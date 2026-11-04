@@ -40,35 +40,4 @@ def canonicalArith {width : Nat} [NeZero width] (data : Knowledge) : HolArith wi
   | .subOverflow destination left right flag =>
       .subOverflow destination (canonicalRegs' destination data left) (canonicalRegs' destination data right) flag
 
-/-- Actual immediate canonicalization commutes with the reviewed constructor
-codec on related input knowledge. Flapjack API infrastructure, no HOL original. -/
-theorem canonicalImmReg_transport {width : Nat} [NeZero width]
-    (native : Knowledge) (executed : WordCseKnowledge) (related : KnowledgeRel width native executed)
-    (right : WordRegImm (BitVec width)) :
-    HolRegImm.ofWordRegImm (wordCseCanonicalImmReg executed right) =
-      canonicalImmReg native (HolRegImm.ofWordRegImm right) := by
-  cases right <;> simp [wordCseCanonicalImmReg, HolRegImm.ofWordRegImm, canonicalImmReg,
-    canonicalRegs_transport native executed related]
-
-/-- Both original avoid-register immediate branches commute with the codec. -/
-theorem canonicalImmRegAvoid_transport {width : Nat} [NeZero width]
-    (native : Knowledge) (executed : WordCseKnowledge) (related : KnowledgeRel width native executed)
-    (avoid : Nat) (right : WordRegImm (BitVec width)) :
-    HolRegImm.ofWordRegImm (wordCseCanonicalImmReg' avoid executed right) =
-      canonicalImmReg' avoid native (HolRegImm.ofWordRegImm right) := by
-  cases right <;> simp [wordCseCanonicalImmReg', HolRegImm.ofWordRegImm, canonicalImmReg',
-    canonicalRegsAvoid_transport native executed related]
-
-/-- Complete executed/native arithmetic boundary, including the rejected
-five-register diagnostic AddCarry. No output encoding success or target run is
-assumed. Flapjack API transport, not full CSE correctness or production routing. -/
-theorem canonicalArith_transport {width : Nat} [NeZero width]
-    (native : Knowledge) (executed : WordCseKnowledge) (related : KnowledgeRel width native executed)
-    (operation : WordArith (BitVec width)) :
-    ExecutedCodec.arithFromExecuted? (wordCseCanonicalArith executed operation) =
-      (ExecutedCodec.arithFromExecuted? operation).map (canonicalArith native) := by
-  cases operation <;> simp [wordCseCanonicalArith, ExecutedCodec.arithFromExecuted?, canonicalArith,
-    canonicalRegs_transport native executed related, canonicalRegsAvoid_transport native executed related,
-    canonicalImmRegAvoid_transport native executed related]
-
 end Flapjack.Compiler.Backend.WordCse

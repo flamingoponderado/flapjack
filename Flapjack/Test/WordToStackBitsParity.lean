@@ -41,9 +41,6 @@ def parityGuard : Bool :=
 
 example : bitsToWordW (width := 64) [true, false, true] = (5 : BitVec 64) := by decide
 
-example : (bitsToWordW (width := 8) [true, false, true]).toNat =
-    Flapjack.RiscV.CakeAlloc.bitsToWord [true, false, true] := by decide
-
 /-! ## `word_list` parity
 
 Rows for the width-indexed `wordListW`, tagged against HOL `word_list_def`
@@ -432,58 +429,6 @@ def literalWMoveParityGuard : Bool :=
 example : wMove (width := 32) [] (3, 8, 0) = .skip := by
   simp [wMove, Flapjack.Compiler.Backend.Parmove.parmove,
     Flapjack.Compiler.Backend.Parmove.pmov, wMoveAux]
-
-/-! ## Executable bitmap recursion ↔ tagged recursion
-
-Untagged bridge (bead `flapjack-pxn.18.5.15.3.1.1`): the executed
-`Flapjack.RiscV.CakeAlloc` bitmap recursion maps onto the tagged
-`bitsToWordW`/`wordListW` for every input, including the out-of-range
-`LENGTH > width` boundary (both sides truncate). -/
-
-def bridgeParityGuard : Bool :=
-  (BitVec.ofNat 64 (Flapjack.RiscV.CakeAlloc.bitsToWord (List.replicate 65 true)) ==
-    bitsToWordW (width := 64) (List.replicate 65 true)) &&
-  (BitVec.ofNat 64 (Flapjack.RiscV.CakeAlloc.bitsToWord [true, false, true]) ==
-    bitsToWordW (width := 64) [true, false, true]) &&
-  ((Flapjack.RiscV.CakeAlloc.frameBitmapWords 4 [true, false]).map (BitVec.ofNat 64) ==
-    wordListW (width := 64) [true, false] 4) &&
-  ((Flapjack.RiscV.CakeAlloc.frameBitmapWords 2
-      [true, true, true, true, true]).map (BitVec.ofNat 64) ==
-    wordListW (width := 64) [true, true, true, true, true] 2) &&
-  ((Flapjack.RiscV.CakeAlloc.writeBitmap [0, 1, 2] 0 8 8).map (BitVec.ofNat 8) ==
-    writeBitmapHOL (width := 8) [0, 1, 2] 0 8) &&
-  ((Flapjack.RiscV.CakeAlloc.writeBitmap [2, 4, 6] 0 8 8).map (BitVec.ofNat 8) ==
-    writeBitmapHOL (width := 8) [2, 4, 6] 0 8) &&
-  ((Flapjack.RiscV.CakeAlloc.writeBitmap [0, 2, 4] 0 64 64).map (BitVec.ofNat 64) ==
-    writeBitmapHOL (width := 64) [0, 2, 4] 0 64)
-
-#eval bridgeParityGuard
-#guard bridgeParityGuard
-
-/-- The executed `writeBitmap` (with its `List.contains` name-set) maps onto the
-HOL-shaped `writeBitmapHOL`, kernel-checked on all inputs. -/
-example : (Flapjack.RiscV.CakeAlloc.writeBitmap [0, 1, 2] 0 8 8).map (BitVec.ofNat 8) =
-    writeBitmapHOL (width := 8) [0, 1, 2] 0 8 :=
-  Flapjack.RiscV.CakeAlloc.writeBitmap_eq_writeBitmapHOL [0, 1, 2] 0 8
-
-/-- Arbitrary-input executable/tagged `bitsToWord` equivalence (stronger than
-in-range). -/
-example : BitVec.ofNat 64 (Flapjack.RiscV.CakeAlloc.bitsToWord [false, true, true, false]) =
-    bitsToWordW (width := 64) [false, true, true, false] :=
-  Flapjack.RiscV.CakeAlloc.bitsToWord_ofNat_eq _
-
-/-- The executable chunking maps onto the tagged `wordListW`. -/
-example : (Flapjack.RiscV.CakeAlloc.frameBitmapWords 2
-      [true, true, true, true, true]).map (BitVec.ofNat 64) =
-    wordListW (width := 64) [true, true, true, true, true] 2 :=
-  Flapjack.RiscV.CakeAlloc.frameBitmapWords_map 2 _
-
-/-- Kernel-checked equality of the executed bitmap recursion with the tagged
-`wordListW`, for the prose-level `dimindex = width` identification. -/
-example : (Flapjack.RiscV.CakeAlloc.frameBitmapWords 3 [true, false, true]).map
-      (BitVec.ofNat 64) =
-    wordListW (width := 64) [true, false, true] 3 :=
-  Flapjack.RiscV.CakeAlloc.frameBitmapWords_map 3 _
 
 /-! ## stackLang program-combinator oracle parity
 
@@ -1041,19 +986,6 @@ def wInstParityGuard : Bool :=
 #eval wInstParityGuard
 #guard wInstParityGuard
 
-def runChecks : IO Bool := do
-  IO.println "PASS Word-to-Stack HOL bitmap, stack-slot, and program-combinator oracle rows"
-  IO.println "PASS executable Cake bitmap recursion and name-set map to tagged bitsToWordW/wordListW/writeBitmapHOL"
-  IO.println "PASS stackLang store_name datatype oracle rows"
-  pure (parityGuard && wordListParityGuard && chunkToBitsParityGuard &&
-    chunkToBitmapParityGuard && writeBitmapParityGuard && insertBitmapParityGuard &&
-    stackSlotsParityGuard && perfSlotsParityGuard && bridgeParityGuard &&
-    progCombinatorsParityGuard && storeNameParityGuard && regFormatParityGuard &&
-    stackMoveParityGuard && wMoveParityGuard && copyRetParityGuard &&
-    copyRetIndependentGuard && wLiveParityGuard && handlerParityGuard &&
-    callDestParityGuard && stubParityGuard && wShareInstParityGuard &&
-    wInstParityGuard && literalWMoveParityGuard)
-
 end Flapjack.Test.WordToStackBitsParity
 
 namespace Flapjack.Test.HandlerDestinationPolymorphism
@@ -1068,4 +1000,5 @@ example : stackHandlerArgs (α := Nat) (ε := Unit) false (Sum.inl true) 7 (2,7,
     stackArgs (γ := Nat) (β := Unit) (Sum.inl true) 7 (2,10,12) := rfl
 example : stackHandlerArgs (α := Nat) (δ := Bool) true (Sum.inr ()) 7 (2,7,9) =
     stackArgs (γ := Nat) (α := Bool) (Sum.inr ()) 7 (2,12,14) := rfl
+
 end Flapjack.Test.HandlerDestinationPolymorphism

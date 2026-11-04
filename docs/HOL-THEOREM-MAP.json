@@ -98581,38 +98581,6 @@
     "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1316-1440, stage A4): panToTargetMachineLabOfGoodCode with good_code from the source-level stage A2 (panToTargetGoodCodeFromSource, via pan_to_word_every_inst_ok_less and the configuration's zero offsets) over the top theorem's pancake_good_code; all premises are compile_prog_max results, configuration hypotheses, pan_installed components and top-theorem hypotheses."
   },
   {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Compiler/Backend/WordToStack/ProductionStoreConsts.lean",
-    "lean_name": "actualCaller",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific production StoreConsts caller/nativecode/fullprojectedstate/macroboundary transport, no separate HOL declaration. Originalword_to_stack comp532-534 consumes constWordsToBitmapW(constants,LENGTH), index register1 n2w wrapping, fixedsource storeConstsStubLocation6; StackRemove203-209 reads indexreg1 and ignoresstub. Nativecode equality through actual WordPayloads includes arbitrary storedcounts/index and all original inputregisters/configurations; nativeAppList observed via flatten and fullcount retained. Actual typed fusedconsumer supplies nativeproducer; legacygenericNathelper remains separate. No manufactured bound/scratchconfiguration/targetrun/desiredoutput premise; whole WordToStack/nativeproduction remains open."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Compiler/Backend/WordToStack/ProductionStoreConsts.lean",
-    "lean_name": "code",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific production StoreConsts caller/nativecode/fullprojectedstate/macroboundary transport, no separate HOL declaration. Originalword_to_stack comp532-534 consumes constWordsToBitmapW(constants,LENGTH), index register1 n2w wrapping, fixedsource storeConstsStubLocation6; StackRemove203-209 reads indexreg1 and ignoresstub. Nativecode equality through actual WordPayloads includes arbitrary storedcounts/index and all original inputregisters/configurations; nativeAppList observed via flatten and fullcount retained. Actual typed fusedconsumer supplies nativeproducer; legacygenericNathelper remains separate. No manufactured bound/scratchconfiguration/targetrun/desiredoutput premise; whole WordToStack/nativeproduction remains open."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Compiler/Backend/WordToStack/ProductionStoreConsts.lean",
-    "lean_name": "state",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific production StoreConsts caller/nativecode/fullprojectedstate/macroboundary transport, no separate HOL declaration. Originalword_to_stack comp532-534 consumes constWordsToBitmapW(constants,LENGTH), index register1 n2w wrapping, fixedsource storeConstsStubLocation6; StackRemove203-209 reads indexreg1 and ignoresstub. Nativecode equality through actual WordPayloads includes arbitrary storedcounts/index and all original inputregisters/configurations; nativeAppList observed via flatten and fullcount retained. Actual typed fusedconsumer supplies nativeproducer; legacygenericNathelper remains separate. No manufactured bound/scratchconfiguration/targetrun/desiredoutput premise; whole WordToStack/nativeproduction remains open."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Compiler/Backend/WordToStack/ProductionStoreConsts.lean",
-    "lean_name": "macroBoundary",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific production StoreConsts caller/nativecode/fullprojectedstate/macroboundary transport, no separate HOL declaration. Originalword_to_stack comp532-534 consumes constWordsToBitmapW(constants,LENGTH), index register1 n2w wrapping, fixedsource storeConstsStubLocation6; StackRemove203-209 reads indexreg1 and ignoresstub. Nativecode equality through actual WordPayloads includes arbitrary storedcounts/index and all original inputregisters/configurations; nativeAppList observed via flatten and fullcount retained. Actual typed fusedconsumer supplies nativeproducer; legacygenericNathelper remains separate. No manufactured bound/scratchconfiguration/targetrun/desiredoutput premise; whole WordToStack/nativeproduction remains open."
-  },
-  {
     "lean_path": "Flapjack/Misc/BinaryIeeeRest.lean",
     "lean_name": "holIsIntegralR",
     "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
@@ -98777,38 +98745,6 @@
     "hol_name": null
   },
   {
-    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/ProductionNativeCopyMemoryGuard.lean",
-    "lean_name": "nativeCopyProgramMemoryGuard",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "flapjack-sol3: Flapjack-specific production memory-domain invariant, no independent HOL declaration. The full reviewed native copyProp instruction/program clauses preserve memory opcodes; the actual wordCopyPropViaHOL adapter preserves allocatorMemorySupported unconditionally, including rejected-input fallback. Reviewed input/output codec and cutset normalization guard lemmas discharge carrier correspondence. No successful allocator, output support or target execution premise; no HOL port or whole production allocator correctness claim.",
-    "hol_path": null,
-    "hol_name": null
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/ProductionNativeCopyMemoryGuard.lean",
-    "lean_name": "nativeCopyWrapperMemoryGuard",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "flapjack-sol3: Flapjack-specific production memory-domain invariant, no independent HOL declaration. The full reviewed native copyProp instruction/program clauses preserve memory opcodes; the actual wordCopyPropViaHOL adapter preserves allocatorMemorySupported unconditionally, including rejected-input fallback. Reviewed input/output codec and cutset normalization guard lemmas discharge carrier correspondence. No successful allocator, output support or target execution premise; no HOL port or whole production allocator correctness claim.",
-    "hol_path": null,
-    "hol_name": null
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/ProductionNativeFormals.lean",
-    "lean_name": "allocatorWithSsaAndCopy_metadata",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific observed-output retention invariant for arbitrary copy, SSA and cleanup producers. Derived from the actual WithSsaAndCopy consumer; no desired metadata/spill equality assumption, target execution or independent HOL declaration. Actual native-copy witnesses instantiate this invariant; legacy helper compatibility remains explicit."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/ProductionNativeSpillState.lean",
-    "lean_name": "allocatorWithSsaAndCopy_spillState",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific observed-output retention invariant for arbitrary copy, SSA and cleanup producers. Derived from the actual WithSsaAndCopy consumer; no desired metadata/spill equality assumption, target execution or independent HOL declaration. Actual native-copy witnesses instantiate this invariant; legacy helper compatibility remains explicit."
-  },
-  {
     "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
     "hol_name": "riscv_encoder_correct",
     "lean_path": "Flapjack/RiscV/CorrectnessEncoding/JumpCmp.lean",
@@ -98853,14 +98789,6 @@
     "inherits_reals_as_rational_cuts": true
   },
   {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Compiler/Backend/WordToStack/ProductionPreSsaDomain.lean",
-    "lean_name": "acceptedAllocatorInput_usesNativeCopy",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific actual allocator dispatch equation, no independent HOL declaration. Accepted inputs route to the explicit wordCopyPropViaHOL/full-SSA consumer, preserving every output/failure branch. Source variants discharge input acceptance from compiler closure; no allocation availability/output-codec or target-run premise. Legacy routed-limit lemmas remain separately described as legacy API facts."
-  },
-  {
     "hol_path": "cakeml/compiler/backend/riscv/proofs/riscv_configProofScript.sml",
     "hol_name": "riscv_backend_config_ok",
     "lean_path": "Flapjack/Compiler/Backend/RiscVConfig/Proofs.lean",
@@ -98900,30 +98828,6 @@
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-c2026-10-04 source comparison: original unconditional riscv_targetProof512 encoder_correct riscv_target and complete asmProps encoder_correct_def117-133 equal the reviewed native target/encoderCorrect contract. Exhaustive six outer asm constructors, five Inst constructors, eight Arith constructors and Addr destructuring cover17 leaf groups. targetOk proved; no extra simulation, target-run/result, postrelation or successful-pass premise. Complete existential n/all interference environments/code bytes/PC predicate/final relation/outside-source-domain asserts2 retained through exact definition. All kernel-checked native constructor proofs consumed; no finite-fixture universality claim. Inherits reals_as_rational_cuts native model assurance limit SOUNDNESS8. Whole production compiler routing and final Pancake-to-RISC-V theorem remain separate open obligations."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Compiler/Backend/WordSimp/ProductionSmartSeq.lean",
-    "lean_name": "smartSeq_production",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack production encoder correspondence for the complete reviewed native SmartSeq and prefix folds; input carrier encodings identify the source image, output correspondence is derived. No separate HOL original or HOL-to-Lean equivalence proof. Optimized executed constructor operation retained under documented real-source measured full-codec performance exception; broader rejected instruction extension and whole WordSimp/compiler simulation remain separate."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Compiler/Backend/WordSimp/ProductionSmartSeq.lean",
-    "lean_name": "smartSeqFold_production",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack production encoder correspondence for the complete reviewed native SmartSeq and prefix folds; input carrier encodings identify the source image, output correspondence is derived. No separate HOL original or HOL-to-Lean equivalence proof. Optimized executed constructor operation retained under documented real-source measured full-codec performance exception; broader rejected instruction extension and whole WordSimp/compiler simulation remain separate."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Compiler/Backend/WordSimp/ProductionSmartSeq.lean",
-    "lean_name": "smartSeqLeftSeq_production",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack production encoder correspondence for the complete reviewed native SmartSeq and prefix folds; input carrier encodings identify the source image, output correspondence is derived. No separate HOL original or HOL-to-Lean equivalence proof. Optimized executed constructor operation retained under documented real-source measured full-codec performance exception; broader rejected instruction extension and whole WordSimp/compiler simulation remain separate."
   },
   {
     "hol_path": null,
@@ -99053,22 +98957,6 @@
     "lean_name": "panToTargetCompileSemanticsRiscVExecutable",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific corollary (bead flapjack-z9g67) of panToTargetCompileSemanticsRiscV with the compiler premise on the callable compileProgMaxExecutable (= compile_prog_max by compileProgMaxExecutable_eq) at pancakeBackendConf riscvBackendConfig; all other premises and the conclusion unchanged. Does not establish the CLI computes this function."
-  },
-  {
-    "lean_path": "Flapjack/RiscV/RuntimeImageBackendOutput.lean",
-    "lean_name": "stackToRiscV_fullBackendOutput",
-    "hol_path": null,
-    "hol_name": null,
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific complete backend output/adapter composition infrastructure, no independent HOL declaration. Reuses tagged original fromStack/fromWord/attachBitmaps. Retains input rejection, None/guards/arbitrary bitmap payload/full config/symbol attachment without successful-output or target premise. Native path has no relabel/filter/stub injection. Source diagnostic wrapper and whole producer/body correctness remain open on z6zwp."
-  },
-  {
-    "lean_path": "Flapjack/RiscV/RuntimeImageBackendOutput.lean",
-    "lean_name": "runtimeSectionsFromBackend_actual",
-    "hol_path": null,
-    "hol_name": null,
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific complete backend output/adapter composition infrastructure, no independent HOL declaration. Reuses tagged original fromStack/fromWord/attachBitmaps. Retains input rejection, None/guards/arbitrary bitmap payload/full config/symbol attachment without successful-output or target premise. Native path has no relabel/filter/stub injection. Source diagnostic wrapper and whole producer/body correctness remain open on z6zwp."
   },
   {
     "lean_path": "Flapjack/RiscV/NativeBackendOutput.lean",

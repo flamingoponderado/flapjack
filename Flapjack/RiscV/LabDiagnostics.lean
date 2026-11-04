@@ -1,6 +1,7 @@
-import Flapjack.RiscV.InitializedRuntime
-import Flapjack.Compiler.Backend.StackToLab.Production
 import Flapjack.RiscV.Lab
+import Flapjack.Compiler.Backend.StackToLab.RuntimeLabels
+import Flapjack.Compiler.Encoders.RiscV.Target
+import Flapjack.Compiler.Backend.RiscVConfig.Executable
 
 /-!
 # Checked Lab-to-RISC-V diagnostics
@@ -30,15 +31,5 @@ structure LabLoweringError where
 def labLoweringError (sectionId position : Nat)
     (feature : LabUnsupportedFeature) : LabLoweringError :=
   { sectionId, position, feature }
-
-def labPlainUnsupportedFeature [NeZero width] :
-    LabPlain (Word width) → Option LabUnsupportedFeature
-  | .word (.arith (.longDiv _ _ _ _ _)) => some .longDiv
-  | _ => none
-
-def labPlainLoweringError [NeZero width] (sectionId position : Nat)
-    (operation : LabPlain (Word width)) : LabLoweringError :=
-  { sectionId, position,
-    feature := (labPlainUnsupportedFeature operation).getD .loweringFailure }
 
 end Flapjack.RiscV

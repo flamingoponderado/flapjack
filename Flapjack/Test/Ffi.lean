@@ -1,4 +1,4 @@
-import Flapjack.RiscV.Link
+import Flapjack.RiscV.Ffi
 import Flapjack.Ffi
 import Flapjack.PanValueFfiCore
 
@@ -111,19 +111,5 @@ example :
   simp [callFfi, identityFfiState]
 
 open RiscV
-
-def combinedFfiFunctions : List (Nat × List Nat × WordProg (Word 64)) :=
-  [(7, [2], .seq
-    (.ffi "inc" 2 3 4 5 ([], []))
-    (.return 0 [2]))]
-
-def combinedHandlerFunctions : List (Nat × List Nat × WordProg (Word 64)) :=
-  [(8, [3], .raise 3)]
-
-def loopFfiBreakProgram : WordProg (Word 64) :=
-  .seq
-    (.loop []
-      (.seq (.ffi "inc" 2 3 4 5 ([], [])) (.break 0)) [])
-    (.return 0 [2])
 
 end Flapjack

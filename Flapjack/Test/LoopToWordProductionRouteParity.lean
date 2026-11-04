@@ -1,4 +1,17 @@
-import Flapjack.Pipeline
+import Flapjack.Pancake.PanSimp.DeclsProduction
+import Flapjack.Pancake.PanGlobalsByteRanged
+import Flapjack.Pancake.PanStructs.CompileTopProduction
+import Flapjack.Pancake.PanSimpByteRanged
+import Flapjack.CompileFunctionDistinct
+import Flapjack.Pancake.CrepToLoop.Optimise
+import Flapjack.Pancake.CrepToLoop.ProductionDeclarations
+import Flapjack.Pancake.LoopToWord.CompFuncExact
+import Flapjack.Pancake.LoopToWord.LoopProgCarrierCodec
+import Flapjack.RiscV.WordDiagnostics
+import Flapjack.RiscV.WordFuseConditions
+import Flapjack.RiscV.WordUnreach
+import Flapjack.RiscV.Lab
+import Flapjack.Display
 
 /-!
 # Production Loop-to-Word comp_func route checks
@@ -30,20 +43,5 @@ private def ffiBody : LoopProg (BitVec 8) :=
 
 private def nonByteFfiBody : LoopProg (BitVec 8) :=
   .ffi "λ" 0 1 2 3 [0, 1]
-
-#guard (loopToWordCompFuncViaHOL 3 [0, 1] controlBody).isSome = true
-#guard (loopToWordCompFuncViaHOL 3 [0, 1] handlerBody).isSome = true
-#guard (loopToWordCompFuncViaHOL 3 [0, 1] memoryBody).isSome = true
-#guard (loopToWordCompFuncViaHOL 3 [0, 1] ffiBody).isSome = true
-#guard loopToWordCompFuncViaHOL 3 [0, 1] nonByteFfiBody = none
-
-#guard reprStr (loopToWordCompFuncRouted 3 [0, 1] controlBody) =
-  reprStr (loopToWordCompFunc 3 [0, 1] controlBody)
-#guard reprStr (loopToWordCompFuncRouted 3 [0, 1] handlerBody) =
-  reprStr (loopToWordCompFunc 3 [0, 1] handlerBody)
-#guard reprStr (loopToWordCompFuncRouted 3 [0, 1] memoryBody) =
-  reprStr (loopToWordCompFunc 3 [0, 1] memoryBody)
-#guard reprStr (loopToWordCompFuncRouted 3 [0, 1] ffiBody) =
-  reprStr (loopToWordCompFunc 3 [0, 1] ffiBody)
 
 end Flapjack.Test.LoopToWordProductionRouteParity

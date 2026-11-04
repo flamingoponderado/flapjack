@@ -1,4 +1,5 @@
-import Flapjack.StackAlloc.Machine
+import Flapjack.StackAlloc.Runtime
+import Flapjack.RiscV.WordToStack
 import Flapjack.Compiler.Backend.Semantics.StackSem.Bitmap
 
 /-

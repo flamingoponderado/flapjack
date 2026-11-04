@@ -20,20 +20,4 @@ private theorem decodedLookup (tree : Spt Nat) (key : Nat) :
   rw [productionMergeMapLookup]
   simpa only [sptLookup_sptFromAList] using sptLookup_sptFromAList_sptToAList key tree
 
-/-- Actual allocator caller preserves every native output observation and both
-independent state counters. No map distinctness, finite-width counter bound,
-or presumed output relation occurs in the premises. This transports the native
-operation through production state codecs, not a new tagged HOL theorem. -/
-theorem wordSsaMergeMovesCorresponds (names : List Nat) (left right : WordSsaState) (next : Nat) :
-    let native := mergeMoves names (sptFromAList left.current) (sptFromAList right.current) next
-    let executed := wordSsaMergeMoves names left right next
-    executed.1 = native.1 ∧ executed.2.1 = native.2.1 ∧
-    executed.2.2.1 = native.2.2.1 ∧
-    executed.2.2.2.1.next = left.next ∧ executed.2.2.2.2.next = right.next ∧
-    (∀ key, lookupNatInfo key executed.2.2.2.1.current = sptLookup key native.2.2.2.1) ∧
-    (∀ key, lookupNatInfo key executed.2.2.2.2.current = sptLookup key native.2.2.2.2) := by
-  unfold wordSsaMergeMoves mergeMovesExecutable
-  obtain ⟨lm,rm,n,l,r⟩ := mergeMoves names (sptFromAList left.current) (sptFromAList right.current) next
-  simp only
-  exact ⟨True.intro,True.intro,True.intro,True.intro,True.intro,decodedLookup l,decodedLookup r⟩
 end Flapjack.Compiler.Backend.WordAlloc

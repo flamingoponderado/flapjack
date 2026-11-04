@@ -27,15 +27,9 @@ def wordClashTreeNames : WordClashTree → List Nat
 termination_by tree => sizeOf tree
 decreasing_by all_goals decreasing_trivial
 
-def wordOracleColour (oracle : NatInfoMap Nat) (source : Nat) : Nat :=
-  totalColour oracle source
-
 /-! Cake's allocator applies `total_colour` to the complete Word program after
     IRC colouring.  Keep this boundary named so callers cannot accidentally
     apply the compressed colour map directly or omit nested handlers/live sets. -/
-def wordApplyTotalColour (oracle : NatInfoMap Nat) (program : WordProg α) :
-    WordProg α :=
-  wordApplyColour (totalColour oracle) program
 
 def wordOracleEdgesSafe (colour : Nat → Nat) : List (Nat × Nat) → Bool
   | [] => true
@@ -48,52 +42,5 @@ def wordOracleStackSafe (colour : Nat → Nat) (stackStart : Nat) :
   | name :: names =>
       (if name % 4 == 3 then colour name ≥ stackStart else true) &&
         wordOracleStackSafe colour stackStart names
-
-def wordOracleColouringOk (_colours stackStart : Nat)
-    (tree : WordClashTree) (forced : List (Nat × Nat))
-    (oracle : NatInfoMap Nat) : Bool :=
-  let colour := wordOracleColour oracle
-  (wordClashTreeCheck colour tree [] []).isSome &&
-    wordOracleEdgesSafe colour forced &&
-      wordOracleStackSafe colour stackStart
-        (wordClashTreeNames tree).eraseDups
-
-def wordAllocateFunctionWithOracle [OfNat α 0] (parameters : List Nat)
-    (program : WordProg α) (colours stackStart : Nat)
-    (oracle : NatInfoMap Nat) :
-    Option (WordSsaState × List Nat × WordProg α) :=
-  let (state, renamedParameters, renamedProgram) :=
-    wordSsaRenameFunction parameters program
-  let tree := WordClashTree.seq (.set renamedParameters)
-    (wordClashTree renamedProgram [])
-  let forced := wordProgForcedClashes renamedProgram
-  if wordOracleColouringOk colours stackStart tree forced oracle then
-    some (state, renamedParameters, wordApplyTotalColour oracle renamedProgram)
-  else
-    none
-
-theorem wordOracleColouringOk_rejects_forced_alias
-    (colours stackStart : Nat) (tree : WordClashTree)
-    (oracle : NatInfoMap Nat) (name : Nat) :
-    wordOracleColouringOk colours stackStart tree [(name, name)] oracle =
-      false := by
-  simp [wordOracleColouringOk, wordOracleEdgesSafe]
-
-theorem wordAllocateFunctionWithOracle_sound [OfNat α 0]
-    (parameters : List Nat) (program : WordProg α)
-    (colours stackStart : Nat) (oracle : NatInfoMap Nat)
-    (state : WordSsaState) (renamedParameters : List Nat)
-    (renamedProgram : WordProg α)
-    (halloc : wordAllocateFunctionWithOracle parameters program colours stackStart oracle =
-      some (state, renamedParameters, renamedProgram)) :
-    wordOracleColouringOk colours stackStart
-        (WordClashTree.seq
-          (.set (wordSsaRenameFunction parameters program).2.fst)
-          (wordClashTree (wordSsaRenameFunction parameters program).2.snd []))
-        (wordProgForcedClashes (wordSsaRenameFunction parameters program).2.snd)
-        oracle = true := by
-  simp [wordAllocateFunctionWithOracle] at halloc
-  rcases halloc with ⟨hcheck, rfl, rfl, rfl⟩
-  exact hcheck
 
 end Flapjack

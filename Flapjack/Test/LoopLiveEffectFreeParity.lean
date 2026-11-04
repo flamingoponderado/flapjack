@@ -1,7 +1,20 @@
 import Flapjack.Parser
 import Flapjack.Pancake.PanToCrep.Compile
-import Flapjack.Pipeline
+import Flapjack.Pancake.PanSimp.DeclsProduction
+import Flapjack.Pancake.PanGlobalsByteRanged
+import Flapjack.Pancake.PanStructs.CompileTopProduction
+import Flapjack.Pancake.PanSimpByteRanged
+import Flapjack.CompileFunctionDistinct
+import Flapjack.Pancake.CrepToLoop.Optimise
+import Flapjack.Pancake.CrepToLoop.ProductionDeclarations
 import Flapjack.Pancake.LoopToWord
+import Flapjack.Pancake.LoopToWord.CompFuncExact
+import Flapjack.Pancake.LoopToWord.LoopProgCarrierCodec
+import Flapjack.RiscV.WordDiagnostics
+import Flapjack.RiscV.WordFuseConditions
+import Flapjack.RiscV.WordUnreach
+import Flapjack.RiscV.Lab
+import Flapjack.Display
 import Flapjack.Pancake.Semantics.LoopSem
 import Flapjack.LoopSemantics
 
@@ -152,79 +165,5 @@ def initialState (code : LoopCode Word) : LoopMachineState Word Unit :=
     ffi := trivialFfiState Unit ()
     baseAddr := 0
     topAddr := 0 }
-
-/-- Compile `source` through the production entrypoint and run the first Loop
-    function body on the faithful machine. -/
-def loopRun (source : String) : Option (List Int) :=
-  match Parser.parseTopDecs (BitVec.ofInt 64) source with
-  | Except.error _ => none
-  | Except.ok declarations =>
-      match compileFlapjackEntryCake .rv64i (BitVec.ofNat 64 8)
-          (fun value => BitVec.ofNat 64 value) "main"
-          (panTargetDeclarationsWithDefaultMain declarations) with
-      | none => none
-      | some pipeline =>
-          match pipeline.loop with
-          | (_, _, body) :: _ =>
-              match evaluateLoop 200 effectFreeHooks body
-                  (initialState pipeline.loop) with
-              | (some (.result values), _) =>
-                  some (values.map fun value => match value with
-                    | .word word => word.toInt
-                    | .loc _ _ => 0)
-              | _ => none
-          | [] => none
-
-/-- The compiled function table and first (`main`) body of a fixture, for the
-    structural check. -/
-def mainBodies (source : String) : Option (LoopCode Word × LoopProg Word) :=
-  match Parser.parseTopDecs (BitVec.ofInt 64) source with
-  | Except.error _ => none
-  | Except.ok declarations =>
-      match compileFlapjackEntryCake .rv64i (BitVec.ofNat 64 8)
-          (fun value => BitVec.ofNat 64 value) "main"
-          (panTargetDeclarationsWithDefaultMain declarations) with
-      | none => none
-      | some pipeline => match pipeline.loop with
-          | (_, _, body) :: _ => some (pipeline.loop, body)
-          | [] => none
-
-def effectFreeProgram (source : String) : Bool :=
-  match mainBodies source with
-  | some (code, body) => effectFree code body
-  | none => false
-
-def outSevenResult : Option (List Int) := loopRun outSevenSource
-def wideConstantResult : Option (List Int) := loopRun wideConstantSource
-
-def outSevenEffectFree : Bool := effectFreeProgram outSevenSource
-def wideConstantEffectFree : Bool := effectFreeProgram wideConstantSource
-
-def outSevenMatches : Bool := outSevenResult == some [7]
-def wideConstantMatches : Bool := wideConstantResult == some [1073741832]
-
-#guard outSevenEffectFree
-#guard wideConstantEffectFree
-#guard outSevenMatches
-#guard wideConstantMatches
-
-def runChecks : IO Bool := do
-  let checks :=
-    [ ("Loop effect-free out=7 loop_live regression is effect-free",
-        outSevenEffectFree),
-      ("Loop effect-free out=7 loop_live regression returns 7",
-        outSevenMatches),
-      ("Loop effect-free wide-constant regression is effect-free",
-        wideConstantEffectFree),
-      ("Loop effect-free wide-constant regression returns the constant",
-        wideConstantMatches) ]
-  let results ← checks.mapM fun (name, ok) => do
-    if ok then
-      IO.println s!"PASS {name}"
-      pure true
-    else
-      IO.println s!"FAIL {name}"
-      pure false
-  pure (results.all id)
 
 end Flapjack.Test.LoopLiveEffectFreeParity

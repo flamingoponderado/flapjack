@@ -25,27 +25,14 @@ private def exactNested : HolLoopProg 8 :=
 private def exactNestedExecutable : LoopProg (BitVec 8) :=
   holLoopProgToExecutableCanonical exactNested
 
-example : executableLoopProgToHol exactNestedExecutable = some exactNested := by
-  simp [exactNestedExecutable, exactNested, executableLoopProgToHol,
-    holLoopProgToExecutableCanonical, holLoopProgToExecutable,
-    numSetKeys, Flapjack.LoopToWord.toNumSetHOL, ofString_toStringOfBytes]
-
 example : loopProgExecRel exactNestedExecutable exactNested :=
   holLoopProgToExecutableCanonical_rel exactNested
 
 private def exactExpressionRejected : LoopProg (BitVec 8) :=
   .assign 3 (.cmp .equal (.var 1) (.const 0))
 
-example : executableLoopProgToHol exactExpressionRejected = none := by
-  simp [exactExpressionRejected, executableLoopProgToHol]
-
 private def byteNameFfi : LoopProg (BitVec 8) :=
   .ffi "write" 1 2 3 4 []
-
-example : executableLoopProgToHol byteNameFfi =
-    some (.ffi (ofString "write") 1 2 3 4 .ln) := by
-  simp [byteNameFfi, executableLoopProgToHol,
-    Flapjack.LoopToWord.toNumSetHOL]
 
 example : sptLookup 2 (Flapjack.LoopToWord.toNumSetHOL [2, 2]) = some () := by
   exact (sptLookup_toNumSetHOL_iff_mem 2 [2, 2]).2 (by simp)

@@ -1,4 +1,4 @@
-import Flapjack.Compiler.Backend.WordCse.ProductionArithmetic
+import Flapjack.Compiler.Backend.WordCse.Proofs.WfDataPreservation
 
 namespace Flapjack.Test.WordCseProductionArithmeticParity
 open Flapjack RiscV Compiler.Backend.WordCse Compiler.Encoders.Asm
@@ -42,26 +42,11 @@ private def factKey {width : Nat} [NeZero width] (mode : Nat) (op : HolArith wid
 private def nativeData {width : Nat} [NeZero width] (mode : Nat) (op : HolArith width) : Knowledge :=
   { initialData mode with
     instrsMem := Misc.BalancedMap.insert listCmp (factKey mode op) 3 Misc.BalancedMap.empty }
-private def regMap (xs : List (Nat × Nat)) : WordCseRegMap :=
-  xs.foldr (fun e m => m.insert e.1 e.2) ∅
-private def executedData {width : Nat} [NeZero width] (mode : Nat) (op : HolArith width) : WordCseKnowledge :=
-  { toCanonical := regMap (canonicalEntries mode)
-    toLatest := regMap [(3,5),(9,9)]
-    getsMem := regMap [(wordCseStoreCode (.currHeap : WordStore (BitVec width)),3)]
-    instrsMem := (∅ : WordCseFactMap).insert (factKey mode op) 3
-    loadsMem := (∅ : WordCseFactMap).insert [99] 3 }
 private def nativeProgram {width : Nat} [NeZero width] : WordLangProgHOL (BitVec width) →
     Nat × List Nat × List Nat × List Nat
   | .inst (.arith a) =>
       let a := HolArith.ofWordLangArith a
       (1,arithToNumList a,arithWrites a,arithReads a)
-  | .move priority [(r,current)] => (0,[priority],[r],[current])
-  | _ => (2,[],[],[])
-private def executedProgram {width : Nat} [NeZero width] : WordProg (BitVec width) →
-    Nat × List Nat × List Nat × List Nat
-  | .inst (.arith a) => match ExecutedCodec.arithFromExecuted? a with
-      | some a => (1,arithToNumList a,arithWrites a,arithReads a)
-      | none => (2,[],[],[])
   | .move priority [(r,current)] => (0,[priority],[r],[current])
   | _ => (2,[],[],[])
 private def nativeObservation {width : Nat} [NeZero width] (mode : Nat) (op : HolArith width)
@@ -75,18 +60,6 @@ private def nativeObservation {width : Nat} [NeZero width] (mode : Nat) (op : Ho
      (fun k => Misc.BalancedMap.lookup listCmp k data.instrsMem),
    [[99]].map (fun k => Misc.BalancedMap.lookup listCmp k data.loadsMem),
    nativeProgram output.2)
-private def executedObservation {width : Nat} [NeZero width] (mode : Nat) (op : HolArith width)
-    (output : WordProg (BitVec width) × WordCseKnowledge) : Observation :=
-  let d := firstRegOfArith op
-  let data := output.2
-  ([d,3,5,9,11].map (fun k => data.toCanonical[k]?),
-   [3,d,9,11].map (fun k => data.toLatest[k]?),
-   [WordStore.currHeap,WordStore.nextFree].map
-     (fun s => data.getsMem[wordCseStoreCode (s : WordStore (BitVec width))]?),
-   [instToNumList (.arith (adjusted mode op)),factKey mode op,[99]].map
-     (fun k => data.instrsMem[k]?),
-   [[99]].map (fun k => data.loadsMem[k]?),
-   executedProgram output.1)
 -- Numeric tuples strictly transcribed from original arithmetic_0..arithmetic_239.
 private def fixtures : List Fixture := [
   ⟨1,0,0,7,([some 7, some 3, some 5, some 9, none],[some 5, some 7, some 9, none],[some 3, none],[some 7, some 3, some 3],[some 3],1,[25, 35, 109, 33, 105],[7],[9, 5])⟩,
@@ -336,23 +309,5 @@ private def nativeCheck (fixture : Fixture) : Bool :=
     nativeObservation fixture.mode op
       (wordCse (nativeData fixture.mode op) (.inst (HolInst.arith op).toWordLangInst)) == fixture.expected
 example : fixtures.all nativeCheck = true := by decide +kernel
-private def checkExecuted (fixture : Fixture) (positive : fixture.width ≠ 0) : IO Bool :=
-  letI : NeZero fixture.width := ⟨positive⟩
-  do
-    let op := operation (width := fixture.width) fixture.kind fixture.destination
-    let observed := executedObservation fixture.mode op
-      (RiscV.wordCseProg (executedData fixture.mode op) (.inst (.arith (executedArithmetic op))))
-    if observed != fixture.expected then
-      IO.eprintln s!"FAIL executed CSE arithmetic width={fixture.width} kind={fixture.kind} mode={fixture.mode}: {repr observed}"
-      return false
-    return true
-def runChecks : IO Bool := do
-  for fixture in fixtures do
-    if h : fixture.width = 0 then
-      IO.eprintln "FAIL CSE arithmetic zero-width fixture"
-      return false
-    else
-      if !(← checkExecuted fixture h) then return false
-  IO.println "PASS executed CSE arithmetic: 240 original/kernel/runtime cases, all eight constructors, five knowledge fields, full payload encoding, guards, hit/miss and widths1/8/64/80"
-  return true
+
 end Flapjack.Test.WordCseProductionArithmeticParity

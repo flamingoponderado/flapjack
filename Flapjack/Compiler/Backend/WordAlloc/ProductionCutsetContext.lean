@@ -72,32 +72,4 @@ theorem numSetFromList_production (names : List Nat) :
   rw [roundtrip _ (sptWfFromAList _)]
   exact unitMap_eq_of_membership _ _ (mem_toSet names)
 
-/-- Production cutset union equals the original sparse-tree union, retaining
-both halves and arbitrary repeated names. -/
-theorem callSet_production (left right : List Nat) :
-    sptFromAList ((wordClashTreeCallSet left right).map (fun key => (key, ()))) =
-      sptUnion (LoopToWord.toNumSetHOL left) (LoopToWord.toNumSetHOL right) := by
-  rw [wordClashTreeCallSet, numSetFromList_production]
-  apply (sptEqThm _ _ ⟨sptWfFromAList _, sptWfUnion _ _
-    ⟨by rw [toNumSet_production]; exact sptWfFromAList _,
-     by rw [toNumSet_production]; exact sptWfFromAList _⟩⟩).mpr
-  intro key
-  simp only [sptLookup_sptUnion, toNumSet_production, unitLookup,
-    List.mem_eraseDups, List.mem_append]
-  by_cases leftMember : key ∈ left <;> by_cases rightMember : key ∈ right <;>
-    simp [leftMember, rightMember]
-
-/-- Exact context lookup after the real cutset codec, including out-of-range
-indices and both loop entry/exit sets. -/
-theorem loopFrame_production (index : Nat) (frames : List (List Nat × List Nat)) :
-    (wordClashTreeFindLoopFrame index frames).map wordCutsetsToHOL =
-      (frames.map wordCutsetsToHOL)[index]? := by
-  induction frames generalizing index with
-  | nil => cases index <;> rfl
-  | cons frame frames ih =>
-      cases index with
-      | zero => rfl
-      | succ index => simpa only [wordClashTreeFindLoopFrame, Nat.add_sub_cancel,
-          List.map_cons, List.getElem?_cons_succ] using ih index
-
 end Flapjack.WordAlloc

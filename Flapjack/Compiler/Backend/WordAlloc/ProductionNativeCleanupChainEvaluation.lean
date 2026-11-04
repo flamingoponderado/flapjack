@@ -1,5 +1,12 @@
-import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeCleanupSuffixEvaluation
-import Flapjack.Compiler.Backend.WordCse.ProductionProgram
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead
+import Flapjack.Compiler.Backend.WordToStack.ProductionFlatCodec
+import Flapjack.Compiler.Backend.WordCopy.Production
+import Flapjack.Compiler.Backend.WordCopy.Proofs.Correct
+import Flapjack.Compiler.Backend.WordUnreach.Production
+import Flapjack.Compiler.Backend.WordAlloc.ProductionCanonicalCutsetCodec
+import Flapjack.Pancake.Proofs.WordConvs.CopyProp
+import Flapjack.Pancake.Proofs.WordConvs.ThreeToTwo
+import Flapjack.Pancake.Proofs.WordConvs.Unreach
 import Flapjack.Compiler.Backend.WordCse.Proofs.CompCorrect
 import Flapjack.Pancake.Proofs.WordConvs.WordCse
 import Flapjack.Pancake.Proofs.WordConvs.RemoveDead
@@ -123,65 +130,4 @@ theorem wordCommonSubexpElim_setsWf {width : Nat} [NeZero width]
     WordAllocatorProgramSetsWf (wordCommonSubexpElim program) := by
   simpa only [wordCommonSubexpElim] using wordCse_setsWf emptyData program valid
 
-/-- The whole executed post-SSA cleanup chain on an encoded flat program satisfies the
-complete original evaluation conclusion for HOL `compile_single`'s cleaned program
-`remove_dead_prog (remove_unreach (three_to_two_reg_prog F (copy_prop
-(word_common_subexp_elim (remove_dead_prog p)))))`. Every executed phase succeeds and every
-intermediate re-encoding is literal, derived from the source encoder; the only premises are
-the original flat convention, source evaluation and non-error result. Locals may differ
-only on non-returning results, exactly as in `evaluate_remove_dead_prog`. Flapjack
-composition; no HOL original. -/
-theorem nativeCleanupChain_evaluation {width : Nat} [NeZero width] {C F : Type}
-    (source : WordProg (BitVec width)) (native : WordLangProgHOL (BitVec width))
-    (encoded : wordLangProgToHOL source = some native)
-    (state finalState : WordSemStateFiniteExact width C F)
-    (result : Option (WordSemResult width))
-    (sourceConditions : flatExpConventions native = true ∧
-      evaluate native state = (result, finalState) ∧ result ≠ some .error) :
-    ∃ unreached output : WordProg (BitVec width),
-      wordRemoveUnreachViaHOL? (wordThreeToTwoReg (wordCopyPropViaHOL
-        (wordCseProp (wordRemoveDeadProgramViaHOL source)))) = some unreached ∧
-      wordRemoveDeadProgramViaHOL unreached = output ∧
-      wordLangProgFromHOL (removeDeadProg (removeUnreach (threeToTwoRegProg false (copyProp
-        (wordCommonSubexpElim (removeDeadProg native)))))) = some output ∧
-      ∃ targetLocals : Spt (WordLocW width),
-        evaluate (removeDeadProg (removeUnreach (threeToTwoRegProg false (copyProp
-            (wordCommonSubexpElim (removeDeadProg native)))))) state =
-          (result, {finalState with locals := targetLocals}) ∧
-        match (generalizing := false) result with
-        | none => True
-        | some (.break _) => True
-        | some (.continue _) => True
-        | some _ => finalState.locals = targetLocals := by
-  obtain ⟨flat, run, nonerror⟩ := sourceConditions
-  -- first dead-code removal
-  obtain ⟨dead, deadDecoded, deadRouted, deadLocals, deadRun, deadSame⟩ :=
-    nativeDead_evaluation source native encoded state finalState result ⟨flat, run, nonerror⟩
-  have sourceWf := productionProgram_setsWf source native encoded
-  -- the actual configuration-independent flat preservation of `remove_dead_prog_conventions`
-  have deadFlat : flatExpConventions (removeDeadProg native) = true :=
-    (WordConvs.removeDeadProgConventions (fun _ => true) native
-      { isa := .riscv, encode := fun _ => [], bigEndian := false, codeAlignment := 0,
-        linkReg := none, avoidRegs := [], regCount := 0, fpRegCount := 0,
-        twoRegArith := false, validImm := fun _ _ => false, addrOffset := (0, 0),
-        hwOffset := (0, 0), byteOffset := (0, 0), jumpOffset := (0, 0),
-        cjumpOffset := (0, 0), locOffset := (0, 0) }).1 flat
-  -- CSE: executed/native transport, literal re-encoding, original correctness
-  have cseDecoded := wordCommonSubexpElim_production_transport _ dead deadDecoded
-  have cseEncoded : wordLangProgToHOL (wordCseProp (wordRemoveDeadProgramViaHOL source)) =
-      some (wordCommonSubexpElim (removeDeadProg native)) := by
-    rw [deadRouted]
-    exact canonicalProgram_codec _ _
-      (wordCommonSubexpElim_setsWf _ (removeDeadProg_setsWf native sourceWf)) cseDecoded
-  have cseFlat := WordConvs.flat_exp_conventions_word_common_subexp_elim _ deadFlat
-  have cseRun := word_common_subexp_elim_correct _ state result _ ⟨deadRun, deadFlat, nonerror⟩
-  -- the post-CSE suffix
-  obtain ⟨unreached, output, unreachRouted, finalRouted, finalDecoded, targetLocals, finalRun,
-    finalSame⟩ := nativeCleanupSuffix_evaluation _ _ cseEncoded state _ result
-      ⟨cseFlat, cseRun, nonerror⟩
-  refine ⟨unreached, output, unreachRouted, finalRouted, finalDecoded, targetLocals, ?_, ?_⟩
-  · simpa only using finalRun
-  · cases result with
-    | none => trivial
-    | some value => cases value <;> simp_all
 end Flapjack.WordAlloc

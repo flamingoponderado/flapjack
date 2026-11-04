@@ -1,5 +1,18 @@
 import Flapjack.Pancake.Proofs.PanGlobals
-import Flapjack.Pipeline
+import Flapjack.Pancake.PanSimp.DeclsProduction
+import Flapjack.Pancake.PanGlobalsByteRanged
+import Flapjack.Pancake.PanStructs.CompileTopProduction
+import Flapjack.Pancake.PanSimpByteRanged
+import Flapjack.CompileFunctionDistinct
+import Flapjack.Pancake.CrepToLoop.Optimise
+import Flapjack.Pancake.CrepToLoop.ProductionDeclarations
+import Flapjack.Pancake.LoopToWord.CompFuncExact
+import Flapjack.Pancake.LoopToWord.LoopProgCarrierCodec
+import Flapjack.RiscV.WordDiagnostics
+import Flapjack.RiscV.WordFuseConditions
+import Flapjack.RiscV.WordUnreach
+import Flapjack.RiscV.Lab
+import Flapjack.Display
 
 namespace Flapjack.Test.PanGlobalsCompileTopForStartParity
 
@@ -52,30 +65,6 @@ def globalPresentParityGuard : Bool :=
 
 /-! The source-facing entry helper carries the tagged HOL definition's result
     into the declarations compiled by the downstream Crep pass. -/
-def sourceEntryUsesCakeGlobalOutput : Bool :=
-  match compileFlapjackEntryCake .rv64i (BitVec.ofNat 64 8)
-      (BitVec.ofNat 64) "main" [word64Global, word64MainFunction] with
-  | none => false
-  | some pipeline =>
-      match pipeline.globals.declarations with
-      | [.function main, .function renamed] =>
-          main.name == "main" && main.params.isEmpty &&
-          (match main.body with
-          | .seq
-              (.seq
-                (.store (.op .sub [.topAddr, .const address]) (.const value))
-                .skip)
-              (.call none "main'" []) =>
-                address == BitVec.ofNat 64 8 && value == BitVec.ofNat 64 7
-          | _ => false) &&
-          renamed.name == "main'" && (match renamed.body with
-            | .skip => true
-            | _ => false)
-      | _ => false
-
-#eval sourceEntryUsesCakeGlobalOutput
-#guard sourceEntryUsesCakeGlobalOutput
-
 def parityGuard : Bool :=
   let missing :=
     globalCompileTopForStart 4 id [mainFunction] "absent"

@@ -1,4 +1,17 @@
-import Flapjack.Pipeline
+import Flapjack.Pancake.PanSimp.DeclsProduction
+import Flapjack.Pancake.PanGlobalsByteRanged
+import Flapjack.Pancake.PanStructs.CompileTopProduction
+import Flapjack.Pancake.PanSimpByteRanged
+import Flapjack.CompileFunctionDistinct
+import Flapjack.Pancake.CrepToLoop.Optimise
+import Flapjack.Pancake.CrepToLoop.ProductionDeclarations
+import Flapjack.Pancake.LoopToWord.CompFuncExact
+import Flapjack.Pancake.LoopToWord.LoopProgCarrierCodec
+import Flapjack.RiscV.WordDiagnostics
+import Flapjack.RiscV.WordFuseConditions
+import Flapjack.RiscV.WordUnreach
+import Flapjack.RiscV.Lab
+import Flapjack.Display
 
 /-!
 Concrete exception-code relation for the source-to-Crep correctness boundary.
@@ -26,21 +39,6 @@ def panExceptionCodeEntriesAux (fromNat : Nat → α) (index : Nat) :
       (exception, fromNat index) ::
         panExceptionCodeEntriesAux fromNat (index + 1) entries
 termination_by entries => sizeOf entries
-
-/-! The existing executable port calls this table
-`crepGetEidsFromDecls`.  The auxiliary representation above is only used to
-prove its finite-word injectivity. -/
-theorem pipelineExceptionCodes_eq_panExceptionCodeEntriesAux
-    (fromNat : Nat → α) (index : Nat)
-    (declarations : List (Decl α)) :
-    pipelineExceptionCodes fromNat index declarations =
-      panExceptionCodeEntriesAux fromNat index (exceptionEntries declarations) := by
-  induction declarations generalizing index with
-  | nil => simp [pipelineExceptionCodes, exceptionEntries, panExceptionCodeEntriesAux]
-  | cons declaration declarations ih =>
-      cases declaration <;>
-        simp [pipelineExceptionCodes, exceptionEntries,
-          panExceptionCodeEntriesAux, ih]
 
 /-! A list-backed analogue of Cake's `excp_rel`: the two tables have the same
 domain, and the expected table is injective.  The actual table's values are
@@ -129,43 +127,5 @@ theorem panExceptionCodeEntries_lookup_injective_bounded
           omega
         · simp [panExceptionCodeEntriesAux, lookupInfo, hrightHead] at hright
           exact ih (index + 1) (by omega) hnodup'.2 hleft hright
-
-theorem getEidsImpExcpRel
-    [BEq String] [LawfulBEq String]
-    (fromNat : Nat → α) (declarations : List (Decl α))
-    (actual : InfoMap α)
-    (hfrom : ∀ i j,
-      i < (exceptionEntries declarations).length →
-      j < (exceptionEntries declarations).length →
-      fromNat i = fromNat j → i = j)
-    (hnodup : ((exceptionEntries declarations).map Prod.fst).Nodup)
-    (hdomain : ∀ exception,
-      lookupInfo exception (crepGetEidsFromDecls fromNat declarations) = none ↔
-        lookupInfo exception actual = none) :
-    panValuePcExceptionCodeRel
-      (crepGetEidsFromDecls fromNat declarations) actual := by
-  constructor
-  · exact hdomain
-  · intro exception exception' code code' hlookup hlookup' hcode
-    have hlookup'aux : lookupInfo exception
-        (panExceptionCodeEntriesAux fromNat 0 (exceptionEntries declarations)) =
-        some code := by
-      change lookupInfo exception
-          (pipelineExceptionCodes fromNat 0 declarations) = some code at hlookup
-      rw [pipelineExceptionCodes_eq_panExceptionCodeEntriesAux
-        fromNat 0 declarations] at hlookup
-      exact hlookup
-    have hlookup''aux : lookupInfo exception'
-        (panExceptionCodeEntriesAux fromNat 0 (exceptionEntries declarations)) =
-        some code' := by
-      change lookupInfo exception'
-          (pipelineExceptionCodes fromNat 0 declarations) = some code' at hlookup'
-      rw [pipelineExceptionCodes_eq_panExceptionCodeEntriesAux
-        fromNat 0 declarations] at hlookup'
-      exact hlookup'
-    exact panExceptionCodeEntries_lookup_injective_bounded
-      fromNat (exceptionEntries declarations).length hfrom 0
-      (exceptionEntries declarations) (by simp) hnodup
-      exception exception' code code' hlookup'aux hlookup''aux hcode
 
 end Flapjack

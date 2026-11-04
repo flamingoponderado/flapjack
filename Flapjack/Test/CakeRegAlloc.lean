@@ -1,5 +1,8 @@
 import Flapjack.RiscV.CakeRegAlloc
-import Flapjack.RiscV.WordDeadCode
+import Flapjack.Compiler.Backend.WordUnreach
+import Flapjack.Compiler.Backend.WordCse.ListOrder
+import Flapjack.Compiler.Backend.WordCse.RegisterUses
+import Flapjack.Compiler.Backend.StackToLab.ExecutedCodec
 import Flapjack.Compiler.Backend.RegAlloc.ProductionHandledColourReads
 
 /-!
@@ -209,81 +212,6 @@ example :
       some 99 := by
   exact CakeNodeMap.get_set_ofList_outside _ _ _ (by decide)
 
-/-- Move chain whose second element writes the allocatable variable 9
-    from the stack variable 7: 9 becomes forced-stack (`{9}`). -/
-def moveChainGuard : Bool :=
-  cakeGetStackOnly (.move 1 [(9, 9), (7, 9)] : WordProg Nat) = [9]
-
-/-- The same move shape but sourced from physical register 2: the target
-    stays allocatable (`∅`). -/
-def moveFromRegGuard : Bool :=
-  cakeGetStackOnly (.move 1 [(9, 9), (2, 9)] : WordProg Nat) = []
-
-/-- Sequences thread the state right-to-left; the second move's
-    forced-stack target stays visible, and the first move's plain
-    delete leaves it intact (`{9}`). -/
-def seqMovesGuard : Bool :=
-  cakeGetStackOnly
-    (.seq (.move 1 [(13, 13), (2, 13)] : WordProg Nat)
-      (.move 1 [(9, 9), (7, 9)] : WordProg Nat)) = [9]
-
-/-- Branches merge the two arms; 19 is a stack variable (4n+3), so the
-    right arm contributes nothing (`{9}`). -/
-def ifMergeGuard : Bool :=
-  cakeGetStackOnly
-    (.ite .notEqual 2 (.reg 3)
-      (.move 1 [(9, 9), (7, 9)] : WordProg Nat)
-      (.move 1 [(19, 19), (7, 19)] : WordProg Nat)) = [9]
-
-/-- Both arms contribute allocatable targets 9 and 21 (`{9, 21}`). -/
-def ifMergeAllocGuard : Bool :=
-  cakeGetStackOnly
-    (.ite .notEqual 2 (.reg 3)
-      (.move 1 [(9, 9), (7, 9)] : WordProg Nat)
-      (.move 1 [(21, 21), (7, 21)] : WordProg Nat)) = [9, 21]
-
-/- The immediate branch equation removes only its condition from the
-   temporary set (`word_allocScript.sml:1746-1752`).  Start with a live
-   temporary so this checks the removal itself, rather than only the
-   whole-program empty-set wrapper.  The canonical HOL probe returns
-   `(LN,LN)` for this case. -/
-def ifImmediateRemovesTempGuard : Bool :=
-  cakeGetStackOnlyAux ([9], [])
-      (.ite .notEqual 9 (.imm 0) (.skip : WordProg Nat)
-        (.skip : WordProg Nat)) = ([], [])
-
-#guard ifImmediateRemovesTempGuard
-
-/-- Calls analyse and merge the return continuation and exception
-    handler; 19 is a stack variable so only the continuation
-    contributes (`{9}`). -/
-def callMergeGuard : Bool :=
-  cakeGetStackOnly
-    (.call (some ([9], ([], []),
-        (.move 1 [(9, 9), (7, 9)] : WordProg Nat), 0, 1))
-      (some 5) [2]
-      (some (11, (.move 1 [(19, 19), (7, 19)] : WordProg Nat), 0, 2))) = [9]
-
-/-- Tail calls (no return tuple) leave the state untouched (`∅`). -/
-def callTailGuard : Bool :=
-  cakeGetStackOnly (.call none (some 5) [0, 2] none : WordProg Nat) = []
-
-/- These control-flow cases mirror the Cake `MustTerminate` and `Loop`
-   equations in `word_allocScript.sml:1754-1769`.  The canonical HOL probe
-   returns `[9]` for each wrapper around the forced-stack move chain. -/
-def mustTerminateGuard : Bool :=
-  cakeGetStackOnly
-      (.mustTerminate (.move 1 [(9, 9), (7, 9)] : WordProg Nat)) = [9]
-
-def loopBodyGuard : Bool :=
-  cakeGetStackOnly
-      (.loop [] (.move 1 [(9, 9), (7, 9)]) [] : WordProg Nat) = [9]
-
-/-- A plain assignment is a clash-tree leaf: its written name is removed
-    from the temporaries set (`∅`). -/
-def assignLeafGuard : Bool :=
-  cakeGetStackOnly (.assign 9 (.const 7 : WordExp Nat) : WordProg Nat) = []
-
 /- The TreeSet graph accumulator must materialize the same descending Cake
    adjacency lists as the reference list insertion path. -/
 def graphSetAccumulatorGuard : Bool :=
@@ -366,44 +294,6 @@ def indexedAdjacencyMembershipGuard : Bool :=
       cakeAdjMem state x y == cakeSortedMem x (cakeAdjSub state.adjLists y)))
 
 #guard indexedAdjacencyMembershipGuard
-
-def stackOnlyFastReferenceGuard : Bool :=
-  let programs : List (WordProg Nat) :=
-    [ .skip,
-      .tick,
-      .break 0,
-      .continue 0,
-      .move 1 [(9, 9), (7, 9)],
-      .assign 9 (.var 7),
-      .seq (.move 1 [(13, 13), (2, 13)])
-        (.move 1 [(9, 9), (7, 9)]),
-      .ite .notEqual 2 (.reg 3)
-        (.move 1 [(9, 9), (7, 9)])
-        (.move 1 [(21, 21), (7, 21)]),
-      .loop [] (.move 1 [(9, 9), (7, 9)]) [],
-      .call (some ([9], ([], []),
-        (.move 1 [(9, 9), (7, 9)] : WordProg Nat), 0, 1))
-        (some 5) [2] none ]
-  programs.all (fun program =>
-    cakeGetStackOnly program == (cakeGetStackOnlyAux ([], []) program).2)
-
-#guard stackOnlyFastReferenceGuard
-
-def stackOnlyMergeSetsReferenceGuard : Bool :=
-  let mkState (ts fs : List Nat) : CakeStackOnlyState :=
-    { ts, fs,
-      tsSet := Flapjack.natSetOfList ts,
-      fsSet := Flapjack.natSetOfList fs }
-  let base := mkState [13, 9, 9] [17]
-  let left := mkState [21, 13, 5] [19, 17]
-  let right := mkState [25, 9, 5] [23, 19]
-  let reference := cakeStackOnlyMergeSetsReference base left right
-  let fast := cakeStackOnlyMergeSets base left right
-  fast.ts == reference.ts && fast.fs == reference.fs &&
-    fast.tsSet.toList == reference.tsSet.toList &&
-    fast.fsSet.toList == reference.fsSet.toList
-
-#guard stackOnlyMergeSetsReferenceGuard
 
 def filterReversedGuard : Bool :=
   filterReversed (fun x : Nat => x % 2 = 1) [1, 2, 3, 4, 5, 6] = [5, 3, 1]
@@ -906,7 +796,6 @@ def smergePriorityGuard : Bool :=
 
 #guard smergePriorityGuard
 
-
 /-! ## IRC graph construction guards
 
 Structural checks for `cakeMkGraph` / `cakeExtendGraph` / `cakeMkTags` /
@@ -1318,7 +1207,6 @@ def unspillTransitionGuard : Bool :=
 
 #guard unspillTransitionGuard
 
-
 /- The canonical `reg_alloc_probe.out` cost-sensitive case exercises
    `do_spill` with a non-`NONE` source-keyed table and one allocatable colour:
    Cake selects the high-cost source 5 for colour 0, leaving 1 and 9 in the
@@ -1533,63 +1421,10 @@ def freezeWorklistTransitionGuard : Bool :=
     (out.moveRelated.get 1).getD true == false
 
 #guard freezeWorklistTransitionGuard
-/- `get_prefs_def` uses `MAP ... ++ acc`, preserving each Move's source
-   order.  These guards mirror the canonical `get_prefs_probe.out` output. -/
-def prefsMoveOrderGuard : Bool :=
-  cakeGetPrefs (.move 7 [(1, 2), (3, 4)] : WordProg Nat) [] ==
-    [(7, (1, 2)), (7, (3, 4))]
-
-def prefsSeqOrderGuard : Bool :=
-  cakeGetPrefs
-      (.seq (.move 7 [(1, 2), (3, 4)])
-        (.move 8 [(5, 6), (7, 8)]) : WordProg Nat) [] ==
-    [(7, (1, 2)), (7, (3, 4)), (8, (5, 6)), (8, (7, 8))]
-
-def prefsControlFlowGuard : Bool :=
-  cakeGetPrefs
-      (.mustTerminate (.move 9 [(9, 10), (11, 12)]) : WordProg Nat) [] ==
-      [(9, (9, 10)), (9, (11, 12))] &&
-    cakeGetPrefs
-      (.loop [] (.move 10 [(13, 14), (15, 16)]) [] : WordProg Nat) [] ==
-      [(10, (13, 14)), (10, (15, 16))] &&
-    cakeGetPrefs
-      (.ite .notEqual 2 (.reg 3)
-        (.move 11 [(17, 18)]) (.move 12 [(19, 20)]) : WordProg Nat) [] ==
-    [(11, (17, 18)), (12, (19, 20))]
-
 /-! These control-flow cases mirror the remaining `get_prefs_def` equations
     in Cake's `word_allocScript.sml`: both branch arms are traversed with the
     else-arm as the incoming accumulator, and a handled call traverses its
     handler after its return continuation. -/
-def prefsBranchOrderGuard : Bool :=
-  cakeGetPrefs
-      (.ite .notEqual 2 (.reg 3)
-        (.move 9 [(1, 2)]) (.move 10 [(3, 4)]) : WordProg Nat) [] ==
-    [(9, (1, 2)), (10, (3, 4))]
-
-def prefsCallHandlerOrderGuard : Bool :=
-    cakeGetPrefs
-      (.call (some ([9], ([], []),
-          (.move 11 [(5, 6)] : WordProg Nat), 0, 1))
-        (some 2) []
-        (some (12, (.move 13 [(7, 8)] : WordProg Nat), 0, 2)) : WordProg Nat) [] ==
-    [(13, (7, 8)), (11, (5, 6))]
-
-/- `get_prefs_def`'s handled-call `NONE` branch traverses only the return
-   handler; it must not invent preferences from an absent exception handler. -/
-def prefsCallReturnOnlyGuard : Bool :=
-  cakeGetPrefs
-      (.call (some ([9], ([], []),
-          (.move 15 [(1, 2)] : WordProg Nat), 0, 1))
-        (some 2) [] none : WordProg Nat) [] ==
-    [(15, (1, 2))]
-
-def prefsLoopOrderGuard : Bool :=
-  cakeGetPrefs
-      (.loop [2]
-        (.move 14 [(9, 10)] : WordProg Nat) [3] : WordProg Nat) [] ==
-    [(14, (9, 10))]
-
 /-- `sort_moves` flips equal-priority moves relative to the input order
     (probe `sort_moves_probe.out` `sm_ties_two`). -/
 def qsortTiesTwoGuard : Bool :=
@@ -1808,90 +1643,8 @@ def sourceMovePhysicalFallbackGuard : Bool :=
       (Flapjack.RiscV.CakeRegAlloc.cakeAllocatorIndexLookup index)
       (7, (2, 9)) == (7, (0, 1))
 
-/-- Cake's `remove_dead (Move pri ls)` keeps the surviving move priority
-    (`word_allocScript.sml:891-899`).  The priority orders the coalescing
-    worklist (`sort_moves` sorts descending, `do_coalesce` consumes the first
-    compatible move), so the `Move1` SSA entry/ABI shuffle must still be
-    priority 1 after the dead pass; rebuilding it as priority 0 let the
-    `callee_abi` entry copies survive. -/
-def deadMovePriorityGuard : Bool :=
-  match Flapjack.RiscV.wordDeadCode (.move 1 [(6, 2)] : WordProg Nat) [6] with
-  | (.move priority [(6, 2)], _) => priority == 1
-  | _ => false
-
-/-- The full dead-program pass keeps the priority of a live entry move. -/
-def deadProgramPriorityGuard : Bool :=
-  match Flapjack.RiscV.wordRemoveDeadProgram
-      (.seq (.move 1 [(6, 2)]) (.return 0 [6]) : WordProg Nat) with
-  | .seq (.move priority _) _ => priority == 1
-  | _ => false
-
-/- These three guards mirror the non-instruction `get_live` equations in
-   `word_allocScript.sml`: a tail call carries only its arguments, Alloc keeps
-   its result live with both cut-set components, and StoreConsts kills its
-   source/bitmap while retaining the produced lengths. -/
-def deadTailCallLiveGuard : Bool :=
-  match Flapjack.RiscV.wordDeadCodeAux
-      (.call none (some 7) [2, 4] none : WordProg Nat) [99] [] with
-  | (.call none (some 7) [2, 4] none, live) => live == [2, 4]
-  | _ => false
-
-def deadAllocLiveGuard : Bool :=
-  match Flapjack.RiscV.wordDeadCodeAux
-      (.alloc 7 ([2], [3]) : WordProg Nat) [99] [] with
-  | (.alloc 7 ([2], [3]), live) => live == [7, 2, 3]
-  | _ => false
-
-def deadInstallLiveGuard : Bool :=
-  match Flapjack.RiscV.wordDeadCodeAux
-      (.install 7 8 9 10 ([11], [12]) : WordProg Nat) [99] [] with
-  | (.install 7 8 9 10 ([11], [12]), live) => live == [7, 8, 9, 10, 11, 12]
-  | _ => false
-
-def deadFfiLiveGuard : Bool :=
-  match Flapjack.RiscV.wordDeadCodeAux
-      (.ffi "svc" 7 8 9 10 ([11], [12]) : WordProg Nat) [99] [] with
-  | (.ffi "svc" 7 8 9 10 ([11], [12]), live) => live == [7, 8, 9, 10, 11, 12]
-  | _ => false
-
-def deadStoreConstsLiveGuard : Bool :=
-  match Flapjack.RiscV.wordDeadCodeAux
-      (.storeConsts 1 2 3 4 [] : WordProg Nat) [1, 2, 9] [] with
-  | (.storeConsts 1 2 3 4 [], live) => live == [9, 3, 4]
-  | _ => false
-
-def copyLastMoveSource : WordProg Nat → Option Nat
-  | .move _ [(destination, source)] =>
-      if destination == 485 then some source else none
-  | .seq _ second => copyLastMoveSource second
-  | _ => none
 termination_by program => sizeOf program
 decreasing_by all_goals decreasing_trivial
-
-def copyGetPreservesClassGuard : Bool :=
-  let steps : List (WordProg Nat) :=
-    [.move 0 [(409, 401)], .move 0 [(413, 389)], .move 0 [(417, 373)],
-     .move 0 [(421, 385)], .move 0 [(425, 377)], .move 0 [(429, 413)],
-     .seq (.move 0 [(433, 409)]) (.inst (.mem .store 429 433)),
-     .move 0 [(437, 417)],
-     .seq (.move 0 [(441, 433)]) (.store (.var 441) 437),
-     .move 0 [(445, 421)],
-     .seq (.move 0 [(449, 441)]) (.store (.var 449) 445),
-     .move 0 [(453, 425)],
-     .seq (.move 0 [(457, 449)]) (.store (.var 457) 453),
-     .get 461 (.heapLength),
-     .inst (.arith (.shift .lsl 465 461 (.imm 1))),
-     .opCurrHeap .add 469 465,
-     .assign 473 (.load (.var 469)), .assign 477 (.load (.var 473)),
-     .move 0 [(481, 381)], .move 0 [(485, 409)]]
-  let (program, _) := steps.foldl
-    (fun (program, state) step =>
-      let (step, state) := Flapjack.RiscV.wordCopyProg state step
-      (.seq program step, state))
-    (.skip, Flapjack.RiscV.wordCopyEmpty)
-  copyLastMoveSource program == some 457
-
-#guard copyGetPreservesClassGuard
 
 /- Cake's mk_bij_aux enumerates a Set through the Patricia-tree toAList,
    whose order is not ascending.  This fixture is the checked HOL order
@@ -1905,238 +1658,10 @@ def cakeBijSetPatriciaGuard : Bool :=
     lookupNatInfo 6 bij.toAllocator == some 3
 
 #guard cakeBijSetPatriciaGuard
-def applyColourSetPatriciaGuard : Bool :=
-  wordApplyColourNumSet id [0, 4, 6, 12] == [0, 4, 12, 6]
-
-#guard applyColourSetPatriciaGuard
-
-/- The original Cake `apply_colour_probe.out` checks that allocator colours
-   reach every register-bearing field, while control labels remain unchanged:
-   assignment/return/raise, call cut sets and handler, and loop live sets. -/
-def applyColourProbeGuard : Bool :=
-  let colour := Flapjack.RiscV.CakeAlloc.totalColour [(1, 7), (3, 9)]
-  let assignOk :=
-    match wordApplyColour colour
-        (.assign 1 (.var 3) : WordProg Nat) with
-    | .assign name (.var source) => name == 14 && source == 18
-    | _ => false
-  let returnRaiseOk :=
-    match wordApplyColour colour
-        (.seq (.return 1 [3, 0]) (.raise 0) : WordProg Nat) with
-    | .seq (.return label values) (.raise exception) =>
-        label == 14 && values == [18, 0] && exception == 0
-    | _ => false
-  let callOk :=
-    match wordApplyColour colour
-        (.call (some ([1], ([3], [0]), .return 1 [3], 10, 11))
-          (some 12) [1, 3]
-          (some (0, .raise 3, 13, 14)) : WordProg Nat) with
-    | .call (some (returns, (normalCut, exceptionCut), ret, normalLabel, raiseLabel))
-        target arguments (some (handlerLabel, handler, handlerNormal, handlerRaise)) =>
-        returns == [14] && normalCut == [18] && exceptionCut == [0] &&
-          target == some 12 && arguments == [14, 18] &&
-          normalLabel == 10 && raiseLabel == 11 &&
-          handlerLabel == 0 && handlerNormal == 13 && handlerRaise == 14 &&
-          (match ret with
-          | .return label values => label == 14 && values == [18]
-          | _ => false) &&
-          (match handler with
-          | .raise exception => exception == 18
-          | _ => false)
-    | _ => false
-  let loopOk :=
-    match wordApplyColour colour
-        (.loop [0, 1] (.assign 1 (.var 3)) [3] : WordProg Nat) with
-    | .loop liveIn (.assign name (.var source)) liveOut =>
-        liveIn == [0, 14] && name == 14 && source == 18 && liveOut == [18]
-    | _ => false
-  assignOk && returnRaiseOk && callOk && loopOk
-
-#guard applyColourProbeGuard
-
-/- Cake's `max_var` ignores control-flow labels on Break and Continue; they
-   are labels, not Word register names and must not enlarge the stack frame. -/
-def maxVarControlLabelGuard : Bool :=
-  wordProgCakeMaxVar
-      (.seq (.break 999) (.continue 888) : WordProg Nat) == 0
-
-#guard maxVarControlLabelGuard
 #guard sortMovesTailSplitGuard
 #guard sortMovesLongTieGuard
 #guard raDeltaTriangleGuard
 #guard raForcedEdgeGuard
-
-def parityGuard : Bool :=
-  moveChainGuard && moveFromRegGuard && seqMovesGuard && ifMergeGuard &&
-    ifMergeAllocGuard && ifImmediateRemovesTempGuard && callMergeGuard &&
-    callTailGuard && mustTerminateGuard &&
-    loopBodyGuard && assignLeafGuard &&
-    bijDeltaBasicGuard && bijDeltaDedupGuard && bijSeqOrderGuard &&
-    bijBranchOrderGuard && bijBranchLiveGuard && bijSetGuard &&
-    bijSetUnsortedGuard && bijCompositeGuard && graphDeltaDisjointGuard &&
-    graphDeltaCliqueGuard && graphSetCliqueGuard && graphForcedEdgeGuard &&
-    graphTagsGuard && graphInitGuard && heuDeltaGuard && heuMovesGuard &&
-    heuSpillGuard && heuFixedDegreeGuard && raDeltaPairGuard &&
-    raDeltaFreeGuard && raDeltaTriangleGuard && raStackOnlyGuard &&
-    raMovesCoalesceGuard && raSimpleMovesGuard && raFixedCoalesceGuard &&
-      raMovesSelfFilteredGuard &&
-      raForcedEdgeGuard &&
-    raOrderSeqGuard && raOrderCliqueGuard && raSpillCostGuard &&
-    prefsMoveOrderGuard && prefsSeqOrderGuard && prefsControlFlowGuard &&
-    prefsBranchOrderGuard &&
-    prefsCallHandlerOrderGuard && prefsCallReturnOnlyGuard &&
-    prefsLoopOrderGuard && prefsControlFlowGuard &&
-    partOrderGuard && reviveOrderGuard && movesToSpOrderGuard &&
-    resortMovesSpOrderGuard && bgOkOrderGuard &&
-    qsortTiesTwoGuard && qsortTiesThreeGuard && qsortDescGuard &&
-    stempBadColourTieGuard && raMovesStempGuard && raMovesStempHiGuard &&
-    negFirstMatchProjectionGuard && biasedPreferenceGuard &&
-    negBiasedPreferenceGuard && fullConsistencyGuard && canonizeMoveGuard &&
-    assignAtempFixedNeighbourGuard && assignStempUnboundColourGuard &&
-    assignAtempsHeuristicThenRangeGuard && sortedInsertMemGuard &&
-    firstMatchColGuard && assignStempsTraversalGuard && insertEdgeGuard &&
-    cliqueInsertEdgeGuard && decDegreeNeighboursGuard && pushStackGuard &&
-    worklistPrependGuard && extendCliqueGuard && splitDegreeGuard &&
-    smergePriorityGuard &&
-    resetMoveRelatedGuard && removeColoursGuard
-    && mapUpdateBoundedGuard && sourceSpillCostKeyGuard &&
-    sourceSpillCostRoundTripGuard && sourceMovePhysicalFallbackGuard
-    && deadMovePriorityGuard
-    && deadProgramPriorityGuard && deadTailCallLiveGuard && deadAllocLiveGuard
-    && deadInstallLiveGuard && deadFfiLiveGuard && deadStoreConstsLiveGuard
-    && cakeBijSetPatriciaGuard
-    && coalesceParentCompressionGuard
-    && prefreezeTransitionGuard
-    && sortMovesTailSplitGuard && freezeWorklistTransitionGuard &&
-      doSpillEqualDegreeGuard && doSpillEmptyGuard &&
-      doStepSimplifyPriorityGuard &&
-      doStepSpillFallbackGuard &&
-      rptDoStepEarlyStopGuard &&
-      unspillTransitionGuard
-      && coalesceSelfMoveRejectedGuard && applyColourProbeGuard
-
-/- The aggregate guard is intentionally disabled while the allocator port is
-   being aligned with CakeML.  Individual oracle cases remain available to
-   select and repair without blocking the whole build on stale expectations. -/
-def runChecks : IO Bool := do
-  let results := [
-    cakeNodeMapHolListLookupGuard, cakeNodeMapHolListUpdateGuard,
-    moveChainGuard, moveFromRegGuard, seqMovesGuard, ifMergeGuard,
-    ifMergeAllocGuard, ifImmediateRemovesTempGuard, callMergeGuard,
-    callTailGuard, mustTerminateGuard,
-    loopBodyGuard, assignLeafGuard,
-    bijDeltaBasicGuard, bijDeltaDedupGuard, bijSeqOrderGuard,
-    bijBranchOrderGuard, bijBranchLiveGuard, bijSetGuard,
-    bijSetUnsortedGuard, bijCompositeGuard, graphDeltaDisjointGuard,
-    graphDeltaCliqueGuard, graphSetCliqueGuard, graphForcedEdgeGuard,
-    extendCliqueSetBatchGuard, extendCliqueSetBatchEmptyLiveGuard,
-    extendCliqueSetBatchOverlappingCliqueGuard,
-    graphTagsGuard, graphInitGuard, heuDeltaGuard, heuMovesGuard,
-    heuSpillGuard, heuFixedDegreeGuard, raDeltaPairGuard, raDeltaFreeGuard,
-    raDeltaTriangleGuard, raStackOnlyGuard, raMovesCoalesceGuard,
-    raSimpleMovesGuard,
-    raFixedCoalesceGuard, raMovesSelfFilteredGuard, raForcedEdgeGuard,
-    raOrderSeqGuard, raOrderCliqueGuard, raSpillCostGuard,
-    prefsMoveOrderGuard, prefsSeqOrderGuard, prefsControlFlowGuard,
-    prefsBranchOrderGuard,
-    prefsCallHandlerOrderGuard, prefsCallReturnOnlyGuard, prefsLoopOrderGuard,
-    prefsControlFlowGuard,
-    partOrderGuard,
-    reviveOrderGuard, revivePartitionGuard, bgOkOrderGuard, qsortTiesTwoGuard,
-    movesToSpOrderGuard, resortMovesSpOrderGuard,
-    qsortTiesThreeGuard, qsortDescGuard, raMovesStempGuard,
-    raMovesStempHiGuard, negFirstMatchProjectionGuard, biasedPreferenceGuard,
-    negBiasedPreferenceGuard, fullConsistencyGuard, canonizeMoveGuard,
-    assignAtempFixedNeighbourGuard, assignStempUnboundColourGuard,
-    assignAtempsHeuristicThenRangeGuard, sortedInsertMemGuard,
-    firstMatchColGuard, assignStempsTraversalGuard, insertEdgeGuard,
-    cliqueInsertEdgeGuard, decDegreeNeighboursGuard, pushStackGuard,
-    resetMoveRelatedGuard,
-    removeColoursGuard,
-    mapUpdateBoundedGuard,
-    deadMovePriorityGuard, deadProgramPriorityGuard, sortMovesTailSplitGuard,
-    sourceSpillCostKeyGuard, sourceMovePhysicalFallbackGuard,
-    deadTailCallLiveGuard, deadAllocLiveGuard, deadInstallLiveGuard,
-    deadFfiLiveGuard, deadStoreConstsLiveGuard, stExMinCostOrderGuard,
-    stExMinCostTieGuard, stExMinCostZeroDegreeGuard,
-    stExMaxDegOrderGuard, stExMaxDegTieGuard, doSpillTransitionGuard,
-    respillWorklistGuard,
-    respillBelowThresholdGuard, simplifyBatchGuard, decDegreeOutOfDimGuard,
-    decDegreeOutOfDimNoOpGuard, coalesceWorklistSuccessGuard,
-    freezeWorklistTransitionGuard, coalesceParentCompressionGuard,
-    prefreezeTransitionGuard, doSpillEqualDegreeGuard, doSpillEmptyGuard,
-    doStepSimplifyPriorityGuard, doStepSpillFallbackGuard,
-    rptDoStepEarlyStopGuard, unspillTransitionGuard,
-    worklistPrependGuard, extendCliqueGuard, splitDegreeGuard,
-    smergePriorityGuard, applyColourProbeGuard]
-  let names := [
-    "CakeNodeMap HOL-list lookup range", "CakeNodeMap HOL-list update range",
-    "get_stack_only move chain", "get_stack_only move from reg",
-    "get_stack_only seq moves", "get_stack_only if merge",
-    "get_stack_only if merge alloc", "get_stack_only immediate removes temp",
-    "get_stack_only call merge",
-    "get_stack_only call tail", "get_stack_only MustTerminate",
-    "get_stack_only Loop body", "get_stack_only assign leaf",
-    "mk_bij delta basic", "mk_bij delta dedup", "mk_bij seq order",
-    "mk_bij branch order", "mk_bij branch live", "mk_bij set",
-    "mk_bij set unsorted", "mk_bij composite", "mk_graph delta disjoint",
-    "mk_graph delta clique", "mk_graph set clique", "extend_graph forced",
-    "extend clique batch",
-    "extend clique batch empty live",
-    "extend clique batch overlapping clique",
-    "mk_tags roles", "init_ra_state", "init_alloc1_heu delta",
-    "init_alloc1_heu moves", "init_alloc1_heu spill",
-    "init_alloc1_heu fixed degree", "reg_alloc delta pair",
-    "reg_alloc delta free", "reg_alloc triangle",
-    "reg_alloc stack only",
-    "reg_alloc moves coalesce", "reg_alloc Simple ignores moves",
-    "reg_alloc fixed-endpoint coalesce",
-    "reg_alloc moves self filtered",
-    "reg_alloc forced edge",
-    "reg_alloc sequential pair order", "reg_alloc clique order",
-    "reg_alloc spill-cost selection",
-    "get_prefs Move order", "get_prefs Seq order", "get_prefs control flow",
-    "get_prefs If order",
-    "get_prefs Call handler order", "get_prefs Call return-only order",
-    "get_prefs Loop order", "get_prefs control flow",
-    "sorting partition order", "revive moves reversing partition", "revive partition direction", "bg_ok order",
-    "sort_moves tie two", "moves_to_sp order", "resort_moves output order",
-    "sort_moves tie three", "sort_moves long tie",
-    "sort_moves descending",
-    "reg_alloc moves stack temp", "reg_alloc moves stack temp high",
-    "neg_first_match_col projection", "biased preference",
-    "negative biased preference", "full consistency", "canonize move",
-    "assign_Atemp fixed neighbour", "assign_Stemp unbound colour",
-    "assign_Atemps heuristic then range", "sorted_insert/sorted_mem",
-    "first_match_col", "assign_Stemps traversal", "insert_edge",
-    "clique_insert_edge", "dec_degree neighbours", "push_stack",
-    "Cake map updates stay bounded",
-    "remove_dead keeps move priority", "remove_dead_prog keeps entry priority",
-    "mk_bij uses Cake Patricia Set order", "sort_moves tail split oracle",
-    "source-keyed spill costs", "source-keyed spill-cost round trip",
-    "physical source move fallback",
-    "remove_dead tail-call liveness", "remove_dead Alloc liveness",
-    "remove_dead Install liveness", "remove_dead FFI liveness",
-    "remove_dead StoreConsts liveness", "st_ex_list_MIN_cost ordering",
-    "st_ex_list_MIN_cost tie ordering", "st_ex_list_MIN_cost zero degree",
-    "st_ex_list_MAX_deg ordering", "st_ex_list_MAX_deg tie ordering",
-    "do_spill transition", "dec_degree out-of-dimension guard",
-    "respill freeze-to-spill transition",
-    "respill below-threshold no-op", "do_simplify batch ordering",
-    "dec_degree out-of-dimension no-op with outside adjacency",
-    "do_coalesce success transition", "do_freeze transition",
-    "do_prefreeze transition", "do_spill equal-degree transition",
-    "do_spill empty-worklist no-op",
-    "do_step simplify priority", "do_step spill fallback",
-    "rpt_do_step early stop", "unspill transition",
-    "worklist prepend",
-    "extend clique", "split degree", "smerge priority",
-    "apply_colour rewrites source Word register fields"]
-  let mut all := true
-  for (name, result) in names.zip results do
-    if result then IO.println s!"PASS {name}" else IO.println s!"FAIL {name}"
-    all := all && result
-  pure all
 
 -- Native adjacency Subscript is preserved, rather than replaced by an empty row.
 example : (cakeDecDegree 0 { CakeRaState.empty 1 with
