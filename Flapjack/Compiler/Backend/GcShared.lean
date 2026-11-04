@@ -15,8 +15,7 @@ Datatype: heap_element =
 ```
 
 `num` is rendered as `Nat` and `('a heap_address) list` as `List (HeapAddress α)`.
-The carriers and their element/heap length definitions are ported here; the
-`gc_state` record remains to be ported for GC simulation.
+The shared collector state is in the `GcShared.State` submodule.
 -/
 
 namespace Flapjack

@@ -1,5 +1,149 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "gc_state",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/State.lean",
+  "lean_name": "GcState",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared all twelve fields and their order with the original gc_state datatype and typed empty-state capture; address and payload types remain independent."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "empty_state_def",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/State.lean",
+  "lean_name": "emptyGcState",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the full polymorphic field assignment with gc_shared_empty_state_typed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "heap_segment_def",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/State.lean",
+  "lean_name": "heapSegment",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared both splits, failure branches, subtraction and polymorphic heap carriers with gc_shared_heap_segment_typed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gcScript.sml",
+  "hol_name": "gen_gc_conf",
+  "lean_path": "Flapjack/Compiler/Backend/GenGc.lean",
+  "lean_name": "Config",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared limit and isRef fields against the source datatype and gen_gc_move_typed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "gen_gc_partial_conf",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial.lean",
+  "lean_name": "Config",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared all four fields against the source datatype and partial_gc_move_typed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gcScript.sml",
+  "hol_name": "gc_move_def",
+  "lean_path": "Flapjack/Compiler/Backend/GenGc.lean",
+  "lean_name": "gcMove",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared all source clauses, updates, recursion and independently quantified types with gen_gc_move_typed; HOL probe captures are regression evidence, not a cross-language proof."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gcScript.sml",
+  "hol_name": "gc_move_list_def",
+  "lean_path": "Flapjack/Compiler/Backend/GenGc.lean",
+  "lean_name": "gcMoveList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared all source clauses, updates, recursion and independently quantified types with gen_gc_move_list_typed; HOL probe captures are regression evidence, not a cross-language proof."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gcScript.sml",
+  "hol_name": "gc_move_data_def",
+  "lean_path": "Flapjack/Compiler/Backend/GenGc.lean",
+  "lean_name": "gcMoveData",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared all source clauses, updates, recursion and independently quantified types with gen_gc_move_data_typed; HOL probe captures are regression evidence, not a cross-language proof. The guarded head check uses head?; when the list is empty the preceding conjunct is false, so the original total HD cannot affect the result."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gcScript.sml",
+  "hol_name": "gc_move_refs_def",
+  "lean_path": "Flapjack/Compiler/Backend/GenGc.lean",
+  "lean_name": "gcMoveRefs",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared all source clauses, updates, recursion and independently quantified types with gen_gc_move_refs_typed; HOL probe captures are regression evidence, not a cross-language proof."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gcScript.sml",
+  "hol_name": "gc_move_loop_def",
+  "lean_path": "Flapjack/Compiler/Backend/GenGc.lean",
+  "lean_name": "gcMoveLoop",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared all source clauses, updates, recursion and independently quantified types with gen_gc_move_loop_typed; HOL probe captures are regression evidence, not a cross-language proof."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gcScript.sml",
+  "hol_name": "gen_gc_def",
+  "lean_path": "Flapjack/Compiler/Backend/GenGc.lean",
+  "lean_name": "genGc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared all source clauses, updates, recursion and independently quantified types with gen_gc_typed; HOL probe captures are regression evidence, not a cross-language proof."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "gc_move_def",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial.lean",
+  "lean_name": "gcMove",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared all source clauses, updates, recursion and independently quantified types with partial_gc_move_typed; HOL probe captures are regression evidence, not a cross-language proof."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "gc_move_list_def",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial.lean",
+  "lean_name": "gcMoveList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared all source clauses, updates, recursion and independently quantified types with partial_gc_move_list_typed; HOL probe captures are regression evidence, not a cross-language proof."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "gc_move_ref_list_def",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial.lean",
+  "lean_name": "gcMoveRefList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared all source clauses, updates, recursion and independently quantified types with partial_gc_move_ref_list_typed; HOL probe captures are regression evidence, not a cross-language proof. The reference payload type is independent of the collector state payload type."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "gc_move_data_def",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial.lean",
+  "lean_name": "gcMoveData",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared all source clauses, updates, recursion and independently quantified types with partial_gc_move_data_typed; HOL probe captures are regression evidence, not a cross-language proof. The guarded head check uses head?; when the list is empty the preceding conjunct is false, so the original total HD cannot affect the result."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "partial_gc_def",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial.lean",
+  "lean_name": "partialGc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared all source clauses, updates, recursion and independently quantified types with partial_gc_typed; HOL probe captures are regression evidence, not a cross-language proof."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_combinedScript.sml",
+  "hol_name": "make_partial_conf_def",
+  "lean_path": "Flapjack/Compiler/Backend/GcCombined/Collector.lean",
+  "lean_name": "makePartialConf",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared all source clauses, updates, recursion and independently quantified types with make_partial_conf_typed; HOL probe captures are regression evidence, not a cross-language proof."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_combinedScript.sml",
+  "hol_name": "gc_combined_def",
+  "lean_path": "Flapjack/Compiler/Backend/GcCombined/Collector.lean",
+  "lean_name": "gcCombined",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared all source clauses, updates, recursion and independently quantified types with gc_combined_typed; HOL probe captures are regression evidence, not a cross-language proof."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "word_gc_fun_lemma_Simple",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/Simple.lean",
