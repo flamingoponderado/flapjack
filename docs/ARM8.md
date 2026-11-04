@@ -479,11 +479,21 @@ Flapjack infrastructure that combines it with the shift reasoning.
 `arm8_encoder_correct_shift_lsr_imm`, `_asr_imm` and `_lsl_imm` compose the
 rendered `Encode`/`Decode` inverse, the `Run` equation with the masks
 substituted, and the corresponding mask identity, then close through
-`asmCaseOne`.  `.lsl` needs its two computed field values (`63w - n2w n` and
+`arm8RegCaseOne` (see below).  `.lsl` needs its two computed field values (`63w - n2w n` and
 `-n2w n`) pinned first; `interval_cases` over the 64 admissible shift amounts
 does that.  All four case theorems from this batch (`addCarry` and the three
 shift-immediate forms) carry the shared `arm8_encoder_correct` tag and
 `reviewed_exact` manifest rows.
+
+Every one-instruction lowering that writes one register and leaves memory
+alone (the three shift-immediate forms, `ror`, the register shift, the
+add/sub and logical binops in their immediate and register forms, and `div`)
+closes through one shared tail, `arm8RegCaseOne` (`Const.lean`), the
+counterpart of the `next_tac 0`, `next_state_tac01`, `state_tac` sequence HOL
+applies to those branches of `arm8_encoder_correct`.  It reads the instruction
+word from memory, steps `arm8Next` once and discharges `asmCaseOne`; each case
+theorem supplies only its `arm8_ast`/`Encode`/`Decode` equations, its `Run`
+equation and the source-side `asmUpd` facts.
 
 `Mem.lean` now records the two `LoadStoreImmediate@64` word shapes
 `e_LoadStoreImmediate` emits — the signed nine-bit form and the scaled
