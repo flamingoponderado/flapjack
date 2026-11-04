@@ -6861,6 +6861,134 @@ theorem growingExprsSimFromBelowWithClock_handle {C F : Type} (passFuel relation
             · intro key entry found
               exact growth key entry (nextGrowth key entry found)
 
+/-- Exception-handler simulation with growing open locations. This is
+Flapjack-specific simulation infrastructure. -/
+theorem growingExprsSimFromBelowWithOpenClock_handle {C F : Type} (passFuel relationFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (required : State) (trace : BackendCommon.Tra)
+    (sb sh tb th : ClosLang.Exp)
+    (bodyIH : GrowingExprsSimFromBelowWithOpenClock (F := F) passFuel relationFuel limit compiler required [sb] [tb])
+    (bodyWf : ∀ (allowed : Set Nat) (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+      (env : List ClosSem.Value) (state : ClosSem.State (NumSet × C) F),
+      ValuesWellFormedFuel relationFuel g allowed code env → StateWellFormedFuel relationFuel g allowed code state →
+      OracleAuxEmpty state.compileOracle → EvalWellFormedFuel relationFuel g allowed code (evaluate [sb] env state))
+    (handlerIH : GrowingExprsSimFromBelowWithOpenClock (F := F) passFuel relationFuel limit compiler required [sh] [th]) :
+    GrowingExprsSimFromBelowWithOpenClock (F := F) passFuel relationFuel limit compiler required [.handle trace sb sh] [.handle trace tb th] := by
+  intro g requiredGrowth allowed sourceEnv targetEnv source target sourceResult sourceFinal clock run notType envs envWf sourceWf states ready
+    disjoint avoids sourceCompiler targetCompiler oracle
+  have handleEnv : EnvRelFuel relationFuel g allowed target.code sourceEnv targetEnv 0
+      [(0, .handle trace tb th)] := by simpa using envs
+  have bodyEnv := envRelFuel_handle_body trace tb th handleEnv
+  have sourceBodyWf := bodyWf allowed g target.code sourceEnv source envWf sourceWf ready.auxEmpty
+  cases bodyRun : evaluate [sb] sourceEnv source with
+  | mk bodyResult bodyFinal =>
+    rw [bodyRun] at sourceBodyWf
+    have bodySafe : bodyResult ≠ .err (.abort .typeError) := by
+      intro bad
+      subst bodyResult
+      have eq : sourceResult = .err (.abort .typeError) := by
+        simpa [evaluate, bodyRun, fixClock] using congrArg Prod.fst run.symm
+      exact notType eq
+    obtain ⟨bodyExtra, bodyG, bodyAllowed, targetBodyResult, targetBodyFinal, bodyExt, bodyAllowedGrowth,
+      bodyDisjoint, bodyAvoids, targetBodyRun, bodyRel, bodyStates,
+      bodyStateWf, bodyReady, bodyCompiler, targetBodyCompiler, bodyOracle, bodyGrowth⟩ :=
+      bodyIH g requiredGrowth allowed sourceEnv targetEnv source target bodyResult bodyFinal clock bodyRun bodySafe
+        (by simpa using bodyEnv) envWf sourceWf states ready disjoint avoids sourceCompiler targetCompiler oracle
+    have bodyClockBound : targetBodyFinal.clock ≤ target.clock := by
+      have sourceBound := evaluate_clock_le [sb] sourceEnv source
+      rw [bodyRun] at sourceBound
+      change bodyFinal.clock ≤ source.clock at sourceBound
+      have originalClocks := states.2.1
+      have finalClocks := bodyStates.2.1
+      change bodyFinal.clock = targetBodyFinal.clock at finalClocks
+      change source.clock = target.clock at originalClocks
+      omega
+    let sourceNext := (fixClock source ((), bodyFinal)).2
+    let targetNext := (fixClock target ((), targetBodyFinal)).2
+    have nextClock : sourceNext.clock < limit := by
+      simp only [sourceNext, fixClock]
+      exact Nat.lt_of_le_of_lt (Nat.min_le_left _ _) clock
+    have nextStates : StateRelFuel relationFuel bodyG bodyAllowed sourceNext targetNext :=
+      stateRelFuel_fixClock source target () () states.2.1 bodyStates
+    have nextWf : StateWellFormedFuel relationFuel bodyG bodyAllowed targetNext.code sourceNext := by
+      simpa [sourceNext, targetNext, fixClock] using
+        stateWellFormedFuel_clock bodyStateWf (min source.clock bodyFinal.clock)
+    have nextReady : IncrementalInstallReady bodyG sourceNext targetNext :=
+      incrementalInstallReady_fixClock bodyG source bodyFinal target targetBodyFinal bodyReady
+    have nextCompiler : sourceNext.compile = compileIncFuelCallback passFuel compiler := by
+      simpa [sourceNext, fixClock] using bodyCompiler
+    have nextTargetCompiler : targetNext.compile = compiler := by simpa [targetNext, fixClock] using targetBodyCompiler
+    have nextOracle : targetNext.compileOracle = compileIncFuelOracle passFuel sourceNext.compileOracle := by
+      simpa [sourceNext, targetNext, fixClock] using bodyOracle
+    have nextAvoids : OracleLocationsAvoid bodyAllowed sourceNext := by
+      simpa [sourceNext, fixClock, OracleLocationsAvoid] using bodyAvoids
+    have nextGrowth : ∀ key entry, target.code.lookup key = some entry → targetNext.code.lookup key = some entry := bodyGrowth
+    cases bodyResult with
+    | val sourceValues =>
+      cases targetBodyResult with
+      | err error => simp [resultRel] at bodyRel
+      | val targetValues =>
+        have eq : sourceResult = .val sourceValues ∧ sourceFinal = sourceNext := by
+          simpa [evaluate, bodyRun, fixClock, sourceNext] using run.symm
+        obtain ⟨rfl, rfl⟩ := eq
+        refine ⟨bodyExtra, bodyG, bodyAllowed, .val targetValues, targetNext, bodyExt, bodyAllowedGrowth,
+          bodyDisjoint, nextAvoids, ?_, bodyRel, nextStates, nextWf, nextReady,
+          nextCompiler, nextTargetCompiler, nextOracle, nextGrowth⟩
+        have shiftedBound : targetBodyFinal.clock ≤ target.clock + bodyExtra := by omega
+        simp [evaluate, targetBodyRun, fixClock, targetNext,
+          Nat.min_eq_right bodyClockBound, Nat.min_eq_right shiftedBound]
+    | err sourceError =>
+      cases targetBodyResult with
+      | val values => simp [resultRel] at bodyRel
+      | err targetError =>
+        cases sourceError with
+        | abort sourceAbort =>
+          cases targetError with
+          | raise value => simp [resultRel, excRel] at bodyRel
+          | abort targetAbort =>
+            have eq : sourceResult = .err (.abort sourceAbort) ∧ sourceFinal = sourceNext := by
+              simpa [evaluate, bodyRun, fixClock, sourceNext] using run.symm
+            obtain ⟨rfl, rfl⟩ := eq
+            refine ⟨bodyExtra, bodyG, bodyAllowed, .err (.abort targetAbort), targetNext, bodyExt, bodyAllowedGrowth,
+              bodyDisjoint, nextAvoids, ?_, bodyRel, nextStates, nextWf, nextReady,
+              nextCompiler, nextTargetCompiler, nextOracle, nextGrowth⟩
+            have shiftedBound : targetBodyFinal.clock ≤ target.clock + bodyExtra := by omega
+            simp [evaluate, targetBodyRun, fixClock, targetNext,
+              Nat.min_eq_right bodyClockBound, Nat.min_eq_right shiftedBound]
+        | raise sourceValue =>
+          cases targetError with
+          | abort error => simp [resultRel, excRel] at bodyRel
+          | raise targetValue =>
+            have payload : ValueRelFuel relationFuel bodyG bodyAllowed targetNext.code sourceValue targetValue := bodyRel
+            have grownEnv := envRelFuel_mono handleEnv bodyExt bodyAllowedGrowth nextGrowth
+            have handlerEnv := envRelFuel_handle_enter trace tb th grownEnv payload
+            have payloadWf : ValueWellFormedFuel relationFuel bodyG bodyAllowed targetNext.code sourceValue :=
+              valueWellFormedFuel_mono sourceBodyWf.1 bodyExt bodyAllowedGrowth nextGrowth
+            have outerWf := valuesWellFormedFuel_mono envWf bodyExt bodyAllowedGrowth nextGrowth
+            have handlerRun : evaluate [sh] (sourceValue :: sourceEnv) sourceNext = (sourceResult, sourceFinal) := by
+              simpa [evaluate, bodyRun, fixClock, sourceNext] using run
+            obtain ⟨handlerExtra, finalG, finalAllowed, result, final, extended, handlerAllowedGrowth, finalDisjoint, finalAvoids,
+              targetRun, related, finalStates, finalWf, finalReady,
+              finalCompiler, targetFinalCompiler, finalOracle, growth⟩ :=
+              handlerIH bodyG (stateExtends_trans required g bodyG requiredGrowth bodyExt) bodyAllowed (sourceValue :: sourceEnv) (targetValue :: targetEnv) sourceNext targetNext
+                sourceResult sourceFinal nextClock handlerRun notType (by simpa using handlerEnv) (.cons payloadWf outerWf)
+                nextWf nextStates nextReady bodyDisjoint nextAvoids nextCompiler nextTargetCompiler nextOracle
+            refine ⟨bodyExtra + handlerExtra, finalG, finalAllowed, result, final, stateExtends_trans g bodyG finalG bodyExt extended,
+              Set.Subset.trans bodyAllowedGrowth handlerAllowedGrowth, finalDisjoint, finalAvoids, ?_, related,
+              finalStates, finalWf, finalReady, finalCompiler, targetFinalCompiler, finalOracle, ?_⟩
+            · have shiftedBody := (evaluate_addClock (C := C) (F := F)).1 [tb] targetEnv
+                { target with clock := target.clock + bodyExtra } targetBodyFinal (.err (.raise targetValue)) handlerExtra
+                targetBodyRun (by simp)
+              have shiftedBody' : evaluate [tb] targetEnv
+                  { target with clock := target.clock + (bodyExtra + handlerExtra) } =
+                  (.err (.raise targetValue), { targetBodyFinal with clock := targetBodyFinal.clock + handlerExtra }) := by
+                simpa [Nat.add_assoc] using shiftedBody
+              have shiftedBound : targetBodyFinal.clock + handlerExtra ≤
+                  target.clock + (bodyExtra + handlerExtra) := by omega
+              simpa [evaluate, shiftedBody', fixClock, targetNext,
+                Nat.min_eq_right bodyClockBound, Nat.min_eq_right shiftedBound] using targetRun
+            · intro key entry found
+              exact growth key entry (nextGrowth key entry found)
+
 /-- Clock-bounded ordinary-operation simulation. This is
 Flapjack-specific simulation infrastructure. -/
 theorem growingExprsSimFromBelow_ordinaryOp {C F : Type} (passFuel relationFuel limit : Nat)
@@ -7150,6 +7278,27 @@ theorem callsFuel_handle_growing_below_withClock {C F : Type} (passFuel relation
     Option.some.injEq, Prod.mk.injEq] at run
   obtain ⟨⟨targetBody, middle⟩, bodyRun, ⟨targetHandler, next⟩, handlerRun, rfl, rfl⟩ := run
   exact growingExprsSimFromBelowWithClock_handle passFuel relationFuel limit compiler next allowed trace body handler targetBody targetHandler
+    (bodyIH targetBody middle bodyRun) bodyWf (handlerIH targetHandler middle handlerRun)
+
+/-- The handler traversal composes its body and handler with growing open
+locations. The body well-formedness premise remains explicit. -/
+theorem callsFuel_handle_growing_below_withOpenClock {C F : Type} (passFuel relationFuel traversalFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (trace : BackendCommon.Tra)
+    (body handler : ClosLang.Exp) (initial final : State) (out : ClosLang.Exp)
+    (run : callsFuel (traversalFuel + 1) (.handle trace body handler) initial = some (out, final))
+    (bodyIH : ∀ target middle, callsFuel traversalFuel body initial = some (target, middle) →
+      GrowingExprsSimFromBelowWithOpenClock (F := F) passFuel relationFuel limit compiler final [body] [target])
+    (bodyWf : ∀ (allowed : Set Nat) (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+      (env : List ClosSem.Value) (state : ClosSem.State (NumSet × C) F),
+      ValuesWellFormedFuel relationFuel g allowed code env → StateWellFormedFuel relationFuel g allowed code state →
+      OracleAuxEmpty state.compileOracle → EvalWellFormedFuel relationFuel g allowed code (evaluate [body] env state))
+    (handlerIH : ∀ target middle, callsFuel traversalFuel handler middle = some (target, final) →
+      GrowingExprsSimFromBelowWithOpenClock (F := F) passFuel relationFuel limit compiler final [handler] [target]) :
+    GrowingExprsSimFromBelowWithOpenClock (F := F) passFuel relationFuel limit compiler final [.handle trace body handler] [out] := by
+  simp only [callsFuel, Bind.bind, Option.bind_eq_some_iff, Pure.pure,
+    Option.some.injEq, Prod.mk.injEq] at run
+  obtain ⟨⟨targetBody, middle⟩, bodyRun, ⟨targetHandler, next⟩, handlerRun, rfl, rfl⟩ := run
+  exact growingExprsSimFromBelowWithOpenClock_handle passFuel relationFuel limit compiler next trace body handler targetBody targetHandler
     (bodyIH targetBody middle bodyRun) bodyWf (handlerIH targetHandler middle handlerRun)
 
 /-- Clock-bounded ordinaryOp traversal. This is
