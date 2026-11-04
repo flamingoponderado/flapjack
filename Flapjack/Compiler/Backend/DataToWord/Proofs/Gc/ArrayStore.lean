@@ -44,7 +44,7 @@ theorem stateRel64_storeArrayElement {C F : Type} (conf : Config) (l1 l2 : Nat)
       · exact List.mem_append_left _ (List.mem_append_left _ baseMember)
       · exact tail
     · simpa [roots] using memory
-  obtain ⟨pointerWord, addr, encoding, real, inDomain, result⟩ :=
+  obtain ⟨pointerWord, addr, encoding, real, _, inDomain, result⟩ :=
     Memory.memoryRel_refStore conf target.be (holThe source.tstamps) source.refs source.space
       target.store target.memory target.mdomain item itemWord bit ref location roots old n found bound (Or.inr rfl) focused
   have targetBase : WordSemStateFiniteExact.getVar (adjustVar base) target = some (.word pointerWord) := by
