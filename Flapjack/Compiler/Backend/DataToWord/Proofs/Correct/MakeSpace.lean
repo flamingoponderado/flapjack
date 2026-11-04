@@ -6,24 +6,26 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.Scratch
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Correct
 open Flapjack Gc
 
-/-- If the generated allocation check takes its no-collection branch, and
-the requested byte count fits the target word, it simulates the source cut.
-The collection and overflowing-count cases remain separate obligations. -/
+/-- The request constant used by the compiler, including its overflow
+sentinel. -/
+def makeSpaceRequest64 (amount : Nat) : BitVec 64 :=
+  let value := BitVec.ofNat 64 (amount * 8)
+  if value.toNat = amount * 8 then value else -1
+
+/-- If the generated allocation check takes its no-collection branch, it
+simulates the source cut. The collection branch remains an obligation. -/
 theorem makeSpace64_fast {C F : Type} (conf : Config) (secn label l1 l2 : Nat)
     (source : DataSem.State C F) (target : WordSemStateFiniteExact 64 C F)
     (locs : List (Nat × Nat)) (related : stateRel64 conf l1 l2 source target none locs)
     (amount : Nat) (live : NumSet) (saved : Spt DataSem.Value)
-    (cut : DataSem.cutEnv live source.locals = some saved) (amountBound : amount * 8 < 2 ^ 64)
+    (cut : DataSem.cutEnv live source.locals = some saved)
     (fast : ∃ nextFree trigger, target.store.lookup .nextFree = some (.word nextFree) ∧
       target.store.lookup .triggerGC = some (.word trigger) ∧
-      Compiler.Encoders.Asm.wordCmpHOL .lower (trigger - nextFree) (BitVec.ofNat 64 (amount * 8)) = false) :
+      Compiler.Encoders.Asm.wordCmpHOL .lower (trigger - nextFree) (makeSpaceRequest64 amount) = false) :
     continues64 conf secn label l1 l2 (.makeSpace amount live) source target locs := by
   obtain ⟨nextFree, trigger, available, nextStore, triggerStore, difference, sourceBound, noWrap, reserve⟩ :=
     stateRel64_spaceAvailable conf l1 l2 source target locs related
   have availableBound : available * 8 < 2 ^ 64 := by omega
-  have amountNat : (BitVec.ofNat 64 (amount * 8)).toNat = amount * 8 := by
-    simp only [BitVec.toNat_ofNat]
-    exact Nat.mod_eq_of_lt amountBound
   have availableNat : (8 * BitVec.ofNat 64 available : BitVec 64).toNat = available * 8 := by
     change (BitVec.ofNat 64 8 * BitVec.ofNat 64 available).toNat = available * 8
     rw [← BitVec.ofNat_mul]
@@ -35,6 +37,27 @@ theorem makeSpace64_fast {C F : Type} (conf : Config) (secn label l1 l2 : Nat)
   subst nextFree'
   subst trigger'
   rw [difference] at check
+  have amountBound : amount * 8 < 2 ^ 64 := by
+    by_contra overflow
+    have truncated : (BitVec.ofNat 64 (amount * 8)).toNat ≠ amount * 8 := by
+      simp only [BitVec.toNat_ofNat]
+      have modulus := Nat.mod_lt (amount * 8) (by decide : 0 < 2 ^ 64)
+      omega
+    have underSentinel : available * 8 < (-1 : BitVec 64).toNat := by
+      have value : (-1 : BitVec 64).toNat = 18446744073709551615 := by decide
+      rw [value]
+      norm_num at noWrap
+      omega
+    have branch : Compiler.Encoders.Asm.wordCmpHOL .lower (8 * BitVec.ofNat 64 available) (-1) = true := by
+      simp only [Compiler.Encoders.Asm.wordCmpHOL, BitVec.lt_def, availableNat, decide_eq_true_eq]
+      exact underSentinel
+    simp only [makeSpaceRequest64, truncated, ↓reduceIte] at check
+    rw [branch] at check
+    contradiction
+  have amountNat : (BitVec.ofNat 64 (amount * 8)).toNat = amount * 8 := by
+    simp only [BitVec.toNat_ofNat]
+    exact Nat.mod_eq_of_lt amountBound
+  simp only [makeSpaceRequest64, amountNat, ↓reduceIte] at check
   have compare : Compiler.Encoders.Asm.wordCmpHOL .lower (8 * BitVec.ofNat 64 available)
       (BitVec.ofNat 64 (amount * 8)) = false := check
   have enoughAvailable : amount ≤ available := by
