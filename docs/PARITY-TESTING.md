@@ -8,6 +8,17 @@ source revisions and the resulting executable's embedded version. Set
 `CAKEML_BUILD_DIR` to choose another persistent build directory. The reference
 submodules in this repository remain read-only.
 
+On 2026-11-04, 40 generated nested-closure programs and 80 structured
+programs with varied backend options matched the pinned executable's complete
+output. All 38 structured templates also matched, including escaping mutual
+recursion, higher-order calls, exceptions, and recursive datatypes:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --rich --seed 11049187 --count 40 --timeout 90
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-options --seed 11049190 --count 80 --timeout 90
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-all --seed 11049189 --timeout 90
+```
+
 On 2026-11-03, the pinned bootstrap completed with one HOL build job. Its
 build-produced executable passed `scripts/check-cake-help.py --pinned-reference` and
 `scripts/check-cake-pancake-parity.py --reference`, including the latter's 38

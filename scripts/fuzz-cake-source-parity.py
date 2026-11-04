@@ -303,6 +303,21 @@ def structured_sources(rng):
         f'in (g [{b},{c}], h [{c}]) end; val y = f {a};',
         f'val f = fn x => let val y = (x,{a}) in fn z => (x,y,(z : int)) end; '
         f'val g = f {b}; val y = (g {c},g {a});',
+        f'fun make seed = let fun even (xs : int list) = case xs of [] => seed | _::rest => odd rest '
+        f'and odd (xs : int list) = case xs of [] => {a} | _::rest => even rest '
+        f'in (even,odd) end; val (f,g) = make {b}; '
+        f'val y = (f [{a},{c}], g [{b}], f []);',
+        f'fun make x y = let fun apply f z = f z; '
+        f'fun add z = (x,y,z) in fn z => (apply add z, apply add {a}) end; '
+        f'val f = make {b} {c}; val y = (f {a}, f {b});',
+        f'exception E int; fun make x = let fun f y z = '
+        f'(case y of 0 => raise E z | _ => (x,y,z)) '
+        f'in fn y => (f y {a}) handle E z => (x,y,z) end; '
+        f'val f = make {b}; val y = (f 0, f {c});',
+        f'datatype t = Leaf int | Branch t t; '
+        f'fun make k = let fun walk x = case x of Leaf n => k '
+        f'| Branch l r => walk l in walk end; '
+        f'val f = make {a}; val y = (f (Branch (Leaf {b}) (Leaf {c})), f (Leaf {a}));',
     ]
 
 
