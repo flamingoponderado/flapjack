@@ -110413,6 +110413,22 @@
     "reviewer": "Source comparison: the typed HOL capture retains the complete abstract ML invariant, byte-array lookup and equal byte lengths as its premises. Its existential roots, heap prefix and suffix, and word list retain the root equality, original heap split, word-count formula, and updated abstract invariant with the same configuration, roots, space and generation state. Byte arrays use fixed eight-bit elements, while the heap payload and roots share the positive HOL word dimension."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ArrayUpdateRefs.lean",
+    "lean_name": "blocksUnique_updateRef",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "blocks_unique_update_ref",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: the typed HOL capture retains the same source value list as stack prefix and inserted ValueArray, followed by the same reference pointer and stack; both block-uniqueness predicates and reference-tree carrier match."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ArrayUpdateRefs.lean",
+    "lean_name": "blocksUnique_updateRef1",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "blocks_unique_update_ref1",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: the typed capture retains nonempty roots, old value-array lookup, source uniqueness, index, pointer and the updated array in the conclusion. List.set matches HOL LUPDATE, including out-of-range behavior; headD returns the source HD under the nonempty premise, making its default unreachable."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ByteUpdateRefs.lean",
     "lean_name": "blocksUnique_insertByteArray",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
