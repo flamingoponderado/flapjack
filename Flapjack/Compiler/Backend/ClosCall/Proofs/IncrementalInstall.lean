@@ -186,6 +186,75 @@ theorem callsListBounded_group_body_with_coverage (fuel : Nat) (fns : List (Nat 
   exact callsListBounded_lookup_run_weak_with_coverage fuel (fns.map Prod.snd) target initial final allowed
     run distinct fresh initialDistinct initialWeak coverage index body out sourceIndex targetLookup
 
+/-- A related recursive closure supplies a covered body traversal in either
+the extracted or the open group. This records the coverage needed by the
+body simulation without asserting that the full simulation has been proved. -/
+theorem recClosureRelFuel_body_traversal_with_coverage (fuel : Nat) (g : State) (allowed : Set Nat)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (loc : Nat)
+    (sourceFns targetFns : List (Nat × ClosLang.Exp)) (index arity : Nat)
+    (body targetBody : ClosLang.Exp)
+    (related : recClosureRelFuel fuel g allowed code loc sourceFns targetFns)
+    (sourceLookup : sourceFns[index]? = some (arity, body))
+    (targetLookup : targetFns[index]? = some (arity, targetBody)) :
+    (∃ trace converted depth before after,
+      targetBody = .call trace 0 (loc + 2 * index + 1) (ClosCall.variables trace arity) ∧
+      code.lookup (loc + 2 * index + 1) = some (arity, converted) ∧
+      depth < max fuel (listBudget (sourceFns.map Prod.snd) + 1) ∧
+      callsFuel depth body before = some (converted, after) ∧
+      (codeLocationsExp body).Nodup ∧ LabelsFresh (codeLocationsExp body) before ∧
+      (before.2.map Prod.fst).Nodup ∧ weaklyWellFormed before ∧ stateExtends after g ∧
+      (∀ k ∈ codeLocationsExp body, ¬ sptDomain after.1 k → k ∈ allowed)) ∨
+    (∃ depth before after,
+      depth < max fuel (listBudget (sourceFns.map Prod.snd) + 1) ∧
+      callsFuel depth body before = some (targetBody, after) ∧
+      (codeLocationsExp body).Nodup ∧ LabelsFresh (codeLocationsExp body) before ∧
+      (before.2.map Prod.fst).Nodup ∧ weaklyWellFormed before ∧ stateExtends after g ∧
+      (∀ k ∈ codeLocationsExp body, ¬ sptDomain after.1 k → k ∈ allowed)) := by
+  obtain ⟨initial, bodies, afterProbe, converted, _, _, _, initialWf, initialFresh, probe, selectedBody,
+    _, _, _, _, _, _, _, _, _, alternatives⟩ :=
+    recClosureRelFuel_probe_body fuel g allowed code loc sourceFns targetFns index arity body related sourceLookup
+  obtain ⟨_, well, _, _, _, _, _, _, _⟩ := related
+  rcases alternatives with ⟨closed, ⟨trace, stubIndex, targetEq⟩, probeExt, codeExt, covered, included⟩ |
+      ⟨_, openBodies, afterOpen, openRun, targetEq, openExt, covered, _, _⟩
+  · left
+    have fresh : LabelsFresh (codeLocations (sourceFns.map Prod.snd)) (insertEach loc sourceFns.length initial) := by
+      simpa [LabelsFresh, insertEach] using initialFresh
+    have initialDistinct : ((insertEach loc sourceFns.length initial).2.map Prod.fst).Nodup := by
+      simpa [insertEach] using initialWf.2
+    have initialWeak := weaklyWellFormed_insertEach loc sourceFns.length initial (wellFormed_weak initial initialWf)
+    obtain ⟨depth, before, after, bound, selected, distinct, bodyFresh, beforeDistinct, beforeWeak,
+      _, _, extended, bodyCovered⟩ :=
+      callsListBounded_group_body_with_coverage fuel sourceFns bodies (insertEach loc sourceFns.length initial)
+        afterProbe allowed probe well.2.2.2 fresh initialDistinct initialWeak covered index arity body converted
+        sourceLookup selectedBody
+    have stub := callsListSource_lookup trace stubIndex loc sourceFns index arity body sourceLookup
+    have targetStub : targetFns[index]? =
+        some (arity, .call trace 0 (loc + 2 * index + 1) (ClosCall.variables trace arity)) := by
+      simpa [targetEq] using stub
+    have bodyEq : targetBody = .call trace 0 (loc + 2 * index + 1) (ClosCall.variables trace arity) := by
+      rw [targetLookup] at targetStub
+      exact (Prod.mk.inj (Option.some.inj targetStub)).2
+    have arityLookup : (sourceFns.map Prod.fst)[index]? = some arity := by
+      simp [List.getElem?_map, sourceLookup]
+    have pairLookup : ((sourceFns.map Prod.fst).zip bodies)[index]? = some (arity, converted) :=
+      List.getElem?_zip_eq_some.mpr ⟨arityLookup, selectedBody⟩
+    have generated := codeList_lookup loc ((sourceFns.map Prod.fst).zip bodies) afterProbe index arity converted pairLookup
+    exact ⟨trace, converted, depth, before, after, bodyEq, included _ _ generated, bound, selected, distinct,
+      bodyFresh, beforeDistinct, beforeWeak, stateExtends_trans _ _ _ extended probeExt, bodyCovered⟩
+  · right
+    have fresh : LabelsFresh (codeLocations (sourceFns.map Prod.snd)) initial := by
+      simpa [LabelsFresh] using initialFresh
+    have zippedLookup : ((sourceFns.map Prod.fst).zip openBodies)[index]? = some (arity, targetBody) := by
+      simpa [targetEq] using targetLookup
+    have targetIndex : openBodies[index]? = some targetBody := (List.getElem?_zip_eq_some.mp zippedLookup).2
+    obtain ⟨depth, before, after, bound, selected, distinct, bodyFresh, beforeDistinct, beforeWeak,
+      _, _, extended, bodyCovered⟩ :=
+      callsListBounded_group_body_with_coverage fuel sourceFns openBodies initial afterOpen allowed openRun
+        well.2.2.2 fresh initialWf.2 (wellFormed_weak initial initialWf) covered index arity body targetBody
+        sourceLookup targetIndex
+    exact ⟨depth, before, after, bound, selected, distinct, bodyFresh, beforeDistinct, beforeWeak,
+      stateExtends_trans _ _ _ extended openExt, bodyCovered⟩
+
 /-- Extending target code preserves the fixed compiler-state relation. -/
 theorem stateRelFuel_extendCode {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
     {source : ClosSem.State (NumSet × C) F} {target : ClosSem.State C F}
