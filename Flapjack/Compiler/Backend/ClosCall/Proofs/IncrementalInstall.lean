@@ -21136,19 +21136,27 @@ theorem doInstall_nonType_preserves_IncrementalCodeInv {C F : Type} (fuel relati
     (states : StateRelFuel relationFuel g allowed source target)
     (values : List.Forall₂ (ValueRelFuel relationFuel g allowed target.code) sourceValues targetValues)
     (inv : IncrementalCodeInv fuel g allowed source target)
+    (sourceWf : StateWellFormedFuel relationFuel g allowed target.code source)
+    (disjoint : Disjoint allowed (sptDomain g.1))
     (run : doInstall sourceValues source = (result, final)) (notType : result ≠ .err (.abort .typeError)) :
     ∃ expressions converted nextKnown targetFinal,
       compileIncFuel? fuel g.1 (expressions, []) = some (nextKnown, converted) ∧
       doInstall targetValues target =
         (if source.clock = 0 then .err (.abort .timeoutError) else .val converted.1, targetFinal) ∧
       result = (if source.clock = 0 then .err (.abort .timeoutError) else .val expressions) ∧
+      stateExtends g (nextKnown, converted.2 ++ g.2) ∧
+      Disjoint (allowed ∪ {loc | loc ∈ codeLocations expressions ∧ ¬ sptDomain nextKnown loc}) (sptDomain nextKnown) ∧
+      StateRelFuel relationFuel (nextKnown, converted.2 ++ g.2)
+        (allowed ∪ {loc | loc ∈ codeLocations expressions ∧ ¬ sptDomain nextKnown loc}) final targetFinal ∧
+      StateWellFormedFuel relationFuel (nextKnown, converted.2 ++ g.2)
+        (allowed ∪ {loc | loc ∈ codeLocations expressions ∧ ¬ sptDomain nextKnown loc}) targetFinal.code final ∧
       IncrementalCodeInv fuel (nextKnown, converted.2 ++ g.2)
         (allowed ∪ {loc | loc ∈ codeLocations expressions ∧ ¬ sptDomain nextKnown loc}) final targetFinal := by
-  have ⟨ready, _⟩ := inv.ready
+  have ⟨ready, avoids⟩ := inv.ready
   have savedInv := inv
   obtain ⟨_, sourceCompiler, targetOracle, _, _, ordered, _, _⟩ := inv
   obtain ⟨expressions, converted, nextKnown, targetFinal, passRun, targetRun, resultEq, exprEq,
-    _, _, newReady, finalStates, finalCompiler, targetCompiler, finalOracle, _⟩ :=
+    _, extended, newReady, finalStates, finalCompiler, targetCompiler, finalOracle, codeGrowth⟩ :=
     doInstall_nonType_ready fuel relationFuel g allowed target.compile source target sourceValues targetValues
       result final ready states values sourceCompiler rfl targetOracle run notType
   obtain ⟨otherExpressions, otherConverted, otherKnown, otherTarget, otherPass, otherRun, _, otherExprEq, exactCode⟩ :=
@@ -21166,7 +21174,24 @@ theorem doInstall_nonType_preserves_IncrementalCodeInv {C F : Type} (fuel relati
       (allowed ∪ {loc | loc ∈ codeLocations expressions ∧ ¬ sptDomain nextKnown loc}) final :=
     oracleLocationsOrdered_after_compile fuel g allowed source final (expressions, []) nextKnown converted
       ((oracleLocationsOrdered_iff_oracleMonotonic g allowed source).2 ordered) exprEq passRun (by simpa using congrArg ClosSem.State.compileOracle finalEq)
-  refine ⟨expressions, converted, nextKnown, targetFinal, passRun, targetRun, resultEq, ?_⟩
+  have sourceAvoids : ∀ loc ∈ codeLocations expressions, loc ∉ allowed := by
+    intro loc member
+    apply avoids 0 loc
+    simpa [exprEq] using member
+  have oldDisjoint : Disjoint allowed (sptDomain nextKnown) :=
+    compileIncFuel_disjoint_known fuel g.1 (expressions, []) nextKnown converted allowed passRun disjoint sourceAvoids
+  have finalDisjoint : Disjoint (allowed ∪ {loc | loc ∈ codeLocations expressions ∧ ¬ sptDomain nextKnown loc}) (sptDomain nextKnown) := by
+    apply Set.disjoint_left.mpr
+    intro loc member known
+    rcases member with old | ⟨_, unknown⟩
+    · exact Set.disjoint_left.mp oldDisjoint old known
+    · exact unknown known
+  have allowedGrowth : allowed ⊆ allowed ∪ {loc | loc ∈ codeLocations expressions ∧ ¬ sptDomain nextKnown loc} := Set.subset_union_left
+  have finalStates' := stateRelFuel_mono finalStates (stateExtends_refl _ newReady.well.2) allowedGrowth
+  have installedWf := doInstall_wellFormedFuel sourceValues source final result sourceWf (ready.auxEmpty 0) run
+  have finalWf := stateWellFormedFuel_mono installedWf extended allowedGrowth codeGrowth
+  refine ⟨expressions, converted, nextKnown, targetFinal, passRun, targetRun, resultEq, extended,
+    finalDisjoint, finalStates', finalWf, ?_⟩
   refine ⟨finalStates.2.2.2.2.2, ?_, finalOracle, newReady.well, newReady.known, ?_, exactCode, ?_⟩
   · simpa [targetCompiler] using finalCompiler
   · exact (oracleLocationsOrdered_iff_oracleMonotonic _ _ _).1 ordered'
