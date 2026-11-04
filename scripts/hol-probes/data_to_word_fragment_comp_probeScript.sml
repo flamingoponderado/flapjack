@@ -17,6 +17,7 @@ val entry = EVAL ``let conf = (ARB:data_to_word$config) with <|tag_bits := 1; le
  let p11 = dataLang$Assign 3 (closLang$BlockOp (closLang$TagLenEq 0 1)) [1] NONE in
  let p12 = dataLang$Assign 3 (closLang$BlockOp (closLang$TagLenEq 1 3)) [1] NONE in
  let p13 = dataLang$Assign 3 (closLang$BlockOp (closLang$TagLenEq 1 65536)) [1] NONE in
- MAP (data_to_word$comp conf 5 2) [p0;p1;p2;p3;p4;p5;p6;p7;p8;p9;p10;p11;p12;p13] : (64 wordLang$prog # num) list``;
+ let p14 = dataLang$Assign 3 (closLang$BlockOp closLang$BoundsCheckBlock) [1;2] NONE in
+ MAP (data_to_word$comp conf 5 2) [p0;p1;p2;p3;p4;p5;p6;p7;p8;p9;p10;p11;p12;p13;p14] : (64 wordLang$prog # num) list``;
 val _ = (print "fragment="; print_term (rhs (concl (CONV_RULE
   (RAND_CONV (SIMP_CONV (srw_ss()) [wordsTheory.dimindex_64, wordsTheory.dimword_def] THENC EVAL THENC DEPTH_CONV (CHANGED_CONV wordsLib.WORD_EVAL_CONV))) entry))); print "\n");

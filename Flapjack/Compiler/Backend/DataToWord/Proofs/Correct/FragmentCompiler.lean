@@ -36,6 +36,12 @@ def fragmentCompile64 (conf : Config) (secn label : Nat) : DataLang.Prog → Opt
   | .assign dest (.blockOp .lengthBlock) [src] none =>
       some (.ite .test (adjustVar src) (.imm 1) (.assign (adjustVar dest) (.const 0))
         (.assign (adjustVar dest) (shiftN .lsl (shiftN .lsr (.load (realAddr conf (adjustVar src))) (64 - conf.lenSize)) 2)), label)
+  | .assign dest (.blockOp .boundsCheckBlock) [base, index] none =>
+      some (wordListSeq [
+        .ite .test (adjustVar base) (.imm 1) (.assign 1 (.const 0))
+          (.assign 1 (shiftN .lsr (.load (realAddr conf (adjustVar base))) (64 - conf.lenSize))),
+        .assign 3 (shiftVar .ror (adjustVar index) 2),
+        .ite .lower 3 (.reg 1) (.assign (adjustVar dest) (.const 18)) (.assign (adjustVar dest) (.const 2))], label)
   | .assign dest (.blockOp (.lenEq len)) [src] none =>
       if len = 0 then
         some (.ite .test (adjustVar src) (.imm 1)
@@ -96,7 +102,7 @@ theorem fragmentCompile64_agrees (conf : Config) (secn : Nat) (program : DataLan
   | intConst dest i =>
     intro label
     simp [fragmentCompile64, compileControl64, compileControl?, smallnum_eq_inlined]
-  | boolNot | boolTest | lessConst | blockLength | element =>
+  | boolNot | boolTest | lessConst | blockLength | blockBounds | element =>
     intro label
     simp only [fragmentCompile64, compileControl64, compileControl?, Option.getD_some]
     all_goals rfl

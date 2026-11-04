@@ -161,6 +161,22 @@ theorem doAppAux_cons_code {C F : Type} (tag : Nat) (args : List DataSem.Value)
     all_goals obtain ⟨rfl, rfl⟩ := run
     all_goals exact rfl
 
+theorem doAppAux_blockBounds_code {C F : Type} (args : List DataSem.Value)
+    (state next : State C F) (value : DataSem.Value)
+    (run : doAppAux (.blockOp .boundsCheckBlock) args state = .val (value, next)) : next.code = state.code := by
+  cases args with
+  | nil => simp [doAppAux, applyNonFfi] at run
+  | cons first rest =>
+    cases rest with
+    | nil => simp [doAppAux, applyNonFfi] at run
+    | cons second tail =>
+      cases tail with
+      | cons third tail => simp [doAppAux, applyNonFfi] at run
+      | nil =>
+        cases first <;> cases second <;> simp [doAppAux, applyNonFfi] at run
+        all_goals obtain ⟨rfl, rfl⟩ := run
+        all_goals rfl
+
 
 theorem doAppAux_boolNot_code {C F : Type} (args : List DataSem.Value)
     (state next : State C F) (value : DataSem.Value)
@@ -302,6 +318,9 @@ theorem verifiedFragment_code {C F : Type} (program : DataLang.Prog) (fragment :
     intro state
     exact evaluate_assign_block_code_of_aux dest .lengthBlock [src] none state
       (doAppAux_blockCompare_code .lengthBlock (Or.inr (Or.inr (Or.inr rfl))))
+  | blockBounds dest base index =>
+    intro state
+    exact evaluate_assign_block_code_of_aux dest .boundsCheckBlock [base, index] none state doAppAux_blockBounds_code
   | element dest src index =>
     intro state
     exact evaluate_assign_block_code_of_aux dest (.elemAt index) [src] none state (doAppAux_elemAt_code index)
