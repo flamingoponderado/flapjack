@@ -626,6 +626,8 @@ structure IncrementalInstallReady {C F : Type} (g : State)
     loc ∉ codeLocations (source.compileOracle earlier).2.1
   fresh : ∀ index loc, loc ∈ codeLocations (source.compileOracle index).2.1 →
     target.code.lookup (loc + 1) = none
+  locations : ∀ index, everyFnLocationSome (source.compileOracle index).2.1
+  annotations : ∀ index, everyFnVarsNone (source.compileOracle index).2.1
 
 /-- Future source installations avoid the locations of currently open
 closures. This is one component of the HOL oracle monotonicity invariant;
@@ -736,7 +738,7 @@ theorem doInstall_nonType_ready {C F : Type} (fuel relationFuel : Nat) (g : Stat
   have laterFresh := doInstall_shiftedOracle_fresh fuel source sourceValues result final target.code run notType
     (fun later _ => ready.fresh later) (fun later positive => ready.disjoint 0 later positive)
   have newReady : IncrementalInstallReady (nextKnown, converted.2 ++ g.2) final targetFinal := by
-    refine ⟨newWell, included, newKnown, ?_, ?_, ?_, ?_⟩
+    refine ⟨newWell, included, newKnown, ?_, ?_, ?_, ?_, ?_, ?_⟩
     · intro index
       simpa [finalEq, holShiftSeq] using ready.auxEmpty (index + 1)
     · intro index
@@ -756,6 +758,10 @@ theorem doInstall_nonType_ready {C F : Type} (fuel relationFuel : Nat) (g : Stat
         exact (Prod.mk.inj (Option.some.inj oraclePass)).2
       rw [convertedEq]
       exact laterFresh index loc member
+    · intro index
+      simpa [finalEq, holShiftSeq] using ready.locations (index + 1)
+    · intro index
+      simpa [finalEq, holShiftSeq] using ready.annotations (index + 1)
   refine ⟨expressions, converted, nextKnown, targetFinal, passRun, targetRun, resultEq, exprEq,
     nonempty, extended, newReady, finalStates, finalCompiler, targetFinalCompiler, oracleEq, growth⟩
 
@@ -1125,6 +1131,8 @@ theorem doInstall_success_evaluate_withOpenClock {C F : Type} (fuel relationFuel
     (avoids : OracleLocationsAvoid allowed source)
     (programIH : ∀ nextKnown converted nextAllowed,
       compileIncFuel? fuel g.1 (program, []) = some (nextKnown, converted) →
+      wellFormed g → (codeLocations program).Nodup → LabelsFresh (codeLocations program) g →
+      everyFnLocationSome program → everyFnVarsNone program →
       (∀ loc ∈ codeLocations program, ¬ sptDomain nextKnown loc → loc ∈ nextAllowed) →
       InstalledProgramSimBelowWithOpenClock (C := C) (F := F) fuel relationFuel source.clock compiler
         (nextKnown, converted.2 ++ g.2) nextAllowed program converted.1) :
@@ -1150,7 +1158,7 @@ theorem doInstall_success_evaluate_withOpenClock {C F : Type} (fuel relationFuel
       targetFinal.compileOracle = compileIncFuelOracle fuel final.compileOracle ∧
       (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry) := by
   obtain ⟨expressions, converted, nextKnown, targetInstalled, nextAllowed, passRun, targetRun, resultEq,
-    _, _, extended, newReady, allowedGrowth, coverage, nextDisjoint, nextAvoids, newStates,
+    exprEq, _, extended, newReady, allowedGrowth, coverage, nextDisjoint, nextAvoids, newStates,
     installedCompiler, targetInstalledCompiler, installedOracle, installGrowth⟩ :=
     doInstall_nonType_ready_open_growth fuel relationFuel g allowed compiler source target sourceValues targetValues
       (.val program) installed ready states values sourceCompiler targetCompiler targetOracle installRun (by simp)
@@ -1161,6 +1169,13 @@ theorem doInstall_success_evaluate_withOpenClock {C F : Type} (fuel relationFuel
   have programEq : program = expressions := by simpa [nonzero] using resultEq
   have programPass : compileIncFuel? fuel g.1 (program, []) = some (nextKnown, converted) := by
     simpa [programEq] using passRun
+  have oracleEq : program = (source.compileOracle 0).2.1 := programEq.trans exprEq
+  have programDistinct : (codeLocations program).Nodup := by simpa [oracleEq] using ready.distinct 0
+  have programFresh : LabelsFresh (codeLocations program) g := by
+    apply labelsFresh_of_codeIncludes g (codeLocations program) target.code ready.well.2 ready.included
+    simpa [oracleEq] using ready.fresh 0
+  have programLocations : everyFnLocationSome program := by simpa [oracleEq] using ready.locations 0
+  have programAnnotations : everyFnVarsNone program := by simpa [oracleEq] using ready.annotations 0
   have programCoverage : ∀ loc ∈ codeLocations program, ¬ sptDomain nextKnown loc → loc ∈ nextAllowed := by
     simpa [programEq] using coverage
   have targetInstall : doInstall targetValues target = (.val converted.1, targetInstalled) := by
@@ -1174,7 +1189,7 @@ theorem doInstall_success_evaluate_withOpenClock {C F : Type} (fuel relationFuel
   obtain ⟨extraClock, finalG, finalAllowed, targetResult, targetFinal, bodyExtended, bodyAllowed,
     finalDisjoint, finalAvoids, targetEval, related, finalStates, finalWf, finalReady,
     finalCompiler, targetFinalCompiler, finalOracle, bodyGrowth⟩ :=
-    programIH nextKnown converted nextAllowed programPass programCoverage installed targetInstalled result final
+    programIH nextKnown converted nextAllowed programPass ready.well programDistinct programFresh programLocations programAnnotations programCoverage installed targetInstalled result final
       smaller programRun notType installedWf' newStates newReady nextDisjoint nextAvoids
       installedCompiler targetInstalledCompiler installedOracle
   exact ⟨nextKnown, converted, targetInstalled, nextAllowed, extraClock, finalG, finalAllowed,
@@ -1492,6 +1507,8 @@ theorem runInstalled_incremental_sim_withOpenClock {C F : Type} (fuel relationFu
     (avoids : OracleLocationsAvoid allowed source)
     (programIH : ∀ program nextKnown converted nextAllowed,
       compileIncFuel? fuel g.1 (program, []) = some (nextKnown, converted) →
+      wellFormed g → (codeLocations program).Nodup → LabelsFresh (codeLocations program) g →
+      everyFnLocationSome program → everyFnVarsNone program →
       (∀ loc ∈ codeLocations program, ¬ sptDomain nextKnown loc → loc ∈ nextAllowed) →
       InstalledProgramSimBelowWithOpenClock (C := C) (F := F) fuel relationFuel source.clock compiler
         (nextKnown, converted.2 ++ g.2) nextAllowed program converted.1) :
@@ -1803,6 +1820,8 @@ theorem evaluate_install_incremental_sim_withOpenClock {C F : Type} (fuel relati
         (∀ key entry, target.code.lookup key = some entry → targetMiddle.code.lookup key = some entry))
     (programIH : ∀ (middleG : State) program nextKnown converted nextAllowed,
       compileIncFuel? fuel middleG.1 (program, []) = some (nextKnown, converted) →
+      wellFormed middleG → (codeLocations program).Nodup → LabelsFresh (codeLocations program) middleG →
+      everyFnLocationSome program → everyFnVarsNone program →
       (∀ loc ∈ codeLocations program, ¬ sptDomain nextKnown loc → loc ∈ nextAllowed) →
       InstalledProgramSimBelowWithOpenClock (C := C) (F := F) fuel relationFuel source.clock compiler
         (nextKnown, converted.2 ++ middleG.2) nextAllowed program converted.1) :
@@ -1852,11 +1871,13 @@ theorem evaluate_install_incremental_sim_withOpenClock {C F : Type} (fuel relati
           simpa [argsRun] using bound
         have programIH' : ∀ program nextKnown converted nextAllowed,
             compileIncFuel? fuel middleG.1 (program, []) = some (nextKnown, converted) →
+            wellFormed middleG → (codeLocations program).Nodup → LabelsFresh (codeLocations program) middleG →
+            everyFnLocationSome program → everyFnVarsNone program →
             (∀ loc ∈ codeLocations program, ¬ sptDomain nextKnown loc → loc ∈ nextAllowed) →
             InstalledProgramSimBelowWithOpenClock (C := C) (F := F) fuel relationFuel sourceMiddle.clock compiler
               (nextKnown, converted.2 ++ middleG.2) nextAllowed program converted.1 := by
-          intro program nextKnown converted nextAllowed pass coverage start targetStart bodyResult bodyFinal smaller
-          exact programIH middleG program nextKnown converted nextAllowed pass coverage start targetStart bodyResult
+          intro program nextKnown converted nextAllowed pass well distinct fresh locations annotations coverage start targetStart bodyResult bodyFinal smaller
+          exact programIH middleG program nextKnown converted nextAllowed pass well distinct fresh locations annotations coverage start targetStart bodyResult
             bodyFinal (by omega)
         obtain ⟨bodyExtra, nextG, nextAllowed, targetResult, targetFinal, secondExt, secondAllowed,
           finalDisjoint, finalAvoids, targetRun, related, finalStates, finalWf, finalReady,
@@ -2100,8 +2121,8 @@ theorem incrementalInstallReady_decClock {C F : Type} (g : State)
     (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F) (amount : Nat)
     (ready : IncrementalInstallReady g source target) :
     IncrementalInstallReady g (decClock amount source) (decClock amount target) := by
-  obtain ⟨well, included, known, auxEmpty, distinct, disjoint, fresh⟩ := ready
-  exact ⟨well, included, known, auxEmpty, distinct, disjoint, fresh⟩
+  obtain ⟨well, included, known, auxEmpty, distinct, disjoint, fresh, locations, annotations⟩ := ready
+  exact ⟨well, included, known, auxEmpty, distinct, disjoint, fresh, locations, annotations⟩
 
 /-- Matching ticks preserve the growing-state simulation of their bodies. -/
 theorem growingExprsSim_tick {C F : Type} (passFuel relationFuel : Nat)
@@ -2264,14 +2285,16 @@ theorem incrementalInstallReady_doApp {C F : Type} (g : State)
     IncrementalInstallReady g sourceNext targetNext := by
   have sourceFields := ClosInterp.doApp_compilerFields op sourceArgs source sourceNext sourceValue sourceRun
   have targetFields := ClosInterp.doApp_compilerFields op targetArgs target targetNext targetValue targetRun
-  obtain ⟨well, included, known, auxEmpty, distinct, disjoint, fresh⟩ := ready
-  refine ⟨well, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  obtain ⟨well, included, known, auxEmpty, distinct, disjoint, fresh, locations, annotations⟩ := ready
+  refine ⟨well, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · simpa [ClosInterp.CompilerFieldsPreserved, targetFields.2.2.1] using included
   · simpa [ClosInterp.CompilerFieldsPreserved, sourceFields.2.1] using known
   · simpa [ClosInterp.CompilerFieldsPreserved, sourceFields.2.1] using auxEmpty
   · simpa [ClosInterp.CompilerFieldsPreserved, sourceFields.2.1] using distinct
   · simpa [ClosInterp.CompilerFieldsPreserved, sourceFields.2.1] using disjoint
   · simpa [ClosInterp.CompilerFieldsPreserved, sourceFields.2.1, targetFields.2.2.1] using fresh
+  · simpa [ClosInterp.CompilerFieldsPreserved, sourceFields.2.1] using locations
+  · simpa [ClosInterp.CompilerFieldsPreserved, sourceFields.2.1] using annotations
 
 /-- Ordinary primitive operations compose the growing simulation of their
 arguments with primitive simulation and source well-formedness preservation.
@@ -2393,8 +2416,8 @@ theorem incrementalInstallReady_fixClock {C F : Type} (g : State)
     (source sourceNext : ClosSem.State (NumSet × C) F) (target targetNext : ClosSem.State C F)
     (ready : IncrementalInstallReady g sourceNext targetNext) :
     IncrementalInstallReady g (fixClock source ((), sourceNext)).2 (fixClock target ((), targetNext)).2 := by
-  obtain ⟨well, included, known, auxEmpty, distinct, disjoint, fresh⟩ := ready
-  exact ⟨well, included, known, auxEmpty, distinct, disjoint, fresh⟩
+  obtain ⟨well, included, known, auxEmpty, distinct, disjoint, fresh, locations, annotations⟩ := ready
+  exact ⟨well, included, known, auxEmpty, distinct, disjoint, fresh, locations, annotations⟩
 
 /-- Condition evaluation and either branch simulate with the compiler state
 and oracle invariants produced by the condition. -/
@@ -3578,8 +3601,8 @@ theorem incrementalInstallReady_setClock {C F : Type} (g : State)
     (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
     (sourceClock targetClock : Nat) (ready : IncrementalInstallReady g source target) :
     IncrementalInstallReady g { source with clock := sourceClock } { target with clock := targetClock } := by
-  obtain ⟨well, included, known, auxEmpty, distinct, disjoint, fresh⟩ := ready
-  exact ⟨well, included, known, auxEmpty, distinct, disjoint, fresh⟩
+  obtain ⟨well, included, known, auxEmpty, distinct, disjoint, fresh, locations, annotations⟩ := ready
+  exact ⟨well, included, known, auxEmpty, distinct, disjoint, fresh, locations, annotations⟩
 
 /-- Applying no arguments returns the related function and preserves the
 compiler-state and oracle invariants. -/
@@ -4672,8 +4695,8 @@ theorem incrementalInstallReady_setRefs {C F : Type} (g : State)
     (sourceRefs targetRefs : HolFiniteMapExact Nat (ClosSem.Ref ClosSem.Value))
     (ready : IncrementalInstallReady g source target) :
     IncrementalInstallReady g { source with refs := sourceRefs } { target with refs := targetRefs } := by
-  obtain ⟨well, included, known, auxEmpty, distinct, disjoint, fresh⟩ := ready
-  exact ⟨well, included, known, auxEmpty, distinct, disjoint, fresh⟩
+  obtain ⟨well, included, known, auxEmpty, distinct, disjoint, fresh, locations, annotations⟩ := ready
+  exact ⟨well, included, known, auxEmpty, distinct, disjoint, fresh, locations, annotations⟩
 
 /-- Forcing related thunks simulates the evaluator, including memoization,
 while carrying the growing compiler state and oracle invariants. -/
@@ -6319,6 +6342,8 @@ theorem callsFuel_install_growing_below_withOpenClock {C F : Type} (passFuel rel
       GrowingExprsSimFromBelowWithOpenClock (F := F) passFuel relationFuel limit compiler passFinal args target)
     (programIH : ∀ clock, clock < limit → ∀ (middleG : State) program nextKnown converted nextAllowed,
       compileIncFuel? passFuel middleG.1 (program, []) = some (nextKnown, converted) →
+      wellFormed middleG → (codeLocations program).Nodup → LabelsFresh (codeLocations program) middleG →
+      everyFnLocationSome program → everyFnVarsNone program →
       (∀ loc ∈ codeLocations program, ¬ sptDomain nextKnown loc → loc ∈ nextAllowed) →
       InstalledProgramSimBelowWithOpenClock (C := C) (F := F) passFuel relationFuel clock compiler
         (nextKnown, converted.2 ++ middleG.2) nextAllowed program converted.1) :
@@ -6353,6 +6378,8 @@ theorem callsFuel_install_growing_below_withCoveredOpenClock {C F : Type} (passF
       GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler passFinal args target)
     (programIH : ∀ clock, clock < limit → ∀ (middleG : State) program nextKnown converted nextAllowed,
       compileIncFuel? passFuel middleG.1 (program, []) = some (nextKnown, converted) →
+      wellFormed middleG → (codeLocations program).Nodup → LabelsFresh (codeLocations program) middleG →
+      everyFnLocationSome program → everyFnVarsNone program →
       (∀ loc ∈ codeLocations program, ¬ sptDomain nextKnown loc → loc ∈ nextAllowed) →
       InstalledProgramSimBelowWithOpenClock (C := C) (F := F) passFuel relationFuel clock compiler
         (nextKnown, converted.2 ++ middleG.2) nextAllowed program converted.1) :
@@ -15753,6 +15780,8 @@ theorem callsFuel_op_withCoveredOpenClock_from_induction {C F : Type}
       GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel callerClock compiler after [body] [converted])
     (programIH : ∀ clock, clock < limit → ∀ (middleG : State) program nextKnown converted nextAllowed,
       compileIncFuel? passFuel middleG.1 (program, []) = some (nextKnown, converted) →
+      wellFormed middleG → (codeLocations program).Nodup → LabelsFresh (codeLocations program) middleG →
+      everyFnLocationSome program → everyFnVarsNone program →
       (∀ loc ∈ codeLocations program, ¬ sptDomain nextKnown loc → loc ∈ nextAllowed) →
       InstalledProgramSimBelowWithOpenClock (C := C) (F := F) passFuel relationFuel clock compiler
         (nextKnown, converted.2 ++ middleG.2) nextAllowed program converted.1)
@@ -15887,6 +15916,8 @@ theorem callsFuel_withCoveredOpenClock_structural {C F : Type}
       GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel callerClock compiler after [body] [converted])
     (programIH : ∀ clock, clock < limit → ∀ (middleG : State) program nextKnown converted nextAllowed,
       compileIncFuel? passFuel middleG.1 (program, []) = some (nextKnown, converted) →
+      wellFormed middleG → (codeLocations program).Nodup → LabelsFresh (codeLocations program) middleG →
+      everyFnLocationSome program → everyFnVarsNone program →
       (∀ loc ∈ codeLocations program, ¬ sptDomain nextKnown loc → loc ∈ nextAllowed) →
       InstalledProgramSimBelowWithOpenClock (C := C) (F := F) passFuel relationFuel clock compiler
         (nextKnown, converted.2 ++ middleG.2) nextAllowed program converted.1)
@@ -16276,6 +16307,50 @@ theorem compileIncFuel_installedBelow_withCoveredOpenClock_from_cases {C F : Typ
   apply growingExprsSimFromBelowWithCoveredOpenClock_installedBelow _ _ _ _ _ _ _ _ coverage
   exact compileIncFuel_growing_below_withCoveredOpenClock passFuel relationFuel limit compiler g program nextKnown converted
     run distinct fresh initialWf eligible eligibleIH exprIH
+
+/-- Clock induction discharges both recursive closure-body and incremental
+installation simulations using the actual source syntax and compiler-state
+invariants. Source evaluation well-formedness remains an explicit premise.
+This is Flapjack-specific infrastructure, not a HOL correctness theorem. -/
+theorem callsFuel_withCoveredOpenClock_clock_induction {C F : Type}
+    (passFuel relationFuel : Nat) (compiler : ClosSem.Compiler C)
+    (evalWf : ∀ (allowed : Set Nat) (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+      (expressions : List ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State (NumSet × C) F),
+      ValuesWellFormedFuel relationFuel g allowed code env → StateWellFormedFuel relationFuel g allowed code state →
+      OracleAuxEmpty state.compileOracle → EvalWellFormedFuel relationFuel g allowed code (evaluate expressions env state)) :
+    ∀ limit depth expression output initial final,
+      callsFuel depth expression initial = some (output, final) →
+      (codeLocationsExp expression).Nodup → LabelsFresh (codeLocationsExp expression) initial → wellFormed initial →
+      everyFnLocationSome [expression] → everyFnVarsNone [expression] →
+      GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler final [expression] [output] := by
+  have memberAnnotations : ∀ (expressions : List ClosLang.Exp) (expression : ClosLang.Exp),
+      expression ∈ expressions → everyFnLocationSome expressions → everyFnVarsNone expressions →
+      everyFnLocationSome [expression] ∧ everyFnVarsNone [expression] := by
+    intro expressions
+    induction expressions with
+    | nil => simp
+    | cons head tail ih =>
+      intro expression member locations annotations
+      simp only [List.mem_cons] at member
+      simp only [everyFnLocationSome] at locations
+      simp only [everyFnVarsNone] at annotations
+      rcases member with rfl | member
+      · exact ⟨by simpa [everyFnLocationSome] using locations.1, by simpa [everyFnVarsNone] using annotations.1⟩
+      · exact ih expression member locations.2 annotations.2
+  intro limit
+  induction limit using Nat.strong_induction_on with
+  | h limit ih =>
+    apply callsFuel_withCoveredOpenClock_structural passFuel relationFuel limit compiler ?_ ?_ evalWf
+    · intro callerClock smaller depth before after body converted traversal distinct fresh well locations annotations
+      exact ih callerClock smaller depth body converted before after traversal distinct fresh well locations annotations
+    · intro clock smaller middleG program nextKnown converted nextAllowed pass well distinct fresh locations annotations coverage
+      apply compileIncFuel_installedBelow_withCoveredOpenClock_from_cases passFuel relationFuel clock compiler nextAllowed middleG
+        (program, []) nextKnown converted pass coverage distinct fresh well
+        (fun expression _ => everyFnLocationSome [expression] ∧ everyFnVarsNone [expression])
+      · intro depth bound expression output before after member traversal
+        exact memberAnnotations program expression member locations annotations
+      · intro depth bound expression output before after traversal expressionDistinct expressionFresh beforeWf eligible
+        exact ih clock smaller depth expression output before after traversal expressionDistinct expressionFresh beforeWf eligible.1 eligible.2
 
 /-- The successful install case obtains the installed-program simulation
 from the actual incremental traversal and the oracle's location invariant.
