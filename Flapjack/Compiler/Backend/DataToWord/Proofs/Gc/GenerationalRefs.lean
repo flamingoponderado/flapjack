@@ -1,4 +1,6 @@
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.HeapWordList
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalInvariant
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PayloadSwap
 
 /-! Major collector reference-scan simulation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
@@ -102,7 +104,18 @@ theorem refScan_headRead {width : Nat} [NeZero width] (conf : Config)
       memory (p + wordSemBytesInWord * BitVec.ofNat width
         (heapLength (state.h1 ++ state.h2 ++ state.r4 ++ state.r3) + xs.length)) = .word header ∧
       domain (p + wordSemBytesInWord * BitVec.ofNat width
-        (heapLength (state.h1 ++ state.h2 ++ state.r4 ++ state.r3) + xs.length)) = true := by
+        (heapLength (state.h1 ++ state.h2 ++ state.r4 ++ state.r3) + xs.length)) = true ∧
+      let addr := p + wordSemBytesInWord * BitVec.ofNat width
+        (heapLength (state.h1 ++ state.h2 ++ state.r4 ++ state.r3) + xs.length)
+      let base := p + wordSemBytesInWord * BitVec.ofNat width (heapLength (state.h1 ++ state.h2) + xs.length)
+      let free := p + wordSemBytesInWord * BitVec.ofNat width (heapLength (state.h1 ++ state.h2))
+      SetSep.star (SetSep.star (SetSep.star (wordHeap curr state.heap conf) (Misc.wordList free xs))
+        (Misc.wordList (addr + wordSemBytesInWord) (roots.map (wordAddr conf))))
+        (SetSep.star (SetSep.one (addr, .word header))
+          (SetSep.star (SetSep.star (SetSep.star (wordHeap p (state.h1 ++ state.h2) conf) frame)
+            (wordHeap base (state.r4 ++ state.r3) conf))
+            (wordHeap (addr + wordSemBytesInWord * BitVec.ofNat width (len + 1)) (tail ++ state.r1) conf)))
+        (SetSep.fun2Set (memory, fun address => domain address = true)) := by
   have refTrue : genConf.isRef (tag, payload) = true := by
     have h := (List.all_eq_true.mp refs) (.dataElement roots len (tag, payload)) (by simp [pending])
     simpa [isRefElement] using h
@@ -130,15 +143,43 @@ theorem refScan_headRead {width : Nat} [NeZero width] (conf : Config)
       SetSep.star (SetSep.star (wordHeap base (before ++ .dataElement roots len (tag, payload) :: after) conf)
         (Misc.wordList free xs)) rest := by dsimp [rest]; ac_rfl
     rwa [reorder] at separated
-  obtain ⟨header, encoded, rootLen, bound, decoded, read, present, _⟩ :=
+  obtain ⟨header, encoded, rootLen, bound, decoded, read, present, cell⟩ :=
     refScan_dataCell conf before after roots len tag payload base free xs memory domain rest mutable arrangement
   have address : base + wordSemBytesInWord * BitVec.ofNat width (heapLength before) =
       p + wordSemBytesInWord * BitVec.ofNat width
         (heapLength (state.h1 ++ state.h2 ++ state.r4 ++ state.r3) + xs.length) := by
     simp only [base, before, heapLength_append, BitVec.ofNat_add, BitVec.mul_add]
     ac_rfl
-  exact ⟨header, encoded, rootLen, bound, decoded, by simpa [address] using read,
-    by simpa [address] using present⟩
+  refine ⟨header, encoded, rootLen, bound, decoded, by simpa [address] using read,
+    by simpa [address] using present, ?_⟩
+  let addr := base + wordSemBytesInWord * BitVec.ofNat width (heapLength before)
+  have rearranged : SetSep.star (SetSep.star (SetSep.star (wordHeap curr state.heap conf)
+      (Misc.wordList free xs)) (Misc.wordList (addr + wordSemBytesInWord) (roots.map (wordAddr conf))))
+      (SetSep.star (SetSep.one (addr, .word header))
+        (SetSep.star (SetSep.star (SetSep.star (wordHeap p (state.h1 ++ state.h2) conf) frame)
+          (wordHeap base before conf))
+          (wordHeap (addr + wordSemBytesInWord * BitVec.ofNat width (len + 1)) after conf)))
+      (SetSep.fun2Set (memory, fun address => domain address = true)) := by
+    change SetSep.star (SetSep.star (Misc.wordList free xs)
+      (Misc.wordList (addr + wordSemBytesInWord) (roots.map (wordAddr conf))))
+      (SetSep.star (SetSep.one (addr, .word header))
+        (SetSep.star (SetSep.star rest (wordHeap base before conf))
+          (wordHeap (addr + wordSemBytesInWord * BitVec.ofNat width (len + 1)) after conf))) _ at cell
+    have reorder : SetSep.star (SetSep.star (Misc.wordList free xs)
+        (Misc.wordList (addr + wordSemBytesInWord) (roots.map (wordAddr conf))))
+        (SetSep.star (SetSep.one (addr, .word header))
+          (SetSep.star (SetSep.star rest (wordHeap base before conf))
+            (wordHeap (addr + wordSemBytesInWord * BitVec.ofNat width (len + 1)) after conf))) =
+      SetSep.star (SetSep.star (SetSep.star (wordHeap curr state.heap conf)
+        (Misc.wordList free xs)) (Misc.wordList (addr + wordSemBytesInWord) (roots.map (wordAddr conf))))
+        (SetSep.star (SetSep.one (addr, .word header))
+          (SetSep.star (SetSep.star (SetSep.star (wordHeap p (state.h1 ++ state.h2) conf) frame)
+            (wordHeap base before conf))
+            (wordHeap (addr + wordSemBytesInWord * BitVec.ofNat width (len + 1)) after conf))) := by
+      dsimp [rest]
+      ac_rfl
+    rwa [reorder] at cell
+  simpa only [addr, address, base, free, before, after] using rearranged
 
 /-- A nonempty reference segment begins strictly before the end of the
 original heap. This arithmetic fact factors the nonempty scan case. -/
@@ -223,7 +264,7 @@ theorem refScan_wordStep {width : Nat} [NeZero width] (conf : Config)
        let (final, i2, pa2, ib2, pb2, memory2, c2) := wordGenGcMoveRefs conf (k - 1)
         (next, last, i1, pa1, ib1, pb1, curr, memory1, domain)
        (final, i2, pa2, ib2, pb2, memory2, c1 && c2)) := by
-  obtain ⟨header, _, _, _, decoded, read, present⟩ :=
+  obtain ⟨header, _, _, _, decoded, read, present, _⟩ :=
     refScan_headRead conf genConf state roots len tag payload tail curr p xs memory domain frame
       pending refClass refs separated
   have notLast := refScan_addresses_ne state _ tail p xs.length pending invariant bytesBound good
@@ -231,6 +272,187 @@ theorem refScan_wordStep {width : Nat} [NeZero width] (conf : Config)
   dsimp only
   rw [wordGenGcMoveRefs, if_neg notLast, if_neg nonzero]
   simp only [read, present, wordSemIsWordLoc, wordSemTheWord, Bool.true_and, decoded]
+
+/-- Run the established major-collector root-list simulation on the first
+reference payload while retaining all surrounding scan regions in the frame.
+This is local factoring of the nonempty reference-scan proof. -/
+theorem refScan_moveRoots {width : Nat} [NeZero width] (conf : Config)
+    (genConf : GenGc.Config (HeapTag × List (WordLocW width)))
+    (state middle : GcState (WordLocW width) (HeapTag × List (WordLocW width)))
+    (roots moved : List (HeapAddress (WordLocW width))) (len : Nat) (tag : HeapTag)
+    (payload : List (WordLocW width))
+    (tail : List (HeapElement (WordLocW width) (HeapTag × List (WordLocW width))))
+    (curr p k1 i1 pa1 ib1 pb1 : BitVec width) (xs : List (WordLocW width))
+    (memory memory1 : BitVec width → WordLocW width) (domain : BitVec width → Bool)
+    (frame : ((BitVec width × WordLocW width) → Prop) → Prop) (c1 : Bool)
+    (pending : state.r2 = .dataElement roots len (tag, payload) :: tail)
+    (abstractRun : GenGc.gcMoveList genConf state roots = (moved, middle)) (middleOk : middle.ok = true)
+    (heapBound : heapLength state.heap ≤ 2 ^ width / 2 ^ shiftLength conf)
+    (refClass : ∀ t r, genConf.isRef (t, r) = true ↔ isMutTag t) (lenBound : conf.lenSize + 5 ≤ width)
+    (refs : (state.r4 ++ state.r3 ++ state.r2 ++ state.r1).all (isRefElement genConf.isRef) = true)
+    (separated : SetSep.star (SetSep.star (wordHeap curr state.heap conf) (wordHeapParts conf p state xs)) frame
+      (SetSep.fun2Set (memory, fun address => domain address = true)))
+    (length : xs.length = state.n) (good : goodDimindex width)
+    (wordRun : wordGenGcMoveList conf
+      (p + wordSemBytesInWord * BitVec.ofNat width
+          (heapLength (state.h1 ++ state.h2 ++ state.r4 ++ state.r3) + xs.length) + wordSemBytesInWord,
+       BitVec.ofNat width roots.length, BitVec.ofNat width state.a,
+       p + wordSemBytesInWord * BitVec.ofNat width (heapLength (state.h1 ++ state.h2)),
+       BitVec.ofNat width (state.a + state.n),
+       p + wordSemBytesInWord * BitVec.ofNat width (heapLength (state.h1 ++ state.h2) + state.n),
+       curr, memory, domain) = (k1, i1, pa1, ib1, pb1, memory1, c1)) :
+    ∃ (header : BitVec width)
+      (left right : List (HeapElement (WordLocW width) (HeapTag × List (WordLocW width))))
+      (xs1 : List (WordLocW width)),
+      wordPayload roots len tag payload conf = (header, roots.map (wordAddr conf), true) ∧
+      roots.length = len ∧ middle.h2 = state.h2 ++ left ∧ middle.r4 = right ++ state.r4 ∧
+      (let addr := p + wordSemBytesInWord * BitVec.ofNat width
+          (heapLength (state.h1 ++ state.h2 ++ state.r4 ++ state.r3) + xs.length)
+       let base := p + wordSemBytesInWord * BitVec.ofNat width (heapLength (state.h1 ++ state.h2) + xs.length)
+       let free := p + wordSemBytesInWord * BitVec.ofNat width (heapLength (state.h1 ++ state.h2))
+       let rootFrame := SetSep.star (SetSep.one (addr, .word header))
+         (SetSep.star (SetSep.star (SetSep.star (wordHeap p (state.h1 ++ state.h2) conf) frame)
+           (wordHeap base (state.r4 ++ state.r3) conf))
+           (wordHeap (addr + wordSemBytesInWord * BitVec.ofNat width (len + 1)) (tail ++ state.r1) conf))
+       SetSep.star (SetSep.star (SetSep.star (SetSep.star (SetSep.star (wordHeap curr middle.heap conf)
+         (wordHeap free left conf)) (wordHeap pb1 right conf)) (Misc.wordList pa1 xs1))
+         (Misc.wordList (addr + wordSemBytesInWord) (moved.map (wordAddr conf)))) rootFrame
+         (SetSep.fun2Set (memory1, fun address => domain address = true)) ∧
+       heapLength middle.heap = heapLength state.heap ∧ c1 = true ∧ i1 = BitVec.ofNat width middle.a ∧
+       ib1 = BitVec.ofNat width (middle.a + middle.n) ∧ middle.n = xs1.length ∧
+       state.n = heapLength left + middle.n + heapLength right ∧
+       k1 = (addr + wordSemBytesInWord) + BitVec.ofNat width roots.length * wordSemBytesInWord ∧
+       pa1 = free + wordSemBytesInWord * BitVec.ofNat width (heapLength left) ∧
+       pb1 = pa1 + wordSemBytesInWord * BitVec.ofNat width middle.n ∧
+       (right ++ middle.r3 ++ middle.r2 ++ middle.r1).all (isRefElement genConf.isRef) = true) := by
+  obtain ⟨header, encoded, rootsLen, rootsBound, _, _, _, lists⟩ :=
+    refScan_headRead conf genConf state roots len tag payload tail curr p xs memory domain frame
+      pending refClass refs separated
+  obtain ⟨left, right, leftEq, rightEq, clearRun⟩ :=
+    gcMoveList_withNilLemma genConf roots moved state middle abstractRun middleOk
+  have clearRefs : (({ state with h2 := [], r4 := [] }).r4 ++
+      ({ state with h2 := [], r4 := [] }).r3 ++ ({ state with h2 := [], r4 := [] }).r2 ++
+      ({ state with h2 := [], r4 := [] }).r1).all (isRefElement genConf.isRef) = true := by
+    simp only at refs ⊢
+    simp only [List.nil_append, List.all_append, Bool.and_eq_true] at refs ⊢
+    exact ⟨⟨refs.1.1.2, refs.1.2⟩, refs.2⟩
+  have rootBound : roots.length < 2 ^ width := by
+    have widthPos : 0 < width := Nat.pos_of_ne_zero (NeZero.ne width)
+    have exponent : width - 4 < width := by omega
+    have boundPow : 2 ^ (width - 4) < 2 ^ width := Nat.pow_lt_pow_right (by decide : 1 < 2) exponent
+    omega
+  let addr := p + wordSemBytesInWord * BitVec.ofNat width
+    (heapLength (state.h1 ++ state.h2 ++ state.r4 ++ state.r3) + xs.length)
+  let base := p + wordSemBytesInWord * BitVec.ofNat width (heapLength (state.h1 ++ state.h2) + xs.length)
+  let free := p + wordSemBytesInWord * BitVec.ofNat width (heapLength (state.h1 ++ state.h2))
+  let rootFrame := SetSep.star (SetSep.one (addr, WordLocW.word header))
+    (SetSep.star (SetSep.star (SetSep.star (wordHeap p (state.h1 ++ state.h2) conf) frame)
+      (wordHeap base (state.r4 ++ state.r3) conf))
+      (wordHeap (addr + wordSemBytesInWord * BitVec.ofNat width (len + 1)) (tail ++ state.r1) conf))
+  have freeEnd : free + wordSemBytesInWord * BitVec.ofNat width state.n =
+      p + wordSemBytesInWord * BitVec.ofNat width (heapLength (state.h1 ++ state.h2) + state.n) := by
+    simp only [free, BitVec.ofNat_add, BitVec.mul_add, BitVec.add_assoc]
+  have wordRun' : wordGenGcMoveList conf
+      (addr + wordSemBytesInWord, BitVec.ofNat width roots.length, BitVec.ofNat width state.a, free,
+       BitVec.ofNat width (state.a + state.n), free + wordSemBytesInWord * BitVec.ofNat width state.n,
+       curr, memory, domain) = (k1, i1, pa1, ib1, pb1, memory1, c1) := by
+    rw [freeEnd]
+    exact wordRun
+  obtain ⟨xs1, memoryResult, heapLen, success, indexEq, limitEq, xsLen, accounting, lastEq, paEq, pbEq, refsOut⟩ :=
+    wordGenGcMoveList_thm conf genConf roots { state with h2 := [], r4 := [] }
+      { middle with h2 := left, r4 := right } moved curr free (addr + wordSemBytesInWord) k1 i1 pa1 ib1 pb1
+      xs memory memory1 domain rootFrame c1 clearRun middleOk rfl rfl heapBound refClass lenBound lists wordRun'
+      clearRefs length good rootBound
+  exact ⟨header, left, right, xs1, encoded, rootsLen, leftEq, rightEq,
+    memoryResult, heapLen, success, indexEq, limitEq, xsLen, accounting, lastEq, paEq, pbEq, refsOut⟩
+
+/-- The post-root-move state restores the reference-scan length and
+classification invariants for the recursive call. This is local factoring of
+the source proof's nonempty reference case. -/
+theorem refScan_advanceInvariant {α β : Type} (conf : GenGc.Config β)
+    (state middle : GcState α β) (roots moved : List (HeapAddress α))
+    (len : Nat) (payload : β) (tail right : List (HeapElement α β))
+    (pending : state.r2 = .dataElement roots len payload :: tail)
+    (abstractRun : GenGc.gcMoveList conf state roots = (moved, middle)) (middleOk : middle.ok = true)
+    (rightEq : middle.r4 = right ++ state.r4) (invariant : genLenInv state)
+    (refs : (state.r4 ++ state.r3 ++ state.r2 ++ state.r1).all (isRefElement conf.isRef) = true)
+    (newRefs : (right ++ middle.r3 ++ middle.r2 ++ middle.r1).all (isRefElement conf.isRef) = true) :
+    let next := { middle with r2 := tail, r3 := middle.r3 ++ [.dataElement moved len payload] }
+    genLenInv next ∧ next.h1 = state.h1 ∧ next.r2 = tail ∧
+      (next.r4 ++ next.r3 ++ next.r2 ++ next.r1).all (isRefElement conf.isRef) = true := by
+  obtain ⟨h1Eq, r1Eq, r2Eq, r3Eq⟩ := genMoveList_const conf roots moved state middle abstractRun
+  have midInv := genMoveList_lenInv conf roots moved state middle abstractRun middleOk invariant
+  have headRef : conf.isRef payload = true := by
+    have h := (List.all_eq_true.mp refs) (.dataElement roots len payload) (by simp [pending])
+    simpa [isRefElement] using h
+  have oldRefs : state.r4.all (isRefElement conf.isRef) = true := by
+    apply List.all_eq_true.mpr
+    intro element member
+    exact (List.all_eq_true.mp refs) element (by simp [member])
+  constructor
+  · simp only [genLenInv] at midInv ⊢
+    simp [heapLength, List.map_append, List.sum_append, elLength, r2Eq, pending] at midInv ⊢
+    omega
+  constructor
+  · exact h1Eq
+  constructor
+  · rfl
+  · simp only [rightEq, List.all_append, List.all_cons, isRefElement, Bool.and_eq_true] at newRefs oldRefs ⊢
+    simp only [r2Eq, pending, List.all_cons, isRefElement, Bool.and_eq_true] at newRefs
+    aesop
+
+/-- After moving a reference's roots, the same header and the rewritten root
+words reconstruct its exact heap-element assertion. This is local factoring
+of the nonempty reference-scan proof. -/
+theorem refScan_movedElement {width : Nat} [NeZero width] (conf : Config)
+    (genConf : GenGc.Config (HeapTag × List (WordLocW width)))
+    (state middle : GcState (WordLocW width) (HeapTag × List (WordLocW width)))
+    (roots moved : List (HeapAddress (WordLocW width))) (len : Nat) (tag : HeapTag)
+    (payload : List (WordLocW width)) (header addr : BitVec width)
+    (abstractRun : GenGc.gcMoveList genConf state roots = (moved, middle))
+    (encoded : wordPayload roots len tag payload conf = (header, roots.map (wordAddr conf), true))
+    (rootsLen : roots.length = len) (bound : roots.length < 2 ^ (width - 4))
+    (decoded : decodeLength conf header = BitVec.ofNat width roots.length) :
+    wordEl addr (.dataElement moved len (tag, payload)) conf =
+      SetSep.star (SetSep.one (addr, WordLocW.word header))
+        (Misc.wordList (addr + wordSemBytesInWord) (moved.map (wordAddr conf))) := by
+  have movedLen := GenGc.gcMoveList_length genConf roots moved state middle abstractRun
+  have encodedMoved : wordPayload moved len tag payload conf = (header, moved.map (wordAddr conf), true) := by
+    have original : wordPayload roots roots.length tag payload conf =
+        (header, roots.map (wordAddr conf), true) := by simpa only [rootsLen] using encoded
+    simpa only [rootsLen] using wordPayload_swap roots moved tag payload conf header original movedLen
+  funext cells
+  apply propext
+  simp only [wordEl, encodedMoved, StackRemove.WordListExists.starCond, Misc.wordList,
+    List.length_map, movedLen, bound, decoded, and_self, and_true]
+  rfl
+
+/-- Address equations aligning the newly copied regions with the remaining
+reference heap after one root-list move. This is local arithmetic factoring
+for the recursive reference-scan assertion. -/
+theorem refScan_regionAddresses {width : Nat} [NeZero width] {α β : Type}
+    (state middle : GcState α β) (left right : List (HeapElement α β))
+    (p pa1 pb1 : BitVec width) (xsLength : Nat)
+    (freeEq : pa1 = p + wordSemBytesInWord * BitVec.ofNat width (heapLength (state.h1 ++ state.h2)) +
+      wordSemBytesInWord * BitVec.ofNat width (heapLength left))
+    (refsEq : pb1 = pa1 + wordSemBytesInWord * BitVec.ofNat width middle.n)
+    (accounting : state.n = heapLength left + middle.n + heapLength right)
+    (length : xsLength = state.n) :
+    pa1 = p + wordSemBytesInWord * BitVec.ofNat width (heapLength (state.h1 ++ state.h2 ++ left)) ∧
+    pb1 = p + wordSemBytesInWord * BitVec.ofNat width (heapLength (state.h1 ++ state.h2 ++ left) + middle.n) ∧
+    pb1 + wordSemBytesInWord * BitVec.ofNat width (heapLength right) =
+      p + wordSemBytesInWord * BitVec.ofNat width (heapLength (state.h1 ++ state.h2) + xsLength) := by
+  constructor
+  · rw [freeEq]
+    simp only [heapLength_append, BitVec.ofNat_add, BitVec.mul_add]
+    ac_rfl
+  constructor
+  · rw [refsEq, freeEq]
+    simp only [heapLength_append, BitVec.ofNat_add, BitVec.mul_add]
+    ac_rfl
+  · rw [refsEq, freeEq, length, accounting]
+    simp only [BitVec.ofNat_add, BitVec.mul_add]
+    ac_rfl
 
 /-- Empty-reference case of the original reference-scan simulation. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "word_gen_gc_move_refs_thm"
