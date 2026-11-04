@@ -2917,6 +2917,8 @@ import Flapjack.Compiler.Backend.WordRemove.Proofs.CompileState
 import Flapjack.Compiler.Backend.WordRemove.Proofs.Correct
 import Flapjack.Compiler.Backend.DataToWord.Config
 import Flapjack.Compiler.Backend.WordGcFunctions
+import Flapjack.Compiler.Backend.CopyingGc
+import Flapjack.Test.CopyingGcParity
 import Flapjack.Compiler.Backend.WordGcFunctions.Roots
 import Flapjack.Compiler.Backend.WordGcFunctions.HasFpOps
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.InitStoreOk

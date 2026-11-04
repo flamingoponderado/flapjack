@@ -1,4 +1,5 @@
 import Flapjack.Test.DataToWordWordEqualityParity
+import Flapjack.Test.CopyingGcParity
 import Flapjack.Test.DataToWordValueEqualityParity
 import Flapjack.Test.DataToWordWordMemoryEqualityParity
 import Flapjack.Test.DataToWordMultiwordCompareParity

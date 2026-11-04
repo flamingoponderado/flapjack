@@ -220,6 +220,12 @@ regression evidence, not a proof of compiler equivalence.
 the collector root merge, its length and stack reconstruction theorems, preservation of both stack relations by decoding, the filtered encoded-root correspondence, root traversal and store-level filtering/merge theorems for all collector kinds, preserved store fields, the decoded flat-root pairing theorem, and validity of projected heap addresses,
 global default, handler-location, architecture/heap-limit, polymorphic environment-join, and stack-flattening definitions and append theorem. Regenerate with
 `HOL_PROBE_ONLY=data_to_word_gc_stack_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`copying_gc_probe.out` captures the original polymorphic copying-collector
+definitions and evaluations for repeated pointers, a data-only collection,
+and a collection that scans a copied pointer target.
+`Flapjack/Test/CopyingGcParity.lean` kernel-replays those examples; they are
+finite regression evidence, not a collector-correctness proof.
 The capture supports source review; it is not a cross-language proof.
 
 `data_to_word_space_control_probe.out` captures typed literal HOL replays of

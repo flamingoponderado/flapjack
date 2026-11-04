@@ -164,6 +164,21 @@ theorem heapLookup_less {α β : Type} (heap : List (HeapElement α β)) (n : Na
   simp only [heapLength, List.map_cons, List.sum_cons]
   cases x <;> simp [elLength] <;> omega
 
+/-- Replace the heap element at an exact boundary with a forwarding pointer.
+The status is false for an invalid address or a non-data element. -/
+@[hol "cakeml/compiler/backend/gc/gc_sharedScript.sml" "gc_forward_ptr_def"]
+def gcForwardPtr {α β : Type} (offset : Nat) :
+    List (HeapElement α β) → Nat → α → Bool → List (HeapElement α β) × Bool
+  | [], _, _, _ => ([], false)
+  | x :: xs, ptr, value, ok =>
+      if offset = 0 then
+        (.forwardPointer ptr value (elLength x - 1) :: xs,
+          (match x with | .dataElement .. => true | _ => false) && ok)
+      else if offset < elLength x then (x :: xs, false)
+      else
+        let (ys, ok') := gcForwardPtr (offset - elLength x) xs ptr value ok
+        (x :: ys, ok')
+
 end Backend
 end Compiler
 end Flapjack

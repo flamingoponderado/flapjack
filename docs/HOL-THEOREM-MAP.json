@@ -1,5 +1,45 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "gc_forward_ptr_def",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared.lean",
+  "lean_name": "gcForwardPtr",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source lines 278-286 and gc_forward_ptr_typed in copying_gc_probe.out: independent heap-address and payload carriers are retained, exact offset and short-element failure branches agree, and a forwarding entry records elLength minus one while preserving the input status only for data elements."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/copying_gcScript.sml",
+  "hol_name": "gc_move_def",
+  "lean_path": "Flapjack/Compiler/Backend/CopyingGc.lean",
+  "lean_name": "gcMove",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source lines 12-28 and gc_move_typed: independently polymorphic address and heap-payload carriers, data, fresh-copy, forwarded and failure clauses, result order and all space/status checks match. The failure address uses holArb at HeapAddress alpha, with an inhabitation witness obtained from the already-present pointer payload; no new premise is introduced. The captured repeated-pointer evaluation is replayed in Lean."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/copying_gcScript.sml",
+  "hol_name": "gc_move_list_def",
+  "lean_path": "Flapjack/Compiler/Backend/CopyingGc.lean",
+  "lean_name": "gcMoveList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source lines 30-38 and gc_move_list_typed: the same two independent carriers, state tuple order, empty case and left-to-right recursive move are retained. The repeated-pointer case is captured from HOL and kernel-replayed in Lean."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/copying_gcScript.sml",
+  "hol_name": "gc_move_loop_def",
+  "lean_path": "Flapjack/Compiler/Backend/CopyingGc.lean",
+  "lean_name": "gcMoveLoop",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source lines 40-53 and gc_move_loop_typed: empty and overflow cases, data-only scan, root move, unchanged first pending element check, updated scan prefix and tail match. The head? equality combined with the nonempty check has the same Boolean result as HOL's guarded HD equality, including empty lists. The well-founded measure is limit minus scanned heap length, as in HOL."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/copying_gcScript.sml",
+  "hol_name": "full_gc_def",
+  "lean_path": "Flapjack/Compiler/Backend/CopyingGc.lean",
+  "lean_name": "fullGc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source lines 55-64 and full_gc_typed: polymorphic roots and heap, the initial heap-length check, move and scan calls, and all six final status checks and output fields match. The data-only example is captured from HOL and kernel-replayed in Lean; this definition does not prove collector correctness."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "loc_ok_word_addr",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/RootsValid.lean",
