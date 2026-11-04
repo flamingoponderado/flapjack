@@ -15156,6 +15156,144 @@ theorem growingExprsSimFromBelowWithCoveredOpenClock_of_forall₂ {C F : Type} (
                   combinedExt, combinedAllowed, finalDisjoint, finalAvoids, targetOuter, .cons grownValue tailRel,
                   finalStates, finalWf, finalReady, finalCompiler, targetFinalCompiler, finalOracle, combinedGrowth⟩
 
+
+/-- Covered singleton simulations compose while retaining source result
+well-formedness at the actual final compiler state and code. This is
+Flapjack-specific infrastructure. -/
+theorem growingExprsSimFromBelowWithCoveredOpenClockAndResultWf_of_forall₂ {C F : Type} (passFuel relationFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (required : State) {sourceExps targetExps : List ClosLang.Exp}
+    (sims : List.Forall₂ (fun source target =>
+      GrowingExprsSimFromBelowWithCoveredOpenClockAndResultWf (F := F) passFuel relationFuel limit compiler required [source] [target])
+      sourceExps targetExps) :
+    GrowingExprsSimFromBelowWithCoveredOpenClockAndResultWf (F := F) passFuel relationFuel limit compiler required sourceExps targetExps := by
+  induction sims with
+  | nil =>
+    intro g _ allowed sourceEnv targetEnv source target result final _ clock run _ _ _ stateWf states ready
+      disjoint avoids sourceCompiler targetCompiler oracle
+    have eq : result = .val [] ∧ final = source := by simpa [evaluate] using run.symm
+    obtain ⟨rfl, rfl⟩ := eq
+    exact ⟨0, g, allowed, .val [], target, stateExtends_refl g ready.well.2, Set.Subset.rfl,
+      disjoint, avoids, by simp [evaluate], .nil, .nil, states, stateWf, ready, sourceCompiler,
+      targetCompiler, oracle, fun _ _ h => h⟩
+  | @cons sourceHead targetHead sourceTail targetTail headSim tailSims tailIH =>
+    intro g requiredGrowth allowed sourceEnv targetEnv source target result final coverage clock run notType envs envWf stateWf states ready
+      disjoint avoids sourceCompiler targetCompiler oracle
+    have headEnv : EnvRelFuel relationFuel g allowed target.code sourceEnv targetEnv 0 [(0, targetHead)] := by
+      apply envRelFuel_subset envs
+      intro item member
+      simp only [List.mem_singleton] at member
+      subst item
+      simp
+    have headCoverage : ∀ loc ∈ codeLocations [sourceHead], ¬ sptDomain required.1 loc → loc ∈ allowed := by
+      intro loc member unknown
+      apply coverage loc ?_ unknown
+      simpa [codeLocations] using List.mem_append_left (codeLocations sourceTail) (by simpa [codeLocations] using member)
+    cases headRun : evaluate [sourceHead] sourceEnv source with
+    | mk headResult headFinal =>
+      have headSafe : headResult ≠ .err (.abort .typeError) := by
+        intro bad
+        subst headResult
+        have outer := ClosProps.evaluate_cons_error sourceHead sourceTail sourceEnv source headFinal (.abort .typeError) headRun
+        have eq : result = .err (.abort .typeError) := by rw [run] at outer; exact (Prod.mk.inj outer).1
+        exact notType eq
+      obtain ⟨headExtra, headG, headAllowed, targetHeadResult, targetHeadFinal, headExt, headAllowedGrowth,
+        headDisjoint, headAvoids, targetHeadRun, headRel, headResultWf, headStates, headWf, headReady,
+        headCompiler, targetHeadCompiler, headOracle, headGrowth⟩ :=
+        headSim g requiredGrowth allowed sourceEnv targetEnv source target headResult headFinal headCoverage clock headRun headSafe
+          headEnv envWf stateWf states ready disjoint avoids sourceCompiler targetCompiler oracle
+      cases headResult with
+      | err error =>
+        cases targetHeadResult with
+        | val values => simp [resultRel] at headRel
+        | err targetError =>
+          have eq : result = .err error ∧ final = headFinal := by
+            have outer := ClosProps.evaluate_cons_error sourceHead sourceTail sourceEnv source headFinal error headRun
+            rw [run] at outer
+            exact Prod.mk.inj outer
+          obtain ⟨rfl, rfl⟩ := eq
+          exact ⟨headExtra, headG, headAllowed, .err targetError, targetHeadFinal, headExt,
+            headAllowedGrowth, headDisjoint, headAvoids,
+            ClosProps.evaluate_cons_error targetHead targetTail targetEnv { target with clock := target.clock + headExtra }
+              targetHeadFinal targetError targetHeadRun,
+            headRel, headResultWf, headStates, headWf, headReady, headCompiler, targetHeadCompiler, headOracle, headGrowth⟩
+      | val values =>
+        obtain ⟨value, rfl⟩ := evaluate_singleton_value sourceHead sourceEnv source headFinal values headRun
+        cases targetHeadResult with
+        | err error => simp [resultRel] at headRel
+        | val targetValues =>
+          obtain ⟨targetValue, rfl⟩ := evaluate_singleton_value targetHead targetEnv
+            { target with clock := target.clock + headExtra } targetHeadFinal targetValues targetHeadRun
+          have valueRel : ValueRelFuel relationFuel headG headAllowed targetHeadFinal.code value targetValue := by
+            simpa [resultRel] using headRel
+          have valueWf : ValueWellFormedFuel relationFuel headG headAllowed targetHeadFinal.code value := by
+            cases headResultWf with
+            | cons head _ => exact head
+          have tailEnv : EnvRelFuel relationFuel g allowed target.code sourceEnv targetEnv 0
+              (targetTail.map (0, ·)) := by
+            apply envRelFuel_subset envs
+            intro item member
+            simp only [List.map_cons, List.mem_cons]
+            exact Or.inr member
+          have tailEnv' := envRelFuel_mono tailEnv headExt headAllowedGrowth headGrowth
+          have tailEnvWf := valuesWellFormedFuel_mono envWf headExt headAllowedGrowth headGrowth
+          cases tailRun : evaluate sourceTail sourceEnv headFinal with
+          | mk tailResult tailFinal =>
+            have sourceOuter := ClosProps.evaluate_cons_value sourceHead sourceTail sourceEnv source headFinal value headRun
+            rw [run, tailRun] at sourceOuter
+            have tailSafe : tailResult ≠ .err (.abort .typeError) := by
+              intro bad
+              subst tailResult
+              simp only at sourceOuter
+              exact notType (Prod.mk.inj sourceOuter).1
+            have headClock : headFinal.clock < limit := by
+              have bound := evaluate_clock_le [sourceHead] sourceEnv source
+              rw [headRun] at bound
+              exact Nat.lt_of_le_of_lt bound clock
+            have requiredHead := stateExtends_trans required g headG requiredGrowth headExt
+            have tailCoverage : ∀ loc ∈ codeLocations sourceTail, ¬ sptDomain required.1 loc → loc ∈ headAllowed := by
+              intro loc member unknown
+              apply headAllowedGrowth
+              apply coverage loc ?_ unknown
+              simpa [codeLocations] using List.mem_append_right (codeLocationsExp sourceHead) member
+            obtain ⟨tailExtra, finalG, finalAllowed, targetTailResult, targetFinal, tailExt, tailAllowedGrowth,
+              finalDisjoint, finalAvoids, targetTailRun, tailRel, tailResultWf, finalStates, finalWf, finalReady,
+              finalCompiler, targetFinalCompiler, finalOracle, tailGrowth⟩ :=
+              tailIH headG requiredHead headAllowed sourceEnv targetEnv headFinal targetHeadFinal tailResult tailFinal
+                tailCoverage headClock tailRun tailSafe tailEnv' tailEnvWf headWf headStates headReady headDisjoint headAvoids
+                headCompiler targetHeadCompiler headOracle
+            have shiftedHead := (evaluate_addClock (C := C) (F := F)).1 [targetHead] targetEnv
+              { target with clock := target.clock + headExtra } targetHeadFinal (.val [targetValue]) tailExtra
+              targetHeadRun (by simp)
+            have targetOuter := ClosProps.evaluate_cons_value targetHead targetTail targetEnv
+              { target with clock := target.clock + (headExtra + tailExtra) }
+              { targetHeadFinal with clock := targetHeadFinal.clock + tailExtra } targetValue
+              (by simpa [Nat.add_assoc] using shiftedHead)
+            rw [targetTailRun] at targetOuter
+            have combinedExt := stateExtends_trans g headG finalG headExt tailExt
+            have combinedAllowed := Set.Subset.trans headAllowedGrowth tailAllowedGrowth
+            have combinedGrowth : ∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry :=
+              fun key entry found => tailGrowth key entry (headGrowth key entry found)
+            cases tailResult with
+            | err error =>
+              cases targetTailResult with
+              | val vs => simp [resultRel] at tailRel
+              | err targetError =>
+                obtain ⟨rfl, rfl⟩ := Prod.mk.inj sourceOuter
+                exact ⟨headExtra + tailExtra, finalG, finalAllowed, .err targetError, targetFinal,
+                  combinedExt, combinedAllowed, finalDisjoint, finalAvoids, targetOuter, tailRel, tailResultWf, finalStates,
+                  finalWf, finalReady, finalCompiler, targetFinalCompiler, finalOracle, combinedGrowth⟩
+            | val tailValues =>
+              cases targetTailResult with
+              | err error => simp [resultRel] at tailRel
+              | val targetTailValues =>
+                obtain ⟨rfl, rfl⟩ := Prod.mk.inj sourceOuter
+                have grownValue := valueRelFuel_mono valueRel tailExt tailAllowedGrowth tailGrowth
+                have grownWf := valueWellFormedFuel_mono valueWf tailExt tailAllowedGrowth tailGrowth
+                exact ⟨headExtra + tailExtra, finalG, finalAllowed, .val (targetValue :: targetTailValues), targetFinal,
+                  combinedExt, combinedAllowed, finalDisjoint, finalAvoids, targetOuter, .cons grownValue tailRel,
+                  .cons grownWf tailResultWf, finalStates, finalWf, finalReady, finalCompiler, targetFinalCompiler, finalOracle, combinedGrowth⟩
+
+
 /-- An open-location list simulation supplies the induction hypothesis for an
 installed program with an empty environment. -/
 theorem growingExprsSimFromBelowWithOpenClock_installedBelow {C F : Type}
@@ -15201,6 +15339,24 @@ theorem growingExprsSimFromBelowWithCoveredOpenClock_mono_state {C F : Type} (pa
   apply coverage loc member
   intro known
   exact unknown (knownReflect loc member known)
+
+
+/-- This covered traversal composition also carries well-formed source
+results at the actual final compiler state and code. This is Flapjack-specific
+infrastructure. -/
+theorem growingExprsSimFromBelowWithCoveredOpenClockAndResultWf_mono_state {C F : Type} (passFuel relationFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (smaller larger : State) (sourceExps targetExps : List ClosLang.Exp)
+    (growth : stateExtends smaller larger)
+    (knownReflect : ∀ loc ∈ codeLocations sourceExps, sptDomain larger.1 loc → sptDomain smaller.1 loc)
+    (sim : GrowingExprsSimFromBelowWithCoveredOpenClockAndResultWf (F := F) passFuel relationFuel limit compiler smaller sourceExps targetExps) :
+    GrowingExprsSimFromBelowWithCoveredOpenClockAndResultWf (F := F) passFuel relationFuel limit compiler larger sourceExps targetExps := by
+  intro g extended allowed sourceEnv targetEnv source target result final coverage
+  apply sim g (stateExtends_trans smaller larger g growth extended) allowed sourceEnv targetEnv source target result final
+  intro loc member unknown
+  apply coverage loc member
+  intro known
+  exact unknown (knownReflect loc member known)
+
 
 /-- A successful list traversal composes expression simulations that need
 their own generated pass states, using label freshness to show that each
@@ -15654,6 +15810,77 @@ theorem callsListFuel_growing_below_withCoveredOpenClock {C F : Type} (passFuel 
         · intro n bound expression output before after exprRun exprDistinct exprFresh beforeWf eligibleExpr
           exact exprIH n (by omega) expression output before after exprRun exprDistinct exprFresh beforeWf eligibleExpr
 
+
+/-- This covered traversal composition also carries well-formed source
+results at the actual final compiler state and code. This is Flapjack-specific
+infrastructure. -/
+theorem callsListFuel_growing_below_withCoveredOpenClockAndResultWf {C F : Type} (passFuel relationFuel traversalFuel limit : Nat)
+    (compiler : ClosSem.Compiler C)
+    (source target : List ClosLang.Exp) (initial final : State)
+    (run : callsListFuel traversalFuel source initial = some (target, final))
+    (distinct : (codeLocations source).Nodup) (fresh : LabelsFresh (codeLocations source) initial)
+    (initialWf : wellFormed initial) (eligible : ClosLang.Exp → State → Prop)
+    (eligibleIH : ∀ depth, depth < traversalFuel → ∀ expression output before after,
+      expression ∈ source → callsFuel depth expression before = some (output, after) → eligible expression after)
+    (exprIH : ∀ depth, depth < traversalFuel → ∀ expression output before after,
+      callsFuel depth expression before = some (output, after) →
+      (codeLocationsExp expression).Nodup → LabelsFresh (codeLocationsExp expression) before →
+      wellFormed before → eligible expression after →
+      GrowingExprsSimFromBelowWithCoveredOpenClockAndResultWf (F := F) passFuel relationFuel limit compiler after [expression] [output]) :
+    GrowingExprsSimFromBelowWithCoveredOpenClockAndResultWf (F := F) passFuel relationFuel limit compiler final source target := by
+  apply growingExprsSimFromBelowWithCoveredOpenClockAndResultWf_of_forall₂ passFuel relationFuel limit compiler final
+  induction traversalFuel generalizing source target initial final with
+  | zero =>
+    cases source with
+    | nil => simp [callsListFuel] at run; obtain ⟨rfl, _⟩ := run; exact .nil
+    | cons e es => simp [callsListFuel] at run
+  | succ depth ih =>
+    cases source with
+    | nil => simp [callsListFuel] at run; obtain ⟨rfl, _⟩ := run; exact .nil
+    | cons e es =>
+      simp only [callsListFuel, Bind.bind, Option.bind_eq_some_iff, Pure.pure,
+        Option.some.injEq, Prod.mk.injEq] at run
+      obtain ⟨⟨e', middle⟩, headRun, ⟨es', next⟩, tailRun, rfl, rfl⟩ := run
+      have allDistinct : (codeLocationsExp e ++ codeLocations es).Nodup := by
+        simpa [codeLocations] using distinct
+      have allFresh : LabelsFresh (codeLocationsExp e ++ codeLocations es) initial := by
+        simpa [codeLocations] using fresh
+      have headDistinct := List.Nodup.of_append_left allDistinct
+      have tailDistinct := List.Nodup.of_append_right allDistinct
+      have headFresh : LabelsFresh (codeLocationsExp e) initial := by
+        intro loc member
+        exact allFresh loc (List.mem_append_left _ member)
+      have middleFresh : LabelsFresh (codeLocations es) middle := by
+        have labels := callsFuel_labelsBound depth e initial middle e' headRun
+        intro loc member labelMember
+        rcases labels (loc + 1) labelMember with old | ⟨origin, originMember, equal⟩
+        · exact allFresh loc (List.mem_append_right _ member) old
+        · have unequal := (List.nodup_append.mp allDistinct).2.2 origin originMember loc member
+          exact unequal (Nat.add_right_cancel equal.symm)
+      have singletonRun : callsListFuel (depth + 1) [e] initial = some ([e'], middle) := by
+        simp [callsListFuel, headRun]
+      have middleWf := callsListFuel_wellFormed (depth + 1) [e] initial middle [e'] singletonRun
+        (by simpa [codeLocations] using headDistinct) (by simpa [codeLocations] using headFresh) initialWf
+      have boundedTail : callsListBounded depth es middle = some (es', next) := by
+        simp [callsListBounded, tailRun]
+      have tailExt := callsListBounded_stateExtends depth es middle next es' boundedTail tailDistinct middleFresh middleWf.2
+      refine List.Forall₂.cons ?_ ?_
+      · apply growingExprsSimFromBelowWithCoveredOpenClockAndResultWf_mono_state passFuel relationFuel limit compiler middle next [e] [e'] tailExt
+        · intro loc member known
+          have headMember : loc ∈ codeLocationsExp e := by simpa [codeLocations] using member
+          have outside : loc ∉ codeLocations es := by
+            intro tailMember
+            exact (List.nodup_append.mp allDistinct).2.2 loc headMember loc tailMember rfl
+          exact callsListBounded_known_reflect_outside depth es es' middle next boundedTail (wellFormed_weak middle middleWf) loc outside known
+        · exact exprIH depth (by omega) e e' initial middle headRun headDistinct headFresh initialWf
+            (eligibleIH depth (by omega) e e' initial middle (by simp) headRun)
+      · apply ih es es' middle next tailRun tailDistinct middleFresh middleWf
+        · intro n bound expression output before after member exprRun
+          exact eligibleIH n (by omega) expression output before after (by simp [member]) exprRun
+        · intro n bound expression output before after exprRun exprDistinct exprFresh beforeWf eligibleExpr
+          exact exprIH n (by omega) expression output before after exprRun exprDistinct exprFresh beforeWf eligibleExpr
+
+
 /-- A list traversal follows from the structural induction for its members.
 This is Flapjack-specific simulation infrastructure. -/
 theorem callsListFuel_withCoveredOpenClock_from_induction {C F : Type}
@@ -15708,6 +15935,44 @@ theorem callsListFuel_withCoveredOpenClock_from_annotated_induction {C F : Type}
     exact memberAnnotations source expression member locations annotations
   · intro depth bound expression output before after expressionRun expressionDistinct expressionFresh beforeWf eligible
     exact structIH depth bound expression output before after expressionRun expressionDistinct expressionFresh beforeWf eligible.1 eligible.2
+
+
+/-- This covered traversal composition also carries well-formed source
+results at the actual final compiler state and code. This is Flapjack-specific
+infrastructure. -/
+theorem callsListFuel_withCoveredOpenClockAndResultWf_from_annotated_induction {C F : Type}
+    (passFuel relationFuel traversalFuel limit : Nat) (compiler : ClosSem.Compiler C)
+    (source target : List ClosLang.Exp) (initial final : State)
+    (run : callsListFuel traversalFuel source initial = some (target, final))
+    (distinct : (codeLocations source).Nodup) (fresh : LabelsFresh (codeLocations source) initial)
+    (initialWf : wellFormed initial) (locations : everyFnLocationSome source) (annotations : everyFnVarsNone source)
+    (structIH : ∀ depth, depth < traversalFuel → ∀ expression output before after,
+      callsFuel depth expression before = some (output, after) →
+      (codeLocationsExp expression).Nodup → LabelsFresh (codeLocationsExp expression) before → wellFormed before →
+      everyFnLocationSome [expression] → everyFnVarsNone [expression] →
+      GrowingExprsSimFromBelowWithCoveredOpenClockAndResultWf (F := F) passFuel relationFuel limit compiler after [expression] [output]) :
+    GrowingExprsSimFromBelowWithCoveredOpenClockAndResultWf (F := F) passFuel relationFuel limit compiler final source target := by
+  have memberAnnotations : ∀ (expressions : List ClosLang.Exp) (expression : ClosLang.Exp),
+      expression ∈ expressions → everyFnLocationSome expressions → everyFnVarsNone expressions →
+      everyFnLocationSome [expression] ∧ everyFnVarsNone [expression] := by
+    intro expressions
+    induction expressions with
+    | nil => simp
+    | cons head tail ih =>
+      intro expression member locations annotations
+      simp only [List.mem_cons] at member
+      simp only [everyFnLocationSome] at locations
+      simp only [everyFnVarsNone] at annotations
+      rcases member with rfl | member
+      · exact ⟨by simpa [everyFnLocationSome] using locations.1, by simpa [everyFnVarsNone] using annotations.1⟩
+      · exact ih expression member locations.2 annotations.2
+  apply callsListFuel_growing_below_withCoveredOpenClockAndResultWf passFuel relationFuel traversalFuel limit compiler source target
+    initial final run distinct fresh initialWf (fun expression _ => everyFnLocationSome [expression] ∧ everyFnVarsNone [expression])
+  · intro depth bound expression output before after member expressionRun
+    exact memberAnnotations source expression member locations annotations
+  · intro depth bound expression output before after expressionRun expressionDistinct expressionFresh beforeWf eligible
+    exact structIH depth bound expression output before after expressionRun expressionDistinct expressionFresh beforeWf eligible.1 eligible.2
+
 
 /-- Two sequential disjoint traversals yield simulations at their common final
 state. Later compilation cannot make a location from the first piece newly
@@ -16272,6 +16537,93 @@ theorem callsListBounded_growing_below_withCoveredOpenClock {C F : Type} (passFu
       exact eligibleIH depth (by omega) expression output before after member expressionRun
     · intro depth bound expression output before after expressionRun expressionDistinct expressionFresh beforeWf eligibleExpr
       exact exprIH depth (by omega) expression output before after expressionRun expressionDistinct expressionFresh beforeWf eligibleExpr
+
+
+/-- This covered traversal composition also carries well-formed source
+results at the actual final compiler state and code. This is Flapjack-specific
+infrastructure. -/
+theorem callsListBounded_growing_below_withCoveredOpenClockAndResultWf {C F : Type} (passFuel relationFuel traversalFuel limit : Nat)
+    (compiler : ClosSem.Compiler C)
+    (source target : List ClosLang.Exp) (initial final : State)
+    (run : callsListBounded traversalFuel source initial = some (target, final))
+    (distinct : (codeLocations source).Nodup) (fresh : LabelsFresh (codeLocations source) initial)
+    (initialWf : wellFormed initial) (eligible : ClosLang.Exp → State → Prop)
+    (eligibleIH : ∀ depth, depth < max traversalFuel (listBudget source + 1) → ∀ expression output before after,
+      expression ∈ source → callsFuel depth expression before = some (output, after) → eligible expression after)
+    (exprIH : ∀ depth, depth < max traversalFuel (listBudget source + 1) → ∀ expression output before after,
+      callsFuel depth expression before = some (output, after) →
+      (codeLocationsExp expression).Nodup → LabelsFresh (codeLocationsExp expression) before →
+      wellFormed before → eligible expression after →
+      GrowingExprsSimFromBelowWithCoveredOpenClockAndResultWf (F := F) passFuel relationFuel limit compiler after [expression] [output]) :
+    GrowingExprsSimFromBelowWithCoveredOpenClockAndResultWf (F := F) passFuel relationFuel limit compiler final source target := by
+  unfold callsListBounded at run
+  cases first : callsListFuel traversalFuel source initial with
+  | none =>
+    simp only [first] at run
+    exact callsListFuel_growing_below_withCoveredOpenClockAndResultWf passFuel relationFuel _ limit compiler source target initial final
+      run distinct fresh initialWf eligible eligibleIH exprIH
+  | some result =>
+    have equal : result = (target, final) := by simpa [first] using run
+    subst result
+    apply callsListFuel_growing_below_withCoveredOpenClockAndResultWf passFuel relationFuel traversalFuel limit compiler source target initial final
+      first distinct fresh initialWf eligible
+    · intro depth bound expression output before after member expressionRun
+      exact eligibleIH depth (by omega) expression output before after member expressionRun
+    · intro depth bound expression output before after expressionRun expressionDistinct expressionFresh beforeWf eligibleExpr
+      exact exprIH depth (by omega) expression output before after expressionRun expressionDistinct expressionFresh beforeWf eligibleExpr
+
+
+/-- The bounded traversal, including its structural retry, composes
+annotated expression simulations with source result well-formedness. This is
+Flapjack-specific infrastructure. -/
+theorem callsListBounded_withCoveredOpenClockAndResultWf_from_annotated_induction {C F : Type}
+    (passFuel relationFuel traversalFuel limit : Nat) (compiler : ClosSem.Compiler C)
+    (source target : List ClosLang.Exp) (initial final : State)
+    (run : callsListBounded traversalFuel source initial = some (target, final))
+    (distinct : (codeLocations source).Nodup) (fresh : LabelsFresh (codeLocations source) initial)
+    (initialWf : wellFormed initial) (locations : everyFnLocationSome source) (annotations : everyFnVarsNone source)
+    (exprIH : ∀ depth, depth < max traversalFuel (listBudget source + 1) → ∀ expression output before after,
+      callsFuel depth expression before = some (output, after) →
+      (codeLocationsExp expression).Nodup → LabelsFresh (codeLocationsExp expression) before → wellFormed before →
+      everyFnLocationSome [expression] → everyFnVarsNone [expression] →
+      GrowingExprsSimFromBelowWithCoveredOpenClockAndResultWf (F := F) passFuel relationFuel limit compiler after [expression] [output]) :
+    GrowingExprsSimFromBelowWithCoveredOpenClockAndResultWf (F := F) passFuel relationFuel limit compiler final source target := by
+  unfold callsListBounded at run
+  cases first : callsListFuel traversalFuel source initial with
+  | none =>
+    simp only [first] at run
+    exact callsListFuel_withCoveredOpenClockAndResultWf_from_annotated_induction passFuel relationFuel _ limit compiler
+      source target initial final run distinct fresh initialWf locations annotations exprIH
+  | some result =>
+    have equal : result = (target, final) := by simpa [first] using run
+    subst result
+    apply callsListFuel_withCoveredOpenClockAndResultWf_from_annotated_induction passFuel relationFuel traversalFuel limit compiler
+      source target initial final first distinct fresh initialWf locations annotations
+    intro depth bound expression output before after traversal expressionDistinct expressionFresh beforeWf expressionLocations expressionAnnotations
+    exact exprIH depth (by omega) expression output before after traversal expressionDistinct expressionFresh beforeWf expressionLocations expressionAnnotations
+
+/-- Actual incremental compilation supplies covered simulation with source
+result well-formedness from annotated expression cases. This is
+Flapjack-specific infrastructure; the expression induction remains open. -/
+theorem compileIncFuel_withCoveredOpenClockAndResultWf_from_cases {C F : Type}
+    (passFuel relationFuel limit : Nat) (compiler : ClosSem.Compiler C) (g : State) (program : ClosSem.Program)
+    (nextKnown : NumSet) (converted : ClosSem.Program)
+    (run : compileIncFuel? passFuel g.1 program = some (nextKnown, converted))
+    (distinct : (codeLocations program.1).Nodup) (fresh : LabelsFresh (codeLocations program.1) g)
+    (initialWf : wellFormed g) (locations : everyFnLocationSome program.1) (annotations : everyFnVarsNone program.1)
+    (exprIH : ∀ depth, depth < max passFuel (listBudget program.1 + 1) → ∀ expression output before after,
+      callsFuel depth expression before = some (output, after) →
+      (codeLocationsExp expression).Nodup → LabelsFresh (codeLocationsExp expression) before → wellFormed before →
+      everyFnLocationSome [expression] → everyFnVarsNone [expression] →
+      GrowingExprsSimFromBelowWithCoveredOpenClockAndResultWf (F := F) passFuel relationFuel limit compiler after [expression] [output]) :
+    GrowingExprsSimFromBelowWithCoveredOpenClockAndResultWf (F := F) passFuel relationFuel limit compiler
+      (nextKnown, converted.2 ++ g.2) program.1 converted.1 := by
+  have traversal := compileIncFuel_traversal passFuel g.1 program nextKnown converted run
+  have appended := callsListBounded_appendAux passFuel program.1 (g.1, []) g.2
+  have merged : callsListBounded passFuel program.1 g = some (converted.1, (nextKnown, converted.2 ++ g.2)) := by
+    simpa [appendAux, traversal] using appended
+  exact callsListBounded_withCoveredOpenClockAndResultWf_from_annotated_induction passFuel relationFuel passFuel limit compiler
+    program.1 converted.1 g (nextKnown, converted.2 ++ g.2) merged distinct fresh initialWf locations annotations exprIH
 
 /-- The incremental pass exposes a list simulation above its emitted state,
 subject to the expression-case induction and source conditions. The premise
