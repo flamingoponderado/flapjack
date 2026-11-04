@@ -11,6 +11,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.BlockTagLength
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.BlockBounds
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.ByteBounds
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.ArrayBounds
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.ArrayElement
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.BlockElement
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.BlockTagEmpty
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.BlockTagOutOfRange
@@ -165,6 +166,7 @@ inductive VerifiedFragment : DataLang.Prog → Prop where
       VerifiedFragment (.assign dest (.memOp .boundsCheckArray) [base, index] none)
   | arrayLength (dest base : Nat) : VerifiedFragment (.assign dest (.memOp .length) [base] none)
   | byteLength (dest base : Nat) : VerifiedFragment (.assign dest (.memOp .lengthByte) [base] none)
+  | dynamicElement (dest base index : Nat) : VerifiedFragment (.assign dest (.memOp .el) [base, index] none)
   | element (dest src index : Nat) : VerifiedFragment (.assign dest (.blockOp (.elemAt index)) [src] none)
   | lessConst (dest src n : Nat) : VerifiedFragment (.assign dest (.intOp (.lessConstSmall n)) [src] none)
   | boolTest (dest left right : Nat) (test : AstHOL.Test) :
@@ -236,6 +238,9 @@ theorem verifiedFragment64 {C F : Type} (conf : Config) (secn l1 l2 : Nat)
   | byteLength dest base =>
     intro label source target locs related safe
     exact Or.inl (assignByteLength64_of_safe conf secn label l1 l2 source target locs related dest base safe)
+  | dynamicElement dest base index =>
+    intro label source target locs related safe
+    exact Or.inl (assignDynamicElement64_of_safe conf secn label l1 l2 source target locs related dest base index safe)
   | element dest src index =>
     intro label source target locs related safe
     exact Or.inl (assignElement64_of_safe conf secn label l1 l2 source target locs related dest src index safe)

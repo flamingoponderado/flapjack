@@ -169,7 +169,7 @@ identities; the capture supports source review, not pass correctness.
 original `data_to_word$comp` and representative 64-bit results for nested
 control flow, numeric constants, Boolean operations, constructor tag-and-length
 tests (including packed, header, and unencodable queries), block, value-array,
-and byte-array bounds checks, and value-array and byte-array lengths,
+and byte-array bounds checks, value-array and byte-array lengths, and dynamic element reads,
 and label/global-pointer assignments. `DataToWordFragmentCompilerParity.lean`
 checks the same results in Lean, and `fragmentCompile64_agrees` proves that the
 source-shaped fragment traversal agrees with the executed compiler for every

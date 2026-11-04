@@ -71,6 +71,10 @@ example : fragmentCompile64 conf 5 2 (.assign 3 (.memOp .length) [1] none) =
 example : fragmentCompile64 conf 5 2 (.assign 3 (.memOp .lengthByte) [1] none) =
     some (.assign 8 (shiftN .lsl (.op .sub [shiftN .lsr (.load (realAddr conf 4)) 45, .const 8]) 2), 2) := by rfl
 
+example : fragmentCompile64 conf 5 2 (.assign 3 (.memOp .el) [1, 2] none) =
+    some (.assign 8 (.load (.op .add [realAddr conf 4,
+      .op .add [.const 8, .shift .lsl (.var 6) (.const 1)]])), 2) := by rfl
+
 example : fragmentCompile64 conf 5 2 (.assign 3 (.blockOp (.cons 17)) [] none) =
     some (.assign 8 (.const 274), 2) := by rfl
 
