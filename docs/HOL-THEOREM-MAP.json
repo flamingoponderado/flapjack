@@ -1,5 +1,25 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "make_gc_conf_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/GcConfig.lean",
+  "lean_name": "makeGcConf",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared line 1318 and make_gc_conf_typed: the heap payload component is independently polymorphic, and the source isMutTag predicate is converted to its equivalent Boolean classifier for the source configuration field."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "do_partial_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/DoPartial.lean",
+  "lean_name": "doPartial",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared lines 3875-3880 and do_partial_typed: only the generational case evaluates wordGenGcCanDoPartial and the other cases return false. The HOL finite-map store uses the canonical finite-support carrier and word values retain their positive dimension."
+},
+{
   "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
   "hol_name": "gc_state",
   "lean_path": "Flapjack/Compiler/Backend/GcShared/State.lean",

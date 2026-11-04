@@ -219,6 +219,8 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.Loop
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.Full
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.FullStore
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.Simple
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CombinedSimple
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CombinedNone
 import Flapjack.Compiler.Backend.GcCombined.Collector
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.HeapExpand
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PointerAddress
