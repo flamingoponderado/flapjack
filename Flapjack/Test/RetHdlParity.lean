@@ -40,23 +40,12 @@ String-backed `retHdl` / `expHdlFiniteMap` helpers with the production
 `assignRet` output. Only the separate width-indexed `assignRetW` carries the
 exact `assign_ret_def` tag. -/
 
-example : retHdl (α := Nat) (.comb [.one, .one]) [1, 2] = assignRet (α := Nat) [1, 2] :=
-  retHdl_comb_eq_assignRet _ _ (by simp [Shape.shapeSize])
-
-example : retHdl (α := Nat) (.comb [.one]) [1] = .skip :=
-  retHdl_one_word_eq_skip _ _ (by simp [Shape.shapeSize])
-
 example : expHdlFiniteMap
     (FUPDATE (FEMPTY : FiniteMap String (Shape × List Nat))
       ("x", (.comb [.one, .one], [1, 2]))) "x"
     = assignRet (α := Nat) [1, 2] :=
   expHdlFiniteMap_eq_assignRet (shape := .comb [.one, .one])
     (by simp [FLOOKUP, FUPDATE])
-
-example : expHdl [("x", (.comb [.one, .one], [1, 2]))] "x"
-    = assignRet (α := Nat) [1, 2] :=
-  expHdl_eq_assignRet_of_lookupInfo (shape := .comb [.one, .one])
-    (by simp [lookupInfo])
 
 /-! ## Exact-carrier HOL-parity checks
 

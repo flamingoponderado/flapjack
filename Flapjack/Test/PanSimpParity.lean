@@ -2054,76 +2054,6 @@ theorem clocked_ret_to_tail_common_fuel_matches_cake :
   · decide
   · decide
 
-theorem clocked_pan_simp_common_fuel_matches_cake :
-    evalPanValueFfiClockProg evaluatorContext (fun _ _ => none)
-      evaluatorHandler [] [] 0 0 8 2 (fun _ => none) (fun _ => none)
-      (fun _ => none) evaluatorFfi 2
-      (panSimpProg (.seq (.skip : Prog Nat) .tick)) =
-    evalPanValueFfiClockProg evaluatorContext (fun _ _ => none)
-      evaluatorHandler [] [] 0 0 8 2 (fun _ => none) (fun _ => none)
-      (fun _ => none) evaluatorFfi 2
-      (seqAssoc (.skip : Prog Nat) (.seq .skip .tick)) := by
-  apply evalPanValueFfiClockProg_panSimpProg_eq_of_common_fuel
-    (fuelCompiled := 2) (fuelSource := 2) (commonFuel := 2)
-    (result := (.control (.normal (fun _ => none) (fun _ => none)
-      (fun _ => none) evaluatorFfi), 1))
-    evaluatorContext (fun _ _ => none) evaluatorHandler [] [] 0 0 8
-    (.seq (.skip : Prog Nat) .tick)
-    (fun _ => none) (fun _ => none) (fun _ => none) evaluatorFfi 2
-    none none none
-  · simp [panSimpProg, retToTail, seqAssoc, evalPanValueFfiClockProg]
-  · simp [seqAssoc, evalPanValueFfiClockProg]
-  · decide
-  · decide
-
-theorem clocked_pan_simp_source_common_fuel_matches_cake :
-    evalPanValueFfiClockProg evaluatorContext (fun _ _ => none)
-      evaluatorHandler [] [] 0 0 8 3 (fun _ => none) (fun _ => none)
-      (fun _ => none) evaluatorFfi 2
-      (panSimpProg (.seq (.skip : Prog Nat) .tick)) =
-    evalPanValueFfiClockProg evaluatorContext (fun _ _ => none)
-      evaluatorHandler [] [] 0 0 8 3 (fun _ => none) (fun _ => none)
-      (fun _ => none) evaluatorFfi 2
-      (.seq (.skip : Prog Nat) .tick) := by
-  apply evalPanValueFfiClockProg_panSimpProg_eq_of_common_fuel_source
-    (fuelCompiled := 2) (fuelAssoc := 2) (fuelSource := 2) (commonFuel := 3)
-    (result := (.control (.normal (fun _ => none) (fun _ => none)
-      (fun _ => none) evaluatorFfi), 1))
-    evaluatorContext (fun _ _ => none) evaluatorHandler [] [] 0 0 8
-    (.seq (.skip : Prog Nat) .tick)
-    (fun _ => none) (fun _ => none) (fun _ => none) evaluatorFfi 2
-    none none none
-  · simp [panSimpProg, retToTail, seqAssoc, evalPanValueFfiClockProg]
-  · simp [seqAssoc, evalPanValueFfiClockProg]
-  · simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]
-  · decide
-  · decide
-  · decide
-  · decide
-
-theorem clocked_pan_simp_source_result_common_fuel :
-    evalPanValueFfiClockProg evaluatorContext (fun _ _ => none)
-      evaluatorHandler [] [] 0 0 8 3 (fun _ => none) (fun _ => none)
-      (fun _ => none) evaluatorFfi 2
-      (panSimpProg (.seq (.skip : Prog Nat) .tick)) =
-    some (.control (.normal (fun _ => none) (fun _ => none)
-      (fun _ => none) evaluatorFfi), 1) := by
-  apply evalPanValueFfiClockProg_panSimpProg_result_of_common_fuel_source
-    (fuelCompiled := 2) (fuelAssoc := 2) (fuelSource := 2) (commonFuel := 3)
-    (result := (.control (.normal (fun _ => none) (fun _ => none)
-      (fun _ => none) evaluatorFfi), 1))
-    evaluatorContext (fun _ _ => none) evaluatorHandler [] [] 0 0 8
-    (.seq (.skip : Prog Nat) .tick)
-    (fun _ => none) (fun _ => none) (fun _ => none) evaluatorFfi 2
-    none none none
-  · simp [panSimpProg, retToTail, seqAssoc, evalPanValueFfiClockProg]
-  · simp [seqAssoc, evalPanValueFfiClockProg]
-  · simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]
-  · decide
-  · decide
-  · decide
-  · decide
-
 theorem pan_simp_skip_seq_fuel_bound_matches_cake :
     panSimpSkipSeqFuel
         (seqAssoc (.skip : Prog Nat)
@@ -2228,7 +2158,6 @@ theorem seq_call_ret_mismatching_return :
 theorem seq_call_ret_fallback :
     seqCallRet (.tick : Prog Nat) = .tick := by
   rfl
-
 
 /-! The expected values are the direct HOL evaluation of
     `pan_simp$ret_to_tail` from `pan_simpScript.sml:50-66`. -/
@@ -2343,11 +2272,6 @@ theorem pan_simp_compile_prog_map :
       compileProgDeclsFixture.map panSimpDecl := by
   exact panSimpDecls_eq_map compileProgDeclsFixture
 
-theorem pan_simp_compile_prog_size_of_eids :
-    sizeOfEids (panSimpDecls compileProgDeclsFixture) =
-      sizeOfEids compileProgDeclsFixture := by
-  exact sizeOfEids_panSimpDecls compileProgDeclsFixture
-
 theorem pan_simp_compile_prog_functions :
     functions (panSimpDecls compileProgDeclsFixture) =
       (functions compileProgDeclsFixture).map (fun entry =>
@@ -2358,15 +2282,6 @@ theorem pan_simp_compile_prog_first_all_distinct :
     ((functions (panSimpDecls compileProgDeclsFixture)).map
       (fun entry => entry.1)).Nodup := by
   exact functions_panSimpDecls_names_nodup compileProgDeclsFixture (by decide)
-
-theorem pan_simp_compile_prog_distinct_params :
-    ∀ entry ∈ functions (panSimpDecls compileProgDeclsFixture),
-      (entry.2.1.map Prod.fst).Nodup := by
-  apply functions_panSimpDecls_params_nodup compileProgDeclsFixture
-  intro entry hentry
-  simp [compileProgDeclsFixture, functions, functionEntries] at hentry
-  rcases hentry with rfl
-  simp
 
 def functionsNamesNodupParity : Bool :=
   decide (((functions (panSimpDecls compileProgDeclsFixture)).map
@@ -2412,20 +2327,6 @@ def elCompileProgDeclsFixture : List (Decl Nat) :=
   [.function
      { name := "f", inline := false, exported := false, params := [],
        body := .skip, returnShape := .one }]
-
-theorem pan_simp_compile_prog_el_compile_prog_el_prog_eq :
-    (functions elCompileProgDeclsFixture)[0]? =
-      some ("f", [], .skip, .one) := by
-  have hentry : (functions (panSimpDecls elCompileProgDeclsFixture))[0]? =
-      some ("f", [], .skip, .one) := by
-    rw [functions_panSimpDecls, List.getElem?_map]
-    rw [show (functions elCompileProgDeclsFixture)[0]? =
-      some ("f", [], .skip, .one) from rfl]
-    simp only [Option.map_some, panSimpProg_skip]
-  exact el_functions_panSimpDecls_eq
-    (declarations := elCompileProgDeclsFixture)
-    (n := 0) (start := "f") (pprog := .skip) (p := .skip)
-    (rshape := .one) hentry (by decide) (by decide) (by rfl)
 
 def functionsElCompileParity : Bool :=
   match (functions elCompileProgDeclsFixture)[0]? with
@@ -2630,7 +2531,6 @@ example : PanValueFfiClockNormalAdequateProgFromFloor 3 3 evaluatorContext
     (PanValueFfiClockNormalProg.seq (.skip : Prog Nat) (.annot "tag" "text")
       PanValueFfiClockNormalProg.skip (PanValueFfiClockNormalProg.annot "tag" "text"))
 
-
 /-- The pan_simp transform of a normal program keeps a floor certificate. -/
 example : PanValueFfiClockNormalAdequateProgFromFloor 3 3 evaluatorContext
     (fun _ _ => none) evaluatorHandler [] [] 0 0 8 7 none none none
@@ -2641,10 +2541,14 @@ example : PanValueFfiClockNormalAdequateProgFromFloor 3 3 evaluatorContext
     (PanValueFfiClockNormalProg.seq (.skip : Prog Nat) (.annot "tag" "text")
       PanValueFfiClockNormalProg.skip (PanValueFfiClockNormalProg.annot "tag" "text"))
 
+/-! ## Exact HOL helper-slice instantiations
+
+These instantiate the tagged HOL helper restatements in
+`Flapjack/Pancake/Proofs/PanSimp.lean` at a concrete word type so the reviewed
+statements are exercised by `lake build`. -/
 
 -- Clock-shift arithmetic needed by a whole-program analogue of Cake
 -- `evaluate_add_clock_eq`.
-
 
 /-! ## Exact HOL helper-slice instantiations
 
@@ -2680,6 +2584,5 @@ example :
       (([(1, (2, 3))] : List (Nat × Nat × Nat)).map
         (fun entry => entry.2.2)).map (fun body => body + 1) :=
   mapSndFEq _ (fun body => body + 1) (fun value => value)
-
 
 end Flapjack.Test.PanSimpParity

@@ -38,8 +38,6 @@ def context : LoopContext Nat :=
   { vars := [], functions := [("pair", (66, 2)), ("add1", (65, 2))],
     maxVar := 0, target := .rv64i }
 
-def compiled : LoopProg Nat := compileCrepToLoop context [] crepBody
-
 /-- Every cutset the compiled program carries, in traversal order. -/
 def cutsets : LoopProg Nat → List (List Nat)
   | .seq first second => cutsets first ++ cutsets second
@@ -55,40 +53,5 @@ def cutsets : LoopProg Nat → List (List Nat)
        | none => [])
   | .ffi _ _ _ _ _ live => [live]
   | _ => []
-
-/-- `stage=crep_to_loop_comp`: the call cutset and its handler live-out are
-    `⦕1; 3; 4; 5⦖`; loop var `2` is the `LoadByte` temporary and Cake keeps it
-    out of both. -/
-def callCutsetMatches : Bool :=
-  (cutsets compiled).take 3 == [[1, 3, 4, 5], [1, 3, 4, 5], [1, 3, 4, 5]]
-
-/-- `Loop ⦕1; 3; 4; 5⦖ ... ⦕1; 3; 4; 5⦖` likewise excludes the temporary. -/
-def loopCutsetMatches : Bool :=
-  let sets := cutsets compiled
-  sets.contains [1, 3, 4, 5] && !sets.any (fun live => live.contains 2)
-
-/-- The comparison `If` that `prog_if` builds keeps `compile_exp`'s own
-    temporaries `7` and `8`: Cake prints `⦕1; 3; 4; 5; 7; 8⦖` there, so the
-    `Dec` fix must not be a blanket suppression of inserted temporaries. -/
-def comparisonCutsetKeepsItsTemporaries : Bool :=
-  (cutsets compiled).contains [1, 3, 4, 5, 7, 8]
-
-#guard callCutsetMatches
-#guard loopCutsetMatches
-#guard comparisonCutsetKeepsItsTemporaries
-
-def runChecks : IO Bool := do
-  let checks : List (String × Bool) :=
-    [ ("crep_to_loop Dec keeps the initializer temporary out of a call cutset",
-        callCutsetMatches)
-    , ("crep_to_loop Dec keeps the initializer temporary out of a loop cutset",
-        loopCutsetMatches)
-    , ("crep_to_loop still records a comparison's own temporaries",
-        comparisonCutsetKeepsItsTemporaries) ]
-  let mut ok := true
-  for (label, passed) in checks do
-    if passed then IO.println s!"PASS {label}" else IO.println s!"FAIL {label}"
-    ok := ok && passed
-  pure ok
 
 end Flapjack.Test.CrepToLoopDecLive

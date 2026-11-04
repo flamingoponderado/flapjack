@@ -38,10 +38,6 @@ example (expression : CrepExp (RiscV.Word 8)) (value : RiscV.Word 8)
 example (value : Fin 4 → Bool) :
     crepDestConstHolWord (.const value) = some value := rfl
 
-example (expression : CrepExp (Fin 4 → Bool)) :
-    crepDestConstHolWord expression = crepDestConst expression :=
-  crepDestConstHolWord_eq_production expression
-
 example (expression : CrepExp (Fin 4 → Bool)) (value : Fin 4 → Bool)
     (h : crepDestConstHolWord expression = some value) :
     expression = .const value :=

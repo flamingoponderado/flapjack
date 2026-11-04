@@ -1,5 +1,4 @@
 import Flapjack.Pancake.PanToCrep.ContextBridge
-import Flapjack.Pancake.PanToCrep.ContextProductionEvidence
 import Flapjack.Pancake.PanLang.Decl
 import Flapjack.Pancake.Proofs.PanToCrep
 
@@ -118,7 +117,6 @@ example :
   change sample.eids.lookup e = some (2 : BitVec 8)
   simp [sample, e, HolFiniteMapExact.update, HolFiniteMapExact.empty, FUPDATE]
 
-
 /-! The production bridge exposes exact context lookups to the String/Shape
 compiler boundary using decoded byte names and shapes. -/
 example : sample.toProduction.vars (toStringOfBytes p) = some (.one, [0]) := by
@@ -217,18 +215,6 @@ private def compilerContext : PanToCrepHOLContext (BitVec 8) :=
   panToCrepMkCtxtHOL (panToCrepMakeVmapHOL compilerParams)
     (functionInfosHOL compilerDeclarations) 0
     (panToCrepGetEidsFromDeclsHOL compilerDeclarations)
-
-private theorem compilerContextEvidence :
-    PanToCrepContextProductionEvidence compilerContext := by
-  simpa [compilerContext, compilerEntry, compilerParams, Shape.shapeSize,
-    compilerDeclarations, compilerFunction, functionEntries] using
-      panToCrepFunctionContextProductionEvidence compilerDeclarations compilerEntry
-        compilerDeclarationsByteRanged compilerEntryMem
-
-private def compilerContextExact : PanToCrepContextExact 8 :=
-  panToCrepContextExactOfProduction compilerContext compilerContextEvidence
-
-example : compilerContextExact.vmax = 0 := rfl
 
 /-! Exact HOL `ctxt_fc_def` rows: replay the direct HOL-EVAL probe
 `scripts/hol-probes/ctxt_fc_probe.out`. The rows `shaped_slots`,

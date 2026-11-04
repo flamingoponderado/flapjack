@@ -148,6 +148,9 @@ theorem panSemShapeOfMapPanValueShapeNil (arguments : List (PanValue α)) :
     arguments.map panSemShapeOf = arguments.map (panValueShape []) := by
   exact List.map_congr_left (fun value _ => panSemShapeOf_eq_panValueShape_nil value)
 
+/-! Flapjack support: `panShapeMatches` is an exact structural shape check, so
+success entails equality of its two shape arguments. This is used to expose
+the indexed formal/argument shape fact from `lookup_code`'s successful check. -/
 /- Indexed-list form of the HOL Call premise
 `LIST_REL (fun formal arg => formal.shape = shape_of arg) parameters arguments`.
 The source-facing equality is kept untagged until the complete Call theorem is
@@ -155,6 +158,7 @@ ported. -/
 /-! Flapjack support: `panShapeMatches` is an exact structural shape check, so
 success entails equality of its two shape arguments. This is used to expose
 the indexed formal/argument shape fact from `lookup_code`'s successful check. -/
+
 mutual
   theorem panShapeMatches_eq (left right : Shape)
       (hmatch : panShapeMatches left right = true) : left = right := by
@@ -2617,7 +2621,6 @@ def compileCodeRelProg [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
       vmax := context.vmax }
     program
 
-
 /-- Bridge from the proof-side finite-map context to the HOL finite-map
     compiler context; the two records have the same four fields. -/
 def PanToCrepProofContext.toHOLContext (context : PanToCrepProofContext α) :
@@ -2885,112 +2888,6 @@ theorem firstCompileToCrepAllDistinctExact {width : Nat} [NeZero width]
         compileToCrepExactHOLW declarations).map Prod.fst).Nodup := by
   simpa [compileToCrepExactHOLW, List.map_map, Function.comp_def] using hdistinct
 
-/-- `compileToCrepHOL` is the source function list mapped through `comp_func`
-    and `crep_vars`, with the context built from the same declaration list. -/
-theorem compileToCrepHOL_eq_map
-    (declarations : List (Decl (BitVec width))) :
-    compileToCrepHOL declarations =
-      (functionEntries declarations).map
-        (fun entry =>
-          (entry.1,
-           (panToCrepVars entry.2.1,
-            panToCrepCompFuncRiscV
-              (panToCrepMkCtxtHOL FEMPTY (functionInfosHOL declarations) 0
-                (panToCrepGetEidsFromDeclsHOL declarations))
-              entry.2.1 entry.2.2.1))) := by
-  simp [compileToCrepHOL, functionInfosHOL_eq_makeFuncsHOL,
-    panToCrepCompFuncRiscV_eq_compFuncHOL, panToCrepMkCtxtHOL]
-
-/-- Source-shaped port (Flapjack-specific; NOT an exact HOL port) of HOL `alookup_compile_prog_code`
-    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:4575`): a source
-    function entry with empty parameters and body `prog` is compiled to the
-    Crepe entry whose argument slots are `crep_vars []` and whose body is
-    `comp_func (make_funcs (functions pan_code)) (get_eids_from_decls pan_code)
-    [] prog`.  `List.lookup` on the nested-pair triple list is HOL's `ALOOKUP`.
-
-    Source-shaped counterparts used here (all currently untagged since the
-    `flapjack-pxn.18.3.5.7.2` String-carrier withdrawal): `compileToCrepHOL` (`compile_to_crep_def`),
-    `panToCrepVars` (`crep_vars_def`), `panToCrepGetEidsFromDeclsHOL`
-    (`get_eids_from_decls_def`), `panToCrepMkCtxtHOL` (`mk_ctxt_def`),
-    `panToCrepMakeVmapHOL` (`make_vmap_def`) and `compileProgRiscV`
-    (`compile_def`).  Two further helpers are deliberate untagged adapters:
-    * `functionInfosHOL` computes the HOL finite-map value
-      `alist_to_fmap (make_funcs (functions pan_code))`: `panToCrepMakeFuncs`
-      produces the same source-order `(name, (params, return))` list as HOL
-      `make_funcs`, and `FUPDATE_LIST FEMPTY ·.reverse` is `alist_to_fmap`
-      (`FOLDR FUPDATE FEMPTY`, first duplicate wins);
-    * `panToCrepCompFuncRiscV` is `comp_func` after threading the context as a
-      record: it reads `context.funcs`/`context.eids` instead of HOL's separate
-      `fs`/`eids` arguments and applies the `compile_def`-shaped compiler to the
-      `mk_ctxt_def`/`make_vmap_def`. No HOL side condition or body step is
-      dropped.  The HOL-vs-Lean equivalence of the statement is not proved by
-      this theorem: the theorem is a within-Lean lookup fact, and the HOL
-      correspondence is reviewed by comparing the definitions (per SOUNDNESS),
-      not established by the proof below. -/
--- FLAPJACK-SPECIFIC (not an exact HOL port). Source-reviewed against HOL
--- `alookup_compile_prog_code` (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:4575-4586`),
--- which states: `ALL_DISTINCT (MAP FST (functions pan_code)) /\
--- ALOOKUP (functions pan_code) start = SOME ([],prog,rshape) ==>
--- ALOOKUP (compile_to_crep pan_code) start =
---   SOME ([], comp_func (make_funcs (functions pan_code))
---                       (get_eids_from_decls pan_code) [] prog)`.
--- The Lean statement has the same premise/conclusion shape (Nodup + `List.lookup`
--- for `ALL_DISTINCT`/`ALOOKUP`), but its carriers and compilation terms differ:
---   * keyed by production `FunName`/`VarName`/`ExceptionId` = `String` (and the
---     embedded `PanToCrepProofContext`/`PanToCrepHOLContext` `FiniteMap`s are
---     `String`-keyed), while HOL keys by `funname`/`varname`/`eid` = `mlstring`;
---   * `Prog (BitVec width)`/production `Shape` vs HOL's word-indexed `prog`/`shape`;
---   * the body is `panToCrepCompFuncRiscV` (a `comp_func` after threading the
---     context as a record) over `functionInfosHOL` rather than HOL's literal
---     `comp_func (make_funcs (functions pan_code)) (get_eids_from_decls pan_code)`;
---   * the width is a parameter with `[NeZero width]`, an executable condition HOL
---     does not need.
--- `names_as_string` cannot authorize the `Shape`/`Prog` carriers or the adapter
--- terms, and no `NameRanged` byte witness applies (the conclusion is an `ALOOKUP`
--- equation over compiled programs, not a name).  Direct HOL-EVAL rows are recorded
--- in `scripts/hol-probes/crep_alookup_compile_probe.out`
--- (`source_names_distinct=T`, `alookup_empty_params=T`, `alookup_param_entry=T`)
--- and reproduced by `alookupGuard` plus the worked `example`s in
--- `Flapjack/Test/PanToCrepCodeRelParity.lean:158-195` (registered at :440).
--- The `docs/HOL-THEOREM-MAP.json` entry `alookup_compile_prog_code` ->
--- `alookupCompileToCrepCode` is already `documented_mismatch`, so the tag stays
--- WITHDRAWN.  The exact MlString carrier is tracked by `flapjack-pxn.18.3.5.8`
--- (parent `flapjack-pxn.18.3.5.7.2`).
-theorem alookupCompileToCrepCode [NeZero width]
-    (declarations : List (Decl (BitVec width)))
-    (start : FunName) (prog : Prog (BitVec width)) (rshape : Shape)
-    (_hdistinct : ((functionEntries declarations).map Prod.fst).Nodup)
-    (hlookup : List.lookup start (functionEntries declarations) =
-      some ([], (prog, rshape))) :
-    List.lookup start (compileToCrepHOL declarations) =
-      some ([], panToCrepCompFuncRiscV
-        (panToCrepMkCtxtHOL FEMPTY (functionInfosHOL declarations) 0
-          (panToCrepGetEidsFromDeclsHOL declarations)) [] prog) := by
-  obtain ⟨l₁, l₂, hdecomp, hnotin⟩ :=
-    List.lookup_eq_some_iff.mp hlookup
-  rw [compileToCrepHOL_eq_map]
-  apply (List.lookup_eq_some_iff
-    (b := ([], panToCrepCompFuncRiscV
-      (panToCrepMkCtxtHOL FEMPTY (functionInfosHOL declarations) 0
-        (panToCrepGetEidsFromDeclsHOL declarations)) [] prog))).mpr
-  refine ⟨l₁.map (fun entry =>
-      (entry.1, (panToCrepVars entry.2.1,
-        panToCrepCompFuncRiscV
-          (panToCrepMkCtxtHOL FEMPTY (functionInfosHOL declarations) 0
-            (panToCrepGetEidsFromDeclsHOL declarations))
-          entry.2.1 entry.2.2.1))),
-    l₂.map (fun entry =>
-      (entry.1, (panToCrepVars entry.2.1,
-        panToCrepCompFuncRiscV
-          (panToCrepMkCtxtHOL FEMPTY (functionInfosHOL declarations) 0
-            (panToCrepGetEidsFromDeclsHOL declarations))
-          entry.2.1 entry.2.2.1))), ?_, ?_⟩
-  · rw [hdecomp, List.map_append, List.map_cons]
-    simp [panToCrepVars, crepVarsHOL]
-  · intro p hp
-    obtain ⟨q, hq, rfl⟩ := List.mem_map.mp hp
-    simpa using hnotin q hq
-
 /-! Flapjack-specific finite-map support: reversing an association list before
     `FUPDATE_LIST` makes the first source occurrence win, exactly like
     `List.lookup` (HOL `ALOOKUP`). This is list infrastructure, not a standalone
@@ -3047,47 +2944,6 @@ theorem makeFuncsHOL_lookup_of_lookup
   rw [h]
   rfl
 
-/-- General form of the compiled-function lookup: a source entry with
-    parameters `vshs` and body `prog` is compiled to the entry whose argument
-    slots are `crep_vars vshs` and whose body is `comp_func ... vshs prog`.
-    This is the parameter-general companion of the
-    `alookupCompileToCrepCode`; HOL discharges it inside
-    `mk_ctxt_code_imp_code_rel` rather than as a separate theorem, so it
-    deliberately carries no `@[hol]` tag. -/
-theorem alookupCompileToCrepCodeGeneral
-    (declarations : List (Decl (BitVec width)))
-    (start : FunName) (vshs : List (VarName × Shape)) (prog : Prog (BitVec width))
-    (rshape : Shape)
-    (hlookup : List.lookup start (functionEntries declarations) =
-      some (vshs, (prog, rshape))) :
-    List.lookup start (compileToCrepHOL declarations) =
-      some (panToCrepVars vshs, panToCrepCompFuncRiscV
-        (panToCrepMkCtxtHOL FEMPTY (functionInfosHOL declarations) 0
-          (panToCrepGetEidsFromDeclsHOL declarations)) vshs prog) := by
-  obtain ⟨l₁, l₂, hdecomp, hnotin⟩ :=
-    List.lookup_eq_some_iff.mp hlookup
-  rw [compileToCrepHOL_eq_map]
-  apply (List.lookup_eq_some_iff
-    (b := (panToCrepVars vshs, panToCrepCompFuncRiscV
-      (panToCrepMkCtxtHOL FEMPTY (functionInfosHOL declarations) 0
-        (panToCrepGetEidsFromDeclsHOL declarations)) vshs prog))).mpr
-  refine ⟨l₁.map (fun entry =>
-      (entry.1, (panToCrepVars entry.2.1,
-        panToCrepCompFuncRiscV
-          (panToCrepMkCtxtHOL FEMPTY (functionInfosHOL declarations) 0
-            (panToCrepGetEidsFromDeclsHOL declarations))
-          entry.2.1 entry.2.2.1))),
-    l₂.map (fun entry =>
-      (entry.1, (panToCrepVars entry.2.1,
-        panToCrepCompFuncRiscV
-          (panToCrepMkCtxtHOL FEMPTY (functionInfosHOL declarations) 0
-            (panToCrepGetEidsFromDeclsHOL declarations))
-          entry.2.1 entry.2.2.1))), ?_, ?_⟩
-  · rw [hdecomp, List.map_append, List.map_cons]
-  · intro p hp
-    obtain ⟨q, hq, rfl⟩ := List.mem_map.mp hp
-    simpa using hnotin q hq
-
 /-- Production/proof-context bridge used by HOL `mk_ctxt_code_imp_code_rel`: the
     checked compiler's per-function body (`panToCrepCompFuncRiscV`) is the
     `codeRel` proof-context compilation (`compileCodeRelProg`) at the `ctxt_fc`
@@ -3109,60 +2965,6 @@ theorem panToCrepCompFuncRiscV_eq_compileCodeRelProg
     (panToCrepGetEidsFromDeclsHOL declarations)]
   simp only [panToCrepVars_eq, maxList_range, ctxtFc]
 
-/-- Source-shaped port (Flapjack-specific; NOT an exact HOL port) of HOL `mk_ctxt_code_imp_code_rel`
-    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:4604`): with distinct
-    function names and localised bodies, the checked compiler's code table is
-    `code_rel` to the source function table under the `mk_ctxt`/`make_funcs`/
-    `get_eids_from_decls` context. The source map is the finite-map list form
-    (`FUPDATE_LIST … .reverse`), the `make_funcs` lookup drops the body
-    (`makeFuncsHOL_lookup_of_lookup`), the target entry comes from
-    `alookupCompileToCrepCodeGeneral`, and the compiled body is rewritten to
-    `compileCodeRelProg` by `panToCrepCompFuncRiscV_eq_compileCodeRelProg`. Lean
-    splits HOL's single `ctxt` record into `PanToCrepHOLContext`/
-    `PanToCrepProofContext`, so the relation is stated with the proof-context
-    literal (as for `mk_ctxt_imp_locals_rel`). The HOL-vs-Lean equivalence of
-    the statement is reviewed by comparing the definitions (per SOUNDNESS). -/
--- FLAPJACK-SPECIFIC (not an exact HOL port): this source-shaped theorem still uses
--- production carriers. Its input is `Decl (BitVec width)`, whose identifiers are
--- `String` and whose shapes are production `Shape`; its `codeRel` conclusion uses
--- String-keyed `PanToCrepProofContext` maps and production `CrepProg` code. HOL's
--- declaration, context, and code carriers instead use `mlstring`, `shape`, and
--- `crepLang$prog` respectively. The generic production `Prog (BitVec width)` does
--- not repair those surrounding carrier differences. Keep this useful theorem
--- untagged until the faithful identifier and compiler carriers are used. The
--- exact carrier work is tracked by `flapjack-pxn.18.3.5.8` (parent
--- `flapjack-pxn.18.3.5.7.2`).
-theorem mkCtxtCodeImpCodeRel [NeZero width]
-    (declarations : List (Decl (BitVec width)))
-    (_hdistinct : ((functionEntries declarations).map Prod.fst).Nodup)
-    (hlocalised : ∀ entry ∈ functionEntries declarations,
-      localisedProg entry.2.2.1) :
-    codeRel
-      { vars := (FEMPTY : FiniteMap String (Shape × List Nat))
-        funcs := functionInfosHOL declarations
-        eids := panToCrepGetEidsFromDeclsHOL declarations
-        vmax := 0 }
-      (FUPDATE_LIST FEMPTY (functionEntries declarations).reverse)
-      (FUPDATE_LIST FEMPTY (compileToCrepHOL declarations).reverse) := by
-  intro function vshs prog rshape hsource
-  rw [FLOOKUP_FUPDATE_LIST_reverse_eq_lookup] at hsource
-  refine ⟨?_, ?_, ?_⟩
-  · obtain ⟨l₁, l₂, hdecomp, _hnotin⟩ := List.lookup_eq_some_iff.mp hsource
-    have hmem : (function, vshs, prog, rshape) ∈ functionEntries declarations := by
-      rw [hdecomp]
-      simp
-    have hloc := hlocalised (function, vshs, prog, rshape) hmem
-    simpa using hloc
-  · simp only []
-    rw [functionInfosHOL_eq_makeFuncsHOL]
-    exact makeFuncsHOL_lookup_of_lookup (functionEntries declarations)
-      function vshs prog rshape hsource
-  · simp only []
-    rw [FLOOKUP_FUPDATE_LIST_reverse_eq_lookup]
-    rw [alookupCompileToCrepCodeGeneral declarations function vshs prog rshape
-      hsource]
-    rw [panToCrepCompFuncRiscV_eq_compileCodeRelProg, panToCrepVars_eq]
-
 /-- Consumption adapter: a width-indexed `codeRelW` hypothesis is the generic
     `codeRel` at `BitVec width` (`codeRelW_iff_codeRel`), so the existing
     generic `codeRel` helper lemmas apply unchanged when the full correctness
@@ -3175,92 +2977,6 @@ theorem codeRel_of_codeRelW (width : Nat)
     (h : codeRelW width context sourceCode targetCode) :
     codeRel context sourceCode targetCode :=
   (codeRelW_iff_codeRel width context sourceCode targetCode).mp h
-
-/-- The `mk_ctxt` initial-context code relation in the width-indexed HOL
-    `code_rel_def`-shaped form (`codeRelW`, currently untagged), derived from the existing
-    `mk_ctxt_code_imp_code_rel` port via `codeRelW_iff_codeRel`. This is the
-    relation used at the start of the full `pc_compile_correct` statement. -/
-theorem mkCtxtCodeImpCodeRelW [NeZero width] (declarations : List (Decl (BitVec width)))
-    (_hdistinct : ((functionEntries declarations).map Prod.fst).Nodup)
-    (hlocalised : ∀ entry ∈ functionEntries declarations,
-      localisedProg entry.2.2.1) :
-    codeRelW width
-      { vars := (FEMPTY : FiniteMap String (Shape × List Nat))
-        funcs := functionInfosHOL declarations
-        eids := panToCrepGetEidsFromDeclsHOL declarations
-        vmax := 0 }
-      (FUPDATE_LIST FEMPTY (functionEntries declarations).reverse)
-      (FUPDATE_LIST FEMPTY (compileToCrepHOL declarations).reverse) :=
-  (codeRelW_iff_codeRel width _ _ _).mpr
-    (mkCtxtCodeImpCodeRel declarations _hdistinct hlocalised)
-
-/-- Source-shaped port (Flapjack-specific; NOT an exact HOL port) of HOL
-    `el_compile_prog_el_prog_eq`
-    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:4589-4599`): if the
-    compiled table's entry at index `n` is `(start, [], cprog)`, the source
-    names are distinct, `n` is in range, and the source table maps `start` to
-    `([], p, rshape)`, then the source entry at `n` is exactly
-    `(start, [], p, rshape)`.  The HOL `EL`/`ALL_DISTINCT`/`LENGTH`/`ALOOKUP`
-    hypotheses appear here as the bounded `[n]?`, `Nodup`, `length`, and
-    `lookupFunctionEntry`; the conclusion is the same indexed-table fact.  The
-    HOL-vs-Lean equivalence of the statement is reviewed by comparing the
-    definitions (per SOUNDNESS), not proved by this theorem.
-    Direct HOL-EVAL rows are recorded in
-    `scripts/hol-probes/crep_el_compile_probe.out` (`source_el_f=T`,
-    `alookup_f=T`, `compiled_el_f=T`) and exercised by the `elCompileGuard`
-    fixture and the worked `example` in
-    `Flapjack/Test/PanToCrepCodeRelParity.lean:190-212`. -/
--- FLAPJACK-SPECIFIC (not an exact HOL port), source-reviewed: the statement is
--- keyed by the production identifiers `FunName`/`VarName`/`ExceptionId` =
--- `String` (or embeds a `PanToCrepProofContext`/`PanToCrepHOLContext` whose
--- `FiniteMap`s are `String`-keyed), while HOL `pan_to_crepProofScript.sml` keys
--- names by `funname`/`varname`/`eid` = `mlstring`; the `Decl (BitVec width)`
--- list uses production `Shape` (`named : String`) rather than HOL word-indexed
--- `decl`/`shape`.  `names_as_string` cannot authorize the `Decl`/`Shape`/program
--- carriers, and no `NameRanged` byte witness applies (the conclusion is an
--- indexed-table equality, not a name).  The exact MlString carrier is tracked by
--- `flapjack-pxn.18.3.5.8` (parent `flapjack-pxn.18.3.5.7.2`).
-theorem elCompileToCrepElProgEq [NeZero width]
-    (declarations : List (Decl (BitVec width))) (n : Nat) (start : FunName)
-    (cprog : CrepProg (BitVec width)) (p : Prog (BitVec width)) (rshape : Shape)
-    (hentry : (compileToCrepHOL declarations)[n]? = some (start, [], cprog))
-    (hdistinct : ((functionEntries declarations).map Prod.fst).Nodup)
-    (_hlen : n < (functionEntries declarations).length)
-    (hlookup : lookupFunctionEntry start (functionEntries declarations) =
-      some ([], p, rshape)) :
-    (functionEntries declarations)[n]? = some (start, [], p, rshape) := by
-  rw [compileToCrepHOL_eq_map, List.getElem?_map] at hentry
-  have hsome : (functionEntries declarations)[n]? ≠ none := by
-    intro hnone
-    rw [hnone] at hentry
-    simp at hentry
-  obtain ⟨entry, hentry_eq⟩ := Option.ne_none_iff_exists'.mp hsome
-  have hproj :
-      (entry.1, panToCrepVars entry.2.1,
-        panToCrepCompFuncRiscV
-          (panToCrepMkCtxtHOL FEMPTY (functionInfosHOL declarations) 0
-            (panToCrepGetEidsFromDeclsHOL declarations))
-          entry.2.1 entry.2.2.1) = (start, [], cprog) := by
-    rw [hentry_eq] at hentry
-    simpa using hentry
-  have h1 : entry.1 = start := by
-    simpa using congrArg Prod.fst hproj
-  have hlookupEntry :=
-    lookupFunctionEntry_of_getElem? (functionEntries declarations) hdistinct hentry_eq
-  rw [h1] at hlookupEntry
-  rw [hlookup] at hlookupEntry
-  have hp : (entry.2.1, entry.2.2.1, entry.2.2.2) = ([], p, rshape) :=
-    (Option.some.inj hlookupEntry).symm
-  have g1 : entry.2.1 = [] := by simpa using congrArg Prod.fst hp
-  have g2 : entry.2.2.1 = p := by
-    simpa using congrArg Prod.fst (congrArg Prod.snd hp)
-  have g3 : entry.2.2.2 = rshape := by
-    simpa using congrArg Prod.snd (congrArg Prod.snd hp)
-  rw [hentry_eq]
-  congr 1
-  refine Prod.ext (by simpa using h1) ?_
-  refine Prod.ext (by simpa using g1) ?_
-  exact Prod.ext (by simpa using g2) (by simpa using g3)
 
 /-- Flapjack analogue of HOL `first_compile_prog_all_distinct`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:4556-4564`), which proves

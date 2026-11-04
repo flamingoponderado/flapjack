@@ -1,5 +1,4 @@
 import Flapjack.Pancake.CrepToLoop.ContextExact
-import Flapjack.Pancake.CrepToLoop.Optimise
 
 /-!
 # Direct HOL oracle parity for exact `crep_to_loop$comp_func_def`

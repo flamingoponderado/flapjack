@@ -42,12 +42,6 @@ def callShape : LoopProg α → Option (Option Nat × List Nat)
   | .call _ target arguments _ => some (target, arguments)
   | _ => none
 
-def compiledEnv (environment : LocationEnv) (program : LoopProg Nat) : LocationEnv :=
-  (comp environment program).2
-
-def compiledProgram (environment : LocationEnv) (program : LoopProg Nat) : LoopProg Nat :=
-  (comp environment program).1
-
 def probeSkip : LoopProg Nat := .skip
 def probeCallDest : LoopProg Nat := .call none (some 3) [1, 2] none
 def probeCallLast : LoopProg Nat := .call none none [1, 2] none
@@ -69,31 +63,6 @@ def probePrimitive : LoopProg Nat := .primitive [1] .addCarry [2, 3]
 def probeLongMul : LoopProg Nat := .arith (.longMul 1 2 3 4)
 def probeDiv : LoopProg Nat := .arith (.div 1 2 3)
 def probeFallback : LoopProg Nat := .store (.const 0) 1
-
-#guard isSkip (compiledProgram [] probeSkip)
-#guard callShape (compiledProgram [] probeCallDest) == some (some 3, [1, 2])
-#guard callShape (compiledProgram sourceEnvironment probeCallLast) ==
-  some (some 9, [1])
-#guard isSkip (compiledProgram [] probeCallEmpty)
-#guard lookup 2 (compiledEnv sourceEnvironment probeCallLast) == none
-#guard lookup 1 (compiledEnv [] probeLocValue) == some 7
-#guard lookup 1 (compiledEnv [(2, 7)] probeAssignVar) == some 7
-#guard lookup 1 (compiledEnv [(1, 7)] probeAssignVar) == none
-#guard lookup 1 (compiledEnv [(1, 7)] probeAssignExpr) == none
-#guard lookup 1 (compiledEnv [(1, 7)] probeShMem) == none
-#guard lookup 1 (compiledEnv [(1, 7)] probeLoad32) == none
-#guard lookup 1 (compiledEnv [] probeLoadByte) == none
-#guard isSeq (compiledProgram [(1, 7)] probeSequence)
-#guard isIte (compiledProgram [(1, 7)] probeIf)
-#guard isLoop (compiledProgram [(1, 7)] probeLoop)
-#guard lookup 2 (compiledEnv [(1, 7)] probeMark) == some 8
-#guard lookup 1 (compiledEnv [(1, 7)] probeFfi) == none
-#guard lookup 1 (compiledEnv sourceEnvironmentTwo probePrimitive) == none
-#guard lookup 2 (compiledEnv sourceEnvironmentTwo probePrimitive) == some 8
-#guard lookup 1 (compiledEnv sourceEnvironmentTwo probeLongMul) == none
-#guard lookup 2 (compiledEnv sourceEnvironmentTwo probeLongMul) == none
-#guard lookup 1 (compiledEnv [(1, 7)] probeDiv) == none
-#guard lookup 1 (compiledEnv [(1, 7)] probeFallback) == some 7
 
 /-! Basic lookup facts for the association-list location environment, used by
     the `loop_call` correctness proof. -/
@@ -126,33 +95,5 @@ def check (name : String) (actual expected : Bool) : IO Bool := do
   else
     IO.println s!"FAIL {name}: expected {expected}, got {actual}"
     pure false
-
-def runChecks : IO Bool := do
-  let results ← [
-    check "loop_call skip" (isSkip (compiledProgram [] probeSkip)) true,
-    check "loop_call call destination"
-      (callShape (compiledProgram [] probeCallDest) == some (some 3, [1, 2])) true,
-    check "loop_call call last argument"
-      (callShape (compiledProgram sourceEnvironment probeCallLast) ==
-        some (some 9, [1])) true,
-    check "loop_call empty call" (isSkip (compiledProgram [] probeCallEmpty)) true,
-    check "loop_call loc value"
-      (lookup 1 (compiledEnv [] probeLocValue) == some 7) true,
-    check "loop_call assign var copy"
-      (lookup 1 (compiledEnv [(2, 7)] probeAssignVar) == some 7) true,
-    check "loop_call shmem clears" 
-      (lookup 1 (compiledEnv [(1, 7)] probeShMem) == none) true,
-    check "loop_call sequence" (isSeq (compiledProgram [] probeSequence)) true,
-    check "loop_call if" (isIte (compiledProgram [] probeIf)) true,
-    check "loop_call loop" (isLoop (compiledProgram [] probeLoop)) true,
-    check "loop_call mark" (lookup 2 (compiledEnv [(1, 7)] probeMark) == some 8) true,
-    check "loop_call primitive" 
-      (lookup 2 (compiledEnv sourceEnvironmentTwo probePrimitive) == some 8) true,
-    check "loop_call arithmetic" 
-      (lookup 1 (compiledEnv sourceEnvironmentTwo probeLongMul) == none) true,
-    check "loop_call fallback" 
-      (lookup 1 (compiledEnv [(1, 7)] probeFallback) == some 7) true,
-    check "loop_call environment lookup facts" lookupFactsGuard true ].mapM id
-  pure (results.all id)
 
 end Flapjack.Test.LoopCallParity

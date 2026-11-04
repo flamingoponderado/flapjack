@@ -108,9 +108,7 @@ def compFieldHOL {width : Nat} [NeZero width] (index : Nat) :
     uses production `Shape`, whose named fields are Lean `String`, and a
     generic word carrier `α`; HOL `shape` names are `mlstring` and the result
     `crepLang$exp` is indexed by a positive word width. It is therefore not an
-    exact HOL declaration and intentionally has no tag. The exact carrier port
-    `compFieldHOL` over `ShapeHOL`/`CrepExpHOL` is tagged above, and
-    `compileField_map_codecs` is the kernel bridge from this executed helper. -/
+    exact HOL declaration and intentionally has no tag. -/
 def compileField [OfNat α 0] (index : Nat) :
     List Shape → List (CrepExp α) → List (CrepExp α) × Shape
   | [], _ => ([.const 0], .one)
@@ -182,26 +180,6 @@ theorem lookupInfo_eq_flookup_infoMapToFiniteMap [BEq String] [LawfulBEq String]
     (name : String) (entries : InfoMap β) :
     FLOOKUP (infoMapToFiniteMap entries) name = lookupInfo name entries :=
   (lookupInfo_eq_flookup_infoMapToFiniteMap name entries).symm
-
-/-- Kernel-checked association-list adapter retained for tests and lemmas.  It
-    builds a finite map from the compiler's `InfoMap` context and invokes
-    `expHdlFiniteMap`. Production handler compilation does not use this
-    wrapper: `compileProg` calls `expHdlFiniteMap` directly on
-    `infoMapToFiniteMap context.vars`. Both definitions are untagged because
-    their production keys/shapes use `String`, whereas HOL uses `mlstring`.
-    HOL has no association-list helper.
-
-    A known variable is initialized from the global return area, one word per
-    flattened local, and the assignments are nested in source order. -/
-def expHdl {α : Type u} [BEq String]
-    (vars : InfoMap (Shape × List Nat)) (name : VarName) : CrepProg α :=
-  expHdlFiniteMap (α := α) (infoMapToFiniteMap vars) name
-
-/-- The executable adapter computes the faithful finite-map definition on the
-    bridged map. -/
-theorem expHdl_eq_expHdlFiniteMap_bridge {α : Type u} [BEq String]
-    (vars : InfoMap (Shape × List Nat)) (name : VarName) :
-    expHdl (α := α) vars name = expHdlFiniteMap (α := α) (infoMapToFiniteMap vars) name := rfl
 
 /-! `pan_to_crep$exp_hdl` over the `MlString`-keyed / `ShapeHOL` / `CrepProgHOL`
     (`cakeml/pancake/pan_to_crepScript.sml:106-112`).
@@ -384,42 +362,6 @@ theorem retVarHOL_shapeToHOL (shape : Shape) (names : List Nat) :
     simp only [sizeOfShapesHOL_shapeToHOL fields]
   | named name => simp [retVarHOL, retVar, Flapjack.Pancake.PanLang.shapeToHOL]
 
-/-- Narrow kernel bridge: mapping the production `compileField` result into
-    the exact carriers agrees with `compFieldHOL`. The production helper is
-    still the executed one; routing the executed expression lowering through
-    the exact carrier is tracked by `flapjack-pxn.18.3.5.8.12`. -/
-theorem compileField_map_codecs {width : Nat} [NeZero width] (index : Nat)
-    (shapes : List Shape) (expressions : List (CrepExp (BitVec width))) :
-    (compileField (α := BitVec width) index shapes expressions).1.map crepExpToHOL
-        = (compFieldHOL index (shapes.map Flapjack.Pancake.PanLang.shapeToHOL)
-            (expressions.map crepExpToHOL)).1
-    ∧ Flapjack.Pancake.PanLang.shapeToHOL
-        (compileField (α := BitVec width) index shapes expressions).2
-        = (compFieldHOL index (shapes.map Flapjack.Pancake.PanLang.shapeToHOL)
-            (expressions.map crepExpToHOL)).2 := by
-  induction shapes generalizing index expressions with
-  | nil =>
-      rw [compileField.eq_1]
-      simp only [List.map_nil]
-      rw [compFieldHOL.eq_1]
-      simp [crepExpToHOL.eq_1, Flapjack.Pancake.PanLang.shapeToHOL]
-  | cons shape shapes ih =>
-      by_cases h : index = 0
-      · rw [compileField.eq_2]
-        simp only [List.map_cons]
-        rw [compFieldHOL.eq_2]
-        simp only [if_pos h]
-        constructor
-        · rw [sizeOfShapeHOL_shapeToHOL, ← List.map_take]
-        · trivial
-      · rw [compileField.eq_2]
-        simp only [List.map_cons]
-        rw [compFieldHOL.eq_2]
-        simp only [if_neg h]
-        rw [sizeOfShapeHOL_shapeToHOL]
-        rw [← List.map_drop]
-        exact ih (index - 1) (expressions.drop (Shape.shapeSize shape))
-
 /-- Kernel bridge: the executed `withShape` splits the value list exactly like
     the reviewed exact `withShapeHOL` after encoding every shape through the
     `shapeToHOL` codec.  The executed `withShape` measures blocks with the
@@ -437,7 +379,6 @@ theorem withShape_codec {α : Type} (shapes : List Shape) (values : List α) :
   | cons shape shapes ih =>
       simp only [List.map_cons, withShape, Flapjack.Pancake.PanLang.withShapeHOL]
       rw [sizeOfShapeHOL_shapeToHOL shape, ih]
-
 
 /-! Flapjack-only helper modeled on the commented-out `shape_vars_def` text
     (`cakeml/pancake/pan_to_crepScript.sml:319-324`); HOL does not define this
@@ -649,40 +590,6 @@ theorem expHdlFiniteMap_eq_assignRet
   exact panMap2_eq_zipWith (α := Nat) (β := CrepExp α)
     (γ := CrepProg α) _ _ _
 
-/-- Executable-adapter form of the previous lemma: the association-list
-    `expHdl` computes the production `assignRet` whenever `lookupInfo` finds
-    the variable. -/
-theorem expHdl_eq_assignRet_of_lookupInfo {α : Type u} [BEq String] [LawfulBEq String]
-    [OfNat α 0] [OfNat α 1] [Add α]
-    {vars : InfoMap (Shape × List Nat)} {name : VarName}
-    {shape : Shape} {names : List Nat}
-    (h : lookupInfo name vars = some (shape, names)) :
-    expHdl (α := α) vars name = assignRet names := by
-  rw [expHdl_eq_expHdlFiniteMap_bridge (α := α)]
-  exact expHdlFiniteMap_eq_assignRet (α := α)
-    (fm := infoMapToFiniteMap vars) (v := name) (by simpa using h)
-
-/-- The production `retHdl` on a multi-word `Comb` is `assignRet`. -/
-theorem retHdl_comb_eq_assignRet [OfNat α 0] [OfNat α 1] [Add α]
-    (fields : List Shape) (names : List Nat)
-    (h : 1 < Shape.shapeSize (.comb fields)) :
-    retHdl (.comb fields) names = assignRet names := by
-  simp [retHdl, h]
-
-/-- `pan_to_crep$ret_hdl` emits nothing for the one-word shapes. -/
-theorem retHdl_one_word_eq_skip [OfNat α 0] [OfNat α 1] [Add α]
-    (fields : List Shape) (names : List Nat)
-    (h : ¬ 1 < Shape.shapeSize (.comb fields)) :
-    retHdl (.comb fields) names = .skip := by
-  simp [retHdl, h]
-
-theorem retHdl_one_eq_skip [OfNat α 0] [OfNat α 1] [Add α] (names : List Nat) :
-    retHdl (.one : Shape) names = .skip := rfl
-
-theorem retHdl_named_eq_skip [OfNat α 0] [OfNat α 1] [Add α]
-    (structName : StructName) (names : List Nat) :
-    retHdl (.named structName) names = .skip := rfl
-
 /-- `pan_to_crep$ret_var` selects the first flattened destination of a one-word
     shape and reports no return variable otherwise. -/
 theorem retVar_one (names : List Nat) : retVar (.one : Shape) names = names.head? := rfl
@@ -778,54 +685,5 @@ where
   termination_by sizeOf expressions
   decreasing_by
     all_goals first | sizeOf_list_dec | decreasing_trivial
-
-theorem compileExp_const [BEq α] [OfNat α 0] [Add α]
-    (context : CompileContext α) (value : α) :
-    compileExp context (.const value) = ([.const value], .one) := by
-  simp [compileExp]
-
-theorem compileExp_local_var [BEq α] [OfNat α 0] [Add α]
-    (context : CompileContext α) (name : VarName) (shape : Shape) (names : List Nat)
-    (lookup : lookupInfo name context.vars = some (shape, names)) :
-    compileExp context (.var .local name) = (names.map .var, shape) := by
-  simp [compileExp, lookup]
-
-theorem compileExp_bytesInWord [BEq α] [OfNat α 0] [Add α]
-    (context : CompileContext α) :
-    compileExp context .bytesInWord = ([.const context.bytesInWord], .one) := by
-  simp [compileExp]
-
-/-- Production `.load` lowering with a machine-byte-width compile context agrees
-    with Cake's fixed-stride `load_shape` (`loadShapeBytes`).  The pipeline passes
-    `context.bytesInWord`; `hbytes` is the checked invariant that this field is
-    the fixed machine byte width — `riscvBytesInWord_eq` certifies the RV64 entry
-    points, which supply `8`. -/
-theorem compileExp_load_eq_loadShapeBytes [BEq α] [OfNat α 0] [Add α]
-    [CrepBytesInWord α] (context : CompileContext α)
-    (hbytes : context.bytesInWord = CrepBytesInWord.bytesInWord)
-    (shape : Shape) (expression : Exp α) (head : CrepExp α)
-    (rest : List (CrepExp α)) (shape' : Shape)
-    (hcompile : compileExp context expression = (head :: rest, shape')) :
-    (compileExp context (.load shape expression)).1 =
-      loadShapeBytes 0 (Shape.shapeSize shape) head := by
-  rw [compileExp]
-  simp only [hcompile]
-  rw [loadShape_eq_loadShapeBytes_of_stride_eq _ _ _ _ hbytes]
-
-/-- The executable RV64 entry point supplies `riscv64BytesInWord` as the context's
-    `bytesInWord` (`Flapjack.compileMain`), so the production `.load` lowering is
-    exactly Cake's fixed-stride `load_shape`.  This discharges the `hbytes`
-    invariant of `compileExp_load_eq_loadShapeBytes` at the value the executable
-    path actually uses, rather than in a hand-built test context. -/
-theorem compileExp_load_riscv64
-    (context : CompileContext (BitVec 64))
-    (hbytes : context.bytesInWord = riscv64BytesInWord)
-    (shape : Shape) (expression : Exp (BitVec 64)) (head : CrepExp (BitVec 64))
-    (rest : List (CrepExp (BitVec 64))) (shape' : Shape)
-    (hcompile : compileExp context expression = (head :: rest, shape')) :
-    (compileExp context (.load shape expression)).1 =
-      loadShapeBytes 0 (Shape.shapeSize shape) head :=
-  compileExp_load_eq_loadShapeBytes context (by rw [hbytes, riscv64BytesInWord_eq])
-    shape expression head rest shape' hcompile
 
 end Flapjack

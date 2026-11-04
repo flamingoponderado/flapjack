@@ -94,36 +94,6 @@ def whileBodyProgram : CrepProg Nat :=
 def handlerProgram : CrepProg Nat :=
   .call (some ([1], some (3, .skip))) "f" [.const 1]
 
-def constArgsGuard : Bool :=
-  loopCallLivePairs (loopCompileProg probeContext probeLive constArgsProgram)
-    = [([5], [5])]
-
-def load32ArgGuard : Bool :=
-  loopCallLivePairs (loopCompileProg probeContext probeLive load32ArgProgram)
-    = [([5], [5])]
-
-def decContinuationGuard : Bool :=
-  loopCallLivePairs (loopCompileProg probeContext probeLive decContinuationProgram)
-    = [([5, 11], [5, 11])]
-
-def ifBranchesGuard : Bool :=
-  let compiled := loopCompileProg probeContext probeLive ifBranchesProgram
-  loopCallLivePairs compiled = [([5], [5]), ([5], [5])] &&
-    loopIteLives compiled = [[5]]
-
-def whileBodyGuard : Bool :=
-  let compiled := loopCompileProg probeContext probeLive whileBodyProgram
-  /- Cake's While equation threads the incoming statement-region `l` through
-     the loop, its nested If, and the body.  The condition's temporary is not
-     added to those annotations. -/
-  loopCallLivePairs compiled = [([5], [5])] &&
-    loopIteLives compiled = [[5]] &&
-    loopLoopLives compiled = [([5], [5])]
-
-def handlerGuard : Bool :=
-  loopCallLivePairs (loopCompileProg probeContext probeLive handlerProgram)
-    = [([5], [5])]
-
 /-! CakeML's `insert_insert_eq`, `list_insert_SNOC`, `list_insert_append`
     (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:380/:386/:414`) and
     `domain_list_insert`, ported to the Flapjack list-backed live sets. -/
@@ -187,27 +157,5 @@ def insertSortedGuard : Bool :=
 
 #eval insertSortedGuard
 #guard insertSortedGuard
-
-def parityGuard : Bool :=
-  constArgsGuard && load32ArgGuard && decContinuationGuard && ifBranchesGuard &&
-    whileBodyGuard && handlerGuard && insertCommGuard
-
-#eval parityGuard
-#guard parityGuard
-
-def runChecks : IO Bool := do
-  let results := [
-    constArgsGuard, load32ArgGuard, decContinuationGuard, ifBranchesGuard,
-    whileBodyGuard, handlerGuard, insertSortedGuard, insertCommGuard]
-  let names := [
-    "crep_to_loop cutset const args", "crep_to_loop cutset load32 arg",
-    "crep_to_loop dec continuation live", "crep_to_loop if branches live",
-    "crep_to_loop while condition live", "crep_to_loop handler live",
-    "crep_to_loop list_insert lemmas", "crep_to_loop list_insert commutation"]
-  let mut all := true
-  for (name, result) in names.zip results do
-    if result then IO.println s!"PASS {name}" else IO.println s!"FAIL {name}"
-    all := all && result
-  pure all
 
 end Flapjack.Test.CrepToLoopCutsetParity

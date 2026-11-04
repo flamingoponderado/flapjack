@@ -3,12 +3,12 @@ import Flapjack.Parser.ParseTopDecsByteRanged
 import Flapjack.Pancake.PanToCrep.Compile
 import Flapjack.Pancake.Proofs.PanSimp.ProgOfHOL
 import Flapjack.Pancake.PanGlobalsByteRanged
-import Flapjack.Pancake.PanStructs.CompileDeclsCorrespondence
-import Flapjack.Pancake.PanSimpByteRanged
+import Flapjack.Pancake.PanStructs.CompileExpCorrespondence
+import Flapjack.Pancake.PanStructs.CompileDeclsExact
 import Flapjack.CompileFunctionDistinct
-import Flapjack.Pancake.CrepToLoop.Optimise
 import Flapjack.Pancake.CrepToLoop.ProductionCompileProg
-import Flapjack.Pancake.PanToCrep.CompileProgCorrespondence
+import Flapjack.Pancake.PanToCrep.CompileToCrepBridge
+import Flapjack.Pancake.CrepInline.InlineRouteNames
 import Flapjack.Pancake.LoopToWord
 import Flapjack.Pancake.LoopToWord.CompFuncExact
 import Flapjack.Pancake.LoopToWord.LoopProgCarrierCodec

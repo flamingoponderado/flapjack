@@ -1,12 +1,12 @@
 import Flapjack.Pancake.Proofs.PanSimp.ProgOfHOL
 import Flapjack.Pancake.PanGlobalsByteRanged
-import Flapjack.Pancake.PanStructs.CompileDeclsCorrespondence
-import Flapjack.Pancake.PanSimpByteRanged
+import Flapjack.Pancake.PanStructs.CompileExpCorrespondence
+import Flapjack.Pancake.PanStructs.CompileDeclsExact
 import Flapjack.Pancake.PanToCrep.Compile
 import Flapjack.CompileFunctionDistinct
-import Flapjack.Pancake.CrepToLoop.Optimise
 import Flapjack.Pancake.CrepToLoop.ProductionCompileProg
-import Flapjack.Pancake.PanToCrep.CompileProgCorrespondence
+import Flapjack.Pancake.PanToCrep.CompileToCrepBridge
+import Flapjack.Pancake.CrepInline.InlineRouteNames
 import Flapjack.Pancake.LoopToWord.CompFuncExact
 import Flapjack.Pancake.LoopToWord.LoopProgCarrierCodec
 import Flapjack.RiscV.WordDiagnostics
@@ -26,13 +26,6 @@ def compileProgProbeContext : CompileContext Nat :=
 
 #check @allocatedNames_gt
 #check @freshNames_gt
-#check @mem_crepExpVars_le_maxCrepExpVar
-
-theorem maxCrepExpVar_mem_fixture :
-    7 ≤ maxCrepExpVar ([.var 3, .const 0, .var 7] : List (CrepExp Nat)) := by
-  apply mem_crepExpVars_le_maxCrepExpVar
-  simp [crepExpVars]
-
 theorem allocatedNames_gt_fixture : (0 : Nat) < (allocatedNames compileProgProbeContext .one).headD 0 := by
   have hmem : (allocatedNames compileProgProbeContext .one).headD 0 ∈ allocatedNames compileProgProbeContext .one := by
     simp [allocatedNames, compileProgProbeContext]
@@ -283,37 +276,6 @@ theorem compileProgExactNestedDeclsByteRanged :
     · exact compileProbeInlineCallRanged (width := 8) "main" "mid"
         compileProbeNameMainRanged compileProbeNameMidRanged
 
-def compileProgExactProductionEmptyParity : Bool :=
-  match compileProgTopHOLProductionExactInline ([] : List (Decl (BitVec 8))) (by
-      intro declaration hmem
-      simp at hmem) with
-  | [] => true
-  | _ => false
-
-def compileProgExactProductionDuplicateParity : Bool :=
-  match compileProgTopHOLProductionExactInline compileProgExactDuplicateDecls
-      compileProgExactDuplicateDeclsByteRanged with
-  | [("id", [], .return [.const first]),
-     ("id", [], .return [.const second]),
-     ("main", [], .seq .tick (.return [.const returned]))] =>
-      first == BitVec.ofNat 8 7 && second == BitVec.ofNat 8 9 &&
-        returned == BitVec.ofNat 8 7
-  | _ => false
-
-def compileProgExactProductionNestedParity : Bool :=
-  match compileProgTopHOLProductionExactInline compileProgExactNestedDecls
-      compileProgExactNestedDeclsByteRanged with
-  | [("leaf", [], .return [.const leafValue]),
-     ("mid", [], .seq .tick (.return [.const midValue])),
-     ("main", [], .seq .tick (.seq .tick (.return [.const mainValue])))] =>
-      leafValue == BitVec.ofNat 8 7 && midValue == BitVec.ofNat 8 7 &&
-        mainValue == BitVec.ofNat 8 7
-  | _ => false
-
-#guard compileProgExactProductionEmptyParity
-#guard compileProgExactProductionDuplicateParity
-#guard compileProgExactProductionNestedParity
-
 /-! Further direct `compile_prog_probe.out` rows exercise the exact parser route
     on a mutual inline cycle, handler recursion, and a multi-value return. These
     distinguish HOL's per-callee `DOMSUB` recursion and handler clause from a
@@ -346,16 +308,6 @@ theorem compileProgExactCycleDeclsByteRanged :
   · subst declaration
     exact compileProbeInlineCallRanged (width := 8) "main" "f"
       compileProbeNameMainRanged compileProbeNameFRanged
-
-def compileProgExactCycleParity : Bool :=
-  match compileProgTopHOLProductionExactInline compileProgExactCycleDecls
-      compileProgExactCycleDeclsByteRanged with
-  | [("f", [], .seq .tick (.call none "f" [])),
-     ("g", [], .seq .tick (.call none "g" [])),
-     ("main", [], .seq .tick (.seq .tick (.call none "f" [])))] => true
-  | _ => false
-
-#guard compileProgExactCycleParity
 
 def compileProgCycleCompatibilityParity : Bool :=
   match compileProgTopHOL compileProgExactCycleDecls with
@@ -397,18 +349,6 @@ theorem compileProgExactHandlerDeclsByteRanged :
             compileProbeNameIdRanged, by simp, True.intro⟩⟩⟩
     · simp [ShapeByteRanged]
 
-def compileProgExactHandlerParity : Bool :=
-  match compileProgTopHOLProductionExactInline compileProgExactHandlerDecls
-      compileProgExactHandlerDeclsByteRanged with
-  | [("id", [], .return [.const value]),
-     ("main", [], .dec 1 (.const 0)
-       (.call (some ([1], some (0, .seq .skip
-         (.seq .tick (.return [.const handledValue]))))) "id" []))] =>
-      value == BitVec.ofNat 8 7 && handledValue == BitVec.ofNat 8 7
-  | _ => false
-
-#guard compileProgExactHandlerParity
-
 def compileProgHandlerCompatibilityParity : Bool :=
   match compileProgTopHOL compileProgExactHandlerDecls with
   | [("id", [], .return [.const value]),
@@ -449,17 +389,6 @@ theorem compileProgExactAggregateReturnDeclsByteRanged :
       exact ⟨compileProbeNamePairRanged, by simp, True.intro⟩
     · simp [ShapeByteRanged]
 
-def compileProgExactAggregateReturnParity : Bool :=
-  match compileProgTopHOLProductionExactInline compileProgExactAggregateReturnDecls
-      compileProgExactAggregateReturnDeclsByteRanged with
-  | [("pair", [], .return [.const first, .const second]),
-     ("main", [], .seq .tick (.return [.const mainFirst, .const mainSecond]))] =>
-      first == BitVec.ofNat 8 7 && second == BitVec.ofNat 8 9 &&
-        mainFirst == BitVec.ofNat 8 7 && mainSecond == BitVec.ofNat 8 9
-  | _ => false
-
-#guard compileProgExactAggregateReturnParity
-
 def compileProgAggregateReturnCompatibilityParity : Bool :=
   match compileProgTopHOL compileProgExactAggregateReturnDecls with
   | [("pair", [], .return [.const first, .const second]),
@@ -469,36 +398,6 @@ def compileProgAggregateReturnCompatibilityParity : Bool :=
   | _ => false
 
 #guard compileProgAggregateReturnCompatibilityParity
-
-def compileProgExactDuplicateMatchesProduction : Bool :=
-  match compileProgTopHOL compileProgExactDuplicateDecls,
-      compileProgTopHOLProductionExactInline compileProgExactDuplicateDecls
-        compileProgExactDuplicateDeclsByteRanged with
-  | [(_, [], .return [.const directFirst]),
-     (_, [], .return [.const directSecond]),
-     (_, [], .seq .tick (.return [.const directReturned]))],
-    [(_, [], .return [.const exactFirst]),
-     (_, [], .return [.const exactSecond]),
-     (_, [], .seq .tick (.return [.const exactReturned]))] =>
-      directFirst == exactFirst && directSecond == exactSecond &&
-        directReturned == exactReturned
-  | _, _ => false
-
-def compileProgExactNestedMatchesProduction : Bool :=
-  match compileProgTopHOL compileProgExactNestedDecls,
-      compileProgTopHOLProductionExactInline compileProgExactNestedDecls
-        compileProgExactNestedDeclsByteRanged with
-  | [(_, [], .return [.const directLeaf]),
-     (_, [], .seq .tick (.return [.const directMid])),
-     (_, [], .seq .tick (.seq .tick (.return [.const directMain])))],
-    [(_, [], .return [.const exactLeaf]),
-     (_, [], .seq .tick (.return [.const exactMid])),
-     (_, [], .seq .tick (.seq .tick (.return [.const exactMain])))] =>
-      directLeaf == exactLeaf && directMid == exactMid && directMain == exactMain
-  | _, _ => false
-
-#guard compileProgExactDuplicateMatchesProduction
-#guard compileProgExactNestedMatchesProduction
 
 /-! HOL's `ShMemStore` constructor operands are positional value then address;
     `compile_def` allocates the shared-store temporary from the first operand

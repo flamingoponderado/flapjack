@@ -13,24 +13,6 @@ namespace Flapjack
 open Flapjack.Pancake.PanLang
 open Flapjack.Basis.Pure.MlString
 
-/-- Transport of one production `functionEntries` entry to the exact
-    `functionsHOL` entry carrier. -/
-def funEntryToHOL {width : Nat} [NeZero width]
-    (e : FunName × List (VarName × Shape) × Prog (BitVec width) × Shape) :
-    MlS × List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL :=
-  (ofString e.1, e.2.1.map paramToHOL, progToHOL e.2.2.1, shapeToHOL e.2.2.2)
-
-/-- The exact `functionsHOL` of the encoded declarations is the encoded
-    production `functionEntries`. -/
-theorem functionsHOL_map_declToHOL {width : Nat} [NeZero width]
-    (ds : List (Decl (BitVec width))) :
-    functionsHOL (ds.map declToHOL) = (functionEntries ds).map funEntryToHOL := by
-  induction ds with
-  | nil => simp [functionsHOL, functionEntries]
-  | cons d ds ih =>
-    cases d <;>
-      simp [functionsHOL, functionEntries, declToHOL, funDeclToHOL, funEntryToHOL, ih]
-
 /-- The right-fold association-list rendering of HOL `alist_to_fmap` equals the
     left fold of `FUPDATE` over the reversed association list. -/
 theorem alistToFmap_eq_fupdate_list_reverse [BEq α] (entries : List (α × β)) :
@@ -84,17 +66,6 @@ theorem flookup_alistToFmap_map_decode {α β γ δ : Type}
         rw [FLOOKUP_update, FLOOKUP_update, hkk, hfk]
         exact ih htail_inj htail_left
 
-/-- Production association-list entries of HOL `make_funcs`. -/
-def prodFuncEntries {width : Nat} [NeZero width] (ds : List (Decl (BitVec width))) :
-    List (FunName × (List (VarName × Shape) × Shape)) :=
-  (functionEntries ds).map (fun e => (e.1, (e.2.1, e.2.2.2)))
-
-/-- Production association-list entries of HOL `get_eids_from_decls`. -/
-def prodEidsEntries {width : Nat} [NeZero width] (ds : List (Decl (BitVec width))) :
-    List (String × BitVec width) :=
-  let names := (exceptionEntries ds).map Prod.fst
-  names.zip ((List.range names.length).map (BitVec.ofNat width))
-
 /-- Encode a production `(params, return)` function signature to exact carriers. -/
 def encodeFuncValue (v : List (VarName × Shape) × Shape) :
     List (MlS × ShapeHOL) × ShapeHOL :=
@@ -111,18 +82,6 @@ def decodeFuncValue (v : List (MlS × ShapeHOL) × ShapeHOL) :
   obtain ⟨p, r⟩ := v
   simp [encodeFuncValue, decodeFuncValue, List.map_map, Function.comp_def]
 
-/-- The exact `make_funcs` association list of the encoded declarations is the
-    encoded production `make_funcs` association list. -/
-theorem makeFuncsEntriesHOL_map_declToHOL {width : Nat} [NeZero width]
-    (ds : List (Decl (BitVec width))) :
-    makeFuncsEntriesHOL (functionsHOL (ds.map declToHOL)) =
-      (prodFuncEntries ds).map (fun e => (ofString e.1, encodeFuncValue e.2)) := by
-  rw [makeFuncsEntriesHOL, functionsHOL_map_declToHOL, prodFuncEntries, List.map_map]
-  simp only [List.map_map]
-  apply List.map_congr_left
-  intro e _
-  simp [funEntryToHOL, encodeFuncValue]
-
 /-- Zipping a mapped list with codes of the mapped length equals mapping the
     code-zipped original. -/
 theorem zip_map_fst {α β : Type} (f : α → String) (x : List α) (g : Nat → β) :
@@ -130,100 +89,6 @@ theorem zip_map_fst {α β : Type} (f : α → String) (x : List α) (g : Nat �
       (x.zip ((List.range x.length).map g)).map (fun e => (f e.1, e.2)) := by
   rw [List.length_map, List.zip_map_left]
   rfl
-
-/-- Reverse direction of `makeFuncsEntriesHOL_map_declToHOL`, valid on
-    byte-ranged declarations: the production `make_funcs` association list is
-    the decoded exact list. -/
-theorem prodFuncEntries_eq_map {width : Nat} [NeZero width]
-    (ds : List (Decl (BitVec width)))
-    (hdecls : ∀ d ∈ ds, DeclByteRanged d) :
-    prodFuncEntries ds =
-      (makeFuncsEntriesHOL (functionsHOL (ds.map declToHOL))).map
-        (fun e => (toStringOfBytes e.1, decodeFuncValue e.2)) := by
-  rw [makeFuncsEntriesHOL_map_declToHOL, prodFuncEntries, List.map_map, List.map_map]
-  apply List.map_congr_left
-  intro src hsrc
-  obtain ⟨hname, hparams, hret, _⟩ := functionEntries_byteRanged ds hdecls src hsrc
-  have hparams' : ListParamByteRanged src.2.1 := fun p hp => hparams p hp
-  have hval : decodeFuncValue (encodeFuncValue (src.2.1, src.2.2.2)) =
-      (src.2.1, src.2.2.2) := by
-    simp only [encodeFuncValue, decodeFuncValue]
-    rw [List.map_map, listParamOfHOL_paramToHOL _ hparams',
-      shapeOfHOL_shapeToHOL _ hret]
-  simp only [Function.comp_apply]
-  rw [Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes src.1 hname, hval]
-
-/-- The production exception-id association entries are the decoded exact
-    `get_eids_from_decls` entries. -/
-theorem prodEidsEntries_eq_map {width : Nat} [NeZero width]
-    (ds : List (Decl (BitVec width)))
-    (hdecls : ∀ d ∈ ds, DeclByteRanged d) :
-    prodEidsEntries ds =
-      (getEidsEntriesHOL (ds.map declToHOL)).map
-        (fun e => (toStringOfBytes e.1, e.2)) := by
-  unfold prodEidsEntries
-  rw [getEidsEntriesHOL_eq_lengthBased]
-  have hnames :
-      ((exceptionsHOL (ds.map declToHOL)).map Prod.fst).map toStringOfBytes =
-        (exceptionEntries ds).map Prod.fst := by
-    have h := exceptionsHOL_map_paramOfHOL (ds.map declToHOL)
-    rw [map_declOfHOL_declToHOL ds hdecls] at h
-    have h' := congrArg (List.map Prod.fst) h
-    rw [← h', List.map_map, List.map_map]
-    rfl
-  rw [← hnames]
-  exact zip_map_fst toStringOfBytes _ (BitVec.ofNat width)
-
-/-- Lookup-level bridge for the exact `make_funcs` map: the production
-    `functionInfosHOL` finite map, decoded to exact carriers, is the exact
-    `makeFuncsExactHOL` map of the encoded declarations. -/
-theorem makeFuncsExactHOL_lookup_declToHOL {width : Nat} [NeZero width]
-    (ds : List (Decl (BitVec width)))
-    (hdecls : ∀ d ∈ ds, DeclByteRanged d) (key : MlS) :
-    (makeFuncsExactHOL (functionsHOL (ds.map declToHOL))).lookup key =
-      (functionInfosHOL ds (toStringOfBytes key)).map encodeFuncValue := by
-  have hgen := flookup_alistToFmap_map_decode
-    (f := Flapjack.Basis.Pure.MlString.toStringOfBytes)
-    (h := decodeFuncValue) (decode := encodeFuncValue)
-    (entries := makeFuncsEntriesHOL (functionsHOL (ds.map declToHOL))) key
-    (fun e _ hab => Flapjack.toStringOfBytes_injective hab)
-    (fun e _ => encodeFuncValue_decodeFuncValue e.2)
-  rw [← prodFuncEntries_eq_map ds hdecls] at hgen
-  have hexact : (makeFuncsExactHOL (functionsHOL (ds.map declToHOL))).lookup key =
-      FLOOKUP (alistToFmap (makeFuncsEntriesHOL (functionsHOL (ds.map declToHOL)))) key := rfl
-  have hprod : functionInfosHOL ds (toStringOfBytes key) =
-      FLOOKUP (alistToFmap (prodFuncEntries ds)) (toStringOfBytes key) := by
-    rw [functionInfosHOL_eq_makeFuncsHOL, makeFuncsHOL]
-    change FUPDATE_LIST FEMPTY (prodFuncEntries ds).reverse (toStringOfBytes key) =
-      FLOOKUP (alistToFmap (prodFuncEntries ds)) (toStringOfBytes key)
-    rw [← alistToFmap_eq_fupdate_list_reverse]
-    rfl
-  rw [hexact, hprod]
-  exact hgen.symm
-
-/-- Lookup-level bridge for the exact `get_eids_from_decls` map. -/
-theorem getEidsFromDeclsHOL_lookup_declToHOL {width : Nat} [NeZero width]
-    (ds : List (Decl (BitVec width)))
-    (hdecls : ∀ d ∈ ds, DeclByteRanged d) (key : MlS) :
-    (getEidsFromDeclsHOL (ds.map declToHOL)).lookup key =
-      panToCrepGetEidsFromDeclsHOL ds (toStringOfBytes key) := by
-  have hgen := flookup_alistToFmap_map_decode
-    (f := Flapjack.Basis.Pure.MlString.toStringOfBytes)
-    (h := id) (decode := id) (entries := getEidsEntriesHOL (ds.map declToHOL)) key
-    (fun e _ hab => Flapjack.toStringOfBytes_injective hab)
-    (fun e _ => rfl)
-  simp only [id_eq] at hgen
-  rw [← prodEidsEntries_eq_map ds hdecls] at hgen
-  have hexact : (getEidsFromDeclsHOL (ds.map declToHOL)).lookup key =
-      FLOOKUP (alistToFmap (getEidsEntriesHOL (ds.map declToHOL))) key := rfl
-  have hprod : panToCrepGetEidsFromDeclsHOL ds (toStringOfBytes key) =
-      FLOOKUP (alistToFmap (prodEidsEntries ds)) (toStringOfBytes key) := by
-    change FUPDATE_LIST FEMPTY (prodEidsEntries ds).reverse (toStringOfBytes key) =
-      FLOOKUP (alistToFmap (prodEidsEntries ds)) (toStringOfBytes key)
-    rw [← alistToFmap_eq_fupdate_list_reverse]
-    rfl
-  rw [hexact, hprod]
-  simpa using hgen.symm
 
 theorem holFiniteMapExact_ext {α β : Type}
     {left right : HolFiniteMapExact α β}
@@ -463,97 +328,5 @@ theorem panToCrepMakeVmapHOLExactOfProductionParams_bridge
   rw [Flapjack.holFmapAsFiniteSupportResultWitness_panToCrepMakeVmapHOLExact]
   simpa [exactParams, FEMPTY, panToCrepMakeVmapHOL,
     panToCrepMakeVmapRaw, hentries] using hupdate
-
-/-- The assembled byte-ranged bridge: transporting the production
-    declaration-only compiler's output through the reviewed codecs equals the
-    tagged exact `compile_to_crep` on the encoded declarations.
-
-    Flapjack-specific infrastructure (no HOL original): HOL has no production
-    `String`-keyed compiler counterpart, so this relation between the production
-    `compileToCrepHOL` and the tagged exact `compileToCrepExactHOLW` is not a
-    port of a HOL declaration and carries no `@[hol]` tag. It is stated on the
-    `DeclByteRanged` side condition, which is exactly the hypothesis under which
-    `declOfHOL_declToHOL` recovers production declarations. -/
-theorem compileToCrepHOL_map_declToHOL {width : Nat} [NeZero width]
-    (ds : List (Decl (BitVec width)))
-    (hdecls : ∀ d ∈ ds, DeclByteRanged d) :
-    (compileToCrepHOL ds).map
-        (fun t => (ofString t.1, t.2.1, crepProgToHOL t.2.2)) =
-      compileToCrepExactHOLW (ds.map declToHOL) := by
-  have hthird : ∀ e ∈ functionEntries ds,
-      crepProgToHOL
-          (compFuncHOL (functionInfosHOL ds) (panToCrepGetEidsFromDeclsHOL ds)
-            e.2.1 e.2.2.1) =
-        compFuncExactHOLW
-          (makeFuncsExactHOL (functionsHOL (ds.map declToHOL)))
-          (getEidsFromDeclsHOL (ds.map declToHOL))
-          (e.2.1.map paramToHOL) (progToHOL e.2.2.1) := by
-    intro e he
-    have hbridge := compileFunctionExactProductionBridge ds e hdecls he
-    obtain ⟨_, hparams, _, _⟩ := functionEntries_byteRanged ds hdecls e he
-    rw [← hbridge, crepProgToHOL_crepProgOfHOL]
-    have hctx :
-        panToCrepContextExactOfProduction
-            (panToCrepMkCtxtHOL (panToCrepMakeVmapHOL e.2.1)
-              (functionInfosHOL ds)
-              (Shape.shapeSize (.comb (e.2.1.map Prod.snd)) - 1)
-              (panToCrepGetEidsFromDeclsHOL ds))
-            (panToCrepFunctionContextProductionEvidence ds e hdecls he) =
-          mkCtxtExactHOL (panToCrepMakeVmapHOLExact (e.2.1.map paramToHOL))
-            (makeFuncsExactHOL (functionsHOL (ds.map declToHOL)))
-            (sizeOfShapeHOL (.comb ((e.2.1.map paramToHOL).map Prod.snd)) - 1)
-            (getEidsFromDeclsHOL (ds.map declToHOL)) := by
-      apply panToCrepContextExact_ext
-      · apply holFiniteMapExact_ext
-        intro key
-        rw [panToCrepContextExactOfProduction_vars_lookup]
-        exact (panToCrepMakeVmapHOLExactOfProductionParams_bridge e.2.1 hparams key).symm
-      · apply holFiniteMapExact_ext
-        intro key
-        change (functionInfosHOL ds (toStringOfBytes key)).map
-            (fun value => (value.1.map (fun p => (ofString p.1, shapeToHOL p.2)),
-              shapeToHOL value.2)) =
-          (makeFuncsExactHOL (functionsHOL (ds.map declToHOL))).lookup key
-        rw [makeFuncsExactHOL_lookup_declToHOL ds hdecls key]
-        rfl
-      · apply holFiniteMapExact_ext
-        intro key
-        rw [panToCrepContextExactOfProduction_eids_lookup]
-        exact (getEidsFromDeclsHOL_lookup_declToHOL ds hdecls key).symm
-      · show Shape.shapeSize (.comb (e.2.1.map Prod.snd)) - 1 =
-          sizeOfShapeHOL (.comb ((e.2.1.map paramToHOL).map Prod.snd)) - 1
-        rw [show (e.2.1.map paramToHOL).map Prod.snd =
-            (e.2.1.map Prod.snd).map shapeToHOL by
-          simp only [List.map_map]
-          apply List.map_congr_left
-          intro p _
-          rfl]
-        simp only [sizeOfShapeHOL_comb, sizeOfShapesHOL_shapeToHOL, Shape.shapeSize]
-    rw [hctx]
-    rw [compFuncExactHOLW]
-  have hlhs : (compileToCrepHOL ds).map
-        (fun t => (ofString t.1, t.2.1, crepProgToHOL t.2.2)) =
-      (functionEntries ds).map (fun e =>
-        (ofString e.1, panToCrepVars e.2.1,
-          crepProgToHOL (compFuncHOL (functionInfosHOL ds)
-            (panToCrepGetEidsFromDeclsHOL ds) e.2.1 e.2.2.1))) := by
-    simp only [compileToCrepHOL, List.map_map, ← functionInfosHOL_eq_makeFuncsHOL]
-    rfl
-  have hrhs : compileToCrepExactHOLW (ds.map declToHOL) =
-      (functionEntries ds).map (fun e =>
-        (ofString e.1, crepVarsHOL (e.2.1.map paramToHOL),
-          compFuncExactHOLW (makeFuncsExactHOL (functionsHOL (ds.map declToHOL)))
-            (getEidsFromDeclsHOL (ds.map declToHOL))
-            (e.2.1.map paramToHOL) (progToHOL e.2.2.1))) := by
-    simp only [compileToCrepExactHOLW, functionsHOL_map_declToHOL, List.map_map]
-    apply List.map_congr_left
-    intro e _
-    simp [funEntryToHOL]
-  rw [hlhs, hrhs]
-  apply List.map_congr_left
-  intro e he
-  refine Prod.ext rfl (Prod.ext ?_ ?_)
-  · rw [crepVarsHOL_map_paramToHOL]
-  · exact hthird e he
 
 end Flapjack

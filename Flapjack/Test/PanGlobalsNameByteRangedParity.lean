@@ -78,10 +78,6 @@ example : Flapjack.Pancake.PanLang.NameRanged
   holMlStringWitness_globalFreshName "x" (by
     unfold Flapjack.Pancake.PanLang.NameRanged; decide) ["x", "x'", "x''"]
 
-example : Flapjack.Pancake.PanLang.NameRanged
-    (globalNewMainName [functionDecl "main", functionDecl "main'"]) :=
-  holMlStringWitness_globalNewMainName _
-
 /-- Production extraction lemmas (natural counterpart modules). -/
 example {width : Nat} {function : String}
     {configuration configurationLength array arrayLength : Flapjack.Exp (BitVec width)}

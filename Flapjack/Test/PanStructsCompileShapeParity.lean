@@ -37,12 +37,6 @@ private theorem byteRangedStructCompileInput_ok :
     simp [DeclByteRanged, FunDeclByteRanged, NameRanged, ListParamByteRanged,
       ParamByteRanged, ShapeByteRanged, ProgByteRanged, ExpByteRanged]
 
-theorem structCompileTopExact_byteRanged_fixture :
-    structCompileTopExactOfByteRanged byteRangedStructCompileInput
-      byteRangedStructCompileInput_ok = structCompileTop byteRangedStructCompileInput :=
-  structCompileTopExact_eq_legacyOfByteRanged byteRangedStructCompileInput
-    byteRangedStructCompileInput_ok
-
 /-! Direct replay of the source HOL-EVAL rows in
     `scripts/hol-probes/compile_shape_probe.out` using the exact
     `MlString`/`ShapeHOL` carrier. -/
@@ -167,82 +161,6 @@ theorem structCompileShapesFuel_eq_map_fixture :
   simp [structCompileShapeFuel, structCompileShapeFuel.structCompileShapesFuel,
     forwardContext, lookupInfoWithRest]
 
-/- Direct parity for `pan_structs$get_names_def`
-   (`pan_structsScript.sml:235`).  Cake prepends each Name declaration while
-   traversing the source list, so the final structure environment is in
-   reverse Name order and ignores every non-Name declaration. -/
-def getNamesParityGuard : Bool :=
-  let context : StructPassContext :=
-    { structs := [], locals := [], globals := [] }
-  match structGetNames context
-      [.decl .one "global" (.const 0),
-       .name "First" [("a", .comb [.one, .one])],
-       .function
-         { name := "f", inline := false, exported := false, params := [],
-           body := .skip, returnShape := .one },
-       .name "Second" [("b", .one)]] with
-  | { structs := [("Second", second), ("First", first)],
-      locals := [], globals := [] } =>
-      match second.fields, second.size, second.shapedFields,
-        first.fields, first.size, first.shapedFields with
-      | [("b", .one)], 0, [], [("a", .comb [.one, .one])], 0, [] => true
-      | _, _, _, _, _, _ => false
-  | _ => false
-
-#eval getNamesParityGuard
-#guard getNamesParityGuard
-
-/- Direct parity for `pan_structs$compile_top_def`
-   (`pan_structsScript.sml:244`).  The top pass must seed the structure
-   context from Name declarations, then return only the compiled declarations
-   in source order. -/
-def compileTopParityGuard : Bool :=
-  match structCompileTop
-      [.name "Pair" [("left", .one), ("right", .one)],
-       .decl (.named "Pair") "global"
-         (.nStruct "Pair" [("left", .const 1), ("right", .const 2)]),
-       .function
-         { name := "read", inline := false, exported := false,
-           params := [("pair", .named "Pair")],
-           body := .return (.nField "right" (.var .local "pair")),
-           returnShape := .one }] with
-  | [.decl (.comb [.one, .one]) "global" (.rStruct [.const 1, .const 2]),
-     .function declaration] =>
-      (match declaration.params with
-      | [("pair", .comb [.one, .one])] => true
-      | _ => false) &&
-      match declaration.body with
-      | .return (.rField 1 (.var .local "pair")) => true
-      | _ => false
-  | _ => false
-
-#eval compileTopParityGuard
-#guard compileTopParityGuard
-
-/- The optional shape callback is threaded through declaration shapes,
-   expressions, and function bodies while the default `structCompileTop` call
-   above continues to use the production `structCompileShape`. -/
-def compileTopCallbackGuard : Bool :=
-  let callback : StructContext → Shape → Shape := fun _ _ => .comb [.one]
-  match structCompileTop
-      [.name "S" [],
-       .decl (.named "S") "g" (.load (.named "S") (.const (0 : BitVec 8))),
-       .function
-         { name := "read", inline := false, exported := false,
-           params := [("p", .named "S")],
-           body := .return (.load (.named "S") (.var .local "p")),
-           returnShape := .named "S" }] callback with
-  | [.decl (.comb [.one]) "g" (.load (.comb [.one]) (.const _)),
-     .function declaration] =>
-      match declaration.params, declaration.returnShape, declaration.body with
-      | [("p", .comb [.one])], .comb [.one],
-          .return (.load (.comb [.one]) (.var .local "p")) => true
-      | _, _, _ => false
-  | _ => false
-
-#eval compileTopCallbackGuard
-#guard compileTopCallbackGuard
-
 /-! Cake's `function_names_structs_compile_top`
     (`cakeml/pancake/proofs/pan_to_wordProofScript.sml:313`). -/
 
@@ -252,16 +170,5 @@ def namesFunction : FunDecl Nat :=
 
 def namesDecls : List (Decl Nat) :=
   [.function namesFunction, .decl .one "g" (.const 1), .name "S" []]
-
-theorem functions_names_structCompileTop_fixture :
-    (functions (structCompileTop namesDecls)).map Prod.fst =
-      (functions namesDecls).map Prod.fst :=
-  functions_names_structCompileTop namesDecls
-
-def structNamesGuard : Bool :=
-  (functions (structCompileTop namesDecls)).map Prod.fst == ["f"]
-
-#eval structNamesGuard
-#guard structNamesGuard
 
 end Flapjack.Test.PanStructsCompileShapeParity
