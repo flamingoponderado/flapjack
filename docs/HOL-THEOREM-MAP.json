@@ -116,6 +116,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gcScript.sml",
+  "hol_name": "gc_move_loop_ok",
+  "lean_path": "Flapjack/Compiler/Backend/GenGc/Proofs/Progress.lean",
+  "lean_name": "gcMoveLoop_ok",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared gen_gc_move_loop_ok_typed and the source definition: success of the same clocked major collection loop implies success of its input state, with independent address and payload types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gcScript.sml",
   "hol_name": "gc_move_refs_ok",
   "lean_path": "Flapjack/Compiler/Backend/GenGc/Proofs/Progress.lean",
   "lean_name": "gcMoveRefs_ok",

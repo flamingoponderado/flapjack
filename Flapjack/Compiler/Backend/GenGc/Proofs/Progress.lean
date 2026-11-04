@@ -180,4 +180,24 @@ theorem gcMoveData_h2 {α β : Type} (conf : Config β) (state : GcState α β)
     | forwardPointer ptr value len => rw [gcMoveData] at ok; simp [heap, bounded] at ok
     | dataElement roots len payload => exact False.elim (notData roots len payload rfl)
 
+/-- A successful major collection loop started from a successful state. -/
+@[hol "cakeml/compiler/backend/gc/gen_gcScript.sml" "gc_move_loop_ok"]
+theorem gcMoveLoop_ok {α β : Type} (conf : Config β) (state : GcState α β)
+    (clock : Nat) (ok : (gcMoveLoop conf state clock).ok = true) : state.ok = true := by
+  classical
+  induction clock generalizing state with
+  | zero =>
+    rw [gcMoveLoop] at ok
+    split at ok
+    · split at ok <;> simp_all
+    · simp at ok
+  | succ clock ih =>
+    rw [gcMoveLoop] at ok
+    split at ok
+    · split at ok
+      · exact ok
+      · exact gcMoveData_ok conf state (ih _ (by simpa using ok))
+    · exact gcMoveRefs_ok conf { state with r2 := state.r4, r4 := [] }
+        (ih _ (by simpa using ok))
+
 end Flapjack.Compiler.Backend.GenGc
