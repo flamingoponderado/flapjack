@@ -110,6 +110,41 @@ theorem targetStateRel_congr {s2 : AsmState 64} {s t : arm8_state}
   · intro i hi
     simp [arm8ConfigL3] at hi
 
+/-- `arm8Next` respects agreement for any instruction word whose step has an
+explicit equation `arm8Next u = F u` (Flapjack infrastructure): the word is
+read from the same in-domain bytes in both states, so both step by `F`, and
+`hF` says `F` maps the agreeing pair to an agreeing pair.  `hnext` takes the
+standard `arm8Next_*` premises in their usual order. -/
+theorem arm8L3Agree_next {d : BitVec 64 → Prop} {s t : arm8_state}
+    (h : Arm8L3Agree d s t) (hok : arm8Ok s = true) (w : BitVec 32)
+    (F : arm8_state → arm8_state)
+    (hnext : ∀ u : arm8_state, u.exception = exception.NoException →
+      u.MEM u.PC = BitVec.ofNat 8 ((w >>> 0).toNat) →
+      u.MEM (u.PC + 1) = BitVec.ofNat 8 ((w >>> 8).toNat) →
+      u.MEM (u.PC + 2) = BitVec.ofNat 8 ((w >>> 16).toNat) →
+      u.MEM (u.PC + 3) = BitVec.ofNat 8 ((w >>> 24).toNat) →
+      Aligned (TN := 64) (u.PC, 4) = true →
+      u.SCTLR_EL1.E0E = false → u.PSTATE.EL = (0 : BitVec 2) → arm8Next u = F u)
+    (hF : Arm8L3Agree d (F s) (F t))
+    (hf : ∀ j, j < 4 → d (t.PC + BitVec.ofNat 64 j))
+    (hb0 : t.MEM t.PC = BitVec.ofNat 8 ((w >>> 0).toNat))
+    (hb1 : t.MEM (t.PC + 1) = BitVec.ofNat 8 ((w >>> 8).toNat))
+    (hb2 : t.MEM (t.PC + 2) = BitVec.ofNat 8 ((w >>> 16).toNat))
+    (hb3 : t.MEM (t.PC + 3) = BitVec.ofNat 8 ((w >>> 24).toNat)) :
+    Arm8L3Agree d (arm8Next s) (arm8Next t) := by
+  have hokt : arm8Ok t = true := by rw [← arm8Ok_congr h]; exact hok
+  obtain ⟨hel, he0, _, _, _, hexc0, halign⟩ := (arm8Ok_iff s).mp hok
+  obtain ⟨helt, he0t, _, _, _, hexc0t, halignt⟩ := (arm8Ok_iff t).mp hokt
+  have hal : Aligned (TN := 64) (s.PC, 4) = true := by
+    rw [Aligned_four_iff]
+    simpa using (holAligned_iff 2 s.PC).mp halign
+  have halt : Aligned (TN := 64) (t.PC, 4) = true := by
+    rw [Aligned_four_iff]
+    simpa using (holAligned_iff 2 t.PC).mp halignt
+  obtain ⟨hs0, hs1, hs2, hs3⟩ := h.word hf w hb0 hb1 hb2 hb3
+  rw [hnext s hexc0 hs0 hs1 hs2 hs3 hal he0 hel, hnext t hexc0t hb0 hb1 hb2 hb3 halt he0t helt]
+  exact hF
+
 /-- The conclusion of `encoder_correct` for one source instruction, at
 `arm8TargetL3`. -/
 def CaseGoal (i : HolAsm 64) (s1 s2 : AsmState 64) (ms : arm8_state) : Prop :=

@@ -470,6 +470,11 @@ step `k` (the start state itself, then anything agreeing with `T k`) to a state
 agreeing with `T (k + 1)`, its memory preservation outside the source domain,
 the intermediate `arm8Ok`/`PC`/code facts, and the final `targetStateRel`.
 `asserts_chain` and `asserts2_chain` carry the induction over the steps.
+The per-instruction agreement lemmas (`arm8Next_*_agree`) share their
+argument through `arm8L3Agree_next`: both agreeing states read the same
+in-domain instruction bytes and step by the instruction's `arm8Next_*`
+equation, so each lemma only proves that the equation's right-hand side
+preserves agreement.
 
 `ShiftBitfield.lean` starts the `shift` `.lsl`/`.lsr`/`.asr` immediate forms,
 which `arm8_ast` lowers to a single `BitfieldMove@64` guarded by

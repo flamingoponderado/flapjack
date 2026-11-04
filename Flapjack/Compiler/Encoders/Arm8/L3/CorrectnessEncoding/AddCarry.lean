@@ -344,20 +344,8 @@ theorem arm8Next_addSubImmediateS_zero_agree (d : BitVec 64 → Prop)
     (hb3 : t.MEM (t.PC + 3) = BitVec.ofNat 8 ((arm8AddSubImmediateWordS true false
       (holWordExtract 12 11 0 (0 : BitVec 64)) rn 31 >>> 24).toNat)) :
     Arm8L3Agree d (arm8Next s) (arm8Next t) := by
-  have hokt : arm8Ok t = true := by rw [← arm8Ok_congr h]; exact hok
-  obtain ⟨hel, he0, _, _, _, hexc0, halign⟩ := (arm8Ok_iff s).mp hok
-  obtain ⟨helt, he0t, _, _, _, hexc0t, halignt⟩ := (arm8Ok_iff t).mp hokt
-  have hal : Aligned (TN := 64) (s.PC, 4) = true := aligned_of_holAligned s.PC halign
-  have halt : Aligned (TN := 64) (t.PC, 4) = true := aligned_of_holAligned t.PC halignt
-  have hs0 := (h.mem t.PC (by simpa using hf 0 (by omega))).trans hb0
-  have hs1 := (h.mem (t.PC + 1) (by simpa using hf 1 (by omega))).trans hb1
-  have hs2 := (h.mem (t.PC + 2) (by simpa using hf 2 (by omega))).trans hb2
-  have hs3 := (h.mem (t.PC + 3) (by simpa using hf 3 (by omega))).trans hb3
-  rw [← h.pc] at hs0 hs1 hs2 hs3
-  have hss := arm8Next_addSubImmediateS_zero s rn hrn hexc0 hs0 hs1 hs2 hs3 hal he0 hel
-  have htt := arm8Next_addSubImmediateS_zero t rn hrn hexc0t hb0 hb1 hb2 hb3 halt he0t helt
+  refine arm8L3Agree_next h hok _ _ (fun u => arm8Next_addSubImmediateS_zero u rn hrn) ?_ hf hb0 hb1 hb2 hb3
   have hx : X (TN := 64) rn s = X (TN := 64) rn t := arm8X_congr_or_zero h rn
-  rw [hss, htt]
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · simp [h.pc]
   · exact h.reg
@@ -382,23 +370,12 @@ theorem arm8Next_conditionalCompare_zero_agree (d : BitVec 64 → Prop)
     (hb3 : t.MEM (t.PC + 3) = BitVec.ofNat 8 ((arm8ConditionalCompareWord false
       (0 : BitVec 5) (0 : BitVec 4) false false true false rn >>> 24).toNat)) :
     Arm8L3Agree d (arm8Next s) (arm8Next t) := by
-  have hokt : arm8Ok t = true := by rw [← arm8Ok_congr h]; exact hok
-  obtain ⟨hel, he0, _, _, _, hexc0, halign⟩ := (arm8Ok_iff s).mp hok
-  obtain ⟨helt, he0t, _, _, _, hexc0t, halignt⟩ := (arm8Ok_iff t).mp hokt
-  have hal : Aligned (TN := 64) (s.PC, 4) = true := aligned_of_holAligned s.PC halign
-  have halt : Aligned (TN := 64) (t.PC, 4) = true := aligned_of_holAligned t.PC halignt
-  have hs0 := (h.mem t.PC (by simpa using hf 0 (by omega))).trans hb0
-  have hs1 := (h.mem (t.PC + 1) (by simpa using hf 1 (by omega))).trans hb1
-  have hs2 := (h.mem (t.PC + 2) (by simpa using hf 2 (by omega))).trans hb2
-  have hs3 := (h.mem (t.PC + 3) (by simpa using hf 3 (by omega))).trans hb3
-  rw [← h.pc] at hs0 hs1 hs2 hs3
-  have hss := arm8Next_conditionalCompare_zero s rn hexc0 hs0 hs1 hs2 hs3 hal he0 hel
-  have htt := arm8Next_conditionalCompare_zero t rn hexc0t hb0 hb1 hb2 hb3 halt he0t helt
+  refine arm8L3Agree_next h hok _ _ (fun u => arm8Next_conditionalCompare_zero u rn) ?_ hf hb0 hb1 hb2 hb3
   have hx : X (TN := 64) rn s = X (TN := 64) rn t := arm8X_congr_or_zero h rn
   have hcd : ConditionHolds (0 : BitVec 4) { s with branch_hint := none } =
       ConditionHolds (0 : BitVec 4) { t with branch_hint := none } :=
     arm8ConditionHolds_congr (0 : BitVec 4) (by rw [h.pstate])
-  rw [hss, htt, hcd]
+  rw [hcd]
   split_ifs with hc
   · refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
     · simp [h.pc]
@@ -433,21 +410,9 @@ theorem arm8Next_addSubCarry_agree (d : BitVec 64 → Prop)
     (hb2 : t.MEM (t.PC + 2) = BitVec.ofNat 8 ((arm8AddSubCarryWord false sb rm rn rd >>> 16).toNat))
     (hb3 : t.MEM (t.PC + 3) = BitVec.ofNat 8 ((arm8AddSubCarryWord false sb rm rn rd >>> 24).toNat)) :
     Arm8L3Agree d (arm8Next s) (arm8Next t) := by
-  have hokt : arm8Ok t = true := by rw [← arm8Ok_congr h]; exact hok
-  obtain ⟨hel, he0, _, _, _, hexc0, halign⟩ := (arm8Ok_iff s).mp hok
-  obtain ⟨helt, he0t, _, _, _, hexc0t, halignt⟩ := (arm8Ok_iff t).mp hokt
-  have hal : Aligned (TN := 64) (s.PC, 4) = true := aligned_of_holAligned s.PC halign
-  have halt : Aligned (TN := 64) (t.PC, 4) = true := aligned_of_holAligned t.PC halignt
-  have hs0 := (h.mem t.PC (by simpa using hf 0 (by omega))).trans hb0
-  have hs1 := (h.mem (t.PC + 1) (by simpa using hf 1 (by omega))).trans hb1
-  have hs2 := (h.mem (t.PC + 2) (by simpa using hf 2 (by omega))).trans hb2
-  have hs3 := (h.mem (t.PC + 3) (by simpa using hf 3 (by omega))).trans hb3
-  rw [← h.pc] at hs0 hs1 hs2 hs3
-  have hss := arm8Next_addSubCarry s sb rm rn rd hrd hexc0 hs0 hs1 hs2 hs3 hal he0 hel
-  have htt := arm8Next_addSubCarry t sb rm rn rd hrd hexc0t hb0 hb1 hb2 hb3 halt he0t helt
+  refine arm8L3Agree_next h hok _ _ (fun u => arm8Next_addSubCarry u sb rm rn rd hrd) ?_ hf hb0 hb1 hb2 hb3
   have hx : X (TN := 64) rn s = X (TN := 64) rn t := arm8X_congr_or_zero h rn
   have hxm : X (TN := 64) rm s = X (TN := 64) rm t := arm8X_congr_or_zero h rm
-  rw [hss, htt]
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · simp [h.pc]
   · simp only [h.reg, hx, hxm, h.pstate]
@@ -472,19 +437,7 @@ theorem arm8Next_moveWide_z_zero_agree (d : BitVec 64 → Prop)
     (hb3 : t.MEM (t.PC + 3) = BitVec.ofNat 8 ((arm8MoveWideWord .z (0 : BitVec 2)
       (0 : BitVec 16) rd >>> 24).toNat)) :
     Arm8L3Agree d (arm8Next s) (arm8Next t) := by
-  have hokt : arm8Ok t = true := by rw [← arm8Ok_congr h]; exact hok
-  obtain ⟨hel, he0, _, _, _, hexc0, halign⟩ := (arm8Ok_iff s).mp hok
-  obtain ⟨helt, he0t, _, _, _, hexc0t, halignt⟩ := (arm8Ok_iff t).mp hokt
-  have hal : Aligned (TN := 64) (s.PC, 4) = true := aligned_of_holAligned s.PC halign
-  have halt : Aligned (TN := 64) (t.PC, 4) = true := aligned_of_holAligned t.PC halignt
-  have hs0 := (h.mem t.PC (by simpa using hf 0 (by omega))).trans hb0
-  have hs1 := (h.mem (t.PC + 1) (by simpa using hf 1 (by omega))).trans hb1
-  have hs2 := (h.mem (t.PC + 2) (by simpa using hf 2 (by omega))).trans hb2
-  have hs3 := (h.mem (t.PC + 3) (by simpa using hf 3 (by omega))).trans hb3
-  rw [← h.pc] at hs0 hs1 hs2 hs3
-  have hss := arm8Next_moveWide_z_zero s rd hrd hexc0 hs0 hs1 hs2 hs3 hal he0 hel
-  have htt := arm8Next_moveWide_z_zero t rd hrd hexc0t hb0 hb1 hb2 hb3 halt he0t helt
-  rw [hss, htt]
+  refine arm8L3Agree_next h hok _ _ (fun u => arm8Next_moveWide_z_zero u rd hrd) ?_ hf hb0 hb1 hb2 hb3
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · simp [h.pc]
   · simp [h.reg]

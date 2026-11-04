@@ -167,53 +167,6 @@ theorem arm8Next_address (ms : arm8_state) (imm : BitVec 64) (rd : Nat)
   rw [hn, hrun]
   rfl
 
-/-- Applying `arm8Next` to two states that agree on `d` and carry the address
-word gives states that still agree. -/
-theorem arm8Next_address_agree (d : BitVec 64 → Prop) (s t : arm8_state)
-    (h : Arm8L3Agree d s t) (hok : arm8Ok s = true) (imm : BitVec 64) (rd : Nat)
-    (hrd : rd ≠ 31) (hlt : rd < 32)
-    (hround : BitVec.signExtend 64 (BitVec.setWidth 21
-      (holWordExtract 19 20 2 imm ++ holWordExtract 2 1 0 imm)) = imm)
-    (hf : ∀ j, j < 4 → d (t.PC + BitVec.ofNat 64 j))
-    (hb0 : t.MEM t.PC = BitVec.ofNat 8 ((arm8AddressWord imm (BitVec.ofNat 5 rd) >>> 0).toNat))
-    (hb1 : t.MEM (t.PC + 1) = BitVec.ofNat 8 ((arm8AddressWord imm (BitVec.ofNat 5 rd) >>> 8).toNat))
-    (hb2 : t.MEM (t.PC + 2) = BitVec.ofNat 8 ((arm8AddressWord imm (BitVec.ofNat 5 rd) >>> 16).toNat))
-    (hb3 : t.MEM (t.PC + 3) = BitVec.ofNat 8 ((arm8AddressWord imm (BitVec.ofNat 5 rd) >>> 24).toNat)) :
-    Arm8L3Agree d (arm8Next s) (arm8Next t) := by
-  have hokt : arm8Ok t = true := by rw [← arm8Ok_congr h]; exact hok
-  obtain ⟨hel, he0, _, _, _, hexc0, halign⟩ := (arm8Ok_iff s).mp hok
-  obtain ⟨helt, he0t, _, _, _, hexc0t, halignt⟩ := (arm8Ok_iff t).mp hokt
-  have hal : Aligned (TN := 64) (s.PC, 4) = true := by
-    rw [Aligned_four_iff]
-    simpa [← h.pc] using (holAligned_iff 2 s.PC).mp halign
-  have halt : Aligned (TN := 64) (t.PC, 4) = true := by
-    rw [Aligned_four_iff]
-    simpa using (holAligned_iff 2 t.PC).mp halignt
-  have hs0 : s.MEM s.PC = BitVec.ofNat 8 ((arm8AddressWord imm (BitVec.ofNat 5 rd) >>> 0).toNat) := by
-    rw [h.pc]
-    exact (h.mem t.PC (by simpa using hf 0 (by omega))).trans hb0
-  have hs1 : s.MEM (s.PC + 1) = BitVec.ofNat 8 ((arm8AddressWord imm (BitVec.ofNat 5 rd) >>> 8).toNat) := by
-    rw [h.pc]
-    exact (h.mem (t.PC + 1) (by simpa using hf 1 (by omega))).trans hb1
-  have hs2 : s.MEM (s.PC + 2) = BitVec.ofNat 8 ((arm8AddressWord imm (BitVec.ofNat 5 rd) >>> 16).toNat) := by
-    rw [h.pc]
-    exact (h.mem (t.PC + 2) (by simpa using hf 2 (by omega))).trans hb2
-  have hs3 : s.MEM (s.PC + 3) = BitVec.ofNat 8 ((arm8AddressWord imm (BitVec.ofNat 5 rd) >>> 24).toNat) := by
-    rw [h.pc]
-    exact (h.mem (t.PC + 3) (by simpa using hf 3 (by omega))).trans hb3
-  have hss := arm8Next_address s imm rd hrd hlt hround hexc0 hs0 hs1 hs2 hs3 hal he0 hel
-  have htt := arm8Next_address t imm rd hrd hlt hround hexc0t hb0 hb1 hb2 hb3 halt he0t helt
-  rw [hss, htt]
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-  · simp [h.pc]
-  · simp only [h.reg, h.pc]
-  · simp [h.pstate]
-  · simp [h.sctlr]
-  · simp [h.tcr]
-  · simp [h.exc]
-  · intro a ha
-    simp only [h.mem a ha]
-
 /-- The four encoded bytes of the address word. -/
 theorem arm8EncodeBytes_address (imm : BitVec 64) (rd : BitVec 5)
     (h : BitVec.signExtend 64 (BitVec.setWidth 21
