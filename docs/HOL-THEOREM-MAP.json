@@ -1,6 +1,14 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "LENGTH_LESS_EQ_SUM_el_length",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GenerationalLoop.lean",
+  "lean_name": "length_le_heapLength",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared length_less_eq_sum_el_length_typed and heapLength: list length is bounded by the sum of element lengths for independently polymorphic address and payload carriers."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "word_gen_gc_move_data_thm",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GenerationalData.lean",
   "lean_name": "wordGenGcMoveData_thm",
@@ -113,6 +121,15 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared is_mut_tag_word_payload_typed: the original payload equation and mutable-tag hypothesis imply the same header, projected addresses, and Boolean validity equivalence. Header and word-location widths are independently quantified."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_gen_gc_move_loop_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GenerationalLoop.lean",
+  "lean_name": "wordGenGcMoveLoop_empty",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared word_gen_gc_move_loop_thm_typed and the first source proof case: the complete original hypotheses and conclusion are retained, restricted to the case where both pending data and reference regions are empty. All word carriers share the original positive width."
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gcScript.sml",
