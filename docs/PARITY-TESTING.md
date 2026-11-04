@@ -88,6 +88,17 @@ python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-
 python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --deep-mutations --seed 11040819 --count 120 --timeout 60
 ```
 
+On 2026-11-04, the existing `cake` executable also matched the pinned
+original's complete stdout, stderr, and exit status for 160 configuration
+mutations, 180 nested-source mutations, and 40 generated programs with the
+standard prelude:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --config-mutations --seed 11040981 --count 160 --timeout 90
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --deep-mutations --seed 11040982 --count 180 --timeout 90
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --rich --seed 11040983 --count 40 --timeout 90
+```
+
 These comparisons cover the generated inputs only; they do not establish
 general output equivalence.
 
