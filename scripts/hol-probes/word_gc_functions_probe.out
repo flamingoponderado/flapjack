@@ -5,6 +5,7 @@ gc_is_ref_header_8=T
 gc_is_ref_header_c=F
 gc_memcpy=(216w,Word 100w,Word 108w,Word 216w,T)
 gc_memcpy_dom=F
+gc_memcpy_independent_widths=(48w,7,9,T)
 gc_move_loc=(Loc 3 0,7w,2000w,T)
 gc_move_loc_nonzero=(Loc 3 4,7w,2000w,F)
 gc_move_small=(Word 4w,7w,2000w,T)

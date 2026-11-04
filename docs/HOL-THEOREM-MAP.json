@@ -1,6 +1,15 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "memcpy_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/Memcpy.lean",
+  "lean_name": "memcpyCorrect",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared source lines 739-744, memcpy_thm_typed and memcpy_first_star_argument. The address word width is positive and independent of the arbitrary memory-value type; the result preserves the original left-associated frame and both word lists, exact count bound, destination address and successful status."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "get_addr_and_1_not_0",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PointerAddress.lean",
   "lean_name": "getAddr_and_one_ne_zero",
@@ -48949,7 +48958,7 @@
     "lean_name": "memcpy",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml curried w a b m dm; w = 0w gives (b,m,T), else recursive call on (w-1w) (a+bytes_in_word) (b+bytes_in_word) ((b =+ m a) m) returning c1 /\\ a IN dm /\\ b IN dm (53-59); =+ rendered by gcUpdate, dm as a Bool membership function; termination by w2n. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. Rows replayed from scripts/hol-probes/word_gc_functions_probe.out in Flapjack/Test/WordGcFunctionsParity.lean."
+    "reviewer": "Compared word_gcFunctionsScript.sml lines 53-59 and memcpy_def_typed: curried count, source, destination, polymorphic memory and domain; zero returns unchanged memory and true, otherwise recursively copy after the functional update and conjoin both domain checks. The positive count-word and address-word widths and the memory-value type are independent, as in HOL. Existing concrete collector rows are replayed by Flapjack/Test/WordGcFunctionsParity.lean."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
