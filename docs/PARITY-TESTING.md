@@ -15,6 +15,16 @@ with `python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-p
 This compares complete compiler output, diagnostics, and exit status; it is
 not a general equivalence proof.
 
+After merging `main` at `d5f6c5326f`, the rebuilt `cake` matched all 143 fixed
+corpus cases, including array updates holding tree nodes, closures, and
+aliased nested arrays. A further 40 generated programs with varied backend
+options also matched:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --corpus --timeout 90
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-options --seed 116834111 --count 40 --timeout 90
+```
+
 After merging `main` at `efc992d38`, the executable also matched 40 generated
 nested programs, 50 structured programs with backend options, and 100
 display mutations:

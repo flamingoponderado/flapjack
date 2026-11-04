@@ -184,6 +184,17 @@ BASIS_CORPUS = [
     'fun make x = let val a = Array.array 1 x; '
     'fun inc y = (Array.update a 0 (Array.sub a 0 + y); Array.sub a 0) '
     'in (inc, fn z => inc z + inc z) end; val (f,g) = make 4; val _ = print_int (f 3 + g 2);',
+    # Store heap pointers, closures, and values recovered through aliases.
+    'datatype tree = Leaf int | Node tree tree; '
+    'val a = Array.array 3 (Leaf 0); val t = Node (Leaf 7) (Leaf 8); '
+    'val _ = Array.update a 2 t; val _ = Array.update a 0 (Array.sub a 2); '
+    'val _ = case Array.sub a 0 of Node (Leaf x) (Leaf y) => print_int (x + y) | _ => print_int 0;',
+    'fun mk n = fn x => x + n; val a = Array.array 2 (mk 1); '
+    'val f = mk 12; val _ = Array.update a 1 f; val _ = Array.update a 0 (Array.sub a 1); '
+    'val _ = print_int ((Array.sub a 0) 3 + (Array.sub a 1) 4);',
+    'val a = Array.fromList [Array.array 1 1, Array.array 1 2, Array.array 1 3]; '
+    'val r = Array.sub a 0; val _ = Array.update a 2 r; val _ = Array.update r 0 9; '
+    'val _ = print_int (Array.sub (Array.sub a 2) 0);',
 ]
 
 
