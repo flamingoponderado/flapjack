@@ -1,5 +1,29 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/gc/gen_gcScript.sml",
+  "hol_name": "gc_move_refs_ok",
+  "lean_path": "Flapjack/Compiler/Backend/GenGc/Proofs/Progress.lean",
+  "lean_name": "gcMoveRefs_ok",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared gen_gc_move_refs_ok_typed: success of the same reference scan implies the original state was successful, over independent address and payload types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gcScript.sml",
+  "hol_name": "gc_move_data_ok",
+  "lean_path": "Flapjack/Compiler/Backend/GenGc/Proofs/Progress.lean",
+  "lean_name": "gcMoveData_ok",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared gen_gc_move_data_ok_typed: success of the same data scan implies the original state was successful, over independent address and payload types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gcScript.sml",
+  "hol_name": "gc_move_data_h2",
+  "lean_path": "Flapjack/Compiler/Backend/GenGc/Proofs/Progress.lean",
+  "lean_name": "gcMoveData_h2",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared gen_gc_move_data_h2_typed: success of the same data scan implies its resulting h2 list is empty, with independent heap carriers."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "gc_move_data_const",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GenerationalInvariant.lean",
