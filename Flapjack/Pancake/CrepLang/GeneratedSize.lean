@@ -1,5 +1,9 @@
-import Flapjack.Pancake.CrepLang.Prog
-import Flapjack.Pancake.PanLang.Exp
+module
+
+public import Flapjack.Pancake.CrepLang.Prog
+public import Flapjack.Pancake.PanLang.Exp
+
+@[expose] public section
 
 /-!
 # HOL's generated `crepLang` datatype sizes

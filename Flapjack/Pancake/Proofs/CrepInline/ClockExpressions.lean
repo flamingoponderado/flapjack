@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
-import Flapjack.Misc.OptMmapCong
+module
+
+public import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
+public import Flapjack.Misc.OptMmapCong
+
+@[expose] public section
 
 namespace Flapjack.CrepInlineClockExpressions
 

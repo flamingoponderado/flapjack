@@ -1,4 +1,8 @@
-import Flapjack.CrepeSemantics
+module
+
+public import Flapjack.CrepeSemantics
+
+@[expose] public section
 
 /-!
 # Crepe `exit_loop`

@@ -1,5 +1,9 @@
-import Flapjack.Pancake.LoopLang
-import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
+module
+
+public import Flapjack.Pancake.LoopLang
+public import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
+
+@[expose] public section
 
 /-!
 # loop_call `is_load_def`

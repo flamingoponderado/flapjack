@@ -1,6 +1,10 @@
-import Flapjack.LoopGetVarImm
-import Flapjack.FiniteMap.Basic
-import Flapjack.Pancake.WordLang
+module
+
+public import Flapjack.LoopGetVarImm
+public import Flapjack.FiniteMap.Basic
+public import Flapjack.Pancake.WordLang
+
+@[expose] public section
 
 /-!
 # Exact HOL `loopSem$state` carrier

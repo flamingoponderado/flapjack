@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Encoders.Asm
-import Flapjack.HolRef
+module
+
+public import Flapjack.Compiler.Encoders.Asm
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-!
 # x86-64 instruction encodings

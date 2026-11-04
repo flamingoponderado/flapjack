@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Encoders.AsmProps.Assertions
-import Mathlib.Logic.Function.Iterate
-import Mathlib.Data.List.Range
-import Lean.Elab.Tactic.Omega
+module
+
+public import Flapjack.Compiler.Encoders.AsmProps.Assertions
+public import Mathlib.Logic.Function.Iterate
+public import Mathlib.Data.List.Range
+public import Lean.Elab.Tactic.Omega
+
+@[expose] public section
 
 /-! Full generic original ASM assertion iteration and weakening theorems. -/
 namespace Flapjack.Compiler.Encoders.AsmProps

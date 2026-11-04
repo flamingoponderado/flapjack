@@ -1,4 +1,8 @@
-import Flapjack.AstHOL
+module
+
+public import Flapjack.AstHOL
+
+@[expose] public section
 
 namespace Flapjack.AstHOL
 
