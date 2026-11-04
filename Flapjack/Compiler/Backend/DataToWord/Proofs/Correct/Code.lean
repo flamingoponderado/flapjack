@@ -607,6 +607,35 @@ theorem evaluate_assign_globalsPtr_code {C F : Type} (dest : Nat) (state : State
     have second := doAppAux_globalsPtr_code args _ after value run
     simpa [doStack, doLimSafe, first, code] using second
 
+/-- Installing a globals pointer changes the global field but preserves code. -/
+theorem doAppAux_setGlobalsPtr_code {C F : Type} (args : List DataSem.Value)
+    (state next : State C F) (value : DataSem.Value)
+    (run : doAppAux (.globOp .setGlobalsPtr) args state = .val (value, next)) : next.code = state.code := by
+  cases args with
+  | nil => simp [doAppAux, applyNonFfi] at run
+  | cons item rest =>
+    cases rest with
+    | cons head tail => simp [doAppAux, applyNonFfi] at run
+    | nil =>
+      cases item <;> simp [doAppAux, applyNonFfi] at run
+      case refPtr bit ptr =>
+        cases bit <;> simp at run
+        obtain ⟨rfl, rfl⟩ := run
+        rfl
+
+theorem evaluate_assign_setGlobalsPtr_code {C F : Type} (dest name : Nat) (state : State C F) :
+    (evaluate (.assign dest (.globOp .setGlobalsPtr) [name] none) state).2.code = state.code := by
+  apply evaluate_assign_code_step
+  intro args before after value code run
+  simp only [doApp] at run
+  cases space : doSpace (.globOp .setGlobalsPtr) args before with
+  | none => simp [space] at run
+  | some accounted =>
+    simp only [space] at run
+    have first := (doSpace_code_const (.globOp .setGlobalsPtr) args before accounted space).1
+    have second := doAppAux_setGlobalsPtr_code args _ after value run
+    simpa [doStack, doLimSafe, first, code] using second
+
 /-- Reading a global leaves the source code table unchanged. -/
 theorem doAppAux_globalLoad_code {C F : Type} (index : Nat) (args : List DataSem.Value)
     (state next : State C F) (value : DataSem.Value)
@@ -689,6 +718,7 @@ theorem verifiedFragment_code {C F : Type} (program : DataLang.Prog) (fragment :
   | tick => intro state; exact evaluate_tick_code state
   | move dest src => intro state; exact evaluate_move_code dest src state
   | globalsPtr dest => intro state; exact evaluate_assign_globalsPtr_code dest state
+  | setGlobalsPtr dest name => intro state; exact evaluate_assign_setGlobalsPtr_code dest name state
   | globalLoad dest index => intro state; exact evaluate_assign_globalLoad_code dest index state
   | globalStore dest index value => intro state; exact evaluate_assign_globalStore_code dest index value state
   | label dest label => intro state; exact evaluate_assign_label_code dest label [] none state

@@ -121,6 +121,9 @@ def fragmentCompile64 (conf : Config) (secn label : Nat) : DataLang.Prog → Opt
       else some (giveUp, label)
   | .assign dest (.label codeLabel) [] none => some (.locValue (adjustVar dest) codeLabel, label)
   | .assign dest (.globOp .globalsPtr) [] none => some (.assign (adjustVar dest) (.lookup .globals), label)
+  | .assign dest (.globOp .setGlobalsPtr) [name] none =>
+      some (.seq (.set .globals (.var (adjustVar name)))
+        (.seq (.set .globReal (realAddr conf (adjustVar name))) (.assign (adjustVar dest) (.const 2))), label)
   | .assign dest (.globOp (.global index)) [] none =>
       some (.assign (adjustVar dest) (.load (.op .add [.lookup .globReal,
         .const (BitVec.ofNat 64 (64 / 8) * BitVec.ofNat 64 (index + 1))])), label)
@@ -136,7 +139,7 @@ theorem fragmentCompile64_agrees (conf : Config) (secn : Nat) (program : DataLan
     (fragment : VerifiedFragment program) : ∀ label,
     fragmentCompile64 conf secn label program = some (compileControl64 conf secn label program) := by
   induction fragment with
-  | skip | tick | move | ret | raise | label | globalsPtr | globalLoad | globalStore =>
+  | skip | tick | move | ret | raise | label | globalsPtr | setGlobalsPtr | globalLoad | globalStore =>
     intro label
     simp [fragmentCompile64, compileControl64, compileControl?]
   | intConst dest i =>
