@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.IncrementalInstall
 import Flapjack.Compiler.Backend.ClosCall.Proofs.Syntax
 import Flapjack.Compiler.Backend.ClosCall.Proofs.LocationSafety
 import Flapjack.Compiler.Backend.ClosCall.Proofs.LocationMultiplicity
+import Flapjack.Compiler.Backend.ClosCall.Proofs.LocationAccounting
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.InstalledSemantics
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.AnnotationInvariants
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.AnnotatedPrepared
@@ -549,6 +550,26 @@ theorem numberedCallOracle_main_locations_nodup {C : Type} (fuel : Nat)
   apply ClosCall.compileIncFuelOracle_locations_nodup
   simpa [stateCo, ClosNumber.ignoreTable] using
     ClosNumber.compileInc_codeLocations_nodup (oracle index).1.1 (oracle index).2.1
+
+/-- Main expressions and emitted auxiliary bodies retain distinct locations
+together after numbering, direct-call conversion, and annotation. -/
+theorem numberedCallOracle_all_locations_nodup {C : Type} (fuel : Nat)
+    (oracle : Nat → (Nat × (NumSet × C)) × (List ClosLang.Exp × List (Nat × Nat × ClosLang.Exp))) :
+    ∀ index, (codeLocations (ClosAnnotate.annotateList 0
+      (ClosCall.compileIncFuelOracle fuel
+        (stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle) index).2.1) ++
+      codeLocations ((ClosAnnotate.compile (ClosCall.compileIncFuelOracle fuel
+        (stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle) index).2.2).map
+          (fun (_, _, body) => body))).Nodup := by
+  intro index
+  let numbered := stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle
+  let called := ClosCall.compileIncFuelOracle fuel numbered index
+  have sourceDistinct : (codeLocations (numbered index).2.1).Nodup := by
+    simpa [numbered, stateCo, ClosNumber.ignoreTable] using
+      ClosNumber.compileInc_codeLocations_nodup (oracle index).1.1 (oracle index).2.1
+  have distinct := ClosCall.compileIncFuelOracle_all_locations_nodup fuel numbered index sourceDistinct
+  exact ((ClosAnnotate.annotateList_codeLocations_sublist 0 called.2.1).append
+    (ClosAnnotate.compile_codeLocations_sublist called.2.2)).nodup distinct
 
 
 /-- Main expressions and auxiliary bodies produced by the direct-call
