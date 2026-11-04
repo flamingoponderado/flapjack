@@ -416,6 +416,146 @@ theorem evaluate_oracleAuxEmpty {C F : Type} :
   · intro location function args state empty
     exact (all state.clock).1 location function args state rfl empty
 
+/-- A closure application preserves well-formedness when body evaluation and
+shorter applications preserve it for states with an empty auxiliary oracle.
+This is Flapjack-specific proof infrastructure. -/
+theorem evaluateApp_wellFormedFuel_step_of_oracle {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (location : Option Nat)
+    (function : ClosSem.Value) (args : List ClosSem.Value) (state : ClosSem.State C F)
+    (functionWf : ValueWellFormedFuel fuel g allowed code function)
+    (argsWf : ValuesWellFormedFuel fuel g allowed code args)
+    (stateWf : StateWellFormedFuel fuel g allowed code state)
+    (oracleEmpty : OracleAuxEmpty state.compileOracle)
+    (bodyIH : ∀ (body : ClosLang.Exp) (env : List ClosSem.Value) (start : ClosSem.State C F),
+      start.clock < state.clock → ValuesWellFormedFuel fuel g allowed code env →
+      StateWellFormedFuel fuel g allowed code start → OracleAuxEmpty start.compileOracle →
+      EvalWellFormedFuel fuel g allowed code (evaluate [body] env start))
+    (appIH : ∀ (value : ClosSem.Value) (rest : List ClosSem.Value) (start : ClosSem.State C F),
+      start.clock < state.clock → ValueWellFormedFuel fuel g allowed code value →
+      ValuesWellFormedFuel fuel g allowed code rest → StateWellFormedFuel fuel g allowed code start → OracleAuxEmpty start.compileOracle →
+      EvalWellFormedFuel fuel g allowed code (evaluateApp location value rest start)) :
+    EvalWellFormedFuel fuel g allowed code (evaluateApp location function args state) := by
+  cases args with
+  | nil =>
+    rw [evaluateApp]
+    change ValuesWellFormedFuel fuel g allowed code [function] ∧ _
+    exact ⟨.cons functionWf .nil, stateWf⟩
+  | cons first rest =>
+    rw [evaluateApp]
+    cases found : destClosure state.maxApp location function (first :: rest) with
+    | none => simpa [found, EvalWellFormedFuel, ResultWellFormedFuel] using stateWf
+    | some kind =>
+      cases kind with
+      | partialApp value =>
+        have valueWf := destClosure_partial_wellFormedFuel state.maxApp location function
+          (first :: rest) value functionWf argsWf found
+        dsimp only
+        split
+        · simpa [EvalWellFormedFuel, ResultWellFormedFuel] using stateWellFormedFuel_clock stateWf 0
+        · exact ⟨.cons valueWf .nil, stateWellFormedFuel_clock stateWf _⟩
+      | fullApp body bodyEnv remaining =>
+        have ⟨envWf, remainingWf⟩ := destClosure_full_wellFormedFuel state.maxApp location function
+          (first :: rest) bodyEnv remaining body functionWf argsWf found
+        have remainingLt := destClosure_full_remaining_lt state.maxApp location function (first :: rest)
+          bodyEnv remaining body found
+        let cost := (first :: rest).length - remaining.length
+        have costPositive : 0 < cost := Nat.sub_pos_of_lt remainingLt
+        dsimp only
+        split
+        · simpa [EvalWellFormedFuel, ResultWellFormedFuel] using stateWellFormedFuel_clock stateWf 0
+        · rename_i enough
+          rw [fixClock_evaluate]
+          have smaller : (decClock cost state).clock < state.clock := by simp [decClock]; omega
+          have bodyWf := bodyIH body bodyEnv (decClock cost state) smaller envWf
+            (stateWellFormedFuel_clock stateWf _) (by simpa [decClock] using oracleEmpty)
+          have bodyOracle := (evaluate_oracleAuxEmpty (C := C) (F := F)).1 [body] bodyEnv (decClock cost state)
+            (by simpa [decClock] using oracleEmpty)
+          cases bodyRun : evaluate [body] bodyEnv (decClock cost state) with
+          | mk result final =>
+            rw [bodyRun] at bodyWf bodyOracle
+            have bodyBound : final.clock ≤ (decClock cost state).clock := by
+              have bound := evaluate_clock_le [body] bodyEnv (decClock cost state)
+              simpa [bodyRun] using bound
+            cases result with
+            | err error => exact bodyWf
+            | val values =>
+              obtain ⟨value, rfl⟩ := evaluate_singleton_value body bodyEnv (decClock cost state) final values bodyRun
+              cases bodyWf.1 with
+              | cons valueWf tail =>
+                exact appIH value remaining final (by omega) valueWf remainingWf bodyWf.2 bodyOracle
+
+/-- Application evaluation preserves well-formedness when argument,
+function, and closure-application induction hypotheses do. -/
+theorem evaluate_app_wellFormedFuel_of_oracle {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (trace : BackendCommon.Tra) (location : Option Nat)
+    (function : ClosLang.Exp) (args : List ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State C F)
+    (stateWf : StateWellFormedFuel fuel g allowed code state)
+    (oracleEmpty : OracleAuxEmpty state.compileOracle)
+    (argsIH : EvalWellFormedFuel fuel g allowed code (evaluate args env state))
+    (fnIH : ∀ (start : ClosSem.State C F), start.clock ≤ state.clock → StateWellFormedFuel fuel g allowed code start →
+      EvalWellFormedFuel fuel g allowed code (evaluate [function] env start))
+    (appIH : ∀ (value : ClosSem.Value) (values : List ClosSem.Value) (start : ClosSem.State C F),
+      start.clock ≤ state.clock → ValueWellFormedFuel fuel g allowed code value → ValuesWellFormedFuel fuel g allowed code values →
+      StateWellFormedFuel fuel g allowed code start → OracleAuxEmpty start.compileOracle →
+      EvalWellFormedFuel fuel g allowed code (evaluateApp location value values start)) :
+    EvalWellFormedFuel fuel g allowed code (evaluate [.app trace location function args] env state) := by
+  cases args with
+  | nil => simpa [evaluate, EvalWellFormedFuel, ResultWellFormedFuel] using stateWf
+  | cons first rest =>
+    cases argsRun : evaluate (first :: rest) env state with
+    | mk result final =>
+      have argsOracle := (evaluate_oracleAuxEmpty (C := C) (F := F)).1 (first :: rest) env state oracleEmpty
+      rw [argsRun] at argsIH argsOracle
+      rw [evaluate]
+      simp only [List.isEmpty_cons, Bool.false_eq_true, ↓reduceIte]
+      rw [fixClock_evaluate, argsRun]
+      cases result with
+      | err error => exact argsIH
+      | val values =>
+        rw [fixClock_evaluate]
+        have argsBound := evaluate_clock_le (first :: rest) env state
+        rw [argsRun] at argsBound
+        have fnWf := fnIH final argsBound argsIH.2
+        have fnOracle := (evaluate_oracleAuxEmpty (C := C) (F := F)).1 [function] env final argsOracle
+        cases fnRun : evaluate [function] env final with
+        | mk fnResult fnFinal =>
+          rw [fnRun] at fnWf fnOracle
+          cases fnResult with
+          | err error => simpa [EvalWellFormedFuel, fixClock_evaluate, fnRun] using fnWf
+          | val fnValues =>
+            obtain ⟨fnValue, rfl⟩ := evaluate_singleton_value function env final fnFinal fnValues fnRun
+            have valueWf : ValueWellFormedFuel fuel g allowed code fnValue := by
+              cases fnWf.1 with
+              | cons head tail => exact head
+            have fnBound := evaluate_clock_le [function] env final
+            rw [fnRun] at fnBound
+            dsimp only at argsBound fnBound
+            simpa [EvalWellFormedFuel, fixClock_evaluate, fnRun] using
+              appIH fnValue values fnFinal (by omega) valueWf argsIH.1 fnWf.2 fnOracle
+
+/-- Closure application preserves well-formedness when each closure body
+does so under an empty auxiliary oracle. This is Flapjack-specific proof
+infrastructure and leaves body well-formedness as a premise. -/
+theorem evaluateApp_wellFormedFuel_of_body_oracle {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (location : Option Nat)
+    (bodyWf : ∀ (body : ClosLang.Exp) (env : List ClosSem.Value) (start : ClosSem.State C F),
+      ValuesWellFormedFuel fuel g allowed code env → StateWellFormedFuel fuel g allowed code start →
+      OracleAuxEmpty start.compileOracle → EvalWellFormedFuel fuel g allowed code (evaluate [body] env start))
+    (function : ClosSem.Value) (args : List ClosSem.Value) (state : ClosSem.State C F)
+    (functionWf : ValueWellFormedFuel fuel g allowed code function)
+    (argsWf : ValuesWellFormedFuel fuel g allowed code args)
+    (stateWf : StateWellFormedFuel fuel g allowed code state)
+    (oracleEmpty : OracleAuxEmpty state.compileOracle) :
+    EvalWellFormedFuel fuel g allowed code (evaluateApp location function args state) := by
+  generalize clockEq : state.clock = clock
+  induction clock using Nat.strong_induction_on generalizing function args state with
+  | h clock ih =>
+    apply evaluateApp_wellFormedFuel_step_of_oracle location function args state functionWf argsWf stateWf oracleEmpty
+    · intro body env start _ envWf startWf empty
+      exact bodyWf body env start envWf startWf empty
+    · intro value rest start smaller valueWf restWf startWf empty
+      exact ih start.clock (by omega) value rest start valueWf restWf startWf empty rfl
+
 /-- Primitive evaluation needs only the initial oracle condition: the
 general oracle-preservation theorem supplies it after argument evaluation. -/
 theorem evaluate_op_wellFormedFuel_of_oracle {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}

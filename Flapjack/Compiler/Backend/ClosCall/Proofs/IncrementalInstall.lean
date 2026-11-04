@@ -11,6 +11,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantRecursiveBinding
 import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantRetainedApplication
 import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantBodyPureApplication
 import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantBodyImpureApplication
+import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateOracleControl
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateOracleAdvance
 
 /-! Incremental installation under direct-call conversion. -/
@@ -4564,6 +4565,31 @@ theorem forceApplication_growing_wf {C F : Type} (relationFuel : Nat) (allowed :
   have evalWf := evaluate_app_wellFormedFuel .none none (.var .none 0) [unitExp] [value] state stateWf unitWf
     (fun start _ startWf => evaluate_var_state_wellFormedFuel .none 0 [value] start (.cons valueWf .nil) startWf)
     (fun function args start _ functionWf argsWf startWf => appWf g code function args start functionWf argsWf startWf)
+  simpa [appUnit, unitExp] using evalWf
+
+/-- The generated force application is well formed when source closure bodies
+are well formed under an empty auxiliary oracle. This is Flapjack-specific
+proof infrastructure. -/
+theorem forceApplication_growing_wf_of_oracle {C F : Type} (relationFuel : Nat) (allowed : Set Nat)
+    (bodyWf : ∀ (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+      (body : ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State (NumSet × C) F),
+      ValuesWellFormedFuel relationFuel g allowed code env → StateWellFormedFuel relationFuel g allowed code state →
+      OracleAuxEmpty state.compileOracle → EvalWellFormedFuel relationFuel g allowed code (evaluate [body] env state))
+    (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+    (value : ClosSem.Value) (state : ClosSem.State (NumSet × C) F)
+    (valueWf : ValueWellFormedFuel relationFuel g allowed code value)
+    (stateWf : StateWellFormedFuel relationFuel g allowed code state)
+    (oracleEmpty : OracleAuxEmpty state.compileOracle) :
+    EvalWellFormedFuel relationFuel g allowed code (evaluate [appUnit (.var .none 0)] [value] state) := by
+  let unitExp : ClosLang.Exp := .op .none (.blockOp (.cons 0)) []
+  have unitWf : EvalWellFormedFuel relationFuel g allowed code (evaluate [unitExp] [value] state) := by
+    exact evaluate_ordinaryOp_wellFormedFuel .none (.blockOp (.cons 0)) [] [value] state (by simp) (by simp)
+      (evaluate_nil_wellFormedFuel [value] state stateWf)
+  have evalWf := evaluate_app_wellFormedFuel_of_oracle .none none (.var .none 0) [unitExp] [value] state
+    stateWf oracleEmpty unitWf
+    (fun start _ startWf => evaluate_var_state_wellFormedFuel .none 0 [value] start (.cons valueWf .nil) startWf)
+    (fun function args start _ functionWf argsWf startWf empty =>
+      evaluateApp_wellFormedFuel_of_body_oracle none (bodyWf g code) function args start functionWf argsWf startWf empty)
   simpa [appUnit, unitExp] using evalWf
 
 /-- The force traversal follows from its argument simulation and the growing
@@ -10279,6 +10305,36 @@ theorem callsFuel_app_none_withOpenClock_of_traversals {C F : Type}
   · apply growingAppSimClockBelowWithOpenClock_of_traversals passFuel relationFuel limit compiler none exprIH
     intro allowed g code body _ _ _ _ _ _ _ _ _ env state
     exact evalWf allowed g code [body] env state
+
+/-- Force-thunk traversal follows from the smaller-clock body traversal
+induction. Source evaluation well-formedness remains an explicit premise.
+This is Flapjack-specific simulation infrastructure. -/
+theorem callsFuel_force_withOpenClock_of_traversals {C F : Type}
+    (passFuel relationFuel traversalFuel limit : Nat) (compiler : ClosSem.Compiler C)
+    (trace : BackendCommon.Tra) (args : List ClosLang.Exp) (initial final : State) (out : ClosLang.Exp)
+    (run : callsFuel (traversalFuel + 1) (.op trace (.thunkOp .forceThunk) args) initial = some (out, final))
+    (argsIH : ∀ target, callsListFuel traversalFuel args initial = some (target, final) →
+      GrowingExprsSimFromBelowWithOpenClock (F := F) passFuel relationFuel limit compiler final args target)
+    (exprIH : ∀ callerClock, callerClock < limit → ∀ depth (before after : State) (body converted : ClosLang.Exp),
+      callsFuel depth body before = some (converted, after) →
+      (codeLocationsExp body).Nodup → LabelsFresh (codeLocationsExp body) before → wellFormed before →
+      GrowingExprsSimFromBelowWithOpenClock (F := F) passFuel relationFuel callerClock compiler after [body] [converted])
+    (evalWf : ∀ (allowed : Set Nat) (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+      (expressions : List ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State (NumSet × C) F),
+      ValuesWellFormedFuel relationFuel g allowed code env → StateWellFormedFuel relationFuel g allowed code state →
+      OracleAuxEmpty state.compileOracle → EvalWellFormedFuel relationFuel g allowed code (evaluate expressions env state)) :
+    GrowingExprsSimFromBelowWithOpenClock (F := F) passFuel relationFuel limit compiler final
+      [.op trace (.thunkOp .forceThunk) args] [out] := by
+  have appIH : GrowingAppSimClockBelowWithOpenClock (F := F) passFuel relationFuel limit compiler none := by
+    apply growingAppSimClockBelowWithOpenClock_of_traversals passFuel relationFuel limit compiler none exprIH
+    intro allowed g code body _ _ _ _ _ _ _ _ _ env state
+    exact evalWf allowed g code [body] env state
+  apply callsFuel_force_growing_below_withOpenClock passFuel relationFuel traversalFuel limit compiler trace
+    args initial final out run argsIH (forceApplication_growing_from_open_app passFuel relationFuel limit compiler final appIH)
+  intro allowed
+  apply forceApplication_growing_wf_of_oracle relationFuel allowed
+  intro g code body env state
+  exact evalWf allowed g code [body] env state
 
 /-- A retained application traversal follows from simulations of its
 argument and function traversals and the ordinary smaller-clock expression
