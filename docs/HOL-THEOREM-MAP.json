@@ -1,6 +1,46 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "gc_move_const",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GenerationalInvariant.lean",
+  "lean_name": "genMove_const",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared gc_move_const_typed with the HOL statement: the move and its four preserved fields match, with independent address and payload types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "gc_move_list_const",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GenerationalInvariant.lean",
+  "lean_name": "genMoveList_const",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared gc_move_list_const_typed: the successful threaded list move and all four preserved fields match with independent heap carriers."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "heap_length_gc_forward_ptr",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GenerationalInvariant.lean",
+  "lean_name": "heapLength_gcForwardPtr",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared heap_length_gc_forward_ptr_typed: successful forwarding preserves heap length and implies the input status, with independent address and payload types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "gc_move_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GenerationalInvariant.lean",
+  "lean_name": "genMove_lenInv",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared gen_move_len_inv_typed and len_inv_def: the same move, successful output and initial length invariant imply the final length invariant over independent heap carriers."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "gc_move_list_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GenerationalInvariant.lean",
+  "lean_name": "genMoveList_lenInv",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared gen_move_list_len_inv_typed and len_inv_def: the source root-list execution, success and initial invariant imply the same final invariant."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "word_gen_gc_move_list_thm",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GenerationalList.lean",
   "lean_name": "wordGenGcMoveList_thm",
