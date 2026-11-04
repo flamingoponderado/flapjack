@@ -110404,6 +110404,14 @@
     "reviewer": "Source comparison: the typed capture retains both index bounds, the word-size equality, good_dimindex, the arbitrary byte, byte list, initial word and endian flag, and the original equality between the lane write and packing the list update. The byte and list element carriers are fixed at eight bits; the address and packed word share the positive HOL word dimension. List.set matches the source update at the required in-range index."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ByteUpdateRefs.lean",
+    "lean_name": "blocksUnique_insertByteArray",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "blocks_unique_insert_ByteArray",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: the typed HOL capture retains the same block-uniqueness implication, reference pointer and stack, insertion key, byte-array flag and fixed eight-bit payload. The reference tree and value carriers retain their source shapes."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/BytePacking.lean",
     "lean_name": "writeBytesInj",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",

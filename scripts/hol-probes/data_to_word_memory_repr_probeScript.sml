@@ -92,6 +92,7 @@ val _ = show "memory_rel_RefPtr_T_IMP_typed" data_to_word_memoryProofTheory.memo
 val _ = show "memory_rel_Loc_typed" data_to_word_memoryProofTheory.memory_rel_Loc;
 val _ = show "get_byte_bytes_to_word_typed" data_to_word_memoryProofTheory.get_byte_bytes_to_word;
 val _ = show "set_byte_bytes_to_word_typed" data_to_word_memoryProofTheory.set_byte_bytes_to_word;
+val _ = show "blocks_unique_insert_ByteArray_typed" data_to_word_memoryProofTheory.blocks_unique_insert_ByteArray;
 val _ = show "write_bytes_inj_typed" data_to_word_memoryProofTheory.write_bytes_inj;
 val _ = show "vb_eq_size_numbers" (EVAL ``data_to_word_memoryProof$vb_eq_size
   (sptree$LN : num bvlSem$ref sptree$num_map) (dataSem$Number 7) (dataSem$Number 7)``);
