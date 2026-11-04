@@ -56,9 +56,40 @@ theorem allPcs_eq {width : Nat} [NeZero width] (n : Nat)
           · rw [hx, Nat.succ_mul, Nat.add_comm (i * 2 ^ alignment)]
             simp [BitVec.ofNat_add, BitVec.add_assoc]
 
-/-- Local induction infrastructure for the tagged domain-coverage theorem;
-not a separately claimed HOL declaration. -/
-private theorem byteOffsetInDomain {width : Nat} [NeZero width]
+/-- Adding one before the `j`-th byte offset is the `(j + 1)`-th byte offset.
+Shared by the asmProps coverage proof and the closed machine models;
+Flapjack infrastructure, no HOL original. -/
+theorem addOneOffset {width : Nat} (a : BitVec width) (j : Nat) :
+    (a + 1) + BitVec.ofNat width j = a + BitVec.ofNat width (j + 1) := by
+  rw [BitVec.ofNat_add, BitVec.add_assoc]
+  congr 1
+  exact BitVec.add_comm _ _
+
+/-- The `j`-th byte of a byte list in memory is the `j`-th byte of the list,
+for every `j` below the length.  Shared with the closed machine models;
+Flapjack infrastructure, no HOL original. -/
+theorem bytesInMemoryHOL_get {width : Nat} [NeZero width]
+    {a : BitVec width} {bs : List (BitVec 8)} {m : BitVec width → BitVec 8}
+    {d : BitVec width → Prop} (h : bytesInMemoryHOL a bs m d) :
+    ∀ j, j < bs.length → m (a + BitVec.ofNat width j) = bs.getD j 0 := by
+  revert h
+  induction bs generalizing a with
+  | nil => intro _ j hj; simp at hj
+  | cons x xs ih =>
+      intro h j hj
+      obtain ⟨hx, hd, ht⟩ := h
+      cases j with
+      | zero => simpa using hx
+      | succ j =>
+          have hj' : j < xs.length := by simpa using hj
+          have hrec := ih ht j hj'
+          rw [← addOneOffset]
+          simpa using hrec
+
+/-- The `j`-th byte of a byte list in memory lies in the domain, for every `j`
+below the length.  Shared by the asmProps coverage proof and the closed
+machine models (X64 and ARM8); Flapjack infrastructure, no HOL original. -/
+theorem byteOffsetInDomain {width : Nat} [NeZero width]
     (xs : List (BitVec 8)) (address : BitVec width)
     (memory : BitVec width → BitVec 8) (domain : BitVec width → Prop)
     (h : bytesInMemoryHOL address xs memory domain)
@@ -73,9 +104,7 @@ private theorem byteOffsetInDomain {width : Nat} [NeZero width]
       have ho : offset < xs.length := by simpa using bound
       have hd := ih (address + 1) h.2.2 offset ho
       have he : (address + 1) + BitVec.ofNat width offset =
-          address + BitVec.ofNat width (offset + 1) := by
-        rw [BitVec.ofNat_add, BitVec.add_assoc]
-        exact congrArg (address + ·) (BitVec.add_comm _ _)
+          address + BitVec.ofNat width (offset + 1) := addOneOffset address offset
       exact he ▸ hd
 
 @[hol "cakeml/compiler/encoders/asm/asmPropsScript.sml" "bytes_in_memory_all_pcs"

@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Encoders.Arm8.Machine.Simulate
 import Flapjack.Compiler.Encoders.Arm8.Machine.DecodeProof
+import Flapjack.Compiler.Encoders.Arm8.BitVecLemmas
 
 /-!
 # The closed ARMv8 `skip` case of `encoder_correct`
@@ -28,37 +29,6 @@ namespace Flapjack.Compiler.Encoders.Arm8
 open Flapjack Compiler.Encoders.Asm Compiler.Encoders.AsmSem Compiler.Encoders.AsmProps
 
 /-! ## Byte facts -/
-
-/-- Adding one to the base before adding the `j`-th byte offset is the same as
-adding the `(j + 1)`-th byte offset. -/
-theorem arm8AddOneOffset (a : BitVec 64) (j : Nat) :
-    (a + 1) + BitVec.ofNat 64 j = a + BitVec.ofNat 64 (j + 1) := by
-  bv_omega
-
-/-- The `j`-th byte of a byte list in memory lies in the domain, for every
-`j` below the length (recursive form, all arguments explicit). -/
-theorem bytesInMemoryHOL_domainAux :
-    ∀ (bs : List (BitVec 8)) (a : BitVec 64) (m : BitVec 64 → BitVec 8)
-      (d : BitVec 64 → Prop), bytesInMemoryHOL a bs m d →
-      ∀ j, j < bs.length → d (a + BitVec.ofNat 64 j)
-  | [], _, _, _, _, j, hj => by simp at hj
-  | _ :: rest, a, m, d, h, j, hj => by
-      obtain ⟨-, hd, ht⟩ := h
-      cases j with
-      | zero => simpa using hd
-      | succ j =>
-          have hj' : j < rest.length := by simpa using hj
-          have hrec := bytesInMemoryHOL_domainAux rest (a + 1) m d ht j hj'
-          rw [arm8AddOneOffset] at hrec
-          exact hrec
-
-/-- The `j`-th byte of a byte list in memory lies in the domain, for every
-`j` below the length. -/
-theorem bytesInMemoryHOL_domain {a : BitVec 64} {bs : List (BitVec 8)}
-    {m : BitVec 64 → BitVec 8} {d : BitVec 64 → Prop}
-    (h : bytesInMemoryHOL a bs m d) :
-    ∀ j, j < bs.length → d (a + BitVec.ofNat 64 j) :=
-  bytesInMemoryHOL_domainAux bs a m d h
 
 /-- `arm8_ast` of `skip` is the single instruction `noOp`. -/
 theorem arm8Ast_skip : arm8Ast (.inst .skip) = [.noOp] := rfl

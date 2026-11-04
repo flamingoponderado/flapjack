@@ -70,11 +70,10 @@ theorem evalCrepSemHOLProgExact_extCall_mapcs {width : Nat} [NeZero width] {σ :
   have hbe : (crepSimpMapcsHOL state).be = state.be := by cases state; rfl
   have hffi : (crepSimpMapcsHOL state).ffi = state.ffi := by cases state; rfl
   rw [hlocals, hmemory, hmemaddrs, hbe, hffi]
-  split <;> (try split) <;> (try split) <;> (try split) <;>
+  split <;> (try split) <;> (try split) <;>
     first
     | (simp only [Prod.map, id_eq]; rw [crepSimpMapcsHOL_withMemoryFfi]; rfl)
-    | (simp only [Prod.map, id_eq]; rfl)
-    | simp_all
+    | (simp only [Prod.map, id_eq])
 
 /-- The `ExtCall function configuration configurationLength array arrayLength`
     specialization of HOL `simp_prog_correct` (`crep_arithProofScript.sml:184-212`).
