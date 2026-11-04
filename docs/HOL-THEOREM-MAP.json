@@ -1,5 +1,50 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_el_eq_word_list",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/HeapWordList.lean",
+  "lean_name": "wordEl_eq_wordList",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared word_el_eq_word_list_typed: the existential word list, exact element length, arbitrary replacement frame/address/memory and shared domain all match; address and payload word widths are independently quantified."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_heap_eq_word_list_strong",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/HeapWordList.lean",
+  "lean_name": "wordHeap_eq_wordList_strong",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared word_heap_eq_word_list_strong_typed: the same-width heap and address carriers, list existence and exact length, and arbitrary replacement address/frame/memory with the same domain are retained."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_heap_eq_word_list",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/HeapWordList.lean",
+  "lean_name": "wordHeap_eq_wordList",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared word_heap_eq_word_list_typed: the same-width heap representation yields a separated list of exactly the heap length with the original memory and domain."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_list_IMP_limit",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/HeapWordList.lean",
+  "lean_name": "wordList_imp_limit",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared word_list_IMP_limit_typed: the payload type remains arbitrary and the original separated functional-memory and good-dimension hypotheses imply the same word-count bound."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_heap_IMP_limit",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/HeapWordList.lean",
+  "lean_name": "wordHeap_imp_limit",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared word_heap_IMP_limit_typed: the same-width heap representation, separated functional-memory assertion and good dimension imply the original heap-length bound."
+},
+{
   "hol_path": "cakeml/compiler/backend/gc/gen_gcScript.sml",
   "hol_name": "gc_move_list_length",
   "lean_path": "Flapjack/Compiler/Backend/GenGc/Proofs/Progress.lean",
