@@ -2697,6 +2697,33 @@ def GrowingExprsSimFromBelowWithOpenClock {C F : Type} (passFuel relationFuel li
       targetFinal.compileOracle = compileIncFuelOracle passFuel final.compileOracle ∧
       (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry)
 
+/-- Variables preserve the open-location invariant. This is
+Flapjack-specific simulation infrastructure. -/
+theorem growingExprsSimFromBelowWithOpenClock_var {C F : Type} (passFuel relationFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (required : State) (trace : BackendCommon.Tra) (index : Nat) :
+    GrowingExprsSimFromBelowWithOpenClock (F := F) passFuel relationFuel limit compiler required
+      [.var trace index] [.var trace index] := by
+  intro g _ allowed sourceEnv targetEnv source target result final _ run notType envs _ sourceWf states ready
+    disjoint avoids sourceCompiler targetCompiler oracle
+  cases lookup : sourceEnv[index]? with
+  | none =>
+    have failed : result = .err (.abort .typeError) := by
+      simpa [evaluate, lookup] using congrArg Prod.fst run.symm
+    exact (notType failed).elim
+  | some value =>
+    have eq : result = .val [value] ∧ final = source := by simpa [evaluate, lookup] using run.symm
+    obtain ⟨rfl, rfl⟩ := eq
+    have related := (envRelFuel_iff relationFuel g allowed target.code sourceEnv targetEnv 0
+      [(0, .var trace index)]).mp (by simpa using envs)
+    have used : ∃ fn ∈ [(0, .var trace index)], ClosProps.freeVar (fn.1 + 0 + index) fn.2 := by
+      refine ⟨(0, .var trace index), by simp, ?_⟩
+      simp [ClosProps.freeVar, ClosProps.freeVars, ClosProps.freeVarExp]
+    obtain ⟨next, nextLookup, valueRel⟩ := envRel_lookup related used lookup
+    refine ⟨0, g, allowed, .val [next], target, stateExtends_refl g ready.well.2, Set.Subset.rfl,
+      disjoint, avoids, ?_, .cons valueRel .nil, states, sourceWf, ready, sourceCompiler,
+      targetCompiler, oracle, fun _ _ h => h⟩
+    simp [evaluate, nextLookup]
+
 /-- Clock-allowing expression simulation restricted to environments with a
 required argument prefix. This is Flapjack-specific infrastructure motivated by HOL
 `calls_correct`, not a port of that theorem: its other invariants and
@@ -5549,6 +5576,51 @@ theorem growingExprsSimFromBelowWithClock_tick {C F : Type} (passFuel relationFu
     have clocksEqual : target.clock + extraClock - 1 = target.clock - 1 + extraClock := by omega
     simpa [evaluate, decClock, targetNonzero, shiftedNonzero, clocksEqual] using targetRun
 
+/-- Ticks preserve the open-location simulation, including timeout and an
+additional target clock allowance. This is Flapjack-specific infrastructure. -/
+theorem growingExprsSimFromBelowWithOpenClock_tick {C F : Type} (passFuel relationFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (required : State) (trace : BackendCommon.Tra)
+    (sourceBody targetBody : ClosLang.Exp)
+    (bodySim : GrowingExprsSimFromBelowWithOpenClock (F := F) passFuel relationFuel limit compiler required [sourceBody] [targetBody]) :
+    GrowingExprsSimFromBelowWithOpenClock (F := F) passFuel relationFuel limit compiler required
+      [.tick trace sourceBody] [.tick trace targetBody] := by
+  intro g requiredGrowth allowed sourceEnv targetEnv source target result final clock run notType envs envWf sourceWf states ready
+    disjoint avoids sourceCompiler targetCompiler oracle
+  have clocks := states.2.1
+  by_cases zero : source.clock = 0
+  · have targetZero : target.clock = 0 := by omega
+    have eq : result = .err (.abort .timeoutError) ∧ final = source := by simpa [evaluate, zero] using run.symm
+    obtain ⟨rfl, rfl⟩ := eq
+    have targetRun : evaluate [.tick trace targetBody] targetEnv target =
+        (.err (.abort .timeoutError), target) := by simp [evaluate, targetZero]
+    exact ⟨0, g, allowed, .err (.abort .timeoutError), target, stateExtends_refl g ready.well.2,
+      Set.Subset.rfl, disjoint, avoids, by simpa using targetRun, rfl, states, sourceWf, ready,
+      sourceCompiler, targetCompiler, oracle, fun _ _ h => h⟩
+  · have targetNonzero : target.clock ≠ 0 := by omega
+    have bodyRun : evaluate [sourceBody] sourceEnv (decClock 1 source) = (result, final) := by
+      simpa [evaluate, zero] using run
+    have bodyEnv : EnvRelFuel relationFuel g allowed target.code sourceEnv targetEnv 0 [(0, targetBody)] := by
+      apply (envRelFuel_iff _ _ _ _ _ _ _ _).mpr
+      have h := (envRelFuel_iff relationFuel g allowed target.code sourceEnv targetEnv 0
+        [(0, .tick trace targetBody)]).mp (by simpa using envs)
+      simpa [envRel, ClosProps.freeVar, ClosProps.freeVars, ClosProps.freeVarExp] using h
+    obtain ⟨extraClock, finalG, finalAllowed, targetResult, targetFinal, extended, allowedGrowth,
+      finalDisjoint, finalAvoids, targetRun, related, finalStates, finalWf, finalReady,
+      finalCompiler, targetFinalCompiler, finalOracle, growth⟩ :=
+      bodySim g requiredGrowth allowed sourceEnv targetEnv (decClock 1 source) (decClock 1 target) result final
+        (by simp [decClock]; omega) bodyRun notType (by simpa [decClock] using bodyEnv) envWf
+        (stateWellFormedFuel_clock sourceWf _) (stateRelFuel_decClock states 1)
+        (incrementalInstallReady_decClock g source target 1 ready) disjoint
+        (by simpa [OracleLocationsAvoid, decClock] using avoids)
+        (by simpa [decClock] using sourceCompiler) (by simpa [decClock] using targetCompiler)
+        (by simpa [decClock] using oracle)
+    refine ⟨extraClock, finalG, finalAllowed, targetResult, targetFinal, extended, allowedGrowth,
+      finalDisjoint, finalAvoids, ?_, related, finalStates, finalWf, finalReady,
+      finalCompiler, targetFinalCompiler, finalOracle, growth⟩
+    have shiftedNonzero : target.clock + extraClock ≠ 0 := by omega
+    have clocksEqual : target.clock + extraClock - 1 = target.clock - 1 + extraClock := by omega
+    simpa [evaluate, decClock, targetNonzero, shiftedNonzero, clocksEqual] using targetRun
+
 /-- Clock-bounded raise simulation. This is
 Flapjack-specific simulation infrastructure. -/
 theorem growingExprsSimFromBelow_raise {C F : Type} (passFuel relationFuel limit : Nat)
@@ -5646,6 +5718,95 @@ theorem growingExprsSimFromBelowWithClock_raise {C F : Type} (passFuel relationF
           simpa [resultRel] using related
         exact ⟨extraClock, finalG, .err (.raise targetValue), targetFinal, extended, by simp [evaluate, targetRun], valueRel,
           finalStates, finalWf, finalReady, finalCompiler, targetFinalCompiler, finalOracle, growth⟩
+
+/-- Raising a related value preserves the growing open-location simulation.
+This is Flapjack-specific simulation infrastructure. -/
+theorem growingExprsSimFromBelowWithOpenClock_raise {C F : Type} (passFuel relationFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (required : State) (trace : BackendCommon.Tra)
+    (sourceBody targetBody : ClosLang.Exp)
+    (bodySim : GrowingExprsSimFromBelowWithOpenClock (F := F) passFuel relationFuel limit compiler required [sourceBody] [targetBody]) :
+    GrowingExprsSimFromBelowWithOpenClock (F := F) passFuel relationFuel limit compiler required
+      [.raise trace sourceBody] [.raise trace targetBody] := by
+  intro g requiredGrowth allowed sourceEnv targetEnv source target result final clock run notType envs envWf sourceWf states ready
+    disjoint avoids sourceCompiler targetCompiler oracle
+  have bodyEnv : EnvRelFuel relationFuel g allowed target.code sourceEnv targetEnv 0 [(0, targetBody)] := by
+    apply (envRelFuel_iff _ _ _ _ _ _ _ _).mpr
+    have h := (envRelFuel_iff relationFuel g allowed target.code sourceEnv targetEnv 0
+      [(0, .raise trace targetBody)]).mp (by simpa using envs)
+    simpa [envRel, ClosProps.freeVar, ClosProps.freeVars, ClosProps.freeVarExp] using h
+  cases bodyRun : evaluate [sourceBody] sourceEnv source with
+  | mk bodyResult bodyFinal =>
+    have bodySafe : bodyResult ≠ .err (.abort .typeError) := by
+      intro bad
+      subst bodyResult
+      have eq : result = .err (.abort .typeError) := by
+        simpa [evaluate, bodyRun] using congrArg Prod.fst run.symm
+      exact notType eq
+    obtain ⟨extraClock, finalG, finalAllowed, targetResult, targetFinal, extended, allowedGrowth,
+      finalDisjoint, finalAvoids, targetRun, related, finalStates, finalWf, finalReady,
+      finalCompiler, targetFinalCompiler, finalOracle, growth⟩ :=
+      bodySim g requiredGrowth allowed sourceEnv targetEnv source target bodyResult bodyFinal clock bodyRun bodySafe
+        (by simpa using bodyEnv) envWf sourceWf states ready disjoint avoids sourceCompiler targetCompiler oracle
+    cases bodyResult with
+    | err error =>
+      cases targetResult with
+      | val values => simp [resultRel] at related
+      | err targetError =>
+        have eq : result = .err error ∧ final = bodyFinal := by simpa [evaluate, bodyRun] using run.symm
+        obtain ⟨rfl, rfl⟩ := eq
+        exact ⟨extraClock, finalG, finalAllowed, .err targetError, targetFinal, extended, allowedGrowth,
+          finalDisjoint, finalAvoids, by simp [evaluate, targetRun], related, finalStates, finalWf,
+          finalReady, finalCompiler, targetFinalCompiler, finalOracle, growth⟩
+    | val values =>
+      obtain ⟨value, rfl⟩ := evaluate_singleton_value sourceBody sourceEnv source bodyFinal values bodyRun
+      cases targetResult with
+      | err error => simp [resultRel] at related
+      | val targetValues =>
+        obtain ⟨targetValue, rfl⟩ := evaluate_singleton_value targetBody targetEnv
+          { target with clock := target.clock + extraClock } targetFinal targetValues targetRun
+        have eq : result = .err (.raise value) ∧ final = bodyFinal := by simpa [evaluate, bodyRun] using run.symm
+        obtain ⟨rfl, rfl⟩ := eq
+        have valueRel : ValueRelFuel relationFuel finalG finalAllowed targetFinal.code value targetValue := by
+          simpa [resultRel] using related
+        exact ⟨extraClock, finalG, finalAllowed, .err (.raise targetValue), targetFinal, extended, allowedGrowth,
+          finalDisjoint, finalAvoids, by simp [evaluate, targetRun], valueRel, finalStates, finalWf,
+          finalReady, finalCompiler, targetFinalCompiler, finalOracle, growth⟩
+
+/-- The actual variable traversal preserves the open-location simulation. -/
+theorem callsFuel_var_growing_below_withOpenClock {C F : Type} (passFuel relationFuel traversalFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (trace : BackendCommon.Tra) (index : Nat)
+    (initial final : State) (out : ClosLang.Exp)
+    (run : callsFuel (traversalFuel + 1) (.var trace index) initial = some (out, final)) :
+    GrowingExprsSimFromBelowWithOpenClock (F := F) passFuel relationFuel limit compiler final [.var trace index] [out] := by
+  simp [callsFuel] at run
+  obtain ⟨rfl, rfl⟩ := run
+  exact growingExprsSimFromBelowWithOpenClock_var passFuel relationFuel limit compiler initial trace index
+
+/-- The actual tick traversal uses its body's open-location simulation. -/
+theorem callsFuel_tick_growing_below_withOpenClock {C F : Type} (passFuel relationFuel traversalFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (trace : BackendCommon.Tra) (body : ClosLang.Exp)
+    (initial final : State) (out : ClosLang.Exp)
+    (run : callsFuel (traversalFuel + 1) (.tick trace body) initial = some (out, final))
+    (bodyIH : ∀ target, callsFuel traversalFuel body initial = some (target, final) →
+      GrowingExprsSimFromBelowWithOpenClock (F := F) passFuel relationFuel limit compiler final [body] [target]) :
+    GrowingExprsSimFromBelowWithOpenClock (F := F) passFuel relationFuel limit compiler final [.tick trace body] [out] := by
+  simp only [callsFuel, Bind.bind, Option.bind_eq_some_iff, Pure.pure,
+    Option.some.injEq, Prod.mk.injEq] at run
+  obtain ⟨⟨target, next⟩, bodyRun, rfl, rfl⟩ := run
+  exact growingExprsSimFromBelowWithOpenClock_tick passFuel relationFuel limit compiler next trace body target (bodyIH target bodyRun)
+
+/-- The actual raise traversal uses its body's open-location simulation. -/
+theorem callsFuel_raise_growing_below_withOpenClock {C F : Type} (passFuel relationFuel traversalFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (trace : BackendCommon.Tra) (body : ClosLang.Exp)
+    (initial final : State) (out : ClosLang.Exp)
+    (run : callsFuel (traversalFuel + 1) (.raise trace body) initial = some (out, final))
+    (bodyIH : ∀ target, callsFuel traversalFuel body initial = some (target, final) →
+      GrowingExprsSimFromBelowWithOpenClock (F := F) passFuel relationFuel limit compiler final [body] [target]) :
+    GrowingExprsSimFromBelowWithOpenClock (F := F) passFuel relationFuel limit compiler final [.raise trace body] [out] := by
+  simp only [callsFuel, Bind.bind, Option.bind_eq_some_iff, Pure.pure,
+    Option.some.injEq, Prod.mk.injEq] at run
+  obtain ⟨⟨target, next⟩, bodyRun, rfl, rfl⟩ := run
+  exact growingExprsSimFromBelowWithOpenClock_raise passFuel relationFuel limit compiler next trace body target (bodyIH target bodyRun)
 
 /-- Clock-bounded tick traversal. This is
 Flapjack-specific simulation infrastructure. -/
