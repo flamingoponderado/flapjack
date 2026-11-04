@@ -1,6 +1,10 @@
-import Flapjack.Misc.Sptree
-import Flapjack.HolRef
-import Mathlib.Tactic.IntervalCases
+module
+
+public import Flapjack.Misc.Sptree
+public import Flapjack.HolRef
+public import Mathlib.Tactic.IntervalCases
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.Mips32Config
 

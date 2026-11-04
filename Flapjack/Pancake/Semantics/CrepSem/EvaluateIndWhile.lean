@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
+module
+
+public import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
+
+@[expose] public section
 
 namespace Flapjack
 
