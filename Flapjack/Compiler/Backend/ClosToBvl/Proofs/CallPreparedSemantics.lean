@@ -554,6 +554,142 @@ theorem numberedCallOracle_main_locations_nodup {C : Type} (fuel : Nat)
   simpa [stateCo, ClosNumber.ignoreTable] using
     ClosNumber.compileInc_codeLocations_nodup (oracle index).1.1 (oracle index).2.1
 
+/-- The initial direct-call pass produces distinct auxiliary entry labels,
+main locations, and auxiliary-body locations together when its input
+locations are distinct and even. -/
+theorem initialCall_entries_and_locations_nodup (fuel : Nat)
+    (expressions called : List ClosLang.Exp) (state : ClosCall.State)
+    (run : ClosCall.compileFuel fuel true expressions = some (called, state))
+    (distinct : (codeLocations expressions).Nodup)
+    (sourceEven : ∀ loc ∈ codeLocations expressions, loc % 2 = 0) :
+    (state.2.map Prod.fst ++ (codeLocations called ++
+      codeLocations (state.2.map (fun (_, _, body) => body)))).Nodup := by
+  have traversal : ClosCall.callsListBounded fuel expressions (.ln, []) = some (called, state) := by
+    simpa [ClosCall.compileFuel] using run
+  have bodiesDistinct := ClosCall.callsListBounded_all_locations_nodup fuel expressions called .ln state traversal distinct
+  have entriesDistinct := ClosCall.compileFuel_labelsDistinct fuel true expressions called state run distinct
+  have within := ClosCall.compileFuel_locationsWithin (fun loc => loc ∈ codeLocations expressions)
+    fuel expressions called state run (by intro _ member; exact member)
+  apply List.Nodup.append entriesDistinct bodiesDistinct
+  intro label entry locs
+  obtain ⟨origin, inSource, equal⟩ := callAux_label_origin fuel expressions called state run label entry
+  have originEven := sourceEven origin inSource
+  have labelSource : label ∈ codeLocations expressions := by
+    rcases List.mem_append.mp locs with main | auxiliary
+    · exact within.1 label main
+    · obtain ⟨body, bodyMember, locMember⟩ := (mem_codeLocations label _).1 auxiliary
+      obtain ⟨entry, entryMember, bodyEq⟩ := List.mem_map.mp bodyMember
+      obtain ⟨name, arity, sourceBody⟩ := entry
+      simp only at bodyEq
+      subst body
+      exact within.2 name arity sourceBody entryMember label locMember
+  have labelEven := sourceEven label labelSource
+  omega
+
+/-- Adding the initial entry chain and annotating its bodies preserves the
+combined distinctness of entry labels and nested closure locations. -/
+theorem initialCall_annotated_chain_source_nodup (fuel start : Nat)
+    (expressions called : List ClosLang.Exp) (state : ClosCall.State)
+    (run : ClosCall.compileFuel fuel true expressions = some (called, state))
+    (distinct : (codeLocations expressions).Nodup)
+    (sourceEven : ∀ loc ∈ codeLocations expressions, loc % 2 = 0)
+    (sourceLower : ∀ loc ∈ codeLocations expressions, start + max 1 expressions.length ≤ loc) :
+    let raw := ClosAnnotate.compile (chainExps start called ++ state.2)
+    (raw.map Prod.fst ++ codeLocations (raw.map (fun (_, _, body) => body))).Nodup := by
+  let chain := chainExps start called
+  let source := chain ++ state.2
+  let raw := ClosAnnotate.compile source
+  have traversal : ClosCall.callsListBounded fuel expressions (.ln, []) = some (called, state) := by
+    simpa [ClosCall.compileFuel] using run
+  have length := ClosCall.callsListBounded_length fuel expressions (.ln, []) state called traversal
+  have all := initialCall_entries_and_locations_nodup fuel expressions called state run distinct sourceEven
+  have within := ClosCall.compileFuel_locationsWithin (fun loc => loc ∈ codeLocations expressions)
+    fuel expressions called state run (by intro _ member; exact member)
+  have chainSeparated : ∀ label ∈ chain.map Prod.fst,
+      label ∉ state.2.map Prod.fst ++ (codeLocations called ++
+        codeLocations (state.2.map (fun (_, _, body) => body))) := by
+    intro label inChain later
+    have chainBound := chainExps_label_bounds start called label inChain
+    rcases List.mem_append.mp later with entry | nested
+    · obtain ⟨origin, member, equal⟩ := callAux_label_origin fuel expressions called state run label entry
+      have lower := sourceLower origin member
+      omega
+    · have inSource : label ∈ codeLocations expressions := by
+        rcases List.mem_append.mp nested with main | auxiliary
+        · exact within.1 label main
+        · obtain ⟨body, bodyMember, locMember⟩ := (mem_codeLocations label _).1 auxiliary
+          obtain ⟨entry, entryMember, bodyEq⟩ := List.mem_map.mp bodyMember
+          obtain ⟨name, arity, sourceBody⟩ := entry
+          simp only at bodyEq
+          subst body
+          exact within.2 name arity sourceBody entryMember label locMember
+      have lower := sourceLower label inSource
+      omega
+  have sourceDistinct : (source.map Prod.fst ++ codeLocations (source.map (fun (_, _, body) => body))).Nodup := by
+    simp only [source, List.map_append, codeLocations_append, chain, chainExps_codeLocations]
+    rw [List.append_assoc]
+    apply List.Nodup.append (chainExps_labels_nodup start called) all
+    exact chainSeparated
+  have annotationSub := ClosAnnotate.compile_codeLocations_sublist source
+  have annotatedDistinct := annotationSub.nodup sourceDistinct.of_append_right
+  have labelsEq : raw.map Prod.fst = source.map Prod.fst := by simp [raw, annotated_labels]
+  change (raw.map Prod.fst ++ codeLocations (raw.map (fun (_, _, body) => body))).Nodup
+  rw [labelsEq]
+  apply List.Nodup.append sourceDistinct.of_append_left annotatedDistinct
+  intro label entry body
+  exact sourceDistinct.disjoint entry (annotationSub.subset body)
+
+/-- Prepared BVL code has distinct labels when source entries and nested
+closure locations are distinct together. -/
+theorem compilePrepared_labels_nodup_of_source (original current output : Config)
+    (expressions : List ClosLang.Exp) (raw : List (Nat × Nat × ClosLang.Exp))
+    (compiled : List (Nat × Nat × Bvl.Exp)) (names : Spt Flapjack.Basis.Pure.MlString.MlString)
+    (compile : compilePrepared? original current expressions raw = some (output, compiled, names))
+    (sourceDistinct : (raw.map Prod.fst ++ codeLocations (raw.map (fun (_, _, body) => body))).Nodup) :
+    (compiled.map Prod.fst).Nodup := by
+  classical
+  let converted := compileProgExpsHOL current.maxApp raw
+  have convertedRun : compileProg? current.maxApp raw = some converted :=
+    compileProg_checked_eq_original current.maxApp raw
+  have convertedDistinct : (converted.map Prod.fst).Nodup :=
+    compileProg_checked_nodup_of_source current.maxApp raw converted convertedRun sourceDistinct
+  obtain ⟨resultNames, generated⟩ := compilePrepared_entries original current expressions raw
+  have equal := Option.some.inj (compile.symm.trans generated)
+  cases equal
+  let stubs := sptToAList (initCode current.maxApp)
+  let stubLabels := stubs.map Prod.fst ++ [numStubs current.maxApp - 2, numStubs current.maxApp - 1]
+  have stubCount : 2 ≤ numStubs current.maxApp := by simp [numStubs]
+  have stubDistinct : (stubs.map Prod.fst).Nodup := sptAllDistinctMapFstToAList _
+  have stubBelow : ∀ label ∈ stubs.map Prod.fst, label < numStubs current.maxApp - 2 := by
+    intro label member
+    obtain ⟨⟨name, arity, body⟩, entry, equal⟩ := List.mem_map.mp member
+    simp only at equal
+    subst label
+    exact initCode_label_lt current.maxApp name (arity, body) entry
+  have prefixDistinct : stubLabels.Nodup := by
+    dsimp [stubLabels]
+    apply List.Nodup.append stubDistinct
+    · simp; omega
+    · intro label inStub inSpecial
+      have b := stubBelow label inStub
+      simp only [List.mem_cons, List.not_mem_nil, or_false] at inSpecial
+      omega
+  have prefixBelow : ∀ label ∈ stubLabels, label < numStubs current.maxApp := by
+    intro label member
+    simp only [stubLabels, List.mem_append, List.mem_cons, List.not_mem_nil, or_false] at member
+    cases member with
+    | inl stub => have b := stubBelow label stub; omega
+    | inr special => omega
+  have allDistinct : (stubLabels ++ converted.map Prod.fst).Nodup := by
+    apply List.Nodup.append prefixDistinct convertedDistinct
+    intro label inPrefix inConverted
+    have low := prefixBelow label inPrefix
+    have high := compileProg_checked_label_lower current.maxApp raw converted convertedRun label inConverted
+    omega
+  have permutation := (codeSort_perm (initialCompiledEntries current.maxApp current.start raw)).map Prod.fst
+  apply permutation.nodup_iff.mpr
+  simpa [initialCompiledEntries, stubs, converted, stubLabels, List.map_append] using allDistinct
+
 /-- Main expressions and emitted auxiliary bodies retain distinct locations
 together after numbering, direct-call conversion, and annotation. -/
 theorem numberedCallOracle_all_locations_nodup {C : Type} (fuel : Nat)
@@ -911,9 +1047,9 @@ theorem numberedCallOracle_compileOracleInv {C : Type} (maxApp fuel : Nat)
     obtain ⟨name, arity, body⟩ := entry
     simpa [everyFnLocationSome] using ((calledSyntax index).2 name arity body member).1
 
-/-- Direct-call to BVL semantics with future label invariants derived from
-the numbering oracle. The initial compiled-code distinctness and boundary,
-source safety, and source-oracle ordering remain explicit premises. -/
+/-- Direct-call to BVL semantics with initial and future label distinctness
+derived from numbered source locations. The initial compiled-code boundary
+and source safety remain explicit premises. -/
 theorem numberedCall_to_preparedBvl_semantics {C F : Type} (ffi : HolFfiState F)
     (passFuel relationFuel : Nat) (original current output : Config)
     (targetCompiler : BvlSem.Compiler C)
@@ -936,7 +1072,7 @@ theorem numberedCall_to_preparedBvl_semantics {C F : Type} (ffi : HolFfiState F)
         (pureCc (compileInc current.maxApp) targetCompiler))) expressions ≠ .fail)
     (compile : compilePrepared? original current nameExpressions
       (ClosAnnotate.compile (chainExps current.start called ++ callState.2)) = some (output, compiled, names))
-    (distinct : (compiled.map Prod.fst).Nodup)
+    (sourceEven : ∀ loc ∈ codeLocations expressions, loc % 2 = 0)
     (initialBelow : ∀ location ∈ compiled.map Prod.fst,
       location < (oracle 0).1.1 + numStubs current.maxApp) :
     BvlSem.semantics ffi (sptFromAList compiled)
@@ -980,6 +1116,16 @@ theorem numberedCall_to_preparedBvl_semantics {C F : Type} (ffi : HolFfiState F)
       (oracle j).1.1 + numStubs current.maxApp := by
     intro i j order
     exact Nat.add_le_add_right (numberingOracle_state_monotone oracle oracleState order) _
+  have sourceLower : ∀ loc ∈ codeLocations expressions, current.start + max 1 expressions.length ≤ loc := by
+    intro loc member
+    have bound := initialLower loc member
+    have nonemptyLength : 1 ≤ expressions.length := List.length_pos_iff.mpr sourceNonempty
+    omega
+  have rawDistinct := initialCall_annotated_chain_source_nodup passFuel current.start expressions called callState
+    passRun syntaxGood.2.2 sourceEven sourceLower
+  have distinct : (compiled.map Prod.fst).Nodup :=
+    compilePrepared_labels_nodup_of_source original current output nameExpressions
+      (ClosAnnotate.compile (chainExps current.start called ++ callState.2)) compiled names compile rawDistinct
   exact call_to_preparedBvl_semantics_of_location_bounds ffi passFuel relationFuel original current output
     targetCompiler (fun index => (oracle index).1.1 + numStubs current.maxApp)
     expressions called nameExpressions callState compiled names numbered passRun syntaxGood known callOrdered syntaxOracle
