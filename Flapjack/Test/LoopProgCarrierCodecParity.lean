@@ -37,8 +37,4 @@ private def byteNameFfi : LoopProg (BitVec 8) :=
 example : sptLookup 2 (Flapjack.LoopToWord.toNumSetHOL [2, 2]) = some () := by
   exact (sptLookup_toNumSetHOL_iff_mem 2 [2, 2]).2 (by simp)
 
-def runChecks : IO Bool := do
-  IO.println "PASS width-indexed LoopProg carrier codec (nested control/call/FFI, set membership, rejected extra expression)"
-  return true
-
 end Flapjack.Test.LoopProgCarrierCodecParity
