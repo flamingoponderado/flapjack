@@ -1,4 +1,8 @@
-import Mathlib.Data.BitVec
+module
+
+public import Mathlib.Data.BitVec
+
+@[expose] public section
 
 /-!
 # HOL `words`: `word_log2`

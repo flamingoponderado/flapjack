@@ -1,4 +1,8 @@
-import Flapjack.HolRef
+module
+
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-!
 Exact port of HOL `misc$UNCURRY_eq_pair` (`cakeml/misc/miscScript.sml:2271`):

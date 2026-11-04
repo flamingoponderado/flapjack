@@ -1,4 +1,8 @@
-import Flapjack.HolRef
+module
+
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! `miscScript.sml` `DISJOINT_INTER`. Sets are predicates, as in the reviewed
 set_sep port: HOL `DISJOINT s t` is pointwise non-overlap and `∩` is pointwise

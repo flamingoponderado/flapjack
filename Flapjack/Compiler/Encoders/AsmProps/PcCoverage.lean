@@ -1,6 +1,10 @@
-import Flapjack.Misc.BytesInMemory
-import Mathlib.Data.Set.Basic
-import Lean.Elab.Tactic.Omega
+module
+
+public import Flapjack.Misc.BytesInMemory
+public import Mathlib.Data.Set.Basic
+public import Lean.Elab.Tactic.Omega
+
+@[expose] public section
 
 /-! Native asmProps stride PC sets and encoded-byte domain coverage. -/
 namespace Flapjack.Compiler.Encoders.AsmProps

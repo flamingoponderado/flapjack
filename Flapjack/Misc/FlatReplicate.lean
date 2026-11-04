@@ -1,4 +1,8 @@
-import Flapjack.HolRef
+module
+
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-!
 # HOL `misc$FLAT_REPLICATE_NIL`
