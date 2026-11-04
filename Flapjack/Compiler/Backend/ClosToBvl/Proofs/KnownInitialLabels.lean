@@ -148,4 +148,23 @@ theorem numberedKnown_output_labels (fuel number : Nat) (c : ClosKnown.Config)
   intro location member
   exact ClosNumber.renumberList_location_bounds program number location (subset member)
 
+/-- The executable known-function pipeline introduces no new numbered
+closure locations. -/
+theorem numberedKnown_output_locations_subset (fuel number : Nat) (c : ClosKnown.Config)
+    (program : List ClosLang.Exp) (optimized : List (ClosLang.Exp × ClosKnown.ValApprox))
+    (globals : Spt ClosKnown.ValApprox) (output : List ClosLang.Exp)
+    (knownRun : ClosKnown.knownListTotal c (ClosFvs.compile (ClosNumber.renumberList number program).2)
+      [] .ln = (optimized, globals))
+    (optRun : ((optimized.map Prod.fst).mapM fun e => do
+      let e ← ClosTicks.removeBounded fuel e
+      ClosLetop.compileBounded fuel e) = some output) :
+    codeLocations output ⊆ codeLocations (ClosNumber.renumberList number program).2 := by
+  let numbered := (ClosNumber.renumberList number program).2
+  have outputEq := Option.some.inj ((ClosKnown.ticks_letop_bounded fuel (optimized.map Prod.fst)).symm.trans optRun)
+  have run := ClosKnown.known_compileFuel_eq fuel c numbered optimized globals knownRun
+  rw [outputEq] at run
+  have counts := ClosKnown.compileFuel_codeLocationsBag fuel (some c) _ numbered output run
+  intro label member
+  exact List.count_pos_iff.mp (Nat.lt_of_lt_of_le (List.count_pos_iff.mpr member) (counts label))
+
 end Flapjack.Compiler.Backend.ClosToBvl
