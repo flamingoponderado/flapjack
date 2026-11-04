@@ -2699,9 +2699,9 @@ def GrowingExprsSimFromBelowWithOpenClock {C F : Type} (passFuel relationFuel li
 
 /-- Open-location body simulation restricted to a required argument prefix. -/
 def GrowingExprsSimFromBelowWithOpenClockArity {C F : Type} (passFuel relationFuel limit : Nat)
-    (compiler : ClosSem.Compiler C) (required : State) (arity : Nat) (sourceExps targetExps : List ClosLang.Exp) : Prop :=
-  ∀ (g : State), stateExtends required g → ∀ (allowed : Set Nat)
-    (sourceEnv targetEnv : List ClosSem.Value)
+    (compiler : ClosSem.Compiler C) (required : State) (allowed : Set Nat) (arity : Nat) (sourceExps targetExps : List ClosLang.Exp) : Prop :=
+  ∀ (g : State), stateExtends required g →
+    ∀ (sourceEnv targetEnv : List ClosSem.Value)
     (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
     (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
     (final : ClosSem.State (NumSet × C) F),
@@ -2726,6 +2726,16 @@ def GrowingExprsSimFromBelowWithOpenClockArity {C F : Type} (passFuel relationFu
       final.compile = compileIncFuelCallback passFuel compiler ∧ targetFinal.compile = compiler ∧
       targetFinal.compileOracle = compileIncFuelOracle passFuel final.compileOracle ∧
       (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry)
+
+/-- An open-location simulation above one compiler state is valid above an
+extension of that state. -/
+theorem growingExprsSimFromBelowWithOpenClock_mono_state {C F : Type} (passFuel relationFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (smaller larger : State) (sourceExps targetExps : List ClosLang.Exp)
+    (growth : stateExtends smaller larger)
+    (sim : GrowingExprsSimFromBelowWithOpenClock (F := F) passFuel relationFuel limit compiler smaller sourceExps targetExps) :
+    GrowingExprsSimFromBelowWithOpenClock (F := F) passFuel relationFuel limit compiler larger sourceExps targetExps := by
+  intro g extended
+  exact sim g (stateExtends_trans smaller larger g growth extended)
 
 /-- Variables preserve the open-location invariant. This is
 Flapjack-specific simulation infrastructure. -/
@@ -4831,6 +4841,32 @@ theorem probeBody_sim_of_completed_state {C F : Type} (passFuel relationFuel lim
     (appendAux after suffix) g allowed [body] [converted] completedGrowth
     (exprIH (appendAux before suffix) (appendAux after suffix) completedRun distinct fresh completedWf)
 
+/-- If a probe state can be completed with an auxiliary-code suffix that is
+fresh for the body and whose final state extends into the installed compiler
+state, the ordinary well-formed traversal induction applies to that probe.
+Constructing such a suffix for every probe remains an obligation. This is
+Flapjack-specific simulation infrastructure, not a HOL theorem port. -/
+theorem probeBody_sim_of_completed_state_open {C F : Type} (passFuel relationFuel limit depth : Nat)
+    (compiler : ClosSem.Compiler C) (g : State)
+    (body converted : ClosLang.Exp) (before after : State) (suffix : List (Nat × Nat × ClosLang.Exp))
+    (run : callsFuel depth body before = some (converted, after))
+    (distinct : (codeLocationsExp body).Nodup)
+    (fresh : LabelsFresh (codeLocationsExp body) (appendAux before suffix))
+    (completedWf : wellFormed (appendAux before suffix))
+    (completedGrowth : stateExtends (appendAux after suffix) g)
+    (exprIH : ∀ initial final,
+      callsFuel depth body initial = some (converted, final) →
+      (codeLocationsExp body).Nodup → LabelsFresh (codeLocationsExp body) initial →
+      wellFormed initial →
+      GrowingExprsSimFromBelowWithOpenClock (F := F) passFuel relationFuel limit compiler final [body] [converted]) :
+    GrowingExprsSimFromBelowWithOpenClock (F := F) passFuel relationFuel limit compiler g [body] [converted] := by
+  have completedRun : callsFuel depth body (appendAux before suffix) =
+      some (converted, appendAux after suffix) := by
+    simpa [run] using (callsFuel_appendAux_pair depth).1 body before suffix
+  exact growingExprsSimFromBelowWithOpenClock_mono_state passFuel relationFuel limit compiler
+    (appendAux after suffix) g [body] [converted] completedGrowth
+    (exprIH (appendAux before suffix) (appendAux after suffix) completedRun distinct fresh completedWf)
+
 /-- Related closure bodies satisfy the arity-restricted application
 interface in both extracted and open groups, assuming the ordinary
 well-formed body-traversal induction. Extracted probe states are completed
@@ -4887,6 +4923,65 @@ theorem recClosureRelFuel_body_arity_withClock {C F : Type} (passFuel relationFu
       allowed [body] [targetBody] extended (exprIH targetBody depth before after depthBound selectedRun distinct fresh beforeWf)
     exact bodySim larger (stateExtends_refl larger ready.well.2) sourceEnv targetEnv source target result final clock run
       notType envs envWf sourceWf states ready sourceCompiler targetCompiler oracle
+
+/-- Related closure bodies satisfy the arity-restricted application
+interface in both extracted and open groups, assuming the ordinary
+well-formed body-traversal induction. Extracted probe states are completed
+with fresh installed code before invoking that induction. This is
+Flapjack-specific infrastructure, not a HOL theorem port. -/
+theorem recClosureRelFuel_body_arity_withOpenClock {C F : Type} (passFuel relationFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (g : State) (allowed : Set Nat)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (loc : Nat)
+    (sourceFns targetFns : List (Nat × ClosLang.Exp)) (index arity : Nat)
+    (body targetBody : ClosLang.Exp)
+    (related : recClosureRelFuel relationFuel g allowed code loc sourceFns targetFns)
+    (sourceLookup : sourceFns[index]? = some (arity, body))
+    (targetLookup : targetFns[index]? = some (arity, targetBody))
+    (exprIH : ∀ converted depth before after,
+      depth < max relationFuel (listBudget (sourceFns.map Prod.snd) + 1) →
+      callsFuel depth body before = some (converted, after) →
+      (codeLocationsExp body).Nodup → LabelsFresh (codeLocationsExp body) before →
+      wellFormed before →
+      GrowingExprsSimFromBelowWithOpenClock (F := F) passFuel relationFuel limit compiler after [body] [converted]) :
+    GrowingExprsSimFromBelowWithOpenClockArity (F := F) passFuel relationFuel limit compiler g allowed arity [body] [targetBody] := by
+  intro larger growth sourceEnv targetEnv source target result final clock sourceBound run notType envs envWf sourceWf
+    states ready disjoint avoids sourceCompiler targetCompiler oracle
+  have related' := recClosureRelFuel_retarget relationFuel g larger allowed code target.code loc sourceFns targetFns
+    related growth ready.included
+  rcases recClosureRelFuel_body_traversal_cases relationFuel larger allowed target.code loc sourceFns targetFns
+      index arity body targetBody related' sourceLookup targetLookup with
+    ⟨trace, converted, depth, before, after, _, _, bodyEq, codeLookup, depthBound, selectedRun,
+      distinct, fresh, beforeDistinct, beforeWeak, knownCovered, _, beforeGrowth, _, afterGrowth, _, closed, _⟩ |
+    ⟨depth, before, after, depthBound, selectedRun, distinct, fresh, beforeWf, extended⟩
+  · have stubEnv : EnvRelFuel relationFuel larger allowed target.code sourceEnv targetEnv 0
+        [(0, .call trace 0 (loc + 2 * index + 1) (ClosCall.variables trace arity))] := by
+      simpa [bodyEq] using envs
+    obtain ⟨targetBound, bodyEnv⟩ :=
+      envRelFuel_stub_body_prefix relationFuel larger allowed target.code trace (loc + 2 * index + 1)
+        arity converted sourceEnv targetEnv stubEnv sourceBound closed
+    obtain ⟨suffix, completedWf, completedFresh, completedGrowth⟩ :=
+      weaklyWellFormed_complete_aux_fresh before after larger (codeLocationsExp body) beforeWeak beforeDistinct
+        ready.well beforeGrowth afterGrowth fresh knownCovered
+    have bodySim := probeBody_sim_of_completed_state_open passFuel relationFuel limit depth compiler larger
+      body converted before after suffix selectedRun distinct completedFresh completedWf completedGrowth
+      (fun initial final traversal bodyDistinct bodyFresh initialWf =>
+        exprIH converted depth initial final depthBound traversal bodyDistinct bodyFresh initialWf)
+    obtain ⟨extraClock, finalG, finalAllowed, targetResult, targetFinal, finalExt, allowedGrowth, finalDisjoint, finalAvoids,
+      targetRun, resultRelated,
+      finalStates, finalWf, finalReady, finalCompiler, targetFinalCompiler, finalOracle, codeGrowth⟩ :=
+      bodySim
+        larger (stateExtends_refl larger ready.well.2) allowed sourceEnv (targetEnv.take arity) source target result final
+        clock run notType (by simpa using bodyEnv) envWf sourceWf states ready disjoint avoids sourceCompiler targetCompiler oracle
+    refine ⟨extraClock + 1, finalG, finalAllowed, targetResult, targetFinal, finalExt, allowedGrowth,
+      finalDisjoint, finalAvoids, ?_, resultRelated, finalStates,
+      finalWf, finalReady, finalCompiler, targetFinalCompiler, finalOracle, codeGrowth⟩
+    rw [bodyEq, evaluate_generated_stub_with_allowance trace (loc + 2 * index + 1) arity extraClock
+      converted targetEnv target targetBound codeLookup]
+    exact targetRun
+  · have bodySim := growingExprsSimFromBelowWithOpenClock_mono_state passFuel relationFuel limit compiler after larger
+      [body] [targetBody] extended (exprIH targetBody depth before after depthBound selectedRun distinct fresh beforeWf)
+    exact bodySim larger (stateExtends_refl larger ready.well.2) allowed sourceEnv targetEnv source target result final clock run
+      notType envs envWf sourceWf states ready disjoint avoids sourceCompiler targetCompiler oracle
 
 /-- A clock-bounded pass-state simulation supplies the corresponding
 installed-program simulation. This is Flapjack-specific infrastructure. -/
@@ -9424,7 +9519,7 @@ theorem evaluateApp_full_growing_clockBelow_withOpenClock {C F : Type} (passFuel
     (bodyIH : ∀ (targetBody : ClosLang.Exp) (loc : Nat) (sourceFns targetFns : List (Nat × ClosLang.Exp))
       (index arity : Nat), recClosureRelFuel relationFuel g allowed target.code loc sourceFns targetFns →
       sourceFns[index]? = some (arity, sourceBody) → targetFns[index]? = some (arity, targetBody) →
-      GrowingExprsSimFromBelowWithOpenClockArity (F := F) passFuel relationFuel source.clock compiler g arity [sourceBody] [targetBody])
+      GrowingExprsSimFromBelowWithOpenClockArity (F := F) passFuel relationFuel source.clock compiler g allowed arity [sourceBody] [targetBody])
     (bodyWf : ∀ (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
       (body targetBody : ClosLang.Exp) (loc : Nat) (sourceFns targetFns : List (Nat × ClosLang.Exp))
       (index arity : Nat), recClosureRelFuel relationFuel g allowed code loc sourceFns targetFns →
@@ -9516,7 +9611,7 @@ theorem evaluateApp_full_growing_clockBelow_withOpenClock {C F : Type} (passFuel
             bodyDisjoint, bodyAvoids, targetBodyRun, bodyRel, bodyStates,
             bodyStateWf, bodyReady, bodyCompiler, targetBodyCompiler, bodyOracle, bodyGrowth⟩ :=
             bodyIH targetBody loc sourceFns targetFns index arity closure sourceLookup targetLookup
-              g (stateExtends_refl g ready.well.2) allowed sourceBodyEnv targetBodyEnv sourceStart targetStart bodyResult bodyFinal startClock sourceBodyBound bodyRun bodySafe
+              g (stateExtends_refl g ready.well.2) sourceBodyEnv targetBodyEnv sourceStart targetStart bodyResult bodyFinal startClock sourceBodyBound bodyRun bodySafe
               (by simpa [targetStart, decClock] using bodyEnv) sourceBodyEnvWf startWf startStates startReady disjoint
               (by simpa [sourceStart, decClock, OracleLocationsAvoid] using avoids)
               (by simpa [sourceStart, decClock] using sourceCompiler)
@@ -9724,7 +9819,7 @@ theorem growingAppSimClockBelowWithOpenClock_of_bodies {C F : Type} (passFuel re
       (sourceBody targetBody : ClosLang.Exp) (loc : Nat) (sourceFns targetFns : List (Nat × ClosLang.Exp))
       (index arity : Nat), recClosureRelFuel relationFuel g allowed code loc sourceFns targetFns →
       sourceFns[index]? = some (arity, sourceBody) → targetFns[index]? = some (arity, targetBody) →
-      GrowingExprsSimFromBelowWithOpenClockArity (F := F) passFuel relationFuel callerClock compiler g arity [sourceBody] [targetBody])
+      GrowingExprsSimFromBelowWithOpenClockArity (F := F) passFuel relationFuel callerClock compiler g allowed arity [sourceBody] [targetBody])
     (bodyWf : ∀ (allowed : Set Nat) (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
       (body targetBody : ClosLang.Exp) (loc : Nat) (sourceFns targetFns : List (Nat × ClosLang.Exp))
       (index arity : Nat), recClosureRelFuel relationFuel g allowed code loc sourceFns targetFns →
@@ -9809,6 +9904,67 @@ theorem growingAppSimClockBelowWithClock_of_traversals {C F : Type}
     sourceFns targetFns index arity sourceBody targetBody related sourceLookup targetLookup
   intro converted depth initial final _ traversal distinct fresh initialWf
   exact exprIH callerClock clockBound depth initial final sourceBody converted traversal distinct fresh initialWf
+
+/-- The growing-open-location application induction follows from the ordinary
+well-formed expression traversal induction at smaller clocks, including both
+open and extracted recursive groups. Source-body well-formedness remains a
+separate premise. This is Flapjack-specific infrastructure, not a HOL theorem
+port. -/
+theorem growingAppSimClockBelowWithOpenClock_of_traversals {C F : Type}
+    (passFuel relationFuel clockLimit : Nat) (compiler : ClosSem.Compiler C)
+    (requested : Option Nat)
+    (exprIH : ∀ callerClock, callerClock < clockLimit → ∀ depth (initial final : State)
+      (body converted : ClosLang.Exp),
+      callsFuel depth body initial = some (converted, final) →
+      (codeLocationsExp body).Nodup → LabelsFresh (codeLocationsExp body) initial →
+      wellFormed initial →
+      GrowingExprsSimFromBelowWithOpenClock (F := F) passFuel relationFuel callerClock compiler final [body] [converted])
+    (bodyWf : ∀ (allowed : Set Nat) (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+      (body targetBody : ClosLang.Exp) (loc : Nat) (sourceFns targetFns : List (Nat × ClosLang.Exp))
+      (index arity : Nat), recClosureRelFuel relationFuel g allowed code loc sourceFns targetFns →
+      sourceFns[index]? = some (arity, body) → targetFns[index]? = some (arity, targetBody) →
+      ∀ (env : List ClosSem.Value) (state : ClosSem.State (NumSet × C) F),
+        ValuesWellFormedFuel relationFuel g allowed code env → StateWellFormedFuel relationFuel g allowed code state →
+        OracleAuxEmpty state.compileOracle → EvalWellFormedFuel relationFuel g allowed code (evaluate [body] env state)) :
+    GrowingAppSimClockBelowWithOpenClock (F := F) passFuel relationFuel clockLimit compiler requested := by
+  apply growingAppSimClockBelowWithOpenClock_of_bodies passFuel relationFuel clockLimit compiler requested ?_ bodyWf
+  intro callerClock clockBound allowed g code sourceBody targetBody loc sourceFns targetFns index arity related sourceLookup targetLookup
+  apply recClosureRelFuel_body_arity_withOpenClock passFuel relationFuel callerClock compiler g allowed code loc
+    sourceFns targetFns index arity sourceBody targetBody related sourceLookup targetLookup
+  intro converted depth initial final _ traversal distinct fresh initialWf
+  exact exprIH callerClock clockBound depth initial final sourceBody converted traversal distinct fresh initialWf
+
+/-- A location-free application traversal follows from its subexpression
+simulations and the smaller-clock traversal induction. Source evaluation
+well-formedness remains an explicit premise. -/
+theorem callsFuel_app_none_withOpenClock_of_traversals {C F : Type}
+    (passFuel relationFuel traversalFuel limit : Nat) (compiler : ClosSem.Compiler C)
+    (trace : BackendCommon.Tra) (sourceFn : ClosLang.Exp) (sourceArgs : List ClosLang.Exp)
+    (initial final : State) (out : ClosLang.Exp)
+    (run : callsFuel (traversalFuel + 1) (.app trace none sourceFn sourceArgs) initial = some (out, final))
+    (argsIH : ∀ target middle, callsListFuel traversalFuel sourceArgs initial = some (target, middle) →
+      GrowingExprsSimFromBelowWithOpenClock (F := F) passFuel relationFuel limit compiler final sourceArgs target)
+    (fnIH : ∀ target middle, callsFuel traversalFuel sourceFn middle = some (target, final) →
+      GrowingExprsSimFromBelowWithOpenClock (F := F) passFuel relationFuel limit compiler final [sourceFn] [target])
+    (exprIH : ∀ callerClock, callerClock < limit → ∀ depth (before after : State) (body converted : ClosLang.Exp),
+      callsFuel depth body before = some (converted, after) →
+      (codeLocationsExp body).Nodup → LabelsFresh (codeLocationsExp body) before → wellFormed before →
+      GrowingExprsSimFromBelowWithOpenClock (F := F) passFuel relationFuel callerClock compiler after [body] [converted])
+    (evalWf : ∀ (allowed : Set Nat) (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+      (expressions : List ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State (NumSet × C) F),
+      ValuesWellFormedFuel relationFuel g allowed code env → StateWellFormedFuel relationFuel g allowed code state →
+      OracleAuxEmpty state.compileOracle → EvalWellFormedFuel relationFuel g allowed code (evaluate expressions env state)) :
+    GrowingExprsSimFromBelowWithOpenClock (F := F) passFuel relationFuel limit compiler final
+      [.app trace none sourceFn sourceArgs] [out] := by
+  apply callsFuel_app_none_growing_below_withOpenClock passFuel relationFuel traversalFuel limit compiler trace
+    sourceFn sourceArgs initial final out run argsIH fnIH
+  · intro allowed g code env state
+    exact evalWf allowed g code sourceArgs env state
+  · intro allowed g code env state
+    exact evalWf allowed g code [sourceFn] env state
+  · apply growingAppSimClockBelowWithOpenClock_of_traversals passFuel relationFuel limit compiler none exprIH
+    intro allowed g code body _ _ _ _ _ _ _ _ _ env state
+    exact evalWf allowed g code [body] env state
 
 /-- A retained application traversal follows from simulations of its
 argument and function traversals and the ordinary smaller-clock expression
@@ -11619,16 +11775,6 @@ theorem growingExprsSimFromBelowWithOpenClock_installedBelow {C F : Type}
     simp [envRel]
   exact sim g (stateExtends_refl g ready.well.2) allowed [] [] source target result final clock run notType
     envs .nil sourceWf states ready disjoint avoids sourceCompiler targetCompiler oracle
-
-/-- An open-location simulation above one compiler state is valid above an
-extension of that state. -/
-theorem growingExprsSimFromBelowWithOpenClock_mono_state {C F : Type} (passFuel relationFuel limit : Nat)
-    (compiler : ClosSem.Compiler C) (smaller larger : State) (sourceExps targetExps : List ClosLang.Exp)
-    (growth : stateExtends smaller larger)
-    (sim : GrowingExprsSimFromBelowWithOpenClock (F := F) passFuel relationFuel limit compiler smaller sourceExps targetExps) :
-    GrowingExprsSimFromBelowWithOpenClock (F := F) passFuel relationFuel limit compiler larger sourceExps targetExps := by
-  intro g extended
-  exact sim g (stateExtends_trans smaller larger g growth extended)
 
 /-- A successful list traversal composes expression simulations that need
 their own generated pass states, using label freshness to show that each
