@@ -1,4 +1,8 @@
-import Flapjack.HolRef
+module
+
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! `miscScript.sml` natural-number `DIV`/`MOD` lemmas cited by the
 Pancake-to-target proof. HOL `num` is `Nat` (truncated subtraction, `DIV`/`MOD`

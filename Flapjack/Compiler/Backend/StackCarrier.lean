@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackLang
-import Flapjack.Pancake.WordLang
+module
+
+public import Flapjack.Compiler.Backend.StackLang
+public import Flapjack.Pancake.WordLang
+
+@[expose] public section
 
 /-!
 # Shared-word StackLang carrier
