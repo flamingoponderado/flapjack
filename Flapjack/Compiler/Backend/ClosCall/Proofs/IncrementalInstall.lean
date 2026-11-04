@@ -1450,6 +1450,111 @@ theorem evaluate_install_incremental_sim_withClock {C F : Type} (fuel relationFu
         rw [shiftedArgs']
         exact targetRun
 
+/-- An install expression composes argument evaluation with installation while
+allowing the set of open locations to grow in both phases. This is
+Flapjack-specific induction infrastructure, not a HOL correctness theorem. -/
+theorem evaluate_install_incremental_sim_withOpenClock {C F : Type} (fuel relationFuel : Nat) (g : State)
+    (allowed : Set Nat) (compiler : ClosSem.Compiler C) (trace : BackendCommon.Tra)
+    (sourceArgs targetArgs : List ClosLang.Exp) (sourceEnv targetEnv : List ClosSem.Value)
+    (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (final : ClosSem.State (NumSet × C) F)
+    (run : evaluate [.op trace .install sourceArgs] sourceEnv source = (result, final))
+    (notType : result ≠ .err (.abort .typeError))
+    (argsIH : ∀ sourceResult sourceMiddle,
+      evaluate sourceArgs sourceEnv source = (sourceResult, sourceMiddle) →
+      sourceResult ≠ .err (.abort .typeError) →
+      ∃ argsExtra middleG middleAllowed targetResult targetMiddle,
+        evaluate targetArgs targetEnv { target with clock := target.clock + argsExtra } = (targetResult, targetMiddle) ∧
+        stateExtends g middleG ∧ allowed ⊆ middleAllowed ∧
+        Disjoint middleAllowed (sptDomain middleG.1) ∧ OracleLocationsAvoid middleAllowed sourceMiddle ∧
+        resultRel (List.Forall₂ (ValueRelFuel relationFuel middleG middleAllowed targetMiddle.code))
+          (ValueRelFuel relationFuel middleG middleAllowed targetMiddle.code) sourceResult targetResult ∧
+        StateRelFuel relationFuel middleG middleAllowed sourceMiddle targetMiddle ∧
+        StateWellFormedFuel relationFuel middleG middleAllowed targetMiddle.code sourceMiddle ∧
+        IncrementalInstallReady middleG sourceMiddle targetMiddle ∧
+        sourceMiddle.compile = compileIncFuelCallback fuel compiler ∧ targetMiddle.compile = compiler ∧
+        targetMiddle.compileOracle = compileIncFuelOracle fuel sourceMiddle.compileOracle ∧
+        (∀ key entry, target.code.lookup key = some entry → targetMiddle.code.lookup key = some entry))
+    (programIH : ∀ (middleG : State) program nextKnown converted nextAllowed,
+      compileIncFuel? fuel middleG.1 (program, []) = some (nextKnown, converted) →
+      (∀ loc ∈ codeLocations program, ¬ sptDomain nextKnown loc → loc ∈ nextAllowed) →
+      InstalledProgramSimBelowWithOpenClock (C := C) (F := F) fuel relationFuel source.clock compiler
+        (nextKnown, converted.2 ++ middleG.2) nextAllowed program converted.1) :
+    ∃ extraClock nextG nextAllowed targetResult targetFinal,
+      stateExtends g nextG ∧ allowed ⊆ nextAllowed ∧
+      Disjoint nextAllowed (sptDomain nextG.1) ∧ OracleLocationsAvoid nextAllowed final ∧
+      evaluate [.op trace .install targetArgs] targetEnv { target with clock := target.clock + extraClock } =
+        (targetResult, targetFinal) ∧
+      resultRel (List.Forall₂ (ValueRelFuel relationFuel nextG nextAllowed targetFinal.code))
+        (ValueRelFuel relationFuel nextG nextAllowed targetFinal.code) result targetResult ∧
+      StateRelFuel relationFuel nextG nextAllowed final targetFinal ∧
+      StateWellFormedFuel relationFuel nextG nextAllowed targetFinal.code final ∧
+      IncrementalInstallReady nextG final targetFinal ∧
+      final.compile = compileIncFuelCallback fuel compiler ∧ targetFinal.compile = compiler ∧
+      targetFinal.compileOracle = compileIncFuelOracle fuel final.compileOracle ∧
+      (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry) := by
+  rw [ClosProps.AdjustOracle.evaluateInstallEq trace sourceArgs sourceEnv source] at run
+  cases argsRun : evaluate sourceArgs sourceEnv source with
+  | mk argsResult sourceMiddle =>
+    rw [argsRun] at run
+    have argsSafe : argsResult ≠ .err (.abort .typeError) := by
+      intro bad
+      rw [bad] at run
+      cases run
+      exact notType rfl
+    obtain ⟨argsExtra, middleG, middleAllowed, targetArgsResult, targetMiddle, targetArgsRun, firstExt,
+      firstAllowed, middleDisjoint, middleAvoids, argsRelated, middleStates, middleWf, middleReady,
+      sourceCompiler, targetCompiler, targetOracle, argsGrowth⟩ := argsIH argsResult sourceMiddle argsRun argsSafe
+    cases argsResult with
+    | err error =>
+      cases targetArgsResult with
+      | val targetValues => simp [resultRel] at argsRelated
+      | err targetError =>
+        cases run
+        refine ⟨argsExtra, middleG, middleAllowed, .err targetError, targetMiddle, firstExt,
+          firstAllowed, middleDisjoint, middleAvoids, ?_, argsRelated, middleStates, middleWf,
+          middleReady, sourceCompiler, targetCompiler, targetOracle, argsGrowth⟩
+        rw [ClosProps.AdjustOracle.evaluateInstallEq, targetArgsRun]
+    | val sourceValues =>
+      cases targetArgsResult with
+      | err targetError => simp [resultRel] at argsRelated
+      | val targetValues =>
+        have reversed : List.Forall₂ (ValueRelFuel relationFuel middleG middleAllowed targetMiddle.code)
+            sourceValues.reverse targetValues.reverse := List.rel_reverse argsRelated
+        have clockBound : sourceMiddle.clock ≤ source.clock := by
+          have bound := evaluate_clock_le sourceArgs sourceEnv source
+          simpa [argsRun] using bound
+        have programIH' : ∀ program nextKnown converted nextAllowed,
+            compileIncFuel? fuel middleG.1 (program, []) = some (nextKnown, converted) →
+            (∀ loc ∈ codeLocations program, ¬ sptDomain nextKnown loc → loc ∈ nextAllowed) →
+            InstalledProgramSimBelowWithOpenClock (C := C) (F := F) fuel relationFuel sourceMiddle.clock compiler
+              (nextKnown, converted.2 ++ middleG.2) nextAllowed program converted.1 := by
+          intro program nextKnown converted nextAllowed pass coverage start targetStart bodyResult bodyFinal smaller
+          exact programIH middleG program nextKnown converted nextAllowed pass coverage start targetStart bodyResult
+            bodyFinal (by omega)
+        obtain ⟨bodyExtra, nextG, nextAllowed, targetResult, targetFinal, secondExt, secondAllowed,
+          finalDisjoint, finalAvoids, targetRun, related, finalStates, finalWf, finalReady,
+          finalCompiler, targetFinalCompiler, finalOracle, growth⟩ :=
+          runInstalled_incremental_sim_withOpenClock fuel relationFuel middleG middleAllowed compiler
+            sourceMiddle targetMiddle sourceValues.reverse targetValues.reverse result final middleReady middleStates
+            middleWf reversed sourceCompiler targetCompiler targetOracle run notType middleDisjoint middleAvoids programIH'
+        have shiftedArgs := (evaluate_addClock (C := C) (F := F)).1 targetArgs targetEnv
+          { target with clock := target.clock + argsExtra } targetMiddle (.val targetValues) bodyExtra
+          targetArgsRun (by simp)
+        refine ⟨argsExtra + bodyExtra, nextG, nextAllowed, targetResult, targetFinal,
+          stateExtends_trans g middleG nextG firstExt secondExt, Set.Subset.trans firstAllowed secondAllowed,
+          finalDisjoint, finalAvoids, ?_, related, finalStates, finalWf, finalReady,
+          finalCompiler, targetFinalCompiler, finalOracle,
+          fun key entry found => growth key entry (argsGrowth key entry found)⟩
+        rw [ClosProps.AdjustOracle.evaluateInstallEq]
+        have shiftedArgs' : evaluate targetArgs targetEnv
+            { target with clock := target.clock + (argsExtra + bodyExtra) } =
+            (.val targetValues, { targetMiddle with clock := targetMiddle.clock + bodyExtra }) := by
+          simpa [Nat.add_assoc] using shiftedArgs
+        rw [shiftedArgs']
+        exact targetRun
+
 /-- A source-driven simulation that carries the incremental compiler and
 oracle invariants through a list of expressions. This Lean-side predicate is
 for composing the cases of the bounded direct-call simulation. -/
