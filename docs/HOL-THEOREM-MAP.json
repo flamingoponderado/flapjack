@@ -110413,6 +110413,32 @@
     "reviewer": "Source comparison: the typed HOL capture retains the complete abstract ML invariant, byte-array lookup and equal byte lengths as its premises. Its existential roots, heap prefix and suffix, and word list retain the root equality, original heap split, word-count formula, and updated abstract invariant with the same configuration, roots, space and generation state. Byte arrays use fixed eight-bit elements, while the heap payload and roots share the positive HOL word dimension."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ArrayUpdateValue.lean",
+    "lean_name": "isRefBlock",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "isRefBlock_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: the typed capture retains the existential pointer list, exact RefBlock equality and independently polymorphic address and list-payload element carriers."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ArrayUpdateValue.lean",
+    "lean_name": "refBlockInv",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "RefBlock_inv_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: the typed capture retains both directional implications for every lookup and non-RefBlock cell, with independent address and list-payload element types shared by the two heaps."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ArrayUpdateValue.lean",
+    "lean_name": "valueInv_insertValueArray",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "v_inv_ValueArray_insert",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["f", "tf"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: the typed capture retains the RefBlock_inv, original value invariant and domain-conditioned ValueArray lookup in the same conjunction, and the updated reference tree and second heap in the conclusion. Tree, values, stack address and both heaps match their source carriers; f and tf are canonical finite-support maps and the address and payload share the positive HOL word dimension."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ArrayUpdateRefs.lean",
     "lean_name": "blocksUnique_updateRef",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
