@@ -97,6 +97,7 @@ val _ = show "partial_move_with_nil_typed" data_to_word_gcProofTheory.gc_partial
 val _ = show "partial_move_list_with_nil_typed" data_to_word_gcProofTheory.gc_partial_move_list_with_NIL;
 val _ = show "partial_move_list_with_nil_lemma_typed" data_to_word_gcProofTheory.gc_partial_move_list_with_NIL_LEMMA;
 val _ = show "word_partial_move_roots_typed" data_to_word_gcProofTheory.word_gen_gc_partial_move_roots_thm;
+val _ = show "word_partial_move_list_typed" data_to_word_gcProofTheory.word_gen_gc_partial_move_list_thm;
 val _ = show "partial_gc_move_heap_length_typed" gen_gc_partialTheory.gc_move_heap_length;
 val _ = show "length_less_eq_sum_el_length_typed" data_to_word_gcProofTheory.LENGTH_LESS_EQ_SUM_el_length;
 val _ = show "gen_gc_move_data_h2_typed" gen_gcTheory.gc_move_data_h2;
