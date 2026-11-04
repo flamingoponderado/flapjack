@@ -2170,7 +2170,6 @@ import Flapjack.Pancake.CrepInline.InlineRouteNames
 import Flapjack.CompileFunctionDistinct
 import Flapjack.Semantics
 import Flapjack.CrepeSemantics
-import Flapjack.CrepeGlobalAddress
 import Flapjack.Pancake.Semantics.CrepSem
 import Flapjack.Pancake.Semantics.CrepSem.Log2ZeroParametric
 import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
