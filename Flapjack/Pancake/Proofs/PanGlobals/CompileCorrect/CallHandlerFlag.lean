@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.PanSem.EvaluateClock
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.EvaluateClock
+
+@[expose] public section
 
 namespace Flapjack.PanGlobalsCallHandlerFlag
 open Flapjack.Pancake.PanLang

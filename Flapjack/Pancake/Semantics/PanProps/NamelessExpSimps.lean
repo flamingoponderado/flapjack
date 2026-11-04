@@ -1,5 +1,9 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.Semantics.PanProps
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.Semantics.PanProps
+
+@[expose] public section
 
 /-!
 # `nameless_exp_simps`

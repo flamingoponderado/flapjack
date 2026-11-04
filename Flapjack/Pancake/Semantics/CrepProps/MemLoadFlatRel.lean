@@ -1,9 +1,13 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.PanLang.Decl
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
-import Flapjack.Pancake.Semantics.PanSem.MemLoadHOL
-import Flapjack.Pancake.Semantics.PanSem.ValueHOL
-import Flapjack.Pancake.Semantics.PanProps
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.PanLang.Decl
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+public import Flapjack.Pancake.Semantics.PanSem.MemLoadHOL
+public import Flapjack.Pancake.Semantics.PanSem.ValueHOL
+public import Flapjack.Pancake.Semantics.PanProps
+
+@[expose] public section
 
 /-! Exact port support for `crepPropsScript.sml` memory-load relations. -/
 

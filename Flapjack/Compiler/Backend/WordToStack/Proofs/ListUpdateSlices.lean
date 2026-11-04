@@ -1,7 +1,11 @@
-import Flapjack.HolRef
-import Init.Data.List.Nat.TakeDrop
-import Init.Data.List.Nat.Modify
-import Lean.Elab.Tactic.Omega
+module
+
+public import Flapjack.HolRef
+public import Init.Data.List.Nat.TakeDrop
+public import Init.Data.List.Nat.Modify
+public import Lean.Elab.Tactic.Omega
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordToStack
 

@@ -1,7 +1,11 @@
-import Flapjack.Pancake.Proofs.PanSimp.SkipSeqExact
-import Flapjack.Pancake.Proofs.PanSimp.WhileBodyExact
-import Flapjack.Pancake.PanSimp
-import Flapjack.Pancake.Semantics.PanSem.EvaluateClock
+module
+
+public import Flapjack.Pancake.Proofs.PanSimp.SkipSeqExact
+public import Flapjack.Pancake.Proofs.PanSimp.WhileBodyExact
+public import Flapjack.Pancake.PanSimp
+public import Flapjack.Pancake.Semantics.PanSem.EvaluateClock
+
+@[expose] public section
 
 namespace Flapjack
 open Pancake.PanLang PanSemStateFiniteExact
