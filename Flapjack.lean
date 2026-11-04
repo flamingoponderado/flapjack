@@ -298,6 +298,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteUpdate
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteUpdateRefs
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteUpdateValue
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteUpdateValueHeap
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteUpdateRefInv
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteUpdateHeap
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordCompare
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockEquality

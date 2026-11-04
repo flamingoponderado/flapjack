@@ -57,6 +57,44 @@ theorem heapLookup_byteHeap_nonByte {width : Nat} [NeZero width] (be flag : Bool
     | cons head tail ih => exact .cons ⟨HeapCellShape.refl head, fun _ => rfl⟩ ih
   exact heapLookup_preserve_selected nonByteCell shape offset cell found select
 
+/-- Replacing one equally sized heap cell changes lookup only at that cell's
+starting address. Lookup into the interior fails for both heaps. -/
+theorem heapLookup_replace_ne {α β : Type} (pre post : List (HeapElement α β))
+    (before after : HeapElement α β) (sameLength : elLength before = elLength after)
+    (offset : Nat) (different : offset ≠ heapLength pre) :
+    heapLookup offset (pre ++ [before] ++ post) = heapLookup offset (pre ++ [after] ++ post) := by
+  induction pre generalizing offset with
+  | nil =>
+    change offset ≠ 0 at different
+    change heapLookup offset (before :: post) = heapLookup offset (after :: post)
+    simp only [heapLookup, different, ↓reduceIte]
+    rw [← sameLength]
+  | cons head tail ih =>
+    by_cases zero : offset = 0
+    · subst offset
+      simp [heapLookup]
+    · by_cases inside : offset < elLength head
+      · simp [heapLookup, zero, inside]
+      · simp only [List.cons_append, heapLookup, zero, inside, ↓reduceIte]
+        apply ih
+        change offset ≠ elLength head + heapLength tail at different
+        omega
+
+/-- At the replaced cell boundary, lookup returns the new byte cell. -/
+theorem heapLookup_byteHeap_here {width : Nat} [NeZero width] (pre post : ValueHeap width)
+    (be flag : Bool) (bytes : List (BitVec 8)) (words : List (BitVec width)) :
+    heapLookup (heapLength pre) (pre ++ [bytesRep be flag bytes words] ++ post) =
+      some (bytesRep be flag bytes words) := by
+  induction pre with
+  | nil => simp [heapLength, heapLookup]
+  | cons head tail ih =>
+    have positive : 0 < elLength head := by cases head <;> simp [elLength]
+    change heapLookup (elLength head + heapLength tail)
+      (head :: (tail ++ [bytesRep be flag bytes words] ++ post)) = _
+    simp only [heapLookup, show ¬ elLength head + heapLength tail = 0 by omega, ↓reduceIte,
+      show ¬ elLength head + heapLength tail < elLength head by omega]
+    simpa using ih
+
 /-- The clocked value relation survives changing the payload of one byte cell.
 The number, block, word and thunk cases only inspect non-byte heap cells. -/
 theorem clockValueInv_byteHeap {width : Nat} [NeZero width] (ck : Nat) (conf : Config)
