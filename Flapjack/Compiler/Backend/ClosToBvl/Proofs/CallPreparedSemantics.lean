@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.ClosCall.Proofs.IncrementalInstall
+import Flapjack.Compiler.Backend.ClosCall.Proofs.Syntax
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.InstalledSemantics
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.AnnotationInvariants
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.AnnotatedPrepared
@@ -237,5 +238,87 @@ theorem call_to_preparedBvl_semantics_of_boundaries {C F : Type} (ffi : HolFfiSt
     (chainExps current.start called ++ callState.2) compiled names (ClosCall.compileIncFuelOracle passFuel oracle)
     targetCompiler boundary compile closureSafe distinct programLocations monotone initialBelow futureDistinct ranges futureLocations
   exact bvlEq.trans closureEq
+
+
+/-- The direct-call pass itself supplies all closure syntax safety needed
+for annotation and BVL preparation. Label boundaries remain explicit; this
+is Flapjack-specific composition infrastructure. -/
+theorem call_to_preparedBvl_semantics_of_source_syntax {C F : Type} (ffi : HolFfiState F)
+    (passFuel relationFuel : Nat) (original current output : Config)
+    (targetCompiler : BvlSem.Compiler C) (boundary : Nat → Nat)
+    (expressions called nameExpressions : List ClosLang.Exp) (callState : ClosCall.State)
+    (compiled : List (Nat × Nat × Bvl.Exp)) (names : Spt Flapjack.Basis.Pure.MlString.MlString)
+    (oracle : CompileOracle (NumSet × C))
+    (passRun : ClosCall.compileFuel passFuel true expressions = some (called, callState))
+    (syntaxGood : ClosCall.syntaxOk expressions) (known : callState.1 = (oracle 0).1.1)
+    (callOrdered : oracleMonotonic (fun entry => {loc | loc ∈ codeLocations entry.2.1}) (· < ·)
+      {loc | loc ∈ codeLocations expressions} oracle)
+    (syntaxOracle : ∀ n, ClosCall.syntaxOk (oracle n).2.1 ∧ (oracle n).2.2 = [])
+    (sourceNonempty : expressions ≠ [])
+    (fresh : ∀ key, current.start ≤ key → key < current.start + called.length →
+      (initialSourceCode callState.2).lookup key = none)
+    (chainOrdered : oracleMonotonic oracleCodeNames (· < ·)
+      ({key | current.start ≤ key ∧ key < current.start + called.length} ∪ codeDomain (initialSourceCode callState.2))
+      (ClosCall.compileIncFuelOracle passFuel oracle))
+    (sourceSafe : semantics ffi current.maxApp HolFiniteMapExact.empty oracle
+      (ClosCall.compileIncFuelCallback passFuel (pureCc ClosAnnotate.compileInc
+        (pureCc (compileInc current.maxApp) targetCompiler))) expressions ≠ .fail)
+    (compile : compilePrepared? original current nameExpressions
+      (ClosAnnotate.compile (chainExps current.start called ++ callState.2)) = some (output, compiled, names))
+    (distinct : (compiled.map Prod.fst).Nodup)
+    (monotone : ∀ {i j}, i ≤ j → boundary i ≤ boundary j)
+    (initialBelow : ∀ location ∈ compiled.map Prod.fst, location < boundary 0)
+    (futureDistinct : ∀ index, ((compileInc current.maxApp
+      (ClosAnnotate.compileInc (ClosCall.compileIncFuelOracle passFuel oracle index).2)).map Prod.fst).Nodup)
+    (ranges : ∀ index location, location ∈ (compileInc current.maxApp
+      (ClosAnnotate.compileInc (ClosCall.compileIncFuelOracle passFuel oracle index).2)).map Prod.fst →
+      boundary index ≤ location ∧ location < boundary (index + 1))
+    :
+    BvlSem.semantics ffi (sptFromAList compiled)
+      (pureCo (compileInc current.maxApp) ∘ pureCo ClosAnnotate.compileInc ∘ ClosCall.compileIncFuelOracle passFuel oracle)
+      targetCompiler output.start =
+    semantics ffi current.maxApp HolFiniteMapExact.empty oracle
+      (ClosCall.compileIncFuelCallback passFuel (pureCc ClosAnnotate.compileInc
+        (pureCc (compileInc current.maxApp) targetCompiler))) expressions := by
+  have outputSafe := ClosCall.compileFuel_callSyntax passFuel expressions called callState passRun ⟨syntaxGood.1, syntaxGood.2.1⟩
+  have oracleSafe := ClosCall.compileIncFuelOracle_callSyntax passFuel oracle (by
+    intro index
+    exact ⟨(syntaxOracle index).1.1, (syntaxOracle index).1.2.1⟩)
+  have auxSafe : ∀ name arity body, (name, arity, body) ∈ callState.2 → everyFnVarsNone [body] := by
+    intro name arity body member
+    simpa [everyFnVarsNone] using (outputSafe.2 name arity body member).2
+  have annotationOracleSafe : ∀ n,
+      everyFnVarsNone (ClosCall.compileIncFuelOracle passFuel oracle n).2.1 ∧
+      everyFnVarsNone ((ClosCall.compileIncFuelOracle passFuel oracle n).2.2.map (fun (_, _, body) => body)) := by
+    intro n
+    exact ⟨(oracleSafe n).1.2, (ClosCall.auxSyntax_bodies _ (oracleSafe n).2).2⟩
+  have futureLocations : ∀ index, everyFnLocationSome (ClosCall.compileIncFuelOracle passFuel oracle index).2.1 ∧
+      ∀ entry ∈ (ClosCall.compileIncFuelOracle passFuel oracle index).2.2, everyFnLocationSome [entry.2.2] := by
+    intro index
+    refine ⟨(oracleSafe index).1.1, ?_⟩
+    intro entry member
+    obtain ⟨name, arity, body⟩ := entry
+    simpa [everyFnLocationSome] using ((oracleSafe index).2 name arity body member).1
+  have memberLocations : ∀ (bodies : List ClosLang.Exp) (body : ClosLang.Exp),
+      everyFnLocationSome bodies → body ∈ bodies → everyFnLocationSome [body] := by
+    intro bodies body all member
+    induction bodies with
+    | nil => simp at member
+    | cons head tail ih =>
+      simp only [everyFnLocationSome] at all
+      rcases List.mem_cons.mp member with rfl | member
+      · simpa [everyFnLocationSome] using all.1
+      · exact ih all.2 member
+  have programLocations : ∀ name arity body, (name, arity, body) ∈ chainExps current.start called ++ callState.2 →
+      everyFnLocationSome [body] := by
+    intro name arity body member
+    rcases List.mem_append.mp member with inChain | inAux
+    · apply memberLocations _ body ((chainExps_annotations current.start called).1.mpr outputSafe.1.1)
+      exact List.mem_map.mpr ⟨(name, arity, body), inChain, rfl⟩
+    · simpa [everyFnLocationSome] using (outputSafe.2 name arity body inAux).1
+  exact call_to_preparedBvl_semantics_of_boundaries ffi passFuel relationFuel original current output targetCompiler boundary
+    expressions called nameExpressions callState compiled names oracle passRun syntaxGood known callOrdered syntaxOracle
+    sourceNonempty outputSafe.1.2 auxSafe annotationOracleSafe fresh chainOrdered sourceSafe compile distinct programLocations
+    monotone initialBelow futureDistinct ranges futureLocations
 
 end Flapjack.Compiler.Backend.ClosToBvl
