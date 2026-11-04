@@ -15476,6 +15476,127 @@ theorem callsFuel_handle_withCoveredOpenClock_from_induction {C F : Type}
   exact growingExprsSimFromBelowWithCoveredOpenClock_handle passFuel relationFuel limit compiler next trace body handler
     targetBody targetHandler sims.1 bodyWf sims.2
 
+/-- The tick case derives its body simulation from structural induction.
+This is Flapjack-specific simulation infrastructure. -/
+theorem callsFuel_tick_withCoveredOpenClock_from_induction {C F : Type}
+    (passFuel relationFuel traversalFuel limit : Nat) (compiler : ClosSem.Compiler C) (trace : BackendCommon.Tra)
+    (body : ClosLang.Exp) (initial final : State) (out : ClosLang.Exp)
+    (run : callsFuel (traversalFuel + 1) (.tick trace body) initial = some (out, final))
+    (distinct : (codeLocationsExp (.tick trace body)).Nodup)
+    (fresh : LabelsFresh (codeLocationsExp (.tick trace body)) initial) (initialWf : wellFormed initial)
+    (structIH : ∀ expression output before after,
+      callsFuel traversalFuel expression before = some (output, after) →
+      (codeLocationsExp expression).Nodup → LabelsFresh (codeLocationsExp expression) before → wellFormed before →
+      GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler after [expression] [output]) :
+    GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler final [.tick trace body] [out] := by
+  apply callsFuel_tick_growing_below_withCoveredOpenClock passFuel relationFuel traversalFuel limit compiler trace body initial final out run
+  intro target bodyRun
+  exact structIH body target initial final bodyRun (by simpa [codeLocationsExp] using distinct)
+    (by simpa [codeLocationsExp] using fresh) initialWf
+
+/-- The raise case derives its body simulation from structural induction.
+This is Flapjack-specific simulation infrastructure. -/
+theorem callsFuel_raise_withCoveredOpenClock_from_induction {C F : Type}
+    (passFuel relationFuel traversalFuel limit : Nat) (compiler : ClosSem.Compiler C) (trace : BackendCommon.Tra)
+    (body : ClosLang.Exp) (initial final : State) (out : ClosLang.Exp)
+    (run : callsFuel (traversalFuel + 1) (.raise trace body) initial = some (out, final))
+    (distinct : (codeLocationsExp (.raise trace body)).Nodup)
+    (fresh : LabelsFresh (codeLocationsExp (.raise trace body)) initial) (initialWf : wellFormed initial)
+    (structIH : ∀ expression output before after,
+      callsFuel traversalFuel expression before = some (output, after) →
+      (codeLocationsExp expression).Nodup → LabelsFresh (codeLocationsExp expression) before → wellFormed before →
+      GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler after [expression] [output]) :
+    GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler final [.raise trace body] [out] := by
+  apply callsFuel_raise_growing_below_withCoveredOpenClock passFuel relationFuel traversalFuel limit compiler trace body initial final out run
+  intro target bodyRun
+  exact structIH body target initial final bodyRun (by simpa [codeLocationsExp] using distinct)
+    (by simpa [codeLocationsExp] using fresh) initialWf
+
+/-- The conditional case derives all three child simulations from structural
+induction, preserving coverage through the later branch traversals. This is
+Flapjack-specific simulation infrastructure. -/
+theorem callsFuel_if_withCoveredOpenClock_from_induction {C F : Type}
+    (passFuel relationFuel traversalFuel limit : Nat) (compiler : ClosSem.Compiler C) (trace : BackendCommon.Tra)
+    (condition yes no : ClosLang.Exp) (initial final : State) (out : ClosLang.Exp)
+    (run : callsFuel (traversalFuel + 1) (.ifThenElse trace condition yes no) initial = some (out, final))
+    (distinct : (codeLocationsExp (.ifThenElse trace condition yes no)).Nodup)
+    (fresh : LabelsFresh (codeLocationsExp (.ifThenElse trace condition yes no)) initial) (initialWf : wellFormed initial)
+    (structIH : ∀ depth, depth ≤ traversalFuel → ∀ expression output before after,
+      callsFuel depth expression before = some (output, after) →
+      (codeLocationsExp expression).Nodup → LabelsFresh (codeLocationsExp expression) before → wellFormed before →
+      GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler after [expression] [output]) :
+    GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler final
+      [.ifThenElse trace condition yes no] [out] := by
+  simp only [callsFuel, Bind.bind, Option.bind_eq_some_iff, Pure.pure, Option.some.injEq, Prod.mk.injEq] at run
+  obtain ⟨⟨targetCondition, middle1⟩, conditionRun, ⟨targetYes, middle2⟩, yesRun,
+    ⟨targetNo, next⟩, noRun, rfl, rfl⟩ := run
+  have allDistinct : ((codeLocationsExp condition ++ codeLocationsExp yes) ++ codeLocationsExp no).Nodup := by
+    simpa [codeLocationsExp, List.append_assoc] using distinct
+  have allFresh : LabelsFresh ((codeLocationsExp condition ++ codeLocationsExp yes) ++ codeLocationsExp no) initial := by
+    simpa [codeLocationsExp, List.append_assoc] using fresh
+  have firstDistinct := List.Nodup.of_append_left allDistinct
+  have noDistinct := List.Nodup.of_append_right allDistinct
+  have firstFresh : LabelsFresh (codeLocationsExp condition ++ codeLocationsExp yes) initial := by
+    intro loc member
+    exact allFresh loc (List.mem_append_left _ member)
+  have conditionListRun : callsListFuel (traversalFuel + 1) [condition] initial = some ([targetCondition], middle1) := by
+    simp [callsListFuel, conditionRun]
+  have firstSims := callsListFuel_then_expression_withCoveredOpenClock passFuel relationFuel (traversalFuel + 1) traversalFuel limit compiler
+    [condition] [targetCondition] yes targetYes initial middle1 middle2 conditionListRun yesRun
+    (by simpa [codeLocations] using firstDistinct) (by simpa [codeLocations] using firstFresh) initialWf
+    (by intro depth bound expression output before after expressionRun expressionDistinct expressionFresh beforeWf
+        exact structIH depth (by omega) expression output before after expressionRun expressionDistinct expressionFresh beforeWf)
+  have conditionDistinct := List.Nodup.of_append_left firstDistinct
+  have yesDistinct := List.Nodup.of_append_right firstDistinct
+  have conditionFresh : LabelsFresh (codeLocationsExp condition) initial := by
+    intro loc member
+    exact firstFresh loc (List.mem_append_left _ member)
+  have middle1Wf := callsListFuel_wellFormed (traversalFuel + 1) [condition] initial middle1 [targetCondition] conditionListRun
+    (by simpa [codeLocations] using conditionDistinct) (by simpa [codeLocations] using conditionFresh) initialWf
+  have yesFresh : LabelsFresh (codeLocationsExp yes) middle1 := by
+    intro loc member label
+    rcases callsFuel_labelsBound traversalFuel condition initial middle1 targetCondition conditionRun (loc + 1) label with old | ⟨origin, inCondition, equal⟩
+    · exact firstFresh loc (List.mem_append_right _ member) old
+    · exact (List.nodup_append.mp firstDistinct).2.2 origin inCondition loc member (Nat.add_right_cancel equal.symm)
+  have yesListRun : callsListFuel (traversalFuel + 1) [yes] middle1 = some ([targetYes], middle2) := by
+    simp [callsListFuel, yesRun]
+  have middle2Wf := callsListFuel_wellFormed (traversalFuel + 1) [yes] middle1 middle2 [targetYes] yesListRun
+    (by simpa [codeLocations] using yesDistinct) (by simpa [codeLocations] using yesFresh) middle1Wf
+  have noFresh : LabelsFresh (codeLocationsExp no) middle2 := by
+    intro loc member label
+    rcases callsFuel_labelsBound traversalFuel yes middle1 middle2 targetYes yesRun (loc + 1) label with old | ⟨origin, inYes, equal⟩
+    · rcases callsFuel_labelsBound traversalFuel condition initial middle1 targetCondition conditionRun (loc + 1) old with old | ⟨origin, inCondition, equal⟩
+      · exact allFresh loc (List.mem_append_right _ member) old
+      · exact (List.nodup_append.mp allDistinct).2.2 origin (List.mem_append_left _ inCondition) loc member (Nat.add_right_cancel equal.symm)
+    · exact (List.nodup_append.mp allDistinct).2.2 origin (List.mem_append_right _ inYes) loc member (Nat.add_right_cancel equal.symm)
+  have noExt := callsFuel_stateExtends traversalFuel no targetNo middle2 next noRun noDistinct noFresh middle2Wf.2
+  have noListRun : callsListBounded (traversalFuel + 1) [no] middle2 = some ([targetNo], next) := by
+    simp [callsListBounded, callsListFuel, noRun]
+  have reflect : ∀ loc ∈ codeLocationsExp condition ++ codeLocationsExp yes,
+      sptDomain next.1 loc → sptDomain middle2.1 loc := by
+    intro loc member known
+    have outside : loc ∉ codeLocations [no] := by
+      intro inNo
+      have inNo' : loc ∈ codeLocationsExp no := by simpa [codeLocations] using inNo
+      exact (List.nodup_append.mp allDistinct).2.2 loc member loc inNo' rfl
+    exact callsListBounded_known_reflect_outside (traversalFuel + 1) [no] [targetNo] middle2 next
+      noListRun (wellFormed_weak middle2 middle2Wf) loc outside known
+  have conditionSim : GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler next [condition] [targetCondition] := by
+    apply growingExprsSimFromBelowWithCoveredOpenClock_mono_state passFuel relationFuel limit compiler middle2 next [condition] [targetCondition] noExt
+    · intro loc member known
+      apply reflect loc _ known
+      exact List.mem_append_left _ (by simpa [codeLocations] using member)
+    · exact firstSims.1
+  have yesSim : GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler next [yes] [targetYes] := by
+    apply growingExprsSimFromBelowWithCoveredOpenClock_mono_state passFuel relationFuel limit compiler middle2 next [yes] [targetYes] noExt
+    · intro loc member known
+      apply reflect loc _ known
+      exact List.mem_append_right _ (by simpa [codeLocations] using member)
+    · exact firstSims.2
+  have noSim := structIH traversalFuel (Nat.le_refl _) no targetNo middle2 next noRun noDistinct noFresh middle2Wf
+  exact growingExprsSimFromBelowWithCoveredOpenClock_if passFuel relationFuel limit compiler next trace
+    condition yes no targetCondition targetYes targetNo conditionSim yesSim noSim
+
 /-- All primitive-operation traversal cases derive their argument simulation
 from structural induction. Installed programs, smaller-clock closure bodies,
 and source evaluation well-formedness remain explicit hypotheses. This is
