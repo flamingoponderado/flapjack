@@ -97,7 +97,7 @@ theorem stateRel64_getBlockHeader {C F : Type} (conf : Config) (l1 l2 : Nat)
       word.getLsbD 0 = true ∧ Memory.getRealAddr conf target.store word = some address ∧
       target.memory address = .word header ∧ target.mdomain address = true ∧
       WordGcFunctions.decodeLength conf header = BitVec.ofNat 64 values.length ∧
-      values.length < 2 ^ (64 - 4) := by
+      values.length < 2 ^ (64 - 4) ∧ encodeHeader conf (4 * tag) values.length = some header := by
   obtain ⟨word, wordRun⟩ := stateRel64_getVar conf l1 l2 source target none locs related name (.block stamp tag values) sourceRun
   have member := localPair_mem_joinEnv source.locals target.locals name (.block stamp tag values) word sourceRun wordRun
   rcases related with ⟨_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, memory⟩
@@ -116,7 +116,7 @@ theorem stateRel64_getBlockHeader {C F : Type} (conf : Config) (l1 l2 : Nat)
   obtain ⟨w, encoded, facts⟩ := Memory.memoryRel_blockImp conf target.be (holThe source.tstamps) source.refs source.space
     target.store target.memory target.mdomain stamp tag values word roots ⟨focused, Or.inr rfl⟩
   simp only [nonempty, ↓reduceIte] at facts
-  obtain ⟨address, header, bit, _, _, real, mem, domain, decoded, bound, _, _⟩ := facts
-  exact ⟨w, address, header, by simpa [encoded] using wordRun, bit, real, mem, domain, decoded, bound⟩
+  obtain ⟨address, header, bit, _, _, real, mem, domain, decoded, bound, encodedHeader, _⟩ := facts
+  exact ⟨w, address, header, by simpa [encoded] using wordRun, bit, real, mem, domain, decoded, bound, encodedHeader⟩
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

@@ -9,6 +9,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.BlockEmpty
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.BlockLength
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.BlockTagEmpty
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.BlockTagOutOfRange
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.BlockTag
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Construct
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Label
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Globals
@@ -149,8 +150,7 @@ inductive VerifiedFragment : DataLang.Prog → Prop where
   | label (dest codeLabel : Nat) : VerifiedFragment (.assign dest (.label codeLabel) [] none)
   | emptyCons (dest tag : Nat) : tag < 2 ^ 64 / 16 → VerifiedFragment (.assign dest (.blockOp (.cons tag)) [] none)
   | blockTagEmpty (dest src tag : Nat) : VerifiedFragment (.assign dest (.blockOp (.tagLenEq tag 0)) [src] none)
-  | blockTagOutOfRange (dest src tag : Nat) : ¬ tag < 2 ^ 64 / 16 →
-      VerifiedFragment (.assign dest (.blockOp (.tagEq tag)) [src] none)
+  | blockTag (dest src tag : Nat) : VerifiedFragment (.assign dest (.blockOp (.tagEq tag)) [src] none)
   | blockEmpty (dest src : Nat) : VerifiedFragment (.assign dest (.blockOp (.lenEq 0)) [src] none)
   | blockLength (dest src : Nat) : VerifiedFragment (.assign dest (.blockOp .lengthBlock) [src] none)
   | lessConst (dest src n : Nat) : VerifiedFragment (.assign dest (.intOp (.lessConstSmall n)) [src] none)
@@ -199,9 +199,9 @@ theorem verifiedFragment64 {C F : Type} (conf : Config) (secn l1 l2 : Nat)
   | blockTagEmpty dest src tag =>
     intro label source target locs related safe
     exact Or.inl (assignBlockTagEmpty64_of_safe conf secn label l1 l2 source target locs related dest src tag safe)
-  | blockTagOutOfRange dest src tag bound =>
+  | blockTag dest src tag =>
     intro label source target locs related safe
-    exact Or.inl (assignBlockTagOutOfRange64_of_safe conf secn label l1 l2 source target locs related dest src tag bound safe)
+    exact Or.inl (assignBlockTag64_of_safe conf secn label l1 l2 source target locs related dest src tag safe)
   | blockEmpty dest src =>
     intro label source target locs related safe
     exact Or.inl (assignBlockEmpty64_of_safe conf secn label l1 l2 source target locs related dest src safe)

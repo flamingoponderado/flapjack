@@ -1,4 +1,6 @@
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.Block
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.Scratch
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockHeaderInjective
 
 /-! Relating compiled block-header accesses to the memory relation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
@@ -69,15 +71,76 @@ theorem stateRel64_loadBlockHeader {C F : Type} (conf : Config) (l1 l2 : Nat)
       word.getLsbD 0 = true ∧
       WordSemStateFiniteExact.wordExp target (.load (realAddr conf (adjustVar name))) = some (.word header) ∧
       WordGcFunctions.decodeLength conf header = BitVec.ofNat 64 values.length ∧
-      values.length < 2 ^ (64 - 4) := by
-  obtain ⟨word, address, header, variableRun, bit, real, mem, domain, decoded, bound⟩ :=
+      values.length < 2 ^ (64 - 4) ∧ encodeHeader conf (4 * tag) values.length = some header := by
+  obtain ⟨word, address, header, variableRun, bit, real, mem, domain, decoded, bound, encoded⟩ :=
     stateRel64_getBlockHeader conf l1 l2 source target locs related name stamp tag values sourceRun nonempty
   have shiftBound : shiftLength conf < 64 := by
     rcases related with ⟨_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, memory⟩
     obtain ⟨heap, limit, a, sp, sp1, gens, heapMem, rest⟩ := memory
     exact heapMem.2.2.2.2.2.1
   have addressRun := wordExp_realAddr64 conf target (adjustVar name) word address shiftBound variableRun real
-  refine ⟨word, header, variableRun, bit, ?_, decoded, bound⟩
+  refine ⟨word, header, variableRun, bit, ?_, decoded, bound, encoded⟩
   simp [WordSemStateFiniteExact.wordExp, addressRun, WordSemStateFiniteExact.memLoad, domain, mem]
+
+set_option maxRecDepth 4096 in
+/-- The executable tag mask selects the same header bits as the HOL-shaped
+slice mask. The configuration bound comes from the heap invariant. -/
+theorem tagMask64_eq_slice (conf : Config) (bound : conf.lenSize + 7 < 64) :
+    (tagMask conf : BitVec 64) = holWordSlice (64 - conf.lenSize - 1) 2 (~~~(0 : BitVec 64)) := by
+  have limited : conf.lenSize ≤ 56 := by omega
+  interval_cases h : conf.lenSize <;> simp [tagMask, h, holWordSlice, holFcpWord] <;> decide
+
+/-- A nonempty related block's loaded and masked header compares equal to an
+in-range tag encoding exactly when its source tag matches. -/
+theorem stateRel64_loadBlockTag {C F : Type} (conf : Config) (l1 l2 : Nat)
+    (source : DataSem.State C F) (target : WordSemStateFiniteExact 64 C F)
+    (locs : List (Nat × Nat)) (related : stateRel64 conf l1 l2 source target none locs)
+    (name stamp found tag : Nat) (values : List DataSem.Value)
+    (sourceRun : DataSem.getVar name source.locals = some (.block stamp found values))
+    (nonempty : values ≠ []) (tagBound : tag < 2 ^ 64 / 16) :
+    ∃ (word header : BitVec 64),
+      WordSemStateFiniteExact.getVar (adjustVar name) target = some (.word word) ∧
+      word.getLsbD 0 = true ∧
+      WordSemStateFiniteExact.wordExp target (.load (realAddr conf (adjustVar name))) = some (.word header) ∧
+      ((header &&& (tagMask conf ||| 2)) = BitVec.ofNat 64 (16 * tag + 2) ↔ found = tag) := by
+  obtain ⟨word, header, variableRun, bit, loadRun, decoded, lengthBound, encoded⟩ :=
+    stateRel64_loadBlockHeader conf l1 l2 source target locs related name stamp found values sourceRun nonempty
+  have configBound : conf.lenSize + 7 < 64 := by
+    rcases related with ⟨_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, memory⟩
+    obtain ⟨heap, limit, a, sp, sp1, gens, heapMem, rest⟩ := memory
+    exact heapMem.2.2.2.2.1
+  have maskEq := tagMask64_eq_slice conf configBound
+  obtain ⟨foundBound, mask⟩ := Memory.encodeHeader_tagMask conf found values.length header encoded (Or.inr rfl)
+  have masked : (header &&& (tagMask conf ||| 2)) = BitVec.ofNat 64 (16 * found + 2) := by
+    rw [maskEq]
+    exact mask
+  refine ⟨word, header, variableRun, bit, loadRun, ?_⟩
+  rw [masked]
+  constructor
+  · intro eq
+    apply Memory.nilEncoding_injective (Or.inr rfl) found tag foundBound tagBound
+    simpa [BitVec.ofNat_add, BitVec.ofNat_mul, BitVec.mul_comm] using eq
+  · rintro rfl
+    rfl
+
+/-- Header loads through an adjusted source register are unaffected by writes
+to temporary register 1. -/
+theorem wordExp_header_setScratch1 {C F : Type} (conf : Config)
+    (target : WordSemStateFiniteExact 64 C F) (name : Nat) (word : WordLocW 64) :
+    WordSemStateFiniteExact.wordExp (WordSemStateFiniteExact.setVar 1 word target)
+      (.load (realAddr conf (adjustVar name))) =
+    WordSemStateFiniteExact.wordExp target (.load (realAddr conf (adjustVar name))) := by
+  have address : WordSemStateFiniteExact.wordExp (WordSemStateFiniteExact.setVar 1 word target)
+        (realAddr conf (adjustVar name)) = WordSemStateFiniteExact.wordExp target (realAddr conf (adjustVar name)) := by
+    have store (key : WordStoreHOL) : WordSemStateFiniteExact.getStore key (WordSemStateFiniteExact.setVar 1 word target) =
+        WordSemStateFiniteExact.getStore key target := rfl
+    by_cases fast : wordShiftAmount 64 = shiftLength conf ∧ conf.lenBits = 0 ∧ conf.tagBits = 0
+    · simp [realAddr, fast, WordSemStateFiniteExact.wordExp, getVar_setScratch1, store]
+    · by_cases short : wordShiftAmount 64 ≤ conf.padBits + 1
+      · simp [realAddr, fast, short, WordSemStateFiniteExact.wordExp, getVar_setScratch1, store]
+      · simp [realAddr, fast, short, WordSemStateFiniteExact.wordExp, getVar_setScratch1, store]
+  simp only [WordSemStateFiniteExact.wordExp, address]
+  split <;> simp [WordSemStateFiniteExact.memLoad, WordSemStateFiniteExact.setVar]
+  all_goals rfl
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

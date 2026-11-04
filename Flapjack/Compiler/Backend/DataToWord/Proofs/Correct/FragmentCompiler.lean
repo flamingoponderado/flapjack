@@ -41,8 +41,15 @@ def fragmentCompile64 (conf : Config) (secn label : Nat) : DataLang.Prog → Opt
         some (.ite .equal (adjustVar src) (.imm (BitVec.ofNat 64 (16 * tag + 2)))
           (.assign (adjustVar dest) (.const 18)) (.assign (adjustVar dest) (.const 2)), label)
       else some (.assign (adjustVar dest) (.const 2), label)
-  | .assign dest (.blockOp (.tagEq tag)) [_src] none =>
-      if tag < 2 ^ 64 / 16 then none else some (.assign (adjustVar dest) (.const 2), label)
+  | .assign dest (.blockOp (.tagEq tag)) [src] none =>
+      if tag < 2 ^ 64 / 16 then
+        some (wordListSeq [
+          .assign 1 (.var (adjustVar src)),
+          .ite .test (adjustVar src) (.imm 1) .skip
+            (.assign 1 (.op .and [.load (realAddr conf (adjustVar src)), .const (tagMask conf ||| 2)])),
+          .ite .equal 1 (.imm (BitVec.ofNat 64 (16 * tag + 2)))
+            (.assign (adjustVar dest) (.const 18)) (.assign (adjustVar dest) (.const 2))], label)
+      else some (.assign (adjustVar dest) (.const 2), label)
   | .assign dest (.blockOp (.cons tag)) [] none =>
       if tag < 2 ^ 64 / 16 then some (.assign (adjustVar dest) (.const (BitVec.ofNat 64 (16 * tag + 2))), label)
       else some (giveUp, label)
@@ -73,10 +80,13 @@ theorem fragmentCompile64_agrees (conf : Config) (secn : Nat) (program : DataLan
       rfl
     · have bound' : ¬ tag < 1152921504606846976 := by simpa using bound
       simp [fragmentCompile64, bound', compileControl64, compileControl?]
-  | blockTagOutOfRange dest src tag bound =>
+  | blockTag dest src tag =>
     intro label
-    have bound' : ¬ tag < 1152921504606846976 := by simpa using bound
-    simp [fragmentCompile64, bound', compileControl64, compileControl?]
+    by_cases bound : tag < 2 ^ 64 / 16
+    · simp only [fragmentCompile64, bound, ↓reduceIte, compileControl64, compileControl?, Option.getD_some]
+      rfl
+    · have bound' : ¬ tag < 1152921504606846976 := by simpa using bound
+      simp [fragmentCompile64, bound', compileControl64, compileControl?]
   | emptyCons dest tag bound =>
     intro label
     simp only [fragmentCompile64, bound, ↓reduceIte, compileControl64, compileControl?, Option.getD_some]

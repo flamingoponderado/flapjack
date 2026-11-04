@@ -259,7 +259,7 @@ theorem verifiedFragment_code {C F : Type} (program : DataLang.Prog) (fragment :
     intro state
     exact evaluate_assign_block_code_of_aux dest (.tagLenEq tag 0) [src] none state
       (doAppAux_blockCompare_code (.tagLenEq tag 0) (Or.inr (Or.inr (Or.inl ⟨tag, 0, rfl⟩))))
-  | blockTagOutOfRange dest src tag bound =>
+  | blockTag dest src tag =>
     intro state
     exact evaluate_assign_block_code_of_aux dest (.tagEq tag) [src] none state
       (doAppAux_blockCompare_code (.tagEq tag) (Or.inl ⟨tag, rfl⟩))
