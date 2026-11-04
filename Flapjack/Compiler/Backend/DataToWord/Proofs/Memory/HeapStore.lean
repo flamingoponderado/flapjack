@@ -94,4 +94,202 @@ theorem heapStore_refBlock_effect {α β : Type} (heap : List (HeapElement α (H
     rw [← heapLookup_replace_ne pre post _ _ size n different]
     simpa only [List.append_assoc, List.singleton_append] using old
 
+/-- Storing a reference block whose new pointers are among the roots preserves
+root validity and heap validity. This is infrastructure for the abstract
+value-array update, where the new block's pointers come from the root prefix. -/
+theorem heapStore_refBlock_preservesRootsHeap {α β : Type}
+    (heap : List (HeapElement α (HeapTag × List β))) (roots : List (HeapAddress α))
+    (offset limit : Nat) (before after : List (HeapAddress α))
+    (sameLength : before.length = after.length)
+    (found : heapLookup offset heap = some (refBlock before))
+    (rootsValid : rootsOk roots heap) (heapValid : heapOk heap limit)
+    (newRoots : ∀ address ∈ after, address ∈ roots) :
+    ∃ heap2, heapStore offset [refBlock after] heap = (heap2, true) ∧
+      refBlockInv heap heap2 ∧ rootsOk roots heap2 ∧ heapOk heap2 limit := by
+  obtain ⟨heap2, stored, unchanged, _, lengths, forwards, members, lookupData, _⟩ :=
+    heapStore_refBlock_effect heap offset before after sameLength found
+  refine ⟨heap2, stored, unchanged, ?_, ?_⟩
+  · intro ptr value member
+    exact (lookupData ptr).mpr (rootsValid ptr value member)
+  · refine ⟨lengths.trans heapValid.1, forwards.trans heapValid.2.1, ?_⟩
+    intro pointers len data ptr value conditions
+    rcases members pointers len data conditions.1 with newCell | oldCell
+    · have pointersEq : pointers = after := by
+        simp only [refBlock, HeapElement.dataElement.injEq] at newCell
+        exact newCell.1
+      subst pointers
+      exact (lookupData ptr).mpr (rootsValid ptr value (newRoots _ conditions.2))
+    · exact (lookupData ptr).mpr (heapValid.2.2 pointers len data ptr value ⟨oldCell, conditions.2⟩)
+
+/-- Equal cell lengths and matching data-cell classification are enough to
+transport heap splits and data-only prefixes, without fixing pointer contents. -/
+def HeapCellLayout {α β : Type} (left right : HeapElement α β) : Prop :=
+  elLength left = elLength right ∧ (isDataElement left ↔ isDataElement right)
+
+/-- Replacing equal-sized reference blocks preserves cell layout. -/
+theorem refBlock_replace_layout {α β : Type} (pre post : List (HeapElement α (HeapTag × List β)))
+    (before after : List (HeapAddress α)) (sameLength : before.length = after.length) :
+    List.Forall₂ HeapCellLayout (pre ++ [refBlock before] ++ post) (pre ++ [refBlock after] ++ post) := by
+  have self (heap : List (HeapElement α (HeapTag × List β))) : List.Forall₂ HeapCellLayout heap heap := by
+    induction heap with
+    | nil => exact .nil
+    | cons head tail ih => exact .cons ⟨rfl, Iff.rfl⟩ ih
+  induction pre with
+  | nil =>
+    refine .cons ⟨?_, ?_⟩ (self post)
+    · simp [refBlock, elLength, sameLength]
+    · simp [refBlock, isDataElement]
+  | cons head tail ih => exact .cons ⟨rfl, Iff.rfl⟩ ih
+
+/-- Data-only prefixes survive equal-sized reference-block replacement. -/
+theorem dataUpTo_refBlockReplace {α β : Type} (pre post : List (HeapElement α (HeapTag × List β)))
+    (before after : List (HeapAddress α)) (sameLength : before.length = after.length) (offset : Nat)
+    (valid : dataUpTo offset (pre ++ [refBlock before] ++ post)) :
+    dataUpTo offset (pre ++ [refBlock after] ++ post) := by
+  obtain ⟨left, right, split, allData⟩ := valid
+  obtain ⟨left2, right2, split2, leftLayout, _⟩ :=
+    heapSplit_relation (fun h : HeapCellLayout _ _ => h.1)
+      (refBlock_replace_layout pre post before after sameLength) offset left right split
+  refine ⟨left2, right2, split2, ?_⟩
+  exact forall_mem_of_forall₂ leftLayout (fun h data => h.2.mp data) allData
+
+/-- Equal-sized reference-block updates preserve unused-space bookkeeping. -/
+theorem unusedSpaceInv_refBlockReplace {α β : Type} (pre post : List (HeapElement α (HeapTag × List β)))
+    (before after : List (HeapAddress α)) (sameLength : before.length = after.length) (offset length : Nat)
+    (valid : unusedSpaceInv offset length (pre ++ [refBlock before] ++ post)) :
+    unusedSpaceInv offset length (pre ++ [refBlock after] ++ post) := by
+  have inv := refBlockInv_replace pre post before after sameLength
+  refine ⟨?_, ?_, dataUpTo_refBlockReplace pre post before after sameLength offset valid.2.2⟩
+  · intro nonzero
+    apply inv.1 offset (.unused (length - 1))
+    exact ⟨valid.1 nonzero, by simp [isRefBlock, refBlock]⟩
+  · have lengthEq : heapLength (pre ++ [refBlock before] ++ post) =
+        heapLength (pre ++ [refBlock after] ++ post) := by
+      simp [heapLength, List.map_append, List.sum_append, refBlock, elLength, sameLength]
+    rw [← lengthEq]
+    exact valid.2.1
+
+/-- Splitting at or before a prefix boundary leaves the first part unchanged
+when the following cell is replaced. -/
+theorem heapSplit_before_replacement {α β : Type} (pre post : List (HeapElement α β))
+    (before after : HeapElement α β) (offset : Nat) (bound : offset ≤ heapLength pre)
+    (first second : List (HeapElement α β))
+    (split : heapSplit offset (pre ++ before :: post) = some (first, second)) :
+    ∃ second2, heapSplit offset (pre ++ after :: post) = some (first, second2) := by
+  induction pre generalizing offset first second with
+  | nil =>
+    have zero : offset = 0 := by simpa [heapLength] using bound
+    subst offset
+    simp [heapSplit] at split
+    obtain ⟨rfl, rfl⟩ := split
+    exact ⟨after :: post, by simp [heapSplit]⟩
+  | cons head tail ih =>
+    by_cases zero : offset = 0
+    · subst offset
+      simp [heapSplit] at split
+      obtain ⟨rfl, rfl⟩ := split
+      exact ⟨head :: (tail ++ after :: post), by simp [heapSplit]⟩
+    · by_cases inside : offset < elLength head
+      · simp [heapSplit, zero, inside] at split
+      · have remain : offset - elLength head ≤ heapLength tail := by
+          change offset ≤ elLength head + heapLength tail at bound
+          omega
+        cases tailSplit : heapSplit (offset - elLength head) (tail ++ before :: post) with
+        | none => simp [heapSplit, zero, inside, tailSplit] at split
+        | some pair =>
+          obtain ⟨left, right⟩ := pair
+          have eq : (head :: left, right) = (first, second) := by
+            simpa [heapSplit, zero, inside, tailSplit] using split
+          cases eq
+          obtain ⟨right2, split2⟩ := ih _ remain left second tailSplit
+          exact ⟨right2, by simp [heapSplit, zero, inside, split2]⟩
+
+/-- If a reference-block update occurs at or after the allocation point,
+all generation-start pointer restrictions remain unchanged. -/
+theorem genStateOk_refBlockReplace {α β : Type} (pre post : List (HeapElement α (HeapTag × List β)))
+    (before after : List (HeapAddress α)) (a refsStart : Nat) (gens : GcCombined.GenState)
+    (afterAlloc : a ≤ heapLength pre)
+    (valid : genStateOk a refsStart (pre ++ [refBlock before] ++ post) gens) :
+    genStateOk a refsStart (pre ++ [refBlock after] ++ post) gens := by
+  cases gens with
+  | genState _ starts =>
+    refine ⟨valid.1, ?_⟩
+    intro start member
+    obtain ⟨first, second, split, pointers⟩ := valid.2 start member
+    have bound : start ≤ heapLength pre := (valid.1 start member).trans afterAlloc
+    have split' : heapSplit start (pre ++ refBlock before :: post) = some (first, second) := by
+      simpa [List.append_assoc] using split
+    obtain ⟨second2, split2⟩ := heapSplit_before_replacement pre post (refBlock before) (refBlock after)
+      start bound first second split'
+    exact ⟨first, second2, by simpa [List.append_assoc] using split2, pointers⟩
+
+/-- Equal-sized reference blocks preserve both layout and the collector's
+mutable-reference classification. -/
+theorem refBlock_replace_gcLayout {α β : Type} (pre post : List (HeapElement α (HeapTag × List β)))
+    (before after : List (HeapAddress α)) (sameLength : before.length = after.length) :
+    List.Forall₂ (fun left right => HeapCellLayout left right ∧ (isRef left ↔ isRef right))
+      (pre ++ [refBlock before] ++ post) (pre ++ [refBlock after] ++ post) := by
+  have self (heap : List (HeapElement α (HeapTag × List β))) :
+      List.Forall₂ (fun left right => HeapCellLayout left right ∧ (isRef left ↔ isRef right)) heap heap := by
+    induction heap with
+    | nil => exact .nil
+    | cons head tail ih => exact .cons ⟨⟨rfl, Iff.rfl⟩, Iff.rfl⟩ ih
+  induction pre with
+  | nil =>
+    refine .cons ⟨⟨?_, ?_⟩, ?_⟩ (self post)
+    · simp [refBlock, elLength, sameLength]
+    · simp [refBlock, isDataElement]
+    · simp [refBlock, isRef, isMutTag]
+  | cons head tail ih => exact .cons ⟨⟨rfl, Iff.rfl⟩, Iff.rfl⟩ ih
+
+/-- A reference-block update at or after allocation preserves the complete
+garbage-collector invariant, including generational heap partitioning. -/
+theorem gcKindInv_refBlockReplace {α β : Type} (conf : Config)
+    (pre post : List (HeapElement α (HeapTag × List β))) (before after : List (HeapAddress α))
+    (a sp sp1 : Nat) (gens : GcCombined.GenState) (sameLength : before.length = after.length)
+    (afterAlloc : a ≤ heapLength pre)
+    (valid : gcKindInv conf a sp sp1 gens (pre ++ [refBlock before] ++ post)) :
+    gcKindInv conf a sp sp1 gens (pre ++ [refBlock after] ++ post) := by
+  cases kind : conf.gcKind with
+  | none => simpa [gcKindInv, kind] using valid
+  | simple => simpa [gcKindInv, kind] using valid
+  | generational sizes =>
+    simp only [gcKindInv, kind] at valid ⊢
+    obtain ⟨gensOk, first, second, split, noRefs, refs⟩ := valid
+    obtain ⟨first2, second2, split2, firstLayout, secondLayout⟩ :=
+      heapSplit_relation (fun h : HeapCellLayout _ _ ∧ (_ ↔ _) => h.1.1)
+        (refBlock_replace_gcLayout pre post before after sameLength) (a + sp + sp1) first second split
+    refine ⟨genStateOk_refBlockReplace pre post before after a (a + sp + sp1) gens afterAlloc gensOk,
+      first2, second2, split2, ?_, ?_⟩
+    · exact forall_mem_of_forall₂ firstLayout (fun h noRef ref => noRef (h.2.mpr ref)) noRefs
+    · exact forall_mem_of_forall₂ secondLayout (fun h ref => h.2.mp ref) refs
+
+/-- All heap-side components of the abstract ML invariant survive a
+reference-block replacement after the allocation point, provided the new
+pointers are roots. Stack/reference relations are established separately. -/
+theorem refBlockReplace_heapInvariants {α β : Type} (conf : Config)
+    (pre post : List (HeapElement α (HeapTag × List β))) (roots : List (HeapAddress α))
+    (before after : List (HeapAddress α)) (a sp sp1 limit : Nat) (gens : GcCombined.GenState)
+    (sameLength : before.length = after.length) (afterAlloc : a ≤ heapLength pre)
+    (rootsValid : rootsOk roots (pre ++ [refBlock before] ++ post))
+    (heapValid : heapOk (pre ++ [refBlock before] ++ post) limit)
+    (gcValid : gcKindInv conf a sp sp1 gens (pre ++ [refBlock before] ++ post))
+    (unused : unusedSpaceInv a (sp + sp1) (pre ++ [refBlock before] ++ post))
+    (newRoots : ∀ address ∈ after, address ∈ roots) :
+    rootsOk roots (pre ++ [refBlock after] ++ post) ∧
+      heapOk (pre ++ [refBlock after] ++ post) limit ∧
+      gcKindInv conf a sp sp1 gens (pre ++ [refBlock after] ++ post) ∧
+      unusedSpaceInv a (sp + sp1) (pre ++ [refBlock after] ++ post) := by
+  obtain ⟨heap2, stored, _, rootNew, heapNew⟩ :=
+    heapStore_refBlock_preservesRootsHeap (pre ++ [refBlock before] ++ post) roots (heapLength pre) limit
+      before after sameLength (heapLookup_refBlock_here pre post before) rootsValid heapValid newRoots
+  have canonical : heap2 = pre ++ [refBlock after] ++ post := by
+    have exactStore := heapStore_refBlock pre post after before sameLength.symm
+    simp only [List.append_assoc, List.singleton_append] at exactStore stored ⊢
+    rw [exactStore] at stored
+    exact (Prod.mk.inj stored).1.symm
+  subst heap2
+  exact ⟨rootNew, heapNew, gcKindInv_refBlockReplace conf pre post before after a sp sp1 gens sameLength afterAlloc gcValid,
+    unusedSpaceInv_refBlockReplace pre post before after sameLength a (sp + sp1) unused⟩
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
