@@ -30,6 +30,22 @@ private theorem packFree {width : Nat} [NeZero width] {β : Type}
   refine ⟨left, right, split, ⟨a, b, split', ha, ?_⟩, hf⟩
   exact ⟨xs, (StackRemove.WordListExists.starCond _ _ _).mpr ⟨hb, length⟩⟩
 
+/-- Successful full collection preserves the configured heap limit and
+returns an allocation index within it. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "full_gc_IMP"]
+theorem fullGc_imp {α β : Type} (roots result : List (HeapAddress α))
+    (heap heap1 : List (HeapElement α β)) (limit a : Nat)
+    (run : fullGc (roots, heap, limit) = (result, heap1, a, true)) :
+    a ≤ limit ∧ limit = heapLength heap := by
+  simp only [fullGc] at run
+  generalize gcMoveList (roots, [], 0, limit, heap, true, limit) = r at run
+  rcases r with ⟨roots1, pending, a1, n1, heapMid, ok⟩
+  generalize gcMoveLoop ([], pending, a1, n1, heapMid, ok, limit) = r at run
+  rcases r with ⟨scanned, a2, n2, heapEnd, ok2⟩
+  simp only [Prod.mk.injEq, Bool.and_eq_true, decide_eq_true_eq] at run
+  obtain ⟨_, _, rfl, ⟨⟨⟨⟨_, _⟩, _⟩, limitEq⟩, _⟩, bound⟩ := run
+  exact ⟨bound, limitEq.symm⟩
+
 /-- Full abstract-to-word copying collection. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "word_full_gc_thm"
   (words_as_type_indexed_bitvec)]

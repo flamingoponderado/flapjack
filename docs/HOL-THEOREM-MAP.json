@@ -1,6 +1,14 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "full_gc_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/Full.lean",
+  "lean_name": "fullGc_imp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared lines 1202-1205 and full_gc_IMP_typed: both heap element parameters remain independent polymorphic types, and the successful full-collection premise and both limit conclusions are unchanged."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "word_full_gc_thm",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/Full.lean",
   "lean_name": "wordFullGc_thm",
