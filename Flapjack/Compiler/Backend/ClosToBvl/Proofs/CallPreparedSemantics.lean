@@ -773,4 +773,100 @@ theorem numberedCallOracle_nested_location_bounds {C : Type} (fuel : Nat)
       within.2 name arity sourceBody entryMember loc locMember
     exact numberingOracle_location_successor_bounds oracle state index loc sourceLoc
 
+/-- Incremental BVL labels stay within the numbering interval shifted by the
+application-stub prefix, including labels generated for auxiliary functions. -/
+theorem numberedCallOracle_bvl_labels_range {C : Type} (maxApp fuel : Nat)
+    (oracle : Nat → (Nat × (NumSet × C)) × (List ClosLang.Exp × List (Nat × Nat × ClosLang.Exp)))
+    (state : isStateOracle (ClosNumber.ignoreTable ClosNumber.compileInc) oracle) :
+    ∀ index label, label ∈ (compileInc maxApp (ClosAnnotate.compileInc
+      (ClosCall.compileIncFuelOracle fuel
+        (stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle) index).2)).map Prod.fst →
+      (oracle index).1.1 + numStubs maxApp ≤ label ∧
+        label < (oracle (index + 1)).1.1 + numStubs maxApp := by
+  intro index label member
+  let start := (oracle index).1.1
+  let limit := (oracle (index + 1)).1.1
+  let expressions := (oracle index).2.1
+  let numbered := stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle
+  let called := ClosCall.compileIncFuelOracle fuel numbered index
+  let program := ClosAnnotate.compileInc called.2
+  obtain ⟨output, marker, outputLength⟩ := numberedCallOracle_marker fuel oracle index
+  have marker' : called.2.1 = .op .none (.intOp (.const (Int.ofNat start))) [] :: output := marker
+  have annotatedMarker : program.1 = .op .none (.intOp (.const (Int.ofNat start))) [] ::
+      ClosAnnotate.annotateList 0 output := by
+    simpa [program, ClosAnnotate.compileInc, marker'] using ClosAnnotate.annotateList_name_marker start output
+  let real := (extractName program.1).2
+  have shape := extractName_numbered_marker start (ClosAnnotate.annotateList 0 output)
+  have startEq : (extractName program.1).1 = start := by simpa [annotatedMarker] using shape.1
+  have lengthEq : real.length = max 1 expressions.length := by
+    have l : real.length = max 1 output.length := by
+      simpa [real, annotatedMarker, ClosAnnotate.annotateList_length] using shape.2.1
+    simpa [expressions, outputLength] using l
+  have extract : extractName program.1 = (start, real) := by
+    cases h : extractName program.1 with
+    | mk first second => simp [real, h] at startEq ⊢; exact startEq
+  have mainEq : codeLocations real = codeLocations program.1 := by
+    rw [show codeLocations real = codeLocations (ClosAnnotate.annotateList 0 output) by
+      simpa [real, annotatedMarker] using shape.2.2]
+    simp [annotatedMarker, codeLocations, codeLocationsExp]
+  have entriesBound : start + max 1 real.length ≤ limit := by
+    have reserve := ClosNumber.compileInc_reservation start expressions
+    have next := state index
+    simp only [ClosNumber.ignoreTable] at next
+    simpa [lengthEq, start, expressions, limit, next] using reserve
+  have nested := numberedCallOracle_nested_location_bounds fuel oracle state index
+  have mainBounds : ∀ loc ∈ codeLocations real, start ≤ loc ∧ loc < limit := by
+    intro loc inside
+    rw [mainEq] at inside
+    have bound := nested.1 loc inside
+    omega
+  have auxBounds : ∀ entry ∈ program.2, start ≤ entry.1 ∧ entry.1 < limit ∧
+      ∀ loc ∈ codeLocationsExp entry.2.2, start ≤ loc ∧ loc < limit := by
+    intro entry inside
+    have labelIn : entry.1 ∈ program.2.map Prod.fst := List.mem_map.mpr ⟨entry, inside, rfl⟩
+    have bound := (numberedCallOracle_aux_distinct_and_range fuel oracle state index).2 entry.1 labelIn
+    refine ⟨bound.1, bound.2, ?_⟩
+    intro loc locIn
+    have bodyIn : entry.2.2 ∈ program.2.map (fun (_, _, body) => body) :=
+      List.mem_map.mpr ⟨entry, inside, rfl⟩
+    have locs : loc ∈ codeLocations (program.2.map (fun (_, _, body) => body)) :=
+      (mem_codeLocations loc _).2 ⟨entry.2.2, bodyIn, locIn⟩
+    have locBound := nested.2 loc locs
+    omega
+  exact compileInc_labels_range maxApp start limit program real extract entriesBound mainBounds auxBounds label member
+
+/-- Numbering intervals order the compiled labels of successive oracle
+entries, provided the initial labels precede the first interval. -/
+theorem numberedCallOracle_bvl_labels_ordered {C : Type} (maxApp fuel : Nat)
+    (oracle : Nat → (Nat × (NumSet × C)) × (List ClosLang.Exp × List (Nat × Nat × ClosLang.Exp)))
+    (state : isStateOracle (ClosNumber.ignoreTable ClosNumber.compileInc) oracle)
+    (initial : Set Nat)
+    (initialBound : ∀ label ∈ initial, label < (oracle 0).1.1 + numStubs maxApp) :
+    oracleMonotonic
+      (fun entry => {label | label ∈ (compileInc maxApp (ClosAnnotate.compileInc entry.2)).map Prod.fst})
+      (· < ·) initial
+      (ClosCall.compileIncFuelOracle fuel (stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle)) := by
+  have step : ∀ i, (oracle i).1.1 ≤ (oracle (i + 1)).1.1 := by
+    intro i
+    have reserve := ClosNumber.compileInc_reservation (oracle i).1.1 (oracle i).2.1
+    have next := state i
+    simp only [ClosNumber.ignoreTable] at next
+    omega
+  have monotone : ∀ i j, i ≤ j → (oracle i).1.1 ≤ (oracle j).1.1 := by
+    intro i j le
+    induction le with
+    | refl => exact Nat.le_refl _
+    | @step j le ih => exact Nat.le_trans ih (step j)
+  constructor
+  · intro i j x y lt xmem ymem
+    have xbound := numberedCallOracle_bvl_labels_range maxApp fuel oracle state i x xmem
+    have ybound := numberedCallOracle_bvl_labels_range maxApp fuel oracle state j y ymem
+    have between := monotone (i + 1) j (by omega)
+    omega
+  · intro i x y xmem ymem
+    have xbound := initialBound x xmem
+    have ybound := numberedCallOracle_bvl_labels_range maxApp fuel oracle state i y ymem
+    have between := monotone 0 i (Nat.zero_le i)
+    omega
+
 end Flapjack.Compiler.Backend.ClosToBvl
