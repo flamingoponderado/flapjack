@@ -1,6 +1,16 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_gc_fun_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CollectorStore.lean",
+  "lean_name": "wordGcFun_store_invariants",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": ["store", "store'"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared source lines 6391-6409 and word_gc_fun_IMP_typed: the same successful collector execution implies all eight listed store lookup equalities in the original order and Globals in the result domain, rendered by isSome. Input and output stores are canonical HolFiniteMapExact representations of HOL finite maps; the input and output memory, roots, and map values share the positive word width. Temp 29 retains the fixed word5 store-key payload. All collector branches use the actual wordGcFun. This does not establish collector memory correctness or cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "loc_merge_FILTER_isWord",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/LocMerge.lean",
   "lean_name": "locMerge_filter_isWord",
