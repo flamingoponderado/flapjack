@@ -3257,6 +3257,124 @@ theorem evaluateApp_partial_growing {C F : Type} (passFuel relationFuel : Nat)
         · simpa [decClock] using targetCompiler
         · simpa [decClock] using oracle
 
+/-- Applying no arguments preserves open-location disjointness and oracle
+avoidance. This is Flapjack-specific induction infrastructure. -/
+theorem evaluateApp_nil_growing_open {C F : Type} (passFuel relationFuel : Nat)
+    (compiler : ClosSem.Compiler C) (allowed : Set Nat) (requested : Option Nat) (g : State)
+    (sourceFun targetFun : ClosSem.Value)
+    (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (final : ClosSem.State (NumSet × C) F)
+    (run : evaluateApp requested sourceFun [] source = (result, final))
+    (functions : ValueRelFuel relationFuel g allowed target.code sourceFun targetFun)
+    (stateWf : StateWellFormedFuel relationFuel g allowed target.code source)
+    (states : StateRelFuel relationFuel g allowed source target) (ready : IncrementalInstallReady g source target)
+    (sourceCompiler : source.compile = compileIncFuelCallback passFuel compiler)
+    (targetCompiler : target.compile = compiler)
+    (oracle : target.compileOracle = compileIncFuelOracle passFuel source.compileOracle)
+    (disjoint : Disjoint allowed (sptDomain g.1)) (avoids : OracleLocationsAvoid allowed source) :
+    ∃ finalG targetResult targetFinal,
+      stateExtends g finalG ∧ Disjoint allowed (sptDomain finalG.1) ∧ OracleLocationsAvoid allowed final ∧
+      evaluateApp requested targetFun [] target = (targetResult, targetFinal) ∧
+      resultRel (List.Forall₂ (ValueRelFuel relationFuel finalG allowed targetFinal.code))
+        (ValueRelFuel relationFuel finalG allowed targetFinal.code) result targetResult ∧
+      StateRelFuel relationFuel finalG allowed final targetFinal ∧
+      StateWellFormedFuel relationFuel finalG allowed targetFinal.code final ∧
+      IncrementalInstallReady finalG final targetFinal ∧
+      final.compile = compileIncFuelCallback passFuel compiler ∧ targetFinal.compile = compiler ∧
+      targetFinal.compileOracle = compileIncFuelOracle passFuel final.compileOracle ∧
+      (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry) := by
+  have eq : result = .val [sourceFun] ∧ final = source := by simpa [evaluateApp] using run.symm
+  obtain ⟨rfl, rfl⟩ := eq
+  exact ⟨g, .val [targetFun], target, stateExtends_refl g ready.well.2, disjoint, avoids,
+    by simp [evaluateApp], .cons functions .nil, states, stateWf, ready, sourceCompiler, targetCompiler,
+    oracle, fun _ _ h => h⟩
+
+/-- Partial application preserves disjointness and oracle avoidance, including timeout.
+This is Flapjack-specific induction infrastructure. -/
+theorem evaluateApp_partial_growing_open {C F : Type} (passFuel relationFuel : Nat)
+    (compiler : ClosSem.Compiler C) (allowed : Set Nat) (requested : Option Nat) (g : State)
+    (sourceFun targetFun sourcePartial : ClosSem.Value) (sourceArgs targetArgs : List ClosSem.Value)
+    (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (final : ClosSem.State (NumSet × C) F)
+    (nonempty : sourceArgs ≠ [])
+    (sourceClosure : destClosure source.maxApp requested sourceFun sourceArgs = some (.partialApp sourcePartial))
+    (run : evaluateApp requested sourceFun sourceArgs source = (result, final))
+    (functions : ValueRelFuel relationFuel g allowed target.code sourceFun targetFun)
+    (args : List.Forall₂ (ValueRelFuel relationFuel g allowed target.code) sourceArgs targetArgs)
+    (stateWf : StateWellFormedFuel relationFuel g allowed target.code source)
+    (states : StateRelFuel relationFuel g allowed source target) (ready : IncrementalInstallReady g source target)
+    (sourceCompiler : source.compile = compileIncFuelCallback passFuel compiler)
+    (targetCompiler : target.compile = compiler)
+    (oracle : target.compileOracle = compileIncFuelOracle passFuel source.compileOracle)
+    (disjoint : Disjoint allowed (sptDomain g.1)) (avoids : OracleLocationsAvoid allowed source) :
+    ∃ finalG targetResult targetFinal,
+      stateExtends g finalG ∧ Disjoint allowed (sptDomain finalG.1) ∧ OracleLocationsAvoid allowed final ∧
+      evaluateApp requested targetFun targetArgs target = (targetResult, targetFinal) ∧
+      resultRel (List.Forall₂ (ValueRelFuel relationFuel finalG allowed targetFinal.code))
+        (ValueRelFuel relationFuel finalG allowed targetFinal.code) result targetResult ∧
+      StateRelFuel relationFuel finalG allowed final targetFinal ∧
+      StateWellFormedFuel relationFuel finalG allowed targetFinal.code final ∧
+      IncrementalInstallReady finalG final targetFinal ∧
+      final.compile = compileIncFuelCallback passFuel compiler ∧ targetFinal.compile = compiler ∧
+      targetFinal.compileOracle = compileIncFuelOracle passFuel final.compileOracle ∧
+      (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry) := by
+  have targetNonempty : targetArgs ≠ [] := by
+    intro empty
+    have len := args.length_eq
+    simp [empty] at len
+    cases sourceArgs with
+    | nil => exact nonempty rfl
+    | cons head tail => simp at len
+  have maxApp := states.2.2.1
+  obtain ⟨targetPartial, targetClosure, partialRel⟩ :=
+    destClosure_partial_fuel relationFuel g allowed target.code source.maxApp requested sourceFun targetFun sourcePartial
+      sourceArgs targetArgs sourceClosure functions args
+  have targetClosure' : destClosure target.maxApp requested targetFun targetArgs = some (.partialApp targetPartial) := by
+    simpa [← maxApp] using targetClosure
+  have clocks := states.2.1
+  have lengths := args.length_eq
+  cases sourceArgs with
+  | nil => contradiction
+  | cons sourceHead sourceTail =>
+    cases targetArgs with
+    | nil => contradiction
+    | cons targetHead targetTail =>
+      rw [evaluateApp, sourceClosure] at run
+      by_cases timeout : source.clock < (sourceHead :: sourceTail).length
+      · have targetTimeout : target.clock < (targetHead :: targetTail).length := by omega
+        have sourceTimeout' : source.clock ≤ sourceTail.length := by simpa using timeout
+        have targetTimeout' : target.clock ≤ targetTail.length := by simpa using targetTimeout
+        have eq : result = .err (.abort .timeoutError) ∧ final = { source with clock := 0 } := by
+          simpa [sourceTimeout'] using run.symm
+        obtain ⟨rfl, rfl⟩ := eq
+        refine ⟨g, .err (.abort .timeoutError), { target with clock := 0 }, stateExtends_refl g ready.well.2, disjoint, by simpa [OracleLocationsAvoid] using avoids,
+          ?_, rfl, stateRelFuel_zeroClock states, ?_, incrementalInstallReady_setClock g source target 0 0 ready,
+          sourceCompiler, targetCompiler, oracle, fun _ _ h => h⟩
+        · rw [evaluateApp, targetClosure']
+          simp [targetTimeout']
+        · exact stateWellFormedFuel_clock stateWf 0
+      · have targetEnough : ¬ target.clock < (targetHead :: targetTail).length := by omega
+        have sourceEnough' : ¬ source.clock ≤ sourceTail.length := by simpa using timeout
+        have targetEnough' : ¬ target.clock ≤ targetTail.length := by simpa using targetEnough
+        have eq : result = .val [sourcePartial] ∧ final = decClock (sourceHead :: sourceTail).length source := by
+          simpa [sourceEnough'] using run.symm
+        obtain ⟨rfl, rfl⟩ := eq
+        refine ⟨g, .val [targetPartial], decClock (targetHead :: targetTail).length target,
+          stateExtends_refl g ready.well.2, disjoint, by simpa [OracleLocationsAvoid, decClock] using avoids,
+          ?_, .cons partialRel .nil, ?_, ?_, ?_, ?_, ?_, ?_, fun _ _ h => h⟩
+        · rw [evaluateApp, targetClosure']
+          simp [targetEnough']
+        · rw [← lengths]
+          exact stateRelFuel_decClock states (sourceHead :: sourceTail).length
+        · simpa [decClock] using stateWellFormedFuel_clock stateWf _
+        · simpa [decClock] using incrementalInstallReady_setClock g source target
+            (source.clock - (sourceHead :: sourceTail).length) (target.clock - (targetHead :: targetTail).length) ready
+        · simpa [decClock] using sourceCompiler
+        · simpa [decClock] using targetCompiler
+        · simpa [decClock] using oracle
+
 /-- The application induction hypothesis for strictly shorter argument
 lists. This permits the compiler state to grow between applications. -/
 def GrowingAppSimBelow {C F : Type} (passFuel relationFuel limit : Nat) (compiler : ClosSem.Compiler C)
@@ -7974,6 +8092,47 @@ theorem growingExprsSimFromBelowWithClock_call {C F : Type} (passFuel relationFu
         simpa [argsRun, findCode, empty, HolFiniteMapExact.empty] using congrArg Prod.fst run.symm
       exact (notType bad).elim
 
+/-- Source direct-call simulation with growing open locations. This is
+Flapjack-specific simulation infrastructure. -/
+theorem growingExprsSimFromBelowWithOpenClock_call {C F : Type} (passFuel relationFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (required : State) (trace : BackendCommon.Tra) (ticks label : Nat)
+    (sourceArgs targetArgs : List ClosLang.Exp)
+    (argsIH : GrowingExprsSimFromBelowWithOpenClock (F := F) passFuel relationFuel limit compiler required sourceArgs targetArgs) :
+    GrowingExprsSimFromBelowWithOpenClock (F := F) passFuel relationFuel limit compiler required
+      [.call trace ticks label sourceArgs] [.call trace ticks label targetArgs] := by
+  intro g requiredGrowth allowed sourceEnv targetEnv source target result final clock run notType envs envWf sourceWf states ready
+    disjoint avoids sourceCompiler targetCompiler oracle
+  have argsEnv := envRelFuel_call_args trace ticks label targetArgs (by simpa using envs)
+  rw [evaluate, fixClock_evaluate] at run
+  cases argsRun : evaluate sourceArgs sourceEnv source with
+  | mk argsResult argsFinal =>
+    have argsSafe : argsResult ≠ .err (.abort .typeError) := by
+      intro bad
+      subst argsResult
+      have eq : result = .err (.abort .typeError) := by simpa [argsRun] using congrArg Prod.fst run.symm
+      exact notType eq
+    obtain ⟨argsExtra, argsG, argsAllowed, targetArgsResult, targetArgsFinal, argsExt, argsAllowedGrowth,
+      argsDisjoint, argsAvoids, targetArgsRun, argsRel, argsStates,
+      argsWf, argsReady, argsCompiler, targetArgsCompiler, argsOracle, argsGrowth⟩ :=
+      argsIH g requiredGrowth allowed sourceEnv targetEnv source target argsResult argsFinal clock argsRun argsSafe argsEnv envWf
+        sourceWf states ready disjoint avoids sourceCompiler targetCompiler oracle
+    cases argsResult with
+    | err error =>
+      cases targetArgsResult with
+      | val values => simp [resultRel] at argsRel
+      | err targetError =>
+        have eq : result = .err error ∧ final = argsFinal := by simpa [argsRun] using run.symm
+        obtain ⟨rfl, rfl⟩ := eq
+        refine ⟨argsExtra, argsG, argsAllowed, .err targetError, targetArgsFinal, argsExt, argsAllowedGrowth,
+          argsDisjoint, argsAvoids, ?_, argsRel, argsStates, argsWf,
+          argsReady, argsCompiler, targetArgsCompiler, argsOracle, argsGrowth⟩
+        rw [evaluate, fixClock_evaluate, targetArgsRun]
+    | val values =>
+      have empty : argsFinal.code = HolFiniteMapExact.empty := argsStates.2.2.2.2.2
+      have bad : result = .err (.abort .typeError) := by
+        simpa [argsRun, findCode, empty, HolFiniteMapExact.empty] using congrArg Prod.fst run.symm
+      exact (notType bad).elim
+
 /-- Clock-bounded call traversal. This is
 Flapjack-specific simulation infrastructure. -/
 theorem callsFuel_call_growing_below {C F : Type} (passFuel relationFuel traversalFuel limit : Nat)
@@ -8001,6 +8160,20 @@ theorem callsFuel_call_growing_below_withClock {C F : Type} (passFuel relationFu
     Option.some.injEq, Prod.mk.injEq] at run
   obtain ⟨⟨targetArgs, next⟩, argsRun, rfl, rfl⟩ := run
   exact growingExprsSimFromBelowWithClock_call passFuel relationFuel limit compiler next allowed trace ticks label args targetArgs (argsIH targetArgs argsRun)
+
+/-- The source direct-call traversal uses the growing open-location argument
+simulation. This is Flapjack-specific induction infrastructure. -/
+theorem callsFuel_call_growing_below_withOpenClock {C F : Type} (passFuel relationFuel traversalFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (trace : BackendCommon.Tra) (ticks label : Nat)
+    (args : List ClosLang.Exp) (initial final : State) (out : ClosLang.Exp)
+    (run : callsFuel (traversalFuel + 1) (.call trace ticks label args) initial = some (out, final))
+    (argsIH : ∀ target, callsListFuel traversalFuel args initial = some (target, final) →
+      GrowingExprsSimFromBelowWithOpenClock (F := F) passFuel relationFuel limit compiler final args target) :
+    GrowingExprsSimFromBelowWithOpenClock (F := F) passFuel relationFuel limit compiler final [.call trace ticks label args] [out] := by
+  simp only [callsFuel, Bind.bind, Option.bind_eq_some_iff, Pure.pure,
+    Option.some.injEq, Prod.mk.injEq] at run
+  obtain ⟨⟨targetArgs, next⟩, argsRun, rfl, rfl⟩ := run
+  exact growingExprsSimFromBelowWithOpenClock_call passFuel relationFuel limit compiler next trace ticks label args targetArgs (argsIH targetArgs argsRun)
 
 /-- Clock-bounded force traversal. This is
 Flapjack-specific simulation infrastructure. -/
