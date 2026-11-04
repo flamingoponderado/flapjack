@@ -366,6 +366,7 @@ val _ = show "update_byte_ref_thm_typed" data_to_word_memoryProofTheory.update_b
 val _ = show "update_ref_thm_typed" data_to_word_memoryProofTheory.update_ref_thm;
 val _ = show "heap_deref_def_typed" data_to_word_memoryProofTheory.heap_deref_def;
 val _ = show "update_ref_thm1_typed" data_to_word_memoryProofTheory.update_ref_thm1;
+val _ = show "memory_rel_Update_prime_typed" data_to_word_memoryProofTheory.memory_rel_Update';
 val _ = show "heap_store_def_typed" data_to_word_memoryProofTheory.heap_store_def;
 val _ = show "heap_store_lemma_typed" data_to_word_memoryProofTheory.heap_store_lemma;
 val _ = show "heap_store_RefBlock_thm_typed" data_to_word_memoryProofTheory.heap_store_RefBlock_thm;

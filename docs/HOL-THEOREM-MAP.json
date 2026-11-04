@@ -110422,6 +110422,16 @@
     "reviewer": "Compared update_ref_thm_typed against the Lean statement: both assume the complete abstract ML invariant for a stack prefix followed by the reference pointer, the old value-array lookup, and equal replacement and old lengths. Both conclude the same existential root split and successful heap store of the replacement reference block, followed by the complete abstract invariant for the inserted value array and returned heap. The heap, roots and existential pointer payload share the HOL word dimension, represented by a positive type-indexed BitVec width."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ArrayStore.lean",
+    "lean_name": "memoryRel_updateRef",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_Update'",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["store"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared memory_rel_Update_prime_typed: the complete memory relation, array lookup, good word dimension, and index bound are unchanged; the same existential pointer word and real address yield domain membership and the complete updated memory relation. The concrete memory function overrides exactly the selected address with the replacement word, as in HOL function update. The finite-support store represents the HOL finite map; memory, location and pointer widths share the positive HOL word dimension and the Boolean domain is the source word set."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ArrayUpdateElement.lean",
     "lean_name": "heapDeref",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",

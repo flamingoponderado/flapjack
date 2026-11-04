@@ -42,7 +42,7 @@ theorem updateRefElementCore {width : Nat} [NeZero width] (conf : Config)
     (valid : absMlInv conf ((value :: values) ++ .refPtr bit ptr :: stack) refs (roots, heap, be, a, sp, sp1, gens) limit next ∧
       sptLookup ptr refs = some (.valueArray old) ∧ index < old.length) :
     ∃ (p : Nat) (rs roots2 oldRoots : List (HeapAddress (WordLocW width))) (firstRoot : HeapAddress (WordLocW width)) (heap2 : ValueHeap width) (u : WordLocW width),
-      roots = rs ++ .pointer p u :: roots2 ∧ rs.head? = some firstRoot ∧ rs.length = (value :: values).length ∧ heapDeref p heap = some oldRoots ∧ oldRoots.length = old.length ∧
+      roots = rs ++ .pointer p u :: roots2 ∧ rs.head? = some firstRoot ∧ rs.length = (value :: values).length ∧ heapDeref p heap = some oldRoots ∧ heapLookup p heap = some (refBlock oldRoots) ∧ oldRoots.length = old.length ∧
       heapStore p [refBlock (oldRoots.set index firstRoot)] heap = (heap2, true) ∧
       absMlInv conf ((value :: values) ++ .refPtr bit ptr :: stack) (sptInsert ptr (.valueArray (old.set index value)) refs)
         (roots, heap2, be, a, sp, sp1, gens) limit next := by
@@ -136,7 +136,7 @@ theorem updateRefElementCore {width : Nat} [NeZero width] (conf : Config)
         exact ((restrictTimestampMap_lookup_some tf keep n v).mp lookup).1
       · intro n domain
         exact nextBound n (restrictTimestampMap_domain_apply tf keep n domain).1
-    refine ⟨heapLength pre, firstRoot :: restRoots, roots2, oldRoots, firstRoot, newHeap, .word 0, rfl, rfl, ?_, ?_, ?_, ?_, ?_⟩
+    refine ⟨heapLength pre, firstRoot :: restRoots, roots2, oldRoots, firstRoot, newHeap, .word 0, rfl, rfl, ?_, ?_, oldLookup, ?_, ?_, ?_⟩
     · exact prefixInv.length_eq.symm
     · exact heapDeref_refBlock _ _ _ oldLookup
     · exact oldInv.length_eq
@@ -171,7 +171,7 @@ theorem updateRefElement {width : Nat} [NeZero width] (conf : Config)
   cases values with
   | nil => simp at nonempty
   | cons value values =>
-    obtain ⟨p, rs, roots2, oldRoots, firstRoot, heap2, u, rootsEq, headEq, lengthEq, deref, oldLength, stored, updated⟩ :=
+    obtain ⟨p, rs, roots2, oldRoots, firstRoot, heap2, u, rootsEq, headEq, lengthEq, deref, _, oldLength, stored, updated⟩ :=
       updateRefElementCore conf value values stack bit ptr refs roots heap be a sp sp1 gens limit next index old
         ⟨invariant, found, indexBound⟩
     cases rs with
