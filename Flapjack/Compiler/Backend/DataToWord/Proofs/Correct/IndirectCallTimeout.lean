@@ -4,7 +4,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.IndirectCallSetup
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Correct
 open Flapjack Gc
 
-/-- A timeout in a inindirect callee propagates through the non-tail caller,
+/-- A timeout in an indirect callee propagates through the non-tail caller,
 including its independent clock clamps. -/
 theorem returningCall64_indirect_callee_timeout {C F : Type} (conf : Config) (secn label l1 l2 : Nat)
     (source : DataSem.State C F) (target : WordSemStateFiniteExact 64 C F)
