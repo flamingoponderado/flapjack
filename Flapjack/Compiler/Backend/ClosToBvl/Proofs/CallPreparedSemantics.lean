@@ -911,4 +911,80 @@ theorem numberedCallOracle_compileOracleInv {C : Type} (maxApp fuel : Nat)
     obtain ⟨name, arity, body⟩ := entry
     simpa [everyFnLocationSome] using ((calledSyntax index).2 name arity body member).1
 
+/-- Direct-call to BVL semantics with future label invariants derived from
+the numbering oracle. The initial compiled-code distinctness and boundary,
+source safety, and source-oracle ordering remain explicit premises. -/
+theorem numberedCall_to_preparedBvl_semantics {C F : Type} (ffi : HolFfiState F)
+    (passFuel relationFuel : Nat) (original current output : Config)
+    (targetCompiler : BvlSem.Compiler C)
+    (expressions called nameExpressions : List ClosLang.Exp) (callState : ClosCall.State)
+    (compiled : List (Nat × Nat × Bvl.Exp)) (names : Spt Flapjack.Basis.Pure.MlString.MlString)
+    (oracle : Nat → (Nat × (NumSet × C)) × (List ClosLang.Exp × List (Nat × Nat × ClosLang.Exp)))
+    (oracleState : isStateOracle (ClosNumber.ignoreTable ClosNumber.compileInc) oracle)
+    (passRun : ClosCall.compileFuel passFuel true expressions = some (called, callState))
+    (syntaxGood : ClosCall.syntaxOk expressions)
+    (known : callState.1 = ((stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle) 0).1.1)
+    (initialUpper : ∀ loc ∈ codeLocations expressions, loc < (oracle 0).1.1)
+    (varsNone : ∀ n, everyFnVarsNone (oracle n).2.1)
+    (oracleAuxEmpty : ∀ n, (oracle n).2.2 = [])
+    (sourceNonempty : expressions ≠ [])
+    (initialLower : ∀ loc ∈ codeLocations expressions, current.start + expressions.length ≤ loc)
+    (firstLower : current.start + expressions.length ≤ (oracle 0).1.1)
+    (sourceSafe : semantics ffi current.maxApp HolFiniteMapExact.empty
+      (stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle)
+      (ClosCall.compileIncFuelCallback passFuel (pureCc ClosAnnotate.compileInc
+        (pureCc (compileInc current.maxApp) targetCompiler))) expressions ≠ .fail)
+    (compile : compilePrepared? original current nameExpressions
+      (ClosAnnotate.compile (chainExps current.start called ++ callState.2)) = some (output, compiled, names))
+    (distinct : (compiled.map Prod.fst).Nodup)
+    (initialBelow : ∀ location ∈ compiled.map Prod.fst,
+      location < (oracle 0).1.1 + numStubs current.maxApp) :
+    BvlSem.semantics ffi (sptFromAList compiled)
+      (pureCo (compileInc current.maxApp) ∘ pureCo ClosAnnotate.compileInc ∘
+        ClosCall.compileIncFuelOracle passFuel (stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle))
+      targetCompiler output.start =
+    semantics ffi current.maxApp HolFiniteMapExact.empty (stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle)
+      (ClosCall.compileIncFuelCallback passFuel (pureCc ClosAnnotate.compileInc
+        (pureCc (compileInc current.maxApp) targetCompiler))) expressions := by
+  let numbered := stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle
+  have syntaxOracle : ∀ n, ClosCall.syntaxOk (numbered n).2.1 ∧ (numbered n).2.2 = [] := by
+    intro n
+    constructor
+    · refine ⟨?_, ?_, ?_⟩
+      · simpa [numbered, stateCo, ClosNumber.ignoreTable] using
+          ClosNumber.compileInc_locations (oracle n).1.1 (oracle n).2.1
+      · simpa [numbered, stateCo, ClosNumber.ignoreTable, ClosNumber.compileInc_varsNone] using varsNone n
+      · simpa [numbered, stateCo, ClosNumber.ignoreTable] using
+          ClosNumber.compileInc_codeLocations_nodup (oracle n).1.1 (oracle n).2.1
+    · simpa [numbered, stateCo, ClosNumber.ignoreTable] using oracleAuxEmpty n
+  have callOrdered : oracleMonotonic (fun entry => {loc | loc ∈ codeLocations entry.2.1}) (· < ·)
+      {loc | loc ∈ codeLocations expressions} numbered := by
+    constructor
+    · intro i j x y order xmem ymem
+      have xbound := numberingOracle_location_bounds oracle oracleState i x xmem
+      have ybound := numberingOracle_location_bounds oracle oracleState j y ymem
+      have between := numberingOracle_state_monotone oracle oracleState (show i + 1 ≤ j by omega)
+      omega
+    · intro i x y xmem ymem
+      have xbound := initialUpper x xmem
+      have ybound := numberingOracle_location_bounds oracle oracleState i y ymem
+      have between := numberingOracle_state_monotone oracle oracleState (Nat.zero_le i)
+      omega
+  have futureLower : ∀ index loc, loc ∈ codeLocations (numbered index).2.1 →
+      current.start + expressions.length ≤ loc := by
+    intro index loc member
+    have first := numberingOracle_state_monotone oracle oracleState (Nat.zero_le index)
+    have bounds := numberingOracle_location_bounds oracle oracleState index loc member
+    omega
+  have monotone : ∀ {i j}, i ≤ j → (oracle i).1.1 + numStubs current.maxApp ≤
+      (oracle j).1.1 + numStubs current.maxApp := by
+    intro i j order
+    exact Nat.add_le_add_right (numberingOracle_state_monotone oracle oracleState order) _
+  exact call_to_preparedBvl_semantics_of_location_bounds ffi passFuel relationFuel original current output
+    targetCompiler (fun index => (oracle index).1.1 + numStubs current.maxApp)
+    expressions called nameExpressions callState compiled names numbered passRun syntaxGood known callOrdered syntaxOracle
+    sourceNonempty initialLower futureLower sourceSafe compile distinct monotone initialBelow
+    (numberedCallOracle_bvl_labels_nodup current.maxApp passFuel oracle oracleState)
+    (numberedCallOracle_bvl_labels_range current.maxApp passFuel oracle oracleState)
+
 end Flapjack.Compiler.Backend.ClosToBvl
