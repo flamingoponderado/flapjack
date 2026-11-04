@@ -34,6 +34,7 @@ val _ = show "word_gc_move_roots_thm_typed" data_to_word_gcProofTheory.word_gc_m
 val _ = show "word_gc_move_list_thm_typed" data_to_word_gcProofTheory.word_gc_move_list_thm;
 val _ = show "word_payload_swap_typed" data_to_word_gcProofTheory.word_payload_swap;
 val _ = show "word_gc_move_loop_thm_typed" data_to_word_gcProofTheory.word_gc_move_loop_thm;
+val _ = show "word_full_gc_thm_typed" data_to_word_gcProofTheory.word_full_gc_thm;
 val movePre = fst (dest_imp (concl data_to_word_gcProofTheory.word_gc_move_thm));
 val moveSep = List.nth (strip_conj movePre, 2);
 val moveStar = fst (dest_comb moveSep);

@@ -1,6 +1,15 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_full_gc_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/Full.lean",
+  "lean_name": "wordFullGc_thm",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared lines 1141-1156 and word_full_gc_thm_typed: the roots, heap, memory, frame and word carriers share the same positive width, and the original abstract and word runs, bounds, configuration assumptions, separation assertion and all conclusions are retained. The proof composes the original root and scan simulations and reconstructs both expanded heaps."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "word_gc_move_loop_thm",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/Loop.lean",
   "lean_name": "wordGcMoveLoop_thm",
