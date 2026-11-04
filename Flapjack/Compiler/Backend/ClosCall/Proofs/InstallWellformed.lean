@@ -160,7 +160,7 @@ theorem evaluate_force_oracleAuxEmpty {C F : Type} (trace : BackendCommon.Tra)
               cases stored : updateThunk values final.refs forced <;> simpa [bodyRun, stored] using bodyOracle
 
 /-- The final element of a nonempty list is a member of that list. -/
-private theorem holLast_mem_nonempty {A : Type} [Nonempty A] (values : List A) (nonempty : values ≠ []) :
+theorem holLast_mem_nonempty {A : Type} [Nonempty A] (values : List A) (nonempty : values ≠ []) :
     holLast values ∈ values := by
   induction values with
   | nil => contradiction

@@ -556,6 +556,142 @@ theorem evaluateApp_wellFormedFuel_of_body_oracle {C F : Type} {fuel : Nat} {g :
     · intro value rest start smaller valueWf restWf startWf empty
       exact ih start.clock (by omega) value rest start valueWf restWf startWf empty rfl
 
+/-- Dynamic installation preserves the bounded evaluation invariant when
+the current oracle's auxiliary list is empty and installed code satisfies
+the recursive evaluation hypothesis. -/
+theorem evaluate_install_wellFormedFuel_of_oracle {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (trace : BackendCommon.Tra)
+    (args : List ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State C F)
+    (argsIH : EvalWellFormedFuel fuel g allowed code (evaluate args env state))
+    (oracleEmpty : OracleAuxEmpty state.compileOracle)
+    (bodyIH : ∀ (program : List ClosLang.Exp) (start : ClosSem.State C F),
+      start.clock < state.clock → StateWellFormedFuel fuel g allowed code start → OracleAuxEmpty start.compileOracle →
+      EvalWellFormedFuel fuel g allowed code (evaluate program [] start)) :
+    EvalWellFormedFuel fuel g allowed code (evaluate [.op trace .install args] env state) := by
+  cases argsRun : evaluate args env state with
+  | mk argsResult argsFinal =>
+    have argsOracle := (evaluate_oracleAuxEmpty (C := C) (F := F)).1 args env state oracleEmpty
+    rw [argsRun] at argsIH argsOracle
+    rw [evaluate, fixClock_evaluate, argsRun]
+    cases argsResult with
+    | err error => simpa [EvalWellFormedFuel] using argsIH
+    | val values =>
+      dsimp only
+      cases installRun : doInstall values.reverse argsFinal with
+      | mk installResult installFinal =>
+        have installWf := doInstall_wellFormedFuel values.reverse argsFinal installFinal installResult
+          argsIH.2 (argsOracle 0) installRun
+        cases installResult with
+        | err error =>
+          cases error with
+          | raise value => exact (doInstall_noRaise values.reverse argsFinal installFinal value installRun).elim
+          | abort reason => simpa [EvalWellFormedFuel, ResultWellFormedFuel] using installWf
+        | val program =>
+          dsimp only
+          have parts := doInstall_nonType_parts values.reverse argsFinal installFinal (.val program) installRun (by simp)
+          obtain ⟨_, _, _, _, _, expressions, _, _, _, _, _, _, _, _, _, _, programNonempty, _, resultEq⟩ := parts
+          have programEq : program = expressions := by
+            split at resultEq <;> simp_all
+          have nonempty : program ≠ [] := by simpa [programEq] using programNonempty
+          have argsBound := evaluate_clock_le args env state
+          rw [argsRun] at argsBound
+          dsimp only at argsBound
+          have installBound := doInstall_success_clock values.reverse argsFinal installFinal program installRun
+          have installOracle := doInstall_oracleAuxEmpty values.reverse argsFinal installFinal (.val program) argsOracle installRun
+          have bodyWf := bodyIH program installFinal (by omega) installWf installOracle
+          cases bodyRun : evaluate program [] installFinal with
+          | mk bodyResult bodyFinal =>
+            rw [bodyRun] at bodyWf
+            cases bodyResult with
+            | err error => simpa [EvalWellFormedFuel] using bodyWf
+            | val resultValues =>
+              let _ : Nonempty ClosSem.Value := ⟨unitValue⟩
+              have length := (evaluate_length (C := C) (F := F)).1 program [] installFinal bodyFinal resultValues bodyRun
+              have resultNonempty : resultValues ≠ [] := by
+                intro empty
+                simp [empty] at length
+                exact nonempty (List.length_eq_zero_iff.mp length.symm)
+              have lastWf := valuesWellFormedFuel_mem bodyWf.1 (holLast_mem_nonempty resultValues resultNonempty)
+              change EvalWellFormedFuel fuel g allowed code (.val [holLast resultValues], bodyFinal)
+              exact ⟨.cons lastWf .nil, bodyWf.2⟩
+
+
+/-- The evaluator's force-thunk case preserves the invariant assuming the
+argument and forced-body induction hypotheses. -/
+theorem evaluate_force_wellFormedFuel_of_oracle {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (trace : BackendCommon.Tra)
+    (args : List ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State C F)
+    (oracleEmpty : OracleAuxEmpty state.compileOracle)
+    (argsIH : EvalWellFormedFuel fuel g allowed code (evaluate args env state))
+    (bodyIH : ∀ (value : ClosSem.Value) (start : ClosSem.State C F), start.clock ≤ state.clock →
+      ValueWellFormedFuel fuel g allowed code value →
+      StateWellFormedFuel fuel g allowed code start → OracleAuxEmpty start.compileOracle →
+      EvalWellFormedFuel fuel g allowed code (evaluate [appUnit (.var .none 0)] [value] start)) :
+    EvalWellFormedFuel fuel g allowed code
+      (evaluate [.op trace (.thunkOp .forceThunk) args] env state) := by
+  cases argsRun : evaluate args env state with
+  | mk argsResult argsFinal =>
+    have argsOracle := (evaluate_oracleAuxEmpty (C := C) (F := F)).1 args env state oracleEmpty
+    rw [argsRun] at argsIH argsOracle
+    rw [evaluate, fixClock_evaluate, argsRun]
+    cases argsResult with
+    | err error => simpa [EvalWellFormedFuel] using argsIH
+    | val targets =>
+      cases inspected : destThunk targets argsFinal.refs with
+      | badRef => simpa [EvalWellFormedFuel, ResultWellFormedFuel, inspected] using argsIH.2
+      | notThunk => simpa [EvalWellFormedFuel, ResultWellFormedFuel, inspected] using argsIH.2
+      | isThunk mode value =>
+        have valueWf := destThunk_wellFormedFuel targets argsFinal mode value argsIH.2 inspected
+        cases mode with
+        | evaluated =>
+          simpa [EvalWellFormedFuel, ResultWellFormedFuel, inspected] using
+            And.intro (ValuesWellFormedFuel.cons valueWf .nil) argsIH.2
+        | notEvaluated =>
+          have argsBound := evaluate_clock_le args env state
+          rw [argsRun] at argsBound
+          have bodyWf := bodyIH value argsFinal argsBound valueWf argsIH.2 argsOracle
+          cases bodyRun : evaluate [appUnit (.var .none 0)] [value] argsFinal with
+          | mk bodyResult bodyFinal =>
+            rw [bodyRun] at bodyWf
+            cases bodyResult with
+            | err error => simpa [EvalWellFormedFuel, inspected, bodyRun] using bodyWf
+            | val forced =>
+              cases stored : updateThunk targets bodyFinal.refs forced with
+              | none => simpa [EvalWellFormedFuel, ResultWellFormedFuel, inspected, bodyRun, stored] using bodyWf.2
+              | some refs =>
+                simpa [EvalWellFormedFuel, ResultWellFormedFuel, inspected, bodyRun, stored] using
+                  And.intro bodyWf.1 (updateThunk_wellFormedFuel targets forced bodyFinal refs bodyWf.2 bodyWf.1 stored)
+
+
+/-- Primitive evaluation preserves well-formedness using recursive hypotheses
+only at states with empty auxiliary oracles. This is Flapjack-specific proof
+infrastructure, with recursive evaluation left as a premise. -/
+theorem evaluate_op_wellFormedFuel_with_oracle_hypotheses {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (trace : BackendCommon.Tra)
+    (op : ClosLang.Op) (args : List ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State C F)
+    (oracleEmpty : OracleAuxEmpty state.compileOracle)
+    (argsIH : EvalWellFormedFuel fuel g allowed code (evaluate args env state))
+    (installIH : ∀ (program : List ClosLang.Exp) (start : ClosSem.State C F),
+      start.clock < state.clock → StateWellFormedFuel fuel g allowed code start → OracleAuxEmpty start.compileOracle →
+      EvalWellFormedFuel fuel g allowed code (evaluate program [] start))
+    (forceIH : op = .thunkOp .forceThunk → ∀ (value : ClosSem.Value) (start : ClosSem.State C F),
+      start.clock ≤ state.clock → ValueWellFormedFuel fuel g allowed code value →
+      StateWellFormedFuel fuel g allowed code start → OracleAuxEmpty start.compileOracle →
+      EvalWellFormedFuel fuel g allowed code (evaluate [appUnit (.var .none 0)] [value] start)) :
+    EvalWellFormedFuel fuel g allowed code (evaluate [.op trace op args] env state) := by
+  have ordinary : ∀ op, op ≠ .install → op ≠ .thunkOp .forceThunk →
+      EvalWellFormedFuel fuel g allowed code (evaluate [.op trace op args] env state) := by
+    intro op notInstall notForce
+    exact evaluate_ordinaryOp_wellFormedFuel trace op args env state notInstall notForce argsIH
+  cases op with
+  | install => exact evaluate_install_wellFormedFuel_of_oracle trace args env state argsIH oracleEmpty installIH
+  | thunkOp operation =>
+    cases operation with
+    | forceThunk => exact evaluate_force_wellFormedFuel_of_oracle trace args env state oracleEmpty argsIH (forceIH rfl)
+    | allocThunk mode => exact ordinary _ (by simp) (by simp)
+    | updateThunk mode => exact ordinary _ (by simp) (by simp)
+  | label | ffi | intOp | wordOp | blockOp | globOp | memOp => exact ordinary _ (by simp) (by simp)
+
 /-- Primitive evaluation needs only the initial oracle condition: the
 general oracle-preservation theorem supplies it after argument evaluation. -/
 theorem evaluate_op_wellFormedFuel_of_oracle {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
