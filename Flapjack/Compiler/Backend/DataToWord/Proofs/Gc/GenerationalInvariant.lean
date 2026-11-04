@@ -44,6 +44,69 @@ theorem genMoveList_const {α β : Type} (conf : GenGc.Config β) (roots roots1 
     obtain ⟨h1Tail, r1Tail, r2Tail, r3Tail⟩ := ih tail middle final tailRun
     exact ⟨h1Tail.trans h1, r1Tail.trans r1, r2Tail.trans r2, r3Tail.trans r3⟩
 
+/-- Scanning reference objects leaves the already scanned heap unchanged. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "gc_move_refs_const"]
+theorem genMoveRefs_const {α β : Type} (conf : GenGc.Config β) (state state1 : GcState α β)
+    (run : GenGc.gcMoveRefs conf state = state1) : state1.h1 = state.h1 := by
+  subst state1
+  induction state using GenGc.gcMoveRefs.induct conf with
+  | case1 state empty =>
+    cases state with
+    | mk old h1 h2 r4 r3 r2 r1 a n ok heap heap0 =>
+      simp only at empty
+      subst r2
+      rw [GenGc.gcMoveRefs]
+  | case2 state tail roots len payload refs roots1 middle move refsAgain ih =>
+    cases state with
+    | mk old h1 h2 r4 r3 r2 r1 a n ok heap heap0 =>
+      simp only at refs
+      subst r2
+      rw [GenGc.gcMoveRefs]
+      simp only [move]
+      exact ih.trans (genMoveList_const conf roots roots1 _ middle move).1
+  | case3 state head tail refs refsAgain notData =>
+    cases head with
+    | unused len =>
+      cases state with
+      | mk old h1 h2 r4 r3 r2 r1 a n ok heap heap0 =>
+        simp only at refs
+        subst r2
+        rw [GenGc.gcMoveRefs]
+    | forwardPointer ptr value len =>
+      cases state with
+      | mk old h1 h2 r4 r3 r2 r1 a n ok heap heap0 =>
+        simp only at refs
+        subst r2
+        rw [GenGc.gcMoveRefs]
+    | dataElement roots len payload =>
+      exact False.elim (notData roots len payload refs rfl (by rfl))
+
+/-- Scanning copied data preserves the processed reference lists. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "gc_move_data_const"]
+theorem genMoveData_const {α β : Type} (conf : GenGc.Config β) (state state1 : GcState α β)
+    (run : GenGc.gcMoveData conf state = state1) :
+    state1.r1 = state.r1 ∧ state1.r2 = state.r2 ∧ state1.r3 = state.r3 := by
+  classical
+  subst state1
+  induction state using GenGc.gcMoveData.induct conf with
+  | case1 state empty => rw [GenGc.gcMoveData]; simp [empty]
+  | case2 state head tail heap over => rw [GenGc.gcMoveData]; simp [heap, over]
+  | case3 state tail roots len payload roots1 middle move heap bounded flag ih =>
+    cases state with
+    | mk old h1 h2 r4 r3 r2 r1 a n ok origHeap heap0 =>
+      simp only at heap
+      subst h2
+      rw [GenGc.gcMoveData]
+      simp only [bounded, ↓reduceIte, move]
+      dsimp only [flag] at ih
+      obtain ⟨_, eq1, eq2, eq3⟩ := genMoveList_const conf roots roots1 _ middle move
+      exact ⟨ih.1.trans eq1, ih.2.1.trans eq2, ih.2.2.trans eq3⟩
+  | case4 state head tail heap bounded notData =>
+    cases head with
+    | unused len => rw [GenGc.gcMoveData]; simp [heap, bounded]
+    | forwardPointer ptr value len => rw [GenGc.gcMoveData]; simp [heap, bounded]
+    | dataElement roots len payload => exact False.elim (notData roots len payload rfl)
+
 /-- A successful forwarding update preserves heap length and its input status. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "heap_length_gc_forward_ptr"]
 theorem heapLength_gcForwardPtr {α β : Type} (heap : List (HeapElement α β))

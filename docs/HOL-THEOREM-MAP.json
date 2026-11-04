@@ -1,6 +1,22 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "gc_move_data_const",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GenerationalInvariant.lean",
+  "lean_name": "genMoveData_const",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared gc_move_data_const_typed with the complete HOL statement: the same data-scan execution preserves r1, r2 and r3 for independent address and payload types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "gc_move_refs_const",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GenerationalInvariant.lean",
+  "lean_name": "genMoveRefs_const",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared gc_move_refs_const_typed with the complete HOL statement: the same reference-scan execution preserves h1 for independent address and payload types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "gc_move_const",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GenerationalInvariant.lean",
   "lean_name": "genMove_const",
