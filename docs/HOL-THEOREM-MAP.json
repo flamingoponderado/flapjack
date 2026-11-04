@@ -110800,6 +110800,16 @@
     "reviewer": "Source comparison: v_inv_tf_restrict_lemma and its typed data_to_word_memory_repr capture preserve the clock, configuration, data value, spt reference tree, stack, address, two maps, heap and predicate. The unbounded value-invariant premise and both timestamp-containment conditions imply the clocked relation with only tf restricted. f and tf use canonical finite-support maps; restrictTimestampMap_lookup_some establishes the source DRESTRICT lookup behavior, including absent and excluded keys. The heap and address retain the shared positive word dimension, and dataSem.Value retains fixed word64."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ByteUpdateValue.lean",
+    "lean_name": "valueInv_insertByteArray",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "v_inv_ByteArray_insert",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["f", "tf"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: the typed HOL capture retains the full conjunction of the value invariant and domain-conditioned prior-byte-array lookup, and the same invariant after insertion. The value, tree, pointer bit, fixed eight-bit byte lists, address, heap, configuration, and both finite maps retain their carriers and roles. sptMem is the source tree-domain membership; f and tf are canonical finite-support maps and address and heap share the positive HOL word dimension."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/ValueInv/Restriction.lean",
     "lean_name": "valueInv_tfRestrict",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",

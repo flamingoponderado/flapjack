@@ -360,6 +360,7 @@ val _ = show "v_inv_ck_rules_typed" data_to_word_memoryProofTheory.v_inv_ck_rule
 val _ = show "v_inv_eq_typed" data_to_word_memoryProofTheory.v_inv_eq;
 val _ = show "v_inv_RefPtr_T_typed" data_to_word_memoryProofTheory.v_inv_RefPtr_T;
 val _ = show "v_inv_tf_restrict_lemma_typed" data_to_word_memoryProofTheory.v_inv_tf_restrict_lemma;
+val _ = show "v_inv_ByteArray_insert_typed" data_to_word_memoryProofTheory.v_inv_ByteArray_insert;
 val _ = show "v_inv_tf_restrict_typed" data_to_word_memoryProofTheory.v_inv_tf_restrict;
 val _ = show "n2mw_typed" multiwordTheory.n2mw_def;
 val _ = show "mw2n_def_typed" multiwordTheory.mw2n_def;
