@@ -312,11 +312,13 @@ theorem arm8RegCaseOne (inst : HolInst 64) (dest : Nat) (v : BitVec 64)
     change holAligned 2 (ms.PC + 4) = true
     rw [(alignedAddSub 2 ms.PC 4 h4).1, halign]
 
-/-- The shared tail of the two-instruction lowerings that write registers
-and flags but no memory (`addOverflow`, `subOverflow`, `longMul`; Flapjack
-infrastructure, the counterpart of HOL's `next_tac 1`, `next_state_tac01`,
-`next_state_tacN`, `state_tac` sequence).  The first instruction `i1` sets the
-register file to `R1` and `PSTATE` to `P1`; the second, run on any state that
+/-- The shared tail of the two-instruction lowerings that write registers,
+possibly flags, but no memory (used by `addOverflow` and `subOverflow`;
+Flapjack infrastructure, the counterpart of HOL's `next_tac 1`,
+`next_state_tac01`, `next_state_tacN`, `state_tac` sequence).  The first
+instruction `i1` sets the register file to `R1` and `PSTATE` to `P1` (a
+lowering that leaves the flags alone takes `P1 := ms.PSTATE`); the second, run
+on any state that
 the interference environment leaves with those registers and flags, sets the
 register file to `R2`.  `hpost` relates `R2` to the source-side `asmUpd`. -/
 theorem arm8RegCaseTwo (inst : HolInst 64) (s1 s2 : AsmState 64) (ms : arm8_state)
