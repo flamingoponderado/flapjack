@@ -60,11 +60,11 @@ argument and the same optional frame size. -/
 theorem stateRel64_findCode_direct {C F : Type} (conf : Config) (l1 l2 : Nat)
     (source : DataSem.State C F) (target : WordSemStateFiniteExact 64 C F)
     (locs : List (Nat × Nat)) (related : stateRel64 conf l1 l2 source target none locs)
-    (label : Nat) (args : List DataSem.Value) (words : List (WordLocW 64)) (body : DataLang.Prog)
+    (r1 r2 label : Nat) (args : List DataSem.Value) (words : List (WordLocW 64)) (body : DataLang.Prog)
     (size : Option Nat) (lengths : args.length = words.length)
     (found : DataSem.findCode (some label) args source.code source.stackFrameSizes = some (args, body, size)) :
-    wordSemFindCode (some label) (.loc l1 l2 :: words) target.code target.stackSize =
-      some (.loc l1 l2 :: words, (compileControl64 conf label 2 body).1, size) := by
+    wordSemFindCode (some label) (.loc r1 r2 :: words) target.code target.stackSize =
+      some (.loc r1 r2 :: words, (compileControl64 conf label 2 body).1, size) := by
   unfold DataSem.findCode at found
   cases lookup : sptLookup label source.code with
   | none => simp [lookup] at found

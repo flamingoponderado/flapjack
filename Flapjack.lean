@@ -219,6 +219,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.JumpExcLocals
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PopEnv
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.ReturnValues
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.FindCode
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CallEnv
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Skip
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Tick
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Return
