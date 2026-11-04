@@ -1,6 +1,15 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "stack_rel_dec_stack_IMP_stack_rel",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/DecStack.lean",
+  "lean_name": "stackRel_decStack_locMerge",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared source lines 6528-6551 and the typed stack_rel_dec_stack_IMP_stack_rel_typed capture: the original word stacks and replacement roots share one positive word dimension, the data stack and location pairs have the same carriers, and all three premises and both LIST_REL conclusions are retained. The proof derives the result from the independently checked wordSem stack-key preservation theorem. Source review and kernel checking do not establish collector correctness or cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "loc_merge_def",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/LocMerge.lean",
   "lean_name": "locMerge",
