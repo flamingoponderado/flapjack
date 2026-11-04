@@ -129,31 +129,4 @@ def initializedRuntimeInitialStoredProgram? [NeZero width]
   else
     pure (labInitialStoredProgram program)
 
-/-- Stored-length convergence over the complete actual program. Exhausting the
-relocation budget fails, matching HOL `remove_labels_loop`; an unconverged
-program must never reach instruction lowering. -/
-def initializedRuntimeEncodeStable [NeZero width] (fuel : Nat)
-    (context : WordFfiContext) (haltPc : Nat) (program : LabProgram (Word width)) :
-    Option (LabProgram (Word width)) :=
-  match fuel with
-  | 0 => none
-  | fuel + 1 => do
-      let labels ← initializedRuntimeLabelIndex? program
-      let next := labEncodeStoredProgram context labels 0 0 haltPc program
-      if labStoredLineLengths next == labStoredLineLengths program then pure next
-      else initializedRuntimeEncodeStable fuel context haltPc next
-
-/-- Both relocation sweeps retain original maximum observed instruction slots;
-all entry/GC/raise/store/source labels come from the generated program. -/
-def compileLabProgramLinkedWithNativeInitialization [NeZero width]
-    (context : WordFfiContext) (program : LabProgram (Word width)) :
-    Option (List (Nat × Word width × List (Instruction width))) := do
-  let initial ← initializedRuntimeInitialStoredProgram? program
-  let encoded ← initializedRuntimeEncodeStable 8 context (labStoredProgramLength initial) initial
-  let relabelled := labUpdateStoredLabelLengths 0 encoded
-  let final ← initializedRuntimeEncodeStable 8 context (labStoredProgramLength relabelled) relabelled
-  let labels ← initializedRuntimeLabelIndex? final
-  compileLabProgramLinkedWithStoredLengthsAux context labels 0 0
-    (labStoredProgramLength final) final
-
 end Flapjack.RiscV

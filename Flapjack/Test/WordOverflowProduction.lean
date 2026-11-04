@@ -816,42 +816,4 @@ example : wordToStackInst
     some (.seq (.stackLoad 4 6) (.seq (.stackLoad 5 4)
       (.seq (.inst (.arith (.subOverflow 4 4 5 0))) (.stackStore 4 5)))) := by rfl
 
--- Original overflow_add_enc_0, through actual dispatch.
-example : (wordArithToInstructions (.addOverflow 5 2 3 4 : WordArith (BitVec 64))).map
-    encodeInstructions = some [179, 79, 49, 0, 147, 207, 255, 255, 179, 2, 49, 0, 51, 194, 81, 0, 51, 242, 79, 0, 19, 82, 242, 3] := by decide +kernel
-
--- Original overflow_add_enc_3, through actual dispatch.
-example : (wordArithToInstructions (.addOverflow 30 29 28 27 : WordArith (BitVec 64))).map
-    encodeInstructions = some [179, 207, 206, 1, 147, 207, 255, 255, 51, 143, 206, 1, 179, 77, 238, 1, 179, 253, 191, 1, 147, 221, 253, 3] := by decide +kernel
-
--- Original overflow_add_enc_5, through actual dispatch.
-example : (wordArithToInstructions (.addOverflow 4 2 3 4 : WordArith (BitVec 64))).map
-    encodeInstructions = some [179, 79, 49, 0, 147, 207, 255, 255, 51, 2, 49, 0, 51, 194, 65, 0, 51, 242, 79, 0, 19, 82, 242, 3] := by decide +kernel
-
--- Original overflow_add_enc_6, through actual dispatch.
-example : (wordArithToInstructions (.addOverflow 2 2 3 4 : WordArith (BitVec 64))).map
-    encodeInstructions = some [179, 79, 49, 0, 147, 207, 255, 255, 51, 1, 49, 0, 51, 194, 33, 0, 51, 242, 79, 0, 19, 82, 242, 3] := by decide +kernel
-
-example : wordArithToInstructions (.addOverflow 5 2 5 4 : WordArith (BitVec 64)) = none := by rfl
-example : wordArithToInstructions (.addOverflow 5 2 3 31 : WordArith (BitVec 64)) = none := by rfl
-
--- Original overflow_sub_enc_0, through actual dispatch.
-example : (wordArithToInstructions (.subOverflow 5 2 3 4 : WordArith (BitVec 64))).map
-    encodeInstructions = some [179, 79, 49, 0, 179, 2, 49, 64, 51, 194, 81, 0, 19, 66, 242, 255, 51, 242, 79, 0, 19, 82, 242, 3] := by decide +kernel
-
--- Original overflow_sub_enc_3, through actual dispatch.
-example : (wordArithToInstructions (.subOverflow 30 29 28 27 : WordArith (BitVec 64))).map
-    encodeInstructions = some [179, 207, 206, 1, 51, 143, 206, 65, 179, 77, 238, 1, 147, 205, 253, 255, 179, 253, 191, 1, 147, 221, 253, 3] := by decide +kernel
-
--- Original overflow_sub_enc_5, through actual dispatch.
-example : (wordArithToInstructions (.subOverflow 4 2 3 4 : WordArith (BitVec 64))).map
-    encodeInstructions = some [179, 79, 49, 0, 51, 2, 49, 64, 51, 194, 65, 0, 19, 66, 242, 255, 51, 242, 79, 0, 19, 82, 242, 3] := by decide +kernel
-
--- Original overflow_sub_enc_6, through actual dispatch.
-example : (wordArithToInstructions (.subOverflow 2 2 3 4 : WordArith (BitVec 64))).map
-    encodeInstructions = some [179, 79, 49, 0, 51, 1, 49, 64, 51, 194, 33, 0, 19, 66, 242, 255, 51, 242, 79, 0, 19, 82, 242, 3] := by decide +kernel
-
-example : wordArithToInstructions (.subOverflow 5 2 5 4 : WordArith (BitVec 64)) = none := by rfl
-example : wordArithToInstructions (.subOverflow 5 2 3 31 : WordArith (BitVec 64)) = none := by rfl
-
 end Flapjack.Test.WordOverflowProduction

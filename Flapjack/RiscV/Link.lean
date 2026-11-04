@@ -11,111 +11,6 @@ RISC-V sequence.
 
 namespace Flapjack.RiscV
 
-def linkRiscVFunctionsAt [NeZero width] (start : Word width) (offset : Nat) :
-    List (Nat × List Nat × Option (List (Instruction width) × List (Fin 32))) →
-      Option (List (Nat × Word width × List Nat × List (Instruction width) × List (Fin 32)))
-  | [] => some []
-  | (label, parameters, some (code, returns)) :: functions => do
-      let rest ← linkRiscVFunctionsAt start (offset + 4 * code.length) functions
-      pure ((label, start + BitVec.ofNat width offset, parameters, code, returns) :: rest)
-  | _ => none
-
-def linkRiscVFunctions [NeZero width]
-    (start : Word width)
-    (functions : List (Nat × List Nat × Option (List (Instruction width) × List (Fin 32)))) :=
-  linkRiscVFunctionsAt start 0 functions
-
-def linkRiscVCodeLength [NeZero width] :
-    List (Nat × List Nat × Option (List (Instruction width) × List (Fin 32))) → Nat
-  | [] => 0
-  | (_, _, some (code, _)) :: functions => code.length + linkRiscVCodeLength functions
-  | _ :: functions => linkRiscVCodeLength functions
-
-theorem linkRiscVFunctionsAt_append_resolved [NeZero width]
-    (start : Word width) (offset : Nat)
-    (functionsPrefix suffix :
-      List (Nat × List Nat × Option (List (Instruction width) × List (Fin 32))))
-    (hresolved : ∀ item ∈ functionsPrefix, ∃ code returns, item.2.2 = some (code, returns)) :
-    linkRiscVFunctionsAt start offset (functionsPrefix ++ suffix) = (do
-      let left ← linkRiscVFunctionsAt start offset functionsPrefix
-      let right ← linkRiscVFunctionsAt
-        start (offset + 4 * linkRiscVCodeLength functionsPrefix) suffix
-      pure (left ++ right)) := by
-  induction functionsPrefix generalizing offset with
-  | nil => simp [linkRiscVCodeLength, linkRiscVFunctionsAt]
-  | cons item functionsPrefix ih =>
-      rcases item with ⟨label, parameters, artifact⟩
-      cases artifact with
-      | none =>
-          have h := hresolved (label, parameters, none) (by simp)
-          simp at h
-      | some artifact =>
-          rcases artifact with ⟨code, returns⟩
-          have htail : ∀ item ∈ functionsPrefix, ∃ code returns, item.2.2 = some (code, returns) := by
-            intro item hitem
-            exact hresolved item (by simp [hitem])
-          simp only [linkRiscVFunctionsAt, linkRiscVCodeLength, List.cons_append]
-          rw [ih (offset := offset + 4 * code.length) htail]
-          generalize hlinked :
-            linkRiscVFunctionsAt start (offset + 4 * code.length) functionsPrefix = linkedPrefix
-          cases linkedPrefix <;> simp [Nat.add_assoc, Nat.mul_add]
-          generalize hrest :
-            linkRiscVFunctionsAt
-              start (offset + (4 * code.length + 4 * linkRiscVCodeLength functionsPrefix))
-              suffix = linkedSuffix
-          cases linkedSuffix <;> simp
-
-def lookupLinkedEntry [NeZero width]
-    (label : Nat)
-    (functions : List (Nat × Word width × List Nat × List (Instruction width) × List (Fin 32))) :
-    Option (Word width) :=
-  match functions with
-  | [] => none
-  | (candidate, entry, _, _, _) :: functions =>
-      if label == candidate then some entry else lookupLinkedEntry label functions
-
-theorem lookupLinkedEntry_linkRiscVFunctionsAt_head [NeZero width]
-    (start : Word width) (offset label : Nat) (parameters : List Nat)
-    (code : List (Instruction width)) (returns : List (Fin 32))
-    (functions :
-      List (Nat × List Nat × Option (List (Instruction width) × List (Fin 32))))
-    (linked :
-      List (Nat × Word width × List Nat × List (Instruction width) × List (Fin 32)))
-    (hrest : linkRiscVFunctionsAt start (offset + 4 * code.length) functions =
-      some linked) :
-    (linkRiscVFunctionsAt start offset
-      ((label, parameters, some (code, returns)) :: functions)).bind
-        (lookupLinkedEntry label) =
-      some (start + BitVec.ofNat width offset) := by
-  simp [linkRiscVFunctionsAt, hrest, lookupLinkedEntry]
-
-def wordCallToRiscVLabel [NeZero width]
-    (functions : List (Nat × Word width × List Nat × List (Instruction width) × List (Fin 32)))
-    (label : Nat) (parameters returns arguments destinations : List Nat) :
-    Option (List (Instruction width)) := do
-  let entry ← lookupLinkedEntry label functions
-  wordCallToRiscV entry parameters returns arguments destinations
-
-theorem wordCallToRiscVLabel_linkRiscVFunctionsAt_head [NeZero width]
-    (start : Word width) (offset label : Nat) (functionParameters : List Nat)
-    (code : List (Instruction width)) (functionReturns : List (Fin 32))
-    (functions :
-      List (Nat × List Nat × Option (List (Instruction width) × List (Fin 32))))
-    (linked :
-      List (Nat × Word width × List Nat × List (Instruction width) × List (Fin 32)))
-    (callParameters callReturns arguments destinations : List Nat)
-    (hrest : linkRiscVFunctionsAt start (offset + 4 * code.length) functions =
-      some linked) :
-    (linkRiscVFunctionsAt start offset
-      ((label, functionParameters, some (code, functionReturns)) :: functions)).bind
-        (fun linked =>
-          wordCallToRiscVLabel linked label callParameters callReturns arguments destinations) =
-      wordCallToRiscVLabel
-        ((label, start + BitVec.ofNat width offset, functionParameters, code,
-          functionReturns) :: linked)
-        label callParameters callReturns arguments destinations := by
-  simp [linkRiscVFunctionsAt, hrest, wordCallToRiscVLabel, lookupLinkedEntry]
-
 def wordFunctionReturnNames [NeZero width] :
     WordProg (Word width) → Option (List Nat)
   | .return _ values => some values
@@ -169,48 +64,9 @@ def wordFunctionReturnNamesWithCalls [NeZero width]
   | _ => none
 termination_by program => sizeOf program
 
-def compileLinkedWordFunction [NeZero width]
-    (context : WordCallContext width)
-    (function : Nat × List Nat × WordProg (Word width)) :
-    Option (Nat × List Nat × Option (List (Instruction width) × List (Fin 32))) := do
-  let (label, parameters, body) := function
-  let (code, returns) ← wordFunctionToRiscVWithCallsAndLoops context body
-  pure (label, parameters, some (code ++ [.jalr 0 1 0], returns))
-
-theorem compileLinkedWordFunction_shape [NeZero width]
-    (context : WordCallContext width)
-    (label : Nat) (parameters : List Nat) (body : WordProg (Word width))
-    (code : List (Instruction width)) (returns : List (Fin 32))
-    (hcode : wordFunctionToRiscVWithCallsAndLoops context body = some (code, returns)) :
-    compileLinkedWordFunction context (label, parameters, body) =
-      some (label, parameters, some (code ++ [.jalr 0 1 0], returns)) := by
-  simp [compileLinkedWordFunction, hcode]
-
 /-! Carry the compiler witness through the first linker cell.  This is the
     boundary used by correctness clients that need the actual entry address,
     rather than only the instruction list returned by the selector. -/
-theorem compileLinkedWordFunction_linkRiscVFunctionsAt_head [NeZero width]
-    (context : WordCallContext width)
-    (start : Word width) (offset label : Nat) (parameters : List Nat)
-    (body : WordProg (Word width)) (code : List (Instruction width))
-    (returns : List (Fin 32))
-    (functions : List (Nat × List Nat × Option
-      (List (Instruction width) × List (Fin 32))))
-    (linked : List (Nat × Word width × List Nat ×
-      List (Instruction width) × List (Fin 32)))
-    (hcode : wordFunctionToRiscVWithCallsAndLoops context body =
-      some (code, returns))
-    (hrest : linkRiscVFunctionsAt start
-      (offset + 4 * (code.length + 1)) functions = some linked) :
-    compileLinkedWordFunction context (label, parameters, body) =
-        some (label, parameters, some (code ++ [.jalr 0 1 0], returns)) ∧
-      linkRiscVFunctionsAt start offset
-        ((label, parameters, some (code ++ [.jalr 0 1 0], returns)) :: functions) =
-        some ((label, start + BitVec.ofNat width offset, parameters,
-          code ++ [.jalr 0 1 0], returns) :: linked) := by
-  constructor
-  · exact compileLinkedWordFunction_shape context label parameters body code returns hcode
-  · simp [linkRiscVFunctionsAt, hrest]
 
 def wordFunctionTargetSignaturesAux [NeZero width]
     (allFunctions : List (Nat × List Nat × WordProg (Word width))) :
@@ -236,107 +92,15 @@ def wordFunctionTargetSignatures [NeZero width] :
       let rest ← wordFunctionTargetSignatures functions
       pure ((label, 0, parameters, returns) :: rest)
 
-def linkWordFunctions [NeZero width]
-    (start : Word width)
-    (functions : List (Nat × List Nat × WordProg (Word width))) := do
-  let signatures ← wordFunctionTargetSignaturesWithCalls functions
-  let provisionalContext : WordCallContext width := { targets := signatures }
-  let provisional ← functions.mapM (compileLinkedWordFunction provisionalContext)
-  let linked :
-      List (Nat × Word width × List Nat × List (Instruction width) × List (Fin 32)) ←
-    linkRiscVFunctions start provisional
-  let targets : List (Nat × Word width × List Nat × List Nat) :=
-    linked.map (fun (item :
-        Nat × Word width × List Nat × List (Instruction width) × List (Fin 32)) =>
-      let (label, entry, parameters, _code, returns) := item
-      (label, entry, parameters, List.map (fun register : Fin 32 => register.val) returns))
-  let context : WordCallContext width := { targets := targets }
-  let actual ← functions.mapM (compileLinkedWordFunction context)
-  linkRiscVFunctions start actual
-
 /-!
 Linking for the FFI-aware selector mirrors the ordinary call-aware linker but
 retains the service table throughout both provisional and final compilation.
 This keeps function entry addresses stable while allowing an FFI operation in
 any supported straight-line or loop body.
 -/
-def compileLinkedWordFunctionWithFfi [NeZero width]
-    (context : WordCallFfiContext width)
-    (function : Nat × List Nat × WordProg (Word width)) :
-    Option (Nat × List Nat × Option (List (Instruction width) × List (Fin 32))) := do
-  let (label, parameters, body) := function
-  let (code, returns) ← wordFunctionToRiscVWithCallsAndFfiAndLoops context body
-  pure (label, parameters, some (code ++ [.jalr 0 1 0], returns))
-
-theorem compileLinkedWordFunctionWithFfi_shape [NeZero width]
-    (context : WordCallFfiContext width)
-    (label : Nat) (parameters : List Nat) (body : WordProg (Word width))
-    (code : List (Instruction width)) (returns : List (Fin 32))
-    (hcode : wordFunctionToRiscVWithCallsAndFfiAndLoops context body =
-      some (code, returns)) :
-    compileLinkedWordFunctionWithFfi context (label, parameters, body) =
-      some (label, parameters, some (code ++ [.jalr 0 1 0], returns)) := by
-  simp [compileLinkedWordFunctionWithFfi, hcode]
-
-theorem compileLinkedWordFunctionWithFfi_linkRiscVFunctionsAt_head
-    [NeZero width]
-    (context : WordCallFfiContext width)
-    (start : Word width) (offset label : Nat) (parameters : List Nat)
-    (body : WordProg (Word width)) (code : List (Instruction width))
-    (returns : List (Fin 32))
-    (functions : List (Nat × List Nat × Option
-      (List (Instruction width) × List (Fin 32))))
-    (linked : List (Nat × Word width × List Nat ×
-      List (Instruction width) × List (Fin 32)))
-    (hcode : wordFunctionToRiscVWithCallsAndFfiAndLoops context body =
-      some (code, returns))
-    (hrest : linkRiscVFunctionsAt start
-      (offset + 4 * (code.length + 1)) functions = some linked) :
-    compileLinkedWordFunctionWithFfi context (label, parameters, body) =
-        some (label, parameters, some (code ++ [.jalr 0 1 0], returns)) ∧
-      linkRiscVFunctionsAt start offset
-        ((label, parameters, some (code ++ [.jalr 0 1 0], returns)) :: functions) =
-        some ((label, start + BitVec.ofNat width offset, parameters,
-          code ++ [.jalr 0 1 0], returns) :: linked) := by
-  constructor
-  · exact compileLinkedWordFunctionWithFfi_shape context label parameters body code returns hcode
-  · simp [linkRiscVFunctionsAt, hrest]
-
-def linkWordFunctionsWithFfi [NeZero width]
-    (start : Word width) (services : List (FunName × Nat))
-    (functions : List (Nat × List Nat × WordProg (Word width))) := do
-  let signatures ← wordFunctionTargetSignaturesWithCalls functions
-  let provisionalContext : WordCallFfiContext width :=
-    { targets := signatures, services := services }
-  let provisional ← functions.mapM (compileLinkedWordFunctionWithFfi provisionalContext)
-  let linked :
-      List (Nat × Word width × List Nat × List (Instruction width) × List (Fin 32)) ←
-    linkRiscVFunctions start provisional
-  let targets : List (Nat × Word width × List Nat × List Nat) :=
-    linked.map (fun (item :
-        Nat × Word width × List Nat × List (Instruction width) × List (Fin 32)) =>
-      let (label, entry, parameters, _code, returns) := item
-      (label, entry, parameters, List.map (fun register : Fin 32 => register.val) returns))
-  let context : WordCallFfiContext width :=
-    { targets := targets, services := services }
-  let actual ← functions.mapM (compileLinkedWordFunctionWithFfi context)
-  linkRiscVFunctions start actual
-
-theorem linkWordFunctionsWithFfi_empty [NeZero width]
-    (start : Word width) (services : List (FunName × Nat)) :
-    linkWordFunctionsWithFfi start services [] = some [] := by
-  rfl
 
 theorem wordFunctionReturnNames_return [NeZero width] (values : List Nat) :
     wordFunctionReturnNames (.return 0 values : WordProg (Word width)) = some values := by
   simp [wordFunctionReturnNames]
-
-theorem linkWordFunctions_empty [NeZero width] (start : Word width) :
-    linkWordFunctions start [] = some [] := by
-  rfl
-
-theorem linkRiscVFunctions_empty [NeZero width] (start : Word width) :
-    linkRiscVFunctions start [] = some [] := by
-  rfl
 
 end Flapjack.RiscV

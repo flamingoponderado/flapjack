@@ -26,7 +26,6 @@ import Flapjack.RiscV.WordFuseConditions
 import Flapjack.RiscV.WordInstSelect
 import Flapjack.RiscV.WordUnreach
 import Flapjack.RiscV.Backend
-import Flapjack.RiscV.Loops
 import Flapjack.RiscV.Link
 import Flapjack.RiscV.Lab
 import Flapjack.Display

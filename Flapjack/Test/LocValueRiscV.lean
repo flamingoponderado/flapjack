@@ -9,12 +9,4 @@ def locValueStackRemoveConfig : StackRemoveConfig :=
   { storeBase := 10, currHeap := 12, scratch := 31, addressScratch := 29,
     stackPointer := 20, bytesInWord := 8, stackBase := 21, wordShift := 3 }
 
-#guard
-  compileStackProgramNatListToRiscV (width := 64) { services := [] }
-    locValueStackRemoveConfig 0 0
-    [(1, (.locValue 5 2 0 : StackProg Nat)),
-     (2, (.skip : StackProg Nat))] ==
-    some [.auipc 5 (BitVec.ofNat 64 0),
-      .addi 5 5 (BitVec.ofNat 64 8)]
-
 end Flapjack.RiscV

@@ -14,20 +14,6 @@ example : project 64 (.shift .ror 9 10 11) =
 example : project 64 .skip = none := rfl
 example : project 64 (.seq (.const 9 1) (.arith .add 9 9 10)) = none := rfl
 
-example (d v : Nat) (h : v < 2 ^ 64) :
-    labCompilePlain (width := 64) (.const d v) =
-      labCompilePlain (.word (.const d (BitVec.ofNat 64 v))) := const_emission d v h
-example (op : BinOp) (d l r : Nat) :
-    labCompilePlain (width := 64) (.arith op d l r) =
-      labCompilePlain (.word (.arith (.binOp op d l (.reg r)))) := arith_emission op d l r
-example (op : Shift) (d l r : Nat) :
-    labCompilePlain (width := 64) (.shift op d l r) =
-      labCompilePlain (.word (.arith (.shift op d l (.reg r)))) := shift_emission op d l r
-
-example : labCompilePlain (width := 64) (.arith .add 32 1 2) = none := rfl
-example : labCompilePlain (width := 64) (.shift .ror 31 1 2) = none := rfl
-example : labCompilePlain (width := 64) (.shift .ror 1 31 2) = none := rfl
-example : labCompilePlain (width := 64) (.shift .ror 1 2 31) = none := rfl
 example : labLineInstructionCount (width := 64) (.asm (.shift .ror 1 2 3) [] 0) = 5 := rfl
 example (v : Nat) (h : v < 2 ^ 64) :
     labLineInstructionCount (width := 64) (.asm (.const 9 v) [] 0) =

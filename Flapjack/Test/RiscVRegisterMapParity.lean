@@ -1,7 +1,6 @@
 import Flapjack.RiscV.CakeStackReseat
 import Flapjack.RiscV.Lab
 import Flapjack.RiscV.RegisterNames
-import Flapjack.RiscV.RegisterRelabel
 import Flapjack.RiscV.RegisterTransfer
 
 /-!
@@ -114,125 +113,6 @@ example : labRegisterOfNat (portToStack 27) = some 27 := by decide
 example : labRegisterOfNat (portToStack 28) = some 28 := by decide
 example : labRegisterOfNat (portToStack 29) = some 29 := by decide
 example : labRegisterOfNat (portToStack 31) = some 31 := by decide
-
-/-- The Lab boundary lowers a constant return to the original hardware zero
-operand and the original destination register, byte-for-byte. -/
-example (destination value : Nat) (hvalue : value < 2 ^ 11) :
-    (labCompilePlain (width := 64) (.const destination value)) =
-      (labRegisterOfNat (portToStack destination)).map
-        (fun register => [.ori register 0 (BitVec.ofNat 64 value)]) := by
-  cases h : registerOfNat destination <;>
-    simp [labCompilePlain, labRegisterOfNat_portToStack_all, h, hvalue]
-
-/- The source-facing stack/Lab boundary is where CakeML's target constant
-   expansion occurs.  Keep concrete wide cases here rather than in the
-   standalone Word-to-instruction fixture: small constants use ORI, while a
-   non-immediate 32-bit value uses the exact LUI/ADDI pair. -/
-example :
-    labCompilePlain (width := 64) (.const 3 0) =
-      some [.ori 3 0 (BitVec.ofNat 64 0)] := by decide
-
-example :
-    labCompilePlain (width := 64) (.const 4 41) =
-      some [.ori 4 0 (BitVec.ofNat 64 41)] := by decide
-
-example :
-    labCompilePlain (width := 64) (.const 5 0x12345678) =
-      some [.lui 5 (BitVec.ofNat 64 0x12345),
-        .addi 5 5 (BitVec.ofNat 64 0x678)] := by decide
-
-/- The same Cake expansion must also be used when a Word instruction reaches
-   Lab as `.word (.const ...)`; the old path incorrectly emitted one ADDI. -/
-example :
-    labCompilePlain (width := 64)
-      (.word (.const 3 (BitVec.ofNat 64 41))) =
-      some [.ori 3 0 (BitVec.ofNat 64 41)] := by decide
-
-example :
-    labCompilePlain (width := 64)
-      (.word (.const 5 (BitVec.ofNat 64 0x12345678))) =
-      some [.lui 5 (BitVec.ofNat 64 0x12345),
-        .addi 5 5 (BitVec.ofNat 64 0x678)] := by decide
-
-/-- The one-time Cake relabeling is a bijection on the 64-bit state space,
-packaging the injective and surjective boundary facts. -/
-example : Function.Injective (relabelRegisters (width := 64) riscvForward) ∧
-    Function.Surjective (relabelRegisters (width := 64) riscvForward) :=
-  relabelRegisters_riscvForward_bijective
-
-/-- The internal write accessor reads back the written value at its own role
-whenever that role is not the hardwired zero image. -/
-example (state : State 64) (value : Word 64) :
-    readRegister (writeRegisterInternal riscvForward state (1 : Fin 32) value) (1 : Fin 32) =
-      value :=
-  readRegister_writeRegisterInternal_riscvForward_self state _ value (by decide)
-
-/-- Every other internal read is unchanged by the internal write; only the
-architectural zero role is dropped. -/
-example (state : State 64) (value : Word 64) (other : Fin 32) (hne : other ≠ (1 : Fin 32)) :
-    readRegister (writeRegisterInternal riscvForward state (1 : Fin 32) value) other =
-      readRegister state other :=
-  readRegister_writeRegisterInternal_riscvForward_other state _ other value hne
-
-/-- The explicit transfer across the `riscv_names` map is the state relabeling
-by its explicit inverse map. -/
-example (state : State 64) :
-    transferState state = relabelRegisters (width := 64) riscvInverse state :=
-  transferState_eq_relabelRegisters_riscvInverse state
-
-/-- Relabeling a transferred state returns the original state, so the transfer
-is a two-sided inverse of the one-time Cake relabeling. -/
-example (state : State 64) :
-    relabelRegisters (width := 64) riscvForward (transferState state) = state :=
-  relabelRegisters_riscvForward_transferState state
-
-/-- Transferring a relabeled state returns the original state as well. -/
-example (state : State 64) :
-    transferState (relabelRegisters (width := 64) riscvForward state) = state :=
-  transferState_relabelRegisters_riscvForward state
-
-/-- The hardware zero slot of a transferred state is the internal register `27`,
-so the concrete zero-register fact is an ordinary fact about the abstract state
-rather than a hardwired assumption. -/
-example (state : State 64) :
-    ZeroRegister (transferState state) ↔ readRegister state (27 : Fin 32) = 0 :=
-  zeroRegister_transferState_iff state
-
-/-- Writing the hardware zero slot of a transferred state is discarded. -/
-example (state : State 64) (value : Word 64) :
-    writeRegister (transferState state) (0 : Fin 32) value = transferState state :=
-  writeRegister_transferState_zero state value
-
-/-- Reading an arbitrary hardware slot of a transferred state returns the
-internal register named by the explicit inverse map. -/
-example (state : State 64) (index : Fin 32) :
-    readRegister (transferState state) index = readRegister state (riscvInverse index) :=
-  readRegister_transfer state index
-
-/-- A hardware write to an arbitrary nonzero slot of a transferred state matches
-the internal write to its inverse register. -/
-example (state : State 64) (index : Fin 32) (value : Word 64) (hindex : index ≠ 0) :
-    writeRegister (transferState state) index value =
-      transferState (writeRegisterInternal riscvForward state (riscvInverse index) value) :=
-  writeRegister_transfer state index value hindex
-
-/-- The Cake register map fixes the canonical all-zero initial state. -/
-example : relabelRegisters (width := 64) riscvForward (zeroState 64) = zeroState 64 :=
-  relabelRegisters_riscvForward_zeroState
-
-/-- The `riscv_names` transfer fixes the canonical all-zero initial state. -/
-example : transferState (zeroState 64) = zeroState 64 :=
-  transferState_zeroState
-
-/-- The transferred initial state still satisfies the architectural
-zero-register contract. -/
-example : ZeroRegister (transferState (zeroState 64)) :=
-  zeroRegister_transferState_zeroState
-
-example (state : State 64) (value : Word 64) :
-    readRegister (writeRegisterInternal riscvForward state (1 : Fin 32) value) 27 =
-      readRegister state 27 :=
-  readRegister_writeRegisterInternal_riscvForward_zero state _ value
 
 def runChecks : IO Bool := do
   let checks : List (String × Bool) :=

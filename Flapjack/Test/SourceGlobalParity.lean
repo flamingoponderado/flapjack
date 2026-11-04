@@ -321,16 +321,6 @@ def cakeWideConstantsMain : List (BitVec 8) :=
     BitVec.ofNat 8 0x85, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x67,
     BitVec.ofNat 8 0x80, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x00 ]
 
-def wideConstantsExact : Bool :=
-  match compileFlapjackRiscVSourceRuntimeImageChecked (width := 64) .rv64i
-      (BitVec.ofNat 64 8) (BitVec.ofInt 64) [] checkedPipelineRemoveConfig
-      "main" wideConstantsSource with
-  | .ok image =>
-      match image.sections.find? (fun encodedSection => encodedSection.label == Flapjack.firstLoopName + 1) with
-      | some encodedSection => encodedSection.bytes == cakeWideConstantsMain
-      | none => false
-  | .error _ => false
-
 /-- CakeML `cml_generated_main` for `globalSource` (offset 1000, 28 bytes). -/
 def cakeGlobalGeneratedMain : List (BitVec 8) :=
   [ BitVec.ofNat 8 0x03, BitVec.ofNat 8 0xb5, BitVec.ofNat 8 0x8c,
@@ -632,185 +622,9 @@ def cakeFfiRegisterC : List (BitVec 8) :=
 /-- CakeML `cml_main` length for `ffiRegisterSource` (208 bytes). -/
 def cakeFfiRegisterMainLength : Nat := 208
 
-/-- Run a source program through the checked RV64I byte entry point. -/
-def compileSourceBytes (source : String) : Option (List (BitVec 8)) :=
-  match compileFlapjackRiscVSourceBytesChecked (width := 64) .rv64i
-      (BitVec.ofNat 64 8) (BitVec.ofInt 64) [] checkedPipelineRemoveConfig
-      "main" source with
-  | .ok artifact => some artifact.bytes
-  | .error _ => none
-
-/-- Run a source program through the checked runtime-image entry point. -/
-def runtimeImageAccepted (source : String) : Bool :=
-  match compileFlapjackRiscVSourceRuntimeImageChecked (width := 64) .rv64i
-      (BitVec.ofNat 64 8) (BitVec.ofInt 64) [] checkedPipelineRemoveConfig
-      "main" source with
-  | .ok image => image.sections.length > 0 && image.bitmaps.data.length > 0
-  | .error _ => false
-
-/-- Run a source program through the checked linked-image entry point. Every
-encoded section must be non-empty and a whole number of RISC-V words. -/
-def imageAccepted (source : String) : Bool :=
-  match compileFlapjackRiscVSourceImageChecked (width := 64) .rv64i
-      (BitVec.ofNat 64 8) (BitVec.ofInt 64) [] checkedPipelineRemoveConfig
-      "main" source with
-  | .ok image =>
-      image.sections.length > 0 &&
-        image.sections.all (fun encoded =>
-          encoded.bytes.length > 0 && encoded.bytes.length % 4 == 0)
-  | .error _ => false
-
-/-- Runtime-image entry point must expose at least one encoded section. -/
-def runtimeImageSectionsAccepted (source : String) : Bool :=
-  match compileFlapjackRiscVSourceRuntimeImageChecked (width := 64) .rv64i
-      (BitVec.ofNat 64 8) (BitVec.ofInt 64) [] checkedPipelineRemoveConfig
-      "main" source with
-  | .ok image => image.sections.length > 0
-  | .error _ => false
-
-/-- The global fixture must be accepted by the byte entry point. -/
-def globalBytesAccepted : Bool :=
-  match compileSourceBytes globalSource with
-  | some bytes => bytes.length > 0
-  | none => false
-
-/-- The structured-shape global variant must also be accepted. -/
-def nestedGlobalBytesAccepted : Bool :=
-  match compileSourceBytes nestedGlobalSource with
-  | some bytes => bytes.length > 0
-  | none => false
-
-/-- The global initializer must reach the artifact, making it longer than the
-global-free baseline. -/
-def initializerChangesArtifact : Bool :=
-  match compileSourceBytes globalSource, compileSourceBytes plainSource with
-  | some global, some plain => global.length > plain.length
-  | _, _ => false
-
-/-- The two-global binary-operator fixture must be accepted by the byte entry
-point; this is the regression for the recursive expression-lowering failure. -/
-def multiGlobalBytesAccepted : Bool :=
-  match compileSourceBytes multiGlobalSource with
-  | some bytes => bytes.length > 0
-  | none => false
-
-/-- The three-global n-ary addition fixture must be accepted; the flat `Add`
-node previously fell through the arity-2 match and failed lowering. -/
-def naryGlobalBytesAccepted : Bool :=
-  match compileSourceBytes naryGlobalSource with
-  | some bytes => bytes.length > 0
-  | none => false
-
-/-- The multiplication fixture must be accepted; the low-word `LongMul` alias
-previously failed the special-location contract. -/
-def longMulGlobalBytesAccepted : Bool :=
-  match compileSourceBytes longMulGlobalSource with
-  | some bytes => bytes.length > 0
-  | none => false
-
-/-- The named-struct fixture must be accepted; the static checker previously
-left named shapes with an empty field list and rejected every field access. -/
-def namedStructBytesAccepted : Bool :=
-  match compileSourceBytes namedStructSource with
-  | some bytes => bytes.length > 0
-  | none => false
-
-/-- The shared-memory computed-address fixture must be accepted; the shared
-lowering previously required an atomic address. -/
-def sharedMemoryBytesAccepted : Bool :=
-  match compileSourceBytes sharedMemorySource with
-  | some bytes => bytes.length > 0
-  | none => false
-
-/-- The shadowed local declaration fixture must be accepted; the static checker
-previously treated the second declaration in a body as a hard scope error. -/
-def shadowingBytesAccepted : Bool :=
-  match compileSourceBytes shadowingSource with
-  | some bytes => bytes.length > 0
-  | none => false
-
-/-- The global shared-memory load destination fixture must be accepted; the
-static checker previously looked only at locals. -/
-def globalSharedLoadBytesAccepted : Bool :=
-  match compileSourceBytes globalSharedLoadSource with
-  | some bytes => bytes.length > 0
-  | none => false
-
-/-- The non-word shared-memory load destination fixture must be rejected; the
-reference compiler rejects it and the static checker now matches. -/
-def nonWordSharedLoadRejected : Bool :=
-  (compileSourceBytes nonWordSharedLoadSource).isNone
-
-/-- The rotate-right fixture must be accepted; the word-to-stack pass previously
-left a `.ror` result in the reserved scratch register `31`. -/
-def rotateBytesAccepted : Bool :=
-  match compileSourceBytes rotateSource with
-  | some bytes => bytes.length > 0
-  | none => false
-
-/-- The large-shape local fixture must be accepted; the identity source path
-previously failed once a local needed register 29/31 or above. -/
-def largeShapeBytesAccepted : Bool :=
-  match compileSourceBytes largeShapeSource with
-  | some bytes => bytes.length > 0
-  | none => false
-
-/-- The register-pressure fixture must be accepted: the clash-tree analysis now
-matches CakeML's Delta/Set/Branch/Seq interference families, so allocation
-succeeds even with many simultaneously-live locals. -/
-def pressureBytesAccepted : Bool :=
-  match compileSourceBytes pressureSource with
-  | some bytes => bytes.length > 0
-  | none => false
-
-/-- The `LongMul` register-pressure fixture must be accepted: the allocator
-    records the backend operand-distinctness conflicts so the high product
-    destination cannot alias an operand. -/
-def longMulPressureBytesAccepted : Bool :=
-  match compileSourceBytes longMulPressureSource with
-  | some bytes => bytes.length > 0
-  | none => false
-
-/-- The condition register-pressure fixture must be accepted: a spilled
-    condition compared against a nonzero immediate no longer forces scratch
-    register 31 to hold both the condition and the immediate. -/
-def conditionPressureBytesAccepted : Bool :=
-  match compileSourceBytes conditionPressureSource with
-  | some bytes => bytes.length > 0
-  | none => false
-
-/-- The structured-store fixture must be accepted: the original `st` flattens
-its value, so a struct-valued local is a legal store source. -/
-def structStoreBytesAccepted : Bool :=
-  match compileSourceBytes structStoreSource with
-  | some bytes => bytes.length > 0
-  | none => false
-
-/-- The FFI fixture must be accepted: an original-Pancake `@foo` call resolves
-to a registered service id once the entry point discovers the name. -/
-def ffiCallBytesAccepted : Bool :=
-  match compileSourceBytes ffiCallSource with
-  | some bytes => bytes.length > 0
-  | none => false
-
 /-! `ffiCallSource` is also the minimized differential-fuzzer regression in
 `OriginalPancake/ffi_runtime_image.pnk`: CakeML accepts it, while the
 source-to-runtime-image path must discover `foo` before linking the FFI call. -/
-def ffiCallRuntimeImageAccepted : Bool :=
-  runtimeImageAccepted ffiCallSource
-
-/-- The linked `--sections` source entry point must discover the same FFI
-service before constructing the full-SSA image. -/
-def ffiCallLinkedImageAccepted : Bool :=
-  imageAccepted ffiCallSource
-
-/-- The FFI fixture whose arguments sit in the ABI registers must be accepted:
-the word-to-stack pass copies them with a parallel move. -/
-def ffiRegisterBytesAccepted : Bool :=
-  match compileSourceBytes ffiRegisterSource with
-  | some bytes => bytes.length > 0
-  | none => false
-
 /-- A source program audited against original Pancake RISC-V coverage at the
 combined head: `cakeMainLength` is the byte length of the `cml_main_7` section
 produced by `cake --pancake --target=riscv`, and `source` must be accepted by
@@ -877,21 +691,6 @@ def auditedSources : List AuditedSource :=
       source := "var 1 x = 1+1;\nfun 1 main() { x = x + 1; return x; }\n" }
   ]
 
-/-- Every audited source is accepted by the Flapjack source bytes entrypoint and
-has a recorded original-compiler `cml_main_7` length. -/
-def auditedAccepted : Bool :=
-  auditedSources.all (fun entry =>
-    entry.cakeMainLength > 0 &&
-      match compileSourceBytes entry.source with
-      | some bytes => bytes.length > 0
-      | none => false)
-
-/-- Every audited source reaches all three checked source entry points: encoded
-bytes, the linked image, and the bitmap SimpleGC runtime image. -/
-def auditedEntrypointsAccepted : Bool :=
-  auditedSources.all (fun entry =>
-    imageAccepted entry.source && runtimeImageSectionsAccepted entry.source)
-
 /-- The pinned CakeML reference sections keep their original byte lengths. -/
 def cakeGoldenShape : Bool :=
   cakeGlobalGeneratedMain.length == 28 && cakeGlobalMain.length == 20 &&
@@ -919,32 +718,7 @@ def cakeGoldenShape : Bool :=
     cakeFfiRegisterGeneratedMain.length == 4 && cakeFfiRegisterC.length == 4 &&
     cakeFfiRegisterMainLength == 208
 
-#guard globalBytesAccepted
-#guard nestedGlobalBytesAccepted
-#guard multiGlobalBytesAccepted
-#guard naryGlobalBytesAccepted
-#guard longMulGlobalBytesAccepted
-#guard namedStructBytesAccepted
-#guard sharedMemoryBytesAccepted
-#guard shadowingBytesAccepted
-#guard globalSharedLoadBytesAccepted
-#guard nonWordSharedLoadRejected
-#guard rotateBytesAccepted
-#guard largeShapeBytesAccepted
-#guard pressureBytesAccepted
-#guard longMulPressureBytesAccepted
-#guard conditionPressureBytesAccepted
-#guard structStoreBytesAccepted
-#guard ffiCallBytesAccepted
-#guard ffiCallRuntimeImageAccepted
-#guard ffiCallLinkedImageAccepted
-#guard ffiRegisterBytesAccepted
-#guard initializerChangesArtifact
-#guard auditedAccepted
-#guard auditedEntrypointsAccepted
 #guard cakeGoldenShape
-#guard wideConstantsExact
-
 def checkBool (name : String) (condition : Bool) : IO Bool := do
   if condition then
     IO.println s!"PASS {name}"
@@ -952,60 +726,5 @@ def checkBool (name : String) (condition : Bool) : IO Bool := do
   else
     IO.println s!"FAIL {name}"
     pure false
-
-/-- Executable checks invoked from the `lake test` driver. -/
-def runChecks : IO Bool := do
-  let results ← [
-    checkBool "Pancake global source compiles (bytes)" globalBytesAccepted,
-    checkBool "Pancake structured global source compiles (bytes)"
-      nestedGlobalBytesAccepted,
-    checkBool "Pancake two-global source compiles (bytes)"
-      multiGlobalBytesAccepted,
-    checkBool "Pancake three-global n-ary source compiles (bytes)"
-      naryGlobalBytesAccepted,
-    checkBool "Pancake multiplication source compiles (bytes)"
-      longMulGlobalBytesAccepted,
-    checkBool "Pancake named-struct source compiles (bytes)"
-      namedStructBytesAccepted,
-    checkBool "Pancake shared-memory computed-address source compiles (bytes)"
-      sharedMemoryBytesAccepted,
-    checkBool "Pancake shadowed local declaration source compiles (bytes)"
-      shadowingBytesAccepted,
-    checkBool "Pancake global shared-memory load destination compiles (bytes)"
-      globalSharedLoadBytesAccepted,
-    checkBool "Pancake non-word shared-memory load destination rejected"
-      nonWordSharedLoadRejected,
-    checkBool "Pancake rotate-right source compiles (bytes)"
-      rotateBytesAccepted,
-    checkBool "Pancake large-shape local source compiles (bytes)"
-      largeShapeBytesAccepted,
-    checkBool "Pancake register-pressure source compiles (bytes)"
-      pressureBytesAccepted,
-    checkBool "Pancake LongMul register-pressure source compiles (bytes)"
-      longMulPressureBytesAccepted,
-    checkBool "Pancake condition register-pressure source compiles (bytes)"
-      conditionPressureBytesAccepted,
-    checkBool "Pancake struct-valued local store source compiles (bytes)"
-      structStoreBytesAccepted,
-    checkBool "Pancake four-argument FFI call source compiles (bytes)"
-      ffiCallBytesAccepted,
-    checkBool "Pancake four-argument FFI call reaches the runtime image"
-      ffiCallRuntimeImageAccepted,
-    checkBool "Pancake four-argument FFI call reaches the linked image"
-      ffiCallLinkedImageAccepted,
-    checkBool "Pancake FFI call with ABI-register sources compiles (bytes)"
-      ffiRegisterBytesAccepted,
-    checkBool "Pancake global source compiles (runtime image)"
-      (runtimeImageAccepted globalSource),
-    checkBool "Pancake global initializer changes artifact"
-      initializerChangesArtifact,
-    checkBool "Pancake audited source constructs compile (bytes)"
-      auditedAccepted,
-    checkBool "Pancake audited source constructs reach image and runtime image"
-      auditedEntrypointsAccepted,
-    checkBool "CakeML global golden sections pinned" cakeGoldenShape,
-    checkBool "CakeML wide-constant return section is exact" wideConstantsExact
-    ].mapM id
-  pure (results.all id)
 
 end Flapjack.Test.SourceGlobalParity

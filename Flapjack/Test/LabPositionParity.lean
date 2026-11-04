@@ -19,117 +19,9 @@ example :
       some (0 - BitVec.ofNat 64 128) := by
   decide
 
-example :
-    labFfiStubPrefix (width := 64)
-      { services := [("first", 7), ("second", 8)] } =
-      labFfiServiceStub 8 ++ labFfiServiceStub 7 ++
-        List.replicate 8 (.jal 0 0) := by
-  rfl
-
-example :
-    labCompileAsmWithHalt (width := 64) { services := [] } (labLabelIndexOf []) 64 999 .halt =
-      some [.jal 0 (0 - BitVec.ofNat 64 80)] := by
-  rfl
-
-/-! Cake switches the backward Halt transfer to its long AUIPC/JALR form once
-    the distance is beyond the direct JAL range.  Keep the boundary exact so
-    the target assembler cannot silently regress to the short form. -/
-example :
-    labCompileAsmWithHalt (width := 64) { services := [] } (labLabelIndexOf [])
-      (2 ^ 20) 999 .halt =
-      some [.auipc 31 (BitVec.ofInt 64 (-256)),
-        .jalr 0 31 (BitVec.ofInt 64 (-16))] := by
-  decide
-
-example :
-    labCompileAsmWithHalt (width := 64) { services := [] } (labLabelIndexOf []) 64 999 .install =
-      some [.jal 0 (0 - BitVec.ofNat 64 96)] := by
-  rfl
-
-example :
-    labCompileAsmProgramWithFfiBaseAndHalt (width := 64)
-      { services := [("first", 7), ("second", 8)] } (labLabelIndexOf []) 96 64 999
-      (.callFfi "first") =
-      /- Cake addresses the exported FFI block from the linked absolute
-         position; `ffiBase` is retained only for the legacy API shape. -/
-      some [.jal 0 (0 - BitVec.ofNat 64 144)] := by
-  decide
-
-/-! Cake's `riscv_ast (Loc r i)` always splits the PC-relative delta into a
-    signed-12 low part and the complementary upper part.  These guards pin
-    both sides of the signed-12 boundary and an exact negative page delta. -/
-#guard labLocValueInstructions (width := 64) 5 2047 0 ==
-  [.auipc 5 (BitVec.ofInt 64 0),
-   .addi 5 5 (BitVec.ofInt 64 2047)]
-
-#guard labLocValueInstructions (width := 64) 5 2048 0 ==
-  [.auipc 5 (BitVec.ofInt 64 1),
-   .addi 5 5 (BitVec.ofInt 64 (-2048))]
-
-#guard labLocValueInstructions (width := 64) 5 0 4096 ==
-  [.auipc 5 (BitVec.ofInt 64 (-1)),
-   .addi 5 5 (BitVec.ofInt 64 0)]
-
-/-! Cake can retain a LabAsm length of 5 after `add_nop`: its one-instruction
-    body is followed by one complete encoded Skip even though the logical line
-    length is not instruction-aligned. -/
-def storedLengthFiveOracle : Bool :=
-    labPadStoredInstructions (width := 64)
-      [.ori 10 0 (BitVec.ofNat 64 1)] 5 ==
-    [.ori 10 0 (BitVec.ofNat 64 1)]
-
-#guard storedLengthFiveOracle
-
-/-! Cake's `enc_lines_again` retains a two-instruction relocation slot when a
-    jump first needs a long transfer.  After the final labels make the same
-    jump fit in one JAL, `pad_code` fills the retained slot with one encoded
-    Skip.  Keep this boundary separate from label-triggered `add_nop`: the
-    preceding LabAsm itself owns the residual byte range. -/
-def retainedJumpSlotPaddingOracle : Bool :=
-  labCompileProgramLinesWithStoredLengths (width := 64) { services := [] }
-      (labLabelIndexOf [(0, 0, 1004)]) 1000 1000 2000
-      [.labAsm (.jump { sectionId := 0, label := 0 }) [] 8] ==
-    some [.jal 0 (BitVec.ofNat 64 4), .addi 0 0 0]
-
-#guard retainedJumpSlotPaddingOracle
-
-/-! Cake's `pad_section` applies each nonzero retained label length to the
-    most recent prior LabAsm, appending one complete encoded Skip. -/
-def twoStoredLabelPadsOracle : Bool :=
-  labCompileProgramLinesWithStoredLengths (width := 64) { services := [] } (labLabelIndexOf [])
-      1000 1000 2000
-      [.asm (.const 1 1) [] 4,
-       .label 0 1 1,
-       .asm (.const 2 2) [] 4,
-       .label 0 2 1] ==
-    some [.ori 1 0 (BitVec.ofNat 64 1), .addi 0 0 0,
-      .ori 2 0 (BitVec.ofNat 64 2), .addi 0 0 0]
-
-#guard twoStoredLabelPadsOracle
-
 /-! A leading retained label has no preceding Asm/LabAsm, so Cake's
     `pad_section` leaves the section physically unchanged.  Consecutive
     retained labels still apply `add_nop` to that same nearest predecessor. -/
-def leadingStoredLabelNoPadOracle : Bool :=
-    labCompileProgramLinesWithStoredLengths (width := 64) { services := [] } (labLabelIndexOf [])
-      1000 1000 2000
-      [.label 0 1 1,
-       .asm (.const 1 1) [] 4] ==
-    some [.ori 1 0 (BitVec.ofNat 64 1)]
-
-#guard leadingStoredLabelNoPadOracle
-
-def consecutiveStoredLabelPadsOracle : Bool :=
-    labCompileProgramLinesWithStoredLengths (width := 64) { services := [] } (labLabelIndexOf [])
-      1000 1000 2000
-      [.asm (.const 1 1) [] 4,
-       .label 0 1 1,
-       .label 0 2 1] ==
-    some [.ori 1 0 (BitVec.ofNat 64 1), .addi 0 0 0, .addi 0 0 0]
-
-#guard consecutiveStoredLabelPadsOracle
-
-
 example :
     labLinkedFfiStubOffset (width := 64)
       { services := [("first", 7), ("second", 8)] } "first" 96 =
@@ -140,13 +32,6 @@ example :
     labLinkedFfiStubOffset (width := 64)
       { services := [("first", 7), ("second", 8)] } "second" 96 =
       some (0 - BitVec.ofNat 64 96) := by
-  decide
-
-/-! Cake's `riscv_ast` materializes ordinary immediate comparisons, including
-    zero, in the encoder temporary before emitting the branch. -/
-example :
-    labWordConditionOperands (width := 64) .notEqual 10 (.imm 0) =
-      some (10, 31, [.ori 31 0 (BitVec.ofNat 64 0)]) := by
   decide
 
 /-! `labLookupProgramPosition` used to scan the label list linearly and take

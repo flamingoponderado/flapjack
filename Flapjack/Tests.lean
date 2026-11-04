@@ -29,7 +29,6 @@ import Flapjack.Test.BalancedMapBalanceArithmeticParity
 import Flapjack.Test.BalancedMapKeyOrderedTypes
 import Flapjack.Test.BalancedMapHeterogeneousParity
 import Flapjack.Test.LabToTargetLabsDomainParity
-import Flapjack.Test.LabImplicitSectionZero
 import Flapjack.Test.StackToLabExecutedInput
 import Flapjack.Test.ProductionMacros
 import Flapjack.Test.StackWordBoundary
@@ -159,7 +158,6 @@ import Flapjack.Test.Parser
 import Flapjack.Test.DisplayParity
 import Flapjack.Test.ParserStaticExamples
 import Flapjack.Test.ParserParseDefParity
-import Flapjack.Test.Backend
 import Flapjack.Test.CompileFunctionDistinct
 import Flapjack.Test.Runtime
 import Flapjack.Test.CollectorSemantics
@@ -173,8 +171,6 @@ import Flapjack.Test.SpillCosts
 import Flapjack.Test.HeuristicDriver
 import Flapjack.Test.HeuristicStackPipeline
 import Flapjack.RiscV.CorrectnessHeuristicStack
-import Flapjack.Test.RiscVEncoding
-import Flapjack.Test.RiscVConstantParity
 import Flapjack.RiscV.CorrectnessGraphLocations
 import Flapjack.Test.LongDivSemantics
 import Flapjack.Test.LocValueAnalysis

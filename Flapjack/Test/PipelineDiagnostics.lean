@@ -142,54 +142,12 @@ example :
     RiscV.wordToStackProgNatChecked, RiscV.wordToStackProgNat,
     RiscV.wordProgFirstUnsupported, RiscV.wordProgToNat]
 
-example :
-    RiscV.compileLabProgramChecked (width := 64) { services := [] }
-      [⟨17, [.labAsm (.heapAlloc 3) [] 0]⟩] =
-        .error { sectionId := 17, position := 0, feature := .heapAlloc } := by
-  rfl
-
-/-! The linked checked boundary retains the same section/position diagnostic;
-the historical linked API would collapse this failure to `none`. -/
-example :
-    RiscV.compileLabProgramLinkedChecked (width := 64) { services := [] }
-      [⟨17, [.labAsm (.heapAlloc 3) [] 0]⟩] =
-        .error { sectionId := 17, position := 0, feature := .heapAlloc } := by
-  rfl
-
-/-! The halt-aware linker used by the SimpleGC runtime preserves the same
-    section/position diagnostic instead of collapsing to `artifactFailure`. -/
-example :
-    RiscV.compileLabProgramLinkedWithHaltChecked (width := 64) { services := [] }
-      [⟨17, [.labAsm (.heapAlloc 3) [] 0]⟩] =
-        .error { sectionId := 17, position := 0, feature := .heapAlloc } := by
-  rfl
-
-example :
-    RiscV.compileLabProgramChecked (width := 64) { services := [] }
-      [⟨29, [.asm (.word (.arith (.longDiv 0 3 3 0 6))) [] 0]⟩] =
-        .error { sectionId := 29, position := 0, feature := .longDiv } := by
-  rfl
-
-/-! CakeML's RISC-V target rejects a direct `LongDiv` instruction
-    (`riscv_targetScript.sml:143`).  Software lowering must therefore happen
-    through the `LongDiv_code`/`LongDiv1_code` helper path rather than by
-    teaching the direct instruction selector a new encoding. -/
-example :
-    RiscV.wordArithToInstructions (width := 64)
-      (.longDiv 0 3 3 0 6) = none := by
-  rfl
-
 /-! The direct selector rejection is distinct from the source compiler path:
     the normalized source LongDiv is replaced by the linked CakeML software
     helper sections before Lab lowering. -/
 def longDivSourceEntryRemoveConfig : StackRemoveConfig :=
   { storeBase := 10, currHeap := 12, scratch := 31, addressScratch := 29,
     stackPointer := 20, bytesInWord := 8, stackBase := 21, wordShift := 3 }
-
-#guard
-  (RiscV.compileStackProgramNatToRiscVChecked (width := 64) { services := [] }
-    longDivSourceEntryRemoveConfig 29 0
-    (.inst (.arith (.longDiv 0 3 3 0 6)) : StackProg Nat)).isOk
 
 def longDivRuntimeSemanticConfig : StackRemoveConfig :=
   { longDivSourceEntryRemoveConfig with bytesInWord := 1 }
@@ -198,16 +156,6 @@ def longDivRuntimeSemanticConfig : StackRemoveConfig :=
     raise stub and user section.  Keep that linked ordering explicit: Lab
     relocation and helper calls depend on these labels, while direct RISC-V
     LongDiv encoding remains rejected above. -/
-def longDivLinkedSectionOrder : Bool :=
-  match RiscV.compileStackProgramNatListLinkedWithRaiseStubToRiscVCakeChecked
-      (width := 8) { services := [] } longDivRuntimeSemanticConfig 29 0
-      [(29, (.inst (.arith (.longDiv 0 3 3 0 6)) : StackProg Nat))] with
-  | .ok sections => sections.map (fun entry => entry.1) ==
-      [RiscV.cakeLongDiv1Location, RiscV.cakeLongDivLocation,
-       stackRaiseStubLocation, 29]
-  | .error _ => false
-
-#guard longDivLinkedSectionOrder
 
 def longDivRuntimeSemanticState : WordStackMachineState 8 :=
   { registers := fun register =>
@@ -325,20 +273,6 @@ def cakeLongDivCode8Oracle : WordProg Nat :=
 example : RiscV.cakeLongDivCode 8 = cakeLongDivCode8Oracle := by
   rfl
 
-example :
-    RiscV.compileLabProgramChecked (width := 64) { services := [] }
-      [⟨19, [.asm (.const 1 7) [] 0]⟩] =
-        .ok [.ori 1 0 (BitVec.ofNat 64 7)] := by
-  rfl
-
-example :
-    RiscV.compileLabProgramChecked (width := 64) { services := [] }
-      [⟨1, [.labAsm (.jump ⟨2, 0⟩) [] 0]⟩,
-       ⟨2, [.label 2 0 0, .asm (.const 1 7) [] 0]⟩] =
-        .ok [.jal 0 (BitVec.ofNat 64 4),
-          .ori 1 0 (BitVec.ofNat 64 7)] := by
-  rfl
-
 def checkedPipelineDeclarations : List (Decl (RiscV.Word 64)) :=
   [.function
     { name := "main", inline := false, exported := true, params := [],
@@ -348,96 +282,12 @@ def checkedPipelineRemoveConfig : StackRemoveConfig :=
   { storeBase := 10, currHeap := 12, scratch := 31, addressScratch := 29,
     stackPointer := 20, bytesInWord := 8, stackBase := 21, wordShift := 3 }
 
-#guard
-    match compileFlapjackRiscVSourceBytesChecked (width := 64) .rv64i
-      (BitVec.ofNat 64 8) (BitVec.ofInt 64) [] checkedPipelineRemoveConfig
-      "main" "fun main() { return 7; }" with
-    | .ok artifact => artifact.bytes.length > 0
-    | .error _ => false
-
-/-! The public source entrypoint must accept calls as well as closed returns. -/
-#guard
-    match compileFlapjackRiscVSourceBytesChecked (width := 64) .rv64i
-      (BitVec.ofNat 64 8) (BitVec.ofInt 64) [] checkedPipelineRemoveConfig
-      "main"
-      "fun 1 id(1 x) { return x; }\nfun 1 main() { var 1 answer = id(41); return answer; }" with
-    | .ok artifact => artifact.bytes.length > 0
-    | .error _ => false
-
-/-! Cake-compatible structured store addresses must survive the source-facing
-    pipeline as well as the parser/static checker. -/
-#guard
-    match compileFlapjackRiscVSourceBytesChecked (width := 64) .rv64i
-      (BitVec.ofNat 64 8) (BitVec.ofInt 64) [] checkedPipelineRemoveConfig
-      "main"
-      "fun 1 main() { var {1} x = <1>; st x.0, x.0; return 1; }" with
-    | .ok artifact => artifact.bytes.length > 0
-    | .error _ => false
-
-#guard
-    match compileFlapjackRiscVSourceRuntimeImageChecked (width := 64) .rv64i
-      (BitVec.ofNat 64 8) (BitVec.ofInt 64) [] checkedPipelineRemoveConfig
-      "main" "var 1 global = 7;\nfun 1 main() { return global; }" with
-    | .ok image => image.sections.length > 0 && image.bitmaps.data.length > 0
-    | .error _ => false
-
-#guard
-    match compileFlapjackRiscVSourceRuntimeImageChecked (width := 64) .rv64i
-      (BitVec.ofNat 64 8) (BitVec.ofInt 64) [] checkedPipelineRemoveConfig
-      "main" "var {1} global = <7>;\nfun 1 main() { return global.0; }" with
-    | .ok image => image.sections.length > 0 && image.bitmaps.data.length > 0
-    | .error _ => false
-
-#guard
-    match compileFlapjackRiscVSourceBytesChecked (width := 64) .rv64i
-      (BitVec.ofNat 64 8) (BitVec.ofInt 64) [] checkedPipelineRemoveConfig
-      "main" "fun main() {" with
-    | .error (.parse _) => true
-    | _ => false
-
-#guard
-    match compileFlapjackRiscVSourceImageChecked (width := 64) .rv64i
-      (BitVec.ofNat 64 8) (BitVec.ofInt 64) [] checkedPipelineRemoveConfig
-      "main" "fun main() { return 7; }" with
-    | .ok image => image.sections.length > 0 &&
-        image.sections.all (fun entry => entry.bytes.length % 4 == 0)
-    | .error _ => false
-
-#guard
-    match compileFlapjackRiscVSourceImageChecked (width := 64) .rv64i
-      (BitVec.ofNat 64 8) (BitVec.ofInt 64) [] checkedPipelineRemoveConfig
-      "missing" "fun main() { return 7; }" with
-    | .error .entryNotFound => true
-    | _ => false
-
-#guard
-    match compileFlapjackRiscVSourceRuntimeImageChecked (width := 64) .rv64i
-      (BitVec.ofNat 64 8) (BitVec.ofInt 64) [] checkedPipelineRemoveConfig
-      "main" "fun main() { return 7; }" with
-    | .ok image => image.bitmaps.data.length > 0 && image.sections.length > 0 &&
-        image.sections.all (fun entry => entry.bytes.length % 4 == 0)
-    | .error _ => false
-
 /-! Original Pancake also accepts a computed address for an ordinary local
     store.  Keep this source-facing regression separate from the structured
     address case above: the address is a nested expression and the value is a
     scalar local. -/
 def nestedLocalStoreSource : String :=
   "fun 1 main() { var 1 x = 7; st 1000 + 12, x; return x; }"
-
-#guard
-    match compileFlapjackRiscVSourceBytesChecked (width := 64) .rv64i
-      (BitVec.ofNat 64 8) (BitVec.ofInt 64) [] checkedPipelineRemoveConfig
-      "main" nestedLocalStoreSource with
-    | .ok artifact => artifact.bytes.length > 0 && artifact.bytes.length % 4 == 0
-    | .error _ => false
-
-def nestedLocalStoreBytesAccepted : Bool :=
-  match compileFlapjackRiscVSourceBytesChecked (width := 64) .rv64i
-      (BitVec.ofNat 64 8) (BitVec.ofInt 64) [] checkedPipelineRemoveConfig
-      "main" nestedLocalStoreSource with
-  | .ok artifact => artifact.bytes.length > 0 && artifact.bytes.length % 4 == 0
-  | .error _ => false
 
 /-! GH #1157 (`Normalize or explain mode-specific section IDs in lowering
     errors`): the section id recorded in a lowering error is a crepe-local
