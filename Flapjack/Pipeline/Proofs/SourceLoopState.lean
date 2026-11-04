@@ -16,17 +16,13 @@ import Flapjack.Pancake.CrepToLoop.Proofs.LocValueFree
 import Flapjack.Pancake.CrepToLoop.StateRel
 import Flapjack.Pancake.Semantics.LoopSemStateExact
 
-/-! Proof-only exact/source pipeline bridges. Keeping these state and
-`locValue` relations downstream of `Pipeline` preserves executable definitions
-and theorem statements without making the CLI import closure load the evaluator
-proof stack. -/
+/-! Proof-only exact/source Loop-state bridges. -/
 
 namespace Flapjack
 
 /-! ### Exact Spt code-table bridge for the non-executed routed alternative
 
-`pipelineLoopFunctionsSourceCompileProgRouted` is a tested alternative, not
-the executed CLI route. It emits an association list, while the exact Loop
+The routed Loop compilation emits an association list, while the exact Loop
 state uses an `Spt` code field. The declarations here build that Spt table from
 the faithful, structurally rebased `compile_prog` rows and prove both lookup
 directions needed by `LoopSemStateFiniteExact.prodRel`. They are Flapjack-only

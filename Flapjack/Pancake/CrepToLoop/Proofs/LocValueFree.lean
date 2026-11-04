@@ -818,7 +818,7 @@ projection to executable `LoopProg` is structural and leaves the forbidden
 constructor explicit, so the free-output fact is established before projection
 and does not rely on projection to erase it. `holLoopProgToExecutable_preserves_locValueFree`
 and the production adapter's `rebaseHOLFunctionLabels_preserves_locValueFree`
-cover the projection and label-rebase boundaries used by `Pipeline.lean`. -/
+cover the projection and label-rebase boundaries. -/
 theorem compileProgHOLExact_bodiesLocValueFree {width : Nat} [NeZero width]
     (target : Flapjack.Compiler.Encoders.Asm.AsmArchitecture)
     (program : List

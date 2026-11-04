@@ -8,10 +8,8 @@ original-HOL EVAL rows:
 * `scripts/hol-probes/ret_to_tail_probe.out` (`pan_simp$ret_to_tail`)
 
 The expected production values are exactly the oracle rows: `Skip`, `Tick`,
-`Seq Tick Tick`, and `Skip` for `ret_to_tail`. Because the executed pipeline
-(`Flapjack/Pipeline.lean`, `Flapjack/PerfFrontMain.lean`) runs the production
-`panSimpDecls`, these bridge rows connect the tagged exact HOL `pan_simp`
-definitions to the executed pass.
+`Seq Tick Tick`, and `Skip` for `ret_to_tail`. These bridge rows connect the
+tagged exact HOL `pan_simp` definitions to the production `panSimpDecls`.
 -/
 import Flapjack.Pancake.Proofs.PanSimp.ProgOfHOL
 

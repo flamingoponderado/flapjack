@@ -14,16 +14,6 @@ directly in HOL.  The recorded answers are:
 
 `Flapjack.RiscV.riscvRegisterName` is the port of that map, so the guards below
 are checked against the original oracle rather than a transcription.
-
-The source adapter `Flapjack.wordRiscVAbiSourceRegister` gives the hardware
-register of an even Word name `2r`, i.e. `riscv_names r`.  Cake applies the map
-to every Lab register, so the adapter must do so for every even name, not only
-`r` in `{0,1,2,3,4}`.  A restricted adapter makes `2` and `10` collide on
-hardware register `10` (and `6` with `12` on `12`); the guest reproducer
-(GH#1015 `guest.pp.pnk`, renamed `main` section) then fails allocation with
-`wordAllocateVarsWithFixedLocations = none` on the fixed-only conflicting edges
-`(2,10)` and `(6,12)`.  The guards below check the full map, including that the
-fixed sources stay injective.
 -/
 
 open Flapjack Flapjack.RiscV

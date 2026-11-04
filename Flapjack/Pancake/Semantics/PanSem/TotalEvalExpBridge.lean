@@ -54,9 +54,8 @@ premises are therefore relevant:
   structure context are byte-ranged, so a stored record's field-name lookups and
   a context shape comparison agree with their `mlstring` images.
 
-The **expression** half is discharged from the executed compiler path: the
-parser-backed entrypoints (`Pipeline.lean:634-671`) thread `DeclByteRanged` for
-their declarations, a function body carries `ProgByteRanged`
+The **expression** half is discharged from the parser's byte-range evidence:
+parsed declarations are `DeclByteRanged`, a function body carries `ProgByteRanged`
 (`FunDeclByteRanged`), and `expsOf_byteRanged`
 (`Flapjack/Pancake/PanLang/Prog.lean`) proves that every expression occurring
 directly in a `ProgByteRanged` program is `ExpByteRanged` (a loaded shape is
@@ -2734,10 +2733,8 @@ theorem evalPanSemStateExp_byteRanged {σ : Type}
 The all-16 agreement `evalPanValueExp_agree` (`:2494`) and its state wrapper
 `evalPanSemStateExp_agree` (`:2671`) take the encoded expression's identifier
 bytes as an explicit `ExpByteRanged` premise.  That premise is **not** an extra
-assumption beyond the executed compiler path: the parser-backed entrypoints
-(`Pipeline.lean:634-671`, e.g. `compileFlapjackEntryCake`'s
-`some (.isTrue targetByteRanged)` branch) thread `DeclByteRanged` for their
-declarations, and `expsOf_byteRanged`
+assumption beyond what the parser provides: parsed declarations are
+`DeclByteRanged`, and `expsOf_byteRanged`
 (`Flapjack/Pancake/PanLang/Prog.lean`) proves the program-level predicate
 `ProgByteRanged` already implies `ExpByteRanged` for every expression occurring
 directly in the program (`Flapjack.expsOf`).  The wrappers below therefore

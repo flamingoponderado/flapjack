@@ -75,11 +75,10 @@ production String-keyed `compileProgTopHOL`. This equality is NOT definitional:
 it is kernel-proved by `compileProgTopHOLOfExact_declToHOL` using the
 `DeclByteRanged` premise, i.e. propositional (not definitional) equality.
 This is the kernel-checked bridge from the parser output to the exact carrier.
-The production source entrypoints compose its premise through entry relocation,
-`pan_simp`, struct compilation, and `compile_top`, then pass the resulting proof
-to `compileProgNativeWithMetadataRouted` in `compileFlapjackEntryCake`.
-With the CLI's standard BitVec literals, this selects `compileProgDeclsHOLW`
-and its exact inliner, then decodes the output and retains metadata.
+Its premise composes through entry relocation, `pan_simp`, struct compilation,
+and `compile_top`; with standard BitVec literals the resulting proof selects
+`compileProgDeclsHOLW` and its exact inliner in
+`compileProgNativeWithMetadataRouted`.
 `CompileProgCorrespondence.lean` proves complete output agreement at this
 byte-range boundary. This codec agreement does not establish pass simulation
 or the end-to-end compiler correctness theorem. Direct

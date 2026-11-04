@@ -82,8 +82,8 @@ def holDeclarationOnlyOracle : Bool :=
 /-! These declaration-only fixtures replay the `raise_pair` and
 `handled_pair` rows from the direct HOL `compile_to_crep_probe.out` at its
 concrete 8-bit word instantiation. They exercise the exact finite-map
-`compileToCrepHOL` path used by `compileFlapjackEntryCake`, rather than the
-older caller-context compatibility helper below. -/
+`compileToCrepHOL` path, rather than the older caller-context compatibility
+helper below. -/
 def holPairRaiseProbe : List (Decl (BitVec 8)) :=
   [.exnDecl "E" (.comb [.one, .one]),
    .function

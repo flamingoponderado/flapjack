@@ -21,9 +21,8 @@ import Flapjack.LoopSemantics
 /-!
 # Effect-free `loop_live` regression on the production compiler path
 
-This restores the executable `out = 7` while-loop regression (formerly
-`LoopLivePreloopLocals.lean`, removed with the retired `compileFlapjack`
-wrapper) on the current production entrypoint `compileFlapjackEntryCake`.
+This is the executable `out = 7` while-loop regression (formerly
+`LoopLivePreloopLocals.lean`).
 
 Scope: the test exercises only the *effect-free* fragment of the Loop machine.
 The tested programs contain no `Primitive`, `Arith`, `Store`, `SetGlobal`,

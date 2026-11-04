@@ -272,9 +272,8 @@ def structCompileShapeExactProduction (context : StructContext) (shape : Shape) 
     It executes both HOL `compile_shape` and `old_exp_shape` exact definitions
     through their codecs.
     `structCompileTopExact_eq_legacyOfByteRanged` proves its output equals the
-    legacy pass on this domain. The parser-backed `compileFlapjackEntryCake`
-    route executes this pass after composing its byte-range evidence. This
-    codec wrapper has no separate HOL declaration. -/
+    legacy pass on this domain. This codec wrapper has no separate HOL
+    declaration. -/
 def structCompileTopExactOfByteRanged [BEq String] {width : Nat} [NeZero width]
     (declarations : List (Decl (BitVec width)))
     (_hdeclarations : ∀ declaration ∈ declarations, DeclByteRanged declaration) :
