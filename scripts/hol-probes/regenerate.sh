@@ -4269,7 +4269,7 @@ run_probe word_gc_functions_has_fp_ops_probeScript.sml word_gc_functions_has_fp_
   "$cake_dir/compiler/backend/proofs/word_gcFunctionsScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe word_gc_functions_probeScript.sml word_gc_functions_probe.out \
-  gc_ptr_to_addr gc_is_gc_word_const_odd gc_memcpy_independent_widths \
+  gc_ptr_to_addr gc_is_gc_word_const_odd gc_memcpy_independent_widths gc_forward_header_width1 \
   gc_refs_to_addresses_empty gc_refs_to_addresses_basic gc_refs_to_addresses_skip \
   "$cake_dir/compiler/backend/proofs/word_gcFunctionsScript.sml" \
   "$cake_dir/compiler/backend/proofs"

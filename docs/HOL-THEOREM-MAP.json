@@ -1,6 +1,15 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_gc_move_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/MoveForward.lean",
+  "lean_name": "wordGcMove_forward",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the ForwardPointer case of lines 786-828 with word_gc_move_thm_typed and the captured separation-star arguments. The original abstract and concrete runs, heap bound, frame, list length, and complete existential result are retained; the input pointer and its looked-up heap constructor select the original forwarding case. Natural shifts, including one-bit widths, match word_el_typed. The data-element pointer case and assembling theorem remain open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "memcpy_thm",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/Memcpy.lean",
   "lean_name": "memcpyCorrect",
@@ -111573,7 +111582,7 @@
     "hol_name": "word_el_def",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "Source comparison: all three original clauses and typed data_to_word_memory_repr capture. The heap address and stored word dimensions are independent, the payload header has the stored word dimension, and the payload length bound uses the address dimension. Singleton, word-list, existential-list, separation and pure-condition assertions retain their original operands and order."
+    "reviewer": "Source comparison: all three original clauses and word_el_typed capture. The heap address and stored word dimensions are independent, the payload header has the stored word dimension, and the payload length bound uses the address dimension. The forwarding header shifts by natural 2, including at one-bit width; gc_forward_header_width1 records the original result. Singleton, word-list, existential-list, separation and pure-condition assertions retain their original operands and order."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Heap.lean",

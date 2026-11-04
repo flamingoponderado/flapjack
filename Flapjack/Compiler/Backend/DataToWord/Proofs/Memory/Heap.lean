@@ -19,7 +19,7 @@ def wordEl {addressWidth : Nat} {valueWidth : Nat} [NeZero addressWidth] [NeZero
   match element with
   | .unused len => Misc.wordListExists address (len + 1)
   | .forwardPointer index _ len =>
-      SetSep.star (SetSep.one (address, WordLocW.word (BitVec.ofNat valueWidth index <<< 2)))
+      SetSep.star (SetSep.one (address, WordLocW.word (BitVec.ofNat valueWidth index <<< (2 : Nat))))
         (Misc.wordListExists (address + StackRemove.bytesInWord addressWidth) len)
   | .dataElement addresses len (tag, payload) =>
       let (header, words, valid) := wordPayload addresses len tag payload conf
