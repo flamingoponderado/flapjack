@@ -19,6 +19,7 @@ theorem raise64 {C F : Type} (conf : Config) (secn label l1 l2 : Nat)
       DataSem.evaluate (.raise name) source = (some (.err (.raise value)), next) ∧
       WordSemStateFiniteExact.evaluate (compileControl64 conf secn label (.raise name)).1 target =
         (some (.exception (.loc a b) word), targetNext) ∧
+      WordSemStateFiniteExact.jumpExc target = some (targetNext, a, b) ∧
       targetNext.ffi = next.ffi ∧ BackendProps.optionLe targetNext.stackMax next.stackMax ∧
       wordSemLastN (next.stack.length + 1) locs = (return1, return2) :: remaining ∧
       ∀ dest, stateRel64 conf return1 return2 (DataSem.setVar dest value next)
@@ -27,7 +28,7 @@ theorem raise64 {C F : Type} (conf : Config) (secn label l1 l2 : Nat)
   obtain ⟨targetNext, a, b, r1, r2, remaining, targetJump, locations, after⟩ :=
     stateRel64_jumpExc_setVar conf l1 l2 source next target locs related name value word lookup wordLookup jump
   have afterZero := after 0
-  refine ⟨word, targetNext, a, b, r1, r2, remaining, ?_, ?_, afterZero.1, ?_, locations, after⟩
+  refine ⟨word, targetNext, a, b, r1, r2, remaining, ?_, ?_, targetJump, afterZero.1, ?_, locations, after⟩
   · simp [DataSem.evaluate, lookup, jump]
   · simp [compileControl64, compileControl?, WordSemStateFiniteExact.evaluate, wordLookup, targetJump]
   · exact afterZero.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1

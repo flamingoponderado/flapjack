@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Raise
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Seq
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.ExceptionDestination
 
 /-! Exceptional outcomes and sequential composition. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Correct
@@ -14,6 +15,7 @@ def raises64 {C F : Type} (conf : Config) (secn label : Nat)
     DataSem.evaluate program source = (some (.err (.raise value)), source') ∧
     WordSemStateFiniteExact.evaluate (compileControl64 conf secn label program).1 target =
       (some (.exception (.loc a b) word), target') ∧
+    (∃ jumpState, WordSemStateFiniteExact.jumpExc target = some (jumpState, a, b)) ∧
     target'.ffi = source'.ffi ∧ BackendProps.optionLe target'.stackMax source'.stackMax ∧
     wordSemLastN (source'.stack.length + 1) locs = (r1, r2) :: remaining ∧
     ∀ dest, stateRel64 conf r1 r2 (DataSem.setVar dest value source')
@@ -31,9 +33,9 @@ theorem raise64_of_safe {C F : Type} (conf : Config) (secn label l1 l2 : Nat)
     cases jump : DataSem.jumpExc source with
     | none => simp [DataSem.evaluate, lookup, jump] at safe
     | some next =>
-      obtain ⟨word, nextTarget, a, b, r1, r2, remaining, sr, tr, ffi, bound, locations, after⟩ :=
+      obtain ⟨word, nextTarget, a, b, r1, r2, remaining, sr, tr, targetJump, ffi, bound, locations, after⟩ :=
         raise64 conf secn label l1 l2 source target locs related name value next lookup jump
-      exact ⟨value, word, next, nextTarget, a, b, r1, r2, remaining, sr, tr, ffi, bound, locations, after⟩
+      exact ⟨value, word, next, nextTarget, a, b, r1, r2, remaining, sr, tr, ⟨nextTarget, targetJump⟩, ffi, bound, locations, after⟩
 
 /-- An exception in the first command propagates through a sequence, including
 clock clamping and the restored handler-state relation. -/
@@ -43,7 +45,7 @@ theorem seq64_raiseFirst {C F : Type} (conf : Config) (secn label l1 l2 : Nat)
     (related : stateRel64 conf l1 l2 source target none locs)
     (firstRaises : raises64 conf secn label first source target locs) :
     raises64 conf secn label (.seq first second) source target locs := by
-  obtain ⟨value, word, source', target', a, b, r1, r2, remaining, sr, tr, ffi, bound, locations, after⟩ := firstRaises
+  obtain ⟨value, word, source', target', a, b, r1, r2, remaining, sr, tr, jump, ffi, bound, locations, after⟩ := firstRaises
   let k := min source.clock source'.clock
   let sourceClamped := { source' with clock := k }
   let targetClamped := { target' with clock := k, termdep := target.termdep }
@@ -52,7 +54,7 @@ theorem seq64_raiseFirst {C F : Type} (conf : Config) (secn label l1 l2 : Nat)
   have minEq : (if source.clock < source'.clock then source.clock else source'.clock) = k := by
     dsimp [k]
     split <;> omega
-  refine ⟨value, word, sourceClamped, targetClamped, a, b, r1, r2, remaining, ?_, ?_, ffi, bound, locations, ?_⟩
+  refine ⟨value, word, sourceClamped, targetClamped, a, b, r1, r2, remaining, ?_, ?_, jump, ffi, bound, locations, ?_⟩
   · simp [DataSem.evaluate, sr, DataSem.fixClock, sourceClamped, k]
   · simp [compileControl64_seq, WordSemStateFiniteExact.evaluate, tr,
       WordSemStateFiniteExact.fixClock, oldClock, newClock, minEq, targetClamped]

@@ -30,9 +30,22 @@ theorem outcomes64_of_evaluations {C F : Type} (conf : Config) (secn label label
     (sourceEq : DataSem.evaluate parent source = DataSem.evaluate child source')
     (targetEq : WordSemStateFiniteExact.evaluate (compileControl64 conf secn label parent).1 target =
       WordSemStateFiniteExact.evaluate (compileControl64 conf secn label' child).1 target')
+    (jumpTransport : ∀ a b next, WordSemStateFiniteExact.jumpExc target' = some (next, a, b) →
+      ∃ beforeNext, WordSemStateFiniteExact.jumpExc target = some (beforeNext, a, b))
     (outcome : outcomes64 conf secn label' l1 l2 child source' target' locs) :
     outcomes64 conf secn label l1 l2 parent source target locs := by
-  simpa only [outcomes64, continues64, returns64, timesOut64, raises64, sourceEq, targetEq] using outcome
+  rcases outcome with continued | returned | timeout | raised
+  · left
+    simpa only [continues64, sourceEq, targetEq] using continued
+  · right; left
+    simpa only [returns64, sourceEq, targetEq] using returned
+  · right; right; left
+    simpa only [timesOut64, sourceEq, targetEq] using timeout
+  · right; right; right
+    obtain ⟨value, word, s, t, a, b, r1, r2, remaining, sr, tr, ⟨jumpState, jump⟩, ffi, bound, locations, after⟩ := raised
+    refine ⟨value, word, s, t, a, b, r1, r2, remaining, ?_, ?_, jumpTransport a b jumpState jump, ffi, bound, locations, after⟩
+    · simpa only [sourceEq] using sr
+    · simpa only [targetEq] using tr
 
 /-- If a sequence cannot return a type error, its first command cannot return
 one either. -/
@@ -79,6 +92,11 @@ theorem seq64_outcomes {C F : Type} (conf : Config) (secn label l1 l2 : Nat)
       simpa only [sourceEq] using safe
     exact outcomes64_of_evaluations conf secn label (compileControl64 conf secn label first).2 l1 l2
       (.seq first second) second source sourceClamped target targetClamped locs sourceEq targetEq
+      (by
+        intro a b next jump
+        obtain ⟨mid, midJump⟩ := jumpExc_destination_of_keyEq target' targetClamped next a b
+          (by exact of_eq_true (WordSemStackEq.sKeyEqRefl target'.stack)) rfl jump
+        exact evaluate_continue_jumpExc_destination (compileControl64 conf secn label first).1 target target' mid a b targetRun midJump)
       (secondCorrect sourceClamped targetClamped afterClamp secondSafe)
   · exact Or.inr (Or.inl (seq64_returnFirst conf secn label l1 l2 first second source target locs related returned))
   · exact Or.inr (Or.inr (Or.inl (seq64_timeoutFirst conf secn label first second source target timeout)))
@@ -107,6 +125,8 @@ theorem if64_outcomes {C F : Type} (conf : Config) (secn label l1 l2 name : Nat)
       (.ifThenElse name yes no) no source source target target locs
     · simpa only [Bool.false_eq_true, ↓reduceIte] using branch.1
     · simpa only [Bool.false_eq_true, ↓reduceIte] using branch.2
+    · intro a b next jump
+      exact ⟨next, jump⟩
     · exact noCorrect source target related branchSafe
   | true =>
     have branchSafe : (DataSem.evaluate yes source).1 ≠ some (.err (.abort .typeError)) := by
@@ -115,6 +135,8 @@ theorem if64_outcomes {C F : Type} (conf : Config) (secn label l1 l2 name : Nat)
       (.ifThenElse name yes no) yes source source target target locs
     · simpa only [↓reduceIte] using branch.1
     · simpa only [↓reduceIte] using branch.2
+    · intro a b next jump
+      exact ⟨next, jump⟩
     · exact yesCorrect source target related branchSafe
 
 /-- Syntactic subset whose simulation cases have been established so far. -/

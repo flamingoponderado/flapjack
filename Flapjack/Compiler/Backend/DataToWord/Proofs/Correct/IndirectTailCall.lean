@@ -86,11 +86,11 @@ theorem tailCall64_indirect_outcomes {C F : Type} (conf : Config) (secn fresh l1
       have eqs := tailCall64_indirect_evaluations conf secn fresh source target names name label values words l1 l2 body _
         sourceAll wordAll sourceCode wordCode zero related.2.1 _ sourceNext _ targetNext sr tr (by simp) rfl
       exact Or.inr (Or.inr (Or.inl ⟨sourceNext, targetNext, eqs.1, eqs.2, ffi, bound⟩))
-    · obtain ⟨result, targetValue, sourceNext, targetNext, a, b, r1, r2, remaining, sr, tr, ffi, bound, locations, after⟩ := raised
+    · obtain ⟨result, targetValue, sourceNext, targetNext, a, b, r1, r2, remaining, sr, tr, ⟨jumpState, jump⟩, ffi, bound, locations, after⟩ := raised
       have eqs := tailCall64_indirect_evaluations conf secn fresh source target names name label values words l1 l2 body _
         sourceAll wordAll sourceCode wordCode zero related.2.1 _ sourceNext _ targetNext sr tr (by simp) rfl
       exact Or.inr (Or.inr (Or.inr ⟨result, targetValue, sourceNext, targetNext, a, b, r1, r2, remaining,
-        eqs.1, eqs.2, ffi, bound, locations, after⟩))
+        eqs.1, eqs.2, callEnv_jumpExc_destination target jumpState _ _ a b jump, ffi, bound, locations, after⟩))
 
 /-- Every source-safe indirect tail call is simulated if the selected body
 satisfies the recursive simulation hypothesis. -/

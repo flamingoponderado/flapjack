@@ -79,11 +79,11 @@ theorem tailCall64_direct_outcomes {C F : Type} (conf : Config) (secn label l1 l
     have eqs := tailCall64_direct_evaluations conf secn label l1 l2 source target locs related callee names values body size
       sourceRun found positive words wordRun _ sourceNext _ targetNext sr tr (by simp) rfl
     exact Or.inr (Or.inr (Or.inl ⟨sourceNext, targetNext, eqs.1, eqs.2, ffi, bound⟩))
-  · obtain ⟨result, targetValue, sourceNext, targetNext, a, b, r1, r2, remaining, sr, tr, ffi, bound, locations, after⟩ := raised
+  · obtain ⟨result, targetValue, sourceNext, targetNext, a, b, r1, r2, remaining, sr, tr, ⟨jumpState, jump⟩, ffi, bound, locations, after⟩ := raised
     have eqs := tailCall64_direct_evaluations conf secn label l1 l2 source target locs related callee names values body size
       sourceRun found positive words wordRun _ sourceNext _ targetNext sr tr (by simp) rfl
     exact Or.inr (Or.inr (Or.inr ⟨result, targetValue, sourceNext, targetNext, a, b, r1, r2, remaining,
-      eqs.1, eqs.2, ffi, bound, locations, after⟩))
+      eqs.1, eqs.2, callEnv_jumpExc_destination target jumpState _ _ a b jump, ffi, bound, locations, after⟩))
 
 /-- With no remaining clock, a successfully resolved direct tail call times
 out on both sides with the same FFI and stack-maximum bound. -/

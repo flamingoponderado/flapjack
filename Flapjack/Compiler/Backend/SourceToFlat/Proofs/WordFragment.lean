@@ -25,6 +25,7 @@ def fragmentOutcomesAt64 {C F : Type} (conf : DataToWord.Config) (l1 l2 : Nat)
   (∃ value word source' target' a b r1 r2 remaining,
     DataSem.evaluate body source = (some (.err (.raise value)), source') ∧
     WordSemStateFiniteExact.evaluate wordBody target = (some (.exception (.loc a b) word), target') ∧
+    (∃ jumpState, WordSemStateFiniteExact.jumpExc target = some (jumpState, a, b)) ∧
     target'.ffi = source'.ffi ∧ BackendProps.optionLe target'.stackMax source'.stackMax ∧
     wordSemLastN (source'.stack.length + 1) locs = (r1, r2) :: remaining ∧
     ∀ dest, stateRel64 conf r1 r2 (DataSem.setVar dest value source')
