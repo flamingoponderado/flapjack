@@ -608,4 +608,200 @@ theorem wordGenGcPartialMoveData_empty {width : Nat} [NeZero width] (conf : Conf
   obtain ⟨rfl, rfl, rfl, rfl⟩ := wordRun
   exact ⟨xs, current, separated, empty, rfl, segment, rfl, rfl, length.symm, invariant, rfl, by simp [empty], allRefs⟩
 
+/-- Partial collector data scan simulation. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "word_gen_gc_partial_move_data_thm"
+  (words_as_type_indexed_bitvec)]
+theorem wordGenGcPartialMoveData_thm {width : Nat} [NeZero width] (conf : Config)
+    (genConf : GenGcPartial.Config (HeapTag × List (WordLocW width))) (k : Nat)
+    (state state1 : GcState (WordLocW width) (HeapTag × List (WordLocW width)))
+    (memory memory1 : BitVec width → WordLocW width) (domain : BitVec width → Bool)
+    (curr p : BitVec width) (xs : List (WordLocW width))
+    (pa1 i1 : BitVec width) (old current refs : List (HeapElement (WordLocW width) (HeapTag × List (WordLocW width))))
+    (frame : ((BitVec width × WordLocW width) → Prop) → Prop) (c1 : Bool)
+    (abstractRun : GenGcPartial.gcMoveData genConf state = state1) (stateOk : state1.ok = true)
+    (limitEq : genConf.limit = heapLength state.heap)
+    (heapBound : heapLength state.heap ≤ 2 ^ width / 2 ^ shiftLength conf)
+    (heapBytesBound : heapLength state.heap * (width / 8) < 2 ^ width)
+    (ordered : genConf.genStart ≤ genConf.refsStart) (refBound : genConf.refsStart ≤ heapLength state.heap)
+    (segment : heapSegment (genConf.genStart, genConf.refsStart) state.heap = some (old, current, refs))
+    (dataBound : conf.lenSize + 2 < width)
+    (refClass : ∀ t r, genConf.isRef (t, r) = true ↔ isMutTag t)
+    (wordRun : wordGenGcPartialMoveData conf k
+      (p + wordSemBytesInWord * BitVec.ofNat width (heapLength state.h1), BitVec.ofNat width state.a,
+       p + wordSemBytesInWord * BitVec.ofNat width (heapLength (state.h1 ++ state.h2)),
+       curr, memory, domain, wordSemBytesInWord * BitVec.ofNat width genConf.genStart,
+       wordSemBytesInWord * BitVec.ofNat width genConf.refsStart) = (i1, pa1, memory1, c1))
+    (countBound : heapLength state.h2 + state.n ≤ k) (invariant : partialLenInv state)
+    (separated : SetSep.star (SetSep.star (SetSep.star
+      (wordHeap (curr + wordSemBytesInWord * BitVec.ofNat width (heapLength old)) current conf)
+      (wordHeap p (state.h1 ++ state.h2) conf))
+      (Misc.wordList (p + wordSemBytesInWord * BitVec.ofNat width (heapLength (state.h1 ++ state.h2))) xs)) frame
+      (SetSep.fun2Set (memory, fun address => domain address = true)))
+    (allRefs : (state.r4 ++ state.r3 ++ state.r2 ++ state.r1).all (isRefElement genConf.isRef) = true)
+    (length : xs.length = state.n) (good : goodDimindex width) :
+    ∃ xs1 current1,
+      SetSep.star (SetSep.star (SetSep.star
+        (wordHeap (curr + wordSemBytesInWord * BitVec.ofNat width (heapLength old)) current1 conf)
+        (wordHeap p (state1.h1 ++ state1.h2) conf))
+        (Misc.wordList (p + wordSemBytesInWord * BitVec.ofNat width (heapLength (state1.h1 ++ state1.h2))) xs1)) frame
+        (SetSep.fun2Set (memory1, fun address => domain address = true)) ∧
+      state1.h2 = [] ∧ heapLength state1.heap = heapLength state.heap ∧
+      heapSegment (genConf.genStart, genConf.refsStart) state1.heap = some (old, current1, refs) ∧
+      c1 = true ∧ i1 = BitVec.ofNat width state1.a ∧ state1.n = xs1.length ∧ partialLenInv state1 ∧
+      heapLength (state1.h1 ++ state1.h2 ++ state1.r4) + state1.n =
+        heapLength (state.h1 ++ state.h2 ++ state.r4) + state.n ∧
+      pa1 = p + wordSemBytesInWord * BitVec.ofNat width (heapLength (state1.h1 ++ state1.h2)) ∧
+      (state1.r4 ++ state1.r3 ++ state1.r2 ++ state1.r1).all (isRefElement genConf.isRef) = true := by
+  classical
+  induction k using Nat.strong_induction_on generalizing state state1 memory memory1 xs pa1 i1 c1 current with
+  | h k ih =>
+    cases pending : state.h2 with
+    | nil =>
+      simpa only [pending] using wordGenGcPartialMoveData_empty conf genConf k state state1 memory memory1 domain curr p xs
+        pa1 i1 old current refs frame c1 abstractRun stateOk limitEq heapBound heapBytesBound ordered refBound
+        segment dataBound refClass wordRun countBound invariant separated allRefs length good pending
+    | cons head tail =>
+      cases head with
+      | unused len =>
+        cases state with
+        | mk old h1 h2 r4 r3 r2 r1 a n ok heap heap0 =>
+          simp only at pending
+          subst h2
+          rw [GenGcPartial.gcMoveData] at abstractRun
+          simp only [ite_self] at abstractRun
+          subst state1
+          contradiction
+      | forwardPointer addr value len =>
+        cases state with
+        | mk old h1 h2 r4 r3 r2 r1 a n ok heap heap0 =>
+          simp only at pending
+          subst h2
+          rw [GenGcPartial.gcMoveData] at abstractRun
+          simp only [ite_self] at abstractRun
+          subst state1
+          contradiction
+      | dataElement roots len data =>
+        rcases data with ⟨tag, payload⟩
+        obtain ⟨header, words, encoded, wordLen, wordBound, info, step⟩ :=
+          partialDataScan_wordStep conf genConf k state roots len tag payload tail old current curr p
+            (BitVec.ofNat width state.a) xs memory domain frame pending separated countBound invariant heapBytesBound good dataBound
+        cases bit : header.getLsbD 2 with
+        | true =>
+          have rootsEmpty : roots = [] := by simpa [bit] using info
+          subst roots
+          obtain ⟨recursive, _, nextFuel⟩ := partialDataScan_rawAbstract genConf k state state1 len (tag, payload) tail
+            pending abstractRun stateOk countBound
+          obtain ⟨nextInvariant, nextRefs, nextMemory, nextAccounting⟩ :=
+            partialDataScan_rawState conf genConf state len tag payload tail old current curr p xs memory domain frame
+              pending invariant allRefs separated
+          let next := { state with h1 := state.h1 ++ [HeapElement.dataElement [] len (tag, payload)], h2 := tail }
+          have nextCursor := dataScan_nextCursor state [] len (tag, payload) p
+          simp only [bit, ↓reduceIte] at step
+          rw [step] at wordRun
+          rw [wordLen, nextCursor] at wordRun
+          have sameLayout : next.h1 ++ next.h2 = state.h1 ++ state.h2 := by
+            simp [next, pending, List.append_assoc]
+          have recursiveWord : wordGenGcPartialMoveData conf (k - 1)
+              (p + wordSemBytesInWord * BitVec.ofNat width (heapLength next.h1), BitVec.ofNat width next.a,
+               p + wordSemBytesInWord * BitVec.ofNat width (heapLength (next.h1 ++ next.h2)),
+               curr, memory, domain, wordSemBytesInWord * BitVec.ofNat width genConf.genStart,
+               wordSemBytesInWord * BitVec.ofNat width genConf.refsStart) = (i1, pa1, memory1, c1) := by
+            simpa only [next, sameLayout] using wordRun
+          have positive : 0 < k := by
+            have h : 0 < heapLength state.h2 := by rw [pending]; simp [heapLength, elLength]
+            omega
+          obtain ⟨xsFinal, currentFinal, finalMemory, finalH2, finalHeap, finalSegment, finalOk, finalI, finalLen,
+            finalInvariant, finalAccounting, finalPa, finalRefs⟩ :=
+            ih (k - 1) (by omega) next state1 memory memory1 xs pa1 i1 current c1 recursive stateOk
+              limitEq heapBound heapBytesBound refBound segment recursiveWord nextFuel nextInvariant nextMemory nextRefs length
+          refine ⟨xsFinal, currentFinal, finalMemory, finalH2, finalHeap, finalSegment, finalOk, finalI, finalLen,
+            finalInvariant, ?_, finalPa, finalRefs⟩
+          simpa only [pending] using finalAccounting.trans nextAccounting
+        | false =>
+          have mapped : words = roots.map (wordAddr conf) := by simpa [bit] using info
+          obtain ⟨header2, words2, encoded2, _, _, _, _, read, _, _⟩ :=
+            scanDataCell conf state.h1 tail roots len tag payload
+              (curr + wordSemBytesInWord * BitVec.ofNat width (heapLength old)) p
+              (p + wordSemBytesInWord * BitVec.ofNat width (heapLength (state.h1 ++ state.h2))) xs current
+              memory domain frame good dataBound (by simpa only [pending] using separated)
+          have headerEq : header2 = header := by
+            have h := congrArg Prod.fst (encoded2.symm.trans encoded)
+            simpa using h
+          subst header2
+          have read' : memory (p + wordSemBytesInWord * BitVec.ofNat width (heapLength state.h1)) = .word header := by
+            simpa [wordSemBytesInWord, StackRemove.bytesInWord] using read
+          have pointer : (wordSemTheWord (memory (p + wordSemBytesInWord * BitVec.ofNat width (heapLength state.h1)))).getLsbD 2 = false := by
+            simpa [read', wordSemTheWord] using bit
+          generalize move : GenGcPartial.gcMoveList genConf state roots = moveResult
+          rcases moveResult with ⟨moved, middle⟩
+          obtain ⟨_, middleOk, _, _⟩ :=
+            partialDataScan_abstractStep genConf state middle state1 roots moved len (tag, payload) tail
+              pending move abstractRun stateOk
+          simp only [bit, Bool.false_eq_true, ↓reduceIte, mapped, List.length_map] at step
+          rw [step] at wordRun
+          let addr := p + wordSemBytesInWord * BitVec.ofNat width (heapLength state.h1)
+          generalize wordMove : wordGenGcPartialMoveList conf
+            (addr + wordSemBytesInWord, BitVec.ofNat width roots.length, BitVec.ofNat width state.a,
+             p + wordSemBytesInWord * BitVec.ofNat width (heapLength (state.h1 ++ state.h2)),
+             curr, memory, domain, wordSemBytesInWord * BitVec.ofNat width genConf.genStart,
+             wordSemBytesInWord * BitVec.ofNat width genConf.refsStart) = wordMoveResult at wordRun
+          rcases wordMoveResult with ⟨nextAddr, midI, midPa, midMemory, moveOk⟩
+          dsimp only at wordRun
+          generalize wordTail : wordGenGcPartialMoveData conf (k - 1)
+            (nextAddr, midI, midPa, curr, midMemory, domain,
+             wordSemBytesInWord * BitVec.ofNat width genConf.genStart,
+             wordSemBytesInWord * BitVec.ofNat width genConf.refsStart) = wordTailResult at wordRun
+          rcases wordTailResult with ⟨lastI, lastPa, lastMemory, tailOk⟩
+          simp only [Prod.mk.injEq] at wordRun
+          obtain ⟨rfl, rfl, rfl, rfl⟩ := wordRun
+          obtain ⟨header3, left, right, xsMid, currentMid, encoded3, rootsLen, rootsBound, decoded3,
+            leftEq, rightEq, memoryResult, heapLen, segmentMid, moveSuccess, indexEq, xsLen, accounting,
+            cursorEq, paEq⟩ :=
+            partialDataScan_moveRoots conf genConf state middle roots moved len tag payload tail old current refs curr p
+              nextAddr midI midPa xs memory midMemory domain frame moveOk pending move middleOk limitEq heapBound
+              ordered refBound segment refClass heapBytesBound dataBound separated length good pointer wordMove
+          subst moveOk
+          simp only [Bool.true_and]
+          let next := { middle with h1 := middle.h1 ++ [HeapElement.dataElement moved len (tag, payload)], h2 := middle.h2.drop 1, ok := true }
+          have nextMemory := partialDataScan_nextMemory conf genConf state middle roots moved len tag payload
+            tail left old currentMid header3 curr p midPa xsMid true midMemory domain frame pending move
+            encoded3 rootsLen rootsBound decoded3 leftEq paEq memoryResult
+          have middlePending : middle.h2 = .dataElement roots len (tag, payload) :: (tail ++ left) := by
+            simp [leftEq, pending]
+          obtain ⟨nextInvariant, nextAccounting⟩ := partialDataScan_nextInvariant genConf state middle roots moved
+            len (tag, payload) (tail ++ left) true move middleOk middlePending invariant
+          obtain ⟨middleH1, middleR4, middleR3, middleR2, middleR1, _⟩ :=
+            partialMoveList_fixedFields genConf roots moved state middle move
+          have nextRefs : (next.r4 ++ next.r3 ++ next.r2 ++ next.r1).all (isRefElement genConf.isRef) = true := by
+            simpa [next, middleR4, middleR3, middleR2, middleR1] using allRefs
+          obtain ⟨nextCursor, nextPa⟩ := partialDataScan_nextPointers state middle roots moved len (tag, payload)
+            tail left p nextAddr midPa true pending middleH1 leftEq rootsLen cursorEq paEq
+          obtain ⟨nextRun0, _, tailFuel0⟩ := partialDataScan_pointerAbstract genConf k state middle state1 roots moved
+            len (tag, payload) tail left pending move leftEq abstractRun stateOk countBound
+          have nextRun : GenGcPartial.gcMoveData genConf next = state1 := by
+            simpa [next, middlePending] using nextRun0
+          have tailFuel : heapLength next.h2 + next.n ≤ k - 1 := by
+            simpa [next, middlePending] using tailFuel0
+          rw [nextCursor, indexEq, nextPa] at wordTail
+          have recursiveWord : wordGenGcPartialMoveData conf (k - 1)
+              (p + wordSemBytesInWord * BitVec.ofNat width (heapLength next.h1), BitVec.ofNat width next.a,
+               p + wordSemBytesInWord * BitVec.ofNat width (heapLength (next.h1 ++ next.h2)),
+               curr, midMemory, domain, wordSemBytesInWord * BitVec.ofNat width genConf.genStart,
+               wordSemBytesInWord * BitVec.ofNat width genConf.refsStart) = (lastI, lastPa, lastMemory, tailOk) := by
+            simpa only [next] using wordTail
+          have positive : 0 < k := by
+            have h : 0 < heapLength state.h2 := by rw [pending]; simp [heapLength, elLength]
+            omega
+          obtain ⟨xsFinal, currentFinal, finalMemory, finalH2, finalHeap, finalSegment, finalOk, finalI, finalLen,
+            finalInvariant, finalAccounting, finalPa, finalRefs⟩ :=
+            ih (k - 1) (by omega) next state1 midMemory lastMemory xsMid lastPa lastI currentMid tailOk
+              nextRun stateOk (by simpa [next, heapLen] using limitEq)
+              (by simpa [next, heapLen] using heapBound) (by simpa [next, heapLen] using heapBytesBound)
+              (by simpa [next, heapLen] using refBound) (by simpa [next] using segmentMid)
+              recursiveWord tailFuel nextInvariant nextMemory nextRefs xsLen.symm
+          refine ⟨xsFinal, currentFinal, finalMemory, finalH2, ?_, finalSegment, finalOk, finalI, finalLen,
+            finalInvariant, ?_, finalPa, finalRefs⟩
+          · simpa [next, heapLen] using finalHeap
+          · simpa only [pending] using finalAccounting.trans nextAccounting
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

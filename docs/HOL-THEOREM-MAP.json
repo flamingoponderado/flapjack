@@ -3,6 +3,15 @@
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "word_gen_gc_partial_move_data_thm",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PartialData.lean",
+  "lean_name": "wordGenGcPartialMoveData_thm",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared word_partial_move_data_typed with the complete theorem: the heap segment, bounds, separated memory, fuel, reference invariant and all existential conclusions agree at the shared positive word width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_gen_gc_partial_move_data_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PartialData.lean",
   "lean_name": "wordGenGcPartialMoveData_empty",
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
