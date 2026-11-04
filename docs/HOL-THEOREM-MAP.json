@@ -71426,30 +71426,6 @@
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
-    "lean_name": "progOfHOL_panSimpCompileHOL",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific codec bridge for exact HOL `compile_def`: decoding `panSimpCompileHOL` agrees with executed production `panSimpProg`. Composition of the seq_assoc and ret_to_tail bridges; no separate HOL theorem and no HOL tag."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
-    "lean_name": "progOfHOL_panSimpDeclsHOL",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific codec bridge for exact HOL `compile_prog_def`: mapping `panSimpDeclsHOL` through `declOfHOL` agrees with executed production `panSimpDecls`, including declaration traversal and per-function body compilation. No separate HOL theorem about the declaration decoder; no HOL tag."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
-    "lean_name": "progOfHOL_retToTailHOL",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific codec bridge for exact HOL `ret_to_tail_def`: decoding `retToTailHOL` agrees with production `retToTail`. HOL has no separate decoder theorem; proved by strong sizeOf induction. No HOL tag."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
     "lean_name": "progOfHOL_retToTailHOL_call",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific codec equation for the Call clause of exact pan_simp ret_to_tail. It uses the ProgHOL Call decoder and a recursive handler-body equation; HOL has no theorem about commuting progOfHOL with retToTailHOL, so no HOL tag is claimed."
@@ -71498,25 +71474,9 @@
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
-    "lean_name": "progOfHOL_seqAssocHOL",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific full codec bridge for exact HOL `seq_assoc_def`: decoding `seqAssocHOL` agrees with production `seqAssoc`. HOL has no separate theorem commuting its `ProgHOL` decoder with the transform; proved by Lean-only strong sizeOf induction. No HOL tag."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
     "lean_name": "progOfHOL_seqAssocHOL_annot",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific codec equation for the annotation clause of exact pan_simp seq_assoc. It requires no recursive hypothesis because HOL erases annotations to the prefix; HOL has no theorem about commuting progOfHOL with seqAssocHOL, so no HOL tag is claimed."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
-    "lean_name": "progOfHOL_seqAssocHOL_call",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific codec equation for the Call clause of exact pan_simp seq_assoc. It uses the Call metadata decoder and a recursive handler-body equation; HOL has no separate theorem about commuting progOfHOL with seqAssocHOL, so no HOL tag is claimed."
   },
   {
     "hol_path": null,

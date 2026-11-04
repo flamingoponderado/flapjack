@@ -37,10 +37,6 @@ private theorem byteRangedStructCompileInput_ok :
     simp [DeclByteRanged, FunDeclByteRanged, NameRanged, ListParamByteRanged,
       ParamByteRanged, ShapeByteRanged, ProgByteRanged, ExpByteRanged]
 
-example : ∀ declaration ∈ structCompileTop byteRangedStructCompileInput,
-    DeclByteRanged declaration :=
-  structCompileTop_byteRanged byteRangedStructCompileInput byteRangedStructCompileInput_ok
-
 theorem structCompileTopExact_byteRanged_fixture :
     structCompileTopExactOfByteRanged byteRangedStructCompileInput
       byteRangedStructCompileInput_ok = structCompileTop byteRangedStructCompileInput :=

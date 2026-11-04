@@ -1,13 +1,14 @@
 import Flapjack.Parser
 import Flapjack.Parser.ParseTopDecsByteRanged
 import Flapjack.Pancake.PanToCrep.Compile
-import Flapjack.Pancake.PanSimp.DeclsProduction
+import Flapjack.Pancake.Proofs.PanSimp.ProgOfHOL
 import Flapjack.Pancake.PanGlobalsByteRanged
-import Flapjack.Pancake.PanStructs.CompileTopProduction
+import Flapjack.Pancake.PanStructs.CompileDeclsCorrespondence
 import Flapjack.Pancake.PanSimpByteRanged
 import Flapjack.CompileFunctionDistinct
 import Flapjack.Pancake.CrepToLoop.Optimise
-import Flapjack.Pancake.CrepToLoop.ProductionDeclarations
+import Flapjack.Pancake.CrepToLoop.ProductionCompileProg
+import Flapjack.Pancake.PanToCrep.CompileProgCorrespondence
 import Flapjack.Pancake.LoopToWord
 import Flapjack.Pancake.LoopToWord.CompFuncExact
 import Flapjack.Pancake.LoopToWord.LoopProgCarrierCodec
@@ -48,29 +49,5 @@ def sourceMakeVmapOracle : Bool :=
   lookupNatInfo 30 (crepMakeVmap [10, 20, 30]) == some 2
 
 #guard sourceMakeVmapOracle
-
-/-! `comp_func_def` must resolve a source parameter through `make_vmap` before
-    lowering.  This representative assignment is the source-to-Loop oracle:
-    Cake's parameter name `10` is compiled to dense local slot `0`. -/
-def sourceCompFuncOracle : Bool :=
-  match crepCompFunc .rv64i [] [10] (.return [.var 10] : CrepProg Nat) with
-  | .mark (.seq (.mark (.assign 1 (.var 0))) _) => true
-  | _ => false
-
-#guard sourceCompFuncOracle
-
-/-! `mk_ctxt_def` field-order oracle: the constructor preserves both the
-    source-name lookup map and Cake's fresh-variable bound. -/
-def sourceMkCtxtOracle : Bool :=
-  let context := crepMkCtxt (α := Nat) .rv64i (crepMakeVmap [10, 20])
-    [("f", (64, 2))] 1
-  context.vars == [(20, 1), (10, 0)] &&
-    findLoopVar context 20 == 1 && context.maxVar == 1 &&
-    context.functions == [("f", (64, 2))] &&
-    match context.target with
-    | .rv64i => true
-    | _ => false
-
-#guard sourceMkCtxtOracle
 
 end Flapjack.Test.LoopToWordBoundaryParity

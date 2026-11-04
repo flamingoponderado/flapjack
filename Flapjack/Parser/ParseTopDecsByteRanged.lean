@@ -75,12 +75,7 @@ production String-keyed `compileProgTopHOL`. This equality is NOT definitional:
 it is kernel-proved by `compileProgTopHOLOfExact_declToHOL` using the
 `DeclByteRanged` premise, i.e. propositional (not definitional) equality.
 This is the kernel-checked bridge from the parser output to the exact carrier.
-Its premise composes through entry relocation, `pan_simp`, struct compilation,
-and `compile_top`; with standard BitVec literals the resulting proof selects
-`compileProgDeclsHOLW` and its exact inliner in
-`compileProgNativeWithMetadataRouted`.
-`CompileProgCorrespondence.lean` proves complete output agreement at this
-byte-range boundary. This codec agreement does not establish pass simulation
+This codec agreement does not establish pass simulation
 or the end-to-end compiler correctness theorem. Direct
 original-Pancake parity evidence for the executed boundary is
 `python3 scripts/check-parity-goldens.py` (wide_constants.pnk, parity

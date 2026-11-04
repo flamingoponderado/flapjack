@@ -872,7 +872,6 @@ theorem structCompileExp_oldShape_eq {width : Nat} [BEq String]
     (fun field value ih he => ih he)
     expression
 
-
 private theorem structCompileProgExps_eq_of_shape_eq {width : Nat} [BEq String]
     (context : StructPassContext) (compileShape : StructContext → Shape → Shape)
     (hshape : ∀ shape, ShapeByteRanged shape →
@@ -1089,7 +1088,6 @@ private theorem structCompileParams_byteRanged [BEq String] (context : StructCon
   rcases h source hsource with ⟨hname, hshape⟩
   exact ⟨hname, structCompileShape_byteRanged context source.2 hc hshape⟩
 
-
 theorem structCompileDecls_structs {width : Nat} [BEq String]
     (declarations : List (Decl (BitVec width))) :
     ∀ (context : StructPassContext)
@@ -1101,7 +1099,6 @@ theorem structCompileDecls_structs {width : Nat} [BEq String]
   | cons declaration rest ih =>
       intro context compileShape oldShape
       cases declaration <;> simp [structCompileDecls, ih]
-
 
 /-- Flapjack output range invariant for declaration compilation, used by the
 production syntax decoder. This infrastructure theorem has no HOL original. -/
@@ -1163,19 +1160,6 @@ theorem structCompileDecls_byteRanged {width : Nat} [BEq String]
           simp only [structCompileDecls] at hresult
           exact ih context hc hrest result hresult
 
-theorem structCompileTop_byteRanged {width : Nat} [BEq String]
-    (declarations : List (Decl (BitVec width)))
-    (hdecls : ∀ declaration ∈ declarations, DeclByteRanged declaration) :
-    ∀ declaration ∈ structCompileTop declarations, DeclByteRanged declaration := by
-  let initial : StructPassContext := { structs := [], locals := [], globals := [] }
-  have hcontext : CtxBR (structGetNames initial declarations).structs :=
-    structGetNames_ctxBR initial declarations (by simp [initial, CtxBR]) hdecls
-  intro declaration hmem
-  letI : BEq String := instBEqOfDecidableEq
-  simpa [structCompileTop, initial] using
-    structCompileDecls_byteRanged declarations (structGetNames initial declarations)
-      hcontext hdecls declaration hmem
-
 /-- Flapjack codec infrastructure, not a HOL theorem. Byte-range hypotheses
 ensure exact identifier equality selects the same first occurrence, including
 missing keys and duplicate keys, for any translated payload. -/
@@ -1208,7 +1192,6 @@ theorem encodedShapeContextLookup (name : String) (entries : List (String × Sha
       (lookupInfo name entries).map shapeToHOL := by
   exact encodedContextLookup shapeToHOL name entries hname
     (fun p hp => (hentries p hp).1)
-
 
 /-- Flapjack codec infrastructure: the exact local lookup is the source lookup
 with its shape payload encoded, under the actual byte-range obligations. -/
@@ -1603,7 +1586,6 @@ theorem structOldExpShapeExactProduction_eq_legacy {width : Nat} [NeZero width]
   exact shapeOfHOL_shapeToHOL _
     (structOldExpShape_byteRanged context hc hl hg expression he)
 
-
 private theorem structCompileProgExps_oldShape_eq {width : Nat} [BEq String]
     (context : StructPassContext) (compileShape : StructContext → Shape → Shape)
     (oldShape : StructPassContext → Exp (BitVec width) → Shape)
@@ -1893,7 +1875,6 @@ theorem structCompileDecls_globals_byteRanged {width : Nat} [BEq String]
       | name name fields =>
           simpa only [structCompileDecls] using ih context compileShape oldShape hg hrest
 
-
 private theorem structCompileDeclsExact_eq_legacy {width : Nat} [BEq String] [NeZero width]
     (declarations : List (Decl (BitVec width))) :
     ∀ (context : StructPassContext), CtxBR context.structs →
@@ -1989,7 +1970,6 @@ private theorem structCompileDeclsExact_eq_legacy {width : Nat} [BEq String] [Ne
           simp only [structCompileDecls]
           exact ih context hc hl hg hrest
 
-
 /-- Both exact HOL callbacks in the parser-ranged `pan_structs` route preserve
     the production result. The proof composes the recursive old-expression
     codec with the existing shape callback equivalence through programs and
@@ -2013,7 +1993,5 @@ theorem structCompileTopExact_eq_legacyOfByteRanged {width : Nat} [BEq String] [
   simpa [structCompileTopExactOfByteRanged, structCompileTop, initial] using
     structCompileDeclsExact_eq_legacy declarations (structGetNames initial declarations)
       hcontext hl hg hdeclarations
-
-
 
 end Flapjack

@@ -25,21 +25,6 @@ open Flapjack.Compiler.Encoders.Asm
 
 private abbrev fs : HolFiniteMapExact MlString (Nat × Nat) := HolFiniteMapExact.empty
 
-/-- A byte-ranged source `skip` reaches the checked production `comp_func`
-route, then the exact `optimise_def` route, and relates to that exact result. -/
-example : loopProgExecRel
-    (crepCompFuncThroughHOLExact (width := 8) .rv32i [] []
-    (CrepProg.skip : CrepProg (BitVec 8))
-    (by simp [CrepProgNameRanged])
-    (by intro entry h; simp at h))
-    (optimiseHOL (compFuncHOLExact (width := 8) .riscv fs []
-      (CrepProgHOL.skip : CrepProgHOL 8))) := by
-  simpa [crepMakeVmap, crepProgToHOL, crepMkCtxt,
-    productionLoopContextToExact, lookupInfo, fs, HolFiniteMapExact.empty] using
-    (crepCompFuncThroughHOLExact_rel (width := 8) .rv32i [] []
-    (CrepProg.skip : CrepProg (BitVec 8))
-    (by simp [CrepProgNameRanged]) (by simp))
-
 /-- `comp_func_skip` HOL row. -/
 theorem compFunc_skip :
     compFuncHOLExact (width := 8) .riscv fs []

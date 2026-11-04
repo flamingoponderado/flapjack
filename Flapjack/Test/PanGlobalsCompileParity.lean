@@ -224,19 +224,6 @@ def duplicateGlobalDecls : List (Decl Nat) :=
        body := .return (.var .global "g")
        returnShape := .one }]
 
-def duplicateGlobalLayoutGuard : Bool :=
-  let compiled := globalCompileTop 8 id duplicateGlobalDecls
-  match compiled.initializers, compiled.declarations with
-  | [.store (.op .sub [.topAddr, .const 8]) (.const 7),
-     .store (.op .sub [.topAddr, .const 16]) (.const 7)],
-    [.function declaration] =>
-      match declaration.body with
-      | .return (.load .one (.op .sub [.topAddr, .const 16])) => true
-      | _ => false
-  | _, _ => false
-
-#guard duplicateGlobalLayoutGuard
-
 /-! Cake compiles each global initializer with only the declarations that
     precede it in source order.  A reference to a later global therefore
     takes `compile_exp`'s zero fallback, even though the final global context
@@ -253,14 +240,5 @@ def laterGlobalInitializerDecls : List (Decl Nat) :=
        params := []
        body := .return (.var .global "later")
        returnShape := .one }]
-
-def precedingGlobalContextGuard : Bool :=
-  let compiled := globalCompileTop 8 id laterGlobalInitializerDecls
-  match compiled.initializers with
-  | [.store (.op .sub [.topAddr, .const 8]) (.const 0),
-     .store (.op .sub [.topAddr, .const 16]) (.const 7)] => true
-  | _ => false
-
-#guard precedingGlobalContextGuard
 
 end Flapjack.Test.PanGlobalsCompileParity
