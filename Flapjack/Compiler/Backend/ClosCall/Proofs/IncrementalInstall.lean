@@ -21519,4 +21519,243 @@ theorem evaluateApp_compileIncFuel_finalKnown_ordered {C F : Type} (fuel : Nat) 
     · exact Or.inl (Or.inr openLoc)
 
 
+/-- Compiler state obtained by compiling consecutive oracle entries and
+prepending their emitted auxiliary code. This is Flapjack-specific history
+infrastructure. -/
+def compileOraclePrefix {C : Type} (fuel : Nat) (oracle : ClosSem.CompileOracle (NumSet × C)) : Nat → State → State
+  | 0, g => g
+  | n + 1, g =>
+    let compiled := compileIncFuelTotal fuel g.1 (oracle 0).2
+    compileOraclePrefix fuel (holShiftSeq 1 oracle) n (compiled.1, compiled.2.2 ++ g.2)
+
+/-- Oracle ordering and a well-formed compiler state make the current
+oracle program's labels fresh. This is Flapjack-specific infrastructure. -/
+theorem labelsFresh_of_oracleMonotonic {C : Type} (g : State) (allowed : Set Nat)
+    (oracle : ClosSem.CompileOracle (NumSet × C)) (well : wellFormed g)
+    (ordered : BackendProps.oracleMonotonic (fun entry => {loc | loc ∈ codeLocations entry.2.1}) (· < ·)
+      (sptDomain g.1 ∪ allowed) oracle) :
+    LabelsFresh (codeLocations (oracle 0).2.1) g := by
+  intro loc member labelMember
+  have image : loc + 1 ∈ Set.image Nat.succ (sptDomain g.1) := by
+    rw [← well.1]
+    exact labelMember
+  obtain ⟨knownLoc, known, equal⟩ := image
+  have same : knownLoc = loc := by omega
+  subst knownLoc
+  have lt := ordered.2 0 loc loc (Or.inl known) member
+  omega
+
+/-- Compiling a checked oracle prefix reconstructs a well-formed compiler
+state whose emitted association list is exactly the target code obtained by
+installing the transformed prefix. This is Flapjack-specific infrastructure. -/
+theorem compileOraclePrefix_exactCode {C F : Type} (fuel count : Nat)
+    (source : ClosSem.State (NumSet × C) F) (g : State)
+    (known : g.1 = (source.compileOracle 0).1.1) (well : wellFormed g)
+    (syntaxOracle : ∀ index, syntaxOk (source.compileOracle index).2.1 ∧ (source.compileOracle index).2.2 = [])
+    (ordered : BackendProps.oracleMonotonic (fun entry => {loc | loc ∈ codeLocations entry.2.1}) (· < ·)
+      (sptDomain g.1 ∪ (∅ : Set Nat)) source.compileOracle)
+    (steps : ∀ index, index < count → ∃ converted,
+      compileIncFuel? fuel (source.compileOracle index).1.1 (source.compileOracle index).2 =
+        some ((source.compileOracle (index + 1)).1.1, converted)) :
+    let finalG := compileOraclePrefix fuel source.compileOracle count g
+    wellFormed finalG ∧ finalG.1 = (source.compileOracle count).1.1 ∧ stateExtends g finalG ∧
+      ClosSem.installOraclePrefix (HolFiniteMapExact.alistToFmap g.2)
+        (compileIncFuelOracle fuel source.compileOracle) count = HolFiniteMapExact.alistToFmap finalG.2 := by
+  induction count generalizing source g with
+  | zero =>
+    simp only [compileOraclePrefix, ClosSem.installOraclePrefix]
+    exact ⟨well, known, stateExtends_refl g well.2, trivial⟩
+  | succ count ih =>
+    cases totalEq : compileIncFuelTotal fuel g.1 (source.compileOracle 0).2 with
+    | mk nextKnown converted =>
+      have pass : compileIncFuel? fuel g.1 (source.compileOracle 0).2 = some (nextKnown, converted) := by
+        simpa [totalEq] using compileIncFuel_eq_total fuel g.1 (source.compileOracle 0).2
+      obtain ⟨checkedConverted, checkedPass⟩ := steps 0 (by omega)
+      have sameKnown : nextKnown = (source.compileOracle 1).1.1 := by
+        have checkedPass' : compileIncFuel? fuel g.1 (source.compileOracle 0).2 =
+            some ((source.compileOracle 1).1.1, checkedConverted) := by simpa [known] using checkedPass
+        exact congrArg Prod.fst (Option.some.inj (pass.symm.trans checkedPass'))
+      have distinct : (codeLocations (source.compileOracle 0).2.1).Nodup := (syntaxOracle 0).1.2.2
+      have fresh := labelsFresh_of_oracleMonotonic g ∅ source.compileOracle well ordered
+      have ⟨newWell, extension⟩ := compileIncFuel_merge_state fuel g.1 g.2 (source.compileOracle 0).2
+        nextKnown converted pass well distinct fresh
+      let nextSource := { source with compileOracle := holShiftSeq 1 source.compileOracle }
+      let nextG : State := (nextKnown, converted.2 ++ g.2)
+      have nextKnownEq : nextG.1 = (nextSource.compileOracle 0).1.1 := by simpa [nextG, nextSource, holShiftSeq] using sameKnown
+      have syntaxNext : ∀ index, syntaxOk (nextSource.compileOracle index).2.1 ∧ (nextSource.compileOracle index).2.2 = [] := by
+        intro index
+        simpa [nextSource, holShiftSeq] using syntaxOracle (index + 1)
+      have oldOrdered : OracleLocationsOrdered g ∅ source := (oracleLocationsOrdered_iff_oracleMonotonic g ∅ source).2 ordered
+      have shiftedOrdered := oracleLocationsOrdered_after_compile fuel g ∅ source nextSource (source.compileOracle 0).2
+        nextKnown converted oldOrdered rfl pass rfl
+      have orderedNext' : OracleLocationsOrdered nextG ∅ nextSource := by
+        constructor
+        · exact shiftedOrdered.1
+        · intro index x y member future
+          rcases member with knownLoc | impossible
+          · exact shiftedOrdered.2 index x y (Or.inl knownLoc) future
+          · exact False.elim impossible
+      have orderedNext := (oracleLocationsOrdered_iff_oracleMonotonic nextG ∅ nextSource).1 orderedNext'
+      have nextSteps : ∀ index, index < count → ∃ output,
+          compileIncFuel? fuel (nextSource.compileOracle index).1.1 (nextSource.compileOracle index).2 =
+            some ((nextSource.compileOracle (index + 1)).1.1, output) := by
+        intro index bound
+        obtain ⟨output, step⟩ := steps (index + 1) (by omega)
+        refine ⟨output, ?_⟩
+        simpa [nextSource, holShiftSeq, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using step
+      have recursive := ih nextSource nextG nextKnownEq newWell syntaxNext orderedNext nextSteps
+      have targetHead : (compileIncFuelOracle fuel source.compileOracle 0).2.2 = converted.2 := by
+        simp [compileIncFuelOracle, BackendProps.stateCo, ← known, totalEq]
+      have targetTail : holShiftSeq 1 (compileIncFuelOracle fuel source.compileOracle) =
+          compileIncFuelOracle fuel (holShiftSeq 1 source.compileOracle) := by
+        funext index
+        rfl
+      have install : (HolFiniteMapExact.alistToFmap g.2).updateListEq converted.2 =
+          HolFiniteMapExact.alistToFmap nextG.2 := by
+        exact compileIncFuel_install_exactCode fuel g (source.compileOracle 0).2 nextKnown converted pass distinct
+      simp only [compileOraclePrefix, totalEq] at ⊢
+      change wellFormed (compileOraclePrefix fuel nextSource.compileOracle count nextG) ∧
+        (compileOraclePrefix fuel nextSource.compileOracle count nextG).1 = (source.compileOracle (count + 1)).1.1 ∧
+        stateExtends g (compileOraclePrefix fuel nextSource.compileOracle count nextG) ∧ _
+      refine ⟨recursive.1, ?_, stateExtends_trans g nextG _ extension recursive.2.2.1, ?_⟩
+      · simpa [nextSource, holShiftSeq, Nat.add_comm] using recursive.2.1
+      · simp only [ClosSem.installOraclePrefix, targetHead, targetTail, install]
+        exact recursive.2.2.2
+
+/-- Included distinct bindings determine a finite code map exactly when the
+map has no keys outside those bindings. This is Flapjack-specific map
+infrastructure for the final code invariant. -/
+theorem codeIncludes_exact_of_domain {V : Type} (entries : List (Nat × V))
+    (code : HolFiniteMapExact Nat V) (distinct : (entries.map Prod.fst).Nodup)
+    (included : codeIncludes entries code)
+    (domain : ∀ key value, code.lookup key = some value → key ∈ entries.map Prod.fst) :
+    code = HolFiniteMapExact.alistToFmap entries := by
+  apply holFiniteMapExact_eq_of_lookup
+  intro key
+  cases found : code.lookup key with
+  | none =>
+    cases alistFound : (HolFiniteMapExact.alistToFmap entries).lookup key with
+    | none => rfl
+    | some value =>
+      have logical : logicalAssocLookup key entries = some value := by
+        simpa [alistToFmap_lookup_logical] using alistFound
+      have impossible := included key value logical
+      rw [found] at impossible
+      contradiction
+  | some value =>
+    have member := domain key value found
+    obtain ⟨⟨label, item⟩, entryMember, equal⟩ := List.mem_map.mp member
+    dsimp at equal
+    subst label
+    have logical := logicalAssocLookup_of_mem entries key item distinct entryMember
+    have same := included key item logical
+    rw [found] at same
+    have itemEq : item = value := (Option.some.inj same).symm
+    rw [alistToFmap_lookup_logical, logical, itemEq]
+
+/-- Every code key after installing a finite oracle prefix was already in
+the initial map or occurs in an auxiliary list from that prefix. This is
+Flapjack-specific history infrastructure. -/
+theorem installOraclePrefix_key_origin {C : Type} (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+    (oracle : ClosSem.CompileOracle C) (count key : Nat) (value : Nat × ClosLang.Exp)
+    (found : (ClosSem.installOraclePrefix code oracle count).lookup key = some value) :
+    code.lookup key ≠ none ∨ ∃ index, index < count ∧ key ∈ (oracle index).2.2.map Prod.fst := by
+  induction count generalizing code oracle with
+  | zero =>
+    left
+    simp only [ClosSem.installOraclePrefix] at found
+    rw [found]
+    simp
+  | succ count ih =>
+    simp only [ClosSem.installOraclePrefix] at found
+    rcases ih (code.updateListEq (oracle 0).2.2) (holShiftSeq 1 oracle) found with old | ⟨index, bound, member⟩
+    · by_cases member : key ∈ (oracle 0).2.2.map Prod.fst
+      · exact Or.inr ⟨0, by omega, member⟩
+      · left
+        intro missing
+        apply old
+        rw [HolFiniteMapExact.lookup_updateListEq]
+        have same := FLOOKUP_FUPDATE_LIST_HOL_not_mem code.lookup (oracle 0).2.2 key member
+        simpa [FLOOKUP, missing] using same
+    · right
+      refine ⟨index + 1, by omega, ?_⟩
+      simpa [holShiftSeq] using member
+
+/-- A key newly installed from the transformed oracle prefix is the successor
+of a source location from that same prefix. This is Flapjack-specific history
+infrastructure. -/
+theorem compileOraclePrefix_key_origin {C : Type} (fuel count : Nat)
+    (oracle : ClosSem.CompileOracle (NumSet × C)) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+    (key : Nat) (value : Nat × ClosLang.Exp)
+    (syntaxOracle : ∀ index, syntaxOk (oracle index).2.1)
+    (found : (ClosSem.installOraclePrefix code (compileIncFuelOracle fuel oracle) count).lookup key = some value) :
+    code.lookup key ≠ none ∨ ∃ loc, loc ∈ OraclePastLocations oracle count ∧ key = loc + 1 := by
+  rcases installOraclePrefix_key_origin code (compileIncFuelOracle fuel oracle) count key value found with old | ⟨index, bound, member⟩
+  · exact Or.inl old
+  · obtain ⟨nextKnown, pass, _⟩ := compileIncFuelOracle_entry fuel oracle index
+    have generated := compileIncFuel_generated fuel (oracle index).1.1 (oracle index).2 nextKnown
+      (compileIncFuelOracle fuel oracle index).2 pass (syntaxOracle index).2.2
+    obtain ⟨loc, locMember, equal⟩ := generated.2.1 key member
+    exact Or.inr ⟨loc, ⟨index, bound, locMember⟩, equal⟩
+
+/-- Two well-formed compiler states with the same known locations have the
+same emitted-label domain. This is Flapjack-specific invariant infrastructure. -/
+theorem wellFormed_sameKnown_labels (left right : State)
+    (leftWell : wellFormed left) (rightWell : wellFormed right) (known : left.1 = right.1) :
+    ∀ label, label ∈ left.2.map Prod.fst ↔ label ∈ right.2.map Prod.fst := by
+  intro label
+  have equal : {label | label ∈ left.2.map Prod.fst} = {label | label ∈ right.2.map Prod.fst} := by
+    rw [leftWell.1, rightWell.1, known]
+  exact Set.ext_iff.mp equal label
+
+/-- A target code map reconstructed from a well-formed prefix state is also
+the exact map of any well-formed included state with the same known locations.
+This is Flapjack-specific infrastructure for recovering the final code
+invariant. -/
+theorem codeIncludes_exact_of_sameKnown (prefixG finalG : State)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+    (prefixWell : wellFormed prefixG) (finalWell : wellFormed finalG) (known : prefixG.1 = finalG.1)
+    (prefixCode : code = HolFiniteMapExact.alistToFmap prefixG.2)
+    (included : codeIncludes finalG.2 code) : code = HolFiniteMapExact.alistToFmap finalG.2 := by
+  apply codeIncludes_exact_of_domain finalG.2 code finalWell.2 included
+  intro key value found
+  have prefixMember : key ∈ prefixG.2.map Prod.fst := by
+    apply alistToFmap_codeDomain prefixG.2 key value
+    simpa [prefixCode] using found
+  exact (wellFormed_sameKnown_labels prefixG finalG prefixWell finalWell known key).1 prefixMember
+
+/-- When source and target histories consume the same checked prefix, final
+readiness entails the exact target-code clause for the final compiler state.
+The matching-prefix premise still needs to be established by the simulation;
+this is Flapjack-specific infrastructure. -/
+theorem finalCode_exact_of_matching_checkedPrefix {C F : Type} (fuel count : Nat)
+    (g finalG : State) (allowed : Set Nat)
+    (source final : ClosSem.State (NumSet × C) F) (target targetFinal : ClosSem.State C F)
+    (inv : IncrementalCodeInv fuel g allowed source target)
+    (readyFinal : IncrementalInstallReady finalG final targetFinal)
+    (sourceShift : final.compileOracle = holShiftSeq count source.compileOracle)
+    (targetCode : targetFinal.code = ClosSem.installOraclePrefix target.code target.compileOracle count)
+    (steps : ∀ index, index < count → ∃ converted,
+      compileIncFuel? fuel (source.compileOracle index).1.1 (source.compileOracle index).2 =
+        some ((source.compileOracle (index + 1)).1.1, converted)) :
+    targetFinal.code = HolFiniteMapExact.alistToFmap finalG.2 := by
+  obtain ⟨_, _, targetOracle, well, known, ordered, sourceCode, syntaxOracle⟩ := inv
+  have orderedEmpty : BackendProps.oracleMonotonic (fun entry => {loc | loc ∈ codeLocations entry.2.1}) (· < ·)
+      (sptDomain g.1 ∪ (∅ : Set Nat)) source.compileOracle := by
+    constructor
+    · exact ordered.1
+    · intro index x y member later
+      rcases member with knownLoc | impossible
+      · exact ordered.2 index x y (Or.inl knownLoc) later
+      · exact False.elim impossible
+  have reconstructed := compileOraclePrefix_exactCode fuel count source g known well syntaxOracle orderedEmpty steps
+  have sameKnown : (compileOraclePrefix fuel source.compileOracle count g).1 = finalG.1 := by
+    rw [reconstructed.2.1, readyFinal.known, sourceShift]
+    simp [holShiftSeq]
+  have prefixCode : targetFinal.code = HolFiniteMapExact.alistToFmap
+      (compileOraclePrefix fuel source.compileOracle count g).2 := by
+    rw [targetCode, sourceCode, targetOracle]
+    exact reconstructed.2.2.2
+  exact codeIncludes_exact_of_sameKnown _ finalG targetFinal.code reconstructed.1 readyFinal.well sameKnown prefixCode readyFinal.included
+
 end Flapjack.Compiler.Backend.ClosCall
