@@ -1,6 +1,51 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_payload_swap",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PayloadSwap.lean",
+  "lean_name": "wordPayload_swap",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared lines 996-998 and word_payload_swap_typed: an equally long replacement address list preserves the original header and validity and maps to the new payload. Header and payload word widths are independently quantified positive widths, as in HOL."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_gc_move_loop_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/LoopEmpty.lean",
+  "lean_name": "wordGcMoveLoop_empty",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the empty-pending-heap case of lines 1003-1022 and word_gc_move_loop_thm_typed. It retains the original abstract and word runs, initial-status, heap and byte bounds, configuration and fuel hypotheses, separated heap and free list, and every existential conclusion. The nonempty case and assembling theorem remain open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "word_heap_heap_expand",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/HeapExpand.lean",
+  "lean_name": "wordHeap_heapExpand",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared lines 8934-8935 and word_heap_heap_expand_typed: the assertions are equal for all lengths and independent positive address and stored-word widths, without added side conditions."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "word_el_IMP_word_list_exists",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/HeapExpand.lean",
+  "lean_name": "wordEl_imp_wordListExists",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared lines 8898-8901 and word_el_IMP_word_list_exists_typed: an arbitrary frame and predicate heap are preserved while the original element assertion implies the existential list at the original element length; address and stored-word widths remain independent."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "word_heap_IMP_word_list_exists",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/HeapExpand.lean",
+  "lean_name": "wordHeap_imp_wordListExists",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared lines 8914-8917 and word_heap_IMP_word_list_exists_typed: an arbitrary frame and predicate heap are preserved while the entire word-heap assertion implies the existential list at its original total length; address and stored-word widths remain independent."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "word_gc_move_list_thm",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/ListSimulation.lean",
   "lean_name": "wordGcMoveList_thm",
