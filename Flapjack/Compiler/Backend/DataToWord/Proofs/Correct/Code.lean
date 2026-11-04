@@ -724,6 +724,9 @@ theorem verifiedFragment_code {C F : Type} (program : DataLang.Prog) (fragment :
   | byteCompare dest left right kind =>
     intro state
     exact evaluate_assign_word_code dest (.wordTest .w8 kind.test) [left, right] none state
+  | byteShift dest src shift amount =>
+    intro state
+    exact evaluate_assign_word_code dest (.wordShift .w8 shift amount) [src] none state
   | setGlobalsPtr dest name => intro state; exact evaluate_assign_setGlobalsPtr_code dest name state
   | globalLoad dest index => intro state; exact evaluate_assign_globalLoad_code dest index state
   | globalStore dest index value => intro state; exact evaluate_assign_globalStore_code dest index value state

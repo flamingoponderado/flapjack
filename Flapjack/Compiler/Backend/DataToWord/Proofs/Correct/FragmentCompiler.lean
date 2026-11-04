@@ -133,6 +133,8 @@ def fragmentCompile64 (conf : Config) (secn label : Nat) : DataLang.Prog → Opt
         (.assign (adjustVar dest) (.const 2)), label)
   | .assign dest (.wordOp (.wordOpw .w8 op)) [left, right] none =>
       some (.assign (adjustVar dest) (byteOpExpr64 op left right), label)
+  | .assign dest (.wordOp (.wordShift .w8 shift amount)) [src] none =>
+      some (.assign (adjustVar dest) (byteShiftExpr64 shift amount src), label)
   | .assign dest (.wordOp (.wordTest .w8 .equal)) [left, right] none =>
       some (byteCompareProg64 .equal dest left right, label)
   | .assign dest (.wordOp (.wordTest .w8 (.compare .lt))) [left, right] none =>
@@ -156,7 +158,7 @@ theorem fragmentCompile64_agrees (conf : Config) (secn : Nat) (program : DataLan
   | byteCompare dest left right kind =>
     intro label
     cases kind <;> rfl
-  | boolNot | boolTest | lessConst | blockLength | blockBounds | byteBounds | arrayBounds | arrayLength | byteLength | dynamicElement | byteElement | byteStore | arrayStore | byteOp | element =>
+  | boolNot | boolTest | lessConst | blockLength | blockBounds | byteBounds | arrayBounds | arrayLength | byteLength | dynamicElement | byteElement | byteStore | arrayStore | byteOp | byteShift | element =>
     intro label
     simp only [fragmentCompile64, compileControl64, compileControl?, Option.getD_some]
     all_goals rfl
