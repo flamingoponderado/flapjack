@@ -205,7 +205,7 @@ payload classification theorem, heap assertions, append theorem, heap/store
 invariant, abstract heap/GC conditions, value/reference traversals, clocked
 value-invariant rules and monotonicity, unbounded value cases and full
 memory-relation statements (including their independent carriers), the typed
-packed-byte update, array-update uniqueness and value-invariant, reference-block heap comparison, heap-store clauses and abstract heap-update theorems, and original HOL low-bit and byte-packing and update
+packed-byte update, array-update uniqueness and value-invariant, reference-block heap comparison, heap dereference and store clauses, whole-array and single-element abstract update theorems, and original HOL low-bit and byte-packing and update
 observations at both widths and byte orders.
 Regenerate with
 `HOL_PROBE_ONLY=data_to_word_memory_repr_probeScript.sml scripts/hol-probes/regenerate.sh`. The capture supports source review; it is

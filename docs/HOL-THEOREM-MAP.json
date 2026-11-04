@@ -110422,6 +110422,23 @@
     "reviewer": "Compared update_ref_thm_typed against the Lean statement: both assume the complete abstract ML invariant for a stack prefix followed by the reference pointer, the old value-array lookup, and equal replacement and old lengths. Both conclude the same existential root split and successful heap store of the replacement reference block, followed by the complete abstract invariant for the inserted value array and returned heap. The heap, roots and existential pointer payload share the HOL word dimension, represented by a positive type-indexed BitVec width."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ArrayUpdateElement.lean",
+    "lean_name": "heapDeref",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "heap_deref_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared heap_deref_def_typed: both match a successful heap lookup to a DataElement with RefTag and empty payload, returning its pointer list regardless of the length field; all other elements and lookup failure return NONE. The pointer and payload carriers remain independently polymorphic."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ArrayUpdateElement.lean",
+    "lean_name": "updateRefElement",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "update_ref_thm1",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared update_ref_thm1_typed: both retain the full abstract invariant, array lookup, in-range index and nonempty source prefix; the conclusions retain the existential root split and length, old heap dereference and length, successful single-entry heap store, and full updated abstract invariant. Both head defaults are unreachable because the source prefix is nonempty and the root prefix has equal length. Heap and roots share the HOL word dimension represented by positive-width BitVec."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/HeapStore.lean",
     "lean_name": "heapStore",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",

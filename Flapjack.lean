@@ -300,6 +300,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ArrayUpdateRe
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ArrayUpdateValue
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ArrayUpdateRestriction
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ArrayUpdateStack
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ArrayUpdateElement
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.HeapStore
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteUpdateValue
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteUpdateValueHeap

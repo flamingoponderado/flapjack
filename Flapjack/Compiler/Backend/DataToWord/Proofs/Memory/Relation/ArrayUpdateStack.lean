@@ -61,7 +61,8 @@ theorem updateRef {width : Nat} [NeZero width] (conf : Config)
   have heapComponents := refBlockReplace_heapInvariants conf pre post
     (rs ++ .pointer (heapLength pre) (.word 0) :: roots2) oldRoots rs a sp sp1 limit gens equalLengths
     (by simpa [List.append_assoc] using rootsValid) (by simpa [List.append_assoc] using heapValid)
-    (by simpa [List.append_assoc] using gcValid) (by simpa [List.append_assoc] using unused) newRoots
+    (by simpa [List.append_assoc] using gcValid) (by simpa [List.append_assoc] using unused)
+    (fun address member => Or.inl (newRoots address member))
   have dataEq (n : Nat) : isSomeDataElement (heapLookup n (pre ++ refBlock oldRoots :: post)) ↔
       isSomeDataElement (heapLookup n newHeap) := by
     simpa [newHeap, List.append_assoc] using refBlock_replace_isSomeData pre post oldRoots rs equalLengths n

@@ -94,16 +94,15 @@ theorem heapStore_refBlock_effect {α β : Type} (heap : List (HeapElement α (H
     rw [← heapLookup_replace_ne pre post _ _ size n different]
     simpa only [List.append_assoc, List.singleton_append] using old
 
-/-- Storing a reference block whose new pointers are among the roots preserves
-root validity and heap validity. This is infrastructure for the abstract
-value-array update, where the new block's pointers come from the root prefix. -/
+/-- Storing a reference block preserves heap validity when every resulting
+pointer was already in the block or appears among the roots. -/
 theorem heapStore_refBlock_preservesRootsHeap {α β : Type}
     (heap : List (HeapElement α (HeapTag × List β))) (roots : List (HeapAddress α))
     (offset limit : Nat) (before after : List (HeapAddress α))
     (sameLength : before.length = after.length)
     (found : heapLookup offset heap = some (refBlock before))
     (rootsValid : rootsOk roots heap) (heapValid : heapOk heap limit)
-    (newRoots : ∀ address ∈ after, address ∈ roots) :
+    (newRoots : ∀ address ∈ after, address ∈ roots ∨ address ∈ before) :
     ∃ heap2, heapStore offset [refBlock after] heap = (heap2, true) ∧
       refBlockInv heap heap2 ∧ rootsOk roots heap2 ∧ heapOk heap2 limit := by
   obtain ⟨heap2, stored, unchanged, _, lengths, forwards, members, lookupData, _⟩ :=
@@ -118,7 +117,11 @@ theorem heapStore_refBlock_preservesRootsHeap {α β : Type}
         simp only [refBlock, HeapElement.dataElement.injEq] at newCell
         exact newCell.1
       subst pointers
-      exact (lookupData ptr).mpr (rootsValid ptr value (newRoots _ conditions.2))
+      apply (lookupData ptr).mpr
+      rcases newRoots _ conditions.2 with root | old
+      · exact rootsValid ptr value root
+      · apply heapValid.2.2 before before.length (HeapTag.refTag, []) ptr value
+        exact ⟨by simpa [refBlock] using heapLookup_mem heap offset (refBlock before) found, old⟩
     · exact (lookupData ptr).mpr (heapValid.2.2 pointers len data ptr value ⟨oldCell, conditions.2⟩)
 
 /-- Equal cell lengths and matching data-cell classification are enough to
@@ -363,7 +366,7 @@ theorem refBlockReplace_heapInvariants {α β : Type} (conf : Config)
     (heapValid : heapOk (pre ++ [refBlock before] ++ post) limit)
     (gcValid : gcKindInv conf a sp sp1 gens (pre ++ [refBlock before] ++ post))
     (unused : unusedSpaceInv a (sp + sp1) (pre ++ [refBlock before] ++ post))
-    (newRoots : ∀ address ∈ after, address ∈ roots) :
+    (newRoots : ∀ address ∈ after, address ∈ roots ∨ address ∈ before) :
     rootsOk roots (pre ++ [refBlock after] ++ post) ∧
       heapOk (pre ++ [refBlock after] ++ post) limit ∧
       gcKindInv conf a sp sp1 gens (pre ++ [refBlock after] ++ post) ∧
