@@ -18,32 +18,4 @@ open Flapjack
 open Flapjack.Compiler.Backend.WordToStack
 open Flapjack.RiscV.CakeAlloc
 
-private def bridgeGuard : Bool :=
-  (BitVec.ofNat 64 (Flapjack.RiscV.CakeAlloc.bitsToWord (List.replicate 65 true)) ==
-      bitsToWordW (width := 64) (List.replicate 65 true)) &&
-    (BitVec.ofNat 8 (Flapjack.RiscV.CakeAlloc.bitsToWord [true, false, true]) ==
-      bitsToWordW (width := 8) [true, false, true]) &&
-    ((Flapjack.RiscV.CakeAlloc.frameBitmapWords 3
-          [true, true, true, true, true]).map (BitVec.ofNat 8) ==
-        wordListW (width := 8) [true, true, true, true, true] 3)
-
-#eval bridgeGuard
-#guard bridgeGuard
-
-example : BitVec.ofNat 64 (Flapjack.RiscV.CakeAlloc.bitsToWord [true, false, true]) =
-    bitsToWordW (width := 64) [true, false, true] :=
-  bitsToWord_ofNat_eq _
-
-example : (Flapjack.RiscV.CakeAlloc.frameBitmapWords 3
-      [true, true, true, true, true]).map (BitVec.ofNat 8) =
-    wordListW (width := 8) [true, true, true, true, true] 3 :=
-  frameBitmapWords_map 3 _
-
-def runChecks : IO Bool := do
-  if bridgeGuard then
-    IO.println "PASS executable Cake bitmap recursion maps to tagged bitsToWordW/wordListW"
-  else
-    IO.println "FAIL executable Cake bitmap recursion bridge"
-  pure bridgeGuard
-
 end Flapjack.Test.CakeAllocatorBitsBridgeParity

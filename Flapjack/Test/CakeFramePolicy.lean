@@ -39,96 +39,18 @@ def callFrameExact : Bool :=
 
 #guard callFrameExact
 
-def bitmapEncodingExact : Bool :=
-  bitsToWord [true, false, true] == 5 &&
-    bitsToWord [false, false, false] == 0 &&
-    frameBitmapWords 3 [true, false, true, false, true] == [13, 2] &&
-    writeBitmap [] 12 3 64 == [8] &&
-    writeBitmap [24] 12 3 64 == [12] &&
-    writeBitmap [25, 26] 12 3 64 == [14]
-
-#guard bitmapEncodingExact
-
-/- The checked `word_stack_frame_probe.out` values `bitmap_empty=8w`,
-   `bitmap_slot2=12w`, and `bitmap_slots1_2=14w` exercise the
-   location-derived `write_bitmap` mirror directly. -/
-def frameLocationConfig : WordStackConfig :=
-  { locations := [(1, .stack 2), (2, .stack 3)]
-    scratch := 31
-    stackBase := 10
-    specialScratch := 28 }
-
-/- Physical frame slots include the bitmap-pointer word at slot zero. The
-original bitmap slot2 observation therefore uses physical slot3. -/
-def oneSpillLocationBitmapExact : Bool :=
-  let config : WordStackConfig :=
-    { locations := [(3, .stack 1)], scratch := 22, stackBase := 0 }
-  wordStackLiveBitmapFromLocations config 1 64 [3] == [3] &&
-    writeBitmap [44] 22 1 64 == [3]
-
-#guard oneSpillLocationBitmapExact
-
-def locationBitmapExact : Bool :=
-  wordStackLiveBitmapFromLocations frameLocationConfig 3 64 [] == [8] &&
-    wordStackLiveBitmapFromLocations frameLocationConfig 3 64 [2] == [12] &&
-    wordStackLiveBitmapFromLocations frameLocationConfig 3 64 [1, 2] == [14]
-
-#guard locationBitmapExact
-
-/- At 66 slots the location-derived path crosses the 63-bit bitmap chunk
-   boundary.  Cake appends one explicit terminator before splitting; the
-   legacy base-1 helper would encode the first chunk as 3 * 2^63 instead. -/
-def locationBitmapChunkBoundaryExact : Bool :=
-  let config : WordStackConfig :=
-    { locations := [], scratch := 31, stackBase := 0 }
-  wordStackLiveBitmapFromLocations config 66 64 [] ==
-    [2 ^ 63, 8]
-
-#guard locationBitmapChunkBoundaryExact
-
 def temporaryNumberingExact : Bool :=
   limitVar 0 == 5 && limitVar 26 == 29
 
 #guard temporaryNumberingExact
-
-/- Direct HOL-EVAL rows from `word_stack_frame_probe.out`: Cake's `max_var`
-   ignores register names in a Move, while a later assignment to Word name 26
-   contributes to the frame input. -/
-def maxVarFrameInputExact : Bool :=
-  wordProgCakeMaxVar (.skip : WordProg Nat) == 0 &&
-    wordProgCakeMaxVar (.move 0 [(0, 0)] : WordProg Nat) == 0 &&
-    wordProgCakeMaxVar
-      (.seq (.assign 0 (.const 0)) (.assign 26 (.const 0)) : WordProg Nat) == 26
-
-#guard maxVarFrameInputExact
-
-/- Direct HOL-EVAL rows from `word_stack_max_var_probe.out`: an instruction
-   contributes both its address and destination, while a Return contributes
-   its label and every returned value to the frame-sizing maximum. -/
-def maxVarInstructionReturnExact : Bool :=
-  wordProgCakeMaxVar
-      (.inst (.mem .store 7 12) : WordProg Nat) == 12 &&
-    wordProgCakeMaxVar (.return 7 [4, 12] : WordProg Nat) == 12
-
-#guard maxVarInstructionReturnExact
 
 def runChecks : IO Bool := do
   let checks : List (String × Bool) :=
     [ ("wReg1/wReg2 preserve Cake frame slot numbering", registerFrameExact),
       ("format_var preserves register and spilled alternatives", formatExact),
       ("stack_arg_count and stack_free preserve call occupancy", callFrameExact),
-      ("bits_to_word and write_bitmap preserve Cake bitmap words",
-        bitmapEncodingExact),
-      ("location-derived frame bitmaps match Cake write_bitmap outputs",
-        locationBitmapExact),
-      ("location-derived frame bitmap chunk boundary matches Cake",
-        locationBitmapChunkBoundaryExact),
       ("limit_var preserves the SSA temporary numbering base",
-        temporaryNumberingExact),
-      ("max_var frame inputs match the Cake HOL probe",
-        maxVarFrameInputExact),
-      ("max_var instruction and return inputs match the Cake probe",
-        maxVarInstructionReturnExact) ]
+        temporaryNumberingExact)]
   let mut ok := true
   for (name, result) in checks do
     if result then

@@ -1,5 +1,8 @@
 import Flapjack.RiscV.Encoding
-import Flapjack.RiscV.WordCse
+import Flapjack.Compiler.Backend.WordCse.ListOrder
+import Flapjack.Compiler.Backend.WordCse.RegisterUses
+import Flapjack.Compiler.Backend.StackToLab.ExecutedCodec
+import Std.Data.TreeMap
 
 /-! Encoding parity with the CakeML RISC-V exporter (`export_riscvScript.sml`):
     the Word `Div` operation uses the signed DIV funct3/funct7 encoding. -/

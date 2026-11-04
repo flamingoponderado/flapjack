@@ -27,9 +27,6 @@ def loopContext : LoopContext Nat :=
   { vars := [], functions := [("f", (64, 0))], maxVar := 2,
     target := .rv64i }
 
-def wordContext : WordContext :=
-  { vars := [(3, 2), (4, 3)] }
-
 def identityFunction : FunDecl Nat :=
   { name := "identity", inline := false, exported := false, params := [("x", .one)],
     body := .return (.var .local "x"), returnShape := .one }
@@ -233,10 +230,6 @@ example :
           (.seq (.store32 3 4) .skip)) := by
   simp [loopCompileProg, loopCompileExp, loopNestedSeq,
     loopContext]
-
-example :
-    loopToWordExp (LoopExp.baseAddr : LoopExp Nat) = some (.lookup .currHeap) := by
-  simp [loopToWordExp]
 
 example :
     loopVarsOfExp ((LoopExp.op .add [.var 1, .load (.var 2)]) : LoopExp Nat) =

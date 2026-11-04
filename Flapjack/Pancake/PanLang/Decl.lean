@@ -309,25 +309,14 @@ returning `(eid, shape)` for each `ExnDecl` and dropping
 uses `ShapeHOL`, so this is an exact word-indexed port (the production
 `exceptionEntries` uses Lean `String` and monomorphic `Shape`).
 
-Executable-path disposition (bead `flapjack-4ac.1.44.1`): all three
-`flapjack-compile` source modes (`CompileMain.lean:92-129`) call one of the
-checked source-byte/image/runtime-image entrypoints in
-`RiscV/PipelineDiagnostics.lean`. Each parser-backed entrypoint proves
-`DeclByteRanged` for its declarations and passes that evidence to
-`compileFlapjackEntryCake` (`Pipeline.lean:634-671`). Its proof-bearing branch
-calls `compileProgTopHOLWithMetadataOfExact`, which calls
-`compileProgTopHOLProductionExact` (`PanToCrep/CompileProg.lean:152-186,
-5190-5200`). That executed helper constructs the exception map with
-`panToCrepGetEidsFromDeclsOfExactHOL`, whose body calls this tagged
-`exceptionsHOL` (`PanToCrep/Compile.lean:1207-1218`). The byte-range premise is
-what makes the `DeclHOL` codec total for names and shapes on this route; the
-helper's equality theorem proves it preserves the prior exception map.
-
-`pipelineCrepeContext` / `pipelineCrepeCompileContext` in `Pipeline.lean`
-still use `crepGetEidsFromDecls`, but a whole-tree caller search finds no use
-outside their own definitions and associated local results; they are not on the
-`flapjack-compile` source call graph. Keep this distinction explicit: the
-CLI's parser-proven compile-to-Crep route executes `exceptionsHOL`, while the
+`compileProgTopHOLWithMetadataOfExact` calls
+`compileProgTopHOLProductionExact` (`PanToCrep/CompileProg.lean`), which
+constructs the exception map with `panToCrepGetEidsFromDeclsOfExactHOL`, whose
+body calls this tagged `exceptionsHOL` (`PanToCrep/Compile.lean`). The
+byte-range premise is what makes the `DeclHOL` codec total for names and shapes
+on this route; the helper's equality theorem proves it preserves the prior
+exception map. Keep this distinction explicit: that route executes
+`exceptionsHOL`, while the
 general compatibility context helpers remain String-backed. -/
 @[hol "cakeml/pancake/panLangScript.sml" "exceptions_def"]
 def exceptionsHOL {width : Nat} [NeZero width] :

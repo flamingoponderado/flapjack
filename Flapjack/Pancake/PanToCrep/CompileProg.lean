@@ -128,9 +128,8 @@ private theorem panToCrepParamsVmapEntries_exact_offset
 -- `compile` by `.18.3.5.8.13`, exact `compile_inl_top` by
 -- `flapjack-e7w.1`; the exact-carrier inliner is a tested, non-executed
 -- alternative until proved equal. The full compile_prog adapter and end-to-end
--- carrier bridge remain tracked by open epic `flapjack-e7w.2`). In
--- `compileFlapjackEntryCake` (Pipeline.lean), the parser-proved branch invokes
--- `compileProgTopHOLWithMetadataOfExact`. Its body route calls exact
+-- carrier bridge remain tracked by open epic `flapjack-e7w.2`).
+-- `compileProgTopHOLWithMetadataOfExact`'s body route calls exact
 -- `compileProgExactHOLW` on each function, decodes at the existing
 -- source-shaped Crep boundary and inlines with `compileInlTopHOL`;
 -- `compileProgTopHOLProductionExact_eq` proves equality with this generic

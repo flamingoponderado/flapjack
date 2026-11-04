@@ -1,5 +1,18 @@
-import Flapjack.Pipeline
+import Flapjack.Pancake.PanSimp.DeclsProduction
+import Flapjack.Pancake.PanGlobalsByteRanged
+import Flapjack.Pancake.PanStructs.CompileTopProduction
+import Flapjack.Pancake.PanSimpByteRanged
 import Flapjack.Pancake.PanToCrep.Compile
+import Flapjack.CompileFunctionDistinct
+import Flapjack.Pancake.CrepToLoop.Optimise
+import Flapjack.Pancake.CrepToLoop.ProductionDeclarations
+import Flapjack.Pancake.LoopToWord.CompFuncExact
+import Flapjack.Pancake.LoopToWord.LoopProgCarrierCodec
+import Flapjack.RiscV.WordDiagnostics
+import Flapjack.RiscV.WordFuseConditions
+import Flapjack.RiscV.WordUnreach
+import Flapjack.RiscV.Lab
+import Flapjack.Display
 import Flapjack.Pancake.PanToCrep.CompileExact
 
 namespace Flapjack.Test.CompileProgParity
@@ -10,7 +23,6 @@ def compileProgProbeContext : CompileContext Nat :=
   { vars := [], functions := [], exceptions := [], maxVar := 0,
     bytesInWord := 1 }
 
-#check @crepGetEidsFromDecls_lookup_iff_exception
 #check @allocatedNames_gt
 #check @freshNames_gt
 #check @mem_crepExpVars_le_maxCrepExpVar
@@ -487,56 +499,6 @@ def compileProgExactNestedMatchesProduction : Bool :=
 #guard compileProgExactDuplicateMatchesProduction
 #guard compileProgExactNestedMatchesProduction
 
-/-! The fixture is the direct HOL evaluation of
-    `pan_to_crep$compile_prog` on the same inline callee/caller pair. -/
-theorem compile_prog_inline_call_parity :
-    compileProgToCrep compileProgProbeContext compileProgProbeDecls =
-      [{ name := "leaf", params := [], body := .return [.const 7],
-         returnShape := .one },
-       { name := "mid", params := [],
-         body := .seq .tick (.return [.const 7]), returnShape := .one },
-       { name := "main", params := [],
-         body := .seq .tick (.seq .tick (.return [.const 7])), returnShape := .one }] := by
-  simp [compileProgToCrep, pipelineInlineNames, compileToCrep,
-    compileFunctionsSource, compileFunDeclSource, panToCrepCompFunc,
-    panToCrepVars_eq, Shape.shapeSize, panToCrepCompileInlTop,
-    functionInfos, compileProgProbeContext, compileProgProbeDecls,
-    compileProg, compileExp, compileArgs,
-    crepInlineTopRecursiveByNames, crepInlineTopRecursive,
-    crepInlineFunctionsRecursive, crepInlineActiveNames,
-    crepInlineProgRecursive, crepInlineLookup, crepInlineCallBody,
-    crepInlineTail, crepArgLoad, crepInlineTmpNames, crepUnreachElim,
-    nestedDecs]
-
-/-! Cake's `first_compile_prog_all_distinct` regression: the complete
-    source-shaped `compile_prog` boundary keeps every function name distinct
-    after the selected inline bodies have been rewritten. -/
-theorem compile_prog_first_compile_prog_all_distinct :
-    (compileProgToCrep compileProgProbeContext compileProgProbeDecls).map
-      CompiledFunction.name |>.Nodup := by
-  exact compileProgToCrep_names_nodup _ _ (by
-    simp [compileProgProbeDecls, functionDeclarationNames])
-
-/-! Cake's `compile_prog_distinct_params` regression at the same complete
-    source-shaped boundary. -/
-theorem compile_prog_compile_prog_distinct_params :
-    ∀ function ∈ compileProgToCrep compileProgProbeContext compileProgProbeDecls,
-      function.params.Nodup := by
-  exact compileProgToCrep_params_nodup _ _
-
-def parityGuard : Bool :=
-  match compileProgToCrep compileProgProbeContext compileProgProbeDecls with
-  | [{ name := "leaf", params := [], body := .return [.const 7],
-         returnShape := .one },
-     { name := "mid", params := [],
-       body := .seq .tick (.return [.const 7]), returnShape := .one },
-     { name := "main", params := [],
-       body := .seq .tick (.seq .tick (.return [.const 7])), returnShape := .one }] => true
-  | _ => false
-
-#eval parityGuard
-#guard parityGuard
-
 /-! HOL's `ShMemStore` constructor operands are positional value then address;
     `compile_def` allocates the shared-store temporary from the first operand
     (`pan_to_crepScript.sml:285-293`). This production parity row gives that
@@ -656,10 +618,6 @@ def exactDeclCompileProgNestedInline : Bool :=
 #guard exactDeclCompileProgNestedInline
 
 def runChecks : IO Bool := do
-  if parityGuard then
-    IO.println "PASS compile_prog inline-call source parity"
-  else
-    IO.println "FAIL compile_prog parity"
   if compileProgUnreachableInlineGuard then
     IO.println "PASS compile_prog unreach-before-inline parity"
   else
@@ -668,7 +626,6 @@ def runChecks : IO Bool := do
     IO.println "PASS compile_prog shared-store address temporary parity"
   else
     IO.println "FAIL compile_prog shared-store address temporary parity"
-  pure (parityGuard && compileProgUnreachableInlineGuard &&
-    shMemStoreAddressTempParity)
+  pure (compileProgUnreachableInlineGuard && shMemStoreAddressTempParity)
 
 end Flapjack.Test.CompileProgParity

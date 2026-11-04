@@ -1,4 +1,4 @@
-import Flapjack.RiscV.CorrectnessStack
+import Flapjack.RiscV.WordToStack
 
 namespace Flapjack.RiscV
 

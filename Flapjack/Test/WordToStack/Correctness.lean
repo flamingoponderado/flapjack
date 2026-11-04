@@ -1,6 +1,6 @@
 import Flapjack.RiscV.WordToStack
 import Flapjack.RiscV.Backend
-import Flapjack.RiscV.CorrectnessWordToStack
+import Flapjack.StackAlloc.Runtime
 
 namespace Flapjack.RiscV
 

@@ -82,8 +82,8 @@ def holDeclarationOnlyOracle : Bool :=
 /-! These declaration-only fixtures replay the `raise_pair` and
 `handled_pair` rows from the direct HOL `compile_to_crep_probe.out` at its
 concrete 8-bit word instantiation. They exercise the exact finite-map
-`compileToCrepHOL` path used by `compileFlapjackEntryCake`, rather than the
-older caller-context compatibility helper below. -/
+`compileToCrepHOL` path, rather than the older caller-context compatibility
+helper below. -/
 def holPairRaiseProbe : List (Decl (BitVec 8)) :=
   [.exnDecl "E" (.comb [.one, .one]),
    .function
@@ -475,30 +475,6 @@ def laterPairTempLoop : Option (LoopProg (BitVec 64)) := do
   let loopContext : LoopContext (BitVec 64) :=
     { vars := [], functions := [], maxVar := 0, target := .rv64i }
   some (compileCrepToLoop loopContext [] crep)
-
-def laterPairTempWord : Option (WordProg (BitVec 64)) := do
-  let loop ← laterPairTempLoop
-  some (LoopToWord.loopToWordCompFunc 0 [] loop)
-
-def laterPairTempPipelineStack : Option (StackProg Nat) := do
-  let word ← laterPairTempWord
-  let stackConfig : RiscV.WordStackConfig :=
-    { locations := (List.range 31).map fun register =>
-        (register, .register register),
-      scratch := 31, stackBase := 0 }
-  RiscV.wordToStackProgNat stackConfig (RiscV.wordProgToNat word)
-
-def stackTempWrites : StackProg Nat → List Nat
-  | .set (.temp written) _ => [written]
-  | .seq first second => stackTempWrites first ++ stackTempWrites second
-  | _ => []
-
-def laterPairStackTempRegionOracle : Bool :=
-  match laterPairTempPipelineStack with
-  | some stack => stackTempWrites stack == [0, 1]
-  | none => false
-
-#guard laterPairStackTempRegionOracle
 
 def handledPairDecls : List (Decl Nat) :=
   [.exnDecl "E" (.comb [.one, .one]),

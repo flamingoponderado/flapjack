@@ -583,11 +583,10 @@ mutual
       further from the HOL Bool statement.
 
       Executable-path disposition (bead `flapjack-4ac.4.4.1`): this value-level
-      predicate has no call site on the executable compiler path. The RISC-V
-      entrypoints (`compileFlapjackRiscVSourceRuntimeImageChecked` and siblings
-      in `Flapjack/RiscV/PipelineDiagnostics.lean`) run `staticCheck`
-      (`Flapjack/Pancake/PanStatic.lean:1794`), which checks declared shapes
-      (`isWfShape`/`checkShape`/`shapedBased...`), not runtime value validity.
+      predicate has no call site on the executable compiler path. The
+      compiler's static checking (`Flapjack/Pancake/PanStatic.lean`) checks
+      declared shapes (`isWfShape`/`checkShape`/`shapedBased...`), not runtime
+      value validity.
       `panIsWfShapeValueBool` occurs only as a proof-side precondition
       (`panStructEveryValueShapeWfBool`,
       `Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean:614`) over

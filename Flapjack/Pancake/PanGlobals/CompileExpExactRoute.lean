@@ -35,9 +35,9 @@ The byte-ranged executable path added below *is* textual routing, however:
 through the executed decl/prog compiler, with kernel-checked equalities
 `compileProgCakeOfExact_eq` (under `ProgByteRanged`) and
 `compileDecsCakeOfExact_eq` (under `IsCakeCanonical` + `DeclByteRanged`) to the
-production functions.  The executed `globalCompileTopForStartSomeCakeOfExact`
-(`PanGlobalsByteRanged.lean`) and `Pipeline.lean:654` run these routed siblings
-on the parser-proof (byte-range) branch. The later declaration wrapper in
+production functions.  `globalCompileTopForStartSomeCakeOfExact`
+(`PanGlobalsByteRanged.lean`) runs these routed siblings on the parser-proof
+(byte-range) branch. The later declaration wrapper in
 `DeclarationProgramRoute.lean` now replaces the recursive String program
 mirror at that caller with decoded tagged `compileProgExactHOL`; its universal
 program correspondence is proved in `ProgramExactRoute.lean`. Initializers

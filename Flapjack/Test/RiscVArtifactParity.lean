@@ -75,20 +75,6 @@ open Flapjack Flapjack.RiscV
 open Flapjack.Test.OriginalPancakeProbes
   (decClock constReturn entryOrder nestedExpression setVar emptyLocals)
 
-/-- The checked source-facing pipeline configuration used by the compiler
-entry point, kept local so this parity test does not import the executable
-`CompileMain` module and collide with the test driver's `main`. -/
-def artifactCompileConfig : StackRemoveConfig :=
-  { storeBase := 10
-    currHeap := 12
-    scratch := 31
-    addressScratch := 29
-    stackPointer := 24
-    bytesInWord := 8
-    stackBase := 25
-    wordShift := 3
-    jump := false }
-
 /-- The fixture source, taken from the original-side probe fact so the two
 comparisons cannot drift apart. -/
 def decClockSource : String := decClock.source
@@ -122,15 +108,6 @@ removes the no-op generated for Tick before final assembly. -/
 def flapjackMainBytes : List (BitVec 8) :=
   [0x13, 0x65, 0x70, 0x00,
    0x67, 0x80, 0x00, 0x00].map (BitVec.ofNat 8)
-
-/-- Actual source sections with their generated addresses and bytes. The legacy
-fixture tuple uses source labels3 onward; translate only that observation back
-from the original firstLoopName namespace. No emitted byte/address is synthesized. -/
-def emittedSections (image : SourceRiscVRuntimeImage 64) :
-    List (Nat × Nat × List (BitVec 8)) :=
-  (image.sections.filter (fun sec => sec.label >= firstLoopName)).map
-    (fun sec => (Flapjack.Compiler.Backend.StackToLab.RuntimeLabels.legacySection sec.label,
-      sec.address.toNat, sec.bytes))
 
 /-- The generated initializer section is byte-identical to Cake (see
 `flapjackGeneratedMainBytes`). -/
@@ -225,100 +202,6 @@ fact.  It is the GitHub issue #1015 reproducer whose right-nested sum needs
 more than the four reserved Word-to-Stack temporaries. -/
 def nestedExpressionSource : String := nestedExpression.source
 
-/-! The runtime-image guard above exercises the public source path.  Keep a
-    smaller Word-to-Stack guard beside it as well: this is a spilled
-    destination, and the expression needs the dead allocator registers that
-    Cake's flattened Loop temporaries make available after the four reserved
-    scratch registers.  This prevents a future refactor from accidentally
-    restoring the old fixed-pool boundary while the end-to-end fixture still
-    happens to compile through a different path. -/
-def nestedExpressionWordConfig : WordStackConfig :=
-  { locations := [(0, .register 2), (1, .register 3), (2, .register 4),
-      (3, .register 5), (4, .register 6), (5, .stack 0)]
-    scratch := 31
-    stackBase := 1 }
-
-def nestedExpressionWord : WordExp Nat :=
-  .shift .lsr
-    (.op .add [.var 0,
-      .op .add [.var 1,
-        .op .add [.var 2,
-          .op .add [.var 3, .var 4]]]])
-    (.const 1)
-
-def nestedExpressionWordLoweringAccepted : Bool :=
-  match wordStackCompileExpToPhysicalNat nestedExpressionWordConfig 5
-      nestedExpressionWord with
-  | some _ => true
-  | none => false
-
-/-! The explicit temporary-pool adapter remains covered independently of the
-    source-facing selector boundary.  Keep a small structural oracle here so
-    this does not silently become only a larger temporary-register pool: the
-    innermost over-budget child (the four-add chain, budget three) is
-    materialized into a fresh temporary, and the shift then combines that
-    temporary with the constant inline. -/
-def flattenExpressionProbe : WordProg Nat :=
-  .assign 0 nestedExpressionWord
-
-def flattenExpressionProbeMaterialized : WordProg Nat :=
-  (RiscV.wordFlattenProgram 9 flattenExpressionProbe).program
-
-def flattenExpressionProbeMatches : Bool :=
-  match flattenExpressionProbeMaterialized with
-  | .seq (.assign 9 (.op .add [.var 0,
-        .op .add [.var 1,
-          .op .add [.var 2,
-            .op .add [.var 3, .var 4]]]]))
-      (.assign 0 (.shift .lsr (.var 9) (.const 1))) => true
-  | _ => false
-
-/-! Materialization is bounded by the Word-to-Stack pool consumption, not by
-    plain depth: a rotate node draws two pool entries (a destination register
-    distinct from the scratch target plus the right subtree), so a rotate
-    around a rotated operand needs four entries even though its depth is
-    three.  Register-pressure-heavy sections such as `ripemd160_block` keep
-    every allocator register live, leaving only the three reserved entries
-    and rejecting the depth-bounded tree. -/
-def rorChainBudgetProbe : WordExp Nat :=
-  .shift .ror
-    (.shift .ror (.op .add [.var 1, .var 2]) (.const 3))
-    (.const 5)
-
-def rorChainBudgetMatches : Bool :=
-  RiscV.wordExpLoweringBudget rorChainBudgetProbe == 4
-
-def flattenRorChainProbe : WordProg Nat :=
-  .assign 0 rorChainBudgetProbe
-
-/-! The inner rotate (budget two) is materialized because an outer `ror`
-    needs two pool entries; the outer rotate then runs inline on atoms. -/
-def flattenRorChainProbeMatches : Bool :=
-  match (RiscV.wordFlattenProgram 5 flattenRorChainProbe).program with
-  | .seq (.assign 5 (.shift .ror (.op .add [.var 1, .var 2]) (.const 3)))
-      (.assign 0 (.shift .ror (.var 5) (.const 5))) => true
-  | _ => false
-
-/-! An operator application wider than two arguments draws one pool entry and
-    recurses with the remainder for every argument; with atom arguments the
-    whole application stays within the reserved pool. -/
-def wideOpBudgetMatches : Bool :=
-  RiscV.wordExpLoweringBudget (α := Nat)
-      (.op .add [.var 1, .var 2, .var 3, .var 4]) == 1
-
-/-! The Word-to-Stack `set` compiler accepts only atom values, so a compound
-    value is materialized into a fresh temporary before the store.  Without
-    this, a depth-bounded flattener keeps a two-operand sum compound and the
-    store lowering fails. -/
-def flattenSetProbe : WordProg Nat :=
-  .set .currHeap (.op .add [.var 1, .var 2])
-
-def flattenSetProbeMatches : Bool :=
-  match (RiscV.wordFlattenProgram 5 flattenSetProbe).program with
-  | .seq (.assign 5 (.op .add [.var 1, .var 2]))
-      (.set .currHeap (.var 5)) => true
-  | _ => false
-
 /-! ## Saturated-register exact oracles (bead `flapjack-pxn.2.5`, GH #1015)
 
 Cake never rejects a nested expression: `crep_to_loop` flattens it into fresh
@@ -330,52 +213,6 @@ the Word-to-Stack expression pool then contains only the three reserved
 scratch registers.  The flattener must therefore guarantee that every
 emitted assignment value fits three pool entries; these probes pin both the
 acceptance and the exact spilled lowering in that configuration. -/
-
-/-- Every allocatable register holds a variable; destinations `0`, `5`, `9`
-    are spilled to stack slots. -/
-def nestedExpressionSaturatedConfig : WordStackConfig :=
-  { locations := [(0, .stack 0), (1, .register 5), (2, .register 6),
-      (3, .register 7), (4, .register 8), (5, .stack 2), (9, .stack 1)]
-      ++ (List.range 22).map (fun i => (100 + i, .register (9 + i))) ++
-      [(200, .register 2), (201, .register 3), (202, .register 4)]
-    scratch := 31
-    stackBase := 1 }
-
-/-- The flattened GH #1015 tree lowers with a saturated register file. -/
-def saturatedNestedExpressionLowers : Bool :=
-  match RiscV.wordToStackProgNat nestedExpressionSaturatedConfig
-      flattenExpressionProbeMaterialized with
-  | some _ => true
-  | none => false
-
-/-- The flattened rotate chain lowers with a saturated register file. -/
-def saturatedRorChainLowers : Bool :=
-  match RiscV.wordToStackProgNat nestedExpressionSaturatedConfig
-      ((RiscV.wordFlattenProgram 5 flattenRorChainProbe).program) with
-  | some _ => true
-  | none => false
-
-/-- Exact spilled lowering of the flattened GH #1015 tree in the saturated
-    configuration: the materialized four-add chain is evaluated into the
-    reserved registers `27`/`28`/`29` (innermost first, exactly Cake's
-    bottom-up order), stored to temporary slot `2`, reloaded into scratch
-    `31`, shifted, and stored to the destination slot `1`. -/
-def saturatedNestedExpressionExact : Bool :=
-  match RiscV.wordToStackProgNat nestedExpressionSaturatedConfig
-      flattenExpressionProbeMaterialized with
-  | some (.seq
-      (.seq
-        (.seq
-          (.seq
-            (.seq (.arith .add 27 7 8)
-              (.seq (.arith .or 28 6 6) (.arith .add 28 28 27)))
-            (.seq (.arith .or 29 5 5) (.arith .add 29 29 28)))
-          (.seq (.stackLoad 31 1) (.arith .add 31 31 29)))
-        (.stackStore 31 2))
-      (.seq (.stackLoad 31 2)
-        (.seq (.const 29 1)
-          (.seq (.shift .lsr 31 31 29) (.stackStore 31 1))))) => true
-  | _ => false
 
 /-- The differential-fuzzing `dup-global` fixture (GitHub issue #962 smoke,
     bead `flapjack-pxn.8.5.14.4`).  The original CakeML accepts a duplicate
@@ -430,15 +267,6 @@ def ffiOrderSource : String :=
 /-- The same two FFI names in the opposite first-appearance order. -/
 def ffiOrderFlipSource : String :=
   "fun 1 main() { @bar(4,3,2,1); @foo(1,2,3,4); return 0; }"
-
-def ffiCollectorOrderGuard : Bool :=
-  match RiscV.wordProgFfiNamesCake
-      (.seq (.ffi "foo" 1 2 3 4 ([], []))
-        (.ffi "bar" 1 2 3 4 ([], [])) : WordProg Nat) with
-  | ["bar", "foo"] => true
-  | _ => false
-
-#guard ffiCollectorOrderGuard
 
 def bytesContain (needle haystack : List (BitVec 8)) : Bool :=
   match needle, haystack with
@@ -886,33 +714,10 @@ def allocatorColourSource : String :=
     "  return 0;\n" ++
     "}\n"
 
-def allocatorColourCompileConfig : StackRemoveConfig :=
-  { artifactCompileConfig with jump := false }
-
-/- Cake's `ShareInst Store (Op Add [base; Const offset])` reaches the final
-   RISC-V emitter as one base+offset memory instruction.  Keep a direct Lab
-   regression guard for the source-shaped lowering used by `hello`. -/
-def sharedWordStoreOffsetPeephole : Bool :=
-  match labFlatten false 4 0 [] []
-      ((.seq (.seq (.const 31 40) (.arith .add 29 12 31))
-        (.shMem .store 10 29)) : StackProg Nat) with
-  | ⟨[.asm (.memOffset .store .add 10 12 40) [] 0], false, 0⟩ => true
-  | _ => false
-
-#guard nestedExpressionWordLoweringAccepted
-#guard flattenExpressionProbeMatches
-#guard sharedWordStoreOffsetPeephole
 #guard generatedMainBytesMatch
 #guard decClockExactParity
 #guard standaloneTickFiltered
 #guard constReturnExactParity
-#guard rorChainBudgetMatches
-#guard flattenRorChainProbeMatches
-#guard wideOpBudgetMatches
-#guard flattenSetProbeMatches
-#guard saturatedNestedExpressionLowers
-#guard saturatedRorChainLowers
-#guard saturatedNestedExpressionExact
 
 def runChecks : IO Bool := do
   let checks : List (String × Bool) :=
@@ -924,9 +729,7 @@ def runChecks : IO Bool := do
       ("standalone tick is filtered at the final Lab boundary",
         standaloneTickFiltered),
       ("const_return cml_main is byte-identical to Cake",
-        constReturnExactParity),
-      ("nested_expression Word-to-Stack lowering uses the extended temp pool",
-        nestedExpressionWordLoweringAccepted)]
+        constReturnExactParity)]
   let mut ok := true
   for (name, result) in checks do
     if result then

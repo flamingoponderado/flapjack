@@ -1,4 +1,4 @@
-import Flapjack.StackRemove
+import Flapjack.Stack
 
 namespace Flapjack
 

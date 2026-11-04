@@ -1,4 +1,17 @@
-import Flapjack.Pancake.PanToWord.ProductionPrefix
+import Flapjack.Pancake.PanSimp.DeclsProduction
+import Flapjack.Pancake.PanGlobalsByteRanged
+import Flapjack.Pancake.PanStructs.CompileTopProduction
+import Flapjack.Pancake.PanSimpByteRanged
+import Flapjack.CompileFunctionDistinct
+import Flapjack.Pancake.CrepToLoop.Optimise
+import Flapjack.Pancake.CrepToLoop.ProductionDeclarations
+import Flapjack.Pancake.LoopToWord.LoopProgCarrierCodec
+import Flapjack.RiscV.WordDiagnostics
+import Flapjack.RiscV.WordFuseConditions
+import Flapjack.RiscV.WordUnreach
+import Flapjack.RiscV.Lab
+import Flapjack.Display
+import Flapjack.Pancake.PanToWord
 
 namespace Flapjack.Test.PanNativeWordPrefixParity
 open Flapjack Pancake.PanLang
@@ -22,21 +35,4 @@ private def payloadMatches {width : Nat} : List (Nat × Nat × WordLangProgHOL (
      (66, 1, .seq (.assign 2 (.const value)) (.seq (.return 0 [2]) .skip))] => value == 7
   | _ => false
 
-private def check (width : Nat) [NeZero width] : Bool :=
-  match compileFlapjackFrontendWordNative? (declarations width) (source width) with
-  | some rows => payloadMatches rows
-  | none => false
-
-#guard check 8
-#guard check 64
-example {width : Nat} [NeZero width] :
-    compileFlapjackFrontendWordNative? (declarations width) (source width) =
-      some (panToWordCompileProgHOL .riscv
-        ((panTargetMoveStartToFront "main" (declarations width)).map declToHOL)) :=
-  compileFlapjackFrontendWordNative_original (declarations width) (source width)
-
-def runChecks : IO Bool := do
-  if !(check 8 && check 64) then throw (IO.userError "complete original native Word prefix differs")
-  IO.println "PASS original full native Word prefix: all3 row payloads/arguments/continuations,64/65/66 calls65/66, widths8+64 and general source theorem"
-  return true
 end Flapjack.Test.PanNativeWordPrefixParity

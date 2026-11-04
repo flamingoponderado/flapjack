@@ -1,4 +1,4 @@
-import Flapjack.Compiler.Backend.WordCse.ProductionHeapLoc
+import Flapjack.Compiler.Backend.WordCse.Proofs.WfDataPreservation
 
 namespace Flapjack.Test.WordCseProductionHeapLocParity
 open Flapjack RiscV Compiler.Backend.WordCse
@@ -26,22 +26,11 @@ private def nativeData (f : Fixture) : Knowledge :=
     getsMem := [(.currHeap,3)]
     instrsMem := Misc.BalancedMap.insert listCmp (factKey f) 3 Misc.BalancedMap.empty
     loadsMem := Misc.BalancedMap.insert listCmp [99] 3 Misc.BalancedMap.empty }
-private def regMap (xs : List (Nat × Nat)) : WordCseRegMap :=
-  xs.foldr (fun e m => m.insert e.1 e.2) ∅
-private def executedData (f : Fixture) : WordCseKnowledge :=
-  { toCanonical := regMap (canonicalEntries f.mode)
-    toLatest := regMap [(3,5),(9,9)]
-    getsMem := regMap [(wordCseStoreCode (.currHeap : WordStore (BitVec 64)),3)]
-    instrsMem := (∅ : WordCseFactMap).insert (factKey f) 3
-    loadsMem := (∅ : WordCseFactMap).insert [99] 3 }
 private def observedKey (f : Fixture) : List Nat :=
   if f.kind = 5 then [48,f.location] else
     opCurrHeapToNumList (operator f.kind)
       (canonicalRegs' f.destination (invalidateData (nativeData f) f.destination) f.source)
 private def nativeProgram (f : Fixture) : WordLangProgHOL (BitVec 64) :=
-  if f.kind = 5 then .locValue f.destination f.location
-  else .opCurrHeap (operator f.kind) f.destination f.source
-private def executedProgram (f : Fixture) : WordProg (BitVec 64) :=
   if f.kind = 5 then .locValue f.destination f.location
   else .opCurrHeap (operator f.kind) f.destination f.source
 private def nativeObservation (f : Fixture)
@@ -53,20 +42,6 @@ private def nativeObservation (f : Fixture)
    [observedKey f,factKey f,[99]].map (fun k => Misc.BalancedMap.lookup listCmp k data.instrsMem),
    [[99]].map (fun k => Misc.BalancedMap.lookup listCmp k data.loadsMem),
    match output.2 with
-   | .opCurrHeap b r source => (1,arithOpToNum b,r,source)
-   | .locValue r l => (2,48,r,l)
-   | .move priority [(r,current)] => (0,priority,r,current)
-   | _ => (3,0,0,0))
-private def executedObservation (f : Fixture)
-    (output : WordProg (BitVec 64) × WordCseKnowledge) : Observation :=
-  let data := output.2
-  ([f.destination,3,5,9].map (fun k => data.toCanonical[k]?),
-   [3,f.destination,9].map (fun k => data.toLatest[k]?),
-   [WordStore.currHeap,WordStore.nextFree].map
-     (fun k => data.getsMem[wordCseStoreCode (k : WordStore (BitVec 64))]?),
-   [observedKey f,factKey f,[99]].map (fun k => data.instrsMem[k]?),
-   [[99]].map (fun k => data.loadsMem[k]?),
-   match output.1 with
    | .opCurrHeap b r source => (1,arithOpToNum b,r,source)
    | .locValue r l => (2,48,r,l)
    | .move priority [(r,current)] => (0,priority,r,current)
@@ -126,13 +101,5 @@ private def fixtures : List Fixture := [
   ⟨5,3,2,8,23,([none, some 3, some 5, some 9],[some 5, none, some 9],[some 3, none],[some 3, some 3, none],[some 3],0,0,2,5)⟩,
   ⟨5,3,2,8,1208925819614629174706193,([none, some 3, some 5, some 9],[some 5, none, some 9],[some 3, none],[some 3, some 3, none],[some 3],0,0,2,5)⟩ ]
 example : fixtures.all (fun f => nativeObservation f (wordCse (nativeData f) (nativeProgram f)) == f.expected) = true := by decide +kernel
-def runChecks : IO Bool := do
-  for fixture in fixtures do
-    let observed := executedObservation fixture
-      (RiscV.wordCseProg (executedData fixture) (executedProgram fixture))
-    if observed != fixture.expected then
-      IO.eprintln s!"FAIL executed CSE heap/location kind={fixture.kind} mode={fixture.mode}: {repr observed}"
-      return false
-  IO.println "PASS executed CSE heap/location: 52 original/kernel/runtime cases, all five operators, full knowledge/program outputs, guards, canonical hit/miss, even destinations and large Nat registers/locations"
-  return true
+
 end Flapjack.Test.WordCseProductionHeapLocParity

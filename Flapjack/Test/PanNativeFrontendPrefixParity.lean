@@ -1,4 +1,17 @@
-import Flapjack.Pipeline
+import Flapjack.Pancake.PanSimp.DeclsProduction
+import Flapjack.Pancake.PanGlobalsByteRanged
+import Flapjack.Pancake.PanStructs.CompileTopProduction
+import Flapjack.Pancake.PanSimpByteRanged
+import Flapjack.CompileFunctionDistinct
+import Flapjack.Pancake.CrepToLoop.Optimise
+import Flapjack.Pancake.CrepToLoop.ProductionDeclarations
+import Flapjack.Pancake.LoopToWord.CompFuncExact
+import Flapjack.Pancake.LoopToWord.LoopProgCarrierCodec
+import Flapjack.RiscV.WordDiagnostics
+import Flapjack.RiscV.WordFuseConditions
+import Flapjack.RiscV.WordUnreach
+import Flapjack.RiscV.Lab
+import Flapjack.Display
 
 namespace Flapjack.Test.PanNativeFrontendPrefixParity
 open Flapjack Pancake.PanLang
@@ -38,21 +51,4 @@ private def loopMatches : List (Nat × List Nat × HolLoopProg 8) → Bool
         (.mark (.seq (.mark (.return [1])) (.mark .skip)))))] => value == 7
   | _ => false
 
-private def fullCheck : Bool :=
-  let frontend := compileFlapjackFrontendCake "main" declarations (some (.isTrue source))
-  cakeMatches frontend.2.2.1 && rawMatches frontend.2.2.2 &&
-    match compileFlapjackFrontendLoopNative? "main" declarations source with
-    | some rows => loopMatches rows
-    | none => false
-
-#guard fullCheck
-example : compileFlapjackFrontendLoopNative? "main" declarations source =
-    some (compileProgHOLExact .riscv
-      (compileProgDeclsHOLW ((frontendCakeDeclarations "main" declarations).map declToHOL))) :=
-  compileFlapjackFrontendLoopNative_original "main" declarations source
-
-def runChecks : IO Bool := do
-  if !fullCheck then throw (IO.userError "original full frontend/native prefix payload differs")
-  IO.println "PASS original native frontend prefix: full Cake declarations, raw Crep fields, original rows64/65/66 and calls65/66; source premises derived"
-  return true
 end Flapjack.Test.PanNativeFrontendPrefixParity

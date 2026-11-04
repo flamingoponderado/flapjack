@@ -1,6 +1,5 @@
 import Flapjack.RiscV.Lab
 import Flapjack.StackAlloc.Runtime
-import Flapjack.StackAlloc.Machine
 import Flapjack.StackAlloc.Correctness
 
 namespace Flapjack

@@ -33,18 +33,6 @@ carrier alone does not prove any HOL theorem.
 
 namespace Flapjack.Compiler.Backend.StackCarrier
 
-/-- Canonical single-word-parameter `stackLang$prog` carrier: `Inst`/`RegImm`/
-`Addr` all share one word type, with HOL's fixed `mlstring` (`String`) and the
-HOL-matching `Cmp`/`BinOp`/`WordMemOp`. -/
-abbrev ProgW (α : Type) : Type :=
-  StackLang.Prog (WordLangInst α) Cmp (WordRegImm α) BinOp WordMemOp (WordLangAddr α) String
-
-/-- Definitional unfolding of the canonical carrier. -/
-theorem progW_eq (α : Type) :
-    ProgW α =
-      StackLang.Prog (WordLangInst α) Cmp (WordRegImm α) BinOp WordMemOp
-        (WordLangAddr α) String := rfl
-
 /-- Single-word-parameter instruction carrier (HOL `'a inst`). -/
 abbrev InstW (α : Type) : Type := WordLangInst α
 

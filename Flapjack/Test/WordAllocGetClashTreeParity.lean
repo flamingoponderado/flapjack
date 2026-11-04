@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.WordAlloc.ClashTreeProg
-import Flapjack.Compiler.Backend.WordAlloc.ProductionBufferClashTree
+import Flapjack.Compiler.Backend.RegAlloc.ProductionBijection
+import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.RoundTrip
 
 namespace Flapjack.Test.WordAllocGetClashTreeParity
 
@@ -83,14 +84,6 @@ example : getClashTree (.codeBufferWrite 1 2 : WordLangProgHOL (BitVec 8)) [] =
 -- gct_databufferwrite=T
 example : getClashTree (.dataBufferWrite 1 2 : WordLangProgHOL (BitVec 8)) [] =
     .delta [] [2, 1] := by decide +kernel
-
--- Executed producer replay of those same original HOL observations. These
--- explicit ordered lists detect a reversal even though set membership agrees.
-example : Flapjack.wordClashTree (.codeBufferWrite 1 2 : WordProg (BitVec 8)) [] =
-    .delta [] [2, 1] := by simp only [Flapjack.wordClashTree]
-
-example : Flapjack.wordClashTree (.dataBufferWrite 1 2 : WordProg (BitVec 8)) [] =
-    .delta [] [2, 1] := by simp only [Flapjack.wordClashTree]
 
 -- gct_ffi=T
 example : getClashTree

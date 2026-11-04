@@ -22,51 +22,20 @@ example : supported (.install 2 3 4 5 6 : HolProg 64) = true := by simp [support
 example : supported (.shMemOp .store8 2 (.addr 3 255) : HolProg 64) = true := by simp [supported, leafSupported]
 example : supported (.codeBufferWrite 2 3 : HolProg 64) = true := by simp [supported, leafSupported]
 example : supported (.get 2 .endOfHeap : HolProg 64) = false := by simp [supported, leafSupported]
-example : sectionToExecuted? (7, (.get 2 .endOfHeap : HolProg 64)) = none := by
-  simp [sectionToExecuted?, supported, leafSupported]
 example : supported (.set .endOfHeap 2 : HolProg 64) = false := by simp [supported, leafSupported]
-example : sectionToExecuted? (7, (.set .endOfHeap 2 : HolProg 64)) = none := by
-  simp [sectionToExecuted?, supported, leafSupported]
 example : supported (.opCurrHeap .sub 2 3 : HolProg 64) = false := by simp [supported, leafSupported]
-example : sectionToExecuted? (7, (.opCurrHeap .sub 2 3 : HolProg 64)) = none := by
-  simp [sectionToExecuted?, supported, leafSupported]
 example : supported (.alloc 17 : HolProg 64) = false := by simp [supported, leafSupported]
-example : sectionToExecuted? (7, (.alloc 17 : HolProg 64)) = none := by
-  simp [sectionToExecuted?, supported, leafSupported]
 example : supported (.storeConsts 2 3 (some 17) : HolProg 64) = false := by simp [supported, leafSupported]
-example : sectionToExecuted? (7, (.storeConsts 2 3 (some 17) : HolProg 64)) = none := by
-  simp [sectionToExecuted?, supported, leafSupported]
 example : supported (.dataBufferWrite 2 3 : HolProg 64) = false := by simp [supported, leafSupported]
-example : sectionToExecuted? (7, (.dataBufferWrite 2 3 : HolProg 64)) = none := by
-  simp [sectionToExecuted?, supported, leafSupported]
 example : supported (.stackAlloc 17 : HolProg 64) = false := by simp [supported, leafSupported]
-example : sectionToExecuted? (7, (.stackAlloc 17 : HolProg 64)) = none := by
-  simp [sectionToExecuted?, supported, leafSupported]
 example : supported (.stackFree 17 : HolProg 64) = false := by simp [supported, leafSupported]
-example : sectionToExecuted? (7, (.stackFree 17 : HolProg 64)) = none := by
-  simp [sectionToExecuted?, supported, leafSupported]
 example : supported (.stackStore 17 2 : HolProg 64) = false := by simp [supported, leafSupported]
-example : sectionToExecuted? (7, (.stackStore 17 2 : HolProg 64)) = none := by
-  simp [sectionToExecuted?, supported, leafSupported]
 example : supported (.stackStoreAny 2 17 : HolProg 64) = false := by simp [supported, leafSupported]
-example : sectionToExecuted? (7, (.stackStoreAny 2 17 : HolProg 64)) = none := by
-  simp [sectionToExecuted?, supported, leafSupported]
 example : supported (.stackLoad 17 2 : HolProg 64) = false := by simp [supported, leafSupported]
-example : sectionToExecuted? (7, (.stackLoad 17 2 : HolProg 64)) = none := by
-  simp [sectionToExecuted?, supported, leafSupported]
 example : supported (.stackLoadAny 2 17 : HolProg 64) = false := by simp [supported, leafSupported]
-example : sectionToExecuted? (7, (.stackLoadAny 2 17 : HolProg 64)) = none := by
-  simp [sectionToExecuted?, supported, leafSupported]
 example : supported (.stackGetSize 17 : HolProg 64) = false := by simp [supported, leafSupported]
-example : sectionToExecuted? (7, (.stackGetSize 17 : HolProg 64)) = none := by
-  simp [sectionToExecuted?, supported, leafSupported]
 example : supported (.stackSetSize 17 : HolProg 64) = false := by simp [supported, leafSupported]
-example : sectionToExecuted? (7, (.stackSetSize 17 : HolProg 64)) = none := by
-  simp [sectionToExecuted?, supported, leafSupported]
 example : supported (.bitmapLoad 2 17 : HolProg 64) = false := by simp [supported, leafSupported]
-example : sectionToExecuted? (7, (.bitmapLoad 2 17 : HolProg 64)) = none := by
-  simp [sectionToExecuted?, supported, leafSupported]
-
 -- All four call-option combinations, including the conservative ignored-handler check.
 example : supported (.call none (.inl 17) none : HolProg 64) = true := by simp [supported]
 example : supported (.call none (.inr 17) (some (.tick, 2, 3)) : HolProg 64) = true := by
@@ -103,41 +72,9 @@ example : flattenHOL true (.stackStore 17 2 : HolProg 64) 7 2 [] [] = (.list [],
 example : flattenHOL true (.dataBufferWrite 2 3 : HolProg 64) 7 2 [] [] = (.list [], false, 2) := by
   simp [flattenHOL]
 
--- Exact original whole sections, including absence of redundant entry labels.
-example : sectionToExecuted? (7, (.skip : HolProg 64)) =
-    some { name := 7, lines := [.label 7 1 0] } := by
-  simp [sectionToExecuted?, supported, leafSupported, progToSectionHOL, flattenHOL,
-    isSeqHOL, Flapjack.Compiler.Backend.StackAlloc.nextLab, appListAppend, appendAux,
-    ExecutedCodec.sectionToExecuted?, ExecutedCodec.mapCodec?, ExecutedCodec.lineToExecuted?]
-example : sectionToExecuted? (7, (.seq .tick .skip : HolProg 64)) =
-    some { name := 7, lines := [.asm .tick [] 0, .label 7 1 0, .label 7 2 0] } := by
-  simp [sectionToExecuted?, supported, leafSupported, progToSectionHOL, flattenHOL,
-    isSeqHOL, Flapjack.Compiler.Backend.StackAlloc.nextLab, appListAppend, appendAux,
-    ExecutedCodec.sectionToExecuted?, ExecutedCodec.mapCodec?, ExecutedCodec.lineToExecuted?,
-    ExecutedCodec.plainToExecuted?, ExecutedCodec.asmToExecuted?, ExecutedCodec.instToExecuted?]
-example : sectionToExecuted? (7, (.locValue 2 17 29 : HolProg 64)) =
-    some { name := 7, lines := [.labAsm (.locValue 2 ⟨17, 29⟩) [] 0, .label 7 1 0] } := by
-  simp [sectionToExecuted?, supported, leafSupported, progToSectionHOL, flattenHOL,
-    isSeqHOL, Flapjack.Compiler.Backend.StackAlloc.nextLab, appListAppend, appendAux,
-    ExecutedCodec.sectionToExecuted?, ExecutedCodec.mapCodec?, ExecutedCodec.lineToExecuted?,
-    ExecutedCodec.labAsmToExecuted, ExecutedCodec.refToExecuted]
-
 -- Overflow is now supported; the residual guard still excludes FP.
 example : supported (.inst (.arith (.addOverflow 1 2 3 4)) : HolProg 64) = true := by
   simp [supported, leafSupported]
-example : sectionToExecuted? (7, (.inst (.arith (.addOverflow 1 2 3 4)) : HolProg 64)) =
-    some { name := 7, lines := [.asm (.word (.arith (.addOverflow 1 2 3 4))) [] 0,
-      .label 7 1 0] } := by
-  simp [sectionToExecuted?, supported, leafSupported, progToSectionHOL, flattenHOL,
-    isSeqHOL, Flapjack.Compiler.Backend.StackAlloc.nextLab, appListAppend, appendAux,
-    ExecutedCodec.sectionToExecuted?, ExecutedCodec.mapCodec?, ExecutedCodec.lineToExecuted?,
-    ExecutedCodec.plainToExecuted?, ExecutedCodec.asmToExecuted?, ExecutedCodec.instToExecuted?,
-    ExecutedCodec.arithToExecuted?]
-example : sectionToExecuted? (7, (.skip : HolProg 1)) =
-    some { name := 7, lines := [.label 7 1 0] } := by
-  simp [sectionToExecuted?, supported, leafSupported, progToSectionHOL, flattenHOL,
-    isSeqHOL, Flapjack.Compiler.Backend.StackAlloc.nextLab, appListAppend, appendAux,
-    ExecutedCodec.sectionToExecuted?, ExecutedCodec.mapCodec?, ExecutedCodec.lineToExecuted?]
 example : supported (.inst (.const 999 (BitVec.ofNat 80 (2 ^ 79 + 1))) : HolProg 80) = true := by
   simp [supported, leafSupported]
 

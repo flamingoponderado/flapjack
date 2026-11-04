@@ -28,9 +28,7 @@ open Flapjack.Compiler.Encoders.Asm
         loop_to_word$compile prog
     ```
 
-    Each stage is the reviewed exact port of the named HOL definition. Proof-side
-    definition: the executed `flapjack-compile` path is the production pipeline
-    in `Flapjack/Pipeline.lean`, not this declaration. -/
+    Each stage is the reviewed exact port of the named HOL definition. -/
 @[hol "cakeml/pancake/pan_to_wordScript.sml" "compile_prog_def"
   (words_as_type_indexed_bitvec)]
 def panToWordCompileProgHOL {width : Nat} [NeZero width] (arch : AsmArchitecture)

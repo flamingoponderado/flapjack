@@ -19,10 +19,8 @@ def oCompile [OfNat α 0] [OfNat α 1]
     maps, and the generic executable `LoopProg`, while HOL uses `asm$architecture`,
     `mlstring` keys, and `HolLoopProg`; moreover it calls the production
     `compileCrepToLoop`/`loopLiveOptimise`, not an exact `compile_def` port.
-    It is the single Crep-to-Loop route executed by the production pipeline
-    (`pipelineLoopFunctionsSource`) and all CLI modes; the exact whole-program
-    `compileProgHOLExact` and per-function exact routes are tested alternatives
-    until their output equality is proved (PR #1174 review). -/
+    It is not on the shipping compiler's path: `flapjack-compile` runs
+    `RiscV.NativeSource.compile`, which uses the exact `crep_to_loop` port. -/
 def crepCompFunc [OfNat α 0] [OfNat α 1]
     (target : RiscV.Architecture) (functions : InfoMap (Nat × Nat))
     (params : List Nat) (body : CrepProg α) : LoopProg α :=
@@ -32,9 +30,8 @@ def crepCompFunc [OfNat α 0] [OfNat α 1]
 
 /-! ## Exact-carrier executable bridge
 
-The production compiler executes `crepCompFunc` above, not this bridge. This
-per-function exact boundary is a tested alternative, available for callers
-that need the exact `ocompile_def` result and can prove the byte-range premises.
+This per-function exact boundary is available for callers that need the exact
+`ocompile_def` result and can prove the byte-range premises.
 It is usable only when the program and every function-map key satisfy the checked
 `CrepNameRanged` codec premise. Without those premises, `MlString.ofString`
 can truncate a non-byte Lean `String`, so callers must keep using the generic

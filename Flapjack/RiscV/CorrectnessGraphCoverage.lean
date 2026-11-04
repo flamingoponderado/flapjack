@@ -1,4 +1,4 @@
-import Flapjack.RiscV.CorrectnessGraphLocations
+import Flapjack.RiscV.AllocatorCorrectness
 import Flapjack.RiscV.OracleAllocator
 
 /-!
@@ -135,67 +135,5 @@ theorem wordClashTreeBijection_maps_names
           simpa [wordClashTreeBijection] using
             wordClashTreeBijection_lookup_preserves first
               (wordClashTreeBijection second bijection) name node hnode⟩
-
-theorem wordAllocateGraph_maps_clash_names
-    (tree : WordClashTree) (forced : List (Nat × Nat))
-    (fixedSources : List Nat) (moves : List (Nat × Nat))
-    (colours stackStart : Nat) (allocation : WordGraphAllocation)
-    (halloc : wordAllocateGraph tree forced fixedSources moves colours stackStart =
-      some allocation) :
-    ∀ name, name ∈ wordClashTreeNames tree →
-      ∃ node, lookupNatInfo name allocation.bijection.toNode = some node := by
-  simp [wordAllocateGraph] at halloc
-  rcases halloc with ⟨_, heq⟩
-  cases heq
-  intro name hname
-  have hnode := wordClashTreeBijection_maps_names tree
-    { toNode := [], fromNode := [], next := 0 } name hname
-  simpa [wordInitRegAlloc, wordMkBijection] using hnode
-
-theorem wordAllocateGraph_maps_clash_locations
-    (tree : WordClashTree) (forced : List (Nat × Nat))
-    (fixedSources : List Nat) (moves : List (Nat × Nat))
-    (colours stackStart : Nat) (allocation : WordGraphAllocation)
-    (halloc : wordAllocateGraph tree forced fixedSources moves colours stackStart =
-      some allocation) :
-    ∀ name, name ∈ wordClashTreeNames tree →
-      ∃ location,
-        lookupNatInfo name (wordGraphLocations allocation colours stackStart) =
-          some location := by
-  simp [wordAllocateGraph] at halloc
-  rcases halloc with ⟨_, heq⟩
-  cases heq
-  intro name hname
-  have hnode := wordClashTreeBijection_maps_names tree
-    { toNode := [], fromNode := [], next := 0 } name hname
-  rcases hnode with ⟨node, hnode⟩
-  have hnode' : lookupNatInfo name (wordMkBijection tree).toNode = some node := by
-    simpa [wordMkBijection] using hnode
-  have hinverse := wordMkBijection_lookup_inverse tree name node hnode'
-  apply wordGraphLocations_lookup_of_fromNode
-  simpa [wordInitRegAlloc, wordMkBijection] using hinverse
-
-theorem wordAllocateGraphFunctionWithEntryRenamed_maps_clash_names [OfNat α 0]
-    (parameters : List Nat) (program : WordProg α)
-    (fixedSources : List Nat) (colours stackStart : Nat)
-    (state : WordSsaState) (renamedParameters : List Nat)
-    (allocation : WordGraphAllocation) (renamedProgram : WordProg α)
-    (halloc : wordAllocateGraphFunctionWithEntryRenamed parameters program
-      fixedSources colours stackStart =
-      some (state, renamedParameters, allocation, renamedProgram)) :
-    ∀ name, name ∈ wordClashTreeNames
-        (WordClashTree.seq (.set renamedParameters)
-          (wordClashTree renamedProgram [])) →
-      ∃ node, lookupNatInfo name allocation.bijection.toNode = some node := by
-  simp [wordAllocateGraphFunctionWithEntryRenamed] at halloc
-  rcases halloc with ⟨allocation', hgraph, rfl, rfl, rfl, rfl⟩
-  exact wordAllocateGraph_maps_clash_names
-    (WordClashTree.seq
-      (.set (wordSsaRenameFunctionWithEntry parameters program).2.fst)
-      (wordClashTree (wordSsaRenameFunctionWithEntry parameters program).2.snd []))
-    (wordProgForcedClashes (wordSsaRenameFunctionWithEntry parameters program).2.snd)
-    fixedSources
-      (wordProgPreferenceEdges (wordSsaRenameFunctionWithEntry parameters program).2.snd)
-    colours stackStart allocation' hgraph
 
 end Flapjack
