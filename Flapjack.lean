@@ -314,6 +314,8 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.GlobalsSet
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Word8
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Word8Compare
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Word8Shift
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MakeSpace
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.MakeSpace
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.HeapStore
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteUpdateValue
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteUpdateValueHeap
