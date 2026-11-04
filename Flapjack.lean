@@ -229,6 +229,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Return
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.SeqCases
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.If
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Move
+import Flapjack.Compiler.Backend.Semantics.DataSem.EvaluateCode
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Fragment
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.TailCall
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.IndirectTailCall
