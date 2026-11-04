@@ -6,6 +6,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.LocationAccounting
 import Flapjack.Compiler.Backend.ClosCall.Proofs.EntryMarker
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.LocationParity
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.VarsNone
+import Flapjack.Compiler.Backend.ClosNumber.Proofs.Semantics
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.InstalledSemantics
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.AnnotationInvariants
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.AnnotatedPrepared
@@ -1225,5 +1226,78 @@ theorem numberedCall_to_preparedBvl_semantics {C F : Type} (ffi : HolFfiState F)
     sourceNonempty initialLower futureLower sourceSafe compile distinct monotone initialBelow
     (numberedCallOracle_bvl_labels_nodup current.maxApp passFuel oracle oracleState)
     (numberedCallOracle_bvl_labels_range current.maxApp passFuel oracle oracleState)
+
+/-- Numbering and direct-call to BVL semantics for an initial closure
+program. Source behavior safety, numbering interval premises, and oracle
+syntax remain explicit. -/
+theorem renumberedCall_to_preparedBvl_semantics {C F : Type} (ffi : HolFfiState F)
+    (passFuel relationFuel number : Nat) (original current output : Config)
+    (targetCompiler : BvlSem.Compiler C)
+    (source called nameExpressions : List ClosLang.Exp) (callState : ClosCall.State)
+    (compiled : List (Nat × Nat × Bvl.Exp)) (names : Spt Flapjack.Basis.Pure.MlString.MlString)
+    (oracle : Nat → (Nat × (NumSet × C)) × (List ClosLang.Exp × List (Nat × Nat × ClosLang.Exp)))
+    (oracleState : isStateOracle (ClosNumber.ignoreTable ClosNumber.compileInc) oracle)
+    (sourceVarsNone : everyFnVarsNone source) (sourceNonempty : source ≠ [])
+    (numberEven : number % 2 = 0) (entryReservation : current.start + source.length ≤ number)
+    (futureStartsAfter : (ClosNumber.renumberList number source).1 ≤ (oracle 0).1.1)
+    (passRun : ClosCall.compileFuel passFuel true (ClosNumber.renumberList number source).2 = some (called, callState))
+    (known : callState.1 = ((stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle) 0).1.1)
+    (varsNone : ∀ n, everyFnVarsNone (oracle n).2.1)
+    (oracleAuxEmpty : ∀ n, (oracle n).2.2 = [])
+    (sourceNoApps : ¬ containsAppSome current.maxApp source)
+    (oracleNoApps : ∀ n, ¬ containsAppSome current.maxApp (oracle n).2.1)
+    (sourceSafe : semantics ffi current.maxApp HolFiniteMapExact.empty oracle
+      (stateCc (ClosNumber.ignoreTable ClosNumber.compileInc)
+        (ClosCall.compileIncFuelCallback passFuel (pureCc ClosAnnotate.compileInc
+          (pureCc (compileInc current.maxApp) targetCompiler)))) source ≠ .fail)
+    (compile : compilePrepared? original current nameExpressions
+      (ClosAnnotate.compile (chainExps current.start called ++ callState.2)) = some (output, compiled, names)) :
+    BvlSem.semantics ffi (sptFromAList compiled)
+      (pureCo (compileInc current.maxApp) ∘ pureCo ClosAnnotate.compileInc ∘
+        ClosCall.compileIncFuelOracle passFuel (stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle))
+      targetCompiler output.start =
+    semantics ffi current.maxApp HolFiniteMapExact.empty oracle
+      (stateCc (ClosNumber.ignoreTable ClosNumber.compileInc)
+        (ClosCall.compileIncFuelCallback passFuel (pureCc ClosAnnotate.compileInc
+          (pureCc (compileInc current.maxApp) targetCompiler)))) source := by
+  let callCompiler := ClosCall.compileIncFuelCallback passFuel (pureCc ClosAnnotate.compileInc
+    (pureCc (compileInc current.maxApp) targetCompiler))
+  have numberSem := ClosNumber.semantics_number ffi current.maxApp number oracle callCompiler source
+    sourceSafe sourceNoApps (fun n => ⟨oracleAuxEmpty n, oracleNoApps n⟩)
+  have numberedSafe : semantics ffi current.maxApp HolFiniteMapExact.empty
+      (stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle) callCompiler
+      (ClosNumber.renumberList number source).2 ≠ .fail := by
+    rw [numberSem]
+    exact sourceSafe
+  let expressions := (ClosNumber.renumberList number source).2
+  have length : expressions.length = source.length := ClosNumber.renumberList_length source number
+  have syntaxGood : ClosCall.syntaxOk expressions := by
+    refine ⟨ClosNumber.renumberList_locations source number, ?_,
+      ClosNumber.renumberList_codeLocations_nodup source number⟩
+    exact (ClosNumber.renumberList_varsNone source number).2 sourceVarsNone
+  have nonempty : expressions ≠ [] := by
+    intro empty
+    have sourceLength := List.length_pos_iff.mpr sourceNonempty
+    simp [empty] at length
+    omega
+  have initialUpper : ∀ loc ∈ codeLocations expressions, loc + 1 < (oracle 0).1.1 := by
+    intro loc member
+    have bounds := ClosNumber.renumberList_location_successor_bounds source number loc member
+    omega
+  have initialLower : ∀ loc ∈ codeLocations expressions, current.start + expressions.length ≤ loc := by
+    intro loc member
+    have bounds := ClosNumber.renumberList_location_bounds source number loc member
+    omega
+  have firstLower : current.start + expressions.length ≤ (oracle 0).1.1 := by
+    have bound := ClosNumber.renumberList_start_le source number
+    omega
+  have sourceEven : ∀ loc ∈ codeLocations expressions, loc % 2 = 0 := by
+    intro loc member
+    have parity := ClosNumber.renumberList_location_parity source number loc member
+    omega
+  have callSem := numberedCall_to_preparedBvl_semantics ffi passFuel relationFuel original current output targetCompiler
+    expressions called nameExpressions callState compiled names oracle oracleState passRun syntaxGood known initialUpper
+    varsNone oracleAuxEmpty nonempty initialLower firstLower numberedSafe compile sourceEven
+  exact callSem.trans numberSem
 
 end Flapjack.Compiler.Backend.ClosToBvl
