@@ -32,6 +32,19 @@ namespace, the word-to-word colouring oracle and the exported names). -/
 private def configChecks : List (String × Bool) :=
   [ ("config equals itself", decide (config = config)),
     ("closure expression equals itself", decide (closExp = closExp)),
+    ("same-constructor closure expressions with different nested payload differ",
+      !decide (closExp = .letrec [Flapjack.Basis.Pure.MlString.ofString "f"] (some 1) (some [2])
+        [(1, .op .none (.blockOp (.constant (.constCons 0 [.constInt 4]))) [.var .none 0])]
+        (.app .none none (.var .none 1) []))),
+    ("same-constructor BVI calls with different optional handler differ",
+      !decide ((Bvi.Exp.call 0 none [] (some (.var 0))) = .call 0 none [] (some (.var 1)))),
+    ("same-constructor BVL lets with different list length differ",
+      !decide ((Bvl.Exp.«let» [.var 0] (.var 1)) = .«let» [.var 0, .var 0] (.var 1))),
+    ("same-constructor approximations with different nested tuple differ",
+      !decide ((ClosKnown.ValApprox.tuple 0 [.other]) = .tuple 0 [.impossible])),
+    ("same-constructor namespaces with different nested module differ",
+      !decide ((NamespaceHOL.Namespace.bind ([] : List (Nat × Nat))
+          [(0, .bind [(1, 2)] [])]) = .bind [] [(0, .bind [(1, 3)] [])])),
     ("closure call state differs",
       !decide (config = { config with
         closConf := { config.closConf with callState := (.ln, [(0, (1, closExp))]) } })),
