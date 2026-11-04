@@ -16,3 +16,9 @@ val _ = show "full_gc_data" (EVAL ``full_gc
   ([Data (7:num)], [Unused 1 : (num,num) heap_element], 2)``);
 val _ = show "full_gc_pointer" (SIMP_RULE (srw_ss()) [isDataElement_def] (EVAL ``full_gc
   ([Pointer 0 (9:num)], [DataElement [Data 5] 1 (4:num)], 2)``));
+val _ = show "gc_forward_ptr_ok_typed" gc_forward_ptr_ok;
+val _ = show "gc_move_ok_typed" gc_move_ok;
+val _ = show "gc_move_list_ok_typed" gc_move_list_ok;
+val _ = show "gc_move_loop_ok_typed" gc_move_loop_ok;
+val _ = show "gc_move_list_IMP_LENGTH_typed" gc_move_list_IMP_LENGTH;
+val _ = show "full_gc_IMP_LENGTH_typed" full_gc_IMP_LENGTH;

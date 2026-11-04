@@ -2918,6 +2918,7 @@ import Flapjack.Compiler.Backend.WordRemove.Proofs.Correct
 import Flapjack.Compiler.Backend.DataToWord.Config
 import Flapjack.Compiler.Backend.WordGcFunctions
 import Flapjack.Compiler.Backend.CopyingGc
+import Flapjack.Compiler.Backend.CopyingGc.Proofs.Progress
 import Flapjack.Test.CopyingGcParity
 import Flapjack.Compiler.Backend.WordGcFunctions.Roots
 import Flapjack.Compiler.Backend.WordGcFunctions.HasFpOps

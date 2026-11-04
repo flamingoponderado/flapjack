@@ -1,6 +1,54 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "gc_forward_ptr_ok",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/ForwardPtr.lean",
+  "lean_name": "gcForwardPtr_ok",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source lines 289-295 and gc_forward_ptr_ok_typed: successful forwarding requires the original Boolean status, over independently polymorphic address and heap-payload types, with the forwarding payload free in HOL and explicit in Lean."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/copying_gcScript.sml",
+  "hol_name": "gc_move_ok",
+  "lean_path": "Flapjack/Compiler/Backend/CopyingGc/Proofs/Progress.lean",
+  "lean_name": "gcMove_ok",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source lines 557-573 and gc_move_ok_typed: a true-result move preserves the initial status and the conditional allocation-position/heap-length equation, over independent root and payload carriers. The free offset b is explicitly quantified in Lean."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/copying_gcScript.sml",
+  "hol_name": "gc_move_list_ok",
+  "lean_path": "Flapjack/Compiler/Backend/CopyingGc/Proofs/Progress.lean",
+  "lean_name": "gcMoveList_ok",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source lines 575-593 and gc_move_list_ok_typed: true-result root traversal preserves initial status and the conditional allocation-position equation. The original unused universally quantified c' has an independently inferred type gamma; Lean retains it as _unused : gamma, independent of the Boolean status and both heap carriers."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/copying_gcScript.sml",
+  "hol_name": "gc_move_loop_ok",
+  "lean_path": "Flapjack/Compiler/Backend/CopyingGc/Proofs/Progress.lean",
+  "lean_name": "gcMoveLoop_ok",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the exported gc_move_loop_ok_typed after source lines 595-623: a successful scan implies the input Boolean status, with independently polymorphic address and heap payload carriers and no extra assumptions. Lean uses the original scan's well-founded induction and the checked root-list progress theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/copying_gcScript.sml",
+  "hol_name": "gc_move_list_IMP_LENGTH",
+  "lean_path": "Flapjack/Compiler/Backend/CopyingGc/Proofs/Progress.lean",
+  "lean_name": "gcMoveList_imp_length",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source lines 625-634 and gc_move_list_IMP_LENGTH_typed: any root-list traversal result has the input root count, irrespective of its Boolean status, with independent address and payload carriers."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/copying_gcScript.sml",
+  "hol_name": "full_gc_IMP_LENGTH",
+  "lean_path": "Flapjack/Compiler/Backend/CopyingGc/Proofs/Progress.lean",
+  "lean_name": "fullGc_imp_length",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source lines 636-643 and full_gc_IMP_LENGTH_typed: the same true-result full collection premise implies equality of output and input root counts, over independent address and heap payload carriers."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
   "hol_name": "gc_forward_ptr_def",
   "lean_path": "Flapjack/Compiler/Backend/GcShared.lean",
   "lean_name": "gcForwardPtr",

@@ -223,7 +223,9 @@ global default, handler-location, architecture/heap-limit, polymorphic environme
 
 `copying_gc_probe.out` captures the original polymorphic copying-collector
 definitions and evaluations for repeated pointers, a data-only collection,
-and a collection that scans a copied pointer target.
+and a collection that scans a copied pointer target. It also captures the
+typed forwarding, move, list and scan progress lemmas and root-count results,
+including the independently typed unused binder in `gc_move_list_ok`.
 `Flapjack/Test/CopyingGcParity.lean` kernel-replays those examples; they are
 finite regression evidence, not a collector-correctness proof.
 The capture supports source review; it is not a cross-language proof.
