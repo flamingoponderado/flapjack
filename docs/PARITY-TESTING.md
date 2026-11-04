@@ -1057,6 +1057,19 @@ python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake 
   --type-seed 749321 --edge-seed 328471 --compile-seed 684033 --timeout 60
 ```
 
+A further 2026-11-04 frontend run matched 5,120 generated cases, including
+500 arbitrary-byte inputs, 500 cross-context cases, and 320 type-annotation
+cases. It did not compile any RISC-V programs:
+
+```sh
+python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake \
+  --type-cases 1000 --compile-cases 0 --compile-config-cases 0 --rich-cases 0 \
+  --integration-cases 0 --declaration-cases 500 --handler-cases 500 --annotation-cases 320 \
+  --cross-context-cases 500 --config-cases 0 --config-error-cases 0 --sexp-cases 300 \
+  --byte-cases 0 --structured-cases 500 --lex-cases 500 --token-cases 500 \
+  --raw-byte-cases 500 --type-seed 976341 --edge-seed 782204 --timeout 60
+```
+
 On 2026-11-01, compile seed `394793` matched the pinned compiler for 30
 stateful or module-dependent programs and 40 composed higher-order programs.
 Edge seed `933455` matched 675 option-validation cases. The integration corpus

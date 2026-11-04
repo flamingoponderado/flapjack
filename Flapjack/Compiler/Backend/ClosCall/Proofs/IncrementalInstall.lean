@@ -26413,4 +26413,49 @@ theorem IncrementalCodeInv_fuel_independent {C F : Type} (left right : Nat) (g :
     IncrementalCodeInv left g allowed source target ↔ IncrementalCodeInv right g allowed source target := by
   simp only [IncrementalCodeInv, compileIncFuelCallback_independent left right, compileIncFuelOracle_independent left right]
 
+
+/-- The enabled initial direct-call pass preserves the complete fuel-indexed
+incremental code invariant. This connects the production `compileFuel` output
+to the source evaluation simulation; it is not a HOL theorem port. -/
+theorem compileFuel_enabled_preserves_IncrementalCodeInv {C F : Type}
+    (passFuel relationFuel : Nat) (compiler : ClosSem.Compiler C)
+    (expressions output : List ClosLang.Exp) (required g : State)
+    (passRun : compileFuel passFuel true expressions = some (output, required))
+    (syntaxGood : syntaxOk expressions) (requiredGrowth : stateExtends required g) (allowed : Set Nat)
+    (sourceEnv targetEnv : List ClosSem.Value)
+    (source final : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (coverage : ∀ loc ∈ codeLocations expressions, ¬ sptDomain required.1 loc → loc ∈ allowed)
+    (run : evaluate expressions sourceEnv source = (result, final))
+    (notType : result ≠ .err (.abort .typeError))
+    (envs : EnvRelFuel relationFuel g allowed target.code sourceEnv targetEnv 0 (output.map (0, ·)))
+    (envWf : ValuesWellFormedFuel relationFuel g allowed target.code sourceEnv)
+    (sourceWf : StateWellFormedFuel relationFuel g allowed target.code source)
+    (states : StateRelFuel relationFuel g allowed source target)
+    (disjoint : Disjoint allowed (sptDomain g.1)) (targetCompiler : target.compile = compiler)
+    (inv : IncrementalCodeInv passFuel g allowed source target) :
+    ∃ extraClock finalG finalAllowed targetResult targetFinal,
+      stateExtends g finalG ∧ allowed ⊆ finalAllowed ∧ Disjoint finalAllowed (sptDomain finalG.1) ∧
+      evaluate output targetEnv {target with clock := target.clock + extraClock} = (targetResult, targetFinal) ∧
+      resultRel (List.Forall₂ (ValueRelFuel relationFuel finalG finalAllowed targetFinal.code))
+        (ValueRelFuel relationFuel finalG finalAllowed targetFinal.code) result targetResult ∧
+      ResultWellFormedFuel relationFuel finalG finalAllowed targetFinal.code result ∧
+      StateRelFuel relationFuel finalG finalAllowed final targetFinal ∧
+      StateWellFormedFuel relationFuel finalG finalAllowed targetFinal.code final ∧
+      IncrementalCodeInv passFuel finalG finalAllowed final targetFinal := by
+  have initialWf : wellFormed ((.ln, []) : State) := by
+    constructor
+    · ext label
+      simp only [Set.mem_ofPred_eq, List.map_nil, List.not_mem_nil, false_iff]
+      rintro ⟨key, member, _⟩
+      change sptDomain (.ln : NumSet) key at member
+      simp [sptDomain, sptLookup] at member
+    · simp
+  have traversal : callsListBounded passFuel expressions (.ln, []) = some (output, required) := by
+    simpa [compileFuel] using passRun
+  exact callsListBounded_preserves_IncrementalCodeInv passFuel relationFuel passFuel compiler
+    expressions output (.ln, []) required g traversal syntaxGood.2.2 (by simp [LabelsFresh]) initialWf syntaxGood.1 syntaxGood.2.1
+    requiredGrowth allowed sourceEnv targetEnv source final target result coverage run notType envs envWf sourceWf states
+    disjoint targetCompiler inv
+
 end Flapjack.Compiler.Backend.ClosCall
