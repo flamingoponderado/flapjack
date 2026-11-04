@@ -266,8 +266,9 @@ theorem memoryRel_byteStore64 (conf : DataToWord.Config) (be : Bool) (next : Nat
     (vars : List (DataSem.Value × WordLocW 64)) (i : Nat) (byte : BitVec 8)
     (found : sptLookup ptr refs = some (.byteArray flag bytes)) (indexBound : i < bytes.length)
     (related : memoryRel conf be next refs space store memory domain ((.refPtr bit ptr, root) :: vars)) :
-    ∃ (curr : BitVec 64) (pre : ValueHeap 64) (updated : BitVec 64 → WordLocW 64), store.lookup .currHeap = some (.word curr) ∧
-      memStoreByteAuxExact memory domain be
+    ∃ (curr : BitVec 64) (pre : ValueHeap 64) (updated : BitVec 64 → WordLocW 64) (w : BitVec 64),
+      root = .word w ∧ getRealAddr conf store w = some (curr + 8 * BitVec.ofNat 64 (heapLength pre)) ∧
+      store.lookup .currHeap = some (.word curr) ∧ memStoreByteAuxExact memory domain be
         (curr + 8 * BitVec.ofNat 64 (heapLength pre) + 8 + BitVec.ofNat 64 i) byte = some updated ∧
       memoryRel conf be next (sptInsert ptr (.byteArray flag (bytes.set i byte)) refs)
         space store updated domain ((.refPtr bit ptr, root) :: vars) := by
@@ -285,10 +286,40 @@ theorem memoryRel_byteStore64 (conf : DataToWord.Config) (be : Bool) (next : Nat
   obtain ⟨curr, updated, currStore, memWrite, heapUpdated⟩ :=
     heapInMemoryStore_byteStore64 conf be flag bytes words pre post a sp sp1 gens store memory domain limit i byte
       indexBound wordBound capacity heapMem
-  refine ⟨curr, pre, updated, currStore, memWrite, ?_⟩
+  have projected : wordAddr conf (.pointer (heapLength pre) (.word 0)) = root := by
+    rw [rootsEq] at rootWords
+    cases rootWords with
+    | cons head _ => exact head
+  have rootEq : root = .word (getAddr conf (heapLength pre) (.word 0)) := by
+    simpa [wordAddr] using projected.symm
+  have cell := heapLookup_byteHeap_here pre post be flag bytes words
+  have real := (getRealAddr_getAddr conf store _ (heapLength pre) _ curr (.word 0)
+    ⟨heapMem.1, cell, currStore, Or.inr rfl⟩).2
+  refine ⟨curr, pre, updated, getAddr conf (heapLength pre) (.word 0), rootEq, ?_, currStore, memWrite, ?_⟩
+  · simpa [StackRemove.bytesInWord, BitVec.mul_comm] using real
   refine ⟨pre ++ [bytesRep be flag (bytes.set i byte) words] ++ post, limit, a, sp, sp1, gens,
     heapUpdated, ?_, bound, spaceBound⟩
   refine ⟨roots, ?_, rootWords⟩
   simpa using absUpdated
+
+/-- The related reference supplies the actual byte-store address computed by
+the compiler, and the resulting memory remains related to the updated source
+references. This is the 64-bit store component of the byte-array memory theorem. -/
+theorem memoryRel_byteStoreAddress64 (conf : DataToWord.Config) (be : Bool) (next : Nat)
+    (refs : Spt (BvlSem.Ref DataSem.Value)) (space : Nat)
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW 64))
+    (memory : BitVec 64 → WordLocW 64) (domain : BitVec 64 → Bool)
+    (bit flag : Bool) (ptr : Nat) (bytes : List (BitVec 8)) (root : WordLocW 64)
+    (vars : List (DataSem.Value × WordLocW 64)) (i : Nat) (byte : BitVec 8)
+    (found : sptLookup ptr refs = some (.byteArray flag bytes)) (indexBound : i < bytes.length)
+    (related : memoryRel conf be next refs space store memory domain ((.refPtr bit ptr, root) :: vars)) :
+    ∃ w address updated, root = .word w ∧ getRealAddr conf store w = some address ∧
+      memStoreByteAuxExact memory domain be (address + 8 + BitVec.ofNat 64 i) byte = some updated ∧
+      memoryRel conf be next (sptInsert ptr (.byteArray flag (bytes.set i byte)) refs)
+        space store updated domain ((.refPtr bit ptr, root) :: vars) := by
+  obtain ⟨curr, pre, updated, w, rootEq, address, _, stored, result⟩ :=
+    memoryRel_byteStore64 conf be next refs space store memory domain bit flag ptr bytes root vars i byte
+      found indexBound related
+  exact ⟨w, curr + 8 * BitVec.ofNat 64 (heapLength pre), updated, rootEq, address, stored, result⟩
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
