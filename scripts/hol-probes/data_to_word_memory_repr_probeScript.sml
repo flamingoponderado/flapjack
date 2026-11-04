@@ -91,6 +91,7 @@ val _ = show "memory_rel_Number_cmp_typed" data_to_word_memoryProofTheory.memory
 val _ = show "memory_rel_RefPtr_T_IMP_typed" data_to_word_memoryProofTheory.memory_rel_RefPtr_T_IMP;
 val _ = show "memory_rel_Loc_typed" data_to_word_memoryProofTheory.memory_rel_Loc;
 val _ = show "get_byte_bytes_to_word_typed" data_to_word_memoryProofTheory.get_byte_bytes_to_word;
+val _ = show "set_byte_bytes_to_word_typed" data_to_word_memoryProofTheory.set_byte_bytes_to_word;
 val _ = show "write_bytes_inj_typed" data_to_word_memoryProofTheory.write_bytes_inj;
 val _ = show "vb_eq_size_numbers" (EVAL ``data_to_word_memoryProof$vb_eq_size
   (sptree$LN : num bvlSem$ref sptree$num_map) (dataSem$Number 7) (dataSem$Number 7)``);
@@ -374,6 +375,14 @@ val _ = show "write_bytes_be" (EVAL ``data_to_word$write_bytes
   [17w:word8;34w;51w] [0xAABBCCDDw:word32;0x11223344w] T``);
 val _ = show "write_bytes_64" (EVAL ``data_to_word$write_bytes
   [1w:word8;2w;3w;4w;5w;6w;7w;8w;9w] [0w:word64;0w] F``);
+val _ = show "set_byte_packed_32_le" (EVAL ``byte$set_byte (3w:word32) (255w:word8)
+  (byte$bytes_to_word 4 (0w:word32) [17w:word8;34w;51w;68w] 0xAABBCCDDw F) F``);
+val _ = show "set_byte_packed_32_be" (EVAL ``byte$set_byte (3w:word32) (255w:word8)
+  (byte$bytes_to_word 4 (0w:word32) [17w:word8;34w;51w;68w] 0xAABBCCDDw T) T``);
+val _ = show "set_byte_packed_64_le" (EVAL ``byte$set_byte (7w:word64) (255w:word8)
+  (byte$bytes_to_word 8 (0w:word64) [1w:word8;2w;3w;4w;5w;6w;7w;8w] 0w F) F``);
+val _ = show "set_byte_packed_64_be" (EVAL ``byte$set_byte (7w:word64) (255w:word8)
+  (byte$bytes_to_word 8 (0w:word64) [1w:word8;2w;3w;4w;5w;6w;7w;8w] 0w T) T``);
 val _ = show "bc_ref_inv_typed" data_to_word_memoryProofTheory.bc_ref_inv_def;
 val _ = show "bc_stack_ref_inv_typed" data_to_word_memoryProofTheory.bc_stack_ref_inv_def;
 val _ = show "abs_ml_inv_typed" data_to_word_memoryProofTheory.abs_ml_inv_def;

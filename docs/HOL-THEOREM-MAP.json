@@ -110395,6 +110395,15 @@
     "reviewer": "Source comparison: get_byte_bytes_to_word and its typed capture retain the quantified byte list and initial word, both index bounds, word-size equality, good_dimindex condition, and byte extraction result. Lean's indexed list access carries the source in-bounds hypothesis as its proof; the word width is the same positive HOL dimension."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ByteUpdate.lean",
+    "lean_name": "setByte_bytesToWord",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "set_byte_bytes_to_word",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: the typed capture retains both index bounds, the word-size equality, good_dimindex, the arbitrary byte, byte list, initial word and endian flag, and the original equality between the lane write and packing the list update. The byte and list element carriers are fixed at eight bits; the address and packed word share the positive HOL word dimension. List.set matches the source update at the required in-range index."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/BytePacking.lean",
     "lean_name": "writeBytesInj",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",

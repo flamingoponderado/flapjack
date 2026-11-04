@@ -2,10 +2,25 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Store
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Abstract
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv.Reference
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteUpdate
 
 /-! Original HOL observations for pointer-tag and heap representation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
 open Flapjack
+open Flapjack.HolByte
+
+set_option maxRecDepth 8192 in
+example : setByte (3 : BitVec 32) (255 : BitVec 8)
+    (bytesToWord 4 0 [17, 34, 51, 68] (0xAABBCCDD : BitVec 32) false) false = 0xFF332211 := by decide
+set_option maxRecDepth 8192 in
+example : setByte (3 : BitVec 32) (255 : BitVec 8)
+    (bytesToWord 4 0 [17, 34, 51, 68] (0xAABBCCDD : BitVec 32) true) true = 0x112233FF := by decide
+set_option maxRecDepth 8192 in
+example : setByte (7 : BitVec 64) (255 : BitVec 8)
+    (bytesToWord 8 0 [1, 2, 3, 4, 5, 6, 7, 8] (0 : BitVec 64) false) false = 0xFF07060504030201 := by decide
+set_option maxRecDepth 8192 in
+example : setByte (7 : BitVec 64) (255 : BitVec 8)
+    (bytesToWord 8 0 [1, 2, 3, 4, 5, 6, 7, 8] (0 : BitVec 64) true) true = 0x01020304050607FF := by decide
 
 private def config : Config := ⟨1, 2, 0, 4, false, false, false, false, false, false, .none⟩
 
