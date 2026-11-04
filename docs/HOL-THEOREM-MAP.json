@@ -1,6 +1,19 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_gc_fun_lemma_Simple",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/Simple.lean",
+  "lean_name": "wordGcFun_lemma_simple",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "store",
+    "outStore"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared lines 3819-3831 and word_gc_fun_lemma_Simple_typed, including the simplified source theorem with separated global and stack roots. The same abstract invariant, finite-map store, heap and root premises imply successful actual collector execution, restored heap/store invariant, existential output roots, mapped globals and zipped stack relation and stack length. Both standalone stores use the canonical finite-support carrier; memory, heap payloads and word locations share the same positive word width. No global-word or successful-concrete-run premise is added."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "full_gc_IMP",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/Full.lean",
   "lean_name": "fullGc_imp",
