@@ -74,6 +74,7 @@ val _ = show "gen_gc_move_data_ok_typed" gen_gcTheory.gc_move_data_ok;
 val _ = show "gen_gc_move_refs_ok_typed" gen_gcTheory.gc_move_refs_ok;
 val _ = show "gen_gc_move_loop_ok_typed" gen_gcTheory.gc_move_loop_ok;
 val _ = show "word_gen_gc_move_loop_thm_typed" data_to_word_gcProofTheory.word_gen_gc_move_loop_thm;
+val _ = show "word_gen_gc_thm_typed" data_to_word_gcProofTheory.word_gen_gc_thm;
 val _ = show "length_less_eq_sum_el_length_typed" data_to_word_gcProofTheory.LENGTH_LESS_EQ_SUM_el_length;
 val _ = show "gen_gc_move_data_h2_typed" gen_gcTheory.gc_move_data_h2;
 val _ = show "gen_gc_move_list_length_typed" gen_gcTheory.gc_move_list_length;

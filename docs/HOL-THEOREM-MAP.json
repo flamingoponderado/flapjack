@@ -1,6 +1,15 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_gen_gc_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GenerationalFull.lean",
+  "lean_name": "wordGenGc_thm",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared word_gen_gc_thm_typed and the source proof: the original abstract and word collector equations, success, heap and byte bounds, classifier, duplicated good-width premise, separated free memory, and complete output conjunction including the repeated roots equality are retained at the common positive word width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "word_gen_gc_move_loop_thm",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GenerationalLoop.lean",
   "lean_name": "wordGenGcMoveLoop_thm",
