@@ -13,21 +13,6 @@ def oCompile [OfNat α 0] [OfNat α 1]
     LoopProg α :=
   loopLiveOptimise (compileCrepToLoop context live program)
 
-/-! Production helper corresponding to the shape of CakeML Pancake's
-    `comp_func_def` (`crep_to_loopScript.sml:235`). It is intentionally
-    untagged: it uses RISC-V `Architecture`, String-keyed production function
-    maps, and the generic executable `LoopProg`, while HOL uses `asm$architecture`,
-    `mlstring` keys, and `HolLoopProg`; moreover it calls the production
-    `compileCrepToLoop`/`loopLiveOptimise`, not an exact `compile_def` port.
-    It is not on the shipping compiler's path: `flapjack-compile` runs
-    `RiscV.NativeSource.compile`, which uses the exact `crep_to_loop` port. -/
-def crepCompFunc [OfNat α 0] [OfNat α 1]
-    (target : RiscV.Architecture) (functions : InfoMap (Nat × Nat))
-    (params : List Nat) (body : CrepProg α) : LoopProg α :=
-  let context : LoopContext α := crepMkCtxt target (crepMakeVmap params)
-    functions (params.length - 1)
-  oCompile context (List.range params.length) body
-
 /-! ## Exact-carrier executable bridge
 
 This per-function exact boundary is available for callers that need the exact
@@ -68,43 +53,6 @@ theorem oCompileThroughHOLExact_rel {width : Nat} [NeZero width]
       (oCompileThroughHOLExact context live program hProgramNames hFunctionNames)
       (ocompileHOLExact (productionLoopContextToExact context)
         (listToNumSetHOLExact live) (crepProgToHOL program)) := by
-  exact holLoopProgToExecutableCanonical_rel _
-
-/-- Exact-carrier route for the production `crepCompFunc`, retaining the
-byte-range obligations required at the `String`/HOL `mlstring` boundary. It
-executes the reviewed `comp_func_def` and then the reviewed `optimise_def`.
-Callers without the name evidence continue through the generic helper above. -/
-def crepCompFuncThroughHOLExact {width : Nat} [NeZero width]
-    (target : RiscV.Architecture) (functions : InfoMap (Nat × Nat))
-    (params : List Nat) (body : CrepProg (BitVec width))
-    (_hProgramNames : CrepProgNameRanged body)
-    (_hFunctionNames : ∀ entry ∈ functions, CrepNameRanged entry.1) :
-    LoopProg (BitVec width) :=
-  let context : LoopContext (BitVec width) :=
-    crepMkCtxt target (crepMakeVmap params) functions (params.length - 1)
-  let exactContext := productionLoopContextToExact context
-  holLoopProgToExecutableCanonical
-    (optimiseHOL
-      (compFuncHOLExact exactContext.target exactContext.funcs params (crepProgToHOL body)))
-
-/-- Structural relation for the exact-carrier `comp_func` route. -/
-theorem crepCompFuncThroughHOLExact_rel {width : Nat} [NeZero width]
-    (target : RiscV.Architecture) (functions : InfoMap (Nat × Nat))
-    (params : List Nat) (body : CrepProg (BitVec width))
-    (hProgramNames : CrepProgNameRanged body)
-    (hFunctionNames : ∀ entry ∈ functions, CrepNameRanged entry.1) :
-    loopProgExecRel
-      (crepCompFuncThroughHOLExact target functions params body
-        hProgramNames hFunctionNames)
-      (optimiseHOL
-        (compFuncHOLExact
-          (productionLoopContextToExact (α := BitVec width)
-            (crepMkCtxt (α := BitVec width) target (crepMakeVmap params)
-              functions (params.length - 1))).target
-          (productionLoopContextToExact (α := BitVec width)
-            (crepMkCtxt (α := BitVec width) target (crepMakeVmap params)
-              functions (params.length - 1))).funcs
-          params (crepProgToHOL body))) := by
   exact holLoopProgToExecutableCanonical_rel _
 
 theorem oCompile_skip [OfNat α 0] [OfNat α 1]

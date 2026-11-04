@@ -1624,7 +1624,6 @@ import Flapjack.Pancake.Proofs.PanStructs.CompileExpLoad32
 import Flapjack.Pancake.Proofs.PanStructs.CompileExpBytesInWord
 import Flapjack.Test.PanStructsShapeMapParity
 import Flapjack.Pancake.PanStructs.CompileDeclsCorrespondence
-import Flapjack.Pancake.PanStructs.CompileTopProduction
 import Flapjack.Pancake.PanStructs.CompileProgCorrespondence
 import Flapjack.Pancake.PanStructs.CompileProgProduction
 import Flapjack.Pancake.PanStructs.CompileProgExact
@@ -2237,7 +2236,6 @@ import Flapjack.NatDedup
 import Flapjack.Pancake.CrepToLoop
 import Flapjack.Pancake.CrepToLoop.ContextExact
 import Flapjack.Pancake.CrepToLoop.ProductionCompileProg
-import Flapjack.Pancake.CrepToLoop.ProductionDeclarations
 import Flapjack.Pancake.CrepToLoop.Proofs.LocValueFree
 import Flapjack.Pancake.CrepToLoop.Proofs.AssignedVars
 import Flapjack.Pancake.CrepToLoop.Proofs.SurvivesMapiAssign

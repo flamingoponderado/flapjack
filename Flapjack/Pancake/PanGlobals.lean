@@ -714,110 +714,6 @@ theorem toStringOfBytes_injective : Function.Injective toStringOfBytes := by
   have := congrArg ofString h
   simpa [ofString_toStringOfBytes] using this
 
-/-- The byte codec commutes with the exact polymorphic `fperm_name`: decoding a
-    renamed `MlString` is the `String` rename of the decoded names. -/
-theorem toStringOfBytes_fpermName (f g h : MlS) :
-    toStringOfBytes (fpermName f g h) =
-      fpermName (toStringOfBytes f) (toStringOfBytes g) (toStringOfBytes h) := by
-  have hinj := toStringOfBytes_injective
-  by_cases hfh : f = h
-  · simp [fpermName, hfh]
-  · have hne : toStringOfBytes f ≠ toStringOfBytes h := fun hh => hfh (hinj hh)
-    by_cases hgh : g = h
-    · simp [fpermName, hfh, hne, hgh]
-    · have hgne : toStringOfBytes g ≠ toStringOfBytes h := fun hh => hgh (hinj hh)
-      simp [fpermName, hfh, hne, hgh, hgne]
-
-/-- Checked bridge for the structural program rename: decoding the reviewed
-    exact `fpermHOL` over the word-indexed `ProgHOL` carrier is the executed
-    production `globalRenameProg` over the decoded program.  The relation is
-    total (no byte-range premise): it connects the exact definition to the
-    production analogue on the exact-carrier image.  Making the executed
-    compiler itself call `fpermHOL` additionally needs the byte-range
-    `progToHOL`/`progOfHOL` routing tracked by `flapjack-6nn.3.1`. -/
-@[simp] theorem progOfHOL_fpermHOL {width : Nat} [NeZero width] (f g : MlS)
-    (program : ProgHOL width) :
-    progOfHOL (fpermHOL f g program) =
-      globalRenameProg (toStringOfBytes f) (toStringOfBytes g)
-        (progOfHOL program) := by
-  fun_induction fpermHOL f g program with
-  | case1 name shape value body ih =>
-      simp_all only [progOfHOL, globalRenameProg]
-  | case2 first second ih2 ih1 =>
-      simp_all only [progOfHOL, globalRenameProg]
-  | case3 condition thenBranch elseBranch ih2 ih1 =>
-      simp_all only [progOfHOL, globalRenameProg]
-  | case4 condition body ih =>
-      simp_all only [progOfHOL, globalRenameProg]
-  | case5 info name args ih =>
-      cases info with
-      | none =>
-          simp_all only [progOfHOL, globalRenameProg, globalRenameFunctionName,
-            toStringOfBytes_fpermName]
-      | some pair =>
-          obtain ⟨kindOpt, handlerOpt⟩ := pair
-          cases handlerOpt with
-          | none =>
-              simp_all only [progOfHOL, globalRenameProg, globalRenameFunctionName,
-                toStringOfBytes_fpermName]
-          | some triple =>
-              obtain ⟨eid, binding, handler⟩ := triple
-              simp_all only [progOfHOL, globalRenameProg, globalRenameFunctionName,
-                toStringOfBytes_fpermName]
-  | case6 name shape function args body ih =>
-      simp_all only [progOfHOL, globalRenameProg, globalRenameFunctionName,
-        toStringOfBytes_fpermName]
-  | case7 program x5 x4 x3 x2 x1 x0 =>
-      cases program with
-      | dec name shape value body => exact absurd rfl (x5 name shape value body)
-      | seq first second => exact absurd rfl (x4 first second)
-      | ite condition thenBranch elseBranch =>
-          exact absurd rfl (x3 condition thenBranch elseBranch)
-      | «while» condition body => exact absurd rfl (x2 condition body)
-      | call info name args => exact absurd rfl (x1 info name args)
-      | decCall name shape function args body =>
-          exact absurd rfl (x0 name shape function args body)
-      | skip => simp [progOfHOL, globalRenameProg]
-      | assign kind name value => simp [progOfHOL, globalRenameProg]
-      | primitive name operator args => simp [progOfHOL, globalRenameProg]
-      | store address value => simp [progOfHOL, globalRenameProg]
-      | store32 address value => simp [progOfHOL, globalRenameProg]
-      | storeByte address value => simp [progOfHOL, globalRenameProg]
-      | «break» => simp [progOfHOL, globalRenameProg]
-      | «continue» => simp [progOfHOL, globalRenameProg]
-      | extCall function configuration configurationLength array arrayLength =>
-          simp [progOfHOL, globalRenameProg]
-      | raise exception value => simp [progOfHOL, globalRenameProg]
-      | «return» value => simp [progOfHOL, globalRenameProg]
-      | shMemLoad size kind name address => simp [progOfHOL, globalRenameProg]
-      | shMemStore size address value => simp [progOfHOL, globalRenameProg]
-      | tick => simp [progOfHOL, globalRenameProg]
-      | annot tag text => simp [progOfHOL, globalRenameProg]
-
-/-- Checked bridge for the declaration rename, the `fperm_decs` companion of
-    `progOfHOL_fpermHOL`: mapping the exact `fpermDecsHOL` result through
-    `declOfHOL` is the executed `globalRenameDecls` over the decoded list. -/
-@[simp] theorem map_declOfHOL_fpermDecsHOL {width : Nat} [NeZero width] (f g : MlS)
-    (declarations : List (DeclHOL width)) :
-    (fpermDecsHOL f g declarations).map declOfHOL =
-      globalRenameDecls (toStringOfBytes f) (toStringOfBytes g)
-        (declarations.map declOfHOL) := by
-  induction declarations with
-  | nil => simp [fpermDecsHOL, globalRenameDecls]
-  | cons d ds ih =>
-      cases d with
-      | function fi =>
-          simp only [fpermDecsHOL, List.map_cons, globalRenameDecls, declOfHOL,
-            funDeclOfHOL]
-          rw [ih]
-          simp [progOfHOL_fpermHOL, toStringOfBytes_fpermName]
-      | decl shape name value =>
-          simp [fpermDecsHOL, globalRenameDecls, declOfHOL, ih]
-      | exnDecl exceptionName shape =>
-          simp [fpermDecsHOL, globalRenameDecls, declOfHOL, ih]
-      | name struct fields =>
-          simp [fpermDecsHOL, globalRenameDecls, declOfHOL, ih]
-
 end FpermBridge
 
 /-! Counterpart of Cake's `fperm_decs_append`
@@ -1446,7 +1342,6 @@ theorem holMlStringWitness_globalNewMainName (declarations : List (Decl α)) :
   unfold globalNewMainName
   exact holMlStringWitness_freshNameHOL "main" (globalFunctionNames declarations)
     (by unfold Flapjack.Pancake.PanLang.NameRanged; decide)
-
 
 /-! Flapjack-specific source-shaped counterpart (NOT an exact HOL port) of Cake's `dec_shapes_def` (`pan_globalsScript.sml:228`): the
     shape projection skips function, name, and exception declarations and
@@ -3809,22 +3704,6 @@ theorem globalCompileTopForStart_sizeOfEids [BEq String] [Add α] [Mul α]
         sizeOfEids_globalCompileDecs_functions,
         sizeOfEids_globalRenameDecls, sizeOfEids_globalResortDecls]
       simp [sizeOfEids_cons, isExnDecl, hnil]
-
-def globalCompileTop [BEq String] [Add α] [Mul α]
-    (bytesInWord : α) (fromNat : Nat → α) (declarations : List (Decl α)) :
-    GlobalCompiledProgram α :=
-  let initial : GlobalPassContext α :=
-    { globals := []
-      globalsSize := fromNat 0
-      maxGlobalsSize := fromNat 0
-      bytesInWord := bytesInWord
-      fromNat := fromNat }
-  let collected := globalCollect initial declarations
-  let context := { collected with maxGlobalsSize := collected.globalsSize }
-  let initializerContext := { initial with maxGlobalsSize := collected.globalsSize }
-  { initializers := globalCompileInitializers initializerContext declarations
-    declarations := globalCompileDecls context declarations
-    context := context }
 
 @[simp] theorem globalCompileExp_local [BEq String]
     (context : GlobalPassContext α) (name : VarName) :

@@ -1100,7 +1100,6 @@ import Flapjack.Test.PanSourceEntryParity
 import Flapjack.Test.PanNativeWordPrefixParity
 import Flapjack.Test.PanNativeFrontendPrefixParity
 import Flapjack.Test.PanTargetEntryParity
-import Flapjack.Test.CrepToLoopNativeDeclarationsParity
 import Flapjack.Test.LoopCallEnvParity
 import Flapjack.Test.ArtifactFormat
 import Flapjack.Test.RiscVArtifactParity
@@ -1598,7 +1597,6 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.CrepArithExactParity.runChecks,
     Flapjack.Test.CrepToLoopCompileProgParity.runChecks,
     Flapjack.Test.CrepToLoopOriginalNamesProductionParity.runChecks,
-    Flapjack.Test.CrepToLoopNativeDeclarationsParity.runChecks,
     Flapjack.Test.LoopCallEnvParity.runChecks,
     Flapjack.Test.CakeStackReseatParity.runChecks,
     Flapjack.Test.RiscVArtifactParity.runChecks,

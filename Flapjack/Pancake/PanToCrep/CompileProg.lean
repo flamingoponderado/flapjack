@@ -10,11 +10,8 @@ import Flapjack.Pancake.PanLang.ProgHOLInduction
 /-!
 HOL-shaped top-level Pancake-to-Crep compiler boundary. The per-function
 exact adapter here retains the production inliner and is proved equal to the
-compatibility route. The parser-backed pipeline now uses
-`compileProgNativeWithMetadataRouted` in `CompileProgCorrespondence`: with
-standard BitVec literals it executes the reviewed exact whole declaration
-compiler and exact inliner, then decodes for production metadata. The separate
-`compileProgTopHOLProductionExactInline` variant remains an unused alternative.
+compatibility route. The separate `compileProgTopHOLProductionExactInline`
+variant remains an unused alternative.
 -/
 
 namespace Flapjack

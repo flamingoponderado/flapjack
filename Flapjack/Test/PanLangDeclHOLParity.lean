@@ -69,10 +69,6 @@ private def parityGuard : Bool :=
 #eval parityGuard
 #guard parityGuard
 
--- kernel-checked roundtrips to the production carriers
-example : funDeclToHOL (funDeclOfHOL fdH) = fdH := funDeclToHOL_funDeclOfHOL fdH
-example : declToHOL (declOfHOL (DeclHOL.function fdH : DeclHOL 64)) =
-    (DeclHOL.function fdH : DeclHOL 64) := declToHOL_declOfHOL _
 example : structInfoToHOL (structInfoOfHOL (StructInfoHOLExact.mk [(s "f", .one)] 7)) =
     StructInfoHOLExact.mk [(s "f", .one)] 7 := structInfoToHOL_structInfoOfHOL _
 

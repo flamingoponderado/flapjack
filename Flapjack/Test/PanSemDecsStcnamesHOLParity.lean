@@ -15,7 +15,6 @@ namespace Flapjack.Test.PanSemDecsStcnamesHOLParity
 open Flapjack
 open Flapjack.Pancake.PanLang
 
-
 private abbrev ml (s : String) : MlS := Flapjack.Basis.Pure.MlString.ofString s
 
 private def nameAF : List (DeclHOL 8) :=
@@ -73,14 +72,6 @@ example : (decsStcnamesHOLExact (width := 8) [] wfMiss).isNone = true := by deci
 
 /-- `Decl`/`Function`/`ExnDecl` entries are skipped and the scan continues. -/
 example : ctxLen (decsStcnamesHOLExact (width := 8) [] skipDecl) = some 1 := by decide
-
-/-- The accepted HOL `Name` context is decoded and used as the production
-    entry context, preserving field order and size while filling the
-    implementation-only shaped-field cache with its documented default. -/
-example : productionContextSummary = some (1, 1) := by
-  simp [productionContextSummary, panSemDeclarationsStructsCake,
-    productionNameA, decsStcnamesHOLExact, panStructContextOfHOL,
-    structContextOfHOL, structInfoOfHOL, paramOfHOL, shapeOfHOL]
 
 /-- `decs_stcnames_lemma`: a code list of only function/exception declarations
 leaves the context unchanged (tagged exact port). -/

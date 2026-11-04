@@ -118,13 +118,6 @@ def funDeclToHOL {width : Nat} [NeZero width] (d : FunDeclOf width) : FunDeclHOL
     body := progToHOL d.body
     returnShape := shapeToHOL d.returnShape }
 
-@[simp] theorem funDeclToHOL_funDeclOfHOL {width : Nat} [NeZero width]
-    (d : FunDeclHOL width) : funDeclToHOL (funDeclOfHOL d) = d := by
-  obtain ⟨name, inline, exported, params, body, returnShape⟩ := d
-  simp [funDeclToHOL, funDeclOfHOL, listParamToHOL_paramOfHOL,
-    Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes, progToHOL_progOfHOL,
-    shapeToHOL_shapeOfHOL]
-
 /-- HOL `decl` to the production carrier. -/
 def declOfHOL {width : Nat} [NeZero width] : DeclHOL width → Flapjack.Decl (BitVec width)
   | .function d => .function (funDeclOfHOL d)
@@ -138,12 +131,6 @@ def declToHOL {width : Nat} [NeZero width] : Flapjack.Decl (BitVec width) → De
   | .decl shape name value => .decl (shapeToHOL shape) (ofString name) (expToHOL value)
   | .exnDecl exceptionName shape => .exnDecl (ofString exceptionName) (shapeToHOL shape)
   | .name struct fields => .name (ofString struct) (fields.map paramToHOL)
-
-@[simp] theorem declToHOL_declOfHOL {width : Nat} [NeZero width]
-    (d : DeclHOL width) : declToHOL (declOfHOL d) = d := by
-  cases d <;>
-    simp [declToHOL, declOfHOL, funDeclToHOL_funDeclOfHOL, listParamToHOL_paramOfHOL,
-      expToHOL_expOfHOL, shapeToHOL_shapeOfHOL, Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes]
 
 /-- HOL `struct_info` to the production-shaped carrier. -/
 def structInfoOfHOL (d : StructInfoHOLExact) : Flapjack.StructInfoHOL :=
@@ -512,7 +499,6 @@ def StructContextByteRanged (c : Flapjack.StructContextHOL) : Prop :=
       Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes name hname,
       structInfoOfHOL_structInfoToHOL info hinfo, ih ht]
 
-
 /-- HOL `ALOOKUP` over the exact MlString-keyed structure context
 (`panLangScript.sml:164-171` uses `ALOOKUP ctxt name`): first name match. -/
 def structContextLookupHOL {α : Type} (name : MlS) :
@@ -676,7 +662,6 @@ end
       ((structContextLookupHOL name rest).isNone &&
         isWfFldsExactHOL rest info.fields && isWfCtxtExactHOL rest) := by
   simp only [isWfCtxtExactHOL]
-
 
 /-- Extraction: a byte-ranged function declaration has a byte-ranged name. -/
 theorem declByteRanged_function_name {width : Nat} {fd : Flapjack.FunDecl (BitVec width)}
