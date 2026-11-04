@@ -14,6 +14,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.ArrayBounds
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.ArrayElement
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.ByteElement
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.ByteStore
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.ArrayStore
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.BlockElement
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.BlockTagEmpty
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.BlockTagOutOfRange
@@ -171,6 +172,7 @@ inductive VerifiedFragment : DataLang.Prog → Prop where
   | dynamicElement (dest base index : Nat) : VerifiedFragment (.assign dest (.memOp .el) [base, index] none)
   | byteElement (dest base index : Nat) : VerifiedFragment (.assign dest (.memOp .derefByte) [base, index] none)
   | byteStore (dest base index value : Nat) : VerifiedFragment (.assign dest (.memOp .updateByte) [base, index, value] none)
+  | arrayStore (dest base index value : Nat) : VerifiedFragment (.assign dest (.memOp .update) [base, index, value] none)
   | element (dest src index : Nat) : VerifiedFragment (.assign dest (.blockOp (.elemAt index)) [src] none)
   | lessConst (dest src n : Nat) : VerifiedFragment (.assign dest (.intOp (.lessConstSmall n)) [src] none)
   | boolTest (dest left right : Nat) (test : AstHOL.Test) :
@@ -251,6 +253,9 @@ theorem verifiedFragment64 {C F : Type} (conf : Config) (secn l1 l2 : Nat)
   | byteStore dest base index value =>
     intro label source target locs related safe
     exact Or.inl (assignByteStore64_of_safe conf secn label l1 l2 source target locs related dest base index value safe)
+  | arrayStore dest base index value =>
+    intro label source target locs related safe
+    exact Or.inl (assignArrayStore64_of_safe conf secn label l1 l2 source target locs related dest base index value safe)
   | element dest src index =>
     intro label source target locs related safe
     exact Or.inl (assignElement64_of_safe conf secn label l1 l2 source target locs related dest src index safe)
