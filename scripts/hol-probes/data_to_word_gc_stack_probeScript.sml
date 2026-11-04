@@ -39,3 +39,6 @@ val movePost = snd (dest_exists (snd (dest_imp (concl data_to_word_gcProofTheory
 val movePostStar = fst (dest_comb (hd (strip_conj movePost)));
 val movePostFirst = snd (dest_comb (fst (dest_comb movePostStar)));
 val _ = (print "word_gc_move_result_first_star_argument="; Lib.with_flag (Globals.show_types,true) print_term movePostFirst; print "\n");
+val _ = show "get_addr_and_1_not_0_typed" data_to_word_gcProofTheory.get_addr_and_1_not_0;
+val _ = show "ptr_to_addr_get_addr_typed" data_to_word_gcProofTheory.ptr_to_addr_get_addr;
+val _ = show "NOT_is_fwd_ptr_typed" data_to_word_gcProofTheory.NOT_is_fwd_ptr;

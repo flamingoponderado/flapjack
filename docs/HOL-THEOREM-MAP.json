@@ -1,6 +1,33 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "get_addr_and_1_not_0",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PointerAddress.lean",
+  "lean_name": "getAddr_and_one_ne_zero",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared source lines 615-620 and get_addr_and_1_not_0_typed: every encoded pointer has its low marker bit set, without extra assumptions, over the same positive-width word and word-location carrier."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "ptr_to_addr_get_addr",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PointerAddress.lean",
+  "lean_name": "ptrToAddr_getAddr",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared source lines 629-642 and ptr_to_addr_get_addr_typed: the same strict bound on index times the shift scale implies exact recovery of curr + n2w index * bytes_in_word, at one shared positive word width. The proof uses the reviewed low-bits and bounded-shift facts."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "NOT_is_fwd_ptr",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PointerAddress.lean",
+  "lean_name": "wordPayload_not_fwdPtr",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared source lines 778-784 and NOT_is_fwd_ptr_typed: any word_payload output header is not a forwarding pointer, irrespective of its validity flag. The header word dimension alpha and address/payload word dimension beta are independently quantified positive widths in Lean, as in the captured HOL type. All header-tag constructors are covered."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "word_gc_move_thm",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/MoveData.lean",
   "lean_name": "wordGcMove_data",

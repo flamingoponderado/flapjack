@@ -217,7 +217,7 @@ Lean fixtures check the executed compiler at both widths. The captures are
 regression evidence, not a proof of compiler equivalence.
 
 `data_to_word_gc_stack_probe.out` captures the typed adjusted-set lookup and domain theorems, original stack relation,
-the collector root merge, its length and stack reconstruction theorems, preservation of both stack relations by decoding, the filtered encoded-root correspondence, root traversal and store-level filtering/merge theorems for all collector kinds, preserved store fields, the decoded flat-root pairing theorem, validity of projected heap addresses, and the original word-move simulation statement and separation-star nesting,
+the collector root merge, its length and stack reconstruction theorems, preservation of both stack relations by decoding, the filtered encoded-root correspondence, root traversal and store-level filtering/merge theorems for all collector kinds, preserved store fields, the decoded flat-root pairing theorem, validity of projected heap addresses, the original word-move simulation and separation-star nesting, and typed pointer-address and header facts,
 global default, handler-location, architecture/heap-limit, polymorphic environment-join, and stack-flattening definitions and append theorem. Regenerate with
 `HOL_PROBE_ONLY=data_to_word_gc_stack_probeScript.sml scripts/hol-probes/regenerate.sh`.
 

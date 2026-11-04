@@ -205,6 +205,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.DecodedRoots
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CollectorFilter
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.RootsValid
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MoveData
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PointerAddress
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.AdjustedSet
 import Flapjack.Compiler.Backend.DataToWord.Proofs.JoinEnv
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Total
