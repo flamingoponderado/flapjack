@@ -237,11 +237,11 @@ theorem mem_allPcs_eight_l3 (p : BitVec 64) (i : Nat) (hi : i < 2) :
   omega
 
 /-- Two `arm8Next` steps for a two-instruction lowering: the first step leaves
-memory alone outside the source domain, the second may write inside it and
-writes `v` into `r`.  The interference environment is applied between the steps,
-so the second step is taken on an arbitrary agreeing state (`hnext2`,
-`hnext2_out`). -/
-theorem asmCaseTwoMem (inst : HolInst 64) (r : Nat) (v : BitVec 64)
+memory alone outside the source domain, the second may write inside it, and
+the final state's allocatable registers are the source post-state's
+(`htregs`).  The interference environment is applied between the steps, so the
+second step is taken on an arbitrary agreeing state (`hnext2`, `hnext2_out`). -/
+theorem asmCaseTwoRegs (inst : HolInst 64)
     (t1 t2 : arm8_state) (s1 s2 : AsmState 64) (ms : arm8_state)
     (h : asmStep arm8ConfigL3 s1 (.inst inst) s2 ∧ targetStateRel arm8TargetL3 s1 ms)
     (hnext1 : arm8Next ms = t1)
@@ -258,12 +258,10 @@ theorem asmCaseTwoMem (inst : HolInst 64) (r : Nat) (v : BitVec 64)
     (htok2 : arm8Ok t2 = true)
     (htpc2 : t2.PC = ms.PC + 8)
     (htmemIn : ∀ x, s1.memDomain x → t2.MEM x = s2.mem x)
-    (htreg : ∀ k, k < 32 → arm8ConfigL3.avoidRegs.contains k = false → k ≠ r →
-      t2.REG (BitVec.ofNat 5 k) = ms.REG (BitVec.ofNat 5 k))
-    (htval : t2.REG (BitVec.ofNat 5 r) = v)
+    (htregs : ∀ k, k < 32 → arm8ConfigL3.avoidRegs.contains k = false →
+      t2.REG (BitVec.ofNat 5 k) = s2.regs k)
     (hs2pc : s2.pc = s1.pc + BitVec.ofNat 64 8)
-    (hs2dom : s2.memDomain = s1.memDomain)
-    (hs2regs : ∀ k, s2.regs k = if k = r then v else s1.regs k) :
+    (hs2dom : s2.memDomain = s1.memDomain) :
     CaseGoal (.inst inst) s1 s2 ms := by
   obtain ⟨hs, hr⟩ := h
   obtain ⟨hok, hpc, _hmem, hreg, hfp⟩ := hr
@@ -284,10 +282,7 @@ theorem asmCaseTwoMem (inst : HolInst 64) (r : Nat) (v : BitVec 64)
     · change ∀ k, k < arm8ConfigL3.regCount ∧ arm8ConfigL3.avoidRegs.contains k = false →
         t2.REG (BitVec.ofNat 5 k) = s2.regs k
       intro k hk
-      by_cases hkr : k = r
-      · rw [hkr, htval, hs2regs r, if_pos rfl]
-      · rw [htreg k hk.1 hk.2 hkr, hs2regs k, if_neg hkr]
-        exact hreg k hk
+      exact htregs k hk.1 hk.2
     · intro k hk
       simp [arm8ConfigL3] at hk
   have hcode : allPcs (arm8Enc (.inst inst)).length s1.pc 0 ⊆ s1.memDomain :=
@@ -329,7 +324,41 @@ theorem asmCaseTwoMem (inst : HolInst 64) (r : Nat) (v : BitVec 64)
     · intro x hx
       exact (hnext2_out (env 0 t1) hagree0 x hx).symm
 
-
+/-- `asmCaseTwoRegs` when the lowering writes `v` into the single destination
+register `r`. -/
+theorem asmCaseTwoMem (inst : HolInst 64) (r : Nat) (v : BitVec 64)
+    (t1 t2 : arm8_state) (s1 s2 : AsmState 64) (ms : arm8_state)
+    (h : asmStep arm8ConfigL3 s1 (.inst inst) s2 ∧ targetStateRel arm8TargetL3 s1 ms)
+    (hnext1 : arm8Next ms = t1)
+    (hnext2 : ∀ (u : arm8_state), Arm8L3Agree s1.memDomain u t1 →
+      Arm8L3Agree s1.memDomain (arm8Next u) t2)
+    (hnext2_out : ∀ (u : arm8_state), Arm8L3Agree s1.memDomain u t1 →
+      ∀ x, ¬ s1.memDomain x → (arm8Next u).MEM x = u.MEM x)
+    (hlen : (arm8Enc (.inst inst)).length = 8)
+    (htok1 : arm8Ok t1 = true)
+    (htpc1 : t1.PC = ms.PC + 4)
+    (htmem1 : ∀ x, ¬ s1.memDomain x → t1.MEM x = ms.MEM x)
+    (htcode1 : ∀ pc, pc ∈ allPcs (arm8Enc (.inst inst)).length s1.pc 0 →
+      t1.MEM pc = ms.MEM pc)
+    (htok2 : arm8Ok t2 = true)
+    (htpc2 : t2.PC = ms.PC + 8)
+    (htmemIn : ∀ x, s1.memDomain x → t2.MEM x = s2.mem x)
+    (htreg : ∀ k, k < 32 → arm8ConfigL3.avoidRegs.contains k = false → k ≠ r →
+      t2.REG (BitVec.ofNat 5 k) = ms.REG (BitVec.ofNat 5 k))
+    (htval : t2.REG (BitVec.ofNat 5 r) = v)
+    (hs2pc : s2.pc = s1.pc + BitVec.ofNat 64 8)
+    (hs2dom : s2.memDomain = s1.memDomain)
+    (hs2regs : ∀ k, s2.regs k = if k = r then v else s1.regs k) :
+    CaseGoal (.inst inst) s1 s2 ms := by
+  refine asmCaseTwoRegs inst t1 t2 s1 s2 ms h hnext1 hnext2 hnext2_out hlen htok1 htpc1 htmem1
+    htcode1 htok2 htpc2 htmemIn ?_ hs2pc hs2dom
+  have hreg := h.2.2.2.2.1
+  rw [arm8TargetL3_getReg] at hreg
+  intro k hk hav
+  by_cases hkr : k = r
+  · rw [hkr, htval, hs2regs r, if_pos rfl]
+  · rw [htreg k hk hav hkr, hs2regs k, if_neg hkr]
+    exact hreg k ⟨hk, hav⟩
 /-- `X` of the zero register is zero. -/
 theorem arm8X_zero (st : arm8_state) : X (TN := 64) 31#5 st = (0 : BitVec 64) := by
   simp [X]
