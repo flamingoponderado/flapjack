@@ -1,4 +1,8 @@
-import Flapjack.Misc.Logroot
+module
+
+public import Flapjack.Misc.Logroot
+
+@[expose] public section
 
 /-!
 # HOL `bit`: `LOG2`

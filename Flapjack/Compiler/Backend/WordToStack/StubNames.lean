@@ -1,5 +1,10 @@
-import Flapjack.Pancake.WordLang
-import Flapjack.Basis.Pure.MlString
+module
+
+public import Flapjack.Pancake.WordLang
+public import Flapjack.Basis.Pure.MlString
+
+@[expose] public section
+
 namespace Flapjack.Compiler.Backend.WordToStack
 open Flapjack.Basis.Pure.MlString
 /-- Original ordered WordToStack runtime symbols at the reviewed WordLang labels.

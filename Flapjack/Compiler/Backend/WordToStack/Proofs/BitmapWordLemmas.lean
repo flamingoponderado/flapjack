@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Init.Data.BitVec.Bitblast
-import Lean.Elab.Tactic.Omega
+module
+
+public import Flapjack.HolRef
+public import Init.Data.BitVec.Bitblast
+public import Lean.Elab.Tactic.Omega
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordToStack
 
