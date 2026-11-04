@@ -56,6 +56,31 @@ theorem callsListBounded_knownBound (fuel : Nat) (es : List ClosLang.Exp) (initi
     simp only [first] at run
     exact callsListFuel_knownBound _ es initial final out run
 
+/-- Incremental conversion keeps the open-location set disjoint from known
+locations when it was initially disjoint and the source program avoids that
+set. This is Flapjack-specific infrastructure for the HOL disjointness
+invariant, not a port of a HOL theorem. -/
+theorem compileIncFuel_disjoint_known (fuel : Nat) (known : NumSet) (program : ClosSem.Program)
+    (nextKnown : NumSet) (converted : ClosSem.Program) (allowed : Set Nat)
+    (run : compileIncFuel? fuel known program = some (nextKnown, converted))
+    (oldDisjoint : Disjoint allowed (sptDomain known))
+    (sourceAvoids : ∀ loc ∈ codeLocations program.1, loc ∉ allowed) :
+    Disjoint allowed (sptDomain nextKnown) := by
+  have traversal := compileIncFuel_traversal fuel known program nextKnown converted run
+  have origins := callsListBounded_knownBound fuel program.1 (known, []) (nextKnown, converted.2)
+    converted.1 traversal
+  have labels := callsListBounded_labelsBound fuel program.1 (known, []) (nextKnown, converted.2)
+    converted.1 traversal
+  apply Set.disjoint_left.mpr
+  intro loc allowedMember finalKnown
+  rcases origins loc finalKnown with old | generated
+  · exact Set.disjoint_left.mp oldDisjoint allowedMember old
+  · rcases labels (loc + 1) generated with old | ⟨origin, member, equal⟩
+    · simp at old
+    · have same : origin = loc := by omega
+      subst origin
+      exact sourceAvoids loc member allowedMember
+
 /-- Reattach previously generated code to an incremental result. Distinct
 and fresh source locations ensure the combined compiler state remains well
 formed and extends the previous one. -/

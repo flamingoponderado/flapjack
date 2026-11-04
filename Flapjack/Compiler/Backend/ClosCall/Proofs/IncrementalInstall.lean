@@ -301,6 +301,26 @@ structure IncrementalInstallReady {C F : Type} (g : State)
   fresh : ∀ index loc, loc ∈ codeLocations (source.compileOracle index).2.1 →
     target.code.lookup (loc + 1) = none
 
+/-- Future source installations avoid the locations of currently open
+closures. This is one component of the HOL oracle monotonicity invariant;
+it is Flapjack-specific and does not assert the remaining components. -/
+def OracleLocationsAvoid {C F : Type} (allowed : Set Nat) (source : ClosSem.State C F) : Prop :=
+  ∀ index loc, loc ∈ codeLocations (source.compileOracle index).2.1 → loc ∉ allowed
+
+/-- A non-type-error installation shifts the source oracle and preserves
+avoidance of the open locations. This is Flapjack-specific infrastructure. -/
+theorem doInstall_nonType_oracleLocationsAvoid {C F : Type} (allowed : Set Nat)
+    (values : List ClosSem.Value) (source final : ClosSem.State C F)
+    (result : SemanticPrimitivesHOL.Result (List ClosLang.Exp) ClosSem.Value)
+    (run : doInstall values source = (result, final))
+    (notType : result ≠ .err (.abort .typeError))
+    (avoids : OracleLocationsAvoid allowed source) : OracleLocationsAvoid allowed final := by
+  obtain ⟨_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, finalEq, _⟩ :=
+    doInstall_nonType_parts values source final result run notType
+  intro index loc member
+  apply avoids (index + 1) loc
+  simpa [finalEq, holShiftSeq] using member
+
 /-- A non-type-error installation advances the oracle and preserves the
 conditions for later installations, along with the growing state relation.
 The result applies to the actual incremental callback and target code update. -/
@@ -377,6 +397,53 @@ theorem doInstall_nonType_ready {C F : Type} (fuel relationFuel : Nat) (g : Stat
       exact laterFresh index loc member
   refine ⟨expressions, converted, nextKnown, targetFinal, passRun, targetRun, resultEq, exprEq,
     nonempty, extended, newReady, finalStates, finalCompiler, targetFinalCompiler, oracleEq, growth⟩
+
+/-- A non-type-error installation preserves both open-location disjointness
+and avoidance by the remaining source oracle. This is Flapjack-specific
+infrastructure for the disjointness part of the HOL code invariant. -/
+theorem doInstall_nonType_ready_disjoint {C F : Type} (fuel relationFuel : Nat) (g : State)
+    (allowed : Set Nat) (compiler : ClosSem.Compiler C)
+    (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (sourceValues targetValues : List ClosSem.Value)
+    (result : SemanticPrimitivesHOL.Result (List ClosLang.Exp) ClosSem.Value)
+    (final : ClosSem.State (NumSet × C) F)
+    (ready : IncrementalInstallReady g source target)
+    (states : StateRelFuel relationFuel g allowed source target)
+    (values : List.Forall₂ (ValueRelFuel relationFuel g allowed target.code) sourceValues targetValues)
+    (sourceCompiler : source.compile = compileIncFuelCallback fuel compiler)
+    (targetCompiler : target.compile = compiler)
+    (targetOracle : target.compileOracle = compileIncFuelOracle fuel source.compileOracle)
+    (run : doInstall sourceValues source = (result, final))
+    (notType : result ≠ .err (.abort .typeError))
+    (disjoint : Disjoint allowed (sptDomain g.1))
+    (avoids : OracleLocationsAvoid allowed source) :
+    ∃ expressions converted nextKnown targetFinal,
+      compileIncFuel? fuel g.1 (expressions, []) = some (nextKnown, converted) ∧
+      doInstall targetValues target =
+        (if source.clock = 0 then .err (.abort .timeoutError) else .val converted.1, targetFinal) ∧
+      result = (if source.clock = 0 then .err (.abort .timeoutError) else .val expressions) ∧
+      expressions = (source.compileOracle 0).2.1 ∧ expressions ≠ [] ∧
+      stateExtends g (nextKnown, converted.2 ++ g.2) ∧
+      IncrementalInstallReady (nextKnown, converted.2 ++ g.2) final targetFinal ∧
+      StateRelFuel relationFuel (nextKnown, converted.2 ++ g.2) allowed final targetFinal ∧
+      Disjoint allowed (sptDomain nextKnown) ∧ OracleLocationsAvoid allowed final ∧
+      final.compile = compileIncFuelCallback fuel compiler ∧ targetFinal.compile = compiler ∧
+      targetFinal.compileOracle = compileIncFuelOracle fuel final.compileOracle ∧
+      (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry) := by
+  obtain ⟨expressions, converted, nextKnown, targetFinal, passRun, targetRun, resultEq, exprEq,
+    nonempty, extended, newReady, newStates, finalCompiler, targetFinalCompiler, finalOracle, growth⟩ :=
+    doInstall_nonType_ready fuel relationFuel g allowed compiler source target sourceValues targetValues
+      result final ready states values sourceCompiler targetCompiler targetOracle run notType
+  have sourceAvoids : ∀ loc ∈ codeLocations expressions, loc ∉ allowed := by
+    intro loc member
+    apply avoids 0 loc
+    simpa [exprEq] using member
+  have newDisjoint := compileIncFuel_disjoint_known fuel g.1 (expressions, []) nextKnown converted allowed
+    passRun disjoint sourceAvoids
+  exact ⟨expressions, converted, nextKnown, targetFinal, passRun, targetRun, resultEq, exprEq, nonempty,
+    extended, newReady, newStates, newDisjoint,
+    doInstall_nonType_oracleLocationsAvoid allowed sourceValues source final result run notType avoids,
+    finalCompiler, targetFinalCompiler, finalOracle, growth⟩
 
 /-- Simulation at empty environments for source evaluations starting below a
 clock bound. It is Lean-side infrastructure for the installed-program case. -/
