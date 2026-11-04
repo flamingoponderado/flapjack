@@ -1,6 +1,15 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_gc_move_loop_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/LoopRaw.lean",
+  "lean_name": "scanClaim_raw",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the original raw-header branch of lines 1003-1102 with word_gc_move_loop_thm_typed: the pending data-element constructor and concrete header bit select the source case, the original initial-status, execution, bounds, frame, fuel and full existential conclusion are preserved, and the only recursive premise is the complete source-shaped ScanClaim for the source recursive state. The pointer-header branch and assembling theorem remain open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "word_payload_swap",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PayloadSwap.lean",
   "lean_name": "wordPayload_swap",
