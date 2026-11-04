@@ -2,11 +2,29 @@
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "word_gc_move_loop_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/Loop.lean",
+  "lean_name": "wordGcMoveLoop_thm",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the complete statement against lines 1005-1022 and word_gc_move_loop_thm_typed: all abstract and concrete runs, initial status, bounds, separation assertion, fuel and word-width condition, and existential conclusions agree. The proof uses the original loop induction and both header cases."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_gc_move_loop_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/LoopPointer.lean",
+  "lean_name": "scanClaim_pointer",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the pointer-header branch of lines 1023-1140 and word_gc_move_loop_thm_typed. The data-element and concrete header bit select the source case; all original conditions and the full conclusion are retained. The recursive premise is the complete source-shaped claim for the successful payload move, derived from the original induction hypothesis."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_gc_move_loop_thm",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/LoopRaw.lean",
   "lean_name": "scanClaim_raw",
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "Compared the original raw-header branch of lines 1003-1102 with word_gc_move_loop_thm_typed: the pending data-element constructor and concrete header bit select the source case, the original initial-status, execution, bounds, frame, fuel and full existential conclusion are preserved, and the only recursive premise is the complete source-shaped ScanClaim for the source recursive state. The pointer-header branch and assembling theorem remain open."
+  "reviewer": "Compared the original raw-header branch of lines 1003-1102 with word_gc_move_loop_thm_typed: the pending data-element constructor and concrete header bit select the source case, the original initial-status, execution, bounds, frame, fuel and full existential conclusion are preserved, and the only recursive premise is the complete source-shaped ScanClaim for the source recursive state. The full induction is assembled in wordGcMoveLoop_thm."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
@@ -24,7 +42,7 @@
   "lean_name": "wordGcMoveLoop_empty",
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "Compared the empty-pending-heap case of lines 1003-1022 and word_gc_move_loop_thm_typed. It retains the original abstract and word runs, initial-status, heap and byte bounds, configuration and fuel hypotheses, separated heap and free list, and every existential conclusion. The nonempty case and assembling theorem remain open."
+  "reviewer": "Compared the empty-pending-heap case of lines 1003-1022 and word_gc_move_loop_thm_typed. It retains the original abstract and word runs, initial-status, heap and byte bounds, configuration and fuel hypotheses, separated heap and free list, and every existential conclusion. The full induction is assembled in wordGcMoveLoop_thm."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
