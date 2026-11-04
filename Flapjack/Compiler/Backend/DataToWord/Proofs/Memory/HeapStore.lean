@@ -264,13 +264,101 @@ theorem gcKindInv_refBlockReplace {α β : Type} (conf : Config)
     · exact forall_mem_of_forall₂ firstLayout (fun h noRef ref => noRef (h.2.mpr ref)) noRefs
     · exact forall_mem_of_forall₂ secondLayout (fun h ref => h.2.mp ref) refs
 
-/-- All heap-side components of the abstract ML invariant survive a
-reference-block replacement after the allocation point, provided the new
-pointers are roots. Stack/reference relations are established separately. -/
+/-- A successful heap split decomposes the original heap at the requested
+word offset. -/
+theorem heapSplit_decomposition {α β : Type} (heap : List (HeapElement α β)) (offset : Nat)
+    (first second : List (HeapElement α β))
+    (split : heapSplit offset heap = some (first, second)) :
+    heap = first ++ second ∧ heapLength first = offset := by
+  induction heap generalizing offset first second with
+  | nil =>
+    by_cases zero : offset = 0
+    · subst offset
+      simp [heapSplit] at split
+      obtain ⟨rfl, rfl⟩ := split
+      simp [heapLength]
+    · simp [heapSplit, zero] at split
+  | cons head tail ih =>
+    by_cases zero : offset = 0
+    · subst offset
+      simp [heapSplit] at split
+      obtain ⟨rfl, rfl⟩ := split
+      simp [heapLength]
+    · by_cases inside : offset < elLength head
+      · simp [heapSplit, zero, inside] at split
+      · cases tailSplit : heapSplit (offset - elLength head) tail with
+        | none => simp [heapSplit, zero, inside, tailSplit] at split
+        | some pair =>
+          obtain ⟨left, right⟩ := pair
+          have eq : (head :: left, right) = (first, second) := by
+            simpa [heapSplit, zero, inside, tailSplit] using split
+          cases eq
+          obtain ⟨heapEq, lengthEq⟩ := ih _ left second tailSplit
+          constructor
+          · simp [heapEq]
+          · change elLength head + heapLength left = offset
+            omega
+
+/-- A successful lookup strictly before a heap prefix's end belongs to that
+prefix, even when the full heap has an additional suffix. -/
+theorem heapLookup_mem_beforePrefix {α β : Type} (pre post : List (HeapElement α β))
+    (offset : Nat) (cell : HeapElement α β) (bound : offset < heapLength pre)
+    (found : heapLookup offset (pre ++ post) = some cell) : cell ∈ pre := by
+  induction pre generalizing offset with
+  | nil => simp [heapLength] at bound
+  | cons head tail ih =>
+    by_cases zero : offset = 0
+    · subst offset
+      simp [heapLookup] at found
+      simp [found]
+    · by_cases inside : offset < elLength head
+      · simp [heapLookup, zero, inside] at found
+      · have remain : offset - elLength head < heapLength tail := by
+          change offset < elLength head + heapLength tail at bound
+          omega
+        have tailFound : heapLookup (offset - elLength head) (tail ++ post) = some cell := by
+          simpa [heapLookup, zero, inside] using found
+        exact List.mem_cons_of_mem head (ih _ remain tailFound)
+
+/-- In a generational heap, every reference block lies at or beyond the
+collector's reference boundary: the preceding partition contains no refs. -/
+theorem gcKindInv_refBlock_afterBoundary {α β : Type} (conf : Config) (sizes : List Nat)
+    (heap : List (HeapElement α (HeapTag × List β))) (a sp sp1 : Nat) (gens : GcCombined.GenState)
+    (ptr : Nat) (pointers : List (HeapAddress α)) (kind : conf.gcKind = .generational sizes)
+    (valid : gcKindInv conf a sp sp1 gens heap) (found : heapLookup ptr heap = some (refBlock pointers)) :
+    a + sp + sp1 ≤ ptr := by
+  simp only [gcKindInv, kind] at valid
+  obtain ⟨_, first, second, split, noRefs, _⟩ := valid
+  obtain ⟨heapEq, lengthEq⟩ := heapSplit_decomposition heap (a + sp + sp1) first second split
+  by_contra notAfter
+  have before : ptr < heapLength first := by omega
+  have member : refBlock pointers ∈ first := heapLookup_mem_beforePrefix first second ptr _ before (by simpa [heapEq] using found)
+  have notRef := noRefs _ member
+  apply notRef
+  simp [isRef, isMutTag, refBlock]
+
+/-- The existing GC invariant itself supplies the allocation-position fact in
+the generational case, so no separate bound is needed for a reference update. -/
+theorem gcKindInv_refBlockReplace_of_valid {α β : Type} (conf : Config)
+    (pre post : List (HeapElement α (HeapTag × List β))) (before after : List (HeapAddress α))
+    (a sp sp1 : Nat) (gens : GcCombined.GenState) (sameLength : before.length = after.length)
+    (valid : gcKindInv conf a sp sp1 gens (pre ++ [refBlock before] ++ post)) :
+    gcKindInv conf a sp sp1 gens (pre ++ [refBlock after] ++ post) := by
+  cases kind : conf.gcKind with
+  | none => simpa [gcKindInv, kind] using valid
+  | simple => simpa [gcKindInv, kind] using valid
+  | generational sizes =>
+    have afterBoundary := gcKindInv_refBlock_afterBoundary conf sizes _ a sp sp1 gens
+      (heapLength pre) before kind valid (heapLookup_refBlock_here pre post before)
+    have afterAlloc : a ≤ heapLength pre := by omega
+    exact gcKindInv_refBlockReplace conf pre post before after a sp sp1 gens sameLength afterAlloc valid
+
+/-- All heap-side abstract invariants survive an equal-sized reference-block
+update whose new pointers are roots; the GC case derives its own location bound. -/
 theorem refBlockReplace_heapInvariants {α β : Type} (conf : Config)
     (pre post : List (HeapElement α (HeapTag × List β))) (roots : List (HeapAddress α))
     (before after : List (HeapAddress α)) (a sp sp1 limit : Nat) (gens : GcCombined.GenState)
-    (sameLength : before.length = after.length) (afterAlloc : a ≤ heapLength pre)
+    (sameLength : before.length = after.length)
     (rootsValid : rootsOk roots (pre ++ [refBlock before] ++ post))
     (heapValid : heapOk (pre ++ [refBlock before] ++ post) limit)
     (gcValid : gcKindInv conf a sp sp1 gens (pre ++ [refBlock before] ++ post))
@@ -289,7 +377,7 @@ theorem refBlockReplace_heapInvariants {α β : Type} (conf : Config)
     rw [exactStore] at stored
     exact (Prod.mk.inj stored).1.symm
   subst heap2
-  exact ⟨rootNew, heapNew, gcKindInv_refBlockReplace conf pre post before after a sp sp1 gens sameLength afterAlloc gcValid,
+  exact ⟨rootNew, heapNew, gcKindInv_refBlockReplace_of_valid conf pre post before after a sp sp1 gens sameLength gcValid,
     unusedSpaceInv_refBlockReplace pre post before after sameLength a (sp + sp1) unused⟩
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
