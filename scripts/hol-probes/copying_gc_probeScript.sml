@@ -6,6 +6,7 @@ fun show label th =
     (print label; print "="; Lib.with_flag (Globals.show_types,true) print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
 val _ = show "gc_forward_ptr_typed" gc_forward_ptr_def;
+val _ = show "gc_forward_ptr_thm_typed" gc_forward_ptr_thm;
 val _ = show "gc_move_typed" gc_move_def;
 val _ = show "gc_move_list_typed" gc_move_list_def;
 val _ = show "gc_move_loop_typed" gc_move_loop_def;

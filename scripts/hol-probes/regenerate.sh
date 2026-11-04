@@ -4269,7 +4269,7 @@ run_probe word_gc_functions_has_fp_ops_probeScript.sml word_gc_functions_has_fp_
   "$cake_dir/compiler/backend/proofs/word_gcFunctionsScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe word_gc_functions_probeScript.sml word_gc_functions_probe.out \
-  gc_ptr_to_addr gc_is_gc_word_const_odd gc_memcpy_independent_widths gc_forward_header_width1 \
+  gc_ptr_to_addr gc_is_gc_word_const_odd gc_memcpy_independent_widths gc_forward_header_width1 gc_thunk_header_shift_width1 \
   gc_refs_to_addresses_empty gc_refs_to_addresses_basic gc_refs_to_addresses_skip \
   "$cake_dir/compiler/backend/proofs/word_gcFunctionsScript.sml" \
   "$cake_dir/compiler/backend/proofs"
@@ -8354,7 +8354,7 @@ run_probe data_to_word_memory_repr_probeScript.sml data_to_word_memory_repr_prob
   "$cake_dir/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe copying_gc_probeScript.sml copying_gc_probe.out \
-  gc_forward_ptr_typed gc_move_typed gc_move_list_typed gc_move_loop_typed full_gc_typed gc_move_list_repeat full_gc_data full_gc_pointer gc_forward_ptr_ok_typed gc_move_ok_typed gc_move_list_ok_typed gc_move_loop_ok_typed gc_move_list_IMP_LENGTH_typed full_gc_IMP_LENGTH_typed gc_move_IMP_isDataElement_typed gc_move_list_IMP_isDataElement_typed gc_move_loop_IMP_isDataElement_typed full_gc_IMP_isDataElement_typed \
+  gc_forward_ptr_typed gc_forward_ptr_thm_typed gc_move_typed gc_move_list_typed gc_move_loop_typed full_gc_typed gc_move_list_repeat full_gc_data full_gc_pointer gc_forward_ptr_ok_typed gc_move_ok_typed gc_move_list_ok_typed gc_move_loop_ok_typed gc_move_list_IMP_LENGTH_typed full_gc_IMP_LENGTH_typed gc_move_IMP_isDataElement_typed gc_move_list_IMP_isDataElement_typed gc_move_loop_IMP_isDataElement_typed full_gc_IMP_isDataElement_typed \
   "$cake_dir/compiler/backend/gc/copying_gcScript.sml" "$cake_dir/compiler/backend/gc"
 
 run_probe data_to_word_gc_stack_probeScript.sml data_to_word_gc_stack_probe.out \

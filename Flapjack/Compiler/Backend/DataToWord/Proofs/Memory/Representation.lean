@@ -68,14 +68,14 @@ def wordPayload {headerWidth : Nat} {payloadWidth : Nat} [NeZero headerWidth] [N
     BitVec headerWidth × List (WordLocW payloadWidth) × Bool :=
   match tag with
   | .blockTag n =>
-      let header := makeHeader conf (BitVec.ofNat headerWidth n <<< 2) addresses.length
+      let header := makeHeader conf (BitVec.ofNat headerWidth n <<< (2 : Nat)) addresses.length
       (header, addresses.map (wordAddr conf),
         payload.isEmpty && decide (addresses.length = len ∧ encodeHeader conf (n * 4) addresses.length = some header))
   | .refTag =>
       (makeHeader conf 2 addresses.length, addresses.map (wordAddr conf),
         payload.isEmpty && decide (addresses.length = len))
   | .thunkTag mode =>
-      (makeHeader conf ((thunkTagToBits mode <<< 3) ||| 6) addresses.length, addresses.map (wordAddr conf),
+      (makeHeader conf ((thunkTagToBits mode <<< (3 : Nat)) ||| 6) addresses.length, addresses.map (wordAddr conf),
         payload.isEmpty && decide (addresses.length = 1 ∧ len = 1))
   | .word64Tag =>
       (makeHeader conf 3 len, payload,
@@ -88,6 +88,20 @@ def wordPayload {headerWidth : Nat} {payloadWidth : Nat} [NeZero headerWidth] [N
       let k := if headerWidth = 32 then 2 else 3
       (makeByteHeader conf compareByContents n, payload,
         addresses.isEmpty && decide (payload.length = len ∧ n + 2 ^ k < 2 ^ (conf.lenSize + k)))
+
+/-- Successful encoding produces exactly the declared number of payload words. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "word_payload_IMP"
+  (words_as_type_indexed_bitvec)]
+theorem wordPayloadImp {headerWidth : Nat} {payloadWidth : Nat}
+    [NeZero headerWidth] [NeZero payloadWidth]
+    (addresses : List (HeapAddress (WordLocW payloadWidth))) (len : Nat) (tag : HeapTag)
+    (payload : List (WordLocW payloadWidth)) (conf : Config) (h : BitVec headerWidth)
+    (ts : List (WordLocW payloadWidth))
+    (encoded : wordPayload addresses len tag payload conf = (h, ts, true)) :
+    ts.length = len := by
+  cases tag <;> simp [wordPayload] at encoded
+  all_goals rcases encoded with ⟨_, rfl, rest⟩
+  all_goals simp_all
 
 /-- A valid payload has the declared length; its header identifies whether
 it contains raw words or projected heap addresses. The header and payload

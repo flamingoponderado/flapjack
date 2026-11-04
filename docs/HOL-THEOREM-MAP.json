@@ -1,5 +1,22 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "gc_forward_ptr_thm",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/ForwardPtr.lean",
+  "lean_name": "gcForwardPtr_thm",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source lines 300-302 and gc_forward_ptr_thm_typed: the prefix and suffix are arbitrary, both heap element carriers are independent, and the status is preserved without an extra assumption."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "word_payload_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Representation.lean",
+  "lean_name": "wordPayloadImp",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared lines 8892-8893 and word_payload_IMP_typed: successful encoding entails the exact payload length, with independent positive header and payload word widths and no extra assumptions."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "word_gc_move_thm",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/MoveForward.lean",
@@ -111524,7 +111541,7 @@
     "hol_name": "word_payload_def",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "Source comparison: all six clauses in the original definition and typed data_to_word_memory_repr capture. Header and payload use independently quantified positive word widths; address mapping, payload selection, header encoding and each validity condition preserve the source. Empty-list tests and decidable conjunctions compute the corresponding Boolean conditions."
+    "reviewer": "Source comparison: all six clauses in the original definition and word_payload_typed capture. Header and payload use independently quantified positive word widths; address mapping, payload selection, header encoding and each validity condition preserve the source. Block and thunk headers use natural shift counts 2 and 3, including for one-bit words. Empty-list tests and decidable conjunctions compute the corresponding Boolean conditions."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Representation.lean",

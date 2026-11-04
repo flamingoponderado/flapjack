@@ -42,7 +42,7 @@ theorem wordHeap_blockHeader {width : Nat} [NeZero width] (conf : Config)
   simp only [wordEl, blockRep, wordPayload, List.isEmpty_nil, Bool.true_and, List.length_map] at elementAssertion
   obtain ⟨listHeap, pureHeap, split3, listAssertion, pureAssertion⟩ := elementAssertion
   obtain ⟨singleton, tailHeap, split4, singletonAssertion, _⟩ := listAssertion
-  let header : BitVec width := makeHeader conf (BitVec.ofNat width tag <<< 2) roots.length
+  let header : BitVec width := makeHeader conf (BitVec.ofNat width tag <<< (2 : Nat)) roots.length
   let address := curr + StackRemove.bytesInWord width * BitVec.ofNat width (heapLength before)
   have member1 : singleton (address, .word header) := by
     change singleton = (fun entry => entry = (address, .word header)) at singletonAssertion

@@ -28,6 +28,7 @@ val _ = show "lower_bits_wide_result" (prove(
 val _ = show "make_byte_header_typed" data_to_wordTheory.make_byte_header_def;
 val _ = show "thunk_tag_to_bits_typed" data_to_word_memoryProofTheory.thunk_tag_to_bits_def;
 val _ = show "word_payload_typed" data_to_word_memoryProofTheory.word_payload_def;
+val _ = show "word_payload_IMP_typed" data_to_word_memoryProofTheory.word_payload_IMP;
 val _ = show "word_payload_T_IMP_typed" data_to_word_memoryProofTheory.word_payload_T_IMP;
 val _ = show "el_length_typed" gc_sharedTheory.el_length_def;
 val _ = show "word_el_typed" data_to_word_memoryProofTheory.word_el_def;
