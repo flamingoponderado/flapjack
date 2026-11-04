@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.RaiseCases
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.If
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Move
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Constant
@@ -15,11 +16,12 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Globals
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Correct
 open Flapjack Gc
 
-/-- The three outcomes currently covered by the production-backed simulation. -/
+/-- The outcomes currently covered by the production-backed simulation. -/
 def outcomes64 {C F : Type} (conf : Config) (secn label l1 l2 : Nat) (program : DataLang.Prog)
     (source : DataSem.State C F) (target : WordSemStateFiniteExact 64 C F) (locs : List (Nat × Nat)) : Prop :=
   continues64 conf secn label l1 l2 program source target locs ∨
-    returns64 conf secn label l1 l2 program source target locs ∨ timesOut64 conf secn label program source target
+    returns64 conf secn label l1 l2 program source target locs ∨
+    timesOut64 conf secn label program source target ∨ raises64 conf secn label program source target locs
 
 /-- Equal source and target evaluations transport the established outcomes. -/
 theorem outcomes64_of_evaluations {C F : Type} (conf : Config) (secn label label' l1 l2 : Nat)
@@ -30,7 +32,7 @@ theorem outcomes64_of_evaluations {C F : Type} (conf : Config) (secn label label
       WordSemStateFiniteExact.evaluate (compileControl64 conf secn label' child).1 target')
     (outcome : outcomes64 conf secn label' l1 l2 child source' target' locs) :
     outcomes64 conf secn label l1 l2 parent source target locs := by
-  simpa only [outcomes64, continues64, returns64, timesOut64, sourceEq, targetEq] using outcome
+  simpa only [outcomes64, continues64, returns64, timesOut64, raises64, sourceEq, targetEq] using outcome
 
 /-- If a sequence cannot return a type error, its first command cannot return
 one either. -/
@@ -44,7 +46,7 @@ theorem seq_first_safe {C F : Type} (first second : DataLang.Prog) (source : Dat
     subst result
     simp [DataSem.evaluate, run, DataSem.fixClock] at safe
 
-/-- Sequential execution composes all three covered outcomes while respecting
+/-- Sequential execution composes all covered outcomes while respecting
 both clock clamping and restoration of the target termination depth. -/
 theorem seq64_outcomes {C F : Type} (conf : Config) (secn label l1 l2 : Nat)
     (first second : DataLang.Prog) (source : DataSem.State C F) (target : WordSemStateFiniteExact 64 C F)
@@ -55,7 +57,7 @@ theorem seq64_outcomes {C F : Type} (conf : Config) (secn label l1 l2 : Nat)
       stateRel64 conf l1 l2 s t none locs → (DataSem.evaluate second s).1 ≠ some (.err (.abort .typeError)) →
       outcomes64 conf secn (compileControl64 conf secn label first).2 l1 l2 second s t locs) :
     outcomes64 conf secn label l1 l2 (.seq first second) source target locs := by
-  rcases firstOutcome with continued | returned | timeout
+  rcases firstOutcome with continued | returned | timeout | raised
   · obtain ⟨source', target', sourceRun, targetRun, afterFirst⟩ := continued
     let k := min source.clock source'.clock
     let sourceClamped := { source' with clock := k }
@@ -79,7 +81,8 @@ theorem seq64_outcomes {C F : Type} (conf : Config) (secn label l1 l2 : Nat)
       (.seq first second) second source sourceClamped target targetClamped locs sourceEq targetEq
       (secondCorrect sourceClamped targetClamped afterClamp secondSafe)
   · exact Or.inr (Or.inl (seq64_returnFirst conf secn label l1 l2 first second source target locs related returned))
-  · exact Or.inr (Or.inr (seq64_timeoutFirst conf secn label first second source target timeout))
+  · exact Or.inr (Or.inr (Or.inl (seq64_timeoutFirst conf secn label first second source target timeout)))
+  · exact Or.inr (Or.inr (Or.inr (seq64_raiseFirst conf secn label l1 l2 first second source target locs related raised)))
 
 /-- Source-safe conditionals inherit one of the covered outcomes from the
 branch selected by their related Boolean locals. -/
@@ -132,6 +135,7 @@ inductive VerifiedFragment : DataLang.Prog → Prop where
   | boolNot (dest src : Nat) : VerifiedFragment (.assign dest (.blockOp .boolNot) [src] none)
   | intConst (dest : Nat) (i : Int) : VerifiedFragment (.assign dest (.intOp (.const i)) [] none)
   | ret (names : List Nat) : VerifiedFragment (.return names)
+  | raise (name : Nat) : VerifiedFragment (.raise name)
   | seq {first second : DataLang.Prog} : VerifiedFragment first → VerifiedFragment second →
       VerifiedFragment (.seq first second)
   | ite (name : Nat) {yes no : DataLang.Prog} : VerifiedFragment yes → VerifiedFragment no →
@@ -154,7 +158,7 @@ theorem verifiedFragment64 {C F : Type} (conf : Config) (secn l1 l2 : Nat)
   | tick =>
     intro label source target locs related _
     by_cases zero : source.clock = 0
-    · exact Or.inr (Or.inr (tick64_timesOut conf secn label l1 l2 source target locs related zero))
+    · exact Or.inr (Or.inr (Or.inl (tick64_timesOut conf secn label l1 l2 source target locs related zero)))
     · exact Or.inl (tick64_continues conf secn label l1 l2 source target locs related zero)
   | move dest src =>
     intro label source target locs related safe
@@ -192,6 +196,9 @@ theorem verifiedFragment64 {C F : Type} (conf : Config) (secn l1 l2 : Nat)
   | ret names =>
     intro label source target locs related safe
     exact Or.inr (Or.inl (return64_returns_of_safe conf secn label l1 l2 source target locs related names safe))
+  | raise name =>
+    intro label source target locs related safe
+    exact Or.inr (Or.inr (Or.inr (raise64_of_safe conf secn label l1 l2 source target locs related name safe)))
   | @seq first second firstFrag secondFrag firstIH secondIH =>
     intro label source target locs related safe
     apply seq64_outcomes conf secn label l1 l2 first second source target locs related safe

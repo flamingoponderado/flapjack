@@ -21,7 +21,14 @@ def fragmentOutcomesAt64 {C F : Type} (conf : DataToWord.Config) (l1 l2 : Nat)
     stateRel64 conf l1 l2 source' target' (some (values.zip words)) locs) ∨
   (∃ source' target', DataSem.evaluate body source = (some (.err (.abort .timeoutError)), source') ∧
     WordSemStateFiniteExact.evaluate wordBody target = (some .timeOut, target') ∧
-    target'.ffi = source'.ffi ∧ BackendProps.optionLe target'.stackMax source'.stackMax)
+    target'.ffi = source'.ffi ∧ BackendProps.optionLe target'.stackMax source'.stackMax) ∨
+  (∃ value word source' target' a b r1 r2 remaining,
+    DataSem.evaluate body source = (some (.err (.raise value)), source') ∧
+    WordSemStateFiniteExact.evaluate wordBody target = (some (.exception (.loc a b) word), target') ∧
+    target'.ffi = source'.ffi ∧ BackendProps.optionLe target'.stackMax source'.stackMax ∧
+    wordSemLastN (source'.stack.length + 1) locs = (r1, r2) :: remaining ∧
+    ∀ dest, stateRel64 conf r1 r2 (DataSem.setVar dest value source')
+      (WordSemStateFiniteExact.setVar (DataToWord.adjustVar dest) word target') none remaining)
 
 /-- The configured function lookup for either setting of multi-argument introduction. -/
 theorem compileCakeToWord64ConfiguredFuel_fragmentFunction_noCallKnown (fuel : Nat)
@@ -117,7 +124,7 @@ theorem configuredFragmentFunction_simulation_noCallKnown {C F : Type} (fuel : N
   refine ⟨code, wordBody, nextLabel, wordRun, compilerEq, outputLookup, ?_, ?_⟩
   · simpa [bodyEq] using targetLookup
   · have simulation := verifiedFragment64 word codeLabel l1 l2 body fragment 2 sourceState targetState locs related safe
-    simpa [fragmentOutcomesAt64, outcomes64, continues64, returns64, timesOut64, bodyEq] using simulation
+    simpa [fragmentOutcomesAt64, outcomes64, continues64, returns64, timesOut64, raises64, bodyEq] using simulation
 
 /-- A function in the configured BVI-to-data output whose body lies in the
 verified fragment is installed in the actual word output with the same body as

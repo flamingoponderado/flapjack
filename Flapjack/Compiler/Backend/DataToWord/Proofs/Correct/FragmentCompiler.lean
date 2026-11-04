@@ -12,6 +12,7 @@ def fragmentCompile64 (conf : Config) (secn label : Nat) : DataLang.Prog → Opt
   | .tick => some (.tick, label)
   | .move dest src => some (.move 0 [(adjustVar dest, adjustVar src)], label)
   | .return names => some (.return 0 (names.map adjustVar), label)
+  | .raise name => some (.raise (adjustVar name), label)
   | .seq first second => do
       let (first', next) ← fragmentCompile64 conf secn label first
       let (second', last) ← fragmentCompile64 conf secn next second
@@ -52,7 +53,7 @@ theorem fragmentCompile64_agrees (conf : Config) (secn : Nat) (program : DataLan
     (fragment : VerifiedFragment program) : ∀ label,
     fragmentCompile64 conf secn label program = some (compileControl64 conf secn label program) := by
   induction fragment with
-  | skip | tick | move | ret | label | globalsPtr =>
+  | skip | tick | move | ret | raise | label | globalsPtr =>
     intro label
     simp [fragmentCompile64, compileControl64, compileControl?]
   | intConst dest i =>
