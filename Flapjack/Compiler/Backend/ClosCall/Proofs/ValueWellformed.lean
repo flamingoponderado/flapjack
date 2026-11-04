@@ -86,6 +86,24 @@ theorem valuesWellFormedFuel_mono {fuel : Nat} {g g' : State} {allowed allowed' 
     | cons head tail =>
       exact .cons (valueWellFormedFuel_mono head stateGrowth allowedGrowth codeGrowth) (ih tail)
 
+/-- Extending the compiler state, open locations, and installed code preserves
+well-formed values or exception payloads in an evaluator result. This is
+Flapjack-specific infrastructure. -/
+theorem resultWellFormedFuel_mono {fuel : Nat} {g g' : State} {allowed allowed' : Set Nat}
+    {code code' : HolFiniteMapExact Nat (Nat × ClosLang.Exp)}
+    {result : Flapjack.SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value}
+    (wf : ResultWellFormedFuel fuel g allowed code result)
+    (stateGrowth : stateExtends g g') (allowedGrowth : allowed ⊆ allowed')
+    (codeGrowth : ∀ key entry, code.lookup key = some entry → code'.lookup key = some entry) :
+    ResultWellFormedFuel fuel g' allowed' code' result := by
+  cases result with
+  | val values =>
+    exact valuesWellFormedFuel_mono wf stateGrowth allowedGrowth codeGrowth
+  | err error =>
+    cases error with
+    | abort reason => trivial
+    | raise value => exact valueWellFormedFuel_mono wf stateGrowth allowedGrowth codeGrowth
+
 /-- Concatenation preserves pointwise value well-formedness. -/
 theorem valuesWellFormedFuel_append {fuel : Nat} {g : State} {allowed : Set Nat}
     {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} {left right : List ClosSem.Value}

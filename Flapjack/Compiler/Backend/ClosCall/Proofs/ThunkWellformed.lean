@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.ClosCall.Proofs.PrimitiveWellformed
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClock
+import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
 
 /-! Well-formedness of thunk inspection and updates. -/
 namespace Flapjack.Compiler.Backend.ClosCall
@@ -40,6 +41,68 @@ theorem updateThunk_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allowe
 def EvalWellFormedFuel {C F : Type} (fuel : Nat) (g : State) (allowed : Set Nat)
     (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (outcome : ClosSem.EvalResult C F) : Prop :=
   ResultWellFormedFuel fuel g allowed code outcome.1 ∧ StateWellFormedFuel fuel g allowed code outcome.2
+
+/-- Evaluation well-formedness is preserved when compiler state, open
+locations and installed code grow. This is Flapjack-specific infrastructure. -/
+theorem evalWellFormedFuel_mono {C F : Type} {fuel : Nat} {g g' : State} {allowed allowed' : Set Nat}
+    {code code' : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} {outcome : ClosSem.EvalResult C F}
+    (wf : EvalWellFormedFuel fuel g allowed code outcome)
+    (stateGrowth : stateExtends g g') (allowedGrowth : allowed ⊆ allowed')
+    (codeGrowth : ∀ key entry, code.lookup key = some entry → code'.lookup key = some entry) :
+    EvalWellFormedFuel fuel g' allowed' code' outcome :=
+  ⟨resultWellFormedFuel_mono wf.1 stateGrowth allowedGrowth codeGrowth,
+    stateWellFormedFuel_mono wf.2 stateGrowth allowedGrowth codeGrowth⟩
+
+/-- An evaluator outcome is well formed at a compiler state, open-location
+set, and code map extending those initially supplied. The witnesses must be
+connected to the corresponding compiler simulation separately. This is
+Flapjack-specific infrastructure. -/
+def GrowingEvalWellFormedFuel {C F : Type} (fuel : Nat) (g : State) (allowed : Set Nat)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (outcome : ClosSem.EvalResult C F) : Prop :=
+  ∃ finalG finalAllowed finalCode,
+    stateExtends g finalG ∧ allowed ⊆ finalAllowed ∧
+    (∀ key entry, code.lookup key = some entry → finalCode.lookup key = some entry) ∧
+    EvalWellFormedFuel fuel finalG finalAllowed finalCode outcome
+
+/-- Sequential evaluation composes growth witnesses, moving the first value
+into the compiler state and code produced by the tail. This is Flapjack-specific
+infrastructure; the tail induction hypothesis is still explicit. -/
+theorem evaluate_cons_growing_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (first second : ClosLang.Exp)
+    (rest : List ClosLang.Exp) (env : List Value) (state : ClosSem.State C F)
+    (headIH : GrowingEvalWellFormedFuel fuel g allowed code (evaluate [first] env state))
+    (tailIH : ∀ middleG middleAllowed middleCode (start : ClosSem.State C F),
+      (evaluate [first] env state).2 = start →
+      StateWellFormedFuel fuel middleG middleAllowed middleCode start →
+      GrowingEvalWellFormedFuel fuel middleG middleAllowed middleCode (evaluate (second :: rest) env start)) :
+    GrowingEvalWellFormedFuel fuel g allowed code (evaluate (first :: second :: rest) env state) := by
+  obtain ⟨middleG, middleAllowed, middleCode, headGrowth, headAllowed, headCode, headWf⟩ := headIH
+  cases headRun : evaluate [first] env state with
+  | mk headResult headFinal =>
+    rw [headRun] at headWf
+    rw [evaluate, fixClock_evaluate, headRun]
+    cases headResult with
+    | err error =>
+      exact ⟨middleG, middleAllowed, middleCode, headGrowth, headAllowed, headCode, headWf⟩
+    | val headValues =>
+      obtain ⟨head, rfl⟩ := evaluate_singleton_value first env state headFinal headValues headRun
+      have headValueWf : ValueWellFormedFuel fuel middleG middleAllowed middleCode head := by
+        cases headWf.1 with
+        | cons h _ => exact h
+      obtain ⟨finalG, finalAllowed, finalCode, tailGrowth, tailAllowed, tailCode, tailWf⟩ :=
+        tailIH middleG middleAllowed middleCode headFinal (by simp [headRun]) headWf.2
+      have totalGrowth := stateExtends_trans g middleG finalG headGrowth tailGrowth
+      have totalAllowed := Set.Subset.trans headAllowed tailAllowed
+      have totalCode : ∀ key entry, code.lookup key = some entry → finalCode.lookup key = some entry :=
+        fun key entry found => tailCode key entry (headCode key entry found)
+      cases tailRun : evaluate (second :: rest) env headFinal with
+      | mk tailResult tailFinal =>
+        rw [tailRun] at tailWf
+        cases tailResult with
+        | err error => exact ⟨finalG, finalAllowed, finalCode, totalGrowth, totalAllowed, totalCode, tailWf⟩
+        | val values =>
+          have headWf' := valueWellFormedFuel_mono headValueWf tailGrowth tailAllowed tailCode
+          exact ⟨finalG, finalAllowed, finalCode, totalGrowth, totalAllowed, totalCode, .cons headWf' tailWf.1, tailWf.2⟩
 
 /-- The evaluator's force-thunk case preserves the invariant assuming the
 argument and forced-body induction hypotheses. -/

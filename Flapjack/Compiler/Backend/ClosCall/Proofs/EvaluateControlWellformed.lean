@@ -372,4 +372,39 @@ theorem evaluate_tick_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allo
   · simp only [zero, ↓reduceIte]
     exact bodyIH (stateWellFormedFuel_clock stateWf _)
 
+/-- Raising a value carries forward the compiler-state and code growth of
+its evaluated argument. This is Flapjack-specific infrastructure. -/
+theorem evaluate_raise_growing_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (trace : BackendCommon.Tra)
+    (body : ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State C F)
+    (bodyIH : GrowingEvalWellFormedFuel fuel g allowed code (evaluate [body] env state)) :
+    GrowingEvalWellFormedFuel fuel g allowed code (evaluate [.raise trace body] env state) := by
+  obtain ⟨nextG, nextAllowed, nextCode, growth, allowedGrowth, codeGrowth, wf⟩ := bodyIH
+  exact ⟨nextG, nextAllowed, nextCode, growth, allowedGrowth, codeGrowth,
+    evaluate_raise_wellFormedFuel trace body env state wf⟩
+
+/-- A direct call carries forward the compiler-state and code growth of its
+argument evaluation. This is Flapjack-specific infrastructure. -/
+theorem evaluate_call_growing_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (trace : BackendCommon.Tra)
+    (ticks label : Nat) (args : List ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State C F)
+    (argsIH : GrowingEvalWellFormedFuel fuel g allowed code (evaluate args env state)) :
+    GrowingEvalWellFormedFuel fuel g allowed code (evaluate [.call trace ticks label args] env state) := by
+  obtain ⟨nextG, nextAllowed, nextCode, growth, allowedGrowth, codeGrowth, wf⟩ := argsIH
+  exact ⟨nextG, nextAllowed, nextCode, growth, allowedGrowth, codeGrowth,
+    evaluate_call_wellFormedFuel trace ticks label args env state wf⟩
+
+/-- An ordinary primitive carries forward the compiler-state and code growth
+of its argument evaluation. Install and force use separate cases. This is
+Flapjack-specific infrastructure. -/
+theorem evaluate_ordinaryOp_growing_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (trace : BackendCommon.Tra) (op : ClosLang.Op)
+    (args : List ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State C F)
+    (notInstall : op ≠ .install) (notForce : op ≠ .thunkOp .forceThunk)
+    (argsIH : GrowingEvalWellFormedFuel fuel g allowed code (evaluate args env state)) :
+    GrowingEvalWellFormedFuel fuel g allowed code (evaluate [.op trace op args] env state) := by
+  obtain ⟨nextG, nextAllowed, nextCode, growth, allowedGrowth, codeGrowth, wf⟩ := argsIH
+  exact ⟨nextG, nextAllowed, nextCode, growth, allowedGrowth, codeGrowth,
+    evaluate_ordinaryOp_wellFormedFuel trace op args env state notInstall notForce wf⟩
+
 end Flapjack.Compiler.Backend.ClosCall
