@@ -1,6 +1,8 @@
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteUpdate
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteLoad
 import Flapjack.Compiler.Backend.LabToTarget.InstMem
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Heap
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteUpdateStack
 
 /-! Concrete writes to a separated packed byte payload. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
@@ -140,5 +142,153 @@ theorem bytePayload_memStore64 (bytes : List (BitVec 8)) (words : List (BitVec 6
   refine ⟨_, ?_, assertion⟩
   unfold memStoreByteAuxExact
   simp only [alignEq, memEq, inDomain, ↓reduceIte, byteEq]
+
+/-- Updating one byte of a concrete byte-cell assertion preserves its header,
+side conditions, and any disjoint surrounding heap frame. -/
+theorem wordEl_byteStore64 (conf : DataToWord.Config) (be flag : Bool)
+    (bytes : List (BitVec 8)) (words : List (BitVec 64)) (base : BitVec 64)
+    (memory : BitVec 64 → WordLocW 64) (domain : BitVec 64 → Bool)
+    (frame : ((BitVec 64 × WordLocW 64) → Prop) → Prop) (i : Nat) (byte : BitVec 8)
+    (aligned : ((base + 8) >>> (3 : Nat)) <<< (3 : Nat) = base + 8)
+    (indexBound : i < bytes.length) (wordBound : i < 2 ^ 64)
+    (capacity : bytes.length ≤ words.length * 8)
+    (separated : SetSep.star (wordEl base (bytesRep be flag bytes words) conf) frame
+      (SetSep.fun2Set (memory, fun addr => domain addr = true))) :
+    ∃ updated, memStoreByteAuxExact memory domain be (base + 8 + BitVec.ofNat 64 i) byte = some updated ∧
+      SetSep.star (wordEl base (bytesRep be flag (bytes.set i byte) words) conf) frame
+        (SetSep.fun2Set (updated, fun addr => domain addr = true)) := by
+  simp only [wordEl, bytesRep, wordPayload, List.isEmpty_nil, Bool.true_and,
+    List.length_map, writeBytes_wordCount, Misc.wordList, ← SetSep.starAssoc] at separated
+  rw [star_swap_first] at separated
+  obtain ⟨updated, store, result⟩ := bytePayload_memStore64 bytes words (base + 8) be memory domain _ i byte
+    aligned indexBound wordBound capacity (by simpa [StackRemove.bytesInWord] using separated)
+  refine ⟨updated, store, ?_⟩
+  rw [star_swap_first] at result
+  simpa [wordEl, bytesRep, wordPayload, writeBytes_wordCount, Misc.wordList, ← SetSep.starAssoc,
+    StackRemove.bytesInWord] using result
+
+/-- The concrete store preserves a whole word heap around the updated byte
+cell, including an arbitrary disjoint frame such as the alternate heap. -/
+theorem wordHeap_byteStore64 (conf : DataToWord.Config) (be flag : Bool)
+    (bytes : List (BitVec 8)) (words : List (BitVec 64)) (curr : BitVec 64)
+    (pre post : ValueHeap 64) (memory : BitVec 64 → WordLocW 64) (domain : BitVec 64 → Bool)
+    (frame : ((BitVec 64 × WordLocW 64) → Prop) → Prop) (i : Nat) (byte : BitVec 8)
+    (aligned : ((curr + 8 * BitVec.ofNat 64 (heapLength pre) + 8) >>> (3 : Nat)) <<< (3 : Nat) =
+      curr + 8 * BitVec.ofNat 64 (heapLength pre) + 8)
+    (indexBound : i < bytes.length) (wordBound : i < 2 ^ 64)
+    (capacity : bytes.length ≤ words.length * 8)
+    (separated : SetSep.star (wordHeap curr (pre ++ [bytesRep be flag bytes words] ++ post) conf) frame
+      (SetSep.fun2Set (memory, fun addr => domain addr = true))) :
+    ∃ updated, memStoreByteAuxExact memory domain be
+      (curr + 8 * BitVec.ofNat 64 (heapLength pre) + 8 + BitVec.ofNat 64 i) byte = some updated ∧
+      SetSep.star (wordHeap curr (pre ++ [bytesRep be flag (bytes.set i byte) words] ++ post) conf) frame
+        (SetSep.fun2Set (updated, fun addr => domain addr = true)) := by
+  have sameLength := (bytesRep_shape be flag bytes (bytes.set i byte) words).length
+  rw [List.append_assoc, wordHeapAppend] at separated
+  simp only [List.singleton_append, wordHeap, ← SetSep.starAssoc] at separated
+  rw [star_swap_first] at separated
+  obtain ⟨updated, store, result⟩ := wordEl_byteStore64 conf be flag bytes words
+    (curr + 8 * BitVec.ofNat 64 (heapLength pre)) memory domain _ i byte aligned indexBound wordBound capacity
+    (by simpa [StackRemove.bytesInWord] using separated)
+  refine ⟨updated, store, ?_⟩
+  rw [star_swap_first] at result
+  rw [List.append_assoc, wordHeapAppend]
+  simp only [List.singleton_append, wordHeap, ← SetSep.starAssoc]
+  simpa [StackRemove.bytesInWord, ← sameLength] using result
+
+/-- The word heap and its alternate heap continue to satisfy the concrete
+heap/store invariant after a bounded byte store. The caller supplies the
+byte payload capacity established from the encoded byte-cell header. -/
+theorem heapInMemoryStore_byteStore64 (conf : DataToWord.Config) (be flag : Bool)
+    (bytes : List (BitVec 8)) (words : List (BitVec 64)) (pre post : ValueHeap 64)
+    (a sp sp1 : Nat) (gens : GcCombined.GenState) (store : HolFiniteMapExact WordStoreHOL (WordLocW 64))
+    (memory : BitVec 64 → WordLocW 64) (domain : BitVec 64 → Bool) (limit i : Nat) (byte : BitVec 8)
+    (indexBound : i < bytes.length) (wordBound : i < 2 ^ 64)
+    (capacity : bytes.length ≤ words.length * 8)
+    (heapMem : heapInMemoryStore (pre ++ [bytesRep be flag bytes words] ++ post)
+      a sp sp1 gens conf store memory domain limit) :
+    ∃ curr updated, store.lookup .currHeap = some (.word curr) ∧
+      memStoreByteAuxExact memory domain be
+        (curr + 8 * BitVec.ofNat 64 (heapLength pre) + 8 + BitVec.ofNat 64 i) byte = some updated ∧
+      heapInMemoryStore (pre ++ [bytesRep be flag (bytes.set i byte) words] ++ post)
+        a sp sp1 gens conf store updated domain limit := by
+  obtain ⟨bound1, bound2, shift, lenNonzero, lenBound, shiftBound, globals,
+    curr, other, currAligned, otherAligned, currStore, otherStore, nextStore,
+    triggerStore, endStore, lengthStore, globInv, genInv, separated⟩ := heapMem
+  have currAligned3 : (curr >>> (3 : Nat)) <<< (3 : Nat) = curr := by
+    simpa [holByteAligned, holAligned, holLOG2_eq_log2 (n := 8) (by decide), holAlign_eq_shift] using currAligned
+  have targetAligned : ((curr + 8 * BitVec.ofNat 64 (heapLength pre) + 8) >>> (3 : Nat)) <<< (3 : Nat) =
+      curr + 8 * BitVec.ofNat 64 (heapLength pre) + 8 := by
+    bv_decide
+  obtain ⟨updated, memWrite, heapNew⟩ := wordHeap_byteStore64 conf be flag bytes words curr pre post
+    memory domain _ i byte targetAligned indexBound wordBound capacity separated
+  have lengthEq := heapLength_shape (byteHeap_shape be flag bytes (bytes.set i byte) words pre post)
+  refine ⟨curr, updated, currStore, memWrite, ?_⟩
+  refine ⟨?_, ?_, shift, lenNonzero, lenBound, shiftBound, globals, curr, other, currAligned, otherAligned,
+    currStore, otherStore, nextStore, triggerStore, endStore, lengthStore, globInv, genInv, heapNew⟩
+  · simpa only [← lengthEq] using bound1
+  · simpa only [← lengthEq] using bound2
+
+/-- The abstract byte-array allocation size and the heap-store bound imply
+both payload capacity and the 64-bit bound on any valid byte index. -/
+theorem byteHeap_storeBounds64 (conf : DataToWord.Config) (be flag : Bool)
+    (bytes : List (BitVec 8)) (words : List (BitVec 64)) (pre post : ValueHeap 64)
+    (a sp sp1 : Nat) (gens : GcCombined.GenState) (store : HolFiniteMapExact WordStoreHOL (WordLocW 64))
+    (memory : BitVec 64 → WordLocW 64) (domain : BitVec 64 → Bool) (limit i : Nat)
+    (count : words.length = bytes.length / 8 + 1) (indexBound : i < bytes.length)
+    (heapMem : heapInMemoryStore (pre ++ [bytesRep be flag bytes words] ++ post)
+      a sp sp1 gens conf store memory domain limit) :
+    bytes.length ≤ words.length * 8 ∧ i < 2 ^ 64 := by
+  have division := Nat.mod_add_div bytes.length 8
+  have remBound := Nat.mod_lt bytes.length (by decide : 0 < 8)
+  have capacity : bytes.length ≤ words.length * 8 := by omega
+  have sizeBound : words.length ≤ heapLength (pre ++ [bytesRep be flag bytes words] ++ post) := by
+    rw [List.append_assoc, heapLength_append]
+    simp only [List.singleton_append]
+    change words.length ≤ heapLength pre + (elLength (bytesRep be flag bytes words) + heapLength post)
+    simp only [bytesRep, writeBytes_wordCount, elLength]
+    omega
+  simp only [List.append_assoc, List.singleton_append] at sizeBound
+  have heapBound := heapMem.2.1
+  norm_num at heapBound ⊢
+  constructor
+  · exact capacity
+  · omega
+
+/-- A source byte-array update and the matching concrete 64-bit byte store
+preserve the full data-to-word memory relation. The address is expressed via
+the heap prefix exposed by the abstract byte-update theorem. -/
+theorem memoryRel_byteStore64 (conf : DataToWord.Config) (be : Bool) (next : Nat)
+    (refs : Spt (BvlSem.Ref DataSem.Value)) (space : Nat)
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW 64))
+    (memory : BitVec 64 → WordLocW 64) (domain : BitVec 64 → Bool)
+    (bit flag : Bool) (ptr : Nat) (bytes : List (BitVec 8)) (root : WordLocW 64)
+    (vars : List (DataSem.Value × WordLocW 64)) (i : Nat) (byte : BitVec 8)
+    (found : sptLookup ptr refs = some (.byteArray flag bytes)) (indexBound : i < bytes.length)
+    (related : memoryRel conf be next refs space store memory domain ((.refPtr bit ptr, root) :: vars)) :
+    ∃ (curr : BitVec 64) (pre : ValueHeap 64) (updated : BitVec 64 → WordLocW 64), store.lookup .currHeap = some (.word curr) ∧
+      memStoreByteAuxExact memory domain be
+        (curr + 8 * BitVec.ofNat 64 (heapLength pre) + 8 + BitVec.ofNat 64 i) byte = some updated ∧
+      memoryRel conf be next (sptInsert ptr (.byteArray flag (bytes.set i byte)) refs)
+        space store updated domain ((.refPtr bit ptr, root) :: vars) := by
+  obtain ⟨heap, limit, a, sp, sp1, gens, heapMem, wordInv, bound, spaceBound⟩ := related
+  obtain ⟨roots, absInv, rootWords⟩ := wordInv
+  have absInv' : absMlInv conf (.refPtr bit ptr :: vars.map Prod.fst) refs
+      (roots, heap, be, a, sp, sp1, gens) limit next := by simpa using absInv
+  obtain ⟨roots2, pre, post, words, rootsEq, heapEq, wordCount, absUpdated⟩ :=
+    updateByteRef conf bit ptr (vars.map Prod.fst) refs roots heap be a sp sp1 gens limit next flag bytes
+      (bytes.set i byte) ⟨absInv', found, by simp⟩
+  rw [heapEq] at heapMem
+  have count : words.length = bytes.length / 8 + 1 := by simpa using wordCount
+  obtain ⟨capacity, wordBound⟩ := byteHeap_storeBounds64 conf be flag bytes words pre post
+    a sp sp1 gens store memory domain limit i count indexBound heapMem
+  obtain ⟨curr, updated, currStore, memWrite, heapUpdated⟩ :=
+    heapInMemoryStore_byteStore64 conf be flag bytes words pre post a sp sp1 gens store memory domain limit i byte
+      indexBound wordBound capacity heapMem
+  refine ⟨curr, pre, updated, currStore, memWrite, ?_⟩
+  refine ⟨pre ++ [bytesRep be flag (bytes.set i byte) words] ++ post, limit, a, sp, sp1, gens,
+    heapUpdated, ?_, bound, spaceBound⟩
+  refine ⟨roots, ?_, rootWords⟩
+  simpa using absUpdated
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
