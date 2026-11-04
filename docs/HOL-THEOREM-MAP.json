@@ -1,5 +1,23 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_gen_gc_partial_move_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PartialMove.lean",
+  "lean_name": "wordGenGcPartialMove_copy",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared word_gen_gc_partial_move_thm_typed and the original in-generation data-element case: the complete original hypotheses and existential outputs are retained with the original generation and lookup case conditions at a common positive word width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_gen_gc_partial_move_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PartialMove.lean",
+  "lean_name": "wordGenGcPartialMove_thm",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared word_gen_gc_partial_move_thm_typed and the complete source proof: the original abstract and concrete move equations, success, segment and heap bounds, classifier, separated heap and list, and every existential result are retained at the common positive word width."
+},
+{
   "hol_path": "cakeml/compiler/backend/gc/gen_gcScript.sml",
   "hol_name": "heap_lookup_APPEND",
   "lean_path": "Flapjack/Compiler/Backend/GenGc/Proofs/HeapLookup.lean",
