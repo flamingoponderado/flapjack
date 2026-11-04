@@ -3,6 +3,15 @@
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "word_gen_gc_move_data_thm",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GenerationalData.lean",
+  "lean_name": "wordGenGcMoveData_thm",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the complete source statement and word_gen_gc_move_data_thm_typed: the shared word width, abstract and word executions, success, bounds, classifier, fuel, heap invariant, separated memory and complete existential postconditions match. The proof follows the original strong induction and covers empty, invalid, raw-word and pointer-payload cases."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_gen_gc_move_data_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GenerationalData.lean",
   "lean_name": "wordGenGcMoveData_empty",
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
