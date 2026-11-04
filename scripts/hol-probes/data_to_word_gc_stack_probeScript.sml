@@ -31,6 +31,7 @@ val _ = show "word_gc_fun_IMP_FILTER_typed" data_to_word_gcProofTheory.word_gc_f
 val _ = show "loc_ok_word_addr_typed" data_to_word_gcProofTheory.loc_ok_word_addr;
 val _ = show "word_gc_move_thm_typed" data_to_word_gcProofTheory.word_gc_move_thm;
 val _ = show "word_gc_move_roots_thm_typed" data_to_word_gcProofTheory.word_gc_move_roots_thm;
+val _ = show "word_gc_move_list_thm_typed" data_to_word_gcProofTheory.word_gc_move_list_thm;
 val movePre = fst (dest_imp (concl data_to_word_gcProofTheory.word_gc_move_thm));
 val moveSep = List.nth (strip_conj movePre, 2);
 val moveStar = fst (dest_comb moveSep);

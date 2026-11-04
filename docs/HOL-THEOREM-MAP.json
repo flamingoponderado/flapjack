@@ -1,5 +1,14 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_gc_move_list_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/ListSimulation.lean",
+  "lean_name": "wordGcMoveList_thm",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared lines 932-949 and word_gc_move_list_thm_typed, including the successful abstract run, bounded source heap and root count, concrete word-list run, left-associated initial and final separation assertions, and all pointer, length and status conclusions. All word carriers share the positive width. Each iteration uses the full word_gc_move_thm and the original prefix-independence theorem, and writes the updated root into its separated memory cell."
+},
+{
   "hol_path": "cakeml/compiler/backend/gc/copying_gcScript.sml",
   "hol_name": "gc_move_ALT",
   "lean_path": "Flapjack/Compiler/Backend/CopyingGc/Proofs/Append.lean",
