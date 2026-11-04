@@ -20884,9 +20884,9 @@ theorem IncrementalCodeInv.ready {C F : Type} {fuel : Nat} {g : State} {allowed 
   exact incrementalInstallReady_of_syntax_and_oracleMonotonic g allowed source target well code known syntaxOracle ordered
 
 /-- The production list traversal simulates a non-type-error source run
-under the fuel-indexed code invariant. The conclusion retains the weaker
-readiness invariant; preservation of the complete source-shaped invariant
-remains to be proved. This is Flapjack-specific simulation infrastructure,
+under the fuel-indexed code invariant. This earlier result retains the weaker
+readiness invariant; `callsListBounded_preserves_IncrementalCodeInv` below
+provides the full fuel-indexed invariant. This is Flapjack-specific simulation infrastructure,
 not a port of HOL's `calls_correct`. -/
 theorem callsListBounded_sim_of_IncrementalCodeInv {C F : Type}
     (passFuel relationFuel traversalFuel : Nat) (compiler : ClosSem.Compiler C)
@@ -20929,9 +20929,9 @@ theorem callsListBounded_sim_of_IncrementalCodeInv {C F : Type}
     states ready disjoint avoids sourceCompiler targetCompiler oracle
 
 /-- Related closure application simulates a non-type-error source run under
-the fuel-indexed code invariant. The conclusion retains readiness rather than
-the complete source-shaped invariant. This is Flapjack-specific simulation
-infrastructure, not a port of HOL's `calls_correct`. -/
+the fuel-indexed code invariant. This earlier result retains readiness;
+`evaluateApp_preserves_IncrementalCodeInv_from_inv` below provides the full
+fuel-indexed invariant. This is Flapjack-specific simulation infrastructure, not a port of HOL's `calls_correct`. -/
 theorem evaluateApp_sim_of_IncrementalCodeInv {C F : Type}
     (passFuel relationFuel : Nat) (compiler : ClosSem.Compiler C) (location : Option Nat)
     (g : State) (allowed : Set Nat) (function targetFunction : ClosSem.Value) (args targetArgs : List ClosSem.Value)
@@ -26143,5 +26143,193 @@ theorem callsFuel_preserves_IncrementalCodeInv {C F : Type}
     finalStates finalReady finalCompiler targetCompiler targetFinalCompiler finalOracle origin
   exact ⟨extraClock, finalG, finalAllowed, targetResult, targetFinal, extended, allowedGrowth, targetRun,
     related, resultWf, finalStates, finalWf, finalInv⟩
+
+
+/-- The fuel-indexed list traversal preserves the complete incremental code
+invariant. The actual traversal, source syntax, and location coverage are
+explicit; this is Flapjack-specific infrastructure, not a HOL theorem port. -/
+theorem callsListFuel_preserves_IncrementalCodeInv {C F : Type}
+    (passFuel relationFuel limit depth : Nat) (compiler : ClosSem.Compiler C)
+    (expressions output : List ClosLang.Exp) (initial required g : State)
+    (passRun : callsListFuel depth expressions initial = some (output, required))
+    (distinct : (codeLocations expressions).Nodup)
+    (fresh : LabelsFresh (codeLocations expressions) initial) (initialWf : wellFormed initial)
+    (locations : everyFnLocationSome expressions) (annotations : everyFnVarsNone expressions)
+    (requiredGrowth : stateExtends required g) (allowed : Set Nat)
+    (sourceEnv targetEnv : List ClosSem.Value)
+    (source final : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (coverage : ∀ loc ∈ codeLocations expressions, ¬ sptDomain required.1 loc → loc ∈ allowed)
+    (clock : source.clock < limit) (run : evaluate expressions sourceEnv source = (result, final))
+    (notType : result ≠ .err (.abort .typeError))
+    (envs : EnvRelFuel relationFuel g allowed target.code sourceEnv targetEnv 0 (output.map (0, ·)))
+    (envWf : ValuesWellFormedFuel relationFuel g allowed target.code sourceEnv)
+    (sourceWf : StateWellFormedFuel relationFuel g allowed target.code source)
+    (states : StateRelFuel relationFuel g allowed source target)
+    (ready : IncrementalInstallReady g source target)
+    (disjoint : Disjoint allowed (sptDomain g.1)) (avoids : OracleLocationsAvoid allowed source)
+    (sourceCompiler : source.compile = compileIncFuelCallback passFuel compiler)
+    (targetCompiler : target.compile = compiler)
+    (oracle : target.compileOracle = compileIncFuelOracle passFuel source.compileOracle)
+    (inv : IncrementalCodeInv passFuel g allowed source target) :
+    ∃ extraClock finalG finalAllowed targetResult targetFinal,
+      stateExtends g finalG ∧ allowed ⊆ finalAllowed ∧
+      Disjoint finalAllowed (sptDomain finalG.1) ∧
+      evaluate output targetEnv {target with clock := target.clock + extraClock} = (targetResult, targetFinal) ∧
+      resultRel (List.Forall₂ (ValueRelFuel relationFuel finalG finalAllowed targetFinal.code))
+        (ValueRelFuel relationFuel finalG finalAllowed targetFinal.code) result targetResult ∧
+      ResultWellFormedFuel relationFuel finalG finalAllowed targetFinal.code result ∧
+      StateRelFuel relationFuel finalG finalAllowed final targetFinal ∧
+      StateWellFormedFuel relationFuel finalG finalAllowed targetFinal.code final ∧
+      IncrementalCodeInv passFuel finalG finalAllowed final targetFinal := by
+  have sim := callsListFuel_withCoveredOpenClockAndOrigin_from_annotated_induction (F := F) passFuel relationFuel depth limit compiler
+    expressions output initial required passRun distinct fresh initialWf locations annotations (by
+      intro childDepth _ body converted before after traversal bodyDistinct bodyFresh bodyWf bodyLocations bodyAnnotations
+      exact callsFuel_withCoveredOpenClockAndOrigin_clock_induction passFuel relationFuel compiler limit childDepth body converted
+        before after traversal bodyDistinct bodyFresh bodyWf bodyLocations bodyAnnotations)
+  obtain ⟨extraClock, finalG, finalAllowed, targetResult, targetFinal, extended, allowedGrowth,
+    finalDisjoint, _, origin, targetRun, related, resultWf, finalStates, finalWf, finalReady,
+    finalCompiler, targetFinalCompiler, finalOracle, _⟩ :=
+    sim g requiredGrowth allowed sourceEnv targetEnv source target result final coverage clock run notType envs envWf
+      sourceWf states ready disjoint avoids sourceCompiler targetCompiler oracle
+  have finalInv := evaluate_final_IncrementalCodeInv_of_open_origin passFuel relationFuel compiler g finalG allowed finalAllowed
+    source final target targetFinal expressions output sourceEnv targetEnv result targetResult extraClock inv run targetRun
+    finalStates finalReady finalCompiler targetCompiler targetFinalCompiler finalOracle origin
+  exact ⟨extraClock, finalG, finalAllowed, targetResult, targetFinal, extended, allowedGrowth, finalDisjoint,
+    targetRun, related, resultWf, finalStates, finalWf, finalInv⟩
+
+/-- Closure application preserves the complete incremental code invariant
+using the actual smaller-clock expression traversals. This fuel-indexed Lean
+simulation is not a HOL theorem port. -/
+theorem evaluateApp_preserves_IncrementalCodeInv {C F : Type}
+    (passFuel relationFuel limit : Nat) (compiler : ClosSem.Compiler C) (location : Option Nat)
+    (g : State) (allowed : Set Nat) (function targetFunction : ClosSem.Value)
+    (args targetArgs : List ClosSem.Value)
+    (source final : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (clock : source.clock < limit) (run : evaluateApp location function args source = (result, final))
+    (notType : result ≠ .err (.abort .typeError))
+    (functions : ValueRelFuel relationFuel g allowed target.code function targetFunction)
+    (arguments : List.Forall₂ (ValueRelFuel relationFuel g allowed target.code) args targetArgs)
+    (functionWf : ValueWellFormedFuel relationFuel g allowed target.code function)
+    (argsWf : ValuesWellFormedFuel relationFuel g allowed target.code args)
+    (sourceWf : StateWellFormedFuel relationFuel g allowed target.code source)
+    (states : StateRelFuel relationFuel g allowed source target)
+    (ready : IncrementalInstallReady g source target)
+    (disjoint : Disjoint allowed (sptDomain g.1)) (avoids : OracleLocationsAvoid allowed source)
+    (sourceCompiler : source.compile = compileIncFuelCallback passFuel compiler)
+    (targetCompiler : target.compile = compiler)
+    (oracle : target.compileOracle = compileIncFuelOracle passFuel source.compileOracle)
+    (inv : IncrementalCodeInv passFuel g allowed source target) :
+    ∃ extraClock finalG finalAllowed targetResult targetFinal,
+      stateExtends g finalG ∧ allowed ⊆ finalAllowed ∧ Disjoint finalAllowed (sptDomain finalG.1) ∧
+      evaluateApp location targetFunction targetArgs {target with clock := target.clock + extraClock} = (targetResult, targetFinal) ∧
+      resultRel (List.Forall₂ (ValueRelFuel relationFuel finalG finalAllowed targetFinal.code))
+        (ValueRelFuel relationFuel finalG finalAllowed targetFinal.code) result targetResult ∧
+      ResultWellFormedFuel relationFuel finalG finalAllowed targetFinal.code result ∧
+      StateRelFuel relationFuel finalG finalAllowed final targetFinal ∧
+      StateWellFormedFuel relationFuel finalG finalAllowed targetFinal.code final ∧
+      IncrementalCodeInv passFuel finalG finalAllowed final targetFinal := by
+  have sim := growingAppSimClockBelowWithCoveredOpenClockAndOrigin_of_traversals (F := F) passFuel relationFuel limit compiler location (by
+    intro callerClock _ depth before after body converted traversal bodyDistinct bodyFresh bodyWf bodyLocations bodyAnnotations
+    exact callsFuel_withCoveredOpenClockAndOrigin_clock_induction passFuel relationFuel compiler callerClock depth body converted
+      before after traversal bodyDistinct bodyFresh bodyWf bodyLocations bodyAnnotations)
+  obtain ⟨extraClock, finalG, finalAllowed, targetResult, targetFinal, extended, allowedGrowth,
+    finalDisjoint, _, origin, targetRun, related, resultWf, finalStates, finalWf, finalReady,
+    finalCompiler, targetFinalCompiler, finalOracle, _⟩ :=
+    sim g allowed function targetFunction args targetArgs source target result final clock run notType functions arguments
+      functionWf argsWf sourceWf states ready disjoint avoids sourceCompiler targetCompiler oracle
+  have finalInv := evaluateApp_final_IncrementalCodeInv_of_open_origin passFuel relationFuel compiler g finalG allowed finalAllowed
+    source final target targetFinal location function targetFunction args targetArgs result targetResult extraClock inv run targetRun
+    finalStates finalReady finalCompiler targetCompiler targetFinalCompiler finalOracle origin
+  exact ⟨extraClock, finalG, finalAllowed, targetResult, targetFinal, extended, allowedGrowth, finalDisjoint,
+    targetRun, related, resultWf, finalStates, finalWf, finalInv⟩
+
+
+/-- Bounded production traversal preserves the complete code invariant.
+This is fuel-indexed Flapjack infrastructure, not a HOL theorem port. -/
+theorem callsListBounded_preserves_IncrementalCodeInv {C F : Type}
+    (passFuel relationFuel depth : Nat) (compiler : ClosSem.Compiler C)
+    (expressions output : List ClosLang.Exp) (initial required g : State)
+    (passRun : callsListBounded depth expressions initial = some (output, required))
+    (distinct : (codeLocations expressions).Nodup)
+    (fresh : LabelsFresh (codeLocations expressions) initial) (initialWf : wellFormed initial)
+    (locations : everyFnLocationSome expressions) (annotations : everyFnVarsNone expressions)
+    (requiredGrowth : stateExtends required g) (allowed : Set Nat)
+    (sourceEnv targetEnv : List ClosSem.Value)
+    (source final : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (coverage : ∀ loc ∈ codeLocations expressions, ¬ sptDomain required.1 loc → loc ∈ allowed)
+    (run : evaluate expressions sourceEnv source = (result, final))
+    (notType : result ≠ .err (.abort .typeError))
+    (envs : EnvRelFuel relationFuel g allowed target.code sourceEnv targetEnv 0 (output.map (0, ·)))
+    (envWf : ValuesWellFormedFuel relationFuel g allowed target.code sourceEnv)
+    (sourceWf : StateWellFormedFuel relationFuel g allowed target.code source)
+    (states : StateRelFuel relationFuel g allowed source target)
+    (disjoint : Disjoint allowed (sptDomain g.1)) (targetCompiler : target.compile = compiler)
+    (inv : IncrementalCodeInv passFuel g allowed source target) :
+    ∃ extraClock finalG finalAllowed targetResult targetFinal,
+      stateExtends g finalG ∧ allowed ⊆ finalAllowed ∧
+      Disjoint finalAllowed (sptDomain finalG.1) ∧
+      evaluate output targetEnv {target with clock := target.clock + extraClock} = (targetResult, targetFinal) ∧
+      resultRel (List.Forall₂ (ValueRelFuel relationFuel finalG finalAllowed targetFinal.code))
+        (ValueRelFuel relationFuel finalG finalAllowed targetFinal.code) result targetResult ∧
+      ResultWellFormedFuel relationFuel finalG finalAllowed targetFinal.code result ∧
+      StateRelFuel relationFuel finalG finalAllowed final targetFinal ∧
+      StateWellFormedFuel relationFuel finalG finalAllowed targetFinal.code final ∧
+      IncrementalCodeInv passFuel finalG finalAllowed final targetFinal := by
+  have ⟨ready, avoids⟩ := inv.ready
+  have sourceCompiler : source.compile = compileIncFuelCallback passFuel compiler := by
+    simpa [targetCompiler] using inv.2.1
+  have oracle := inv.2.2.1
+  have sim := callsListBounded_withCoveredOpenClockAndOrigin_from_annotated_induction (F := F) passFuel relationFuel depth (source.clock + 1) compiler
+    expressions output initial required passRun distinct fresh initialWf locations annotations (by
+      intro childDepth _ body converted before after traversal bodyDistinct bodyFresh bodyWf bodyLocations bodyAnnotations
+      exact callsFuel_withCoveredOpenClockAndOrigin_clock_induction passFuel relationFuel compiler (source.clock + 1) childDepth body converted
+        before after traversal bodyDistinct bodyFresh bodyWf bodyLocations bodyAnnotations)
+  obtain ⟨extraClock, finalG, finalAllowed, targetResult, targetFinal, extended, allowedGrowth,
+    finalDisjoint, _, origin, targetRun, related, resultWf, finalStates, finalWf, finalReady,
+    finalCompiler, targetFinalCompiler, finalOracle, _⟩ :=
+    sim g requiredGrowth allowed sourceEnv targetEnv source target result final coverage (by omega) run notType envs envWf
+      sourceWf states ready disjoint avoids sourceCompiler targetCompiler oracle
+  have finalInv := evaluate_final_IncrementalCodeInv_of_open_origin passFuel relationFuel compiler g finalG allowed finalAllowed
+    source final target targetFinal expressions output sourceEnv targetEnv result targetResult extraClock inv run targetRun
+    finalStates finalReady finalCompiler targetCompiler targetFinalCompiler finalOracle origin
+  exact ⟨extraClock, finalG, finalAllowed, targetResult, targetFinal, extended, allowedGrowth, finalDisjoint,
+    targetRun, related, resultWf, finalStates, finalWf, finalInv⟩
+
+/-- Related application preserves the complete code invariant.
+This is fuel-indexed Flapjack infrastructure, not a HOL theorem port. -/
+theorem evaluateApp_preserves_IncrementalCodeInv_from_inv {C F : Type}
+    (passFuel relationFuel : Nat) (compiler : ClosSem.Compiler C) (location : Option Nat)
+    (g : State) (allowed : Set Nat) (function targetFunction : ClosSem.Value)
+    (args targetArgs : List ClosSem.Value)
+    (source final : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (run : evaluateApp location function args source = (result, final))
+    (notType : result ≠ .err (.abort .typeError))
+    (functions : ValueRelFuel relationFuel g allowed target.code function targetFunction)
+    (arguments : List.Forall₂ (ValueRelFuel relationFuel g allowed target.code) args targetArgs)
+    (functionWf : ValueWellFormedFuel relationFuel g allowed target.code function)
+    (argsWf : ValuesWellFormedFuel relationFuel g allowed target.code args)
+    (sourceWf : StateWellFormedFuel relationFuel g allowed target.code source)
+    (states : StateRelFuel relationFuel g allowed source target)
+    (disjoint : Disjoint allowed (sptDomain g.1)) (targetCompiler : target.compile = compiler)
+    (inv : IncrementalCodeInv passFuel g allowed source target) :
+    ∃ extraClock finalG finalAllowed targetResult targetFinal,
+      stateExtends g finalG ∧ allowed ⊆ finalAllowed ∧ Disjoint finalAllowed (sptDomain finalG.1) ∧
+      evaluateApp location targetFunction targetArgs {target with clock := target.clock + extraClock} = (targetResult, targetFinal) ∧
+      resultRel (List.Forall₂ (ValueRelFuel relationFuel finalG finalAllowed targetFinal.code))
+        (ValueRelFuel relationFuel finalG finalAllowed targetFinal.code) result targetResult ∧
+      ResultWellFormedFuel relationFuel finalG finalAllowed targetFinal.code result ∧
+      StateRelFuel relationFuel finalG finalAllowed final targetFinal ∧
+      StateWellFormedFuel relationFuel finalG finalAllowed targetFinal.code final ∧
+      IncrementalCodeInv passFuel finalG finalAllowed final targetFinal := by
+  have ⟨ready, avoids⟩ := inv.ready
+  have sourceCompiler : source.compile = compileIncFuelCallback passFuel compiler := by
+    simpa [targetCompiler] using inv.2.1
+  exact evaluateApp_preserves_IncrementalCodeInv passFuel relationFuel (source.clock + 1) compiler location g allowed function targetFunction
+    args targetArgs source final target result (by omega) run notType functions arguments functionWf argsWf sourceWf states ready
+    disjoint avoids sourceCompiler targetCompiler inv.2.2.1 inv
 
 end Flapjack.Compiler.Backend.ClosCall
