@@ -1,0 +1,132 @@
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.TailCall
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.IndirectCall
+
+/-! Indirect tail calls through source code-pointer locals. -/
+namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Correct
+open Flapjack Gc
+
+/-- A resolved indirect tail call propagates any valid callee results. -/
+theorem tailCall64_indirect_evaluations {C F : Type} (conf : Config) (secn fresh : Nat)
+    (source : DataSem.State C F) (target : WordSemStateFiniteExact 64 C F)
+    (names : List Nat) (name label : Nat) (values : List DataSem.Value) (words : List (WordLocW 64))
+    (l1 l2 : Nat) (body : DataLang.Prog) (size : Option Nat)
+    (sourceRun : DataSem.getVars (names ++ [name]) source.locals = some (values ++ [.codePtr label]))
+    (wordRun : WordSemStateFiniteExact.getVars (0 :: (names ++ [name]).map adjustVar) target =
+      some ((.loc l1 l2 :: words) ++ [.loc label 0]))
+    (sourceCode : DataSem.findCode none (values ++ [.codePtr label]) source.code source.stackFrameSizes = some (values, body, size))
+    (wordCode : wordSemFindCode none ((.loc l1 l2 :: words) ++ [.loc label 0]) target.code target.stackSize =
+      some (.loc l1 l2 :: words, (compileControl64 conf label 2 body).1, size))
+    (positive : source.clock ≠ 0) (clock : target.clock = source.clock)
+    (sourceResult : Option (SemanticPrimitivesHOL.Result (List DataSem.Value) DataSem.Value)) (sourceNext : DataSem.State C F)
+    (targetResult : Option (WordSemResult 64)) (targetNext : WordSemStateFiniteExact 64 C F)
+    (sourceBody : DataSem.evaluate body (DataSem.callEnv values size (DataSem.decClock source)) = (sourceResult, sourceNext))
+    (targetBody : WordSemStateFiniteExact.evaluate (compileControl64 conf label 2 body).1
+      (WordSemStateFiniteExact.callEnv (.loc l1 l2 :: words) size (WordSemStateFiniteExact.decClock target)) = (targetResult, targetNext))
+    (nonempty : sourceResult ≠ none) (goodReturn : wordSemBadFunReturn targetResult = false) :
+    DataSem.evaluate (.call none none (names ++ [name]) none) source = (sourceResult, sourceNext) ∧
+    WordSemStateFiniteExact.evaluate (compileControl64 conf secn fresh (.call none none (names ++ [name]) none)).1 target =
+      (targetResult, targetNext) := by
+  have targetPositive : target.clock ≠ 0 := by simpa [clock] using positive
+  constructor
+  · cases sourceResult with
+    | none => contradiction
+    | some result => simp [DataSem.evaluate, sourceRun, sourceCode, positive, sourceBody]
+  · have compiled : (compileControl64 conf secn fresh (.call none none (names ++ [name]) none)).1 =
+        .call none none (0 :: (names ++ [name]).map adjustVar) none := rfl
+    rw [compiled]
+    simp only [List.map_append, List.map_cons, List.map_nil] at wordRun
+    simp only [List.cons_append] at wordCode
+    simp [WordSemStateFiniteExact.evaluate, wordRun, wordSemBadDestArgs, wordSemAddRetLoc,
+      wordCode, targetPositive, targetBody, goodReturn]
+
+/-- Given a source-safe indirect tail call and the selected callee's recursive
+simulation, both evaluators agree on its observable outcome. -/
+theorem tailCall64_indirect_outcomes {C F : Type} (conf : Config) (secn fresh l1 l2 : Nat)
+    (source : DataSem.State C F) (target : WordSemStateFiniteExact 64 C F)
+    (locs : List (Nat × Nat)) (related : stateRel64 conf l1 l2 source target none locs)
+    (label : Nat) (names : List Nat) (name : Nat) (values : List DataSem.Value) (body : DataLang.Prog)
+    (sourceRun : DataSem.getVars names source.locals = some values)
+    (pointer : DataSem.getVar name source.locals = some (.codePtr label))
+    (lookup : sptLookup label source.code = some (values.length, body))
+    (safe : (DataSem.evaluate (.call none none (names ++ [name]) none) source).1 ≠ some (.err (.abort .typeError)))
+    (calleeCorrect : ∀ (s : DataSem.State C F) (t : WordSemStateFiniteExact 64 C F),
+      stateRel64 conf l1 l2 s t none locs → (DataSem.evaluate body s).1 ≠ some (.err (.abort .typeError)) →
+      outcomes64 conf label 2 l1 l2 body s t locs) :
+    outcomes64 conf secn fresh l1 l2 (.call none none (names ++ [name]) none) source target locs := by
+  obtain ⟨words, sourceAll, wordAll, sourceCode, wordCode, calleeRelated⟩ :=
+    stateRel64_findCode_indirect_callEnv conf l1 l2 source target locs related label names name values body sourceRun pointer lookup
+  by_cases zero : source.clock = 0
+  · have targetZero : target.clock = 0 := by simpa [related.2.1] using zero
+    apply Or.inr; apply Or.inr; apply Or.inl
+    refine ⟨DataSem.flushState true source, WordSemStateFiniteExact.flushState true target, ?_, ?_, related.1, ?_⟩
+    · simp [DataSem.evaluate, sourceAll, sourceCode, zero]
+    · have compiled : (compileControl64 conf secn fresh (.call none none (names ++ [name]) none)).1 =
+          .call none none (0 :: (names ++ [name]).map adjustVar) none := rfl
+      rw [compiled]
+      simp only [List.map_append, List.map_cons, List.map_nil] at wordAll
+      simp only [List.cons_append] at wordCode
+      simp [WordSemStateFiniteExact.evaluate, wordAll, wordSemBadDestArgs, wordSemAddRetLoc, wordCode, targetZero]
+    · exact related.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
+  · have calleeSafe : (DataSem.evaluate body (DataSem.callEnv values (sptLookup label source.stackFrameSizes)
+        (DataSem.decClock source))).1 ≠ some (.err (.abort .typeError)) := by
+      intro bad
+      cases run : DataSem.evaluate body (DataSem.callEnv values (sptLookup label source.stackFrameSizes) (DataSem.decClock source)) with
+      | mk result state =>
+        have eq : result = some (.err (.abort .typeError)) := by simpa [run] using bad
+        subst result
+        simp [DataSem.evaluate, sourceAll, sourceCode, zero, run] at safe
+    rcases calleeCorrect _ _ calleeRelated calleeSafe with continued | returned | timeout | raised
+    · obtain ⟨sourceNext, targetNext, sr, tr, after⟩ := continued
+      simp [DataSem.evaluate, sourceAll, sourceCode, zero, sr] at safe
+    · obtain ⟨result, targetValues, sourceNext, targetNext, lengths, sr, tr, after⟩ := returned
+      have eqs := tailCall64_indirect_evaluations conf secn fresh source target names name label values words l1 l2 body _
+        sourceAll wordAll sourceCode wordCode zero related.2.1 _ sourceNext _ targetNext sr tr (by simp) rfl
+      exact Or.inr (Or.inl ⟨result, targetValues, sourceNext, targetNext, lengths, eqs.1, eqs.2, after⟩)
+    · obtain ⟨sourceNext, targetNext, sr, tr, ffi, bound⟩ := timeout
+      have eqs := tailCall64_indirect_evaluations conf secn fresh source target names name label values words l1 l2 body _
+        sourceAll wordAll sourceCode wordCode zero related.2.1 _ sourceNext _ targetNext sr tr (by simp) rfl
+      exact Or.inr (Or.inr (Or.inl ⟨sourceNext, targetNext, eqs.1, eqs.2, ffi, bound⟩))
+    · obtain ⟨result, targetValue, sourceNext, targetNext, a, b, r1, r2, remaining, sr, tr, ffi, bound, locations, after⟩ := raised
+      have eqs := tailCall64_indirect_evaluations conf secn fresh source target names name label values words l1 l2 body _
+        sourceAll wordAll sourceCode wordCode zero related.2.1 _ sourceNext _ targetNext sr tr (by simp) rfl
+      exact Or.inr (Or.inr (Or.inr ⟨result, targetValue, sourceNext, targetNext, a, b, r1, r2, remaining,
+        eqs.1, eqs.2, ffi, bound, locations, after⟩))
+
+/-- Every source-safe indirect tail call is simulated if the selected body
+satisfies the recursive simulation hypothesis. -/
+theorem tailCall64_indirect_of_safe {C F : Type} (conf : Config) (secn fresh l1 l2 : Nat)
+    (source : DataSem.State C F) (target : WordSemStateFiniteExact 64 C F)
+    (locs : List (Nat × Nat)) (related : stateRel64 conf l1 l2 source target none locs)
+    (names : List Nat)
+    (safe : (DataSem.evaluate (.call none none names none) source).1 ≠ some (.err (.abort .typeError)))
+    (calleeCorrect : ∀ (label arity : Nat) (body : DataLang.Prog),
+      sptLookup label source.code = some (arity, body) →
+      ∀ (s : DataSem.State C F) (t : WordSemStateFiniteExact 64 C F),
+        stateRel64 conf l1 l2 s t none locs → (DataSem.evaluate body s).1 ≠ some (.err (.abort .typeError)) →
+        outcomes64 conf label 2 l1 l2 body s t locs) :
+    outcomes64 conf secn fresh l1 l2 (.call none none names none) source target locs := by
+  induction names using List.reverseRecOn with
+  | nil => simp [DataSem.evaluate, DataSem.getVars, DataSem.findCode] at safe
+  | append_singleton names name ih =>
+    cases run : DataSem.getVars (names ++ [name]) source.locals with
+    | none => simp [DataSem.evaluate, run] at safe
+    | some allValues =>
+      obtain ⟨values, final, prefixRun, finalRun, equal⟩ := dataGetVars_unsnoc names name source.locals allValues run
+      subst allValues
+      cases final with
+      | number n => simp [DataSem.evaluate, run, DataSem.findCode, holLast_snoc] at safe
+      | word64 w => simp [DataSem.evaluate, run, DataSem.findCode, holLast_snoc] at safe
+      | block stamp tag fields => simp [DataSem.evaluate, run, DataSem.findCode, holLast_snoc] at safe
+      | refPtr immutable address => simp [DataSem.evaluate, run, DataSem.findCode, holLast_snoc] at safe
+      | codePtr label =>
+        cases lookup : sptLookup label source.code with
+        | none => simp [DataSem.evaluate, run, DataSem.findCode, holLast_snoc, lookup] at safe
+        | some entry =>
+          obtain ⟨arity, body⟩ := entry
+          by_cases length : values.length = arity
+          · subst arity
+            exact tailCall64_indirect_outcomes conf secn fresh l1 l2 source target locs related label names name values body
+              prefixRun finalRun lookup safe (calleeCorrect label values.length body lookup)
+          · simp [DataSem.evaluate, run, DataSem.findCode, holLast_snoc, lookup, length] at safe
+
+end Flapjack.Compiler.Backend.DataToWord.Proofs.Correct
