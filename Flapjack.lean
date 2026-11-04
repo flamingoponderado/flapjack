@@ -232,6 +232,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalRefs
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalData
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalLoop
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalFull
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PartialSplit
 import Flapjack.Compiler.Backend.GcCombined.Collector
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.HeapExpand
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PointerAddress

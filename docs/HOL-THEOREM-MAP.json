@@ -1,5 +1,125 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "heap_drop_def",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/Slice.lean",
+  "lean_name": "heapDrop",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared heap_drop_typed: both split cases agree and NONE uses the shared HOL arbitrary value of the same list type."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "heap_take_def",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/Slice.lean",
+  "lean_name": "heapTake",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared heap_take_typed: both split cases agree and NONE uses the shared HOL arbitrary value of the same list type."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "heap_split_heap_length",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/Slice.lean",
+  "lean_name": "heapSplit_heapLength",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared heap_split_heap_length_typed: the successful split preserves the prefix length, heap length and reconstruction with independent element carriers."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "heap_segment_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/Slice.lean",
+  "lean_name": "heapSegment_imp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared heap_segment_imp_typed: successful segmentation yields the same reconstruction and all three length equations with independent element carriers."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "gc_forward_ptr_heap_length",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Forward.lean",
+  "lean_name": "gcForwardPtr_heapLength",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared partial_gc_forward_ptr_heap_length_typed: all forwarding results preserve heap length, independently of their success flag."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "gc_move_heap_length",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Forward.lean",
+  "lean_name": "gcMove_heapLength",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared partial_gc_move_heap_length_typed: the original partial root-move equation implies equality of initial and final heap lengths."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "gc_forward_ptr_APPEND",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PartialSplit.lean",
+  "lean_name": "gcForwardPtr_append",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared gc_forward_ptr_append_typed: both branches preserve the original offset test and forwarded status; the address and payload carriers are independent."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "heap_split_APPEND",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PartialSplit.lean",
+  "lean_name": "heapSplit_append",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared heap_split_append_typed: the complete prefix and suffix are recovered at the prefix word length; the address and payload carriers are independent."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "heap_split_APPEND'",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PartialSplit.lean",
+  "lean_name": "heapSplit_append_sum",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared heap_split_append_sum_typed: the source sum of element lengths is retained; the address and payload carriers are independent."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "heap_drop_APPEND",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PartialSplit.lean",
+  "lean_name": "heapDrop_append",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared heap_drop_append_typed: dropping a complete prefix returns its suffix; the address and payload carriers are independent."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "heap_take_APPEND",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PartialSplit.lean",
+  "lean_name": "heapTake_append",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared heap_take_append_typed: taking a complete prefix returns that prefix; the address and payload carriers are independent."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "heap_drop_0",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PartialSplit.lean",
+  "lean_name": "heapDrop_zero",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared heap_drop_zero_typed: dropping zero words returns the original heap; the address and payload carriers are independent."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "gc_forward_ptr_heap_split",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PartialSplit.lean",
+  "lean_name": "gcForwardPtr_heapSplit",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared gc_forward_ptr_heap_split_typed: the data lookup, forwarding equation, offset bounds, and segmented heap conclusion are retained; the address and payload carriers are independent."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "partial_gc_move_heap_split",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PartialSplit.lean",
+  "lean_name": "partialGcMove_heapSplit",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared partial_gc_move_heap_split_typed: the root move, segmentation, ordering premise, and preserved outer segments are retained; the address and payload carriers are independent."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "partial_gc_move_list_heap_split",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PartialSplit.lean",
+  "lean_name": "partialGcMoveList_heapSplit",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared partial_gc_move_list_heap_split_typed: the list move, segmentation, ordering premise, and preserved outer segments are retained; the address and payload carriers are independent."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "word_gen_gc_thm",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GenerationalFull.lean",
