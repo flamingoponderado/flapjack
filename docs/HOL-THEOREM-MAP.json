@@ -2,6 +2,24 @@
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "word_gen_gc_move_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GenerationalRef.lean",
+  "lean_name": "wordGenGcMove_ref",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the reference data-element branch at lines 1250-1414 with word_gen_gc_move_thm_typed. The lookup and mutable tag select the original branch; all original hypotheses and the full existential result are retained. The proof splits free space at the suffix destination and derives the index and address equalities before applying the verified copy simulation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_gen_gc_move_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GenerationalMove.lean",
+  "lean_name": "wordGenGcMove_thm",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the entire quantified statement, heap and word carriers, classification and execution hypotheses, separated memory, and all existential results with lines 1250-1269 and word_gen_gc_move_thm_typed. It assembles the data, forwarding-pointer, non-reference and reference cases, with failure cases eliminated by the original success hypothesis."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_gen_gc_move_thm",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GenerationalNonRef.lean",
   "lean_name": "wordGenGcMove_nonRef",
   "statement_status": "reviewed_words_as_type_indexed_bitvec",

@@ -26,7 +26,49 @@ def genLenInv {α β : Type} (state : GcState α β) : Prop :=
 theorem isRefHeader_alt {width : Nat} [NeZero width] (w : BitVec width)
     (good : goodDimindex width) :
     isRefHeader w = true ↔ w.getLsbD 2 = false ∧ w.getLsbD 3 = true := by
-  rcases good with hw | hw <;> subst width <;> simp only [isRefHeader, decide_eq_true_eq] <;> bv_decide
+  have widthBound : 3 < width := by rcases good with h | h <;> omega
+  have w2 : 2 < width := by omega
+  have w3 : 3 < width := by omega
+  simp only [isRefHeader, decide_eq_true_eq]
+  constructor
+  · intro eq
+    have h2 := congrArg (fun v : BitVec width => v.getLsbD 2) eq
+    have h3 := congrArg (fun v : BitVec width => v.getLsbD 3) eq
+    simp only [BitVec.getLsbD_and] at h2 h3
+    change (w.getLsbD 2 && (BitVec.ofNat width 12).getLsbD 2) = (BitVec.ofNat width 8).getLsbD 2 at h2
+    change (w.getLsbD 3 && (BitVec.ofNat width 12).getLsbD 3) = (BitVec.ofNat width 8).getLsbD 3 at h3
+    simp only [BitVec.getLsbD_ofNat, w2, w3, decide_true, Bool.true_and] at h2 h3
+    change (w.getLsbD 2 && true) = false at h2
+    change (w.getLsbD 3 && true) = true at h3
+    simp only [Bool.and_true] at h2 h3
+    exact ⟨h2, h3⟩
+  · rintro ⟨h2, h3⟩
+    apply BitVec.eq_of_getLsbD_eq
+    intro i hi
+    simp only [BitVec.getLsbD_and]
+    change (w.getLsbD i && (BitVec.ofNat width 12).getLsbD i) = (BitVec.ofNat width 8).getLsbD i
+    simp only [BitVec.getLsbD_ofNat, hi, decide_true, Bool.true_and]
+    by_cases i2 : i = 2
+    · subst i
+      change (w.getLsbD 2 && true) = false
+      simpa only [Bool.and_true] using h2
+    by_cases i3 : i = 3
+    · subst i
+      change (w.getLsbD 3 && true) = true
+      simpa only [Bool.and_true] using h3
+    have b12 : (12 : Nat).testBit i = false := by
+      by_cases small : i < 4
+      · have : i = 0 ∨ i = 1 := by omega
+        rcases this with rfl | rfl <;> decide
+      · have p : 2 ^ 4 ≤ 2 ^ i := Nat.pow_le_pow_right (by decide : 0 < (2 : Nat)) (by omega)
+        exact Nat.testBit_lt_two_pow (by omega)
+    have b8 : (8 : Nat).testBit i = false := by
+      by_cases small : i < 4
+      · have : i = 0 ∨ i = 1 := by omega
+        rcases this with rfl | rfl <;> decide
+      · have p : 2 ^ 4 ≤ 2 ^ i := Nat.pow_le_pow_right (by decide : 0 < (2 : Nat)) (by omega)
+        exact Nat.testBit_lt_two_pow (by omega)
+    simp only [b12, b8, Bool.and_false]
 
 /-- The header reference bit agrees with the source mutable-tag classifier,
 with independent header and payload word widths. -/
