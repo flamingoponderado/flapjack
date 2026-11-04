@@ -222,6 +222,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.FindCode
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CallEnv
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CutEnv
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PushCall
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CallDomain
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Skip
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Tick
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Return
