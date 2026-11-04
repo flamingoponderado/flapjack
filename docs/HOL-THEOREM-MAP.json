@@ -1,5 +1,40 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/gc/gen_gcScript.sml",
+  "hol_name": "heap_lookup_APPEND",
+  "lean_path": "Flapjack/Compiler/Backend/GenGc/Proofs/HeapLookup.lean",
+  "lean_name": "heapLookup_append",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared gen_gc_heap_lookup_append_typed: the same heap-word offset test selects the left lookup or the right lookup with prefix length subtracted; address and payload carriers remain independent."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_gen_gc_partial_move_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PartialMove.lean",
+  "lean_name": "wordGenGcPartialMove_data",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared word_gen_gc_partial_move_thm_typed and the original immediate-data case: all original hypotheses and the complete existential conclusion are retained, specialized to a Data root at the common positive word width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_gen_gc_partial_move_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PartialMove.lean",
+  "lean_name": "wordGenGcPartialMove_outside",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared word_gen_gc_partial_move_thm_typed and the source pointer-outside-generation case: the complete original hypotheses and output are retained, with the original case condition and common positive word width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_gen_gc_partial_move_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PartialMove.lean",
+  "lean_name": "wordGenGcPartialMove_forward",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared word_gen_gc_partial_move_thm_typed and the source in-generation forwarding-pointer case: the complete original hypotheses and output are retained, with the original generation and lookup case conditions and common positive word width."
+},
+{
   "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
   "hol_name": "heap_drop_def",
   "lean_path": "Flapjack/Compiler/Backend/GcShared/Slice.lean",
