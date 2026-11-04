@@ -1,6 +1,15 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_gen_gc_move_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GenerationalNonRef.lean",
+  "lean_name": "wordGenGcMove_nonRef",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the data-element non-reference branch at lines 1250-1377 with word_gen_gc_move_thm_typed. The lookup and nonmutable tag select the original branch, and all source assumptions and full existential conclusions are retained. The proof derives the memory header and connects concrete major collection to the already verified copying simulation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "is_Ref_def",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/Generational.lean",
   "lean_name": "isRefElement",
