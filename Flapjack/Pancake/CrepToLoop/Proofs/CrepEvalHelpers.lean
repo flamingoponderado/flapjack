@@ -1,6 +1,10 @@
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
-import Flapjack.HolRef
-import Flapjack.Misc.OptMmapCong
+module
+
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+public import Flapjack.HolRef
+public import Flapjack.Misc.OptMmapCong
+
+@[expose] public section
 
 /-!
 # crep_to_loopProof `crep_eval_upd_clock`

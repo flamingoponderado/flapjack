@@ -1,4 +1,8 @@
-import Mathlib.Analysis.Real.Sqrt
+module
+
+public import Mathlib.Analysis.Real.Sqrt
+
+@[expose] public section
 
 /-!
 # Real square-root facts for binary64 rounding

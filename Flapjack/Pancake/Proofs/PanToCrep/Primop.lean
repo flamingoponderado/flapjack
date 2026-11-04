@@ -1,7 +1,11 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.Semantics.CrepSem.Primop
-import Flapjack.Pancake.Semantics.PanSem.Primop
-import Flapjack.Pancake.Semantics.PanSem.ValueHOL
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.Semantics.CrepSem.Primop
+public import Flapjack.Pancake.Semantics.PanSem.Primop
+public import Flapjack.Pancake.Semantics.PanSem.ValueHOL
+
+@[expose] public section
 
 /-!
 The AddCarry primitive case needed by HOL `pc_compile_correct`.

@@ -1,4 +1,8 @@
-import Flapjack.Pancake.PanToCrep.Compile
+module
+
+public import Flapjack.Pancake.PanToCrep.Compile
+
+@[expose] public section
 
 /-!
 Elementary facts about the compiler's generated local names.  These are

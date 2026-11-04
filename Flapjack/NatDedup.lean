@@ -1,4 +1,8 @@
-import Std.Data.TreeSet
+module
+
+public import Std.Data.TreeSet
+
+@[expose] public section
 
 /-!
 # Deduplicating lists of names

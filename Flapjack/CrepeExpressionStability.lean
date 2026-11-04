@@ -1,4 +1,8 @@
-import Flapjack.CrepeSemantics
+module
+
+public import Flapjack.CrepeSemantics
+
+@[expose] public section
 
 /-!
 Expression non-interference for fresh Crep locals.  This is the evaluator

@@ -1,4 +1,9 @@
-import Flapjack.Pancake.CrepLang.Prog
+module
+
+public import Flapjack.Pancake.CrepLang.Prog
+
+@[expose] public section
+
 namespace Flapjack
 /-- Full original arbitrary-address/count equality. The GENLIST index is Nat,
 while the global address remains the original fixed word5; expression words

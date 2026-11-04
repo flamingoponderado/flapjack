@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.PanSimp.SeqAssocExact
+module
+
+public import Flapjack.Pancake.Proofs.PanSimp.SeqAssocExact
+
+@[expose] public section
 
 /-! The assembled original `evaluate_seq_assoc`
 (pan_simpProofScript.sml:117-135) from its case pieces, by the source's

@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Semantics.PanProps.SemanticsWrapper
-import Flapjack.Pancake.Semantics.PanSem.Semantics
+module
+
+public import Flapjack.Pancake.Semantics.PanProps.SemanticsWrapper
+public import Flapjack.Pancake.Semantics.PanSem.Semantics
+
+@[expose] public section
 
 namespace Flapjack
 

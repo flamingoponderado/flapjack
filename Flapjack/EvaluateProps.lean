@@ -1,4 +1,8 @@
-import Flapjack.FfiHOL
+module
+
+public import Flapjack.FfiHOL
+
+@[expose] public section
 
 namespace Flapjack
 

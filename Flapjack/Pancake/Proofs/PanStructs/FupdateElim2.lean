@@ -1,5 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+
+@[expose] public section
+
 namespace Flapjack.Pancake.Proofs.PanStructs.FupdateElim2
 open Flapjack
 /-- Full original local finite-map update neutrality. Classical equality is

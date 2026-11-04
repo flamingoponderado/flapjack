@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordAlloc.SSAMergeMoves
-import Lean.Elab.Tactic.Omega
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.SSAMergeMoves
+public import Lean.Elab.Tactic.Omega
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

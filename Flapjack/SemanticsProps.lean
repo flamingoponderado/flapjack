@@ -1,5 +1,9 @@
-import Flapjack.Ffi
-import Flapjack.Misc.LList
+module
+
+public import Flapjack.Ffi
+public import Flapjack.Misc.LList
+
+@[expose] public section
 
 /-!
 # CakeML generic behavior semantics

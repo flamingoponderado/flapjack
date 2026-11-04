@@ -1,4 +1,8 @@
-import Flapjack.Misc.BytesInMemory
+module
+
+public import Flapjack.Misc.BytesInMemory
+
+@[expose] public section
 
 namespace Flapjack
 
