@@ -20529,4 +20529,148 @@ theorem callsFuel_withCoveredOpenClockAndResultWf_clock_induction {C F : Type}
     intro callerClock smaller depth before after body converted traversal distinct fresh well locations annotations
     exact ih callerClock smaller depth body converted before after traversal distinct fresh well locations annotations
 
+/-- Successful installation and evaluation satisfy the result-preserving
+simulation without a separate installed-program induction hypothesis. This is
+Flapjack-specific simulation infrastructure. -/
+theorem doInstall_success_evaluate_withOpenClockAndResultWf_closed {C F : Type} (fuel relationFuel : Nat) (g : State)
+    (allowed : Set Nat) (compiler : ClosSem.Compiler C)
+    (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (sourceValues targetValues : List ClosSem.Value) (program : List ClosLang.Exp)
+    (installed : ClosSem.State (NumSet × C) F)
+    (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (final : ClosSem.State (NumSet × C) F)
+    (ready : IncrementalInstallReady g source target)
+    (states : StateRelFuel relationFuel g allowed source target)
+    (sourceWf : StateWellFormedFuel relationFuel g allowed target.code source)
+    (values : List.Forall₂ (ValueRelFuel relationFuel g allowed target.code) sourceValues targetValues)
+    (sourceCompiler : source.compile = compileIncFuelCallback fuel compiler)
+    (targetCompiler : target.compile = compiler)
+    (targetOracle : target.compileOracle = compileIncFuelOracle fuel source.compileOracle)
+    (installRun : doInstall sourceValues source = (.val program, installed))
+    (programRun : evaluate program [] installed = (result, final))
+    (notType : result ≠ .err (.abort .typeError))
+    (disjoint : Disjoint allowed (sptDomain g.1))
+    (avoids : OracleLocationsAvoid allowed source)
+ :
+    ∃ nextKnown converted targetInstalled nextAllowed extraClock finalG finalAllowed targetResult targetFinal,
+      compileIncFuel? fuel g.1 (program, []) = some (nextKnown, converted) ∧
+      doInstall targetValues target = (.val converted.1, targetInstalled) ∧
+      doInstall targetValues { target with clock := target.clock + extraClock } =
+        (.val converted.1, { targetInstalled with clock := targetInstalled.clock + extraClock }) ∧
+      IncrementalInstallReady (nextKnown, converted.2 ++ g.2) installed targetInstalled ∧
+      stateExtends g (nextKnown, converted.2 ++ g.2) ∧
+      stateExtends (nextKnown, converted.2 ++ g.2) finalG ∧
+      allowed ⊆ nextAllowed ∧ nextAllowed ⊆ finalAllowed ∧
+      (∀ loc ∈ codeLocations program, ¬ sptDomain nextKnown loc → loc ∈ nextAllowed) ∧
+      Disjoint finalAllowed (sptDomain finalG.1) ∧ OracleLocationsAvoid finalAllowed final ∧
+      evaluate converted.1 [] { targetInstalled with clock := targetInstalled.clock + extraClock } =
+        (targetResult, targetFinal) ∧
+      resultRel (List.Forall₂ (ValueRelFuel relationFuel finalG finalAllowed targetFinal.code))
+        (ValueRelFuel relationFuel finalG finalAllowed targetFinal.code) result targetResult ∧
+      ResultWellFormedFuel relationFuel finalG finalAllowed targetFinal.code result ∧
+      StateRelFuel relationFuel finalG finalAllowed final targetFinal ∧
+      StateWellFormedFuel relationFuel finalG finalAllowed targetFinal.code final ∧
+      IncrementalInstallReady finalG final targetFinal ∧
+      final.compile = compileIncFuelCallback fuel compiler ∧ targetFinal.compile = compiler ∧
+      targetFinal.compileOracle = compileIncFuelOracle fuel final.compileOracle ∧
+      (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry) := by
+  apply doInstall_success_evaluate_withOpenClockAndResultWf fuel relationFuel g allowed compiler source target
+    sourceValues targetValues program installed result final ready states sourceWf values sourceCompiler targetCompiler
+    targetOracle installRun programRun notType disjoint avoids
+  intro nextKnown converted nextAllowed pass well distinct fresh locations annotations coverage
+  apply compileIncFuel_installedBelow_withCoveredOpenClockAndResultWf_from_cases fuel relationFuel source.clock compiler nextAllowed g
+    (program, []) nextKnown converted pass coverage distinct fresh well locations annotations
+  intro depth _ expression output before after traversal expressionDistinct expressionFresh initialWf expressionLocations expressionAnnotations
+  exact callsFuel_withCoveredOpenClockAndResultWf_clock_induction fuel relationFuel compiler source.clock depth expression output before after
+    traversal expressionDistinct expressionFresh initialWf expressionLocations expressionAnnotations
+
+/-- A successful incremental compilation satisfies the result-preserving
+simulation for annotated source programs. This is Flapjack-specific
+simulation infrastructure. -/
+theorem compileIncFuel_withCoveredOpenClockAndResultWf {C F : Type}
+    (passFuel relationFuel limit : Nat) (compiler : ClosSem.Compiler C) (g : State) (program : ClosSem.Program)
+    (nextKnown : NumSet) (converted : ClosSem.Program)
+    (run : compileIncFuel? passFuel g.1 program = some (nextKnown, converted))
+    (distinct : (codeLocations program.1).Nodup) (fresh : LabelsFresh (codeLocations program.1) g)
+    (initialWf : wellFormed g) (locations : everyFnLocationSome program.1) (annotations : everyFnVarsNone program.1)
+ :
+    GrowingExprsSimFromBelowWithCoveredOpenClockAndResultWf (F := F) passFuel relationFuel limit compiler
+      (nextKnown, converted.2 ++ g.2) program.1 converted.1 := by
+  apply compileIncFuel_withCoveredOpenClockAndResultWf_from_cases passFuel relationFuel limit compiler g program nextKnown converted
+    run distinct fresh initialWf locations annotations
+  intro depth _ expression output before after traversal expressionDistinct expressionFresh beforeWf expressionLocations expressionAnnotations
+  exact callsFuel_withCoveredOpenClockAndResultWf_clock_induction passFuel relationFuel compiler limit depth expression output before after
+    traversal expressionDistinct expressionFresh beforeWf expressionLocations expressionAnnotations
+
+/-- Incremental installation, including timeout and program execution,
+satisfies the result-preserving simulation without an installed-program
+induction hypothesis. This is Flapjack-specific simulation infrastructure. -/
+theorem runInstalled_incremental_sim_withOpenClockAndResultWf_closed {C F : Type} (fuel relationFuel : Nat) (g : State)
+    (allowed : Set Nat) (compiler : ClosSem.Compiler C)
+    (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (sourceValues targetValues : List ClosSem.Value)
+    (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (final : ClosSem.State (NumSet × C) F)
+    (ready : IncrementalInstallReady g source target)
+    (states : StateRelFuel relationFuel g allowed source target)
+    (sourceWf : StateWellFormedFuel relationFuel g allowed target.code source)
+    (values : List.Forall₂ (ValueRelFuel relationFuel g allowed target.code) sourceValues targetValues)
+    (sourceCompiler : source.compile = compileIncFuelCallback fuel compiler)
+    (targetCompiler : target.compile = compiler)
+    (targetOracle : target.compileOracle = compileIncFuelOracle fuel source.compileOracle)
+    (run : ClosProps.AdjustOracle.runInstalled sourceValues source = (result, final))
+    (notType : result ≠ .err (.abort .typeError))
+    (disjoint : Disjoint allowed (sptDomain g.1))
+    (avoids : OracleLocationsAvoid allowed source)
+ :
+    ∃ extraClock nextG nextAllowed targetResult targetFinal,
+      stateExtends g nextG ∧ allowed ⊆ nextAllowed ∧
+      Disjoint nextAllowed (sptDomain nextG.1) ∧ OracleLocationsAvoid nextAllowed final ∧
+      ClosProps.AdjustOracle.runInstalled targetValues { target with clock := target.clock + extraClock } =
+        (targetResult, targetFinal) ∧
+      resultRel (List.Forall₂ (ValueRelFuel relationFuel nextG nextAllowed targetFinal.code))
+        (ValueRelFuel relationFuel nextG nextAllowed targetFinal.code) result targetResult ∧
+      ResultWellFormedFuel relationFuel nextG nextAllowed targetFinal.code result ∧
+      StateRelFuel relationFuel nextG nextAllowed final targetFinal ∧
+      StateWellFormedFuel relationFuel nextG nextAllowed targetFinal.code final ∧
+      IncrementalInstallReady nextG final targetFinal ∧
+      final.compile = compileIncFuelCallback fuel compiler ∧ targetFinal.compile = compiler ∧
+      targetFinal.compileOracle = compileIncFuelOracle fuel final.compileOracle ∧
+      (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry) := by
+  apply runInstalled_incremental_sim_withOpenClockAndResultWf fuel relationFuel g allowed compiler source target
+    sourceValues targetValues result final ready states sourceWf values sourceCompiler targetCompiler targetOracle run notType disjoint avoids
+  intro program nextKnown converted nextAllowed pass well distinct fresh locations annotations coverage
+  apply compileIncFuel_installedBelow_withCoveredOpenClockAndResultWf_from_cases fuel relationFuel source.clock compiler nextAllowed g
+    (program, []) nextKnown converted pass coverage distinct fresh well locations annotations
+  intro depth _ expression output before after traversal expressionDistinct expressionFresh initialWf expressionLocations expressionAnnotations
+  exact callsFuel_withCoveredOpenClockAndResultWf_clock_induction fuel relationFuel compiler source.clock depth expression output before after
+    traversal expressionDistinct expressionFresh initialWf expressionLocations expressionAnnotations
+
+/-- The production traversal, including its retry, simulates annotated
+expression lists without a per-expression simulation hypothesis. This is
+Flapjack-specific infrastructure. -/
+theorem callsListBounded_withCoveredOpenClockAndResultWf {C F : Type}
+    (passFuel relationFuel traversalFuel limit : Nat) (compiler : ClosSem.Compiler C)
+    (source target : List ClosLang.Exp) (initial final : State)
+    (run : callsListBounded traversalFuel source initial = some (target, final))
+    (distinct : (codeLocations source).Nodup) (fresh : LabelsFresh (codeLocations source) initial)
+    (initialWf : wellFormed initial) (locations : everyFnLocationSome source) (annotations : everyFnVarsNone source) :
+    GrowingExprsSimFromBelowWithCoveredOpenClockAndResultWf (F := F) passFuel relationFuel limit compiler final source target := by
+  apply callsListBounded_withCoveredOpenClockAndResultWf_from_annotated_induction passFuel relationFuel traversalFuel limit compiler
+    source target initial final run distinct fresh initialWf locations annotations
+  intro depth _ expression output before after traversal expressionDistinct expressionFresh beforeWf expressionLocations expressionAnnotations
+  exact callsFuel_withCoveredOpenClockAndResultWf_clock_induction passFuel relationFuel compiler limit depth expression output before after
+    traversal expressionDistinct expressionFresh beforeWf expressionLocations expressionAnnotations
+
+/-- Related closure applications satisfy the result-preserving simulation
+without a separate body-evaluation assumption. This is Flapjack-specific
+infrastructure. -/
+theorem growingAppSimClockBelowWithOpenClockAndResultWf {C F : Type}
+    (passFuel relationFuel limit : Nat) (compiler : ClosSem.Compiler C) (location : Option Nat) :
+    GrowingAppSimClockBelowWithOpenClockAndResultWf (F := F) passFuel relationFuel limit compiler location := by
+  apply growingAppSimClockBelowWithCoveredOpenClockAndResultWf_of_traversals passFuel relationFuel limit compiler location
+  intro callerClock _ depth before after body converted traversal distinct fresh well locations annotations
+  exact callsFuel_withCoveredOpenClockAndResultWf_clock_induction passFuel relationFuel compiler callerClock depth body converted before after
+    traversal distinct fresh well locations annotations
+
 end Flapjack.Compiler.Backend.ClosCall
