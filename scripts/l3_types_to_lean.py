@@ -7,8 +7,10 @@ Prints, in source order, one tagged Lean `inductive` per `Construct` type and on
 `Flapjack/RiscV/L3/Types.lean`. With trailing DECL arguments, only the named declarations
 are emitted (used for the ARM8 state carriers, which are a subset of the model's types).
 `--beq-only` lists the declarations that derive `BEq` instead of `DecidableEq`, because Lean
-cannot derive `DecidableEq` for their deeply nested payloads. The committed ARM8 carriers are
-reproduced by
+cannot derive `DecidableEq` for their deeply nested payloads. It is an error to name a
+declaration that has a function-typed field or constructor payload: the generator derives only
+`Inhabited` for those, so `BEq` cannot be derived and the flag would have no effect. The
+committed ARM8 carriers are reproduced by
 
     scripts/l3_types_to_lean.py HOL/examples/l3-machine-code/arm8/model/arm8Script.sml \
         HOL/examples/l3-machine-code/arm8/model/arm8Script.sml ProcState ... arm8_state \
@@ -105,6 +107,8 @@ def render(text: str, HOLPATH: str, only: list[str] | None = None,
         tag='@[hol "%s" "%s" %d]'%(HOLPATH,n,start) if False else '@[hol "%s" "%s"]'%(HOLPATH,n)
         if kind=='Record':
             fun=any(hasfun(t) for _,t in items)
+            if fun and n in beq_only:
+                raise ValueError('--beq-only declaration `%s` has a function-typed field and cannot derive BEq'%n)
             res.append('/-- HOL L3 record `%s` (`%s:%d`). -/\n%s\nstructure %s where\n'%(n,script,start,tag,ident(n)))
             for f,t in items: res.append('  %s : %s\n'%(ident(f),t))
             res.append('  deriving Inhabited\n\n' if fun else
@@ -112,6 +116,8 @@ def render(text: str, HOLPATH: str, only: list[str] | None = None,
                         '  deriving DecidableEq, Repr, Inhabited\n\n'))
         else:
             fun=any(hasfun(t) for _,a in items for t in a)
+            if fun and n in beq_only:
+                raise ValueError('--beq-only declaration `%s` has a function-typed constructor payload and cannot derive BEq'%n)
             res.append('/-- HOL L3 datatype `%s` (`%s:%d`). -/\n%s\ninductive %s where\n'%(n,script,start,tag,ident(n)))
             for c,args in items:
                 res.append('  | %s%s\n'%(ident(c),''.join(' (a%d : %s)'%(k,t) for k,t in enumerate(args))))

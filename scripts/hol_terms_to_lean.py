@@ -1174,7 +1174,7 @@ def render_multi(r: Renderer, lean_name: str, out) -> tuple[str, bool]:
         bodies.append(body)
         arms.append(f'| {pat} => {body}')
     if numerals:
-        arms.append(f'| _ => {r.tm(out[0][2], env)}')
+        arms.append(f'| _ => {bodies[0]}')
     tv_binders = type_binders(f0.ty, [params[0] for _, params, _ in out])
     defined_name = r.defined.get((f0.thy, f0.name)) if isinstance(f0, Const) else None
     recursive = defined_name is not None and any(mentions(defined_name, b) for b in bodies)

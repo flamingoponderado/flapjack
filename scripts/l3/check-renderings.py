@@ -36,12 +36,18 @@ def digest(text):
 ARM8_DIR = "Flapjack/Compiler/Encoders/Arm8/L3"
 
 
+def definition_source(path):
+    """Native definitions live in `Defs.lean` or its split `Defs/`/`Step/` submodules."""
+    return path.name == "Defs.lean" or "Defs" in path.parts or "Step" in path.parts
+
+
 def sources(root=ROOT):
     trust = module("l3_drift_comments", root / "scripts/check-native-trust.py")
     result = {}
     paths = [p for p in sorted((root / "Flapjack/RiscV/L3").rglob("*.lean"))
-             if p.name == "Defs.lean" or "Defs" in p.parts or "Step" in p.parts]
-    paths += [p for p in sorted((root / ARM8_DIR).rglob("*.lean")) if p.name == "Defs.lean"]
+             if definition_source(p)]
+    paths += [p for p in sorted((root / ARM8_DIR).rglob("*.lean"))
+              if definition_source(p)]
     for path in paths:
         text = trust.without_comments(path.read_text())
         for start in START.finditer(text):
