@@ -1,6 +1,25 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "loc_merge_FILTER_isWord",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/LocMerge.lean",
+  "lean_name": "locMerge_filter_isWord",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared source lines 6343-6347 and loc_merge_FILTER_isWord_typed: the single universally quantified word-location list retains one positive word dimension, and merging it with its filtered word elements equals the original list without hypotheses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_gc_fun_loc_merge",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CollectorRoots.lean",
+  "lean_name": "wordGcFun_locMerge",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": ["store", "store'"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared source lines 6349-6388 and word_gc_fun_loc_merge_typed. Both store binders use the canonical HolFiniteMapExact representation of HOL finite maps, and the memory, domain, roots and values share one positive word dimension. The successful filtered collector execution and EVERY loc_ok premises imply the original collector execution with loc_merge roots and identical memory and store results. The proof uses the actual wordGcFun and covers None, Simple, and both generational branches. Source review and Lean kernel checking do not establish cross-language equivalence or whole-collector memory correctness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "loc_ok_def",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/MoveRoots.lean",
   "lean_name": "locOk",

@@ -199,6 +199,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.LocMerge
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.DecStack
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StackRoots
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MoveRoots
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CollectorRoots
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.AdjustedSet
 import Flapjack.Compiler.Backend.DataToWord.Proofs.JoinEnv
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Total

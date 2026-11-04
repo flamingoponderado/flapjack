@@ -23,3 +23,5 @@ val _ = show "loc_ok_typed" data_to_word_gcProofTheory.loc_ok_def;
 val _ = show "word_gc_move_roots_IMP_FILTER_typed" data_to_word_gcProofTheory.word_gc_move_roots_IMP_FILTER;
 val _ = show "word_gen_gc_move_roots_IMP_FILTER_typed" data_to_word_gcProofTheory.word_gen_gc_move_roots_IMP_FILTER;
 val _ = show "word_gen_gc_partial_move_roots_IMP_FILTER_typed" data_to_word_gcProofTheory.word_gen_gc_partial_move_roots_IMP_FILTER;
+val _ = show "loc_merge_FILTER_isWord_typed" data_to_word_gcProofTheory.loc_merge_FILTER_isWord;
+val _ = show "word_gc_fun_loc_merge_typed" data_to_word_gcProofTheory.word_gc_fun_loc_merge;

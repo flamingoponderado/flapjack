@@ -26,6 +26,15 @@ theorem length_locMerge {width : Nat} [NeZero width] (xs ys : List (WordLocW wid
     | loc a b => simp [locMerge, ih]
     | word w => cases ys <;> simp [locMerge, ih]
 
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "loc_merge_FILTER_isWord"
+  (words_as_type_indexed_bitvec)]
+theorem locMerge_filter_isWord {width : Nat} [NeZero width] (xs : List (WordLocW width)) :
+    locMerge xs (xs.filter wordSemIsWordLoc) = xs := by
+  induction xs with
+  | nil => rfl
+  | cons x xs ih =>
+    cases x <;> simp only [List.filter_cons, wordSemIsWordLoc, Bool.false_eq_true, ↓reduceIte, locMerge, ih]
+
 /-- Any root list with the encoded stack's length can refill the original
 frame layout. This Lean-side length lemma is used to prove the source result. -/
 theorem decStack_of_length {width : Nat} [NeZero width]
