@@ -1,4 +1,8 @@
-import Flapjack.HolRef
+module
+
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! Literal indexing helpers for the Word-to-Stack stack relation. -/
 namespace Flapjack.WordToStackProofs

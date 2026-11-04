@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
-import Flapjack.Pancake.Semantics.PanSemStateEval
+module
+
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+public import Flapjack.Pancake.Semantics.PanSemStateEval
+
+@[expose] public section
 
 /-!
 Source-model evaluator for the underspecified HOL `LOG2 0` case.

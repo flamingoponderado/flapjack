@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Semantics.PanProps
-import Flapjack.Pancake.Semantics.PanSem.DecCallExact
+module
+
+public import Flapjack.Pancake.Semantics.PanProps
+public import Flapjack.Pancake.Semantics.PanSem.DecCallExact
+
+@[expose] public section
 
 /-!
 # `list_rel_length_shape_of_flatten` over the exact value carrier

@@ -1,6 +1,10 @@
-import Flapjack.Pancake.Semantics.PanProps
-import Flapjack.Misc.LprefixLub
-import Flapjack.FfiHOL
+module
+
+public import Flapjack.Pancake.Semantics.PanProps
+public import Flapjack.Misc.LprefixLub
+public import Flapjack.FfiHOL
+
+@[expose] public section
 
 namespace Flapjack
 

@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Semantics.PanProps
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
+module
+
+public import Flapjack.Pancake.Semantics.PanProps
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+
+@[expose] public section
 
 /-!
 # `FLOOKUP_pan_res_var_thm` over the exact finite map
