@@ -5,6 +5,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.LocationMultiplicity
 import Flapjack.Compiler.Backend.ClosCall.Proofs.LocationAccounting
 import Flapjack.Compiler.Backend.ClosCall.Proofs.EntryMarker
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.LocationParity
+import Flapjack.Compiler.Backend.ClosNumber.Proofs.VarsNone
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.InstalledSemantics
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.AnnotationInvariants
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.AnnotatedPrepared
@@ -868,5 +869,46 @@ theorem numberedCallOracle_bvl_labels_ordered {C : Type} (maxApp fuel : Nat)
     have ybound := numberedCallOracle_bvl_labels_range maxApp fuel oracle state i y ymem
     have between := monotone 0 i (Nat.zero_le i)
     omega
+
+/-- Numbering, direct-call conversion, and annotation supply the complete
+incremental closure-to-BVL oracle invariant when the incoming source syntax
+has no variable annotations and the initial target code is below the first
+numbering interval. -/
+theorem numberedCallOracle_compileOracleInv {C : Type} (maxApp fuel : Nat)
+    (oracle : Nat → (Nat × (NumSet × C)) × (List ClosLang.Exp × List (Nat × Nat × ClosLang.Exp)))
+    (state : isStateOracle (ClosNumber.ignoreTable ClosNumber.compileInc) oracle)
+    (varsNone : ∀ index, everyFnVarsNone (oracle index).2.1)
+    (sourceCode : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+    (targetCode : Spt (Nat × Bvl.Exp)) (targetCompiler : BvlSem.Compiler C)
+    (initialBelow : ∀ label, sptMem label targetCode →
+      label < (oracle 0).1.1 + numStubs maxApp) :
+    compileOracleInv maxApp sourceCode (pureCc (compileInc maxApp) targetCompiler)
+      (pureCo ClosAnnotate.compileInc ∘ ClosCall.compileIncFuelOracle fuel
+        (stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle))
+      targetCode targetCompiler
+      (pureCo (compileInc maxApp) ∘ pureCo ClosAnnotate.compileInc ∘ ClosCall.compileIncFuelOracle fuel
+        (stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle)) := by
+  let numbered := stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle
+  have inputSafe : ∀ index, ClosCall.ListCallSyntax (numbered index).2.1 := by
+    intro index
+    constructor
+    · simpa [numbered, stateCo, ClosNumber.ignoreTable] using
+        ClosNumber.compileInc_locations (oracle index).1.1 (oracle index).2.1
+    · simpa [numbered, stateCo, ClosNumber.ignoreTable, ClosNumber.compileInc_varsNone] using varsNone index
+  have calledSyntax := ClosCall.compileIncFuelOracle_callSyntax fuel numbered inputSafe
+  have mono : ∀ {i j}, i ≤ j → (oracle i).1.1 + numStubs maxApp ≤
+      (oracle j).1.1 + numStubs maxApp := by
+    intro i j order
+    exact Nat.add_le_add_right (numberingOracle_state_monotone oracle state order) _
+  apply compileOracleInv_of_annotated_boundaries maxApp sourceCode
+    (ClosCall.compileIncFuelOracle fuel numbered) targetCode targetCompiler
+    (fun index => (oracle index).1.1 + numStubs maxApp) mono initialBelow
+  · exact numberedCallOracle_bvl_labels_nodup maxApp fuel oracle state
+  · exact numberedCallOracle_bvl_labels_range maxApp fuel oracle state
+  · intro index
+    refine ⟨(calledSyntax index).1.1, ?_⟩
+    intro entry member
+    obtain ⟨name, arity, body⟩ := entry
+    simpa [everyFnLocationSome] using ((calledSyntax index).2 name arity body member).1
 
 end Flapjack.Compiler.Backend.ClosToBvl
