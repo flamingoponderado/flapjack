@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteUpdate
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Abstract
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation
 
 /-! Heap-shape preservation for byte-array payload updates. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
@@ -65,12 +66,22 @@ theorem heapLookup_data_shape {α β : Type} {left right : List (HeapElement α 
         rw [← head.length]
         exact ih _
 
-/-- Heap splitting preserves the cell layout in both resulting segments. -/
-theorem heapSplit_shape {α β : Type} {left right : List (HeapElement α β)}
-    (shape : List.Forall₂ HeapCellShape left right) (offset : Nat)
+/-- The reference maps remain injective into the data cells of a heap with
+    the same layout. This discharges the map-range obligations of the stack
+    reference invariant; the value and reference cases require separate proofs. -/
+theorem mapInjInto_heapShape {α β : Type} {left right : List (HeapElement α β)}
+    (shape : List.Forall₂ HeapCellShape left right) (map : HolFiniteMapExact Nat Nat)
+    (valid : mapInjInto map (fun ptr => isSomeDataElement (heapLookup ptr left))) :
+    mapInjInto map (fun ptr => isSomeDataElement (heapLookup ptr right)) := by
+  exact ⟨fun key domain => (heapLookup_data_shape shape _).mp (valid.1 key domain), valid.2⟩
+
+/-- Heap splitting preserves any pointwise relation that preserves cell lengths. -/
+theorem heapSplit_relation {α β : Type} {rel : HeapElement α β → HeapElement α β → Prop}
+    (lengthEq : ∀ {x y}, rel x y → elLength x = elLength y)
+    {left right : List (HeapElement α β)} (shape : List.Forall₂ rel left right) (offset : Nat)
     (pre post : List (HeapElement α β)) (split : heapSplit offset left = some (pre, post)) :
     ∃ pre' post', heapSplit offset right = some (pre', post') ∧
-      List.Forall₂ HeapCellShape pre pre' ∧ List.Forall₂ HeapCellShape post post' := by
+      List.Forall₂ rel pre pre' ∧ List.Forall₂ rel post post' := by
   induction shape generalizing offset pre post with
   | nil =>
     by_cases zero : offset = 0
@@ -87,7 +98,7 @@ theorem heapSplit_shape {α β : Type} {left right : List (HeapElement α β)}
       exact ⟨[], y :: ys, by simp [heapSplit], .nil, .cons head tail⟩
     · by_cases inside : offset < elLength x
       · simp [heapSplit, zero, inside] at split
-      · have inside' : ¬ offset < elLength y := by rw [← head.length]; exact inside
+      · have inside' : ¬ offset < elLength y := by rw [← lengthEq head]; exact inside
         cases tailSplit : heapSplit (offset - elLength x) xs with
         | none => simp [heapSplit, zero, inside, tailSplit] at split
         | some pair =>
@@ -99,8 +110,16 @@ theorem heapSplit_shape {α β : Type} {left right : List (HeapElement α β)}
             ih (offset - elLength x) leftPrefix post tailSplit
           refine ⟨y :: rightPrefix, rightSuffix, ?_, .cons head preShape, sufShape⟩
           simp only [heapSplit, zero, inside', ↓reduceIte]
-          rw [← head.length, rightSplit]
+          rw [← lengthEq head, rightSplit]
           rfl
+
+/-- Heap splitting preserves the cell layout in both resulting segments. -/
+theorem heapSplit_shape {α β : Type} {left right : List (HeapElement α β)}
+    (shape : List.Forall₂ HeapCellShape left right) (offset : Nat)
+    (pre post : List (HeapElement α β)) (split : heapSplit offset left = some (pre, post)) :
+    ∃ pre' post', heapSplit offset right = some (pre', post') ∧
+      List.Forall₂ HeapCellShape pre pre' ∧ List.Forall₂ HeapCellShape post post' :=
+  heapSplit_relation (fun h => h.length) shape offset pre post split
 
 /-- Same-layout lists preserve the data-cell property. -/
 theorem heapShape_allData {α β : Type} {left right : List (HeapElement α β)}
@@ -228,6 +247,70 @@ theorem byteHeap_shape {width : Nat} [NeZero width] (be flag : Bool)
   induction pre with
   | nil => exact .cons (bytesRep_shape be flag before after words) (self post)
   | cons head tail ih => exact .cons (HeapCellShape.refl head) ih
+
+/-- Cell layout together with the mutable-reference classification needed by
+    the generational collector. -/
+def HeapCellGcShape {α β : Type} (left right : HeapElement α (HeapTag × β)) : Prop :=
+  HeapCellShape left right ∧ (isRef left ↔ isRef right)
+
+/-- A pointwise relation preserving a predicate transports a list-wide property. -/
+theorem forall_mem_of_forall₂ {α : Type} {rel : α → α → Prop} {p : α → Prop}
+    {left right : List α} (related : List.Forall₂ rel left right)
+    (preserve : ∀ {x y}, rel x y → p x → p y)
+    (valid : ∀ x ∈ left, p x) : ∀ y ∈ right, p y := by
+  induction related with
+  | nil => simp
+  | @cons x y xs ys head tail ih =>
+    intro z hz
+    simp only [List.mem_cons] at hz
+    rcases hz with rfl | rest
+    · exact preserve head (valid x (by simp))
+    · exact ih (fun v hv => valid v (by simp [hv])) z rest
+
+/-- Heap layout and mutable-reference classification preserve the complete
+    garbage-collector invariant, including its generational partition. -/
+theorem gcKindInv_shape {α β : Type} {left right : List (HeapElement α (HeapTag × β))}
+    (shape : List.Forall₂ HeapCellGcShape left right)
+    (conf : Config) (a sp sp1 : Nat) (gens : GcCombined.GenState)
+    (valid : gcKindInv conf a sp sp1 gens left) : gcKindInv conf a sp sp1 gens right := by
+  have layouts : List.Forall₂ HeapCellShape left right := shape.imp (fun _ _ h => h.1)
+  cases kind : conf.gcKind with
+  | none => simpa [gcKindInv, kind] using valid
+  | simple => simpa [gcKindInv, kind] using valid
+  | generational sizes =>
+    simp only [gcKindInv, kind] at valid ⊢
+    obtain ⟨gensOk, pre, post, split, noRefs, refs⟩ := valid
+    obtain ⟨pre', post', split', preShape, postShape⟩ :=
+      heapSplit_relation (fun h : HeapCellGcShape _ _ => h.1.length) shape (a + sp + sp1) pre post split
+    refine ⟨genStateOk_shape layouts a (a + sp + sp1) gens gensOk, pre', post', split', ?_, ?_⟩
+    · exact forall_mem_of_forall₂ preShape (fun h noRef ref => noRef (h.2.mpr ref)) noRefs
+    · exact forall_mem_of_forall₂ postShape (fun h ref => h.2.mp ref) refs
+
+/-- Byte-array payload replacement preserves GC cell classification and layout. -/
+theorem byteHeap_gcShape {width : Nat} [NeZero width] (be flag : Bool)
+    (before after : List (BitVec 8)) (words : List (BitVec width))
+    (pre post : List (HeapElement (WordLocW width) (HeapTag × List (WordLocW width)))) :
+    List.Forall₂ HeapCellGcShape (pre ++ [bytesRep be flag before words] ++ post)
+      (pre ++ [bytesRep be flag after words] ++ post) := by
+  have self (heap : List (HeapElement (WordLocW width) (HeapTag × List (WordLocW width)))) :
+      List.Forall₂ HeapCellGcShape heap heap := by
+    induction heap with
+    | nil => exact .nil
+    | cons head tail ih => exact .cons ⟨HeapCellShape.refl head, Iff.rfl⟩ ih
+  induction pre with
+  | nil =>
+    refine .cons ⟨bytesRep_shape be flag before after words, ?_⟩ (self post)
+    simp [bytesRep, isRef, isMutTag]
+  | cons head tail ih => exact .cons ⟨HeapCellShape.refl head, Iff.rfl⟩ ih
+
+/-- Replacing byte contents preserves even generational GC invariants. -/
+theorem gcKindInv_byteUpdate {width : Nat} [NeZero width] (be flag : Bool)
+    (before after : List (BitVec 8)) (words : List (BitVec width))
+    (pre post : List (HeapElement (WordLocW width) (HeapTag × List (WordLocW width))))
+    (conf : Config) (a sp sp1 : Nat) (gens : GcCombined.GenState)
+    (valid : gcKindInv conf a sp sp1 gens (pre ++ [bytesRep be flag before words] ++ post)) :
+    gcKindInv conf a sp sp1 gens (pre ++ [bytesRep be flag after words] ++ post) :=
+  gcKindInv_shape (byteHeap_gcShape be flag before after words pre post) conf a sp sp1 gens valid
 
 /-- The original byte-payload replacement preserves the unused-space
 invariant. This independently checked statement is infrastructure for the
