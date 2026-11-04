@@ -7,3 +7,6 @@ flat_typed=(∀(ys :α stack_frame list) (xs :stack list) (vs :(num # α word_lo
 flat_append_typed=∀(xs :stack list) (ys :α stack_frame list) (xs1 :stack list) (ys1 :α stack_frame list). LENGTH xs = LENGTH ys ⇒ flat (xs ++ xs1) (ys ++ ys1) = flat xs ys ++ flat xs1 ys1
 lookup_adjust_var_adjust_set_typed=(lookup (adjust_var (n :num)) (adjust_set (s :sptree$num_set)) :unit option) = (lookup n s :unit option)
 adjust_var_IN_adjust_set_typed=adjust_var (n :num) ∈ (domain (adjust_set (s :sptree$num_set)) :num -> bool) ⇔ n ∈ (domain s :num -> bool)
+loc_merge_typed=(∀(ys :α word_loc list). loc_merge ([] :α word_loc list) ys = ([] :α word_loc list)) ∧ (∀(ys :α word_loc list) (xs :α word_loc list) (l2 :num) (l1 :num). loc_merge ((Loc l1 l2 :α word_loc)::xs) ys = (Loc l1 l2 :α word_loc)::loc_merge xs ys) ∧ (∀(ys :α word_loc list) (y :α word_loc) (xs :α word_loc list) (w :α word). loc_merge (Word w::xs) (y::ys) = y::loc_merge xs ys) ∧ ∀(xs :α word_loc list) (w :α word). loc_merge (Word w::xs) ([] :α word_loc list) = Word w::xs
+length_loc_merge_typed=∀(xs :α word_loc list) (ys :α word_loc list). LENGTH (loc_merge xs ys) = LENGTH xs
+dec_stack_loc_merge_enc_stack_typed=∀(xs :α stack_frame list) (ys :α word_loc list). ∃(ss :α stack_frame list). dec_stack (loc_merge (enc_stack xs) ys) xs = SOME ss

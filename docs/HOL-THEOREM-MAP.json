@@ -1,5 +1,32 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "loc_merge_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/LocMerge.lean",
+  "lean_name": "locMerge",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared all four source equations at lines 6274-6278 with loc_merge_typed in data_to_word_gc_stack_probe.out. Both lists use the same positive HOL word dimension, translated to BitVec width; Loc retains its two natural fields, Word its width-indexed payload, and the empty-replacement branch retains the complete original suffix. This is proof infrastructure, not a collector correctness theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "LENGTH_loc_merge",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/LocMerge.lean",
+  "lean_name": "length_locMerge",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the complete source theorem at lines 6281-6285 and length_loc_merge_typed: both lists have the same positive word dimension and the conclusion equates merged and original lengths without hypotheses. Kernel checking and the typed capture do not prove cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "dec_stack_loc_merge_enc_stack",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/LocMerge.lean",
+  "lean_name": "decStack_locMerge_encStack",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared source lines 6501-6512 and dec_stack_loc_merge_enc_stack_typed: the universally quantified stack and replacement roots share the same positive word dimension, and the existential decoded stack is returned by the original-shaped encoder, merge and decoder without added premises. The Lean proof uses the stronger length-based decoding lemma. Source review and kernel checking do not prove collector correctness or cross-language equivalence."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
   "hol_name": "known_Op_Const",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/KnownLabelOracle.lean",

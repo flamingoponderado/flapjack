@@ -14,3 +14,6 @@ val _ = show "flat_typed" data_to_word_gcProofTheory.flat_def;
 val _ = show "flat_append_typed" data_to_word_gcProofTheory.flat_APPEND;
 val _ = show "lookup_adjust_var_adjust_set_typed" data_to_word_gcProofTheory.lookup_adjust_var_adjust_set;
 val _ = show "adjust_var_IN_adjust_set_typed" data_to_word_gcProofTheory.adjust_var_IN_adjust_set;
+val _ = show "loc_merge_typed" data_to_word_gcProofTheory.loc_merge_def;
+val _ = show "length_loc_merge_typed" data_to_word_gcProofTheory.LENGTH_loc_merge;
+val _ = show "dec_stack_loc_merge_enc_stack_typed" data_to_word_gcProofTheory.dec_stack_loc_merge_enc_stack;
