@@ -15,13 +15,14 @@ the export written by `scripts/l3/export_arm8_defs.sml`.
 The rendering maps HOL `bool ** 'N` (FCP) to `BitVec N` with a `Nat` width and
 `[NeZero N]` discharge, HOL `bitstring` (`bool list`, most-significant bit
 first) to `List Bool` via `Flapjack/Compiler/Encoders/Arm8/L3/Support.lean`,
-and HOL sets (`α -> bool`) to predicates.  It is a transcription aid, not a
-HOL-to-Lean equivalence proof.  The 118 declarations with a resolvable HOL
-source are `@[hol]`-tagged: 117 are recorded as `pending_statement_review` in
-`docs/HOL-THEOREM-MAP.json` and `NoOperation` is `reviewed_exact`; the ten generated `...2num`/`num2...`
-conversions and `boolify32` are untagged infrastructure.  Source review of
-each equation against the pinned HOL script is still required before the
-tagged rows can be called exact ports.
+and HOL sets (`α -> bool`) to predicates.  The 118 declarations with a
+resolvable HOL source are `@[hol]`-tagged and recorded as `reviewed_exact` in
+`docs/HOL-THEOREM-MAP.json` (117 transition and encoding definitions plus
+`NoOperation`); the ten generated `...2num`/`num2...` conversions and
+`boolify32` are untagged infrastructure.  Each tagged equation was compared
+with its pinned HOL definition theorem, and the translation rules are
+reviewed in `docs/ARM8.md` "Transition review".  This is a declaration-level
+source comparison, not a formal HOL-to-Lean equivalence proof.
 -/
 
 namespace Flapjack.Compiler.Encoders.Arm8.L3

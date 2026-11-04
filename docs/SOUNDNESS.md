@@ -309,8 +309,8 @@ The following are open review or verification obligations:
       target record, configuration, lowering and transition-definition closure
       are ported: `L3/Support.lean` supplies the
       bitstring/FCP/list/set/word/integer helpers, `L3/Defs.lean` renders the
-      129 definitions reachable from `NextStateARM8` (118 tagged: 117
-      `pending_statement_review` and `NoOperation` `reviewed_exact`), `L3/Target.lean` has `arm8_next`, `L3/Ast.lean`
+      129 definitions reachable from `NextStateARM8` (118 tagged, all
+      `reviewed_exact`), `L3/Target.lean` has `arm8_next`, `L3/Ast.lean`
       the lowering `arm8_ast`/`arm8_enc`, `L3/Configuration.lean` the exact
       `arm8_config` and `arm8ConfigL3_encOk`, and `L3/Target/State.lean` the
       `arm8TargetL3` record.  `L3/CorrectnessEncoding/` proves all 64
@@ -321,19 +321,21 @@ The following are open review or verification obligations:
       encoder-correctness theorem therefore applies to the L3 target directly,
       with no added hypothesis, and needs no closed-model-to-L3 transition
       refinement: it is stated over `NextStateARM8` from the start.  The
-      exactness of those statements is conditional on the `Defs.lean`
-      renderings they unfold to, which remain `pending_statement_review`
-      (mechanically rendered and drift-checked against the committed
-      `scripts/l3/arm8_defs.sexp.gz` export by `scripts/l3/check-renderings.py`,
-      with two documented handwritten exceptions, but not individually
-      certified), and
-      every declaration whose constant closure reaches the FP renderings
+      `Defs.lean` renderings those statements unfold to were compared
+      declaration-by-declaration with the pinned HOL definitions and are
+      `reviewed_exact`; `scripts/l3/check-renderings.py` also drift-checks them
+      against the committed `scripts/l3/arm8_defs.sexp.gz` export (with two
+      documented handwritten exceptions).  The review is a declaration-level
+      source comparison, not a formal cross-prover equivalence proof, and the
+      only out-of-range extensions are the documented `HD []` and `num2...`
+      totalizations, which do not affect the emitted subset.  Every declaration
+      whose constant closure reaches the FP renderings
       inherits the item 8 real-rendering assumption.  There is no proof about
       arbitrary ARMv8 code, and nothing shows that the model agrees with real
       AArch64 hardware.  The trusted compiler claim still rests on the closed
       model plus the parity evidence: the executed driver emits the closed
       subset, and the L3 chain proves the L3 encoder correct for the same
-      source instructions, conditional on the rendering assumption above.  No
+      source instructions.  No
       theorem relates the closed `arm8Ast`/`arm8Enc`/`validImmediate` to the L3
       `arm8Ast`/`arm8Enc`/`arm8ValidImmediate`: the only evidence that the
       executed encoder emits the same bytes and makes the same immediate
@@ -348,7 +350,7 @@ The following are open review or verification obligations:
       helpers the remaining ones need (`holRotate`, `holShiftr`, `holShiftl`,
       `holField`, `holTestbit`, `holV2w`, `holBitwise`, `holReplicate`), and
       `arm8LsrMaskIdentity`/`arm8LslMaskIdentity` restate HOL's `lsr`/`lsl`
-      identities (tagged, `pending_statement_review`); `asr_mask` remains
+      identities (tagged, `reviewed_exact`); `asr_mask` remains
       untagged Flapjack infrastructure because HOL's `asr2` is a statement about
       the mask value rather than a shift identity.  `arm8EncoderCorrectL3`
       proves the L3 `encoder_correct arm8_target` obligation; the closed-model

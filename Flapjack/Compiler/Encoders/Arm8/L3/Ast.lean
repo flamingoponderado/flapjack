@@ -29,8 +29,8 @@ def arm8EncodeFail : List instruction := [NoOperation]
 L3 `Encode` result, or four zero bytes for `BadCode`.  Reviewed exact: the
 `ARM8` clause extracts the same four bytes (`BitVec.ofNat 8 ((w >>> 8k).toNat)`
 for `(8k+7 >< 8k) w`), `BadCode` gives four zero bytes, and `MachineCode` has
-exactly those two constructors.  The callee `Encode` remains a mechanically
-rendered L3 definition (`pending_statement_review`). -/
+exactly those two constructors.  The callee `Encode` is a reviewed L3
+definition (`reviewed_exact`). -/
 @[hol "cakeml/compiler/encoders/arm8/arm8_targetScript.sml" "arm8_encode_def"]
 noncomputable def arm8Encode (i : instruction) : List (BitVec 8) :=
   match Encode i with

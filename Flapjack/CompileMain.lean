@@ -23,7 +23,16 @@ connects to source correctness in the same way as the MIPS32 route (via
 `X64.NativeCLI.output_ok`).  The ARMv8 target proves `encoderCorrect arm8Target`
 for the closed ARMv8 model in `Flapjack/Compiler/Encoders/Arm8/Machine/` and
 instantiates the Pancake-to-machine-code theorem there; that model covers the
-emitted instruction subset, not the full L3 ARMv8 semantics.
+emitted instruction subset.  The same target also proves
+`arm8EncoderCorrectL3 : encoderCorrect arm8TargetL3` over the L3
+`arm8_state`/`NextStateARM8` model in
+`Flapjack/Compiler/Encoders/Arm8/L3/CorrectnessEncoding/Complete.lean`, and
+`panToTargetCompileSemanticsArm8L3` in
+`Flapjack/Pancake/Proofs/PanToTarget/Arm8L3Instance.lean` instantiates the
+Pancake-to-target theorem at that L3 configuration.  Those L3 theorems are about
+the logical `compile_prog_max`; the executed `--target=arm8` driver still runs
+the closed `arm8Config`, and no theorem yet connects its output to the L3
+result.
 -/
 
 namespace Flapjack
