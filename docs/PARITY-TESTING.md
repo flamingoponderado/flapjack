@@ -290,33 +290,20 @@ intent before being checked in. This is the repository's small, reproducible
 analogue of C-Reduce; it does not invoke arbitrary source transformations
 that might accidentally change the language category being tested.
 
-After shrinking, limit the Flapjack dump to one source-level function when the
-section name is already known:
-
-```sh
-python3 scripts/parity-debug.py CASE.pnk --out /tmp/debug --minimize \
-    --function _mpt_delete_node_body
-```
-
-The function filter applies to the Lean dump; the Cake/HOL dump remains the
-complete probe output so that the surrounding pass context is not lost.
-
-The same command also captures intermediate values from both implementations.
+The same command also captures CakeML's intermediate values.
 With `--minimize`, it shrinks the source before producing the final assembly
-or intermediate-stage dumps; the original input is retained as `case.pnk`, and
+or intermediate-stage dump; the original input is retained as `case.pnk`, and
 the witness used for the dumps is recorded as `comparison_source` in
 `comparison.json`.
-`flapjack-stages.txt` comes from `lake exe flapjack-debug`, while
 `cake-stages.txt` comes from the original HOL definitions through
 [`scripts/hol-probes/pancake-stage-probeScript.sml`](../scripts/hol-probes/pancake-stage-probeScript.sml).
-When `--minimize` is supplied, both stage dumps are run on the resulting
+When `--minimize` is supplied, the stage dump is run on the resulting
 `case.min.pnk`, not the original large input; `comparison.json` records that
 stage source explicitly.
 The stage sequence is the original `pan_simp`, `pan_structs`, `pan_globals`,
-`pan_to_crep`, `crep_to_loop`, and `loop_to_word` boundary. Compare matching
-stage records first; the first divergence identifies the pass that should be
-ported or repaired. The HOL stage capture requires a built HOL4/CakeML tree,
-but final artifacts and the Lean dump remain available without it.
+`pan_to_crep`, `crep_to_loop`, and `loop_to_word` boundary. The HOL stage
+capture requires a built HOL4/CakeML tree, but final artifacts remain
+available without it.
 
 For allocator discrepancies, set `PANCAKE_ALLOCATOR_PROBE=1` when running the
 HOL probe. Set `PANCAKE_ALLOCATOR_LABEL=66` (or another numeric Word label)
@@ -326,15 +313,6 @@ For any intermediate-stage investigation, also set `PANCAKE_STAGE_LABEL=258`
 (the numeric function label of interest). This filters the original
 `crep_to_loop` result before `loop_to_word`, avoiding multi-gigabyte dumps for
 large guests; it can be combined with the allocator probe.
-
-For a relocation or stored-length discrepancy after `loop_to_word`, use
-`flapjack-debug --lab-label LABEL CASE.pnk`. It prints only the selected
-source-shaped Lab section at the `initial`, `encoded`, `relabelled`, and
-`final` linker stages, including each line's stored length and byte position.
-The label is the numeric section name shown by the Lean stage dump; this
-compact view avoids rendering the complete linked program. Compare it with
-the CakeML `enc_sec_list`/`enc_secs_again` probe before changing relocation or
-padding code.
 
 For a larger campaign, preserve the complete finding directory produced by
 `parity-difffuzz.py --out ... --minimize` and then run `parity-debug.py` on its
@@ -353,27 +331,6 @@ This workflow concerns implementation parity and regression evidence. The
 validity and implications of theorems, including the still-parameterized
 top-level compiler-correctness boundary, are documented separately in
 [`SOUNDNESS.md`](SOUNDNESS.md).
-
-### Loop-to-Word route selection
-
-Output parity alone does not prove that the exact HOL route was selected. Run
-this finite route audit on the original-accepted extracted corpus and the pinned
-guest source:
-
-```sh
-python3 scripts/check-loop-to-word-routes.py --guest /path/to/guest.pp.pnk \
-  --out /tmp/loop-to-word-routes
-```
-
-Build `flapjack-debug` first. Its `--loop-to-word-routes` mode uses the same
-Crep-to-Loop runtime-image boundary and label base as the artifact compiler,
-then checks the actual `loopToWordCompFuncViaHOL` and
-`loopToWordCompParametersViaHOL` guards for every function. A failed guard
-prints its function label and fails the command. The runner records source
-hashes and per-program results in `results.json`, verifies the pinned guest
-source hash, and filters corpus programs using the original Cake compiler's
-acceptance. This evidence covers those concrete programs; universal
-parser/pipeline encodability remains a separate proof obligation.
 
 ## Pinned stateless guest builds
 

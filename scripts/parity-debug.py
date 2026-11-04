@@ -4,8 +4,7 @@
 The final artifact comparison is shared with ``parity-difffuzz.py``.  When
 HOL4 and CakeML are available, the script also evaluates the original
 ``pan_simp -> pan_structs -> pan_globals -> pan_to_crep -> crep_to_loop ->
-loop_to_word`` stages.  Flapjack's matching pipeline is dumped by the
-``flapjack-debug`` executable.  ``--minimize`` performs signature-preserving
+loop_to_word`` stages.  ``--minimize`` performs signature-preserving
 line delta debugging, so a smaller source is only accepted when it keeps the
 same observed disagreement.  When enabled, the minimized source is selected
 before the final assembly and stage dumps, so those dumps stay manageable.
@@ -32,8 +31,6 @@ DEFAULT_CAKE = Path(os.environ.get(
     "CAKE", os.path.expanduser("~/pancake-lean/cakeml/developers/bin/cake")))
 DEFAULT_FLAPJACK = Path(os.environ.get(
     "FLAPJACK", str(ROOT / ".lake/build/bin/flapjack-compile")))
-DEFAULT_DEBUG = Path(os.environ.get(
-    "FLAPJACK_DEBUG", str(ROOT / ".lake/build/bin/flapjack-debug")))
 DEFAULT_HOL = Path(os.environ.get("HOL", "/home/zksecurity/HOL/bin/hol"))
 
 
@@ -67,16 +64,13 @@ def main(argv=None):
                         help="directory receiving the complete evidence bundle")
     parser.add_argument("--cake", type=Path, default=DEFAULT_CAKE)
     parser.add_argument("--flapjack", type=Path, default=DEFAULT_FLAPJACK)
-    parser.add_argument("--flapjack-debug", type=Path, default=DEFAULT_DEBUG)
     parser.add_argument("--hol", type=Path, default=DEFAULT_HOL)
     parser.add_argument("--nice", type=int, default=10)
     parser.add_argument("--timeout", type=int, default=60)
-    parser.add_argument("--function", dest="function_name",
-                        help="only dump this Flapjack source-level function")
     parser.add_argument("--minimize", action="store_true",
                         help="also write case.min.pnk preserving mismatch signatures")
     parser.add_argument("--no-stages", action="store_true",
-                        help="skip the HOL and Lean intermediate-stage commands")
+                        help="skip the HOL intermediate-stage command")
     args = parser.parse_args(argv)
 
     source = args.source.resolve()
@@ -138,13 +132,6 @@ def main(argv=None):
         # Stage evidence must explain the witness that was reduced above.  In
         # particular, do not spend time rendering the original full guest
         # after --minimize has already found a much smaller discrepancy.
-        debug_command = [args.flapjack_debug]
-        if args.function_name:
-            debug_command += ["--function", args.function_name]
-        debug_command.append(str(stage_source))
-        debug = run(debug_command, timeout=args.timeout)
-        write_bytes(out / "flapjack-stages.txt", debug["stdout"])
-        write_bytes(out / "flapjack-stages.err", debug["stderr"])
         hol_env = os.environ.copy()
         hol_env["PANCAKE_SOURCE"] = str(stage_source)
         # Cake's generated .ui files resolve their theory objects through
@@ -159,13 +146,8 @@ def main(argv=None):
         write_bytes(out / "cake-stages.txt", hol["stdout"])
         write_bytes(out / "cake-stages.err", hol["stderr"])
         record["stage_source"] = str(stage_source)
-        record["stage_commands"] = {"flapjack": debug["command"], "cake": hol["command"]}
-        record["stage_returncodes"] = {"flapjack": debug["returncode"], "cake": hol["returncode"]}
-        cake_stage_lines = hol["stdout"].decode("utf-8", "replace").splitlines(True)
-        flap_stage_lines = debug["stdout"].decode("utf-8", "replace").splitlines(True)
-        (out / "stages.diff").write_text("".join(difflib.unified_diff(
-            cake_stage_lines, flap_stage_lines,
-            fromfile="cake-stages.txt", tofile="flapjack-stages.txt")))
+        record["stage_commands"] = {"cake": hol["command"]}
+        record["stage_returncodes"] = {"cake": hol["returncode"]}
         (out / "comparison.json").write_text(json.dumps(record, indent=2) + "\n")
 
     print("out=%s class=%s signatures=%s" % (
