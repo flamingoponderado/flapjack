@@ -239,6 +239,20 @@ class RenderMultiTest(unittest.TestCase):
         self.assertFalse(recursive)
         self.assertIn('| 0 => 0', text)
 
+    def test_default_arm_reuses_the_first_clause_body(self):
+        # The default arm must not render the first clause a second time.
+        calls = []
+        original = self.r.tm
+        def counting(t, env):
+            calls.append(t)
+            return original(t, env)
+        self.r.tm = counting
+        out = [(self.f, [numeral(0)], numeral(0)),
+               (self.f, [numeral(1)], numeral(1))]
+        text, _ = render_multi(self.r, 'num2foo', out)
+        self.assertEqual(len(calls), 2)
+        self.assertIn('| _ => 0', text)
+
 
 class ExtraTypesPathTest(unittest.TestCase):
     def test_missing_configured_extra_types_file_raises(self):

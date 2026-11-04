@@ -85,6 +85,22 @@ class L3TypesToLeanTest(unittest.TestCase):
         self.assertNotEqual(proc.returncode, 0)
         self.assertIn('Data', proc.stderr)
 
+    def test_beq_only_on_function_field_is_an_error(self):
+        # `arm8_state` has function-typed REG/MEM fields, so the generator
+        # derives only `Inhabited`; asking for `BEq` would silently do nothing.
+        proc = subprocess.run(
+            [sys.executable, str(ROOT / 'scripts' / 'l3_types_to_lean.py'),
+             ARM8_MODEL, ARM8_MODEL, 'ProcState', 'arm8_state',
+             '--beq-only', 'arm8_state'],
+            capture_output=True, text=True)
+        self.assertNotEqual(proc.returncode, 0)
+        self.assertIn('arm8_state', proc.stderr)
+
+    def test_render_rejects_beq_only_on_function_field(self):
+        with self.assertRaises(ValueError):
+            RENDER((ROOT / ARM8_MODEL).read_text(), ARM8_MODEL,
+                   ['ProcState', 'arm8_state'], ('arm8_state',))
+
     def test_render_rejects_beq_only_outside_the_selection(self):
         with self.assertRaises(ValueError):
             RENDER((ROOT / ARM8_MODEL).read_text(), ARM8_MODEL,

@@ -9,6 +9,7 @@ import unittest
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 DECLARED_NAMES = runpy.run_path(str(ROOT / 'scripts' / 'l3' / 'check-renderings.py'))['declared_names']
+DEFINITION_SOURCE = runpy.run_path(str(ROOT / 'scripts' / 'l3' / 'check-renderings.py'))['definition_source']
 
 ARM8_EXPORT = ROOT / 'scripts' / 'l3' / 'arm8_defs.sexp.gz'
 ARM8_TYPES = ROOT / 'Flapjack' / 'Compiler' / 'Encoders' / 'Arm8' / 'L3' / 'Types.lean'
@@ -43,6 +44,24 @@ class ModelTheoryResetTest(unittest.TestCase):
             write_export(riscv, RISCV_EXPORT)
             _, failed = module.main(['renderer', str(riscv), str(RISCV_TYPES)])
             self.assertFalse(failed)
+
+
+class DefinitionSourceTest(unittest.TestCase):
+    def test_defs_lean(self):
+        self.assertTrue(DEFINITION_SOURCE(
+            pathlib.PurePosixPath('Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean')))
+
+    def test_split_defs_directory(self):
+        self.assertTrue(DEFINITION_SOURCE(
+            pathlib.PurePosixPath('Flapjack/RiscV/L3/Defs/ReadInst.lean')))
+
+    def test_step_directory(self):
+        self.assertTrue(DEFINITION_SOURCE(
+            pathlib.PurePosixPath('Flapjack/RiscV/L3/Step/Next.lean')))
+
+    def test_other_module_is_not_a_definition_source(self):
+        self.assertFalse(DEFINITION_SOURCE(
+            pathlib.PurePosixPath('Flapjack/Compiler/Encoders/Arm8/L3/Types.lean')))
 
 
 class DeclaredNamesTest(unittest.TestCase):
