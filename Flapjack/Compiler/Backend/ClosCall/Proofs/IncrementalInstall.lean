@@ -11,6 +11,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantRecursiveBinding
 import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantRetainedApplication
 import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantBodyPureApplication
 import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantBodyImpureApplication
+import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateOracleAdvance
 
 /-! Incremental installation under direct-call conversion. -/
 namespace Flapjack.Compiler.Backend.ClosCall
@@ -306,6 +307,41 @@ closures. This is one component of the HOL oracle monotonicity invariant;
 it is Flapjack-specific and does not assert the remaining components. -/
 def OracleLocationsAvoid {C F : Type} (allowed : Set Nat) (source : ClosSem.State C F) : Prop :=
   ∀ index loc, loc ∈ codeLocations (source.compileOracle index).2.1 → loc ∉ allowed
+
+/-- Oracle-location avoidance survives any finite oracle shift. This is
+Flapjack-specific infrastructure for the open-location invariant. -/
+theorem oracleLocationsAvoid_of_advance {C F : Type} (allowed : Set Nat)
+    (source final : ClosSem.State C F)
+    (advance : OracleAdvance source.compileOracle final.compileOracle)
+    (avoids : OracleLocationsAvoid allowed source) : OracleLocationsAvoid allowed final := by
+  obtain ⟨offset, shifted⟩ := advance
+  intro index loc member
+  apply avoids (index + offset) loc
+  simpa [shifted, holShiftSeq] using member
+
+/-- Every expression evaluation preserves oracle-location avoidance,
+including timeouts and installation errors. This is Flapjack-specific
+infrastructure based on the evaluator's oracle-advance theorem. -/
+theorem evaluate_oracleLocationsAvoid {C F : Type} (allowed : Set Nat)
+    (expressions : List ClosLang.Exp) (env : List ClosSem.Value)
+    (source final : ClosSem.State C F)
+    (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (run : evaluate expressions env source = (result, final))
+    (avoids : OracleLocationsAvoid allowed source) : OracleLocationsAvoid allowed final := by
+  exact oracleLocationsAvoid_of_advance allowed source final
+    ((evaluate_oracle_advance (C := C) (F := F)).1 expressions env source final result run) avoids
+
+/-- Closure application preserves oracle-location avoidance for every
+result. This is Flapjack-specific infrastructure. -/
+theorem evaluateApp_oracleLocationsAvoid {C F : Type} (allowed : Set Nat)
+    (location : Option Nat) (function : ClosSem.Value) (args : List ClosSem.Value)
+    (source final : ClosSem.State C F)
+    (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (run : evaluateApp location function args source = (result, final))
+    (avoids : OracleLocationsAvoid allowed source) : OracleLocationsAvoid allowed final := by
+  have advance := (evaluate_oracle_advance (C := C) (F := F)).2 (source.clock + 1)
+    location function args source final result (by omega) run
+  exact oracleLocationsAvoid_of_advance allowed source final advance avoids
 
 /-- A non-type-error installation shifts the source oracle and preserves
 avoidance of the open locations. This is Flapjack-specific infrastructure. -/
@@ -8981,6 +9017,45 @@ theorem callsFuel_app_withClock_of_traversals {C F : Type}
   have appIH := growingAppSimClockBelowWithClock_of_traversals passFuel relationFuel limit compiler allowed location exprIH bodyWf
   exact callsFuel_app_growing_below_withClock passFuel relationFuel traversalFuel limit compiler allowed trace location
     sourceFn sourceArgs initial final out run notAllowed argsIH fnIH argsWf fnWf appIH
+
+/-- Under the HOL-shaped open/known disjointness invariant, every known
+application location satisfies the direct-call side condition. This is
+Flapjack-specific infrastructure. -/
+theorem known_application_not_open (allowed : Set Nat) (state : State)
+    (disjoint : Disjoint allowed (sptDomain state.1)) (location : Option Nat) :
+    ∀ address, location = some address → (sptLookup address state.1).isSome = true → address ∉ allowed := by
+  intro address _ known member
+  have inDomain : sptDomain state.1 address := by simpa [sptDomain] using known
+  exact Set.disjoint_left.mp disjoint member inDomain
+
+/-- With open/known disjointness, the complete application traversal case
+uses the ordinary smaller-clock traversal induction. Evaluation
+well-formedness remains a premise. This is Flapjack-specific infrastructure,
+not a HOL theorem port. -/
+theorem callsFuel_app_withClock_of_disjoint {C F : Type}
+    (passFuel relationFuel traversalFuel limit : Nat) (compiler : ClosSem.Compiler C)
+    (allowed : Set Nat) (trace : BackendCommon.Tra) (location : Option Nat)
+    (sourceFn : ClosLang.Exp) (sourceArgs : List ClosLang.Exp) (initial final : State) (out : ClosLang.Exp)
+    (run : callsFuel (traversalFuel + 1) (.app trace location sourceFn sourceArgs) initial = some (out, final))
+    (disjoint : Disjoint allowed (sptDomain final.1))
+    (argsIH : ∀ target middle, callsListFuel traversalFuel sourceArgs initial = some (target, middle) →
+      GrowingExprsSimFromBelowWithClock (F := F) passFuel relationFuel limit compiler final allowed sourceArgs target)
+    (fnIH : ∀ target middle, callsFuel traversalFuel sourceFn middle = some (target, final) →
+      GrowingExprsSimFromBelowWithClock (F := F) passFuel relationFuel limit compiler final allowed [sourceFn] [target])
+    (exprIH : ∀ callerClock, callerClock < limit → ∀ depth (before after : State)
+      (body converted : ClosLang.Exp),
+      callsFuel depth body before = some (converted, after) →
+      (codeLocationsExp body).Nodup → LabelsFresh (codeLocationsExp body) before → wellFormed before →
+      GrowingExprsSimFromBelowWithClock (F := F) passFuel relationFuel callerClock compiler after allowed [body] [converted])
+    (evalWf : ∀ (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+      (expressions : List ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State (NumSet × C) F),
+      ValuesWellFormedFuel relationFuel g allowed code env → StateWellFormedFuel relationFuel g allowed code state →
+      OracleAuxEmpty state.compileOracle → EvalWellFormedFuel relationFuel g allowed code (evaluate expressions env state)) :
+    GrowingExprsSimFromBelowWithClock (F := F) passFuel relationFuel limit compiler final allowed
+      [.app trace location sourceFn sourceArgs] [out] := by
+  exact callsFuel_app_withClock_of_traversals passFuel relationFuel traversalFuel limit compiler allowed trace location
+    sourceFn sourceArgs initial final out run (known_application_not_open allowed final disjoint location)
+    argsIH fnIH exprIH evalWf
 
 /-- Appending older auxiliary code preserves the generated pass state when
 the combined code has distinct labels. -/
