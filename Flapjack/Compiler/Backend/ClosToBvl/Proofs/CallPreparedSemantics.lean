@@ -3,6 +3,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.Syntax
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.InstalledSemantics
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.AnnotationInvariants
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.AnnotatedPrepared
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.NumberedPrepared
 
 /-! Composition of direct-call conversion with the installed closure chain. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
@@ -445,5 +446,93 @@ theorem call_to_preparedBvl_semantics_of_location_bounds {C F : Type} (ffi : Hol
   exact call_to_preparedBvl_semantics_of_source_syntax ffi passFuel relationFuel original current output targetCompiler boundary
     expressions called nameExpressions callState compiled names oracle passRun syntaxGood known callOrdered syntaxOracle
     sourceNonempty fresh chainOrdered sourceSafe compile distinct monotone initialBelow futureDistinct ranges
+
+
+/-- The initial direct-call pass emits distinct auxiliary labels inside the
+successor interval of the source closure locations. -/
+theorem callAux_distinct_and_range (fuel lower upper : Nat) (expressions called : List ClosLang.Exp)
+    (state : ClosCall.State) (run : ClosCall.compileFuel fuel true expressions = some (called, state))
+    (distinct : (codeLocations expressions).Nodup)
+    (bounds : ∀ loc ∈ codeLocations expressions, lower ≤ loc ∧ loc + 1 < upper) :
+    (state.2.map Prod.fst).Nodup ∧
+      ∀ label ∈ state.2.map Prod.fst, lower ≤ label ∧ label < upper := by
+  have well := ClosCall.compileFuel_enabled_wellFormed fuel expressions called state run distinct
+  refine ⟨well.2, ?_⟩
+  intro label member
+  obtain ⟨loc, sourceMember, equal⟩ := callAux_label_origin fuel expressions called state run label member
+  have b := bounds loc sourceMember
+  omega
+
+/-- Each transformed oracle entry has distinct auxiliary labels, and those
+labels lie in the successor interval of the corresponding source entry. -/
+theorem callOracle_aux_distinct_and_range {C : Type} (fuel : Nat)
+    (oracle : CompileOracle (NumSet × C)) (lower upper : Nat → Nat)
+    (distinct : ∀ index, (codeLocations (oracle index).2.1).Nodup)
+    (bounds : ∀ index loc, loc ∈ codeLocations (oracle index).2.1 →
+      lower index ≤ loc ∧ loc + 1 < upper index) :
+    ∀ index, ((ClosCall.compileIncFuelOracle fuel oracle index).2.2.map Prod.fst).Nodup ∧
+      ∀ label ∈ (ClosCall.compileIncFuelOracle fuel oracle index).2.2.map Prod.fst,
+        lower index ≤ label ∧ label < upper index := by
+  intro index
+  obtain ⟨nextKnown, pass, _⟩ := ClosCall.compileIncFuelOracle_entry fuel oracle index
+  have generated := ClosCall.compileIncFuel_generated fuel (oracle index).1.1 (oracle index).2 nextKnown
+    (ClosCall.compileIncFuelOracle fuel oracle index).2 pass (distinct index)
+  refine ⟨generated.1, ?_⟩
+  intro label member
+  obtain ⟨loc, sourceMember, equal⟩ := generated.2.1 label member
+  have b := bounds index loc sourceMember
+  omega
+
+/-- Annotation leaves the generated auxiliary labels unchanged, so their
+source-derived distinctness and range survive the production annotation
+step. -/
+theorem annotatedCallOracle_aux_distinct_and_range {C : Type} (fuel : Nat)
+    (oracle : CompileOracle (NumSet × C)) (lower upper : Nat → Nat)
+    (distinct : ∀ index, (codeLocations (oracle index).2.1).Nodup)
+    (bounds : ∀ index loc, loc ∈ codeLocations (oracle index).2.1 →
+      lower index ≤ loc ∧ loc + 1 < upper index) :
+    ∀ index, ((ClosAnnotate.compile (ClosCall.compileIncFuelOracle fuel oracle index).2.2).map Prod.fst).Nodup ∧
+      ∀ label ∈ (ClosAnnotate.compile (ClosCall.compileIncFuelOracle fuel oracle index).2.2).map Prod.fst,
+        lower index ≤ label ∧ label < upper index := by
+  intro index
+  simpa only [annotated_labels] using callOracle_aux_distinct_and_range fuel oracle lower upper distinct bounds index
+
+
+/-- A consistent numbering oracle reserves the successor of every closure
+location before advancing to its next numbering state. -/
+theorem numberingOracle_location_successor_bounds {C : Type}
+    (oracle : Nat → (Nat × C) × (List ClosLang.Exp × List (Nat × Nat × ClosLang.Exp)))
+    (state : isStateOracle (ClosNumber.ignoreTable ClosNumber.compileInc) oracle)
+    (index location : Nat)
+    (member : location ∈ codeLocations
+      ((stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle index).2.1)) :
+    (oracle index).1.1 ≤ location ∧ location + 1 < (oracle (index + 1)).1.1 := by
+  have numbered : location ∈ codeLocations (ClosNumber.compileInc (oracle index).1.1 (oracle index).2.1).2 := by
+    simpa [stateCo, ClosNumber.ignoreTable] using member
+  have bounds := ClosNumber.compileInc_location_successor_bounds (oracle index).1.1 location (oracle index).2.1 numbered
+  have next := state index
+  simp only [ClosNumber.ignoreTable] at next
+  omega
+
+/-- When a direct-call oracle receives numbered programs, its generated
+auxiliary labels are distinct and lie strictly inside each numbering interval,
+including after closure annotation. -/
+theorem numberedCallOracle_aux_distinct_and_range {C : Type} (fuel : Nat)
+    (oracle : Nat → (Nat × (NumSet × C)) × (List ClosLang.Exp × List (Nat × Nat × ClosLang.Exp)))
+    (state : isStateOracle (ClosNumber.ignoreTable ClosNumber.compileInc) oracle) :
+    ∀ index,
+      ((ClosAnnotate.compile (ClosCall.compileIncFuelOracle fuel
+        (stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle) index).2.2).map Prod.fst).Nodup ∧
+      ∀ label ∈ (ClosAnnotate.compile (ClosCall.compileIncFuelOracle fuel
+        (stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle) index).2.2).map Prod.fst,
+        (oracle index).1.1 ≤ label ∧ label < (oracle (index + 1)).1.1 := by
+  apply annotatedCallOracle_aux_distinct_and_range fuel
+    (stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle)
+    (fun index => (oracle index).1.1) (fun index => (oracle (index + 1)).1.1)
+  · intro index
+    simpa [stateCo, ClosNumber.ignoreTable] using
+      ClosNumber.compileInc_codeLocations_nodup (oracle index).1.1 (oracle index).2.1
+  · intro index loc member
+    exact numberingOracle_location_successor_bounds oracle state index loc member
 
 end Flapjack.Compiler.Backend.ClosToBvl
