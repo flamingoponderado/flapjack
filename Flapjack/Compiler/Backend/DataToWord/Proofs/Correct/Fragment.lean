@@ -26,6 +26,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.GlobalLoad
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.GlobalStore
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.GlobalsSet
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Word8
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Word8Compare
 
 /-! Inductive simulation for the currently established data-language fragment. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Correct
@@ -187,6 +188,8 @@ inductive VerifiedFragment : DataLang.Prog → Prop where
   | boolNot (dest src : Nat) : VerifiedFragment (.assign dest (.blockOp .boolNot) [src] none)
   | byteOp (dest left right : Nat) (op : BackendCommon.Opw) :
       VerifiedFragment (.assign dest (.wordOp (.wordOpw .w8 op)) [left, right] none)
+  | byteCompare (dest left right : Nat) (kind : ByteComparison) :
+      VerifiedFragment (.assign dest (.wordOp (.wordTest .w8 kind.test)) [left, right] none)
   | intConst (dest : Nat) (i : Int) : VerifiedFragment (.assign dest (.intOp (.const i)) [] none)
   | ret (names : List Nat) : VerifiedFragment (.return names)
   | raise (name : Nat) : VerifiedFragment (.raise name)
@@ -289,6 +292,9 @@ theorem verifiedFragment64 {C F : Type} (conf : Config) (secn l1 l2 : Nat)
   | byteOp dest left right op =>
     intro label source target locs related safe
     exact Or.inl (assignByteOp64_of_safe conf secn label l1 l2 source target locs related dest left right op safe)
+  | byteCompare dest left right kind =>
+    intro label source target locs related safe
+    exact Or.inl (assignByteCompare64_of_safe conf secn label l1 l2 source target locs related dest left right kind safe)
   | intConst dest i =>
     intro label source target locs related safe
     exact Or.inl (assignConst64_of_safe conf secn label l1 l2 source target locs related dest i safe)

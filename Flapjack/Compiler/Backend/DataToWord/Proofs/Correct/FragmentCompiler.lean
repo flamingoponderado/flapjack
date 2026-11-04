@@ -133,6 +133,12 @@ def fragmentCompile64 (conf : Config) (secn label : Nat) : DataLang.Prog → Opt
         (.assign (adjustVar dest) (.const 2)), label)
   | .assign dest (.wordOp (.wordOpw .w8 op)) [left, right] none =>
       some (.assign (adjustVar dest) (byteOpExpr64 op left right), label)
+  | .assign dest (.wordOp (.wordTest .w8 .equal)) [left, right] none =>
+      some (byteCompareProg64 .equal dest left right, label)
+  | .assign dest (.wordOp (.wordTest .w8 (.compare .lt))) [left, right] none =>
+      some (byteCompareProg64 .less dest left right, label)
+  | .assign dest (.wordOp (.wordTest .w8 (.compare .leq))) [left, right] none =>
+      some (byteCompareProg64 .lessEq dest left right, label)
   | _ => none
 
 /-- On the verified fragment, the independent source-shaped traversal returns
@@ -147,6 +153,9 @@ theorem fragmentCompile64_agrees (conf : Config) (secn : Nat) (program : DataLan
   | intConst dest i =>
     intro label
     simp [fragmentCompile64, compileControl64, compileControl?, smallnum_eq_inlined]
+  | byteCompare dest left right kind =>
+    intro label
+    cases kind <;> rfl
   | boolNot | boolTest | lessConst | blockLength | blockBounds | byteBounds | arrayBounds | arrayLength | byteLength | dynamicElement | byteElement | byteStore | arrayStore | byteOp | element =>
     intro label
     simp only [fragmentCompile64, compileControl64, compileControl?, Option.getD_some]
