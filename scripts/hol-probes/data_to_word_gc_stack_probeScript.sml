@@ -78,6 +78,7 @@ val _ = show "gen_gc_length_typed" gen_gcTheory.gen_gc_LENGTH;
 val _ = show "muttag_header_typed" data_to_word_gcProofTheory.muttag_header_def;
 val _ = show "is_mut_tag_word_payload_typed" data_to_word_gcProofTheory.isMutTag_word_payload_IMP;
 val _ = show "word_gen_gc_move_refs_thm_typed" data_to_word_gcProofTheory.word_gen_gc_move_refs_thm;
+val _ = show "word_gen_gc_move_data_thm_typed" data_to_word_gcProofTheory.word_gen_gc_move_data_thm;
 val _ = show "word_list_IMP_limit_typed" data_to_word_gcProofTheory.word_list_IMP_limit;
 val _ = show "word_el_eq_word_list_typed" data_to_word_gcProofTheory.word_el_eq_word_list;
 val _ = show "word_heap_eq_word_list_strong_typed" data_to_word_gcProofTheory.word_heap_eq_word_list_strong;

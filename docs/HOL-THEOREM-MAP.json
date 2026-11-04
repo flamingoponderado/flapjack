@@ -1,6 +1,15 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_gen_gc_move_data_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GenerationalData.lean",
+  "lean_name": "wordGenGcMoveData_empty",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the empty-h2 case with word_gen_gc_move_data_thm_typed and the source proof: all original execution, bounds, classifier, fuel, memory and invariant hypotheses and the complete existential postcondition are retained; the added h2-empty premise selects this case."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "word_gen_gc_move_refs_thm",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GenerationalRefs.lean",
   "lean_name": "wordGenGcMoveRefs_thm",
