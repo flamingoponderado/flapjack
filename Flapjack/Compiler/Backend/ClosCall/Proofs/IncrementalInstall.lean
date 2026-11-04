@@ -186,6 +186,19 @@ theorem callsListBounded_group_body_with_coverage (fuel : Nat) (fns : List (Nat 
   exact callsListBounded_lookup_run_weak_with_coverage fuel (fns.map Prod.snd) target initial final allowed
     run distinct fresh initialDistinct initialWeak coverage index body out sourceIndex targetLookup
 
+/-- If initially known locations have labels, a traversal preserves that
+property for the selected body. This is Flapjack-specific infrastructure. -/
+theorem knownBound_body_labels (initial before : State) (body : ClosLang.Exp)
+    (origins : KnownBound initial before) (suffix : initial.2 <:+ before.2)
+    (initialCovered : ∀ k ∈ codeLocationsExp body, sptDomain initial.1 k → k + 1 ∈ initial.2.map Prod.fst) :
+    ∀ k ∈ codeLocationsExp body, sptDomain before.1 k → k + 1 ∈ before.2.map Prod.fst := by
+  intro k member known
+  rcases origins k known with old | emitted
+  · obtain ⟨front, eq⟩ := suffix
+    rw [← eq, List.map_append]
+    exact List.mem_append_right _ (initialCovered k member old)
+  · exact emitted
+
 /-- A related recursive closure supplies a covered body traversal in either
 the extracted or the open group. This records the coverage needed by the
 body simulation without asserting that the full simulation has been proved. -/
@@ -202,13 +215,18 @@ theorem recClosureRelFuel_body_traversal_with_coverage (fuel : Nat) (g : State) 
       depth < max fuel (listBudget (sourceFns.map Prod.snd) + 1) ∧
       callsFuel depth body before = some (converted, after) ∧
       (codeLocationsExp body).Nodup ∧ LabelsFresh (codeLocationsExp body) before ∧
-      (before.2.map Prod.fst).Nodup ∧ weaklyWellFormed before ∧ stateExtends after g ∧
+      (before.2.map Prod.fst).Nodup ∧ weaklyWellFormed before ∧
+      (∀ k ∈ codeLocationsExp body, sptDomain before.1 k → k + 1 ∈ before.2.map Prod.fst) ∧
+      stateExtends before g ∧ stateExtends after g ∧
+      (∀ n, ClosProps.freeVarExp n converted → n < arity) ∧
       (∀ k ∈ codeLocationsExp body, ¬ sptDomain after.1 k → k ∈ allowed)) ∨
     (∃ depth before after,
       depth < max fuel (listBudget (sourceFns.map Prod.snd) + 1) ∧
       callsFuel depth body before = some (targetBody, after) ∧
       (codeLocationsExp body).Nodup ∧ LabelsFresh (codeLocationsExp body) before ∧
-      (before.2.map Prod.fst).Nodup ∧ weaklyWellFormed before ∧ stateExtends after g ∧
+      (before.2.map Prod.fst).Nodup ∧ weaklyWellFormed before ∧
+      (∀ k ∈ codeLocationsExp body, sptDomain before.1 k → k + 1 ∈ before.2.map Prod.fst) ∧
+      stateExtends before g ∧ stateExtends after g ∧
       (∀ k ∈ codeLocationsExp body, ¬ sptDomain after.1 k → k ∈ allowed)) := by
   obtain ⟨initial, bodies, afterProbe, converted, _, _, _, initialWf, initialFresh, probe, selectedBody,
     _, _, _, _, _, _, _, _, _, alternatives⟩ :=
@@ -223,7 +241,7 @@ theorem recClosureRelFuel_body_traversal_with_coverage (fuel : Nat) (g : State) 
       simpa [insertEach] using initialWf.2
     have initialWeak := weaklyWellFormed_insertEach loc sourceFns.length initial (wellFormed_weak initial initialWf)
     obtain ⟨depth, before, after, bound, selected, distinct, bodyFresh, beforeDistinct, beforeWeak,
-      _, _, extended, bodyCovered⟩ :=
+      known, suffix, extended, bodyCovered⟩ :=
       callsListBounded_group_body_with_coverage fuel sourceFns bodies (insertEach loc sourceFns.length initial)
         afterProbe allowed probe well.2.2.2 fresh initialDistinct initialWeak covered index arity body converted
         sourceLookup selectedBody
@@ -239,8 +257,35 @@ theorem recClosureRelFuel_body_traversal_with_coverage (fuel : Nat) (g : State) 
     have pairLookup : ((sourceFns.map Prod.fst).zip bodies)[index]? = some (arity, converted) :=
       List.getElem?_zip_eq_some.mpr ⟨arityLookup, selectedBody⟩
     have generated := codeList_lookup loc ((sourceFns.map Prod.fst).zip bodies) afterProbe index arity converted pairLookup
+    have initialCovered : ∀ k ∈ codeLocationsExp body,
+        sptDomain (insertEach loc sourceFns.length initial).1 k →
+          k + 1 ∈ (insertEach loc sourceFns.length initial).2.map Prod.fst := by
+      intro k member knownInitial
+      rcases (insertEach_domain loc sourceFns.length initial k).mp knownInitial with old | ⟨i, bound, eq⟩
+      · have label : k + 1 ∈ initial.2.map Prod.fst := by
+          have labelIn : k + 1 ∈ {label | label ∈ initial.2.map Prod.fst} := by
+            rw [initialWf.1]
+            exact ⟨k, old, rfl⟩
+          exact labelIn
+        simpa [insertEach] using label
+      · have sourceIndex : (sourceFns.map Prod.snd)[index]? = some body := by
+          simp [List.getElem?_map, sourceLookup]
+        have bodyIn : body ∈ sourceFns.map Prod.snd := List.mem_of_getElem? sourceIndex
+        have nested : k ∈ codeLocations (sourceFns.map Prod.snd) :=
+          (mem_codeLocations k (sourceFns.map Prod.snd)).mpr ⟨body, bodyIn, member⟩
+        subst k
+        have nested' : 2 * i + loc ∈ codeLocations (sourceFns.map Prod.snd) := by
+          simpa [Nat.add_comm] using nested
+        exact (recClosureWellFormed_disjoint loc sourceFns well i bound nested').elim
+    have beforeCovered := knownBound_body_labels _ before body known suffix initialCovered
+    have singleton : callsListBounded (depth + 1) [body] before = some ([converted], after) := by
+      simp [callsListBounded, callsListFuel, selected]
+    have beforeAfter := callsListBounded_stateExtends (depth + 1) [body] before after [converted] singleton
+      (by simpa [codeLocations] using distinct) (by simpa [codeLocations] using bodyFresh) beforeDistinct
+    have afterGrowth := stateExtends_trans _ _ _ extended probeExt
     exact ⟨trace, converted, depth, before, after, bodyEq, included _ _ generated, bound, selected, distinct,
-      bodyFresh, beforeDistinct, beforeWeak, stateExtends_trans _ _ _ extended probeExt, bodyCovered⟩
+      bodyFresh, beforeDistinct, beforeWeak, beforeCovered, stateExtends_trans _ _ _ beforeAfter afterGrowth,
+      afterGrowth, groupClosed_selected sourceFns bodies index arity body converted closed sourceLookup selectedBody, bodyCovered⟩
   · right
     have fresh : LabelsFresh (codeLocations (sourceFns.map Prod.snd)) initial := by
       simpa [LabelsFresh] using initialFresh
@@ -248,12 +293,24 @@ theorem recClosureRelFuel_body_traversal_with_coverage (fuel : Nat) (g : State) 
       simpa [targetEq] using targetLookup
     have targetIndex : openBodies[index]? = some targetBody := (List.getElem?_zip_eq_some.mp zippedLookup).2
     obtain ⟨depth, before, after, bound, selected, distinct, bodyFresh, beforeDistinct, beforeWeak,
-      _, _, extended, bodyCovered⟩ :=
+      known, suffix, extended, bodyCovered⟩ :=
       callsListBounded_group_body_with_coverage fuel sourceFns openBodies initial afterOpen allowed openRun
         well.2.2.2 fresh initialWf.2 (wellFormed_weak initial initialWf) covered index arity body targetBody
         sourceLookup targetIndex
+    have initialCovered : ∀ k ∈ codeLocationsExp body, sptDomain initial.1 k → k + 1 ∈ initial.2.map Prod.fst := by
+      intro k _ old
+      have label : k + 1 ∈ {label | label ∈ initial.2.map Prod.fst} := by
+        rw [initialWf.1]
+        exact ⟨k, old, rfl⟩
+      exact label
+    have beforeCovered := knownBound_body_labels _ before body known suffix initialCovered
+    have singleton : callsListBounded (depth + 1) [body] before = some ([targetBody], after) := by
+      simp [callsListBounded, callsListFuel, selected]
+    have beforeAfter := callsListBounded_stateExtends (depth + 1) [body] before after [targetBody] singleton
+      (by simpa [codeLocations] using distinct) (by simpa [codeLocations] using bodyFresh) beforeDistinct
+    have afterGrowth := stateExtends_trans _ _ _ extended openExt
     exact ⟨depth, before, after, bound, selected, distinct, bodyFresh, beforeDistinct, beforeWeak,
-      stateExtends_trans _ _ _ extended openExt, bodyCovered⟩
+      beforeCovered, stateExtends_trans _ _ _ beforeAfter afterGrowth, afterGrowth, bodyCovered⟩
 
 /-- Extending target code preserves the fixed compiler-state relation. -/
 theorem stateRelFuel_extendCode {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
@@ -4906,6 +4963,121 @@ theorem growingExprsSimFrom_mono {C F : Type} (passFuel relationFuel : Nat) (com
     GrowingExprsSimFrom (F := F) passFuel relationFuel compiler larger allowed sourceExps targetExps := by
   intro g extended
   exact sim g (stateExtends_trans smaller larger g growth extended)
+
+/-- A completed probe can use a coverage-aware traversal simulation at a
+larger runtime state. The open set covers locations unknown immediately after
+the selected body traversal. -/
+theorem probeBody_sim_of_completed_state_covered {C F : Type} (passFuel relationFuel limit depth : Nat)
+    (compiler : ClosSem.Compiler C) (g : State) (allowed : Set Nat)
+    (body converted : ClosLang.Exp) (before after : State) (suffix : List (Nat × Nat × ClosLang.Exp))
+    (run : callsFuel depth body before = some (converted, after))
+    (distinct : (codeLocationsExp body).Nodup)
+    (fresh : LabelsFresh (codeLocationsExp body) (appendAux before suffix))
+    (completedWf : wellFormed (appendAux before suffix))
+    (completedGrowth : stateExtends (appendAux after suffix) g)
+    (coverage : ∀ k ∈ codeLocations [body], ¬ sptDomain after.1 k → k ∈ allowed)
+    (exprIH : ∀ initial final,
+      callsFuel depth body initial = some (converted, final) →
+      (codeLocationsExp body).Nodup → LabelsFresh (codeLocationsExp body) initial →
+      wellFormed initial →
+      GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler final [body] [converted]) :
+    ∀ (sourceEnv targetEnv : List ClosSem.Value)
+      (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+      (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+      (final : ClosSem.State (NumSet × C) F),
+      source.clock < limit → evaluate [body] sourceEnv source = (result, final) →
+      result ≠ .err (.abort .typeError) →
+      EnvRelFuel relationFuel g allowed target.code sourceEnv targetEnv 0 [(0, converted)] →
+      ValuesWellFormedFuel relationFuel g allowed target.code sourceEnv →
+      StateWellFormedFuel relationFuel g allowed target.code source →
+      StateRelFuel relationFuel g allowed source target → IncrementalInstallReady g source target →
+      Disjoint allowed (sptDomain g.1) → OracleLocationsAvoid allowed source →
+      source.compile = compileIncFuelCallback passFuel compiler → target.compile = compiler →
+      target.compileOracle = compileIncFuelOracle passFuel source.compileOracle →
+      ∃ extraClock finalG finalAllowed targetResult targetFinal,
+        stateExtends g finalG ∧ allowed ⊆ finalAllowed ∧
+        Disjoint finalAllowed (sptDomain finalG.1) ∧ OracleLocationsAvoid finalAllowed final ∧
+        evaluate [converted] targetEnv { target with clock := target.clock + extraClock } = (targetResult, targetFinal) ∧
+        resultRel (List.Forall₂ (ValueRelFuel relationFuel finalG finalAllowed targetFinal.code))
+          (ValueRelFuel relationFuel finalG finalAllowed targetFinal.code) result targetResult ∧
+        StateRelFuel relationFuel finalG finalAllowed final targetFinal ∧
+        StateWellFormedFuel relationFuel finalG finalAllowed targetFinal.code final ∧
+        IncrementalInstallReady finalG final targetFinal ∧
+        final.compile = compileIncFuelCallback passFuel compiler ∧ targetFinal.compile = compiler ∧
+        targetFinal.compileOracle = compileIncFuelOracle passFuel final.compileOracle ∧
+        (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry) := by
+  have completedRun : callsFuel depth body (appendAux before suffix) =
+      some (converted, appendAux after suffix) := by
+    simpa [run] using (callsFuel_appendAux_pair depth).1 body before suffix
+  intro sourceEnv targetEnv source target result final clock evalRun notType envs envWf stateWf states ready
+    disjoint avoids sourceCompiler targetCompiler oracle
+  exact exprIH (appendAux before suffix) (appendAux after suffix) completedRun distinct fresh completedWf
+    g completedGrowth allowed sourceEnv targetEnv source target result final (by simpa [appendAux] using coverage)
+    clock evalRun notType (by simpa using envs) envWf stateWf states ready disjoint avoids
+    sourceCompiler targetCompiler oracle
+
+/-- Related closure bodies use coverage-aware traversal simulations in both
+open and extracted groups. The ordinary traversal induction remains a premise. -/
+theorem recClosureRelFuel_body_arity_withCoveredOpenClock {C F : Type} (passFuel relationFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (g : State) (allowed : Set Nat)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (loc : Nat)
+    (sourceFns targetFns : List (Nat × ClosLang.Exp)) (index arity : Nat)
+    (body targetBody : ClosLang.Exp)
+    (related : recClosureRelFuel relationFuel g allowed code loc sourceFns targetFns)
+    (sourceLookup : sourceFns[index]? = some (arity, body))
+    (targetLookup : targetFns[index]? = some (arity, targetBody))
+    (exprIH : ∀ converted depth before after,
+      depth < max relationFuel (listBudget (sourceFns.map Prod.snd) + 1) →
+      callsFuel depth body before = some (converted, after) →
+      (codeLocationsExp body).Nodup → LabelsFresh (codeLocationsExp body) before →
+      wellFormed before →
+      GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler after [body] [converted]) :
+    GrowingExprsSimFromBelowWithOpenClockArity (F := F) passFuel relationFuel limit compiler g allowed arity [body] [targetBody] := by
+  intro larger growth sourceEnv targetEnv source target result final clock sourceBound run notType envs envWf sourceWf
+    states ready disjoint avoids sourceCompiler targetCompiler oracle
+  have related' := recClosureRelFuel_retarget relationFuel g larger allowed code target.code loc sourceFns targetFns
+    related growth ready.included
+  rcases recClosureRelFuel_body_traversal_with_coverage relationFuel larger allowed target.code loc sourceFns targetFns
+      index arity body targetBody related' sourceLookup targetLookup with
+    ⟨trace, converted, depth, before, after, bodyEq, codeLookup, depthBound, selectedRun,
+      distinct, fresh, beforeDistinct, beforeWeak, knownCovered, beforeGrowth, afterGrowth, closed, covered⟩ |
+    ⟨depth, before, after, depthBound, selectedRun, distinct, fresh, beforeDistinct, beforeWeak,
+      knownCovered, beforeGrowth, afterGrowth, covered⟩
+  · have stubEnv : EnvRelFuel relationFuel larger allowed target.code sourceEnv targetEnv 0
+        [(0, .call trace 0 (loc + 2 * index + 1) (ClosCall.variables trace arity))] := by
+      simpa [bodyEq] using envs
+    obtain ⟨targetBound, bodyEnv⟩ :=
+      envRelFuel_stub_body_prefix relationFuel larger allowed target.code trace (loc + 2 * index + 1)
+        arity converted sourceEnv targetEnv stubEnv sourceBound closed
+    obtain ⟨suffix, completedWf, completedFresh, completedGrowth⟩ :=
+      weaklyWellFormed_complete_aux_fresh before after larger (codeLocationsExp body) beforeWeak beforeDistinct
+        ready.well beforeGrowth afterGrowth fresh knownCovered
+    obtain ⟨extraClock, finalG, finalAllowed, targetResult, targetFinal, finalExt, allowedGrowth,
+      finalDisjoint, finalAvoids, targetRun, resultRelated, finalStates, finalWf, finalReady,
+      finalCompiler, targetFinalCompiler, finalOracle, codeGrowth⟩ :=
+      probeBody_sim_of_completed_state_covered passFuel relationFuel limit depth compiler larger allowed
+        body converted before after suffix selectedRun distinct completedFresh completedWf completedGrowth
+        (by simpa [codeLocations] using covered)
+        (fun initial final traversal bodyDistinct bodyFresh initialWf =>
+          exprIH converted depth initial final depthBound traversal bodyDistinct bodyFresh initialWf)
+        sourceEnv (targetEnv.take arity) source target result final clock run notType
+        (by simpa using bodyEnv) envWf sourceWf states ready disjoint avoids sourceCompiler targetCompiler oracle
+    refine ⟨extraClock + 1, finalG, finalAllowed, targetResult, targetFinal, finalExt, allowedGrowth,
+      finalDisjoint, finalAvoids, ?_, resultRelated, finalStates, finalWf, finalReady,
+      finalCompiler, targetFinalCompiler, finalOracle, codeGrowth⟩
+    rw [bodyEq, evaluate_generated_stub_with_allowance trace (loc + 2 * index + 1) arity extraClock
+      converted targetEnv target targetBound codeLookup]
+    exact targetRun
+  · obtain ⟨suffix, completedWf, completedFresh, completedGrowth⟩ :=
+      weaklyWellFormed_complete_aux_fresh before after larger (codeLocationsExp body) beforeWeak beforeDistinct
+        ready.well beforeGrowth afterGrowth fresh knownCovered
+    exact probeBody_sim_of_completed_state_covered passFuel relationFuel limit depth compiler larger allowed
+      body targetBody before after suffix selectedRun distinct completedFresh completedWf completedGrowth
+      (by simpa [codeLocations] using covered)
+      (fun initial final traversal bodyDistinct bodyFresh initialWf =>
+        exprIH targetBody depth initial final depthBound traversal bodyDistinct bodyFresh initialWf)
+      sourceEnv targetEnv source target result final clock run notType (by simpa using envs) envWf sourceWf states ready
+      disjoint avoids sourceCompiler targetCompiler oracle
 
 /-- A pass-state-restricted list simulation supplies the installed-program
 simulation at that same state. This is Flapjack-specific infrastructure; the
@@ -10297,6 +10469,188 @@ theorem growingExprsSimFromBelowWithOpenClock_app {C F : Type} (passFuel relatio
                 · intro key entry found
                   exact appGrowth key entry (prefixGrowth key entry found)
 
+/-- Retained application simulation with growing open locations. The application and
+source well-formedness hypotheses remain assumptions; this is
+Flapjack-specific simulation infrastructure. -/
+theorem growingExprsSimFromBelowWithCoveredOpenClock_app {C F : Type} (passFuel relationFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (required : State) (trace : BackendCommon.Tra) (loc : Option Nat)
+    (sourceFn targetFn : ClosLang.Exp) (sourceArgs targetArgs : List ClosLang.Exp)
+    (length : sourceArgs.length = targetArgs.length)
+    (argsIH : GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler required sourceArgs targetArgs)
+    (fnIH : GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler required [sourceFn] [targetFn])
+    (argsWf : ∀ (allowed : Set Nat) (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+      (env : List ClosSem.Value) (state : ClosSem.State (NumSet × C) F),
+      ValuesWellFormedFuel relationFuel g allowed code env → StateWellFormedFuel relationFuel g allowed code state →
+      OracleAuxEmpty state.compileOracle → EvalWellFormedFuel relationFuel g allowed code (evaluate sourceArgs env state))
+    (fnWf : ∀ (allowed : Set Nat) (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+      (env : List ClosSem.Value) (state : ClosSem.State (NumSet × C) F),
+      ValuesWellFormedFuel relationFuel g allowed code env → StateWellFormedFuel relationFuel g allowed code state →
+      OracleAuxEmpty state.compileOracle → EvalWellFormedFuel relationFuel g allowed code (evaluate [sourceFn] env state))
+    (appIH : GrowingAppSimClockBelowWithOpenClock (F := F) passFuel relationFuel limit compiler loc) :
+    GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler required
+      [.app trace loc sourceFn sourceArgs] [.app trace loc targetFn targetArgs] := by
+  intro g requiredGrowth allowed sourceEnv targetEnv source target sourceResult sourceFinal coverage clock run notType envs envWf sourceWf states ready
+    disjoint avoids sourceCompiler targetCompiler oracle
+  have fnCoverage : ∀ k ∈ codeLocations [sourceFn], ¬ sptDomain required.1 k → k ∈ allowed := by
+    intro k member unknown
+    apply coverage k ?_ unknown
+    simp only [codeLocations, codeLocationsExp, List.append_nil, List.mem_append] at member ⊢
+    tauto
+  have argsCoverage : ∀ k ∈ codeLocations sourceArgs, ¬ sptDomain required.1 k → k ∈ allowed := by
+    intro k member unknown
+    apply coverage k ?_ unknown
+    simp only [codeLocations, codeLocationsExp, List.append_nil, List.mem_append] at ⊢
+    exact Or.inr member
+  have appEnv : EnvRelFuel relationFuel g allowed target.code sourceEnv targetEnv 0
+      [(0, .app trace loc targetFn targetArgs)] := by simpa using envs
+  obtain ⟨fnEnv, argsEnv⟩ := envRelFuel_app_parts trace loc targetFn targetArgs appEnv
+  cases sourceArgs with
+  | nil =>
+    have bad : sourceResult = .err (.abort .typeError) := by simpa [evaluate] using congrArg Prod.fst run.symm
+    exact (notType bad).elim
+  | cons first rest =>
+    have targetNonempty : targetArgs ≠ [] := by
+      intro empty
+      simp [empty] at length
+    have targetNotEmpty : targetArgs.isEmpty = false := by
+      cases targetArgs with
+      | nil => exact (targetNonempty rfl).elim
+      | cons head tail => rfl
+    have initialArgsWf := argsWf allowed g target.code sourceEnv source envWf sourceWf ready.auxEmpty
+    rw [evaluate] at run
+    simp only [List.isEmpty_cons, Bool.false_eq_true, ↓reduceIte, fixClock_evaluate] at run
+    cases argsRun : evaluate (first :: rest) sourceEnv source with
+    | mk argsResult argsFinal =>
+      rw [argsRun] at initialArgsWf
+      have argsSafe : argsResult ≠ .err (.abort .typeError) := by
+        intro bad
+        subst argsResult
+        have eq : sourceResult = .err (.abort .typeError) := by simpa [argsRun] using congrArg Prod.fst run.symm
+        exact notType eq
+      obtain ⟨argsExtra, argsG, argsAllowed, targetArgsResult, targetArgsFinal, argsExt, argsAllowedGrowth,
+        argsDisjoint, argsAvoids, targetArgsRun, argsRel, argsStates,
+        argsStateWf, argsReady, argsCompiler, targetArgsCompiler, argsOracle, argsGrowth⟩ :=
+        argsIH g requiredGrowth allowed sourceEnv targetEnv source target argsResult argsFinal (by simpa using argsCoverage) clock argsRun argsSafe argsEnv envWf
+          sourceWf states ready disjoint avoids sourceCompiler targetCompiler oracle
+      cases argsResult with
+      | err error =>
+        cases targetArgsResult with
+        | val values => simp [resultRel] at argsRel
+        | err targetError =>
+          have eq : sourceResult = .err error ∧ sourceFinal = argsFinal := by simpa [argsRun] using run.symm
+          obtain ⟨rfl, rfl⟩ := eq
+          refine ⟨argsExtra, argsG, argsAllowed, .err targetError, targetArgsFinal, argsExt, argsAllowedGrowth,
+            argsDisjoint, argsAvoids, ?_, argsRel, argsStates, argsStateWf,
+            argsReady, argsCompiler, targetArgsCompiler, argsOracle, argsGrowth⟩
+          rw [evaluate]
+          simp only [targetNotEmpty, Bool.false_eq_true, ↓reduceIte, fixClock_evaluate]
+          rw [targetArgsRun]
+      | val values =>
+        cases targetArgsResult with
+        | err error => simp [resultRel] at argsRel
+        | val targetValues =>
+          have argsClock : argsFinal.clock < limit := by
+            have bound := evaluate_clock_le (first :: rest) sourceEnv source
+            rw [argsRun] at bound
+            exact Nat.lt_of_le_of_lt bound clock
+          have requiredArgs := stateExtends_trans required g argsG requiredGrowth argsExt
+          have valuesRel : List.Forall₂ (ValueRelFuel relationFuel argsG argsAllowed targetArgsFinal.code) values targetValues := argsRel
+          have fnEnv' := envRelFuel_mono fnEnv argsExt argsAllowedGrowth argsGrowth
+          have fnEnvWf := valuesWellFormedFuel_mono envWf argsExt argsAllowedGrowth argsGrowth
+          have functionWfEval := fnWf argsAllowed argsG targetArgsFinal.code sourceEnv argsFinal fnEnvWf argsStateWf argsReady.auxEmpty
+          cases fnRun : evaluate [sourceFn] sourceEnv argsFinal with
+          | mk fnResult fnFinal =>
+            rw [fnRun] at functionWfEval
+            have fnSafe : fnResult ≠ .err (.abort .typeError) := by
+              intro bad
+              subst fnResult
+              have eq : sourceResult = .err (.abort .typeError) := by
+                simpa [argsRun, fnRun, fixClock_evaluate] using congrArg Prod.fst run.symm
+              exact notType eq
+            obtain ⟨fnExtra, fnG, fnAllowed, targetFnResult, targetFnFinal, fnExt, fnAllowedGrowth,
+              fnDisjoint, fnAvoids, targetFnRun, fnRel, fnStates,
+              fnStateWf, fnReady, fnCompiler, targetFnCompiler, fnOracle, fnGrowth⟩ :=
+              fnIH argsG requiredArgs argsAllowed sourceEnv targetEnv argsFinal targetArgsFinal fnResult fnFinal (fun k member unknown => argsAllowedGrowth (fnCoverage k member unknown)) argsClock fnRun fnSafe
+                (by simpa using fnEnv') fnEnvWf argsStateWf argsStates argsReady argsDisjoint argsAvoids argsCompiler targetArgsCompiler argsOracle
+            have prefixExt := stateExtends_trans g argsG fnG argsExt fnExt
+            have prefixAllowed := Set.Subset.trans argsAllowedGrowth fnAllowedGrowth
+            have prefixGrowth : ∀ key entry, target.code.lookup key = some entry → targetFnFinal.code.lookup key = some entry :=
+              fun key entry found => fnGrowth key entry (argsGrowth key entry found)
+            cases fnResult with
+            | err error =>
+              cases targetFnResult with
+              | val vs => simp [resultRel] at fnRel
+              | err targetError =>
+                have eq : sourceResult = .err error ∧ sourceFinal = fnFinal := by
+                  simpa [argsRun, fnRun, fixClock_evaluate] using run.symm
+                obtain ⟨rfl, rfl⟩ := eq
+                refine ⟨argsExtra + fnExtra, fnG, fnAllowed, .err targetError, targetFnFinal, prefixExt, prefixAllowed,
+                  fnDisjoint, fnAvoids, ?_, fnRel, fnStates, fnStateWf,
+                  fnReady, fnCompiler, targetFnCompiler, fnOracle, prefixGrowth⟩
+                have shiftedArgs := (evaluate_addClock (C := C) (F := F)).1 targetArgs targetEnv
+                  { target with clock := target.clock + argsExtra } targetArgsFinal (.val targetValues) fnExtra
+                  targetArgsRun (by simp)
+                have shiftedArgs' : evaluate targetArgs targetEnv
+                    { target with clock := target.clock + (argsExtra + fnExtra) } =
+                    (.val targetValues, { targetArgsFinal with clock := targetArgsFinal.clock + fnExtra }) := by
+                  simpa [Nat.add_assoc] using shiftedArgs
+                rw [evaluate]
+                simp only [targetNotEmpty, Bool.false_eq_true, ↓reduceIte, fixClock_evaluate]
+                rw [shiftedArgs', targetFnRun]
+            | val fnValues =>
+              obtain ⟨fnValue, rfl⟩ := evaluate_singleton_value sourceFn sourceEnv argsFinal fnFinal fnValues fnRun
+              cases targetFnResult with
+              | err error => simp [resultRel] at fnRel
+              | val targetFnValues =>
+                obtain ⟨targetFnValue, rfl⟩ :=
+                  evaluate_singleton_value targetFn targetEnv { targetArgsFinal with clock := targetArgsFinal.clock + fnExtra } targetFnFinal targetFnValues targetFnRun
+                have functionRel : ValueRelFuel relationFuel fnG fnAllowed targetFnFinal.code fnValue targetFnValue := by
+                  simpa [resultRel] using fnRel
+                have valuesRel' : List.Forall₂ (ValueRelFuel relationFuel fnG fnAllowed targetFnFinal.code) values targetValues :=
+                  List.Forall₂.imp (fun _ _ h => valueRelFuel_mono h fnExt fnAllowedGrowth fnGrowth) valuesRel
+                have fnClock : fnFinal.clock < limit := by
+                  have bound := evaluate_clock_le [sourceFn] sourceEnv argsFinal
+                  rw [fnRun] at bound
+                  exact Nat.lt_of_le_of_lt bound argsClock
+                have appRun : evaluateApp loc fnValue values fnFinal = (sourceResult, sourceFinal) := by
+                  simpa [argsRun, fnRun, fixClock_evaluate] using run
+                have argumentWf : ValuesWellFormedFuel relationFuel fnG fnAllowed targetFnFinal.code values :=
+                  valuesWellFormedFuel_mono initialArgsWf.1 prefixExt prefixAllowed prefixGrowth
+                have functionWf : ValueWellFormedFuel relationFuel fnG fnAllowed targetFnFinal.code fnValue := by
+                  have valueWf : ValueWellFormedFuel relationFuel argsG argsAllowed targetArgsFinal.code fnValue := by
+                    cases functionWfEval.1 with
+                    | cons head tail => exact head
+                  exact valueWellFormedFuel_mono valueWf fnExt fnAllowedGrowth fnGrowth
+                obtain ⟨appExtra, finalG, finalAllowed, result, final, appExt, appAllowedGrowth, finalDisjoint, finalAvoids,
+                  targetRun, related, finalStates, finalWf, finalReady,
+                  finalCompiler, targetFinalCompiler, finalOracle, appGrowth⟩ :=
+                  appIH fnG fnAllowed fnValue targetFnValue values targetValues fnFinal targetFnFinal sourceResult sourceFinal
+                    fnClock appRun notType functionRel valuesRel' functionWf argumentWf fnStateWf fnStates fnReady fnDisjoint fnAvoids
+                    fnCompiler targetFnCompiler fnOracle
+                refine ⟨argsExtra + (fnExtra + appExtra), finalG, finalAllowed, result, final, stateExtends_trans g fnG finalG prefixExt appExt,
+                  Set.Subset.trans prefixAllowed appAllowedGrowth, finalDisjoint, finalAvoids, ?_, related,
+                  finalStates, finalWf, finalReady, finalCompiler, targetFinalCompiler, finalOracle, ?_⟩
+                · have shiftedArgs := (evaluate_addClock (C := C) (F := F)).1 targetArgs targetEnv
+                    { target with clock := target.clock + argsExtra } targetArgsFinal (.val targetValues) (fnExtra + appExtra)
+                    targetArgsRun (by simp)
+                  have shiftedArgs' : evaluate targetArgs targetEnv
+                      { target with clock := target.clock + (argsExtra + (fnExtra + appExtra)) } =
+                      (.val targetValues, { targetArgsFinal with clock := targetArgsFinal.clock + (fnExtra + appExtra) }) := by
+                    simpa [Nat.add_assoc] using shiftedArgs
+                  have shiftedFn := (evaluate_addClock (C := C) (F := F)).1 [targetFn] targetEnv
+                    { targetArgsFinal with clock := targetArgsFinal.clock + fnExtra } targetFnFinal
+                    (.val [targetFnValue]) appExtra targetFnRun (by simp)
+                  have shiftedFn' : evaluate [targetFn] targetEnv
+                      { targetArgsFinal with clock := targetArgsFinal.clock + (fnExtra + appExtra) } =
+                      (.val [targetFnValue], { targetFnFinal with clock := targetFnFinal.clock + appExtra }) := by
+                    simpa [Nat.add_assoc] using shiftedFn
+                  rw [evaluate]
+                  simp only [targetNotEmpty, Bool.false_eq_true, ↓reduceIte, fixClock_evaluate]
+                  rw [shiftedArgs', shiftedFn']
+                  simpa using targetRun
+                · intro key entry found
+                  exact appGrowth key entry (prefixGrowth key entry found)
+
 /-- Clock-bounded traversal of a location-free application. This is
 Flapjack-specific simulation infrastructure. -/
 theorem callsFuel_app_none_growing_below {C F : Type} (passFuel relationFuel traversalFuel limit : Nat)
@@ -10376,6 +10730,33 @@ theorem callsFuel_app_none_growing_below_withOpenClock {C F : Type} (passFuel re
   obtain ⟨⟨targetArgs, middle⟩, argsRun, ⟨targetFn, next⟩, fnRun, rfl, rfl⟩ := run
   have length := callsListFuel_length traversalFuel sourceArgs initial middle targetArgs argsRun
   exact growingExprsSimFromBelowWithOpenClock_app passFuel relationFuel limit compiler next trace none sourceFn targetFn sourceArgs targetArgs
+    length.symm (argsIH targetArgs middle argsRun) (fnIH targetFn middle fnRun) argsWf fnWf appIH
+
+/-- Location-free application traversal with growing open locations. This is
+Flapjack-specific simulation infrastructure. -/
+theorem callsFuel_app_none_growing_below_withCoveredOpenClock {C F : Type} (passFuel relationFuel traversalFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (trace : BackendCommon.Tra)
+    (sourceFn : ClosLang.Exp) (sourceArgs : List ClosLang.Exp) (initial final : State) (out : ClosLang.Exp)
+    (run : callsFuel (traversalFuel + 1) (.app trace none sourceFn sourceArgs) initial = some (out, final))
+    (argsIH : ∀ target middle, callsListFuel traversalFuel sourceArgs initial = some (target, middle) →
+      GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler final sourceArgs target)
+    (fnIH : ∀ target middle, callsFuel traversalFuel sourceFn middle = some (target, final) →
+      GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler final [sourceFn] [target])
+    (argsWf : ∀ (allowed : Set Nat) (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+      (env : List ClosSem.Value) (state : ClosSem.State (NumSet × C) F),
+      ValuesWellFormedFuel relationFuel g allowed code env → StateWellFormedFuel relationFuel g allowed code state →
+      OracleAuxEmpty state.compileOracle → EvalWellFormedFuel relationFuel g allowed code (evaluate sourceArgs env state))
+    (fnWf : ∀ (allowed : Set Nat) (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+      (env : List ClosSem.Value) (state : ClosSem.State (NumSet × C) F),
+      ValuesWellFormedFuel relationFuel g allowed code env → StateWellFormedFuel relationFuel g allowed code state →
+      OracleAuxEmpty state.compileOracle → EvalWellFormedFuel relationFuel g allowed code (evaluate [sourceFn] env state))
+    (appIH : GrowingAppSimClockBelowWithOpenClock (F := F) passFuel relationFuel limit compiler none) :
+    GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler final [.app trace none sourceFn sourceArgs] [out] := by
+  simp only [callsFuel, Bind.bind, Option.bind_eq_some_iff, Pure.pure,
+    Option.some.injEq, Prod.mk.injEq] at run
+  obtain ⟨⟨targetArgs, middle⟩, argsRun, ⟨targetFn, next⟩, fnRun, rfl, rfl⟩ := run
+  have length := callsListFuel_length traversalFuel sourceArgs initial middle targetArgs argsRun
+  exact growingExprsSimFromBelowWithCoveredOpenClock_app passFuel relationFuel limit compiler next trace none sourceFn targetFn sourceArgs targetArgs
     length.symm (argsIH targetArgs middle argsRun) (fnIH targetFn middle fnRun) argsWf fnWf appIH
 
 /-- The generated force application follows from a clock-bounded
@@ -10664,6 +11045,38 @@ theorem callsFuel_app_unknown_growing_below_withOpenClock {C F : Type} (passFuel
     obtain ⟨rfl, rfl⟩ := rest
     have length := callsListFuel_length traversalFuel sourceArgs initial middle targetArgs argsRun
     exact growingExprsSimFromBelowWithOpenClock_app passFuel relationFuel limit compiler afterFn trace (some loc) sourceFn targetFn sourceArgs targetArgs
+      length.symm (argsIH targetArgs middle argsRun) (fnIH targetFn middle fnRun) argsWf fnWf appIH
+
+/-- Growing-open-location traversal of an application whose location is not
+known to the pass. This is Flapjack-specific simulation infrastructure. -/
+theorem callsFuel_app_unknown_growing_below_withCoveredOpenClock {C F : Type} (passFuel relationFuel traversalFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (trace : BackendCommon.Tra) (loc : Nat)
+    (sourceFn : ClosLang.Exp) (sourceArgs : List ClosLang.Exp) (initial final : State) (out : ClosLang.Exp)
+    (run : callsFuel (traversalFuel + 1) (.app trace (some loc) sourceFn sourceArgs) initial = some (out, final))
+    (unknown : sptLookup loc final.1 = none)
+    (argsIH : ∀ target middle, callsListFuel traversalFuel sourceArgs initial = some (target, middle) →
+      GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler final sourceArgs target)
+    (fnIH : ∀ target middle, callsFuel traversalFuel sourceFn middle = some (target, final) →
+      GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler final [sourceFn] [target])
+    (argsWf : ∀ (allowed : Set Nat) (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+      (env : List ClosSem.Value) (state : ClosSem.State (NumSet × C) F),
+      ValuesWellFormedFuel relationFuel g allowed code env → StateWellFormedFuel relationFuel g allowed code state →
+      OracleAuxEmpty state.compileOracle → EvalWellFormedFuel relationFuel g allowed code (evaluate sourceArgs env state))
+    (fnWf : ∀ (allowed : Set Nat) (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+      (env : List ClosSem.Value) (state : ClosSem.State (NumSet × C) F),
+      ValuesWellFormedFuel relationFuel g allowed code env → StateWellFormedFuel relationFuel g allowed code state →
+      OracleAuxEmpty state.compileOracle → EvalWellFormedFuel relationFuel g allowed code (evaluate [sourceFn] env state))
+    (appIH : GrowingAppSimClockBelowWithOpenClock (F := F) passFuel relationFuel limit compiler (some loc)) :
+    GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler final [.app trace (some loc) sourceFn sourceArgs] [out] := by
+  simp only [callsFuel, Bind.bind, Option.bind_eq_some_iff, Pure.pure] at run
+  obtain ⟨⟨targetArgs, middle⟩, argsRun, ⟨targetFn, afterFn⟩, fnRun, rest⟩ := run
+  by_cases found : (sptLookup loc afterFn.1).isSome
+  · simp [found] at rest
+    split at rest <;> simp_all
+  · simp [found] at rest
+    obtain ⟨rfl, rfl⟩ := rest
+    have length := callsListFuel_length traversalFuel sourceArgs initial middle targetArgs argsRun
+    exact growingExprsSimFromBelowWithCoveredOpenClock_app passFuel relationFuel limit compiler afterFn trace (some loc) sourceFn targetFn sourceArgs targetArgs
       length.symm (argsIH targetArgs middle argsRun) (fnIH targetFn middle fnRun) argsWf fnWf appIH
 
 /-- A full application uses clock-bounded body simulation and a
@@ -11463,6 +11876,35 @@ theorem growingAppSimClockBelowWithOpenClock_of_traversals {C F : Type}
   intro converted depth initial final _ traversal distinct fresh initialWf
   exact exprIH callerClock clockBound depth initial final sourceBody converted traversal distinct fresh initialWf
 
+/-- The growing-open-location application induction follows from the ordinary
+well-formed expression traversal induction at smaller clocks, including both
+open and extracted recursive groups. Source-body well-formedness remains a
+separate premise. This is Flapjack-specific infrastructure, not a HOL theorem
+port. -/
+theorem growingAppSimClockBelowWithCoveredOpenClock_of_traversals {C F : Type}
+    (passFuel relationFuel clockLimit : Nat) (compiler : ClosSem.Compiler C)
+    (requested : Option Nat)
+    (exprIH : ∀ callerClock, callerClock < clockLimit → ∀ depth (initial final : State)
+      (body converted : ClosLang.Exp),
+      callsFuel depth body initial = some (converted, final) →
+      (codeLocationsExp body).Nodup → LabelsFresh (codeLocationsExp body) initial →
+      wellFormed initial →
+      GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel callerClock compiler final [body] [converted])
+    (bodyWf : ∀ (allowed : Set Nat) (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+      (body targetBody : ClosLang.Exp) (loc : Nat) (sourceFns targetFns : List (Nat × ClosLang.Exp))
+      (index arity : Nat), recClosureRelFuel relationFuel g allowed code loc sourceFns targetFns →
+      sourceFns[index]? = some (arity, body) → targetFns[index]? = some (arity, targetBody) →
+      ∀ (env : List ClosSem.Value) (state : ClosSem.State (NumSet × C) F),
+        ValuesWellFormedFuel relationFuel g allowed code env → StateWellFormedFuel relationFuel g allowed code state →
+        OracleAuxEmpty state.compileOracle → EvalWellFormedFuel relationFuel g allowed code (evaluate [body] env state)) :
+    GrowingAppSimClockBelowWithOpenClock (F := F) passFuel relationFuel clockLimit compiler requested := by
+  apply growingAppSimClockBelowWithOpenClock_of_bodies passFuel relationFuel clockLimit compiler requested ?_ bodyWf
+  intro callerClock clockBound allowed g code sourceBody targetBody loc sourceFns targetFns index arity related sourceLookup targetLookup
+  apply recClosureRelFuel_body_arity_withCoveredOpenClock passFuel relationFuel callerClock compiler g allowed code loc
+    sourceFns targetFns index arity sourceBody targetBody related sourceLookup targetLookup
+  intro converted depth initial final _ traversal distinct fresh initialWf
+  exact exprIH callerClock clockBound depth initial final sourceBody converted traversal distinct fresh initialWf
+
 /-- A location-free application traversal follows from its subexpression
 simulations and the smaller-clock traversal induction. Source evaluation
 well-formedness remains an explicit premise. -/
@@ -11519,6 +11961,36 @@ theorem callsFuel_force_withOpenClock_of_traversals {C F : Type}
     intro allowed g code body _ _ _ _ _ _ _ _ _ env state
     exact evalWf allowed g code [body] env state
   apply callsFuel_force_growing_below_withOpenClock passFuel relationFuel traversalFuel limit compiler trace
+    args initial final out run argsIH (forceApplication_growing_from_open_app passFuel relationFuel limit compiler final appIH)
+  intro allowed
+  apply forceApplication_growing_wf_of_oracle relationFuel allowed
+  intro g code body env state
+  exact evalWf allowed g code [body] env state
+
+/-- Force-thunk traversal follows from the smaller-clock body traversal
+induction. Source evaluation well-formedness remains an explicit premise.
+This is Flapjack-specific simulation infrastructure. -/
+theorem callsFuel_force_withCoveredOpenClock_of_traversals {C F : Type}
+    (passFuel relationFuel traversalFuel limit : Nat) (compiler : ClosSem.Compiler C)
+    (trace : BackendCommon.Tra) (args : List ClosLang.Exp) (initial final : State) (out : ClosLang.Exp)
+    (run : callsFuel (traversalFuel + 1) (.op trace (.thunkOp .forceThunk) args) initial = some (out, final))
+    (argsIH : ∀ target, callsListFuel traversalFuel args initial = some (target, final) →
+      GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler final args target)
+    (exprIH : ∀ callerClock, callerClock < limit → ∀ depth (before after : State) (body converted : ClosLang.Exp),
+      callsFuel depth body before = some (converted, after) →
+      (codeLocationsExp body).Nodup → LabelsFresh (codeLocationsExp body) before → wellFormed before →
+      GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel callerClock compiler after [body] [converted])
+    (evalWf : ∀ (allowed : Set Nat) (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+      (expressions : List ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State (NumSet × C) F),
+      ValuesWellFormedFuel relationFuel g allowed code env → StateWellFormedFuel relationFuel g allowed code state →
+      OracleAuxEmpty state.compileOracle → EvalWellFormedFuel relationFuel g allowed code (evaluate expressions env state)) :
+    GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler final
+      [.op trace (.thunkOp .forceThunk) args] [out] := by
+  have appIH : GrowingAppSimClockBelowWithOpenClock (F := F) passFuel relationFuel limit compiler none := by
+    apply growingAppSimClockBelowWithCoveredOpenClock_of_traversals passFuel relationFuel limit compiler none exprIH
+    intro allowed g code body _ _ _ _ _ _ _ _ _ env state
+    exact evalWf allowed g code [body] env state
+  apply callsFuel_force_growing_below_withCoveredOpenClock passFuel relationFuel traversalFuel limit compiler trace
     args initial final out run argsIH (forceApplication_growing_from_open_app passFuel relationFuel limit compiler final appIH)
   intro allowed
   apply forceApplication_growing_wf_of_oracle relationFuel allowed
@@ -11635,6 +12107,62 @@ theorem callsFuel_app_retained_withOpenClock_of_traversals {C F : Type}
       sourceFn sourceArgs initial final out run argsIH fnIH argsWf fnWf appIH
   | some address =>
     exact callsFuel_app_unknown_growing_below_withOpenClock passFuel relationFuel traversalFuel limit compiler trace address
+      sourceFn sourceArgs initial final out run (unknown address rfl) argsIH fnIH argsWf fnWf appIH
+
+/-- A retained application traversal follows from simulations of its
+argument and function traversals and the ordinary smaller-clock expression
+induction. A general source evaluation well-formedness premise supplies the
+argument, function, and closure-body obligations. Known-location rewrites
+are handled separately. This is Flapjack-specific infrastructure. -/
+theorem callsFuel_app_retained_withCoveredOpenClock_of_traversals {C F : Type}
+    (passFuel relationFuel traversalFuel limit : Nat) (compiler : ClosSem.Compiler C)
+    (trace : BackendCommon.Tra) (location : Option Nat)
+    (sourceFn : ClosLang.Exp) (sourceArgs : List ClosLang.Exp) (initial final : State) (out : ClosLang.Exp)
+    (run : callsFuel (traversalFuel + 1) (.app trace location sourceFn sourceArgs) initial = some (out, final))
+    (unknown : ∀ address, location = some address → sptLookup address final.1 = none)
+    (argsIH : ∀ target middle, callsListFuel traversalFuel sourceArgs initial = some (target, middle) →
+      GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler final sourceArgs target)
+    (fnIH : ∀ target middle, callsFuel traversalFuel sourceFn middle = some (target, final) →
+      GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler final [sourceFn] [target])
+    (exprIH : ∀ callerClock, callerClock < limit → ∀ depth (before after : State)
+      (body converted : ClosLang.Exp),
+      callsFuel depth body before = some (converted, after) →
+      (codeLocationsExp body).Nodup → LabelsFresh (codeLocationsExp body) before → wellFormed before →
+      GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel callerClock compiler after [body] [converted])
+    (evalWf : ∀ (allowed : Set Nat) (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+      (expressions : List ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State (NumSet × C) F),
+      ValuesWellFormedFuel relationFuel g allowed code env → StateWellFormedFuel relationFuel g allowed code state →
+      OracleAuxEmpty state.compileOracle → EvalWellFormedFuel relationFuel g allowed code (evaluate expressions env state)) :
+    GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler final
+      [.app trace location sourceFn sourceArgs] [out] := by
+  have argsWf : ∀ (allowed : Set Nat) (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+      (env : List ClosSem.Value) (state : ClosSem.State (NumSet × C) F),
+      ValuesWellFormedFuel relationFuel g allowed code env → StateWellFormedFuel relationFuel g allowed code state →
+      OracleAuxEmpty state.compileOracle → EvalWellFormedFuel relationFuel g allowed code (evaluate sourceArgs env state) := by
+    intro allowed g code env state
+    exact evalWf allowed g code sourceArgs env state
+  have fnWf : ∀ (allowed : Set Nat) (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+      (env : List ClosSem.Value) (state : ClosSem.State (NumSet × C) F),
+      ValuesWellFormedFuel relationFuel g allowed code env → StateWellFormedFuel relationFuel g allowed code state →
+      OracleAuxEmpty state.compileOracle → EvalWellFormedFuel relationFuel g allowed code (evaluate [sourceFn] env state) := by
+    intro allowed g code env state
+    exact evalWf allowed g code [sourceFn] env state
+  have bodyWf : ∀ (allowed : Set Nat) (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+      (body targetBody : ClosLang.Exp) (loc : Nat) (sourceFns targetFns : List (Nat × ClosLang.Exp))
+      (index arity : Nat), recClosureRelFuel relationFuel g allowed code loc sourceFns targetFns →
+      sourceFns[index]? = some (arity, body) → targetFns[index]? = some (arity, targetBody) →
+      ∀ (env : List ClosSem.Value) (state : ClosSem.State (NumSet × C) F),
+        ValuesWellFormedFuel relationFuel g allowed code env → StateWellFormedFuel relationFuel g allowed code state →
+        OracleAuxEmpty state.compileOracle → EvalWellFormedFuel relationFuel g allowed code (evaluate [body] env state) := by
+    intro allowed g code body _ _ _ _ _ _ _ _ _ env state
+    exact evalWf allowed g code [body] env state
+  have appIH := growingAppSimClockBelowWithCoveredOpenClock_of_traversals passFuel relationFuel limit compiler location exprIH bodyWf
+  cases location with
+  | none =>
+    exact callsFuel_app_none_growing_below_withCoveredOpenClock passFuel relationFuel traversalFuel limit compiler trace
+      sourceFn sourceArgs initial final out run argsIH fnIH argsWf fnWf appIH
+  | some address =>
+    exact callsFuel_app_unknown_growing_below_withCoveredOpenClock passFuel relationFuel traversalFuel limit compiler trace address
       sourceFn sourceArgs initial final out run (unknown address rfl) argsIH fnIH argsWf fnWf appIH
 
 /-- A clock-bounded simulation supplies the pure-function witness above
