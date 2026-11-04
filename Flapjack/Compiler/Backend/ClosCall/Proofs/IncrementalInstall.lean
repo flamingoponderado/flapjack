@@ -26553,4 +26553,136 @@ theorem compileFuel_enabled_semantics {C F : Type}
   exact ⟨extra, targetResult, targetFinal, targetRun, (ClosSem.resultRelOutcome _ _ result targetResult related).1,
     (ClosSem.resultRelOutcome _ _ result targetResult related).2, ffiEq⟩
 
+
+/-- Locations present in the source but absent from the pass's known set. -/
+def initialOpenLocations (expressions : List ClosLang.Exp) (g : State) : Set Nat :=
+  {loc | loc ∈ codeLocations expressions ∧ ¬ sptDomain g.1 loc}
+
+/-- The exact initial open-location set gives coverage and is disjoint from
+known locations. This is Flapjack-specific infrastructure. -/
+theorem initialOpenLocations_properties (expressions : List ClosLang.Exp) (g : State) :
+    (∀ loc ∈ codeLocations expressions, ¬ sptDomain g.1 loc → loc ∈ initialOpenLocations expressions g) ∧
+    Disjoint (initialOpenLocations expressions g) (sptDomain g.1) := by
+  constructor
+  · intro loc member unknown
+    exact ⟨member, unknown⟩
+  · apply Set.disjoint_left.mpr
+    intro loc member known
+    exact member.2 known
+
+/-- The enabled direct-call pass preserves whole-program behavior with the
+initial open set computed from the actual pass result. The fuel-indexed
+invariant remains an explicit premise; this is not a HOL theorem port. -/
+theorem compileFuel_enabled_semantics_initialOpen {C F : Type}
+    (passFuel relationFuel : Nat) (compiler : ClosSem.Compiler C)
+    (expressions output : List ClosLang.Exp) (required : State)
+    (passRun : compileFuel passFuel true expressions = some (output, required))
+    (syntaxGood : syntaxOk expressions) (ffi : HolFfiState F) (maxApp : Nat)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+    (sourceOracle : ClosSem.CompileOracle (NumSet × C)) (targetOracle : ClosSem.CompileOracle C)
+    (sourceCompiler : ClosSem.Compiler (NumSet × C))
+    (inv : IncrementalCodeInv passFuel required (initialOpenLocations expressions required)
+      (ClosSem.initialState ffi maxApp HolFiniteMapExact.empty sourceOracle sourceCompiler 0)
+      (ClosSem.initialState ffi maxApp code targetOracle compiler 0))
+    (sourceSafe : ClosSem.semantics ffi maxApp HolFiniteMapExact.empty sourceOracle sourceCompiler expressions ≠ .fail) :
+    ClosSem.semantics ffi maxApp code targetOracle compiler output =
+      ClosSem.semantics ffi maxApp HolFiniteMapExact.empty sourceOracle sourceCompiler expressions := by
+  have well : wellFormed required := inv.2.2.2.1
+  obtain ⟨coverage, disjoint⟩ := initialOpenLocations_properties expressions required
+  exact compileFuel_enabled_semantics passFuel relationFuel compiler expressions output required required passRun syntaxGood
+    (stateExtends_refl required well.2) (initialOpenLocations expressions required) coverage disjoint ffi maxApp code
+    sourceOracle targetOracle sourceCompiler inv sourceSafe
+
+
+/-- Every location known after the initial direct-call pass originates in
+the source program. This is Flapjack-specific traversal infrastructure. -/
+theorem compileFuel_enabled_known_origin (fuel : Nat) (expressions output : List ClosLang.Exp) (required : State)
+    (run : compileFuel fuel true expressions = some (output, required)) :
+    ∀ loc, sptDomain required.1 loc → loc ∈ codeLocations expressions := by
+  have traversal : callsListBounded fuel expressions (.ln, []) = some (output, required) := by
+    simpa [compileFuel] using run
+  have origins := callsListBounded_knownBound fuel expressions (.ln, []) required output traversal
+  have labels := callsListBounded_labelsBound fuel expressions (.ln, []) required output traversal
+  intro loc known
+  rcases origins loc known with old | generated
+  · simp [sptDomain, sptLookup] at old
+  · rcases labels (loc + 1) generated with old | ⟨origin, member, equal⟩
+    · simp at old
+    · have same : origin = loc := by omega
+      simpa [same] using member
+
+/-- The pass's known locations together with the remaining source locations
+form precisely the source-location set. -/
+theorem compileFuel_enabled_initialLocations (fuel : Nat) (expressions output : List ClosLang.Exp) (required : State)
+    (run : compileFuel fuel true expressions = some (output, required)) :
+    (show Set Nat from sptDomain required.1 ∪ initialOpenLocations expressions required) = {loc | loc ∈ codeLocations expressions} := by
+  classical
+  ext loc
+  constructor
+  · intro member
+    rcases member with known | openLoc
+    · exact compileFuel_enabled_known_origin fuel expressions output required run loc known
+    · exact openLoc.1
+  · intro member
+    by_cases known : sptDomain required.1 loc
+    · exact Or.inl known
+    · exact Or.inr ⟨member, known⟩
+
+/-- The output compiler state of the enabled pass is well formed when the
+input has distinct code locations. -/
+theorem compileFuel_enabled_wellFormed (fuel : Nat) (expressions output : List ClosLang.Exp) (required : State)
+    (run : compileFuel fuel true expressions = some (output, required))
+    (distinct : (codeLocations expressions).Nodup) : wellFormed required := by
+  have initialWf : wellFormed ((.ln, []) : State) := by
+    constructor
+    · ext label
+      simp only [Set.mem_ofPred_eq, List.map_nil, List.not_mem_nil, false_iff]
+      rintro ⟨key, member, _⟩
+      change sptDomain (.ln : NumSet) key at member
+      simp [sptDomain, sptLookup] at member
+    · simp
+  apply callsListBounded_wellFormed fuel expressions (.ln, []) required output
+  · simpa [compileFuel] using run
+  · exact distinct
+  · simp [LabelsFresh]
+  · exact initialWf
+
+
+/-- Whole-program behavior preservation for the enabled production
+closure-call pass, with its initial invariant derived from the compiler and
+oracle conditions. The callback is the bounded Lean adapter; this theorem is
+not claimed as an exact HOL port. -/
+theorem compileFuel_enabled_semantics_of_oracle {C F : Type}
+    (passFuel relationFuel : Nat) (compiler : ClosSem.Compiler C)
+    (expressions output : List ClosLang.Exp) (required : State)
+    (passRun : compileFuel passFuel true expressions = some (output, required))
+    (syntaxGood : syntaxOk expressions) (ffi : HolFfiState F) (maxApp : Nat)
+    (sourceOracle : ClosSem.CompileOracle (NumSet × C))
+    (sourceCompiler : ClosSem.Compiler (NumSet × C))
+    (sourceCompilerEq : sourceCompiler = compileIncFuelCallback passFuel compiler)
+    (known : required.1 = (sourceOracle 0).1.1)
+    (ordered : BackendProps.oracleMonotonic (fun entry => {loc | loc ∈ codeLocations entry.2.1}) (· < ·)
+      {loc | loc ∈ codeLocations expressions} sourceOracle)
+    (syntaxOracle : ∀ index, syntaxOk (sourceOracle index).2.1 ∧ (sourceOracle index).2.2 = [])
+    (sourceSafe : ClosSem.semantics ffi maxApp HolFiniteMapExact.empty sourceOracle sourceCompiler expressions ≠ .fail) :
+    ClosSem.semantics ffi maxApp (HolFiniteMapExact.alistToFmap required.2)
+      (compileIncFuelOracle passFuel sourceOracle) compiler output =
+      ClosSem.semantics ffi maxApp HolFiniteMapExact.empty sourceOracle sourceCompiler expressions := by
+  have well := compileFuel_enabled_wellFormed passFuel expressions output required passRun syntaxGood.2.2
+  have ordered' : BackendProps.oracleMonotonic (fun entry => {loc | loc ∈ codeLocations entry.2.1}) (· < ·)
+      (sptDomain required.1 ∪ initialOpenLocations expressions required) sourceOracle := by
+    refine ⟨ordered.1, ?_⟩
+    intro index x y member later
+    rcases member with knownLoc | openLoc
+    · exact ordered.2 index x y (compileFuel_enabled_known_origin passFuel expressions output required passRun x knownLoc) later
+    · exact ordered.2 index x y openLoc.1 later
+  have inv : IncrementalCodeInv passFuel required (initialOpenLocations expressions required)
+      (ClosSem.initialState ffi maxApp HolFiniteMapExact.empty sourceOracle sourceCompiler 0)
+      (ClosSem.initialState ffi maxApp (HolFiniteMapExact.alistToFmap required.2)
+        (compileIncFuelOracle passFuel sourceOracle) compiler 0) := by
+    exact ⟨rfl, sourceCompilerEq, rfl, well, known, ordered', rfl, syntaxOracle⟩
+  exact compileFuel_enabled_semantics_initialOpen passFuel relationFuel compiler expressions output required passRun syntaxGood
+    ffi maxApp (HolFiniteMapExact.alistToFmap required.2) sourceOracle (compileIncFuelOracle passFuel sourceOracle)
+    sourceCompiler inv sourceSafe
+
 end Flapjack.Compiler.Backend.ClosCall
