@@ -75,6 +75,10 @@ example : fragmentCompile64 conf 5 2 (.assign 3 (.memOp .el) [1, 2] none) =
     some (.assign 8 (.load (.op .add [realAddr conf 4,
       .op .add [.const 8, .shift .lsl (.var 6) (.const 1)]])), 2) := by rfl
 
+example : fragmentCompile64 conf 5 2 (.assign 3 (.memOp .derefByte) [1, 2] none) =
+    some (.seq (.assign 1 (.op .add [realAddr conf 4, .op .add [.const 8, shiftN .lsr (.var 6) 2]]))
+      (.seq (.inst (.mem .load8 3 (.addr 1 0))) (.assign 8 (shiftN .lsl (.var 3) 2))), 2) := by rfl
+
 example : fragmentCompile64 conf 5 2 (.assign 3 (.blockOp (.cons 17)) [] none) =
     some (.assign 8 (.const 274), 2) := by rfl
 

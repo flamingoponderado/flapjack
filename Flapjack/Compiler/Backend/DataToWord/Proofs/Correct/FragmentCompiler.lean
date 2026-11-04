@@ -62,6 +62,10 @@ def fragmentCompile64 (conf : Config) (secn label : Nat) : DataLang.Prog → Opt
   | .assign dest (.memOp .el) [base, index] none =>
       some (.assign (adjustVar dest) (.load (.op .add [realAddr conf (adjustVar base),
         .op .add [.const 8, .shift .lsl (.var (adjustVar index)) (.const 1)]])), label)
+  | .assign dest (.memOp .derefByte) [base, index] none =>
+      some (wordListSeq [
+        .assign 1 (.op .add [realAddr conf (adjustVar base), .op .add [.const 8, shiftN .lsr (.var (adjustVar index)) 2]]),
+        .inst (.mem .load8 3 (.addr 1 0)), .assign (adjustVar dest) (shiftN .lsl (.var 3) 2)], label)
   | .assign dest (.blockOp (.lenEq len)) [src] none =>
       if len = 0 then
         some (.ite .test (adjustVar src) (.imm 1)
@@ -122,7 +126,7 @@ theorem fragmentCompile64_agrees (conf : Config) (secn : Nat) (program : DataLan
   | intConst dest i =>
     intro label
     simp [fragmentCompile64, compileControl64, compileControl?, smallnum_eq_inlined]
-  | boolNot | boolTest | lessConst | blockLength | blockBounds | byteBounds | arrayBounds | arrayLength | byteLength | dynamicElement | element =>
+  | boolNot | boolTest | lessConst | blockLength | blockBounds | byteBounds | arrayBounds | arrayLength | byteLength | dynamicElement | byteElement | element =>
     intro label
     simp only [fragmentCompile64, compileControl64, compileControl?, Option.getD_some]
     all_goals rfl
