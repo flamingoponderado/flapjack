@@ -1,5 +1,57 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "is_Ref_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/Generational.lean",
+  "lean_name": "isRefElement",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the data, unused and forwarding clauses and independent heap element carriers against is_Ref_typed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "len_inv_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/Generational.lean",
+  "lean_name": "genLenInv",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the full heap-length equation and independent address and payload carriers against len_inv_typed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "is_ref_header_alt",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/Generational.lean",
+  "lean_name": "isRefHeader_alt",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared both bit tests and good dimension premise against is_ref_header_alt_typed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "is_ref_header_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/Generational.lean",
+  "lean_name": "isRefHeader_thm",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared all premises and mutable-tag conclusion with is_ref_header_thm_typed; header and payload word widths remain independent."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_gen_gc_move_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/Generational.lean",
+  "lean_name": "wordGenGcMove_data",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the immediate-root case with word_gen_gc_move_thm_typed; every original assumption and the complete existential memory, address, length and reference-invariant conclusion are retained."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_gen_gc_move_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GenerationalForward.lean",
+  "lean_name": "wordGenGcMove_forward",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the forwarding-pointer lookup case with word_gen_gc_move_thm_typed; the constructor lookup selects the source case and all original assumptions and existential conclusions are retained."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
   "hol_name": "make_gc_conf_def",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/GcConfig.lean",
