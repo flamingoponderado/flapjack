@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.CallFragmentCode
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.IndirectCallHandlerTimeout
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Fragment
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.IndirectReturningCallHandler
@@ -27,7 +28,10 @@ theorem caughtCall64_indirect_outcomes {C F : Type} (conf : Config) (secn label 
         (WordSemStateFiniteExact.pushEnv (sptInter target.locals (.ls ()), sptInter target.locals (adjustSet live))
           (some (adjustVar handlerName, (compileControl64 conf secn (label + 2) handlerBody).1, secn, label + 1))
           (WordSemStateFiniteExact.decClock target))) ((l1, l2) :: locs))
+    (calleeCode : (DataSem.evaluate body
+      (DataSem.callEnv values size (DataSem.pushEnv saved true (DataSem.decClock source)))).2.code = source.code)
     (handlerCorrect : ∀ (s : DataSem.State C F) (t : WordSemStateFiniteExact 64 C F),
+      s.code = source.code → s.clock < source.clock →
       stateRel64 conf l1 l2 s t none locs → (DataSem.evaluate handlerBody s).1 ≠ some (.err (.abort .typeError)) →
       outcomes64 conf secn (label + 2) l1 l2 handlerBody s t locs) :
     outcomes64 conf secn label l1 l2 (.call (some (returns, live)) none (names ++ [lastName]) (some (handlerName, handlerBody))) source target locs := by
@@ -131,7 +135,12 @@ theorem caughtCall64_indirect_outcomes {C F : Type} (conf : Config) (secn label 
     · exact stackFacts.1
     · exact stackFacts.2
     · exact jumpHandler
-  · exact handlerCorrect handlerSource handlerTarget handlerRelated handlerSafe
+  · have sourceCode : handlerSource.code = source.code := by
+      simpa [handlerSource, sourceClamped, DataSem.setVar, sourceBody] using calleeCode
+    have sourceClock : handlerSource.clock < source.clock := by
+      simp [handlerSource, sourceClamped, DataSem.setVar, k, sourceEntry, DataSem.callEnv, DataSem.pushEnv, DataSem.decClock]
+      omega
+    exact handlerCorrect handlerSource handlerTarget sourceCode sourceClock handlerRelated handlerSafe
 
 /-- A source-safe indirect call with a handler composes with its selected
 callee's simulation for all currently covered outcomes. -/
@@ -150,7 +159,9 @@ theorem call64_indirect_handler_outcomes {C F : Type} (conf : Config) (secn labe
     (calleeCorrect : ∀ (s : DataSem.State C F) (t : WordSemStateFiniteExact 64 C F),
       s.code = source.code → s.clock < source.clock → stateRel64 conf secn label s t none ((l1, l2) :: locs) → (DataSem.evaluate body s).1 ≠ some (.err (.abort .typeError)) →
       outcomes64 conf callee 2 secn label body s t ((l1, l2) :: locs))
+    (closed : CallFragmentCode source.code)
     (handlerCorrect : ∀ (s : DataSem.State C F) (t : WordSemStateFiniteExact 64 C F),
+      s.code = source.code → s.clock < source.clock →
       stateRel64 conf l1 l2 s t none locs → (DataSem.evaluate handlerBody s).1 ≠ some (.err (.abort .typeError)) →
       outcomes64 conf secn (label + 2) l1 l2 handlerBody s t locs) :
     outcomes64 conf secn label l1 l2 (.call (some (returns, live)) none (names ++ [lastName]) (some (handlerName, handlerBody))) source target locs := by
@@ -187,8 +198,14 @@ theorem call64_indirect_handler_outcomes {C F : Type} (conf : Config) (secn labe
         callee names returns lastName live saved values args body handlerBody handlerName size sourceRun wordRun pointer lookup sizeEq cut distinct zero safe returned)
     · exact Or.inr (Or.inr (Or.inl (returningCall64_indirect_handler_callee_timeout conf secn label l1 l2 source target locs related
         callee names returns lastName live saved values args body handlerBody handlerName size sourceRun wordRun pointer lookup sizeEq cut distinct zero timeout)))
-    · exact caughtCall64_indirect_outcomes conf secn label l1 l2 source target locs related
-        callee names returns lastName live saved values args body handlerBody handlerName size sourceRun wordRun pointer lookup sizeEq cut distinct zero safe raised handlerCorrect
+    · have member := closed callee values.length body lookup
+      have calleeCode : (DataSem.evaluate body
+          (DataSem.callEnv values size (DataSem.pushEnv saved true (DataSem.decClock source)))).2.code = source.code := by
+        simpa [DataSem.callEnv, DataSem.pushEnv, DataSem.decClock] using
+          callFragment_code body member (DataSem.callEnv values size (DataSem.pushEnv saved true (DataSem.decClock source)))
+            (by simpa [DataSem.callEnv, DataSem.pushEnv, DataSem.decClock] using closed)
+      exact caughtCall64_indirect_outcomes conf secn label l1 l2 source target locs related
+        callee names returns lastName live saved values args body handlerBody handlerName size sourceRun wordRun pointer lookup sizeEq cut distinct zero safe raised calleeCode handlerCorrect
 
 /-- A safe indirect call is simulated when its selected body satisfies the
 recursive simulation hypothesis. -/
@@ -203,7 +220,9 @@ theorem call64_indirect_handler_of_safe {C F : Type} (conf : Config) (secn label
         s.code = source.code → s.clock < source.clock → stateRel64 conf secn label s t none ((l1, l2) :: locs) →
         (DataSem.evaluate body s).1 ≠ some (.err (.abort .typeError)) →
         outcomes64 conf callee 2 secn label body s t ((l1, l2) :: locs))
+    (closed : CallFragmentCode source.code)
     (handlerCorrect : ∀ (s : DataSem.State C F) (t : WordSemStateFiniteExact 64 C F),
+      s.code = source.code → s.clock < source.clock →
       stateRel64 conf l1 l2 s t none locs → (DataSem.evaluate handlerBody s).1 ≠ some (.err (.abort .typeError)) →
       outcomes64 conf secn (label + 2) l1 l2 handlerBody s t locs) :
     outcomes64 conf secn label l1 l2 (.call (some (returns, live)) none names (some (handlerName, handlerBody))) source target locs := by
@@ -236,7 +255,7 @@ theorem call64_indirect_handler_of_safe {C F : Type} (conf : Config) (secn label
               | some saved =>
                 obtain ⟨words, wordRun, _⟩ := stateRel64_getVars conf l1 l2 source target none locs related names values prefixRun
                 exact call64_indirect_handler_outcomes conf secn label l1 l2 source target locs related callee names returns name live saved
-                  values words body handlerBody handlerName _ prefixRun wordRun finalRun lookup rfl cut distinct safe (calleeCorrect callee values.length body lookup) handlerCorrect
+                  values words body handlerBody handlerName _ prefixRun wordRun finalRun lookup rfl cut distinct safe (calleeCorrect callee values.length body lookup) closed handlerCorrect
             · simp [DataSem.evaluate, run, found, distinct] at safe
           · simp [DataSem.evaluate, run, DataSem.findCode, holLast_snoc, lookup, length] at safe
 
