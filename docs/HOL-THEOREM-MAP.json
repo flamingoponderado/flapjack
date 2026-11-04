@@ -1,6 +1,15 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "loc_ok_word_addr",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/RootsValid.lean",
+  "lean_name": "locOk_wordAddr",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared source lines 6162-6165 and loc_ok_word_addr_typed: every heap address over the same positive-width word-location carrier projects to a loc_ok root, with no assumptions. The production-shaped wordAddr preserves Word roots and emits only Loc values with zero second component. Source comparison and kernel checking do not establish whole-collector correctness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "word_gc_fun_IMP_FILTER",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CollectorFilter.lean",
   "lean_name": "wordGcFun_imp_filter",
