@@ -607,6 +607,41 @@ theorem evaluate_assign_globalsPtr_code {C F : Type} (dest : Nat) (state : State
     have second := doAppAux_globalsPtr_code args _ after value run
     simpa [doStack, doLimSafe, first, code] using second
 
+/-- Reading a global leaves the source code table unchanged. -/
+theorem doAppAux_globalLoad_code {C F : Type} (index : Nat) (args : List DataSem.Value)
+    (state next : State C F) (value : DataSem.Value)
+    (run : doAppAux (.globOp (.global index)) args state = .val (value, next)) : next.code = state.code := by
+  cases args with
+  | cons a rest => simp [doAppAux, applyNonFfi] at run
+  | nil =>
+    cases global : state.global with
+    | none => simp [doAppAux, applyNonFfi, global] at run
+    | some ptr =>
+      cases found : sptLookup ptr state.refs with
+      | none => simp [doAppAux, applyNonFfi, global, found] at run
+      | some entry =>
+        cases entry <;> simp [doAppAux, applyNonFfi, global, found] at run
+        case valueArray values =>
+          cases item : values[index]? with
+          | none => simp [item] at run
+          | some result =>
+            simp [item] at run
+            obtain ⟨rfl, rfl⟩ := run
+            rfl
+
+theorem evaluate_assign_globalLoad_code {C F : Type} (dest index : Nat) (state : State C F) :
+    (evaluate (.assign dest (.globOp (.global index)) [] none) state).2.code = state.code := by
+  apply evaluate_assign_code_step
+  intro args before after value code run
+  simp only [doApp] at run
+  cases space : doSpace (.globOp (.global index)) args before with
+  | none => simp [space] at run
+  | some accounted =>
+    simp only [space] at run
+    have first := (doSpace_code_const (.globOp (.global index)) args before accounted space).1
+    have second := doAppAux_globalLoad_code index args _ after value run
+    simpa [doStack, doLimSafe, first, code] using second
+
 /-- Every program in the current non-call simulation fragment preserves its
 code table, including all failing executions. This is Lean-side infrastructure,
 not a port of the unrestricted HOL compiler-correctness theorem. -/
@@ -617,6 +652,7 @@ theorem verifiedFragment_code {C F : Type} (program : DataLang.Prog) (fragment :
   | tick => intro state; exact evaluate_tick_code state
   | move dest src => intro state; exact evaluate_move_code dest src state
   | globalsPtr dest => intro state; exact evaluate_assign_globalsPtr_code dest state
+  | globalLoad dest index => intro state; exact evaluate_assign_globalLoad_code dest index state
   | label dest label => intro state; exact evaluate_assign_label_code dest label [] none state
   | emptyCons dest tag bound =>
     intro state

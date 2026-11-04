@@ -58,6 +58,7 @@ theorem heapInMemoryStore_refElement {width : Nat} [NeZero width] (conf : Config
     (heapMem : heapInMemoryStore heap a sp sp1 gens conf store memory domain limit) :
     ∃ addr : BitVec width,
       getRealAddr conf store (getAddr conf index annot) = some addr ∧
+      getRealSimpleAddr conf store (getAddr conf index annot) = some addr ∧
       memory (addr + StackRemove.bytesInWord width + BitVec.ofNat width i * StackRemove.bytesInWord width) =
         wordAddr conf roots[i] ∧
       domain (addr + StackRemove.bytesInWord width + BitVec.ofNat width i * StackRemove.bytesInWord width) = true := by
@@ -72,10 +73,11 @@ theorem heapInMemoryStore_refElement {width : Nat} [NeZero width] (conf : Config
     rw [← split.1]
     exact Or.inl activeMember
   have facts := (SetSep.fun2SetThm memory (fun addr => domain addr = true) _ (wordAddr conf roots[i])).mp graph
-  have addr := (getRealAddr_getAddr conf store heap index (refBlock roots) curr annot
-    ⟨heapBound, found, stored, good⟩).2
-  refine ⟨curr + StackRemove.bytesInWord width * BitVec.ofNat width index, ?_, facts.1, facts.2⟩
-  simpa only [BitVec.mul_comm] using addr
+  have addr := getRealAddr_getAddr conf store heap index (refBlock roots) curr annot
+    ⟨heapBound, found, stored, good⟩
+  refine ⟨curr + StackRemove.bytesInWord width * BitVec.ofNat width index, ?_, ?_, facts.1, facts.2⟩
+  · simpa only [BitVec.mul_comm] using addr.2
+  · simpa only [BitVec.mul_comm] using addr.1
 
 /-- Lean-side invariant helper: values reachable after pushing an array element
 were already in the original invariant, including nested blocks. -/
@@ -193,7 +195,7 @@ theorem memoryRel_refArrayElement {width : Nat} [NeZero width] (conf : Config) (
     (h : memoryRel conf bigEndian next refs space store memory domain ((.refPtr bit ref, location) :: vars) ∧
       goodDimindex width) :
     ∃ w addr : BitVec width,
-      location = .word w ∧ getRealAddr conf store w = some addr ∧
+      location = .word w ∧ getRealAddr conf store w = some addr ∧ getRealSimpleAddr conf store w = some addr ∧
       domain (addr + StackRemove.bytesInWord width + StackRemove.bytesInWord width * BitVec.ofNat width i) = true ∧
       memoryRel conf bigEndian next refs space store memory domain
         ((values[i], memory (addr + StackRemove.bytesInWord width + StackRemove.bytesInWord width * BitVec.ofNat width i)) ::
@@ -207,7 +209,7 @@ theorem memoryRel_refArrayElement {width : Nat} [NeZero width] (conf : Config) (
   cases addresses with
   | cons parentAddr restAddresses =>
     subst parent
-    obtain ⟨addr, addressEq, memoryEq, domainEq⟩ :=
+    obtain ⟨addr, addressEq, simpleEq, memoryEq, domainEq⟩ :=
       heapInMemoryStore_refElement conf heap ptr childRoots i childBound a sp sp1 gens store memory domain limit
         (.word 0) good cell heapMem
     have memChild : memory (addr + StackRemove.bytesInWord width + StackRemove.bytesInWord width * BitVec.ofNat width i) =
@@ -215,7 +217,7 @@ theorem memoryRel_refArrayElement {width : Nat} [NeZero width] (conf : Config) (
       simpa only [childEq, BitVec.mul_comm] using memoryEq
     have inDomain : domain (addr + StackRemove.bytesInWord width + StackRemove.bytesInWord width * BitVec.ofNat width i) = true := by
       simpa only [BitVec.mul_comm] using domainEq
-    refine ⟨getAddr conf ptr (.word 0), addr, ?_, addressEq, inDomain, ?_⟩
+    refine ⟨getAddr conf ptr (.word 0), addr, ?_, addressEq, simpleEq, inDomain, ?_⟩
     · simpa only [wordAddr] using parentAddr.symm
     · refine ⟨heap, limit, a, sp, sp1, gens, heapMem, ?_, limitBound, spaceBound⟩
       refine ⟨child :: .pointer ptr (.word 0) :: rest, extended, ?_⟩

@@ -97,7 +97,7 @@ theorem stateRel64_loadRefArrayElement {C F : Type} (conf : Config) (l1 l2 : Nat
       · exact List.mem_append_left _ (List.mem_append_left _ member)
       · exact tail
     · simpa [roots] using memory
-  obtain ⟨w, addr, encoded, real, domain, extended⟩ :=
+  obtain ⟨w, addr, encoded, real, _, domain, extended⟩ :=
     Memory.memoryRel_refArrayElement conf target.be (holThe source.tstamps) source.refs source.space
       target.store target.memory target.mdomain bit ref values word roots index bound found ⟨focused, Or.inr rfl⟩
   have targetRun : WordSemStateFiniteExact.getVar (adjustVar name) target = some (.word w) := by
