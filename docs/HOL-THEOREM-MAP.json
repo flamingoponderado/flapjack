@@ -110413,6 +110413,30 @@
     "reviewer": "Source comparison: the typed HOL capture retains the complete abstract ML invariant, byte-array lookup and equal byte lengths as its premises. Its existential roots, heap prefix and suffix, and word list retain the root equality, original heap split, word-count formula, and updated abstract invariant with the same configuration, roots, space and generation state. Byte arrays use fixed eight-bit elements, while the heap payload and roots share the positive HOL word dimension."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/HeapStore.lean",
+    "lean_name": "heapStore",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "heap_store_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: typed capture retains independently polymorphic heap carriers, both recursive clauses, boundary replacement, boolean size equality, invalid interior behavior and the recursive offset and result pair."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/HeapStore.lean",
+    "lean_name": "heapStore_atPrefix",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "heap_store_lemma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: typed capture retains the polymorphic prefix, replacement, following cell and suffix, the exact heap-length offset and the boolean equality comparing replacement and original lengths."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/HeapStore.lean",
+    "lean_name": "heapStore_refBlock",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "heap_store_RefBlock_thm",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: typed capture retains equal-length pointer lists, polymorphic heap address and payload types, exact source prefix/suffix and successful replacement result."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ArrayUpdateValue.lean",
     "lean_name": "isRefBlock",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
