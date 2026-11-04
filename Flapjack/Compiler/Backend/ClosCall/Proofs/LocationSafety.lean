@@ -62,6 +62,23 @@ theorem codeLocationsFuns_zip_subset (arities : List Nat) (bodies : List ClosLan
       · exact List.mem_append_left _ head
       · exact List.mem_append_right _ (ih bodies tail)
 
+/-- When the arity and body lists have equal lengths, zipping them preserves
+the complete list of nested locations, including their multiplicities. -/
+theorem codeLocationsFuns_zip_eq (arities : List Nat) (bodies : List ClosLang.Exp)
+    (lengths : arities.length = bodies.length) :
+    codeLocationsFuns (arities.zip bodies) = codeLocations bodies := by
+  induction arities generalizing bodies with
+  | nil =>
+    cases bodies with
+    | nil => rfl
+    | cons body rest => simp at lengths
+  | cons arity rest ih =>
+    cases bodies with
+    | nil => simp at lengths
+    | cons body bodies =>
+      simp only [List.length_cons, Nat.succ.injEq] at lengths
+      simp only [List.zip_cons_cons, codeLocationsFuns, codeLocations, ih bodies lengths]
+
 /-- The source-shaped auxiliary-code builder preserves a bound on nested
 locations when each added body satisfies it. -/
 theorem codeListSource_locationsWithin (P : Nat → Prop) (loc : Nat)
