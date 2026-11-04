@@ -1,3 +1,4 @@
+import Flapjack.FiniteMap.AlistExact
 import Flapjack.Compiler.Backend.ClosCall.Proofs.IncrementalCode
 import Flapjack.Compiler.Backend.ClosCall.Proofs.AuxiliaryAppend
 import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantDirectCall
@@ -20672,5 +20673,124 @@ theorem growingAppSimClockBelowWithOpenClockAndResultWf {C F : Type}
   intro callerClock _ depth before after body converted traversal distinct fresh well locations annotations
   exact callsFuel_withCoveredOpenClockAndResultWf_clock_induction passFuel relationFuel compiler callerClock depth body converted before after
     traversal distinct fresh well locations annotations
+
+/-- Ordering conditions on oracle locations used to recover the open-set
+and freshness components of incremental readiness. These are Flapjack-specific
+projections of the oracle invariant, not a port of `code_inv`. -/
+def OracleLocationsOrdered {C F : Type} (g : State) (allowed : Set Nat)
+    (source : ClosSem.State C F) : Prop :=
+  (∀ earlier later x y, earlier < later → x ∈ codeLocations (source.compileOracle earlier).2.1 →
+    y ∈ codeLocations (source.compileOracle later).2.1 → x < y) ∧
+  (∀ index x y, (sptDomain g.1 x ∨ x ∈ allowed) →
+    y ∈ codeLocations (source.compileOracle index).2.1 → x < y)
+
+/-- Oracle ordering excludes currently open locations from every future
+program. This is Flapjack-specific invariant infrastructure. -/
+theorem oracleLocationsAvoid_of_ordered {C F : Type} (g : State) (allowed : Set Nat)
+    (source : ClosSem.State C F) (ordered : OracleLocationsOrdered g allowed source) :
+    OracleLocationsAvoid allowed source := by
+  intro index loc member openLoc
+  have lt := ordered.2 index loc loc (Or.inr openLoc) member
+  omega
+
+/-- An ordered oracle and a target code domain contained in the compiler's
+emitted labels provide the remaining freshness and disjointness components of
+incremental readiness. This is Flapjack-specific invariant infrastructure. -/
+theorem incrementalInstallReady_of_ordered {C F : Type} (g : State) (allowed : Set Nat)
+    (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (well : wellFormed g) (included : codeIncludes g.2 target.code)
+    (codeDomain : ∀ key value, target.code.lookup key = some value → key ∈ g.2.map Prod.fst)
+    (known : g.1 = (source.compileOracle 0).1.1)
+    (auxEmpty : ∀ index, (source.compileOracle index).2.2 = [])
+    (distinct : ∀ index, (codeLocations (source.compileOracle index).2.1).Nodup)
+    (locations : ∀ index, everyFnLocationSome (source.compileOracle index).2.1)
+    (annotations : ∀ index, everyFnVarsNone (source.compileOracle index).2.1)
+    (ordered : OracleLocationsOrdered g allowed source) :
+    IncrementalInstallReady g source target ∧ OracleLocationsAvoid allowed source := by
+  constructor
+  · refine ⟨well, included, known, auxEmpty, distinct, ?_, ?_, locations, annotations⟩
+    · intro earlier later earlierLt loc laterMember earlierMember
+      have lt := ordered.1 earlier later loc loc earlierLt earlierMember laterMember
+      omega
+    · intro index loc member
+      cases lookup : target.code.lookup (loc + 1) with
+      | none => rfl
+      | some value =>
+        have label : loc + 1 ∈ g.2.map Prod.fst := codeDomain _ _ lookup
+        have knownLabel : loc + 1 ∈ Set.image Nat.succ (sptDomain g.1) := by
+          rw [← well.1]
+          exact label
+        obtain ⟨other, otherKnown, equal⟩ := knownLabel
+        have same : other = loc := by omega
+        subst other
+        have lt := ordered.2 index loc loc (Or.inl otherKnown) member
+        omega
+  · exact oracleLocationsAvoid_of_ordered g allowed source ordered
+
+/-- HOL-shaped association-list map lookup agrees with the logical
+association lookup used by code inclusion. This is Flapjack-specific
+representation infrastructure. -/
+theorem alistToFmap_lookup_logical {K V : Type} (entries : List (K × V)) (key : K) :
+    (HolFiniteMapExact.alistToFmap entries).lookup key = logicalAssocLookup key entries := by
+  classical
+  induction entries with
+  | nil => simp [HolFiniteMapExact.alistToFmap, logicalAssocLookup_nil, HolFiniteMapExact.empty]
+  | cons entry rest ih =>
+    rcases entry with ⟨other, value⟩
+    by_cases equal : key = other
+    · subst key
+      rw [HolFiniteMapExact.lookup_alistToFmap_head, (logicalAssocLookup_cons other other value rest).1 rfl]
+    · rw [HolFiniteMapExact.lookup_alistToFmap_tail _ _ key equal,
+        (logicalAssocLookup_cons key other value rest).2 equal, ih]
+
+/-- A code map built from the emitted association list has no entries outside
+that list's labels. This is Flapjack-specific representation infrastructure. -/
+theorem alistToFmap_codeDomain {K V : Type} (entries : List (K × V)) (key : K) (value : V)
+    (lookup : (HolFiniteMapExact.alistToFmap entries).lookup key = some value) :
+    key ∈ entries.map Prod.fst := by
+  classical
+  induction entries with
+  | nil => simp [HolFiniteMapExact.alistToFmap, HolFiniteMapExact.empty] at lookup
+  | cons entry rest ih =>
+    rcases entry with ⟨other, otherValue⟩
+    by_cases equal : key = other
+    · simp [equal]
+    · have restLookup : (HolFiniteMapExact.alistToFmap rest).lookup key = some value := by
+        rw [HolFiniteMapExact.lookup_alistToFmap_tail (other, otherValue) rest key equal] at lookup
+        exact lookup
+      simp only [List.map_cons, List.mem_cons]
+      exact Or.inr (ih restLookup)
+
+/-- The exact association-list map satisfies code inclusion and the code
+bound needed by the ordered-oracle readiness construction. This is
+Flapjack-specific representation infrastructure. -/
+theorem alistToFmap_codeIncludes_and_domain {K V : Type} (entries : List (K × V)) :
+    codeIncludes entries (HolFiniteMapExact.alistToFmap entries) ∧
+    (∀ key value, (HolFiniteMapExact.alistToFmap entries).lookup key = some value → key ∈ entries.map Prod.fst) := by
+  constructor
+  · intro key value lookup
+    rw [alistToFmap_lookup_logical]
+    exact lookup
+  · exact alistToFmap_codeDomain entries
+
+/-- When target code is exactly the association-list map, the ordered oracle
+and source syntax conditions establish incremental readiness and open-location
+avoidance. This is Flapjack-specific infrastructure; it does not assert the
+remaining clauses of HOL's `code_inv`. -/
+theorem incrementalInstallReady_of_ordered_alistCode {C F : Type} (g : State) (allowed : Set Nat)
+    (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (well : wellFormed g) (code : target.code = HolFiniteMapExact.alistToFmap g.2)
+    (known : g.1 = (source.compileOracle 0).1.1)
+    (auxEmpty : ∀ index, (source.compileOracle index).2.2 = [])
+    (distinct : ∀ index, (codeLocations (source.compileOracle index).2.1).Nodup)
+    (locations : ∀ index, everyFnLocationSome (source.compileOracle index).2.1)
+    (annotations : ∀ index, everyFnVarsNone (source.compileOracle index).2.1)
+    (ordered : OracleLocationsOrdered g allowed source) :
+    IncrementalInstallReady g source target ∧ OracleLocationsAvoid allowed source := by
+  apply incrementalInstallReady_of_ordered g allowed source target well ?_ ?_ known auxEmpty distinct locations annotations ordered
+  · rw [code]
+    exact (alistToFmap_codeIncludes_and_domain g.2).1
+  · rw [code]
+    exact (alistToFmap_codeIncludes_and_domain g.2).2
 
 end Flapjack.Compiler.Backend.ClosCall
