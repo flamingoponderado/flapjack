@@ -20,6 +20,33 @@ theorem memoryRel_rearrange {width : Nat} [NeZero width] (conf : Config) (bigEnd
     wordMlInv_rearrange heap bigEndian a sp sp1 gens limit next conf refs xs ys subset hword,
     hbound, hspace⟩
 
+open Classical in
+/-- Updating both functions at one key preserves the relation for their
+mapped key list when the replacement pair is already a related root. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "memory_rel_IMP_MAP_UPDATE"
+  (fmap_as_finite_support_relation := [store]) (words_as_type_indexed_bitvec)]
+theorem memoryRel_mapUpdate {width : Nat} [NeZero width] {α : Type} (conf : Config) (bigEndian : Bool)
+    (next : Nat) (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value))
+    (space : Nat) (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (memory : BitVec width → WordLocW width) (domain : BitVec width → Bool)
+    (value : Flapjack.Compiler.Backend.DataSem.Value) (word : WordLocW width)
+    (source : α → Flapjack.Compiler.Backend.DataSem.Value) (target : α → WordLocW width)
+    (index : α) (keys : List α) (vars : List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width)) :
+    memoryRel conf bigEndian next refs space store memory domain
+      ((value, word) :: keys.map (fun key => (source key, target key)) ++ vars) →
+    memoryRel conf bigEndian next refs space store memory domain
+      (keys.map (fun key => (Function.update source index value key, Function.update target index word key)) ++ vars) := by
+  apply memoryRel_rearrange conf bigEndian next refs space store memory domain
+  intro pair member
+  simp only [List.mem_append, List.mem_map, List.mem_cons] at member ⊢
+  rcases member with ⟨key, inKeys, rfl⟩ | inVars
+  · by_cases same : key = index
+    · subst key
+      simp
+    · simp [Function.update, same]
+      exact Or.inl (Or.inr ⟨key, inKeys, rfl, rfl⟩)
+  · exact Or.inr inVars
+
 /-- Removing the first paired value preserves the memory relation. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "memory_rel_tl"
   (fmap_as_finite_support_relation := [store]) (words_as_type_indexed_bitvec)]

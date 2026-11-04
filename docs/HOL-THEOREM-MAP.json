@@ -109545,6 +109545,16 @@
     "reviewer": "Source comparison: memory_rel_Sub and its typed data_to_word_memory_repr capture retain the two Number/Word operands, both clear-bit premises, good_dimindex, and the w2i no-overflow equation for subtraction. The conclusion prepends the source integer result and corresponding word result to the original suffix. BitVec.toInt represents signed w2i and getLsbD 0 = false represents the negated word_bit premise. store uses the canonical finite-support map and all word occurrences share the positive HOL width."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Rearrange.lean",
+    "lean_name": "memoryRel_mapUpdate",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_IMP_MAP_UPDATE",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["store"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared memory_rel_IMP_MAP_UPDATE_typed: the source and target retain an arbitrary independent key type, paired source-value and word-location functions, arbitrary key list and suffix, and the single existing replacement root as the sole premise. Both update each function at the same key using classical equality, map the paired results over the same keys, and conclude the unchanged full memory relation. The store uses the canonical finite-support carrier and memory and word locations share the positive HOL word dimension."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ByteBitwise.lean",
     "lean_name": "memoryRel_byteAnd",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
