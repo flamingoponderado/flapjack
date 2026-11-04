@@ -51,11 +51,23 @@ def fragmentCompile64 (conf : Config) (secn label : Nat) : DataLang.Prog → Opt
           .ite .equal 1 (.imm (BitVec.ofNat 64 len))
             (.assign (adjustVar dest) (.const 18)) (.assign (adjustVar dest) (.const 2))], label)
       else some (.assign (adjustVar dest) (.const 2), label)
-  | .assign dest (.blockOp (.tagLenEq tag 0)) [src] none =>
-      if tag < 2 ^ 64 / 16 then
-        some (.ite .equal (adjustVar src) (.imm (BitVec.ofNat 64 (16 * tag + 2)))
-          (.assign (adjustVar dest) (.const 18)) (.assign (adjustVar dest) (.const 2)), label)
-      else some (.assign (adjustVar dest) (.const 2), label)
+  | .assign dest (.blockOp (.tagLenEq tag len)) [src] none =>
+      if len = 0 then
+        if tag < 2 ^ 64 / 16 then
+          some (.ite .equal (adjustVar src) (.imm (BitVec.ofNat 64 (16 * tag + 2)))
+            (.assign (adjustVar dest) (.const 18)) (.assign (adjustVar dest) (.const 2)), label)
+        else some (.assign (adjustVar dest) (.const 2), label)
+      else if tag < 2 ^ conf.tagBits - 1 ∧ len < 2 ^ conf.lenBits - 1 then
+        some (.seq (.assign 1 (.op .and [.var (adjustVar src), .const (BitVec.ofNat 64 (2 ^ (conf.lenBits + conf.tagBits + 1) - 1))]))
+          (.ite .equal 1 (.imm (ptrBits conf tag len ||| 1))
+            (.assign (adjustVar dest) (.const 18)) (.assign (adjustVar dest) (.const 2))), label)
+      else match encodeHeader (width := 64) conf (4 * tag) len with
+        | none => some (.assign (adjustVar dest) (.const 2), label)
+        | some header => some (wordListSeq [
+            .assign 1 (.const 0),
+            .ite .test (adjustVar src) (.imm 1) .skip (.assign 1 (.load (realAddr conf (adjustVar src)))),
+            .ite .equal 1 (.imm header) (.assign (adjustVar dest) (.const 18))
+              (.assign (adjustVar dest) (.const 2))], label)
   | .assign dest (.blockOp (.tagEq tag)) [src] none =>
       if tag < 2 ^ 64 / 16 then
         some (wordListSeq [
@@ -102,13 +114,23 @@ theorem fragmentCompile64_agrees (conf : Config) (secn : Nat) (program : DataLan
           rfl
         · have fits' : ¬ wanted < 18446744073709551616 := by simpa using fits
           simp [fragmentCompile64, zero, fast, fits', compileControl64, compileControl?]
-  | blockTagEmpty dest src tag =>
+  | blockTagLen dest src tag wanted =>
     intro label
-    by_cases bound : tag < 2 ^ 64 / 16
-    · simp only [fragmentCompile64, bound, ↓reduceIte, compileControl64, compileControl?, Option.getD_some]
-      rfl
-    · have bound' : ¬ tag < 1152921504606846976 := by simpa using bound
-      simp [fragmentCompile64, bound', compileControl64, compileControl?]
+    by_cases zero : wanted = 0
+    · by_cases bound : tag < 2 ^ 64 / 16
+      · simp only [fragmentCompile64, zero, bound, ↓reduceIte, compileControl64, compileControl?, Option.getD_some]
+        rfl
+      · have bound' : ¬ tag < 1152921504606846976 := by simpa using bound
+        simp [fragmentCompile64, zero, bound', compileControl64, compileControl?]
+    · by_cases fast : tag < 2 ^ conf.tagBits - 1 ∧ wanted < 2 ^ conf.lenBits - 1
+      · simp only [fragmentCompile64, zero, fast.1, fast.2, and_self, ↓reduceIte, compileControl64, compileControl?, Option.getD_some]
+        rw [fastTagLengthQuery64 conf tag wanted fast.1 fast.2]
+        rfl
+      · cases query : (encodeHeader conf (4 * tag) wanted : Option (BitVec 64)) with
+        | none => simp [fragmentCompile64, zero, fast, query, compileControl64, compileControl?]
+        | some header =>
+          simp only [fragmentCompile64, zero, fast, ↓reduceIte, query, compileControl64, compileControl?, Option.getD_some]
+          rfl
   | blockTag dest src tag =>
     intro label
     by_cases bound : tag < 2 ^ 64 / 16

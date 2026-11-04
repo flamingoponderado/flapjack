@@ -32,6 +32,18 @@ example : fragmentCompile64 conf 5 2 (.assign 3 (.blockOp (.tagLenEq 17 0)) [1] 
 example : fragmentCompile64 conf 5 2 (.assign 3 (.blockOp (.tagLenEq 1152921504606846976 0)) [1] none) =
     some (.assign 8 (.const 2), 2) := by rfl
 
+example : fragmentCompile64 conf 5 2 (.assign 3 (.blockOp (.tagLenEq 0 1)) [1] none) =
+    some (.seq (.assign 1 (.op .and [.var 4, .const 15]))
+      (.ite .equal 1 (.imm 3) (.assign 8 (.const 18)) (.assign 8 (.const 2))), 2) := by rfl
+
+example : fragmentCompile64 conf 5 2 (.assign 3 (.blockOp (.tagLenEq 1 3)) [1] none) =
+    some (.seq (.assign 1 (.const 0))
+      (.seq (.ite .test 4 (.imm 1) .skip (.assign 1 (.load (realAddr conf 4))))
+        (.ite .equal 1 (.imm 0x3000000000013) (.assign 8 (.const 18)) (.assign 8 (.const 2)))), 2) := by rfl
+
+example : fragmentCompile64 conf 5 2 (.assign 3 (.blockOp (.tagLenEq 1 65536)) [1] none) =
+    some (.assign 8 (.const 2), 2) := by rfl
+
 example : fragmentCompile64 conf 5 2 (.assign 3 (.blockOp (.cons 17)) [] none) =
     some (.assign 8 (.const 274), 2) := by rfl
 

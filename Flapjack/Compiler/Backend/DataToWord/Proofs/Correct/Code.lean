@@ -286,10 +286,10 @@ theorem verifiedFragment_code {C F : Type} (program : DataLang.Prog) (fragment :
   | emptyCons dest tag bound =>
     intro state
     exact evaluate_assign_block_code_of_aux dest (.cons tag) [] none state (doAppAux_cons_code tag)
-  | blockTagEmpty dest src tag =>
+  | blockTagLen dest src tag wanted =>
     intro state
-    exact evaluate_assign_block_code_of_aux dest (.tagLenEq tag 0) [src] none state
-      (doAppAux_blockCompare_code (.tagLenEq tag 0) (Or.inr (Or.inr (Or.inl ⟨tag, 0, rfl⟩))))
+    exact evaluate_assign_block_code_of_aux dest (.tagLenEq tag wanted) [src] none state
+      (doAppAux_blockCompare_code (.tagLenEq tag wanted) (Or.inr (Or.inr (Or.inl ⟨tag, wanted, rfl⟩))))
   | blockTag dest src tag =>
     intro state
     exact evaluate_assign_block_code_of_aux dest (.tagEq tag) [src] none state

@@ -1,9 +1,71 @@
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.BlockLengthEq
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.BlockTagEmpty
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.BlockTagLength
 
 /-! Constructor tag-and-length tests in the 64-bit simulation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Correct
 open Flapjack Gc
+
+/-- The packed-pointer branch simulates a positive combined query whose
+tag and length fit below their saturation limits. -/
+theorem assignTagLenFast64 {C F : Type} (conf : Config) (secn label l1 l2 : Nat)
+    (source : DataSem.State C F) (target : WordSemStateFiniteExact 64 C F)
+    (locs : List (Nat × Nat)) (related : stateRel64 conf l1 l2 source target none locs)
+    (dest src stamp found tag wanted : Nat) (values : List DataSem.Value)
+    (sourceRun : DataSem.getVar src source.locals = some (.block stamp found values))
+    (positive : 0 < wanted) (tagBound : tag < 2 ^ conf.tagBits - 1)
+    (lenBound : wanted < 2 ^ conf.lenBits - 1) :
+    continues64 conf secn label l1 l2 (.assign dest (.blockOp (.tagLenEq tag wanted)) [src] none) source target locs := by
+  let op := ClosLang.Op.blockOp (.tagLenEq tag wanted)
+  let middle := DataSem.doStack op [.block stamp found values] (DataSem.doLimSafe source op [.block stamp found values])
+  have middleRel : stateRel64 conf l1 l2 middle target none locs :=
+    stateRel64_afterDoStack conf l1 l2 source target locs related op [.block stamp found values]
+  obtain ⟨w, targetRun, comparison⟩ := stateRel64_getBlockFastTagLength conf l1 l2 source target locs related
+    src stamp found tag wanted values sourceRun positive tagBound lenBound
+  let masked : BitVec 64 := w &&& BitVec.ofNat 64 (2 ^ (conf.lenBits + conf.tagBits + 1) - 1)
+  let result := decide (found = tag ∧ values.length = wanted)
+  have cmp : Compiler.Encoders.Asm.wordCmpHOL .equal masked (ptrBits conf tag wanted ||| 1) = result := by
+    apply Bool.eq_iff_iff.mpr
+    simp only [Compiler.Encoders.Asm.wordCmpHOL, beq_iff_eq, result, decide_eq_true_eq]
+    exact comparison
+  let target1 := WordSemStateFiniteExact.setVar 1 (.word masked) target
+  have targetRel : stateRel64 conf l1 l2 middle target1 none locs :=
+    stateRel64_setScratch1 conf l1 l2 middle target locs middleRel (.word masked)
+  refine ⟨DataSem.setVar dest (DataSem.boolValue result) middle,
+    WordSemStateFiniteExact.setVar (adjustVar dest) (.word (if result then 18 else 2)) target1, ?_, ?_, ?_⟩
+  · simp [DataSem.evaluate, DataLang.opRequiresNames, DataLang.opSpaceReset, DataSem.getVars, sourceRun,
+      DataSem.cutStateOpt, DataSem.doApp, DataSem.doSpace, DataSpace.opSpaceReq, DataSem.doAppAux,
+      DataSem.applyNonFfi, DataSem.installSfs, op, middle, result]
+  · have first : WordSemStateFiniteExact.evaluate
+        (.assign 1 (.op .and [.var (adjustVar src), .const (BitVec.ofNat 64 (2 ^ (conf.lenBits + conf.tagBits + 1) - 1))])) target =
+        (none, target1) := by
+      simp [WordSemStateFiniteExact.evaluate, WordSemStateFiniteExact.wordExp, targetRun,
+        wordOpHOL, wordOp, theWords, target1, masked]
+      congr 2
+      change (w &&& (BitVec.ofNat 64 (2 ^ (conf.lenBits + conf.tagBits + 1) - 1) &&& (18446744073709551615 : BitVec 64))) =
+        (w &&& BitVec.ofNat 64 (2 ^ (conf.lenBits + conf.tagBits + 1) - 1))
+      bv_decide
+    have second : WordSemStateFiniteExact.evaluate
+        (.ite .equal 1 (.imm (ptrBits conf tag wanted ||| 1))
+          (.assign (adjustVar dest) (.const 18)) (.assign (adjustVar dest) (.const 2))) target1 =
+        (none, WordSemStateFiniteExact.setVar (adjustVar dest) (.word (if result then 18 else 2)) target1) := by
+      simp [WordSemStateFiniteExact.evaluate, WordSemStateFiniteExact.getVarImm, wordSemWordCmp,
+        WordSemStateFiniteExact.wordExp, target1, WordSemStateFiniteExact.getVar,
+        WordSemStateFiniteExact.setVar, sptLookup_sptInsert_same]
+      change Compiler.Encoders.Asm.wordCmpHOL .equal masked (ptrBits conf tag wanted ||| BitVec.ofNat 64 1) = result at cmp
+      rw [cmp]
+      cases result <;> rfl
+    have fix : WordSemStateFiniteExact.fixClock target ((none : Option (WordSemResult 64)), target1) = (none, target1) := by
+      simp [WordSemStateFiniteExact.fixClock, target1, WordSemStateFiniteExact.setVar]
+    have notZero : wanted ≠ 0 := by omega
+    simp only [compileControl64, compileControl?, notZero, ↓reduceIte, tagBound, lenBound]
+    rw [fastTagLengthQuery64 conf tag wanted tagBound lenBound]
+    change WordSemStateFiniteExact.evaluate
+      (.seq (.assign 1 (.op .and [.var (adjustVar src), .const (BitVec.ofNat 64 (2 ^ (conf.lenBits + conf.tagBits + 1) - 1))]))
+        (.ite .equal 1 (.imm (ptrBits conf tag wanted ||| 1))
+          (.assign (adjustVar dest) (.const 18)) (.assign (adjustVar dest) (.const 2)))) target = _
+    simp only [WordSemStateFiniteExact.evaluate, first, fix, second]
+  · exact stateRel64_setBool conf l1 l2 middle target1 locs targetRel dest result
 
 /-- An unencodable positive tag-and-length query cannot match a related
 constructor; the compiler's constant-false fallback is correct. -/
@@ -136,5 +198,48 @@ theorem assignTagLenHeader64 {C F : Type} (conf : Config) (secn label l1 l2 : Na
         (.ite .equal 1 (.imm queryHeader) (.assign (adjustVar dest) (.const 18)) (.assign (adjustVar dest) (.const 2))))) target = _
     simp only [WordSemStateFiniteExact.evaluate, first, firstFix, secondRun, secondFix, third]
   · exact stateRel64_setBool conf l1 l2 middle target2 locs targetRel2 dest result
+
+/-- All lowering branches simulate a combined constructor query. -/
+theorem assignTagLen64 {C F : Type} (conf : Config) (secn label l1 l2 : Nat)
+    (source : DataSem.State C F) (target : WordSemStateFiniteExact 64 C F)
+    (locs : List (Nat × Nat)) (related : stateRel64 conf l1 l2 source target none locs)
+    (dest src stamp found tag wanted : Nat) (values : List DataSem.Value)
+    (sourceRun : DataSem.getVar src source.locals = some (.block stamp found values)) :
+    continues64 conf secn label l1 l2 (.assign dest (.blockOp (.tagLenEq tag wanted)) [src] none) source target locs := by
+  by_cases zero : wanted = 0
+  · subst wanted
+    exact assignBlockTagEmpty64 conf secn label l1 l2 source target locs related dest src stamp found tag values sourceRun
+  · have positive : 0 < wanted := by omega
+    by_cases fast : tag < 2 ^ conf.tagBits - 1 ∧ wanted < 2 ^ conf.lenBits - 1
+    · exact assignTagLenFast64 conf secn label l1 l2 source target locs related dest src stamp found tag wanted values sourceRun positive fast.1 fast.2
+    · cases query : (encodeHeader conf (4 * tag) wanted : Option (BitVec 64)) with
+      | none => exact assignTagLenUnencodable64 conf secn label l1 l2 source target locs related dest src stamp found tag wanted values sourceRun positive fast query
+      | some header => exact assignTagLenHeader64 conf secn label l1 l2 source target locs related dest src stamp found tag wanted values header sourceRun positive fast query
+
+/-- Source safety guarantees that the combined query receives a block. -/
+theorem assignTagLen64_of_safe {C F : Type} (conf : Config) (secn label l1 l2 : Nat)
+    (source : DataSem.State C F) (target : WordSemStateFiniteExact 64 C F)
+    (locs : List (Nat × Nat)) (related : stateRel64 conf l1 l2 source target none locs)
+    (dest src tag wanted : Nat)
+    (safe : (DataSem.evaluate (.assign dest (.blockOp (.tagLenEq tag wanted)) [src] none) source).1 ≠
+      some (.err (.abort .typeError))) :
+    continues64 conf secn label l1 l2 (.assign dest (.blockOp (.tagLenEq tag wanted)) [src] none) source target locs := by
+  cases sourceRun : DataSem.getVar src source.locals with
+  | none => simp [DataSem.evaluate, DataLang.opRequiresNames, DataLang.opSpaceReset, DataSem.getVars, sourceRun] at safe
+  | some value =>
+    cases value with
+    | block stamp found values => exact assignTagLen64 conf secn label l1 l2 source target locs related dest src stamp found tag wanted values sourceRun
+    | number i =>
+      simp [DataSem.evaluate, DataLang.opRequiresNames, DataLang.opSpaceReset, DataSem.getVars, sourceRun,
+        DataSem.cutStateOpt, DataSem.doApp, DataSem.doSpace, DataSpace.opSpaceReq, DataSem.doAppAux, DataSem.applyNonFfi] at safe
+    | word64 w =>
+      simp [DataSem.evaluate, DataLang.opRequiresNames, DataLang.opSpaceReset, DataSem.getVars, sourceRun,
+        DataSem.cutStateOpt, DataSem.doApp, DataSem.doSpace, DataSpace.opSpaceReq, DataSem.doAppAux, DataSem.applyNonFfi] at safe
+    | codePtr loc =>
+      simp [DataSem.evaluate, DataLang.opRequiresNames, DataLang.opSpaceReset, DataSem.getVars, sourceRun,
+        DataSem.cutStateOpt, DataSem.doApp, DataSem.doSpace, DataSpace.opSpaceReq, DataSem.doAppAux, DataSem.applyNonFfi] at safe
+    | refPtr flag loc =>
+      simp [DataSem.evaluate, DataLang.opRequiresNames, DataLang.opSpaceReset, DataSem.getVars, sourceRun,
+        DataSem.cutStateOpt, DataSem.doApp, DataSem.doSpace, DataSpace.opSpaceReq, DataSem.doAppAux, DataSem.applyNonFfi] at safe
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Correct
