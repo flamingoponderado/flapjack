@@ -1,5 +1,9 @@
-import Flapjack.HolRef
-import Lean.Elab.Tactic.Omega
+module
+
+public import Flapjack.HolRef
+public import Lean.Elab.Tactic.Omega
+
+@[expose] public section
 
 /-! Counterpart of the pinned HOL state-transformer iteration definition. -/
 namespace Flapjack

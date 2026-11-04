@@ -1,5 +1,9 @@
-import Flapjack.Pancake.CrepLang.Exp
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
+module
+
+public import Flapjack.Pancake.CrepLang.Exp
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+
+@[expose] public section
 
 /-!
 # crepProps `eval_some_var_cexp_local_lookup` over the exact carriers

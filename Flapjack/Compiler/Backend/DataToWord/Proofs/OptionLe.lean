@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BackendProps
+module
+
+public import Flapjack.Compiler.Backend.BackendProps
+
+@[expose] public section
 
 /-!
 # `data_to_wordProof`: `option_le_SOME`
