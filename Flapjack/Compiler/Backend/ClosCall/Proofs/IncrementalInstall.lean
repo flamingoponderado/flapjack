@@ -15905,8 +15905,10 @@ theorem callsFuel_app_withCoveredOpenClock_from_induction {C F : Type}
 
 /-- Structural traversal simulation for annotated source expressions.
 Smaller-clock closure bodies, installed programs, and source evaluation
-well-formedness remain explicit hypotheses. This is Flapjack-specific
-simulation infrastructure, not a port of the HOL correctness theorem. -/
+well-formedness remain explicit hypotheses. The unrestricted evaluation
+well-formedness hypothesis is too strong for unnumbered closures; the
+counterexample below records this gap. This is Flapjack-specific simulation
+infrastructure, not a port of the HOL correctness theorem. -/
 theorem callsFuel_withCoveredOpenClock_structural {C F : Type}
     (passFuel relationFuel limit : Nat) (compiler : ClosSem.Compiler C)
     (bodyIH : ∀ callerClock, callerClock < limit → ∀ depth (before after : State) (body converted : ClosLang.Exp),
@@ -16308,9 +16310,37 @@ theorem compileIncFuel_installedBelow_withCoveredOpenClock_from_cases {C F : Typ
   exact compileIncFuel_growing_below_withCoveredOpenClock passFuel relationFuel limit compiler g program nextKnown converted
     run distinct fresh initialWf eligible eligibleIH exprIH
 
+/-- The unrestricted source-evaluation premise used by the conditional
+clock induction is not satisfiable when a well-formed state with an empty
+oracle exists: evaluating an unnumbered function produces an unnumbered
+closure, which `ValueWellFormedFuel` excludes. The missing result must instead
+restrict expressions and account for their compilation and coverage. This is
+Flapjack-specific diagnostic infrastructure. -/
+theorem unrestricted_evaluation_wellFormed_impossible {C F : Type} (relationFuel : Nat)
+    (g : State) (allowed : Set Nat) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+    (state : ClosSem.State (NumSet × C) F) (name : Basis.Pure.MlString.MlString)
+    (stateWf : StateWellFormedFuel relationFuel g allowed code state)
+    (oracle : OracleAuxEmpty state.compileOracle) :
+    ¬ (∀ (allowed : Set Nat) (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+      (expressions : List ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State (NumSet × C) F),
+      ValuesWellFormedFuel relationFuel g allowed code env → StateWellFormedFuel relationFuel g allowed code state →
+      OracleAuxEmpty state.compileOracle → EvalWellFormedFuel relationFuel g allowed code (evaluate expressions env state)) := by
+  intro all
+  let source : ClosSem.State (NumSet × C) F := { state with maxApp := 1 }
+  have sourceWf : StateWellFormedFuel relationFuel g allowed code source := by
+    simpa [source, StateWellFormedFuel] using stateWf
+  have sourceOracle : OracleAuxEmpty source.compileOracle := by simpa [source] using oracle
+  have impossible := all allowed g code [.fn name none none 1 (.var .none 0)] [] source .nil sourceWf sourceOracle
+  have valuesWf : ValuesWellFormedFuel relationFuel g allowed code [.closure none [] [] 1 (.var .none 0)] := by
+    simpa [evaluate, source, EvalWellFormedFuel, ResultWellFormedFuel] using impossible.1
+  cases valuesWf with
+  | cons head _ => cases head
+
 /-- Clock induction discharges both recursive closure-body and incremental
 installation simulations using the actual source syntax and compiler-state
 invariants. Source evaluation well-formedness remains an explicit premise.
+That unrestricted premise is uninhabitable in ordinary well-formed states, as shown above; this conditional
+result is a staging step toward a restricted, source-driven induction.
 This is Flapjack-specific infrastructure, not a HOL correctness theorem. -/
 theorem callsFuel_withCoveredOpenClock_clock_induction {C F : Type}
     (passFuel relationFuel : Nat) (compiler : ClosSem.Compiler C)
