@@ -18,8 +18,4 @@ example : Compiler.Backend.WordToStack.Native.wMoveNative (width := 64)
       .seq (.stackLoad 23 0)
         (.seq (.seq (.stackLoad 22 0) (.stackStore 22 0)) (.stackStore 23 0)) := by cbv
 
-def runChecks : IO Bool := do
-  IO.println "PASS actual option scheduler and native temporary/frame fixtures match original HOL rows"
-  pure true
-
 end Flapjack.Test.ProductionScheduler

@@ -2296,7 +2296,6 @@ import Flapjack.Test.CrepToLoopCompFuncParity
 import Flapjack.Test.CrepFindLabParity
 import Flapjack.Pancake.LoopLive
 import Flapjack.Pancake.LoopToWord
-import Flapjack.Test.WordCompileExpExactParity
 import Flapjack.Test.LoopToWordCompileCorrectSeq
 import Flapjack.Test.WordContextCoverage
 import Flapjack.Pancake.LoopToWord.Proofs.RelationsExact

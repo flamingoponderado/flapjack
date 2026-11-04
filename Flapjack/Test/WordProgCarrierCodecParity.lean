@@ -66,9 +66,4 @@ private def imageNestedHandler : HolLoopProg 8 :=
 private def imageFfi : HolLoopProg 8 :=
   .ffi (ofString "write") 1 2 3 4 (toNumSetHOL [2, 3])
 
-def runChecks : IO Bool := do
-  IO.println "PASS fixed-width WordLangProg projection (loop/call/FFI; AddCarry/memory; unsupported FP/overflow rejected)"
-  IO.println "PASS exact compHOL output image (AddCarry; memory; nested Seq/Loop/Call-handler; FFI)"
-  return true
-
 end Flapjack.Test.WordProgCarrierCodecParity
