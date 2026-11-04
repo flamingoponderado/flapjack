@@ -1,5 +1,5 @@
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.JumpExcBounds
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.LocalUpdates
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.NewLocal
 
 /-! Locals restored from a related exception frame. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
@@ -61,7 +61,12 @@ theorem stateRel64_jumpExc {C F : Type} (conf : Config) (l1 l2 : Nat)
     ∃ targetNext label1 label2 return1 return2 remainingLocs,
       WordSemStateFiniteExact.jumpExc target = some (targetNext, label1, label2) ∧
       locs.drop (target.stack.length - (target.handler + 1)) = (return1, return2) :: remainingLocs ∧
-      stateRel64 conf return1 return2 next targetNext none remainingLocs := by
+      stateRel64 conf return1 return2 next targetNext none remainingLocs ∧
+      ∀ pair ∈ joinEnv source.locals (sptToAList (sptInter target.locals (adjustSet source.locals))),
+        Memory.memoryRel conf targetNext.be (holThe next.tstamps) next.refs next.space
+          targetNext.store targetNext.memory targetNext.mdomain
+          (pair :: (joinEnv next.locals (sptToAList (sptInter targetNext.locals (adjustSet next.locals))) ++
+            [(theGlobal next.global, holFapply targetNext.store .globals)] ++ flatStack next.stack targetNext.stack)) := by
   have oldBound := related.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
   rcases related with ⟨ffi, clock, handlerEq, gcFun, code, oracle, dimension, shift, timestamps,
     globals, zero, locals, stackPairs, locationPairs, stackBound, maxBound, stackSize, localSize, limits, memory⟩
@@ -114,6 +119,25 @@ theorem stateRel64_jumpExc {C F : Type} (conf : Config) (l1 l2 : Nat)
                     rw [dropped, ← sameDrop, targetDropped] at sub
                     simpa [flatStack] using sub
                   have bound := jumpExc_stackMaxBound target targetNext label1 label2 targetJump oldBound
+                  have carry : ∀ pair ∈ joinEnv source.locals (sptToAList (sptInter target.locals (adjustSet source.locals))),
+                      Memory.memoryRel conf targetNext.be (holThe source.tstamps) source.refs source.space
+                        targetNext.store targetNext.memory targetNext.mdomain
+                        (pair :: (joinEnv env (sptToAList (sptInter targetNext.locals (adjustSet env))) ++
+                          [(theGlobal source.global, holFapply targetNext.store .globals)] ++ flatStack rest rest')) := by
+                    intro pair pairMember
+                    apply Memory.memoryRel_rearrange conf target.be (holThe source.tstamps) source.refs source.space
+                      target.store target.memory target.mdomain _ _ ?_ memory
+                    intro root member
+                    change root ∈ pair :: (joinEnv env (sptToAList (sptInter (sptUnion (sptFromAList gc) (sptFromAList nonGc)) (adjustSet env))) ++
+                      [(theGlobal source.global, holFapply target.store .globals)] ++ flatStack rest rest') at member
+                    simp only [Option.getD_none, List.nil_append, List.mem_cons, List.mem_append] at member ⊢
+                    rcases member with same | (localRoot | globalRoot) | stackRoot
+                    · subst root
+                      exact Or.inl (Or.inl pairMember)
+                    · exact Or.inr (rootSubset (List.mem_append_left _ (stackEnvRel_restored_roots size size' env nonGc gc headRel.1 localRoot)))
+                    · exact Or.inl (Or.inr globalRoot)
+                    · exact Or.inr (rootSubset (List.mem_append_right _ stackRoot))
+                  refine ⟨?_, carry⟩
                   refine ⟨ffi, clock, ?_, gcFun, code, oracle, dimension, shift, timestamps, globals, ?_, ?_, restRel,
                     locRest, bound, maxBound, stackSize, ?_, limits, ?_⟩
                   · exact headRel.2
@@ -132,5 +156,36 @@ theorem stateRel64_jumpExc {C F : Type} (conf : Config) (l1 l2 : Nat)
                     · exact Or.inr (rootSubset (List.mem_append_left _ (stackEnvRel_restored_roots size size' env nonGc gc headRel.1 localRoot)))
                     · exact Or.inl (Or.inr globalRoot)
                     · exact Or.inr (rootSubset (List.mem_append_right _ stackRoot))
+
+/-- A related raised value can be installed in any corresponding restored
+local after the handler jump. This is a candidate-relation result; the full
+HOL theorem also requires the faithful unrestricted compiler relations. -/
+theorem stateRel64_jumpExc_setVar {C F : Type} (conf : Config) (l1 l2 : Nat)
+    (source next : DataSem.State C F) (target : WordSemStateFiniteExact 64 C F)
+    (locs : List (Nat × Nat)) (related : stateRel64 conf l1 l2 source target none locs)
+    (n : Nat) (value : DataSem.Value) (word : WordLocW 64)
+    (sourceLookup : DataSem.getVar n source.locals = some value)
+    (targetLookup : WordSemStateFiniteExact.getVar (adjustVar n) target = some word)
+    (jump : DataSem.jumpExc source = some next) :
+    ∃ targetNext label1 label2 return1 return2 remainingLocs,
+      WordSemStateFiniteExact.jumpExc target = some (targetNext, label1, label2) ∧
+      wordSemLastN (next.stack.length + 1) locs = (return1, return2) :: remainingLocs ∧
+      ∀ dest, stateRel64 conf return1 return2 (DataSem.setVar dest value next)
+        (WordSemStateFiniteExact.setVar (adjustVar dest) word targetNext) none remainingLocs := by
+  obtain ⟨targetNext, a, b, r1, r2, remaining, targetJump, locations, after, carry⟩ :=
+    stateRel64_jumpExc conf l1 l2 source next target locs related jump
+  have root := localPair_mem_joinEnv source.locals target.locals n value word sourceLookup targetLookup
+  have sourceTargetLength := after.2.2.2.2.2.2.2.2.2.2.2.2.1.length_eq
+  have targetLocsLength := after.2.2.2.2.2.2.2.2.2.2.2.2.2.1.length_eq
+  have originalLength := related.2.2.2.2.2.2.2.2.2.2.2.2.2.1.length_eq
+  have dropLength := congrArg List.length locations
+  simp only [List.length_drop, List.length_cons] at dropLength
+  have dropEq : locs.length - (next.stack.length + 1) =
+      target.stack.length - (target.handler + 1) := by omega
+  have lastLocations : wordSemLastN (next.stack.length + 1) locs = (r1, r2) :: remaining := by
+    rw [wordSemLastN_eq_drop, dropEq, locations]
+  refine ⟨targetNext, a, b, r1, r2, remaining, targetJump, lastLocations, ?_⟩
+  intro dest
+  exact stateRel64_setNewLocal conf r1 r2 next targetNext remaining after dest value word (carry (value, word) root)
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
