@@ -26332,4 +26332,85 @@ theorem evaluateApp_preserves_IncrementalCodeInv_from_inv {C F : Type}
     args targetArgs source final target result (by omega) run notType functions arguments functionWf argsWf sourceWf states ready
     disjoint avoids sourceCompiler targetCompiler inv.2.2.1 inv
 
+
+/-- Incremental program compilation preserves the fuel-indexed code
+invariant for its actual bounded output. This is Flapjack-specific
+infrastructure, not a HOL theorem port. -/
+theorem compileIncFuel_preserves_IncrementalCodeInv {C F : Type}
+    (passFuel relationFuel : Nat) (compiler : ClosSem.Compiler C)
+    (program converted : ClosSem.Program) (nextKnown : NumSet) (initial g : State)
+    (passRun : compileIncFuel? passFuel initial.1 program = some (nextKnown, converted))
+    (distinct : (codeLocations program.1).Nodup)
+    (fresh : LabelsFresh (codeLocations program.1) initial) (initialWf : wellFormed initial)
+    (locations : everyFnLocationSome program.1) (annotations : everyFnVarsNone program.1)
+    (requiredGrowth : stateExtends (nextKnown, converted.2 ++ initial.2) g) (allowed : Set Nat)
+    (sourceEnv targetEnv : List ClosSem.Value)
+    (source final : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (coverage : ∀ loc ∈ codeLocations program.1, ¬ sptDomain nextKnown loc → loc ∈ allowed)
+    (run : evaluate program.1 sourceEnv source = (result, final))
+    (notType : result ≠ .err (.abort .typeError))
+    (envs : EnvRelFuel relationFuel g allowed target.code sourceEnv targetEnv 0 (converted.1.map (0, ·)))
+    (envWf : ValuesWellFormedFuel relationFuel g allowed target.code sourceEnv)
+    (sourceWf : StateWellFormedFuel relationFuel g allowed target.code source)
+    (states : StateRelFuel relationFuel g allowed source target)
+    (disjoint : Disjoint allowed (sptDomain g.1)) (targetCompiler : target.compile = compiler)
+    (inv : IncrementalCodeInv passFuel g allowed source target) :
+    ∃ extraClock finalG finalAllowed targetResult targetFinal,
+      stateExtends g finalG ∧ allowed ⊆ finalAllowed ∧
+      Disjoint finalAllowed (sptDomain finalG.1) ∧
+      evaluate converted.1 targetEnv {target with clock := target.clock + extraClock} = (targetResult, targetFinal) ∧
+      resultRel (List.Forall₂ (ValueRelFuel relationFuel finalG finalAllowed targetFinal.code))
+        (ValueRelFuel relationFuel finalG finalAllowed targetFinal.code) result targetResult ∧
+      ResultWellFormedFuel relationFuel finalG finalAllowed targetFinal.code result ∧
+      StateRelFuel relationFuel finalG finalAllowed final targetFinal ∧
+      StateWellFormedFuel relationFuel finalG finalAllowed targetFinal.code final ∧
+      IncrementalCodeInv passFuel finalG finalAllowed final targetFinal := by
+  have traversal := compileIncFuel_traversal passFuel initial.1 program nextKnown converted passRun
+  have appended := callsListBounded_appendAux passFuel program.1 (initial.1, []) initial.2
+  have merged : callsListBounded passFuel program.1 initial =
+      some (converted.1, (nextKnown, converted.2 ++ initial.2)) := by
+    simpa [appendAux, traversal] using appended
+  exact callsListBounded_preserves_IncrementalCodeInv passFuel relationFuel passFuel compiler
+    program.1 converted.1 initial (nextKnown, converted.2 ++ initial.2) g merged distinct fresh initialWf locations annotations
+    requiredGrowth allowed sourceEnv targetEnv source final target result coverage run notType envs envWf sourceWf states
+    disjoint targetCompiler inv
+
+
+/-- The production incremental direct-call output does not depend on the
+initial traversal fuel: the bounded retry computes the same traversal. This
+is Flapjack-specific infrastructure, not a HOL correspondence theorem. -/
+theorem compileIncFuel_independent (left right : Nat) (known : NumSet) (program : ClosSem.Program) :
+    compileIncFuel? left known program = compileIncFuel? right known program := by
+  simp only [compileIncFuel?]
+  rw [callsListBounded_independent left right program.1 (known, [])]
+
+/-- The total compiler adapter is independent of the initial traversal fuel. -/
+theorem compileIncFuelTotal_independent (left right : Nat) (known : NumSet) (program : ClosSem.Program) :
+    compileIncFuelTotal left known program = compileIncFuelTotal right known program := by
+  simp only [compileIncFuelTotal, compileIncFuel_independent left right]
+
+/-- Changing traversal fuel does not change the incremental callback. -/
+theorem compileIncFuelCallback_independent {C : Type} (left right : Nat) (compiler : ClosSem.Compiler C) :
+    compileIncFuelCallback left compiler = compileIncFuelCallback right compiler := by
+  simp only [compileIncFuelCallback]
+  congr 1
+  funext known program
+  exact compileIncFuelTotal_independent left right known program
+
+/-- Changing traversal fuel does not change the compiled oracle. -/
+theorem compileIncFuelOracle_independent {C : Type} (left right : Nat) (oracle : Nat → ((NumSet × C) × ClosSem.Program)) :
+    compileIncFuelOracle left oracle = compileIncFuelOracle right oracle := by
+  simp only [compileIncFuelOracle]
+  congr 1
+  funext known program
+  exact compileIncFuelTotal_independent left right known program
+
+/-- The fuel-indexed incremental code invariant is independent of the
+initial traversal fuel. This does not establish correspondence to HOL. -/
+theorem IncrementalCodeInv_fuel_independent {C F : Type} (left right : Nat) (g : State) (allowed : Set Nat)
+    (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F) :
+    IncrementalCodeInv left g allowed source target ↔ IncrementalCodeInv right g allowed source target := by
+  simp only [IncrementalCodeInv, compileIncFuelCallback_independent left right, compileIncFuelOracle_independent left right]
+
 end Flapjack.Compiler.Backend.ClosCall
