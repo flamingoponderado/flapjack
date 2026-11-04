@@ -110,4 +110,98 @@ theorem blocksUnique_updateRef1 (next : Nat) (refs : Spt (BvlSem.Ref Value))
     | cons head tail => simp
   · exact unique
 
+/-- Replacing an array with values that are already roots or belonged to the
+old array does not introduce newly reachable references. The pointer to the
+updated array must itself be a root. -/
+theorem reachableRefs_insertValueArray_subset (refs : Spt (BvlSem.Ref Value))
+    (roots replacement : List Value) (ptr : Nat) (bit : Bool)
+    (pointerRoot : .refPtr bit ptr ∈ roots)
+    (origin : ∀ value ∈ replacement, value ∈ roots ∨
+      ∃ old, sptLookup ptr refs = some (.valueArray old) ∧ value ∈ old)
+    (target : Nat) :
+    reachableRefs roots (sptInsert ptr (.valueArray replacement) refs) target → reachableRefs roots refs target := by
+  have step : ∀ source dest, reachableRefs roots refs source →
+      refEdge (sptInsert ptr (.valueArray replacement) refs) source dest → reachableRefs roots refs dest := by
+    intro source dest reachable edge
+    by_cases same : source = ptr
+    · subst source
+      simp only [refEdge, sptLookup_sptInsert_same, getRefs, List.mem_flatMap] at edge
+      obtain ⟨value, member, reference⟩ := edge
+      rcases origin value member with rootMember | ⟨old, oldLookup, oldMember⟩
+      · exact ⟨value, dest, rootMember, reference, Relation.ReflTransGen.refl⟩
+      · have oldEdge : refEdge refs ptr dest := by
+          simp only [refEdge, oldLookup, getRefs, List.mem_flatMap]
+          exact ⟨value, oldMember, reference⟩
+        exact ⟨.refPtr bit ptr, ptr, pointerRoot, by simp [getRefs],
+          Relation.ReflTransGen.single oldEdge⟩
+    · have oldEdge : refEdge refs source dest := by
+        simpa [refEdge, sptLookup_sptInsert_ne ptr source _ refs same] using edge
+      obtain ⟨root, start, member, reference, path⟩ := reachable
+      exact ⟨root, start, member, reference, path.tail oldEdge⟩
+  rintro ⟨root, start, rootMember, reference, path⟩
+  have startReach : reachableRefs roots refs start := ⟨root, start, rootMember, reference, Relation.ReflTransGen.refl⟩
+  induction path with
+  | refl => exact startReach
+  | tail path edge ih => exact step _ _ ih edge
+
+/-- Replacing an array with a stack prefix cannot make new references reachable. -/
+theorem reachableRefs_updateValueArray (refs : Spt (BvlSem.Ref Value))
+    (values stack : List Value) (ptr : Nat) (bit : Bool) (target : Nat) :
+    reachableRefs (values ++ .refPtr bit ptr :: stack) (sptInsert ptr (.valueArray values) refs) target →
+      reachableRefs (values ++ .refPtr bit ptr :: stack) refs target := by
+  apply reachableRefs_insertValueArray_subset refs _ values ptr bit
+  · simp
+  · intro value member
+    exact Or.inl (List.mem_append_left _ member)
+
+/-- Updating a single array entry with a root cannot make new references
+reachable, even when the index is out of bounds. -/
+theorem reachableRefs_updateValueArray_set (refs : Spt (BvlSem.Ref Value))
+    (roots stack old : List Value) (ptr i : Nat) (bit : Bool) (replacement : Value)
+    (found : sptLookup ptr refs = some (.valueArray old)) (root : replacement ∈ roots) (target : Nat) :
+    reachableRefs (roots ++ .refPtr bit ptr :: stack) (sptInsert ptr (.valueArray (old.set i replacement)) refs) target →
+      reachableRefs (roots ++ .refPtr bit ptr :: stack) refs target := by
+  apply reachableRefs_insertValueArray_subset refs _ _ ptr bit
+  · simp
+  · intro value member
+    rcases List.mem_or_eq_of_mem_set member with oldMember | equal
+    · exact Or.inr ⟨old, found, oldMember⟩
+    · subst value
+      exact Or.inl (List.mem_append_left _ root)
+
+/-- Replacing an array with values already on the stack or in the old array
+cannot introduce new timestamps into the stack/reference invariant. -/
+theorem allTimestamps_insertValueArray_subset (refs : Spt (BvlSem.Ref Value))
+    (roots replacement : List Value) (ptr : Nat)
+    (origin : ∀ value ∈ replacement, value ∈ roots ∨
+      ∃ old, sptLookup ptr refs = some (.valueArray old) ∧ value ∈ old)
+    (stamp : Nat) :
+    allTimestamps (sptInsert ptr (.valueArray replacement) refs) roots stamp → allTimestamps refs roots stamp := by
+  rintro ⟨value, fromRefs | fromRoots, timestamp⟩
+  · obtain ⟨index, cell, lookup, contains⟩ := fromRefs
+    by_cases same : index = ptr
+    · subst index
+      simp only [sptLookup_sptInsert_same, Option.some.injEq] at lookup
+      subst cell
+      simp only [findRef] at contains
+      rcases origin value contains with rootMember | ⟨old, oldLookup, oldMember⟩
+      · exact ⟨value, Or.inr rootMember, timestamp⟩
+      · exact ⟨value, Or.inl ⟨ptr, .valueArray old, oldLookup, oldMember⟩, timestamp⟩
+    · rw [sptLookup_sptInsert_ne ptr index _ refs same] at lookup
+      exact ⟨value, Or.inl ⟨index, cell, lookup, contains⟩, timestamp⟩
+  · exact ⟨value, Or.inr fromRoots, timestamp⟩
+
+/-- The single-element update case of timestamp inclusion. -/
+theorem allTimestamps_updateValueArray_set_subset (refs : Spt (BvlSem.Ref Value))
+    (roots stack old : List Value) (ptr i : Nat) (replacement : Value)
+    (found : sptLookup ptr refs = some (.valueArray old)) (root : replacement ∈ roots) (stamp : Nat) :
+    allTimestamps (sptInsert ptr (.valueArray (old.set i replacement)) refs) (roots ++ stack) stamp →
+      allTimestamps refs (roots ++ stack) stamp := by
+  apply allTimestamps_insertValueArray_subset refs _ _ ptr
+  intro value member
+  rcases List.mem_or_eq_of_mem_set member with oldMember | equal
+  · exact Or.inr ⟨old, found, oldMember⟩
+  · subst value
+    exact Or.inl (List.mem_append_left _ root)
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
