@@ -111,4 +111,30 @@ theorem partialMoveList_withNilLemma {α β : Type} (conf : GenGcPartial.Config 
     cases newState
     rfl
 
+/-- A successful partial data scan started from a successful state. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "gc_partial_move_data_ok_before"]
+theorem partialMoveData_okBefore {α β : Type} (conf : GenGcPartial.Config β) (state state1 : GcState α β)
+    (run : GenGcPartial.gcMoveData conf state = state1) (ok : state1.ok = true) : state.ok = true := by
+  classical
+  subst state1
+  induction state using GenGcPartial.gcMoveData.induct conf with
+  | case1 state empty => rw [GenGcPartial.gcMoveData] at ok; simpa [empty] using ok
+  | case2 state head tail heap over => rw [GenGcPartial.gcMoveData] at ok; simp [heap, over] at ok
+  | case3 state tail roots len payload roots1 middle move heap bounded flag ih =>
+    cases state with
+    | mk old h1 h2 r4 r3 r2 r1 a n status origHeap heap0 =>
+      simp only at heap
+      subst h2
+      rw [GenGcPartial.gcMoveData] at ok
+      simp only [bounded, ↓reduceIte, move] at ok
+      have check := ih ok
+      dsimp only [flag] at check
+      simp only [Bool.and_eq_true] at check
+      exact partialMoveList_okBefore conf roots _ roots1 middle move check.1.1
+  | case4 state head tail heap bounded notData =>
+    cases head with
+    | unused len => rw [GenGcPartial.gcMoveData] at ok; simp [heap, bounded] at ok
+    | forwardPointer ptr value len => rw [GenGcPartial.gcMoveData] at ok; simp [heap, bounded] at ok
+    | dataElement roots len payload => exact False.elim (notData roots len payload rfl)
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

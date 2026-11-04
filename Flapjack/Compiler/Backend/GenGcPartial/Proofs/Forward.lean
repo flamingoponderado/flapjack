@@ -55,4 +55,23 @@ theorem gcMove_heapLength {α β : Type} (conf : Config β) (state state1 : GcSt
             obtain ⟨_, rfl⟩ := run
             exact gcForwardPtr_heapLength ptr state.heap state.a value _ newHeap status forward
 
+/-- Traversing roots preserves the heap's word length, including failure. -/
+@[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "gc_move_list_heap_length"]
+theorem gcMoveList_heapLength {α β : Type} (roots roots1 : List (HeapAddress α))
+    (conf : Config β) (state state1 : GcState α β)
+    (run : gcMoveList conf state roots = (roots1, state1)) :
+    heapLength state.heap = heapLength state1.heap := by
+  induction roots generalizing state roots1 state1 with
+  | nil => simp [gcMoveList, Prod.mk.injEq] at run; obtain ⟨_, rfl⟩ := run; rfl
+  | cons root roots ih =>
+    simp only [gcMoveList] at run
+    generalize headRun : gcMove conf state root = result at run
+    obtain ⟨rootMid, middle⟩ := result
+    generalize tailRun : gcMoveList conf middle roots = result at run
+    obtain ⟨tail, final⟩ := result
+    simp only [Prod.mk.injEq] at run
+    obtain ⟨_, rfl⟩ := run
+    exact (gcMove_heapLength conf state middle root rootMid headRun).trans
+      (ih (state := middle) (roots1 := tail) (state1 := final) tailRun)
+
 end Flapjack.Compiler.Backend.GenGcPartial

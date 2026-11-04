@@ -1,6 +1,55 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_gen_gc_partial_move_data_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PartialData.lean",
+  "lean_name": "wordGenGcPartialMoveData_empty",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared word_partial_move_data_typed and the original empty-pending case: all source hypotheses and the complete existential output are retained, specialized to an empty h2, at the common positive word width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "partial_len_inv_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PartialInvariant.lean",
+  "lean_name": "partialLenInv",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared partial_len_inv_typed: the heap is partitioned by the same data, free, reference and old-region lengths with independent address and payload types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "gc_partial_move_heap_lengths",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PartialInvariant.lean",
+  "lean_name": "partialMove_heapLengths",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared partial_move_heap_lengths_typed: the same successful root move preserves the sum of free words and pending-data heap length."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "gc_partial_move_list_heap_lengths",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PartialInvariant.lean",
+  "lean_name": "partialMoveList_heapLengths",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared partial_move_list_heap_lengths_typed: the same successful root-list move preserves the sum of free words and pending-data heap length."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "gc_partial_move_data_ok_before",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PartialAccumulator.lean",
+  "lean_name": "partialMoveData_okBefore",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared partial_move_data_ok_before_typed: success of the original partial data-scan equation implies success of its input state for independent address and payload types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "gc_move_list_heap_length",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Forward.lean",
+  "lean_name": "gcMoveList_heapLength",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared partial_gc_move_list_heap_length_typed: the original root-list equation preserves heap length without a success premise, with independent address and payload types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "word_gen_gc_partial_move_list_thm",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PartialList.lean",
   "lean_name": "wordGenGcPartialMoveList_thm",
