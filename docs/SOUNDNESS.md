@@ -286,6 +286,12 @@ The following are open review or verification obligations:
       the instruction forms `arm8_ast` emits, and
       `Flapjack/Pancake/Proofs/PanToTarget/Arm8Instance.lean` instantiates the
       Pancake-to-machine-code theorem at that model with no encoder premise.
+      The L3 `arm8_state` carrier and the model's datatype carriers
+      (`instruction`, `LoadStore`, `Data`, `System`, etc.), CakeML's
+      `arm8_proj` and `arm8_ok` are ported in
+      `Flapjack/Compiler/Encoders/Arm8/L3/`, and `arm8Ok_of_closed` proves
+      that the closed model's validity implies the L3 validity gate under the
+      L3-only privilege, control-register and exception hypotheses.
     - **What is not checked.** The closed model is not CakeML's full L3 ARMv8
       semantics.  The decoder is a permissive recognizer and can also accept
       non-emitted AArch64 words with closed-model (not L3) semantics; only
@@ -299,19 +305,54 @@ The following are open review or verification obligations:
       ANDS-immediate `Rd`); the ANDS-immediate case relies on `setflags = true`,
       since the non-flag-setting logical-immediate slot means SP.  That per-slot
       AArch64 fact is an external assumption, not checked by the model.  Unknown
-      instruction words set `failed`; there is no L3
-      `arm8_encoder_correct` port, no proof about arbitrary ARMv8 code, and no
-      theorem that the model agrees with real AArch64 hardware or with L3.
-      The trusted compiler claim therefore rests on the closed model plus the
-      parity evidence, not on an L3 refinement.
+      instruction words set `failed`.  The L3 carriers, projection, validity gate,
+      target record, configuration, lowering and transition-definition closure
+      are ported: `L3/Support.lean` supplies the
+      bitstring/FCP/list/set/word/integer helpers, `L3/Defs.lean` renders the
+      129 definitions reachable from `NextStateARM8` (118 tagged: 117
+      `pending_statement_review` and `NoOperation` `reviewed_exact`), `L3/Target.lean` has `arm8_next`, `L3/Ast.lean`
+      the lowering `arm8_ast`/`arm8_enc`, `L3/Configuration.lean` the exact
+      `arm8_config` and `arm8ConfigL3_encOk`, and `L3/Target/State.lean` the
+      `arm8TargetL3` record.  `L3/CorrectnessEncoding/` proves all 64
+      per-constructor cases of `encoder_correct` and the assembling
+      `arm8EncoderCorrectL3 : encoderCorrect arm8TargetL3`, together with
+      `arm8TargetL3_targetOk`; those 66 declarations and the target,
+      configuration and lowering definitions are `reviewed_exact`.  The
+      encoder-correctness theorem therefore applies to the L3 target directly,
+      with no added hypothesis, and needs no closed-model-to-L3 transition
+      refinement: it is stated over `NextStateARM8` from the start.  The
+      exactness of those statements is conditional on the `Defs.lean`
+      renderings they unfold to, which remain `pending_statement_review`
+      (mechanically rendered and drift-checked against the committed
+      `scripts/l3/arm8_defs.sexp.gz` export by `scripts/l3/check-renderings.py`,
+      with two documented handwritten exceptions, but not individually
+      certified), and
+      every declaration whose constant closure reaches the FP renderings
+      inherits the item 8 real-rendering assumption.  There is no proof about
+      arbitrary ARMv8 code, and nothing shows that the model agrees with real
+      AArch64 hardware.  The trusted compiler claim still rests on the closed
+      model plus the parity evidence: the executed driver emits the closed
+      subset, and the L3 chain proves the L3 encoder correct for the same
+      source instructions, conditional on the rendering assumption above.  No
+      theorem relates the closed `arm8Ast`/`arm8Enc`/`validImmediate` to the L3
+      `arm8Ast`/`arm8Enc`/`arm8ValidImmediate`: the only evidence that the
+      executed encoder emits the same bytes and makes the same immediate
+      decisions as the L3 one is the compiler-output parity against CakeML, so
+      a divergence between the two encoders would not be caught by
+      `arm8EncoderCorrectL3`.  Proving the closed encoder equal to the L3 one on
+      the emitted subset is an open gap.
     - **Proof port status.** The structural length lemmas at the start of
       `arm8_targetProofScript.sml`, the word64 conjunct of
       `Decode_EncodeBitMask`, `mul_long`, and the length half of
-      `arm8_encoding` are ported. The remaining meaningful helpers (`lsl`,
-      `lsr`, `asr2`, `ror`) need HOL bitstring/FCP operations that Flapjack does
-      not yet provide; `asr` is only a word64 specialization of HOL's library
-      `word_asr_n2w`. The Flapjack `encoderCorrect arm8Target` theorem is a
-      closed-subset analogue, not the HOL L3 theorem.
+      `arm8_encoding` are ported.  `L3/Support.lean` supplies the bitstring/FCP
+      helpers the remaining ones need (`holRotate`, `holShiftr`, `holShiftl`,
+      `holField`, `holTestbit`, `holV2w`, `holBitwise`, `holReplicate`), and
+      `arm8LsrMaskIdentity`/`arm8LslMaskIdentity` restate HOL's `lsr`/`lsl`
+      identities (tagged, `pending_statement_review`); `asr_mask` remains
+      untagged Flapjack infrastructure because HOL's `asr2` is a statement about
+      the mask value rather than a shift identity.  `arm8EncoderCorrectL3`
+      proves the L3 `encoder_correct arm8_target` obligation; the closed-model
+      `encoderCorrect arm8Target` theorem remains a closed-subset analogue.
 
 11. The x86-64 backend emits byte-identical machine code to the original
     CakeML x64 target, and its correctness theorem is proved against a closed

@@ -22,6 +22,22 @@ from pathlib import Path
 
 sys.setrecursionlimit(1000000)
 
+# HOL theory holding the L3 model datatypes/constants (riscv or arm8).
+MODEL_THY = 'riscv'
+
+# Datatypes ported outside the model Types module.  ARM8's `ShiftType` and
+# `MoveWideOp` live in Flapjack/Compiler/Encoders/Arm8/Encode.lean; parse that
+# file instead of copying its constructor lists here, and import only the named
+# types: `parse_types` is written for the generated Types.lean and misreads a
+# hand-written inductive's multi-line constructors and payload binders.  Case
+# arms are matched to constructors by position, so a *reorder* in that file
+# still needs the drift gate (`scripts/l3/check-renderings.py`) to notice; a
+# rename does not.
+EXTRA_TYPES_PATH = {
+    'arm8': (Path(__file__).resolve().parents[1] / 'Flapjack/Compiler/Encoders/Arm8/Encode.lean',
+             ('ShiftType', 'MoveWideOp')),
+}
+
 # ---------------------------------------------------------------------------
 # S-expression reader
 
@@ -151,6 +167,19 @@ def tyvar_name(n: str) -> str:
     return 'T' + re.sub(r"[^A-Za-z0-9]", "", n)
 
 
+def fcp_tyvars(t, acc):
+    """Type variables used as an fcp `bool ** 'N` width (HOL dimension)."""
+    if isinstance(t, Ty) and t.thy == 'fcp' and t.op == 'cart' and t.args[0] == Ty('min', 'bool', ()):
+        inner = t.args[1]
+        if isinstance(inner, TyVar) and inner.name not in acc:
+            acc.append(inner.name)
+        return acc
+    if isinstance(t, Ty):
+        for a in t.args:
+            fcp_tyvars(a, acc)
+    return acc
+
+
 def tyvars(t, acc):
     if isinstance(t, TyVar):
         if t.name not in acc:
@@ -167,6 +196,10 @@ def ty_lean(t) -> str:
     w = word_width(t)
     if w is not None:
         return f'(BitVec {w})'
+    if isinstance(t, Ty) and t.thy == 'fcp' and t.op == 'cart' and t.args[0] == Ty('min', 'bool', ()):
+        inner = t.args[1]
+        if isinstance(inner, TyVar):
+            return f'(BitVec {tyvar_name(inner.name)})'
     key = (t.thy, t.op)
     if key == ('min', 'bool'):
         return 'Bool'
@@ -190,7 +223,7 @@ def ty_lean(t) -> str:
         return 'HolRounding'
     if key == ('binary_ieee', 'float_compare'):
         return 'HolFloatCompare'
-    if t.thy == 'riscv':
+    if t.thy == MODEL_THY:
         return ident(t.op)
     raise Unrenderable(f'type {t}')
 
@@ -376,14 +409,31 @@ class Renderer:
             if generic is not None and generic[1]:
                 inst = {}
                 match_ty(generic[0], c.ty, inst)
-                name = '(' + name + ''.join(f' ({tyvar_name(v)} := {ty_lean(inst[v])})' for v in generic[1] if v in inst) + ')'
+                widths = set(fcp_tyvars(generic[0], []))
+                explicit = []
+                for v in generic[1]:
+                    if v not in inst:
+                        continue
+                    if v in widths:
+                        we = dimension_expr(inst[v])
+                        if we is None:
+                            raise Unrenderable(f'{c.name} width instantiation')
+                        explicit.append(f' ({tyvar_name(v)} := {we})')
+                    else:
+                        explicit.append(f' ({tyvar_name(v)} := {ty_lean(inst[v])})')
+                name = '(' + name + ''.join(explicit) + ')'
             return name if not args else '(' + name + ''.join(' ' + self.atom(a, env) for a in args) + ')'
-        if c.thy == 'riscv':
+        if c.thy == MODEL_THY:
             return self.riscv_const(c, args, env)
         if c.name.endswith('_CASE'):
             return self.case(c, args, env)
         if key in SPECIAL:
             return SPECIAL[key](self, c, args, env)
+        if key == ('pred_set', 'INSERT'):
+            # The predicate lambda needs the renderer's own variable names, so
+            # it is handled here where `env` is in scope.
+            return self.eta(c, args, env, 2,
+                            lambda xs, raw: insert_predicate(self, env, raw, xs))
         if key in CONSTANTS:
             arity, fmt = CONSTANTS[key]
             return self.eta(c, args, env, arity,
@@ -393,16 +443,22 @@ class Renderer:
     # -- generated riscv constants -----------------------------------------
     def riscv_const(self, c: Const, args, env) -> str:
         n = c.name
-        m = re.fullmatch(r'recordtype\.([A-Za-z_]+)\.seldef\.([A-Za-z0-9_\']+)_fupd', n)
+        if (c.thy, n) in RENAMED_CTORS:
+            tname, cname = RENAMED_CTORS[(c.thy, n)]
+            arity = len(fun_parts(c.ty)[0])
+            return self.eta(c, args, env, arity,
+                            lambda xs, raw: (f'{tname}.{cname}' if not xs else
+                                             f'({tname}.{cname}' + ''.join(' ' + x for x in xs) + ')'))
+        m = re.fullmatch(r'recordtype\.([A-Za-z0-9_]+)\.seldef\.([A-Za-z0-9_\']+)_fupd', n)
         if m:
             field = ident(m.group(2))
             return self.eta(c, args, env, 2,
                             lambda xs, raw: f'(let r := {xs[1]}; {{ r with {field} := {xs[0]} r.{field} }})')
-        m = re.fullmatch(r'recordtype\.([A-Za-z_]+)\.seldef\.([A-Za-z0-9_\']+)', n)
+        m = re.fullmatch(r'recordtype\.([A-Za-z0-9_]+)\.seldef\.([A-Za-z0-9_\']+)', n)
         if m:
             field = ident(m.group(2))
             return self.eta(c, args, env, 1, lambda xs, raw: f'{xs[0]}.{field}')
-        m = re.fullmatch(r'recordtype\.([A-Za-z_]+)', n)
+        m = re.fullmatch(r'recordtype\.([A-Za-z0-9_]+)', n)
         if m:
             tname = m.group(1)
             arity = len(fun_parts(c.ty)[0])
@@ -412,7 +468,7 @@ class Renderer:
             return self.case(c, args, env)
         # a constructor of a riscv datatype
         _, rng = fun_parts(c.ty)
-        if isinstance(rng, Ty) and rng.thy == 'riscv':
+        if isinstance(rng, Ty) and rng.thy == MODEL_THY:
             arity = len(fun_parts(c.ty)[0])
             return self.eta(c, args, env, arity,
                             lambda xs, raw: (f'{ident(rng.op)}.{ident(n)}' if not xs else
@@ -457,20 +513,21 @@ class Renderer:
 
     def datatype_info(self, t):
         """[(constructor, arity)] for a case scrutinee type."""
-        if isinstance(t, Ty) and t.thy == 'riscv' and t.op in self.types and 'ctors' in self.types[t.op]:
+        if isinstance(t, Ty) and t.thy == MODEL_THY and t.op in self.types and 'ctors' in self.types[t.op]:
             info = self.types[t.op]
             return list(zip(info['ctors'], info['arity']))
-        if isinstance(t, Ty) and t.thy == 'riscv' and t.op in self.types and 'fields' in self.types[t.op]:
+        if isinstance(t, Ty) and t.thy == MODEL_THY and t.op in self.types and 'fields' in self.types[t.op]:
             return [('mk', len(self.types[t.op]['fields']))]
         if isinstance(t, Ty) and (t.thy, t.op) in BUILTIN_CASES:
             return BUILTIN_CASES[(t.thy, t.op)]
         return None
 
     def pattern(self, t, ctor, names):
-        if isinstance(t, Ty) and t.thy == 'riscv' and 'fields' in self.types.get(t.op, {}):
+        if isinstance(t, Ty) and t.thy == MODEL_THY and 'fields' in self.types.get(t.op, {}):
             return '⟨' + ', '.join(names) + '⟩'
-        if isinstance(t, Ty) and t.thy == 'riscv':
-            return f'.{ident(ctor)}' + ''.join(' ' + n for n in names)
+        if isinstance(t, Ty) and t.thy == MODEL_THY:
+            _, cname = RENAMED_CTORS.get((t.thy, ctor), (t.op, ctor))
+            return f'.{ident(cname)}' + ''.join(' ' + n for n in names)
         key = (t.thy, t.op)
         if key == ('option', 'option'):
             return 'none' if ctor == 'NONE' else f'some {names[0]}'
@@ -505,15 +562,43 @@ def unused_pattern(pattern: str, body: str) -> str:
     return re.sub(r"[A-Za-z_][A-Za-z0-9_']*", lambda m: unused(m.group(), body), pattern)
 
 
-def width_of_result(c: Const) -> int:
-    w = word_width(fun_parts(c.ty)[1])
+def dimension_expr(t) -> int | str | None:
+    """A Lean dimension: an int numeral from an fcp index type, or a Nat type variable.
+
+    A word type is rejected: the dimension of `bool ** N` is `2^N`, not the
+    word length `N`, so instantiating a width variable with a word type fails
+    loudly instead of rendering the length as the dimension.
+    """
+    if isinstance(t, TyVar):
+        return tyvar_name(t.name)
+    if isinstance(t, Ty) and ((t.thy == 'fcp' and t.op in ('bit0', 'bit1'))
+                              or (t.thy == 'one' and t.op == 'one')):
+        return fcp_size(t)
+    return None
+
+
+def word_width_expr(t) -> int | str | None:
+    """The Lean width of a word type (`bool ** N`), or None.
+
+    The index goes through `dimension_expr`, so an index type that is itself a
+    word type is rejected instead of being rendered as its length.  A bare type
+    variable or a non-cart type is not a word and is rejected too.
+    """
+    if isinstance(t, Ty) and t.thy == 'fcp' and t.op == 'cart' \
+            and t.args[0] == Ty('min', 'bool', ()):
+        return dimension_expr(t.args[1])
+    return None
+
+
+def width_of_result(c: Const) -> int | str:
+    w = word_width_expr(fun_parts(c.ty)[1])
     if w is None:
         raise Unrenderable(f'{c.name} result width')
     return w
 
 
-def width_of_arg(c: Const, i: int) -> int:
-    w = word_width(fun_parts(c.ty)[0][i])
+def width_of_arg(c: Const, i: int) -> int | str:
+    w = word_width_expr(fun_parts(c.ty)[0][i])
     if w is None:
         raise Unrenderable(f'{c.name} argument width')
     return w
@@ -695,17 +780,96 @@ def special_sqrt_fp(r, c, args, env):
         f'(holFp{width}ToFloat {xs[1]})).2)')
 
 
+def free_vars(t, bound=frozenset()):
+    """The free HOL variables of a term, as (name, type) pairs.
+
+    HOL identifies a variable by its name *and* type, so a lambda binds only
+    its own `(name, type)`: a differently typed variable of the same name stays
+    free.
+    """
+    if isinstance(t, Var):
+        return set() if (t.name, t.ty) in bound else {(t.name, t.ty)}
+    if isinstance(t, Comb):
+        return free_vars(t.f, bound) | free_vars(t.x, bound)
+    if isinstance(t, Lam):
+        return free_vars(t.body, bound | {(t.v.name, t.v.ty)})
+    return set()
+
+
+def bare_ident(name: str) -> str:
+    """The Lean identifier a rendered name denotes, without `«»` escaping."""
+    if name.startswith('«') and name.endswith('»'):
+        return name[1:-1]
+    return name
+
+
+def insert_predicate(r, env, args, xs):
+    # Only a free variable of either operand can be captured; a variable bound
+    # by a nested lambda of the same name is unaffected, so the rendered text
+    # alone is not a safe test.  Take the names the renderer actually gave
+    # those variables from `env` rather than copying its naming rule.  Compare
+    # the identifiers, not the escaped text: `Renderer.var` falls back to
+    # `ident(name)` for a variable it has not bound, which escapes `x'` as
+    # `«x'»`, so a raw text comparison would miss that collision with the
+    # prime-suffixed binders chosen below.
+    taken = {bare_ident(r.var(Var(n, ty), env))
+             for n, ty in free_vars(args[0]) | free_vars(args[1])}
+    x = 'x'
+    while x in taken:
+        x += "'"
+    return f'(fun {x} => {x} = {xs[0]} || {xs[1]} {x})'
+
+
+def symbolic_field_bounds(high, low, width):
+    """True for `high = low + (width - 1)` with a literal step.
+
+    That is the only non-literal shape whose inserted field is known to cover
+    exactly the input word; it is the ARM8 MoveWide form
+    `bit_field_insert (pos + 15) pos imm` with a 16-bit `imm`.
+    """
+    h, args = strip_comb(high)
+    if not (is_const(h, 'arithmetic', '+') and len(args) == 2):
+        return False
+    left, right = args
+    step = nat_literal(right)
+    if step is None:
+        left, right = right, left
+        step = nat_literal(right)
+    return step is not None and step == width - 1 and left == low
+
+
 def special_bit_field_insert(r, c, args, env):
     # HOL raw FCP indexing is unspecified outside the input width. Unlike
-    # word_bit, bit_field_insert does not add that bound itself. Every call
-    # in the pinned model has literal bounds; require their source-side
-    # guarantee before using the getLsbD-based helper.
+    # word_bit, bit_field_insert does not add that bound itself, so a rendering
+    # is only justified where the call is known in range.
     if len(args) < 3:
-        raise Unrenderable('bit_field_insert requires checked literal bounds')
-    high, low = nat_literal(args[0]), nat_literal(args[1])
+        raise Unrenderable('bit_field_insert requires checked bounds')
+    high_n, low_n = nat_literal(args[0]), nat_literal(args[1])
     width = word_width(type_of(args[2]))
-    if high is None or low is None or width is None or (low <= high and high - low >= width):
-        raise Unrenderable('bit_field_insert input index may exceed word width')
+    if high_n is not None and low_n is not None:
+        if width is None or (low_n <= high_n and high_n - low_n >= width):
+            raise Unrenderable('bit_field_insert input index may exceed word width')
+        return r.eta(c, args, env, 4,
+                     lambda xs, raw: f'(holBitFieldInsert {xs[0]} {xs[1]} {xs[2]} {xs[3]})')
+    # Non-literal bounds: only the documented ARM8 MoveWide call is allowed.
+    # HOL's `bit_field_insert h l a b` is `word_modify (\i. COND (l <= i /\ i <= h)
+    # (a ' (i - l))) b` (wordsScript.sml:280-283), and `word_modify` only visits
+    # the *result* indices `i < dimindex (:result)`.  Every visited index is
+    # either outside `[l, h]` (value `b ' i`) or reads `a ' (i - l)`, so the only
+    # index that can leave the input word is `i - l`, i.e. the rendering is
+    # exact as soon as `h - l < dimindex (:input)`.  The result width therefore
+    # needs no upper bound: an `h` beyond it still updates every visited index.
+    #
+    # The accepted shape is `high = low + (input width - 1)`, which gives
+    # `h - l = dimindex (:input) - 1`; it is the ARM8 MoveWide call
+    # `bit_field_insert (pos + 15) pos (imm : word16)` (with `pos` from a 2-bit
+    # `hw`, so the call is in range at every site, though that argument is
+    # documented there rather than checked here).  Any other symbolic bound is
+    # reported instead of rendered.
+    if width is None:
+        raise Unrenderable('bit_field_insert symbolic input width')
+    if not symbolic_field_bounds(args[0], args[1], width):
+        raise Unrenderable('bit_field_insert non-literal bounds are not checked in range')
     return r.eta(c, args, env, 4,
                  lambda xs, raw: f'(holBitFieldInsert {xs[0]} {xs[1]} {xs[2]} {xs[3]})')
 
@@ -732,6 +896,29 @@ def special_chr(r, c, args, env):
 
 def special_int_of_num(r, c, args, env):
     return r.eta(c, args, env, 1, lambda xs, raw: f'(Int.ofNat {xs[0]})')
+
+
+# HOL constructors whose Lean port uses a different constructor name.  Derived
+# from the parsed Lean datatypes: HOL's constructor is `<Type>_<UPPER>` and the
+# Lean one is the same constructor in the port's spelling (`ShiftType_LSL` ->
+# `lsl`).  Only constructors whose spelled name actually differs are recorded.
+def renamed_ctors(types: dict, thy: str) -> dict:
+    """Constructors whose Lean spelling differs from HOL's `<Type>_<UPPER>`.
+
+    A Lean constructor that already starts with its type name (`MemOp_LOAD`) is
+    spelled as HOL spells it, so no mapping is recorded; only names like
+    `ShiftType_LSL` -> `lsl` get one.
+    """
+    out = {}
+    for name, info in types.items():
+        for ctor in info.get('ctors', []):
+            if ctor.startswith(name + '_'):
+                continue
+            out[(thy, f'{name}_{ctor.upper()}')] = (name, ctor)
+    return out
+
+
+RENAMED_CTORS: dict = {}
 
 
 SPECIAL = {
@@ -862,6 +1049,32 @@ CONSTANTS = {
     ('words', 'word_to_hex_string'): (1, lambda r, c, xs, raw: f'(holWordToHexString {xs[0]})'),
     ('ASCIInumbers', 'num_to_dec_string'): (1, lambda r, c, xs, raw: f'(holNumToDecString {xs[0]})'),
     ('state_transformer', 'FOR'): (1, lambda r, c, xs, raw: f'(holFor {xs[0]})'),
+    ('bitstring', 'w2v'): (1, lambda r, c, xs, raw: f'(holW2v {xs[0]})'),
+    ('bitstring', 'testbit'): (2, lambda r, c, xs, raw: f'(holTestbit {xs[0]} {xs[1]})'),
+    ('bitstring', 'shiftr'): (2, lambda r, c, xs, raw: f'(holShiftr {xs[0]} {xs[1]})'),
+    ('bitstring', 'shiftl'): (2, lambda r, c, xs, raw: f'(holShiftl {xs[0]} {xs[1]})'),
+    ('bitstring', 'rotate'): (2, lambda r, c, xs, raw: f'(holRotate {xs[0]} {xs[1]})'),
+    ('bitstring', 'replicate'): (2, lambda r, c, xs, raw: f'(holReplicate {xs[0]} {xs[1]})'),
+    ('bitstring', 'bxor'): (2, lambda r, c, xs, raw: f'(holBxor {xs[0]} {xs[1]})'),
+    ('bitstring', 'field'): (3, lambda r, c, xs, raw: f'(holField {xs[0]} {xs[1]} {xs[2]})'),
+    ('bitstring', 'v2n'): (1, lambda r, c, xs, raw: f'(holV2n {xs[0]})'),
+    ('list', 'PAD_LEFT'): (3, lambda r, c, xs, raw: f'(holPadLeft {xs[0]} {xs[1]} {xs[2]})'),
+    ('list', 'PAD_RIGHT'): (3, lambda r, c, xs, raw: f'(holPadRight {xs[0]} {xs[1]} {xs[2]})'),
+    ('list', 'FLAT'): (1, lambda r, c, xs, raw: f'(List.flatten {xs[0]})'),
+    ('list', 'HD'): (1, lambda r, c, xs, raw: f'(holHd {xs[0]})'),
+    ('list', 'LENGTH'): (1, lambda r, c, xs, raw: f'({xs[0]}.length)'),
+    ('list', 'REVERSE'): (1, lambda r, c, xs, raw: f'({xs[0]}.reverse)'),
+    ('bool', 'IN'): (2, lambda r, c, xs, raw: f'({xs[1]} {xs[0]})'),
+    ('pred_set', 'EMPTY'): (0, lambda r, c, xs, raw: '(fun _ => false)'),
+    ('words', 'word_ror'): (2, lambda r, c, xs, raw: f'(BitVec.rotateRight {xs[0]} {xs[1]})'),
+    ('words', 'word_msb'): (1, lambda r, c, xs, raw: f'(BitVec.msb {xs[0]})'),
+    ('words', 'word_hi'): (2, lambda r, c, xs, raw: f'(holWordHi {xs[0]} {xs[1]})'),
+    ('words', 'word_reverse'): (1, lambda r, c, xs, raw: f'(BitVec.reverse {xs[0]})'),
+    ('words', 'word_log2'): (1, lambda r, c, xs, raw: f'(holWordLog2 {xs[0]})'),
+    ('integer', 'int_add'): bin_op('+'),
+    ('integer', 'Num'): (1, lambda r, c, xs, raw: f'({xs[0]}.natAbs)'),
+    ('arithmetic', 'MIN'): (2, lambda r, c, xs, raw: f'(min {xs[0]} {xs[1]})'),
+    ('arithmetic', 'MOD'): bin_op('%'),
 }
 
 
@@ -897,6 +1110,80 @@ for _name in ('LT', 'EQ', 'GT', 'UN'):
         0, lambda r, c, xs, raw, name=_name: f'HolFloatCompare.{name.lower()}')
 
 
+def type_binders(head_ty, params) -> str:
+    """The implicit width/type binders for a definition's quantified types.
+
+    HOL type variables range over nonempty carriers; FCP index variables become
+    `Nat` widths with a `NeZero` discharge.
+    """
+    tvs = tyvars(head_ty, [])
+    for p in params:
+        tyvars(type_of(p), tvs)
+    width_tvs = fcp_tyvars(head_ty, [])
+    for p in params:
+        fcp_tyvars(type_of(p), width_tvs)
+    return ''.join(
+        f'{{{tyvar_name(v)} : Nat}} [NeZero {tyvar_name(v)}] ' if v in width_tvs
+        else f'{{{tyvar_name(v)} : Type}} [Nonempty {tyvar_name(v)}] '
+        for v in tvs)
+
+
+def render_multi(r: Renderer, lean_name: str, out) -> tuple[str, bool]:
+    """A `match` for a multi-clause definition with one parameter.
+
+    L3 generates `...2num`/`num2...` as one equation per constructor (and one
+    numeral per constructor index).  HOL leaves `num2...` unspecified above the
+    highest index; the Lean rendering adds a total default arm from the first
+    clause.  That default is not dead code: `Decode` calls `num2MemBarrierOp` on
+    the raw 2-bit `opc` field (bits 6:5), whose guard constrains bit 7 but not
+    bits 6:5, so `opc = 3` reaches `num2MemBarrierOp 3`; there Lean picks `DSB`
+    where HOL is unspecified.  The encoder never emits that word, so the choice
+    does not change what the model executes.
+
+    The rendering is only justified when every clause defines the same
+    one-argument constant; a later clause with more parameters or a different
+    head constant is reported instead of emitted.  The definition's width and
+    type variables are bound by the same `type_binders` the single-clause path
+    emits.
+    """
+    f0, params0, _ = out[0]
+    if len(params0) != 1:
+        raise Unrenderable(f'{len(out)} clauses')
+    for f, params, _ in out:
+        if len(params) != 1:
+            raise Unrenderable(f'{len(out)} clauses: clause arity differs')
+        if not (isinstance(f, Const) and isinstance(f0, Const)
+                and (f.thy, f.name) == (f0.thy, f0.name)):
+            raise Unrenderable(f'{len(out)} clauses: clauses define different constants')
+    param_ty = type_of(params0[0])
+    arg, env = r.bind(Var('arg0', param_ty), {})
+    arms = []
+    bodies = []
+    numerals = True
+    for f, params, rhs in out:
+        p = params[0]
+        v = nat_literal(p)
+        if v is not None:
+            pat = str(v)
+        elif isinstance(p, Const) and p.thy == MODEL_THY:
+            numerals = False
+            pat = r.pattern(param_ty, p.name, [])
+        else:
+            raise Unrenderable(f'{len(out)} clauses')
+        body = r.tm(rhs, env)
+        bodies.append(body)
+        arms.append(f'| {pat} => {body}')
+    if numerals:
+        arms.append(f'| _ => {r.tm(out[0][2], env)}')
+    tv_binders = type_binders(f0.ty, [params[0] for _, params, _ in out])
+    defined_name = r.defined.get((f0.thy, f0.name)) if isinstance(f0, Const) else None
+    recursive = defined_name is not None and any(mentions(defined_name, b) for b in bodies)
+    result_ty = ty_lean(fun_parts(f0.ty)[1])
+    text = (f'def {lean_name} ' + tv_binders + f'({arg} : {ty_lean(param_ty)}) : {result_ty} :=\n'
+            f'  match {arg} with\n  ' + '\n  '.join(arms))
+    return text, recursive
+
+
 def render_def(r: Renderer, lean_name: str, term) -> tuple[str, bool]:
     """The Lean equations of one HOL definition theorem (a conjunction of clauses)."""
     clauses = []
@@ -922,6 +1209,8 @@ def render_def(r: Renderer, lean_name: str, term) -> tuple[str, bool]:
         lhs, rhs = args
         f, params = strip_comb(lhs)
         out.append((f, params, rhs))
+    if len(out) > 1:
+        return render_multi(r, lean_name, out)
     if len(out) != 1:
         raise Unrenderable(f'{len(out)} clauses')
     f, params, rhs = out[0]
@@ -943,12 +1232,8 @@ def render_def(r: Renderer, lean_name: str, term) -> tuple[str, bool]:
         body = f'match {name} with\n  | {unused_pattern(pat, body)} =>\n  {body}'
     binders = [re.sub(r'^\(([^ ]+) :', lambda m: '(' + unused(m.group(1), body) + ' :', b) for b in binders]
     recursive = isinstance(f, Const) and (f.thy, f.name) in r.defined and \
-        re.search(r'(?<![A-Za-z0-9_.«])' + re.escape(r.defined[(f.thy, f.name)]) + r'(?![A-Za-z0-9_»])', body) is not None
-    tvs = tyvars(type_of(lhs), [])
-    for p in params:
-        tyvars(type_of(p), tvs)
-    # HOL type variables range over nonempty carriers. No chosen Lean default is required.
-    tv_binders = ''.join(f'{{{tyvar_name(v)} : Type}} [Nonempty {tyvar_name(v)}] ' for v in tvs)
+        mentions(r.defined[(f.thy, f.name)], body)
+    tv_binders = type_binders(type_of(lhs), params)
     head = f'def {lean_name} ' + tv_binders + ' '.join(binders) + f' : {result_ty} :=\n  {body}'
     return head, recursive
 
@@ -980,9 +1265,29 @@ def tuple_pattern(r, p, env):
 
 
 def main(argv):
+    global MODEL_THY, RENAMED_CTORS
+    MODEL_THY = 'riscv'
+    for arg in argv[3:]:
+        if arg.startswith('--thy='):
+            MODEL_THY = arg.removeprefix('--thy=')
     sexp_path, types_lean = argv[1], argv[2]
     data = read_sexps(Path(sexp_path).read_text())
     types = parse_types(Path(types_lean).read_text())
+    extra = EXTRA_TYPES_PATH.get(MODEL_THY)
+    if extra is not None:
+        extra_path, extra_names = extra
+        if not extra_path.exists():
+            raise FileNotFoundError(
+                f'configured extra types file for {MODEL_THY} is missing: {extra_path}')
+        parsed = parse_types(extra_path.read_text())
+        missing = [n for n in extra_names if n not in parsed]
+        if missing:
+            raise ValueError(f'configured extra types missing from {extra_path}: {missing}')
+        # Only add datatypes the model Types module does not declare: the extra
+        # module may carry same-named carriers with different constructor
+        # spellings (ARM8 Encode.lean has its own closed-model `MemOp`).
+        for name in extra_names:
+            types.setdefault(name, parsed[name])
     defined = {}
     order = []
     for rec in data:
@@ -990,6 +1295,14 @@ def main(argv):
         lean = ident(name)
         defined[(thy, name)] = lean
         order.append((thy, name, defname, parse_tm(term)))
+    # Only map a constructor name that actually occurs in the export; this keeps
+    # guessed `<Type>_<UPPER>` keys from matching an unrelated constant.
+    hol_consts = set()
+    for _, _, _, term in order:
+        for c in constants_of(term):
+            hol_consts.add((c.thy, c.name))
+    RENAMED_CTORS = {k: v for k, v in renamed_ctors(types, MODEL_THY).items()
+                     if k in hol_consts}
     roots = [arg.removeprefix('--roots=') for arg in argv[3:]
              if arg.startswith('--roots=')]
     if roots:
@@ -1039,7 +1352,7 @@ def main(argv):
             nc = r.noncomputable or 'holThe' in text or any(d in noncomp for d in deps)
             if nc:
                 noncomp.add((thy, name))
-            emitted.append((thy, name, defname, text, rec, nc))
+            emitted.append((thy, name, defined[(thy, name)], defname, text, rec, nc))
         except Unrenderable as e:
             bad.add((thy, name))
             failed.append((thy, name, str(e)))
@@ -1067,14 +1380,23 @@ def parse_types(text: str) -> dict:
 if __name__ == '__main__':
     emitted, failed = main(sys.argv)
     paths = dict(arg.split('=', 1) for arg in sys.argv[3:]
-                 if not arg.startswith('--roots='))
-    for thy, name, defname, text, rec, nc in emitted:
+                 if not arg.startswith('--'))
+    for thy, name, lean_name, defname, text, rec, nc in emitted:
         if re.fullmatch(r'boolify\d+', name):
             # Generated by bitstringLib.bitify_boolify from an L3 `BL` call: no source
             # declaration to cite, so the rendering is untagged infrastructure.
             print(f'/-- HOL `{thy}${name}` (`{defname}`), generated by `bitstringLib.bitify_boolify` '
                   f'for an L3 `BL` call (no source declaration); mechanically rendered from the '
                   f'elaborated HOL definition. Flapjack infrastructure, untagged. -/')
+        elif defname == name + '_thm' and (name.startswith('num2') or name.endswith('2num')):
+            # Generated by the L3 `Construct` machinery: the `_thm` is not a
+            # source declaration, so `scripts/check-hol-refs.py` cannot resolve
+            # it and the rendering is untagged infrastructure.
+            print(f'/-- HOL `{thy}${name}` (`{defname}`), mechanically rendered from the elaborated HOL\n'
+                  f'definition.  Untagged: the L3 `...2num`/`num2...` conversions are generated by the\n'
+                  f'`Construct` machinery, and `scripts/check-hol-refs.py` resolves `Construct` types but\n'
+                  f'not their generated `_thm` equations.  Flapjack infrastructure, not an exact-port\n'
+                  f'claim. -/')
         else:
             note = (' Uses the original fixed binary32/binary64 field codecs and generic IEEE '
                     'value/comparison operations with `(reals_as_rational_cuts)` '

@@ -202,9 +202,6 @@ theorem CrepSemHOLState.toExpressionEvaluatorState_toHolFiniteBitVecState_locals
             (holWordToBitVec (instFinHolFiniteDimension (width := width))
               (bitVecToHolWordBits value)) = PanWordLab.word value
           congr 1
-          change holWordToBitVec
-            (instFinHolFiniteDimension (width := width))
-            (bitVecToHolWordBits value) = value
           change holWordBitsToBitVec (bitVecToHolWordBits value) = value
           exact holWordBitsToBitVec_bitVecToHolWordBits value
 
@@ -236,9 +233,6 @@ theorem CrepSemHOLState.toExpressionEvaluatorState_toHolFiniteBitVecState_global
             (holWordToBitVec (instFinHolFiniteDimension (width := width))
               (bitVecToHolWordBits value)) = PanWordLab.word value
           congr 1
-          change holWordToBitVec
-            (instFinHolFiniteDimension (width := width))
-            (bitVecToHolWordBits value) = value
           change holWordBitsToBitVec (bitVecToHolWordBits value) = value
           exact holWordBitsToBitVec_bitVecToHolWordBits value
 
@@ -422,7 +416,7 @@ theorem crepSimpExpCorrect1CrepSemHOLStateSource
       (instFinHolFiniteDimension (width := width))
       state.toExpressionEvaluatorState (crepExpHOLToSourceBits expression) := by
   rw [CrepSemHOLState.toExpressionEvaluatorState_mapc]
-  letI : HolFiniteDimension (Fin width) :=
+  let _ : HolFiniteDimension (Fin width) :=
     instFinHolFiniteDimension (width := width)
   have hCodeId :
       crepArithHolFiniteDimensionMapCode
@@ -1431,7 +1425,7 @@ theorem crepSimpExpCorrect1CrepSemHOLFiniteStateSourceEval
     evalCrepHolFiniteWordSourceExpWordLab dimension
       state.toSourceEvaluatorState
       (mapCrepExpWord (bitVecToHolWord dimension) (crepExpOfHOL expression)) := by
-  letI : HolFiniteDimension ι := dimension
+  let _ : HolFiniteDimension ι := dimension
   let source := state.toSourceEvaluatorState
   let sourceExpression :=
     mapCrepExpWord (bitVecToHolWord dimension) (crepExpOfHOL expression)
@@ -1474,7 +1468,7 @@ theorem evalCrepRuntimeExp_crepSemHOLState_var
   rw [hLocal]
   cases h : holState.locals.lookup name with
   | none => simp
-  | some cell => cases cell <;> simp [HolWordLab.toPanWordLab,
+  | some cell => cases cell; simp [HolWordLab.toPanWordLab,
       PanWordLab.toHolWordLab, panTheWord]
 
 /-- Native production-evaluator `LoadGlob` case against the exact finite-map
@@ -1503,7 +1497,7 @@ theorem evalCrepRuntimeExp_crepSemHOLState_loadGlob
   rw [hGlobal]
   cases h : holState.globals.lookup address with
   | none => simp
-  | some cell => cases cell <;> simp [HolWordLab.toPanWordLab,
+  | some cell => cases cell; simp [HolWordLab.toPanWordLab,
       PanWordLab.toHolWordLab, panTheWord]
 
 /-- Exact finite-map `Var` case for the production evaluator instantiated at
@@ -1747,7 +1741,7 @@ private theorem crepShMemLoadExactHOL_mapc {width : Nat} [NeZero width] {σ : Ty
   subst hr
   unfold crepShMemLoadExactHOL
   simp only [CrepSemHOLState.mapc]
-  split <;> (try split) <;> (try split) <;> (try split) <;> rfl
+  split <;> (try split) <;> (try split) <;> rfl
 
 private theorem crepShMemStoreExactHOL_mapc {width : Nat} [NeZero width] {σ : Type}
     (f : MlString × (List Nat × CrepProgHOL width) → List Nat × CrepProgHOL width)
@@ -1762,7 +1756,7 @@ private theorem crepShMemStoreExactHOL_mapc {width : Nat} [NeZero width] {σ : T
   subst hr
   unfold crepShMemStoreExactHOL
   simp only [CrepSemHOLState.mapc]
-  split <;> (try split) <;> (try split) <;> (try split) <;> (try split) <;> rfl
+  split <;> (try split) <;> (try split) <;> (try split) <;> rfl
 
 /-- Exact port of HOL `sh_mem_op_code` (`crep_arithProofScript.sml:173-180`):
     the proof-script-local `mapc f` code update commutes with `sh_mem_op`. HOL

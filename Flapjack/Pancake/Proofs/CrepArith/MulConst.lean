@@ -1,5 +1,6 @@
 import Flapjack.Pancake.CrepArith
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
+import Flapjack.Misc.Words.Log2
 
 /-!
 # crep_arith `mul_const` correctness over the exact carriers
@@ -27,12 +28,6 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {σ : Type} :
   CrepSemHOLState.holFmapAsFiniteSupportWitness
 
 end CrepArithMulConstFiniteSupport
-
-/-- HOL `words$word_log2 w = n2w (LOG2 (w2n w))` (HOL library, outside the CakeML
-    submodule, so untagged).  `Nat.log2` agrees with HOL `LOG2` on the positive
-    arguments at which the theorems below use it. -/
-def holWordLog2 {width : Nat} (w : BitVec width) : BitVec width :=
-  BitVec.ofNat width (Nat.log2 w.toNat)
 
 /-- A successful `dest_2exp` has a nonzero argument. -/
 private theorem crepDest2ExpHOL_ne_zero {width : Nat} [NeZero width] {i : Nat}
