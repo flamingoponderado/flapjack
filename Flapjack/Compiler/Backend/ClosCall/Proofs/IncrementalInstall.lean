@@ -481,6 +481,75 @@ theorem doInstall_nonType_ready_disjoint {C F : Type} (fuel relationFuel : Nat) 
     doInstall_nonType_oracleLocationsAvoid allowed sourceValues source final result run notType avoids,
     finalCompiler, targetFinalCompiler, finalOracle, growth⟩
 
+/-- Installation can enlarge the open-location set by the current program's
+locations that remain unknown after compilation. The enlarged set stays
+disjoint from known locations and from every later oracle program, and the
+related states remain related under it. This is Flapjack-specific
+infrastructure for the open-set component of the HOL invariant. -/
+theorem doInstall_nonType_ready_open_growth {C F : Type} (fuel relationFuel : Nat) (g : State)
+    (allowed : Set Nat) (compiler : ClosSem.Compiler C)
+    (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (sourceValues targetValues : List ClosSem.Value)
+    (result : SemanticPrimitivesHOL.Result (List ClosLang.Exp) ClosSem.Value)
+    (final : ClosSem.State (NumSet × C) F)
+    (ready : IncrementalInstallReady g source target)
+    (states : StateRelFuel relationFuel g allowed source target)
+    (values : List.Forall₂ (ValueRelFuel relationFuel g allowed target.code) sourceValues targetValues)
+    (sourceCompiler : source.compile = compileIncFuelCallback fuel compiler)
+    (targetCompiler : target.compile = compiler)
+    (targetOracle : target.compileOracle = compileIncFuelOracle fuel source.compileOracle)
+    (run : doInstall sourceValues source = (result, final))
+    (notType : result ≠ .err (.abort .typeError))
+    (disjoint : Disjoint allowed (sptDomain g.1))
+    (avoids : OracleLocationsAvoid allowed source) :
+    ∃ expressions converted nextKnown targetFinal nextAllowed,
+      compileIncFuel? fuel g.1 (expressions, []) = some (nextKnown, converted) ∧
+      doInstall targetValues target =
+        (if source.clock = 0 then .err (.abort .timeoutError) else .val converted.1, targetFinal) ∧
+      result = (if source.clock = 0 then .err (.abort .timeoutError) else .val expressions) ∧
+      expressions = (source.compileOracle 0).2.1 ∧ expressions ≠ [] ∧
+      stateExtends g (nextKnown, converted.2 ++ g.2) ∧
+      IncrementalInstallReady (nextKnown, converted.2 ++ g.2) final targetFinal ∧
+      allowed ⊆ nextAllowed ∧
+      (∀ loc ∈ codeLocations expressions, ¬ sptDomain nextKnown loc → loc ∈ nextAllowed) ∧
+      Disjoint nextAllowed (sptDomain nextKnown) ∧ OracleLocationsAvoid nextAllowed final ∧
+      StateRelFuel relationFuel (nextKnown, converted.2 ++ g.2) nextAllowed final targetFinal ∧
+      final.compile = compileIncFuelCallback fuel compiler ∧ targetFinal.compile = compiler ∧
+      targetFinal.compileOracle = compileIncFuelOracle fuel final.compileOracle ∧
+      (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry) := by
+  obtain ⟨expressions, converted, nextKnown, targetFinal, passRun, targetRun, resultEq, exprEq,
+    nonempty, extended, newReady, newStates, oldDisjoint, oldAvoids, finalCompiler,
+    targetFinalCompiler, finalOracle, codeGrowth⟩ :=
+    doInstall_nonType_ready_disjoint fuel relationFuel g allowed compiler source target sourceValues targetValues
+      result final ready states values sourceCompiler targetCompiler targetOracle run notType disjoint avoids
+  let nextAllowed : Set Nat := allowed ∪ { loc | loc ∈ codeLocations expressions ∧ ¬ sptDomain nextKnown loc }
+  have allowedGrowth : allowed ⊆ nextAllowed := Set.subset_union_left
+  have coverage : ∀ loc ∈ codeLocations expressions, ¬ sptDomain nextKnown loc → loc ∈ nextAllowed := by
+    intro loc member unknown
+    exact Or.inr ⟨member, unknown⟩
+  have nextDisjoint : Disjoint nextAllowed (sptDomain nextKnown) := by
+    apply Set.disjoint_left.mpr
+    intro loc member known
+    rcases member with old | ⟨_, unknown⟩
+    · exact Set.disjoint_left.mp oldDisjoint old known
+    · exact unknown known
+  obtain ⟨_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, finalEq, _⟩ :=
+    doInstall_nonType_parts sourceValues source final result run notType
+  have nextAvoids : OracleLocationsAvoid nextAllowed final := by
+    intro index loc laterMember member
+    rcases member with old | ⟨currentMember, _⟩
+    · exact oldAvoids index loc laterMember old
+    · have laterOriginal : loc ∈ codeLocations (source.compileOracle (index + 1)).2.1 := by
+        simpa [finalEq, holShiftSeq] using laterMember
+      have separate := ready.disjoint 0 (index + 1) (by omega) loc laterOriginal
+      apply separate
+      simpa [exprEq] using currentMember
+  have nextStates := stateRelFuel_mono newStates
+    (stateExtends_refl (nextKnown, converted.2 ++ g.2) newReady.well.2) allowedGrowth
+  exact ⟨expressions, converted, nextKnown, targetFinal, nextAllowed, passRun, targetRun, resultEq, exprEq,
+    nonempty, extended, newReady, allowedGrowth, coverage, nextDisjoint, nextAvoids, nextStates,
+    finalCompiler, targetFinalCompiler, finalOracle, codeGrowth⟩
+
 /-- Simulation at empty environments for source evaluations starting below a
 clock bound. It is Lean-side infrastructure for the installed-program case. -/
 def InstalledProgramSimBelow {C F : Type} (passFuel fuel limit : Nat) (compiler : ClosSem.Compiler C)
