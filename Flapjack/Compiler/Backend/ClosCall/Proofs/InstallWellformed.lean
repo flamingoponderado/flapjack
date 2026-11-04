@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.ClosCall.Proofs.ThunkWellformed
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
 import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyCode
+import Flapjack.Compiler.Backend.Semantics.ClosProps.AdjustOracle
 
 /-! Source-state well-formedness during dynamic installation. -/
 namespace Flapjack.Compiler.Backend.ClosCall
@@ -174,6 +175,66 @@ theorem holLast_mem_nonempty {A : Type} [Nonempty A] (values : List A) (nonempty
       simp only [List.mem_cons] at member
       tauto
 
+/-- The actual installed-program continuation preserves well-formedness at
+the caller-supplied compiler state and code, including the last result value.
+This formulation permits those parameters to be the state and code produced
+by an incremental installation. This is Flapjack-specific infrastructure. -/
+theorem runInstalled_wellFormedFuel_of_actual_install {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (values : List ClosSem.Value) (source : ClosSem.State C F)
+    (installedWf : StateWellFormedFuel fuel g allowed code (doInstall values source).2)
+    (programIH : ∀ program installed, doInstall values source = (.val program, installed) →
+      EvalWellFormedFuel fuel g allowed code (evaluate program [] installed)) :
+    EvalWellFormedFuel fuel g allowed code (ClosProps.AdjustOracle.runInstalled values source) := by
+  unfold ClosProps.AdjustOracle.runInstalled
+  cases installRun : doInstall values source with
+  | mk installResult installed =>
+    rw [installRun] at installedWf
+    cases installResult with
+    | err error =>
+      cases error with
+      | raise value => exact (doInstall_noRaise values source installed value installRun).elim
+      | abort reason => simpa [EvalWellFormedFuel, ResultWellFormedFuel] using installedWf
+    | val program =>
+      have programWf := programIH program installed installRun
+      obtain ⟨_, _, _, _, _, expressions, _, _, _, _, _, _, _, _, _, _, nonempty, _, resultEq⟩ :=
+        doInstall_nonType_parts values source installed (.val program) installRun (by simp)
+      have programEq : program = expressions := by
+        split at resultEq <;> simp_all
+      have programNonempty : program ≠ [] := by simpa [programEq] using nonempty
+      cases programRun : evaluate program [] installed with
+      | mk result final =>
+        rw [programRun] at programWf
+        cases result with
+        | err error => simpa [programRun] using programWf
+        | val resultValues =>
+          let _ : Nonempty ClosSem.Value := ⟨unitValue⟩
+          have length := (evaluate_length (C := C) (F := F)).1 program [] installed final resultValues programRun
+          have resultNonempty : resultValues ≠ [] := by
+            intro empty
+            simp [empty] at length
+            exact programNonempty (List.length_eq_zero_iff.mp length.symm)
+          have lastWf := valuesWellFormedFuel_mem programWf.1 (holLast_mem_nonempty resultValues resultNonempty)
+          simpa [programRun, EvalWellFormedFuel, ResultWellFormedFuel] using
+            And.intro (ValuesWellFormedFuel.cons lastWf .nil) programWf.2
+
+/-- An install expression preserves well-formedness when its actual argument
+result and installed continuation do so at the chosen final compiler state
+and code. This is Flapjack-specific infrastructure. -/
+theorem evaluate_install_wellFormedFuel_of_actual_args {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (trace : BackendCommon.Tra)
+    (args : List ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State C F)
+    (argsWf : EvalWellFormedFuel fuel g allowed code (evaluate args env state))
+    (installIH : ∀ values next, evaluate args env state = (.val values, next) →
+      EvalWellFormedFuel fuel g allowed code (ClosProps.AdjustOracle.runInstalled values.reverse next)) :
+    EvalWellFormedFuel fuel g allowed code (evaluate [.op trace .install args] env state) := by
+  rw [ClosProps.AdjustOracle.evaluateInstallEq]
+  cases argsRun : evaluate args env state with
+  | mk result next =>
+    rw [argsRun] at argsWf
+    cases result with
+    | err error => exact argsWf
+    | val values => exact installIH values next argsRun
+
 /-- Dynamic installation preserves the bounded evaluation invariant when
 the current oracle's auxiliary list is empty and installed code satisfies
 the recursive evaluation hypothesis. -/
@@ -189,46 +250,21 @@ theorem evaluate_install_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {a
   cases argsRun : evaluate args env state with
   | mk argsResult argsFinal =>
     rw [argsRun] at argsIH oracleEmpty
-    rw [evaluate, fixClock_evaluate, argsRun]
+    rw [ClosProps.AdjustOracle.evaluateInstallEq, argsRun]
     cases argsResult with
-    | err error => simpa [EvalWellFormedFuel] using argsIH
+    | err error => exact argsIH
     | val values =>
-      dsimp only
-      cases installRun : doInstall values.reverse argsFinal with
-      | mk installResult installFinal =>
-        have installWf := doInstall_wellFormedFuel values.reverse argsFinal installFinal installResult
-          argsIH.2 oracleEmpty installRun
-        cases installResult with
-        | err error =>
-          cases error with
-          | raise value => exact (doInstall_noRaise values.reverse argsFinal installFinal value installRun).elim
-          | abort reason => simpa [EvalWellFormedFuel, ResultWellFormedFuel] using installWf
-        | val program =>
-          dsimp only
-          have parts := doInstall_nonType_parts values.reverse argsFinal installFinal (.val program) installRun (by simp)
-          obtain ⟨_, _, _, _, _, expressions, _, _, _, _, _, _, _, _, _, _, programNonempty, _, resultEq⟩ := parts
-          have programEq : program = expressions := by
-            split at resultEq <;> simp_all
-          have nonempty : program ≠ [] := by simpa [programEq] using programNonempty
-          have argsBound := evaluate_clock_le args env state
-          rw [argsRun] at argsBound
-          dsimp only at argsBound
-          have installBound := doInstall_success_clock values.reverse argsFinal installFinal program installRun
-          have bodyWf := bodyIH program installFinal (by omega) installWf
-          cases bodyRun : evaluate program [] installFinal with
-          | mk bodyResult bodyFinal =>
-            rw [bodyRun] at bodyWf
-            cases bodyResult with
-            | err error => simpa [EvalWellFormedFuel] using bodyWf
-            | val resultValues =>
-              let _ : Nonempty ClosSem.Value := ⟨unitValue⟩
-              have length := (evaluate_length (C := C) (F := F)).1 program [] installFinal bodyFinal resultValues bodyRun
-              have resultNonempty : resultValues ≠ [] := by
-                intro empty
-                simp [empty] at length
-                exact nonempty (List.length_eq_zero_iff.mp length.symm)
-              have lastWf := valuesWellFormedFuel_mem bodyWf.1 (holLast_mem_nonempty resultValues resultNonempty)
-              change EvalWellFormedFuel fuel g allowed code (.val [holLast resultValues], bodyFinal)
-              exact ⟨.cons lastWf .nil, bodyWf.2⟩
+      have installedWf : StateWellFormedFuel fuel g allowed code (doInstall values.reverse argsFinal).2 := by
+        cases installRun : doInstall values.reverse argsFinal with
+        | mk result installed =>
+          exact doInstall_wellFormedFuel values.reverse argsFinal installed result argsIH.2 oracleEmpty installRun
+      apply runInstalled_wellFormedFuel_of_actual_install values.reverse argsFinal installedWf
+      intro program installed installRun
+      have argsBound := evaluate_clock_le args env state
+      rw [argsRun] at argsBound
+      dsimp only at argsBound
+      have installBound := doInstall_success_clock values.reverse argsFinal installed program installRun
+      have stateWf := doInstall_wellFormedFuel values.reverse argsFinal installed (.val program) argsIH.2 oracleEmpty installRun
+      exact bodyIH program installed (by omega) stateWf
 
 end Flapjack.Compiler.Backend.ClosCall
