@@ -21758,4 +21758,288 @@ theorem finalCode_exact_of_matching_checkedPrefix {C F : Type} (fuel count : Nat
     exact reconstructed.2.2.2
   exact codeIncludes_exact_of_sameKnown _ finalG targetFinal.code reconstructed.1 readyFinal.well sameKnown prefixCode readyFinal.included
 
+/-- Distinct entries of an ordered source oracle generate disjoint target
+auxiliary labels. This is Flapjack-specific prefix infrastructure. -/
+theorem compileIncFuelOracle_aux_disjoint {C : Type} (fuel : Nat)
+    (oracle : ClosSem.CompileOracle (NumSet × C)) (initial : Set Nat)
+    (syntaxOracle : ∀ index, syntaxOk (oracle index).2.1)
+    (ordered : BackendProps.oracleMonotonic (fun entry => {loc | loc ∈ codeLocations entry.2.1}) (· < ·) initial oracle) :
+    ∀ earlier later, earlier < later → ∀ label,
+      label ∈ (compileIncFuelOracle fuel oracle earlier).2.2.map Prod.fst →
+      label ∉ (compileIncFuelOracle fuel oracle later).2.2.map Prod.fst := by
+  intro earlier later before label first second
+  obtain ⟨firstKnown, firstPass, _⟩ := compileIncFuelOracle_entry fuel oracle earlier
+  obtain ⟨lastKnown, lastPass, _⟩ := compileIncFuelOracle_entry fuel oracle later
+  have firstGenerated := compileIncFuel_generated fuel (oracle earlier).1.1 (oracle earlier).2 firstKnown
+    (compileIncFuelOracle fuel oracle earlier).2 firstPass (syntaxOracle earlier).2.2
+  have lastGenerated := compileIncFuel_generated fuel (oracle later).1.1 (oracle later).2 lastKnown
+    (compileIncFuelOracle fuel oracle later).2 lastPass (syntaxOracle later).2.2
+  obtain ⟨firstLoc, firstMember, firstEq⟩ := firstGenerated.2.1 label first
+  obtain ⟨lastLoc, lastMember, lastEq⟩ := lastGenerated.2.1 label second
+  have lt := ordered.1 earlier later firstLoc lastLoc before firstMember lastMember
+  omega
+
+/-- Equal shifted oracles with pairwise disjoint auxiliary keys have empty
+auxiliary code in every entry between the shifts. This is Flapjack-specific
+prefix infrastructure. -/
+theorem oracle_aux_empty_between_equal_shifts {C : Type} (oracle : ClosSem.CompileOracle C)
+    (first last : Nat) (before : first < last)
+    (disjoint : ∀ earlier later, earlier < later → ∀ label,
+      label ∈ (oracle earlier).2.2.map Prod.fst → label ∉ (oracle later).2.2.map Prod.fst)
+    (equal : holShiftSeq first oracle = holShiftSeq last oracle) :
+    ∀ index, first ≤ index → index < last → (oracle index).2.2 = [] := by
+  intro index lower upper
+  have entryEq : oracle index = oracle (index + (last - first)) := by
+    have shifted := congrFun equal (index - first)
+    simpa [holShiftSeq, show index - first + first = index by omega,
+      show index - first + last = index + (last - first) by omega] using shifted
+  have noKeys : (oracle index).2.2.map Prod.fst = [] := by
+    cases keys : (oracle index).2.2.map Prod.fst with
+    | nil => rfl
+    | cons label rest =>
+      have inFirst : label ∈ (oracle index).2.2.map Prod.fst := by rw [keys]; simp
+      have inLater : label ∈ (oracle (index + (last - first))).2.2.map Prod.fst := by
+        rw [← entryEq]
+        exact inFirst
+      exact False.elim (disjoint index (index + (last - first)) (by omega) label inFirst inLater)
+  exact List.map_eq_nil_iff.mp noKeys
+
+/-- Installing a prefix with no auxiliary code leaves the code map unchanged.
+This is Flapjack-specific prefix infrastructure. -/
+theorem installOraclePrefix_of_empty_aux {C : Type} (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+    (oracle : ClosSem.CompileOracle C) (count : Nat)
+    (empty : ∀ index, index < count → (oracle index).2.2 = []) :
+    ClosSem.installOraclePrefix code oracle count = code := by
+  induction count generalizing code oracle with
+  | zero => rfl
+  | succ count ih =>
+    have headEmpty : (oracle 0).2.2 = [] := empty 0 (by omega)
+    have tailEmpty : ∀ index, index < count → ((holShiftSeq 1 oracle) index).2.2 = [] := by
+      intro index bound
+      simpa [holShiftSeq] using empty (index + 1) (by omega)
+    simp only [ClosSem.installOraclePrefix, headEmpty]
+    have same : code.updateListEq [] = code := by
+      cases code
+      rfl
+    rw [same]
+    exact ih code (holShiftSeq 1 oracle) tailEmpty
+
+/-- Equal shifted oracles with disjoint auxiliary labels yield equal installed
+code maps, even if the shifts have different numeric offsets. This is
+Flapjack-specific prefix infrastructure. -/
+theorem installOraclePrefix_eq_of_equal_shifts {C : Type}
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (oracle : ClosSem.CompileOracle C)
+    (first last : Nat)
+    (disjoint : ∀ earlier later, earlier < later → ∀ label,
+      label ∈ (oracle earlier).2.2.map Prod.fst → label ∉ (oracle later).2.2.map Prod.fst)
+    (equal : holShiftSeq first oracle = holShiftSeq last oracle) :
+    ClosSem.installOraclePrefix code oracle first = ClosSem.installOraclePrefix code oracle last := by
+  have orderedCase : ∀ low high, low < high → holShiftSeq low oracle = holShiftSeq high oracle →
+      ClosSem.installOraclePrefix code oracle low = ClosSem.installOraclePrefix code oracle high := by
+    intro low high before same
+    have empty := oracle_aux_empty_between_equal_shifts oracle low high before disjoint same
+    have tailEmpty : ∀ index, index < high - low → ((holShiftSeq low oracle) index).2.2 = [] := by
+      intro index bound
+      apply empty (index + low) (by omega) (by omega)
+    have highEq : high = low + (high - low) := by omega
+    rw [highEq, ClosSem.installOraclePrefix_add]
+    exact (installOraclePrefix_of_empty_aux _ (holShiftSeq low oracle) (high - low) tailEmpty).symm
+  rcases lt_trichotomy first last with before | equalCount | after
+  · exact orderedCase first last before equal
+  · subst last; rfl
+  · exact (orderedCase last first after equal.symm).symm
+
+/-- Related final oracles and readiness recover the exact target-code clause
+for arbitrary source and target evaluations. Numeric prefix lengths need not
+match: any intervening target entries have empty auxiliary code. This is
+Flapjack-specific simulation infrastructure. -/
+theorem evaluate_finalCode_exact {C F : Type} (fuel : Nat) (compiler : ClosSem.Compiler C)
+    (g finalG : State) (allowed : Set Nat)
+    (source final : ClosSem.State (NumSet × C) F) (target targetFinal : ClosSem.State C F)
+    (sourceExps targetExps : List ClosLang.Exp) (sourceEnv targetEnv : List ClosSem.Value)
+    (sourceResult targetResult : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (extraClock : Nat) (inv : IncrementalCodeInv fuel g allowed source target)
+    (sourceCompiler : source.compile = compileIncFuelCallback fuel compiler)
+    (sourceRun : evaluate sourceExps sourceEnv source = (sourceResult, final))
+    (targetRun : evaluate targetExps targetEnv {target with clock := target.clock + extraClock} = (targetResult, targetFinal))
+    (readyFinal : IncrementalInstallReady finalG final targetFinal)
+    (finalOracle : targetFinal.compileOracle = compileIncFuelOracle fuel final.compileOracle) :
+    targetFinal.code = HolFiniteMapExact.alistToFmap finalG.2 := by
+  obtain ⟨n, _, sourceShift, _, checked⟩ :=
+    evaluate_compileIncFuel_checkedPrefix fuel compiler sourceExps sourceEnv source final sourceResult sourceCompiler sourceRun
+  have steps : ∀ index, index < n → ∃ converted,
+      compileIncFuel? fuel (source.compileOracle index).1.1 (source.compileOracle index).2 =
+        some ((source.compileOracle (index + 1)).1.1, converted) := by
+    intro index bound
+    obtain ⟨converted, _, _, pass, _⟩ := checked index bound
+    exact ⟨converted, pass⟩
+  obtain ⟨m, targetShift, targetPrefix⟩ := ClosSem.evaluate_oracleCodePrefix targetExps targetEnv
+    {target with clock := target.clock + extraClock} targetFinal targetResult targetRun
+  have initialOracle : target.compileOracle = compileIncFuelOracle fuel source.compileOracle := inv.2.2.1
+  have shiftedEqual : holShiftSeq m target.compileOracle = holShiftSeq n target.compileOracle := by
+    calc
+      holShiftSeq m target.compileOracle = targetFinal.compileOracle := by simpa using targetShift.symm
+      _ = compileIncFuelOracle fuel final.compileOracle := finalOracle
+      _ = holShiftSeq n (compileIncFuelOracle fuel source.compileOracle) := by
+        rw [sourceShift]
+        funext index
+        rfl
+      _ = holShiftSeq n target.compileOracle := by rw [initialOracle]
+  have syntaxOracle : ∀ index, syntaxOk (source.compileOracle index).2.1 := by
+    intro index
+    exact (inv.2.2.2.2.2.2.2 index).1
+  have disjoint : ∀ earlier later, earlier < later → ∀ label,
+      label ∈ (target.compileOracle earlier).2.2.map Prod.fst →
+      label ∉ (target.compileOracle later).2.2.map Prod.fst := by
+    rw [initialOracle]
+    exact compileIncFuelOracle_aux_disjoint fuel source.compileOracle (sptDomain g.1 ∪ allowed)
+      syntaxOracle inv.2.2.2.2.2.1
+  have equalPrefixes := installOraclePrefix_eq_of_equal_shifts target.code target.compileOracle m n disjoint shiftedEqual
+  have targetPrefix' : targetFinal.code = ClosSem.installOraclePrefix target.code target.compileOracle n := by
+    simpa using targetPrefix.trans equalPrefixes
+  exact finalCode_exact_of_matching_checkedPrefix fuel n g finalG allowed source final target targetFinal inv readyFinal sourceShift targetPrefix' steps
+
+/-- Related final oracles and readiness recover exact target code after
+closure applications, including differing numeric prefix offsets. This is
+Flapjack-specific simulation infrastructure. -/
+theorem evaluateApp_finalCode_exact {C F : Type} (fuel : Nat) (compiler : ClosSem.Compiler C)
+    (g finalG : State) (allowed : Set Nat)
+    (source final : ClosSem.State (NumSet × C) F) (target targetFinal : ClosSem.State C F)
+    (location : Option Nat) (sourceFn targetFn : ClosSem.Value) (sourceArgs targetArgs : List ClosSem.Value)
+    (sourceResult targetResult : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (extraClock : Nat) (inv : IncrementalCodeInv fuel g allowed source target)
+    (sourceCompiler : source.compile = compileIncFuelCallback fuel compiler)
+    (sourceRun : evaluateApp location sourceFn sourceArgs source = (sourceResult, final))
+    (targetRun : evaluateApp location targetFn targetArgs {target with clock := target.clock + extraClock} = (targetResult, targetFinal))
+    (readyFinal : IncrementalInstallReady finalG final targetFinal)
+    (finalOracle : targetFinal.compileOracle = compileIncFuelOracle fuel final.compileOracle) :
+    targetFinal.code = HolFiniteMapExact.alistToFmap finalG.2 := by
+  obtain ⟨n, _, sourceShift, _, checked⟩ :=
+    evaluateApp_compileIncFuel_checkedPrefix fuel compiler location sourceFn sourceArgs source final sourceResult sourceCompiler sourceRun
+  have steps : ∀ index, index < n → ∃ converted,
+      compileIncFuel? fuel (source.compileOracle index).1.1 (source.compileOracle index).2 =
+        some ((source.compileOracle (index + 1)).1.1, converted) := by
+    intro index bound
+    obtain ⟨converted, _, _, pass, _⟩ := checked index bound
+    exact ⟨converted, pass⟩
+  obtain ⟨m, targetShift, targetPrefix⟩ := ClosSem.evaluateApp_oracleCodePrefix location targetFn targetArgs
+    {target with clock := target.clock + extraClock} targetFinal targetResult targetRun
+  have initialOracle : target.compileOracle = compileIncFuelOracle fuel source.compileOracle := inv.2.2.1
+  have shiftedEqual : holShiftSeq m target.compileOracle = holShiftSeq n target.compileOracle := by
+    calc
+      holShiftSeq m target.compileOracle = targetFinal.compileOracle := by simpa using targetShift.symm
+      _ = compileIncFuelOracle fuel final.compileOracle := finalOracle
+      _ = holShiftSeq n (compileIncFuelOracle fuel source.compileOracle) := by
+        rw [sourceShift]
+        funext index
+        rfl
+      _ = holShiftSeq n target.compileOracle := by rw [initialOracle]
+  have syntaxOracle : ∀ index, syntaxOk (source.compileOracle index).2.1 := by
+    intro index
+    exact (inv.2.2.2.2.2.2.2 index).1
+  have disjoint : ∀ earlier later, earlier < later → ∀ label,
+      label ∈ (target.compileOracle earlier).2.2.map Prod.fst →
+      label ∉ (target.compileOracle later).2.2.map Prod.fst := by
+    rw [initialOracle]
+    exact compileIncFuelOracle_aux_disjoint fuel source.compileOracle (sptDomain g.1 ∪ allowed)
+      syntaxOracle inv.2.2.2.2.2.1
+  have equalPrefixes := installOraclePrefix_eq_of_equal_shifts target.code target.compileOracle m n disjoint shiftedEqual
+  have targetPrefix' : targetFinal.code = ClosSem.installOraclePrefix target.code target.compileOracle n := by
+    simpa using targetPrefix.trans equalPrefixes
+  exact finalCode_exact_of_matching_checkedPrefix fuel n g finalG allowed source final target targetFinal inv readyFinal sourceShift targetPrefix' steps
+
+
+/-- The closed list simulation also preserves the exact target-code clause.
+The complete final code invariant remains an additional obligation. This is
+Flapjack-specific simulation infrastructure. -/
+theorem callsListBounded_sim_with_exactCode {C F : Type}
+    (passFuel relationFuel traversalFuel : Nat) (compiler : ClosSem.Compiler C)
+    (sourceExps targetExps : List ClosLang.Exp) (initial passFinal g : State) (allowed : Set Nat)
+    (sourceEnv targetEnv : List ClosSem.Value)
+    (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (final : ClosSem.State (NumSet × C) F)
+    (passRun : callsListBounded traversalFuel sourceExps initial = some (targetExps, passFinal))
+    (distinct : (codeLocations sourceExps).Nodup) (fresh : LabelsFresh (codeLocations sourceExps) initial)
+    (initialWf : wellFormed initial) (locations : everyFnLocationSome sourceExps) (annotations : everyFnVarsNone sourceExps)
+    (growth : stateExtends passFinal g)
+    (coverage : ∀ loc ∈ codeLocations sourceExps, ¬ sptDomain passFinal.1 loc → loc ∈ allowed)
+    (run : evaluate sourceExps sourceEnv source = (result, final)) (notType : result ≠ .err (.abort .typeError))
+    (envs : EnvRelFuel relationFuel g allowed target.code sourceEnv targetEnv 0 (targetExps.map (0, ·)))
+    (envWf : ValuesWellFormedFuel relationFuel g allowed target.code sourceEnv)
+    (sourceWf : StateWellFormedFuel relationFuel g allowed target.code source)
+    (states : StateRelFuel relationFuel g allowed source target) (inv : IncrementalCodeInv passFuel g allowed source target)
+    (disjoint : Disjoint allowed (sptDomain g.1)) (targetCompiler : target.compile = compiler) :
+    ∃ extraClock finalG finalAllowed targetResult targetFinal,
+      stateExtends g finalG ∧ allowed ⊆ finalAllowed ∧
+      Disjoint finalAllowed (sptDomain finalG.1) ∧ OracleLocationsAvoid finalAllowed final ∧
+      evaluate targetExps targetEnv { target with clock := target.clock + extraClock } = (targetResult, targetFinal) ∧
+      resultRel (List.Forall₂ (ValueRelFuel relationFuel finalG finalAllowed targetFinal.code))
+        (ValueRelFuel relationFuel finalG finalAllowed targetFinal.code) result targetResult ∧
+      ResultWellFormedFuel relationFuel finalG finalAllowed targetFinal.code result ∧
+      StateRelFuel relationFuel finalG finalAllowed final targetFinal ∧
+      StateWellFormedFuel relationFuel finalG finalAllowed targetFinal.code final ∧
+      IncrementalInstallReady finalG final targetFinal ∧
+      targetFinal.code = HolFiniteMapExact.alistToFmap finalG.2 ∧
+      final.compile = compileIncFuelCallback passFuel compiler ∧ targetFinal.compile = compiler ∧
+      targetFinal.compileOracle = compileIncFuelOracle passFuel final.compileOracle ∧
+      (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry) := by
+  obtain ⟨extraClock, finalG, finalAllowed, targetResult, targetFinal, extended, allowedGrowth,
+    finalDisjoint, finalAvoids, targetRun, related, resultWf, finalStates, finalWf, finalReady,
+    finalCompiler, targetFinalCompiler, finalOracle, codeGrowth⟩ :=
+    callsListBounded_sim_of_IncrementalCodeInv passFuel relationFuel traversalFuel compiler sourceExps targetExps
+      initial passFinal g allowed sourceEnv targetEnv source target result final passRun distinct fresh initialWf locations annotations
+      growth coverage run notType envs envWf sourceWf states inv disjoint targetCompiler
+  have sourceCompiler : source.compile = compileIncFuelCallback passFuel compiler := by
+    simpa [targetCompiler] using inv.2.1
+  have codeEq := evaluate_finalCode_exact passFuel compiler g finalG allowed source final target targetFinal sourceExps targetExps
+    sourceEnv targetEnv result targetResult extraClock inv sourceCompiler run targetRun finalReady finalOracle
+  exact ⟨extraClock, finalG, finalAllowed, targetResult, targetFinal, extended, allowedGrowth, finalDisjoint,
+    finalAvoids, targetRun, related, resultWf, finalStates, finalWf, finalReady, codeEq,
+    finalCompiler, targetFinalCompiler, finalOracle, codeGrowth⟩
+
+/-- The closed application simulation preserves the exact target-code
+clause; the remaining final invariant remains an additional obligation. This is
+Flapjack-specific simulation infrastructure. -/
+theorem evaluateApp_sim_with_exactCode {C F : Type}
+    (passFuel relationFuel : Nat) (compiler : ClosSem.Compiler C) (location : Option Nat)
+    (g : State) (allowed : Set Nat) (function targetFunction : ClosSem.Value) (args targetArgs : List ClosSem.Value)
+    (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (final : ClosSem.State (NumSet × C) F)
+    (run : evaluateApp location function args source = (result, final)) (notType : result ≠ .err (.abort .typeError))
+    (functions : ValueRelFuel relationFuel g allowed target.code function targetFunction)
+    (arguments : List.Forall₂ (ValueRelFuel relationFuel g allowed target.code) args targetArgs)
+    (functionWf : ValueWellFormedFuel relationFuel g allowed target.code function)
+    (argsWf : ValuesWellFormedFuel relationFuel g allowed target.code args)
+    (sourceWf : StateWellFormedFuel relationFuel g allowed target.code source)
+    (states : StateRelFuel relationFuel g allowed source target) (inv : IncrementalCodeInv passFuel g allowed source target)
+    (disjoint : Disjoint allowed (sptDomain g.1)) (targetCompiler : target.compile = compiler) :
+    ∃ extraClock finalG finalAllowed targetResult targetFinal,
+      stateExtends g finalG ∧ allowed ⊆ finalAllowed ∧
+      Disjoint finalAllowed (sptDomain finalG.1) ∧ OracleLocationsAvoid finalAllowed final ∧
+      evaluateApp location targetFunction targetArgs { target with clock := target.clock + extraClock } = (targetResult, targetFinal) ∧
+      resultRel (List.Forall₂ (ValueRelFuel relationFuel finalG finalAllowed targetFinal.code))
+        (ValueRelFuel relationFuel finalG finalAllowed targetFinal.code) result targetResult ∧
+      ResultWellFormedFuel relationFuel finalG finalAllowed targetFinal.code result ∧
+      StateRelFuel relationFuel finalG finalAllowed final targetFinal ∧
+      StateWellFormedFuel relationFuel finalG finalAllowed targetFinal.code final ∧
+      IncrementalInstallReady finalG final targetFinal ∧
+      targetFinal.code = HolFiniteMapExact.alistToFmap finalG.2 ∧
+      final.compile = compileIncFuelCallback passFuel compiler ∧ targetFinal.compile = compiler ∧
+      targetFinal.compileOracle = compileIncFuelOracle passFuel final.compileOracle ∧
+      (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry) := by
+  obtain ⟨extraClock, finalG, finalAllowed, targetResult, targetFinal, extended, allowedGrowth,
+    finalDisjoint, finalAvoids, targetRun, related, resultWf, finalStates, finalWf, finalReady,
+    finalCompiler, targetFinalCompiler, finalOracle, codeGrowth⟩ :=
+    evaluateApp_sim_of_IncrementalCodeInv passFuel relationFuel compiler location g allowed function targetFunction args targetArgs
+      source target result final run notType functions arguments functionWf argsWf sourceWf states inv disjoint targetCompiler
+  have sourceCompiler : source.compile = compileIncFuelCallback passFuel compiler := by
+    simpa [targetCompiler] using inv.2.1
+  have codeEq := evaluateApp_finalCode_exact passFuel compiler g finalG allowed source final target targetFinal location function targetFunction
+    args targetArgs result targetResult extraClock inv sourceCompiler run targetRun finalReady finalOracle
+  exact ⟨extraClock, finalG, finalAllowed, targetResult, targetFinal, extended, allowedGrowth, finalDisjoint,
+    finalAvoids, targetRun, related, resultWf, finalStates, finalWf, finalReady, codeEq,
+    finalCompiler, targetFinalCompiler, finalOracle, codeGrowth⟩
+
 end Flapjack.Compiler.Backend.ClosCall
