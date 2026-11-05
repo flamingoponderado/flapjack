@@ -1,5 +1,13 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "full_gc_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/CollectorSimple.lean",
+  "lean_name": "fullGc_abstract_memory",
+  "statement_status": "pending_statement_review",
+  "reviewer": "Source hypotheses and conclusions compared; inferred HOL carrier types and the dependent representation review remain to be captured."
+},
+{
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
   "hol_name": "similar_ptr_def",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Similarity.lean",

@@ -141,4 +141,38 @@ theorem fullGc_stack_reference {width : Nat} [NeZero width]
   exact ⟨addrMap (holFapply f) roots, heap2, a2, run,
     bcStackRefInv_gcRelated conf next stack refs roots heap _ bigEndian f expanded rootDomain valid⟩
 
+/-- Simple copying collection re-establishes the entire abstract memory
+invariant, with its heap-length and reachability consequences. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "full_gc_thm"
+  (words_as_type_indexed_bitvec)]
+theorem fullGc_abstract_memory {width : Nat} [NeZero width]
+    (conf : Flapjack.Compiler.Backend.DataToWord.Config)
+    (stack : List Flapjack.Compiler.Backend.DataSem.Value)
+    (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value))
+    (roots : List (HeapAddress (WordLocW width)))
+    (heap : List (HeapElement (WordLocW width) (HeapTag × List (WordLocW width))))
+    (bigEndian : Bool) (a sp sp1 : Nat) (gens : GcCombined.GenState) (limit next : Nat)
+    (assumptions : absMlInv conf stack refs (roots, heap, bigEndian, a, sp, sp1, gens) limit next ∧
+      conf.gcKind = .simple) :
+    ∃ roots2 heap2 a2,
+      CopyingGc.fullGc (roots, heap, limit) = (roots2, heap2, a2, true) ∧
+      absMlInv conf stack refs
+        (roots2, heap2 ++ heapExpand (limit - a2), bigEndian, a2, limit - a2, 0, gens) limit next ∧
+      heapLength heap2 = a2 ∧
+      heapLength (heapFilter (reachableAddresses roots heap) heap) = heapLength heap2 ∧
+      allReachableFromRoots roots2 (heap2 ++ heapExpand (limit - a2)) ∧
+      List.Forall isDataElement heap2 := by
+  obtain ⟨valid, simple⟩ := assumptions
+  obtain ⟨rootOk, heapGood, _, _, stackValid⟩ := valid
+  obtain ⟨roots2, heap2, a2, run, rootOk2, heapGood2, unused, reachable, filtered, allData, lengthEq⟩ :=
+    fullGc_abstract_structure roots heap limit rootOk heapGood
+  obtain ⟨roots3, heap3, a3, run3, stackValid3⟩ :=
+    fullGc_stack_reference conf next stack refs roots heap limit bigEndian rootOk heapGood stackValid
+  have same : (roots2, heap2, a2, true) = (roots3, heap3, a3, true) := run.symm.trans run3
+  cases same
+  refine ⟨roots2, heap2, a2, run, ⟨rootOk2, heapGood2, ?_, ?_, stackValid3⟩,
+    lengthEq, filtered, reachable, List.forall_iff_forall_mem.mpr allData⟩
+  · simp [gcKindInv, simple]
+  · simpa using unused
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
