@@ -1,3 +1,9 @@
+`data_to_word_gc_stack_probe.out` captures the exported `flat_PERM_extract_stack`,
+`soundness_size_of`, and `soundness_size_of_gen` statements with inferred types.
+The captures support source review of root multiplicity, the explicit sizing
+result, and the canonical finite-map and word carriers; they do not establish
+cross-language equivalence.
+
 `data_to_word_gc_stack_probe.out` captures the typed original unchanged-pointer set and finiteness theorem, combined forwarding-map definition, and parsed local domain and application statements. These show that configuration and heap payload types are independent; the local parses do not replay their HOL proofs.
 
 The same probe captures the exported `partial_gc_related` theorem with inferred types, including its existential finite map and all heap-relation conclusions.

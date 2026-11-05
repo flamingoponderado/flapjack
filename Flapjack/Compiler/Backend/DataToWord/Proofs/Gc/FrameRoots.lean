@@ -186,8 +186,10 @@ theorem joinEnv_values_perm {width : Nat} [NeZero width]
   rw [same]
   exact values
 
-/-- Flapjack infrastructure: flattening paired stacks preserves the
-multiplicity of every value extracted from source frames. -/
+/-- Flattening related paired stacks preserves the multiplicity of source
+frame values. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "flat_PERM_extract_stack"
+  (words_as_type_indexed_bitvec)]
 theorem flatStack_values_perm {width : Nat} [NeZero width]
     (source : List DataSem.Stack) (target : List (WordSemStackFrame width))
     (related : List.Forall₂ stackRel source target) :

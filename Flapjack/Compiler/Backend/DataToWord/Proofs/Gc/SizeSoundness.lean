@@ -139,4 +139,55 @@ theorem absMlInv_failed_request {width : Nat} [NeZero width]
   have heapSize : heapLength heap = limit := invariant.2.1.1
   omega
 
+/-- Canonical lookup and finite-support roundtrip for the source reference map. -/
+theorem holFmapAsFiniteSupportParamWitness_soundnessSizeOfGen_f
+    (f : HolFiniteMapExact Nat Nat) (key : Nat) :
+    (Memory.ReferenceMapBroad.ofBroad (Memory.ReferenceMapBroad.toBroad f)).lookup key = f.lookup key ∧
+    (Memory.ReferenceMapBroad.ofBroad (Memory.ReferenceMapBroad.toBroad f)).finiteSupport = f.finiteSupport ∧
+    Memory.ReferenceMapBroad.ofBroad (Memory.ReferenceMapBroad.toBroad f) = f := by
+  cases f
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- Canonical lookup and finite-support roundtrip for the source timestamp map. -/
+theorem holFmapAsFiniteSupportParamWitness_soundnessSizeOfGen_tf
+    (tf : HolFiniteMapExact Nat Nat) (key : Nat) :
+    (Memory.ReferenceMapBroad.ofBroad (Memory.ReferenceMapBroad.toBroad tf)).lookup key = tf.lookup key ∧
+    (Memory.ReferenceMapBroad.ofBroad (Memory.ReferenceMapBroad.toBroad tf)).finiteSupport = tf.finiteSupport ∧
+    Memory.ReferenceMapBroad.ofBroad (Memory.ReferenceMapBroad.toBroad tf) = tf := by
+  cases tf
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- The source's generalized heap-size soundness theorem, retaining the
+explicit sizing result and the source's duplicate-root and reachability premises. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "soundness_size_of_gen"
+  (fmap_as_finite_support_parameters := [f, tf]) (words_as_type_indexed_bitvec)]
+theorem soundnessSizeOfGen {width : Nat} [NeZero width]
+    (limits : DataSem.Limits) (roots2 dups roots : List Flapjack.Compiler.Backend.DataSem.Value)
+    (addresses : List (HeapAddress (WordLocW width))) (n2 : Nat)
+    (r2 : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value)) (s2 : Spt Unit)
+    (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value)) (conf : Config)
+    (f : HolFiniteMapExact Nat Nat) (tf : HolFiniteMapExact Nat Nat) (heap : Memory.ValueHeap width) (be : Bool)
+    (cells : ∀ key, Memory.reachableRefs roots refs key ∧ Memory.mapDomain f key →
+      Memory.bcRefInv conf key refs (f, tf, heap, be))
+    (noThunks : DataSem.noThunksInRefs refs)
+    (related : List.Forall₂ (fun v a => Memory.valueInv conf v refs (a, f, tf, heap)) roots addresses)
+    (perm : roots2.Perm (dups ++ roots)) (duplicates : ∀ value, value ∈ dups → value ∈ roots)
+    (good : goodDimindex width) (mapInRefs : ∀ key, Memory.mapDomain f key → sptDomain refs key)
+    (architecture : limits.arch64Bit = decide (width = 64))
+    (sizing : DataSem.sizeOfValues limits roots2 refs .ln = (n2, r2, s2)) :
+    ∃ after : List Nat, (after.map (Memory.lookupLen heap)).sum ≤ n2 ∧
+      ∀ ptr, reachableAddresses addresses heap ptr → ptr ∈ after := by
+  have mapInRefs' : ∀ key ptr, f.lookup key = some ptr → sptLookup key refs ≠ none := by
+    intro key ptr mapped absent
+    have present := mapInRefs key ⟨ptr, mapped⟩
+    simp [sptDomain, absent] at present
+  have cells' : ∀ key ptr, Memory.reachableRefs roots refs key → f.lookup key = some ptr →
+      Memory.bcRefInv conf key refs (f, tf, heap, be) := by
+    intro key ptr reachable mapped
+    exact cells key ⟨reachable, ptr, mapped⟩
+  obtain ⟨after, bound, reachable⟩ := sizeSound_reachable limits roots2 dups roots addresses refs conf f tf heap be
+    good architecture perm duplicates related noThunks mapInRefs' cells'
+  refine ⟨after, ?_, reachable⟩
+  simpa [sizing] using bound
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
