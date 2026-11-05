@@ -4072,6 +4072,66 @@ theorem PanSemStateRelExecRanged.setMemory {σ : Type}
     PanSemStateRelExecRanged { state with memory := memory } :=
   h.of_fields rfl rfl rfl
 
+/-- The `memaddrs` update preserves `PanSemStateRelExecRanged`. -/
+theorem PanSemStateRelExecRanged.setMemaddrs {σ : Type}
+    {state : PanSemState (RiscV.Word 64) (FfiState σ)}
+    (h : PanSemStateRelExecRanged state) (memaddrs : RiscV.Word 64 → Bool) :
+    PanSemStateRelExecRanged { state with memaddrs := memaddrs } :=
+  h.of_fields rfl rfl rfl
+
+/-- The `sharedMemaddrs` update preserves `PanSemStateRelExecRanged`. -/
+theorem PanSemStateRelExecRanged.setSharedMemaddrs {σ : Type}
+    {state : PanSemState (RiscV.Word 64) (FfiState σ)}
+    (h : PanSemStateRelExecRanged state) (sharedMemaddrs : RiscV.Word 64 → Bool) :
+    PanSemStateRelExecRanged { state with sharedMemaddrs := sharedMemaddrs } :=
+  h.of_fields rfl rfl rfl
+
+/-- The code-map update preserves `PanSemStateRelExecRanged`. -/
+theorem PanSemStateRelExecRanged.setCode {σ : Type}
+    {state : PanSemState (RiscV.Word 64) (FfiState σ)}
+    (h : PanSemStateRelExecRanged state) (code : PanSemCodeMap (RiscV.Word 64)) :
+    PanSemStateRelExecRanged { state with code := code } :=
+  h.of_fields rfl rfl rfl
+
+/-- The exception-shape update preserves `PanSemStateRelExecRanged`. -/
+theorem PanSemStateRelExecRanged.setExceptionShapes {σ : Type}
+    {state : PanSemState (RiscV.Word 64) (FfiState σ)}
+    (h : PanSemStateRelExecRanged state)
+    (exceptionShapes : ExceptionId → Option Shape) :
+    PanSemStateRelExecRanged { state with exceptionShapes := exceptionShapes } :=
+  h.of_fields rfl rfl rfl
+
+/-- The base-address update preserves `PanSemStateRelExecRanged`. -/
+theorem PanSemStateRelExecRanged.setBaseAddress {σ : Type}
+    {state : PanSemState (RiscV.Word 64) (FfiState σ)}
+    (h : PanSemStateRelExecRanged state) (baseAddress : RiscV.Word 64) :
+    PanSemStateRelExecRanged { state with baseAddress := baseAddress } :=
+  h.of_fields rfl rfl rfl
+
+/-- The top-address update preserves `PanSemStateRelExecRanged`. -/
+theorem PanSemStateRelExecRanged.setTopAddress {σ : Type}
+    {state : PanSemState (RiscV.Word 64) (FfiState σ)}
+    (h : PanSemStateRelExecRanged state) (topAddress : RiscV.Word 64) :
+    PanSemStateRelExecRanged { state with topAddress := topAddress } :=
+  h.of_fields rfl rfl rfl
+
+/-- The endianness update preserves `PanSemStateRelExecRanged`. -/
+theorem PanSemStateRelExecRanged.setBe {σ : Type}
+    {state : PanSemState (RiscV.Word 64) (FfiState σ)}
+    (h : PanSemStateRelExecRanged state) (be : Bool) :
+    PanSemStateRelExecRanged { state with be := be } :=
+  h.of_fields rfl rfl rfl
+
+/-- Replacing the structure context by a byte-ranged context preserves
+    `PanSemStateRelExecRanged`. -/
+theorem PanSemStateRelExecRanged.setStructs {σ : Type}
+    {state : PanSemState (RiscV.Word 64) (FfiState σ)}
+    (h : PanSemStateRelExecRanged state) (structs : StructContext)
+    (hstructs : StructContextByteRanged structs.toHOL) :
+    PanSemStateRelExecRanged { state with structs := structs } := by
+  refine ⟨h.1, h.2.1, ?_⟩
+  exact hstructs
+
 /-- The expression-driven local assignment class: assigning the byte-ranged result
     of a byte-ranged expression evaluated under a ranged state preserves
     `PanSemStateRelExecRanged`.  The value's rangedness is supplied by
@@ -4090,6 +4150,22 @@ theorem PanSemStateRelExecRanged.evalLocalUpdate {σ : Type}
   have hv := evalPanValueExp_byteRanged state hranged
     (some (panSemBitVec64MemoryAccess state)) e he value hvalue
   exact PanSemStateRelExecRanged.updateLocals hranged name value hv
+
+/-- The expression-driven global assignment class, mirroring
+    `PanSemStateRelExecRanged.evalLocalUpdate`. -/
+theorem PanSemStateRelExecRanged.evalGlobalUpdate {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (hranged : PanSemStateRelExecRanged state)
+    (e : Exp (RiscV.Word 64)) (he : ExpByteRanged e)
+    (name : VarName) (value : PanValue (RiscV.Word 64))
+    (hvalue : evalPanValueExp state.structs state.locals state.globals state.memory
+        state.baseAddress state.topAddress panSemBitVec64BytesInWord e
+        (memoryAccess := some (panSemBitVec64MemoryAccess state)) = some value) :
+    PanSemStateRelExecRanged
+      { state with globals := updatePanValueMap state.globals name value } := by
+  have hv := evalPanValueExp_byteRanged state hranged
+    (some (panSemBitVec64MemoryAccess state)) e he value hvalue
+  exact PanSemStateRelExecRanged.updateGlobals hranged name value hv
 
 /-! ### The boundary where rangedness can fail
 

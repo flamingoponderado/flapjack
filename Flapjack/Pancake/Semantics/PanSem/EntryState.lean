@@ -76,6 +76,72 @@ def panSemDeclarationsStructsCake
   (decsStcnamesHOLExact (width := 64) ([] : StructContextExact)
       (declarations.map declToHOL)).map panStructContextOfHOL
 
+/-- **Production `evaluate_decls` frame.**  A successful production
+    `evaluateDecls` changes only `runtime.globals`, `code` and `eshapes`; the rest
+    of the runtime (structure context, locals, memory, FFI, clock, addresses,
+    byte width and memory hooks) and the memory access are unchanged, as in HOL
+    `evaluate_decls_def`. -/
+theorem evaluateDecls_frame {σ : Type} :
+    ∀ (declarations : List (Decl (RiscV.Word 64)))
+      (state out : PanSemDeclarationState (RiscV.Word 64) σ),
+      evaluateDecls state declarations = some out →
+      out.runtime = { state.runtime with globals := out.runtime.globals } ∧
+        out.memoryAccess = state.memoryAccess := by
+  intro declarations
+  induction declarations with
+  | nil =>
+      intro state out h
+      simp only [evaluateDecls, Option.some.injEq] at h
+      subst h
+      exact ⟨rfl, rfl⟩
+  | cons declaration declarations ih =>
+      intro state out h
+      cases declaration with
+      | name _ _ =>
+          simp only [evaluateDecls] at h
+          exact ih state out h
+      | decl shape name expression =>
+          simp only [evaluateDecls] at h
+          split at h
+          · cases h
+          · split at h
+            · obtain ⟨hr, hm⟩ := ih _ out h
+              exact ⟨by rw [hr], hm⟩
+            · cases h
+      | function fd =>
+          simp only [evaluateDecls] at h
+          split at h
+          · obtain ⟨hr, hm⟩ := ih _ out h
+            exact ⟨hr, hm⟩
+          · cases h
+      | exnDecl exception shape =>
+          simp only [evaluateDecls] at h
+          split at h
+          · cases h
+          · split at h
+            · obtain ⟨hr, hm⟩ := ih _ out h
+              exact ⟨hr, hm⟩
+            · cases h
+
+/-- The fields of the entry state that `evaluate_decls` does not write are those
+    of the initial declaration state's runtime. -/
+theorem panSemEntryStateOfDecls_frame {σ : Type}
+    (machine : PanSemState (RiscV.Word 64) (FfiState σ))
+    (declarations : List (Decl (RiscV.Word 64)))
+    (state out : PanSemDeclarationState (RiscV.Word 64) σ)
+    (h : evaluateDecls state declarations = some out) :
+    (panSemEntryStateOfDecls machine out).structs = state.runtime.structs ∧
+      (panSemEntryStateOfDecls machine out).locals = state.runtime.locals ∧
+      (panSemEntryStateOfDecls machine out).memory = state.runtime.memory ∧
+      (panSemEntryStateOfDecls machine out).ffi = state.runtime.ffi ∧
+      (panSemEntryStateOfDecls machine out).clock = state.runtime.clock ∧
+      (panSemEntryStateOfDecls machine out).baseAddress = state.runtime.baseAddress ∧
+      (panSemEntryStateOfDecls machine out).topAddress = state.runtime.topAddress := by
+  obtain ⟨hr, _⟩ := evaluateDecls_frame declarations state out h
+  simp only [panSemEntryStateOfDecls]
+  rw [hr]
+  exact ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+
 /-- Production `isWfShape` agrees with the exact HOL `is_wf_shape` on a
     byte-ranged shape under a byte-ranged structure context. -/
 theorem isWfShape_eq_isWfShapeExactHOL (context : StructContext)
@@ -84,6 +150,7 @@ theorem isWfShape_eq_isWfShapeExactHOL (context : StructContext)
     isWfShape context shape = isWfShapeExactHOL (panStructContextToHOL context) (shapeToHOL shape) := by
   rw [← isWfShapeHOL_toHOL, panStructContextToHOL]
   exact isWfShapeHOL_eq_isWfShapeExactHOL context.toHOL (fun p hp => (hcontext p hp).1) shape hshape
+
 
 /-- `List.all` congruence on the list members. -/
 theorem list_all_congr_mem {β : Type} (l : List β) (f g : β → Bool)
