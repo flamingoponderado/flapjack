@@ -110,4 +110,71 @@ theorem genGc_abstract_memory {width : Nat} [NeZero width]
   obtain ⟨rfl, rfl⟩ := Prod.mk.inj equal
   exact ⟨roots1, state, run, ok, allocated, rootsGood, heapWell, free, reachable, filtered, stackValid⟩
 
+/-- Major collection establishes the generational heap partition and the
+new generation starts at the allocation boundary. -/
+theorem genGc_kindInv {α β : Type} (wordConf : DataToWord.Config)
+    (conf : Config (HeapTag × β)) (sizes : List Nat) (roots : List (HeapAddress α))
+    (heap : List (HeapElement α (HeapTag × β)))
+    (kind : wordConf.gcKind = .generational sizes)
+    (classify : ∀ tag payload, conf.isRef (tag, payload) = true ↔ isMutTag tag)
+    (rootOk : rootsOk roots heap) (heapGood : heapOk heap conf.limit) :
+    ∃ roots1 state,
+      genGc conf (roots, heap) = (roots1, state) ∧
+      gcKindInv wordConf state.a state.n 0 (.genState 0 (sizes.map fun _ => state.a))
+        (state.h1 ++ heapExpand state.n ++ state.r1) := by
+  obtain ⟨state, run, _, invariant, h2, r4, r3, r2⟩ :=
+    genGc_invariant conf roots heap rootOk heapGood
+  obtain ⟨roots1, state1, run1, _, _, _, targetGood, _, _, _⟩ :=
+    genGc_abstract_structure conf roots heap rootOk heapGood
+  have equal : (addrMap (heapMap1 state.heap) roots, state) = (roots1, state1) := run.symm.trans run1
+  obtain ⟨rfl, rfl⟩ := Prod.mk.inj equal
+  have allocated : state.a = heapLength state.h1 := by simpa [h2] using invariant.1.symm
+  have partition := genGc_dataRefsSplit conf roots heap classify
+  rw [run] at partition
+  have h1NonRef : ∀ e ∈ state.h1, ¬ isRef e := fun e member => (partition.1 e member).2
+  have r1Ref : ∀ e ∈ state.r1, isRef e := partition.2.2.1
+  have noGap : ∀ ptr, isSomeDataElement (heapLookup ptr (state.h1 ++ heapExpand state.n ++ state.r1)) →
+      ptr < state.a ∨ state.a + state.n ≤ ptr := by
+    intro ptr found
+    have member := (gcInv_final_target conf state heap roots invariant h2 r4 r3 r2 ptr).mpr found
+    rcases member with data | refs
+    · left
+      have bound := heapAddresses_less_heapLength state.h1 0 ptr data
+      omega
+    · right
+      exact heapAddresses_base_le state.r1 (state.a + state.n) ptr refs
+  have startOk : genStartOk (state.h1 ++ heapExpand state.n ++ state.r1) (state.a + state.n) state.a := by
+    refine ⟨state.h1, heapExpand state.n ++ state.r1, ?_, ?_⟩
+    · simpa [allocated, List.append_assoc] using
+        DataToWord.Proofs.Gc.heapSplit_append state.h1 (heapExpand state.n ++ state.r1)
+    · intro xs len payload ptr value pair
+      have member : .dataElement xs len payload ∈ state.h1 ++ heapExpand state.n ++ state.r1 := by
+        simp [pair.1]
+      exact noGap ptr (targetGood.2.2 xs len payload ptr value ⟨member, pair.2⟩)
+  have prefixNonRef : ∀ e ∈ state.h1 ++ heapExpand state.n, ¬ isRef e := by
+    intro e member
+    simp only [List.mem_append] at member
+    rcases member with data | unused
+    · exact h1NonRef e data
+    · cases nEq : state.n with
+      | zero => simp [heapExpand, nEq] at unused
+      | succ n =>
+        simp [heapExpand, nEq] at unused
+        subst e
+        simp [isRef]
+  refine ⟨addrMap (heapMap1 state.heap) roots, state, run, ?_⟩
+  simp only [gcKindInv, kind, Nat.add_zero, genStateOk]
+  refine ⟨⟨?_, ?_⟩, state.h1 ++ heapExpand state.n, state.r1, ?_, prefixNonRef, r1Ref⟩
+  · intro start member
+    simp only [List.mem_map] at member
+    obtain ⟨_, _, rfl⟩ := member
+    exact Nat.le_refl _
+  · intro start member
+    simp only [List.mem_map] at member
+    obtain ⟨_, _, rfl⟩ := member
+    exact startOk
+  · have split := DataToWord.Proofs.Gc.heapSplit_append (state.h1 ++ heapExpand state.n) state.r1
+    rw [heapLength_append, heapLength_heapExpand, ← allocated] at split
+    simpa [List.append_assoc] using split
+
 end Flapjack.Compiler.Backend.GenGc
