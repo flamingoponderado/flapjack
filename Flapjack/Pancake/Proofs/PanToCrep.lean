@@ -1932,8 +1932,8 @@ def codeRel [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
 /-- Width-indexed proof-side `code_rel` interface: the HOL reference is
     word-length polymorphic (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:32-43`),
     so this width-indexed form makes the compiler expression the
-    `compileProgRiscV` (`compile_def`-shaped) boundary. The generic `codeRel` states the
-    same clauses over an arbitrary word carrier `alpha`.
+    `compileProgRiscV` (`compile_def`-shaped) boundary. The generic `codeRel` is its
+    `alpha`-instantiated view (`codeRelW_iff_codeRel` below).
 
     Source-reviewed decision: the `code_rel_def` tag stays WITHDRAWN as a
     documented carrier mismatch, not an exact port. Clause for clause this matches
@@ -1973,6 +1973,17 @@ def codeRelW (width : Nat)
       let nextContext := ctxtFc context.funcs context.eids variables shapes names
       FLOOKUP targetCode function = some
         (names, compileProgRiscV nextContext.toHOLContext program)
+
+/-- The width-indexed relation is the generic `codeRel` instantiated at
+    `BitVec width`, definitionally via the rfl compiler bridges. -/
+theorem codeRelW_iff_codeRel (width : Nat)
+    (context : PanToCrepProofContext (BitVec width))
+    (sourceCode : FiniteMap FunName
+      (List (VarName × Shape) × Prog (BitVec width) × Shape))
+    (targetCode : FiniteMap FunName (List Nat × CrepProg (BitVec width))) :
+    codeRelW width context sourceCode targetCode ↔
+      codeRel context sourceCode targetCode :=
+  Iff.rfl
 
 /-- Source-shaped port (Flapjack-specific; NOT an exact HOL port) of HOL
     `compile_exp_not_mem_load_glob`
