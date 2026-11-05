@@ -12,6 +12,40 @@ def heapsSimilar {α β : Type} (original current : List (HeapElement α β)) : 
     if isForwardPointer now then elLength now = elLength old ∧ isDataElement old
     else now = old) original current
 
+/-- If no element is a forwarding pointer, filtering for non-forwarding
+elements retains the whole heap. -/
+@[hol "cakeml/compiler/backend/gc/gc_sharedScript.sml" "FILTER_LEMMA"]
+theorem filter_notForward {α β : Type} (heap : List (HeapElement α β))
+    (noForward : heap.filter isForwardPointer = []) :
+    heap.filter (fun h => !(isForwardPointer h)) = heap := by
+  induction heap with
+  | nil => rfl
+  | cons head tail ih =>
+    cases head with
+    | unused len =>
+      simp only [List.filter_cons, isForwardPointer, Bool.false_eq_true, ↓reduceIte] at noForward
+      simpa [isForwardPointer] using ih noForward
+    | forwardPointer ptr value len => simp [isForwardPointer] at noForward
+    | dataElement roots len data =>
+      simp only [List.filter_cons, isForwardPointer, Bool.false_eq_true, ↓reduceIte] at noForward
+      simpa [isForwardPointer] using ih noForward
+
+/-- A heap without forwarding pointers is similar to itself. -/
+@[hol "cakeml/compiler/backend/gc/gc_sharedScript.sml" "heaps_similar_REFL"]
+theorem heapsSimilar_refl {α β : Type} (heap : List (HeapElement α β))
+    (noForward : heap.filter isForwardPointer = []) : heapsSimilar heap heap := by
+  induction heap with
+  | nil => exact .nil
+  | cons head tail ih =>
+    cases head with
+    | unused len =>
+      simp only [List.filter_cons, isForwardPointer, Bool.false_eq_true, ↓reduceIte] at noForward
+      exact .cons rfl (ih noForward)
+    | forwardPointer ptr value len => simp [isForwardPointer] at noForward
+    | dataElement roots len data =>
+      simp only [List.filter_cons, isForwardPointer, Bool.false_eq_true, ↓reduceIte] at noForward
+      exact .cons rfl (ih noForward)
+
 /-- Similar heaps occupy the same number of words. -/
 @[hol "cakeml/compiler/backend/gc/gc_sharedScript.sml" "heaps_similar_IMP_heap_length"]
 theorem heapsSimilar_imp_heapLength {α β : Type} (xs ys : List (HeapElement α β))

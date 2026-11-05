@@ -1034,6 +1034,31 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "FILTER_LEMMA",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/HeapSimilarity.lean",
+  "lean_name": "filter_notForward",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared filter_lemma_typed: absence of forwarding pointers implies the complementary filter equals the heap, with independent heap element payload types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "heaps_similar_REFL",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/HeapSimilarity.lean",
+  "lean_name": "heapsSimilar_refl",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared heaps_similar_refl_typed: the no-forwarding filter hypothesis and self-similarity conclusion match, with independent heap element payload types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "heap_map_EMPTY",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/HeapMap/Properties.lean",
+  "lean_name": "heapMap_empty",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": ["heapMap"],
+  "reviewer": "Compared heap_map_empty_typed: no forwarding pointers yields empty FDOM at any starting offset, expressed as a defined-lookup predicate equality; heap element payload types remain independent. The imported heapMap result has its reviewed lookup witness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
   "hol_name": "heaps_similar_def",
   "lean_path": "Flapjack/Compiler/Backend/GcShared/HeapSimilarity.lean",
   "lean_name": "heapsSimilar",

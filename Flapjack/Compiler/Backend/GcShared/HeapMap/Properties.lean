@@ -67,4 +67,29 @@ theorem heapLookup_flookup {α β : Type} (heap : List (HeapElement α β))
   rw [holFmapAsFiniteSupportResultWitness_heapMap]
   simpa using heapLookup_flookup_aux heap n 0 ptr len value found
 
+/-- A heap with no forwarding pointers has an empty forwarding-map domain. -/
+@[hol "cakeml/compiler/backend/gc/gc_sharedScript.sml" "heap_map_EMPTY"
+  (fmap_as_finite_support_result_observations := [heapMap])]
+theorem heapMap_empty {α β : Type} (xs : List (HeapElement α β)) (n : Nat)
+    (noForward : xs.filter isForwardPointer = []) :
+    (fun key => (heapMap n xs).lookup key ≠ none) = (fun _ => False) := by
+  have emptyLookup : ∀ (xs : List (HeapElement α β)) (base key : Nat),
+      xs.filter isForwardPointer = [] → heapMapLookup base xs key = none := by
+    intro heap
+    induction heap with
+    | nil => intros; rfl
+    | cons head tail ih =>
+      intro base key noForward
+      cases head with
+      | unused len =>
+        simp only [List.filter_cons, isForwardPointer, Bool.false_eq_true, ↓reduceIte] at noForward
+        exact ih (base + elLength (.unused len)) key noForward
+      | forwardPointer ptr value len => simp [isForwardPointer] at noForward
+      | dataElement roots len data =>
+        simp only [List.filter_cons, isForwardPointer, Bool.false_eq_true, ↓reduceIte] at noForward
+        exact ih (base + elLength (.dataElement roots len data)) key noForward
+  funext key
+  rw [holFmapAsFiniteSupportResultWitness_heapMap, emptyLookup xs n key noForward]
+  simp
+
 end Flapjack.Compiler.Backend
