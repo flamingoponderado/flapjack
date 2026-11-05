@@ -136,6 +136,150 @@ theorem partialFull_dataFixed {α β : Type} (conf : GenGcPartial.Config β) (st
     | forwardPointer ptr value len => rw [GenGcPartial.gcMoveData]; simp [heap, bounded]
     | dataElement roots len payload => exact False.elim (notData roots len payload rfl)
 
+/-- A successful partial collection consists of a valid heap segment,
+successful root and reference traversals, and the final copied-data scan. -/
+theorem partialFull_abstractSteps {α β : Type} (conf : GenGcPartial.Config β)
+    (roots roots1 : List (HeapAddress α)) (heap : List (HeapElement α β)) (result : GcState α β)
+    (run : GenGcPartial.partialGc conf (roots, heap) = (roots1, result)) (ok : result.ok = true) :
+    ∃ old current refs middle refs1 afterRefs,
+      heapSegment (conf.genStart, conf.refsStart) heap = some (old, current, refs) ∧
+      GenGcPartial.gcMoveList conf
+        { emptyGcState with heap := heap, old := old, r2 := refs, a := conf.genStart, n := heapLength current }
+        roots = (roots1, middle) ∧ middle.ok = true ∧
+      GenGcPartial.gcMoveRefList conf middle refs = (refs1, afterRefs) ∧ afterRefs.ok = true ∧
+      GenGcPartial.gcMoveData conf { afterRefs with r1 := refs1, r2 := [] } = result := by
+  classical
+  rw [GenGcPartial.partialGc] at run
+  cases segment : heapSegment (conf.genStart, conf.refsStart) heap with
+  | none =>
+    simp only [segment, Prod.mk.injEq] at run
+    obtain ⟨_, rfl⟩ := run
+    simp at ok
+  | some parts =>
+    obtain ⟨old, current, refs⟩ := parts
+    simp only [segment] at run
+    generalize rootsRun : GenGcPartial.gcMoveList conf
+      { emptyGcState with heap := heap, old := old, r2 := refs, a := conf.genStart, n := heapLength current }
+      roots = rootsResult at run
+    obtain ⟨moved, middle⟩ := rootsResult
+    generalize refsRun : GenGcPartial.gcMoveRefList conf middle refs = refsResult at run
+    obtain ⟨refs1, afterRefs⟩ := refsResult
+    simp only [Prod.mk.injEq] at run
+    obtain ⟨rfl, dataRun⟩ := run
+    have afterOk : afterRefs.ok = true := by
+      have before := partialMoveData_okBefore conf { afterRefs with r1 := refs1, r2 := [] } result dataRun ok
+      exact before
+    have middleOk := partialMoveRefList_okBefore conf refs middle refs1 afterRefs refsRun afterOk
+    exact ⟨old, current, refs, middle, refs1, afterRefs, rfl, rootsRun, middleOk, refsRun, afterOk, dataRun⟩
+
+/-- Connect the original whole-heap assertion to the partial collector's
+verified root traversal and retain the remaining heap regions as its frame. -/
+theorem partialFull_rootPhase {width : Nat} [NeZero width] (conf : Config)
+    (genConf : GenGcPartial.Config (HeapTag × List (WordLocW width)))
+    (roots roots1 : List (HeapAddress (WordLocW width)))
+    (heap old current refs : List (HeapElement (WordLocW width) (HeapTag × List (WordLocW width))))
+    (middle : GcState (WordLocW width) (HeapTag × List (WordLocW width)))
+    (curr new i1 pa1 : BitVec width) (xs : List (WordLocW width))
+    (memory memory1 : BitVec width → WordLocW width) (domain : BitVec width → Bool)
+    (frame : ((BitVec width × WordLocW width) → Prop) → Prop) (w : List (WordLocW width)) (c1 : Bool)
+    (segment : heapSegment (genConf.genStart, genConf.refsStart) heap = some (old, current, refs))
+    (run : GenGcPartial.gcMoveList genConf
+      { emptyGcState with heap := heap, old := old, r2 := refs, a := genConf.genStart, n := heapLength current }
+      roots = (roots1, middle)) (ok : middle.ok = true)
+    (limitEq : genConf.limit = heapLength heap)
+    (heapBound : heapLength heap ≤ 2 ^ width / 2 ^ shiftLength conf)
+    (ordered : genConf.genStart ≤ genConf.refsStart) (refBound : genConf.refsStart ≤ heapLength heap)
+    (refClass : ∀ t r, genConf.isRef (t, r) = true ↔ isMutTag t)
+    (byteBound : heapLength heap * (width / 8) < 2 ^ width)
+    (separated : SetSep.star (SetSep.star (wordHeap curr heap conf) (Misc.wordList new xs)) frame
+      (SetSep.fun2Set (memory, fun address => domain address = true)))
+    (wordRun : wordGenGcPartialMoveRoots conf
+      (roots.map (wordAddr conf), BitVec.ofNat width genConf.genStart, new, curr, memory, domain,
+       wordSemBytesInWord * BitVec.ofNat width genConf.genStart,
+       wordSemBytesInWord * BitVec.ofNat width genConf.refsStart) = (w, i1, pa1, memory1, c1))
+    (length : xs.length = genConf.refsStart - genConf.genStart) (good : goodDimindex width) :
+    ∃ xs1 current1,
+      SetSep.star (SetSep.star (SetSep.star
+        (wordHeap (curr + wordSemBytesInWord * BitVec.ofNat width (heapLength old)) current1 conf)
+        (wordHeap new middle.h2 conf)) (Misc.wordList pa1 xs1))
+        (SetSep.star (SetSep.star (wordHeap curr old conf)
+          (wordHeap (curr + wordSemBytesInWord * BitVec.ofNat width genConf.refsStart) refs conf)) frame)
+        (SetSep.fun2Set (memory1, fun address => domain address = true)) ∧
+      w = roots1.map (wordAddr conf) ∧ heapLength middle.heap = heapLength heap ∧
+      heapSegment (genConf.genStart, genConf.refsStart) middle.heap = some (old, current1, refs) ∧
+      c1 = true ∧ i1 = BitVec.ofNat width middle.a ∧ middle.n = xs1.length ∧
+      heapLength current = heapLength middle.h2 + middle.n + heapLength middle.r4 ∧
+      pa1 = new + wordSemBytesInWord * BitVec.ofNat width (heapLength middle.h2) := by
+  obtain ⟨whole, oldLen, endLen, _⟩ := heapSegment_imp heap _ _ old current refs segment
+  have currentLen : heapLength current = genConf.refsStart - genConf.genStart := by
+    rw [heapLength_append, oldLen] at endLen
+    omega
+  have sepRoot : SetSep.star (SetSep.star
+      (wordHeap (curr + wordSemBytesInWord * BitVec.ofNat width (heapLength old)) current conf)
+      (Misc.wordList new xs))
+      (SetSep.star (SetSep.star (wordHeap curr old conf)
+        (wordHeap (curr + wordSemBytesInWord * BitVec.ofNat width genConf.refsStart) refs conf)) frame)
+      (SetSep.fun2Set (memory, fun address => domain address = true)) := by
+    rw [← whole, partialFull_rootFrame, endLen] at separated
+    exact separated
+  let initial : GcState (WordLocW width) (HeapTag × List (WordLocW width)) :=
+    { emptyGcState with heap := heap, old := old, r2 := refs, a := genConf.genStart, n := heapLength current }
+  obtain ⟨xs1, current1, memoryResult, rootEq, heapEq, segment1, flag, indexEq, xsLen, accounting, paEq⟩ :=
+    wordGenGcPartialMoveRoots_thm conf genConf initial middle roots roots1 old current refs curr new i1 pa1 xs
+      memory memory1 domain _ w c1 run ok rfl rfl limitEq heapBound ordered refBound segment refClass byteBound
+      sepRoot wordRun (by simpa [initial, currentLen] using length) good
+  exact ⟨xs1, current1, memoryResult, rootEq, heapEq, segment1, flag, indexEq, xsLen, accounting, paEq⟩
+
+/-- The root phase's framed heap exposes the source reference suffix for the
+verified reference-list simulation. -/
+theorem partialFull_referenceFrame {width : Nat} [NeZero width] (conf : Config)
+    (old current copied refs : List (HeapElement (WordLocW width) (HeapTag × List (WordLocW width))))
+    (curr new pa k : BitVec width) (xs : List (WordLocW width))
+    (frame : ((BitVec width × WordLocW width) → Prop) → Prop) :
+    SetSep.star (SetSep.star (SetSep.star
+      (wordHeap (curr + wordSemBytesInWord * BitVec.ofNat width (heapLength old)) current conf)
+      (wordHeap new copied conf)) (Misc.wordList pa xs))
+      (SetSep.star (SetSep.star (wordHeap curr old conf) (wordHeap k refs conf)) frame) =
+    SetSep.star (SetSep.star (SetSep.star
+      (wordHeap (curr + wordSemBytesInWord * BitVec.ofNat width (heapLength old)) current conf)
+      (Misc.wordList pa xs)) (wordHeap k refs conf))
+      (SetSep.star (SetSep.star (wordHeap curr old conf) (wordHeap new copied conf)) frame) := by
+  ac_rfl
+
+/-- Reassemble the copied data and remembered reference regions after the
+reference phase, ready for the partial data scan. -/
+theorem partialFull_dataFrame {width : Nat} [NeZero width] (conf : Config)
+    (old current copied appended refs : List (HeapElement (WordLocW width) (HeapTag × List (WordLocW width))))
+    (curr new pa pa1 k : BitVec width) (xs : List (WordLocW width))
+    (frame : ((BitVec width × WordLocW width) → Prop) → Prop)
+    (paEq : pa = new + wordSemBytesInWord * BitVec.ofNat width (heapLength copied)) :
+    SetSep.star (SetSep.star (SetSep.star (SetSep.star
+      (wordHeap (curr + wordSemBytesInWord * BitVec.ofNat width (heapLength old)) current conf)
+      (wordHeap pa appended conf)) (Misc.wordList pa1 xs)) (wordHeap k refs conf))
+      (SetSep.star (SetSep.star (wordHeap curr old conf) (wordHeap new copied conf)) frame) =
+    SetSep.star (SetSep.star (SetSep.star
+      (wordHeap (curr + wordSemBytesInWord * BitVec.ofNat width (heapLength old)) current conf)
+      (wordHeap new (copied ++ appended) conf)) (Misc.wordList pa1 xs))
+      (SetSep.star (SetSep.star (wordHeap curr old conf) (wordHeap k refs conf)) frame) := by
+  change pa = new + StackRemove.bytesInWord width * BitVec.ofNat width (heapLength copied) at paEq
+  rw [wordHeapAppend copied appended new conf, ← paEq]
+  ac_rfl
+
+/-- Establish the copied-data scan invariant from the source heap partition,
+reference-size preservation, and the two allocation accounting equations. -/
+theorem partialFull_dataInvariant {α β : Type} (state : GcState α β)
+    (old current refs refs1 : List (HeapElement α β))
+    (segment : heapSegment (heapLength old, heapLength (old ++ current)) state.heap = some (old, current, refs))
+    (h1Empty : state.h1 = []) (r4Empty : state.r4 = []) (r3Empty : state.r3 = [])
+    (oldEq : state.old = old) (refsLen : heapLength refs1 = heapLength refs)
+    (accounting : heapLength current = heapLength state.h2 + state.n) :
+    partialLenInv { state with r1 := refs1, r2 := [] } := by
+  obtain ⟨whole, _, _, _⟩ := heapSegment_imp state.heap _ _ old current refs segment
+  simp only [partialLenInv, h1Empty, r4Empty, r3Empty, oldEq, List.nil_append, List.append_nil]
+  rw [← whole]
+  simp only [heapLength_append, refsLen]
+  omega
+
 /-- The generic reference classifier agrees with mutable-tag recognition. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "EVERY_is_Ref_isRef"]
 theorem everyIsRefElement_iff {α β : Type} (classify : HeapTag × β → Bool)
