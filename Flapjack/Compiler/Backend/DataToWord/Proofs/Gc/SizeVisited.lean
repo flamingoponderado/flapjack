@@ -8,9 +8,8 @@ open Flapjack Flapjack.Compiler.Backend
 removed references into the collector's visited-address list. -/
 def sizeVisited (refs remaining : Spt (BvlSem.Ref DataSem.Value)) (seen : Spt Unit)
     (f tf : HolFiniteMapExact Nat Nat) (visited : List Nat) : Prop :=
-  (∀ key ptr, (sptLookup key seen).isSome = true → tf.lookup key = some ptr → ptr ∈ visited) ∧
-  (∀ key ptr, sptLookup key refs ≠ none → sptLookup key remaining = none →
-    f.lookup key = some ptr → ptr ∈ visited)
+  (∀ key, (sptLookup key seen).isSome = true → holFapply tf key ∈ visited) ∧
+  (∀ key, sptLookup key refs ≠ none → sptLookup key remaining = none → holFapply f key ∈ visited)
 
 /-- Flapjack infrastructure: extending the visited list retains both map
 coverage conditions. -/
@@ -18,8 +17,8 @@ theorem sizeVisited_mono (refs remaining : Spt (BvlSem.Ref DataSem.Value)) (seen
     (f tf : HolFiniteMapExact Nat Nat) (before after : List Nat)
     (valid : sizeVisited refs remaining seen f tf before)
     (subset : ∀ ptr ∈ before, ptr ∈ after) : sizeVisited refs remaining seen f tf after := by
-  exact ⟨fun key ptr seenKey mapKey => subset ptr (valid.1 key ptr seenKey mapKey),
-    fun key ptr inRefs absent mapKey => subset ptr (valid.2 key ptr inRefs absent mapKey)⟩
+  exact ⟨fun key seenKey => subset _ (valid.1 key seenKey),
+    fun key inRefs absent => subset _ (valid.2 key inRefs absent)⟩
 
 /-- Flapjack infrastructure: recording a newly visited block timestamp and
 its mapped heap address preserves both map coverage conditions. -/
@@ -28,16 +27,15 @@ theorem sizeVisited_insertStamp (refs remaining : Spt (BvlSem.Ref DataSem.Value)
     (valid : sizeVisited refs remaining seen f tf visited) (mapped : tf.lookup stamp = some ptr) :
     sizeVisited refs remaining (sptInsert stamp () seen) f tf (ptr :: visited) := by
   refine ⟨?_, ?_⟩
-  · intro key target present lookup
+  · intro key present
     by_cases equal : key = stamp
     · subst key
-      have same : target = ptr := Option.some.inj (lookup.symm.trans mapped)
-      simp [same]
+      simp [holFapply_of_lookup mapped]
     · have previous : (sptLookup key seen).isSome = true := by
         simpa [sptLookup_sptInsert_ne stamp key () seen equal] using present
-      exact List.mem_cons_of_mem _ (valid.1 key target previous lookup)
-  · intro key target inRefs absent lookup
-    exact List.mem_cons_of_mem _ (valid.2 key target inRefs absent lookup)
+      exact List.mem_cons_of_mem _ (valid.1 key previous)
+  · intro key inRefs absent
+    exact List.mem_cons_of_mem _ (valid.2 key inRefs absent)
 
 /-- Flapjack infrastructure: removing a reference from the source work tree
 and visiting its mapped cell preserves both map coverage conditions. -/
@@ -46,16 +44,15 @@ theorem sizeVisited_deleteRef (refs remaining : Spt (BvlSem.Ref DataSem.Value)) 
     (valid : sizeVisited refs remaining seen f tf visited) (mapped : f.lookup index = some ptr) :
     sizeVisited refs (sptDelete index remaining) seen f tf (ptr :: visited) := by
   refine ⟨?_, ?_⟩
-  · intro key target present lookup
-    exact List.mem_cons_of_mem _ (valid.1 key target present lookup)
-  · intro key target inRefs absent lookup
+  · intro key present
+    exact List.mem_cons_of_mem _ (valid.1 key present)
+  · intro key inRefs absent
     by_cases equal : key = index
     · subst key
-      have same : target = ptr := Option.some.inj (lookup.symm.trans mapped)
-      simp [same]
+      simp [holFapply_of_lookup mapped]
     · have previouslyAbsent : sptLookup key remaining = none := by
         simpa [sptLookup_sptDelete, equal] using absent
-      exact List.mem_cons_of_mem _ (valid.2 key target inRefs previouslyAbsent lookup)
+      exact List.mem_cons_of_mem _ (valid.2 key inRefs previouslyAbsent)
 
 /-- Flapjack infrastructure: the source sizing result is sound when it has a
 bounded heap traversal, retains a reference submap, and covers the updated
@@ -181,7 +178,7 @@ theorem sizeSound_seenBlock {width : Nat} [NeZero width]
   · have block := (Memory.valueInv_block conf stamp tag (head :: tail) refs address f tf heap).mp related
     simp only [List.cons_ne_nil, ↓reduceIte] at block
     obtain ⟨ptr, children, _, timestamp, rfl, _⟩ := block
-    exact ⟨visited, traverseHeap.seen visited ptr _ (covered.1 stamp ptr already timestamp),
+    exact ⟨visited, traverseHeap.seen visited ptr _ (by simpa [holFapply_of_lookup timestamp] using covered.1 stamp already),
       by simp [DataSem.sizeOfValues, already]⟩
 
 /-- Flapjack infrastructure: a reference already removed from the source
@@ -199,7 +196,9 @@ theorem sizeSound_seenRef {width : Nat} [NeZero width]
   apply sizeSound_atomic limits _ refs remaining seen address f tf heap visited subset covered
   · simp [sizeOfValues_missingRef limits bit index remaining seen missing]
   · exact sizeOf_seenRef_traversal limits conf bit index remaining refs seen address f tf heap visited
-      related noThunks missing mapInRefs covered.2
+      related noThunks missing mapInRefs (by
+        intro key ptr inRefs absent mapped
+        simpa [holFapply_of_lookup mapped] using covered.2 key inRefs absent)
 
 /-- Flapjack infrastructure: the recursive sizing result for the children of
 an unseen block extends to the block, including the updated map coverage. -/
