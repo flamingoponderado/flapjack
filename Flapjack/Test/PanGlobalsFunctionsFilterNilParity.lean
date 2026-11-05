@@ -16,20 +16,6 @@ def declarations : List (Decl Nat) :=
    .name "S" [], .exnDecl "E" (.named "T"),
    .decl .one "h" (.const 9)]
 
-theorem functionsFilterNilFixture :
-    functions
-      (globalDeclsFilter
-        (fun declaration => !globalDeclIsFunction declaration) declarations) = [] :=
-  functions_filter_nil declarations
-
-theorem functionsFilterExnDeclFixture :
-    functions (globalDeclsFilter isExnDecl declarations) = [] :=
-  functions_FILTER_exn_decl declarations
-
-theorem functionsFilterIsNameFixture :
-    functions (globalDeclsFilter isName declarations) = [] :=
-  functions_FILTER_is_name declarations
-
 def functionsFilterNilGuard : Bool :=
   (functions
       (globalDeclsFilter
@@ -38,19 +24,6 @@ def functionsFilterNilGuard : Bool :=
     (functions (globalDeclsFilter isName declarations)).isEmpty
 
 #guard functionsFilterNilGuard
-
-/-! Regression for Cake's `MEM_functions` (`pan_globalsProofScript.sml:2380`),
-    ported in `Flapjack.Pancake.Proofs.PanGlobals`: the unique function entry
-    of `declarations` comes from the source `.function` declaration. -/
-theorem memFunctionsFixture :
-    ∃ declaration : FunDecl Nat,
-      (.function declaration : Decl Nat) ∈ declarations ∧
-        ("f", [], (.skip : Prog Nat), .one) =
-          (declaration.name, declaration.params, declaration.body,
-            declaration.returnShape) :=
-  MEM_functions (declarations := declarations)
-    (entry := ("f", [], (.skip : Prog Nat), .one))
-    (by simp [declarations, functions, functionEntries])
 
 def memFunctionsGuard : Bool :=
   (functions declarations).length = 1

@@ -215,39 +215,16 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
             (record["lean_path"], record["lean_name"]): record
             for record in manifest
         }
-        cases = {
-            ("Flapjack/Pancake/Proofs/PanGlobals.lean", "exceptions_append"): (
-                "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-                "exceptions_append",
-                "flapjack-dlc.48",
-            ),
-            (
-                "Flapjack/Pancake/Proofs/PanGlobals.lean",
-                "exceptions_FILTER_is_function",
-            ): (
-                "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-                "exceptions_FILTER_is_function",
-                "flapjack-dlc.47",
-            ),
-        }
         tagged = MAP["tagged_declarations"]()
-        for key, (hol_path, hol_name, bead) in cases.items():
-            with self.subTest(lean_name=key[1]):
-                record = manifest_by_key[key]
-                self.assertEqual(
-                    (record["hol_path"], record["hol_name"]),
-                    (hol_path, hol_name),
-                )
-                self.assertEqual(record["statement_status"], "documented_mismatch")
-                self.assertIn("Exp α.Const", record["reviewer"])
-                self.assertIn(bead, record["reviewer"])
-                self.assertNotIn(key, tagged)
-        tagged = MAP["tagged_declarations"]()
-        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
-        manifest_by_key = {
-            (record["lean_path"], record["lean_name"]): record
-            for record in manifest
-        }
+        for name in ("exceptions_append", "exceptions_FILTER_is_function",
+                     "fperm_name_cancel", "fperm_name_cong"):
+            key = ("Flapjack/Pancake/Proofs/PanGlobals.lean", name)
+            self.assertNotIn(key, manifest_by_key)
+            self.assertNotIn(key, tagged)
+        for name in ("exceptions_appendHOL", "exceptions_FILTER_is_functionHOL"):
+            key = ("Flapjack/Pancake/Proofs/PanGlobals/DeclListLemmas.lean", name)
+            self.assertIn(key, tagged)
+
         exact_cases = {
             ("Flapjack/Pancake/PanGlobals.lean", "fpermName"): (
                 "cakeml/pancake/pan_globalsScript.sml",
@@ -274,16 +251,7 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
                 self.assertIn(key, tagged)
         mismatch_cases = {
             ("Flapjack/Pancake/PanGlobals.lean", "globalRenameFunctionName"): (
-                "cakeml/pancake/pan_globalsScript.sml",
-                "fperm_name_def",
-            ),
-            ("Flapjack/Pancake/Proofs/PanGlobals.lean", "fperm_name_cancel"): (
-                "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-                "fperm_name_cancel",
-            ),
-            ("Flapjack/Pancake/Proofs/PanGlobals.lean", "fperm_name_cong"): (
-                "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-                "fperm_name_cong",
+                "cakeml/pancake/pan_globalsScript.sml", "fperm_name_def"
             ),
         }
         for key, (hol_path, hol_name) in mismatch_cases.items():
@@ -339,24 +307,10 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
                         f"{identifier}: {classification}", record["reviewer"]
                     )
                 self.assertIn(key, tagged)
-        mismatch_cases = {
-            ("Flapjack/Pancake/Proofs/PanGlobals.lean", "fresh_name_correct"): (
-                "fresh_name_correct",
-            ),
-            ("Flapjack/Pancake/Proofs/PanGlobals.lean", "fresh_name_correct'"): (
-                "fresh_name_correct'",
-            ),
-        }
-        for key, (hol_name,) in mismatch_cases.items():
-            with self.subTest(lean_name=key[1]):
-                record = manifest_by_key[key]
-                self.assertEqual(
-                    (record["hol_path"], record["hol_name"]),
-                    ("cakeml/pancake/proofs/pan_globalsProofScript.sml", hol_name),
-                )
-                self.assertEqual(record["statement_status"], "documented_mismatch")
-                self.assertIn("globalFreshName", record["reviewer"])
-                self.assertNotIn(key, tagged)
+        for name in ("fresh_name_correct", "fresh_name_correct'"):
+            key = ("Flapjack/Pancake/Proofs/PanGlobals.lean", name)
+            self.assertNotIn(key, manifest_by_key)
+            self.assertNotIn(key, tagged)
 
     def test_crep_evaluate_ind_exact_tag(self):
         tagged = MAP["tagged_declarations"]()
@@ -1009,27 +963,20 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
         self.assertIn("byte-observable", record["reviewer"])
         self.assertIn("String", record["reviewer"])
 
-    def test_fperm_decs_decls_carrier_mismatch_stays_untagged(self):
-        key = ("Flapjack/Pancake/Proofs/PanGlobals.lean", "fperm_decs_decls")
+    def test_fperm_decs_decls_production_variant_removed(self):
         inventory = {
             (record["lean_path"], record["lean_name"]): record
             for record in MAP["build_inventory"]()
         }
-        self.assertEqual(inventory[key]["hol_name"], "fperm_decs_decls")
-        self.assertEqual(inventory[key]["statement_status"], "documented_mismatch")
-        self.assertNotIn(key, MAP["tagged_declarations"]())
-
-        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
-        record = next(record for record in manifest if
-                      (record["lean_path"], record["lean_name"]) == key)
-        self.assertEqual(record["hol_name"], "fperm_decs_decls")
-        self.assertEqual(record["statement_status"], "documented_mismatch")
-        review = MAP["DOCUMENTED_MISMATCHES"][key][2]
-        self.assertIn("unused ys binder", review)
-        self.assertIn("arbitrary α global values", review)
-        self.assertIn("no NameRanged premise", review)
-        self.assertIn("arbitrary α global values", record["reviewer"])
-
+        self.assertNotIn(
+            ("Flapjack/Pancake/Proofs/PanGlobals.lean", "fperm_decs_decls"),
+            inventory,
+        )
+        exact_key = (
+            "Flapjack/Pancake/Proofs/PanGlobals/DeclListLemmas.lean",
+            "fperm_decs_declsHOL",
+        )
+        self.assertEqual(inventory[exact_key]["hol_name"], "fperm_decs_decls")
 
     def test_fields_in_order_reorder_analogue_stays_untagged(self):
         inventory = {

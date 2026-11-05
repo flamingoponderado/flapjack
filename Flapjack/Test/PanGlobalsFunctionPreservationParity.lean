@@ -4,7 +4,7 @@ namespace Flapjack.Test.PanGlobalsFunctionPreservationParity
 
 open Flapjack
 
-/-! Regression for the tagged HOL lemmas `resort_decls_preserve_functions`
+/-! Executable observations corresponding to the HOL lemmas `resort_decls_preserve_functions`
     (`pan_globalsProofScript.sml:2055`) and `fperm_decs_FILTER_is_function`
     (`pan_globalsProofScript.sml:2032`). -/
 
@@ -18,17 +18,6 @@ def declarations : List (Decl Nat) :=
    .decl (.comb [.one, .named "S"]) "g" (.const 7),
    .name "S" [], .exnDecl "E" (.named "T"),
    .decl .one "h" (.const 9)]
-
-theorem resortDeclsPreserveFunctionsFixture :
-    functions (globalResortDecls declarations) = functions declarations :=
-  resort_decls_preserve_functions declarations
-
-theorem fpermDecsFilterIsFunctionFixture :
-    globalRenameDecls "f" "b"
-        (globalDeclsFilter globalDeclIsFunction declarations) =
-      globalDeclsFilter globalDeclIsFunction
-        (globalRenameDecls "f" "b" declarations) :=
-  fperm_decs_FILTER_is_function "f" "b" declarations
 
 def functionPreservationGuard : Bool :=
   ((functions (globalResortDecls declarations)).map (fun entry => entry.1) ==

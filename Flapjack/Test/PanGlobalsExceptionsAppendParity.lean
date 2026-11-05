@@ -15,11 +15,6 @@ def declarations : List (Decl Nat) :=
 
 def rest : List (Decl Nat) := [.exnDecl "F" .one, .decl .one "k" (.const 11)]
 
-theorem exceptionsAppendFixture :
-    exceptionEntries (declarations ++ rest) =
-      exceptionEntries declarations ++ exceptionEntries rest :=
-  exceptions_append declarations rest
-
 def exceptionsAppendGuard : Bool :=
   (match exceptionEntries (declarations ++ rest) with
    | [("E", .named "T"), ("F", .one)] => true

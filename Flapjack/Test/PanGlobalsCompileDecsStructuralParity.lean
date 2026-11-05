@@ -26,36 +26,6 @@ def nonFunctionDeclarations : List (Decl Nat) :=
 def compileResult : GlobalCompileDecsResult Nat :=
   globalCompileDecs compileContext declarations
 
-def nonFunctionCompileResult : GlobalCompileDecsResult Nat :=
-  globalCompileDecs compileContext nonFunctionDeclarations
-
-theorem compileDecsEveryIsFunctionFixture :
-    compileResult.functions.all globalDeclIsFunction = true :=
-  compile_decs_EVERY_is_function compileContext declarations
-    compileResult.initializers compileResult.functions compileResult.exceptions
-    compileResult.context rfl
-
-theorem compileDecsDeclsThmFixture :
-    nonFunctionCompileResult.functions = [] :=
-  compile_decs_decls_thm compileContext nonFunctionDeclarations
-    nonFunctionCompileResult.initializers nonFunctionCompileResult.functions
-    nonFunctionCompileResult.exceptions nonFunctionCompileResult.context rfl
-    (by simp [nonFunctionDeclarations, globalDeclIsFunction])
-
-theorem compileDecsExnsAreExnsFixture :
-    compileResult.exceptions =
-      globalDeclsFilter globalDeclIsException declarations :=
-  compile_decs_exns_are_exns compileContext declarations
-    compileResult.initializers compileResult.functions compileResult.exceptions
-    compileResult.context rfl
-
-theorem compileDecsPreserveFunctionsFixture :
-    (functions compileResult.functions).map (fun entry => entry.1) =
-      (functions declarations).map (fun entry => entry.1) :=
-  compile_decs_preserve_functions compileContext declarations
-    compileResult.initializers compileResult.functions compileResult.exceptions
-    compileResult.context rfl
-
 def compileDecsStructuralGuard : Bool :=
   let result := globalCompileDecs compileContext declarations
   result.functions.all globalDeclIsFunction &&
@@ -71,18 +41,6 @@ def compileDecsStructuralGuard : Bool :=
 def renamedPredicate : Decl Nat → Bool
   | .function function => function.name == "b"
   | _ => true
-
-theorem everyFpermDecsFixture :
-    (globalRenameDecls "f" "b" declarations).all renamedPredicate = true :=
-  EVERY_fperm_decs "f" "b" renamedPredicate declarations (by decide) (by decide)
-
-theorem compileDecsFilterDeclsFixture :
-    globalCompileDecs compileContext (globalDeclsFilter isDecl declarations) =
-      { initializers := compileResult.initializers, functions := [],
-        exceptions := [], context := compileResult.context } :=
-  compile_decs_FILTER_decs compileContext declarations
-    compileResult.initializers compileResult.functions compileResult.exceptions
-    compileResult.context rfl
 
 def everyFpermDecsGuard : Bool :=
   (globalRenameDecls "f" "b" declarations).all renamedPredicate

@@ -76749,35 +76749,11 @@
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "ALL_DISTINCT_fperm_decs",
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
-    "lean_name": "ALL_DISTINCT_fperm_decs",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Codex (source comparison) Carrier note: keyed by FunName/VarName/ExceptionId/StructName = String (via Decl/FunDecl/Shape/functionEntries/exceptionEntries) while HOL pan_globalsProofScript.sml uses mlstring; tag state is documented_mismatch pending the exact MlString carrier (flapjack-pxn.18.3.5.8)."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "EVERY_fperm_decs",
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
-    "lean_name": "EVERY_fperm_decs",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-main (source comparison with pan_globalsProofScript.sml:2436-2442): HOL uses MlString names and a quantified Prop-valued P over HOL declarations; this executable analogue uses production String names and a Bool-valued predicate. Exact theorem remains untagged and is tracked by flapjack-pxn.18.3.5.8.14."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
     "hol_name": "EVERY_fperm_decs",
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
     "lean_name": "EVERY_fperm_decsHOL",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds9 (source comparison, bead flapjack-pxn.18.3.5.8.14) HOL EVERY_fperm_decs[local] (pan_globalsProofScript.sml:2436-2442) states forall f g decs, EVERY (λd. ¬is_function d ⇒ P d) decs ∧ EVERY (λd. ∀fi. d = Function fi ⇒ P (Function (fi with <|name := fperm_name f g fi.name; body := fperm f g fi.body|>))) decs ⇒ EVERY P (fperm_decs f g decs). The exact Lean port is over DeclHOL width with a Prop-valued P, rendering each HOL EVERY as the membership-quantified forall d ∈ ..., the boolean is_function as isFunctionHOL d = false, and the renamed function with the exact fpermName/fpermHOL. No extra hypotheses, no weakened conclusion, no qualifier."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "FILTER_decs_fperm_decs",
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
-    "lean_name": "FILTER_decs_fperm_decs",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Codex (source comparison) Carrier note: keyed by FunName/VarName/ExceptionId/StructName = String (via Decl/FunDecl/Shape/functionEntries/exceptionEntries) while HOL pan_globalsProofScript.sml uses mlstring; tag state is documented_mismatch pending the exact MlString carrier (flapjack-pxn.18.3.5.8)."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
@@ -76791,153 +76767,9 @@
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
     "hol_name": "MEM_functions",
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
-    "lean_name": "MEM_functions",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Codex (source comparison) Carrier note: keyed by FunName/VarName/ExceptionId/StructName = String (via Decl/FunDecl/Shape/functionEntries/exceptionEntries) while HOL pan_globalsProofScript.sml uses mlstring; tag state is documented_mismatch pending the exact MlString carrier (flapjack-pxn.18.3.5.8)."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "MEM_functions",
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
     "lean_name": "MEM_functionsHOL",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds3 (source comparison, bead flapjack-pxn.18.3.5.8.17): HOL MEM_functions[local] (pan_globalsProofScript.sml:2380-2387) states MEM t (functions decs) ==> exists fi. MEM (Function fi) decs and t = (fi.name,fi.params,fi.body,fi.return). MEM_functionsHOL matches the implication shape over the exact DeclHOL/FunDeclHOL/functionsHOL carriers with MlS/ShapeHOL/ProgHOL width. HOL declares it [local] so it has no theory-database name; scripts/hol-probes/pan_globals_mem_functions_probe.out records the underlying functions projection and the membership instance the theorem characterizes, replayed in Flapjack/Test/PanGlobalsMemFunctionsHOLParity.lean. Production MEM_functions stays documented_mismatch."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "compile_decls_append",
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
-    "lean_name": "compile_decls_append_cake",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Codex (source comparison; exact compile_decs_* statement over the canonical CakeContext: compileDecsCake is the tagged compile_decs_def port, compileProgCake/compileExpCake/freshNameHOL are the tagged compile_def/compile_exp_def/fresh_name_def ports, [NeZero width] mirrors HOL dimindex positivity, and globals is consulted only through FLOOKUP/FUPDATE with the same local finite-map representation argument as compileExpCake); name equality is [LawfulBEq String] so the == used by FUPDATE/FLOOKUP reflects HOL =.) Carrier note: keyed by FunName/VarName/ExceptionId/StructName = String (via Decl/FunDecl/Shape/functionEntries/exceptionEntries) while HOL pan_globalsProofScript.sml uses mlstring; tag state is documented_mismatch pending the exact MlString carrier (flapjack-pxn.18.3.5.8)."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Untagged: context-threading globalCompileDecsThreaded over arbitrary GlobalPassContext bytesInWord/fromNat and arbitrary [Add α]/[Mul α] with non-lawful [BEq String]; exact canonical-word-context port tracked by a dependency bead. Carrier note: keyed by FunName/VarName/ExceptionId/StructName = String (via Decl/FunDecl/Shape/functionEntries/exceptionEntries) while HOL pan_globalsProofScript.sml uses mlstring; tag state is documented_mismatch pending the exact MlString carrier (flapjack-pxn.18.3.5.8).",
-    "hol_name": "compile_decls_append",
-    "lean_name": "compile_decls_append_threaded"
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "compile_decs_EVERY_is_function",
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
-    "lean_name": "compile_decs_EVERY_is_function",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Untagged: globalCompileDecs compiles function bodies under the final collected context, unlike HOL compile_decs which threads context through declarations. Carrier note: keyed by FunName/VarName/ExceptionId/StructName = String (via Decl/FunDecl/Shape/functionEntries/exceptionEntries) while HOL pan_globalsProofScript.sml uses mlstring; tag state is documented_mismatch pending the exact MlString carrier (flapjack-pxn.18.3.5.8)."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "compile_decs_EVERY_is_function",
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
-    "lean_name": "compile_decs_EVERY_is_function_cake",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Codex (source comparison; exact compile_decs_* statement over the canonical CakeContext: compileDecsCake is the tagged compile_decs_def port, compileProgCake/compileExpCake/freshNameHOL are the tagged compile_def/compile_exp_def/fresh_name_def ports, [NeZero width] mirrors HOL dimindex positivity, and globals is consulted only through FLOOKUP/FUPDATE with the same local finite-map representation argument as compileExpCake); name equality is [LawfulBEq String] so the == used by FUPDATE/FLOOKUP reflects HOL =.) Carrier note: keyed by FunName/VarName/ExceptionId/StructName = String (via Decl/FunDecl/Shape/functionEntries/exceptionEntries) while HOL pan_globalsProofScript.sml uses mlstring; tag state is documented_mismatch pending the exact MlString carrier (flapjack-pxn.18.3.5.8)."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Untagged: context-threading globalCompileDecsThreaded over arbitrary GlobalPassContext bytesInWord/fromNat and arbitrary [Add α]/[Mul α] with non-lawful [BEq String]; exact canonical-word-context port tracked by a dependency bead. Carrier note: keyed by FunName/VarName/ExceptionId/StructName = String (via Decl/FunDecl/Shape/functionEntries/exceptionEntries) while HOL pan_globalsProofScript.sml uses mlstring; tag state is documented_mismatch pending the exact MlString carrier (flapjack-pxn.18.3.5.8).",
-    "hol_name": "compile_decs_EVERY_is_function",
-    "lean_name": "compile_decs_EVERY_is_function_threaded"
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "compile_decs_FILTER_decs",
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
-    "lean_name": "compile_decs_FILTER_decs",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Untagged: the premise concerns globalCompileDecs, not HOL's context-threading compile_decs."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "compile_decs_decls_thm",
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
-    "lean_name": "compile_decs_decls_thm",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Untagged: the premise concerns globalCompileDecs, not HOL's context-threading compile_decs. Carrier note: keyed by FunName/VarName/ExceptionId/StructName = String (via Decl/FunDecl/Shape/functionEntries/exceptionEntries) while HOL pan_globalsProofScript.sml uses mlstring; tag state is documented_mismatch pending the exact MlString carrier (flapjack-pxn.18.3.5.8)."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "compile_decs_decls_thm",
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
-    "lean_name": "compile_decs_decls_thm_cake",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Codex (source comparison; exact compile_decs_* statement over the canonical CakeContext: compileDecsCake is the tagged compile_decs_def port, compileProgCake/compileExpCake/freshNameHOL are the tagged compile_def/compile_exp_def/fresh_name_def ports, [NeZero width] mirrors HOL dimindex positivity, and globals is consulted only through FLOOKUP/FUPDATE with the same local finite-map representation argument as compileExpCake); name equality is [LawfulBEq String] so the == used by FUPDATE/FLOOKUP reflects HOL =.) Carrier note: keyed by FunName/VarName/ExceptionId/StructName = String (via Decl/FunDecl/Shape/functionEntries/exceptionEntries) while HOL pan_globalsProofScript.sml uses mlstring; tag state is documented_mismatch pending the exact MlString carrier (flapjack-pxn.18.3.5.8)."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Untagged: context-threading globalCompileDecsThreaded over arbitrary GlobalPassContext bytesInWord/fromNat and arbitrary [Add α]/[Mul α] with non-lawful [BEq String]; exact canonical-word-context port tracked by a dependency bead. Carrier note: keyed by FunName/VarName/ExceptionId/StructName = String (via Decl/FunDecl/Shape/functionEntries/exceptionEntries) while HOL pan_globalsProofScript.sml uses mlstring; tag state is documented_mismatch pending the exact MlString carrier (flapjack-pxn.18.3.5.8).",
-    "hol_name": "compile_decs_decls_thm",
-    "lean_name": "compile_decs_decls_thm_threaded"
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "compile_decs_exns_are_exns",
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
-    "lean_name": "compile_decs_exns_are_exns",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Untagged: the premise concerns globalCompileDecs, not HOL's context-threading compile_decs."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "compile_decs_preserve_functions",
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
-    "lean_name": "compile_decs_preserve_functions",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Untagged: the premise concerns globalCompileDecs, not HOL's context-threading compile_decs."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "dec_shapes_FILTER",
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
-    "lean_name": "dec_shapes_FILTER",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Codex (source comparison) Carrier note: keyed by FunName/VarName/ExceptionId/StructName = String (via Decl/FunDecl/Shape/functionEntries/exceptionEntries) while HOL pan_globalsProofScript.sml uses mlstring; tag state is documented_mismatch pending the exact MlString carrier (flapjack-pxn.18.3.5.8)."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "dec_shapes_append",
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
-    "lean_name": "dec_shapes_append",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Codex (source comparison) Carrier note: keyed by FunName/VarName/ExceptionId/StructName = String (via Decl/FunDecl/Shape/functionEntries/exceptionEntries) while HOL pan_globalsProofScript.sml uses mlstring; tag state is documented_mismatch pending the exact MlString carrier (flapjack-pxn.18.3.5.8)."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "dec_shapes_fperm_decs",
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
-    "lean_name": "dec_shapes_fperm_decs",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Codex (source comparison) Carrier note: keyed by FunName/VarName/ExceptionId/StructName = String (via Decl/FunDecl/Shape/functionEntries/exceptionEntries) while HOL pan_globalsProofScript.sml uses mlstring; tag state is documented_mismatch pending the exact MlString carrier (flapjack-pxn.18.3.5.8)."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "dec_shapes_functions",
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
-    "lean_name": "dec_shapes_functions",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Codex (source comparison) Carrier note: keyed by FunName/VarName/ExceptionId/StructName = String (via Decl/FunDecl/Shape/functionEntries/exceptionEntries) while HOL pan_globalsProofScript.sml uses mlstring; tag state is documented_mismatch pending the exact MlString carrier (flapjack-pxn.18.3.5.8)."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "dec_shapes_resort_decls_def",
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
-    "lean_name": "dec_shapes_resort_decls_def",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Codex (source comparison): the filter/reordering clauses agree, but the Lean theorem uses production Decl α and Shape; HOL declarations contain word-valued ExpHOL width and return ShapeHOL. Production names are String while HOL identifiers are mlstring. names_as_string only covers identifiers. The theorem is untagged and exact-carrier replacement is tracked by flapjack-6nn.3.1."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "decl_distinct",
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
-    "lean_name": "decl_distinct",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Codex (source comparison) Carrier note: keyed by FunName/VarName/ExceptionId/StructName = String (via Decl/FunDecl/Shape/functionEntries/exceptionEntries) while HOL pan_globalsProofScript.sml uses mlstring; tag state is documented_mismatch pending the exact MlString carrier (flapjack-pxn.18.3.5.8)."
   },
   {
     "hol_path": null,
@@ -77041,22 +76873,6 @@
     "reviewer": "flapjack-ds9 (source comparison, bead flapjack-pxn.18.5.2.22.3.1): HOL evaluate_two[local] (pan_globalsProofScript.sml:2631-2652) states evaluate (p,t with clock := k) = (res,st) /\\ evaluate (p,t with clock := k') = (res',st') /\\ res <> SOME TimeOut /\\ res' <> SOME TimeOut ==> res = res' /\\ st.ffi = st'.ffi. Lean evaluateTwo keeps the exact ProgHOL program, the PanSemStateFiniteExact state, both run equations and both non-TimeOut premises, and the same res = res' /\\ st.ffi = st'.ffi conclusion; evaluate is the canonical tagged PanSemStateFiniteExact.evaluateHOLFiniteState. Only carrier difference is the reviewed finite-map/word translation recorded by the qualifiers; no added premise. Proof uses the tagged panProps evaluate_add_clock_eq (panPropsEvaluateAddClockEq) and clock arithmetic, exactly as HOL. Replayed kernel-checked in Flapjack/Test/PanGlobalsEvaluateTwoParity.lean. Coordinator review required."
   },
   {
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "exceptions_FILTER_is_function",
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
-    "lean_name": "exceptions_FILTER_is_function",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds4 (source comparison, bead flapjack-dlc.47) HOL exceptions_FILTER_is_function (pan_globalsProofScript.sml:2515-2525) is the five-clause conjunction over FILTER is_function, FILTER ($¬ o is_function), FILTER is_exn_decl, FILTER is_name, and FILTER is_decl; the Lean theorem assembles the same five clauses with globalDeclsFilter and globalDeclIsFunction/globalDeclIsException/globalDeclIsName/globalDeclIsGlobal. The mismatch is the imported declaration carrier: Lean ranges over production Decl α with Exp α.Const : α (a generic word, not HOL's fixed-width ExpHOL width.Const : 'a word) and String FunName/VarName/ExceptionId/StructName, while HOL uses 'a word and mlstring. names_as_string cannot authorize the whole declaration carrier, so the tag remains withdrawn pending the exact MlString/exact-carrier retarget (flapjack-6nn.3.1 / flapjack-pxn.18.3.5.8). Direct HOL rows empty=[] and exception=[(«E»,Comb [One; One])] are in pan_lang_exceptions_probe.out and sampled by Flapjack/Test/PanGlobalsExceptionsFilterIsFunctionParity.lean."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "exceptions_append",
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
-    "lean_name": "exceptions_append",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds4 (source comparison, bead flapjack-dlc.48) HOL exceptions_append (pan_globalsProofScript.sml:2507-2513) exceptions (ds ++ ds') = exceptions ds ++ exceptions ds' holds structurally for the source-shaped exceptionEntries, which only walks declaration constructors and never inspects an expression payload. The mismatch is the imported declaration carrier: Lean ranges over production Decl α with Exp α.Const : α (a generic word, not HOL's fixed-width ExpHOL width.Const : 'a word) and String FunName/VarName/ExceptionId/StructName, while HOL uses 'a word and mlstring. names_as_string cannot authorize the whole declaration carrier, so the tag remains withdrawn pending the exact MlString/exact-carrier retarget (flapjack-6nn.3.1 / flapjack-pxn.18.3.5.8). Direct HOL rows empty=[] and exception=[(«E»,Comb [One; One])] are in pan_lang_exceptions_probe.out and sampled by Flapjack/Test/PanGlobalsExceptionsAppendParity.lean."
-  },
-  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
@@ -77106,46 +76922,6 @@
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "fperm_decs_FILTER_is_function",
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
-    "lean_name": "fperm_decs_FILTER_is_function",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-dlc.49): HOL fperm_decs (pan_globalsScript.sml:216) renames fi.name/fi.body and leaves non-function declarations unchanged, matching globalRenameDecls; the FILTER/EVERY shapes also match. Statement carriers differ beyond name representation: production FunName/VarName/ExceptionId/StructName/DeclarationName = String vs HOL funname/varname/eid/stcname = mlstring, and production Decl α carries generic Exp α (Const : α) and Prog α, whereas HOL decl is word-indexed (exp = Const ('a word)). names_as_string cannot cover the expression/program value-index difference, so the tag stays withdrawn. Deps: exact MlString identifier carrier flapjack-pxn.18.3.5.8 (parent flapjack-pxn.18.3.5.7.2), exact-carrier production transformation flapjack-6nn.3.1."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "fperm_decs_append",
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
-    "lean_name": "fperm_decs_append",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Codex (source comparison) Carrier note: keyed by FunName/VarName/ExceptionId/StructName = String (via Decl/FunDecl/Shape/functionEntries/exceptionEntries) while HOL pan_globalsProofScript.sml uses mlstring; tag state is documented_mismatch pending the exact MlString carrier (flapjack-pxn.18.3.5.8)."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "fperm_decs_decls",
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
-    "lean_name": "fperm_decs_decls",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Codex and flapjack-ds5 (source comparison with pan_globalsProofScript.sml:2023-2029): the unused ys binder, non-function premise, and rename-to-self equation correspond. Lean quantifies over production Decl α with String names and arbitrary α global values, plus executable-only [BEq String] and the Flapjack-specific globalDeclIsFunction; HOL uses mlstring names, word-valued globals, and HOL is_function. Although the premise makes each renamer a no-op, it does not equate declaration carriers. There is no NameRanged premise or checked declaration bridge for names_as_string; keep documented_mismatch pending exact-carrier work flapjack-pxn.18.3.5.8 and flapjack-6nn.3.1."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "fperm_name_cancel",
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
-    "lean_name": "fperm_name_cancel",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds4 (bead flapjack-dlc.52) String-specialized production form of HOL's polymorphic fperm_name_cancel (pan_globalsProofScript.sml:1622). HOL carries no type annotation and generalizes the theorem to 'a -> 'a -> 'a -> 'a, while this statement instantiates alpha := String (FunName); it is a specialization of the HOL original, so the names_as_string qualifier does not authorize a tag. Exact polymorphic port: fpermName_cancel."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "fperm_name_cong",
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
-    "lean_name": "fperm_name_cong",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds4 (bead flapjack-dlc.53) String-specialized production form of HOL's polymorphic fperm_name_cong (pan_globalsProofScript.sml:1629). HOL carries no type annotation and generalizes the theorem to 'a -> 'a -> 'a -> 'a, while this statement instantiates alpha := String (FunName); it is a specialization of the HOL original, so the names_as_string qualifier does not authorize a tag. Exact polymorphic port: fpermName_cong."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
     "hol_name": "fresh_name_correct",
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
     "lean_name": "freshNameHOL_not_mem_hol",
@@ -77177,100 +76953,12 @@
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "fresh_name_correct",
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
-    "lean_name": "fresh_name_correct",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds4 (source comparison, bead flapjack-dlc.54) HOL fresh_name_correct (pan_globalsProofScript.sml:993): forall name names, MEM (fresh_name name names) names => F. The Lean declaration named here is proved about the production fuel-bounded search globalFreshName (globalFreshName_not_mem), not the reviewed source-shaped freshNameHOL (@[hol] port of fresh_name_def, pan_globalsScript.sml:55), so this production-form tag stays withdrawn. The exact source-shaped port is now freshNameHOL_not_mem_hol (Flapjack/Pancake/Proofs/PanGlobals.lean), tagged with the names_as_string classification; unifying the executable path so the production search is the tagged definition is tracked by flapjack-pxn.18.3.5.8. Direct HOL rows in scripts/hol-probes/pan_globals_fresh_name_probe.out."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "fresh_name_correct'",
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
-    "lean_name": "fresh_name_correct'",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds4 (source comparison, bead flapjack-dlc.55) HOL fresh_name_correct' (pan_globalsProofScript.sml:1003): MEM (fresh_name name names) names' => set names' subset of set names => F, proved via fresh_name_correct. The Lean declaration named here is over the production globalFreshName (globalFreshName_not_mem_of_subset), not the reviewed freshNameHOL, so this production-form tag stays withdrawn. The exact source-shaped port is now freshNameHOL_not_mem_of_subset_hol (Flapjack/Pancake/Proofs/PanGlobals.lean), tagged with the names_as_string classification. The executable-path unification is tracked by flapjack-pxn.18.3.5.8. Direct HOL rows in scripts/hol-probes/pan_globals_fresh_name_probe.out."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
     "hol_name": "functions_fperm_decs",
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
     "lean_name": "functionsFpermDecsHOL",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "reviewer": "C source comparison pan_globalsProof1701-1708, functions/fperm_decs definitions and native DeclHOL/FunDeclHOL/ProgHOL carriers: same universal x/y/declaration list, original functions list MAP with name/body permutation and unchanged parameters/return shape; all four declaration constructors and list order retained. Only standard positive type-indexed HOL word to BitVec width under NeZero translation, explicit words_as_type_indexed_bitvec; native MlS list carriers unchanged, no FFI host or extra premise. Proof and elaborated type unchanged; Coordinator source/positive-word qualifier review accepted: shared bead flapjack-pxn.18.5.2.22.12 close reason records comparison of pan_globalsScript191-221 and pan_globalsProofScript1701-1708, published1a10679a6 PR1185; definitions/statements unchanged.",
     "words_as_type_indexed_bitvec": true
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "functions_FILTER_exn_decl",
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
-    "lean_name": "functions_FILTER_exn_decl",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Codex (source comparison) Carrier note: keyed by FunName/VarName/ExceptionId/StructName = String (via Decl/FunDecl/Shape/functionEntries/exceptionEntries) while HOL pan_globalsProofScript.sml uses mlstring; tag state is documented_mismatch pending the exact MlString carrier (flapjack-pxn.18.3.5.8)."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "functions_FILTER_is_name",
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
-    "lean_name": "functions_FILTER_is_name",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Codex (source comparison) Carrier note: keyed by FunName/VarName/ExceptionId/StructName = String (via Decl/FunDecl/Shape/functionEntries/exceptionEntries) while HOL pan_globalsProofScript.sml uses mlstring; tag state is documented_mismatch pending the exact MlString carrier (flapjack-pxn.18.3.5.8)."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "functions_filter_nil",
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
-    "lean_name": "functions_filter_nil",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Codex (source comparison) Carrier note: keyed by FunName/VarName/ExceptionId/StructName = String (via Decl/FunDecl/Shape/functionEntries/exceptionEntries) while HOL pan_globalsProofScript.sml uses mlstring; tag state is documented_mismatch pending the exact MlString carrier (flapjack-pxn.18.3.5.8)."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "functions_fperm_decs",
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
-    "lean_name": "functions_fperm_decs",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Codex (source comparison) Carrier note: keyed by FunName/VarName/ExceptionId/StructName = String (via Decl/FunDecl/Shape/functionEntries/exceptionEntries) while HOL pan_globalsProofScript.sml uses mlstring; tag state is documented_mismatch pending the exact MlString carrier (flapjack-pxn.18.3.5.8)."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "compile_top_only_functions_or_exns",
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
-    "lean_name": "globalCompileTopCake_all_function_or_exception",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Codex (reference inventory) Carrier note: keyed by FunName/VarName/ExceptionId/StructName = String (via Decl/FunDecl/Shape/functionEntries/exceptionEntries) while HOL pan_globalsProofScript.sml uses mlstring; tag state is documented_mismatch pending the exact MlString carrier (flapjack-pxn.18.3.5.8)."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "compile_top_shape_wf",
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
-    "lean_name": "globalCompileTopCake_shapes_wf",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Codex (source comparison) Carrier note: keyed by FunName/VarName/ExceptionId/StructName = String (via Decl/FunDecl/Shape/functionEntries/exceptionEntries) while HOL pan_globalsProofScript.sml uses mlstring; tag state is documented_mismatch pending the exact MlString carrier (flapjack-pxn.18.3.5.8)."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "compile_top_shape_wf_nil",
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
-    "lean_name": "globalCompileTopCake_shapes_wf_nil",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Codex source review against pan_globalsProofScript.sml:2495-2504: HOL premises are evaluate_decls s code = SOME s', s.structs = [], and EVERY admissible-constructor check; conclusion is one EVERY predicate over compile_top code start. Lean has the corresponding success, empty-struct, and admissibility premises, but its conclusion is membership in globalCompileTopCake plus an equality test per function output, not the HOL conclusion shape. Its Decl/FunDecl/Shape/state names are also String-backed, while HOL uses mlstring. Keep untagged as documented_mismatch; flapjack-pxn.18.3.5.8 tracks exact MlString carriers. The current Lean statement fixture is not a direct HOL oracle regression; a faithful retarget needs the reviewed compile_top definition and direct source rows."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
-    "lean_name": "globalCompileTopForStart_all_function_or_exception",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
-    "lean_name": "globalCompileTopForStart_shapes_wf",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
@@ -77312,22 +77000,6 @@
     "lean_name": "map_pick_up_first",
     "statement_status": "reviewed_exact",
     "reviewer": "Codex (source comparison)"
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "new_main_name_correct",
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
-    "lean_name": "new_main_name_correct",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Codex (source comparison): besides production String names versus HOL mlstring names, this theorem ranges over production Decl α whose Exp α.Const : α differs from HOL word-valued ExpHOL width.Const : 'a word. names_as_string only accounts for identifiers. The theorem is untagged; exact-carrier new_main_name work is tracked by flapjack-6nn.3.1."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "not_is_function",
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
-    "lean_name": "not_is_function",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Codex (source comparison) Carrier note: keyed by FunName/VarName/ExceptionId/StructName = String (via Decl/FunDecl/Shape/functionEntries/exceptionEntries) while HOL pan_globalsProofScript.sml uses mlstring; tag state is documented_mismatch pending the exact MlString carrier (flapjack-pxn.18.3.5.8)."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
@@ -77374,14 +77046,6 @@
     "lean_name": "resortDeclsHOL_eq_filter",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific: under the resort admissibility predicate resortDeclsHOL is its normal form because filter is_name is empty."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "resort_decls_preserve_functions",
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
-    "lean_name": "resort_decls_preserve_functions",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Codex (source comparison): function preservation follows the same constructor partition, but the theorem ranges over production Decl α with Exp α.Const : α and String identifiers; HOL decl uses word-valued ExpHOL width and mlstring identifiers. names_as_string cannot cover the expression-carrier difference. The theorem is untagged; exact-carrier production replacement is tracked by flapjack-6nn.3.1."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
@@ -79999,7 +79663,7 @@
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
     "hol_name": "ALL_DISTINCT_fperm_decs",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.7): exact DeclHOL/MlS/ShapeHOL re-port of HOL ALL_DISTINCT_fperm_decs over the tagged exact functionsHOL/exceptionsHOL/decShapesHOL/fpermDecsHOL/resortDeclsHOL/newMainNameHOL/freshNameMlS and Bool-valued is_* predicates; same binders, hypotheses and conclusion (FILTER=List.filter, MAP FST=map Prod.fst, ALL_DISTINCT=Nodup, EVERY over Bool predicate = membership-quantified `= true`, unused HOL binders kept as free-typed binders). Supersedes the production-carrier documented_mismatch declaration of the same HOL name in Proofs/PanGlobals.lean, which stays untagged-by-status."
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.7): exact DeclHOL/MlS/ShapeHOL re-port of HOL ALL_DISTINCT_fperm_decs over the tagged exact functionsHOL/exceptionsHOL/decShapesHOL/fpermDecsHOL/resortDeclsHOL/newMainNameHOL/freshNameMlS and Bool-valued is_* predicates; same binders, hypotheses and conclusion (FILTER=List.filter, MAP FST=map Prod.fst, ALL_DISTINCT=Nodup, EVERY over Bool predicate = membership-quantified `= true`, unused HOL binders kept as free-typed binders). Supersedes the former production-carrier analogue, which has been removed."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/DeclListLemmas.lean",
@@ -80007,7 +79671,7 @@
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
     "hol_name": "dec_shapes_FILTER",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.7): exact DeclHOL/MlS/ShapeHOL re-port of HOL dec_shapes_FILTER over the tagged exact functionsHOL/exceptionsHOL/decShapesHOL/fpermDecsHOL/resortDeclsHOL/newMainNameHOL/freshNameMlS and Bool-valued is_* predicates; same binders, hypotheses and conclusion (FILTER=List.filter, MAP FST=map Prod.fst, ALL_DISTINCT=Nodup, EVERY over Bool predicate = membership-quantified `= true`, unused HOL binders kept as free-typed binders). Supersedes the production-carrier documented_mismatch declaration of the same HOL name in Proofs/PanGlobals.lean, which stays untagged-by-status."
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.7): exact DeclHOL/MlS/ShapeHOL re-port of HOL dec_shapes_FILTER over the tagged exact functionsHOL/exceptionsHOL/decShapesHOL/fpermDecsHOL/resortDeclsHOL/newMainNameHOL/freshNameMlS and Bool-valued is_* predicates; same binders, hypotheses and conclusion (FILTER=List.filter, MAP FST=map Prod.fst, ALL_DISTINCT=Nodup, EVERY over Bool predicate = membership-quantified `= true`, unused HOL binders kept as free-typed binders). Supersedes the former production-carrier analogue, which has been removed."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/DeclListLemmas.lean",
@@ -80015,7 +79679,7 @@
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
     "hol_name": "dec_shapes_append",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.7): exact DeclHOL/MlS/ShapeHOL re-port of HOL dec_shapes_append over the tagged exact functionsHOL/exceptionsHOL/decShapesHOL/fpermDecsHOL/resortDeclsHOL/newMainNameHOL/freshNameMlS and Bool-valued is_* predicates; same binders, hypotheses and conclusion (FILTER=List.filter, MAP FST=map Prod.fst, ALL_DISTINCT=Nodup, EVERY over Bool predicate = membership-quantified `= true`, unused HOL binders kept as free-typed binders). Supersedes the production-carrier documented_mismatch declaration of the same HOL name in Proofs/PanGlobals.lean, which stays untagged-by-status."
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.7): exact DeclHOL/MlS/ShapeHOL re-port of HOL dec_shapes_append over the tagged exact functionsHOL/exceptionsHOL/decShapesHOL/fpermDecsHOL/resortDeclsHOL/newMainNameHOL/freshNameMlS and Bool-valued is_* predicates; same binders, hypotheses and conclusion (FILTER=List.filter, MAP FST=map Prod.fst, ALL_DISTINCT=Nodup, EVERY over Bool predicate = membership-quantified `= true`, unused HOL binders kept as free-typed binders). Supersedes the former production-carrier analogue, which has been removed."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/DeclListLemmas.lean",
@@ -80023,7 +79687,7 @@
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
     "hol_name": "dec_shapes_fperm_decs",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.7): exact DeclHOL/MlS/ShapeHOL re-port of HOL dec_shapes_fperm_decs over the tagged exact functionsHOL/exceptionsHOL/decShapesHOL/fpermDecsHOL/resortDeclsHOL/newMainNameHOL/freshNameMlS and Bool-valued is_* predicates; same binders, hypotheses and conclusion (FILTER=List.filter, MAP FST=map Prod.fst, ALL_DISTINCT=Nodup, EVERY over Bool predicate = membership-quantified `= true`, unused HOL binders kept as free-typed binders). Supersedes the production-carrier documented_mismatch declaration of the same HOL name in Proofs/PanGlobals.lean, which stays untagged-by-status."
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.7): exact DeclHOL/MlS/ShapeHOL re-port of HOL dec_shapes_fperm_decs over the tagged exact functionsHOL/exceptionsHOL/decShapesHOL/fpermDecsHOL/resortDeclsHOL/newMainNameHOL/freshNameMlS and Bool-valued is_* predicates; same binders, hypotheses and conclusion (FILTER=List.filter, MAP FST=map Prod.fst, ALL_DISTINCT=Nodup, EVERY over Bool predicate = membership-quantified `= true`, unused HOL binders kept as free-typed binders). Supersedes the former production-carrier analogue, which has been removed."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/DeclListLemmas.lean",
@@ -80031,7 +79695,7 @@
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
     "hol_name": "dec_shapes_functions",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.7): exact DeclHOL/MlS/ShapeHOL re-port of HOL dec_shapes_functions over the tagged exact functionsHOL/exceptionsHOL/decShapesHOL/fpermDecsHOL/resortDeclsHOL/newMainNameHOL/freshNameMlS and Bool-valued is_* predicates; same binders, hypotheses and conclusion (FILTER=List.filter, MAP FST=map Prod.fst, ALL_DISTINCT=Nodup, EVERY over Bool predicate = membership-quantified `= true`, unused HOL binders kept as free-typed binders). Supersedes the production-carrier documented_mismatch declaration of the same HOL name in Proofs/PanGlobals.lean, which stays untagged-by-status."
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.7): exact DeclHOL/MlS/ShapeHOL re-port of HOL dec_shapes_functions over the tagged exact functionsHOL/exceptionsHOL/decShapesHOL/fpermDecsHOL/resortDeclsHOL/newMainNameHOL/freshNameMlS and Bool-valued is_* predicates; same binders, hypotheses and conclusion (FILTER=List.filter, MAP FST=map Prod.fst, ALL_DISTINCT=Nodup, EVERY over Bool predicate = membership-quantified `= true`, unused HOL binders kept as free-typed binders). Supersedes the former production-carrier analogue, which has been removed."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/DeclListLemmas.lean",
@@ -80039,7 +79703,7 @@
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
     "hol_name": "dec_shapes_resort_decls_def",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.7): exact DeclHOL/MlS/ShapeHOL re-port of HOL dec_shapes_resort_decls_def over the tagged exact functionsHOL/exceptionsHOL/decShapesHOL/fpermDecsHOL/resortDeclsHOL/newMainNameHOL/freshNameMlS and Bool-valued is_* predicates; same binders, hypotheses and conclusion (FILTER=List.filter, MAP FST=map Prod.fst, ALL_DISTINCT=Nodup, EVERY over Bool predicate = membership-quantified `= true`, unused HOL binders kept as free-typed binders). Supersedes the production-carrier documented_mismatch declaration of the same HOL name in Proofs/PanGlobals.lean, which stays untagged-by-status."
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.7): exact DeclHOL/MlS/ShapeHOL re-port of HOL dec_shapes_resort_decls_def over the tagged exact functionsHOL/exceptionsHOL/decShapesHOL/fpermDecsHOL/resortDeclsHOL/newMainNameHOL/freshNameMlS and Bool-valued is_* predicates; same binders, hypotheses and conclusion (FILTER=List.filter, MAP FST=map Prod.fst, ALL_DISTINCT=Nodup, EVERY over Bool predicate = membership-quantified `= true`, unused HOL binders kept as free-typed binders). Supersedes the former production-carrier analogue, which has been removed."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/DeclListLemmas.lean",
@@ -80047,7 +79711,7 @@
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
     "hol_name": "decl_distinct",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.7): exact DeclHOL/MlS/ShapeHOL re-port of HOL decl_distinct over the tagged exact functionsHOL/exceptionsHOL/decShapesHOL/fpermDecsHOL/resortDeclsHOL/newMainNameHOL/freshNameMlS and Bool-valued is_* predicates; same binders, hypotheses and conclusion (FILTER=List.filter, MAP FST=map Prod.fst, ALL_DISTINCT=Nodup, EVERY over Bool predicate = membership-quantified `= true`, unused HOL binders kept as free-typed binders). Supersedes the production-carrier documented_mismatch declaration of the same HOL name in Proofs/PanGlobals.lean, which stays untagged-by-status."
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.7): exact DeclHOL/MlS/ShapeHOL re-port of HOL decl_distinct over the tagged exact functionsHOL/exceptionsHOL/decShapesHOL/fpermDecsHOL/resortDeclsHOL/newMainNameHOL/freshNameMlS and Bool-valued is_* predicates; same binders, hypotheses and conclusion (FILTER=List.filter, MAP FST=map Prod.fst, ALL_DISTINCT=Nodup, EVERY over Bool predicate = membership-quantified `= true`, unused HOL binders kept as free-typed binders). Supersedes the former production-carrier analogue, which has been removed."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/DeclListLemmas.lean",
@@ -80055,7 +79719,7 @@
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
     "hol_name": "exceptions_FILTER_is_function",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.7): exact DeclHOL/MlS/ShapeHOL re-port of HOL exceptions_FILTER_is_function over the tagged exact functionsHOL/exceptionsHOL/decShapesHOL/fpermDecsHOL/resortDeclsHOL/newMainNameHOL/freshNameMlS and Bool-valued is_* predicates; same binders, hypotheses and conclusion (FILTER=List.filter, MAP FST=map Prod.fst, ALL_DISTINCT=Nodup, EVERY over Bool predicate = membership-quantified `= true`, unused HOL binders kept as free-typed binders). Supersedes the production-carrier documented_mismatch declaration of the same HOL name in Proofs/PanGlobals.lean, which stays untagged-by-status."
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.7): exact DeclHOL/MlS/ShapeHOL re-port of HOL exceptions_FILTER_is_function over the tagged exact functionsHOL/exceptionsHOL/decShapesHOL/fpermDecsHOL/resortDeclsHOL/newMainNameHOL/freshNameMlS and Bool-valued is_* predicates; same binders, hypotheses and conclusion (FILTER=List.filter, MAP FST=map Prod.fst, ALL_DISTINCT=Nodup, EVERY over Bool predicate = membership-quantified `= true`, unused HOL binders kept as free-typed binders). Supersedes the former production-carrier analogue, which has been removed."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/DeclListLemmas.lean",
@@ -80063,7 +79727,7 @@
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
     "hol_name": "exceptions_append",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.7): exact DeclHOL/MlS/ShapeHOL re-port of HOL exceptions_append over the tagged exact functionsHOL/exceptionsHOL/decShapesHOL/fpermDecsHOL/resortDeclsHOL/newMainNameHOL/freshNameMlS and Bool-valued is_* predicates; same binders, hypotheses and conclusion (FILTER=List.filter, MAP FST=map Prod.fst, ALL_DISTINCT=Nodup, EVERY over Bool predicate = membership-quantified `= true`, unused HOL binders kept as free-typed binders). Supersedes the production-carrier documented_mismatch declaration of the same HOL name in Proofs/PanGlobals.lean, which stays untagged-by-status."
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.7): exact DeclHOL/MlS/ShapeHOL re-port of HOL exceptions_append over the tagged exact functionsHOL/exceptionsHOL/decShapesHOL/fpermDecsHOL/resortDeclsHOL/newMainNameHOL/freshNameMlS and Bool-valued is_* predicates; same binders, hypotheses and conclusion (FILTER=List.filter, MAP FST=map Prod.fst, ALL_DISTINCT=Nodup, EVERY over Bool predicate = membership-quantified `= true`, unused HOL binders kept as free-typed binders). Supersedes the former production-carrier analogue, which has been removed."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/DeclListLemmas.lean",
@@ -80071,7 +79735,7 @@
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
     "hol_name": "fperm_decs_FILTER_is_function",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.7): exact DeclHOL/MlS/ShapeHOL re-port of HOL fperm_decs_FILTER_is_function over the tagged exact functionsHOL/exceptionsHOL/decShapesHOL/fpermDecsHOL/resortDeclsHOL/newMainNameHOL/freshNameMlS and Bool-valued is_* predicates; same binders, hypotheses and conclusion (FILTER=List.filter, MAP FST=map Prod.fst, ALL_DISTINCT=Nodup, EVERY over Bool predicate = membership-quantified `= true`, unused HOL binders kept as free-typed binders). Supersedes the production-carrier documented_mismatch declaration of the same HOL name in Proofs/PanGlobals.lean, which stays untagged-by-status."
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.7): exact DeclHOL/MlS/ShapeHOL re-port of HOL fperm_decs_FILTER_is_function over the tagged exact functionsHOL/exceptionsHOL/decShapesHOL/fpermDecsHOL/resortDeclsHOL/newMainNameHOL/freshNameMlS and Bool-valued is_* predicates; same binders, hypotheses and conclusion (FILTER=List.filter, MAP FST=map Prod.fst, ALL_DISTINCT=Nodup, EVERY over Bool predicate = membership-quantified `= true`, unused HOL binders kept as free-typed binders). Supersedes the former production-carrier analogue, which has been removed."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/DeclListLemmas.lean",
@@ -80079,7 +79743,7 @@
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
     "hol_name": "fperm_decs_decls",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.7): exact DeclHOL/MlS/ShapeHOL re-port of HOL fperm_decs_decls over the tagged exact functionsHOL/exceptionsHOL/decShapesHOL/fpermDecsHOL/resortDeclsHOL/newMainNameHOL/freshNameMlS and Bool-valued is_* predicates; same binders, hypotheses and conclusion (FILTER=List.filter, MAP FST=map Prod.fst, ALL_DISTINCT=Nodup, EVERY over Bool predicate = membership-quantified `= true`, unused HOL binders kept as free-typed binders). Supersedes the production-carrier documented_mismatch declaration of the same HOL name in Proofs/PanGlobals.lean, which stays untagged-by-status."
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.7): exact DeclHOL/MlS/ShapeHOL re-port of HOL fperm_decs_decls over the tagged exact functionsHOL/exceptionsHOL/decShapesHOL/fpermDecsHOL/resortDeclsHOL/newMainNameHOL/freshNameMlS and Bool-valued is_* predicates; same binders, hypotheses and conclusion (FILTER=List.filter, MAP FST=map Prod.fst, ALL_DISTINCT=Nodup, EVERY over Bool predicate = membership-quantified `= true`, unused HOL binders kept as free-typed binders). Supersedes the former production-carrier analogue, which has been removed."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/DeclListLemmas.lean",
@@ -80087,7 +79751,7 @@
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
     "hol_name": "fresh_name_correct",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.7): exact DeclHOL/MlS/ShapeHOL re-port of HOL fresh_name_correct over the tagged exact functionsHOL/exceptionsHOL/decShapesHOL/fpermDecsHOL/resortDeclsHOL/newMainNameHOL/freshNameMlS and Bool-valued is_* predicates; same binders, hypotheses and conclusion (FILTER=List.filter, MAP FST=map Prod.fst, ALL_DISTINCT=Nodup, EVERY over Bool predicate = membership-quantified `= true`, unused HOL binders kept as free-typed binders). Supersedes the production-carrier documented_mismatch declaration of the same HOL name in Proofs/PanGlobals.lean, which stays untagged-by-status."
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.7): exact DeclHOL/MlS/ShapeHOL re-port of HOL fresh_name_correct over the tagged exact functionsHOL/exceptionsHOL/decShapesHOL/fpermDecsHOL/resortDeclsHOL/newMainNameHOL/freshNameMlS and Bool-valued is_* predicates; same binders, hypotheses and conclusion (FILTER=List.filter, MAP FST=map Prod.fst, ALL_DISTINCT=Nodup, EVERY over Bool predicate = membership-quantified `= true`, unused HOL binders kept as free-typed binders). Supersedes the former production-carrier analogue, which has been removed."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/DeclListLemmas.lean",
@@ -80103,7 +79767,7 @@
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
     "hol_name": "functions_FILTER_exn_decl",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.7): exact DeclHOL/MlS/ShapeHOL re-port of HOL functions_FILTER_exn_decl over the tagged exact functionsHOL/exceptionsHOL/decShapesHOL/fpermDecsHOL/resortDeclsHOL/newMainNameHOL/freshNameMlS and Bool-valued is_* predicates; same binders, hypotheses and conclusion (FILTER=List.filter, MAP FST=map Prod.fst, ALL_DISTINCT=Nodup, EVERY over Bool predicate = membership-quantified `= true`, unused HOL binders kept as free-typed binders). Supersedes the production-carrier documented_mismatch declaration of the same HOL name in Proofs/PanGlobals.lean, which stays untagged-by-status."
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.7): exact DeclHOL/MlS/ShapeHOL re-port of HOL functions_FILTER_exn_decl over the tagged exact functionsHOL/exceptionsHOL/decShapesHOL/fpermDecsHOL/resortDeclsHOL/newMainNameHOL/freshNameMlS and Bool-valued is_* predicates; same binders, hypotheses and conclusion (FILTER=List.filter, MAP FST=map Prod.fst, ALL_DISTINCT=Nodup, EVERY over Bool predicate = membership-quantified `= true`, unused HOL binders kept as free-typed binders). Supersedes the former production-carrier analogue, which has been removed."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/DeclListLemmas.lean",
@@ -80111,7 +79775,7 @@
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
     "hol_name": "functions_FILTER_is_name",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.7): exact DeclHOL/MlS/ShapeHOL re-port of HOL functions_FILTER_is_name over the tagged exact functionsHOL/exceptionsHOL/decShapesHOL/fpermDecsHOL/resortDeclsHOL/newMainNameHOL/freshNameMlS and Bool-valued is_* predicates; same binders, hypotheses and conclusion (FILTER=List.filter, MAP FST=map Prod.fst, ALL_DISTINCT=Nodup, EVERY over Bool predicate = membership-quantified `= true`, unused HOL binders kept as free-typed binders). Supersedes the production-carrier documented_mismatch declaration of the same HOL name in Proofs/PanGlobals.lean, which stays untagged-by-status."
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.7): exact DeclHOL/MlS/ShapeHOL re-port of HOL functions_FILTER_is_name over the tagged exact functionsHOL/exceptionsHOL/decShapesHOL/fpermDecsHOL/resortDeclsHOL/newMainNameHOL/freshNameMlS and Bool-valued is_* predicates; same binders, hypotheses and conclusion (FILTER=List.filter, MAP FST=map Prod.fst, ALL_DISTINCT=Nodup, EVERY over Bool predicate = membership-quantified `= true`, unused HOL binders kept as free-typed binders). Supersedes the former production-carrier analogue, which has been removed."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/DeclListLemmas.lean",
@@ -80119,7 +79783,7 @@
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
     "hol_name": "functions_filter_nil",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.7): exact DeclHOL/MlS/ShapeHOL re-port of HOL functions_filter_nil over the tagged exact functionsHOL/exceptionsHOL/decShapesHOL/fpermDecsHOL/resortDeclsHOL/newMainNameHOL/freshNameMlS and Bool-valued is_* predicates; same binders, hypotheses and conclusion (FILTER=List.filter, MAP FST=map Prod.fst, ALL_DISTINCT=Nodup, EVERY over Bool predicate = membership-quantified `= true`, unused HOL binders kept as free-typed binders). Supersedes the production-carrier documented_mismatch declaration of the same HOL name in Proofs/PanGlobals.lean, which stays untagged-by-status."
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.7): exact DeclHOL/MlS/ShapeHOL re-port of HOL functions_filter_nil over the tagged exact functionsHOL/exceptionsHOL/decShapesHOL/fpermDecsHOL/resortDeclsHOL/newMainNameHOL/freshNameMlS and Bool-valued is_* predicates; same binders, hypotheses and conclusion (FILTER=List.filter, MAP FST=map Prod.fst, ALL_DISTINCT=Nodup, EVERY over Bool predicate = membership-quantified `= true`, unused HOL binders kept as free-typed binders). Supersedes the former production-carrier analogue, which has been removed."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/DeclListLemmas.lean",
@@ -80127,7 +79791,7 @@
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
     "hol_name": "new_main_name_correct",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.7): exact DeclHOL/MlS/ShapeHOL re-port of HOL new_main_name_correct over the tagged exact functionsHOL/exceptionsHOL/decShapesHOL/fpermDecsHOL/resortDeclsHOL/newMainNameHOL/freshNameMlS and Bool-valued is_* predicates; same binders, hypotheses and conclusion (FILTER=List.filter, MAP FST=map Prod.fst, ALL_DISTINCT=Nodup, EVERY over Bool predicate = membership-quantified `= true`, unused HOL binders kept as free-typed binders). Supersedes the production-carrier documented_mismatch declaration of the same HOL name in Proofs/PanGlobals.lean, which stays untagged-by-status."
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.7): exact DeclHOL/MlS/ShapeHOL re-port of HOL new_main_name_correct over the tagged exact functionsHOL/exceptionsHOL/decShapesHOL/fpermDecsHOL/resortDeclsHOL/newMainNameHOL/freshNameMlS and Bool-valued is_* predicates; same binders, hypotheses and conclusion (FILTER=List.filter, MAP FST=map Prod.fst, ALL_DISTINCT=Nodup, EVERY over Bool predicate = membership-quantified `= true`, unused HOL binders kept as free-typed binders). Supersedes the former production-carrier analogue, which has been removed."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/DeclListLemmas.lean",
@@ -80135,7 +79799,7 @@
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
     "hol_name": "not_is_function",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.7): exact DeclHOL/MlS/ShapeHOL re-port of HOL not_is_function over the tagged exact functionsHOL/exceptionsHOL/decShapesHOL/fpermDecsHOL/resortDeclsHOL/newMainNameHOL/freshNameMlS and Bool-valued is_* predicates; same binders, hypotheses and conclusion (FILTER=List.filter, MAP FST=map Prod.fst, ALL_DISTINCT=Nodup, EVERY over Bool predicate = membership-quantified `= true`, unused HOL binders kept as free-typed binders). Supersedes the production-carrier documented_mismatch declaration of the same HOL name in Proofs/PanGlobals.lean, which stays untagged-by-status."
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.7): exact DeclHOL/MlS/ShapeHOL re-port of HOL not_is_function over the tagged exact functionsHOL/exceptionsHOL/decShapesHOL/fpermDecsHOL/resortDeclsHOL/newMainNameHOL/freshNameMlS and Bool-valued is_* predicates; same binders, hypotheses and conclusion (FILTER=List.filter, MAP FST=map Prod.fst, ALL_DISTINCT=Nodup, EVERY over Bool predicate = membership-quantified `= true`, unused HOL binders kept as free-typed binders). Supersedes the former production-carrier analogue, which has been removed."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/DeclListLemmas.lean",
@@ -80143,7 +79807,7 @@
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
     "hol_name": "resort_decls_preserve_functions",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.7): exact DeclHOL/MlS/ShapeHOL re-port of HOL resort_decls_preserve_functions over the tagged exact functionsHOL/exceptionsHOL/decShapesHOL/fpermDecsHOL/resortDeclsHOL/newMainNameHOL/freshNameMlS and Bool-valued is_* predicates; same binders, hypotheses and conclusion (FILTER=List.filter, MAP FST=map Prod.fst, ALL_DISTINCT=Nodup, EVERY over Bool predicate = membership-quantified `= true`, unused HOL binders kept as free-typed binders). Supersedes the production-carrier documented_mismatch declaration of the same HOL name in Proofs/PanGlobals.lean, which stays untagged-by-status."
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.7): exact DeclHOL/MlS/ShapeHOL re-port of HOL resort_decls_preserve_functions over the tagged exact functionsHOL/exceptionsHOL/decShapesHOL/fpermDecsHOL/resortDeclsHOL/newMainNameHOL/freshNameMlS and Bool-valued is_* predicates; same binders, hypotheses and conclusion (FILTER=List.filter, MAP FST=map Prod.fst, ALL_DISTINCT=Nodup, EVERY over Bool predicate = membership-quantified `= true`, unused HOL binders kept as free-typed binders). Supersedes the former production-carrier analogue, which has been removed."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
