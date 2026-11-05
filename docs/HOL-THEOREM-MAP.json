@@ -1034,6 +1034,24 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "gc_related_def",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/Related.lean",
+  "lean_name": "gcRelated",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f"],
+  "reviewer": "Compared gc_related_typed: INJ is its target-membership and injectivity conjuncts, FDOM uses defined lookup, FAPPLY uses holFapply including its shared unspecified outside-domain value, and both heap carriers remain independently polymorphic. The same-module witness checks the canonical map codec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "gc_related_APPEND_heap_expand",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Reachability.lean",
+  "lean_name": "gcRelated_append_heapExpand",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f"],
+  "reviewer": "Compared gc_related_append_heap_expand_typed, including the arbitrary canonical finite address map, expansion size, both heaps and independent heap payload types; the same-module witness checks the map codec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
   "hol_name": "ADDR_MAP_def",
   "lean_path": "Flapjack/Compiler/Backend/GcShared/AddressMap.lean",
   "lean_name": "addrMap",

@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.GcShared.Reachability
+import Flapjack.Compiler.Backend.GcShared.Related
 import Flapjack.Compiler.Backend.GenGc.Proofs.HeapLookup
 
 /-! Abstract collector reachability conditions. -/
@@ -33,6 +34,23 @@ theorem isSomeDataElement_heapLookup_expand {α β : Type} (a : Nat)
     isSomeDataElement (heapLookup a (heap ++ heapExpand n)) ↔
       isSomeDataElement (heapLookup a heap) := by
   simp only [isSomeDataElement, heapLookup_expand_eq_some]
+
+/-- The collector map parameter has the same canonical lookup and support
+after converting through its explicit representation. -/
+theorem holFmapAsFiniteSupportParamWitness_gcRelated_append_heapExpand_f
+    (f : HolFiniteMapExact Nat Nat) (key : Nat) :
+    (GcMapBroad.ofBroad (GcMapBroad.toBroad f)).lookup key = f.lookup key ∧
+    (GcMapBroad.ofBroad (GcMapBroad.toBroad f)).finiteSupport = f.finiteSupport ∧
+    GcMapBroad.ofBroad (GcMapBroad.toBroad f) = f :=
+  holFmapAsFiniteSupportParamWitness_gcRelated_f f key
+
+/-- Appending unused space preserves the abstract collector heap relation. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "gc_related_APPEND_heap_expand"
+  (fmap_as_finite_support_parameters := [f])]
+theorem gcRelated_append_heapExpand {α β : Type} (f : HolFiniteMapExact Nat Nat)
+    (heap heap2 : List (HeapElement α β)) (n : Nat) :
+    gcRelated f heap (heap2 ++ heapExpand n) ↔ gcRelated f heap heap2 := by
+  simp only [gcRelated, isSomeDataElement_heapLookup_expand, heapLookup_expand_eq_some]
 
 /-- Unused space introduces no edges into the abstract heap graph. This
 Flapjack-specific consequence supports the collector reachability proof. -/
