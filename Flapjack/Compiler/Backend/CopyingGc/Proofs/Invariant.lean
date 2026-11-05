@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.CopyingGc
 import Flapjack.Compiler.Backend.GcShared.HeapSimilarity
 import Flapjack.Compiler.Backend.GcShared.Reachability
 import Flapjack.Compiler.Backend.GcShared.ForwardPtr
+import Flapjack.Compiler.Backend.CopyingGc.Proofs.Append
 
 /-! Abstract invariant for the copying collector. -/
 namespace Flapjack.Compiler.Backend.CopyingGc
@@ -514,5 +515,54 @@ theorem gcInv_moveList {α β : Type} (xs : List (HeapAddress α))
       exact (observation1 ptr).trans (observation2 ptr)
     · intro i j old
       exact submap2 i j (submap1 i j old)
+
+/-- Every pointer in the next unscanned data element is valid in the current
+heap and reachable in the original heap. This is a Flapjack proof step toward
+the copying collector scan-loop invariant. -/
+theorem gcInv_scan_children {α β : Type} (h1 pending heap heap0 : List (HeapElement α β))
+    (a n limit len : Nat) (ok : Bool) (roots0 ys : List (HeapAddress α)) (data : β)
+    (invariant : gcInv h1 (.dataElement ys len data :: pending) a n heap ok limit heap0 roots0) :
+    ∀ ptr u, .pointer ptr u ∈ ys →
+      isSomeDataOrForward (heapLookup ptr heap) ∧ reachableAddresses roots0 heap0 ptr := by
+  obtain ⟨_, _, _, _, _, heapGood, similar, _, _, _, _, surjective, entries⟩ := invariant
+  have atBoundary : heapAddresses 0 (h1 ++ .dataElement ys len data :: pending) (heapLength h1) := by
+    rw [heapAddresses_append]
+    simp [heapAddresses]
+  obtain ⟨i, defined, mapEq⟩ := surjective (heapLength h1) atBoundary
+  cases found : (heapMap 0 heap).lookup i with
+  | none => exact False.elim (defined found)
+  | some j =>
+    have jEq : j = heapLength h1 := by
+      change holFapply (heapMap 0 heap) i = heapLength h1 at mapEq
+      rw [holFapply_of_lookup found] at mapEq
+      exact mapEq
+    obtain ⟨xs, size, payload, oldFound, newFound, parentReach, _⟩ := entries i j found
+    subst j
+    simp only [Nat.lt_irrefl, ↓reduceIte] at newFound
+    have boundaryFound := heapLookup_prefix h1 pending (.dataElement ys len data)
+    have equalElements : HeapElement.dataElement xs size payload = .dataElement ys len data :=
+      Option.some.inj (newFound.symm.trans boundaryFound)
+    cases equalElements
+    intro ptr u member
+    have oldMember : .dataElement ys len data ∈ heap0 := heapLookup_mem heap0 i _ oldFound
+    have originalData : isSomeDataElement (heapLookup ptr heap0) :=
+      heapGood.2.2 ys len data ptr u ⟨oldMember, member⟩
+    refine ⟨heapSimilar_data_imp_dataOrForward heap0 heap ptr similar originalData, ?_⟩
+    obtain ⟨rootValue, root, rootMember, path⟩ := parentReach
+    exact ⟨rootValue, root, rootMember, path.tail ⟨ys, len, data, u, oldFound, member⟩⟩
+
+/-- Root-list movement keeps its input copied heap as a prefix. This
+Flapjack consequence of `gcMoveList_alt` is used by the scan-loop proof. -/
+theorem gcMoveList_preserves_prefix {α β : Type} (roots roots' : List (HeapAddress α))
+    (copied copied' heap heap' : List (HeapElement α β)) (a n limit a' n' : Nat) (ok ok' : Bool)
+    (run : gcMoveList (roots, copied, a, n, heap, ok, limit) = (roots', copied', a', n', heap', ok')) :
+    ∃ added, copied' = copied ++ added := by
+  have alt := gcMoveList_alt roots copied a n heap ok limit () () () () () ()
+  rw [run] at alt
+  cases result : gcMoveList (roots, [], a, n, heap, ok, limit) with
+  | mk rootResult rest =>
+    rcases rest with ⟨added, a1, n1, heap1, ok1⟩
+    simp only [result, Prod.mk.injEq] at alt
+    exact ⟨added, alt.2.1⟩
 
 end Flapjack.Compiler.Backend.CopyingGc

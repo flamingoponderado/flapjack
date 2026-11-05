@@ -107,6 +107,39 @@ theorem heapsSimilar_imp_heapLength {α β : Type} (xs ys : List (HeapElement α
     simp only [heapLength, List.map_cons, List.sum_cons] at ih ⊢
     rw [lengthEq, ih]
 
+/-- Data elements in the original heap remain data elements or become
+forwarding pointers at the same address in a similar heap. -/
+@[hol "cakeml/compiler/backend/gc/gc_sharedScript.sml" "heap_similar_Data_IMP_DataOrForward"]
+theorem heapSimilar_data_imp_dataOrForward {α β : Type} (heap0 heap1 : List (HeapElement α β))
+    (ptr : Nat) (similar : heapsSimilar heap0 heap1)
+    (present : isSomeDataElement (heapLookup ptr heap0)) :
+    isSomeDataOrForward (heapLookup ptr heap1) := by
+  induction similar generalizing ptr with
+  | nil => simp [heapLookup, isSomeDataElement] at present
+  | @cons old now oldTail nowTail head tail ih =>
+    have lengthEq : elLength old = elLength now := by
+      cases now <;> simp [isForwardPointer] at head ⊢
+      · subst old; rfl
+      · exact head.1.symm
+      · subst old; rfl
+    by_cases zero : ptr = 0
+    · subst ptr
+      simp only [heapLookup, if_true, isSomeDataElement, Option.some.injEq] at present
+      obtain ⟨xs, len, data, oldEq⟩ := present
+      subst old
+      cases now with
+      | unused n => simp [isForwardPointer] at head
+      | forwardPointer target value len =>
+        exact Or.inl ⟨target, value, len, by simp [heapLookup]⟩
+      | dataElement children len payload =>
+        exact Or.inr ⟨children, len, payload, by simp [heapLookup]⟩
+    · by_cases inside : ptr < elLength old
+      · simp [heapLookup, zero, inside, isSomeDataElement] at present
+      · have next : isSomeDataElement (heapLookup (ptr - elLength old) oldTail) := by
+          simpa only [heapLookup, zero, inside, if_false] using present
+        have notInside : ¬ ptr < elLength now := by simpa [← lengthEq] using inside
+        simpa only [heapLookup, zero, notInside, inside, if_false, ← lengthEq] using ih _ next
+
 /-- A data element in the current heap occurs at the same boundary in the
 original heap. -/
 @[hol "cakeml/compiler/backend/gc/gc_sharedScript.sml" "heap_similar_Data_IMP"]

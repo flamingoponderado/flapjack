@@ -149,6 +149,7 @@ val _ = show "addr_map_typed" gc_sharedTheory.ADDR_MAP_def;
 val _ = show "gc_related_typed" gc_sharedTheory.gc_related_def;
 val _ = show "heap_map_typed" gc_sharedTheory.heap_map_def;
 val _ = show "heaps_similar_typed" gc_sharedTheory.heaps_similar_def;
+val _ = show "heap_similar_data_imp_data_or_forward_typed" gc_sharedTheory.heap_similar_Data_IMP_DataOrForward;
 val _ = show "is_some_forward_pointer_typed" gc_sharedTheory.isSomeForwardPointer_def;
 val _ = show "is_some_data_or_forward_typed" gc_sharedTheory.isSomeDataOrForward_def;
 val _ = show "is_some_data_or_forward_lemma_typed" gc_sharedTheory.isSomeDataOrForward_lemma;

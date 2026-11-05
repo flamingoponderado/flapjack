@@ -1107,6 +1107,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "heap_similar_Data_IMP_DataOrForward",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/HeapSimilarity.lean",
+  "lean_name": "heapSimilar_data_imp_dataOrForward",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared heap_similar_data_imp_data_or_forward_typed: a data-element lookup in the original heap and heap similarity imply data-or-forward lookup in the current heap, with independent heap payload types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
   "hol_name": "heaps_similar_def",
   "lean_path": "Flapjack/Compiler/Backend/GcShared/HeapSimilarity.lean",
   "lean_name": "heapsSimilar",
