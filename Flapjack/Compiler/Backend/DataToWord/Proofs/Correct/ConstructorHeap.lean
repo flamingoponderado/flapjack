@@ -269,4 +269,105 @@ theorem memoryRel_allocateBlock_from_heap {width : Nat} [NeZero width] (conf : C
   · simpa [lengthEq] using wordInv
   · omega
 
+/-- A related nonempty constructor field list with enough reserved space has
+the complete post-allocation memory relation. The free-region decomposition
+and available heap space are derived from the original relation. -/
+theorem memoryRel_allocateBlock {width : Nat} [NeZero width] (conf : Config)
+    (fields vars : List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width))
+    (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value))
+    (next tag space : Nat) (be : Bool) (header : BitVec width)
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (memory : BitVec width → WordLocW width) (domain : BitVec width → Bool)
+    (nonempty : fields ≠ []) (enough : fields.length + 1 ≤ space)
+    (encoded : encodeHeader conf (4 * tag) fields.length = some header)
+    (related : memoryRel conf be next refs space store memory domain (fields ++ vars)) :
+    ∃ (curr : BitVec width) (index : Nat),
+      store.lookup .nextFree = some (.word (curr + StackRemove.bytesInWord width * BitVec.ofNat width index)) ∧
+      let base := curr + StackRemove.bytesInWord width * BitVec.ofNat width index
+      let nextFree := curr + StackRemove.bytesInWord width * BitVec.ofNat width (index + (fields.length + 1))
+      memoryRel conf be (next + 1) refs (space - (fields.length + 1))
+        (store.updateEq (.nextFree, .word nextFree))
+        (storeEachMemory base 0 (.word header :: fields.map Prod.snd) memory) domain
+        (((.block next tag (fields.map Prod.fst)),
+          wordAddr conf (.pointer index (.word (ptrBits conf tag fields.length)))) :: fields ++ vars) := by
+  obtain ⟨heap, limit, a, sp, sp1, gens, heapMem, wordInv, limitBound, spaceBound⟩ := related
+  have invariant := wordInv
+  obtain ⟨roots, absInv, _⟩ := wordInv
+  obtain ⟨_, _, _, unused, _⟩ := absInv
+  have positive : sp + sp1 ≠ 0 := by omega
+  have found : heapLookup a heap = some (.unused (sp + sp1 - 1)) := unused.1 positive
+  obtain ⟨pre, post, heapEq, indexEq⟩ := heapLookup_split heap a _ found
+  have freeEq : (heapExpand (sp + sp1) : ValueHeap width) = [.unused (sp + sp1 - 1)] := by
+    unfold heapExpand
+    rw [if_neg positive]
+  have shape : heap = pre ++ heapExpand (sp + sp1) ++ post := by
+    simpa only [freeEq, List.append_assoc, List.singleton_append] using heapEq
+  subst heap
+  subst a
+  have heapMem' : heapInMemoryStore (pre ++ heapExpand (sp + sp1) ++ post)
+      (heapLength pre) sp sp1 gens conf store memory domain limit := by
+    simpa only [freeEq, List.append_assoc, List.singleton_append] using heapMem
+  have invariant' : wordMlInv (pre ++ heapExpand (sp + sp1) ++ post, be, heapLength pre, sp, sp1, gens)
+      limit next conf refs (fields ++ vars) := by
+    simpa only [freeEq, List.append_assoc, List.singleton_append] using invariant
+  obtain ⟨curr, _, nextStore, _, _, result⟩ := memoryRel_allocateBlock_from_heap conf fields vars refs pre post
+    sp sp1 next tag limit space be gens header store memory domain nonempty (by omega) spaceBound limitBound encoded heapMem' invariant'
+  exact ⟨curr, heapLength pre, nextStore, result⟩
+
+/-- The actual store loop and the constructor's resulting memory relation
+compose directly from the original related memory. The setup registers must
+already hold `nextFree`, the encoded header, and the field words. -/
+theorem memoryRel_allocateBlock_storeEach {width : Nat} [NeZero width] {C F : Type} (conf : Config)
+    (fields vars : List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width))
+    (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value))
+    (next tag space : Nat) (be : Bool) (header : BitVec width)
+    (state : WordSemStateFiniteExact width C F) (baseName : Nat) (names : List Nat)
+    (nonempty : fields ≠ []) (enough : fields.length + 1 ≤ space)
+    (encoded : encodeHeader conf (4 * tag) fields.length = some header)
+    (related : memoryRel conf be next refs space state.store state.memory state.mdomain (fields ++ vars))
+    (baseRun : WordSemStateFiniteExact.getVar baseName state = state.store.lookup .nextFree)
+    (valuesRun : WordSemStateFiniteExact.getVars names state = some (.word header :: fields.map Prod.snd)) :
+    ∃ (curr : BitVec width) (index : Nat),
+      let base := curr + StackRemove.bytesInWord width * BitVec.ofNat width index
+      let nextFree := curr + StackRemove.bytesInWord width * BitVec.ofNat width (index + (fields.length + 1))
+      WordSemStateFiniteExact.getVar baseName state = some (.word base) ∧
+      WordSemStateFiniteExact.evaluate (storeEach baseName names 0) state =
+        (none, { state with memory := storeEachMemory base 0 (.word header :: fields.map Prod.snd) state.memory }) ∧
+      memoryRel conf be (next + 1) refs (space - (fields.length + 1))
+        (state.store.updateEq (.nextFree, .word nextFree))
+        (storeEachMemory base 0 (.word header :: fields.map Prod.snd) state.memory) state.mdomain
+        (((.block next tag (fields.map Prod.fst)),
+          wordAddr conf (.pointer index (.word (ptrBits conf tag fields.length)))) :: fields ++ vars) := by
+  obtain ⟨curr, index, nextStore, result⟩ :=
+    memoryRel_allocateBlock conf fields vars refs next tag space be header state.store state.memory state.mdomain
+      nonempty enough encoded related
+  have baseValue : WordSemStateFiniteExact.getVar baseName state =
+      some (.word (curr + StackRemove.bytesInWord width * BitVec.ofNat width index)) := baseRun.trans nextStore
+  have lengthEq : names.length = fields.length + 1 := by
+    have lengths := WordSemStateFiniteExact.getVarsLengthLemma names state _ valuesRun
+    simp at lengths
+    omega
+  obtain ⟨heap, limit, a, sp, sp1, gens, heapMem, wordInv, _, spaceBound⟩ := related
+  obtain ⟨_, absInv, _⟩ := wordInv
+  obtain ⟨_, _, _, unused, _⟩ := absInv
+  have positive : sp + sp1 ≠ 0 := by omega
+  obtain ⟨pre, post, heapEq, indexEq⟩ := heapLookup_split heap a _ (unused.1 positive)
+  have freeEq : (heapExpand (sp + sp1) : ValueHeap width) = [.unused (sp + sp1 - 1)] := by
+    unfold heapExpand
+    rw [if_neg positive]
+  subst heap
+  subst a
+  have heapMem' : heapInMemoryStore (pre ++ heapExpand (sp + sp1) ++ post)
+      (heapLength pre) sp sp1 gens conf state.store state.memory state.mdomain limit := by
+    simpa only [freeEq, List.append_assoc, List.singleton_append] using heapMem
+  obtain ⟨otherCurr, _, otherNext, frame, free⟩ :=
+    heapInMemoryStore_constructorFree conf pre post sp sp1 names.length gens state.store state.memory state.mdomain limit
+      (by omega) heapMem'
+  have sameBase : curr + StackRemove.bytesInWord width * BitVec.ofNat width index =
+      otherCurr + StackRemove.bytesInWord width * BitVec.ofNat width (heapLength pre) := by
+    exact WordLocW.word.inj (Option.some.inj (nextStore.symm.trans otherNext))
+  refine ⟨curr, index, baseValue, ?_, result⟩
+  apply evaluate_storeEach_of_freeRegion baseName names 0 _ _ state baseValue valuesRun frame
+  simpa [sameBase] using free
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Correct
