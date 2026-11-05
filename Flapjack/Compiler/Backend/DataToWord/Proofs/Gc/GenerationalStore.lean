@@ -3,6 +3,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.FullStore
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.GcConfig
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.DoPartial
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation
+import Flapjack.Compiler.Backend.GenGcPartial.Proofs.Similarity
 
 /-! Generational collectors under the heap/store invariant. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
@@ -195,6 +196,28 @@ theorem partialSource_resultSegment {α β : Type} (conf : GenGcPartial.Config �
   rw [dataRun] at dataOld
   have oldEq : state.old = old := by simpa [initial] using dataOld.trans (refsOld.trans rootOld)
   exact ⟨current, refs, by simpa [oldEq] using segment⟩
+
+/-- A successful partial collection retains the original reference suffix up
+to the source's similarity relation. -/
+theorem partialSource_resultRefsSimilar {α β : Type} (conf : GenGcPartial.Config β)
+    (roots roots1 : List (HeapAddress α)) (heap : List (HeapElement α β)) (state : GcState α β)
+    (run : GenGcPartial.partialGc conf (roots, heap) = (roots1, state)) (ok : state.ok = true) :
+    ∃ current refs,
+      heapSegment (conf.genStart, conf.refsStart) heap = some (state.old, current, refs) ∧
+      List.Forall₂ (GenGcPartial.similarData conf) refs state.r1 := by
+  obtain ⟨old, current, refs, middle, refs1, afterRefs, segment, rootRun, _, refRun, _, dataRun⟩ :=
+    partialFull_abstractSteps conf roots roots1 heap state run ok
+  let initial : GcState α β :=
+    { emptyGcState with heap := heap, old := old, r2 := refs, a := conf.genStart, n := heapLength current }
+  have rootOld := (partialMoveList_fixedFields conf roots roots1 initial middle rootRun).2.2.2.2.2
+  have refsOld := (partialFull_refListFixed conf refs refs1 middle afterRefs refRun).2.2.2.2.2
+  have fixed := partialFull_dataFixed conf { afterRefs with r1 := refs1, r2 := [] }
+  rw [dataRun] at fixed
+  have oldEq : state.old = old := by simpa [initial] using fixed.2.2.2.2.1.trans (refsOld.trans rootOld)
+  have refsEq : state.r1 = refs1 := fixed.2.2.2.1
+  refine ⟨current, refs, by simpa [oldEq] using segment, ?_⟩
+  rw [refsEq]
+  exact GenGcPartial.gcMoveRefList_similar conf refs refs1 middle afterRefs refRun
 
 /-- The old region returned by a successful partial collection is composed
 of source data elements. -/

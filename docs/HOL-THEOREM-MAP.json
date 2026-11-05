@@ -1,5 +1,29 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "similar_ptr_def",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Similarity.lean",
+  "lean_name": "similarPtr",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the corresponding partial_similar typed HOL probe, including independent configuration, address-payload and heap-payload carriers, constructor cases and list relations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "similar_data_def",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Similarity.lean",
+  "lean_name": "similarData",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the corresponding partial_similar typed HOL probe, including independent configuration, address-payload and heap-payload carriers, constructor cases and list relations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "LIST_REL_similar_data_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Similarity.lean",
+  "lean_name": "similarData_lengths",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the corresponding partial_similar typed HOL probe, including independent configuration, address-payload and heap-payload carriers, constructor cases and list relations."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "word_gen_gc_partial_full_thm",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PartialFull.lean",
