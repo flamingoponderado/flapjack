@@ -1861,18 +1861,17 @@ show the sampled indices are valid. The original definition is HOL4
 `word_index_n2w` at lines 1765-1774 states the general numeric-index equation.
 The kernel-checked canonical `Fin width`/BitVec equation
 `holWordBitsToBitVec_n2w` is in `Flapjack.Pancake.Semantics.CrepSem.Eval`; its
-zero/one/high-bit examples are in `Flapjack.Test.CrepeSimpExpParity`.
+zero/one/high-bit examples are in `Flapjack.Test.CrepSemEvalExactParity`.
 For any explicit `HolFiniteDimension`, `holFiniteWordN2W_at_index` proves that
 the arbitrary-index adapter returns `Nat.testBit value (encode index)`, which
-is the pointwise FCP `BIT` equation under the chosen finite-index encoding;
-the Bool carrier test exercises this at multiple indices.
+is the pointwise FCP `BIT` equation under the chosen finite-index encoding.
 `hol_word_arithmetic_probe.out` records the direct HOL4 definitions
 `word_add_def`, `word_mul_def`, and `word_sub_def` from the same external
 `wordsScript.sml`, along with the general `word_add_n2w` and `word_mul_n2w`
 theorems and 8-bit simplification examples. Lean's
 `holFiniteWordSourceAdd`/`holFiniteWordSourceMul` encode the source `n2w` of
-natural arithmetic on `w2n` values, with generic Fin-index transport theorems
-and focused 4-bit checks in `CrepeSimpExpParity`. The pointwise `n2w`/`BIT`
+natural arithmetic on `w2n` values, with generic Fin-index transport theorems; the original 8-bit arithmetic
+rows are checked in `CrepSemEvalExactParity`. The pointwise `n2w`/`BIT`
 equation is proved for explicit finite dimensions. The recursive
 `finWordSBitSum` follows the numeric `Fin` indices and proves the `w2n`
 weighted `SBIT` sum equals BitVec `toNat`; the operation adapters are also
@@ -1890,15 +1889,15 @@ read-only CakeML checkout with matching source and built theories by setting
 `857f0d98da8f8a3580f3442338e697809308ede`).
 `holFiniteWord_wordOp_toBitVec` proves that the explicit finite-dimension
 wordOp list behavior maps through the Fin-index/BitVec conversion for every
-operator and argument list; Bool-index checks are in
-`Flapjack.Test.CrepeSimpExpParity`. This remains untagged because the theorem
+operator and argument list; the original 8-bit rows are checked on `wordOpHOL`
+in `Flapjack.Test.CrepSemEvalExactParity`. This remains untagged because the theorem
 uses explicit dimension data.
 `word_sh_finite_probe.out` records the original `wordLang$word_sh_def`, its
 `dimindex` guard, and zero, valid, width, and above-width examples. Its source
 is `cakeml/compiler/backend/wordLangScript.sml`; the direct Lean transport
 `holFiniteWord_evalPanShift_toBitVec` covers all four shift operators for every
-explicit finite dimension. A Bool-index instance is checked in
-`Flapjack.Test.CrepeSimpExpParity`. This is evaluator infrastructure and does
+explicit finite dimension. The original 8-bit rows are checked on
+`wordShiftHOL` in `Flapjack.Test.CrepSemEvalExactParity`. This is evaluator infrastructure and does
 not by itself establish the unrestricted HOL-polymorphic
 `simp_exp_correct1` statement. Regenerate against a read-only CakeML checkout
 with matching built theories by setting `CAKEML`; the checked output was
@@ -2006,9 +2005,8 @@ the native `simp_exp_correct1` cases. It also evaluates the original
 `crepSem$eval` before and after simplifying `Crepop Mul [Var 2; Const 8w]`
 with local 2 set to `Word 5w`; the simplifier yields `Shift Lsl (Var 2)
 (Const 3w)` and both evaluations return `SOME (Word 40w)`. The matching
-production source-runtime observation and all-width theorem application are
-in `Flapjack.Test.CrepeSimpExpParity`; the exact-carrier Var/Const replay is
-checked there alongside the tagged native evaluator cases in
+exact-carrier evaluation and Var/Const replays are in
+`Flapjack.Test.CrepeSimpExpParity`, alongside the tagged native evaluator cases in
 `Flapjack.Pancake.Proofs.CrepArith.HOLStateMapc`. These checks exercise the
 result shape, but do not close the polymorphic evaluator-preservation theorem
 `simp_exp_correct1`; the explicit finite-index adapter's relation to HOL's
@@ -2027,8 +2025,8 @@ For the isolated `Const` case of local `simp_exp_correct1`, this direct
 `Flapjack.Pancake.Proofs.CrepArith.HOLStateMapc`.
 `crep_eval_cmp_rv64_probe.out` records direct HOL `crepSem$eval` results for all
 eight `asm$word_cmp_def` constructors, including signed-versus-unsigned order,
-negations, and overlapping/disjoint bit tests. Matching source-runtime
-comparisons are checked in `Flapjack.Test.CrepeSimpExpParity`; the generic
+negations, and overlapping/disjoint bit tests. Matching exact-evaluator
+comparisons are checked in `Flapjack.Test.CrepSemEvalExactParity`; the generic
 finite-index-to-BitVec comparison equation is `holFiniteWord_evalPanCmp_toBitVec`.
 `pan_globals_compile_top_probe.out` records original Pancake HOL evaluation
 of `pan_globals$compile_top` for an absent start function (the total empty-list
