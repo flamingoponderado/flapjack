@@ -2060,12 +2060,12 @@ plus HOL simplifier reduction of `convert_s_def` over nonempty local, global,
 exception-shape, and function-code finite maps using the finite-map lookup
 rules. These are used in `compile_correct` at
 `cakeml/pancake/proofs/pan_structsProofScript.sml:1034`. These rows only check
-the listed evaluator and conversion equations; they do not prove the full
-theorem. The finite-map state interface and actual `compile_correct` Skip,
-Tick, Break, and Continue case specializations are tracked separately. The
-parent theorem remains open while other statement cases and the complete
-induction are unfinished. Lean regressions live in
-`Flapjack.Test.PanStructsCompileCorrect`.
+the listed evaluator and conversion equations; they do not by themselves prove
+the full theorem. Exact finite-state evaluator equations and map observations
+live in `Flapjack.Test.PanStructsExactOracleParity`. The full HOL-carrier program
+correctness theorem is `compileCorrectExact` in
+`Flapjack.Pancake.Proofs.PanStructs.CompileCorrectExact`, with finite-map and
+word-representation qualifiers.
 `pan_structs_res_convert_probe.out` records direct HOL EVAL of the `pan_structs`
 result conversion and classification functions at
 `cakeml/pancake/proofs/pan_structsProofScript.sml:992-1009` and `:1028-1031`:
@@ -2080,36 +2080,14 @@ scripts/hol-probes/regenerate.sh`, and the same rows are replayed over the exact
 `PanSemResultExact`/`ValueHOL` carriers through `convertResHOL`, `isContResHOL`,
 `isContResHOL_eqDisj`, and `resVsHOL` in
 `Flapjack.Test.PanStructsResConvertParity`.
-`pan_structs_compile_exp_correct_probe.out` records HOL evaluations of Local
-and Global variable-constructor instances and Const-, RStruct-, NStruct-,
-NField-, RField-, Op-, Load-, and faithful Load32-constructor instances of
-`compile_exp_correct`; each
-five-element tuple contains old shape, semantic value shape, field validity,
-source evaluation, and converted target evaluation. The Var, Const, Shift, and
-faithful Load32 cases use `evalPanValueExpFull`; Load32 supplies an explicit
-model-backed `read32` access. RStruct, NStruct, NField, RField, Op, Load, and
-LoadByte retain their existing evaluator interfaces. These constructor cases
-are exercised by finite-map regressions in
-`Flapjack.Test.PanStructsCompileCorrect`. They are constructor specializations
-of the universal HOL theorem, not a complete induction port, and remain
-untagged where the Lean state/evaluator interfaces differ. The RStruct and Op
-rows use nonempty expressions: the former checks aggregate construction, while
-the latter checks that a binary Op retains exactly its two word operands after
-value conversion. Both validate all three constructor conclusions. The
-nonempty-list
-row separately checks source `OPT_MMAP` success, pointwise compiled-expression
-correctness, and the converted `compile_exps` result for the local HOL helper
-`compile_exp_correct_mmap_helper`; Lean proves the corresponding production
-list-evaluation prerequisite in `panStructCompileExpsEvalOfPointwiseCorrect`.
-The Load row directly exercises an explicit two-word memory read and is paired
-with a Lean source/converted evaluation fixture. The nested named-load row
-checks a multiword `Pair` containing a named `Inner`, including source and
-compiled shapes, field validity, and both evaluator results. Its general
-constructor case and the required memory-conversion induction remain open. The
-`size_of_compile_shape_comb` row separately directly evaluates the HOL
-`size_of_compile_shape` prerequisite at
-`cakeml/pancake/proofs/pan_structsProofScript.sml:512`; the generic Lean theorem
-and concrete fixture live in `Flapjack.Test.PanStructsCompileShapeParity`.
+`pan_structs_compile_exp_correct_probe.out` records HOL evaluations of expression
+constructor instances of `compile_exp_correct`. Each five-element tuple records
+the old shape, value shape, field validity, source evaluation and converted
+target evaluation. `Flapjack.Test.PanStructsExactOracleParity` checks all expression-evaluation
+rows through the finite HOL state, `compileExpExact` and `convertStateExact`,
+including the concrete nonempty-list case and recorded failure results. The
+concrete `size_of_compile_shape_comb` observation is exercised in
+`Flapjack.Test.PanStructsCompileShapeParity`.
 `pan_structs_mem_load_conversion_probe.out` directly evaluates the HOL One
 branch, a nested three-word Comb branch, and a nested named `Pair`/`Inner`
 branch of `mem_load_conversion` at
@@ -2117,8 +2095,9 @@ branch of `mem_load_conversion` at
 the concrete `struct_infos_ok` result separately as `T` (proved from HOL's
 `struct_infos_ok_cons`) and prints both the source `NStruct` load and converted
 target `RStruct` load values, followed by their expected-value checks. The
-corresponding production fuel-loader conversion theorem is kept untagged and
-paired with a Lean execution regression in `Flapjack.Test.PanStructsCompileCorrect`.
+full HOL-carrier `memLoadConversion` theorem is in
+`Flapjack.Pancake.Proofs.PanStructs.MemLoadConversion`; the concrete nested
+load row is also checked in `Flapjack.Test.PanStructsExactOracleParity`.
 `pan_structs_shape_context_drop_probe.out` records direct HOL EVAL of
 `size_of_sh_with_ctxt_drop` at
 `cakeml/pancake/proofs/pan_structsProofScript.sml:99` for `One`, a suffix-found
@@ -2129,9 +2108,9 @@ named structure, and a nested `Comb`. The exact-carrier theorem over
 `pan_structs_value_validity_probe.out` records direct HOL EVAL of the word,
 matching/mismatching named-record, missing-context, and duplicate-key first
 match rows for
-`v_flds_ok_def` and `is_wf_shape_v_def`; the matching Bool-valued Lean
-definitions and regressions live in
-`Flapjack.Pancake.Proofs.PanStructs.CompileCorrect` and
+`v_flds_ok_def` and `is_wf_shape_v_def`; the HOL-carrier field-validity
+regressions are in `Flapjack.Test.PanStructsExactOracleParity`; nested and
+append cases and shape-well-formedness regressions are in
 `Flapjack.Test.PanStructsValueValidityParity`.
 `pan_structs_afindi_append_probe.out` records direct HOL EVAL of prefix-hit,
 shifted suffix-hit and missing-key rows for `afindi_append` at

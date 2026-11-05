@@ -84547,14 +84547,7 @@
 
 
 
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
-    "lean_name": "boolAndRearr",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-only Bool rearrangement helper ((l && s && (n && m)) = ((l && n) && (s && m))); no standalone HOL declaration."
-  },
+
   {
     "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
     "hol_name": "convert_res_def",
@@ -84612,52 +84605,17 @@
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Generic Lean membership consequence of successful first-match lookup; used to show that a disjoint appended prefix cannot shadow a successful HOL context lookup."
   },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
-    "lean_name": "panFieldsFldsOk_toHOL",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Field-list-level companion of panValueFldsOk_toHOL; no standalone HOL declaration."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
-    "lean_name": "panSemStateRelExecRanged_panStructConvertState",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack plumbing (bead flapjack-pxn.18.4.3.77.2.15.6): assembles the initial-state locals/globals/struct-context rangedness of the pan_structs-converted production state; structs := [] makes the StructContextByteRanged conjunct trivial. No HOL declaration; not a port claim."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
-    "lean_name": "panShapeListMatches_eq_panStructShapeListEqBool",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-only list-level companion of panShapeMatches_eq_panStructShapeEqBool; no standalone HOL declaration."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
-    "lean_name": "panShapeMatches_eq_panStructShapeEqBool",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-only adapter equating the production panShapeMatches with panStructShapeEqBool (decide of structural Shape equality) under lawful String equality; no standalone HOL declaration."
-  },
 
 
 
 
 
 
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
-    "hol_name": "convert_v_def",
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
-    "lean_name": "panStructConvertValue",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-dlc.66): the three constructor equations match HOL convert_v_def (pan_structsProofScript.sml:31-37), but the carrier differs: HOL panSem$v (panSemScript.sml:22) has stcname/fldname = mlstring and Val ('a word_lab), while production PanValue alpha has StructName/FieldName = String and stores alpha directly in the first constructor, not a word_lab wrapper. That constructor field-type difference is beyond name representation, so names_as_string does not apply. The exact HOL-shaped convert_v is now ported as convertV over ValueHOL (reviewed_exact, above) and this executable counterpart stays untagged until the executable path itself runs over the exact carriers, tracked by flapjack-pxn.18.3.5.8 (parent flapjack-pxn.18.3.5.7.2). Direct HOL row convert_named_record=RStruct [ValWord 3w; ValWord 5w] in pan_structs_compile_correct_probe.out:1; paired Lean regression Flapjack.Test.PanStructsCompileCorrect:13-17."
-  },
+
+
+
+
+
 
   {
     "hol_path": null,
@@ -84668,71 +84626,15 @@
     "reviewer": "Projects pointwise Bool value-validity across an RStruct list to the selected element; RField case support only, with no standalone HOL declaration."
   },
 
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
-    "lean_name": "panValueByteRanged_of_globals_panStructConvertState",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack plumbing (bead flapjack-pxn.18.4.3.77.2.15.6): the globals conjunct of PanSemStateRelExecRanged instantiated at panStructConvertState, by cases on the source global lookup plus the converted-value lemma. No HOL declaration; not a port claim."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
-    "lean_name": "panValueByteRanged_of_locals_panStructConvertState",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack plumbing (bead flapjack-pxn.18.4.3.77.2.15.6): the locals conjunct of PanSemStateRelExecRanged instantiated at panStructConvertState, by cases on the source local lookup plus the converted-value lemma. No HOL declaration; not a port claim."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
-    "lean_name": "panValueByteRanged_panStructConvertValue",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack plumbing (bead flapjack-pxn.18.4.3.77.2.15.6): panStructConvertValue rewrites every .nStruct into .rStruct and drops all record and field names, so a converted production value is name-free and PanValueByteRanged holds unconditionally; proved by the generated mutual induction. No HOL declaration; not a port claim."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
-    "lean_name": "panValueFieldsHaveShapes_eq",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-only adapter rewriting panValueFieldsHaveShapes as HOL v_flds_ok's MAP FST / MAP (shape_of o SND) equalities over the panSemShapeOf port; no standalone HOL declaration."
-  },
 
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
-    "lean_name": "panValueFldsOk_toHOL",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Clause-by-clause adapter from the exact HOL-shaped panValueFldsOk over StructContextHOL to the production panStructValueFieldsOkBool over the cache-augmented StructContext under StructContext.toHOL; no standalone HOL declaration."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
-    "lean_name": "panValueShapeList_eq_panSemShapeOf",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "List form of the runtime/semantic shape correspondence; NField proof support only."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
-    "lean_name": "panValueShape_eq_panSemShapeOf",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Relates runtime matching shapes to the context-free semantic shape function; helper for NField shape preservation, not a separate HOL theorem."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
-    "lean_name": "panValuesFldsOk_toHOL",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "List-level companion of panValueFldsOk_toHOL; no standalone HOL declaration."
-  },
+
+
+
+
+
+
+
+
   {
     "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
     "hol_name": "res_vs_def",
@@ -84749,14 +84651,7 @@
     "statement_status": "reviewed_exact",
     "reviewer": "Exact source comparison with pan_structsProofScript.sml:99-102: both premises are is_wf_shape (DROP n context) shape and ALL_DISTINCT (MAP FST context), and the conclusion is equality of size_of_sh_with_ctxt on dropped/full contexts. Lean uses the exact ShapeHOL, StructContextExact and MlString carriers, with identical Bool validity and first-match lookup. Direct HOL EVAL rows are in scripts/hol-probes/pan_structs_shape_context_drop_probe.out; exact-carrier kernel regressions are in Flapjack/Test/PanStructsShapeContextDropParity.lean."
   },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
-    "lean_name": "string_beq_comm",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-only commutativity of String BEq used to align helper argument order; no standalone HOL declaration."
-  },
+
   {
     "hol_path": null,
     "hol_name": null,

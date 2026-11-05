@@ -579,19 +579,13 @@ mutual
       lemma only identifies lookup for lawful instances and does not establish
       that the production representation is the same HOL interface. Lean
       `StructInfo` also has an additional `shapedFields` cache absent from HOL.
-      The separate Prop-valued convenience predicate in CompileCorrect is
-      further from the HOL Bool statement.
-
       Executable-path disposition (bead `flapjack-4ac.4.4.1`): this value-level
       predicate has no call site on the executable compiler path. The
       compiler's static checking (`Flapjack/Pancake/PanStatic.lean`) checks
       declared shapes (`isWfShape`/`checkShape`/`shapedBased...`), not runtime
       value validity.
-      `panIsWfShapeValueBool` occurs only as a proof-side precondition
-      (`panStructEveryValueShapeWfBool`,
-      `Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean:614`) over
-      locals/globals, and the kernel-checked `panIsWfShapeValueHOL_toHOL`
-      already connects it to the HOL-shaped `panIsWfShapeValueHOL`. The
+      The kernel-checked `panIsWfShapeValueHOL_toHOL` connects this
+      predicate to the HOL-shaped `panIsWfShapeValueHOL`. The
       remaining gap to the exact `isWfShapeValueHOLExact` is the carrier
       (`String`/`StructContextHOL` vs `MlStringHOL`/`StructContextExact`),
       tracked by bead `flapjack-pxn.18.3.5.8`.

@@ -39,9 +39,8 @@ abbrev InfoMap (α : Type u) := List (String × α)
 /-- Projection of the production cache-augmented `StructContext` onto the
     HOL-shaped `StructContextHOL`, keeping the HOL `struct_info` fields `fields`
     and `size` and dropping the production-only `StructInfo.shapedFields`
-    cache. This is the context adapter used to relate the exact HOL-shaped
-    predicates (`panValueFldsOk`, `panIsWfShapeValueHOL`) to the production
-    predicates over `StructContext`. Because both lookups are first-match, the
+    cache. This context adapter relates `panIsWfShapeValueHOL` to the
+    production predicate over `StructContext`. Because both lookups are first-match, the
     projection preserves shadowing of duplicate struct names. -/
 def StructContext.toHOL (context : StructContext) : StructContextHOL :=
   context.map (fun entry => (entry.1, { fields := entry.2.fields, size := entry.2.size }))

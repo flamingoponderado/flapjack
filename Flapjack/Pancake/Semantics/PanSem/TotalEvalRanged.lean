@@ -607,8 +607,8 @@ The code map of a production state is an association list looked up by
 stored entry.  A code map whose stored entries are all byte-ranged therefore
 satisfies `PanSemCodeRanged`.  The declaration-derived code map
 (`functionEntries`, HOL `panLang$functions`) has byte-ranged entries when every
-declaration is `DeclByteRanged`, and the `pan_structs` code conversion (the
-`panStructConvertCode` map of `PanStructs/CompileCorrect.lean`) preserves them.
+declaration is `DeclByteRanged`, and the inline `pan_structs` code map
+conversion preserves them.
 This mirrors DS9's `exceptionEntries` lemmas for `PanSemExceptionShapesRanged`
 (`flapjack-pxn.18.4.3.77.2.15.5`). -/
 
@@ -642,7 +642,7 @@ theorem functionEntries_panLangEntryByteRanged (declarations : List (Decl (RiscV
       | exnDecl _ _ => simpa only [functionEntries] using htail
       | name _ _ => simpa only [functionEntries] using htail
 
-/-- The `pan_structs` code conversion (`panStructConvertCode`, rendered inline)
+/-- The inline `pan_structs` code conversion
     preserves `PanSemCodeRanged` for a byte-ranged structure context, via
     `structCompileShape_byteRanged` and `structCompileProg_byteRanged`. -/
 theorem PanSemCodeRanged.map_structCompile [BEq String]
