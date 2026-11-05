@@ -364,3 +364,35 @@ is `Flapjack/Compiler/Encoders/RiscV/Target.lean`. Its native RISC-V instruction
 carrier and Encode body are in the original L3 model counterpart under
 `Flapjack/RiscV/L3/`; the exact assembly carrier is in
 `Flapjack/Compiler/Encoders/Asm.lean`.
+
+## Measuring port size
+
+Three informational reports (not gates) measure how much larger a port is than
+its HOL source:
+
+- `scripts/check-lemma-density.py [ROOT ...]` (default `Flapjack/Pancake`)
+  attributes each Lean file to the HOL script that its `@[hol]` tags cite most
+  (an untagged file goes to the script most cited in its nearest tagged
+  enclosing directory, never above the scanned root) and prints, per cited
+  script, HOL lines and declarations next to Lean files, lines, theorems and
+  tags, with the two ratios. See the script's docstring for the attribution
+  rule and its limits.
+- `scripts/report-proof-duplication.py [ROOT ...]` (default
+  `Flapjack/Compiler/Encoders`) lists clusters of near-identical Lean proofs,
+  which are candidates for a shared lemma.
+- `scripts/report-unused-theorems.py [--prefix MODULE]` (default
+  `Flapjack.Pancake`) lists the untagged theorems under a module prefix that
+  no other declaration of the `Flapjack` library uses, following proof terms
+  (rule in `scripts/UnusedTheorems.lean`). Names mentioned in tests,
+  documentation and scripts, theorems with any attribute other than `hol`
+  (simp, grind, ext, ...: automation can use them unnamed), and the
+  representation witnesses that `check-hol-refs.py` requires by name, and
+  theorems whose inventory row cites HOL (such as `documented_mismatch`) are
+  kept as roots. A theorem whose name occurs in the source of a surviving
+  Lean declaration is kept too, because a `rfl` theorem used in `simp`
+  leaves no trace in the proof term. It loads the built
+  library through `lake env lean`, so run it after `lake build Flapjack` and
+  not alongside other Lake commands.
+
+All three accept `--json`. Use them to choose and measure deduplication work; a
+lower ratio is not by itself evidence of a faithful port.
