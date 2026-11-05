@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.CopyingGc.Proofs.Invariant
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PartialSplit
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv.Relocation
 
 /-! Abstract memory conditions for the simple copying collector. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
