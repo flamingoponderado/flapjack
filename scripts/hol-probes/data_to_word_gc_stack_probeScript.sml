@@ -107,6 +107,7 @@ val _ = show "partial_gc_move_ref_list_is_ref_typed" data_to_word_gcProofTheory.
 val _ = show "every_is_ref_is_ref_typed" data_to_word_gcProofTheory.EVERY_is_Ref_isRef;
 val _ = show "ends_with_refs_typed" data_to_word_gcProofTheory.ends_with_refs_def;
 val _ = show "word_gen_gc_partial_typed" data_to_word_gcProofTheory.word_gen_gc_partial_thm;
+val _ = show "word_gen_gc_partial_full_typed" data_to_word_gcProofTheory.word_gen_gc_partial_full_thm;
 val _ = show "partial_move_heap_lengths_typed" data_to_word_gcProofTheory.gc_partial_move_heap_lengths;
 val _ = show "partial_move_list_heap_lengths_typed" data_to_word_gcProofTheory.gc_partial_move_list_heap_lengths;
 val _ = show "partial_gc_move_list_heap_length_typed" gen_gc_partialTheory.gc_move_list_heap_length;
