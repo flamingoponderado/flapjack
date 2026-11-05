@@ -1,6 +1,15 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "gc_combined_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/CollectorCombined.lean",
+  "lean_name": "combinedGc_abstractMemory",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared gc_combined_thm_typed and source: the abstract-invariant and conditional active-generation premises, all five existential outputs, combined collector equation, output abstract invariant, and conditional reachability and heap/data length guarantees match. The shared word width in roots and heap elements is represented by a positive-width BitVec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
   "hol_name": "has_gen_def",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/CollectorPartial.lean",
   "lean_name": "hasGen",

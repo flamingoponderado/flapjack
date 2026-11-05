@@ -42,6 +42,7 @@ val _ = show "full_gc_thm_typed" data_to_word_memoryProofTheory.full_gc_thm;
 val _ = show "gen_gc_thm_typed" data_to_word_memoryProofTheory.gen_gc_thm;
 val _ = show "has_gen_typed" data_to_word_memoryProofTheory.has_gen_def;
 val _ = show "gen_gc_partial_thm_typed" data_to_word_memoryProofTheory.gen_gc_partial_thm;
+val _ = show "gc_combined_thm_typed" data_to_word_memoryProofTheory.gc_combined_thm;
 val _ = show "reset_gens_typed" data_to_word_memoryProofTheory.reset_gens_def;
 val _ = show "gen_gc_is_final_typed" gen_gcTheory.is_final_def;
 val _ = show "partial_heap_restrict_typed" gc_sharedTheory.heap_restrict_def;

@@ -24,6 +24,8 @@ The same probe parses the reference traversal's no-forwarding-pointer statement 
 
 The same probe captures `has_gen_def` and `gen_gc_partial_thm` with inferred types for review of the partial collector's abstract-memory theorem.
 
+It also captures the inferred type of `gc_combined_thm`, including its conditional full-collection guarantees.
+
 `data_to_word_gc_stack_probe.out` includes the typed `full_gc_thm` statement,
 including its shared word dimension and complete abstract-memory conclusions,
 and the generic `gen_gc$is_final` predicate. These captures support source
