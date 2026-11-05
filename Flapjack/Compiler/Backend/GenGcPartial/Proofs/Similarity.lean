@@ -107,6 +107,31 @@ theorem gcMoveRefList_similar {α β γ : Type} (conf : Config γ)
       exact .cons ⟨rfl, rfl, gcMoveList_similar conf roots roots1 state middle headRun⟩
         (ih tail1 middle final tailRun)
 
+/-- Partial collection preserves the number of roots, including failure. -/
+theorem partialGc_length {α β : Type} (conf : Config β) (roots roots1 : List (HeapAddress α))
+    (heap : List (HeapElement α β)) (state : GcState α β)
+    (run : partialGc conf (roots, heap) = (roots1, state)) : roots1.length = roots.length := by
+  classical
+  simp only [partialGc] at run
+  cases segment : heapSegment (conf.genStart, conf.refsStart) heap with
+  | none => simp [segment, Prod.mk.injEq] at run; obtain ⟨rfl, _⟩ := run; rfl
+  | some parts =>
+    obtain ⟨old, current, refs⟩ := parts
+    simp only [segment] at run
+    generalize move : gcMoveList conf
+      { emptyGcState with heap := heap, old := old, r2 := refs, a := conf.genStart, n := heapLength current }
+      roots = moved at run
+    obtain ⟨roots2, middle⟩ := moved
+    cases scan : gcMoveRefList conf middle refs with
+    | mk refs1 afterRefs =>
+      simp only [scan, Prod.mk.injEq] at run
+      obtain ⟨rfl, _⟩ := run
+      have related := gcMoveList_similar conf roots roots2 _ middle move
+      clear move
+      induction related with
+      | nil => rfl
+      | cons head tail ih => simp [ih]
+
 open Classical in
 /-- Similar heaps have the same total size and the same size after filtering
 to data elements. -/
