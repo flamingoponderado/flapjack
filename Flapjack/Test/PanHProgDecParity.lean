@@ -34,7 +34,7 @@ def decContext : PanHProgDecContext Nat DecState where
   extendLocal := fun state name value =>
     { state with locals := updatePanValueMap state.locals name value }
   restoreLocal := fun state name oldValue =>
-    { state with locals := panValueResVar state.locals name oldValue }
+    { state with locals := restorePanValueLocal state.locals name oldValue }
 
 def body : Prog Nat := .return (.const 0)
 

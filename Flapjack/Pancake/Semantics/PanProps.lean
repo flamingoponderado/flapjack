@@ -2056,7 +2056,7 @@ exact `panSem` carriers.  The exact Lean counterparts are `shapeOfHOLExact`
 (`PanSem/ValueHOL.lean`, tagged `shape_of_def`) and `resVarHOLExact`
 (`PanSem/LocalUpdatesExact.lean`, tagged `res_var_def`), so these lemmas are
 ported over those definitions rather than the production generic carriers used
-by the `panValueShape`/`panValueResVar` bridges. -/
+by `panValueShape` and `restorePanValueLocal`. -/
 
 /-- Exact port of HOL `panProps$shape_of_val` (`panPropsScript.sml:14`):
     `shape_of (Val x) = One`.  The `Val` payload is ignored, so the
