@@ -3545,7 +3545,6 @@ import Flapjack.Pancake.PanToWord
 import Flapjack.Pancake.PanLang.ProgHOLInduction
 import Flapjack.Pancake.Proofs.PanSimp.ProgOfHOL
 import Flapjack.PanLocalised
-import Flapjack.Pancake.Proofs.PanSimp.Evaluate
 import Flapjack.Pancake.Proofs.PanSimp.StateRel
 import Flapjack.Pancake.Proofs.PanSimp.CompileEvalCorrect
 import Flapjack.Pancake.Proofs.PanSimp.RetToTailCorrect

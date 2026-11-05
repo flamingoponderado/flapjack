@@ -7,31 +7,6 @@ open Flapjack.Pancake.Proofs.PanStructs.ConvertState
 open Flapjack.Pancake.Proofs.PanStructs.ShapeMap
 open Flapjack.Pancake.Proofs.PanStructs.StructInfosOkExact
 
-/-- Flapjack exact evaluator infrastructure: successful record-field list
-execution preserves list length, without a pre-imposed resource or bound condition. -/
-theorem evalList_length {width : Nat} {σ : Type} [NeZero width]
-    (source : PanSemStateFiniteExact width σ) (expressions : List (ExpHOL width))
-    (values : List (ValueHOL width))
-    (heval : @PanSemStateFiniteExact.evalListHOLFinite width σ _ source
-      (fun a => Classical.propDecidable (source.memaddrs a)) expressions = some values) :
-    values.length = expressions.length := by
-  classical
-  change evalListHOLExact source.toExact expressions = some values at heval
-  induction expressions generalizing values with
-  | nil =>
-    simp only [evalListHOLExact, Option.some.injEq] at heval
-    simp [← heval]
-  | cons expression rest ih =>
-    simp only [evalListHOLExact] at heval
-    cases hh : evalHOLExact source.toExact expression with
-    | none => simp [hh] at heval
-    | some value =>
-      cases ht : evalListHOLExact source.toExact rest with
-      | none => simp [hh, ht] at heval
-      | some tail =>
-        have hv : value :: tail = values := by simpa [hh, ht] using heval
-        subst values
-        simp only [List.length_cons, ih tail ht]
 /-- Canonical imported state-carrier roundtrip for this representation qualifier.
 Flapjack infrastructure, not an independent HOL declaration. -/
 theorem holFmapAsFiniteSupportWitness {width : Nat} {σ : Type} [NeZero width] :

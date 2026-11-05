@@ -63,23 +63,6 @@ mutual
     | expression :: rest, live => varsOfExpHOL expression (varsOfExpListHOL rest live)
 end
 
-/-- Membership in a fold of `insertNatSorted` over an expression's reads. -/
-theorem mem_foldr_insertNatSorted (names : List Nat) (live : List Nat) (x : Nat) :
-    x ∈ names.foldr insertNatSorted live ↔ x ∈ names ∨ x ∈ live := by
-  induction names with
-  | nil => simp
-  | cons name names ih =>
-      simp only [List.foldr_cons, insertNatSorted_mem, ih, List.mem_cons]
-      constructor
-      · rintro (h | h | h)
-        · exact Or.inl (Or.inl h)
-        · exact Or.inl (Or.inr h)
-        · exact Or.inr h
-      · rintro ((h | h) | h)
-        · exact Or.inl h
-        · exact Or.inr (Or.inl h)
-        · exact Or.inr (Or.inr h)
-
 def deleteNatSorted (name : Nat) : List Nat → List Nat
   | [] => []
   | head :: tail =>
@@ -245,20 +228,6 @@ def loopInsertAll : List Nat → List Nat → List Nat
   | [], names => names
   | name :: rest, names => loopInsert name (loopInsertAll rest names)
 
-theorem loopInsert_nodup (name : Nat) (names : List Nat)
-    (hnames : names.Nodup) : (loopInsert name names).Nodup := by
-  by_cases hname : name ∈ names
-  · simp [loopInsert, hname, hnames]
-  · simp [loopInsert, hname, hnames]
-
-theorem loopInsertAll_nodup (added names : List Nat)
-    (hnames : names.Nodup) : (loopInsertAll added names).Nodup := by
-  induction added generalizing names with
-  | nil => exact hnames
-  | cons name rest ih =>
-      exact loopInsert_nodup name (loopInsertAll rest names)
-        (ih names hnames)
-
 def loopAccVars : LoopProg α → List Nat → List Nat
   | .seq first second, names => loopAccVars first (loopAccVars second names)
   | .break _, names => names
@@ -299,10 +268,6 @@ def loopAccVars : LoopProg α → List Nat → List Nat
   | .store32 _ _, names => names
   | .storeByte _ _, names => names
   | .ffi _ _ _ _ _ _, names => names
-
-theorem loopAccVars_skip (names : List Nat) :
-    loopAccVars (.skip : LoopProg α) names = names := by
-  rfl
 
 /-! Cake `loopPropsScript.sml:40` `cut_sets_def`: the list-backed live set
     after executing a Loop statement.  Cake's HOL `insert`/`num_set` is
@@ -360,43 +325,6 @@ def loopCompSyntaxOk (live : List Nat) : LoopProg α → Prop
   | .loop liveIn body liveOut =>
       live = liveIn ∧ live = liveOut ∧ loopCompSyntaxOk liveIn body
   | _ => False
-
-/-- Membership is preserved by a fold of `insertNatSorted`; this is the
-    list-backed counterpart of CakeML's `union` accumulation used by
-    `cut_sets_union_accumulate`. -/
-theorem mem_foldl_insertNatSorted (names : List Nat) (live : List Nat) :
-    ∀ x, x ∈ live →
-      x ∈ names.foldl (fun current name => insertNatSorted name current) live := by
-  induction names generalizing live with
-  | nil => intro x hx; simpa using hx
-  | cons name names ih =>
-      intro x hx
-      simp only [List.foldl_cons]
-      exact ih (insertNatSorted name live) x
-        (by rw [insertNatSorted_mem]; exact Or.inr hx)
-
-/-- Membership in a fold of `insertNatSorted` is exactly membership in the
-    initial live set or in the folded names; this is the list-backed
-    counterpart of CakeML's `union` accumulation. -/
-theorem mem_foldl_insertNatSorted_iff (names : List Nat) (live : List Nat) :
-    ∀ x, x ∈ names.foldl (fun current name => insertNatSorted name current) live ↔
-      x ∈ live ∨ x ∈ names := by
-  induction names generalizing live with
-  | nil => intro x; simp
-  | cons name names ih =>
-      intro x
-      simp only [List.foldl_cons]
-      rw [ih (insertNatSorted name live) x, insertNatSorted_mem]
-      simp only [List.mem_cons]
-      constructor
-      · rintro ((h | h) | h)
-        · exact Or.inr (Or.inl h)
-        · exact Or.inl h
-        · exact Or.inr (Or.inr h)
-      · rintro (h | h | h)
-        · exact Or.inl (Or.inr h)
-        · exact Or.inl (Or.inl h)
-        · exact Or.inr h
 
 theorem loopInsert_mem (name : Nat) (names : List Nat) (x : Nat) :
     x ∈ loopInsert name names ↔ x = name ∨ x ∈ names := by

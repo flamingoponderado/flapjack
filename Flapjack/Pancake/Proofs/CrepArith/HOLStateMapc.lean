@@ -18,7 +18,6 @@ namespace Flapjack
 
 open Flapjack.Basis.Pure.MlString
 
-
 /-! The canonical finite-map carrier is owned by the Crep semantics module.
 This same-module re-export makes its existing kernel-checked roundtrip
 available to finite-support qualifiers in the CrepArith counterpart, without
@@ -116,273 +115,6 @@ theorem evalCrepHolFiniteWordSourceExp_mapc_projection
       evalCrepHolFiniteWordSourceExp (instFinHolFiniteDimension (width := width))
         state.toExpressionEvaluatorState expression := by
   rw [CrepSemHOLState.toExpressionEvaluatorState_mapc]
-
-/-- The `memory` field in the all-width expression projection agrees with the
-direct BitVec projection after the canonical finite-index conversion. This
-representation equation is Flapjack support; it does not identify HOL's
-arbitrary `finite_index` type with `Fin width`. -/
-theorem CrepSemHOLState.toExpressionEvaluatorState_toHolFiniteBitVecState_memory
-    {width : Nat} [NeZero width] {σ : Type}
-    (state : CrepSemHOLState width σ) :
-    ((state.toExpressionEvaluatorState).toHolFiniteBitVecState
-      (instFinHolFiniteDimension (width := width))).memory =
-    state.toBitVecEvaluatorState.memory := by
-  funext address
-  have hAddress : holWordBitsToBitVec
-      (bitVecToHolWord (instFinHolFiniteDimension (width := width)) address) =
-      address := by
-    change holWordBitsToBitVec
-      (holWordToFinBits (instFinHolFiniteDimension (width := width))
-        (finBitsToHolWord (instFinHolFiniteDimension (width := width))
-          (bitVecToHolWordBits address))) = address
-    rw [holWordToFinBits_finBitsToHolWord]
-    exact holWordBitsToBitVec_bitVecToHolWordBits address
-  dsimp only [CrepSemHOLState.toExpressionEvaluatorState,
-    CrepHolState.toHolFiniteBitVecState]
-  rw [hAddress]
-  cases hCell : state.memory address with
-  | word value =>
-      simp [CrepSemHOLState.toBitVecEvaluatorState,
-        mapCrepHolWordLab, holWordLabToBits_word,
-        instFinHolFiniteDimension, hCell]
-      change holWordToBitVec
-        (instFinHolFiniteDimension (width := width))
-        (bitVecToHolWordBits value) = value
-      change holWordBitsToBitVec (bitVecToHolWordBits value) = value
-      exact holWordBitsToBitVec_bitVecToHolWordBits value
-
-/-- The address-domain field in the expression projection agrees with the
-direct BitVec projection after the canonical finite-index conversion. -/
-theorem CrepSemHOLState.toExpressionEvaluatorState_toHolFiniteBitVecState_memaddrs
-    {width : Nat} [NeZero width] {σ : Type}
-    (state : CrepSemHOLState width σ) :
-    ((state.toExpressionEvaluatorState).toHolFiniteBitVecState
-      (instFinHolFiniteDimension (width := width))).memaddrs =
-    state.toBitVecEvaluatorState.memaddrs := by
-  funext address
-  have hAddress : holWordBitsToBitVec
-      (bitVecToHolWord (instFinHolFiniteDimension (width := width)) address) =
-      address := by
-    change holWordBitsToBitVec
-      (holWordToFinBits (instFinHolFiniteDimension (width := width))
-        (finBitsToHolWord (instFinHolFiniteDimension (width := width))
-          (bitVecToHolWordBits address))) = address
-    rw [holWordToFinBits_finBitsToHolWord]
-    exact holWordBitsToBitVec_bitVecToHolWordBits address
-  dsimp only [CrepSemHOLState.toExpressionEvaluatorState,
-    CrepHolState.toHolFiniteBitVecState]
-  rw [hAddress]
-  rfl
-
-/-- Finite-map locals survive the expression projection and canonical
-finite-index transport unchanged in the direct BitVec view. -/
-theorem CrepSemHOLState.toExpressionEvaluatorState_toHolFiniteBitVecState_locals
-    {width : Nat} [NeZero width] {σ : Type}
-    (state : CrepSemHOLState width σ) :
-    ((state.toExpressionEvaluatorState).toHolFiniteBitVecState
-      (instFinHolFiniteDimension (width := width))).locals =
-    state.toBitVecEvaluatorState.locals := by
-  funext name
-  cases hLocal : state.locals.lookup name with
-  | none =>
-      simp [CrepSemHOLState.toExpressionEvaluatorState,
-        CrepSemHOLState.toBitVecEvaluatorState,
-        CrepHolState.toHolFiniteBitVecState, hLocal]
-  | some cell =>
-      cases cell with
-      | word value =>
-          dsimp only [CrepSemHOLState.toExpressionEvaluatorState,
-            CrepSemHOLState.toBitVecEvaluatorState,
-            CrepHolState.toHolFiniteBitVecState]
-          rw [hLocal]
-          simp only [Option.map_some, holWordLabToBits_word, mapCrepHolWordLab,
-            HolWordLab.toPanWordLab]
-          apply congrArg some
-          change PanWordLab.word
-            (holWordToBitVec (instFinHolFiniteDimension (width := width))
-              (bitVecToHolWordBits value)) = PanWordLab.word value
-          congr 1
-          change holWordBitsToBitVec (bitVecToHolWordBits value) = value
-          exact holWordBitsToBitVec_bitVecToHolWordBits value
-
-/-- Finite-map globals survive the expression projection and canonical
-finite-index transport unchanged in the direct BitVec view. -/
-theorem CrepSemHOLState.toExpressionEvaluatorState_toHolFiniteBitVecState_globals
-    {width : Nat} [NeZero width] {σ : Type}
-    (state : CrepSemHOLState width σ) :
-    ((state.toExpressionEvaluatorState).toHolFiniteBitVecState
-      (instFinHolFiniteDimension (width := width))).globals =
-    state.toBitVecEvaluatorState.globals := by
-  funext name
-  cases hGlobal : state.globals.lookup name with
-  | none =>
-      simp [CrepSemHOLState.toExpressionEvaluatorState,
-        CrepSemHOLState.toBitVecEvaluatorState,
-        CrepHolState.toHolFiniteBitVecState, hGlobal]
-  | some cell =>
-      cases cell with
-      | word value =>
-          dsimp only [CrepSemHOLState.toExpressionEvaluatorState,
-            CrepSemHOLState.toBitVecEvaluatorState,
-            CrepHolState.toHolFiniteBitVecState]
-          rw [hGlobal]
-          simp only [Option.map_some, holWordLabToBits_word, mapCrepHolWordLab,
-            HolWordLab.toPanWordLab]
-          apply congrArg some
-          change PanWordLab.word
-            (holWordToBitVec (instFinHolFiniteDimension (width := width))
-              (bitVecToHolWordBits value)) = PanWordLab.word value
-          congr 1
-          change holWordBitsToBitVec (bitVecToHolWordBits value) = value
-          exact holWordBitsToBitVec_bitVecToHolWordBits value
-
-/-- The shared-memory domain field also survives the expression projection
-and canonical finite-index transport. -/
-theorem CrepSemHOLState.toExpressionEvaluatorState_toHolFiniteBitVecState_shMemaddrs
-    {width : Nat} [NeZero width] {σ : Type}
-    (state : CrepSemHOLState width σ) :
-    ((state.toExpressionEvaluatorState).toHolFiniteBitVecState
-      (instFinHolFiniteDimension (width := width))).shMemaddrs =
-    state.toBitVecEvaluatorState.shMemaddrs := by
-  funext address
-  have hAddress : holWordBitsToBitVec
-      (bitVecToHolWord (instFinHolFiniteDimension (width := width)) address) =
-      address := by
-    change holWordBitsToBitVec
-      (holWordToFinBits (instFinHolFiniteDimension (width := width))
-        (finBitsToHolWord (instFinHolFiniteDimension (width := width))
-          (bitVecToHolWordBits address))) = address
-    rw [holWordToFinBits_finBitsToHolWord]
-    exact holWordBitsToBitVec_bitVecToHolWordBits address
-  dsimp only [CrepSemHOLState.toExpressionEvaluatorState,
-    CrepHolState.toHolFiniteBitVecState]
-  rw [hAddress]
-  rfl
-
-/-- The base-address word in the canonical finite-index conversion agrees
-with the direct BitVec view. -/
-theorem CrepSemHOLState.toExpressionEvaluatorState_toHolFiniteBitVecState_baseAddress
-    {width : Nat} [NeZero width] {σ : Type}
-    (state : CrepSemHOLState width σ) :
-    ((state.toExpressionEvaluatorState).toHolFiniteBitVecState
-      (instFinHolFiniteDimension (width := width))).baseAddress =
-    state.toBitVecEvaluatorState.baseAddress := by
-  dsimp only [CrepSemHOLState.toExpressionEvaluatorState,
-    CrepSemHOLState.toBitVecEvaluatorState,
-    CrepHolState.toHolFiniteBitVecState]
-  change holWordToBitVec (instFinHolFiniteDimension (width := width))
-    (bitVecToHolWordBits state.baseAddr) = state.baseAddr
-  change holWordBitsToBitVec (bitVecToHolWordBits state.baseAddr) = state.baseAddr
-  exact holWordBitsToBitVec_bitVecToHolWordBits state.baseAddr
-
-/-- The top-address word in the canonical finite-index conversion agrees
-with the direct BitVec view. -/
-theorem CrepSemHOLState.toExpressionEvaluatorState_toHolFiniteBitVecState_topAddress
-    {width : Nat} [NeZero width] {σ : Type}
-    (state : CrepSemHOLState width σ) :
-    ((state.toExpressionEvaluatorState).toHolFiniteBitVecState
-      (instFinHolFiniteDimension (width := width))).topAddress =
-    state.toBitVecEvaluatorState.topAddress := by
-  dsimp only [CrepSemHOLState.toExpressionEvaluatorState,
-    CrepSemHOLState.toBitVecEvaluatorState,
-    CrepHolState.toHolFiniteBitVecState]
-  change holWordToBitVec (instFinHolFiniteDimension (width := width))
-    (bitVecToHolWordBits state.topAddr) = state.topAddr
-  change holWordBitsToBitVec (bitVecToHolWordBits state.topAddr) = state.topAddr
-  exact holWordBitsToBitVec_bitVecToHolWordBits state.topAddr
-
-/-- The expression projection followed by the canonical finite-index
-transport equals the direct BitVec projection of the same exact state. This
-is representation support for all-width evaluator proofs; arbitrary HOL
-`finite_index` isomorphism remains a separate requirement. -/
-theorem CrepSemHOLState.toExpressionEvaluatorState_toHolFiniteBitVecState
-    {width : Nat} [NeZero width] {σ : Type}
-    (state : CrepSemHOLState width σ) :
-    (state.toExpressionEvaluatorState).toHolFiniteBitVecState
-      (instFinHolFiniteDimension (width := width)) =
-    state.toBitVecEvaluatorState := by
-  apply crepHolState_eq_of_fields
-  · exact CrepSemHOLState.toExpressionEvaluatorState_toHolFiniteBitVecState_locals state
-  · exact CrepSemHOLState.toExpressionEvaluatorState_toHolFiniteBitVecState_globals state
-  · rfl
-  · exact CrepSemHOLState.toExpressionEvaluatorState_toHolFiniteBitVecState_memory state
-  · exact CrepSemHOLState.toExpressionEvaluatorState_toHolFiniteBitVecState_memaddrs state
-  · exact CrepSemHOLState.toExpressionEvaluatorState_toHolFiniteBitVecState_shMemaddrs state
-  · rfl
-  · rfl
-  · rfl
-  · exact CrepSemHOLState.toExpressionEvaluatorState_toHolFiniteBitVecState_baseAddress state
-  · exact CrepSemHOLState.toExpressionEvaluatorState_toHolFiniteBitVecState_topAddress state
-
-/-- The canonical `Fin width` finite-word runtime adapter is definitionally
-the existing HOL-word-bits runtime adapter on this exact state. -/
-theorem CrepSemHOLState.toHolFiniteWordRuntime_instFin_eq_toHolWordBitsRuntime
-    {width : Nat} [NeZero width] {σ : Type}
-    (state : CrepHolState (Fin width → Bool) σ) :
-    state.toHolFiniteWordRuntime (instFinHolFiniteDimension (width := width)) =
-    state.toHolWordBitsRuntime := by
-  rfl
-
-/-- Full all-width evaluator transport from the exact-state expression
-projection to production `evalCrepRuntimeExp`, related to the direct BitVec
-HOL-state evaluator. This still uses canonical `Fin width`; it does not claim
-the arbitrary HOL `finite_index` instance has been reindexed. -/
-theorem evalCrepRuntimeExp_exactCrepSemHOLState_projection
-    {width : Nat} [NeZero width] {σ : Type}
-    (state : CrepSemHOLState width σ)
-    (expression : CrepExp (Fin width → Bool)) :
-    evalCrepRuntimeExp
-      (state.toExpressionEvaluatorState.toHolWordBitsRuntime) expression =
-    (evalCrepHolExp state.toBitVecEvaluatorState
-      (mapCrepExpWord
-        (holWordToBitVec (instFinHolFiniteDimension (width := width)))
-        expression)).map
-      (bitVecToHolWord (instFinHolFiniteDimension (width := width))) := by
-  rw [← CrepSemHOLState.toHolFiniteWordRuntime_instFin_eq_toHolWordBitsRuntime]
-  calc
-    _ = evalCrepHolFiniteDimensionExp
-          (instFinHolFiniteDimension (width := width))
-          state.toExpressionEvaluatorState expression :=
-      evalCrepRuntimeExp_finiteDimension_eq
-        (dimension := instFinHolFiniteDimension (width := width))
-        (state := state.toExpressionEvaluatorState)
-        (expression := expression)
-    _ = _ := by
-      simp [evalCrepHolFiniteDimensionExp,
-        CrepSemHOLState.toExpressionEvaluatorState_toHolFiniteBitVecState]
-
-/-- The all-width finite-word source `Load32` clause over the exact HOL-shaped
-state reduces to the tagged HOL `mem_load_32_def` port on its direct BitVec
-projection. This isolates the memory cell, domain, and endian fields from the
-recursive `eval_def` proof. It remains untagged: the enclosing evaluator still
-uses Flapjack's explicit finite-index projection. -/
-theorem evalCrepSemHOLStateSource_load32_eq_memLoad32HOL
-    {width : Nat} [NeZero width] {σ : Type}
-    (state : CrepSemHOLState width σ)
-    (addressExpression : CrepExp (Fin width → Bool))
-    (address : Fin width → Bool)
-    (hAddress : evalCrepHolFiniteWordSourceExp
-      (instFinHolFiniteDimension (width := width))
-      state.toExpressionEvaluatorState addressExpression = some address) :
-    (evalCrepHolFiniteWordSourceExp
-      (instFinHolFiniteDimension (width := width))
-      state.toExpressionEvaluatorState (.load32 addressExpression)).map
-        (holWordToBitVec (instFinHolFiniteDimension (width := width))) =
-    (panMemLoad32HOL
-        (fun bitAddress =>
-          (state.toBitVecEvaluatorState.memory bitAddress).toHolWordLab)
-        (fun bitAddress => state.toBitVecEvaluatorState.memaddrs bitAddress = true)
-        state.toBitVecEvaluatorState.bigEndian
-        (holWordToBitVec (instFinHolFiniteDimension (width := width)) address)).map
-          (fun value => BitVec.ofNat width value.toNat) := by
-  classical
-  rw [evalCrepHolFiniteWordSourceExp_load32_eq_panMemLoad32HOL
-    (dimension := instFinHolFiniteDimension (width := width))
-    (state := state.toExpressionEvaluatorState)
-    (addressExpression := addressExpression) (address := address) hAddress]
-  rw [CrepSemHOLState.toExpressionEvaluatorState_toHolFiniteBitVecState_memory,
-    CrepSemHOLState.toExpressionEvaluatorState_toHolFiniteBitVecState_memaddrs]
-  rfl
 
 /-- All-positive-width `simp_exp_correct1` support over the HOL-shaped Crep
 state carrier and the proof-script-local `mapc` update. The statement keeps
@@ -1527,7 +1259,6 @@ theorem evalCrepRuntimeExp_toBitVecEvaluatorState_loadGlob
   change state.toBitVecEvaluatorState.globals address = _
   rfl
 
-
 /-! ## Assembled `simp_exp_correct1` and `simp_exp_correct`
 
 HOL proves `simp_exp_correct1` by `ho_match_mp_tac (name_ind_cases [] eval_ind)`
@@ -1618,7 +1349,6 @@ theorem crepSimpExpCorrectNativeHOL
   intro h
   rw [crepSimpExpCorrect1NativeHOL update state exp v (by rw [h]; simp), h]
 
-
 /-- Exact HOL `opt_mmap_simp_exp_correct` (`crep_arithProofScript.sml:150-152`):
     `OPT_MMAP (crepSem$eval s) es = SOME vs ⇒
       OPT_MMAP (eval (mapc f s)) (MAP simp_exp es) = SOME vs`, with `f s es vs`
@@ -1642,7 +1372,6 @@ theorem crepOptMmapSimpExpCorrectNativeHOL
   exact optMmapEqSomeMono (evalCrepSemHOLExp state) _ es vs h
     (fun child value _ hValue =>
       crepSimpExpCorrectNativeHOL update state child value hValue)
-
 
 /-- Exact HOL `lookup_code` (`crep_arithProofScript.sml:162-164`, `[local]`):
     `lookup_code (FMAP_MAP2 (\(s,n,p). (n, simp_prog p)) c) fname args len =

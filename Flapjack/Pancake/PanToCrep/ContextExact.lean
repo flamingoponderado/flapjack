@@ -128,23 +128,6 @@ theorem toProduction_key_nameRanged (name : MlS) :
   have hlt := byte.isLt
   simpa using hlt
 
-theorem toProduction_shapeByteRanged : (shape : ShapeHOL) →
-    Flapjack.Pancake.PanLang.ShapeByteRanged
-      (Flapjack.Pancake.PanLang.shapeOfHOL shape)
-  | .one => by
-      simp [Flapjack.Pancake.PanLang.shapeOfHOL,
-        Flapjack.Pancake.PanLang.ShapeByteRanged]
-  | .comb fields => by
-      simp only [Flapjack.Pancake.PanLang.shapeOfHOL,
-        Flapjack.Pancake.PanLang.ShapeByteRanged]
-      intro productionShape hproductionShape
-      obtain ⟨shape, hshape, rfl⟩ := List.mem_map.mp hproductionShape
-      exact toProduction_shapeByteRanged shape
-  | .named name => by
-      simpa [Flapjack.Pancake.PanLang.shapeOfHOL,
-        Flapjack.Pancake.PanLang.ShapeByteRanged] using
-        toProduction_key_nameRanged name
-
 end PanToCrepContextExact
 
 /-- Exact port of HOL `pan_to_crep$mk_ctxt`

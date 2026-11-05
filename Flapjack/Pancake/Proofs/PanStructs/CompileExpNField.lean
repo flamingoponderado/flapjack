@@ -49,17 +49,6 @@ theorem lookupField_index {width : Nat} [NeZero width]
       refine ⟨index + 1, ?_, ?_⟩
       · simp [afindi_cons, Ne.symm heq, hi]
       · simpa only [List.map_cons, List.getElem?_cons_succ] using hv
-/-- Flapjack payload codec infrastructure: the index supplied by successful
-source lookup selects the converted payload in the actual converted record. -/
-theorem lookupField_converted_index {width : Nat} [NeZero width]
-    (name : MlS) (fields : List (MlS × ValueHOL width)) (value : ValueHOL width)
-    (h : lookupFieldHOL name fields = some value) :
-    ∃ index, afindi name fields = some index ∧
-      (fields.map (fun entry => convertV entry.2))[index]? = some (convertV value) := by
-  obtain ⟨index, hi, hv⟩ := lookupField_index name fields value h
-  refine ⟨index, hi, ?_⟩
-  have hmap := congrArg (Option.map convertV) hv
-  simpa only [List.getElem?_map, List.map_map, Function.comp_def, Option.map_some, Option.map_map] using hmap
 /-- Flapjack factoring of actual named-value validity. The source Boolean
 predicate itself supplies the structure lookup, key order and shape equality. -/
 theorem namedValidity_fields {width : Nat} [NeZero width]
