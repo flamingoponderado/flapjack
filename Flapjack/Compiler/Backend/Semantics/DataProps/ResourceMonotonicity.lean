@@ -118,6 +118,31 @@ theorem resourceMono_installAssign {C F : Type} (dest : Nat) (names : List Nat)
   intro args before after value run
   exact doApp_install_resource_frame args before after value run
 
+/-- Integer assignments satisfy source resource monotonicity. -/
+theorem resourceMono_intAssign {C F : Type} (dest : Nat) (op : ClosLang.IntOp)
+    (names : List Nat) (live : Option NumSet) (state : State C F) :
+    ResourceMono (.assign dest (.intOp op) names live) state := by
+  apply resourceMono_assign dest (.intOp op) names live state
+  intro args before after value run
+  exact doApp_int_resource_frame op args before after value run
+
+/-- Word and floating-point word assignments satisfy source resource
+monotonicity. -/
+theorem resourceMono_wordAssign {C F : Type} (dest : Nat) (op : ClosLang.WordOp)
+    (names : List Nat) (live : Option NumSet) (state : State C F) :
+    ResourceMono (.assign dest (.wordOp op) names live) state := by
+  apply resourceMono_assign dest (.wordOp op) names live state
+  intro args before after value run
+  exact doApp_word_resource_frame op args before after value run
+
+/-- Code-label assignments satisfy source resource monotonicity. -/
+theorem resourceMono_labelAssign {C F : Type} (dest label : Nat)
+    (names : List Nat) (live : Option NumSet) (state : State C F) :
+    ResourceMono (.assign dest (.label label) names live) state := by
+  apply resourceMono_assign dest (.label label) names live state
+  intro args before after value run
+  exact doApp_label_resource_frame label args before after value run
+
 /-- Sequential source execution composes the three resource properties. -/
 theorem resourceMono_seq {C F : Type} (first second : DataLang.Prog) (state : State C F)
     (firstMono : ResourceMono first state)
