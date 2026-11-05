@@ -274,6 +274,117 @@ theorem constCaseOne (r : Nat) (v : BitVec 64) (i : instruction) (t : arm8_state
   exact asmCaseOne (.const r v) r v t s1 s2 ms ⟨hs, hr⟩ hnext htpc htmem htreg htval htok
     hs2pc hs2mem hs2dom hs2regs
 
+/-- `holUpdate` at its application form for any carrier (Flapjack
+infrastructure: the memory-specialised `holUpdate_apply` does not cover the
+register file). -/
+theorem holUpdate_apply_general {α β : Type} [DecidableEq α] (a : α) (b : β)
+    (f : α → β) (c : α) : holUpdate a b f c = if a = c then b else f c := rfl
+
+theorem holUpdate_same {α β : Type} [DecidableEq α] (a : α) (b : β) (f : α → β) :
+    holUpdate a b f a = b := by
+  rw [holUpdate_apply_general, if_pos rfl]
+
+theorem holUpdate_ne {α β : Type} [DecidableEq α] {a c : α} (h : ¬ a = c) (b : β)
+    (f : α → β) : holUpdate a b f c = f c := by
+  rw [holUpdate_apply_general, if_neg h]
+
+/-- The four bytes `arm8Encode` lays down for an instruction that encodes to
+`w` (Flapjack infrastructure). -/
+theorem arm8WordBytes (m : BitVec 64 → BitVec 8) (p : BitVec 64) (i : instruction)
+    (w : BitVec 32) (hencw : Encode i = MachineCode.ARM8 w)
+    (hb : ∀ k, k < 4 → m (p + BitVec.ofNat 64 k) = (arm8Encode i).getD k 0) :
+    m p = BitVec.ofNat 8 ((w >>> 0).toNat) ∧
+      m (p + 1) = BitVec.ofNat 8 ((w >>> 8).toNat) ∧
+      m (p + 2) = BitVec.ofNat 8 ((w >>> 16).toNat) ∧
+      m (p + 3) = BitVec.ofNat 8 ((w >>> 24).toNat) := by
+  simp only [arm8Encode, hencw] at hb
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · simpa using hb 0 (by omega)
+  · simpa using hb 1 (by omega)
+  · simpa using hb 2 (by omega)
+  · simpa using hb 3 (by omega)
+
+/-- A valid register index is not the zero/stack register 31 (Flapjack
+infrastructure). -/
+theorem arm8Reg_ne31 {n : Nat} (hn : n ≠ 31) (hlt : n < 32) :
+    BitVec.ofNat 5 n ≠ (31 : BitVec 5) := by
+  intro hh
+  exact hn ((arm8Reg_eq (b := 31) hlt (by omega)).mp hh)
+
+/-- The shared tail of every one-instruction lowering that writes `v` into
+the destination register and leaves memory alone (Flapjack infrastructure, the
+counterpart of HOL's `next_tac 0`, `next_state_tac01`, `state_tac` sequence in
+`arm8_encoder_correct`).  The instruction `i` encodes to `w`, which decodes to
+`id`.  `hrun` is its `Run` equation and `hpost` the source-side `asmUpd` of
+`inst`; both may use `hreg`, the register part of the state relation. -/
+theorem arm8RegCaseOne (inst : HolInst 64) (dest : Nat) (v : BitVec 64)
+    (s1 s2 : AsmState 64) (ms : arm8_state)
+    (h : asmStep arm8ConfigL3 s1 (.inst inst) s2 ∧ targetStateRel arm8TargetL3 s1 ms)
+    (hdlt : dest < 32) (i id : instruction) (w : BitVec 32)
+    (henc : arm8Enc (.inst inst) = arm8Encode i)
+    (hencw : Encode i = MachineCode.ARM8 w) (hdec : Decode w = id)
+    (hrun : (∀ k, k < arm8ConfigL3.regCount ∧ arm8ConfigL3.avoidRegs.contains k = false →
+        ms.REG (BitVec.ofNat 5 k) = s1.regs k) →
+      Run id { ms with branch_hint := none } =
+        { ms with branch_hint := none, REG := holUpdate (BitVec.ofNat 5 dest) v ms.REG })
+    (hpost : (∀ k, k < arm8ConfigL3.regCount ∧ arm8ConfigL3.avoidRegs.contains k = false →
+        ms.REG (BitVec.ofNat 5 k) = s1.regs k) →
+      ∀ p : BitVec 64, (asmUpd (.inst inst) p s1).pc = p ∧
+        (∀ x, (asmUpd (.inst inst) p s1).mem x = s1.mem x) ∧
+        (asmUpd (.inst inst) p s1).memDomain = s1.memDomain ∧
+        ∀ k, (asmUpd (.inst inst) p s1).regs k = if k = dest then v else s1.regs k) :
+    CaseGoal (.inst inst) s1 s2 ms := by
+  obtain ⟨hs, hr⟩ := h
+  have hr0 := hr
+  obtain ⟨hok, hpc, hmem, hreg, _hfp⟩ := hr
+  rw [arm8TargetL3_stateOk] at hok
+  rw [arm8TargetL3_getPc] at hpc
+  rw [arm8TargetL3_getByte] at hmem
+  rw [arm8TargetL3_getReg] at hreg
+  change ms.PC = s1.pc at hpc
+  change ∀ a, s1.memDomain a → ms.MEM a = s1.mem a at hmem
+  change ∀ k, k < arm8ConfigL3.regCount ∧ arm8ConfigL3.avoidRegs.contains k = false →
+    ms.REG (BitVec.ofNat 5 k) = s1.regs k at hreg
+  obtain ⟨hel, he0, hsa0, htbi1, htbi0, hexc0, halign⟩ := (arm8Ok_iff ms).mp hok
+  have hal : Aligned (TN := 64) (ms.PC, 4) = true := by
+    rw [Aligned_four_iff]
+    simpa using (holAligned_iff 2 ms.PC).mp halign
+  have hlen : (arm8Enc (.inst inst)).length = 4 := by
+    rw [henc, arm8Encode_length]
+  have hbcode := hs.1
+  simp only [arm8ConfigL3] at hbcode
+  have hbdom := bytesInMemoryHOL_domain hbcode
+  have hbms : bytesInMemoryHOL ms.PC (arm8Enc (.inst inst)) ms.MEM s1.memDomain := by
+    rw [hpc]
+    exact bytesInMemory_changeMem _ _ _ _ _ ⟨hbcode, fun n hn => (hmem _ (hbdom n hn)).symm⟩
+  obtain ⟨h0, h1, h2, h3⟩ := arm8WordBytes ms.MEM ms.PC i w hencw (fun k hk => by
+    rw [← henc]
+    exact bytesInMemoryHOL_get hbms k (by rw [hlen]; exact hk))
+  have hrun' := hrun hreg
+  have hn := arm8Next_word ms w id hdec (by rw [hrun']) (by rw [hrun']; exact hexc0)
+    h0 h1 h2 h3 hal he0 hel
+  have hnext : arm8Next ms = { ms with
+      branch_hint := none,
+      REG := holUpdate (BitVec.ofNat 5 dest) v ms.REG,
+      PC := ms.PC + 4 } := by
+    unfold arm8Next
+    rw [hn, hrun']
+    rfl
+  have hupd := hs.2.2.2.2.1
+  simp only [arm8ConfigL3] at hupd
+  rw [hlen] at hupd
+  obtain ⟨hs2pc, hs2mem, hs2dom, hs2regs⟩ := hpost hreg (s1.pc + BitVec.ofNat 64 4)
+  rw [hupd] at hs2pc hs2mem hs2dom hs2regs
+  refine asmCaseOne inst dest v _ s1 s2 ms ⟨hs, hr0⟩ hnext rfl (fun _ => rfl) ?_
+    (holUpdate_same _ _ _) ?_ hs2pc hs2mem hs2dom hs2regs
+  · intro k hk hkd
+    exact holUpdate_ne (fun hh => hkd ((arm8Reg_eq hdlt hk).mp hh).symm) _ _
+  · have h4 : holAligned 2 (4 : BitVec 64) = true := by rw [holAligned_iff]; decide
+    rw [arm8Ok_iff]
+    refine ⟨hel, he0, hsa0, htbi1, htbi0, hexc0, ?_⟩
+    change holAligned 2 (ms.PC + 4) = true
+    rw [(alignedAddSub 2 ms.PC 4 h4).1, halign]
+
 /-- The word emitted for a zeroing `MoveWide` constant. -/
 abbrev arm8ConstMovZWord (imm16 : BitVec 16) (hw : BitVec 2) (r : Nat) : BitVec 32 :=
   arm8MoveWideWord .z hw imm16 (BitVec.ofNat 5 r)

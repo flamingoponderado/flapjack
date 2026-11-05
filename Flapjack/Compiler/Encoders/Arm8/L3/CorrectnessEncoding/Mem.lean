@@ -2725,20 +2725,6 @@ theorem arm8FarImm_encodable (off : BitVec 64)
   obtain ⟨hlo, hhi⟩ := arm8FarOffsetBounds off hok
   exact arm8FarImm_encodable_of_bounds off hlo hhi hnsx
 
-/-- `holUpdate` at its application form for any carrier (Flapjack
-infrastructure: the memory-specialised `holUpdate_apply` does not cover the
-register file). -/
-theorem holUpdate_apply_general {α β : Type} [DecidableEq α] (a : α) (b : β)
-    (f : α → β) (c : α) : holUpdate a b f c = if a = c then b else f c := rfl
-
-theorem holUpdate_same {α β : Type} [DecidableEq α] (a : α) (b : β) (f : α → β) :
-    holUpdate a b f a = b := by
-  rw [holUpdate_apply_general, if_pos rfl]
-
-theorem holUpdate_ne {α β : Type} [DecidableEq α] {a c : α} (h : ¬ a = c) (b : β)
-    (f : α → β) : holUpdate a b f c = f c := by
-  rw [holUpdate_apply_general, if_neg h]
-
 
 /-! ## The shared `Mem` tail
 
@@ -2752,22 +2738,6 @@ effect, `arm8MemLoadCase*`/`arm8MemStoreCase*` instantiate them for a
 per-width `Run` facts.
 -/
 
-/-- The four bytes `arm8Encode` lays down for an instruction that encodes to
-`w` (Flapjack infrastructure). -/
-theorem arm8WordBytes (m : BitVec 64 → BitVec 8) (p : BitVec 64) (i : instruction)
-    (w : BitVec 32) (hencw : Encode i = MachineCode.ARM8 w)
-    (hb : ∀ k, k < 4 → m (p + BitVec.ofNat 64 k) = (arm8Encode i).getD k 0) :
-    m p = BitVec.ofNat 8 ((w >>> 0).toNat) ∧
-      m (p + 1) = BitVec.ofNat 8 ((w >>> 8).toNat) ∧
-      m (p + 2) = BitVec.ofNat 8 ((w >>> 16).toNat) ∧
-      m (p + 3) = BitVec.ofNat 8 ((w >>> 24).toNat) := by
-  simp only [arm8Encode, hencw] at hb
-  refine ⟨?_, ?_, ?_, ?_⟩
-  · simpa using hb 0 (by omega)
-  · simpa using hb 1 (by omega)
-  · simpa using hb 2 (by omega)
-  · simpa using hb 3 (by omega)
-
 /-- Scratch register 26 is distinct from every allocatable register
 (Flapjack infrastructure). -/
 theorem arm8Reg26_ne {k : Nat} (hk : k < 32)
@@ -2777,13 +2747,6 @@ theorem arm8Reg26_ne {k : Nat} (hk : k < 32)
   have hk26 : k = 26 := ((arm8Reg_eq (a := 26) (by omega) hk).mp hh).symm
   rw [hk26] at hav
   simp [arm8ConfigL3] at hav
-
-/-- A valid register index is not the zero/stack register 31 (Flapjack
-infrastructure). -/
-theorem arm8Reg_ne31 {n : Nat} (hn : n ≠ 31) (hlt : n < 32) :
-    BitVec.ofNat 5 n ≠ (31 : BitVec 5) := by
-  intro hh
-  exact hn ((arm8Reg_eq (b := 31) hlt (by omega)).mp hh)
 
 /-- `asmUpd` of a `Mem` instruction sets the PC to the given address
 (Flapjack infrastructure). -/
