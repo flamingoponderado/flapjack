@@ -4,6 +4,8 @@ import Flapjack.Compiler.Backend.GcShared.Reachability
 import Flapjack.Compiler.Backend.GcShared.Related
 import Flapjack.Compiler.Backend.CopyingGc.Proofs.Invariant
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PartialSplit
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalAccumulator
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.GenerationalSplit
 
 /-! Abstract invariant for the major generational collector. -/
 namespace Flapjack.Compiler.Backend.GenGc
@@ -1015,5 +1017,210 @@ theorem gcInv_refs_scan_move {α β : Type} (conf : Config β) (state : GcState 
       gcInv conf next heap0 roots0 :=
   gcInv_moveList conf state heap0 roots0 xs invariant
     (gcInv_refs_scan_children conf state heap0 roots0 xs len payload pending invariant head)
+
+/-- Moving a scanned data object changes finality only within that object's
+old interval. This is Flapjack infrastructure for the scan transition. -/
+theorem isFinal_data_scan_outside {α β : Type} (conf : Config β) (state : GcState α β)
+    (xs : List (HeapAddress α)) (len : Nat) (payload : β) (tail : List (HeapElement α β)) (p : Nat)
+    (outside : p < heapLength state.h1 ∨ heapLength state.h1 + (len + 1) ≤ p) :
+    isFinal conf { state with h1 := state.h1 ++ [.dataElement xs len payload], h2 := tail } p ↔
+      isFinal conf state p := by
+  simp [isFinal, heapLength, List.map_append, List.sum_append, elLength]
+  simp only [heapLength] at outside
+  omega
+
+open Classical in
+/-- Replacing the next copied data object's children by their relocated
+addresses and moving the object to the scanned segment preserves the major
+collector invariant. -/
+theorem gcInv_data_scan_shift {α β : Type} (conf : Config β) (state : GcState α β)
+    (heap0 : List (HeapElement α β)) (roots0 xs : List (HeapAddress α))
+    (len : Nat) (payload : β) (tail : List (HeapElement α β))
+    (invariant : gcInv conf state heap0 roots0)
+    (head : state.h2 = .dataElement xs len payload :: tail)
+    (children : ∀ ptr u, .pointer ptr u ∈ xs → (heapMap 0 state.heap).lookup ptr ≠ none) :
+    gcInv conf { state with h1 := state.h1 ++ [.dataElement (addrMap (heapMap1 state.heap) xs) len payload], h2 := tail } heap0 roots0 := by
+  obtain ⟨allocated, balance, free, size, ok, good, similar, h1Data, h2Data,
+    r1Data, r2Data, r3Data, r4Data, refs, into, injective, surjective, entries⟩ := invariant
+  have tailData : ∀ h ∈ tail, isDataElement h := by
+    intro h member
+    exact h2Data h (by rw [head]; simp [member])
+  have newData : ∀ h ∈ state.h1 ++ [.dataElement (addrMap (heapMap1 state.heap) xs) len payload], isDataElement h := by
+    intro h member
+    simp only [List.mem_append, List.mem_singleton] at member
+    rcases member with member | rfl
+    · exact h1Data h member
+    · exact ⟨_, _, _, rfl⟩
+  have lengthEq : heapLength (state.h1 ++ state.h2) =
+      heapLength ((state.h1 ++ [.dataElement (addrMap (heapMap1 state.heap) xs) len payload]) ++ tail) := by
+    simp [head, heapLength, List.map_append, List.sum_append, elLength, Nat.add_assoc]
+  have addressEq : heapAddresses 0 (state.h1 ++ state.h2) =
+      heapAddresses 0 ((state.h1 ++ [.dataElement (addrMap (heapMap1 state.heap) xs) len payload]) ++ tail) := by
+    rw [head]
+    exact CopyingGc.heapAddresses_scan_replace state.h1 tail xs (addrMap (heapMap1 state.heap) xs) len payload
+  have notFinal : ¬ isFinal conf state (heapLength state.h1) := by
+    have room : heapLength state.h1 + (len + 1) ≤ state.a := by
+      rw [heapLength_append, head] at allocated
+      simp [heapLength, elLength] at allocated ⊢
+      omega
+    simp only [isFinal, not_or, not_and, not_lt, not_le]
+    omega
+  have newFinal : isFinal conf { state with h1 := state.h1 ++ [.dataElement (addrMap (heapMap1 state.heap) xs) len payload], h2 := tail }
+      (heapLength state.h1) := by
+    left
+    simp [heapLength, List.map_append, List.sum_append, elLength]
+  simp only [gcInv]
+  refine ⟨?_, balance, free, size, ok, good, similar, newData, tailData,
+    r1Data, r2Data, r3Data, r4Data, refs, ?_, injective, ?_, ?_⟩
+  · exact lengthEq.symm.trans allocated
+  · intro i defined
+    have mapped := into i defined
+    rw [← addressEq]
+    exact mapped
+  · intro j member
+    apply surjective j
+    rw [← addressEq] at member
+    exact member
+  · intro i j lookup
+    obtain ⟨oldXs, oldLen, oldPayload, originalFound, copiedFound, reach, oldChildren⟩ := entries i j lookup
+    refine ⟨oldXs, oldLen, oldPayload, originalFound, ?_, reach, ?_⟩
+    · by_cases atHead : j = heapLength state.h1
+      · subst j
+        simp only [notFinal, ↓reduceIte] at copiedFound
+        have expected := heapLookup_prefix state.h1
+          (tail ++ heapExpand state.n ++ state.r4 ++ state.r3 ++ state.r2 ++ state.r1) (.dataElement xs len payload)
+        have same : HeapElement.dataElement oldXs oldLen oldPayload = .dataElement xs len payload := by
+          apply Option.some.inj
+          exact copiedFound.symm.trans (by simpa [head, List.append_assoc] using expected)
+        cases same
+        have result := heapLookup_prefix state.h1
+          (tail ++ heapExpand state.n ++ state.r4 ++ state.r3 ++ state.r2 ++ state.r1)
+          (.dataElement (addrMap (heapMap1 state.heap) xs) len payload)
+        simpa [List.append_assoc, newFinal] using result
+      · have beforeOrAfter : j < heapLength state.h1 ∨ heapLength state.h1 + (len + 1) ≤ j := by
+          by_cases before : j < heapLength state.h1
+          · exact Or.inl before
+          · right
+            by_contra smaller
+            have inside : j - heapLength state.h1 < len + 1 := by omega
+            have nonzero : j - heapLength state.h1 ≠ 0 := by omega
+            simp only [head, List.append_assoc] at copiedFound
+            rw [heapLookup_append j state.h1] at copiedFound
+            simp [before, heapLookup, nonzero, elLength, inside] at copiedFound
+        have finalEq := isFinal_data_scan_outside conf state (addrMap (heapMap1 state.heap) xs) len payload tail j beforeOrAfter
+        have same := CopyingGc.heapLookup_scan_replace_ne state.h1
+          (tail ++ heapExpand state.n ++ state.r4 ++ state.r3 ++ state.r2 ++ state.r1)
+          xs (addrMap (heapMap1 state.heap) xs) len payload j atHead
+        have oldCopy : heapLookup j (state.h1 ++ .dataElement xs len payload ::
+            (tail ++ heapExpand state.n ++ state.r4 ++ state.r3 ++ state.r2 ++ state.r1)) =
+            some (.dataElement (if isFinal conf state j then addrMap (heapMap1 state.heap) oldXs else oldXs) oldLen oldPayload) := by
+          simpa [head, List.append_assoc] using copiedFound
+        rw [same] at oldCopy
+        simpa [List.append_assoc, finalEq] using oldCopy
+    · intro ptr u member final
+      by_cases atHead : j = heapLength state.h1
+      · subst j
+        simp only [notFinal, ↓reduceIte] at copiedFound
+        have expected := heapLookup_prefix state.h1
+          (tail ++ heapExpand state.n ++ state.r4 ++ state.r3 ++ state.r2 ++ state.r1) (.dataElement xs len payload)
+        have same : HeapElement.dataElement oldXs oldLen oldPayload = .dataElement xs len payload := by
+          apply Option.some.inj
+          exact copiedFound.symm.trans (by simpa [head, List.append_assoc] using expected)
+        cases same
+        exact children ptr u member
+      · have beforeOrAfter : j < heapLength state.h1 ∨ heapLength state.h1 + (len + 1) ≤ j := by
+          by_cases before : j < heapLength state.h1
+          · exact Or.inl before
+          · right
+            by_contra smaller
+            have inside : j - heapLength state.h1 < len + 1 := by omega
+            have nonzero : j - heapLength state.h1 ≠ 0 := by omega
+            simp only [head, List.append_assoc] at copiedFound
+            rw [heapLookup_append j state.h1] at copiedFound
+            simp [before, heapLookup, nonzero, elLength, inside] at copiedFound
+        apply oldChildren ptr u member
+        exact (isFinal_data_scan_outside conf state (addrMap (heapMap1 state.heap) xs) len payload tail j beforeOrAfter).mp final
+
+/-- Moving the next data object's children and transferring that object into
+the scanned segment preserves the major invariant. -/
+theorem gcInv_data_scan_step {α β : Type} (conf : Config β) (state : GcState α β)
+    (heap0 : List (HeapElement α β)) (roots0 xs : List (HeapAddress α))
+    (len : Nat) (payload : β) (tail : List (HeapElement α β))
+    (invariant : gcInv conf state heap0 roots0)
+    (head : state.h2 = .dataElement xs len payload :: tail) :
+    ∃ next,
+      gcMoveList conf state xs = (addrMap (heapMap1 next.heap) xs, next) ∧
+      (∀ i j, (heapMap 0 state.heap).lookup i = some j → (heapMap 0 next.heap).lookup i = some j) ∧
+      gcInv conf { next with h1 := next.h1 ++ [.dataElement (addrMap (heapMap1 next.heap) xs) len payload], h2 := next.h2.drop 1 } heap0 roots0 := by
+  obtain ⟨next, run, children, _, submap, nextInv⟩ :=
+    gcInv_data_scan_move conf state heap0 roots0 xs len payload tail invariant head
+  have nextOk : next.ok = true := nextInv.2.2.2.2.1
+  obtain ⟨added, _, prefixEq, _, _⟩ :=
+    DataToWord.Proofs.Gc.gcMoveList_withNilLemma conf xs (addrMap (heapMap1 next.heap) xs) state next run nextOk
+  have nextHead : next.h2 = .dataElement xs len payload :: (tail ++ added) := by
+    simpa [head] using prefixEq
+  have shifted := gcInv_data_scan_shift conf next heap0 roots0 xs len payload (tail ++ added) nextInv nextHead children
+  refine ⟨next, run, submap, ?_⟩
+  simpa [nextHead] using shifted
+
+/-- The data scan preserves the major collector invariant and all prior
+forwarding entries, and empties the pending data segment. This is stated for
+the untagged source-shaped invariant above. -/
+theorem gcInv_moveData {α β : Type} (conf : Config β) (state : GcState α β)
+    (heap0 : List (HeapElement α β)) (roots0 : List (HeapAddress α)) :
+    gcInv conf state heap0 roots0 → state.r3 = [] → state.r2 = [] →
+    (∀ i j, (heapMap 0 state.heap).lookup i = some j →
+      (heapMap 0 (gcMoveData conf state).heap).lookup i = some j) ∧
+    gcInv conf (gcMoveData conf state) heap0 roots0 ∧
+    (gcMoveData conf state).h2 = [] ∧ (gcMoveData conf state).r3 = [] ∧
+    (gcMoveData conf state).r2 = [] := by
+  classical
+  induction state using gcMoveData.induct conf with
+  | case1 state empty =>
+    intro invariant r3 r2
+    rw [gcMoveData]
+    simp [empty, invariant, r3, r2]
+  | case2 state head tail heap over =>
+    intro invariant _ _
+    have allocated := invariant.1
+    have balance := invariant.2.1
+    rw [heap] at allocated
+    omega
+  | case3 state tail roots len payload roots1 middle move heap bounded flag ih =>
+    intro invariant r3 r2
+    obtain ⟨next, run, submap, shifted⟩ :=
+      gcInv_data_scan_step conf state heap0 roots0 roots len payload tail invariant heap
+    have same : middle = next := by
+      rw [move] at run
+      exact (Prod.mk.inj run).2
+    subst middle
+    have rootsEq : roots1 = addrMap (heapMap1 next.heap) roots := by
+      rw [move] at run
+      exact (Prod.mk.inj run).1
+    subst roots1
+    obtain ⟨added, _, prefixEq, _, _⟩ :=
+      DataToWord.Proofs.Gc.gcMoveList_withNilLemma conf roots (addrMap (heapMap1 next.heap) roots) state next run shifted.2.2.2.2.1
+    have nextHead : next.h2 = .dataElement roots len payload :: (tail ++ added) := by
+      simpa [heap] using prefixEq
+    have refs := DataToWord.Proofs.Memory.gcMoveList_refsUnchanged conf state roots
+    rw [run] at refs
+    have nextOk : next.ok = true := shifted.2.2.2.2.1
+    have flagTrue : flag = true := by
+      dsimp only [flag]
+      simp [nextOk, nextHead]
+    have recursive := ih (by simpa [flagTrue, nextOk] using shifted) (by simpa using refs.2.2.trans r3)
+      (by simpa using refs.2.1.trans r2)
+    rw [gcMoveData]
+    simp only [heap, bounded, ↓reduceIte, move]
+    simp only [flagTrue] at recursive
+    have composed := And.intro (fun i j old => recursive.1 i j (submap i j old)) recursive.2
+    simpa [nextOk, nextHead] using composed
+  | case4 state head tail heap bounded notData =>
+    intro invariant _ _
+    have data := invariant.2.2.2.2.2.2.2.2.1 head (by simp [heap])
+    cases head with
+    | unused len => simp [isDataElement] at data
+    | forwardPointer ptr value len => simp [isDataElement] at data
+    | dataElement roots len payload => exact False.elim (notData roots len payload rfl)
 
 end Flapjack.Compiler.Backend.GenGc
