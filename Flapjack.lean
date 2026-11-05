@@ -300,6 +300,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.TailCallSpace
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.ReturningCallSpace
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.DirectCallSpace
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.HandlerCallSpace
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.IndirectCallSpace
 import Flapjack.Compiler.Backend.Semantics.DataProps.ResourceCall
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.Limits
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Representation
