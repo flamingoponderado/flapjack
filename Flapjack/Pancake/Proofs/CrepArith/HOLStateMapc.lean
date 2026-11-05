@@ -34,25 +34,6 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width]
 
 end CrepArithSimpExpCorrectWitnesses
 
-/-- Flapjack-only record extensionality for the evaluator-state carrier. -/
-private theorem crepHolState_eq_of_fields {α σ : Type}
-    {left right : CrepHolState α σ}
-    (hLocals : left.locals = right.locals)
-    (hGlobals : left.globals = right.globals)
-    (hCode : left.code = right.code)
-    (hMemory : left.memory = right.memory)
-    (hMemaddrs : left.memaddrs = right.memaddrs)
-    (hShMemaddrs : left.shMemaddrs = right.shMemaddrs)
-    (hClock : left.clock = right.clock)
-    (hBigEndian : left.bigEndian = right.bigEndian)
-    (hFfi : left.ffi = right.ffi)
-    (hBaseAddress : left.baseAddress = right.baseAddress)
-    (hTopAddress : left.topAddress = right.topAddress) :
-    left = right := by
-  cases left
-  cases right
-  simp_all
-
 /-- HOL's local `mapc f` state update, using `FMAP_MAP2` on the code map.
 Declared as an `abbrev` so that projection equations (and the shared-memory
 domain decision procedure) reduce during type class synthesis, exactly as for

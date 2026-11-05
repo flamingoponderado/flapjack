@@ -27,13 +27,6 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {σ : Type} :
         CrepSemBroadState.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
   CrepSemHOLState.holFmapAsFiniteSupportWitness
 
-private theorem crepSimpMapcsHOL_emptyLocals {width : Nat} [NeZero width]
-    {σ : Type} (state : CrepSemHOLState width σ) :
-    crepSimpMapcsHOL (CrepSemHOLState.emptyLocals state) =
-      CrepSemHOLState.emptyLocals (crepSimpMapcsHOL state) := by
-  cases state
-  rfl
-
 end SimpProgCorrectReturnSupport
 
 /-- The `Return` specialization of HOL `simp_prog_correct`
@@ -73,7 +66,7 @@ theorem simpProgCorrectReturnCase {width : Nat} [NeZero width] {σ : Type} :
         update state values words hvalues
       rw [crepSimpProgHOL, evalCrepSemHOLProgExact_return_holShape, hmap,
         hvaluesSimp]
-      rw [SimpProgCorrectReturnSupport.crepSimpMapcsHOL_emptyLocals]
+      rw [crepSimpMapcsHOL_emptyLocals]
       rw [← hmap]
 
 end Flapjack

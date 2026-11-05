@@ -126,7 +126,7 @@ inductive LoopBehaviour where
   | fail
 
 structure LoopSemanticsHooks where
-  evaluate : Nat → LoopMachineStep
+  evaluate : Nat → Option (LoopMachineResult Nat) × LoopMachineState Nat LoopWordLoc
   ioEvents : LoopMachineState Nat LoopWordLoc → List FfiEvent
   ffiOutcome : FfiFinalEvent → FfiOutcome
 

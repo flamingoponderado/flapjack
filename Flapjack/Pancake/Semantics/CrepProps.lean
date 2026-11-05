@@ -1142,21 +1142,11 @@ private abbrev crepUnassignedFreeVarsMotive {width : Nat} [NeZero width] {σ : T
     n ∉ crepAssignedFreeVarsHOL x.1 →
     t.locals.lookup n = x.2.locals.lookup n
 
-private theorem fupdListHOLZipNotMemU {α β : Type} [DecidableEq α] (k : α) :
-    ∀ (xs : List α) (ys : List β) (f : FiniteMap α β), k ∉ xs →
-      FUPDATE_LIST_HOL f (xs.zip ys) k = f k
-  | [], _, f, _ => by simp [FUPDATE_LIST_HOL]
-  | _ :: _, [], f, _ => by simp [FUPDATE_LIST_HOL]
-  | x :: xs, y :: ys, f, hk => by
-      simp only [List.mem_cons, not_or] at hk
-      rw [List.zip_cons_cons, FUPDATE_LIST_HOL_cons, fupdListHOLZipNotMemU k xs ys _ hk.2]
-      simp [FUPDATE_HOL, hk.1]
-
 private theorem lookup_updateListEq_not_mem {α β : Type} [DecidableEq α]
     (m : HolFiniteMapExact α β) (xs : List α) (ys : List β) (k : α) (hk : k ∉ xs) :
     (m.updateListEq (xs.zip ys)).lookup k = m.lookup k := by
   simp only [HolFiniteMapExact.lookup_updateListEq]
-  exact fupdListHOLZipNotMemU k xs ys m.lookup hk
+  exact fupdateListHOL_zip_not_mem k xs ys m.lookup hk
 
 private theorem lookup_updateEq_ne {α β : Type} [DecidableEq α]
     (m : HolFiniteMapExact α β) (x : α) (v : β) (k : α) (hk : k ≠ x) :
@@ -1193,7 +1183,7 @@ private theorem shMemStore_locals {width : Nat} [NeZero width] {σ : Type}
         | (simp at hres; done)
   · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
 
-private theorem lookupCodeFinite_eq_HOLFinite {width : Nat} [NeZero width]
+theorem lookupCodeFinite_eq_HOLFinite {width : Nat} [NeZero width]
     (c : HolFiniteMapExact Flapjack.Basis.Pure.MlString.MlString (List Nat × CrepProgHOL width))
     (f : Flapjack.Basis.Pure.MlString.MlString) (args : List (HolWordLab width)) (len : Nat) :
     lookupCodeFiniteHOL c f args len = lookupCodeHOLFinite c.lookup f args len := by
@@ -1621,7 +1611,7 @@ theorem evaluateSeqStoreGlobalsResHOL {width : Nat} [NeZero width] {σ : Type} :
               CrepSemHOLState width σ).locals.lookup h = some v := by
             simp only [List.zip_cons_cons, HolFiniteMapExact.lookup_updateListEq,
               FUPDATE_LIST_HOL_cons]
-            rw [fupdListHOLZipNotMemU h vars vs _ hnd.1]
+            rw [fupdateListHOL_zip_not_mem h vars vs _ hnd.1]
             simp [FUPDATE_HOL]
           rw [show crepExactEvalExp
               ({ t with locals := t.locals.updateListEq ((h :: vars).zip (v :: vs)) } :

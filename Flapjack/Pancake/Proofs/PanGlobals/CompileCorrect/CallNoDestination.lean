@@ -28,15 +28,6 @@ open Flapjack.PanSemStateFiniteExact
 
 open Flapjack.PanGlobalsCompileCorrect
 
-/-- Flapjack-only equation relating the literal recursive compiled argument list
-    to the MAP spelling of OPT_MMAP_eval_correct; no separate HOL original. -/
-private theorem compileList_eq_map {width : Nat} [NeZero width]
-    (context : PanGlobalsContextExact width) (args : List (ExpHOL width)) :
-    compileExpExactHOLList context args = args.map (compileExpExactHOL context) := by
-  induction args with
-  | nil => simp only [compileExpExactHOLList,List.map_nil]
-  | cons e es ih => simp only [compileExpExactHOLList,List.map_cons,ih]
-
 /-- Genuine Call SOME (NONE, NONE) case of original compile_correct. Only the
 original argument/lookup/nonzero-clock guarded callee evaluate_ind IH is used.
 HOL panSem658-697 restores caller locals on a shape-matching return and clears

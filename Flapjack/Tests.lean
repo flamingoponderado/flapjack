@@ -250,7 +250,6 @@ import Flapjack.Test.LongMulSpillRelation
 import Flapjack.Test.LongMulRegisterRelation
 import Flapjack.Test.AddCarryRegisterRelation
 import Flapjack.Test.LongMulMixedRelation
-import Flapjack.Test.PanValueFfiClockFuel
 import Flapjack.Test.WordToStackBitsParity
 import Flapjack.Test.MlStringParity
 import Flapjack.Test.MlStringBridgeParity

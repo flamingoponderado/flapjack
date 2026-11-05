@@ -47,22 +47,6 @@ theorem mapMap2FstHOL {α β γ δ ε : Type} :
   exact panMap2_fst_eq
     (fun _ y => (List.range y.2.1.length, h y.2.1 y.2.2)) xs ys hlen
 
-/-- Flapjack-only list infrastructure: mapping an injective function preserves
-    `List.Nodup`. This generic helper has no standalone HOL declaration. -/
-private theorem nodupMapInjective {α β : Type} (f : α → β)
-    (hf : Function.Injective f) : ∀ xs : List α, xs.Nodup → (xs.map f).Nodup
-  | [], _ => by simp
-  | head :: tail, h => by
-      have hcons := List.nodup_cons.mp h
-      simp only [List.map_cons, List.nodup_cons]
-      constructor
-      · intro hmem
-        rcases List.mem_map.mp hmem with ⟨other, hother, heq⟩
-        have hsame : head = other := hf heq.symm
-        cases hsame
-        exact hcons.1 hother
-      · exact nodupMapInjective f hf tail hcons.2
-
 /-- Exact HOL `first_compile_prog_all_distinct`
     (`crep_to_loopProofScript.sml:3832-3838`): every compiled program label is
     distinct. The binders `c, crep_code` and the unqualified conclusion are

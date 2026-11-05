@@ -1,8 +1,10 @@
 import Flapjack.Pancake.Semantics.PanSem.EvaluateClock
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Leaves
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocalEval
+import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Support
 
 namespace Flapjack.PanGlobalsFreshLocalDecCall
+open Flapjack.PanGlobalsFreshLocalSupport
 open Flapjack.Pancake.PanLang
 open Flapjack.PanSemStateFiniteExact
 
@@ -13,45 +15,6 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} {σ : Type} [NeZero width] :
     (∀ state : PanSemStateFiniteExact width σ,
       PanSemStateFiniteExact.ofExact state.toExact state.toExact_finiteSupport = state) :=
   PanSemStateFiniteExact.holFmapAsFiniteSupportWitness
-
-
-/-- Flapjack-only equality of the two canonical update interfaces. -/
-private theorem updateEq_eq_update {width : Nat} [NeZero width]
-    (locals : HolFiniteMapExact MlS (ValueHOL width)) (entry : MlS × ValueHOL width) :
-    locals.updateEq entry = locals.update entry := by
-  apply HolFiniteMapExact.ext
-  funext key
-  simp only [HolFiniteMapExact.lookup_updateEq, HolFiniteMapExact.lookup_update,
-    FUPDATE_HOL_eq_FUPDATE]
-
-/-- Flapjack-only transport of the reviewed local update to literal HOL equality. -/
-private theorem setVarEq {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateFiniteExact width σ) (name : MlS) (value : ValueHOL width) :
-    setVarHOLFinite name value state = {state with locals := state.locals.updateEq (name,value)} := by
-  simp only [setVarHOLFinite, updateEq_eq_update]
-
-/-- Flapjack-only pointwise map algebra: independent updates commute. -/
-private theorem updateCommute {width : Nat} [NeZero width]
-    (locals : HolFiniteMapExact MlS (ValueHOL width)) (a b : MlS)
-    (x y : ValueHOL width) (hne : a ≠ b) :
-    (locals.updateEq (a,x)).updateEq (b,y) =
-      (locals.updateEq (b,y)).updateEq (a,x) := by
-  apply HolFiniteMapExact.ext
-  funext key
-  by_cases ha : key = a <;> by_cases hb : key = b <;>
-    simp_all [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL]
-
-/-- Flapjack-only pointwise map algebra for restoring a distinct binding. -/
-private theorem restoreCommute {width : Nat} [NeZero width]
-    (locals : HolFiniteMapExact MlS (ValueHOL width)) (a b : MlS)
-    (x : ValueHOL width) (old : Option (ValueHOL width)) (hne : a ≠ b) :
-    HolFiniteMapExact.resVarEq (locals.updateEq (a,x)) (b,old) =
-      (HolFiniteMapExact.resVarEq locals (b,old)).updateEq (a,x) := by
-  apply HolFiniteMapExact.ext
-  funext key
-  cases old <;> by_cases ha : key = a <;> by_cases hb : key = b <;>
-    simp_all [HolFiniteMapExact.lookup_resVarEq_none, HolFiniteMapExact.lookup_resVarEq_some,
-      HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, FDOMSUB_HOL]
 
 /-- Genuine DecCall induction case of HOL1045-1091. The continuation IH is
 restricted by the literal source argument, lookup, nonzero clock, returned value,

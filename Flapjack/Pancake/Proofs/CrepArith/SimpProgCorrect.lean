@@ -56,7 +56,7 @@ def simpProgCorrectAt {width : Nat} [NeZero width] {σ : Type}
     evalCrepSemHOLProgExact (crepSimpMapcsHOL state) (crepSimpProgHOL program) =
       (result, crepSimpMapcsHOL finalState)
 
-private theorem crepSimpMapcsHOL_emptyLocals {width : Nat} [NeZero width]
+theorem crepSimpMapcsHOL_emptyLocals {width : Nat} [NeZero width]
     {σ : Type} (state : CrepSemHOLState width σ) :
     crepSimpMapcsHOL (CrepSemHOLState.emptyLocals state) =
       CrepSemHOLState.emptyLocals (crepSimpMapcsHOL state) := by
