@@ -415,4 +415,54 @@ theorem evaluate_resourceSafety {C F : Type} (program : DataLang.Prog) (state : 
     (evaluate program state).2.safeForSpace = true → state.safeForSpace = true :=
   (evaluate_resourceMono program state).2.2
 
+/-- Successful primitive applications preserve the event prefix. This has the
+source theorem's premise and conclusion, but remains untagged until the whole
+primitive evaluator and its dependencies have been reviewed against HOL. -/
+theorem doApp_events_of_result {C F : Type} (op : ClosLang.Op) (args : List Value)
+    (state : State C F) (value : Value) (next : State C F)
+    (run : doApp op args state = .val (value, next)) :
+    state.ffi.ioEvents <+: next.ffi.ioEvents :=
+  (doApp_resource_frame op args state next value run).1
+
+/-- Successful primitive applications cannot increase space safety. This is
+untagged pending the primitive evaluator's full correspondence review. -/
+theorem doApp_safety_of_result {C F : Type} (op : ClosLang.Op) (args : List Value)
+    (state : State C F) (value : Value) (next : State C F)
+    (premises : doApp op args state = .val (value, next) ∧ next.safeForSpace = true) :
+    state.safeForSpace = true :=
+  (doApp_resource_frame op args state next value premises.1).2.2 premises.2
+
+/-- Successful primitive applications do not decrease the stack maximum.
+This is untagged pending the primitive evaluator's full correspondence review. -/
+theorem doApp_stack_of_result {C F : Type} (op : ClosLang.Op) (args : List Value)
+    (state : State C F) (value : Value) (next : State C F)
+    (run : doApp op args state = .val (value, next)) :
+    BackendProps.optionLe state.stackMax next.stackMax :=
+  (doApp_resource_frame op args state next value run).2.1
+
+/-- Evaluation preserves the event prefix for an explicit evaluation result.
+The source evaluator and its dependencies still require correspondence review. -/
+theorem evaluate_events_of_result {C F : Type} (program : DataLang.Prog)
+    (state : State C F) (result : Option (Result (List Value) Value)) (next : State C F)
+    (run : evaluate program state = (result, next)) :
+    state.ffi.ioEvents <+: next.ffi.ioEvents := by
+  simpa only [run] using evaluate_resourceEvents program state
+
+/-- Evaluation cannot increase space safety. This source-shaped statement is
+untagged pending the full evaluator correspondence review. -/
+theorem evaluate_safety_of_result {C F : Type} (program : DataLang.Prog)
+    (state : State C F) (result : Option (Result (List Value) Value)) (next : State C F)
+    (premises : evaluate program state = (result, next) ∧ next.safeForSpace = true) :
+    state.safeForSpace = true := by
+  apply evaluate_resourceSafety program state
+  simpa only [premises.1] using premises.2
+
+/-- Evaluation does not decrease the recorded stack maximum. This source-shaped
+statement is untagged pending the full evaluator correspondence review. -/
+theorem evaluate_stack_of_result {C F : Type} (program : DataLang.Prog)
+    (state : State C F) (result : Option (Result (List Value) Value)) (next : State C F)
+    (run : evaluate program state = (result, next)) :
+    BackendProps.optionLe state.stackMax next.stackMax := by
+  simpa only [run] using evaluate_resourceStack program state
+
 end Flapjack.Compiler.Backend.DataSem
