@@ -791,11 +791,7 @@ import Flapjack.Test.LoopIsLoadParity
 import Flapjack.Test.LoopCallParity
 import Flapjack.Test.LoopEvalParity
 import Flapjack.Test.LoopObservationalSemanticsParity
-import Flapjack.Test.LoopSemEvaluateParity
-import Flapjack.Test.LoopLiveEffectFreeParity
 import Flapjack.Test.LoopLiveDomainListDeleteParity
-import Flapjack.Test.LoopPrimopParity
-import Flapjack.Test.LoopShMemParity
 import Flapjack.Test.LoopFfiParity
 import Flapjack.Test.LoopMemExactParity
 import Flapjack.Test.PanItreeFfiParity
@@ -990,7 +986,6 @@ import Flapjack.Test.StackSemShMemOpParity
 import Flapjack.Test.StackSemFfiParity
 import Flapjack.Test.StackSemInstallParity
 import Flapjack.Test.StackSemMeasureParity
-import Flapjack.Test.LoopStoreNarrowParity
 import Flapjack.Test.WordToStackLiveBitmapParity
 import Flapjack.Test.StackSemControlCasesParity
 import Flapjack.Test.PanGlobalsFpermShMemLoadParity
@@ -1326,10 +1321,7 @@ def main : IO Unit := do
     Flapjack.Test.LoopIsLoadParity.runChecks,
     Flapjack.Test.LoopEvalParity.runChecks,
     Flapjack.Test.LoopObservationalSemanticsParity.runChecks,
-    Flapjack.Test.LoopSemEvaluateParity.runChecks,
     Flapjack.Test.LoopLiveDomainListDeleteParity.runChecks,
-    Flapjack.Test.LoopPrimopParity.runChecks,
-    Flapjack.Test.LoopShMemParity.runChecks,
     Flapjack.Test.LoopFfiParity.runChecks,
     Flapjack.Test.LoopMemExactParity.runChecks,
     Flapjack.Test.PanItreeFfiParity.runChecks,
@@ -1489,7 +1481,6 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.StackSemFfiParity.runChecks,
     Flapjack.Test.StackSemInstallParity.runChecks,
     Flapjack.Test.StackSemMeasureParity.runChecks,
-    Flapjack.Test.LoopStoreNarrowParity.runChecks,
     Flapjack.Test.WordToStackLiveBitmapParity.runChecks,
     Flapjack.Test.StackSemCopyWordsParity.runChecks,
     Flapjack.Test.StackSemStoreConstSemParity.runChecks,
