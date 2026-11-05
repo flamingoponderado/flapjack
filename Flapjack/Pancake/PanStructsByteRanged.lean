@@ -251,18 +251,6 @@ theorem structCompileShape_byteRanged (context : StructContext) (shape : Shape)
     ShapeByteRanged (structCompileShape context shape) :=
   structCompileShapeWF_byteRanged context shape hc hs
 
-theorem structCompileShapesWF_byteRanged (context : StructContext) (hc : CtxBR context)
-    (shapes : List Shape) (hs : ∀ s ∈ shapes, ShapeByteRanged s) :
-    ∀ s ∈ structCompileShapeWF.structCompileShapesWF context shapes, ShapeByteRanged s := by
-  induction shapes with
-  | nil => intro s hmem; simp [structCompileShapeWF.structCompileShapesWF] at hmem
-  | cons shape shapes ih =>
-      intro s hmem
-      simp only [structCompileShapeWF.structCompileShapesWF] at hmem
-      rcases List.mem_cons.mp hmem with rfl | hmem'
-      · exact structCompileShapeWF_byteRanged context shape hc (hs shape (by simp))
-      · exact ih (fun t ht => hs t (by simp [ht])) s hmem'
-
 private theorem listExpByteRanged_iff {width : Nat} (l : List (Exp (BitVec width))) :
     ListExpByteRanged l ↔ ∀ e ∈ l, ExpByteRanged e := by
   induction l with
@@ -907,101 +895,6 @@ private theorem structCompileParams_byteRanged [BEq String] (context : StructCon
   rcases h source hsource with ⟨hname, hshape⟩
   exact ⟨hname, structCompileShape_byteRanged context source.2 hc hshape⟩
 
-/-- Flapjack codec infrastructure, not a HOL theorem. Byte-range hypotheses
-ensure exact identifier equality selects the same first occurrence, including
-missing keys and duplicate keys, for any translated payload. -/
-theorem encodedContextLookup {α β : Type} (convert : α → β)
-    (name : String) (entries : List (String × α))
-    (hname : NameRanged name) (hkeys : ∀ p ∈ entries, NameRanged p.1) :
-    (entries.map fun p => (ofString p.1, convert p.2)).findSome?
-        (fun p => if p.1 = ofString name then some p.2 else none) =
-      (lookupInfo name entries).map convert := by
-  induction entries with
-  | nil => simp [lookupInfo]
-  | cons entry entries ih =>
-      rcases entry with ⟨candidate, value⟩
-      have hcandidate := hkeys (candidate, value) (by simp)
-      have htail : ∀ p ∈ entries, NameRanged p.1 :=
-        fun p hp => hkeys p (by simp [hp])
-      by_cases hmatch : candidate = name
-      · subst candidate
-        simp [lookupInfo]
-      · have hexact : ofString candidate ≠ ofString name :=
-          fun h => hmatch (ofString_injective_of_ranged_local hcandidate hname h)
-        simp [lookupInfo, hmatch, hexact, ih htail]
-
-/-- Flapjack codec lookup specialization for source local/global/field shapes;
-shape payload conversion preserves every source shape. -/
-theorem encodedShapeContextLookup (name : String) (entries : List (String × Shape))
-    (hname : NameRanged name) (hentries : ListParamByteRanged entries) :
-    (entries.map fun p => (ofString p.1, shapeToHOL p.2)).findSome?
-        (fun p => if p.1 = ofString name then some p.2 else none) =
-      (lookupInfo name entries).map shapeToHOL := by
-  exact encodedContextLookup shapeToHOL name entries hname
-    (fun p hp => (hentries p hp).1)
-
-/-- Flapjack codec infrastructure: the exact local lookup is the source lookup
-with its shape payload encoded, under the actual byte-range obligations. -/
-theorem structPassContextToExact_locals (context : StructPassContext) (name : String)
-    (hname : NameRanged name) (hentries : ListParamByteRanged context.locals) :
-    (structPassContextToExact context).locals.findSome?
-        (fun p => if p.1 = ofString name then some p.2 else none) =
-      (lookupInfo name context.locals).map shapeToHOL :=
-  encodedShapeContextLookup name context.locals hname hentries
-
-/-- Flapjack codec infrastructure: the exact global lookup preserves the
-source first-match result and all missing-key defaults. -/
-theorem structPassContextToExact_globals (context : StructPassContext) (name : String)
-    (hname : NameRanged name) (hentries : ListParamByteRanged context.globals) :
-    (structPassContextToExact context).globals.findSome?
-        (fun p => if p.1 = ofString name then some p.2 else none) =
-      (lookupInfo name context.globals).map shapeToHOL :=
-  encodedShapeContextLookup name context.globals hname hentries
-
-/-- Flapjack codec infrastructure: nested struct/field lookup preserves both
-first-match searches. Missing structs or fields remain NONE; stored shape
-payloads use the existing exact shape codec. -/
-theorem encodedStructFieldLookup (context : StructContext) (name field : String)
-    (hc : CtxBR context) (hname : NameRanged name) (hfield : NameRanged field) :
-    ((structContextToCompileShapeExact context).findSome?
-        (fun p => if p.1 = ofString name then some p.2 else none)).bind
-        (fun fields => fields.findSome?
-          (fun p => if p.1 = ofString field then some p.2 else none)) =
-      ((lookupInfo name context).bind (fun info => lookupInfo field info.fields)).map
-        shapeToHOL := by
-  induction context with
-  | nil => simp [structContextToCompileShapeExact, lookupInfo]
-  | cons entry context ih =>
-      rcases entry with ⟨candidate, info⟩
-      have hhead := hc (candidate, info) (by simp)
-      have htail : CtxBR context := fun p hp => hc p (by simp [hp])
-      by_cases hmatch : candidate = name
-      · subst candidate
-        simpa [structContextToCompileShapeExact, lookupInfo] using
-          encodedShapeContextLookup field info.fields hfield hhead.2
-      · have hexact : ofString candidate ≠ ofString name :=
-          fun h => hmatch (ofString_injective_of_ranged_local hhead.1 hname h)
-        simpa [structContextToCompileShapeExact, lookupInfo, hmatch, hexact] using ih htail
-
-/-- Flapjack codec infrastructure: decoding a looked-up encoded shape recovers
-its production payload, rather than only relating the encoded maps. -/
-theorem encodedShapeContextLookup_roundtrip (name : String)
-    (entries : List (String × Shape)) (hname : NameRanged name)
-    (hentries : ListParamByteRanged entries) :
-    ((entries.map fun p => (ofString p.1, shapeToHOL p.2)).findSome?
-      (fun p => if p.1 = ofString name then some p.2 else none)).map shapeOfHOL =
-      lookupInfo name entries := by
-  rw [encodedShapeContextLookup name entries hname hentries]
-  induction entries with
-  | nil => simp [lookupInfo]
-  | cons entry entries ih =>
-      rcases entry with ⟨candidate, shape⟩
-      have hhead := hentries (candidate, shape) (by simp)
-      have htail : ListParamByteRanged entries := fun p hp => hentries p (by simp [hp])
-      by_cases hmatch : candidate = name
-      · simp [lookupInfo, hmatch, shapeOfHOL_shapeToHOL shape hhead.2]
-      · simpa [lookupInfo, hmatch] using ih htail
-
 /-- Flapjack range infrastructure: any selected association-list payload
 satisfies an invariant held by all source entries. No HOL theorem is claimed. -/
 theorem lookupInfo_payload_invariant {α : Type} (property : α → Prop)
@@ -1028,71 +921,6 @@ private theorem lookupShape_default_byteRanged (name : String) (entries : List (
       exact lookupInfo_payload_invariant ShapeByteRanged name entries
         (fun p hp => (hall p hp).2) shape hlookup
 
-/-- Flapjack codec infrastructure for raw field selection. Encoding commutes
-with indexed selection and the defensive One default, including out-of-range
-indices. This representation lemma has no HOL theorem original. -/
-theorem shapeToHOL_getD (shapes : List Shape) (index : Nat) :
-    shapeToHOL (shapes.getD index .one) =
-      (shapes.map shapeToHOL)[index]?.getD .one := by
-  induction shapes generalizing index with
-  | nil => simp [List.getD, shapeToHOL]
-  | cons shape shapes ih =>
-      cases index with
-      | zero => simp [List.getD]
-      | succ index => simpa [List.getD] using ih index
-
-/-- Flapjack cross-carrier infrastructure: both source variable kinds retain
-first-match lookup and the One default. The source name is actually ranged;
-no successful lookup or computed result is assumed. No HOL theorem original. -/
-theorem oldExpShapeExact_var_encode {width : Nat} [NeZero width]
-    (context : StructPassContext) (kind : VarKind) (name : String)
-    (hn : NameRanged name) (hl : ListParamByteRanged context.locals)
-    (hg : ListParamByteRanged context.globals) :
-    Pancake.PanStructs.CompileShapeExact.oldExpShapeExact
-      (structPassContextToExact context) (expToHOL (Exp.var kind name : Exp (BitVec width))) =
-        shapeToHOL (structOldExpShape context (Exp.var kind name : Exp (BitVec width))) := by
-  cases kind
-  · simp only [expToHOL, Pancake.PanStructs.CompileShapeExact.oldExpShapeExact,
-      structOldExpShape]
-    rw [structPassContextToExact_locals context name hn hl]
-    cases lookupInfo name context.locals <;> simp [shapeToHOL]
-  · simp only [expToHOL, Pancake.PanStructs.CompileShapeExact.oldExpShapeExact,
-      structOldExpShape]
-    rw [structPassContextToExact_globals context name hn hg]
-    cases lookupInfo name context.globals <;> simp [shapeToHOL]
-
-/-- Flapjack codec infrastructure for compile_exp named-field indexing.
-Actual byte-ranged query and stored names make equality injective through the
-name codec. Both operations retain the first duplicate match and absent fields;
-this cross-carrier lemma has no HOL theorem original. -/
-theorem encodedFieldIndexLookup (field : String) (fields : List (String × Shape))
-    (hfield : NameRanged field) (hfields : ListParamByteRanged fields) :
-    afindi (ofString field) (fields.map fun p => (ofString p.1, shapeToHOL p.2)) =
-      structFindFieldIndex field fields := by
-  induction fields with
-  | nil => simp [afindi, structFindFieldIndex]
-  | cons entry fields ih =>
-      rcases entry with ⟨candidate, shape⟩
-      have hhead := hfields (candidate, shape) (by simp)
-      have htail : ListParamByteRanged fields := fun p hp => hfields p (by simp [hp])
-      by_cases hmatch : candidate = field
-      · subst candidate
-        simp [afindi, structFindFieldIndex]
-      · have hexact : ofString field ≠ ofString candidate :=
-          fun h => hmatch (ofString_injective_of_ranged_local hhead.1 hfield h.symm)
-        simp only [List.map_cons, afindi_cons, hexact, ↓reduceIte,
-          structFindFieldIndex, beq_iff_eq, hmatch, ↓reduceIte]
-        rw [ih htail]
-        cases structFindFieldIndex field fields <;> rfl
-
-/-- Flapjack codec corollary retaining the source zero default for missing
-named fields. No target lookup success or index bounds are assumed. -/
-theorem encodedFieldIndexLookup_default (field : String) (fields : List (String × Shape))
-    (hfield : NameRanged field) (hfields : ListParamByteRanged fields) :
-    (afindi (ofString field) (fields.map fun p => (ofString p.1, shapeToHOL p.2))).getD 0 =
-      (structFindFieldIndex field fields).getD 0 := by
-  rw [encodedFieldIndexLookup field fields hfield hfields]
-
 private theorem shapeToHOL_getD_map (value : Option Shape) :
     (value.map shapeToHOL).getD .one = shapeToHOL (value.getD .one) := by
   cases value <;> simp [Option.getD, shapeToHOL]
@@ -1104,24 +932,5 @@ private theorem structOldExpShapes_eq_map {α : Type} (context : StructPassConte
   induction expressions with
   | nil => simp [structOldExpShape.structOldExpShapes]
   | cons expression expressions ih => simp [structOldExpShape.structOldExpShapes, ih]
-
-theorem structCompileParams_eq_of_shape_eq [BEq String] (context : StructContext)
-    (compileShape : StructContext → Shape → Shape)
-    (hshape : ∀ shape, ShapeByteRanged shape →
-      compileShape context shape = structCompileShape context shape) :
-    ∀ parameters : List (String × Shape), ListParamByteRanged parameters →
-      parameters.map (fun (name, shape) => (name, compileShape context shape)) =
-        parameters.map (fun (name, shape) => (name, structCompileShape context shape)) := by
-  intro parameters
-  induction parameters with
-  | nil => simp
-  | cons parameter parameters ih =>
-      intro hall
-      obtain ⟨name, shape⟩ := parameter
-      obtain ⟨_, hs⟩ := hall (name, shape) (by simp)
-      simp only [List.map_cons]
-      rw [hshape shape hs]
-      congr 1
-      exact ih (fun item hitem => hall item (by simp [hitem]))
 
 end Flapjack

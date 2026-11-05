@@ -669,10 +669,4 @@ theorem declByteRanged_function_name {width : Nat} {fd : Flapjack.FunDecl (BitVe
     NameRanged fd.name :=
   h.1
 
-/-- Extraction: a byte-ranged function declaration has a byte-ranged name. -/
-theorem funDeclByteRanged_name {width : Nat} {fd : Flapjack.FunDecl (BitVec width)}
-    (h : FunDeclByteRanged fd) :
-    NameRanged fd.name :=
-  h.1
-
 end Flapjack.Pancake.PanLang

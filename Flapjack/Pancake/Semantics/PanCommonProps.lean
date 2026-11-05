@@ -72,22 +72,6 @@ theorem optMmapEqSome (xs : List α) (f : α → Option β) (ys : List β) :
             rcases h with ⟨hfx, htail⟩
             simp [List.mapM_cons, hfx, ih ys htail]
 
-/-- The empty context map satisfies `ctxt_max` for every bound. -/
-theorem ctxtMax_empty (n : Nat) :
-    ctxtMax n (FEMPTY : FiniteMap String (Shape × List Nat)) := by
-  refine ⟨Nat.zero_le n, ?_⟩
-  intro v a xs hlookup
-  simp at hlookup
-
-/-- The empty context map satisfies `no_overlap`. -/
-theorem noOverlap_empty :
-    noOverlap (FEMPTY : FiniteMap String (Shape × List Nat)) := by
-  refine ⟨?_, ?_⟩
-  · intro x a xs hlookup
-    simp at hlookup
-  · intro x y a b xs ys hx hy hinter
-    simp at hx
-
 /-- Rendering of HOL `alist_to_fmap` (`FOLDR (λ(k,v) m. FUPDATE m (k,v)) FEMPTY`).
     The HOL definition lives in HOL's `alistTheory`, outside the CakeML tree, so
     this helper is untagged here. -/

@@ -224,7 +224,6 @@ theorem getVars_cons {width : Nat} [NeZero width] {F : Type}
         (fun value => (getVars names state).map (fun values => value :: values)) :=
   rfl
 
-
 /-- Exact HOL `loopSem$result` (`cakeml/pancake/semantics/loopSemScript.sml:30-38`):
 
     ```
@@ -706,37 +705,6 @@ def LoopSemStateFiniteExact.toProductionState {width : Nat} [NeZero width]
   baseAddr := state.baseAddr
   topAddr := state.topAddr
 
-/-- The state constructor satisfies the observational production relation when
-    the caller supplies the two genuinely non-structural obligations: related
-    FFI states and both directions of the production-list/exact-Spt code
-    relation. This does not identify any actual CLI state constructor or prove
-    an evaluator simulation; its purpose is to make those remaining premises
-    explicit for subsequent source-route proofs. Flapjack-only infrastructure,
-    with no separate HOL theorem for a carrier conversion. -/
-theorem LoopSemStateFiniteExact.toProductionState_prodRel {width : Nat}
-    [NeZero width] {F : Type} (state : LoopSemStateFiniteExact width F)
-    (code : LoopCode (BitVec width)) (ffi : FfiState F)
-    (hFfi : FfiStateRel ffi state.ffi)
-    (hRows : ∀ entry, entry ∈ code →
-      ∃ program, sptLookup entry.1 state.code = some (entry.2.1, program) ∧
-        loopProgExecRel entry.2.2 program)
-    (hCoverage : ∀ label parameters program,
-      sptLookup label state.code = some (parameters, program) →
-        ∃ entry ∈ code, entry.1 = label ∧ entry.2.1 = parameters ∧
-          loopProgExecRel entry.2.2 program) :
-    state.prodRel (state.toProductionState code ffi) := by
-  refine ⟨?_, ?_, ?_, rfl, rfl, rfl, rfl, hFfi, rfl, rfl, ?_, ?_⟩
-  · intro name
-    rfl
-  · intro global
-    rfl
-  · intro address
-    rfl
-  · intro entry hEntry
-    exact hRows entry hEntry
-  · intro label parameters program hLookup
-    exact hCoverage label parameters program hLookup
-
 /-- Exact and production Loop states preserve `prodRel` when the source
     `set_var` update is paired with the executable `loopSetVar` update. The
     local-map lookup proof uses the exact `sptInsert` lookup equations; every
@@ -981,17 +949,6 @@ theorem lookupLoopFunction_eq_of_prodRel {width : Nat} [NeZero width] {F : Type}
   obtain ⟨_, _, _, _, _, _, _, _, _, _, hcode, hcov⟩ := h
   obtain ⟨entry, hentry, hlabel, _, _⟩ := hcov label parameters program hlookup
   exact lookupLoopFunction_eq_of_rel hcode ⟨entry, hentry, hlabel⟩ hlookup
-
-/-- Production lookup absence under the full state bridge.  Flapjack bridge
-    infrastructure (no `@[hol]` tag). -/
-theorem lookupLoopFunction_eq_none_of_prodRel {width : Nat} [NeZero width] {F : Type}
-    {state : LoopSemStateFiniteExact width F}
-    {machine : LoopMachineState (BitVec width) F}
-    (h : state.prodRel machine)
-    {label : Nat} (hlookup : sptLookup label state.code = none) :
-    lookupLoopFunction label machine.code = none := by
-  obtain ⟨_, _, _, _, _, _, _, _, _, _, hcode, _⟩ := h
-  exact lookupLoopFunction_eq_none_of_rel hcode hlookup
 
 /-- `find_code` correspondence: under `prodRel`, the production executable
     `findLoopCode` on the association-list code table and the exact

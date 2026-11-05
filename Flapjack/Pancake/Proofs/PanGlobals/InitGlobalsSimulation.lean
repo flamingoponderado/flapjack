@@ -36,36 +36,6 @@ theorem initializerExpression {width : Nat} {σ : Type} [NeZero width]
   exact PanPropsEvalStateFiniteExact.evalEmptyLocalsHOLFinite target
     (compileExpExactHOL context expression) value hcompiled
 
-/-- Flapjack-specific address algebra for the initializer cons proof's head
-store and recursive free-range obligations (HOL source 2155-2229). This has no
-independently named HOL original; it reuses PanGlobalsMemStores.addresses_add
-with the multiplication order used by the initializer. Modular arithmetic permits wrapping;
-no numeric bound or evaluation premise is needed for range splitting. -/
-theorem initializerAddressesSplit {width : Nat} [NeZero width] (base : BitVec width)
-    (head tail : Nat) (address : BitVec width) :
-    addresses base (head + tail) address ↔
-      addresses base head address ∨
-        addresses (base + BitVec.ofNat width head *
-          Flapjack.Compiler.Backend.StackRemove.bytesInWord width) tail address := by
-  simpa only [Flapjack.Compiler.Backend.StackRemove.bytesInWord,
-    BitVec.mul_comm] using PanGlobalsMemStores.addresses_add head tail base address
-
-/-- Prefix containment used to justify the first initializer's stores. -/
-theorem initializerAddressesPrefix {width : Nat} [NeZero width] (base : BitVec width)
-    (head tail : Nat) (address : BitVec width)
-    (h : addresses base head address) :
-    addresses base (head + tail) address :=
-  (initializerAddressesSplit base head tail address).mpr (Or.inl h)
-
-/-- Suffix containment transports domain and disjointness premises to the
-recursive initializer. This is infrastructure, not an extra simulation premise. -/
-theorem initializerAddressesSuffix {width : Nat} [NeZero width] (base : BitVec width)
-    (head tail : Nat) (address : BitVec width)
-    (h : addresses (base + BitVec.ofNat width head *
-      Flapjack.Compiler.Backend.StackRemove.bytesInWord width) tail address) :
-    addresses base (head + tail) address :=
-  (initializerAddressesSplit base head tail address).mpr (Or.inr h)
-
 /-- Canonical state roundtrips for the relation representation. -/
 theorem holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact
     {width : Nat} {σ : Type} [NeZero width] :

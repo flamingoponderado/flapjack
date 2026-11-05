@@ -2069,7 +2069,6 @@ theorem crepSimpExpEvalPreserves {n : Nat} [NeZero n] {σ : Type}
         have htailSimp := ihTail.2 state htail
         simp [evalCrepRuntimeExps, hh, hheadSimp, htailSimp]
 
-
 /-- Flapjack representation of HOL's local `mapc f` state update through
     `FMAP_MAP2`: apply `f` to each `(functionName, storedEntry)` pair and leave
     every other runtime field alone. -/
@@ -3299,24 +3298,6 @@ theorem evalCrepHolFiniteWordSourceExpWordLab_shift_eq_wordShiftHOL
         (evalCrepHolFiniteWordSourceExp_shift_eq_wordShiftHOL
           dimension state operator left right leftValue rightValue hLeft hRight))
 
-/-! Adapter equation for the list-valued source `Op` clause. Once the source
-    subexpressions evaluate to `values`, the clause is exactly HOL
-    `word_op_def` transported through the explicit finite word carrier. The
-    complete argument list and HOL's `Option` arity failure are preserved. -/
-theorem evalCrepHolFiniteWordSourceExp_op_eq_wordOpHOL
-    {ι : Type} {σ : Type} (dimension : HolFiniteDimension ι)
-    (state : CrepHolState (ι → Bool) σ) (operator : BinOp)
-    (expressions : List (CrepExp (ι → Bool))) (values : List (ι → Bool))
-    (hValues : expressions.mapM (evalCrepHolFiniteWordSourceExp dimension state) =
-      some values) :
-    evalCrepHolFiniteWordSourceExp dimension state (.op operator expressions) =
-      (wordOpHOL operator (values.map (holWordToBitVec dimension))).map
-        (bitVecToHolWord dimension) := by
-  letI : HolFiniteDimension ι := dimension
-  letI : NeZero dimension.width := ⟨Nat.ne_of_gt dimension.width_pos⟩
-  simp [evalCrepHolFiniteWordSourceExp, hValues,
-    holFiniteWordSourceMemoryModel]
-
 theorem crepSimpExpCorrect1CmpHolFiniteWordSourceCase
     {ι : Type} {σ : Type} [dimension : HolFiniteDimension ι]
     (f : FunName × (List Nat × CrepProg (ι → Bool)) →
@@ -3814,41 +3795,6 @@ theorem crepSimpExpCorrect1HolWordBitsSourceRuntime {width : Nat} [NeZero width]
   rw [hFromNat] at hresult
   exact hresult
 
-
-
-/-- Flapjack's RISC-V specialization of HOL simp_exp_correct1.
-    It keeps the HOL theorem's successful-evaluation premise, arbitrary local
-    mapc f code-map update, and complete Option (PanWordLab.word ...)
-    result. The value type is a positive-width RISC-V word and evaluation fixes
-    riscvCrepWordTarget; HOL instead quantifies over its polymorphic word
-    type and arbitrary crepSem state. The evaluator correspondence is proved
-    for every positive RISC-V width and for the concrete `Fin width → Bool`
-    carrier, but not for an arbitrary HOL finite dimension type. This faithful-
-    shape specialization is deliberately untagged. -/
-theorem crepSimpExpCorrect1 {n : Nat} [NeZero n] {σ : Type}
-    (f : FunName × (List Nat × CrepProg (RiscV.Word n)) →
-      List Nat × CrepProg (RiscV.Word n))
-    (state : CrepRuntimeState (RiscV.Word n) σ)
-    (expression : CrepExp (RiscV.Word n))
-    (h : (evalCrepRuntimeExp (riscvCrepWordTarget state) expression).map
-      PanWordLab.word ≠ none) :
-    (evalCrepRuntimeExp (riscvCrepWordTarget (crepArithMapCode f state))
-      (crepSimpExp (BitVec.ofNat n) expression)).map PanWordLab.word =
-    (evalCrepRuntimeExp (riscvCrepWordTarget state) expression).map
-      PanWordLab.word := by
-  have hraw : evalCrepRuntimeExp (riscvCrepWordTarget state) expression ≠ none := by
-    simpa using h
-  have hsimp := crepSimpExpEvalPreserves state expression hraw
-  have htarget :
-      riscvCrepWordTarget (crepArithMapCode f state) =
-        crepArithMapCode f (riscvCrepWordTarget state) := by
-    cases state
-    rfl
-  rw [htarget]
-  rw [crepEvalCodeMapIrrel f (riscvCrepWordTarget state)
-    (crepSimpExp (BitVec.ofNat n) expression)]
-  rw [hsimp]
-
 /-! Flapjack-only all-width support for the source-shaped state update. This
     is intentionally not tagged as HOL `simp_exp_correct1`: it represents
     HOL words only as `RiscV.Word n`/`BitVec n` and the direct evaluator's
@@ -4104,6 +4050,5 @@ theorem crepSimpExpCorrect1HolWordBitsSource {width : Nat} [NeZero width]
   unfold evalCrepHolWordBitsExp at hpres ⊢
   rw [hstate]
   exact hpres
-
 
 end Flapjack

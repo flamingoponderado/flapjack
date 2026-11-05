@@ -668,7 +668,6 @@ mutual
   decreasing_by all_goals first | sizeOf_list_dec | decreasing_trivial
 end
 
-
 mutual
   /-- Prop-valued Flapjack convenience predicate mirroring the equations of
       HOL `v_flds_ok_def`. It is not an exact port: HOL returns Bool, while
@@ -919,21 +918,6 @@ def panStructConvertState [BEq String] (context : StructPassContext)
   baseAddress := state.baseAddress
   topAddress := state.topAddress
 
-/-- The concrete `pan_structs` state conversion preserves
-    `PanSemExceptionShapesRanged`: the source predicate plus a byte-ranged pass
-    context gives the compiled state's exception-shape table the required
-    range. This instantiates the `flapjack-pxn.18.4.3.77.2.15.3` predicate at
-    the production constructor `panStructConvertState`, so the `hexnRanged`
-    premise of the `Raise` agreement is discharged for reachable states
-    without a free rangedness assumption. Untagged Flapjack plumbing. -/
-theorem panSemExceptionShapesRanged_panStructConvertState {σ : Type}
-    [BEq String] (context : StructPassContext)
-    (state : PanSemState (RiscV.Word 64) (FfiState σ))
-    (h : PanSemExceptionShapesRanged state) (hc : CtxBR context.structs) :
-    PanSemExceptionShapesRanged (panStructConvertState context state) := by
-  have hmap := h.map_structCompileShape context.structs hc
-  simpa only [PanSemExceptionShapesRanged, panStructConvertState] using hmap
-
 /-- The `pan_structs` value conversion preserves `PanValueByteRanged`: the word
     case is unchanged, `rStruct` carries the predicate over the converted field
     list, and `nStruct` drops its record and field names and converts only the
@@ -1018,39 +1002,6 @@ theorem panSemStateRelExecRanged_panStructConvertState {σ : Type}
   · exact panValueByteRanged_of_globals_panStructConvertState context state
   · simp [panStructConvertState, StructContext.toHOL,
       Pancake.PanLang.StructContextByteRanged]
-
-/-- The concrete `pan_structs` state conversion preserves the ranged-code
-    invariant used by the total evaluator bridge. Source code entries must be
-    byte-ranged, and the structure context must be byte-ranged; the proof
-    follows the production `panStructConvertCode` map and the shape/program
-    compiler lemmas. The initial-code premise can be derived from
-    `functionEntries` with `panSemCodeRanged_of_functionEntries`. Untagged
-    Flapjack plumbing (`flapjack-pxn.18.4.3.77.2.15.5`). -/
-theorem panSemCodeRanged_panStructConvertState {σ : Type}
-    [BEq String] (context : StructPassContext)
-    (state : PanSemState (RiscV.Word 64) (FfiState σ))
-    (h : ∀ entry ∈ state.code, PanLangEntryByteRanged entry.2)
-    (hc : CtxBR context.structs) :
-    PanSemCodeRanged (panStructConvertState context state) := by
-  have hmap := PanSemCodeRanged.map_structCompile h context hc
-  simpa only [PanSemCodeRanged, panStructConvertState, panStructConvertCode] using hmap
-
-/-- Declaration-derived code remains ranged through the concrete `pan_structs`
-    state conversion. This connects `DeclByteRanged` input declarations to the
-    production state constructor used after the pass. Untagged Flapjack
-    plumbing (`flapjack-pxn.18.4.3.77.2.15.5`). -/
-theorem panSemCodeRanged_panStructConvertState_of_functionEntries {σ : Type}
-    [BEq String] (context : StructPassContext)
-    (state : PanSemState (RiscV.Word 64) (FfiState σ))
-    (declarations : List (Decl (RiscV.Word 64)))
-    (hranged : ∀ declaration ∈ declarations,
-      Flapjack.Pancake.PanLang.DeclByteRanged declaration)
-    (hc : CtxBR context.structs) :
-    PanSemCodeRanged
-      (panStructConvertState context { state with code := functionEntries declarations }) := by
-  apply panSemCodeRanged_panStructConvertState
-  · exact functionEntries_panLangEntryByteRanged declarations hranged
-  · exact hc
 
 /-- Production-evaluator API translation of the local HOL helper
     `compile_exp_correct_mmap_helper` (`pan_structsProofScript.sml:206`):
@@ -2514,7 +2465,6 @@ mutual
         rw [panValueFldsOk_toHOL context value, panFieldsFldsOk_toHOL context fields]
 end
 
-
 private theorem panStructRStructListShapeFields
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α] [Sub α]
     [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
@@ -3435,21 +3385,6 @@ theorem panStructCompileExpCorrectRFieldCase
                 exact hselectedConverted
               exact ⟨hshape, hselectedValid, htarget⟩
 
-/-- Lookup in HOL's `FMAP_MAP2`-shaped `InfoMap` representation commutes with
-    mapping values. Keeping this finite list, rather than only its total lookup
-    function, preserves the exact support needed by `compile_correct`. -/
-theorem lookupInfo_mapValues [BEq String] (entries : InfoMap α)
-    (name : String) (convert : α → β) :
-    lookupInfo name (entries.map fun (key, value) => (key, convert value)) =
-      (lookupInfo name entries).map convert := by
-  induction entries with
-  | nil => simp [lookupInfo]
-  | cons entry entries ih =>
-      rcases entry with ⟨key, value⟩
-      by_cases hkey : key == name
-      · simp [lookupInfo, hkey]
-      · simp [lookupInfo, hkey, ih]
-
 theorem panStruct_mapKeys_preserved (entries : InfoMap α)
     (transform : String × α → String × β)
     (htransform : ∀ entry, (transform entry).1 = entry.1) :
@@ -3518,50 +3453,6 @@ def panStructFiniteStateFromMaps [BEq String] [LawfulBEq String]
     cases runtime
     intro name
     simp
-
-/-- The `INFO_MAP`-backed initial-state constructor preserves the code-range
-    invariant whenever its stored code entries are byte-ranged. Combined with
-    `panSemCodeRanged_of_functionEntries`, this applies to declaration-built
-    function maps. Untagged Flapjack plumbing
-    (`flapjack-pxn.18.4.3.77.2.15.5`). -/
-theorem panSemCodeRanged_panStructFiniteStateFromMaps {σ : Type}
-    [BEq String] [LawfulBEq String]
-    (runtime : PanSemState (RiscV.Word 64) (FfiState σ))
-    (locals globals : InfoMap (PanValue (RiscV.Word 64)))
-    (exceptionShapes : InfoMap Shape) (code : PanSemCodeMap (RiscV.Word 64))
-    (locals_nodup : (locals.map Prod.fst).Nodup)
-    (globals_nodup : (globals.map Prod.fst).Nodup)
-    (exceptionShapes_nodup : (exceptionShapes.map Prod.fst).Nodup)
-    (code_nodup : (code.map Prod.fst).Nodup)
-    (h : ∀ entry ∈ code, PanLangEntryByteRanged entry.2) :
-    PanSemCodeRanged
-      (panStructFiniteStateFromMaps runtime locals globals exceptionShapes code
-        locals_nodup globals_nodup exceptionShapes_nodup code_nodup).runtime := by
-  exact panSemCodeRanged_of_entries _ h
-
-/-- The `INFO_MAP`-backed concrete state constructor preserves
-    `PanSemExceptionShapesRanged` whenever its exception-shape association list
-    stores only byte-ranged shapes. This instantiates the
-    `flapjack-pxn.18.4.3.77.2.15.3` predicate at
-    `panStructFiniteStateFromMaps` (the `panPropsALookupEq` runtime view), for
-    use when wiring the compiled initial state into the total evaluator bridge.
-    Untagged Flapjack plumbing. -/
-theorem panSemExceptionShapesRanged_panStructFiniteStateFromMaps {σ : Type}
-    [BEq String] [LawfulBEq String]
-    (runtime : PanSemState (RiscV.Word 64) (FfiState σ))
-    (locals globals : InfoMap (PanValue (RiscV.Word 64)))
-    (exceptionShapes : InfoMap Shape) (code : PanSemCodeMap (RiscV.Word 64))
-    (locals_nodup : (locals.map Prod.fst).Nodup)
-    (globals_nodup : (globals.map Prod.fst).Nodup)
-    (exceptionShapes_nodup : (exceptionShapes.map Prod.fst).Nodup)
-    (code_nodup : (code.map Prod.fst).Nodup)
-    (hranged : ∀ entry ∈ exceptionShapes, Flapjack.Pancake.PanLang.ShapeByteRanged entry.2) :
-    PanSemExceptionShapesRanged
-      (panStructFiniteStateFromMaps runtime locals globals exceptionShapes code
-        locals_nodup globals_nodup exceptionShapes_nodup code_nodup).runtime := by
-  have hlookup :=
-    panSemExceptionShapesRanged_of_ALookupEq runtime exceptionShapes hranged
-  simpa only [PanSemExceptionShapesRanged, panStructFiniteStateFromMaps] using hlookup
 
 /-- Map all HOL finite-map fields while keeping the same finite key support.
     The result is again related to the production evaluator state by exact

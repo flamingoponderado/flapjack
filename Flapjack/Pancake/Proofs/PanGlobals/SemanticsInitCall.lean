@@ -64,11 +64,6 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} {σ : Type} [NeZero width] :
         PanSemStateFiniteExact.ofExact state.toExact state.toExact_finiteSupport = state) :=
   PanSemStateFiniteExact.holFmapAsFiniteSupportWitness
 
-
-theorem finmap_ext {α β : Type} {m n : HolFiniteMapExact α β} (h : m.lookup = n.lookup) :
-    m = n := by
-  cases m; cases n; cases h; rfl
-
 /-- The code field is preserved by `evaluate` (HOL `evaluate_invariants`). -/
 theorem eval_code {width : Nat} {σ : Type} [NeZero width]
     (s : PanSemStateFiniteExact width σ) (p : ProgHOL width) :
@@ -382,6 +377,5 @@ theorem semanticsInitCall' {width : Nat} {σ : Type} [NeZero width]
       { s' with clock := 0 } k ⟨hzero, by simp⟩
     simpa only [tin, Nat.zero_add] using h
   exact semanticsInitCall s start body start' rshape args' body' s' ⟨h1, h2, hstep, h5⟩
-
 
 end Flapjack

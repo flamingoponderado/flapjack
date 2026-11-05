@@ -4881,25 +4881,6 @@ theorem panSemExceptionShapesRanged_of_ALookupEq [DecidableEq String]
       · simp only [panPropsALookupEq, decide_eq_false_iff_not.mpr hc] at hlookup
         exact ih (fun e he => hranged e (by simp [he])) hlookup
 
-/-- `PanSemExceptionShapesRanged` is preserved by the `pan_structs` pass, which maps
-    each stored shape through `structCompileShape context`: the existing
-    `structCompileShape_byteRanged` carries byte-rangedness across the rewrite. -/
-theorem PanSemExceptionShapesRanged.map_structCompileShape
-    {state : PanSemState (RiscV.Word 64) (FfiState σ)}
-    (h : PanSemExceptionShapesRanged state) (context : StructContext)
-    (hc : CtxBR context) :
-    PanSemExceptionShapesRanged
-      { state with exceptionShapes := fun name =>
-          Option.map (structCompileShape context) (state.exceptionShapes name) } := by
-  intro exceptionId shape hlookup
-  cases hstate : state.exceptionShapes exceptionId with
-  | none => simp only [hstate, Option.map_none] at hlookup; exact absurd hlookup (by simp)
-  | some stored =>
-      simp only [hstate, Option.map_some] at hlookup
-      rw [Option.some.injEq] at hlookup
-      rw [← hlookup]
-      exact structCompileShape_byteRanged context stored hc (h exceptionId stored hstate)
-
 /-- The compiled initial exception map (a total `panPropsALookupEq` lookup of
     `exceptionEntries declarations`) satisfies `PanSemExceptionShapesRanged`
     whenever `declarations` is `DeclByteRanged`. -/

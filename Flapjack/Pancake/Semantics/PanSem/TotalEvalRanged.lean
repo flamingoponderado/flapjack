@@ -642,14 +642,6 @@ theorem functionEntries_panLangEntryByteRanged (declarations : List (Decl (RiscV
       | exnDecl _ _ => simpa only [functionEntries] using htail
       | name _ _ => simpa only [functionEntries] using htail
 
-/-- The compiled initial code map `functionEntries declarations` satisfies
-    `PanSemCodeRanged` whenever every declaration is `DeclByteRanged`. -/
-theorem panSemCodeRanged_of_functionEntries (state : PanSemState (RiscV.Word 64) (FfiState σ))
-    (declarations : List (Decl (RiscV.Word 64)))
-    (hranged : ∀ d ∈ declarations, DeclByteRanged d) :
-    PanSemCodeRanged { state with code := functionEntries declarations } :=
-  panSemCodeRanged_of_entries _ (functionEntries_panLangEntryByteRanged declarations hranged)
-
 /-- The `pan_structs` code conversion (`panStructConvertCode`, rendered inline)
     preserves `PanSemCodeRanged` for a byte-ranged structure context, via
     `structCompileShape_byteRanged` and `structCompileProg_byteRanged`. -/
