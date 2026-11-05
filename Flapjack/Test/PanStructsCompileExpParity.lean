@@ -67,33 +67,6 @@ def compileProgParityGuard : Bool :=
 #eval compileProgParityGuard
 #guard compileProgParityGuard
 
-/- Cake `compile_exps_eq_map` (`pan_structsProofScript.sml:11`): the production
-   list helper maps the production expression compiler over a nontrivial
-   structure expression. -/
-theorem structCompileExps_eq_map_fixture :
-    structCompileExp.structCompileExps context
-        ([.nStruct "Pair" [("right", .const 2), ("left", .const 1)]] : List (Exp Nat)) =
-      [.rStruct [.const 1, .const 2]] := by
-  calc
-    _ = List.map (structCompileExp context)
-        ([.nStruct "Pair" [("right", .const 2), ("left", .const 1)]] : List (Exp Nat)) :=
-      congrFun (structCompileExps_eq_map context)
-        ([.nStruct "Pair" [("right", .const 2), ("left", .const 1)]] : List (Exp Nat))
-    _ = [.rStruct [.const 1, .const 2]] := by
-      simp [structCompileExp, structCompileExp.structCompileFields,
-        structSelectFields, context, lookupInfo]
-
-/- Cake `old_exp_shapes_eq` (`pan_structsProofScript.sml:679`): the production
-   old-shape list helper maps nontrivial source expressions pointwise. -/
-theorem structOldExpShapes_eq_map_fixture :
-    structOldExpShape.structOldExpShapes context
-        ([.const 1, .var .local "local", .nStruct "Pair" [],
-          .rStruct [.const 2, .var .global "global", .var .local "local"]] : List (Exp Nat)) =
-      [.one, .comb [.one, .one], .named "Pair",
-       .comb [.one, .named "Pair", .comb [.one, .one]]] := by
-  rw [structOldExpShapes_eq_map]
-  simp [structOldExpShape, structOldExpShape.structOldExpShapes, context, lookupInfo]
-
 end Flapjack.Test.PanStructsCompileExpParity
 
 namespace Flapjack.Test.PanStructsCompileExpExactParity

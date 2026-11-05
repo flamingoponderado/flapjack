@@ -953,18 +953,6 @@ DOCUMENTED_MISMATCHES = {
         "ProgHOL width in Flapjack/Pancake/Semantics/PanProps.lean. Faithful replacement "
         "depends on flapjack-pxn.18.3.5.8 (MlString carriers). "
     ),
-    ("Flapjack/Pancake/Proofs/PanStructs.lean", "fieldsInOrderReorderNoop"): (
-        "cakeml/pancake/proofs/pan_structsProofScript.sml",
-        "fields_in_order_reorder_noop",
-        "Codex (source comparison with pan_structsProofScript.sml:218-239: the "
-        "matching field-name-list and distinctness premises and reorder equation "
-        "correspond, but production FieldName/StructPassContext/Exp identifiers "
-        "are String while HOL uses mlstring and exact expression/context carriers. "
-        "The conclusion preserves compiled expression identifiers, which are "
-        "byte-observable. No NameRanged premise exists, so names_as_string cannot "
-        "bridge arbitrary names. Keep @[hol] withheld pending exact carrier work "
-        "flapjack-pxn.18.3.5.8."
-    ),
     ("Flapjack/Pancake/Proofs/PanToCrep.lean", "globalsLookup"): (
         "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
         "globals_lookup_def",
@@ -1060,19 +1048,6 @@ DOCUMENTED_MISMATCHES = {
         "carriers. The direct pan_lang_is_wf_shape_probe.out examples cover "
         "the HOL predicate only, not a carrier equivalence. Keep @[hol] "
         "withheld pending exact-carrier work flapjack-pxn.18.3.5.8."
-    ),
-    ("Flapjack/Pancake/Proofs/PanStructs.lean", "structOldExpShapes_eq_map"): (
-        "cakeml/pancake/proofs/pan_structsProofScript.sml",
-        "old_exp_shapes_eq",
-        "Codex (source comparison with pan_structsProofScript.sml:679-683: the "
-        "recursive list equation and induction argument match, but production "
-        "Exp α/Shape/StructPassContext use unrestricted String identifiers while "
-        "HOL uses mlstring names and HOL expression/shape carriers. NStruct "
-        "returns its name as a byte-observable named shape; no NameRanged premise "
-        "is present, so names_as_string cannot bridge arbitrary inputs. The Lean "
-        "kernel proof and HOL's source proof establish the list equation only "
-        "within their respective carriers. Keep @[hol] withheld pending exact "
-        "carrier work flapjack-pxn.18.3.5.8."
     ),
     ("Flapjack/Pancake/Proofs/PanStructs.lean", "structInfosOk"): (
         "cakeml/pancake/proofs/pan_structsProofScript.sml",

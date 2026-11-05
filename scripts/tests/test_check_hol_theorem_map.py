@@ -892,23 +892,6 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
         self.assertEqual(production_record["statement_status"],
                          "no_hol_reference_pending_classification")
 
-    def test_old_exp_shapes_map_analogue_stays_untagged(self):
-        inventory = {
-            (record["lean_path"], record["lean_name"]): record
-            for record in MAP["build_inventory"]()
-        }
-        key = ("Flapjack/Pancake/Proofs/PanStructs.lean", "structOldExpShapes_eq_map")
-        self.assertEqual(inventory[key]["hol_name"], "old_exp_shapes_eq")
-        self.assertEqual(inventory[key]["statement_status"], "documented_mismatch")
-
-        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
-        record = next(record for record in manifest if
-                      (record["lean_path"], record["lean_name"]) == key)
-        self.assertEqual(record["hol_name"], "old_exp_shapes_eq")
-        self.assertEqual(record["statement_status"], "documented_mismatch")
-        self.assertIn("byte-observable", record["reviewer"])
-        self.assertIn("String", record["reviewer"])
-
     def test_fperm_decs_decls_production_variant_removed(self):
         inventory = {
             (record["lean_path"], record["lean_name"]): record
@@ -923,24 +906,6 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
             "fperm_decs_declsHOL",
         )
         self.assertEqual(inventory[exact_key]["hol_name"], "fperm_decs_decls")
-
-    def test_fields_in_order_reorder_analogue_stays_untagged(self):
-        inventory = {
-            (record["lean_path"], record["lean_name"]): record
-            for record in MAP["build_inventory"]()
-        }
-        key = ("Flapjack/Pancake/Proofs/PanStructs.lean", "fieldsInOrderReorderNoop")
-        self.assertEqual(inventory[key]["hol_name"], "fields_in_order_reorder_noop")
-        self.assertEqual(inventory[key]["statement_status"], "documented_mismatch")
-
-        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
-        record = next(record for record in manifest if
-                      (record["lean_path"], record["lean_name"]) == key)
-        self.assertEqual(record["hol_name"], "fields_in_order_reorder_noop")
-        self.assertEqual(record["statement_status"], "documented_mismatch")
-        self.assertIn("byte-observable", record["reviewer"])
-        self.assertIn("No NameRanged premise", record["reviewer"])
-
 
 class ValidateInventoryTest(unittest.TestCase):
     path = "Flapjack/Pancake/Proofs/Example.lean"

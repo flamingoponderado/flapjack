@@ -84482,14 +84482,7 @@
     "statement_status": "reviewed_exact",
     "reviewer": "Codex (source predicate premise and MAP/DROPWHILE conclusion comparison with direct HOL-EVAL fixture)"
   },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
-    "hol_name": "fields_in_order_reorder_noop",
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
-    "lean_name": "fieldsInOrderReorderNoop",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Codex (source comparison with pan_structsProofScript.sml:218-239: the matching field-name-list and distinctness premises and reorder equation correspond, but production FieldName/StructPassContext/Exp identifiers are String while HOL uses mlstring and exact expression/context carriers. The conclusion preserves compiled expression identifiers, which are byte-observable. No NameRanged premise exists, so names_as_string cannot bridge arbitrary names. Keep @[hol] withheld pending exact carrier work flapjack-pxn.18.3.5.8.)"
-  },
+
   {
     "hol_path": null,
     "hol_name": null,
@@ -84530,46 +84523,11 @@
     "statement_status": "reviewed_exact",
     "reviewer": "Codex (equal-length premise and ZIP/MAP conclusion comparison with direct HOL-EVAL fixture)"
   },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
-    "lean_name": "lookupInfoWithRest_fields_wf",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Lean-only field-well-formedness helper for the size_of_compile_shape proof"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
-    "lean_name": "lookupInfoWithRest_lookupInfo",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Lean-only lookup bridge helper for the size_of_compile_shape proof"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
-    "lean_name": "lookupInfoWithRest_mem",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Lean-only membership helper for the size_of_compile_shape proof"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
-    "lean_name": "lookupInfoWithRest_none_lookupInfo_none",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Lean-only absent-lookup bridge helper for the size_of_compile_shape proof"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
-    "lean_name": "lookupInfoWithRest_suffix_drop",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Lean-only suffix-extraction helper for the size_of_compile_shape proof"
-  },
+
+
+
+
+
   {
     "hol_path": null,
     "hol_name": null,
@@ -84586,14 +84544,7 @@
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Lean support lemma for lookupInfo_drop_helper; no separate HOL declaration"
   },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
-    "hol_name": "alookup_map_structs_ok",
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
-    "lean_name": "lookupInfo_fields_nodup",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-dlc.63): HOL alookup_map_structs_ok is a local theorem over `(stcname # struct_info) list` with `stcname`/`fldname` = mlstring and `struct_info = <|fields; size|>`, looked up with ALOOKUP, concluding `ALL_DISTINCT (MAP FST info.fields)`. Lean lookupInfo_fields_nodup concludes the same shape but over the production `StructContext = List (StructName × StructInfo)` with `StructName`/`FieldName` = String, `StructInfo` carrying the extra shapedFields cache, lookupInfo as first-match BEq, and an extra `[BEq String] [LawfulBEq String]` side condition. Record arity, lookup, and equality side conditions differ beyond names, so (names_as_string := ...) does not apply and the tag stays withdrawn. Exact MlString/exact-record port tracked by flapjack-pxn.18.3.5.8 (parent flapjack-pxn.18.3.5.7.2); oracle row scripts/hol-probes/afindi_probe.out:14, fixture Flapjack.Test.PanStructsAfindiParity (instantiates on simpleContext)."
-  },
+
   {
     "hol_path": null,
     "hol_name": null,
@@ -84642,54 +84593,12 @@
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only production-carrier analogue of size_of_sh_with_ctxt_drop; kept as useful String-backed infrastructure beside the exact MlString/ShapeHOL port."
   },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
-    "lean_name": "shapeSizeWithContext_fold_drop",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Lean-only fold-size context-suffix helper for the size_of_compile_shape proof"
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
-    "hol_name": "compile_exps_eq_map",
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
-    "lean_name": "structCompileExps_eq_map",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-dlc.64): decision keep tag withdrawn. HOL compile_exps_eq_map (pan_structsProofScript.sml:11) is over the record context (pan_structsScript.sml:15-21) whose structs field is the fields-only (stcname # (fldname # shape) list) list with stcname/fldname = mlstring, and over the same compile_exp/compile_exps pair. This Lean statement uses production StructPassContext (PanStructs.lean:41-45): structs : StructContext has StructInfo entries with the production-only shapedFields cache (HOL structs is a bare (fldname # shape) list, no struct_info) and locals/globals : InfoMap Shape; the statement also passes the full StructContext to structCompileShape while HOL compile_shape consumes fields-only ctxt.structs. Carrier arity/field types differ, not only names, so (names_as_string := ...) does not apply. Faithful MlString port tracked by open P1 flapjack-pxn.18.3.5.8 (parent flapjack-pxn.18.3.5.7.2). Oracle row list_map=T in scripts/hol-probes/pan_structs_compile_exp_probe.out; fixture Flapjack.Test.PanStructsCompileExpParity.structCompileExps_eq_map_fixture."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
-    "hol_name": "is_wf_shape_compile_shape",
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
-    "lean_name": "structCompileShapeWF_isWfShape",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-dlc.68): HOL's mutual is_wf_shape_compile_shape (pan_structsProofScript.sml:298) is quantified over fields-only contexts (stcname # (fldname # shape) list) list with stcname/fldname = mlstring, and compile_shape consumes exactly that list. This Lean statement is keyed by production carriers: isWfShape and structCompileShapeWF both take StructContext = List (StructName x StructInfo), where StructName/FieldName = String and StructInfo adds the production-only shapedFields cache (HOL struct_info is fields+size only); the compile-context is the full cache-augmented context, not HOL's fields projection MAP (lambda (nm,info).(nm,info.fields)) ctxt. The [BEq String] argument is production String equality in the Named lookup. The context carrier, not just the name representation, differs, so the (names_as_string := ...) qualifier does not apply. The quantifier/hypothesis shape otherwise matches (no hypotheses; the outer wf-context is independent in both conjuncts, as in HOL). Exact MlString/ShapeHOL/StructContextExact carriers are available for a faithful port, tracked by OPEN flapjack-pxn.18.3.5.8 (parent flapjack-pxn.18.3.5.7.2). Fixture: Flapjack.Test.PanStructsCompileShapeParity.structCompileShapeWF_isWfShape_fixture."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
-    "hol_name": "size_of_compile_shape",
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
-    "lean_name": "structCompileShapeWF_size",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-dlc.72): HOL size_of_compile_shape (pan_structsProofScript.sml:512) is stated over stcname/fldname = mlstring and applies compile_shape to the fields projection MAP (λ(nm,info). (nm,info.fields)) ctxt, i.e. a (stcname # (fldname # shape) list) list context. structCompileShapeWF_size instead quantifies the production StructContext = List (StructName × StructInfo) with StructName/FieldName = String, whose StructInfo carries the extra production-only shapedFields cache, and passes the full StructInfo to structCompileShapeWF rather than HOL's projection. The carrier arity and context term differ beyond name representation, so the (names_as_string := ...) qualifier does not apply; tag remains withdrawn. Faithful MlString/ShapeHOL port tracked by flapjack-pxn.18.3.5.8 (parent flapjack-pxn.18.3.5.7.2). Direct HOL row size_of_compile_shape_comb in scripts/hol-probes/pan_structs_compile_exp_correct_probe.out; Lean fixture Flapjack.Test.PanStructsCompileShapeParity."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
-    "lean_name": "structCompileShapesFuel_eq_map",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (fuel parameter differs from no-fuel HOL compile_shapes_eq_map; see theorem docstring)"
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
-    "hol_name": "compile_shapes_eq_map",
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
-    "lean_name": "structCompileShapes_eq_map",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-dlc.65): HOL compile_shapes_eq_map (pan_structsProofScript.sml:310) is !sctxt shs. compile_shapes sctxt shs = MAP (compile_shape sctxt) shs, over the fields-only context (stcname # (fldname # shape) list) list with stcname/fldname = mlstring; the production functions consume exactly that list. The Lean statement quantifies the production StructContext = List (StructName x StructInfo) with StructName/FieldName = String and StructInfo carrying the extra shapedFields cache (HOL struct_info is fields+size only), so the context carrier differs in arity, not only name representation; this theorem only passes the context through but a tag would still record the compiled functions' carriers, and (names_as_string := ...) does not authorize the extra field. Tag stays withdrawn; faithful MlString carrier port tracked by flapjack-pxn.18.3.5.8 (parent flapjack-pxn.18.3.5.7.2). Fixture: Flapjack.Test.PanStructsCompileShapeParity.structCompileShapes_eq_map_fixture."
-  },
+
+
+
+
+
+
   {
     "hol_path": null,
     "hol_name": null,
@@ -84714,14 +84623,7 @@
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Production String/cache-backed analogue; the exact fields/size-only source port is structInfosOkHOLExact_drop in StructInfosOkExact.lean."
   },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
-    "hol_name": "old_exp_shapes_eq",
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
-    "lean_name": "structOldExpShapes_eq_map",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Codex (source comparison with pan_structsProofScript.sml:679-683: the recursive list equation and induction argument match, but production Exp α/Shape/StructPassContext use unrestricted String identifiers while HOL uses mlstring names and HOL expression/shape carriers. NStruct returns its name as a byte-observable named shape; no NameRanged premise is present, so names_as_string cannot bridge arbitrary inputs. The Lean kernel proof and HOL's source proof establish the list equation only within their respective carriers. Keep @[hol] withheld pending exact carrier work flapjack-pxn.18.3.5.8.)"
-  },
+
   {
     "hol_path": null,
     "hol_name": null,

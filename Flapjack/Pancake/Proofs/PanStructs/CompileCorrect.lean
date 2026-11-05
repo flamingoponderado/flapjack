@@ -813,8 +813,7 @@ decreasing_by
     intentionally untagged because HOL's `mem_load` uses a finite address
     domain and word-labelled state memory, while this helper is stated over
     the production `readWord` callback. The no-named-shape premise isolates
-    precisely the One/Comb induction branches. `structCompileShapeWF_size`
-    supplies the address-step equality used by recursive Comb loads. -/
+    precisely the One/Comb induction branches. -/
 
 private theorem panValueFlatFieldsFuel_eq_shapeListFuel
     (fields : List (FieldName × Shape)) :
