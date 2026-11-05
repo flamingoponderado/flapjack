@@ -272,4 +272,73 @@ theorem gcInv_fresh_bijection {α β : Type} (conf : Config β) (state : GcState
     apply newSurjective j
     simpa only [oldTargets, target, or_assoc] using oldOrNew
 
+/-- A newly copied object is pending rather than final, regardless of which
+side of the major collector heap receives it. -/
+theorem gcInv_fresh_notFinal {α β : Type} (conf : Config β) (state : GcState α β)
+    (heap0 : List (HeapElement α β)) (roots0 : List (HeapAddress α))
+    (ptr len : Nat) (value : α) (addresses : List (HeapAddress α)) (payload : β)
+    (invariant : gcInv conf state heap0 roots0)
+    (found : heapLookup ptr state.heap = some (.dataElement addresses len payload)) :
+    let target := if conf.isRef payload then state.a + (state.n - (len + 1)) else state.a
+    let next := if conf.isRef payload then
+      { state with r4 := .dataElement addresses len payload :: state.r4, n := state.n - (len + 1) }
+    else
+      { state with h2 := state.h2 ++ [.dataElement addresses len payload], n := state.n - (len + 1), a := state.a + len + 1 }
+    ¬ isFinal conf next target := by
+  obtain ⟨_, _, _, _, enough, _, _, _⟩ :=
+    gcInv_fresh_forward_structure conf state heap0 roots0 ptr len state.a value addresses payload invariant found
+  have allocated := invariant.1
+  rw [heapLength_append] at allocated
+  simp only [heapLength] at allocated
+  dsimp only
+  cases ref : conf.isRef payload <;> simp only [Bool.false_eq_true, ↓reduceIte, isFinal,
+    heapLength, List.map_cons, List.sum_cons, elLength, not_or, not_and, not_lt, not_le]
+  all_goals omega
+
+/-- A fresh move's original and destination lookups contain the same object,
+and the installed forwarding entry names its destination. -/
+theorem gcInv_fresh_new_lookup {α β : Type} (conf : Config β) (state : GcState α β)
+    (heap0 : List (HeapElement α β)) (roots0 : List (HeapAddress α))
+    (ptr len : Nat) (value : α) (addresses : List (HeapAddress α)) (payload : β)
+    (invariant : gcInv conf state heap0 roots0)
+    (found : heapLookup ptr state.heap = some (.dataElement addresses len payload)) :
+    ∃ before after,
+      state.heap = before ++ .dataElement addresses len payload :: after ∧ ptr = heapLength before ∧
+      let target := if conf.isRef payload then state.a + (state.n - (len + 1)) else state.a
+      let forwarded := before ++ .forwardPointer target value len :: after
+      let next := if conf.isRef payload then
+        { state with r4 := .dataElement addresses len payload :: state.r4, n := state.n - (len + 1) }
+      else
+        { state with h2 := state.h2 ++ [.dataElement addresses len payload], n := state.n - (len + 1), a := state.a + len + 1 }
+      (heapMap 0 forwarded).lookup ptr = some target ∧
+      heapLookup ptr heap0 = some (.dataElement addresses len payload) ∧
+      heapLookup target (next.h1 ++ next.h2 ++ heapExpand next.n ++ next.r4 ++ next.r3 ++ next.r2 ++ next.r1) =
+        some (.dataElement addresses len payload) := by
+  obtain ⟨before, after, heapEq, ptrEq⟩ := heapLookup_split state.heap ptr _ found
+  have similar := invariant.2.2.2.2.2.2.1
+  rw [heapEq] at similar
+  obtain ⟨before0, after0, heap0Eq, lengthEq⟩ :=
+    heapSimilar_data_imp heap0 before after addresses len payload similar
+  have original : heapLookup ptr heap0 = some (.dataElement addresses len payload) := by
+    rw [ptrEq, heap0Eq, lengthEq]
+    exact heapLookup_prefix before0 after0 _
+  have allocated := invariant.1
+  refine ⟨before, after, heapEq, ptrEq, ?_, original, ?_⟩
+  · rw [ptrEq, heapMap_replace_data before after _ len addresses payload value]
+    simp [HolFiniteMapExact.lookup_update, FUPDATE]
+  · cases ref : conf.isRef payload with
+    | false =>
+      simp only [Bool.false_eq_true, ↓reduceIte]
+      have copied := heapLookup_prefix (state.h1 ++ state.h2)
+        (heapExpand (state.n - (len + 1)) ++ state.r4 ++ state.r3 ++ state.r2 ++ state.r1)
+        (.dataElement addresses len payload)
+      simpa [List.append_assoc, allocated] using copied
+    | true =>
+      simp only [↓reduceIte]
+      have copied := heapLookup_prefix ((state.h1 ++ state.h2) ++ heapExpand (state.n - (len + 1)))
+        (state.r4 ++ state.r3 ++ state.r2 ++ state.r1) (.dataElement addresses len payload)
+      have allocated' : heapLength state.h1 + heapLength state.h2 = state.a := by
+        simpa [heapLength_append] using allocated
+      simpa [List.append_assoc, heapLength_append, heapLength_heapExpand, ← Nat.add_assoc, allocated'] using copied
+
 end Flapjack.Compiler.Backend.GenGc
