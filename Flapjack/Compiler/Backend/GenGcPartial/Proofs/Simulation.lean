@@ -2336,4 +2336,93 @@ theorem heapLookup_forwardedData {α β γ : Type} (conf : Config γ)
   rw [GenGc.heapLookup_append, if_pos inBounds]
   simpa [mapped] using sourceFound
 
+/-- Flapjack proof infrastructure: the reconstructed partial-collector heap
+has the same encoded length as the original valid heap. -/
+theorem partialGc_outputLength {α β : Type} (conf : Config β)
+    (roots roots1 : List (HeapAddress α)) (heap : List (HeapElement α β)) (state : GcState α β)
+    (run : partialGc conf (roots, heap) = (roots1, state)) (original : genInv conf heap)
+    (valid : heapOk heap conf.limit) (invariant : simInv conf heap state) (empty : state.h2 = []) :
+    heapLength (state.old ++ state.h1 ++ heapExpand state.n ++ state.r1) = conf.limit := by
+  have boundary := partialGc_outputPrefixLength conf roots roots1 heap state run original invariant empty
+  obtain ⟨_, _, old, current, refs, segment, _⟩ := original
+  have refsSimilar := (partialGc_regions conf roots roots1 heap old current refs state segment run).2
+  have refsLength := (similarData_lengths conf refs state.r1 refsSimilar).1
+  obtain ⟨whole, _, _, tailLen⟩ := heapSegment_imp heap conf.genStart conf.refsStart old current refs segment
+  have heapLen := valid.1
+  rw [heapLength_append, boundary, ← refsLength, tailLen, heapLen]
+  have ordered := invariant.1.2.1
+  omega
+
+/-- Flapjack proof infrastructure: if the translated final state satisfies the
+major collector invariant, the reconstructed partial heap has no forwarding
+pointers. -/
+theorem partialGc_outputNoForward {α β : Type} (conf : Config β)
+    (roots roots1 : List (HeapAddress α)) (heap : List (HeapElement α β)) (state : GcState α β)
+    (majorHeap : List (HeapElement (DataSort (HeapAddress α) α) β))
+    (majorRoots : List (HeapAddress (DataSort (HeapAddress α) α)))
+    (run : partialGc conf (roots, heap) = (roots1, state)) (original : genInv conf heap)
+    (valid : heapOk heap conf.limit)
+    (majorInv : GenGc.gcInv (toGenConf conf) (toGenState conf state) majorHeap majorRoots) :
+    (state.old ++ state.h1 ++ heapExpand state.n ++ state.r1).filter isForwardPointer = [] := by
+  obtain ⟨_, _, old, current, refs, segment, _⟩ := original
+  obtain ⟨oldEq, refsSimilar⟩ := partialGc_regions conf roots roots1 heap old current refs state segment run
+  obtain ⟨whole, _, _, _⟩ := heapSegment_imp heap conf.genStart conf.refsStart old current refs segment
+  have noForward : ∀ element ∈ heap, isForwardPointer element = false := by
+    intro element member
+    cases flag : isForwardPointer element with
+    | false => rfl
+    | true =>
+      have inFilter : element ∈ heap.filter isForwardPointer := by simp [member, flag]
+      rw [valid.2.1] at inFilter
+      simp at inFilter
+  have oldClean : old.filter isForwardPointer = [] := by
+    apply List.filter_eq_nil_iff.mpr
+    intro element member
+    have inHeap : element ∈ heap := by rw [← whole]; simp [member]
+    simp [noForward element inHeap]
+  have refsClean : refs.filter isForwardPointer = [] := by
+    apply List.filter_eq_nil_iff.mpr
+    intro element member
+    have inHeap : element ∈ heap := by rw [← whole]; simp [member]
+    simp [noForward element inHeap]
+  have outputRefsClean := similarData_noForward conf refs state.r1 refsSimilar refsClean
+  have copiedData := majorInv.2.2.2.2.2.2.2.1
+  have copiedClean : state.h1.filter isForwardPointer = [] := by
+    apply List.filter_eq_nil_iff.mpr
+    intro element member
+    have translatedMember : toGenHeapElement conf element ∈ (toGenState conf state).h1 := by
+      change toGenHeapElement conf element ∈ state.h1.map (toGenHeapElement conf)
+      exact List.mem_map.mpr ⟨element, member, rfl⟩
+    have data := copiedData _ translatedMember
+    cases element <;> simp [toGenHeapElement, isDataElement, isForwardPointer] at data ⊢
+  have freeClean : (heapExpand state.n : List (HeapElement α β)).filter isForwardPointer = [] := by
+    cases state.n <;> simp [heapExpand, isForwardPointer]
+  simp [List.filter_append, oldEq, oldClean, copiedClean, freeClean, outputRefsClean]
+
+/-- Flapjack proof infrastructure: every pointer in an unchanged old-region
+object still points to data in the reconstructed output heap. -/
+theorem partialGc_oldPointersValid {α β : Type} (conf : Config β)
+    (roots roots1 : List (HeapAddress α)) (heap : List (HeapElement α β)) (state : GcState α β)
+    (run : partialGc conf (roots, heap) = (roots1, state)) (original : genInv conf heap)
+    (valid : heapOk heap conf.limit) (invariant : simInv conf heap state) (empty : state.h2 = [])
+    (children : List (HeapAddress α)) (len : Nat) (data : β) (ptr : Nat) (value : α)
+    (object : .dataElement children len data ∈ state.old) (child : .pointer ptr value ∈ children) :
+    isSomeDataElement (heapLookup ptr (state.old ++ state.h1 ++ heapExpand state.n ++ state.r1)) := by
+  have originalCopy := original
+  obtain ⟨_, _, old, current, refs, segment, _, _, _, _, _, oldPointers⟩ := originalCopy
+  have oldEq := (partialGc_regions conf roots roots1 heap old current refs state segment run).1
+  have oldObject : .dataElement children len data ∈ old := by simpa [oldEq] using object
+  have outside := oldPointers children len data ptr value ⟨oldObject, child⟩
+  obtain ⟨whole, _, _, _⟩ := heapSegment_imp heap conf.genStart conf.refsStart old current refs segment
+  have inHeap : .dataElement children len data ∈ heap := by rw [← whole]; simp [oldObject]
+  obtain ⟨targetChildren, targetLen, targetData, targetFound⟩ := valid.2.2 children len data ptr value ⟨inHeap, child⟩
+  rcases outside with before | after
+  · have output := heapLookup_old conf roots roots1 heap state ptr
+      (state.h1 ++ heapExpand state.n ++ state.r1) targetChildren targetLen targetData run original targetFound before
+    exact ⟨targetChildren, targetLen, targetData, by simpa [List.append_assoc] using output⟩
+  · have boundary := partialGc_outputPrefixLength conf roots roots1 heap state run original invariant empty
+    obtain ⟨resultChildren, resultFound⟩ :=
+      heapLookup_refs conf roots roots1 heap state ptr targetChildren targetLen targetData run original targetFound boundary after
+    exact ⟨resultChildren, targetLen, targetData, resultFound⟩
+
 end Flapjack.Compiler.Backend.GenGcPartial

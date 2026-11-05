@@ -110,6 +110,26 @@ theorem gcMoveRefList_similar {α β γ : Type} (conf : Config γ)
       exact .cons ⟨rfl, rfl, gcMoveList_similar conf roots roots1 state middle headRun⟩
         (ih tail1 middle final tailRun)
 
+/-- Flapjack infrastructure: similarity preserves the absence of forwarding
+pointers. -/
+theorem similarData_noForward {α β σ : Type} (conf : σ) (left right : List (HeapElement α β))
+    (similar : List.Forall₂ (similarData conf) left right)
+    (clean : left.filter isForwardPointer = []) : right.filter isForwardPointer = [] := by
+  induction similar with
+  | nil => rfl
+  | @cons head1 head2 left right head tail ih =>
+    cases head1 <;> cases head2 <;>
+      simp_all [similarData, isForwardPointer]
+
+/-- Traversing reference objects preserves the absence of forwarding pointers.
+The local HOL proof has not yet been replayed. -/
+@[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "gc_move_refs_isForwardPointer"]
+theorem gcMoveRefList_noForward {α β γ : Type} (conf : Config γ)
+    (refs refs1 : List (HeapElement α β)) (state state1 : GcState α γ)
+    (run : gcMoveRefList conf state refs = (refs1, state1))
+    (clean : refs.filter isForwardPointer = []) : refs1.filter isForwardPointer = [] :=
+  similarData_noForward conf refs refs1 (gcMoveRefList_similar conf refs refs1 state state1 run) clean
+
 /-- Partial collection preserves the number of roots, including failure. -/
 theorem partialGc_length {α β : Type} (conf : Config β) (roots roots1 : List (HeapAddress α))
     (heap : List (HeapElement α β)) (state : GcState α β)

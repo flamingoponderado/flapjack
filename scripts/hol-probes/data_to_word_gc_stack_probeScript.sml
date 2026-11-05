@@ -113,6 +113,11 @@ val partialAddrMapAppendLength = ``
   (ADDR_MAP ($FAPPLY f) (refs_to_roots conf heap_refs) = refs_to_roots conf r1)``;
 val _ = (print "partial_addr_map_append_length_statement_typed=";
   Lib.with_flag (Globals.show_types,true) print_term partialAddrMapAppendLength; print "\n");
+val partialRefsNoForward = ``!refs refs1 state1 state.
+  (gc_move_ref_list conf state refs = (refs1,state1)) /\
+  (FILTER isForwardPointer refs = []) ==> (FILTER isForwardPointer refs1 = [])``;
+val _ = (print "partial_refs_no_forward_statement_typed=";
+  Lib.with_flag (Globals.show_types,true) print_term partialRefsNoForward; print "\n");
 val partialNewFDomain = ``
   (!i. i IN FDOM f ==> isSomeDataElement (heap_lookup (i + conf.gen_start) heap)) ==>
   ((x IN FDOM (new_f f conf heap)) =

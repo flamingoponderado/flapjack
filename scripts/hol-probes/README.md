@@ -8,6 +8,8 @@ The same probe parses the complete partial-collection output-prefix length state
 
 The same probe captures the typed source statement for splitting mapped roots from mapped reference-object children. It is a parsed local statement, not a HOL proof replay.
 
+The same probe parses the reference traversal's no-forwarding-pointer statement with independent reference and state payload types; it does not replay the local HOL proof.
+
 `data_to_word_gc_stack_probe.out` captures the typed local reference-list simulation statement, including its independent reference-element payload type. This is a parsed statement, not a HOL proof replay.
 
 `data_to_word_gc_stack_probe.out` captures the inferred statement of local `gc_move_list_simulation`; it is a typed parse rather than a replay of the local HOL proof.

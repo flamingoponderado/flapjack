@@ -1,6 +1,14 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "gc_move_refs_isForwardPointer",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Similarity.lean",
+  "lean_name": "gcMoveRefList_noForward",
+  "statement_status": "pending_statement_review",
+  "reviewer": "Compared partial_refs_no_forward_statement_typed, including independent reference and collector-state payloads; local HOL proof replay remains pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
   "hol_name": "isSomeDataElement_heap_lookup_heap_expand",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
   "lean_name": "heapLookup_heapExpand_notData",
