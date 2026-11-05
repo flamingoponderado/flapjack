@@ -686,36 +686,7 @@ theorem arm8Next_movK_agree (d : BitVec 64 → Prop) (s t : arm8_state)
     (hb2 : t.MEM (t.PC + 2) = BitVec.ofNat 8 ((arm8MoveWideWord .k hw imm16 rd >>> 16).toNat))
     (hb3 : t.MEM (t.PC + 3) = BitVec.ofNat 8 ((arm8MoveWideWord .k hw imm16 rd >>> 24).toNat)) :
     Arm8L3Agree d (arm8Next s) (arm8Next t) := by
-  have hokt : arm8Ok t = true := by rw [← arm8Ok_congr h]; exact hok
-  obtain ⟨hel, he0, _, _, _, hexc0, halign⟩ := (arm8Ok_iff s).mp hok
-  obtain ⟨helt, he0t, _, _, _, hexc0t, halignt⟩ := (arm8Ok_iff t).mp hokt
-  have hal : Aligned (TN := 64) (s.PC, 4) = true := by
-    rw [Aligned_four_iff]
-    simpa [← h.pc] using (holAligned_iff 2 s.PC).mp halign
-  have halt : Aligned (TN := 64) (t.PC, 4) = true := by
-    rw [Aligned_four_iff]
-    simpa using (holAligned_iff 2 t.PC).mp halignt
-  have hd0 : d t.PC := by simpa using hf 0 (by omega)
-  have hd1 : d (t.PC + 1) := by simpa using hf 1 (by omega)
-  have hd2 : d (t.PC + 2) := by simpa using hf 2 (by omega)
-  have hd3 : d (t.PC + 3) := by simpa using hf 3 (by omega)
-  have hs0 : s.MEM s.PC = BitVec.ofNat 8 ((arm8MoveWideWord .k hw imm16 rd >>> 0).toNat) := by
-    rw [h.pc]
-    exact (h.mem t.PC hd0).trans hb0
-  have hs1 : s.MEM (s.PC + 1) = BitVec.ofNat 8 ((arm8MoveWideWord .k hw imm16 rd >>> 8).toNat) := by
-    rw [h.pc]
-    exact (h.mem (t.PC + 1) hd1).trans hb1
-  have hs2 : s.MEM (s.PC + 2) = BitVec.ofNat 8 ((arm8MoveWideWord .k hw imm16 rd >>> 16).toNat) := by
-    rw [h.pc]
-    exact (h.mem (t.PC + 2) hd2).trans hb2
-  have hs3 : s.MEM (s.PC + 3) = BitVec.ofNat 8 ((arm8MoveWideWord .k hw imm16 rd >>> 24).toNat) := by
-    rw [h.pc]
-    exact (h.mem (t.PC + 3) hd3).trans hb3
-  have hsf : ∀ j, j < 4 → d (s.PC + BitVec.ofNat 64 j) := by
-    intro j hj; rw [h.pc]; exact hf j hj
-  have hss := arm8Next_movK s hw imm16 rd hrd hexc0 hs0 hs1 hs2 hs3 hal he0 hel
-  have htt := arm8Next_movK t hw imm16 rd hrd hexc0t hb0 hb1 hb2 hb3 halt he0t helt
-  rw [hss, htt]
+  refine arm8L3Agree_next h hok _ _ (fun u => arm8Next_movK u hw imm16 rd hrd) ?_ hf hb0 hb1 hb2 hb3
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · simp [h.pc]
   · simp only [X, h.reg]
@@ -725,7 +696,6 @@ theorem arm8Next_movK_agree (d : BitVec 64 → Prop) (s t : arm8_state)
   · simp [h.exc]
   · intro a ha
     simp only [h.mem a ha]
-
 
 /-! ## The four-instruction shape, step by step -/
 
