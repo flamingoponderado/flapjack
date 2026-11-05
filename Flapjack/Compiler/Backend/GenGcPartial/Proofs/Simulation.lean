@@ -1733,4 +1733,66 @@ theorem newForwardMap_current {α β : Type} (f : HolFiniteMapExact Nat Nat)
     simp [fOldPtrs, Nat.not_lt.mpr lower, Nat.not_le.mpr upper]
   simp [newForwardMap, newForwardLookup, notOld, lower]
 
+open Classical in
+/-- Flapjack infrastructure: characterization of the combined forwarding-map
+domain. The finite-map representation has not yet been classified for HOL. -/
+theorem newForwardMap_domain {α β : Type} (f : HolFiniteMapExact Nat Nat)
+    (conf : Config β) (heap : List (HeapElement α β)) (ptr : Nat)
+    (valid : ∀ i, f.lookup i ≠ none → isSomeDataElement (heapLookup (i + conf.genStart) heap)) :
+    ((newForwardMap f conf heap).lookup ptr ≠ none) ↔
+      if ptr < conf.genStart ∨ conf.refsStart ≤ ptr then
+        isSomeDataElement (heapLookup ptr heap)
+      else ∃ i, f.lookup i ≠ none ∧ ptr = conf.genStart + i := by
+  by_cases outside : ptr < conf.genStart ∨ conf.refsStart ≤ ptr
+  · simp only [outside, ↓reduceIte]
+    by_cases data : isSomeDataElement (heapLookup ptr heap)
+    · have old : ptr ∈ fOldPtrs conf heap := ⟨data, outside⟩
+      simp [newForwardMap_old f conf heap ptr old, data]
+    · have absent : conf.genStart ≤ ptr → f.lookup (ptr - conf.genStart) = none := by
+        intro lower
+        by_contra found
+        have isData := valid (ptr - conf.genStart) found
+        have address : ptr - conf.genStart + conf.genStart = ptr := by omega
+        rw [address] at isData
+        exact data isData
+      simpa [newForwardMap, newForwardLookup, fOldPtrs, outside, data] using absent
+  · have lower : conf.genStart ≤ ptr := by omega
+    have upper : ptr < conf.refsStart := by omega
+    have mapDomain : (f.lookup (ptr - conf.genStart)).map (conf.genStart + ·) ≠ none ↔
+        f.lookup (ptr - conf.genStart) ≠ none := by
+      cases f.lookup (ptr - conf.genStart) <;> simp
+    simp only [outside, ↓reduceIte, newForwardMap_current f conf heap ptr lower upper, mapDomain]
+    constructor
+    · intro found
+      exact ⟨ptr - conf.genStart, found, by omega⟩
+    · rintro ⟨i, found, eq⟩
+      have : ptr - conf.genStart = i := by omega
+      simpa [this] using found
+
+open Classical in
+/-- Flapjack infrastructure: applying the combined forwarding map at a
+defined key agrees with the appropriate source-region rule. -/
+theorem newForwardMap_apply {α β : Type} (f : HolFiniteMapExact Nat Nat)
+    (conf : Config β) (heap : List (HeapElement α β)) (ptr : Nat)
+    (present : (newForwardMap f conf heap).lookup ptr ≠ none)
+    (valid : ∀ i, f.lookup i ≠ none → isSomeDataElement (heapLookup (i + conf.genStart) heap)) :
+    holFapply (newForwardMap f conf heap) ptr =
+      if ptr < conf.genStart ∨ conf.refsStart ≤ ptr then ptr
+      else conf.genStart + holFapply f (ptr - conf.genStart) := by
+  by_cases outside : ptr < conf.genStart ∨ conf.refsStart ≤ ptr
+  · simp only [outside, ↓reduceIte]
+    have data : isSomeDataElement (heapLookup ptr heap) := by
+      simpa only [outside, ↓reduceIte] using (newForwardMap_domain f conf heap ptr valid).mp present
+    exact holFapply_of_lookup (newForwardMap_old f conf heap ptr ⟨data, outside⟩)
+  · simp only [outside, ↓reduceIte]
+    have lower : conf.genStart ≤ ptr := by omega
+    have upper : ptr < conf.refsStart := by omega
+    have current := newForwardMap_current f conf heap ptr lower upper
+    cases found : f.lookup (ptr - conf.genStart) with
+    | none => simp [found] at current; exact False.elim (present current)
+    | some value =>
+      rw [holFapply_of_lookup found]
+      apply holFapply_of_lookup
+      simpa [found] using current
+
 end Flapjack.Compiler.Backend.GenGcPartial
