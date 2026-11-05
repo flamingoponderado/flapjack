@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.MakeSpaceGc
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.If
+import Flapjack.Compiler.Backend.Semantics.DataProps.PrimitiveResources
 
 /-! Composing allocation failure with continuing commands. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Correct
