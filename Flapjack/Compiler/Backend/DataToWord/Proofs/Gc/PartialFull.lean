@@ -179,6 +179,93 @@ theorem partialFull_dataFixed {α β : Type} (conf : GenGcPartial.Config β) (st
     | forwardPointer ptr value len => rw [GenGcPartial.gcMoveData]; simp [heap, bounded]
     | dataElement roots len payload => exact False.elim (notData roots len payload rfl)
 
+/-- Root traversal preserves the two outer heap segments. -/
+theorem partialFull_rootSegment {α β : Type} (conf : GenGcPartial.Config β)
+    (roots roots1 : List (HeapAddress α)) (state state1 : GcState α β)
+    (old current refs : List (HeapElement α β))
+    (run : GenGcPartial.gcMoveList conf state roots = (roots1, state1))
+    (segment : heapSegment (conf.genStart, conf.refsStart) state.heap = some (old, current, refs))
+    (ordered : conf.genStart ≤ conf.refsStart) :
+    ∃ current1, heapSegment (conf.genStart, conf.refsStart) state1.heap = some (old, current1, refs) := by
+  obtain ⟨whole, oldLen, endLen, _⟩ := heapSegment_imp state.heap _ _ old current refs segment
+  have finalShape := partialGcMoveList_heapSplit roots conf state roots1 state1 old current refs run segment ordered
+  have lengthEq := GenGcPartial.gcMoveList_heapLength roots roots1 conf state state1 run
+  let changed := heapTake (heapLength current) (heapDrop (heapLength old) state1.heap)
+  have finalEq : state1.heap = old ++ changed ++ refs := finalShape
+  have changedLen : heapLength changed = heapLength current := by
+    rw [← whole, finalEq] at lengthEq
+    simp only [heapLength_append] at lengthEq
+    omega
+  refine ⟨changed, ?_⟩
+  rw [finalEq, ← oldLen, ← endLen]
+  simp only [heapSegment, List.append_assoc, heapSplit_append, heapLength_append,
+    Nat.not_lt.mpr (Nat.le_add_right _ _), ↓reduceIte, Nat.add_sub_cancel_left]
+  rw [← changedLen, heapSplit_append]
+  rfl
+
+/-- Reference traversal preserves the two outer heap segments. -/
+theorem partialFull_refsSegment {α β γ : Type} (conf : GenGcPartial.Config γ)
+    (scanned scanned1 : List (HeapElement α β)) (state state1 : GcState α γ)
+    (old current refs : List (HeapElement α γ))
+    (run : GenGcPartial.gcMoveRefList conf state scanned = (scanned1, state1))
+    (segment : heapSegment (conf.genStart, conf.refsStart) state.heap = some (old, current, refs))
+    (ordered : conf.genStart ≤ conf.refsStart) :
+    ∃ current1, heapSegment (conf.genStart, conf.refsStart) state1.heap = some (old, current1, refs) := by
+  induction scanned generalizing scanned1 state state1 current with
+  | nil => simp [GenGcPartial.gcMoveRefList, Prod.mk.injEq] at run; obtain ⟨_, rfl⟩ := run; exact ⟨current, segment⟩
+  | cons head tail ih =>
+    cases head with
+    | unused len => simp [GenGcPartial.gcMoveRefList, Prod.mk.injEq] at run; obtain ⟨_, rfl⟩ := run; exact ⟨current, segment⟩
+    | forwardPointer ptr value len => simp [GenGcPartial.gcMoveRefList, Prod.mk.injEq] at run; obtain ⟨_, rfl⟩ := run; exact ⟨current, segment⟩
+    | dataElement roots len payload =>
+      simp only [GenGcPartial.gcMoveRefList] at run
+      generalize headRun : GenGcPartial.gcMoveList conf state roots = result at run
+      obtain ⟨roots1, middle⟩ := result
+      generalize tailRun : GenGcPartial.gcMoveRefList conf middle tail = result at run
+      obtain ⟨tail1, final⟩ := result
+      simp only [Prod.mk.injEq] at run
+      obtain ⟨_, rfl⟩ := run
+      obtain ⟨changed, changedSegment⟩ := partialFull_rootSegment conf roots roots1 state middle old current refs headRun segment ordered
+      exact ih tail1 middle final changed tailRun changedSegment
+
+/-- Copied-data scanning preserves the two outer heap segments. -/
+theorem partialFull_dataSegment {α β : Type} (conf : GenGcPartial.Config β) (state : GcState α β)
+    (ordered : conf.genStart ≤ conf.refsStart) :
+    ∀ old current refs,
+      heapSegment (conf.genStart, conf.refsStart) state.heap = some (old, current, refs) →
+      ∃ current1, heapSegment (conf.genStart, conf.refsStart) (GenGcPartial.gcMoveData conf state).heap =
+        some (old, current1, refs) := by
+  classical
+  induction state using GenGcPartial.gcMoveData.induct conf with
+  | case1 state empty =>
+    intro old current refs segment
+    rw [GenGcPartial.gcMoveData]
+    simpa [empty] using (Exists.intro current segment)
+  | case2 state head tail heap over =>
+    intro old current refs segment
+    rw [GenGcPartial.gcMoveData]
+    simpa [heap, over] using (Exists.intro current segment)
+  | case3 state tail roots len payload roots1 middle move heap bounded flag ih =>
+    intro old current refs segment
+    obtain ⟨changed, middleSegment⟩ :=
+      partialFull_rootSegment conf roots roots1 state middle old current refs move segment ordered
+    have nextSegment : heapSegment (conf.genStart, conf.refsStart)
+        ({ middle with h1 := middle.h1 ++ [.dataElement roots1 len payload], h2 := middle.h2.drop 1, ok := flag } : GcState α β).heap =
+          some (old, changed, refs) := middleSegment
+    have result := ih old changed refs nextSegment
+    cases state with
+    | mk old0 h1 h2 r4 r3 r2 r1 a n status origHeap heap0 =>
+      simp only at heap
+      subst h2
+      rw [GenGcPartial.gcMoveData]
+      simpa only [bounded, ↓reduceIte, move] using result
+  | case4 state head tail heap bounded notData =>
+    intro old current refs segment
+    cases head with
+    | unused len => rw [GenGcPartial.gcMoveData]; simpa [heap, bounded] using (Exists.intro current segment)
+    | forwardPointer ptr value len => rw [GenGcPartial.gcMoveData]; simpa [heap, bounded] using (Exists.intro current segment)
+    | dataElement roots len payload => exact False.elim (notData roots len payload rfl)
+
 /-- A successful partial collection consists of a valid heap segment,
 successful root and reference traversals, and the final copied-data scan. -/
 theorem partialFull_abstractSteps {α β : Type} (conf : GenGcPartial.Config β)
@@ -230,6 +317,33 @@ theorem partialFull_collectDataMass {α β : Type} (conf : GenGcPartial.Config �
   rw [dataRun] at scanMass
   simp only [emptyGcState, heapLength, List.map_nil, List.sum_nil, Nat.add_zero] at rootsMass
   exact rootsMass.trans (refsMass.trans scanMass)
+
+/-- A successful partial collection preserves its original old and reference
+segments in the collector's source heap. -/
+theorem partialFull_collectSegment {α β : Type} (conf : GenGcPartial.Config β)
+    (roots roots1 : List (HeapAddress α)) (heap : List (HeapElement α β)) (result : GcState α β)
+    (run : GenGcPartial.partialGc conf (roots, heap) = (roots1, result)) (ok : result.ok = true)
+    (ordered : conf.genStart ≤ conf.refsStart) :
+    ∃ current current1 refs,
+      heapSegment (conf.genStart, conf.refsStart) heap = some (result.old, current, refs) ∧
+      heapSegment (conf.genStart, conf.refsStart) result.heap = some (result.old, current1, refs) := by
+  obtain ⟨old, current, refs, middle, refs1, afterRefs, segment, rootsRun, _, refsRun, _, dataRun⟩ :=
+    partialFull_abstractSteps conf roots roots1 heap result run ok
+  let initial : GcState α β :=
+    { emptyGcState with heap := heap, old := old, r2 := refs, a := conf.genStart, n := heapLength current }
+  obtain ⟨middleCurrent, middleSegment⟩ :=
+    partialFull_rootSegment conf roots roots1 initial middle old current refs rootsRun segment ordered
+  obtain ⟨refsCurrent, refsSegment⟩ :=
+    partialFull_refsSegment conf refs refs1 middle afterRefs old middleCurrent refs refsRun middleSegment ordered
+  obtain ⟨finalCurrent, finalSegment⟩ :=
+    partialFull_dataSegment conf { afterRefs with r1 := refs1, r2 := [] } ordered old refsCurrent refs refsSegment
+  rw [dataRun] at finalSegment
+  have rootOld := (partialMoveList_fixedFields conf roots roots1 initial middle rootsRun).2.2.2.2.2
+  have refsOld := (partialFull_refListFixed conf refs refs1 middle afterRefs refsRun).2.2.2.2.2
+  have dataOld := (partialFull_dataFixed conf { afterRefs with r1 := refs1, r2 := [] }).2.2.2.2.1
+  rw [dataRun] at dataOld
+  have oldEq : result.old = old := by simpa [initial] using dataOld.trans (refsOld.trans rootOld)
+  exact ⟨current, finalCurrent, refs, by simpa [oldEq] using segment, by simpa [oldEq] using finalSegment⟩
 
 /-- Connect the original whole-heap assertion to the partial collector's
 verified root traversal and retain the remaining heap regions as its frame. -/

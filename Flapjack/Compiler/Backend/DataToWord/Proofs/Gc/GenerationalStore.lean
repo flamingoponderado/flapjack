@@ -285,6 +285,29 @@ theorem partialSource_resultOldData {width : Nat} [NeZero width] (conf : Config)
   obtain ⟨current, refs, segment⟩ := partialSource_resultSegment _ roots roots1 heap state run ok
   exact partialSource_oldData heap state.old current refs _ (a + sp + sp1) a segment source.2.2.2.1.2.2 startBound
 
+/-- Source unused-space accounting and the preserved outer heap segments
+bound the copied old generation by the original allocation point. -/
+theorem partialSource_allocationBound {α β : Type} (conf : GenGcPartial.Config β)
+    (roots roots1 : List (HeapAddress α)) (heap : List (HeapElement α β)) (state : GcState α β)
+    (a free : Nat) (finish : conf.refsStart = a + free)
+    (unused : unusedSpaceInv a free heap)
+    (run : GenGcPartial.partialGc conf (roots, heap) = (roots1, state)) (ok : state.ok = true)
+    (ordered : conf.genStart ≤ conf.refsStart) (oldData : ∀ element ∈ state.old, isDataElement element) :
+    heapLength (state.old ++ state.h1) ≤ a := by
+  obtain ⟨current, current1, refs, inputSegment, outputSegment⟩ :=
+    partialFull_collectSegment conf roots roots1 heap state run ok ordered
+  obtain ⟨inputWhole, _, inputEnd, _⟩ := heapSegment_imp heap _ _ state.old current refs inputSegment
+  obtain ⟨outputWhole, _, _, _⟩ := heapSegment_imp state.heap _ _ state.old current1 refs outputSegment
+  have split : heapSplit (a + free) heap = some (state.old ++ current, refs) := by
+    rw [← finish, ← inputEnd, ← inputWhole]
+    exact heapSplit_append (state.old ++ current) refs
+  have sourceMass := partialSource_dataMass heap (state.old ++ current) refs a free unused split
+  have resultMass := partialFull_collectDataMass conf roots roots1 heap state run ok
+  have oldMass := GenGcPartial.dataMass_of_allData state.old oldData
+  rw [← outputWhole, GenGcPartial.dataMass_append, GenGcPartial.dataMass_append, oldMass] at resultMass
+  rw [heapLength_append]
+  omega
+
 /-- The store invariant supplies the memory and machine-word premises for a
 successful combined partial collection. -/
 theorem combinedPartial_store_simulation {width : Nat} [NeZero width] (conf : Config)
@@ -469,9 +492,8 @@ theorem combinedMajor_store_execution {width : Nat} [NeZero width] (conf : Confi
   simp only [List.map_cons] at concrete
   simp [wordGcFun, kind, full, globalValue, currValue, otherValue, sizeValue, wordSemTheWord, concrete, holHd, assum]
 
-/-- Execute the concrete partial branch when the collector's new allocation
-pointer stays below the previous trigger. Deriving that heap bound from the
-source invariant remains part of the enclosing store-correctness proof. -/
+/-- Execute the concrete partial branch, deriving the allocation bound from
+the source invariant and the collector's preserved heap segments. -/
 theorem combinedPartial_store_execution {width : Nat} [NeZero width] (conf : Config)
     (root root1 : HeapAddress (WordLocW width)) (roots roots1 : List (HeapAddress (WordLocW width)))
     (heap heap1 : List (HeapElement (WordLocW width) (HeapTag × List (WordLocW width))))
@@ -485,10 +507,7 @@ theorem combinedPartial_store_execution {width : Nat} [NeZero width] (conf : Con
     (global : store.lookup .globals = some (wordAddr conf root))
     (source : absMlInv conf values references (root :: roots, heap, be, a, sp, sp1, gens) limit next)
     (good : goodDimindex width)
-    (heapMem : heapInMemoryStore heap a sp sp1 gens conf store memory domain limit)
-    (allocationBound : ∀ (state : GcState (WordLocW width) (HeapTag × List (WordLocW width))),
-      GenGcPartial.partialGc (makePartialConf (makeGcConf limit) gens (a + sp + sp1)) (root :: roots, heap) = (root1 :: roots1, state) →
-      heapLength (state.old ++ state.h1) ≤ a + sp) :
+    (heapMem : heapInMemoryStore heap a sp sp1 gens conf store memory domain limit) :
     ∃ curr other : BitVec width, ∃ outMemory : BitVec width → WordLocW width,
       ∃ state : GcState (WordLocW width) (HeapTag × List (WordLocW width)),
       let pa := curr + wordSemBytesInWord * BitVec.ofNat width (heapLength (state.old ++ state.h1))
@@ -518,6 +537,16 @@ theorem combinedPartial_store_execution {width : Nat} [NeZero width] (conf : Con
     heapLen, segment, inv, refsOk⟩ :=
     combinedPartial_store_simulation conf (root :: roots) (root1 :: roots1) heap heap1 a sp sp1 limit a1 n1
       gens gens1 limits store memory domain run kind selected limitEq ending ordered refBound good heapMem
+  have stateOk : state.ok = true := by
+    have combinedRun := run
+    simp only [gcCombined, ↓reduceIte, abstractRun, Prod.mk.injEq] at combinedRun
+    exact combinedRun.2.2.2.2.2
+  have oldData := partialSource_resultOldData conf values references (root :: roots) (root1 :: roots1) heap state
+    be a sp sp1 limit next gens limits store memory domain source kind selected heapMem abstractRun stateOk
+  have finish : (makePartialConf (makeGcConf (α := List (WordLocW width)) limit) gens (a + sp + sp1)).refsStart =
+      a + (sp + sp1) := by cases gens; simp [makePartialConf, Nat.add_assoc]
+  have allocationBound := partialSource_allocationBound _ (root :: roots) (root1 :: roots1) heap state a (sp + sp1)
+    finish source.2.2.2.1 abstractRun stateOk ordered oldData
   refine ⟨curr, other, outMemory, state, currLookup, otherLookup, abstractRun, heapEq, allocEq, freeEq, gensEq,
     ?_, separated, h2Empty, r4Empty, r3Empty, r2Empty, inv⟩
   have globalValue : holFapply store .globals = wordAddr conf root := holFapply_of_lookup global
@@ -535,7 +564,7 @@ theorem combinedPartial_store_execution {width : Nat} [NeZero width] (conf : Con
     subst oldCurr
     exact holFapply_of_lookup oldEnd
   have enoughSpace := partialAllocation_fits conf heap a sp sp1 limit (heapLength (state.old ++ state.h1))
-    gens limits store memory domain curr selected (allocationBound state abstractRun) refBound good heapMem currLookup
+    gens limits store memory domain curr selected (by omega) refBound good heapMem currLookup
   have enough' :
       let endh := curr + wordSemBytesInWord * BitVec.ofNat width (a + sp + sp1)
       let pa := curr + wordSemBytesInWord * BitVec.ofNat width (heapLength (state.old ++ state.h1))
