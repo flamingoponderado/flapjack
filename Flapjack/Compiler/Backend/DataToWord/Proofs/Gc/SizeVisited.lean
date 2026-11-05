@@ -474,14 +474,14 @@ theorem sizeSound_single {width : Nat} [NeZero width]
       tf.lookup stamp = some ptr → heapLookup ptr heap = some (Memory.blockRep tag children) →
       sptSubspt remaining refs → sizeVisited refs remaining (sptInsert stamp () seen) f tf (ptr :: visited) →
       sizeSound limits (head :: tail) refs remaining (sptInsert stamp () seen) children f tf heap (ptr :: visited))
-    (arrays : ∀ index values ptr children,
-      sptLookup index remaining = some (.valueArray values) →
+    (arrays : ∀ bit index values ptr children,
+      value = .refPtr bit index → sptLookup index remaining = some (.valueArray values) →
       List.Forall₂ (fun addr item => Memory.valueInv conf item refs (addr, f, tf, heap)) children values →
       f.lookup index = some ptr → heapLookup ptr heap = some (Memory.refBlock children) →
       sptSubspt (sptDelete index remaining) refs → sizeVisited refs (sptDelete index remaining) seen f tf (ptr :: visited) →
       sizeSound limits values refs (sptDelete index remaining) seen children f tf heap (ptr :: visited))
-    (mutBlocks : ∀ index tag finalised left item right ptr children,
-      sptLookup index remaining = some (.mutBlock tag finalised left item right) →
+    (mutBlocks : ∀ bit index tag finalised left item right ptr children,
+      value = .refPtr bit index → sptLookup index remaining = some (.mutBlock tag finalised left item right) →
       List.Forall₂ (fun addr item => Memory.valueInv conf item refs (addr, f, tf, heap)) children (left ++ [item] ++ right) →
       f.lookup index = some ptr → heapLookup ptr heap = some (Memory.blockRep tag children) →
       sptSubspt (sptDelete index remaining) refs → sizeVisited refs (sptDelete index remaining) seen f tf (ptr :: visited) →
@@ -515,11 +515,11 @@ theorem sizeSound_single {width : Nat} [NeZero width]
       | valueArray values =>
         apply sizeSound_refArray limits conf bit index values refs remaining seen address f tf heap be visited related noThunks subset found cellInv covered
         intro ptr children relation mapped heapFound sub coverage
-        exact arrays index values ptr children found relation mapped heapFound sub coverage
+        exact arrays bit index values ptr children rfl found relation mapped heapFound sub coverage
       | mutBlock tag finalised left item right =>
         apply sizeSound_mutBlock limits conf bit index tag finalised left item right refs remaining seen address f tf heap be visited related noThunks subset found cellInv covered
         intro ptr children relation mapped heapFound sub coverage
-        exact mutBlocks index tag finalised left item right ptr children found relation mapped heapFound sub coverage
+        exact mutBlocks bit index tag finalised left item right ptr children rfl found relation mapped heapFound sub coverage
       | thunk mode item =>
         exact False.elim (noThunks index mode item ((sptSubsptLookup remaining refs).mp subset index _ found))
 
@@ -571,5 +571,96 @@ theorem reachableRefs_mutBlock (refs : Spt (BvlSem.Ref DataSem.Value))
   apply reachableRefs_refFields refs bit index (left ++ [value] ++ right) target _ reachable
   intro start member
   simpa [Memory.refEdge, found] using member
+
+/-- Flapjack infrastructure: a traversal can use any root list with the
+same members, including repetitions and arbitrary reorderings. -/
+theorem traverseHeap_roots_congr {α β : Type} (heap : List (HeapElement α β))
+    (before after : List Nat) (roots other : List (HeapAddress α))
+    (run : traverseHeap heap before roots after)
+    (same : ∀ root, root ∈ other ↔ root ∈ roots) :
+    traverseHeap heap before other after := by
+  apply traverseHeap.append run (traverseHeap.empty after)
+  ext root
+  simpa using same root
+
+/-- Flapjack infrastructure: rearranging or repeating heap roots preserves
+the sizing invariant. -/
+theorem sizeSound_roots_congr {width : Nat} [NeZero width]
+    (limits : DataSem.Limits) (values : List DataSem.Value)
+    (refs remaining : Spt (BvlSem.Ref DataSem.Value)) (seen : Spt Unit)
+    (addresses other : List (HeapAddress (WordLocW width)))
+    (f tf : HolFiniteMapExact Nat Nat) (heap : Memory.ValueHeap width) (visited : List Nat)
+    (sound : sizeSound limits values refs remaining seen addresses f tf heap visited)
+    (same : ∀ address, address ∈ other ↔ address ∈ addresses) :
+    sizeSound limits values refs remaining seen other f tf heap visited := by
+  obtain ⟨after, bound, run, sub, covered⟩ := sound
+  exact ⟨after, bound, traverseHeap_roots_congr heap visited after addresses other run same, sub, covered⟩
+
+/-- Flapjack infrastructure: remove a paired element from the middle of two
+related lists without changing the order of the remaining pairs. -/
+theorem forall₂_split_cons {α β : Type} (R : α → β → Prop)
+    (before : List α) (value : α) (after : List α) (addresses : List β)
+    (related : List.Forall₂ R (before ++ value :: after) addresses) :
+    ∃ left address right, addresses = left ++ address :: right ∧ R value address ∧
+      List.Forall₂ R (before ++ after) (left ++ right) := by
+  induction before generalizing addresses with
+  | nil =>
+    cases related with
+    | cons h t => exact ⟨[], _, _, rfl, h, t⟩
+  | cons first rest ih =>
+    cases related with
+    | cons h t =>
+      obtain ⟨left, address, right, eq, hval, hrest⟩ := ih _ t
+      exact ⟨_ :: left, address, right, by simp [eq], hval, List.Forall₂.cons h hrest⟩
+
+/-- Flapjack infrastructure: split the heap representation of a permuted
+source list at its selected source head, retaining a permutation of the tail. -/
+theorem perm_forall₂_split_cons {α β : Type} (R : α → β → Prop)
+    (value : α) (values roots : List α) (addresses : List β)
+    (perm : (value :: values).Perm roots) (related : List.Forall₂ R roots addresses) :
+    ∃ before after left address right,
+      roots = before ++ value :: after ∧ addresses = left ++ address :: right ∧
+      values.Perm (before ++ after) ∧ R value address ∧
+      List.Forall₂ R (before ++ after) (left ++ right) := by
+  have member : value ∈ roots := perm.mem_iff.mp (by simp)
+  obtain ⟨before, after, rfl⟩ := List.mem_iff_append.mp member
+  obtain ⟨left, address, right, addressEq, relatedHead, relatedTail⟩ :=
+    forall₂_split_cons R before value after addresses related
+  have remainder : values.Perm (before ++ after) := by
+    apply List.Perm.cons_inv
+    exact perm.trans (List.perm_cons_append_cons value (List.Perm.refl (before ++ after))).symm
+  exact ⟨before, after, left, address, right, rfl, addressEq, remainder, relatedHead, relatedTail⟩
+
+/-- Flapjack infrastructure: compose the sizing result for a source head
+with that for its tail when their heap roots follow a permuted source list. -/
+theorem sizeSound_perm_cons {width : Nat} [NeZero width]
+    (limits : DataSem.Limits) (conf : Config) (value : DataSem.Value)
+    (values roots : List DataSem.Value) (addresses : List (HeapAddress (WordLocW width)))
+    (refs remaining : Spt (BvlSem.Ref DataSem.Value)) (seen : Spt Unit)
+    (f tf : HolFiniteMapExact Nat Nat) (heap : Memory.ValueHeap width) (visited : List Nat)
+    (perm : (value :: values).Perm roots)
+    (related : List.Forall₂ (fun v a => Memory.valueInv conf v refs (a, f, tf, heap)) roots addresses)
+    (tailSound : ∀ before after left right,
+      values.Perm (before ++ after) →
+      List.Forall₂ (fun v a => Memory.valueInv conf v refs (a, f, tf, heap)) (before ++ after) (left ++ right) →
+      sizeSound limits values refs remaining seen (left ++ right) f tf heap visited)
+    (headSound : ∀ address middle,
+      Memory.valueInv conf value refs (address, f, tf, heap) →
+      sptSubspt (DataSem.sizeOfValues limits values remaining seen).2.1 refs →
+      sizeVisited refs (DataSem.sizeOfValues limits values remaining seen).2.1
+        (DataSem.sizeOfValues limits values remaining seen).2.2 f tf middle →
+      sizeSound limits [value] refs (DataSem.sizeOfValues limits values remaining seen).2.1
+        (DataSem.sizeOfValues limits values remaining seen).2.2 [address] f tf heap middle) :
+    sizeSound limits (value :: values) refs remaining seen addresses f tf heap visited := by
+  obtain ⟨before, after, left, address, right, _, addressEq, permTail, headRelated, tailRelated⟩ :=
+    perm_forall₂_split_cons _ value values roots addresses perm related
+  subst addresses
+  have composed := sizeSound_cons limits value values refs remaining seen address (left ++ right)
+    f tf heap visited (tailSound before after left right permTail tailRelated)
+    (fun middle sub covered => headSound address middle headRelated sub covered)
+  apply sizeSound_roots_congr limits (value :: values) refs remaining seen (address :: (left ++ right))
+    (left ++ address :: right) f tf heap visited composed
+  intro root
+  simp [or_left_comm]
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
