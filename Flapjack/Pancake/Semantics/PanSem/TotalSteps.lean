@@ -72,6 +72,25 @@ def panSemTotalExprStep [NeZero 64]
     panSemTotalExprStep state expression onValue = onValue value := by
   simp [panSemTotalExprStep, heval]
 
+theorem panSemTotalExprStep_none [NeZero 64]
+    [BEq (RiscV.Word 64)] [OfNat (RiscV.Word 64) 0] [OfNat (RiscV.Word 64) 1]
+    [OfNat (RiscV.Word 64) 2] [OfNat (RiscV.Word 64) 3]
+    [Add (RiscV.Word 64)] [Mul (RiscV.Word 64)] [Sub (RiscV.Word 64)]
+    [AndOp (RiscV.Word 64)] [OrOp (RiscV.Word 64)]
+    [HXor (RiscV.Word 64) (RiscV.Word 64) (RiscV.Word 64)]
+    [ShiftLeft (RiscV.Word 64)] [ShiftRight (RiscV.Word 64)]
+    [LT (RiscV.Word 64)]
+    [DecidableRel (fun left right : RiscV.Word 64 => left < right)]
+    [PanCmp (RiscV.Word 64)]
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (expression : Exp (RiscV.Word 64))
+    (onValue : PanValue (RiscV.Word 64) →
+      Option (PanSemHOLResult (RiscV.Word 64)) ×
+        PanSemState (RiscV.Word 64) (FfiState σ))
+    (heval : evalPanSemStateExp state expression = none) :
+    panSemTotalExprStep state expression onValue = (some .error, state) := by
+  simp [panSemTotalExprStep, heval]
+
 /-- HOL `Assign` (`panSemScript.sml:566-572`): evaluate the source, require
     `is_valid_value`, write through `set_kvar`, and return `SOME Error` with the
     state unchanged when the source fails or the destination is invalid.  A
@@ -326,6 +345,25 @@ def panSemTotalExprListStep [NeZero 64]
     panSemTotalExprListStep state expressions onValues = onValues values := by
   simp [panSemTotalExprListStep, heval]
 
+theorem panSemTotalExprListStep_none [NeZero 64]
+    [BEq (RiscV.Word 64)] [OfNat (RiscV.Word 64) 0] [OfNat (RiscV.Word 64) 1]
+    [OfNat (RiscV.Word 64) 2] [OfNat (RiscV.Word 64) 3]
+    [Add (RiscV.Word 64)] [Mul (RiscV.Word 64)] [Sub (RiscV.Word 64)]
+    [AndOp (RiscV.Word 64)] [OrOp (RiscV.Word 64)]
+    [HXor (RiscV.Word 64) (RiscV.Word 64) (RiscV.Word 64)]
+    [ShiftLeft (RiscV.Word 64)] [ShiftRight (RiscV.Word 64)]
+    [LT (RiscV.Word 64)]
+    [DecidableRel (fun left right : RiscV.Word 64 => left < right)]
+    [PanCmp (RiscV.Word 64)]
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (expressions : List (Exp (RiscV.Word 64)))
+    (onValues : List (PanValue (RiscV.Word 64)) →
+      Option (PanSemHOLResult (RiscV.Word 64)) ×
+        PanSemState (RiscV.Word 64) (FfiState σ))
+    (heval : evalPanSemStateExps state expressions = none) :
+    panSemTotalExprListStep state expressions onValues = (some .error, state) := by
+  simp [panSemTotalExprListStep, heval]
+
 /-- HOL `Primitive` (`cakeml/pancake/semantics/panSemScript.sml:576`): evaluate
     the argument expressions, run the primitive handler, and, when the produced
     value is a valid new binding for the local name, install it; otherwise
@@ -569,6 +607,27 @@ def panSemTotalStore32Clause [NeZero 64] [BEq (RiscV.Word 64)]
     panSemTotalStore32Clause state address value = (some .error, state) := by
   simp [panSemTotalStore32Clause, panSemTotalExprStep, heval]
 
+theorem panSemTotalStore32Clause_ok [NeZero 64] [BEq (RiscV.Word 64)]
+    [OfNat (RiscV.Word 64) 0] [OfNat (RiscV.Word 64) 1]
+    [OfNat (RiscV.Word 64) 2] [OfNat (RiscV.Word 64) 3]
+    [Add (RiscV.Word 64)] [Mul (RiscV.Word 64)] [Sub (RiscV.Word 64)]
+    [AndOp (RiscV.Word 64)] [OrOp (RiscV.Word 64)]
+    [HXor (RiscV.Word 64) (RiscV.Word 64) (RiscV.Word 64)]
+    [ShiftLeft (RiscV.Word 64)] [ShiftRight (RiscV.Word 64)]
+    [LT (RiscV.Word 64)]
+    [DecidableRel (fun left right : RiscV.Word 64 => left < right)]
+    [PanCmp (RiscV.Word 64)]
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (address value : Exp (RiscV.Word 64)) (addr word : RiscV.Word 64)
+    (memory : RiscV.Word 64 → Option (PanValue (RiscV.Word 64)))
+    (hevalAddr : evalPanSemStateExp state address = some (.word addr))
+    (hevalValue : evalPanSemStateExp state value = some (.word word))
+    (hstore : (panSemBitVec64MemoryAccess state).store32
+      (panSemBitVec64MemoryAccess state).domain state.memory
+      panSemBitVec64BytesInWord addr word = some memory) :
+    panSemTotalStore32Clause state address value = (none, { state with memory := memory }) := by
+  simp [panSemTotalStore32Clause, panSemTotalExprStep, hevalAddr, hevalValue, hstore]
+
 /-- HOL `StoreByte` (`cakeml/pancake/semantics/panSemScript.sml:597-603`): both
     the destination and the source must be words; store the low byte via
     `mem_store_byte s.memory s.memaddrs s.be adr (w2w w)`, modelled by the
@@ -617,6 +676,28 @@ def panSemTotalStoreByteClause [NeZero 64] [BEq (RiscV.Word 64)]
     panSemTotalStoreByteClause state address value = (some .error, state) := by
   simp [panSemTotalStoreByteClause, panSemTotalExprStep, heval]
 
+theorem panSemTotalStoreByteClause_ok [NeZero 64] [BEq (RiscV.Word 64)]
+    [OfNat (RiscV.Word 64) 0] [OfNat (RiscV.Word 64) 1]
+    [OfNat (RiscV.Word 64) 2] [OfNat (RiscV.Word 64) 3]
+    [Add (RiscV.Word 64)] [Mul (RiscV.Word 64)] [Sub (RiscV.Word 64)]
+    [AndOp (RiscV.Word 64)] [OrOp (RiscV.Word 64)]
+    [HXor (RiscV.Word 64) (RiscV.Word 64) (RiscV.Word 64)]
+    [ShiftLeft (RiscV.Word 64)] [ShiftRight (RiscV.Word 64)]
+    [LT (RiscV.Word 64)]
+    [DecidableRel (fun left right : RiscV.Word 64 => left < right)]
+    [PanCmp (RiscV.Word 64)]
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (address value : Exp (RiscV.Word 64)) (addr word : RiscV.Word 64)
+    (memory : RiscV.Word 64 → Option (PanValue (RiscV.Word 64)))
+    (hevalAddr : evalPanSemStateExp state address = some (.word addr))
+    (hevalValue : evalPanSemStateExp state value = some (.word word))
+    (hstore : (panSemBitVec64MemoryAccess state).storeByte
+      (panSemBitVec64MemoryAccess state).domain state.memory
+      panSemBitVec64BytesInWord addr word = some memory) :
+    panSemTotalStoreByteClause state address value = (none, { state with memory := memory }) := by
+  simp [panSemTotalStoreByteClause, panSemTotalExprStep, hevalAddr, hevalValue, hstore]
+
+
 -- HOL `Dec` statement clause (panSemScript.sml:556-561). Note `Dec` has no
 -- `VarKind`: it always binds the name in `s.locals`.
 def panSemTotalDecBind [BEq String] (state : PanSemState (RiscV.Word 64) (FfiState σ) )
@@ -647,6 +728,30 @@ def panSemTotalDecClause [BEq String] [LawfulBEq String] (state : PanSemState (R
     (heval : evalPanSemStateExp state expression = none) :
     panSemTotalDecClause state name shape expression body = (some .error, state) := by
   simp [panSemTotalDecClause, panSemTotalExprStep, heval]
+
+theorem panSemTotalDecClause_normal [BEq String] [LawfulBEq String] (state : PanSemState (RiscV.Word 64) (FfiState σ) )
+    (name : VarName) (shape : Shape)
+    (expression : Exp (RiscV.Word 64))
+    (body : PanSemState (RiscV.Word 64) (FfiState σ) →
+      Option (PanSemHOLResult (RiscV.Word 64)) × PanSemState (RiscV.Word 64) (FfiState σ))
+    (value : PanValue (RiscV.Word 64))
+    (heval : evalPanSemStateExp state expression = some value)
+    (hshape : panShapeMatches shape (panSemShapeOf value) = true) :
+    panSemTotalDecClause state name shape expression body =
+      (let result := body (panSemTotalDecBind state name value)
+       (result.1, { result.2 with locals := resVar result.2.locals (name, state.locals name) })) := by
+  simp [panSemTotalDecClause, panSemTotalExprStep, heval, hshape]
+
+theorem panSemTotalDecClause_shapeError [BEq String] [LawfulBEq String] (state : PanSemState (RiscV.Word 64) (FfiState σ) )
+    (name : VarName) (shape : Shape)
+    (expression : Exp (RiscV.Word 64))
+    (body : PanSemState (RiscV.Word 64) (FfiState σ) →
+      Option (PanSemHOLResult (RiscV.Word 64)) × PanSemState (RiscV.Word 64) (FfiState σ))
+    (value : PanValue (RiscV.Word 64))
+    (heval : evalPanSemStateExp state expression = some value)
+    (hshape : panShapeMatches shape (panSemShapeOf value) = false) :
+    panSemTotalDecClause state name shape expression body = (some .error, state) := by
+  simp [panSemTotalDecClause, panSemTotalExprStep, heval, hshape]
 
 /-! ## `ShMemLoad`/`ShMemStore` total clause steps (`flapjack-pxn.18.4.3.77.9`)
 
@@ -796,6 +901,49 @@ def panSemTotalExtCallStep (state : PanSemState α (FfiState σ))
     (function : FunName) :
     panSemTotalExtCallStep state none none none none readBytes invoke writeBytes function =
       (some .error, state) := rfl
+
+theorem panSemTotalExtCallStep_read_error
+    (state : PanSemState α (FfiState σ))
+    (address1 length1 address2 length2 : α)
+    (readBytes : α → α → Option (List UInt8))
+    (invoke : FfiState σ → FfiName → List UInt8 → List UInt8 → FfiResult σ)
+    (writeBytes : PanSemState α (FfiState σ) → α → List UInt8 → PanSemState α (FfiState σ))
+    (function : FunName) (hread : readBytes address1 length1 = none) :
+    panSemTotalExtCallStep state (some (.word address1)) (some (.word length1))
+        (some (.word address2)) (some (.word length2)) readBytes invoke writeBytes function =
+      (some .error, state) := by
+  simp [panSemTotalExtCallStep, hread]
+
+theorem panSemTotalExtCallStep_final
+    (state : PanSemState α (FfiState σ))
+    (address1 length1 address2 length2 : α) (bytes bytes2 : List UInt8)
+    (readBytes : α → α → Option (List UInt8))
+    (invoke : FfiState σ → FfiName → List UInt8 → List UInt8 → FfiResult σ)
+    (writeBytes : PanSemState α (FfiState σ) → α → List UInt8 → PanSemState α (FfiState σ))
+    (function : FunName) (event : FfiFinalEvent)
+    (hread1 : readBytes address1 length1 = some bytes)
+    (hread2 : readBytes address2 length2 = some bytes2)
+    (hinvoke : invoke state.ffi (.extCall function) bytes bytes2 = .final event) :
+    panSemTotalExtCallStep state (some (.word address1)) (some (.word length1))
+        (some (.word address2)) (some (.word length2)) readBytes invoke writeBytes function =
+      (some (.finalFfi event), panEmptyLocals state) := by
+  simp [panSemTotalExtCallStep, hread1, hread2, hinvoke]
+
+theorem panSemTotalExtCallStep_returned
+    (state : PanSemState α (FfiState σ))
+    (address1 length1 address2 length2 : α) (bytes bytes2 : List UInt8)
+    (readBytes : α → α → Option (List UInt8))
+    (invoke : FfiState σ → FfiName → List UInt8 → List UInt8 → FfiResult σ)
+    (writeBytes : PanSemState α (FfiState σ) → α → List UInt8 → PanSemState α (FfiState σ))
+    (function : FunName) (newFfi : FfiState σ) (newBytes : List UInt8)
+    (hread1 : readBytes address1 length1 = some bytes)
+    (hread2 : readBytes address2 length2 = some bytes2)
+    (hinvoke : invoke state.ffi (.extCall function) bytes bytes2 = .returned newFfi newBytes) :
+    panSemTotalExtCallStep state (some (.word address1)) (some (.word length1))
+        (some (.word address2)) (some (.word length2)) readBytes invoke writeBytes function =
+      (none, { writeBytes state address2 newBytes with ffi := newFfi }) := by
+  simp [panSemTotalExtCallStep, hread1, hread2, hinvoke]
+
 
 /-! ## ExtCall machine codec and clause assembly (flapjack-pxn.18.4.3.77.16)
 
@@ -996,6 +1144,72 @@ def panSemTotalWhileStep [DecidableEq α] [OfNat α 0]
     panSemTotalWhileStep state (some (.nStruct name fields)) evaluateBody recurseWhile =
       (some .error, state) := rfl
 
+theorem panSemTotalWhileStep_word_zero [DecidableEq α] [OfNat α 0]
+    (state : PanSemState α (FfiState σ)) (word : α) (hzero : word = 0)
+    (evaluateBody : PanSemState α (FfiState σ) →
+      Option (PanSemHOLResult α) × PanSemState α (FfiState σ))
+    (recurseWhile : PanSemState α (FfiState σ) →
+      Option (PanSemHOLResult α) × PanSemState α (FfiState σ)) :
+    panSemTotalWhileStep state (some (.word word)) evaluateBody recurseWhile =
+      (none, state) := by
+  simp [panSemTotalWhileStep, hzero]
+
+theorem panSemTotalWhileStep_word_timeout [DecidableEq α] [OfNat α 0]
+    (state : PanSemState α (FfiState σ)) (word : α) (hzero : word ≠ 0)
+    (hclock : state.clock = 0)
+    (evaluateBody : PanSemState α (FfiState σ) →
+      Option (PanSemHOLResult α) × PanSemState α (FfiState σ))
+    (recurseWhile : PanSemState α (FfiState σ) →
+      Option (PanSemHOLResult α) × PanSemState α (FfiState σ)) :
+    panSemTotalWhileStep state (some (.word word)) evaluateBody recurseWhile =
+      (some .timeOut, { state with locals := fun _ => none }) := by
+  simp [panSemTotalWhileStep, hzero, hclock]
+
+/-- The nonzero-condition, nonzero-clock body step. -/
+theorem panSemTotalWhileStep_word_body [DecidableEq α] [OfNat α 0]
+    (state : PanSemState α (FfiState σ)) (word : α) (hzero : word ≠ 0)
+    (hclock : state.clock ≠ 0)
+    (evaluateBody : PanSemState α (FfiState σ) →
+      Option (PanSemHOLResult α) × PanSemState α (FfiState σ))
+    (recurseWhile : PanSemState α (FfiState σ) →
+      Option (PanSemHOLResult α) × PanSemState α (FfiState σ)) :
+    panSemTotalWhileStep state (some (.word word)) evaluateBody recurseWhile =
+      (let decremented := { state with clock := state.clock - 1 }
+       let bodyResult := evaluateBody decremented
+       let s1 := panSemFixClock decremented.clock bodyResult.2
+       match bodyResult.1 with
+       | none => recurseWhile s1
+       | some .continue => recurseWhile s1
+       | some .break => (none, s1)
+       | other => (other, s1)) := by
+  simp [panSemTotalWhileStep, hzero, hclock]
+
+theorem panSemTotalWhileStep_word_break [DecidableEq α] [OfNat α 0]
+    (state : PanSemState α (FfiState σ)) (word : α) (hzero : word ≠ 0)
+    (hclock : state.clock ≠ 0) (s1 : PanSemState α (FfiState σ))
+    (evaluateBody : PanSemState α (FfiState σ) →
+      Option (PanSemHOLResult α) × PanSemState α (FfiState σ))
+    (recurseWhile : PanSemState α (FfiState σ) →
+      Option (PanSemHOLResult α) × PanSemState α (FfiState σ))
+    (hbody : evaluateBody { state with clock := state.clock - 1 } = (some .break, s1)) :
+    panSemTotalWhileStep state (some (.word word)) evaluateBody recurseWhile =
+      (none, panSemFixClock (state.clock - 1) s1) := by
+  rw [panSemTotalWhileStep_word_body state word hzero hclock evaluateBody recurseWhile]
+  simp [hbody]
+
+theorem panSemTotalWhileStep_word_continue [DecidableEq α] [OfNat α 0]
+    (state : PanSemState α (FfiState σ)) (word : α) (hzero : word ≠ 0)
+    (hclock : state.clock ≠ 0) (s1 : PanSemState α (FfiState σ))
+    (evaluateBody : PanSemState α (FfiState σ) →
+      Option (PanSemHOLResult α) × PanSemState α (FfiState σ))
+    (recurseWhile : PanSemState α (FfiState σ) →
+      Option (PanSemHOLResult α) × PanSemState α (FfiState σ))
+    (hbody : evaluateBody { state with clock := state.clock - 1 } = (some .continue, s1)) :
+    panSemTotalWhileStep state (some (.word word)) evaluateBody recurseWhile =
+      recurseWhile (panSemFixClock (state.clock - 1) s1) := by
+  rw [panSemTotalWhileStep_word_body state word hzero hclock evaluateBody recurseWhile]
+  simp [hbody]
+
 /-! ## Flapjack panSem clock helpers (flapjack-pxn.18.4.3.77.11)
 
 `panSem$dec_clock_def` and `panSem$fix_clock_def`
@@ -1097,6 +1311,18 @@ def panSemTotalDecCallStep [BEq String] [LawfulBEq String]
     panSemTotalDecCallStep state (some arguments) none resultName resultShape
       continuation evaluate = (some .error, state) := rfl
 
+theorem panSemTotalDecCallStep_timeout [BEq String] [LawfulBEq String]
+    (state : PanSemState α (FfiState σ)) (arguments : List (PanValue α))
+    (body : Prog α) (newLocals : VarName → Option (PanValue α)) (returnShape : Shape)
+    (resultName : VarName) (resultShape : Shape) (continuation : Prog α)
+    (evaluate : Prog α → PanSemState α (FfiState σ) →
+      Option (PanSemHOLResult α) × PanSemState α (FfiState σ))
+    (hclock : state.clock = 0) :
+    panSemTotalDecCallStep state (some arguments) (some (body, newLocals, returnShape))
+        resultName resultShape continuation evaluate =
+      (some .timeOut, panEmptyLocals state) := by
+  simp [panSemTotalDecCallStep, hclock]
+
 /-! ## Total `Call` clause composition step (flapjack-pxn.18.4.3.77.14)
 
 `panSemTotalCallStep` mirrors the HOL `Call` case of `evaluate_def`
@@ -1186,5 +1412,17 @@ def panSemTotalCallStep [BEq String] [LawfulBEq String]
       Option (PanSemHOLResult α) × PanSemState α (FfiState σ)) :
     panSemTotalCallStep state (some arguments) none callType evaluate =
       (some .error, state) := rfl
+
+theorem panSemTotalCallStep_timeout [BEq String] [LawfulBEq String]
+    (state : PanSemState α (FfiState σ)) (arguments : List (PanValue α))
+    (body : Prog α) (newLocals : VarName → Option (PanValue α)) (returnShape : Shape)
+    (callType : Option (Option (VarKind × VarName) ×
+      Option (ExceptionId × VarName × Prog α)))
+    (evaluate : Prog α → PanSemState α (FfiState σ) →
+      Option (PanSemHOLResult α) × PanSemState α (FfiState σ))
+    (hclock : state.clock = 0) :
+    panSemTotalCallStep state (some arguments) (some (body, newLocals, returnShape))
+        callType evaluate = (some .timeOut, panEmptyLocals state) := by
+  simp [panSemTotalCallStep, hclock]
 
 end Flapjack

@@ -46,4 +46,58 @@ noncomputable def panEvaluateClockFinite {width : Nat} {σ : Type} [NeZero width
     (PanSemStateFiniteExact.evalPanSemRecursiveCallHOLFinite_exists
       clockState (panEntryProgram start))
 
+/-- The finite recursive evaluator is total, so `panEvaluateClockFinite` is
+    its unique result/post-state pair. -/
+theorem panEvaluateClockFinite_spec {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (start : MlS) (clock : Nat) : by
+  classical
+  exact
+    PanSemStateFiniteExact.evalPanSemRecursiveCallHOLFinite
+      ({ state with clock := clock })
+      (panEntryProgram start) = some (panEvaluateClockFinite state start clock)
+  := by
+  classical
+  exact Classical.choose_spec
+    (PanSemStateFiniteExact.evalPanSemRecursiveCallHOLFinite_exists
+      ({ state with clock := clock }) (panEntryProgram start))
+
+/-- The direct finite-state clock observation projects to the existing broad
+    exact `panEvaluateClock` observation. This isolates the state/map-carrier
+    translation; it does not establish a translation for the divergence LUB. -/
+theorem panEvaluateClockFinite_toExact {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (start : MlS) (clock : Nat) :
+    ((panEvaluateClockFinite state start clock).1,
+      (panEvaluateClockFinite state start clock).2.toExact) =
+      panEvaluateClock (panSemExactContextOfFiniteState state) start clock := by
+  classical
+  let finiteState : PanSemStateFiniteExact width σ := { state with clock := clock }
+  have hfinite := panEvaluateClockFinite_spec state start clock
+  have hprojection := PanSemStateFiniteExact.evalPanSemRecursiveCallHOLFinite_toExact
+    finiteState (panEntryProgram start)
+  rw [hfinite] at hprojection
+  simp only [Option.map_some] at hprojection
+  let broadContext := panSemExactContextOfFiniteState state
+  let finiteContext := panSemExactContextOfFiniteState finiteState
+  have hstate : finiteContext.state = (panClockContext broadContext clock).state := by
+    rfl
+  have heval := eval_context_state (panEntryProgram start) finiteContext
+    (panClockContext broadContext clock) hstate
+  change some ((panEvaluateClockFinite state start clock).1,
+      (panEvaluateClockFinite state start clock).2.toExact) =
+    (evalPanSemRecursiveCallContextHOLExact (panEntryProgram start) finiteContext).map
+      (fun pair => (pair.1, pair.2.state)) at hprojection
+  rw [heval] at hprojection
+  cases hbroad : evalPanSemRecursiveCallContextHOLExact (panEntryProgram start)
+      (panClockContext broadContext clock) with
+  | none => simp [hbroad] at hprojection
+  | some pair =>
+      simp only [hbroad, Option.map_some] at hprojection
+      have hpairs := Option.some.inj hprojection
+      have hpairs' : (panEvaluateClockFinite state start clock).1 = pair.1 ∧
+          (panEvaluateClockFinite state start clock).2.toExact = pair.2.state := by
+        exact Prod.mk.inj hpairs
+      unfold panEvaluateClock
+      rw [hbroad]
+      exact Prod.ext hpairs'.1 hpairs'.2
+
 end Flapjack

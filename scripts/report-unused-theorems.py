@@ -77,6 +77,21 @@ THEOREM_RE = re.compile(
 )
 
 
+def components(token: str) -> set[str]:
+    """The dotted components of an identifier token, each also without
+    trailing quote marks.
+
+    Lean names may contain ``'``, so the token pattern keeps it; but in
+    Python or prose a name is often quoted (``'foo'``), which yields the
+    token ``foo'``.  Keeping both spellings protects ``foo`` and ``foo'``."""
+    out: set[str] = set()
+    for part in token.split("."):
+        out.add(part)
+        out.add(part.rstrip("'"))
+    out.discard("")
+    return out
+
+
 def text_roots(repo: pathlib.Path) -> set[str]:
     """Every dotted component of every identifier in the tracked text files.
 
@@ -91,7 +106,7 @@ def text_roots(repo: pathlib.Path) -> set[str]:
         if not path.is_file():
             continue
         for tok in TOKEN_RE.findall(path.read_text(encoding="utf-8", errors="replace")):
-            names.update(tok.split("."))
+            names.update(components(tok))
     return names
 
 
@@ -104,6 +119,11 @@ DECL_AFTER_ATTRS_RE = re.compile(
     r"\s*(?:(?:private|protected|noncomputable)\s+)*(theorem|lemma|def|abbrev|instance|"
     r"structure|inductive|opaque|axiom)\s+([^\s:(\[{]+)"
 )
+# A surviving comment often abbreviates a family as `..._skip_projection` or
+# `_break_projection`; such a token protects the same file's candidates whose
+# names end with it.  Short tokens (`_1`, `_eq`) are too generic to count.
+SHORTHAND_MIN = 6
+PREFIX_IN_RE = re.compile(r"^(open|set_option|omit|include|variable)\b.*\bin\s*$")
 ATTRIBUTE_CMD_RE = re.compile(r"^attribute\s*\[", re.MULTILINE)
 
 
@@ -174,7 +194,7 @@ def attributed_theorems(text: str) -> set[str]:
         rest = masked[end : len(masked) if nxt is None else nxt.start()]
         if any(a != "hol" for a in attrs):
             for tok in rest.split():
-                found.update(tok.split("."))
+                found.update(components(tok))
     return found
 
 
@@ -210,19 +230,24 @@ def attached_start(lines: list[str], start: int) -> int:
     """First line (0-based) of the comments attached to a declaration.
 
     ``start`` is the 0-based line of the declaration keyword.  Attached are
-    directly preceding ``@[...]`` and ``--`` lines, a ``/-- ... -/`` docstring
-    ending directly above them, and, after blank lines, a ``/-! ... -/``
+    directly preceding ``@[...]``, ``--`` and ``open ... in``-style prefix
+    lines, a ``/-- ... -/`` docstring ending directly above them (with the
+    prefix lines above it), and, after blank lines, a ``/-! ... -/``
     comment that is not a section heading (``is_heading``).  A comment documenting
     only one declaration is written this way, so it goes with it."""
-    k = start
-    while k > 0 and (lines[k - 1].startswith("@[") or lines[k - 1].startswith("--")):
-        k -= 1
+    def up(k: int) -> int:
+        while k > 0 and (lines[k - 1].startswith("@[") or lines[k - 1].startswith("--")
+                         or PREFIX_IN_RE.match(lines[k - 1])):
+            k -= 1
+        return k
+
+    k = up(start)
     if k > 0 and lines[k - 1].rstrip().endswith("-/"):
         m = k - 1
         while m > 0 and not lines[m].lstrip().startswith("/-"):
             m -= 1
         if lines[m].startswith("/--"):
-            k = m
+            k = up(m)
     j = k
     while j > 0 and lines[j - 1] == "":
         j -= 1
@@ -254,14 +279,16 @@ def filter_named_uses(sources: dict[str, pathlib.Path], found: list[dict]) -> li
 
     Mentions in comments and strings count: a theorem that a surviving
     docstring or module comment names is presented as a result, so the
-    report keeps it.  The lines of a candidate declaration, including its
+    report keeps it.  So does a shorthand token such as ``_skip_projection``
+    (from ``..._skip_projection``) for the same file's candidates whose names
+    end with it.  The lines of a candidate declaration, including its
     attached comments (``attached_start``), do not count."""
     lines_of: dict[str, list[set[str]]] = {}
     spans: dict[tuple[str, str], list[tuple[int, int]]] = {}
     for f, path in sources.items():
         raw = path.read_text(encoding="utf-8", errors="replace")
         lines = raw.split("\n")
-        lines_of[f] = [{c for t in TOKEN_RE.findall(line) for c in t.split(".")}
+        lines_of[f] = [{c for t in TOKEN_RE.findall(line) for c in components(t)}
                        for line in lines]
         for d in _rpd.parse_decls(path, f):
             first = attached_start(lines, d.start - 1)
@@ -273,12 +300,16 @@ def filter_named_uses(sources: dict[str, pathlib.Path], found: list[dict]) -> li
             for first, end in spans.get(key, []):
                 excluded.setdefault(key[0], set()).update(range(first, end))
         named: set[str] = set()
+        suffixes: dict[str, set[str]] = {}
         for f, toks in lines_of.items():
             skip = excluded.get(f, set())
             for i, line_toks in enumerate(toks):
                 if i not in skip:
                     named |= line_toks
-        kept = {c for c in cand if c[1] in named}
+                    suffixes.setdefault(f, set()).update(
+                        t for t in line_toks if t.startswith("_") and len(t) >= SHORTHAND_MIN)
+        kept = {c for c in cand
+                if c[1] in named or any(c[1].endswith(t) for t in suffixes.get(c[0], ()))}
         if not kept:
             break
         cand -= kept
@@ -308,7 +339,7 @@ def inventory_roots(repo: pathlib.Path) -> set[str]:
             if key in ("lean_name", "lean_path") or not isinstance(value, str):
                 continue
             for tok in TOKEN_RE.findall(value):
-                names.update(tok.split("."))
+                names.update(components(tok))
     return names
 
 

@@ -37,6 +37,19 @@ def panSemEvaluateRiscV64CodeStateWithProductionPrimop
     Option (PanValueFfiClockResult (RiscV.Word 64) σ) :=
   panSemEvaluateRiscV64CodeStateViaHOL context panPrimopHOL handler state program
 
+/-- The concrete runner is the generic source-state evaluator with exactly the
+    fixed production handler; its original parameterized interface is retained
+    for explicit-handler proofs. -/
+theorem panSemEvaluateRiscV64CodeStateWithProductionPrimop_eq
+    (context : PanValueFfiContext (RiscV.Word 64))
+    (handler : PanValueStatefulFfiHandler (RiscV.Word 64) σ)
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (program : Prog (RiscV.Word 64)) :
+    panSemEvaluateRiscV64CodeStateWithProductionPrimop context handler state program =
+      panSemEvaluateRiscV64CodeState context panPrimopHOL handler state program :=
+  panSemEvaluateRiscV64CodeStateViaHOL_eq context panPrimopHOL handler state program
+
+
 /-- Declaration-to-entry RV64 source execution with the production primitive
     handler and the guarded HOL expression route. The input owns the source
     memory domains and byte order for both declarations and the body. -/
@@ -49,6 +62,21 @@ def panSemEvaluateRiscV64ProgramWithProductionPrimop
     (memoryHandler : Option (PanValueMemoryFfiHandler (RiscV.Word 64) σ) := none) :
     Option (PanValueFfiClockResult (RiscV.Word 64) σ) :=
   panSemEvaluateRiscV64ProgramViaHOL context input clock panPrimopHOL handler
+    fuel decls entry arguments (memoryHandler := memoryHandler)
+
+/-- The concrete declaration-to-entry route retains the full previous result. -/
+theorem panSemEvaluateRiscV64ProgramWithProductionPrimop_eq
+    (context : PanValueFfiContext (RiscV.Word 64))
+    (input : PanSemRiscV64ProgramInput σ)
+    (clock : Nat) (handler : PanValueStatefulFfiHandler (RiscV.Word 64) σ)
+    (fuel : Nat) (decls : List (Decl (RiscV.Word 64)))
+    (entry : FunName) (arguments : List (Exp (RiscV.Word 64)))
+    (memoryHandler : Option (PanValueMemoryFfiHandler (RiscV.Word 64) σ) := none) :
+    panSemEvaluateRiscV64ProgramWithProductionPrimop context input clock handler
+      fuel decls entry arguments (memoryHandler := memoryHandler) =
+    evalPanValueFfiClockProgram context input.initial clock panPrimopHOL handler fuel decls entry arguments
+      (memoryAccess := some (panSemBitVec64MemoryAccess input.toOwner)) (memoryHandler := memoryHandler) :=
+  panSemEvaluateRiscV64ProgramViaHOL_eq context input clock panPrimopHOL handler
     fuel decls entry arguments (memoryHandler := memoryHandler)
 
 end Flapjack

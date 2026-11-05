@@ -120,6 +120,38 @@ def decCallStepHOLExact {width : Nat} {σ : Type} [NeZero width]
       evalExpressions evaluate = (some .error, state) := by
   simp [decCallStepHOLExact, h]
 
+theorem decCallStepHOLExact_lookup_error {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateExact width σ) (resultName : MlS) (shape : ShapeHOL)
+    (fname : MlS) (arguments : List (ExpHOL width)) (continuation : ProgHOL width)
+    (evalExpressions : PanSemStateExact width σ → List (ExpHOL width) →
+      Option (List (ValueHOL width)))
+    (evaluate : ProgHOL width → PanSemStateExact width σ →
+      Option (PanSemResultExact width) × PanSemStateExact width σ)
+    (values : List (ValueHOL width))
+    (hargs : evalExpressions state arguments = some values)
+    (hlookup : lookupCodeHOLExact state.code fname values = none) :
+    decCallStepHOLExact state resultName shape fname arguments continuation
+      evalExpressions evaluate = (some .error, state) := by
+  simp [decCallStepHOLExact, hargs, hlookup]
+
+theorem decCallStepHOLExact_timeout {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateExact width σ) (resultName : MlS) (shape : ShapeHOL)
+    (fname : MlS) (arguments : List (ExpHOL width)) (continuation : ProgHOL width)
+    (evalExpressions : PanSemStateExact width σ → List (ExpHOL width) →
+      Option (List (ValueHOL width)))
+    (evaluate : ProgHOL width → PanSemStateExact width σ →
+      Option (PanSemResultExact width) × PanSemStateExact width σ)
+    (values : List (ValueHOL width))
+    (body : ProgHOL width) (calleeLocals : MlS → Option (ValueHOL width))
+    (returnShape : ShapeHOL)
+    (hargs : evalExpressions state arguments = some values)
+    (hlookup : lookupCodeHOLExact state.code fname values =
+      some (body, calleeLocals, returnShape))
+    (hclock : state.clock = 0) :
+    decCallStepHOLExact state resultName shape fname arguments continuation
+      evalExpressions evaluate = (some .timeOut, emptyLocalsHOLExact state) := by
+  simp [decCallStepHOLExact, hargs, hlookup, hclock]
+
 /-! ## Exact `LIST_REL` carrier and the `vshapes`/`args` length/MAP lemma
 
 HOL `panSemScript.sml:740` states `vshapes_args_rel_imp_eq_len_MAP` for the

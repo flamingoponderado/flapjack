@@ -132,6 +132,22 @@ theorem docAttachedB : True := trivial
 
 theorem headingNamed : True := trivial
 
+/-! The family `..._skip_projection` / `_break_projection` is proved below. -/
+
+def separator : Nat := 0
+
+theorem fooBar_skip_projection : True := trivial
+
+theorem fooBar_break_projection : True := trivial
+
+theorem fooBar_tick_projection : True := trivial
+
+open Foo in
+/-- Mentions `prefixedB`; attached to prefixedA through `open ... in`. -/
+theorem prefixedA : True := trivial
+
+theorem prefixedB : True := trivial
+
 /-!
 # Overview
 
@@ -162,7 +178,9 @@ class NamedUsesTest(unittest.TestCase):
                      "stringOnly", "iffThm", "nsThm", "docOnlyA", "docOnlyB",
                      "docAttachedA", "docAttachedB", "headingNamed", "attachedC",
                      "afterMultilineHeading", "multilineHeadingNamed",
-                     "afterSpacedHeading", "spacedHeadingNamed"]
+                     "afterSpacedHeading", "spacedHeadingNamed", "prefixedA", "prefixedB",
+                     "fooBar_skip_projection", "fooBar_break_projection",
+                     "fooBar_tick_projection"]
             found = [{"file": "F.lean", "module": "F", "name": "Flapjack." + n} for n in names]
             kept = rut.filter_named_uses({"F.lean": path}, found)
         # usedByRfl is named by the surviving `kept`; chainB by the surviving
@@ -177,7 +195,8 @@ class NamedUsesTest(unittest.TestCase):
         self.assertEqual({d["name"].split(".")[-1] for d in kept},
                          {"deadA", "deadB", "docOnlyA", "docOnlyB", "docAttachedA",
                           "docAttachedB", "attachedC", "afterMultilineHeading",
-                          "afterSpacedHeading"})
+                          "afterSpacedHeading", "prefixedA", "prefixedB",
+                          "fooBar_tick_projection"})
 
 
 class InventoryRootsTest(unittest.TestCase):
@@ -227,6 +246,14 @@ class MainRootsTest(unittest.TestCase):
         # Every root source reaches the Lean half, and nothing else does.
         self.assertEqual(sorted(captured["roots"]),
                          ["onlyByAttribute", "onlyByInventory", "onlyByText"])
+
+
+class ComponentsTest(unittest.TestCase):
+    def test_quoted_and_primed_names(self):
+        self.assertEqual(rut.components("Ns.foo'"), {"Ns", "foo'", "foo"})
+        self.assertEqual(rut.components("bar''"), {"bar''", "bar"})
+        tokens = rut.TOKEN_RE.findall("KEEP = {('F.lean', 'quotedName'): 'x'}")
+        self.assertIn("quotedName", set().union(*(rut.components(t) for t in tokens)))
 
 
 class TextRootsTest(unittest.TestCase):

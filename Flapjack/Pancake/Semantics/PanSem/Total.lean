@@ -299,6 +299,23 @@ theorem panSemTotalIfStep_zero [DecidableEq α] [OfNat α 0]
       elseBranch state := by
   simp [panSemTotalIfStep]
 
+theorem panSemTotalIfStep_error [DecidableEq α] [OfNat α 0]
+    (state : PanSemState α (FfiState σ))
+    (evaluatedCondition : Option (PanValue α))
+    (hbad : ∀ value, evaluatedCondition ≠ some (.word value))
+    (thenBranch elseBranch :
+      PanSemState α (FfiState σ) →
+        Option (PanSemHOLResult α) × PanSemState α (FfiState σ)) :
+    panSemTotalIfStep state evaluatedCondition thenBranch elseBranch =
+      (some .error, state) := by
+  cases evaluatedCondition with
+  | none => rfl
+  | some value =>
+      cases value with
+      | word word => exact (hbad word rfl).elim
+      | rStruct values => rfl
+      | nStruct name fields => rfl
+
 /-- RISC-V 64-bit source-state `If` clause. Unlike
     `panSemTotalIfStep`, this definition evaluates the condition expression
     itself with `evalPanSemStateExp`, deriving locals, globals, structs,
@@ -328,6 +345,34 @@ def panSemEvaluateIfClauseRiscV64 [NeZero 64]
       PanSemState (RiscV.Word 64) (FfiState σ) :=
   panSemTotalIfStep state (evalPanSemStateExp state condition)
     (evaluateProgram thenBranch) (evaluateProgram elseBranch)
+
+theorem panSemEvaluateIfClauseRiscV64_word
+    (evaluateProgram : Prog (RiscV.Word 64) →
+      PanSemState (RiscV.Word 64) (FfiState σ) →
+        Option (PanSemHOLResult (RiscV.Word 64)) ×
+          PanSemState (RiscV.Word 64) (FfiState σ))
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (condition : Exp (RiscV.Word 64))
+    (thenBranch elseBranch : Prog (RiscV.Word 64))
+    (value : RiscV.Word 64)
+    (heval : evalPanSemStateExp state condition = some (.word value)) :
+    panSemEvaluateIfClauseRiscV64 evaluateProgram state condition thenBranch elseBranch =
+      (if value = 0 then evaluateProgram elseBranch state
+       else evaluateProgram thenBranch state) := by
+  simp [panSemEvaluateIfClauseRiscV64, panSemTotalIfStep, heval]
+
+theorem panSemEvaluateIfClauseRiscV64_eval_error
+    (evaluateProgram : Prog (RiscV.Word 64) →
+      PanSemState (RiscV.Word 64) (FfiState σ) →
+        Option (PanSemHOLResult (RiscV.Word 64)) ×
+          PanSemState (RiscV.Word 64) (FfiState σ))
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (condition : Exp (RiscV.Word 64))
+    (thenBranch elseBranch : Prog (RiscV.Word 64))
+    (heval : evalPanSemStateExp state condition = none) :
+    panSemEvaluateIfClauseRiscV64 evaluateProgram state condition thenBranch elseBranch =
+      (some .error, state) := by
+  simp [panSemEvaluateIfClauseRiscV64, panSemTotalIfStep, heval]
 
 theorem panSemEvaluateIfClauseRiscV64_eval_nonword
     (evaluateProgram : Prog (RiscV.Word 64) →
@@ -686,6 +731,20 @@ theorem panSemTotalAssignStep_normal_local
     (h : panValueAssignmentValid state.structs state.locals state.globals .local name evaluated = true) :
     panSemTotalAssignStep state .local name (some evaluated) =
       (.normal, { state with locals := updatePanValueMap state.locals name evaluated }) := by
+  simp [panSemTotalAssignStep, h]
+
+theorem panSemTotalAssignStep_normal_global
+    [BEq α] (state : PanSemState α (FfiState σ)) (name : VarName) (evaluated : PanValue α)
+    (h : panValueAssignmentValid state.structs state.locals state.globals .global name evaluated = true) :
+    panSemTotalAssignStep state .global name (some evaluated) =
+      (.normal, { state with globals := updatePanValueMap state.globals name evaluated }) := by
+  simp [panSemTotalAssignStep, h]
+
+theorem panSemTotalAssignStep_invalid
+    [BEq α] (state : PanSemState α (FfiState σ)) (kind : VarKind) (name : VarName)
+    (evaluated : PanValue α)
+    (h : panValueAssignmentValid state.structs state.locals state.globals kind name evaluated = false) :
+    panSemTotalAssignStep state kind name (some evaluated) = (.error, state) := by
   simp [panSemTotalAssignStep, h]
 
 end Flapjack

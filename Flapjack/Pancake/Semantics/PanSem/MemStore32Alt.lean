@@ -49,6 +49,42 @@ theorem panGetByteHOL32_toNat (i : Nat) (hi : i < 4) (value : BitVec 32)
     split <;> omega
   rw [hbi, Nat.mod_mod, nat_div_256_pow_eq_shift]
 
+/-- `w2w` conversions preserve the low byte observed by `set_byte`, even when
+    the destination word is narrower than one byte. -/
+theorem ofNat_toNat_mod_256_congr {width : Nat} [NeZero width]
+    (left right : Nat) (h : left % 256 = right % 256) :
+    (BitVec.ofNat width left).toNat % 256 =
+      (BitVec.ofNat width right).toNat % 256 := by
+  rw [BitVec.toNat_ofNat, BitVec.toNat_ofNat]
+  by_cases hwide : 8 ≤ width
+  · have hdiv : 256 ∣ 2 ^ width := by
+      refine ⟨2 ^ (width - 8), ?_⟩
+      calc
+        2 ^ width = 2 ^ (8 + (width - 8)) := by congr 1 <;> omega
+        _ = 2 ^ 8 * 2 ^ (width - 8) := Nat.pow_add _ _ _
+        _ = 256 * 2 ^ (width - 8) := by rw [show (2 : Nat) ^ 8 = 256 by decide]
+    rw [Nat.mod_mod_of_dvd _ hdiv, Nat.mod_mod_of_dvd _ hdiv, h]
+  · have hdiv : 2 ^ width ∣ 256 := by
+      refine ⟨2 ^ (8 - width), ?_⟩
+      calc
+        256 = 2 ^ 8 := by decide
+        _ = 2 ^ (width + (8 - width)) := by congr 1 <;> omega
+        _ = 2 ^ width * 2 ^ (8 - width) := Nat.pow_add _ _ _
+    have hlow : left % 2 ^ width = right % 2 ^ width := by
+      rw [← Nat.mod_mod_of_dvd left hdiv, ← Nat.mod_mod_of_dvd right hdiv, h]
+    have hbound : 2 ^ width ≤ 256 := by
+      have hw : width ≤ 7 := by omega
+      have hp := Nat.pow_le_pow_right (by omega : 1 ≤ 2) hw
+      have hseven : (2 : Nat) ^ 7 = 128 := by decide
+      rw [hseven] at hp
+      omega
+    have hpos : 0 < width := Nat.pos_of_ne_zero (NeZero.ne width)
+    have hmodwidth_left : left % 2 ^ width < 2 ^ width := Nat.mod_lt _ (Nat.pow_pos (by omega))
+    have hmodwidth_right : right % 2 ^ width < 2 ^ width := Nat.mod_lt _ (Nat.pow_pos (by omega))
+    rw [Nat.mod_eq_of_lt (Nat.lt_of_lt_of_le hmodwidth_left hbound),
+      Nat.mod_eq_of_lt (Nat.lt_of_lt_of_le hmodwidth_right hbound)]
+    exact hlow
+
 /-- The byte-slot congruence underlying the store chain. -/
 theorem store32ByteCongr {width : Nat} [NeZero width]
     (address : RiscV.Word width) (bigEndian : Bool)

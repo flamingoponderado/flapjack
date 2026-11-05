@@ -218,6 +218,23 @@ theorem evalPanSemNonrecursiveHOLFinite_clock_le {width : Nat} {σ : Type} [NeZe
     subst hres
     exact evalPanSemNonrecursiveHOLExact_clock_le program state.toExact pair hpair
 
+/-- Finite local write keeps the clock. -/
+theorem setVarHOLFinite_clock {width : Nat} {σ : Type} [NeZero width]
+    (name : MlS) (value : ValueHOL width) (state : PanSemStateFiniteExact width σ) :
+    (setVarHOLFinite name value state).clock = state.clock := rfl
+
+/-- Finite global write keeps the clock. -/
+theorem setGlobalHOLFinite_clock {width : Nat} {σ : Type} [NeZero width]
+    (name : MlS) (value : ValueHOL width) (state : PanSemStateFiniteExact width σ) :
+    (setGlobalHOLFinite name value state).clock = state.clock := rfl
+
+/-- Finite keyed write keeps the clock. -/
+theorem setKvarHOLFinite_clock {width : Nat} {σ : Type} [NeZero width]
+    (kind : VarKind) (name : MlS) (value : ValueHOL width)
+    (state : PanSemStateFiniteExact width σ) :
+    (setKvarHOLFinite kind name value state).clock = state.clock := by
+  cases kind <;> rfl
+
 /-- Finite locals clearing keeps the clock. -/
 theorem emptyLocalsHOLFinite_clock {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) :
@@ -550,6 +567,7 @@ theorem fixClockHOLFinite_evaluateState {width : Nat} {σ : Type} [NeZero width]
       evaluateHOLFiniteState state program := by
   classical
   exact fixClockHOLFinite_evaluate state program
+
 
 /-- FLAPJACK-SPECIFIC (not a HOL declaration): the finite `Call`/`DecCall` body
     result already satisfies the evaluated-clock bound, so the finite
@@ -1519,6 +1537,8 @@ theorem evaluateHOLFiniteState_call_body_fallback {width : Nat} {σ : Type} [NeZ
         FiniteEvalContext width σ) = context from rfl]
   rw [hcall]
   simp only [FiniteEvalContext.withState_state, hpostContext]
+
+
 
 /-
 HOL `evaluate_def` line-780 `Call` conjunct (fix_clock-free restatement) over the

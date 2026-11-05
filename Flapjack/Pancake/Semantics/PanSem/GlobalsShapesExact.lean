@@ -78,6 +78,22 @@ theorem assignStepHOLExact_globalsShapesExact {width : Nat} {σ : Type} [NeZero 
     · rfl
   · rfl
 
+/-- A successful exact `setKvarHOLExact` (the guarded global/local write used by
+    `Call`/`DecCall`) preserves the globals shape map. -/
+theorem setKvarHOLExact_globalsShapesExact_of_valid {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateExact width σ) (kind : VarKind) (name : MlS) (value : ValueHOL width)
+    (hvalid : isValidValueHOLExact state kind name value = true) :
+    globalsShapesExact (setKvarHOLExact kind name value state) = globalsShapesExact state := by
+  cases kind
+  · rfl
+  · funext key
+    have hshape := isValidValueHOLExact_global_shape state name value hvalid
+    by_cases hk : key = name
+    · subst hk
+      simp only [globalsShapesExact, setKvarHOLExact, if_true, Option.map_some]
+      exact hshape.symm
+    · simp only [globalsShapesExact, setKvarHOLExact, if_neg hk]
+
 /-- The broad shared-memory load helper preserves the globals shape map whenever
     its destination already holds a word (the guard the HOL evaluate clause
     imposes before calling `sh_mem_load`). -/
@@ -126,6 +142,15 @@ theorem shMemLoadHOLExact_globalsShapesExact {width : Nat} {σ : Type} [NeZero w
                 Option.map_some, shapeOfHOLExact_val_local]
             · simp only [globalsShapesExact, setKvarHOLExact, if_neg hk]
     · rw [if_neg hdomain]
+
+/-- The broad shared-memory store helper never writes a global. -/
+theorem shMemStoreHOLExact_globalsShapesExact {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateExact width σ) [DecidablePred state.shMemaddrs]
+    (word address : RiscV.Word width) (nb : Nat) :
+    globalsShapesExact (shMemStoreHOLExact state word address nb).2 =
+      globalsShapesExact state := by
+  unfold shMemStoreHOLExact
+  repeat (first | split | rfl)
 
 /-- Broad `ShMemLoad` clause preserves the globals shape map. -/
 theorem shMemLoadClauseHOLExact_globalsShapesExact {width : Nat} {σ : Type} [NeZero width]
