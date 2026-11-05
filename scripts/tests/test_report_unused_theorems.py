@@ -76,7 +76,7 @@ class AttributedTheoremsTest(unittest.TestCase):
         self.assertEqual(
             rut.attributed_theorems(LEAN),
             {"simpOne", "holAndGrind", "localSimp", "extSplit", "later", "laterToo",
-             "removedAttr", "simpDef", "multiOne", "multiTwo"},
+             "removedAttr", "simpDef", "multiOne", "multiTwo", "Ns"},
         )
 
 
@@ -103,6 +103,14 @@ theorem inExample : True := trivial
 
 theorem stringOnly : True := trivial
 def s : String := "stringOnly"
+
+theorem iffThm : True ↔ True := Iff.rfl
+
+example : True := by simp [iffThm.mp]
+
+theorem nsThm : True := trivial
+
+theorem usesNs : True := Flapjack.nsThm
 """
 
 
@@ -112,13 +120,14 @@ class NamedUsesTest(unittest.TestCase):
             path = pathlib.Path(tmp) / "F.lean"
             path.write_text(NAMED)
             names = ["usedByRfl", "deadA", "deadB", "deadC", "chainB", "inExample",
-                     "stringOnly"]
+                     "stringOnly", "iffThm", "nsThm"]
             found = [{"file": "F.lean", "module": "F", "name": "Flapjack." + n} for n in names]
             kept = rut.filter_named_uses({"F.lean": path}, found)
         # usedByRfl is named by the surviving `kept`; chainB by the surviving
         # chainA (not a candidate); inExample by an example.  deadB is named
         # only by the candidate deadA, deadC only in a comment, stringOnly
-        # only inside a string.
+        # only inside a string.  iffThm is named through `iffThm.mp` and
+        # nsThm through the qualified `Flapjack.nsThm`.
         self.assertEqual({d["name"].split(".")[-1] for d in kept},
                          {"deadA", "deadB", "deadC", "stringOnly"})
 

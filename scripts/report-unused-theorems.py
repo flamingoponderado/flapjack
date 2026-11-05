@@ -69,6 +69,9 @@ THEOREM_RE = re.compile(
 
 
 def text_roots(repo: pathlib.Path) -> set[str]:
+    """Every dotted component of every identifier in the tracked text files.
+
+    A dotted mention such as ``foo.mp`` protects ``foo`` as well as ``mp``."""
     files = subprocess.run(["git", "ls-files", *TEXT_GLOBS], cwd=repo, check=True,
                            capture_output=True, text=True).stdout.split()
     names: set[str] = set()
@@ -79,7 +82,7 @@ def text_roots(repo: pathlib.Path) -> set[str]:
         if not path.is_file():
             continue
         for tok in TOKEN_RE.findall(path.read_text(encoding="utf-8", errors="replace")):
-            names.add(tok.rsplit(".", 1)[-1])
+            names.update(tok.split("."))
     return names
 
 
@@ -162,7 +165,7 @@ def attributed_theorems(text: str) -> set[str]:
         rest = masked[end : len(masked) if nxt is None else nxt.start()]
         if any(a != "hol" for a in attrs):
             for tok in rest.split():
-                found.add(tok.rsplit(".", 1)[-1])
+                found.update(tok.split("."))
     return found
 
 
@@ -183,7 +186,8 @@ def drop_named_uses(repo: pathlib.Path, found: list[dict]) -> list[dict]:
     Every token of every ``Flapjack`` Lean file counts (comments and strings
     masked), except the lines of candidate declarations themselves, as split
     by ``report-proof-duplication.py``'s parser; so ``example``s, attribute
-    commands and macros count too.  Iterates to a fixed point: a candidate
+    commands and macros count too.  Every dotted component of a token counts,
+    so ``simp [foo.mp]`` names ``foo``.  Iterates to a fixed point: a candidate
     named elsewhere stops being a candidate, and its own body then counts."""
     if not found:
         return []
@@ -199,7 +203,7 @@ def filter_named_uses(sources: dict[str, pathlib.Path], found: list[dict]) -> li
     spans: dict[tuple[str, str], list[tuple[int, int]]] = {}
     for f, path in sources.items():
         masked = _rpd.mask_comments(path.read_text(encoding="utf-8", errors="replace"))
-        lines_of[f] = [{t.rsplit(".", 1)[-1] for t in TOKEN_RE.findall(line)}
+        lines_of[f] = [{c for t in TOKEN_RE.findall(line) for c in t.split(".")}
                        for line in masked.split("\n")]
         for d in _rpd.parse_decls(path, f):
             spans.setdefault((f, d.name.rsplit(".", 1)[-1]), []).append((d.start, d.end))
