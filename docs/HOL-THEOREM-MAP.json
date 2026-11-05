@@ -1,6 +1,30 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "ends_with_refs_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PartialFull.lean",
+  "lean_name": "endsWithRefs",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the corresponding typed HOL probe, including the independent reference address and payload carriers, the predicate and all hypotheses and conclusions."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "partial_gc_move_ref_list_isRef",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PartialFull.lean",
+  "lean_name": "partialGcMoveRefList_isRef",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the corresponding typed HOL probe, including the independent reference address and payload carriers, the predicate and all hypotheses and conclusions."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "EVERY_is_Ref_isRef",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PartialFull.lean",
+  "lean_name": "everyIsRefElement_iff",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the corresponding typed HOL probe, including the independent reference address and payload carriers, the predicate and all hypotheses and conclusions."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "word_gen_gc_partial_move_ref_list_thm",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PartialRefs.lean",
   "lean_name": "wordGenGcPartialMoveRefList_thm",
