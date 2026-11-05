@@ -1,5 +1,29 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
+  "hol_name": "check_res_size_of",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Heap/SizeProperties.lean",
+  "lean_name": "checkRes_sizeOfValues",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared check_res_size_of_typed_replay: the original local theorem is replayed in HOL, and the same limits, source values, reference tree, seen set and guarded sizing equality are retained."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "size_of_cons",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/SizeValues.lean",
+  "lean_name": "sizeOfValues_cons",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared size_of_cons_typed: the tail-first and head-second sizing equations, reference and seen-state threading, and summed result match."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "size_of_global_to_vs",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/SizeValues.lean",
+  "lean_name": "sizeOfValues_global",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared size_of_global_to_vs_typed: the same arbitrary values, optional global reference, source limits, references and visited timestamps occur on both sides."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "traverse_heap",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/HeapTraversal.lean",

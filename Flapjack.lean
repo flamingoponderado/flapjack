@@ -2980,6 +2980,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordGcCorrect
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StateGcExecution
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.HeapPointerSizes
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.HeapTraversal
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.SizeValues
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.CollectorGenerationalWord
 import Flapjack.Test.CopyingGcParity
 import Flapjack.Compiler.Backend.WordGcFunctions.Roots

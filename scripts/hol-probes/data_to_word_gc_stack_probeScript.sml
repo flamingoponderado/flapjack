@@ -38,6 +38,20 @@ val _ = show "traverse_heap_reachable_set_mono_typed" data_to_word_gcProofTheory
 val _ = show "traverse_heap_reachable_aux_vars_gc_edge_typed" data_to_word_gcProofTheory.traverse_heap_reachable_aux_vars_gc_edge;
 val _ = show "traverse_heap_reachable_RTC_gc_edge_typed" data_to_word_gcProofTheory.traverse_heap_reachable_RTC_gc_edge;
 val _ = show "traverse_heap_reachable_typed" data_to_word_gcProofTheory.traverse_heap_reachable;
+val _ = show "size_of_cons_typed" data_to_word_gcProofTheory.size_of_cons;
+val _ = show "size_of_global_to_vs_typed" data_to_word_gcProofTheory.size_of_global_to_vs;
+val checkResSizeOf = ``!lims vs refs seen.
+  dataSem$check_res refs (dataSem$size_of lims vs refs seen) = dataSem$size_of lims vs refs seen``;
+val _ = (print "check_res_size_of_typed_statement=";
+  Lib.with_flag (Globals.show_types,true) print_term checkResSizeOf; print "\n");
+val checkResSizeReplay = prove (checkResSizeOf,
+  qsuff_tac `!lims vs refs seen. sptree$size ((\(n,rs,ss). rs) (dataSem$size_of lims vs refs seen)) <= sptree$size refs`
+  >- (rw [] \\ pop_assum (assume_tac o SPEC_ALL) \\ pairarg_tac \\ fs [dataSemTheory.check_res_def])
+  \\ ho_match_mp_tac dataSemTheory.size_of_ind \\ fs [dataSemTheory.size_of_def] \\ rw []
+  \\ rpt (pairarg_tac \\ fs []) \\ rveq \\ fs []
+  \\ fs [dataSemTheory.check_res_def,bool_case_eq,option_case_eq,pair_case_eq,CaseEq"ref"]
+  \\ rveq \\ fs [] \\ rpt (pairarg_tac \\ fs []) \\ rveq \\ fs [] \\ fs [sptreeTheory.size_delete]);
+val _ = show "check_res_size_of_typed_replay" checkResSizeReplay;
 val _ = show "word_gc_fun_EL_lemma_typed" data_to_word_gcProofTheory.word_gc_fun_EL_lemma;
 val _ = show "word_gc_fun_IMP_FILTER_typed" data_to_word_gcProofTheory.word_gc_fun_IMP_FILTER;
 val _ = show "loc_ok_word_addr_typed" data_to_word_gcProofTheory.loc_ok_word_addr;

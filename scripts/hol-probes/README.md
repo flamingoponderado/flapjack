@@ -32,6 +32,8 @@ The probe also captures the typed data-pointer distinctness, lookup-domain, and 
 
 The heap traversal rules and its visited-set, edge-closure, and reachable-address theorems are captured with inferred types for comparison.
 
+The source sizing captures include the tail-first and global equations and a typed HOL replay of the local `check_res_size_of` result.
+
 `data_to_word_gc_stack_probe.out` includes the typed `full_gc_thm` statement,
 including its shared word dimension and complete abstract-memory conclusions,
 and the generic `gen_gc$is_final` predicate. These captures support source
