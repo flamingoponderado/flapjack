@@ -70,4 +70,61 @@ theorem assignCons64_of_limSafe {C F : Type} (conf : Config) (secn label l1 l2 d
     exact assignCons64 conf secn label l1 l2 dest tag source target locs related args values
       sourceRun nonempty enough _ encoded next stamps
 
+/-- A successful, space-safe source constructor execution supplies both the
+reserved-space and representation bounds needed by the simulation. -/
+theorem assignCons64_of_execution_safe {C F : Type} (conf : Config) (secn label l1 l2 dest tag : Nat)
+    (source : DataSem.State C F) (target : WordSemStateFiniteExact 64 C F)
+    (locs : List (Nat × Nat)) (related : stateRel64 conf l1 l2 source target none locs)
+    (args : List Nat) (values : List DataSem.Value)
+    (sourceRun : DataSem.getVars args source.locals = some values) (nonempty : values ≠ [])
+    (typeSafe : (DataSem.evaluate (.assign dest (.blockOp (.cons tag)) args none) source).1 ≠
+      some (.err (.abort .typeError)))
+    (spaceSafe : (DataSem.evaluate (.assign dest (.blockOp (.cons tag)) args none) source).2.safeForSpace = true) :
+    continues64 conf secn label l1 l2 (.assign dest (.blockOp (.cons tag)) args none) source target locs := by
+  have enough : values.length + 1 ≤ source.space := by
+    by_contra insufficient
+    have small : source.space < values.length + 1 := by omega
+    simp [DataSem.evaluate, DataLang.opRequiresNames, sourceRun, DataSem.cutStateOpt,
+      DataSem.doApp, DataSem.doSpace, DataLang.opSpaceReset, DataSpace.opSpaceReq,
+      DataSem.consumeSpace, nonempty, small] at typeSafe
+  have present : source.tstamps.isSome = true := related.2.2.2.2.2.2.2.2.1
+  obtain ⟨next, stamps⟩ : ∃ next, source.tstamps = some next := by
+    cases h : source.tstamps with
+    | none => simp [h] at present
+    | some next => exact ⟨next, rfl⟩
+  have safe : DataSem.limSafe source.limits (.blockOp (.cons tag)) values := by
+    by_contra bad
+    simp [DataSem.evaluate, DataLang.opRequiresNames, sourceRun, DataSem.cutStateOpt,
+      DataSem.doApp, DataSem.doSpace, DataLang.opSpaceReset, DataSpace.opSpaceReq,
+      DataSem.consumeSpace, DataSem.doAppAux, DataSem.applyNonFfi, DataSem.withFreshTimestamp,
+      DataSem.installSfs, DataSem.checkLim, DataSem.doStack, DataSem.doLimSafe, DataSem.setVar,
+      nonempty, Nat.not_lt.mpr enough, stamps, bad] at spaceSafe
+  exact assignCons64_of_limSafe conf secn label l1 l2 dest tag source target locs related args values
+    sourceRun nonempty enough safe
+
+/-- Source type and space safety suffice for any nonempty constructor
+argument list; successful source lookups provide the argument values. -/
+theorem assignCons64_of_safe {C F : Type} (conf : Config) (secn label l1 l2 dest tag : Nat)
+    (source : DataSem.State C F) (target : WordSemStateFiniteExact 64 C F)
+    (locs : List (Nat × Nat)) (related : stateRel64 conf l1 l2 source target none locs)
+    (args : List Nat) (nonempty : args ≠ [])
+    (typeSafe : (DataSem.evaluate (.assign dest (.blockOp (.cons tag)) args none) source).1 ≠
+      some (.err (.abort .typeError)))
+    (spaceSafe : (DataSem.evaluate (.assign dest (.blockOp (.cons tag)) args none) source).2.safeForSpace = true) :
+    continues64 conf secn label l1 l2 (.assign dest (.blockOp (.cons tag)) args none) source target locs := by
+  cases sourceRun : DataSem.getVars args source.locals with
+  | none =>
+    simp [DataSem.evaluate, DataLang.opRequiresNames, sourceRun] at typeSafe
+  | some values =>
+    obtain ⟨words, wordRun, lengths⟩ := stateRel64_getVars conf l1 l2 source target none locs related args values sourceRun
+    have targetLengths := WordSemStateFiniteExact.getVarsLengthLemma (args.map adjustVar) target words wordRun
+    have valueNonempty : values ≠ [] := by
+      intro empty
+      apply nonempty
+      apply List.eq_nil_of_length_eq_zero
+      simp at targetLengths
+      simpa [empty] using targetLengths.symm.trans lengths.symm
+    exact assignCons64_of_execution_safe conf secn label l1 l2 dest tag source target locs related
+      args values sourceRun valueNonempty typeSafe spaceSafe
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Correct
