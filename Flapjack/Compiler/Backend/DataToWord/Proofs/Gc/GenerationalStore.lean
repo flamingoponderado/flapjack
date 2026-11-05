@@ -931,7 +931,9 @@ theorem combinedPartial_store_correct {width : Nat} [NeZero width] (conf : Confi
       wordGcFun conf (roots.map (wordAddr conf), memory, domain, store) =
         some (roots1.map (wordAddr conf), outMemory, outStore) ∧
       heapInMemoryStore heap1 a1 k (n1 - k) gens1 conf outStore outMemory domain limit ∧
-      k ≤ n1 ∧ outStore.lookup .globals = some (wordAddr conf root1) := by
+      k ≤ n1 ∧ outStore.lookup .globals = some (wordAddr conf root1) ∧
+      ∃ p t, outStore.lookup .nextFree = some (.word p) ∧ outStore.lookup .triggerGC = some (.word t) ∧
+        wordSemTheWord (holFapply store .allocSize) ≤ t - p := by
   classical
   obtain ⟨g, globalEq⟩ := combinedPartial_global_word conf values references root root1 roots roots1 heap heap1
     be a sp sp1 limit next a1 n1 gens gens1 limits store memory domain run kind selected global source good heapMem
@@ -967,6 +969,20 @@ theorem combinedPartial_store_correct {width : Nat} [NeZero width] (conf : Confi
     have oldLen := (heapSegment_imp state.heap _ _ state.old current1 refs1 segment).2.1
     simp only [heapLength_append]
     omega
+  obtain ⟨_, _, _, refBound⟩ := partialSource_conditions conf values references (root :: roots) heap
+    be a sp sp1 limit next gens limits store memory domain source kind selected heapMem
+  have oldData := partialSource_resultOldData conf values references (root :: roots) (root1 :: roots1) heap state
+    be a sp sp1 limit next gens limits store memory domain source kind selected heapMem abstractRun stateOk
+  have ordered : (makePartialConf (makeGcConf (α := List (WordLocW width)) limit) gens (a + sp + sp1)).genStart ≤
+      a + sp + sp1 := by
+    obtain ⟨_, _, startBound, _⟩ := partialSource_conditions conf values references (root :: roots) heap
+      be a sp sp1 limit next gens limits store memory domain source kind selected heapMem
+    omega
+  have allocationBound := partialSource_allocationBound _ (root :: roots) (root1 :: roots1) heap state a (sp + sp1)
+    (by simpa [Nat.add_assoc] using refsStartEq) source.2.2.2.1 abstractRun stateOk ordered oldData
+  have fits := partialAllocation_fits conf heap a sp sp1 limit (heapLength (state.old ++ state.h1))
+    gens limits store memory domain curr selected (by omega) refBound good heapMem currLookup
+  have triggerFits := newTrig_alloc_le _ _ limits fits
   obtain ⟨k, triggerEq, kBound⟩ := newTrig_wordCount state.n
     (wordSemTheWord (holFapply store .allocSize)) limits good
   have invariant := combinedPartial_store_reconstruct conf heap heap1 a sp sp1 limit
@@ -980,10 +996,17 @@ theorem combinedPartial_store_correct {width : Nat} [NeZero width] (conf : Confi
         (curr + wordSemBytesInWord * BitVec.ofNat width (heapLength (state.old ++ state.h1))))
         (wordSemTheWord (holFapply store .allocSize)) limits)),
     (.globals, .word g), (.globReal, globReal conf curr (.word g)), (.temp 0, .word 0), (.temp 1, .word 0)]
-  refine ⟨outMemory, outStore, k, ?_, ?_, by simpa [freeEq] using kBound, ?_⟩
+  refine ⟨outMemory, outStore, k, ?_, ?_, by simpa [freeEq] using kBound, ?_, ?_⟩
   · simpa [outStore, globalEq] using execution
   · simpa [outStore, allocEq, freeEq, gensEq, index] using invariant
   · simp [outStore, HolFiniteMapExact.lookup_updateListEq, FUPDATE_LIST_HOL, FUPDATE_HOL, globalEq]
+  · let pa := curr + wordSemBytesInWord * BitVec.ofNat width (heapLength (state.old ++ state.h1))
+    let endh := curr + wordSemBytesInWord * BitVec.ofNat width (a + sp + sp1)
+    let trigger := newTrig (endh - pa) (wordSemTheWord (holFapply store .allocSize)) limits
+    refine ⟨pa, pa + trigger, ?_, ?_, ?_⟩
+    · simp [outStore, pa, HolFiniteMapExact.lookup_updateListEq, FUPDATE_LIST_HOL, FUPDATE_HOL]
+    · simp [outStore, pa, endh, trigger, HolFiniteMapExact.lookup_updateListEq, FUPDATE_LIST_HOL, FUPDATE_HOL]
+    · simpa [pa, endh, trigger] using triggerFits
 
 /-- A successful major collection executes the concrete collector and
 reconstructs the complete heap/store invariant. -/
@@ -1045,8 +1068,8 @@ theorem combinedMajor_store_correct {width : Nat} [NeZero width] (conf : Config)
   · simp [outStore, HolFiniteMapExact.lookup_updateListEq, FUPDATE_LIST_HOL, FUPDATE_HOL, globalEq]
 
 /-- Both generational branches preserve the heap/store invariant and publish
-the moved global root. This is local composition toward the full collector
-theorem; the source's allocation-space conclusions are not stated here. -/
+the moved global root. The partial branch also guarantees allocation space;
+the source's major-collection allocation bound remains outside this composition. -/
 theorem combinedGenerational_store_correct {width : Nat} [NeZero width] (conf : Config)
     (values : List DataSem.Value) (references : Spt (BvlSem.Ref DataSem.Value))
     (root : HeapAddress (WordLocW width)) (roots roots1 : List (HeapAddress (WordLocW width)))
@@ -1065,7 +1088,10 @@ theorem combinedGenerational_store_correct {width : Nat} [NeZero width] (conf : 
       wordGcFun conf (roots.map (wordAddr conf), memory, domain, store) =
         some (rest.map (wordAddr conf), outMemory, outStore) ∧
       heapInMemoryStore heap1 a1 k2 k3 gens1 conf outStore outMemory domain limit ∧
-      k2 + k3 = n1 ∧ outStore.lookup .globals = some (wordAddr conf root1) := by
+      k2 + k3 = n1 ∧ outStore.lookup .globals = some (wordAddr conf root1) ∧
+      (wordGenGcCanDoPartial limits store → ∃ p t,
+        outStore.lookup .nextFree = some (.word p) ∧ outStore.lookup .triggerGC = some (.word t) ∧
+          wordSemTheWord (holFapply store .allocSize) ≤ t - p) := by
   classical
   have length := combinedGenerational_rootsLength (makeGcConf (α := List (WordLocW width)) limit) limits
     (root :: roots) roots1 heap heap1 gens gens1 (a + sp + sp1) a1 n1 (doPartial conf store) true run
@@ -1076,10 +1102,11 @@ theorem combinedGenerational_store_correct {width : Nat} [NeZero width] (conf : 
     · have partialRun : gcCombined (makeGcConf (α := List (WordLocW width)) limit) (.generational limits)
           (root :: roots, heap, gens, a + sp + sp1, true) = (root1 :: rest, heap1, a1, n1, gens1, true) := by
         simpa [doPartial, kind, selected] using run
-      obtain ⟨outMemory, outStore, k, execution, invariant, bound, globalOut⟩ :=
+      obtain ⟨outMemory, outStore, k, execution, invariant, bound, globalOut, space⟩ :=
         combinedPartial_store_correct conf values references root root1 roots rest heap heap1 be a sp sp1 limit next
           a1 n1 gens gens1 limits store memory domain partialRun kind selected global source good heapMem
-      exact ⟨root1, rest, outMemory, outStore, k, n1 - k, rfl, execution, invariant, Nat.add_sub_of_le bound, globalOut⟩
+      exact ⟨root1, rest, outMemory, outStore, k, n1 - k, rfl, execution, invariant,
+        Nat.add_sub_of_le bound, globalOut, fun _ => space⟩
     · have fullRun : gcCombined (makeGcConf (α := List (WordLocW width)) limit) (.generational limits)
           (root :: roots, heap, gens, a + sp + sp1, false) = (root1 :: rest, heap1, a1, n1, gens1, true) := by
         simpa [doPartial, kind, selected] using run
@@ -1087,11 +1114,12 @@ theorem combinedGenerational_store_correct {width : Nat} [NeZero width] (conf : 
       obtain ⟨outMemory, outStore, k, execution, invariant, bound, globalOut⟩ :=
         combinedMajor_store_correct conf root root1 roots rest heap heap1 a sp sp1 limit a1 n1 gens gens1
           limits (a + sp + sp1) store memory domain fullRun kind selected global limitEq good heapMem
-      exact ⟨root1, rest, outMemory, outStore, k, n1 - k, rfl, execution, invariant, Nat.add_sub_of_le bound, globalOut⟩
+      exact ⟨root1, rest, outMemory, outStore, k, n1 - k, rfl, execution, invariant,
+        Nat.add_sub_of_le bound, globalOut, fun h => False.elim (selected h)⟩
 
 /-- The generational collector preserves the heap/store invariant and the
-stack-root encoding. The source theorem additionally states allocation-space
-conclusions, which remain outside this local composition. -/
+stack-root encoding, and partial collection leaves room for the allocation.
+The source's major-collection allocation bound remains outside this composition. -/
 theorem combinedGenerational_stack_correct {width : Nat} [NeZero width] (conf : Config)
     (value : DataSem.Value) (stack : List (DataSem.Value × WordLocW width))
     (references : Spt (BvlSem.Ref DataSem.Value)) (root : HeapAddress (WordLocW width))
@@ -1112,7 +1140,9 @@ theorem combinedGenerational_stack_correct {width : Nat} [NeZero width] (conf : 
       heapInMemoryStore heap1 a1 k2 k3 gens1 conf outStore outMemory domain limit ∧ k2 + k3 = n1 ∧
       roots1 = root1 :: rest ∧ wordAddr conf root1 = holFapply outStore .globals ∧
       List.Forall₂ (fun v w => wordAddr conf v = w) rest (((stack.map Prod.fst).zip stack1).map Prod.snd) ∧
-      stack1.length = stack.length := by
+      stack1.length = stack.length ∧ (wordGenGcCanDoPartial limits store → ∃ p t,
+        outStore.lookup .nextFree = some (.word p) ∧ outStore.lookup .triggerGC = some (.word t) ∧
+          wordSemTheWord (holFapply store .allocSize) ≤ t - p) := by
   have lookupExists := heapMem.2.2.2.2.2.2.1
   obtain ⟨w, lookup⟩ := lookupExists
   have globalLookup : store.lookup .globals = some (wordAddr conf root) := by
@@ -1126,7 +1156,7 @@ theorem combinedGenerational_stack_correct {width : Nat} [NeZero width] (conf : 
   have rootsEq : stack.map Prod.snd = roots.map (wordAddr conf) := (forallMap _ _ _).mp related
   have length := combinedGenerational_rootsLength (makeGcConf (α := List (WordLocW width)) limit) limits
     (root :: roots) roots1 heap heap1 gens gens1 (a + sp + sp1) a1 n1 (doPartial conf store) true run
-  obtain ⟨root1, rest, outMemory, outStore, k2, k3, rootsOut, execution, invariant, freeSum, globalOut⟩ :=
+  obtain ⟨root1, rest, outMemory, outStore, k2, k3, rootsOut, execution, invariant, freeSum, globalOut, space⟩ :=
     combinedGenerational_store_correct conf (value :: stack.map Prod.fst) references root roots roots1 heap heap1
       be a sp sp1 limit next a1 n1 gens gens1 limits store memory domain source kind good heapMem globalLookup run
   have restLength : rest.length = stack.length := by
@@ -1136,7 +1166,7 @@ theorem combinedGenerational_stack_correct {width : Nat} [NeZero width] (conf : 
     simp only [List.length_cons] at length
     omega
   refine ⟨rest.map (wordAddr conf), outMemory, outStore, k2, k3, root1, rest, ?_, invariant, freeSum,
-    rootsOut, (holFapply_of_lookup globalOut).symm, ?_, by simp [restLength]⟩
+    rootsOut, (holFapply_of_lookup globalOut).symm, ?_, by simp [restLength], space⟩
   · simpa [rootsEq] using execution
   · apply (forallMap _ _ _).mpr
     rw [List.map_snd_zip (by simp [restLength])]
