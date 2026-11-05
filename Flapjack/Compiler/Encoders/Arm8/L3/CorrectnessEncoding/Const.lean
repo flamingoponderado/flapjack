@@ -632,24 +632,10 @@ theorem arm8Next_movK (ms : arm8_state) (hw : BitVec 2) (imm16 : BitVec 16) (rd 
   have hdec : Decode (arm8MoveWideWord .k hw imm16 rd) =
       instruction.Data (Data.«MoveWide@64» (1, .k, hw, imm16, rd)) :=
     arm8Decode_moveWide .k hw imm16 rd
-  have hbr : (Run (instruction.Data (Data.«MoveWide@64» (1, .k, hw, imm16, rd)))
-      { ms with branch_hint := none }).branch_hint = none := by
-    rw [arm8Run_moveWide_k]
-    rw [if_neg hrd]
-  have hexc : (Run (instruction.Data (Data.«MoveWide@64» (1, .k, hw, imm16, rd)))
-      { ms with branch_hint := none }).exception = exception.NoException := by
-    rw [arm8Run_moveWide_k]
-    rw [if_neg hrd]
-    exact hexc0
-  have hn := arm8Next_word ms (arm8MoveWideWord .k hw imm16 rd)
-    (instruction.Data (Data.«MoveWide@64» (1, .k, hw, imm16, rd)))
-    hdec hbr hexc h0 h1 h2 h3 hal he0 hel
-  unfold arm8Next
-  rw [hn]
+  refine arm8Next_eq ms _ _ _ hdec ?_ rfl hexc0 h0 h1 h2 h3 hal he0 hel
   rw [arm8Run_moveWide_k]
   rw [if_neg hrd]
   rfl
-
 
 /-! ## Memory-free instructions and the run machinery -/
 

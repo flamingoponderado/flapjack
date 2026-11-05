@@ -117,18 +117,8 @@ theorem arm8Next_locBigAdd (ms : arm8_state) (register : Nat)
     rw [arm8Run_locBigAdd]
     rw [arm8WriteX_of_valid _ _ hrd hlt]
     rfl
-  have hbr : (Run (arm8LocBigAddInsn register) { ms with branch_hint := none }).branch_hint = none := by
-    rw [hrun]
-  have hexc : (Run (arm8LocBigAddInsn register) { ms with branch_hint := none }).exception =
-      exception.NoException := by
-    rw [hrun]
-    simpa using hexc0
-  have hn := arm8Next_word ms (arm8AddSubShiftedRegisterWord false false ShiftType.lsl 26 0
-      (BitVec.ofNat 5 register) (BitVec.ofNat 5 register)) (arm8LocBigAddInsn register)
-    hdec hbr hexc h0 h1 h2 h3 hal he0 hel
-  unfold arm8Next
-  rw [hn, hrun]
-  rfl
+  refine arm8Next_eq ms _ _ _ hdec ?_ rfl hexc0 h0 h1 h2 h3 hal he0 hel
+  rw [hrun]
 
 /-! ## The six-step chain -/
 

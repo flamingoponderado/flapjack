@@ -117,17 +117,7 @@ theorem arm8Next_logicalShiftedRegister_ands (ms : arm8_state) (rm rn : BitVec 5
     dsimp only [i]
     exact arm8Decode_logicalShiftedRegister_ands rm rn 31
   have hrun := arm8Run_logicalShiftedRegister_ands_eq rm rn { ms with branch_hint := none }
-  have hbr : (Run i { ms with branch_hint := none }).branch_hint = none := by
-    dsimp only [i]
-    rw [hrun]
-  have hexc : (Run i { ms with branch_hint := none }).exception = exception.NoException := by
-    dsimp only [i]
-    rw [hrun]
-    simpa using hexc0
-  have hn := arm8Next_word ms (arm8LogicalShiftedRegisterWord (3 : BitVec 2) false ShiftType.lsl 0 rm rn 31)
-    i hdec hbr hexc h0 h1 h2 h3 hal he0 hel
-  unfold arm8Next
-  rw [hn]
+  refine arm8Next_eq ms _ _ _ hdec ?_ rfl hexc0 h0 h1 h2 h3 hal he0 hel
   dsimp only [i]
   rw [hrun]
   rfl
@@ -196,17 +186,7 @@ theorem arm8Next_addSubShiftedRegister_setflags_xzr (ms : arm8_state) (rm rn : B
     dsimp only [i]
     exact arm8Decode_addSubShiftedRegister true true rm 0 rn 31
   have hrun := arm8Run_addSubShiftedRegister_setflags_xzr_eq rm rn { ms with branch_hint := none }
-  have hbr : (Run i { ms with branch_hint := none }).branch_hint = none := by
-    dsimp only [i]
-    rw [hrun]
-  have hexc : (Run i { ms with branch_hint := none }).exception = exception.NoException := by
-    dsimp only [i]
-    rw [hrun]
-    simpa using hexc0
-  have hn := arm8Next_word ms (arm8AddSubShiftedRegisterWord true true ShiftType.lsl rm 0 rn 31)
-    i hdec hbr hexc h0 h1 h2 h3 hal he0 hel
-  unfold arm8Next
-  rw [hn]
+  refine arm8Next_eq ms _ _ _ hdec ?_ rfl hexc0 h0 h1 h2 h3 hal he0 hel
   dsimp only [i]
   rw [hrun]
   rfl
@@ -807,11 +787,6 @@ theorem arm8_encoder_correct_jumpCmp_reg (cmp : Cmp) (r t : Nat) (a : BitVec 64)
       (Flapjack.Compiler.Encoders.AsmSem.regImm (.reg t) s1) =
       ConditionHolds (arm8CmpCond cmp) T1 := by
     rw [hreadReg, hregImm, ← hsrcv, ← hrtv, ← hcond]
-  have hcode : allPcs 8 s1.pc 0 ⊆ s1.memDomain := by
-    have h0' := bytesInMemory_allPcs (arm8Enc (.jumpCmp cmp r (.reg t) a)) s1.pc s1.mem
-      s1.memDomain 0 hb
-    rw [hlen] at h0'
-    exact h0'
   have hdom8 : ∀ j, j < 8 → s1.memDomain (s1.pc + BitVec.ofNat 64 j) := by
     intro j hj
     exact hdom j (by rw [hlen]; exact hj)
@@ -823,43 +798,6 @@ theorem arm8_encoder_correct_jumpCmp_reg (cmp : Cmp) (r t : Nat) (a : BitVec 64)
       exact bv_add_split s1.pc 4 j
     rw [h1]
     exact hdom8 (4 + j) (by omega)
-  refine ⟨1, ?_⟩
-  intro env henv
-  dsimp only
-  simp only [arm8ConfigL3, hlen]
-  have hagree : ∀ k x, Arm8L3Agree s1.memDomain (env k x) x :=
-    fun k x => (arm8Proj_eq_iff s1.memDomain _ _).mp (henv k x)
-  have a1 : Arm8L3Agree s1.memDomain (env 0 (arm8Next ms)) T1 := by
-    rw [hn1]; exact hagree 0 _
-  have a2 : Arm8L3Agree s1.memDomain (arm8Next (env 0 (arm8Next ms))) T2 := by
-    have hh := arm8Next_branchConditional_agree s1.memDomain (env 0 (arm8Next ms)) T1 a1
-      (by rw [arm8Ok_congr a1]; exact hT1ok) (a - 4) (arm8CmpCond cmp) hround hdomT1
-      hbB0 hbB1 hbB2 hbB3
-    rw [hn2] at hh
-    exact hh
-  have a2' : Arm8L3Agree s1.memDomain (env 1 (arm8Next (env 0 (arm8Next ms)))) T2 :=
-    (hagree 1 (arm8Next (env 0 (arm8Next ms)))).trans a2
-  have hP1 : arm8Ok (env 0 (arm8Next ms)) = true ∧
-      (∀ pc, pc ∈ allPcs 8 s1.pc 0 → (env 0 (arm8Next ms)).MEM pc = ms.MEM pc) ∧
-      (env 0 (arm8Next ms)).PC ∈ allPcs 8 s1.pc 2 := by
-    refine ⟨?_, ?_, ?_⟩
-    · rw [arm8Ok_congr a1]; exact hT1ok
-    · intro pc hpc'
-      rw [a1.mem pc (hcode hpc'), hT1mem]
-    · rw [a1.pc, hT1pc, hpc]
-      simpa using mem_allPcs_eight_l3 s1.pc 1 (by norm_num)
-  have hu1mem : ∀ x, (arm8Next (env 0 (arm8Next ms))).MEM x = (env 0 (arm8Next ms)).MEM x := by
-    intro x
-    have hh := arm8Next_branchConditional_mem (env 0 (arm8Next ms)) (a - 4) (arm8CmpCond cmp)
-      hround (by rw [a1.exc]; exact hT1exc)
-      (by rw [a1.pc, a1.mem T1.PC (by simpa using hdomT1 0 (by omega))]; exact hbB0)
-      (by rw [a1.pc, a1.mem (T1.PC + 1) (by simpa using hdomT1 1 (by omega))]; exact hbB1)
-      (by rw [a1.pc, a1.mem (T1.PC + 2) (by simpa using hdomT1 2 (by omega))]; exact hbB2)
-      (by rw [a1.pc, a1.mem (T1.PC + 3) (by simpa using hdomT1 3 (by omega))]; exact hbB3)
-      (by rw [a1.pc]; exact hal4) (by rw [a1.sctlr, hT1sctlr]; exact he0)
-      (by rw [a1.pstate, hT1el]; exact hel)
-      (by rw [a1.tcr, hT1tcr]; exact htbi1) (by rw [a1.tcr, hT1tcr]; exact htbi0) x
-    exact hh
   have hs2dom : s2.memDomain = s1.memDomain := by
     by_cases hc : ConditionHolds (arm8CmpCond cmp) T1 = true
     · have hwt : wordCmpHOL cmp (Flapjack.Compiler.Encoders.AsmSem.readReg r s1)
@@ -965,18 +903,41 @@ theorem arm8_encoder_correct_jumpCmp_reg (cmp : Cmp) (r t : Nat) (a : BitVec 64)
         exact hreg k hk
       · intro k hk
         simp [arm8ConfigL3] at hk
-  have hQ : targetStateRel arm8TargetL3 s2 (env 1 (arm8Next (env 0 (arm8Next ms)))) :=
-    targetStateRel_congr (hs2dom.symm ▸ a2') hq
-  have hP'1 : ∀ x, ¬ s1.memDomain x → ms.MEM x = (arm8Next ms).MEM x := by
-    intro x _; rw [hn1, hT1mem]
-  have hP'2 : ∀ x, ¬ s1.memDomain x →
-      (env 0 (arm8Next ms)).MEM x = (arm8Next (env 0 (arm8Next ms))).MEM x := by
-    intro x _; exact (hu1mem x).symm
-  constructor
-  · simp only [asserts, Nat.reduceAdd, Nat.reduceSub]
-    exact ⟨hP1, hQ⟩
-  · simp only [asserts2, Nat.reduceAdd, Nat.reduceSub]
-    exact ⟨hP'1, hP'2, trivial⟩
+  refine asmCaseChain _ 1 (fun k => if k = 1 then T1 else T2) s1 s2 ms
+    ⟨hs, ⟨hok, hpc, hmem, hreg, hfp⟩⟩ hlen ?_ ?_ ?_ ?_ ?_ hs2dom hq
+  · intro k hk u hu
+    interval_cases k
+    · rw [hu.1 rfl, hn1]
+      exact Arm8L3Agree.refl _ _
+    · have hu1 : Arm8L3Agree s1.memDomain u T1 := hu.2 (by decide)
+      have hh := arm8Next_branchConditional_agree s1.memDomain u T1 hu1
+        (by rw [arm8Ok_congr hu1]; exact hT1ok) (a - 4) (arm8CmpCond cmp) hround hdomT1
+        hbB0 hbB1 hbB2 hbB3
+      rw [hn2] at hh
+      exact hh
+  · intro k hk u hu x _
+    interval_cases k
+    · rw [hu.1 rfl, hn1, hT1mem]
+    · have hu1 : Arm8L3Agree s1.memDomain u T1 := hu.2 (by decide)
+      have hh := arm8Next_branchConditional_mem u (a - 4) (arm8CmpCond cmp)
+        hround (by rw [hu1.exc]; exact hT1exc)
+        (by rw [hu1.pc, hu1.mem T1.PC (by simpa using hdomT1 0 (by omega))]; exact hbB0)
+        (by rw [hu1.pc, hu1.mem (T1.PC + 1) (by simpa using hdomT1 1 (by omega))]; exact hbB1)
+        (by rw [hu1.pc, hu1.mem (T1.PC + 2) (by simpa using hdomT1 2 (by omega))]; exact hbB2)
+        (by rw [hu1.pc, hu1.mem (T1.PC + 3) (by simpa using hdomT1 3 (by omega))]; exact hbB3)
+        (by rw [hu1.pc]; exact hal4) (by rw [hu1.sctlr, hT1sctlr]; exact he0)
+        (by rw [hu1.pstate, hT1el]; exact hel)
+        (by rw [hu1.tcr, hT1tcr]; exact htbi1) (by rw [hu1.tcr, hT1tcr]; exact htbi0) x
+      exact hh
+  · intro k h1 h2
+    obtain rfl : k = 1 := by omega
+    exact hT1ok
+  · intro k h1 h2
+    obtain rfl : k = 1 := by omega
+    exact hT1pc
+  · intro k h1 h2 x _
+    obtain rfl : k = 1 := by omega
+    exact hT1mem x
 
 /-! ## The immediate compare shapes: `LogicalImmediate@64` and
 `AddSubImmediate@64` with `S := T` into `XZR` -/
@@ -1030,17 +991,7 @@ theorem arm8Next_logicalImmediate_ands (ms : arm8_state) (imm : BitVec 64) (rn :
     exact arm8Decode_logicalImmediate .LogicalOp_AND true imm rn 31 N imms immr opc2 hbm
       (by rw [hop])
   have hrun := arm8Run_logicalImmediate_ands_eq imm rn { ms with branch_hint := none }
-  have hbr : (Run i { ms with branch_hint := none }).branch_hint = none := by
-    dsimp only [i]
-    rw [hrun]
-  have hexc : (Run i { ms with branch_hint := none }).exception = exception.NoException := by
-    dsimp only [i]
-    rw [hrun]
-    simpa using hexc0
-  have hn := arm8Next_word ms (arm8LogicalImmediateWord opc2 N imms immr rn 31)
-    i hdec hbr hexc h0 h1 h2 h3 hal he0 hel
-  unfold arm8Next
-  rw [hn]
+  refine arm8Next_eq ms _ _ _ hdec ?_ rfl hexc0 h0 h1 h2 h3 hal he0 hel
   dsimp only [i]
   rw [hrun]
   rfl
@@ -1124,17 +1075,7 @@ theorem arm8Next_addSubImmediateS_low (ms : arm8_state) (imm : BitVec 64) (rn : 
     dsimp only [i]
     exact arm8Decode_addSubImmediateS_low true imm rn 31 hlow
   have hrun := arm8Run_addSubImmediate_setflags_xzr_eq imm rn { ms with branch_hint := none } hrn
-  have hbr : (Run i { ms with branch_hint := none }).branch_hint = none := by
-    dsimp only [i]
-    rw [hrun]
-  have hexc : (Run i { ms with branch_hint := none }).exception = exception.NoException := by
-    dsimp only [i]
-    rw [hrun]
-    simpa using hexc0
-  have hn := arm8Next_word ms (arm8AddSubImmediateWordS true false
-    (holWordExtract 12 11 0 imm) rn 31) i hdec hbr hexc h0 h1 h2 h3 hal he0 hel
-  unfold arm8Next
-  rw [hn]
+  refine arm8Next_eq ms _ _ _ hdec ?_ rfl hexc0 h0 h1 h2 h3 hal he0 hel
   dsimp only [i]
   rw [hrun]
   rfl
@@ -1175,17 +1116,7 @@ theorem arm8Next_addSubImmediateS_high (ms : arm8_state) (imm : BitVec 64) (rn :
     dsimp only [i]
     exact arm8Decode_addSubImmediateS_high true imm rn 31 hhigh
   have hrun := arm8Run_addSubImmediate_setflags_xzr_eq imm rn { ms with branch_hint := none } hrn
-  have hbr : (Run i { ms with branch_hint := none }).branch_hint = none := by
-    dsimp only [i]
-    rw [hrun]
-  have hexc : (Run i { ms with branch_hint := none }).exception = exception.NoException := by
-    dsimp only [i]
-    rw [hrun]
-    simpa using hexc0
-  have hn := arm8Next_word ms (arm8AddSubImmediateWordS true true
-    (holWordExtract 12 23 12 imm) rn 31) i hdec hbr hexc h0 h1 h2 h3 hal he0 hel
-  unfold arm8Next
-  rw [hn]
+  refine arm8Next_eq ms _ _ _ hdec ?_ rfl hexc0 h0 h1 h2 h3 hal he0 hel
   dsimp only [i]
   rw [hrun]
   rfl
@@ -1645,11 +1576,6 @@ theorem arm8_encoder_correct_jumpCmp_imm (cmp : Cmp) (r : Nat) (v a : BitVec 64)
       (Flapjack.Compiler.Encoders.AsmSem.regImm (.imm v) s1) =
       ConditionHolds (arm8CmpCond cmp) T1 := by
     rw [hreadReg, hregImm, ← hsrcv, ← hcond]
-  have hcode : allPcs 8 s1.pc 0 ⊆ s1.memDomain := by
-    have h0' := bytesInMemory_allPcs (arm8Enc (.jumpCmp cmp r (.imm v) a)) s1.pc s1.mem
-      s1.memDomain 0 hb
-    rw [hlen] at h0'
-    exact h0'
   have hdom8 : ∀ j, j < 8 → s1.memDomain (s1.pc + BitVec.ofNat 64 j) := by
     intro j hj
     exact hdom j (by rw [hlen]; exact hj)
@@ -1661,43 +1587,6 @@ theorem arm8_encoder_correct_jumpCmp_imm (cmp : Cmp) (r : Nat) (v a : BitVec 64)
       exact bv_add_split s1.pc 4 j
     rw [h1]
     exact hdom8 (4 + j) (by omega)
-  refine ⟨1, ?_⟩
-  intro env henv
-  dsimp only
-  simp only [arm8ConfigL3, hlen]
-  have hagree : ∀ k x, Arm8L3Agree s1.memDomain (env k x) x :=
-    fun k x => (arm8Proj_eq_iff s1.memDomain _ _).mp (henv k x)
-  have a1 : Arm8L3Agree s1.memDomain (env 0 (arm8Next ms)) T1 := by
-    rw [hn1]; exact hagree 0 _
-  have a2 : Arm8L3Agree s1.memDomain (arm8Next (env 0 (arm8Next ms))) T2 := by
-    have hh := arm8Next_branchConditional_agree s1.memDomain (env 0 (arm8Next ms)) T1 a1
-      (by rw [arm8Ok_congr a1]; exact hT1ok) (a - 4) (arm8CmpCond cmp) hround hdomT1
-      hbB0 hbB1 hbB2 hbB3
-    rw [hn2] at hh
-    exact hh
-  have a2' : Arm8L3Agree s1.memDomain (env 1 (arm8Next (env 0 (arm8Next ms)))) T2 :=
-    (hagree 1 (arm8Next (env 0 (arm8Next ms)))).trans a2
-  have hP1 : arm8Ok (env 0 (arm8Next ms)) = true ∧
-      (∀ pc, pc ∈ allPcs 8 s1.pc 0 → (env 0 (arm8Next ms)).MEM pc = ms.MEM pc) ∧
-      (env 0 (arm8Next ms)).PC ∈ allPcs 8 s1.pc 2 := by
-    refine ⟨?_, ?_, ?_⟩
-    · rw [arm8Ok_congr a1]; exact hT1ok
-    · intro pc hpc'
-      rw [a1.mem pc (hcode hpc'), hT1mem]
-    · rw [a1.pc, hT1pc, hpc]
-      simpa using mem_allPcs_eight_l3 s1.pc 1 (by norm_num)
-  have hu1mem : ∀ x, (arm8Next (env 0 (arm8Next ms))).MEM x = (env 0 (arm8Next ms)).MEM x := by
-    intro x
-    have hh := arm8Next_branchConditional_mem (env 0 (arm8Next ms)) (a - 4) (arm8CmpCond cmp)
-      hround (by rw [a1.exc]; exact hT1exc)
-      (by rw [a1.pc, a1.mem T1.PC (by simpa using hdomT1 0 (by omega))]; exact hbB0)
-      (by rw [a1.pc, a1.mem (T1.PC + 1) (by simpa using hdomT1 1 (by omega))]; exact hbB1)
-      (by rw [a1.pc, a1.mem (T1.PC + 2) (by simpa using hdomT1 2 (by omega))]; exact hbB2)
-      (by rw [a1.pc, a1.mem (T1.PC + 3) (by simpa using hdomT1 3 (by omega))]; exact hbB3)
-      (by rw [a1.pc]; exact hal4) (by rw [a1.sctlr, hT1sctlr]; exact he0)
-      (by rw [a1.pstate, hT1el]; exact hel)
-      (by rw [a1.tcr, hT1tcr]; exact htbi1) (by rw [a1.tcr, hT1tcr]; exact htbi0) x
-    exact hh
   have hs2dom : s2.memDomain = s1.memDomain := by
     by_cases hc : ConditionHolds (arm8CmpCond cmp) T1 = true
     · have hwt : wordCmpHOL cmp (Flapjack.Compiler.Encoders.AsmSem.readReg r s1)
@@ -1803,17 +1692,40 @@ theorem arm8_encoder_correct_jumpCmp_imm (cmp : Cmp) (r : Nat) (v a : BitVec 64)
         exact hreg k hk
       · intro k hk
         simp [arm8ConfigL3] at hk
-  have hQ : targetStateRel arm8TargetL3 s2 (env 1 (arm8Next (env 0 (arm8Next ms)))) :=
-    targetStateRel_congr (hs2dom.symm ▸ a2') hq
-  have hP'1 : ∀ x, ¬ s1.memDomain x → ms.MEM x = (arm8Next ms).MEM x := by
-    intro x _; rw [hn1, hT1mem]
-  have hP'2 : ∀ x, ¬ s1.memDomain x →
-      (env 0 (arm8Next ms)).MEM x = (arm8Next (env 0 (arm8Next ms))).MEM x := by
-    intro x _; exact (hu1mem x).symm
-  constructor
-  · simp only [asserts, Nat.reduceAdd, Nat.reduceSub]
-    exact ⟨hP1, hQ⟩
-  · simp only [asserts2, Nat.reduceAdd, Nat.reduceSub]
-    exact ⟨hP'1, hP'2, trivial⟩
+  refine asmCaseChain _ 1 (fun k => if k = 1 then T1 else T2) s1 s2 ms
+    ⟨hs, ⟨hok, hpc, hmem, hreg, hfp⟩⟩ hlen ?_ ?_ ?_ ?_ ?_ hs2dom hq
+  · intro k hk u hu
+    interval_cases k
+    · rw [hu.1 rfl, hn1]
+      exact Arm8L3Agree.refl _ _
+    · have hu1 : Arm8L3Agree s1.memDomain u T1 := hu.2 (by decide)
+      have hh := arm8Next_branchConditional_agree s1.memDomain u T1 hu1
+        (by rw [arm8Ok_congr hu1]; exact hT1ok) (a - 4) (arm8CmpCond cmp) hround hdomT1
+        hbB0 hbB1 hbB2 hbB3
+      rw [hn2] at hh
+      exact hh
+  · intro k hk u hu x _
+    interval_cases k
+    · rw [hu.1 rfl, hn1, hT1mem]
+    · have hu1 : Arm8L3Agree s1.memDomain u T1 := hu.2 (by decide)
+      have hh := arm8Next_branchConditional_mem u (a - 4) (arm8CmpCond cmp)
+        hround (by rw [hu1.exc]; exact hT1exc)
+        (by rw [hu1.pc, hu1.mem T1.PC (by simpa using hdomT1 0 (by omega))]; exact hbB0)
+        (by rw [hu1.pc, hu1.mem (T1.PC + 1) (by simpa using hdomT1 1 (by omega))]; exact hbB1)
+        (by rw [hu1.pc, hu1.mem (T1.PC + 2) (by simpa using hdomT1 2 (by omega))]; exact hbB2)
+        (by rw [hu1.pc, hu1.mem (T1.PC + 3) (by simpa using hdomT1 3 (by omega))]; exact hbB3)
+        (by rw [hu1.pc]; exact hal4) (by rw [hu1.sctlr, hT1sctlr]; exact he0)
+        (by rw [hu1.pstate, hT1el]; exact hel)
+        (by rw [hu1.tcr, hT1tcr]; exact htbi1) (by rw [hu1.tcr, hT1tcr]; exact htbi0) x
+      exact hh
+  · intro k h1 h2
+    obtain rfl : k = 1 := by omega
+    exact hT1ok
+  · intro k h1 h2
+    obtain rfl : k = 1 := by omega
+    exact hT1pc
+  · intro k h1 h2 x _
+    obtain rfl : k = 1 := by omega
+    exact hT1mem x
 
 end Flapjack.Compiler.Encoders.Arm8.L3
