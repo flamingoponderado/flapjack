@@ -40,6 +40,13 @@ val _ = show "traverse_heap_reachable_RTC_gc_edge_typed" data_to_word_gcProofThe
 val _ = show "traverse_heap_reachable_typed" data_to_word_gcProofTheory.traverse_heap_reachable;
 val _ = show "size_of_cons_typed" data_to_word_gcProofTheory.size_of_cons;
 val _ = show "size_of_global_to_vs_typed" data_to_word_gcProofTheory.size_of_global_to_vs;
+val sizeOfBlock = ``!lims ts tag vs refs seen.
+  dataSem$size_of lims [dataSem$Block ts tag vs] refs seen =
+  if vs = [] \/ IS_SOME (sptree$lookup ts seen) then (0,refs,seen)
+  else let (n,refs1,seen1) = dataSem$size_of lims vs refs (sptree$insert ts () seen)
+       in (n + LENGTH vs + 1,refs1,seen1)``;
+val _ = show "size_of_Block_typed_replay"
+  (prove (sizeOfBlock, rpt gen_tac \\ Cases_on `vs` \\ fs [dataSemTheory.size_of_def]));
 val _ = show "LENGTH_n2mw_LE_bignum_digits_typed" data_to_word_gcProofTheory.LENGTH_n2mw_LE_bignum_digits;
 val checkResSizeOf = ``!lims vs refs seen.
   dataSem$check_res refs (dataSem$size_of lims vs refs seen) = dataSem$size_of lims vs refs seen``;

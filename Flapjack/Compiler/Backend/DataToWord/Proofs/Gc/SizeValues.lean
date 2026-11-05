@@ -40,6 +40,20 @@ theorem sizeOfValues_global (limits : DataSem.Limits) (values : List DataSem.Val
     conv_lhs => rw [sizeOfValues_cons, ih]
     conv_rhs => rw [sizeOfValues_cons]
 
+/-- A block costs nothing when empty or already seen; otherwise its fields
+are sized after recording its timestamp. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "size_of_Block"]
+theorem sizeOfValues_block (limits : DataSem.Limits) (stamp tag : Nat) (values : List DataSem.Value)
+    (refs : Spt (BvlSem.Ref DataSem.Value)) (seen : Spt Unit) :
+    DataSem.sizeOfValues limits [.block stamp tag values] refs seen =
+      if values = [] ∨ (sptLookup stamp seen).isSome = true then (0, refs, seen)
+      else
+        let (n, refs1, seen1) := DataSem.sizeOfValues limits values refs (sptInsert stamp () seen)
+        (n + values.length + 1, refs1, seen1) := by
+  cases values with
+  | nil => simp [DataSem.sizeOfValues]
+  | cons head tail => simp [DataSem.sizeOfValues]
+
 /-- Flapjack infrastructure: on a supported architecture, the word-digit
 encoding length is exactly the source sizing function's digit count. -/
 theorem n2mw_length_eq_bignumDigits {width : Nat} [NeZero width] (n : Nat)
@@ -195,5 +209,82 @@ theorem sizeOf_codePtr_traversal {width : Nat} [NeZero width]
   have equal := (Memory.valueInv_codePtr conf value refs address f tf heap).mp related
   subst address
   exact ⟨visited, traverseHeap.data visited _, by simp [DataSem.sizeOfValues]⟩
+
+/-- Flapjack infrastructure: a nullary block is immediate and needs no heap
+traversal or source-size charge. -/
+theorem sizeOf_emptyBlock_traversal {width : Nat} [NeZero width]
+    (limits : DataSem.Limits) (conf : Config) (stamp tag : Nat)
+    (refs : Spt (BvlSem.Ref DataSem.Value)) (seen : Spt Unit)
+    (address : HeapAddress (WordLocW width)) (f tf : HolFiniteMapExact Nat Nat)
+    (heap : Memory.ValueHeap width) (visited : List Nat)
+    (related : Memory.valueInv conf (.block stamp tag []) refs (address, f, tf, heap)) :
+    ∃ after, traverseHeap heap visited [address] after ∧
+      (after.map (Memory.lookupLen heap)).sum ≤
+        (DataSem.sizeOfValues limits [.block stamp tag []] refs seen).1 + (visited.map (Memory.lookupLen heap)).sum := by
+  have block := (Memory.valueInv_block conf stamp tag [] refs address f tf heap).mp related
+  simp only [↓reduceIte] at block
+  obtain ⟨rfl, _, _⟩ := block
+  exact ⟨visited, traverseHeap.data visited _, by simp [DataSem.sizeOfValues]⟩
+
+/-- Flapjack infrastructure: a previously sized nonempty block points to an
+already visited heap cell and incurs no second traversal charge. -/
+theorem sizeOf_seenBlock_traversal {width : Nat} [NeZero width]
+    (limits : DataSem.Limits) (conf : Config) (stamp tag : Nat) (head : DataSem.Value)
+    (tail : List DataSem.Value) (refs : Spt (BvlSem.Ref DataSem.Value)) (seen : Spt Unit)
+    (address : HeapAddress (WordLocW width)) (f tf : HolFiniteMapExact Nat Nat)
+    (heap : Memory.ValueHeap width) (visited : List Nat)
+    (related : Memory.valueInv conf (.block stamp tag (head :: tail)) refs (address, f, tf, heap))
+    (already : (sptLookup stamp seen).isSome = true)
+    (seenVisited : ∀ key ptr, (sptLookup key seen).isSome = true → tf.lookup key = some ptr → ptr ∈ visited) :
+    ∃ after, traverseHeap heap visited [address] after ∧
+      (after.map (Memory.lookupLen heap)).sum ≤
+        (DataSem.sizeOfValues limits [.block stamp tag (head :: tail)] refs seen).1 +
+          (visited.map (Memory.lookupLen heap)).sum := by
+  have block := (Memory.valueInv_block conf stamp tag (head :: tail) refs address f tf heap).mp related
+  simp only [List.cons_ne_nil, ↓reduceIte] at block
+  obtain ⟨ptr, children, _, timestamp, rfl, _⟩ := block
+  have present := seenVisited stamp ptr already timestamp
+  refine ⟨visited, traverseHeap.seen visited ptr _ present, ?_⟩
+  simp [DataSem.sizeOfValues, already]
+
+/-- Flapjack infrastructure: the recursive traversal of an unseen block's
+children extends to the block itself, charging its header and fields once. -/
+theorem sizeOf_freshBlock_traversal {width : Nat} [NeZero width]
+    (limits : DataSem.Limits) (conf : Config) (stamp tag : Nat) (head : DataSem.Value)
+    (tail : List DataSem.Value) (refs : Spt (BvlSem.Ref DataSem.Value)) (seen : Spt Unit)
+    (address : HeapAddress (WordLocW width)) (f tf : HolFiniteMapExact Nat Nat)
+    (heap : Memory.ValueHeap width) (visited : List Nat)
+    (related : Memory.valueInv conf (.block stamp tag (head :: tail)) refs (address, f, tf, heap))
+    (fresh : (sptLookup stamp seen).isSome = false)
+    (childrenSound : ∀ ptr children,
+      List.Forall₂ (fun value addr => Memory.valueInv conf value refs (addr, f, tf, heap)) (head :: tail) children →
+      tf.lookup stamp = some ptr → heapLookup ptr heap = some (Memory.blockRep tag children) →
+      ∃ after, traverseHeap heap (ptr :: visited) children after ∧
+        (after.map (Memory.lookupLen heap)).sum ≤
+          (DataSem.sizeOfValues limits (head :: tail) refs (sptInsert stamp () seen)).1 +
+            ((ptr :: visited).map (Memory.lookupLen heap)).sum) :
+    ∃ after, traverseHeap heap visited [address] after ∧
+      (after.map (Memory.lookupLen heap)).sum ≤
+        (DataSem.sizeOfValues limits [.block stamp tag (head :: tail)] refs seen).1 +
+          (visited.map (Memory.lookupLen heap)).sum := by
+  have block := (Memory.valueInv_block conf stamp tag (head :: tail) refs address f tf heap).mp related
+  simp only [List.cons_ne_nil, ↓reduceIte] at block
+  obtain ⟨ptr, children, valuesRel, timestamp, rfl, found⟩ := block
+  obtain ⟨after, traversal, bound⟩ := childrenSound ptr children valuesRel timestamp found
+  refine ⟨after, ?_, ?_⟩
+  · apply traverseHeap.visit (children := children)
+    · simpa [Memory.blockRep] using found
+    · exact traversal
+  · have lengths := valuesRel.length_eq
+    have ptrCost : Memory.lookupLen heap ptr = (head :: tail).length + 1 := by
+      simp [Memory.lookupLen, found, Memory.blockRep, elLength, ← lengths]
+    simp only [List.map_cons, List.sum_cons, ptrCost] at bound
+    cases result : DataSem.sizeOfValues limits (head :: tail) refs (sptInsert stamp () seen) with
+    | mk n rest =>
+      cases rest
+      rw [result] at bound
+      simp [DataSem.sizeOfValues, fresh, result] at ⊢
+      simp only [List.length_cons] at bound
+      omega
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

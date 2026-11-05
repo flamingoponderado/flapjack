@@ -34,6 +34,8 @@ The heap traversal rules and its visited-set, edge-closure, and reachable-addres
 
 The source sizing captures include the tail-first and global equations and a typed HOL replay of the local `check_res_size_of` result.
 
+The local `size_of_Block` equation is also replayed with inferred source types.
+
 The probe captures the original width-indexed multiword digit-length bound used by the bignum sizing case.
 
 `data_to_word_gc_stack_probe.out` includes the typed `full_gc_thm` statement,

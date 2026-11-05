@@ -1,6 +1,14 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "size_of_Block",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/SizeValues.lean",
+  "lean_name": "sizeOfValues_block",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared size_of_Block_typed_replay with the local source theorem: empty or previously visited blocks cost zero; otherwise the same timestamp insertion, recursive reference/seen results, payload length and header charge occur."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "LENGTH_n2mw_LE_bignum_digits",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/SizeValues.lean",
   "lean_name": "n2mw_length_le_bignumDigits",
