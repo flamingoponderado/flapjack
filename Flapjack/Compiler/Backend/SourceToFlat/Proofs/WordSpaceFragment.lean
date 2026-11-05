@@ -4,7 +4,7 @@ import Flapjack.Compiler.Backend.BviToData.Proofs.Simulation
 import Flapjack.Compiler.Backend.BviToData.Proofs.Program
 import Flapjack.Compiler.Backend.BviToData.Proofs.Semantics
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.CallFragment
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.TailCallSpace
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.DirectCallSpace
 import Flapjack.Compiler.Backend.Semantics.WordSem.Semantics
 
 /-! Connecting allocation-capable data fragments to configured word output. -/
@@ -393,11 +393,11 @@ theorem configuredBviCallFragment_entry {C F : Type} (fuel : Nat)
     dataRun, finalRel, projection, bviWord, wordResult, targetFinal, wordRun, notOutOfSpace, ffiEq⟩
 
 /-- The emitted word entry call simulates a non-type-error BVI entry call
-for a closed fragment with direct tail calls and allocation-space checks.
-The permitted allocation failure retains the FFI event-prefix guarantee.
-Returning calls, allocation-producing primitives, initial-state construction,
-and whole-program HOL correspondence remain open. -/
-theorem configuredBviTailSpace_entry {C F : Type} (fuel : Nat)
+for a closed fragment with direct tail calls, returning calls without handlers,
+and allocation-space checks. The permitted allocation failure retains the FFI
+event-prefix guarantee. Handlers, allocation-producing primitives, initial-state
+construction, and whole-program HOL correspondence remain open. -/
+theorem configuredBviDirectCallSpace_entry {C F : Type} (fuel : Nat)
     (source nextSource : Config) (closure nextClosure : ClosToBvl.Config)
     (bvlConfig nextBvlConfig : BvlToBvi.Config) (word : DataToWord.Config)
     (declarations : List AstHOL.Dec) (bviCode : List (Nat × Nat × Bvi.Exp))
@@ -418,7 +418,7 @@ theorem configuredBviTailSpace_entry {C F : Type} (fuel : Nat)
     (locs : List (Nat × Nat)) (related : stateRel64 word l1 l2 dataState targetState none locs)
     (sourceCode : dataState.code = sptFromAList (BviToData.compileProg bviCode))
     (targetCode : targetState.code = sptFromAList wordCode)
-    (closed : TailSpaceFragmentCode (sptFromAList (BviToData.compileProg bviCode))) :
+    (closed : DirectCallSpaceFragmentCode (sptFromAList (BviToData.compileProg bviCode))) :
     ∃ dataResult dataFinal,
       DataToWord.Proofs.Gc.codeRel64 word (sptFromAList (BviToData.compileProg bviCode))
         targetState.code ∧
@@ -446,10 +446,10 @@ theorem configuredBviTailSpace_entry {C F : Type} (fuel : Nat)
       subst dataResult
       exact notType (by simpa [BviToData.dataToBviResult] using projection.symm)
     simpa [dataRun] using resultSafe
-  have entryFragment : TailSpaceFragment (.call none (some start) [] none) :=
-    TailSpaceFragment.tailCall start []
-  have closedState : TailSpaceFragmentCode dataState.code := by simpa only [sourceCode] using closed
-  have simulation := tailSpaceFragment64 word _ entryFragment secn label l1 l2 dataState targetState locs closedState related dataSafe
+  have entryFragment : DirectCallSpaceFragment (.call none (some start) [] none) :=
+    DirectCallSpaceFragment.tailCall start []
+  have closedState : DirectCallSpaceFragmentCode dataState.code := by simpa only [sourceCode] using closed
+  have simulation := directCallSpaceFragment64 word _ entryFragment secn label l1 l2 dataState targetState locs closedState related dataSafe
   have entryCompile : (compileControl64 word secn label (.call none (some start) [] none)).1 =
       .call none (some start) [0] none := rfl
   have wordOutcome : fragmentOutcomesAt64 word l1 l2 (.call none (some start) [] none)
