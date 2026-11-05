@@ -1,6 +1,15 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "partial_gc_related",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
+  "lean_name": "partialGc_related",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": ["f"],
+  "reviewer": "Compared partial_gc_related_typed, including the original roots and heap validity premises, existential state and map, root renaming, root-domain inclusion, output heap validity, full gcRelated relation, and success. The HOL existential finite map is represented by the canonical finite-support binder f."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
   "hol_name": "gc_move_refs_isForwardPointer",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Similarity.lean",
   "lean_name": "gcMoveRefList_noForward",

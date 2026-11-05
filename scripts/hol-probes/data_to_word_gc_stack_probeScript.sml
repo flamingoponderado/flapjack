@@ -61,6 +61,7 @@ val _ = show "partial_sim_inv_typed" gen_gc_partialTheory.sim_inv_def;
 val _ = show "partial_f_old_ptrs_typed" gen_gc_partialTheory.f_old_ptrs_def;
 val _ = show "partial_f_old_ptrs_finite_typed" gen_gc_partialTheory.f_old_ptrs_finite;
 val _ = show "partial_new_f_typed" gen_gc_partialTheory.new_f_def;
+val _ = show "partial_gc_related_typed" gen_gc_partialTheory.partial_gc_related;
 val partialMoveListSimilar = ``!xs state1 ys state2.
   (gc_move_list conf state1 xs = (ys,state2)) ==>
   LIST_REL (similar_ptr conf) xs ys``;

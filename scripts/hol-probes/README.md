@@ -1,5 +1,7 @@
 `data_to_word_gc_stack_probe.out` captures the typed original unchanged-pointer set and finiteness theorem, combined forwarding-map definition, and parsed local domain and application statements. These show that configuration and heap payload types are independent; the local parses do not replay their HOL proofs.
 
+The same probe captures the exported `partial_gc_related` theorem with inferred types, including its existential finite map and all heap-relation conclusions.
+
 `data_to_word_gc_stack_probe.out` also records typed parses of the local root-list and reference-list similarity results and related-heap lookup result. The reference payload and collector-state payload are independent; these parses do not replay the local HOL proofs.
 
 `data_to_word_gc_stack_probe.out` includes typed parses of the old-region and reference-region lookup results for partial collection. These support statement comparison; the local HOL proofs are not replayed.
