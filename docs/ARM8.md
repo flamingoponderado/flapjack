@@ -460,8 +460,9 @@ out lands in `sr` and the truncated sum in `d`, exactly as
 `AsmSem.arithUpd` specifies, matching the HOL proof's `AddCarry` branch
 (`next_tac 4`).
 
-The straight-line multi-instruction cases (`addCarry`, `loc_big`, `longMul`
-and the four-instruction `const` lowering) discharge the `asserts n` /
+The multi-instruction cases (`addCarry`, `loc_big`, `longMul`, the
+four-instruction `const` lowering and the two `jumpCmp` forms, whose second
+instruction branches) discharge the `asserts n` /
 `asserts2 (n + 1)` obligations of `CaseGoal` through one lemma,
 `asmCaseChain` (`Simulate.lean`), the counterpart of HOL's repeated
 `next_state_tacN` steps.  Each case supplies the expected state `T k` after
@@ -474,7 +475,10 @@ The per-instruction agreement lemmas (`arm8Next_*_agree`) share their
 argument through `arm8L3Agree_next`: both agreeing states read the same
 in-domain instruction bytes and step by the instruction's `arm8Next_*`
 equation, so each lemma only proves that the equation's right-hand side
-preserves agreement.
+preserves agreement.  The step equations themselves share `arm8Next_eq` (`Bytes.lean`):
+given the decoded instruction and its `Run` equation with the PC advanced by
+four, it discharges the fetch, decode, branch-hint and exception side
+conditions of `NextStateARM8`.
 
 `ShiftBitfield.lean` starts the `shift` `.lsl`/`.lsr`/`.asr` immediate forms,
 which `arm8_ast` lowers to a single `BitfieldMove@64` guarded by

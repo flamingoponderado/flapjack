@@ -156,16 +156,8 @@ theorem arm8Next_address (ms : arm8_state) (imm : BitVec 64) (rd : Nat)
     dsimp only [i]
     rw [arm8Run_address]
     rw [arm8WriteX_of_valid _ _ hrd hlt]
-  have hbr : (Run i { ms with branch_hint := none }).branch_hint = none := by
-    rw [hrun]
-  have hexc : (Run i { ms with branch_hint := none }).exception = exception.NoException := by
-    rw [hrun]
-    simpa using hexc0
-  have hn := arm8Next_word ms (arm8AddressWord imm (BitVec.ofNat 5 rd))
-    i hdec hbr hexc h0 h1 h2 h3 hal he0 hel
-  unfold arm8Next
-  rw [hn, hrun]
-  rfl
+  refine arm8Next_eq ms _ _ _ hdec ?_ rfl hexc0 h0 h1 h2 h3 hal he0 hel
+  rw [hrun]
 
 /-- The four encoded bytes of the address word. -/
 theorem arm8EncodeBytes_address (imm : BitVec 64) (rd : BitVec 5)

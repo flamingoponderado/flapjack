@@ -130,30 +130,12 @@ theorem arm8Next_moveWide_z_zero (ms : arm8_state) (rd : BitVec 5)
     exact arm8Decode_moveWide .z (0 : BitVec 2) (0 : BitVec 16) rd
   have hrun := arm8Run_moveWide_z (0 : BitVec 2) (0 : BitVec 16) rd
     { ms with branch_hint := none }
-  have hbr : (Run i { ms with branch_hint := none }).branch_hint = none := by
-    dsimp only [i]
-    rw [hrun, if_neg hrd]
-  have hexc : (Run i { ms with branch_hint := none }).exception = exception.NoException := by
-    dsimp only [i]
-    rw [hrun, if_neg hrd]
-    simpa using hexc0
-  have hn := arm8Next_word ms (arm8MoveWideWord .z (0 : BitVec 2) (0 : BitVec 16) rd)
-    i hdec hbr hexc h0 h1 h2 h3 hal he0 hel
-  unfold arm8Next
-  rw [hn]
+  refine arm8Next_eq ms _ _ _ hdec ?_ rfl hexc0 h0 h1 h2 h3 hal he0 hel
   dsimp only [i]
   rw [hrun, if_neg hrd]
   rfl
 
 /-! ## Projections through `SetTheFlags` and `write'X` -/
-
-theorem setTheFlags_branchHint (b : Bool) (n z c v : Bool) (s : arm8_state) :
-    (SetTheFlags (b, (n, (z, (c, v)))) s).branch_hint = s.branch_hint := by
-  simp only [SetTheFlags]; split <;> rfl
-
-theorem setTheFlags_exception (b : Bool) (n z c v : Bool) (s : arm8_state) :
-    (SetTheFlags (b, (n, (z, (c, v)))) s).exception = s.exception := by
-  simp only [SetTheFlags]; split <;> rfl
 
 theorem arm8X_branchHint (n : BitVec 5) (s : arm8_state) :
     X (TN := 64) n { s with branch_hint := none } = X (TN := 64) n s := rfl
@@ -243,25 +225,11 @@ theorem arm8Next_conditionalCompare_zero (ms : arm8_state) (rn : BitVec 5)
     dsimp only [i]
     exact arm8Decode_conditionalCompare (0 : BitVec 5) (0 : BitVec 4) rn
   have hrun := arm8Run_conditionalCompare_zero rn { ms with branch_hint := none }
-  have hbr : (Run i { ms with branch_hint := none }).branch_hint = none := by
-    dsimp only [i]
-    rw [hrun]
-    split
-    · rw [setTheFlags_branchHint]
-    · rw [setTheFlags_branchHint]
-  have hexc : (Run i { ms with branch_hint := none }).exception = exception.NoException := by
-    dsimp only [i]
-    rw [hrun]
-    split
-    · rw [setTheFlags_exception]; simpa using hexc0
-    · rw [setTheFlags_exception]; simpa using hexc0
-  have hn := arm8Next_word ms (arm8ConditionalCompareWord false (0 : BitVec 5)
-    (0 : BitVec 4) false false true false rn) i hdec hbr hexc h0 h1 h2 h3 hal he0 hel
-  unfold arm8Next
-  rw [hn]
+  refine arm8Next_eq ms _ _ _ hdec ?_ (by split <;> rfl) (by split <;> exact hexc0)
+    h0 h1 h2 h3 hal he0 hel
   dsimp only [i]
   rw [hrun]
-  simp only [holThe, setTheFlags_eq]
+  simp only [setTheFlags_eq]
   split
   · simp [arm8AddWithCarry_add_zero_ofNat]
   · simp
@@ -305,23 +273,10 @@ theorem arm8Next_addSubCarry (ms : arm8_state) (s : Bool) (rm rn rd : BitVec 5)
     dsimp only [i]
     exact arm8Decode_addSubCarry_gen false s rm rn rd
   have hrun := arm8Run_addSubCarry_eq s rm rn rd { ms with branch_hint := none } hrd
-  have hbr : (Run i { ms with branch_hint := none }).branch_hint = none := by
-    dsimp only [i]
-    rw [hrun]
-    simp only [SetTheFlags]
-    split <;> rfl
-  have hexc : (Run i { ms with branch_hint := none }).exception = exception.NoException := by
-    dsimp only [i]
-    rw [hrun]
-    simp only [SetTheFlags]
-    split <;> simpa using hexc0
-  have hn := arm8Next_word ms (arm8AddSubCarryWord false s rm rn rd) i hdec hbr hexc
-    h0 h1 h2 h3 hal he0 hel
-  unfold arm8Next
-  rw [hn]
+  refine arm8Next_eq ms _ _ _ hdec ?_ rfl hexc0 h0 h1 h2 h3 hal he0 hel
   dsimp only [i]
   rw [hrun]
-  simp only [holThe, setTheFlags_eq]
+  simp only [setTheFlags_eq]
   split <;> simp [arm8X_branchHint]
 
 /-- `SetTheFlags` preserves the `PSTATE` agreement of two states. -/
