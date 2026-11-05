@@ -21,9 +21,10 @@ lines are compared, because short lemmas are often alike by design.
 
 Candidate pairs are found through ``k``-grams shared by at most ``--max-df``
 declarations, so a near-duplicate pair whose shared ``k``-grams are all more
-common than that is missed; the near-duplicate figures are therefore a lower
-bound.  Declarations whose normalised token sequences are identical are always
-clustered, whatever ``--max-df`` is.
+common than that is missed.  The number of declarations and lines found in
+clusters is therefore a lower bound; the number of clusters is not, since a
+missed pair can split one group into several.  Declarations whose normalised
+token sequences are identical are always clustered, whatever ``--max-df`` is.
 
 Usage::
 
@@ -286,8 +287,9 @@ def main(argv: list[str]) -> int:
     print(f"Near-duplicate proofs (>= {args.min_lines} lines, Jaccard >= {args.threshold}, "
           f"k = {args.k}): {len(groups)} clusters, {clustered_lines} lines, "
           f"out of {len(big)} compared declarations")
-    print(f"(a lower bound: pairs sharing only k-grams common to more than "
-          f"{args.max_df} declarations are not compared, unless identical)")
+    print(f"(clustered declarations and lines are a lower bound: pairs sharing only "
+          f"k-grams common to more than {args.max_df} declarations are not compared "
+          f"unless identical, which can also split a group into several clusters)")
     for n, g in enumerate(groups[: args.top], 1):
         print(f"\n[{n}] {len(g)} declarations, {sum(d.lines for d in g)} lines")
         for d in g:
