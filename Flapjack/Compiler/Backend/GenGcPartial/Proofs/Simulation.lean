@@ -1017,4 +1017,132 @@ theorem gcMoveRefList_simulation {α β γ : Type} (conf : Config β)
           tailOld p ⟨xs, size, payload, u, member, child, outside⟩
         exact ⟨xs, size, payload, v, by simp [oldMember], oldChild, outside⟩
 
+/-- Flapjack proof infrastructure: functional form of the partial copied-data
+scan simulation. -/
+theorem gcMoveData_simulationCore {α β : Type} (conf : Config β) (state : GcState α β) :
+    ∀ (heap0 : List (HeapElement α β)),
+      simInv conf heap0 state →
+      (∀ children len data ptr value, .pointer ptr value ∈ children →
+        .dataElement children len data ∈ state.heap ++ state.h2 → ptr < heapLength state.heap) →
+      heapLength state.heap = conf.limit →
+      (GenGc.gcMoveData (toGenConf conf) (toGenState conf state)).ok = true →
+      simInv conf heap0 (gcMoveData conf state) ∧
+      GenGc.gcMoveData (toGenConf conf) (toGenState conf state) = toGenState conf (gcMoveData conf state) := by
+  classical
+  induction state using gcMoveData.induct conf with
+  | case1 state empty =>
+    intro heap0 invariant bounded size success
+    rw [gcMoveData]
+    simp only [empty]
+    have majorEmpty : (toGenState conf state).h2 = [] := by simp [toGenState, toGenHeapList, empty]
+    rw [GenGc.gcMoveData]
+    simp [majorEmpty, invariant]
+  | case2 state head tail heap over =>
+    intro heap0 invariant bounded size success
+    have limits := (simInv_dataScanLimits conf heap0 state invariant).1
+    rw [heap] at limits
+    omega
+  | case3 state tail roots len payload roots1 middle move heap scanBound flag ih =>
+    intro heap0 invariant bounded size success
+    have lengthEq : heapLength ((toGenState conf state).h1 ++ (toGenState conf state).h2) =
+        heapLength (state.h1 ++ state.h2) := by
+      simpa [toGenState, toGenHeapList, List.map_append] using
+        heapLength_toGenHeapList conf (state.h1 ++ state.h2)
+    have majorPending : (toGenState conf state).h2 =
+        .dataElement (roots.map (toGenHeapAddress conf)) len payload :: toGenHeapList conf tail := by
+      simp [toGenState, toGenHeapList, toGenHeapElement, heap]
+    have majorBound : ¬ (toGenConf conf).limit <
+        heapLength ((toGenState conf state).h1 ++
+          .dataElement (roots.map (toGenHeapAddress conf)) len payload :: toGenHeapList conf tail) := by
+      rw [← majorPending, lengthEq]
+      exact Nat.not_lt.mpr (simInv_dataScanLimits conf heap0 state invariant).2
+    cases majorRun : GenGc.gcMoveList (toGenConf conf) (toGenState conf state)
+        (roots.map (toGenHeapAddress conf)) with
+    | mk majorRoots majorMiddle =>
+      rw [GenGc.gcMoveData] at success
+      simp only [majorPending, majorBound, ↓reduceIte, majorRun] at success
+      have middleOk := GenGc.gcMoveData_ok (toGenConf conf) _ success
+      simp only [Bool.and_eq_true] at middleOk
+      obtain ⟨tail1, middlePending, equal, step⟩ :=
+        gcMoveData_simulationStep conf heap0 state middle roots roots1 len payload tail
+          majorRoots majorMiddle heap invariant bounded size move majorRun middleOk.1.1
+      obtain ⟨rootsEq, middleEq⟩ := Prod.mk.inj equal
+      subst majorRoots
+      subst majorMiddle
+      have majorNext : (GenGc.gcMoveData (toGenConf conf)
+          { toGenState conf middle with
+            h1 := (toGenState conf middle).h1 ++
+              [.dataElement (roots1.map (toGenHeapAddress conf)) len payload],
+            h2 := (toGenState conf middle).h2.drop 1, ok := middle.ok }).ok = true := by
+        simpa [toGenState, toGenHeapList, toGenHeapElement, middlePending] using success
+      obtain ⟨nextInv, nextSize, nextBound, nextEq⟩ := step middle.ok
+      have nextSuccess : (GenGc.gcMoveData (toGenConf conf)
+          (toGenState conf { middle with
+            h1 := middle.h1 ++ [.dataElement roots1 len payload], h2 := tail1, ok := middle.ok })).ok = true := by
+        rw [nextEq]
+        exact majorNext
+      have majorEq : GenGc.gcMoveData (toGenConf conf) (toGenState conf state) =
+          GenGc.gcMoveData (toGenConf conf)
+            (toGenState conf { middle with
+              h1 := middle.h1 ++ [.dataElement roots1 len payload], h2 := tail1, ok := middle.ok }) := by
+        rw [GenGc.gcMoveData]
+        simp only [majorPending, majorBound, ↓reduceIte, majorRun]
+        rw [nextEq]
+        simp [toGenState, toGenHeapList, toGenHeapElement, middlePending]
+      dsimp only [flag] at ih
+      simp only [middlePending, List.drop_succ_cons, List.drop_zero, List.head?_cons,
+        ne_eq, List.cons_ne_nil, not_false_eq_true, decide_true, Bool.and_true] at ih
+      have result := ih heap0 nextInv nextBound nextSize nextSuccess
+      rw [gcMoveData]
+      simp only [heap, scanBound, ↓reduceIte, move, middlePending, List.drop_succ_cons,
+        List.drop_zero, List.head?_cons, ne_eq, List.cons_ne_nil, not_false_eq_true, decide_true, Bool.and_true]
+      rw [majorEq]
+      exact result
+  | case4 state head tail heap scanBound notData =>
+    intro heap0 invariant bounded size success
+    have lengthEq : heapLength ((toGenState conf state).h1 ++ (toGenState conf state).h2) =
+        heapLength (state.h1 ++ state.h2) := by
+      simpa [toGenState, toGenHeapList, List.map_append] using
+        heapLength_toGenHeapList conf (state.h1 ++ state.h2)
+    have majorBound : ¬ (toGenConf conf).limit <
+        heapLength ((toGenState conf state).h1 ++ (toGenState conf state).h2) := by
+      rw [lengthEq]
+      exact Nat.not_lt.mpr (simInv_dataScanLimits conf heap0 state invariant).2
+    cases head with
+    | unused n =>
+      rw [GenGc.gcMoveData] at success
+      simp [toGenState, toGenHeapList, toGenHeapElement, heap] at majorBound success
+    | forwardPointer ptr value n =>
+      rw [GenGc.gcMoveData] at success
+      simp [toGenState, toGenHeapList, toGenHeapElement, heap] at majorBound success
+    | dataElement children n data => exact False.elim (notData children n data rfl)
+
+/-- Partial copied-data scanning simulates the major collector and preserves
+the simulation invariant. The local HOL proof has not yet been replayed. -/
+@[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "gc_move_data_simulation"]
+theorem gcMoveData_simulation {α β : Type} (conf : Config β)
+    (state state1 : GcState α β) (heap0 : List (HeapElement α β))
+    (majorState : GcState (DataSort (HeapAddress α) α) β)
+    (partialRun : gcMoveData conf state = state1)
+    (invariant : simInv conf heap0 state)
+    (bounded : ∀ children len data ptr value,
+      .pointer ptr value ∈ children → .dataElement children len data ∈ state.h2 ++ state.heap →
+        ptr < heapLength state.heap)
+    (size : heapLength state.heap = conf.limit)
+    (majorRun : GenGc.gcMoveData (toGenConf conf) (toGenState conf state) = majorState)
+    (majorOk : majorState.ok = true) :
+    simInv conf heap0 state1 ∧ majorState = toGenState conf state1 := by
+  have bounded' : ∀ children len data ptr value,
+      .pointer ptr value ∈ children → .dataElement children len data ∈ state.heap ++ state.h2 →
+        ptr < heapLength state.heap := by
+    intro children len data ptr value child member
+    apply bounded children len data ptr value child
+    simpa [List.mem_append, or_comm] using member
+  have success : (GenGc.gcMoveData (toGenConf conf) (toGenState conf state)).ok = true := by
+    rw [majorRun]
+    exact majorOk
+  have result := gcMoveData_simulationCore conf state heap0 invariant bounded' size success
+  rw [partialRun, majorRun] at result
+  exact result
+
 end Flapjack.Compiler.Backend.GenGcPartial
