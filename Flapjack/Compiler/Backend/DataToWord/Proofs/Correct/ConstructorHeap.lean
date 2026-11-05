@@ -1,11 +1,39 @@
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.ConstructorFree
 import Flapjack.Compiler.Backend.GcShared.Filter
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Numbers
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockHeaderInjective
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.FreshBlockGc
 
 /-! Reconstruction of the separated word heap after constructor writes. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Correct
 open Flapjack Flapjack.Compiler.Backend
 open Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
+
+/-- A successfully encoded header decodes to its original length under the
+configuration bounds used by the word heap. -/
+theorem decodeLength_encodeHeader {width : Nat} [NeZero width] (conf : Config)
+    (tag len : Nat) (header : BitVec width) (widthBound : 4 ≤ width)
+    (configBound : conf.lenSize + 2 < width)
+    (encoded : encodeHeader conf tag len = some header) :
+    WordGcFunctions.decodeLength conf header = BitVec.ofNat width len := by
+  have bounds : tag < 2 ^ (width - conf.lenSize - 2) ∧ tag < 2 ^ width / 16 ∧
+      len < 2 ^ (width - 4) ∧ len < 2 ^ conf.lenSize := by
+    by_contra no
+    simp [encodeHeader, no] at encoded
+  have headerEq : makeHeader conf (BitVec.ofNat width tag) len = header := by
+    simpa [encodeHeader, bounds] using encoded
+  rw [← headerEq]
+  apply BitVec.eq_of_getLsbD_eq
+  intro i hi
+  simp only [WordGcFunctions.decodeLength, BitVec.getLsbD_ushiftRight, BitVec.getLsbD_ofNat,
+    hi, decide_true, Bool.true_and]
+  by_cases low : i < conf.lenSize
+  · have position : width - conf.lenSize + i = i + (width - conf.lenSize) := by omega
+    rw [position, headerLengthBit conf tag len i widthBound configBound bounds.1 low]
+  · have out : ¬width - conf.lenSize + i < width := by omega
+    have pow : 2 ^ conf.lenSize ≤ 2 ^ i := Nat.pow_le_pow_right (by decide) (by omega)
+    have zero : len.testBit i = false := Nat.testBit_lt_two_pow (by omega)
+    rw [BitVec.getLsbD_of_ge _ _ (by omega), zero]
 
 /-- Successful compiler header encoding provides the block payload and its
 word-heap length bound. -/
@@ -143,7 +171,6 @@ theorem heapInMemoryStore_storeConstructor_of_encoded {width : Nat} [NeZero widt
     (store : HolFiniteMapExact WordStoreHOL (WordLocW width)) (memory : BitVec width → WordLocW width)
     (domain : BitVec width → Bool) (limit : Nat) (enough : addresses.length + 1 ≤ sp)
     (encoded : encodeHeader conf (4 * tag) addresses.length = some header)
-    (decoded : WordGcFunctions.decodeLength conf header = BitVec.ofNat width addresses.length)
     (heapMem : heapInMemoryStore (pre ++ heapExpand (sp + sp1) ++ post)
       (heapLength pre) sp sp1 gens conf store memory domain limit) :
     ∃ curr, store.lookup .nextFree = some (.word (curr + StackRemove.bytesInWord width * BitVec.ofNat width (heapLength pre))) ∧
@@ -154,7 +181,92 @@ theorem heapInMemoryStore_storeConstructor_of_encoded {width : Nat} [NeZero widt
         (store.updateEq (.nextFree, .word next))
         (storeEachMemory base 0 (.word header :: addresses.map (wordAddr conf)) memory) domain limit := by
   obtain ⟨payload, lengthBound⟩ := encodedConstructor_payload conf addresses tag header encoded
+  have configBound : conf.lenSize + 7 < width := heapMem.2.2.2.2.1
+  have decoded := decodeLength_encodeHeader conf (4 * tag) addresses.length header (by omega) (by omega) encoded
   exact heapInMemoryStore_storeConstructor conf pre post addresses tag sp sp1 header gens store memory domain limit
     enough payload lengthBound decoded heapMem
+
+/-- Constructor allocation preserves the word-level ML invariant, with the
+new source block and its projected target pointer added to the stack. -/
+theorem wordMlInv_allocateBlock {width : Nat} [NeZero width] (conf : Config)
+    (fields vars : List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width))
+    (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value))
+    (pre post : ValueHeap width) (sp sp1 next tag limit : Nat) (be : Bool) (gens : GcCombined.GenState)
+    (nonempty : fields ≠ []) (enough : fields.length + 1 ≤ sp)
+    (inv : wordMlInv (pre ++ heapExpand (sp + sp1) ++ post, be, heapLength pre, sp, sp1, gens)
+      limit next conf refs (fields ++ vars)) :
+    ∃ addresses,
+      addresses.length = fields.length ∧
+      List.Forall₂ (fun address word => wordAddr conf address = word) addresses (fields.map Prod.snd) ∧
+      wordMlInv (pre ++ [blockRep tag addresses] ++ heapExpand (sp + sp1 - (addresses.length + 1)) ++ post,
+        be, heapLength pre + (addresses.length + 1), sp - (addresses.length + 1), sp1, gens)
+        limit (next + 1) conf refs
+        (((.block next tag (fields.map Prod.fst)),
+          wordAddr conf (.pointer (heapLength pre) (.word (ptrBits conf tag addresses.length)))) :: fields ++ vars) := by
+  obtain ⟨roots, absInv, projected⟩ := inv
+  have rootLength : roots.length = (fields ++ vars).length := by
+    simpa using projected.length_eq
+  let addresses := roots.take fields.length
+  let rest := roots.drop fields.length
+  have addressesLength : addresses.length = fields.length := by
+    simp [addresses, rootLength]
+  have parts : roots = addresses ++ rest := by simp [addresses, rest]
+  have fieldsProjected : List.Forall₂ (fun address word => wordAddr conf address = word) addresses (fields.map Prod.snd) := by
+    have selected := List.forall₂_take fields.length projected
+    simpa [addresses] using selected
+  have sourceNonempty : fields.map Prod.fst ≠ [] := by simpa using nonempty
+  have oldAbs : absMlInv conf (fields.map Prod.fst ++ vars.map Prod.fst) refs
+      (addresses ++ rest, pre ++ heapExpand (sp + sp1) ++ post, be, heapLength pre, sp, sp1, gens) limit next := by
+    simpa [List.map_append, ← parts] using absInv
+  have nextAbs := absMlInv_allocateBlock conf (fields.map Prod.fst) (vars.map Prod.fst) addresses rest refs pre post
+    sp sp1 next tag limit be gens sourceNonempty (by simp [addressesLength]) (by omega) oldAbs
+  refine ⟨addresses, addressesLength, fieldsProjected, ?_⟩
+  refine ⟨.pointer (heapLength pre) (.word (ptrBits conf tag addresses.length)) :: roots, ?_, ?_⟩
+  · simpa [List.map_append, ← parts] using nextAbs
+  · exact .cons rfl projected
+
+/-- The abstract and concrete constructor updates together establish the
+full memory relation with reduced available space. -/
+theorem memoryRel_allocateBlock_from_heap {width : Nat} [NeZero width] (conf : Config)
+    (fields vars : List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width))
+    (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value))
+    (pre post : ValueHeap width) (sp sp1 next tag limit space : Nat) (be : Bool) (gens : GcCombined.GenState)
+    (header : BitVec width) (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (memory : BitVec width → WordLocW width) (domain : BitVec width → Bool)
+    (nonempty : fields ≠ []) (enough : fields.length + 1 ≤ sp) (spaceBound : space ≤ sp)
+    (limitBound : (limit + 3) * (width / 8) + 1 < 2 ^ width)
+    (encoded : encodeHeader conf (4 * tag) fields.length = some header)
+    (heapMem : heapInMemoryStore (pre ++ heapExpand (sp + sp1) ++ post)
+      (heapLength pre) sp sp1 gens conf store memory domain limit)
+    (inv : wordMlInv (pre ++ heapExpand (sp + sp1) ++ post, be, heapLength pre, sp, sp1, gens)
+      limit next conf refs (fields ++ vars)) :
+    ∃ (curr : BitVec width) (addresses : List (HeapAddress (WordLocW width))),
+      store.lookup .nextFree = some (.word (curr + StackRemove.bytesInWord width * BitVec.ofNat width (heapLength pre))) ∧
+      addresses.length = fields.length ∧
+      addresses.map (wordAddr conf) = fields.map Prod.snd ∧
+      let base := curr + StackRemove.bytesInWord width * BitVec.ofNat width (heapLength pre)
+      let nextFree := curr + StackRemove.bytesInWord width * BitVec.ofNat width (heapLength pre + (fields.length + 1))
+      memoryRel conf be (next + 1) refs (space - (fields.length + 1))
+        (store.updateEq (.nextFree, .word nextFree))
+        (storeEachMemory base 0 (.word header :: fields.map Prod.snd) memory) domain
+        (((.block next tag (fields.map Prod.fst)),
+          wordAddr conf (.pointer (heapLength pre) (.word (ptrBits conf tag fields.length)))) :: fields ++ vars) := by
+  obtain ⟨addresses, lengthEq, projected, wordInv⟩ :=
+    wordMlInv_allocateBlock conf fields vars refs pre post sp sp1 next tag limit be gens nonempty enough inv
+  have wordsEq : addresses.map (wordAddr conf) = fields.map Prod.snd := by
+    have mapped : List.Forall₂ (· = ·) (addresses.map (wordAddr conf)) (fields.map Prod.snd) :=
+      List.forall₂_map_left_iff.mpr projected
+    simpa only [List.forall₂_eq_eq_eq] using mapped
+  have encoded' : encodeHeader conf (4 * tag) addresses.length = some header := by simpa [lengthEq] using encoded
+  obtain ⟨curr, nextStore, updatedHeap⟩ := heapInMemoryStore_storeConstructor_of_encoded conf pre post addresses tag sp sp1
+    header gens store memory domain limit (by omega) encoded' heapMem
+  refine ⟨curr, addresses, nextStore, lengthEq, wordsEq, ?_⟩
+  dsimp only
+  refine ⟨pre ++ [blockRep tag addresses] ++ heapExpand (sp + sp1 - (addresses.length + 1)) ++ post,
+    limit, heapLength pre + (addresses.length + 1), sp - (addresses.length + 1), sp1, gens,
+    ?_, ?_, limitBound, ?_⟩
+  · simpa [lengthEq, wordsEq] using updatedHeap
+  · simpa [lengthEq] using wordInv
+  · omega
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Correct
