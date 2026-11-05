@@ -17,7 +17,7 @@ and invariant postconditions are not yet proved here.
 
 namespace Flapjack
 
-/-- Private lookup bridge from the production string lookup to the
+/-- Lookup bridge from the production string lookup to the
     HOL-style association-list lookup. -/
 theorem lookupInfoStringDefault_eq_panPropsALookupEq
     {β : Type} (key : String) (entries : List (String × β)) :
