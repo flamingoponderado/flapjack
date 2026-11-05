@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CombinedGenerational
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.FullStore
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.GcConfig
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.DoPartial
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation
 
 /-! Generational collectors under the heap/store invariant. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
@@ -120,6 +121,101 @@ theorem partialGenStart_store {width : Nat} [NeZero width] (conf : Config)
       refine ⟨start, tail, count, rfl, ?_, ?_⟩
       · simp [makePartialConf, holHd]
       · simpa only [wordEq, wordSemBytesInWord, StackRemove.bytesInWord] using lookup
+
+/-- The source ML and store invariants provide the heap size, reference
+suffix, and generation ordering needed by partial collection. -/
+theorem partialSource_conditions {width : Nat} [NeZero width] (conf : Config)
+    (values : List DataSem.Value) (references : Spt (BvlSem.Ref DataSem.Value))
+    (roots : List (HeapAddress (WordLocW width)))
+    (heap : List (HeapElement (WordLocW width) (HeapTag × List (WordLocW width))))
+    (be : Bool) (a sp sp1 limit next : Nat) (gens : GenState) (limits : List Nat)
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (memory : BitVec width → WordLocW width) (domain : BitVec width → Bool)
+    (source : absMlInv conf values references (roots, heap, be, a, sp, sp1, gens) limit next)
+    (kind : conf.gcKind = .generational limits) (selected : wordGenGcCanDoPartial limits store)
+    (heapMem : heapInMemoryStore heap a sp sp1 gens conf store memory domain limit) :
+    limit = heapLength heap ∧ endsWithRefs (a + sp + sp1) heap ∧
+      (makePartialConf (makeGcConf (α := List (WordLocW width)) limit) gens (a + sp + sp1)).genStart ≤ a ∧
+      a + sp + sp1 ≤ heapLength heap := by
+  rcases source with ⟨rootsOk, heapOk, gcOk, unused, stackOk⟩
+  rcases heapMem with ⟨_, _, _, _, _, _, _, curr, other, _, _, _, _, _, _, _, _, _, generations, _⟩
+  obtain ⟨start, tail, count, gensEq, startEq, startLookup⟩ :=
+    partialGenStart_store conf (makeGcConf limit) gens (a + sp + sp1) limits store kind selected generations
+  simp only [gcKindInv, kind] at gcOk
+  obtain ⟨genOk, first, second, split, _, refTail⟩ := gcOk
+  have startBound : start ≤ a := by
+    rw [gensEq] at genOk
+    exact genOk.1 start (by simp)
+  refine ⟨heapOk.1.symm, ⟨first, second, split, refTail⟩, ?_, ?_⟩
+  · simpa [startEq] using startBound
+  · simpa [Nat.add_assoc] using unused.2.1
+
+/-- The old-generation prefix contains only data when its boundary precedes
+the source allocation boundary. -/
+theorem partialSource_oldData {α β : Type} (heap : List (HeapElement α β))
+    (old current refs : List (HeapElement α β)) (start finish allocation : Nat)
+    (segment : heapSegment (start, finish) heap = some (old, current, refs))
+    (beforeAllocation : dataUpTo allocation heap) (ordered : start ≤ allocation) :
+    ∀ element ∈ old, isDataElement element := by
+  obtain ⟨whole, oldLen, _, _⟩ := heapSegment_imp heap start finish old current refs segment
+  obtain ⟨before, after, split, allData⟩ := beforeAllocation
+  obtain ⟨beforeLen, _, beforeWhole⟩ := heapSplit_heapLength heap before after allocation split
+  have oldPrefix : old <+: heap := ⟨current ++ refs, by simpa [List.append_assoc] using whole⟩
+  have beforePrefix : before <+: heap := ⟨after, beforeWhole⟩
+  have included : old <+: before := by
+    rcases List.prefix_or_prefix_of_prefix oldPrefix beforePrefix with h | h
+    · exact h
+    · obtain ⟨tail, oldEq⟩ := h
+      have zero : heapLength tail = 0 := by
+        have lengths := congrArg heapLength oldEq
+        rw [heapLength_append, oldLen, beforeLen] at lengths
+        omega
+      have tailEmpty : tail = [] := List.length_eq_zero_iff.mp (Nat.eq_zero_of_le_zero (by
+        have le := length_le_heapLength tail
+        omega))
+      simp only [tailEmpty, List.append_nil] at oldEq
+      subst old
+      exact ⟨[], by simp⟩
+  intro element member
+  exact allData element (included.sublist.subset member)
+
+/-- A successful partial collection preserves the original old-generation
+prefix as the first component of the input heap segment. -/
+theorem partialSource_resultSegment {α β : Type} (conf : GenGcPartial.Config β)
+    (roots roots1 : List (HeapAddress α)) (heap : List (HeapElement α β)) (state : GcState α β)
+    (run : GenGcPartial.partialGc conf (roots, heap) = (roots1, state)) (ok : state.ok = true) :
+    ∃ current refs, heapSegment (conf.genStart, conf.refsStart) heap = some (state.old, current, refs) := by
+  obtain ⟨old, current, refs, middle, refs1, afterRefs, segment, rootRun, _, refRun, _, dataRun⟩ :=
+    partialFull_abstractSteps conf roots roots1 heap state run ok
+  let initial : GcState α β :=
+    { emptyGcState with heap := heap, old := old, r2 := refs, a := conf.genStart, n := heapLength current }
+  have rootOld := (partialMoveList_fixedFields conf roots roots1 initial middle rootRun).2.2.2.2.2
+  have refsOld := (partialFull_refListFixed conf refs refs1 middle afterRefs refRun).2.2.2.2.2
+  have dataOld := (partialFull_dataFixed conf { afterRefs with r1 := refs1, r2 := [] }).2.2.2.2.1
+  rw [dataRun] at dataOld
+  have oldEq : state.old = old := by simpa [initial] using dataOld.trans (refsOld.trans rootOld)
+  exact ⟨current, refs, by simpa [oldEq] using segment⟩
+
+/-- The old region returned by a successful partial collection is composed
+of source data elements. -/
+theorem partialSource_resultOldData {width : Nat} [NeZero width] (conf : Config)
+    (values : List DataSem.Value) (references : Spt (BvlSem.Ref DataSem.Value))
+    (roots roots1 : List (HeapAddress (WordLocW width)))
+    (heap : List (HeapElement (WordLocW width) (HeapTag × List (WordLocW width))))
+    (state : GcState (WordLocW width) (HeapTag × List (WordLocW width)))
+    (be : Bool) (a sp sp1 limit next : Nat) (gens : GenState) (limits : List Nat)
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (memory : BitVec width → WordLocW width) (domain : BitVec width → Bool)
+    (source : absMlInv conf values references (roots, heap, be, a, sp, sp1, gens) limit next)
+    (kind : conf.gcKind = .generational limits) (selected : wordGenGcCanDoPartial limits store)
+    (heapMem : heapInMemoryStore heap a sp sp1 gens conf store memory domain limit)
+    (run : GenGcPartial.partialGc (makePartialConf (makeGcConf limit) gens (a + sp + sp1)) (roots, heap) =
+      (roots1, state)) (ok : state.ok = true) :
+    ∀ element ∈ state.old, isDataElement element := by
+  obtain ⟨_, _, startBound, _⟩ := partialSource_conditions conf values references roots heap be a sp sp1 limit next
+    gens limits store memory domain source kind selected heapMem
+  obtain ⟨current, refs, segment⟩ := partialSource_resultSegment _ roots roots1 heap state run ok
+  exact partialSource_oldData heap state.old current refs _ (a + sp + sp1) a segment source.2.2.2.1.2.2 startBound
 
 /-- The store invariant supplies the memory and machine-word premises for a
 successful combined partial collection. -/
@@ -311,6 +407,7 @@ source invariant remains part of the enclosing store-correctness proof. -/
 theorem combinedPartial_store_execution {width : Nat} [NeZero width] (conf : Config)
     (root root1 : HeapAddress (WordLocW width)) (roots roots1 : List (HeapAddress (WordLocW width)))
     (heap heap1 : List (HeapElement (WordLocW width) (HeapTag × List (WordLocW width))))
+    (values : List DataSem.Value) (references : Spt (BvlSem.Ref DataSem.Value)) (be : Bool) (next : Nat)
     (a sp sp1 limit a1 n1 : Nat) (gens gens1 : GenState) (limits : List Nat)
     (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
     (memory : BitVec width → WordLocW width) (domain : BitVec width → Bool)
@@ -318,9 +415,8 @@ theorem combinedPartial_store_execution {width : Nat} [NeZero width] (conf : Con
       (root :: roots, heap, gens, a + sp + sp1, true) = (root1 :: roots1, heap1, a1, n1, gens1, true))
     (kind : conf.gcKind = .generational limits) (selected : wordGenGcCanDoPartial limits store)
     (global : store.lookup .globals = some (wordAddr conf root))
-    (limitEq : limit = heapLength heap) (ending : endsWithRefs (a + sp + sp1) heap)
-    (ordered : (makePartialConf (makeGcConf (α := List (WordLocW width)) limit) gens (a + sp + sp1)).genStart ≤ a + sp + sp1)
-    (refBound : a + sp + sp1 ≤ heapLength heap) (good : goodDimindex width)
+    (source : absMlInv conf values references (root :: roots, heap, be, a, sp, sp1, gens) limit next)
+    (good : goodDimindex width)
     (heapMem : heapInMemoryStore heap a sp sp1 gens conf store memory domain limit)
     (allocationBound : ∀ (state : GcState (WordLocW width) (HeapTag × List (WordLocW width))),
       GenGcPartial.partialGc (makePartialConf (makeGcConf limit) gens (a + sp + sp1)) (root :: roots, heap) = (root1 :: roots1, state) →
@@ -346,6 +442,9 @@ theorem combinedPartial_store_execution {width : Nat} [NeZero width] (conf : Con
         (SetSep.fun2Set (outMemory, fun address => domain address = true)) ∧
       state.h2 = [] ∧ state.r4 = [] ∧ state.r3 = [] ∧ state.r2 = [] ∧ partialLenInv state := by
   classical
+  obtain ⟨limitEq, ending, startBound, refBound⟩ := partialSource_conditions conf values references (root :: roots) heap
+    be a sp sp1 limit next gens limits store memory domain source kind selected heapMem
+  have ordered : (makePartialConf (makeGcConf (α := List (WordLocW width)) limit) gens (a + sp + sp1)).genStart ≤ a + sp + sp1 := by omega
   obtain ⟨curr, other, outMemory, state, current1, refs1, currLookup, otherLookup, startLookup,
     abstractRun, heapEq, allocEq, freeEq, gensEq, concrete, separated, h2Empty, r4Empty, r3Empty, r2Empty,
     heapLen, segment, inv, refsOk⟩ :=
