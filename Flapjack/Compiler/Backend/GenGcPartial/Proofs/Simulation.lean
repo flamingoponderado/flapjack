@@ -1662,4 +1662,75 @@ theorem partialGc_success {α β : Type} (conf : Config β)
       state1 _ majorState partialRun generations ⟨lower, upper⟩ segment nonrefs refData validRoots majorRun validHeap majorOk
     exact ⟨roots1, state1, rfl, invariant, empty, ok⟩
 
+/-- Data-object addresses outside the generation being collected. -/
+@[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "f_old_ptrs_def"]
+def fOldPtrs {α β : Type} (conf : Config β) (heap : List (HeapElement α β)) : Set Nat :=
+  { ptr | isSomeDataElement (heapLookup ptr heap) ∧ (ptr < conf.genStart ∨ conf.refsStart ≤ ptr) }
+
+/-- The set of unchanged data-object addresses is finite. The original HOL
+proof has not yet been replayed. -/
+@[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "f_old_ptrs_finite"]
+theorem fOldPtrs_finite {α β : Type} (heap : List (HeapElement α β)) (conf : Config β) :
+    (fOldPtrs conf heap).Finite := by
+  apply (Set.finite_lt_nat (heapLength heap)).subset
+  intro ptr member
+  obtain ⟨children, len, data, found⟩ := member.1
+  exact heapLookup_less heap ptr (.dataElement children len data) found
+
+open Classical in
+/-- Raw lookup used by Flapjack's finite forwarding-map construction. -/
+noncomputable def newForwardLookup {α β : Type} (f : HolFiniteMapExact Nat Nat)
+    (conf : Config β) (heap : List (HeapElement α β)) (ptr : Nat) : Option Nat :=
+  if ptr ∈ fOldPtrs conf heap then some ptr
+  else if conf.genStart ≤ ptr then (f.lookup (ptr - conf.genStart)).map (conf.genStart + ·)
+  else none
+
+/-- The partial collector's combined forwarding map. This construction is
+Flapjack infrastructure until its finite-map representation is classified
+and reviewed against the HOL definition. -/
+noncomputable def newForwardMap {α β : Type} (f : HolFiniteMapExact Nat Nat)
+    (conf : Config β) (heap : List (HeapElement α β)) : HolFiniteMapExact Nat Nat := by
+  classical
+  refine ⟨newForwardLookup f conf heap, ?_⟩
+  obtain ⟨keys, supported⟩ := f.finiteSupport
+  refine ⟨List.range (heapLength heap) ++ keys.map (conf.genStart + ·), ?_⟩
+  intro ptr present
+  unfold newForwardLookup at present
+  split at present
+  · rename_i old
+    apply List.mem_append.mpr
+    left
+    apply List.mem_range.mpr
+    obtain ⟨children, len, data, found⟩ := old.1
+    exact heapLookup_less heap ptr (.dataElement children len data) found
+  · split at present
+    · rename_i lower
+      apply List.mem_append.mpr
+      right
+      apply List.mem_map.mpr
+      refine ⟨ptr - conf.genStart, ?_, ?_⟩
+      · apply supported
+        intro absent
+        simp [absent] at present
+      · omega
+    · contradiction
+
+/-- Flapjack infrastructure: valid pointers outside the current generation
+are mapped to themselves. -/
+theorem newForwardMap_old {α β : Type} (f : HolFiniteMapExact Nat Nat)
+    (conf : Config β) (heap : List (HeapElement α β)) (ptr : Nat)
+    (old : ptr ∈ fOldPtrs conf heap) : (newForwardMap f conf heap).lookup ptr = some ptr := by
+  simp [newForwardMap, newForwardLookup, old]
+
+/-- Flapjack infrastructure: a current-generation pointer is forwarded by
+the translated major-collector map. -/
+theorem newForwardMap_current {α β : Type} (f : HolFiniteMapExact Nat Nat)
+    (conf : Config β) (heap : List (HeapElement α β)) (ptr : Nat)
+    (lower : conf.genStart ≤ ptr) (upper : ptr < conf.refsStart) :
+    (newForwardMap f conf heap).lookup ptr =
+      (f.lookup (ptr - conf.genStart)).map (conf.genStart + ·) := by
+  have notOld : ptr ∉ fOldPtrs conf heap := by
+    simp [fOldPtrs, Nat.not_lt.mpr lower, Nat.not_le.mpr upper]
+  simp [newForwardMap, newForwardLookup, notOld, lower]
+
 end Flapjack.Compiler.Backend.GenGcPartial
