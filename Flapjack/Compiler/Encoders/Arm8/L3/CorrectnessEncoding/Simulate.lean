@@ -73,6 +73,24 @@ theorem arm8Proj_eq_iff (d : BitVec 64 → Prop) (s t : arm8_state) :
       · simp [ha]
     simp only [arm8Proj, hp, hs, ht, he, hr, hpc, hmem]
 
+/-- The four instruction bytes at the PC of a state carry over to any state
+agreeing with it on a domain containing them (Flapjack infrastructure). -/
+theorem Arm8L3Agree.word {d : BitVec 64 → Prop} {u t : arm8_state} (h : Arm8L3Agree d u t)
+    (hf : ∀ j, j < 4 → d (t.PC + BitVec.ofNat 64 j)) (w : BitVec 32)
+    (h0 : t.MEM t.PC = BitVec.ofNat 8 ((w >>> 0).toNat))
+    (h1 : t.MEM (t.PC + 1) = BitVec.ofNat 8 ((w >>> 8).toNat))
+    (h2 : t.MEM (t.PC + 2) = BitVec.ofNat 8 ((w >>> 16).toNat))
+    (h3 : t.MEM (t.PC + 3) = BitVec.ofNat 8 ((w >>> 24).toNat)) :
+    u.MEM u.PC = BitVec.ofNat 8 ((w >>> 0).toNat) ∧
+      u.MEM (u.PC + 1) = BitVec.ofNat 8 ((w >>> 8).toNat) ∧
+      u.MEM (u.PC + 2) = BitVec.ofNat 8 ((w >>> 16).toNat) ∧
+      u.MEM (u.PC + 3) = BitVec.ofNat 8 ((w >>> 24).toNat) := by
+  rw [h.pc]
+  exact ⟨(h.mem _ (by simpa using hf 0 (by omega))).trans h0,
+    (h.mem _ (by simpa using hf 1 (by omega))).trans h1,
+    (h.mem _ (by simpa using hf 2 (by omega))).trans h2,
+    (h.mem _ (by simpa using hf 3 (by omega))).trans h3⟩
+
 /-- `arm8Ok` only reads the components `Arm8L3Agree` fixes. -/
 theorem arm8Ok_congr {d : BitVec 64 → Prop} {s t : arm8_state}
     (h : Arm8L3Agree d s t) : arm8Ok s = arm8Ok t := by
@@ -235,6 +253,124 @@ theorem mem_allPcs_eight_l3 (p : BitVec 64) (i : Nat) (hi : i < 2) :
   refine ⟨i, ?_, rfl⟩
   have h4 : (2 : Nat) ^ 2 = 4 := by norm_num
   omega
+
+/-- The states a straight-line simulation may reach before its `k`-th
+step: the start state itself before the first step, and afterwards anything
+agreeing with the expected state `T k` (Flapjack infrastructure). -/
+def ChainAt (d : BitVec 64 → Prop) (s0 : arm8_state) (T : Nat → arm8_state) (k : Nat)
+    (u : arm8_state) : Prop :=
+  (k = 0 → u = s0) ∧ (k ≠ 0 → Arm8L3Agree d u (T k))
+
+/-- The `asserts` half of `CaseGoal` for a straight-line lowering of `n + 1`
+instructions (Flapjack infrastructure): if every state reachable before step
+`k` steps to a state agreeing with `T (k + 1)`, the intermediate assertion
+holds on everything agreeing with `T 1`, ..., `T n`, and the final one on
+everything agreeing with `T (n + 1)`, then the interleaving of `arm8Next` with
+the interference environment satisfies `asserts`. -/
+theorem asserts_chain {d : BitVec 64 → Prop} (n : Nat) (env : Nat → arm8_state → arm8_state)
+    (s0 : arm8_state) (T : Nat → arm8_state) (P Q : arm8_state → Prop)
+    (henv : ∀ k x, Arm8L3Agree d (env k x) x)
+    (hstep : ∀ k, k ≤ n → ∀ u, ChainAt d s0 T k u → Arm8L3Agree d (arm8Next u) (T (k + 1)))
+    (hP : ∀ k, 1 ≤ k → k ≤ n → ∀ u, Arm8L3Agree d u (T k) → P u)
+    (hQ : ∀ u, Arm8L3Agree d u (T (n + 1)) → Q u) :
+    ∀ m, m ≤ n → ∀ s, ChainAt d s0 T (n - m) s →
+      asserts m (fun k s => env (n - k) (arm8Next s)) s P Q := by
+  intro m
+  induction m with
+  | zero =>
+    intro _ s hs
+    show Q (env (n - 0) (arm8Next s))
+    apply hQ
+    have h1 := hstep n le_rfl s (by simpa using hs)
+    exact (henv _ _).trans h1
+  | succ m ih =>
+    intro hm s hs
+    have h1 : Arm8L3Agree d (env (n - (m + 1)) (arm8Next s)) (T (n - m)) := by
+      have h2 := hstep (n - (m + 1)) (by omega) s hs
+      rw [show n - (m + 1) + 1 = n - m by omega] at h2
+      exact (henv _ _).trans h2
+    exact ⟨hP (n - m) (by omega) (by omega) _ h1,
+      ih (by omega) _ ⟨fun h => absurd h (by omega), fun _ => h1⟩⟩
+
+/-- The `asserts2` half of `CaseGoal` for a straight-line lowering of `n + 1`
+instructions (Flapjack infrastructure): every step relates its pre- and
+post-state by `R`. -/
+theorem asserts2_chain {d : BitVec 64 → Prop} (n : Nat) (env : Nat → arm8_state → arm8_state)
+    (s0 : arm8_state) (T : Nat → arm8_state) (R : arm8_state → arm8_state → Prop)
+    (henv : ∀ k x, Arm8L3Agree d (env k x) x)
+    (hstep : ∀ k, k ≤ n → ∀ u, ChainAt d s0 T k u → Arm8L3Agree d (arm8Next u) (T (k + 1)))
+    (hR : ∀ k, k ≤ n → ∀ u, ChainAt d s0 T k u → R u (arm8Next u)) :
+    ∀ m, m ≤ n + 1 → ∀ s, ChainAt d s0 T (n + 1 - m) s →
+      asserts2 m (fun k => env (n + 1 - k)) arm8Next s R := by
+  intro m
+  induction m with
+  | zero => intro _ _ _; trivial
+  | succ m ih =>
+    intro hm s hs
+    have h1 : Arm8L3Agree d (env (n + 1 - (m + 1)) (arm8Next s)) (T (n + 1 - m)) := by
+      have h2 := hstep (n + 1 - (m + 1)) (by omega) s hs
+      rw [show n + 1 - (m + 1) + 1 = n + 1 - m by omega] at h2
+      exact (henv _ _).trans h2
+    exact ⟨hR (n + 1 - (m + 1)) (by omega) s hs,
+      ih (by omega) _ ⟨fun h => absurd h (by omega), fun _ => h1⟩⟩
+
+/-- `encoder_correct`'s case obligation for a straight-line lowering of
+`n + 1` instructions that leaves memory outside the source domain alone
+(Flapjack infrastructure, the counterpart of HOL's repeated
+`next_state_tacN` steps).  `T k` is the machine state expected after `k`
+steps; `hstep` steps every state `ChainAt` admits before step `k` (the start
+state itself for the first step), `hok`/`hpc`/`hcode` are the intermediate
+assertions, and `hfinal` is the post-state relation. -/
+theorem asmCaseChain (i : HolAsm 64) (n : Nat) (T : Nat → arm8_state)
+    (s1 s2 : AsmState 64) (ms : arm8_state)
+    (h : asmStep arm8ConfigL3 s1 i s2 ∧ targetStateRel arm8TargetL3 s1 ms)
+    (hlen : (arm8Enc i).length = 4 * (n + 1))
+    (hstep : ∀ k, k ≤ n → ∀ u, ChainAt s1.memDomain ms T k u →
+      Arm8L3Agree s1.memDomain (arm8Next u) (T (k + 1)))
+    (hstepMem : ∀ k, k ≤ n → ∀ u, ChainAt s1.memDomain ms T k u →
+      ∀ x, ¬ s1.memDomain x → (arm8Next u).MEM x = u.MEM x)
+    (hok : ∀ k, 1 ≤ k → k ≤ n → arm8Ok (T k) = true)
+    (hpc : ∀ k, 1 ≤ k → k ≤ n → (T k).PC = ms.PC + BitVec.ofNat 64 (4 * k))
+    (hcode : ∀ k, 1 ≤ k → k ≤ n → ∀ x, s1.memDomain x → (T k).MEM x = ms.MEM x)
+    (hs2dom : s2.memDomain = s1.memDomain)
+    (hfinal : targetStateRel arm8TargetL3 s2 (T (n + 1))) :
+    CaseGoal i s1 s2 ms := by
+  obtain ⟨hs, hr⟩ := h
+  have hpc0 : ms.PC = s1.pc := hr.2.1
+  have hcodeDom : allPcs (arm8Enc i).length s1.pc 0 ⊆ s1.memDomain :=
+    bytesInMemory_allPcs (arm8Enc i) s1.pc s1.mem s1.memDomain 0 hs.1
+  have hstart : ∀ k, k = 0 → ChainAt s1.memDomain ms T k ms :=
+    fun k hk => ⟨fun _ => rfl, fun h => absurd hk h⟩
+  refine ⟨n, ?_⟩
+  intro env henv
+  have henv' : ∀ k x, Arm8L3Agree s1.memDomain (env k x) x := fun k x =>
+    (arm8Proj_eq_iff s1.memDomain _ _).mp (henv k x)
+  constructor
+  · refine asserts_chain n env ms T _ _ henv' hstep ?_ ?_ n le_rfl ms (hstart _ (by omega))
+    · intro k hk1 hkn u hu
+      refine ⟨?_, ?_, ?_⟩
+      · rw [arm8Ok_congr hu]
+        exact hok k hk1 hkn
+      · intro pc hpc'
+        have hd := hcodeDom hpc'
+        exact (hu.mem pc hd).trans (hcode k hk1 hkn pc hd)
+      · change u.PC ∈ allPcs (arm8Enc i).length s1.pc 2
+        rw [hu.pc, hpc k hk1 hkn, hpc0, hlen, allPcs_eq]
+        refine ⟨k, ?_, ?_⟩
+        · have h4 : (2 : Nat) ^ 2 = 4 := by norm_num
+          rw [h4]
+          omega
+        · congr 1
+          congr 1
+          norm_num
+          omega
+    · intro u hu
+      have hu' : Arm8L3Agree s2.memDomain u (T (n + 1)) := by rw [hs2dom]; exact hu
+      exact targetStateRel_congr hu' hfinal
+  · refine asserts2_chain n env ms T _ henv' hstep ?_ (n + 1) le_rfl ms
+      (hstart _ (by omega))
+    intro k hk u hu x hx
+    exact (hstepMem k hk u hu x hx).symm
 
 /-- Two `arm8Next` steps for a two-instruction lowering: the first step leaves
 memory alone outside the source domain, the second may write inside it, and

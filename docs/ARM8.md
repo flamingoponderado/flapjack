@@ -336,7 +336,7 @@ and a final `AddSubShiftedRegister@64` adding the temporary to the
 destination.  It proves the lowering shape, the 24-byte encoding, the six
 `NextStateARM8` steps, that the four insertions put the offset into register 26
 and that the final add writes `PC + offset`; `arm8_encoder_correct_loc_big`
-assembles the case with `n = 5`.
+assembles the case with `n = 5` through `asmCaseChain` (see below).
 
 `Branch.lean` records the `JMP`-typed `BranchImmediate` instruction: its word
 (`btype = CALL` bit, the `00101` opcode and the 26-bit immediate), the
@@ -448,8 +448,9 @@ zeroes `r4`, and a final `AddSubCarry@64` into `r4`.  The file generalises the
 `AddSubCarry@64` decoder to both `opc`/`s` combinations, records the
 `AddWithCarry` facts for the two zero compares
 (`arm8AddWithCarry_subs_zero`, `arm8AddWithCarry_add_zero`), gives each of the
-five steps its `arm8Next_*` equation, its memory-preservation lemma
-(`arm8Next_*_mem`) and its `arm8Ok` preservation, and carries the five
+five steps its `arm8Next_*` equation, its interference-agreement lemma
+(`arm8Next_*_agree`), a memory-preservation lemma for each instruction kind
+and its `arm8Ok` preservation, and carries the five
 intermediate states `arm8AddCarryT1..T5` with `PC`/`REG`/`exception`/`EL`/
 `SCTLR_EL1`/`MEM` projections.  The register effect is stated first in
 `readReg` form (`hs2regsR`) so that the goal and `arithUpd`'s body share the
@@ -458,6 +459,17 @@ same `Decidable` instances, then rewritten to the `s1.regs` form through
 out lands in `sr` and the truncated sum in `d`, exactly as
 `AsmSem.arithUpd` specifies, matching the HOL proof's `AddCarry` branch
 (`next_tac 4`).
+
+The straight-line multi-instruction cases (`addCarry`, `loc_big`, `longMul`
+and the four-instruction `const` lowering) discharge the `asserts n` /
+`asserts2 (n + 1)` obligations of `CaseGoal` through one lemma,
+`asmCaseChain` (`Simulate.lean`), the counterpart of HOL's repeated
+`next_state_tacN` steps.  Each case supplies the expected state `T k` after
+`k` instructions, a step lemma taking any state that `ChainAt` admits before
+step `k` (the start state itself, then anything agreeing with `T k`) to a state
+agreeing with `T (k + 1)`, its memory preservation outside the source domain,
+the intermediate `arm8Ok`/`PC`/code facts, and the final `targetStateRel`.
+`asserts_chain` and `asserts2_chain` carry the induction over the steps.
 
 `ShiftBitfield.lean` starts the `shift` `.lsl`/`.lsr`/`.asr` immediate forms,
 which `arm8_ast` lowers to a single `BitfieldMove@64` guarded by
