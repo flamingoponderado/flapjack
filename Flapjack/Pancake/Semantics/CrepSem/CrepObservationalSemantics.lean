@@ -140,43 +140,4 @@ clock-indexed trace family of `crepSemantics` is a `panLprefixChain`.  This
 packages the chain obligation so that `crepSemantics` no longer needs it as an
 independent assumption.  Flapjack-specific infrastructure; no `@[hol]` tag. -/
 
-/-- The clock-indexed FFI event traces of the exact crepSem entry evaluation
-form a pairwise prefix chain, given the add-clock event-prefix property. -/
-theorem crepEvaluateClock_ioEvents_lprefixChain_of_addClock_prefix
-    {width : Nat} [NeZero width] {σ : Type}
-    (state : CrepSemHOLState width σ) (start : MlString)
-    (hmono : ∀ clock extra : Nat,
-      crepResultEvents (crepEvaluateClock state start clock) <+:
-      crepResultEvents (crepEvaluateClock state start (clock + extra))) :
-    panLprefixChain (fun clock =>
-      crepResultEvents (crepEvaluateClock state start clock)) := by
-  intro left right
-  rcases Nat.le_total left right with hle | hle
-  · left
-    have hprefix := hmono left (right - left)
-    rwa [Nat.add_sub_cancel' hle] at hprefix
-  · right
-    have hprefix := hmono right (left - right)
-    rwa [Nat.add_sub_cancel' hle] at hprefix
-
-/-- The clock-indexed FFI event traces of the exact crepSem entry evaluation
-form a pairwise prefix chain, derived from the exact evaluator's add-clock
-event-prefix property (`crepPropsScript.sml:1020`).  Flapjack-specific
-infrastructure; no `@[hol]` tag. -/
-theorem crepEvaluateClock_ioEvents_lprefixChain {width : Nat} [NeZero width] {σ : Type}
-    (state : CrepSemHOLState width σ) (start : MlString) :
-    panLprefixChain (fun clock =>
-      crepResultEvents (crepEvaluateClock state start clock)) := by
-  apply crepEvaluateClock_ioEvents_lprefixChain_of_addClock_prefix state start
-  intro clock extra
-  have hmono :
-      (evalCrepSemHOLProgExact ({ state with clock := clock } : CrepSemHOLState width σ)
-          (crepEntryProgram start)).2.ffi.ioEvents <+:
-        (evalCrepSemHOLProgExact ({ state with clock := clock + extra } : CrepSemHOLState width σ)
-          (crepEntryProgram start)).2.ffi.ioEvents := by
-    simpa only [crepStateAddClock] using
-      (evalCrepSemHOLProgExact_addClockCombined (crepEntryProgram start)
-        ({ state with clock := clock } : CrepSemHOLState width σ) extra).1
-  simpa only [crepEvaluateClock, crepResultEvents] using hmono
-
 end Flapjack

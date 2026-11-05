@@ -31,16 +31,6 @@ theorem crepStampExactDomains_ioEvents_eq {width : Nat} [NeZero width] {σ : Typ
     (base state : CrepSemHOLState width σ) :
     (crepStampExactDomains base state).ffi.ioEvents = state.ffi.ioEvents := rfl
 
-/-- `empty_locals` preserves the FFI component. -/
-theorem CrepSemHOLState.emptyLocals_ioEvents_eq {width : Nat} [NeZero width] {σ : Type}
-    (state : CrepSemHOLState width σ) :
-    (CrepSemHOLState.emptyLocals state).ffi.ioEvents = state.ffi.ioEvents := rfl
-
-/-- `fix_clock` preserves the FFI component of the result state. -/
-theorem fixClockCrepSemHOL_ioEvents_eq {width : Nat} [NeZero width] {σ : Type} {β : Type}
-    (oldState : CrepSemHOLState width σ) (step : β × CrepSemHOLState width σ) :
-    (fixClockCrepSemHOL oldState step).2.ffi.ioEvents = step.2.ffi.ioEvents := rfl
-
 /-- The `While` loop-control case split cannot discard an earlier event prefix:
     the recursive branches use the `While` IH, the `Break 0`/pass-through
     branches keep the `fix_clock` state, and the loop step itself only extends

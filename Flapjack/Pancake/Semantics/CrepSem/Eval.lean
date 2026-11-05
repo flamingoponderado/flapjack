@@ -168,17 +168,6 @@ structure HolFiniteIndexSpec (ι : Type u) where
 
 namespace HolFiniteIndexSpec
 
-/-- The record's coverage and bounded injectivity are exactly HOL's
-    `?! n. n < dimindex(:'a) /\\ index n = value` property. -/
-theorem satisfiesHolFiniteIndex {ι : Type u} (spec : HolFiniteIndexSpec ι) :
-    ∀ value, ∃ n, n < spec.width ∧ spec.index n = value ∧
-      ∀ m, m < spec.width → spec.index m = value → m = n := by
-  intro value
-  obtain ⟨n, hn, hvalue⟩ := spec.covers value
-  refine ⟨n, hn, hvalue, ?_⟩
-  intro m hm hmvalue
-  exact spec.unique m n hm hn (hmvalue.trans hvalue.symm)
-
 @[instance_reducible] noncomputable def toDimension {ι : Type u}
     (spec : HolFiniteIndexSpec ι) :
     HolFiniteDimension ι where
@@ -198,12 +187,6 @@ theorem satisfiesHolFiniteIndex {ι : Type u} (spec : HolFiniteIndexSpec ι) :
   decode_encode := by
     intro value
     exact (Classical.choose_spec (spec.covers value)).2
-
-/-- The chosen bounded `decode` is exactly HOL's supplied index map at every
-    valid index.  HOL leaves the map's out-of-range values unconstrained. -/
-theorem toDimension_decode {ι : Type u} (spec : HolFiniteIndexSpec ι)
-    (index : Fin spec.width) :
-    spec.toDimension.decode index = spec.index index.val := rfl
 
 end HolFiniteIndexSpec
 
@@ -234,13 +217,6 @@ noncomputable def toFiniteIndexSpec {ι : Type u}
               congrArg dimension.encode hdecode
         _ = ⟨m, hm⟩ := dimension.encode_decode _
     exact congrArg Fin.val heq
-
-/-- On the source-defined range, the recovered finite-index map is the
-    dimension dictionary's `decode`. -/
-theorem toFiniteIndexSpec_index {ι : Type u}
-    (dimension : HolFiniteDimension ι) (index : Fin dimension.width) :
-    dimension.toFiniteIndexSpec.index index.val = dimension.decode index := by
-  simp [toFiniteIndexSpec, holFiniteIndex, index.isLt]
 
 end HolFiniteDimension
 
@@ -322,10 +298,6 @@ def holWordSignedLess {width : Nat} (left right : BitVec width) : Bool :=
     true
   else
     decide (left.toNat < right.toNat)
-
-theorem holWordSignedLess_eq_riscvSignedLess {width : Nat}
-    (left right : BitVec width) :
-    holWordSignedLess left right = RiscV.signedLess left right := rfl
 
 /-! Generic finite-index word operations are transported by the explicit
     dimension enumeration. They are kept in their own namespace so existing
@@ -553,37 +525,6 @@ def holFiniteWordSourceSub {ι : Type u} (dimension : HolFiniteDimension ι)
       (2 ^ dimension.width - holFiniteWordW2N dimension right %
         2 ^ dimension.width))
 
-theorem holFiniteWordSourceAdd_eq_n2w_SBitSum {ι : Type u}
-    (dimension : HolFiniteDimension ι) (left right : ι → Bool) :
-    holFiniteWordSourceAdd dimension left right =
-      holFiniteWordN2W dimension
-        (holFiniteWordSBitSum dimension left + holFiniteWordSBitSum dimension right) := by
-  simp [holFiniteWordSourceAdd, holFiniteWordW2N_eq_SBitSum]
-
-theorem holFiniteWordSourceMul_eq_n2w_SBitSum {ι : Type u}
-    (dimension : HolFiniteDimension ι) (left right : ι → Bool) :
-    holFiniteWordSourceMul dimension left right =
-      holFiniteWordN2W dimension
-        (holFiniteWordSBitSum dimension left * holFiniteWordSBitSum dimension right) := by
-  simp [holFiniteWordSourceMul, holFiniteWordW2N_eq_SBitSum]
-
-theorem holFiniteWordSourceSub_eq_n2w_SBitSum {ι : Type u}
-    (dimension : HolFiniteDimension ι) (left right : ι → Bool) :
-    holFiniteWordSourceSub dimension left right =
-      holFiniteWordN2W dimension
-        (holFiniteWordSBitSum dimension left +
-          (2 ^ dimension.width - holFiniteWordSBitSum dimension right %
-            2 ^ dimension.width)) := by
-  simp [holFiniteWordSourceSub, holFiniteWordW2N_eq_SBitSum]
-
-theorem holFiniteWordSourceAdd_toBitVec {ι : Type u}
-    (dimension : HolFiniteDimension ι) (left right : ι → Bool) :
-    holWordToBitVec dimension (holFiniteWordSourceAdd dimension left right) =
-      holWordToBitVec dimension left + holWordToBitVec dimension right := by
-  rw [holFiniteWordSourceAdd, holFiniteWordN2W, holFiniteWordW2N,
-    holWordToBitVec_bitVecToHolWord]
-  simp [holFiniteWordW2N, BitVec.ofNat_add]
-
 theorem holFiniteWordSourceMul_toBitVec {ι : Type u}
     (dimension : HolFiniteDimension ι) (left right : ι → Bool) :
     holWordToBitVec dimension (holFiniteWordSourceMul dimension left right) =
@@ -673,20 +614,6 @@ theorem holFiniteWordSourceCrepOp_eq_crepOpCrep {ι : Type u}
         simp [holFiniteWordSourceCrepOp, crepOpCrep,
           holFiniteWordSourceMul_eq_mul]
       | cons extra tail => rfl
-
-theorem holFiniteWordSourceSub_toBitVec {ι : Type u}
-    (dimension : HolFiniteDimension ι) (left right : ι → Bool) :
-    holWordToBitVec dimension (holFiniteWordSourceSub dimension left right) =
-      holWordToBitVec dimension left - holWordToBitVec dimension right := by
-  rw [holFiniteWordSourceSub, holFiniteWordN2W, holFiniteWordW2N,
-    holWordToBitVec_bitVecToHolWord]
-  change BitVec.ofNat dimension.width
-      ((holWordToBitVec dimension left).toNat +
-        (2 ^ dimension.width -
-          (holWordToBitVec dimension right).toNat % 2 ^ dimension.width)) = _
-  rw [Nat.add_comm _ (2 ^ dimension.width - _)]
-  rw [← BitVec.ofNat_sub_ofNat]
-  simp
 
 theorem holFiniteWordToBitVec_and {ι : Type u}
     [dimension : HolFiniteDimension ι] (left right : ι → Bool) :
@@ -1187,11 +1114,6 @@ def CrepHolState.toRuntime [NeZero width]
     baseAddress := state.baseAddress
     topAddress := state.topAddress }
 
-/-- `toHolState` is a left inverse of `toRuntime` on the 11 encoded fields. -/
-theorem CrepHolState.toHolState_toRuntime [NeZero width]
-    (state : CrepHolState (RiscV.Word width) σ) :
-    state.toRuntime.toHolState = state := rfl
-
 /-- Production adapter: the exact HOL-shaped `setCrepHolGlobals` on the
     field-only state commutes with `CrepHolState.toRuntime`, so the executable
     `setCrepRuntimeGlobals` performs the same global update. -/
@@ -1385,31 +1307,6 @@ def holFiniteWordSourceByteIndex {ι : Type u}
   let byteIndex := if bytesPerWord = 0 then addressIndex
     else addressIndex % bytesPerWord
   if bigEndian then bytesPerWord - 1 - byteIndex else byteIndex
-
-/-- HOL `byte_index_def` uses `8 * (w2n address MOD bytesPerWord)` in
-    little-endian mode, and counts that slot backward in big-endian mode.
-    This equation exposes the source `w2n` through its already-proved
-    weighted-SBIT representation; the `bytesPerWord = 0` branch preserves
-    HOL's `MOD_0` behavior. -/
-theorem holFiniteWordSourceByteIndex_eq_holW2N {ι : Type u}
-    (dimension : HolFiniteDimension ι) (address : ι → Bool)
-    (bigEndian : Bool) :
-    8 * holFiniteWordSourceByteIndex dimension address bigEndian =
-      if bigEndian then
-        8 * (dimension.width / 8 - 1 -
-          (holFiniteWordW2N dimension address % (dimension.width / 8)))
-      else
-        8 * (holFiniteWordW2N dimension address % (dimension.width / 8)) := by
-  have haddress : (holWordToBitVec dimension address).toNat =
-      holFiniteWordSBitSum dimension address := by
-    change holFiniteWordW2N dimension address = _
-    exact holFiniteWordW2N_eq_SBitSum dimension address
-  rw [holFiniteWordW2N_eq_SBitSum]
-  unfold holFiniteWordSourceByteIndex
-  rw [haddress]
-  by_cases hbytes : dimension.width / 8 = 0
-  · cases bigEndian <;> simp [hbytes]
-  · cases bigEndian <;> simp [hbytes]
 
 /-- Pointwise form of HOL `get_byte_def`: output bit `j` is source bit
     `j + 8 * byteIndex`, provided `j` belongs to the result `word8`. -/
@@ -1610,41 +1507,6 @@ theorem holFiniteWordSetByteBitVec_toNat (width offset : Nat)
     _ = (value.toNat / 2 ^ (offset + 8)) * 2 ^ (offset + 8) +
         (byte.toNat % 2 ^ 8) * 2 ^ offset + value.toNat % 2 ^ offset := by omega
 
-/-- The generic source `set_byte` model agrees with its BitVec slice form for
-    every finite dimension, byte address, and endian mode. -/
-theorem holFiniteWordSourceSetByte_toBitVec {ι : Type u}
-    (dimension : HolFiniteDimension ι) (address byte value : ι → Bool)
-    (bigEndian : Bool) :
-    holWordToBitVec dimension
-        (holFiniteWordSourceSetByte dimension address byte value bigEndian) =
-      holFiniteWordSetByteBitVec dimension.width
-        (8 * holFiniteWordSourceByteIndex dimension address bigEndian)
-        (holWordToBitVec dimension byte) (holWordToBitVec dimension value) := by
-  let offset := 8 * holFiniteWordSourceByteIndex dimension address bigEndian
-  have hoffset : offset =
-      8 * holFiniteWordSourceByteIndex dimension address bigEndian := rfl
-  apply BitVec.eq_of_getLsbD_eq
-  intro index hindex
-  rw [holWordToBitVec_getLsbD dimension _ ⟨index, hindex⟩]
-  have hvalue := holWordToBitVec_getLsbD dimension value ⟨index, hindex⟩
-  simp only [holFiniteWordSourceSetByte, dimension.encode_decode]
-  rw [← hoffset, ← hvalue]
-  by_cases hlow : index < offset
-  · have hlow8 : index < offset + 8 := by omega
-    have hnotge : ¬ offset ≤ index := by omega
-    simp [holFiniteWordSetByteBitVec, hlow, hlow8, hnotge, hindex]
-  · by_cases hmid : index < offset + 8
-    · have hge : offset ≤ index := by omega
-      have hnohigh : ¬ offset + 8 ≤ index := by omega
-      have hspan : index - offset < 8 := by omega
-      simp [holFiniteWordSetByteBitVec, hlow, hmid, hge, hnohigh,
-        hspan, hindex]
-    · have hge : offset + 8 ≤ index := by omega
-      have hnoByte : ¬ index - offset < 8 := by omega
-      have hrestore : offset + 8 + (index - (offset + 8)) = index := by omega
-      simp [holFiniteWordSetByteBitVec, hlow, hmid, hge, hnoByte,
-        hindex, hrestore]
-
 def holFiniteWordSourceWordOfBytesAt {ι : Type u}
     (dimension : HolFiniteDimension ι) (bigEndian : Bool)
     (address : ι → Bool) : List (ι → Bool) → ι → Bool
@@ -1661,33 +1523,6 @@ def holFiniteWordSourceAligned {ι : Type u}
     Bool :=
   let exponent := Nat.log2 alignment
   decide ((holWordToBitVec dimension address).toNat % (2 ^ exponent) = 0)
-
-/-- Source-model alignment is HOL `aligned` expressed through HOL `w2n`:
-    clearing `LOG2 alignment` low bits is divisibility by that power of two.
-    The address conversion is the weighted-SBIT sum proved for `w2n_def`. -/
-theorem holFiniteWordSourceAligned_eq_holW2N {ι : Type u}
-    (dimension : HolFiniteDimension ι) (alignment : Nat)
-    (address : ι → Bool) :
-    holFiniteWordSourceAligned dimension alignment address =
-      decide (holFiniteWordSBitSum dimension address %
-        (2 ^ Nat.log2 alignment) = 0) := by
-  change decide (holFiniteWordW2N dimension address %
-    (2 ^ Nat.log2 alignment) = 0) = _
-  rw [holFiniteWordW2N_eq_SBitSum]
-
-/-! HOL `aligned 2` is clearing two low bits, equivalent to a natural-number
-    shift round trip. This theorem records the source/HOL guard equivalence;
-    `panMemLoad32HOL` uses the equivalent modulo-four form directly so its
-    width-one instance does not depend on overloaded shift amounts. -/
-theorem holFiniteWordSourceAligned4_eq_natShiftGuard {ι : Type u}
-    (dimension : HolFiniteDimension ι) (address : ι → Bool) :
-    holFiniteWordSourceAligned dimension 4 address =
-      decide ((((holWordToBitVec dimension address) >>> (2 : Nat)) <<< (2 : Nat)) =
-        holWordToBitVec dimension address) := by
-  change decide ((holWordToBitVec dimension address).toNat %
-      (2 ^ Nat.log2 4) = 0) = _
-  rw [show Nat.log2 4 = 2 by decide]
-  exact bitVecAligned4_decide_eq_shiftGuard (holWordToBitVec dimension address)
 
 def holFiniteWordSourceWordOfBytes {ι : Type u}
     (dimension : HolFiniteDimension ι) (bigEndian : Bool)
@@ -1853,76 +1688,6 @@ theorem holFiniteWordSourceWordOfBytes32_toBitVec {ι : Type u}
   simp [holFiniteWordSourceWordOfBytes32,
     holWordToBitVec_bitVecToHolWord]
 
-/-- The recursive HOL `word_of_bytes_def` model commutes with the explicit
-    finite-word-to-BitVec encoding, for every byte list, address, and endian
-    mode. The cons case uses the all-dimension `set_byte` slice equation. -/
-theorem holFiniteWordSourceWordOfBytesAt_toBitVec {ι : Type u}
-    (dimension : HolFiniteDimension ι) (bigEndian : Bool)
-    (address : ι → Bool) (bytes : List (ι → Bool)) :
-    holWordToBitVec dimension
-        (holFiniteWordSourceWordOfBytesAt dimension bigEndian address bytes) =
-      holFiniteWordSourceWordOfBytesBitVecAt dimension bigEndian address
-        (bytes.map (holWordToBitVec dimension)) := by
-  induction bytes generalizing address with
-  | nil => simp [holFiniteWordSourceWordOfBytesAt,
-      holFiniteWordSourceWordOfBytesBitVecAt,
-      holWordToBitVec_bitVecToHolWord]
-  | cons byte rest ih =>
-      simp only [holFiniteWordSourceWordOfBytesAt,
-        holFiniteWordSourceWordOfBytesBitVecAt, List.map_cons]
-      rw [holFiniteWordSourceSetByte_toBitVec]
-      rw [ih (address := bitVecToHolWord dimension
-        (holWordToBitVec dimension address + 1))]
-
-/-- The public source-shaped `word_of_bytes` operation has the corresponding
-    BitVec recursion from address zero. -/
-theorem holFiniteWordSourceWordOfBytes_toBitVec {ι : Type u}
-    (dimension : HolFiniteDimension ι) (bigEndian : Bool)
-    (bytes : List (ι → Bool)) :
-    holWordToBitVec dimension
-        (holFiniteWordSourceWordOfBytes dimension bigEndian bytes) =
-        holFiniteWordSourceWordOfBytesBitVecAt dimension bigEndian
-        (bitVecToHolWord dimension (BitVec.ofNat dimension.width 0))
-        (bytes.map (holWordToBitVec dimension)) := by
-  change holWordToBitVec dimension
-      (holFiniteWordSourceWordOfBytesAt dimension bigEndian
-        (bitVecToHolWord dimension (BitVec.ofNat dimension.width 0)) bytes) = _
-  simpa [holWordToBitVec_bitVecToHolWord] using
-    holFiniteWordSourceWordOfBytesAt_toBitVec dimension bigEndian
-      (bitVecToHolWord dimension (BitVec.ofNat dimension.width 0)) bytes
-
-/-- The direct BitVec implementation used by fixed-width HOL `word_of_bytes`
-    is exactly the transport of the recursive source-word definition. Keeping
-    this equation explicit lets tests and production callers reduce at BitVec
-    width 32 instead of repeatedly converting finite Boolean functions. -/
-theorem holFiniteWordSourceWordOfBytes32BitVec_eq_source {ι : Type u}
-    (dimension : HolFiniteDimension ι) (bigEndian : Bool)
-    (bytes : List (ι → Bool)) :
-    holFiniteWordSourceWordOfBytes32BitVec dimension bigEndian bytes =
-      holWordToBitVec (instFinHolFiniteDimension (width := 32))
-        (holFiniteWordSourceWordOfBytes
-          (instFinHolFiniteDimension (width := 32)) bigEndian
-          (bytes.map fun byte =>
-            bitVecToHolWord (instFinHolFiniteDimension (width := 32))
-              (BitVec.ofNat 32 ((holWordToBitVec dimension byte).toNat % 256)))) := by
-  let dimension32 : HolFiniteDimension (Fin 32) :=
-    instFinHolFiniteDimension (width := 32)
-  change holFiniteWordSourceWordOfBytesBitVecAt dimension32 bigEndian
-      (bitVecToHolWord dimension32 (BitVec.ofNat 32 0))
-      (bytes.map fun byte =>
-        BitVec.ofNat 32 ((holWordToBitVec dimension byte).toNat % 256)) = _
-  rw [holFiniteWordSourceWordOfBytes_toBitVec]
-  simp only [List.map_map]
-  apply congrArg (holFiniteWordSourceWordOfBytesBitVecAt dimension32 bigEndian
-    (bitVecToHolWord dimension32 (BitVec.ofNat 32 0)))
-  apply List.map_congr_left
-  intro byte _
-  change BitVec.ofNat 32 ((holWordToBitVec dimension byte).toNat % 256) =
-    holWordToBitVec dimension32
-      (bitVecToHolWord dimension32
-        (BitVec.ofNat 32 ((holWordToBitVec dimension byte).toNat % 256)))
-  exact (holWordToBitVec_bitVecToHolWord dimension32 _).symm
-
 def holFiniteWordSourceMemoryModel {ι : Type u}
     (dimension : HolFiniteDimension ι) (_bigEndian : Bool) :
     PanMemoryModel (ι → Bool) := by
@@ -1956,18 +1721,6 @@ def holFiniteWordSourceMemoryModel {ι : Type u}
         (holWordToBitVec dimension right).toNat).map
           (bitVecToHolWord dimension) }
 
-/-- The source model routes list-valued word operations through the tagged
-    HOL `word_op_def` port. This transport equation proves that changing the
-    route preserves the arbitrary finite-word helper result. -/
-theorem holFiniteWordSourceMemoryModel_wordOp_eq_wordOp {ι : Type u}
-    [dimension : HolFiniteDimension ι] (bigEndian : Bool)
-    (operator : BinOp) (values : List (ι → Bool)) :
-    (holFiniteWordSourceMemoryModel dimension bigEndian).wordOp operator values =
-      wordOp operator values := by
-  change (wordOpHOL operator (values.map (holWordToBitVec dimension))).map
-      (bitVecToHolWord dimension) = wordOp operator values
-  exact (holFiniteWord_wordOp_toBitVec dimension operator values).symm
-
 /-- The finite-word source model's shift field is the tagged HOL `word_sh`
     definition transported through the selected finite-index/BitVec
     representation. The existing evaluator shift transport proves it agrees
@@ -1984,68 +1737,6 @@ theorem holFiniteWordSourceMemoryModel_shift_eq_evalPanShiftFull {ι : Type u}
     (wordShiftHOL_eq_evalPanShiftFull operator
       (holWordToBitVec dimension left) (holWordToBitVec dimension right))
 
-/-! The source-shaped operation fields used by the recursive finite-word
-    evaluator agree with the fields of the all-width RISC-V Crep runtime
-    target after the explicit finite-index/BitVec conversion. This pins the
-    production target binding for `Op`, `Cmp`, and `Shift`; it does not identify
-    the explicit `HolFiniteDimension` with HOL's implicit `finite_index`
-    dictionary or establish the surrounding whole-state correspondence. -/
-theorem holFiniteWordSourceModel_ops_eq_riscvWordTarget {ι : Type u}
-    (dimension : HolFiniteDimension ι) (bigEndian : Bool)
-    (operator : BinOp) (values : List (ι → Bool))
-    (crepOperator : CrepOp) (crepValues : List (ι → Bool))
-    (cmp : Cmp) (shift : Shift) (left right : ι → Bool) :
-    ((holFiniteWordSourceMemoryModel dimension bigEndian).wordOp operator values).map
-        (holWordToBitVec dimension) =
-      (RiscV.panRiscVMemoryModelForEndian bigEndian).wordOp operator
-        (values.map (holWordToBitVec dimension)) ∧
-    holWordToBitVec dimension
-        ((holFiniteWordSourceMemoryModel dimension bigEndian).compare cmp left right) =
-      (RiscV.panRiscVMemoryModelForEndian bigEndian).compare cmp
-        (holWordToBitVec dimension left) (holWordToBitVec dimension right) ∧
-    ((holFiniteWordSourceMemoryModel dimension bigEndian).shift shift left right).map
-        (holWordToBitVec dimension) =
-      (RiscV.panRiscVMemoryModelForEndian bigEndian).shift shift
-        (holWordToBitVec dimension left) (holWordToBitVec dimension right) ∧
-    (holFiniteWordSourceCrepOp dimension crepOperator crepValues).map
-        (holWordToBitVec dimension) =
-      crepOpCrepWord (width := dimension.width) crepOperator
-        (crepValues.map (holWordToBitVec dimension)) := by
-  letI : NeZero dimension.width := ⟨Nat.ne_of_gt dimension.width_pos⟩
-  constructor
-  · change ((wordOpHOL operator (values.map (holWordToBitVec dimension))).map
-        (bitVecToHolWord dimension)).map (holWordToBitVec dimension) = _
-    simp only [Option.map_map, Function.comp_def,
-      holWordToBitVec_bitVecToHolWord]
-    change Option.map id (wordOpHOL operator
-      (values.map (holWordToBitVec dimension))) = _
-    rw [← panRiscVWordOp_eq_wordOpHOL (width := dimension.width) operator _]
-    simp only [RiscV.panRiscVMemoryModelForEndian]
-    cases h : RiscV.panRiscVWordOp operator
-        (values.map (holWordToBitVec dimension)) <;> simp
-  constructor
-  · change holWordToBitVec dimension
-        (bitVecToHolWord dimension
-          (wordCmpResultHOL cmp (holWordToBitVec dimension left)
-            (holWordToBitVec dimension right))) = _
-    simp only [holWordToBitVec_bitVecToHolWord]
-    exact (panRiscVCmp_eq_wordCmpResultHOL (width := dimension.width) cmp _ _).symm
-  constructor
-  · change ((wordShiftHOL shift (holWordToBitVec dimension left)
-        (holWordToBitVec dimension right).toNat).map
-          (bitVecToHolWord dimension)).map (holWordToBitVec dimension) = _
-    simp only [Option.map_map, Function.comp_def,
-      holWordToBitVec_bitVecToHolWord]
-    change Option.map id (wordShiftHOL shift (holWordToBitVec dimension left)
-      (holWordToBitVec dimension right).toNat) = _
-    rw [← panRiscVShift_eq_wordShiftHOL (width := dimension.width) shift
-      (holWordToBitVec dimension left) (holWordToBitVec dimension right)]
-    simp only [RiscV.panRiscVMemoryModelForEndian]
-    cases h : RiscV.panRiscVShift shift (holWordToBitVec dimension left)
-        (holWordToBitVec dimension right) <;> simp
-  · exact holFiniteWordSourceCrepOp_to_crepOpCrepWord dimension
-      crepOperator crepValues
-
 /-- BitVec-carrier view of the HOL source memory model. Every field is
     transported from the arbitrary finite-word source operations; this does
     not replace them with RISC-V's target memory model. -/
@@ -2055,59 +1746,6 @@ def holFiniteWordSourceMemoryModelToBitVec {ι : Type u}
   transportPanMemoryModel (holWordToBitVec dimension)
     (bitVecToHolWord dimension)
     (holFiniteWordSourceMemoryModel dimension bigEndian)
-
-theorem wordCmpResultHOL_eq_evalPanCmp [NeZero width]
-    (operator : Cmp) (left right : BitVec width) :
-    wordCmpResultHOL operator left right = evalPanCmp operator left right := by
-  cases operator with
-  | equal => simp [wordCmpResultHOL, wordCmpHOL, evalPanCmp]
-  | less =>
-      simp [wordCmpResultHOL, wordCmpHOL, evalPanCmp, PanCmp.less,
-        holAsmSignedLess, RiscV.signedLess]
-  | lower =>
-      simp only [wordCmpResultHOL, wordCmpHOL, evalPanCmp, PanCmp.lower]
-      rfl
-  | test => simp [wordCmpResultHOL, wordCmpHOL, evalPanCmp]
-  | notEqual => simp [wordCmpResultHOL, wordCmpHOL, evalPanCmp]
-  | notLess =>
-      have hless : holAsmSignedLess left right = RiscV.signedLess left right := rfl
-      simp only [wordCmpResultHOL, wordCmpHOL, evalPanCmp, PanCmp.less, hless]
-      by_cases h : RiscV.signedLess left right = true <;> simp [h]
-  | notLower =>
-      simp only [wordCmpResultHOL, wordCmpHOL, evalPanCmp, PanCmp.lower]
-      by_cases h : decide (left < right) = true <;> simp [h]
-  | notTest => simp [wordCmpResultHOL, wordCmpHOL, evalPanCmp]
-
-/-- The `setByte` field of the generic source memory model transports to its
-    explicit BitVec slice operation. -/
-theorem holFiniteWordSourceMemoryModel_setByte_toBitVec {ι : Type u}
-    (dimension : HolFiniteDimension ι) (modelEndian bigEndian : Bool)
-    (address byte value : ι → Bool) :
-    holWordToBitVec dimension
-        ((holFiniteWordSourceMemoryModel dimension modelEndian).setByte
-          (bitVecToHolWord dimension (BitVec.ofNat dimension.width
-            (dimension.width / 8))) address byte value bigEndian) =
-      holFiniteWordSetByteBitVec dimension.width
-        (8 * holFiniteWordSourceByteIndex dimension address bigEndian)
-        (holWordToBitVec dimension byte) (holWordToBitVec dimension value) := by
-  change holWordToBitVec dimension
-      (holFiniteWordSourceSetByte dimension address byte value bigEndian) = _
-  exact holFiniteWordSourceSetByte_toBitVec dimension address byte value bigEndian
-
-/-- The `wordOfBytes` field transports to the explicit recursive BitVec
-    implementation matching HOL `word_of_bytes_def`. -/
-theorem holFiniteWordSourceMemoryModel_wordOfBytes_toBitVec {ι : Type u}
-    (dimension : HolFiniteDimension ι) (modelEndian bigEndian : Bool)
-    (bytes : List (ι → Bool)) :
-    holWordToBitVec dimension
-        ((holFiniteWordSourceMemoryModel dimension modelEndian).wordOfBytes
-          bigEndian bytes) =
-      holFiniteWordSourceWordOfBytesBitVecAt dimension bigEndian
-        (bitVecToHolWord dimension (BitVec.ofNat dimension.width 0))
-        (bytes.map (holWordToBitVec dimension)) := by
-  change holWordToBitVec dimension
-      (holFiniteWordSourceWordOfBytes dimension bigEndian bytes) = _
-  exact holFiniteWordSourceWordOfBytes_toBitVec dimension bigEndian bytes
 
 /-- The source memory model's fixed-width load decoder transports to the
     explicit 32-bit `word_of_bytes` result followed by carrier-width `w2w`. -/
@@ -2156,26 +1794,6 @@ theorem holFiniteWordSourceMemoryModel_byteAlign_toBitVec {ι : Type u}
       (holFiniteWordSourceByteAlign dimension address) = _
   exact holFiniteWordSourceByteAlign_toBitVec dimension address
 
-/-- The generic source memory model's `getByte` field has the same BitVec
-    pointwise extraction equation as the HOL `get_byte` formula. -/
-theorem holFiniteWordSourceMemoryModel_getByte_toBitVec_getLsbD {ι : Type u}
-    (dimension : HolFiniteDimension ι) (modelEndian bigEndian : Bool)
-    (bytes address value : ι → Bool) (index : Fin dimension.width) :
-    BitVec.getLsbD
-        (holWordToBitVec dimension
-          ((holFiniteWordSourceMemoryModel dimension modelEndian).getByte
-            bytes address value bigEndian)) index.val =
-      (decide (index.val < 8) &&
-        BitVec.getLsbD
-          (holWordToBitVec dimension value >>>
-            (8 * holFiniteWordSourceByteIndex dimension address bigEndian))
-          index.val) := by
-  change BitVec.getLsbD
-      (holWordToBitVec dimension
-        (holFiniteWordSourceGetByte dimension address value bigEndian)) index.val = _
-  exact holFiniteWordSourceGetByte_toBitVec_getLsbD
-    dimension address value bigEndian index
-
 /-- The generic source memory model's `getByte` field transports as the
     carrier-width `w2w` of the low byte of the shifted source word. -/
 theorem holFiniteWordSourceMemoryModel_getByte_toBitVec {ι : Type u}
@@ -2218,24 +1836,6 @@ theorem holFiniteWordSourceMemoryModel_getByte_eq_panGetByteHOL {ι : Type u}
   simp [panGetByteHOL, holFiniteWordSourceByteIndex,
     holWordToBitVec_bitVecToHolWord, BitVec.toNat_ushiftRight,
     Nat.shiftRight_eq_div_pow, Nat.pow_mul, hidx]
-
-/-- The source-shaped finite-word model comparison agrees with the generic
-    BitVec/HOL comparison after transporting the operands. -/
-theorem holFiniteWordSourceMemoryModel_compare_toBitVec {ι : Type u}
-    [dimension : HolFiniteDimension ι] (bigEndian : Bool)
-    (operator : Cmp) (left right : ι → Bool) :
-    holWordToBitVec dimension
-        ((holFiniteWordSourceMemoryModel dimension bigEndian).compare
-          operator left right) =
-      RiscV.panRiscVCmp operator (holWordToBitVec dimension left)
-        (holWordToBitVec dimension right) := by
-  letI : NeZero dimension.width := ⟨Nat.ne_of_gt dimension.width_pos⟩
-  change holWordToBitVec dimension
-    (bitVecToHolWord dimension
-      (wordCmpResultHOL operator (holWordToBitVec dimension left)
-        (holWordToBitVec dimension right))) = _
-  rw [holWordToBitVec_bitVecToHolWord, wordCmpResultHOL_eq_evalPanCmp]
-  exact (panRiscVCmp_eq_evalPanCmp operator _ _).symm
 
 /-- A load model with HOL's dimension-derived byte alignment and the existing
     RISC-V byte extraction, alignment, and word-of-bytes operations. This is
@@ -2299,16 +1899,6 @@ def CrepHolState.toHolFiniteWordSourceRuntime {ι : Type u}
   let runtime := state.toHolFiniteWordRuntime dimension
   { runtime with
     memoryModel := holFiniteWordSourceMemoryModel dimension state.bigEndian }
-
-/-- The generic finite-word production adapter projects back to exactly the
-    eleven fields of HOL `crepSem$state`. The explicit `HolFiniteDimension`
-    witness chooses word operations and byte semantics, but does not alter the
-    represented HOL state. This closes the state-record part of the evaluator
-    correspondence; the source word-operation correspondence remains open. -/
-theorem CrepHolState.toHolState_toHolFiniteWordSourceRuntime {ι : Type u}
-    (dimension : HolFiniteDimension ι) (state : CrepHolState (ι → Bool) σ) :
-    (state.toHolFiniteWordSourceRuntime dimension).toHolState = state := by
-  rfl
 
 /-! The production byte/word load branches over the source-shaped runtime
     reduce to the model-parametric state helpers that spell out HOL's
@@ -2895,45 +2485,6 @@ theorem crepRuntimeLoadByte_riscv64_eq_panMemLoadByteHOL {σ : Type}
           (fun byte => BitVec.ofNat 64 byte.toNat) :=
             crepHolEvalMemLoadByte_riscv64_eq_panMemLoadByteHOL state address
 
-theorem crepHolEvalMemLoadByte_source_eq_riscv64 {σ : Type}
-    (state : CrepHolState (Fin 64 → Bool) σ) (address : Fin 64 → Bool) :
-    (crepHolEvalMemLoadByte
-        (holFiniteWordSourceMemoryModel
-          (instFinHolFiniteDimension (width := 64)) state.bigEndian)
-        (bitVecToHolWord (instFinHolFiniteDimension (width := 64))
-          (8 : BitVec 64)) state address).map
-          (holWordToBitVec (instFinHolFiniteDimension (width := 64))) =
-      crepRuntimeLoadByte
-        (riscvCrepWordTarget
-          (state.toHolFiniteBitVecState
-            (instFinHolFiniteDimension (width := 64))).toRuntime)
-        (holWordToBitVec (instFinHolFiniteDimension (width := 64)) address) := by
-  calc
-    _ = (panMemLoadByteHOL
-        (fun current =>
-          ((state.toHolFiniteBitVecState
-            (instFinHolFiniteDimension (width := 64))).memory current).toHolWordLab)
-        (fun current =>
-          (state.toHolFiniteBitVecState
-            (instFinHolFiniteDimension (width := 64))).memaddrs current = true)
-        state.bigEndian
-        (holWordToBitVec (instFinHolFiniteDimension (width := 64)) address)).map
-          (fun byte => BitVec.ofNat 64 byte.toNat) := by
-            exact crepHolEvalMemLoadByte_source_eq_panMemLoadByteHOL
-              (instFinHolFiniteDimension (width := 64)) state.bigEndian
-              (bitVecToHolWord (instFinHolFiniteDimension (width := 64))
-                (8 : BitVec 64)) state address
-    _ = crepRuntimeLoadByte
-        (riscvCrepWordTarget
-          (state.toHolFiniteBitVecState
-            (instFinHolFiniteDimension (width := 64))).toRuntime)
-        (holWordToBitVec (instFinHolFiniteDimension (width := 64)) address) := by
-          symm
-          exact crepRuntimeLoadByte_riscv64_eq_panMemLoadByteHOL
-            (state.toHolFiniteBitVecState
-              (instFinHolFiniteDimension (width := 64)))
-            (holWordToBitVec (instFinHolFiniteDimension (width := 64)) address)
-
 /-! RV64 Load32 uses the existing PanSem byte-assembly bridge after explicitly
     viewing a Crep word-lab memory as PanSem word cells. -/
 
@@ -3238,45 +2789,6 @@ theorem crepRuntimeLoad32_riscv64_eq_panMemLoad32HOL {σ : Type}
         state.bigEndian address).map
           (fun value => BitVec.ofNat 64 value.toNat) :=
             crepHolEvalMemLoad32_riscv64_eq_panMemLoad32HOL state address
-
-theorem crepHolEvalMemLoad32_source_eq_riscv64 {σ : Type}
-    (state : CrepHolState (Fin 64 → Bool) σ) (address : Fin 64 → Bool) :
-    (crepHolEvalMemLoad32
-        (holFiniteWordSourceMemoryModel
-          (instFinHolFiniteDimension (width := 64)) state.bigEndian)
-        (bitVecToHolWord (instFinHolFiniteDimension (width := 64))
-          (8 : BitVec 64)) state address).map
-          (holWordToBitVec (instFinHolFiniteDimension (width := 64))) =
-      crepRuntimeLoad32
-        (riscvCrepWordTarget
-          (state.toHolFiniteBitVecState
-            (instFinHolFiniteDimension (width := 64))).toRuntime)
-        (holWordToBitVec (instFinHolFiniteDimension (width := 64)) address) := by
-  calc
-    _ = (panMemLoad32HOL
-        (fun current =>
-          ((state.toHolFiniteBitVecState
-            (instFinHolFiniteDimension (width := 64))).memory current).toHolWordLab)
-        (fun current =>
-          (state.toHolFiniteBitVecState
-            (instFinHolFiniteDimension (width := 64))).memaddrs current = true)
-        state.bigEndian
-        (holWordToBitVec (instFinHolFiniteDimension (width := 64)) address)).map
-          (fun value => BitVec.ofNat 64 value.toNat) := by
-            exact crepHolEvalMemLoad32_source_eq_panMemLoad32HOL
-              (instFinHolFiniteDimension (width := 64))
-              (bitVecToHolWord (instFinHolFiniteDimension (width := 64))
-                (8 : BitVec 64)) state address
-    _ = crepRuntimeLoad32
-        (riscvCrepWordTarget
-          (state.toHolFiniteBitVecState
-            (instFinHolFiniteDimension (width := 64))).toRuntime)
-        (holWordToBitVec (instFinHolFiniteDimension (width := 64)) address) := by
-          symm
-          exact crepRuntimeLoad32_riscv64_eq_panMemLoad32HOL
-            (state.toHolFiniteBitVecState
-              (instFinHolFiniteDimension (width := 64)))
-            (holWordToBitVec (instFinHolFiniteDimension (width := 64)) address)
 
 theorem crepHolFiniteDimension_local_toBitVec {ι : Type}
     (dimension : HolFiniteDimension ι) (state : CrepHolState (ι → Bool) σ)
@@ -3692,60 +3204,6 @@ theorem evalCrepHolFiniteWordSourceExpWordLab_op_eq_wordOpHOL
     Option.bind_some]
   simp [holFiniteWordSourceMemoryModel, mapCrepHolWordLab,
     holWordToBitVec_bitVecToHolWord, Option.map_map, Function.comp_def]
-
-/-- The finite-index source evaluator's successful `Op` clause agrees with
-    the executed RISC-V runtime evaluator on the word-converted expression
-    and operand values.  The hypotheses expose recursive child evaluation on
-    both sides; this pins the constructor dispatch without claiming that the
-    source and production memory/state carriers agree. -/
-theorem evalCrepHolFiniteWordSourceExp_op_eq_riscvRuntime
-    {ι : Type} {σ : Type} (dimension : HolFiniteDimension ι)
-    (state : CrepHolState (ι → Bool) σ) (operator : BinOp)
-    (expressions : List (CrepExp (ι → Bool))) (values : List (ι → Bool))
-    (hSource : expressions.mapM
-      (evalCrepHolFiniteWordSourceExp dimension state) = some values)
-    (hRuntime : (expressions.map (mapCrepExpWord (holWordToBitVec dimension))).mapM
-      (evalCrepRuntimeExp (riscvCrepWordTarget
-        (state.toHolFiniteBitVecState dimension).toRuntime)) =
-        some (values.map (holWordToBitVec dimension))) :
-    (evalCrepHolFiniteWordSourceExp dimension state
-      (.op operator expressions)).map (holWordToBitVec dimension) =
-    evalCrepRuntimeExp (riscvCrepWordTarget
-      (state.toHolFiniteBitVecState dimension).toRuntime)
-      (.op operator (expressions.map
-        (mapCrepExpWord (holWordToBitVec dimension)))) := by
-  letI : NeZero dimension.width := ⟨Nat.ne_of_gt dimension.width_pos⟩
-  simp only [evalCrepHolFiniteWordSourceExp, Option.bind_eq_bind, hSource,
-    Option.bind_some]
-  simp only [evalCrepRuntimeExp, hRuntime]
-  simpa [riscvCrepWordTarget, CrepHolState.toHolFiniteBitVecState,
-    CrepHolState.toRuntime,
-    holFiniteWordSourceMemoryModel, Option.map_map, Function.comp_def]
-    using (holFiniteWordSourceModel_ops_eq_riscvWordTarget dimension
-      state.bigEndian operator values .mul [] .equal .lsl (values.headD 0)
-      (values.headD 0)).1
-
-/-- The recursive source `Load` clause transports to the tagged width-indexed
-    HOL `mem_load_def`: it checks the same address domain and returns the same
-    complete `word_lab` cell after converting the finite-index word state to
-    `BitVec`. This remains adapter support because the surrounding recursive
-    evaluator and its finite-index dictionary are not identified with native
-    HOL `crepSem$eval`. -/
-theorem evalCrepHolFiniteWordSourceExpWordLab_load_eq_memLoadCrepHolW
-    {ι : Type} {σ : Type} (dimension : HolFiniteDimension ι)
-    (state : CrepHolState (ι → Bool) σ)
-    (addressExpression : CrepExp (ι → Bool)) (address : ι → Bool)
-    (hAddress : evalCrepHolFiniteWordSourceExp dimension state
-      addressExpression = some address) :
-    ((evalCrepHolFiniteWordSourceExp dimension state
-      (.load addressExpression)).map PanWordLab.word).map
-        (mapCrepHolWordLab (holWordToBitVec dimension)) =
-    memLoadCrepHolW (holWordToBitVec dimension address)
-      (CrepHolState.toHolFiniteBitVecState dimension state) := by
-  letI : NeZero dimension.width := ⟨Nat.ne_of_gt dimension.width_pos⟩
-  simp [evalCrepHolFiniteWordSourceExp, hAddress, memLoadCrepHolW,
-    CrepHolState.toHolFiniteBitVecState, mapCrepHolWordLab, panTheWord,
-    bitVecToHolWord_holWordToBitVec]
 
 /-- Complete HOL `word_lab` result view of the explicitly finite-index
     source evaluator. Since `word_lab` has only the `Word` constructor, this
@@ -4597,21 +4055,6 @@ theorem evalCrepRuntimeExp_finiteDimension_eq {ι : Type}
       simp [evalCrepRuntimeExps, ihHead state, ihTail.2 state]
 
 namespace HolFiniteIndexSpec
-
-/-- Instantiate the all-constructor production-evaluator transport directly
-    from the HOL-shaped bounded finite-index dictionary. This is a Flapjack
-    representation bridge: the RHS remains the explicit source word-operation
-    adapter, so it is not a claim that those operations equal native HOL
-    `crepSem$eval`. -/
-theorem evalCrepRuntimeExp_toProduction {ι : Type}
-    (spec : HolFiniteIndexSpec ι) :
-    letI : HolFiniteDimension ι := spec.toDimension
-    ∀ (state : CrepHolState (ι → Bool) σ) (expression : CrepExp (ι → Bool)),
-      evalCrepRuntimeExp (state.toHolFiniteWordRuntime spec.toDimension) expression =
-        evalCrepHolFiniteDimensionExp spec.toDimension state expression := by
-  intro state expression
-  letI : HolFiniteDimension ι := spec.toDimension
-  exact evalCrepRuntimeExp_finiteDimension_eq spec.toDimension state expression
 
 end HolFiniteIndexSpec
 

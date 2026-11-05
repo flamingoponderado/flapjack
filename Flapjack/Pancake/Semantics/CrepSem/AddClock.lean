@@ -78,14 +78,6 @@ abbrev crepStateAddClock {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ) (extra : Nat) :
     (crepStateAddClock state extra).topAddr = state.topAddr := rfl
 
-/-- Composition of two clock shifts. -/
-theorem crepStateAddClock_add {width : Nat} [NeZero width] {σ : Type}
-    (state : CrepSemHOLState width σ) (a b : Nat) :
-    crepStateAddClock (crepStateAddClock state a) b =
-      crepStateAddClock state (a + b) := by
-  unfold crepStateAddClock
-  rw [show state.clock + a + b = state.clock + (a + b) by omega]
-
 @[simp] theorem crepStateAddClock_zero {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ) : crepStateAddClock state 0 = state := by
   unfold crepStateAddClock
@@ -108,13 +100,6 @@ theorem crepStateAddClock_add {width : Nat} [NeZero width] {σ : Type}
     CrepSemHOLState.emptyLocals (crepStateAddClock state extra) =
       crepStateAddClock (CrepSemHOLState.emptyLocals state) extra := rfl
 
-theorem decClock_crepStateAddClock {width : Nat} [NeZero width] {σ : Type}
-    (state : CrepSemHOLState width σ) (extra : Nat) (h : state.clock ≠ 0) :
-    decClockCrepSemHOL (crepStateAddClock state extra) =
-      crepStateAddClock (decClockCrepSemHOL state) extra := by
-  unfold decClockCrepSemHOL crepStateAddClock
-  rw [show state.clock + extra - 1 = state.clock - 1 + extra by omega]
-
 /-- The exact expression evaluator is insensitive to the clock shift. -/
 @[simp] theorem evalCrepSemHOLExp_crepStateAddClock {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ)
@@ -129,52 +114,6 @@ theorem decClock_crepStateAddClock {width : Nat} [NeZero width] {σ : Type}
       rw [optMmapCongHOL args args _ _ rfl ih]
   | _ => simp_all [evalCrepSemHOLExp]
 
-/-- The shared-memory load port commutes with the clock shift. -/
-theorem crepShMemLoadExactHOL_crepStateAddClock {width : Nat} [NeZero width] {σ : Type}
-    (name : Nat) (address : BitVec width) (nb : Nat)
-    (state : CrepSemHOLState width σ) [DecidablePred state.shMemaddrs]
-    (r : Option (CrepResultHOLExact width)) (s' : CrepSemHOLState width σ)
-    (extra : Nat) (h : crepShMemLoadExactHOL name address nb state = (r, s')) :
-    crepShMemLoadExactHOL name address nb (crepStateAddClock state extra) =
-      (r, crepStateAddClock s' extra) := by
-  have hs : s' = (crepShMemLoadExactHOL name address nb state).2 := by rw [h]
-  subst hs
-  have hr : r = (crepShMemLoadExactHOL name address nb state).1 := by rw [h]
-  subst hr
-  unfold crepShMemLoadExactHOL
-  simp only [crepStateAddClock]
-  split <;> (try split) <;> (try split) <;> (try split) <;> rfl
-
-/-- The shared-memory store port commutes with the clock shift. -/
-theorem crepShMemStoreExactHOL_crepStateAddClock {width : Nat} [NeZero width] {σ : Type}
-    (name : Nat) (address : BitVec width) (nb : Nat)
-    (state : CrepSemHOLState width σ) [DecidablePred state.shMemaddrs]
-    (r : Option (CrepResultHOLExact width)) (s' : CrepSemHOLState width σ)
-    (extra : Nat) (h : crepShMemStoreExactHOL name address nb state = (r, s')) :
-    crepShMemStoreExactHOL name address nb (crepStateAddClock state extra) =
-      (r, crepStateAddClock s' extra) := by
-  have hs : s' = (crepShMemStoreExactHOL name address nb state).2 := by rw [h]
-  subst hs
-  have hr : r = (crepShMemStoreExactHOL name address nb state).1 := by rw [h]
-  subst hr
-  unfold crepShMemStoreExactHOL
-  simp only [crepStateAddClock]
-  split <;> (try split) <;> (try split) <;> (try split) <;> rfl
-
-/-- The shared-memory dispatch commutes with the clock shift. -/
-theorem crepShMemOpExactHOL_crepStateAddClock {width : Nat} [NeZero width] {σ : Type}
-    (operator : WordMemOp) (name : Nat) (address : BitVec width)
-    (state : CrepSemHOLState width σ) [DecidablePred state.shMemaddrs]
-    (r : Option (CrepResultHOLExact width)) (s' : CrepSemHOLState width σ)
-    (extra : Nat) (h : crepShMemOpExactHOL operator name address state = (r, s')) :
-    crepShMemOpExactHOL operator name address (crepStateAddClock state extra) =
-      (r, crepStateAddClock s' extra) := by
-  cases operator <;>
-    simp only [crepShMemOpExactHOL] at h ⊢ <;>
-    first
-    | exact crepShMemLoadExactHOL_crepStateAddClock name address _ state r s' extra h
-    | exact crepShMemStoreExactHOL_crepStateAddClock name address _ state r s' extra h
-
 /-- The combined clock-shift statement: the two runs share an event prefix, and
 if the original did not time out then the shifted run is exactly the original
 run with its final clock raised by `extra` (HOL `evaluate_add_clock_eq`). -/
@@ -186,17 +125,5 @@ abbrev CrepAddClockCombined {width : Nat} [NeZero width] {σ : Type}
     evalCrepSemHOLProgExact (crepStateAddClock state extra) program =
       ((evalCrepSemHOLProgExact state program).1,
         crepStateAddClock (evalCrepSemHOLProgExact state program).2 extra))
-
-/-- Package the combined statement from the two explicit run equations. -/
-theorem crepAddClockCombined_of_shift_eq {width : Nat} [NeZero width] {σ : Type}
-    (program : CrepProgHOL width) (state : CrepSemHOLState width σ) (extra : Nat)
-    (r : Option (CrepResultHOLExact width)) (s' : CrepSemHOLState width σ)
-    (h1 : evalCrepSemHOLProgExact state program = (r, s'))
-    (h2 : evalCrepSemHOLProgExact (crepStateAddClock state extra) program =
-      (r, crepStateAddClock s' extra)) :
-    CrepAddClockCombined program state extra := by
-  unfold CrepAddClockCombined
-  rw [h1, h2]
-  exact ⟨List.prefix_refl _, fun _ => rfl⟩
 
 end Flapjack
