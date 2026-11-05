@@ -15,6 +15,15 @@ theorem dataMass_append {α β : Type} (xs ys : List (HeapElement α β)) :
   classical
   simp [dataMass, List.filter_append, heapLength_append]
 
+/-- Filtering a heap consisting entirely of data preserves its encoded size. -/
+theorem dataMass_of_allData {α β : Type} (heap : List (HeapElement α β))
+    (allData : ∀ element ∈ heap, isDataElement element) : dataMass heap = heapLength heap := by
+  classical
+  unfold dataMass
+  congr 1
+  rw [List.filter_eq_self]
+  simpa using allData
+
 /-- Forwarding a data element moves exactly its encoded size out of the
 source heap's data mass. -/
 theorem forwardPtr_dataMass {α β : Type} (heap newHeap : List (HeapElement α β))

@@ -151,6 +151,51 @@ theorem partialSource_conditions {width : Nat} [NeZero width] (conf : Config)
   · simpa [startEq] using startBound
   · simpa [Nat.add_assoc] using unused.2.1
 
+/-- The source unused-space invariant accounts for the data before the free
+region and excludes that region from the data mass. -/
+theorem partialSource_dataMass {α β : Type} (heap before refs : List (HeapElement α β))
+    (allocation free : Nat) (unused : unusedSpaceInv allocation free heap)
+    (split : heapSplit (allocation + free) heap = some (before, refs)) :
+    GenGcPartial.dataMass heap = allocation + GenGcPartial.dataMass refs := by
+  classical
+  obtain ⟨data, suffix, dataSplit, allData⟩ := unused.2.2
+  obtain ⟨dataLen, _, whole⟩ := heapSplit_heapLength heap data suffix allocation dataSplit
+  have dataMass := GenGcPartial.dataMass_of_allData data allData
+  by_cases freeZero : free = 0
+  · subst free
+    simp only [Nat.add_zero] at split
+    rw [dataSplit] at split
+    simp only [Option.some.injEq, Prod.mk.injEq] at split
+    obtain ⟨_, rfl⟩ := split
+    rw [← whole, GenGcPartial.dataMass_append, dataMass, dataLen]
+  · obtain ⟨left, right, shape, leftLen⟩ := heapLookup_split heap allocation _ (unused.1 freeZero)
+    have canonical : heapSplit allocation heap = some (left, .unused (free - 1) :: right) := by
+      rw [shape, leftLen]
+      exact heapSplit_append left _
+    rw [canonical] at dataSplit
+    simp only [Option.some.injEq, Prod.mk.injEq] at dataSplit
+    obtain ⟨rfl, _⟩ := dataSplit
+    have afterFree : heapSplit (allocation + free) heap = some (left ++ [.unused (free - 1)], right) := by
+      have size : heapLength (left ++ [.unused (free - 1)]) = allocation + free := by
+        rw [heapLength_append, dataLen]
+        have singleton : heapLength ([.unused (free - 1)] : List (HeapElement α β)) = free := by
+          simp [heapLength, elLength]
+          omega
+        rw [singleton]
+      rw [← size, shape]
+      have assoc : left ++ .unused (free - 1) :: right =
+          (left ++ [.unused (free - 1)]) ++ right := by
+        exact (List.append_assoc left [.unused (free - 1)] right).symm
+      rw [assoc]
+      exact heapSplit_append (left ++ [.unused (free - 1)]) right
+    rw [afterFree] at split
+    simp only [Option.some.injEq, Prod.mk.injEq] at split
+    obtain ⟨_, rfl⟩ := split
+    rw [shape, GenGcPartial.dataMass_append]
+    have zero : GenGcPartial.dataMass (.unused (free - 1) :: right) = GenGcPartial.dataMass right := by
+      simp [GenGcPartial.dataMass, isDataElement]
+    rw [zero, dataMass, dataLen]
+
 /-- The old-generation prefix contains only data when its boundary precedes
 the source allocation boundary. -/
 theorem partialSource_oldData {α β : Type} (heap : List (HeapElement α β))
