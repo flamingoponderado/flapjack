@@ -1,0 +1,15 @@
+load "preamble"; load "dataPropsTheory";
+open HolKernel Parse bossLib preamble dataPropsTheory;
+val _ = new_theory "flapjack_data_resource_mono_probe";
+val _ = Globals.linewidth := 1000000;
+fun show name th =
+  (if null (hyp th) then () else raise Fail ("unexpected hypotheses: " ^ name);
+   print (name ^ "=");
+   Lib.with_flag (Globals.show_types,true) print_term (concl th);
+   print "\n");
+val _ = show "do_app_io_events_mono_typed" do_app_io_events_mono;
+val _ = show "do_app_safe_for_space_mono_typed" do_app_safe_for_space_mono;
+val _ = show "do_app_stack_max_typed" do_app_stack_max;
+val _ = show "evaluate_io_events_mono_typed" evaluate_io_events_mono;
+val _ = show "evaluate_safe_for_space_mono_typed" evaluate_safe_for_space_mono;
+val _ = show "evaluate_option_le_stack_max_typed" evaluate_option_le_stack_max;

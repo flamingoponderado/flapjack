@@ -396,4 +396,23 @@ theorem evaluate_resourceMono {C F : Type} (program : DataLang.Prog) (state : St
           exact smaller body next (by omega)
   exact allRanks state.clock (sizeOf program) program state rfl rfl
 
+/-- Flapjack projection of the combined resource proof onto event prefixes.
+The direct-result formulation is infrastructure, and the full cross-language
+evaluator correspondence is still under review. -/
+theorem evaluate_resourceEvents {C F : Type} (program : DataLang.Prog) (state : State C F) :
+    state.ffi.ioEvents <+: (evaluate program state).2.ffi.ioEvents :=
+  (evaluate_resourceMono program state).1
+
+/-- Flapjack projection onto the source stack bound. The direct-result
+formulation is infrastructure pending evaluator correspondence review. -/
+theorem evaluate_resourceStack {C F : Type} (program : DataLang.Prog) (state : State C F) :
+    BackendProps.optionLe state.stackMax (evaluate program state).2.stackMax :=
+  (evaluate_resourceMono program state).2.1
+
+/-- Flapjack projection onto the source safety flag. The direct-result
+formulation is infrastructure pending evaluator correspondence review. -/
+theorem evaluate_resourceSafety {C F : Type} (program : DataLang.Prog) (state : State C F) :
+    (evaluate program state).2.safeForSpace = true → state.safeForSpace = true :=
+  (evaluate_resourceMono program state).2.2
+
 end Flapjack.Compiler.Backend.DataSem
