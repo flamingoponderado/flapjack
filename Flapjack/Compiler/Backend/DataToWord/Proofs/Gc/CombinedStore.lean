@@ -18,8 +18,8 @@ theorem collector_hasSpace_of_gap {width : Nat} [NeZero width] {C F : Type}
   simpa [WordSemStateFiniteExact.hasSpace, WordSemStateFiniteExact.getStore, next, trigger, BitVec.le_def] using fits
 
 /-- The combined collector preserves the heap/store invariant and stack-root
-encoding for each GC kind; partial collection also leaves allocation space.
-The source's major-collection allocation bound remains outside this composition. -/
+encoding, and satisfies the allocation-space conclusions for both generational
+branches. This local statement assumes the source root list is nonempty. -/
 theorem combinedGc_stack_correct {width : Nat} [NeZero width] (conf : Config)
     (value : DataSem.Value) (stack : List (DataSem.Value × WordLocW width))
     (references : Spt (BvlSem.Ref DataSem.Value)) (root : HeapAddress (WordLocW width))
@@ -48,7 +48,11 @@ theorem combinedGc_stack_correct {width : Nat} [NeZero width] (conf : Config)
       (∀ (limits : List Nat) (request : BitVec width), conf.gcKind = .generational limits →
         wordGenGcCanDoPartial limits store → store.lookup .allocSize = some (.word request) →
         ∀ {C F : Type} (state : WordSemStateFiniteExact width C F),
-          WordSemStateFiniteExact.hasSpace (.word request) { state with store := outStore } = some true) := by
+          WordSemStateFiniteExact.hasSpace (.word request) { state with store := outStore } = some true) ∧
+      (∀ limits requested, conf.gcKind = .generational limits → ¬ wordGenGcCanDoPartial limits store →
+        store.lookup .allocSize = some (.word
+          (if requested * (width / 8) < 2 ^ width then BitVec.ofNat width (requested * (width / 8)) else -1)) →
+        requested ≤ n1 → requested ≤ k2) := by
   cases kind : conf.gcKind with
   | none =>
     obtain ⟨stack1, outMemory, outStore, k2, k3, root1, rest, execution, invariant, sum, zero,
@@ -56,24 +60,24 @@ theorem combinedGc_stack_correct {width : Nat} [NeZero width] (conf : Config)
       combinedNone_store_correct conf stack root roots roots1 heap heap1 a sp sp1 limit a1 n1 gens gens1
         store memory domain good heapMem global related run kind
     exact ⟨stack1, outMemory, outStore, k2, k3, root1, rest, execution, invariant, sum, fun _ => zero,
-      rootsOut, globalOut, stackOut, length, by simp, by simp⟩
+      rootsOut, globalOut, stackOut, length, by simp, by simp, by simp⟩
   | simple =>
     obtain ⟨stack1, outMemory, outStore, k2, k3, root1, rest, execution, invariant, sum, zero,
       rootsOut, globalOut, stackOut, length⟩ :=
       combinedSimple_store_correct conf value stack references root roots roots1 heap heap1 be a sp sp1 limit next
         a1 n1 gens gens1 store memory domain source good heapMem global related run kind
     exact ⟨stack1, outMemory, outStore, k2, k3, root1, rest, execution, invariant, sum, fun _ => zero,
-      rootsOut, globalOut, stackOut, length, by simp, by simp⟩
+      rootsOut, globalOut, stackOut, length, by simp, by simp, by simp⟩
   | generational limits =>
     have genRun : gcCombined (makeGcConf (α := List (WordLocW width)) limit) (.generational limits)
         (root :: roots, heap, gens, a + sp + sp1, doPartial conf store) =
         (roots1, heap1, a1, n1, gens1, true) := by simpa [kind] using run
     obtain ⟨stack1, outMemory, outStore, k2, k3, root1, rest, execution, invariant, sum,
-      rootsOut, globalOut, stackOut, length, space⟩ :=
+      rootsOut, globalOut, stackOut, length, space, allocation⟩ :=
       combinedGenerational_stack_correct conf value stack references root roots roots1 heap heap1 be a sp sp1
         limit next a1 n1 gens gens1 limits store memory domain source kind good heapMem global related genRun
     refine ⟨stack1, outMemory, outStore, k2, k3, root1, rest, execution, invariant, sum, ?_,
-      rootsOut, globalOut, stackOut, length, ?_, ?_⟩
+      rootsOut, globalOut, stackOut, length, ?_, ?_, ?_⟩
     · simp
     · intro sizes same selected
       have sizesEq : sizes = limits := by simpa [kind] using same.symm
@@ -85,5 +89,9 @@ theorem combinedGc_stack_correct {width : Nat} [NeZero width] (conf : Config)
       obtain ⟨p, t, next, trigger, fits⟩ := space selected
       have requestFits : request ≤ t - p := by simpa [holFapply_of_lookup alloc, wordSemTheWord] using fits
       exact collector_hasSpace_of_gap state outStore request p t next trigger requestFits
+    · intro sizes requested same full alloc bound
+      have sizesEq : sizes = limits := by simpa [kind] using same.symm
+      subst sizes
+      exact allocation full requested alloc bound
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
