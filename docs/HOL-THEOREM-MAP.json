@@ -1034,6 +1034,54 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "ADDR_MAP_def",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/AddressMap.lean",
+  "lean_name": "addrMap",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared addr_map_typed, including all recursive clauses, numeric pointer-offset renaming and unchanged independently polymorphic payloads."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "ADDR_APPLY_def",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/AddressMap.lean",
+  "lean_name": "addrApply",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared addr_apply_typed, including both constructor clauses, numeric offset renaming and unchanged polymorphic payload."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "ADDR_MAP_EQ",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/AddressMap.lean",
+  "lean_name": "addrMap_eq",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared addr_map_eq_typed, including the membership-guarded agreement hypothesis, arbitrary offset functions and unchanged polymorphic payload."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "ADDR_MAP_LENGTH",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/AddressMap.lean",
+  "lean_name": "addrMap_length",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared addr_map_length_typed, including equality direction, arbitrary offset function and polymorphic payload."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "ADDR_MAP_APPEND",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/AddressMap.lean",
+  "lean_name": "addrMap_append",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared addr_map_append_typed, including arbitrary lists, offset function and polymorphic payload."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "MEM_ADDR_MAP",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/AddressMap.lean",
+  "lean_name": "mem_addrMap",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared mem_addr_map_typed, including the pointer membership premise, existential source address, payload and equality direction."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
   "hol_name": "gc_edge_def",
   "lean_path": "Flapjack/Compiler/Backend/GcShared/Reachability.lean",
   "lean_name": "gcEdge",

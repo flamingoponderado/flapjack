@@ -1,4 +1,4 @@
-import Flapjack.Compiler.Backend.GcShared
+import Flapjack.Compiler.Backend.GcShared.AddressMap
 import Mathlib.Logic.Relation
 
 /-! Heap reachability and filtering used by abstract collector correctness. -/
