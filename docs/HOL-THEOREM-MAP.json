@@ -1,6 +1,22 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "heap_lookup_old_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
+  "lean_name": "heapLookup_old",
+  "statement_status": "pending_statement_review",
+  "reviewer": "Compared partial_lookup_old_statement_typed, including the arbitrary output suffix; the local HOL proof replay remains pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "heap_lookup_refs_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
+  "lean_name": "heapLookup_refs",
+  "statement_status": "pending_statement_review",
+  "reviewer": "Compared partial_lookup_refs_statement_typed, including the output prefix length and preserved object size and payload; the local HOL proof replay remains pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
   "hol_name": "gc_move_list_similar",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Similarity.lean",
   "lean_name": "gcMoveList_similar",

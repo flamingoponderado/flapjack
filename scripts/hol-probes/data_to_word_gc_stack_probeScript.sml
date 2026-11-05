@@ -80,6 +80,21 @@ val partialLookupSimilarData = ``!h1 h2 n.
       MAP (to_gen_heap_address conf) xs2)``;
 val _ = (print "partial_lookup_similar_data_statement_typed=";
   Lib.with_flag (Globals.show_types,true) print_term partialLookupSimilarData; print "\n");
+val partialLookupOld = ``!i ys.
+  (partial_gc conf (roots,heap) = (roots1,state1)) /\ gen_inv conf heap /\
+  (heap_lookup i heap = SOME (DataElement xs l d)) /\ (i < conf.gen_start) ==>
+  (heap_lookup i (state1.old ++ ys) = SOME (DataElement xs l d))``;
+val _ = (print "partial_lookup_old_statement_typed=";
+  Lib.with_flag (Globals.show_types,true) print_term partialLookupOld; print "\n");
+val partialLookupRefs = ``!x.
+  (partial_gc conf (roots,heap) = (roots1,state1)) /\ gen_inv conf heap /\
+  (heap_lookup x heap = SOME (DataElement xs l d)) /\
+  (heap_length (state1.old ++ state1.h1 ++ heap_expand state1.n) = conf.refs_start) /\
+  (conf.refs_start <= x) ==>
+  ?xs1. (heap_lookup x (state1.old ++ state1.h1 ++ heap_expand state1.n ++ state1.r1) =
+    SOME (DataElement xs1 l d))``;
+val _ = (print "partial_lookup_refs_statement_typed=";
+  Lib.with_flag (Globals.show_types,true) print_term partialLookupRefs; print "\n");
 val partialNewFDomain = ``
   (!i. i IN FDOM f ==> isSomeDataElement (heap_lookup (i + conf.gen_start) heap)) ==>
   ((x IN FDOM (new_f f conf heap)) =

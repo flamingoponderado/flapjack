@@ -10,6 +10,7 @@ import Flapjack.Compiler.Backend.GenGcPartial.Proofs.Conservation
 import Flapjack.Compiler.Backend.GenGcPartial.Proofs.Accumulator
 import Flapjack.Compiler.Backend.GcShared.ForwardPtr
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PartialSplit
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PartialFull
 
 /-! Translation from a partial collector state to a major collector state. -/
 namespace Flapjack.Compiler.Backend.GenGcPartial
@@ -1899,5 +1900,101 @@ theorem holFmapAsFiniteSupportParamWitness_heapLookup_similarData_f
     (GcMapBroad.ofBroad (GcMapBroad.toBroad f)).finiteSupport = f.finiteSupport ∧
     GcMapBroad.ofBroad (GcMapBroad.toBroad f) = f :=
   holFmapAsFiniteSupportParamWitness_gcRelated_f f key
+
+/-- Flapjack proof infrastructure: a segmented partial collection keeps the
+old region and produces a reference list similar to the original one. -/
+theorem partialGc_regions {α β : Type} (conf : Config β)
+    (roots roots1 : List (HeapAddress α)) (heap old current refs : List (HeapElement α β))
+    (state : GcState α β)
+    (segment : heapSegment (conf.genStart, conf.refsStart) heap = some (old, current, refs))
+    (run : partialGc conf (roots, heap) = (roots1, state)) :
+    state.old = old ∧ List.Forall₂ (similarData conf) refs state.r1 := by
+  classical
+  simp only [partialGc, segment] at run
+  generalize rootRun : gcMoveList conf
+    { emptyGcState with heap := heap, old := old, r2 := refs, a := conf.genStart, n := heapLength current }
+    roots = result at run
+  obtain ⟨movedRoots, middle⟩ := result
+  generalize refRun : gcMoveRefList conf middle refs = result at run
+  obtain ⟨movedRefs, afterRefs⟩ := result
+  simp only [Prod.mk.injEq] at run
+  obtain ⟨_, rfl⟩ := run
+  have rootFixed := DataToWord.Proofs.Gc.partialMoveList_fixedFields conf roots movedRoots _ middle rootRun
+  have refFixed := DataToWord.Proofs.Gc.partialFull_refListFixed conf refs movedRefs middle afterRefs refRun
+  have dataFixed := DataToWord.Proofs.Gc.partialFull_dataFixed conf { afterRefs with r1 := movedRefs, r2 := [] }
+  have refSimilar := gcMoveRefList_similar conf refs movedRefs middle afterRefs refRun
+  simp only at dataFixed
+  refine ⟨?_, ?_⟩
+  · exact dataFixed.2.2.2.2.1.trans (refFixed.2.2.2.2.2.trans rootFixed.2.2.2.2.2)
+  · simpa only [gcMoveData_r1] using refSimilar
+
+/-- Flapjack proof infrastructure: lookup in similar heap lists preserves an
+object's encoded size and payload. -/
+theorem heapLookup_similarShape {α β γ : Type} (conf : Config γ)
+    (left right : List (HeapElement α β)) (n : Nat) (xs : List (HeapAddress α))
+    (len : Nat) (payload : β) (related : List.Forall₂ (similarData conf) left right)
+    (found : heapLookup n left = some (.dataElement xs len payload)) :
+    ∃ ys, heapLookup n right = some (.dataElement ys len payload) := by
+  induction related generalizing n with
+  | nil => simp [heapLookup] at found
+  | @cons head1 head2 left right head tail ih =>
+    by_cases zero : n = 0
+    · subst n
+      simp [heapLookup] at found
+      subst head1
+      cases head2 with
+      | unused size => simp [similarData] at head
+      | forwardPointer ptr value size => simp [similarData] at head
+      | dataElement ys size data =>
+        simp only [similarData] at head
+        obtain ⟨rfl, rfl, _⟩ := head
+        exact ⟨ys, by simp [heapLookup]⟩
+    · by_cases inside : n < elLength head1
+      · simp [heapLookup, zero, inside] at found
+      · have equalLength := similarData_elLength conf head1 head2 head
+        have targetInside : ¬ n < elLength head2 := by simpa [← equalLength] using inside
+        have foundTail : heapLookup (n - elLength head1) left = some (.dataElement xs len payload) := by
+          simpa [heapLookup, zero, inside] using found
+        obtain ⟨ys, targetFound⟩ := ih (n - elLength head1) foundTail
+        refine ⟨ys, ?_⟩
+        simpa [heapLookup, zero, targetInside, ← equalLength, inside] using targetFound
+
+/-- Lookup of an old-generation object is unchanged by partial collection.
+The local HOL proof has not yet been replayed. -/
+@[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "heap_lookup_old_IMP"]
+theorem heapLookup_old {α β : Type} (conf : Config β)
+    (roots roots1 : List (HeapAddress α)) (heap : List (HeapElement α β)) (state : GcState α β)
+    (ptr : Nat) (tail : List (HeapElement α β)) (children : List (HeapAddress α)) (len : Nat) (data : β)
+    (run : partialGc conf (roots, heap) = (roots1, state)) (invariant : genInv conf heap)
+    (found : heapLookup ptr heap = some (.dataElement children len data)) (before : ptr < conf.genStart) :
+    heapLookup ptr (state.old ++ tail) = some (.dataElement children len data) := by
+  obtain ⟨_, _, old, current, refs, segment, _⟩ := invariant
+  have oldEq := (partialGc_regions conf roots roots1 heap old current refs state segment run).1
+  obtain ⟨whole, oldLen, _, _⟩ := heapSegment_imp heap conf.genStart conf.refsStart old current refs segment
+  rw [← whole, List.append_assoc, GenGc.heapLookup_append, oldLen, if_pos before] at found
+  rw [oldEq, GenGc.heapLookup_append, oldLen, if_pos before]
+  exact found
+
+/-- Lookup of a reference-region object after partial collection preserves its
+size and payload. The local HOL proof has not yet been replayed. -/
+@[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "heap_lookup_refs_IMP"]
+theorem heapLookup_refs {α β : Type} (conf : Config β)
+    (roots roots1 : List (HeapAddress α)) (heap : List (HeapElement α β)) (state : GcState α β)
+    (ptr : Nat) (children : List (HeapAddress α)) (len : Nat) (data : β)
+    (run : partialGc conf (roots, heap) = (roots1, state)) (invariant : genInv conf heap)
+    (found : heapLookup ptr heap = some (.dataElement children len data))
+    (prefixSize : heapLength (state.old ++ state.h1 ++ heapExpand state.n) = conf.refsStart)
+    (after : conf.refsStart ≤ ptr) :
+    ∃ children1, heapLookup ptr (state.old ++ state.h1 ++ heapExpand state.n ++ state.r1) =
+      some (.dataElement children1 len data) := by
+  obtain ⟨_, _, old, current, refs, segment, _⟩ := invariant
+  have refsSimilar := (partialGc_regions conf roots roots1 heap old current refs state segment run).2
+  obtain ⟨whole, _, endLen, _⟩ := heapSegment_imp heap conf.genStart conf.refsStart old current refs segment
+  rw [← whole, GenGc.heapLookup_append, endLen, if_neg (Nat.not_lt.mpr after)] at found
+  obtain ⟨children1, refFound⟩ :=
+    heapLookup_similarShape conf refs state.r1 (ptr - conf.refsStart) children len data refsSimilar found
+  refine ⟨children1, ?_⟩
+  rw [GenGc.heapLookup_append, prefixSize, if_neg (Nat.not_lt.mpr after)]
+  exact refFound
 
 end Flapjack.Compiler.Backend.GenGcPartial
