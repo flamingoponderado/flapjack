@@ -82609,14 +82609,7 @@
     "statement_status": "documented_mismatch",
     "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.8): statement reads the production String-keyed `Prog`/`Decl` transformation, whereas HOL pan_simpProofScript.sml states it over the exact mlstring-keyed panLang syntax with the exact panLang definitions. The @[hol] tag was withdrawn and the exact port is tracked by flapjack-4ac.8 (blocked by the exact-transformation prerequisite flapjack-4ac.8.1)."
   },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp.lean",
-    "lean_name": "collectPanValueStructs_structInfosOk",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
+
   {
     "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
     "hol_name": "decs_stcnames_compile_prog",
@@ -82993,14 +82986,7 @@
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Codex (proof inventory)"
   },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp.lean",
-    "lean_name": "lookupInfo_isSome_of_mem",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
+
   {
     "hol_path": null,
     "hol_name": null,
@@ -84483,30 +84469,9 @@
     "reviewer": "Codex (source predicate premise and MAP/DROPWHILE conclusion comparison with direct HOL-EVAL fixture)"
   },
 
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
-    "lean_name": "isWfShapeList_of_all",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Lean support lemma for the struct_infos_ok_drop proof"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
-    "lean_name": "isWfShape_drop",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Production String/cache-backed analogue; the exact MlString/ShapeHOL source port is isWfShapeExactHOL_drop in StructInfosOkExact.lean."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
-    "lean_name": "isWfShape_of_mem",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Lean support lemma used by PanStructs shape-size proof"
-  },
+
+
+
   {
     "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
     "hol_name": "opt_mmap_eq_every",
@@ -84528,22 +84493,8 @@
 
 
 
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
-    "lean_name": "lookupInfo_drop_helper",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Lean specialization of local alookup_drop_helper; no separate HOL declaration"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
-    "lean_name": "lookupInfo_eq_lookup",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Lean support lemma for lookupInfo_drop_helper; no separate HOL declaration"
-  },
+
+
 
   {
     "hol_path": null,
@@ -84551,7 +84502,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
     "lean_name": "lookupInfo_isSome_drop",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Support lemma used by isWfShape_drop and PanValues; not a ported HOL declaration"
+    "reviewer": "Support lemma used by PanValues; not a ported HOL declaration"
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
@@ -84585,44 +84536,16 @@
     "statement_status": "reviewed_exact",
     "reviewer": "Codex (generic function statement comparison with direct HOL-EVAL fixture)"
   },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
-    "lean_name": "shapeSizeWithContext_drop",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-only production-carrier analogue of size_of_sh_with_ctxt_drop; kept as useful String-backed infrastructure beside the exact MlString/ShapeHOL port."
-  },
 
 
 
 
 
 
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
-    "lean_name": "structInfosOk_append",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Production String/cache-backed analogue; the exact fields/size-only source port is structInfosOkHOLExact_append in StructInfosOkExact.lean."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
-    "lean_name": "structInfosOk_cons",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Production String/cache-backed analogue only; its precise carrier mismatch and the exact MlS/ShapeHOL port are documented beside the declaration."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
-    "lean_name": "structInfosOk_drop",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Production String/cache-backed analogue; the exact fields/size-only source port is structInfosOkHOLExact_drop in StructInfosOkExact.lean."
-  },
+
+
+
+
 
   {
     "hol_path": null,
@@ -86762,7 +86685,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanStructs/StructInfosOkExact.lean",
     "lean_name": "isWfShapeExactHOL_drop",
     "statement_status": "reviewed_exact",
-    "reviewer": "Source-reviewed against pan_structsProofScript.sml:114-127. The implication that is_wf_shape holds on DROP n ctxt entails it on ctxt is unchanged, using exact StructContextExact/MlS/ShapeHOL carriers and the HOL Boolean predicate. Named-shape lookup isSome is preserved by suffix inclusion. The production String/cache-backed isWfShape_drop remains an untagged analogue."
+    "reviewer": "Source-reviewed against pan_structsProofScript.sml:114-127. The implication that is_wf_shape holds on DROP n ctxt entails it on ctxt is unchanged, using exact StructContextExact/MlS/ShapeHOL carriers and the HOL Boolean predicate. Named-shape lookup isSome is preserved by suffix inclusion. The production String/cache-backed isWfShape_drop analogue was removed."
   },
   {
     "hol_path": null,

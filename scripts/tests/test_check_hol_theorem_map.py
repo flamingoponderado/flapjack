@@ -866,31 +866,22 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
         )
         self.assertEqual(inventory[exact_key]["hol_name"], "locals_rel_lookup_ctxt")
 
-    def test_is_wf_shape_drop_exact_port_and_production_analogue(self):
+    def test_is_wf_shape_drop_exact_port(self):
         inventory = {
             (record["lean_path"], record["lean_name"]): record
             for record in MAP["build_inventory"]()
         }
         exact_key = ("Flapjack/Pancake/Proofs/PanStructs/StructInfosOkExact.lean",
                      "isWfShapeExactHOL_drop")
-        production_key = ("Flapjack/Pancake/Proofs/PanStructs.lean", "isWfShape_drop")
         self.assertEqual(inventory[exact_key]["hol_name"], "is_wf_shape_drop")
         self.assertEqual(inventory[exact_key]["statement_status"],
                          "pending_statement_review")
-        self.assertEqual(inventory[production_key]["hol_name"], "is_wf_shape_drop")
-        self.assertEqual(inventory[production_key]["statement_status"],
-                         "documented_mismatch")
 
         manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
         exact_record = next(record for record in manifest if
                             (record["lean_path"], record["lean_name"]) == exact_key)
         self.assertEqual(exact_record["hol_name"], "is_wf_shape_drop")
         self.assertEqual(exact_record["statement_status"], "reviewed_exact")
-        production_record = next(record for record in manifest if
-                                 (record["lean_path"], record["lean_name"]) == production_key)
-        self.assertIsNone(production_record["hol_name"])
-        self.assertEqual(production_record["statement_status"],
-                         "no_hol_reference_pending_classification")
 
     def test_fperm_decs_decls_production_variant_removed(self):
         inventory = {

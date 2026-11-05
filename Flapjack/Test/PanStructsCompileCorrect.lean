@@ -271,7 +271,7 @@ def nestedLoadStructContext : StructContext :=
 
 def nestedLoadCompileContext : StructPassContext :=
   -- Production's HOL context relation observes names and field shapes here,
-  -- while the source runtime's structInfosOk supplies the authoritative sizes.
+  -- while the source context supplies the authoritative sizes.
   -- Deliberately skew cached sizes to guard against accidentally requiring
   -- full StructInfo equality in the compiled-load conversion.
   { structs :=

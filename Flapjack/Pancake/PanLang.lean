@@ -123,10 +123,8 @@ abbrev StructContextHOL := List (StructName × StructInfoHOL)
     `κ = String` instance). It is not `@[hol]`-tagged: the HOL source
     (`alistTheory`, cited by HOL `FLOOKUP` users) is HOL stdlib, outside the
     CakeML submodule, and the definition quantifies a `[BEq κ]` instance where
-    HOL uses `=`. Direct evidence: the review/audit bead
-    `flapjack-pxn.18.3.6.5`, the equality to core `List.lookup`
-    (`lookupInfo_eq_lookup`, `Proofs/PanStructs.lean:263`) under `[LawfulBEq
-    String]`. -/
+    HOL uses `=`. Correspondence with HOL equality requires a lawful `BEq`
+    instance. -/
 def lookupInfo [BEq κ] (key : κ) : List (κ × α) → Option α
   | [] => none
   | (candidate, value) :: entries =>
