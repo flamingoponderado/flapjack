@@ -142,7 +142,9 @@ def attribute(files: dict[str, Counter], roots: list[str] | None = None) -> dict
     so separate roots do not borrow each other's tags.  A file given directly
     as a root, or outside every root, falls back no further than its own
     directory."""
-    roots = [r.rstrip("/") for r in (roots or [""])]
+    # ``None`` (the default) means one root covering every file; an empty list
+    # (only file roots were given) means no directory root at all.
+    roots = [r.rstrip("/") for r in ([""] if roots is None else roots)]
     subtree: dict[str, Counter] = defaultdict(Counter)
     for f, tags in files.items():
         parts = f.split("/")[:-1]

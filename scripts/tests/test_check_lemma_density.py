@@ -101,6 +101,11 @@ class AttributionTest(unittest.TestCase):
         owner = cld.attribute(files, ["A/tagged.lean"])
         self.assertEqual(owner["A/Sub/file.lean"], cld.UNATTRIBUTED)
 
+    def test_only_file_roots(self):
+        files = {"A/tagged.lean": Counter({"x": 1}), "B/helper.lean": Counter()}
+        owner = cld.attribute(files, [])
+        self.assertEqual(owner["B/helper.lean"], cld.UNATTRIBUTED)
+
     def test_no_tags_anywhere(self):
         self.assertEqual(cld.attribute({"a/b.lean": Counter()}), {"a/b.lean": cld.UNATTRIBUTED})
 
@@ -132,6 +137,18 @@ class MainTest(unittest.TestCase):
         self.assertIsNone(rows["no/yScript.sml"]["line_ratio"])
         self.assertEqual(report["totals_owning_scripts"]["hol_tags"], 2)
         self.assertEqual(report["totals_owning_scripts"]["lean_files"], 1)
+
+    def test_file_roots_in_separate_directories(self):
+        with tempfile.TemporaryDirectory() as d:
+            a, b = pathlib.Path(d) / "A", pathlib.Path(d) / "B"
+            a.mkdir()
+            b.mkdir()
+            (a / "f.lean").write_text('@[hol "no/xScript.sml" "p"]\ntheorem p : True := trivial\n')
+            (b / "g.lean").write_text("theorem s : True := trivial\n")
+            report = self.run_json(str(a / "f.lean"), str(b / "g.lean"))
+        rows = {r["script"]: r for r in report["scripts"]}
+        self.assertEqual(rows["no/xScript.sml"]["lean_files"], 1)
+        self.assertEqual(rows[cld.UNATTRIBUTED]["lean_files"], 1)
 
     def test_json_on_repository_subtree(self):
         out = io.StringIO()
