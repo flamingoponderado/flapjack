@@ -28,6 +28,8 @@ It also captures the inferred type of `gc_combined_thm`, including its condition
 
 The exported `word_gc_fun_correct` capture records the store and word-state carriers and the failed-allocation conclusion for source comparison.
 
+The probe also captures the typed data-pointer distinctness, lookup-domain, and summed-length bound used in the source heap-sizing proof.
+
 `data_to_word_gc_stack_probe.out` includes the typed `full_gc_thm` statement,
 including its shared word dimension and complete abstract-memory conclusions,
 and the generic `gen_gc$is_final` predicate. These captures support source

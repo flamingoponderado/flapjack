@@ -1,6 +1,30 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "ALL_DISTINCT_data_pointers",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/HeapPointerSizes.lean",
+  "lean_name": "dataPointers_nodup",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared ALL_DISTINCT_data_pointers_typed: arbitrary independent heap address and payload carriers and duplicate-free enumeration agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "SUM_MAP_lookup_len_LESS_EQ",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/HeapPointerSizes.lean",
+  "lean_name": "sum_lookupLen_le",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared SUM_MAP_lookup_len_LESS_EQ_typed: the arbitrary heap carriers, address-list inclusion, duplicate-free premise and two sums of lookup lengths agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "set_data_pointers",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/HeapPointerSizes.lean",
+  "lean_name": "set_dataPointers",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared set_data_pointers_typed: both sets are the data pointer enumeration and data-element lookup domain for arbitrary independent heap carriers."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "word_gc_fun_correct",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/WordGcCorrect.lean",
   "lean_name": "wordGcFun_correct",
