@@ -145,6 +145,8 @@ heaps_similar_typed=∀(heap0 :(α, β) heap_element list) (heap :(α, β) heap_
 is_some_forward_pointer_typed=∀(x :(α, β) heap_element option). isSomeForwardPointer x ⇔ ∃(ptr :num) (d :α) (l :num). x = SOME (ForwardPointer ptr d l :(α, β) heap_element)
 is_some_data_or_forward_typed=∀(x :(α, β) heap_element option). isSomeDataOrForward x ⇔ isSomeForwardPointer x ∨ isSomeDataElement x
 is_some_data_or_forward_lemma_typed=∀(ha :(α, β) heap_element list) (ptr :num). isSomeDataOrForward (heap_lookup ptr (ha ++ DataElement (ys :α heap_address list) (l :num) (d :β)::(hb :(α, β) heap_element list))) ⇔ isSomeDataOrForward (heap_lookup ptr (ha ++ [(ForwardPointer (a :num) (u :α) l :(α, β) heap_element)] ++ hb))
+heap_lookup_prefix_typed=∀(xs :(α, β) heap_element list). heap_lookup (heap_length xs) (xs ++ (x :(α, β) heap_element)::(ys :(α, β) heap_element list)) = SOME x
+heap_lookup_extend_typed=∀(xs :(α, β) heap_element list) (n :num) (ys :(α, β) heap_element list) (x :(α, β) heap_element). heap_lookup n xs = SOME x ⇒ heap_lookup n (xs ++ ys) = SOME x
 filter_lemma_typed=∀(heap :(α, β) heap_element list). FILTER (isForwardPointer :(α, β) heap_element -> bool) heap = ([] :(α, β) heap_element list) ⇒ FILTER (λ(h :(α, β) heap_element). ¬isForwardPointer h) heap = heap
 heaps_similar_refl_typed=∀(xs :(α, β) heap_element list). FILTER (isForwardPointer :(α, β) heap_element -> bool) xs = ([] :(α, β) heap_element list) ⇒ heaps_similar xs xs
 heap_map_empty_typed=∀(xs :(α, β) heap_element list) (n :num). FILTER (isForwardPointer :(α, β) heap_element -> bool) xs = ([] :(α, β) heap_element list) ⇒ FDOM (heap_map n xs) = (∅ :num -> bool)

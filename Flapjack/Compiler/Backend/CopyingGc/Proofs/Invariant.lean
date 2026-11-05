@@ -96,6 +96,22 @@ theorem heapMap_forward_submap {α β : Type} (before after : List (HeapElement 
   rw [heapMap_replace_data before after target len roots data value]
   simp [HolFiniteMapExact.lookup_update, FUPDATE, ne, old]
 
+/-- Fresh forwarding leaves the total map application unchanged at every
+address already present in its domain. This is a Flapjack proof step for
+preserving previously copied entries. -/
+theorem heapMap1_forward_old {α β : Type} (before after : List (HeapElement α β))
+    (roots : List (HeapAddress α)) (len target : Nat) (data : β) (value : α) (key : Nat)
+    (defined : (heapMap 0 (before ++ .dataElement roots len data :: after)).lookup key ≠ none) :
+    heapMap1 (before ++ .forwardPointer target value len :: after) key =
+      heapMap1 (before ++ .dataElement roots len data :: after) key := by
+  cases found : (heapMap 0 (before ++ .dataElement roots len data :: after)).lookup key with
+  | none => exact False.elim (defined found)
+  | some mapped =>
+    have next := heapMap_forward_submap before after roots len target data value key mapped found
+    change holFapply (heapMap 0 (before ++ .forwardPointer target value len :: after)) key =
+      holFapply (heapMap 0 (before ++ .dataElement roots len data :: after)) key
+    rw [holFapply_of_lookup next, holFapply_of_lookup found]
+
 /-- The fresh-data branch successfully installs the forwarding pointer,
 preserves previous map entries and preserves data-or-forward lookup status.
 This is a Flapjack proof step toward the complete move invariant. -/
@@ -282,5 +298,115 @@ theorem gcInv_move_fresh_bij {α β : Type}
     (heapAddresses 0 (h1 ++ h2)) (heapLength before) a sourceFresh targetFresh
     mapsInto injective surjective
   simpa only [heapMap1, newMap, targetEq] using bij
+
+/-- The new forwarding entry satisfies the original-heap lookup,
+copied-heap lookup, and reachability parts of the move invariant. This is the
+new-entry case of the copying collector proof. -/
+theorem gcInv_move_fresh_new_entry {α β : Type}
+    (h1 h2 before after heap0 : List (HeapElement α β)) (a n limit len : Nat)
+    (roots0 ys : List (HeapAddress α)) (value : α) (data : β) (ok : Bool)
+    (invariant : gcInv h1 h2 a n (before ++ .dataElement ys len data :: after) ok limit heap0 roots0)
+    (reachable : reachableAddresses roots0 heap0 (heapLength before)) :
+    (heapMap 0 (before ++ .forwardPointer a value len :: after)).lookup (heapLength before) = some a ∧
+    ∃ xs size payload,
+      heapLookup (heapLength before) heap0 = some (.dataElement xs size payload) ∧
+      heapLookup a (h1 ++ (h2 ++ [.dataElement ys len data])) = some (.dataElement
+        (if a < heapLength h1 then
+          addrMap (heapMap1 (before ++ .forwardPointer a value len :: after)) xs else xs) size payload) ∧
+      reachableAddresses roots0 heap0 (heapLength before) ∧
+      ∀ ptr u, .pointer ptr u ∈ xs → a < heapLength h1 →
+        (heapMap 0 (before ++ .forwardPointer a value len :: after)).lookup ptr ≠ none := by
+  have allocated := invariant.2.1
+  have similar := invariant.2.2.2.2.2.2.1
+  obtain ⟨before0, after0, heapEq, lengthEq⟩ :=
+    heapSimilar_data_imp heap0 before after ys len data similar
+  have originalFound : heapLookup (heapLength before) heap0 = some (.dataElement ys len data) := by
+    rw [heapEq, lengthEq]
+    exact heapLookup_prefix before0 after0 _
+  have notBefore : ¬ a < heapLength h1 := by
+    rw [allocated, heapLength_append]
+    omega
+  have copiedFound : heapLookup a (h1 ++ (h2 ++ [.dataElement ys len data])) =
+      some (.dataElement ys len data) := by
+    rw [allocated, ← List.append_assoc]
+    simpa using heapLookup_prefix (h1 ++ h2) [] (.dataElement ys len data)
+  have mapped : (heapMap 0 (before ++ .forwardPointer a value len :: after)).lookup
+      (heapLength before) = some a := by
+    rw [heapMap_replace_data before after a len ys data value]
+    simp [HolFiniteMapExact.lookup_update, FUPDATE]
+  refine ⟨mapped, ys, len, data, originalFound, ?_, reachable, ?_⟩
+  · simpa [notBefore] using copiedFound
+  · intro ptr u member less
+    exact False.elim (notBefore less)
+
+/-- Every pre-existing forwarding entry retains its original and copied heap
+correspondence after a fresh copy. This is the old-entry case of the copying
+collector proof. -/
+theorem gcInv_move_fresh_old_entry {α β : Type}
+    (h1 h2 before after heap0 : List (HeapElement α β)) (a n limit len : Nat)
+    (roots0 ys : List (HeapAddress α)) (value : α) (data : β) (ok : Bool) (i j : Nat)
+    (invariant : gcInv h1 h2 a n (before ++ .dataElement ys len data :: after) ok limit heap0 roots0)
+    (different : i ≠ heapLength before)
+    (newLookup : (heapMap 0 (before ++ .forwardPointer a value len :: after)).lookup i = some j) :
+    ∃ xs size payload, heapLookup i heap0 = some (.dataElement xs size payload) ∧
+      heapLookup j (h1 ++ (h2 ++ [.dataElement ys len data])) = some (.dataElement
+        (if j < heapLength h1 then addrMap (heapMap1 (before ++ .forwardPointer a value len :: after)) xs
+          else xs) size payload) ∧
+      reachableAddresses roots0 heap0 i ∧
+      ∀ ptr u, .pointer ptr u ∈ xs → j < heapLength h1 →
+        (heapMap 0 (before ++ .forwardPointer a value len :: after)).lookup ptr ≠ none := by
+  have oldLookup : (heapMap 0 (before ++ .dataElement ys len data :: after)).lookup i = some j := by
+    rw [heapMap_replace_data before after a len ys data value] at newLookup
+    simpa [HolFiniteMapExact.lookup_update, FUPDATE, Ne.symm different] using newLookup
+  obtain ⟨_, _, _, _, _, _, _, _, _, _, _, _, entries⟩ := invariant
+  obtain ⟨xs, size, payload, oldFound, copiedFound, reach, children⟩ := entries i j oldLookup
+  have mappedEq : j < heapLength h1 →
+      addrMap (heapMap1 (before ++ .forwardPointer a value len :: after)) xs =
+        addrMap (heapMap1 (before ++ .dataElement ys len data :: after)) xs := by
+    intro less
+    apply addrMap_eq
+    intro ptr u member
+    exact heapMap1_forward_old before after ys len a data value ptr (children ptr u member less)
+  refine ⟨xs, size, payload, oldFound, ?_, reach, ?_⟩
+  · have extended := heapLookup_extend (h1 ++ h2) [.dataElement ys len data] j _ copiedFound
+    by_cases less : j < heapLength h1
+    · simpa [List.append_assoc, less, mappedEq less] using extended
+    · simpa [List.append_assoc, less] using extended
+  · intro ptr u member less
+    have oldDefined := children ptr u member less
+    cases found : (heapMap 0 (before ++ .dataElement ys len data :: after)).lookup ptr with
+    | none => exact False.elim (oldDefined found)
+    | some mapped =>
+      have next := heapMap_forward_submap before after ys len a data value ptr mapped found
+      rw [next]
+      simp
+
+/-- The fresh-copy post-state satisfies the full source-shaped copying
+invariant. This Flapjack theorem assembles the structural, bijection, and
+entry cases; `gcInv` remains untagged pending its representation qualifier. -/
+theorem gcInv_move_fresh_post {α β : Type}
+    (h1 h2 before after heap0 : List (HeapElement α β)) (a n limit len : Nat)
+    (roots0 ys : List (HeapAddress α)) (value : α) (data : β) (ok : Bool)
+    (invariant : gcInv h1 h2 a n (before ++ .dataElement ys len data :: after) ok limit heap0 roots0)
+    (reachable : reachableAddresses roots0 heap0 (heapLength before)) :
+    gcInv h1 (h2 ++ [.dataElement ys len data]) (a + (len + 1)) (n - (len + 1))
+      (before ++ .forwardPointer a value len :: after) true limit heap0 roots0 := by
+  obtain ⟨balance, allocated, free, heapSize, similar, h1Data, h2Data⟩ :=
+    gcInv_move_fresh_structure h1 h2 before after heap0 a n limit len roots0 ys value data ok invariant
+  obtain ⟨mapsInto, injective, surjective⟩ :=
+    gcInv_move_fresh_bij h1 h2 before after heap0 a n limit len roots0 ys value data ok invariant
+  refine ⟨balance, allocated, free, rfl, heapSize, invariant.2.2.2.2.2.1,
+    similar, h1Data, h2Data, mapsInto, injective, surjective, ?_⟩
+  intro i j newLookup
+  by_cases eq : i = heapLength before
+  · subst i
+    obtain ⟨mapped, entry⟩ :=
+      gcInv_move_fresh_new_entry h1 h2 before after heap0 a n limit len roots0 ys value data ok invariant reachable
+    rw [mapped] at newLookup
+    have eq : a = j := Option.some.inj newLookup
+    subst j
+    exact entry
+  · exact gcInv_move_fresh_old_entry h1 h2 before after heap0 a n limit len roots0 ys value data ok i j
+      invariant eq newLookup
 
 end Flapjack.Compiler.Backend.CopyingGc

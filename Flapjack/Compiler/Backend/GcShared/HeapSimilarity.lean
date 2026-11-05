@@ -15,6 +15,21 @@ def isSomeForwardPointer {α β : Type} (element : Option (HeapElement α β)) :
 def isSomeDataOrForward {α β : Type} (element : Option (HeapElement α β)) : Prop :=
   isSomeForwardPointer element ∨ isSomeDataElement element
 
+/-- Looking up the boundary after a prefix returns its next element. -/
+@[hol "cakeml/compiler/backend/gc/gc_sharedScript.sml" "heap_lookup_PREFIX"]
+theorem heapLookup_prefix {α β : Type} (xs ys : List (HeapElement α β)) (x : HeapElement α β) :
+    heapLookup (heapLength xs) (xs ++ x :: ys) = some x := by
+  rw [GenGc.heapLookup_append]
+  simp [heapLookup]
+
+/-- Appending a heap does not change an existing successful lookup. -/
+@[hol "cakeml/compiler/backend/gc/gc_sharedScript.sml" "heap_lookup_EXTEND"]
+theorem heapLookup_extend {α β : Type} (xs ys : List (HeapElement α β)) (n : Nat)
+    (x : HeapElement α β) (found : heapLookup n xs = some x) :
+    heapLookup n (xs ++ ys) = some x := by
+  rw [GenGc.heapLookup_append]
+  simp [heapLookup_less xs n x found, found]
+
 /-- Replacing a data element with a same-size forwarding pointer preserves
 whether any heap lookup finds data or a forwarding pointer. -/
 @[hol "cakeml/compiler/backend/gc/gc_sharedScript.sml" "isSomeDataOrForward_lemma"]

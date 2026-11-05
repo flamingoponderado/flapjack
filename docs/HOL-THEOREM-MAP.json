@@ -1034,6 +1034,22 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "heap_lookup_PREFIX",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/HeapSimilarity.lean",
+  "lean_name": "heapLookup_prefix",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared heap_lookup_prefix_typed: lookup at the prefix word length returns the next element, with arbitrary suffix and independent heap payload types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "heap_lookup_EXTEND",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/HeapSimilarity.lean",
+  "lean_name": "heapLookup_extend",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared heap_lookup_extend_typed: successful lookup is unchanged when any heap suffix is appended, with independent heap payload types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
   "hol_name": "isSomeDataOrForward_lemma",
   "lean_path": "Flapjack/Compiler/Backend/GcShared/HeapSimilarity.lean",
   "lean_name": "isSomeDataOrForward_replace",
