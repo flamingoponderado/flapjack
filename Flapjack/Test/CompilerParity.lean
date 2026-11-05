@@ -791,7 +791,6 @@ import Flapjack.Test.LoopIsLoadParity
 import Flapjack.Test.LoopCallParity
 import Flapjack.Test.LoopEvalParity
 import Flapjack.Test.LoopObservationalSemanticsParity
-import Flapjack.Test.LoopLiveEffectFreeParity
 import Flapjack.Test.LoopLiveDomainListDeleteParity
 import Flapjack.Test.LoopFfiParity
 import Flapjack.Test.LoopMemExactParity

@@ -39,8 +39,7 @@ in HOL. Lean's generated `evaluate.eq_13` distributes `cutRes` over the branch
 test. The two forms reduce to the same selected branch; the main evaluator's
 docstring records this presentational rewrite. HOL's `w2w` operations are
 `BitVec.setWidth`, including the explicit 32-bit and 8-bit store operands.
-This review is about the exact evaluator specification only; it does not claim
-that the optional production `evaluateLoop` hook path is an evaluator adapter.
+This review is about the exact evaluator specification only.
 -/
 
 namespace Flapjack.LoopSemStateFiniteExact.EvaluateCases
