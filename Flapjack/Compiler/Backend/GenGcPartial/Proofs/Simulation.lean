@@ -1268,6 +1268,23 @@ theorem partialGc_initialTranslation {α β : Type} (conf : Config β)
     simpa [toGenHeapList] using heapLength_toGenHeapList conf current
   simp [toGenState, emptyGcState, translated, empty, limit, toGenHeapList, length]
 
+/-- Flapjack proof infrastructure: installing references whose protected
+pointers came from the original heap preserves the simulation invariant. -/
+theorem simInv_installRefs {α β : Type} (conf : Config β)
+    (heap0 : List (HeapElement α β)) (state : GcState α β)
+    (refs : List (HeapElement α β)) (invariant : simInv conf heap0 state)
+    (oldRefs : ∀ ptr, hasOldPtr conf refs ptr → hasOldPtr conf heap0 ptr) :
+    simInv conf heap0 { state with r2 := [], r1 := refs } := by
+  rcases invariant with ⟨gen, address, remaining, size, empty, old⟩
+  refine ⟨gen, address, remaining, size, empty, ?_⟩
+  intro ptr ⟨children, len, data, value, member, child, outside⟩
+  simp only [List.mem_append] at member
+  rcases member with ((inHeap | inPrefix) | inPending) | inRefs
+  · exact old ptr ⟨children, len, data, value, by simp [inHeap], child, outside⟩
+  · exact old ptr ⟨children, len, data, value, by simp [inPrefix], child, outside⟩
+  · exact old ptr ⟨children, len, data, value, by simp [inPending], child, outside⟩
+  · exact oldRefs ptr ⟨children, len, data, value, inRefs, child, outside⟩
+
 /-- Flapjack proof infrastructure: under the partial simulation invariant, a
 successful major loop on the translated state consists of the data scan alone. -/
 theorem gcMoveData_majorLoopSimulation {α β : Type} (conf : Config β)
@@ -1339,5 +1356,35 @@ theorem gcMoveData_majorLoopComplete {α β : Type} (conf : Config β)
   rw [resultEq] at success
   have partialOk : (gcMoveData conf state).ok = true := by simpa [toGenState] using success
   exact ⟨resultInv, resultEq, gcMoveData_h2 conf state partialOk, partialOk⟩
+
+/-- Flapjack proof infrastructure: the final partial scan can start after the
+processed references are installed, while the major loop continues from the
+same translated state. -/
+theorem gcMoveData_majorLoopAfterRefs {α β : Type} (conf : Config β)
+    (heap0 : List (HeapElement α β)) (state : GcState α β)
+    (refs : List (HeapElement α β)) (clock : Nat)
+    (invariant : simInv conf heap0 state)
+    (oldRefs : ∀ ptr, hasOldPtr conf refs ptr → hasOldPtr conf heap0 ptr)
+    (bounded : ∀ children len data ptr value,
+      .pointer ptr value ∈ children → .dataElement children len data ∈ state.heap ++ state.h2 →
+        ptr < heapLength state.heap)
+    (size : heapLength state.heap = conf.limit)
+    (success : (GenGc.gcMoveLoop (toGenConf conf) (toGenState conf state) clock).ok = true) :
+    let final := gcMoveData conf { state with r2 := [], r1 := refs }
+    simInv conf heap0 final ∧
+    GenGc.gcMoveLoop (toGenConf conf) (toGenState conf state) clock = toGenState conf final ∧
+    final.h2 = [] ∧ final.ok = true ∧ final.r1 = refs := by
+  have nextInv := simInv_installRefs conf heap0 state refs invariant oldRefs
+  have translated : toGenState conf { state with r2 := [], r1 := refs } = toGenState conf state := rfl
+  have nextSuccess : (GenGc.gcMoveLoop (toGenConf conf)
+      (toGenState conf { state with r2 := [], r1 := refs }) clock).ok = true := by
+    rw [translated]
+    exact success
+  obtain ⟨finalInv, finalEq, finalEmpty, finalOk⟩ :=
+    gcMoveData_majorLoopComplete conf heap0 { state with r2 := [], r1 := refs } clock
+      nextInv bounded size nextSuccess
+  dsimp only
+  rw [translated] at finalEq
+  exact ⟨finalInv, finalEq, finalEmpty, finalOk, gcMoveData_r1 conf _⟩
 
 end Flapjack.Compiler.Backend.GenGcPartial

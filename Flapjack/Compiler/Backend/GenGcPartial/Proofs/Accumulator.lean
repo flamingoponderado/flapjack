@@ -205,4 +205,56 @@ theorem gcMoveList_r4 {α β : Type} (conf : Config β) (state : GcState α β)
     rw [run] at head
     exact (ih state1).trans head
 
+/-- Flapjack infrastructure: a root move does not change scanned references. -/
+theorem gcMove_r1 {α β : Type} (conf : Config β) (state : GcState α β) (root : HeapAddress α) :
+    (gcMove conf state root).2.r1 = state.r1 := by
+  cases root with
+  | data value => rfl
+  | pointer ptr value =>
+    by_cases outside : ptr < conf.genStart ∨ conf.refsStart ≤ ptr
+    · simp [gcMove, outside]
+    · cases found : heapLookup ptr state.heap with
+      | none => simp [gcMove, outside, found]
+      | some element => cases element <;> simp [gcMove, outside, found]
+
+/-- Flapjack infrastructure: root traversal does not change scanned references. -/
+theorem gcMoveList_r1 {α β : Type} (conf : Config β) (state : GcState α β)
+    (roots : List (HeapAddress α)) : (gcMoveList conf state roots).2.r1 = state.r1 := by
+  induction roots generalizing state with
+  | nil => rfl
+  | cons root roots ih =>
+    simp only [gcMoveList]
+    generalize run : gcMove conf state root = result
+    obtain ⟨root1, state1⟩ := result
+    have head := gcMove_r1 conf state root
+    rw [run] at head
+    exact (ih state1).trans head
+
+/-- Copied-data scanning leaves scanned references unchanged. The local HOL
+proof has not yet been replayed. -/
+@[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "gc_move_data_r1" 1137]
+theorem gcMoveData_r1 {α β : Type} (conf : Config β) (state : GcState α β) :
+    (gcMoveData conf state).r1 = state.r1 := by
+  classical
+  induction state using gcMoveData.induct conf with
+  | case1 state empty => rw [gcMoveData]; simp [empty]
+  | case2 state head tail heap over => rw [gcMoveData]; simp [heap, over]
+  | case3 state tail roots len payload roots1 middle move heap bounded flag ih =>
+    cases state with
+    | mk old h1 h2 r4 r3 r2 r1 a n status origHeap heap0 =>
+      simp only at heap
+      subst h2
+      rw [gcMoveData]
+      simp only [bounded, ↓reduceIte, move]
+      dsimp only [flag] at ih
+      have same := gcMoveList_r1 conf
+        (GcState.mk old h1 (.dataElement roots len payload :: tail) r4 r3 r2 r1 a n status origHeap heap0) roots
+      rw [move] at same
+      exact ih.trans same
+  | case4 state head tail heap bounded notData =>
+    cases head with
+    | unused len => rw [gcMoveData]; simp [heap, bounded]
+    | forwardPointer ptr value len => rw [gcMoveData]; simp [heap, bounded]
+    | dataElement roots len payload => exact False.elim (notData roots len payload rfl)
+
 end Flapjack.Compiler.Backend.GenGcPartial
