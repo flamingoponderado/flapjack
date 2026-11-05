@@ -1,5 +1,22 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "reset_gens_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/CollectorGenerational.lean",
+  "lean_name": "resetGens",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared reset_gens_typed and the HOL clauses: the configuration and natural boundary are unchanged, with an empty generation list for None and Simple and the same mapped boundary for Generational."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "gen_gc_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/CollectorGenerational.lean",
+  "lean_name": "genGc_abstract_memory_allKinds",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared gen_gc_thm_typed and source: the sole abstract-invariant premise, configured major collection, reset generation state, complete post-invariant, success, filtered length, both data-only clauses and reachability conclusion match. Roots and heap payloads share the original word width, represented by positive-width BitVec; the collector state preserves both independently parameterized source carriers at those instantiated types."
+},
+{
   "hol_path": "cakeml/compiler/backend/gc/gen_gcScript.sml",
   "hol_name": "is_final_def",
   "lean_path": "Flapjack/Compiler/Backend/GenGc/Proofs/Invariant.lean",

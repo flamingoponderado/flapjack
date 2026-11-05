@@ -56,12 +56,15 @@ theorem genGc_generational_abstract_memory {width : Nat} [NeZero width]
     exact List.forall_iff_forall_mem.mpr invariant.2.2.2.2.2.2.2.2.2.1
 
 /-- Major collection restores the complete abstract ML invariant for any
-collector kind. This source-shaped result remains untagged pending a complete
-source and carrier review. -/
+collector kind. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "gen_gc_thm"
+  (words_as_type_indexed_bitvec)]
 theorem genGc_abstract_memory_allKinds {width : Nat} [NeZero width]
-    (conf : DataToWord.Config) (stack : List DataSem.Value)
-    (refs : Spt (BvlSem.Ref DataSem.Value))
-    (roots : List (HeapAddress (WordLocW width))) (heap : ValueHeap width)
+    (conf : Flapjack.Compiler.Backend.DataToWord.Config)
+    (stack : List Flapjack.Compiler.Backend.DataSem.Value)
+    (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value))
+    (roots : List (HeapAddress (WordLocW width)))
+    (heap : List (HeapElement (WordLocW width) (HeapTag × List (WordLocW width))))
     (bigEndian : Bool) (a sp sp1 : Nat) (gens : GcCombined.GenState)
     (limit next : Nat)
     (valid : absMlInv conf stack refs (roots, heap, bigEndian, a, sp, sp1, gens) limit next) :
