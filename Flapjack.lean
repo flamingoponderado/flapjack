@@ -2984,6 +2984,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.SizeValues
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.SizeVisited
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.SizeSoundness
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordGcSize
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.FrameRoots
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StateGcSize
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.SizeSeen
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.CollectorGenerationalWord

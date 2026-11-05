@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StateGcExecution
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordGcSize
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.FrameRoots
 
 /-! Heap limits and source sizing at the collector state boundary. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
@@ -83,5 +84,42 @@ theorem stateRel64_gc_preserved_size {C F : Type} (conf : Config) (l1 l2 request
   cases run1
   exact sizeBound ⟨allocated, failed, active⟩
 
+
+/-- Flapjack infrastructure: collection from the candidate state relation
+preserves that relation and, after failed allocation, bounds source sizing of
+the actual extracted stack and global roots, including duplicate roots. This
+uses Flapjack's candidate code/oracle relation and is not yet a HOL port. -/
+theorem stateRel64_gc_gen {C F : Type} (conf : Config) (l1 l2 requested : Nat)
+    (source : DataSem.State C F) (target : WordSemStateFiniteExact 64 C F)
+    (locs : List (Nat × Nat)) (related : stateRel64 conf l1 l2 source target none locs)
+    (emptyLocals : source.locals = .ln) :
+    ∃ moved memory store stack,
+      target.gcFun (wordSemEncStack target.stack, target.memory, target.mdomain, target.store) =
+        some (moved, memory, store) ∧
+      wordSemDecStack moved target.stack = some stack ∧
+      store.lookup (.temp 29) = target.store.lookup (.temp 29) ∧
+      store.lookup .allocSize = target.store.lookup .allocSize ∧
+      stateRel64 conf l1 l2 { source with space := 0 }
+        { target with stack := stack, store := store, memory := memory } none locs ∧
+      (target.store.lookup .allocSize = some (.word (gcAllocSize requested)) ∧
+        WordSemStateFiniteExact.hasSpace (.word (gcAllocSize requested))
+          { target with store := store } = some false ∧ conf.gcKind ≠ .none ∧
+        DataSem.noThunksInRefs source.refs →
+        ∀ roots2 dups,
+          roots2.Perm (dups ++ (source.stack.flatMap DataSem.extractStack ++ [theGlobal source.global])) →
+          (∀ v, v ∈ dups → v ∈ source.stack.flatMap DataSem.extractStack ++ [theGlobal source.global]) →
+          source.limits.heapLimit < (DataSem.sizeOfValues source.limits roots2 source.refs .ln).1 + requested) := by
+  obtain ⟨moved, memory, store, stack, run, decoded, temp, alloc, preserved, bound⟩ :=
+    stateRel64_gc_preserved_size conf l1 l2 requested source target locs related emptyLocals
+  refine ⟨moved, memory, store, stack, run, decoded, temp, alloc, preserved, ?_⟩
+  intro failed roots2 dups perm duplicates
+  have framePerm := flatStack_values_perm source.stack target.stack related.2.2.2.2.2.2.2.2.2.2.2.2.1
+  have rootsPerm : (theGlobal source.global :: (flatStack source.stack target.stack).map Prod.fst).Perm
+      (source.stack.flatMap DataSem.extractStack ++ [theGlobal source.global]) :=
+    (framePerm.cons _).trans (List.perm_append_singleton _ _).symm
+  apply bound failed roots2 dups
+  · exact perm.trans (rootsPerm.symm.append_left dups)
+  · intro value member
+    exact rootsPerm.mem_iff.mpr (duplicates value member)
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
