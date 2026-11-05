@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PartialRefs
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalFull
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.HeapExpand
+import Flapjack.Compiler.Backend.GenGcPartial.Proofs.Conservation
 
 /-! Partial generational collector simulation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
@@ -103,6 +104,47 @@ theorem partialFull_refListFixed {α β γ : Type} (conf : GenGcPartial.Config �
       obtain ⟨h1', r4', r3', r2', r1', old'⟩ := ih tail1 middle final tailRun
       exact ⟨h1'.trans h1, r4'.trans r4, r3'.trans r3, r2'.trans r2, r1'.trans r1, old'.trans old⟩
 
+/-- A successful copied-data scan conserves the data remaining in the source
+heap plus the copied data in its work lists. -/
+theorem partialFull_dataMass {α β : Type} (conf : GenGcPartial.Config β) (state : GcState α β) :
+    (GenGcPartial.gcMoveData conf state).ok = true →
+    GenGcPartial.dataMass state.heap + heapLength state.h1 + heapLength state.h2 =
+      GenGcPartial.dataMass (GenGcPartial.gcMoveData conf state).heap +
+        heapLength (GenGcPartial.gcMoveData conf state).h1 + heapLength (GenGcPartial.gcMoveData conf state).h2 := by
+  classical
+  induction state using GenGcPartial.gcMoveData.induct conf with
+  | case1 state empty =>
+    rw [GenGcPartial.gcMoveData]
+    simp [empty]
+  | case2 state head tail heap over =>
+    rw [GenGcPartial.gcMoveData]
+    simp [heap, over]
+  | case3 state tail roots len payload roots1 middle move heap bounded flag ih =>
+    intro success
+    obtain ⟨recursive, _, nonempty, headEq⟩ :=
+      partialDataScan_abstractStep conf state middle (GenGcPartial.gcMoveData conf state)
+        roots roots1 len payload tail heap move rfl success
+    have pending : ∃ rest, middle.h2 = .dataElement roots len payload :: rest := by
+      cases h : middle.h2 with
+      | nil => exact False.elim (nonempty h)
+      | cons head rest =>
+        simp only [h, List.head?_cons, Option.some.injEq] at headEq
+        exact ⟨rest, by simp [headEq] at h ⊢⟩
+    obtain ⟨rest, pending⟩ := pending
+    have mass := GenGcPartial.gcMoveList_dataMass conf roots roots1 state middle move
+    dsimp only [flag] at ih
+    have scan := ih (by rw [recursive]; exact success)
+    rw [recursive] at scan
+    simp only [pending, List.drop_succ_cons, List.drop_zero,
+      heapLength, List.map_append, List.sum_append, List.map_cons, List.map_nil,
+      List.sum_cons, List.sum_nil, elLength] at scan mass ⊢
+    omega
+  | case4 state head tail heap bounded notData =>
+    cases head with
+    | unused len => rw [GenGcPartial.gcMoveData]; simp [heap, bounded]
+    | forwardPointer ptr value len => rw [GenGcPartial.gcMoveData]; simp [heap, bounded]
+    | dataElement roots len payload => exact False.elim (notData roots len payload rfl)
+
 /-- A partial copied-data scan preserves the non-data partitions and the
 underlying heap's total length. -/
 theorem partialFull_dataFixed {α β : Type} (conf : GenGcPartial.Config β) (state : GcState α β) :
@@ -172,6 +214,22 @@ theorem partialFull_abstractSteps {α β : Type} (conf : GenGcPartial.Config β)
       exact before
     have middleOk := partialMoveRefList_okBefore conf refs middle refs1 afterRefs refsRun afterOk
     exact ⟨old, current, refs, middle, refs1, afterRefs, rfl, rootsRun, middleOk, refsRun, afterOk, dataRun⟩
+
+/-- A successful partial collection conserves source data mass and copied
+data across its root, reference, and copied-data phases. -/
+theorem partialFull_collectDataMass {α β : Type} (conf : GenGcPartial.Config β)
+    (roots roots1 : List (HeapAddress α)) (heap : List (HeapElement α β)) (result : GcState α β)
+    (run : GenGcPartial.partialGc conf (roots, heap) = (roots1, result)) (ok : result.ok = true) :
+    GenGcPartial.dataMass heap =
+      GenGcPartial.dataMass result.heap + heapLength result.h1 + heapLength result.h2 := by
+  obtain ⟨old, current, refs, middle, refs1, afterRefs, _, rootsRun, _, refsRun, _, dataRun⟩ :=
+    partialFull_abstractSteps conf roots roots1 heap result run ok
+  have rootsMass := GenGcPartial.gcMoveList_dataMass conf roots roots1 _ middle rootsRun
+  have refsMass := GenGcPartial.gcMoveRefList_dataMass conf refs refs1 middle afterRefs refsRun
+  have scanMass := partialFull_dataMass conf { afterRefs with r1 := refs1, r2 := [] } (by rw [dataRun]; exact ok)
+  rw [dataRun] at scanMass
+  simp only [emptyGcState, heapLength, List.map_nil, List.sum_nil, Nat.add_zero] at rootsMass
+  exact rootsMass.trans (refsMass.trans scanMass)
 
 /-- Connect the original whole-heap assertion to the partial collector's
 verified root traversal and retain the remaining heap regions as its frame. -/
