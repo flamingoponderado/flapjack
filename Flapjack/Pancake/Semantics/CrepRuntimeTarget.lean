@@ -166,6 +166,33 @@ theorem riscv64CrepRuntimeTarget_sharedDomain
       (riscv64CrepRuntimeTarget base).shMemaddrs address :=
   rfl
 
+/-- Production `crepRuntimeSharedAddressValid` is the canonical FFI shared
+    domain applied to the (byte-aligned) address, i.e. HOL `addr IN
+    s.sh_memaddrs` / `byte_align addr IN s.sh_memaddrs`. -/
+theorem crepRuntimeSharedAddressValid_eq_sharedDomain
+    (base : CrepRuntimeState (RiscV.Word 64) σ) (operator : WordMemOp)
+    (address : RiscV.Word 64) :
+    crepRuntimeSharedAddressValid (riscv64CrepRuntimeTarget base) operator address =
+      (riscv64CrepRuntimeTarget base).ffiContext.sharedDomain
+        (crepRuntimeSharedAddress (riscv64CrepRuntimeTarget base) operator address) :=
+  rfl
+
+/-- Width-zero shared-memory ops validate the raw address, as HOL does when
+    `nb = 0`. -/
+theorem crepRuntimeSharedAddress_load_target
+    (base : CrepRuntimeState (RiscV.Word 64) σ) (address : RiscV.Word 64) :
+    crepRuntimeSharedAddress (riscv64CrepRuntimeTarget base) .load address =
+      address :=
+  rfl
+
+/-- Width-four shared-memory ops validate the byte-aligned address, as HOL does
+    when `nb ≠ 0`; `panRiscVByteAlign 8` is HOL `byte_align` on 64-bit words. -/
+theorem crepRuntimeSharedAddress_load32_target
+    (base : CrepRuntimeState (RiscV.Word 64) σ) (address : RiscV.Word 64) :
+    crepRuntimeSharedAddress (riscv64CrepRuntimeTarget base) .load32 address =
+      RiscV.panRiscVByteAlign (8 : RiscV.Word 64) address :=
+  rfl
+
 /-! ### FFI byte-codec bridges
 
 On the canonical target the FFI byte operations are exactly the RISC-V byte
@@ -173,6 +200,12 @@ helpers, whose offset arithmetic is HOL `byte$get_byte` / `byte$set_byte` /
 `byte$byte_align`. `wordToBytes` is the little-endian byte list handed to the
 external handler for `ExtCall` and shared memory, matching HOL `word_to_bytes`.
 Direct oracle: `scripts/hol-probes/crep_runtime_ffi_boundary_probe.out`. -/
+
+theorem riscv64PanValueFfiContext_byteAlign_eq_riscv
+    (domain : RiscV.Word 64 → Bool) (address : RiscV.Word 64) :
+    (riscv64PanValueFfiContext domain).byteAlign address =
+      RiscV.panRiscVByteAlign (8 : RiscV.Word 64) address :=
+  rfl
 
 theorem riscv64PanValueFfiContext_wordToByte_eq_getByte0
     (domain : RiscV.Word 64 → Bool) (value : RiscV.Word 64) :
@@ -429,6 +462,57 @@ theorem crepRuntimeStore32_target_eq_riscv
 The production expression evaluator, on the canonical target, uses exactly the
 RISC-V memory model operations and the RISC-V word/compare/shift operations.
 -/
+
+theorem evalCrepRuntimeExp_load_target
+    (base : CrepRuntimeState (RiscV.Word 64) σ) (address : CrepExp (RiscV.Word 64)) :
+    evalCrepRuntimeExp (riscv64CrepRuntimeTarget base) (.load address) =
+      (evalCrepRuntimeExp (riscv64CrepRuntimeTarget base) address).bind
+        (RiscV.panRiscVReadWord base.memaddrs (crepRuntimeMemoryView base.memory)) := by
+  simp [evalCrepRuntimeExp, crepRuntimeLoad_target_eq_riscv]
+
+theorem evalCrepRuntimeExp_loadByte_target
+    (base : CrepRuntimeState (RiscV.Word 64) σ) (address : CrepExp (RiscV.Word 64)) :
+    evalCrepRuntimeExp (riscv64CrepRuntimeTarget base) (.loadByte address) =
+      (evalCrepRuntimeExp (riscv64CrepRuntimeTarget base) address).bind
+        (RiscV.panRiscVReadByte base.memaddrs (crepRuntimeMemoryView base.memory)
+          (8 : RiscV.Word 64)) := by
+  simp [evalCrepRuntimeExp, crepRuntimeLoadByte_target_eq_riscv]
+
+theorem evalCrepRuntimeExp_load32_target
+    (base : CrepRuntimeState (RiscV.Word 64) σ) (address : CrepExp (RiscV.Word 64)) :
+    evalCrepRuntimeExp (riscv64CrepRuntimeTarget base) (.load32 address) =
+      (evalCrepRuntimeExp (riscv64CrepRuntimeTarget base) address).bind
+        (RiscV.panRiscVRead32 base.memaddrs (crepRuntimeMemoryView base.memory)
+          (8 : RiscV.Word 64)) := by
+  simp [evalCrepRuntimeExp, crepRuntimeLoad32_target_eq_riscv]
+
+theorem evalCrepRuntimeExp_op_target
+    (base : CrepRuntimeState (RiscV.Word 64) σ)
+    (operator : BinOp) (expressions : List (CrepExp (RiscV.Word 64))) :
+    evalCrepRuntimeExp (riscv64CrepRuntimeTarget base) (.op operator expressions) =
+      (expressions.mapM (evalCrepRuntimeExp (riscv64CrepRuntimeTarget base))).bind
+        (RiscV.panRiscVWordOp operator) := by
+  simp [evalCrepRuntimeExp, riscv64CrepRuntimeTarget, RiscV.panRiscVMemoryModel]
+
+theorem evalCrepRuntimeExp_cmp_target
+    (base : CrepRuntimeState (RiscV.Word 64) σ)
+    (operator : Cmp) (left right : CrepExp (RiscV.Word 64)) :
+    evalCrepRuntimeExp (riscv64CrepRuntimeTarget base) (.cmp operator left right) =
+      (evalCrepRuntimeExp (riscv64CrepRuntimeTarget base) left).bind
+        (fun leftValue =>
+          (evalCrepRuntimeExp (riscv64CrepRuntimeTarget base) right).bind
+            (fun rightValue => some (RiscV.panRiscVCmp operator leftValue rightValue))) := by
+  simp [evalCrepRuntimeExp, riscv64CrepRuntimeTarget, RiscV.panRiscVMemoryModel]
+
+theorem evalCrepRuntimeExp_shift_target
+    (base : CrepRuntimeState (RiscV.Word 64) σ)
+    (operator : Shift) (left right : CrepExp (RiscV.Word 64)) :
+    evalCrepRuntimeExp (riscv64CrepRuntimeTarget base) (.shift operator left right) =
+      (evalCrepRuntimeExp (riscv64CrepRuntimeTarget base) left).bind
+        (fun leftValue =>
+          (evalCrepRuntimeExp (riscv64CrepRuntimeTarget base) right).bind
+            (RiscV.panRiscVShift operator leftValue)) := by
+  simp [evalCrepRuntimeExp, riscv64CrepRuntimeTarget, RiscV.panRiscVMemoryModel]
 
 /-! ## The RV64 `Op` evaluator case
 
@@ -1221,6 +1305,13 @@ theorem isRiscV64CrepRuntimeTarget_updateLocals {state : CrepRuntimeState (RiscV
     isRiscV64CrepRuntimeTarget { state with locals := locals } :=
   isRiscV64CrepRuntimeTarget_of_components h rfl rfl rfl rfl rfl
 
+/-- Updating the globals preserves the canonical configuration. -/
+theorem isRiscV64CrepRuntimeTarget_updateGlobals {state : CrepRuntimeState (RiscV.Word 64) σ}
+    (globals : BitVec 5 → Option (PanWordLab (RiscV.Word 64)))
+    (h : isRiscV64CrepRuntimeTarget state) :
+    isRiscV64CrepRuntimeTarget { state with globals := globals } :=
+  isRiscV64CrepRuntimeTarget_of_components h rfl rfl rfl rfl rfl
+
 /-- Updating the FFI state preserves the canonical configuration. -/
 theorem isRiscV64CrepRuntimeTarget_updateFfi {state : CrepRuntimeState (RiscV.Word 64) σ}
     (ffi : FfiState σ) (h : isRiscV64CrepRuntimeTarget state) :
@@ -1241,11 +1332,39 @@ theorem isRiscV64CrepRuntimeTarget_decCrepClock {state : CrepRuntimeState (RiscV
     isRiscV64CrepRuntimeTarget (decCrepClock state) :=
   isRiscV64CrepRuntimeTarget_of_components h rfl rfl rfl rfl rfl
 
+/-- Writing a local preserves the canonical configuration. -/
+theorem isRiscV64CrepRuntimeTarget_updateCrepRuntimeLocal
+    {state : CrepRuntimeState (RiscV.Word 64) σ} {name : Nat}
+    {value : PanWordLab (RiscV.Word 64)} (h : isRiscV64CrepRuntimeTarget state) :
+    isRiscV64CrepRuntimeTarget
+      { state with locals := updateCrepRuntimeLocal state.locals name value } :=
+  isRiscV64CrepRuntimeTarget_updateLocals _ h
+
 /-- Clearing the locals preserves the canonical configuration. -/
 theorem isRiscV64CrepRuntimeTarget_clearCrepRuntimeLocals
     {state : CrepRuntimeState (RiscV.Word 64) σ} (h : isRiscV64CrepRuntimeTarget state) :
     isRiscV64CrepRuntimeTarget (clearCrepRuntimeLocals state) :=
   isRiscV64CrepRuntimeTarget_updateLocals _ h
+
+/-- Writing a global preserves the canonical configuration. -/
+theorem isRiscV64CrepRuntimeTarget_setCrepRuntimeGlobals
+    {state : CrepRuntimeState (RiscV.Word 64) σ} {key : BitVec 5}
+    {value : PanWordLab (RiscV.Word 64)} (h : isRiscV64CrepRuntimeTarget state) :
+    isRiscV64CrepRuntimeTarget (setCrepRuntimeGlobals key value state) :=
+  isRiscV64CrepRuntimeTarget_updateGlobals _ h
+
+/-- A successful plain store preserves the canonical configuration. -/
+theorem isRiscV64CrepRuntimeTarget_crepRuntimeStore
+    {state : CrepRuntimeState (RiscV.Word 64) σ} {address value : RiscV.Word 64}
+    (h : isRiscV64CrepRuntimeTarget state) :
+    ∀ u, crepRuntimeStore state address value = some u → isRiscV64CrepRuntimeTarget u := by
+  intro u hu
+  unfold crepRuntimeStore at hu
+  split at hu
+  · injection hu with hu
+    subst hu
+    exact isRiscV64CrepRuntimeTarget_updateMemory _ h
+  · simp at hu
 
 /-- A successful byte store preserves the canonical configuration. -/
 theorem isRiscV64CrepRuntimeTarget_crepRuntimeStoreByte
@@ -1260,6 +1379,29 @@ theorem isRiscV64CrepRuntimeTarget_crepRuntimeStoreByte
     subst hu
     exact isRiscV64CrepRuntimeTarget_updateMemory _ h
   · simp at hu
+
+/-- A successful 32-bit store preserves the canonical configuration. -/
+theorem isRiscV64CrepRuntimeTarget_crepRuntimeStore32
+    {state : CrepRuntimeState (RiscV.Word 64) σ} {address value : RiscV.Word 64}
+    (h : isRiscV64CrepRuntimeTarget state) :
+    ∀ u, crepRuntimeStore32 state address value = some u → isRiscV64CrepRuntimeTarget u := by
+  intro u hu
+  unfold crepRuntimeStore32 at hu
+  dsimp only at hu
+  split at hu
+  · split at hu
+    · injection hu with hu
+      subst hu
+      exact isRiscV64CrepRuntimeTarget_updateMemory _ h
+    · simp at hu
+  · simp at hu
+
+/-- The canonical target's memory-only variant is configured. -/
+theorem isRiscV64CrepRuntimeTarget_riscv64SetMemory
+    (base : CrepRuntimeState (RiscV.Word 64) σ)
+    (memory : RiscV.Word 64 → PanWordLab (RiscV.Word 64)) :
+    isRiscV64CrepRuntimeTarget (riscv64SetMemory base memory) :=
+  isRiscV64CrepRuntimeTarget_updateMemory memory (riscv64CrepRuntimeTarget_isTarget base)
 
 /-- The HOL `write_bytearray` state is configured for every base state, since it
     only replaces the memory of the canonical target. -/
@@ -2632,6 +2774,70 @@ theorem evalCrepRuntimeProg_store
     | none => simp only [evalCrepRuntimeProg, evalCrepRuntimeExpWordLab_panTheWord, h, h2]
     | some valueWord =>
       cases hs : crepRuntimeStore base addressWord valueWord with
+      | none => simp only [evalCrepRuntimeProg, evalCrepRuntimeExpWordLab_panTheWord, h, h2, hs]
+      | some state => simp only [evalCrepRuntimeProg, evalCrepRuntimeExpWordLab_panTheWord, h, h2, hs]
+
+theorem evalCrepRuntimeProg_store32
+    [BEq (RiscV.Word 64)] [OfNat (RiscV.Word 64) 0] [OfNat (RiscV.Word 64) 1]
+    [Add (RiscV.Word 64)] [Mul (RiscV.Word 64)] [Sub (RiscV.Word 64)]
+    [AndOp (RiscV.Word 64)] [OrOp (RiscV.Word 64)]
+    [HXor (RiscV.Word 64) (RiscV.Word 64) (RiscV.Word 64)]
+    [ShiftLeft (RiscV.Word 64)] [ShiftRight (RiscV.Word 64)] [LT (RiscV.Word 64)]
+    [DecidableRel (fun left right : RiscV.Word 64 => left < right)]
+    [PanCmp (RiscV.Word 64)]
+    (handler : CrepRuntimeFfiHandler (RiscV.Word 64) Unit ε)
+    (primitive : CrepPrimitiveHandler (RiscV.Word 64))
+    (fuel : Nat) (base : CrepRuntimeState (RiscV.Word 64) Unit)
+    (address value : CrepExp (RiscV.Word 64)) :
+    evalCrepRuntimeProg handler primitive (fuel + 1) base (.store32 address value) =
+      match evalCrepRuntimeExp base address with
+      | none => some (.error, base)
+      | some addressWord =>
+          match evalCrepRuntimeExp base value with
+          | none => some (.error, base)
+          | some valueWord =>
+              match crepRuntimeStore32 base addressWord valueWord with
+              | some state => some (.normal, state)
+              | none => some (.error, base) := by
+  cases h : evalCrepRuntimeExp base address with
+  | none => simp only [evalCrepRuntimeProg, evalCrepRuntimeExpWordLab_panTheWord, h]
+  | some addressWord =>
+    cases h2 : evalCrepRuntimeExp base value with
+    | none => simp only [evalCrepRuntimeProg, evalCrepRuntimeExpWordLab_panTheWord, h, h2]
+    | some valueWord =>
+      cases hs : crepRuntimeStore32 base addressWord valueWord with
+      | none => simp only [evalCrepRuntimeProg, evalCrepRuntimeExpWordLab_panTheWord, h, h2, hs]
+      | some state => simp only [evalCrepRuntimeProg, evalCrepRuntimeExpWordLab_panTheWord, h, h2, hs]
+
+theorem evalCrepRuntimeProg_storeByte
+    [BEq (RiscV.Word 64)] [OfNat (RiscV.Word 64) 0] [OfNat (RiscV.Word 64) 1]
+    [Add (RiscV.Word 64)] [Mul (RiscV.Word 64)] [Sub (RiscV.Word 64)]
+    [AndOp (RiscV.Word 64)] [OrOp (RiscV.Word 64)]
+    [HXor (RiscV.Word 64) (RiscV.Word 64) (RiscV.Word 64)]
+    [ShiftLeft (RiscV.Word 64)] [ShiftRight (RiscV.Word 64)] [LT (RiscV.Word 64)]
+    [DecidableRel (fun left right : RiscV.Word 64 => left < right)]
+    [PanCmp (RiscV.Word 64)]
+    (handler : CrepRuntimeFfiHandler (RiscV.Word 64) Unit ε)
+    (primitive : CrepPrimitiveHandler (RiscV.Word 64))
+    (fuel : Nat) (base : CrepRuntimeState (RiscV.Word 64) Unit)
+    (address value : CrepExp (RiscV.Word 64)) :
+    evalCrepRuntimeProg handler primitive (fuel + 1) base (.storeByte address value) =
+      match evalCrepRuntimeExp base address with
+      | none => some (.error, base)
+      | some addressWord =>
+          match evalCrepRuntimeExp base value with
+          | none => some (.error, base)
+          | some valueWord =>
+              match crepRuntimeStoreByte base addressWord valueWord with
+              | some state => some (.normal, state)
+              | none => some (.error, base) := by
+  cases h : evalCrepRuntimeExp base address with
+  | none => simp only [evalCrepRuntimeProg, evalCrepRuntimeExpWordLab_panTheWord, h]
+  | some addressWord =>
+    cases h2 : evalCrepRuntimeExp base value with
+    | none => simp only [evalCrepRuntimeProg, evalCrepRuntimeExpWordLab_panTheWord, h, h2]
+    | some valueWord =>
+      cases hs : crepRuntimeStoreByte base addressWord valueWord with
       | none => simp only [evalCrepRuntimeProg, evalCrepRuntimeExpWordLab_panTheWord, h, h2, hs]
       | some state => simp only [evalCrepRuntimeProg, evalCrepRuntimeExpWordLab_panTheWord, h, h2, hs]
 

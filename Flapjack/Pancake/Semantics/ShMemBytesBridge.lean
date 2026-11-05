@@ -62,6 +62,79 @@ theorem panWordToBytesHOL_eq_map_crepClockWordToBytes {width : Nat} [NeZero widt
     UInt8.toNat_ofNat', Nat.mod_mod]
   rw [hexp, UInt8.toBitVec_ofNat']
 
+/-- The Pan shared-memory load issues the same `call_FFI` request as the exact
+    Crep shared-memory load: for equal FFI states, byte count and address the
+    (mapped-read) oracle receives identical byte lists. -/
+theorem callFFIHOL_sharedMemRead_eq {width : Nat} [NeZero width] {σ : Type}
+    (ffi : HolFfiState σ) (nb : Nat) (address : RiscV.Word width) :
+    callFFIHOL ffi (.sharedMem .mappedRead) [BitVec.ofNat 8 nb]
+        (panWordToBytesHOL address false) =
+      callFFIHOL ffi (.sharedMem .mappedRead) [BitVec.ofNat 8 nb]
+        ((crepClockWordToBytes address).map UInt8.toBitVec) := by
+  rw [panWordToBytesHOL_eq_map_crepClockWordToBytes]
+
+/-- The Pan shared-memory store issues the same `call_FFI` request as the exact
+    Crep shared-memory store for the whole-word (`nb = 0`) encoding: for equal
+    FFI states the (mapped-write) oracle receives identical byte lists. -/
+theorem callFFIHOL_sharedMemWrite_eq {width : Nat} [NeZero width] {σ : Type}
+    (ffi : HolFfiState σ) (nb : Nat) (value address : RiscV.Word width) :
+    callFFIHOL ffi (.sharedMem .mappedWrite) [BitVec.ofNat 8 nb]
+        (panWordToBytesHOL value false ++ panWordToBytesHOL address false) =
+      callFFIHOL ffi (.sharedMem .mappedWrite) [BitVec.ofNat 8 nb]
+        ((crepClockWordToBytes value ++ crepClockWordToBytes address).map
+          UInt8.toBitVec) := by
+  rw [panWordToBytesHOL_eq_map_crepClockWordToBytes value,
+    panWordToBytesHOL_eq_map_crepClockWordToBytes address, List.map_append]
+
+/-- The Pan shared-memory store's byte-aligned-prefix (`nb ≠ 0`) request also
+    agrees with the exact Crep request: the `TAKE nb` prefix is mapped through
+    the same byte encoding. -/
+theorem callFFIHOL_sharedMemWrite_take_eq {width : Nat} [NeZero width] {σ : Type}
+    (ffi : HolFfiState σ) (nb : Nat) (value address : RiscV.Word width) :
+    callFFIHOL ffi (.sharedMem .mappedWrite) [BitVec.ofNat 8 nb]
+        ((panWordToBytesHOL value false).take nb ++ panWordToBytesHOL address false) =
+      callFFIHOL ffi (.sharedMem .mappedWrite) [BitVec.ofNat 8 nb]
+        (((crepClockWordToBytes value).take nb ++ crepClockWordToBytes address).map
+          UInt8.toBitVec) := by
+  rw [panWordToBytesHOL_eq_map_crepClockWordToBytes value,
+    panWordToBytesHOL_eq_map_crepClockWordToBytes address, List.map_append,
+    ← List.map_take]
+
+/-- Result correspondence of the exact Pan and Crep shared-memory loads: for
+    equal FFI states and domains the two primitives agree on the FFI oracle
+    event (`some (.finalFfi e)`), on `.error`, or on the successful `none`
+    (FFI-returned) case.  The `.ret` branch leaves the decoded value and the
+    written variable for the `locals_rel` slot obligation (see the module
+    docstring). -/
+theorem shMemLoadHOLExact_control_corresponds {width : Nat} [NeZero width] {σ : Type}
+    (source : PanSemStateExact width σ) [DecidablePred source.shMemaddrs]
+    (target : CrepSemHOLState width σ) [DecidablePred target.shMemaddrs]
+    (kind : VarKind) (name : MlS) (crepName : Nat) (address : RiscV.Word width) (nb : Nat)
+    (hffi : source.ffi = target.ffi)
+    (hdom : ∀ a, source.shMemaddrs a = target.shMemaddrs a) :
+    (∃ e : HolFinalEvent, (shMemLoadHOLExact source kind name address nb).1 = some (.finalFfi e) ∧
+        (crepShMemLoadExactHOL crepName address nb target).1 = some (.finalFfi e)) ∨
+      ((shMemLoadHOLExact source kind name address nb).1 = some .error ∧
+        (crepShMemLoadExactHOL crepName address nb target).1 = some .error) ∨
+      ((shMemLoadHOLExact source kind name address nb).1 = none ∧
+        (crepShMemLoadExactHOL crepName address nb target).1 = none) := by
+  unfold shMemLoadHOLExact crepShMemLoadExactHOL
+  rw [hffi, panWordToBytesHOL_eq_map_crepClockWordToBytes address]
+  simp only [hdom]
+  split
+  · split
+    · cases hcall : callFFIHOL target.ffi (.sharedMem .mappedRead) [BitVec.ofNat 8 nb]
+          ((crepClockWordToBytes address).map UInt8.toBitVec) with
+      | final event => exact Or.inl ⟨event, rfl, rfl⟩
+      | ret newFfi newBytes => exact Or.inr (Or.inr ⟨rfl, rfl⟩)
+    · exact Or.inr (Or.inl ⟨rfl, rfl⟩)
+  · split
+    · cases hcall : callFFIHOL target.ffi (.sharedMem .mappedRead) [BitVec.ofNat 8 nb]
+          ((crepClockWordToBytes address).map UInt8.toBitVec) with
+      | final event => exact Or.inl ⟨event, rfl, rfl⟩
+      | ret newFfi newBytes => exact Or.inr (Or.inr ⟨rfl, rfl⟩)
+    · exact Or.inr (Or.inl ⟨rfl, rfl⟩)
+
 /-- Result correspondence of the exact Pan and Crep shared-memory stores: for
     equal FFI states and domains, and a target local holding the stored word,
     the two primitives agree on the FFI oracle event, on `.error`, or on the
@@ -282,6 +355,34 @@ def panWacc {width : Nat} [NeZero width] (a : Nat) :
   | b :: bs, C =>
       panSetByteHOL (BitVec.ofNat width a) (BitVec.ofNat width b.toNat) (panWacc (a + 1) bs C) false
 
+/-- `panWordOfBytesHOL` is `panWacc` started from the zero cell, for any address
+    whose `Nat` value plus the list length does not overflow the word. -/
+theorem panWordOfBytesHOL_eq_panWacc {width : Nat} [NeZero width] (bs : List (BitVec 8))
+    (a : Nat) (ha : a + bs.length ≤ 2 ^ width) :
+    panWordOfBytesHOL (width := width) false (BitVec.ofNat width a) bs = panWacc a bs 0 := by
+  induction bs generalizing a with
+  | nil => simp [panWordOfBytesHOL, panWacc]
+  | cons b rest ih =>
+      have ha' : a + 1 + rest.length ≤ 2 ^ width := by simp only [List.length_cons] at ha; omega
+      have hsucc : (BitVec.ofNat width a : RiscV.Word width) + 1 = BitVec.ofNat width (a + 1) := by
+        simp [BitVec.ofNat_add]
+      rw [panWordOfBytesHOL, hsucc, ih (a + 1) ha', panWacc]
+
+/-- Concatenation law for `panWacc`: a byte list splits into its first
+    `bs.length` bytes, applied to the accumulator at address `a`, and the
+    continuation `es`, applied deeper at address `a + bs.length`. -/
+theorem panWacc_append {width : Nat} [NeZero width] (bs es : List (BitVec 8)) (a : Nat)
+    (C : RiscV.Word width) :
+    panWacc a (bs ++ es) C = panWacc a bs (panWacc (a + bs.length) es C) := by
+  induction bs generalizing a C with
+  | nil => simp [panWacc]
+  | cons b rest ih =>
+      simp only [List.cons_append, List.length_cons, panWacc]
+      rw [ih (a + 1) C]
+      have h : a + 1 + rest.length = a + (rest.length + 1) := by omega
+      rw [h]
+
+
 /-! ## Byte write/read projection at the written residue
 
 `panGetByteHOL_panSetByteHOL_self` reads back the byte just written at the same
@@ -349,6 +450,10 @@ agrees with the cell on the whole window leaves the cell unchanged.  These are
 the windowed building blocks for the overlong truncation argument.
 -/
 
+theorem div_pow_mod_eq (v r : Nat) : (v / 256 ^ r) % 256 = v % 256 ^ (r + 1) / 256 ^ r := by
+  rw [Nat.pow_succ]
+  rw [Nat.mod_mul_right_div_self]
+
 /-- The bytes `get_byte` at addresses `a, a+1, ..., a+n-1` of a word, as the
     `BitVec 8` list that `panWacc`/`panWordOfBytesHOL` consume. -/
 def panBytesFrom {width : Nat} [NeZero width] (a : Nat) :
@@ -356,6 +461,21 @@ def panBytesFrom {width : Nat} [NeZero width] (a : Nat) :
   | 0, _ => []
   | n + 1, X => (panGetByteHOL (BitVec.ofNat width a) X false).toBitVec ::
       panBytesFrom (a + 1) n X
+
+theorem panBytesFrom_eq_of_getByte_eq {width : Nat} [NeZero width] {a n : Nat}
+    {X Y : RiscV.Word width}
+    (h : ∀ j, j < n → panGetByteHOL (BitVec.ofNat width (a + j)) X false
+      = panGetByteHOL (BitVec.ofNat width (a + j)) Y false) :
+    panBytesFrom a n X = panBytesFrom a n Y := by
+  induction n generalizing a with
+  | zero => rfl
+  | succ n ih =>
+      simp only [panBytesFrom]
+      have h0 := h 0 (by omega)
+      simp only [Nat.add_zero] at h0
+      rw [h0, ih (a := a + 1) (fun j hj => by
+        have := h (j + 1) (by omega)
+        simpa only [show a + (j + 1) = a + 1 + j by omega] using this)]
 
 theorem panWacc_panBytesFrom_eq_self {width : Nat} [NeZero width] (hwidth : 8 ≤ width)
     (n : Nat) : ∀ (a : Nat) (X C : RiscV.Word width),
@@ -375,11 +495,72 @@ theorem panWacc_panBytesFrom_eq_self {width : Nat} [NeZero width] (hwidth : 8 �
       rw [← h0, UInt8.toNat_toBitVec]
       exact panSetByteHOL_panGetByteHOL (BitVec.ofNat width a) C false hwidth
 
+
 /-! ## Byte-level word extensionality
 
 Two `RiscV.Word width` values with the same little-endian byte at every residue
 `r < width / 8` are equal, via base-256 digit injectivity.  This turns agreement
 of the `panGetByteHOL` projections into equality of the words. -/
+
+/-- Base-256 digit injectivity: two natural numbers below `256 ^ p` whose
+    base-256 digits agree at every position `< p` are equal. -/
+theorem nat_digits_inj (a b p : Nat)
+    (h : ∀ r, r < p → (a / 256^r) % 256 = (b / 256^r) % 256)
+    (ha : a < 256^p) (hb : b < 256^p) : a = b := by
+  induction p generalizing a b with
+  | zero => omega
+  | succ p ih =>
+      have h0 : a % 256 = b % 256 := by
+        have hh := h 0 (by omega)
+        simpa using hh
+      have hshift : ∀ r, r < p → ((a / 256) / 256^r) % 256 = ((b / 256) / 256^r) % 256 := by
+        intro r hr
+        have hh := h (r + 1) (by omega)
+        have hpow : 256 ^ (r + 1) = 256 * 256 ^ r := by rw [Nat.pow_succ, Nat.mul_comm]
+        rw [hpow] at hh
+        simpa only [Nat.div_div_eq_div_mul] using hh
+      have hpowp : 256 ^ (p + 1) = 256 ^ p * 256 := Nat.pow_succ 256 p
+      rw [hpowp] at ha hb
+      have ha' : a / 256 < 256 ^ p := (Nat.div_lt_iff_lt_mul (by decide : 0 < 256)).mpr ha
+      have hb' : b / 256 < 256 ^ p := (Nat.div_lt_iff_lt_mul (by decide : 0 < 256)).mpr hb
+      have heq : a / 256 = b / 256 := ih (a / 256) (b / 256) hshift ha' hb'
+      have ea : a % 256 + 256 * (a / 256) = a := Nat.mod_add_div a 256
+      have eb : b % 256 + 256 * (b / 256) = b := Nat.mod_add_div b 256
+      omega
+
+/-- `panGetByteHOL` at address `r` is the `r`-th little-endian base-256 digit. -/
+theorem panGetByteHOL_toNat_ofNat {width : Nat} [NeZero width] (r : Nat)
+    (hr : r < width / 8) (X : RiscV.Word width) :
+    (panGetByteHOL (BitVec.ofNat width r) X false).toNat = (X.toNat / 256^r) % 256 := by
+  have hkw : r < 2 ^ width :=
+    Nat.lt_of_le_of_lt (Nat.le_trans (Nat.le_of_lt hr) (Nat.div_le_self width 8))
+      Nat.lt_two_pow_self
+  have h256 : 0 < 256 ^ r := Nat.pow_pos (by decide)
+  simp only [panGetByteHOL, Bool.false_eq_true, if_false, BitVec.toNat_ofNat,
+    Nat.mod_eq_of_lt hkw, Nat.mod_eq_of_lt hr]
+  rw [UInt8.toNat_ofNat', show (2 : Nat) ^ 8 = 256 by decide]
+  exact Nat.mod_eq_of_lt (Nat.mod_lt _ (by decide : 0 < 256))
+
+/-- Word extensionality from bytes: two words whose little-endian bytes agree at
+    every residue `r < width / 8` are equal. -/
+theorem panWord_eq_of_getByte_eq {width : Nat} [NeZero width] (hdiv : width % 8 = 0)
+    {X Y : RiscV.Word width}
+    (h : ∀ r, r < width / 8 →
+      (panGetByteHOL (BitVec.ofNat width r) X false).toNat
+        = (panGetByteHOL (BitVec.ofNat width r) Y false).toNat) : X = Y := by
+  apply BitVec.eq_of_toNat_eq
+  have hw8 : 8 * (width / 8) = width := by
+    rw [Nat.mul_comm]; exact Nat.div_mul_cancel (Nat.dvd_of_mod_eq_zero hdiv)
+  have hpow : (2 : Nat) ^ width = 256 ^ (width / 8) :=
+    calc (2 : Nat) ^ width = 2 ^ (8 * (width / 8)) := congrArg (fun e => (2 : Nat) ^ e) hw8.symm
+      _ = 256 ^ (width / 8) := two_pow_eight_mul_eq_pow256 (width / 8)
+  refine nat_digits_inj X.toNat Y.toNat (width / 8) ?_ ?_ ?_
+  · intro r hr
+    rw [← panGetByteHOL_toNat_ofNat r hr X, ← panGetByteHOL_toNat_ofNat r hr Y]
+    exact h r hr
+  · exact Nat.lt_of_lt_of_eq X.isLt hpow
+  · exact Nat.lt_of_lt_of_eq Y.isLt hpow
+
 
 /-! ## Address-parameterised decoder `toNat` characterization
 
@@ -387,6 +568,7 @@ The bridge from the byte-level decoder to the little-endian sum: for an address
 `a` and a word cell `C`, `panWacc a l C` keeps the low `a` residues of `C`, the
 high part of `C` above the written window, and contributes `leSumB a l` on the
 window. -/
+
 
 theorem mul_div_self_of_add_of_dvd {m D X L : Nat} (hm : 0 < m) (hd : m ∣ D)
     (hX : X = L + D) (hL : L < m) : X / m * m = D := by
@@ -465,6 +647,8 @@ theorem panWacc_toNat_formula {width : Nat} [NeZero width] (h8w : 8 ≤ width)
         Nat.mod_mul_right_mod, leSumB_cons, ← hS]
       rw [hbb2]
       ac_rfl
+
+
 
 /-! ## Unconditional exact Pan/Crep byte-decoder equality
 

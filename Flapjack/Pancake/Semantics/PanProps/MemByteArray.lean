@@ -67,6 +67,45 @@ private theorem panWriteBytearrayHOL_preservesWordAt {width : Nat} [NeZero width
           rcases hUpdated with ⟨newWord, hNewWord⟩
           exact ⟨newWord, by simpa [hStore] using hNewWord⟩
 
+/-- Flapjack-specific word-tag preservation helper related to HOL
+    `panProps$write_bytearray_update_byte` (`panPropsScript.sml:1098`). This
+    stronger helper assumes a selected `word` witness and proves preservation
+    after any bytearray write. It is deliberately untagged: HOL's exact premise
+    is one implication antecedent containing
+    `byte_aligned ad ∧ (∃w, memory ad = Word w)`, while this helper currently
+    presents the witness and alignment as separate binders. The faithful exact
+    statement is tracked by `flapjack-4ac.4.58.1`. -/
+theorem panWriteBytearrayPreservesWordAt {width : Nat} [NeZero width]
+    (bytes : List UInt8) (address address' : RiscV.Word width)
+    (memory : RiscV.Word width → HolWordLab width)
+    (domain : RiscV.Word width → Prop) [DecidablePred domain]
+    (bigEndian : Bool) (_aligned : panByteAlignHOL (width := width) address = address)
+    (word : RiscV.Word width)
+    (hMemory : memory address = .word word) :
+    ∃ updatedWord,
+      panWriteBytearrayHOL address' bytes memory domain bigEndian address =
+        .word updatedWord := by
+  exact panWriteBytearrayHOL_preservesWordAt address' bytes memory domain bigEndian
+    address word hMemory
+
+/-- Flapjack analogue of HOL `write_bytearray_update_byte`. Its alignment and
+    word-preservation cases follow HOL, but its bytes are `List UInt8` instead
+    of `word8 list = List (BitVec 8)`, so the HOL tag is intentionally absent.
+    The faithful carrier replacement is tracked by
+    `flapjack-4ac.5.16.5.4`. -/
+theorem writeBytearrayUpdateByte {width : Nat} [NeZero width]
+    (bytes : List UInt8) (address address' : RiscV.Word width)
+    (memory : RiscV.Word width → HolWordLab width)
+    (domain : RiscV.Word width → Prop) [DecidablePred domain]
+    (bigEndian : Bool) :
+    (panByteAlignHOL address = address ∧
+      (∃ word : RiscV.Word width, memory address = .word word)) →
+      ∃ word : RiscV.Word width,
+        panWriteBytearrayHOL address' bytes memory domain bigEndian address = .word word := by
+  rintro ⟨haligned, word, hmemory⟩
+  exact panWriteBytearrayPreservesWordAt bytes address address' memory domain
+    bigEndian haligned word hmemory
+
 /-- Flapjack analogue of HOL `panProps$read_write_bytearray_lemma`
     (`cakeml/pancake/semantics/panPropsScript.sml:1119`). Reading `length`
     bytes with the byte loader and then writing them back leaves memory
