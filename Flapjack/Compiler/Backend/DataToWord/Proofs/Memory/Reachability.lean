@@ -52,6 +52,79 @@ theorem gcRelated_append_heapExpand {α β : Type} (f : HolFiniteMapExact Nat Na
     gcRelated f heap (heap2 ++ heapExpand n) ↔ gcRelated f heap heap2 := by
   simp only [gcRelated, isSomeDataElement_heapLookup_expand, heapLookup_expand_eq_some]
 
+private theorem pointer_mem_addrMap {α : Type} (f : Nat → Nat) (xs : List (HeapAddress α))
+    (ptr : Nat) (value : α) (member : .pointer ptr value ∈ xs) :
+    .pointer (f ptr) value ∈ addrMap f xs := by
+  induction xs with
+  | nil => simp at member
+  | cons head tail ih =>
+    simp only [List.mem_cons] at member
+    rcases member with same | member
+    · subst head
+      simp [addrMap]
+    · cases head <;> simp [addrMap, ih member]
+
+/-- The canonical finite-map codec preserves lookup and support. -/
+theorem holFmapAsFiniteSupportParamWitness_reachableAddresses_related_f
+    (f : HolFiniteMapExact Nat Nat) (key : Nat) :
+    (GcMapBroad.ofBroad (GcMapBroad.toBroad f)).lookup key = f.lookup key ∧
+    (GcMapBroad.ofBroad (GcMapBroad.toBroad f)).finiteSupport = f.finiteSupport ∧
+    GcMapBroad.ofBroad (GcMapBroad.toBroad f) = f :=
+  holFmapAsFiniteSupportParamWitness_gcRelated_f f key
+
+/-- A related collector heap preserves reachability under address renaming. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "reachable_addresses_related"
+  (fmap_as_finite_support_parameters := [f])]
+theorem reachableAddresses_related {α β γ : Type} (k : Nat) (roots : List (HeapAddress α))
+    (heap heap2 : List (HeapElement β γ)) (f : HolFiniteMapExact Nat Nat)
+    (reachable : reachableAddresses roots heap k) (related : gcRelated f heap heap2)
+    (domain : ∀ p, reachableAddresses roots heap p → f.lookup p ≠ none) :
+    reachableAddresses (addrMap (holFapply f) roots) heap2 (holFapply f k) := by
+  obtain ⟨value, source, rootMember, path⟩ := reachable
+  refine ⟨value, holFapply f source, pointer_mem_addrMap _ _ _ _ rootMember, ?_⟩
+  induction path with
+  | refl => exact .refl
+  | @tail middle target path edge ih =>
+    have middleDomain : f.lookup middle ≠ none :=
+      domain middle ⟨value, source, rootMember, path⟩
+    obtain ⟨children, len, payload, pointerValue, found, member⟩ := edge
+    obtain ⟨mappedFound, _⟩ := related.2.2.2 middle children len payload middleDomain found
+    exact ih.tail ⟨addrMap (holFapply f) children, len, payload, pointerValue,
+      mappedFound, pointer_mem_addrMap _ _ _ _ member⟩
+
+/-- The canonical finite-map codec preserves lookup and support. -/
+theorem holFmapAsFiniteSupportParamWitness_imp_allReachableFromRoots_f
+    (f : HolFiniteMapExact Nat Nat) (key : Nat) :
+    (GcMapBroad.ofBroad (GcMapBroad.toBroad f)).lookup key = f.lookup key ∧
+    (GcMapBroad.ofBroad (GcMapBroad.toBroad f)).finiteSupport = f.finiteSupport ∧
+    GcMapBroad.ofBroad (GcMapBroad.toBroad f) = f :=
+  holFmapAsFiniteSupportParamWitness_gcRelated_f f key
+
+/-- A collector mapping precisely the reachable addresses onto the new data
+elements makes every data element in the new heap reachable. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "IMP_all_reachable_from_roots"
+  (fmap_as_finite_support_parameters := [f])]
+theorem imp_allReachableFromRoots {α β γ : Type} (f : HolFiniteMapExact Nat Nat)
+    (roots : List (HeapAddress α)) (heap heap2 : List (HeapElement β γ))
+    (domain : (fun p => f.lookup p ≠ none) = reachableAddresses roots heap)
+    (range : (fun p => ∃ x, f.lookup x = some p) =
+      (fun p => isSomeDataElement (heapLookup p heap2)))
+    (related : gcRelated f heap heap2) :
+    allReachableFromRoots (addrMap (holFapply f) roots) heap2 := by
+  intro ptr children len payload found
+  have present : isSomeDataElement (heapLookup ptr heap2) := ⟨children, len, payload, found⟩
+  have inRange : ∃ x, f.lookup x = some ptr := (congrFun range ptr).mpr present
+  obtain ⟨x, lookup⟩ := inRange
+  have xDomain : f.lookup x ≠ none := by simp [lookup]
+  have xReachable : reachableAddresses roots heap x := by
+    rw [← domain]
+    exact xDomain
+  have subset : ∀ p, reachableAddresses roots heap p → f.lookup p ≠ none := by
+    intro p reach
+    exact (congrFun domain p).mpr reach
+  have mapped := reachableAddresses_related x roots heap heap2 f xReachable related subset
+  simpa [holFapply_of_lookup lookup] using mapped
+
 /-- Unused space introduces no edges into the abstract heap graph. This
 Flapjack-specific consequence supports the collector reachability proof. -/
 theorem gcEdge_heapExpand {α β : Type} (heap : List (HeapElement α β)) (n source target : Nat) :

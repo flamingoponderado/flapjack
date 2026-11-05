@@ -1043,6 +1043,24 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "reachable_addresses_related",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Reachability.lean",
+  "lean_name": "reachableAddresses_related",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f"],
+  "reviewer": "Compared reachable_addresses_related_typed: the reachability premise, related heaps, reachable-domain inclusion and renamed reachability conclusion match; root payload and both heap payload types remain independent. The canonical map witness covers the finite-map parameter."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "IMP_all_reachable_from_roots",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Reachability.lean",
+  "lean_name": "imp_allReachableFromRoots",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f"],
+  "reviewer": "Compared imp_all_reachable_from_roots_typed: the domain and range equalities, heap relation and renamed all-reachable conclusion match. Lookup-defined and lookup-image predicates express FDOM and FRANGE; root payload and both heap payload types remain independent. The canonical map witness covers f."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
   "hol_name": "gc_related_APPEND_heap_expand",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Reachability.lean",
   "lean_name": "gcRelated_append_heapExpand",
