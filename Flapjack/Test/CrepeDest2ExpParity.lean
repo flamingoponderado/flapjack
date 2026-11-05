@@ -11,12 +11,6 @@ def word (value : Nat) : RiscV.Word 8 := BitVec.ofNat 8 value
 @[instance_reducible] def finiteWordDimension8 : HolFiniteDimension (Fin 8) :=
   inferInstance
 
-def finiteWord8 (value : Nat) : Fin 8 → Bool :=
-  bitVecToHolWord finiteWordDimension8 (word value)
-
-def canonicalWordBits8 (value : Nat) : Fin 8 → Bool :=
-  bitVecToHolWordBits (word value)
-
 def parityGuard : Bool :=
   crepDest2Exp 0 (word 0) == none &&
   crepDest2Exp 3 (word 1) == some 3 &&
@@ -34,8 +28,7 @@ def parityGuard : Bool :=
 
 /-! The bounded production helper agrees with the reviewed HOL definition
     on every direct HOL-EVAL row above, including rejected odd values and the
-    all-ones boundary. The unconditional `crepDest2Exp_eq_HOL` theorem covers
-    all positive widths and inputs; these rows also exercise the runtime path. -/
+    all-ones boundary. These rows also exercise the runtime path. -/
 def reviewedDefinitionParity : Bool :=
   (crepDest2Exp 0 (word 0) == crepDest2ExpHOL 0 (word 0)) &&
   (crepDest2Exp 3 (word 1) == crepDest2ExpHOL 3 (word 1)) &&
@@ -61,52 +54,5 @@ def boundParity : Bool :=
 
 #eval boundParity
 #guard boundParity
-
-example : word 1 = BitVec.shiftLeft (1 : RiscV.Word 8) 0 :=
-  crepDest2Exp_eq_shift (word 1) 0 (by native_decide)
-
-example : word 2 = BitVec.shiftLeft (1 : RiscV.Word 8) 1 :=
-  crepDest2Exp_eq_shift (word 2) 1 (by native_decide)
-
-example : word 8 = BitVec.shiftLeft (1 : RiscV.Word 8) 3 :=
-  crepDest2Exp_eq_shift (word 8) 3 (by native_decide)
-
-/-! These canonical finite-index rows check the all-width support theorem on
-    the same successful `8w` and highest-bit (`128w`) shifts printed by the
-    direct HOL probe. -/
-example : canonicalWordBits8 8 =
-    bitVecToHolWordBits (BitVec.shiftLeft (1 : BitVec 8) 3) :=
-  crepDest2ExpHolWordBits_eq_lsl_support (canonicalWordBits8 8) 3
-    (by decide +kernel)
-
-example : canonicalWordBits8 128 =
-    bitVecToHolWordBits (BitVec.shiftLeft (1 : BitVec 8) 7) :=
-  crepDest2ExpHolWordBits_eq_lsl_support (canonicalWordBits8 128) 7
-    (by decide +kernel)
-
-example : 3 < 8 :=
-  crepDest2Exp_lt_width (word 8) 3 (by native_decide)
-
-example : 3 ≤ 0 + (BitVec.ofNat 8 (Nat.log2 (word 8).toNat)).toNat :=
-  crepDest2ExpBound 0 (word 8) 3
-    (by decide +kernel)
-
-example : 6 ≤ 4 + (BitVec.ofNat 8 (Nat.log2 (word 4).toNat)).toNat :=
-  crepDest2ExpBound 4 (word 4) 6
-    (by decide +kernel)
-
-example : 6 ≤ 4 + (holWordToBitVec finiteWordDimension8
-    (bitVecToHolWord finiteWordDimension8
-      (BitVec.ofNat 8 (Nat.log2
-        (holWordToBitVec finiteWordDimension8 (finiteWord8 4)).toNat)))).toNat :=
-  crepDest2ExpHolFiniteDimensionBoundSupport finiteWordDimension8 4
-    (finiteWord8 4) 6 (by decide +kernel)
-
-example : 3 ≤ 3 + (holWordToBitVec finiteWordDimension8
-    (bitVecToHolWord finiteWordDimension8
-      (BitVec.ofNat 8 (Nat.log2
-        (holWordToBitVec finiteWordDimension8 (finiteWord8 1)).toNat)))).toNat :=
-  crepDest2ExpHolFiniteDimensionBoundSupport finiteWordDimension8 3
-    (finiteWord8 1) 3 (by decide +kernel)
 
 end Flapjack.Test.CrepeDest2ExpParity

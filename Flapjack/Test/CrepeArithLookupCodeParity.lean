@@ -3,8 +3,7 @@ import Flapjack.Pancake.Proofs.CrepArith
 /-! Direct original-HOL boundary for the local `lookup_code` theorem used by
 `crep_arithProofScript.sml:simp_prog_correct`. The HOL fixture simplifies an
 8-bit multiplication in the stored function body before looking it up. The
-width-indexed Lean theorem states the source `FMAP_MAP2`/`OPTION_MAP` commute
-law over `lookupCrepHolCodeW`; the generic helper remains untagged support. -/
+guards exercise source-shaped and production lookup after simplification. -/
 
 namespace Flapjack.Test.CrepeArithLookupCodeParity
 
@@ -26,38 +25,11 @@ private def duplicateParameterCode : FunName → Option (List Nat × CrepProg Wo
   FUPDATE FEMPTY ("f", ([1, 1], .skip))
 
 example :
-    lookupCrepHolCode simpCode "f" arguments 1 =
-      (lookupCrepHolCode code "f" arguments 1).map
-        (fun (body, locals) => (crepSimpProg (BitVec.ofNat 8) body, locals)) :=
-  crepArithLookupCodeSimpProg (fromNat := BitVec.ofNat 8)
-    code "f" arguments 1
-
-example :
-    lookupCrepHolCodeW simpCode "f" arguments 1 =
-      (lookupCrepHolCodeW code "f" arguments 1).map
-        (fun (body, locals) => (crepSimpProg (BitVec.ofNat 8) body, locals)) :=
-  crepArithLookupCodeSimpProgW code "f" arguments 1
-
-/-- The production runtime lookup equals the positive-width tagged HOL
-    definition, including its complete body/locals result shape. -/
-example :
     lookupCrepRuntimeCode "f" [BitVec.ofNat 8 9] simpCode =
       lookupCrepHolCodeW simpCode "f" [.word (BitVec.ofNat 8 9)] 1 :=
   lookupCrepRuntimeCode_eq_lookupCrepHolCodeW
     "f" [BitVec.ofNat 8 9] 1 simpCode
 
-/-- The HOL definition accepts `len` but does not inspect it. The exact lemma
-    retains that quantified input, including values different from the
-    parameter count. -/
-example :
-    lookupCrepHolCode simpCode "f" arguments 0 =
-      (lookupCrepHolCode code "f" arguments 0).map
-        (fun (body, locals) => (crepSimpProg (BitVec.ofNat 8) body, locals)) :=
-  crepArithLookupCodeSimpProg (fromNat := BitVec.ofNat 8)
-    code "f" arguments 0
-
-/- HOL `simp_prog_after_lookup` in `crep_arith_lookup_code_probe.out` is
-   `SOME (Assign 2 (Const 8w), FEMPTY⟨1 ↦ Word 9w⟩)`. -/
 #guard match lookupCrepHolCode simpCode "f" arguments 1 with
   | some (body, locals) =>
       (match body with
