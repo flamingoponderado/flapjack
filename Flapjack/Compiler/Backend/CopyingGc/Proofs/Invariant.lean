@@ -409,4 +409,110 @@ theorem gcInv_move_fresh_post {α β : Type}
   · exact gcInv_move_fresh_old_entry h1 h2 before after heap0 a n limit len roots0 ys value data ok i j
       invariant eq newLookup
 
+/-- A single root move preserves the source-shaped copying invariant and
+extends the forwarding map. This theorem remains untagged while `gcInv` and
+the internal finite-map representation await HOL reference classification. -/
+theorem gcInv_move {α β : Type} (x : HeapAddress α)
+    (h1 h2 heap heap0 : List (HeapElement α β)) (a n limit : Nat) (ok : Bool)
+    (roots0 : List (HeapAddress α))
+    (invariant : gcInv h1 h2 a n heap ok limit heap0 roots0)
+    (rootValid : ∀ ptr u, x = .pointer ptr u →
+      isSomeDataOrForward (heapLookup ptr heap) ∧ reachableAddresses roots0 heap0 ptr) :
+    ∃ h23 a3 n3 heap3 c3,
+      gcMove (x, h2, a, n, heap, ok, limit) =
+        (addrApply (heapMap1 heap3) x, h23, a3, n3, heap3, c3) ∧
+      (∀ ptr u, x = .pointer ptr u → (heapMap 0 heap3).lookup ptr ≠ none) ∧
+      (∀ ptr, isSomeDataOrForward (heapLookup ptr heap) ↔ isSomeDataOrForward (heapLookup ptr heap3)) ∧
+      (∀ i j, (heapMap 0 heap).lookup i = some j → (heapMap 0 heap3).lookup i = some j) ∧
+      gcInv h1 h23 a3 n3 heap3 c3 limit heap0 roots0 := by
+  cases x with
+  | data value =>
+    exact ⟨h2, a, n, heap, ok, gcInv_move_data h1 h2 heap heap0 a n limit ok roots0 value invariant⟩
+  | pointer ptr value =>
+    obtain ⟨valid, reachable⟩ := rootValid ptr value rfl
+    rcases valid with forward | data
+    · obtain ⟨target, forwardedValue, len, found⟩ := forward
+      exact ⟨h2, a, n, heap, ok,
+        gcInv_move_forward h1 h2 heap heap0 a n limit ptr target len ok roots0 value forwardedValue invariant found⟩
+    · obtain ⟨ys, len, payload, found⟩ := data
+      obtain ⟨before, after, heapEq, ptrEq, run, observation, submap⟩ :=
+        gcInv_move_fresh_core h1 h2 heap heap0 a n limit ptr len ok roots0 ys value payload invariant found
+      have beforeInv : gcInv h1 h2 a n (before ++ .dataElement ys len payload :: after) ok limit heap0 roots0 := by
+        simpa [heapEq] using invariant
+      have beforeReach : reachableAddresses roots0 heap0 (heapLength before) := by
+        simpa [ptrEq] using reachable
+      have post := gcInv_move_fresh_post h1 h2 before after heap0 a n limit len roots0 ys value payload ok
+        beforeInv beforeReach
+      obtain ⟨mapped, _⟩ := gcInv_move_fresh_new_entry h1 h2 before after heap0 a n limit len roots0 ys
+        value payload ok beforeInv beforeReach
+      have mappedApply : heapMap1 (before ++ .forwardPointer a value len :: after) ptr = a := by
+        rw [ptrEq]
+        exact holFapply_of_lookup mapped
+      refine ⟨h2 ++ [.dataElement ys len payload], a + (len + 1), n - (len + 1),
+        before ++ .forwardPointer a value len :: after, true, ?_, ?_, observation, submap, post⟩
+      · simpa [addrApply, mappedApply] using run
+      · intro p u eq
+        cases eq
+        rw [ptrEq, mapped]
+        simp
+
+/-- Moving a list of valid roots preserves the copying invariant, extends the
+forwarding map, and renames the roots by the final map. This theorem is
+untagged while `gcInv` awaits its finite-map representation classification. -/
+theorem gcInv_moveList {α β : Type} (xs : List (HeapAddress α))
+    (h1 h2 heap heap0 : List (HeapElement α β)) (a n limit : Nat) (ok : Bool)
+    (roots0 : List (HeapAddress α))
+    (invariant : gcInv h1 h2 a n heap ok limit heap0 roots0)
+    (rootsValid : ∀ ptr u, .pointer ptr u ∈ xs →
+      isSomeDataOrForward (heapLookup ptr heap) ∧ reachableAddresses roots0 heap0 ptr) :
+    ∃ h23 a3 n3 heap3 c3,
+      gcMoveList (xs, h2, a, n, heap, ok, limit) =
+        (addrMap (heapMap1 heap3) xs, h23, a3, n3, heap3, c3) ∧
+      (∀ ptr u, .pointer ptr u ∈ xs → (heapMap 0 heap3).lookup ptr ≠ none) ∧
+      (∀ ptr, isSomeDataOrForward (heapLookup ptr heap) ↔ isSomeDataOrForward (heapLookup ptr heap3)) ∧
+      (∀ i j, (heapMap 0 heap).lookup i = some j → (heapMap 0 heap3).lookup i = some j) ∧
+      gcInv h1 h23 a3 n3 heap3 c3 limit heap0 roots0 := by
+  induction xs generalizing h2 a n heap ok with
+  | nil =>
+    exact ⟨h2, a, n, heap, ok, by simp [gcMoveList, addrMap, invariant]⟩
+  | cons head tail ih =>
+    have headValid : ∀ ptr u, head = .pointer ptr u →
+        isSomeDataOrForward (heapLookup ptr heap) ∧ reachableAddresses roots0 heap0 ptr := by
+      intro ptr u eq
+      exact rootsValid ptr u (by simp [← eq])
+    obtain ⟨h21, a1, n1, heap1, ok1, move, headDomain, observation1, submap1, inv1⟩ :=
+      gcInv_move head h1 h2 heap heap0 a n limit ok roots0 invariant headValid
+    have tailValid : ∀ ptr u, .pointer ptr u ∈ tail →
+        isSomeDataOrForward (heapLookup ptr heap1) ∧ reachableAddresses roots0 heap0 ptr := by
+      intro ptr u member
+      obtain ⟨valid, reach⟩ := rootsValid ptr u (by simp [member])
+      exact ⟨(observation1 ptr).mp valid, reach⟩
+    obtain ⟨h22, a2, n2, heap2, ok2, moves, tailDomain, observation2, submap2, inv2⟩ :=
+      ih h21 heap1 a1 n1 ok1 inv1 tailValid
+    have headApply : addrApply (heapMap1 heap1) head = addrApply (heapMap1 heap2) head := by
+      cases head with
+      | data value => rfl
+      | pointer ptr value =>
+        have defined := headDomain ptr value rfl
+        cases found : (heapMap 0 heap1).lookup ptr with
+        | none => exact False.elim (defined found)
+        | some target =>
+          have next := submap2 ptr target found
+          simp [addrApply, heapMap1, holFapply_of_lookup found, holFapply_of_lookup next]
+    refine ⟨h22, a2, n2, heap2, ok2, ?_, ?_, ?_, ?_, inv2⟩
+    · simp only [gcMoveList, move, headApply, moves]
+      cases head <;> rfl
+    · intro ptr u member
+      simp only [List.mem_cons] at member
+      rcases member with eq | member
+      · have defined := headDomain ptr u eq.symm
+        cases found : (heapMap 0 heap1).lookup ptr with
+        | none => exact False.elim (defined found)
+        | some target => rw [submap2 ptr target found]; simp
+      · exact tailDomain ptr u member
+    · intro ptr
+      exact (observation1 ptr).trans (observation2 ptr)
+    · intro i j old
+      exact submap2 i j (submap1 i j old)
+
 end Flapjack.Compiler.Backend.CopyingGc
