@@ -95,6 +95,15 @@ val partialLookupRefs = ``!x.
     SOME (DataElement xs1 l d))``;
 val _ = (print "partial_lookup_refs_statement_typed=";
   Lib.with_flag (Globals.show_types,true) print_term partialLookupRefs; print "\n");
+val partialGcHeapLength = ``!roots'.
+  (partial_gc conf (roots,heap) = (roots1,state1)) /\
+  (gen_gc (to_gen_conf conf) (gen_roots,gen_heap) = (roots',to_gen_state conf state1)) /\
+  (heap_segment (conf.gen_start,conf.refs_start) heap = SOME (heap_old,heap_current,heap_refs)) /\
+  (conf.gen_start <= conf.refs_start) /\ (conf.refs_start <= conf.limit) /\
+  roots_ok gen_roots gen_heap /\ heap_ok gen_heap (to_gen_conf conf).limit ==>
+  (heap_length (state1.old ++ state1.h1 ++ heap_expand state1.n) = conf.refs_start)``;
+val _ = (print "partial_gc_heap_length_statement_typed=";
+  Lib.with_flag (Globals.show_types,true) print_term partialGcHeapLength; print "\n");
 val partialNewFDomain = ``
   (!i. i IN FDOM f ==> isSomeDataElement (heap_lookup (i + conf.gen_start) heap)) ==>
   ((x IN FDOM (new_f f conf heap)) =

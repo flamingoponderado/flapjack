@@ -4,6 +4,8 @@
 
 `data_to_word_gc_stack_probe.out` includes typed parses of the old-region and reference-region lookup results for partial collection. These support statement comparison; the local HOL proofs are not replayed.
 
+The same probe parses the complete partial-collection output-prefix length statement, including its independent major roots and heap. This is not a replay of the local HOL proof.
+
 `data_to_word_gc_stack_probe.out` captures the typed local reference-list simulation statement, including its independent reference-element payload type. This is a parsed statement, not a HOL proof replay.
 
 `data_to_word_gc_stack_probe.out` captures the inferred statement of local `gc_move_list_simulation`; it is a typed parse rather than a replay of the local HOL proof.
