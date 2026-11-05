@@ -320,4 +320,89 @@ theorem valueInv_gcRelated {width : Nat} [NeZero width]
   intro ck
   exact clockValueInv_gcRelated ck conf value refs x f tf g heap heap2 related domain valid
 
+/-- A member of the left side of a pairwise relation has a related member on
+the right. This is Flapjack list infrastructure. -/
+theorem forall2_member_left {α β : Type} {R : α → β → Prop} {xs : List α} {ys : List β}
+    (pairs : List.Forall₂ R xs ys) (item : α) (member : item ∈ xs) :
+    ∃ other, other ∈ ys ∧ R item other := by
+  induction pairs with
+  | nil => simp at member
+  | @cons head other tail others related pairs ih =>
+    simp only [List.mem_cons] at member
+    rcases member with rfl | member
+    · exact ⟨other, by simp, related⟩
+    · obtain ⟨result, present, relation⟩ := ih member
+      exact ⟨result, by simp [present], relation⟩
+
+/-- Every non-evaluated-thunk reference occurring in a valid value maps to
+a collector-domain address. This is the domain conjunct used by the source
+collector relocation theorem. -/
+theorem valueInv_getRefs_gcDomain {width : Nat} [NeZero width]
+    (conf : Config) (value : Value) (refs : Spt (BvlSem.Ref Value))
+    (x : HeapAddress (WordLocW width)) (f tf g : HolFiniteMapExact Nat Nat)
+    (heap heap2 : ValueHeap width) (related : gcRelated g heap heap2)
+    (domain : ∀ ptr u, x = .pointer ptr u → g.lookup ptr ≠ none)
+    (valid : valueInv conf value refs (x, f, tf, heap)) :
+    ∀ n, n ∈ getRefs value →
+      (∀ child, sptLookup n refs ≠ some (.thunk .evaluated child)) →
+      g.lookup (holFapply f n) ≠ none := by
+  intro n member notEvaluated
+  cases valueEq : value with
+  | number i => simp [valueEq, getRefs] at member
+  | word64 word => simp [valueEq, getRefs] at member
+  | codePtr loc => simp [valueEq, getRefs] at member
+  | refPtr bit ptr =>
+    simp only [valueEq, getRefs, List.mem_singleton] at member
+    rw [valueEq] at valid
+    subst n
+    rcases (valueInv_refPtr conf bit ptr refs x f tf heap).mp valid with
+      ⟨_, _, _, position⟩ | ⟨mode, child, addr, found, _, _, _, _, _, position⟩ |
+      ⟨child, found, _, _, _⟩
+    · exact domain _ _ position
+    · cases mode with
+      | notEvaluated => exact domain _ _ position
+      | evaluated => exact False.elim (notEvaluated child found)
+    · exact False.elim (notEvaluated child found)
+  | block stamp tag values =>
+    simp only [valueEq, getRefs, List.mem_flatMap] at member
+    rw [valueEq] at valid
+    obtain ⟨child, childMember, childRef⟩ := member
+    have nonempty : values ≠ [] := by intro empty; simp [empty] at childMember
+    obtain ⟨ptr, addresses, pair, _, rfl, cell⟩ :=
+      (valueInv_nonemptyBlock conf stamp tag values refs x f tf heap nonempty).mp valid
+    obtain ⟨addr, addrMember, childValid⟩ := forall2_member_left pair child childMember
+    have defined := domain ptr (.word (ptrBits conf tag addresses.length)) rfl
+    have original : heapLookup ptr heap = some (.dataElement addresses addresses.length (.blockTag tag, [])) := by
+      simpa [blockRep] using cell
+    have children := (related.2.2.2 ptr addresses addresses.length (.blockTag tag, []) defined original).2
+    have childDomain : ∀ p u, addr = .pointer p u → g.lookup p ≠ none := by
+      intro p u eq
+      apply children p u
+      simpa [← eq] using addrMember
+    exact valueInv_getRefs_gcDomain conf child refs addr f tf g heap heap2 related childDomain childValid n childRef notEvaluated
+termination_by sizeOf value
+decreasing_by
+  have smaller := List.sizeOf_lt_of_mem childMember
+  rw [valueEq]
+  simp_wf
+  omega
+
+/-- Combine relocated value validity with its reference-domain consequence.
+This Flapjack formulation expands the evaluated-thunk predicate inline; the
+source declaration and its finite-map representation still require review
+before this result can carry a HOL reference. -/
+theorem valueInv_gcRelated_withRefDomain {width : Nat} [NeZero width]
+    (conf : Config) (value : Value) (refs : Spt (BvlSem.Ref Value))
+    (x : HeapAddress (WordLocW width)) (f tf g : HolFiniteMapExact Nat Nat)
+    (heap heap2 : ValueHeap width) (related : gcRelated g heap heap2)
+    (domain : ∀ ptr u, x = .pointer ptr u → g.lookup ptr ≠ none)
+    (valid : valueInv conf value refs (x, f, tf, heap)) :
+    valueInv conf value refs
+      (addrApply (holFapply g) x, HolFiniteMapExact.compose g f, HolFiniteMapExact.compose g tf, heap2) ∧
+    ∀ n, n ∈ getRefs value →
+      (∀ child, sptLookup n refs ≠ some (.thunk .evaluated child)) →
+      g.lookup (holFapply f n) ≠ none :=
+  ⟨valueInv_gcRelated conf value refs x f tf g heap heap2 related domain valid,
+   valueInv_getRefs_gcDomain conf value refs x f tf g heap heap2 related domain valid⟩
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
