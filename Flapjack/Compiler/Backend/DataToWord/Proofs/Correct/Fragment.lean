@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.OutOfSpace
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.RaiseCases
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.If
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Move
