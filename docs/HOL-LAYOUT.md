@@ -279,9 +279,10 @@ its HOL source:
 - `scripts/check-lemma-density.py [ROOT ...]` (default `Flapjack/Pancake`)
   attributes each Lean file to the HOL script that its `@[hol]` tags cite most
   (an untagged file goes to the script most cited in its nearest tagged
-  enclosing directory) and prints, per script, HOL lines and declarations next
-  to Lean files, lines, theorems and tags, with the two ratios. See the
-  script's docstring for the attribution rule and its limits.
+  enclosing directory, never above the scanned root) and prints, per cited
+  script, HOL lines and declarations next to Lean files, lines, theorems and
+  tags, with the two ratios. See the script's docstring for the attribution
+  rule and its limits.
 - `scripts/report-proof-duplication.py [ROOT ...]` (default
   `Flapjack/Compiler/Encoders`) lists clusters of near-identical Lean proofs,
   which are candidates for a shared lemma.

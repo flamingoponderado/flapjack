@@ -50,6 +50,13 @@ class HolStatsTest(unittest.TestCase):
             tmp.write_text(text)
             self.assertEqual(cld.hol_file_stats(tmp), (text.count("\n"), 3))
 
+    def test_comment_marker_inside_string(self):
+        text = 'val s = "(*"\nTheorem a:\n T\nQED\nval t = "\\"(*"\nDefinition b:\n x = 1\nEnd\n'
+        with tempfile.TemporaryDirectory() as d:
+            tmp = pathlib.Path(d) / "xScript.sml"
+            tmp.write_text(text)
+            self.assertEqual(cld.hol_file_stats(tmp), (text.count("\n"), 2))
+
     def test_missing_script(self):
         self.assertIsNone(cld.hol_file_stats(pathlib.Path("/nonexistent/xScript.sml")))
 
@@ -73,11 +80,59 @@ class AttributionTest(unittest.TestCase):
         # Q has no tags of its own; the repository root's majority is used.
         self.assertEqual(owner["Q/none.lean"], "x")
 
+    def test_fallback_stays_inside_its_root(self):
+        files = {
+            "A/tagged.lean": Counter({"x": 1}),
+            "B/helper.lean": Counter(),
+            "B/Sub/deep.lean": Counter(),
+            "C/Sub/tagged.lean": Counter({"y": 1}),
+            "C/Sub/helper.lean": Counter(),
+            "C/top.lean": Counter(),
+        }
+        owner = cld.attribute(files, ["A", "B", "C"])
+        self.assertEqual(owner["A/tagged.lean"], "x")
+        self.assertEqual(owner["B/helper.lean"], cld.UNATTRIBUTED)
+        self.assertEqual(owner["B/Sub/deep.lean"], cld.UNATTRIBUTED)
+        self.assertEqual(owner["C/Sub/helper.lean"], "y")
+        self.assertEqual(owner["C/top.lean"], "y")
+
+    def test_file_root_uses_only_its_directory(self):
+        files = {"A/tagged.lean": Counter({"x": 1}), "A/Sub/file.lean": Counter()}
+        owner = cld.attribute(files, ["A/tagged.lean"])
+        self.assertEqual(owner["A/Sub/file.lean"], cld.UNATTRIBUTED)
+
     def test_no_tags_anywhere(self):
         self.assertEqual(cld.attribute({"a/b.lean": Counter()}), {"a/b.lean": cld.UNATTRIBUTED})
 
 
 class MainTest(unittest.TestCase):
+    def run_json(self, *args):
+        out = io.StringIO()
+        with redirect_stdout(out):
+            self.assertEqual(cld.main([*args, "--json"]), 0)
+        return json.loads(out.getvalue())
+
+    def test_minority_and_disjoint_roots(self):
+        with tempfile.TemporaryDirectory() as d:
+            a, b = pathlib.Path(d) / "A", pathlib.Path(d) / "B"
+            a.mkdir()
+            b.mkdir()
+            (a / "f.lean").write_text(
+                '@[hol "no/xScript.sml" "p"]\ntheorem p : True := trivial\n'
+                '@[hol "no/xScript.sml" "q"]\ntheorem q : True := trivial\n'
+                '@[hol "no/yScript.sml" "r"]\ntheorem r : True := trivial\n')
+            (b / "g.lean").write_text("theorem s : True := trivial\n")
+            report = self.run_json(str(a), str(b))
+        rows = {r["script"]: r for r in report["scripts"]}
+        self.assertEqual(set(rows), {"no/xScript.sml", "no/yScript.sml", cld.UNATTRIBUTED})
+        self.assertEqual((rows["no/xScript.sml"]["lean_files"], rows["no/xScript.sml"]["hol_tags"]), (1, 2))
+        self.assertEqual((rows["no/yScript.sml"]["lean_files"], rows["no/yScript.sml"]["hol_tags"]), (0, 1))
+        self.assertEqual(rows[cld.UNATTRIBUTED]["lean_theorems"], 1)
+        self.assertEqual(report["totals"]["hol_tags"], 3)
+        self.assertIsNone(rows["no/yScript.sml"]["line_ratio"])
+        self.assertEqual(report["totals_owning_scripts"]["hol_tags"], 2)
+        self.assertEqual(report["totals_owning_scripts"]["lean_files"], 1)
+
     def test_json_on_repository_subtree(self):
         out = io.StringIO()
         with redirect_stdout(out):
@@ -95,7 +150,7 @@ class MainTest(unittest.TestCase):
         out = io.StringIO()
         with redirect_stdout(out):
             self.assertEqual(cld.main(["Flapjack/Pancake/PanLang", "--sort", "script"]), 0)
-        self.assertIn("total (", out.getvalue())
+        self.assertIn("total over all 1 rows", out.getvalue())
 
 
 if __name__ == "__main__":

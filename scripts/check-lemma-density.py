@@ -12,15 +12,23 @@ script prints:
   the start of a line, outside comments);
 * the Lean files attributed to it, with their lines, ``theorem``/``lemma``
   declarations and ``@[hol]`` tags citing it;
-* the two ratios Lean lines / HOL lines and Lean theorems / HOL declarations.
+* the two ratios Lean lines / HOL lines and Lean theorems / HOL declarations
+  (blank for a script that owns no Lean file).
+
+Two totals follow: over the scripts that own at least one Lean file, and over
+all rows (including unattributed files and scripts cited only by minority
+tags).
 
 Attribution is by file.  A Lean file belongs to the HOL script that most of
 its own ``@[hol]`` tags cite (ties go to the alphabetically first script).  A
 file without tags belongs to the script most cited in the nearest enclosing
 directory whose subtree has tags; this attributes the helper modules that sit
-beside a pass's tagged modules to that pass.  Files under a root with no tags
-at all are counted as unattributed.  The attribution is a heuristic: a file
-that ports parts of two scripts is counted entirely for the majority one.
+beside a pass's tagged modules to that pass.  The search never goes above the
+scanned root containing the file, so separate roots do not borrow each other's
+tags; a file under a root with no tags at all is counted as unattributed.  The
+attribution is a heuristic: a file that ports parts of two scripts is counted
+entirely for the majority one, and the other script's row (which every cited
+script gets, possibly with no files) counts only that tag.
 
 Older ``val NAME = store_thm (...)`` bindings are not counted as HOL
 declarations, so a script written in that style has a too-small denominator.
@@ -65,7 +73,10 @@ mask_lean_comments = _rpd.mask_comments
 
 
 def mask_sml_comments(text: str) -> str:
-    """Blank out (nested) SML comments, keeping newlines and offsets."""
+    """Blank out (nested) SML comments, keeping newlines and offsets.
+
+    String literals are skipped, so a ``(*`` inside a string does not open a
+    comment; inside a comment, strings are not special (as in SML)."""
     out = list(text)
     i, n = 0, len(text)
     while i < n:
@@ -86,6 +97,11 @@ def mask_sml_comments(text: str) -> str:
                 if out[k] != "\n":
                     out[k] = " "
             i = j
+        elif text[i] == '"':
+            j = i + 1
+            while j < n and text[j] != '"':
+                j += 2 if text[j] == "\\" else 1
+            i = j + 1
         else:
             i += 1
     return "".join(out)
@@ -118,8 +134,15 @@ def majority(tags: Counter) -> str | None:
     return min(tags.items(), key=lambda kv: (-kv[1], kv[0]))[0]
 
 
-def attribute(files: dict[str, Counter]) -> dict[str, str]:
-    """Map each Lean file (a ``/``-separated relative path) to a HOL script."""
+def attribute(files: dict[str, Counter], roots: list[str] | None = None) -> dict[str, str]:
+    """Map each Lean file (a ``/``-separated relative path) to a HOL script.
+
+    ``roots`` are the scanned directories (``/``-separated, relative); the
+    fallback for an untagged file never looks above the root containing it,
+    so separate roots do not borrow each other's tags.  A file given directly
+    as a root, or outside every root, falls back no further than its own
+    directory."""
+    roots = [r.rstrip("/") for r in (roots or [""])]
     subtree: dict[str, Counter] = defaultdict(Counter)
     for f, tags in files.items():
         parts = f.split("/")[:-1]
@@ -127,11 +150,15 @@ def attribute(files: dict[str, Counter]) -> dict[str, str]:
             subtree["/".join(parts[:i])].update(tags)
     result = {}
     for f, tags in files.items():
-        script = majority(tags)
         parts = f.split("/")[:-1]
-        while script is None and parts is not None:
+        enclosing = [r for r in roots if r == "" or f.startswith(r + "/")]
+        floor = max((len(r.split("/")) if r else 0) for r in enclosing) if enclosing else len(parts)
+        script = majority(tags)
+        while script is None and len(parts) >= floor:
             script = majority(subtree.get("/".join(parts), Counter()))
-            parts = parts[:-1] if parts else None
+            if not parts:
+                break
+            parts = parts[:-1]
         result[f] = script or UNATTRIBUTED
     return result
 
@@ -150,40 +177,50 @@ def main(argv: list[str]) -> int:
     args = ap.parse_args(argv)
 
     repo = pathlib.Path(__file__).resolve().parent.parent
+    def rel(p: pathlib.Path) -> str:
+        rp = p.resolve()
+        return rp.relative_to(repo).as_posix() if rp.is_relative_to(repo) else rp.as_posix()
+
     paths: list[pathlib.Path] = []
+    dir_roots: list[str] = []
     for root in args.roots:
         p = pathlib.Path(root) if pathlib.Path(root).is_absolute() else repo / root
         if p.is_file():
             paths.append(p)
         elif p.is_dir():
             paths.extend(sorted(p.rglob("*.lean")))
+            dir_roots.append(rel(p))
         else:
             ap.error(f"no such file or directory: {root}")
 
     stats: dict[str, tuple[int, int, Counter]] = {}
     for p in paths:
-        rp = p.resolve()
-        rel = rp.relative_to(repo).as_posix() if rp.is_relative_to(repo) else rp.as_posix()
-        stats[rel] = lean_file_stats(p.read_text(encoding="utf-8", errors="replace"))
-    owner = attribute({f: s[2] for f, s in stats.items()})
+        stats[rel(p)] = lean_file_stats(p.read_text(encoding="utf-8", errors="replace"))
+    owner = attribute({f: s[2] for f, s in stats.items()}, dir_roots)
 
     rows: dict[str, dict] = {}
+
+    def row_for(script: str) -> dict:
+        return rows.setdefault(script, {"script": script, "lean_files": 0, "lean_lines": 0,
+                                        "lean_theorems": 0, "hol_tags": 0})
+
     for f, (lines, theorems, tags) in stats.items():
-        script = owner[f]
-        row = rows.setdefault(script, {"script": script, "lean_files": 0, "lean_lines": 0,
-                                       "lean_theorems": 0, "hol_tags": 0})
+        row = row_for(owner[f])
         row["lean_files"] += 1
         row["lean_lines"] += lines
         row["lean_theorems"] += theorems
-    for f, (_, _, tags) in stats.items():
+        # Every cited script gets a row, even one that owns no file (cited
+        # only by minority tags), so that no tag or HOL script is dropped.
         for script, n in tags.items():
-            if script in rows:
-                rows[script]["hol_tags"] += n
+            row_for(script)["hol_tags"] += n
     for script, row in rows.items():
         hol = None if script == UNATTRIBUTED else hol_file_stats(repo / script)
         row["hol_lines"], row["hol_declarations"] = hol if hol else (None, None)
-        row["line_ratio"] = ratio(row["lean_lines"], row["hol_lines"] or 0)
-        row["theorem_ratio"] = ratio(row["lean_theorems"], row["hol_declarations"] or 0)
+        # A script that owns no file has no Lean side to compare.
+        owned = row["lean_files"] > 0
+        row["line_ratio"] = ratio(row["lean_lines"], row["hol_lines"] or 0) if owned else None
+        row["theorem_ratio"] = (ratio(row["lean_theorems"], row["hol_declarations"] or 0)
+                                if owned else None)
 
     def key(r: dict):
         if args.sort == "script":
@@ -195,12 +232,18 @@ def main(argv: list[str]) -> int:
         return -r["lean_lines"]
 
     ordered = sorted(rows.values(), key=key)
-    totals = {k: sum(r[k] or 0 for r in ordered)
-              for k in ("lean_files", "lean_lines", "lean_theorems", "hol_tags",
-                        "hol_lines", "hol_declarations")}
+    fields = ("lean_files", "lean_lines", "lean_theorems", "hol_tags", "hol_lines",
+              "hol_declarations")
+    # Two totals: over every cited script, and over the scripts that own at
+    # least one Lean file.  A script cited only by minority tags adds its whole
+    # HOL size but no Lean lines, so the first total's ratios are lower.
+    totals = {k: sum(r[k] or 0 for r in ordered) for k in fields}
+    owning = [r for r in ordered if r["lean_files"] and r["script"] != UNATTRIBUTED]
+    totals_owning = {k: sum(r[k] or 0 for r in owning) for k in fields}
 
     if args.json:
-        json.dump({"roots": args.roots, "scripts": ordered, "totals": totals},
+        json.dump({"roots": args.roots, "scripts": ordered, "totals": totals,
+                   "totals_owning_scripts": totals_owning},
                   sys.stdout, indent=2)
         print()
         return 0
@@ -218,11 +261,16 @@ def main(argv: list[str]) -> int:
               f"{r['hol_tags']:>5} | {fmt(r['line_ratio']):>7} {fmt(r['theorem_ratio']):>6}  "
               f"{r['script']}")
     print("-" * len(header))
-    print(f"{totals['hol_lines']:>9} {totals['hol_declarations']:>6} | "
-          f"{totals['lean_files']:>5} {totals['lean_lines']:>10} {totals['lean_theorems']:>6} "
-          f"{totals['hol_tags']:>5} | {fmt(ratio(totals['lean_lines'], totals['hol_lines'])):>7} "
-          f"{fmt(ratio(totals['lean_theorems'], totals['hol_declarations'])):>6}  "
-          f"total ({len(ordered)} scripts)")
+
+    def total_line(t: dict, label: str) -> None:
+        print(f"{t['hol_lines']:>9} {t['hol_declarations']:>6} | "
+              f"{t['lean_files']:>5} {t['lean_lines']:>10} {t['lean_theorems']:>6} "
+              f"{t['hol_tags']:>5} | {fmt(ratio(t['lean_lines'], t['hol_lines'])):>7} "
+              f"{fmt(ratio(t['lean_theorems'], t['hol_declarations'])):>6}  {label}")
+
+    total_line(totals_owning, f"total over the {len(owning)} scripts owning Lean files")
+    total_line(totals, f"total over all {len(ordered)} rows (scripts cited only by "
+                       f"minority tags add HOL size, no Lean lines)")
     return 0
 
 
