@@ -1,3 +1,5 @@
+`data_to_word_gc_stack_probe.out` captures the inferred statement of local `gc_move_list_simulation`; it is a typed parse rather than a replay of the local HOL proof.
+
 `data_to_word_gc_stack_probe.out` also captures the typed statement of local `gc_move_simulation`; it is a parsed source statement, not a replay of the local HOL proof.
 
 `data_to_word_gc_stack_probe.out` records inferred types for the partial collector heap restriction, major-collector translation, and simulation invariants, including independent address, payload, and configuration carriers.

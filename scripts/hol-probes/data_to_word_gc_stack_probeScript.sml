@@ -69,6 +69,19 @@ val partialMoveSimulation = ``!ptr ptr' state state' ptr1' state1'.
   all_old_ptrs conf [ptr'] SUBSET all_old_ptrs conf [ptr]``;
 val _ = (print "partial_move_simulation_statement_typed=";
   Lib.with_flag (Globals.show_types,true) print_term partialMoveSimulation; print "\n");
+val partialMoveListSimulation = ``!ptr ptr' state state' ptr1' state1'.
+  (gen_gc_partial$gc_move_list conf state ptr = (ptr', state')) /\
+  sim_inv conf heap0 state /\
+  (!p u. MEM (Pointer p u) ptr ==> p < heap_length state.heap) /\
+  (heap_length state.heap = conf.limit) /\
+  (gen_gc$gc_move_list (to_gen_conf conf) (to_gen_state conf state)
+    (MAP (to_gen_heap_address conf) ptr) = (ptr1', state1')) /\ state1'.ok ==>
+  sim_inv conf heap0 state' /\
+  ((ptr1', state1') = (MAP (to_gen_heap_address conf) ptr', to_gen_state conf state')) /\
+  all_old_ptrs conf ptr' SUBSET all_old_ptrs conf ptr``;
+val _ = (print "partial_move_list_simulation_statement_typed=";
+  Lib.with_flag (Globals.show_types,true) print_term partialMoveListSimulation; print "\n");
+
 
 
 val _ = show "full_gc_IMP_typed" data_to_word_gcProofTheory.full_gc_IMP;
