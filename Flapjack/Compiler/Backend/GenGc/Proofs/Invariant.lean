@@ -6,6 +6,7 @@ import Flapjack.Compiler.Backend.CopyingGc.Proofs.Invariant
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PartialSplit
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalAccumulator
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.GenerationalSplit
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalInvariant
 
 /-! Abstract invariant for the major generational collector. -/
 namespace Flapjack.Compiler.Backend.GenGc
@@ -1402,7 +1403,7 @@ theorem gcInv_moveRefs {α β : Type} (conf : Config β) (state : GcState α β)
       (heapMap 0 (gcMoveRefs conf state).heap).lookup i = some j) ∧
     gcInv conf (gcMoveRefs conf state) heap0 roots0 ∧
     (gcMoveRefs conf state).r3 = [] ∧ (gcMoveRefs conf state).r2 = [] ∧
-    (0 < heapLength state.r3 → heapLength state.r1 < heapLength (gcMoveRefs conf state).r1) := by
+    (0 < heapLength state.r3 ∨ state.r2 ≠ [] → heapLength state.r1 < heapLength (gcMoveRefs conf state).r1) := by
   classical
   induction state using gcMoveRefs.induct conf with
   | case1 state empty =>
@@ -1418,6 +1419,10 @@ theorem gcInv_moveRefs {α β : Type} (conf : Config β) (state : GcState α β)
     refine ⟨?_, finished, rfl, empty, ?_⟩
     · intros; assumption
     · intro positive
+      have scanned : 0 < heapLength state.r3 := by
+        rcases positive with scanned | pending
+        · exact scanned
+        · exact False.elim (pending empty)
       simp only [heapLength_append]
       omega
   | case2 state tail roots len payload heap roots1 middle move heapAgain ih =>
@@ -1447,10 +1452,10 @@ theorem gcInv_moveRefs {α β : Type} (conf : Config β) (state : GcState α β)
     refine ⟨fun i j old => recursive.1 i j (submap i j old), recursive.2.1,
       recursive.2.2.1, recursive.2.2.2.1, ?_⟩
     intro positive
-    have longer := recursive.2.2.2.2 (by
+    have longer := recursive.2.2.2.2 (Or.inl (by
       change 0 < heapLength (next.r3 ++ [.dataElement (addrMap (heapMap1 next.heap) roots) len payload])
       simp only [heapLength, List.map_append, List.sum_append, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, elLength]
-      omega)
+      omega))
     have r1Eq : next.r1 = state.r1 := refs.1
     simpa only [r1Eq] using longer
   | case3 state head tail heap refsAgain notData =>
@@ -1460,5 +1465,182 @@ theorem gcInv_moveRefs {α β : Type} (conf : Config β) (state : GcState α β)
     | unused len => simp [isDataElement] at data
     | forwardPointer ptr value len => simp [isDataElement] at data
     | dataElement roots len payload => exact False.elim (notData roots len payload heap rfl (by rfl))
+
+/-- Put the newly discovered reference queue into the pending scan segment.
+The finality predicate and the represented heap are unchanged. -/
+theorem gcInv_startRefs {α β : Type} (conf : Config β) (state : GcState α β)
+    (heap0 : List (HeapElement α β)) (roots0 : List (HeapAddress α))
+    (invariant : gcInv conf state heap0 roots0) (r2Empty : state.r2 = [])
+    (r3Empty : state.r3 = []) :
+    gcInv conf { state with r2 := state.r4, r4 := [] } heap0 roots0 := by
+  classical
+  have finalEq (j : Nat) : isFinal conf { state with r2 := state.r4, r4 := [] } j ↔ isFinal conf state j := by
+    simp only [isFinal, r2Empty, r3Empty, heapLength, List.map_nil, List.sum_nil, Nat.add_zero]
+    omega
+  obtain ⟨allocated, balance, free, size, ok, good, similar, h1, h2, r1, r2, r3, r4, refs,
+    into, injective, surjective, entries⟩ := invariant
+  simp only [gcInv, List.nil_append, r2Empty, r3Empty, List.append_nil] at *
+  refine ⟨allocated, balance, free, size, ok, good, similar, h1, h2, r1, r4, ?_, ?_, refs,
+    into, injective, surjective, ?_⟩
+  · simp
+  · simp
+  · intro i j lookup
+    obtain ⟨xs, len, payload, original, copied, reachable, children⟩ := entries i j lookup
+    refine ⟨xs, len, payload, original, ?_, reachable, ?_⟩
+    · simp only [finalEq]
+      exact copied
+    · intro ptr value member final
+      exact children ptr value member ((finalEq j).mp final)
+
+/-- Data scanning never shrinks the already scanned data segment. -/
+theorem gcMoveData_h1_monotone {α β : Type} (conf : Config β) (state : GcState α β) :
+    heapLength state.h1 ≤ heapLength (gcMoveData conf state).h1 := by
+  classical
+  induction state using gcMoveData.induct conf with
+  | case1 state empty => rw [gcMoveData]; simp [empty]
+  | case2 state head tail heap over => rw [gcMoveData]; simp [heap, over]
+  | case3 state tail roots len payload roots1 middle move heap bounded flag ih =>
+    have same := gcMoveList_h1 conf state roots
+    rw [move] at same
+    cases state with
+    | mk old h1 h2 r4 r3 r2 r1 a n status origHeap heap0 =>
+      simp only at heap
+      subst h2
+      rw [gcMoveData]
+      simp only [bounded, ↓reduceIte, move]
+      dsimp only [flag] at ih
+      simp only at same ih ⊢
+      rw [heapLength_append] at ih
+      rw [same] at ih ⊢
+      omega
+  | case4 state head tail heap bounded notData =>
+    cases head with
+    | unused len => rw [gcMoveData]; simp [heap, bounded]
+    | forwardPointer ptr value len => rw [gcMoveData]; simp [heap, bounded]
+    | dataElement roots len payload => exact False.elim (notData roots len payload rfl)
+
+/-- A valid scan of a nonempty pending data segment strictly advances the
+scanned segment. -/
+theorem gcInv_moveData_progress {α β : Type} (conf : Config β) (state : GcState α β)
+    (heap0 : List (HeapElement α β)) (roots0 : List (HeapAddress α))
+    (invariant : gcInv conf state heap0 roots0) (nonempty : state.h2 ≠ []) :
+    heapLength state.h1 < heapLength (gcMoveData conf state).h1 := by
+  classical
+  cases headEq : state.h2 with
+  | nil => exact False.elim (nonempty headEq)
+  | cons head tail =>
+    have allocated := invariant.1
+    have balance := invariant.2.1
+    have bounded : ¬ conf.limit < heapLength (state.h1 ++ head :: tail) := by
+      rw [headEq] at allocated
+      omega
+    have data := invariant.2.2.2.2.2.2.2.2.1 head (by simp [headEq])
+    obtain ⟨roots, len, payload, rfl⟩ := data
+    obtain ⟨next, run, _, shifted⟩ :=
+      gcInv_data_scan_step conf state heap0 roots0 roots len payload tail invariant headEq
+    have nextOk : next.ok = true := shifted.2.2.2.2.1
+    obtain ⟨added, _, prefixEq, _, _⟩ :=
+      DataToWord.Proofs.Gc.gcMoveList_withNilLemma conf roots (addrMap (heapMap1 next.heap) roots) state next run nextOk
+    have nextHead : next.h2 = .dataElement roots len payload :: (tail ++ added) := by
+      simpa [headEq] using prefixEq
+    have same := gcMoveList_h1 conf state roots
+    rw [run] at same
+    have unfold : gcMoveData conf state = gcMoveData conf
+        { next with h1 := next.h1 ++ [.dataElement (addrMap (heapMap1 next.heap) roots) len payload], h2 := next.h2.drop 1, ok := true } := by
+      rw [gcMoveData]
+      simp [headEq, bounded, run, nextOk, nextHead]
+    rw [unfold]
+    have monotone := gcMoveData_h1_monotone conf
+      { next with h1 := next.h1 ++ [.dataElement (addrMap (heapMap1 next.heap) roots) len payload], h2 := next.h2.drop 1, ok := true }
+    change next.h1 = state.h1 at same
+    simp only at monotone
+    rw [heapLength_append, same] at monotone
+    rw [same]
+    simp only [heapLength, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, elLength] at monotone ⊢
+    omega
+
+/-- Pending data and references fit in the unscanned part of the collector
+limit. -/
+theorem gcInv_capacity {α β : Type} (conf : Config β) (state : GcState α β)
+    (heap0 : List (HeapElement α β)) (roots0 : List (HeapAddress α))
+    (invariant : gcInv conf state heap0 roots0) :
+    heapLength state.h1 + heapLength state.h2 + heapLength state.r4 + heapLength state.r1 ≤ conf.limit := by
+  have allocated := invariant.1
+  have balance := invariant.2.1
+  simp only [heapLength_append] at allocated balance
+  omega
+
+/-- With the source clock bound, the major collector loop preserves its
+invariant and forwarding map and finishes all pending scan queues. -/
+theorem gcInv_moveLoop {α β : Type} (conf : Config β) (state : GcState α β)
+    (heap0 : List (HeapElement α β)) (roots0 : List (HeapAddress α)) (clock : Nat) :
+    conf.limit ≤ clock + heapLength state.h1 + heapLength state.r1 →
+    state.r2 = [] → state.r3 = [] → gcInv conf state heap0 roots0 →
+    (∀ i j, (heapMap 0 state.heap).lookup i = some j →
+      (heapMap 0 (gcMoveLoop conf state clock).heap).lookup i = some j) ∧
+    gcInv conf (gcMoveLoop conf state clock) heap0 roots0 ∧
+    (gcMoveLoop conf state clock).h2 = [] ∧ (gcMoveLoop conf state clock).r4 = [] ∧
+    (gcMoveLoop conf state clock).r3 = [] ∧ (gcMoveLoop conf state clock).r2 = [] := by
+  classical
+  induction clock generalizing state with
+  | zero =>
+    intro bound r2 r3 invariant
+    have capacity := gcInv_capacity conf state heap0 roots0 invariant
+    have h2Empty : state.h2 = [] := by
+      cases eq : state.h2 with
+      | nil => rfl
+      | cons head tail =>
+        have positive : 0 < heapLength state.h2 := by
+          rw [eq]
+          cases head <;> simp [heapLength, elLength]
+        omega
+    have r4Empty : state.r4 = [] := by
+      cases eq : state.r4 with
+      | nil => rfl
+      | cons head tail =>
+        have positive : 0 < heapLength state.r4 := by
+          rw [eq]
+          cases head <;> simp [heapLength, elLength]
+        omega
+    rw [gcMoveLoop]
+    simp [r4Empty, h2Empty, invariant, r3, r2]
+  | succ clock ih =>
+    intro bound r2 r3 invariant
+    cases refs : state.r4 with
+    | nil =>
+      cases data : state.h2 with
+      | nil =>
+        rw [gcMoveLoop]
+        simp [refs, data, invariant, r3, r2]
+      | cons head tail =>
+        have nonempty : state.h2 ≠ [] := by rw [data]; simp
+        have moved := gcInv_moveData conf state heap0 roots0 invariant r3 r2
+        have progress := gcInv_moveData_progress conf state heap0 roots0 invariant nonempty
+        have refsConst := DataToWord.Proofs.Gc.genMoveData_const conf state (gcMoveData conf state) rfl
+        have nextBound : conf.limit ≤ clock + heapLength (gcMoveData conf state).h1 + heapLength (gcMoveData conf state).r1 := by
+          rw [refsConst.1]
+          omega
+        have recursive := ih (gcMoveData conf state) nextBound moved.2.2.2.2 moved.2.2.2.1 moved.2.1
+        rw [gcMoveLoop]
+        simp only [refs, data, Nat.succ_ne_zero, ↓reduceIte, Nat.succ_sub_one]
+        exact ⟨fun i j old => recursive.1 i j (moved.1 i j old), recursive.2⟩
+    | cons head tail =>
+      let start := { state with r2 := state.r4, r4 := [] }
+      have startInv : gcInv conf start heap0 roots0 := gcInv_startRefs conf state heap0 roots0 invariant r2 r3
+      have moved := gcInv_moveRefs conf start heap0 roots0 startInv
+      have progress : heapLength state.r1 < heapLength (gcMoveRefs conf start).r1 := by
+        apply moved.2.2.2.2
+        right
+        simp [start, refs]
+      have h1Eq : (gcMoveRefs conf start).h1 = state.h1 :=
+        DataToWord.Proofs.Gc.genMoveRefs_const conf start (gcMoveRefs conf start) rfl
+      have nextBound : conf.limit ≤ clock + heapLength (gcMoveRefs conf start).h1 + heapLength (gcMoveRefs conf start).r1 := by
+        rw [h1Eq]
+        omega
+      have recursive := ih (gcMoveRefs conf start) nextBound moved.2.2.2.1 moved.2.2.1 moved.2.1
+      rw [gcMoveLoop]
+      simp only [refs, Nat.succ_ne_zero, ↓reduceIte, Nat.succ_sub_one]
+      have composed := And.intro (fun i j old => recursive.1 i j (moved.1 i j old)) recursive.2
+      simpa [start, refs] using composed
 
 end Flapjack.Compiler.Backend.GenGc
