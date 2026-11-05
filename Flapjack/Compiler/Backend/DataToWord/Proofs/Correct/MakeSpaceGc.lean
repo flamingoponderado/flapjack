@@ -34,6 +34,7 @@ theorem makeSpace64_slow_allocator {C F : Type} (conf : Config) (secn label l1 l
       stateRel64 conf l1 l2 sourceNext targetNext none locs ∧
       sourceNext.locals = saved ∧ sourceNext.stack = source.stack ∧ sourceNext.space = 0 ∧
       (enough = true → stateRel64 conf l1 l2 { sourceNext with space := amount } targetNext none locs) ∧
+      (enough = true → stateRel64 conf l1 l2 (DataSem.addSpace { source with locals := saved } amount) targetNext none locs) ∧
       (enough = false → conf.gcKind ≠ .none → DataSem.noThunksInRefs source.refs →
         ∀ roots2 dups,
           roots2.Perm (dups ++ (sptToList saved ++ source.stack.flatMap DataSem.extractStack ++ [theGlobal source.global])) →
@@ -45,8 +46,8 @@ theorem makeSpace64_slow_allocator {C F : Type} (conf : Config) (secn label l1 l
   have preparedRel : stateRel64 conf l1 l2 source prepared none locs :=
     stateRel64_setScratch1 conf l1 l2 source _ locs firstRel (.word (makeSpaceRequest64 amount))
   obtain ⟨sourceNext, targetNext, enough, alloc, nextRel, sourceLocals, sourceStack, sourceSpace,
-    _, _, reserve, failed⟩ := stateRel64_alloc conf l1 l2 amount source prepared locs preparedRel live saved cut
-  refine ⟨sourceNext, targetNext, enough, ?_, nextRel, sourceLocals, sourceStack, sourceSpace, reserve, failed⟩
+    _, _, _, _, reserve, originalReserve, failed⟩ := stateRel64_alloc conf l1 l2 amount source prepared locs preparedRel live saved cut
+  refine ⟨sourceNext, targetNext, enough, ?_, nextRel, sourceLocals, sourceStack, sourceSpace, reserve, originalReserve, failed⟩
   rw [makeSpace64_slow_noFfi conf secn label target amount live nextFree trigger nextStore triggerStore slow noFfi]
   change WordSemStateFiniteExact.fixClock prepared
     (WordSemStateFiniteExact.evaluate (.alloc 1 (adjustSets live)) prepared) = _
@@ -104,6 +105,7 @@ theorem makeSpace64_slow_branches {C F : Type} (conf : Config) (secn label l1 l2
       WordSemStateFiniteExact.evaluate (compileControl64 conf secn label (.makeSpace amount live)).1 target =
         WordSemStateFiniteExact.fixClock prepared
           (if enough then (none, targetNext) else (some .notEnoughSpace, WordSemStateFiniteExact.flushState true targetNext)) ∧
+      (enough = true → continues64 conf secn label l1 l2 (.makeSpace amount live) source target locs) ∧
       (enough = true →
         WordSemStateFiniteExact.evaluate (compileControl64 conf secn label (.makeSpace amount live)).1 target =
           (none, { targetNext with clock := min prepared.clock targetNext.clock, termdep := prepared.termdep }) ∧
@@ -116,10 +118,27 @@ theorem makeSpace64_slow_branches {C F : Type} (conf : Config) (secn label l1 l2
         (DataSem.addSpace { source with locals := saved } amount).safeForSpace = false) := by
   let prepared := WordSemStateFiniteExact.setVar 1 (.word (makeSpaceRequest64 amount))
     (WordSemStateFiniteExact.setVar 1 (.word (trigger - nextFree)) target)
-  obtain ⟨sourceNext, targetNext, enough, run, _, _, _, _, reserve, failed⟩ :=
+  obtain ⟨sourceNext, targetNext, enough, run, _, _, _, _, reserve, originalReserve, failed⟩ :=
     makeSpace64_slow_allocator conf secn label l1 l2 source target locs related amount live saved cut
       nextFree trigger nextStore triggerStore slow noFfi
-  refine ⟨sourceNext, targetNext, enough, run, ?_, ?_⟩
+  refine ⟨sourceNext, targetNext, enough, run, ?_, ?_, ?_⟩
+  · intro yes
+    have finalRel := originalReserve yes
+    have clockEq : targetNext.clock = prepared.clock := by
+      simpa [prepared, WordSemStateFiniteExact.setVar, DataSem.addSpace, related.2.1] using finalRel.2.1
+    let finalTarget := { targetNext with termdep := prepared.termdep }
+    have fixed : WordSemStateFiniteExact.fixClock prepared ((none : Option (WordSemResult 64)), targetNext) =
+        (none, finalTarget) := by
+      simp [WordSemStateFiniteExact.fixClock, finalTarget, clockEq]
+    have targetRun : WordSemStateFiniteExact.evaluate (compileControl64 conf secn label (.makeSpace amount live)).1 target =
+        (none, finalTarget) := by
+      change WordSemStateFiniteExact.evaluate (compileControl64 conf secn label (.makeSpace amount live)).1 target =
+        WordSemStateFiniteExact.fixClock prepared
+          (if enough then (none, targetNext) else (some .notEnoughSpace, WordSemStateFiniteExact.flushState true targetNext)) at run
+      simpa only [yes, ↓reduceIte, fixed] using run
+    refine ⟨DataSem.addSpace { source with locals := saved } amount, finalTarget, ?_, targetRun, ?_⟩
+    · simp [DataSem.evaluate, cut]
+    · simpa [stateRel64, finalTarget] using finalRel
   · intro yes
     have clockEq : (if prepared.clock < targetNext.clock then prepared.clock else targetNext.clock) =
         min prepared.clock targetNext.clock := by split <;> omega
@@ -141,5 +160,51 @@ theorem makeSpace64_slow_branches {C F : Type} (conf : Config) (secn label l1 l2
       (sptToList saved ++ source.stack.flatMap DataSem.extractStack ++ [theGlobal source.global]) []
     · simp
     · simp
+
+/-- Flapjack infrastructure: with an active collector and a source result
+that remains space-safe, the compiled slow allocation path continues with
+the actual source `makeSpace` state related to the word result. -/
+theorem makeSpace64_slow_continues {C F : Type} (conf : Config) (secn label l1 l2 : Nat)
+    (source : DataSem.State C F) (target : WordSemStateFiniteExact 64 C F)
+    (locs : List (Nat × Nat)) (related : stateRel64 conf l1 l2 source target none locs)
+    (amount : Nat) (live : NumSet) (saved : Spt DataSem.Value)
+    (cut : DataSem.cutEnv live source.locals = some saved)
+    (nextFree trigger : BitVec 64)
+    (nextStore : target.store.lookup .nextFree = some (.word nextFree))
+    (triggerStore : target.store.lookup .triggerGC = some (.word trigger))
+    (slow : Compiler.Encoders.Asm.wordCmpHOL .lower (trigger - nextFree) (makeSpaceRequest64 amount) = true)
+    (noFfi : conf.callEmptyFfi = false) (active : conf.gcKind ≠ .none)
+    (safe : (DataSem.addSpace { source with locals := saved } amount).safeForSpace = true) :
+    continues64 conf secn label l1 l2 (.makeSpace amount live) source target locs := by
+  obtain ⟨_, _, enough, _, success, _, failure⟩ :=
+    makeSpace64_slow_branches conf secn label l1 l2 source target locs related amount live saved cut
+      nextFree trigger nextStore triggerStore slow noFfi
+  cases flag : enough with
+  | true => exact success flag
+  | false =>
+    have unsafeResult := (failure flag active).2
+    rw [safe] at unsafeResult
+    contradiction
+
+/-- Flapjack infrastructure: both the fast check and the collection path
+simulate a space-safe source command for an active collector when diagnostic
+FFIs are disabled. -/
+theorem makeSpace64_continues {C F : Type} (conf : Config) (secn label l1 l2 : Nat)
+    (source : DataSem.State C F) (target : WordSemStateFiniteExact 64 C F)
+    (locs : List (Nat × Nat)) (related : stateRel64 conf l1 l2 source target none locs)
+    (amount : Nat) (live : NumSet) (saved : Spt DataSem.Value)
+    (cut : DataSem.cutEnv live source.locals = some saved)
+    (noFfi : conf.callEmptyFfi = false) (active : conf.gcKind ≠ .none)
+    (safe : (DataSem.addSpace { source with locals := saved } amount).safeForSpace = true) :
+    continues64 conf secn label l1 l2 (.makeSpace amount live) source target locs := by
+  obtain ⟨nextFree, trigger, _, nextStore, triggerStore, _, _, _, _⟩ :=
+    stateRel64_spaceAvailable conf l1 l2 source target locs related
+  cases branch : Compiler.Encoders.Asm.wordCmpHOL .lower (trigger - nextFree) (makeSpaceRequest64 amount) with
+  | false =>
+    exact makeSpace64_fast conf secn label l1 l2 source target locs related amount live saved cut
+      ⟨nextFree, trigger, nextStore, triggerStore, branch⟩
+  | true =>
+    exact makeSpace64_slow_continues conf secn label l1 l2 source target locs related amount live saved cut
+      nextFree trigger nextStore triggerStore branch noFfi active safe
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Correct

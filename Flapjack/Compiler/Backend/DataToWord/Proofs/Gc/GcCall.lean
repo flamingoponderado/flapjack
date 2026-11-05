@@ -32,6 +32,68 @@ theorem wordPopEnv_store {width : Nat} [NeZero width] {C F : Type}
         subst after
         rfl
 
+/-- Flapjack infrastructure: popping a word frame preserves the recorded
+stack maximum. -/
+theorem wordPopEnv_stackMax {width : Nat} [NeZero width] {C F : Type}
+    (before after : WordSemStateFiniteExact width C F)
+    (pop : WordSemStateFiniteExact.popEnv before = some after) : after.stackMax = before.stackMax := by
+  cases h : before.stack with
+  | nil => simp [WordSemStateFiniteExact.popEnv, h] at pop
+  | cons frame rest =>
+    cases frame with
+    | stackFrame size nonGc gc handler =>
+      cases handler with
+      | none => simp [WordSemStateFiniteExact.popEnv, h] at pop; subst after; rfl
+      | some info =>
+        rcases info with ⟨saved, l1, l2⟩
+        simp [WordSemStateFiniteExact.popEnv, h] at pop
+        subst after
+        rfl
+
+/-- Flapjack infrastructure: saving a frame does not increase the recorded
+stack maximum when the current stack and locals already fit that maximum. -/
+theorem pushEnv_stackMax_of_bound {width : Nat} [NeZero width] {C F : Type}
+    (state : WordSemStateFiniteExact width C F) (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (bound : BackendProps.optionLe (wordSemOptionAdd (wordSemStackSize state.stack) state.localsSize) state.stackMax) :
+    (WordSemStateFiniteExact.pushEnv envs none state).stackMax = state.stackMax := by
+  have reverseBound : BackendProps.optionLe
+      (wordSemOptionAdd state.localsSize (wordSemStackSize state.stack)) state.stackMax := by
+    cases hsize : wordSemStackSize state.stack <;> cases hlocals : state.localsSize <;>
+      cases hmax : state.stackMax <;> simp_all [BackendProps.optionLe, wordSemOptionAdd, Nat.add_comm]
+  have maxEq : wordSemOptionMax state.stackMax
+      (wordSemOptionAdd state.localsSize (wordSemStackSize state.stack)) = state.stackMax := by
+    cases hsize : wordSemStackSize state.stack <;> cases hlocals : state.localsSize <;>
+      cases hmax : state.stackMax <;>
+      simp_all [BackendProps.optionLe, wordSemOptionAdd, wordSemOptionMax]
+  cases envList : wordSemEnvToList envs.2 state.permute with
+  | mk gc permute =>
+    change wordSemOptionMax state.stackMax
+      (wordSemStackSize (.stackFrame state.localsSize (sptToAList envs.1) gc none :: state.stack)) = state.stackMax
+    change wordSemOptionMax state.stackMax
+      (wordSemOptionAdd state.localsSize (wordSemStackSize state.stack)) = state.stackMax
+    exact maxEq
+
+
+/-- Flapjack infrastructure: recording the same stack size twice, with zero
+extra call-frame size, does not change the optional stack maximum. -/
+theorem optionMax_add_zero_repeat (maxSize stackSize : Option Nat) :
+    wordSemOptionMax (wordSemOptionMax maxSize stackSize)
+      (wordSemOptionAdd stackSize (some 0)) = wordSemOptionMax maxSize stackSize := by
+  cases maxSize <;> cases stackSize <;> simp [wordSemOptionMax, wordSemOptionAdd]
+
+/-- Flapjack infrastructure: entering the zero-argument collector call does
+not change the stack maximum already recorded by saving the environment. -/
+theorem callEnv_pushEnv_stackMax {width : Nat} [NeZero width] {C F : Type}
+    (state : WordSemStateFiniteExact width C F) (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (ret : WordLocW width) :
+    (WordSemStateFiniteExact.callEnv [ret] (some 0) (WordSemStateFiniteExact.pushEnv envs none state)).stackMax =
+      (WordSemStateFiniteExact.pushEnv envs none state).stackMax := by
+  cases envList : wordSemEnvToList envs.2 state.permute with
+  | mk gc permute =>
+    simpa [WordSemStateFiniteExact.callEnv, WordSemStateFiniteExact.pushEnv, envList] using
+      optionMax_add_zero_repeat state.stackMax
+        (wordSemStackSize (.stackFrame state.localsSize (sptToAList envs.1) gc none :: state.stack))
+
 /-- Flapjack infrastructure: save the live source environment, enter a
 zero-argument collector call, execute collection, and restore the saved
 frames. The sizing conclusion is expressed over the saved environment and
@@ -54,7 +116,9 @@ theorem stateRel64_gc_savedCall {C F : Type} (conf : Config) (l1 l2 requested : 
       targetNext.store = store ∧
       targetNext.store.lookup (.temp 29) = target.store.lookup (.temp 29) ∧
       targetNext.store.lookup .allocSize = target.store.lookup .allocSize ∧
+      targetNext.stackMax = target.stackMax ∧
       sourceNext.locals = saved ∧ sourceNext.stack = source.stack ∧ sourceNext.space = 0 ∧
+      sourceNext = { source with locals := saved, space := 0, stackMax := source0.stackMax, safeForSpace := source0.safeForSpace } ∧
       (target.store.lookup .allocSize = some (.word (gcAllocSize requested)) ∧
         WordSemStateFiniteExact.hasSpace (.word (gcAllocSize requested)) targetNext = some false ∧
         conf.gcKind ≠ .none ∧ DataSem.noThunksInRefs source.refs →
@@ -101,10 +165,21 @@ theorem stateRel64_gc_savedCall {C F : Type} (conf : Config) (l1 l2 requested : 
     simp [WordSemStateFiniteExact.hasSpace, WordSemStateFiniteExact.getStore, storeAfter]
   have targetStore : target0.store = target.store := by
     simp [target0, WordSemStateFiniteExact.callEnv, WordSemStateFiniteExact.pushEnv]
+  have targetMax : target0.stackMax = target.stackMax := by
+    have savedMax := pushEnv_stackMax_of_bound target
+      (sptInter target.locals (.ls ()), sptInter target.locals (adjustSet live))
+      related.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
+    have callMax := callEnv_pushEnv_stackMax target
+      (sptInter target.locals (.ls ()), sptInter target.locals (adjustSet live)) (.loc l1 l2)
+    exact callMax.trans savedMax
+  have maxAfter : targetNext.stackMax = target.stackMax := by
+    exact (wordPopEnv_stackMax _ _ targetPop).trans targetMax
   refine ⟨moved, memory, store, stack, sourceNext, targetNext, run, decoded, sourcePop, targetPop,
-    restored, storeAfter, ?_, ?_, rfl, rfl, rfl, ?_⟩
+    restored, storeAfter, ?_, ?_, maxAfter, rfl, rfl, rfl, ?_, ?_⟩
   · simpa [storeAfter, targetStore] using temp
   · simpa [storeAfter, targetStore] using alloc
+  · cases source
+    simp [sourceNext, source0, DataSem.callEnv, DataSem.pushEnv]
   · rintro ⟨allocated, failed, active, noThunks⟩
     have allocated0 : target0.store.lookup .allocSize = some (.word (gcAllocSize requested)) := by
       simpa [targetStore] using allocated
