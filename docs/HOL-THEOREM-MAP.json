@@ -936,6 +936,54 @@
   "reviewer": "Compared all source clauses, updates, recursion and independently quantified types with gc_combined_typed; HOL probe captures are regression evidence, not a cross-language proof."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "all_reachable_from_roots_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Reachability.lean",
+  "lean_name": "allReachableFromRoots",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared all_reachable_from_roots_typed and source: the root payload and both heap-element payload types remain independent, and every successful data-element lookup must have a reachable address."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "gc_edge_def",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/Reachability.lean",
+  "lean_name": "gcEdge",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source and gc_edge_typed: source and target addresses, both heap-element type parameters, lookup, data-element fields, and pointer membership are retained."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "reachable_addresses_def",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/Reachability.lean",
+  "lean_name": "reachableAddresses",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source and reachable_addresses_typed, including the independent root payload and both heap-element payload types, pointer-root membership, and reflexive transitive edge closure."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "heap_filter_aux_def",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/Reachability.lean",
+  "lean_name": "heapFilterAux",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared both heap_filter_aux_typed clauses, including independent heap-element payload types, membership in the address predicate, list order, and increment by the element length."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "heap_filter_def",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/Reachability.lean",
+  "lean_name": "heapFilter",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared heap_filter_typed: both definitions apply the same polymorphic auxiliary filter at address zero, retaining the address predicate and heap argument."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "heap_filter_EMPTY",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/Reachability.lean",
+  "lean_name": "heapFilter_empty",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared heap_filter_EMPTY_typed, including both independent heap-element payload types, the empty address set and empty result."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "alloc_size_def",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CombinedStore.lean",
