@@ -1,4 +1,4 @@
-import Flapjack.PanValueFfiClockCorrectness
+import Flapjack.PanValueFfiClockSemantics
 import Flapjack.Test.PanValueMemoryFfi
 
 /-! The clocked source evaluator must retain the accelerator-style memory FFI

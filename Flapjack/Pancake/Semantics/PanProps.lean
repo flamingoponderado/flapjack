@@ -159,8 +159,9 @@ HOL tag on an event-prefix result. The faithful theorem remains tracked by
 result-option/state shape, but its implementation delegates through the
 unrestricted function-backed evaluator; the direct finite evaluator still has
 an outer assembly marker, and its clause/evaluator correspondence is not
-complete (`flapjack-qj5`). The existing `PanValueFfiClockShift` proves only
-clock arithmetic and selected structural-fuel evaluator cases over different
+complete (`flapjack-qj5`). The Flapjack-only `PanValueFfiClockShift` (moved
+to stepped-flapjack, which owns the clocked structural-fuel evaluator theory)
+proves only clock arithmetic and selected structural-fuel evaluator cases over different
 program, state, and value carriers; it does not supply the whole-program
 clock-shift argument or the timeout split in HOL's theorem. Do not tag either
 surface as this theorem. The exact finite evaluator prerequisite is tracked by
