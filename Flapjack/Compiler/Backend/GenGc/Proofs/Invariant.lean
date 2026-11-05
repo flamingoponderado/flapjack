@@ -1643,4 +1643,175 @@ theorem gcInv_moveLoop {α β : Type} (conf : Config β) (state : GcState α β)
       have composed := And.intro (fun i j old => recursive.1 i j (moved.1 i j old)) recursive.2
       simpa [start, refs] using composed
 
+/-- Well-formed roots and heap produce a major collection that has moved
+all roots, preserved the invariant, and drained every pending scan queue.
+This result remains untagged while the invariant's internal map awaits
+representation classification. -/
+theorem genGc_invariant {α β : Type} (conf : Config β) (roots : List (HeapAddress α))
+    (heap : List (HeapElement α β)) (rootOk : rootsOk roots heap)
+    (heapGood : heapOk heap conf.limit) :
+    ∃ state,
+      genGc conf (roots, heap) = (addrMap (heapMap1 state.heap) roots, state) ∧
+      (∀ ptr u, .pointer ptr u ∈ roots → (heapMap 0 state.heap).lookup ptr ≠ none) ∧
+      gcInv conf state heap roots ∧ state.h2 = [] ∧ state.r4 = [] ∧
+      state.r3 = [] ∧ state.r2 = [] := by
+  classical
+  let initial : GcState α β :=
+    { emptyGcState with heap := heap, n := conf.limit, ok := decide (heapLength heap = conf.limit) }
+  have initialInv : gcInv conf initial heap roots := gcInv_init conf heap roots heapGood
+  have valid : ∀ ptr u, .pointer ptr u ∈ roots →
+      isSomeDataOrForward (heapLookup ptr initial.heap) ∧ reachableAddresses roots heap ptr := by
+    intro ptr u member
+    exact ⟨Or.inr (rootOk ptr u member), ⟨u, ptr, member, .refl⟩⟩
+  obtain ⟨middle, moved, domain, _, _, middleInv⟩ :=
+    gcInv_moveList conf initial heap roots roots initialInv valid
+  have fields := DataToWord.Proofs.Gc.genMoveList_const conf roots (addrMap (heapMap1 middle.heap) roots) initial middle moved
+  have middleR2 : middle.r2 = [] := by simpa [initial, emptyGcState] using fields.2.2.1
+  have middleR3 : middle.r3 = [] := by simpa [initial, emptyGcState] using fields.2.2.2
+  have scanned := gcInv_moveLoop conf middle heap roots conf.limit (by omega) middleR2 middleR3 middleInv
+  let final := gcMoveLoop conf middle conf.limit
+  have finalDomain : ∀ ptr u, .pointer ptr u ∈ roots → (heapMap 0 final.heap).lookup ptr ≠ none := by
+    intro ptr u member
+    have defined := domain ptr u member
+    cases lookup : (heapMap 0 middle.heap).lookup ptr with
+    | none => exact False.elim (defined lookup)
+    | some target =>
+      have mapped := scanned.1 ptr target lookup
+      simp [final, mapped]
+  have rootMap : addrMap (heapMap1 middle.heap) roots = addrMap (heapMap1 final.heap) roots := by
+    apply addrMap_eq
+    intro ptr u member
+    have defined := domain ptr u member
+    cases lookup : (heapMap 0 middle.heap).lookup ptr with
+    | none => exact False.elim (defined lookup)
+    | some target =>
+      have mapped := scanned.1 ptr target lookup
+      change holFapply (heapMap 0 middle.heap) ptr = holFapply (heapMap 0 final.heap) ptr
+      rw [holFapply_of_lookup lookup, holFapply_of_lookup mapped]
+  refine ⟨final, ?_, finalDomain, scanned.2⟩
+  change (let (rs, st) := gcMoveList conf initial roots; (rs, gcMoveLoop conf st conf.limit)) =
+    (addrMap (heapMap1 final.heap) roots, final)
+  simp [moved, rootMap, final]
+
+/-- Every forwarded object is final once both scan queues are drained. -/
+theorem gcInv_final_isFinal {α β : Type} (conf : Config β) (state : GcState α β)
+    (heap0 : List (HeapElement α β)) (roots0 : List (HeapAddress α))
+    (invariant : gcInv conf state heap0 roots0)
+    (h2Empty : state.h2 = []) (r4Empty : state.r4 = [])
+    (r3Empty : state.r3 = []) (r2Empty : state.r2 = [])
+    (i : Nat) (defined : (heapMap 0 state.heap).lookup i ≠ none) :
+    isFinal conf state (heapMap1 state.heap i) := by
+  have address := invariant.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1 i defined
+  simp only [h2Empty, r4Empty, r3Empty, r2Empty, List.append_nil, List.nil_append] at address
+  simp only [isFinal, r4Empty, r3Empty, r2Empty, heapLength, List.map_nil, List.sum_nil, Nat.add_zero]
+  rcases address with data | refs
+  · left
+    have bound := heapAddresses_less_heapLength state.h1 0 (heapMap1 state.heap i) data
+    simpa [heapLength] using bound
+  · right
+    left
+    exact heapAddresses_base_le state.r1 (state.a + state.n) (heapMap1 state.heap i) refs
+
+/-- After major collection, the forwarding-map domain is exactly the set of
+addresses reachable from the original roots. -/
+theorem gcInv_final_domain {α β : Type} (conf : Config β) (state : GcState α β)
+    (heap : List (HeapElement α β)) (roots : List (HeapAddress α))
+    (invariant : gcInv conf state heap roots)
+    (h2Empty : state.h2 = []) (r4Empty : state.r4 = [])
+    (r3Empty : state.r3 = []) (r2Empty : state.r2 = [])
+    (rootDomain : ∀ ptr u, .pointer ptr u ∈ roots → (heapMap 0 state.heap).lookup ptr ≠ none) :
+    (fun ptr => (heapMap 0 state.heap).lookup ptr ≠ none) = reachableAddresses roots heap := by
+  have entries := invariant.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2
+  funext ptr
+  apply propext
+  constructor
+  · intro defined
+    cases found : (heapMap 0 state.heap).lookup ptr with
+    | none => exact False.elim (defined found)
+    | some target =>
+      obtain ⟨_, _, _, _, _, reach, _⟩ := entries ptr target found
+      exact reach
+  · intro reach
+    obtain ⟨value, source, member, path⟩ := reach
+    induction path with
+    | refl => exact rootDomain source value member
+    | @tail middle target path edge ih =>
+      cases found : (heapMap 0 state.heap).lookup middle with
+      | none => exact False.elim (ih found)
+      | some mapped =>
+        have defined : (heapMap 0 state.heap).lookup middle ≠ none := by rw [found]; simp
+        have final := gcInv_final_isFinal conf state heap roots invariant h2Empty r4Empty r3Empty r2Empty middle defined
+        have mapValue : heapMap1 state.heap middle = mapped := holFapply_of_lookup found
+        obtain ⟨xs, size, payload, oldFound, _, _, children⟩ := entries middle mapped found
+        obtain ⟨edgeRoots, edgeLen, edgeData, edgeValue, edgeFound, edgeMember⟩ := edge
+        have equal : HeapElement.dataElement xs size payload = .dataElement edgeRoots edgeLen edgeData :=
+          Option.some.inj (oldFound.symm.trans edgeFound)
+        cases equal
+        rw [mapValue] at final
+        exact children target edgeValue edgeMember final
+
+/-- The final invariant relates the original heap to the major collector's
+assembled data, free-space and reference segments. -/
+theorem gcInv_final_related {α β : Type} (conf : Config β) (state : GcState α β)
+    (heap : List (HeapElement α β)) (roots : List (HeapAddress α))
+    (invariant : gcInv conf state heap roots)
+    (h2Empty : state.h2 = []) (r4Empty : state.r4 = [])
+    (r3Empty : state.r3 = []) (r2Empty : state.r2 = []) :
+    gcRelated (heapMap 0 state.heap) heap (state.h1 ++ heapExpand state.n ++ state.r1) := by
+  have invariantCopy := invariant
+  obtain ⟨_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, injective, _, entries⟩ := invariant
+  have entry : ∀ i, (heapMap 0 state.heap).lookup i ≠ none →
+      ∃ xs len payload, heapLookup i heap = some (.dataElement xs len payload) ∧
+        heapLookup (heapMap1 state.heap i) (state.h1 ++ heapExpand state.n ++ state.r1) =
+          some (.dataElement (addrMap (heapMap1 state.heap) xs) len payload) ∧
+        ∀ ptr value, .pointer ptr value ∈ xs → (heapMap 0 state.heap).lookup ptr ≠ none := by
+    intro i defined
+    cases found : (heapMap 0 state.heap).lookup i with
+    | none => exact False.elim (defined found)
+    | some mapped =>
+      have final := gcInv_final_isFinal conf state heap roots invariantCopy h2Empty r4Empty r3Empty r2Empty i defined
+      have mapValue : heapMap1 state.heap i = mapped := holFapply_of_lookup found
+      obtain ⟨xs, len, payload, oldFound, newFound, _, childDomain⟩ := entries i mapped found
+      rw [mapValue] at final
+      refine ⟨xs, len, payload, oldFound, ?_, ?_⟩
+      · simpa [mapValue, final, h2Empty, r4Empty, r3Empty, r2Empty] using newFound
+      · intro ptr value member
+        exact childDomain ptr value member final
+  refine ⟨?_, injective, ?_, ?_⟩
+  · intro i defined
+    obtain ⟨xs, len, payload, _, found, _⟩ := entry i defined
+    exact ⟨addrMap (heapMap1 state.heap) xs, len, payload, found⟩
+  · intro i defined
+    obtain ⟨xs, len, payload, found, _, _⟩ := entry i defined
+    exact ⟨xs, len, payload, found⟩
+  · intro i xs len payload defined found
+    obtain ⟨xs', len', payload', oldFound, newFound, children⟩ := entry i defined
+    have equal : HeapElement.dataElement xs' len' payload' = .dataElement xs len payload :=
+      Option.some.inj (oldFound.symm.trans found)
+    cases equal
+    exact ⟨newFound, children⟩
+
+/-- Major collection produces a forwarding map with the exact reachable
+source domain and an abstract relation to the assembled target heap. The
+range and filtered-length clauses of the full source theorem are separate. -/
+theorem genGc_relation_clauses {α β : Type} (conf : Config β)
+    (roots : List (HeapAddress α)) (heap : List (HeapElement α β))
+    (rootOk : rootsOk roots heap) (heapGood : heapOk heap conf.limit) :
+    ∃ state,
+      genGc conf (roots, heap) = (addrMap (heapMap1 state.heap) roots, state) ∧
+      (fun ptr => (heapMap 0 state.heap).lookup ptr ≠ none) = reachableAddresses roots heap ∧
+      gcRelated (heapMap 0 state.heap) heap (state.h1 ++ heapExpand state.n ++ state.r1) ∧
+      (∀ element ∈ state.h1 ++ state.r1, isDataElement element) ∧
+      state.a = heapLength state.h1 ∧ state.ok = true := by
+  obtain ⟨state, run, rootDomain, invariant, h2, r4, r3, r2⟩ :=
+    genGc_invariant conf roots heap rootOk heapGood
+  refine ⟨state, run, gcInv_final_domain conf state heap roots invariant h2 r4 r3 r2 rootDomain,
+    gcInv_final_related conf state heap roots invariant h2 r4 r3 r2, ?_, ?_, invariant.2.2.2.2.1⟩
+  · intro element member
+    simp only [List.mem_append] at member
+    rcases member with left | right
+    · exact invariant.2.2.2.2.2.2.2.1 element left
+    · exact invariant.2.2.2.2.2.2.2.2.2.1 element right
+  · simpa [h2] using invariant.1.symm
+
 end Flapjack.Compiler.Backend.GenGc
