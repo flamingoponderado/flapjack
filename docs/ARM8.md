@@ -316,7 +316,8 @@ constructor; all are Flapjack case splits of the single HOL theorem
 `LongMul.lean` assembles those facts into the two-instruction `longMul` case
 theorem with `n = 1` (`asserts 1`, `asserts2 2`).  `addOverflow` and
 `subOverflow` (the flag-setting add or subtract followed by the `VC` select)
-close through `arm8RegCaseTwo` (`Const.lean`), the two-instruction counterpart
+share one proof, `arm8OverflowCase` (`Overflow.lean`, generic over the
+add/subtract flag), which closes through `arm8RegCaseTwo` (`Const.lean`), the two-instruction counterpart
 of `arm8RegCaseOne`: the first instruction sets the register file and
 `PSTATE`, the second is run on any state the interference environment leaves
 with those registers and flags, and `asmCaseTwoRegs` (`Simulate.lean`)
