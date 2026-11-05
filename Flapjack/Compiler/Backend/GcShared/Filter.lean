@@ -1,5 +1,7 @@
 import Flapjack.Compiler.Backend.GcShared.Reachability
 import Flapjack.Compiler.Backend.GcShared.HeapMap
+import Mathlib.Data.Set.Finite.Basic
+import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
 /-! Heap filtering by element starting addresses. -/
 namespace Flapjack.Compiler.Backend
@@ -83,5 +85,87 @@ theorem heapLookup_imp_heapFilter {α β : Type} (heap : List (HeapElement α β
     have positive : 0 < elLength x := by cases x <;> simp [elLength]
     omega
   simp [heapFilter, heapFilterAux_append, heapFilterAux, emptyBefore, emptyAfter]
+
+/-- Inserting a fresh address adds the length selected by that address. -/
+@[hol "cakeml/compiler/backend/gc/gc_sharedScript.sml" "heap_length_heap_filter_INSERT"]
+theorem heapLength_heapFilter_insert {α β : Type} (heap : List (HeapElement α β))
+    (e : Nat) (s : Nat → Prop) (fresh : ¬s e) :
+    heapLength (heapFilter (fun p => p = e ∨ s p) heap) =
+      heapLength (heapFilter (fun p => p = e) heap) + heapLength (heapFilter s heap) := by
+  classical
+  have aux : ∀ (heap : List (HeapElement α β)) offset,
+      heapLength (heapFilterAux offset (fun p => p = e ∨ s p) heap) =
+        heapLength (heapFilterAux offset (fun p => p = e) heap) +
+          heapLength (heapFilterAux offset s heap) := by
+    intro heap
+    induction heap with
+    | nil => intro offset; simp [heapFilterAux, heapLength]
+    | cons head tail ih =>
+      intro offset
+      have recurrence := ih (offset + elLength head)
+      simp only [heapLength] at recurrence
+      by_cases atE : offset = e
+      · subst offset
+        simp [heapFilterAux, fresh, heapLength]
+        omega
+      · by_cases inS : s offset
+        · simp [heapFilterAux, atE, inS, heapLength]
+          omega
+        · simpa [heapFilterAux, atE, inS, heapLength] using recurrence
+  exact aux heap 0
+
+/-- A finite selection's filtered length is the sum of its singleton filtered
+lengths. This Flapjack helper supports the collector's bijection proof. -/
+theorem heapLength_heapFilter_finset {α β : Type} (heap : List (HeapElement α β))
+    (s : Finset Nat) :
+    heapLength (heapFilter (fun p => p ∈ s) heap) =
+      s.sum (fun p => heapLength (heapFilter (fun q => q = p) heap)) := by
+  classical
+  induction s using Finset.induction_on with
+  | empty => simp [heapFilter_empty, heapLength]
+  | @insert e s fresh ih =>
+    have selector : (fun p => p ∈ insert e s) = (fun p => p = e ∨ p ∈ s) := by
+      funext p
+      exact propext (by simp)
+    rw [selector, heapLength_heapFilter_insert heap e (fun p => p ∈ s) fresh, ih,
+      Finset.sum_insert fresh]
+
+/-- A bijection between selected data elements of equal lengths preserves the
+filtered heap length. The first existential payload is an independent,
+unused type variable in the inferred HOL statement. -/
+@[hol "cakeml/compiler/backend/gc/gc_sharedScript.sml" "heap_length_heap_filter_eq"]
+theorem heapLength_heapFilter_eq {α β γ δ : Type} (s t : Set Nat) (f : Nat → Nat)
+    (heap : List (HeapElement α β)) (heap2 : List (HeapElement γ β))
+    (bijective : Set.BijOn f s t) (finiteS : s.Finite) (finiteT : t.Finite)
+    (matching : ∀ i ∈ s, ∃ (xs : List (HeapAddress α)) (xs2 : List (HeapAddress γ))
+        (len : Nat) (_unused : δ) (data : β),
+      heapLookup i heap = some (.dataElement xs len data) ∧
+      heapLookup (f i) heap2 = some (.dataElement xs2 len data)) :
+    heapLength (heapFilter t heap2) = heapLength (heapFilter s heap) := by
+  classical
+  have sourceSelector : (fun p => p ∈ finiteS.toFinset) = s := by
+    funext p
+    exact propext finiteS.mem_toFinset
+  have targetSelector : (fun p => p ∈ finiteT.toFinset) = t := by
+    funext p
+    exact propext finiteT.mem_toFinset
+  have sourceSum := heapLength_heapFilter_finset heap finiteS.toFinset
+  have targetSum := heapLength_heapFilter_finset heap2 finiteT.toFinset
+  rw [sourceSelector] at sourceSum
+  rw [targetSelector] at targetSum
+  rw [targetSum, sourceSum]
+  symm
+  apply Finset.sum_bij (fun i _ => f i)
+  · intro i member
+    exact finiteT.mem_toFinset.mpr (bijective.1 (finiteS.mem_toFinset.mp member))
+  · intro i hi j hj eq
+    exact bijective.2.1 (finiteS.mem_toFinset.mp hi) (finiteS.mem_toFinset.mp hj) eq
+  · intro j member
+    obtain ⟨i, hi, eq⟩ := bijective.2.2 (finiteT.mem_toFinset.mp member)
+    exact ⟨i, finiteS.mem_toFinset.mpr hi, eq⟩
+  · intro i member
+    obtain ⟨xs, xs2, len, _, data, sourceLookup, targetLookup⟩ := matching i (finiteS.mem_toFinset.mp member)
+    rw [heapLookup_imp_heapFilter heap i _ sourceLookup, heapLookup_imp_heapFilter heap2 (f i) _ targetLookup]
+    simp [heapLength, elLength]
 
 end Flapjack.Compiler.Backend

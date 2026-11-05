@@ -176,6 +176,14 @@ val _ = show "heap_map1_typed" gc_sharedTheory.heap_map1_def;
 val _ = show "heap_addresses_typed" gc_sharedTheory.heap_addresses_def;
 val _ = show "heap_filter_aux_addresses_union_typed" gc_sharedTheory.heap_filter_aux_heap_addresses_UNION;
 val _ = show "heap_length_heap_filter_typed" gc_sharedTheory.heap_length_heap_filter;
+val _ = show "heap_length_heap_filter_eq_typed" gc_sharedTheory.heap_length_heap_filter_eq;
+val _ = show "heap_length_heap_filter_insert_typed_replay" (prove (
+  ``!heap. ~(e IN s) ==> (heap_length (heap_filter (e INSERT s) heap) =
+    heap_length (heap_filter {e} heap) + heap_length (heap_filter s heap))``,
+  fs [gc_sharedTheory.heap_filter_def]
+  \\ qspec_tac (`0n`,`n:num`)
+  \\ Induct_on `heap` \\ fs [gc_sharedTheory.heap_filter_aux_def, gc_sharedTheory.heap_length_def]
+  \\ rpt strip_tac \\ fs [SUM_APPEND] \\ rw [] \\ fs []));
 val _ = show "heap_filter_aux_append_typed" gc_sharedTheory.heap_filter_aux_APPEND;
 val filter_shift = prove (
   ``!k n e heap. heap_filter_aux (k+n) {e+n} heap = heap_filter_aux k {e} heap``,

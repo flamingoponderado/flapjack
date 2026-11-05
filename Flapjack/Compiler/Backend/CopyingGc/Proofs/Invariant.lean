@@ -3,6 +3,7 @@ import Flapjack.Compiler.Backend.GcShared.HeapSimilarity
 import Flapjack.Compiler.Backend.GcShared.Reachability
 import Flapjack.Compiler.Backend.GcShared.Related
 import Flapjack.Compiler.Backend.GcShared.Filter
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Reachability
 import Flapjack.Compiler.Backend.GcShared.ForwardPtr
 import Flapjack.Compiler.Backend.CopyingGc.Proofs.Append
 
@@ -882,6 +883,66 @@ theorem gcInv_final_related {α β : Type} (heap2 heap3 heap : List (HeapElement
     cases eq
     exact ⟨newFound, children⟩
 
+/-- The copied heap's length equals the length of original elements selected
+by the final forwarding-map domain. This is a Flapjack consequence of the
+final copying invariant and the source heap-filter length theorem. -/
+theorem gcInv_final_filterLength {α β : Type} (heap2 heap3 heap : List (HeapElement α β))
+    (a n limit : Nat) (ok : Bool) (roots : List (HeapAddress α))
+    (invariant : gcInv heap2 [] a n heap3 ok limit heap roots) :
+    heapLength heap2 = heapLength (heapFilter (fun ptr => (heapMap 0 heap3).lookup ptr ≠ none) heap) := by
+  obtain ⟨_, _, _, _, _, _, _, _, _, mapsInto, injective, surjective, entries⟩ := invariant
+  let source : Set Nat := fun ptr => (heapMap 0 heap3).lookup ptr ≠ none
+  let target : Set Nat := heapAddresses 0 heap2
+  have maps : Set.MapsTo (heapMap1 heap3) source target := by
+    intro ptr defined
+    change heapAddresses 0 heap2 (heapMap1 heap3 ptr)
+    simpa using mapsInto ptr defined
+  have inj : Set.InjOn (heapMap1 heap3) source := by
+    intro i hi j hj eq
+    exact injective i j hi hj eq
+  have surj : Set.SurjOn (heapMap1 heap3) source target := by
+    intro j member
+    change heapAddresses 0 heap2 j at member
+    exact surjective j (by simpa using member)
+  have bij : Set.BijOn (heapMap1 heap3) source target := ⟨maps, inj, surj⟩
+  obtain ⟨keys, support⟩ := (heapMap 0 heap3).finiteSupport
+  have finiteSource : source.Finite := keys.finite_toSet.subset (by
+    intro key defined
+    exact support key defined)
+  have targetImage : target = heapMap1 heap3 '' source := by
+    apply Set.ext
+    intro j
+    constructor
+    · intro member
+      obtain ⟨i, hi, eq⟩ := surj member
+      exact ⟨i, hi, eq⟩
+    · rintro ⟨i, hi, rfl⟩
+      exact maps hi
+  have finiteTarget : target.Finite := by
+    rw [targetImage]
+    exact finiteSource.image _
+  have matching : ∀ i ∈ source, ∃ (xs xs2 : List (HeapAddress α)) (len : Nat)
+      (_unused : Unit) (data : β), heapLookup i heap = some (.dataElement xs len data) ∧
+        heapLookup (heapMap1 heap3 i) heap2 = some (.dataElement xs2 len data) := by
+    intro i defined
+    cases found : (heapMap 0 heap3).lookup i with
+    | none => exact False.elim (defined found)
+    | some j =>
+      have mapValue : heapMap1 heap3 i = j := holFapply_of_lookup found
+      have address : heapAddresses 0 heap2 j := by
+        have image := maps defined
+        change heapAddresses 0 heap2 (heapMap1 heap3 i) at image
+        simpa [mapValue] using image
+      have below : j < heapLength heap2 := by
+        simpa using heapAddresses_less_heapLength heap2 0 j address
+      obtain ⟨xs, len, data, oldFound, newFound, _, _⟩ := entries i j found
+      refine ⟨xs, addrMap (heapMap1 heap3) xs, len, (), data, oldFound, ?_⟩
+      simpa [mapValue, below] using newFound
+  have filtered := heapLength_heapFilter_eq source target (heapMap1 heap3) heap heap2
+    bij finiteSource finiteTarget matching
+  rw [heapLength_heapFilter_addresses] at filtered
+  exact filtered
+
 /-- Successful full collection supplies the source-domain, target-range,
 and heap-relation clauses of the abstract collector theorem. The source's
 heap-filter length equality remains to be proved separately. -/
@@ -902,5 +963,29 @@ theorem fullGc_relation_clauses {α β : Type} (roots : List (HeapAddress α))
   · exact gcInv_final_related heap2 heap3 heap a2 (limit - a2) limit true roots invariant
   · exact invariant.2.2.2.2.2.2.2.1
   · simpa using invariant.2.1.symm
+
+/-- Full collection establishes the original heap relation, reachable-domain
+and filtered-length properties. This source-shaped result remains untagged
+until the invariant's internal and existential finite-map representations
+can be recorded by the HOL reference infrastructure. -/
+theorem fullGc_related {α β : Type} (roots : List (HeapAddress α))
+    (heap : List (HeapElement α β)) (limit : Nat)
+    (rootOk : rootsOk roots heap) (heapGood : heapOk heap limit) :
+    ∃ (heap2 : List (HeapElement α β)) (a2 : Nat) (f : HolFiniteMapExact Nat Nat),
+      fullGc (roots, heap, limit) = (addrMap (holFapply f) roots, heap2, a2, true) ∧
+      (fun ptr => f.lookup ptr ≠ none) = reachableAddresses roots heap ∧
+      (fun target => ∃ ptr, f.lookup ptr = some target) =
+        (fun target => isSomeDataElement (heapLookup target heap2)) ∧
+      heapLength heap2 = heapLength (heapFilter (fun ptr => f.lookup ptr ≠ none) heap) ∧
+      gcRelated f heap (heap2 ++ heapExpand (limit - a2)) ∧
+      (∀ element ∈ heap2, isDataElement element) := by
+  obtain ⟨heap2, a2, heap3, run, rootDomain, invariant⟩ := fullGc_invariant roots heap limit rootOk heapGood
+  refine ⟨heap2, a2, heapMap 0 heap3, run, ?_, ?_, ?_, ?_, ?_⟩
+  · exact gcInv_final_domain heap2 heap3 heap a2 (limit - a2) limit true roots invariant rootDomain
+  · exact gcInv_final_range heap2 heap3 heap a2 (limit - a2) limit true roots invariant
+  · exact gcInv_final_filterLength heap2 heap3 heap a2 (limit - a2) limit true roots invariant
+  · exact (DataToWord.Proofs.Memory.gcRelated_append_heapExpand (heapMap 0 heap3) heap heap2 (limit - a2)).mpr
+      (gcInv_final_related heap2 heap3 heap a2 (limit - a2) limit true roots invariant)
+  · exact invariant.2.2.2.2.2.2.2.1
 
 end Flapjack.Compiler.Backend.CopyingGc

@@ -1331,6 +1331,22 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "heap_length_heap_filter_INSERT",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/Filter.lean",
+  "lean_name": "heapLength_heapFilter_insert",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the local source and heap_length_heap_filter_insert_typed_replay: insertion of an address absent from the set adds the singleton-filter length; both heap payload types remain independent."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "heap_length_heap_filter_eq",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/Filter.lean",
+  "lean_name": "heapLength_heapFilter_eq",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared heap_length_heap_filter_eq_typed: the bijection, finiteness hypotheses, successful data-element lookups, equal lengths and payload, and target/source equality direction match. The two heap address payload types are independent, as is the unused first existential d's inferred type δ; Lean preserves it as an explicit existential binder."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
   "hol_name": "heap_filter_aux_heap_addresses_UNION",
   "lean_path": "Flapjack/Compiler/Backend/GcShared/Filter.lean",
   "lean_name": "heapFilterAux_addresses_union",
