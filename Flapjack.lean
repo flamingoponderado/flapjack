@@ -2198,9 +2198,6 @@ import Flapjack.PanValueEvaluatorStability
 import Flapjack.PanValueFfiCore
 import Flapjack.PanMemory
 import Flapjack.PanValueFfiClockSemantics
-import Flapjack.PanValueFfiClockFuel
-import Flapjack.PanValueFfiClockCorrectness
-import Flapjack.PanValueFfiClockShift
 import Flapjack.RiscV.Model
 import Flapjack.RiscV.L3.Types
 import Flapjack.RiscV.Encoding
