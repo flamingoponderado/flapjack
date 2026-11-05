@@ -1389,6 +1389,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.ReadBytearray
 import Flapjack.Pancake.Proofs.PanGlobals.ByteStore
 import Flapjack.Pancake.Proofs.PanGlobals.WriteBytearray
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Leaves
+import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Support
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.While
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.If
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Seq
@@ -1581,6 +1582,7 @@ import Flapjack.Pancake.Proofs.PanStructs.FlattenConversion
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectStoreWords
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectStore
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectAssign
+import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectSupport
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectPrimitive
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectDec
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectWhile

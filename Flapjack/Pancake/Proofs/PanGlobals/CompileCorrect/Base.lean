@@ -174,6 +174,15 @@ theorem compileCorrect_Tick {width : Nat} {σ : Type} [NeZero width]
     obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
     exact ⟨_, rfl, Flapjack.PanGlobalsStateRelationClock.stateRelDecClockHOL ctxt s t true hrel⟩
 
+/-- Flapjack-only equation relating the literal recursive compiled argument list
+    to the MAP spelling of OPT_MMAP_eval_correct; no separate HOL original. -/
+theorem compileList_eq_map {width : Nat} [NeZero width]
+    (context : PanGlobalsContextExact width) (args : List (ExpHOL width)) :
+    compileExpExactHOLList context args = args.map (compileExpExactHOL context) := by
+  induction args with
+  | nil => simp only [compileExpExactHOLList,List.map_nil]
+  | cons e es ih => simp only [compileExpExactHOLList,List.map_cons,ih]
+
 end PanGlobalsCompileCorrect
 
 end Flapjack

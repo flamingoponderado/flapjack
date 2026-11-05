@@ -34,15 +34,6 @@ private theorem stateRelLocalSetVar {width : Nat} {σ : Type} [NeZero width]
   have hl := h.2.1 rfl
   exact ⟨h.1, fun _ => congrArg (fun locals => locals.update (name,value)) hl, h.2.2⟩
 
-/-- Flapjack-only equation connecting the mutually recursive compiler list
-worker with literal HOL MAP; not a separate HOL declaration. -/
-private theorem compileList_eq_map {width : Nat} [NeZero width]
-    (context : PanGlobalsContextExact width) (arguments : List (ExpHOL width)) :
-    compileExpExactHOLList context arguments = arguments.map (compileExpExactHOL context) := by
-  induction arguments with
-  | nil => simp only [compileExpExactHOLList,List.map_nil]
-  | cons expression rest ih => simp only [compileExpExactHOLList,List.map_cons,ih]
-
 /-- Original Primitive compiler-correctness case, HOL592-612. The original
 state relation/source run/non-Error premises suffice: argument equality and
 successful target primitive/validity are derived internally, with no extra IH. -/
@@ -89,7 +80,7 @@ theorem compileCorrect_Primitive {width : Nat} {σ : Type} [NeZero width]
         have hvalid : isValidValueHOLFinite target .local name value = true := by
           simpa only [isValidValueHOLFinite,lookupKvarHOLFinite,← hl] using hv
         refine ⟨setVarHOLFinite name value target, ?_, ?_⟩
-        · simp only [compileProgExactHOL,evaluateHOLFiniteState_primitive,compileList_eq_map,ht,hp,hvalid,ite_true]
+        · simp only [compileProgExactHOL,evaluateHOLFiniteState_primitive,PanGlobalsCompileCorrect.compileList_eq_map,ht,hp,hvalid,ite_true]
         · exact stateRelLocalSetVar context source target name value hrel
       · simp only [hv] at hev
         obtain ⟨rfl,rfl⟩ := Prod.mk.inj hev
