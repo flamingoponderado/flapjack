@@ -4,6 +4,7 @@ import Flapjack.Compiler.Backend.BviToData.Proofs.Simulation
 import Flapjack.Compiler.Backend.BviToData.Proofs.Program
 import Flapjack.Compiler.Backend.BviToData.Proofs.Semantics
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.CallFragment
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.TailCallSpace
 import Flapjack.Compiler.Backend.Semantics.WordSem.Semantics
 
 /-! Connecting allocation-capable data fragments to configured word output. -/
@@ -390,6 +391,87 @@ theorem configuredBviCallFragment_entry {C F : Type} (fuel : Nat)
     · exact False.elim (notOutOfSpace failure.1)
   exact ⟨dataResult, dataFinal, by simpa only [targetCode] using codeRel,
     dataRun, finalRel, projection, bviWord, wordResult, targetFinal, wordRun, notOutOfSpace, ffiEq⟩
+
+/-- The emitted word entry call simulates a non-type-error BVI entry call
+for a closed fragment with direct tail calls and allocation-space checks.
+The permitted allocation failure retains the FFI event-prefix guarantee.
+Returning calls, allocation-producing primitives, initial-state construction,
+and whole-program HOL correspondence remain open. -/
+theorem configuredBviTailSpace_entry {C F : Type} (fuel : Nat)
+    (source nextSource : Config) (closure nextClosure : ClosToBvl.Config)
+    (bvlConfig nextBvlConfig : BvlToBvi.Config) (word : DataToWord.Config)
+    (declarations : List AstHOL.Dec) (bviCode : List (Nat × Nat × Bvi.Exp))
+    (wordCode : List (Nat × Nat × WordLangProgHOL (BitVec 64)))
+    (names : Spt Basis.Pure.MlString.MlString)
+    (bviCompile : compileCakeToBviConfiguredFuel fuel source closure bvlConfig declarations =
+      some (nextSource, nextClosure, nextBvlConfig, bviCode, names))
+    (wordCompile : compileCakeToWord64ConfiguredFuel fuel source closure bvlConfig word declarations =
+      some (nextSource, nextClosure, nextBvlConfig, wordCode, names))
+    (start secn label l1 l2 : Nat) (bviState nextBvi : BviSem.BviState C F)
+    (result : BviSem.BviResult)
+    (bviRun : BviSem.evaluate [.call 0 (some start) [] none] [] bviState = (result, nextBvi))
+    (notType : result ≠ .err (.abort .typeError))
+    (dataState : DataSem.State C F) (targetState : WordSemStateFiniteExact 64 C F)
+    (bviRelated : BviToData.stateRel bviState dataState)
+    (empty : sptIsEmpty dataState.locals = true)
+    (jump : ∀ x, result = .err (.raise x) → DataSem.jumpExc dataState ≠ none)
+    (locs : List (Nat × Nat)) (related : stateRel64 word l1 l2 dataState targetState none locs)
+    (sourceCode : dataState.code = sptFromAList (BviToData.compileProg bviCode))
+    (targetCode : targetState.code = sptFromAList wordCode)
+    (closed : TailSpaceFragmentCode (sptFromAList (BviToData.compileProg bviCode))) :
+    ∃ dataResult dataFinal,
+      DataToWord.Proofs.Gc.codeRel64 word (sptFromAList (BviToData.compileProg bviCode))
+        targetState.code ∧
+      DataSem.evaluate (.call none (some start) [] none) dataState = (some dataResult, dataFinal) ∧
+      BviToData.stateRel nextBvi dataFinal ∧ BviToData.dataToBviResult dataResult = result ∧
+      bviWordOutcomes64 word l1 l2 result (.call none (some start) [] none)
+        (.call none (some start) [0] none) dataState targetState locs ∧
+      ∃ wordResult targetFinal,
+        WordSemStateFiniteExact.evaluate (.call none (some start) [0] none) targetState = (some wordResult, targetFinal) ∧
+        ((wordResult ≠ .notEnoughSpace ∧ targetFinal.ffi = nextBvi.ffi) ∨
+          (wordResult = .notEnoughSpace ∧ targetFinal.ffi.ioEvents <+: nextBvi.ffi.ioEvents)) := by
+  obtain ⟨actualCode, actualRun, codeRel⟩ :=
+    compileCakeToWord64ConfiguredFuel_codeRel_allSettings fuel source nextSource closure nextClosure
+      bvlConfig nextBvlConfig word declarations bviCode names bviCompile
+  have codeEq : actualCode = wordCode := by
+    have eq := Option.some.inj (actualRun.symm.trans wordCompile)
+    exact congrArg (fun x => x.2.2.2.1) eq
+  subst actualCode
+  obtain ⟨dataResult, dataFinal, dataRun, finalRel, projection⟩ :=
+    BviToData.compilePart_evaluate start bviState nextBvi dataState result bviRun notType bviRelated empty jump
+  have dataSafe : (DataSem.evaluate (.call none (some start) [] none) dataState).1 ≠
+      some (.err (.abort .typeError)) := by
+    have resultSafe : dataResult ≠ .err (.abort .typeError) := by
+      intro eq
+      subst dataResult
+      exact notType (by simpa [BviToData.dataToBviResult] using projection.symm)
+    simpa [dataRun] using resultSafe
+  have entryFragment : TailSpaceFragment (.call none (some start) [] none) :=
+    TailSpaceFragment.tailCall start []
+  have closedState : TailSpaceFragmentCode dataState.code := by simpa only [sourceCode] using closed
+  have simulation := tailSpaceFragment64 word _ entryFragment secn label l1 l2 dataState targetState locs closedState related dataSafe
+  have entryCompile : (compileControl64 word secn label (.call none (some start) [] none)).1 =
+      .call none (some start) [0] none := rfl
+  have wordOutcome : fragmentOutcomesAt64 word l1 l2 (.call none (some start) [] none)
+      (.call none (some start) [0] none) dataState targetState locs ∨
+      ∃ final, WordSemStateFiniteExact.evaluate (.call none (some start) [0] none) targetState = (some .notEnoughSpace, final) ∧
+        BackendProps.optionLe final.stackMax (DataSem.evaluate (.call none (some start) [] none) dataState).2.stackMax ∧
+        final.ffi.ioEvents <+: (DataSem.evaluate (.call none (some start) [] none) dataState).2.ffi.ioEvents ∧
+        (word.gcKind ≠ .none → (DataSem.evaluate (.call none (some start) [] none) dataState).2.safeForSpace = false) := by
+    simpa only [outcomesWithSpace64, outOfSpace64, fragmentOutcomesAt64, outcomes64,
+      continues64, returns64, timesOut64, raises64, entryCompile] using simulation
+  have noReturn := BviToData.entryCall_notReturn start bviState nextBvi result bviRun
+  have bviWord := bviWordOutcomes64_of_data word l1 l2 result (.call none (some start) [] none)
+    (.call none (some start) [0] none) dataState targetState locs dataResult dataFinal dataRun
+    (fun _ => projection) (fun impossible => False.elim (noReturn impossible)) wordOutcome
+  have dataFfi : (DataSem.evaluate (.call none (some start) [] none) dataState).2.ffi = nextBvi.ffi := by
+    rw [dataRun]
+    exact finalRel.2.2.2.2.2.1.symm
+  have observations := bviWordOutcomes64_ffi word l1 l2 result (.call none (some start) [] none)
+    (.call none (some start) [0] none) dataState targetState locs nextBvi dataFfi bviWord
+  exact ⟨dataResult, dataFinal, by simpa only [targetCode] using codeRel,
+    dataRun, finalRel, projection, bviWord, observations⟩
+
 
 /-- Every clock of a non-failing BVI initial program has a matching execution
 of the word-semantics entry call, provided the emitted data code belongs to
