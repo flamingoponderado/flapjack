@@ -40,6 +40,7 @@ val _ = show "traverse_heap_reachable_RTC_gc_edge_typed" data_to_word_gcProofThe
 val _ = show "traverse_heap_reachable_typed" data_to_word_gcProofTheory.traverse_heap_reachable;
 val _ = show "size_of_cons_typed" data_to_word_gcProofTheory.size_of_cons;
 val _ = show "size_of_global_to_vs_typed" data_to_word_gcProofTheory.size_of_global_to_vs;
+val _ = show "LENGTH_n2mw_LE_bignum_digits_typed" data_to_word_gcProofTheory.LENGTH_n2mw_LE_bignum_digits;
 val checkResSizeOf = ``!lims vs refs seen.
   dataSem$check_res refs (dataSem$size_of lims vs refs seen) = dataSem$size_of lims vs refs seen``;
 val _ = (print "check_res_size_of_typed_statement=";

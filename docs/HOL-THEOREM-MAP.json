@@ -1,5 +1,14 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "LENGTH_n2mw_LE_bignum_digits",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/SizeValues.lean",
+  "lean_name": "n2mw_length_le_bignumDigits",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared LENGTH_n2mw_LE_bignum_digits_typed: the good dimension and n ≤ m premises, source digit bound and length of the width-indexed word list agree; the positive HOL word dimension is represented by BitVec width."
+},
+{
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "check_res_size_of",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Heap/SizeProperties.lean",
