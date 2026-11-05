@@ -1,5 +1,29 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "size_of_cons_seen_Block",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/SizeSeen.lean",
+  "lean_name": "sizeOfValues_cons_seen_block",
+  "statement_status": "pending_statement_review",
+  "reviewer": "The Lean result builds; capture the exported original theorem's inferred type before classifying the statement as reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "size_of_seen_Block",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/SizeSeen.lean",
+  "lean_name": "sizeOfValues_seen_block",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared size_of_seen_Block_typed_replay with source: a nonempty block among the source roots has its timestamp in the final seen tree after the same sizing equation, retaining the original reference and timestamp tree carriers."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "size_of_seen_SUBSET",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/SizeSeen.lean",
+  "lean_name": "sizeOfValues_seen_subset",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared size_of_seen_SUBSET_typed_replay against the source theorem: the same sizing equation implies inclusion of the input timestamp domain in the output timestamp domain, over the original reference tree and unit-valued seen sets."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "size_of_Block",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/SizeValues.lean",

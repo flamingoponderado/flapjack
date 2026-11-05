@@ -36,6 +36,8 @@ The source sizing captures include the tail-first and global equations and a typ
 
 The local `size_of_Block` equation is also replayed with inferred source types.
 
+The probe replays `size_of_seen_SUBSET` and `size_of_seen_Block` from the assignment proof and captures their inferred reference and timestamp tree types.
+
 The probe captures the original width-indexed multiword digit-length bound used by the bignum sizing case.
 
 `data_to_word_gc_stack_probe.out` includes the typed `full_gc_thm` statement,

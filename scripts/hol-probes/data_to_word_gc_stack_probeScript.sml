@@ -60,6 +60,29 @@ val checkResSizeReplay = prove (checkResSizeOf,
   \\ fs [dataSemTheory.check_res_def,bool_case_eq,option_case_eq,pair_case_eq,CaseEq"ref"]
   \\ rveq \\ fs [] \\ rpt (pairarg_tac \\ fs []) \\ rveq \\ fs [] \\ fs [sptreeTheory.size_delete]);
 val _ = show "check_res_size_of_typed_replay" checkResSizeReplay;
+val sizeOfSeenSubset = ``!lims vs refs seen n1 seen1 refs1.
+  dataSem$size_of lims vs refs seen = (n1,refs1,seen1) ==>
+  sptree$domain seen SUBSET sptree$domain seen1``;
+val sizeOfSeenReplay = prove (sizeOfSeenSubset,
+  ho_match_mp_tac dataSemTheory.size_of_ind \\ rw [dataSemTheory.size_of_def]
+  \\ rpt (pairarg_tac \\ fs []) \\ rveq
+  >- (ho_match_mp_tac SUBSET_TRANS \\ asm_exists_tac \\ fs [])
+  \\ every_case_tac \\ fs [] \\ first_x_assum irule \\ rpt (pairarg_tac \\ fs []));
+val _ = show "size_of_seen_SUBSET_typed_replay" sizeOfSeenReplay;
+val sizeOfSeenBlock = ``!lims vs refs seen n1 refs1 seen1 ts tag fields.
+  dataSem$size_of lims vs refs seen = (n1,refs1,seen1) ==>
+  (MEM (dataSem$Block ts tag fields) vs /\ fields <> [] ==>
+   sptree$lookup ts seen1 = SOME ())``;
+val sizeOfSeenBlockReplay = prove (sizeOfSeenBlock,
+  ho_match_mp_tac dataSemTheory.size_of_ind >> rpt strip_tac >>
+  fs [dataSemTheory.size_of_def] >>
+  rpt (pairarg_tac >> fs [] >> rveq) >>
+  fs [dataSemTheory.size_of_def, DISJ_IMP_THM, FORALL_AND_THM]
+  >- (dxrule_then assume_tac sizeOfSeenReplay >> fs [SUBSET_DEF, sptreeTheory.domain_lookup])
+  >- (res_tac >> dxrule_then assume_tac sizeOfSeenReplay >> fs [SUBSET_DEF, sptreeTheory.domain_lookup])
+  >- (fs [CaseEq"bool", IS_SOME_EXISTS] >> rveq >> fs [] >>
+      dxrule_then assume_tac sizeOfSeenReplay >> fs [SUBSET_DEF, sptreeTheory.domain_lookup]));
+val _ = show "size_of_seen_Block_typed_replay" sizeOfSeenBlockReplay;
 val _ = show "word_gc_fun_EL_lemma_typed" data_to_word_gcProofTheory.word_gc_fun_EL_lemma;
 val _ = show "word_gc_fun_IMP_FILTER_typed" data_to_word_gcProofTheory.word_gc_fun_IMP_FILTER;
 val _ = show "loc_ok_word_addr_typed" data_to_word_gcProofTheory.loc_ok_word_addr;
