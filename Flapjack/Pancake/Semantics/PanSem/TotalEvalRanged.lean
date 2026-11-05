@@ -39,8 +39,6 @@ namespace Flapjack
 open Flapjack.Pancake.PanLang
 open Flapjack.Basis.Pure.MlString
 
-
-
 section Ranged
 
 variable {σ : Type}
@@ -221,7 +219,6 @@ theorem panSemTotalShMemStoreClause_rangedOutput
         | exact ⟨h.of_fields rfl rfl rfl, trivial⟩
     · exact PanSemRangedOutput.error h
   · exact PanSemRangedOutput.error h
-
 
 theorem PanSemCodeRanged.of_code {state other : PanSemState (RiscV.Word 64) (FfiState σ)}
     (h : PanSemCodeRanged state) (hcode : other.code = state.code) : PanSemCodeRanged other := by
@@ -602,15 +599,6 @@ theorem panSemTotalEvaluateCake_ranged
     (hcode : PanSemCodeRanged state) :
     PanSemRangedOutput (panSemTotalEvaluateCake prog state) :=
   panSemTotalEvaluate_ranged panPrimopHOL panPrimopHOL_byteRanged prog state hprog hstate hcode
-
-/-- The rangedness invariant is closed under runs of the canonical entrypoint,
-    including code-entry rangedness (`panSemTotalEvaluate_code`). -/
-theorem panSemTotalEvaluateCake_codeRanged
-    (prog : Prog (RiscV.Word 64)) (state : PanSemState (RiscV.Word 64) (FfiState σ))
-    (hcode : PanSemCodeRanged state) :
-    PanSemCodeRanged (panSemTotalEvaluateCake prog state).2 :=
-  hcode.of_code (panSemTotalEvaluate_code panPrimopHOL prog state)
-
 
 /-! ### Initial-state code rangedness
 
