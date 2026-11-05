@@ -19,7 +19,7 @@ namespace Flapjack
 
 /-- Private lookup bridge from the production string lookup to the
     HOL-style association-list lookup. -/
-private theorem lookupInfoStringDefault_eq_panPropsALookupEq
+theorem lookupInfoStringDefault_eq_panPropsALookupEq
     {β : Type} (key : String) (entries : List (String × β)) :
     @lookupInfo String β instBEqOfDecidableEq key entries =
       panPropsALookupEq key entries := by
@@ -1403,55 +1403,16 @@ mutual
                     simp
 end
 
-private theorem lookupInfoWithRest_suffix_drop_for_load
-    (name : String) (context : StructContext) (info : StructInfo)
-    (suffix : StructContext)
-    (hlookup : lookupInfoWithRest name context = some (info, suffix)) :
-    ∃ n, context.drop n = suffix := by
-  induction context with
-  | nil => simp [lookupInfoWithRest] at hlookup
-  | cons entry context ih =>
-      obtain ⟨candidate, entryInfo⟩ := entry
-      by_cases hmatch : candidate == name
-      · simp [lookupInfoWithRest, hmatch] at hlookup
-        rcases hlookup with ⟨rfl, rfl⟩
-        exact ⟨1, by simp⟩
-      · simp only [lookupInfoWithRest, hmatch] at hlookup
-        obtain ⟨n, hn⟩ := ih hlookup
-        refine ⟨n + 1, ?_⟩
-        simpa [List.drop_succ_cons, Nat.succ_eq_add_one] using hn
-
 private theorem structInfosOk_suffix_for_load
     (name : String) (context : StructContext) (info : StructInfo)
     (suffix : StructContext)
     (hlookup : lookupInfoWithRest name context = some (info, suffix))
     (hok : structInfosOk context) :
     structInfosOk suffix := by
-  obtain ⟨n, hdrop⟩ := lookupInfoWithRest_suffix_drop_for_load
+  obtain ⟨n, hdrop⟩ := lookupInfoWithRest_suffix_drop
     name context info suffix hlookup
   rw [← hdrop]
   exact structInfosOk_drop n context hok
-
-private theorem lookupInfoWithRest_fields_wf_for_load
-    (name : String) (context : StructContext) (info : StructInfo)
-    (suffix : StructContext)
-    (hlookup : lookupInfoWithRest name context = some (info, suffix))
-    (hok : structInfosOk context) :
-    isWfShape.isWfShapeList suffix (info.fields.map Prod.snd) = true := by
-  induction context with
-  | nil => simp [lookupInfoWithRest] at hlookup
-  | cons entry context ih =>
-      obtain ⟨candidate, entryInfo⟩ := entry
-      by_cases hmatch : candidate == name
-      · simp [lookupInfoWithRest, hmatch] at hlookup
-        rcases hlookup with ⟨rfl, rfl⟩
-        obtain ⟨_, _, hfields, _⟩ := hok
-        have hhead := hfields 0 candidate entryInfo (by simp)
-        have htail : ((candidate, entryInfo) :: context).drop 1 = context := rfl
-        rw [htail] at hhead
-        exact isWfShapeList_of_all (fun shape hshape => hhead shape hshape)
-      · simp only [lookupInfoWithRest, hmatch] at hlookup
-        exact ih hlookup (structInfosOk_drop 1 ((candidate, entryInfo) :: context) hok)
 
 private theorem panValueFlatFieldsFuel_eq_shapeListFuel
     (fields : List (FieldName × Shape)) :
@@ -1571,7 +1532,7 @@ theorem panValueFlatLoadFuel_convert_all [BEq α] [Add α]
         obtain ⟨info, suffix⟩ := entry
         have hokSuffix := structInfosOk_suffix_for_load
           name context info suffix hlookup hok
-        have hfieldsWf := lookupInfoWithRest_fields_wf_for_load
+        have hfieldsWf := lookupInfoWithRest_fields_wf
           name context info suffix hlookup hok
         have hcontextFuel := panValueFlatContextFuel_lookup_ge
           name context info suffix hlookup
@@ -2233,7 +2194,7 @@ theorem panValueFlatLoadFuel_shape_fields [BEq α] [Add α]
         obtain ⟨info, suffix⟩ := entry
         have hokSuffix := structInfosOk_suffix_for_load name context info suffix
           hlookup hok
-        have hfieldsWf := lookupInfoWithRest_fields_wf_for_load
+        have hfieldsWf := lookupInfoWithRest_fields_wf
           name context info suffix hlookup hok
         cases hfields : panValueFlatLoadFieldsFuel suffix readWord bytesInWord fuel
             info.fields address with
@@ -2249,7 +2210,7 @@ theorem panValueFlatLoadFuel_shape_fields [BEq α] [Add α]
               name context info suffix hlookup
             have hfieldShapes := panValueFieldsHaveShapes_of_maps context
               info.fields fields hnames hshapes
-            obtain ⟨n, hdrop⟩ := lookupInfoWithRest_suffix_drop_for_load
+            obtain ⟨n, hdrop⟩ := lookupInfoWithRest_suffix_drop
               name context info suffix hlookup
             have hcontext : context = context.take n ++ suffix := by
               calc
@@ -2712,13 +2673,6 @@ private theorem lookupInfo_mapValuesNStruct [BEq String] (entries : InfoMap α)
       · simp [lookupInfo, hkey]
       · simp [lookupInfo, hkey, ih]
 
-private theorem lookupInfoDefaultPanPropsNStruct
-    {β : Type} (key : String) (entries : List (String × β)) :
-    @lookupInfo String β instBEqOfDecidableEq key entries =
-      panPropsALookupEq key entries := by
-  letI : LawfulBEq String := instLawfulBEqString
-  exact lookupInfo_eq_panPropsALookupEq key entries
-
 private theorem evalPanValueFieldsFull_projection
     [BEq String] [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
@@ -2881,7 +2835,7 @@ theorem panStructCompileExpCorrectNStructCase
             subst value
             have hlookupLocal : lookupInfo name state.structs = some info := by
               rw [lookupInfo_eq_panPropsALookupEq]
-              rw [← lookupInfoDefaultPanPropsNStruct, hlookup]
+              rw [← lookupInfoStringDefault_eq_panPropsALookupEq, hlookup]
             have hcontextFieldsMap :
                 (lookupInfo name context.structs).map (fun info => info.fields) =
                   some info.fields := by
@@ -3132,7 +3086,7 @@ theorem panStructCompileExpCorrectNFieldCase
                     info.fields fields field fieldValue hfieldNames hfieldLookup
                   have hlookupLocal : lookupInfo structName state.structs = some info := by
                     rw [lookupInfo_eq_panPropsALookupEq]
-                    rw [← lookupInfoDefaultPanPropsNStruct, hlookupStruct]
+                    rw [← lookupInfoStringDefault_eq_panPropsALookupEq, hlookupStruct]
                   have hcontextFieldsMap :
                       (lookupInfo structName context.structs).map (fun entry => entry.fields) =
                         some info.fields := by
@@ -3163,7 +3117,7 @@ theorem panStructCompileExpCorrectNFieldCase
                   have hcontextInfoDefault :
                       @lookupInfo String StructInfo instBEqOfDecidableEq
                         structName context.structs = some contextInfo := by
-                    rw [lookupInfoDefaultPanPropsNStruct]
+                    rw [lookupInfoStringDefault_eq_panPropsALookupEq]
                     rw [lookupInfo_eq_panPropsALookupEq] at hcontextInfo
                     exact hcontextInfo
                   have hfieldShapeContext :
@@ -3172,7 +3126,7 @@ theorem panStructCompileExpCorrectNFieldCase
                   have hfieldShapeContextDefault :
                       @lookupInfo FieldName Shape instBEqOfDecidableEq
                         field contextInfo.fields = some fieldShape := by
-                    rw [lookupInfoDefaultPanPropsNStruct]
+                    rw [lookupInfoStringDefault_eq_panPropsALookupEq]
                     rw [lookupInfo_eq_panPropsALookupEq] at hfieldShapeContext
                     exact hfieldShapeContext
                   have hfieldShapeSem : fieldShape = panSemShapeOf fieldValue := by

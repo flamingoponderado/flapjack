@@ -1579,7 +1579,7 @@ theorem evaluateDeclsHOLFinite_names {width : Nat} {σ : Type} [NeZero width]
 /-- Flapjack finite-map support: a single `FUPDATE` followed by `FUPDATE_LIST`
     is the `FUPDATE_LIST` with the entry prepended. Infrastructure for the
     `evaluate_decls_functions` port, not a separate HOL declaration. -/
-private theorem updateList_cons {α β : Type} [BEq α] [LawfulBEq α]
+theorem updateList_cons {α β : Type} [BEq α] [LawfulBEq α]
     (map : HolFiniteMapExact α β) (entry : α × β) (entries : List (α × β)) :
     (map.update entry).updateList entries = map.updateList (entry :: entries) := by
   apply HolFiniteMapExact.ext

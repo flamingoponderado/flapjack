@@ -686,7 +686,7 @@ end HolFiniteMapExact
 
 /-- Flapjack-only record extensionality for the evaluator-state carrier, used to
     state the finite-support projection bridges field by field. -/
-private theorem crepHolState_eq_of_fields {α σ : Type}
+theorem crepHolState_eq_of_fields {α σ : Type}
     {left right : CrepHolState α σ}
     (hLocals : left.locals = right.locals)
     (hGlobals : left.globals = right.globals)

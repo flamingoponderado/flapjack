@@ -49,30 +49,6 @@ theorem holFmapAsFiniteSupportRelationWitness_LoopSemStateFiniteExact
 
 end CrepToLoopNcompileCorrectAssemblyWitnesses
 
-private theorem lookupCodeFinite_eq_HOLFinite' {width : Nat} [NeZero width]
-    (c : HolFiniteMapExact Flapjack.Basis.Pure.MlString.MlString (List Nat × CrepProgHOL width))
-    (f : Flapjack.Basis.Pure.MlString.MlString) (args : List (HolWordLab width)) (len : Nat) :
-    lookupCodeFiniteHOL c f args len = lookupCodeHOLFinite c.lookup f args len := by
-  have h1 := lookupCodeFiniteHOL_lookup c f args len
-  unfold lookupCodeHOLFinite
-  split
-  · rename_i hn
-    rw [hn] at h1
-    cases hF : lookupCodeFiniteHOL c f args len with
-    | none => rfl
-    | some val => rw [hF] at h1; simp at h1
-  · rename_i body cl hs
-    rw [hs] at h1
-    cases hF : lookupCodeFiniteHOL c f args len with
-    | none => rw [hF] at h1; simp at h1
-    | some val =>
-        obtain ⟨b, m⟩ := val
-        rw [hF] at h1
-        simp only [Option.map_some, Option.some.injEq, Prod.mk.injEq] at h1
-        obtain ⟨rfl, hm⟩ := h1
-        congr 2
-        exact holFiniteMapExact_eq_of_lookup_eq hm
-
 /-- Flapjack helper (no HOL declaration): HOL `ncompile_correct`'s
     `recInduct crepSemTheory.evaluate_ind` assembly of all nineteen case pieces
     into the canonical `PropertyAt` form; the tagged `crepToLoop_ncompile_correct`
@@ -131,11 +107,11 @@ theorem crepToLoopNcompileCorrectOf {width : Nat} [NeZero width] {σ : Type} :
     exact crepToLoop_ncompile_correct_call caltyp fname argexps s
       (fun args prog newlocals st eid rts p ⟨h1, h2, h3, h4, h5, h6⟩ =>
         ihh args (prog, newlocals) prog newlocals _ _ st _ eid _ _ _ _ eid p
-          (by rw [hfun]; exact h1) (by rw [← lookupCodeFinite_eq_HOLFinite']; exact h2) rfl
+          (by rw [hfun]; exact h1) (by rw [← lookupCodeFinite_eq_HOLFinite]; exact h2) rfl
           (by subst h6; simpa using h3) h4 h5.symm rfl rfl rfl h6 rfl rfl rfl rfl)
       (fun args prog newlocals ⟨h1, h2, h3, h4⟩ =>
         ihb args (prog, newlocals) prog newlocals (by rw [hfun]; exact h1)
-          (by rw [← lookupCodeFinite_eq_HOLFinite']; exact h2) rfl
+          (by rw [← lookupCodeFinite_eq_HOLFinite]; exact h2) rfl
           (by cases caltyp with
               | none => simp
               | some x => obtain ⟨rts, y⟩ := x; simpa using h3) h4)
@@ -143,7 +119,6 @@ theorem crepToLoopNcompileCorrectOf {width : Nat} [NeZero width] {σ : Type} :
   · intro f p1 l1 p2 l2 s res s1 t ctxt l he hne hs hm hg hc hl
     exact crepToLoop_ncompile_correct_extCall f p1 l1 p2 l2 s res s1 t ctxt l
       ⟨he, hne, hs, hm, hg, hc, hl⟩
-
 
 /-- Flapjack helper (no HOL declaration): HOL `ocompile_correct`
     (`crep_to_loopProofScript.sml:3720-3750`) from the `ncompile_correct` property
