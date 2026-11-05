@@ -884,6 +884,14 @@ Flapjack, or `--record-reference /path/to/pinned/cake` to regenerate captures;
 both commands verify the reported CakeML and HOL revisions. These finite
 comparisons are regression evidence, not a proof of output parity.
 
+The pinned CLI corpus also covers byte-word overflow followed by a shift,
+recursive exception handling with reference updates, a nested module closure
+with shared mutable state, and the diagnostic for using a constructor as a
+function argument. Each case compares the complete output and exit status.
+A generated run with seeds 629 and 3083 additionally matched 1,100 parser and
+type-checking cases, 28 complete RISC-V programs, and four composed programs
+with varied backend options.
+
 For deterministic generated inputs, run
 `python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake`
 after building `cake`. The script verifies the pinned compiler provenance and

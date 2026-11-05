@@ -15,6 +15,10 @@ spec.loader.exec_module(parity)
 
 # Each program makes the computed result observable through an output call.
 CASES = {
+    'word8_overflow_and_shift': 'val x = Word8.+ (Word8.fromInt 250) (Word8.fromInt 12); val _ = print_int (Word8.toInt (Word8.>> x 1));',
+    'exception_recursive_state': 'exception Stop int; val r = Ref 0; fun f xs = case xs of [] => !r | x::rest => (r := !r+x; if x=4 then raise Stop (!r) else f rest); val _ = print_int ((f [1,2,4,8]) handle Stop n => n);',
+    'polymorphic_constructor_as_function_error': "datatype 'a box = B 'a; fun unbox (B x) = x; val xs = List.map B [1,2,3]; val _ = print_int (List.foldl (fn x => fn n => unbox x+n) 0 xs);",
+    'nested_module_closure_reference': 'structure A = struct val r = Ref 1; fun add x = (r := !r+x; !r); end; structure B = struct fun f n = let val g = fn x => A.add (n+x) in g 1 + g 2 end; end; val _ = print_int (B.f 3);',
     'qualified_exception_handler': 'structure A = struct exception E int; fun f x = raise E x end; val _ = print_int ((A.f 5) handle A.E n => n+1);',
     'nested_module_constructor': 'structure A = struct structure B = struct datatype t = C int; val x = C 3 end end; val _ = print_int (case A.B.x of A.B.C n => n);',
     'aliased_tuple_pattern': 'fun f (x as (a,b)) = case x of (c,d) => a+b+c+d; val _ = print_int (f (3,4));',
@@ -248,7 +252,7 @@ CASE_ARGS = {
     'hidden_type_binary': ['--types', '--exclude_prelude=true'],
     'hidden_type_function': ['--types', '--exclude_prelude=true'],
 }
-ERROR_CASES = {'types_print_sexp_type_error', 'types_explore_parse_error',
+ERROR_CASES = {'polymorphic_constructor_as_function_error', 'types_print_sexp_type_error', 'types_explore_parse_error',
                'value_restriction_empty_vector', 'unsupported_record_syntax',
                'explore_parse_error', 'explore_type_error', 'explore_sexp_parse_error', 'explore_sexp_type_error',
                'print_sexp_type_error', 'print_sexp_parse_error', 'hidden_type_shadow', 'hidden_type_compile',
