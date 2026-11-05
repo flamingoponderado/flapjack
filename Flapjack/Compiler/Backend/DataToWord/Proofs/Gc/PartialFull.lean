@@ -318,6 +318,33 @@ theorem partialFull_collectDataMass {α β : Type} (conf : GenGcPartial.Config �
   simp only [emptyGcState, heapLength, List.map_nil, List.sum_nil, Nat.add_zero] at rootsMass
   exact rootsMass.trans (refsMass.trans scanMass)
 
+/-- A successful partial collection's allocation index is the size of its
+old prefix and copied data once the data work list is exhausted. -/
+theorem partialFull_dataIndex {α β : Type} (conf : GenGcPartial.Config β)
+    (roots roots1 : List (HeapAddress α)) (heap : List (HeapElement α β)) (result : GcState α β)
+    (run : GenGcPartial.partialGc conf (roots, heap) = (roots1, result)) (ok : result.ok = true)
+    (empty : result.h2 = []) : result.a = heapLength (result.old ++ result.h1) := by
+  obtain ⟨old, current, refs, middle, refs1, afterRefs, segment, rootsRun, _, refsRun, _, dataRun⟩ :=
+    partialFull_abstractSteps conf roots roots1 heap result run ok
+  obtain ⟨_, oldLen, _, _⟩ := heapSegment_imp heap _ _ old current refs segment
+  let initial : GcState α β :=
+    { emptyGcState with heap := heap, old := old, r2 := refs, a := conf.genStart, n := heapLength current }
+  have rootsIndex := partialMoveList_dataIndex conf roots roots1 initial middle rootsRun
+  have refsIndex := partialMoveRefList_dataIndex conf refs refs1 middle afterRefs refsRun
+  have scanIndex := partialMoveData_dataIndex conf { afterRefs with r1 := refs1, r2 := [] } (by rw [dataRun]; exact ok)
+  rw [dataRun] at scanIndex
+  have rootsOld := (partialMoveList_fixedFields conf roots roots1 initial middle rootsRun).2.2.2.2.2
+  have refsOld := (partialFull_refListFixed conf refs refs1 middle afterRefs refsRun).2.2.2.2.2
+  have dataOld := (partialFull_dataFixed conf { afterRefs with r1 := refs1, r2 := [] }).2.2.2.2.1
+  rw [dataRun] at dataOld
+  have oldEq : result.old = old := by simpa [initial] using dataOld.trans (refsOld.trans rootsOld)
+  simp [initial, emptyGcState, heapLength] at rootsIndex
+  simp [empty, heapLength] at scanIndex
+  simp [heapLength] at refsIndex
+  simp [oldEq, heapLength]
+  simp [heapLength] at oldLen
+  omega
+
 /-- A successful partial collection preserves its original old and reference
 segments in the collector's source heap. -/
 theorem partialFull_collectSegment {α β : Type} (conf : GenGcPartial.Config β)

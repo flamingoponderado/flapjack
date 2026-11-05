@@ -706,6 +706,47 @@ theorem combinedPartial_store_execution {width : Nat} [NeZero width] (conf : Con
     wordSemTheWord, endOffset, concrete, holHd, assum]
   simpa only [wordSemTheWord] using enoughNorm
 
+/-- A successful partial collection preserves the word shape of its global
+root. -/
+theorem combinedPartial_global_word {width : Nat} [NeZero width] (conf : Config)
+    (values : List DataSem.Value) (references : Spt (BvlSem.Ref DataSem.Value))
+    (root root1 : HeapAddress (WordLocW width)) (roots roots1 : List (HeapAddress (WordLocW width)))
+    (heap heap1 : List (HeapElement (WordLocW width) (HeapTag × List (WordLocW width))))
+    (be : Bool) (a sp sp1 limit next a1 n1 : Nat) (gens gens1 : GenState) (limits : List Nat)
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (memory : BitVec width → WordLocW width) (domain : BitVec width → Bool)
+    (run : gcCombined (makeGcConf (α := List (WordLocW width)) limit) (.generational limits)
+      (root :: roots, heap, gens, a + sp + sp1, true) = (root1 :: roots1, heap1, a1, n1, gens1, true))
+    (kind : conf.gcKind = .generational limits) (selected : wordGenGcCanDoPartial limits store)
+    (global : store.lookup .globals = some (wordAddr conf root))
+    (source : absMlInv conf values references (root :: roots, heap, be, a, sp, sp1, gens) limit next)
+    (good : goodDimindex width) (heapMem : heapInMemoryStore heap a sp sp1 gens conf store memory domain limit) :
+    ∃ g, wordAddr conf root1 = .word g := by
+  have assum := heapInMemoryStore_gcAssum conf heap a sp sp1 limit gens store memory domain good heapMem
+  have inputWord : wordSemIsWordLoc (wordAddr conf root) = true := by
+    simpa [holFapply_of_lookup global] using assum.2.2.2.2.2.2.2.1
+  obtain ⟨limitEq, ending, startBound, refBound⟩ :=
+    partialSource_conditions conf values references (root :: roots) heap be a sp sp1 limit next
+      gens limits store memory domain source kind selected heapMem
+  have ordered : (makePartialConf (makeGcConf (α := List (WordLocW width)) limit) gens (a + sp + sp1)).genStart ≤
+      a + sp + sp1 := by omega
+  obtain ⟨curr, other, outMemory, state, current1, refs1, _, _, _, _, _, _, _, _, concrete, _⟩ :=
+    combinedPartial_store_simulation conf (root :: roots) (root1 :: roots1) heap heap1 a sp sp1 limit a1 n1
+      gens gens1 limits store memory domain run kind selected limitEq ending ordered refBound good heapMem
+  let gs := wordSemBytesInWord * BitVec.ofNat width
+    (makePartialConf (makeGcConf (α := List (WordLocW width)) limit) gens (a + sp + sp1)).genStart
+  let rs := wordSemBytesInWord * BitVec.ofNat width (a + sp + sp1)
+  have rel := wordGenGcPartialMoveRoots_rootRel conf ((root :: roots).map (wordAddr conf))
+    (gs >>> wordShiftAmount width) other curr memory domain gs rs
+  rw [← wordGenGcPartialFull_fst, concrete] at rel
+  simp only [List.map_cons] at rel
+  cases rel with
+  | cons head tail =>
+    have outputWord : wordSemIsWordLoc (wordAddr conf root1) = true := by simpa [inputWord] using head.1.symm
+    cases value : wordAddr conf root1 with
+    | word w => exact ⟨w, rfl⟩
+    | loc l o => simp [value, wordSemIsWordLoc] at outputWord
+
 /-- A successful major collection preserves the word shape of its global
 root. -/
 theorem combinedMajor_global_word {width : Nat} [NeZero width] (conf : Config)

@@ -65,6 +65,74 @@ def partialLenInv {α β : Type} (state : GcState α β) : Prop :=
   heapLength state.heap = heapLength (state.h1 ++ state.h2) + state.n +
     heapLength (state.r4 ++ state.r3 ++ state.r2 ++ state.r1 ++ state.old)
 
+/-- Partial root movement advances its allocation index by the size of
+newly copied data. -/
+theorem partialMove_dataIndex {α β : Type} (conf : GenGcPartial.Config β)
+    (state state1 : GcState α β) (root root1 : HeapAddress α)
+    (run : GenGcPartial.gcMove conf state root = (root1, state1)) :
+    state1.a + heapLength state.h1 + heapLength state.h2 =
+      state.a + heapLength state1.h1 + heapLength state1.h2 := by
+  cases root with
+  | data value => simp [GenGcPartial.gcMove, Prod.mk.injEq] at run; obtain ⟨_, rfl⟩ := run; rfl
+  | pointer ptr value =>
+    by_cases outside : ptr < conf.genStart ∨ conf.refsStart ≤ ptr
+    · simp [GenGcPartial.gcMove, outside, Prod.mk.injEq] at run; obtain ⟨_, rfl⟩ := run; rfl
+    · cases found : heapLookup ptr state.heap with
+      | none => simp [GenGcPartial.gcMove, outside, found, Prod.mk.injEq] at run; obtain ⟨_, rfl⟩ := run; rfl
+      | some element =>
+        cases element with
+        | unused len => simp [GenGcPartial.gcMove, outside, found, Prod.mk.injEq] at run; obtain ⟨_, rfl⟩ := run; rfl
+        | forwardPointer dest old len => simp [GenGcPartial.gcMove, outside, found, Prod.mk.injEq] at run; obtain ⟨_, rfl⟩ := run; rfl
+        | dataElement roots len payload =>
+          simp [GenGcPartial.gcMove, outside, found, Prod.mk.injEq] at run
+          obtain ⟨_, rfl⟩ := run
+          simp [heapLength, elLength]
+          omega
+
+/-- Traversing roots preserves the partial allocation-index relationship. -/
+theorem partialMoveList_dataIndex {α β : Type} (conf : GenGcPartial.Config β)
+    (roots roots1 : List (HeapAddress α)) (state state1 : GcState α β)
+    (run : GenGcPartial.gcMoveList conf state roots = (roots1, state1)) :
+    state1.a + heapLength state.h1 + heapLength state.h2 =
+      state.a + heapLength state1.h1 + heapLength state1.h2 := by
+  induction roots generalizing roots1 state state1 with
+  | nil => simp [GenGcPartial.gcMoveList, Prod.mk.injEq] at run; obtain ⟨_, rfl⟩ := run; rfl
+  | cons root roots ih =>
+    simp only [GenGcPartial.gcMoveList] at run
+    generalize headRun : GenGcPartial.gcMove conf state root = headResult at run
+    obtain ⟨root1, middle⟩ := headResult
+    generalize tailRun : GenGcPartial.gcMoveList conf middle roots = tailResult at run
+    obtain ⟨tail, final⟩ := tailResult
+    simp only [Prod.mk.injEq] at run
+    obtain ⟨_, rfl⟩ := run
+    have first := partialMove_dataIndex conf state middle root root1 headRun
+    have second := ih tail middle final tailRun
+    omega
+
+/-- Reference traversal preserves the partial allocation-index relationship. -/
+theorem partialMoveRefList_dataIndex {α β γ : Type} (conf : GenGcPartial.Config γ)
+    (refs refs1 : List (HeapElement α β)) (state state1 : GcState α γ)
+    (run : GenGcPartial.gcMoveRefList conf state refs = (refs1, state1)) :
+    state1.a + heapLength state.h1 + heapLength state.h2 =
+      state.a + heapLength state1.h1 + heapLength state1.h2 := by
+  induction refs generalizing refs1 state state1 with
+  | nil => simp [GenGcPartial.gcMoveRefList, Prod.mk.injEq] at run; obtain ⟨_, rfl⟩ := run; rfl
+  | cons head tail ih =>
+    cases head with
+    | unused len => simp [GenGcPartial.gcMoveRefList, Prod.mk.injEq] at run; obtain ⟨_, rfl⟩ := run; rfl
+    | forwardPointer ptr value len => simp [GenGcPartial.gcMoveRefList, Prod.mk.injEq] at run; obtain ⟨_, rfl⟩ := run; rfl
+    | dataElement roots len payload =>
+      simp only [GenGcPartial.gcMoveRefList] at run
+      generalize headRun : GenGcPartial.gcMoveList conf state roots = headResult at run
+      obtain ⟨roots1, middle⟩ := headResult
+      generalize tailRun : GenGcPartial.gcMoveRefList conf middle tail = tailResult at run
+      obtain ⟨tail1, final⟩ := tailResult
+      simp only [Prod.mk.injEq] at run
+      obtain ⟨_, rfl⟩ := run
+      have first := partialMoveList_dataIndex conf roots roots1 state middle headRun
+      have second := ih tail1 middle final tailRun
+      omega
+
 /-- A partial root move leaves the scanned data, old region and reference
 accumulators unchanged. This is local infrastructure for the scan proof. -/
 theorem partialMove_fixedFields {α β : Type} (conf : GenGcPartial.Config β)

@@ -45,6 +45,42 @@ theorem partialDataScan_abstractStep {α β : Type} (conf : GenGcPartial.Config 
     simp only [Bool.and_eq_true, decide_eq_true_eq] at flags
     exact ⟨recursive, flags.1.1, flags.1.2, flags.2⟩
 
+/-- Successful partial data scanning preserves the allocation-index and
+copied-data work-list relationship. -/
+theorem partialMoveData_dataIndex {α β : Type} (conf : GenGcPartial.Config β) (state : GcState α β) :
+    (GenGcPartial.gcMoveData conf state).ok = true →
+    (GenGcPartial.gcMoveData conf state).a + heapLength state.h1 + heapLength state.h2 =
+      state.a + heapLength (GenGcPartial.gcMoveData conf state).h1 +
+        heapLength (GenGcPartial.gcMoveData conf state).h2 := by
+  classical
+  induction state using GenGcPartial.gcMoveData.induct conf with
+  | case1 state empty => rw [GenGcPartial.gcMoveData]; simp [empty]
+  | case2 state head tail heap over => rw [GenGcPartial.gcMoveData]; simp [heap, over]
+  | case3 state tail roots len payload roots1 middle move heap bounded flag ih =>
+    intro success
+    obtain ⟨recursive, _, nonempty, headEq⟩ :=
+      partialDataScan_abstractStep conf state middle (GenGcPartial.gcMoveData conf state)
+        roots roots1 len payload tail heap move rfl success
+    have pending : ∃ rest, middle.h2 = .dataElement roots len payload :: rest := by
+      cases h : middle.h2 with
+      | nil => exact False.elim (nonempty h)
+      | cons head rest =>
+        simp only [h, List.head?_cons, Option.some.injEq] at headEq
+        exact ⟨rest, by simp [headEq] at h ⊢⟩
+    obtain ⟨rest, pending⟩ := pending
+    have index := partialMoveList_dataIndex conf roots roots1 state middle move
+    dsimp only [flag] at ih
+    have scan := ih (by rw [recursive]; exact success)
+    rw [recursive] at scan
+    simp only [pending, List.drop_succ_cons, List.drop_zero, heapLength, List.map_append,
+      List.sum_append, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, elLength] at scan index ⊢
+    omega
+  | case4 state head tail heap bounded notData =>
+    cases head with
+    | unused len => rw [GenGcPartial.gcMoveData]; simp [heap, bounded]
+    | forwardPointer ptr value len => rw [GenGcPartial.gcMoveData]; simp [heap, bounded]
+    | dataElement roots len payload => exact False.elim (notData roots len payload rfl)
+
 /-- A nonempty copied-data region has distinct start and end addresses under
 the original partial-heap invariant and byte bound. -/
 theorem partialDataScan_addresses_ne {width : Nat} [NeZero width] {α β : Type}
