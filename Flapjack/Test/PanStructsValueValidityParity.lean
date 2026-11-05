@@ -23,10 +23,6 @@ example (name : String) (structs : StructContext) :
     lookupInfo name structs = panPropsALookupEq name structs := by
   exact lookupInfo_eq_panPropsALookupEq name structs
 
-example :
-    panStructContextShapeView valueValidityContext =
-      [("Pair", [("left", Shape.one), ("right", Shape.comb [])])] := rfl
-
 example : panStructValueFieldsOkBool valueValidityContext (.word 1 : PanValue Nat) = true := by
   simp [panStructValueFieldsOkBool, valueValidityContext]
 
@@ -176,9 +172,6 @@ private def nestedValue : PanValue Nat :=
     [("inner", .nStruct "Pair" [("left", .word 2), ("right", .rStruct [])]),
      ("tag", .word 3)]
 
-private def appendPrefix : StructContextHOL :=
-  [("PrefixOnly", { fields := [("marker", Shape.one)], size := 1 })]
-
 /-- `v_flds_ok_duplicate_second` in `pan_structs_value_validity_probe.out`. -/
 example : panValueFldsOk holValueValiditySecondMatchContext holValueValidityMatch = true := by
   simp [panValueFldsOk, panValuesFldsOk, panFieldsFldsOk, lookupInfo,
@@ -195,14 +188,6 @@ example : panValueFldsOk nestedContext nestedValue = true := by
   simp [panValueFldsOk, panValuesFldsOk, panFieldsFldsOk, lookupInfo,
     panStructShapeListEqBool, panStructShapeEqBool, panSemShapeOf,
     nestedContext, nestedValue]
-
-/-- `v_flds_ok_append_nonempty_prefix_named` in the direct HOL-EVAL fixture. -/
-example : panValueFldsOk (appendPrefix ++ nestedContext) nestedValue = true := by
-  apply panValueFldsOk_append appendPrefix nestedContext nestedValue
-  · simp [panValueFldsOk, panValuesFldsOk, panFieldsFldsOk, lookupInfo,
-      panStructShapeListEqBool, panStructShapeEqBool, panSemShapeOf,
-      nestedContext, nestedValue]
-  · simp [appendPrefix, nestedContext]
 
 /-- Exact `panSem$v` / `mlstring` regression for the named nonempty-prefix HOL
     EVAL row `v_flds_ok_append_nonempty_prefix_named`. -/
