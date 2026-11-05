@@ -2598,4 +2598,178 @@ theorem partialGc_outputWellFormed {α β : Type} (conf : Config β)
       (toGenRoots conf roots ++ refsToRoots conf refs) partialRun original validHeap invariant empty majorInv majorValid refsValid
     exact ⟨roots1, state, rfl, ok, output⟩
 
+/-- Flapjack proof infrastructure: a major-collector source-map entry denotes
+a data object at the corresponding address in the original full heap. -/
+theorem majorMap_sourceData {α β γ : Type} (conf : Config γ)
+    (heap old current refs : List (HeapElement α β)) (f : HolFiniteMapExact Nat Nat)
+    (segment : heapSegment (conf.genStart, conf.refsStart) heap = some (old, current, refs))
+    (majorSource : ∀ i, f.lookup i ≠ none →
+      isSomeDataElement (heapLookup i (toGenHeapList conf current))) :
+    ∀ i, f.lookup i ≠ none → isSomeDataElement (heapLookup (i + conf.genStart) heap) := by
+  obtain ⟨whole, oldLen, _, _⟩ := heapSegment_imp heap conf.genStart conf.refsStart old current refs segment
+  intro i defined
+  have translated := majorSource i defined
+  obtain ⟨children, len, payload, found⟩ := (isSomeDataElement_toGenHeapList conf current i).mp translated
+  have bound := heapLookup_less current i _ found
+  refine ⟨children, len, payload, ?_⟩
+  rw [← whole, List.append_assoc, GenGc.heapLookup_append, oldLen]
+  simp only [Nat.not_lt.mpr (by omega : conf.genStart ≤ i + conf.genStart), if_false,
+    Nat.add_sub_cancel_right]
+  rw [GenGc.heapLookup_append, if_pos bound]
+  exact found
+
+/-- Flapjack proof infrastructure: every defined combined-map source is a
+data object in the original heap. -/
+theorem newForwardMap_sourceData {α β γ : Type} (conf : Config γ)
+    (heap : List (HeapElement α β)) (f : HolFiniteMapExact Nat Nat)
+    (valid : ∀ i, f.lookup i ≠ none → isSomeDataElement (heapLookup (i + conf.genStart) heap)) :
+    ∀ ptr, (newForwardMap f conf heap).lookup ptr ≠ none → isSomeDataElement (heapLookup ptr heap) := by
+  intro ptr defined
+  have domain := (newForwardMap_domain f conf heap ptr valid).mp defined
+  by_cases outside : ptr < conf.genStart ∨ conf.refsStart ≤ ptr
+  · simpa [outside] using domain
+  · simp only [outside, ↓reduceIte] at domain
+    obtain ⟨i, member, rfl⟩ := domain
+    simpa [Nat.add_comm] using valid i member
+
+/-- Flapjack proof infrastructure: current-generation entries in the
+combined map use a defined major-map entry and remain in the generation. -/
+theorem newForwardMap_currentBounds {α β γ : Type} (conf : Config γ)
+    (heap : List (HeapElement α β)) (f : HolFiniteMapExact Nat Nat) (ptr : Nat)
+    (lower : conf.genStart ≤ ptr) (upper : ptr < conf.refsStart)
+    (defined : (newForwardMap f conf heap).lookup ptr ≠ none)
+    (targetBounds : ∀ i, f.lookup i ≠ none → holFapply f i < conf.refsStart - conf.genStart) :
+    f.lookup (ptr - conf.genStart) ≠ none ∧
+      conf.genStart ≤ holFapply (newForwardMap f conf heap) ptr ∧
+      holFapply (newForwardMap f conf heap) ptr < conf.refsStart := by
+  have lookup := newForwardMap_current f conf heap ptr lower upper
+  cases found : f.lookup (ptr - conf.genStart) with
+  | none => simp [found] at lookup; exact False.elim (defined lookup)
+  | some value =>
+    have majorDefined : f.lookup (ptr - conf.genStart) ≠ none := by simp [found]
+    have target := targetBounds (ptr - conf.genStart) majorDefined
+    have mapEq : (newForwardMap f conf heap).lookup ptr = some (conf.genStart + value) := by
+      simpa [found] using lookup
+    have majorEq := holFapply_of_lookup found
+    have partialEq := holFapply_of_lookup mapEq
+    rw [majorEq] at target
+    refine ⟨by simp, ?_, ?_⟩ <;> rw [partialEq] <;> omega
+
+/-- Flapjack proof infrastructure: combining an injective major forwarding
+map with identity outside the generation yields an injective map. -/
+theorem newForwardMap_injective {α β γ : Type} (conf : Config γ)
+    (heap : List (HeapElement α β)) (f : HolFiniteMapExact Nat Nat)
+    (valid : ∀ i, f.lookup i ≠ none → isSomeDataElement (heapLookup (i + conf.genStart) heap))
+    (targetBounds : ∀ i, f.lookup i ≠ none → holFapply f i < conf.refsStart - conf.genStart)
+    (injective : ∀ i j, f.lookup i ≠ none → f.lookup j ≠ none → holFapply f i = holFapply f j → i = j) :
+    ∀ i j, (newForwardMap f conf heap).lookup i ≠ none → (newForwardMap f conf heap).lookup j ≠ none →
+      holFapply (newForwardMap f conf heap) i = holFapply (newForwardMap f conf heap) j → i = j := by
+  intro i j iDefined jDefined equal
+  have iApply := newForwardMap_apply f conf heap i iDefined valid
+  have jApply := newForwardMap_apply f conf heap j jDefined valid
+  by_cases iOutside : i < conf.genStart ∨ conf.refsStart ≤ i
+  · simp only [iOutside, ↓reduceIte] at iApply
+    by_cases jOutside : j < conf.genStart ∨ conf.refsStart ≤ j
+    · simp only [jOutside, ↓reduceIte] at jApply
+      omega
+    · have jLower : conf.genStart ≤ j := by omega
+      have jUpper : j < conf.refsStart := by omega
+      obtain ⟨_, lo, hi⟩ := newForwardMap_currentBounds conf heap f j jLower jUpper jDefined targetBounds
+      omega
+  · have iLower : conf.genStart ≤ i := by omega
+    have iUpper : i < conf.refsStart := by omega
+    obtain ⟨iMajor, ilo, ihi⟩ := newForwardMap_currentBounds conf heap f i iLower iUpper iDefined targetBounds
+    by_cases jOutside : j < conf.genStart ∨ conf.refsStart ≤ j
+    · simp only [jOutside, ↓reduceIte] at jApply
+      omega
+    · have jLower : conf.genStart ≤ j := by omega
+      have jUpper : j < conf.refsStart := by omega
+      obtain ⟨jMajor, _, _⟩ := newForwardMap_currentBounds conf heap f j jLower jUpper jDefined targetBounds
+      simp only [iOutside, ↓reduceIte] at iApply
+      simp only [jOutside, ↓reduceIte] at jApply
+      have fEqual : holFapply f (i - conf.genStart) = holFapply f (j - conf.genStart) := by omega
+      have indices := injective (i - conf.genStart) (j - conf.genStart) iMajor jMajor fEqual
+      omega
+
+/-- Flapjack proof infrastructure: major forwarding-map targets lie within
+the current generation of the reconstructed partial-collector heap. -/
+theorem majorMap_targetBounds {α β : Type} (conf : Config β)
+    (roots roots1 : List (HeapAddress α)) (heap : List (HeapElement α β)) (state : GcState α β)
+    (majorHeap : List (HeapElement (DataSort (HeapAddress α) α) β)) (f : HolFiniteMapExact Nat Nat)
+    (run : partialGc conf (roots, heap) = (roots1, state)) (original : genInv conf heap)
+    (invariant : simInv conf heap state) (empty : state.h2 = [])
+    (related : gcRelated f majorHeap (toGenHeapList conf state.h1 ++ heapExpand state.n)) :
+    ∀ i, f.lookup i ≠ none → holFapply f i < conf.refsStart - conf.genStart := by
+  have boundary := partialGc_outputPrefixLength conf roots roots1 heap state run original invariant empty
+  have originalCopy := original
+  obtain ⟨lower, _, old, current, refs, segment, _⟩ := originalCopy
+  have oldEq := (partialGc_regions conf roots roots1 heap old current refs state segment run).1
+  have oldLen := (heapSegment_imp heap conf.genStart conf.refsStart old current refs segment).2.1
+  have translatedLength : heapLength (toGenHeapList conf state.h1 ++ heapExpand state.n) =
+      conf.refsStart - conf.genStart := by
+    simp only [heapLength_append, heapLength_toGenHeapList, heapLength_heapExpand, oldEq, oldLen] at boundary ⊢
+    omega
+  intro i defined
+  obtain ⟨children, len, data, found⟩ := related.1 i defined
+  have bound := heapLookup_less (toGenHeapList conf state.h1 ++ heapExpand state.n) (holFapply f i) _ found
+  simpa [translatedLength] using bound
+
+/-- Flapjack proof infrastructure: the combined map derived from a valid
+major relation is injective and is defined only on original data objects. -/
+theorem partialGc_combinedMapProperties {α β : Type} (conf : Config β)
+    (roots roots1 : List (HeapAddress α)) (heap old current refs : List (HeapElement α β))
+    (state : GcState α β) (f : HolFiniteMapExact Nat Nat)
+    (run : partialGc conf (roots, heap) = (roots1, state)) (original : genInv conf heap)
+    (invariant : simInv conf heap state) (empty : state.h2 = [])
+    (segment : heapSegment (conf.genStart, conf.refsStart) heap = some (old, current, refs))
+    (related : gcRelated f (toGenHeapList conf current) (toGenHeapList conf state.h1 ++ heapExpand state.n)) :
+    (∀ i j, (newForwardMap f conf heap).lookup i ≠ none → (newForwardMap f conf heap).lookup j ≠ none →
+      holFapply (newForwardMap f conf heap) i = holFapply (newForwardMap f conf heap) j → i = j) ∧
+    (∀ i, (newForwardMap f conf heap).lookup i ≠ none → isSomeDataElement (heapLookup i heap)) := by
+  have source := majorMap_sourceData conf heap old current refs f segment related.2.2.1
+  have targets := majorMap_targetBounds conf roots roots1 heap state (toGenHeapList conf current) f
+    run original invariant empty related
+  exact ⟨newForwardMap_injective conf heap f source targets related.2.1,
+    newForwardMap_sourceData conf heap f source⟩
+
+/-- Flapjack proof infrastructure: each defined combined-map entry points to
+a data object in the reconstructed partial-collector output heap. -/
+theorem partialGc_combinedMapTargetData {α β : Type} (conf : Config β)
+    (roots roots1 : List (HeapAddress α)) (heap old current refs : List (HeapElement α β))
+    (state : GcState α β) (f : HolFiniteMapExact Nat Nat)
+    (run : partialGc conf (roots, heap) = (roots1, state)) (original : genInv conf heap)
+    (invariant : simInv conf heap state) (empty : state.h2 = [])
+    (segment : heapSegment (conf.genStart, conf.refsStart) heap = some (old, current, refs))
+    (related : gcRelated f (toGenHeapList conf current) (toGenHeapList conf state.h1 ++ heapExpand state.n)) :
+    ∀ i, (newForwardMap f conf heap).lookup i ≠ none →
+      isSomeDataElement (heapLookup (holFapply (newForwardMap f conf heap) i)
+        (state.old ++ state.h1 ++ heapExpand state.n ++ state.r1)) := by
+  have source := majorMap_sourceData conf heap old current refs f segment related.2.2.1
+  have targets := majorMap_targetBounds conf roots roots1 heap state (toGenHeapList conf current) f
+    run original invariant empty related
+  have boundary := partialGc_outputPrefixLength conf roots roots1 heap state run original invariant empty
+  have oldEq := (partialGc_regions conf roots roots1 heap old current refs state segment run).1
+  have oldLen := (heapSegment_imp heap conf.genStart conf.refsStart old current refs segment).2.1
+  intro i defined
+  have mapEq := newForwardMap_apply f conf heap i defined source
+  by_cases outside : i < conf.genStart ∨ conf.refsStart ≤ i
+  · simp only [outside, ↓reduceIte] at mapEq
+    rw [mapEq]
+    obtain ⟨children, len, data, found⟩ := newForwardMap_sourceData conf heap f source i defined
+    rcases outside with before | after
+    · have output := heapLookup_old conf roots roots1 heap state i (state.h1 ++ heapExpand state.n ++ state.r1)
+        children len data run original found before
+      exact ⟨children, len, data, by simpa [List.append_assoc] using output⟩
+    · obtain ⟨children1, result⟩ :=
+        heapLookup_refs conf roots roots1 heap state i children len data run original found boundary after
+      exact ⟨children1, len, data, result⟩
+  · have lower : conf.genStart ≤ i := by omega
+    have upper : i < conf.refsStart := by omega
+    simp only [outside, ↓reduceIte] at mapEq
+    obtain ⟨majorDefined, _, _⟩ := newForwardMap_currentBounds conf heap f i lower upper defined targets
+    have majorTarget := related.1 (i - conf.genStart) majorDefined
+    have output := translatedCopiedData_inOutput conf state.old state.h1 state.r1 state.n
+      (holFapply f (i - conf.genStart)) ((congrArg heapLength oldEq).trans oldLen) majorTarget
+    simpa [mapEq] using output
+
 end Flapjack.Compiler.Backend.GenGcPartial
