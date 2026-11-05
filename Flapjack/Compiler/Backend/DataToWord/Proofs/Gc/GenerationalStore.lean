@@ -8,6 +8,90 @@ namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Backend.WordGcFunctions
 open Flapjack.Compiler.Backend.DataToWord.Proofs.Memory Flapjack.Compiler.Backend.GcCombined
 
+/-- If an allocation fits in the available space, the chosen trigger is no
+smaller than that allocation. This factors the source's local trigger fact. -/
+theorem newTrig_alloc_le {width : Nat} [NeZero width] (space alloc : BitVec width) (limits : List Nat)
+    (fits : alloc ≤ space) : alloc ≤ newTrig space alloc limits := by
+  have fitsNat : alloc.toNat ≤ space.toNat := by simpa only [BitVec.le_def] using fits
+  by_cases allocLeGen : alloc.toNat ≤ (getGenSize limits : BitVec width).toNat
+  ·
+    have minBound : min space.toNat (getGenSize limits : BitVec width).toNat < 2 ^ width :=
+      lt_of_le_of_lt (Nat.min_le_left _ _) space.isLt
+    simp only [newTrig, allocLeGen, ↓reduceIte, BitVec.le_def, BitVec.toNat_ofNat, Nat.mod_eq_of_lt minBound]
+    exact Nat.le_min.mpr ⟨fitsNat, allocLeGen⟩
+  · have notSmall : ¬ space.toNat < alloc.toNat := by omega
+    by_cases aligned : holByteAligned alloc = true
+    · simp [newTrig, allocLeGen, notSmall, aligned]
+    · simp [newTrig, allocLeGen, notSmall, aligned, BitVec.le_def, fitsNat]
+
+/-- Moving an allocation pointer earlier within a bounded heap cannot reduce
+the unsigned byte space remaining before its end. -/
+theorem partialAvailableSpace_mono {width : Nat} [NeZero width] (base : BitVec width)
+    (earlier later finish : Nat) (ordered : earlier ≤ later) (within : later ≤ finish)
+    (bound : finish * (width / 8) < 2 ^ width) (good : goodDimindex width) :
+    (base + wordSemBytesInWord * BitVec.ofNat width finish) -
+        (base + wordSemBytesInWord * BitVec.ofNat width later) ≤
+      (base + wordSemBytesInWord * BitVec.ofNat width finish) -
+        (base + wordSemBytesInWord * BitVec.ofNat width earlier) := by
+  have bytesPos : 0 < width / 8 := by rcases good with rfl | rfl <;> decide
+  have finishSmall : finish < 2 ^ width := by
+    have le := Nat.le_mul_of_pos_right finish bytesPos
+    omega
+  have earlierSmall : earlier < 2 ^ width := by omega
+  have laterSmall : later < 2 ^ width := by omega
+  have cancelCommon (x y z : BitVec width) : (x + y) - (x + z) = y - z := by
+    apply BitVec.sub_eq_iff_eq_add.mpr
+    calc
+      x + y = x + ((y - z) + z) := by rw [BitVec.sub_add_cancel]
+      _ = (y - z) + (x + z) := by ac_rfl
+  simp only [cancelCommon, ← BitVec.mul_sub,
+    BitVec.ofNat_sub_ofNat_of_le finish later laterSmall within,
+    BitVec.ofNat_sub_ofNat_of_le finish earlier earlierSmall (le_trans ordered within)]
+  have smallerBound : (width / 8) * (finish - later) < 2 ^ width := by
+    have le := Nat.mul_le_mul_left (width / 8) (Nat.sub_le finish later)
+    rw [Nat.mul_comm] at bound
+    omega
+  have largerBound : (width / 8) * (finish - earlier) < 2 ^ width := by
+    have le := Nat.mul_le_mul_left (width / 8) (Nat.sub_le finish earlier)
+    rw [Nat.mul_comm] at bound
+    omega
+  simp only [BitVec.le_def, BitVec.toNat_mul, wordSemBytesInWord, BitVec.toNat_ofNat]
+  rcases good with h | h <;> subst width <;>
+    norm_num at smallerBound largerBound ⊢ <;> omega
+
+/-- The partial-selection test guarantees that an allocation still fits if
+the collector's new pointer does not pass the previous trigger. -/
+theorem partialAllocation_fits {width : Nat} [NeZero width] (conf : Config)
+    (heap : List (HeapElement (WordLocW width) (HeapTag × List (WordLocW width))))
+    (a sp sp1 limit newIndex : Nat) (gens : GenState) (limits : List Nat)
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (memory : BitVec width → WordLocW width) (domain : BitVec width → Bool) (curr : BitVec width)
+    (selected : wordGenGcCanDoPartial limits store) (indexBound : newIndex ≤ a + sp)
+    (heapBound : a + sp + sp1 ≤ heapLength heap) (good : goodDimindex width)
+    (heapMem : heapInMemoryStore heap a sp sp1 gens conf store memory domain limit)
+    (currLookup : store.lookup .currHeap = some (.word curr)) :
+    wordSemTheWord (holFapply store .allocSize) ≤
+      (curr + wordSemBytesInWord * BitVec.ofNat width (a + sp + sp1)) -
+        (curr + wordSemBytesInWord * BitVec.ofNat width newIndex) := by
+  rcases heapMem with ⟨_, byteBound, _, _, _, _, _, oldCurr, other, _, _, oldCurrLookup, _, _, trigger, endHeap, _⟩
+  have same : oldCurr = curr := by simpa [oldCurrLookup] using currLookup
+  subst oldCurr
+  have triggerValue := holFapply_of_lookup trigger
+  have endValue := holFapply_of_lookup endHeap
+  have chosen : wordSemTheWord (holFapply store .allocSize) ≤
+      (curr + wordSemBytesInWord * BitVec.ofNat width (a + sp + sp1)) -
+        (curr + wordSemBytesInWord * BitVec.ofNat width (a + sp)) := by
+    simpa [wordGenGcCanDoPartial, triggerValue, endValue, wordSemTheWord,
+      wordSemBytesInWord, StackRemove.bytesInWord] using selected.2
+  have endBound : (a + sp + sp1) * (width / 8) < 2 ^ width :=
+    lt_of_le_of_lt (Nat.mul_le_mul_right _ (by omega)) byteBound
+  have monotone := partialAvailableSpace_mono curr newIndex (a + sp) (a + sp + sp1)
+    indexBound (by omega) endBound good
+  apply BitVec.le_def.mpr
+  have first := BitVec.le_def.mp chosen
+  have second := BitVec.le_def.mp monotone
+  omega
+
 /-- A selectable partial collection has a nonempty abstract generation list,
 and the stored generation-start word represents its first boundary. -/
 theorem partialGenStart_store {width : Nat} [NeZero width] (conf : Config)
@@ -221,9 +305,9 @@ theorem combinedMajor_store_execution {width : Nat} [NeZero width] (conf : Confi
   simp only [List.map_cons] at concrete
   simp [wordGcFun, kind, full, globalValue, currValue, otherValue, sizeValue, wordSemTheWord, concrete, holHd, assum]
 
-/-- Execute the concrete partial branch once its allocation-space check is
-known to hold. Deriving that check from the source invariant remains part of
-the enclosing store-correctness proof. -/
+/-- Execute the concrete partial branch when the collector's new allocation
+pointer stays below the previous trigger. Deriving that heap bound from the
+source invariant remains part of the enclosing store-correctness proof. -/
 theorem combinedPartial_store_execution {width : Nat} [NeZero width] (conf : Config)
     (root root1 : HeapAddress (WordLocW width)) (roots roots1 : List (HeapAddress (WordLocW width)))
     (heap heap1 : List (HeapElement (WordLocW width) (HeapTag × List (WordLocW width))))
@@ -238,13 +322,9 @@ theorem combinedPartial_store_execution {width : Nat} [NeZero width] (conf : Con
     (ordered : (makePartialConf (makeGcConf (α := List (WordLocW width)) limit) gens (a + sp + sp1)).genStart ≤ a + sp + sp1)
     (refBound : a + sp + sp1 ≤ heapLength heap) (good : goodDimindex width)
     (heapMem : heapInMemoryStore heap a sp sp1 gens conf store memory domain limit)
-    (enough : ∀ (curr : BitVec width) (state : GcState (WordLocW width) (HeapTag × List (WordLocW width))),
-      store.lookup .currHeap = some (.word curr) →
+    (allocationBound : ∀ (state : GcState (WordLocW width) (HeapTag × List (WordLocW width))),
       GenGcPartial.partialGc (makePartialConf (makeGcConf limit) gens (a + sp + sp1)) (root :: roots, heap) = (root1 :: roots1, state) →
-      let endh := curr + wordSemBytesInWord * BitVec.ofNat width (a + sp + sp1)
-      let pa := curr + wordSemBytesInWord * BitVec.ofNat width (heapLength (state.old ++ state.h1))
-      let alloc := wordSemTheWord (holFapply store .allocSize)
-      alloc ≤ endh - pa ∧ alloc ≤ newTrig (endh - pa) alloc limits) :
+      heapLength (state.old ++ state.h1) ≤ a + sp) :
     ∃ curr other : BitVec width, ∃ outMemory : BitVec width → WordLocW width,
       ∃ state : GcState (WordLocW width) (HeapTag × List (WordLocW width)),
       let pa := curr + wordSemBytesInWord * BitVec.ofNat width (heapLength (state.old ++ state.h1))
@@ -287,7 +367,14 @@ theorem combinedPartial_store_execution {width : Nat} [NeZero width] (conf : Con
     have same : oldCurr = curr := by simpa [oldCurrLookup] using currLookup
     subst oldCurr
     exact holFapply_of_lookup oldEnd
-  have enough' := enough curr state currLookup abstractRun
+  have enoughSpace := partialAllocation_fits conf heap a sp sp1 limit (heapLength (state.old ++ state.h1))
+    gens limits store memory domain curr selected (allocationBound state abstractRun) refBound good heapMem currLookup
+  have enough' :
+      let endh := curr + wordSemBytesInWord * BitVec.ofNat width (a + sp + sp1)
+      let pa := curr + wordSemBytesInWord * BitVec.ofNat width (heapLength (state.old ++ state.h1))
+      let alloc := wordSemTheWord (holFapply store .allocSize)
+      alloc ≤ endh - pa ∧ alloc ≤ newTrig (endh - pa) alloc limits :=
+    ⟨enoughSpace, newTrig_alloc_le _ _ limits enoughSpace⟩
   have endOffset : (curr + wordSemBytesInWord * BitVec.ofNat width (a + sp + sp1)) - curr =
       wordSemBytesInWord * BitVec.ofNat width (a + sp + sp1) := by
     simp only [BitVec.add_comm curr, BitVec.add_sub_cancel]
