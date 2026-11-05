@@ -203,6 +203,31 @@ theorem bviWordOutcomes64_of_data {C F : Type} (conf : DataToWord.Config) (l1 l2
         resultEq, sourceRun, targetRun, jump, ffiEq, bound, stack, related⟩))
   · exact Or.inr (Or.inr (Or.inr outOfSpace))
 
+/-- Word execution preserves the final BVI FFI state for ordinary outcomes;
+on allocation failure its event trace is a prefix of the BVI trace. This is
+Flapjack composition infrastructure for the two candidate state relations. -/
+theorem bviWordOutcomes64_ffi {C F : Type} (conf : DataToWord.Config) (l1 l2 : Nat)
+    (result : BviSem.BviResult) (body : DataLang.Prog) (wordBody : WordLangProgHOL (BitVec 64))
+    (source : DataSem.State C F) (target : WordSemStateFiniteExact 64 C F) (locs : List (Nat × Nat))
+    (bviFinal : BviSem.BviState C F)
+    (dataFfi : (DataSem.evaluate body source).2.ffi = bviFinal.ffi)
+    (outcome : bviWordOutcomes64 conf l1 l2 result body wordBody source target locs) :
+    ∃ wordResult targetFinal, WordSemStateFiniteExact.evaluate wordBody target = (some wordResult, targetFinal) ∧
+      ((wordResult ≠ .notEnoughSpace ∧ targetFinal.ffi = bviFinal.ffi) ∨
+        (wordResult = .notEnoughSpace ∧ targetFinal.ffi.ioEvents <+: bviFinal.ffi.ioEvents)) := by
+  rcases outcome with returned | timeout | raised | outOfSpace
+  · obtain ⟨values, words, s, t, length, resultEq, sourceRun, targetRun, related⟩ := returned
+    have sourceFfi : s.ffi = bviFinal.ffi := by simpa [sourceRun] using dataFfi
+    exact ⟨_, t, targetRun, Or.inl ⟨by simp, related.1.trans sourceFfi⟩⟩
+  · obtain ⟨s, t, resultEq, sourceRun, targetRun, ffiEq, bound⟩ := timeout
+    have sourceFfi : s.ffi = bviFinal.ffi := by simpa [sourceRun] using dataFfi
+    exact ⟨_, t, targetRun, Or.inl ⟨by simp, ffiEq.trans sourceFfi⟩⟩
+  · obtain ⟨value, word, s, t, a, b, r1, r2, remaining, resultEq, sourceRun, targetRun, jump, ffiEq, bound, stack, related⟩ := raised
+    have sourceFfi : s.ffi = bviFinal.ffi := by simpa [sourceRun] using dataFfi
+    exact ⟨_, t, targetRun, Or.inl ⟨by simp, ffiEq.trans sourceFfi⟩⟩
+  · obtain ⟨t, targetRun, bound, events, unsafeProof⟩ := outOfSpace
+    exact ⟨_, t, targetRun, Or.inr ⟨rfl, by simpa [dataFfi] using events⟩⟩
+
 /-- A non-type-error BVI evaluation corresponds to the emitted word body's
 return, timeout, exception, or allocation-failure outcome. This connects the
 two existing Lean-side pass proofs; their candidate relations, exception
@@ -237,7 +262,10 @@ theorem configuredBviSpaceFragment_fromBvi {C F : Type} (fuel : Nat)
       BviToData.stateRel nextBvi { final with localsSize := localsSize, stackMax := stackMax, safeForSpace := safe, peakHeapLength := peak } ∧
       BviToData.correctOutcome bviResult sourceState final env.length next (List.range env.length)
         [] dataNames env true (some dataResult) ls ∧
-      bviWordOutcomes64 word l1 l2 bviResult (BviToData.compileExp arity body) wordBody sourceState targetState locs := by
+      bviWordOutcomes64 word l1 l2 bviResult (BviToData.compileExp arity body) wordBody sourceState targetState locs ∧
+      ∃ wordResult targetFinal, WordSemStateFiniteExact.evaluate wordBody targetState = (some wordResult, targetFinal) ∧
+        ((wordResult ≠ .notEnoughSpace ∧ targetFinal.ffi = nextBvi.ffi) ∨
+          (wordResult = .notEnoughSpace ∧ targetFinal.ffi.ioEvents <+: nextBvi.ffi.ioEvents)) := by
   have safe : (DataSem.evaluate (BviToData.compileExp arity body) sourceState).1 ≠
       some (.err (.abort .typeError)) := by
     simpa [envLength] using BviToData.compileExp_notType body env bviState nextBvi bviResult
@@ -255,7 +283,12 @@ theorem configuredBviSpaceFragment_fromBvi {C F : Type} (fuel : Nat)
     simpa [envLength] using dataRun
   have bviWord := bviWordOutcomes64_of_data word l1 l2 bviResult (BviToData.compileExp arity body)
     wordBody sourceState targetState locs dataResult _ actualDataRun outcome.1 outcome.2.1 wordOutcome
+  have dataFfi : (DataSem.evaluate (BviToData.compileExp arity body) sourceState).2.ffi = nextBvi.ffi := by
+    rw [actualDataRun]
+    exact finalRel.2.2.2.2.2.1.symm
+  have observations := bviWordOutcomes64_ffi word l1 l2 bviResult (BviToData.compileExp arity body)
+    wordBody sourceState targetState locs nextBvi dataFfi bviWord
   exact ⟨code, wordBody, dataResult, final, dataNames, next, ls, localsSize, stackMax, safeFlag, peak,
-    wordRun, outputLookup, targetLookup, actualDataRun, finalRel, outcome, bviWord⟩
+    wordRun, outputLookup, targetLookup, actualDataRun, finalRel, outcome, bviWord, observations⟩
 
 end Flapjack.Compiler.Backend.SourceToFlat
