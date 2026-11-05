@@ -94,4 +94,46 @@ theorem combinedGc_stack_correct {width : Nat} [NeZero width] (conf : Config)
       subst sizes
       exact allocation full requested alloc bound
 
+/-- Collector correctness without assuming the input roots are nonempty: the
+relation to the stored global and stack roots entails that fact. The result
+uses the actual word evaluator's space check for arbitrary surrounding word
+state; it remains local until the HOL declaration and carrier types are reviewed. -/
+theorem combinedGc_correct {width : Nat} [NeZero width] (conf : Config)
+    (value : DataSem.Value) (stack : List (DataSem.Value × WordLocW width))
+    (references : Spt (BvlSem.Ref DataSem.Value)) (roots roots1 : List (HeapAddress (WordLocW width)))
+    (heap heap1 : List (HeapElement (WordLocW width) (HeapTag × List (WordLocW width))))
+    (be : Bool) (a sp sp1 limit next a1 n1 : Nat) (gens gens1 : GenState)
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (memory : BitVec width → WordLocW width) (domain : BitVec width → Bool)
+    (source : absMlInv conf (value :: stack.map Prod.fst) references (roots, heap, be, a, sp, sp1, gens) limit next)
+    (good : goodDimindex width) (heapMem : heapInMemoryStore heap a sp sp1 gens conf store memory domain limit)
+    (related : List.Forall₂ (fun v w => wordAddr conf v = w) roots
+      (holFapply store .globals :: stack.map Prod.snd))
+    (run : gcCombined (makeGcConf (α := List (WordLocW width)) limit) conf.gcKind
+      (roots, heap, gens, a + sp + sp1, doPartial conf store) = (roots1, heap1, a1, n1, gens1, true)) :
+    ∃ stack1 outMemory outStore k2 k3,
+      wordGcFun conf (stack.map Prod.snd, memory, domain, store) = some (stack1, outMemory, outStore) ∧
+      heapInMemoryStore heap1 a1 k2 k3 gens1 conf outStore outMemory domain limit ∧ k2 + k3 = n1 ∧
+      (∀ (limits : List Nat) (request : BitVec width), conf.gcKind = .generational limits →
+        wordGenGcCanDoPartial limits store → store.lookup .allocSize = some (.word request) →
+        ∀ {C F : Type} (state : WordSemStateFiniteExact width C F),
+          WordSemStateFiniteExact.hasSpace (.word request) { state with store := outStore } = some true) ∧
+      ((conf.gcKind = .none ∨ conf.gcKind = .simple) → k3 = 0) ∧
+      (∀ limits requested, conf.gcKind = .generational limits → ¬ wordGenGcCanDoPartial limits store →
+        store.lookup .allocSize = some (.word
+          (if requested * (width / 8) < 2 ^ width then BitVec.ofNat width (requested * (width / 8)) else -1)) →
+        requested ≤ n1 → requested ≤ k2) ∧
+      List.Forall₂ (fun v w => wordAddr conf v = w) roots1
+        (holFapply outStore .globals :: (((stack.map Prod.fst).zip stack1).map Prod.snd)) ∧
+      stack1.length = stack.length := by
+  cases related with
+  | cons global tail =>
+    obtain ⟨stack1, outMemory, outStore, k2, k3, root1, rest, execution, invariant, freeSum, zero,
+      rootsOut, globalOut, stackOut, length, _, space, allocation⟩ :=
+      combinedGc_stack_correct conf value stack references _ _ roots1 heap heap1 be a sp sp1 limit next a1 n1
+        gens gens1 store memory domain source good heapMem global tail run
+    refine ⟨stack1, outMemory, outStore, k2, k3, execution, invariant, freeSum, space, zero, allocation, ?_, length⟩
+    rw [rootsOut]
+    exact .cons globalOut stackOut
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
