@@ -390,4 +390,55 @@ theorem makeSpace64_outcomes {C F : Type} (conf : Config) (secn label l1 l2 : Na
     exact makeSpace64_slow_branches_anyFfi conf secn label l1 l2 source target locs related amount live saved cut
       nextFree trigger nextStore triggerStore branch
 
+/-- The `makeSpace` case in the source/target outcome shape: a source run
+that is not a type error yields either related normal states or the permitted
+allocation failure, including the event-prefix and resource bounds. This is
+Flapjack-specific because `stateRel64` is still a candidate relation. -/
+theorem makeSpace64_case {C F : Type} (conf : Config) (secn label l1 l2 : Nat)
+    (source : DataSem.State C F) (target : WordSemStateFiniteExact 64 C F)
+    (locs : List (Nat × Nat)) (related : stateRel64 conf l1 l2 source target none locs)
+    (amount : Nat) (live : NumSet) (result : Option (Flapjack.SemanticPrimitivesHOL.Result (List DataSem.Value) DataSem.Value)) (sourceNext : DataSem.State C F)
+    (sourceRun : DataSem.evaluate (.makeSpace amount live) source = (result, sourceNext))
+    (notTypeError : result ≠ some (.err (.abort .typeError))) :
+    ∃ targetResult targetNext,
+      WordSemStateFiniteExact.evaluate (compileControl64 conf secn label (.makeSpace amount live)).1 target =
+        (targetResult, targetNext) ∧
+      BackendProps.optionLe targetNext.stackMax sourceNext.stackMax ∧
+      (targetResult = some .notEnoughSpace →
+        targetNext.ffi.ioEvents <+: sourceNext.ffi.ioEvents ∧
+        (conf.gcKind ≠ .none → sourceNext.safeForSpace = false)) ∧
+      (targetResult ≠ some .notEnoughSpace →
+        result = none ∧ targetResult = none ∧ stateRel64 conf l1 l2 sourceNext targetNext none locs) := by
+  cases cut : DataSem.cutEnv live source.locals with
+  | none =>
+    have bad : (DataSem.evaluate (.makeSpace amount live) source).1 = some (.err (.abort .typeError)) := by
+      simp [DataSem.evaluate, cut]
+    rw [sourceRun] at bad
+    exact False.elim (notTypeError bad)
+  | some saved =>
+    have sourceEq : result = none ∧ sourceNext = DataSem.addSpace { source with locals := saved } amount := by
+      simpa [DataSem.evaluate, cut] using sourceRun.symm
+    rcases sourceEq with ⟨rfl, rfl⟩
+    rcases makeSpace64_outcomes conf secn label l1 l2 source target locs related amount live saved cut with success | failure
+    · obtain ⟨s, t, src, tgt, rel⟩ := success
+      have sEq : s = DataSem.addSpace { source with locals := saved } amount := by
+        simpa [DataSem.evaluate, cut] using src.symm
+      subst s
+      have relCopy := rel
+      rcases rel with ⟨_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, bound, _⟩
+      refine ⟨none, t, tgt, ?_, ?_, ?_⟩
+      · simpa [DataSem.addSpace] using bound
+      · intro impossible
+        contradiction
+      · intro _
+        exact ⟨rfl, rfl, relCopy⟩
+    · obtain ⟨t, run, ffi, bound, unsafeProof⟩ := failure
+      refine ⟨some .notEnoughSpace, t, run, ?_, ?_, ?_⟩
+      · simpa [DataSem.addSpace] using bound
+      · intro _
+        refine ⟨?_, unsafeProof⟩
+        simp [ffi, DataSem.addSpace]
+      · intro impossible
+        exact False.elim (impossible rfl)
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Correct
