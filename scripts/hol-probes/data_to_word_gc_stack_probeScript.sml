@@ -156,6 +156,11 @@ val _ = show "filter_lemma_typed" gc_sharedTheory.FILTER_LEMMA;
 val _ = show "heaps_similar_refl_typed" gc_sharedTheory.heaps_similar_REFL;
 val _ = show "heap_map_empty_typed" gc_sharedTheory.heap_map_EMPTY;
 val _ = show "copying_gc_inv_typed" copying_gcTheory.gc_inv_def;
+val _ = show "copying_heap_addresses_snoc_typed_replay"
+  (prove (``!xs n x. heap_addresses n (xs ++ [x]) =
+                     heap_addresses n xs UNION {heap_length xs + n}``,
+          simp [gc_sharedTheory.heap_addresses_APPEND, gc_sharedTheory.heap_addresses_def,
+                arithmeticTheory.ADD_COMM]));
 val _ = show "heaps_similar_imp_heap_length_typed" gc_sharedTheory.heaps_similar_IMP_heap_length;
 val _ = show "heap_similar_data_imp_typed" gc_sharedTheory.heap_similar_Data_IMP;
 val _ = show "heaps_similar_lemma_typed" gc_sharedTheory.heaps_similar_lemma;

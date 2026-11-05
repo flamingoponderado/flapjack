@@ -134,4 +134,58 @@ theorem gcInv_move_fresh_core {α β : Type} (h1 h2 heap heap0 : List (HeapEleme
     rw [heapEq] at old
     exact heapMap_forward_submap before after ys len a data value i j old
 
+/-- Reconstruct the size, free-space, heap similarity, and data-element
+components of the fresh-copy post-state. This isolates part of the remaining
+copying collector move proof; the map bijection and lookup clauses are not
+assumed or concluded here. -/
+theorem gcInv_move_fresh_structure {α β : Type}
+    (h1 h2 before after heap0 : List (HeapElement α β)) (a n limit len : Nat)
+    (roots0 ys : List (HeapAddress α)) (value : α) (data : β) (ok : Bool)
+    (invariant : gcInv h1 h2 a n (before ++ .dataElement ys len data :: after) ok limit heap0 roots0) :
+    (a + (len + 1)) + (n - (len + 1)) = limit ∧
+    a + (len + 1) = heapLength (h1 ++ (h2 ++ [.dataElement ys len data])) ∧
+    n - (len + 1) = heapLength ((before ++ .forwardPointer a value len :: after).filter
+      (fun h => !(isForwardPointer h))) ∧
+    heapLength (before ++ .forwardPointer a value len :: after) = limit ∧
+    heapsSimilar heap0 (before ++ .forwardPointer a value len :: after) ∧
+    (∀ h ∈ h1, isDataElement h) ∧
+    (∀ h ∈ h2 ++ [.dataElement ys len data], isDataElement h) := by
+  obtain ⟨balance, allocated, free, _, heapSize, _, similar, h1Data, h2Data, _⟩ := invariant
+  have enough : len + 1 ≤ n := by
+    simp [List.filter_append, isForwardPointer, heapLength, elLength,
+      List.map_append, List.sum_append] at free
+    omega
+  refine ⟨by omega, ?_, ?_, ?_, ?_, h1Data, ?_⟩
+  · simp [heapLength, List.map_append, List.sum_append, elLength] at allocated ⊢
+    omega
+  · simp [List.filter_append, isForwardPointer, heapLength, elLength,
+      List.map_append, List.sum_append] at free ⊢
+    omega
+  · simpa [heapLength, List.map_append, List.sum_append, elLength] using heapSize
+  · simpa [← allocated] using heapsSimilar_forward before heap0 after h1 h2 ys len data value similar
+  · intro h member
+    simp only [List.mem_append, List.mem_singleton] at member
+    rcases member with member | rfl
+    · exact h2Data h member
+    · exact ⟨ys, len, data, rfl⟩
+
+/-- Appending an element adds exactly its starting address to the heap's
+address set. -/
+@[hol "cakeml/compiler/backend/gc/copying_gcScript.sml" "heap_addresses_SNOC"]
+theorem heapAddresses_snoc {α β : Type} (xs : List (HeapElement α β))
+    (n : Nat) (x : HeapElement α β) :
+    heapAddresses n (xs ++ [x]) =
+      (fun p => heapAddresses n xs p ∨ p = heapLength xs + n) := by
+  rw [heapAddresses_append]
+  funext p
+  simp [heapAddresses, Nat.add_comm]
+
+/-- The address immediately after a heap is fresh. This Flapjack proof step
+follows from the source heap-address upper bound. -/
+theorem heapAddresses_end_fresh {α β : Type} (xs : List (HeapElement α β)) :
+    ¬heapAddresses 0 xs (heapLength xs) := by
+  intro member
+  have bound := heapAddresses_less_heapLength xs 0 (heapLength xs) member
+  simp at bound
+
 end Flapjack.Compiler.Backend.CopyingGc

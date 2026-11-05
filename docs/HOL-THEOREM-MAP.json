@@ -1082,6 +1082,14 @@
   "reviewer": "Compared heap_map_empty_typed: no forwarding pointers yields empty FDOM at any starting offset, expressed as a defined-lookup predicate equality; heap element payload types remain independent. The imported heapMap result has its reviewed lookup witness."
 },
 {
+  "hol_path": "cakeml/compiler/backend/gc/copying_gcScript.sml",
+  "hol_name": "heap_addresses_SNOC",
+  "lean_path": "Flapjack/Compiler/Backend/CopyingGc/Proofs/Invariant.lean",
+  "lean_name": "heapAddresses_snoc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the local source statement and copying_heap_addresses_snoc_typed_replay: appending one arbitrary element adds its starting address to the set; both heap payload carriers remain independent."
+},
+{
   "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
   "hol_name": "heaps_similar_def",
   "lean_path": "Flapjack/Compiler/Backend/GcShared/HeapSimilarity.lean",
