@@ -1,6 +1,6 @@
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.MakeSpaceGc
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.If
-import Flapjack.Compiler.Backend.Semantics.DataProps.PrimitiveResources
+import Flapjack.Compiler.Backend.Semantics.DataProps.ResourceMonotonicity
 
 /-! Composing allocation failure with continuing commands. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Correct
@@ -77,6 +77,53 @@ theorem seq64_outOfSpaceSecond {C F : Type} (conf : Config) (secn label l1 l2 : 
       WordSemStateFiniteExact.fixClock, oldClock, newClock, minEq, targetClamped]
   exact ⟨final, targetEq.trans finalRun, by simpa [sourceEq] using bound,
     by simpa [sourceEq] using events, by simpa [sourceEq] using unsafeProof⟩
+
+/-- Failure in the first compiled command propagates through the sequence,
+provided the source continuation satisfies the three monotonicity induction
+properties. No target execution of the second command is assumed. -/
+theorem seq64_outOfSpaceFirst {C F : Type} (conf : Config) (secn label : Nat)
+    (first second : DataLang.Prog) (source : DataSem.State C F)
+    (target : WordSemStateFiniteExact 64 C F)
+    (firstFailure : outOfSpace64 conf secn label first source target)
+    (secondMono : ∀ state : DataSem.State C F, DataSem.ResourceMono second state) :
+    outOfSpace64 conf secn label (.seq first second) source target := by
+  obtain ⟨firstTarget, targetRun, bound, events, unsafeProof⟩ := firstFailure
+  let final := (WordSemStateFiniteExact.fixClock target
+    ((some .notEnoughSpace : Option (WordSemResult 64)), firstTarget)).2
+  have targetSeq : WordSemStateFiniteExact.evaluate (compileControl64 conf secn label (.seq first second)).1 target =
+      (some .notEnoughSpace, final) := by
+    simp [compileControl64_seq, WordSemStateFiniteExact.evaluate, targetRun, final,
+      WordSemStateFiniteExact.fixClock]
+  cases sourceRun : DataSem.evaluate first source with
+  | mk result middle =>
+    have sourceFacts : BackendProps.optionLe firstTarget.stackMax middle.stackMax ∧
+        firstTarget.ffi.ioEvents <+: middle.ffi.ioEvents ∧
+        (conf.gcKind ≠ .none → middle.safeForSpace = false) := by
+      simpa [sourceRun] using And.intro bound (And.intro events unsafeProof)
+    cases result with
+    | some result =>
+      refine ⟨final, targetSeq, ?_, ?_, ?_⟩
+      · simpa [DataSem.evaluate, sourceRun, DataSem.fixClock, final, WordSemStateFiniteExact.fixClock] using sourceFacts.1
+      · simpa [DataSem.evaluate, sourceRun, DataSem.fixClock, final, WordSemStateFiniteExact.fixClock] using sourceFacts.2.1
+      · simpa [DataSem.evaluate, sourceRun, DataSem.fixClock] using sourceFacts.2.2
+    | none =>
+      let clamped := { middle with clock := min source.clock middle.clock }
+      have seqRun : DataSem.evaluate (.seq first second) source = DataSem.evaluate second clamped := by
+        simp [DataSem.evaluate, sourceRun, DataSem.fixClock, clamped]
+      have nextFacts := secondMono clamped
+      refine ⟨final, targetSeq, ?_, ?_, ?_⟩
+      · rw [seqRun]
+        exact BackendProps.optionLe_trans _ _ _ ⟨sourceFacts.1, nextFacts.2.1⟩
+      · rw [seqRun]
+        exact List.IsPrefix.trans sourceFacts.2.1 nextFacts.1
+      · rw [seqRun]
+        intro active
+        have wasUnsafe := sourceFacts.2.2 active
+        cases safe : (DataSem.evaluate second clamped).2.safeForSpace with
+        | false => rfl
+        | true =>
+          have beforeSafe := nextFacts.2.2 safe
+          simp [clamped, wasUnsafe] at beforeSafe
 
 /-- A conditional inherits allocation failure from its selected branch,
 with the compiler's branch-specific label counter. -/
