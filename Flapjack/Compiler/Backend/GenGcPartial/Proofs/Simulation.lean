@@ -246,6 +246,160 @@ theorem toGenHeap_forward {α β γ : Type} (conf : Config γ)
     simp [ordered]
   exact ⟨current1, sourceForward, genForward, finalSegment⟩
 
+/-- Forwarding a current-generation data object to an address inside that
+generation preserves the partial collector's source heap invariant. -/
+theorem genInv_forward {α β : Type} (conf : Config β)
+    (heap : List (HeapElement α β)) (ptr target : Nat) (value : α)
+    (roots : List (HeapAddress α)) (len : Nat) (payload : β)
+    (invariant : genInv conf heap) (lower : conf.genStart ≤ ptr) (upper : ptr < conf.refsStart)
+    (targetLower : conf.genStart ≤ target) (targetUpper : target < conf.refsStart)
+    (found : heapLookup ptr heap = some (.dataElement roots len payload)) :
+    genInv conf (gcForwardPtr ptr heap target value true).1 := by
+  obtain ⟨ordered, within, old, current, refs, segment, oldNotRef, currentNotRef,
+    refsData, forwardBounds, oldData, oldPointers⟩ := invariant
+  obtain ⟨whole, oldLen, endLen, _⟩ := heapSegment_imp heap conf.genStart conf.refsStart old current refs segment
+  have inside : ptr - conf.genStart < heapLength current := by
+    rw [heapLength_append, oldLen] at endLen
+    omega
+  have currentFound : heapLookup (ptr - conf.genStart) current = some (.dataElement roots len payload) := by
+    rw [← whole, List.append_assoc, GenGc.heapLookup_append, oldLen,
+      if_neg (Nat.not_lt.mpr lower), GenGc.heapLookup_append, if_pos inside] at found
+    exact found
+  obtain ⟨before, after, currentEq, indexEq⟩ := heapLookup_split current (ptr - conf.genStart) _ currentFound
+  let current1 := before ++ .forwardPointer target value len :: after
+  have ptrEq : ptr = heapLength (old ++ before) := by
+    rw [heapLength_append, oldLen, ← indexEq]
+    omega
+  have forwardEq : gcForwardPtr ptr heap target value true = (old ++ current1 ++ refs, true) := by
+    rw [← whole, currentEq, ptrEq]
+    simpa [current1, List.append_assoc] using gcForwardPtr_thm (old ++ before) (after ++ refs) roots len payload target value true
+  obtain ⟨other, sourceForward, _, finalSegment⟩ :=
+    toGenHeap_forward conf heap old current refs ptr target value roots len payload true segment lower upper (by
+      rw [← whole, List.append_assoc, GenGc.heapLookup_append, oldLen,
+        if_neg (Nat.not_lt.mpr lower), GenGc.heapLookup_append, if_pos inside]
+      exact currentFound)
+  have sameHeap : old ++ current1 ++ refs = old ++ other ++ refs := by
+    exact Prod.mk.inj (forwardEq.symm.trans sourceForward) |>.1
+  have sameCurrent : current1 = other := by
+    exact List.append_cancel_left (List.append_cancel_right sameHeap)
+  rw [← sameCurrent] at finalSegment
+  have newNotRef : List.Forall (fun e => heapElementIsRef conf e = false) current1 := by
+    rw [List.forall_iff_forall_mem] at currentNotRef ⊢
+    intro e member
+    simp only [current1, List.mem_append, List.mem_cons] at member
+    rcases member with beforeMem | rfl | afterMem
+    · exact currentNotRef e (by simp [currentEq, beforeMem])
+    · rfl
+    · exact currentNotRef e (by simp [currentEq, afterMem])
+  have newForward : ∀ n a l, .forwardPointer n a l ∈ old ++ current1 ++ refs →
+      conf.genStart ≤ n ∧ n < conf.refsStart := by
+    intro n a l member
+    simp only [current1, List.mem_append, List.mem_cons, or_assoc] at member
+    rcases member with oldMem | beforeMem | eq | afterMem | refsMem
+    · apply forwardBounds n a l
+      rw [← whole, currentEq]
+      simp only [List.mem_append, List.mem_cons, or_assoc]
+      exact Or.inl oldMem
+    · apply forwardBounds n a l
+      rw [← whole, currentEq]
+      simp only [List.mem_append, List.mem_cons, or_assoc]
+      exact Or.inr (Or.inl beforeMem)
+    · cases eq
+      exact ⟨targetLower, targetUpper⟩
+    · apply forwardBounds n a l
+      rw [← whole, currentEq]
+      simp only [List.mem_append, List.mem_cons, or_assoc]
+      exact Or.inr (Or.inr (Or.inr (Or.inl afterMem)))
+    · apply forwardBounds n a l
+      rw [← whole, currentEq]
+      simp only [List.mem_append, List.mem_cons, or_assoc]
+      exact Or.inr (Or.inr (Or.inr (Or.inr refsMem)))
+  rw [forwardEq]
+  exact ⟨ordered, within, old, current1, refs, finalSegment, oldNotRef, newNotRef,
+    refsData, newForward, oldData, oldPointers⟩
+
+/-- Moving a data object into the copied queue while installing a forwarding
+pointer introduces no new protected child pointers. -/
+theorem hasOldPtr_forward_copy {α β γ : Type} (conf : Config γ)
+    (before after h1 h2 r1 : List (HeapElement α β)) (target : Nat) (value : α)
+    (roots : List (HeapAddress α)) (len : Nat) (payload : β) (ptr : Nat) :
+    hasOldPtr conf ((before ++ .forwardPointer target value len :: after) ++ h1 ++
+      (h2 ++ [.dataElement roots len payload]) ++ r1) ptr →
+    hasOldPtr conf ((before ++ .dataElement roots len payload :: after) ++ h1 ++ h2 ++ r1) ptr := by
+  rintro ⟨xs, n, data, u, member, child, outside⟩
+  refine ⟨xs, n, data, u, ?_, child, outside⟩
+  simp only [List.mem_append, List.mem_cons, or_assoc] at member ⊢
+  aesop
+
+/-- A successful fresh data move preserves the full partial-collector
+simulation invariant. -/
+theorem simInv_fresh_move {α β : Type} (conf : Config β)
+    (state state1 : GcState α β) (heap0 : List (HeapElement α β))
+    (ptr : Nat) (value : α) (roots : List (HeapAddress α)) (len : Nat) (payload : β)
+    (root1 : HeapAddress α) (invariant : simInv conf heap0 state)
+    (lower : conf.genStart ≤ ptr) (upper : ptr < conf.refsStart)
+    (bounded : ptr < heapLength state.heap)
+    (found : heapLookup ptr state.heap = some (.dataElement roots len payload))
+    (enough : len + 1 ≤ state.n) (nonref : conf.isRef payload = false)
+    (stateOk : state.ok = true) (run : gcMove conf state (.pointer ptr value) = (root1, state1)) :
+    simInv conf heap0 state1 := by
+  have allocLower := invariant.2.1
+  have allocUpper := invariant.2.2.1
+  have targetUpper : state.a < conf.refsStart := by omega
+  have outside : ¬ (ptr < conf.genStart ∨ conf.refsStart ≤ ptr) := by omega
+  obtain ⟨before, after, heapEq, ptrEq⟩ := heapLookup_split state.heap ptr _ found
+  have direct : gcForwardPtr ptr state.heap state.a value true =
+      (before ++ .forwardPointer state.a value len :: after, true) := by
+    rw [heapEq, ptrEq]
+    exact gcForwardPtr_thm before after roots len payload state.a value true
+  have nextGen := genInv_forward conf state.heap ptr state.a value roots len payload
+    invariant.1 lower upper allocLower targetUpper found
+  rw [direct] at nextGen
+  have step : gcMove conf state (.pointer ptr value) =
+      (.pointer state.a value, { state with h2 := state.h2 ++ [.dataElement roots len payload], n := state.n - (len + 1), a := state.a + len + 1, heap := before ++ .forwardPointer state.a value len :: after, ok := true }) := by
+    simp [gcMove, outside, found, bounded, enough, nonref, stateOk, direct]
+  rw [step] at run
+  obtain ⟨rfl, rfl⟩ := Prod.mk.inj run
+  obtain ⟨_, start, space, balance, empty, pointers⟩ := invariant
+  simp only [simInv]
+  refine ⟨nextGen, ?_, ?_, ?_, ?_, ?_⟩
+  · omega
+  · omega
+  · rw [← List.append_assoc, heapLength_append]
+    simp only [heapLength, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, elLength]
+    simp only [heapLength] at balance
+    omega
+  · intro reversed
+    omega
+  · intro p member
+    apply pointers p
+    have member' := hasOldPtr_forward_copy conf before after state.h1 state.h2 state.r1 state.a value roots len payload p member
+    simpa [heapEq] using member'
+
+/-- A successful fresh partial move had a successful input state, enough
+space, and a nonreference source object. -/
+theorem gcMove_fresh_success_conditions {α β : Type} (conf : Config β)
+    (state state1 : GcState α β) (ptr : Nat) (value : α)
+    (roots : List (HeapAddress α)) (len : Nat) (payload : β) (root1 : HeapAddress α)
+    (lower : conf.genStart ≤ ptr) (upper : ptr < conf.refsStart)
+    (found : heapLookup ptr state.heap = some (.dataElement roots len payload))
+    (run : gcMove conf state (.pointer ptr value) = (root1, state1))
+    (ok : state1.ok = true) :
+    state.ok = true ∧ len + 1 ≤ state.n ∧ conf.isRef payload = false := by
+  have outside : ¬ (ptr < conf.genStart ∨ conf.refsStart ≤ ptr) := by omega
+  obtain ⟨before, after, heapEq, ptrEq⟩ := heapLookup_split state.heap ptr _ found
+  let status := ((state.ok && decide (ptr < heapLength state.heap)) && decide (len + 1 ≤ state.n)) && !(conf.isRef payload)
+  have direct : gcForwardPtr ptr state.heap state.a value status =
+      (before ++ .forwardPointer state.a value len :: after, status) := by
+    rw [heapEq, ptrEq]
+    exact gcForwardPtr_thm before after roots len payload state.a value status
+  simp only [gcMove, outside, ↓reduceIte, found] at run
+  change (.pointer state.a value, { state with h2 := state.h2 ++ [.dataElement roots len payload], n := state.n - (len + 1), a := state.a + len + 1, heap := (gcForwardPtr ptr state.heap state.a value status).1, ok := (gcForwardPtr ptr state.heap state.a value status).2 }) = (root1, state1) at run
+  rw [direct] at run
+  obtain ⟨_, rfl⟩ := Prod.mk.inj run
+  simp [status] at ok
+  exact ⟨ok.1.1.1, ok.1.2, ok.2⟩
+
 set_option backward.isDefEq.respectTransparency false in
 /-- In the fresh-object case, a successful major move determines a matching
 partial move and translated state. Preservation of `simInv` is a separate
@@ -424,5 +578,105 @@ theorem gcMove_simulation_forward {α β : Type} (conf : Config β)
     simp only [allOldPtrs, List.mem_singleton, HeapAddress.pointer.injEq] at member
     obtain ⟨_, ⟨rfl, _⟩, outside⟩ := member
     omega
+
+/-- The fresh current-generation data-object case of the partial-to-major
+root-move simulation. -/
+@[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "gc_move_simulation"]
+theorem gcMove_simulation_fresh {α β : Type} (conf : Config β)
+    (state state1 : GcState α β) (heap0 : List (HeapElement α β))
+    (ptr len : Nat) (value : α) (roots : List (HeapAddress α)) (payload : β) (root1 : HeapAddress α)
+    (majorRoot : HeapAddress (DataSort (HeapAddress α) α))
+    (majorState : GcState (DataSort (HeapAddress α) α) β)
+    (lower : conf.genStart ≤ ptr) (upper : ptr < conf.refsStart)
+    (found : heapLookup ptr state.heap = some (.dataElement roots len payload))
+    (partialRun : gcMove conf state (.pointer ptr value) = (root1, state1))
+    (bounded : ∀ p u, HeapAddress.pointer ptr value = .pointer p u → p < heapLength state.heap)
+    (_heapLengthEq : heapLength state.heap = conf.limit)
+    (invariant : simInv conf heap0 state)
+    (majorRun : GenGc.gcMove (toGenConf conf) (toGenState conf state) (toGenHeapAddress conf (.pointer ptr value)) =
+      (majorRoot, majorState)) (majorOk : majorState.ok = true) :
+    simInv conf heap0 state1 ∧
+    (majorRoot, majorState) = (toGenHeapAddress conf root1, toGenState conf state1) ∧
+    ∀ p, allOldPtrs conf [root1] p → allOldPtrs conf [.pointer ptr value] p := by
+  have bound := bounded ptr value rfl
+  have majorSuccess : (GenGc.gcMove (toGenConf conf) (toGenState conf state)
+      (toGenHeapAddress conf (.pointer ptr value))).2.ok = true := by
+    rw [majorRun]
+    exact majorOk
+  obtain ⟨moved, next, partialEq, translated, nextOk⟩ :=
+    gcMove_fresh_translation conf state heap0 ptr value roots len payload lower upper bound found invariant majorSuccess
+  rw [partialRun] at partialEq
+  obtain ⟨rfl, rfl⟩ := Prod.mk.inj partialEq
+  obtain ⟨stateOk, enough, nonref⟩ :=
+    gcMove_fresh_success_conditions conf state state1 ptr value roots len payload root1 lower upper found partialRun nextOk
+  have post := simInv_fresh_move conf state state1 heap0 ptr value roots len payload root1 invariant lower upper bound found enough nonref stateOk partialRun
+  have equal : (majorRoot, majorState) = (toGenHeapAddress conf root1, toGenState conf state1) :=
+    majorRun.symm.trans translated
+  have outside : ¬ (ptr < conf.genStart ∨ conf.refsStart ≤ ptr) := by omega
+  have rootEq : root1 = .pointer state.a value := by
+    simp only [gcMove, outside, ↓reduceIte, found, Prod.mk.injEq] at partialRun
+    exact partialRun.1.symm
+  refine ⟨post, equal, ?_⟩
+  intro p member
+  rw [rootEq] at member
+  simp only [allOldPtrs, List.mem_singleton, HeapAddress.pointer.injEq] at member
+  obtain ⟨_, ⟨rfl, _⟩, disjoint⟩ := member
+  have start := invariant.2.1
+  have limit := invariant.2.2.1
+  omega
+
+/-- Partial root movement simulates the corresponding major root movement,
+preserves the simulation invariant, and does not introduce protected roots. -/
+@[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "gc_move_simulation"]
+theorem gcMove_simulation {α β : Type} (conf : Config β)
+    (state state1 : GcState α β) (heap0 : List (HeapElement α β))
+    (root root1 : HeapAddress α) (majorRoot : HeapAddress (DataSort (HeapAddress α) α))
+    (majorState : GcState (DataSort (HeapAddress α) α) β)
+    (partialRun : gcMove conf state root = (root1, state1))
+    (bounded : ∀ p u, root = .pointer p u → p < heapLength state.heap)
+    (heapLengthEq : heapLength state.heap = conf.limit)
+    (invariant : simInv conf heap0 state)
+    (majorRun : GenGc.gcMove (toGenConf conf) (toGenState conf state) (toGenHeapAddress conf root) =
+      (majorRoot, majorState)) (majorOk : majorState.ok = true) :
+    simInv conf heap0 state1 ∧
+    (majorRoot, majorState) = (toGenHeapAddress conf root1, toGenState conf state1) ∧
+    ∀ p, allOldPtrs conf [root1] p → allOldPtrs conf [root] p := by
+  cases root with
+  | data d =>
+    exact gcMove_simulation_data conf state state1 heap0 d root1 majorRoot majorState
+      partialRun bounded heapLengthEq invariant majorRun majorOk
+  | pointer ptr value =>
+    by_cases outside : ptr < conf.genStart ∨ conf.refsStart ≤ ptr
+    · exact gcMove_simulation_protected conf state state1 heap0 ptr value root1 majorRoot majorState
+        outside partialRun bounded heapLengthEq invariant majorRun majorOk
+    · have lower : conf.genStart ≤ ptr := by omega
+      have upper : ptr < conf.refsStart := by omega
+      obtain ⟨_, _, old, current, refs, segment, _, _, _, _, _, _⟩ := invariant.1
+      have lookup := heapLookup_toGenHeap conf state.heap old current refs ptr segment lower upper
+      have inputEq : toGenHeapAddress conf (.pointer ptr value) = .pointer (ptr - conf.genStart) (.real value) := by
+        simp [toGenHeapAddress, Nat.not_lt.mpr lower, Nat.not_le.mpr upper]
+      cases found : heapLookup ptr state.heap with
+      | none =>
+        have missing : heapLookup (ptr - conf.genStart) (toGenState conf state).heap = none := by
+          simpa [toGenState, found] using lookup
+        rw [inputEq] at majorRun
+        simp only [GenGc.gcMove, missing, Prod.mk.injEq] at majorRun
+        obtain ⟨_, rfl⟩ := majorRun
+        simp at majorOk
+      | some element =>
+        cases element with
+        | unused len =>
+          have unused : heapLookup (ptr - conf.genStart) (toGenState conf state).heap = some (.unused len) := by
+            simpa [toGenState, found, toGenHeapElement] using lookup
+          rw [inputEq] at majorRun
+          simp only [GenGc.gcMove, unused, Prod.mk.injEq] at majorRun
+          obtain ⟨_, rfl⟩ := majorRun
+          simp at majorOk
+        | forwardPointer target oldValue len =>
+          exact gcMove_simulation_forward conf state state1 heap0 ptr target len value oldValue root1 majorRoot majorState
+            lower upper found partialRun bounded heapLengthEq invariant majorRun majorOk
+        | dataElement roots len payload =>
+          exact gcMove_simulation_fresh conf state state1 heap0 ptr len value roots payload root1 majorRoot majorState
+            lower upper found partialRun bounded heapLengthEq invariant majorRun majorOk
 
 end Flapjack.Compiler.Backend.GenGcPartial

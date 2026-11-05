@@ -3,6 +3,22 @@
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
   "hol_name": "gc_move_simulation",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
+  "lean_name": "gcMove_simulation_fresh",
+  "statement_status": "pending_statement_review",
+  "reviewer": "Fresh data-object case compared with partial_move_simulation_statement_typed and the source proof. The original HOL theorem is local; a typed HOL proof replay remains pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "gc_move_simulation",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
+  "lean_name": "gcMove_simulation",
+  "statement_status": "pending_statement_review",
+  "reviewer": "Assembled all root and lookup cases compared with partial_move_simulation_statement_typed and the source proof. The original HOL theorem is local; a typed HOL proof replay remains pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "gc_move_simulation",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
   "lean_name": "gcMove_simulation_forward",
   "statement_status": "pending_statement_review",
   "reviewer": "Forwarded current-generation pointer case compared with partial_move_simulation_statement_typed and the source proof; a typed replay of the local HOL theorem and assembly of all move cases remain pending."
