@@ -6,6 +6,27 @@ namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Backend.WordGcFunctions
 open Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
 
+/-- A successful major collection's allocation index equals the size of
+its copied data, provided its work list has been exhausted. -/
+theorem genFull_dataIndex {α β : Type} (conf : GenGc.Config β)
+    (roots roots1 : List (HeapAddress α)) (heap : List (HeapElement α β)) (state : GcState α β)
+    (run : GenGc.genGc conf (roots, heap) = (roots1, state)) (ok : state.ok = true)
+    (empty : state.h2 = []) : state.a = heapLength state.h1 := by
+  classical
+  let initial : GcState α β :=
+    { emptyGcState with heap := heap, n := conf.limit, ok := decide (heapLength heap = conf.limit) }
+  change (let (moved, middle) := GenGc.gcMoveList conf initial roots
+    (moved, GenGc.gcMoveLoop conf middle conf.limit)) = (roots1, state) at run
+  cases rootsRun : GenGc.gcMoveList conf initial roots with
+  | mk moved middle =>
+    simp only [rootsRun, Prod.mk.injEq] at run
+    obtain ⟨_, loopRun⟩ := run
+    have first := genMoveList_dataIndex conf roots moved initial middle rootsRun
+    have second := genLoop_dataIndex conf conf.limit middle state loopRun ok
+    simp [initial, emptyGcState, heapLength] at first
+    simp [empty, heapLength] at second ⊢
+    omega
+
 private instance {α : Type} : Std.Associative (SetSep.star (α := α)) :=
   ⟨fun p q r => (SetSep.starAssoc p q r).symm⟩
 private instance {α : Type} : Std.Commutative (SetSep.star (α := α)) := ⟨SetSep.starComm⟩

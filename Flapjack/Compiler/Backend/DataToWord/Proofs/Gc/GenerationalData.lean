@@ -99,6 +99,41 @@ theorem dataScan_abstractStep {α β : Type} (conf : GenGc.Config β)
     simp only [Bool.and_eq_true, decide_eq_true_eq] at flags
     exact ⟨recursive, flags.1.1, flags.1.2, flags.2⟩
 
+/-- Successful data scanning preserves the allocation-index/work-list
+relationship while transferring each scanned object between lists. -/
+theorem genMoveData_dataIndex {α β : Type} (conf : GenGc.Config β) (state : GcState α β) :
+    (GenGc.gcMoveData conf state).ok = true →
+    (GenGc.gcMoveData conf state).a + heapLength state.h1 + heapLength state.h2 =
+      state.a + heapLength (GenGc.gcMoveData conf state).h1 + heapLength (GenGc.gcMoveData conf state).h2 := by
+  classical
+  induction state using GenGc.gcMoveData.induct conf with
+  | case1 state empty => rw [GenGc.gcMoveData]; simp [empty]
+  | case2 state head tail heap over => rw [GenGc.gcMoveData]; simp [heap, over]
+  | case3 state tail roots len payload roots1 middle move heap bounded flag ih =>
+    intro success
+    obtain ⟨recursive, _, nonempty, headEq⟩ :=
+      dataScan_abstractStep conf state middle (GenGc.gcMoveData conf state)
+        roots roots1 len payload tail heap move rfl success
+    have pending : ∃ rest, middle.h2 = .dataElement roots len payload :: rest := by
+      cases h : middle.h2 with
+      | nil => exact False.elim (nonempty h)
+      | cons head rest =>
+        simp only [h, List.head?_cons, Option.some.injEq] at headEq
+        exact ⟨rest, by simp [headEq] at h ⊢⟩
+    obtain ⟨rest, pending⟩ := pending
+    have index := genMoveList_dataIndex conf roots roots1 state middle move
+    dsimp only [flag] at ih
+    have scan := ih (by rw [recursive]; exact success)
+    rw [recursive] at scan
+    simp only [pending, List.drop_succ_cons, List.drop_zero, heapLength, List.map_append,
+      List.sum_append, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, elLength] at scan index ⊢
+    omega
+  | case4 state head tail heap bounded notData =>
+    cases head with
+    | unused len => rw [GenGc.gcMoveData]; simp [heap, bounded]
+    | forwardPointer ptr value len => rw [GenGc.gcMoveData]; simp [heap, bounded]
+    | dataElement roots len payload => exact False.elim (notData roots len payload rfl)
+
 /-- The nonempty scan consumes at least one heap word, so the original
 combined pending/free/reference budget decreases. This local arithmetic
 factoring has no separate HOL original. -/

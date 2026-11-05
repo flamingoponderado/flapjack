@@ -4,6 +4,84 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalList
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
 open Flapjack Flapjack.Compiler.Backend
 
+/-- Moving a root advances the data allocation index by exactly the size
+appended to the copied-data work list. -/
+theorem genMove_dataIndex {α β : Type} (conf : GenGc.Config β) (root root1 : HeapAddress α)
+    (state state1 : GcState α β) (run : GenGc.gcMove conf state root = (root1, state1)) :
+    state1.a + heapLength state.h1 + heapLength state.h2 =
+      state.a + heapLength state1.h1 + heapLength state1.h2 := by
+  cases root with
+  | data d => simp [GenGc.gcMove, Prod.mk.injEq] at run; obtain ⟨_, rfl⟩ := run; rfl
+  | pointer ptr d =>
+    cases found : heapLookup ptr state.heap with
+    | none => simp [GenGc.gcMove, found, Prod.mk.injEq] at run; obtain ⟨_, rfl⟩ := run; rfl
+    | some element =>
+      cases element with
+      | unused len => simp [GenGc.gcMove, found, Prod.mk.injEq] at run; obtain ⟨_, rfl⟩ := run; rfl
+      | forwardPointer dest old len => simp [GenGc.gcMove, found, Prod.mk.injEq] at run; obtain ⟨_, rfl⟩ := run; rfl
+      | dataElement xs len payload =>
+        cases test : conf.isRef payload <;>
+          simp [GenGc.gcMove, found, test, Prod.mk.injEq] at run <;>
+          obtain ⟨_, rfl⟩ := run
+        all_goals simp [heapLength, elLength]
+        all_goals omega
+
+/-- Root traversal preserves the allocation-index/work-list relationship. -/
+theorem genMoveList_dataIndex {α β : Type} (conf : GenGc.Config β) (roots roots1 : List (HeapAddress α))
+    (state state1 : GcState α β) (run : GenGc.gcMoveList conf state roots = (roots1, state1)) :
+    state1.a + heapLength state.h1 + heapLength state.h2 =
+      state.a + heapLength state1.h1 + heapLength state1.h2 := by
+  induction roots generalizing roots1 state state1 with
+  | nil => simp [GenGc.gcMoveList, Prod.mk.injEq] at run; obtain ⟨_, rfl⟩ := run; rfl
+  | cons root roots ih =>
+    simp only [GenGc.gcMoveList] at run
+    generalize headRun : GenGc.gcMove conf state root = headResult at run
+    obtain ⟨root1, middle⟩ := headResult
+    generalize tailRun : GenGc.gcMoveList conf middle roots = tailResult at run
+    obtain ⟨tail, final⟩ := tailResult
+    simp only [Prod.mk.injEq] at run
+    obtain ⟨_, rfl⟩ := run
+    have first := genMove_dataIndex conf root root1 state middle headRun
+    have second := ih tail middle final tailRun
+    omega
+
+/-- Reference scanning preserves the allocation-index/work-list relationship. -/
+theorem genMoveRefs_dataIndex {α β : Type} (conf : GenGc.Config β) (state : GcState α β) :
+    (GenGc.gcMoveRefs conf state).a + heapLength state.h1 + heapLength state.h2 =
+      state.a + heapLength (GenGc.gcMoveRefs conf state).h1 + heapLength (GenGc.gcMoveRefs conf state).h2 := by
+  induction state using GenGc.gcMoveRefs.induct conf with
+  | case1 state empty =>
+    cases state with
+    | mk old h1 h2 r4 r3 r2 r1 a n ok heap heap0 =>
+      simp only at empty
+      subst r2
+      rw [GenGc.gcMoveRefs]
+  | case2 state tail roots len payload refs roots1 middle move refsAgain ih =>
+    have moved := genMoveList_dataIndex conf roots roots1 state middle move
+    cases state with
+    | mk old h1 h2 r4 r3 r2 r1 a n ok heap heap0 =>
+      simp only at refs
+      subst r2
+      rw [GenGc.gcMoveRefs]
+      simp only [move]
+      dsimp at ih moved
+      omega
+  | case3 state head tail refs refsAgain notData =>
+    cases head with
+    | unused len =>
+      cases state with
+      | mk old h1 h2 r4 r3 r2 r1 a n ok heap heap0 =>
+        simp only at refs
+        subst r2
+        rw [GenGc.gcMoveRefs]
+    | forwardPointer ptr value len =>
+      cases state with
+      | mk old h1 h2 r4 r3 r2 r1 a n ok heap heap0 =>
+        simp only at refs
+        subst r2
+        rw [GenGc.gcMoveRefs]
+    | dataElement roots len payload => exact False.elim (notData roots len payload refs rfl (by rfl))
+
 /-- Root movement leaves the scanned heap and processed reference lists unchanged. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "gc_move_const"]
 theorem genMove_const {α β : Type} (conf : GenGc.Config β) (root root1 : HeapAddress α)

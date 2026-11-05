@@ -132,6 +132,44 @@ theorem genLoop_refsStep {α β : Type} (conf : GenGc.Config β) (state final : 
     apply GenGc.gcMoveLoop_ok conf _ k
     simpa [next] using success
 
+/-- A successful collector loop preserves the allocation-index/work-list
+relationship across both kinds of scan. -/
+theorem genLoop_dataIndex {α β : Type} (conf : GenGc.Config β) (k : Nat)
+    (state final : GcState α β) (run : GenGc.gcMoveLoop conf state k = final) (success : final.ok = true) :
+    final.a + heapLength state.h1 + heapLength state.h2 =
+      state.a + heapLength final.h1 + heapLength final.h2 := by
+  classical
+  induction k generalizing state final with
+  | zero =>
+    cases refs : state.r4 with
+    | nil =>
+      cases pending : state.h2 with
+      | nil => rw [GenGc.gcMoveLoop] at run; simp [refs, pending] at run; subst final; simp [pending]
+      | cons head tail =>
+        have positive := (genLoop_dataStep conf state final 0 refs (by simp [pending]) run success).1
+        omega
+    | cons head tail =>
+      have positive := (genLoop_refsStep conf state final 0 (by simp [refs]) run success).1
+      omega
+  | succ k ih =>
+    cases refs : state.r4 with
+    | nil =>
+      cases pending : state.h2 with
+      | nil => rw [GenGc.gcMoveLoop] at run; simp [refs, pending] at run; subst final; simp [pending]
+      | cons head tail =>
+        obtain ⟨_, next, nextOk⟩ := genLoop_dataStep conf state final (k + 1) refs (by simp [pending]) run success
+        have step := genMoveData_dataIndex conf state nextOk
+        have rest := ih (GenGc.gcMoveData conf state) final (by simpa using next) success
+        rw [pending] at step
+        omega
+    | cons head tail =>
+      obtain ⟨_, next, _⟩ := genLoop_refsStep conf state final (k + 1) (by simp [refs]) run success
+      let start := { state with r2 := state.r4, r4 := [] }
+      have step := genMoveRefs_dataIndex conf start
+      have rest := ih (GenGc.gcMoveRefs conf start) final (by simpa [start] using next) success
+      dsimp only [start] at step rest
+      omega
+
 /-- Expose the data scan and recursive concrete loop, retaining both flags.
 This is local unfolding of the word-level loop. -/
 theorem genLoop_wordDataStep {width : Nat} [NeZero width] (conf : Config)
