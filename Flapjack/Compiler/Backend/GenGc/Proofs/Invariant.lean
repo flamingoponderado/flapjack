@@ -129,4 +129,147 @@ theorem gcInv_move_fresh_core {α β : Type} (conf : Config β) (state : GcState
     rw [heapEq] at old
     exact CopyingGc.heapMap_forward_submap before after addresses len _ payload value i j old
 
+/-- Replacing a copied cell with its forwarding pointer preserves heap
+similarity and size while consuming exactly that cell's free-space length.
+The destination is arbitrary, so the same facts apply to both placement
+branches of the major collector. -/
+theorem gcInv_fresh_forward_structure {α β : Type} (conf : Config β) (state : GcState α β)
+    (heap0 : List (HeapElement α β)) (roots0 : List (HeapAddress α))
+    (ptr len target : Nat) (value : α) (addresses : List (HeapAddress α)) (payload : β)
+    (invariant : gcInv conf state heap0 roots0)
+    (found : heapLookup ptr state.heap = some (.dataElement addresses len payload)) :
+    ∃ before after,
+      state.heap = before ++ .dataElement addresses len payload :: after ∧
+      ptr = heapLength before ∧ len + 1 ≤ state.n ∧
+      heapLength (before ++ .forwardPointer target value len :: after) = conf.limit ∧
+      heapLength ((before ++ .forwardPointer target value len :: after).filter
+        (fun h => !(isForwardPointer h))) = state.n - (len + 1) ∧
+      heapsSimilar heap0 (before ++ .forwardPointer target value len :: after) := by
+  obtain ⟨before, after, heapEq, ptrEq⟩ := heapLookup_split state.heap ptr _ found
+  have free := invariant.2.2.1
+  have size := invariant.2.2.2.1
+  have similar := invariant.2.2.2.2.2.2.1
+  rw [heapEq] at free size similar
+  have enough : len + 1 ≤ state.n := by
+    simp [List.filter_append, isForwardPointer, heapLength, elLength,
+      List.map_append, List.sum_append] at free
+    omega
+  refine ⟨before, after, heapEq, ptrEq, enough, ?_, ?_, ?_⟩
+  · simpa [heapLength, List.map_append, List.sum_append, elLength] using size
+  · simp [List.filter_append, isForwardPointer, heapLength, elLength,
+      List.map_append, List.sum_append] at free ⊢
+    omega
+  · have same := heapsSimilar_forward before heap0 after (heapExpand target : List (HeapElement α β))
+      [] addresses len payload value similar
+    simpa [heapLength_heapExpand] using same
+
+/-- The fresh object's destination lies between the old copied-data and
+reference address sets. This supplies the freshness premise for extending the
+collector's forwarding-map bijection. -/
+theorem gcInv_fresh_target_fresh {α β : Type} (conf : Config β) (state : GcState α β)
+    (heap0 : List (HeapElement α β)) (roots0 : List (HeapAddress α))
+    (ptr len : Nat) (value : α) (addresses : List (HeapAddress α)) (payload : β)
+    (invariant : gcInv conf state heap0 roots0)
+    (found : heapLookup ptr state.heap = some (.dataElement addresses len payload)) :
+    let target := if conf.isRef payload then state.a + (state.n - (len + 1)) else state.a
+    ¬ (heapAddresses 0 (state.h1 ++ state.h2) target ∨
+      heapAddresses (state.a + state.n) (state.r4 ++ state.r3 ++ state.r2 ++ state.r1) target) := by
+  obtain ⟨_, _, _, _, enough, _, _, _⟩ :=
+    gcInv_fresh_forward_structure conf state heap0 roots0 ptr len state.a value addresses payload invariant found
+  have allocated := invariant.1
+  dsimp only
+  cases ref : conf.isRef payload <;> simp only [Bool.false_eq_true, ↓reduceIte, not_or]
+  all_goals constructor
+  all_goals intro member
+  all_goals first
+    | have bound := heapAddresses_less_heapLength _ 0 _ member; omega
+    | have bound := heapAddresses_base_le _ (state.a + state.n) _ member; omega
+
+/-- Both placement choices extend the collector's destination set by the
+new object's address and retain the previous destination addresses. -/
+theorem gcInv_fresh_target_set {α β : Type} (conf : Config β) (state : GcState α β)
+    (heap0 : List (HeapElement α β)) (roots0 : List (HeapAddress α))
+    (ptr len : Nat) (value : α) (addresses : List (HeapAddress α)) (payload : β)
+    (invariant : gcInv conf state heap0 roots0)
+    (found : heapLookup ptr state.heap = some (.dataElement addresses len payload)) :
+    let target := if conf.isRef payload then state.a + (state.n - (len + 1)) else state.a
+    let next := if conf.isRef payload then
+      { state with r4 := .dataElement addresses len payload :: state.r4, n := state.n - (len + 1) }
+    else
+      { state with h2 := state.h2 ++ [.dataElement addresses len payload], n := state.n - (len + 1), a := state.a + len + 1 }
+    ∀ p, (heapAddresses 0 (next.h1 ++ next.h2) p ∨
+      heapAddresses (next.a + next.n) (next.r4 ++ next.r3 ++ next.r2 ++ next.r1) p) ↔
+      (heapAddresses 0 (state.h1 ++ state.h2) p ∨
+       heapAddresses (state.a + state.n) (state.r4 ++ state.r3 ++ state.r2 ++ state.r1) p ∨ p = target) := by
+  obtain ⟨_, _, _, _, enough, _, _, _⟩ :=
+    gcInv_fresh_forward_structure conf state heap0 roots0 ptr len state.a value addresses payload invariant found
+  have allocated := invariant.1
+  have balance : state.a + (state.n - (len + 1)) + (len + 1) = state.a + state.n := by omega
+  dsimp only
+  intro p
+  cases ref : conf.isRef payload with
+  | false =>
+    simp only [Bool.false_eq_true, ↓reduceIte]
+    rw [← List.append_assoc, CopyingGc.heapAddresses_snoc]
+    simp only [Nat.add_zero, allocated]
+    have bound : state.a + len + 1 + (state.n - (len + 1)) = state.a + state.n := by omega
+    rw [bound]
+    tauto
+  | true =>
+    simp only [↓reduceIte]
+    simp only [List.cons_append, heapAddresses, elLength]
+    rw [balance]
+    tauto
+
+/-- A fresh move extends the major collector's forwarding bijection to the
+new destination set, for both data and reference placement. -/
+theorem gcInv_fresh_bijection {α β : Type} (conf : Config β) (state : GcState α β)
+    (heap0 : List (HeapElement α β)) (roots0 : List (HeapAddress α))
+    (ptr len : Nat) (value : α) (addresses : List (HeapAddress α)) (payload : β)
+    (invariant : gcInv conf state heap0 roots0)
+    (found : heapLookup ptr state.heap = some (.dataElement addresses len payload)) :
+    ∃ before after,
+      state.heap = before ++ .dataElement addresses len payload :: after ∧
+      ptr = heapLength before ∧
+      let target := if conf.isRef payload then state.a + (state.n - (len + 1)) else state.a
+      let forwarded := before ++ .forwardPointer target value len :: after
+      let next := if conf.isRef payload then
+        { state with r4 := .dataElement addresses len payload :: state.r4, n := state.n - (len + 1) }
+      else
+        { state with h2 := state.h2 ++ [.dataElement addresses len payload], n := state.n - (len + 1), a := state.a + len + 1 }
+      let targets := fun p => heapAddresses 0 (next.h1 ++ next.h2) p ∨
+        heapAddresses (next.a + next.n) (next.r4 ++ next.r3 ++ next.r2 ++ next.r1) p
+      (∀ i, (heapMap 0 forwarded).lookup i ≠ none → targets (heapMap1 forwarded i)) ∧
+      (∀ i j, (heapMap 0 forwarded).lookup i ≠ none → (heapMap 0 forwarded).lookup j ≠ none →
+        heapMap1 forwarded i = heapMap1 forwarded j → i = j) ∧
+      (∀ j, targets j → ∃ i, (heapMap 0 forwarded).lookup i ≠ none ∧ heapMap1 forwarded i = j) := by
+  obtain ⟨before, after, heapEq, ptrEq⟩ := heapLookup_split state.heap ptr _ found
+  refine ⟨before, after, heapEq, ptrEq, ?_⟩
+  dsimp only
+  let target := if conf.isRef payload then state.a + (state.n - (len + 1)) else state.a
+  let oldTargets := fun p => heapAddresses 0 (state.h1 ++ state.h2) p ∨
+    heapAddresses (state.a + state.n) (state.r4 ++ state.r3 ++ state.r2 ++ state.r1) p
+  have sourceFresh := not_in_heapMap before after addresses len payload
+  have targetFresh : ¬ oldTargets target :=
+    gcInv_fresh_target_fresh conf state heap0 roots0 ptr len value addresses payload invariant found
+  have targetSet := gcInv_fresh_target_set conf state heap0 roots0 ptr len value addresses payload invariant found
+  dsimp only at targetSet
+  obtain ⟨_, _, _, _, _, _, _, _, _, _, _, _, _, _, mapsInto, injective, surjective, _⟩ := invariant
+  rw [heapEq] at mapsInto injective surjective
+  have bij := CopyingGc.finiteMap_bij_insert (heapMap 0 (before ++ .dataElement addresses len payload :: after))
+    oldTargets (heapLength before) target sourceFresh targetFresh mapsInto injective surjective
+  have newMap := heapMap_replace_data before after target len addresses payload value
+  rw [← newMap] at bij
+  obtain ⟨newInto, newInjective, newSurjective⟩ := bij
+  refine ⟨?_, ?_, ?_⟩
+  · intro i defined
+    have mapped := newInto i defined
+    apply (targetSet _).mpr
+    simpa only [oldTargets, target, heapMap1, or_assoc] using mapped
+  · simpa only [heapMap1] using newInjective
+  · intro j member
+    have oldOrNew := (targetSet j).mp member
+    apply newSurjective j
+    simpa only [oldTargets, target, or_assoc] using oldOrNew
+
 end Flapjack.Compiler.Backend.GenGc
