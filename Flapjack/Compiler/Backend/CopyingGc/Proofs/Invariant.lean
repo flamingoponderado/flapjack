@@ -188,4 +188,99 @@ theorem heapAddresses_end_fresh {α β : Type} (xs : List (HeapElement α β)) :
   have bound := heapAddresses_less_heapLength xs 0 (heapLength xs) member
   simp at bound
 
+/-- Adding a fresh key and a fresh target extends a finite-map bijection by
+one pair. This Flapjack lemma supplies the copying collector's update step. -/
+theorem finiteMap_bij_insert (f : HolFiniteMapExact Nat Nat) (targets : Nat → Prop)
+    (source target : Nat) (sourceFresh : f.lookup source = none) (targetFresh : ¬ targets target)
+    (mapsInto : ∀ i, f.lookup i ≠ none → targets (holFapply f i))
+    (injective : ∀ i j, f.lookup i ≠ none → f.lookup j ≠ none →
+      holFapply f i = holFapply f j → i = j)
+    (surjective : ∀ j, targets j → ∃ i, f.lookup i ≠ none ∧ holFapply f i = j) :
+    (∀ i, (f.update (source, target)).lookup i ≠ none →
+      targets (holFapply (f.update (source, target)) i) ∨ holFapply (f.update (source, target)) i = target) ∧
+    (∀ i j, (f.update (source, target)).lookup i ≠ none →
+      (f.update (source, target)).lookup j ≠ none →
+      holFapply (f.update (source, target)) i = holFapply (f.update (source, target)) j → i = j) ∧
+    (∀ j, targets j ∨ j = target →
+      ∃ i, (f.update (source, target)).lookup i ≠ none ∧ holFapply (f.update (source, target)) i = j) := by
+  have lookupAt : (f.update (source, target)).lookup source = some target := by
+    simp [HolFiniteMapExact.lookup_update, FUPDATE]
+  have applyAt : holFapply (f.update (source, target)) source = target := holFapply_of_lookup lookupAt
+  have lookupOther : ∀ i, i ≠ source → (f.update (source, target)).lookup i = f.lookup i := by
+    intro i ne
+    simp [HolFiniteMapExact.lookup_update, FUPDATE, Ne.symm ne]
+  have applyOther : ∀ i, i ≠ source → holFapply (f.update (source, target)) i = holFapply f i := by
+    intro i ne
+    unfold holFapply
+    rw [lookupOther i ne]
+  refine ⟨?_, ?_, ?_⟩
+  · intro i defined
+    by_cases eq : i = source
+    · subst i
+      exact Or.inr applyAt
+    · left
+      rw [applyOther i eq]
+      rw [lookupOther i eq] at defined
+      exact mapsInto i defined
+  · intro i j di dj same
+    by_cases ei : i = source
+    · subst i
+      by_cases ej : j = source
+      · exact ej.symm
+      · have oldj : f.lookup j ≠ none := by rwa [lookupOther j ej] at dj
+        have image := mapsInto j oldj
+        rw [applyAt, applyOther j ej] at same
+        exact False.elim (targetFresh (same ▸ image))
+    · by_cases ej : j = source
+      · subst j
+        have oldi : f.lookup i ≠ none := by rwa [lookupOther i ei] at di
+        have image := mapsInto i oldi
+        rw [applyOther i ei, applyAt] at same
+        exact False.elim (targetFresh (same ▸ image))
+      · apply injective i j
+        · rwa [lookupOther i ei] at di
+        · rwa [lookupOther j ej] at dj
+        · simpa [applyOther i ei, applyOther j ej] using same
+  · intro j member
+    rcases member with member | rfl
+    · obtain ⟨i, defined, eq⟩ := surjective j member
+      have ne : i ≠ source := by
+        intro same
+        subst i
+        exact defined sourceFresh
+      exact ⟨i, by rw [lookupOther i ne]; exact defined, by rw [applyOther i ne]; exact eq⟩
+    · exact ⟨source, by rw [lookupAt]; simp, applyAt⟩
+
+/-- The fresh-copy step extends the invariant's forwarding-map bijection to
+the newly appended copied element. This is a Flapjack proof step toward the
+complete copying collector move invariant. -/
+theorem gcInv_move_fresh_bij {α β : Type}
+    (h1 h2 before after heap0 : List (HeapElement α β)) (a n limit len : Nat)
+    (roots0 ys : List (HeapAddress α)) (value : α) (data : β) (ok : Bool)
+    (invariant : gcInv h1 h2 a n (before ++ .dataElement ys len data :: after) ok limit heap0 roots0) :
+    (∀ i, (heapMap 0 (before ++ .forwardPointer a value len :: after)).lookup i ≠ none →
+      heapAddresses 0 (h1 ++ (h2 ++ [.dataElement ys len data]))
+        (heapMap1 (before ++ .forwardPointer a value len :: after) i)) ∧
+    (∀ i j, (heapMap 0 (before ++ .forwardPointer a value len :: after)).lookup i ≠ none →
+      (heapMap 0 (before ++ .forwardPointer a value len :: after)).lookup j ≠ none →
+      heapMap1 (before ++ .forwardPointer a value len :: after) i =
+        heapMap1 (before ++ .forwardPointer a value len :: after) j → i = j) ∧
+    (∀ j, heapAddresses 0 (h1 ++ (h2 ++ [.dataElement ys len data])) j →
+      ∃ i, (heapMap 0 (before ++ .forwardPointer a value len :: after)).lookup i ≠ none ∧
+        heapMap1 (before ++ .forwardPointer a value len :: after) i = j) := by
+  obtain ⟨_, allocated, _, _, _, _, _, _, _, mapsInto, injective, surjective, _⟩ := invariant
+  have sourceFresh := not_in_heapMap before after ys len data
+  have targetFresh : ¬heapAddresses 0 (h1 ++ h2) a := by
+    rw [allocated]
+    exact heapAddresses_end_fresh (h1 ++ h2)
+  have targetEq : heapAddresses 0 (h1 ++ (h2 ++ [.dataElement ys len data])) =
+      (fun p => heapAddresses 0 (h1 ++ h2) p ∨ p = a) := by
+    rw [← List.append_assoc, heapAddresses_snoc]
+    simp [← allocated]
+  have newMap := heapMap_replace_data before after a len ys data value
+  have bij := finiteMap_bij_insert (heapMap 0 (before ++ .dataElement ys len data :: after))
+    (heapAddresses 0 (h1 ++ h2)) (heapLength before) a sourceFresh targetFresh
+    mapsInto injective surjective
+  simpa only [heapMap1, newMap, targetEq] using bij
+
 end Flapjack.Compiler.Backend.CopyingGc
