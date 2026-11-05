@@ -69185,30 +69185,6 @@
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanSimp.lean",
-    "lean_name": "evalPanValueDeclarationsWithStructs_resortDecls_imp",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp.lean",
-    "lean_name": "evalPanValueDeclarations_exception_lookup_isSome",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp.lean",
-    "lean_name": "evalPanValueDeclarations_exception_shape_lookup",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp.lean",
     "lean_name": "evalPanValueDeclarations_exception_state_evidence",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Codex (proof inventory)"
@@ -69250,22 +69226,6 @@
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanSimp.lean",
     "lean_name": "evalPanValueExp_panValueProgramStateRel",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp.lean",
-    "lean_name": "evalPanValueProgram_of_declarations_and_raised_call_with_exception_evidence",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp.lean",
-    "lean_name": "evalPanValueProgram_of_declarations_and_raised_call_with_exception_lookup_evidence",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Codex (proof inventory)"
   },
@@ -69513,14 +69473,6 @@
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanSimp.lean",
-    "lean_name": "lookupInfo_eq_some_of_mem_of_nodup",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp.lean",
     "lean_name": "lookupInfo_isSome_of_mem",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Codex (proof inventory)"
@@ -69601,14 +69553,6 @@
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanSimp.lean",
-    "lean_name": "panExceptionEntries_mem_of_exnDecl_mem",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp.lean",
     "lean_name": "panExceptionEntries_nil",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Codex (proof inventory)"
@@ -69650,22 +69594,6 @@
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanSimp.lean",
     "lean_name": "panValueProgramStateRel_evalDeclarations_evalExp",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp.lean",
-    "lean_name": "panValueProgramStateRel_evalDeclarations_lookupPanFunction",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp.lean",
-    "lean_name": "panValueProgramStateRel_evalDeclarations_parameterShape_adequacy",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Codex (proof inventory)"
   },
@@ -70162,31 +70090,7 @@
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
-    "lean_name": "PanValueFfiClockNormalAdequateProgFromFloor_call_caught_handler",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
-    "lean_name": "PanValueFfiClockNormalAdequateProgFromFloor_call_destination",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
     "lean_name": "PanValueFfiClockNormalAdequateProgFromFloor_dec",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
-    "lean_name": "PanValueFfiClockNormalAdequateProgFromFloor_decCall_returned",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Codex (proof inventory)"
   },
@@ -70203,22 +70107,6 @@
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
     "lean_name": "PanValueFfiClockNormalAdequateProgFromFloor_leaf",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
-    "lean_name": "PanValueFfiClockNormalAdequateProgFromFloor_of_adequate",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
-    "lean_name": "PanValueFfiClockNormalAdequateProgFromFloor_of_from",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Codex (proof inventory)"
   },
@@ -70250,39 +70138,7 @@
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
-    "lean_name": "PanValueFfiClockNormalAdequateProgFromFloor_seq_adequate",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
     "lean_name": "PanValueFfiClockNormalAdequateProgFromFloor_tick",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
-    "lean_name": "PanValueFfiClockNormalAdequateProgFromFloor_weaken",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
-    "lean_name": "PanValueFfiClockNormalAdequateProgFromFloor_while",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
-    "lean_name": "PanValueFfiClockNormalAdequateProgFromFloor_while_zero",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Codex (proof inventory)"
   },
@@ -70339,14 +70195,6 @@
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
     "lean_name": "PanValueFfiClockNormalAdequateProgFrom_of_adequate",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
-    "lean_name": "PanValueFfiClockNormalAdequateProgFrom_of_fromFloor",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Codex (proof inventory)"
   },
@@ -70523,14 +70371,6 @@
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
     "lean_name": "evalPanValueFfiClockLeaf_annot",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
-    "lean_name": "evalPanValueFfiClockLeaf_return_var",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Codex (proof inventory)"
   },
@@ -70778,14 +70618,6 @@
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
-    "lean_name": "evalPanValueFfiClockProg_fuel_anti",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
     "lean_name": "evalPanValueFfiClockProg_ite_false_normal_progCallFuel",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Codex (proof inventory)"
@@ -70803,14 +70635,6 @@
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
     "lean_name": "evalPanValueFfiClockProg_ite_false_some_progCallFuel",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
-    "lean_name": "evalPanValueFfiClockProg_ite_false_some_progSize",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Codex (proof inventory)"
   },
@@ -70890,31 +70714,7 @@
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
-    "lean_name": "evalPanValueFfiClockProg_panSimpProg_eq_of_common_fuel",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
-    "lean_name": "evalPanValueFfiClockProg_panSimpProg_eq_of_common_fuel_source",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
     "lean_name": "evalPanValueFfiClockProg_panSimpProg_eq_of_seqSkipFragment",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
-    "lean_name": "evalPanValueFfiClockProg_panSimpProg_eq_of_seqSkipFragment_progSize",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Codex (proof inventory)"
   },
@@ -70930,23 +70730,7 @@
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
-    "lean_name": "evalPanValueFfiClockProg_panSimpProg_result_of_common_fuel_source",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
     "lean_name": "evalPanValueFfiClockProg_retToTail_eq_of_common_fuel",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
-    "lean_name": "evalPanValueFfiClockProg_retToTail_eq_of_seqSkipFragment",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Codex (proof inventory)"
   },
@@ -70970,31 +70754,7 @@
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
-    "lean_name": "evalPanValueFfiClockProg_seqAssoc_eq_of_seqSkipFragment_progSize",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
     "lean_name": "evalPanValueFfiClockProg_seqAssoc_eq_of_skipSeqProg",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
-    "lean_name": "evalPanValueFfiClockProg_seqAssoc_fuel_gap",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
-    "lean_name": "evalPanValueFfiClockProg_seqCallRet_returned",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Codex (proof inventory)"
   },
@@ -71026,14 +70786,6 @@
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
-    "lean_name": "evalPanValueFfiClockProg_seq_call_caught_handler_normal_progCallFuel",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
     "lean_name": "evalPanValueFfiClockProg_seq_call_destination_continuation_progCallFuel",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Codex (proof inventory)"
@@ -71043,22 +70795,6 @@
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
     "lean_name": "evalPanValueFfiClockProg_seq_call_destination_normal_progCallFuel",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
-    "lean_name": "evalPanValueFfiClockProg_seq_call_return_returned",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
-    "lean_name": "evalPanValueFfiClockProg_seq_call_return_tail_call",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Codex (proof inventory)"
   },
@@ -71154,14 +70890,6 @@
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
-    "lean_name": "evalPanValueFfiClockProg_seq_some_progSize",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
     "lean_name": "evalPanValueFfiClockProg_seq_terminal_some",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Codex (proof inventory)"
@@ -71203,14 +70931,6 @@
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
     "lean_name": "evalPanValueFfiClockProg_while_broke_some",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
-    "lean_name": "evalPanValueFfiClockProg_while_broke_some_progCallFuel",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Codex (proof inventory)"
   },
@@ -71290,14 +71010,6 @@
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
-    "lean_name": "evalPanValueFfiClockProg_while_timeout_some_progCallFuel",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
     "lean_name": "evalPanValueFfiClockProg_while_timeout_some_progSize",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Codex (proof inventory)"
@@ -71330,14 +71042,6 @@
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
-    "lean_name": "one_le_progSize_of_seqSkipFragment",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
     "lean_name": "panSimpSeqSkipFragment_of_skipSeqProg",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Codex (proof inventory)"
@@ -71347,14 +71051,6 @@
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
     "lean_name": "panSimpSeqSkipFuel_le_progSize",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
-    "lean_name": "panSimpSeqSkipFuel_le_sizeOf",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Codex (proof inventory)"
   },
@@ -71378,23 +71074,7 @@
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
-    "lean_name": "panSimpSkipSeqProg_of_fragment",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
     "lean_name": "panSimpSkipSeqProg_seqAssoc",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/Evaluate.lean",
-    "lean_name": "seqCallRet_tail_call",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Codex (proof inventory)"
   },
@@ -71413,134 +71093,6 @@
     "lean_name": "panSimpToStringOfBytes_injective",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific codec lemma: injectivity follows from `ofString_toStringOfBytes`; there is no separate HOL theorem for this decoder property. It carries no HOL tag."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
-    "lean_name": "progOfHOL_call",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific equation for the `progOfHOL` codec on HOL Call metadata. It exposes the decoded production call and has no separate HOL original; no HOL tag is claimed."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
-    "lean_name": "progOfHOL_retToTailHOL_call",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific codec equation for the Call clause of exact pan_simp ret_to_tail. It uses the ProgHOL Call decoder and a recursive handler-body equation; HOL has no theorem about commuting progOfHOL with retToTailHOL, so no HOL tag is claimed."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
-    "lean_name": "progOfHOL_retToTailHOL_dec",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific codec equation for the Dec clause of exact pan_simp ret_to_tail. It uses the recursive body codec equation; HOL has no theorem about commuting progOfHOL with retToTailHOL, so no HOL tag is claimed."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
-    "lean_name": "progOfHOL_retToTailHOL_decCall",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific codec equation for the DecCall clause of exact pan_simp ret_to_tail. It uses the recursive body codec equation; HOL has no theorem about commuting progOfHOL with retToTailHOL, so no HOL tag is claimed."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
-    "lean_name": "progOfHOL_retToTailHOL_ite",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific codec equation for the If clause of exact pan_simp ret_to_tail. It uses the two recursive branch codec equations; HOL has no theorem about commuting progOfHOL with retToTailHOL, so no HOL tag is claimed."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
-    "lean_name": "progOfHOL_retToTailHOL_seq",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific codec equation for the Seq clause of exact pan_simp ret_to_tail. It reuses the separate seq_call_ret/progOfHOL bridge and two recursive ret_to_tail hypotheses; HOL has no theorem about commuting progOfHOL with retToTailHOL, so no HOL tag is claimed."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
-    "lean_name": "progOfHOL_retToTailHOL_while",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific codec equation for the While clause of exact pan_simp ret_to_tail. It uses the recursive body codec equation; HOL has no theorem about commuting progOfHOL with retToTailHOL, so no HOL tag is claimed."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
-    "lean_name": "progOfHOL_seqAssocHOL_annot",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific codec equation for the annotation clause of exact pan_simp seq_assoc. It requires no recursive hypothesis because HOL erases annotations to the prefix; HOL has no theorem about commuting progOfHOL with seqAssocHOL, so no HOL tag is claimed."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
-    "lean_name": "progOfHOL_seqAssocHOL_dec",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific codec equation for the Dec clause of exact pan_simp seq_assoc. It uses a recursive body equation at Skip; HOL has no theorem about commuting progOfHOL with seqAssocHOL, so no HOL tag is claimed."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
-    "lean_name": "progOfHOL_seqAssocHOL_decCall",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific codec equation for the DecCall clause of exact pan_simp seq_assoc. It uses the recursive body equation at Skip; HOL has no theorem about commuting progOfHOL with seqAssocHOL, so no HOL tag is claimed."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
-    "lean_name": "progOfHOL_seqAssocHOL_ite",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific codec equation for the If clause of exact pan_simp seq_assoc. It uses only the recursive then/else branch equations at Skip; HOL has no theorem about commuting progOfHOL with seqAssocHOL, so no HOL tag is claimed."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
-    "lean_name": "progOfHOL_seqAssocHOL_seq",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific codec equation for the Seq clause of exact pan_simp seq_assoc. It uses the two recursive seq_assoc equations; HOL has no theorem about commuting progOfHOL with seqAssocHOL, so no HOL tag is claimed."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
-    "lean_name": "progOfHOL_seqAssocHOL_tick",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific codec equation for the Tick fallback clause of exact pan_simp seq_assoc. It requires no recursive hypothesis; HOL has no theorem about commuting progOfHOL with seqAssocHOL, so no HOL tag is claimed."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
-    "lean_name": "progOfHOL_seqAssocHOL_while",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific codec equation for the While clause of exact pan_simp seq_assoc. It uses the recursive loop-body equation at Skip; HOL has no theorem about commuting progOfHOL with seqAssocHOL, so no HOL tag is claimed."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
-    "lean_name": "progOfHOL_seqCallRetHOL",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific representation bridge for HOL `seq_call_ret_def`: HOL has no separate theorem commuting `seqCallRetHOL` with the Lean `progOfHOL` decoder. The bridge preserves the exact HOL transform while reflecting its MlString equality guard through the decoder. It carries no HOL tag."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
-    "lean_name": "progOfHOL_smartSeqHOL",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific representation bridge for `smartSeqHOL`: HOL declares the transformation but has no separate theorem about commuting the `ProgHOL` to production `Prog` decoder with it. This proof connects the exact HOL carrier to the executable helper and carries no HOL tag."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanSimp/RetToTailAssembly.lean",
