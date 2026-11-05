@@ -92,47 +92,4 @@ def decStepHOLExact {width : Nat} {σ : Type} [NeZero width]
       else (some .error, state)
   | none => (some .error, state)
 
-/-- The initializer-evaluation failure branch returns `SOME Error` and leaves
-    the state unchanged. -/
-theorem decStepHOLExact_initializer_error {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateExact width σ) (name : MlS) (shape : ShapeHOL)
-    (initializer : ExpHOL width) (body : ProgHOL width)
-    (evalInitializer : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width))
-    (evaluateBody : ProgHOL width → PanSemStateExact width σ →
-      Option (PanSemResultExact width) × PanSemStateExact width σ)
-    (h : evalInitializer state initializer = none) :
-    decStepHOLExact state name shape initializer body evalInitializer evaluateBody
-      = (some .error, state) := by
-  simp only [decStepHOLExact, h]
-
-/-- The shape-mismatch branch returns `SOME Error` and leaves the state
-    unchanged. -/
-theorem decStepHOLExact_shape_error {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateExact width σ) (name : MlS) (shape : ShapeHOL)
-    (initializer : ExpHOL width) (body : ProgHOL width)
-    (evalInitializer : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width))
-    (evaluateBody : ProgHOL width → PanSemStateExact width σ →
-      Option (PanSemResultExact width) × PanSemStateExact width σ)
-    (value : ValueHOL width) (h : evalInitializer state initializer = some value)
-    (hshape : shapeEqHOL shape (shapeOfHOLExact value) = false) :
-    decStepHOLExact state name shape initializer body evalInitializer evaluateBody
-      = (some .error, state) := by
-  simp [decStepHOLExact, h, hshape]
-
-/-- The success branch installs the binding, runs the body, and restores the
-    previous local binding. -/
-theorem decStepHOLExact_ok {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateExact width σ) (name : MlS) (shape : ShapeHOL)
-    (initializer : ExpHOL width) (body : ProgHOL width)
-    (evalInitializer : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width))
-    (evaluateBody : ProgHOL width → PanSemStateExact width σ →
-      Option (PanSemResultExact width) × PanSemStateExact width σ)
-    (value : ValueHOL width) (h : evalInitializer state initializer = some value)
-    (hshape : shapeEqHOL shape (shapeOfHOLExact value) = true) :
-    decStepHOLExact state name shape initializer body evalInitializer evaluateBody
-      = (let result := evaluateBody body (setVarHOLExact name value state)
-         (result.1, { result.2 with
-           locals := resVarHOLExact result.2.locals (name, state.locals name) })) := by
-  simp [decStepHOLExact, h, hshape]
-
 end Flapjack

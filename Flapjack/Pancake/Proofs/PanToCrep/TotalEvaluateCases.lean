@@ -796,6 +796,37 @@ theorem panToCrepCallPreserveStateCodeLocalsRelExact
   refine ⟨?_, hcodePost, hexcpPost, hlocalsPost⟩
   simpa [PanSemStateFiniteExact.decClockHOLFinite, decClockCrepSemHOL] using hstatePost
 
+/-! The `Skip` constructor case uses the total result×state clauses on both
+  sides. The source evaluator uses the production `PanSemState`, and the target
+  evaluator uses the code-bearing runtime state converted by `toHolState`. The
+  compiled target syntax is exactly `Skip`. The returned runtime post-state is
+  the original target state, so all four state/code/exception/local relations
+  are established at the post-state boundary without a target-run premise. -/
+theorem panToCrepTotalSkipStateCase
+    {σ : Type _}
+    (context : PanToCrepProofContext (RiscV.Word 64))
+    (sourceState : PanSemState (RiscV.Word 64) (FfiState σ))
+    (targetState : CrepRuntimeState (RiscV.Word 64) σ)
+    (hstate : stateRel sourceState targetState)
+    (hcode : codeRel context (panSemCodeAsLookup sourceState.code)
+      targetState.code)
+    (hexcp : excpRel context.eids sourceState.exceptionShapes)
+    (hlocals : localsRel context sourceState.locals targetState.locals) :
+    panSemEvaluateExprIfFragmentRiscV64ByMeasure (.leaf .skip) sourceState =
+        (none, sourceState) ∧
+    compileCodeRelProg context (.skip : Prog (RiscV.Word 64)) =
+        (CrepProg.skip : CrepProg (BitVec 64)) ∧
+    ∃ targetPost : CrepRuntimeState (RiscV.Word 64) σ,
+      evalCrepClockLeaf .skip targetState.toHolState =
+          (none, targetPost.toHolState) ∧
+      stateRel sourceState targetPost ∧
+      codeRel context (panSemCodeAsLookup sourceState.code) targetPost.code ∧
+      excpRel context.eids sourceState.exceptionShapes ∧
+      localsRel context sourceState.locals targetPost.locals := by
+  refine ⟨by simp [panSemEvaluateExprIfFragmentRiscV64ByMeasure], rfl, ?_⟩
+  refine ⟨targetState, by simp, hstate, ?_, hexcp, hlocals⟩
+  exact hcode
+
 /-! Source review of HOL `eval_var_cexp_present_ctxt`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:693-748`). It quantifies
     over source state, expression, evaluated value, target state, context,
