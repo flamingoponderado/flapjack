@@ -66,6 +66,18 @@ theorem doInstall_resource_frame {C F R : Type} (args : List Value) (state next 
   all_goals obtain ⟨_, rfl⟩ := run
   all_goals exact ⟨rfl, rfl, rfl⟩
 
+/-- The production installation dispatcher resets the stack bound and safety
+flag while retaining FFI events. -/
+theorem doApp_install_resource_frame {C F : Type} (args : List Value) (state next : State C F)
+    (value : Value) (run : doApp .install args state = .val (value, next)) :
+    state.ffi.ioEvents <+: next.ffi.ioEvents ∧
+    BackendProps.optionLe state.stackMax next.stackMax ∧
+    (next.safeForSpace = true → state.safeForSpace = true) := by
+  simp only [doApp] at run
+  have facts := doInstall_resource_frame args { state with stackMax := none, stackFrameSizes := .ln } next value run
+  obtain ⟨ffi, stack, safe⟩ := facts
+  simp [ffi, stack, safe, BackendProps.optionLe]
+
 /-- A returning FFI application extends the event list while preserving the
 resource fields; this is a component of the original primitive monotonicity results. -/
 theorem doAppAux_ffi_resource_frame {C F : Type} (name : Basis.Pure.MlString.MlString) (args : List Value)

@@ -26,6 +26,98 @@ theorem resourceMono_tick {C F : Type} (state : State C F) : ResourceMono .tick 
   by_cases zero : state.clock = 0 <;>
     simp [ResourceMono, evaluate, zero, flushState, decClock, BackendProps.optionLe_refl]
 
+/-- Returning a value list preserves the observed resource fields, including
+the failed-variable-lookup case. -/
+theorem resourceMono_return {C F : Type} (names : List Nat) (state : State C F) :
+    ResourceMono (.return names) state := by
+  cases found : getVars names state.locals <;>
+    simp [ResourceMono, evaluate, found, flushState, BackendProps.optionLe_refl]
+
+/-- A successful exception jump changes only local and control data. -/
+theorem jumpExc_resource_frame {C F : Type} (state next : State C F)
+    (run : jumpExc state = some next) :
+    next.ffi = state.ffi ∧ next.stackMax = state.stackMax ∧ next.safeForSpace = state.safeForSpace := by
+  unfold jumpExc at run
+  split at run
+  · split at run
+    · simp only [Option.some.injEq] at run
+      subst next
+      exact ⟨rfl, rfl, rfl⟩
+    · contradiction
+  · contradiction
+
+/-- Raising either jumps to a saved handler or reports a type error; neither
+case changes the three resource observations. -/
+theorem resourceMono_raise {C F : Type} (name : Nat) (state : State C F) :
+    ResourceMono (.raise name) state := by
+  cases found : getVar name state.locals with
+  | none => simp [ResourceMono, evaluate, found, BackendProps.optionLe_refl]
+  | some value =>
+    cases jump : jumpExc state with
+    | none => simp [ResourceMono, evaluate, found, jump, BackendProps.optionLe_refl]
+    | some next =>
+      obtain ⟨ffi, stack, safe⟩ := jumpExc_resource_frame state next jump
+      simp [ResourceMono, evaluate, found, jump, ffi, stack, safe, BackendProps.optionLe_refl]
+
+/-- A successful live-variable cut preserves the observed resources. -/
+theorem cutStateOpt_resource_frame {C F : Type} (names : Option NumSet) (state next : State C F)
+    (run : cutStateOpt names state = some next) :
+    next.ffi = state.ffi ∧ next.stackMax = state.stackMax ∧ next.safeForSpace = state.safeForSpace := by
+  cases names with
+  | none => simp [cutStateOpt] at run; subst next; exact ⟨rfl, rfl, rfl⟩
+  | some names =>
+    cases cut : cutEnv names state.locals with
+    | none => simp [cutStateOpt, cutState, cut] at run
+    | some env =>
+      simp [cutStateOpt, cutState, cut] at run
+      subst next
+      exact ⟨rfl, rfl, rfl⟩
+
+/-- An assignment is resource-monotone when its primitive is; failed cuts,
+argument reads, and primitive errors follow the actual evaluator branches. -/
+theorem resourceMono_assign {C F : Type} (dest : Nat) (op : ClosLang.Op) (names : List Nat)
+    (live : Option NumSet) (state : State C F)
+    (primitive : ∀ (args : List Value) (before after : State C F) (value : Value),
+      doApp op args before = .val (value, after) →
+      before.ffi.ioEvents <+: after.ffi.ioEvents ∧ BackendProps.optionLe before.stackMax after.stackMax ∧
+        (after.safeForSpace = true → before.safeForSpace = true)) :
+    ResourceMono (.assign dest op names live) state := by
+  by_cases bad : (DataLang.opRequiresNames op == live.isNone) = true
+  · simp [ResourceMono, evaluate, bad, BackendProps.optionLe_refl]
+  · cases reads : getVars names state.locals with
+    | none => simp [ResourceMono, evaluate, bad, reads, BackendProps.optionLe_refl]
+    | some values =>
+      cases cut : cutStateOpt live state with
+      | none => simp [ResourceMono, evaluate, bad, reads, cut, BackendProps.optionLe_refl]
+      | some prepared =>
+        obtain ⟨ffi, stack, safe⟩ := cutStateOpt_resource_frame live state prepared cut
+        cases application : doApp op values prepared with
+        | err error =>
+          cases op <;> simp [ResourceMono, evaluate, bad, reads, cut, application, flushState,
+            installSfs, ffi, stack, safe, BackendProps.optionLe_refl]
+        | val pair =>
+          obtain ⟨value, after⟩ := pair
+          obtain ⟨events, bound, safeBefore⟩ := primitive values prepared after value application
+          cases op <;> simp [ResourceMono, evaluate, bad, reads, cut, application, setVar,
+            installSfs, ffi, stack, safe] at events bound safeBefore ⊢ <;> tauto
+
+/-- The FFI assignment case uses the actual primitive dispatcher and FFI
+oracle; returned events are extended exactly as in the FFI semantics. -/
+theorem resourceMono_ffiAssign {C F : Type} (dest : Nat) (name : Basis.Pure.MlString.MlString)
+    (names : List Nat) (live : Option NumSet) (state : State C F) :
+    ResourceMono (.assign dest (.ffi name) names live) state := by
+  apply resourceMono_assign dest (.ffi name) names live state
+  intro args before after value run
+  exact doApp_ffi_resource_frame name args before after value run
+
+/-- Installation assignments satisfy source resource monotonicity. -/
+theorem resourceMono_installAssign {C F : Type} (dest : Nat) (names : List Nat)
+    (live : Option NumSet) (state : State C F) :
+    ResourceMono (.assign dest .install names live) state := by
+  apply resourceMono_assign dest .install names live state
+  intro args before after value run
+  exact doApp_install_resource_frame args before after value run
+
 /-- Sequential source execution composes the three resource properties. -/
 theorem resourceMono_seq {C F : Type} (first second : DataLang.Prog) (state : State C F)
     (firstMono : ResourceMono first state)
