@@ -292,7 +292,8 @@ its HOL source:
   (rule in `scripts/UnusedTheorems.lean`). Names mentioned in tests,
   documentation and scripts, theorems with any attribute other than `hol`
   (simp, grind, ext, ...: automation can use them unnamed), and the
-  representation witnesses that `check-hol-refs.py` requires by name, are
+  representation witnesses that `check-hol-refs.py` requires by name, and
+  theorems whose inventory row cites HOL (such as `documented_mismatch`) are
   kept as roots. A theorem whose name occurs in the source of a surviving
   Lean declaration is kept too, because a `rfl` theorem used in `simp`
   leaves no trace in the proof term. It loads the built
