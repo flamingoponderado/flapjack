@@ -706,6 +706,162 @@ theorem combinedPartial_store_execution {width : Nat} [NeZero width] (conf : Con
     wordSemTheWord, endOffset, concrete, holHd, assum]
   simpa only [wordSemTheWord] using enoughNorm
 
+/-- A successful major collection preserves the word shape of its global
+root. -/
+theorem combinedMajor_global_word {width : Nat} [NeZero width] (conf : Config)
+    (root root1 : HeapAddress (WordLocW width)) (roots roots1 : List (HeapAddress (WordLocW width)))
+    (heap heap1 : List (HeapElement (WordLocW width) (HeapTag × List (WordLocW width))))
+    (a sp sp1 limit a1 n1 : Nat) (gens gens1 : GenState) (limits : List Nat) (refsStart : Nat)
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (memory : BitVec width → WordLocW width) (domain : BitVec width → Bool)
+    (run : gcCombined (makeGcConf (α := List (WordLocW width)) limit) (.generational limits)
+      (root :: roots, heap, gens, refsStart, false) = (root1 :: roots1, heap1, a1, n1, gens1, true))
+    (global : store.lookup .globals = some (wordAddr conf root)) (limitEq : limit = heapLength heap)
+    (good : goodDimindex width) (heapMem : heapInMemoryStore heap a sp sp1 gens conf store memory domain limit) :
+    ∃ g, wordAddr conf root1 = .word g := by
+  have assum := heapInMemoryStore_gcAssum conf heap a sp sp1 limit gens store memory domain good heapMem
+  have inputWord : wordSemIsWordLoc (wordAddr conf root) = true := by
+    simpa [holFapply_of_lookup global] using assum.2.2.2.2.2.2.2.1
+  obtain ⟨curr, other, outMemory, state, _, _, _, _, _, _, _, concrete, _⟩ :=
+    combinedMajor_store_simulation conf (root :: roots) (root1 :: roots1) heap heap1 a sp sp1 limit a1 n1
+      gens gens1 limits refsStart store memory domain run limitEq good heapMem
+  have rel := wordGenGcMoveRoots_rootRel conf ((root :: roots).map (wordAddr conf)) 0 other
+    ((wordSemBytesInWord * BitVec.ofNat width limit) >>> wordShiftAmount width)
+    (other + wordSemBytesInWord * BitVec.ofNat width limit) curr memory domain
+  rw [← wordGenGc_fst, concrete] at rel
+  simp only [List.map_cons] at rel
+  cases rel with
+  | cons head tail =>
+    have outputWord : wordSemIsWordLoc (wordAddr conf root1) = true := by simpa [inputWord] using head.1.symm
+    cases value : wordAddr conf root1 with
+    | word w => exact ⟨w, rfl⟩
+    | loc l o => simp [value, wordSemIsWordLoc] at outputWord
+
+/-- Rebuild the major collector's heap/store invariant after swapping spaces
+and choosing a whole-word trigger within the available free region. -/
+theorem combinedMajor_store_reconstruct {width : Nat} [NeZero width] (conf : Config)
+    (heap heap1 : List (HeapElement (WordLocW width) (HeapTag × List (WordLocW width))))
+    (a sp sp1 limit copied free triggerWords : Nat) (gens : GenState) (limits : List Nat)
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (memory outMemory : BitVec width → WordLocW width) (domain : BitVec width → Bool)
+    (curr other g : BitVec width)
+    (heapMem : heapInMemoryStore heap a sp sp1 gens conf store memory domain limit)
+    (kind : conf.gcKind = .generational limits) (lengthEq : heapLength heap1 = heapLength heap)
+    (triggerBound : triggerWords ≤ free)
+    (triggerEq : newTrig (wordSemBytesInWord * BitVec.ofNat width free)
+      (wordSemTheWord (holFapply store .allocSize)) limits = wordSemBytesInWord * BitVec.ofNat width triggerWords)
+    (currLookup : store.lookup .currHeap = some (.word curr))
+    (otherLookup : store.lookup .otherHeap = some (.word other))
+    (separated : SetSep.star (wordHeap other heap1 conf) (wordHeap curr (heapExpand limit) conf)
+      (SetSep.fun2Set (outMemory, fun address => domain address = true))) :
+    heapInMemoryStore heap1 copied triggerWords (free - triggerWords) (.genState 0 (limits.map fun _ => copied)) conf
+      (store.updateListEq [(.currHeap, .word other), (.otherHeap, .word curr),
+        (.nextFree, .word (other + wordSemBytesInWord * BitVec.ofNat width copied)),
+        (.genStart, .word ((other + wordSemBytesInWord * BitVec.ofNat width copied) - other)),
+        (.triggerGC, .word ((other + wordSemBytesInWord * BitVec.ofNat width copied) +
+          newTrig ((other + wordSemBytesInWord * BitVec.ofNat width (copied + free)) -
+            (other + wordSemBytesInWord * BitVec.ofNat width copied))
+            (wordSemTheWord (holFapply store .allocSize)) limits)),
+        (.endOfHeap, .word (other + wordSemBytesInWord * BitVec.ofNat width (copied + free))),
+        (.globals, .word g), (.globReal, globReal conf other (.word g)),
+        (.temp 0, .word 0), (.temp 1, .word 0), (.temp 2, .word 0), (.temp 3, .word 0),
+        (.temp 4, .word 0), (.temp 5, .word 0), (.temp 6, .word 0)]) outMemory domain limit := by
+  classical
+  rcases heapMem with ⟨heapBound, byteBound, shift, nonzero, lenBound, shiftBound, global,
+    oldCurr, oldOther, currAligned, otherAligned, oldCurrLookup, oldOtherLookup, next, trigger, endHeap, heapSize,
+    globRealOld, generations, oldSeparated⟩
+  have currEq : oldCurr = curr := by simpa [oldCurrLookup] using currLookup
+  have otherEq : oldOther = other := by simpa [oldOtherLookup] using otherLookup
+  subst oldCurr
+  subst oldOther
+  have offset : (other + wordSemBytesInWord * BitVec.ofNat width (copied + free)) -
+      (other + wordSemBytesInWord * BitVec.ofNat width copied) = wordSemBytesInWord * BitVec.ofNat width free := by
+    rw [BitVec.ofNat_add, BitVec.mul_add, ← BitVec.add_assoc]
+    simp
+  have sum : copied + triggerWords + (free - triggerWords) = copied + free := by omega
+  have genValid : genStartsInStore conf (.genState 0 (limits.map fun _ => copied))
+      (some (.word (StackRemove.bytesInWord width * BitVec.ofNat width copied))) := by
+    simp only [genStartsInStore]
+    intro sizes eq
+    have sizesEq : sizes = limits := by simpa [kind] using eq.symm
+    subst sizes
+    simp only [List.length_map, true_and]
+    intro x xs first
+    cases limits with
+    | nil => simp at first
+    | cons size rest =>
+      simp only [List.map_cons, List.cons.injEq] at first
+      obtain ⟨rfl, _⟩ := first
+      rfl
+  rw [offset, triggerEq]
+  rw [heapInMemoryStore, lengthEq]
+  refine ⟨heapBound, byteBound, shift, nonzero, lenBound, shiftBound, ?_, other, curr,
+    otherAligned, currAligned, ?_⟩
+  · simp [HolFiniteMapExact.lookup_updateListEq, FUPDATE_LIST_HOL, FUPDATE_HOL]
+  · simp [HolFiniteMapExact.lookup_updateListEq, FUPDATE_LIST_HOL, FUPDATE_HOL,
+      wordSemBytesInWord, StackRemove.bytesInWord, sum, BitVec.ofNat_add, BitVec.mul_add,
+      BitVec.add_assoc, heapSize, globRealInv, globReal, genStartsInStore, kind, separated]
+    simpa [genStartsInStore, kind, StackRemove.bytesInWord] using genValid
+
+/-- A successful major collection executes the concrete collector and
+reconstructs the complete heap/store invariant. -/
+theorem combinedMajor_store_correct {width : Nat} [NeZero width] (conf : Config)
+    (root root1 : HeapAddress (WordLocW width)) (roots roots1 : List (HeapAddress (WordLocW width)))
+    (heap heap1 : List (HeapElement (WordLocW width) (HeapTag × List (WordLocW width))))
+    (a sp sp1 limit a1 n1 : Nat) (gens gens1 : GenState) (limits : List Nat) (refsStart : Nat)
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (memory : BitVec width → WordLocW width) (domain : BitVec width → Bool)
+    (run : gcCombined (makeGcConf (α := List (WordLocW width)) limit) (.generational limits)
+      (root :: roots, heap, gens, refsStart, false) = (root1 :: roots1, heap1, a1, n1, gens1, true))
+    (kind : conf.gcKind = .generational limits) (full : ¬ wordGenGcCanDoPartial limits store)
+    (global : store.lookup .globals = some (wordAddr conf root)) (limitEq : limit = heapLength heap)
+    (good : goodDimindex width) (heapMem : heapInMemoryStore heap a sp sp1 gens conf store memory domain limit) :
+    ∃ outMemory outStore k,
+      wordGcFun conf (roots.map (wordAddr conf), memory, domain, store) =
+        some (roots1.map (wordAddr conf), outMemory, outStore) ∧
+      heapInMemoryStore heap1 a1 k (n1 - k) gens1 conf outStore outMemory domain limit ∧
+      k ≤ n1 ∧ outStore.lookup .globals = some (wordAddr conf root1) := by
+  classical
+  obtain ⟨g, globalEq⟩ := combinedMajor_global_word conf root root1 roots roots1 heap heap1 a sp sp1 limit a1 n1
+    gens gens1 limits refsStart store memory domain run global limitEq good heapMem
+  obtain ⟨curr, other, outMemory, state, currLookup, otherLookup, abstractRun, heapEq, allocEq, freeEq, gensEq,
+    execution, separated, h2Empty, r4Empty, r3Empty, r2Empty, heapLen, inv, refsOk⟩ :=
+    combinedMajor_store_execution conf root root1 roots roots1 heap heap1 a sp sp1 limit a1 n1 gens gens1 limits
+      refsStart store memory domain run kind full global limitEq good heapMem
+  have stateOk : state.ok = true := by
+    have combinedRun := run
+    simp only [gcCombined, Bool.false_eq_true, ↓reduceIte, abstractRun, Prod.mk.injEq] at combinedRun
+    exact combinedRun.2.2.2.2.2
+  have index := genFull_dataIndex (makeGcConf (α := List (WordLocW width)) limit)
+    (root :: roots) (root1 :: roots1) heap state abstractRun stateOk h2Empty
+  have expandLen : heapLength (heapExpand state.n : List (HeapElement (WordLocW width)
+      (HeapTag × List (WordLocW width)))) = state.n := by cases state.n <;> simp [heapExpand, heapLength, elLength]
+  have outputLength : heapLength heap1 = heapLength heap := by
+    rw [heapEq]
+    simp only [heapLength_append, expandLen]
+    simp [genLenInv, h2Empty, r4Empty, r3Empty, r2Empty, heapLength] at inv
+    simp [heapLength] at heapLen ⊢
+    omega
+  obtain ⟨k, triggerEq, kBound⟩ := newTrig_wordCount state.n
+    (wordSemTheWord (holFapply store .allocSize)) limits good
+  have invariant := combinedMajor_store_reconstruct conf heap heap1 a sp sp1 limit (heapLength state.h1) state.n k
+    gens limits store memory outMemory domain curr other g heapMem kind outputLength kBound triggerEq currLookup otherLookup separated
+  let outStore := store.updateListEq [(.currHeap, .word other), (.otherHeap, .word curr),
+    (.nextFree, .word (other + wordSemBytesInWord * BitVec.ofNat width (heapLength state.h1))),
+    (.genStart, .word ((other + wordSemBytesInWord * BitVec.ofNat width (heapLength state.h1)) - other)),
+    (.triggerGC, .word ((other + wordSemBytesInWord * BitVec.ofNat width (heapLength state.h1)) +
+      newTrig ((other + wordSemBytesInWord * BitVec.ofNat width (heapLength state.h1 + state.n)) -
+        (other + wordSemBytesInWord * BitVec.ofNat width (heapLength state.h1)))
+        (wordSemTheWord (holFapply store .allocSize)) limits)),
+    (.endOfHeap, .word (other + wordSemBytesInWord * BitVec.ofNat width (heapLength state.h1 + state.n))),
+    (.globals, .word g), (.globReal, globReal conf other (.word g)),
+    (.temp 0, .word 0), (.temp 1, .word 0), (.temp 2, .word 0), (.temp 3, .word 0),
+    (.temp 4, .word 0), (.temp 5, .word 0), (.temp 6, .word 0)]
+  refine ⟨outMemory, outStore, k, ?_, ?_, by simpa [freeEq] using kBound, ?_⟩
+  · simpa [outStore, globalEq] using execution
+  · simpa [outStore, allocEq, freeEq, gensEq, index] using invariant
+  · simp [outStore, HolFiniteMapExact.lookup_updateListEq, FUPDATE_LIST_HOL, FUPDATE_HOL, globalEq]
+
 /-- Both generational branches execute the combined collector's root result
 and publish its first root in the globals store field. -/
 theorem combinedGenerational_store_execution {width : Nat} [NeZero width] (conf : Config)
