@@ -426,6 +426,13 @@ DEFINITION_RE = re.compile(
     r"(?:def|abbrev|opaque|theorem|lemma)\s+([^\s:({\[]+)"
 )
 DOCUMENTED_MISMATCHES = {
+    ('Flapjack/Pancake/Semantics/PanCommonProps.lean', 'ctxtMax'): ('cakeml/pancake/semantics/pan_commonPropsScript.sml', 'ctxt_max_def', 'Raw function maps admit infinite support and Boolean equality adds assumptions absent from HOL; retained for faithful finite-map lookup proofs.'),
+    ('Flapjack/Pancake/Semantics/PanCommonProps.lean', 'noOverlap'): ('cakeml/pancake/semantics/pan_commonPropsScript.sml', 'no_overlap_def', 'Raw function maps admit infinite support and Boolean equality adds assumptions absent from HOL; retained for faithful finite-map lookup proofs.'),
+    ('Flapjack/Pancake/Semantics/PanCommonProps.lean', 'fmEmptyZipAlist'): ('cakeml/pancake/semantics/pan_commonPropsScript.sml', 'fm_empty_zip_alist', 'Raw function maps admit infinite support and Boolean equality adds assumptions absent from HOL; retained for faithful finite-map lookup proofs.'),
+    ('Flapjack/Pancake/Semantics/PanCommonProps.lean', 'fmEmptyZipFlookup'): ('cakeml/pancake/semantics/pan_commonPropsScript.sml', 'fm_empty_zip_flookup', 'Raw function maps admit infinite support and Boolean equality adds assumptions absent from HOL; retained for faithful finite-map lookup proofs.'),
+    ('Flapjack/Pancake/Semantics/PanCommonProps.lean', 'optMmapSomeEqZipFlookup'): ('cakeml/pancake/semantics/pan_commonPropsScript.sml', 'opt_mmap_some_eq_zip_flookup', 'Raw function maps admit infinite support and Boolean equality adds assumptions absent from HOL; retained for faithful finite-map lookup proofs.'),
+    ('Flapjack/Pancake/Semantics/PanCommonProps.lean', 'optMmapDisjZipFlookup'): ('cakeml/pancake/semantics/pan_commonPropsScript.sml', 'opt_mmap_disj_zip_flookup', 'Raw function maps admit infinite support and Boolean equality adds assumptions absent from HOL; retained for faithful finite-map lookup proofs.'),
+    ('Flapjack/Pancake/Semantics/PanCommonProps.lean', 'updateEqZipFlookupHOL'): ('cakeml/pancake/semantics/pan_commonPropsScript.sml', 'update_eq_zip_flookup', 'Raw function maps admit infinite support and Boolean equality adds assumptions absent from HOL; retained for faithful finite-map lookup proofs.'),
     ("Flapjack/Compiler/Backend/WordToWord/Proofs/CompileConventions/Labels.lean", "compileNamesLabels"): (
         "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml", "compile_to_word_conventions",
         "PR1213 source review: only names/labels conjuncts; the full theorem is separately tagged in CompileConventions.Output. This helper must remain untagged."
@@ -2095,7 +2102,6 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         ("Flapjack/Pancake/Proofs/PanToCrep.lean", "mod_eq_of_lt_eq"),
         ("Flapjack/Pancake/Proofs/PanToCrep.lean", "option_ne_none_iff_exists"),
         ("Flapjack/Pancake/Proofs/PanToCrep.lean", "prod_mk_pair_eq_id"),
-        ("Flapjack/Pancake/Proofs/PanToCrep/CompileExpVmax.lean", "genlistVmaxDistinctListsCompiledExpsW"),
         ("Flapjack/Pancake/PanLang/Decl.lean", "isDeclHOL"),
         ("Flapjack/Pancake/PanLang/Decl.lean", "isFunctionHOL"),
         ("Flapjack/Pancake/PanLang/Decl.lean", "isNameHOL"),

@@ -925,45 +925,12 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
             inventory,
         )
 
-    def test_genlist_vmax_distinct_lists_port_is_in_review_inventory(self):
-        inventory = {
-            (record["lean_path"], record["lean_name"]): record
-            for record in MAP["build_inventory"]()
-        }
-        generic_key = (
-            "Flapjack/Pancake/Proofs/PanToCrep/CompileExpVmax.lean",
-            "genlistVmaxDistinctListsCompiledExps",
-        )
-        generic = inventory[generic_key]
-        self.assertIsNone(generic["hol_name"])
-        self.assertEqual(
-            generic["statement_status"],
-            "no_hol_reference_pending_classification",
-        )
-
-        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
-        manifest_by_key = {
-            (record["lean_path"], record["lean_name"]): record
-            for record in manifest
-        }
-        generic_record = manifest_by_key[generic_key]
-        self.assertEqual(
-            generic_record["hol_name"],
-            "genlist_vmax_distinct_lists_compiled_exps",
-        )
-        self.assertEqual(generic_record["statement_status"], "documented_mismatch")
-
-        exact_key = (
-            "Flapjack/Pancake/Proofs/PanToCrep/CompileExpVmax.lean",
-            "genlistVmaxDistinctListsCompiledExpsW",
-        )
-        exact = inventory[exact_key]
-        self.assertEqual(
-            exact["hol_name"],
-            "genlist_vmax_distinct_lists_compiled_exps",
-        )
-        self.assertEqual(exact["statement_status"], "reviewed_exact")
-        self.assertTrue(exact["reviewer"])
+    def test_removed_vmax_analogues_are_not_in_inventory(self):
+        inventory = MAP["build_inventory"]()
+        self.assertFalse(any(
+            record["lean_path"] == "Flapjack/Pancake/Proofs/PanToCrep/CompileExpVmax.lean"
+            for record in inventory
+        ))
 
     def test_exact_pan_to_crep_utility_ports_are_in_review_inventory(self):
         inventory = {

@@ -20,7 +20,6 @@ import Flapjack.Pancake.PanToCrep.CompileProg
 import Flapjack.Pancake.PanToCrep.CompileExact
 import Flapjack.Pancake.PanToCrep.ContextExact
 import Flapjack.Pancake.Proofs.PanToCrep.CompileExactVarSupport
-import Flapjack.Pancake.Proofs.PanToCrep.CompileExpVmax
 import Flapjack.CrepeCompileExpVariables
 import Flapjack.PanToCrepMaxList
 
@@ -185,21 +184,10 @@ mutual
               panShapeListMatches_eq leftTail rightTail htail]
 end
 
-/-- HOL `res_var_commutes'`: restoring two distinct finite-map locals
-    commutes. `LawfulBEq` identifies the map implementation's Boolean key
-    comparison with HOL equality. -/
-@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "res_var_commutes'"]
-theorem resVarCommutesPrime [BEq α] [LawfulBEq α]
-    (locals : FiniteMap α β) (h n : α) (v v' : Option β)
-    (hne : n ≠ h) :
-    resVar (resVar locals (h, v)) (n, v') =
-      resVar (resVar locals (n, v')) (h, v) := by
-  funext key
-  change FLOOKUP (resVar (resVar locals (h, v)) (n, v')) key =
-    FLOOKUP (resVar (resVar locals (n, v')) (h, v)) key
-  simp only [FLOOKUP_resVar]
-  by_cases hh : key = h <;> by_cases hn : key = n <;>
-    simp_all [beq_iff_eq]
+
+/-! The exact HOL theorems `res_var_commutes'`, `MEM_compile_exp_vmax`,
+    and `genlist_vmax_distinct_lists_compiled_exps` remain to be ported over
+    the faithful finite-map and expression carriers. -/
 
 /-- Flapjack-only optional-indexing support for HOL `load_shape_el_rel`.
     HOL's `EL` is stated without an Option because its index premise gives

@@ -190,7 +190,6 @@ import Flapjack.Pancake.PanCommon
 import Flapjack.Pancake.PanToCrep.CompileProg
 import Flapjack.Pancake.Proofs.PanStructs
 import Flapjack.Pancake.Proofs.PanToCrep.CodeRelExact
-import Flapjack.Pancake.Proofs.PanToCrep.CompileExpVmax
 import Flapjack.Pancake.Semantics.CrepSem.Primop
 import Flapjack.Pancake.Semantics.LoopSem
 import Flapjack.Pancake.Semantics.PanCommonProps
