@@ -565,4 +565,206 @@ theorem gcMoveList_preserves_prefix {α β : Type} (roots roots' : List (HeapAdd
     simp only [result, Prod.mk.injEq] at alt
     exact ⟨added, alt.2.1⟩
 
+/-- Replacing a data element's pointer payload preserves every heap lookup
+away from its starting address. This is a Flapjack scan proof helper. -/
+theorem heapLookup_scan_replace_ne {α β : Type} (h1 tail : List (HeapElement α β))
+    (ys zs : List (HeapAddress α)) (len : Nat) (data : β) (j : Nat)
+    (ne : j ≠ heapLength h1) :
+    heapLookup j (h1 ++ .dataElement ys len data :: tail) =
+      heapLookup j (h1 ++ .dataElement zs len data :: tail) := by
+  rw [GenGc.heapLookup_append j h1, GenGc.heapLookup_append j h1]
+  by_cases below : j < heapLength h1
+  · simp [below]
+  · have nonzero : j - heapLength h1 ≠ 0 := by omega
+    simp [below, heapLookup, nonzero, elLength]
+    rfl
+
+/-- The scanned and unscanned versions of a data element occupy the same
+heap-address set. This is a Flapjack scan proof helper. -/
+theorem heapAddresses_scan_replace {α β : Type} (h1 tail : List (HeapElement α β))
+    (ys zs : List (HeapAddress α)) (len : Nat) (data : β) :
+    heapAddresses 0 (h1 ++ .dataElement ys len data :: tail) =
+      heapAddresses 0 ((h1 ++ [.dataElement zs len data]) ++ tail) := by
+  rw [List.append_assoc]
+  simp only [List.singleton_append, heapAddresses_append]
+  funext j
+  simp [heapAddresses, elLength]
+
+/-- Moving a fully processed element from the pending heap into the scanned
+heap preserves the source-shaped collector invariant. This Flapjack theorem
+is the scan-state shift needed for the copying collector loop proof. -/
+theorem gcInv_scan_shift {α β : Type} (h1 tail heap heap0 : List (HeapElement α β))
+    (a n limit len : Nat) (ok : Bool) (roots0 ys : List (HeapAddress α)) (data : β)
+    (invariant : gcInv h1 (.dataElement ys len data :: tail) a n heap ok limit heap0 roots0)
+    (children : ∀ ptr u, .pointer ptr u ∈ ys → (heapMap 0 heap).lookup ptr ≠ none) :
+    gcInv (h1 ++ [.dataElement (addrMap (heapMap1 heap) ys) len data]) tail
+      a n heap ok limit heap0 roots0 := by
+  obtain ⟨balance, allocated, free, status, heapSize, heapGood, similar, h1Data, pendingData,
+    mapsInto, injective, surjective, entries⟩ := invariant
+  have h2Data : ∀ h ∈ tail, isDataElement h := by
+    intro h member
+    exact pendingData h (by simp [member])
+  have newH1Data : ∀ h ∈ h1 ++ [.dataElement (addrMap (heapMap1 heap) ys) len data], isDataElement h := by
+    intro h member
+    simp only [List.mem_append, List.mem_singleton] at member
+    rcases member with member | rfl
+    · exact h1Data h member
+    · exact ⟨_, _, _, rfl⟩
+  have totalLen : heapLength (h1 ++ .dataElement ys len data :: tail) =
+      heapLength ((h1 ++ [.dataElement (addrMap (heapMap1 heap) ys) len data]) ++ tail) := by
+    simp [heapLength, List.map_append, List.sum_append, elLength, Nat.add_assoc]
+  have addressEq := heapAddresses_scan_replace h1 tail ys (addrMap (heapMap1 heap) ys) len data
+  refine ⟨balance, allocated.trans totalLen, free, status, heapSize, heapGood, similar,
+    newH1Data, h2Data, ?_, injective, ?_, ?_⟩
+  · intro i defined
+    rw [← addressEq]
+    exact mapsInto i defined
+  · intro j member
+    apply surjective j
+    rwa [addressEq]
+  · intro i j found
+    obtain ⟨xs, size, payload, originalFound, copiedFound, reach, oldChildren⟩ := entries i j found
+    refine ⟨xs, size, payload, originalFound, ?_, reach, ?_⟩
+    · have newBound : heapLength (h1 ++ [.dataElement (addrMap (heapMap1 heap) ys) len data]) =
+          heapLength h1 + (len + 1) := by
+        simp [heapLength, List.map_append, List.sum_append, elLength]
+      by_cases before : j < heapLength h1
+      · have beforeNew : j < heapLength (h1 ++ [.dataElement (addrMap (heapMap1 heap) ys) len data]) := by
+          rw [newBound]; omega
+        have ne : j ≠ heapLength h1 := by omega
+        have sameLookup := heapLookup_scan_replace_ne h1 tail ys (addrMap (heapMap1 heap) ys) len data j ne
+        simpa [List.append_assoc, before, beforeNew, ← sameLookup] using copiedFound
+      · by_cases atHead : j = heapLength h1
+        · subst j
+          simp only [Nat.lt_irrefl, ↓reduceIte] at copiedFound
+          have expected := heapLookup_prefix h1 tail (.dataElement ys len data)
+          have eq : HeapElement.dataElement xs size payload = .dataElement ys len data :=
+            Option.some.inj (copiedFound.symm.trans expected)
+          cases eq
+          have beforeNew : heapLength h1 <
+              heapLength (h1 ++ [.dataElement (addrMap (heapMap1 heap) ys) len data]) := by
+            rw [newBound]; omega
+          have result := heapLookup_prefix h1 tail (.dataElement (addrMap (heapMap1 heap) ys) len data)
+          simpa [List.append_assoc, beforeNew] using result
+        · have beyond : heapLength h1 + (len + 1) ≤ j := by
+            by_contra smaller
+            have inside : j - heapLength h1 < len + 1 := by omega
+            have nonzero : j - heapLength h1 ≠ 0 := by omega
+            rw [GenGc.heapLookup_append j h1] at copiedFound
+            simp [before, heapLookup, nonzero, elLength, inside] at copiedFound
+          have notBeforeNew : ¬j < heapLength (h1 ++ [.dataElement (addrMap (heapMap1 heap) ys) len data]) := by
+            rw [newBound]; omega
+          have sameLookup := heapLookup_scan_replace_ne h1 tail ys (addrMap (heapMap1 heap) ys) len data j atHead
+          simpa [List.append_assoc, before, notBeforeNew, ← sameLookup] using copiedFound
+    · intro ptr u member scanned
+      by_cases before : j < heapLength h1
+      · exact oldChildren ptr u member before
+      · have upper : j < heapLength h1 + (len + 1) := by
+          simpa [heapLength, List.map_append, List.sum_append, elLength] using scanned
+        have atHead : j = heapLength h1 := by
+          by_contra ne
+          have inside : j - heapLength h1 < len + 1 := by omega
+          have nonzero : j - heapLength h1 ≠ 0 := by omega
+          rw [GenGc.heapLookup_append j h1] at copiedFound
+          simp [before, heapLookup, nonzero, elLength, inside] at copiedFound
+        subst j
+        simp only [Nat.lt_irrefl, ↓reduceIte] at copiedFound
+        have expected := heapLookup_prefix h1 tail (.dataElement ys len data)
+        have eq : HeapElement.dataElement xs size payload = .dataElement ys len data :=
+          Option.some.inj (copiedFound.symm.trans expected)
+        cases eq
+        exact children ptr u member
+
+/-- Scanning all pending copied elements preserves the source-shaped
+collector invariant and extends the forwarding map. This theorem is untagged
+while `gcInv` awaits finite-map representation classification. -/
+theorem gcInv_moveLoop {α β : Type} (h1 h2 heap heap0 : List (HeapElement α β))
+    (a n limit : Nat) (ok : Bool) (roots0 : List (HeapAddress α))
+    (invariant : gcInv h1 h2 a n heap ok limit heap0 roots0) :
+    ∃ h13 a3 n3 heap3 c3,
+      gcMoveLoop (h1, h2, a, n, heap, ok, limit) = (h13, a3, n3, heap3, c3) ∧
+      (∀ i j, (heapMap 0 heap).lookup i = some j → (heapMap 0 heap3).lookup i = some j) ∧
+      gcInv h13 [] a3 n3 heap3 c3 limit heap0 roots0 := by
+  cases h2 with
+  | nil => exact ⟨h1, a, n, heap, ok, by simp [gcMoveLoop, invariant]⟩
+  | cons head tail =>
+    have headData : isDataElement head := invariant.2.2.2.2.2.2.2.2.1 head (by simp)
+    obtain ⟨ys, len, data, rfl⟩ := headData
+    have guard : ¬limit < heapLength (h1 ++ .dataElement ys len data :: tail) := by
+      have balance := invariant.1
+      have allocated := invariant.2.1
+      omega
+    have childrenValid := gcInv_scan_children h1 tail heap heap0 a n limit len ok roots0 ys data invariant
+    obtain ⟨pending', a1, n1, heap1, ok1, moved, childrenDomain, _, submap1, inv1⟩ :=
+      gcInv_moveList ys h1 (.dataElement ys len data :: tail) heap heap0 a n limit ok roots0 invariant childrenValid
+    obtain ⟨added, pendingEq⟩ := gcMoveList_preserves_prefix ys (addrMap (heapMap1 heap1) ys)
+      (.dataElement ys len data :: tail) pending' heap heap1 a n limit a1 n1 ok ok1 moved
+    subst pending'
+    have shifted := gcInv_scan_shift h1 (tail ++ added) heap1 heap0 a1 n1 limit len ok1 roots0 ys data inv1 childrenDomain
+    have positive : 0 < len + 1 := by omega
+    have oldBelow : heapLength h1 < limit := by
+      have balance := invariant.1
+      have allocated := invariant.2.1
+      simp [heapLength, List.map_append, List.sum_append, elLength] at allocated ⊢
+      omega
+    have decrease : limit - heapLength (h1 ++ [.dataElement (addrMap (heapMap1 heap1) ys) len data]) <
+        limit - heapLength h1 := by
+      simp [heapLength, List.map_append, List.sum_append, elLength] at oldBelow ⊢
+      omega
+    obtain ⟨h13, a3, n3, heap3, c3, scan, submap2, resultInv⟩ :=
+      gcInv_moveLoop (h1 ++ [.dataElement (addrMap (heapMap1 heap1) ys) len data]) (tail ++ added)
+        heap1 heap0 a1 n1 limit ok1 roots0 shifted
+    refine ⟨h13, a3, n3, heap3, c3, ?_, ?_, resultInv⟩
+    · simp only [gcMoveLoop, if_neg guard, moved, List.cons_append, List.drop, List.head?]
+      simpa using scan
+    · intro i j old
+      exact submap2 i j (submap1 i j old)
+termination_by limit - heapLength h1
+decreasing_by exact decrease
+
+/-- A well-formed heap and valid roots produce a successful full collection
+and the final source-shaped invariant. This result remains untagged while
+`gcInv` and its finite-map representation await source classification. -/
+theorem fullGc_invariant {α β : Type} (roots : List (HeapAddress α))
+    (heap : List (HeapElement α β)) (limit : Nat)
+    (rootOk : rootsOk roots heap) (heapGood : heapOk heap limit) :
+    ∃ heap2 a2 heap3,
+      fullGc (roots, heap, limit) = (addrMap (heapMap1 heap3) roots, heap2, a2, true) ∧
+      (∀ ptr u, .pointer ptr u ∈ roots → (heapMap 0 heap3).lookup ptr ≠ none) ∧
+      gcInv heap2 [] a2 (limit - a2) heap3 true limit heap roots := by
+  have initial := (gcInv_init heap roots limit).mpr heapGood
+  have valid : ∀ ptr u, .pointer ptr u ∈ roots →
+      isSomeDataOrForward (heapLookup ptr heap) ∧ reachableAddresses roots heap ptr := by
+    intro ptr u member
+    exact ⟨Or.inr (rootOk ptr u member), ⟨u, ptr, member, .refl⟩⟩
+  obtain ⟨pending, a1, n1, heap1, c1, moved, domain1, _, _, inv1⟩ :=
+    gcInv_moveList roots [] [] heap heap 0 limit limit true roots initial valid
+  obtain ⟨heap2, a2, n2, heap3, c3, scanned, submap, inv2⟩ :=
+    gcInv_moveLoop [] pending heap1 heap a1 n1 limit c1 roots inv1
+  have status : c3 = true := inv2.2.2.2.1
+  have balance : a2 + n2 = limit := inv2.1
+  have allocated : a2 = heapLength heap2 := by simpa using inv2.2.1
+  have finalHeap : heapLength heap3 = limit := inv2.2.2.2.2.1
+  have remaining : n2 = limit - a2 := by omega
+  have within : heapLength heap2 ≤ limit := by omega
+  have rootDomain : ∀ ptr u, .pointer ptr u ∈ roots → (heapMap 0 heap3).lookup ptr ≠ none := by
+    intro ptr u member
+    have defined := domain1 ptr u member
+    cases lookup : (heapMap 0 heap1).lookup ptr with
+    | none => exact False.elim (defined lookup)
+    | some target => rw [submap ptr target lookup]; simp
+  have rootMap : addrMap (heapMap1 heap1) roots = addrMap (heapMap1 heap3) roots := by
+    apply addrMap_eq
+    intro ptr u member
+    have defined := domain1 ptr u member
+    cases lookup : (heapMap 0 heap1).lookup ptr with
+    | none => exact False.elim (defined lookup)
+    | some target =>
+      have final := submap ptr target lookup
+      change holFapply (heapMap 0 heap1) ptr = holFapply (heapMap 0 heap3) ptr
+      rw [holFapply_of_lookup lookup, holFapply_of_lookup final]
+  refine ⟨heap2, a2, heap3, ?_, rootDomain, ?_⟩
+  · simp [fullGc, moved, scanned, rootMap, status, allocated, finalHeap, heapGood.1, remaining, within]
+  · simpa [status, remaining] using inv2
+
 end Flapjack.Compiler.Backend.CopyingGc
