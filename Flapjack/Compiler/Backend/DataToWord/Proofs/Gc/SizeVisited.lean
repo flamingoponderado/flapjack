@@ -663,4 +663,122 @@ theorem sizeSound_perm_cons {width : Nat} [NeZero width]
   intro root
   simp [or_left_comm]
 
+/-- Flapjack infrastructure: source reachability is monotone in its roots. -/
+theorem reachableRefs_roots_mono (refs : Spt (BvlSem.Ref DataSem.Value))
+    (smaller larger : List DataSem.Value) (target : Nat)
+    (subset : ∀ root, root ∈ smaller → root ∈ larger)
+    (reachable : Memory.reachableRefs smaller refs target) :
+    Memory.reachableRefs larger refs target := by
+  obtain ⟨root, start, member, found, path⟩ := reachable
+  exact ⟨root, start, subset root member, found, path⟩
+
+/-- Flapjack infrastructure: after sizing a nonempty tail, sizing the head
+strictly decreases the lexicographic source recursion measure. -/
+theorem sizeSound_tail_measure (limits : DataSem.Limits) (value next : DataSem.Value)
+    (tail : List DataSem.Value) (remaining : Spt (BvlSem.Ref DataSem.Value)) (seen : Spt Unit) :
+    Prod.Lex (· < ·) (· < ·)
+      (sptSize (DataSem.sizeOfValues limits (next :: tail) remaining seen).2.1, sizeOf [value])
+      (sptSize remaining, sizeOf (value :: next :: tail)) := by
+  have hb := DataSem.sizeOfValues_refsBound limits (next :: tail) remaining seen
+  have hn : 0 < sizeOf next := by cases next <;> simp_wf
+  by_cases equal : sptSize (DataSem.sizeOfValues limits (next :: tail) remaining seen).2.1 = sptSize remaining
+  · rw [equal]
+    apply Prod.Lex.right
+    simp_wf
+    omega
+  · apply Prod.Lex.left
+    omega
+
+set_option maxHeartbeats 1200000 in
+/-- Flapjack infrastructure: source sizing has a bounded heap traversal with
+all visited-address conditions, for permuted and related source roots. -/
+theorem sizeSound_all {width : Nat} [NeZero width]
+    (limits : DataSem.Limits) (conf : Config) (values roots : List DataSem.Value)
+    (addresses : List (HeapAddress (WordLocW width)))
+    (refs remaining : Spt (BvlSem.Ref DataSem.Value)) (seen : Spt Unit)
+    (f tf : HolFiniteMapExact Nat Nat) (heap : Memory.ValueHeap width) (be : Bool) (visited : List Nat)
+    (good : goodDimindex width) (architecture : limits.arch64Bit = decide (width = 64))
+    (perm : values.Perm roots)
+    (related : List.Forall₂ (fun v a => Memory.valueInv conf v refs (a, f, tf, heap)) roots addresses)
+    (noThunks : DataSem.noThunksInRefs refs) (subset : sptSubspt remaining refs)
+    (covered : sizeVisited refs remaining seen f tf visited)
+    (mapInRefs : ∀ key ptr, f.lookup key = some ptr → sptLookup key refs ≠ none)
+    (cells : ∀ key ptr, Memory.reachableRefs roots refs key → f.lookup key = some ptr →
+      Memory.bcRefInv conf key refs (f, tf, heap, be)) :
+    sizeSound limits values refs remaining seen addresses f tf heap visited := by
+  cases values with
+  | nil =>
+    have rootEq : roots = [] := perm.symm.eq_nil
+    subst roots
+    cases related
+    exact sizeSound_nil limits refs remaining seen f tf heap visited subset covered
+  | cons value values =>
+    cases values with
+    | nil =>
+      have rootEq : roots = [value] := perm.symm.eq_singleton
+      subst roots
+      cases related with
+      | cons valueRelated rest =>
+        cases rest
+        apply sizeSound_single limits conf value refs remaining seen _ f tf heap be visited good architecture
+          valueRelated noThunks subset covered mapInRefs cells
+        · intro stamp tag head tail ptr children eq fresh relation timestamp heapFound sub coverage
+          subst value
+          apply sizeSound_all limits conf (head :: tail) (head :: tail) children refs remaining
+            (sptInsert stamp () seen) f tf heap be (ptr :: visited) good architecture
+            (List.Perm.refl _) relation noThunks sub coverage mapInRefs
+          intro key target reach mapped
+          exact cells key target (reachableRefs_blockFields refs stamp tag (head :: tail) key reach) mapped
+        · intro bit index items ptr children eq found relation mapped heapFound sub coverage
+          subst value
+          have original := (sptSubsptLookup remaining refs).mp subset index (.valueArray items) found
+          apply sizeSound_all limits conf items items children refs (sptDelete index remaining)
+            seen f tf heap be (ptr :: visited) good architecture (List.Perm.refl _) relation.flip noThunks sub coverage mapInRefs
+          intro key target reach mapped'
+          exact cells key target (reachableRefs_valueArray refs bit index items key original reach) mapped'
+        · intro bit index tag finalised left item right ptr children eq found relation mapped heapFound sub coverage
+          subst value
+          have original := (sptSubsptLookup remaining refs).mp subset index (.mutBlock tag finalised left item right) found
+          apply sizeSound_all limits conf (left ++ [item] ++ right) (left ++ [item] ++ right) children
+            refs (sptDelete index remaining) seen f tf heap be (ptr :: visited) good architecture
+            (List.Perm.refl _) relation.flip noThunks sub coverage mapInRefs
+          intro key target reach mapped'
+          exact cells key target (reachableRefs_mutBlock refs bit index tag finalised left item right key original reach) mapped'
+    | cons next tail =>
+      apply sizeSound_perm_cons limits conf value (next :: tail) roots addresses refs remaining seen
+        f tf heap visited perm related
+      · intro before after left right tailPerm tailRelated
+        apply sizeSound_all limits conf (next :: tail) (before ++ after) (left ++ right) refs remaining seen
+          f tf heap be visited good architecture tailPerm tailRelated noThunks subset covered mapInRefs
+        intro key ptr reach mapped
+        apply cells key ptr _ mapped
+        apply reachableRefs_roots_mono refs (before ++ after) roots key _ reach
+        intro root member
+        exact perm.mem_iff.mp (List.mem_cons_of_mem _ (tailPerm.mem_iff.mpr member))
+      · intro address middle valueRelated sub coverage
+        apply sizeSound_all limits conf [value] [value] [address] refs
+          (DataSem.sizeOfValues limits (next :: tail) remaining seen).2.1
+          (DataSem.sizeOfValues limits (next :: tail) remaining seen).2.2 f tf heap be middle
+          good architecture (List.Perm.refl _) (List.Forall₂.cons valueRelated List.Forall₂.nil)
+          noThunks sub coverage mapInRefs
+        intro key ptr reach mapped
+        apply cells key ptr _ mapped
+        apply reachableRefs_roots_mono refs [value] roots key _ reach
+        intro root member
+        have : root = value := by simpa using member
+        subst root
+        exact perm.mem_iff.mp (by simp)
+termination_by (sptSize remaining, sizeOf values)
+decreasing_by
+  all_goals subst_vars
+  all_goals simp_wf
+  all_goals try (apply Prod.Lex.right; simp_wf; omega)
+  all_goals try (apply Prod.Lex.left; apply sptSize_delete_lt; simp_all)
+  all_goals try
+    apply Prod.Lex.right
+    have hv : 0 < sizeOf value := by cases value <;> simp_wf
+    omega
+  all_goals exact sizeSound_tail_measure _ _ _ _ _ _
+
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
