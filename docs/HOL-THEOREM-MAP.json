@@ -1,6 +1,15 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "gc_move_ref_list_heap_length",
+  "hol_line": 1123,
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Forward.lean",
+  "lean_name": "gcMoveRefList_heapLength",
+  "statement_status": "pending_statement_review",
+  "reviewer": "Compared the reference traversal premise and heap-length equality against the HOL source; inferred types and local proof replay remain to be checked."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
   "hol_name": "gc_move_data_h2",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Accumulator.lean",
   "lean_name": "gcMoveData_h2",

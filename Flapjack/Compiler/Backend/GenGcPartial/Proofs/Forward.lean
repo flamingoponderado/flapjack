@@ -74,4 +74,28 @@ theorem gcMoveList_heapLength {α β : Type} (roots roots1 : List (HeapAddress �
     exact (gcMove_heapLength conf state middle root rootMid headRun).trans
       (ih (state := middle) (roots1 := tail) (state1 := final) tailRun)
 
+/-- Reference-object traversal preserves the heap's word length. The local HOL
+proof has not yet been replayed. -/
+@[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "gc_move_ref_list_heap_length" 1123]
+theorem gcMoveRefList_heapLength {α β γ : Type} (conf : Config γ)
+    (refs refs1 : List (HeapElement α β)) (state state1 : GcState α γ)
+    (run : gcMoveRefList conf state refs = (refs1, state1)) :
+    heapLength state.heap = heapLength state1.heap := by
+  induction refs generalizing state refs1 state1 with
+  | nil => simp [gcMoveRefList, Prod.mk.injEq] at run; obtain ⟨_, rfl⟩ := run; rfl
+  | cons head tail ih =>
+    cases head with
+    | unused len => simp [gcMoveRefList, Prod.mk.injEq] at run; obtain ⟨_, rfl⟩ := run; rfl
+    | forwardPointer ptr value len => simp [gcMoveRefList, Prod.mk.injEq] at run; obtain ⟨_, rfl⟩ := run; rfl
+    | dataElement roots len payload =>
+      simp only [gcMoveRefList] at run
+      generalize headRun : gcMoveList conf state roots = result at run
+      obtain ⟨roots1, middle⟩ := result
+      generalize tailRun : gcMoveRefList conf middle tail = result at run
+      obtain ⟨tail1, final⟩ := result
+      simp only [Prod.mk.injEq] at run
+      obtain ⟨_, rfl⟩ := run
+      exact (gcMoveList_heapLength roots roots1 conf state middle headRun).trans
+        (ih (state := middle) (refs1 := tail1) (state1 := final) tailRun)
+
 end Flapjack.Compiler.Backend.GenGcPartial

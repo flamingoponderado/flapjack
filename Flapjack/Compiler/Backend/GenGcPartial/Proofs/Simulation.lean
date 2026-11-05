@@ -773,6 +773,79 @@ theorem gcMoveList_dataPointersBound {α β : Type} (conf : Config β)
   rw [← size]
   exact bounded children len data ptr value member original
 
+/-- Flapjack proof infrastructure: reference traversal preserves the data
+pointer bound needed by the subsequent copied-data scan. -/
+theorem gcMoveRefList_dataPointersBound {α β γ : Type} (conf : Config γ)
+    (state state1 : GcState α γ) (refs refs1 : List (HeapElement α β))
+    (run : gcMoveRefList conf state refs = (refs1, state1))
+    (bounded : ∀ children len data ptr value,
+      .pointer ptr value ∈ children → .dataElement children len data ∈ state.heap ++ state.h2 →
+        ptr < heapLength state.heap) :
+    ∀ children len data ptr value,
+      .pointer ptr value ∈ children → .dataElement children len data ∈ state1.heap ++ state1.h2 →
+        ptr < heapLength state1.heap := by
+  intro children len data ptr value member object
+  have original := (gcMoveRefList_dataMem conf refs refs1 state state1 children len data run).mp object
+  have size := gcMoveRefList_heapLength conf refs refs1 state state1 run
+  rw [← size]
+  exact bounded children len data ptr value member original
+
+/-- Flapjack proof infrastructure: pointers in valid heap objects lie within
+the heap's encoded extent. -/
+theorem heapOk_dataPointersBound {α β : Type} (heap : List (HeapElement α β)) (limit : Nat)
+    (valid : heapOk heap limit) :
+    ∀ children len data ptr value,
+      .pointer ptr value ∈ children → .dataElement children len data ∈ heap → ptr < heapLength heap := by
+  intro children len data ptr value child object
+  obtain ⟨xs, size, payload, found⟩ := valid.2.2 children len data ptr value ⟨object, child⟩
+  exact heapLookup_less heap ptr (.dataElement xs size payload) found
+
+/-- Flapjack proof infrastructure: roots valid for a heap are within its
+encoded extent. -/
+theorem rootsOk_pointersBound {α β γ : Type} (heap : List (HeapElement β γ))
+    (roots : List (HeapAddress α)) (valid : rootsOk roots heap) :
+    ∀ ptr value, .pointer ptr value ∈ roots → ptr < heapLength heap := by
+  intro ptr value member
+  obtain ⟨children, len, data, found⟩ := valid ptr value member
+  exact heapLookup_less heap ptr (.dataElement children len data) found
+
+/-- Flapjack proof infrastructure: the original heap's pointer bounds survive
+both the initial root traversal and remembered-reference traversal. -/
+theorem gcMoveRootsRefs_dataPointersBound {α β γ : Type} (conf : Config β)
+    (state middle final : GcState α β) (roots roots1 : List (HeapAddress α))
+    (refs refs1 : List (HeapElement α γ)) (limit : Nat)
+    (valid : heapOk state.heap limit) (empty : state.h2 = [])
+    (rootRun : gcMoveList conf state roots = (roots1, middle))
+    (refsRun : gcMoveRefList conf middle refs = (refs1, final)) :
+    ∀ children len data ptr value,
+      .pointer ptr value ∈ children → .dataElement children len data ∈ final.heap ++ final.h2 →
+        ptr < heapLength final.heap := by
+  have initial : ∀ children len data ptr value,
+      .pointer ptr value ∈ children → .dataElement children len data ∈ state.heap ++ state.h2 →
+        ptr < heapLength state.heap := by
+    intro children len data ptr value child object
+    apply heapOk_dataPointersBound state.heap limit valid children len data ptr value child
+    simpa [empty] using object
+  have middleBound := gcMoveList_dataPointersBound conf state middle roots roots1 rootRun initial
+  exact gcMoveRefList_dataPointersBound conf middle final refs refs1 refsRun middleBound
+
+/-- Flapjack proof infrastructure: children of the original reference segment
+remain bounded after a heap-length-preserving root traversal. -/
+theorem heapOk_referenceSegmentBound {α β : Type} (conf : Config β)
+    (heap old current refs : List (HeapElement α β)) (state : GcState α β)
+    (valid : heapOk heap conf.limit)
+    (segment : heapSegment (conf.genStart, conf.refsStart) heap = some (old, current, refs))
+    (size : heapLength state.heap = heapLength heap) :
+    ∀ children len data ptr value,
+      .pointer ptr value ∈ children ∧ .dataElement children len data ∈ refs →
+        ptr < heapLength state.heap := by
+  obtain ⟨whole, _, _, _⟩ := heapSegment_imp heap conf.genStart conf.refsStart old current refs segment
+  intro children len data ptr value ⟨child, object⟩
+  rw [size]
+  apply heapOk_dataPointersBound heap conf.limit valid children len data ptr value child
+  rw [← whole]
+  simp [object]
+
 /-- Flapjack proof infrastructure: after the scan removes its current pending
 object, every remaining object's pointers still satisfy the recursive bound. -/
 theorem gcMoveList_dataScanNextBound {α β : Type} (conf : Config β)
