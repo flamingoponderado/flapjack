@@ -1,6 +1,19 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "soundness_size_of",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/SizeSoundness.lean",
+  "lean_name": "soundnessSizeOf",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_parameters": [
+    "f",
+    "tf"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the exported soundness_size_of_typed statement with the Lean declaration: arbitrary initial and resulting reference/seen trees, exact size tuple, related and permuted roots, reachable reference-cell invariant, no-thunks condition, reference-map domain inclusion, good dimension and architecture agreement are retained. Both image-subset premises and conclusions use total holFapply, including keys outside the finite-map domain; the existential heap traversal and exact summed-length bound retain their source forms. The two canonical finite maps have same-module parameter roundtrip witnesses, and the single HOL word dimension is a positive-width BitVec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "flat_PERM_extract_stack",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/FrameRoots.lean",
   "lean_name": "flatStack_values_perm",

@@ -190,4 +190,78 @@ theorem soundnessSizeOfGen {width : Nat} [NeZero width]
   refine ⟨after, ?_, reachable⟩
   simpa [sizing] using bound
 
+/-- Canonical lookup and finite-support roundtrip for the reference map. -/
+theorem holFmapAsFiniteSupportParamWitness_soundnessSizeOf_f
+    (f : HolFiniteMapExact Nat Nat) (key : Nat) :
+    (Memory.ReferenceMapBroad.ofBroad (Memory.ReferenceMapBroad.toBroad f)).lookup key = f.lookup key ∧
+    (Memory.ReferenceMapBroad.ofBroad (Memory.ReferenceMapBroad.toBroad f)).finiteSupport = f.finiteSupport ∧
+    Memory.ReferenceMapBroad.ofBroad (Memory.ReferenceMapBroad.toBroad f) = f := by
+  cases f
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- Canonical lookup and finite-support roundtrip for the timestamp map. -/
+theorem holFmapAsFiniteSupportParamWitness_soundnessSizeOf_tf
+    (tf : HolFiniteMapExact Nat Nat) (key : Nat) :
+    (Memory.ReferenceMapBroad.ofBroad (Memory.ReferenceMapBroad.toBroad tf)).lookup key = tf.lookup key ∧
+    (Memory.ReferenceMapBroad.ofBroad (Memory.ReferenceMapBroad.toBroad tf)).finiteSupport = tf.finiteSupport ∧
+    Memory.ReferenceMapBroad.ofBroad (Memory.ReferenceMapBroad.toBroad tf) = tf := by
+  cases tf
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- Source heap sizing is bounded by an actual traversal, preserving the
+reference submap and both visited images, including out-of-domain map values. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "soundness_size_of"
+  (fmap_as_finite_support_parameters := [f, tf]) (words_as_type_indexed_bitvec)]
+theorem soundnessSizeOf {width : Nat} [NeZero width]
+    (limits : DataSem.Limits) (roots : List Flapjack.Compiler.Backend.DataSem.Value)
+    (r1 : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value)) (s1 : Spt Unit)
+    (rootVars : List Flapjack.Compiler.Backend.DataSem.Value)
+    (addresses : List (HeapAddress (WordLocW width))) (n2 : Nat)
+    (r2 : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value)) (s2 : Spt Unit) (p1 : List Nat)
+    (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value)) (conf : Config)
+    (f : HolFiniteMapExact Nat Nat) (tf : HolFiniteMapExact Nat Nat) (heap : Memory.ValueHeap width) (be : Bool)
+    (cells : ∀ key, Memory.reachableRefs rootVars refs key ∧ Memory.mapDomain f key →
+      Memory.bcRefInv conf key refs (f, tf, heap, be))
+    (noThunks : DataSem.noThunksInRefs refs)
+    (related : List.Forall₂ (fun v a => Memory.valueInv conf v refs (a, f, tf, heap)) rootVars addresses)
+    (perm : roots.Perm rootVars) (good : goodDimindex width)
+    (seenImage : (holFapply tf '' {key | sptDomain s1 key}) ⊆ {ptr | ptr ∈ p1})
+    (refImage : (holFapply f '' {key | sptDomain refs key ∧ ¬ sptDomain r1 key}) ⊆ {ptr | ptr ∈ p1})
+    (mapInRefs : ∀ key, Memory.mapDomain f key → sptDomain refs key)
+    (subset : sptSubspt r1 refs) (architecture : limits.arch64Bit = decide (width = 64))
+    (sizing : DataSem.sizeOfValues limits roots r1 s1 = (n2, r2, s2)) :
+    ∃ p2 : List Nat, (p2.map (Memory.lookupLen heap)).sum ≤ n2 + (p1.map (Memory.lookupLen heap)).sum ∧
+      traverseHeap heap p1 addresses p2 ∧ sptSubspt r2 refs ∧
+      (holFapply tf '' {key | sptDomain s2 key}) ⊆ {ptr | ptr ∈ p2} ∧
+      (holFapply f '' {key | sptDomain refs key ∧ ¬ sptDomain r2 key}) ⊆ {ptr | ptr ∈ p2} := by
+  have mapInRefs' : ∀ key ptr, f.lookup key = some ptr → sptLookup key refs ≠ none := by
+    intro key ptr mapped absent
+    have present := mapInRefs key ⟨ptr, mapped⟩
+    simp [sptDomain, absent] at present
+  have cells' : ∀ key ptr, Memory.reachableRefs rootVars refs key → f.lookup key = some ptr →
+      Memory.bcRefInv conf key refs (f, tf, heap, be) := by
+    intro key ptr reachable mapped
+    exact cells key ⟨reachable, ptr, mapped⟩
+  have covered : sizeVisited refs r1 s1 f tf p1 := by
+    constructor
+    · intro key present
+      exact seenImage ⟨key, present, rfl⟩
+    · intro key present absent
+      apply refImage
+      refine ⟨key, ?_, rfl⟩
+      constructor
+      · simpa [sptDomain, Option.isSome_iff_ne_none] using present
+      · simp [sptDomain, absent]
+  obtain ⟨p2, bound, traversal, sub, coverage⟩ :=
+    sizeSound_all limits conf roots rootVars addresses refs r1 s1 f tf heap be p1
+      good architecture perm related noThunks subset covered mapInRefs' cells'
+  simp only [sizing] at bound sub coverage
+  refine ⟨p2, bound, traversal, sub, ?_, ?_⟩
+  · rintro ptr ⟨key, present, rfl⟩
+    exact coverage.1 key present
+  · rintro ptr ⟨key, ⟨present, absent⟩, rfl⟩
+    apply coverage.2 key
+    · simpa [sptDomain, Option.isSome_iff_ne_none] using present
+    · simpa [sptDomain, Option.isSome_iff_ne_none] using absent
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
