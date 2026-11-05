@@ -826,6 +826,104 @@ theorem gcMoveList_preservesPendingHead {α β : Type} (conf : Config β)
     obtain ⟨_, eq⟩ := fact
     exact ⟨final.h2, by rw [eq]; rfl⟩
 
+/-- Flapjack proof infrastructure: moving the processed object from the
+pending queue to the scanned prefix preserves the simulation invariant when
+its rewritten children introduce no protected pointers. -/
+theorem simInv_dataScanStep {α β : Type} (conf : Config β)
+    (heap0 : List (HeapElement α β)) (state : GcState α β)
+    (roots roots1 : List (HeapAddress α)) (len : Nat) (payload : β)
+    (tail : List (HeapElement α β)) (flag : Bool)
+    (invariant : simInv conf heap0 state)
+    (pending : state.h2 = .dataElement roots len payload :: tail)
+    (oldRoots : ∀ p, allOldPtrs conf roots1 p → allOldPtrs conf roots p) :
+    simInv conf heap0 { state with
+      h1 := state.h1 ++ [.dataElement roots1 len payload], h2 := tail, ok := flag } := by
+  rcases invariant with ⟨gen, address, remaining, size, empty, old⟩
+  refine ⟨gen, address, remaining, ?_, ?_, ?_⟩
+  · simp only at size ⊢
+    rw [pending] at size
+    simp [heapLength, elLength] at size ⊢
+    omega
+  · intro degenerate
+    obtain ⟨_, impossible⟩ := empty degenerate
+    rw [pending] at impossible
+    contradiction
+  · intro ptr witness
+    obtain ⟨children, objectLen, objectData, value, member, child, outside⟩ := witness
+    simp only [List.mem_append, List.mem_cons, List.not_mem_nil, or_false] at member
+    rcases member with (((inHeap | inPrefix) | inTail) | inRefs)
+    · exact old ptr ⟨children, objectLen, objectData, value, by simp [inHeap], child, outside⟩
+    · rcases inPrefix with inPrefix | eq
+      · exact old ptr ⟨children, objectLen, objectData, value, by simp [inPrefix], child, outside⟩
+      · cases eq
+        obtain ⟨prior, priorMem, priorOutside⟩ := oldRoots ptr ⟨value, child, outside⟩
+        apply old ptr
+        exact ⟨roots, len, payload, prior, by simp [pending], priorMem, priorOutside⟩
+    · exact old ptr ⟨children, objectLen, objectData, value, by simp [pending, inTail], child, outside⟩
+    · exact old ptr ⟨children, objectLen, objectData, value, by simp [inRefs], child, outside⟩
+
+/-- Flapjack proof infrastructure: translating a partial scan step produces
+the major collector's corresponding queue and scanned-prefix update. -/
+theorem toGenState_dataScanStep {α β : Type} (conf : Config β)
+    (state : GcState α β) (roots roots1 : List (HeapAddress α))
+    (len : Nat) (payload : β) (tail : List (HeapElement α β)) (flag : Bool)
+    (pending : state.h2 = .dataElement roots len payload :: tail) :
+    toGenState conf { state with
+      h1 := state.h1 ++ [.dataElement roots1 len payload], h2 := tail, ok := flag } =
+    { toGenState conf state with
+      h1 := (toGenState conf state).h1 ++
+        [.dataElement (roots1.map (toGenHeapAddress conf)) len payload],
+      h2 := (toGenState conf state).h2.drop 1, ok := flag } := by
+  simp [toGenState, toGenHeapList, toGenHeapElement, pending]
+
+/-- Flapjack proof infrastructure: a successful pair of child-list moves
+establishes the invariant and pointer bound for the next copied-data scan. -/
+theorem gcMoveData_simulationStep {α β : Type} (conf : Config β)
+    (heap0 : List (HeapElement α β)) (state middle : GcState α β)
+    (roots roots1 : List (HeapAddress α)) (len : Nat) (payload : β)
+    (tail : List (HeapElement α β))
+    (majorRoots : List (HeapAddress (DataSort (HeapAddress α) α)))
+    (majorMiddle : GcState (DataSort (HeapAddress α) α) β)
+    (pending : state.h2 = .dataElement roots len payload :: tail)
+    (invariant : simInv conf heap0 state)
+    (bounded : ∀ children size data ptr value,
+      .pointer ptr value ∈ children → .dataElement children size data ∈ state.heap ++ state.h2 →
+        ptr < heapLength state.heap)
+    (heapLengthEq : heapLength state.heap = conf.limit)
+    (run : gcMoveList conf state roots = (roots1, middle))
+    (majorRun : GenGc.gcMoveList (toGenConf conf) (toGenState conf state)
+      (roots.map (toGenHeapAddress conf)) = (majorRoots, majorMiddle))
+    (majorOk : majorMiddle.ok = true) :
+    ∃ tail1, middle.h2 = .dataElement roots len payload :: tail1 ∧
+      (majorRoots, majorMiddle) = (roots1.map (toGenHeapAddress conf), toGenState conf middle) ∧
+      ∀ flag, let next := { middle with
+        h1 := middle.h1 ++ [.dataElement roots1 len payload], h2 := tail1, ok := flag }
+      simInv conf heap0 next ∧ heapLength next.heap = conf.limit ∧
+      (∀ children size data ptr value,
+        .pointer ptr value ∈ children → .dataElement children size data ∈ next.heap ++ next.h2 →
+          ptr < heapLength next.heap) ∧
+      toGenState conf next = { toGenState conf middle with
+        h1 := (toGenState conf middle).h1 ++
+          [.dataElement (roots1.map (toGenHeapAddress conf)) len payload],
+        h2 := (toGenState conf middle).h2.drop 1, ok := flag } := by
+  have rootBound : ∀ ptr value, .pointer ptr value ∈ roots → ptr < heapLength state.heap := by
+    intro ptr value member
+    apply bounded roots len payload ptr value member
+    simp [pending]
+  obtain ⟨middleInv, equal, oldRoots⟩ :=
+    gcMoveList_simulation conf heap0 roots state middle roots1 majorRoots majorMiddle
+      run invariant rootBound heapLengthEq majorRun majorOk
+  obtain ⟨tail1, nextPending⟩ :=
+    gcMoveList_preservesPendingHead conf state middle roots roots1 _ tail pending run
+  refine ⟨tail1, nextPending, equal, ?_⟩
+  intro flag
+  dsimp only
+  refine ⟨simInv_dataScanStep conf heap0 middle roots roots1 len payload tail1 flag middleInv nextPending oldRoots,
+    ?_, ?_, toGenState_dataScanStep conf middle roots roots1 len payload tail1 flag nextPending⟩
+  · exact (gcMoveList_heapLength roots roots1 conf state middle run).symm.trans heapLengthEq
+  · have nextBound := gcMoveList_dataScanNextBound conf state middle roots roots1 run bounded
+    simpa [nextPending] using nextBound
+
 /-- Major root traversal factors over concatenated input lists. -/
 theorem majorMoveList_append {α β : Type} (conf : GenGc.Config β) (state : GcState α β)
     (xs ys : List (HeapAddress α)) :
