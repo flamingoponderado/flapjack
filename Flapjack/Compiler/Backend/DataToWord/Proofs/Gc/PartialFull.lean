@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PartialRefs
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalFull
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.HeapExpand
 
 /-! Partial generational collector simulation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
@@ -377,6 +378,36 @@ theorem partialFull_outputBounds {α β : Type} (state : GcState α β)
     heapLength_append, refsLen] at invariant
   simp only [heapLength_append] at endLen
   omega
+
+/-- Pack the collector's output regions into the heap used by the combined
+partial-collection branch. -/
+theorem partialFull_packResult {width : Nat} [NeZero width] (conf : Config)
+    (old copied refs : List (HeapElement (WordLocW width) (HeapTag × List (WordLocW width))))
+    (curr new pa : BitVec width) (free scratch : Nat)
+    (frame : ((BitVec width × WordLocW width) → Prop) → Prop)
+    (paEq : pa = curr + wordSemBytesInWord * BitVec.ofNat width (heapLength (old ++ copied))) :
+    SetSep.star (SetSep.star (SetSep.star (SetSep.star (SetSep.star
+      (wordHeap curr old conf)
+      (wordHeap (curr + wordSemBytesInWord * BitVec.ofNat width (heapLength old)) copied conf))
+      (Misc.wordListExists pa free))
+      (wordHeap (pa + wordSemBytesInWord * BitVec.ofNat width free) refs conf))
+      (Misc.wordListExists new scratch)) frame =
+    SetSep.star (SetSep.star
+      (wordHeap curr (old ++ copied ++ heapExpand free ++ refs) conf)
+      (wordHeap new (heapExpand scratch) conf)) frame := by
+  change pa = curr + StackRemove.bytesInWord width * BitVec.ofNat width (heapLength (old ++ copied)) at paEq
+  rw [wordHeapAppend (old ++ copied ++ heapExpand free) refs curr conf,
+    wordHeapAppend (old ++ copied) (heapExpand free) curr conf, wordHeapAppend old copied curr conf,
+    wordHeap_heapExpand, wordHeap_heapExpand]
+  have expandLen : heapLength (heapExpand free : List (HeapElement (WordLocW width)
+      (HeapTag × List (WordLocW width)))) = free := by cases free <;> simp [heapExpand, heapLength, elLength]
+  have refsAddress : curr + StackRemove.bytesInWord width * BitVec.ofNat width
+      (heapLength (old ++ copied ++ heapExpand free)) = pa + wordSemBytesInWord * BitVec.ofNat width free := by
+    rw [heapLength_append, expandLen, paEq]
+    simp only [BitVec.ofNat_add, BitVec.mul_add, wordSemBytesInWord, StackRemove.bytesInWord]
+    ac_rfl
+  rw [← paEq, refsAddress]
+  simp only [wordSemBytesInWord, StackRemove.bytesInWord]
 
 /-- The generic reference classifier agrees with mutable-tag recognition. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "EVERY_is_Ref_isRef"]
