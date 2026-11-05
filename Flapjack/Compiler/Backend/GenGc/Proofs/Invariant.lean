@@ -1814,4 +1814,217 @@ theorem genGc_relation_clauses {α β : Type} (conf : Config β)
     · exact invariant.2.2.2.2.2.2.2.2.2.1 element right
   · simpa [h2] using invariant.1.symm
 
+/-- The final target set contains exactly the data-element addresses in the
+assembled major-collector heap; the intervening unused block is excluded. -/
+theorem gcInv_final_target {α β : Type} (conf : Config β) (state : GcState α β)
+    (heap : List (HeapElement α β)) (roots : List (HeapAddress α))
+    (invariant : gcInv conf state heap roots)
+    (h2Empty : state.h2 = []) (r4Empty : state.r4 = [])
+    (r3Empty : state.r3 = []) (r2Empty : state.r2 = []) (target : Nat) :
+    (heapAddresses 0 state.h1 target ∨ heapAddresses (state.a + state.n) state.r1 target) ↔
+      isSomeDataElement (heapLookup target (state.h1 ++ heapExpand state.n ++ state.r1)) := by
+  have allocated : heapLength state.h1 = state.a := by simpa [h2Empty] using invariant.1
+  have surjective := invariant.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
+  have related := gcInv_final_related conf state heap roots invariant h2Empty r4Empty r3Empty r2Empty
+  constructor
+  · intro member
+    have targetMember : heapAddresses 0 (state.h1 ++ state.h2) target ∨
+        heapAddresses (state.a + state.n) (state.r4 ++ state.r3 ++ state.r2 ++ state.r1) target := by
+      simpa [h2Empty, r4Empty, r3Empty, r2Empty] using member
+    obtain ⟨i, defined, mapEq⟩ := surjective target targetMember
+    have found := related.1 i defined
+    change holFapply (heapMap 0 state.heap) i = target at mapEq
+    rwa [mapEq] at found
+  · rintro ⟨xs, len, payload, found⟩
+    have address := heapLookup_imp_heapAddresses (state.h1 ++ heapExpand state.n ++ state.r1) target
+      (.dataElement xs len payload) found
+    rw [heapAddresses_append, heapAddresses_append] at address
+    simp only [heapLength_append, heapLength_heapExpand, Nat.zero_add, allocated] at address
+    rcases address with (data | unused) | refs
+    · exact Or.inl data
+    · cases nEq : state.n with
+      | zero => simp [nEq, heapExpand, heapAddresses] at unused
+      | succ n =>
+        have atStart : target = state.a := by
+          simpa [nEq, heapExpand, heapAddresses] using unused
+        subst target
+        have absent := heapLookup_prefix state.h1 state.r1 (.unused n)
+        rw [allocated] at absent
+        have clash : heapLookup state.a (state.h1 ++ heapExpand state.n ++ state.r1) = some (.unused n) := by
+          simpa [nEq, heapExpand, List.append_assoc] using absent
+        rw [clash] at found
+        cases found
+    · exact Or.inr refs
+
+/-- The final forwarding-map range is exactly the data-element addresses of
+the assembled major-collector heap. -/
+theorem gcInv_final_range {α β : Type} (conf : Config β) (state : GcState α β)
+    (heap : List (HeapElement α β)) (roots : List (HeapAddress α))
+    (invariant : gcInv conf state heap roots)
+    (h2Empty : state.h2 = []) (r4Empty : state.r4 = [])
+    (r3Empty : state.r3 = []) (r2Empty : state.r2 = []) :
+    (fun target => ∃ ptr, (heapMap 0 state.heap).lookup ptr = some target) =
+      (fun target => isSomeDataElement (heapLookup target (state.h1 ++ heapExpand state.n ++ state.r1))) := by
+  have into := invariant.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
+  have surjective := invariant.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
+  funext target
+  apply propext
+  rw [← gcInv_final_target conf state heap roots invariant h2Empty r4Empty r3Empty r2Empty target]
+  constructor
+  · rintro ⟨i, found⟩
+    have defined : (heapMap 0 state.heap).lookup i ≠ none := by rw [found]; simp
+    have mapEq : heapMap1 state.heap i = target := holFapply_of_lookup found
+    have member := into i defined
+    simpa [h2Empty, r4Empty, r3Empty, r2Empty, mapEq] using member
+  · intro member
+    have targetMember : heapAddresses 0 (state.h1 ++ state.h2) target ∨
+        heapAddresses (state.a + state.n) (state.r4 ++ state.r3 ++ state.r2 ++ state.r1) target := by
+      simpa [h2Empty, r4Empty, r3Empty, r2Empty] using member
+    obtain ⟨i, defined, mapEq⟩ := surjective target targetMember
+    cases found : (heapMap 0 state.heap).lookup i with
+    | none => exact False.elim (defined found)
+    | some value =>
+      have equal : value = target := by
+        change holFapply (heapMap 0 state.heap) i = target at mapEq
+        rwa [holFapply_of_lookup found] at mapEq
+      exact ⟨i, equal ▸ found⟩
+
+private theorem heapFilterAux_covers {α β : Type} (heap : List (HeapElement α β))
+    (offset : Nat) (selected : Nat → Prop)
+    (covers : ∀ p, heapAddresses offset heap p → selected p) :
+    heapFilterAux offset selected heap = heap := by
+  classical
+  induction heap generalizing offset with
+  | nil => rfl
+  | cons head tail ih =>
+    have atHead : selected offset := covers offset (by simp [heapAddresses])
+    have coversTail : ∀ p, heapAddresses (offset + elLength head) tail p → selected p := by
+      intro p member
+      exact covers p (by simp [heapAddresses, member])
+    simp [heapFilterAux, atHead, ih (offset + elLength head) coversTail]
+
+/-- Filtering the final target heap by its live addresses discards just the
+unused expansion and retains both data segments. -/
+theorem gcInv_final_filterTarget {α β : Type} (conf : Config β) (state : GcState α β)
+    (heap : List (HeapElement α β)) (roots : List (HeapAddress α))
+    (invariant : gcInv conf state heap roots) (h2Empty : state.h2 = []) :
+    heapFilter (fun p => heapAddresses 0 state.h1 p ∨ heapAddresses (state.a + state.n) state.r1 p)
+      (state.h1 ++ heapExpand state.n ++ state.r1) = state.h1 ++ state.r1 := by
+  classical
+  have allocated : heapLength state.h1 = state.a := by simpa [h2Empty] using invariant.1
+  let selected : Nat → Prop := fun p => heapAddresses 0 state.h1 p ∨ heapAddresses (state.a + state.n) state.r1 p
+  have first : heapFilterAux 0 selected state.h1 = state.h1 := by
+    apply heapFilterAux_covers
+    intro p member
+    exact Or.inl member
+  have last : heapFilterAux (state.a + state.n) selected state.r1 = state.r1 := by
+    apply heapFilterAux_covers
+    intro p member
+    exact Or.inr member
+  have middle : heapFilterAux state.a selected (heapExpand state.n : List (HeapElement α β)) = [] := by
+    cases eq : state.n with
+    | zero => simp [heapExpand, heapFilterAux]
+    | succ n =>
+      have outside : ¬ selected state.a := by
+        intro member
+        rcases member with data | refs
+        · have bound := heapAddresses_less_heapLength state.h1 0 state.a data
+          omega
+        · have bound := heapAddresses_base_le state.r1 (state.a + state.n) state.a refs
+          omega
+      simp [heapExpand, heapFilterAux, outside]
+  change heapFilter selected (state.h1 ++ heapExpand state.n ++ state.r1) = _
+  simp only [heapFilter, heapFilterAux_append, heapLength_append, heapLength_heapExpand, Nat.zero_add, allocated]
+  simp [first, middle, last]
+
+/-- The live target heap has the same length as the original heap filtered by
+the final forwarding-map domain. -/
+theorem gcInv_final_filterLength {α β : Type} (conf : Config β) (state : GcState α β)
+    (heap : List (HeapElement α β)) (roots : List (HeapAddress α))
+    (invariant : gcInv conf state heap roots)
+    (h2Empty : state.h2 = []) (r4Empty : state.r4 = [])
+    (r3Empty : state.r3 = []) (r2Empty : state.r2 = []) :
+    heapLength (state.h1 ++ state.r1) =
+      heapLength (heapFilter (fun ptr => (heapMap 0 state.heap).lookup ptr ≠ none) heap) := by
+  let source : Set Nat := fun ptr => (heapMap 0 state.heap).lookup ptr ≠ none
+  let target : Set Nat := fun p => heapAddresses 0 state.h1 p ∨ heapAddresses (state.a + state.n) state.r1 p
+  have into := invariant.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
+  have injective := invariant.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
+  have surjective := invariant.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
+  have related := gcInv_final_related conf state heap roots invariant h2Empty r4Empty r3Empty r2Empty
+  have maps : Set.MapsTo (heapMap1 state.heap) source target := by
+    intro ptr defined
+    have member := into ptr defined
+    change heapAddresses 0 state.h1 (heapMap1 state.heap ptr) ∨
+      heapAddresses (state.a + state.n) state.r1 (heapMap1 state.heap ptr)
+    simpa [h2Empty, r4Empty, r3Empty, r2Empty] using member
+  have inj : Set.InjOn (heapMap1 state.heap) source := by
+    intro i hi j hj eq
+    exact injective i j hi hj eq
+  have surj : Set.SurjOn (heapMap1 state.heap) source target := by
+    intro j member
+    change heapAddresses 0 state.h1 j ∨ heapAddresses (state.a + state.n) state.r1 j at member
+    apply surjective j
+    simpa [h2Empty, r4Empty, r3Empty, r2Empty] using member
+  have bij : Set.BijOn (heapMap1 state.heap) source target := ⟨maps, inj, surj⟩
+  obtain ⟨keys, support⟩ := (heapMap 0 state.heap).finiteSupport
+  have finiteSource : source.Finite := keys.finite_toSet.subset (by
+    intro key defined
+    exact support key defined)
+  have targetImage : target = heapMap1 state.heap '' source := by
+    apply Set.ext
+    intro j
+    constructor
+    · intro member
+      obtain ⟨i, hi, eq⟩ := surj member
+      exact ⟨i, hi, eq⟩
+    · rintro ⟨i, hi, rfl⟩
+      exact maps hi
+  have finiteTarget : target.Finite := by
+    rw [targetImage]
+    exact finiteSource.image _
+  have matching : ∀ i ∈ source, ∃ (xs xs2 : List (HeapAddress α)) (len : Nat)
+      (_unused : Unit) (data : β), heapLookup i heap = some (.dataElement xs len data) ∧
+        heapLookup (heapMap1 state.heap i) (state.h1 ++ heapExpand state.n ++ state.r1) =
+          some (.dataElement xs2 len data) := by
+    intro i defined
+    obtain ⟨xs, len, data, original⟩ := related.2.2.1 i defined
+    obtain ⟨copied, _⟩ := related.2.2.2 i xs len data defined original
+    exact ⟨xs, addrMap (heapMap1 state.heap) xs, len, (), data, original, copied⟩
+  have filtered := heapLength_heapFilter_eq source target (heapMap1 state.heap) heap
+    (state.h1 ++ heapExpand state.n ++ state.r1) bij finiteSource finiteTarget matching
+  change heapLength (heapFilter (fun p => heapAddresses 0 state.h1 p ∨ heapAddresses (state.a + state.n) state.r1 p)
+    (state.h1 ++ heapExpand state.n ++ state.r1)) = _ at filtered
+  rw [gcInv_final_filterTarget conf state heap roots invariant h2Empty] at filtered
+  exact filtered
+
+/-- Major collection provides the full abstract relation: the forwarding map
+has the reachable source domain and live target range, preserves filtered
+length, and relates every copied object. This remains untagged because the
+existential HOL finite map is represented by `HolFiniteMapExact` and that
+representation has not yet been classified for this theorem. -/
+theorem genGc_related {α β : Type} (conf : Config β) (roots : List (HeapAddress α))
+    (heap : List (HeapElement α β)) (rootOk : rootsOk roots heap)
+    (heapGood : heapOk heap conf.limit) :
+    ∃ (state : GcState α β) (f : HolFiniteMapExact Nat Nat),
+      genGc conf (roots, heap) = (addrMap (holFapply f) roots, state) ∧
+      (fun ptr => f.lookup ptr ≠ none) = reachableAddresses roots heap ∧
+      (fun target => ∃ ptr, f.lookup ptr = some target) =
+        (fun target => isSomeDataElement (heapLookup target (state.h1 ++ heapExpand state.n ++ state.r1))) ∧
+      heapLength (state.h1 ++ state.r1) = heapLength (heapFilter (fun ptr => f.lookup ptr ≠ none) heap) ∧
+      gcRelated f heap (state.h1 ++ heapExpand state.n ++ state.r1) ∧
+      ∀ element ∈ state.h1 ++ state.r1, isDataElement element := by
+  obtain ⟨state, run, rootDomain, invariant, h2, r4, r3, r2⟩ :=
+    genGc_invariant conf roots heap rootOk heapGood
+  refine ⟨state, heapMap 0 state.heap, run,
+    gcInv_final_domain conf state heap roots invariant h2 r4 r3 r2 rootDomain,
+    gcInv_final_range conf state heap roots invariant h2 r4 r3 r2,
+    gcInv_final_filterLength conf state heap roots invariant h2 r4 r3 r2,
+    gcInv_final_related conf state heap roots invariant h2 r4 r3 r2, ?_⟩
+  intro element member
+  simp only [List.mem_append] at member
+  rcases member with left | right
+  · exact invariant.2.2.2.2.2.2.2.1 element left
+  · exact invariant.2.2.2.2.2.2.2.2.2.1 element right
+
 end Flapjack.Compiler.Backend.GenGc
