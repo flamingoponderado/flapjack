@@ -869,30 +869,6 @@ theorem PanSemStateRelExec.ffiReturned {σ : Type}
   rw [hprod, hexact] at hbridge
   exact PanSemStateRelExec.setFfi h hbridge.1
 
-/-- The returned/`ret` branch specialised to the executed `callFfi` against the
-    exact `callFFIHOL`, so a `Flapjack/FfiBridge.lean` bridge
-    (`callFfi_extCall_success_bridge`, `callFfi_sharedMem_success_bridge`,
-    `callFfi_empty_extCall_bridge`, …) plugs in directly as `hbridge`. -/
-theorem PanSemStateRelExec.callFfiReturned {σ : Type}
-    {production : PanSemState (RiscV.Word 64) (FfiState σ)}
-    {exact : PanSemStateExact 64 σ}
-    (h : PanSemStateRelExec production exact)
-    (name : FfiName) (holName : HolFfiName)
-    (configuration bytes : List UInt8)
-    (holConfiguration holBytes : List (BitVec 8))
-    {newProduction : FfiState σ} {newExact : HolFfiState σ}
-    {prodBytes : List UInt8} {exactBytes : List (BitVec 8)}
-    (hbridge : FfiResultRel
-      (callFfi production.ffi name configuration bytes)
-      (callFFIHOL exact.ffi holName holConfiguration holBytes))
-    (hprod : callFfi production.ffi name configuration bytes =
-      .returned newProduction prodBytes)
-    (hexact : callFFIHOL exact.ffi holName holConfiguration holBytes =
-      .ret newExact exactBytes) :
-    PanSemStateRelExec { production with ffi := newProduction }
-      { exact with ffi := newExact } :=
-  PanSemStateRelExec.ffiReturned h hbridge hprod hexact
-
 /-- The finalising FFI branch (oracle finalisation or returned-length failure).
     A finalising `callFfi`/`callFFIHOL` installs no new FFI state, so both `ffi`
     fields stay as they were and `PanSemStateRelExec` is preserved.  The
@@ -1345,7 +1321,6 @@ theorem ffiResultRel_callFfi_sharedMem {σ : Type} (prod : FfiState σ)
                 hprod hlen, callFFIHOL_ret exact _ _ _ hState hBytes hneH hexa,
               if_neg hlenHf]
             exact ⟨hop, hcfg, hbytes, Or.inl ⟨rfl, rfl⟩⟩
-
 
 /-- Production/exact agreement for the executed shared-memory load body
     (`panShMemLoad` against the exact `shMemLoadHOLFiniteExact`), including the

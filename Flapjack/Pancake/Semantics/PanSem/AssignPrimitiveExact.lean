@@ -62,33 +62,6 @@ def assignStepHOLExact {width : Nat} {σ : Type} [NeZero width]
       else (some .error, state)
   | none => (some .error, state)
 
-theorem assignStepHOLExact_eval_error {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateExact width σ) (kind : VarKind) (name : MlS)
-    (source : ExpHOL width)
-    (evalExpression : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width))
-    (h : evalExpression state source = none) :
-    assignStepHOLExact state kind name source evalExpression = (some .error, state) := by
-  simp only [assignStepHOLExact, h]
-
-theorem assignStepHOLExact_invalid {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateExact width σ) (kind : VarKind) (name : MlS)
-    (source : ExpHOL width) (value : ValueHOL width)
-    (evalExpression : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width))
-    (heval : evalExpression state source = some value)
-    (hvalid : isValidValueHOLExact state kind name value = false) :
-    assignStepHOLExact state kind name source evalExpression = (some .error, state) := by
-  simp [assignStepHOLExact, heval, hvalid]
-
-theorem assignStepHOLExact_ok {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateExact width σ) (kind : VarKind) (name : MlS)
-    (source : ExpHOL width) (value : ValueHOL width)
-    (evalExpression : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width))
-    (heval : evalExpression state source = some value)
-    (hvalid : isValidValueHOLExact state kind name value = true) :
-    assignStepHOLExact state kind name source evalExpression
-      = (none, setKvarHOLExact kind name value state) := by
-  simp [assignStepHOLExact, heval, hvalid]
-
 /-- HOL `panSem$evaluate` `Primitive` case, over the exact MlString-keyed state. -/
 def primitiveStepHOLExact {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateExact width σ) (name : MlS) (operator : PrimOp)
@@ -105,52 +78,5 @@ def primitiveStepHOLExact {width : Nat} {σ : Type} [NeZero width]
           else (some .error, state)
       | none => (some .error, state)
   | none => (some .error, state)
-
-theorem primitiveStepHOLExact_eval_error {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateExact width σ) (name : MlS) (operator : PrimOp)
-    (arguments : List (ExpHOL width))
-    (evalExpressions : PanSemStateExact width σ → List (ExpHOL width) →
-      Option (List (ValueHOL width)))
-    (h : evalExpressions state arguments = none) :
-    primitiveStepHOLExact state name operator arguments evalExpressions
-      = (some .error, state) := by
-  simp only [primitiveStepHOLExact, h]
-
-theorem primitiveStepHOLExact_primop_none {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateExact width σ) (name : MlS) (operator : PrimOp)
-    (arguments : List (ExpHOL width)) (values : List (ValueHOL width))
-    (evalExpressions : PanSemStateExact width σ → List (ExpHOL width) →
-      Option (List (ValueHOL width)))
-    (heval : evalExpressions state arguments = some values)
-    (hprim : panPrimopHOLExact (width := width) operator values = none) :
-    primitiveStepHOLExact state name operator arguments evalExpressions
-      = (some .error, state) := by
-  simp [primitiveStepHOLExact, heval, hprim]
-
-theorem primitiveStepHOLExact_invalid {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateExact width σ) (name : MlS) (operator : PrimOp)
-    (arguments : List (ExpHOL width)) (values : List (ValueHOL width))
-    (value : ValueHOL width)
-    (evalExpressions : PanSemStateExact width σ → List (ExpHOL width) →
-      Option (List (ValueHOL width)))
-    (heval : evalExpressions state arguments = some values)
-    (hprim : panPrimopHOLExact (width := width) operator values = some value)
-    (hvalid : isValidValueHOLExact state .local name value = false) :
-    primitiveStepHOLExact state name operator arguments evalExpressions
-      = (some .error, state) := by
-  simp [primitiveStepHOLExact, heval, hprim, hvalid]
-
-theorem primitiveStepHOLExact_ok {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateExact width σ) (name : MlS) (operator : PrimOp)
-    (arguments : List (ExpHOL width)) (values : List (ValueHOL width))
-    (value : ValueHOL width)
-    (evalExpressions : PanSemStateExact width σ → List (ExpHOL width) →
-      Option (List (ValueHOL width)))
-    (heval : evalExpressions state arguments = some values)
-    (hprim : panPrimopHOLExact (width := width) operator values = some value)
-    (hvalid : isValidValueHOLExact state .local name value = true) :
-    primitiveStepHOLExact state name operator arguments evalExpressions
-      = (none, setVarHOLExact name value state) := by
-  simp [primitiveStepHOLExact, heval, hprim, hvalid]
 
 end Flapjack

@@ -55,13 +55,6 @@ def PanSemStateExact.FiniteSupport {width : Nat} [NeZero width]
   (∃ keys : List MlS, ∀ key, state.code key ≠ none → key ∈ keys) ∧
   (∃ keys : List MlS, ∀ key, state.eshapes key ≠ none → key ∈ keys)
 
-/-- Kernel-checked finite-support projection of the reused HOL finite-map
-    carrier: a `HolFiniteMapExact` exposes a support list for its lookup. -/
-theorem HolFiniteMapExact.lookup_finiteSupport {α β : Type}
-    (map : HolFiniteMapExact α β) :
-    ∃ keys : List α, ∀ key, map.lookup key ≠ none → key ∈ keys :=
-  map.finiteSupport
-
 /-- Clearing the locals of a finite-support state keeps every map field
     finite-support (HOL `empty_locals` writes `FEMPTY` to `locals`). -/
 theorem PanSemStateExact.finiteSupport_emptyLocals {width : Nat} [NeZero width]

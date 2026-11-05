@@ -91,8 +91,12 @@ theorem deadA : True := deadB
 
 theorem deadB : True := trivial
 
--- deadC is mentioned only in a comment
+-- deadC is mentioned in a free-standing comment
+
 theorem deadC : True := trivial
+
+-- attachedC is mentioned only in its own attached comment
+theorem attachedC : True := trivial
 
 theorem chainA : True := chainB
 
@@ -112,6 +116,56 @@ example : True := by simp [iffThm.mp]
 theorem nsThm : True := trivial
 
 theorem usesNs : True := Flapjack.nsThm
+
+/-- Companion of `docOnlyB`; this docstring goes with docOnlyA. -/
+theorem docOnlyA : True := trivial
+
+/-! Notes on `docAttachedB`, attached to docAttachedA. -/
+
+theorem docAttachedA : True := trivial
+
+theorem docOnlyB : True := trivial
+
+theorem docAttachedB : True := trivial
+
+/-! ## Results: `headingNamed` (a section heading is not attached) -/
+
+theorem headingNamed : True := trivial
+
+/-! The family `..._skip_projection` / `_break_projection` is proved below. -/
+
+def separator : Nat := 0
+
+theorem fooBar_skip_projection : True := trivial
+
+theorem fooBar_break_projection : True := trivial
+
+theorem fooBar_tick_projection : True := trivial
+
+open Foo in
+/-- Mentions `prefixedB`; attached to prefixedA through `open ... in`. -/
+theorem prefixedA : True := trivial
+
+theorem prefixedB : True := trivial
+
+/-!
+# Overview
+
+The main result is `multilineHeadingNamed`.
+-/
+
+theorem afterMultilineHeading : True := trivial
+
+theorem multilineHeadingNamed : True := trivial
+
+/-!
+
+## Notes on `spacedHeadingNamed`
+-/
+
+theorem afterSpacedHeading : True := trivial
+
+theorem spacedHeadingNamed : True := trivial
 """
 
 
@@ -121,16 +175,28 @@ class NamedUsesTest(unittest.TestCase):
             path = pathlib.Path(tmp) / "F.lean"
             path.write_text(NAMED)
             names = ["usedByRfl", "deadA", "deadB", "deadC", "chainB", "inExample",
-                     "stringOnly", "iffThm", "nsThm"]
+                     "stringOnly", "iffThm", "nsThm", "docOnlyA", "docOnlyB",
+                     "docAttachedA", "docAttachedB", "headingNamed", "attachedC",
+                     "afterMultilineHeading", "multilineHeadingNamed",
+                     "afterSpacedHeading", "spacedHeadingNamed", "prefixedA", "prefixedB",
+                     "fooBar_skip_projection", "fooBar_break_projection",
+                     "fooBar_tick_projection"]
             found = [{"file": "F.lean", "module": "F", "name": "Flapjack." + n} for n in names]
             kept = rut.filter_named_uses({"F.lean": path}, found)
         # usedByRfl is named by the surviving `kept`; chainB by the surviving
-        # chainA (not a candidate); inExample by an example.  deadB is named
-        # only by the candidate deadA, deadC only in a comment, stringOnly
-        # only inside a string.  iffThm is named through `iffThm.mp` and
-        # nsThm through the qualified `Flapjack.nsThm`.
+        # chainA (not a candidate); inExample by an example; iffThm through
+        # `iffThm.mp`; nsThm through `Flapjack.nsThm`; deadC by a free-standing
+        # comment; stringOnly inside a string; headingNamed,
+        # multilineHeadingNamed and spacedHeadingNamed by section headings
+        # (single-line, `/-!` then `# ...`, and with a blank line between),
+        # which are never attached to the candidate below them.  deadB is named only by the candidate deadA, and the
+        # docOnly/docAttached B theorems only by comments attached to their
+        # candidate A theorems; attachedC only by its own attached comment.
         self.assertEqual({d["name"].split(".")[-1] for d in kept},
-                         {"deadA", "deadB", "deadC", "stringOnly"})
+                         {"deadA", "deadB", "docOnlyA", "docOnlyB", "docAttachedA",
+                          "docAttachedB", "attachedC", "afterMultilineHeading",
+                          "afterSpacedHeading", "prefixedA", "prefixedB",
+                          "fooBar_tick_projection"})
 
 
 class InventoryRootsTest(unittest.TestCase):
@@ -141,12 +207,22 @@ class InventoryRootsTest(unittest.TestCase):
             {"hol_path": "a/xScript.sml", "hol_name": "x", "lean_name": "Flapjack.mismatch",
              "statement_status": "documented_mismatch"},
             {"hol_path": "a/xScript.sml", "hol_name": "y", "lean_name": "exact",
-             "statement_status": "reviewed_exact"},
+             "statement_status": "reviewed_exact",
+             "reviewer": "The chain remains proved by `Flapjack.citedInNote`."},
+            {"hol_path": None, "hol_name": None, "lean_name": "Flapjack.otherPlaceholder",
+             "lean_path": "Flapjack/otherPlaceholderFile.lean",
+             "statement_status": "no_hol_reference_pending_classification",
+             "reviewer": "see seeAlso.mp for the specialisation"},
         ]
         with tempfile.TemporaryDirectory() as tmp:
             (pathlib.Path(tmp) / "docs").mkdir()
             (pathlib.Path(tmp) / rut.INVENTORY).write_text(json.dumps(rows))
-            self.assertEqual(rut.inventory_roots(pathlib.Path(tmp)), {"mismatch", "exact"})
+            roots = rut.inventory_roots(pathlib.Path(tmp))
+        self.assertTrue({"mismatch", "exact", "citedInNote", "seeAlso"} <= roots)
+        # A placeholder row protects neither its own theorem nor its file.
+        self.assertNotIn("placeholder", roots)
+        self.assertNotIn("otherPlaceholder", roots)
+        self.assertNotIn("otherPlaceholderFile", roots)
 
 
 class MainRootsTest(unittest.TestCase):
@@ -170,6 +246,14 @@ class MainRootsTest(unittest.TestCase):
         # Every root source reaches the Lean half, and nothing else does.
         self.assertEqual(sorted(captured["roots"]),
                          ["onlyByAttribute", "onlyByInventory", "onlyByText"])
+
+
+class ComponentsTest(unittest.TestCase):
+    def test_quoted_and_primed_names(self):
+        self.assertEqual(rut.components("Ns.foo'"), {"Ns", "foo'", "foo"})
+        self.assertEqual(rut.components("bar''"), {"bar''", "bar"})
+        tokens = rut.TOKEN_RE.findall("KEEP = {('F.lean', 'quotedName'): 'x'}")
+        self.assertIn("quotedName", set().union(*(rut.components(t) for t in tokens)))
 
 
 class TextRootsTest(unittest.TestCase):

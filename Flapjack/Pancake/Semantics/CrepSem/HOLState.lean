@@ -217,17 +217,6 @@ private theorem filter_length_lt_of_mem [DecidableEq α]
         simp [hne]
         omega
 
-/-- Removing a defined key strictly decreases the explicit finite-domain
-    cardinality, matching HOL `CARD (FDOM fs)`. -/
-theorem domainCard_eraseEq_lt [DecidableEq α]
-    (map : HolFiniteMapWithDomain α β) (key : α)
-    (h : map.map.lookup key ≠ none) :
-    (map.eraseEq key).domainCard < map.domainCard := by
-  change (List.filter (fun query => decide (query ≠ key)) map.keys).length <
-    map.keys.length
-  exact filter_length_lt_of_mem map.keys key map.keys_nodup
-    ((map.keys_iff_lookup key).mpr h)
-
 end HolFiniteMapWithDomain
 
 namespace HolFiniteMapExact

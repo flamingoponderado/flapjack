@@ -152,14 +152,4 @@ theorem panSemEvalMeasureRel_decBody
   apply panSemEvalMeasureRel_of_same_clock_cost_lt rfl
   simp [panSemProgFuel] <;> omega
 
-/-- `While`'s body is a strict subprogram. Its evaluator call uses a lower
-    clock when the loop condition is true; the generic clock-decrease lemma
-    handles that call even though the body's cost need not be smaller than
-    every unrelated caller. -/
-theorem panSemEvalMeasureRel_whileBody
-    (state : PanSemState α ffi) (condition : Exp α) (body : Prog α) :
-    panSemEvalMeasureRel (state, body) (state, Prog.while condition body) := by
-  apply panSemEvalMeasureRel_of_same_clock_cost_lt rfl
-  simp [panSemProgFuel] <;> omega
-
 end Flapjack

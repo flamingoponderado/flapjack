@@ -19,7 +19,8 @@ has a status other than ``no_hol_reference_pending_classification`` (for
 example an untagged ``documented_mismatch`` row, which records a known HOL
 counterpart and the work tracked for an exact port) are roots as well, so
 the report never recommends deleting port bookkeeping, nor anything such a
-theorem uses.
+theorem uses.  So is any name that an inventory row's reviewer note (or
+other text field) mentions.
 
 Theorems that carry any attribute other than ``hol`` (``@[simp]``,
 ``@[grind]``, ``@[ext]``, a custom simp set, ...), on the declaration or
@@ -30,11 +31,12 @@ term mentions them today.
 
 Proof terms do not record every use by name: a ``rfl`` theorem passed to
 ``simp``/``simpa``/``rw``/``dsimp`` is applied by definitional unfolding and
-may leave no constant behind.  So after the Lean half, a candidate whose
-leaf name occurs (outside comments and strings) in the source of a Lean
-declaration that is not itself a candidate is kept, and this is repeated
-until nothing changes; a mention inside another unused theorem does not
-keep it.
+may leave no constant behind.  And a theorem that a surviving docstring or
+module comment names is presented there as a result.  So after the Lean
+half, a candidate whose name occurs anywhere in a ``Flapjack`` Lean file,
+comments included, outside the candidate declarations and their attached
+comments is kept, and this is repeated until nothing changes; a mention
+inside another unused theorem does not keep it.
 
 Only theorems written as a ``theorem``/``lemma`` in the source file of their
 module are printed; generated equation and structure lemmas are dropped.
@@ -66,13 +68,28 @@ import importlib.util
 
 TEXT_GLOBS = ["*.md", "*.py", "*.sh", "*.json", "*.toml", "*.txt", "*.yml", "*.yaml",
               "Flapjack/Test/*.lean", "scripts/*.lean"]
-EXCLUDED_TEXT = {"docs/HOL-THEOREM-MAP.json"}  # read by inventory_roots instead
+EXCLUDED_TEXT = {"docs/HOL-THEOREM-MAP.json"}  # read field by field by inventory_roots
 TOKEN_RE = re.compile(r"[A-Za-z_][\w?!'.]*")
 THEOREM_RE = re.compile(
     r"^(?:@\[[^\]]*\]\s*)*(?:(?:private|protected|noncomputable)\s+)*(?:theorem|lemma)\s+"
     r"([^\s:(\[{]+)",
     re.MULTILINE,
 )
+
+
+def components(token: str) -> set[str]:
+    """The dotted components of an identifier token, each also without
+    trailing quote marks.
+
+    Lean names may contain ``'``, so the token pattern keeps it; but in
+    Python or prose a name is often quoted (``'foo'``), which yields the
+    token ``foo'``.  Keeping both spellings protects ``foo`` and ``foo'``."""
+    out: set[str] = set()
+    for part in token.split("."):
+        out.add(part)
+        out.add(part.rstrip("'"))
+    out.discard("")
+    return out
 
 
 def text_roots(repo: pathlib.Path) -> set[str]:
@@ -89,7 +106,7 @@ def text_roots(repo: pathlib.Path) -> set[str]:
         if not path.is_file():
             continue
         for tok in TOKEN_RE.findall(path.read_text(encoding="utf-8", errors="replace")):
-            names.update(tok.split("."))
+            names.update(components(tok))
     return names
 
 
@@ -102,6 +119,11 @@ DECL_AFTER_ATTRS_RE = re.compile(
     r"\s*(?:(?:private|protected|noncomputable)\s+)*(theorem|lemma|def|abbrev|instance|"
     r"structure|inductive|opaque|axiom)\s+([^\s:(\[{]+)"
 )
+# A surviving comment often abbreviates a family as `..._skip_projection` or
+# `_break_projection`; such a token protects the same file's candidates whose
+# names end with it.  Short tokens (`_1`, `_eq`) are too generic to count.
+SHORTHAND_MIN = 6
+PREFIX_IN_RE = re.compile(r"^(open|set_option|omit|include|variable)\b.*\bin\s*$")
 ATTRIBUTE_CMD_RE = re.compile(r"^attribute\s*\[", re.MULTILINE)
 
 
@@ -172,7 +194,7 @@ def attributed_theorems(text: str) -> set[str]:
         rest = masked[end : len(masked) if nxt is None else nxt.start()]
         if any(a != "hol" for a in attrs):
             for tok in rest.split():
-                found.update(tok.split("."))
+                found.update(components(tok))
     return found
 
 
@@ -190,10 +212,10 @@ def automation_roots(repo: pathlib.Path) -> set[str]:
 def drop_named_uses(repo: pathlib.Path, found: list[dict]) -> list[dict]:
     """Keep only candidates that no surviving Lean source names.
 
-    Every token of every ``Flapjack`` Lean file counts (comments and strings
-    masked), except the lines of candidate declarations themselves, as split
-    by ``report-proof-duplication.py``'s parser; so ``example``s, attribute
-    commands and macros count too.  Every dotted component of a token counts,
+    Every token of every ``Flapjack`` Lean file counts, comments and strings
+    included, except the lines of candidate declarations and their attached
+    comments, as split by ``report-proof-duplication.py``'s parser; so
+    ``example``s, attribute commands, macros and documentation count too.  Every dotted component of a token counts,
     so ``simp [foo.mp]`` names ``foo``.  Iterates to a fixed point: a candidate
     named elsewhere stops being a candidate, and its own body then counts."""
     if not found:
@@ -204,29 +226,90 @@ def drop_named_uses(repo: pathlib.Path, found: list[dict]) -> list[dict]:
     return filter_named_uses(sources, found)
 
 
+def attached_start(lines: list[str], start: int) -> int:
+    """First line (0-based) of the comments attached to a declaration.
+
+    ``start`` is the 0-based line of the declaration keyword.  Attached are
+    directly preceding ``@[...]``, ``--`` and ``open ... in``-style prefix
+    lines, a ``/-- ... -/`` docstring ending directly above them (with the
+    prefix lines above it), and, after blank lines, a ``/-! ... -/``
+    comment that is not a section heading (``is_heading``).  A comment documenting
+    only one declaration is written this way, so it goes with it."""
+    def up(k: int) -> int:
+        while k > 0 and (lines[k - 1].startswith("@[") or lines[k - 1].startswith("--")
+                         or PREFIX_IN_RE.match(lines[k - 1])):
+            k -= 1
+        return k
+
+    k = up(start)
+    if k > 0 and lines[k - 1].rstrip().endswith("-/"):
+        m = k - 1
+        while m > 0 and not lines[m].lstrip().startswith("/-"):
+            m -= 1
+        if lines[m].startswith("/--"):
+            k = up(m)
+    j = k
+    while j > 0 and lines[j - 1] == "":
+        j -= 1
+    if j > 0 and lines[j - 1].rstrip().endswith("-/"):
+        m = j - 1
+        while m > 0 and not lines[m].startswith("/-"):
+            m -= 1
+        if lines[m].startswith("/-!") and not is_heading(lines, m):
+            k = m
+    return k
+
+
+def is_heading(lines: list[str], m: int) -> bool:
+    """Whether the ``/-!`` comment opening on line ``m`` is a section heading.
+
+    A heading's text starts with ``#``, either on the opening line
+    (``/-! # Title``) or, after blank lines, on a later one (``/-!`` then
+    ``# Title``)."""
+    rest = lines[m][3:].strip()
+    i = m
+    while not rest and i + 1 < len(lines):
+        i += 1
+        rest = lines[i].strip()
+    return rest.startswith("#")
+
+
 def filter_named_uses(sources: dict[str, pathlib.Path], found: list[dict]) -> list[dict]:
-    """``drop_named_uses`` over explicit ``{relative path: file}`` sources."""
+    """``drop_named_uses`` over explicit ``{relative path: file}`` sources.
+
+    Mentions in comments and strings count: a theorem that a surviving
+    docstring or module comment names is presented as a result, so the
+    report keeps it.  So does a shorthand token such as ``_skip_projection``
+    (from ``..._skip_projection``) for the same file's candidates whose names
+    end with it.  The lines of a candidate declaration, including its
+    attached comments (``attached_start``), do not count."""
     lines_of: dict[str, list[set[str]]] = {}
     spans: dict[tuple[str, str], list[tuple[int, int]]] = {}
     for f, path in sources.items():
-        masked = _rpd.mask_comments(path.read_text(encoding="utf-8", errors="replace"))
-        lines_of[f] = [{c for t in TOKEN_RE.findall(line) for c in t.split(".")}
-                       for line in masked.split("\n")]
+        raw = path.read_text(encoding="utf-8", errors="replace")
+        lines = raw.split("\n")
+        lines_of[f] = [{c for t in TOKEN_RE.findall(line) for c in components(t)}
+                       for line in lines]
         for d in _rpd.parse_decls(path, f):
-            spans.setdefault((f, d.name.rsplit(".", 1)[-1]), []).append((d.start, d.end))
+            first = attached_start(lines, d.start - 1)
+            spans.setdefault((f, d.name.rsplit(".", 1)[-1]), []).append((first, d.end))
     cand = {(d["file"], d["name"].rsplit(".", 1)[-1]) for d in found}
     while True:
         excluded: dict[str, set[int]] = {}
         for key in cand:
-            for start, end in spans.get(key, []):
-                excluded.setdefault(key[0], set()).update(range(start - 1, end))
+            for first, end in spans.get(key, []):
+                excluded.setdefault(key[0], set()).update(range(first, end))
         named: set[str] = set()
+        suffixes: dict[str, set[str]] = {}
         for f, toks in lines_of.items():
             skip = excluded.get(f, set())
             for i, line_toks in enumerate(toks):
                 if i not in skip:
                     named |= line_toks
-        kept = {c for c in cand if c[1] in named}
+                    suffixes.setdefault(f, set()).update(
+                        t for t in line_toks if t.startswith("_") and len(t) >= SHORTHAND_MIN)
+        kept = {c for c in cand
+                if c[1] in named or any(c[1].endswith(t) for t in suffixes.get(c[0], ()))}
         if not kept:
             break
         cand -= kept
@@ -238,13 +321,26 @@ PENDING = "no_hol_reference_pending_classification"
 
 
 def inventory_roots(repo: pathlib.Path) -> set[str]:
-    """Leaf names of Lean theorems whose inventory row is more than a placeholder."""
+    """Names the inventory protects.
+
+    The leaf names of Lean theorems whose row is more than a placeholder, and
+    every dotted component of every identifier in the rows' other text fields
+    (reviewer notes and the like, but not a row's own ``lean_name`` or
+    ``lean_path``): a note that cites a theorem as evidence ("remains proved
+    by X", "see X") must not be left pointing at nothing."""
     path = repo / INVENTORY
     if not path.is_file():
         return set()
-    return {row["lean_name"].rsplit(".", 1)[-1]
-            for row in json.loads(path.read_text(encoding="utf-8"))
-            if row.get("hol_path") or row.get("hol_name") or row.get("statement_status") != PENDING}
+    names: set[str] = set()
+    for row in json.loads(path.read_text(encoding="utf-8")):
+        if row.get("hol_path") or row.get("hol_name") or row.get("statement_status") != PENDING:
+            names.add(row["lean_name"].rsplit(".", 1)[-1])
+        for key, value in row.items():
+            if key in ("lean_name", "lean_path") or not isinstance(value, str):
+                continue
+            for tok in TOKEN_RE.findall(value):
+                names.update(components(tok))
+    return names
 
 
 def source_theorems(path: pathlib.Path) -> set[str]:
