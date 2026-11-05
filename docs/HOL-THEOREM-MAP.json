@@ -1,6 +1,14 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "partial_gc_simulation",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
+  "lean_name": "partialGc_simulation",
+  "statement_status": "pending_statement_review",
+  "reviewer": "Compared the source premises and conclusions, including generation segmentation, root validity, major collection, heap validity, and the final state and reference results. Inferred HOL types and local proof replay remain to be checked."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
   "hol_name": "gc_move_data_r1",
   "hol_line": 1137,
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Accumulator.lean",

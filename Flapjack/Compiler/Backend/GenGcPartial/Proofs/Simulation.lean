@@ -1387,4 +1387,93 @@ theorem gcMoveData_majorLoopAfterRefs {α β : Type} (conf : Config β)
   rw [translated] at finalEq
   exact ⟨finalInv, finalEq, finalEmpty, finalOk, gcMoveData_r1 conf _⟩
 
+/-- Partial collection simulates major collection on the current generation.
+The local HOL proof and inferred types have not yet been replayed. -/
+@[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "partial_gc_simulation"]
+theorem partialGc_simulation {α β : Type} (conf : Config β)
+    (roots roots1 : List (HeapAddress α)) (heap old current refs : List (HeapElement α β))
+    (state1 : GcState α β)
+    (majorRoots : List (HeapAddress (DataSort (HeapAddress α) α)))
+    (majorState : GcState (DataSort (HeapAddress α) α) β)
+    (partialRun : partialGc conf (roots, heap) = (roots1, state1))
+    (generations : heapGenOk heap conf)
+    (_ordered : conf.genStart ≤ conf.refsStart ∧ conf.refsStart ≤ conf.limit)
+    (segment : heapSegment (conf.genStart, conf.refsStart) heap = some (old, current, refs))
+    (_nonrefs : List.Forall (fun e => heapElementIsRef conf e = false) (old ++ current))
+    (refData : List.Forall isDataElement refs) (validRoots : rootsOk roots heap)
+    (majorRun : GenGc.genGc (toGenConf conf)
+      (toGenRoots conf roots ++ refsToRoots conf refs, toGenHeapList conf current) = (majorRoots, majorState))
+    (validHeap : heapOk heap conf.limit) (majorOk : majorState.ok = true) :
+    majorRoots = toGenRoots conf roots1 ++ refsToRoots conf state1.r1 ∧
+    majorState = toGenState conf state1 ∧ simInv conf heap state1 ∧ state1.h2 = [] ∧ state1.ok = true := by
+  classical
+  let initial : GcState α β := { emptyGcState with
+    heap := heap, old := old, r2 := refs, a := conf.genStart, n := heapLength current }
+  have initialInv : simInv conf heap initial := partialGc_initialSimInv conf heap old current refs validHeap generations segment
+  have initialEq : toGenState conf initial =
+      ({ emptyGcState with
+        heap := toGenHeapList conf current, n := (toGenConf conf).limit,
+        ok := decide (heapLength (toGenHeapList conf current) = (toGenConf conf).limit) } :
+        GcState (DataSort (HeapAddress α) α) β) :=
+    partialGc_initialTranslation conf heap old current refs generations segment
+  simp only [partialGc, segment] at partialRun
+  change (let (roots', next) := gcMoveList conf initial roots
+    let (refs', afterRefs) := gcMoveRefList conf next refs
+    (roots', gcMoveData conf { afterRefs with r1 := refs', r2 := [] })) = (roots1, state1) at partialRun
+  cases rootRun : gcMoveList conf initial roots with
+  | mk movedRoots afterRoots =>
+    cases refsRun : gcMoveRefList conf afterRoots refs with
+    | mk movedRefs afterRefs =>
+      simp only [rootRun, refsRun, Prod.mk.injEq] at partialRun
+      obtain ⟨rfl, rfl⟩ := partialRun
+      simp only [GenGc.genGc] at majorRun
+      rw [← initialEq] at majorRun
+      simp only [toGenRoots] at majorRun
+      rw [majorMoveList_append] at majorRun
+      cases majorRootRun : GenGc.gcMoveList (toGenConf conf) (toGenState conf initial)
+          (roots.map (toGenHeapAddress conf)) with
+      | mk majorMovedRoots majorAfterRoots =>
+        cases majorRefsRun : GenGc.gcMoveList (toGenConf conf) majorAfterRoots (refsToRoots conf refs) with
+        | mk majorMovedRefs majorAfterRefs =>
+          simp only [majorRootRun, majorRefsRun, Prod.mk.injEq] at majorRun
+          obtain ⟨rfl, rfl⟩ := majorRun
+          have refsOk := GenGc.gcMoveLoop_ok (toGenConf conf) majorAfterRefs (toGenConf conf).limit majorOk
+          have rootsOk := GenGc.gcMoveList_ok (toGenConf conf) (refsToRoots conf refs)
+            majorMovedRefs majorAfterRoots majorAfterRefs majorRefsRun refsOk
+          have rootsBound : ∀ ptr value, .pointer ptr value ∈ roots → ptr < heapLength initial.heap := by
+            simpa [initial] using rootsOk_pointersBound heap roots validRoots
+          have initialSize : heapLength initial.heap = conf.limit := by simpa [initial] using validHeap.1
+          obtain ⟨rootsInv, rootsEq, _⟩ := gcMoveList_simulation conf heap roots initial afterRoots
+            movedRoots majorMovedRoots majorAfterRoots rootRun initialInv rootsBound initialSize majorRootRun rootsOk
+          obtain ⟨majorRootsEq, majorRootsStateEq⟩ := Prod.mk.inj rootsEq
+          subst majorMovedRoots
+          subst majorAfterRoots
+          have rootsSize : heapLength afterRoots.heap = heapLength heap := by
+            simpa [initial] using (gcMoveList_heapLength roots movedRoots conf initial afterRoots rootRun).symm
+          have refsBound := heapOk_referenceSegmentBound conf heap old current refs afterRoots validHeap segment rootsSize
+          have rootsLimit : heapLength afterRoots.heap = conf.limit := rootsSize.trans validHeap.1
+          obtain ⟨refsInv, majorRefsEq, majorRefsStateEq, oldRefs⟩ :=
+            gcMoveRefList_simulation conf afterRoots afterRefs refs movedRefs heap majorMovedRefs majorAfterRefs
+              refsRun majorRefsRun refsOk rootsInv refsBound rootsLimit refData
+          subst majorMovedRefs
+          subst majorAfterRefs
+          have originalRefs : ∀ ptr, hasOldPtr conf refs ptr → hasOldPtr conf heap ptr := by
+            intro ptr ⟨children, len, data, value, member, child, outside⟩
+            obtain ⟨whole, _, _, _⟩ := heapSegment_imp heap conf.genStart conf.refsStart old current refs segment
+            refine ⟨children, len, data, value, ?_, child, outside⟩
+            rw [← whole]
+            simp [member]
+          have movedOld : ∀ ptr, hasOldPtr conf movedRefs ptr → hasOldPtr conf heap ptr := by
+            intro ptr member
+            exact originalRefs ptr (oldRefs ptr member)
+          have finalBound := gcMoveRootsRefs_dataPointersBound conf initial afterRoots afterRefs roots movedRoots
+            refs movedRefs conf.limit (by simpa [initial] using validHeap) (by simp [initial, emptyGcState]) rootRun refsRun
+          have finalSize : heapLength afterRefs.heap = conf.limit := by
+            exact (gcMoveRefList_heapLength conf refs movedRefs afterRoots afterRefs refsRun).symm.trans rootsLimit
+          obtain ⟨finalInv, finalEq, finalEmpty, finalOk, finalRefs⟩ :=
+            gcMoveData_majorLoopAfterRefs conf heap afterRefs movedRefs (toGenConf conf).limit
+              refsInv movedOld finalBound finalSize majorOk
+          refine ⟨?_, finalEq, finalInv, finalEmpty, finalOk⟩
+          simp [toGenRoots, finalRefs]
+
 end Flapjack.Compiler.Backend.GenGcPartial
