@@ -403,6 +403,137 @@ theorem everyIsRefElement_iff {α β : Type} (classify : HeapTag × β → Bool)
       rcases payload with ⟨tag, payload⟩
       exact (classEq tag payload).mpr test
 
+/-- Split an existential word region at a known word count. This is local
+separation infrastructure for the final partial-collector copy. -/
+theorem partialFull_splitWordListExists {width : Nat} [NeZero width] {β : Type}
+    (address : BitVec width) (first second : Nat) :
+    Misc.wordListExists (β := β) address (first + second) =
+      SetSep.star (Misc.wordListExists address first)
+        (Misc.wordListExists (address + StackRemove.bytesInWord width * BitVec.ofNat width first) second) := by
+  funext cells
+  apply propext
+  constructor
+  · intro assertion
+    obtain ⟨values, words, length⟩ : ∃ values : List β,
+        Misc.wordList address values cells ∧ values.length = first + second := by
+      simpa only [Misc.wordListExists, SetSep.sepExists, StackRemove.WordListExists.starCond] using assertion
+    let left := values.take first
+    let right := values.drop first
+    have leftLen : left.length = first := by simp [left, length]
+    have rightLen : right.length = second := by simp [right, length]
+    have partition : Misc.wordList address (left ++ right) cells := by simpa [left, right] using words
+    rw [StackRemove.StackHeap.wordListAppend] at partition
+    rcases partition with ⟨l, r, split, leftWords, rightWords⟩
+    refine ⟨l, r, split, ?_, ?_⟩
+    · exact ⟨left, (StackRemove.WordListExists.starCond _ _ _).mpr ⟨leftWords, leftLen⟩⟩
+    · refine ⟨right, (StackRemove.WordListExists.starCond _ _ _).mpr ⟨?_, rightLen⟩⟩
+      simpa only [leftLen] using rightWords
+  · rintro ⟨l, r, split, firstExists, secondExists⟩
+    obtain ⟨left, leftWords, leftLen⟩ : ∃ values : List β, Misc.wordList address values l ∧ values.length = first := by
+      simpa only [Misc.wordListExists, SetSep.sepExists, StackRemove.WordListExists.starCond] using firstExists
+    obtain ⟨right, rightWords, rightLen⟩ : ∃ values : List β,
+        Misc.wordList (address + StackRemove.bytesInWord width * BitVec.ofNat width first) values r ∧ values.length = second := by
+      simpa only [Misc.wordListExists, SetSep.sepExists, StackRemove.WordListExists.starCond] using secondExists
+    refine ⟨left ++ right, (StackRemove.WordListExists.starCond _ _ _).mpr ⟨?_, ?_⟩⟩
+    · rw [StackRemove.StackHeap.wordListAppend]
+      refine ⟨l, r, split, leftWords, ?_⟩
+      simpa only [leftLen] using rightWords
+    · simp [leftLen, rightLen]
+
+/-- Copy a represented heap prefix to an equally sized prefix of a larger
+represented heap, preserving the source and returning the remaining words. -/
+theorem partialFull_copyBack {width : Nat} [NeZero width] (conf : Config)
+    (copied current : List (HeapElement (WordLocW width) (HeapTag × List (WordLocW width))))
+    (src dst last : BitVec width) (memory memory1 : BitVec width → WordLocW width)
+    (domain : BitVec width → Bool) (frame : ((BitVec width × WordLocW width) → Prop) → Prop) (ok : Bool)
+    (fits : heapLength copied ≤ heapLength current) (bound : heapLength copied < 2 ^ width)
+    (separated : SetSep.star (SetSep.star (wordHeap src copied conf) (wordHeap dst current conf)) frame
+      (SetSep.fun2Set (memory, fun address => domain address = true)))
+    (run : memcpy (BitVec.ofNat width (heapLength copied)) src dst memory domain = (last, memory1, ok)) :
+    ∃ rest : List (WordLocW width),
+      SetSep.star (SetSep.star (wordHeap dst copied conf)
+        (Misc.wordList (dst + wordSemBytesInWord * BitVec.ofNat width (heapLength copied)) rest))
+        (SetSep.star (wordHeap src copied conf) frame)
+        (SetSep.fun2Set (memory1, fun address => domain address = true)) ∧
+      rest.length = heapLength current - heapLength copied ∧
+      last = dst + wordSemBytesInWord * BitVec.ofNat width (heapLength copied) ∧ ok = true := by
+  let targetFrame := SetSep.star (wordHeap dst current conf) frame
+  have sourceSep : SetSep.star (wordHeap src copied conf) targetFrame
+      (SetSep.fun2Set (memory, fun address => domain address = true)) := by
+    simpa only [targetFrame, ← SetSep.starAssoc] using separated
+  obtain ⟨source, sourceSep, sourceLen, restore⟩ :=
+    wordHeap_eq_wordList_strong copied src targetFrame memory (fun address => domain address = true) conf sourceSep
+  let sourceFrame := SetSep.star (Misc.wordList src source) frame
+  have targetSep : SetSep.star (wordHeap dst current conf) sourceFrame
+      (SetSep.fun2Set (memory, fun address => domain address = true)) := by
+    have reorder : SetSep.star (Misc.wordList src source) targetFrame =
+        SetSep.star (wordHeap dst current conf) sourceFrame := by dsimp [targetFrame, sourceFrame]; ac_rfl
+    rwa [reorder] at sourceSep
+  obtain ⟨target, targetSep, targetLen⟩ :=
+    wordHeap_eq_wordList current dst sourceFrame memory (fun address => domain address = true) conf targetSep
+  let firstWords := target.take source.length
+  let rest := target.drop source.length
+  have prefixLen : firstWords.length = source.length := by simp [firstWords, ← sourceLen, ← targetLen, fits]
+  have restLen : rest.length = heapLength current - heapLength copied := by simp [rest, ← sourceLen, ← targetLen]
+  have targetWords : Misc.wordList dst (firstWords ++ rest) = Misc.wordList dst target := by simp [firstWords, rest]
+  rw [← targetWords, StackRemove.StackHeap.wordListAppend] at targetSep
+  let remainingFrame := SetSep.star (Misc.wordList (dst + wordSemBytesInWord * BitVec.ofNat width source.length) rest) frame
+  have copyInput : SetSep.star (SetSep.star remainingFrame (Misc.wordList src source)) (Misc.wordList dst firstWords)
+      (SetSep.fun2Set (memory, fun address => domain address = true)) := by
+    have reorder : SetSep.star (SetSep.star (Misc.wordList dst firstWords)
+        (Misc.wordList (dst + StackRemove.bytesInWord width * BitVec.ofNat width firstWords.length) rest)) sourceFrame =
+      SetSep.star (SetSep.star remainingFrame (Misc.wordList src source)) (Misc.wordList dst firstWords) := by
+      simp only [prefixLen, StackRemove.bytesInWord]
+      dsimp [remainingFrame, sourceFrame]
+      ac_rfl
+    rwa [reorder] at targetSep
+  have run' : memcpy (BitVec.ofNat width source.length) src dst memory domain = (last, memory1, ok) := by
+    simpa only [sourceLen] using run
+  obtain ⟨copyOutput, lastEq, success⟩ :=
+    memcpyCorrect source src ok dst memory memory1 domain last firstWords remainingFrame run' prefixLen
+      (by simpa only [← sourceLen] using bound) copyInput
+  let destFrame := SetSep.star (Misc.wordList src source) remainingFrame
+  have destWords : SetSep.star (Misc.wordList dst source) destFrame
+      (SetSep.fun2Set (memory1, fun address => domain address = true)) := by
+    have reorder : SetSep.star (SetSep.star remainingFrame (Misc.wordList src source)) (Misc.wordList dst source) =
+        SetSep.star (Misc.wordList dst source) destFrame := by dsimp [destFrame]; ac_rfl
+    rwa [reorder] at copyOutput
+  have destHeap := restore dst destFrame memory1 destWords
+  let srcFrame := SetSep.star (wordHeap dst copied conf) remainingFrame
+  have sourceWords : SetSep.star (Misc.wordList src source) srcFrame
+      (SetSep.fun2Set (memory1, fun address => domain address = true)) := by
+    have reorder : SetSep.star (wordHeap dst copied conf) destFrame =
+        SetSep.star (Misc.wordList src source) srcFrame := by dsimp [destFrame, srcFrame]; ac_rfl
+    rwa [reorder] at destHeap
+  have sourceHeap := restore src srcFrame memory1 sourceWords
+  refine ⟨rest, ?_, restLen, ?_, success⟩
+  · have reorder : SetSep.star (wordHeap src copied conf) srcFrame =
+        SetSep.star (SetSep.star (wordHeap dst copied conf)
+          (Misc.wordList (dst + wordSemBytesInWord * BitVec.ofNat width (heapLength copied)) rest))
+          (SetSep.star (wordHeap src copied conf) frame) := by
+      dsimp [srcFrame, remainingFrame]
+      rw [← sourceLen]
+      ac_rfl
+    rwa [reorder] at sourceHeap
+  · simpa only [← sourceLen, BitVec.mul_comm] using lastEq
+
+/-- The full partial collector copies exactly the number of words produced by
+the partial phase. -/
+theorem partialFull_copyStep {width : Nat} [NeZero width] (conf : Config)
+    (roots : List (WordLocW width)) (curr new len gs rs : BitVec width)
+    (memory memory1 : BitVec width → WordLocW width) (domain : BitVec width → Bool)
+    (roots1 : List (WordLocW width)) (i1 pa1 : BitVec width) (c1 : Bool) (count : Nat)
+    (partialRun : wordGenGcPartial conf (roots, curr, new, len, memory, domain, gs, rs) =
+      (roots1, i1, pa1, memory1, c1))
+    (paEq : pa1 = new + wordSemBytesInWord * BitVec.ofNat width count)
+    (byteBound : count * (width / 8) < 2 ^ width) (good : goodDimindex width) :
+    wordGenGcPartialFull conf (roots, curr, new, len, memory, domain, gs, rs) =
+      (let (last, memory2, c2) := memcpy (BitVec.ofNat width count) new (curr + gs) memory1 domain
+       (roots1, i1, last, memory2, c1 && c2)) := by
+  have decoded := (genFull_decodeLength count good byteBound).1
+  rw [wordGenGcPartialFull, partialRun]
+  simp only [paEq, BitVec.add_comm new, BitVec.add_sub_cancel, decoded]
+
 /-- Partial generational collector simulation. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "word_gen_gc_partial_thm"
   (words_as_type_indexed_bitvec)]
