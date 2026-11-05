@@ -90,8 +90,10 @@ theorem arm8Next_word (ms : arm8_state) (w : BitVec 32) (i : instruction)
 
 /-- `arm8Next` of a state holding the encoded word of a non-branch
 instruction, as an equation with any state `T` that the run of the
-instruction, with the PC advanced by four, equals (Flapjack infrastructure;
-every `arm8Next_*` step lemma is an instance). -/
+instruction, with the PC advanced by four, equals (Flapjack infrastructure for
+the non-branch `arm8Next_*` step equations; branch steps such as
+`arm8Next_branchConditional` change the PC differently and are not
+instances). -/
 theorem arm8Next_eq (ms : arm8_state) (w : BitVec 32) (i : instruction) (T : arm8_state)
     (hdec : Decode w = i)
     (hT : { (Run i { ms with branch_hint := none }) with
