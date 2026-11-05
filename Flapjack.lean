@@ -242,6 +242,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PartialFull
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CombinedGenerational
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalStore
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CombinedStore
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.CollectorNone
 import Flapjack.Compiler.Backend.GenGcPartial.Proofs.Similarity
 import Flapjack.Compiler.Backend.GenGcPartial.Proofs.Conservation
 import Flapjack.Compiler.Backend.GcCombined.Collector
