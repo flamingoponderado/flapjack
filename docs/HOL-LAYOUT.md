@@ -293,7 +293,9 @@ its HOL source:
   documentation and scripts, theorems with any attribute other than `hol`
   (simp, grind, ext, ...: automation can use them unnamed), and the
   representation witnesses that `check-hol-refs.py` requires by name, are
-  kept as roots. It loads the built
+  kept as roots. A theorem whose name occurs in the source of a surviving
+  Lean declaration is kept too, because a `rfl` theorem used in `simp`
+  leaves no trace in the proof term. It loads the built
   library through `lake env lean`, so run it after `lake build Flapjack` and
   not alongside other Lake commands.
 

@@ -63,6 +63,10 @@ theorem laterToo : True := trivial
 attribute [simp] later Ns.laterToo
 attribute [-simp] removedAttr
 attribute [local irreducible] simpDef
+attribute [simp]
+  multiOne
+  Ns.multiTwo
+theorem afterMulti : True := trivial
 -- attribute [simp] commented
 """
 
@@ -72,8 +76,51 @@ class AttributedTheoremsTest(unittest.TestCase):
         self.assertEqual(
             rut.attributed_theorems(LEAN),
             {"simpOne", "holAndGrind", "localSimp", "extSplit", "later", "laterToo",
-             "removedAttr", "simpDef"},
+             "removedAttr", "simpDef", "multiOne", "multiTwo"},
         )
+
+
+NAMED = """
+theorem usedByRfl : (1 : Nat) = 1 := rfl
+
+theorem kept : True := by
+  simp [usedByRfl]
+
+theorem deadA : True := deadB
+
+theorem deadB : True := trivial
+
+-- deadC is mentioned only in a comment
+theorem deadC : True := trivial
+
+theorem chainA : True := chainB
+
+theorem chainB : True := trivial
+
+example : True := by simp [inExample]
+
+theorem inExample : True := trivial
+
+theorem stringOnly : True := trivial
+def s : String := "stringOnly"
+"""
+
+
+class NamedUsesTest(unittest.TestCase):
+    def test_fixed_point(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = pathlib.Path(tmp) / "F.lean"
+            path.write_text(NAMED)
+            names = ["usedByRfl", "deadA", "deadB", "deadC", "chainB", "inExample",
+                     "stringOnly"]
+            found = [{"file": "F.lean", "module": "F", "name": "Flapjack." + n} for n in names]
+            kept = rut.filter_named_uses({"F.lean": path}, found)
+        # usedByRfl is named by the surviving `kept`; chainB by the surviving
+        # chainA (not a candidate); inExample by an example.  deadB is named
+        # only by the candidate deadA, deadC only in a comment, stringOnly
+        # only inside a string.
+        self.assertEqual({d["name"].split(".")[-1] for d in kept},
+                         {"deadA", "deadB", "deadC", "stringOnly"})
 
 
 class MainRootsTest(unittest.TestCase):

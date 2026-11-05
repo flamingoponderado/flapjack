@@ -21,6 +21,14 @@ are roots as well: automation can use them without naming them, so a proof
 or ``example`` added later could depend on them although no stored proof
 term mentions them today.
 
+Proof terms do not record every use by name: a ``rfl`` theorem passed to
+``simp``/``simpa``/``rw``/``dsimp`` is applied by definitional unfolding and
+may leave no constant behind.  So after the Lean half, a candidate whose
+leaf name occurs (outside comments and strings) in the source of a Lean
+declaration that is not itself a candidate is kept, and this is repeated
+until nothing changes; a mention inside another unused theorem does not
+keep it.
+
 Only theorems written as a ``theorem``/``lemma`` in the source file of their
 module are printed; generated equation and structure lemmas are dropped.
 
@@ -148,8 +156,10 @@ def attributed_theorems(text: str) -> set[str]:
         start = m.end() - 1
         end = _bracket_end(masked, start)
         attrs = _attribute_names(masked[start + 1 : end - 1])
-        line_end = masked.find("\n", end)
-        rest = masked[end : len(masked) if line_end < 0 else line_end]
+        # The names run to the next line that starts in column 0, so a
+        # command whose names continue on indented lines is covered.
+        nxt = re.compile(r"\n(?=\S)").search(masked, end)
+        rest = masked[end : len(masked) if nxt is None else nxt.start()]
         if any(a != "hol" for a in attrs):
             for tok in rest.split():
                 found.add(tok.rsplit(".", 1)[-1])
@@ -165,6 +175,51 @@ def automation_roots(repo: pathlib.Path) -> set[str]:
         if path.is_file():
             names |= attributed_theorems(path.read_text(encoding="utf-8", errors="replace"))
     return names
+
+
+def drop_named_uses(repo: pathlib.Path, found: list[dict]) -> list[dict]:
+    """Keep only candidates that no surviving Lean source names.
+
+    Every token of every ``Flapjack`` Lean file counts (comments and strings
+    masked), except the lines of candidate declarations themselves, as split
+    by ``report-proof-duplication.py``'s parser; so ``example``s, attribute
+    commands and macros count too.  Iterates to a fixed point: a candidate
+    named elsewhere stops being a candidate, and its own body then counts."""
+    if not found:
+        return []
+    files = subprocess.run(["git", "ls-files", "Flapjack/*.lean", "Flapjack.lean"], cwd=repo,
+                           check=True, capture_output=True, text=True).stdout.split()
+    sources = {f: repo / f for f in files if (repo / f).is_file()}
+    return filter_named_uses(sources, found)
+
+
+def filter_named_uses(sources: dict[str, pathlib.Path], found: list[dict]) -> list[dict]:
+    """``drop_named_uses`` over explicit ``{relative path: file}`` sources."""
+    lines_of: dict[str, list[set[str]]] = {}
+    spans: dict[tuple[str, str], list[tuple[int, int]]] = {}
+    for f, path in sources.items():
+        masked = _rpd.mask_comments(path.read_text(encoding="utf-8", errors="replace"))
+        lines_of[f] = [{t.rsplit(".", 1)[-1] for t in TOKEN_RE.findall(line)}
+                       for line in masked.split("\n")]
+        for d in _rpd.parse_decls(path, f):
+            spans.setdefault((f, d.name.rsplit(".", 1)[-1]), []).append((d.start, d.end))
+    cand = {(d["file"], d["name"].rsplit(".", 1)[-1]) for d in found}
+    while True:
+        excluded: dict[str, set[int]] = {}
+        for key in cand:
+            for start, end in spans.get(key, []):
+                excluded.setdefault(key[0], set()).update(range(start - 1, end))
+        named: set[str] = set()
+        for f, toks in lines_of.items():
+            skip = excluded.get(f, set())
+            for i, line_toks in enumerate(toks):
+                if i not in skip:
+                    named |= line_toks
+        kept = {c for c in cand if c[1] in named}
+        if not kept:
+            break
+        cand -= kept
+    return [d for d in found if (d["file"], d["name"].rsplit(".", 1)[-1]) in cand]
 
 
 def source_theorems(path: pathlib.Path) -> set[str]:
@@ -206,6 +261,8 @@ def main(argv: list[str]) -> int:
             cache[file] = source_theorems(repo / file)
         if name.rsplit(".", 1)[-1] in cache[file]:
             found.append({"file": file, "module": module, "name": name})
+
+    found = drop_named_uses(repo, found)
 
     if args.json:
         json.dump({"prefix": args.prefix, "unused": found}, sys.stdout, indent=2)
