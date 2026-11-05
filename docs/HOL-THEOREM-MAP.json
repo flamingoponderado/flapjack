@@ -4,8 +4,9 @@
   "hol_name": "full_gc_thm",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/CollectorSimple.lean",
   "lean_name": "fullGc_abstract_memory",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Source hypotheses and conclusions compared; inferred HOL carrier types and the dependent representation review remain to be captured."
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared full_gc_thm_typed and the HOL source: the abstract invariant and simple-GC assumptions, collector execution, expanded post-heap, length, filtered reachable heap, reachability and data-element conclusions agree. Root addresses and heap payloads share the HOL word dimension, translated as positive-width BitVec; the stack, reference tree, configuration and generation state use the reviewed source carriers."
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",

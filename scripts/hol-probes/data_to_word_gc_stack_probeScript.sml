@@ -1,5 +1,6 @@
 load "preamble";
 load "data_to_word_gcProofTheory";
+load "data_to_word_memoryProofTheory";
 open HolKernel Parse boolLib bossLib;
 open preamble;
 val _ = Globals.linewidth := 1000000;
@@ -37,6 +38,7 @@ val _ = show "word_gc_move_list_thm_typed" data_to_word_gcProofTheory.word_gc_mo
 val _ = show "word_payload_swap_typed" data_to_word_gcProofTheory.word_payload_swap;
 val _ = show "word_gc_move_loop_thm_typed" data_to_word_gcProofTheory.word_gc_move_loop_thm;
 val _ = show "word_full_gc_thm_typed" data_to_word_gcProofTheory.word_full_gc_thm;
+val _ = show "full_gc_thm_typed" data_to_word_memoryProofTheory.full_gc_thm;
 val _ = show "full_gc_IMP_typed" data_to_word_gcProofTheory.full_gc_IMP;
 val _ = show "word_gc_fun_lemma_Simple_typed" data_to_word_gcProofTheory.word_gc_fun_lemma_Simple;
 val _ = show "word_gc_fun_lemma_typed" data_to_word_gcProofTheory.word_gc_fun_lemma;
