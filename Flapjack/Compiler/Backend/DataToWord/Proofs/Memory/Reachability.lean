@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.GcShared.Reachability
+import Flapjack.Compiler.Backend.GenGc.Proofs.HeapLookup
 
 /-! Abstract collector reachability conditions. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
@@ -9,6 +10,50 @@ open Flapjack Flapjack.Compiler.Backend
 def allReachableFromRoots {α β γ : Type} (roots : List (HeapAddress α)) (heap : List (HeapElement β γ)) : Prop :=
   ∀ ptr children len payload, heapLookup ptr heap = some (.dataElement children len payload) →
     reachableAddresses roots heap ptr
+
+/-- Appending unused space neither creates nor hides a data-element lookup. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "heap_lookup_expand_eq_SOME"]
+theorem heapLookup_expand_eq_some {α β : Type} (a : Nat) (heap : List (HeapElement α β))
+    (n : Nat) (ys : List (HeapAddress α)) (len : Nat) (data : β) :
+    heapLookup a (heap ++ heapExpand n) = some (.dataElement ys len data) ↔
+      heapLookup a heap = some (.dataElement ys len data) := by
+  rw [GenGc.heapLookup_append]
+  by_cases below : a < heapLength heap
+  · simp [below]
+  · have noLookup : heapLookup a heap ≠ some (.dataElement ys len data) := by
+      intro found
+      exact below (heapLookup_less heap a _ found)
+    simp only [below, if_false, noLookup, iff_false]
+    cases n <;> simp [heapExpand, heapLookup]
+
+/-- Data-element presence is unchanged by appending unused space. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "isSomeDataElement_heap_lookup" 1256]
+theorem isSomeDataElement_heapLookup_expand {α β : Type} (a : Nat)
+    (heap : List (HeapElement α β)) (n : Nat) :
+    isSomeDataElement (heapLookup a (heap ++ heapExpand n)) ↔
+      isSomeDataElement (heapLookup a heap) := by
+  simp only [isSomeDataElement, heapLookup_expand_eq_some]
+
+/-- Unused space introduces no edges into the abstract heap graph. This
+Flapjack-specific consequence supports the collector reachability proof. -/
+theorem gcEdge_heapExpand {α β : Type} (heap : List (HeapElement α β)) (n source target : Nat) :
+    gcEdge (heap ++ heapExpand n) source target ↔ gcEdge heap source target := by
+  simp only [gcEdge, heapLookup_expand_eq_some]
+
+/-- Heap graph reachability is unchanged by appending unused space. -/
+theorem reachableAddresses_heapExpand {α β γ : Type} (roots : List (HeapAddress α))
+    (heap : List (HeapElement β γ)) (n target : Nat) :
+    reachableAddresses roots (heap ++ heapExpand n) target ↔ reachableAddresses roots heap target := by
+  have edgeEq : gcEdge (heap ++ heapExpand n) = gcEdge heap := by
+    funext source target
+    exact propext (gcEdge_heapExpand heap n source target)
+  simp only [reachableAddresses, edgeEq]
+
+/-- All-data reachability survives appending unused space. -/
+theorem allReachableFromRoots_heapExpand {α β γ : Type} (roots : List (HeapAddress α))
+    (heap : List (HeapElement β γ)) (n : Nat) :
+    allReachableFromRoots roots (heap ++ heapExpand n) ↔ allReachableFromRoots roots heap := by
+  simp only [allReachableFromRoots, heapLookup_expand_eq_some, reachableAddresses_heapExpand]
 
 /-- Starting addresses of data elements in a heap. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "data_pointers_def"]

@@ -937,6 +937,23 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "heap_lookup_expand_eq_SOME",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Reachability.lean",
+  "lean_name": "heapLookup_expand_eq_some",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared heap_lookup_expand_eq_some_typed, including data-element fields, arbitrary offset and expansion size, and independently polymorphic heap carriers."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "isSomeDataElement_heap_lookup",
+  "hol_line": 1256,
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Reachability.lean",
+  "lean_name": "isSomeDataElement_heapLookup_expand",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source at line 1256 and is_some_data_element_heap_lookup_1256_typed_replay. HOL later rebinds this name to a different theorem; the replay uses the original definition and heap_lookup_expand_eq_SOME to check the original statement and independently polymorphic carriers."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
   "hol_name": "data_pointers_def",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Reachability.lean",
   "lean_name": "dataPointers",

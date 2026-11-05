@@ -154,6 +154,11 @@ val _ = show "data_length_cons_typed" data_to_word_memoryProofTheory.data_length
 val _ = show "data_length_append_typed" data_to_word_memoryProofTheory.data_length_APPEND;
 val _ = show "data_length_append_heap_expand_typed" data_to_word_memoryProofTheory.data_length_APPEND_heap_expand;
 val _ = show "data_length_heap_length_typed" data_to_word_memoryProofTheory.data_length_heap_length;
+val _ = show "heap_lookup_expand_eq_some_typed" data_to_word_memoryProofTheory.heap_lookup_expand_eq_SOME;
+val _ = show "is_some_data_element_heap_lookup_1256_typed_replay"
+  (prove (``isSomeDataElement (heap_lookup a (heap ++ heap_expand n)) =
+            isSomeDataElement (heap_lookup a heap)``,
+          simp [gc_sharedTheory.isSomeDataElement_def, data_to_word_memoryProofTheory.heap_lookup_expand_eq_SOME]));
 fun evalshow label term = (print label; print "="; print_term (rhs (concl (SIMP_RULE (srw_ss()) [] (EVAL term)))); print "\n");
 val _ = evalshow "gen_gc_reference_move" ``
   let s = (empty_state:(num,num) gc_state) with <| heap := [DataElement [] 0 42]; n := 3 |> in

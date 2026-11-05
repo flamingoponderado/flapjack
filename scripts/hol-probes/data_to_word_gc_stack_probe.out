@@ -147,6 +147,8 @@ data_length_cons_typed=∀(x :(α, β) heap_element) (xs :(α, β) heap_element 
 data_length_append_typed=∀(xs :(α, β) heap_element list) (ys :(α, β) heap_element list). data_length (xs ++ ys) = data_length xs + data_length ys
 data_length_append_heap_expand_typed=data_length ((heap :(α, β) heap_element list) ++ (heap_expand (n :num) :(α, β) heap_element list)) = data_length heap
 data_length_heap_length_typed=EVERY (isDataElement :(α, β) heap_element -> bool) (heap :(α, β) heap_element list) ⇒ data_length heap = heap_length heap
+heap_lookup_expand_eq_some_typed=heap_lookup (a :num) ((heap :(α, β) heap_element list) ++ (heap_expand (n :num) :(α, β) heap_element list)) = SOME (DataElement (ys :α heap_address list) (l :num) (d :β)) ⇔ heap_lookup a heap = SOME (DataElement ys l d)
+is_some_data_element_heap_lookup_1256_typed_replay=isSomeDataElement (heap_lookup (a :num) ((heap :(α, β) heap_element list) ++ (heap_expand (n :num) :(α, β) heap_element list))) ⇔ isSomeDataElement (heap_lookup a heap)
 gen_gc_reference_move=(Pointer 2 7,0,2,T,[DataElement [] 0 42],[])
 gen_gc_data_move=(Pointer 0 7,1,2,T,[],[DataElement [] 0 42])
 partial_gc_forward_ignores_bound_status=(Pointer 2 7,0,3,F)
