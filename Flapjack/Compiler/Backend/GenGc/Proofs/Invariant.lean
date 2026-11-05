@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.GenGc
 import Flapjack.Compiler.Backend.GcShared.HeapSimilarity
 import Flapjack.Compiler.Backend.GcShared.Reachability
 import Flapjack.Compiler.Backend.GcShared.Related
+import Flapjack.Compiler.Backend.CopyingGc.Proofs.Invariant
 
 /-! Abstract invariant for the major generational collector. -/
 namespace Flapjack.Compiler.Backend.GenGc
@@ -84,5 +85,48 @@ theorem gcInv_move_forward {α β : Type} (conf : Config β) (state : GcState α
   have lookup := heapLookup_flookup state.heap ptr target len forwardedValue found
   have applyEq : heapMap1 state.heap ptr = target := holFapply_of_lookup lookup
   simp [gcMove, found, addrApply, applyEq, lookup, invariant]
+
+/-- A fresh major-collection move has enough remaining space, installs the
+correct forwarding pointer in either heap segment, and retains all existing
+forwarding-map entries. This is a case helper; the full post-invariant still
+requires the destination bijection and lookup clauses. -/
+theorem gcInv_move_fresh_core {α β : Type} (conf : Config β) (state : GcState α β)
+    (heap0 : List (HeapElement α β)) (roots0 : List (HeapAddress α))
+    (ptr len : Nat) (value : α) (addresses : List (HeapAddress α)) (payload : β)
+    (invariant : gcInv conf state heap0 roots0)
+    (found : heapLookup ptr state.heap = some (.dataElement addresses len payload)) :
+    ∃ before after,
+      state.heap = before ++ .dataElement addresses len payload :: after ∧
+      ptr = heapLength before ∧ len + 1 ≤ state.n ∧
+      let target := if conf.isRef payload then state.a + (state.n - (len + 1)) else state.a
+      let forwarded := before ++ .forwardPointer target value len :: after
+      gcMove conf state (.pointer ptr value) =
+        (.pointer target value,
+          if conf.isRef payload then
+            { state with r4 := .dataElement addresses len payload :: state.r4, n := state.n - (len + 1), heap := forwarded, ok := true }
+          else
+            { state with h2 := state.h2 ++ [.dataElement addresses len payload], n := state.n - (len + 1), a := state.a + len + 1, heap := forwarded, ok := true }) ∧
+      (∀ p, isSomeDataOrForward (heapLookup p state.heap) ↔
+        isSomeDataOrForward (heapLookup p forwarded)) ∧
+      (∀ i j, (heapMap 0 state.heap).lookup i = some j → (heapMap 0 forwarded).lookup i = some j) := by
+  obtain ⟨before, after, heapEq, ptrEq⟩ := heapLookup_split state.heap ptr _ found
+  have spaceEq := invariant.2.2.1
+  have okEq := invariant.2.2.2.2.1
+  rw [heapEq] at spaceEq
+  have enough : len + 1 ≤ state.n := by
+    simp [List.filter_append, isForwardPointer, heapLength, elLength,
+      List.map_append, List.sum_append] at spaceEq
+    omega
+  refine ⟨before, after, heapEq, ptrEq, enough, ?_, ?_, ?_⟩
+  · have atData : heapLookup (heapLength before) (before ++ .dataElement addresses len payload :: after) =
+        some (.dataElement addresses len payload) := by simpa [heapEq, ptrEq] using found
+    cases ref : conf.isRef payload <;>
+      simp [gcMove, atData, ref, enough, okEq, heapEq, ptrEq, gcForwardPtr_thm]
+  · intro p
+    rw [heapEq]
+    simpa using isSomeDataOrForward_replace before after p _ len addresses payload value
+  · intro i j old
+    rw [heapEq] at old
+    exact CopyingGc.heapMap_forward_submap before after addresses len _ payload value i j old
 
 end Flapjack.Compiler.Backend.GenGc
