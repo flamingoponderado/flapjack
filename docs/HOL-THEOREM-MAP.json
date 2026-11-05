@@ -1034,6 +1034,22 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "heap_map_def",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/HeapMap.lean",
+  "lean_name": "heapMap",
+  "statement_status": "reviewed_fmap_as_finite_support_result",
+  "reviewer": "Compared heap_map_typed: empty, forwarding-pointer update, other constructors, offsets, update precedence and independent heap payload types match. The same-module lookup witness compares the canonical map with the independent raw update recursion."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "heap_addresses_def",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/HeapMap.lean",
+  "lean_name": "heapAddresses",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared heap_addresses_typed: empty set, starting-offset insertion, recursive offset advance and independent heap payload types match."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
   "hol_name": "gc_related_def",
   "lean_path": "Flapjack/Compiler/Backend/GcShared/Related.lean",
   "lean_name": "gcRelated",
