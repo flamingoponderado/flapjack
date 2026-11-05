@@ -1,4 +1,4 @@
-import Flapjack.Compiler.Backend.Semantics.DataProps.PrimitiveResources
+import Flapjack.Compiler.Backend.Semantics.DataProps.BlockResources
 
 /-! Compositional source event and resource monotonicity. -/
 namespace Flapjack.Compiler.Backend.DataSem
@@ -150,6 +150,15 @@ theorem resourceMono_globalAssign {C F : Type} (dest : Nat) (op : ClosLang.GlobO
   apply resourceMono_assign dest (.globOp op) names live state
   intro args before after value run
   exact doApp_global_resource_frame op args before after value run
+
+/-- All block assignments satisfy source resource monotonicity, including
+allocation and timestamp bookkeeping. -/
+theorem resourceMono_blockAssign {C F : Type} (dest : Nat) (op : ClosLang.BlockOp)
+    (names : List Nat) (live : Option NumSet) (state : State C F) :
+    ResourceMono (.assign dest (.blockOp op) names live) state := by
+  apply resourceMono_assign dest (.blockOp op) names live state
+  intro args before after value run
+  exact doApp_block_resource_frame op args before after value run
 
 /-- Sequential source execution composes the three resource properties. -/
 theorem resourceMono_seq {C F : Type} (first second : DataLang.Prog) (state : State C F)
