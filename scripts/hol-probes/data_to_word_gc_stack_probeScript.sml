@@ -39,6 +39,7 @@ val _ = show "word_payload_swap_typed" data_to_word_gcProofTheory.word_payload_s
 val _ = show "word_gc_move_loop_thm_typed" data_to_word_gcProofTheory.word_gc_move_loop_thm;
 val _ = show "word_full_gc_thm_typed" data_to_word_gcProofTheory.word_full_gc_thm;
 val _ = show "full_gc_thm_typed" data_to_word_memoryProofTheory.full_gc_thm;
+val _ = show "gen_gc_is_final_typed" gen_gcTheory.is_final_def;
 val _ = show "full_gc_IMP_typed" data_to_word_gcProofTheory.full_gc_IMP;
 val _ = show "word_gc_fun_lemma_Simple_typed" data_to_word_gcProofTheory.word_gc_fun_lemma_Simple;
 val _ = show "word_gc_fun_lemma_typed" data_to_word_gcProofTheory.word_gc_fun_lemma;

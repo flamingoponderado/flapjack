@@ -1,5 +1,13 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/gc/gen_gcScript.sml",
+  "hol_name": "is_final_def",
+  "lean_path": "Flapjack/Compiler/Backend/GenGc/Proofs/Invariant.lean",
+  "lean_name": "isFinal",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared gen_gc_is_final_typed: the unused configuration parameter and the state address and payload types are three independent types; all three address regions and their bounds match."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
   "hol_name": "gen_gc_data_refs_split",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/GenerationalSplit.lean",

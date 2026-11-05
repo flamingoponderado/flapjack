@@ -1,6 +1,7 @@
 `data_to_word_gc_stack_probe.out` includes the typed `full_gc_thm` statement,
-including its shared word dimension and complete abstract-memory conclusions.
-This capture supports source review, not cross-language equivalence.
+including its shared word dimension and complete abstract-memory conclusions,
+and the generic `gen_gc$is_final` predicate. These captures support source
+review, not cross-language equivalence.
 
 `data_to_word_memory_repr_probe.out` includes a typed parsing of the local
 `gen_gc_data_refs_split` statement. Its address and payload types are independent;
