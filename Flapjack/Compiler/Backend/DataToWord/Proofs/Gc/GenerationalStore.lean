@@ -640,7 +640,11 @@ theorem combinedPartial_store_execution {width : Nat} [NeZero width] (conf : Con
             (.globals, g), (.globReal, globReal conf curr g), (.temp 0, .word 0), (.temp 1, .word 0)]) ∧
       SetSep.star (wordHeap curr heap1 conf) (wordHeap other (heapExpand limit) conf)
         (SetSep.fun2Set (outMemory, fun address => domain address = true)) ∧
-      state.h2 = [] ∧ state.r4 = [] ∧ state.r3 = [] ∧ state.r2 = [] ∧ partialLenInv state := by
+      state.h2 = [] ∧ state.r4 = [] ∧ state.r3 = [] ∧ state.r2 = [] ∧
+      heapLength state.heap = heapLength heap ∧
+      (∃ current1 refs1, heapSegment
+        ((makePartialConf (makeGcConf (α := List (WordLocW width)) limit) gens (a + sp + sp1)).genStart,
+          a + sp + sp1) state.heap = some (state.old, current1, refs1)) ∧ partialLenInv state := by
   classical
   obtain ⟨limitEq, ending, startBound, refBound⟩ := partialSource_conditions conf values references (root :: roots) heap
     be a sp sp1 limit next gens limits store memory domain source kind selected heapMem
@@ -661,7 +665,7 @@ theorem combinedPartial_store_execution {width : Nat} [NeZero width] (conf : Con
   have allocationBound := partialSource_allocationBound _ (root :: roots) (root1 :: roots1) heap state a (sp + sp1)
     finish source.2.2.2.1 abstractRun stateOk ordered oldData
   refine ⟨curr, other, outMemory, state, currLookup, otherLookup, abstractRun, heapEq, allocEq, freeEq, gensEq,
-    ?_, separated, h2Empty, r4Empty, r3Empty, r2Empty, inv⟩
+    ?_, separated, h2Empty, r4Empty, r3Empty, r2Empty, heapLen, ⟨current1, refs1, segment⟩, inv⟩
   have globalValue : holFapply store .globals = wordAddr conf root := holFapply_of_lookup global
   have currValue : holFapply store .currHeap = .word curr := holFapply_of_lookup currLookup
   have otherValue : holFapply store .otherHeap = .word other := holFapply_of_lookup otherLookup
@@ -843,6 +847,143 @@ theorem combinedMajor_store_reconstruct {width : Nat} [NeZero width] (conf : Con
       wordSemBytesInWord, StackRemove.bytesInWord, sum, BitVec.ofNat_add, BitVec.mul_add,
       BitVec.add_assoc, heapSize, globRealInv, globReal, genStartsInStore, kind, separated]
     simpa [genStartsInStore, kind, StackRemove.bytesInWord] using genValid
+
+/-- Rebuild the partial collector's heap/store invariant in the existing
+heap space, splitting the remaining free space at the new trigger. -/
+theorem combinedPartial_store_reconstruct {width : Nat} [NeZero width] (conf : Config)
+    (heap heap1 : List (HeapElement (WordLocW width) (HeapTag × List (WordLocW width))))
+    (a sp sp1 limit copied free triggerWords : Nat) (gens : GenState) (limits : List Nat)
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (memory outMemory : BitVec width → WordLocW width) (domain : BitVec width → Bool)
+    (curr other g : BitVec width)
+    (heapMem : heapInMemoryStore heap a sp sp1 gens conf store memory domain limit)
+    (kind : conf.gcKind = .generational limits) (lengthEq : heapLength heap1 = heapLength heap)
+    (endEq : copied + free = a + sp + sp1) (triggerBound : triggerWords ≤ free)
+    (triggerEq : newTrig (wordSemBytesInWord * BitVec.ofNat width free)
+      (wordSemTheWord (holFapply store .allocSize)) limits = wordSemBytesInWord * BitVec.ofNat width triggerWords)
+    (currLookup : store.lookup .currHeap = some (.word curr))
+    (otherLookup : store.lookup .otherHeap = some (.word other))
+    (separated : SetSep.star (wordHeap curr heap1 conf) (wordHeap other (heapExpand limit) conf)
+      (SetSep.fun2Set (outMemory, fun address => domain address = true))) :
+    heapInMemoryStore heap1 copied triggerWords (free - triggerWords) (.genState 0 (limits.map fun _ => copied)) conf
+      (store.updateListEq [(.currHeap, .word curr), (.otherHeap, .word other),
+        (.nextFree, .word (curr + wordSemBytesInWord * BitVec.ofNat width copied)),
+        (.genStart, .word ((curr + wordSemBytesInWord * BitVec.ofNat width copied) - curr)),
+        (.triggerGC, .word ((curr + wordSemBytesInWord * BitVec.ofNat width copied) +
+          newTrig ((curr + wordSemBytesInWord * BitVec.ofNat width (a + sp + sp1)) -
+            (curr + wordSemBytesInWord * BitVec.ofNat width copied))
+            (wordSemTheWord (holFapply store .allocSize)) limits)),
+        (.globals, .word g), (.globReal, globReal conf curr (.word g)),
+        (.temp 0, .word 0), (.temp 1, .word 0)]) outMemory domain limit := by
+  classical
+  rcases heapMem with ⟨heapBound, byteBound, shift, nonzero, lenBound, shiftBound, global,
+    oldCurr, oldOther, currAligned, otherAligned, oldCurrLookup, oldOtherLookup, next, trigger, endHeap, heapSize,
+    globRealOld, generations, oldSeparated⟩
+  have currEq : oldCurr = curr := by simpa [oldCurrLookup] using currLookup
+  have otherEq : oldOther = other := by simpa [oldOtherLookup] using otherLookup
+  subst oldCurr
+  subst oldOther
+  have offset : (curr + wordSemBytesInWord * BitVec.ofNat width (a + sp + sp1)) -
+      (curr + wordSemBytesInWord * BitVec.ofNat width copied) = wordSemBytesInWord * BitVec.ofNat width free := by
+    rw [← endEq, BitVec.ofNat_add, BitVec.mul_add, ← BitVec.add_assoc]
+    simp
+  have sum : copied + triggerWords + (free - triggerWords) = a + sp + sp1 := by omega
+  have genValid : genStartsInStore conf (.genState 0 (limits.map fun _ => copied))
+      (some (.word (StackRemove.bytesInWord width * BitVec.ofNat width copied))) := by
+    simp only [genStartsInStore]
+    intro sizes eq
+    have sizesEq : sizes = limits := by simpa [kind] using eq.symm
+    subst sizes
+    simp only [List.length_map, true_and]
+    intro x xs first
+    cases limits with
+    | nil => simp at first
+    | cons size rest =>
+      simp only [List.map_cons, List.cons.injEq] at first
+      obtain ⟨rfl, _⟩ := first
+      rfl
+  rw [offset, triggerEq]
+  rw [heapInMemoryStore, lengthEq]
+  refine ⟨heapBound, byteBound, shift, nonzero, lenBound, shiftBound, ?_, curr, other,
+    currAligned, otherAligned, ?_⟩
+  · simp [HolFiniteMapExact.lookup_updateListEq, FUPDATE_LIST_HOL, FUPDATE_HOL]
+  · simp [HolFiniteMapExact.lookup_updateListEq, FUPDATE_LIST_HOL, FUPDATE_HOL,
+      wordSemBytesInWord, StackRemove.bytesInWord, sum, BitVec.ofNat_add, BitVec.mul_add,
+      BitVec.add_assoc, heapSize, endHeap, globRealInv, globReal, genStartsInStore, kind, separated]
+    simpa [genStartsInStore, kind, StackRemove.bytesInWord] using genValid
+
+/-- A successful partial collection executes the concrete collector and
+reconstructs the complete heap/store invariant. -/
+theorem combinedPartial_store_correct {width : Nat} [NeZero width] (conf : Config)
+    (values : List DataSem.Value) (references : Spt (BvlSem.Ref DataSem.Value))
+    (root root1 : HeapAddress (WordLocW width)) (roots roots1 : List (HeapAddress (WordLocW width)))
+    (heap heap1 : List (HeapElement (WordLocW width) (HeapTag × List (WordLocW width))))
+    (be : Bool) (a sp sp1 limit next a1 n1 : Nat) (gens gens1 : GenState) (limits : List Nat)
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (memory : BitVec width → WordLocW width) (domain : BitVec width → Bool)
+    (run : gcCombined (makeGcConf (α := List (WordLocW width)) limit) (.generational limits)
+      (root :: roots, heap, gens, a + sp + sp1, true) = (root1 :: roots1, heap1, a1, n1, gens1, true))
+    (kind : conf.gcKind = .generational limits) (selected : wordGenGcCanDoPartial limits store)
+    (global : store.lookup .globals = some (wordAddr conf root))
+    (source : absMlInv conf values references (root :: roots, heap, be, a, sp, sp1, gens) limit next)
+    (good : goodDimindex width) (heapMem : heapInMemoryStore heap a sp sp1 gens conf store memory domain limit) :
+    ∃ outMemory outStore k,
+      wordGcFun conf (roots.map (wordAddr conf), memory, domain, store) =
+        some (roots1.map (wordAddr conf), outMemory, outStore) ∧
+      heapInMemoryStore heap1 a1 k (n1 - k) gens1 conf outStore outMemory domain limit ∧
+      k ≤ n1 ∧ outStore.lookup .globals = some (wordAddr conf root1) := by
+  classical
+  obtain ⟨g, globalEq⟩ := combinedPartial_global_word conf values references root root1 roots roots1 heap heap1
+    be a sp sp1 limit next a1 n1 gens gens1 limits store memory domain run kind selected global source good heapMem
+  obtain ⟨curr, other, outMemory, state, currLookup, otherLookup, abstractRun, heapEq, allocEq, freeEq, gensEq,
+    execution, separated, h2Empty, r4Empty, r3Empty, r2Empty, heapLen, ⟨current1, refs1, segment⟩, inv⟩ :=
+    combinedPartial_store_execution conf root root1 roots roots1 heap heap1 values references be next a sp sp1 limit
+      a1 n1 gens gens1 limits store memory domain run kind selected global source good heapMem
+  have stateOk : state.ok = true := by
+    have combinedRun := run
+    simp only [gcCombined, ↓reduceIte, abstractRun, Prod.mk.injEq] at combinedRun
+    exact combinedRun.2.2.2.2.2
+  have index := partialFull_dataIndex _ (root :: roots) (root1 :: roots1) heap state abstractRun stateOk h2Empty
+  have expandLen : heapLength (heapExpand state.n : List (HeapElement (WordLocW width)
+      (HeapTag × List (WordLocW width)))) = state.n := by cases state.n <;> simp [heapExpand, heapLength, elLength]
+  have outputLength : heapLength heap1 = heapLength heap := by
+    rw [heapEq]
+    simp only [heapLength_append, expandLen]
+    simp [partialLenInv, h2Empty, r4Empty, r3Empty, r2Empty, heapLength] at inv
+    simp [heapLength] at heapLen ⊢
+    omega
+  obtain ⟨current, refs, inputSegment, similar⟩ := partialSource_resultRefsSimilar _
+    (root :: roots) (root1 :: roots1) heap state abstractRun stateOk
+  have refLengths := (GenGcPartial.similarData_lengths _ refs state.r1 similar).1
+  obtain ⟨_, _, _, inputRefsLen⟩ := heapSegment_imp heap _ _ state.old current refs inputSegment
+  obtain ⟨_, _, _, outputRefsLen⟩ := heapSegment_imp state.heap _ _ state.old current1 refs1 segment
+  have refsStartEq : (makePartialConf (makeGcConf (α := List (WordLocW width)) limit) gens (a + sp + sp1)).refsStart =
+      a + sp + sp1 := by cases gens; rfl
+  rw [refsStartEq] at inputRefsLen
+  have refsEqual : heapLength state.r1 = heapLength refs1 := by omega
+  obtain ⟨_, endCount⟩ := partialFull_outputBounds state state.old current1 refs1 _ (a + sp + sp1)
+    segment h2Empty r4Empty r3Empty r2Empty rfl refsEqual inv
+  have endEq : heapLength (state.old ++ state.h1) + state.n = a + sp + sp1 := by
+    have oldLen := (heapSegment_imp state.heap _ _ state.old current1 refs1 segment).2.1
+    simp only [heapLength_append]
+    omega
+  obtain ⟨k, triggerEq, kBound⟩ := newTrig_wordCount state.n
+    (wordSemTheWord (holFapply store .allocSize)) limits good
+  have invariant := combinedPartial_store_reconstruct conf heap heap1 a sp sp1 limit
+    (heapLength (state.old ++ state.h1)) state.n k gens limits store memory outMemory domain curr other g
+    heapMem kind outputLength endEq kBound triggerEq currLookup otherLookup separated
+  let outStore := store.updateListEq [(.currHeap, .word curr), (.otherHeap, .word other),
+    (.nextFree, .word (curr + wordSemBytesInWord * BitVec.ofNat width (heapLength (state.old ++ state.h1)))),
+    (.genStart, .word ((curr + wordSemBytesInWord * BitVec.ofNat width (heapLength (state.old ++ state.h1))) - curr)),
+    (.triggerGC, .word ((curr + wordSemBytesInWord * BitVec.ofNat width (heapLength (state.old ++ state.h1))) +
+      newTrig ((curr + wordSemBytesInWord * BitVec.ofNat width (a + sp + sp1)) -
+        (curr + wordSemBytesInWord * BitVec.ofNat width (heapLength (state.old ++ state.h1))))
+        (wordSemTheWord (holFapply store .allocSize)) limits)),
+    (.globals, .word g), (.globReal, globReal conf curr (.word g)), (.temp 0, .word 0), (.temp 1, .word 0)]
+  refine ⟨outMemory, outStore, k, ?_, ?_, by simpa [freeEq] using kBound, ?_⟩
+  · simpa [outStore, globalEq] using execution
+  · simpa [outStore, allocEq, freeEq, gensEq, index] using invariant
+  · simp [outStore, HolFiniteMapExact.lookup_updateListEq, FUPDATE_LIST_HOL, FUPDATE_HOL, globalEq]
 
 /-- A successful major collection executes the concrete collector and
 reconstructs the complete heap/store invariant. -/
