@@ -1034,10 +1034,29 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "IN_heap_map_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/HeapMap/Properties.lean",
+  "lean_name": "in_heapMap_imp",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": ["heapMap"],
+  "reviewer": "Compared in_heap_map_imp_typed: defined lookup models FDOM, the base and key remain arbitrary, and both heap payload types are independent. The imported reviewed heapMap producer has a canonical lookup witness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "heap_lookup_FLOOKUP",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/HeapMap/Properties.lean",
+  "lean_name": "heapLookup_flookup",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": ["heapMap"],
+  "reviewer": "Compared heap_lookup_flookup_typed: the original zero-based forwarding lookup and finite-map lookup conclusion retain all fields and independently polymorphic heap carriers. The imported reviewed heapMap producer has a canonical lookup witness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
   "hol_name": "heap_map_def",
   "lean_path": "Flapjack/Compiler/Backend/GcShared/HeapMap.lean",
   "lean_name": "heapMap",
   "statement_status": "reviewed_fmap_as_finite_support_result",
+  "fmap_as_finite_support_result": true,
   "reviewer": "Compared heap_map_typed: empty, forwarding-pointer update, other constructors, offsets, update precedence and independent heap payload types match. The same-module lookup witness compares the canonical map with the independent raw update recursion."
 },
 {
