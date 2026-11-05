@@ -5,6 +5,8 @@ import Flapjack.Compiler.Backend.GcShared.Slice
 import Flapjack.Compiler.Backend.GenGc.Proofs.HeapLookup
 import Flapjack.Compiler.Backend.GenGc.Proofs.Progress
 import Flapjack.Compiler.Backend.GenGcPartial.Proofs.Forward
+import Flapjack.Compiler.Backend.GenGcPartial.Proofs.Conservation
+import Flapjack.Compiler.Backend.GenGcPartial.Proofs.Accumulator
 import Flapjack.Compiler.Backend.GcShared.ForwardPtr
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PartialSplit
 
@@ -753,6 +755,76 @@ theorem gcMoveList_simulation {α β : Type} (conf : Config β)
       · have old : allOldPtrs conf tail1 p := ⟨u, member, outside⟩
         obtain ⟨v, member, outside⟩ := tailOld p old
         exact ⟨v, by simp [member], outside⟩
+
+/-- Flapjack proof infrastructure: the pointer bound needed by the copied-data
+scan survives traversal of a list of roots. -/
+theorem gcMoveList_dataPointersBound {α β : Type} (conf : Config β)
+    (state state1 : GcState α β) (roots roots1 : List (HeapAddress α))
+    (run : gcMoveList conf state roots = (roots1, state1))
+    (bounded : ∀ children len data ptr value,
+      .pointer ptr value ∈ children → .dataElement children len data ∈ state.heap ++ state.h2 →
+        ptr < heapLength state.heap) :
+    ∀ children len data ptr value,
+      .pointer ptr value ∈ children → .dataElement children len data ∈ state1.heap ++ state1.h2 →
+        ptr < heapLength state1.heap := by
+  intro children len data ptr value member object
+  have original := (gcMoveList_dataMem conf roots roots1 state state1 children len data run).mp object
+  have size := gcMoveList_heapLength roots roots1 conf state state1 run
+  rw [← size]
+  exact bounded children len data ptr value member original
+
+/-- Flapjack proof infrastructure: after the scan removes its current pending
+object, every remaining object's pointers still satisfy the recursive bound. -/
+theorem gcMoveList_dataScanNextBound {α β : Type} (conf : Config β)
+    (state state1 : GcState α β) (roots roots1 : List (HeapAddress α))
+    (run : gcMoveList conf state roots = (roots1, state1))
+    (bounded : ∀ children len data ptr value,
+      .pointer ptr value ∈ children → .dataElement children len data ∈ state.heap ++ state.h2 →
+        ptr < heapLength state.heap) :
+    ∀ children len data ptr value,
+      .pointer ptr value ∈ children → .dataElement children len data ∈ state1.heap ++ state1.h2.drop 1 →
+        ptr < heapLength state1.heap := by
+  intro children len data ptr value member object
+  apply gcMoveList_dataPointersBound conf state state1 roots roots1 run bounded children len data ptr value member
+  apply List.mem_append.mpr
+  rcases List.mem_append.mp object with inHeap | inTail
+  · exact Or.inl inHeap
+  · right
+    cases h : state1.h2 with
+    | nil => simp [h] at inTail
+    | cons head tail => simp only [h, List.drop_succ_cons, List.drop_zero] at inTail; simp [inTail]
+
+/-- Flapjack proof infrastructure: the simulation invariant keeps the pending
+data within both collectors' limits. -/
+theorem simInv_dataScanLimits {α β : Type} (conf : Config β)
+    (heap0 : List (HeapElement α β)) (state : GcState α β)
+    (invariant : simInv conf heap0 state) :
+    heapLength (state.h1 ++ state.h2) ≤ conf.limit ∧
+      heapLength (state.h1 ++ state.h2) ≤ (toGenConf conf).limit := by
+  have lower := invariant.1.1
+  have upper := invariant.1.2.1
+  have size := invariant.2.2.2.1
+  simp only [toGenConf]
+  omega
+
+/-- Flapjack proof infrastructure: traversing an object's children keeps that
+object at the front of the pending data queue. -/
+theorem gcMoveList_preservesPendingHead {α β : Type} (conf : Config β)
+    (state state1 : GcState α β) (roots roots1 : List (HeapAddress α))
+    (head : HeapElement α β) (tail : List (HeapElement α β))
+    (pending : state.h2 = head :: tail)
+    (run : gcMoveList conf state roots = (roots1, state1)) :
+    ∃ tail1, state1.h2 = head :: tail1 := by
+  have fact := gcMoveList_accumulate conf { state with h2 := tail } roots [head] []
+  have initial : { state with h2 := [head] ++ tail, r4 := state.r4 ++ [] } = state := by
+    simp [← pending]
+  simp only [initial] at fact
+  rw [run] at fact
+  cases clearRun : gcMoveList conf { state with h2 := tail } roots with
+  | mk out final =>
+    simp only [clearRun, Prod.mk.injEq] at fact
+    obtain ⟨_, eq⟩ := fact
+    exact ⟨final.h2, by rw [eq]; rfl⟩
 
 /-- Major root traversal factors over concatenated input lists. -/
 theorem majorMoveList_append {α β : Type} (conf : GenGc.Config β) (state : GcState α β)
