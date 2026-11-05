@@ -1,6 +1,14 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "gc_move_data_h2",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Accumulator.lean",
+  "lean_name": "gcMoveData_h2",
+  "statement_status": "pending_statement_review",
+  "reviewer": "Compared the successful-scan premise and empty pending-data conclusion against the HOL source; inferred types and local proof replay remain to be checked."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
   "hol_name": "gc_move_with_refs'",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Accumulator.lean",
   "lean_name": "gcMove_withRefsCleared",

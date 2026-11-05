@@ -102,6 +102,29 @@ theorem gcMoveData_withRefsCleared {α β : Type} (conf : Config β) (state : Gc
       { gcMoveData conf state with r2 := [], r1 := refs } :=
   gcMoveData_withReferenceFields conf state refs []
 
+/-- A successful copied-data scan leaves no pending data objects. The local
+HOL proof has not yet been replayed. -/
+@[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "gc_move_data_h2"]
+theorem gcMoveData_h2 {α β : Type} (conf : Config β) (state : GcState α β)
+    (ok : (gcMoveData conf state).ok = true) : (gcMoveData conf state).h2 = [] := by
+  classical
+  induction state using gcMoveData.induct conf with
+  | case1 state empty => rw [gcMoveData]; simp [empty]
+  | case2 state head tail heap over => rw [gcMoveData] at ok; simp [heap, over] at ok
+  | case3 state tail roots len payload roots1 middle move heap bounded flag ih =>
+    cases state with
+    | mk old h1 h2 r4 r3 r2 r1 a n status origHeap heap0 =>
+      simp only at heap
+      subst h2
+      rw [gcMoveData] at ok ⊢
+      simp only [bounded, ↓reduceIte, move] at ok ⊢
+      exact ih ok
+  | case4 state head tail heap bounded notData =>
+    cases head with
+    | unused len => rw [gcMoveData] at ok; simp [heap, bounded] at ok
+    | forwardPointer ptr value len => rw [gcMoveData] at ok; simp [heap, bounded] at ok
+    | dataElement roots len payload => exact False.elim (notData roots len payload rfl)
+
 /-- Adding preexisting accumulators commutes with a partial root move. This
 stronger unconditional equality is local Flapjack proof infrastructure. -/
 theorem gcMove_accumulate {α β : Type} (conf : Config β) (state : GcState α β)

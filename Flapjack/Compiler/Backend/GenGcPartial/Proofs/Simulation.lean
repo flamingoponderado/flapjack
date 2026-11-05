@@ -1195,4 +1195,76 @@ theorem partialGc_initialTranslation {α β : Type} (conf : Config β)
     simpa [toGenHeapList] using heapLength_toGenHeapList conf current
   simp [toGenState, emptyGcState, translated, empty, limit, toGenHeapList, length]
 
+/-- Flapjack proof infrastructure: under the partial simulation invariant, a
+successful major loop on the translated state consists of the data scan alone. -/
+theorem gcMoveData_majorLoopSimulation {α β : Type} (conf : Config β)
+    (heap0 : List (HeapElement α β)) (state : GcState α β) (clock : Nat)
+    (invariant : simInv conf heap0 state)
+    (bounded : ∀ children len data ptr value,
+      .pointer ptr value ∈ children → .dataElement children len data ∈ state.heap ++ state.h2 →
+        ptr < heapLength state.heap)
+    (size : heapLength state.heap = conf.limit)
+    (success : (GenGc.gcMoveLoop (toGenConf conf) (toGenState conf state) clock).ok = true) :
+    simInv conf heap0 (gcMoveData conf state) ∧
+    GenGc.gcMoveLoop (toGenConf conf) (toGenState conf state) clock =
+      toGenState conf (gcMoveData conf state) := by
+  classical
+  have noRefs : (toGenState conf state).r4 = [] := rfl
+  cases pending : (toGenState conf state).h2 with
+  | nil =>
+    have sourceEmpty : state.h2 = [] := by
+      cases h : state.h2 with
+      | nil => rfl
+      | cons head tail => simp [toGenState, toGenHeapList, h] at pending
+    rw [gcMoveData]
+    simp only [sourceEmpty]
+    rw [GenGc.gcMoveLoop]
+    simp [noRefs, pending, invariant]
+  | cons head tail =>
+    cases clock with
+    | zero =>
+      rw [GenGc.gcMoveLoop] at success
+      simp [noRefs, pending] at success
+    | succ clock =>
+      have loopSuccess : (GenGc.gcMoveLoop (toGenConf conf)
+          (GenGc.gcMoveData (toGenConf conf) (toGenState conf state)) clock).ok = true := by
+        rw [GenGc.gcMoveLoop] at success
+        simpa only [noRefs, pending, Nat.succ_ne_zero, ↓reduceIte, Nat.succ_sub_one] using success
+      have dataOk := GenGc.gcMoveLoop_ok (toGenConf conf)
+        (GenGc.gcMoveData (toGenConf conf) (toGenState conf state)) clock loopSuccess
+      obtain ⟨resultInv, resultEq⟩ := gcMoveData_simulationCore conf state heap0 invariant bounded size dataOk
+      have dataEmpty := GenGc.gcMoveData_h2 (toGenConf conf) (toGenState conf state) dataOk
+      have dataNoRefs : (GenGc.gcMoveData (toGenConf conf) (toGenState conf state)).r4 = [] := by
+        rw [resultEq]
+        rfl
+      have loopDone : GenGc.gcMoveLoop (toGenConf conf)
+          (GenGc.gcMoveData (toGenConf conf) (toGenState conf state)) clock =
+          GenGc.gcMoveData (toGenConf conf) (toGenState conf state) := by
+        rw [GenGc.gcMoveLoop]
+        simp only [dataNoRefs, dataEmpty]
+      refine ⟨resultInv, ?_⟩
+      rw [GenGc.gcMoveLoop]
+      simp only [noRefs, pending, Nat.succ_ne_zero, ↓reduceIte, Nat.succ_sub_one]
+      exact loopDone.trans resultEq
+
+/-- Flapjack proof infrastructure: the successful major loop also establishes
+success and an empty data queue for the simulated partial scan. -/
+theorem gcMoveData_majorLoopComplete {α β : Type} (conf : Config β)
+    (heap0 : List (HeapElement α β)) (state : GcState α β) (clock : Nat)
+    (invariant : simInv conf heap0 state)
+    (bounded : ∀ children len data ptr value,
+      .pointer ptr value ∈ children → .dataElement children len data ∈ state.heap ++ state.h2 →
+        ptr < heapLength state.heap)
+    (size : heapLength state.heap = conf.limit)
+    (success : (GenGc.gcMoveLoop (toGenConf conf) (toGenState conf state) clock).ok = true) :
+    simInv conf heap0 (gcMoveData conf state) ∧
+    GenGc.gcMoveLoop (toGenConf conf) (toGenState conf state) clock =
+      toGenState conf (gcMoveData conf state) ∧
+    (gcMoveData conf state).h2 = [] ∧ (gcMoveData conf state).ok = true := by
+  obtain ⟨resultInv, resultEq⟩ :=
+    gcMoveData_majorLoopSimulation conf heap0 state clock invariant bounded size success
+  rw [resultEq] at success
+  have partialOk : (gcMoveData conf state).ok = true := by simpa [toGenState] using success
+  exact ⟨resultInv, resultEq, gcMoveData_h2 conf state partialOk, partialOk⟩
+
 end Flapjack.Compiler.Backend.GenGcPartial
