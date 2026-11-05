@@ -1,5 +1,141 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "data_sort",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
+  "lean_name": "DataSort",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source datatype and partial_to_gen_address_typed: Protected and Real have independent payload types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "to_gen_heap_address_def",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
+  "lean_name": "toGenHeapAddress",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared partial_to_gen_address_typed: independent configuration and address payload types, both protected pointer cases and current-generation subtraction agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "to_gen_conf_def",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
+  "lean_name": "toGenConf",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared partial_to_gen_conf_typed: natural subtraction order and the unchanged reference classifier agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "to_gen_heap_element_def",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
+  "lean_name": "toGenHeapElement",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared partial_to_gen_element_typed: configuration, address and heap payload types are independent; all constructors and offset translations agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "to_gen_heap_list_def",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
+  "lean_name": "toGenHeapList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared partial_to_gen_list_typed: the three independent carrier types and mapped element conversion agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "to_gen_heap_def",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
+  "lean_name": "toGenHeap",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared partial_to_gen_heap_typed: independent carrier types and restriction followed by list translation agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "to_gen_state_def",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
+  "lean_name": "toGenState",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared partial_to_gen_state_typed and gc_state fields: all translated segments, unchanged fields, empty reference segments and subtracted address agree with independent configuration and payload types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "to_gen_roots_def",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
+  "lean_name": "toGenRoots",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared partial_to_gen_roots_typed: the configuration carrier is independent of root payloads and the address mapping agrees."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "refs_to_roots_def",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
+  "lean_name": "refsToRoots",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared partial_refs_to_roots_typed: independent configuration, address and reference payload types and all constructor cases agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "heap_element_is_ref_def",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
+  "lean_name": "heapElementIsRef",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared partial_element_is_ref_typed: data elements use the classifier and both other cases return false; address carrier is independent."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "heap_gen_ok_def",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
+  "lean_name": "heapGenOk",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared partial_heap_gen_ok_typed: both boundaries, existential segment, equality direction, data predicates, pointer restriction and each classifier clause agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "gen_inv_def",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
+  "lean_name": "genInv",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared partial_gen_inv_typed: bounds, segment, nonreference and data clauses, forward-pointer bounds and old-pointer condition agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "has_old_ptr_def",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
+  "lean_name": "hasOldPtr",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared partial_has_old_ptr_typed: configuration, address and payload carriers are independent, and membership and boundary disjunction agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "all_old_ptrs_def",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
+  "lean_name": "allOldPtrs",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared partial_all_old_ptrs_typed: configuration and address carriers are independent and the membership and boundary conditions agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "sim_inv_def",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
+  "lean_name": "simInv",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared partial_sim_inv_typed: generation invariant, bounds, length balance, empty-segment implication and pointwise subset of protected addresses agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "heap_length_to_gen_heap_list",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
+  "lean_name": "heapLength_toGenHeapList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared partial_to_gen_list_length_typed and the source: translation preserves heap length with independent configuration, address and payload carriers."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "heap_restrict_def",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/State.lean",
+  "lean_name": "heapRestrict",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared partial_heap_restrict_typed: independent heap carriers, segment bounds, empty failure result and middle-segment success result agree."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
   "hol_name": "reset_gens_def",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/CollectorGenerational.lean",

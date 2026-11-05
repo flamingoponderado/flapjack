@@ -35,4 +35,13 @@ def heapSegment {α β : Type} (bounds : Nat × Nat) (heap : List (HeapElement �
     if b < a then none else
       (heapSplit (b - heapLength first) remaining).map fun (middle, last) => (first, middle, last)
 
+/-- Keep the middle of a heap segment, or return an empty heap if either
+boundary cannot be split. -/
+@[hol "cakeml/compiler/backend/gc/gc_sharedScript.sml" "heap_restrict_def"]
+def heapRestrict {α β : Type} (start finish : Nat) (heap : List (HeapElement α β)) :
+    List (HeapElement α β) :=
+  match heapSegment (start, finish) heap with
+  | none => []
+  | some (_, middle, _) => middle
+
 end Flapjack.Compiler.Backend
