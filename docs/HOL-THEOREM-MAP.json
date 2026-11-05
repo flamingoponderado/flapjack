@@ -1,5 +1,22 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "has_gen_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/CollectorPartial.lean",
+  "lean_name": "hasGen",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared has_gen_typed: a generation state has an active generation exactly when its list of natural-number starts is nonempty."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "gen_gc_partial_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/CollectorPartial.lean",
+  "lean_name": "genGcPartial_abstractMemory",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared gen_gc_partial_thm_typed and source: the original abstract-invariant, active-generation and collector-kind premises, configured partial collection, existential roots and state, complete post-invariant with reset generations, and success match. The shared HOL word width of the roots, heap payload and collector state is represented by a positive-width BitVec."
+},
+{
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
   "hol_name": "partial_gc_related",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
