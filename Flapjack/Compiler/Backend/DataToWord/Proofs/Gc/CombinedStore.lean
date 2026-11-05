@@ -8,6 +8,12 @@ namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Backend.WordGcFunctions
 open Flapjack.Compiler.Backend.DataToWord.Proofs.Memory Flapjack.Compiler.Backend.GcCombined
 
+/-- Encode a word-count allocation in bytes, saturating on overflow. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "alloc_size_def"
+  (words_as_type_indexed_bitvec)]
+def gcAllocSize {width : Nat} [NeZero width] (requested : Nat) : BitVec width :=
+  if requested * (width / 8) < 2 ^ width then BitVec.ofNat width (requested * (width / 8)) else -1
+
 /-- The concrete word semantics reports sufficient space from the actual
 store lookups and unsigned pointer gap. -/
 theorem collector_hasSpace_of_gap {width : Nat} [NeZero width] {C F : Type}
@@ -120,8 +126,7 @@ theorem combinedGc_correct {width : Nat} [NeZero width] (conf : Config)
           WordSemStateFiniteExact.hasSpace (.word request) { state with store := outStore } = some true) ∧
       ((conf.gcKind = .none ∨ conf.gcKind = .simple) → k3 = 0) ∧
       (∀ limits requested, conf.gcKind = .generational limits → ¬ wordGenGcCanDoPartial limits store →
-        store.lookup .allocSize = some (.word
-          (if requested * (width / 8) < 2 ^ width then BitVec.ofNat width (requested * (width / 8)) else -1)) →
+        store.lookup .allocSize = some (.word (gcAllocSize requested)) →
         requested ≤ n1 → requested ≤ k2) ∧
       List.Forall₂ (fun v w => wordAddr conf v = w) roots1
         (holFapply outStore .globals :: (((stack.map Prod.fst).zip stack1).map Prod.snd)) ∧
@@ -132,8 +137,10 @@ theorem combinedGc_correct {width : Nat} [NeZero width] (conf : Config)
       rootsOut, globalOut, stackOut, length, _, space, allocation⟩ :=
       combinedGc_stack_correct conf value stack references _ _ roots1 heap heap1 be a sp sp1 limit next a1 n1
         gens gens1 store memory domain source good heapMem global tail run
-    refine ⟨stack1, outMemory, outStore, k2, k3, execution, invariant, freeSum, space, zero, allocation, ?_, length⟩
-    rw [rootsOut]
-    exact .cons globalOut stackOut
+    refine ⟨stack1, outMemory, outStore, k2, k3, execution, invariant, freeSum, space, zero, ?_, ?_, length⟩
+    · intro limits requested kind full alloc bound
+      exact allocation limits requested kind full (by simpa [gcAllocSize] using alloc) bound
+    · rw [rootsOut]
+      exact .cons globalOut stackOut
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

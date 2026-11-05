@@ -38,6 +38,7 @@ val _ = show "word_full_gc_thm_typed" data_to_word_gcProofTheory.word_full_gc_th
 val _ = show "full_gc_IMP_typed" data_to_word_gcProofTheory.full_gc_IMP;
 val _ = show "word_gc_fun_lemma_Simple_typed" data_to_word_gcProofTheory.word_gc_fun_lemma_Simple;
 val _ = show "word_gc_fun_lemma_typed" data_to_word_gcProofTheory.word_gc_fun_lemma;
+val _ = show "alloc_size_typed" data_to_word_gcProofTheory.alloc_size_def;
 val _ = show "do_partial_typed" data_to_word_gcProofTheory.do_partial_def;
 val _ = show "make_gc_conf_typed" data_to_word_memoryProofTheory.make_gc_conf_def;
 val _ = show "is_Ref_typed" data_to_word_gcProofTheory.is_Ref_def;

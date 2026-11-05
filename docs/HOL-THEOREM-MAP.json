@@ -937,6 +937,15 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "alloc_size_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CombinedStore.lean",
+  "lean_name": "gcAllocSize",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the source definition and alloc_size_typed capture: the input is a natural word count; both branches use the same byte-count threshold, modular word conversion, and all-ones overflow result. HOL words use the positive-width indexed BitVec representation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "word_gc_fun_lemma_Simple",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/Simple.lean",
   "lean_name": "wordGcFun_lemma_simple",
