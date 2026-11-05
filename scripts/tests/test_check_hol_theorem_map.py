@@ -1361,12 +1361,6 @@ class ValidateInventoryTest(unittest.TestCase):
             ("Flapjack/Pancake/Proofs/CrepInline.lean",
              "foldl_res_var_zip_lookup_var_hol"): "FOLDL_res_var_ZIP_lookup_var",
             ("Flapjack/Pancake/Proofs/CrepInline.lean",
-             "submap_imp_fupdate_submap_hol"): "SUBMAP_IMP_FUPDATE_SUBMAP",
-            ("Flapjack/Pancake/Proofs/CrepInline.lean",
-             "submap_imp_domsub_submap_hol"): "SUBMAP_IMP_DOMSUB_SUBMAP",
-            ("Flapjack/Pancake/Proofs/CrepInline.lean",
-             "submap_imp_domsub_fupdate_hol"): "SUBMAP_IMP_DOMSUB_FUPDATE",
-            ("Flapjack/Pancake/Proofs/CrepInline.lean",
              "res_var_commutes_strong_hol"): "res_var_commutes_strong",
             ("Flapjack/Pancake/Proofs/CrepInline.lean",
              "res_var_foldl_commutes_strong_hol"): "res_var_foldl_commutes_strong",
@@ -1383,29 +1377,6 @@ class ValidateInventoryTest(unittest.TestCase):
                               record["reviewer"])
                 self.assertNotIn(key, MAP["tagged_declarations"]())
 
-        production = {
-            ("Flapjack/Pancake/Proofs/CrepInline.lean",
-             "FOLDL_res_var_ZIP_lookup_var"),
-            ("Flapjack/Pancake/Proofs/CrepInline.lean",
-             "FOLDL_res_var_ZIP_lookup"),
-            ("Flapjack/Pancake/Proofs/CrepInline.lean",
-             "SUBMAP_IMP_FUPDATE_SUBMAP"),
-            ("Flapjack/Pancake/Proofs/CrepInline.lean",
-             "SUBMAP_IMP_DOMSUB_SUBMAP"),
-            ("Flapjack/Pancake/Proofs/CrepInline.lean",
-             "SUBMAP_IMP_DOMSUB_FUPDATE"),
-            ("Flapjack/Pancake/Proofs/CrepInline.lean",
-             "res_var_commutes_strong"),
-            ("Flapjack/Pancake/Proofs/CrepInline.lean",
-             "res_var_foldl_commutes_strong"),
-            ("Flapjack/Pancake/Proofs/CrepInline.lean",
-             "flookup_res_var_is_mem_zip_eq"),
-        }
-        for key in production:
-            with self.subTest(key=key):
-                self.assertEqual(by_key[key]["statement_status"],
-                                 "documented_mismatch")
-                self.assertNotIn(key, MAP["tagged_declarations"]())
 
     def test_globals_lookup_carrier_mismatch_is_documented(self):
         key = ("Flapjack/Pancake/Proofs/PanToCrep.lean", "globalsLookup")

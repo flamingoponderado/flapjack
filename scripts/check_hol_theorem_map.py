@@ -484,55 +484,6 @@ DOCUMENTED_MISMATCHES = {
         "flapjack-luna-b .15.7.7 source review: HOL tlookup names is Spt num, not unrestricted function-backed map; tag withdrawn, exact migration remains open."
     ),
 
-    ("Flapjack/Pancake/Proofs/CrepInline.lean", "crepInlineStateRelW"): (
-        "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-        "state_rel_def",
-        "flapjack-luna-a source review (2026-09-29; bead flapjack-2de.13): tag withdrawn. "
-        "CrepHolState has raw lookup functions for locals/globals/code and admits "
-        "infinite-support states HOL finite maps cannot represent; words_as_type_indexed_bitvec "
-        "does not authorize this map-carrier difference. The helper remains useful Flapjack "
-        "infrastructure; the exact state_rel finite-support port is still open."
-    ),
-    ("Flapjack/Pancake/Proofs/CrepInline.lean", "crepInlineLocalsRelW"): (
-        "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-        "locals_rel_def",
-        "flapjack-luna-a source review (2026-09-29; bead flapjack-2de.13): tag withdrawn. "
-        "CrepHolState locals are a raw lookup function admitting infinite support, unlike HOL "
-        "finite maps. This helper remains Flapjack infrastructure; an exact finite-support "
-        "locals_rel port is still open."
-    ),
-    ("Flapjack/Pancake/Proofs/CrepInline.lean", "crepInlineLocalsStrongRelW"): (
-        "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-        "locals_strong_rel_def",
-        "flapjack-luna-a source review (2026-09-29; bead flapjack-2de.13): tag withdrawn. "
-        "CrepHolState locals are a raw lookup function admitting infinite support, unlike HOL "
-        "finite maps. Exact finite-support counterpart crepInlineLocalsStrongRelExact is "
-        "tagged in this file."
-    ),
-    ("Flapjack/Pancake/Proofs/CrepInline.lean", "crepInlineLocalsRel_decClockW"): (
-        "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-        "locals_rel_dec_clock",
-        "flapjack-luna-a source review (2026-09-29; bead flapjack-2de.13): tag withdrawn "
-        "because this theorem quantifies over CrepHolState raw-function maps, not HOL "
-        "finite-support maps. The helper remains useful Flapjack infrastructure."
-    ),
-    ("Flapjack/Pancake/Proofs/CrepInline.lean", "crepInlineLocalsExtRelW"): (
-        "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-        "locals_ext_rel_def",
-        "flapjack-luna-a source review (2026-09-29; bead flapjack-2de.13): tag withdrawn. "
-        "CrepHolState locals are raw lookup functions admitting infinite support, unlike HOL "
-        "finite maps. This helper remains Flapjack infrastructure; an exact finite-support "
-        "locals_ext_rel port is still open."
-    ),
-    ("Flapjack/Pancake/Proofs/CrepInline.lean", "crepInlineStateRelCodeW"): (
-        "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-        "state_rel_code_def",
-        "flapjack-luna-a source review (2026-09-29; bead flapjack-2de.13): tag withdrawn. "
-        "CrepHolState has raw lookup functions for locals/globals/code and admits "
-        "infinite-support states HOL finite maps cannot represent; words_as_type_indexed_bitvec "
-        "does not authorize this map-carrier difference. Exact finite-support counterpart "
-        "crepInlineStateRelCodeExact is tagged in this file."
-    ),
     ("Flapjack/Pancake/CrepToLoop/StateRel.lean", "crepToLoopGlobalsRel_intro"): (
         "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
         "globals_rel_intro",
@@ -1569,34 +1520,6 @@ DOCUMENTED_MISMATCHES = {
         "(Flapjack/FiniteMap/Basic.lean:19), which admits infinite-support inhabitants whereas "
         "HOL alpha |-> beta is finite-support. Tag withdrawn; faithful port over "
         "HolFiniteMapExact (Flapjack/Pancake/Semantics/CrepSem/HOLState.lean) tracked by bead "
-        "flapjack-pxn.18.3.7.1.3.1.1.3.1."
-    ),
-    ("Flapjack/Pancake/Proofs/CrepInline.lean", "submap_imp_fupdate_submap_hol"): (
-        "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-        "SUBMAP_IMP_FUPDATE_SUBMAP",
-        "flapjack-ds4 (source comparison, bead flapjack-pxn.18.5.5.19): "
-        "FLAPJACK-SPECIFIC / not an exact HOL port. DecidableEq removes the BEq side condition, "
-        "but crepHolSubmap and the FUPDATE_HOL carrier are raw functions FiniteMap, which admit "
-        "infinite support whereas HOL SUBMAP/FUPDATE range over finite maps. Tag withdrawn; "
-        "faithful port over HolFiniteMapExact tracked by bead flapjack-pxn.18.3.7.1.3.1.1.3.1."
-    ),
-    ("Flapjack/Pancake/Proofs/CrepInline.lean", "submap_imp_domsub_submap_hol"): (
-        "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-        "SUBMAP_IMP_DOMSUB_SUBMAP",
-        "flapjack-ds4 (source comparison, bead flapjack-pxn.18.5.5.19): "
-        "FLAPJACK-SPECIFIC / not an exact HOL port. DecidableEq removes the BEq side condition, "
-        "but crepHolSubmap and the FDOMSUB_HOL carrier are raw functions FiniteMap, which admit "
-        "infinite support whereas HOL SUBMAP/DOMSUB range over finite maps. Tag withdrawn; "
-        "faithful port over HolFiniteMapExact tracked by bead flapjack-pxn.18.3.7.1.3.1.1.3.1."
-    ),
-    ("Flapjack/Pancake/Proofs/CrepInline.lean", "submap_imp_domsub_fupdate_hol"): (
-        "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-        "SUBMAP_IMP_DOMSUB_FUPDATE",
-        "flapjack-ds4 (source comparison, bead flapjack-pxn.18.5.5.19): "
-        "FLAPJACK-SPECIFIC / not an exact HOL port. DecidableEq removes the BEq side condition, "
-        "but crepHolSubmap and the FDOMSUB_HOL/FUPDATE_HOL carriers are raw functions FiniteMap, "
-        "which admit infinite support whereas HOL SUBMAP/DOMSUB/FUPDATE range over finite maps. "
-        "Tag withdrawn; faithful port over HolFiniteMapExact tracked by bead "
         "flapjack-pxn.18.3.7.1.3.1.1.3.1."
     ),
     ("Flapjack/Pancake/Proofs/CrepInline.lean", "res_var_commutes_strong_hol"): (

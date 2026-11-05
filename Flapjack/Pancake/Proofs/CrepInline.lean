@@ -175,66 +175,6 @@ theorem fdom_subset_flookup_thm {α : Type} {β : Type} (f g : FiniteMap α β) 
         rw [show g x = some q from hq]
         exact Option.some_ne_none q
 
-/-- CakeML's `res_var_commutes_strong` (`crep_inlineProofScript.sml:699`):
-    `res_var` updates at two keys commute, with no `n ≠ h` side condition (the
-    equal case is definitional).  Stated over the reviewed `resVar`
-    (`res_var_def`), whose Boolean key equality reflects HOL's `=` under
-    `[LawfulBEq α]`. -/
--- FLAPJACK-SPECIFIC (not an exact HOL port): HOL quantifies the key type freely, but this
--- statement requires [BEq α] [LawfulBEq α] because `resVar`/`FUPDATE` use Boolean key equality.
--- Faithful HOL-equality port tracked by bead flapjack-pxn.18.5.5.19.
-theorem res_var_commutes_strong [BEq α] [LawfulBEq α] (lc lc' : FiniteMap α β)
-    (n h : α) :
-    resVar (resVar lc (h, FLOOKUP lc' h)) (n, FLOOKUP lc' n) =
-    resVar (resVar lc (n, FLOOKUP lc' n)) (h, FLOOKUP lc' h) := by
-  by_cases hne : n = h
-  · subst hne
-    rfl
-  · exact resVar_commutes lc lc' n h hne
-
-/-- CakeML's `res_var_foldl_commutes_strong`
-    (`crep_inlineProofScript.sml:706`): commuting a single `res_var` update past
-    a `foldl` of `res_var` over the `ZIP`ped lookup list.  `ZIP (vs, MAP f vs)`
-    is Lean's `vs.zip (vs.map f)`. -/
--- FLAPJACK-SPECIFIC (not an exact HOL port): HOL quantifies the key type freely, but this
--- statement requires [BEq α] [LawfulBEq α] because `resVar`/`FUPDATE` use Boolean key equality.
--- Faithful HOL-equality port tracked by bead flapjack-pxn.18.5.5.19.
-theorem res_var_foldl_commutes_strong [BEq α] [LawfulBEq α]
-    (h : α) (vs : List α) (lc1 lc2 : FiniteMap α β) :
-    resVar ((vs.zip (vs.map (FLOOKUP lc2))).foldl resVar lc1)
-        (h, FLOOKUP lc2 h) =
-      (vs.zip (vs.map (FLOOKUP lc2))).foldl resVar
-        (resVar lc1 (h, FLOOKUP lc2 h)) := by
-  induction vs generalizing lc1 with
-  | nil => simp
-  | cons v vs ih =>
-      simp only [List.map_cons, List.zip_cons_cons, List.foldl_cons]
-      rw [ih (resVar lc1 (v, FLOOKUP lc2 v)),
-        (res_var_commutes_strong lc1 lc2 v h).symm]
-
-/-- CakeML's `flookup_res_var_is_mem_zip_eq` (`crep_inlineProofScript.sml:802`):
-    folding `res_var` over the `ZIP`ped lookup list and then looking up a member
-    `x` of the key list reproduces `lc2`'s binding for `x`. -/
--- FLAPJACK-SPECIFIC (not an exact HOL port): HOL quantifies the key type freely, but this
--- statement requires [BEq α] [LawfulBEq α] because `resVar`/`FUPDATE` use Boolean key equality.
--- Faithful HOL-equality port tracked by bead flapjack-pxn.18.5.5.19.
-theorem flookup_res_var_is_mem_zip_eq [BEq α] [LawfulBEq α]
-    (xs : List α) (x : α) (lc1 lc2 : FiniteMap α β) (hx : x ∈ xs) :
-    FLOOKUP ((xs.zip (xs.map (FLOOKUP lc2))).foldl resVar lc1) x =
-      FLOOKUP lc2 x := by
-  induction xs with
-  | nil => simp at hx
-  | cons a as ih =>
-      simp only [List.map_cons, List.zip_cons_cons, List.foldl_cons]
-      rw [← res_var_foldl_commutes_strong a as lc1 lc2, FLOOKUP_resVar]
-      rcases List.mem_cons.mp hx with hxa | hxas
-      · subst hxa
-        simp
-      · by_cases hxa : x = a
-        · subst hxa
-          simp
-        · rw [if_neg (by rw [beq_eq_false_iff_ne.mpr hxa]; simp)]
-          exact ih hxas
 
 /-- CakeML's `OPT_MMAP_SOME_ALL` (`crep_inlineProofScript.sml:36`): the optional
     map over a list succeeds for some result exactly when every element maps to
@@ -302,25 +242,6 @@ theorem fdoms_eq_opt_mmap_flookup_some {α : Type} {β : Type} (vs : List α)
 
 /-! ## State and locals relations of `inline_prog_correct` -/
 
-/-- CakeML's `state_rel` (`crep_inlineProofScript.sml:12`): two Crep states agree
-    on globals, code, memory, both address domains, clock, endianness, FFI
-    state, and base/top addresses.  `CrepHolState` is the exact 11-field
-    encoding of `crepSem$state`, so this is a field-by-field port; like HOL it
-    leaves `locals` to `locals_rel`/`locals_strong_rel`. -/
--- FLAPJACK-SPECIFIC (not an exact HOL port): generic over the word element type, while HOL
--- crepSem$state is indexed by the word length. The exact width-indexed tag is on
--- crepInlineStateRelW below.
-def crepInlineStateRel (s t : CrepHolState α σ) : Prop :=
-  s.globals = t.globals ∧
-  s.code = t.code ∧
-  s.memory = t.memory ∧
-  s.memaddrs = t.memaddrs ∧
-  s.shMemaddrs = t.shMemaddrs ∧
-  s.clock = t.clock ∧
-  s.bigEndian = t.bigEndian ∧
-  s.ffi = t.ffi ∧
-  s.baseAddress = t.baseAddress ∧
-  s.topAddress = t.topAddress
 
 /-- Finite-map `SUBMAP` for Lean's extensional lookup-function representation:
     every binding of `s` is also a binding of `t` with the same value.  HOL's
@@ -330,102 +251,12 @@ def crepInlineStateRel (s t : CrepHolState α σ) : Prop :=
 def crepHolSubmap {κ : Type} (s t : κ → Option β) : Prop :=
   ∀ n v, s n = some v → t n = some v
 
-/-- Finite-map `SUBMAP_IMP_FUPDATE_SUBMAP`
-    (`crep_inlineProofScript.sml:117`): pointwise updates at the same key
-    preserve `SUBMAP`.  Stated over `crepHolSubmap`; `|+` is `FUPDATE`, whose
-    Boolean key equality reflects HOL's `=` under `[LawfulBEq κ]`. -/
--- FLAPJACK-SPECIFIC (not an exact HOL port): HOL quantifies the key type freely, but this
--- statement requires [BEq α] [LawfulBEq α] because `resVar`/`FUPDATE` use Boolean key equality.
--- Faithful HOL-equality port tracked by bead flapjack-pxn.18.5.5.19.
-theorem SUBMAP_IMP_FUPDATE_SUBMAP {κ : Type} {β : Type} [BEq κ] [LawfulBEq κ]
-    (f g : κ → Option β) (x : κ) (y : β) (h : crepHolSubmap f g) :
-    crepHolSubmap (FUPDATE f (x, y)) (FUPDATE g (x, y)) := by
-  intro n v hn
-  by_cases hxn : x = n
-  · subst hxn
-    simp only [FUPDATE, beq_self_eq_true] at hn ⊢
-    exact hn
-  · have hb : (x == n) = false := beq_eq_false_iff_ne.mpr hxn
-    simp only [FUPDATE, hb] at hn ⊢
-    exact h n v hn
-
-/-- Finite-map `SUBMAP_IMP_DOMSUB_SUBMAP`
-    (`crep_inlineProofScript.sml:127`): removing the same key from both sides
-    preserves `SUBMAP`.  `\\` is `FDOMSUB`. -/
--- FLAPJACK-SPECIFIC (not an exact HOL port): HOL quantifies the key type freely, but this
--- statement requires [BEq α] [LawfulBEq α] because `resVar`/`FUPDATE` use Boolean key equality.
--- Faithful HOL-equality port tracked by bead flapjack-pxn.18.5.5.19.
-theorem SUBMAP_IMP_DOMSUB_SUBMAP {κ : Type} {β : Type} [BEq κ] [LawfulBEq κ]
-    (f g : κ → Option β) (x : κ) (h : crepHolSubmap f g) :
-    crepHolSubmap (FDOMSUB f x) (FDOMSUB g x) := by
-  intro n v hn
-  by_cases hxn : x = n
-  · subst hxn
-    simp [FDOMSUB] at hn
-  · have hb : (x == n) = false := beq_eq_false_iff_ne.mpr hxn
-    simp only [FDOMSUB, hb] at hn ⊢
-    exact h n v hn
-
-/-- Finite-map `SUBMAP_IMP_DOMSUB_FUPDATE`
-    (`crep_inlineProofScript.sml:135`): removing a key from the left and
-    inserting it on the right preserves `SUBMAP`. -/
--- FLAPJACK-SPECIFIC (not an exact HOL port): HOL quantifies the key type freely, but this
--- statement requires [BEq α] [LawfulBEq α] because `resVar`/`FUPDATE` use Boolean key equality.
--- Faithful HOL-equality port tracked by bead flapjack-pxn.18.5.5.19.
-theorem SUBMAP_IMP_DOMSUB_FUPDATE {κ : Type} {β : Type} [BEq κ] [LawfulBEq κ]
-    (f g : κ → Option β) (x : κ) (y : β) (h : crepHolSubmap f g) :
-    crepHolSubmap (FDOMSUB f x) (FUPDATE g (x, y)) := by
-  intro n v hn
-  by_cases hxn : x = n
-  · subst hxn
-    simp [FDOMSUB] at hn
-  · have hb : (x == n) = false := beq_eq_false_iff_ne.mpr hxn
-    simp only [FDOMSUB, FUPDATE, hb] at hn ⊢
-    exact h n v hn
-
-/-- CakeML's `FOLDL_res_var_ZIP_lookup_var` (`crep_inlineProofScript.sml:2661`):
-    a fold of `res_var` over the zipped names and their `l'`-lookups is a
-    `SUBMAP` (`crepHolSubmap`) of `l1`, so any lookup that `l` already defined at
-    a key not in `ns` survives in `l1`. -/
--- FLAPJACK-SPECIFIC (not an exact HOL port): HOL quantifies the key type freely, but this
--- statement requires [BEq α] [LawfulBEq α] because `resVar`/`FUPDATE` use Boolean key equality.
--- Faithful HOL-equality port tracked by bead flapjack-pxn.18.5.5.19.
-theorem FOLDL_res_var_ZIP_lookup_var [BEq α] [LawfulBEq α] (l l' l1 : FiniteMap α β)
-    (ns : List α) (x : α) (v : β)
-    (hsub : crepHolSubmap ((ns.zip (ns.map (FLOOKUP l'))).foldl resVar l) l1)
-    (hv : FLOOKUP l x = some v) (hx : x ∉ ns) :
-    FLOOKUP l1 x = some v := by
-  apply hsub x v
-  change FLOOKUP ((ns.zip (ns.map (FLOOKUP l'))).foldl resVar l) x = some v
-  rw [FLOOKUP_foldl_resVar_zip_not_mem ns (ns.map (FLOOKUP l')) l x
-    (by simp [List.length_map]) hx]
-  exact hv
-
-/-- CakeML's `FOLDL_res_var_ZIP_lookup` (`crep_inlineProofScript.sml:2675`):
-    the `OPT_MMAP` (`List.mapM`) form of `FOLDL_res_var_ZIP_lookup_var`. -/
--- FLAPJACK-SPECIFIC (not an exact HOL port): HOL quantifies the key type freely, but this
--- statement requires [BEq α] [LawfulBEq α] because `resVar`/`FUPDATE` use Boolean key equality.
--- Faithful HOL-equality port tracked by bead flapjack-pxn.18.5.5.19.
-theorem FOLDL_res_var_ZIP_lookup [BEq α] [LawfulBEq α] (l l' l1 : FiniteMap α β)
-    (ns xs : List α) (vs : List β)
-    (hsub : crepHolSubmap ((ns.zip (ns.map (FLOOKUP l'))).foldl resVar l) l1)
-    (h : xs.mapM (FLOOKUP l) = some vs)
-    (hx : ∀ x, x ∈ xs → x ∉ ns) :
-    xs.mapM (FLOOKUP l1) = some vs := by
-  have hpt : ∀ x, x ∈ xs → FLOOKUP l1 x = FLOOKUP l x := by
-    intro x hxmem
-    obtain ⟨y, hy⟩ := (OPT_MMAP_SOME_ALL (FLOOKUP l) xs).mp ⟨vs, h⟩ x hxmem
-    have hfl : FLOOKUP l1 x = some y :=
-      FOLDL_res_var_ZIP_lookup_var l l' l1 ns x y hsub hy (hx x hxmem)
-    rw [hfl, hy]
-  rw [OPT_MMAP_ALL_EQ (FLOOKUP l1) (FLOOKUP l) xs hpt]
-  exact h
 
 /-! ## HOL-equality (`=`) forms of the `res_var` cluster
 
 FLAPJACK-SPECIFIC (not exact HOL ports).  The HOL declarations below quantify
 the key type freely and use propositional equality; `DecidableEq` is Lean's
-encoding of HOL `=`, so the `FUPDATE_HOL`/`FDOMSUB_HOL`/`resVarHOL` forms below
+encoding of HOL `=`, so the `resVarHOL` forms below
 remove the `BEq`/`LawfulBEq` side conditions of the production forms.  They are
 still NOT exact HOL ports, because they quantify Lean's raw function carrier
 `FiniteMap α β := α → Option β` (`Flapjack/FiniteMap/Basic.lean:19`), which
@@ -437,36 +268,6 @@ which now provides `update`/`updateList`/`erase`/`resVar` and their lookup
 lemmas; that port is tracked by bead `flapjack-pxn.18.3.7.1.3.1.1.3.1`.  The
 `_hol` declarations are kept as untagged infrastructure only. -/
 
-theorem submap_imp_fupdate_submap_hol {κ : Type} {β : Type} [DecidableEq κ]
-    (f g : κ → Option β) (x : κ) (y : β) (h : crepHolSubmap f g) :
-    crepHolSubmap (FUPDATE_HOL f (x, y)) (FUPDATE_HOL g (x, y)) := by
-  intro n v hn
-  simp only [FUPDATE_HOL] at hn ⊢
-  by_cases hxn : n = x
-  · simp [hxn] at hn ⊢
-    exact hn
-  · simp [hxn] at hn ⊢
-    exact h n v hn
-
-theorem submap_imp_domsub_submap_hol {κ : Type} {β : Type} [DecidableEq κ]
-    (f g : κ → Option β) (x : κ) (h : crepHolSubmap f g) :
-    crepHolSubmap (FDOMSUB_HOL f x) (FDOMSUB_HOL g x) := by
-  intro n v hn
-  simp only [FDOMSUB_HOL] at hn ⊢
-  by_cases hxn : n = x
-  · simp [hxn] at hn
-  · simp [hxn] at hn ⊢
-    exact h n v hn
-
-theorem submap_imp_domsub_fupdate_hol {κ : Type} {β : Type} [DecidableEq κ]
-    (f g : κ → Option β) (x : κ) (y : β) (h : crepHolSubmap f g) :
-    crepHolSubmap (FDOMSUB_HOL f x) (FUPDATE_HOL g (x, y)) := by
-  intro n v hn
-  simp only [FDOMSUB_HOL, FUPDATE_HOL] at hn ⊢
-  by_cases hxn : n = x
-  · simp [hxn] at hn
-  · simp [hxn] at hn ⊢
-    exact h n v hn
 
 theorem res_var_commutes_strong_hol {α : Type} {β : Type} [DecidableEq α]
     (lc lc' : FiniteMap α β) (n h : α) :
@@ -699,36 +500,14 @@ theorem foldl_res_var_zip_lookup_exact {α : Type} {β : Type} [DecidableEq α]
   rw [OPT_MMAP_ALL_EQ (fun x => l1.lookup x) (fun x => l.lookup x) xs hpt]
   exact h
 
-/-- CakeML's `locals_rel` (`crep_inlineProofScript.sml:26`):
-    `s.locals SUBMAP t.locals`. -/
--- FLAPJACK-SPECIFIC (not an exact HOL port): generic over the word element type, while HOL
--- crepSem$state is indexed by the word length. The exact width-indexed tag is on
--- crepInlineLocalsRelW below.
-def crepInlineLocalsRel (s t : CrepHolState α σ) : Prop :=
-  crepHolSubmap s.locals t.locals
 
 /-- CakeML's `locals_strong_rel` (`crep_inlineProofScript.sml:31`):
     `s.locals = t.locals`. -/
 -- FLAPJACK-SPECIFIC (not an exact HOL port): generic over the word element type, while HOL
--- crepSem$state is indexed by the word length. The exact width-indexed tag is on
--- crepInlineLocalsStrongRelW below.
+-- crepSem$state is indexed by the word length. This remains useful in existing runtime proofs.
 def crepInlineLocalsStrongRel (s t : CrepHolState α σ) : Prop :=
   s.locals = t.locals
 
-/-- CakeML's `locals_rel_dec_clock` (`crep_inlineProofScript.sml:167`): both
-    relations are preserved by `dec_clock`, since only `clock` changes. -/
--- FLAPJACK-SPECIFIC (not an exact HOL port): generic over the word element type, while HOL
--- crepSem$state is indexed by the word length. The exact width-indexed tag is on
--- crepInlineLocalsRel_decClockW below.
-theorem crepInlineLocalsRel_decClock (s t : CrepHolState α σ)
-    (hlocals : crepInlineLocalsRel s t) (hstate : crepInlineStateRel s t) :
-    crepInlineLocalsRel (decCrepHolClock s) (decCrepHolClock t) ∧
-    crepInlineStateRel (decCrepHolClock s) (decCrepHolClock t) := by
-  obtain ⟨hg, hc, hm, hma, hsm, hcl, hbe, hf, hba, hta⟩ := hstate
-  refine ⟨?_, ?_⟩
-  · simpa only [crepInlineLocalsRel, decCrepHolClock] using hlocals
-  · simp only [crepInlineStateRel, decCrepHolClock]
-    exact ⟨hg, hc, hm, hma, hsm, by rw [hcl], hbe, hf, hba, hta⟩
 
 /-- Finite-map `FDOM` for Lean's extensional lookup-function representation:
     the predicate holding exactly at the bound keys.  HOL's `FDOM` is a
@@ -752,8 +531,7 @@ def crepHolFdiff (f : Nat → Option β) (s : Nat → Bool) : Nat → Option β 
     i.e. `FDIFF a'.locals (FDOM a.locals) = FDIFF b'.locals (FDOM b.locals)`.
     `crepHolFdiff`/`crepHolFdom` render HOL's `FDIFF`/`FDOM` extensionally. -/
 -- FLAPJACK-SPECIFIC (not an exact HOL port): generic over the word element type, while HOL
--- crepSem$state is indexed by the word length. The exact width-indexed tag is on
--- crepInlineLocalsExtRelW below.
+-- crepSem$state is indexed by word length and uses finite maps.
 def crepInlineLocalsExtRel (a b a' b' : CrepHolState α σ) : Prop :=
   crepHolFdiff a'.locals (crepHolFdom a.locals) =
     crepHolFdiff b'.locals (crepHolFdom b.locals)
@@ -762,8 +540,7 @@ def crepInlineLocalsExtRel (a b a' b' : CrepHolState α σ) : Prop :=
     without the `code` conjunct, used by the inlining simulation because
     inlining changes `code` but preserves the rest of the state. -/
 -- FLAPJACK-SPECIFIC (not an exact HOL port): generic over the word element type, while HOL
--- crepSem$state is indexed by the word length. The exact width-indexed tag is on
--- crepInlineStateRelCodeW below.
+-- crepSem$state is indexed by word length and uses finite maps.
 def crepInlineStateRelCode (s t : CrepHolState α σ) : Prop :=
   s.globals = t.globals ∧
   s.memory = t.memory ∧
@@ -994,43 +771,6 @@ lookup functions rather than HOL finite maps, so the helpers stay untagged.
 The exact finite-support relation ports required by the correctness path are
 tracked under `flapjack-2de.13`. -/
 
-/-- FLAPJACK-SPECIFIC: raw-function state relation; this declaration has no
-    exact finite-support counterpart in this module yet. -/
-def crepInlineStateRelW {width : Nat} [NeZero width] {σ : Type}
-    (s t : CrepHolState (BitVec width) σ) : Prop :=
-  crepInlineStateRel s t
-
-/-- FLAPJACK-SPECIFIC: raw-function locals submap. -/
-def crepInlineLocalsRelW {width : Nat} [NeZero width] {σ : Type}
-    (s t : CrepHolState (BitVec width) σ) : Prop :=
-  crepInlineLocalsRel s t
-
-/-- FLAPJACK-SPECIFIC: raw-function locals equality; exact finite-support
-    replacement is tracked under `flapjack-2de.13`. -/
-def crepInlineLocalsStrongRelW {width : Nat} [NeZero width] {σ : Type}
-    (s t : CrepHolState (BitVec width) σ) : Prop :=
-  crepInlineLocalsStrongRel s t
-
-/-- FLAPJACK-SPECIFIC: clock preservation over raw-function state carriers. -/
-theorem crepInlineLocalsRel_decClockW {width : Nat} [NeZero width] {σ : Type}
-    (s t : CrepHolState (BitVec width) σ)
-    (hlocals : crepInlineLocalsRelW s t) (hstate : crepInlineStateRelW s t) :
-    crepInlineLocalsRelW (decCrepHolClockW s) (decCrepHolClockW t) ∧
-    crepInlineStateRelW (decCrepHolClockW s) (decCrepHolClockW t) := by
-  have h := crepInlineLocalsRel_decClock s t hlocals hstate
-  simpa only [crepInlineLocalsRelW, crepInlineStateRelW,
-    decCrepHolClockW_eq_decCrepHolClock] using h
-
-/-- FLAPJACK-SPECIFIC: locals extension relation over raw-function maps. -/
-def crepInlineLocalsExtRelW {width : Nat} [NeZero width] {σ : Type}
-    (a b a' b' : CrepHolState (BitVec width) σ) : Prop :=
-  crepInlineLocalsExtRel a b a' b'
-
-/-- FLAPJACK-SPECIFIC: raw-function carrier relation; exact finite-support
-    replacement is tracked under `flapjack-2de.13`. -/
-def crepInlineStateRelCodeW {width : Nat} [NeZero width] {σ : Type}
-    (s t : CrepHolState (BitVec width) σ) : Prop :=
-  crepInlineStateRelCode s t
 
 /-! ## Exact finite-support inlining relations
 

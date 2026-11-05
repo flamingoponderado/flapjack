@@ -578,23 +578,6 @@ example :
   rw [evalCrepRuntimeExp_crepOp_eq]
   simp [evalCrepRuntimeExp, crepOpCrep]
 
-/-- `FOLDL_res_var_ZIP_lookup_var` at a concrete fixture: the fold of
-    `res_var` over `ns = []` is the identity, so a defined lookup survives in any
-    `SUBMAP` extension. -/
-example :
-    FLOOKUP (fun n : Nat => if n = 5 then some 7 else none) 5 = some 7 :=
-  FOLDL_res_var_ZIP_lookup_var (fun n : Nat => if n = 5 then some 7 else none)
-    (fun _ : Nat => none) (fun n : Nat => if n = 5 then some 7 else none)
-    [] 5 7 (fun _ _ h => h) rfl (by simp)
-
-/-- `FOLDL_res_var_ZIP_lookup` at a concrete fixture: the `OPT_MMAP` form with
-    an empty name list. -/
-example :
-    ([1, 2] : List Nat).mapM (FLOOKUP (fun n : Nat => some (n + 1))) =
-      some [2, 3] :=
-  FOLDL_res_var_ZIP_lookup (fun n : Nat => some (n + 1)) (fun _ : Nat => none)
-    (fun n : Nat => some (n + 1)) [] [1, 2] [2, 3] (fun _ _ h => h) rfl (by simp)
-
 /-- HOL `crepProps$dec_clock_simp`: the clock decrement changes only `clock`
     (checked here by two extremes: `.locals` and `.topAddress`). -/
 example : (decCrepHolClock localBase).locals = localBase.locals :=

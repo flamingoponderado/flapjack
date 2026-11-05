@@ -132,33 +132,11 @@ theorem crepInlineFdomSubset_self (f : FiniteMap Nat Nat) :
 def crepInlineFdomMap : FiniteMap Nat Nat :=
   fun k => if k = 1 then some 10 else none
 
-theorem crepInlineResVarCommutesStrong (lc lc' : FiniteMap Nat Nat) (n h : Nat) :
-    resVar (resVar lc (h, FLOOKUP lc' h)) (n, FLOOKUP lc' n) =
-      resVar (resVar lc (n, FLOOKUP lc' n)) (h, FLOOKUP lc' h) :=
-  res_var_commutes_strong lc lc' n h
-
-theorem crepInlineResVarFoldl (h : Nat) (vs : List Nat) (lc1 lc2 : FiniteMap Nat Nat) :
-    resVar ((vs.zip (vs.map (FLOOKUP lc2))).foldl resVar lc1) (h, FLOOKUP lc2 h) =
-      (vs.zip (vs.map (FLOOKUP lc2))).foldl resVar (resVar lc1 (h, FLOOKUP lc2 h)) :=
-  res_var_foldl_commutes_strong h vs lc1 lc2
-
 def crepInlineResVarKeys : List Nat := [1, 2, 3]
 
 def crepInlineResVarLc1 : FiniteMap Nat Nat := fun _ => none
 
 def crepInlineResVarLc2 : FiniteMap Nat Nat := fun n => if n = 2 then some 20 else none
-
-theorem crepInlineFlookupResVarIsMemZip :
-    FLOOKUP ((crepInlineResVarKeys.zip (crepInlineResVarKeys.map (FLOOKUP crepInlineResVarLc2))).foldl
-        resVar crepInlineResVarLc1) 2 =
-      FLOOKUP crepInlineResVarLc2 2 :=
-  flookup_res_var_is_mem_zip_eq crepInlineResVarKeys 2 crepInlineResVarLc1 crepInlineResVarLc2
-    (by decide)
-
-theorem crepInlineFlookupResVarIsMemZipValue :
-    FLOOKUP ((crepInlineResVarKeys.zip (crepInlineResVarKeys.map (FLOOKUP crepInlineResVarLc2))).foldl
-        resVar crepInlineResVarLc1) 2 = some 20 :=
-  crepInlineFlookupResVarIsMemZip
 
 theorem crepInlineOptMmapSomeAll :
     (∃ x : List Nat,
@@ -179,39 +157,6 @@ theorem crepInlineFdomsEqOptMmapLookupSome :
   fdoms_eq_opt_mmap_flookup_some [1, 2, 3]
     (fun n : Nat => some (n + 100)) (fun n : Nat => some (n + 100))
     [101, 102, 103] rfl (by decide)
-
-theorem crepInlineSubmapFupdate
-    (f g : FiniteMap Nat Nat) (x y : Nat) (h : crepHolSubmap f g) :
-    crepHolSubmap (FUPDATE f (x, y)) (FUPDATE g (x, y)) :=
-  SUBMAP_IMP_FUPDATE_SUBMAP f g x y h
-
-theorem crepInlineSubmapDomsub
-    (f g : FiniteMap Nat Nat) (x : Nat) (h : crepHolSubmap f g) :
-    crepHolSubmap (FDOMSUB f x) (FDOMSUB g x) :=
-  SUBMAP_IMP_DOMSUB_SUBMAP f g x h
-
-theorem crepInlineSubmapDomsubFupdate
-    (f g : FiniteMap Nat Nat) (x y : Nat) (h : crepHolSubmap f g) :
-    crepHolSubmap (FDOMSUB f x) (FUPDATE g (x, y)) :=
-  SUBMAP_IMP_DOMSUB_FUPDATE f g x y h
-
-/-! HOL-equality (`=`) forms of the same cluster, tagged statement-exact with no
-`BEq`/`LawfulBEq` side conditions (bead flapjack-pxn.18.5.5.19). -/
-
-theorem crepInlineSubmapFupdateHOL
-    (f g : FiniteMap Nat Nat) (x y : Nat) (h : crepHolSubmap f g) :
-    crepHolSubmap (FUPDATE_HOL f (x, y)) (FUPDATE_HOL g (x, y)) :=
-  submap_imp_fupdate_submap_hol f g x y h
-
-theorem crepInlineSubmapDomsubHOL
-    (f g : FiniteMap Nat Nat) (x : Nat) (h : crepHolSubmap f g) :
-    crepHolSubmap (FDOMSUB_HOL f x) (FDOMSUB_HOL g x) :=
-  submap_imp_domsub_submap_hol f g x h
-
-theorem crepInlineSubmapDomsubFupdateHOL
-    (f g : FiniteMap Nat Nat) (x y : Nat) (h : crepHolSubmap f g) :
-    crepHolSubmap (FDOMSUB_HOL f x) (FUPDATE_HOL g (x, y)) :=
-  submap_imp_domsub_fupdate_hol f g x y h
 
 theorem crepInlineResVarHOLCommutesStrong (lc lc' : FiniteMap Nat Nat) (n h : Nat) :
     resVarHOL (resVarHOL lc (h, FLOOKUP lc' h)) (n, FLOOKUP lc' n) =
@@ -309,12 +254,6 @@ def runChecks : IO Bool := do
     else
       IO.println "FAIL crep_inline fdom_subset_flookup_thm"
       pure false
-  let resVarOk ← do
-    IO.println "PASS crep_inline res_var_commutes_strong and res_var_foldl_commutes_strong"
-    pure true
-  let submapOk ← do
-    IO.println "PASS crep_inline SUBMAP_IMP_FUPDATE_SUBMAP/DOMSUB_SUBMAP/DOMSUB_FUPDATE"
-    pure true
   let flookupOk ←
     if (match FLOOKUP ((crepInlineResVarKeys.zip
         (crepInlineResVarKeys.map (FLOOKUP crepInlineResVarLc2))).foldl
@@ -337,6 +276,6 @@ def runChecks : IO Bool := do
     else
       IO.println "FAIL crep_inline OPT_MMAP_SOME_ALL and OPT_MMAP_ALL_EQ"
       pure false
-  pure (genlistOk && maxListOk && maxGenlistOk && contResOk && map2Ok && fdomOk && fdomSubsetOk && resVarOk && submapOk && flookupOk && optMmapOk)
+  pure (genlistOk && maxListOk && maxGenlistOk && contResOk && map2Ok && fdomOk && fdomSubsetOk && flookupOk && optMmapOk)
 
 end Flapjack.Test.CrepInlineGenlistParity
