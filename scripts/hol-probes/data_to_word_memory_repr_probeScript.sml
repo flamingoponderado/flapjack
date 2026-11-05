@@ -1,10 +1,20 @@
 load "data_to_word_memoryProofTheory"; load "blastLib";
 open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
+open data_to_word_memoryProofTheory gen_gcTheory;
 fun show label th =
   if null (hyp th) then
     (print label; print "="; Lib.with_flag (Globals.show_types,true) print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
+val gen_gc_data_refs_split_statement =
+  ``!cc roots heap.
+      (gen_gc$gen_gc cc (roots,heap) = (roots1,s)) /\
+      (!t r. (cc.isRef (t,r) <=> isMutTag t)) ==>
+      EVERY (\x. ~isRef x) (s.h1 ++ s.h2) /\
+      EVERY isDataElement (s.h1 ++ s.h2) /\
+      EVERY isRef (s.r1 ++ s.r2 ++ s.r3 ++ s.r4)``;
+val _ = (print "gen_gc_data_refs_split_statement_typed=";
+  Lib.with_flag (Globals.show_types,true) print_term gen_gc_data_refs_split_statement; print "\n");
 val _ = show "block_rep_typed" data_to_word_memoryProofTheory.BlockRep_def;
 val _ = show "block_nil_typed" data_to_word_memoryProofTheory.BlockNil_def;
 val _ = show "thunk_block_typed" data_to_word_memoryProofTheory.ThunkBlock_def;

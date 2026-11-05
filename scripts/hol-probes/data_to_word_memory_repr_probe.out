@@ -1,3 +1,4 @@
+gen_gc_data_refs_split_statement_typed=∀(cc :(tag # α) gen_gc_conf) (roots :β heap_address list) (heap :(β, tag # α) heap_element list). gen_gc cc (roots,heap) = ((roots1 :β heap_address list),(s :(β, tag # α) gc_state)) ∧ (∀(t :tag) (r :α). cc.isRef (t,r) ⇔ isMutTag t) ⇒ EVERY (λ(x :(β, tag # α) heap_element). ¬isRef x) (s.h1 ++ s.h2) ∧ EVERY (isDataElement :(β, tag # α) heap_element -> bool) (s.h1 ++ s.h2) ∧ EVERY (isRef :(β, tag # α) heap_element -> bool) (s.r1 ++ s.r2 ++ s.r3 ++ s.r4)
 block_rep_typed=∀(tag :num) (xs :α heap_address list). (BlockRep tag xs :(α, tag # β list) heap_element) = DataElement xs (LENGTH xs) (BlockTag tag,([] :β list))
 block_nil_typed=∀(n :num). (BlockNil n :α word) = (n2w n :α word) ≪ (4 :num) + (2w :α word)
 thunk_block_typed=∀(ev :thunk_mode) (x :α heap_address). (ThunkBlock ev x :(α, tag # β list) heap_element) = DataElement [x] (1 :num) (ThunkTag ev,([] :β list))

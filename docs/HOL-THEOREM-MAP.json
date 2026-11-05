@@ -5,7 +5,7 @@
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/GenerationalSplit.lean",
   "lean_name": "genGc_dataRefsSplit_source",
   "statement_status": "pending_statement_review",
-  "reviewer": "Source clauses and the independent address and payload parameters compared; a typed HOL replay of this local theorem remains to be captured."
+  "reviewer": "Compared source clauses and the independent address and payload parameters with gen_gc_data_refs_split_statement_typed. The probe parses the original statement with inferred types; replaying the local HOL proof remains pending."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",

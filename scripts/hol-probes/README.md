@@ -2,6 +2,10 @@
 including its shared word dimension and complete abstract-memory conclusions.
 This capture supports source review, not cross-language equivalence.
 
+`data_to_word_memory_repr_probe.out` includes a typed parsing of the local
+`gen_gc_data_refs_split` statement. Its address and payload types are independent;
+the capture does not replay the local HOL proof.
+
 `clos_letop_source_probe.out` captures the typed variable-list check, operation selector, source traversal, its equivalence to the original list pass, the polymorphic incremental compiler, replays of the local variable-list evaluation lemmas, the relations and evaluator simulation statement, and the known-function compiler that invokes the pass. These captures support source review, not cross-language equivalence.
 
 `clos_ticks_source_probe.out` captures the typed tick-removal traversal, its equivalence to the original list pass, the polymorphic incremental compiler, the simulation relations, their clock and length theorems, typed replays of local clock-decrement, decoding, primitive-operation, installation and thunk-update results, the simple-relation theorems, the tick-sequence, mutual evaluator-simulation, evaluator correctness and observational statements, closure inspection shape, and variable, raise, handler, let, conditional, function, recursive-binding, call, tick, application and operation inversion through tick removal. These captures support source review, not cross-language equivalence.
