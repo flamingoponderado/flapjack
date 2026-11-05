@@ -1,5 +1,7 @@
 `data_to_word_gc_stack_probe.out` captures the typed original unchanged-pointer set and finiteness theorem, combined forwarding-map definition, and parsed local domain and application statements. These show that configuration and heap payload types are independent; the local parses do not replay their HOL proofs.
 
+`data_to_word_gc_stack_probe.out` also records typed parses of the local root-list and reference-list similarity results and related-heap lookup result. The reference payload and collector-state payload are independent; these parses do not replay the local HOL proofs.
+
 `data_to_word_gc_stack_probe.out` captures the typed local reference-list simulation statement, including its independent reference-element payload type. This is a parsed statement, not a HOL proof replay.
 
 `data_to_word_gc_stack_probe.out` captures the inferred statement of local `gc_move_list_simulation`; it is a typed parse rather than a replay of the local HOL proof.

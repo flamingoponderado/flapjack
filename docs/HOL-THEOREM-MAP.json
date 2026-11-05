@@ -1,6 +1,31 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "gc_move_list_similar",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Similarity.lean",
+  "lean_name": "gcMoveList_similar",
+  "statement_status": "pending_statement_review",
+  "reviewer": "Compared partial_move_list_similar_statement_typed including the common state and configuration payload; the local HOL proof replay remains pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "gc_move_ref_list_similar",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Similarity.lean",
+  "lean_name": "gcMoveRefList_similar",
+  "statement_status": "pending_statement_review",
+  "reviewer": "Compared partial_move_refs_similar_statement_typed, preserving the independent reference payload and collector-state payload; the local HOL proof replay remains pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "heap_lookup_similar_data_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
+  "lean_name": "heapLookup_similarData",
+  "statement_status": "pending_statement_review",
+  "fmap_as_finite_support_parameters": ["f"],
+  "reviewer": "Compared partial_lookup_similar_data_statement_typed, preserving independent configuration and heap payload carriers and the canonical map parameter; the local HOL proof replay remains pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
   "hol_name": "new_f_def",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
   "lean_name": "newForwardMap",

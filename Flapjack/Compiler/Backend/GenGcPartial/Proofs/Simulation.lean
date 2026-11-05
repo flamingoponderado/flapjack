@@ -1801,4 +1801,103 @@ theorem newForwardMap_apply {α β γ : Type} (f : HolFiniteMapExact Nat Nat)
       apply holFapply_of_lookup
       simpa [found] using current
 
+/-- Flapjack infrastructure: when similar reference heads have equal child
+counts, equality of their flattened renamed roots splits at that head. -/
+theorem similarData_refRootsSplit {α β γ : Type} (conf : Config γ)
+    (xs ys : List (HeapAddress α)) (len : Nat) (payload : β)
+    (left right : List (HeapElement α β)) (rename : Nat → Nat)
+    (similar : List.Forall₂ (similarPtr conf) xs ys)
+    (equal : addrMap rename (refsToRoots conf (.dataElement xs len payload :: left)) =
+      refsToRoots conf (.dataElement ys len payload :: right)) :
+    addrMap rename (xs.map (toGenHeapAddress conf)) = ys.map (toGenHeapAddress conf) ∧
+      addrMap rename (refsToRoots conf left) = refsToRoots conf right := by
+  simp only [refsToRoots, addrMap_append] at equal
+  apply List.append_inj equal
+  simp [← addrMap_length, similar.length_eq]
+
+/-- Flapjack infrastructure: flattening similar reference lists preserves
+the boundary between a head object and the remaining objects. -/
+theorem similarData_refRootsTail {α β γ : Type} (conf : Config γ)
+    (head1 head2 : HeapElement α β) (left right : List (HeapElement α β)) (rename : Nat → Nat)
+    (similar : similarData conf head1 head2)
+    (equal : addrMap rename (refsToRoots conf (head1 :: left)) = refsToRoots conf (head2 :: right)) :
+    addrMap rename (refsToRoots conf left) = refsToRoots conf right := by
+  cases head1 with
+  | unused len =>
+    cases head2 <;> simp_all [similarData, refsToRoots]
+  | forwardPointer ptr value len =>
+    cases head2 <;> simp_all [similarData, refsToRoots]
+  | dataElement xs len payload =>
+    cases head2 with
+    | unused n => simp [similarData] at similar
+    | forwardPointer ptr value n => simp [similarData] at similar
+    | dataElement ys n data =>
+      simp only [similarData] at similar
+      obtain ⟨rfl, rfl, children⟩ := similar
+      exact (similarData_refRootsSplit conf xs ys n data left right rename children equal).2
+
+/-- Flapjack infrastructure: related heap elements have equal encoded lengths. -/
+theorem similarData_elLength {α β γ : Type} (conf : Config γ)
+    (left right : HeapElement α β) (similar : similarData conf left right) :
+    elLength left = elLength right := by
+  cases left <;> cases right <;> simp_all [similarData, elLength]
+
+/-- Flapjack proof infrastructure: lookup in similar reference lists retains
+the object's payload and its segment of the renamed flattened roots. -/
+theorem heapLookup_similarData_raw {α β γ : Type} (conf : Config γ)
+    (left right : List (HeapElement α β)) (n : Nat) (xs : List (HeapAddress α))
+    (len : Nat) (payload : β) (rename : Nat → Nat)
+    (related : List.Forall₂ (similarData conf) left right)
+    (found : heapLookup n left = some (.dataElement xs len payload))
+    (rootsEq : addrMap rename (refsToRoots conf left) = refsToRoots conf right) :
+    ∃ ys, heapLookup n right = some (.dataElement ys len payload) ∧
+      addrMap rename (xs.map (toGenHeapAddress conf)) = ys.map (toGenHeapAddress conf) := by
+  induction related generalizing n with
+  | nil => simp [heapLookup] at found
+  | @cons head1 head2 left right head tail ih =>
+    by_cases zero : n = 0
+    · subst n
+      simp [heapLookup] at found
+      subst head1
+      cases head2 with
+      | unused size => simp [similarData] at head
+      | forwardPointer ptr value size => simp [similarData] at head
+      | dataElement ys size data =>
+        simp only [similarData] at head
+        obtain ⟨rfl, rfl, children⟩ := head
+        exact ⟨ys, by simp [heapLookup],
+          (similarData_refRootsSplit conf xs ys size data left right rename children rootsEq).1⟩
+    · by_cases inside : n < elLength head1
+      · simp [heapLookup, zero, inside] at found
+      · have equalLength := similarData_elLength conf head1 head2 head
+        have targetInside : ¬ n < elLength head2 := by simpa [← equalLength] using inside
+        have foundTail : heapLookup (n - elLength head1) left = some (.dataElement xs len payload) := by
+          simpa [heapLookup, zero, inside] using found
+        have rootsTail := similarData_refRootsTail conf head1 head2 left right rename head rootsEq
+        obtain ⟨ys, targetFound, targetRoots⟩ := ih (n - elLength head1) foundTail rootsTail
+        refine ⟨ys, ?_, targetRoots⟩
+        simpa [heapLookup, zero, targetInside, ← equalLength, inside] using targetFound
+
+/-- Related reference heaps preserve lookup results and their renamed child
+roots. The local HOL proof has not yet been replayed. -/
+@[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "heap_lookup_similar_data_IMP"
+  (fmap_as_finite_support_parameters := [f])]
+theorem heapLookup_similarData {α β γ : Type} (conf : Config γ)
+    (left right : List (HeapElement α β)) (n : Nat) (xs : List (HeapAddress α))
+    (len : Nat) (payload : β) (f : HolFiniteMapExact Nat Nat)
+    (related : List.Forall₂ (similarData conf) left right)
+    (found : heapLookup n left = some (.dataElement xs len payload))
+    (rootsEq : addrMap (holFapply f) (refsToRoots conf left) = refsToRoots conf right) :
+    ∃ ys, heapLookup n right = some (.dataElement ys len payload) ∧
+      addrMap (holFapply f) (xs.map (toGenHeapAddress conf)) = ys.map (toGenHeapAddress conf) :=
+  heapLookup_similarData_raw conf left right n xs len payload (holFapply f) related found rootsEq
+
+/-- Canonical finite-map parameter codec for the related-heap lookup result. -/
+theorem holFmapAsFiniteSupportParamWitness_heapLookup_similarData_f
+    (f : HolFiniteMapExact Nat Nat) (key : Nat) :
+    (GcMapBroad.ofBroad (GcMapBroad.toBroad f)).lookup key = f.lookup key ∧
+    (GcMapBroad.ofBroad (GcMapBroad.toBroad f)).finiteSupport = f.finiteSupport ∧
+    GcMapBroad.ofBroad (GcMapBroad.toBroad f) = f :=
+  holFmapAsFiniteSupportParamWitness_gcRelated_f f key
+
 end Flapjack.Compiler.Backend.GenGcPartial

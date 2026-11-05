@@ -41,7 +41,9 @@ theorem gcMove_similar {α β : Type} (conf : Config β) (state state1 : GcState
             obtain ⟨rfl, _⟩ := run
             rfl
 
-/-- Partial root traversal preserves pointer payloads and list structure. -/
+/-- Partial root traversal preserves pointer payloads and list structure.
+The local HOL proof has not yet been replayed. -/
+@[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "gc_move_list_similar"]
 theorem gcMoveList_similar {α β : Type} (conf : Config β) (roots roots1 : List (HeapAddress α))
     (state state1 : GcState α β) (run : gcMoveList conf state roots = (roots1, state1)) :
     List.Forall₂ (similarPtr conf) roots roots1 := by
@@ -79,7 +81,8 @@ theorem similarData_listRefl {α β σ : Type} (conf : σ) (elements : List (Hea
   | cons head tail ih => exact .cons (similarData_refl conf head) ih
 
 /-- Reference traversal preserves element sizes, payloads, and pointer
-payloads. This is a local proof of the source's local similarity result. -/
+payloads. The local HOL proof has not yet been replayed. -/
+@[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "gc_move_ref_list_similar"]
 theorem gcMoveRefList_similar {α β γ : Type} (conf : Config γ)
     (refs refs1 : List (HeapElement α β)) (state state1 : GcState α γ)
     (run : gcMoveRefList conf state refs = (refs1, state1)) :

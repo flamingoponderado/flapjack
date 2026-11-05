@@ -61,6 +61,25 @@ val _ = show "partial_sim_inv_typed" gen_gc_partialTheory.sim_inv_def;
 val _ = show "partial_f_old_ptrs_typed" gen_gc_partialTheory.f_old_ptrs_def;
 val _ = show "partial_f_old_ptrs_finite_typed" gen_gc_partialTheory.f_old_ptrs_finite;
 val _ = show "partial_new_f_typed" gen_gc_partialTheory.new_f_def;
+val partialMoveListSimilar = ``!xs state1 ys state2.
+  (gc_move_list conf state1 xs = (ys,state2)) ==>
+  LIST_REL (similar_ptr conf) xs ys``;
+val _ = (print "partial_move_list_similar_statement_typed=";
+  Lib.with_flag (Globals.show_types,true) print_term partialMoveListSimilar; print "\n");
+val partialMoveRefsSimilar = ``!heap_refs state refs' state' conf.
+  (gc_move_ref_list conf state heap_refs = (refs',state')) ==>
+  LIST_REL (similar_data conf) heap_refs refs'``;
+val _ = (print "partial_move_refs_similar_statement_typed=";
+  Lib.with_flag (Globals.show_types,true) print_term partialMoveRefsSimilar; print "\n");
+val partialLookupSimilarData = ``!h1 h2 n.
+  LIST_REL (similar_data conf) h1 h2 /\
+  (heap_lookup n h1 = SOME (DataElement xs1 l d)) /\
+  (ADDR_MAP ($FAPPLY f) (refs_to_roots conf h1) = refs_to_roots conf h2) ==>
+  ?xs2. (heap_lookup n h2 = SOME (DataElement xs2 l d)) /\
+    (ADDR_MAP ($FAPPLY f) (MAP (to_gen_heap_address conf) xs1) =
+      MAP (to_gen_heap_address conf) xs2)``;
+val _ = (print "partial_lookup_similar_data_statement_typed=";
+  Lib.with_flag (Globals.show_types,true) print_term partialLookupSimilarData; print "\n");
 val partialNewFDomain = ``
   (!i. i IN FDOM f ==> isSomeDataElement (heap_lookup (i + conf.gen_start) heap)) ==>
   ((x IN FDOM (new_f f conf heap)) =
