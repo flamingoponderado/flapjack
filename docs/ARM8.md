@@ -304,7 +304,7 @@ memory unchanged, plus the eight-byte encoded shape `arm8Enc_longMul`).
 `ConditionalSelect.lean` records the same facts for `ConditionalSelect@64`, the
 select used by the `addOverflow` and `subOverflow` lowerings, and
 `Overflow.lean` adds `ConditionHolds` at `VC`, the flag-setting
-`AddSubShiftedRegister@64` step and the two `arm8Next` reductions that the
+`AddSubShiftedRegister@64` step and the `Run` equations that the
 overflow lowerings need, `Carry.lean`
 does the same for `AddSubCarry@64`, which the `addCarry` lowering uses twice,
 and `Compare.lean` records `ConditionalCompareImmediate@64`'s word, `e_sf`,
@@ -314,9 +314,14 @@ constructor; all are Flapjack case splits of the single HOL theorem
 `arm8_encoder_correct` and carry no `@[hol]` tags of their own.
 
 `LongMul.lean` assembles those facts into the two-instruction `longMul` case
-theorem with `n = 1` (`asserts 1`, `asserts2 2`), and `Overflow.lean` does the
-same for `addOverflow` and `subOverflow`: the flag-setting add or subtract
-followed by the `VC` select.
+theorem with `n = 1` (`asserts 1`, `asserts2 2`).  `addOverflow` and
+`subOverflow` (the flag-setting add or subtract followed by the `VC` select)
+close through `arm8RegCaseTwo` (`Const.lean`), the two-instruction counterpart
+of `arm8RegCaseOne`: the first instruction sets the register file and
+`PSTATE`, the second is run on any state the interference environment leaves
+with those registers and flags, and `asmCaseTwoRegs` (`Simulate.lean`)
+discharges the `asserts 1` / `asserts2 2` obligations.  `asmCaseTwoMem` is the
+single-destination corollary of `asmCaseTwoRegs` that the `Mem` tail uses.
 
 `Loc.lean` records the `Address` instruction's word, `Encode`/`Decode`
 inverse, `Run` semantics and `arm8Next` reduction, plus the bit-level
@@ -488,7 +493,8 @@ shift-immediate forms) carry the shared `arm8_encoder_correct` tag and
 Every one-instruction lowering that writes one register and leaves memory
 alone (the three shift-immediate forms, `ror`, the register shift, the
 add/sub and logical binops in their immediate and register forms, and `div`)
-closes through one shared tail, `arm8RegCaseOne` (`Const.lean`), the
+closes through one shared tail, `arm8RegCaseOne` (`Const.lean`); the
+constant lowerings `const_movZ`, `const_movN` and `const_orr` use it too.  It is the
 counterpart of the `next_tac 0`, `next_state_tac01`, `state_tac` sequence HOL
 applies to those branches of `arm8_encoder_correct`.  It reads the instruction
 word from memory, steps `arm8Next` once and discharges `asmCaseOne`; each case
