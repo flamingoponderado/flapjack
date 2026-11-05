@@ -1664,13 +1664,13 @@ theorem partialGc_success {α β : Type} (conf : Config β)
 
 /-- Data-object addresses outside the generation being collected. -/
 @[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "f_old_ptrs_def"]
-def fOldPtrs {α β : Type} (conf : Config β) (heap : List (HeapElement α β)) : Set Nat :=
+def fOldPtrs {α β γ : Type} (conf : Config γ) (heap : List (HeapElement α β)) : Set Nat :=
   { ptr | isSomeDataElement (heapLookup ptr heap) ∧ (ptr < conf.genStart ∨ conf.refsStart ≤ ptr) }
 
 /-- The set of unchanged data-object addresses is finite. The original HOL
 proof has not yet been replayed. -/
 @[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "f_old_ptrs_finite"]
-theorem fOldPtrs_finite {α β : Type} (heap : List (HeapElement α β)) (conf : Config β) :
+theorem fOldPtrs_finite {α β γ : Type} (heap : List (HeapElement α β)) (conf : Config γ) :
     (fOldPtrs conf heap).Finite := by
   apply (Set.finite_lt_nat (heapLength heap)).subset
   intro ptr member
@@ -1679,19 +1679,20 @@ theorem fOldPtrs_finite {α β : Type} (heap : List (HeapElement α β)) (conf :
 
 open Classical in
 /-- Raw lookup used by Flapjack's finite forwarding-map construction. -/
-noncomputable def newForwardLookup {α β : Type} (f : HolFiniteMapExact Nat Nat)
-    (conf : Config β) (heap : List (HeapElement α β)) (ptr : Nat) : Option Nat :=
+noncomputable def newForwardLookup {α β γ : Type} (f : Nat → Option Nat)
+    (conf : Config γ) (heap : List (HeapElement α β)) (ptr : Nat) : Option Nat :=
   if ptr ∈ fOldPtrs conf heap then some ptr
-  else if conf.genStart ≤ ptr then (f.lookup (ptr - conf.genStart)).map (conf.genStart + ·)
+  else if conf.genStart ≤ ptr then (f (ptr - conf.genStart)).map (conf.genStart + ·)
   else none
 
-/-- The partial collector's combined forwarding map. This construction is
-Flapjack infrastructure until its finite-map representation is classified
-and reviewed against the HOL definition. -/
-noncomputable def newForwardMap {α β : Type} (f : HolFiniteMapExact Nat Nat)
-    (conf : Config β) (heap : List (HeapElement α β)) : HolFiniteMapExact Nat Nat := by
+/-- The partial collector's combined forwarding map, using canonical
+finite-support maps for the HOL input and result. -/
+@[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "new_f_def"
+  (fmap_as_finite_support_result)]
+noncomputable def newForwardMap {α β γ : Type} (f : HolFiniteMapExact Nat Nat)
+    (conf : Config γ) (heap : List (HeapElement α β)) : HolFiniteMapExact Nat Nat := by
   classical
-  refine ⟨newForwardLookup f conf heap, ?_⟩
+  refine ⟨newForwardLookup f.lookup conf heap, ?_⟩
   obtain ⟨keys, supported⟩ := f.finiteSupport
   refine ⟨List.range (heapLength heap) ++ keys.map (conf.genStart + ·), ?_⟩
   intro ptr present
@@ -1715,17 +1716,22 @@ noncomputable def newForwardMap {α β : Type} (f : HolFiniteMapExact Nat Nat)
       · omega
     · contradiction
 
+/-- The finite-map translation agrees with the independent raw lookup. -/
+theorem holFmapAsFiniteSupportResultWitness_newForwardMap {α β γ : Type}
+    (f : HolFiniteMapExact Nat Nat) (conf : Config γ) (heap : List (HeapElement α β)) (ptr : Nat) :
+    (newForwardMap f conf heap).lookup ptr = newForwardLookup f.lookup conf heap ptr := rfl
+
 /-- Flapjack infrastructure: valid pointers outside the current generation
 are mapped to themselves. -/
-theorem newForwardMap_old {α β : Type} (f : HolFiniteMapExact Nat Nat)
-    (conf : Config β) (heap : List (HeapElement α β)) (ptr : Nat)
+theorem newForwardMap_old {α β γ : Type} (f : HolFiniteMapExact Nat Nat)
+    (conf : Config γ) (heap : List (HeapElement α β)) (ptr : Nat)
     (old : ptr ∈ fOldPtrs conf heap) : (newForwardMap f conf heap).lookup ptr = some ptr := by
   simp [newForwardMap, newForwardLookup, old]
 
 /-- Flapjack infrastructure: a current-generation pointer is forwarded by
 the translated major-collector map. -/
-theorem newForwardMap_current {α β : Type} (f : HolFiniteMapExact Nat Nat)
-    (conf : Config β) (heap : List (HeapElement α β)) (ptr : Nat)
+theorem newForwardMap_current {α β γ : Type} (f : HolFiniteMapExact Nat Nat)
+    (conf : Config γ) (heap : List (HeapElement α β)) (ptr : Nat)
     (lower : conf.genStart ≤ ptr) (upper : ptr < conf.refsStart) :
     (newForwardMap f conf heap).lookup ptr =
       (f.lookup (ptr - conf.genStart)).map (conf.genStart + ·) := by
@@ -1736,8 +1742,8 @@ theorem newForwardMap_current {α β : Type} (f : HolFiniteMapExact Nat Nat)
 open Classical in
 /-- Flapjack infrastructure: characterization of the combined forwarding-map
 domain. The finite-map representation has not yet been classified for HOL. -/
-theorem newForwardMap_domain {α β : Type} (f : HolFiniteMapExact Nat Nat)
-    (conf : Config β) (heap : List (HeapElement α β)) (ptr : Nat)
+theorem newForwardMap_domain {α β γ : Type} (f : HolFiniteMapExact Nat Nat)
+    (conf : Config γ) (heap : List (HeapElement α β)) (ptr : Nat)
     (valid : ∀ i, f.lookup i ≠ none → isSomeDataElement (heapLookup (i + conf.genStart) heap)) :
     ((newForwardMap f conf heap).lookup ptr ≠ none) ↔
       if ptr < conf.genStart ∨ conf.refsStart ≤ ptr then
@@ -1772,8 +1778,8 @@ theorem newForwardMap_domain {α β : Type} (f : HolFiniteMapExact Nat Nat)
 open Classical in
 /-- Flapjack infrastructure: applying the combined forwarding map at a
 defined key agrees with the appropriate source-region rule. -/
-theorem newForwardMap_apply {α β : Type} (f : HolFiniteMapExact Nat Nat)
-    (conf : Config β) (heap : List (HeapElement α β)) (ptr : Nat)
+theorem newForwardMap_apply {α β γ : Type} (f : HolFiniteMapExact Nat Nat)
+    (conf : Config γ) (heap : List (HeapElement α β)) (ptr : Nat)
     (present : (newForwardMap f conf heap).lookup ptr ≠ none)
     (valid : ∀ i, f.lookup i ≠ none → isSomeDataElement (heapLookup (i + conf.genStart) heap)) :
     holFapply (newForwardMap f conf heap) ptr =

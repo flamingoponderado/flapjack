@@ -1,19 +1,28 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "new_f_def",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
+  "lean_name": "newForwardMap",
+  "statement_status": "reviewed_fmap_as_finite_support_result",
+  "fmap_as_finite_support_result": true,
+  "reviewer": "Compared partial_new_f_typed and HOL FUNION_DEF: the old-pointer identity map has left priority; the other domain is the generation-offset image of the input domain, with offset values. The canonical finite-support input and result use the raw lookup witness, and configuration and heap payload carriers remain independent."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
   "hol_name": "f_old_ptrs_def",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
   "lean_name": "fOldPtrs",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Compared data lookup and outside-generation membership with the HOL source; inferred types and representation review remain to be checked."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared partial_f_old_ptrs_typed: data lookup and outside-generation membership agree, with independent configuration, heap address, and heap payload carriers."
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
   "hol_name": "f_old_ptrs_finite",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
   "lean_name": "fOldPtrs_finite",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Compared finiteness of the original-pointer set with the HOL source; inferred types and local proof replay remain to be checked."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared partial_f_old_ptrs_finite_typed with the source theorem, including independent configuration, heap address, and heap payload carriers."
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",

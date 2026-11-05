@@ -58,6 +58,25 @@ val _ = show "partial_gen_inv_typed" gen_gc_partialTheory.gen_inv_def;
 val _ = show "partial_has_old_ptr_typed" gen_gc_partialTheory.has_old_ptr_def;
 val _ = show "partial_all_old_ptrs_typed" gen_gc_partialTheory.all_old_ptrs_def;
 val _ = show "partial_sim_inv_typed" gen_gc_partialTheory.sim_inv_def;
+val _ = show "partial_f_old_ptrs_typed" gen_gc_partialTheory.f_old_ptrs_def;
+val _ = show "partial_f_old_ptrs_finite_typed" gen_gc_partialTheory.f_old_ptrs_finite;
+val _ = show "partial_new_f_typed" gen_gc_partialTheory.new_f_def;
+val partialNewFDomain = ``
+  (!i. i IN FDOM f ==> isSomeDataElement (heap_lookup (i + conf.gen_start) heap)) ==>
+  ((x IN FDOM (new_f f conf heap)) =
+    if x < conf.gen_start \/ conf.refs_start <= x then
+      isSomeDataElement (heap_lookup x heap)
+    else x IN IMAGE ($+ conf.gen_start) (FDOM f))``;
+val _ = (print "partial_new_f_domain_statement_typed=";
+  Lib.with_flag (Globals.show_types,true) print_term partialNewFDomain; print "\n");
+val partialNewFApply = ``
+  (x IN FDOM (new_f f conf heap)) /\
+  (!i. i IN FDOM f ==> isSomeDataElement (heap_lookup (i + conf.gen_start) heap)) ==>
+  (new_f f conf heap ' x =
+    if x < conf.gen_start \/ conf.refs_start <= x then x
+    else conf.gen_start + f ' (x - conf.gen_start))``;
+val _ = (print "partial_new_f_apply_statement_typed=";
+  Lib.with_flag (Globals.show_types,true) print_term partialNewFApply; print "\n");
 val partialMoveSimulation = ``!ptr ptr' state state' ptr1' state1'.
   (gen_gc_partial$gc_move conf state ptr = (ptr', state')) /\
   (!p u. (ptr = Pointer p u) ==> p < heap_length state.heap) /\
