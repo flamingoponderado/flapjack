@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.GcShared
+import Flapjack.Compiler.Backend.GcShared.HeapMap
 
 /-! Heap lookup over concatenation in the generational collector. -/
 namespace Flapjack.Compiler.Backend.GenGc
@@ -29,5 +30,13 @@ theorem heapLookup_append {α β : Type} (offset : Nat) (first second : List (He
         · have under : ¬offset < elLength head + (tail.map elLength).sum := by
             intro h; exact below (relation.mp h)
           simp only [heapLookup, zero, if_false, inside, under, ih, heapLength, below, Nat.sub_sub]
+
+/-- Every successful lookup is at an element starting address. -/
+@[hol "cakeml/compiler/backend/gc/gen_gcScript.sml" "heap_lookup_IMP_heap_addresses"]
+theorem heapLookup_imp_heapAddresses {α β : Type} (xs : List (HeapElement α β)) (n : Nat)
+    (x : HeapElement α β) (found : heapLookup n xs = some x) : heapAddresses 0 xs n := by
+  obtain ⟨before, after, rfl, rfl⟩ := heapLookup_split xs n x found
+  rw [heapAddresses_append]
+  simp [heapAddresses]
 
 end Flapjack.Compiler.Backend.GenGc

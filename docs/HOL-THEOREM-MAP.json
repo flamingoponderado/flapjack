@@ -1042,6 +1042,46 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "heap_addresses_APPEND",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/HeapMap.lean",
+  "lean_name": "heapAddresses_append",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared heap_addresses_append_typed: union is pointwise disjunction, the second base advances by the first heap length, and both heap payload types are independent."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "heap_addresses_LESS_heap_length",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/HeapMap.lean",
+  "lean_name": "heapAddresses_less_heapLength",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared heap_addresses_less_heap_length_typed: arbitrary heap, base and member imply the original strict upper bound, with independent heap payload types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "heap_addresses_LESS",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/HeapMap.lean",
+  "lean_name": "heapAddresses_base_le",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared heap_addresses_less_typed: arbitrary heap, base and member imply the original lower bound, with independent heap payload types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "MEM_IMP_heap_lookup",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/HeapMap.lean",
+  "lean_name": "mem_imp_heapLookup",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared mem_imp_heap_lookup_typed: heap membership implies an existential successful lookup of the same element, with independent heap payload types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gcScript.sml",
+  "hol_name": "heap_lookup_IMP_heap_addresses",
+  "lean_path": "Flapjack/Compiler/Backend/GenGc/Proofs/HeapLookup.lean",
+  "lean_name": "heapLookup_imp_heapAddresses",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared heap_lookup_imp_heap_addresses_typed: successful lookup implies membership in the zero-based address set, with both heap payload types independent."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
   "hol_name": "heap_addresses_def",
   "lean_path": "Flapjack/Compiler/Backend/GcShared/HeapMap.lean",
   "lean_name": "heapAddresses",
