@@ -84,43 +84,6 @@ theorem shMemLoadStepHOLExact_ok {width : Nat} {σ : Type} [NeZero width]
       runShMemLoad kind name addr (nbOpHOL operator) state := by
   simp only [shMemLoadStepHOLExact, haddr, hlocal]
 
-theorem shMemLoadStepHOLExact_address_error {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateExact width σ) (operator : OpSize) (kind : VarKind)
-    (name : MlS) (address : ExpHOL width)
-    (evalExpression : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width))
-    (runShMemLoad : VarKind → MlS → RiscV.Word width → Nat →
-      PanSemStateExact width σ → Option (PanSemResultExact width) × PanSemStateExact width σ)
-    (haddr : evalExpression state address = none) :
-    shMemLoadStepHOLExact state operator kind name address evalExpression runShMemLoad =
-      (some .error, state) := by
-  simp only [shMemLoadStepHOLExact, haddr]
-
-theorem shMemLoadStepHOLExact_local_none {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateExact width σ) (operator : OpSize) (kind : VarKind)
-    (name : MlS) (address : ExpHOL width)
-    (evalExpression : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width))
-    (runShMemLoad : VarKind → MlS → RiscV.Word width → Nat →
-      PanSemStateExact width σ → Option (PanSemResultExact width) × PanSemStateExact width σ)
-    (addr : RiscV.Word width)
-    (haddr : evalExpression state address = some (.val (.word addr)))
-    (hlocal : lookupKvarHOLExact kind name state = none) :
-    shMemLoadStepHOLExact state operator kind name address evalExpression runShMemLoad =
-      (some .error, state) := by
-  simp only [shMemLoadStepHOLExact, haddr, hlocal]
-
-theorem shMemLoadStepHOLExact_local_rStruct {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateExact width σ) (operator : OpSize) (kind : VarKind)
-    (name : MlS) (address : ExpHOL width)
-    (evalExpression : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width))
-    (runShMemLoad : VarKind → MlS → RiscV.Word width → Nat →
-      PanSemStateExact width σ → Option (PanSemResultExact width) × PanSemStateExact width σ)
-    (addr : RiscV.Word width) (fields : List (ValueHOL width))
-    (haddr : evalExpression state address = some (.val (.word addr)))
-    (hlocal : lookupKvarHOLExact kind name state = some (.rStruct fields)) :
-    shMemLoadStepHOLExact state operator kind name address evalExpression runShMemLoad =
-      (some .error, state) := by
-  simp only [shMemLoadStepHOLExact, haddr, hlocal]
-
 /-- Exact HOL `ShMemStore` clause (`panSemScript.sml:611-614`) over the exact
 `mlstring`-keyed source state. The actual shared-memory effect is delegated to
 `runShMemStore`, which must be the exact `sh_mem_store`; this step only performs
@@ -153,30 +116,6 @@ theorem shMemStoreStepHOLExact_ok {width : Nat} {σ : Type} [NeZero width]
       runShMemStore bytes addr (nbOpHOL operator) state := by
   simp only [shMemStoreStepHOLExact, haddr, hvalue]
 
-theorem shMemStoreStepHOLExact_address_error {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateExact width σ) (operator : OpSize)
-    (address value : ExpHOL width)
-    (evalExpression : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width))
-    (runShMemStore : RiscV.Word width → RiscV.Word width → Nat →
-      PanSemStateExact width σ → Option (PanSemResultExact width) × PanSemStateExact width σ)
-    (haddr : evalExpression state address = none) :
-    shMemStoreStepHOLExact state operator address value evalExpression runShMemStore =
-      (some .error, state) := by
-  simp only [shMemStoreStepHOLExact, haddr]
-
-theorem shMemStoreStepHOLExact_value_error {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateExact width σ) (operator : OpSize)
-    (address value : ExpHOL width)
-    (evalExpression : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width))
-    (runShMemStore : RiscV.Word width → RiscV.Word width → Nat →
-      PanSemStateExact width σ → Option (PanSemResultExact width) × PanSemStateExact width σ)
-    (addr : RiscV.Word width)
-    (haddr : evalExpression state address = some (.val (.word addr)))
-    (hvalue : evalExpression state value = some (.rStruct [])) :
-    shMemStoreStepHOLExact state operator address value evalExpression runShMemStore =
-      (some .error, state) := by
-  simp only [shMemStoreStepHOLExact, haddr, hvalue]
-
 /-- The exact HOL `ShMemLoad` clause: the evaluate-level argument checks plus
 the exact `sh_mem_load` body (`shMemLoadHOLExact`) at `nb_op op`. -/
 def shMemLoadClauseHOLExact {width : Nat} {σ : Type} [NeZero width]
@@ -191,28 +130,6 @@ def shMemLoadClauseHOLExact {width : Nat} {σ : Type} [NeZero width]
       | _ => (some .error, state)
   | _ => (some .error, state)
 
-theorem shMemLoadClauseHOLExact_ok {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateExact width σ) [DecidablePred state.shMemaddrs]
-    (operator : OpSize) (kind : VarKind) (name : MlS) (address : ExpHOL width)
-    (evalExpression : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width))
-    (addr word : RiscV.Word width)
-    (haddr : evalExpression state address = some (.val (.word addr)))
-    (hlocal : lookupKvarHOLExact kind name state = some (.val (.word word))) :
-    shMemLoadClauseHOLExact state operator kind name address evalExpression =
-      shMemLoadHOLExact state kind name addr (nbOpHOL operator) := by
-  simp only [shMemLoadClauseHOLExact, haddr, hlocal]
-
-theorem shMemLoadClauseHOLExact_local_none {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateExact width σ) [DecidablePred state.shMemaddrs]
-    (operator : OpSize) (kind : VarKind) (name : MlS) (address : ExpHOL width)
-    (evalExpression : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width))
-    (addr : RiscV.Word width)
-    (haddr : evalExpression state address = some (.val (.word addr)))
-    (hlocal : lookupKvarHOLExact kind name state = none) :
-    shMemLoadClauseHOLExact state operator kind name address evalExpression =
-      (some .error, state) := by
-  simp only [shMemLoadClauseHOLExact, haddr, hlocal]
-
 /-- The exact HOL `ShMemStore` clause: the evaluate-level argument checks plus
 the exact `sh_mem_store` body (`shMemStoreHOLExact`) at `nb_op op`. -/
 def shMemStoreClauseHOLExact {width : Nat} {σ : Type} [NeZero width]
@@ -226,17 +143,6 @@ def shMemStoreClauseHOLExact {width : Nat} {σ : Type} [NeZero width]
       | some (.val (.word bytes)) => shMemStoreHOLExact state bytes addr (nbOpHOL operator)
       | _ => (some .error, state)
   | _ => (some .error, state)
-
-theorem shMemStoreClauseHOLExact_ok {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateExact width σ) [DecidablePred state.shMemaddrs]
-    (operator : OpSize) (address value : ExpHOL width)
-    (evalExpression : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width))
-    (addr bytes : RiscV.Word width)
-    (haddr : evalExpression state address = some (.val (.word addr)))
-    (hvalue : evalExpression state value = some (.val (.word bytes))) :
-    shMemStoreClauseHOLExact state operator address value evalExpression =
-      shMemStoreHOLExact state bytes addr (nbOpHOL operator) := by
-  simp only [shMemStoreClauseHOLExact, haddr, hvalue]
 
 /-- The exact shared-memory load clause changes data/local/FFI fields only; it
     leaves both memory-domain predicates available to the recursive context. -/

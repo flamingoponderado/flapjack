@@ -109,38 +109,4 @@ def callStepHOLExact {width : Nat} {σ : Type} [NeZero width]
       (some .error, state) := by
   simp [callStepHOLExact, h]
 
-theorem callStepHOLExact_lookup_error {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateExact width σ)
-    (info : Option (Option (VarKind × MlS) × Option (MlS × MlS × ProgHOL width)))
-    (fname : MlS) (arguments : List (ExpHOL width))
-    (evalExpressions : PanSemStateExact width σ → List (ExpHOL width) →
-      Option (List (ValueHOL width)))
-    (evaluate : ProgHOL width → PanSemStateExact width σ →
-      Option (PanSemResultExact width) × PanSemStateExact width σ)
-    (values : List (ValueHOL width))
-    (hargs : evalExpressions state arguments = some values)
-    (hlookup : lookupCodeHOLExact state.code fname values = none) :
-    callStepHOLExact state info fname arguments evalExpressions evaluate =
-      (some .error, state) := by
-  simp [callStepHOLExact, hargs, hlookup]
-
-theorem callStepHOLExact_timeout {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateExact width σ)
-    (info : Option (Option (VarKind × MlS) × Option (MlS × MlS × ProgHOL width)))
-    (fname : MlS) (arguments : List (ExpHOL width))
-    (evalExpressions : PanSemStateExact width σ → List (ExpHOL width) →
-      Option (List (ValueHOL width)))
-    (evaluate : ProgHOL width → PanSemStateExact width σ →
-      Option (PanSemResultExact width) × PanSemStateExact width σ)
-    (values : List (ValueHOL width))
-    (body : ProgHOL width) (calleeLocals : MlS → Option (ValueHOL width))
-    (returnShape : ShapeHOL)
-    (hargs : evalExpressions state arguments = some values)
-    (hlookup : lookupCodeHOLExact state.code fname values =
-      some (body, calleeLocals, returnShape))
-    (hclock : state.clock = 0) :
-    callStepHOLExact state info fname arguments evalExpressions evaluate =
-      (some .timeOut, emptyLocalsHOLExact state) := by
-  simp [callStepHOLExact, hargs, hlookup, hclock]
-
 end Flapjack

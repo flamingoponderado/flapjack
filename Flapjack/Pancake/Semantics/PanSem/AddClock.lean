@@ -105,14 +105,6 @@ abbrev ctxAddClock {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateExact width σ) : stateAddClock state 0 = state := by
   simp only [stateAddClock, Nat.add_zero]
 
-theorem stateAddClock_memaddrsDecidable {width : Nat} {σ : Type} [NeZero width]
-    (context : PanSemExactEvalContext width σ) (extra : Nat) :
-    (ctxAddClock context extra).memaddrsDecidable = context.memaddrsDecidable := rfl
-
-theorem stateAddClock_shMemaddrsDecidable {width : Nat} {σ : Type} [NeZero width]
-    (context : PanSemExactEvalContext width σ) (extra : Nat) :
-    (ctxAddClock context extra).shMemaddrsDecidable = context.shMemaddrsDecidable := rfl
-
 @[simp] theorem ctxAddClock_withState {width : Nat} {σ : Type} [NeZero width]
     (context : PanSemExactEvalContext width σ) (state : PanSemStateExact width σ)
     (hmem : state.memaddrs = context.state.memaddrs)
@@ -222,27 +214,6 @@ theorem callEntryStateHOLExact_stateAddClock {width : Nat} {σ : Type} [NeZero w
   unfold stateAddClock
   exact (is_valid_value_simps2 state kind name value (state.clock + extra)
     state.ffi state.code state.memory).1
-
-theorem ctxAddClock_withState_inv {width : Nat} {σ : Type} [NeZero width]
-    (context : PanSemExactEvalContext width σ) (state : PanSemStateExact width σ)
-    (hmem : state.memaddrs = context.state.memaddrs)
-    (hshared : state.shMemaddrs = context.state.shMemaddrs) (extra : Nat) :
-    (ctxAddClock context extra).withState (stateAddClock state extra)
-        (by rw [stateAddClock_memaddrs]; exact hmem)
-        (by rw [stateAddClock_shMemaddrs]; exact hshared) =
-      ctxAddClock (context.withState state hmem hshared) extra :=
-  (ctxAddClock_withState context state hmem hshared extra).symm
-
-theorem ctxAddClock_withState_generic {width : Nat} {σ : Type} [NeZero width]
-    (context : PanSemExactEvalContext width σ) (state : PanSemStateExact width σ) (extra : Nat)
-    (hm : state.memaddrs = context.state.memaddrs)
-    (hs : state.shMemaddrs = context.state.shMemaddrs)
-    (hm' : (stateAddClock state extra).memaddrs = (ctxAddClock context extra).state.memaddrs)
-    (hs' : (stateAddClock state extra).shMemaddrs = (ctxAddClock context extra).state.shMemaddrs) :
-    (ctxAddClock context extra).withState (stateAddClock state extra) hm' hs' =
-      ctxAddClock (context.withState state hm hs) extra := by
-  apply PanSemExactEvalContext.ext
-  rfl
 
 /-! ## Note (bead flapjack-dpvn)
 
@@ -414,54 +385,6 @@ theorem storeByteStepHOLExact_stateAddClock {width : Nat} {σ : Type} [NeZero wi
                       simp only [storeByteStepHOLExact, evalHOLExact_stateAddClock, h, h2]
       | rStruct fields => simp only [storeByteStepHOLExact, evalHOLExact_stateAddClock, h]
       | nStruct nm fields => simp only [storeByteStepHOLExact, evalHOLExact_stateAddClock, h]
-
-theorem returnStepHOLExact_stateAddClock {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateExact width σ) [DecidablePred state.memaddrs]
-    (expression : ExpHOL width) (extra : Nat) :
-    returnStepHOLExact (stateAddClock state extra) expression
-        (fun _ e => evalHOLExact (stateAddClock state extra) e) =
-      ((returnStepHOLExact state expression (fun _ e => evalHOLExact state e)).1,
-       stateAddClock (returnStepHOLExact state expression
-          (fun _ e => evalHOLExact state e)).2 extra) := by
-  cases h : evalHOLExact state expression with
-  | none => simp only [returnStepHOLExact, evalHOLExact_stateAddClock, h]
-  | some value =>
-      by_cases hs : Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL state.structs
-          (shapeOfHOLExact value) ≤ 32
-      · simp [returnStepHOLExact, h, hs]
-      · simp [returnStepHOLExact, h, hs]
-
-theorem raiseStepHOLExact_stateAddClock {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateExact width σ) [DecidablePred state.memaddrs]
-    (exceptionId : MlS) (expression : ExpHOL width) (extra : Nat) :
-    raiseStepHOLExact (stateAddClock state extra) exceptionId expression
-        (fun _ e => evalHOLExact (stateAddClock state extra) e) =
-      ((raiseStepHOLExact state exceptionId expression
-          (fun _ e => evalHOLExact state e)).1,
-       stateAddClock (raiseStepHOLExact state exceptionId expression
-          (fun _ e => evalHOLExact state e)).2 extra) := by
-  cases h : evalHOLExact state expression with
-  | none => simp only [raiseStepHOLExact, evalHOLExact_stateAddClock, h]
-  | some value =>
-      cases h2 : state.eshapes exceptionId with
-      | none => simp only [raiseStepHOLExact, evalHOLExact_stateAddClock, h, h2]
-      | some shape =>
-          by_cases h3 : shapeEqHOL (shapeOfHOLExact value) shape = true
-          · by_cases h4 : Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL state.structs
-                (shapeOfHOLExact value) ≤ 32
-            · simp [raiseStepHOLExact, h, h2, h3, h4]
-            · simp [raiseStepHOLExact, h, h2, h3, h4]
-          · simp [raiseStepHOLExact, h, h2, h3]
-
-theorem tickStepHOLExact_stateAddClock {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateExact width σ) (extra : Nat) (h : state.clock ≠ 0) :
-    tickStepHOLExact (stateAddClock state extra) =
-      ((tickStepHOLExact state).1, stateAddClock (tickStepHOLExact state).2 extra) := by
-  rw [tickStepHOLExact_clock_pos state h]
-  have h' : (stateAddClock state extra).clock ≠ 0 := by
-    simp only []; omega
-  rw [tickStepHOLExact_clock_pos _ h']
-  exact congrArg (fun s => (none, s)) (decClockHOLExact_stateAddClock state extra h)
 
 theorem shMemLoadHOLExact_stateAddClock {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateExact width σ) [DecidablePred state.shMemaddrs]
@@ -685,16 +608,6 @@ theorem handlerStateHOLExact_stateAddClock {width : Nat} {σ : Type} [NeZero wid
   unfold handlerStateHOLExact
   rw [h2, h1]
 
-theorem callFixedContextHOLExact_stateAddClock {width : Nat} {σ : Type} [NeZero width]
-    (entry : PanSemStateExact width σ) (bodyResult : Option (PanSemResultExact width))
-    (bodyContext : PanSemExactEvalContext width σ) (extra : Nat) :
-    callFixedContextHOLExact (stateAddClock entry extra) bodyResult
-        (ctxAddClock bodyContext extra) =
-      ctxAddClock (callFixedContextHOLExact entry bodyResult bodyContext) extra := by
-  apply PanSemExactEvalContext.ext
-  simp only [callFixedContextHOLExact]
-  exact congrArg Prod.snd (fixClockHOLExact_stateAddClock_pair entry bodyResult bodyContext.state extra)
-
 theorem callContinuationContextHOLExact_stateAddClock {width : Nat} {σ : Type} [NeZero width]
     (context : PanSemExactEvalContext width σ) (fixedContext : PanSemExactEvalContext width σ)
     (resultName : MlS) (value : ValueHOL width) (extra : Nat) :
@@ -704,7 +617,6 @@ theorem callContinuationContextHOLExact_stateAddClock {width : Nat} {σ : Type} 
   apply PanSemExactEvalContext.ext
   simp only [callContinuationContextHOLExact]
   exact handlerStateHOLExact_stateAddClock context fixedContext resultName value extra
-
 
 attribute [local simp] PanSemExactEvalContext.withState_state
 
@@ -733,7 +645,6 @@ theorem callFixedContextHOLExact_state_ffi {width : Nat} {σ : Type} [NeZero wid
     (bodyContext : PanSemExactEvalContext width σ) :
     (callFixedContextHOLExact entry bodyResult bodyContext).state.ffi = bodyContext.state.ffi := by
   simp only [callFixedContextHOLExact, PanSemExactEvalContext.withState_state, fixClockHOLExact]
-
 
 set_option maxHeartbeats 4000000 in
 theorem eval_add_clock_mono_aux

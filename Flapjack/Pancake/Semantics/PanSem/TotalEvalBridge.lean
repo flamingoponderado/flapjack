@@ -160,17 +160,6 @@ theorem ofString_injective_of_ranged {a b : String} (ha : NameRanged a) (hb : Na
   rwa [toStringOfBytes_ofString_of_bytes a ha,
     toStringOfBytes_ofString_of_bytes b hb] at h'
 
-/-- On byte-ranged identifiers, the exact `MlS` key test of `HolFiniteMapExact`
-    agrees with the production `String` key test under `ofString`. -/
-theorem ofString_beq_eq_beq {a b : String} (ha : NameRanged a) (hb : NameRanged b) :
-    (ofString a == ofString b) = (a == b) := by
-  apply Bool.eq_iff_iff.mpr
-  constructor
-  · intro h
-    exact beq_iff_eq.mpr (ofString_injective_of_ranged ha hb (beq_iff_eq.mp h))
-  · intro h
-    exact beq_iff_eq.mpr (by rw [beq_iff_eq.mp h])
-
 /-- Pointwise agreement of the production `updatePanValueMap` and the exact
     `HolFiniteMapExact.update` under the value-map conjunct of
     `PanSemStateRelExec`: the written key receives the related value and every
@@ -869,30 +858,6 @@ theorem PanSemStateRelExec.ffiReturned {σ : Type}
   rw [hprod, hexact] at hbridge
   exact PanSemStateRelExec.setFfi h hbridge.1
 
-/-- The returned/`ret` branch specialised to the executed `callFfi` against the
-    exact `callFFIHOL`, so a `Flapjack/FfiBridge.lean` bridge
-    (`callFfi_extCall_success_bridge`, `callFfi_sharedMem_success_bridge`,
-    `callFfi_empty_extCall_bridge`, …) plugs in directly as `hbridge`. -/
-theorem PanSemStateRelExec.callFfiReturned {σ : Type}
-    {production : PanSemState (RiscV.Word 64) (FfiState σ)}
-    {exact : PanSemStateExact 64 σ}
-    (h : PanSemStateRelExec production exact)
-    (name : FfiName) (holName : HolFfiName)
-    (configuration bytes : List UInt8)
-    (holConfiguration holBytes : List (BitVec 8))
-    {newProduction : FfiState σ} {newExact : HolFfiState σ}
-    {prodBytes : List UInt8} {exactBytes : List (BitVec 8)}
-    (hbridge : FfiResultRel
-      (callFfi production.ffi name configuration bytes)
-      (callFFIHOL exact.ffi holName holConfiguration holBytes))
-    (hprod : callFfi production.ffi name configuration bytes =
-      .returned newProduction prodBytes)
-    (hexact : callFFIHOL exact.ffi holName holConfiguration holBytes =
-      .ret newExact exactBytes) :
-    PanSemStateRelExec { production with ffi := newProduction }
-      { exact with ffi := newExact } :=
-  PanSemStateRelExec.ffiReturned h hbridge hprod hexact
-
 /-- The finalising FFI branch (oracle finalisation or returned-length failure).
     A finalising `callFfi`/`callFFIHOL` installs no new FFI state, so both `ffi`
     fields stay as they were and `PanSemStateRelExec` is preserved.  The
@@ -1053,26 +1018,6 @@ theorem panValueFfiWidth_eq_nbOpHOL : panValueFfiWidth = nbOpHOL := by
   funext size
   cases size <;> rfl
 
-/-- The total shared-memory context exposes the production shared-memory address
-    predicate as its FFI domain. -/
-theorem panSemTotalShMemContext_sharedDomain {σ : Type}
-    (state : PanSemState (RiscV.Word 64) (FfiState σ)) (address : RiscV.Word 64) :
-    (panSemTotalShMemContext state).sharedDomain address = state.sharedMemaddrs address :=
-  rfl
-
-/-- The canonical RISC-V 64 context byte alignment is HOL `byte_align` at width
-    64. -/
-theorem riscv64PanValueFfiContext_byteAlign_eq_panByteAlignHOL
-    (domain : RiscV.Word 64 → Bool) (address : RiscV.Word 64) :
-    (riscv64PanValueFfiContext domain).byteAlign address =
-      panByteAlignHOL (width := 64) address := by
-  simp only [riscv64PanValueFfiContext, RiscV.panRiscVByteAlign, panByteAlignHOL,
-    show (BitVec.toNat (8 : RiscV.Word 64)) = 8 by decide,
-    show (64 / 8 : Nat) = 8 by decide,
-    show (Nat.log2 8) = 3 by decide,
-    show (2 ^ 3 : Nat) = 8 by decide,
-    show (8 : Nat) = 0 ↔ False by decide, if_false]
-
 /-- The executed RISC-V byte alignment at byte count 8 is HOL `byte_align`. -/
 theorem panRiscVByteAlign_eight_eq_panByteAlignHOL (address : RiscV.Word 64) :
     RiscV.panRiscVByteAlign (8 : RiscV.Word 64) address =
@@ -1100,14 +1045,6 @@ theorem callFfi_sharedMem_returned_length {σ : Type} (state : FfiState σ)
       exact absurd h (by simp)
   · rename_i outcome hor
     exact absurd h (by simp)
-
-/-- The executed shared-memory byte extraction is the HOL byte helper at the
-    production width. -/
-theorem riscv64GetByte_eq_panRiscVGetByte (index : Nat) (address : RiscV.Word 64) :
-    riscv64GetByte index address =
-      UInt8.ofNat (RiscV.panRiscVGetByte (8 : RiscV.Word 64)
-        (BitVec.ofNat 64 index) address).toNat :=
-  rfl
 
 /-- The canonical RISC-V 64 context byte encoding agrees with the exact HOL
     `word_to_bytes` codec under `BytesRel`. -/
@@ -1345,7 +1282,6 @@ theorem ffiResultRel_callFfi_sharedMem {σ : Type} (prod : FfiState σ)
                 hprod hlen, callFFIHOL_ret exact _ _ _ hState hBytes hneH hexa,
               if_neg hlenHf]
             exact ⟨hop, hcfg, hbytes, Or.inl ⟨rfl, rfl⟩⟩
-
 
 /-- Production/exact agreement for the executed shared-memory load body
     (`panShMemLoad` against the exact `shMemLoadHOLFiniteExact`), including the
