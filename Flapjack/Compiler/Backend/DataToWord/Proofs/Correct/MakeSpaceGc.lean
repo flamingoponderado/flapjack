@@ -1,4 +1,4 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.MakeSpaceSlow
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.SilentFfi
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.AllocCall
 
 /-! Connecting the compiled slow allocation path to the production collector. -/
