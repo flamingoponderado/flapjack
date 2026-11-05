@@ -52,9 +52,38 @@ class ReportProofDuplicationTest(unittest.TestCase):
         self.assertEqual(decls[0].lines, 27)
         self.assertEqual(decls[3].kind, "def")
 
-    def test_strip_comments(self):
+    def test_mask_comments_keeps_layout(self):
         text = "a /- b /- nested -/ c -/ d -- e\nf"
-        self.assertEqual(rpd.strip_comments(text), "a  d \nf")
+        masked = rpd.mask_comments(text)
+        self.assertEqual(len(masked), len(text))
+        self.assertEqual(masked.split(), ["a", "d", "f"])
+        self.assertEqual(masked.count("\n"), 1)
+
+    def test_comment_markers_inside_strings(self):
+        text = 'def s := "a -- b /- c" ++ x\ndef t := 1'
+        masked = rpd.mask_comments(text)
+        self.assertIn("++ x", masked)
+        self.assertIn("def t := 1", masked)
+        self.assertNotIn("--", masked)
+        self.assertIn('\'"\'', rpd.mask_comments("c = '\"' -- q"))
+
+    def test_declarations_inside_block_comments_are_ignored(self):
+        self.path.write_text(
+            "/-! Module doc mentioning\ntheorem fake and\ndef also_fake -/\n"
+            "theorem real (x : Nat) : True := by\n  /- an inner comment\ntheorem inner -/\n"
+            "  trivial\n\n/-- doc\ntheorem in_doc -/\ndef after : Nat := 1\n")
+        decls = rpd.parse_decls(self.path, "A.lean")
+        self.assertEqual([d.name for d in decls], ["real", "after"])
+        self.assertEqual(decls[0].lines, 4)
+
+    def test_identical_declarations_cluster_despite_max_df(self):
+        body = "\n".join(f"  have h{i} : {i} + x = x + {i} := by omega" for i in range(25))
+        self.path.write_text("".join(
+            f"theorem t{j} (x : Nat) : True := by\n{body}\n  trivial\n\n" for j in range(4)))
+        decls = [d for d in rpd.parse_decls(self.path, "A.lean") if d.lines >= 20]
+        self.assertEqual(rpd.clusters(decls, 8, 0.8, 200)[0].__len__(), 4)
+        groups = rpd.clusters(decls, 8, 0.8, 2)
+        self.assertEqual([len(g) for g in groups], [4])
 
     def test_clusters_ignore_names_numbers_and_comments(self):
         decls = [d for d in rpd.parse_decls(self.path, "A.lean") if d.lines >= 20]

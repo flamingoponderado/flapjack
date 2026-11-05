@@ -10,12 +10,20 @@ script prints, for every ``.lean`` file under the given roots:
 and, across all of them, clusters of declarations whose proofs are nearly
 identical after normalisation.
 
-Normalisation drops comments, replaces numeric literals by ``0`` and the
-declaration's own name by ``SELF``, and splits the remaining text into
-tokens.  Two declarations are similar when the Jaccard similarity of their
-token ``k``-gram sets reaches ``--threshold``; clusters are the connected
+Comments and the contents of string literals are masked (with their line
+structure kept) before declarations are located, so prose in a doc comment is
+never taken for a declaration.  Normalisation then replaces numeric literals
+by ``0`` and the declaration's own name by ``SELF`` and splits the remaining
+text into tokens.  Two declarations are similar when the Jaccard similarity of
+their token ``k``-gram sets reaches ``--threshold``; clusters are the connected
 components of that relation.  Only declarations with at least ``--min-lines``
 lines are compared, because short lemmas are often alike by design.
+
+Candidate pairs are found through ``k``-grams shared by at most ``--max-df``
+declarations, so a near-duplicate pair whose shared ``k``-grams are all more
+common than that is missed; the near-duplicate figures are therefore a lower
+bound.  Declarations whose normalised token sequences are identical are always
+clustered, whatever ``--max-df`` is.
 
 Usage::
 
@@ -65,30 +73,56 @@ class Decl:
         return f"{self.path}:{self.start} {self.name} ({self.lines} lines)"
 
 
-def strip_comments(text: str) -> str:
-    """Remove Lean line comments and (possibly nested) block comments."""
-    out = []
-    i = 0
-    depth = 0
+def mask_comments(text: str) -> str:
+    """Blank out Lean comments and string-literal contents, keeping newlines.
+
+    Line comments, (nested) block comments and doc comments become spaces;
+    string literals keep their quotes but their contents become spaces, so
+    comment markers inside strings are not mistaken for comments.  The result
+    has the same length and line structure as ``text``."""
+    out = list(text)
     n = len(text)
+    i = 0
+
+    def blank(a: int, b: int) -> None:
+        for j in range(a, b):
+            if out[j] != "\n":
+                out[j] = " "
+
     while i < n:
         if text.startswith("/-", i):
-            depth += 1
-            i += 2
-            continue
-        if depth and text.startswith("-/", i):
-            depth -= 1
-            i += 2
-            continue
-        if depth:
-            i += 1
-            continue
-        if text.startswith("--", i):
+            depth = 0
+            j = i
+            while j < n:
+                if text.startswith("/-", j):
+                    depth += 1
+                    j += 2
+                elif text.startswith("-/", j):
+                    depth -= 1
+                    j += 2
+                    if depth == 0:
+                        break
+                else:
+                    j += 1
+            blank(i, j)
+            i = j
+        elif text.startswith("--", i):
             j = text.find("\n", i)
-            i = n if j < 0 else j
-            continue
-        out.append(text[i])
-        i += 1
+            j = n if j < 0 else j
+            blank(i, j)
+            i = j
+        elif text[i] == "'" and i + 2 < n and text[i + 2] == "'" and text[i + 1] != "\\":
+            i += 3  # a character literal such as '"'
+        elif text.startswith("'\\", i) and i + 3 < n and text[i + 3] == "'":
+            i += 4  # an escaped character literal such as '\"'
+        elif text[i] == '"':
+            j = i + 1
+            while j < n and text[j] != '"':
+                j += 2 if text[j] == "\\" else 1
+            blank(i + 1, min(j, n))
+            i = j + 1
+        else:
+            i += 1
     return "".join(out)
 
 
@@ -98,7 +132,8 @@ def parse_decls(path: pathlib.Path, rel: str) -> list[Decl]:
     A declaration starts at a column-0 declaration keyword and extends to the
     line before the next column-0 line that is not part of its body (another
     declaration, a doc comment, a section command, or ``end``)."""
-    lines = path.read_text(encoding="utf-8", errors="replace").split("\n")
+    raw = path.read_text(encoding="utf-8", errors="replace")
+    lines = mask_comments(raw).split("\n")
     starts: list[tuple[int, str, str]] = []
     for idx, line in enumerate(lines):
         m = DECL_RE.match(line)
@@ -116,15 +151,20 @@ def parse_decls(path: pathlib.Path, rel: str) -> list[Decl]:
     return decls
 
 
-def shingles(decl: Decl, k: int) -> set[int]:
+def normalised_tokens(decl: Decl) -> list[str]:
     toks = []
-    for tok in TOKEN_RE.findall(strip_comments(decl.text)):
+    for tok in TOKEN_RE.findall(decl.text):
         if tok == decl.name:
             toks.append("SELF")
         elif NUM_RE.match(tok):
             toks.append("0")
         else:
             toks.append(tok)
+    return toks
+
+
+def shingles(decl: Decl, k: int) -> set[int]:
+    toks = normalised_tokens(decl)
     if len(toks) < k:
         return {hash(tuple(toks))}
     return {hash(tuple(toks[i : i + k])) for i in range(len(toks) - k + 1)}
@@ -161,6 +201,15 @@ def clusters(decls: list[Decl], k: int, threshold: float, max_df: int) -> list[l
         inter = len(sa & sb)
         if inter / (len(sa) + len(sb) - inter) >= threshold:
             parent[find(a)] = find(b)
+    # Identical normalised declarations are clustered even when every k-gram
+    # they share is above the max_df cutoff.
+    exact: dict[tuple[str, ...], int] = {}
+    for i, d in enumerate(decls):
+        key = tuple(normalised_tokens(d))
+        if key in exact:
+            parent[find(i)] = find(exact[key])
+        else:
+            exact[key] = i
     groups: dict[int, list[Decl]] = defaultdict(list)
     for i, d in enumerate(decls):
         groups[find(i)].append(d)
@@ -237,6 +286,8 @@ def main(argv: list[str]) -> int:
     print(f"Near-duplicate proofs (>= {args.min_lines} lines, Jaccard >= {args.threshold}, "
           f"k = {args.k}): {len(groups)} clusters, {clustered_lines} lines, "
           f"out of {len(big)} compared declarations")
+    print(f"(a lower bound: pairs sharing only k-grams common to more than "
+          f"{args.max_df} declarations are not compared, unless identical)")
     for n, g in enumerate(groups[: args.top], 1):
         print(f"\n[{n}] {len(g)} declarations, {sum(d.lines for d in g)} lines")
         for d in g:
