@@ -1145,4 +1145,54 @@ theorem gcMoveData_simulation {α β : Type} (conf : Config β)
   rw [partialRun, majorRun] at result
   exact result
 
+/-- Flapjack proof infrastructure: the state created by partial collection
+satisfies the simulation invariant before any roots are moved. -/
+theorem partialGc_initialSimInv {α β : Type} (conf : Config β)
+    (heap old current refs : List (HeapElement α β))
+    (good : heapOk heap conf.limit) (generations : heapGenOk heap conf)
+    (segment : heapSegment (conf.genStart, conf.refsStart) heap = some (old, current, refs)) :
+    simInv conf heap { emptyGcState with
+      heap := heap, old := old, r2 := refs, a := conf.genStart, n := heapLength current } := by
+  have gen := heapGenOk_genInv conf heap good generations
+  obtain ⟨_, oldLen, endLen, _⟩ :=
+    heapSegment_imp heap conf.genStart conf.refsStart old current refs segment
+  rw [heapLength_append, oldLen] at endLen
+  have upper := gen.2.1
+  have emptyLength : heapLength ([] : List (HeapElement α β)) = 0 := rfl
+  simp only [simInv, emptyGcState, emptyLength, List.append_nil]
+  refine ⟨gen, Nat.le_refl _, ?_, ?_, ?_, ?_⟩
+  · omega
+  · omega
+  · intro _; simp
+  · intro ptr member
+    exact member
+
+/-- Flapjack proof infrastructure: translating the initial partial state gives
+the major collector's initial state for the current generation. -/
+theorem partialGc_initialTranslation {α β : Type} (conf : Config β)
+    (heap old current refs : List (HeapElement α β))
+    (generations : heapGenOk heap conf)
+    (segment : heapSegment (conf.genStart, conf.refsStart) heap = some (old, current, refs)) :
+    toGenState conf { emptyGcState with
+      heap := heap, old := old, r2 := refs, a := conf.genStart, n := heapLength current } =
+    ({ emptyGcState with
+      heap := toGenHeapList conf current, n := (toGenConf conf).limit,
+      ok := decide (heapLength (toGenHeapList conf current) = (toGenConf conf).limit) } :
+      GcState (DataSort (HeapAddress α) α) β) := by
+  obtain ⟨_, oldLen, endLen, _⟩ :=
+    heapSegment_imp heap conf.genStart conf.refsStart old current refs segment
+  rw [heapLength_append, oldLen] at endLen
+  obtain ⟨_, _, _, lower, upper, _⟩ := generations
+  have limit : (toGenConf conf).limit = heapLength current := by
+    simp only [toGenConf]
+    omega
+  have translated : toGenHeap conf heap = toGenHeapList conf current := by
+    simp [toGenHeap, heapRestrict, segment]
+  have empty : toGenHeap conf ([] : List (HeapElement α β)) = [] := by
+    by_cases a : conf.genStart = 0 <;> by_cases b : conf.refsStart = 0 <;>
+      simp [toGenHeap, heapRestrict, heapSegment, heapSplit, toGenHeapList, heapLength, a, b]
+  have length : heapLength (current.map (toGenHeapElement conf)) = heapLength current := by
+    simpa [toGenHeapList] using heapLength_toGenHeapList conf current
+  simp [toGenState, emptyGcState, translated, empty, limit, toGenHeapList, length]
+
 end Flapjack.Compiler.Backend.GenGcPartial
