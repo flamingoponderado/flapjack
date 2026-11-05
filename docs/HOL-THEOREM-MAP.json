@@ -1,6 +1,30 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "gc_move_simulation",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
+  "lean_name": "gcMove_simulation_forward",
+  "statement_status": "pending_statement_review",
+  "reviewer": "Forwarded current-generation pointer case compared with partial_move_simulation_statement_typed and the source proof; a typed replay of the local HOL theorem and assembly of all move cases remain pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "gc_move_simulation",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
+  "lean_name": "gcMove_simulation_data",
+  "statement_status": "pending_statement_review",
+  "reviewer": "Data constructor case compared with partial_move_simulation_statement_typed and source case split. The original theorem is local; a typed HOL proof replay and assembled simulation remain pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "gc_move_simulation",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
+  "lean_name": "gcMove_simulation_protected",
+  "statement_status": "pending_statement_review",
+  "reviewer": "Protected pointer branches (below the generation or at/above references) compared with partial_move_simulation_statement_typed and source case split. The original theorem is local; a typed HOL proof replay and assembled simulation remain pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
   "hol_name": "data_sort",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
   "lean_name": "DataSort",

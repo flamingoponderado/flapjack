@@ -58,6 +58,18 @@ val _ = show "partial_gen_inv_typed" gen_gc_partialTheory.gen_inv_def;
 val _ = show "partial_has_old_ptr_typed" gen_gc_partialTheory.has_old_ptr_def;
 val _ = show "partial_all_old_ptrs_typed" gen_gc_partialTheory.all_old_ptrs_def;
 val _ = show "partial_sim_inv_typed" gen_gc_partialTheory.sim_inv_def;
+val partialMoveSimulation = ``!ptr ptr' state state' ptr1' state1'.
+  (gen_gc_partial$gc_move conf state ptr = (ptr', state')) /\
+  (!p u. (ptr = Pointer p u) ==> p < heap_length state.heap) /\
+  (heap_length state.heap = conf.limit) /\ sim_inv conf heap0 state /\
+  (gen_gc$gc_move (to_gen_conf conf) (to_gen_state conf state)
+    (to_gen_heap_address conf ptr) = (ptr1', state1')) /\ state1'.ok ==>
+  sim_inv conf heap0 state' /\
+  ((ptr1', state1') = (to_gen_heap_address conf ptr', to_gen_state conf state')) /\
+  all_old_ptrs conf [ptr'] SUBSET all_old_ptrs conf [ptr]``;
+val _ = (print "partial_move_simulation_statement_typed=";
+  Lib.with_flag (Globals.show_types,true) print_term partialMoveSimulation; print "\n");
+
 
 val _ = show "full_gc_IMP_typed" data_to_word_gcProofTheory.full_gc_IMP;
 val _ = show "word_gc_fun_lemma_Simple_typed" data_to_word_gcProofTheory.word_gc_fun_lemma_Simple;
