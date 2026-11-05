@@ -2073,4 +2073,198 @@ theorem partialGc_heapLength {α β : Type} (conf : Config β)
   simp only [heapLength_append, heapLength_heapExpand, oldEq, oldLen]
   omega
 
+/-- Equal flattened root and reference traversals split at the original
+root-list boundary. The local HOL proof has not yet been replayed. -/
+@[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "ADDR_MAP_APPEND_LENGTH_IMP"
+  (fmap_as_finite_support_parameters := [f])]
+theorem addrMap_appendLength {α β : Type} (conf : Config β)
+    (roots roots1 : List (HeapAddress α)) (refs refs1 : List (HeapElement α β))
+    (f : HolFiniteMapExact Nat Nat)
+    (mapped : addrMap (holFapply f) (toGenRoots conf roots ++ refsToRoots conf refs) =
+      toGenRoots conf roots1 ++ refsToRoots conf refs1)
+    (sameLength : roots.length = roots1.length) :
+    addrMap (holFapply f) (toGenRoots conf roots) = toGenRoots conf roots1 ∧
+      addrMap (holFapply f) (refsToRoots conf refs) = refsToRoots conf refs1 := by
+  rw [addrMap_append] at mapped
+  apply List.append_inj mapped
+  simpa [toGenRoots, ← addrMap_length] using sameLength
+
+/-- Canonical finite-map parameter codec for splitting mapped roots. -/
+theorem holFmapAsFiniteSupportParamWitness_addrMap_appendLength_f
+    (f : HolFiniteMapExact Nat Nat) (key : Nat) :
+    (GcMapBroad.ofBroad (GcMapBroad.toBroad f)).lookup key = f.lookup key ∧
+    (GcMapBroad.ofBroad (GcMapBroad.toBroad f)).finiteSupport = f.finiteSupport ∧
+    GcMapBroad.ofBroad (GcMapBroad.toBroad f) = f :=
+  holFmapAsFiniteSupportParamWitness_gcRelated_f f key
+
+/-- Flapjack proof infrastructure: one translated root correspondence gives
+the matching combined forwarding-map result and its domain membership. -/
+theorem translatedRoot_forwarding {α β γ : Type} (conf : Config γ)
+    (heap : List (HeapElement α β)) (f : HolFiniteMapExact Nat Nat)
+    (root target : HeapAddress α)
+    (valid : ∀ ptr value, root = .pointer ptr value → isSomeDataElement (heapLookup ptr heap))
+    (domain : ∀ ptr value, toGenHeapAddress conf root = .pointer ptr value → f.lookup ptr ≠ none)
+    (related : addrApply (holFapply f) (toGenHeapAddress conf root) = toGenHeapAddress conf target) :
+    target = addrApply (holFapply (newForwardMap f conf heap)) root ∧
+      ∀ ptr value, root = .pointer ptr value → (newForwardMap f conf heap).lookup ptr ≠ none := by
+  cases root with
+  | data value =>
+    cases target with
+    | data targetValue => simp [toGenHeapAddress, addrApply] at related ⊢; exact related.symm
+    | pointer ptr targetValue =>
+      by_cases lower : ptr < conf.genStart <;> by_cases upper : conf.refsStart ≤ ptr <;>
+        simp [toGenHeapAddress, addrApply, lower, upper] at related
+  | pointer ptr value =>
+    by_cases outside : ptr < conf.genStart ∨ conf.refsStart ≤ ptr
+    · have old : ptr ∈ fOldPtrs conf heap := ⟨valid ptr value rfl, outside⟩
+      have mapped := newForwardMap_old f conf heap ptr old
+      have mapValue : holFapply (newForwardMap f conf heap) ptr = ptr := holFapply_of_lookup mapped
+      have protectedSource : toGenHeapAddress conf (.pointer ptr value) =
+          .data (.protectedValue (.pointer ptr value)) := by
+        rcases outside with lower | upper
+        · simp [toGenHeapAddress, lower]
+        · by_cases lower : ptr < conf.genStart <;> simp [toGenHeapAddress, lower, upper]
+      rw [protectedSource] at related
+      simp only [addrApply] at related
+      have targetEq : target = .pointer ptr value := by
+        cases target with
+        | data targetValue => simp [toGenHeapAddress] at related
+        | pointer targetPtr targetValue =>
+          by_cases lower : targetPtr < conf.genStart <;> by_cases upper : conf.refsStart ≤ targetPtr <;>
+            simp_all [toGenHeapAddress]
+      subst target
+      simp [addrApply, mapValue, mapped]
+    · have lower : conf.genStart ≤ ptr := by omega
+      have upper : ptr < conf.refsStart := by omega
+      have nonlower : ¬ ptr < conf.genStart := Nat.not_lt.mpr lower
+      have nonupper : ¬ conf.refsStart ≤ ptr := Nat.not_le.mpr upper
+      have source : toGenHeapAddress conf (.pointer ptr value) =
+          .pointer (ptr - conf.genStart) (.real value) := by
+        simp [toGenHeapAddress, nonlower, nonupper]
+      have present := domain (ptr - conf.genStart) (.real value) source
+      cases found : f.lookup (ptr - conf.genStart) with
+      | none => exact False.elim (present found)
+      | some dest =>
+        have mapped : (newForwardMap f conf heap).lookup ptr = some (conf.genStart + dest) := by
+          rw [newForwardMap_current f conf heap ptr lower upper, found]
+          rfl
+        have mapValue := holFapply_of_lookup mapped
+        rw [source] at related
+        simp only [addrApply, holFapply_of_lookup found] at related
+        cases target with
+        | data targetValue => simp [toGenHeapAddress] at related
+        | pointer targetPtr targetValue =>
+          by_cases targetLower : targetPtr < conf.genStart
+          · simp [toGenHeapAddress, targetLower] at related
+          · by_cases targetUpper : conf.refsStart ≤ targetPtr
+            · simp [toGenHeapAddress, targetLower, targetUpper] at related
+            · simp [toGenHeapAddress, targetLower, targetUpper] at related
+              obtain ⟨offsetEq, rfl⟩ := related
+              have targetEq : targetPtr = conf.genStart + dest := by omega
+              subst targetPtr
+              simp [addrApply, mapValue, mapped]
+
+/-- Flapjack infrastructure: address mapping is pointwise address application. -/
+theorem addrMap_eq_mapApply {α : Type} (rename : Nat → Nat) (roots : List (HeapAddress α)) :
+    addrMap rename roots = roots.map (addrApply rename) := by
+  induction roots with
+  | nil => rfl
+  | cons head tail ih => cases head <;> simp [addrMap, addrApply, ih]
+
+/-- Flapjack proof infrastructure: translated root correspondence determines
+the complete partial-collector forwarding map on the original roots. -/
+theorem translatedRoots_forwarding {α β γ : Type} (conf : Config γ)
+    (heap : List (HeapElement α β)) (f : HolFiniteMapExact Nat Nat)
+    (roots roots1 : List (HeapAddress α)) (valid : rootsOk roots heap)
+    (domain : ∀ ptr value, .pointer ptr value ∈ toGenRoots conf roots → f.lookup ptr ≠ none)
+    (mapped : addrMap (holFapply f) (toGenRoots conf roots) = toGenRoots conf roots1)
+    (sameLength : roots.length = roots1.length) :
+    roots1 = addrMap (holFapply (newForwardMap f conf heap)) roots ∧
+      ∀ ptr value, .pointer ptr value ∈ roots → (newForwardMap f conf heap).lookup ptr ≠ none := by
+  induction roots generalizing roots1 with
+  | nil =>
+    cases roots1 with
+    | nil => simp [addrMap]
+    | cons head tail => simp at sameLength
+  | cons root roots ih =>
+    cases roots1 with
+    | nil => simp at sameLength
+    | cons root1 roots1 =>
+      have mapped' : (root :: roots).map (fun value =>
+          addrApply (holFapply f) (toGenHeapAddress conf value)) =
+          (root1 :: roots1).map (toGenHeapAddress conf) := by
+        simpa [toGenRoots, addrMap_eq_mapApply, List.map_map, Function.comp_def] using mapped
+      simp only [List.map_cons, List.cons.injEq] at mapped'
+      have rootValid : ∀ ptr value, root = .pointer ptr value → isSomeDataElement (heapLookup ptr heap) := by
+        intro ptr value eq
+        apply valid ptr value
+        simp [← eq]
+      have rootDomain : ∀ ptr value, toGenHeapAddress conf root = .pointer ptr value → f.lookup ptr ≠ none := by
+        intro ptr value eq
+        apply domain ptr value
+        simp only [toGenRoots, List.map_cons, List.mem_cons]
+        exact Or.inl eq.symm
+      obtain ⟨headEq, headDomain⟩ := translatedRoot_forwarding conf heap f root root1 rootValid rootDomain mapped'.1
+      have tailValid : rootsOk roots heap := by
+        intro ptr value member
+        exact valid ptr value (by simp [member])
+      have tailDomain : ∀ ptr value, .pointer ptr value ∈ toGenRoots conf roots → f.lookup ptr ≠ none := by
+        intro ptr value member
+        apply domain ptr value
+        simp only [toGenRoots, List.map_cons, List.mem_cons]
+        exact Or.inr member
+      have tailMapped : addrMap (holFapply f) (toGenRoots conf roots) = toGenRoots conf roots1 := by
+        simpa [toGenRoots, addrMap_eq_mapApply, List.map_map, Function.comp_def] using mapped'.2
+      have tailLength : roots.length = roots1.length := by simpa using sameLength
+      obtain ⟨tailEq, tailDefined⟩ := ih roots1 tailValid tailDomain tailMapped tailLength
+      refine ⟨?_, ?_⟩
+      · simpa [addrMap_eq_mapApply] using congrArg₂ List.cons headEq tailEq
+      · intro ptr value member
+        simp only [List.mem_cons] at member
+        rcases member with equal | member
+        · exact headDomain ptr value equal.symm
+        · exact tailDefined ptr value member
+
+/-- Flapjack proof infrastructure: on valid input, the successful partial
+collector's roots are exactly the original roots renamed by its combined
+forwarding map, which is defined on every original root pointer. -/
+theorem partialGc_rootsForwarded {α β : Type} (conf : Config β)
+    (roots : List (HeapAddress α)) (heap : List (HeapElement α β))
+    (validRoots : rootsOk roots heap) (validHeap : heapOk heap conf.limit)
+    (generations : heapGenOk heap conf) :
+    ∃ (roots1 : List (HeapAddress α)) (state1 : GcState α β) (f : HolFiniteMapExact Nat Nat),
+      partialGc conf (roots, heap) = (roots1, state1) ∧
+      roots1 = addrMap (holFapply (newForwardMap f conf heap)) roots ∧
+      (∀ ptr value, .pointer ptr value ∈ roots → (newForwardMap f conf heap).lookup ptr ≠ none) ∧
+      simInv conf heap state1 ∧ state1.h2 = [] ∧ state1.ok = true := by
+  have gen := heapGenOk_genInv conf heap validHeap generations
+  obtain ⟨lower, upper, old, current, refs, segment, oldNonrefs, currentNonrefs, refData, _⟩ := gen
+  have nonrefs : List.Forall (fun e => heapElementIsRef conf e = false) (old ++ current) :=
+    List.forall_append.mpr ⟨oldNonrefs, currentNonrefs⟩
+  have translatedRoots := rootsOk_simulation conf roots heap old current refs validRoots validHeap segment lower
+  have translatedHeap := heapOk_simulation conf heap old current refs validHeap segment lower upper
+  obtain ⟨majorState, majorRun, majorDomain, majorInv, _⟩ :=
+    GenGc.genGc_invariant (toGenConf conf) (toGenRoots conf roots ++ refsToRoots conf refs)
+      (toGenHeapList conf current) translatedRoots translatedHeap
+  have majorOk : majorState.ok = true := majorInv.2.2.2.2.1
+  let f := heapMap 0 majorState.heap
+  have majorRun' : GenGc.genGc (toGenConf conf)
+      (toGenRoots conf roots ++ refsToRoots conf refs, toGenHeapList conf current) =
+      (addrMap (holFapply f) (toGenRoots conf roots ++ refsToRoots conf refs), majorState) := by
+    change GenGc.genGc (toGenConf conf)
+      (toGenRoots conf roots ++ refsToRoots conf refs, toGenHeapList conf current) =
+      (addrMap (holFapply (heapMap 0 majorState.heap)) (toGenRoots conf roots ++ refsToRoots conf refs), majorState) at majorRun
+    exact majorRun
+  cases partialRun : partialGc conf (roots, heap) with
+  | mk roots1 state1 =>
+    obtain ⟨rootsEq, _, invariant, empty, ok⟩ := partialGc_simulation conf roots roots1 heap old current refs
+      state1 _ majorState partialRun generations ⟨lower, upper⟩ segment nonrefs refData validRoots majorRun' validHeap majorOk
+    have length := partialGc_length conf roots roots1 heap state1 partialRun
+    have split := addrMap_appendLength conf roots roots1 refs state1.r1 f rootsEq length.symm
+    have rootsDomain : ∀ ptr value, .pointer ptr value ∈ toGenRoots conf roots → f.lookup ptr ≠ none := by
+      intro ptr value member
+      exact majorDomain ptr value (List.mem_append.mpr (Or.inl member))
+    obtain ⟨mapped, domain⟩ := translatedRoots_forwarding conf heap f roots roots1 validRoots rootsDomain split.1 length.symm
+    exact ⟨roots1, state1, f, rfl, mapped, domain, invariant, empty, ok⟩
+
 end Flapjack.Compiler.Backend.GenGcPartial

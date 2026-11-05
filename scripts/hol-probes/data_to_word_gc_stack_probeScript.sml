@@ -104,6 +104,15 @@ val partialGcHeapLength = ``!roots'.
   (heap_length (state1.old ++ state1.h1 ++ heap_expand state1.n) = conf.refs_start)``;
 val _ = (print "partial_gc_heap_length_statement_typed=";
   Lib.with_flag (Globals.show_types,true) print_term partialGcHeapLength; print "\n");
+val partialAddrMapAppendLength = ``
+  !(roots : 'a heap_address list) (heap_refs : ('a,'b) heap_element list)
+    (f : num |-> num) roots1 (r1 : ('a,'b) heap_element list) (conf : 'b gen_gc_partial_conf).
+  (ADDR_MAP ($FAPPLY f) (to_gen_roots conf roots ++ refs_to_roots conf heap_refs) =
+    to_gen_roots conf roots1 ++ refs_to_roots conf r1) /\ (LENGTH roots = LENGTH roots1) ==>
+  (ADDR_MAP ($FAPPLY f) (to_gen_roots conf roots) = to_gen_roots conf roots1) /\
+  (ADDR_MAP ($FAPPLY f) (refs_to_roots conf heap_refs) = refs_to_roots conf r1)``;
+val _ = (print "partial_addr_map_append_length_statement_typed=";
+  Lib.with_flag (Globals.show_types,true) print_term partialAddrMapAppendLength; print "\n");
 val partialNewFDomain = ``
   (!i. i IN FDOM f ==> isSomeDataElement (heap_lookup (i + conf.gen_start) heap)) ==>
   ((x IN FDOM (new_f f conf heap)) =

@@ -1,6 +1,15 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "ADDR_MAP_APPEND_LENGTH_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
+  "lean_name": "addrMap_appendLength",
+  "statement_status": "pending_statement_review",
+  "fmap_as_finite_support_parameters": ["f"],
+  "reviewer": "Compared partial_addr_map_append_length_statement_typed, including the common reference and configuration payload and the canonical finite-map parameter; the local HOL proof replay remains pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
   "hol_name": "partial_gc_heap_length_lemma",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
   "lean_name": "partialGc_heapLength",
