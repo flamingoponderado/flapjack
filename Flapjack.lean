@@ -296,6 +296,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.WordTotal
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.WordLabels
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.WordFragment
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.WordSpaceFragment
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.WordConstructorFragment
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.TailCallSpace
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.ReturningCallSpace
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.DirectCallSpace
