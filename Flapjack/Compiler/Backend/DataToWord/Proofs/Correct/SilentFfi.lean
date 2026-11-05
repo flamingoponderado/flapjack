@@ -134,4 +134,19 @@ theorem silentFfi64_related {C F : Type} (conf : Config) (l1 l2 : Nat)
     exact silentFfi64_enabled_related conf l1 l2 source target locs related live saved sourceCut
       nextFree currHeap heapLength enabled nextStore heapStore lengthStore
 
+/-- The candidate memory relation supplies the heap words required by the
+allocation diagnostic, so no additional target-store premises are needed. -/
+theorem silentFfi64_related_fromState {C F : Type} (conf : Config) (l1 l2 : Nat)
+    (source : DataSem.State C F) (target : WordSemStateFiniteExact 64 C F)
+    (locs : List (Nat × Nat)) (related : Gc.stateRel64 conf l1 l2 source target none locs)
+    (live : NumSet) (saved : Spt DataSem.Value)
+    (sourceCut : DataSem.cutEnv live source.locals = some saved) :
+    ∃ targetNext, WordSemStateFiniteExact.evaluate (silentFfi conf 3 (adjustSets live)) target =
+      (none, targetNext) ∧ Gc.stateRel64 conf l1 l2 { source with locals := saved } targetNext none locs := by
+  have memory := related.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2
+  obtain ⟨heap, limit, a, sp, sp1, gens, heapMem, _⟩ := memory
+  obtain ⟨curr, other, _, _, currStore, _, nextStore, _, _, lengthStore, _⟩ := heapMem.2.2.2.2.2.2.2
+  exact silentFfi64_related conf l1 l2 source target locs related live saved sourceCut
+    _ curr _ nextStore currStore lengthStore
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Correct

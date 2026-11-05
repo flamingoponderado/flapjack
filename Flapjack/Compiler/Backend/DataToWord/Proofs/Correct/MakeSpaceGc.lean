@@ -56,6 +56,75 @@ theorem makeSpace64_slow_allocator {C F : Type} (conf : Config) (secn label l1 l
   simp only [WordSemStateFiniteExact.evaluate, read, makeSpaceRequest64_eq_gcAllocSize, alloc]
   simp only [prepared, makeSpaceRequest64_eq_gcAllocSize]
 
+/-- For either diagnostic configuration, the compiled slow path reaches the
+allocator with the source live environment and a related word state. The
+remaining sequence includes the real allocator and the post-allocation FFI. -/
+theorem makeSpace64_slow_enterAllocator {C F : Type} (conf : Config) (secn label l1 l2 : Nat)
+    (source : DataSem.State C F) (target : WordSemStateFiniteExact 64 C F)
+    (locs : List (Nat × Nat)) (related : stateRel64 conf l1 l2 source target none locs)
+    (amount : Nat) (live : NumSet) (saved : Spt DataSem.Value)
+    (cut : DataSem.cutEnv live source.locals = some saved)
+    (nextFree trigger : BitVec 64)
+    (nextStore : target.store.lookup .nextFree = some (.word nextFree))
+    (triggerStore : target.store.lookup .triggerGC = some (.word trigger))
+    (slow : Compiler.Encoders.Asm.wordCmpHOL .lower (trigger - nextFree) (makeSpaceRequest64 amount) = true) :
+    ∃ targetNext,
+      WordSemStateFiniteExact.evaluate (compileControl64 conf secn label (.makeSpace amount live)).1 target =
+        WordSemStateFiniteExact.evaluate
+          (.seq (.assign 1 (.const (makeSpaceRequest64 amount)))
+            (.seq (.alloc 1 (adjustSets live)) (silentFfi conf 3 (adjustSets live)))) targetNext ∧
+      stateRel64 conf l1 l2 { source with locals := saved } targetNext none locs ∧
+      DataSem.cutEnv live saved = some saved := by
+  let initial := WordSemStateFiniteExact.setVar 1 (.word (trigger - nextFree)) target
+  have initialRel := stateRel64_setScratch1 conf l1 l2 source target locs related (.word (trigger - nextFree))
+  obtain ⟨after, run, afterRel⟩ := silentFfi64_related_fromState conf l1 l2 source initial locs initialRel live saved cut
+  have clocks : initial.clock = after.clock := by
+    exact initialRel.2.1.trans afterRel.2.1.symm
+  let next := { after with clock := (if initial.clock < after.clock then initial.clock else after.clock), termdep := initial.termdep }
+  have nextRel : stateRel64 conf l1 l2 { source with locals := saved } next none locs := by
+    simpa [next, clocks, stateRel64] using afterRel
+  refine ⟨next, ?_, nextRel, cutEnv_repeat live source.locals saved cut⟩
+  rw [makeSpace64_slow_transition conf secn label target amount live nextFree trigger nextStore triggerStore slow]
+  change WordSemStateFiniteExact.evaluate (.seq (silentFfi conf 3 (adjustSets live))
+    (.seq (.assign 1 (.const (makeSpaceRequest64 amount)))
+      (.seq (.alloc 1 (adjustSets live)) (silentFfi conf 3 (adjustSets live))))) initial = _
+  simp only [WordSemStateFiniteExact.evaluate, run, WordSemStateFiniteExact.fixClock]
+  rfl
+
+/-- The diagnostic-independent slow path supplies the real allocator with
+its proved collector result. The post-allocation diagnostic remains in the
+executed continuation and is not discharged by this intermediate theorem. -/
+theorem makeSpace64_slow_collector {C F : Type} (conf : Config) (secn label l1 l2 : Nat)
+    (source : DataSem.State C F) (target : WordSemStateFiniteExact 64 C F)
+    (locs : List (Nat × Nat)) (related : stateRel64 conf l1 l2 source target none locs)
+    (amount : Nat) (live : NumSet) (saved : Spt DataSem.Value)
+    (cut : DataSem.cutEnv live source.locals = some saved)
+    (nextFree trigger : BitVec 64)
+    (nextStore : target.store.lookup .nextFree = some (.word nextFree))
+    (triggerStore : target.store.lookup .triggerGC = some (.word trigger))
+    (slow : Compiler.Encoders.Asm.wordCmpHOL .lower (trigger - nextFree) (makeSpaceRequest64 amount) = true) :
+    ∃ entry sourceNext targetNext enough,
+      WordSemStateFiniteExact.evaluate (compileControl64 conf secn label (.makeSpace amount live)).1 target =
+        WordSemStateFiniteExact.evaluate
+          (.seq (.assign 1 (.const (makeSpaceRequest64 amount)))
+            (.seq (.alloc 1 (adjustSets live)) (silentFfi conf 3 (adjustSets live)))) entry ∧
+      WordSemStateFiniteExact.alloc (gcAllocSize amount) (adjustSets live)
+        (WordSemStateFiniteExact.setVar 1 (.word (makeSpaceRequest64 amount)) entry) =
+        (if enough then (none, targetNext) else (some .notEnoughSpace, WordSemStateFiniteExact.flushState true targetNext)) ∧
+      stateRel64 conf l1 l2 sourceNext targetNext none locs ∧
+      sourceNext.locals = saved ∧ sourceNext.stack = source.stack ∧ sourceNext.space = 0 ∧
+      (enough = true → stateRel64 conf l1 l2 (DataSem.addSpace { source with locals := saved } amount) targetNext none locs) := by
+  obtain ⟨entry, execution, entryRel, repeated⟩ := makeSpace64_slow_enterAllocator conf secn label l1 l2
+    source target locs related amount live saved cut nextFree trigger nextStore triggerStore slow
+  let prepared := WordSemStateFiniteExact.setVar 1 (.word (makeSpaceRequest64 amount)) entry
+  have preparedRel := stateRel64_setScratch1 conf l1 l2 { source with locals := saved } entry locs entryRel (.word (makeSpaceRequest64 amount))
+  obtain ⟨sourceNext, targetNext, enough, alloc, resultRel, localsEq, stackEq, spaceEq,
+    _, _, _, _, _, reserved, _⟩ := stateRel64_alloc conf l1 l2 amount
+      { source with locals := saved } prepared locs preparedRel live saved repeated
+  refine ⟨entry, sourceNext, targetNext, enough, execution, ?_, resultRel, localsEq, stackEq, spaceEq, ?_⟩
+  · simpa [prepared, makeSpaceRequest64_eq_gcAllocSize] using alloc
+  · simpa using reserved
+
 /-- Flapjack infrastructure: after cutting locals, source heap sizing can use
 the collector proof's explicit default global root. -/
 theorem sizeOfHeap_cut_roots {C F : Type} (source : DataSem.State C F) (saved : Spt DataSem.Value) :

@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MakeSpace
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.Scratch
+import Flapjack.Compiler.Backend.DataSpace.Proofs.Cuts
 
 /-! Restricting both local environments after the diagnostic call. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
@@ -57,5 +58,36 @@ theorem stateRel64_cutBoth {C F : Type} (conf : Config) (l1 l2 : Nat)
       · exact Or.inl (Or.inr globalMember)
       · exact Or.inr stackMember
     · simpa using memory
+
+/-- Repeating a successful source cut leaves its normalized result unchanged. -/
+theorem cutEnv_repeat {α : Type} (live : NumSet) (source saved : Spt α)
+    (cut : DataSem.cutEnv live source = some saved) :
+    DataSem.cutEnv live saved = some saved := by
+  classical
+  have subset : ∀ key, sptMem key live → sptMem key source := by
+    unfold DataSem.cutEnv at cut
+    split at cut
+    · assumption
+    · contradiction
+  have savedEq : saved = sptMkWf (sptInter source live) := by
+    unfold DataSem.cutEnv at cut
+    split at cut
+    · simpa using cut.symm
+    · contradiction
+  have present : ∀ key, sptMem key live → sptMem key saved := by
+    intro key member
+    obtain ⟨v, hv⟩ := (sptMem_iff_lookup key source).mp (subset key member)
+    obtain ⟨u, hu⟩ := (sptMem_iff_lookup key live).mp member
+    apply (sptMem_iff_lookup key saved).mpr
+    refine ⟨v, ?_⟩
+    rw [savedEq, sptLookup_mkWf, sptLookup_sptInterCases, hv, hu]
+  have same : sptMkWf (sptInter saved live) = saved := by
+    apply (sptEqThm _ _ ⟨DataSpace.sptWf_normalize _, by
+      rw [savedEq]; exact DataSpace.sptWf_normalize _⟩).2
+    intro key
+    rw [sptLookup_mkWf, sptLookup_sptInterCases, savedEq, sptLookup_mkWf,
+      sptLookup_sptInterCases]
+    cases sptLookup key source <;> cases sptLookup key live <;> rfl
+  simp only [DataSem.cutEnv, if_pos present, same]
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
