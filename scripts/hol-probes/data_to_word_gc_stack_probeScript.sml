@@ -176,6 +176,7 @@ val _ = show "heap_map1_typed" gc_sharedTheory.heap_map1_def;
 val _ = show "heap_addresses_typed" gc_sharedTheory.heap_addresses_def;
 val _ = show "heap_filter_aux_addresses_union_typed" gc_sharedTheory.heap_filter_aux_heap_addresses_UNION;
 val _ = show "heap_length_heap_filter_typed" gc_sharedTheory.heap_length_heap_filter;
+val _ = show "heap_length_heap_expand_typed" gc_sharedTheory.heap_length_heap_expand;
 val _ = show "heap_length_heap_filter_eq_typed" gc_sharedTheory.heap_length_heap_filter_eq;
 val _ = show "heap_length_heap_filter_insert_typed_replay" (prove (
   ``!heap. ~(e IN s) ==> (heap_length (heap_filter (e INSERT s) heap) =

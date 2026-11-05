@@ -1331,6 +1331,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "heap_length_heap_expand",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/Filter.lean",
+  "lean_name": "heapLength_heapExpand",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared heap_length_heap_expand_typed: heap expansion has exactly the requested word length for arbitrary natural size and independent heap payload types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
   "hol_name": "heap_length_heap_filter_INSERT",
   "lean_path": "Flapjack/Compiler/Backend/GcShared/Filter.lean",
   "lean_name": "heapLength_heapFilter_insert",

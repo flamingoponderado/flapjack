@@ -6,6 +6,12 @@ import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 /-! Heap filtering by element starting addresses. -/
 namespace Flapjack.Compiler.Backend
 
+/-- Expanding unused heap space produces the requested number of words. -/
+@[hol "cakeml/compiler/backend/gc/gc_sharedScript.sml" "heap_length_heap_expand"]
+theorem heapLength_heapExpand {α β : Type} (n : Nat) :
+    heapLength (heapExpand n : List (HeapElement α β)) = n := by
+  cases n <;> simp [heapExpand, heapLength, elLength]
+
 private theorem heapFilterAux_of_covers {α β : Type} (heap : List (HeapElement α β))
     (offset : Nat) (selected : Nat → Prop)
     (covers : ∀ p, heapAddresses offset heap p → selected p) :
