@@ -397,6 +397,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockEquality
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockElement
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockStack
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.FreshBlock
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.FreshBlockRef
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockExplode
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.PointerEquality
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.SimpleEquality
