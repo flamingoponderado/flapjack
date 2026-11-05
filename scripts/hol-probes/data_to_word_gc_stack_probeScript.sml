@@ -81,6 +81,19 @@ val partialMoveListSimulation = ``!ptr ptr' state state' ptr1' state1'.
   all_old_ptrs conf ptr' SUBSET all_old_ptrs conf ptr``;
 val _ = (print "partial_move_list_simulation_statement_typed=";
   Lib.with_flag (Globals.show_types,true) print_term partialMoveListSimulation; print "\n");
+val partialRefListSimulation = ``!conf state refs0 heap0 state1 state1' refs1 refs1'.
+  (gen_gc_partial$gc_move_ref_list conf state refs0 = (refs1,state1)) /\
+  (gen_gc$gc_move_list (to_gen_conf conf) (to_gen_state conf state)
+    (refs_to_roots conf refs0) = (refs1',state1')) /\ state1'.ok /\
+  sim_inv conf heap0 state /\
+  (!ptrs l d ptr u. MEM (Pointer ptr u) ptrs /\ MEM (DataElement ptrs l d) refs0 ==>
+    ptr < heap_length state.heap) /\
+  (heap_length state.heap = conf.limit) /\ EVERY isDataElement refs0 ==>
+  sim_inv conf heap0 state1 /\ (refs1' = refs_to_roots conf refs1) /\
+  (state1' = to_gen_state conf state1) /\ has_old_ptr conf refs1 SUBSET has_old_ptr conf refs0``;
+val _ = (print "partial_ref_list_simulation_statement_typed=";
+  Lib.with_flag (Globals.show_types,true) print_term partialRefListSimulation; print "\n");
+
 
 
 

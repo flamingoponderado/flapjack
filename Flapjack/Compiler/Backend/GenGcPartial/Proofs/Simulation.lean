@@ -754,4 +754,97 @@ theorem gcMoveList_simulation {α β : Type} (conf : Config β)
         obtain ⟨v, member, outside⟩ := tailOld p old
         exact ⟨v, by simp [member], outside⟩
 
+/-- Major root traversal factors over concatenated input lists. -/
+theorem majorMoveList_append {α β : Type} (conf : GenGc.Config β) (state : GcState α β)
+    (xs ys : List (HeapAddress α)) :
+    GenGc.gcMoveList conf state (xs ++ ys) =
+      let (xs1, middle) := GenGc.gcMoveList conf state xs
+      let (ys1, final) := GenGc.gcMoveList conf middle ys
+      (xs1 ++ ys1, final) := by
+  induction xs generalizing state with
+  | nil => simp [GenGc.gcMoveList]
+  | cons head tail ih =>
+    simp only [List.cons_append, GenGc.gcMoveList]
+    generalize move : GenGc.gcMove conf state head = result
+    obtain ⟨head1, middle⟩ := result
+    simp only
+    rw [ih middle]
+
+/-- Reference-object traversal simulates a major root-list traversal over the
+flattened translated children and preserves the protected-pointer subset. -/
+@[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "gc_move_ref_list_simulation"]
+theorem gcMoveRefList_simulation {α β γ : Type} (conf : Config β)
+    (state state1 : GcState α β) (refs0 refs1 : List (HeapElement α γ))
+    (heap0 : List (HeapElement α β))
+    (majorRoots : List (HeapAddress (DataSort (HeapAddress α) α)))
+    (majorState : GcState (DataSort (HeapAddress α) α) β)
+    (partialRun : gcMoveRefList conf state refs0 = (refs1, state1))
+    (majorRun : GenGc.gcMoveList (toGenConf conf) (toGenState conf state) (refsToRoots conf refs0) =
+      (majorRoots, majorState)) (majorOk : majorState.ok = true)
+    (invariant : simInv conf heap0 state)
+    (bounded : ∀ ptrs len data ptr u, .pointer ptr u ∈ ptrs ∧ .dataElement ptrs len data ∈ refs0 →
+      ptr < heapLength state.heap)
+    (heapLengthEq : heapLength state.heap = conf.limit) (allData : List.Forall isDataElement refs0) :
+    simInv conf heap0 state1 ∧ majorRoots = refsToRoots conf refs1 ∧ majorState = toGenState conf state1 ∧
+    ∀ p, hasOldPtr conf refs1 p → hasOldPtr conf refs0 p := by
+  induction refs0 generalizing state state1 refs1 majorRoots majorState with
+  | nil =>
+    simp only [gcMoveRefList, Prod.mk.injEq] at partialRun
+    obtain ⟨rfl, rfl⟩ := partialRun
+    simp only [refsToRoots, GenGc.gcMoveList, Prod.mk.injEq] at majorRun
+    obtain ⟨rfl, rfl⟩ := majorRun
+    exact ⟨invariant, rfl, rfl, fun _ h => h⟩
+  | cons head tail ih =>
+    have headData : isDataElement head := List.forall_iff_forall_mem.mp allData head (by simp)
+    have tailData : List.Forall isDataElement tail := by
+      apply List.forall_iff_forall_mem.mpr
+      intro e member
+      exact List.forall_iff_forall_mem.mp allData e (by simp [member])
+    obtain ⟨roots, len, data, rfl⟩ := headData
+    simp only [gcMoveRefList] at partialRun
+    generalize headRun : gcMoveList conf state roots = partialHead at partialRun
+    obtain ⟨roots1, middle⟩ := partialHead
+    generalize tailRun : gcMoveRefList conf middle tail = partialTail at partialRun
+    obtain ⟨tail1, final⟩ := partialTail
+    simp only [Prod.mk.injEq] at partialRun
+    obtain ⟨rfl, rfl⟩ := partialRun
+    simp only [refsToRoots, majorMoveList_append] at majorRun
+    generalize majorHeadRun : GenGc.gcMoveList (toGenConf conf) (toGenState conf state)
+      (roots.map (toGenHeapAddress conf)) = majorHead at majorRun
+    obtain ⟨headRoots, middle2⟩ := majorHead
+    generalize majorTailRun : GenGc.gcMoveList (toGenConf conf) middle2 (refsToRoots conf tail) = majorTail at majorRun
+    obtain ⟨tailRoots, final2⟩ := majorTail
+    simp only [Prod.mk.injEq] at majorRun
+    obtain ⟨rfl, rfl⟩ := majorRun
+    have middleOk := GenGc.gcMoveList_ok (toGenConf conf) (refsToRoots conf tail) tailRoots middle2 final2 majorTailRun majorOk
+    have headBound : ∀ ptr u, .pointer ptr u ∈ roots → ptr < heapLength state.heap := by
+      intro ptr u member
+      exact bounded roots len data ptr u ⟨member, by simp⟩
+    obtain ⟨middleInv, equal, headOld⟩ :=
+      gcMoveList_simulation conf heap0 roots state middle roots1 headRoots middle2 headRun invariant headBound heapLengthEq majorHeadRun middleOk
+    obtain ⟨headEq, middleEq⟩ := Prod.mk.inj equal
+    subst headRoots
+    subst middle2
+    have sizeEq := gcMoveList_heapLength roots roots1 conf state middle headRun
+    have tailBound : ∀ ptrs len data ptr u, .pointer ptr u ∈ ptrs ∧ .dataElement ptrs len data ∈ tail →
+        ptr < heapLength middle.heap := by
+      intro ptrs len data ptr u pair
+      rw [← sizeEq]
+      exact bounded ptrs len data ptr u ⟨pair.1, by simp [pair.2]⟩
+    obtain ⟨finalInv, tailEq, stateEq, tailOld⟩ :=
+      ih middle final tail1 tailRoots final2 tailRun majorTailRun majorOk middleInv tailBound (sizeEq.symm.trans heapLengthEq) tailData
+    refine ⟨finalInv, ?_, stateEq, ?_⟩
+    · simp [refsToRoots, tailEq]
+    · intro p member
+      obtain ⟨xs, size, payload, u, membership, child, outside⟩ := member
+      simp only [List.mem_cons] at membership
+      rcases membership with eq | member
+      · cases eq
+        have headMember : allOldPtrs conf roots1 p := ⟨u, child, outside⟩
+        obtain ⟨v, oldChild, outside⟩ := headOld p headMember
+        exact ⟨roots, len, data, v, by simp, oldChild, outside⟩
+      · obtain ⟨xs, size, payload, v, oldMember, oldChild, outside⟩ :=
+          tailOld p ⟨xs, size, payload, u, member, child, outside⟩
+        exact ⟨xs, size, payload, v, by simp [oldMember], oldChild, outside⟩
+
 end Flapjack.Compiler.Backend.GenGcPartial

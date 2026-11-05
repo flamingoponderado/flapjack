@@ -1,6 +1,14 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "gc_move_ref_list_simulation",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
+  "lean_name": "gcMoveRefList_simulation",
+  "statement_status": "pending_statement_review",
+  "reviewer": "Compared the complete statement with partial_ref_list_simulation_statement_typed; the reference-element payload is independent of the state and configuration payload, and the bounds, data condition and protected-pointer subset are retained. The original theorem is local; a typed proof replay remains pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
   "hol_name": "gc_move_list_simulation",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
   "lean_name": "gcMoveList_simulation",

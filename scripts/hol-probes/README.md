@@ -1,3 +1,5 @@
+`data_to_word_gc_stack_probe.out` captures the typed local reference-list simulation statement, including its independent reference-element payload type. This is a parsed statement, not a HOL proof replay.
+
 `data_to_word_gc_stack_probe.out` captures the inferred statement of local `gc_move_list_simulation`; it is a typed parse rather than a replay of the local HOL proof.
 
 `data_to_word_gc_stack_probe.out` also captures the typed statement of local `gc_move_simulation`; it is a parsed source statement, not a replay of the local HOL proof.
