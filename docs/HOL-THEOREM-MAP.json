@@ -84644,54 +84644,12 @@
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only adapter equating the production panShapeMatches with panStructShapeEqBool (decide of structural Shape equality) under lawful String equality; no standalone HOL declaration."
   },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
-    "lean_name": "panStructCompileBreak_eq_break",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Production compiler support equation for Break; no standalone HOL theorem declaration."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
-    "lean_name": "panStructConvertFiniteState_code_support",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Proves `convert_code_def` conversion preserves unique function-code map support; depends on LawfulBEq String so production lookup coincides with HOL equality, and is support rather than a compile_correct case."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
-    "lean_name": "panStructConvertFiniteState_exceptionShapes_support",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Proves `FMAP_MAP2` conversion preserves exception-shape map support in the explicit Nodup list representation; projection support for convert_s, not a standalone HOL theorem or compile_correct case."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
-    "lean_name": "panStructConvertFiniteState_globals_support",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Proves `FMAP_MAP2` conversion preserves global finite-map support in the explicit Nodup list representation; projection support for convert_s, not a standalone HOL theorem or compile_correct case."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
-    "lean_name": "panStructConvertFiniteState_locals_support",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Proves `FMAP_MAP2` conversion preserves local finite-map support in the explicit Nodup list representation; projection support for convert_s, not a standalone HOL theorem or compile_correct case."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
-    "lean_name": "panStructConvertState_code",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Projection helper for the untagged PanSemState convert_s adapter; total function maps do not preserve HOL finite-map support."
-  },
+
+
+
+
+
+
   {
     "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
     "hol_name": "convert_v_def",
@@ -84700,14 +84658,7 @@
     "statement_status": "documented_mismatch",
     "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-dlc.66): the three constructor equations match HOL convert_v_def (pan_structsProofScript.sml:31-37), but the carrier differs: HOL panSem$v (panSemScript.sml:22) has stcname/fldname = mlstring and Val ('a word_lab), while production PanValue alpha has StructName/FieldName = String and stores alpha directly in the first constructor, not a word_lab wrapper. That constructor field-type difference is beyond name representation, so names_as_string does not apply. The exact HOL-shaped convert_v is now ported as convertV over ValueHOL (reviewed_exact, above) and this executable counterpart stays untagged until the executable path itself runs over the exact carriers, tracked by flapjack-pxn.18.3.5.8 (parent flapjack-pxn.18.3.5.7.2). Direct HOL row convert_named_record=RStruct [ValWord 3w; ValWord 5w] in pan_structs_compile_correct_probe.out:1; paired Lean regression Flapjack.Test.PanStructsCompileCorrect:13-17."
   },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
-    "lean_name": "panStructRStructListShapeFields",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Private list induction support that derives old-shape map equality and recursive field validity from the per-field compile_exp_correct induction hypotheses. It supports, but is not itself, the RStruct case."
-  },
+
   {
     "hol_path": null,
     "hol_name": null,
@@ -84716,14 +84667,7 @@
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Projects pointwise Bool value-validity across an RStruct list to the selected element; RField case support only, with no standalone HOL declaration."
   },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
-    "lean_name": "panStruct_mapKeys_preserved",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Generic key-preservation lemma for list-backed finite-map entries; no standalone HOL declaration."
-  },
+
   {
     "hol_path": null,
     "hol_name": null,
@@ -84756,14 +84700,7 @@
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only adapter rewriting panValueFieldsHaveShapes as HOL v_flds_ok's MAP FST / MAP (shape_of o SND) equalities over the panSemShapeOf port; no standalone HOL declaration."
   },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
-    "lean_name": "panValueFlatFieldsFuel_eq_shapeListFuel",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-only representation bridge equating named-field loader fuel to the corresponding shape-list fuel; support for the untagged mem_load_conversion loader correspondence, not a standalone HOL declaration."
-  },
+
   {
     "hol_path": null,
     "hol_name": null,
@@ -85485,14 +85422,7 @@
     ],
     "words_as_type_indexed_bitvec": true
   },
-  {
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileDeclsCorrectDecl.lean",
-    "lean_name": "convertedEmpty",
-    "hol_path": null,
-    "hol_name": null,
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack Decl-case infrastructure; no independent HOL declaration. Supports the original guarded initializer minor without adding public hypotheses."
-  },
+
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileDeclsCorrectDecl.lean",
     "lean_name": "convertedGlobal",
@@ -85501,14 +85431,7 @@
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack Decl-case infrastructure; no independent HOL declaration. Supports the original guarded initializer minor without adding public hypotheses."
   },
-  {
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileDeclsCorrectDecl.lean",
-    "lean_name": "converterGlobalsCode",
-    "hol_path": null,
-    "hol_name": null,
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack Decl-case infrastructure; no independent HOL declaration. Supports the original guarded initializer minor without adding public hypotheses."
-  },
+
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileDeclsCorrectDecl.lean",
     "lean_name": "evalConverterGlobals",

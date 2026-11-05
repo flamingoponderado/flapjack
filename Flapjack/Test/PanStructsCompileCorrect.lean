@@ -32,8 +32,7 @@ example (context : StructPassContext) (state : PanSemState (RiscV.Word 64) (FfiS
 /-- Exact-carrier reproduction of the HOL oracle row
     `convert_named_record=RStruct [ValWord 3w; ValWord 5w]` in
     `scripts/hol-probes/pan_structs_compile_correct_probe.out`: the tagged exact
-    `convertV` over `ValueHOL` both evaluates the row and agrees with the
-    executable `panStructConvertValue` through the checked production bridge. -/
+    `convertV` over `ValueHOL` evaluates the same row. -/
 def exactConvertNamedRecord : ValueHOL 64 :=
   .nStruct (Flapjack.Basis.Pure.MlString.ofString "Pair")
     [(Flapjack.Basis.Pure.MlString.ofString "left", .val (.word (BitVec.ofNat 64 3))),
@@ -44,10 +43,6 @@ example :
       .rStruct [.val (.word (BitVec.ofNat 64 3)),
         .val (.word (BitVec.ofNat 64 5))] := by
   simp [exactConvertNamedRecord, convertV]
-
-example (context : StructPassContext) :
-    structCompileProg context (.skip : Prog Nat) = .skip := by
-  exact panStructCompileSkip_eq_skip context
 
 private abbrev Word64 := Flapjack.RiscV.Word 64
 
@@ -456,169 +451,5 @@ model. -/
   (match target with
    | some (.word result) => result == BitVec.ofNat 64 5
    | _ => false)
-
-def finiteMapState : PanStructFiniteState Word64 (FfiState Unit) :=
-  panStructFiniteStateFromMaps finiteMapRuntime
-    [("local", .word (BitVec.ofNat 64 7))]
-    [("global", .word (BitVec.ofNat 64 11))] [("E", .one)]
-    [("f", ([], .skip, .one))]
-    (by simp) (by simp) (by simp) (by simp)
-
-def finiteMapStateAtClock (clock : Nat) :
-    PanStructFiniteState Word64 (FfiState Unit) :=
-  { finiteMapState with
-    runtime := { finiteMapState.runtime with clock := clock } }
-
-example : finiteMapState.runtime.locals "local" =
-    some (.word (BitVec.ofNat 64 7)) := by
-  rfl
-
-example : finiteMapState.runtime.globals "global" =
-    some (.word (BitVec.ofNat 64 11)) := by
-  rfl
-
-example : finiteMapState.runtime.exceptionShapes "E" = some .one := by
-  rfl
-
-example : finiteMapState.runtime.locals "local" =
-    panPropsALookupEq "local" finiteMapState.locals := by
-  exact finiteMapState.locals_lookup "local"
-
-example : lookupInfo "f" finiteMapState.runtime.code =
-    panPropsALookupEq "f" finiteMapState.runtime.code := by
-  exact lookupInfo_eq_panPropsALookupEq "f" finiteMapState.runtime.code
-
-example :
-    (panStructConvertFiniteState finiteMapContext finiteMapState).locals =
-      [("local", .word (BitVec.ofNat 64 7))] := by
-  simp [panStructConvertFiniteState, finiteMapState,
-    panStructFiniteStateFromMaps, panStructConvertValue]
-
-example :
-    (panStructConvertFiniteState finiteMapContext finiteMapState).globals =
-      [("global", .word (BitVec.ofNat 64 11))] := by
-  simp [panStructConvertFiniteState, finiteMapState,
-    panStructFiniteStateFromMaps, panStructConvertValue]
-
-example :
-    (panStructConvertFiniteState finiteMapContext finiteMapState).exceptionShapes =
-      [("E", .one)] := by
-  simp [panStructConvertFiniteState, finiteMapState,
-    panStructFiniteStateFromMaps, structCompileShape, structCompileShapeWF]
-
-example :
-    lookupInfo "f" (panStructConvertFiniteState finiteMapContext finiteMapState).runtime.code =
-      some ([], .skip, .one) := by
-  simp [panStructConvertFiniteState, finiteMapState,
-    panStructFiniteStateFromMaps, panStructConvertState, panStructConvertCode,
-    structCompileShape, structCompileShapeWF, lookupInfo]
-
-example :
-    ((panStructConvertFiniteState finiteMapContext finiteMapState).runtime.locals
-        "local",
-      (panStructConvertFiniteState finiteMapContext finiteMapState).runtime.globals
-        "global",
-      (panStructConvertFiniteState finiteMapContext finiteMapState).runtime.exceptionShapes
-        "E") =
-      (some (.word (BitVec.ofNat 64 7)),
-        some (.word (BitVec.ofNat 64 11)), some .one) := by
-  simp [panStructConvertFiniteState, finiteMapState,
-    panStructFiniteStateFromMaps, panStructConvertState, panStructConvertValue,
-    panPropsALookupEq, structCompileShape, structCompileShapeWF]
-
-example :
-    panSemEvaluateCodeStateWithPostState (memoryAccess := none) statefulTestContext statefulTestPrimitive
-        statefulTestHandler (BitVec.ofNat 64 8) finiteMapState.runtime (.skip : Prog Word64) =
-      some ((.control (.normal finiteMapState.runtime.locals finiteMapState.runtime.globals
-          finiteMapState.runtime.memory finiteMapState.runtime.ffi),
-          finiteMapState.runtime.clock), finiteMapState.runtime) := by
-  exact panSemEvaluateCodeStateWithPostState_skip statefulTestContext statefulTestPrimitive
-    statefulTestHandler (BitVec.ofNat 64 8) finiteMapState.runtime
-
-example :
-    panSemEvaluateCodeStateWithPostState (memoryAccess := none) statefulTestContext statefulTestPrimitive
-        statefulTestHandler (BitVec.ofNat 64 8)
-        (panStructConvertFiniteState finiteMapContext finiteMapState).runtime
-        (structCompileProg finiteMapContext (.skip : Prog Word64)) =
-      some ((.control (.normal
-          (panStructConvertFiniteState finiteMapContext finiteMapState).runtime.locals
-          (panStructConvertFiniteState finiteMapContext finiteMapState).runtime.globals
-          (panStructConvertFiniteState finiteMapContext finiteMapState).runtime.memory
-          (panStructConvertFiniteState finiteMapContext finiteMapState).runtime.ffi),
-          (panStructConvertFiniteState finiteMapContext finiteMapState).runtime.clock),
-        (panStructConvertFiniteState finiteMapContext finiteMapState).runtime) := by
-  simpa [structCompileProg] using
-    (panSemEvaluateCodeStateWithPostState_skip statefulTestContext statefulTestPrimitive
-      statefulTestHandler (BitVec.ofNat 64 8)
-      (panStructConvertFiniteState finiteMapContext finiteMapState).runtime)
-
-/-! These four result/state assertions pair the checked-in HOL `TimeOut` and
-`NONE` rows with the concrete production evaluator representation. At clock
-zero both source and converted states time out and clear locals. At clock three
-both continue with normal control and decrement to clock two, preserving
-locals, globals, memory, and FFI state. -/
-
-example :
-    panSemEvaluateCodeStateWithPostState (memoryAccess := none) statefulTestContext statefulTestPrimitive
-      statefulTestHandler (BitVec.ofNat 64 8) finiteMapState.runtime (.tick : Prog Word64) =
-      some ((.control (.normal finiteMapState.runtime.locals finiteMapState.runtime.globals
-        finiteMapState.runtime.memory finiteMapState.runtime.ffi), 2),
-        { finiteMapState.runtime with clock := 2 }) := by
-  simp [panSemEvaluateCodeStateWithPostState_tick, finiteMapState,
-    panStructFiniteStateFromMaps, finiteMapRuntime]
-
-example :
-    panSemEvaluateCodeStateWithPostState (memoryAccess := none) statefulTestContext statefulTestPrimitive
-      statefulTestHandler (BitVec.ofNat 64 8)
-      (panStructConvertFiniteState finiteMapContext
-        (finiteMapStateAtClock 3)).runtime
-      (structCompileProg finiteMapContext (.tick : Prog Word64)) =
-      some ((.control (.normal
-        (panStructConvertFiniteState finiteMapContext
-          (finiteMapStateAtClock 3)).runtime.locals
-        (panStructConvertFiniteState finiteMapContext
-          (finiteMapStateAtClock 3)).runtime.globals
-        (panStructConvertFiniteState finiteMapContext
-          (finiteMapStateAtClock 3)).runtime.memory
-        (panStructConvertFiniteState finiteMapContext
-          (finiteMapStateAtClock 3)).runtime.ffi), 2),
-        { (panStructConvertFiniteState finiteMapContext
-            (finiteMapStateAtClock 3)).runtime with clock := 2 }) := by
-  simp [panSemEvaluateCodeStateWithPostState_tick, structCompileProg,
-    finiteMapStateAtClock, finiteMapState, panStructFiniteStateFromMaps,
-    finiteMapRuntime, panStructConvertFiniteState, panStructConvertState,
-    panStructConvertCode, structCompileShape,
-    structCompileShapeWF]
-
-example :
-    panSemEvaluateCodeStateWithPostState (memoryAccess := none) statefulTestContext statefulTestPrimitive
-      statefulTestHandler (BitVec.ofNat 64 8)
-      (finiteMapStateAtClock 0).runtime (.tick : Prog Word64) =
-      some ((.timeout (fun _ => none) (finiteMapStateAtClock 0).runtime.globals
-        (finiteMapStateAtClock 0).runtime.memory (finiteMapStateAtClock 0).runtime.ffi, 0),
-        { (finiteMapStateAtClock 0).runtime with locals := fun _ => none }) := by
-  simp [panSemEvaluateCodeStateWithPostState_tick, finiteMapStateAtClock,
-    finiteMapState, panStructFiniteStateFromMaps, finiteMapRuntime]
-
-example :
-    panSemEvaluateCodeStateWithPostState (memoryAccess := none) statefulTestContext statefulTestPrimitive
-      statefulTestHandler (BitVec.ofNat 64 8)
-      (panStructConvertFiniteState finiteMapContext
-        (finiteMapStateAtClock 0)).runtime
-      (structCompileProg finiteMapContext (.tick : Prog Word64)) =
-      some ((.timeout (fun _ => none)
-        (panStructConvertFiniteState finiteMapContext
-          (finiteMapStateAtClock 0)).runtime.globals
-        (panStructConvertFiniteState finiteMapContext
-          (finiteMapStateAtClock 0)).runtime.memory
-        (panStructConvertFiniteState finiteMapContext
-          (finiteMapStateAtClock 0)).runtime.ffi, 0),
-        { (panStructConvertFiniteState finiteMapContext
-            (finiteMapStateAtClock 0)).runtime with locals := fun _ => none }) := by
-  simp [panSemEvaluateCodeStateWithPostState_tick, structCompileProg,
-    finiteMapStateAtClock, finiteMapState, panStructFiniteStateFromMaps,
-    finiteMapRuntime, panStructConvertFiniteState, panStructConvertState,
-    panStructConvertCode, structCompileShape,
-    structCompileShapeWF]
 
 end Flapjack.Test

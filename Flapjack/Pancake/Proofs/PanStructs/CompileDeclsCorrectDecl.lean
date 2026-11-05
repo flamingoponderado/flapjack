@@ -20,13 +20,6 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} {σ : Type} [NeZero width] :
 
 
 /-- Flapjack infrastructure for the Decl minor; no independent HOL declaration. -/
-private theorem converterGlobalsCode {width : Nat} {σ : Type} [NeZero width]
-    (context : ContextExact) (source : PanSemStateFiniteExact width σ)
-    (globals : List (MlS × ShapeHOL)) :
-    convertStateExact { context with globals := globals } source =
-      { convertStateExact context source with
-        code := convertCodeExact { context with globals := globals } source.code } := rfl
-/-- Flapjack infrastructure for the Decl minor; no independent HOL declaration. -/
 private theorem evalConverterGlobals {width : Nat} {σ : Type} [NeZero width]
     (context : ContextExact) (source : PanSemStateFiniteExact width σ)
     (globals : List (MlS × ShapeHOL)) (expression : ExpHOL width) :
@@ -106,11 +99,6 @@ private theorem initializerFacts {width : Nat} {σ : Type} [NeZero width]
       (fun address => Classical.propDecidable (source.memaddrs address))
       (by intro key bound h; cases h) hwf expression value heval
   exact ⟨hexpr.2.1, hvalueWf, hexpr.2.2⟩
-/-- Flapjack infrastructure for the Decl minor; no independent HOL declaration. -/
-private theorem convertedEmpty {width : Nat} {σ : Type} [NeZero width]
-    (context : ContextExact) (source : PanSemStateFiniteExact width σ) :
-    convertStateExact context source.emptyLocalsHOLFinite =
-      (convertStateExact context source).emptyLocalsHOLFinite := rfl
 /-- Flapjack infrastructure for the Decl minor; no independent HOL declaration. -/
 private theorem convertedGlobal {width : Nat} {σ : Type} [NeZero width]
     (context : ContextExact) (source : PanSemStateFiniteExact width σ)
