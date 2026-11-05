@@ -11,6 +11,169 @@ lemmas as standalone declarations.
 
 namespace Flapjack
 
+/-- The state-owned source evaluator's Skip equation. This uses the actual
+`PanSemState.code` boundary and the source state's derived fuel. -/
+theorem panSemEvaluateCodeState_skip
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (context : PanValueFfiContext α)
+    (primitive : PanPrimitiveHandler α)
+    (handler : PanValueStatefulFfiHandler α σ)
+    (bytesInWord : α) (state : PanSemState α (FfiState σ))
+    (memoryAccess : Option (PanValueMemoryAccess α) := none) :
+    panSemEvaluateCodeState context primitive handler bytesInWord state .skip
+      (memoryAccess := memoryAccess) =
+      some (.control (.normal state.locals state.globals state.memory state.ffi),
+        state.clock) := by
+  have hpositive : 0 < panSemCodeEvaluateFuel state (.skip : Prog α) := by
+    unfold panSemCodeEvaluateFuel
+    omega
+  unfold panSemEvaluateCodeState panSemEvaluateCodeStateWithFuel
+  cases hfuel : panSemCodeEvaluateFuel state (.skip : Prog α) with
+  | zero => omega
+  | succ fuel =>
+      simp [evalPanValueFfiClockCodeProg,
+        evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]
+
+/-- State-boundary Skip case for the source-run-implies-target-run direction
+of HOL `pc_compile_correct`.  Both code relations use the code fields owned
+by their real runtime states; the source post-state is `panSemCodeStateAfter`
+and the target post-state is the result returned by the Crep evaluator.  This
+is local case infrastructure and is deliberately untagged: the complete
+`pc_compile_correct` induction and its other constructors remain open. The
+target side chooses its own fuel existentially, rather than forcing the source
+evaluation's fuel or a fixed cutoff onto the target run. -/
+theorem panToCrepPcCompileCorrectSkipCodeState
+    [BEq α] [OfNat α 0] [OfNat α 1] [OfNat α 2] [OfNat α 3] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    [CrepBytesInWord α] [BEq String]
+    (context : PanToCrepProofContext α)
+    (sourceModel : PanMemoryModel α) (sourceBytesInWord : α)
+    (sourceContext : PanValueFfiContext α)
+    (sourcePrimitive : PanPrimitiveHandler α)
+    (sourceHandler : PanValueStatefulFfiHandler α σ)
+    (targetHandler : CrepRuntimeFfiHandler α σ FfiFinalEvent)
+    (targetPrimitive : CrepPrimitiveHandler α)
+    (sourceState : PanSemState α (FfiState σ))
+    (targetState : CrepRuntimeState α σ)
+    (hstate : stateRel sourceState targetState)
+    (hcode : codeRel context (panSemCodeAsLookup sourceState.code) targetState.code)
+    (hexcp : excpRel context.eids sourceState.exceptionShapes)
+    (hlocals : localsRel context sourceState.locals targetState.locals) :
+    panSemEvaluateCodeStateWithMemoryModel sourceContext sourcePrimitive sourceHandler
+      sourceModel sourceBytesInWord sourceState .skip =
+        some (.control (.normal sourceState.locals sourceState.globals
+          sourceState.memory sourceState.ffi), sourceState.clock) ∧
+    ∃ targetFuel targetResult targetPost,
+      evalCrepRuntimeResult targetHandler targetPrimitive targetFuel targetState
+        (compileCodeRelProg context .skip) = some (targetResult, targetPost) ∧
+      stateRel (panSemCodeStateAfter sourceState
+        (.control (.normal sourceState.locals sourceState.globals
+          sourceState.memory sourceState.ffi), sourceState.clock)) targetPost ∧
+      codeRel context
+        (panSemCodeAsLookup (panSemCodeStateAfter sourceState
+          (.control (.normal sourceState.locals sourceState.globals
+            sourceState.memory sourceState.ffi), sourceState.clock)).code)
+        targetPost.code ∧
+      excpRel context.eids
+        (panSemCodeStateAfter sourceState
+          (.control (.normal sourceState.locals sourceState.globals
+            sourceState.memory sourceState.ffi), sourceState.clock)).exceptionShapes ∧
+      targetResult = .normal ∧
+      localsRel context
+        (panSemCodeStateAfter sourceState
+          (.control (.normal sourceState.locals sourceState.globals
+            sourceState.memory sourceState.ffi), sourceState.clock)).locals
+        targetPost.locals := by
+  have hsource := panSemEvaluateCodeState_skip sourceContext sourcePrimitive sourceHandler
+    sourceBytesInWord sourceState (some (panValueMemoryAccessOfModel sourceModel
+      sourceState.memaddrs sourceState.sharedMemaddrs sourceState.be))
+  refine ⟨(by simpa [panSemEvaluateCodeStateWithMemoryModel] using hsource), ?_⟩
+  have hsourcePost : panSemCodeStateAfter sourceState
+      (.control (.normal sourceState.locals sourceState.globals
+        sourceState.memory sourceState.ffi), sourceState.clock) = sourceState := by
+    cases sourceState
+    rfl
+  refine ⟨1, .normal, targetState, ?_, ?_, ?_, ?_, rfl, ?_⟩
+  · simp [compileCodeRelProg, compileProgHOL, evalCrepRuntimeResult,
+      evalCrepRuntimeProg]
+  · simpa [hsourcePost] using hstate
+  · simpa [hsourcePost] using hcode
+  · simpa [hsourcePost] using hexcp
+  · simpa [hsourcePost] using hlocals
+
+/-- Width-indexed, fuel-bounded evaluator bridge for the HOL
+    `pc_compile_correct[Skip]` proof branch (`pan_to_crepProofScript.sml:493`).
+    It preserves the `state_rel`, width-indexed `code_rel`, `excp_rel`, and
+    `locals_rel` clauses, with `codeRelW` at both code boundaries. It derives
+    successful source and target runs from the incoming relations; the target
+    run uses an existential fuel. This is useful case support, but it is not
+    the full HOL Skip case: HOL's `panSem$evaluate` and `crepSem$evaluate` are
+    total functions returning `(result, state)`, while these Lean interfaces
+    return `Option` results from fuel-indexed evaluators. In particular, the
+    Lean target `.normal` result is not itself HOL's `NONE` result. A faithful
+    total-evaluator interface and its result/state correspondence are still
+    prerequisites for restating the full HOL boundary. Keep this untagged. -/
+theorem panToCrepPcCompileCorrectSkipFuelBoundedBridgeW
+    (width : Nat)
+    [BEq String]
+    (context : PanToCrepProofContext (BitVec width))
+    (sourceModel : PanMemoryModel (BitVec width)) (sourceBytesInWord : BitVec width)
+    (sourceContext : PanValueFfiContext (BitVec width))
+    (sourcePrimitive : PanPrimitiveHandler (BitVec width))
+    (sourceHandler : PanValueStatefulFfiHandler (BitVec width) σ)
+    (targetHandler : CrepRuntimeFfiHandler (BitVec width) σ FfiFinalEvent)
+    (targetPrimitive : CrepPrimitiveHandler (BitVec width))
+    (sourceState : PanSemState (BitVec width) (FfiState σ))
+    (targetState : CrepRuntimeState (BitVec width) σ)
+    (hstate : stateRel sourceState targetState)
+    (hcode : codeRelW width context
+      (panSemCodeAsLookup sourceState.code) targetState.code)
+    (hexcp : excpRel context.eids sourceState.exceptionShapes)
+    (hlocals : localsRel context sourceState.locals targetState.locals) :
+    panSemEvaluateCodeStateWithMemoryModel sourceContext sourcePrimitive sourceHandler
+      sourceModel sourceBytesInWord sourceState .skip =
+        some (.control (.normal sourceState.locals sourceState.globals
+          sourceState.memory sourceState.ffi), sourceState.clock) ∧
+    ∃ targetFuel targetResult targetPost,
+      evalCrepRuntimeResult targetHandler targetPrimitive targetFuel targetState
+        (compileCodeRelProg context .skip) = some (targetResult, targetPost) ∧
+      stateRel (panSemCodeStateAfter sourceState
+        (.control (.normal sourceState.locals sourceState.globals
+          sourceState.memory sourceState.ffi), sourceState.clock)) targetPost ∧
+      codeRelW width context
+        (panSemCodeAsLookup (panSemCodeStateAfter sourceState
+          (.control (.normal sourceState.locals sourceState.globals
+            sourceState.memory sourceState.ffi), sourceState.clock)).code)
+        targetPost.code ∧
+      excpRel context.eids
+        (panSemCodeStateAfter sourceState
+          (.control (.normal sourceState.locals sourceState.globals
+            sourceState.memory sourceState.ffi), sourceState.clock)).exceptionShapes ∧
+      targetResult = .normal ∧
+      localsRel context
+        (panSemCodeStateAfter sourceState
+          (.control (.normal sourceState.locals sourceState.globals
+            sourceState.memory sourceState.ffi), sourceState.clock)).locals
+        targetPost.locals := by
+  have hcodeGeneric :=
+    (codeRelW_iff_codeRel width context
+      (panSemCodeAsLookup sourceState.code) targetState.code).mp hcode
+  rcases panToCrepPcCompileCorrectSkipCodeState context sourceModel sourceBytesInWord
+      sourceContext sourcePrimitive sourceHandler targetHandler targetPrimitive
+      sourceState targetState hstate hcodeGeneric hexcp hlocals with
+    ⟨hsource, targetFuel, targetResult, targetPost, hrun, hstatePost,
+      hcodePost, hexcpPost, hresult, hlocalsPost⟩
+  refine ⟨hsource, targetFuel, targetResult, targetPost, hrun, hstatePost, ?_,
+    hexcpPost, hresult, hlocalsPost⟩
+  exact (codeRelW_iff_codeRel width context
+    (panSemCodeAsLookup (panSemCodeStateAfter sourceState
+      (.control (.normal sourceState.locals sourceState.globals
+        sourceState.memory sourceState.ffi), sourceState.clock)).code)
+    targetPost.code).mpr hcodePost
+
 theorem panSemEvaluateRiscV64CodeState_callRaiseOneWordException_ofEntry
     (context : PanValueFfiContext (RiscV.Word 64))
     (primitive : PanPrimitiveHandler (RiscV.Word 64))

@@ -19,7 +19,8 @@ has a status other than ``no_hol_reference_pending_classification`` (for
 example an untagged ``documented_mismatch`` row, which records a known HOL
 counterpart and the work tracked for an exact port) are roots as well, so
 the report never recommends deleting port bookkeeping, nor anything such a
-theorem uses.
+theorem uses.  So is any name that an inventory row's reviewer note (or
+other text field) mentions.
 
 Theorems that carry any attribute other than ``hol`` (``@[simp]``,
 ``@[grind]``, ``@[ext]``, a custom simp set, ...), on the declaration or
@@ -67,7 +68,7 @@ import importlib.util
 
 TEXT_GLOBS = ["*.md", "*.py", "*.sh", "*.json", "*.toml", "*.txt", "*.yml", "*.yaml",
               "Flapjack/Test/*.lean", "scripts/*.lean"]
-EXCLUDED_TEXT = {"docs/HOL-THEOREM-MAP.json"}  # read by inventory_roots instead
+EXCLUDED_TEXT = {"docs/HOL-THEOREM-MAP.json"}  # read field by field by inventory_roots
 TOKEN_RE = re.compile(r"[A-Za-z_][\w?!'.]*")
 THEOREM_RE = re.compile(
     r"^(?:@\[[^\]]*\]\s*)*(?:(?:private|protected|noncomputable)\s+)*(?:theorem|lemma)\s+"
@@ -289,13 +290,26 @@ PENDING = "no_hol_reference_pending_classification"
 
 
 def inventory_roots(repo: pathlib.Path) -> set[str]:
-    """Leaf names of Lean theorems whose inventory row is more than a placeholder."""
+    """Names the inventory protects.
+
+    The leaf names of Lean theorems whose row is more than a placeholder, and
+    every dotted component of every identifier in the rows' other text fields
+    (reviewer notes and the like, but not a row's own ``lean_name`` or
+    ``lean_path``): a note that cites a theorem as evidence ("remains proved
+    by X", "see X") must not be left pointing at nothing."""
     path = repo / INVENTORY
     if not path.is_file():
         return set()
-    return {row["lean_name"].rsplit(".", 1)[-1]
-            for row in json.loads(path.read_text(encoding="utf-8"))
-            if row.get("hol_path") or row.get("hol_name") or row.get("statement_status") != PENDING}
+    names: set[str] = set()
+    for row in json.loads(path.read_text(encoding="utf-8")):
+        if row.get("hol_path") or row.get("hol_name") or row.get("statement_status") != PENDING:
+            names.add(row["lean_name"].rsplit(".", 1)[-1])
+        for key, value in row.items():
+            if key in ("lean_name", "lean_path") or not isinstance(value, str):
+                continue
+            for tok in TOKEN_RE.findall(value):
+                names.update(tok.split("."))
+    return names
 
 
 def source_theorems(path: pathlib.Path) -> set[str]:
