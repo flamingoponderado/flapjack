@@ -30,11 +30,12 @@ term mentions them today.
 
 Proof terms do not record every use by name: a ``rfl`` theorem passed to
 ``simp``/``simpa``/``rw``/``dsimp`` is applied by definitional unfolding and
-may leave no constant behind.  So after the Lean half, a candidate whose
-leaf name occurs (outside comments and strings) in the source of a Lean
-declaration that is not itself a candidate is kept, and this is repeated
-until nothing changes; a mention inside another unused theorem does not
-keep it.
+may leave no constant behind.  And a theorem that a surviving docstring or
+module comment names is presented there as a result.  So after the Lean
+half, a candidate whose name occurs anywhere in a ``Flapjack`` Lean file,
+comments included, outside the candidate declarations and their attached
+comments is kept, and this is repeated until nothing changes; a mention
+inside another unused theorem does not keep it.
 
 Only theorems written as a ``theorem``/``lemma`` in the source file of their
 module are printed; generated equation and structure lemmas are dropped.
@@ -190,10 +191,10 @@ def automation_roots(repo: pathlib.Path) -> set[str]:
 def drop_named_uses(repo: pathlib.Path, found: list[dict]) -> list[dict]:
     """Keep only candidates that no surviving Lean source names.
 
-    Every token of every ``Flapjack`` Lean file counts (comments and strings
-    masked), except the lines of candidate declarations themselves, as split
-    by ``report-proof-duplication.py``'s parser; so ``example``s, attribute
-    commands and macros count too.  Every dotted component of a token counts,
+    Every token of every ``Flapjack`` Lean file counts, comments and strings
+    included, except the lines of candidate declarations and their attached
+    comments, as split by ``report-proof-duplication.py``'s parser; so
+    ``example``s, attribute commands, macros and documentation count too.  Every dotted component of a token counts,
     so ``simp [foo.mp]`` names ``foo``.  Iterates to a fixed point: a candidate
     named elsewhere stops being a candidate, and its own body then counts."""
     if not found:
@@ -204,22 +205,58 @@ def drop_named_uses(repo: pathlib.Path, found: list[dict]) -> list[dict]:
     return filter_named_uses(sources, found)
 
 
+def attached_start(lines: list[str], start: int) -> int:
+    """First line (0-based) of the comments attached to a declaration.
+
+    ``start`` is the 0-based line of the declaration keyword.  Attached are
+    directly preceding ``@[...]`` and ``--`` lines, a ``/-- ... -/`` docstring
+    ending directly above them, and, after blank lines, a ``/-! ... -/``
+    comment that is not a ``/-! #`` section heading.  A comment documenting
+    only one declaration is written this way, so it goes with it."""
+    k = start
+    while k > 0 and (lines[k - 1].startswith("@[") or lines[k - 1].startswith("--")):
+        k -= 1
+    if k > 0 and lines[k - 1].rstrip().endswith("-/"):
+        m = k - 1
+        while m > 0 and not lines[m].lstrip().startswith("/-"):
+            m -= 1
+        if lines[m].startswith("/--"):
+            k = m
+    j = k
+    while j > 0 and lines[j - 1] == "":
+        j -= 1
+    if j > 0 and lines[j - 1].rstrip().endswith("-/"):
+        m = j - 1
+        while m > 0 and not lines[m].startswith("/-"):
+            m -= 1
+        if lines[m].startswith("/-!") and not lines[m].startswith("/-! #"):
+            k = m
+    return k
+
+
 def filter_named_uses(sources: dict[str, pathlib.Path], found: list[dict]) -> list[dict]:
-    """``drop_named_uses`` over explicit ``{relative path: file}`` sources."""
+    """``drop_named_uses`` over explicit ``{relative path: file}`` sources.
+
+    Mentions in comments and strings count: a theorem that a surviving
+    docstring or module comment names is presented as a result, so the
+    report keeps it.  The lines of a candidate declaration, including its
+    attached comments (``attached_start``), do not count."""
     lines_of: dict[str, list[set[str]]] = {}
     spans: dict[tuple[str, str], list[tuple[int, int]]] = {}
     for f, path in sources.items():
-        masked = _rpd.mask_comments(path.read_text(encoding="utf-8", errors="replace"))
+        raw = path.read_text(encoding="utf-8", errors="replace")
+        lines = raw.split("\n")
         lines_of[f] = [{c for t in TOKEN_RE.findall(line) for c in t.split(".")}
-                       for line in masked.split("\n")]
+                       for line in lines]
         for d in _rpd.parse_decls(path, f):
-            spans.setdefault((f, d.name.rsplit(".", 1)[-1]), []).append((d.start, d.end))
+            first = attached_start(lines, d.start - 1)
+            spans.setdefault((f, d.name.rsplit(".", 1)[-1]), []).append((first, d.end))
     cand = {(d["file"], d["name"].rsplit(".", 1)[-1]) for d in found}
     while True:
         excluded: dict[str, set[int]] = {}
         for key in cand:
-            for start, end in spans.get(key, []):
-                excluded.setdefault(key[0], set()).update(range(start - 1, end))
+            for first, end in spans.get(key, []):
+                excluded.setdefault(key[0], set()).update(range(first, end))
         named: set[str] = set()
         for f, toks in lines_of.items():
             skip = excluded.get(f, set())
