@@ -8,8 +8,10 @@ open Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
 open Flapjack.Compiler.Backend.DataToWord.Proofs.Correct
 
 /-- The actual emitted word body has an ordinary simulation outcome or the
-permitted allocation failure. This uses the configured frontend output and
-the candidate data-to-word relation; it is not whole-program correctness. -/
+permitted allocation failure. This covers enabled known-function optimization,
+including direct calls, as well as configurations without direct calls. The
+candidate data-to-word relation and uncovered instructions remain open, so
+this is not whole-program correctness. -/
 theorem configuredSpaceFragmentFunction_simulation {C F : Type} (fuel : Nat)
     (source nextSource : Config) (closure nextClosure : ClosToBvl.Config)
     (bvlConfig nextBvlConfig : BvlToBvi.Config) (word : DataToWord.Config)
@@ -17,7 +19,7 @@ theorem configuredSpaceFragmentFunction_simulation {C F : Type} (fuel : Nat)
     (names : Spt Basis.Pure.MlString.MlString)
     (run : compileCakeToBviConfiguredFuel fuel source closure bvlConfig declarations =
       some (nextSource, nextClosure, nextBvlConfig, bviCode, names))
-    (calls : closure.doCall = false) (known : closure.knownConf = none)
+    (covered : closure.doCall = false ∨ closure.knownConf.isSome = true)
     (codeLabel arity l1 l2 : Nat) (body : DataLang.Prog)
     (sourceState : DataSem.State C F) (targetState : WordSemStateFiniteExact 64 C F)
     (locs : List (Nat × Nat)) (related : stateRel64 word l1 l2 sourceState targetState none locs)
@@ -35,8 +37,8 @@ theorem configuredSpaceFragmentFunction_simulation {C F : Type} (fuel : Nat)
           BackendProps.optionLe final.stackMax (DataSem.evaluate body sourceState).2.stackMax ∧
           final.ffi.ioEvents <+: (DataSem.evaluate body sourceState).2.ffi.ioEvents ∧
           (word.gcKind ≠ .none → (DataSem.evaluate body sourceState).2.safeForSpace = false)) := by
-  obtain ⟨code, wordRun, codeRel⟩ := compileCakeToWord64ConfiguredFuel_codeRel_noCallKnown fuel source nextSource
-    closure nextClosure bvlConfig nextBvlConfig word declarations bviCode names run calls known
+  obtain ⟨code, wordRun, codeRel⟩ := compileCakeToWord64ConfiguredFuel_codeRel_knownOrNoCall fuel source nextSource
+    closure nextClosure bvlConfig nextBvlConfig word declarations bviCode names run covered
   let wordBody := (compileControl64 word codeLabel 2 body).1
   have outputLookup : sptLookup codeLabel (sptFromAList code) = some (arity + 1, wordBody) := by
     exact codeRel.2.2 codeLabel arity body (by simpa [sourceCode] using sourceLookup)
