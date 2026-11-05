@@ -134,25 +134,6 @@ def compareHook (operator : Cmp) (left right : LoopValue Word) : Bool :=
       (evalLoopCondition operator leftWord rightWord).getD false
   | _, _ => false
 
-/-- Hooks for the effect-free fragment.  `primitive`, `store`, `load32`,
-    `loadByte`, `store32`, `storeByte`, `shMem`, and `ffi` are deliberately
-    total fallbacks that yield `Error`; `arith` and `setGlobal` are no-ops that
-    return the state unchanged.  The programs under test never invoke any of
-    these fields (see `effectFree`). -/
-def effectFreeHooks : LoopEvaluateHooks Word Unit where
-  eval := evalHook
-  primitive := fun _ _ => none
-  arith := fun state _ => some state
-  store := fun _ _ _ => none
-  setGlobal := fun state _ _ => state
-  load32 := fun _ _ => none
-  loadByte := fun _ _ => none
-  store32 := fun _ _ _ => none
-  storeByte := fun _ _ _ => none
-  compare := compareHook
-  shMem := fun _ _ _ state => (some .error, state)
-  ffi := fun _ _ _ _ _ _ state => (some .error, state)
-
 def initialState (code : LoopCode Word) : LoopMachineState Word Unit :=
   { locals := fun _ => none
     globals := fun _ => none

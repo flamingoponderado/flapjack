@@ -6,8 +6,8 @@ import Flapjack.Pancake.Semantics.LoopSemStateExact
 
 Checks the exact width-indexed `LoopSemState` against the direct HOL oracle
 `loop_sem_state_carrier_probe` (num_map locals/code, total memory, set-valued
-domain, clock, be) and exercises the observational bridge to the production
-`LoopMachineState` including `get_var_imm` register/immediate reads.
+domain, clock, be) and checks `get_var_imm` register/immediate reads on a
+`LoopMachineState` with the same fields.
 -/
 
 namespace Flapjack.Test.LoopSemStateParity
@@ -30,7 +30,7 @@ private def exactState : LoopSemState 8 Unit :=
   , baseAddr := 0
   , topAddr := 0 }
 
-/-- Production state satisfying the bridge for `exactState`. -/
+/-- Machine state with the same fields as `exactState`. -/
 private def machineState : LoopMachineState W Unit :=
   { locals := fun name => (exactState.locals name).map loopValueOfWordLocW
   , globals := fun global => (exactState.globals global).map loopValueOfWordLocW
@@ -55,27 +55,6 @@ example : exactState.mdomain (3 : W) = false := rfl
 example : exactState.clock = 5 := rfl
 example : exactState.code 0 = none := rfl
 example : exactState.be = false := rfl
-
-theorem bridgeSample : LoopMachineStateRel exactState machineState := by
-  refine ⟨?_, ?_, ?_, rfl, rfl, rfl, rfl, rfl, rfl, rfl, ?_⟩
-  · intro name
-    simp [machineState]
-  · intro global
-    simp [machineState]
-  · intro address
-    simp [machineState]
-  · intro entry hmem
-    simp [machineState] at hmem
-
-/-- Register read through the bridge. -/
-example : getVarImm machineState (.reg 0) = some (.word (BitVec.ofNat 8 7)) := by
-  rw [getVarImm_reg_eq_of_loopMachineStateRel bridgeSample 0]
-  rfl
-
-/-- Immediate read through the bridge. -/
-example : getVarImm machineState (.imm (BitVec.ofNat 8 9)) =
-    some (.word (BitVec.ofNat 8 9)) :=
-  getVarImm_imm_eq_of_loopMachineStateRel bridgeSample (BitVec.ofNat 8 9)
 
 private def bridgeGuard : Bool :=
   (getVarImm machineState (.reg 0) == some (.word (BitVec.ofNat 8 7))) &&
@@ -103,15 +82,6 @@ example : LoopSemState.getVars [0] { exactState with clock := 9 } =
     LoopSemState.getVars [0] exactState :=
   LoopSemState.getVars_clock [0] exactState 9
 
-/-- Exact carrier `get_var_imm` maps to the production read under the bridge. -/
-example : (LoopSemState.getVarImm (.reg 0) exactState).map loopValueOfWordLocW =
-    getVarImm machineState (.reg 0) :=
-  LoopSemState.getVarImm_map_eq_of_loopMachineStateRel bridgeSample (.reg 0)
-
-/-! ## Exact finite-support carrier (`LoopSemStateFiniteExact`) production bridge -/
-
-/-- A canonical `HolFfiState` with a failing oracle, related to
-    `trivialFfiState Unit ()`. -/
 private def holTrivialFfi : HolFfiState Unit :=
   { oracle := fun _ _ _ _ => .final .failed, ffiState := (), ioEvents := [] }
 
@@ -138,7 +108,7 @@ private def exactFiniteState : LoopSemStateFiniteExact 8 Unit :=
   , baseAddr := 0
   , topAddr := 0 }
 
-/-- Production state satisfying `prodRel` for `exactFiniteState`. -/
+/-- Machine state with the same fields as `exactFiniteState`. -/
 private def finiteMachineState : LoopMachineState (BitVec 8) Unit :=
   { locals := fun name => (sptLookup name exactFiniteState.locals).map loopValueOfWordLocW
   , globals := fun global => (exactFiniteState.globals.lookup global).map loopValueOfWordLocW
@@ -152,23 +122,6 @@ private def finiteMachineState : LoopMachineState (BitVec 8) Unit :=
   , baseAddr := exactFiniteState.baseAddr
   , topAddr := exactFiniteState.topAddr }
 
-/-- The exact finite-support carrier satisfies `prodRel` with the sample
-    production state (empty code makes the code conjunct vacuous). -/
-theorem finiteBridgeSample : exactFiniteState.prodRel finiteMachineState := by
-  unfold LoopSemStateFiniteExact.prodRel
-  refine ⟨?_, ?_, ?_, rfl, rfl, rfl, rfl, ?_, rfl, rfl, ?_, ?_⟩
-  · intro name; rfl
-  · intro global; rfl
-  · intro address; rfl
-  · simpa [finiteMachineState, exactFiniteState] using trivialFfiStateRel
-  · intro entry hmem; simp [finiteMachineState] at hmem
-  · intro label parameters program hlookup
-    simp [exactFiniteState] at hlookup
-
-/-- Sample finite-support carrier with a NON-EMPTY code table: entry `0` maps to
-    `([], .skip)`, matching the production code table below. This exercises the
-    `prodRel` code conjunct through `loopProgExecRel` rather than the vacuous
-    empty-table case. -/
 private def exactFiniteStateCode : LoopSemStateFiniteExact 8 Unit :=
   { exactFiniteState with
     code := sptInsert 0 ([], HolLoopProg.skip) Spt.ln }
@@ -177,39 +130,6 @@ private def exactFiniteStateCode : LoopSemStateFiniteExact 8 Unit :=
 private def finiteMachineStateCode : LoopMachineState (BitVec 8) Unit :=
   { finiteMachineState with code := [(0, [], LoopProg.skip)] }
 
-/-- The exact carrier with a non-empty code table satisfies `prodRel` with the
-    matching production state, exercising the code conjunct through
-    `loopProgExecRel`. -/
-theorem finiteBridgeSampleCode :
-    exactFiniteStateCode.prodRel finiteMachineStateCode := by
-  unfold LoopSemStateFiniteExact.prodRel
-  refine ⟨?_, ?_, ?_, rfl, rfl, rfl, rfl, ?_, rfl, rfl, ?_, ?_⟩
-  · intro name; rfl
-  · intro global; rfl
-  · intro address; rfl
-  · simpa [finiteMachineStateCode, exactFiniteStateCode, finiteMachineState,
-      exactFiniteState] using trivialFfiStateRel
-  · intro entry hmem
-    simp [finiteMachineStateCode] at hmem
-    subst hmem
-    refine ⟨HolLoopProg.skip, ?_, ?_⟩
-    · simp [exactFiniteStateCode, sptLookup]
-    · first | rfl | simp [loopProgExecRel]
-  · intro label parameters program hlookup
-    by_cases h0 : label = 0
-    · subst h0
-      have hpair : ([], HolLoopProg.skip) = (parameters, program) := by
-        simpa [exactFiniteStateCode, exactFiniteState, sptLookup, sptInsert] using hlookup
-      have hfst : ([] : List Nat) = parameters := congrArg Prod.fst hpair
-      have hsnd : HolLoopProg.skip = program := congrArg Prod.snd hpair
-      exact ⟨(0, [], LoopProg.skip), by simp [finiteMachineStateCode],
-        rfl, hfst, by rw [← hsnd]; exact loopProgExecRel_skip⟩
-    · simp [exactFiniteStateCode, exactFiniteState, sptLookup, h0] at hlookup
-
-/-- Sample finite-support carrier whose code table has a recursive-constructor
-    entry, so the `prodRel` code conjunct is exercised through a non-`skip`
-    `loopProgExecRel` witness (a `seq` of `skip` and `tick`) as well as the
-    base `skip` entry. -/
 private def exactFiniteStateSeq : LoopSemStateFiniteExact 8 Unit :=
   { exactFiniteStateCode with
     code := Spt.bs Spt.ln ([], HolLoopProg.skip)
@@ -219,81 +139,6 @@ private def exactFiniteStateSeq : LoopSemStateFiniteExact 8 Unit :=
 private def finiteMachineStateSeq : LoopMachineState (BitVec 8) Unit :=
   { finiteMachineStateCode with
     code := [(0, [], LoopProg.skip), (1, [], LoopProg.seq LoopProg.skip LoopProg.tick)] }
-
-/-- The code conjunct of `prodRel` holds for a code table containing a recursive
-    constructor, through the `loopProgExecRel` introduction lemmas. -/
-theorem finiteBridgeSampleSeq :
-    exactFiniteStateSeq.prodRel finiteMachineStateSeq := by
-  unfold LoopSemStateFiniteExact.prodRel
-  refine ⟨?_, ?_, ?_, rfl, rfl, rfl, rfl, ?_, rfl, rfl, ?_, ?_⟩
-  · intro name; rfl
-  · intro global; rfl
-  · intro address; rfl
-  · simpa [finiteMachineStateSeq, exactFiniteStateSeq, finiteMachineStateCode,
-      exactFiniteStateCode, finiteMachineState, exactFiniteState] using trivialFfiStateRel
-  · intro entry hmem
-    simp only [finiteMachineStateSeq, List.mem_cons, List.mem_nil_iff, or_false] at hmem
-    rcases hmem with rfl | rfl
-    · refine ⟨HolLoopProg.skip, ?_, ?_⟩
-      · simp [exactFiniteStateSeq, exactFiniteStateCode, exactFiniteState, sptLookup]
-      · exact loopProgExecRel_skip
-    · refine ⟨HolLoopProg.seq HolLoopProg.skip HolLoopProg.tick, ?_, ?_⟩
-      · simp [exactFiniteStateSeq, exactFiniteStateCode, exactFiniteState, sptLookup]
-      · exact loopProgExecRel_seq loopProgExecRel_skip loopProgExecRel_tick
-  · intro label parameters program hlookup
-    by_cases h0 : label = 0
-    · subst h0
-      have hlookup0 : sptLookup 0 exactFiniteStateSeq.code =
-          some ([], HolLoopProg.skip) := rfl
-      rw [hlookup0] at hlookup
-      have hpair : ([], HolLoopProg.skip) = (parameters, program) := Option.some.inj hlookup
-      have hfst : ([] : List Nat) = parameters := congrArg Prod.fst hpair
-      have hsnd : HolLoopProg.skip = program := congrArg Prod.snd hpair
-      exact ⟨(0, [], LoopProg.skip), by simp [finiteMachineStateSeq],
-        rfl, hfst, by rw [← hsnd]; exact loopProgExecRel_skip⟩
-    · by_cases h1 : label = 1
-      · subst h1
-        have hlookup1 : sptLookup 1 exactFiniteStateSeq.code =
-            some ([], HolLoopProg.seq HolLoopProg.skip HolLoopProg.tick) := rfl
-        rw [hlookup1] at hlookup
-        have hpair : ([], HolLoopProg.seq HolLoopProg.skip HolLoopProg.tick) =
-            (parameters, program) := Option.some.inj hlookup
-        have hfst : ([] : List Nat) = parameters := congrArg Prod.fst hpair
-        have hsnd : HolLoopProg.seq HolLoopProg.skip HolLoopProg.tick = program :=
-          congrArg Prod.snd hpair
-        exact ⟨(1, [], LoopProg.seq LoopProg.skip LoopProg.tick),
-          by simp [finiteMachineStateSeq],
-          rfl, hfst, by
-            rw [← hsnd]
-            exact loopProgExecRel_seq loopProgExecRel_skip loopProgExecRel_tick⟩
-      · have hnone : sptLookup label exactFiniteStateSeq.code = none := by
-          simp only [exactFiniteStateSeq, exactFiniteStateCode, exactFiniteState, sptLookup]
-          split <;> simp_all <;> omega
-        rw [hnone] at hlookup
-        exact absurd hlookup (by simp)
-
-/-- Register read on the exact carrier transports to the production read. -/
-example : Flapjack.getVarImm finiteMachineState (.reg 0) =
-    some (.word (BitVec.ofNat 8 7)) := by
-  rw [← LoopSemStateFiniteExact.getVarImm_map_eq_of_prodRel finiteBridgeSample (.reg 0)]
-  simp [exactFiniteState, sptLookup, loopValueOfWordLocW]
-
-/-- Immediate read on the exact carrier transports to the production read. -/
-example : Flapjack.getVarImm finiteMachineState (.imm (BitVec.ofNat 8 9)) =
-    some (.word (BitVec.ofNat 8 9)) :=
-  LoopSemStateFiniteExact.getVarImm_map_eq_of_prodRel finiteBridgeSample
-    (.imm (BitVec.ofNat 8 9))
-
-/-- Recursive `get_vars` transports to the production read. -/
-example : Flapjack.getVars [0] finiteMachineState =
-    some [.word (BitVec.ofNat 8 7)] := by
-  rw [← LoopSemStateFiniteExact.getVars_map_eq_of_prodRel finiteBridgeSample [0]]
-  simp [LoopSemStateFiniteExact.getVars, exactFiniteState, sptLookup, loopValueOfWordLocW]
-
-/-- A missing local makes the recursive read fail on both sides. -/
-example : Flapjack.getVars [0, 1] finiteMachineState = none := by
-  rw [← LoopSemStateFiniteExact.getVars_map_eq_of_prodRel finiteBridgeSample [0, 1]]
-  simp [LoopSemStateFiniteExact.getVars, exactFiniteState, sptLookup]
 
 private def finiteBridgeGuard : Bool :=
   (Flapjack.getVarImm finiteMachineState (.reg 0) ==
@@ -311,17 +156,17 @@ private def finiteBridgeCodeGuard : Bool :=
 
 def runChecks : IO Bool := do
   if bridgeGuard then
-    IO.println "PASS loopSem exact state carrier fields and production state bridge"
+    IO.println "PASS loopSem get_var_imm and memory on the machine state"
   else
-    IO.println "FAIL loopSem exact state carrier bridge"
+    IO.println "FAIL loopSem get_var_imm and memory on the machine state"
   if finiteBridgeGuard then
-    IO.println "PASS loopSem exact finite-support state production bridge"
+    IO.println "PASS loopSem get_var_imm on the finite-support sample state"
   else
-    IO.println "FAIL loopSem exact finite-support state production bridge"
+    IO.println "FAIL loopSem get_var_imm on the finite-support sample state"
   if finiteBridgeCodeGuard then
-    IO.println "PASS loopSem exact finite-support non-empty code-table bridge"
+    IO.println "PASS loopSem exact finite-support non-empty code table"
   else
-    IO.println "FAIL loopSem exact finite-support non-empty code-table bridge"
+    IO.println "FAIL loopSem exact finite-support non-empty code table"
   pure (bridgeGuard && finiteBridgeGuard && finiteBridgeCodeGuard)
 
 end Flapjack.Test.LoopSemStateParity

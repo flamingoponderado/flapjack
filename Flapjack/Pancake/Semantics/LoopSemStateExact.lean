@@ -39,10 +39,8 @@ the tagged `state`.  `code` entries use the exact `HolLoopProg` carrier and the
 `BitVec width` model; `memory` is total and the domains are Lean sets, both
 matching HOL.
 
-The production `LoopMachineState` bridge and the `get_var_imm`/`get_vars`
-carrier-level statements live in `LoopSemState.lean`; the bridge to the
-production state over this exact carrier is tracked separately on
-`flapjack-pxn.18.5.17.1`.
+There is no bridge to a production Loop evaluator: the ported Loop pass
+theorems are stated over this exact carrier and `evaluate` directly.
 -/
 
 namespace Flapjack
@@ -637,103 +635,6 @@ def cutRes {width : Nat} [NeZero width] {F : Type} (live : NumSet)
 
 end LoopSemStateFiniteExact
 
-/-- Reverse/coverage direction of the exact/production code-table relation:
-    every successful HOL `sptree$lookup` on the exact `code` `sptree$num_map`
-    has a matching association-list entry in the production state, with the
-    executable program the `loopProgExecRel` image of the faithful one.  This
-    is the two-way counterpart of the forward code conjunct of `prodRel`
-    (below), which maps each production entry back to a successful exact
-    lookup: together they pin down the exact finite support of `code` as
-    exactly the labels occurring in `machine.code`.  A raw lookup-level
-    statement avoids needing an enumeration (`toAList`/`fold`) lemma for the
-    `Spt` carrier.  Flapjack bridge infrastructure (no `@[hol]` tag). -/
-def LoopCodeTableCoverage {width : Nat} [NeZero width] {F : Type}
-    (state : LoopSemStateFiniteExact width F)
-    (machine : LoopMachineState (BitVec width) F) : Prop :=
-  ∀ label parameters program,
-    sptLookup label state.code = some (parameters, program) →
-      ∃ entry ∈ machine.code,
-        entry.1 = label ∧ entry.2.1 = parameters ∧
-          loopProgExecRel entry.2.2 program
-
-/-- Observational bridge from the exact `LoopSemStateFiniteExact` to the
-    production `LoopMachineState`.  Word-location payloads compare through
-    `loopValueOfWordLocW`; the total `memory` is option-valued on the production
-    side (always present); the address sets are `Bool` predicates on both
-    sides; the code table is related in BOTH directions: the forward conjunct
-    maps each production association-list entry to a successful exact
-    `sptLookup` (with the executable program the `loopProgExecRel` image of the
-    faithful one), and `LoopCodeTableCoverage` supplies the reverse direction,
-    so the exact finite support of `code` is exactly the labels listed in
-    `machine.code`; and the FFI state by `FfiStateRel`. -/
-def LoopSemStateFiniteExact.prodRel {width : Nat} [NeZero width] {F : Type}
-    (state : LoopSemStateFiniteExact width F)
-    (machine : LoopMachineState (BitVec width) F) : Prop :=
-  (∀ name, machine.locals name = (sptLookup name state.locals).map loopValueOfWordLocW) ∧
-  (∀ global, machine.globals global = (state.globals.lookup global).map loopValueOfWordLocW) ∧
-  (∀ address, machine.memory address = some (loopValueOfWordLocW (state.memory address))) ∧
-  machine.mdomain = state.mdomain ∧
-  machine.shMdomain = state.shMdomain ∧
-  machine.clock = state.clock ∧
-  machine.be = state.be ∧
-  FfiStateRel machine.ffi state.ffi ∧
-  machine.baseAddr = state.baseAddr ∧
-  machine.topAddr = state.topAddr ∧
-  (∀ entry, entry ∈ machine.code →
-    ∃ program, sptLookup entry.1 state.code = some (entry.2.1, program) ∧
-      loopProgExecRel entry.2.2 program) ∧
-  LoopCodeTableCoverage state machine
-
-/-- Construct the production state carrier observed by `prodRel` from an
-    exact HOL-shaped state, while keeping the production FFI carrier and code
-    table explicit. This is Flapjack-only carrier infrastructure: HOL defines
-    one `loopSem$state` datatype and has no conversion to the production
-    association-list / `FfiState` representation. -/
-def LoopSemStateFiniteExact.toProductionState {width : Nat} [NeZero width]
-    {F : Type} (state : LoopSemStateFiniteExact width F)
-    (code : LoopCode (BitVec width)) (ffi : FfiState F) :
-    LoopMachineState (BitVec width) F where
-  locals := fun name => (sptLookup name state.locals).map loopValueOfWordLocW
-  globals := fun address => (state.globals.lookup address).map loopValueOfWordLocW
-  memory := fun address => some (loopValueOfWordLocW (state.memory address))
-  mdomain := state.mdomain
-  shMdomain := state.shMdomain
-  clock := state.clock
-  code := code
-  be := state.be
-  ffi := ffi
-  baseAddr := state.baseAddr
-  topAddr := state.topAddr
-
-/-- Exact and production Loop states preserve `prodRel` when the source
-    `set_var` update is paired with the executable `loopSetVar` update. The
-    local-map lookup proof uses the exact `sptInsert` lookup equations; every
-    other state field is unchanged by both updates. This is a Flapjack-only
-    cross-carrier transition lemma for evaluator-case proofs, not a separate
-    HOL declaration or a whole-evaluator simulation theorem. -/
-theorem LoopSemStateFiniteExact.setVar_prodRel {width : Nat} [NeZero width]
-    {F : Type} {state : LoopSemStateFiniteExact width F}
-    {machine : LoopMachineState (BitVec width) F}
-    (hrel : state.prodRel machine) (name : Nat) (value : WordLocW width) :
-    (setVar name value state).prodRel
-      {machine with locals := loopSetVar machine.locals name (loopValueOfWordLocW value)} := by
-  rcases hrel with
-    ⟨hlocals, hglobals, hmemory, hmdomain, hshMdomain, hclock, hbe, hffi,
-      hbaseAddr, htopAddr, hcode, hcoverage⟩
-  refine ⟨?_, hglobals, hmemory, hmdomain, hshMdomain, hclock, hbe, hffi,
-    hbaseAddr, htopAddr, hcode, hcoverage⟩
-  intro key
-  by_cases hkey : key = name
-  · subst key
-    simp [setVar, loopSetVar, sptLookup_sptInsert_same]
-  · calc
-      loopSetVar machine.locals name (loopValueOfWordLocW value) key =
-          machine.locals key := by simp [loopSetVar, hkey]
-      _ = (sptLookup key state.locals).map loopValueOfWordLocW := hlocals key
-      _ = (sptLookup key (sptInsert name value state.locals)).map
-            loopValueOfWordLocW := by
-              rw [sptLookup_sptInsert_ne name key value state.locals hkey]
-
 private theorem loopSetVars_sptAlistInsert_map {α β : Type} (f : α → β)
     (names : List Nat) (values : List α) (tree : Spt α) :
     loopSetVars (fun key => (sptLookup key tree).map f) names (values.map f) =
@@ -771,44 +672,6 @@ private theorem loopSetVars_sptAlistInsert_map {α β : Type} (f : α → β)
                     simp only [LoopSemStateFiniteExact.sptAlistInsert]
                     rw [sptLookup_sptInsert_ne name key value
                       (LoopSemStateFiniteExact.sptAlistInsert names values tree) hkey]
-
-/-- Production Loop state update paired with a WordLoc-valued exact
-    `set_vars`. Flapjack-only bridge helper; HOL's `set_vars` operates on its
-    single exact state carrier and does not define this production conversion. -/
-def loopMachineSetVarsWordLoc {width : Nat} [NeZero width] {F : Type}
-    (machine : LoopMachineState (BitVec width) F) (names : List Nat)
-    (values : List (WordLocW width)) : LoopMachineState (BitVec width) F :=
-  { machine with locals :=
-      loopSetVars machine.locals names (values.map loopValueOfWordLocW) }
-
-/-- Exact and production Loop states preserve `prodRel` when the source
-    `set_vars` alist insertion is paired with the production overlay. The proof
-    retains HOL's first-occurrence-wins duplicate behavior and `ZIP` truncation
-    for unequal list lengths. This is a Flapjack-only cross-carrier transition
-    lemma for call/return case proofs, not a full evaluator simulation. -/
-theorem LoopSemStateFiniteExact.setVars_prodRel {width : Nat} [NeZero width]
-    {F : Type} {state : LoopSemStateFiniteExact width F}
-    {machine : LoopMachineState (BitVec width) F}
-    (hrel : state.prodRel machine) (names : List Nat)
-    (values : List (WordLocW width)) :
-    (LoopSemStateFiniteExact.setVars names values state).prodRel
-      (loopMachineSetVarsWordLoc machine names values) := by
-  rcases hrel with
-    ⟨hlocals, hglobals, hmemory, hmdomain, hshMdomain, hclock, hbe, hffi,
-      hbaseAddr, htopAddr, hcode, hcoverage⟩
-  refine ⟨?_, hglobals, hmemory, hmdomain, hshMdomain, hclock, hbe, hffi,
-    hbaseAddr, htopAddr, hcode, hcoverage⟩
-  intro key
-  change loopSetVars machine.locals names (values.map loopValueOfWordLocW) key =
-    (sptLookup key (LoopSemStateFiniteExact.sptAlistInsert names values state.locals)).map
-      loopValueOfWordLocW
-  have hlocalsEq : machine.locals =
-      (fun key => (sptLookup key state.locals).map loopValueOfWordLocW) := by
-    funext localName
-    exact hlocals localName
-  rw [hlocalsEq]
-  exact congrFun (loopSetVars_sptAlistInsert_map loopValueOfWordLocW names
-    values state.locals) key
 
 /-- Source-shaped `find_code` (`loopSemScript.sml:147-163`) reading the exact
     `code` `sptree$num_map` through `sptLookup`.  The code-table representation
@@ -935,122 +798,6 @@ theorem lookupLoopFunction_eq_of_rel {width : Nat} [NeZero width] {F : Type}
             (fun entry hentry => hcode entry (List.mem_cons_of_mem _ hentry))
             ⟨entry, hrest, hentryLabel⟩
 
-/-- Production lookup correspondence under the full state bridge.  Flapjack
-    bridge infrastructure (no `@[hol]` tag). -/
-theorem lookupLoopFunction_eq_of_prodRel {width : Nat} [NeZero width] {F : Type}
-    {state : LoopSemStateFiniteExact width F}
-    {machine : LoopMachineState (BitVec width) F}
-    (h : state.prodRel machine)
-    {label : Nat} {parameters : List Nat} {program : HolLoopProg width}
-    (hlookup : sptLookup label state.code = some (parameters, program)) :
-    ∃ executableProgram,
-      lookupLoopFunction label machine.code = some (parameters, executableProgram) ∧
-        loopProgExecRel executableProgram program := by
-  obtain ⟨_, _, _, _, _, _, _, _, _, _, hcode, hcov⟩ := h
-  obtain ⟨entry, hentry, hlabel, _, _⟩ := hcov label parameters program hlookup
-  exact lookupLoopFunction_eq_of_rel hcode ⟨entry, hentry, hlabel⟩ hlookup
-
-/-- `find_code` correspondence: under `prodRel`, the production executable
-    `findLoopCode` on the association-list code table and the exact
-    source-shaped `findLoopCodeSpt` on the `sptree$num_map` code table produce
-    corresponding results.  Both the labelled (`some entry`) and link
-    (`.loc _ 0` trailing argument) cases are handled, including the
-    duplicate-label first-occurrence-wins order of `lookupLoopFunction`.
-    Flapjack bridge infrastructure (no `@[hol]` tag): it proves the compiled
-    executable lookup agrees with the faithful `loopSem$find_code` reading. -/
-theorem findLoopCode_prodRel {width : Nat} [NeZero width] {F : Type}
-    {state : LoopSemStateFiniteExact width F}
-    {machine : LoopMachineState (BitVec width) F}
-    (h : state.prodRel machine) (label : Option Nat)
-    (args : List (LoopValue (BitVec width))) :
-    loopFindCodeResultRel (findLoopCode label args machine.code)
-      (findLoopCodeSpt label args state.code) := by
-  obtain ⟨_, _, _, _, _, _, _, _, _, _, hcode, hcov⟩ := h
-  cases label with
-  | some entry =>
-      simp only [findLoopCode, findLoopCodeSpt]
-      cases hlookup : sptLookup entry state.code with
-      | none =>
-          have hprod := lookupLoopFunction_eq_none_of_rel hcode hlookup
-          simp only [hprod, loopFindCodeResultRel]
-      | some pair =>
-          obtain ⟨parameters, holBody⟩ := pair
-          obtain ⟨codeEntry, hentry, hlabel, _, _⟩ :=
-            hcov entry parameters holBody hlookup
-          obtain ⟨execBody, hprod, hrel⟩ :=
-            lookupLoopFunction_eq_of_rel hcode ⟨codeEntry, hentry, hlabel⟩ hlookup
-          simp only [hprod]
-          by_cases hlen : args.length = parameters.length
-          · simp only [hlen, if_true]
-            exact ⟨rfl, hrel⟩
-          · simp only [hlen, if_false, loopFindCodeResultRel]
-  | none =>
-      simp only [findLoopCode, findLoopCodeSpt]
-      by_cases hempty : args = []
-      · simp only [hempty, if_true, loopFindCodeResultRel]
-      · simp only [hempty, if_false]
-        cases hlast : args.getLast? with
-        | none => simp only [loopFindCodeResultRel]
-        | some last =>
-            cases last with
-            | word value => simp only [loopFindCodeResultRel]
-            | loc identifier offset =>
-                cases offset with
-                | zero =>
-                    by_cases hlookup : sptLookup identifier state.code = none
-                    · have hprod := lookupLoopFunction_eq_none_of_rel hcode hlookup
-                      simp only [loopFindCodeResultRel]
-                      rw [hlookup, hprod]
-                      trivial
-                    · obtain ⟨pair, hsome⟩ : ∃ pair, sptLookup identifier state.code = some pair := by
-                        cases h : sptLookup identifier state.code with
-                        | none => exact absurd h hlookup
-                        | some p => exact ⟨p, rfl⟩
-                      obtain ⟨parameters, holBody⟩ := pair
-                      obtain ⟨codeEntry, hentry, hlabel, _, _⟩ :=
-                        hcov identifier parameters holBody hsome
-                      obtain ⟨execBody, hprod, hrel⟩ :=
-                        lookupLoopFunction_eq_of_rel hcode
-                          ⟨codeEntry, hentry, hlabel⟩ hsome
-                      simp only [loopFindCodeResultRel]
-                      rw [hsome, hprod]
-                      by_cases hlen : args.length = parameters.length + 1
-                      · simp only [hlen, if_true]
-                        exact ⟨trivial, hrel⟩
-                      · simp only [hlen, if_false]
-                | succ offset => simp only [loopFindCodeResultRel]
-
 end LoopSemStateFiniteExact
-
-/-- Register reads through `get_var_imm` on the production state agree with the
-    exact carrier's local lookup under `prodRel`. -/
-theorem LoopSemStateFiniteExact.getVarImm_map_eq_of_prodRel {width : Nat} [NeZero width]
-    {F : Type} {state : LoopSemStateFiniteExact width F}
-    {machine : LoopMachineState (BitVec width) F}
-    (h : state.prodRel machine) (operand : RegImm (BitVec width)) :
-    (LoopSemStateFiniteExact.getVarImm operand state).map loopValueOfWordLocW =
-      Flapjack.getVarImm machine operand := by
-  cases operand with
-  | reg name => exact (h.1 name).symm
-  | imm value => rfl
-
-/-- Variable reads through `get_vars` on the production state agree with the
-    exact carrier's recursive read under `prodRel`. -/
-theorem LoopSemStateFiniteExact.getVars_map_eq_of_prodRel {width : Nat} [NeZero width]
-    {F : Type} {state : LoopSemStateFiniteExact width F}
-    {machine : LoopMachineState (BitVec width) F}
-    (h : state.prodRel machine) (names : List Nat) :
-    (LoopSemStateFiniteExact.getVars names state).map (List.map loopValueOfWordLocW) =
-      Flapjack.getVars names machine := by
-  induction names with
-  | nil => rfl
-  | cons name names ih =>
-      rw [LoopSemStateFiniteExact.getVars_cons, Flapjack.getVars, h.1 name]
-      cases hlookup : sptLookup name state.locals with
-      | none => rfl
-      | some value =>
-          simp only [Option.bind_some, Option.map_some, Option.map_map]
-          rw [← ih]
-          cases hg : LoopSemStateFiniteExact.getVars names state <;> rfl
 
 end Flapjack

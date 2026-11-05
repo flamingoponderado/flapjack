@@ -83303,14 +83303,6 @@
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.14): HOL unassigned_vars_evaluate_same (loopPropsScript.sml:332-338) `!p s res t n v. evaluate (p,s) = (res,t) /\\ (res = NONE ∨ (∃n. res = SOME (Continue n)) ∨ (∃n. res = SOME (Break n))) /\\ lookup n s.locals = SOME v /\\ ~MEM n (assigned_vars p) /\\ survives n p ==> lookup n t.locals = lookup n s.locals`; Lean binds the same six variables in HOL order with the same five-conjunct premise, where the result disjunction is the definitional abbreviation UnassignedGoodRes res (unfolds to exactly that disjunction), assigned_vars is the tagged holLoopAssignedVars, and the HOL bool survives n p is the tagged survivesHOLExact n p = true; same conclusion over the tagged exact evaluate. No extra hypotheses. fmap_as_finite_support [globals]: quantifies over LoopSemStateFiniteExact whose HOL |-> globals field is the canonical HolFiniteMapExact carrier; locals/code are Spt num_maps and not named; same-module re-exported canonical witness."
   },
   {
-    "hol_path": "cakeml/pancake/semantics/loopSemScript.sml",
-    "hol_name": "loop_primop_def",
-    "lean_path": "Flapjack/Pancake/Semantics/LoopSem.lean",
-    "lean_name": "loopPrimopHOL",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds9 (bead flapjack-ptzz): the `@[hol]` tag is WITHDRAWN. This declaration is valued in `LoopValue` (`Flapjack/LoopFindCode.lean`), a Flapjack executable/faithful loop value, not the exact HOL `word_loc` carrier `WordLocW` (`Flapjack/Pancake/WordLang.lean`), so the unqualified `reviewed_exact` claim was a carrier mismatch. The canonical source-exact port is `LoopSemStateFiniteExact.loopPrimop` (`Flapjack/Pancake/Semantics/LoopSemStateExact.lean`), valued in `WordLocW` and tagged `loop_primop_def` with `(words_as_type_indexed_bitvec)`."
-  },
-  {
     "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
     "hol_name": "mem_load_32_def",
     "lean_path": "Flapjack/Pancake/Semantics/LoopSem.lean",
