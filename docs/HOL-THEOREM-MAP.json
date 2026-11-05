@@ -1,6 +1,15 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_gen_gc_partial_move_ref_list_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PartialRefs.lean",
+  "lean_name": "wordGenGcPartialMoveRefList_thm",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared word_partial_move_ref_list_typed: the bounds, reference predicate, separated memory, heap segment, success and all output equations agree at the shared positive word width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "gc_partial_move_ref_list_ok_before",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PartialAccumulator.lean",
   "lean_name": "partialMoveRefList_okBefore",
