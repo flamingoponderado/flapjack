@@ -946,6 +946,24 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "alloc_size_check",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CombinedStore.lean",
+  "lean_name": "gcAllocSize_check",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared alloc_size_check_typed and the source statement: the same strict unsigned byte comparison, non-wrapping available count, good-dimension premise and strict natural conclusion are retained; HOL words use positive-width BitVecs."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "alloc_size_LEQ_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CombinedStore.lean",
+  "lean_name": "gcAllocSize_le_imp",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared alloc_size_LEQ_IMP_typed and the source statement: the same unsigned encoded-allocation bound, non-wrapping available count, good-dimension premise and natural-number conclusion are retained; HOL words use positive-width BitVecs."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "word_gc_fun_lemma_Simple",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/Simple.lean",
   "lean_name": "wordGcFun_lemma_simple",

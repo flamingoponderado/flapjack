@@ -14,6 +14,37 @@ open Flapjack.Compiler.Backend.DataToWord.Proofs.Memory Flapjack.Compiler.Backen
 def gcAllocSize {width : Nat} [NeZero width] (requested : Nat) : BitVec width :=
   if requested * (width / 8) < 2 ^ width then BitVec.ofNat width (requested * (width / 8)) else -1
 
+/-- An encoded allocation that fits in a bounded number of free words also
+fits as a natural word count. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "alloc_size_LEQ_IMP"
+  (words_as_type_indexed_bitvec)]
+theorem gcAllocSize_le_imp {width : Nat} [NeZero width] (requested available : Nat)
+    (fits : (gcAllocSize requested : BitVec width) ≤ wordSemBytesInWord * BitVec.ofNat width available)
+    (bound : available * (width / 8) < 2 ^ width) (good : goodDimindex width) : requested ≤ available := by
+  have one : (1 : BitVec width).toNat = 1 := by rcases good with rfl | rfl <;> decide
+  rw [gcAllocSize] at fits
+  split_ifs at fits
+  all_goals apply BitVec.le_def.mp at fits
+  all_goals rcases good with rfl | rfl
+  all_goals simp only [wordSemBytesInWord, BitVec.toNat_mul, BitVec.toNat_ofNat, BitVec.toNat_neg, one] at fits
+  all_goals norm_num at *
+  all_goals omega
+
+/-- If the encoded request is larger than a bounded free-word offset, then
+the requested word count exceeds that free count. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "alloc_size_check"
+  (words_as_type_indexed_bitvec)]
+theorem gcAllocSize_check {width : Nat} [NeZero width] (requested available : Nat)
+    (larger : (wordSemBytesInWord * BitVec.ofNat width available).toNat < (gcAllocSize requested : BitVec width).toNat)
+    (bound : available * (width / 8) < 2 ^ width) (good : goodDimindex width) : available < requested := by
+  have one : (1 : BitVec width).toNat = 1 := by rcases good with rfl | rfl <;> decide
+  rw [gcAllocSize] at larger
+  split_ifs at larger
+  all_goals rcases good with rfl | rfl
+  all_goals simp only [wordSemBytesInWord, BitVec.toNat_mul, BitVec.toNat_ofNat, BitVec.toNat_neg, one] at larger
+  all_goals norm_num at *
+  all_goals omega
+
 /-- The concrete word semantics reports sufficient space from the actual
 store lookups and unsigned pointer gap. -/
 theorem collector_hasSpace_of_gap {width : Nat} [NeZero width] {C F : Type}
@@ -22,6 +53,30 @@ theorem collector_hasSpace_of_gap {width : Nat} [NeZero width] {C F : Type}
     (trigger : store.lookup .triggerGC = some (.word t)) (fits : request ≤ t - p) :
     WordSemStateFiniteExact.hasSpace (.word request) { state with store := store } = some true := by
   simpa [WordSemStateFiniteExact.hasSpace, WordSemStateFiniteExact.getStore, next, trigger, BitVec.le_def] using fits
+
+/-- A failed word-level space check in a related heap means that the requested
+allocation exceeds the free words before the collection trigger. -/
+theorem collector_hasSpace_false_bound {width : Nat} [NeZero width] {C F : Type}
+    (conf : Config) (heap : List (HeapElement (WordLocW width) (HeapTag × List (WordLocW width))))
+    (a sp sp1 limit requested : Nat) (gens : GenState) (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (memory : BitVec width → WordLocW width) (domain : BitVec width → Bool)
+    (state : WordSemStateFiniteExact width C F) (good : goodDimindex width)
+    (heapMem : heapInMemoryStore heap a sp sp1 gens conf store memory domain limit)
+    (bound : sp * (width / 8) < 2 ^ width)
+    (failed : WordSemStateFiniteExact.hasSpace (.word (gcAllocSize requested))
+      { state with store := store } = some false) : sp < requested := by
+  obtain ⟨_, _, _, _, _, _, _, curr, other, _, _, _, _, next, trigger, _⟩ := heapMem
+  have gap : (curr + StackRemove.bytesInWord width * BitVec.ofNat width (a + sp)) -
+      (curr + StackRemove.bytesInWord width * BitVec.ofNat width a) =
+        wordSemBytesInWord * BitVec.ofNat width sp := by
+    simp only [wordSemBytesInWord, StackRemove.bytesInWord, BitVec.ofNat_add, BitVec.mul_add, ← BitVec.add_assoc]
+    simp
+  have comparison : (wordSemBytesInWord * BitVec.ofNat width sp).toNat < (gcAllocSize requested : BitVec width).toNat := by
+    simp only [WordSemStateFiniteExact.hasSpace, WordSemStateFiniteExact.getStore, next, trigger,
+      Option.some.injEq, decide_eq_false_iff_not] at failed
+    rw [gap] at failed
+    omega
+  exact gcAllocSize_check requested sp comparison bound good
 
 /-- The combined collector preserves the heap/store invariant and stack-root
 encoding, and satisfies the allocation-space conclusions for both generational
