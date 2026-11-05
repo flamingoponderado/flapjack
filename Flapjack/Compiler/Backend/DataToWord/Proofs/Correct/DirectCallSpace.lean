@@ -1,12 +1,13 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.IndirectCallSpace
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.IndirectReturningCallSpace
 
 /-! Recursive direct calls composed with allocation-space checks. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Correct
 open Flapjack Gc
 
 /-- Allocation-capable commands and direct calls, closed under sequencing,
-conditionals, local handler bodies, and indirect tail calls. Indirect returning
-calls and allocation-producing primitives remain outside this fragment. -/
+conditionals, local handler bodies, and indirect calls without local handlers.
+Indirect calls with local handlers and allocation-producing primitives remain
+outside this fragment. -/
 inductive DirectCallSpaceFragment : DataLang.Prog → Prop where
   | base {program : DataLang.Prog} : VerifiedWithSpace program → DirectCallSpaceFragment program
   | seq {first second : DataLang.Prog} : DirectCallSpaceFragment first → DirectCallSpaceFragment second →
@@ -17,6 +18,8 @@ inductive DirectCallSpaceFragment : DataLang.Prog → Prop where
   | indirectTailCall (names : List Nat) : DirectCallSpaceFragment (.call none none names none)
   | returningCall (callee : Nat) (names returns : List Nat) (live : NumSet) :
       DirectCallSpaceFragment (.call (some (returns, live)) (some callee) names none)
+  | indirectReturningCall (names returns : List Nat) (live : NumSet) :
+      DirectCallSpaceFragment (.call (some (returns, live)) none names none)
   | handledCall (callee : Nat) (names returns : List Nat) (live : NumSet) (handlerName : Nat)
       {handlerBody : DataLang.Prog} : DirectCallSpaceFragment handlerBody →
       DirectCallSpaceFragment (.call (some (returns, live)) (some callee) names (some (handlerName, handlerBody)))
@@ -78,6 +81,17 @@ theorem directCallSpaceFragment_code {C F : Type} (program : DataLang.Prog)
         apply DataSem.evaluate_call_code_step (some (returns, live)) (some callee) names none state
         · intro values args body size found next smaller codeEq
           obtain ⟨label, arity, lookup⟩ := findCode_body_lookup (some callee) values state.code
+            state.stackFrameSizes args body size found
+          have member := closed label arity body lookup
+          have nextClosed : DirectCallSpaceFragmentCode next.code := by simpa [codeEq] using closed
+          exact (clockIH next.clock (by omega) body member next rfl nextClosed).trans codeEq
+        · intro name body handlerEq
+          cases handlerEq
+      | indirectReturningCall names returns live =>
+        intro state eq closed
+        apply DataSem.evaluate_call_code_step (some (returns, live)) none names none state
+        · intro values args body size found next smaller codeEq
+          obtain ⟨label, arity, lookup⟩ := findCode_body_lookup none values state.code
             state.stackFrameSizes args body size found
           have member := closed label arity body lookup
           have nextClosed : DirectCallSpaceFragmentCode next.code := by simpa [codeEq] using closed
@@ -167,6 +181,13 @@ theorem directCallSpaceFragment64 {C F : Type} (conf : Config) (program : DataLa
         obtain ⟨calleeLabel, arity, lookup⟩ := findCode_body_lookup (some callee) args source.code
           source.stackFrameSizes args body size found
         have member := closed calleeLabel arity body lookup
+        have nextClosed : DirectCallSpaceFragmentCode s.code := by simpa [codeEq] using closed
+        exact clockIH s.clock (by omega) body member callee 2 secn label s t ((l1, l2) :: locs) rfl nextClosed rel valid
+      | indirectReturningCall names returns live =>
+        intro secn label l1 l2 source target locs eq closed related safe
+        apply call64_indirect_noHandler_withSpace_of_safe conf secn label l1 l2 source target locs related names returns live safe
+        intro callee arity body lookup s t codeEq smaller rel valid
+        have member := closed callee arity body lookup
         have nextClosed : DirectCallSpaceFragmentCode s.code := by simpa [codeEq] using closed
         exact clockIH s.clock (by omega) body member callee 2 secn label s t ((l1, l2) :: locs) rfl nextClosed rel valid
       | @handledCall callee names returns live handlerName handlerBody handlerFrag handlerIH =>

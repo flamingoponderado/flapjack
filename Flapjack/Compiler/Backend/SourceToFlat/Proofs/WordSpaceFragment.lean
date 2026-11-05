@@ -395,7 +395,7 @@ theorem configuredBviCallFragment_entry {C F : Type} (fuel : Nat)
 /-- The emitted word entry call simulates a non-type-error BVI entry call
 for a closed fragment with direct tail and returning calls, local handlers,
 and allocation-space checks. The permitted allocation failure retains the FFI
-event-prefix guarantee. Indirect returning calls, allocation-producing primitives,
+event-prefix guarantee. Indirect calls with local handlers, allocation-producing primitives,
 initial-state construction, and whole-program HOL correspondence remain open. -/
 theorem configuredBviDirectCallSpace_entry {C F : Type} (fuel : Nat)
     (source nextSource : Config) (closure nextClosure : ClosToBvl.Config)
