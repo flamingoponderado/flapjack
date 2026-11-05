@@ -273,7 +273,7 @@ carrier and Encode body are in the original L3 model counterpart under
 
 ## Measuring port size
 
-Two informational reports (not gates) measure how much larger a port is than
+Three informational reports (not gates) measure how much larger a port is than
 its HOL source:
 
 - `scripts/check-lemma-density.py [ROOT ...]` (default `Flapjack/Pancake`)
@@ -290,8 +290,10 @@ its HOL source:
   `Flapjack.Pancake`) lists the untagged theorems under a module prefix that
   no other declaration of the `Flapjack` library uses, following proof terms
   (rule in `scripts/UnusedTheorems.lean`). Names mentioned in tests,
-  documentation and scripts, and the representation witnesses that
-  `check-hol-refs.py` requires by name, are kept as roots. It loads the built
+  documentation and scripts, theorems with any attribute other than `hol`
+  (simp, grind, ext, ...: automation can use them unnamed), and the
+  representation witnesses that `check-hol-refs.py` requires by name, are
+  kept as roots. It loads the built
   library through `lake env lean`, so run it after `lake build Flapjack` and
   not alongside other Lake commands.
 

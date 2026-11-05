@@ -8,6 +8,9 @@ import pathlib
 import sys
 import tempfile
 import unittest
+import io
+from contextlib import redirect_stderr, redirect_stdout
+from unittest import mock
 
 SCRIPT = pathlib.Path(__file__).resolve().parent.parent / "report-unused-theorems.py"
 spec = importlib.util.spec_from_file_location("report_unused_theorems", SCRIPT)
@@ -30,6 +33,67 @@ class SourceTheoremsTest(unittest.TestCase):
 
     def test_missing_file(self):
         self.assertEqual(rut.source_theorems(pathlib.Path("/nonexistent/F.lean")), set())
+
+
+LEAN = """
+/-- doc @[simp] theorem inDoc : True := trivial -/
+@[simp] theorem simpOne : True := trivial
+
+@[hol "a/xScript.sml" "t"]
+theorem holOnly : True := trivial
+
+@[hol "a/xScript.sml" "u" (list_as_array := [f])]
+theorem holQualified : True := trivial
+
+@[hol "a/xScript.sml" "v", grind =]
+private theorem Ns.holAndGrind : True := trivial
+
+@[local simp]
+lemma localSimp : True := trivial
+
+@[ext] theorem
+  extSplit : True := trivial
+
+@[simp] def simpDef : Nat := 1
+
+theorem plain : True := trivial
+
+theorem later : True := trivial
+theorem laterToo : True := trivial
+attribute [simp] later Ns.laterToo
+attribute [-simp] removedAttr
+attribute [local irreducible] simpDef
+-- attribute [simp] commented
+"""
+
+
+class AttributedTheoremsTest(unittest.TestCase):
+    def test_non_hol_attributes(self):
+        self.assertEqual(
+            rut.attributed_theorems(LEAN),
+            {"simpOne", "holAndGrind", "localSimp", "extSplit", "later", "laterToo",
+             "removedAttr", "simpDef"},
+        )
+
+
+class MainRootsTest(unittest.TestCase):
+    def test_automation_names_reach_the_lean_half(self):
+        captured = {}
+
+        def fake_run(cmd, **kwargs):
+            if cmd[:2] == ["lake", "env"]:
+                captured["roots"] = pathlib.Path(
+                    kwargs["env"]["UNUSED_THEOREMS_TEXT_ROOTS"]).read_text().split()
+                return mock.Mock(returncode=0, stdout="", stderr="")
+            return real_run(cmd, **kwargs)
+
+        real_run = rut.subprocess.run
+        with mock.patch.object(rut, "automation_roots", return_value={"onlyByAttribute"}), \
+                mock.patch.object(rut.subprocess, "run", side_effect=fake_run), \
+                redirect_stderr(io.StringIO()), redirect_stdout(io.StringIO()):
+            self.assertEqual(rut.main([]), 0)
+        self.assertIn("onlyByAttribute", captured["roots"])
+        self.assertIn("unittest", captured["roots"])
 
 
 class TextRootsTest(unittest.TestCase):

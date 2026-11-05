@@ -14,6 +14,13 @@ and text files and in ``Flapjack/Test`` and ``scripts`` Lean files.  This is
 deliberately coarse (a leaf name mentioned anywhere protects every theorem
 with that leaf name) so the report errs towards keeping a theorem.
 
+Theorems that carry any attribute other than ``hol`` (``@[simp]``,
+``@[grind]``, ``@[ext]``, a custom simp set, ...), on the declaration or
+through a later ``attribute [...] name`` command anywhere under ``Flapjack``,
+are roots as well: automation can use them without naming them, so a proof
+or ``example`` added later could depend on them although no stored proof
+term mentions them today.
+
 Only theorems written as a ``theorem``/``lemma`` in the source file of their
 module are printed; generated equation and structure lemmas are dropped.
 
@@ -40,6 +47,7 @@ import subprocess
 import sys
 import tempfile
 from collections import Counter
+import importlib.util
 
 TEXT_GLOBS = ["*.md", "*.py", "*.sh", "*.json", "*.toml", "*.txt", "*.yml", "*.yaml",
               "Flapjack/Test/*.lean", "scripts/*.lean"]
@@ -67,6 +75,98 @@ def text_roots(repo: pathlib.Path) -> set[str]:
     return names
 
 
+_RPD = pathlib.Path(__file__).resolve().parent / "report-proof-duplication.py"
+_spec = importlib.util.spec_from_file_location("report_proof_duplication", _RPD)
+_rpd = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_rpd)
+
+DECL_AFTER_ATTRS_RE = re.compile(
+    r"\s*(?:(?:private|protected|noncomputable)\s+)*(theorem|lemma|def|abbrev|instance|"
+    r"structure|inductive|opaque|axiom)\s+([^\s:(\[{]+)"
+)
+ATTRIBUTE_CMD_RE = re.compile(r"^attribute\s*\[", re.MULTILINE)
+
+
+def _bracket_end(text: str, start: int) -> int:
+    """Index just past the ``]`` matching the ``[`` at ``start``."""
+    depth = 0
+    for i in range(start, len(text)):
+        if text[i] == "[":
+            depth += 1
+        elif text[i] == "]":
+            depth -= 1
+            if depth == 0:
+                return i + 1
+    return len(text)
+
+
+def _attribute_names(content: str) -> list[str]:
+    """Attribute names in the body of ``@[...]``/``attribute [...]``."""
+    names, depth, item = [], 0, ""
+    for ch in content + ",":
+        if ch in "[(":
+            depth += 1
+        elif ch in "])":
+            depth -= 1
+        if ch == "," and depth == 0:
+            words = item.split()
+            words = [w for w in words if w not in ("local", "scoped", "-")]
+            if words:
+                names.append(words[0])
+            item = ""
+        else:
+            item += ch
+    return names
+
+
+def attributed_theorems(text: str) -> set[str]:
+    """Leaf names of theorems given a non-``hol`` attribute in one Lean file.
+
+    Covers ``@[...]`` blocks before a ``theorem``/``lemma`` header and
+    ``attribute [...] name ...`` commands.  Comments and strings are masked
+    first."""
+    masked = _rpd.mask_comments(text)
+    found: set[str] = set()
+    i = 0
+    while True:
+        i = masked.find("@[", i)
+        if i < 0:
+            break
+        attrs: list[str] = []
+        j = i
+        while masked.startswith("@[", j):
+            end = _bracket_end(masked, j + 1)
+            attrs += _attribute_names(masked[j + 2 : end - 1])
+            j = end
+            while j < len(masked) and masked[j].isspace():
+                j += 1
+        m = DECL_AFTER_ATTRS_RE.match(masked, j)
+        if m and m.group(1) in ("theorem", "lemma") and any(a != "hol" for a in attrs):
+            found.add(m.group(2).rsplit(".", 1)[-1])
+        i = max(j, i + 2)
+    for m in ATTRIBUTE_CMD_RE.finditer(masked):
+        start = m.end() - 1
+        end = _bracket_end(masked, start)
+        attrs = _attribute_names(masked[start + 1 : end - 1])
+        line_end = masked.find("\n", end)
+        rest = masked[end : len(masked) if line_end < 0 else line_end]
+        if any(a != "hol" for a in attrs):
+            for tok in rest.split():
+                found.add(tok.rsplit(".", 1)[-1])
+    return found
+
+
+def automation_roots(repo: pathlib.Path) -> set[str]:
+    files = subprocess.run(["git", "ls-files", "Flapjack/*.lean", "Flapjack.lean"], cwd=repo,
+                           check=True, capture_output=True, text=True).stdout.split()
+    names: set[str] = set()
+    for f in files:
+        path = repo / f
+        if path.is_file():
+            names |= attributed_theorems(path.read_text(encoding="utf-8", errors="replace"))
+    return names
+
+
 def source_theorems(path: pathlib.Path) -> set[str]:
     """Leaf names of the theorems written in a Lean source file."""
     if not path.is_file():
@@ -85,7 +185,8 @@ def main(argv: list[str]) -> int:
     repo = pathlib.Path(__file__).resolve().parent.parent
     with tempfile.TemporaryDirectory() as tmp:
         roots_file = pathlib.Path(tmp) / "text-roots.txt"
-        roots_file.write_text("\n".join(sorted(text_roots(repo))) + "\n")
+        roots = text_roots(repo) | automation_roots(repo)
+        roots_file.write_text("\n".join(sorted(roots)) + "\n")
         env = dict(os.environ, UNUSED_THEOREMS_PREFIX=args.prefix,
                    UNUSED_THEOREMS_TEXT_ROOTS=str(roots_file))
         proc = subprocess.run(["lake", "env", "lean", "scripts/UnusedTheorems.lean"],
