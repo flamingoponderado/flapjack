@@ -2977,6 +2977,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.CollectorGenerational
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.CollectorPartial
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.CollectorCombined
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordGcCorrect
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StateGcExecution
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.CollectorGenerationalWord
 import Flapjack.Test.CopyingGcParity
 import Flapjack.Compiler.Backend.WordGcFunctions.Roots
