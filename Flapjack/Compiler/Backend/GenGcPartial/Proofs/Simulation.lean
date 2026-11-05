@@ -1476,4 +1476,117 @@ theorem partialGc_simulation {α β : Type} (conf : Config β)
           refine ⟨?_, finalEq, finalInv, finalEmpty, finalOk⟩
           simp [toGenRoots, finalRefs]
 
+/-- Flapjack proof infrastructure: a translated pointer must come from a
+pointer in the current generation. -/
+theorem toGenHeapAddress_pointerInv {α β : Type} (conf : Config β) (root : HeapAddress α)
+    (ptr : Nat) (value : DataSort (HeapAddress α) α)
+    (translated : toGenHeapAddress conf root = .pointer ptr value) :
+    ∃ original originalValue, root = .pointer original originalValue ∧
+      ptr = original - conf.genStart ∧ value = .real originalValue ∧
+      conf.genStart ≤ original ∧ original < conf.refsStart := by
+  cases root with
+  | data originalValue => simp [toGenHeapAddress] at translated
+  | pointer original originalValue =>
+    by_cases lower : original < conf.genStart
+    · simp [toGenHeapAddress, lower] at translated
+    · by_cases upper : conf.refsStart ≤ original
+      · simp [toGenHeapAddress, lower, upper] at translated
+      · simp [toGenHeapAddress, lower, upper] at translated
+        obtain ⟨rfl, rfl⟩ := translated
+        exact ⟨original, originalValue, rfl, rfl, rfl, Nat.le_of_not_gt lower, Nat.lt_of_not_ge upper⟩
+
+/-- Every pointer in translated roots comes from a current-generation pointer.
+The local HOL proof has not yet been replayed. -/
+@[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "MEM_to_gen_roots_IMP_MEM"]
+theorem mem_toGenRoots_pointerInv {α β : Type} (conf : Config β) (roots : List (HeapAddress α))
+    (ptr : Nat) (value : DataSort (HeapAddress α) α)
+    (member : .pointer ptr value ∈ toGenRoots conf roots) :
+    ∃ original originalValue, .pointer original originalValue ∈ roots ∧
+      ptr = original - conf.genStart ∧ value = .real originalValue ∧
+      conf.genStart ≤ original ∧ original < conf.refsStart := by
+  obtain ⟨root, member, translated⟩ := List.mem_map.mp member
+  obtain ⟨original, originalValue, eq, ptrEq, valueEq, lower, upper⟩ :=
+    toGenHeapAddress_pointerInv conf root ptr value translated
+  subst root
+  exact ⟨original, originalValue, member, ptrEq, valueEq, lower, upper⟩
+
+/-- Every pointer extracted from translated reference objects comes from a
+current-generation child. The local HOL proof has not yet been replayed. -/
+@[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "MEM_refs_to_roots_IMP_MEM"]
+theorem mem_refsToRoots_pointerInv {α β γ : Type} (conf : Config β)
+    (refs : List (HeapElement α γ)) (ptr : Nat) (value : DataSort (HeapAddress α) α)
+    (member : .pointer ptr value ∈ refsToRoots conf refs) :
+    ∃ children len data original originalValue,
+      .dataElement children len data ∈ refs ∧ .pointer original originalValue ∈ children ∧
+      ptr = original - conf.genStart ∧ value = .real originalValue ∧
+      conf.genStart ≤ original ∧ original < conf.refsStart := by
+  induction refs with
+  | nil => simp [refsToRoots] at member
+  | cons head tail ih =>
+    cases head with
+    | unused len =>
+      simp only [refsToRoots] at member
+      obtain ⟨children, size, data, original, originalValue, object, child, ptrEq, valueEq, lower, upper⟩ := ih member
+      exact ⟨children, size, data, original, originalValue, by simp [object], child, ptrEq, valueEq, lower, upper⟩
+    | forwardPointer dest old len =>
+      simp only [refsToRoots] at member
+      obtain ⟨children, size, data, original, originalValue, object, child, ptrEq, valueEq, lower, upper⟩ := ih member
+      exact ⟨children, size, data, original, originalValue, by simp [object], child, ptrEq, valueEq, lower, upper⟩
+    | dataElement children len data =>
+      simp only [refsToRoots, List.mem_append] at member
+      rcases member with child | rest
+      · obtain ⟨original, originalValue, child, ptrEq, valueEq, lower, upper⟩ :=
+          mem_toGenRoots_pointerInv conf children ptr value child
+        exact ⟨children, len, data, original, originalValue, by simp, child, ptrEq, valueEq, lower, upper⟩
+      · obtain ⟨children, size, payload, original, originalValue, object, child, ptrEq, valueEq, lower, upper⟩ := ih rest
+        exact ⟨children, size, payload, original, originalValue, by simp [object], child, ptrEq, valueEq, lower, upper⟩
+
+/-- Translating a heap preserves whether a lookup finds a data element. The
+local HOL proof has not yet been replayed. -/
+@[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "isSomeDataElement_to_gen_heap_list"]
+theorem isSomeDataElement_toGenHeapList {α β γ : Type} (conf : Config γ)
+    (heap : List (HeapElement α β)) (ptr : Nat) :
+    isSomeDataElement (heapLookup ptr (toGenHeapList conf heap)) ↔
+      isSomeDataElement (heapLookup ptr heap) := by
+  rw [heapLookup_toGenHeapList]
+  cases found : heapLookup ptr heap with
+  | none => simp [isSomeDataElement]
+  | some element => cases element <;> simp [isSomeDataElement, toGenHeapElement]
+
+/-- Valid roots and reference children remain valid in the translated current
+generation. The local HOL proof has not yet been replayed. -/
+@[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "roots_ok_simulation"]
+theorem rootsOk_simulation {α β : Type} (conf : Config β) (roots : List (HeapAddress α))
+    (heap old current refs : List (HeapElement α β)) (validRoots : rootsOk roots heap)
+    (validHeap : heapOk heap conf.limit)
+    (segment : heapSegment (conf.genStart, conf.refsStart) heap = some (old, current, refs))
+    (_ordered : conf.genStart ≤ conf.refsStart) :
+    rootsOk (toGenRoots conf roots ++ refsToRoots conf refs) (toGenHeapList conf current) := by
+  obtain ⟨whole, oldLen, endLen, _⟩ := heapSegment_imp heap conf.genStart conf.refsStart old current refs segment
+  have lookupCurrent : ∀ ptr, conf.genStart ≤ ptr → ptr < conf.refsStart →
+      isSomeDataElement (heapLookup ptr heap) →
+      isSomeDataElement (heapLookup (ptr - conf.genStart) (toGenHeapList conf current)) := by
+    intro ptr lower upper found
+    have inside : ptr - conf.genStart < heapLength current := by
+      rw [heapLength_append, oldLen] at endLen
+      omega
+    have lookup : heapLookup ptr heap = heapLookup (ptr - conf.genStart) current := by
+      rw [← whole, List.append_assoc, GenGc.heapLookup_append, oldLen,
+        if_neg (Nat.not_lt.mpr lower), GenGc.heapLookup_append, if_pos inside]
+    apply (isSomeDataElement_toGenHeapList conf current (ptr - conf.genStart)).mpr
+    simpa [lookup] using found
+  intro ptr value member
+  rcases List.mem_append.mp member with root | reference
+  · obtain ⟨original, originalValue, originalMember, ptrEq, _, lower, upper⟩ :=
+      mem_toGenRoots_pointerInv conf roots ptr value root
+    subst ptr
+    exact lookupCurrent original lower upper (validRoots original originalValue originalMember)
+  · obtain ⟨children, len, data, original, originalValue, object, child, ptrEq, _, lower, upper⟩ :=
+      mem_refsToRoots_pointerInv conf refs ptr value reference
+    have inHeap : .dataElement children len data ∈ heap := by
+      rw [← whole]
+      simp [object]
+    subst ptr
+    exact lookupCurrent original lower upper (validHeap.2.2 children len data original originalValue ⟨inHeap, child⟩)
+
 end Flapjack.Compiler.Backend.GenGcPartial

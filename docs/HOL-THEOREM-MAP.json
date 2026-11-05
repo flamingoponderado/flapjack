@@ -1,6 +1,38 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "MEM_to_gen_roots_IMP_MEM",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
+  "lean_name": "mem_toGenRoots_pointerInv",
+  "statement_status": "pending_statement_review",
+  "reviewer": "Compared the pointer origin, translation, and generation bounds with the source; inferred types and local proof replay remain to be checked."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "MEM_refs_to_roots_IMP_MEM",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
+  "lean_name": "mem_refsToRoots_pointerInv",
+  "statement_status": "pending_statement_review",
+  "reviewer": "Compared reference-object membership, pointer origin, translation, and bounds with the source; inferred types and local proof replay remain to be checked."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "isSomeDataElement_to_gen_heap_list",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
+  "lean_name": "isSomeDataElement_toGenHeapList",
+  "statement_status": "pending_statement_review",
+  "reviewer": "Compared the translated lookup data-element equivalence with the source; inferred types and local proof replay remain to be checked."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "roots_ok_simulation",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
+  "lean_name": "rootsOk_simulation",
+  "statement_status": "pending_statement_review",
+  "reviewer": "Compared the root and heap validity, segment, ordering, and translated roots conclusion with the source; inferred types and local proof replay remain to be checked."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
   "hol_name": "partial_gc_simulation",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
   "lean_name": "partialGc_simulation",
