@@ -60176,6 +60176,54 @@
     "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.5.46.3; crep_inlineProofScript.sml:1569-1573: same binders p s r s' p1 e; conjunction premise unreach_elim p = (p1, SOME e) /\\ evaluate (p,s) = (r,s'); conclusion ?e. r = SOME e), over the tagged exact unreachElimHOLExact (unreach_elim_def) and the exact Crep evaluator evalCrepSemHOLProgExact (evaluate_def) on CrepSemHOLState, whose memory-domain decidability is classical internally (no binder). No added premises. Proof: functional induction on unreach_elim (not_none) and the lexicographic (clock, size) evaluation induction evalCrepSemHOLProgExact_inductLex (correct), following HOL's evaluate_ind cases; kernel-checked."
   },
   {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimIndexSize.lean",
+    "lean_name": "holIndexDimension_equiv",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only representation-review infrastructure, bead .18.5.5.50.4. Literal Finite/card-versus-infinite1 equation corresponds to pinned fcpScript63-65, derived from existing finite/infinite branch witnesses. Positive widths are realized by Fin width, without restricting arbitrary HOL index types; Nat.card congruence establishes equivalence invariance. No HOL tag or approved bare-index/word qualifier claim; faithful translation/source review remains parent50 obligation."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimIndexSize.lean",
+    "lean_name": "holIndexDimension_finite",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only bare-index translation candidate infrastructure, bead .18.5.5.50.2. Retains arbitrary nonempty alpha itself and derives word width as max1 Nat.card alpha; kernel witnesses finite nonempty cardinal and infinite dimension1 after original fcpScript63-65 source inspection. Indexed unreach candidate uses f:alpha->Nat and that SAME alpha-derived word dimension, no independent width/domain or BitVec substitution. No exact HOL port or approved representation claim: original external fcp library source now byte-pinned at existing HOL commit a390cbabd3a4521bab4ee20281e3e42933a8a3ae; index/word qualifier/checker source review remains parent50 obligation."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimIndexSize.lean",
+    "lean_name": "holIndexDimension_infinite",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only bare-index translation candidate infrastructure, bead .18.5.5.50.2. Retains arbitrary nonempty alpha itself and derives word width as max1 Nat.card alpha; kernel witnesses finite nonempty cardinal and infinite dimension1 after original fcpScript63-65 source inspection. Indexed unreach candidate uses f:alpha->Nat and that SAME alpha-derived word dimension, no independent width/domain or BitVec substitution. No exact HOL port or approved representation claim: original external fcp library source now byte-pinned at existing HOL commit a390cbabd3a4521bab4ee20281e3e42933a8a3ae; index/word qualifier/checker source review remains parent50 obligation."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimIndexSize.lean",
+    "lean_name": "holIndexDimension_literal",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only representation-review infrastructure, bead .18.5.5.50.4. Literal Finite/card-versus-infinite1 equation corresponds to pinned fcpScript63-65, derived from existing finite/infinite branch witnesses. Positive widths are realized by Fin width, without restricting arbitrary HOL index types; Nat.card congruence establishes equivalence invariance. No HOL tag or approved bare-index/word qualifier claim; faithful translation/source review remains parent50 obligation."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimIndexSize.lean",
+    "lean_name": "holIndexDimension_realizes_width",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only representation-review infrastructure, bead .18.5.5.50.4. Literal Finite/card-versus-infinite1 equation corresponds to pinned fcpScript63-65, derived from existing finite/infinite branch witnesses. Positive widths are realized by Fin width, without restricting arbitrary HOL index types; Nat.card congruence establishes equivalence invariance. No HOL tag or approved bare-index/word qualifier claim; faithful translation/source review remains parent50 obligation."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimIndexSize.lean",
+    "lean_name": "unreachElimProgSize_indexed",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only bare-index translation candidate infrastructure, bead .18.5.5.50.2. Retains arbitrary nonempty alpha itself and derives word width as max1 Nat.card alpha; kernel witnesses finite nonempty cardinal and infinite dimension1 after original fcpScript63-65 source inspection. Indexed unreach candidate uses f:alpha->Nat and that SAME alpha-derived word dimension, no independent width/domain or BitVec substitution. No exact HOL port or approved representation claim: original external fcp library source now byte-pinned at existing HOL commit a390cbabd3a4521bab4ee20281e3e42933a8a3ae; index/word qualifier/checker source review remains parent50 obligation."
+  },
+  {
     "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimPredicates.lean",
     "lean_name": "noReturnOutput",
     "hol_path": null,
@@ -66895,6 +66943,14 @@
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/GlobalBlockAlignment.lean",
     "lean_name": "byteAligned_sub",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only source-derived GlobalAssign alignment infrastructure (bead28.6.1). Original Assign559-568 combines external alignment byte_aligned_add/aligned_add_sub_cor; no single CakeML declaration has this synthesized statement. Uses actual original state_rel goodDimindex32/64 and byte-align fixed points; no generic external alignment port or extra compiler assumption claimed. Kernel arithmetic includes modular underflow; state relation corollary derives block alignment and context lookup internally. External HOL8rows independently captured and kernel replayed; coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/GlobalBlockAlignment.lean",
+    "lean_name": "stateRel_globalBlockAligned",
     "hol_path": null,
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
@@ -96268,6 +96324,14 @@
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyPanToWord.lean",
+    "lean_name": "heapLengthShift",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only arithmetic step of pan_to_target_compile_semantics (HOL proof lines 2041-2054): w2n (-1w*w2 + w3 + bytes_in_word * n2w len) DIV (dimindex DIV 8) - len = w2n (-1w*w2 + w3) DIV (dimindex DIV 8) when the extended span does not wrap."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyPanToWord.lean",
     "lean_name": "panToTargetPanToWordStage",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 2103-2284): pan_to_word state_rel_imp_semantics applied to wst0 = make_init ... sst with code := fromAList (compile_prog isa pan_code); make_init projections discharged, stack-state memory/store facts as hypotheses supplied by the memory-setup stage (.31.2), remaining hypotheses those of the top theorem."
@@ -96675,6 +96739,14 @@
     "lean_name": "panToTargetMachineSemExtend",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only composition step of pan_to_target_compile_semantics (HOL proof line 1316, SUBSET_TRANS with implements' and extend_with_resource_limit' unfolded): implements' T machine {lab} and lab IN extend_with_resource_limit' prec {w} with w <> Fail give every machine behaviour in extend_with_resource_limit' prec {w}."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyMachineToLab.lean",
+    "lean_name": "panToTargetMachineLabSource",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1316-1440, stage A4): panToTargetMachineLabOfGoodCode with good_code from the source-level stage A2 (panToTargetGoodCodeFromSource, via pan_to_word_every_inst_ok_less and the configuration's zero offsets) over the top theorem's pancake_good_code; all premises are compile_prog_max results, configuration hypotheses, pan_installed components and top-theorem hypotheses."
   },
   {
     "lean_path": "Flapjack/Misc/BinaryIeeeRest.lean",
@@ -97389,6 +97461,14 @@
     "lean_name": "arm8PancakeHeapLimit_lt",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack infrastructure (ARM8 closed-model instance, 2026-10-19): this is the concrete heap-limit side condition for `pancakeBackendConf arm8BackendConfig`, discharged by kernel `decide`. It has no HOL original because the closed ARM8 `arm8BackendConfig` is Flapjack-specific; the full L3 ARM8 configuration is tracked separately in #1229."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/Arm8Instance.lean",
+    "lean_name": "panToTargetCompileSemanticsArm8",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack infrastructure (ARM8 closed-model instance, 2026-10-19): instantiates the generic `panToTargetCompileSemantics` theorem at the closed `arm8Target`, supplying `arm8MachineConfigOk` and `arm8EncoderCorrect`. It has no single HOL original: the CakeML analogue depends on the unported L3 `arm8_encoder_correct` and the full `arm8_config` carrier, tracked in #1229."
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",

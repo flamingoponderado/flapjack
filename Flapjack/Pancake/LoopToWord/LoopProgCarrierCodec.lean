@@ -36,4 +36,12 @@ theorem sptLookup_toNumSetHOL_iff_mem (key : Nat) :
       · simp [Flapjack.LoopToWord.toNumSetHOL,
           sptLookup_sptInsert_ne, hkey, ih]
 
+/-- Duplicate-free source live sets satisfy the existing executable/faithful
+representation relation after `toNumSet` conversion. -/
+theorem numSetListRel_toNumSetHOL {live : List Nat} (hnodup : live.Nodup) :
+    numSetListRel live (Flapjack.LoopToWord.toNumSetHOL live) := by
+  refine ⟨hnodup, ?_⟩
+  intro key
+  exact sptLookup_toNumSetHOL_iff_mem key live
+
 end Flapjack

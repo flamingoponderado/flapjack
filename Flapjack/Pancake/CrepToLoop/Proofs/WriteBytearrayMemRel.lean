@@ -190,6 +190,7 @@ def panWriteBytearrayWord8HOLAligned {width : Nat} [NeZero width] (alignment : B
       | some updated => updated
       | none => memory
 
+
 def memStoreByteAuxExactAligned {width : Nat} [NeZero width] (alignment : BitVec width → BitVec width)
     (memory : BitVec width → WordLocW width) (domain : BitVec width → Bool)
     (bigEndian : Bool) (address : BitVec width) (byte : BitVec 8) :
@@ -211,5 +212,42 @@ def writeBytearrayExactAligned {width : Nat} [NeZero width] (alignment : BitVec 
           domain bigEndian address b with
       | some m => m
       | none => memory
+
+/-- The original writer relation is independent of the chosen common alignment.
+This is Flapjack-specific infrastructure; the original numeric instance above
+retains its HOL tag and unchanged hypotheses. -/
+theorem writeBytearrayMemRelAnyAlignment {width : Nat} [NeZero width] (alignment : BitVec width → BitVec width) :
+    ∀ (nb : List (BitVec 8)) (sm : BitVec width → HolWordLab width)
+      (tm : BitVec width → WordLocW width) (w : BitVec width) (dm : BitVec width → Bool)
+      (be : Bool),
+      crepToLoopMemRelHOLExact sm tm (fun a => dm a = true) →
+      crepToLoopMemRelHOLExact (panWriteBytearrayWord8HOLAligned alignment w nb sm (fun a => dm a = true) be)
+        (writeBytearrayExactAligned alignment w nb tm dm be) (fun a => dm a = true) := by
+  intro nb
+  induction nb with
+  | nil => intro sm tm w dm be h; exact h
+  | cons b bs ih =>
+    intro sm tm w dm be h
+    have hr := ih sm tm (w + 1) dm be h
+    simp only [panWriteBytearrayWord8HOLAligned, writeBytearrayExactAligned]
+    generalize panWriteBytearrayWord8HOLAligned alignment (w + 1) bs sm (fun a => dm a = true) be = pr at hr ⊢
+    generalize writeBytearrayExactAligned alignment (w + 1) bs tm dm be = tr at hr ⊢
+    cases hc : pr (alignment w) with
+    | word cell =>
+      by_cases hd : dm (alignment w) = true
+      · have htr : tr (alignment w) = .word cell := by
+          rw [← hr _ hd, hc]; rfl
+        simp only [panMemStoreByteWord8HOLAligned, hc, hd, if_true, memStoreByteAuxExactAligned, htr]
+        intro ad had
+        by_cases hadal : ad = alignment w
+        · subst hadal
+          simp only [wlabWlocExact, if_true]
+          rw [panSetByteHOL_eq_setByteHOL8]
+        · simp only [hadal, if_false]
+          exact hr ad had
+      · have hdf : dm (alignment w) = false := by simpa using hd
+        simp only [panMemStoreByteWord8HOLAligned, hc, hdf, memStoreByteAuxExactAligned]
+        cases tr (alignment w) <;> simp <;> exact h
+
 
 end Flapjack

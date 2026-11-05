@@ -27,6 +27,46 @@ def compileProgFromProduction? {width : Nat} [NeZero width]
     Option (List (Nat × List Nat × HolLoopProg width)) :=
   if namesSupported functions then some (compileProgHOLExact .riscv (sourcePrograms functions)) else none
 
+theorem namesSupported_iff {width : Nat}
+    (functions : List (CompiledFunction (BitVec width))) :
+    namesSupported functions = true ↔
+      (∀ function ∈ functions, CrepNameRanged function.name) ∧
+      (∀ function ∈ functions, CrepProgNameRanged function.body) := by
+  simp only [namesSupported, List.all_eq_true, Bool.and_eq_true,
+    crepNameRangedBool_eq_true_iff, crepProgNameRangedBool_eq_true_iff]
+  constructor
+  · intro h
+    exact ⟨fun f hf => (h f hf).1, fun f hf => (h f hf).2⟩
+  · rintro ⟨hn, hb⟩ f hf
+    exact ⟨hn f hf, hb f hf⟩
+
+/-- Only the supported source-name conditions are premises. The complete
+original native result is derived, with no result/run/context callback. -/
+theorem compileProgFromProduction_supported {width : Nat} [NeZero width]
+    (functions : List (CompiledFunction (BitVec width)))
+    (names : ∀ function ∈ functions, CrepNameRanged function.name)
+    (bodies : ∀ function ∈ functions, CrepProgNameRanged function.body) :
+    compileProgFromProduction? functions =
+      some (compileProgHOLExact .riscv (sourcePrograms functions)) := by
+  simp [compileProgFromProduction?, (namesSupported_iff functions).mpr ⟨names, bodies⟩]
+
+/-- Successful producer calls derive both complete original output and every
+source carrier boundary. This describes the actual API, not a HOL correctness
+port with an added successful-pass hypothesis. -/
+theorem compileProgFromProduction_result {width : Nat} [NeZero width]
+    (functions : List (CompiledFunction (BitVec width)))
+    (output : List (Nat × List Nat × HolLoopProg width))
+    (produced : compileProgFromProduction? functions = some output) :
+    (∀ function ∈ functions, CrepNameRanged function.name) ∧
+    (∀ function ∈ functions, CrepProgNameRanged function.body) ∧
+    output = compileProgHOLExact .riscv (sourcePrograms functions) := by
+  unfold compileProgFromProduction? at produced
+  split at produced
+  · rename_i supported
+    have boundaries := (namesSupported_iff functions).mp supported
+    exact ⟨boundaries.1, boundaries.2, (Option.some.inj produced).symm⟩
+  · contradiction
+
 private theorem zipWith_rowNames {α β : Type}
     (labels : List Nat) (inputs : List α) (compile : Nat → α → β)
     (lengths : labels.length = inputs.length) :
@@ -40,5 +80,19 @@ private theorem zipWith_rowNames {α β : Type}
       simp only [List.zipWith_cons_cons, List.map_cons]
       congr 1
       exact ih inputs (by simpa using lengths)
+
+/-- All original row names, for arbitrary supported input programs. There is
+no legacy label base and no input/output-code-table assumption. -/
+theorem compileProgFromProduction_rowNames {width : Nat} [NeZero width]
+    (functions : List (CompiledFunction (BitVec width)))
+    (names : ∀ function ∈ functions, CrepNameRanged function.name)
+    (bodies : ∀ function ∈ functions, CrepProgNameRanged function.body) :
+    (compileProgFromProduction? functions).map (List.map Prod.fst) =
+      some ((List.range functions.length).map (fun n => n + firstLoopName)) := by
+  rw [compileProgFromProduction_supported functions names bodies]
+  simp only [Option.map_some, compileProgHOLExact]
+  rw [zipWith_rowNames]
+  · simp [sourcePrograms]
+  · simp
 
 end Flapjack.CrepToLoopProduction
