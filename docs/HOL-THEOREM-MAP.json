@@ -1,6 +1,15 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_gen_gc_partial_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PartialFull.lean",
+  "lean_name": "wordGenGcPartial_thm",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared word_gen_gc_partial_typed with the complete theorem: the partial collector run, heap and generation bounds, reference suffix condition, word execution, separated memory and all existential outputs agree at the shared positive word width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "ends_with_refs_def",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PartialFull.lean",
   "lean_name": "endsWithRefs",

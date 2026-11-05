@@ -403,4 +403,198 @@ theorem everyIsRefElement_iff {α β : Type} (classify : HeapTag × β → Bool)
       rcases payload with ⟨tag, payload⟩
       exact (classEq tag payload).mpr test
 
+/-- Partial generational collector simulation. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "word_gen_gc_partial_thm"
+  (words_as_type_indexed_bitvec)]
+theorem wordGenGcPartial_thm {width : Nat} [NeZero width] (conf : Config)
+    (genConf : GenGcPartial.Config (HeapTag × List (WordLocW width)))
+    (roots roots1 : List (HeapAddress (WordLocW width)))
+    (heap : List (HeapElement (WordLocW width) (HeapTag × List (WordLocW width))))
+    (state1 : GcState (WordLocW width) (HeapTag × List (WordLocW width)))
+    (memory memory1 : BitVec width → WordLocW width) (domain : BitVec width → Bool)
+    (curr new pa1 i1 : BitVec width) (frame : ((BitVec width × WordLocW width) → Prop) → Prop)
+    (roots1' : List (WordLocW width)) (c1 : Bool)
+    (abstractRun : GenGcPartial.partialGc genConf (roots, heap) = (roots1, state1)) (stateOk : state1.ok = true)
+    (heapBound : heapLength heap ≤ 2 ^ width / 2 ^ shiftLength conf)
+    (byteBound : heapLength heap * (width / 8) < 2 ^ width)
+    (limitEq : genConf.limit = heapLength heap)
+    (ordered : genConf.genStart ≤ genConf.refsStart) (refBound : genConf.refsStart ≤ heapLength heap)
+    (ending : endsWithRefs genConf.refsStart heap)
+    (_byteBoundAgain : heapLength heap * (width / 8) < 2 ^ width)
+    (dataBound : conf.lenSize + 2 < width)
+    (refClass : ∀ t r, genConf.isRef (t, r) = true ↔ isMutTag t)
+    (wordRun : wordGenGcPartial conf (roots.map (wordAddr conf), curr, new,
+      wordSemBytesInWord * BitVec.ofNat width (heapLength heap), memory, domain,
+      wordSemBytesInWord * BitVec.ofNat width genConf.genStart,
+      wordSemBytesInWord * BitVec.ofNat width genConf.refsStart) = (roots1', i1, pa1, memory1, c1))
+    (separated : SetSep.star (SetSep.star (wordHeap curr heap conf)
+      (Misc.wordListExists new (genConf.refsStart - genConf.genStart))) frame
+      (SetSep.fun2Set (memory, fun address => domain address = true))) (good : goodDimindex width) :
+    ∃ xs1 current1 refs1,
+      SetSep.star (SetSep.star (SetSep.star (wordHeap curr (state1.old ++ current1 ++ state1.r1) conf)
+        (wordHeap new state1.h1 conf))
+        (Misc.wordList (new + wordSemBytesInWord * BitVec.ofNat width (heapLength state1.h1)) xs1)) frame
+        (SetSep.fun2Set (memory1, fun address => domain address = true)) ∧
+      state1.h2 = [] ∧ state1.r4 = [] ∧ state1.r3 = [] ∧ state1.r2 = [] ∧
+      roots1' = roots1.map (wordAddr conf) ∧ heapLength state1.heap = heapLength heap ∧
+      heapSegment (genConf.genStart, genConf.refsStart) state1.heap = some (state1.old, current1, refs1) ∧
+      c1 = true ∧ i1 = BitVec.ofNat width state1.a ∧
+      pa1 = new + wordSemBytesInWord * BitVec.ofNat width (heapLength state1.h1) ∧
+      state1.n = xs1.length ∧ partialLenInv state1 ∧ heapLength state1.h1 ≤ heapLength current1 ∧
+      heapLength state1.h1 + xs1.length + genConf.genStart = genConf.refsStart ∧
+      state1.r1.all (isRefElement genConf.isRef) = true := by
+  classical
+  obtain ⟨old, current, refs, middle, refs1, afterRefs, segment, rootsRun, middleOk, refsRun, afterOk, dataRun⟩ :=
+    partialFull_abstractSteps genConf roots roots1 heap state1 abstractRun stateOk
+  obtain ⟨whole, oldLen, endLen, refsLen⟩ := heapSegment_imp heap _ _ old current refs segment
+  have allRefs := partialFull_segmentRefs heap _ _ old current refs segment ending
+  obtain ⟨xs, xsLen, sep⟩ : ∃ xs : List (WordLocW width), xs.length = genConf.refsStart - genConf.genStart ∧
+      SetSep.star (SetSep.star (wordHeap curr heap conf) (Misc.wordList new xs)) frame
+        (SetSep.fun2Set (memory, fun address => domain address = true)) := by
+    obtain ⟨left, right, split, ⟨a, b, split', ha, hb⟩, hf⟩ := separated
+    obtain ⟨xs, hx, hn⟩ := (show ∃ xs : List (WordLocW width), Misc.wordList new xs b ∧
+        xs.length = genConf.refsStart - genConf.genStart by
+      simpa only [Misc.wordListExists, SetSep.sepExists, StackRemove.WordListExists.starCond] using hb)
+    exact ⟨xs, hn, left, right, split, ⟨a, b, split', ha, hx⟩, hf⟩
+  have startByteBound : genConf.genStart * (width / 8) < 2 ^ width :=
+    lt_of_le_of_lt (Nat.mul_le_mul_right _ (le_trans ordered refBound)) byteBound
+  have decoded := (genFull_decodeLength genConf.genStart good startByteBound).1
+  simp only [wordGenGcPartial, decoded] at wordRun
+  generalize rootWord : wordGenGcPartialMoveRoots conf
+    (roots.map (wordAddr conf), BitVec.ofNat width genConf.genStart, new, curr, memory, domain,
+      wordSemBytesInWord * BitVec.ofNat width genConf.genStart,
+      wordSemBytesInWord * BitVec.ofNat width genConf.refsStart) = rootResult at wordRun
+  obtain ⟨rootsW, iMid, paMid, memoryMid, flagMid⟩ := rootResult
+  generalize refsWord : wordGenGcPartialMoveRefList (2 ^ width) conf
+    (curr + wordSemBytesInWord * BitVec.ofNat width genConf.refsStart, iMid, paMid, curr, memoryMid, domain, flagMid,
+      wordSemBytesInWord * BitVec.ofNat width genConf.genStart,
+      wordSemBytesInWord * BitVec.ofNat width genConf.refsStart,
+      curr + wordSemBytesInWord * BitVec.ofNat width (heapLength heap)) = refsResult at wordRun
+  obtain ⟨iRefs, paRefs, memoryRefs, flagRefs⟩ := refsResult
+  generalize dataWord : wordGenGcPartialMoveData conf (2 ^ width)
+    (new, iRefs, paRefs, curr, memoryRefs, domain,
+      wordSemBytesInWord * BitVec.ofNat width genConf.genStart,
+      wordSemBytesInWord * BitVec.ofNat width genConf.refsStart) = dataResult at wordRun
+  obtain ⟨iFinal, paFinal, memoryFinal, flagFinal⟩ := dataResult
+  simp only [Prod.mk.injEq] at wordRun
+  obtain ⟨rfl, rfl, rfl, rfl, flags⟩ := wordRun
+  obtain ⟨xsMid, currentMid, sepMid, rootsEq, heapMid, segmentMid, flagMidTrue, iMidEq, xsMidLen,
+    rootAccounting, paMidEq⟩ :=
+    partialFull_rootPhase conf genConf roots roots1 heap old current refs middle curr new iMid paMid xs memory memoryMid
+      domain frame rootsW flagMid segment rootsRun middleOk limitEq heapBound ordered refBound refClass byteBound
+      sep rootWord xsLen good
+  subst flagMid
+  let initial : GcState (WordLocW width) (HeapTag × List (WordLocW width)) :=
+    { emptyGcState with heap := heap, old := old, r2 := refs, a := genConf.genStart, n := heapLength current }
+  obtain ⟨midH1, midR4, midR3, midR2, midR1, midOld⟩ :=
+    partialMoveList_fixedFields genConf roots roots1 initial middle rootsRun
+  simp only [initial, emptyGcState] at midH1 midR4 midR3 midR2 midR1 midOld
+  have heapSmall : heapLength heap < 2 ^ width := by
+    rcases good with h | h <;> subst width <;> norm_num at byteBound ⊢ <;> omega
+  have refsBound : heapLength refs ≤ heapLength middle.heap := by rw [heapMid, refsLen]; omega
+  have refsSmall : heapLength refs < 2 ^ width := by rw [refsLen]; omega
+  have refsCount : refs.length < 2 ^ width := lt_of_le_of_lt (length_le_heapLength refs) refsSmall
+  have refsEnd : curr + wordSemBytesInWord * BitVec.ofNat width (heapLength heap) =
+      (curr + wordSemBytesInWord * BitVec.ofNat width genConf.refsStart) +
+        wordSemBytesInWord * BitVec.ofNat width (heapLength refs) := by
+    have total : genConf.refsStart + heapLength refs = heapLength heap := by rw [refsLen]; omega
+    rw [← total, BitVec.ofNat_add, BitVec.mul_add]
+    ac_rfl
+  rw [iMidEq, refsEnd] at refsWord
+  obtain ⟨left, right, xsRefs, currentRefs, leftEq, rightEq, sepRefs, segmentRefs, heapRefs, flagRefsTrue,
+    iRefsEq, xsRefsLen, newRefs, refAccounting, paRefsEq⟩ :=
+    partialFull_referencePhase conf genConf middle afterRefs old currentMid refs refs1 curr new paMid paRefs iRefs
+      (curr + wordSemBytesInWord * BitVec.ofNat width genConf.refsStart) xsMid memoryMid memoryRefs domain frame flagRefs
+      refsRun afterOk (by simpa [heapMid] using limitEq) (by simpa [heapMid] using heapBound) ordered
+      (by simpa [heapMid] using refBound) segmentMid refsBound (Nat.le_of_lt refsSmall) refsCount allRefs refClass
+      (by simpa [heapMid] using byteBound) sepMid refsWord xsMidLen.symm good paMidEq
+  subst flagRefs
+  obtain ⟨afterH1, afterR4, afterR3, afterR2, afterR1, afterOld⟩ :=
+    partialFull_refListFixed genConf refs refs1 middle afterRefs refsRun
+  rw [midH1] at afterH1
+  rw [midR4] at afterR4
+  rw [midR3] at afterR3
+  rw [midR2] at afterR2
+  rw [midR1] at afterR1
+  rw [midOld] at afterOld
+  have rightEmpty : right = [] := by simpa [midR4, afterR4] using rightEq.symm
+  have spaceEq : heapLength current = heapLength afterRefs.h2 + afterRefs.n := by
+    have nilLen : heapLength ([] : List (HeapElement (WordLocW width) (HeapTag × List (WordLocW width)))) = 0 := rfl
+    simp only [midR4, rightEmpty, nilLen] at rootAccounting refAccounting
+    rw [leftEq, heapLength_append]
+    omega
+  obtain ⟨_, _, endRefs, _⟩ := heapSegment_imp afterRefs.heap _ _ old currentRefs refs segmentRefs
+  have currentSize : heapLength currentRefs = heapLength current := by
+    simp only [heapLength_append, oldLen] at endRefs endLen
+    omega
+  have refsOutputLen : heapLength refs1 = heapLength refs :=
+    (partialRefScan_abstractProperties genConf refs refs1 middle afterRefs refsRun allRefs).2.1
+  have normalizedSegment : heapSegment (heapLength old, heapLength (old ++ currentRefs)) afterRefs.heap =
+      some (old, currentRefs, refs) := by simpa [oldLen, endRefs] using segmentRefs
+  have dataInv : partialLenInv { afterRefs with r1 := refs1, r2 := [] } :=
+    partialFull_dataInvariant afterRefs old currentRefs refs refs1 normalizedSegment afterH1 afterR4 afterR3 afterOld
+      refsOutputLen (by simpa [currentSize] using spaceEq)
+  have dataFuel : heapLength afterRefs.h2 + afterRefs.n ≤ 2 ^ width := by
+    rw [← spaceEq]
+    have : heapLength current ≤ heapLength heap := by
+      rw [← whole, heapLength_append, heapLength_append]
+      omega
+    omega
+  have paStart : paRefs = new + wordSemBytesInWord * BitVec.ofNat width (heapLength afterRefs.h2) := by
+    rw [paRefsEq, paMidEq, leftEq, heapLength_append, BitVec.ofNat_add, BitVec.mul_add]
+    ac_rfl
+  let scanState := { afterRefs with r1 := refs1, r2 := [] }
+  let scanFrame := SetSep.star (SetSep.star (wordHeap curr old conf)
+    (wordHeap (curr + wordSemBytesInWord * BitVec.ofNat width genConf.refsStart) refs1 conf)) frame
+  have scanMemory : SetSep.star (SetSep.star (SetSep.star
+      (wordHeap (curr + wordSemBytesInWord * BitVec.ofNat width (heapLength old)) currentRefs conf)
+      (wordHeap new (scanState.h1 ++ scanState.h2) conf))
+      (Misc.wordList (new + wordSemBytesInWord * BitVec.ofNat width (heapLength (scanState.h1 ++ scanState.h2))) xsRefs)) scanFrame
+      (SetSep.fun2Set (memoryRefs, fun address => domain address = true)) := by
+    rw [paStart] at sepRefs
+    simpa [scanState, scanFrame, afterH1] using sepRefs
+  have scanRefs : (scanState.r4 ++ scanState.r3 ++ scanState.r2 ++ scanState.r1).all (isRefElement genConf.isRef) = true := by
+    simpa [scanState, afterR4, afterR3] using (everyIsRefElement_iff genConf.isRef refs1 refClass).mpr newRefs
+  rw [iRefsEq, paStart] at dataWord
+  have scanWord : wordGenGcPartialMoveData conf (2 ^ width)
+      (new + wordSemBytesInWord * BitVec.ofNat width (heapLength scanState.h1), BitVec.ofNat width scanState.a,
+       new + wordSemBytesInWord * BitVec.ofNat width (heapLength (scanState.h1 ++ scanState.h2)),
+       curr, memoryRefs, domain, wordSemBytesInWord * BitVec.ofNat width genConf.genStart,
+       wordSemBytesInWord * BitVec.ofNat width genConf.refsStart) = (iFinal, paFinal, memoryFinal, flagFinal) := by
+    simpa [scanState, afterH1, heapLength] using dataWord
+  obtain ⟨xsFinal, currentFinal, finalMemory, finalH2, finalHeap, finalSegment, finalFlag, finalI, finalLen,
+    finalInv, finalAccounting, finalPa, finalRefs⟩ :=
+    wordGenGcPartialMoveData_thm conf genConf (2 ^ width) scanState state1 memoryRefs memoryFinal domain curr new xsRefs
+      paFinal iFinal old currentRefs refs scanFrame flagFinal dataRun stateOk (by simpa [scanState, heapRefs, heapMid] using limitEq)
+      (by simpa [scanState, heapRefs, heapMid] using heapBound) (by simpa [scanState, heapRefs, heapMid] using byteBound)
+      ordered (by simpa [scanState, heapRefs, heapMid] using refBound) (by simpa [scanState] using segmentRefs)
+      dataBound refClass scanWord (by simpa [scanState] using dataFuel) dataInv scanMemory scanRefs xsRefsLen.symm good
+  have fixed := partialFull_dataFixed genConf scanState
+  rw [dataRun] at fixed
+  obtain ⟨finalR4, finalR3, finalR2, finalR1, finalOld, _⟩ := fixed
+  have r4Empty : state1.r4 = [] := by simpa [scanState, afterR4] using finalR4
+  have r3Empty : state1.r3 = [] := by simpa [scanState, afterR3] using finalR3
+  have r2Empty : state1.r2 = [] := by simpa [scanState] using finalR2
+  have r1Eq : state1.r1 = refs1 := by simpa [scanState] using finalR1
+  have oldEq : state1.old = old := by simpa [scanState, afterOld] using finalOld
+  have finalRefsLen : heapLength state1.r1 = heapLength refs := by rw [r1Eq, refsOutputLen]
+  obtain ⟨_, _, endFinal, _⟩ := heapSegment_imp state1.heap _ _ old currentFinal refs finalSegment
+  have finalKEq : curr + wordSemBytesInWord * BitVec.ofNat width genConf.refsStart =
+      curr + wordSemBytesInWord * BitVec.ofNat width (heapLength (old ++ currentFinal)) := by rw [endFinal]
+  have reconstructed := (congrFun (partialFull_finalFrame conf old currentFinal refs1 state1.h1 curr new
+    (curr + wordSemBytesInWord * BitVec.ofNat width genConf.refsStart)
+    (new + wordSemBytesInWord * BitVec.ofNat width (heapLength state1.h1)) xsFinal frame finalKEq) _).mp
+    (by simpa [scanFrame, finalH2] using finalMemory)
+  obtain ⟨copiedBound, totalEq⟩ := partialFull_outputBounds state1 old currentFinal refs genConf.genStart
+    genConf.refsStart finalSegment finalH2 r4Empty r3Empty r2Empty oldEq finalRefsLen finalInv
+  refine ⟨xsFinal, currentFinal, refs, ?_, finalH2, r4Empty, r3Empty, r2Empty, rootsEq, ?_, ?_, ?_, finalI, ?_,
+    finalLen, finalInv, copiedBound, ?_, ?_⟩
+  · simpa only [oldEq, r1Eq] using reconstructed
+  · simpa [scanState, heapRefs, heapMid] using finalHeap
+  · simpa only [oldEq] using finalSegment
+  · simpa [finalFlag] using flags.symm
+  · simpa [finalH2] using finalPa
+  · simpa [← finalLen] using totalEq
+  · simpa [r1Eq] using (everyIsRefElement_iff genConf.isRef refs1 refClass).mpr newRefs
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
