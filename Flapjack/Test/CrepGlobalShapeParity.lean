@@ -581,16 +581,16 @@ example :
 /-- HOL `crepProps$dec_clock_simp`: the clock decrement changes only `clock`
     (checked here by two extremes: `.locals` and `.topAddress`). -/
 example : (decCrepHolClock localBase).locals = localBase.locals :=
-  (decCrepHolClock_simp localBase).1
+  by rfl
 
 example : (decCrepHolClock localBase).topAddress = localBase.topAddress :=
-  (decCrepHolClock_simp localBase).2.2.2.2.2.2.2.2.2
+  by rfl
 
 /-- HOL `crepProps$empty_locals_simp`: the locals clear changes only `locals`. -/
 example : (emptyCrepHolLocals localBase).globals = localBase.globals :=
-  (emptyCrepHolLocals_simp localBase).1
+  by rfl
 
 example : (emptyCrepHolLocals localBase).clock = localBase.clock :=
-  (emptyCrepHolLocals_simp localBase).2.2.2.2.2.1
+  by rfl
 
 end Flapjack.Test.CrepGlobalShapeParity
