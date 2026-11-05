@@ -1,6 +1,14 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "gen_gc_data_refs_split",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/GenerationalSplit.lean",
+  "lean_name": "genGc_dataRefsSplit_source",
+  "statement_status": "pending_statement_review",
+  "reviewer": "Source clauses and the independent address and payload parameters compared; a typed HOL replay of this local theorem remains to be captured."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
   "hol_name": "full_gc_thm",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/CollectorSimple.lean",
   "lean_name": "fullGc_abstract_memory",

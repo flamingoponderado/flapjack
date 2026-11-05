@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Abstract
 import Flapjack.Compiler.Backend.GenGc
+import Mathlib.Data.List.Basic
 
 /-! Data and reference partition invariants for major collection. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
@@ -223,5 +224,69 @@ theorem gcMoveData_dataRefsSplit {α β : Type}
     | unused len => simp [isDataElement] at headData
     | forwardPointer ptr value len => simp [isDataElement] at headData
     | dataElement roots len payload => exact False.elim (notData roots len payload rfl)
+
+/-- The major collector loop preserves the data/reference partition at every
+clock, including when it reports failure. -/
+theorem gcMoveLoop_dataRefsSplit {α β : Type}
+    (conf : GenGc.Config (HeapTag × β)) (state : GcState α (HeapTag × β)) (clock : Nat)
+    (classify : ∀ tag payload, conf.isRef (tag, payload) = true ↔ isMutTag tag)
+    (invariant : dataRefsSplit state) : dataRefsSplit (GenGc.gcMoveLoop conf state clock) := by
+  classical
+  have refsInput (s : GcState α (HeapTag × β)) (inv : dataRefsSplit s) :
+      dataRefsSplit { s with r2 := s.r4, r4 := [] } := by
+    exact ⟨inv.1, inv.2.1, inv.2.2.1, inv.2.2.2.2.2, inv.2.2.2.2.1, by simp⟩
+  induction clock generalizing state with
+  | zero =>
+    rw [GenGc.gcMoveLoop]
+    split
+    · split
+      · exact invariant
+      · have scanned := gcMoveData_dataRefsSplit conf state classify invariant
+        simpa [dataRefsSplit] using scanned
+    · have scanned := gcMoveRefs_dataRefsSplit conf { state with r2 := state.r4, r4 := [] }
+        classify (refsInput state invariant)
+      simpa [dataRefsSplit] using scanned
+  | succ clock ih =>
+    rw [GenGc.gcMoveLoop]
+    split
+    · split
+      · exact invariant
+      · exact ih _ (gcMoveData_dataRefsSplit conf state classify invariant)
+    · exact ih _ (gcMoveRefs_dataRefsSplit conf { state with r2 := state.r4, r4 := [] }
+        classify (refsInput state invariant))
+
+/-- A complete major collection establishes the data/reference partition. -/
+theorem genGc_dataRefsSplit {α β : Type}
+    (conf : GenGc.Config (HeapTag × β)) (roots : List (HeapAddress α))
+    (heap : List (HeapElement α (HeapTag × β)))
+    (classify : ∀ tag payload, conf.isRef (tag, payload) = true ↔ isMutTag tag) :
+    dataRefsSplit (GenGc.genGc conf (roots, heap)).2 := by
+  let initial : GcState α (HeapTag × β) :=
+    { emptyGcState with heap := heap, n := conf.limit, ok := decide (heapLength heap = conf.limit) }
+  have initialSplit : dataRefsSplit initial := by simp [initial, emptyGcState, dataRefsSplit]
+  have moved := gcMoveList_dataRefsSplit conf initial roots classify initialSplit
+  have final := gcMoveLoop_dataRefsSplit conf (GenGc.gcMoveList conf initial roots).2 conf.limit classify moved
+  simpa [GenGc.genGc, initial] using final
+
+/-- A major collection separates non-reference data cells from reference
+cells. The source declaration is local; inferred HOL types still need a typed
+replay and review. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "gen_gc_data_refs_split"]
+theorem genGc_dataRefsSplit_source {α β : Type}
+    (conf : GenGc.Config (HeapTag × β)) (roots roots1 : List (HeapAddress α))
+    (heap : List (HeapElement α (HeapTag × β))) (state : GcState α (HeapTag × β))
+    (assumptions : GenGc.genGc conf (roots, heap) = (roots1, state) ∧
+      (∀ tag payload, conf.isRef (tag, payload) = true ↔ isMutTag tag)) :
+    List.Forall (fun element => ¬ isRef element) (state.h1 ++ state.h2) ∧
+    List.Forall isDataElement (state.h1 ++ state.h2) ∧
+    List.Forall isRef (state.r1 ++ state.r2 ++ state.r3 ++ state.r4) := by
+  obtain ⟨run, classify⟩ := assumptions
+  have invariant := genGc_dataRefsSplit conf roots heap classify
+  rw [run] at invariant
+  simp only [dataRefsSplit] at invariant
+  simp only [List.forall_iff_forall_mem, List.mem_append, or_imp, forall_and]
+  exact ⟨⟨fun e h => (invariant.1 e h).2, fun e h => (invariant.2.1 e h).2⟩,
+    ⟨fun e h => (invariant.1 e h).1, fun e h => (invariant.2.1 e h).1⟩,
+    ⟨⟨⟨invariant.2.2.1, invariant.2.2.2.1⟩, invariant.2.2.2.2.1⟩, invariant.2.2.2.2.2⟩⟩
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
