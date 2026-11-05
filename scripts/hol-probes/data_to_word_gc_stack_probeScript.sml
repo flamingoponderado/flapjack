@@ -1,5 +1,7 @@
+load "preamble";
 load "data_to_word_gcProofTheory";
 open HolKernel Parse boolLib bossLib;
+open preamble;
 val _ = Globals.linewidth := 1000000;
 fun show label th =
   if null (hyp th) then
@@ -172,6 +174,24 @@ val _ = show "not_in_heap_map_typed" gc_sharedTheory.NOT_IN_heap_map;
 val _ = show "heap_lookup_flookup_typed" gc_sharedTheory.heap_lookup_FLOOKUP;
 val _ = show "heap_map1_typed" gc_sharedTheory.heap_map1_def;
 val _ = show "heap_addresses_typed" gc_sharedTheory.heap_addresses_def;
+val _ = show "heap_filter_aux_addresses_union_typed" gc_sharedTheory.heap_filter_aux_heap_addresses_UNION;
+val _ = show "heap_length_heap_filter_typed" gc_sharedTheory.heap_length_heap_filter;
+val _ = show "heap_filter_aux_append_typed" gc_sharedTheory.heap_filter_aux_APPEND;
+val filter_shift = prove (
+  ``!k n e heap. heap_filter_aux (k+n) {e+n} heap = heap_filter_aux k {e} heap``,
+  Induct_on `heap` \\ fs [gc_sharedTheory.heap_filter_aux_def] \\ rw []
+  \\ first_x_assum (qspecl_then [`k+el_length h`,`n`,`e`] mp_tac) \\ fs [])
+  |> Q.SPEC `0` |> SIMP_RULE std_ss [];
+val filter_zero = prove (
+  ``!heap n. 0 < n ==> (heap_filter_aux n {0} heap = [])``,
+  Induct \\ fs [gc_sharedTheory.heap_filter_aux_def]);
+val _ = show "heap_lookup_imp_heap_filter_typed_replay" (prove (
+  ``!heap e x. (heap_lookup e heap = SOME x) ==> (heap_filter {e} heap = [x])``,
+  Induct \\ fs [gc_sharedTheory.heap_lookup_def] \\ rw []
+  \\ fs [gc_sharedTheory.heap_filter_def, gc_sharedTheory.heap_filter_aux_def]
+  \\ fs [NOT_LESS]
+  THEN1 (match_mp_tac filter_zero \\ Cases_on `h` \\ EVAL_TAC \\ fs [])
+  \\ fs [LESS_EQ_EXISTS] \\ rveq \\ fs [] \\ fs [filter_shift]));
 val _ = show "heap_addresses_append_typed" gc_sharedTheory.heap_addresses_APPEND;
 val _ = show "heap_addresses_less_heap_length_typed" gc_sharedTheory.heap_addresses_LESS_heap_length;
 val _ = show "heap_addresses_less_typed" gc_sharedTheory.heap_addresses_LESS;

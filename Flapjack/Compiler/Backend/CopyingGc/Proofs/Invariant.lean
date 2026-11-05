@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.CopyingGc
 import Flapjack.Compiler.Backend.GcShared.HeapSimilarity
 import Flapjack.Compiler.Backend.GcShared.Reachability
 import Flapjack.Compiler.Backend.GcShared.Related
+import Flapjack.Compiler.Backend.GcShared.Filter
 import Flapjack.Compiler.Backend.GcShared.ForwardPtr
 import Flapjack.Compiler.Backend.CopyingGc.Proofs.Append
 

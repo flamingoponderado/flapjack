@@ -1331,6 +1331,38 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "heap_filter_aux_heap_addresses_UNION",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/Filter.lean",
+  "lean_name": "heapFilterAux_addresses_union",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared heap_filter_aux_addresses_union_typed: union with all element addresses retains the original heap at any base, with independent heap payload types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "heap_length_heap_filter",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/Filter.lean",
+  "lean_name": "heapLength_heapFilter_addresses",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared heap_length_heap_filter_typed: filtering by all zero-based element addresses preserves heap word length, with independent heap payload types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "heap_filter_aux_APPEND",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/Filter.lean",
+  "lean_name": "heapFilterAux_append",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared heap_filter_aux_append_typed: filtering concatenation uses the first heap's word length to advance the second base; heap payload types remain independent."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "heap_lookup_IMP_heap_filter",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/Filter.lean",
+  "lean_name": "heapLookup_imp_heapFilter",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the local source statement and heap_lookup_imp_heap_filter_typed_replay: a successful lookup makes singleton-address filtering return exactly that element; both heap payload types remain independent."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
   "hol_name": "heap_filter_aux_def",
   "lean_path": "Flapjack/Compiler/Backend/GcShared/Reachability.lean",
   "lean_name": "heapFilterAux",
