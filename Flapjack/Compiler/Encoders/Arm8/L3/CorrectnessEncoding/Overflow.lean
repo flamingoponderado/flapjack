@@ -146,42 +146,53 @@ theorem arm8AddWithCarry_overflow_sub (x y : BitVec 64) :
   rw [show Int.ofNat 1 = (1 : Int) from rfl]
   omega
 
-/-- The `addOverflow` constructor of `encoder_correct arm8TargetL3`: the
-flag-setting add followed by the `VC` select simulate the single `addOverflow`
-`asmStep` with `n = 1`. -/
-@[hol "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" "arm8_encoder_correct"]
-theorem arm8_encoder_correct_addOverflow (destination result sourceLeft sourceRight : Nat)
+/-- The shared proof of the two overflow lowerings (Flapjack infrastructure):
+the flag-setting `AddSubShiftedRegister@64` (`op` selects add or subtract)
+followed by the `VC` select.  HOL proves `AddOverflow` and `SubOverflow` with
+the same `next_tac 1` tactic sequence, differing only in the overflow lemma
+`state_tac` is given; here the instance supplies its encoding and the
+source-side register update (`hpost`). -/
+theorem arm8OverflowCase (op : Bool) (inst : HolInst 64)
+    (destination result sourceLeft sourceRight : Nat)
     (s1 s2 : AsmState 64) (ms : arm8_state)
-    (h : asmStep arm8ConfigL3 s1
-      (.inst (.arith (.addOverflow destination result sourceLeft sourceRight))) s2 ∧
-      targetStateRel arm8TargetL3 s1 ms) :
-    CaseGoal (.inst (.arith (.addOverflow destination result sourceLeft sourceRight))) s1 s2 ms := by
-  have hs := h.1
-  have hregok : ((asmRegOkExact destination arm8ConfigL3 = true ∧
+    (h : asmStep arm8ConfigL3 s1 (.inst inst) s2 ∧ targetStateRel arm8TargetL3 s1 ms)
+    (hregok : ((asmRegOkExact destination arm8ConfigL3 = true ∧
       asmRegOkExact result arm8ConfigL3 = true) ∧
       asmRegOkExact sourceLeft arm8ConfigL3 = true) ∧
-      asmRegOkExact sourceRight arm8ConfigL3 = true := by
-    have hk := hs.2.2.2.2.2.2
-    simpa [asmOkExact, asmInstOkExact, asmArithOkExact, arm8ConfigL3, Bool.and_eq_true] using hk
+      asmRegOkExact sourceRight arm8ConfigL3 = true)
+    (henc : arm8Enc (.inst inst) =
+      arm8Encode (.Data (.«AddSubShiftedRegister@64» (1, op, true, .lsl,
+        BitVec.ofNat 5 sourceLeft, 0, BitVec.ofNat 5 result, BitVec.ofNat 5 destination))) ++
+      arm8Encode (.Data (.«ConditionalSelect@64»
+        (1, false, true, 7, 31, 31, BitVec.ofNat 5 sourceRight))))
+    (hpost : (∀ k, k < arm8ConfigL3.regCount ∧ arm8ConfigL3.avoidRegs.contains k = false →
+        ms.REG (BitVec.ofNat 5 k) = s1.regs k) →
+      ∀ p : BitVec 64, (asmUpd (.inst inst) p s1).pc = p ∧
+        (∀ x, (asmUpd (.inst inst) p s1).mem x = s1.mem x) ∧
+        (asmUpd (.inst inst) p s1).memDomain = s1.memDomain ∧
+        ∀ k, (asmUpd (.inst inst) p s1).regs k =
+          if k = sourceRight then (if (AddWithCarry (TN := 64) (X (TN := 64) result ms,
+          (if op then ~~~X (TN := 64) sourceLeft ms else X (TN := 64) sourceLeft ms, op))).2.2.2.2 then (1 : BitVec 64) else 0)
+          else if k = destination then (AddWithCarry (TN := 64) (X (TN := 64) result ms,
+          (if op then ~~~X (TN := 64) sourceLeft ms else X (TN := 64) sourceLeft ms, op))).1 else s1.regs k) :
+    CaseGoal (.inst inst) s1 s2 ms := by
   obtain ⟨⟨⟨hdl, hdr⟩, hsl⟩, hsr⟩ := hregok
   obtain ⟨hdl_lt, hdl_av, hdl_31⟩ := regOk_of_asmL3 hdl
-  obtain ⟨hdr_lt, hdr_av, hdr_31⟩ := regOk_of_asmL3 hdr
-  obtain ⟨hsl_lt, hsl_av, hsl_31⟩ := regOk_of_asmL3 hsl
   obtain ⟨hsr_lt, hsr_av, hsr_31⟩ := regOk_of_asmL3 hsr
   let ov : Bool := (AddWithCarry (TN := 64) (X (TN := 64) result ms,
-    (X (TN := 64) sourceLeft ms, false))).2.2.2.2
-  let v1 : BitVec 64 := X (TN := 64) result ms + X (TN := 64) sourceLeft ms
+          (if op then ~~~X (TN := 64) sourceLeft ms else X (TN := 64) sourceLeft ms, op))).2.2.2.2
   let T1 : arm8_state :=
     { ms with
       branch_hint := none,
-      REG := holUpdate (BitVec.ofNat 5 destination) v1 ms.REG, PC := ms.PC + 4,
+      REG := holUpdate (BitVec.ofNat 5 destination) (AddWithCarry (TN := 64) (X (TN := 64) result ms,
+          (if op then ~~~X (TN := 64) sourceLeft ms else X (TN := 64) sourceLeft ms, op))).1 ms.REG, PC := ms.PC + 4,
       PSTATE := { ms.PSTATE with
         N := (AddWithCarry (TN := 64) (X (TN := 64) result ms,
-          (X (TN := 64) sourceLeft ms, false))).2.1,
+          (if op then ~~~X (TN := 64) sourceLeft ms else X (TN := 64) sourceLeft ms, op))).2.1,
         Z := (AddWithCarry (TN := 64) (X (TN := 64) result ms,
-          (X (TN := 64) sourceLeft ms, false))).2.2.1,
+          (if op then ~~~X (TN := 64) sourceLeft ms else X (TN := 64) sourceLeft ms, op))).2.2.1,
         C := (AddWithCarry (TN := 64) (X (TN := 64) result ms,
-          (X (TN := 64) sourceLeft ms, false))).2.2.2.1,
+          (if op then ~~~X (TN := 64) sourceLeft ms else X (TN := 64) sourceLeft ms, op))).2.2.2.1,
         V := ov } }
   let T2 : arm8_state :=
     { T1 with
@@ -189,16 +200,14 @@ theorem arm8_encoder_correct_addOverflow (destination result sourceLeft sourceRi
       REG := holUpdate (BitVec.ofNat 5 sourceRight) (if ov then (1 : BitVec 64) else 0) T1.REG,
       PC := T1.PC + 4 }
   refine arm8RegCaseTwo _ s1 s2 ms h
-    (.Data (.«AddSubShiftedRegister@64» (1, false, true, .lsl, BitVec.ofNat 5 sourceLeft, 0,
+    (.Data (.«AddSubShiftedRegister@64» (1, op, true, .lsl, BitVec.ofNat 5 sourceLeft, 0,
       BitVec.ofNat 5 result, BitVec.ofNat 5 destination))) _
     (.Data (.«ConditionalSelect@64» (1, false, true, 7, 31, 31, BitVec.ofNat 5 sourceRight))) _ _ _
-    T1.REG T2.REG T1.PSTATE
-    (arm8Enc_addOverflow destination result sourceLeft sourceRight)
-    (arm8Encode_addSubShiftedRegister _ _ _ _ _ _ _) (arm8Decode_addSubShiftedRegister false true _ 0 _ _)
+    T1.REG T2.REG T1.PSTATE henc
+    (arm8Encode_addSubShiftedRegister _ _ _ _ _ _ _) (arm8Decode_addSubShiftedRegister op true _ 0 _ _)
     (arm8Encode_conditionalSelect _ _ _ _ _ _) (arm8Decode_conditionalSelect _ _ _ _) ?_ rfl ?_ ?_
   · intro _
-    rw [arm8Run_addSubShiftedRegister_setflags_eq false _ _ destination _ hdl_31 hdl_lt]
-    rw [arm8AddWithCarry_add]
+    rw [arm8Run_addSubShiftedRegister_setflags_eq op _ _ destination _ hdl_31 hdl_lt]
     rfl
   · intro u hR hP
     rw [arm8Run_conditionalSelect_zero, arm8WriteX_of_valid _ _ hsr_31 hsr_lt, arm8ConditionHolds_seven]
@@ -207,16 +216,8 @@ theorem arm8_encoder_correct_addOverflow (destination result sourceLeft sourceRi
     have hv : T1.PSTATE.V = ov := rfl
     rw [hv, arm8IteNot ov]
   · intro hreg p
-    refine ⟨by simp [asmUpd, instUpd, arithUpd, updPc], fun x => by
-      simp [asmUpd, instUpd, arithUpd, updReg, updPc], by simp [asmUpd, instUpd, arithUpd, updReg, updPc],
-      fun k hk32 hav => ?_⟩
-    have hp : ∀ k, (asmUpd (.inst (.arith (.addOverflow destination result sourceLeft sourceRight))) p s1).regs k =
-        if k = sourceRight then (if ov then (1 : BitVec 64) else 0)
-      else if k = destination then v1 else s1.regs k := by
-      intro k
-      simp [asmUpd, instUpd, arithUpd, updReg, updPc, Flapjack.Compiler.Encoders.AsmSem.readReg,
-        ov, v1, arm8AddWithCarry_overflow_add, arm8X_of_valid, hdr_31, hdr_lt, hsl_31, hsl_lt,
-        hreg result ⟨hdr_lt, hdr_av⟩, hreg sourceLeft ⟨hsl_lt, hsl_av⟩]
+    obtain ⟨hpc, hmem, hdom, hp⟩ := hpost hreg p
+    refine ⟨hpc, hmem, hdom, fun k hk32 hav => ?_⟩
     show T2.REG (BitVec.ofNat 5 k) = _
     rw [hp k]
     unfold T2 T1
@@ -238,6 +239,35 @@ theorem arm8_encoder_correct_addOverflow (destination result sourceLeft sourceRi
         rw [if_neg hne1, if_neg hne2, if_neg h2]
         exact hreg k ⟨hk32, hav⟩
 
+/-- The `addOverflow` constructor of `encoder_correct arm8TargetL3`: the
+flag-setting add followed by the `VC` select simulate the single `addOverflow`
+`asmStep` with `n = 1`. -/
+@[hol "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" "arm8_encoder_correct"]
+theorem arm8_encoder_correct_addOverflow (destination result sourceLeft sourceRight : Nat)
+    (s1 s2 : AsmState 64) (ms : arm8_state)
+    (h : asmStep arm8ConfigL3 s1
+      (.inst (.arith (.addOverflow destination result sourceLeft sourceRight))) s2 ∧
+      targetStateRel arm8TargetL3 s1 ms) :
+    CaseGoal (.inst (.arith (.addOverflow destination result sourceLeft sourceRight))) s1 s2 ms := by
+  have hs := h.1
+  have hregok : ((asmRegOkExact destination arm8ConfigL3 = true ∧
+      asmRegOkExact result arm8ConfigL3 = true) ∧
+      asmRegOkExact sourceLeft arm8ConfigL3 = true) ∧
+      asmRegOkExact sourceRight arm8ConfigL3 = true := by
+    have hk := hs.2.2.2.2.2.2
+    simpa [asmOkExact, asmInstOkExact, asmArithOkExact, arm8ConfigL3, Bool.and_eq_true] using hk
+  have hdr := regOk_of_asmL3 hregok.1.1.2
+  have hsl := regOk_of_asmL3 hregok.1.2
+  refine arm8OverflowCase false _ destination result sourceLeft sourceRight s1 s2 ms h hregok
+    (arm8Enc_addOverflow destination result sourceLeft sourceRight) ?_
+  intro hreg p
+  refine ⟨by simp [asmUpd, instUpd, arithUpd, updPc], fun x => by
+    simp [asmUpd, instUpd, arithUpd, updReg, updPc], by simp [asmUpd, instUpd, arithUpd, updReg, updPc],
+    fun k => ?_⟩
+  simp [asmUpd, instUpd, arithUpd, updReg, updPc, Flapjack.Compiler.Encoders.AsmSem.readReg,
+    arm8AddWithCarry_add, arm8AddWithCarry_overflow_add, arm8X_of_valid, hdr.2.2, hdr.1, hsl.2.2, hsl.1,
+    hreg result ⟨hdr.1, hdr.2.1⟩, hreg sourceLeft ⟨hsl.1, hsl.2.1⟩]
+
 /-- The `subOverflow` constructor of `encoder_correct arm8TargetL3`: the
 flag-setting add followed by the `VC` select simulate the single `subOverflow`
 `asmStep` with `n = 1`. -/
@@ -255,79 +285,16 @@ theorem arm8_encoder_correct_subOverflow (destination result sourceLeft sourceRi
       asmRegOkExact sourceRight arm8ConfigL3 = true := by
     have hk := hs.2.2.2.2.2.2
     simpa [asmOkExact, asmInstOkExact, asmArithOkExact, arm8ConfigL3, Bool.and_eq_true] using hk
-  obtain ⟨⟨⟨hdl, hdr⟩, hsl⟩, hsr⟩ := hregok
-  obtain ⟨hdl_lt, hdl_av, hdl_31⟩ := regOk_of_asmL3 hdl
-  obtain ⟨hdr_lt, hdr_av, hdr_31⟩ := regOk_of_asmL3 hdr
-  obtain ⟨hsl_lt, hsl_av, hsl_31⟩ := regOk_of_asmL3 hsl
-  obtain ⟨hsr_lt, hsr_av, hsr_31⟩ := regOk_of_asmL3 hsr
-  let ov : Bool := (AddWithCarry (TN := 64) (X (TN := 64) result ms,
-    (~~~X (TN := 64) sourceLeft ms, true))).2.2.2.2
-  let v1 : BitVec 64 := X (TN := 64) result ms - X (TN := 64) sourceLeft ms
-  let T1 : arm8_state :=
-    { ms with
-      branch_hint := none,
-      REG := holUpdate (BitVec.ofNat 5 destination) v1 ms.REG, PC := ms.PC + 4,
-      PSTATE := { ms.PSTATE with
-        N := (AddWithCarry (TN := 64) (X (TN := 64) result ms,
-          (~~~X (TN := 64) sourceLeft ms, true))).2.1,
-        Z := (AddWithCarry (TN := 64) (X (TN := 64) result ms,
-          (~~~X (TN := 64) sourceLeft ms, true))).2.2.1,
-        C := (AddWithCarry (TN := 64) (X (TN := 64) result ms,
-          (~~~X (TN := 64) sourceLeft ms, true))).2.2.2.1,
-        V := ov } }
-  let T2 : arm8_state :=
-    { T1 with
-      branch_hint := none,
-      REG := holUpdate (BitVec.ofNat 5 sourceRight) (if ov then (1 : BitVec 64) else 0) T1.REG,
-      PC := T1.PC + 4 }
-  refine arm8RegCaseTwo _ s1 s2 ms h
-    (.Data (.«AddSubShiftedRegister@64» (1, true, true, .lsl, BitVec.ofNat 5 sourceLeft, 0,
-      BitVec.ofNat 5 result, BitVec.ofNat 5 destination))) _
-    (.Data (.«ConditionalSelect@64» (1, false, true, 7, 31, 31, BitVec.ofNat 5 sourceRight))) _ _ _
-    T1.REG T2.REG T1.PSTATE
-    (arm8Enc_subOverflow destination result sourceLeft sourceRight)
-    (arm8Encode_addSubShiftedRegister _ _ _ _ _ _ _) (arm8Decode_addSubShiftedRegister true true _ 0 _ _)
-    (arm8Encode_conditionalSelect _ _ _ _ _ _) (arm8Decode_conditionalSelect _ _ _ _) ?_ rfl ?_ ?_
-  · intro _
-    rw [arm8Run_addSubShiftedRegister_setflags_eq true _ _ destination _ hdl_31 hdl_lt]
-    simp only [if_true, arm8AddWithCarry_sub]
-    rfl
-  · intro u hR hP
-    rw [arm8Run_conditionalSelect_zero, arm8WriteX_of_valid _ _ hsr_31 hsr_lt, arm8ConditionHolds_seven]
-    dsimp only
-    rw [hR, hP]
-    have hv : T1.PSTATE.V = ov := rfl
-    rw [hv, arm8IteNot ov]
-  · intro hreg p
-    refine ⟨by simp [asmUpd, instUpd, arithUpd, updPc], fun x => by
-      simp [asmUpd, instUpd, arithUpd, updReg, updPc], by simp [asmUpd, instUpd, arithUpd, updReg, updPc],
-      fun k hk32 hav => ?_⟩
-    have hp : ∀ k, (asmUpd (.inst (.arith (.subOverflow destination result sourceLeft sourceRight))) p s1).regs k =
-        if k = sourceRight then (if ov then (1 : BitVec 64) else 0)
-      else if k = destination then v1 else s1.regs k := by
-      intro k
-      simp [asmUpd, instUpd, arithUpd, updReg, updPc, Flapjack.Compiler.Encoders.AsmSem.readReg,
-        ov, v1, arm8AddWithCarry_overflow_sub, arm8X_of_valid, hdr_31, hdr_lt, hsl_31, hsl_lt,
-        hreg result ⟨hdr_lt, hdr_av⟩, hreg sourceLeft ⟨hsl_lt, hsl_av⟩]
-    show T2.REG (BitVec.ofNat 5 k) = _
-    rw [hp k]
-    unfold T2 T1
-    simp only [Flapjack.RiscV.L3.holUpdate]
-    by_cases h1 : k = sourceRight
-    · rw [if_pos (by rw [h1]), if_pos h1]
-    · rw [if_neg h1]
-      by_cases h2 : k = destination
-      · have hne : (BitVec.ofNat 5 sourceRight) ≠ (BitVec.ofNat 5 k) := by
-          intro hh
-          exact h1 ((arm8Reg_eq hk32 hsr_lt).1 hh.symm)
-        rw [if_neg hne, if_pos (by rw [h2]), if_pos h2]
-      · have hne1 : (BitVec.ofNat 5 sourceRight) ≠ (BitVec.ofNat 5 k) := by
-          intro hh
-          exact h1 ((arm8Reg_eq hk32 hsr_lt).1 hh.symm)
-        have hne2 : (BitVec.ofNat 5 destination) ≠ (BitVec.ofNat 5 k) := by
-          intro hh
-          exact h2 ((arm8Reg_eq hk32 hdl_lt).1 hh.symm)
-        rw [if_neg hne1, if_neg hne2, if_neg h2]
-        exact hreg k ⟨hk32, hav⟩
+  have hdr := regOk_of_asmL3 hregok.1.1.2
+  have hsl := regOk_of_asmL3 hregok.1.2
+  refine arm8OverflowCase true _ destination result sourceLeft sourceRight s1 s2 ms h hregok
+    (arm8Enc_subOverflow destination result sourceLeft sourceRight) ?_
+  intro hreg p
+  refine ⟨by simp [asmUpd, instUpd, arithUpd, updPc], fun x => by
+    simp [asmUpd, instUpd, arithUpd, updReg, updPc], by simp [asmUpd, instUpd, arithUpd, updReg, updPc],
+    fun k => ?_⟩
+  simp [asmUpd, instUpd, arithUpd, updReg, updPc, Flapjack.Compiler.Encoders.AsmSem.readReg,
+    arm8AddWithCarry_sub, arm8AddWithCarry_overflow_sub, arm8X_of_valid, hdr.2.2, hdr.1, hsl.2.2, hsl.1,
+    hreg result ⟨hdr.1, hdr.2.1⟩, hreg sourceLeft ⟨hsl.1, hsl.2.1⟩]
 
 end Flapjack.Compiler.Encoders.Arm8.L3
