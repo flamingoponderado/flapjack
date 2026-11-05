@@ -304,7 +304,7 @@ memory unchanged, plus the eight-byte encoded shape `arm8Enc_longMul`).
 `ConditionalSelect.lean` records the same facts for `ConditionalSelect@64`, the
 select used by the `addOverflow` and `subOverflow` lowerings, and
 `Overflow.lean` adds `ConditionHolds` at `VC`, the flag-setting
-`AddSubShiftedRegister@64` step and the two `arm8Next` reductions that the
+`AddSubShiftedRegister@64` step and the `Run` equations that the
 overflow lowerings need, `Carry.lean`
 does the same for `AddSubCarry@64`, which the `addCarry` lowering uses twice,
 and `Compare.lean` records `ConditionalCompareImmediate@64`'s word, `e_sf`,
@@ -314,9 +314,15 @@ constructor; all are Flapjack case splits of the single HOL theorem
 `arm8_encoder_correct` and carry no `@[hol]` tags of their own.
 
 `LongMul.lean` assembles those facts into the two-instruction `longMul` case
-theorem with `n = 1` (`asserts 1`, `asserts2 2`), and `Overflow.lean` does the
-same for `addOverflow` and `subOverflow`: the flag-setting add or subtract
-followed by the `VC` select.
+theorem with `n = 1` (`asserts 1`, `asserts2 2`).  `addOverflow` and
+`subOverflow` (the flag-setting add or subtract followed by the `VC` select)
+share one proof, `arm8OverflowCase` (`Overflow.lean`, generic over the
+add/subtract flag), which closes through `arm8RegCaseTwo` (`Const.lean`), the two-instruction counterpart
+of `arm8RegCaseOne`: the first instruction sets the register file and
+`PSTATE`, the second is run on any state the interference environment leaves
+with those registers and flags, and `asmCaseTwoRegs` (`Simulate.lean`)
+discharges the `asserts 1` / `asserts2 2` obligations.  `asmCaseTwoMem` is the
+single-destination corollary of `asmCaseTwoRegs` that the `Mem` tail uses.
 
 `Loc.lean` records the `Address` instruction's word, `Encode`/`Decode`
 inverse, `Run` semantics and `arm8Next` reduction, plus the bit-level
@@ -331,7 +337,7 @@ and a final `AddSubShiftedRegister@64` adding the temporary to the
 destination.  It proves the lowering shape, the 24-byte encoding, the six
 `NextStateARM8` steps, that the four insertions put the offset into register 26
 and that the final add writes `PC + offset`; `arm8_encoder_correct_loc_big`
-assembles the case with `n = 5`.
+assembles the case with `n = 5` through `asmCaseChain` (see below).
 
 `Branch.lean` records the `JMP`-typed `BranchImmediate` instruction: its word
 (`btype = CALL` bit, the `00101` opcode and the 26-bit immediate), the
@@ -443,8 +449,9 @@ zeroes `r4`, and a final `AddSubCarry@64` into `r4`.  The file generalises the
 `AddSubCarry@64` decoder to both `opc`/`s` combinations, records the
 `AddWithCarry` facts for the two zero compares
 (`arm8AddWithCarry_subs_zero`, `arm8AddWithCarry_add_zero`), gives each of the
-five steps its `arm8Next_*` equation, its memory-preservation lemma
-(`arm8Next_*_mem`) and its `arm8Ok` preservation, and carries the five
+five steps its `arm8Next_*` equation, its interference-agreement lemma
+(`arm8Next_*_agree`), a memory-preservation lemma for each instruction kind
+and its `arm8Ok` preservation, and carries the five
 intermediate states `arm8AddCarryT1..T5` with `PC`/`REG`/`exception`/`EL`/
 `SCTLR_EL1`/`MEM` projections.  The register effect is stated first in
 `readReg` form (`hs2regsR`) so that the goal and `arithUpd`'s body share the
@@ -453,6 +460,26 @@ same `Decidable` instances, then rewritten to the `s1.regs` form through
 out lands in `sr` and the truncated sum in `d`, exactly as
 `AsmSem.arithUpd` specifies, matching the HOL proof's `AddCarry` branch
 (`next_tac 4`).
+
+The multi-instruction cases (`addCarry`, `loc_big`, `longMul`, the
+four-instruction `const` lowering and the two `jumpCmp` forms, whose second
+instruction branches) discharge the `asserts n` /
+`asserts2 (n + 1)` obligations of `CaseGoal` through one lemma,
+`asmCaseChain` (`Simulate.lean`), the counterpart of HOL's repeated
+`next_state_tacN` steps.  Each case supplies the expected state `T k` after
+`k` instructions, a step lemma taking any state that `ChainAt` admits before
+step `k` (the start state itself, then anything agreeing with `T k`) to a state
+agreeing with `T (k + 1)`, its memory preservation outside the source domain,
+the intermediate `arm8Ok`/`PC`/code facts, and the final `targetStateRel`.
+`asserts_chain` and `asserts2_chain` carry the induction over the steps.
+The per-instruction agreement lemmas (`arm8Next_*_agree`) share their
+argument through `arm8L3Agree_next`: both agreeing states read the same
+in-domain instruction bytes and step by the instruction's `arm8Next_*`
+equation, so each lemma only proves that the equation's right-hand side
+preserves agreement.  The step equations themselves share `arm8Next_eq` (`Bytes.lean`):
+given the decoded instruction and its `Run` equation with the PC advanced by
+four, it discharges the fetch, decode, branch-hint and exception side
+conditions of `NextStateARM8`.
 
 `ShiftBitfield.lean` starts the `shift` `.lsl`/`.lsr`/`.asr` immediate forms,
 which `arm8_ast` lowers to a single `BitfieldMove@64` guarded by
@@ -479,11 +506,22 @@ Flapjack infrastructure that combines it with the shift reasoning.
 `arm8_encoder_correct_shift_lsr_imm`, `_asr_imm` and `_lsl_imm` compose the
 rendered `Encode`/`Decode` inverse, the `Run` equation with the masks
 substituted, and the corresponding mask identity, then close through
-`asmCaseOne`.  `.lsl` needs its two computed field values (`63w - n2w n` and
+`arm8RegCaseOne` (see below).  `.lsl` needs its two computed field values (`63w - n2w n` and
 `-n2w n`) pinned first; `interval_cases` over the 64 admissible shift amounts
 does that.  All four case theorems from this batch (`addCarry` and the three
 shift-immediate forms) carry the shared `arm8_encoder_correct` tag and
 `reviewed_exact` manifest rows.
+
+Every one-instruction lowering that writes one register and leaves memory
+alone (the three shift-immediate forms, `ror`, the register shift, the
+add/sub and logical binops in their immediate and register forms, and `div`)
+closes through one shared tail, `arm8RegCaseOne` (`Const.lean`); the
+constant lowerings `const_movZ`, `const_movN` and `const_orr` use it too.  It is the
+counterpart of the `next_tac 0`, `next_state_tac01`, `state_tac` sequence HOL
+applies to those branches of `arm8_encoder_correct`.  It reads the instruction
+word from memory, steps `arm8Next` once and discharges `asmCaseOne`; each case
+theorem supplies only its `arm8_ast`/`Encode`/`Decode` equations, its `Run`
+equation and the source-side `asmUpd` facts.
 
 `Mem.lean` now records the two `LoadStoreImmediate@64` word shapes
 `e_LoadStoreImmediate` emits — the signed nine-bit form and the scaled

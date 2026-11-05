@@ -88,4 +88,30 @@ theorem arm8Next_word (ms : arm8_state) (w : BitVec 32) (i : instruction)
   rw [hexc]
   simp
 
+/-- `arm8Next` of a state holding the encoded word of a non-branch
+instruction, as an equation with any state `T` that the run of the
+instruction, with the PC advanced by four, equals (Flapjack infrastructure for
+the non-branch `arm8Next_*` step equations; branch steps such as
+`arm8Next_branchConditional` change the PC differently and are not
+instances). -/
+theorem arm8Next_eq (ms : arm8_state) (w : BitVec 32) (i : instruction) (T : arm8_state)
+    (hdec : Decode w = i)
+    (hT : { (Run i { ms with branch_hint := none }) with
+      PC := (Run i { ms with branch_hint := none }).PC + 4 } = T)
+    (hbr : T.branch_hint = none) (hexc : T.exception = exception.NoException)
+    (h0 : ms.MEM ms.PC = BitVec.ofNat 8 ((w >>> 0).toNat))
+    (h1 : ms.MEM (ms.PC + 1) = BitVec.ofNat 8 ((w >>> 8).toNat))
+    (h2 : ms.MEM (ms.PC + 2) = BitVec.ofNat 8 ((w >>> 16).toNat))
+    (h3 : ms.MEM (ms.PC + 3) = BitVec.ofNat 8 ((w >>> 24).toNat))
+    (hal : Aligned (TN := 64) (ms.PC, 4) = true)
+    (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2)) :
+    arm8Next ms = T := by
+  have hbr' : (Run i { ms with branch_hint := none }).branch_hint = none :=
+    (congrArg (fun x : arm8_state => x.branch_hint) hT).trans hbr
+  have hexc' : (Run i { ms with branch_hint := none }).exception = exception.NoException :=
+    (congrArg (fun x : arm8_state => x.exception) hT).trans hexc
+  unfold arm8Next
+  rw [arm8Next_word ms w i hdec hbr' hexc' h0 h1 h2 h3 hal he0 hel, hT]
+  rfl
+
 end Flapjack.Compiler.Encoders.Arm8.L3

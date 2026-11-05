@@ -474,6 +474,26 @@ theorem arm8ScaledForm_eq (off : BitVec 64) (shift : BitVec 64) :
   apply BitVec.eq_of_toNat_eq
   simp [RiscV.L3.holWordExtract]
 
+/-- The one-instruction branch condition of `arm8_load_store_ast*` at scale
+`k`: if the offset is its own signed nine-bit form or a non-negative scaled
+twelve-bit form, the far-offset branch's guard cannot hold (Flapjack
+infrastructure shared by the `arm8Ast_*_single_of_single*` lemmas). -/
+theorem arm8SingleBranch_absurd (off k : BitVec 64)
+    (hsingle : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat) ∨
+      (!off.msb &&
+        (off == (BitVec.zeroExtend 64 (BitVec.ofNat 12 ((off >>> k).toNat))) <<< k)) = true)
+    (hne : off ≠ BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat))
+    (hrest : off.msb = true ∨
+      off ≠ (BitVec.zeroExtend 64 (BitVec.ofNat 12 ((off >>> k).toNat))) <<< k) : False := by
+  rcases hsingle with hsx | hscaled
+  · exact hne hsx
+  · rw [Bool.and_eq_true, beq_iff_eq] at hscaled
+    obtain ⟨hunsigned, hbeq⟩ := hscaled
+    rcases hrest with hmsb | hne'
+    · rw [hmsb] at hunsigned
+      exact absurd hunsigned (by decide)
+    · exact hne' hbeq
+
 /-- The one-instruction branch of `arm8_load_store_ast` for `.mem .load`: when
  the offset is either its own signed nine-bit form or the scaled twelve-bit form
  at a non-negative offset, `arm8_ast` emits a single `LoadStoreImmediate@64`.
@@ -490,22 +510,9 @@ theorem arm8Ast_load_single_of_single (dest base : Nat) (off : BitVec 64)
   simp only [arm8Ast, arm8LoadStoreAst]
   split
   · rename_i hcond
-    rw [Bool.and_eq_true] at hcond
-    obtain ⟨hne, hrest⟩ := hcond
-    have hne' : off ≠ BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat) := by simpa using hne
-    rcases hsingle with hsx | hscaled
-    · exact absurd hsx hne'
-    · rw [Bool.and_eq_true] at hscaled
-      obtain ⟨hunsigned, hbeq⟩ := hscaled
-      rw [beq_iff_eq] at hbeq
-      rw [Bool.or_eq_true] at hrest
-      rcases hrest with hmsb | hne''
-      · have hmsbt : off.msb = true := by simpa using hmsb
-        rw [hmsbt] at hunsigned
-        exact absurd hunsigned (by decide)
-      · have hne : off ≠ (BitVec.zeroExtend 64 (BitVec.ofNat 12 ((off >>> 3).toNat))) <<< 3 := by
-          simpa using hne''
-        exact (hne hbeq).elim
+    rw [Bool.and_eq_true, Bool.or_eq_true] at hcond
+    exact (arm8SingleBranch_absurd off 3 hsingle (by simpa using hcond.1)
+      (hcond.2.imp (by simpa using ·) (by simpa using ·))).elim
   · rfl
 
 /-- The one-instruction branch of `arm8_load_store_ast` for `.mem .store`
@@ -521,22 +528,9 @@ theorem arm8Ast_store_single_of_single (dest base : Nat) (off : BitVec 64)
   simp only [arm8Ast, arm8LoadStoreAst]
   split
   · rename_i hcond
-    rw [Bool.and_eq_true] at hcond
-    obtain ⟨hne, hrest⟩ := hcond
-    have hne' : off ≠ BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat) := by simpa using hne
-    rcases hsingle with hsx | hscaled
-    · exact absurd hsx hne'
-    · rw [Bool.and_eq_true] at hscaled
-      obtain ⟨hunsigned, hbeq⟩ := hscaled
-      rw [beq_iff_eq] at hbeq
-      rw [Bool.or_eq_true] at hrest
-      rcases hrest with hmsb | hne''
-      · have hmsbt : off.msb = true := by simpa using hmsb
-        rw [hmsbt] at hunsigned
-        exact absurd hunsigned (by decide)
-      · have hne : off ≠ (BitVec.zeroExtend 64 (BitVec.ofNat 12 ((off >>> 3).toNat))) <<< 3 := by
-          simpa using hne''
-        exact (hne hbeq).elim
+    rw [Bool.and_eq_true, Bool.or_eq_true] at hcond
+    exact (arm8SingleBranch_absurd off 3 hsingle (by simpa using hcond.1)
+      (hcond.2.imp (by simpa using ·) (by simpa using ·))).elim
   · rfl
 
 /-- The one-instruction branch of `arm8_load_store_ast32` for `.mem .load32`. -/
@@ -551,22 +545,9 @@ theorem arm8Ast_load_single_of_single32 (dest base : Nat) (off : BitVec 64)
   simp only [arm8Ast, arm8LoadStoreAst32]
   split
   · rename_i hcond
-    rw [Bool.and_eq_true] at hcond
-    obtain ⟨hne, hrest⟩ := hcond
-    have hne' : off ≠ BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat) := by simpa using hne
-    rcases hsingle with hsx | hscaled
-    · exact absurd hsx hne'
-    · rw [Bool.and_eq_true] at hscaled
-      obtain ⟨hunsigned, hbeq⟩ := hscaled
-      rw [beq_iff_eq] at hbeq
-      rw [Bool.or_eq_true] at hrest
-      rcases hrest with hmsb | hne''
-      · have hmsbt : off.msb = true := by simpa using hmsb
-        rw [hmsbt] at hunsigned
-        exact absurd hunsigned (by decide)
-      · have hne : off ≠ (BitVec.zeroExtend 64 (BitVec.ofNat 12 ((off >>> 2).toNat))) <<< 2 := by
-          simpa using hne''
-        exact (hne hbeq).elim
+    rw [Bool.and_eq_true, Bool.or_eq_true] at hcond
+    exact (arm8SingleBranch_absurd off 2 hsingle (by simpa using hcond.1)
+      (hcond.2.imp (by simpa using ·) (by simpa using ·))).elim
   · rfl
 
 /-- The one-instruction branch of `arm8_load_store_ast32` for `.mem .store32`. -/
@@ -581,22 +562,9 @@ theorem arm8Ast_store_single_of_single32 (dest base : Nat) (off : BitVec 64)
   simp only [arm8Ast, arm8LoadStoreAst32]
   split
   · rename_i hcond
-    rw [Bool.and_eq_true] at hcond
-    obtain ⟨hne, hrest⟩ := hcond
-    have hne' : off ≠ BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat) := by simpa using hne
-    rcases hsingle with hsx | hscaled
-    · exact absurd hsx hne'
-    · rw [Bool.and_eq_true] at hscaled
-      obtain ⟨hunsigned, hbeq⟩ := hscaled
-      rw [beq_iff_eq] at hbeq
-      rw [Bool.or_eq_true] at hrest
-      rcases hrest with hmsb | hne''
-      · have hmsbt : off.msb = true := by simpa using hmsb
-        rw [hmsbt] at hunsigned
-        exact absurd hunsigned (by decide)
-      · have hne : off ≠ (BitVec.zeroExtend 64 (BitVec.ofNat 12 ((off >>> 2).toNat))) <<< 2 := by
-          simpa using hne''
-        exact (hne hbeq).elim
+    rw [Bool.and_eq_true, Bool.or_eq_true] at hcond
+    exact (arm8SingleBranch_absurd off 2 hsingle (by simpa using hcond.1)
+      (hcond.2.imp (by simpa using ·) (by simpa using ·))).elim
   · rfl
 
 /-- The one-instruction branch of `arm8_load_store_ast16` for `.mem .load16`. -/
@@ -611,22 +579,9 @@ theorem arm8Ast_load_single_of_single16 (dest base : Nat) (off : BitVec 64)
   simp only [arm8Ast, arm8LoadStoreAst16]
   split
   · rename_i hcond
-    rw [Bool.and_eq_true] at hcond
-    obtain ⟨hne, hrest⟩ := hcond
-    have hne' : off ≠ BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat) := by simpa using hne
-    rcases hsingle with hsx | hscaled
-    · exact absurd hsx hne'
-    · rw [Bool.and_eq_true] at hscaled
-      obtain ⟨hunsigned, hbeq⟩ := hscaled
-      rw [beq_iff_eq] at hbeq
-      rw [Bool.or_eq_true] at hrest
-      rcases hrest with hmsb | hne''
-      · have hmsbt : off.msb = true := by simpa using hmsb
-        rw [hmsbt] at hunsigned
-        exact absurd hunsigned (by decide)
-      · have hne : off ≠ (BitVec.zeroExtend 64 (BitVec.ofNat 12 ((off >>> 1).toNat))) <<< 1 := by
-          simpa using hne''
-        exact (hne hbeq).elim
+    rw [Bool.and_eq_true, Bool.or_eq_true] at hcond
+    exact (arm8SingleBranch_absurd off 1 hsingle (by simpa using hcond.1)
+      (hcond.2.imp (by simpa using ·) (by simpa using ·))).elim
   · rfl
 
 /-- The one-instruction branch of `arm8_load_store_ast16` for `.mem .store16`. -/
@@ -641,22 +596,9 @@ theorem arm8Ast_store_single_of_single16 (dest base : Nat) (off : BitVec 64)
   simp only [arm8Ast, arm8LoadStoreAst16]
   split
   · rename_i hcond
-    rw [Bool.and_eq_true] at hcond
-    obtain ⟨hne, hrest⟩ := hcond
-    have hne' : off ≠ BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat) := by simpa using hne
-    rcases hsingle with hsx | hscaled
-    · exact absurd hsx hne'
-    · rw [Bool.and_eq_true] at hscaled
-      obtain ⟨hunsigned, hbeq⟩ := hscaled
-      rw [beq_iff_eq] at hbeq
-      rw [Bool.or_eq_true] at hrest
-      rcases hrest with hmsb | hne''
-      · have hmsbt : off.msb = true := by simpa using hmsb
-        rw [hmsbt] at hunsigned
-        exact absurd hunsigned (by decide)
-      · have hne : off ≠ (BitVec.zeroExtend 64 (BitVec.ofNat 12 ((off >>> 1).toNat))) <<< 1 := by
-          simpa using hne''
-        exact (hne hbeq).elim
+    rw [Bool.and_eq_true, Bool.or_eq_true] at hcond
+    exact (arm8SingleBranch_absurd off 1 hsingle (by simpa using hcond.1)
+      (hcond.2.imp (by simpa using ·) (by simpa using ·))).elim
   · rfl
 
 /-- The zero-extended four-byte read is the 64-bit OR-of-shifts form
@@ -2725,20 +2667,6 @@ theorem arm8FarImm_encodable (off : BitVec 64)
   obtain ⟨hlo, hhi⟩ := arm8FarOffsetBounds off hok
   exact arm8FarImm_encodable_of_bounds off hlo hhi hnsx
 
-/-- `holUpdate` at its application form for any carrier (Flapjack
-infrastructure: the memory-specialised `holUpdate_apply` does not cover the
-register file). -/
-theorem holUpdate_apply_general {α β : Type} [DecidableEq α] (a : α) (b : β)
-    (f : α → β) (c : α) : holUpdate a b f c = if a = c then b else f c := rfl
-
-theorem holUpdate_same {α β : Type} [DecidableEq α] (a : α) (b : β) (f : α → β) :
-    holUpdate a b f a = b := by
-  rw [holUpdate_apply_general, if_pos rfl]
-
-theorem holUpdate_ne {α β : Type} [DecidableEq α] {a c : α} (h : ¬ a = c) (b : β)
-    (f : α → β) : holUpdate a b f c = f c := by
-  rw [holUpdate_apply_general, if_neg h]
-
 
 /-! ## The shared `Mem` tail
 
@@ -2752,22 +2680,6 @@ effect, `arm8MemLoadCase*`/`arm8MemStoreCase*` instantiate them for a
 per-width `Run` facts.
 -/
 
-/-- The four bytes `arm8Encode` lays down for an instruction that encodes to
-`w` (Flapjack infrastructure). -/
-theorem arm8WordBytes (m : BitVec 64 → BitVec 8) (p : BitVec 64) (i : instruction)
-    (w : BitVec 32) (hencw : Encode i = MachineCode.ARM8 w)
-    (hb : ∀ k, k < 4 → m (p + BitVec.ofNat 64 k) = (arm8Encode i).getD k 0) :
-    m p = BitVec.ofNat 8 ((w >>> 0).toNat) ∧
-      m (p + 1) = BitVec.ofNat 8 ((w >>> 8).toNat) ∧
-      m (p + 2) = BitVec.ofNat 8 ((w >>> 16).toNat) ∧
-      m (p + 3) = BitVec.ofNat 8 ((w >>> 24).toNat) := by
-  simp only [arm8Encode, hencw] at hb
-  refine ⟨?_, ?_, ?_, ?_⟩
-  · simpa using hb 0 (by omega)
-  · simpa using hb 1 (by omega)
-  · simpa using hb 2 (by omega)
-  · simpa using hb 3 (by omega)
-
 /-- Scratch register 26 is distinct from every allocatable register
 (Flapjack infrastructure). -/
 theorem arm8Reg26_ne {k : Nat} (hk : k < 32)
@@ -2777,13 +2689,6 @@ theorem arm8Reg26_ne {k : Nat} (hk : k < 32)
   have hk26 : k = 26 := ((arm8Reg_eq (a := 26) (by omega) hk).mp hh).symm
   rw [hk26] at hav
   simp [arm8ConfigL3] at hav
-
-/-- A valid register index is not the zero/stack register 31 (Flapjack
-infrastructure). -/
-theorem arm8Reg_ne31 {n : Nat} (hn : n ≠ 31) (hlt : n < 32) :
-    BitVec.ofNat 5 n ≠ (31 : BitVec 5) := by
-  intro hh
-  exact hn ((arm8Reg_eq (b := 31) hlt (by omega)).mp hh)
 
 /-- `asmUpd` of a `Mem` instruction sets the PC to the given address
 (Flapjack infrastructure). -/

@@ -154,19 +154,9 @@ theorem arm8Next_multiplyHigh (ms : arm8_state) (rm rn : BitVec 5) (n : Nat)
   have hdec : Decode (arm8MultiplyHighWord false rm rn (BitVec.ofNat 5 n)) =
       instruction.Data (Data.MultiplyHigh (false, (rm, (rn, BitVec.ofNat 5 n)))) :=
     arm8Decode_multiplyHigh rm rn _
-  have hbr : (Run (instruction.Data (Data.MultiplyHigh (false, (rm, (rn, BitVec.ofNat 5 n))))) ({ ms with branch_hint := none })).branch_hint = none := by
-    rw [arm8Run_multiplyHigh]
-    rw [arm8WriteX_of_valid _ _ h31 hn]
-  have hexc : (Run (instruction.Data (Data.MultiplyHigh (false, (rm, (rn, BitVec.ofNat 5 n))))) ({ ms with branch_hint := none })).exception = exception.NoException := by
-    rw [arm8Run_multiplyHigh]
-    rw [arm8WriteX_of_valid _ _ h31 hn]
-    simpa using hexc0
-  have hn' := arm8Next_word ms (arm8MultiplyHighWord false rm rn (BitVec.ofNat 5 n))
-    (instruction.Data (Data.MultiplyHigh (false, (rm, (rn, BitVec.ofNat 5 n)))))
-    hdec hbr hexc h0 h1 h2 h3 hal he0 hel
-  unfold arm8Next
-  rw [hn', arm8Run_multiplyHigh, arm8WriteX_of_valid _ _ h31 hn]
-  simp only [ExtendWord, Bool.false_eq_true, if_false, holThe]
+  refine arm8Next_eq ms _ _ _ hdec ?_ rfl hexc0 h0 h1 h2 h3 hal he0 hel
+  rw [arm8Run_multiplyHigh, arm8WriteX_of_valid _ _ h31 hn]
+  simp only [ExtendWord, Bool.false_eq_true, if_false]
   rfl
 
 /-- One `arm8Next` step on the `MultiplyAddSub@64` word writes `Ra + Rn * Rm`
@@ -184,69 +174,12 @@ theorem arm8Next_multiplyAddSub (ms : arm8_state) (rm ra rn : BitVec 5) (n : Nat
   have hdec : Decode (arm8MultiplyAddSubWord false rm ra rn (BitVec.ofNat 5 n)) =
       instruction.Data (Data.«MultiplyAddSub@64» ((1 : BitVec 64), (false, (rm, (ra, (rn, BitVec.ofNat 5 n)))))) :=
     arm8Decode_multiplyAddSub rm ra rn _
-  have hbr : (Run (instruction.Data (Data.«MultiplyAddSub@64» ((1 : BitVec 64), (false, (rm, (ra, (rn, BitVec.ofNat 5 n))))))) ({ ms with branch_hint := none })).branch_hint = none := by
-    rw [arm8Run_multiplyAddSub]
-    rw [arm8WriteX_of_valid _ _ h31 hn]
-  have hexc : (Run (instruction.Data (Data.«MultiplyAddSub@64» ((1 : BitVec 64), (false, (rm, (ra, (rn, BitVec.ofNat 5 n))))))) ({ ms with branch_hint := none })).exception = exception.NoException := by
-    rw [arm8Run_multiplyAddSub]
-    rw [arm8WriteX_of_valid _ _ h31 hn]
-    simpa using hexc0
-  have hn' := arm8Next_word ms (arm8MultiplyAddSubWord false rm ra rn (BitVec.ofNat 5 n))
-    (instruction.Data (Data.«MultiplyAddSub@64» ((1 : BitVec 64), (false, (rm, (ra, (rn, BitVec.ofNat 5 n)))))))
-    hdec hbr hexc h0 h1 h2 h3 hal he0 hel
-  unfold arm8Next
-  rw [hn', arm8Run_multiplyAddSub, arm8WriteX_of_valid _ _ h31 hn]
-  simp only [holThe]
+  refine arm8Next_eq ms _ _ _ hdec ?_ rfl hexc0 h0 h1 h2 h3 hal he0 hel
+  rw [arm8Run_multiplyAddSub, arm8WriteX_of_valid _ _ h31 hn]
+  simp only
   rfl
 
-
 /-! ## Agreement lemmas for the two `longMul` steps -/
-
-/-- Applying `arm8Next` to two states that agree on `d` and carry the
-`MultiplyHigh` word gives states that still agree. -/
-theorem arm8Next_multiplyHigh_agree (d : BitVec 64 → Prop) (s t : arm8_state)
-    (h : Arm8L3Agree d s t) (hok : arm8Ok s = true)
-    (rm rn : BitVec 5) (n : Nat) (hn : n < 32) (h31 : n ≠ 31)
-    (hrn : rn ≠ 31#5) (hrm : rm ≠ 31#5)
-    (hf : ∀ j, j < 4 → d (t.PC + BitVec.ofNat 64 j))
-    (hb0 : t.MEM t.PC = BitVec.ofNat 8 ((arm8MultiplyHighWord false rm rn (BitVec.ofNat 5 n) >>> 0).toNat))
-    (hb1 : t.MEM (t.PC + 1) = BitVec.ofNat 8 ((arm8MultiplyHighWord false rm rn (BitVec.ofNat 5 n) >>> 8).toNat))
-    (hb2 : t.MEM (t.PC + 2) = BitVec.ofNat 8 ((arm8MultiplyHighWord false rm rn (BitVec.ofNat 5 n) >>> 16).toNat))
-    (hb3 : t.MEM (t.PC + 3) = BitVec.ofNat 8 ((arm8MultiplyHighWord false rm rn (BitVec.ofNat 5 n) >>> 24).toNat)) :
-    Arm8L3Agree d (arm8Next s) (arm8Next t) := by
-  have hokt : arm8Ok t = true := by rw [← arm8Ok_congr h]; exact hok
-  obtain ⟨hel, he0, _, _, _, hexc0, halign⟩ := (arm8Ok_iff s).mp hok
-  obtain ⟨helt, he0t, _, _, _, hexc0t, halignt⟩ := (arm8Ok_iff t).mp hokt
-  have hal : Aligned (TN := 64) (s.PC, 4) = true := by
-    rw [Aligned_four_iff]
-    simpa [← h.pc] using (holAligned_iff 2 s.PC).mp halign
-  have halt : Aligned (TN := 64) (t.PC, 4) = true := by
-    rw [Aligned_four_iff]
-    simpa using (holAligned_iff 2 t.PC).mp halignt
-  have hs0 : s.MEM s.PC = BitVec.ofNat 8 ((arm8MultiplyHighWord false rm rn (BitVec.ofNat 5 n) >>> 0).toNat) := by
-    rw [h.pc]
-    exact (h.mem t.PC (by simpa using hf 0 (by omega))).trans hb0
-  have hs1 : s.MEM (s.PC + 1) = BitVec.ofNat 8 ((arm8MultiplyHighWord false rm rn (BitVec.ofNat 5 n) >>> 8).toNat) := by
-    rw [h.pc]
-    exact (h.mem (t.PC + 1) (by simpa using hf 1 (by omega))).trans hb1
-  have hs2 : s.MEM (s.PC + 2) = BitVec.ofNat 8 ((arm8MultiplyHighWord false rm rn (BitVec.ofNat 5 n) >>> 16).toNat) := by
-    rw [h.pc]
-    exact (h.mem (t.PC + 2) (by simpa using hf 2 (by omega))).trans hb2
-  have hs3 : s.MEM (s.PC + 3) = BitVec.ofNat 8 ((arm8MultiplyHighWord false rm rn (BitVec.ofNat 5 n) >>> 24).toNat) := by
-    rw [h.pc]
-    exact (h.mem (t.PC + 3) (by simpa using hf 3 (by omega))).trans hb3
-  have hss := arm8Next_multiplyHigh s rm rn n hn h31 hexc0 hs0 hs1 hs2 hs3 hal he0 hel
-  have htt := arm8Next_multiplyHigh t rm rn n hn h31 hexc0t hb0 hb1 hb2 hb3 halt he0t helt
-  rw [hss, htt]
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-  · simp [h.pc]
-  · simp only [h.reg, arm8X_congr h hrn, arm8X_congr h hrm]
-  · simp [h.pstate]
-  · simp [h.sctlr]
-  · simp [h.tcr]
-  · simp [h.exc]
-  · intro a ha
-    simp only [h.mem a ha]
 
 /-- Applying `arm8Next` to two states that agree on `d` and carry the
 `MultiplyAddSub@64` word gives states that still agree. -/
@@ -260,30 +193,7 @@ theorem arm8Next_multiplyAddSub_agree (d : BitVec 64 → Prop) (s t : arm8_state
     (hb2 : t.MEM (t.PC + 2) = BitVec.ofNat 8 ((arm8MultiplyAddSubWord false rm ra rn (BitVec.ofNat 5 n) >>> 16).toNat))
     (hb3 : t.MEM (t.PC + 3) = BitVec.ofNat 8 ((arm8MultiplyAddSubWord false rm ra rn (BitVec.ofNat 5 n) >>> 24).toNat)) :
     Arm8L3Agree d (arm8Next s) (arm8Next t) := by
-  have hokt : arm8Ok t = true := by rw [← arm8Ok_congr h]; exact hok
-  obtain ⟨hel, he0, _, _, _, hexc0, halign⟩ := (arm8Ok_iff s).mp hok
-  obtain ⟨helt, he0t, _, _, _, hexc0t, halignt⟩ := (arm8Ok_iff t).mp hokt
-  have hal : Aligned (TN := 64) (s.PC, 4) = true := by
-    rw [Aligned_four_iff]
-    simpa [← h.pc] using (holAligned_iff 2 s.PC).mp halign
-  have halt : Aligned (TN := 64) (t.PC, 4) = true := by
-    rw [Aligned_four_iff]
-    simpa using (holAligned_iff 2 t.PC).mp halignt
-  have hs0 : s.MEM s.PC = BitVec.ofNat 8 ((arm8MultiplyAddSubWord false rm ra rn (BitVec.ofNat 5 n) >>> 0).toNat) := by
-    rw [h.pc]
-    exact (h.mem t.PC (by simpa using hf 0 (by omega))).trans hb0
-  have hs1 : s.MEM (s.PC + 1) = BitVec.ofNat 8 ((arm8MultiplyAddSubWord false rm ra rn (BitVec.ofNat 5 n) >>> 8).toNat) := by
-    rw [h.pc]
-    exact (h.mem (t.PC + 1) (by simpa using hf 1 (by omega))).trans hb1
-  have hs2 : s.MEM (s.PC + 2) = BitVec.ofNat 8 ((arm8MultiplyAddSubWord false rm ra rn (BitVec.ofNat 5 n) >>> 16).toNat) := by
-    rw [h.pc]
-    exact (h.mem (t.PC + 2) (by simpa using hf 2 (by omega))).trans hb2
-  have hs3 : s.MEM (s.PC + 3) = BitVec.ofNat 8 ((arm8MultiplyAddSubWord false rm ra rn (BitVec.ofNat 5 n) >>> 24).toNat) := by
-    rw [h.pc]
-    exact (h.mem (t.PC + 3) (by simpa using hf 3 (by omega))).trans hb3
-  have hss := arm8Next_multiplyAddSub s rm ra rn n hn h31 hexc0 hs0 hs1 hs2 hs3 hal he0 hel
-  have htt := arm8Next_multiplyAddSub t rm ra rn n hn h31 hexc0t hb0 hb1 hb2 hb3 halt he0t helt
-  rw [hss, htt]
+  refine arm8L3Agree_next h hok _ _ (fun u => arm8Next_multiplyAddSub u rm ra rn n hn h31) ?_ hf hb0 hb1 hb2 hb3
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · simp [h.pc]
   · simp only [h.reg, arm8X_congr_or_zero h ra, arm8X_congr h hrn, arm8X_congr h hrm]
@@ -293,21 +203,6 @@ theorem arm8Next_multiplyAddSub_agree (d : BitVec 64 → Prop) (s t : arm8_state
   · simp [h.exc]
   · intro a ha
     simp only [h.mem a ha]
-
-
-/-- The `MultiplyHigh` step leaves memory unchanged. -/
-theorem arm8Next_multiplyHigh_mem (ms : arm8_state) (rm rn : BitVec 5) (n : Nat)
-    (hn : n < 32) (h31 : n ≠ 31) (hexc0 : ms.exception = exception.NoException)
-    (h0 : ms.MEM ms.PC = BitVec.ofNat 8 ((arm8MultiplyHighWord false rm rn (BitVec.ofNat 5 n) >>> 0).toNat))
-    (h1 : ms.MEM (ms.PC + 1) = BitVec.ofNat 8 ((arm8MultiplyHighWord false rm rn (BitVec.ofNat 5 n) >>> 8).toNat))
-    (h2 : ms.MEM (ms.PC + 2) = BitVec.ofNat 8 ((arm8MultiplyHighWord false rm rn (BitVec.ofNat 5 n) >>> 16).toNat))
-    (h3 : ms.MEM (ms.PC + 3) = BitVec.ofNat 8 ((arm8MultiplyHighWord false rm rn (BitVec.ofNat 5 n) >>> 24).toNat))
-    (hal : Aligned (TN := 64) (ms.PC, 4) = true)
-    (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2)) :
-    ∀ x, (arm8Next ms).MEM x = ms.MEM x := by
-  rw [arm8Next_multiplyHigh ms rm rn n hn h31 hexc0 h0 h1 h2 h3 hal he0 hel]
-  intro x
-  rfl
 
 /-- The `MultiplyAddSub@64` step leaves memory unchanged. -/
 theorem arm8Next_multiplyAddSub_mem (ms : arm8_state) (rm ra rn : BitVec 5) (n : Nat)
@@ -371,12 +266,6 @@ theorem arm8MultiplyHigh_extract (ms : arm8_state) (sl sr : Nat)
         BitVec.setWidth 128 (X (TN := 64) (BitVec.ofNat 5 sr) ms)) =
       BitVec.ofNat 64 ((ms.REG (BitVec.ofNat 5 sl)).toNat * (ms.REG (BitVec.ofNat 5 sr)).toNat / 2 ^ 64) := by
   rw [arm8X_of_valid _ hsl31 hsl, arm8X_of_valid _ hsr31 hsr, arm8MultiplyHigh_high]
-
-
-/-- Reading a register other than the one just written is unchanged. -/
-theorem arm8X_update_other (st : arm8_state) (a b : BitVec 5) (v : BitVec 64) (h : a ≠ b) :
-    X (TN := 64) a { st with REG := holUpdate b v st.REG } = X (TN := 64) a st := by
-  simp [X, Flapjack.RiscV.L3.holUpdate, Ne.symm h]
 
 
 /-- A 64-bit product is the `ofNat` of the product of the `toNat`s. -/
