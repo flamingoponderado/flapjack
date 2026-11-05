@@ -5,6 +5,7 @@ import Flapjack.Compiler.Backend.GcShared.Slice
 import Flapjack.Compiler.Backend.GenGc.Proofs.HeapLookup
 import Flapjack.Compiler.Backend.GenGc.Proofs.Progress
 import Flapjack.Compiler.Backend.GenGc.Proofs.Invariant
+import Flapjack.Compiler.Backend.GenGc.Proofs.Correct
 import Flapjack.Compiler.Backend.GenGcPartial.Proofs.Forward
 import Flapjack.Compiler.Backend.GenGcPartial.Proofs.Conservation
 import Flapjack.Compiler.Backend.GenGcPartial.Proofs.Accumulator
@@ -2424,5 +2425,177 @@ theorem partialGc_oldPointersValid {α β : Type} (conf : Config β)
     obtain ⟨resultChildren, resultFound⟩ :=
       heapLookup_refs conf roots roots1 heap state ptr targetChildren targetLen targetData run original targetFound boundary after
     exact ⟨resultChildren, targetLen, targetData, resultFound⟩
+
+/-- Flapjack proof infrastructure: a data lookup in the translated copied
+region gives a data lookup at the corresponding offset in the full output. -/
+theorem translatedCopiedData_inOutput {α β γ : Type} (conf : Config γ)
+    (old copied refs : List (HeapElement α β)) (free ptr : Nat)
+    (oldLength : heapLength old = conf.genStart)
+    (found : isSomeDataElement (heapLookup ptr (toGenHeapList conf copied ++ heapExpand free))) :
+    isSomeDataElement (heapLookup (conf.genStart + ptr) (old ++ copied ++ heapExpand free ++ refs)) := by
+  have translated : toGenHeapList conf (copied ++ heapExpand free) =
+      toGenHeapList conf copied ++ heapExpand free := by
+    simp only [toGenHeapList, List.map_append]
+    change _ ++ toGenHeapList conf (heapExpand free : List (HeapElement α β)) = _
+    rw [toGenHeapList_heapExpand]
+  rw [← translated] at found
+  have source := (isSomeDataElement_toGenHeapList conf (copied ++ heapExpand free) ptr).mp found
+  obtain ⟨children, len, payload, sourceFound⟩ := source
+  have bound := heapLookup_less (copied ++ heapExpand free) ptr _ sourceFound
+  refine ⟨children, len, payload, ?_⟩
+  rw [List.append_assoc, List.append_assoc, GenGc.heapLookup_append, oldLength]
+  simp only [Nat.not_lt.mpr (by omega : conf.genStart ≤ conf.genStart + ptr), if_false, Nat.add_sub_cancel_left]
+  rw [← List.append_assoc copied (heapExpand free) refs]
+  rw [GenGc.heapLookup_append, if_pos bound]
+  exact sourceFound
+
+/-- Flapjack proof infrastructure: copied objects have valid child pointers
+when the corresponding major-collector output heap is valid. -/
+theorem partialGc_copiedPointersValid {α β : Type} (conf : Config β)
+    (roots roots1 : List (HeapAddress α)) (heap : List (HeapElement α β)) (state : GcState α β)
+    (run : partialGc conf (roots, heap) = (roots1, state)) (original : genInv conf heap)
+    (valid : heapOk heap conf.limit) (invariant : simInv conf heap state) (empty : state.h2 = [])
+    (majorValid : heapOk (toGenHeapList conf state.h1 ++ heapExpand state.n) (toGenConf conf).limit)
+    (children : List (HeapAddress α)) (len : Nat) (data : β) (ptr : Nat) (value : α)
+    (object : .dataElement children len data ∈ state.h1) (child : .pointer ptr value ∈ children) :
+    isSomeDataElement (heapLookup ptr (state.old ++ state.h1 ++ heapExpand state.n ++ state.r1)) := by
+  by_cases outside : ptr < conf.genStart ∨ conf.refsStart ≤ ptr
+  · apply partialGc_protectedPointersValid conf roots roots1 heap state run original valid invariant empty ptr
+    exact ⟨children, len, data, value, by simp [object], child, outside⟩
+  · have lower : conf.genStart ≤ ptr := by omega
+    have upper : ptr < conf.refsStart := by omega
+    have translatedObject : .dataElement (children.map (toGenHeapAddress conf)) len data ∈
+        toGenHeapList conf state.h1 ++ heapExpand state.n := by
+      apply List.mem_append.mpr
+      left
+      change .dataElement (children.map (toGenHeapAddress conf)) len data ∈
+        state.h1.map (toGenHeapElement conf)
+      exact List.mem_map.mpr ⟨.dataElement children len data, object, rfl⟩
+    have translatedChild : .pointer (ptr - conf.genStart) (.real value) ∈ children.map (toGenHeapAddress conf) := by
+      apply List.mem_map.mpr
+      refine ⟨.pointer ptr value, child, ?_⟩
+      simp [toGenHeapAddress, Nat.not_lt.mpr lower, Nat.not_le.mpr upper]
+    have target := majorValid.2.2 (children.map (toGenHeapAddress conf)) len data
+      (ptr - conf.genStart) (.real value) ⟨translatedObject, translatedChild⟩
+    have originalCopy := original
+    obtain ⟨_, _, old, current, refs, segment, _⟩ := originalCopy
+    have oldEq := (partialGc_regions conf roots roots1 heap old current refs state segment run).1
+    have oldLen := (heapSegment_imp heap conf.genStart conf.refsStart old current refs segment).2.1
+    have result := translatedCopiedData_inOutput conf state.old state.h1 state.r1 state.n
+      (ptr - conf.genStart) ((congrArg heapLength oldEq).trans oldLen) target
+    simpa [Nat.add_sub_of_le lower] using result
+
+/-- Flapjack proof infrastructure: children of a reference object occur in
+the flattened translated roots. -/
+theorem refsToRoots_child {α β γ : Type} (conf : Config γ)
+    (refs : List (HeapElement α β)) (children : List (HeapAddress α)) (len : Nat) (data : β)
+    (root : HeapAddress α) (object : .dataElement children len data ∈ refs) (child : root ∈ children) :
+    toGenHeapAddress conf root ∈ refsToRoots conf refs := by
+  induction refs with
+  | nil => simp at object
+  | cons head tail ih =>
+    simp only [List.mem_cons] at object
+    rcases object with equal | member
+    · subst head
+      simp only [refsToRoots, List.mem_append]
+      left
+      exact List.mem_map.mpr ⟨root, child, rfl⟩
+    · have tailMember := ih member
+      cases head <;> simp [refsToRoots, tailMember]
+
+/-- Flapjack proof infrastructure: remembered reference objects have valid
+children when the translated reference roots are valid. -/
+theorem partialGc_referencePointersValid {α β : Type} (conf : Config β)
+    (roots roots1 : List (HeapAddress α)) (heap : List (HeapElement α β)) (state : GcState α β)
+    (run : partialGc conf (roots, heap) = (roots1, state)) (original : genInv conf heap)
+    (valid : heapOk heap conf.limit) (invariant : simInv conf heap state) (empty : state.h2 = [])
+    (majorRootsValid : rootsOk (refsToRoots conf state.r1) (toGenHeapList conf state.h1 ++ heapExpand state.n))
+    (children : List (HeapAddress α)) (len : Nat) (data : β) (ptr : Nat) (value : α)
+    (object : .dataElement children len data ∈ state.r1) (child : .pointer ptr value ∈ children) :
+    isSomeDataElement (heapLookup ptr (state.old ++ state.h1 ++ heapExpand state.n ++ state.r1)) := by
+  by_cases outside : ptr < conf.genStart ∨ conf.refsStart ≤ ptr
+  · apply partialGc_protectedPointersValid conf roots roots1 heap state run original valid invariant empty ptr
+    exact ⟨children, len, data, value, by simp [object], child, outside⟩
+  · have lower : conf.genStart ≤ ptr := by omega
+    have upper : ptr < conf.refsStart := by omega
+    have translatedChild := refsToRoots_child conf state.r1 children len data (.pointer ptr value) object child
+    have translatedPointer : .pointer (ptr - conf.genStart) (.real value) ∈ refsToRoots conf state.r1 := by
+      simpa [toGenHeapAddress, Nat.not_lt.mpr lower, Nat.not_le.mpr upper] using translatedChild
+    have target := majorRootsValid (ptr - conf.genStart) (.real value) translatedPointer
+    have originalCopy := original
+    obtain ⟨_, _, old, current, refs, segment, _⟩ := originalCopy
+    have oldEq := (partialGc_regions conf roots roots1 heap old current refs state segment run).1
+    have oldLen := (heapSegment_imp heap conf.genStart conf.refsStart old current refs segment).2.1
+    have result := translatedCopiedData_inOutput conf state.old state.h1 state.r1 state.n
+      (ptr - conf.genStart) ((congrArg heapLength oldEq).trans oldLen) target
+    simpa [Nat.add_sub_of_le lower] using result
+
+/-- Flapjack proof infrastructure: the major collector's final heap and roots
+establish validity of the complete reconstructed partial-collector heap. -/
+theorem partialGc_outputHeapOk {α β : Type} (conf : Config β)
+    (roots roots1 : List (HeapAddress α)) (heap : List (HeapElement α β)) (state : GcState α β)
+    (majorHeap : List (HeapElement (DataSort (HeapAddress α) α) β))
+    (majorRoots : List (HeapAddress (DataSort (HeapAddress α) α)))
+    (run : partialGc conf (roots, heap) = (roots1, state)) (original : genInv conf heap)
+    (valid : heapOk heap conf.limit) (invariant : simInv conf heap state) (empty : state.h2 = [])
+    (majorInv : GenGc.gcInv (toGenConf conf) (toGenState conf state) majorHeap majorRoots)
+    (majorValid : heapOk (toGenHeapList conf state.h1 ++ heapExpand state.n) (toGenConf conf).limit)
+    (majorRootsValid : rootsOk (refsToRoots conf state.r1) (toGenHeapList conf state.h1 ++ heapExpand state.n)) :
+    heapOk (state.old ++ state.h1 ++ heapExpand state.n ++ state.r1) conf.limit := by
+  refine ⟨partialGc_outputLength conf roots roots1 heap state run original valid invariant empty,
+    partialGc_outputNoForward conf roots roots1 heap state majorHeap majorRoots run original valid majorInv, ?_⟩
+  intro children len data ptr value ⟨object, child⟩
+  simp only [List.mem_append] at object
+  rcases object with ((inOld | inCopied) | inFree) | inRefs
+  · exact partialGc_oldPointersValid conf roots roots1 heap state run original valid invariant empty
+      children len data ptr value inOld child
+  · exact partialGc_copiedPointersValid conf roots roots1 heap state run original valid invariant empty
+      majorValid children len data ptr value inCopied child
+  · cases freeEq : state.n <;> simp [heapExpand, freeEq] at inFree
+  · exact partialGc_referencePointersValid conf roots roots1 heap state run original valid invariant empty
+      majorRootsValid children len data ptr value inRefs child
+
+/-- Flapjack proof infrastructure: partial collection of valid input produces
+a successful result whose reconstructed heap is valid. -/
+theorem partialGc_outputWellFormed {α β : Type} (conf : Config β)
+    (roots : List (HeapAddress α)) (heap : List (HeapElement α β))
+    (validRoots : rootsOk roots heap) (validHeap : heapOk heap conf.limit)
+    (generations : heapGenOk heap conf) :
+    ∃ (roots1 : List (HeapAddress α)) (state : GcState α β),
+      partialGc conf (roots, heap) = (roots1, state) ∧ state.ok = true ∧
+      heapOk (state.old ++ state.h1 ++ heapExpand state.n ++ state.r1) conf.limit := by
+  have original := heapGenOk_genInv conf heap validHeap generations
+  have originalCopy := original
+  obtain ⟨lower, upper, old, current, refs, segment, oldNonrefs, currentNonrefs, refData, _⟩ := originalCopy
+  have nonrefs : List.Forall (fun e => heapElementIsRef conf e = false) (old ++ current) :=
+    List.forall_append.mpr ⟨oldNonrefs, currentNonrefs⟩
+  have translatedRoots := rootsOk_simulation conf roots heap old current refs validRoots validHeap segment lower
+  have translatedHeap := heapOk_simulation conf heap old current refs validHeap segment lower upper
+  obtain ⟨majorRoots1, majorState, majorRun, majorOk, _, finalRoots, finalHeap, _⟩ :=
+    GenGc.genGc_abstract_structure (toGenConf conf) (toGenRoots conf roots ++ refsToRoots conf refs)
+      (toGenHeapList conf current) translatedRoots translatedHeap
+  obtain ⟨majorState1, invariantRun, _, majorInv, _⟩ :=
+    GenGc.genGc_invariant (toGenConf conf) (toGenRoots conf roots ++ refsToRoots conf refs)
+      (toGenHeapList conf current) translatedRoots translatedHeap
+  rw [majorRun] at invariantRun
+  have stateEq := (Prod.mk.inj invariantRun).2
+  subst majorState1
+  cases partialRun : partialGc conf (roots, heap) with
+  | mk roots1 state =>
+    obtain ⟨rootsEq, majorStateEq, invariant, empty, ok⟩ :=
+      partialGc_simulation conf roots roots1 heap old current refs state majorRoots1 majorState
+        partialRun generations ⟨lower, upper⟩ segment nonrefs refData validRoots majorRun validHeap majorOk
+    subst majorState
+    have majorValid : heapOk (toGenHeapList conf state.h1 ++ heapExpand state.n) (toGenConf conf).limit := by
+      simpa [toGenState, emptyGcState] using finalHeap
+    have refsValid : rootsOk (refsToRoots conf state.r1) (toGenHeapList conf state.h1 ++ heapExpand state.n) := by
+      intro ptr value member
+      have inRoots : .pointer ptr value ∈ majorRoots1 := by
+        rw [rootsEq]
+        exact List.mem_append.mpr (Or.inr member)
+      simpa [toGenState, emptyGcState] using finalRoots ptr value inRoots
+    have output := partialGc_outputHeapOk conf roots roots1 heap state (toGenHeapList conf current)
+      (toGenRoots conf roots ++ refsToRoots conf refs) partialRun original validHeap invariant empty majorInv majorValid refsValid
+    exact ⟨roots1, state, rfl, ok, output⟩
 
 end Flapjack.Compiler.Backend.GenGcPartial
