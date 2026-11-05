@@ -6,6 +6,102 @@ namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Backend.GcCombined
 open Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
 
+/-- Flapjack infrastructure: scanning appends only data elements to a
+data-only copied prefix. -/
+theorem partialScan_h1Data {α β : Type} (conf : GenGcPartial.Config β) (state : GcState α β)
+    (data : List.Forall isDataElement state.h1) :
+    List.Forall isDataElement (GenGcPartial.gcMoveData conf state).h1 := by
+  classical
+  induction state using GenGcPartial.gcMoveData.induct conf with
+  | case1 state empty => rw [GenGcPartial.gcMoveData]; simpa [empty] using data
+  | case2 state head tail heap over => rw [GenGcPartial.gcMoveData]; simpa [heap, over] using data
+  | case3 state tail roots len payload roots1 middle move heap bounded flag ih =>
+    have fixed := (partialMoveList_fixedFields conf roots roots1 state middle move).1
+    have nextData : List.Forall isDataElement
+        (middle.h1 ++ [HeapElement.dataElement roots1 len payload]) := by
+      simpa [fixed, isDataElement] using data
+    cases state with
+    | mk old h1 h2 r4 r3 r2 r1 a n status origHeap heap0 =>
+      simp only at heap
+      subst h2
+      rw [GenGcPartial.gcMoveData]
+      simpa only [bounded, ↓reduceIte, move] using ih nextData
+  | case4 state head tail heap bounded notData =>
+    cases head with
+    | unused len => rw [GenGcPartial.gcMoveData]; simpa [heap, bounded] using data
+    | forwardPointer ptr value len => rw [GenGcPartial.gcMoveData]; simpa [heap, bounded] using data
+    | dataElement roots len payload => exact False.elim (notData roots len payload rfl)
+
+/-- Flapjack infrastructure: every successful partial collection has a
+data-only copied prefix and has exhausted its copied-data queue. -/
+theorem partialCollection_copiedData {α β : Type} (conf : GenGcPartial.Config β)
+    (roots roots1 : List (HeapAddress α)) (heap : List (HeapElement α β)) (state : GcState α β)
+    (run : GenGcPartial.partialGc conf (roots, heap) = (roots1, state)) (ok : state.ok = true) :
+    List.Forall isDataElement state.h1 ∧ state.h2 = [] := by
+  obtain ⟨old, current, refs, middle, refs1, afterRefs, _, rootsRun, _, refsRun, _, dataRun⟩ :=
+    partialFull_abstractSteps conf roots roots1 heap state run ok
+  have rootH1 := (partialMoveList_fixedFields conf roots roots1 _ middle rootsRun).1
+  have refsH1 := (partialFull_refListFixed conf refs refs1 middle afterRefs refsRun).1
+  have initialData : List.Forall isDataElement
+      ({ afterRefs with r1 := refs1, r2 := [] } : GcState α β).h1 := by
+    simp [refsH1, rootH1, emptyGcState]
+  have scanData := partialScan_h1Data conf _ initialData
+  have scanEmpty := GenGcPartial.gcMoveData_h2 conf { afterRefs with r1 := refs1, r2 := [] }
+    (by rw [dataRun]; exact ok)
+  rw [dataRun] at scanData scanEmpty
+  exact ⟨scanData, scanEmpty⟩
+
+/-- Flapjack infrastructure: appending an arbitrary reference suffix does
+not change the free region following a data-only heap prefix. -/
+theorem unusedSpaceInv_heapExpand_suffix {α β : Type}
+    (before suffix : List (HeapElement α β)) (free : Nat)
+    (data : ∀ element ∈ before, isDataElement element) :
+    unusedSpaceInv (heapLength before) free (before ++ heapExpand free ++ suffix) := by
+  rw [List.append_assoc]
+  refine ⟨?_, ?_, ?_⟩
+  · intro nonzero
+    rw [GenGc.heapLookup_append]
+    simp [heapExpand, nonzero, heapLookup]
+  · simp [heapLength_append, heapLength_heapExpand]
+  · exact ⟨before, heapExpand free ++ suffix, heapSplit_append before (heapExpand free ++ suffix), data⟩
+
+/-- Flapjack infrastructure: a successful partial collection whose old
+generation is data-only restores the abstract free-space invariant. -/
+theorem partialCollection_unusedSpace {α β : Type} (conf : GenGcPartial.Config β)
+    (roots roots1 : List (HeapAddress α)) (heap : List (HeapElement α β)) (state : GcState α β)
+    (run : GenGcPartial.partialGc conf (roots, heap) = (roots1, state)) (ok : state.ok = true)
+    (oldData : ∀ element ∈ state.old, isDataElement element) :
+    unusedSpaceInv state.a (state.n + 0) (state.old ++ state.h1 ++ heapExpand state.n ++ state.r1) := by
+  obtain ⟨copiedData, empty⟩ := partialCollection_copiedData conf roots roots1 heap state run ok
+  have index := partialFull_dataIndex conf roots roots1 heap state run ok empty
+  have prefixData : ∀ element ∈ state.old ++ state.h1, isDataElement element := by
+    intro element member
+    rcases List.mem_append.mp member with old | copied
+    · exact oldData element old
+    · exact List.forall_iff_forall_mem.mp copiedData element copied
+  simpa [index] using unusedSpaceInv_heapExpand_suffix (state.old ++ state.h1) state.r1 state.n prefixData
+
+/-- Flapjack infrastructure: after collection, the allocation boundary is a
+valid reset generation start because no heap pointer targets free space. -/
+theorem genStartOk_heapExpand_suffix {α β : Type}
+    (before suffix : List (HeapElement α β)) (free limit : Nat)
+    (valid : heapOk (before ++ heapExpand free ++ suffix) limit) :
+    genStartOk (before ++ heapExpand free ++ suffix) (heapLength before + free) (heapLength before) := by
+  rw [List.append_assoc] at valid ⊢
+  refine ⟨before, heapExpand free ++ suffix, heapSplit_append before _, ?_⟩
+  intro xs len payload ptr value pair
+  obtain ⟨element, child⟩ := pair
+  have found := valid.2.2 xs len payload ptr value
+    ⟨List.mem_append.mpr (Or.inl element), child⟩
+  by_contra outside
+  have lower : heapLength before ≤ ptr := by omega
+  have upper : ptr - heapLength before < free := by omega
+  have notData : ¬ isSomeDataElement (heapLookup (ptr - heapLength before) (heapExpand free : List (HeapElement α β))) :=
+    GenGcPartial.heapLookup_heapExpand_notData _ _
+  rw [GenGc.heapLookup_append, if_neg (Nat.not_lt.mpr lower), GenGc.heapLookup_append,
+    heapLength_heapExpand, if_pos upper] at found
+  exact notData found
+
 /-- Two ordered, valid heap boundaries form a three-way heap segment. -/
 theorem heapSegment_of_ordered_splits {α β : Type}
     (heap old rest before refs : List (HeapElement α β)) (start finish : Nat)
@@ -123,7 +219,10 @@ theorem partialGc_source_related {width : Nat} [NeZero width]
       gcRelated f heap (state.old ++ state.h1 ++ heapExpand state.n ++ state.r1) ∧ state.ok = true ∧
       rootsOk (addrMap (holFapply f) roots) (state.old ++ state.h1 ++ heapExpand state.n ++ state.r1) ∧
       bcStackRefInv conf next stack refs
-        (addrMap (holFapply f) roots, state.old ++ state.h1 ++ heapExpand state.n ++ state.r1, be) := by
+        (addrMap (holFapply f) roots, state.old ++ state.h1 ++ heapExpand state.n ++ state.r1, be) ∧
+      unusedSpaceInv state.a (state.n + 0) (state.old ++ state.h1 ++ heapExpand state.n ++ state.r1) ∧
+      genStateOk state.a (state.a + state.n + 0) (state.old ++ state.h1 ++ heapExpand state.n ++ state.r1)
+        (.genState 0 (sizes.map fun _ => state.a)) := by
   obtain ⟨rootOk, heapGood, gcOk, unused, stackGood⟩ := valid
   have classify : ∀ tag payload, (makeGcConf (α := List (WordLocW width)) limit).isRef (tag, payload) = true ↔ isMutTag tag := by
     intro tag payload
@@ -134,9 +233,27 @@ theorem partialGc_source_related {width : Nat} [NeZero width]
     (makePartialConf (makeGcConf limit) (.genState count (start :: tail)) (a + sp + sp1))
     roots heap rootOk (by simpa [makePartialConf, makeGcConf] using heapGood) generations
   obtain ⟨state, f, run, domain, heapWell, related, ok⟩ := result
-  refine ⟨state, f, run, domain, ?_, related, ok, ?_, ?_⟩
+  refine ⟨state, f, run, domain, ?_, related, ok, ?_, ?_, ?_, ?_⟩
   · simpa [makePartialConf, makeGcConf] using heapWell
   · exact rootsOk_gcRelated roots heap _ f related domain
   · exact bcStackRefInv_gcRelated conf next stack refs roots heap _ be f related domain stackGood
+  · obtain ⟨old, current, refHeap, _, _, oldData, _, segment, _⟩ := generations
+    have oldEq := (GenGcPartial.partialGc_regions
+      (makePartialConf (makeGcConf limit) (.genState count (start :: tail)) (a + sp + sp1))
+      roots (addrMap (holFapply f) roots) heap old current refHeap state segment.symm run).1
+    apply partialCollection_unusedSpace _ _ _ heap state run ok
+    rw [oldEq]
+    exact List.forall_iff_forall_mem.mp oldData
+  · have empty := (partialCollection_copiedData _ _ _ heap state run ok).2
+    have index := partialFull_dataIndex _ _ _ heap state run ok empty
+    have heapValid : heapOk (state.old ++ state.h1 ++ heapExpand state.n ++ state.r1) limit := by
+      simpa [makePartialConf, makeGcConf] using heapWell
+    have start := genStartOk_heapExpand_suffix (state.old ++ state.h1) state.r1 state.n limit heapValid
+    simp only [genStateOk, List.mem_map, forall_exists_index, and_imp]
+    constructor
+    · intros; omega
+    · intro element _ _ equal
+      subst element
+      simpa [index] using start
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
