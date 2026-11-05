@@ -197,6 +197,11 @@ theorem constructorSequence_evaluate {width : Nat} [NeZero width] {C F : Type} (
         (none, final) ∧
       WordSemStateFiniteExact.getVar (adjustVar dest) final =
         some (wordAddr conf (.pointer index (.word (ptrBits conf tag fields.length)))) ∧
+      (∃ (base free : BitVec width) (mem : BitVec width → WordLocW width),
+        final = WordSemStateFiniteExact.setVar (adjustVar dest)
+          (wordAddr conf (.pointer index (.word (ptrBits conf tag fields.length))))
+          (WordSemStateFiniteExact.setVar 3 (.word header) (WordSemStateFiniteExact.setVar 1 (.word base)
+            (WordSemStateFiniteExact.setStore .nextFree (.word free) { state with memory := mem })))) ∧
       memoryRel conf be (next + 1) refs (space - (fields.length + 1)) final.store final.memory final.mdomain
         (((.block next tag (fields.map Prod.fst)),
           wordAddr conf (.pointer index (.word (ptrBits conf tag fields.length)))) :: fields ++ vars) := by
@@ -243,9 +248,11 @@ theorem constructorSequence_evaluate {width : Nat} [NeZero width] {C F : Type} (
         .set .nextFree (.op .add [.var 1, .const (BitVec.ofNat width (width / 8) * BitVec.ofNat width (fields.length + 1))])]) state = (none, final) := by
     simp only [wordListSeq, WordSemStateFiniteExact.evaluate, firstRun, fixFirst, secondRun, fixSecond, loopRun, fixWritten]
     simpa [final, after, pointer, nextFree] using finish
-  refine ⟨index, final, finalRun, ?_, ?_⟩
+  refine ⟨index, final, finalRun, ?_, ?_, ?_⟩
   · simp [final, after, WordSemStateFiniteExact.getVar, WordSemStateFiniteExact.setStore,
       WordSemStateFiniteExact.setVar, wordAddr, sptLookup_sptInsert_same, pointer]
+  · refine ⟨base, nextFree, storeEachMemory base 0 (.word header :: fields.map Prod.snd) state.memory, ?_⟩
+    rfl
   · simpa [final, after, written, prepared, first, WordSemStateFiniteExact.setStore,
       WordSemStateFiniteExact.setVar, nextFree, base] using result
 
@@ -296,6 +303,11 @@ theorem compileControl_cons_evaluate {width : Nat} [NeZero width] {C F : Type} (
       WordSemStateFiniteExact.evaluate program state = (none, final) ∧
       WordSemStateFiniteExact.getVar (adjustVar dest) final =
         some (wordAddr conf (.pointer index (.word (ptrBits conf tag fields.length)))) ∧
+      (∃ (base free : BitVec width) (mem : BitVec width → WordLocW width),
+        final = WordSemStateFiniteExact.setVar (adjustVar dest)
+          (wordAddr conf (.pointer index (.word (ptrBits conf tag fields.length))))
+          (WordSemStateFiniteExact.setVar 3 (.word header) (WordSemStateFiniteExact.setVar 1 (.word base)
+            (WordSemStateFiniteExact.setStore .nextFree (.word free) { state with memory := mem })))) ∧
       memoryRel conf be (next + 1) refs (space - (fields.length + 1)) final.store final.memory final.mdomain
         (((.block next tag (fields.map Prod.fst)),
           wordAddr conf (.pointer index (.word (ptrBits conf tag fields.length)))) :: fields ++ vars) := by
@@ -309,9 +321,9 @@ theorem compileControl_cons_evaluate {width : Nat} [NeZero width] {C F : Type} (
     simpa [empty] using lengthEq.symm
   have compiled := compileControl_cons_sequence conf secn label dest tag args names header argsNonempty
     (by simpa [lengthEq] using encoded)
-  obtain ⟨index, final, run, pointer, result⟩ := constructorSequence_evaluate conf fields vars refs next tag space dest be
+  obtain ⟨index, final, run, pointer, frame, result⟩ := constructorSequence_evaluate conf fields vars refs next tag space dest be
     header state args good nonempty enough encoded related argsRun
-  refine ⟨_, index, final, ?_, run, pointer, result⟩
+  refine ⟨_, index, final, ?_, run, pointer, frame, result⟩
   simpa [lengthEq] using compiled
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Correct
