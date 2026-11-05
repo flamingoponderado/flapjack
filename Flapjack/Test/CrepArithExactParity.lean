@@ -26,6 +26,20 @@ namespace Flapjack.Test.CrepArithExactParity
 
 open Flapjack
 
+-- Expose the generated recursive equation for concrete multiplication rows.
+theorem simpMul {width : Nat} [NeZero width] (left right : CrepExpHOL width) :
+    crepSimpExpHOL (.crepOp .mul [left, right]) =
+      match crepDestConstHOL (crepSimpExpHOL left), crepDestConstHOL (crepSimpExpHOL right) with
+      | some x, some y => .const (x * y)
+      | some x, none => crepMulConstHOL (crepSimpExpHOL right) x
+      | none, some y => crepMulConstHOL (crepSimpExpHOL left) y
+      | none, none => .crepOp .mul [crepSimpExpHOL left, crepSimpExpHOL right] := by
+  have h : List.map crepSimpExpHOL [left, right] =
+      [crepSimpExpHOL left, crepSimpExpHOL right] := rfl
+  rw [crepSimpExpHOL.eq_1 [left, right]
+    (crepSimpExpHOL left) (crepSimpExpHOL right) h]
+  rfl
+
 private abbrev E := CrepExpHOL 8
 private abbrev P := CrepProgHOL 8
 

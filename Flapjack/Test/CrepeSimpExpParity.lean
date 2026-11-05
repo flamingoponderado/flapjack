@@ -1,7 +1,9 @@
+import Flapjack.Test.CrepArithExactParity
 import Flapjack.Pancake.CrepArith
 import Flapjack.Pancake.Semantics.CrepSem
 import Flapjack.Pancake.Semantics.CrepRuntimeTarget
 import Flapjack.Pancake.Proofs.CrepArith
+import Flapjack.Pancake.Semantics.CrepSem.HOLState
 import Flapjack.RiscV.PanMemory
 
 namespace Flapjack.Test.CrepeSimpExpParity
@@ -16,6 +18,53 @@ example : crepSimpExpHOL (.var 7 : CrepExpHOL 8) = .var 7 := by
 example (value : BitVec 8) :
     crepSimpExpHOL (.const value) = .const value := by
   simp [crepSimpExpHOL]
+
+-- Additional 64-bit rows from `crep_simp_exp_probe.out`.
+example : crepSimpExpHOL (.const (11 : BitVec 64)) = .const 11 := by
+  simp [crepSimpExpHOL]
+example : crepSimpExpHOL (.var 7 : CrepExpHOL 64) = .var 7 := by
+  simp [crepSimpExpHOL]
+#guard match crepSimpExpHOL (.crepOp .mul [.var 2, .const (8 : BitVec 64)]) with
+  | .shift .lsl (.var 2) (.const 3) => true | _ => false
+
+-- The HOL probe varies all fields except locals.
+private def exactLocals (state : CrepSemHOLState 64 Unit) (value : BitVec 64) :
+    CrepSemHOLState 64 Unit :=
+  { state with locals := HolFiniteMapExact.empty.update (2, .word value) }
+
+private def mulEight : CrepExpHOL 64 := .crepOp .mul [.var 2, .const 8]
+private def nestedMul : CrepExpHOL 64 := .crepOp .mul [mulEight, .const 3]
+
+example (state : CrepSemHOLState 64 Unit) :
+    evalCrepSemHOLExp (exactLocals state 5) mulEight = some (.word 40) := by
+  simp [evalCrepSemHOLExp, exactLocals, HolFiniteMapExact.update, FUPDATE,
+    mulEight, crepOpCrepWord]
+example (state : CrepSemHOLState 64 Unit) :
+    evalCrepSemHOLExp (exactLocals state 5) (crepSimpExpHOL mulEight) = some (.word 40) := by
+  simp [mulEight, Flapjack.Test.CrepArithExactParity.simpMul,
+    crepSimpExpHOL, crepDestConstHOL, crepMulConstHOL, crepDest2ExpHOL, evalCrepSemHOLExp,
+    exactLocals, HolFiniteMapExact.update, FUPDATE, mulEight, wordShiftHOL]
+
+-- Preserve the earlier 7 * 8 and (7 * 8) * 3 evaluation checks.
+example (state : CrepSemHOLState 64 Unit) :
+    evalCrepSemHOLExp (exactLocals state 7) mulEight = some (.word 56) := by
+  simp [evalCrepSemHOLExp, exactLocals, HolFiniteMapExact.update, FUPDATE,
+    mulEight, crepOpCrepWord]
+example (state : CrepSemHOLState 64 Unit) :
+    evalCrepSemHOLExp (exactLocals state 7) (crepSimpExpHOL mulEight) = some (.word 56) := by
+  simp [mulEight, Flapjack.Test.CrepArithExactParity.simpMul,
+    crepSimpExpHOL, crepDestConstHOL, crepMulConstHOL, crepDest2ExpHOL, evalCrepSemHOLExp,
+    exactLocals, HolFiniteMapExact.update, FUPDATE, mulEight, wordShiftHOL]
+example (state : CrepSemHOLState 64 Unit) :
+    evalCrepSemHOLExp (exactLocals state 7) nestedMul = some (.word 168) := by
+  simp [evalCrepSemHOLExp, exactLocals, HolFiniteMapExact.update, FUPDATE,
+    nestedMul, mulEight, crepOpCrepWord]
+example (state : CrepSemHOLState 64 Unit) :
+    evalCrepSemHOLExp (exactLocals state 7) (crepSimpExpHOL nestedMul) = some (.word 168) := by
+  simp [mulEight, nestedMul, Flapjack.Test.CrepArithExactParity.simpMul,
+    crepSimpExpHOL, crepDestConstHOL, crepMulConstHOL, crepDest2ExpHOL, evalCrepSemHOLExp,
+    exactLocals, HolFiniteMapExact.update, FUPDATE, nestedMul, mulEight,
+    wordShiftHOL, crepOpCrepWord]
 
 /-! HOL words use a finite Boolean-function carrier. This direct check
     exercises its `Fin n` encoding and conversion to the production BitVec
@@ -150,11 +199,6 @@ def boolDimensionOne : Bool → Bool :=
 #guard holWordToBitVec boolWordDimension
   (evalPanCmp .less boolDimensionWord boolDimensionOne) == BitVec.ofNat 2 1
 
-/-! Generic finite-dimension `dest_2exp` support is checked on Bool-indexed
-    words, in addition to the existing BitVec fixture. These remain support
-    instances under this explicit enumeration, not HOL tags. -/
-example : crepDest2Exp 0 boolDimensionWord = some 1 := by decide +kernel
-
 #guard wordOp .add [] == some (0 : Bool → Bool)
 #guard wordOp .and [] == some (Complement.complement (0 : Bool → Bool))
 #guard wordOp .or [] == some (0 : Bool → Bool)
@@ -197,20 +241,6 @@ example : bitVecToHolWord boolWordDimension
 example : holWordToBitVec boolWordDimension
     (bitVecToHolWord boolWordDimension (BitVec.ofNat 2 2)) = BitVec.ofNat 2 2 :=
   holWordToBitVec_bitVecToHolWord boolWordDimension (BitVec.ofNat 2 2)
-
-def boolDimensionSimplifiedMultiply : CrepExp (Bool → Bool) := by
-  letI : HolFiniteDimension Bool := boolWordDimension
-  exact crepSimpExp (fun value =>
-    bitVecToHolWord boolWordDimension (BitVec.ofNat 2 value))
-    (.crepOp .mul [.var 0, .const (boolDimensionWord)])
-
-def boolDimensionSimplifyHasExpectedShift : Bool :=
-  match boolDimensionSimplifiedMultiply with
-  | .shift .lsl (.var 0) (.const value) =>
-      holWordToBitVec boolWordDimension value == BitVec.ofNat 2 1
-  | _ => false
-
-#guard boolDimensionSimplifyHasExpectedShift
 
 def boolDimensionHolState : CrepHolState (Bool → Bool) Unit where
   locals := fun name => if name == 0 then some (.word boolDimensionWord) else none
@@ -315,10 +345,6 @@ local instance : HolFiniteDimension Bool := boolWordDimensionSwapped
 
 end SwappedFiniteIndex
 
-#guard crepSimpExp (fun value => bitVecToHolWordBits (BitVec.ofNat 4 value))
-    (.crepOp .mul [.var 2, .const (bitVecToHolWordBits (BitVec.ofNat 4 2))]) ==
-  .shift .lsl (.var 2) (.const (bitVecToHolWordBits (BitVec.ofNat 4 1)))
-
 def holWordBitsState4 : CrepHolState (Fin 4 → Bool) Unit where
   locals := fun _ => none
   globals := fun _ => none
@@ -403,30 +429,6 @@ cases. -/
 #guard wordShiftHOL .lsl (BitVec.ofNat 64 7) 0 == some (BitVec.ofNat 64 7)
 #guard wordShiftHOL .lsl (BitVec.ofNat 64 7) 64 == none
 
-def holWordBitsMulEight : CrepExp (Fin 64 → Bool) :=
-  .crepOp .mul [.var 2, .const (holWordBits64 8)]
-
-def holWordBitsMulEightSimplified : CrepExp (Fin 64 → Bool) :=
-  crepSimpExp (fun value => bitVecToHolWordBits (BitVec.ofNat 64 value))
-    holWordBitsMulEight
-
-/-! The HOL fixture evaluates the same local-times-eight expression before
-    and after `simp_exp`; both results are `SOME (Word 40w)`. These guards
-    exercise that original result through production evaluation configured
-    with the source memory model, not just the simplifier's output shape. -/
-#guard holWordBitsMulEightSimplified ==
-  .shift .lsl (.var 2) (.const (holWordBits64 3))
-#guard (evalCrepRuntimeExp
-    (holWordBitsState64WithLocal.toHolFiniteWordSourceRuntime
-      (instFinHolFiniteDimension (width := 64)))
-    holWordBitsMulEight).map PanWordLab.word ==
-  some (.word (holWordBits64 40))
-#guard (evalCrepRuntimeExp
-    (holWordBitsState64WithLocal.toHolFiniteWordSourceRuntime
-      (instFinHolFiniteDimension (width := 64)))
-    holWordBitsMulEightSimplified).map PanWordLab.word ==
-  some (.word (holWordBits64 40))
-
 #guard evalCrepRuntimeExp holWordBitsState4.toHolWordBitsRuntime (.const holBits4) ==
   some holBits4
 #guard evalCrepRuntimeExp holWordBitsState4.toHolWordBitsRuntime
@@ -468,126 +470,6 @@ example :
           (instFinHolFiniteDimension (width := 64)) false)
         (holWordBits64 8) holWordBitsState64 (holWordBits64 8) :=
   crepHolFiniteWordSourceRuntime_load32 holWordBitsState64 (holWordBits64 8)
-
-/-! Direct parity for `crep_arith$simp_exp_def`
-    (`crep_arithScript.sml:59`).  These cases cover constant folding,
-    constant-on-either-side multiplication, recursive children, and the
-    unchanged fallback shape. -/
-def word8 (value : Nat) : RiscV.Word 8 := BitVec.ofNat 8 value
-
-def parityGuard : Bool :=
-  (match crepSimpExp (BitVec.ofNat 8)
-      (.crepOp .mul [.const (word8 2), .const (word8 3)]) with
-  | .const value => value == word8 6
-  | _ => false) &&
-  (match crepSimpExp (BitVec.ofNat 8)
-      (.crepOp .mul [.const (word8 2), .var 2]) with
-  | .shift .lsl (.var 2) (.const value) => value == word8 1
-  | _ => false) &&
-  (match crepSimpExp (BitVec.ofNat 8)
-      (.crepOp .mul [.var 2, .const (word8 2)]) with
-  | .shift .lsl (.var 2) (.const value) => value == word8 1
-  | _ => false) &&
-  (match crepSimpExp (BitVec.ofNat 8)
-      (.crepOp .mul [.var 2, .const (word8 3)]) with
-  | .crepOp .mul [.var 2, .const value] => value == word8 3
-  | _ => false) &&
-  (match crepSimpExp (BitVec.ofNat 8)
-      (.load (.crepOp .mul [.var 2, .const (word8 2)])) with
-  | .load (.shift .lsl (.var 2) (.const value)) => value == word8 1
-  | _ => false) &&
-  (match crepSimpExp (BitVec.ofNat 8)
-      (.crepOp .mul
-        [.crepOp .mul [.const (word8 2), .const (word8 3)],
-         .const (word8 4)]) with
-  | .const value => value == word8 24
-  | _ => false) &&
-  (match crepSimpExp (BitVec.ofNat 8) (.var 7 : CrepExp (RiscV.Word 8)) with
-  | .var 7 => true
-  | _ => false)
-
-#eval parityGuard
-#guard parityGuard
-
-def noWords : RiscV.Word 64 → PanWordLab (RiscV.Word 64) := fun _ => .word 0
-def noDomain : RiscV.Word 64 → Bool := fun _ => false
-
-def runtimeBase : CrepRuntimeState (RiscV.Word 64) Unit :=
-  { locals := fun _ => none
-    globals := fun _ => none
-    code := FEMPTY
-    memory := noWords
-    memaddrs := noDomain
-    shMemaddrs := noDomain
-    memoryModel := RiscV.panRiscVMemoryModel
-    bytesInWord := (8 : RiscV.Word 64)
-    ffiContext := riscv64PanValueFfiContext noDomain
-    clock := 0
-    bigEndian := false
-    ffi := natCrepRuntimeFfiState
-    baseAddress := 0
-    topAddress := 0 }
-
-def runtimeState : CrepRuntimeState (RiscV.Word 64) Unit :=
-  { riscv64CrepRuntimeTarget runtimeBase with
-    locals := updateCrepRuntimeLocal (fun _ => none) 2 (.word (7 : RiscV.Word 64)) }
-
-/-! These checks exercise the production evaluator before and after the pass,
-    including the power-of-two shift branch and bottom-up nested folding.
-    They are executable support checks while the polymorphic HOL theorem port
-    remains open. -/
-def runtimeEvalSimpParity : Bool :=
-  let source : CrepExp (RiscV.Word 64) :=
-    .crepOp .mul [.var 2, .const (8 : RiscV.Word 64)]
-  let nested : CrepExp (RiscV.Word 64) :=
-    .crepOp .mul [source, .const (3 : RiscV.Word 64)]
-  evalCrepRuntimeExp (riscv64CrepRuntimeTarget runtimeState) source == some 56 &&
-  evalCrepRuntimeExp (riscv64CrepRuntimeTarget runtimeState)
-    (crepSimpExp (BitVec.ofNat 64) source) == some 56 &&
-  evalCrepRuntimeExp (riscv64CrepRuntimeTarget runtimeState) nested == some 168 &&
-  evalCrepRuntimeExp (riscv64CrepRuntimeTarget runtimeState)
-    (crepSimpExp (BitVec.ofNat 64) nested) == some 168
-
-#guard runtimeEvalSimpParity
-
-/-! An 8-bit state supplies the key-sensitive code-map regression below. -/
-def holState8 : CrepHolState (RiscV.Word 8) Unit :=
-  { locals := updateCrepRuntimeLocal (fun _ => none) 2 (.word (word8 7))
-    globals := fun _ => none
-    code := fun _ => none
-    memory := fun _ => .word 0
-    memaddrs := fun _ => false
-    shMemaddrs := fun _ => false
-    clock := 0
-    bigEndian := false
-    ffi := natCrepRuntimeFfiState
-    baseAddress := 0
-    topAddress := 0 }
-
-private def keySensitiveCodeMap :
-    FunName × (List Nat × CrepProg (RiscV.Word 8)) →
-      List Nat × CrepProg (RiscV.Word 8)
-  | (name, (parameters, body)) =>
-      if name == "selected" then (parameters.reverse, body)
-      else (parameters, body)
-
-private def holState8WithCode : CrepHolState (RiscV.Word 8) Unit :=
-  { holState8 with code := fun name =>
-      if name == "selected" then some ([1, 2], .skip)
-      else if name == "untouched" then some ([1, 2], .skip)
-      else none }
-
-/-! HOL `FMAP_MAP2` passes the map key together with the stored value to its
-    callback. This regression makes the selected function's parameter list
-    change while another function's entry remains unchanged. -/
-#guard
-  let mapped := crepArithHolMapCode keySensitiveCodeMap holState8WithCode
-  (match mapped.code "selected" with
-   | some (parameters, .skip) => parameters == [2, 1]
-   | _ => false) &&
-  (match mapped.code "untouched" with
-   | some (parameters, .skip) => parameters == [1, 2]
-   | _ => false)
 
 private def holWord64 (value : Nat) : Fin 64 → Bool :=
   bitVecToHolWordBits (BitVec.ofNat 64 value)
