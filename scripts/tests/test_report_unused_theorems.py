@@ -188,12 +188,22 @@ class InventoryRootsTest(unittest.TestCase):
             {"hol_path": "a/xScript.sml", "hol_name": "x", "lean_name": "Flapjack.mismatch",
              "statement_status": "documented_mismatch"},
             {"hol_path": "a/xScript.sml", "hol_name": "y", "lean_name": "exact",
-             "statement_status": "reviewed_exact"},
+             "statement_status": "reviewed_exact",
+             "reviewer": "The chain remains proved by `Flapjack.citedInNote`."},
+            {"hol_path": None, "hol_name": None, "lean_name": "Flapjack.otherPlaceholder",
+             "lean_path": "Flapjack/otherPlaceholderFile.lean",
+             "statement_status": "no_hol_reference_pending_classification",
+             "reviewer": "see seeAlso.mp for the specialisation"},
         ]
         with tempfile.TemporaryDirectory() as tmp:
             (pathlib.Path(tmp) / "docs").mkdir()
             (pathlib.Path(tmp) / rut.INVENTORY).write_text(json.dumps(rows))
-            self.assertEqual(rut.inventory_roots(pathlib.Path(tmp)), {"mismatch", "exact"})
+            roots = rut.inventory_roots(pathlib.Path(tmp))
+        self.assertTrue({"mismatch", "exact", "citedInNote", "seeAlso"} <= roots)
+        # A placeholder row protects neither its own theorem nor its file.
+        self.assertNotIn("placeholder", roots)
+        self.assertNotIn("otherPlaceholder", roots)
+        self.assertNotIn("otherPlaceholderFile", roots)
 
 
 class MainRootsTest(unittest.TestCase):
