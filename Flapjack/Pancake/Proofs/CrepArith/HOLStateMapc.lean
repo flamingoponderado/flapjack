@@ -52,51 +52,12 @@ abbrev CrepSemHOLState.mapc {width : Nat} [NeZero width] {σ : Type}
     (state.mapc f).code.lookup name =
       (state.code.lookup name).map (fun entry => f (name, entry)) := rfl
 
-@[simp] theorem CrepSemHOLState.toExpressionEvaluatorState_mapc
-    {width : Nat} [NeZero width] {σ : Type}
-    (f : MlString × (List Nat × CrepProgHOL width) →
-      List Nat × CrepProgHOL width)
-    (state : CrepSemHOLState width σ) :
-    (state.mapc f).toExpressionEvaluatorState =
-      state.toExpressionEvaluatorState := by
-  rfl
-
 @[simp] theorem CrepSemHOLState.toBitVecEvaluatorState_mapc
     {width : Nat} [NeZero width] {σ : Type}
     (f : MlString × (List Nat × CrepProgHOL width) →
       List Nat × CrepProgHOL width)
     (state : CrepSemHOLState width σ) :
     (state.mapc f).toBitVecEvaluatorState = state.toBitVecEvaluatorState := rfl
-
-/-- HOL's proof-script-local `mapc` update on an arbitrary-index finite state.
-This only uses the finite-map `FMAP_MAP2` encoding; it makes no claim about
-the code-entry representation. -/
-def CrepSemHOLFiniteState.mapc {ι β σ : Type}
-    (f : MlString × β → β) (state : CrepSemHOLFiniteState ι β σ) :
-    CrepSemHOLFiniteState ι β σ :=
-  { state with code := state.code.map2 f }
-
-@[simp] theorem CrepSemHOLFiniteState.toSourceEvaluatorState_mapc
-    {ι β σ : Type} (f : MlString × β → β)
-    (state : CrepSemHOLFiniteState ι β σ) :
-    (state.mapc f).toSourceEvaluatorState = state.toSourceEvaluatorState := rfl
-
-/-- Changing only the HOL code map cannot alter expression evaluation after
-projection into the source evaluator. This is Flapjack support for the
-`simp_exp_correct1` dependency; the evaluator correspondence to native HOL
-remains unproved. -/
-theorem evalCrepHolFiniteWordSourceExp_mapc_projection
-    {width : Nat} [NeZero width] {σ : Type}
-    (f : MlString × (List Nat × CrepProgHOL width) →
-      List Nat × CrepProgHOL width)
-    (state : CrepSemHOLState width σ)
-    (expression : CrepExp (Fin width → Bool)) :
-    evalCrepHolFiniteWordSourceExp (instFinHolFiniteDimension (width := width))
-        (state.mapc f).toExpressionEvaluatorState expression =
-      evalCrepHolFiniteWordSourceExp (instFinHolFiniteDimension (width := width))
-        state.toExpressionEvaluatorState expression := by
-  rw [CrepSemHOLState.toExpressionEvaluatorState_mapc]
-
 
 /-- Var case of HOL `simp_exp_correct1` (`crep_arithProofScript.sml:111`). It
     retains the successful-evaluation premise, polymorphic unused result

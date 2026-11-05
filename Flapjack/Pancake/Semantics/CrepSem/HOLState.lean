@@ -537,76 +537,14 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {ffiState : T
 
 end CrepSemHOLState
 
-/-- Arbitrary-index HOL-shaped expression state for polymorphic evaluator
-support. The word index is abstract as `ι`, with words represented by
-`ι → Bool`; evaluator proofs supply a `HolFiniteDimension ι` dictionary.
-The code-entry type is opaque because expression evaluation never reads code,
-while HOL `mapc` can still update the finite map exactly with `map2`.
-
-This is Flapjack infrastructure rather than an exact `crepSem$state` port:
-generic `CrepProg` does not yet preserve HOL's program/name carriers, and the
-evaluator projection below fixes the unobserved FFI field and uses the
-explicit word-dimension adapter. Do not attach a HOL tag to theorems over this
-carrier until those representation relations are proved. -/
-structure CrepSemHOLFiniteState (ι : Type) (codeEntry ffiState : Type) where
-  locals : HolFiniteMapExact Nat (PanWordLab (ι → Bool))
-  globals : HolFiniteMapExact (BitVec 5) (PanWordLab (ι → Bool))
-  code : HolFiniteMapExact MlString codeEntry
-  memory : (ι → Bool) → PanWordLab (ι → Bool)
-  memaddrs : (ι → Bool) → Prop
-  shMemaddrs : (ι → Bool) → Prop
-  clock : Nat
-  be : Bool
-  ffi : HolFfiState ffiState
-  baseAddr : ι → Bool
-  topAddr : ι → Bool
-
 def crepExpressionProjectionFfi : FfiState Unit :=
   { oracle := fun _ _ _ _ => .final .failed
     state := ()
     ioEvents := [] }
 
-def holWordLabToBits {width : Nat} [NeZero width] (cell : HolWordLab width) :
-    PanWordLab (Fin width → Bool) :=
-  match cell with
-  | .word word => .word (bitVecToHolWordBits word)
-
-/-- Flapjack representation helper exposing the exact-state word-cell
-projection for carrier-bridge proofs; it has no HOL theorem of its own. -/
-@[simp] theorem holWordLabToBits_word {width : Nat} [NeZero width] (word : BitVec width) :
-    holWordLabToBits (HolWordLab.word word) =
-      PanWordLab.word (bitVecToHolWordBits word) := rfl
-
-/-- Project just the observable fields to the existing all-width source
-evaluator. Code is empty and FFI is a fixed witness because expression `eval`
-does not inspect either field; memory domains are converted from HOL sets to
-their Boolean characteristic functions. -/
-noncomputable def CrepSemHOLState.toExpressionEvaluatorState
-    {width : Nat} [NeZero width] {ffiState : Type}
-    (state : CrepSemHOLState width ffiState) :
-    CrepHolState (Fin width → Bool) Unit := by
-  classical
-  exact
-    { locals := fun name => (state.locals.lookup name).map holWordLabToBits
-      globals := fun name => (state.globals.lookup name).map holWordLabToBits
-      code := fun _ => none
-      memory := fun address => holWordLabToBits
-        (state.memory (holWordBitsToBitVec address))
-      memaddrs := fun address => decide
-        (state.memaddrs (holWordBitsToBitVec address))
-      shMemaddrs := fun address => decide
-        (state.shMemaddrs (holWordBitsToBitVec address))
-      clock := state.clock
-      bigEndian := state.be
-      ffi := crepExpressionProjectionFfi
-      baseAddress := bitVecToHolWordBits state.baseAddr
-      topAddress := bitVecToHolWordBits state.topAddr }
-
 /-- Project the expression-observable state fields directly to the canonical
 BitVec word evaluator. Code and FFI use fixed witnesses because expression
-evaluation does not inspect either field. Unlike
-`toExpressionEvaluatorState`, this view does not pass through `Fin width →
-Bool` before returning to the production RISC-V `BitVec width` carrier. -/
+evaluation does not inspect either field. -/
 noncomputable def CrepSemHOLState.toBitVecEvaluatorState
     {width : Nat} [NeZero width] {ffiState : Type}
     (state : CrepSemHOLState width ffiState) :
@@ -873,27 +811,5 @@ def memLoadCrepSemHOL {width : Nat} [NeZero width] {σ : Type}
     [DecidablePred state.memaddrs] :
     Option (HolWordLab width) :=
   if state.memaddrs address then some (state.memory address) else none
-
-/-- Project expression-observable fields of the arbitrary-index state to the
-existing source evaluator. Code and FFI observations are fixed because
-`eval_def` does not inspect them. The projection is Flapjack-only: it uses the
-explicit dimension adapter to interpret the arbitrary HOL word index. -/
-noncomputable def CrepSemHOLFiniteState.toSourceEvaluatorState
-    {ι codeEntry ffiState : Type}
-    (state : CrepSemHOLFiniteState ι codeEntry ffiState) :
-    CrepHolState (ι → Bool) Unit := by
-  classical
-  exact
-    { locals := state.locals.lookup
-      globals := state.globals.lookup
-      code := fun _ => none
-      memory := state.memory
-      memaddrs := state.memaddrs
-      shMemaddrs := state.shMemaddrs
-      clock := state.clock
-      bigEndian := state.be
-      ffi := crepExpressionProjectionFfi
-      baseAddress := state.baseAddr
-      topAddress := state.topAddr }
 
 end Flapjack

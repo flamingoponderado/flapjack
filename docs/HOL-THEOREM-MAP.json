@@ -69629,14 +69629,6 @@
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
-    "lean_name": "CrepSemHOLFiniteState.toSourceEvaluatorState_mapc",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-only projection equation: expression evaluation ignores the arbitrary code-entry map, so the exact finite-map map2 update projects to the same source evaluator state."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
     "lean_name": "CrepSemHOLState.FLOOKUP_mapc",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only lookup equation for the CrepArith-local mapc support; the helper mirrors HOL FMAP_MAP2, but native evaluator correspondence remains open."
@@ -69648,14 +69640,6 @@
     "lean_name": "CrepSemHOLState.toBitVecEvaluatorState_mapc",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only equality for the direct BitVec expression-evaluator projection under CrepArith mapc; it is not an eval_def correspondence."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
-    "lean_name": "CrepSemHOLState.toExpressionEvaluatorState_mapc",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-only projection equation for CrepArith-local mapc support; it concerns the source evaluator projection and is not an eval_def port."
   },
   {
     "hol_path": null,
@@ -69940,14 +69924,6 @@
     "lean_name": "crepSimpMapcsHOL_eq_mapc",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only rfl bridge (bead flapjack-pxn.18.5.4.12): the shared mapcs renderer crepSimpMapcsHOL (SimpProgCorrect.lean) equals CrepSemHOLState.mapc applied to the proof script's mapcs lambda (\\(s,n,p). (n, simp_prog p)), crep_arithProofScript.sml:160. This keeps a single mapped-state predicate for the simp_prog_correct assembly. It is not a HOL declaration (HOL mapcs is an Overload)."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
-    "lean_name": "evalCrepHolFiniteWordSourceExp_mapc_projection",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-only source evaluator invariance under the CrepArith-local mapc projection; native HOL eval correspondence remains open."
   },
   {
     "hol_path": null,
