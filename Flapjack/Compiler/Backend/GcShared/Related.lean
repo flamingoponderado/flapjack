@@ -1,4 +1,4 @@
-import Flapjack.Compiler.Backend.GcShared.HeapMap.Properties
+import Flapjack.Compiler.Backend.GcShared.HeapSimilarity
 import Flapjack.Misc.FiniteMapApply
 
 /-! The abstract relation between a heap and its collected image. -/

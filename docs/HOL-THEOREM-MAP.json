@@ -1034,6 +1034,38 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "heaps_similar_def",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/HeapSimilarity.lean",
+  "lean_name": "heapsSimilar",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared heaps_similar_typed: the list relation, conditional forwarding case, equal lengths, original data-element requirement, and equality direction match; both heap carriers are independent."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "heaps_similar_IMP_heap_length",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/HeapSimilarity.lean",
+  "lean_name": "heapsSimilar_imp_heapLength",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared heaps_similar_imp_heap_length_typed, including arbitrary similar heaps, equal word lengths and independently polymorphic heap carriers."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "heap_similar_Data_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/HeapSimilarity.lean",
+  "lean_name": "heapSimilar_data_imp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared heap_similar_data_imp_typed, including the source similarity premise, existential original heap decomposition, data element, equal prefix lengths and independent heap carriers."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "heaps_similar_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/HeapSimilarity.lean",
+  "lean_name": "heapsSimilar_forward",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared heaps_similar_lemma_typed: replacing the given data element by the original forwarding pointer preserves similarity, and the two payload carriers of h1/h2 remain independent of both original heap carriers."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
   "hol_name": "IN_heap_map_IMP",
   "lean_path": "Flapjack/Compiler/Backend/GcShared/HeapMap/Properties.lean",
   "lean_name": "in_heapMap_imp",
