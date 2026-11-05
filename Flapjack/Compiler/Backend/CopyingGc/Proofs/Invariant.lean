@@ -50,4 +50,33 @@ theorem gcInv_init {α β : Type} (heap : List (HeapElement α β))
     have lengthEq : (heap.map elLength).sum = limit := good.1
     simp [gcInv, heapAddresses, heapLength, filtered, similar, emptyMap, good, lengthEq]
 
+/-- The data-root case of the copying collector's move-invariant proof. -/
+theorem gcInv_move_data {α β : Type} (h1 h2 heap heap0 : List (HeapElement α β))
+    (a n limit : Nat) (ok : Bool) (roots0 : List (HeapAddress α)) (value : α)
+    (invariant : gcInv h1 h2 a n heap ok limit heap0 roots0) :
+    gcMove (.data value, h2, a, n, heap, ok, limit) =
+      (addrApply (heapMap1 heap) (.data value), h2, a, n, heap, ok) ∧
+    (∀ ptr u, HeapAddress.data value = .pointer ptr u → (heapMap 0 heap).lookup ptr ≠ none) ∧
+    (∀ ptr, isSomeDataOrForward (heapLookup ptr heap) ↔ isSomeDataOrForward (heapLookup ptr heap)) ∧
+    (∀ i j, (heapMap 0 heap).lookup i = some j → (heapMap 0 heap).lookup i = some j) ∧
+    gcInv h1 h2 a n heap ok limit heap0 roots0 := by
+  simp [gcMove, addrApply, invariant]
+
+/-- The already-forwarded root case of the copying collector's move-invariant
+proof. The found forwarding pointer supplies the domain fact and map value. -/
+theorem gcInv_move_forward {α β : Type} (h1 h2 heap heap0 : List (HeapElement α β))
+    (a n limit ptr target len : Nat) (ok : Bool) (roots0 : List (HeapAddress α))
+    (value forwardedValue : α)
+    (invariant : gcInv h1 h2 a n heap ok limit heap0 roots0)
+    (found : heapLookup ptr heap = some (.forwardPointer target forwardedValue len)) :
+    gcMove (.pointer ptr value, h2, a, n, heap, ok, limit) =
+      (addrApply (heapMap1 heap) (.pointer ptr value), h2, a, n, heap, ok) ∧
+    (∀ p u, HeapAddress.pointer ptr value = .pointer p u → (heapMap 0 heap).lookup p ≠ none) ∧
+    (∀ p, isSomeDataOrForward (heapLookup p heap) ↔ isSomeDataOrForward (heapLookup p heap)) ∧
+    (∀ i j, (heapMap 0 heap).lookup i = some j → (heapMap 0 heap).lookup i = some j) ∧
+    gcInv h1 h2 a n heap ok limit heap0 roots0 := by
+  have lookup := heapLookup_flookup heap ptr target len forwardedValue found
+  have applyEq : heapMap1 heap ptr = target := holFapply_of_lookup lookup
+  simp [gcMove, found, addrApply, applyEq, lookup, invariant]
+
 end Flapjack.Compiler.Backend.CopyingGc

@@ -4,6 +4,16 @@ import Mathlib.Data.List.Forall2
 /-! The source heap and its forwarding-pointer version. -/
 namespace Flapjack.Compiler.Backend
 
+/-- Recognize a successful forwarding-pointer lookup. -/
+@[hol "cakeml/compiler/backend/gc/gc_sharedScript.sml" "isSomeForwardPointer_def"]
+def isSomeForwardPointer {α β : Type} (element : Option (HeapElement α β)) : Prop :=
+  ∃ ptr value len, element = some (.forwardPointer ptr value len)
+
+/-- Recognize a successful data-element or forwarding-pointer lookup. -/
+@[hol "cakeml/compiler/backend/gc/gc_sharedScript.sml" "isSomeDataOrForward_def"]
+def isSomeDataOrForward {α β : Type} (element : Option (HeapElement α β)) : Prop :=
+  isSomeForwardPointer element ∨ isSomeDataElement element
+
 /-- A forwarded element preserves the original data element's size; all
 other elements remain unchanged. -/
 @[hol "cakeml/compiler/backend/gc/gc_sharedScript.sml" "heaps_similar_def"]

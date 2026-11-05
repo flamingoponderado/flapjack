@@ -1034,6 +1034,22 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "isSomeForwardPointer_def",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/HeapSimilarity.lean",
+  "lean_name": "isSomeForwardPointer",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared is_some_forward_pointer_typed: existential forwarding pointer fields and successful option equality match, with independent heap element carriers."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "isSomeDataOrForward_def",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/HeapSimilarity.lean",
+  "lean_name": "isSomeDataOrForward",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared is_some_data_or_forward_typed: forwarding-pointer or data-element presence matches, with independent heap element carriers."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
   "hol_name": "FILTER_LEMMA",
   "lean_path": "Flapjack/Compiler/Backend/GcShared/HeapSimilarity.lean",
   "lean_name": "filter_notForward",
