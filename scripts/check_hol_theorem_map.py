@@ -1136,17 +1136,6 @@ DOCUMENTED_MISMATCHES = {
         "and uses word_lab. Beyond name representation; keep @[hol] withheld "
         "pending exact-carrier work flapjack-pxn.18.3.5.8.)"
     ),
-    ("Flapjack/PanValueEvaluatorStability.lean", "evalPanValueExps_update_local_not_mem"): (
-        "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
-        "update_locals_not_vars_eval_mmap",
-        "flapjack-ds5 (source comparison with pan_to_crepProofScript.sml:4082-4087: "
-        "single fresh local binding leaves OPT_MMAP (eval) es unchanged; Lean "
-        "evalPanValueExps_update_local_not_mem matches the shape, but is generic "
-        "over the word payload α with Exp α/PanValue α and VarName = String "
-        "functional maps, while HOL is word-indexed with varname = mlstring. "
-        "Beyond name representation; keep @[hol] withheld pending exact-carrier "
-        "work flapjack-pxn.18.3.5.8.)"
-    ),
     ("Flapjack/PanValueEvaluatorStability.lean", "evalPanValueExps_update_locals_not_mem"): (
         "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
         "opt_mmap_eval_distinct_lists_not_affect",
@@ -1570,23 +1559,6 @@ DOCUMENTED_MISMATCHES = {
         "Flapjack/Test/CrepAssignedVarsParity.lean:88-90,111. Keep the tag "
         "withdrawn pending the exact mlstring-carrier port flapjack-pxn.18.3.5.8.8."
     ),
-    ("Flapjack/Pancake/Semantics/CrepProps.lean", "mem_crepAssignedFreeVars_imp_mem_crepAssignedVarsW"): (
-        "cakeml/pancake/semantics/crepPropsScript.sml",
-        "assigned_free_vars_IMP_assigned_vars",
-        "Codex (source comparison with crepPropsScript.sml:373-378: the implication "
-        "`MEM x (assigned_free_vars prog) ==> MEM x (assigned_vars prog)` matches "
-        "the Lean crepAssignedFreeVarsW/crepAssignedVarsW implication pointwise. "
-        "The mismatch is the imported programme carrier: HOL crepLang$prog embeds "
-        "funname = mlstring in Call/ExtCall, while Lean CrepProg embeds "
-        "FunName = String, so the quantified program ranges over a carrier whose "
-        "function names can differ from HOL's. The quantifiers are a whole CrepProg "
-        "and a varname = num name, so no mlstring identifier exists for "
-        "names_as_string and no NameRanged byte witness applies. Direct HOL rows "
-        "imp_mem=T and imp_mem_absent=T are in crep_assigned_vars_probe.out (probe "
-        "header cites crepPropsScript.sml:373) and sampled by "
-        "Flapjack/Test/CrepAssignedVarsParity.lean:50-62. Keep the tag withdrawn "
-        "pending the exact mlstring-carrier port flapjack-pxn.18.3.5.8.8."
-    ),
     ("Flapjack/Pancake/Proofs/CrepInline.lean", "foldl_res_var_zip_lookup_var_hol"): (
         "cakeml/pancake/proofs/crep_inlineProofScript.sml",
         "FOLDL_res_var_ZIP_lookup_var",
@@ -1597,16 +1569,6 @@ DOCUMENTED_MISMATCHES = {
         "(Flapjack/FiniteMap/Basic.lean:19), which admits infinite-support inhabitants whereas "
         "HOL alpha |-> beta is finite-support. Tag withdrawn; faithful port over "
         "HolFiniteMapExact (Flapjack/Pancake/Semantics/CrepSem/HOLState.lean) tracked by bead "
-        "flapjack-pxn.18.3.7.1.3.1.1.3.1."
-    ),
-    ("Flapjack/Pancake/Proofs/CrepInline.lean", "foldl_res_var_zip_lookup_hol"): (
-        "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-        "FOLDL_res_var_ZIP_lookup",
-        "flapjack-ds4 (source comparison, bead flapjack-pxn.18.5.5.19): "
-        "FLAPJACK-SPECIFIC / not an exact HOL port. DecidableEq encodes HOL equality and "
-        "removes the [BEq]/[LawfulBEq] side conditions, but the statement quantifies the raw "
-        "function carrier FiniteMap, which admits infinite support whereas HOL alpha |-> beta is "
-        "finite-support. Tag withdrawn; faithful port over HolFiniteMapExact tracked by bead "
         "flapjack-pxn.18.3.7.1.3.1.1.3.1."
     ),
     ("Flapjack/Pancake/Proofs/CrepInline.lean", "submap_imp_fupdate_submap_hol"): (
@@ -1658,15 +1620,6 @@ DOCUMENTED_MISMATCHES = {
     ("Flapjack/Pancake/Proofs/CrepInline.lean", "flookup_res_var_is_mem_zip_eq_hol"): (
         "cakeml/pancake/proofs/crep_inlineProofScript.sml",
         "flookup_res_var_is_mem_zip_eq",
-        "flapjack-ds4 (source comparison, bead flapjack-pxn.18.5.5.19): "
-        "FLAPJACK-SPECIFIC / not an exact HOL port. DecidableEq removes the BEq side condition, "
-        "but resVarHOL/FLOOKUP quantify the raw function carrier FiniteMap, which admits infinite "
-        "support whereas HOL res_var/FLOOKUP range over finite maps. Tag withdrawn; faithful port "
-        "over HolFiniteMapExact tracked by bead flapjack-pxn.18.3.7.1.3.1.1.3.1."
-    ),
-    ("Flapjack/Pancake/Semantics/CrepProps.lean", "flookup_res_var_distinct_zip_eq_hol"): (
-        "cakeml/pancake/semantics/crepPropsScript.sml",
-        "flookup_res_var_distinct_zip_eq",
         "flapjack-ds4 (source comparison, bead flapjack-pxn.18.5.5.19): "
         "FLAPJACK-SPECIFIC / not an exact HOL port. DecidableEq removes the BEq side condition, "
         "but resVarHOL/FLOOKUP quantify the raw function carrier FiniteMap, which admits infinite "

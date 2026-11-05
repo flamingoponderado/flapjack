@@ -1452,36 +1452,6 @@ theorem compile_decls_append_cake [LawfulBEq String] {width : Nat} [NeZero width
         context := second.context } :=
   compileDecsCake_append context decs rest
 
-/-- Flapjack-only (untagged) counterpart of Cake's `compile_decs_functions_thm`
-    (`cakeml/pancake/proofs/pan_globalsProofScript.sml:1951`) for
-    `globalCompileDecsThreaded`, for a program consisting only of functions:
-    the function table is the source list with each body compiled under the
-    running context.  HOL's statement maps with an `ARB` fallback for
-    non-function declarations; here the fallback is the identity declaration,
-    which coincides with HOL exactly under the `EVERY is_function` premise, so
-    this carries no `@[hol]` tag until the ARB rendering is reviewed. -/
-theorem compile_decs_functions_thm_threaded [BEq String] [Add α] [Mul α]
-    (context : GlobalPassContext α) (code : List (Decl α))
-    (hall : code.all globalDeclIsFunction = true) :
-    (globalCompileDecsThreaded context code).functions =
-      code.map (fun declaration => match declaration with
-        | .function function =>
-            .function { function with body := globalCompileProg context function.body }
-        | other => other) := by
-  induction code generalizing context with
-  | nil => rfl
-  | cons declaration declarations ih =>
-      cases declaration with
-      | function function =>
-          simp only [List.all_cons, globalDeclIsFunction, Bool.true_and] at hall
-          simp only [globalCompileDecsThreaded, List.map_cons, ih context hall]
-      | decl shape name value =>
-          simp [List.all_cons, globalDeclIsFunction] at hall
-      | exnDecl exception shape =>
-          simp [List.all_cons, globalDeclIsFunction] at hall
-      | name struct fields =>
-          simp [List.all_cons, globalDeclIsFunction] at hall
-
 /-- Exact-shaped port of Cake's `ALOOKUP_MAP3`
     (`cakeml/pancake/proofs/pan_globalsProofScript.sml:2841`). HOL's `ALOOKUP`
     is key-polymorphic; the reviewed `lookupInfo` is likewise key-polymorphic

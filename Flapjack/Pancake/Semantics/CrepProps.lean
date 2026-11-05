@@ -441,21 +441,6 @@ theorem flookup_res_var_distinct_zip_eq [BEq α] [LawfulBEq α]
     FLOOKUP ((xs.zip ys).foldl resVar fm) x = FLOOKUP fm x :=
   FLOOKUP_foldl_resVar_zip_not_mem xs ys fm x hlen hx
 
-/-- HOL-equality (`=`) form of CakeML's `flookup_res_var_distinct_zip_eq`
-    (`crepPropsScript.sml:777`) over the raw function carrier.  FLAPJACK-SPECIFIC
-    (not an exact HOL port): `DecidableEq` removes the Boolean-`BEq` side
-    condition, but `FiniteMap α β := α → Option β` admits infinite-support
-    inhabitants whereas HOL `α |-> β` is finite-support, so the statement still
-    ranges over functions HOL cannot represent.  Kept untagged; identical raw
-    function endpoints are also an unsound surrogate for HOL `FUPDATE`/`res_var`.
-    Faithful finite-support port tracked by bead
-    `flapjack-pxn.18.3.7.1.3.1.1.3.1` (over `HolFiniteMapExact`). -/
-theorem flookup_res_var_distinct_zip_eq_hol {α : Type} {β : Type} [DecidableEq α]
-    (xs : List α) (ys : List (Option β)) (fm : FiniteMap α β) (x : α)
-    (hlen : xs.length = ys.length) (hx : x ∉ xs) :
-    FLOOKUP ((xs.zip ys).foldl resVarHOL fm) x = FLOOKUP fm x :=
-  FLOOKUP_foldl_resVarHOL_zip_not_mem xs ys fm x hlen hx
-
 /-- Flapjack analogue of Cake `crepProps$dec_clock_simp`
     (`cakeml/pancake/semantics/crepPropsScript.sml:267-278`), kept untagged with
     status `documented_mismatch` under audit bead `flapjack-dlc.105`.
@@ -667,28 +652,6 @@ theorem crepAssignedVars_nestedSeq_storeGlobalsW {width : Nat} [NeZero width]
     (address : BitVec 5) (values : List (CrepExp (BitVec width))) :
     crepAssignedVarsW (crepNestedSeqW (storeGlobalsW address values)) = [] :=
   crepAssignedVars_nestedSeq_storeGlobals address values
-
-/-- Flapjack width-specialized analogue of Cake
-    `crepProps$assigned_free_vars_IMP_assigned_vars`
-    (`cakeml/pancake/semantics/crepPropsScript.sml:373-378`), kept untagged with
-    status `documented_mismatch` under audit bead `flapjack-dlc.102`.
-    HOL proves `!prog x. MEM x (assigned_free_vars prog) ==> MEM x (assigned_vars prog)`;
-    the Lean implication over `crepAssignedFreeVarsW`/`crepAssignedVarsW` matches
-    it pointwise. The mismatch is the imported programme carrier: HOL's
-    `crepLang$prog` embeds `funname = mlstring` in `Call`/`ExtCall`, while Lean's
-    `CrepProg` embeds `FunName = String`, so the quantified `prog` ranges over a
-    carrier whose function names can differ from HOL's. The quantifiers are a
-    whole `CrepProg` and a `varname = num` name, so no `mlstring` identifier
-    exists for `names_as_string`, and no `NameRanged` byte witness applies.
-    Direct HOL rows `imp_mem=T` and `imp_mem_absent=T` are in
-    `scripts/hol-probes/crep_assigned_vars_probe.out` (probe header cites
-    crepPropsScript.sml:373) and sampled by
-    `Flapjack/Test/CrepAssignedVarsParity.lean:50-62`. Restoring the tag depends
-    on the exact mlstring-carrier port `flapjack-pxn.18.3.5.8.8`. -/
-theorem mem_crepAssignedFreeVars_imp_mem_crepAssignedVarsW {width : Nat} [NeZero width]
-    (program : CrepProg (BitVec width)) (name : Nat)
-    (h : name ∈ crepAssignedFreeVarsW program) : name ∈ crepAssignedVarsW program :=
-  mem_crepAssignedFreeVars_imp_mem_crepAssignedVars program name h
 
 /-- Width-specialized analogue of Cake
     `crepProps$nested_seq_assigned_vars_eq`

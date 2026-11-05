@@ -519,21 +519,6 @@ theorem foldl_res_var_zip_lookup_var_hol {α : Type} {β : Type} [DecidableEq α
     (by simp [List.length_map]) hx]
   exact hv
 
-theorem foldl_res_var_zip_lookup_hol {α : Type} {β : Type} [DecidableEq α]
-    (l l' l1 : FiniteMap α β) (ns xs : List α) (vs : List β)
-    (hsub : crepHolSubmap ((ns.zip (ns.map (FLOOKUP l'))).foldl resVarHOL l) l1)
-    (h : xs.mapM (FLOOKUP l) = some vs)
-    (hx : ∀ x, x ∈ xs → x ∉ ns) :
-    xs.mapM (FLOOKUP l1) = some vs := by
-  have hpt : ∀ x, x ∈ xs → FLOOKUP l1 x = FLOOKUP l x := by
-    intro x hxmem
-    obtain ⟨y, hy⟩ := (OPT_MMAP_SOME_ALL (FLOOKUP l) xs).mp ⟨vs, h⟩ x hxmem
-    have hfl : FLOOKUP l1 x = some y :=
-      foldl_res_var_zip_lookup_var_hol l l' l1 ns x y hsub hy (hx x hxmem)
-    rw [hfl, hy]
-  rw [OPT_MMAP_ALL_EQ (FLOOKUP l1) (FLOOKUP l) xs hpt]
-  exact h
-
 /-! ## Exact finite-support (`HolFiniteMapExact`) forms of the `SUBMAP` cluster
 
 The `_hol` statements above still quantify Lean's raw function carrier

@@ -857,8 +857,6 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
                 "assigned_free_vars_store_globals_empty",
             "crepAssignedVars_nestedSeq_storeGlobalsW":
                 "assigned_vars_store_globals_empty",
-            "mem_crepAssignedFreeVars_imp_mem_crepAssignedVarsW":
-                "assigned_free_vars_IMP_assigned_vars",
         }
         for lean_name, hol_name in expected.items():
             key = ("Flapjack/Pancake/Semantics/CrepProps.lean", lean_name)
@@ -1363,8 +1361,6 @@ class ValidateInventoryTest(unittest.TestCase):
             ("Flapjack/Pancake/Proofs/CrepInline.lean",
              "foldl_res_var_zip_lookup_var_hol"): "FOLDL_res_var_ZIP_lookup_var",
             ("Flapjack/Pancake/Proofs/CrepInline.lean",
-             "foldl_res_var_zip_lookup_hol"): "FOLDL_res_var_ZIP_lookup",
-            ("Flapjack/Pancake/Proofs/CrepInline.lean",
              "submap_imp_fupdate_submap_hol"): "SUBMAP_IMP_FUPDATE_SUBMAP",
             ("Flapjack/Pancake/Proofs/CrepInline.lean",
              "submap_imp_domsub_submap_hol"): "SUBMAP_IMP_DOMSUB_SUBMAP",
@@ -1376,8 +1372,6 @@ class ValidateInventoryTest(unittest.TestCase):
              "res_var_foldl_commutes_strong_hol"): "res_var_foldl_commutes_strong",
             ("Flapjack/Pancake/Proofs/CrepInline.lean",
              "flookup_res_var_is_mem_zip_eq_hol"): "flookup_res_var_is_mem_zip_eq",
-            ("Flapjack/Pancake/Semantics/CrepProps.lean",
-             "flookup_res_var_distinct_zip_eq_hol"): "flookup_res_var_distinct_zip_eq",
         }
         for key, hol_name in hol_forms.items():
             with self.subTest(key=key):
@@ -1444,7 +1438,6 @@ class ValidateInventoryTest(unittest.TestCase):
 
     def test_pan_value_evaluator_stability_mismatches_are_documented(self):
         expected = {
-            "evalPanValueExps_update_local_not_mem": "update_locals_not_vars_eval_mmap",
             "evalPanValueExps_update_locals_not_mem": "opt_mmap_eval_distinct_lists_not_affect",
             "evalPanValueExp_update_locals_not_mem": "eval_distinct_lists_not_affect",
         }
