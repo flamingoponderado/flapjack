@@ -486,7 +486,7 @@ theorem structInfosOk_drop (n : Nat) (context : StructContext)
     rw [hsize]
     exact hctx
 
-private theorem lookupInfoWithRest_suffix_drop (name : String)
+theorem lookupInfoWithRest_suffix_drop (name : String)
     (context : StructContext) (info : StructInfo) (suffix : StructContext)
     (hlookup : lookupInfoWithRest name context = some (info, suffix)) :
     ∃ n, context.drop n = suffix := by
@@ -549,7 +549,7 @@ private theorem lookupInfoWithRest_mem [LawfulBEq String]
       · simp only [lookupInfoWithRest, hmatch] at hlookup
         exact List.mem_cons_of_mem _ (ih hlookup)
 
-private theorem lookupInfoWithRest_fields_wf
+theorem lookupInfoWithRest_fields_wf
     (name : String) (context : StructContext) (info : StructInfo)
     (suffix : StructContext)
     (hlookup : lookupInfoWithRest name context = some (info, suffix))

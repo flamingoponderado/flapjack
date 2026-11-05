@@ -55274,14 +55274,6 @@
     "reviewer": "Flapjack-only constructor inversion helper for tagged dest_const_def. HOL uses ordinary datatype equality reasoning here; no separate HOL declaration is being ported."
   },
   {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
-    "lean_name": "crepHolState_eq_of_fields",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-only record extensionality helper for CrepHolState; it has no HOL theorem counterpart."
-  },
-  {
     "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
     "lean_name": "crepOptMmapSimpExpCorrectNativeHOL",
     "hol_path": "cakeml/pancake/proofs/crep_arithProofScript.sml",
@@ -56022,14 +56014,6 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.4.27): If case of HOL simp_prog_correct (crep_arithProofScript.sml:186-212): ∀ p s r s'. crepSem$evaluate (p, s) = (r, s') ==> r <> SOME Error ==> evaluate (simp_prog p, mapcs s) = (r, mapcs s'), specialised to p = If e c1 c2. The conclusion keeps the same binders, premises and equality over the tagged native evalCrepSemHOLProgExact, crepSimpProgHOL and the shared crepSimpMapcsHOL. The only other premise is exactly the evaluate_ind If IH in the tagged evalCrepSemHOLProgExact_induct hite shape: ∀ v1 w. crepExactEvalExpClassical s e = SOME v1 ==> v1 = Word w ==> the predicate (simpProgCorrectAt) at (if w ≠ 0w then c1 else c2, s), in the same state. There is no target-success or other premise. The proof uses the tagged simp_exp_correct (crepSimpExpCorrectNativeHOL) for the simplified condition and the IH for the selected branch; simp_prog maps both branches, so the branch selection commutes. Axioms: propext, Classical.choice, Quot.sound."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrect/Return.lean",
-    "lean_name": "crepSimpMapcsHOL_emptyLocals",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-only commuting law for the exact simp_prog_correct mapcs renderer and emptyLocals used by the Return case; HOL has no standalone declaration."
   },
   {
     "hol_path": null,
@@ -63278,14 +63262,6 @@
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
-    "lean_name": "restoreUpdate",
-    "hol_path": null,
-    "hol_name": null,
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-only private restoration algebra for in-progress global-handler constructor33.11: restores actual saved lookups after two distinct scratch writes, allowing absent original bindings and different initializer/final result values. Kernel checked; no standalone HOL declaration and no full constructor-port claim. Present-context cases and assembly remain open."
-  },
-  {
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
     "lean_name": "returnedCallStoreTail",
     "hol_path": null,
     "hol_name": null,
@@ -65129,14 +65105,6 @@
     "reviewer": "Flapjack helper for the intLib.COOPER_TAC step of compile_top_semantics_decls: under HOL's no-wrap bound the first address past an n-word block is not in addresses a n; uses tagged mem_addresses, no CakeML declaration claimed."
   },
   {
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsDecls.lean",
-    "lean_name": "updateListCons'",
-    "hol_path": null,
-    "hol_name": null,
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Private Flapjack proof helper for the canonical finite-map updateList cons equation; no independent HOL declaration claimed."
-  },
-  {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsExact.lean",
     "lean_name": "compileDecsHOL_function_suffix",
     "hol_path": null,
@@ -65253,14 +65221,6 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only private assembly infrastructure for evaluate_decls_compile_top; derives structural tables and evaluation from source premises, no independent HOL declaration claimed."
-  },
-  {
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsExact.lean",
-    "lean_name": "updateListCons",
-    "hol_path": null,
-    "hol_name": null,
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Private Flapjack proof helper for the canonical finite-map updateList equation used by evaluate_decls ports; no independent HOL declaration claimed."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopShapeWf.lean",
@@ -71107,14 +71067,6 @@
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
-    "lean_name": "lookupInfoDefaultPanPropsNStruct",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-only equality-instance adapter for the NStruct lookup; no standalone HOL declaration."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
     "lean_name": "lookupInfoStringDefault_eq_panPropsALookupEq",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Private lookup bridge from the production default String BEq instance to the explicit equality-based alist lookup adapter; it is a Lean implementation helper, not a standalone HOL declaration."
@@ -71131,25 +71083,9 @@
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
-    "lean_name": "lookupInfoWithRest_fields_wf_for_load",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-only consequence of structInfosOk that a selected declaration's field shapes are well formed in its lookup suffix; support for named Load conversion."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
     "lean_name": "lookupInfoWithRest_lookupInfo_for_load",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Private adapter from production lookupInfoWithRest success to lookupInfo success, used by named Load; no standalone HOL theorem declaration."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
-    "lean_name": "lookupInfoWithRest_suffix_drop_for_load",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-only support identifying the suffix returned by lookupInfoWithRest as a drop of the source context for named Load conversion."
   },
   {
     "hol_path": null,
@@ -77218,14 +77154,6 @@
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/DecCall.lean",
     "lean_name": "lookup_updateListEq_zip_not_mem",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Lean-only helper for the pc_compile_correct DecCall case (bead flapjack-pxn.18.4.3.95); HOL proves this reasoning inline in the DecCall Resume block, so there is no separate CakeML HOL declaration"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/DecCall.lean",
-    "lean_name": "mapM_congr_mem'",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Lean-only helper for the pc_compile_correct DecCall case (bead flapjack-pxn.18.4.3.95); HOL proves this reasoning inline in the DecCall Resume block, so there is no separate CakeML HOL declaration"
   },

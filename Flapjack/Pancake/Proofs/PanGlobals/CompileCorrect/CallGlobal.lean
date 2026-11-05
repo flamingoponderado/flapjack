@@ -18,7 +18,7 @@ private theorem compileList_eq_map {width : Nat} [NeZero width]
 
 /-- Flapjack map infrastructure: undo a scoped write with its original lookup,
 including an absent original binding. No separately named HOL declaration. -/
-private theorem restore_update {width : Nat} [NeZero width]
+theorem restore_update {width : Nat} [NeZero width]
     (locals : HolFiniteMapExact MlS (ValueHOL width)) (name : MlS) (value : ValueHOL width) :
     HolFiniteMapExact.resVarEq (locals.update (name, value)) (name, locals.lookup name) = locals := by
   classical

@@ -94,7 +94,7 @@ theorem evalDistinctListsNotAffectPrimeHOL {width : Nat} [NeZero width] {σ : Ty
   intro vs s _ e w nvals ⟨heval, hlen, hdist⟩
   rw [evalDistinctListsNotAffectHOL vs s e w nvals ⟨hlen, hdist⟩, heval]
 
-private theorem mapM_congr_mem {α β : Type} (f g : α → Option β) :
+theorem mapM_congr_mem {α β : Type} (f g : α → Option β) :
     ∀ (xs : List α), (∀ x, x ∈ xs → f x = g x) → xs.mapM f = xs.mapM g
   | [], _ => rfl
   | x :: xs, h => by

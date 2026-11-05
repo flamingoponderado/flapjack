@@ -22,15 +22,6 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} {σ : Type} [NeZero width]
         PanSemStateFiniteExact.ofExact state.toExact state.toExact_finiteSupport = state) :=
   PanSemStateFiniteExact.holFmapAsFiniteSupportWitness
 
-private theorem updateListCons {α β : Type} [BEq α] [LawfulBEq α]
-    (map : HolFiniteMapExact α β) (entry : α × β)
-    (entries : List (α × β)) :
-    (map.update entry).updateList entries = map.updateList (entry :: entries) := by
-  apply HolFiniteMapExact.ext
-  funext key
-  simp only [HolFiniteMapExact.lookup_updateList, FUPDATE_LIST_cons]
-  rfl
-
 private theorem fpermDecsHOL_append {width : Nat} [NeZero width]
     (source target : MlS) (left right : List (DeclHOL width)) :
     fpermDecsHOL source target (left ++ right) =
@@ -222,7 +213,7 @@ theorem evaluateDeclsOnlyFunctionsSOMEHOLFinite {width : Nat} {σ : Type}
             simpa [updated] using h
           have hrec := ih updated hrestFunctions hrestShapes
           simpa [PanSemStateFiniteExact.evaluateDeclsHOLFinite, hparam, hreturn,
-            updated, functionsHOL, updateListCons]
+            updated, functionsHOL, PanSemStateFiniteExact.updateList_cons]
             using hrec
 
 /-- Exact PanGlobals source lemma `evaluate_decls_only_functions_and_exns_SOME`
@@ -302,7 +293,7 @@ theorem evaluateDeclsOnlyFunctionsAndExnsSOMEHOLFinite {width : Nat} {σ : Type}
             simpa [updated] using h
           have hrec := ih updated hrestKind hrestFunctions hrestDistinct hrestFresh hrestShapes
           simpa [PanSemStateFiniteExact.evaluateDeclsHOLFinite, hparam, hreturn,
-            updated, functionsHOL, exceptionsHOL, updateListCons]
+            updated, functionsHOL, exceptionsHOL, PanSemStateFiniteExact.updateList_cons]
             using hrec
       | exnDecl exceptionName shape =>
           have hallowed := hkind (.exnDecl exceptionName shape) (by simp)
@@ -353,7 +344,7 @@ theorem evaluateDeclsOnlyFunctionsAndExnsSOMEHOLFinite {width : Nat} {σ : Type}
             simpa [updated] using h
           have hrec := ih updated hrestKind hrestFunctions hrestDistinct hrestFresh hrestShapes
           simpa [PanSemStateFiniteExact.evaluateDeclsHOLFinite, hshape, hfreshHead,
-            updated, functionsHOL, exceptionsHOL, updateListCons]
+            updated, functionsHOL, exceptionsHOL, PanSemStateFiniteExact.updateList_cons]
             using hrec
 
 /-- Flapjack assembly infrastructure: compiled declaration evaluation updates
@@ -485,7 +476,7 @@ theorem evaluateDeclsCompileTopHOLFinite {width : Nat} {σ : Type} [NeZero width
     simp only [main, exceptionsHOL, hfunExceptions, List.append_nil]
   have hresult := evaluateDeclsCompileTopUpdates state result declarations start
     (arguments, body, returnShape) heval hstart hkinds
-  simpa only [hfunctions, hexceptions, ← updateListCons] using hresult
+  simpa only [hfunctions, hexceptions, ← PanSemStateFiniteExact.updateList_cons] using hresult
 
 end PanGlobalsCompileTopSemanticsExact
 
