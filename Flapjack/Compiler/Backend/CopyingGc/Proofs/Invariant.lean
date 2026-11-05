@@ -79,4 +79,20 @@ theorem gcInv_move_forward {α β : Type} (h1 h2 heap heap0 : List (HeapElement 
   have applyEq : heapMap1 heap ptr = target := holFapply_of_lookup lookup
   simp [gcMove, found, addrApply, applyEq, lookup, invariant]
 
+/-- The fresh-copy forwarding update extends the old map without altering
+any existing entry. This is a Flapjack proof step for the data-root case. -/
+theorem heapMap_forward_submap {α β : Type} (before after : List (HeapElement α β))
+    (roots : List (HeapAddress α)) (len target : Nat) (data : β) (value : α)
+    (key mapped : Nat)
+    (old : (heapMap 0 (before ++ .dataElement roots len data :: after)).lookup key = some mapped) :
+    (heapMap 0 (before ++ .forwardPointer target value len :: after)).lookup key = some mapped := by
+  have absent := not_in_heapMap before after roots len data
+  have ne : heapLength before ≠ key := by
+    intro eq
+    subst key
+    rw [absent] at old
+    contradiction
+  rw [heapMap_replace_data before after target len roots data value]
+  simp [HolFiniteMapExact.lookup_update, FUPDATE, ne, old]
+
 end Flapjack.Compiler.Backend.CopyingGc

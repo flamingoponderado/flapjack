@@ -159,6 +159,7 @@ val _ = show "heaps_similar_imp_heap_length_typed" gc_sharedTheory.heaps_similar
 val _ = show "heap_similar_data_imp_typed" gc_sharedTheory.heap_similar_Data_IMP;
 val _ = show "heaps_similar_lemma_typed" gc_sharedTheory.heaps_similar_lemma;
 val _ = show "in_heap_map_imp_typed" gc_sharedTheory.IN_heap_map_IMP;
+val _ = show "not_in_heap_map_typed" gc_sharedTheory.NOT_IN_heap_map;
 val _ = show "heap_lookup_flookup_typed" gc_sharedTheory.heap_lookup_FLOOKUP;
 val _ = show "heap_map1_typed" gc_sharedTheory.heap_map1_def;
 val _ = show "heap_addresses_typed" gc_sharedTheory.heap_addresses_def;

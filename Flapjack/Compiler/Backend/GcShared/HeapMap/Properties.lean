@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.GcShared.HeapMap
+import Flapjack.FiniteMap.MapKeys
 
 /-! Lookup and domain properties of the collector forwarding map. -/
 namespace Flapjack.Compiler.Backend
@@ -91,5 +92,71 @@ theorem heapMap_empty {α β : Type} (xs : List (HeapElement α β)) (n : Nat)
   funext key
   rw [holFmapAsFiniteSupportResultWitness_heapMap, emptyLookup xs n key noForward]
   simp
+
+private theorem heapMapLookup_replace_data {α β : Type} (before suffix : List (HeapElement α β))
+    (base key target len : Nat) (roots : List (HeapAddress α)) (data : β) (value : α) :
+    heapMapLookup base (before ++ .forwardPointer target value len :: suffix) key =
+      FUPDATE (heapMapLookup base (before ++ .dataElement roots len data :: suffix))
+        (base + heapLength before, target) key := by
+  induction before generalizing base with
+  | nil => simp [heapMapLookup, heapLength, elLength, Nat.add_assoc]
+  | cons head tail ih =>
+    cases head with
+    | unused size =>
+      simpa [heapMapLookup, heapLength, elLength, Nat.add_assoc] using ih (base + (size + 1))
+    | dataElement children size payload =>
+      simpa [heapMapLookup, heapLength, elLength, Nat.add_assoc] using ih (base + (size + 1))
+    | forwardPointer old ptr size =>
+      by_cases atBase : key = base
+      · simp [heapMapLookup, heapLength, elLength, FUPDATE, atBase, Nat.add_assoc]
+      · have recEq := ih (base + (size + 1))
+        have ne : base ≠ key := Ne.symm atBase
+        simpa [heapMapLookup, heapLength, elLength, FUPDATE, ne, Nat.add_assoc] using recEq
+
+/-- Replacing a data element by a same-sized forwarding pointer updates its
+starting-address entry and leaves every other forwarding-map lookup unchanged.
+This Flapjack lemma isolates a step of the copying collector proof. -/
+theorem heapMap_replace_data {α β : Type} (before suffix : List (HeapElement α β))
+    (target len : Nat) (roots : List (HeapAddress α)) (data : β) (value : α) :
+    heapMap 0 (before ++ .forwardPointer target value len :: suffix) =
+      (heapMap 0 (before ++ .dataElement roots len data :: suffix)).update
+        (heapLength before, target) := by
+  apply HolFiniteMapExact.ext_lookup
+  intro key
+  simp only [holFmapAsFiniteSupportResultWitness_heapMap, HolFiniteMapExact.lookup_update]
+  have lookupEq : (heapMap 0 (before ++ .dataElement roots len data :: suffix)).lookup =
+      heapMapLookup 0 (before ++ .dataElement roots len data :: suffix) := by
+    funext address
+    exact holFmapAsFiniteSupportResultWitness_heapMap 0 _ address
+  rw [lookupEq]
+  simpa using heapMapLookup_replace_data before suffix 0 key target len roots data value
+
+private theorem heapMapLookup_data_address {α β : Type} (before suffix : List (HeapElement α β))
+    (base len : Nat) (roots : List (HeapAddress α)) (data : β) :
+    heapMapLookup base (before ++ .dataElement roots len data :: suffix)
+      (base + heapLength before) = none := by
+  induction before generalizing base with
+  | nil =>
+    simp only [List.nil_append, heapMapLookup, heapLength, List.map_nil, List.sum_nil, Nat.add_zero]
+    exact heapMapLookup_below suffix (base + elLength (.dataElement roots len data)) base (by
+      simp [elLength])
+  | cons head tail ih =>
+    cases head with
+    | unused size =>
+      simpa [heapMapLookup, heapLength, elLength, Nat.add_assoc] using ih (base + (size + 1))
+    | dataElement children size payload =>
+      simpa [heapMapLookup, heapLength, elLength, Nat.add_assoc] using ih (base + (size + 1))
+    | forwardPointer ptr value size =>
+      have next := ih (base + (size + 1))
+      simpa [heapMapLookup, heapLength, elLength, FUPDATE, Nat.add_assoc] using next
+
+/-- A data element's starting address is absent from the forwarding map. -/
+@[hol "cakeml/compiler/backend/gc/gc_sharedScript.sml" "NOT_IN_heap_map"
+  (fmap_as_finite_support_result_observations := [heapMap])]
+theorem not_in_heapMap {α β : Type} (ha hb : List (HeapElement α β))
+    (ys : List (HeapAddress α)) (len : Nat) (data : β) :
+    (heapMap 0 (ha ++ .dataElement ys len data :: hb)).lookup (heapLength ha) = none := by
+  rw [holFmapAsFiniteSupportResultWitness_heapMap]
+  simpa using heapMapLookup_data_address ha hb 0 len ys data
 
 end Flapjack.Compiler.Backend

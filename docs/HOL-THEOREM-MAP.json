@@ -1107,6 +1107,15 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "NOT_IN_heap_map",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/HeapMap/Properties.lean",
+  "lean_name": "not_in_heapMap",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": ["heapMap"],
+  "reviewer": "Compared not_in_heap_map_typed: the data element's zero-based starting address is outside FDOM, represented by a none lookup, with both heap payload types independently polymorphic. The imported reviewed heapMap has its canonical lookup witness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
   "hol_name": "IN_heap_map_IMP",
   "lean_path": "Flapjack/Compiler/Backend/GcShared/HeapMap/Properties.lean",
   "lean_name": "in_heapMap_imp",
