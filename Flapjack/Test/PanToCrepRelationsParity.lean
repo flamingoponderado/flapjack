@@ -8,52 +8,6 @@ namespace Flapjack.Test.PanToCrepRelationsParity
 
 open Flapjack
 
-theorem emptyExceptionMapsRelated :
-    excpRel (FEMPTY : FiniteMap String Nat)
-      (FEMPTY : FiniteMap String Shape) := by
-  constructor
-  · funext exception
-    simp [FDOM, FEMPTY]
-  · intro exception exception' code code' hlookup
-    simp [FLOOKUP, FEMPTY] at hlookup
-
-theorem sameDomainSingletonMapsRelated :
-    excpRel
-      (FUPDATE FEMPTY ("E", 0) : FiniteMap String Nat)
-      (FUPDATE FEMPTY ("E", Shape.one) : FiniteMap String Shape) := by
-  constructor
-  · funext exception
-    simp [FDOM, FUPDATE, FEMPTY]
-  · intro exception exception' code code' hlookup hlookup' _hcode
-    simp [FLOOKUP, FUPDATE, FEMPTY] at hlookup hlookup'
-    have hname : exception = "E" := hlookup.1.symm
-    have hname' : exception' = "E" := hlookup'.1.symm
-    exact hname.trans hname'.symm
-
-theorem mismatchedExceptionDomainsNotRelated :
-    ¬ excpRel
-      (FUPDATE FEMPTY ("E", 0) : FiniteMap String Nat)
-      (FUPDATE FEMPTY ("F", Shape.one) : FiniteMap String Shape) := by
-  intro hrel
-  have hdomain := congrFun hrel.1 "E"
-  simp [FDOM, FUPDATE, FEMPTY] at hdomain
-
-theorem nonInjectiveCompilerCodesNotRelated :
-    ¬ excpRel
-      (FUPDATE_LIST FEMPTY [("E", 0), ("F", 0)] : FiniteMap String Nat)
-      (FUPDATE_LIST FEMPTY [("E", Shape.one), ("F", Shape.comb [])]
-        : FiniteMap String Shape) := by
-  intro hrel
-  have hE : FLOOKUP
-      (FUPDATE_LIST FEMPTY [("E", 0), ("F", 0)] : FiniteMap String Nat)
-      "E" = some 0 := by simp [FLOOKUP, FUPDATE_LIST, FUPDATE]
-  have hF : FLOOKUP
-      (FUPDATE_LIST FEMPTY [("E", 0), ("F", 0)] : FiniteMap String Nat)
-      "F" = some 0 := by simp [FLOOKUP, FUPDATE_LIST, FUPDATE]
-  have hEq := hrel.2 "E" "F" 0 0 hE hF rfl
-  have hne : "E" ≠ "F" := by decide
-  exact hne hEq
-
 def compilerFunctions : FiniteMap String (List (String × Shape) × Shape) :=
   FUPDATE FEMPTY ("f", ([], .one))
 

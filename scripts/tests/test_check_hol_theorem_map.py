@@ -982,35 +982,22 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
                     inventory[key]["reviewer"], "Codex (source comparison)"
                 )
 
-    def test_locals_rel_lookup_ctxt_withdrawal_is_recorded(self):
+    def test_removed_pan_to_crep_analogues_are_absent(self):
         inventory = {
             (record["lean_path"], record["lean_name"]): record
             for record in MAP["build_inventory"]()
         }
-        key = ("Flapjack/Pancake/Proofs/PanToCrep.lean", "localsRelLookupCtxt")
-        self.assertIsNone(inventory[key]["hol_name"])
-        self.assertEqual(inventory[key]["statement_status"],
-                         "no_hol_reference_pending_classification")
         manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
-        record = next(record for record in manifest if
-                      (record["lean_path"], record["lean_name"]) == key)
-        self.assertEqual(record["hol_name"], "locals_rel_lookup_ctxt")
-        self.assertEqual(record["statement_status"], "documented_mismatch")
-
-    def test_compile_exp_not_mem_load_glob_withdrawal_is_recorded(self):
-        inventory = {
-            (record["lean_path"], record["lean_name"]): record
-            for record in MAP["build_inventory"]()
-        }
-        key = ("Flapjack/Pancake/Proofs/PanToCrep.lean", "compileExpNotMemLoadGlob")
-        self.assertIsNone(inventory[key]["hol_name"])
-        self.assertEqual(inventory[key]["statement_status"],
-                         "no_hol_reference_pending_classification")
-        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
-        record = next(record for record in manifest if
-                      (record["lean_path"], record["lean_name"]) == key)
-        self.assertEqual(record["hol_name"], "compile_exp_not_mem_load_glob")
-        self.assertEqual(record["statement_status"], "documented_mismatch")
+        manifest_keys = {(record["lean_path"], record["lean_name"]) for record in manifest}
+        for name in ("localsRelLookupCtxt", "compileExpNotMemLoadGlob"):
+            key = ("Flapjack/Pancake/Proofs/PanToCrep.lean", name)
+            self.assertNotIn(key, inventory)
+            self.assertNotIn(key, manifest_keys)
+        exact_key = (
+            "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+            "panToCrepLocalsRelLookupCtxtFiniteExact",
+        )
+        self.assertEqual(inventory[exact_key]["hol_name"], "locals_rel_lookup_ctxt")
 
     def test_is_wf_shape_drop_exact_port_and_production_analogue(self):
         inventory = {
@@ -1393,7 +1380,6 @@ class ValidateInventoryTest(unittest.TestCase):
 
     def test_pan_to_crep_definition_cluster_mismatches_are_documented(self):
         expected = {
-            "excpRel": "excp_rel_def",
             "ctxtFc": "ctxt_fc_def",
             "codeRel": "code_rel_def",
             "stateRel": "state_rel_def",

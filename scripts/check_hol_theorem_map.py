@@ -337,19 +337,6 @@ WITHDRAWN_HOL_DECLARATIONS = {
         "exact-carrier port is tracked by flapjack-pxn.18.3.5.8 (parent "
         "flapjack-pxn.18.3.5.7.2)."
     ),
-    ("Flapjack/Pancake/Proofs/PanToCrep.lean", "tlc"): (
-        "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
-        "tlc_def",
-        "flapjack-ds3 (bead flapjack-4ac.5.37): HOL tlc_def (2317-2319) returns a "
-        "finite map to 'a word_lab (flatten : 'a v -> 'a word_lab list), while Lean "
-        "tlc returns FiniteMap Nat alpha, i.e. the raw word payload with the "
-        "PanWordLab.word wrapper dropped; PanValue is explicitly not statement-exact "
-        "(.word stores alpha, not 'a word_lab). Keys agree (Nat/num) but the element "
-        "carrier mismatch is not authorized by any qualifier. Untagged tlcWordLab is "
-        "the PanWordLab-carrying analogue; faithful port tracked by flapjack-0lj "
-        "(word_lab) and flapjack-pxn.18.3.5.8 (MlString). Same-file slc stays untagged "
-        "for the String-vs-mlstring key mismatch (bead flapjack-4ac.5.36)."
-    ),
     ("Flapjack/Pancake/PanToCrep.lean", "expHdlHOL"): (
         "cakeml/pancake/pan_to_crepScript.sml",
         "exp_hdl_def",
@@ -1030,17 +1017,6 @@ DOCUMENTED_MISMATCHES = {
         "Option (List (PanWordLab α)) output. Keep @[hol] withheld; exact-carrier "
         "work flapjack-pxn.18.3.5.8.8.)"
     ),
-    ("Flapjack/Pancake/Proofs/PanToCrep.lean", "excpRel"): (
-        "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
-        "excp_rel_def",
-        "flapjack-ds5 (source comparison with pan_to_crepProofScript.sml:16-23: "
-        "the FDOM-equality plus code-map injectivity statement matches "
-        "clause-for-clause, but Lean quantifies over production "
-        "FiniteMap String α/β while HOL ceids/seids are eid = mlstring finite "
-        "maps. The key carrier is not a name-representation detail and no "
-        "NameRanged premise exists, so names_as_string cannot apply. Keep @[hol] "
-        "withheld pending exact-carrier work flapjack-pxn.18.3.5.8.)"
-    ),
     ("Flapjack/Pancake/Proofs/PanToCrep.lean", "ctxtFc"): (
         "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
         "ctxt_fc_def",
@@ -1594,23 +1570,6 @@ DOCUMENTED_MISMATCHES = {
         "flapjack-pxn.18.3.5.8.13 for exact compile and flapjack-e7w.1 for exact "
         "inline-map carrier flapjack-e7w.1 and open epic flapjack-e7w.2 for the "
         "full compile_inl_top and production-inliner port."
-    ),
-    ("Flapjack/Pancake/Proofs/PanToCrep/CompileProgParams.lean", "compileProgTopHOL_params_nodup"): (
-        "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
-        "compile_prog_distinct_params",
-        "flapjack-luna-b (source comparison, 2026-09-26; follow exact "
-        "compile_prog carrier work flapjack-4ac.2.20; FLAPJACK-SPECIFIC, "
-        "documented_mismatch). HOL compile_prog_distinct_params "
-        "(pan_to_crepProofScript.sml:4684-4691) quantifies over the positive-"
-        "width word-indexed HOL program and concludes about exact "
-        "compile_prog triples (mlstring names, CrepProgHOL bodies). Lean "
-        "compileProgTopHOL_params_nodup instead quantifies over production "
-        "Decl (BitVec width), String names, production Shape/Prog, and concludes "
-        "about production String/CrepProg output; its unrestricted width also "
-        "admits BitVec 0. The proposition's parameter-slot result is useful, "
-        "but these input/output carriers and width domain are not authorized by "
-        "a qualifier. Remove the HOL tag until the statement is ported over "
-        "DeclHOL and exact compile_prog."
     ),
 }
 

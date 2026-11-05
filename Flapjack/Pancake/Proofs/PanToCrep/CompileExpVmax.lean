@@ -47,7 +47,7 @@ private theorem cexpHeads_mem_flatten
 
 /-- Flapjack-specific local copy of the field-selection helper used to avoid
     an import cycle through the parent proof module. Its HOL port is the
-    public `compileField_mem_or_zero` declaration in that module. -/
+    public `memCompFieldHOLExact_or_zero` declaration in that module. -/
 private theorem compileField_output_mem_or_input_or_zero
     [OfNat α 0] (index : Nat) (shapes : List Shape)
     (expressions : List (CrepExp α)) (output : CrepExp α)
