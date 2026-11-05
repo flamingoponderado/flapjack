@@ -124,7 +124,8 @@ theorem heapInMemoryStore_storeConstructor {width : Nat} [NeZero width] (conf : 
     (decoded : WordGcFunctions.decodeLength conf header = BitVec.ofNat width addresses.length)
     (heapMem : heapInMemoryStore (pre ++ heapExpand (sp + sp1) ++ post)
       (heapLength pre) sp sp1 gens conf store memory domain limit) :
-    ∃ curr, store.lookup .nextFree = some (.word (curr + StackRemove.bytesInWord width * BitVec.ofNat width (heapLength pre))) ∧
+    ∃ curr, store.lookup .currHeap = some (.word curr) ∧
+      store.lookup .nextFree = some (.word (curr + StackRemove.bytesInWord width * BitVec.ofNat width (heapLength pre))) ∧
       let base := curr + StackRemove.bytesInWord width * BitVec.ofNat width (heapLength pre)
       let next := curr + StackRemove.bytesInWord width * BitVec.ofNat width (heapLength pre + (addresses.length + 1))
       heapInMemoryStore (pre ++ [blockRep tag addresses] ++ heapExpand (sp + sp1 - (addresses.length + 1)) ++ post)
@@ -147,7 +148,7 @@ theorem heapInMemoryStore_storeConstructor {width : Nat} [NeZero width] (conf : 
       (heapLength pre + (addresses.length + 1)) + (sp - (addresses.length + 1)) := by omega
   have endEq : heapLength pre + sp + sp1 =
       (heapLength pre + (addresses.length + 1)) + (sp - (addresses.length + 1)) + sp1 := by omega
-  refine ⟨curr, nextStore, ?_⟩
+  refine ⟨curr, currStore, nextStore, ?_⟩
   dsimp only
   refine ⟨?_, ?_, shift, lenNonzero, lenBound, shiftBound, ?_, curr, other, currAligned, otherAligned,
     ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, wordHeapNew⟩
@@ -173,7 +174,8 @@ theorem heapInMemoryStore_storeConstructor_of_encoded {width : Nat} [NeZero widt
     (encoded : encodeHeader conf (4 * tag) addresses.length = some header)
     (heapMem : heapInMemoryStore (pre ++ heapExpand (sp + sp1) ++ post)
       (heapLength pre) sp sp1 gens conf store memory domain limit) :
-    ∃ curr, store.lookup .nextFree = some (.word (curr + StackRemove.bytesInWord width * BitVec.ofNat width (heapLength pre))) ∧
+    ∃ curr, store.lookup .currHeap = some (.word curr) ∧
+      store.lookup .nextFree = some (.word (curr + StackRemove.bytesInWord width * BitVec.ofNat width (heapLength pre))) ∧
       let base := curr + StackRemove.bytesInWord width * BitVec.ofNat width (heapLength pre)
       let next := curr + StackRemove.bytesInWord width * BitVec.ofNat width (heapLength pre + (addresses.length + 1))
       heapInMemoryStore (pre ++ [blockRep tag addresses] ++ heapExpand (sp + sp1 - (addresses.length + 1)) ++ post)
@@ -241,6 +243,7 @@ theorem memoryRel_allocateBlock_from_heap {width : Nat} [NeZero width] (conf : C
     (inv : wordMlInv (pre ++ heapExpand (sp + sp1) ++ post, be, heapLength pre, sp, sp1, gens)
       limit next conf refs (fields ++ vars)) :
     ∃ (curr : BitVec width) (addresses : List (HeapAddress (WordLocW width))),
+      store.lookup .currHeap = some (.word curr) ∧
       store.lookup .nextFree = some (.word (curr + StackRemove.bytesInWord width * BitVec.ofNat width (heapLength pre))) ∧
       addresses.length = fields.length ∧
       addresses.map (wordAddr conf) = fields.map Prod.snd ∧
@@ -258,9 +261,9 @@ theorem memoryRel_allocateBlock_from_heap {width : Nat} [NeZero width] (conf : C
       List.forall₂_map_left_iff.mpr projected
     simpa only [List.forall₂_eq_eq_eq] using mapped
   have encoded' : encodeHeader conf (4 * tag) addresses.length = some header := by simpa [lengthEq] using encoded
-  obtain ⟨curr, nextStore, updatedHeap⟩ := heapInMemoryStore_storeConstructor_of_encoded conf pre post addresses tag sp sp1
+  obtain ⟨curr, currStore, nextStore, updatedHeap⟩ := heapInMemoryStore_storeConstructor_of_encoded conf pre post addresses tag sp sp1
     header gens store memory domain limit (by omega) encoded' heapMem
-  refine ⟨curr, addresses, nextStore, lengthEq, wordsEq, ?_⟩
+  refine ⟨curr, addresses, currStore, nextStore, lengthEq, wordsEq, ?_⟩
   dsimp only
   refine ⟨pre ++ [blockRep tag addresses] ++ heapExpand (sp + sp1 - (addresses.length + 1)) ++ post,
     limit, heapLength pre + (addresses.length + 1), sp - (addresses.length + 1), sp1, gens,
@@ -282,6 +285,7 @@ theorem memoryRel_allocateBlock {width : Nat} [NeZero width] (conf : Config)
     (encoded : encodeHeader conf (4 * tag) fields.length = some header)
     (related : memoryRel conf be next refs space store memory domain (fields ++ vars)) :
     ∃ (curr : BitVec width) (index : Nat),
+      store.lookup .currHeap = some (.word curr) ∧
       store.lookup .nextFree = some (.word (curr + StackRemove.bytesInWord width * BitVec.ofNat width index)) ∧
       let base := curr + StackRemove.bytesInWord width * BitVec.ofNat width index
       let nextFree := curr + StackRemove.bytesInWord width * BitVec.ofNat width (index + (fields.length + 1))
@@ -310,9 +314,9 @@ theorem memoryRel_allocateBlock {width : Nat} [NeZero width] (conf : Config)
   have invariant' : wordMlInv (pre ++ heapExpand (sp + sp1) ++ post, be, heapLength pre, sp, sp1, gens)
       limit next conf refs (fields ++ vars) := by
     simpa only [freeEq, List.append_assoc, List.singleton_append] using invariant
-  obtain ⟨curr, _, nextStore, _, _, result⟩ := memoryRel_allocateBlock_from_heap conf fields vars refs pre post
+  obtain ⟨curr, _, currStore, nextStore, _, _, result⟩ := memoryRel_allocateBlock_from_heap conf fields vars refs pre post
     sp sp1 next tag limit space be gens header store memory domain nonempty (by omega) spaceBound limitBound encoded heapMem' invariant'
-  exact ⟨curr, heapLength pre, nextStore, result⟩
+  exact ⟨curr, heapLength pre, currStore, nextStore, result⟩
 
 /-- The actual store loop and the constructor's resulting memory relation
 compose directly from the original related memory. The setup registers must
@@ -338,7 +342,7 @@ theorem memoryRel_allocateBlock_storeEach {width : Nat} [NeZero width] {C F : Ty
         (storeEachMemory base 0 (.word header :: fields.map Prod.snd) state.memory) state.mdomain
         (((.block next tag (fields.map Prod.fst)),
           wordAddr conf (.pointer index (.word (ptrBits conf tag fields.length)))) :: fields ++ vars) := by
-  obtain ⟨curr, index, nextStore, result⟩ :=
+  obtain ⟨curr, index, _, nextStore, result⟩ :=
     memoryRel_allocateBlock conf fields vars refs next tag space be header state.store state.memory state.mdomain
       nonempty enough encoded related
   have baseValue : WordSemStateFiniteExact.getVar baseName state =
