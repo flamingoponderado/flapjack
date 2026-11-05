@@ -2,7 +2,9 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.WordFragment
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.FragmentSpace
 import Flapjack.Compiler.Backend.BviToData.Proofs.Simulation
 import Flapjack.Compiler.Backend.BviToData.Proofs.Program
+import Flapjack.Compiler.Backend.BviToData.Proofs.Semantics
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.CallFragment
+import Flapjack.Compiler.Backend.Semantics.WordSem.Semantics
 
 /-! Connecting allocation-capable data fragments to configured word output. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
@@ -388,5 +390,266 @@ theorem configuredBviCallFragment_entry {C F : Type} (fuel : Nat)
     · exact False.elim (notOutOfSpace failure.1)
   exact ⟨dataResult, dataFinal, by simpa only [targetCode] using codeRel,
     dataRun, finalRel, projection, bviWord, wordResult, targetFinal, wordRun, notOutOfSpace, ffiEq⟩
+
+/-- Every clock of a non-failing BVI initial program has a matching execution
+of the word-semantics entry call, provided the emitted data code belongs to
+the recursive call fragment and the initial word state is related at clock
+zero. Initial BVI/data correspondence and non-type-error facts are derived,
+not assumed. Allocation instructions, initial word-state construction, and
+whole-program HOL correspondence remain open. -/
+theorem configuredBviCallFragment_initial {C F : Type} (fuel : Nat)
+    (source nextSource : Config) (closure nextClosure : ClosToBvl.Config)
+    (bvlConfig nextBvlConfig : BvlToBvi.Config) (word : DataToWord.Config)
+    (declarations : List AstHOL.Dec) (bviCode : List (Nat × Nat × Bvi.Exp))
+    (wordCode : List (Nat × Nat × WordLangProgHOL (BitVec 64)))
+    (names : Spt Basis.Pure.MlString.MlString)
+    (bviCompile : compileCakeToBviConfiguredFuel fuel source closure bvlConfig declarations =
+      some (nextSource, nextClosure, nextBvlConfig, bviCode, names))
+    (wordCompile : compileCakeToWord64ConfiguredFuel fuel source closure bvlConfig word declarations =
+      some (nextSource, nextClosure, nextBvlConfig, wordCode, names))
+    (ffi : HolFfiState F) (oracle : BviSem.CompileOracle C) (compiler : DataSem.Compiler C)
+    (limits : DataSem.Limits) (sizes : Spt Nat) (start : Nat)
+    (noFail : BviSem.semantics ffi (sptFromAList bviCode) oracle
+      (fun cfg code => compiler cfg (BviToData.compileProg code)) start ≠ .fail)
+    (target : WordSemStateFiniteExact 64 C F)
+    (targetCode : target.code = sptFromAList wordCode)
+    (closed : CallFragmentCode (sptFromAList (BviToData.compileProg bviCode)))
+    (initialRelated : stateRel64 word 1 0
+      (DataSem.initialState ffi (sptFromAList (BviToData.compileProg bviCode))
+        (fun n => let (cfg, code) := oracle n; (cfg, BviToData.compileProg code))
+        compiler true limits sizes 0) { target with clock := 0 } none []) :
+    ∀ clock, ∃ result bviFinal dataResult dataFinal wordResult wordFinal,
+      BviSem.evaluate [.call 0 (some start) [] none] []
+        (BviSem.initialState ffi (sptFromAList bviCode) oracle
+          (fun cfg code => compiler cfg (BviToData.compileProg code)) clock) = (result, bviFinal) ∧
+      DataSem.evaluate (.call none (some start) [] none)
+        (DataSem.initialState ffi (sptFromAList (BviToData.compileProg bviCode))
+          (fun n => let (cfg, code) := oracle n; (cfg, BviToData.compileProg code))
+          compiler true limits sizes clock) = (some dataResult, dataFinal) ∧
+      BviToData.stateRel bviFinal dataFinal ∧ BviToData.dataToBviResult dataResult = result ∧
+      WordSemStateFiniteExact.evaluate (.call none (some start) [0] none) { target with clock := clock } =
+        (some wordResult, wordFinal) ∧ wordResult ≠ .notEnoughSpace ∧ wordFinal.ffi = bviFinal.ffi ∧
+      ((∃ values words, result = .val values ∧ wordResult = .result (.loc 1 0) words) ∨
+        (result = .err (.abort .timeoutError) ∧ wordResult = .timeOut)) ∧
+      bviWordOutcomes64 word 1 0 result (.call none (some start) [] none)
+        (.call none (some start) [0] none)
+        (DataSem.initialState ffi (sptFromAList (BviToData.compileProg bviCode))
+          (fun n => let (cfg, code) := oracle n; (cfg, BviToData.compileProg code))
+          compiler true limits sizes clock) { target with clock := clock } [] := by
+  classical
+  have noFatal : ¬ ∃ clock error,
+      (BviSem.evaluate [.call 0 (some start) [] none] []
+        (BviSem.initialState ffi (sptFromAList bviCode) oracle
+          (fun cfg code => compiler cfg (BviToData.compileProg code)) clock)).1 = .err error ∧
+      error ≠ .abort .timeoutError ∧ ∀ event, error ≠ .abort (.ffiError event) := by
+    intro fatal
+    apply noFail
+    simp [BviSem.semantics, BviSem.evaluateTuple, fatal]
+  intro clock
+  generalize bviRun : BviSem.evaluate [.call 0 (some start) [] none] []
+    (BviSem.initialState ffi (sptFromAList bviCode) oracle
+      (fun cfg code => compiler cfg (BviToData.compileProg code)) clock) = pair
+  obtain ⟨result, bviFinal⟩ := pair
+  have notType : result ≠ .err (.abort .typeError) := by
+    intro eq
+    apply noFatal
+    refine ⟨clock, .abort .typeError, ?_, by simp, by simp⟩
+    simpa [bviRun] using eq
+  have notRaise : ∀ x, result ≠ .err (.raise x) := by
+    intro x eq
+    apply noFatal
+    refine ⟨clock, .raise x, ?_, by simp, by simp⟩
+    simpa [bviRun] using eq
+  have relatedAtClock : stateRel64 word 1 0
+      (DataSem.initialState ffi (sptFromAList (BviToData.compileProg bviCode))
+        (fun n => let (cfg, code) := oracle n; (cfg, BviToData.compileProg code))
+        compiler true limits sizes clock) { target with clock := clock } none [] := by
+    have shifted := stateRel64_withClock word 1 0
+      (DataSem.initialState ffi (sptFromAList (BviToData.compileProg bviCode))
+        (fun n => let (cfg, code) := oracle n; (cfg, BviToData.compileProg code)) compiler true limits sizes 0)
+      { target with clock := 0 } none [] clock initialRelated
+    simpa [DataSem.initialState] using shifted
+  have initialRel := BviToData.initialState_related ffi bviCode oracle compiler true limits sizes clock
+  obtain ⟨dataResult, dataFinal, codeRel, dataRun, finalRel, projection, outcomes,
+    wordResult, wordFinal, wordRun, enough, ffiEq⟩ :=
+    configuredBviCallFragment_entry fuel source nextSource closure nextClosure bvlConfig nextBvlConfig word
+      declarations bviCode wordCode names bviCompile wordCompile start 0 2 1 0
+      (BviSem.initialState ffi (sptFromAList bviCode) oracle
+        (fun cfg code => compiler cfg (BviToData.compileProg code)) clock) bviFinal result bviRun notType
+      (DataSem.initialState ffi (sptFromAList (BviToData.compileProg bviCode))
+        (fun n => let (cfg, code) := oracle n; (cfg, BviToData.compileProg code)) compiler true limits sizes clock)
+      { target with clock := clock } initialRel (by simp [DataSem.initialState])
+      (by intro x eq; exact False.elim (notRaise x eq)) [] relatedAtClock rfl
+      (by simpa using targetCode) closed
+  have classified : (∃ values words, result = .val values ∧ wordResult = .result (.loc 1 0) words) ∨
+      (result = .err (.abort .timeoutError) ∧ wordResult = .timeOut) := by
+    rcases outcomes with returned | timeout | raised | outOfSpace
+    · obtain ⟨values, words, dataLast, targetLast, length, resultEq, dataRun', targetRun, related⟩ := returned
+      have wordEq : wordResult = .result (.loc 1 0) words := by
+        have eq := wordRun.symm.trans targetRun
+        exact Option.some.inj (congrArg Prod.fst eq)
+      rcases resultEq with normal | ret
+      · exact Or.inl ⟨values.map BviToData.dataToBviValue, words, normal, wordEq⟩
+      · exact False.elim (notRaise _ ret)
+    · obtain ⟨dataLast, targetLast, resultEq, dataRun', targetRun, ffiEq', bound⟩ := timeout
+      have wordEq : wordResult = .timeOut := by
+        have eq := wordRun.symm.trans targetRun
+        exact Option.some.inj (congrArg Prod.fst eq)
+      exact Or.inr ⟨resultEq, wordEq⟩
+    · obtain ⟨value, _, _, _, _, _, _, _, _, resultEq, _⟩ := raised
+      exact False.elim (notRaise _ resultEq)
+    · obtain ⟨targetLast, targetRun, _⟩ := outOfSpace
+      have eq : wordResult = .notEnoughSpace := by
+        have same := wordRun.symm.trans targetRun
+        exact Option.some.inj (congrArg Prod.fst same)
+      exact False.elim (enough eq)
+  exact ⟨result, bviFinal, dataResult, dataFinal, wordResult, wordFinal, rfl, dataRun,
+    finalRel, projection, wordRun, enough, ffiEq, classified, outcomes⟩
+
+/-- Equal per-clock entry outcomes and FFI states yield equal whole-program
+observations, including the least upper bound of traces on divergence. This
+is Lean-side observational infrastructure, not a HOL theorem port. -/
+theorem bviWord_semantics_of_clockRuns {C F : Type} (ffi : HolFfiState F)
+    (code : Spt (Nat × Bvi.Exp)) (oracle : BviSem.CompileOracle C) (compiler : BviSem.Compiler C)
+    (target : WordSemStateFiniteExact 64 C F) (start : Nat)
+    (noFail : BviSem.semantics ffi code oracle compiler start ≠ .fail)
+    (runs : ∀ clock, ∃ result bviFinal wordResult wordFinal,
+      BviSem.evaluate [.call 0 (some start) [] none] []
+        (BviSem.initialState ffi code oracle compiler clock) = (result, bviFinal) ∧
+      WordSemStateFiniteExact.evaluate (.call none (some start) [0] none) { target with clock := clock } =
+        (some wordResult, wordFinal) ∧ wordFinal.ffi = bviFinal.ffi ∧
+      ((∃ values words, result = .val values ∧ wordResult = .result (.loc 1 0) words) ∨
+        (result = .err (.abort .timeoutError) ∧ wordResult = .timeOut))) :
+    WordSemStateFiniteExact.semantics target start = BviSem.semantics ffi code oracle compiler start := by
+  classical
+  let sourceRun := fun clock => BviSem.evaluate [.call 0 (some start) [] none] []
+    (BviSem.initialState ffi code oracle compiler clock)
+  let targetRun := fun clock => WordSemStateFiniteExact.evaluate (.call none (some start) [0] none)
+    { target with clock := clock }
+  have noSourceFatal : ¬ ∃ clock error, (sourceRun clock).1 = .err error ∧
+      error ≠ .abort .timeoutError ∧ ∀ event, error ≠ .abort (.ffiError event) := by
+    intro fatal
+    apply noFail
+    simp [BviSem.semantics, BviSem.evaluateTuple, sourceRun, fatal]
+  let wordObservation : HolBehaviour → Prop := fun behavior => ∃ clock t r outcome,
+    targetRun clock = (r, t) ∧
+    (match r with
+     | some (.finalFfi e) => outcome = HolOutcome.ffiOutcome e
+     | some (.result _ _) => outcome = HolOutcome.success
+     | some .notEnoughSpace => outcome = HolOutcome.resourceLimitHit
+     | _ => False) ∧ behavior = HolBehaviour.terminate outcome t.ffi.ioEvents
+  have observationEq : wordObservation = BviSem.terminatingObservation ffi code oracle compiler start := by
+    funext behavior
+    apply propext
+    constructor
+    · rintro ⟨clock, t, r, outcome, targetEq, observed, behaviorEq⟩
+      obtain ⟨result, bs, wr, ws, br, tr, ffiEq, classified⟩ := runs clock
+      have targetEq' : targetRun clock = (some wr, ws) := tr
+      have pairEq := targetEq.symm.trans targetEq'
+      cases pairEq
+      rcases classified with ⟨values, words, resultEq, wordEq⟩ | ⟨resultEq, wordEq⟩
+      · subst result
+        subst wr
+        simp only at observed
+        subst outcome
+        refine ⟨clock, .val values, bs, .success, ?_, rfl, ?_⟩
+        · simpa [BviSem.evaluateTuple] using br
+        · simpa [ffiEq] using behaviorEq
+      · subst wr
+        simp at observed
+    · rintro ⟨clock, result, bs, outcome, sourceEq, observed, behaviorEq⟩
+      obtain ⟨result', bs', wr, ws, br, tr, ffiEq, classified⟩ := runs clock
+      have sourceEq' : sourceRun clock = (result, bs) := by simpa [sourceRun, BviSem.evaluateTuple] using sourceEq
+      have sourcePair : (result, bs) = (result', bs') := sourceEq'.symm.trans br
+      cases sourcePair
+      rcases classified with ⟨values, words, resultEq, wordEq⟩ | ⟨resultEq, wordEq⟩
+      · subst result
+        subst wr
+        simp only at observed
+        subst outcome
+        refine ⟨clock, ws, some (.result (.loc 1 0) words), .success, tr, rfl, ?_⟩
+        simpa [ffiEq] using behaviorEq
+      · subst result
+        simp at observed
+  have traceEq : (fun trace => ∃ clock, trace = HolLList.fromList (targetRun clock).2.ffi.ioEvents) =
+      (fun trace => ∃ clock, trace = HolLList.fromList (sourceRun clock).2.ffi.ioEvents) := by
+    funext trace
+    apply propext
+    constructor <;> rintro ⟨clock, eq⟩
+    · obtain ⟨result, bs, wr, ws, br, tr, ffiEq, classified⟩ := runs clock
+      refine ⟨clock, ?_⟩
+      simpa [targetRun, sourceRun, tr, br, ffiEq] using eq
+    · obtain ⟨result, bs, wr, ws, br, tr, ffiEq, classified⟩ := runs clock
+      refine ⟨clock, ?_⟩
+      simpa [targetRun, sourceRun, tr, br, ffiEq] using eq
+  have wordSemEq : WordSemStateFiniteExact.semantics target start =
+    (match holOptionSome wordObservation with
+    | some behavior => behavior
+    | none => .diverge (HolLList.buildLprefixLub (fun trace => ∃ clock, trace = HolLList.fromList (targetRun clock).2.ffi.ioEvents))) := by
+    unfold WordSemStateFiniteExact.semantics
+    dsimp only
+    split
+    · rename_i fatal
+      obtain ⟨clock, bad⟩ := fatal
+      obtain ⟨result, bs, wr, ws, br, tr, ffiEq, classified⟩ := runs clock
+      rw [tr] at bad
+      rcases classified with ⟨values, words, _, eq⟩ | ⟨_, eq⟩ <;> simp [eq] at bad
+    · congr 2
+      funext behavior
+      apply propext
+      dsimp only [wordObservation, targetRun]
+      constructor <;> rintro ⟨clock, t, r, outcome, run, observed, equal⟩
+      all_goals refine ⟨clock, t, r, outcome, run, ?_, equal⟩
+      all_goals cases r with
+        | none => simp at observed
+        | some r => cases r <;> simp_all
+  rw [wordSemEq]
+  unfold BviSem.semantics
+  have sourceFatalEq : ¬ ∃ clock error, (BviSem.evaluateTuple ([.call 0 (some start) [] none], [],
+      BviSem.initialState ffi code oracle compiler clock)).1 = .err error ∧
+      error ≠ .abort .timeoutError ∧ ∀ event, error ≠ .abort (.ffiError event) := by
+    simpa [sourceRun, BviSem.evaluateTuple] using noSourceFatal
+  simp only [sourceFatalEq, if_false]
+  rw [observationEq, traceEq]
+  rfl
+
+/-- For non-failing BVI programs whose compiled data code lies in the
+recursive call fragment, the actual word-semantics observation agrees with
+the BVI observation, including divergence. This Lean-side composition uses
+the candidate initial state relation; allocation instructions, construction
+of that state, and HOL evaluator correspondence remain open. -/
+theorem configuredBviCallFragment_semantics {C F : Type} (fuel : Nat)
+    (source nextSource : Config) (closure nextClosure : ClosToBvl.Config)
+    (bvlConfig nextBvlConfig : BvlToBvi.Config) (word : DataToWord.Config)
+    (declarations : List AstHOL.Dec) (bviCode : List (Nat × Nat × Bvi.Exp))
+    (wordCode : List (Nat × Nat × WordLangProgHOL (BitVec 64)))
+    (names : Spt Basis.Pure.MlString.MlString)
+    (bviCompile : compileCakeToBviConfiguredFuel fuel source closure bvlConfig declarations =
+      some (nextSource, nextClosure, nextBvlConfig, bviCode, names))
+    (wordCompile : compileCakeToWord64ConfiguredFuel fuel source closure bvlConfig word declarations =
+      some (nextSource, nextClosure, nextBvlConfig, wordCode, names))
+    (ffi : HolFfiState F) (oracle : BviSem.CompileOracle C) (compiler : DataSem.Compiler C)
+    (limits : DataSem.Limits) (sizes : Spt Nat) (start : Nat)
+    (noFail : BviSem.semantics ffi (sptFromAList bviCode) oracle
+      (fun cfg code => compiler cfg (BviToData.compileProg code)) start ≠ .fail)
+    (target : WordSemStateFiniteExact 64 C F)
+    (targetCode : target.code = sptFromAList wordCode)
+    (closed : CallFragmentCode (sptFromAList (BviToData.compileProg bviCode)))
+    (initialRelated : stateRel64 word 1 0
+      (DataSem.initialState ffi (sptFromAList (BviToData.compileProg bviCode))
+        (fun n => let (cfg, code) := oracle n; (cfg, BviToData.compileProg code))
+        compiler true limits sizes 0) { target with clock := 0 } none []) :
+    WordSemStateFiniteExact.semantics target start =
+      BviSem.semantics ffi (sptFromAList bviCode) oracle
+        (fun cfg code => compiler cfg (BviToData.compileProg code)) start := by
+  apply bviWord_semantics_of_clockRuns ffi (sptFromAList bviCode) oracle
+    (fun cfg code => compiler cfg (BviToData.compileProg code)) target start noFail
+  intro clock
+  obtain ⟨result, bviFinal, dataResult, dataFinal, wordResult, wordFinal,
+    bviRun, dataRun, finalRel, projection, wordRun, enough, ffiEq, classified, outcomes⟩ :=
+    configuredBviCallFragment_initial fuel source nextSource closure nextClosure bvlConfig nextBvlConfig word
+      declarations bviCode wordCode names bviCompile wordCompile ffi oracle compiler limits sizes start noFail
+      target targetCode closed initialRelated clock
+  exact ⟨result, bviFinal, wordResult, wordFinal, bviRun, wordRun, ffiEq, classified⟩
 
 end Flapjack.Compiler.Backend.SourceToFlat

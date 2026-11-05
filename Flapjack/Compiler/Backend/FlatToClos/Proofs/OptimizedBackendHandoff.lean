@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.BackendHandoff
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.MtiKnownCallDataHandoff
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.WordSpaceFragment
 
 /-! CakeML source behavior through all closure optimizations and BVI. -/
 namespace Flapjack.Compiler.Backend.FlatToClos
@@ -195,7 +196,10 @@ theorem cakeToAllOptimizedData_semantics {C F : Type} [Nonempty C]
         compiler limits sizes targetStart) ∧
       (final.mapM fun (name, argc, body) => do
         pure (name, argc, ← BviToData.compileExpBounded bviFuel argc body)) =
-        some (BviToData.compileProg final) := by
+        some (BviToData.compileProg final) ∧
+      Flapjack.SemanticsHOL.semanticsProg source sourceEnv declarations
+        (BviSem.semantics source.ffi (sptFromAList final) bviOracle
+          (fun cfg code => compiler cfg (BviToData.compileProg code)) targetStart) := by
   let bviCompiler : BviSem.Compiler C := fun cfg code => compiler cfg (BviToData.compileProg code)
   let bviOracle := mtiKnownCallBviOracle closureFuel config.maxApp inlineLimit cutSize
     splitSeq tailEnabled tmcEnabled knownConfig (sourceClosureOracle flatConfig)
@@ -211,10 +215,11 @@ theorem cakeToAllOptimizedData_semantics {C F : Type} [Nonempty C]
     apply safe
     simpa [bviOracle, mtiKnownCallBviOracle, bviCompiler, failure] using behavior
   have agreement := BviToData.compileProg_semantics source.ffi final bviOracle compiler limits sizes targetStart noFail
-  constructor
+  refine ⟨?_, ?_, ?_⟩
   · rw [agreement]
     exact behavior
   · exact BviToData.compileProgBounded_agrees bviFuel final
+  · simpa [bviOracle, mtiKnownCallBviOracle, bviCompiler] using behavior
 
 /-- A successful configured CakeML-to-BVI run supplies all intermediate
 executions needed for the all-optimizations source-to-data composition.
@@ -286,7 +291,10 @@ theorem cakeConfiguredToAllOptimizedData_semantics {C F : Type} [Nonempty C]
         compiler limits sizes resultClosure.start) ∧
       (resultCode.mapM fun (name, argc, body) => do
         pure (name, argc, ← BviToData.compileExpBounded fuel argc body)) =
-        some (BviToData.compileProg resultCode) := by
+        some (BviToData.compileProg resultCode) ∧
+      Flapjack.SemanticsHOL.semanticsProg source sourceEnv declarations
+        (BviSem.semantics source.ffi (sptFromAList resultCode) bviOracle
+          (fun cfg code => compiler cfg (BviToData.compileProg code)) resultClosure.start) := by
   obtain ⟨source', expressions, output, compiled, names, cache, optimized, targetStart, lowered,
     targetNext, tailLast, beforeTmc, tmcLast, afterTmc, bviCache, sourceRun, closureRun,
     optimizedRun, lowerRun, tailRun, tmcRun, inlineRun, sourceEq, closureEq, configEq, _⟩ :=
@@ -387,7 +395,10 @@ theorem cakeConfiguredAllOptimizedWordRun_data_behavior {C F : Type} [Nonempty C
       Flapjack.SemanticsHOL.semanticsProg source sourceEnv declarations
         (DataSem.semantics source.ffi (sptFromAList (BviToData.compileProg bviCode))
           (fun n => let (cfg, code) := bviOracle n; (cfg, BviToData.compileProg code))
-          compiler limits sizes resultClosure.start) := by
+          compiler limits sizes resultClosure.start) ∧
+      Flapjack.SemanticsHOL.semanticsProg source sourceEnv declarations
+        (BviSem.semantics source.ffi (sptFromAList bviCode) bviOracle
+          (fun cfg code => compiler cfg (BviToData.compileProg code)) resultClosure.start) := by
   obtain ⟨bviCode, lowered, fixed, bignum, bviRun, lowerRun, fixedRun, bignumRun, outputEq⟩ :=
     SourceToFlat.configured_word_stage_witnesses fuel sourceConfig config bvlConfig wordConfig declarations
       resultSource resultClosure resultConfig resultWord resultNames run
@@ -396,6 +407,48 @@ theorem cakeConfiguredAllOptimizedWordRun_data_behavior {C F : Type} [Nonempty C
     compiler limits sizes bviRun enabled calls known positive precondition safe production knownSafe oracleState
     initialBound knownState cacheEq oracleTailBound oracleTailWorker oracleTmcBound oracleTmcWorker
     lowerCounterBound tailCounterBound tmcCounterBound bviCacheEq
-  exact ⟨bviCode, lowered, fixed, bignum, bviRun, lowerRun, fixedRun, bignumRun, outputEq, behavior.1⟩
+  exact ⟨bviCode, lowered, fixed, bignum, bviRun, lowerRun, fixedRun, bignumRun, outputEq, behavior.1, behavior.2.2⟩
+
+/-- Compose an established source-to-BVI behavior with the actual configured
+word program, including divergent observations. The upstream source-to-BVI
+premise is supplied by `cakeConfiguredAllOptimizedWordRun_data_behavior` for
+its stated oracle conditions. This is Lean-side pipeline infrastructure: it
+still requires the call-fragment restriction and candidate initial word-state
+relation, and does not claim full HOL compiler correctness. -/
+theorem cakeBviCallFragment_word_behavior {C F : Type}
+    (fuel : Nat) (sourceConfig nextSource : SourceToFlat.Config)
+    (closure nextClosure : ClosToBvl.Config) (bvlConfig nextBvlConfig : BvlToBvi.Config)
+    (word : DataToWord.Config) (source : SemanticPrimitivesHOL.State F)
+    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (declarations : List AstHOL.Dec)
+    (bviCode : List (Nat × Nat × Bvi.Exp))
+    (wordCode : List (Nat × Nat × WordLangProgHOL (BitVec 64)))
+    (names : Spt Basis.Pure.MlString.MlString)
+    (bviCompile : SourceToFlat.compileCakeToBviConfiguredFuel fuel sourceConfig closure bvlConfig declarations =
+      some (nextSource, nextClosure, nextBvlConfig, bviCode, names))
+    (wordCompile : SourceToFlat.compileCakeToWord64ConfiguredFuel fuel sourceConfig closure bvlConfig word declarations =
+      some (nextSource, nextClosure, nextBvlConfig, wordCode, names))
+    (oracle : BviSem.CompileOracle C) (compiler : DataSem.Compiler C)
+    (limits : DataSem.Limits) (sizes : Spt Nat) (start : Nat)
+    (sourceToBvi : Flapjack.SemanticsHOL.semanticsProg source sourceEnv declarations
+      (BviSem.semantics source.ffi (sptFromAList bviCode) oracle
+        (fun cfg code => compiler cfg (BviToData.compileProg code)) start))
+    (safe : ¬ Flapjack.SemanticsHOL.semanticsProg source sourceEnv declarations .fail)
+    (target : WordSemStateFiniteExact 64 C F) (targetCode : target.code = sptFromAList wordCode)
+    (closed : DataToWord.Proofs.Correct.CallFragmentCode (sptFromAList (BviToData.compileProg bviCode)))
+    (initialRelated : DataToWord.Proofs.Gc.stateRel64 word 1 0
+      (DataSem.initialState source.ffi (sptFromAList (BviToData.compileProg bviCode))
+        (fun n => let (cfg, code) := oracle n; (cfg, BviToData.compileProg code))
+        compiler true limits sizes 0) { target with clock := 0 } none []) :
+    Flapjack.SemanticsHOL.semanticsProg source sourceEnv declarations
+      (WordSemStateFiniteExact.semantics target start) := by
+  have noFail : BviSem.semantics source.ffi (sptFromAList bviCode) oracle
+      (fun cfg code => compiler cfg (BviToData.compileProg code)) start ≠ .fail := by
+    intro failure
+    apply safe
+    simpa [failure] using sourceToBvi
+  have agreement := SourceToFlat.configuredBviCallFragment_semantics fuel sourceConfig nextSource closure nextClosure
+    bvlConfig nextBvlConfig word declarations bviCode wordCode names bviCompile wordCompile source.ffi oracle compiler
+    limits sizes start noFail target targetCode closed initialRelated
+  simpa [agreement] using sourceToBvi
 
 end Flapjack.Compiler.Backend.FlatToClos
