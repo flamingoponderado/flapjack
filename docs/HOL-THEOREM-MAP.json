@@ -1,6 +1,30 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "gc_move_data_pres",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Conservation.lean",
+  "lean_name": "gcMove_dataMem",
+  "statement_status": "pending_statement_review",
+  "reviewer": "The data-membership statement was compared with the source; inferred HOL types and the local proof replay remain to be checked."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "gc_move_list_data_pres",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Conservation.lean",
+  "lean_name": "gcMoveList_dataMem",
+  "statement_status": "pending_statement_review",
+  "reviewer": "The data-membership statement was compared with the source; inferred HOL types and the local proof replay remain to be checked."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "gc_move_ref_list_data_pres",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Conservation.lean",
+  "lean_name": "gcMoveRefList_dataMem",
+  "statement_status": "pending_statement_review",
+  "reviewer": "The reference-list payload is independent of the state payload; inferred HOL types and the local proof replay remain to be checked."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
   "hol_name": "gc_move_ref_list_simulation",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
   "lean_name": "gcMoveRefList_simulation",
