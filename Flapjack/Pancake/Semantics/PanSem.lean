@@ -1369,6 +1369,28 @@ theorem panSemEvaluateExactState_return_error_of_eval_none
     panSemEvaluateFuel, evalPanValueFfiClockLeaf, evalPanValueFfiClockProg, evalPanValueFfiLeafControl, panValueReturnResult, evalPanValueExpWith,
     PanSemExactState.toEvaluateState, heval]
 
+theorem panSemEvaluateExactState_return_error_of_oversized
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (context : PanValueFfiContext α)
+    (primitive : PanPrimitiveHandler α)
+    (handler : PanValueStatefulFfiHandler α σ)
+    (state : PanSemExactState α σ)
+    (expression : Exp α) (value : PanValue α)
+    (heval : evalPanValueExp state.legacy.structs state.legacy.locals
+      state.legacy.globals state.legacy.memory state.legacy.baseAddress
+      state.legacy.topAddress state.legacy.bytesInWord expression
+      (memoryAccess := some state.memoryAccess) = some value)
+    (hlimit : panValuePayloadWithinLimit state.legacy.structs value = false) :
+    panSemEvaluateExactState context primitive handler state
+        (.return expression) =
+      some (.control (.error state.legacy.locals state.legacy.globals
+        state.legacy.memory state.legacy.ffi), state.legacy.clock) := by
+  simp [panSemEvaluateExactState, panSemEvaluate, panSemEvaluateWithFuel,
+    panSemEvaluateFuel, evalPanValueFfiClockLeaf, evalPanValueFfiClockProg, evalPanValueFfiLeafControl, panValueReturnResult, evalPanValueExpWith,
+    PanSemExactState.toEvaluateState, heval, hlimit]
+
 /-! Exact source `Raise` Error paths: an expression that fails to evaluate and
     a payload that fails the exception-shape or size check both yield
     `SOME Error` with the full unchanged state (HOL `panSemScript.sml:641-650`). -/
