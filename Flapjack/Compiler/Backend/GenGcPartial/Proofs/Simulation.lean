@@ -4,6 +4,7 @@ import Mathlib.Data.List.Basic
 import Flapjack.Compiler.Backend.GcShared.Slice
 import Flapjack.Compiler.Backend.GenGc.Proofs.HeapLookup
 import Flapjack.Compiler.Backend.GenGc.Proofs.Progress
+import Flapjack.Compiler.Backend.GenGc.Proofs.Invariant
 import Flapjack.Compiler.Backend.GenGcPartial.Proofs.Forward
 import Flapjack.Compiler.Backend.GenGcPartial.Proofs.Conservation
 import Flapjack.Compiler.Backend.GenGcPartial.Proofs.Accumulator
@@ -1588,5 +1589,77 @@ theorem rootsOk_simulation {α β : Type} (conf : Config β) (roots : List (Heap
       simp [object]
     subst ptr
     exact lookupCurrent original lower upper (validHeap.2.2 children len data original originalValue ⟨inHeap, child⟩)
+
+/-- A valid heap's current-generation segment remains valid after translation.
+The local HOL proof has not yet been replayed. -/
+@[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "heap_ok_simulation"]
+theorem heapOk_simulation {α β : Type} (conf : Config β)
+    (heap old current refs : List (HeapElement α β)) (validHeap : heapOk heap conf.limit)
+    (segment : heapSegment (conf.genStart, conf.refsStart) heap = some (old, current, refs))
+    (lower : conf.genStart ≤ conf.refsStart) (upper : conf.refsStart ≤ conf.limit) :
+    heapOk (toGenHeapList conf current) (toGenConf conf).limit := by
+  obtain ⟨whole, oldLen, endLen, _⟩ := heapSegment_imp heap conf.genStart conf.refsStart old current refs segment
+  have currentMember : ∀ element ∈ current, element ∈ heap := by
+    intro element member
+    rw [← whole]
+    simp [member]
+  have noForward : ∀ element ∈ heap, isForwardPointer element = false := by
+    intro element member
+    cases flag : isForwardPointer element with
+    | false => rfl
+    | true =>
+      have inFilter : element ∈ heap.filter isForwardPointer := by simp [member, flag]
+      rw [validHeap.2.1] at inFilter
+      simp at inFilter
+  refine ⟨?_, ?_, ?_⟩
+  · rw [heapLength_append, oldLen] at endLen
+    rw [heapLength_toGenHeapList]
+    simp only [toGenConf]
+    omega
+  · apply List.filter_eq_nil_iff.mpr
+    intro element member
+    obtain ⟨source, sourceMember, rfl⟩ := List.mem_map.mp member
+    have original := noForward source (currentMember source sourceMember)
+    cases source <;> simp [toGenHeapElement, isForwardPointer] at original ⊢
+  · intro children len data ptr value ⟨object, child⟩
+    obtain ⟨source, sourceMember, eq⟩ := List.mem_map.mp object
+    cases source with
+    | unused size => simp [toGenHeapElement] at eq
+    | forwardPointer dest old size => simp [toGenHeapElement] at eq
+    | dataElement original size payload =>
+      simp only [toGenHeapElement, HeapElement.dataElement.injEq] at eq
+      obtain ⟨rfl, rfl, rfl⟩ := eq
+      have originalRoots : rootsOk original heap := by
+        intro originalPtr originalValue member
+        exact validHeap.2.2 original size payload originalPtr originalValue
+          ⟨currentMember _ sourceMember, member⟩
+      have translatedRoots := rootsOk_simulation conf original heap old current refs
+        originalRoots validHeap segment lower
+      apply translatedRoots ptr value
+      exact List.mem_append.mpr (Or.inl child)
+
+/-- Flapjack proof infrastructure: valid partial-collection input has a
+successful partial result satisfying the simulation invariant. -/
+theorem partialGc_success {α β : Type} (conf : Config β)
+    (roots : List (HeapAddress α)) (heap : List (HeapElement α β))
+    (validRoots : rootsOk roots heap) (validHeap : heapOk heap conf.limit)
+    (generations : heapGenOk heap conf) :
+    ∃ roots1 state1, partialGc conf (roots, heap) = (roots1, state1) ∧
+      simInv conf heap state1 ∧ state1.h2 = [] ∧ state1.ok = true := by
+  have gen := heapGenOk_genInv conf heap validHeap generations
+  obtain ⟨lower, upper, old, current, refs, segment, oldNonrefs, currentNonrefs, refData, _⟩ := gen
+  have nonrefs : List.Forall (fun e => heapElementIsRef conf e = false) (old ++ current) :=
+    List.forall_append.mpr ⟨oldNonrefs, currentNonrefs⟩
+  have translatedRoots := rootsOk_simulation conf roots heap old current refs validRoots validHeap segment lower
+  have translatedHeap := heapOk_simulation conf heap old current refs validHeap segment lower upper
+  obtain ⟨majorState, majorRun, _, majorInv, _⟩ :=
+    GenGc.genGc_invariant (toGenConf conf) (toGenRoots conf roots ++ refsToRoots conf refs)
+      (toGenHeapList conf current) translatedRoots translatedHeap
+  have majorOk : majorState.ok = true := majorInv.2.2.2.2.1
+  cases partialRun : partialGc conf (roots, heap) with
+  | mk roots1 state1 =>
+    obtain ⟨_, _, invariant, empty, ok⟩ := partialGc_simulation conf roots roots1 heap old current refs
+      state1 _ majorState partialRun generations ⟨lower, upper⟩ segment nonrefs refData validRoots majorRun validHeap majorOk
+    exact ⟨roots1, state1, rfl, invariant, empty, ok⟩
 
 end Flapjack.Compiler.Backend.GenGcPartial

@@ -1,6 +1,14 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
+  "hol_name": "heap_ok_simulation",
+  "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
+  "lean_name": "heapOk_simulation",
+  "statement_status": "pending_statement_review",
+  "reviewer": "Compared heap validity, generation segment and ordering premises, and translated heap validity with the source; inferred HOL types and local proof replay remain to be checked."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
   "hol_name": "MEM_to_gen_roots_IMP_MEM",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
   "lean_name": "mem_toGenRoots_pointerInv",
