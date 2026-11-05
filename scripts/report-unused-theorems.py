@@ -14,6 +14,13 @@ and text files and in ``Flapjack/Test`` and ``scripts`` Lean files.  This is
 deliberately coarse (a leaf name mentioned anywhere protects every theorem
 with that leaf name) so the report errs towards keeping a theorem.
 
+Theorems whose ``docs/HOL-THEOREM-MAP.json`` row cites a HOL declaration or
+has a status other than ``no_hol_reference_pending_classification`` (for
+example an untagged ``documented_mismatch`` row, which records a known HOL
+counterpart and the work tracked for an exact port) are roots as well, so
+the report never recommends deleting port bookkeeping, nor anything such a
+theorem uses.
+
 Theorems that carry any attribute other than ``hol`` (``@[simp]``,
 ``@[grind]``, ``@[ext]``, a custom simp set, ...), on the declaration or
 through a later ``attribute [...] name`` command anywhere under ``Flapjack``,
@@ -59,7 +66,7 @@ import importlib.util
 
 TEXT_GLOBS = ["*.md", "*.py", "*.sh", "*.json", "*.toml", "*.txt", "*.yml", "*.yaml",
               "Flapjack/Test/*.lean", "scripts/*.lean"]
-EXCLUDED_TEXT = {"docs/HOL-THEOREM-MAP.json"}
+EXCLUDED_TEXT = {"docs/HOL-THEOREM-MAP.json"}  # read by inventory_roots instead
 TOKEN_RE = re.compile(r"[A-Za-z_][\w?!'.]*")
 THEOREM_RE = re.compile(
     r"^(?:@\[[^\]]*\]\s*)*(?:(?:private|protected|noncomputable)\s+)*(?:theorem|lemma)\s+"
@@ -226,6 +233,20 @@ def filter_named_uses(sources: dict[str, pathlib.Path], found: list[dict]) -> li
     return [d for d in found if (d["file"], d["name"].rsplit(".", 1)[-1]) in cand]
 
 
+INVENTORY = "docs/HOL-THEOREM-MAP.json"
+PENDING = "no_hol_reference_pending_classification"
+
+
+def inventory_roots(repo: pathlib.Path) -> set[str]:
+    """Leaf names of Lean theorems whose inventory row is more than a placeholder."""
+    path = repo / INVENTORY
+    if not path.is_file():
+        return set()
+    return {row["lean_name"].rsplit(".", 1)[-1]
+            for row in json.loads(path.read_text(encoding="utf-8"))
+            if row.get("hol_path") or row.get("hol_name") or row.get("statement_status") != PENDING}
+
+
 def source_theorems(path: pathlib.Path) -> set[str]:
     """Leaf names of the theorems written in a Lean source file."""
     if not path.is_file():
@@ -244,7 +265,7 @@ def main(argv: list[str]) -> int:
     repo = pathlib.Path(__file__).resolve().parent.parent
     with tempfile.TemporaryDirectory() as tmp:
         roots_file = pathlib.Path(tmp) / "text-roots.txt"
-        roots = text_roots(repo) | automation_roots(repo)
+        roots = text_roots(repo) | automation_roots(repo) | inventory_roots(repo)
         roots_file.write_text("\n".join(sorted(roots)) + "\n")
         env = dict(os.environ, UNUSED_THEOREMS_PREFIX=args.prefix,
                    UNUSED_THEOREMS_TEXT_ROOTS=str(roots_file))

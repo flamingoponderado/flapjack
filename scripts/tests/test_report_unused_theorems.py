@@ -9,6 +9,7 @@ import sys
 import tempfile
 import unittest
 import io
+import json
 from contextlib import redirect_stderr, redirect_stdout
 from unittest import mock
 
@@ -132,6 +133,22 @@ class NamedUsesTest(unittest.TestCase):
                          {"deadA", "deadB", "deadC", "stringOnly"})
 
 
+class InventoryRootsTest(unittest.TestCase):
+    def test_only_placeholder_rows_are_candidates(self):
+        rows = [
+            {"hol_path": None, "hol_name": None, "lean_name": "Flapjack.placeholder",
+             "statement_status": "no_hol_reference_pending_classification"},
+            {"hol_path": "a/xScript.sml", "hol_name": "x", "lean_name": "Flapjack.mismatch",
+             "statement_status": "documented_mismatch"},
+            {"hol_path": "a/xScript.sml", "hol_name": "y", "lean_name": "exact",
+             "statement_status": "reviewed_exact"},
+        ]
+        with tempfile.TemporaryDirectory() as tmp:
+            (pathlib.Path(tmp) / "docs").mkdir()
+            (pathlib.Path(tmp) / rut.INVENTORY).write_text(json.dumps(rows))
+            self.assertEqual(rut.inventory_roots(pathlib.Path(tmp)), {"mismatch", "exact"})
+
+
 class MainRootsTest(unittest.TestCase):
     def test_automation_names_reach_the_lean_half(self):
         captured = {}
@@ -145,11 +162,14 @@ class MainRootsTest(unittest.TestCase):
 
         real_run = rut.subprocess.run
         with mock.patch.object(rut, "automation_roots", return_value={"onlyByAttribute"}), \
+                mock.patch.object(rut, "inventory_roots", return_value={"onlyByInventory"}), \
+                mock.patch.object(rut, "text_roots", return_value={"onlyByText"}), \
                 mock.patch.object(rut.subprocess, "run", side_effect=fake_run), \
                 redirect_stderr(io.StringIO()), redirect_stdout(io.StringIO()):
             self.assertEqual(rut.main([]), 0)
-        self.assertIn("onlyByAttribute", captured["roots"])
-        self.assertIn("unittest", captured["roots"])
+        # Every root source reaches the Lean half, and nothing else does.
+        self.assertEqual(sorted(captured["roots"]),
+                         ["onlyByAttribute", "onlyByInventory", "onlyByText"])
 
 
 class TextRootsTest(unittest.TestCase):
