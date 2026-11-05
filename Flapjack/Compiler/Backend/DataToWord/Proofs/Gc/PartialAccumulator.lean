@@ -111,6 +111,65 @@ theorem partialMoveList_withNilLemma {α β : Type} (conf : GenGcPartial.Config 
     cases newState
     rfl
 
+/-- A successful reference-list traversal started from a successful state. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "gc_partial_move_ref_list_ok_before"]
+theorem partialMoveRefList_okBefore {α β γ : Type} (conf : GenGcPartial.Config γ)
+    (refs : List (HeapElement α β)) (state : GcState α γ)
+    (refs1 : List (HeapElement α β)) (state1 : GcState α γ)
+    (run : GenGcPartial.gcMoveRefList conf state refs = (refs1, state1))
+    (ok : state1.ok = true) : state.ok = true := by
+  induction refs generalizing state state1 refs1 with
+  | nil =>
+    simp only [GenGcPartial.gcMoveRefList, Prod.mk.injEq] at run
+    obtain ⟨_, rfl⟩ := run
+    exact ok
+  | cons head refs ih =>
+    cases head with
+    | unused len => simp [GenGcPartial.gcMoveRefList, Prod.mk.injEq] at run; obtain ⟨_, rfl⟩ := run; simp at ok
+    | forwardPointer ptr value len => simp [GenGcPartial.gcMoveRefList, Prod.mk.injEq] at run; obtain ⟨_, rfl⟩ := run; simp at ok
+    | dataElement roots len payload =>
+      simp only [GenGcPartial.gcMoveRefList] at run
+      generalize headRun : GenGcPartial.gcMoveList conf state roots = result at run
+      obtain ⟨rootsMid, middle⟩ := result
+      generalize tailRun : GenGcPartial.gcMoveRefList conf middle refs = result at run
+      obtain ⟨tail, final⟩ := result
+      simp only [Prod.mk.injEq] at run
+      obtain ⟨_, rfl⟩ := run
+      exact partialMoveList_okBefore conf roots state rootsMid middle headRun
+        (ih (state := middle) (state1 := final) (refs1 := tail) tailRun ok)
+
+/-- A successful reference-list traversal factors through empty accumulators. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "gc_partial_move_ref_list_with_NIL"]
+theorem partialMoveRefList_withNil {α β γ : Type} (conf : GenGcPartial.Config γ)
+    (refs : List (HeapElement α β)) (state : GcState α γ) (output : List (HeapElement α β))
+    (result : GcState α γ) (run : GenGcPartial.gcMoveRefList conf state refs = (output, result))
+    (_ok : result.ok = true) :
+    (let (out, state1) := GenGcPartial.gcMoveRefList conf { state with h2 := [], r4 := [] } refs
+     (out, { state1 with h2 := state.h2 ++ state1.h2, r4 := state1.r4 ++ state.r4 })) = (output, result) := by
+  have h := GenGcPartial.gcMoveRefList_accumulate conf { state with h2 := [], r4 := [] } refs state.h2 state.r4
+  simp only [List.append_nil, List.nil_append] at h
+  cases state
+  exact h.symm.trans run
+
+/-- A successful reference-list traversal separates its newly accumulated heap. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "gc_partial_move_ref_list_with_NIL_LEMMA"]
+theorem partialMoveRefList_withNilLemma {α β γ : Type} (conf : GenGcPartial.Config γ)
+    (refs : List (HeapElement α β)) (state : GcState α γ) (output : List (HeapElement α β))
+    (result : GcState α γ) (run : GenGcPartial.gcMoveRefList conf state refs = (output, result))
+    (ok : result.ok = true) :
+    ∃ left right,
+      result.h2 = state.h2 ++ left ∧ result.r4 = right ++ state.r4 ∧
+      GenGcPartial.gcMoveRefList conf { state with h2 := [], r4 := [] } refs =
+        (output, { result with h2 := left, r4 := right }) := by
+  have factored := partialMoveRefList_withNil conf refs state output result run ok
+  cases clearRun : GenGcPartial.gcMoveRefList conf { state with h2 := [], r4 := [] } refs with
+  | mk moved newState =>
+    simp only [clearRun, Prod.mk.injEq] at factored
+    obtain ⟨rfl, rfl⟩ := factored
+    refine ⟨newState.h2, newState.r4, rfl, rfl, ?_⟩
+    cases newState
+    rfl
+
 /-- A successful partial data scan started from a successful state. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "gc_partial_move_data_ok_before"]
 theorem partialMoveData_okBefore {α β : Type} (conf : GenGcPartial.Config β) (state state1 : GcState α β)

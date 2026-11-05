@@ -38,6 +38,26 @@ theorem gcMoveList_accumulate {α β : Type} (conf : Config β) (state : GcState
     simp only
     rw [ih state1]
 
+/-- Adding preexisting accumulators commutes with scanning a reference list.
+This unconditional equality is local Flapjack proof infrastructure. -/
+theorem gcMoveRefList_accumulate {α β γ : Type} (conf : Config γ) (state : GcState α γ)
+    (refs : List (HeapElement α β)) (left right : List (HeapElement α γ)) :
+    gcMoveRefList conf { state with h2 := left ++ state.h2, r4 := state.r4 ++ right } refs =
+      let (refs1, state1) := gcMoveRefList conf state refs
+      (refs1, { state1 with h2 := left ++ state1.h2, r4 := state1.r4 ++ right }) := by
+  induction refs generalizing state with
+  | nil => rfl
+  | cons head refs ih =>
+    cases head with
+    | unused len => rfl
+    | forwardPointer ptr value len => rfl
+    | dataElement roots len payload =>
+      simp only [gcMoveRefList, gcMoveList_accumulate]
+      generalize run : gcMoveList conf state roots = result
+      obtain ⟨roots1, state1⟩ := result
+      simp only
+      rw [ih state1]
+
 /-- Partial root moves leave the reference accumulator unchanged. -/
 theorem gcMove_r4 {α β : Type} (conf : Config β) (state : GcState α β) (root : HeapAddress α) :
     (gcMove conf state root).2.r4 = state.r4 := by

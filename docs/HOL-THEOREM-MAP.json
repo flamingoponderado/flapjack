@@ -1,6 +1,30 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "gc_partial_move_ref_list_ok_before",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PartialAccumulator.lean",
+  "lean_name": "partialMoveRefList_okBefore",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the corresponding partial_move_ref_list typed HOL probe: the reference payload and state payload remain independent, and the hypotheses and conclusions agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "gc_partial_move_ref_list_with_NIL",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PartialAccumulator.lean",
+  "lean_name": "partialMoveRefList_withNil",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the corresponding partial_move_ref_list typed HOL probe: the reference payload and state payload remain independent, and the hypotheses and conclusions agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "gc_partial_move_ref_list_with_NIL_LEMMA",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PartialAccumulator.lean",
+  "lean_name": "partialMoveRefList_withNilLemma",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the corresponding partial_move_ref_list typed HOL probe: the reference payload and state payload remain independent, and the hypotheses and conclusions agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "word_gen_gc_partial_move_data_thm",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PartialData.lean",
   "lean_name": "wordGenGcPartialMoveData_thm",
