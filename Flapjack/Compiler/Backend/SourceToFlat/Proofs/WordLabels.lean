@@ -5,6 +5,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.AnnotationCodeSemantics
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.NumberedPrepared
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.MtiKnownDriverSemantics
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.MtiKnownCallDriver
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.CallProductionSemantics
 
 /-! Label invariants for the configured CakeML-to-word driver. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
@@ -202,8 +203,7 @@ theorem configured_bvi_labels_known (fuel : Nat)
       optimizedRun lowerRun tailRun tmcRun inlineRun
 
 /-- The emitted word code has the candidate code relation when either known
-optimization is enabled or direct-call conversion is disabled. The remaining
-direct-call-only configuration still needs its label proof. -/
+optimization is enabled or direct-call conversion is disabled. -/
 theorem compileCakeToWord64ConfiguredFuel_codeRel_knownOrNoCall (fuel : Nat)
     (source nextSource : Config) (closure nextClosure : ClosToBvl.Config)
     (bvlConfig nextBvlConfig : BvlToBvi.Config) (word : DataToWord.Config)
@@ -224,6 +224,53 @@ theorem compileCakeToWord64ConfiguredFuel_codeRel_knownOrNoCall (fuel : Nat)
       | some knownConfig =>
         exact configured_bvi_labels_known fuel source nextSource closure nextClosure bvlConfig nextBvlConfig
           declarations bviCode names run knownConfig h
+  exact compileCakeToWord64ConfiguredFuel_codeRel_of_bviLabels fuel source nextSource closure nextClosure
+    bvlConfig nextBvlConfig word declarations bviCode names run labels.1 labels.2
+
+/-- Every successful configured frontend run emits distinct BVI labels above
+the data runtime stubs, for all closure-optimizer settings. -/
+theorem configured_bvi_labels (fuel : Nat)
+    (source nextSource : Config) (closure nextClosure : ClosToBvl.Config)
+    (bvlConfig nextBvlConfig : BvlToBvi.Config) (declarations : List AstHOL.Dec)
+    (bviCode : List (Nat × Nat × Bvi.Exp)) (names : Spt Basis.Pure.MlString.MlString)
+    (run : compileCakeToBviConfiguredFuel fuel source closure bvlConfig declarations =
+      some (nextSource, nextClosure, nextBvlConfig, bviCode, names)) :
+    (bviCode.map Prod.fst).Nodup ∧ ∀ label ∈ bviCode.map Prod.fst, dataNumStubs ≤ label := by
+  cases calls : closure.doCall with
+  | false =>
+    exact configured_bvi_labels_noCall fuel source nextSource closure nextClosure bvlConfig nextBvlConfig
+      declarations bviCode names run calls
+  | true =>
+    cases known : closure.knownConf with
+    | some knownConfig =>
+      exact configured_bvi_labels_known fuel source nextSource closure nextClosure bvlConfig nextBvlConfig
+        declarations bviCode names run knownConfig known
+    | none =>
+      obtain ⟨source', expressions, output, compiled, names', cache, optimized, targetStart, lowered,
+        targetNext, tailLast, beforeTmc, tmcLast, afterTmc, bviCache, sourceRun, closureRun,
+        optimizedRun, lowerRun, tailRun, tmcRun, inlineRun, sourceEq, closureEq, configEq, rest⟩ :=
+        configured_bvi_all_stage_witnesses fuel source closure bvlConfig declarations nextSource nextClosure nextBvlConfig bviCode names run
+      have distinct := ClosToBvl.compileCallMtiFuel_mtiCall_labels fuel closure output expressions compiled names'
+        known calls closureRun
+      exact BvlToBvi.Proofs.optimizedLowerTailrecTmcInline_labels fuel bvlConfig.inlineSizeLimit bvlConfig.expCut
+        fuel fuel output.start 0 bvlConfig.splitMainAtSeq bvlConfig.doTailrec bvlConfig.doTmc compiled optimized cache
+        targetStart targetNext lowered beforeTmc afterTmc bviCode tailLast tmcLast bviCache distinct
+        optimizedRun lowerRun tailRun tmcRun inlineRun
+
+/-- The actual configured word output has the candidate data-to-word code
+relation for all closure-optimizer settings. -/
+theorem compileCakeToWord64ConfiguredFuel_codeRel_allSettings (fuel : Nat)
+    (source nextSource : Config) (closure nextClosure : ClosToBvl.Config)
+    (bvlConfig nextBvlConfig : BvlToBvi.Config) (word : DataToWord.Config)
+    (declarations : List AstHOL.Dec) (bviCode : List (Nat × Nat × Bvi.Exp))
+    (names : Spt Basis.Pure.MlString.MlString)
+    (run : compileCakeToBviConfiguredFuel fuel source closure bvlConfig declarations =
+      some (nextSource, nextClosure, nextBvlConfig, bviCode, names)) :
+    ∃ code, compileCakeToWord64ConfiguredFuel fuel source closure bvlConfig word declarations =
+      some (nextSource, nextClosure, nextBvlConfig, code, names) ∧
+      DataToWord.Proofs.Gc.codeRel64 word (sptFromAList (BviToData.compileProg bviCode)) (sptFromAList code) := by
+  have labels := configured_bvi_labels fuel source nextSource closure nextClosure bvlConfig nextBvlConfig
+    declarations bviCode names run
   exact compileCakeToWord64ConfiguredFuel_codeRel_of_bviLabels fuel source nextSource closure nextClosure
     bvlConfig nextBvlConfig word declarations bviCode names run labels.1 labels.2
 

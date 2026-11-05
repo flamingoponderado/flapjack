@@ -65,6 +65,43 @@ theorem compileCallMtiFuel_mtiCall_decompose (fuel : Nat) (config output : Confi
     refine ⟨called, callState, callRun, ?_⟩
     simpa [callRun, callOn, knownOff] using run
 
+/-- The direct-call driver produces distinct BVL labels with known-function
+optimization disabled, for either multi-argument setting. This is a
+Flapjack-side consequence of the numbering and call-pass invariants. -/
+theorem compileCallMtiFuel_mtiCall_labels (fuel : Nat) (config output : Config)
+    (source : List ClosLang.Exp) (compiled : List (Nat × Nat × Bvl.Exp))
+    (names : Spt Flapjack.Basis.Pure.MlString.MlString)
+    (knownOff : config.knownConf = none) (callOn : config.doCall = true)
+    (run : compileCallMtiFuel? fuel config source = some (output, compiled, names)) :
+    (compiled.map Prod.fst).Nodup := by
+  obtain ⟨transformed, mtiRun⟩ := ClosMti.compileFuel_succeeds fuel config.doMti config.maxApp source
+  let next := config.nextLoc + max 1 transformed.length
+  let aligned := if next % 2 = 0 then next else next + 1
+  let numbered := (ClosNumber.renumberList aligned transformed).2
+  obtain ⟨called, callState, callRun, prepared⟩ :=
+    compileCallMtiFuel_mtiCall_decompose fuel config output source transformed compiled names
+      knownOff callOn mtiRun run
+  have numberEven : aligned % 2 = 0 := by dsimp [aligned]; split <;> omega
+  have numberLower : config.nextLoc + max 1 transformed.length ≤ aligned := by
+    dsimp [aligned, next]; split <;> omega
+  have distinct : (codeLocations numbered).Nodup :=
+    ClosNumber.renumberList_codeLocations_nodup transformed aligned
+  have sourceEven : ∀ loc ∈ codeLocations numbered, loc % 2 = 0 := by
+    intro loc member
+    have parity := ClosNumber.renumberList_location_parity transformed aligned loc member
+    omega
+  have sourceLower : ∀ loc ∈ codeLocations numbered, config.nextLoc + max 1 numbered.length ≤ loc := by
+    intro loc member
+    have bounds := ClosNumber.renumberList_location_bounds transformed aligned loc member
+    have length : numbered.length = transformed.length := ClosNumber.renumberList_length transformed aligned
+    omega
+  have rawDistinct := initialCall_annotated_chain_source_nodup fuel config.nextLoc numbered called callState
+    (by simpa [numbered] using callRun) distinct sourceEven sourceLower
+  exact compilePrepared_labels_nodup_of_source config
+    { config with start := config.nextLoc, nextLoc := (ClosNumber.renumberList aligned transformed).1, knownConf := none, callState := callState } output source
+    (ClosAnnotate.compile (chainExps config.nextLoc called ++ callState.2)) compiled names
+    (by simpa [next, aligned] using prepared) rawDistinct
+
 /-- The executed direct-call-only closure compiler preserves closure
 observations through BVL preparation under the stated source and oracle
 conditions. Multi-argument introduction and known-function optimization
