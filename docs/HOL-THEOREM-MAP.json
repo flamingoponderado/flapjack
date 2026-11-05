@@ -1034,6 +1034,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+  "hol_name": "isSomeDataOrForward_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/GcShared/HeapSimilarity.lean",
+  "lean_name": "isSomeDataOrForward_replace",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared is_some_data_or_forward_lemma_typed: lookup at every address preserves the data-or-forward observation when the specified data element becomes a same-size forwarding pointer; both heap payload carriers remain independent."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
   "hol_name": "isSomeForwardPointer_def",
   "lean_path": "Flapjack/Compiler/Backend/GcShared/HeapSimilarity.lean",
   "lean_name": "isSomeForwardPointer",

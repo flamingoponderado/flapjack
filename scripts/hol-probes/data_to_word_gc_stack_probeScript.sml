@@ -151,6 +151,7 @@ val _ = show "heap_map_typed" gc_sharedTheory.heap_map_def;
 val _ = show "heaps_similar_typed" gc_sharedTheory.heaps_similar_def;
 val _ = show "is_some_forward_pointer_typed" gc_sharedTheory.isSomeForwardPointer_def;
 val _ = show "is_some_data_or_forward_typed" gc_sharedTheory.isSomeDataOrForward_def;
+val _ = show "is_some_data_or_forward_lemma_typed" gc_sharedTheory.isSomeDataOrForward_lemma;
 val _ = show "filter_lemma_typed" gc_sharedTheory.FILTER_LEMMA;
 val _ = show "heaps_similar_refl_typed" gc_sharedTheory.heaps_similar_REFL;
 val _ = show "heap_map_empty_typed" gc_sharedTheory.heap_map_EMPTY;

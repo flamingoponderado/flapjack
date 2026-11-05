@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.CopyingGc
 import Flapjack.Compiler.Backend.GcShared.HeapSimilarity
 import Flapjack.Compiler.Backend.GcShared.Reachability
+import Flapjack.Compiler.Backend.GcShared.ForwardPtr
 
 /-! Abstract invariant for the copying collector. -/
 namespace Flapjack.Compiler.Backend.CopyingGc
@@ -94,5 +95,43 @@ theorem heapMap_forward_submap {α β : Type} (before after : List (HeapElement 
     contradiction
   rw [heapMap_replace_data before after target len roots data value]
   simp [HolFiniteMapExact.lookup_update, FUPDATE, ne, old]
+
+/-- The fresh-data branch successfully installs the forwarding pointer,
+preserves previous map entries and preserves data-or-forward lookup status.
+This is a Flapjack proof step toward the complete move invariant. -/
+theorem gcInv_move_fresh_core {α β : Type} (h1 h2 heap heap0 : List (HeapElement α β))
+    (a n limit ptr len : Nat) (ok : Bool) (roots0 ys : List (HeapAddress α))
+    (value : α) (data : β)
+    (invariant : gcInv h1 h2 a n heap ok limit heap0 roots0)
+    (found : heapLookup ptr heap = some (.dataElement ys len data)) :
+    ∃ before after,
+      heap = before ++ .dataElement ys len data :: after ∧ ptr = heapLength before ∧
+      gcMove (.pointer ptr value, h2, a, n, heap, ok, limit) =
+        (.pointer a value, h2 ++ [.dataElement ys len data], a + (len + 1), n - (len + 1),
+          before ++ .forwardPointer a value len :: after, true) ∧
+      (∀ p, isSomeDataOrForward (heapLookup p heap) ↔
+        isSomeDataOrForward (heapLookup p (before ++ .forwardPointer a value len :: after))) ∧
+      (∀ i j, (heapMap 0 heap).lookup i = some j →
+        (heapMap 0 (before ++ .forwardPointer a value len :: after)).lookup i = some j) := by
+  obtain ⟨before, after, heapEq, ptrEq⟩ := heapLookup_split heap ptr _ found
+  have spaceEq := invariant.2.2.1
+  have limitEq := invariant.1
+  have okEq := invariant.2.2.2.1
+  rw [heapEq] at spaceEq
+  have enough : len + 1 ≤ n := by
+    simp [List.filter_append, isForwardPointer, heapLength, elLength,
+      List.map_append, List.sum_append] at spaceEq
+    omega
+  refine ⟨before, after, heapEq, ptrEq, ?_, ?_, ?_⟩
+  · rw [heapEq, ptrEq]
+    have atData : heapLookup (heapLength before) (before ++ .dataElement ys len data :: after) =
+        some (.dataElement ys len data) := by simpa [heapEq, ptrEq] using found
+    simp [gcMove, atData, enough, limitEq, okEq, gcForwardPtr_thm]
+  · intro p
+    rw [heapEq]
+    simpa using isSomeDataOrForward_replace before after p a len ys data value
+  · intro i j old
+    rw [heapEq] at old
+    exact heapMap_forward_submap before after ys len a data value i j old
 
 end Flapjack.Compiler.Backend.CopyingGc

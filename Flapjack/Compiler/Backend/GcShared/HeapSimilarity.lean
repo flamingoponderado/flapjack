@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.GcShared.HeapMap.Properties
+import Flapjack.Compiler.Backend.GenGc.Proofs.HeapLookup
 import Mathlib.Data.List.Forall2
 
 /-! The source heap and its forwarding-pointer version. -/
@@ -13,6 +14,26 @@ def isSomeForwardPointer {α β : Type} (element : Option (HeapElement α β)) :
 @[hol "cakeml/compiler/backend/gc/gc_sharedScript.sml" "isSomeDataOrForward_def"]
 def isSomeDataOrForward {α β : Type} (element : Option (HeapElement α β)) : Prop :=
   isSomeForwardPointer element ∨ isSomeDataElement element
+
+/-- Replacing a data element with a same-size forwarding pointer preserves
+whether any heap lookup finds data or a forwarding pointer. -/
+@[hol "cakeml/compiler/backend/gc/gc_sharedScript.sml" "isSomeDataOrForward_lemma"]
+theorem isSomeDataOrForward_replace {α β : Type} (ha hb : List (HeapElement α β))
+    (ptr target len : Nat) (ys : List (HeapAddress α)) (data : β) (u : α) :
+    isSomeDataOrForward (heapLookup ptr (ha ++ .dataElement ys len data :: hb)) ↔
+      isSomeDataOrForward (heapLookup ptr (ha ++ [.forwardPointer target u len] ++ hb)) := by
+  rw [List.append_assoc]
+  simp only [List.singleton_append]
+  rw [GenGc.heapLookup_append ptr ha, GenGc.heapLookup_append ptr ha]
+  by_cases below : ptr < heapLength ha
+  · simp [below]
+  · simp only [below, if_false]
+    by_cases zero : ptr - heapLength ha = 0
+    · simp [heapLookup, zero, isSomeDataOrForward, isSomeDataElement, isSomeForwardPointer]
+    · by_cases inside : ptr - heapLength ha < len + 1
+      · simp [heapLookup, zero, elLength, inside, isSomeDataOrForward,
+          isSomeDataElement, isSomeForwardPointer]
+      · simp [heapLookup, zero, elLength, inside]
 
 /-- A forwarded element preserves the original data element's size; all
 other elements remain unchanged. -/
