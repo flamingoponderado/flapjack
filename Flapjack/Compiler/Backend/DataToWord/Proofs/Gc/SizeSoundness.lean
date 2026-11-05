@@ -91,4 +91,52 @@ theorem dataLength_le_sizeSound {width : Nat} [NeZero width]
   obtain ⟨after, size, cover⟩ := bound
   exact Nat.le_trans (dataLength_le_reachableCover addresses heap after reachable cover) size
 
+/-- Flapjack infrastructure: the abstract ML invariant supplies the exact
+finite maps and related roots needed to bound a fully reachable heap by the
+source sizing result, including duplicated source roots. -/
+theorem absMlInv_dataLength_le_size {width : Nat} [NeZero width]
+    (limits : DataSem.Limits) (conf : Config) (roots2 dups stack : List DataSem.Value)
+    (roots : List (HeapAddress (WordLocW width))) (heap : Memory.ValueHeap width)
+    (refs : Spt (BvlSem.Ref DataSem.Value)) (be : Bool) (a sp sp1 limit next : Nat)
+    (gens : GcCombined.GenState) (good : goodDimindex width)
+    (architecture : limits.arch64Bit = decide (width = 64))
+    (invariant : Memory.absMlInv conf stack refs (roots, heap, be, a, sp, sp1, gens) limit next)
+    (reachable : Memory.allReachableFromRoots roots heap)
+    (noThunks : DataSem.noThunksInRefs refs)
+    (perm : roots2.Perm (dups ++ stack)) (duplicates : ∀ value, value ∈ dups → value ∈ stack) :
+    Memory.dataLength heap ≤ (DataSem.sizeOfValues limits roots2 refs .ln).1 := by
+  obtain ⟨_, _, _, _, f, tf, _, mapSubset, _, _, _, _, _, related, cells⟩ := invariant
+  have mapInRefs : ∀ key ptr, f.lookup key = some ptr → sptLookup key refs ≠ none := by
+    intro key ptr mapped absent
+    obtain ⟨cell, found⟩ := mapSubset key (by simp [Memory.mapDomain, mapped])
+    rw [absent] at found
+    contradiction
+  have cells' : ∀ key ptr, Memory.reachableRefs stack refs key → f.lookup key = some ptr →
+      Memory.bcRefInv conf key refs (f, tf, heap, be) := by
+    intro key ptr reach mapped
+    exact cells key ⟨reach, by simp [Memory.mapDomain, mapped]⟩
+  apply dataLength_le_sizeSound limits roots2 roots refs heap reachable
+  exact sizeSound_reachable limits roots2 dups stack roots refs conf f tf heap be good architecture
+    perm duplicates related noThunks mapInRefs cells'
+
+/-- Flapjack infrastructure: after a fully reachable collection, failure of a
+request implies the corresponding source heap-size limit is exceeded. -/
+theorem absMlInv_failed_request {width : Nat} [NeZero width]
+    (limits : DataSem.Limits) (conf : Config) (roots2 dups stack : List DataSem.Value)
+    (roots : List (HeapAddress (WordLocW width))) (heap : Memory.ValueHeap width)
+    (refs : Spt (BvlSem.Ref DataSem.Value)) (be : Bool) (a sp sp1 limit next request : Nat)
+    (gens : GcCombined.GenState) (good : goodDimindex width)
+    (architecture : limits.arch64Bit = decide (width = 64)) (limitEq : limits.heapLimit = limit)
+    (invariant : Memory.absMlInv conf stack refs (roots, heap, be, a, sp, sp1, gens) limit next)
+    (reachable : Memory.allReachableFromRoots roots heap)
+    (noThunks : DataSem.noThunksInRefs refs)
+    (heapSplit : heapLength heap = Memory.dataLength heap + sp + sp1)
+    (failed : sp + sp1 < request)
+    (perm : roots2.Perm (dups ++ stack)) (duplicates : ∀ value, value ∈ dups → value ∈ stack) :
+    limits.heapLimit < (DataSem.sizeOfValues limits roots2 refs .ln).1 + request := by
+  have bound := absMlInv_dataLength_le_size limits conf roots2 dups stack roots heap refs be a sp sp1
+    limit next gens good architecture invariant reachable noThunks perm duplicates
+  have heapSize : heapLength heap = limit := invariant.2.1.1
+  omega
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
