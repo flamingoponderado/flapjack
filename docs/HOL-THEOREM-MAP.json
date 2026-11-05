@@ -937,6 +937,78 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "data_pointers_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Reachability.lean",
+  "lean_name": "dataPointers",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed source clauses, constructor cases, offset addition and independent heap payload types with data_pointers_typed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "lookup_len_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Reachability.lean",
+  "lean_name": "lookupLen",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared lookup_len_typed, including both lookup outcomes, argument order and independent heap payload types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "data_length_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Reachability.lean",
+  "lean_name": "dataLength",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared data_length_typed, including the sum of lookup lengths over data pointers and independently polymorphic heap carriers."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "data_pointers_heap_expand",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Reachability.lean",
+  "lean_name": "dataPointers_heapExpand",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared data_pointers_heap_expand_typed, including universally quantified heap, expansion size and independent heap payload types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "data_length_heap_expand",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Reachability.lean",
+  "lean_name": "dataLength_heapExpand",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared data_length_heap_expand_typed, including independently polymorphic heap carriers and zero conclusion."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "data_length_CONS",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Reachability.lean",
+  "lean_name": "dataLength_cons",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared data_length_cons_typed, including arbitrary head, tail, independent heap carriers and additive equality."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "data_length_APPEND",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Reachability.lean",
+  "lean_name": "dataLength_append",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared data_length_append_typed, including arbitrary heaps, independent heap carriers and additive equality."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "data_length_APPEND_heap_expand",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Reachability.lean",
+  "lean_name": "dataLength_append_heapExpand",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared data_length_append_heap_expand_typed, including arbitrary heap, expansion size and independent heap payload types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "data_length_heap_length",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Reachability.lean",
+  "lean_name": "dataLength_heapLength",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared data_length_heap_length_typed; membership quantification expresses EVERY isDataElement, with the original conclusion and independent heap payload types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
   "hol_name": "all_reachable_from_roots_def",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Reachability.lean",
   "lean_name": "allReachableFromRoots",

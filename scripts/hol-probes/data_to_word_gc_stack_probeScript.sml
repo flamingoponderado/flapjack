@@ -145,6 +145,15 @@ val _ = show "partial_similar_data_typed" gen_gc_partialTheory.similar_data_def;
 val _ = show "partial_similar_data_lengths_typed" gen_gc_partialTheory.LIST_REL_similar_data_IMP;
 val _ = show "make_partial_conf_typed" gc_combinedTheory.make_partial_conf_def;
 val _ = show "gc_combined_typed" gc_combinedTheory.gc_combined_def;
+val _ = show "data_pointers_typed" data_to_word_memoryProofTheory.data_pointers_def;
+val _ = show "lookup_len_typed" data_to_word_memoryProofTheory.lookup_len_def;
+val _ = show "data_length_typed" data_to_word_memoryProofTheory.data_length_def;
+val _ = show "data_pointers_heap_expand_typed" data_to_word_memoryProofTheory.data_pointers_heap_expand;
+val _ = show "data_length_heap_expand_typed" data_to_word_memoryProofTheory.data_length_heap_expand;
+val _ = show "data_length_cons_typed" data_to_word_memoryProofTheory.data_length_CONS;
+val _ = show "data_length_append_typed" data_to_word_memoryProofTheory.data_length_APPEND;
+val _ = show "data_length_append_heap_expand_typed" data_to_word_memoryProofTheory.data_length_APPEND_heap_expand;
+val _ = show "data_length_heap_length_typed" data_to_word_memoryProofTheory.data_length_heap_length;
 fun evalshow label term = (print label; print "="; print_term (rhs (concl (SIMP_RULE (srw_ss()) [] (EVAL term)))); print "\n");
 val _ = evalshow "gen_gc_reference_move" ``
   let s = (empty_state:(num,num) gc_state) with <| heap := [DataElement [] 0 42]; n := 3 |> in
