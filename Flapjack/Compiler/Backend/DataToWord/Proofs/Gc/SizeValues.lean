@@ -4,6 +4,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StackRel
 import Flapjack.Misc.Multiword.Length
 import Flapjack.Misc.GoodDimindex
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Values
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv
 
 /-! Source heap sizing facts used by collector soundness. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
@@ -128,5 +129,71 @@ theorem traverse_word64_size {width : Nat} [NeZero width]
   · simp only [List.sum_cons]
     have size := lookupLen_word64_le heap ptr value found
     omega
+
+/-- Flapjack infrastructure: supported source and target architectures agree
+on the immediate-integer range. -/
+theorem smallNum_iff_smallInt {width : Nat} [NeZero width] (limits : DataSem.Limits)
+    (i : Int) (good : goodDimindex width) (architecture : limits.arch64Bit = decide (width = 64)) :
+    DataSem.smallNum limits.arch64Bit i ↔ smallInt width i := by
+  rcases good with rfl | rfl <;>
+    simp [DataSem.smallNum, smallInt, architecture]
+
+/-- Flapjack infrastructure: a represented source number admits a heap
+traversal whose added cost is bounded by the source singleton size. -/
+theorem sizeOf_number_traversal {width : Nat} [NeZero width]
+    (limits : DataSem.Limits) (conf : Config) (i : Int)
+    (refs : Spt (BvlSem.Ref DataSem.Value)) (seen : Spt Unit)
+    (address : HeapAddress (WordLocW width)) (f tf : HolFiniteMapExact Nat Nat)
+    (heap : Memory.ValueHeap width) (visited : List Nat)
+    (good : goodDimindex width) (architecture : limits.arch64Bit = decide (width = 64))
+    (related : Memory.valueInv conf (.number i) refs (address, f, tf, heap)) :
+    ∃ after, traverseHeap heap visited [address] after ∧
+      (after.map (Memory.lookupLen heap)).sum ≤
+        (DataSem.sizeOfValues limits [.number i] refs seen).1 + (visited.map (Memory.lookupLen heap)).sum := by
+  have number := (Memory.valueInv_number conf i refs address f tf heap).mp related
+  by_cases small : smallInt width i
+  · have sourceSmall := (smallNum_iff_smallInt limits i good architecture).mpr small
+    simp only [small, ↓reduceIte] at number
+    subst address
+    refine ⟨visited, traverseHeap.data visited _, ?_⟩
+    simp [DataSem.sizeOfValues, sourceSmall]
+  · have sourceBig : ¬ DataSem.smallNum limits.arch64Bit i := by
+      intro sourceSmall
+      exact small ((smallNum_iff_smallInt limits i good architecture).mp sourceSmall)
+    simp only [small, ↓reduceIte] at number
+    obtain ⟨ptr, rfl, found⟩ := number
+    obtain ⟨run, cost⟩ := traverse_bignum_size limits heap visited ptr i (.word 0) good architecture found
+    refine ⟨ptr :: visited, run, ?_⟩
+    simpa [DataSem.sizeOfValues, sourceBig] using cost
+
+/-- Flapjack infrastructure: a represented Word64 admits a traversal whose
+added cost is bounded by its source singleton size. -/
+theorem sizeOf_word64_traversal {width : Nat} [NeZero width]
+    (limits : DataSem.Limits) (conf : Config) (value : BitVec 64)
+    (refs : Spt (BvlSem.Ref DataSem.Value)) (seen : Spt Unit)
+    (address : HeapAddress (WordLocW width)) (f tf : HolFiniteMapExact Nat Nat)
+    (heap : Memory.ValueHeap width) (visited : List Nat)
+    (related : Memory.valueInv conf (.word64 value) refs (address, f, tf, heap)) :
+    ∃ after, traverseHeap heap visited [address] after ∧
+      (after.map (Memory.lookupLen heap)).sum ≤
+        (DataSem.sizeOfValues limits [.word64 value] refs seen).1 + (visited.map (Memory.lookupLen heap)).sum := by
+  obtain ⟨ptr, rfl, found⟩ := (Memory.valueInv_word64 conf value refs address f tf heap).mp related
+  obtain ⟨run, cost⟩ := traverse_word64_size heap visited ptr value (.word 0) found
+  exact ⟨ptr :: visited, run, by simpa [DataSem.sizeOfValues] using cost⟩
+
+/-- Flapjack infrastructure: a code pointer is an immediate value and adds
+no heap traversal cost. -/
+theorem sizeOf_codePtr_traversal {width : Nat} [NeZero width]
+    (limits : DataSem.Limits) (conf : Config) (value : Nat)
+    (refs : Spt (BvlSem.Ref DataSem.Value)) (seen : Spt Unit)
+    (address : HeapAddress (WordLocW width)) (f tf : HolFiniteMapExact Nat Nat)
+    (heap : Memory.ValueHeap width) (visited : List Nat)
+    (related : Memory.valueInv conf (.codePtr value) refs (address, f, tf, heap)) :
+    ∃ after, traverseHeap heap visited [address] after ∧
+      (after.map (Memory.lookupLen heap)).sum ≤
+        (DataSem.sizeOfValues limits [.codePtr value] refs seen).1 + (visited.map (Memory.lookupLen heap)).sum := by
+  have equal := (Memory.valueInv_codePtr conf value refs address f tf heap).mp related
+  subst address
+  exact ⟨visited, traverseHeap.data visited _, by simp [DataSem.sizeOfValues]⟩
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
