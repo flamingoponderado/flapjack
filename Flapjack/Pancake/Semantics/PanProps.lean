@@ -1164,7 +1164,6 @@ theorem memLoadHOLExact_isWfShapeValueHOLExact {width : Nat} [NeZero width] :
   · intro fields address domain _ memory context values h
     exact memLoadHOLExact_isWfShapeValueHOLExact_flds domain memory fields address context values h
 
-
 /-! The function-backed exact evaluator is intermediate proof support for HOL
     `eval_is_wf_shape_v`. It is intentionally untagged because
     `PanSemStateExact` admits unrestricted maps rather than HOL finite maps. -/
@@ -2021,7 +2020,6 @@ theorem allDistinctAlistNoOverlap {α : Type} [BEq α] [LawfulBEq α]
           hlen2 (by rw [withShape_length]) hdistinct hlen1 hme hmf hxy
       exact (hdisj z hzxs hzys).elim
 
-
 /-- Exact port of HOL `all_distinct_alist_ctxt_max`
     (`cakeml/pancake/semantics/panPropsScript.sml:517`): every slot recorded in
     the compiled context is bounded by `MAX_LIST ns`. -/
@@ -2081,10 +2079,6 @@ def v2wordSpecifiedHOL {width : Nat} [NeZero width] :
   | .val (.word word) => some word
   | .rStruct _ => none
   | .nStruct _ _ => none
-
-/-- The exact word case constrained by HOL `v2word_def`. -/
-theorem v2wordSpecifiedHOL_word {width : Nat} [NeZero width] (word : BitVec width) :
-    v2wordSpecifiedHOL (.val (.word word) : ValueHOL width) = some word := rfl
 
 /-- Function-backed rendering of HOL `panProps$FLOOKUP_pan_res_var_thm`
     (`panPropsScript.sml:236`). Untagged because HOL's `lc` is a finite map,
@@ -2146,7 +2140,6 @@ def isWfShapeNilHOL (shape : ShapeHOL) : Bool :=
 
 /-! The exact general `is_wf_shape_v_nil_step1` port already exists in this module
     as `isWfShapeValueHOLExact_nil_step1` (see above); no specialized duplicate is kept. -/
-
 
 /- Untagged support: context-free well-formed shapes have the same
     with-context size as their plain `size_of_shape` size, for every context. -/
@@ -2343,7 +2336,6 @@ theorem functionsHOL_eq_FILTER {width : Nat} [NeZero width]
       | decl sh name body => simp [functionsHOL, isFunctionHOL, ih]
       | exnDecl eid sh => simp [functionsHOL, isFunctionHOL, ih]
       | name nm flds => simp [functionsHOL, isFunctionHOL, ih]
-
 
 /-- Flapjack-specific infrastructure: under the empty structure context, a
     successful exact `memLoadHOLExact` has `flattenHOL`-length equal to the

@@ -64,10 +64,6 @@ theorem callEntry_low {width : Nat} {σ : Type} [NeZero width]
   simp only [callEntryStateHOLFinite, PanSemStateFiniteExact.mk.injEq, and_true, true_and]
   omega
 
-theorem setVar_upd_clock {width : Nat} {σ : Type} [NeZero width]
-    (x : PanSemStateFiniteExact width σ) (c : Nat) (n : MlS) (v : ValueHOL width) :
-    setVarHOLFinite n v { x with clock := c } = { setVarHOLFinite n v x with clock := c } := rfl
-
 theorem setKvar_clock {width : Nat} {σ : Type} [NeZero width]
     (x : PanSemStateFiniteExact width σ) (k : VarKind) (n : MlS) (v : ValueHOL width) :
     (setKvarHOLFinite k n v x).clock = x.clock := by
@@ -451,7 +447,6 @@ abbrev clockSubCallHandlerIH {width : Nat} {σ : Type}
       (PanPropsEvalStateFiniteExact.ofPanSemFinite
         (PanSemStateFiniteExact.setVarHOLFinite evar exn
           { st with locals := state.toPanSemFinite.locals })) p
-
 
 /-- `Call` case of HOL `evaluate_clock_sub` (`panPropsScript.sml:724-728`),
     with exactly the two guarded `evaluate_ind` Call premises (handler and
