@@ -172,4 +172,32 @@ theorem compileExpBounded_correct {C F : Type} (fuel : Nat) (body : Bvi.Exp)
   exact ⟨compileExp env.length body, result, final, names, next, ls, localsSize, stackMax, safe, peak,
     compileExpBounded_agrees_all fuel env.length body, runTarget, finalRel, optimisedRel, outcome⟩
 
+/-- A non-type-error BVI evaluation yields a non-type-error evaluation of its
+optimized data body under the simulation's state, environment, and exception
+premises. This is a Lean-side consequence of the assembled simulation; the
+HOL evaluator and carrier correspondence review remains open. -/
+theorem compileExp_notType {C F : Type} (body : Bvi.Exp)
+    (env : List BvlSem.Value) (source nextSource : BviSem.BviState C F)
+    (res : BviSem.BviResult) (target : DataSem.State C F)
+    (run : BviSem.evaluate [body] env source = (res, nextSource))
+    (notType : res ≠ .err (.abort .typeError))
+    (vars : DataProps.varCorr env (List.range env.length) (sptMap dataToBviValue target.locals))
+    (fresh : ∀ k, env.length ≤ k → sptLookup k target.locals = none)
+    (related : stateRel source target)
+    (exceptionJump : isException res → DataSem.jumpExc target ≠ none) :
+    (DataSem.evaluate (compileExp env.length body) target).1 ≠ some (.err (.abort .typeError)) := by
+  obtain ⟨result, final, names, next, ls, localsSize, stackMax, safe, peak, targetRun,
+      finalRel, optimisedRel, outcome⟩ :=
+    compileExp_of_simulation body env source nextSource res target
+      (simulationFor_all [body] env source) run notType vars fresh related exceptionJump
+  have resultNotType : result ≠ .err (.abort .typeError) := by
+    intro eq
+    subst result
+    have notReturn : ¬ isReturn res := by
+      intro returns
+      obtain ⟨values, impossible, _⟩ := outcome.2.1 returns
+      cases impossible
+    exact notType (by simpa [dataToBviResult] using (outcome.1 notReturn).symm)
+  simpa [targetRun] using resultNotType
+
 end Flapjack.Compiler.Backend.BviToData
