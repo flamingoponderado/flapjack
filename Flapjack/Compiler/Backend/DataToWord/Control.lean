@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.DataLang.Syntax
 import Flapjack.Compiler.Backend.DataToWord.Config
+import Flapjack.Compiler.Backend.DataToWord.Numbers
 import Flapjack.Compiler.Backend.DataToWord.Header
 import Flapjack.Compiler.Backend.DataToWord.Build
 import Flapjack.Compiler.Backend.DataToWord.Locations
@@ -183,14 +184,6 @@ private def fpResult {width : Nat} [NeZero width] (conf : Config) (dest : Nat)
     let store := if width = 64 then writeWord64 conf header dest else writeWord64On32 conf header dest 5 3
     wordListSeq (fpLoads conf sources ++ [.inst (.fp operation), .inst (.fp transfer), store])
 
-/-- Internal pointer-field construction for nonempty constructor allocation;
-the standalone HOL helpers remain to be reviewed. -/
-def pointerBits {width : Nat} (conf : Config) (tag len : Nat) : BitVec width :=
-  let field (n bits shift : Nat) : BitVec width :=
-    let max := 2 ^ bits - 1
-    BitVec.ofNat width ((if n < max then n else max) * 2 ^ shift)
-  field tag conf.tagBits (1 + conf.lenBits) ||| field len conf.lenBits 1
-
 /-- Internal tag-mask construction used by checked word lowering. -/
 def tagMask {width : Nat} (conf : Config) : BitVec width :=
   BitVec.ofNat width (((2 ^ (width - conf.lenSize) - 1) / 4) * 4)
@@ -235,7 +228,7 @@ private def compileCons {width : Nat} [NeZero width] (conf : Config) (l dest tag
     | none => (giveUp, l)
     | some header =>
         let bytes := BitVec.ofNat width (width / 8) * BitVec.ofNat width (args.length + 1)
-        let pointer := getLowerBits conf (.word (pointerBits conf tag args.length))
+        let pointer := getLowerBits conf (.word (ptrBits conf tag args.length))
         (wordListSeq [
           .assign 1 (.lookup .nextFree), .assign 3 (.const header),
           storeEach 1 (3 :: args.map adjustVar) 0,
@@ -341,7 +334,7 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
             some (boolResult dest .test src (.imm 1), l)
           else if len < 2 ^ conf.lenBits - 1 then
             let mask := BitVec.ofNat width (2 ^ (conf.lenBits + 1) - 1)
-            let bits := pointerBits conf 0 len ||| 1
+            let bits := ptrBits conf 0 len ||| 1
             some (.seq (.assign 1 (.op .and [.var src, .const mask]))
               (boolResult dest .equal 1 (.imm bits)), l)
           else if len < 2 ^ width then

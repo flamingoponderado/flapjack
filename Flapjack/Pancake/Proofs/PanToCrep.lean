@@ -49,9 +49,8 @@ source constructors: `Skip`, `Break`, `Continue`, `Annot`, `Tick`, `Assign`,
 `Return`, `Raise`, `ExtCall`, `Seq`, `If`, `While`, `Call`, and `DecCall`.
 The recursive induction obligations are for `Dec`, `Seq`, `If`, `While`,
 `Call`, and `DecCall`; `Call` additionally splits tail-call, timeout, return,
-exception, and final-FFI outcomes. These source proof branches do not turn the
-production-carrier declarations in `Proofs/PanToCrep/EvaluateCases` into exact
-HOL-shaped cases.
+exception, and final-FFI outcomes. These source proof branches are assembled in
+`Proofs/PanToCrep/PcCompileCorrect/Assembly.lean`.
 
 The relation hypotheses also have distinct source definitions in this same
 HOL proof file: `state_rel_def` (line 45) equates total word memory, both
@@ -61,19 +60,14 @@ code entry to `compile (ctxt_fc ...)` in target code; `excp_rel_def` (line 16)
 requires equal exception-map domains and injective compiler codes; and
 `locals_rel_def` (line 71) combines context well-formedness with slot lookup,
 `OPT_MMAP`, flattening, and well-formed-shape obligations. The existing
-`stateRel`, `codeRelW`, `excpRel`, and `localsRel` definitions have analogous
+`stateRel`, `codeRel`, `excpRel`, and `localsRel` definitions have analogous
 logical clauses but use production `String`, `Shape`, `PanValue`, optional
 memory, and `CrepRuntimeState` carriers. Their current similarity does not
 discharge the exact-carrier prerequisites recorded on `.5.16.1`.
 
-There is no assembled Lean theorem with that statement. The existing
-`pc_compile_correct` constructor helpers in `Proofs/PanToCrep/EvaluateCases`
-are individual proof infrastructure, and the `stateRel` below is the
-production `PanSemState`/`CrepRuntimeState` relation, not evidence that the
-exact HOL carriers and both evaluator clause surfaces have been connected.
-Accordingly no `@[hol]` tag is claimed here. The faithful assembled theorem is
-tracked by `flapjack-4ac.5.16.1`, with exact Pan evaluator, Crep evaluator,
-compiler, and relation prerequisites. -/
+The assembled HOL-shaped theorem is in `PcCompileCorrect/Assembly.lean`.
+The `stateRel` below is a production-carrier relation and does not itself
+establish the exact HOL state relation. -/
 
 /-! Flapjack analogue of HOL `globals_lookup_def`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:435-438`). The lookup
@@ -191,32 +185,6 @@ mutual
               panShapeListMatches_eq leftTail rightTail htail]
 end
 
-/-- Flapjack analogue of HOL `flatten_nil_no_size[local]`
-    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:3001-3006`), which proves
-    `is_wf_shape_nil (shape_of x) ⇒ (flatten x = [] ⇔ size_of_shape(shape_of x) = 0)`.
-    This theorem mirrors that statement shape (`isWfShape [] ... = true` for
-    `is_wf_shape_nil`, `panSemShapeOf` for `shape_of`, `panValueFlatten` for
-    `flatten`, `Shape.shapeSize` for `size_of_shape`, `↔` for `⇔`), but its input
-    is the production `PanValue α` carrier whose `nStruct` record/field names are
-    `StructName`/`FieldName` = `String`, whereas HOL is over `panSem$v` with
-    `stcname`/`fldname` = `mlstring`. These value/shape carrier differences
-    exceed identifier representation, so `names_as_string` cannot qualify this
-    analogue (no `NameRanged` witness applies either, since the conclusion is a
-    biconditional over a flattened value, not a name). The withdrawn tag is
-    recorded as a documented mismatch in `docs/HOL-THEOREM-MAP.json`; it is
-    intentionally untagged. An exact MlString-carrier replacement is tracked by
-    `flapjack-pxn.18.3.5.8` (parent `flapjack-pxn.18.3.5.7.2`). The statement is
-    exercised against the original-domain fixtures in
-    `Flapjack/Test/PanValueFlattenParity.lean` (notably
-    `panValueFlatten_eq_nil_iff_shapeSize_eq_zero_fixture`), and HOL `flatten`
-    output rows `word`/`record`/`named` live in
-    `scripts/hol-probes/pan_flatten_probe.out`. -/
-theorem flattenNilNoSize (value : PanValue α)
-    (hwf : isWfShape [] (panSemShapeOf value) = true) :
-    panValueFlatten value = [] ↔ Shape.shapeSize (panSemShapeOf value) = 0 := by
-  rw [panSemShapeOf_eq_panValueShape_nil] at hwf ⊢
-  exact panValueFlatten_eq_nil_iff_shapeSize_eq_zero value hwf
-
 /-- HOL `res_var_commutes'`: restoring two distinct finite-map locals
     commutes. `LawfulBEq` identifies the map implementation's Boolean key
     comparison with HOL equality. -/
@@ -292,28 +260,6 @@ theorem loadShapeBytes_getElem_rel {width : Nat} [NeZero width]
     simpa [loadShapeBytes_length] using hindex
   rw [List.getElem?_eq_getElem hvalid] at hopt
   exact Option.some.inj hopt
-
-/-- Source-shaped port (Flapjack-specific; NOT an exact HOL port) of HOL
-    `is_wf_shape_nil_length_flatten`: a word list chosen by the zero-size
-    or positive-size branch has the size prescribed by the source value shape. -/
--- FLAPJACK-SPECIFIC (not an exact HOL port): the statement is over the
--- production `PanValue` carrier whose `nStruct` record/field names are
--- `StructName`/`FieldName` = `String`, while HOL `pan_to_crepProofScript.sml`
--- is over `panSem$v` with `stcname`/`fldname` = `mlstring`. The exact MlString
--- identifier carrier is tracked by `flapjack-pxn.18.3.5.8` (parent
--- `flapjack-pxn.18.3.5.7.2`).
-theorem isWfShapeNil_length_flatten (value : PanValue α) (words : List α)
-    (hwf : isWfShape [] (panSemShapeOf value) = true)
-    (hzero : Shape.shapeSize (panSemShapeOf value) = 0 → words = [])
-    (hpositive : 0 < Shape.shapeSize (panSemShapeOf value) →
-      words = panValueFlatten value) :
-    words.length = Shape.shapeSize (panSemShapeOf value) := by
-  rw [panSemShapeOf_eq_panValueShape_nil] at hwf hzero hpositive ⊢
-  by_cases hz : Shape.shapeSize (panValueShape [] value) = 0
-  · simp [hzero hz, hz]
-  · have hpos : 0 < Shape.shapeSize (panValueShape [] value) := Nat.pos_of_ne_zero hz
-    rw [hpositive hpos]
-    exact panValueFlatten_length_eq_shapeSize value hwf
 
 /-! Local support for `MAP_SOME_MEM_lemma`, kept in its HOL counterpart
     module. This drops the source theorem's unused Nat witness; the exact
@@ -394,44 +340,6 @@ theorem flookupResVarQuant [BEq κ] [LawfulBEq κ]
   simpa [beq_iff_eq] using FLOOKUP_resVar locals name query value
 
 end
-
-/-- Flapjack analogue of HOL `no_overlap_wrap_rt_some_all_distinct`
-    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:2461-2468`), which states
-    `no_overlap fm ∧ wrap_rt (FLOOKUP fm r) = SOME (vsh, ns) ⇒ ALL_DISTINCT ns`.
-    The statement shape is preserved (`noOverlap` for `no_overlap`, `wrapRt` for
-    `wrap_rt`, `FLOOKUP` for `FLOOKUP`, `Nodup` for `ALL_DISTINCT`, same
-    hypothesis/conclusion structure), but this declaration is deliberately
-    untagged for substantive carrier differences: `fm` is keyed by
-    `FunName`/`VarName` = `String` and stores the production `Shape` whose
-    `Named` constructor carries a `String`, whereas HOL keys by
-    `varname` = `mlstring` and stores `shape` whose `Named` carries an
-    `mlstring`. The `names_as_string` qualifier cannot authorize the embedded
-    `Shape` carrier, and no same-module `NameRanged` byte witness applies because
-    the conclusion is `slots.Nodup`, a duplicate-freeness fact about a `Nat` list
-    rather than a name. `docs/HOL-THEOREM-MAP.json` classifies this hol_name as
-    `documented_mismatch`; the faithful exact-MlString carrier is tracked by
-    `flapjack-pxn.18.3.5.8`. Oracle evidence for the two conjuncts is indirect:
-    `scripts/hol-probes/pan_common_props_no_overlap_probe.out` pins
-    `no_overlap` (rows `slot_nodup_x`, `slot_nodup_y`, `slots_disjoint`) and
-    `scripts/hol-probes/wrap_rt_probe.out` pins `wrap_rt` (rows `none`,
-    `empty_one`, `one_word`, `comb_empty`, `named`); there is no dedicated probe
-    for this combined theorem. -/
-theorem noOverlapWrapRtNodup
-    (fm : FiniteMap String (Shape × List Nat)) (name : String)
-    (shape : Shape) (slots : List Nat)
-    (hno : noOverlap fm)
-    (hwrap : wrapRt (FLOOKUP fm name) = some (shape, slots)) :
-    slots.Nodup := by
-  cases hlookup : FLOOKUP fm name with
-  | none => simp [wrapRt, hlookup] at hwrap
-  | some entry =>
-      rcases entry with ⟨entryShape, entrySlots⟩
-      have hnodup : entrySlots.Nodup :=
-        hno.1 name entryShape entrySlots hlookup
-      cases entryShape <;> cases entrySlots <;>
-        simp [wrapRt, hlookup] at hwrap <;>
-        rcases hwrap with ⟨_, hslots⟩ <;>
-        simpa [← hslots] using hnodup
 
 /-- Flapjack analogue of HOL `mem_comp_field_lem`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:397-406`), which states
@@ -745,65 +653,6 @@ theorem panToCrepGetEidsFromDeclsHOL_lookup_mem
     rwa [heq] at hentry
   · exact absurd hbase (by simp)
 
-/-- Source-shaped port (Flapjack-specific; NOT an exact HOL port) of HOL `get_eids_imp_excp_rel`
-    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:4656`): if the source
-    exception map has the compiler's exception-code domain and the declaration
-    list has fewer exception declarations than `2 ^ width`, then the compiler's
-    code map is injective, matching HOL's `excp_rel`. The word type fixes the
-    value conversion as in `get_eids_from_decls_def`; the HOL-vs-Lean
-    equivalence is reviewed by comparing definitions (per SOUNDNESS), not
-    proved by this theorem. -/
--- FLAPJACK-SPECIFIC (not an exact HOL port): source-shaped port of HOL
--- `get_eids_imp_excp_rel` (`pan_to_crepProofScript.sml:4656-4667`). The premise
--- `panLang$size_of_eids pc < dimword (:'a)` is mirrored by `sizeOfEids pc < 2 ^ width`
--- (with an executable `[NeZero width]`), and `FDOM seids = FDOM (get_eids_from_decls pc)`
--- / conclusion `excp_rel ...` by `FDOM ... = FDOM (panToCrepGetEidsFromDeclsHOL pc)` /
--- `excpRel ...`. The carriers differ: HOL quantifies a positive-width `'a decl list` whose
--- `get_eids_from_decls` returns an `(mlstring, 'a word) fmap`, while this statement uses the
--- production `Decl (BitVec width)` with `ExceptionId`/`VarName` = `String` and production
--- `Shape`, and `panToCrepGetEidsFromDeclsHOL : FiniteMap ExceptionId (BitVec width)`. The
--- result is an injectivity `Prop`; `names_as_string` cannot authorize the `Decl`/`Shape`/word
--- carriers and no `NameRanged` byte witness applies. Direct HOL-EVAL rows `empty_maps`,
--- `same_domain_injective`, `domain_mismatch`, `noninjective_compiler_codes` in
--- `scripts/hol-probes/excp_rel_probe.out` pin the HOL relation; the Lean statement is
--- exercised by the `example` and `getEidsGuard` in
--- `Flapjack/Test/PanToCrepCodeRelParity.lean:249-264` (registered `:443`). The map already
--- records `documented_mismatch`; exact MlString carrier tracked by `flapjack-pxn.18.3.5.8`
--- (parent `flapjack-pxn.18.3.5.7.2`).
-theorem getEidsFromDeclsImpExcpRel [NeZero width]
-    (seids : FiniteMap ExceptionId (BitVec width))
-    (pc : List (Decl (BitVec width)))
-    (hsize : sizeOfEids pc < 2 ^ width)
-    (hdom : FDOM seids = FDOM (panToCrepGetEidsFromDeclsHOL pc)) :
-    excpRel (panToCrepGetEidsFromDeclsHOL pc) seids := by
-  refine ⟨hdom, ?_⟩
-  intro exception exception' code code' hcode hcode' hcodeeq
-  have hentry := panToCrepGetEidsFromDeclsHOL_lookup_mem pc exception code hcode
-  have hentry' := panToCrepGetEidsFromDeclsHOL_lookup_mem pc exception' code' hcode'
-  obtain ⟨i, hnamei, hvali⟩ := mem_zip_getElem? hentry
-  obtain ⟨j, hnamej, hvalj⟩ := mem_zip_getElem? hentry'
-  have hlti : i < ((exceptionEntries pc).map Prod.fst).length :=
-    (List.getElem?_eq_some_iff.mp hnamei).1
-  have hltj : j < ((exceptionEntries pc).map Prod.fst).length :=
-    (List.getElem?_eq_some_iff.mp hnamej).1
-  have hbound : ((exceptionEntries pc).map Prod.fst).length ≤ sizeOfEids pc := by
-    simpa using exceptionEntries_length_le_sizeOfEids pc
-  have hi : i < 2 ^ width := by omega
-  have hj : j < 2 ^ width := by omega
-  have hcodei : BitVec.ofNat width i = code := by
-    rw [List.getElem?_map, List.getElem?_range hlti] at hvali
-    exact Option.some.inj hvali
-  have hcodej : BitVec.ofNat width j = code' := by
-    rw [List.getElem?_map, List.getElem?_range hltj] at hvalj
-    exact Option.some.inj hvalj
-  have hij : i = j :=
-    bitVecOfNat_inj hi hj (by rw [hcodei, hcodeeq, ← hcodej])
-  have hnamej' : ((exceptionEntries pc).map Prod.fst)[i]? = some exception' := by
-    rw [← hij] at hnamej
-    exact hnamej
-  rw [hnamei] at hnamej'
-  exact Option.some.inj hnamej'
-
 /-! HOL `ctxt_fc_def` (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:25`).
     `FUPDATE_LIST` and `withShape` preserve the source definition's ZIP
     truncation and TAKE/DROP slicing, and `maxList` is Cake's `MAX_LIST`. -/
@@ -894,85 +743,6 @@ theorem panToCrepMakeVmapHOL_eq_ctxtFcVars
   rw [compileParamVars_range_withShape params 0]
   simp
 
-/-- HOL `ctxt_fc_funcs_eq`: constructing a function context preserves the
-    supplied function map. -/
--- FLAPJACK-SPECIFIC (not an exact HOL port): the HOL statement
--- (`pan_to_crepProofScript.sml:2295`) has no premises and is definitionally the
--- projection `(ctxt_fc cvs em vs shs ns).funcs = cvs`; the Lean projection
--- matches clause-for-clause but is keyed by the production identifiers
--- `FunName`/`VarName`/`ExceptionId` = `String` (or embeds a
--- `PanToCrepProofContext`/`PanToCrepHOLContext` with `String`-keyed finite maps
--- and production `Shape`), while HOL keys names by `funname`/`varname`/`eid` =
--- `mlstring` and shapes by `shape`. The `names_as_string` qualifier cannot cover
--- the `Shape` carrier, and no `NameRanged` byte witness exists because the
--- output is a finite map of function signatures, not a name. The direct HOL
--- EVAL row `functions_projection=T` is recorded in
--- `scripts/hol-probes/ctxt_fc_probe.out` and paired with the kernel-checked
--- fixture `ctxt_fc_funcs_eq_fixture` in
--- `Flapjack/Test/PanToCrepRelationsParity.lean`. The exact MlString identifier
--- carrier is tracked by `flapjack-pxn.18.3.5.8` (parent
--- `flapjack-pxn.18.3.5.7.2`).
-theorem ctxtFcFuncsEq
-    (functions : FiniteMap String (List (String × Shape) × Shape))
-    (codes : FiniteMap String α) (variables : List String)
-    (shapes : List Shape) (names : List Nat) :
-    (ctxtFc functions codes variables shapes names).funcs = functions := rfl
-
-/-- HOL `ctxt_fc_eids_eq`: constructing a function context preserves the
-    supplied exception-code map. -/
--- FLAPJACK-SPECIFIC (not an exact HOL port): the statement is keyed by the
--- production identifiers `FunName`/`VarName`/`ExceptionId` = `String` (or embeds a
--- `PanToCrepProofContext`/`PanToCrepHOLContext` whose finite maps are `String`-keyed),
--- while HOL `pan_to_crepProofScript.sml` keys names by `funname`/`varname`/`eid` =
--- `mlstring`. The exact MlString identifier carrier is tracked by
--- `flapjack-pxn.18.3.5.8` (parent `flapjack-pxn.18.3.5.7.2`).
-theorem ctxtFcEidsEq
-    (functions : FiniteMap String (List (String × Shape) × Shape))
-    (codes : FiniteMap String α) (variables : List String)
-    (shapes : List Shape) (names : List Nat) :
-    (ctxtFc functions codes variables shapes names).eids = codes := rfl
-
-/-- HOL `ctxt_fc_vmax`: the constructed context's maximum slot is the
-    maximum of the supplied slot list. -/
--- FLAPJACK-SPECIFIC (not an exact HOL port): HOL
--- `pan_to_crepProofScript.sml:2307-2312` proves
--- `(ctxt_fc ctxt.funcs em vs shs ns).vmax = MAX_LIST ns` with no premises
--- (`rw [ctxt_fc_def]`); this theorem has the same no-premises projection shape
--- and is likewise definitional (`rfl`), but is keyed by the production
--- identifiers `FunName`/`VarName`/`ExceptionId` = `String` (or embeds a
--- `PanToCrepProofContext`/`PanToCrepHOLContext` whose finite maps are
--- `String`-keyed) with production `Shape`, while HOL keys names by
--- `funname`/`varname`/`eid` = `mlstring` and slots by `shape`. The
--- `names_as_string` qualifier cannot cover the `Shape` carrier, and no
--- `NameRanged` byte witness exists because the output is a `num` slot bound,
--- not a name. Direct HOL-EVAL rows `vmax_nonempty_list=T`/`vmax_empty_list=T`
--- in `scripts/hol-probes/ctxt_fc_probe.out` are paired with the kernel-checked
--- instances `ctxt_fc_vmax_nonempty_fixture`/`ctxt_fc_vmax_empty_fixture` and
--- `ctxtFcVmaxGuard` in `Flapjack/Test/PanToCrepRelationsParity.lean`. The exact
--- MlString carrier is tracked by `flapjack-pxn.18.3.5.8` (parent
--- `flapjack-pxn.18.3.5.7.2`); this analogue remains deliberately untagged.
-theorem ctxtFcVmax
-    (context : PanToCrepProofContext α) (codes : FiniteMap String α)
-    (variables : List String) (shapes : List Shape) (names : List Nat) :
-    (ctxtFc context.funcs codes variables shapes names).vmax = maxList names := rfl
-
-/-- HOL `ctxt_max_el_leq`: a slot selected from a variable's flattened name
-    list does not exceed the context's maximum slot. -/
--- FLAPJACK-SPECIFIC (not an exact HOL port): the statement is keyed by the
--- production identifiers `FunName`/`VarName`/`ExceptionId` = `String` (or embeds a
--- `PanToCrepProofContext`/`PanToCrepHOLContext` whose finite maps are `String`-keyed),
--- while HOL `pan_to_crepProofScript.sml` keys names by `funname`/`varname`/`eid` =
--- `mlstring`. The exact MlString identifier carrier is tracked by
--- `flapjack-pxn.18.3.5.8` (parent `flapjack-pxn.18.3.5.7.2`).
-theorem ctxtMaxGetElemLe
-    (context : PanToCrepProofContext α) (varName : String)
-    (shape : Shape) (names : List Nat) (index : Nat)
-    (hmax : ctxtMax context.vmax context.vars)
-    (hlookup : FLOOKUP context.vars varName = some (shape, names))
-    (hindex : index < names.length) :
-    names[index] ≤ context.vmax := by
-  exact hmax.2 varName shape names hlookup names[index] (List.getElem_mem hindex)
-
 /-- HOL `slc_def` (`pan_to_crepProofScript.sml:2313-2315`):
     `slc vshs args = FEMPTY |++ ZIP (MAP FST vshs, args)`. -/
 -- FLAPJACK-SPECIFIC (documented mismatch; tag stays withdrawn, bead flapjack-4ac.5.36):
@@ -999,22 +769,6 @@ def slc (parameters : List (String × Shape))
 def tlc (slots : List Nat) (arguments : List (PanValue α)) :
     FiniteMap Nat α :=
   FUPDATE_LIST FEMPTY (slots.zip (arguments.flatMap panValueFlatten))
-
-/-- HOL `slc_tlc_rw`: both local-map constructor names unfold to their
-    original finite-map updates. -/
--- FLAPJACK-SPECIFIC (not an exact HOL port): the statement is keyed by the
--- production identifiers `FunName`/`VarName`/`ExceptionId` = `String` (or embeds a
--- `PanToCrepProofContext`/`PanToCrepHOLContext` whose finite maps are `String`-keyed),
--- while HOL `pan_to_crepProofScript.sml` keys names by `funname`/`varname`/`eid` =
--- `mlstring`. The exact MlString identifier carrier is tracked by
--- `flapjack-pxn.18.3.5.8` (parent `flapjack-pxn.18.3.5.7.2`).
-theorem slcTlcRw
-    (parameters : List (String × Shape)) (slots : List Nat)
-    (arguments : List (PanValue α)) :
-    (FUPDATE_LIST FEMPTY ((parameters.map Prod.fst).zip arguments) =
-      slc parameters arguments) ∧
-    (FUPDATE_LIST FEMPTY (slots.zip (arguments.flatMap panValueFlatten)) =
-      tlc slots arguments) := ⟨rfl, rfl⟩
 
 private theorem updatePanValueMap_eq_FUPDATE
     (locals : VarName → Option (PanValue α)) (name : VarName)
@@ -1423,44 +1177,6 @@ theorem localsRelWfShape
   rw [← panValueIsWf_eq_isWfShape_panValueShape_of_nil [] value rfl]
   exact hshape
 
-/-- HOL `mk_ctxt_imp_locals_rel` (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:4677-4682`):
-    the initial compiler context built from the source function table has an empty
-    variable map and slot bound, so the locals relation holds against any target
-    locals for the empty source locals map. The proof-context record mirrors Cake
-    `mk_ctxt FEMPTY (make_funcs pc) 0 es`.
-
-    The statement shape is mirrored (`∀ pc lcl es. locals_rel (mk_ctxt …) FEMPTY lcl`
-    becomes a universally quantified `declarations`/`eids`/`locals` with the same
-    `mk_ctxt`-shaped context and conclusion). It is intentionally untagged because
-    the carriers differ from the reviewed exact HOL carriers: this declaration uses
-    the production `Decl α`, `FunName`/`VarName`/`ExceptionId = String`, production
-    `Shape` and `PanToCrepProofContext`, plus `FiniteMap`-valued `eids` and
-    `PanWordLab`-valued `locals`, whereas HOL quantifies an `'a decl list` and
-    `(mlstring,'a word) fmap` with `mlstring` keys and HOL `shape`. It also delegates
-    to the production `panToCrepMakeFuncs`/`infoMapToFiniteMap` rather than HOL
-    `make_funcs`, and carries the executable `[LawfulBEq String]` condition. A
-    `names_as_string` qualifier cannot authorize the `Decl`/`Shape`/value carriers,
-    and no `NameRanged` byte witness applies (`locals_rel` is a relation, not a name).
-    The reviewed exact carrier is tracked by `flapjack-pxn.18.3.5.8` (parent
-    `flapjack-pxn.18.3.5.7.2`). `docs/HOL-THEOREM-MAP.json` already records this
-    hol_name as `documented_mismatch`. Evidence:
-    `Flapjack/Test/MkCtxtImpLocalsRelParity.lean` instantiates the theorem against
-    the `mk_ctxt`-shaped `initialContext`. -/
-theorem mkCtxtImpLocalsRel [LawfulBEq String]
-    (declarations : List (Decl α)) (eids : FiniteMap String α)
-    (locals : FiniteMap Nat (PanWordLab α)) :
-    localsRel
-      { vars := (FEMPTY : FiniteMap String (Shape × List Nat))
-        funcs := infoMapToFiniteMap (panToCrepMakeFuncs declarations)
-        eids := eids
-        vmax := 0 }
-      FEMPTY locals := by
-  refine ⟨?_, ?_, ?_⟩
-  · simp [noOverlap, FLOOKUP_empty]
-  · simp [ctxtMax]
-  · intro name value hlookup
-    simp [FLOOKUP_empty] at hlookup
-
 /-- The state-based 64-bit specialization of Cake
     `opt_mmap_eval_is_wf_shape_v`; its evaluator premise is derived solely
     from `PanSemState`, including its
@@ -1563,299 +1279,6 @@ theorem localsRelLookupCtxt
       _ = (panValueFlatten value).length := List.length_map PanWordLab.word
   · rw [hmap, ← hflatten]
 
-/-- HOL `local_rel_gt_vmax_preserved`: a target local slot strictly above the
-    proof context's maximum cannot occur in any source variable's slot list. -/
--- FLAPJACK-SPECIFIC (not an exact HOL port): the statement is keyed by the
--- production identifiers `FunName`/`VarName`/`ExceptionId` = `String` (or embeds a
--- `PanToCrepProofContext`/`PanToCrepHOLContext` whose finite maps are `String`-keyed),
--- while HOL `pan_to_crepProofScript.sml` keys names by `funname`/`varname`/`eid` =
--- `mlstring`. The exact MlString identifier carrier is tracked by
--- `flapjack-pxn.18.3.5.8` (parent `flapjack-pxn.18.3.5.7.2`).
-theorem localRelGtVmaxPreserved
-    (context : PanToCrepProofContext α)
-    (sourceLocals : FiniteMap String (PanValue α))
-    (targetLocals : FiniteMap Nat (PanWordLab α)) (slot : Nat)
-    (newValue : PanWordLab α)
-    (hrel : localsRel context sourceLocals targetLocals)
-    (habove : context.vmax < slot) :
-    localsRel context sourceLocals (FUPDATE targetLocals (slot, newValue)) := by
-  refine ⟨hrel.1, hrel.2.1, ?_⟩
-  intro name value hlookup
-  obtain ⟨names, values, hcontext, hvalues, hflatten, hwf⟩ :=
-    hrel.2.2 name value hlookup
-  refine ⟨names, values, hcontext, ?_, hflatten, hwf⟩
-  rw [← hvalues]
-  apply list_mapM_congr
-  intro key hkey
-  rw [FLOOKUP_update]
-  have hle : key ≤ context.vmax :=
-    hrel.2.1.2 name (panValueShape [] value) names hcontext key hkey
-  have hne : slot ≠ key := by
-    intro he
-    subst key
-    exact (Nat.not_lt_of_ge hle) habove
-  simp [beq_eq_false_iff_ne.mpr hne]
-
-/-- Source-shaped port (Flapjack-specific; NOT an exact HOL port) of HOL
-    `local_rel_le_zip_update_preserved`
-    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:2263-2269`): replacing a
-    source local `x` by a shape-compatible value `v'` and writing its flattened
-    words to the associated distinct slots `ns` preserves `locals_rel`. -/
--- FLAPJACK-SPECIFIC (not an exact HOL port), source-reviewed 2026-09-25:
--- statement shape is mirrored clause-for-clause: `locals_rel ct l l'` ->
--- `localsRel context sourceLocals targetLocals`; `FLOOKUP l x = SOME v` ->
--- `FLOOKUP sourceLocals name = some oldValue`; `FLOOKUP ct.vars x = SOME (sh,ns)`
--- -> `FLOOKUP context.vars name = some (shape, slots)`; `shape_of v = shape_of v'`
--- -> `panValueShape [] oldValue = panValueShape [] newValue`; `ALL_DISTINCT ns`
--- -> `slots.Nodup`; and `locals_rel ct (l |+ (x,v')) (l' |++ ZIP (ns,flatten v'))`
--- -> `localsRel context (FUPDATE sourceLocals (name,newValue)) (FUPDATE_LIST
--- targetLocals (slots.zip ((panValueFlatten newValue).map PanWordLab.word)))`.
--- Carrier mismatch: the Lean statement is keyed by the production identifiers
--- `FunName`/`VarName`/`ExceptionId` = `String` and embeds a
--- `PanToCrepProofContext α` whose finite maps are `String`-keyed, while HOL
--- keys names by `funname`/`varname`/`eid` = `mlstring`; the source-local
--- carrier is production `PanValue α` (with embedded production `Shape`,
--- `named : String`) over a generic word `α`, while HOL uses `panSem$v` /
--- `shape` over a positive-width `'a word` with no typeclass side condition.
--- `names_as_string` cannot authorize the `PanValue`/`Shape` carriers (the
--- identifiers occur inside the local value, not at the theorem boundary), and
--- no `NameRanged` byte witness applies because the conclusion is a `localsRel`
--- relation. `docs/HOL-THEOREM-MAP.json` already classifies this hol_name as
--- `documented_mismatch`; the declaration is intentionally untagged.
--- Evidence: this theorem is exercised by the `Primitive` case of the
--- compile-correctness proof (`Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean:1801`);
--- the `flatten`/`shape_of` components have HOL-oracle rows in
--- `scripts/hol-probes/pan_flatten_probe.out` (`word`/`record`/`named`), and the
--- accompanying `locals_rel` lemmas (`locals_rel_extend_new_var`,
--- `locals_rel_lookup_ctxt`) are tracked under the same withdrawn-tag review.
--- The exact MlString identifier carrier is tracked by
--- `flapjack-pxn.18.3.5.8` (parent `flapjack-pxn.18.3.5.7.2`).
-theorem localRelLeZipUpdatePreserved
-    (context : PanToCrepProofContext α)
-    (sourceLocals : FiniteMap String (PanValue α))
-    (targetLocals : FiniteMap Nat (PanWordLab α))
-    (name : String) (oldValue newValue : PanValue α)
-    (shape : Shape) (slots : List Nat)
-    (hrel : localsRel context sourceLocals targetLocals)
-    (hsource : FLOOKUP sourceLocals name = some oldValue)
-    (hcontext : FLOOKUP context.vars name = some (shape, slots))
-    (hshape : panValueShape [] oldValue = panValueShape [] newValue)
-    (hdistinct : slots.Nodup) :
-    localsRel context (FUPDATE sourceLocals (name, newValue))
-      (FUPDATE_LIST targetLocals
-        (slots.zip ((panValueFlatten newValue).map PanWordLab.word))) := by
-  obtain ⟨oldSlots, hlookup, hlen, _, hwf⟩ :=
-    localsRelLookupCtxt context sourceLocals targetLocals name oldValue hrel hsource
-  have hpair : (panValueShape [] oldValue, oldSlots) = (shape, slots) := by
-    apply Option.some.inj
-    rw [← hlookup, hcontext]
-  have hslots : oldSlots = slots := congrArg Prod.snd hpair
-  have hcontextOld : FLOOKUP context.vars name =
-      some (panValueShape [] oldValue, slots) := by
-    rw [← hslots]
-    exact hlookup
-  have hwfNew : isWfShape [] (panValueShape [] newValue) = true := by
-    rw [← hshape]
-    exact hwf
-  have hlenNew : slots.length =
-      ((panValueFlatten newValue).map PanWordLab.word).length := by
-    rw [List.length_map]
-    rw [← hslots, hlen, panValueFlatten_length_eq_shapeSize oldValue hwf,
-      panValueFlatten_length_eq_shapeSize newValue hwfNew, hshape]
-  refine ⟨hrel.1, hrel.2.1, ?_⟩
-  intro other value hsourceOther
-  rw [FLOOKUP_update] at hsourceOther
-  by_cases hsame : name = other
-  · subst other
-    simp at hsourceOther
-    cases hsourceOther
-    refine ⟨slots, (panValueFlatten newValue).map PanWordLab.word, ?_, ?_, rfl, hwfNew⟩
-    · rw [← hshape]
-      exact hcontextOld
-    · exact opt_mmap_some_eq_zip_flookup slots targetLocals
-        ((panValueFlatten newValue).map PanWordLab.word) hdistinct hlenNew
-  · have hneq : (name == other) = false := beq_eq_false_iff_ne.mpr hsame
-    simp [hneq] at hsourceOther
-    obtain ⟨otherSlots, words, hother, hmap, hflat, hotherWf⟩ :=
-      hrel.2.2 other value hsourceOther
-    refine ⟨otherSlots, words, hother, ?_, hflat, hotherWf⟩
-    have hdisjoint : ListDisjoint slots otherSlots := by
-      intro slot hin hotherIn
-      apply hsame
-      exact hrel.1.2 name other (panValueShape [] oldValue)
-        (panValueShape [] value) slots otherSlots hcontextOld hother
-        ⟨slot, hin, hotherIn⟩
-    rw [opt_mmap_disj_zip_flookup slots targetLocals otherSlots
-      ((panValueFlatten newValue).map PanWordLab.word) hdisjoint hlenNew]
-    exact hmap
-
-/-! `localsRelUpdateExistingValue` proves the local-map relation after a
-shape-preserving source update, using the slots recorded in `context.vars`.
-The target runtime `exp_hdl` execution for a flattened payload of any width
-and its local relation are `EvaluateCases.crepRuntimeExpHdlFiniteMapWords` and
-`crepRuntimeExpHdlFiniteMapWords_localsRel`. The actual state and relation
-setup for a matching handler is available as untagged induction support in
-`crepRuntimeExpHdlFiniteMapWords_handlerPrestateRelations`. This lemma supplies
-the source-to-target map-update relation used by those proofs. The remaining
-gap is composing the recursive callee and handler induction hypotheses into
-the full source/target HOL `Call_Ret_Exception` case. -/
-theorem localsRelUpdateExistingValue
-    (context : PanToCrepProofContext α)
-    (sourceLocals : FiniteMap String (PanValue α))
-    (targetLocals : FiniteMap Nat (PanWordLab α))
-    (name : String) (oldValue newValue : PanValue α)
-    (hrel : localsRel context sourceLocals targetLocals)
-    (hsource : FLOOKUP sourceLocals name = some oldValue)
-    (hshape : panValueShape [] oldValue = panValueShape [] newValue) :
-    ∃ slots,
-      FLOOKUP context.vars name = some (panValueShape [] newValue, slots) ∧
-      slots.Nodup ∧
-      localsRel context (FUPDATE sourceLocals (name, newValue))
-        (FUPDATE_LIST targetLocals
-          (slots.zip ((panValueFlatten newValue).map PanWordLab.word))) := by
-  obtain ⟨slots, hcontextOld, _hlen, _hwords, _hwf⟩ :=
-    localsRelLookupCtxt context sourceLocals targetLocals name oldValue hrel hsource
-  have hcontextNew : FLOOKUP context.vars name =
-      some (panValueShape [] newValue, slots) := by
-    rw [← hshape]
-    exact hcontextOld
-  have hdistinct : slots.Nodup := hrel.1.1 name
-    (panValueShape [] oldValue) slots hcontextOld
-  refine ⟨slots, hcontextNew, hdistinct, ?_⟩
-  exact localRelLeZipUpdatePreserved context sourceLocals targetLocals name
-    oldValue newValue (panValueShape [] oldValue) slots hrel hsource hcontextOld
-    hshape hdistinct
-
-/-- HOL `locals_rel_extend_new_var` (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:4179-4186`):
-    a fresh, well-shaped source local can be allocated in distinct target slots
-    above the old context maximum:
-    `locals_rel ct s t /\ is_wf_shape_nil (shape_of v) /\ ALL_DISTINCT ns /\
-      (!x. MEM x ns ==> ct.vmax < x /\ x <= ct.vmax + size_of_shape (shape_of v)) /\
-      LENGTH ns = size_of_shape (shape_of v) ==>
-      locals_rel (ct with <|vars := ct.vars |+ (x,(shape_of v,ns));
-        vmax := ct.vmax + size_of_shape (shape_of v)|>) (s |+ (x,v))
-        (t |++ ZIP(ns, flatten v))`.
-    The Lean statement mirrors the HOL hypothesis set and conclusion clause for
-    clause: `locals_rel`/`is_wf_shape_nil`/`ALL_DISTINCT`/the slot-bounds condition/
-    `LENGTH` become `localsRel`/`isWfShape []`/`slots.Nodup`/`hbounds`/`hlen`, and
-    `shape_of`/`flatten` become `panValueShape []`/`panValueFlatten`.
--/
--- FLAPJACK-SPECIFIC (not an exact HOL port): the carriers differ from the HOL
--- declaration. `locals_rel`/its context is the production `localsRel` over
--- `PanToCrepProofContext α` (or `PanToCrepHOLContext α`) whose `vars`/`funcs`/`eids`
--- finite maps are keyed by the production `FunName`/`VarName`/`ExceptionId` = `String`,
--- and locals carry the production `PanValue α`/`Shape` (`named : String`) over a generic
--- word `α`; HOL keys names by `funname`/`varname`/`eid` = `mlstring` and uses
--- `panSem$v`/`shape` (`named : mlstring`) over a positive-width `'a word`. The
--- production `isWfShape`/`panValueShape`/`panValueFlatten` are the untagged production
--- mirrors of HOL `is_wf_shape_nil`/`shape_of`/`flatten`. `names_as_string` cannot
--- authorize the embedded `PanValue`/`Shape` carriers (the identifiers occur inside the
--- local value, not at the theorem boundary), and no `NameRanged`/`holMlStringWitness_*`
--- byte witness applies because the conclusion is the `localsRel` relation, not a name.
--- The exact MlString/value carrier is tracked by `flapjack-pxn.18.3.5.8`
--- (parent `flapjack-pxn.18.3.5.7.2`).
-theorem localsRelExtendNewVar
-    (context : PanToCrepProofContext α)
-    (sourceLocals : FiniteMap String (PanValue α))
-    (targetLocals : FiniteMap Nat (PanWordLab α))
-    (value : PanValue α) (name : String) (slots : List Nat)
-    (hrel : localsRel context sourceLocals targetLocals)
-    (hwf : isWfShape [] (panValueShape [] value) = true)
-    (hdistinct : slots.Nodup)
-    (hbounds : ∀ slot ∈ slots,
-      context.vmax < slot ∧
-        slot ≤ context.vmax + Shape.shapeSize (panValueShape [] value))
-    (hlen : slots.length = Shape.shapeSize (panValueShape [] value)) :
-    localsRel
-      { context with
-        vars := FUPDATE context.vars (name, (panValueShape [] value, slots))
-        vmax := context.vmax + Shape.shapeSize (panValueShape [] value) }
-      (FUPDATE sourceLocals (name, value))
-      (FUPDATE_LIST targetLocals
-        (slots.zip ((panValueFlatten value).map PanWordLab.word))) := by
-  have hlenFlat : slots.length =
-      ((panValueFlatten value).map PanWordLab.word).length := by
-    rw [List.length_map, hlen, panValueFlatten_length_eq_shapeSize value hwf]
-  have hdisjointOld : ∀ other shape otherSlots,
-      FLOOKUP context.vars other = some (shape, otherSlots) →
-      ListDisjoint slots otherSlots := by
-    intro other shape otherSlots hlookup slot hin hother
-    have hle : slot ≤ context.vmax :=
-      hrel.2.1.2 other shape otherSlots hlookup slot hother
-    exact (Nat.not_lt_of_ge hle) (hbounds slot hin).1
-  refine ⟨?_, ?_, ?_⟩
-  · constructor
-    · intro other shape otherSlots hlookup
-      rw [FLOOKUP_update] at hlookup
-      by_cases hsame : name = other
-      · simp [beq_iff_eq.mpr hsame] at hlookup
-        have hslots : slots = otherSlots := hlookup.2
-        rw [← hslots]
-        exact hdistinct
-      · have hbeq : (name == other) = false := beq_eq_false_iff_ne.mpr hsame
-        simp [hbeq] at hlookup
-        exact hrel.1.1 other shape otherSlots hlookup
-    · intro left right leftShape rightShape leftSlots rightSlots
-        hleft hright hinter
-      rw [FLOOKUP_update] at hleft hright
-      by_cases hl : name = left
-      · by_cases hr : name = right
-        · exact hl.symm.trans hr
-        · have hleq : (name == left) = true := beq_iff_eq.mpr hl
-          have hreq : (name == right) = false := beq_eq_false_iff_ne.mpr hr
-          simp [hleq] at hleft
-          simp [hreq] at hright
-          have hslots : slots = leftSlots := hleft.2
-          obtain ⟨slot, hin, hother⟩ := hinter
-          exact False.elim ((hdisjointOld right rightShape rightSlots hright)
-            slot (hslots.symm ▸ hin) hother)
-      · by_cases hr : name = right
-        · have hleq : (name == left) = false := beq_eq_false_iff_ne.mpr hl
-          have hreq : (name == right) = true := beq_iff_eq.mpr hr
-          simp [hleq] at hleft
-          simp [hreq] at hright
-          have hslots : slots = rightSlots := hright.2
-          obtain ⟨slot, hin, hother⟩ := hinter
-          exact False.elim ((hdisjointOld left leftShape leftSlots hleft)
-            slot (hslots.symm ▸ hother) hin)
-        · have hleq : (name == left) = false := beq_eq_false_iff_ne.mpr hl
-          have hreq : (name == right) = false := beq_eq_false_iff_ne.mpr hr
-          simp [hleq] at hleft
-          simp [hreq] at hright
-          exact hrel.1.2 left right leftShape rightShape leftSlots rightSlots
-            hleft hright hinter
-  · refine ⟨Nat.zero_le _, ?_⟩
-    intro other shape otherSlots hlookup slot hin
-    rw [FLOOKUP_update] at hlookup
-    by_cases hsame : name = other
-    · simp [beq_iff_eq.mpr hsame] at hlookup
-      have hslots : slots = otherSlots := hlookup.2
-      exact (hbounds slot (hslots.symm ▸ hin)).2
-    · have hbeq : (name == other) = false := beq_eq_false_iff_ne.mpr hsame
-      simp [hbeq] at hlookup
-      exact Nat.le_trans (hrel.2.1.2 other shape otherSlots hlookup slot hin)
-        (Nat.le_add_right _ _)
-  · intro other otherValue hlookupSource
-    rw [FLOOKUP_update] at hlookupSource
-    by_cases hsame : name = other
-    · simp [beq_iff_eq.mpr hsame] at hlookupSource
-      cases hlookupSource
-      refine ⟨slots, (panValueFlatten value).map PanWordLab.word, ?_, ?_, rfl, hwf⟩
-      · simp [FLOOKUP_update, beq_iff_eq.mpr hsame]
-      · exact opt_mmap_some_eq_zip_flookup slots targetLocals
-          ((panValueFlatten value).map PanWordLab.word) hdistinct hlenFlat
-    · have hbeq : (name == other) = false := beq_eq_false_iff_ne.mpr hsame
-      simp [hbeq] at hlookupSource
-      obtain ⟨otherSlots, words, hcontext, hmap, hflat, hotherWf⟩ :=
-        hrel.2.2 other otherValue hlookupSource
-      refine ⟨otherSlots, words, ?_, ?_, hflat, hotherWf⟩
-      · simpa [FLOOKUP_update, hbeq] using hcontext
-      · rw [opt_mmap_disj_zip_flookup slots targetLocals otherSlots
-          ((panValueFlatten value).map PanWordLab.word)
-          (hdisjointOld other (panValueShape [] otherValue) otherSlots hcontext)
-          hlenFlat]
-        exact hmap
-
 /-! Execute the finite-map compiler with the HOL proof context. Every map is
     passed directly to `compileProgHOL`; no queried-name projection to an
     `InfoMap` is performed. -/
@@ -1867,31 +1290,6 @@ def compileCodeRelProg [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
       vmax := context.vmax }
     program
 
-/-- Bridge from the proof-side finite-map context to the HOL finite-map
-    compiler context; the two records have the same four fields. -/
-def PanToCrepProofContext.toHOLContext (context : PanToCrepProofContext α) :
-    PanToCrepHOLContext α :=
-  { vars := context.vars, funcs := context.funcs, eids := context.eids,
-    vmax := context.vmax }
-
-/-- `compileProgRiscV` is the untagged, `compile_def`-shaped Flapjack helper.
-    Its production syntax carriers do not match HOL; see the declaration-local
-    note in `PanToCrep/Compile.lean`. It is definitionally the generic
-    `compileProgHOL` on the same context. -/
-theorem compileProgRiscV_eq_compileProgHOL
-    (context : PanToCrepHOLContext (BitVec width))
-    (program : Prog (BitVec width)) :
-    compileProgRiscV context program = compileProgHOL context program := rfl
-
-/-- The proof-side compiler expression `compileCodeRelProg` is exactly the
-    `compile_def`-shaped compiler (`compileProgRiscV`, untagged) on the bridged
-    context, for EVERY proof context, not only declaration-derived ones. -/
-theorem compileCodeRelProg_eq_compileProgRiscV
-    (context : PanToCrepProofContext (BitVec width))
-    (program : Prog (BitVec width)) :
-    compileCodeRelProg context program =
-      compileProgRiscV context.toHOLContext program := rfl
-
 /-! Flapjack's code relation, shaped after HOL `code_rel_def`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:32`). It quantifies over
     every source code entry, requires localisation and the exact
@@ -1899,18 +1297,8 @@ theorem compileCodeRelProg_eq_compileProgRiscV
     from `GENLIST I (size_of_shape (Comb shs))`, and constructs the target
     context with `ctxt_fc`.
 
-    This declaration is intentionally untagged: it is generic in the word
-    element type `α`, while the `compile_def`-shaped RISC-V
-    specialization `compileProgRiscV`. The bridge
-    `compileCodeRelProg_eq_compileProgRiscV` (with
-    `compileProgRiscV_eq_compileProgHOL`) proves that `compileCodeRelProg` is
-    definitionally that compiler for EVERY proof context at `BitVec
-    width`, not only declaration-derived ones, so the remaining gaps to an exact HOL
-    `code_rel_def` tag are (a) the width-indexing of this relation (tracked in
-    the Exp/word-indexing migration beads) and (b) the `String`-vs-`mlstring`
-    key carrier (`FunName`/`VarName`/`ExceptionId` = `String` vs HOL
-    `funname`/`varname`/`eid` = `mlstring`, tracked by
-    `flapjack-pxn.18.3.5.8`) - not the compiler expression. -/
+    This production relation is untagged: it uses generic word values,
+    String identifiers, and production syntax rather than the HOL carriers. -/
 
 def codeRel [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
     [CrepBytesInWord α]
@@ -1928,62 +1316,6 @@ def codeRel [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
       let nextContext := ctxtFc context.funcs context.eids variables shapes names
       FLOOKUP targetCode function = some
         (names, compileCodeRelProg nextContext program)
-
-/-- Width-indexed proof-side `code_rel` interface: the HOL reference is
-    word-length polymorphic (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:32-43`),
-    so this width-indexed form makes the compiler expression the
-    `compileProgRiscV` (`compile_def`-shaped) boundary. The generic `codeRel` is its
-    `alpha`-instantiated view (`codeRelW_iff_codeRel` below).
-
-    Source-reviewed decision: the `code_rel_def` tag stays WITHDRAWN as a
-    documented carrier mismatch, not an exact port. Clause for clause this matches
-    HOL `code_rel` (`∀ f vshs prog rsh, FLOOKUP s_code f = SOME (...) ==>
-    localised_prog prog ∧ FLOOKUP ctxt.funcs f = SOME (vshs, rsh) ∧ let ... ns =
-    GENLIST I (size_of_shape (Comb shs)); nctxt = ctxt_fc ... in FLOOKUP t_code f =
-    SOME (ns, compile nctxt prog)`), but the carriers differ: (1) the
-    source/target/context maps are keyed by production `FunName`/`VarName`/
-    `ExceptionId` = `String`, while HOL keys them by `funname`/`varname`/`eid` =
-    `mlstring` (the direct probe prints the HOL type as `(mlstring |->
-    (mlstring # shape) list # α panLang$prog # shape) -> (mlstring |-> num list #
-    α crepLang$prog) -> bool`); (2) the source shapes are the production `Shape`
-    and the target code the production `CrepProg (BitVec width)` whose `Call`/
-    `ExtCall` funnames are `String`, compiled through the production
-    `compileProgRiscV` rather than HOL's `crepLang$prog`-returning `compile`; (3)
-    `names_as_string` cannot authorize the `Shape`/`CrepProg` carriers, and no
-    `NameRanged` witness can be stated for a `Prop`-valued relation. Direct
-    HOL-EVAL/proof rows (`code_rel_matching`, `code_rel_rejects_wrong_body`,
-    `code_rel_rejects_missing_function_signature`,
-    `code_rel_rejects_unlocalised_source`) are recorded in
-    `scripts/hol-probes/code_rel_probe.out` and reproduced by
-    `Flapjack/Test/PanToCrepCodeRelParity.lean`. Exact-carrier replacement is
-    tracked by `flapjack-pxn.18.3.5.8` (parent `flapjack-pxn.18.3.5.7.2`); the
-    width-indexing part is now handled by this `codeRelW`. -/
-def codeRelW (width : Nat)
-    (context : PanToCrepProofContext (BitVec width))
-    (sourceCode : FiniteMap FunName
-      (List (VarName × Shape) × Prog (BitVec width) × Shape))
-    (targetCode : FiniteMap FunName (List Nat × CrepProg (BitVec width))) : Prop :=
-  ∀ function variableShapes program returnShape,
-    FLOOKUP sourceCode function = some (variableShapes, program, returnShape) →
-      localisedProg program ∧
-      FLOOKUP context.funcs function = some (variableShapes, returnShape) ∧
-      let variables := variableShapes.map Prod.fst
-      let shapes := variableShapes.map Prod.snd
-      let names := List.range (Shape.shapeSize (.comb shapes))
-      let nextContext := ctxtFc context.funcs context.eids variables shapes names
-      FLOOKUP targetCode function = some
-        (names, compileProgRiscV nextContext.toHOLContext program)
-
-/-- The width-indexed relation is the generic `codeRel` instantiated at
-    `BitVec width`, definitionally via the rfl compiler bridges. -/
-theorem codeRelW_iff_codeRel (width : Nat)
-    (context : PanToCrepProofContext (BitVec width))
-    (sourceCode : FiniteMap FunName
-      (List (VarName × Shape) × Prog (BitVec width) × Shape))
-    (targetCode : FiniteMap FunName (List Nat × CrepProg (BitVec width))) :
-    codeRelW width context sourceCode targetCode ↔
-      codeRel context sourceCode targetCode :=
-  Iff.rfl
 
 /-- Source-shaped port (Flapjack-specific; NOT an exact HOL port) of HOL
     `compile_exp_not_mem_load_glob`
@@ -2023,100 +1355,6 @@ theorem compileExpNotMemLoadGlob [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
       eids := context.eids, vmax := context.vmax }
     expression address
   simpa only [hcompile] using hsafe
-
-/-- Source-shaped port (Flapjack-specific; NOT an exact HOL port) of HOL `code_rel_imp`: an entry in related source code is localised and
-    has the corresponding function metadata and compiled target entry. -/
--- FLAPJACK-SPECIFIC (not an exact HOL port): the statement is keyed by the production
--- identifiers `FunName`/`VarName`/`ExceptionId` = `String` (or embeds a
--- `PanToCrepProofContext`/`PanToCrepHOLContext` whose `FiniteMap`s are `String`-keyed),
--- while HOL `pan_to_crepProofScript.sml` keys names by `funname`/`varname`/`eid` = `mlstring`.
--- The exact MlString identifier carrier is tracked by `flapjack-pxn.18.3.5.8`
--- (parent `flapjack-pxn.18.3.5.7.2`).
-theorem codeRelImp [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
-    [CrepBytesInWord α]
-    (context : PanToCrepProofContext α)
-    (sourceCode : FiniteMap FunName
-      (List (VarName × Shape) × Prog α × Shape))
-    (targetCode : FiniteMap FunName (List Nat × CrepProg α))
-    (hrel : codeRel context sourceCode targetCode)
-    (function : FunName) (variableShapes : List (VarName × Shape))
-    (program : Prog α) (returnShape : Shape)
-    (hlookup : FLOOKUP sourceCode function =
-      some (variableShapes, program, returnShape)) :
-    localisedProg program ∧
-      FLOOKUP context.funcs function = some (variableShapes, returnShape) ∧
-      let variables := variableShapes.map Prod.fst
-      let shapes := variableShapes.map Prod.snd
-      let names := List.range (Shape.shapeSize (.comb shapes))
-      let nextContext := ctxtFc context.funcs context.eids variables shapes names
-      FLOOKUP targetCode function = some
-        (names, compileCodeRelProg nextContext program) :=
-  hrel function variableShapes program returnShape hlookup
-
-/-! Source-shaped analogue of HOL `code_rel_empty_locals`
-(`cakeml/pancake/proofs/pan_to_crepProofScript.sml:96`), not an exact HOL
-port. The state updates do preserve both code fields: HOL `empty_locals_def`
-at panSemScript.sml:436 and crepSemScript.sml:71 update only `locals`, and
-the two Lean updates do the same. The relation carried across those unchanged
-fields is still production-specific, however. -/
--- FLAPJACK-SPECIFIC (not an exact HOL port): HOL `code_rel_def` at
--- pan_to_crepProofScript.sml:30-42 relates `mlstring`-keyed finite maps whose
--- source entries contain HOL `prog` and whose target entries contain HOL
--- `crep_prog` compiled by `compile`. This theorem instead relates
--- `panSemCodeAsLookup source.code` and `target.code` through production
--- `codeRel`: its keys are `String` (`FunName`/`VarName`), its source entries
--- use production `Prog α`, and its target entries use production `CrepProg α`
--- / `compileCodeRelProg`. There is no `NameRanged` or same-module byte witness
--- premise, and no proved state/code-carrier bridge in this statement. The
--- identifier dependency is `flapjack-pxn.18.3.5.8`; exact HOL Prog/Crep code
--- carriers and their compiler bridge are also still prerequisites. Do not tag
--- this analogue with `code_rel_empty_locals` until those boundaries are exact.
-theorem codeRelEmptyLocals [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
-    [CrepBytesInWord α]
-    (context : PanToCrepProofContext α)
-    (source : PanSemState α (FfiState σ))
-    (target : CrepRuntimeState α σ)
-    (hcode : codeRel context (panSemCodeAsLookup source.code) target.code) :
-    codeRel context (panSemCodeAsLookup (panEmptyLocals source).code)
-      (clearCrepRuntimeLocals target).code := by
-  simpa [panEmptyLocals, clearCrepRuntimeLocals] using hcode
-
-/-- HOL `locals_id_update[local]`: writing the existing locals map into the
-    production Crep state leaves that entire state unchanged. -/
-@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "locals_id_update"]
-theorem crepLocalsIdUpdate (target : CrepRuntimeState α σ) :
-    { target with locals := target.locals } = target := by
-  cases target
-  rfl
-
-/-- Flapjack analogue of HOL `first_compile_to_crep_all_distinct`
-    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:4566-4573`), which proves
-    `ALL_DISTINCT (MAP FST (functions prog)) ==>
-      ALL_DISTINCT (MAP FST (compile_to_crep prog))`. This theorem mirrors that
-    statement shape (`Nodup`/`List.map` for `ALL_DISTINCT`/`MAP`), but its input
-    is the production `Decl (BitVec width)` carrier with `String`
-    `FunName`/`VarName`/`ExceptionId` and production `Shape`, and its output
-    uses `FunName`/generic `CrepProg`; HOL quantifies over the `DeclHOL`/panLang
-    carrier (`mlstring` identifiers and HOL expression/shape types) and returns
-    `mlstring` names with `CrepProgHOL width` bodies. These input and output
-    carrier differences exceed identifier representation, so `names_as_string`
-    cannot qualify this analogue (no `NameRanged` witness applies either, since
-    the conclusion is `Nodup` of a name list derived from a compiled program).
-    The withdrawn tag is recorded as a documented mismatch in
-    `docs/HOL-THEOREM-MAP.json`; it is intentionally untagged. An exact-carrier
-    replacement depends on `DeclHOL` and compiler-boundary work tracked by
-    `flapjack-yao.1` (MlString carrier umbrella `flapjack-pxn.18.3.5.8`).
-    Distinctness across the `compile_inl_top` boundary is exercised against the
-    HOL EVAL row `duplicate_first` of
-    `scripts/hol-probes/compile_prog_probe.out` by
-    `Flapjack/Test/CompileProgParity.lean`. -/
-theorem firstCompileToCrepAllDistinct [NeZero width]
-    (declarations : List (Decl (BitVec width)))
-    (hdistinct : ((functionEntries declarations).map
-      fun (name, _, _, _) => name).Nodup) :
-    ((compileToCrepHOL declarations).map
-      fun (name, _, _) => name).Nodup := by
-  simpa [compileToCrepHOL, List.map_map, Function.comp_def] using hdistinct
 
 /-- Exact-carrier port of HOL `first_compile_to_crep_all_distinct`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:4566-4573`). The input
@@ -2189,40 +1427,6 @@ theorem makeFuncsHOL_lookup_of_lookup
       (value.1, value.2.2))]
   rw [h]
   rfl
-
-/-- Flapjack analogue of HOL `first_compile_prog_all_distinct`
-    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:4556-4564`), which proves
-    `ALL_DISTINCT (MAP FST (functions prog)) ==>
-      ALL_DISTINCT (MAP FST (compile_prog prog))`. This theorem mirrors that
-    statement shape (`Nodup`/`List.map`) and derives the `compileProgTopHOL`
-    result from the `compileToCrepHOL` result above, but it quantifies over the
-    production `Decl (BitVec width)` carrier with `String` identifiers and
-    production `Shape`, and concludes about `compileProgTopHOL`, whose output
-    uses production `FunName`/generic `CrepProg`. HOL instead quantifies over
-    the `DeclHOL`/`panLang` carrier (`mlstring` identifiers and HOL
-    expression/shape types) and concludes about the exact `compile_prog` output
-    (`mlstring` names and `CrepProgHOL width` bodies). These input and output
-    carrier differences are not covered by `names_as_string`; therefore this
-    analogue is intentionally untagged and recorded as a documented mismatch in
-    `docs/HOL-THEOREM-MAP.json`. An exact-carrier replacement depends on the
-    `DeclHOL` and compiler-boundary work tracked by `flapjack-wur.1` (MlString
-    carrier umbrella `flapjack-pxn.18.3.5.8`). Distinctness across the
-    `compile_inl_top` boundary is exercised against the HOL EVAL row
-    `duplicate_first` of `scripts/hol-probes/compile_prog_probe.out` by
-    `Flapjack/Test/CompileProgParity.lean`. -/
-theorem firstCompileProgAllDistinct {width : Nat} [NeZero width]
-    (declarations : List (Decl (BitVec width)))
-    (hdistinct : ((functionEntries declarations).map
-      fun (name, _, _, _) => name).Nodup) :
-    ((compileProgTopHOL declarations).map
-      fun (name, _, _) => name).Nodup := by
-  have hnames :
-      ((compileProgTopHOL declarations).map fun (name, _, _) => name) =
-        ((compileToCrepHOL declarations).map fun (name, _, _) => name) := by
-    simp [compileProgTopHOL, compileInlTopHOL, List.map_map,
-      Function.comp_def]
-  rw [hnames]
-  exact firstCompileToCrepAllDistinct declarations hdistinct
 
 /-- `state_rel` records that source and target ffi states coincide; installing the
     same `call_FFI` result on both therefore preserves the whole relation (the

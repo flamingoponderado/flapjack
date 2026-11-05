@@ -87,19 +87,6 @@ def zipTruncationGuard : Bool :=
 def emptyMaximumGuard : Bool :=
   (ctxtFc FEMPTY FEMPTY [] [] [] : PanToCrepProofContext Nat).vmax == 0
 
-theorem ctxt_fc_funcs_eq_fixture :
-    (ctxtFc compilerFunctions exceptionCodes [] [] []).funcs = compilerFunctions :=
-  ctxtFcFuncsEq compilerFunctions exceptionCodes [] [] []
-
-theorem ctxt_fc_vmax_nonempty_fixture :
-    (ctxtFc shapedSlotsContext.funcs exceptionCodes [] [] [4, 1, 7, 3]).vmax =
-      maxList [4, 1, 7, 3] :=
-  ctxtFcVmax shapedSlotsContext exceptionCodes [] [] [4, 1, 7, 3]
-
-theorem ctxt_fc_vmax_empty_fixture :
-    (ctxtFc shapedSlotsContext.funcs exceptionCodes [] [] []).vmax = maxList [] :=
-  ctxtFcVmax shapedSlotsContext exceptionCodes [] [] []
-
 def ctxtFcVmaxGuard : Bool :=
   (ctxtFc shapedSlotsContext.funcs exceptionCodes [] [] [4, 1, 7, 3]).vmax == 7 &&
   (ctxtFc shapedSlotsContext.funcs exceptionCodes [] [] []).vmax == 0

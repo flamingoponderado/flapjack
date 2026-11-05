@@ -918,31 +918,14 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
         ]
         self.assertEqual(compile_prog["hol_name"], "compile_prog_def")
         self.assertEqual(compile_prog["statement_status"], "documented_mismatch")
-        documented_mismatches = (
-            "firstCompileProgAllDistinct",
-            "firstCompileToCrepAllDistinct",
+        for theorem_name in ("firstCompileProgAllDistinct", "firstCompileToCrepAllDistinct"):
+            self.assertNotIn(
+                ("Flapjack/Pancake/Proofs/PanToCrep.lean", theorem_name), inventory
+            )
+        self.assertIn(
+            ("Flapjack/Pancake/Proofs/PanToCrep.lean", "firstCompileToCrepAllDistinctExact"),
+            inventory,
         )
-        for theorem_name in documented_mismatches:
-            key = ("Flapjack/Pancake/Proofs/PanToCrep.lean", theorem_name)
-            with self.subTest(key=key):
-                self.assertIsNone(inventory[key]["hol_name"])
-                self.assertEqual(
-                    inventory[key]["statement_status"],
-                    "no_hol_reference_pending_classification",
-                )
-
-        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
-        manifest_by_key = {
-            (record["lean_path"], record["lean_name"]): record
-            for record in manifest
-        }
-        for theorem_name in documented_mismatches:
-            key = ("Flapjack/Pancake/Proofs/PanToCrep.lean", theorem_name)
-            with self.subTest(review_record=key):
-                self.assertEqual(
-                    manifest_by_key[key]["statement_status"], "documented_mismatch"
-                )
-                self.assertIn("carrier", manifest_by_key[key]["reviewer"])
 
     def test_genlist_vmax_distinct_lists_port_is_in_review_inventory(self):
         inventory = {

@@ -1,7 +1,9 @@
 import Flapjack.Compiler.Backend.Semantics.DataSem.State
+import Flapjack.Compiler.Backend.Semantics.DataSem.Control
 import Flapjack.Compiler.Backend.Semantics.WordSem.State
 import Flapjack.Compiler.Backend.DataToWord.Variables
 import Flapjack.Misc.Option
+import Mathlib.Data.List.Induction
 
 /-! Stack-frame relations used by data-to-word garbage-collector correctness. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
@@ -77,5 +79,34 @@ theorem flatStack_append {width : Nat} [NeZero width]
     | cons y ys =>
       have lengths : xs.length = ys.length := by simpa using sameLength
       cases x <;> cases y <;> simp [flatStack, ih ys lengths, List.append_assoc]
+
+/-- Related data and word stacks have exactly the same optional accounted
+size, including exception-frame overhead. -/
+theorem stackRel_sizeOfStack {width : Nat} [NeZero width]
+    {source : List DataSem.Stack} {target : List (WordSemStackFrame width)}
+    (related : List.Forall₂ stackRel source target) :
+    wordSemStackSize target = DataSem.sizeOfStack source := by
+  induction related with
+  | nil => rfl
+  | @cons frame wordFrame rest wordRest head tail ih =>
+    have frameSize : wordSemStackSizeFrame wordFrame = DataSem.sizeOfStackFrame frame := by
+      cases wordFrame with
+      | stackFrame wordSize nonGc gc handler =>
+        cases frame with
+        | env size env =>
+          cases handler with
+          | none => simpa [stackRel, stackEnvRel, wordSemStackSizeFrame, DataSem.sizeOfStackFrame] using head.2.1.symm
+          | some info => simp [stackRel] at head
+        | exc size env saved =>
+          cases handler with
+          | none => simp [stackRel] at head
+          | some info =>
+            obtain ⟨h, a, b⟩ := info
+            simp only [stackRel] at head
+            simp [wordSemStackSizeFrame, DataSem.sizeOfStackFrame, head.1.2.1]
+    change wordSemOptionAdd (wordSemStackSizeFrame wordFrame) (wordSemStackSize wordRest) =
+      Option.map₂ (· + ·) (DataSem.sizeOfStackFrame frame) (DataSem.sizeOfStack rest)
+    rw [frameSize, ih]
+    cases DataSem.sizeOfStackFrame frame <;> cases DataSem.sizeOfStack rest <;> rfl
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

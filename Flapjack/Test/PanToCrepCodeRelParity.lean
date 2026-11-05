@@ -329,11 +329,6 @@ def makeFuncsGuard : Bool :=
 def eidsDecls : List (Decl (BitVec 8)) :=
   [Decl.exnDecl "E" Shape.one, Decl.exnDecl "F" Shape.one]
 
-example :
-    excpRel (panToCrepGetEidsFromDeclsHOL eidsDecls)
-      (panToCrepGetEidsFromDeclsHOL eidsDecls) :=
-  getEidsFromDeclsImpExcpRel _ eidsDecls (by simp [sizeOfEids, eidsDecls]; decide) rfl
-
 def getEidsGuard : Bool :=
   (FLOOKUP (panToCrepGetEidsFromDeclsHOL eidsDecls) "E" ==
     some (0 : BitVec 8)) &&

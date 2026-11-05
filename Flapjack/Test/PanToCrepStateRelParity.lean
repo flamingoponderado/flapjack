@@ -110,13 +110,6 @@ theorem skipCodeRuntime_relates :
   simpa [stateRel, skipCodeRuntime, targetState] using
     stateRel_satisfied
 
-theorem skipCodeRelEmptyLocalsFixture :
-    codeRel skipCodeContext
-      (panSemCodeAsLookup (panEmptyLocals skipSourceState).code)
-      (clearCrepRuntimeLocals skipCodeRuntime).code :=
-  codeRelEmptyLocals skipCodeContext skipSourceState skipCodeRuntime
-    skipCodeRelFixture
-
 def skipCodeLookupGuard : Bool :=
   (FLOOKUP skipCodeRuntime.code "id").isSome &&
     (lookupCrepRuntimeCode "id" [] skipCodeRuntime.code).isSome
@@ -370,14 +363,14 @@ theorem nestedMemoryStateRel : stateRel nestedSourceMemoryState nestedTargetMemo
 
 private def nestedLoadShape : Shape := .comb [.one, .comb [.one, .one]]
 
-private def nestedLoadCompilerContext : PanToCrepProofContext Word64 :=
+private def nestedLoadCompilerContext : PanToCrepHOLContext Word64 :=
   { vars := FEMPTY, funcs := FEMPTY, eids := FEMPTY, vmax := 0 }
 
 def stateRelNestedLoadSourceTargetCase : Bool :=
   let expression : Exp Word64 := .load nestedLoadShape (.const 0)
   let sourceResult := evalPanSemStateExp nestedSourceMemoryState expression
   let targetExpressions :=
-    (compileExpHOL nestedLoadCompilerContext.toHOLContext expression).1
+    (compileExpHOL nestedLoadCompilerContext expression).1
   match sourceResult with
   | some value =>
       evalCrepRuntimeExps nestedTargetMemoryState targetExpressions ==

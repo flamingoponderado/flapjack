@@ -1,6 +1,5 @@
 import Flapjack.Compiler.Backend.Semantics.DataSem.EvaluateCode
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Space
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Fragment
 
 /-! Code-table preservation for data primitives used by the simulation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Correct
@@ -707,94 +706,5 @@ theorem evaluate_assign_globalStore_code {C F : Type} (dest index value : Nat) (
     have first := (doSpace_code_const (.globOp (.setGlobal index)) args before accounted space).1
     have second := doAppAux_globalStore_code index args _ after result run
     simpa [doStack, doLimSafe, first, code] using second
-
-/-- Every program in the current non-call simulation fragment preserves its
-code table, including all failing executions. This is Lean-side infrastructure,
-not a port of the unrestricted HOL compiler-correctness theorem. -/
-theorem verifiedFragment_code {C F : Type} (program : DataLang.Prog) (fragment : VerifiedFragment program) :
-    ∀ state : State C F, (evaluate program state).2.code = state.code := by
-  induction fragment with
-  | skip => intro state; simp [evaluate]
-  | tick => intro state; exact evaluate_tick_code state
-  | move dest src => intro state; exact evaluate_move_code dest src state
-  | globalsPtr dest => intro state; exact evaluate_assign_globalsPtr_code dest state
-  | byteOp dest left right op =>
-    intro state
-    exact evaluate_assign_word_code dest (.wordOpw .w8 op) [left, right] none state
-  | byteCompare dest left right kind =>
-    intro state
-    exact evaluate_assign_word_code dest (.wordTest .w8 kind.test) [left, right] none state
-  | byteShift dest src shift amount =>
-    intro state
-    exact evaluate_assign_word_code dest (.wordShift .w8 shift amount) [src] none state
-  | setGlobalsPtr dest name => intro state; exact evaluate_assign_setGlobalsPtr_code dest name state
-  | globalLoad dest index => intro state; exact evaluate_assign_globalLoad_code dest index state
-  | globalStore dest index value => intro state; exact evaluate_assign_globalStore_code dest index value state
-  | label dest label => intro state; exact evaluate_assign_label_code dest label [] none state
-  | emptyCons dest tag bound =>
-    intro state
-    exact evaluate_assign_block_code_of_aux dest (.cons tag) [] none state (doAppAux_cons_code tag)
-  | blockTagLen dest src tag wanted =>
-    intro state
-    exact evaluate_assign_block_code_of_aux dest (.tagLenEq tag wanted) [src] none state
-      (doAppAux_blockCompare_code (.tagLenEq tag wanted) (Or.inr (Or.inr (Or.inl ⟨tag, wanted, rfl⟩))))
-  | blockTag dest src tag =>
-    intro state
-    exact evaluate_assign_block_code_of_aux dest (.tagEq tag) [src] none state
-      (doAppAux_blockCompare_code (.tagEq tag) (Or.inl ⟨tag, rfl⟩))
-  | blockLen dest src wanted =>
-    intro state
-    exact evaluate_assign_block_code_of_aux dest (.lenEq wanted) [src] none state
-      (doAppAux_blockCompare_code (.lenEq wanted) (Or.inr (Or.inl ⟨wanted, rfl⟩)))
-  | blockLength dest src =>
-    intro state
-    exact evaluate_assign_block_code_of_aux dest .lengthBlock [src] none state
-      (doAppAux_blockCompare_code .lengthBlock (Or.inr (Or.inr (Or.inr rfl))))
-  | blockBounds dest base index =>
-    intro state
-    exact evaluate_assign_block_code_of_aux dest .boundsCheckBlock [base, index] none state doAppAux_blockBounds_code
-  | byteBounds dest base index loose =>
-    intro state
-    exact evaluate_assign_byteBounds_code dest loose [base, index] state
-  | arrayBounds dest base index =>
-    intro state
-    exact evaluate_assign_arrayBounds_code dest [base, index] state
-  | arrayLength dest base =>
-    intro state
-    exact evaluate_assign_arrayLength_code dest [base] state
-  | byteLength dest base =>
-    intro state
-    exact evaluate_assign_byteLength_code dest [base] state
-  | dynamicElement dest base index =>
-    intro state
-    exact evaluate_assign_dynamicElement_code dest [base, index] state
-  | byteElement dest base index =>
-    intro state
-    exact evaluate_assign_byteElement_code dest [base, index] state
-  | byteStore dest base index value =>
-    intro state
-    exact evaluate_assign_byteStore_code dest [base, index, value] state
-  | arrayStore dest base index value =>
-    intro state
-    exact evaluate_assign_arrayStore_code dest [base, index, value] state
-  | element dest src index =>
-    intro state
-    exact evaluate_assign_block_code_of_aux dest (.elemAt index) [src] none state (doAppAux_elemAt_code index)
-  | lessConst dest src n => intro state; exact evaluate_assign_int_code dest (.lessConstSmall n) [src] none state
-  | boolTest dest left right test =>
-    intro state
-    exact evaluate_assign_block_code_of_aux dest (.boolTest test) [left, right] none state (doAppAux_boolTest_code test)
-  | boolNot dest src =>
-    intro state
-    exact evaluate_assign_block_code_of_aux dest .boolNot [src] none state doAppAux_boolNot_code
-  | intConst dest i => intro state; exact evaluate_assign_int_code dest (.const i) [] none state
-  | ret names => intro state; exact evaluate_return_code names state
-  | raise name => intro state; exact evaluate_raise_code name state
-  | @seq first second firstFrag secondFrag firstIH secondIH =>
-    intro state
-    exact evaluate_seq_code_step first second state (firstIH state) (fun mid _ _ => secondIH mid)
-  | @ite name yes no yesFrag noFrag yesIH noIH =>
-    intro state
-    exact evaluate_if_code_step name yes no state (yesIH state) (noIH state)
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Correct

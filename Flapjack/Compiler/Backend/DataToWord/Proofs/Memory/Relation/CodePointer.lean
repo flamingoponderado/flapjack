@@ -121,4 +121,27 @@ theorem memoryRel_loc {width : Nat} [NeZero width] (conf : Config) (be : Bool)
         have value := related 0
         cases value <;> simp_all [wordAddr]
 
+/-- A represented code pointer has the exact word-level code location. -/
+theorem memoryRel_codePtr_location {width : Nat} [NeZero width] (conf : Config) (be : Bool)
+    (next : Nat) (refs : Spt (BvlSem.Ref DataSem.Value)) (space : Nat)
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW width)) (memory : BitVec width → WordLocW width)
+    (domain : BitVec width → Bool) (label : Nat) (word : WordLocW width)
+    (roots : List (DataSem.Value × WordLocW width))
+    (rel : memoryRel conf be next refs space store memory domain ((.codePtr label, word) :: roots)) :
+    word = .loc label 0 := by
+  obtain ⟨heap, limit, a, sp, sp1, gens, _, hword, _, _⟩ := rel
+  obtain ⟨xs, habs, addresses⟩ := hword
+  obtain ⟨_, _, _, _, stack⟩ := habs
+  obtain ⟨f, tf, _, _, _, _, _, _, _, values, _⟩ := stack
+  cases xs with
+  | nil => cases values
+  | cons x xs =>
+    cases values with
+    | cons valueInv _ =>
+      cases addresses with
+      | cons address _ =>
+        have eq := (valueInv_codePtr conf label refs x f tf heap).mp valueInv
+        subst x
+        simpa [wordAddr] using address.symm
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

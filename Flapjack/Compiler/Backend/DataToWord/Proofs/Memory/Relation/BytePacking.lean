@@ -111,29 +111,6 @@ private theorem packedAt {width : Nat} [NeZero width] (words : List (BitVec widt
       rw [ih (bytes.drop (width / 8)) i (by simpa using h)]
       simp [List.drop_drop, Nat.succ_mul, Nat.add_comm]
 
-/-- An in-range byte is recovered from its packed 64-bit word. The destination
-must have capacity for the complete source byte list; both endian modes use
-the same observable source index. -/
-theorem writeBytes_getByte64 (bytes : List (BitVec 8)) (words : List (BitVec 64))
-    (be : Bool) (i : Nat) (inBytes : i < bytes.length)
-    (capacity : bytes.length ≤ words.length * 8) :
-    getByte (BitVec.ofNat 64 (i % 8))
-      ((DataToWord.writeBytes bytes words be)[i / 8]'(by
-        rw [packedLength]; exact (Nat.div_lt_iff_lt_mul (by decide)).2 (by omega))) be = bytes[i] := by
-  have wordBound : i / 8 < words.length := (Nat.div_lt_iff_lt_mul (by decide)).2 (by omega)
-  have byteBound : i % 8 < (bytes.drop ((i / 8) * 8)).length := by
-    simp only [List.length_drop]
-    have quotient := Nat.mod_add_div i 8
-    omega
-  have remBound : i % 8 < 2 ^ 3 := by exact Nat.mod_lt _ (by decide)
-  rw [packedAt words bytes be (i / 8) wordBound]
-  have read := getByte_bytesToWord (i % 8) 3 be (bytes.drop ((i / 8) * 8)) words[i / 8]
-    ⟨byteBound, remBound, by decide, Or.inr rfl⟩
-  have indexEq : i / 8 * 8 + i % 8 = i := by
-    have quotient := Nat.mod_add_div i 8
-    omega
-  simpa [List.getElem_drop, indexEq] using read
-
 /-- Sufficient destination capacity makes byte packing injective (Flapjack helper). -/
 private theorem packInjAux {width : Nat} [NeZero width] (k : Nat) (words : List (BitVec width))
     (first second : List (BitVec 8)) (be : Bool) (good : goodDimindex width)

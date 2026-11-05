@@ -709,7 +709,7 @@ import Flapjack.Test.WordConvsPostAllocExactParity
 import Flapjack.Test.WordConvsPreAllocExactParity
 import Flapjack.Test.WordRemoveMustTerminateParity
 import Flapjack.Test.DataToWordConfigParity
-import Flapjack.Test.DataToWordFragmentCompilerParity
+import Flapjack.Test.DataToWordCompilerParity
 import Flapjack.Test.DataToWordMemoryRepresentation
 import Flapjack.Test.WordGcFunctionsParity
 import Flapjack.Test.StackAllocGcCodeParity
@@ -954,7 +954,6 @@ import Flapjack.Test.CrepSemStateExactParity
 import Flapjack.Test.CrepSemNonFailStartLookupParity
 import Flapjack.Test.CrepFuelCutoffParity
 import Flapjack.Test.PanToCrepGlobalsLookupParity
-import Flapjack.Test.PanToCrepCallExceptionParity
 import Flapjack.Test.PanToCrepCallExceptionHandlerParity
 import Flapjack.Test.CrepeAssignRetParity
 import Flapjack.Test.CrepeVarCexpParity
@@ -978,7 +977,6 @@ import Flapjack.Test.CrepRuntimeFfiTargetParity
 import Flapjack.Test.CrepRuntimeExtCallStateRelParity
 import Flapjack.Test.CrepEveryExpParity
 import Flapjack.Test.CrepAssignedVarsParity
-import Flapjack.Test.MkCtxtImpLocalsRelParity
 import Flapjack.Test.FmEmptyZipAlistParity
 import Flapjack.Test.FupdateListAppendCommutesParity
 import Flapjack.Test.PanSimpParity
@@ -1477,7 +1475,6 @@ def main : IO Unit := do
     Flapjack.Test.CrepRuntimeExtCallStateRelParity.runChecks,
     Flapjack.Test.CrepEveryExpParity.runChecks,
     Flapjack.Test.CrepAssignedVarsParity.runChecks,
-    Flapjack.Test.MkCtxtImpLocalsRelParity.runChecks,
     Flapjack.Test.FmEmptyZipAlistParity.runChecks,
     Flapjack.Test.FupdateListAppendCommutesParity.runChecks,
     Flapjack.Test.PanToCrepRelationsParity.runChecks,

@@ -272,18 +272,9 @@ theorem fixClock_wordEq {width : Nat} [NeZero width] (conf : Config)
     have clockNotLt : ¬ clock < remainingClock := by omega
     simp [fixClock, limitNotLt, clockNotLt]
 
-/-- The rebound list equation's finite store has the canonical lookup codec. -/
-theorem holFmapAsFiniteSupportParamWitness_wordEqList_unclamped_store {width : Nat} [NeZero width]
-    (store : HolFiniteMapExact WordStoreHOL (WordLocW width)) (key : WordStoreHOL) :
-    (MemoryStoreBroad.ofBroad (MemoryStoreBroad.toBroad store)).lookup key = store.lookup key ∧
-    (MemoryStoreBroad.ofBroad (MemoryStoreBroad.toBroad store)).finiteSupport = store.finiteSupport ∧
-    MemoryStoreBroad.ofBroad (MemoryStoreBroad.toBroad store) = store := by
-  cases store
-  exact ⟨rfl, rfl, rfl⟩
-
-/-- Unclamped equation for the list worker, justified by the clock bounds. -/
-@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "word_eq_def" 14055
-  (fmap_as_finite_support_parameters := [store]) (words_as_type_indexed_bitvec)]
+/-- The list equation from the rebound `word_eq_def`, used in the full
+word-equality proof. HOL's rebound theorem also contains the word equation;
+this supporting rewrite does not claim to port that conjunction. -/
 theorem wordEqList_unclamped {width : Nat} [NeZero width] (conf : Config)
     (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
     (domain : BitVec width → Bool) (memory : BitVec width → WordLocW width)

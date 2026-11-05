@@ -124,49 +124,4 @@ theorem heapInMemoryStore_blockElement {width : Nat} [NeZero width] (conf : Conf
   refine ⟨curr + StackRemove.bytesInWord width * BitVec.ofNat width index, ?_, facts.1, facts.2⟩
   simpa only [BitVec.mul_comm] using addr
 
-/-- A related block's indexed child has an abstract value invariant and its
-projected representation occurs at the corresponding concrete address. This
-Flapjack helper is a step towards the stronger `memory_rel_Block_MEM`, which
-also restores the complete memory relation after pushing the child. -/
-theorem memoryRel_blockElementWitness {width : Nat} [NeZero width] (conf : Config) (bigEndian : Bool)
-    (next : Nat) (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value))
-    (space : Nat) (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
-    (memory : BitVec width → WordLocW width) (domain : BitVec width → Bool)
-    (stamp tag : Nat) (values : List Flapjack.Compiler.Backend.DataSem.Value)
-    (location : WordLocW width) (vars : List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width))
-    (i : Nat) (bound : i < values.length) (good : goodDimindex width)
-    (inv : memoryRel conf bigEndian next refs space store memory domain ((.block stamp tag values, location) :: vars)) :
-    ∃ (w addr : BitVec width) (root : HeapAddress (WordLocW width))
-      (f tf : HolFiniteMapExact Nat Nat) (heap : ValueHeap width) (limit a sp sp1 : Nat) (gens : GcCombined.GenState),
-      location = .word w ∧ getRealAddr conf store w = some addr ∧
-      memory (addr + StackRemove.bytesInWord width + BitVec.ofNat width i * StackRemove.bytesInWord width) = wordAddr conf root ∧
-      domain (addr + StackRemove.bytesInWord width + BitVec.ofNat width i * StackRemove.bytesInWord width) = true ∧
-      valueInv conf values[i] refs (root, f, tf, heap) ∧
-      heapInMemoryStore heap a sp sp1 gens conf store memory domain limit := by
-  obtain ⟨heap, limit, a, sp, sp1, gens, heapMem, wordInv, _, _⟩ := inv
-  obtain ⟨roots, absInv, addresses⟩ := wordInv
-  obtain ⟨_, _, _, _, stackInv⟩ := absInv
-  obtain ⟨f, tf, _, _, _, _, _, _, _, related, _⟩ := stackInv
-  cases roots with
-  | nil => cases related
-  | cons root rest =>
-    cases related with
-    | cons parentRelated _ =>
-      cases addresses with
-      | cons projected _ =>
-        have nonempty : values ≠ [] := by
-          intro eq
-          subst values
-          simp at bound
-        obtain ⟨ptr, children, pair, lookup, rootEq, cell⟩ :=
-          (valueInv_nonemptyBlock conf stamp tag values refs root f tf heap nonempty).mp parentRelated
-        subst root
-        have childBound : i < children.length := by rw [← pair.length_eq]; exact bound
-        have childRelated := pair.get bound childBound
-        obtain ⟨addr, addressEq, memoryEq, domainEq⟩ :=
-          heapInMemoryStore_blockElement conf heap ptr tag children i childBound a sp sp1 gens store memory domain limit
-            (.word (ptrBits conf tag children.length)) good cell heapMem
-        exact ⟨getAddr conf ptr (.word (ptrBits conf tag children.length)), addr, children[i], f, tf, heap,
-          limit, a, sp, sp1, gens, projected.symm, addressEq, memoryEq, domainEq, childRelated, heapMem⟩
-
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

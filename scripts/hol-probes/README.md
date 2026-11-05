@@ -233,11 +233,10 @@ original `data_to_word$comp` and representative 64-bit results for nested
 control flow, numeric constants, Boolean operations, constructor tag-and-length
 tests (including packed, header, and unencodable queries), block, value-array,
 and byte-array bounds checks, value-array and byte-array lengths, dynamic element and byte reads,
-and label/global-pointer assignments. `DataToWordFragmentCompilerParity.lean`
-checks the same results in Lean, and `fragmentCompile64_agrees` proves that the
-source-shaped fragment traversal agrees with the executed compiler for every
-program in `VerifiedFragment`. These are partial correspondence evidence, not
-a proof of equivalence with the complete HOL compiler. Regenerate with
+and label/global-pointer assignments. `DataToWordCompilerParity.lean`
+checks the same results against the executed Lean compiler. These checks are
+finite correspondence evidence, not a proof of equivalence with the complete
+HOL compiler. Regenerate with
 `HOL_PROBE_ONLY=data_to_word_fragment_comp_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `clos_mti_collect_args_probe.out` captures the typed original argument and
@@ -1568,9 +1567,8 @@ carrier source equation is tagged in
 equation at `cakeml/pancake/semantics/panSemScript.sml:618-622`: a nonzero word
 condition selects the then-branch, `0w` selects the else-branch, and a condition
 that evaluates to the non-word value `RStruct []` (or fails to evaluate) returns
-`SOME Error` while retaining the state. The matching Lean guards for the
-measure-driven fragment and the expression-conditioned fragment live in
-`Flapjack.Test.PanSemTotalParity`. `pan_sem_total_fragment_stmt_probe.out` adds
+`SOME Error` while retaining the state. The matching Lean guards for the full exact-state evaluator live in
+`Flapjack.Test.PanSemTotalEvalExactParity`. `pan_sem_total_fragment_stmt_probe.out` adds
 `If` selection over the exact `Assign` clause, including the non-word
 `RStruct []` condition row `total_if_assign_nonword_result` / `_local`; the
 production partial dispatcher's matching `If` guards and kernel-checked
@@ -1694,9 +1692,9 @@ production-to-HOL kernel guards are in
 `pan_to_crepProofTheory`, paired with `Flapjack.Test.PanToCrepRelationsParity`.
 The `functions_projection` row in `ctxt_fc_probe.out` directly checks the
 HOL `ctxt_fc_funcs_eq` theorem at `pan_to_crepProofScript.sml:2295` against
-the kernel-checked Lean fixture in that module. The `vmax_nonempty_list` and
+the context lookup guard in that module. The `vmax_nonempty_list` and
 `vmax_empty_list` rows directly check `ctxt_fc_vmax` at line 2307 and are
-paired with `ctxtFcVmax` Lean fixtures.
+paired with the `ctxtFcVmaxGuard` Lean check.
 The `excp_rel` cases deliberately use a word-valued compiler-code map and a
 shape-valued source map, matching the definition's independent HOL value types.
 The `ctxt_fc` cases record `with_shape` slot slicing, ZIP truncation, and
