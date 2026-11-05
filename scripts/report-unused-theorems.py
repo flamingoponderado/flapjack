@@ -211,7 +211,7 @@ def attached_start(lines: list[str], start: int) -> int:
     ``start`` is the 0-based line of the declaration keyword.  Attached are
     directly preceding ``@[...]`` and ``--`` lines, a ``/-- ... -/`` docstring
     ending directly above them, and, after blank lines, a ``/-! ... -/``
-    comment that is not a ``/-! #`` section heading.  A comment documenting
+    comment that is not a section heading (``is_heading``).  A comment documenting
     only one declaration is written this way, so it goes with it."""
     k = start
     while k > 0 and (lines[k - 1].startswith("@[") or lines[k - 1].startswith("--")):
@@ -229,9 +229,23 @@ def attached_start(lines: list[str], start: int) -> int:
         m = j - 1
         while m > 0 and not lines[m].startswith("/-"):
             m -= 1
-        if lines[m].startswith("/-!") and not lines[m].startswith("/-! #"):
+        if lines[m].startswith("/-!") and not is_heading(lines, m):
             k = m
     return k
+
+
+def is_heading(lines: list[str], m: int) -> bool:
+    """Whether the ``/-!`` comment opening on line ``m`` is a section heading.
+
+    A heading's text starts with ``#``, either on the opening line
+    (``/-! # Title``) or, after blank lines, on a later one (``/-!`` then
+    ``# Title``)."""
+    rest = lines[m][3:].strip()
+    i = m
+    while not rest and i + 1 < len(lines):
+        i += 1
+        rest = lines[i].strip()
+    return rest.startswith("#")
 
 
 def filter_named_uses(sources: dict[str, pathlib.Path], found: list[dict]) -> list[dict]:

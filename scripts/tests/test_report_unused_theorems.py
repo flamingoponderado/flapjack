@@ -131,6 +131,25 @@ theorem docAttachedB : True := trivial
 /-! ## Results: `headingNamed` (a section heading is not attached) -/
 
 theorem headingNamed : True := trivial
+
+/-!
+# Overview
+
+The main result is `multilineHeadingNamed`.
+-/
+
+theorem afterMultilineHeading : True := trivial
+
+theorem multilineHeadingNamed : True := trivial
+
+/-!
+
+## Notes on `spacedHeadingNamed`
+-/
+
+theorem afterSpacedHeading : True := trivial
+
+theorem spacedHeadingNamed : True := trivial
 """
 
 
@@ -141,19 +160,24 @@ class NamedUsesTest(unittest.TestCase):
             path.write_text(NAMED)
             names = ["usedByRfl", "deadA", "deadB", "deadC", "chainB", "inExample",
                      "stringOnly", "iffThm", "nsThm", "docOnlyA", "docOnlyB",
-                     "docAttachedA", "docAttachedB", "headingNamed", "attachedC"]
+                     "docAttachedA", "docAttachedB", "headingNamed", "attachedC",
+                     "afterMultilineHeading", "multilineHeadingNamed",
+                     "afterSpacedHeading", "spacedHeadingNamed"]
             found = [{"file": "F.lean", "module": "F", "name": "Flapjack." + n} for n in names]
             kept = rut.filter_named_uses({"F.lean": path}, found)
         # usedByRfl is named by the surviving `kept`; chainB by the surviving
         # chainA (not a candidate); inExample by an example; iffThm through
         # `iffThm.mp`; nsThm through `Flapjack.nsThm`; deadC by a free-standing
-        # comment; stringOnly inside a string; headingNamed by a section
-        # heading.  deadB is named only by the candidate deadA, and the
+        # comment; stringOnly inside a string; headingNamed,
+        # multilineHeadingNamed and spacedHeadingNamed by section headings
+        # (single-line, `/-!` then `# ...`, and with a blank line between),
+        # which are never attached to the candidate below them.  deadB is named only by the candidate deadA, and the
         # docOnly/docAttached B theorems only by comments attached to their
         # candidate A theorems; attachedC only by its own attached comment.
         self.assertEqual({d["name"].split(".")[-1] for d in kept},
                          {"deadA", "deadB", "docOnlyA", "docOnlyB", "docAttachedA",
-                          "docAttachedB", "attachedC"})
+                          "docAttachedB", "attachedC", "afterMultilineHeading",
+                          "afterSpacedHeading"})
 
 
 class InventoryRootsTest(unittest.TestCase):
