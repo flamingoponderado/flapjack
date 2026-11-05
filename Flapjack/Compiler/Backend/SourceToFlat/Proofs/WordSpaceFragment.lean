@@ -110,10 +110,10 @@ theorem configuredBviSpaceFragment_simulation {C F : Type} (fuel : Nat)
     word declarations bviCode names run codeLabel arity l1 l2 (BviToData.compileExp arity body)
     sourceState targetState locs related sourceCode lookup fragment safe
 
-/-- A non-type-error BVI evaluation supplies the data-safety premise for the
-actual emitted word-body simulation. This connects the two existing Lean-side
-pass proofs; their candidate relations, exception premise, verified fragment,
-and cross-language correspondence reviews remain explicit. -/
+/-- A non-type-error BVI evaluation supplies both the data result relation and
+the safety premise for the actual emitted word-body simulation. This connects
+the two existing Lean-side pass proofs; their candidate relations, exception
+premise, verified fragment, and cross-language reviews remain explicit. -/
 theorem configuredBviSpaceFragment_fromBvi {C F : Type} (fuel : Nat)
     (source nextSource : Config) (closure nextClosure : ClosToBvl.Config)
     (bvlConfig nextBvlConfig : BvlToBvi.Config) (word : DataToWord.Config)
@@ -134,11 +134,16 @@ theorem configuredBviSpaceFragment_fromBvi {C F : Type} (fuel : Nat)
     (locs : List (Nat × Nat)) (related : stateRel64 word l1 l2 sourceState targetState none locs)
     (sourceCode : sourceState.code = sptFromAList (BviToData.compileProg bviCode))
     (fragment : VerifiedWithSpace (BviToData.compileExp arity body)) :
-    ∃ code wordBody,
+    ∃ code wordBody dataResult final dataNames next ls localsSize stackMax safe peak,
       compileCakeToWord64ConfiguredFuel fuel source closure bvlConfig word declarations =
         some (nextSource, nextClosure, nextBvlConfig, code, names) ∧
       sptLookup codeLabel (sptFromAList code) = some (arity + 1, wordBody) ∧
       sptLookup codeLabel targetState.code = some (arity + 1, wordBody) ∧
+      DataSem.evaluate (BviToData.compileExp arity body) sourceState =
+        (some dataResult, { final with localsSize := localsSize, stackMax := stackMax, safeForSpace := safe, peakHeapLength := peak }) ∧
+      BviToData.stateRel nextBvi { final with localsSize := localsSize, stackMax := stackMax, safeForSpace := safe, peakHeapLength := peak } ∧
+      BviToData.correctOutcome bviResult sourceState final env.length next (List.range env.length)
+        [] dataNames env true (some dataResult) ls ∧
       (fragmentOutcomesAt64 word l1 l2 (BviToData.compileExp arity body) wordBody sourceState targetState locs ∨
         ∃ final, WordSemStateFiniteExact.evaluate wordBody targetState = (some .notEnoughSpace, final) ∧
           BackendProps.optionLe final.stackMax (DataSem.evaluate (BviToData.compileExp arity body) sourceState).2.stackMax ∧
@@ -148,8 +153,15 @@ theorem configuredBviSpaceFragment_fromBvi {C F : Type} (fuel : Nat)
       some (.err (.abort .typeError)) := by
     simpa [envLength] using BviToData.compileExp_notType body env bviState nextBvi bviResult
       sourceState bviRun bviSafe vars fresh bviRelated exceptionJump
-  exact configuredBviSpaceFragment_simulation fuel source nextSource closure nextClosure bvlConfig nextBvlConfig
+  obtain ⟨code, wordBody, wordRun, outputLookup, targetLookup, wordOutcome⟩ :=
+    configuredBviSpaceFragment_simulation fuel source nextSource closure nextClosure bvlConfig nextBvlConfig
     word declarations bviCode names run codeLabel arity l1 l2 body member sourceState targetState
     locs related sourceCode fragment safe
+  obtain ⟨dataResult, final, dataNames, next, ls, localsSize, stackMax, safeFlag, peak,
+    dataRun, _, finalRel, outcome⟩ :=
+    BviToData.compileExp_of_simulation body env bviState nextBvi bviResult sourceState
+      (BviToData.simulationFor_all [body] env bviState) bviRun bviSafe vars fresh bviRelated exceptionJump
+  exact ⟨code, wordBody, dataResult, final, dataNames, next, ls, localsSize, stackMax, safeFlag, peak,
+    wordRun, outputLookup, targetLookup, by simpa [envLength] using dataRun, finalRel, outcome, wordOutcome⟩
 
 end Flapjack.Compiler.Backend.SourceToFlat
