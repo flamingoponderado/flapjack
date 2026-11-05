@@ -327,7 +327,7 @@ theorem verifiedFragment64 {C F : Type} (conf : Config) (secn l1 l2 : Nat)
 
 /-- Every program in the established fragment has monotone source events,
 stack maxima, and safety. This is Flapjack-specific infrastructure for
-composing allocation failures; the unrestricted evaluator theorem is open. -/
+composing allocation failures. -/
 theorem verifiedFragment_resourceMono {C F : Type} (program : DataLang.Prog)
     (fragment : VerifiedFragment program) :
     ∀ state : DataSem.State C F, DataSem.ResourceMono program state := by
@@ -346,16 +346,6 @@ theorem verifiedFragment_resourceMono {C F : Type} (program : DataLang.Prog)
     | exact DataSem.resourceMono_assign_all _ _ _ _ state
     | exact DataSem.resourceMono_return _ state
     | exact DataSem.resourceMono_raise _ state
-
-/-- Allocation failure in the first command composes through any established
-fragment as the source continuation, without an extra resource premise. -/
-theorem seq64_outOfSpaceFirst_verified {C F : Type} (conf : Config) (secn label : Nat)
-    (first second : DataLang.Prog) (source : DataSem.State C F)
-    (target : WordSemStateFiniteExact 64 C F) (fragment : VerifiedFragment second)
-    (failure : outOfSpace64 conf secn label first source target) :
-    outOfSpace64 conf secn label (.seq first second) source target :=
-  seq64_outOfSpaceFirst conf secn label first second source target failure
-    (verifiedFragment_resourceMono second fragment)
 
 /-- A source-safe allocation followed by an established fragment has the
 usual simulated outcome or the permitted allocation failure. This connects
@@ -379,6 +369,6 @@ theorem makeSpace_seq_verified {C F : Type} (conf : Config) (secn label l1 l2 : 
     exact verifiedFragment64 conf secn l1 l2 second fragment
       (compileControl64 conf secn label (.makeSpace amount live)).2 s t locs rel valid
   · right
-    exact seq64_outOfSpaceFirst_verified conf secn label (.makeSpace amount live) second source target fragment failure
+    exact seq64_outOfSpaceFirst conf secn label (.makeSpace amount live) second source target failure
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Correct

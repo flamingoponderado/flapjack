@@ -1,6 +1,6 @@
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.MakeSpaceGc
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.If
-import Flapjack.Compiler.Backend.Semantics.DataProps.ResourceMonotonicity
+import Flapjack.Compiler.Backend.Semantics.DataProps.ResourceCall
 
 /-! Composing allocation failure with continuing commands. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Correct
@@ -79,13 +79,12 @@ theorem seq64_outOfSpaceSecond {C F : Type} (conf : Config) (secn label l1 l2 : 
     by simpa [sourceEq] using events, by simpa [sourceEq] using unsafeProof⟩
 
 /-- Failure in the first compiled command propagates through the sequence,
-provided the source continuation satisfies the three monotonicity induction
-properties. No target execution of the second command is assumed. -/
+using source evaluator resource monotonicity. No target execution of the
+second command is assumed. -/
 theorem seq64_outOfSpaceFirst {C F : Type} (conf : Config) (secn label : Nat)
     (first second : DataLang.Prog) (source : DataSem.State C F)
     (target : WordSemStateFiniteExact 64 C F)
-    (firstFailure : outOfSpace64 conf secn label first source target)
-    (secondMono : ∀ state : DataSem.State C F, DataSem.ResourceMono second state) :
+    (firstFailure : outOfSpace64 conf secn label first source target) :
     outOfSpace64 conf secn label (.seq first second) source target := by
   obtain ⟨firstTarget, targetRun, bound, events, unsafeProof⟩ := firstFailure
   let final := (WordSemStateFiniteExact.fixClock target
@@ -110,7 +109,7 @@ theorem seq64_outOfSpaceFirst {C F : Type} (conf : Config) (secn label : Nat)
       let clamped := { middle with clock := min source.clock middle.clock }
       have seqRun : DataSem.evaluate (.seq first second) source = DataSem.evaluate second clamped := by
         simp [DataSem.evaluate, sourceRun, DataSem.fixClock, clamped]
-      have nextFacts := secondMono clamped
+      have nextFacts := DataSem.evaluate_resourceMono second clamped
       refine ⟨final, targetSeq, ?_, ?_, ?_⟩
       · rw [seqRun]
         exact BackendProps.optionLe_trans _ _ _ ⟨sourceFacts.1, nextFacts.2.1⟩

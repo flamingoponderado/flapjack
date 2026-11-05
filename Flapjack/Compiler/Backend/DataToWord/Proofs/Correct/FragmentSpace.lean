@@ -13,14 +13,13 @@ def outcomesWithSpace64 {C F : Type} (conf : Config) (secn label l1 l2 : Nat)
     outOfSpace64 conf secn label program source target
 
 /-- Sequential composition for both ordinary and allocation-failure
-outcomes. The continuation's monotonicity is an induction property. -/
+outcomes, using unrestricted source resource monotonicity. -/
 theorem seq64_outcomesWithSpace {C F : Type} (conf : Config) (secn label l1 l2 : Nat)
     (first second : DataLang.Prog) (source : DataSem.State C F)
     (target : WordSemStateFiniteExact 64 C F) (locs : List (Nat × Nat))
     (related : stateRel64 conf l1 l2 source target none locs)
     (safe : (DataSem.evaluate (.seq first second) source).1 ≠ some (.err (.abort .typeError)))
     (firstOutcome : outcomesWithSpace64 conf secn label l1 l2 first source target locs)
-    (secondMono : ∀ s : DataSem.State C F, DataSem.ResourceMono second s)
     (secondCorrect : ∀ (s : DataSem.State C F) (t : WordSemStateFiniteExact 64 C F),
       stateRel64 conf l1 l2 s t none locs →
       (DataSem.evaluate second s).1 ≠ some (.err (.abort .typeError)) →
@@ -63,7 +62,7 @@ theorem seq64_outcomesWithSpace {C F : Type} (conf : Config) (secn label l1 l2 :
     · exact Or.inl (Or.inr (Or.inl (seq64_returnFirst conf secn label l1 l2 first second source target locs related returned)))
     · exact Or.inl (Or.inr (Or.inr (Or.inl (seq64_timeoutFirst conf secn label first second source target timeout))))
     · exact Or.inl (Or.inr (Or.inr (Or.inr (seq64_raiseFirst conf secn label l1 l2 first second source target locs related raised))))
-  · exact Or.inr (seq64_outOfSpaceFirst conf secn label first second source target failure secondMono)
+  · exact Or.inr (seq64_outOfSpaceFirst conf secn label first second source target failure)
 
 /-- A conditional preserves either kind of outcome from the selected branch. -/
 theorem if64_outcomesWithSpace {C F : Type} (conf : Config) (secn label l1 l2 name : Nat)
@@ -157,7 +156,6 @@ theorem verifiedWithSpace64 {C F : Type} (conf : Config) (secn l1 l2 : Nat)
     intro label source target locs related safe
     apply seq64_outcomesWithSpace conf secn label l1 l2 first second source target locs related safe
       (firstIH label source target locs related (seq_first_safe first second source safe))
-      (verifiedWithSpace_resourceMono second secondFragment)
     intro s t rel valid
     exact secondIH (compileControl64 conf secn label first).2 s t locs rel valid
   | @ite name yes no yesFragment noFragment yesIH noIH =>

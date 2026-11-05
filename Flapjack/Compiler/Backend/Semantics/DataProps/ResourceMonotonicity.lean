@@ -212,6 +212,33 @@ theorem resourceMono_seq {C F : Type} (first second : DataLang.Prog) (state : St
       · exact BackendProps.optionLe_trans _ _ _ ⟨firstFacts.2.1, secondFacts.2.1⟩
       · exact fun safe => firstFacts.2.2 (secondFacts.2.2 safe)
 
+/-- Clock-bounded form of sequence composition for the well-founded source
+evaluator induction. -/
+theorem resourceMono_seq_bounded {C F : Type} (first second : DataLang.Prog) (state : State C F)
+    (firstMono : ResourceMono first state)
+    (secondMono : ∀ next : State C F, next.clock ≤ state.clock → ResourceMono second next) :
+    ResourceMono (.seq first second) state := by
+  cases firstRun : evaluate first state with
+  | mk result mid =>
+    have firstFacts : state.ffi.ioEvents <+: mid.ffi.ioEvents ∧
+        BackendProps.optionLe state.stackMax mid.stackMax ∧
+        (mid.safeForSpace = true → state.safeForSpace = true) := by
+      simpa [ResourceMono, firstRun] using firstMono
+    cases result with
+    | some result =>
+      simpa [ResourceMono, evaluate, firstRun, fixClock] using firstFacts
+    | none =>
+      let clamped := { mid with clock := min state.clock mid.clock }
+      have bound : clamped.clock ≤ state.clock := by simp [clamped]
+      have secondFacts := secondMono clamped bound
+      have seqRun : evaluate (.seq first second) state = evaluate second clamped := by
+        simp [evaluate, firstRun, fixClock, clamped]
+      rw [ResourceMono, seqRun]
+      refine ⟨?_, ?_, ?_⟩
+      · exact List.IsPrefix.trans firstFacts.1 secondFacts.1
+      · exact BackendProps.optionLe_trans _ _ _ ⟨firstFacts.2.1, secondFacts.2.1⟩
+      · exact fun safe => firstFacts.2.2 (secondFacts.2.2 safe)
+
 /-- A conditional inherits source resource monotonicity from either branch. -/
 theorem resourceMono_if {C F : Type} (name : Nat) (yes no : DataLang.Prog) (state : State C F)
     (yesMono : ResourceMono yes state) (noMono : ResourceMono no state) :
