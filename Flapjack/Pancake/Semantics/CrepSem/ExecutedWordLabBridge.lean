@@ -48,45 +48,6 @@ noncomputable def executedCrepState {width : Nat} [NeZero width] {σ : Type}
 def holWordLabToWord {width : Nat} [NeZero width] : HolWordLab width → BitVec width
   | .word value => value
 
-/-- `Const`: the executed `word_lab` evaluator returns the exact `word_lab` cell. -/
-theorem evalCrepRuntimeExpWordLab_executed_const {width : Nat} [NeZero width] {σ : Type}
-    (state : CrepSemHOLState width σ) [DecidablePred state.memaddrs] (value : BitVec width) :
-    evalCrepRuntimeExpWordLab (executedCrepState state) (CrepExp.const value) =
-      (evalCrepSemHOLExp state (CrepExpHOL.const value)).map HolWordLab.toPanWordLab := by
-  simp [evalCrepRuntimeExpWordLab, evalCrepSemHOLExp]
-
-/-- `Var`: local lookup preserves the exact `word_lab` cell. -/
-theorem evalCrepRuntimeExpWordLab_executed_var {width : Nat} [NeZero width] {σ : Type}
-    (state : CrepSemHOLState width σ) [DecidablePred state.memaddrs] (name : Nat) :
-    evalCrepRuntimeExpWordLab (executedCrepState state) (CrepExp.var name) =
-      (evalCrepSemHOLExp state (CrepExpHOL.var name)).map HolWordLab.toPanWordLab := by
-  simp [executedCrepState, CrepSemHOLState.toBitVecEvaluatorState, CrepHolState.toRuntime,
-    evalCrepRuntimeExpWordLab, evalCrepSemHOLExp]
-
-/-- `LoadGlob`: global lookup preserves the exact `word_lab` cell. -/
-theorem evalCrepRuntimeExpWordLab_executed_loadGlob {width : Nat} [NeZero width] {σ : Type}
-    (state : CrepSemHOLState width σ) [DecidablePred state.memaddrs] (address : BitVec 5) :
-    evalCrepRuntimeExpWordLab (executedCrepState state) (CrepExp.loadGlob address) =
-      (evalCrepSemHOLExp state (CrepExpHOL.loadGlob address)).map HolWordLab.toPanWordLab := by
-  simp [executedCrepState, CrepSemHOLState.toBitVecEvaluatorState, CrepHolState.toRuntime,
-    evalCrepRuntimeExpWordLab, evalCrepSemHOLExp]
-
-/-- `BaseAddr`: the base address is carried unchanged into the `word_lab` cell. -/
-theorem evalCrepRuntimeExpWordLab_executed_baseAddr {width : Nat} [NeZero width] {σ : Type}
-    (state : CrepSemHOLState width σ) [DecidablePred state.memaddrs] :
-    evalCrepRuntimeExpWordLab (executedCrepState state) CrepExp.baseAddr =
-      (evalCrepSemHOLExp state CrepExpHOL.baseAddr).map HolWordLab.toPanWordLab := by
-  simp [executedCrepState, CrepSemHOLState.toBitVecEvaluatorState, CrepHolState.toRuntime,
-    evalCrepRuntimeExpWordLab, evalCrepSemHOLExp]
-
-/-- `TopAddr`: the top address is carried unchanged into the `word_lab` cell. -/
-theorem evalCrepRuntimeExpWordLab_executed_topAddr {width : Nat} [NeZero width] {σ : Type}
-    (state : CrepSemHOLState width σ) [DecidablePred state.memaddrs] :
-    evalCrepRuntimeExpWordLab (executedCrepState state) CrepExp.topAddr =
-      (evalCrepSemHOLExp state CrepExpHOL.topAddr).map HolWordLab.toPanWordLab := by
-  simp [executedCrepState, CrepSemHOLState.toBitVecEvaluatorState, CrepHolState.toRuntime,
-    evalCrepRuntimeExpWordLab, evalCrepSemHOLExp]
-
 /-- The `Const` list path used by `evaluate_replicate_const`: the executed
 production `word_lab` list evaluator at the canonical BitVec evaluator state
 returns the same replicated `word_lab` list that the tagged exact
@@ -642,7 +603,6 @@ theorem evalCrepRuntimeExpsWordLab_executed {width : Nat} [NeZero width] {σ : T
   rw [← evalCrepRuntimeExps_wordLab_projection (executedCrepState state) es]
   rw [evalCrepRuntimeExps_executed state es]
   exact option_map_list_holWordLabToWord_map_word (width := width) _
-
 
 /-! ## HOL-quantified evaluator relation (bead `flapjack-pxn.18.5.4.3.8`)
 
