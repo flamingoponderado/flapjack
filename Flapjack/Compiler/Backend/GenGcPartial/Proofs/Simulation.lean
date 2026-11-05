@@ -2267,4 +2267,73 @@ theorem partialGc_rootsForwarded {α β : Type} (conf : Config β)
     obtain ⟨mapped, domain⟩ := translatedRoots_forwarding conf heap f roots roots1 validRoots rootsDomain split.1 length.symm
     exact ⟨roots1, state1, f, rfl, mapped, domain, invariant, empty, ok⟩
 
+/-- An expanded free region contains no data object at any offset. -/
+@[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "isSomeDataElement_heap_lookup_heap_expand"]
+theorem heapLookup_heapExpand_notData {α β : Type} (ptr len : Nat) :
+    ¬ isSomeDataElement (heapLookup ptr (heapExpand len : List (HeapElement α β))) := by
+  cases len with
+  | zero => simp [heapExpand, heapLookup, isSomeDataElement]
+  | succ len =>
+    by_cases zero : ptr = 0
+    · simp [heapExpand, heapLookup, zero, isSomeDataElement]
+    · simp [heapExpand, heapLookup, zero, isSomeDataElement]
+
+/-- Flapjack proof infrastructure: translating free space leaves it unchanged. -/
+theorem toGenHeapList_heapExpand {α β γ : Type} (conf : Config γ) (len : Nat) :
+    toGenHeapList conf (heapExpand len : List (HeapElement α β)) =
+      (heapExpand len : List (HeapElement (DataSort (HeapAddress α) α) β)) := by
+  cases len <;> simp [toGenHeapList, toGenHeapElement, heapExpand]
+
+/-- Flapjack proof infrastructure: a translated data lookup comes from a
+data object with the same size and payload in the source heap. -/
+theorem heapLookup_toGenData {α β γ : Type} (conf : Config γ)
+    (heap : List (HeapElement α β)) (ptr : Nat)
+    (children : List (HeapAddress (DataSort (HeapAddress α) α))) (len : Nat) (payload : β)
+    (found : heapLookup ptr (toGenHeapList conf heap) = some (.dataElement children len payload)) :
+    ∃ original, heapLookup ptr heap = some (.dataElement original len payload) ∧
+      original.map (toGenHeapAddress conf) = children := by
+  rw [heapLookup_toGenHeapList] at found
+  cases source : heapLookup ptr heap with
+  | none => simp [source] at found
+  | some element =>
+    cases element with
+    | unused size => simp [source, toGenHeapElement] at found
+    | forwardPointer dest value size => simp [source, toGenHeapElement] at found
+    | dataElement original size data =>
+      simp only [source, Option.map_some, toGenHeapElement, Option.some.injEq, HeapElement.dataElement.injEq] at found
+      obtain ⟨childrenEq, rfl, rfl⟩ := found
+      exact ⟨original, rfl, childrenEq⟩
+
+/-- Flapjack proof infrastructure: a translated copied-object lookup with
+renamed children yields the corresponding object in the partial output heap. -/
+theorem heapLookup_forwardedData {α β γ : Type} (conf : Config γ)
+    (sourceHeap copied refs : List (HeapElement α β)) (free ptr : Nat)
+    (children : List (HeapAddress α)) (len : Nat) (payload : β) (f : HolFiniteMapExact Nat Nat)
+    (found : heapLookup ptr (toGenHeapList conf copied ++ heapExpand free) =
+      some (.dataElement (addrMap (holFapply f) (children.map (toGenHeapAddress conf))) len payload))
+    (valid : ∀ p value, .pointer p value ∈ children → isSomeDataElement (heapLookup p sourceHeap))
+    (domain : ∀ p value, .pointer p value ∈ children.map (toGenHeapAddress conf) → f.lookup p ≠ none) :
+    heapLookup ptr (copied ++ heapExpand free ++ refs) =
+      some (.dataElement (addrMap (holFapply (newForwardMap f conf sourceHeap)) children) len payload) := by
+  have translated : toGenHeapList conf (copied ++ heapExpand free) =
+      toGenHeapList conf copied ++ heapExpand free := by
+    simp only [toGenHeapList, List.map_append]
+    change _ ++ toGenHeapList conf (heapExpand free : List (HeapElement α β)) = _
+    rw [toGenHeapList_heapExpand]
+  rw [← translated] at found
+  obtain ⟨original, sourceFound, originalRoots⟩ :=
+    heapLookup_toGenData conf (copied ++ heapExpand free) ptr _ len payload found
+  have rootsEq : addrMap (holFapply f) (toGenRoots conf children) = toGenRoots conf original := by
+    simpa [toGenRoots] using originalRoots.symm
+  have sameLength : children.length = original.length := by
+    have equalLength := congrArg List.length rootsEq
+    simpa [toGenRoots, ← addrMap_length] using equalLength
+  have originalValid : rootsOk children sourceHeap := valid
+  have originalDomain : ∀ p value, .pointer p value ∈ toGenRoots conf children → f.lookup p ≠ none := domain
+  obtain ⟨mapped, _⟩ := translatedRoots_forwarding conf sourceHeap f children original
+    originalValid originalDomain rootsEq sameLength
+  have inBounds := heapLookup_less (copied ++ heapExpand free) ptr _ sourceFound
+  rw [GenGc.heapLookup_append, if_pos inBounds]
+  simpa [mapped] using sourceFound
+
 end Flapjack.Compiler.Backend.GenGcPartial
