@@ -234,7 +234,7 @@ theorem gcInv_fresh_bijection {α β : Type} (conf : Config β) (state : GcState
       let target := if conf.isRef payload then state.a + (state.n - (len + 1)) else state.a
       let forwarded := before ++ .forwardPointer target value len :: after
       let next := if conf.isRef payload then
-        { state with r4 := .dataElement addresses len payload :: state.r4, n := state.n - (len + 1) }
+        { state with r4 := HeapElement.dataElement addresses len payload :: state.r4, n := state.n - (len + 1) }
       else
         { state with h2 := state.h2 ++ [.dataElement addresses len payload], n := state.n - (len + 1), a := state.a + len + 1 }
       let targets := fun p => heapAddresses 0 (next.h1 ++ next.h2) p ∨
@@ -340,5 +340,181 @@ theorem gcInv_fresh_new_lookup {α β : Type} (conf : Config β) (state : GcStat
       have allocated' : heapLength state.h1 + heapLength state.h2 = state.a := by
         simpa [heapLength_append] using allocated
       simpa [List.append_assoc, heapLength_append, heapLength_heapExpand, ← Nat.add_assoc, allocated'] using copied
+
+/-- Filling the end of a free region leaves every existing data-element
+lookup unchanged. This is a Flapjack heap lemma for reference-side copying. -/
+theorem heapLookup_fillEnd_preserves_data {α β : Type}
+    (before after : List (HeapElement α β)) (free len index : Nat)
+    (newRoots oldRoots : List (HeapAddress α)) (newData oldData : β) (oldLen : Nat)
+    (enough : len + 1 ≤ free)
+    (found : heapLookup index (before ++ heapExpand free ++ after) = some (.dataElement oldRoots oldLen oldData)) :
+    heapLookup index (before ++ heapExpand (free - (len + 1)) ++
+      .dataElement newRoots len newData :: after) = some (.dataElement oldRoots oldLen oldData) := by
+  have equalLength : heapLength (before ++ heapExpand free) =
+      heapLength (before ++ heapExpand (free - (len + 1)) ++ [.dataElement newRoots len newData]) := by
+    simp only [heapLength_append, heapLength_heapExpand]
+    simp only [heapLength, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, elLength]
+    omega
+  by_cases below : index < heapLength (before ++ heapExpand free)
+  · have oldPrefix : heapLookup index (before ++ heapExpand free) = some (.dataElement oldRoots oldLen oldData) := by
+      have prior := found
+      rw [heapLookup_append] at prior
+      simpa [below] using prior
+    have original := (DataToWord.Proofs.Memory.heapLookup_expand_eq_some index before free oldRoots oldLen oldData).mp oldPrefix
+    have extended := heapLookup_extend before (heapExpand (free - (len + 1)) ++
+      .dataElement newRoots len newData :: after) index _ original
+    simpa [List.append_assoc] using extended
+  · have prior := found
+    rw [heapLookup_append] at prior
+    have afterStart : heapLookup (index - heapLength (before ++ heapExpand free)) after =
+        some (.dataElement oldRoots oldLen oldData) := by simpa [below] using prior
+    have nextBelow : ¬ index < heapLength (before ++ heapExpand (free - (len + 1)) ++
+        [.dataElement newRoots len newData]) := by rw [← equalLength]; exact below
+    have restored := heapLookup_append index (before ++ heapExpand (free - (len + 1)) ++
+      [.dataElement newRoots len newData]) after
+    simp only [nextBelow, if_false] at restored
+    rw [← equalLength, afterStart] at restored
+    simpa [List.append_assoc] using restored
+
+/-- Filling the beginning of a free region also preserves every existing
+data-element lookup. This is the data-side companion to the reference-side
+heap lemma above. -/
+theorem heapLookup_fillStart_preserves_data {α β : Type}
+    (before after : List (HeapElement α β)) (free len index : Nat)
+    (newRoots oldRoots : List (HeapAddress α)) (newData oldData : β) (oldLen : Nat)
+    (enough : len + 1 ≤ free)
+    (found : heapLookup index (before ++ heapExpand free ++ after) = some (.dataElement oldRoots oldLen oldData)) :
+    heapLookup index (before ++ [.dataElement newRoots len newData] ++
+      heapExpand (free - (len + 1)) ++ after) = some (.dataElement oldRoots oldLen oldData) := by
+  have equalLength : heapLength (before ++ heapExpand free) =
+      heapLength (before ++ [.dataElement newRoots len newData] ++ heapExpand (free - (len + 1))) := by
+    simp only [heapLength_append, heapLength_heapExpand]
+    simp only [heapLength, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, elLength]
+    omega
+  by_cases below : index < heapLength (before ++ heapExpand free)
+  · have oldPrefix : heapLookup index (before ++ heapExpand free) = some (.dataElement oldRoots oldLen oldData) := by
+      have prior := found
+      rw [heapLookup_append] at prior
+      simpa [below] using prior
+    have original := (DataToWord.Proofs.Memory.heapLookup_expand_eq_some index before free oldRoots oldLen oldData).mp oldPrefix
+    have extended := heapLookup_extend before ([.dataElement newRoots len newData] ++
+      heapExpand (free - (len + 1)) ++ after) index _ original
+    simpa [List.append_assoc] using extended
+  · have prior := found
+    rw [heapLookup_append] at prior
+    have afterStart : heapLookup (index - heapLength (before ++ heapExpand free)) after =
+        some (.dataElement oldRoots oldLen oldData) := by simpa [below] using prior
+    have nextBelow : ¬ index < heapLength (before ++ [.dataElement newRoots len newData] ++
+        heapExpand (free - (len + 1))) := by rw [← equalLength]; exact below
+    have restored := heapLookup_append index (before ++ [.dataElement newRoots len newData] ++
+      heapExpand (free - (len + 1))) after
+    simp only [nextBelow, if_false] at restored
+    rw [← equalLength, afterStart] at restored
+    simpa [List.append_assoc] using restored
+
+/-- Moving a fresh object leaves the collector's final-region predicate
+unchanged at every address, even though the free region shrinks. -/
+theorem gcInv_fresh_isFinal {α β : Type} (conf : Config β) (state : GcState α β)
+    (heap0 : List (HeapElement α β)) (roots0 : List (HeapAddress α))
+    (ptr len : Nat) (value : α) (addresses : List (HeapAddress α)) (payload : β)
+    (invariant : gcInv conf state heap0 roots0)
+    (found : heapLookup ptr state.heap = some (.dataElement addresses len payload)) :
+    let next := if conf.isRef payload then
+      { state with r4 := .dataElement addresses len payload :: state.r4, n := state.n - (len + 1) }
+    else
+      { state with h2 := state.h2 ++ [.dataElement addresses len payload], n := state.n - (len + 1), a := state.a + len + 1 }
+    ∀ p, isFinal conf next p ↔ isFinal conf state p := by
+  obtain ⟨_, _, _, _, enough, _, _, _⟩ :=
+    gcInv_fresh_forward_structure conf state heap0 roots0 ptr len state.a value addresses payload invariant found
+  dsimp only
+  intro p
+  cases ref : conf.isRef payload <;> simp only [Bool.false_eq_true, ↓reduceIte, isFinal,
+    heapLength, List.map_cons, List.sum_cons, elLength]
+  all_goals omega
+
+open Classical in
+/-- A previously forwarded object's heap lookup and reachability witness
+survive the fresh move. This is the old-entry case of the major collector's
+move invariant. -/
+theorem gcInv_fresh_old_lookup {α β : Type} (conf : Config β) (state : GcState α β)
+    (heap0 : List (HeapElement α β)) (roots0 : List (HeapAddress α))
+    (before after : List (HeapElement α β)) (len i j : Nat) (value : α)
+    (addresses : List (HeapAddress α)) (payload : β)
+    (invariant : gcInv conf state heap0 roots0)
+    (heapEq : state.heap = before ++ .dataElement addresses len payload :: after)
+    (oldLookup : (heapMap 0 state.heap).lookup i = some j) :
+    let target := if conf.isRef payload then state.a + (state.n - (len + 1)) else state.a
+    let forwarded := before ++ .forwardPointer target value len :: after
+    let next := if conf.isRef payload then
+      { state with r4 := .dataElement addresses len payload :: state.r4, n := state.n - (len + 1) }
+    else
+      { state with h2 := state.h2 ++ [.dataElement addresses len payload], n := state.n - (len + 1), a := state.a + len + 1 }
+    ∃ xs size data,
+      heapLookup i heap0 = some (.dataElement xs size data) ∧
+      heapLookup j (next.h1 ++ next.h2 ++ heapExpand next.n ++ next.r4 ++ next.r3 ++ next.r2 ++ next.r1) =
+        some (.dataElement (if isFinal conf next j then addrMap (heapMap1 forwarded) xs else xs) size data) ∧
+      reachableAddresses roots0 heap0 i ∧
+      ∀ ptr u, .pointer ptr u ∈ xs → isFinal conf next j → (heapMap 0 forwarded).lookup ptr ≠ none := by
+  have found : heapLookup (heapLength before) state.heap = some (.dataElement addresses len payload) := by
+    rw [heapEq]
+    exact heapLookup_prefix before after _
+  obtain ⟨_, _, _, _, enough, _, _, _⟩ :=
+    gcInv_fresh_forward_structure conf state heap0 roots0 (heapLength before) len state.a value addresses payload invariant found
+  have finalEq := gcInv_fresh_isFinal conf state heap0 roots0 (heapLength before) len value addresses payload invariant found
+  dsimp only at finalEq ⊢
+  obtain ⟨_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, entries⟩ := invariant
+  obtain ⟨xs, size, data, oldOriginal, oldCopied, reach, children⟩ := entries i j oldLookup
+  have renamed : isFinal conf state j →
+      addrMap (heapMap1 (before ++ .forwardPointer (if conf.isRef payload then state.a + (state.n - (len + 1)) else state.a) value len :: after)) xs =
+      addrMap (heapMap1 state.heap) xs := by
+    intro final
+    apply addrMap_eq
+    intro p u member
+    have present := children p u member final
+    rw [heapEq] at present ⊢
+    exact CopyingGc.heapMap1_forward_old before after addresses len _ payload value p present
+  have copied : heapLookup j
+      ((if conf.isRef payload then
+        { state with r4 := .dataElement addresses len payload :: state.r4, n := state.n - (len + 1) }
+      else
+        { state with h2 := state.h2 ++ [HeapElement.dataElement addresses len payload], n := state.n - (len + 1), a := state.a + len + 1 }).h1 ++
+       (if conf.isRef payload then
+        { state with r4 := .dataElement addresses len payload :: state.r4, n := state.n - (len + 1) }
+      else
+        { state with h2 := state.h2 ++ [HeapElement.dataElement addresses len payload], n := state.n - (len + 1), a := state.a + len + 1 }).h2 ++
+       heapExpand (state.n - (len + 1)) ++
+       (if conf.isRef payload then .dataElement addresses len payload :: state.r4 else state.r4) ++
+       state.r3 ++ state.r2 ++ state.r1) =
+      some (.dataElement (if isFinal conf state j then addrMap (heapMap1 state.heap) xs else xs) size data) := by
+    cases ref : conf.isRef payload with
+    | false =>
+      simp only [Bool.false_eq_true, ↓reduceIte]
+      have retained := heapLookup_fillStart_preserves_data (state.h1 ++ state.h2)
+        (state.r4 ++ state.r3 ++ state.r2 ++ state.r1) state.n len j addresses _ payload data size enough
+        (by simpa [List.append_assoc] using oldCopied)
+      simpa [List.append_assoc] using retained
+    | true =>
+      simp only [↓reduceIte]
+      have retained := heapLookup_fillEnd_preserves_data (state.h1 ++ state.h2)
+        (state.r4 ++ state.r3 ++ state.r2 ++ state.r1) state.n len j addresses _ payload data size enough
+        (by simpa [List.append_assoc] using oldCopied)
+      simpa [List.append_assoc] using retained
+  refine ⟨xs, size, data, oldOriginal, ?_, reach, ?_⟩
+  · rw [finalEq j]
+    by_cases final : isFinal conf state j
+    · have renamed' := renamed final
+      cases ref : conf.isRef payload <;> simp only [ref, Bool.false_eq_true, ↓reduceIte] at renamed'
+      all_goals simpa [ref, final, renamed'] using copied
+    · cases ref : conf.isRef payload <;> simpa [ref, final] using copied
+  · intro p u member final
+    have oldDefined := children p u member ((finalEq j).mp final)
+    rw [heapEq] at oldDefined
+    cases lookup : (heapMap 0 (before ++ .dataElement addresses len payload :: after)).lookup p with
+    | none => exact False.elim (oldDefined lookup)
+    | some destination =>
+      have next := CopyingGc.heapMap_forward_submap before after addresses len
+        (if conf.isRef payload then state.a + (state.n - (len + 1)) else state.a) payload value p destination lookup
+      rw [next]
+      simp
 
 end Flapjack.Compiler.Backend.GenGc
