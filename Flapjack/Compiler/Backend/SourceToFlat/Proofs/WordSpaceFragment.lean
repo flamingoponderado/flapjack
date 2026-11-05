@@ -1,6 +1,8 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.WordFragment
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.FragmentSpace
 import Flapjack.Compiler.Backend.BviToData.Proofs.Simulation
+import Flapjack.Compiler.Backend.BviToData.Proofs.Program
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.CallFragment
 
 /-! Connecting allocation-capable data fragments to configured word output. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
@@ -290,5 +292,101 @@ theorem configuredBviSpaceFragment_fromBvi {C F : Type} (fuel : Nat)
     wordBody sourceState targetState locs nextBvi dataFfi bviWord
   exact ⟨code, wordBody, dataResult, final, dataNames, next, ls, localsSize, stackMax, safeFlag, peak,
     wordRun, outputLookup, targetLookup, actualDataRun, finalRel, outcome, bviWord, observations⟩
+
+/-- The actual word entry call simulates a non-type-error BVI entry call when
+the data code table belongs to the recursive call fragment. The code table is
+the one emitted by the configured compiler, and recursive and mutually
+recursive calls are covered by the clock induction. This Lean-side result
+still assumes the candidate state relations and does not cover allocation
+instructions or establish whole-program HOL correspondence. -/
+theorem configuredBviCallFragment_entry {C F : Type} (fuel : Nat)
+    (source nextSource : Config) (closure nextClosure : ClosToBvl.Config)
+    (bvlConfig nextBvlConfig : BvlToBvi.Config) (word : DataToWord.Config)
+    (declarations : List AstHOL.Dec) (bviCode : List (Nat × Nat × Bvi.Exp))
+    (wordCode : List (Nat × Nat × WordLangProgHOL (BitVec 64)))
+    (names : Spt Basis.Pure.MlString.MlString)
+    (bviCompile : compileCakeToBviConfiguredFuel fuel source closure bvlConfig declarations =
+      some (nextSource, nextClosure, nextBvlConfig, bviCode, names))
+    (wordCompile : compileCakeToWord64ConfiguredFuel fuel source closure bvlConfig word declarations =
+      some (nextSource, nextClosure, nextBvlConfig, wordCode, names))
+    (start secn label l1 l2 : Nat) (bviState nextBvi : BviSem.BviState C F)
+    (result : BviSem.BviResult)
+    (bviRun : BviSem.evaluate [.call 0 (some start) [] none] [] bviState = (result, nextBvi))
+    (notType : result ≠ .err (.abort .typeError))
+    (dataState : DataSem.State C F) (targetState : WordSemStateFiniteExact 64 C F)
+    (bviRelated : BviToData.stateRel bviState dataState)
+    (empty : sptIsEmpty dataState.locals = true)
+    (jump : ∀ x, result = .err (.raise x) → DataSem.jumpExc dataState ≠ none)
+    (locs : List (Nat × Nat)) (related : stateRel64 word l1 l2 dataState targetState none locs)
+    (sourceCode : dataState.code = sptFromAList (BviToData.compileProg bviCode))
+    (targetCode : targetState.code = sptFromAList wordCode)
+    (closed : CallFragmentCode (sptFromAList (BviToData.compileProg bviCode))) :
+    ∃ dataResult dataFinal,
+      DataToWord.Proofs.Gc.codeRel64 word (sptFromAList (BviToData.compileProg bviCode))
+        targetState.code ∧
+      DataSem.evaluate (.call none (some start) [] none) dataState = (some dataResult, dataFinal) ∧
+      BviToData.stateRel nextBvi dataFinal ∧ BviToData.dataToBviResult dataResult = result ∧
+      bviWordOutcomes64 word l1 l2 result (.call none (some start) [] none)
+        (.call none (some start) [0] none) dataState targetState locs ∧
+      ∃ wordResult targetFinal,
+        WordSemStateFiniteExact.evaluate (.call none (some start) [0] none) targetState = (some wordResult, targetFinal) ∧
+        wordResult ≠ .notEnoughSpace ∧ targetFinal.ffi = nextBvi.ffi := by
+  obtain ⟨actualCode, actualRun, codeRel⟩ :=
+    compileCakeToWord64ConfiguredFuel_codeRel_allSettings fuel source nextSource closure nextClosure
+      bvlConfig nextBvlConfig word declarations bviCode names bviCompile
+  have codeEq : actualCode = wordCode := by
+    have eq := Option.some.inj (actualRun.symm.trans wordCompile)
+    exact congrArg (fun x => x.2.2.2.1) eq
+  subst actualCode
+  obtain ⟨dataResult, dataFinal, dataRun, finalRel, projection⟩ :=
+    BviToData.compilePart_evaluate start bviState nextBvi dataState result bviRun notType bviRelated empty jump
+  have dataSafe : (DataSem.evaluate (.call none (some start) [] none) dataState).1 ≠
+      some (.err (.abort .typeError)) := by
+    have resultSafe : dataResult ≠ .err (.abort .typeError) := by
+      intro eq
+      subst dataResult
+      exact notType (by simpa [BviToData.dataToBviResult] using projection.symm)
+    simpa [dataRun] using resultSafe
+  have entryFragment : CallFragment (.call none (some start) [] none) :=
+    CallFragment.call none (some start) [] none (by simp)
+  have closedState : CallFragmentCode dataState.code := by simpa only [sourceCode] using closed
+  have simulation := callFragment64 word _ entryFragment secn label l1 l2 dataState targetState locs closedState related dataSafe
+  have entryCompile : (compileControl64 word secn label (.call none (some start) [] none)).1 =
+      .call none (some start) [0] none := rfl
+  have ordinary : fragmentOutcomesAt64 word l1 l2 (.call none (some start) [] none)
+      (.call none (some start) [0] none) dataState targetState locs := by
+    simpa only [fragmentOutcomesAt64, outcomes64, continues64, returns64, timesOut64, raises64, entryCompile] using simulation
+  have noSpace : (WordSemStateFiniteExact.evaluate (.call none (some start) [0] none) targetState).1 ≠
+      some .notEnoughSpace := by
+    rcases ordinary with continued | returned | timeout | raised
+    · obtain ⟨_, _, _, targetRun, _⟩ := continued
+      simp [targetRun]
+    · obtain ⟨_, _, _, _, _, _, targetRun, _⟩ := returned
+      simp [targetRun]
+    · obtain ⟨_, _, _, targetRun, _, _⟩ := timeout
+      simp [targetRun]
+    · obtain ⟨_, _, _, _, _, _, _, _, _, _, targetRun, _⟩ := raised
+      simp [targetRun]
+  have noReturn := BviToData.entryCall_notReturn start bviState nextBvi result bviRun
+  have bviWord := bviWordOutcomes64_of_data word l1 l2 result (.call none (some start) [] none)
+    (.call none (some start) [0] none) dataState targetState locs dataResult dataFinal dataRun
+    (fun _ => projection) (fun impossible => False.elim (noReturn impossible)) (Or.inl ordinary)
+  have dataFfi : (DataSem.evaluate (.call none (some start) [] none) dataState).2.ffi = nextBvi.ffi := by
+    rw [dataRun]
+    exact finalRel.2.2.2.2.2.1.symm
+  have observations := bviWordOutcomes64_ffi word l1 l2 result (.call none (some start) [] none)
+    (.call none (some start) [0] none) dataState targetState locs nextBvi dataFfi bviWord
+  obtain ⟨wordResult, targetFinal, wordRun, ffiCase⟩ := observations
+  have notOutOfSpace : wordResult ≠ .notEnoughSpace := by
+    intro eq
+    subst wordResult
+    apply noSpace
+    simp [wordRun]
+  have ffiEq : targetFinal.ffi = nextBvi.ffi := by
+    rcases ffiCase with normal | failure
+    · exact normal.2
+    · exact False.elim (notOutOfSpace failure.1)
+  exact ⟨dataResult, dataFinal, by simpa only [targetCode] using codeRel,
+    dataRun, finalRel, projection, bviWord, wordResult, targetFinal, wordRun, notOutOfSpace, ffiEq⟩
 
 end Flapjack.Compiler.Backend.SourceToFlat
