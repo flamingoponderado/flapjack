@@ -1,5 +1,15 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_gc_fun_correct",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/WordGcCorrect.lean",
+  "lean_name": "wordGcFun_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": ["store", "outStore", "WordSemStateFiniteExact.fpRegs", "WordSemStateFiniteExact.store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared word_gc_fun_correct_typed and source: the original good-width, heap/store and word-ML premises, existential word execution, post-heap and abstract invariants, global and stack root relations, and conditional failed-allocation space and reachability conclusions are retained. The input and output HOL stores and the word state's fpRegs and store use canonical finite-support maps, with the state roundtrip witness. The shared HOL word width uses positive-width BitVec; the word state's two remaining type parameters remain independent."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
   "hol_name": "gc_combined_thm",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/CollectorCombined.lean",

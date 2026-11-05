@@ -26,6 +26,8 @@ The same probe captures `has_gen_def` and `gen_gc_partial_thm` with inferred typ
 
 It also captures the inferred type of `gc_combined_thm`, including its conditional full-collection guarantees.
 
+The exported `word_gc_fun_correct` capture records the store and word-state carriers and the failed-allocation conclusion for source comparison.
+
 `data_to_word_gc_stack_probe.out` includes the typed `full_gc_thm` statement,
 including its shared word dimension and complete abstract-memory conclusions,
 and the generic `gen_gc$is_final` predicate. These captures support source
