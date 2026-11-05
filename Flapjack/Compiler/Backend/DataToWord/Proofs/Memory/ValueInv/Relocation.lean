@@ -6,6 +6,7 @@ import Flapjack.FiniteMap.Composition
 /-! Finite-map relocation facts used by the collector value invariant. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
 open Flapjack Flapjack.Compiler.Backend
+open Flapjack.Compiler.Backend.DataSem
 
 /-- A composed map is defined precisely when both maps are defined along its
 lookup path. This Flapjack lemma exposes the canonical map representation. -/
@@ -152,7 +153,7 @@ theorem clockValueInv_block_gcRelated {width : Nat} [NeZero width]
     (related : gcRelated g heap heap2)
     (domain : ∀ ptr u, x = .pointer ptr u → g.lookup ptr ≠ none)
     (valid : valueInv conf (.block stamp tag values) refs (x, f, tf, heap))
-    (recursive : ∀ child addr, valueInv conf child refs (addr, f, tf, heap) →
+    (recursive : ck ≠ 0 → ∀ child addr, valueInv conf child refs (addr, f, tf, heap) →
       (∀ ptr u, addr = .pointer ptr u → g.lookup ptr ≠ none) →
       ClockValueInv (ck - 1) conf child refs
         (addrApply (holFapply g) addr, HolFiniteMapExact.compose g f,
@@ -173,7 +174,7 @@ theorem clockValueInv_block_gcRelated {width : Nat} [NeZero width]
         HolFiniteMapExact.lookup_compose_of_lookup g tf stamp ptr target timestamp found
   have movedCell : heapLookup (holFapply g ptr) heap2 = some (blockRep tag (addrMap (holFapply g) addresses)) := by
     simpa [blockRep, ← addrMap_length addresses (holFapply g)] using moved
-  have relocateList : ∀ vs xs,
+  have relocateList (positive : ck ≠ 0) : ∀ vs xs,
       List.Forall₂ (fun child addr => valueInv conf child refs (addr, f, tf, heap)) vs xs →
       (∀ ptr u, .pointer ptr u ∈ xs → g.lookup ptr ≠ none) →
       List.Forall₂ (fun child addr => ClockValueInv (ck - 1) conf child refs
@@ -188,7 +189,7 @@ theorem clockValueInv_block_gcRelated {width : Nat} [NeZero width]
         intro p u eq
         apply children p u
         simp [← eq]
-      have head := recursive child addr childValid childDomain
+      have head := recursive positive child addr childValid childDomain
       have tailChildren : ∀ ptr u, .pointer ptr u ∈ addrs → g.lookup ptr ≠ none := by
         intro p u member
         apply children p u
@@ -196,57 +197,127 @@ theorem clockValueInv_block_gcRelated {width : Nat} [NeZero width]
       have tailRelocated := ih tailChildren
       cases addr <;> simp only [addrMap] <;> apply List.Forall₂.cons
       all_goals first | simpa [addrApply] using head | exact tailRelocated
-  have relocated := relocateList values addresses pair children
   have result := ClockValueInv.blockCons ck conf stamp tag (holFapply g ptr) values
     (addrMap (holFapply g) addresses) refs (HolFiniteMapExact.compose g f)
     (HolFiniteMapExact.compose g tf) heap2 nonempty
-    (fun _ => (clockValueListInv_iff _ _ _ _ _ _ _ _).mpr relocated) timestampMoved movedCell
+    (fun positive => (clockValueListInv_iff _ _ _ _ _ _ _ _).mpr
+      (relocateList positive values addresses pair children)) timestampMoved movedCell
   simpa [addrApply, ← addrMap_length addresses (holFapply g)] using result
 
-/-- Relocate an unevaluated thunk reference, using the recursive relocation
-step for the thunk's payload. -/
-theorem clockValueInv_unevaluatedThunk_gcRelated {width : Nat} [NeZero width]
-    (ck : Nat) (conf : Config) (n : Nat) (value : Flapjack.Compiler.Backend.DataSem.Value)
+/-- Relocate a stored thunk reference, using the recursive relocation step
+for the thunk's payload. -/
+theorem clockValueInv_storedThunk_gcRelated {width : Nat} [NeZero width]
+    (ck : Nat) (conf : Config) (mode : AstHOL.ThunkMode) (n : Nat) (value : Flapjack.Compiler.Backend.DataSem.Value)
     (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value))
-    (x : HeapAddress (WordLocW width)) (f tf g : HolFiniteMapExact Nat Nat)
+    (addr : HeapAddress (WordLocW width)) (f tf g : HolFiniteMapExact Nat Nat)
     (heap heap2 : ValueHeap width)
-    (found : sptLookup n refs = some (.thunk .notEvaluated value))
+    (found : sptLookup n refs = some (.thunk mode value))
+    (safe : mode = .evaluated → destThunk value refs = .notThunk)
+    (sourceDomain : ∃ ptr, f.lookup n = some ptr)
+    (cell : heapLookup (holFapply f n) heap = some (thunkBlock mode addr))
+    (childValid : valueInv conf value refs (addr, f, tf, heap))
     (related : gcRelated g heap heap2)
-    (domain : ∀ ptr u, x = .pointer ptr u → g.lookup ptr ≠ none)
-    (valid : valueInv conf (.refPtr false n) refs (x, f, tf, heap))
-    (recursive : ∀ addr, valueInv conf value refs (addr, f, tf, heap) →
+    (domain : g.lookup (holFapply f n) ≠ none)
+    (recursive : ck ≠ 0 → ∀ addr, valueInv conf value refs (addr, f, tf, heap) →
       (∀ ptr u, addr = .pointer ptr u → g.lookup ptr ≠ none) →
       ClockValueInv (ck - 1) conf value refs
         (addrApply (holFapply g) addr, HolFiniteMapExact.compose g f,
           HolFiniteMapExact.compose g tf, heap2)) :
     ClockValueInv ck conf (.refPtr false n) refs
-      (addrApply (holFapply g) x, HolFiniteMapExact.compose g f, HolFiniteMapExact.compose g tf, heap2) := by
-  obtain ⟨addr, rfl, ⟨ptr, first⟩, cell, childValid⟩ :=
-    (valueInv_refPtr_notEvaluated conf n value refs x f tf heap found).mp valid
+      (addrApply (holFapply g) (.pointer (holFapply f n) (.word 0)),
+        HolFiniteMapExact.compose g f, HolFiniteMapExact.compose g tf, heap2) := by
+  obtain ⟨ptr, first⟩ := sourceDomain
   have applyFirst : holFapply f n = ptr := holFapply_of_lookup first
-  have defined : g.lookup ptr ≠ none := by
-    apply domain ptr (.word 0)
-    simp [applyFirst]
-  have original : heapLookup ptr heap = some (.dataElement [addr] 1 (.thunkTag .notEvaluated, [])) := by
+  have defined : g.lookup ptr ≠ none := by simpa [applyFirst] using domain
+  have original : heapLookup ptr heap = some (.dataElement [addr] 1 (.thunkTag mode, [])) := by
     simpa [thunkBlock, applyFirst] using cell
-  obtain ⟨moved, children⟩ := related.2.2.2 ptr [addr] 1 (.thunkTag .notEvaluated, []) defined original
+  obtain ⟨moved, children⟩ := related.2.2.2 ptr [addr] 1 (.thunkTag mode, []) defined original
   have childDomain : ∀ p u, addr = .pointer p u → g.lookup p ≠ none := by
     intro p u eq
     apply children p u
     simp [← eq]
-  have childMoved := recursive addr childValid childDomain
   cases second : g.lookup ptr with
   | none => exact False.elim (defined second)
   | some target =>
     have composed := HolFiniteMapExact.lookup_compose_of_lookup g f n ptr target first second
     have movedCell : heapLookup (holFapply (HolFiniteMapExact.compose g f) n) heap2 =
-        some (thunkBlock .notEvaluated (addrApply (holFapply g) addr)) := by
+        some (thunkBlock mode (addrApply (holFapply g) addr)) := by
       cases addr <;> simpa [thunkBlock, addrMap, addrApply, holFapply_of_lookup composed,
         holFapply_of_lookup second] using moved
-    have result := ClockValueInv.refPtrThunk ck conf .notEvaluated n value
+    have result := ClockValueInv.refPtrThunk ck conf mode n value
       (addrApply (holFapply g) addr) refs (HolFiniteMapExact.compose g f)
-      (HolFiniteMapExact.compose g tf) heap2 found (by intro impossible; cases impossible)
-      ⟨target, composed⟩ movedCell (fun _ => childMoved)
+      (HolFiniteMapExact.compose g tf) heap2 found safe
+      ⟨target, composed⟩ movedCell (fun positive => recursive positive addr childValid childDomain)
     simpa [addrApply, applyFirst, holFapply_of_lookup composed, holFapply_of_lookup second] using result
+
+/-- All reference forms relocate, provided the induction step relocates their
+recursive thunk payloads. This is the reference case of the collector proof. -/
+theorem clockValueInv_refPtr_gcRelated {width : Nat} [NeZero width]
+    (ck : Nat) (conf : Config) (bit : Bool) (n : Nat)
+    (refs : Spt (BvlSem.Ref Value)) (x : HeapAddress (WordLocW width))
+    (f tf g : HolFiniteMapExact Nat Nat) (heap heap2 : ValueHeap width)
+    (related : gcRelated g heap heap2)
+    (domain : ∀ ptr u, x = .pointer ptr u → g.lookup ptr ≠ none)
+    (valid : valueInv conf (.refPtr bit n) refs (x, f, tf, heap))
+    (recursive : ck ≠ 0 → ∀ child addr, valueInv conf child refs (addr, f, tf, heap) →
+      (∀ ptr u, addr = .pointer ptr u → g.lookup ptr ≠ none) →
+      ClockValueInv (ck - 1) conf child refs
+        (addrApply (holFapply g) addr, HolFiniteMapExact.compose g f,
+          HolFiniteMapExact.compose g tf, heap2)) :
+    ClockValueInv ck conf (.refPtr bit n) refs
+      (addrApply (holFapply g) x, HolFiniteMapExact.compose g f, HolFiniteMapExact.compose g tf, heap2) := by
+  rcases (valueInv_refPtr conf bit n refs x f tf heap).mp valid with
+    ⟨_, noThunk, _, _⟩ | ⟨mode, child, addr, found, safe, sourceDomain, cell, childValid, rfl, rfl⟩ |
+    ⟨child, found, safe, rfl, childValid⟩
+  · exact valueInv_refPtr_nonThunk_gcRelated conf bit n refs x f tf g heap heap2 noThunk domain valid ck
+  · exact clockValueInv_storedThunk_gcRelated ck conf mode n child refs addr f tf g heap heap2
+      found safe sourceDomain cell childValid related (domain _ _ rfl) (fun positive => recursive positive child)
+  · exact .refPtrThunkInlined ck conf n child (addrApply (holFapply g) x) refs
+      (HolFiniteMapExact.compose g f) (HolFiniteMapExact.compose g tf) heap2 found safe
+      (fun positive => recursive positive child x childValid domain)
+
+/-- Collector heap relocation preserves the clocked value invariant. This
+Flapjack lemma establishes the first conjunct of the source relocation lemma;
+the separate reference-domain conclusion is still required for its full port. -/
+theorem clockValueInv_gcRelated {width : Nat} [NeZero width]
+    (ck : Nat) (conf : Config) (value : Value)
+    (refs : Spt (BvlSem.Ref Value)) (x : HeapAddress (WordLocW width))
+    (f tf g : HolFiniteMapExact Nat Nat) (heap heap2 : ValueHeap width)
+    (related : gcRelated g heap heap2)
+    (domain : ∀ ptr u, x = .pointer ptr u → g.lookup ptr ≠ none)
+    (valid : valueInv conf value refs (x, f, tf, heap)) :
+    ClockValueInv ck conf value refs
+      (addrApply (holFapply g) x, HolFiniteMapExact.compose g f, HolFiniteMapExact.compose g tf, heap2) := by
+  induction ck using Nat.strongRecOn generalizing value x with
+  | ind ck ih =>
+    have recursive : ck ≠ 0 → ∀ child addr, valueInv conf child refs (addr, f, tf, heap) →
+        (∀ ptr u, addr = .pointer ptr u → g.lookup ptr ≠ none) →
+        ClockValueInv (ck - 1) conf child refs
+          (addrApply (holFapply g) addr, HolFiniteMapExact.compose g f,
+            HolFiniteMapExact.compose g tf, heap2) := by
+      intro positive child addr childValid childDomain
+      exact ih (ck - 1) (by omega) child addr childDomain childValid
+    cases value with
+    | number i => exact valueInv_number_gcRelated conf i refs x f tf g heap heap2 related domain valid ck
+    | word64 word => exact valueInv_word64_gcRelated conf word refs x f tf g heap heap2 related domain valid ck
+    | codePtr n => exact valueInv_codePtr_gcRelated conf n refs x f tf g heap heap2 valid ck
+    | refPtr bit n => exact clockValueInv_refPtr_gcRelated ck conf bit n refs x f tf g heap heap2 related domain valid recursive
+    | block stamp tag values =>
+      by_cases empty : values = []
+      · subst values
+        exact valueInv_emptyBlock_gcRelated conf stamp tag refs x f tf g heap heap2 valid ck
+      · exact clockValueInv_block_gcRelated ck conf stamp tag values refs x f tf g heap heap2 empty related domain valid recursive
+
+/-- Relocation preserves the unbounded value invariant at every clock. -/
+theorem valueInv_gcRelated {width : Nat} [NeZero width]
+    (conf : Config) (value : Value) (refs : Spt (BvlSem.Ref Value))
+    (x : HeapAddress (WordLocW width)) (f tf g : HolFiniteMapExact Nat Nat)
+    (heap heap2 : ValueHeap width) (related : gcRelated g heap heap2)
+    (domain : ∀ ptr u, x = .pointer ptr u → g.lookup ptr ≠ none)
+    (valid : valueInv conf value refs (x, f, tf, heap)) :
+    valueInv conf value refs
+      (addrApply (holFapply g) x, HolFiniteMapExact.compose g f, HolFiniteMapExact.compose g tf, heap2) := by
+  intro ck
+  exact clockValueInv_gcRelated ck conf value refs x f tf g heap heap2 related domain valid
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
