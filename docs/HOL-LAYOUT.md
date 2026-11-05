@@ -167,7 +167,7 @@ the cited name occurs in one of the two syntactic forms.
 | `semantics/fpSemScript.sml` | `Flapjack/FpSemHOL.lean` (tagged `fpfma_def`, over the HOL `binary_ieee`/`machine_ieee` renderings in `Flapjack/Misc/BinaryIeee*.lean` and `Flapjack/Misc/MachineIeee*.lean`) |
 | `semantics/proofs/evaluatePropsScript.sml` | `Flapjack/EvaluateProps.lean` |
 | `semantics/proofs/semanticsPropsScript.sml` | `Flapjack/SemanticsProps.lean` (structural behavior and `implements'` analogue; HOL `llist` representation bridge remains open) |
-| `proofs/pan_simpProofScript.sml` | `Flapjack/Pancake/Proofs/PanSimp.lean`, `PanSimp/Evaluate.lean` |
+| `proofs/pan_simpProofScript.sml` | `Flapjack/Pancake/Proofs/PanSimp.lean` and its `PanSimp/` submodules |
 | `proofs/pan_to_wordProofScript.sml` | `Flapjack/Pancake/Proofs/PanToWord.lean` (submodules in `Pancake/Proofs/PanToWord/`, e.g. `EveryInstOkLess.lean` for the `inst_ok_less` section) |
 
 Placement under `Proofs` does not imply that a whole pass correctness theorem
