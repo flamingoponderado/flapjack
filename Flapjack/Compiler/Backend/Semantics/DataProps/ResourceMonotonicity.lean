@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.Semantics.DataProps.BlockResources
+import Flapjack.Compiler.Backend.Semantics.DataProps.ThunkResources
 
 /-! Compositional source event and resource monotonicity. -/
 namespace Flapjack.Compiler.Backend.DataSem
@@ -159,6 +160,32 @@ theorem resourceMono_blockAssign {C F : Type} (dest : Nat) (op : ClosLang.BlockO
   apply resourceMono_assign dest (.blockOp op) names live state
   intro args before after value run
   exact doApp_block_resource_frame op args before after value run
+
+/-- Every successful source primitive application satisfies the event,
+stack and safety properties required by the evaluator induction. -/
+theorem doApp_resource_frame {C F : Type} (op : ClosLang.Op) (args : List Value)
+    (state next : State C F) (value : Value)
+    (run : doApp op args state = .val (value, next)) :
+    state.ffi.ioEvents <+: next.ffi.ioEvents ∧ BackendProps.optionLe state.stackMax next.stackMax ∧
+      (next.safeForSpace = true → state.safeForSpace = true) := by
+  cases op with
+  | label label => exact doApp_label_resource_frame label args state next value run
+  | ffi name => exact doApp_ffi_resource_frame name args state next value run
+  | intOp op => exact doApp_int_resource_frame op args state next value run
+  | wordOp op => exact doApp_word_resource_frame op args state next value run
+  | blockOp op => exact doApp_block_resource_frame op args state next value run
+  | globOp op => exact doApp_global_resource_frame op args state next value run
+  | memOp op => exact doApp_mem_resource_frame op args state next value run
+  | thunkOp op => exact doApp_thunk_resource_frame op args state next value run
+  | install => exact doApp_install_resource_frame args state next value run
+
+/-- Every data-language assignment satisfies source resource monotonicity. -/
+theorem resourceMono_assign_all {C F : Type} (dest : Nat) (op : ClosLang.Op)
+    (names : List Nat) (live : Option NumSet) (state : State C F) :
+    ResourceMono (.assign dest op names live) state := by
+  apply resourceMono_assign dest op names live state
+  intro args before after value run
+  exact doApp_resource_frame op args before after value run
 
 /-- Sequential source execution composes the three resource properties. -/
 theorem resourceMono_seq {C F : Type} (first second : DataLang.Prog) (state : State C F)

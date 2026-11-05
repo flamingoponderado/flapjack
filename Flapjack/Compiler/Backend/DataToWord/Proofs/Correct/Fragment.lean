@@ -325,4 +325,36 @@ theorem verifiedFragment64 {C F : Type} (conf : Config) (secn l1 l2 : Nat)
     · intro s t rel valid
       exact noIH (compileControl64 conf secn label yes).2 s t locs rel valid
 
+/-- Every program in the established fragment has monotone source events,
+stack maxima, and safety. This is Flapjack-specific infrastructure for
+composing allocation failures; the unrestricted evaluator theorem is open. -/
+theorem verifiedFragment_resourceMono {C F : Type} (program : DataLang.Prog)
+    (fragment : VerifiedFragment program) :
+    ∀ state : DataSem.State C F, DataSem.ResourceMono program state := by
+  induction fragment
+  case seq first second _ _ firstIH secondIH =>
+    intro state
+    exact DataSem.resourceMono_seq first second state (firstIH state) secondIH
+  case ite name yes no _ _ yesIH noIH =>
+    intro state
+    exact DataSem.resourceMono_if name yes no state (yesIH state) (noIH state)
+  all_goals intro state
+  all_goals first
+    | exact DataSem.resourceMono_skip state
+    | exact DataSem.resourceMono_tick state
+    | exact DataSem.resourceMono_move _ _ state
+    | exact DataSem.resourceMono_assign_all _ _ _ _ state
+    | exact DataSem.resourceMono_return _ state
+    | exact DataSem.resourceMono_raise _ state
+
+/-- Allocation failure in the first command composes through any established
+fragment as the source continuation, without an extra resource premise. -/
+theorem seq64_outOfSpaceFirst_verified {C F : Type} (conf : Config) (secn label : Nat)
+    (first second : DataLang.Prog) (source : DataSem.State C F)
+    (target : WordSemStateFiniteExact 64 C F) (fragment : VerifiedFragment second)
+    (failure : outOfSpace64 conf secn label first source target) :
+    outOfSpace64 conf secn label (.seq first second) source target :=
+  seq64_outOfSpaceFirst conf secn label first second source target failure
+    (verifiedFragment_resourceMono second fragment)
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Correct
