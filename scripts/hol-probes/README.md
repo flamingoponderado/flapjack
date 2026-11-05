@@ -1949,9 +1949,9 @@ dimensions.
 The direct `crepSem$eval` fixtures `crep_eval_load_byte_probe.out` and
 `crep_eval_load_32_probe.out` also cover width 24: `LoadByte` at address 5
 returns `Word 51w` little-endian and `Word 17w` big-endian; `Load32` at address
-4 returns `Word 0x113322w`. `Flapjack.Test.PanFixedLoadParity` compares those
-original rows against the finite-word source evaluator and records the RISC-V
-runtime adapter's `none` result at the same alignment boundary.
+4 returns `Word 0x113322w`. `Flapjack.Test.CrepSemEvalExactParity` checks those
+rows with the exact evaluator; `Flapjack.Test.PanFixedLoadParity` checks that
+the RISC-V runtime returns the same values.
 The direct width-1 rows `load32_aligned_width1_address0=SOME ...` and
 `load32_unaligned_width1_address1=NONE` were refreshed
 with `HOL4=/home/zksecurity/HOL CAKEML=/home/zksecurity/flapjack2/cakeml

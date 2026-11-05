@@ -62,6 +62,38 @@ def exactState64 : CrepSemHOLState 64 Unit where
   baseAddr := word64 0
   topAddr := word64 0
 
+-- Width-24 state from the LoadByte and Load32 HOL probes. All other state
+-- fields are irrelevant to these expression evaluations.
+def exactDomain24 (address : BitVec 24) : Prop := address = 4
+
+def exactState24 (bigEndian : Bool) : CrepSemHOLState 24 Unit where
+  locals := HolFiniteMapExact.empty
+  globals := HolFiniteMapExact.empty
+  code := HolFiniteMapExact.empty
+  memory := fun address => if address == 4 then .word 0x332211 else .word 0
+  memaddrs := exactDomain24
+  shMemaddrs := fun _ => False
+  clock := 0
+  be := bigEndian
+  ffi := exactFfi
+  baseAddr := 0
+  topAddr := 0
+
+local instance : DecidablePred exactDomain24 := by
+  intro address
+  unfold exactDomain24
+  infer_instance
+
+-- The explicit decider is related to the HOL-facing evaluator by
+-- `evalCrepSemHOLExpWithDecider_eq`.
+def evalExact24 (bigEndian : Bool) (expression : CrepExpHOL 24) :=
+  evalCrepSemHOLExpWithDecider (exactState24 bigEndian)
+    (fun address => (show Decidable (address = (4 : BitVec 24)) from inferInstance)) expression
+
+#guard evalExact24 false (.loadByte (.const 5)) == some (.word 0x33)
+#guard evalExact24 true (.loadByte (.const 5)) == some (.word 0x11)
+#guard evalExact24 false (.load32 (.const 4)) == some (.word 0x113322)
+
 local instance : DecidablePred exactState64.memaddrs := by
   intro address
   change Decidable (address = word64 8)
