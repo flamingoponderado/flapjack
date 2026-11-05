@@ -119,4 +119,26 @@ theorem fullGc_abstract_structure {α β : Type} (roots : List (HeapAddress α))
   · rw [← domain]
     exact filtered.symm
 
+/-- The simple copying collector preserves the combined stack/reference
+invariant, including its appended free space. This Flapjack result handles
+direct collection; the source's separate thunk-inlining stage remains open. -/
+theorem fullGc_stack_reference {width : Nat} [NeZero width]
+    (conf : Config) (next : Nat) (stack : List DataSem.Value)
+    (refs : Spt (BvlSem.Ref DataSem.Value))
+    (roots : List (HeapAddress (WordLocW width))) (heap : ValueHeap width)
+    (limit : Nat) (bigEndian : Bool)
+    (rootOk : rootsOk roots heap) (heapGood : heapOk heap limit)
+    (valid : bcStackRefInv conf next stack refs (roots, heap, bigEndian)) :
+    ∃ roots2 heap2 a2,
+      CopyingGc.fullGc (roots, heap, limit) = (roots2, heap2, a2, true) ∧
+      bcStackRefInv conf next stack refs (roots2, heap2 ++ heapExpand (limit - a2), bigEndian) := by
+  obtain ⟨heap2, a2, heap3, run, rootDomain, invariant⟩ :=
+    CopyingGc.fullGc_invariant roots heap limit rootOk heapGood
+  let f := heapMap 0 heap3
+  have related := CopyingGc.gcInv_final_related heap2 heap3 heap a2 (limit - a2) limit true roots invariant
+  have expanded : gcRelated f heap (heap2 ++ heapExpand (limit - a2)) :=
+    (gcRelated_append_heapExpand f heap heap2 (limit - a2)).mpr related
+  exact ⟨addrMap (holFapply f) roots, heap2, a2, run,
+    bcStackRefInv_gcRelated conf next stack refs roots heap _ bigEndian f expanded rootDomain valid⟩
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

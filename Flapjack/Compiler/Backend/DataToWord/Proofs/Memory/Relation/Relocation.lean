@@ -106,4 +106,36 @@ theorem bcRefInv_gcRelated {width : Nat} [NeZero width] (conf : Config) (n : Nat
             exact fresh notFinal ⟨stamp, ⟨middle, firstStamp⟩, by simpa [stampApply] using equalMiddle⟩
           · simpa [blockRep, holFapply_of_lookup second, ← addrMap_length addresses (holFapply g)] using moved
 
+/-- Relocating the roots and heap preserves the combined stack/reference
+invariant. This covers the collector-relation stage; evaluated-thunk inlining
+is a separate prerequisite for the full source collection theorem. -/
+theorem bcStackRefInv_gcRelated {width : Nat} [NeZero width]
+    (conf : Config) (next : Nat) (stack : List Value) (refs : Spt (BvlSem.Ref Value))
+    (roots : List (HeapAddress (WordLocW width))) (heap heap2 : ValueHeap width)
+    (bigEndian : Bool) (g : HolFiniteMapExact Nat Nat)
+    (related : gcRelated g heap heap2)
+    (rootDomain : ∀ ptr u, .pointer ptr u ∈ roots → g.lookup ptr ≠ none)
+    (valid : bcStackRefInv conf next stack refs (roots, heap, bigEndian)) :
+    bcStackRefInv conf next stack refs (addrMap (holFapply g) roots, heap2, bigEndian) := by
+  obtain ⟨f, tf, fInj, fRefs, tfInj, tfTimes, tfBound, endian, unique, values, refInv⟩ := valid
+  refine ⟨HolFiniteMapExact.compose g f, HolFiniteMapExact.compose g tf,
+    mapInjInto_gcRelated_compose f g heap heap2 fInj related, ?_,
+    mapInjInto_gcRelated_compose tf g heap heap2 tfInj related, ?_, ?_, endian, unique, ?_, ?_⟩
+  · intro n present
+    obtain ⟨middle, first, _⟩ := (mapDomain_compose g f n).mp present
+    exact fRefs n ⟨middle, first⟩
+  · intro n present
+    obtain ⟨middle, first, _⟩ := (mapDomain_compose g tf n).mp present
+    exact tfTimes n ⟨middle, first⟩
+  · intro n present
+    obtain ⟨middle, first, _⟩ := (mapDomain_compose g tf n).mp present
+    exact tfBound n ⟨middle, first⟩
+  · exact (valueInvList_gcRelated conf refs f tf g heap heap2 related roots stack values.flip rootDomain).flip
+  · intro n ⟨reachable, present⟩
+    obtain ⟨middle, first, target, second⟩ := (mapDomain_compose g f n).mp present
+    apply bcRefInv_gcRelated conf n refs f tf g heap heap2 bigEndian related
+      (refInv n ⟨reachable, ⟨middle, first⟩⟩)
+    rw [holFapply_of_lookup first, second]
+    simp
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
