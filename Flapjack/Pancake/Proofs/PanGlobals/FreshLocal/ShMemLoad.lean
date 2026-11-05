@@ -1,7 +1,9 @@
 import Flapjack.Pancake.Proofs.PanGlobals
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocalEval
+import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Support
 
 namespace Flapjack.PanGlobalsFreshLocalShMemLoad
+open Flapjack.PanGlobalsFreshLocalSupport
 open Flapjack.Pancake.PanLang
 open Flapjack.PanSemStateFiniteExact
 
@@ -12,15 +14,6 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} {σ : Type} [NeZero width] :
     (∀ state : PanSemStateFiniteExact width σ,
         ofExact state.toExact state.toExact_finiteSupport = state) :=
   PanSemStateFiniteExact.holFmapAsFiniteSupportWitness
-
-/-- Canonical Boolean/equality update commutation; local infrastructure. -/
-private theorem updateMixed {width : Nat} [NeZero width] (map : HolFiniteMapExact MlS (ValueHOL width))
-    (a b : MlS) (x y : ValueHOL width) (hne : a ≠ b) :
-    (map.updateEq (a, x)).update (b, y) = (map.update (b, y)).updateEq (a, x) := by
-  have he := FUPDATE_comm map.lookup a x b y hne
-  cases map
-  simp only [HolFiniteMapExact.update, HolFiniteMapExact.updateEq, FUPDATE_HOL_eq_FUPDATE]
-  congr 1
 
 /-- Local factoring of the shared-memory transition's fresh-local relation;
 no standalone HOL declaration. It retains final-event local clearing. -/

@@ -15,8 +15,10 @@ import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.CallHandler
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.DecCall
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.ExtCall
 import Flapjack.Pancake.Semantics.PanSem.EvaluateInd
+import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Support
 
 namespace Flapjack.PanGlobalsFreshLocalAssembly
+open Flapjack.PanGlobalsFreshLocalSupport
 open Flapjack.Pancake.PanLang
 open Flapjack.PanSemStateFiniteExact
 open Flapjack.PanGlobalsFreshLocalIf
@@ -28,15 +30,6 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} {σ : Type} [NeZero width] :
     (∀ state : PanSemStateFiniteExact width σ,
         ofExact state.toExact state.toExact_finiteSupport = state) :=
   PanSemStateFiniteExact.holFmapAsFiniteSupportWitness
-
-/-- Local equality of canonical update interfaces; no standalone HOL original. -/
-private theorem updateEq_eq_update {width : Nat} [NeZero width]
-    (locals : HolFiniteMapExact MlS (ValueHOL width)) (entry : MlS × ValueHOL width) :
-    locals.updateEq entry = locals.update entry := by
-  apply HolFiniteMapExact.ext
-  funext key
-  simp only [HolFiniteMapExact.lookup_updateEq, HolFiniteMapExact.lookup_update,
-    FUPDATE_HOL_eq_FUPDATE]
 
 /-- Full evaluate_fresh_local, assembled by the literal evaluate_ind principle.
 All recursive hypotheses are discharged internally. The public statement retains

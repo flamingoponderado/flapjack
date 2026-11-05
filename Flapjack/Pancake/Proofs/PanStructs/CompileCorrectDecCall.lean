@@ -7,7 +7,9 @@ import Flapjack.Pancake.Proofs.PanStructs.FlattenConversion
 import Flapjack.Pancake.Proofs.PanStructs.CompileExpCorrectExact
 import Flapjack.Pancake.Proofs.PanStructs.ValueShapeConversion
 import Flapjack.Pancake.PanStructs.CompileProgExact
+import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectSupport
 namespace Flapjack.Pancake.Proofs.PanStructs.CompileCorrectDecCall
+open Flapjack.Pancake.Proofs.PanStructs.CompileCorrectSupport
 open Flapjack
 open Flapjack.Pancake.PanLang
 open Flapjack.Pancake.PanStructs.CompileShapeExact
@@ -23,63 +25,6 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} {σ : Type} [NeZero width] :
     (∀ state : PanSemStateFiniteExact width σ,
       PanSemStateFiniteExact.ofExact state.toExact state.toExact_finiteSupport = state) :=
   PanSemStateFiniteExact.holFmapAsFiniteSupportWitness
-
-
-/-- Lookup extensionality for proof plumbing; no independent HOL original. -/
-private theorem mapExt {α β : Type} (a b : HolFiniteMapExact α β)
-    (h : ∀ k, a.lookup k = b.lookup k) : a = b := by
-  cases a with | mk al af =>
-    cases b with | mk bl bf =>
-      have he : al = bl := funext h
-      subst bl
-      rfl
-
-/-- Map/update commutation for proof plumbing; no independent HOL original. -/
-private theorem mapUpdate {α β γ : Type} [BEq α] [LawfulBEq α]
-    (fm : HolFiniteMapExact α β) (f : α × β → γ) (k : α) (v : β) :
-    (fm.update (k,v)).map2 f = (fm.map2 f).update (k,f (k,v)) := by
-  apply mapExt
-  intro key
-  simp only [HolFiniteMapExact.lookup_map2, HolFiniteMapExact.lookup_update, FUPDATE]
-  by_cases hk : k == key
-  · have he := beq_iff_eq.mp hk
-    subst key
-    simp
-  · simp [hk]
-
-/-- Updated-map validity for proof plumbing; no independent HOL original. -/
-private theorem everyUpdate {α β : Type} [BEq α] [LawfulBEq α]
-    (fm : HolFiniteMapExact α β) (P : α × β → Bool) (k : α) (v : β)
-    (h : feveryHOL P fm) (hv : P (k,v) = true) : feveryHOL P (fm.update (k,v)) := by
-  intro key value he
-  simp only [HolFiniteMapExact.lookup_update, FUPDATE] at he
-  split at he
-  next hk =>
-    have heq := beq_iff_eq.mp hk
-    subst key
-    cases he
-    exact hv
-  next => exact h key value he
-
-
-/-- Local context bindings are overwritten by every code entry's own params.
-Flapjack proof plumbing; no independent HOL declaration. -/
-private theorem convertStateLocalContext {width : Nat} {σ : Type} [NeZero width]
-    (context : ContextExact) (locals : List (MlS × ShapeHOL))
-    (state : PanSemStateFiniteExact width σ) :
-    convertStateExact {context with locals := locals} state = convertStateExact context state := by
-  rfl
-
-/-- Equality decisions for the same key proposition are unique. Flapjack proof
-plumbing; no extra comparison assumption and no independent HOL declaration. -/
-private theorem resVarCanonical {α β : Type} (d : DecidableEq α)
-    (fm : HolFiniteMapExact α β) (entry : α × Option β) :
-    @HolFiniteMapExact.resVarEq α β d fm entry =
-    @HolFiniteMapExact.resVarEq α β (Classical.typeDecidableEq α) fm entry := by
-  have h : d = Classical.typeDecidableEq α := Subsingleton.elim _ _
-  subst d
-  rfl
-
 
 /-- Full original program-correctness predicate used solely to spell the
 two genuine guarded IHs; no extra predicate is supplied by the caller. -/

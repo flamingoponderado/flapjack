@@ -8,14 +8,6 @@ open Flapjack.Basis.Pure.MlString (ofString)
 open Flapjack.PanSemStateFiniteExact
 open Flapjack.PanGlobalsCompileCorrect
 
-/-- Flapjack-only equation for the literal compiled argument list. -/
-private theorem compileList_eq_map {width : Nat} [NeZero width]
-    (context : PanGlobalsContextExact width) (args : List (ExpHOL width)) :
-    compileExpExactHOLList context args = args.map (compileExpExactHOL context) := by
-  induction args with
-  | nil => simp only [compileExpExactHOLList, List.map_nil]
-  | cons e es ih => simp only [compileExpExactHOLList, List.map_cons, ih]
-
 /-- Flapjack map infrastructure: undo a scoped write with its original lookup,
 including an absent original binding. No separately named HOL declaration. -/
 theorem restore_update {width : Nat} [NeZero width]

@@ -1,7 +1,9 @@
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.If
 import Flapjack.Pancake.Semantics.PanSem.EvaluateClock
+import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Support
 
 namespace Flapjack.PanGlobalsFreshLocalCallNoHandler
+open Flapjack.PanGlobalsFreshLocalSupport
 open Flapjack.Pancake.PanLang
 open Flapjack.PanSemStateFiniteExact
 
@@ -12,15 +14,6 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} {σ : Type} [NeZero width] :
     (∀ state : PanSemStateFiniteExact width σ,
         ofExact state.toExact state.toExact_finiteSupport = state) :=
   PanSemStateFiniteExact.holFmapAsFiniteSupportWitness
-
-/-- Canonical Boolean/equality update commutation; local infrastructure. -/
-private theorem updateMixed {width : Nat} [NeZero width] (map : HolFiniteMapExact MlS (ValueHOL width))
-    (a b : MlS) (x y : ValueHOL width) (hne : a ≠ b) :
-    (map.updateEq (a, x)).update (b, y) = (map.update (b, y)).updateEq (a, x) := by
-  have he := FUPDATE_comm map.lookup a x b y hne
-  cases map
-  simp only [HolFiniteMapExact.update, HolFiniteMapExact.updateEq, FUPDATE_HOL_eq_FUPDATE]
-  congr 1
 
 /-- Genuine non-tail Call-without-handler source subcase of evaluate_fresh_local.
 Callee entry replaces caller locals, so the child run is identical and needs no
