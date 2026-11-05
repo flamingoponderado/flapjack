@@ -110,9 +110,102 @@ theorem configuredBviSpaceFragment_simulation {C F : Type} (fuel : Nat)
     word declarations bviCode names run codeLabel arity l1 l2 (BviToData.compileExp arity body)
     sourceState targetState locs related sourceCode lookup fragment safe
 
-/-- A non-type-error BVI evaluation supplies both the data result relation and
-the safety premise for the actual emitted word-body simulation. This connects
-the two existing Lean-side pass proofs; their candidate relations, exception
+/-- Successful and exceptional BVI results paired with the corresponding
+actual word outcome, or the permitted target allocation failure. This is
+Lean-side composition infrastructure, not a HOL result relation. -/
+def bviWordOutcomes64 {C F : Type} (conf : DataToWord.Config) (l1 l2 : Nat)
+    (result : BviSem.BviResult) (body : DataLang.Prog) (wordBody : WordLangProgHOL (BitVec 64))
+    (source : DataSem.State C F) (target : WordSemStateFiniteExact 64 C F) (locs : List (Nat × Nat)) : Prop :=
+  (∃ values words source' target', values.length = words.length ∧
+    (result = .val (values.map BviToData.dataToBviValue) ∨
+      result = .err (.raise (.ret (values.map BviToData.dataToBviValue)))) ∧
+    DataSem.evaluate body source = (some (.val values), source') ∧
+    WordSemStateFiniteExact.evaluate wordBody target = (some (.result (.loc l1 l2) words), target') ∧
+    stateRel64 conf l1 l2 source' target' (some (values.zip words)) locs) ∨
+  (∃ source' target', result = .err (.abort .timeoutError) ∧
+    DataSem.evaluate body source = (some (.err (.abort .timeoutError)), source') ∧
+    WordSemStateFiniteExact.evaluate wordBody target = (some .timeOut, target') ∧
+    target'.ffi = source'.ffi ∧ BackendProps.optionLe target'.stackMax source'.stackMax) ∨
+  (∃ value word source' target' a b r1 r2 remaining,
+    result = .err (.raise (.exn (BviToData.dataToBviValue value))) ∧
+    DataSem.evaluate body source = (some (.err (.raise value)), source') ∧
+    WordSemStateFiniteExact.evaluate wordBody target = (some (.exception (.loc a b) word), target') ∧
+    (∃ jumpState, WordSemStateFiniteExact.jumpExc target = some (jumpState, a, b)) ∧
+    target'.ffi = source'.ffi ∧ BackendProps.optionLe target'.stackMax source'.stackMax ∧
+    wordSemLastN (source'.stack.length + 1) locs = (r1, r2) :: remaining ∧
+    ∀ dest, stateRel64 conf r1 r2 (DataSem.setVar dest value source')
+      (WordSemStateFiniteExact.setVar (DataToWord.adjustVar dest) word target') none remaining) ∨
+  (∃ final, WordSemStateFiniteExact.evaluate wordBody target = (some .notEnoughSpace, final) ∧
+    BackendProps.optionLe final.stackMax (DataSem.evaluate body source).2.stackMax ∧
+    final.ffi.ioEvents <+: (DataSem.evaluate body source).2.ffi.ioEvents ∧
+    (conf.gcKind ≠ .none → (DataSem.evaluate body source).2.safeForSpace = false))
+
+/-- Compose the BVI result projection with the word fragment outcomes. The
+continuing-data branch is impossible because the BVI simulation produced a
+finished data result. -/
+theorem bviWordOutcomes64_of_data {C F : Type} (conf : DataToWord.Config) (l1 l2 : Nat)
+    (result : BviSem.BviResult) (body : DataLang.Prog) (wordBody : WordLangProgHOL (BitVec 64))
+    (source : DataSem.State C F) (target : WordSemStateFiniteExact 64 C F) (locs : List (Nat × Nat))
+    (dataResult : Flapjack.SemanticPrimitivesHOL.Result (List DataSem.Value) DataSem.Value)
+    (dataFinal : DataSem.State C F)
+    (dataRun : DataSem.evaluate body source = (some dataResult, dataFinal))
+    (projection : ¬ BviToData.isReturn result → BviToData.dataToBviResult dataResult = result)
+    (returns : BviToData.isReturn result → ∃ values, dataResult = .val values ∧
+      result = .err (.raise (.ret (values.map BviToData.dataToBviValue))))
+    (wordOutcome : fragmentOutcomesAt64 conf l1 l2 body wordBody source target locs ∨
+      ∃ final, WordSemStateFiniteExact.evaluate wordBody target = (some .notEnoughSpace, final) ∧
+        BackendProps.optionLe final.stackMax (DataSem.evaluate body source).2.stackMax ∧
+        final.ffi.ioEvents <+: (DataSem.evaluate body source).2.ffi.ioEvents ∧
+        (conf.gcKind ≠ .none → (DataSem.evaluate body source).2.safeForSpace = false)) :
+    bviWordOutcomes64 conf l1 l2 result body wordBody source target locs := by
+  rcases wordOutcome with ordinary | outOfSpace
+  · rcases ordinary with continued | returned | timeout | raised
+    · obtain ⟨s, t, sourceRun, _⟩ := continued
+      rw [dataRun] at sourceRun
+      cases sourceRun
+    · obtain ⟨values, words, s, t, length, sourceRun, targetRun, related⟩ := returned
+      have same : dataResult = .val values := by
+        have eq := dataRun.symm.trans sourceRun
+        exact Option.some.inj (congrArg Prod.fst eq)
+      have resultEq : result = .val (values.map BviToData.dataToBviValue) ∨
+          result = .err (.raise (.ret (values.map BviToData.dataToBviValue))) := by
+        by_cases isRet : BviToData.isReturn result
+        · obtain ⟨vs, valEq, retEq⟩ := returns isRet
+          rw [same] at valEq
+          cases valEq
+          exact Or.inr retEq
+        · exact Or.inl (by simpa [same, BviToData.dataToBviResult] using (projection isRet).symm)
+      exact Or.inl ⟨values, words, s, t, length, resultEq, sourceRun, targetRun, related⟩
+    · obtain ⟨s, t, sourceRun, targetRun, ffiEq, bound⟩ := timeout
+      have same : dataResult = .err (.abort .timeoutError) := by
+        have eq := dataRun.symm.trans sourceRun
+        exact Option.some.inj (congrArg Prod.fst eq)
+      have notRet : ¬ BviToData.isReturn result := by
+        intro isRet
+        obtain ⟨vs, valEq, _⟩ := returns isRet
+        rw [same] at valEq
+        cases valEq
+      have resultEq : result = .err (.abort .timeoutError) := by
+        simpa [same, BviToData.dataToBviResult] using (projection notRet).symm
+      exact Or.inr (Or.inl ⟨s, t, resultEq, sourceRun, targetRun, ffiEq, bound⟩)
+    · obtain ⟨value, word, s, t, a, b, r1, r2, remaining, sourceRun, targetRun, jump, ffiEq, bound, stack, related⟩ := raised
+      have same : dataResult = .err (.raise value) := by
+        have eq := dataRun.symm.trans sourceRun
+        exact Option.some.inj (congrArg Prod.fst eq)
+      have notRet : ¬ BviToData.isReturn result := by
+        intro isRet
+        obtain ⟨vs, valEq, _⟩ := returns isRet
+        rw [same] at valEq
+        cases valEq
+      have resultEq : result = .err (.raise (.exn (BviToData.dataToBviValue value))) := by
+        simpa [same, BviToData.dataToBviResult] using (projection notRet).symm
+      exact Or.inr (Or.inr (Or.inl ⟨value, word, s, t, a, b, r1, r2, remaining,
+        resultEq, sourceRun, targetRun, jump, ffiEq, bound, stack, related⟩))
+  · exact Or.inr (Or.inr (Or.inr outOfSpace))
+
+/-- A non-type-error BVI evaluation corresponds to the emitted word body's
+return, timeout, exception, or allocation-failure outcome. This connects the
+two existing Lean-side pass proofs; their candidate relations, exception
 premise, verified fragment, and cross-language reviews remain explicit. -/
 theorem configuredBviSpaceFragment_fromBvi {C F : Type} (fuel : Nat)
     (source nextSource : Config) (closure nextClosure : ClosToBvl.Config)
@@ -144,11 +237,7 @@ theorem configuredBviSpaceFragment_fromBvi {C F : Type} (fuel : Nat)
       BviToData.stateRel nextBvi { final with localsSize := localsSize, stackMax := stackMax, safeForSpace := safe, peakHeapLength := peak } ∧
       BviToData.correctOutcome bviResult sourceState final env.length next (List.range env.length)
         [] dataNames env true (some dataResult) ls ∧
-      (fragmentOutcomesAt64 word l1 l2 (BviToData.compileExp arity body) wordBody sourceState targetState locs ∨
-        ∃ final, WordSemStateFiniteExact.evaluate wordBody targetState = (some .notEnoughSpace, final) ∧
-          BackendProps.optionLe final.stackMax (DataSem.evaluate (BviToData.compileExp arity body) sourceState).2.stackMax ∧
-          final.ffi.ioEvents <+: (DataSem.evaluate (BviToData.compileExp arity body) sourceState).2.ffi.ioEvents ∧
-          (word.gcKind ≠ .none → (DataSem.evaluate (BviToData.compileExp arity body) sourceState).2.safeForSpace = false)) := by
+      bviWordOutcomes64 word l1 l2 bviResult (BviToData.compileExp arity body) wordBody sourceState targetState locs := by
   have safe : (DataSem.evaluate (BviToData.compileExp arity body) sourceState).1 ≠
       some (.err (.abort .typeError)) := by
     simpa [envLength] using BviToData.compileExp_notType body env bviState nextBvi bviResult
@@ -161,7 +250,12 @@ theorem configuredBviSpaceFragment_fromBvi {C F : Type} (fuel : Nat)
     dataRun, _, finalRel, outcome⟩ :=
     BviToData.compileExp_of_simulation body env bviState nextBvi bviResult sourceState
       (BviToData.simulationFor_all [body] env bviState) bviRun bviSafe vars fresh bviRelated exceptionJump
+  have actualDataRun : DataSem.evaluate (BviToData.compileExp arity body) sourceState =
+      (some dataResult, { final with localsSize := localsSize, stackMax := stackMax, safeForSpace := safeFlag, peakHeapLength := peak }) := by
+    simpa [envLength] using dataRun
+  have bviWord := bviWordOutcomes64_of_data word l1 l2 bviResult (BviToData.compileExp arity body)
+    wordBody sourceState targetState locs dataResult _ actualDataRun outcome.1 outcome.2.1 wordOutcome
   exact ⟨code, wordBody, dataResult, final, dataNames, next, ls, localsSize, stackMax, safeFlag, peak,
-    wordRun, outputLookup, targetLookup, by simpa [envLength] using dataRun, finalRel, outcome, wordOutcome⟩
+    wordRun, outputLookup, targetLookup, actualDataRun, finalRel, outcome, bviWord⟩
 
 end Flapjack.Compiler.Backend.SourceToFlat
