@@ -254,39 +254,6 @@ def riscv64BytesInWord : BitVec 64 := BitVec.ofNat 64 8
     is exactly `byte$bytes_in_word` (`n2w (dimindex (:'a) DIV 8)`). -/
 theorem riscv64BytesInWord_eq : riscv64BytesInWord = CrepBytesInWord.bytesInWord := rfl
 
-/-- The RISC-V compile context byte width is the fixed machine byte width: the
-    pipeline entry points supply `8` for the 64-bit word, which is exactly
-    `byte$bytes_in_word` (`n2w (dimindex (:'a) DIV 8)`). -/
-theorem riscvBytesInWord_eq : (8 : BitVec 64) = CrepBytesInWord.bytesInWord := rfl
-
-/-- The 32-bit oracle probe width is the fixed machine byte width: the checked-in
-    `crep_load_shape_probe.out` was produced with `32 word` values, for which
-    `byte$bytes_in_word = 4`. -/
-theorem probeBytesInWord_eq : (4 : BitVec 32) = CrepBytesInWord.bytesInWord := rfl
-
-/-- Flapjack-specific Nat/variable-stride indexing helper. The exact HOL
-    `load_shape_el_rel` port uses word arithmetic and fixed machine-byte
-    stride in `Proofs/PanToCrep.lean`. -/
-theorem loadShape_getElem (address stride count n : Nat) (value : CrepExp Nat)
-    (h : n < count) :
-    (loadShape address stride count value)[n]? =
-      some (if address + n * stride == 0 then .load value
-            else .load (.op .add [value, .const (address + n * stride)])) := by
-  induction count generalizing address n with
-  | zero => simp at h
-  | succ count ih =>
-      cases n with
-      | zero => simp [loadShape]
-      | succ k =>
-          have hk : k < count := by omega
-          rw [loadShape]
-          simp only [List.getElem?_cons_succ]
-          rw [ih (address + stride) k hk]
-          have haddr : (address + stride) + k * stride = address + (k + 1) * stride := by
-            rw [Nat.add_mul, Nat.one_mul]
-            ac_rfl
-          simp only [haddr]
-
 /-- Original-domain counterpart of Cake's `load_glob_not_mem_load`
     (`cakeml/pancake/semantics/crepPropsScript.sml:688`): a global load absent
     from an expression's expression list stays absent from every expression
@@ -332,7 +299,6 @@ theorem crepExpVars_of_mem_loadShape [BEq α] [OfNat α 0] [Add α]
 def crepNestedSeq : List (CrepProg α) → CrepProg α
   | [] => .skip
   | statement :: statements => .seq statement (crepNestedSeq statements)
-
 
 /-- Faithful port of Cake `crepProps$exps_of` from
     `cakeml/pancake/semantics/crepPropsScript.sml:1282`: collect the
@@ -420,7 +386,6 @@ theorem storesW_eq_stores {width : Nat} [NeZero width] (address : CrepExp (BitVe
   induction values generalizing offset with
   | nil => rfl
   | cons value values ih => simp [storesW, stores, ih]
-
 
 /- FLAPJACK-SPECIFIC (not an exact HOL port): this helper is generic over
     `CrepProg α`/`CrepExp α`, while HOL `crepLang$prog`/`exp` are indexed by
@@ -661,19 +626,6 @@ theorem crepAssignedFreeVars_nestedDecs_append (names : List Nat)
           · subst hc
             simp
           · simp [hc, List.mem_cons, bne_iff_ne]
-
-/-- A variable absent from both the declared slots and the body's assigned
-    free variables is absent from the `nestedDecs` body.  This is the
-    `not_mem_context_assigned_mem_gt` transport step for the declarations
-    introduced by `compileProg`. -/
-theorem not_mem_crepAssignedFreeVars_nestedDecs (names : List Nat)
-    (values : List (CrepExp α)) (body : CrepProg α)
-    (h : names.length = values.length) {x : Nat}
-    (hbody : x ∉ crepAssignedFreeVars body) :
-    x ∉ crepAssignedFreeVars (nestedDecs names values body) := by
-  rw [crepAssignedFreeVars_nestedDecs_append names values body h]
-  intro hmem
-  exact hbody (List.mem_filter.mp hmem).1
 
 /-! The membership form used by Cake's
 `not_mem_context_assigned_mem_gt` induction.  A declaration nest removes

@@ -38,9 +38,6 @@ theorem cutRes_ffi (live : NumSet)
     | none => simp
     | some s1 => simp only; have := cutState_ffi hc; split <;> simp [decClock, this]
 
-theorem fixClock_ffi {β : Type} (old : LoopSemStateFiniteExact width F)
-    (step : β × LoopSemStateFiniteExact width F) : (fixClock old step).2.ffi = step.2.ffi := rfl
-
 theorem shMemLoad_ioEvents (v : Nat) (a : BitVec width) (nb : Nat)
     (s : LoopSemStateFiniteExact width F) :
     s.ffi.ioEvents <+: (shMemLoad v a nb s).2.ffi.ioEvents := by
@@ -61,11 +58,6 @@ theorem shMemOp_ioEvents (op : WordMemOp) (v : Nat) (a : BitVec width)
     (s : LoopSemStateFiniteExact width F) :
     s.ffi.ioEvents <+: (shMemOp op v a s).2.ffi.ioEvents := by
   cases op <;> simp only [shMemOp] <;> first | exact shMemLoad_ioEvents .. | exact shMemStore_ioEvents ..
-
-theorem fixClock_eq_ffi {β : Type} {old s' : LoopSemStateFiniteExact width F}
-    {step : β × LoopSemStateFiniteExact width F} {r : β}
-    (h : fixClock old step = (r, s')) : s'.ffi = step.2.ffi := by
-  have := fixClock_ffi old step; rw [h] at this; exact this
 
 theorem cutRes_eq_ffi {live : NumSet} {r r' : Option (LoopResultExact width)}
     {s s' : LoopSemStateFiniteExact width F}

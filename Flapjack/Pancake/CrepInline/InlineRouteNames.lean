@@ -16,13 +16,6 @@ private theorem crepNameRanged_decode (name : Flapjack.Basis.Pure.MlString.MlStr
   rw [Flapjack.Basis.Pure.MlString.ofNat_toNat_char byte]
   exact hb
 
-/-- Decoding an exact Crep program supplies the byte-name invariant without an
-input assumption. This is codec infrastructure, not a HOL theorem port. -/
-theorem crepProgOfHOL_nameRanged {width : Nat} [NeZero width]
-    (program : CrepProgHOL width) : CrepProgNameRanged (crepProgOfHOL program) := by
-  fun_induction crepProgOfHOL program <;>
-    simp_all [CrepProgNameRanged, crepNameRanged_decode]
-
 private theorem crepInlineLookup_nameRanged {width : Nat}
     [BEq FunName] (entries : List (CrepInlineEntry (BitVec width)))
     (hentries : ∀ entry ∈ entries, CrepProgNameRanged entry.2.2)

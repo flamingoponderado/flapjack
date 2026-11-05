@@ -98,30 +98,6 @@ theorem map_var_crepExpVars_eq {α : Type} (names : List Nat) :
   | nil => rfl
   | cons name names ih => simp [crepExpVars_var, ih]
 
-/-- Flapjack-specific infrastructure: the length result for the pipeline's
-    general-stride `loadShape`.  This is not a HOL port, because it quantifies an
-    explicit stride; the exact HOL counterpart is `length_loadShape_eq_shape`. -/
-theorem loadShape_length [BEq α] [OfNat α 0] [Add α]
-    (address stride : α) (count : Nat) (value : CrepExp α) :
-    (loadShape address stride count value).length = count := by
-  induction count generalizing address with
-  | zero => rfl
-  | succ count ih => simp [loadShape, ih]
-
-/-- Faithful port of Cake `crepProps$length_load_shape_eq_shape`
-    (`cakeml/pancake/semantics/crepPropsScript.sml:30`), stated over the fixed
-    `byte$bytes_in_word` stride.  The `CrepBytesInWord` instance supplies the
-    fixed byte width, so the explicit quantified variables are HOL's `n a e`. -/
--- FLAPJACK-SPECIFIC (not an exact HOL port): generic over the word element type.
--- HOL's exact expression-carrier theorem is `length_loadShapeHOLW` in
--- this module below; this production helper remains useful for generic code.
-theorem length_loadShape_eq_shape [BEq α] [OfNat α 0] [Add α] [CrepBytesInWord α]
-    (count : Nat) (address : α) (value : CrepExp α) :
-    (loadShapeBytes address count value).length = count := by
-  induction count generalizing address with
-  | zero => rfl
-  | succ count ih => simp [loadShapeBytes, ih]
-
 /-! Faithful port of Cake `crepProps$length_load_globals_eq_read_size`
     (`cakeml/pancake/semantics/crepPropsScript.sml:467`). -/
 -- FLAPJACK-SPECIFIC (not an exact HOL port): generic over the word element type,
@@ -400,15 +376,6 @@ theorem flookup_setCrepHolGlobals_localsW {width : Nat} [NeZero width] {σ : Typ
     FLOOKUP (setCrepHolGlobalsW gv w s).locals n = FLOOKUP s.locals n :=
   rfl
 
-/-- Kernel-checked bridge: the width-indexed `FLOOKUP_set_globals` analogue
-    agrees with the generic production statement at `BitVec width`. -/
-theorem flookup_setCrepHolGlobals_localsW_eq_generic {width : Nat} [NeZero width] {σ : Type}
-    (gv : BitVec 5) (w : PanWordLab (BitVec width))
-    (s : CrepHolState (BitVec width) σ) (n : Nat) :
-    FLOOKUP (setCrepHolGlobalsW gv w s).locals n =
-      FLOOKUP (setCrepHolGlobals gv w s).locals n :=
-  rfl
-
 /-! Membership equations for `crepAssignedFreeVars`, exposing Cake's
 `assigned_free_vars_def` (`cakeml/pancake/crepLangScript.sml:149`) clause by
 clause.  These keep the `not_mem_context_assigned_mem_gt` induction from
@@ -638,11 +605,6 @@ theorem eval_loadShapeBytesHOLW_getElem {width : Nat} [NeZero width] {σ : Type}
           rw [List.getElem_cons_succ]
           rw [ih (address := address + BitVec.ofNat width (width / 8)) (n := n) hn']
           rw [loadShape_stride_step]
-
-theorem length_loadShape_eq_shapeW {width : Nat} [NeZero width]
-    (count : Nat) (address : BitVec width) (value : CrepExp (BitVec width)) :
-    (loadShapeBytesW address count value).length = count := by
-  simpa [loadShapeBytesW] using length_loadShape_eq_shape count address value
 
 @[hol "cakeml/pancake/semantics/crepPropsScript.sml" "length_load_globals_eq_read_size"]
 theorem loadGlobals_lengthW {width : Nat} [NeZero width]
@@ -1140,7 +1102,6 @@ theorem crepShMemStoreHOL_flookup_locals {width : Nat} [NeZero width] {σ : Type
   all_goals
     rfl
 
-
 /-- Exact port of HOL `eval_upd_clock_eq` (`crepPropsScript.sml:858-872`):
 the exact `crepSem$eval` expression evaluator never reads the state `clock`
 field, so replacing it is invisible. Quantifier order follows HOL's `t, e, ck`. -/
@@ -1385,7 +1346,6 @@ theorem crepPropsEvaluateIoEventsMono {width : Nat} [NeZero width] {σ : Type}
   have h := evalCrepSemHOLProgExact_ioEvents_prefix state program
   rw [heval] at h
   exact h
-
 
 private theorem holFiniteMapExact_ext_resVar {α β : Type} {left right : HolFiniteMapExact α β}
     (h : ∀ k, left.lookup k = right.lookup k) : left = right := by
@@ -2178,7 +2138,6 @@ theorem evaluateSeqStoresMemStateRelHOL {width : Nat} [NeZero width] {σ : Type}
     { s with locals := s.locals.updateListEq ((ad, .word addr) :: es.zip vs) } addr m res t
     hls hl hm h
   exact ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
-
 
 /-- Flapjack-specific proof motive for the evaluator-induction proof of
     `evaluateCodeInvariantHOL`; HOL has no separate declaration for this

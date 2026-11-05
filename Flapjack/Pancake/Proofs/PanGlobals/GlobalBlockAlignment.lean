@@ -53,20 +53,4 @@ theorem byteAligned_sub {width : Nat} [NeZero width]
       omega
     omega
 
-/-- Flapjack source-derived block-alignment certificate. The global lookup,
-top-address alignment and dimension facts come from the original state relation;
-the compiler simulation therefore needs no additional alignment premise. -/
-theorem stateRel_globalBlockAligned {width : Nat} {σ : Type} [NeZero width]
-    (context : PanGlobalsContextExact width)
-    (source target : PanSemStateFiniteExact width σ)
-    (name : Flapjack.Pancake.PanLang.MlS) (value : ValueHOL width)
-    (hrel : panGlobalsStateRelHOLExact true context source target)
-    (hlookup : source.globals.lookup name = some value) :
-    ∃ address, context.globals.lookup name = some (shapeOfHOLExact value, address) ∧
-      panGlobalsByteAlignedHOL (target.topAddr - address) := by
-  classical
-  rcases hrel with ⟨_, _, _, _, _, _, _, _, hglobals, _, _, _, _, _, _, _, _, htop, hw⟩
-  obtain ⟨address, hcontext, _, _, _, haligned⟩ := hglobals name value hlookup
-  exact ⟨address, hcontext, byteAligned_sub target.topAddr address hw htop haligned⟩
-
 end Flapjack.PanGlobalsGlobalBlockAlignment

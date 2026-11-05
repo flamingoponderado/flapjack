@@ -74,19 +74,6 @@ private theorem globalRenameFunctionName_byteRanged [DecidableEq String]
     · simpa [globalRenameFunctionName, fpermName, hsourceName, htargetName] using hsource
     · simpa [globalRenameFunctionName, fpermName, hsourceName, htargetName] using hname
 
-/-- Byte-ranged shapes compile to byte-ranged shape-value expressions. -/
-theorem globalShapeVal_byteRanged {width : Nat}
-    (context : GlobalPassContext (BitVec width)) :
-    ∀ shape, ShapeByteRanged shape →
-      ExpByteRanged (globalShapeVal context shape) := by
-  intro shape
-  induction shape using Flapjack.Shape.rec
-    (motive_2 := fun shapes => (∀ shape ∈ shapes, ShapeByteRanged shape) →
-      ListExpByteRanged (shapes.map (globalShapeVal context))) with
-  | _ =>
-      grind only [globalShapeVal, ExpByteRanged, ShapeByteRanged,
-        ListExpByteRanged, List.map_cons, List.map_nil, List.mem_cons, List.not_mem_nil]
-
 private theorem globalDeclsFilter_mem_source {α : Type} {predicate : Decl α → Bool}
     {declarations : List (Decl α)} {declaration : Decl α}
     (hmem : declaration ∈ globalDeclsFilter predicate declarations) :

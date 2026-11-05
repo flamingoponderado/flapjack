@@ -94,10 +94,6 @@ def getVarsHOL {width : Nat} [NeZero width]
     Option (List (LoopValue (BitVec width))) :=
   getVars names state
 
-theorem getVarsHOL_eq_getVars {width : Nat} [NeZero width]
-    (names : List Nat) (state : LoopMachineState (BitVec width) F) :
-    getVarsHOL names state = getVars names state := rfl
-
 /-! ## Clock and locals transport properties
 
 These are the `loopPropsScript.sml` lemmas that only observe how `get_vars` and

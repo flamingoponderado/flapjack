@@ -44,14 +44,6 @@ def crepDestConstHOL {width : Nat} [NeZero width] :
   | .const value => some value
   | _ => none
 
-/-- Flapjack-only connection between the exact HOL carrier and the generic
-    production syntax. This has no HOL counterpart because it crosses two
-    different Lean expression carriers. -/
-theorem crepDestConstHOL_eq_production {width : Nat} [NeZero width]
-    (expression : CrepExpHOL width) :
-    crepDestConstHOL expression = crepDestConst (crepExpOfHOL expression) := by
-  cases expression <;> simp [crepDestConstHOL, crepDestConst, crepExpOfHOL]
-
 def crepDest2ExpFuel [BEq α] [OfNat α 0] [OfNat α 1]
     [AndOp α] [ShiftRight α] : Nat → Nat → α → Option Nat
   | 0, _, _ => none

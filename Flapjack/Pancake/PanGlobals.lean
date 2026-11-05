@@ -106,12 +106,6 @@ theorem globalApostrophes_length (count : Nat) :
       simp [globalApostrophes, String.length_append, ih, hsingleton]
       omega
 
-theorem globalApostrophes_injective : Function.Injective globalApostrophes := by
-  intro left right heq
-  have hlen := congrArg String.length heq
-  rw [globalApostrophes_length, globalApostrophes_length] at hlen
-  exact hlen
-
 theorem append_globalApostrophes_injective (name : String) :
     Function.Injective (fun count => name ++ globalApostrophes count) := by
   intro left right heq
@@ -255,17 +249,6 @@ theorem freshNameHOL_not_mem (name : String) (names : List String) :
   fun_induction freshNameHOL name names with
   | case1 name names ih => exact ih
   | case2 name names => assumption
-
-/-- Untagged helper: the source-shaped subset form corresponding to Cake's
-    `fresh_name_correct'` (`pan_globalsProofScript.sml:1003`). The
-    `@[hol]`-tagged exact port lives in the HOL proof counterpart
-    `Flapjack/Pancake/Proofs/PanGlobals.lean`
-    (`freshNameHOL_not_mem_of_subset_hol`), per the HOL-script placement rule. -/
-theorem freshNameHOL_not_mem_of_subset (name : String) (names names' : List String)
-    (hmem : freshNameHOL name names ∈ names')
-    (hsubset : ∀ candidate, candidate ∈ names' → candidate ∈ names) :
-    False :=
-  freshNameHOL_not_mem name names (hsubset _ hmem)
 
 def globalShapeVal (context : GlobalPassContext α) : Shape → Exp α
   | .one => .const (context.fromNat 0)
@@ -2839,40 +2822,6 @@ theorem globalFunctionNames_eq_functions_map (declarations : List (Decl α)) :
   | cons declaration declarations ih =>
       cases declaration <;> rw [globalFunctionNames.eq_def] <;>
         simp [functions, functionEntries, ih]
-
-theorem globalRenameFunctionName_eq_source_iff [BEq String] [LawfulBEq String]
-    (source target name : FunName) :
-    globalRenameFunctionName source target name = source ↔ name = target := by
-  unfold globalRenameFunctionName fpermName
-  by_cases h1 : source = name
-  · rw [if_pos h1]
-    rw [h1]
-    exact eq_comm
-  · rw [if_neg h1]
-    by_cases h2 : target = name
-    · rw [if_pos h2]
-      exact ⟨fun _ => h2.symm, fun _ => rfl⟩
-    · rw [if_neg h2]
-      exact ⟨fun h => absurd h.symm h1, fun h => absurd h.symm h2⟩
-
-theorem mem_map_globalRenameFunctionName_source [BEq String] [LawfulBEq String]
-    (source target : FunName) (names : List FunName) :
-    source ∈ names.map (globalRenameFunctionName source target) ↔
-      target ∈ names := by
-  rw [List.mem_map]
-  constructor
-  · rintro ⟨name, hname, heq⟩
-    have hname_target : name = target :=
-      (globalRenameFunctionName_eq_source_iff source target name).mp heq
-    rwa [hname_target] at hname
-  · intro htarget
-    refine ⟨target, htarget, ?_⟩
-    unfold globalRenameFunctionName fpermName
-    by_cases hst : source = target
-    · rw [if_pos hst]
-      exact hst.symm
-    · rw [if_neg hst]
-      simp
 
 /-! ### Checked exact-carrier bridges for the `pan_globals` declaration-list ports
 

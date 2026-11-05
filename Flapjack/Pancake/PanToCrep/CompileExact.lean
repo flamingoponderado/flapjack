@@ -843,21 +843,4 @@ theorem compileToCrepExactHOLW_params_nodup {width : Nat} [NeZero width]
   simp only [crepVarsHOL]
   exact decide_eq_true List.nodup_range
 
-/-- The canonical inline pass `compileInlProgHOLExactWithSupport` preserves the
-    parameter component of every triple (definitionally, by the `MAP` over
-    triples), so it preserves parameter distinctness.  This is the second half
-    of HOL `compile_prog_distinct_params`. -/
-theorem compileInlProgHOLExactWithSupport_params_nodup {width : Nat} [NeZero width]
-    [BEq CrepInlineMapHOLName] [LawfulBEq CrepInlineMapHOLName]
-    (inl_fs : HolFiniteMapExact CrepInlineMapHOLName (List Nat × CrepProgHOL width))
-    (supportKeys : List CrepInlineMapHOLName)
-    (support_spec : ∀ key, inl_fs.lookup key ≠ none → key ∈ supportKeys)
-    (prog : List (CrepInlineMapHOLName × List Nat × CrepProgHOL width)) :
-    (CrepInlineCanonical.compileInlProgHOLExactWithSupport inl_fs supportKeys
-        support_spec prog).all (fun triple => triple.2.1.Nodup) =
-      prog.all (fun triple => triple.2.1.Nodup) := by
-  unfold CrepInlineCanonical.compileInlProgHOLExactWithSupport
-  simp only [List.all_map]
-  rfl
-
 end Flapjack

@@ -309,37 +309,6 @@ def lookupFunctionEntry (name : FunName) :
       if name == entry.1 then some (entry.2.1, entry.2.2.1, entry.2.2.2)
       else lookupFunctionEntry name functions
 
-/-- `lookupFunctionEntry` returns the entry found at a given index whenever the
-    function names are distinct. -/
-theorem lookupFunctionEntry_of_getElem?
-    (functions : List (FunName × List (VarName × Shape) × Prog α × Shape))
-    (hnodup : (functions.map (fun entry => entry.1)).Nodup)
-    {n : Nat} {entry : FunName × List (VarName × Shape) × Prog α × Shape}
-    (hget : functions[n]? = some entry) :
-    lookupFunctionEntry entry.1 functions =
-      some (entry.2.1, entry.2.2.1, entry.2.2.2) := by
-  induction functions generalizing n with
-  | nil => simp at hget
-  | cons head tail ih =>
-      rw [List.map_cons, List.nodup_cons] at hnodup
-      obtain ⟨hhead, htail⟩ := hnodup
-      cases n with
-      | zero =>
-          rw [List.getElem?_cons_zero] at hget
-          simp only [Option.some.injEq] at hget
-          subst hget
-          simp [lookupFunctionEntry]
-      | succ n =>
-          rw [List.getElem?_cons_succ] at hget
-          have hentry_mem : entry.1 ∈ tail.map (fun entry => entry.1) := by
-            obtain ⟨hlt, heq⟩ := List.getElem?_eq_some_iff.mp hget
-            rw [← heq]
-            exact List.mem_map.mpr ⟨tail[n], List.getElem_mem hlt, rfl⟩
-          have hne : entry.1 ≠ head.1 := fun h => hhead (h ▸ hentry_mem)
-          simp only [lookupFunctionEntry]
-          rw [if_neg (by simpa [beq_iff_eq] using hne)]
-          exact ih htail hget
-
 /-! `pan_simp` preserves the exception identifiers collected by the source
     program. These are the two local preservation steps used by Cake's
     `exp_ids_ret_to_tail_eq` and `exp_ids_seq_assoc_eq` proofs. -/
@@ -415,25 +384,6 @@ def progSize : Prog α → Nat
 termination_by program => sizeOf program
 decreasing_by all_goals decreasing_trivial
 
-/-! `ret_to_tail` only removes the assign/return wrapper used for a tail call;
-    it does not add program nodes.  This small syntactic fact is used by the
-    evaluator-level `pan_simp` fuel bound. -/
-
-theorem progSize_seqCallRet_le (program : Prog α) :
-    progSize (seqCallRet program) ≤ progSize program := by
-  fun_cases seqCallRet program with
-  | case1 => simp only [progSize]; omega
-  | case2 | case3 => exact Nat.le_refl _
-
-theorem progSize_retToTail_le (program : Prog α) :
-    progSize (retToTail program) ≤ progSize program := by
-  fun_induction progSize program with
-  | case3 =>
-      simp only [retToTail]
-      exact Nat.le_trans (progSize_seqCallRet_le _) (by simp only [progSize]; omega)
-  | case11 => grind only [retToTail, progSize]
-  | _ => simp_all only [retToTail, progSize] <;> omega
-
 /-- A call-aware structural budget: `progSize` for the ordinary nodes, but each
     `Call`/`DecCall` node reserves a uniform `callBudget` for its callee (and
     `max` with the handler or continuation body where those run at the same
@@ -483,11 +433,5 @@ theorem progSize_seqAssoc_le (pre program : Prog α) :
     progSize (seqAssoc pre program) ≤ progSize pre + 4 * progSize program := by
   fun_induction progSize program generalizing pre <;>
     grind only [seqAssoc, progSize, progSize_smartSeq_le]
-
-theorem progSize_panSimpProg_le (program : Prog α) :
-    progSize (panSimpProg program) ≤ 1 + 4 * progSize program := by
-  simp only [panSimpProg]
-  exact Nat.le_trans (progSize_retToTail_le (seqAssoc .skip program))
-    (by simpa [progSize] using progSize_seqAssoc_le (.skip : Prog α) program)
 
 end Flapjack

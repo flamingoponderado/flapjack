@@ -65,22 +65,6 @@ theorem globalDeclsFilter_all_of_all (predicate other : Decl α → Bool)
   List.all_eq_true.mpr (fun declaration hmem =>
     List.all_eq_true.mp hall declaration (mem_globalDeclsFilter_original hmem))
 
-/-- Flapjack-specific predicate support; this is not a Cake theorem port. -/
-theorem panDeclShapesWellFormed_or_function (structs : StructContext)
-    (declaration : Decl α) :
-    (globalDeclIsFunction declaration ||
-      panDeclShapesWellFormed structs declaration) = true := by
-  cases declaration <;> simp [globalDeclIsFunction, panDeclShapesWellFormed]
-
-/-- The renaming pass only changes a function's name and body, so the shape
-    predicate is unchanged. -/
-theorem panDeclShapesWellFormed_rename_update (structs : StructContext)
-    (function : FunDecl α) (name : FunName) (body : Prog α) :
-    panDeclShapesWellFormed structs
-        (.function { function with name := name, body := body }) =
-      panDeclShapesWellFormed structs (.function function) := by
-  simp [panDeclShapesWellFormed, panFunctionShapesWellFormed]
-
 /-- Flapjack-specific support for the exception branch of its shape predicate;
     it has no separate HOL theorem declaration. -/
 theorem globalDeclsFilter_isException_all_shapes (structs : StructContext)

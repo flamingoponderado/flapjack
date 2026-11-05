@@ -29,25 +29,6 @@ namespace Flapjack.Pancake.Proofs.PanToTarget
 open Flapjack Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend
 open Flapjack.Pancake.PanLang Flapjack.Basis.Pure.MlString
 
-/-- The heap-length shift of the HOL proof (lines 2041-2054): adding the
-`store_list` words to the heap span and subtracting their count after division by
-the word size, provided the extended span does not wrap. -/
-theorem heapLengthShift {width : Nat} [NeZero width] (good : goodDimindex width)
-    (w2 w3 : BitVec width) (len : Nat)
-    (hbound : (-1 * w2 + w3).toNat + len * (width / 8) < 2 ^ width) :
-    (-1 * w2 + w3 + StackRemove.bytesInWord width * BitVec.ofNat width len).toNat /
-        (width / 8) - len =
-      (-1 * w2 + w3).toNat / (width / 8) := by
-  have hd : 0 < width / 8 := by rcases good with h | h <;> subst h <;> decide
-  have hlen : (StackRemove.bytesInWord width * BitVec.ofNat width len).toNat =
-      len * (width / 8) := by
-    rw [BitVec.toNat_mul, bytesInWord_toNat good, BitVec.toNat_ofNat]
-    have : len < 2 ^ width := by
-      have := Nat.le_mul_of_pos_right len hd; omega
-    rw [Nat.mod_eq_of_lt this, Nat.mul_comm, Nat.mod_eq_of_lt (by omega)]
-  rw [BitVec.toNat_add, hlen, Nat.mod_eq_of_lt hbound, Nat.add_mul_div_right _ _ hd,
-    Nat.add_sub_cancel]
-
 /-- The pan_to_word stage of the HOL proof (lines 2103-2284): `state_rel_imp_semantics`
 for the source-code word state built by `word_to_stackProof$make_init` from the stack
 state `sst`. The `make_init` projections (memory, domains, `be`, `ffi`, the store
