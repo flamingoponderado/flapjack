@@ -265,6 +265,68 @@ theorem partialFull_dataFrame {width : Nat} [NeZero width] (conf : Config)
   rw [wordHeapAppend copied appended new conf, ← paEq]
   ac_rfl
 
+/-- Run the remembered-reference phase after the root phase and combine the
+copied-data regions for the subsequent scan. -/
+theorem partialFull_referencePhase {width : Nat} [NeZero width] (conf : Config)
+    (genConf : GenGcPartial.Config (HeapTag × List (WordLocW width)))
+    (middle afterRefs : GcState (WordLocW width) (HeapTag × List (WordLocW width)))
+    (old current refs refs1 : List (HeapElement (WordLocW width) (HeapTag × List (WordLocW width))))
+    (curr new pa pa1 i1 k : BitVec width) (xs : List (WordLocW width))
+    (memory memory1 : BitVec width → WordLocW width) (domain : BitVec width → Bool)
+    (frame : ((BitVec width × WordLocW width) → Prop) → Prop) (c1 : Bool)
+    (run : GenGcPartial.gcMoveRefList genConf middle refs = (refs1, afterRefs)) (ok : afterRefs.ok = true)
+    (limitEq : genConf.limit = heapLength middle.heap)
+    (heapBound : heapLength middle.heap ≤ 2 ^ width / 2 ^ shiftLength conf)
+    (ordered : genConf.genStart ≤ genConf.refsStart) (refBound : genConf.refsStart ≤ heapLength middle.heap)
+    (segment : heapSegment (genConf.genStart, genConf.refsStart) middle.heap = some (old, current, refs))
+    (refsBound : heapLength refs ≤ heapLength middle.heap) (refsFuel : heapLength refs ≤ 2 ^ width)
+    (refsCount : refs.length < 2 ^ width) (allRefs : ∀ element ∈ refs, isRef element)
+    (refClass : ∀ t r, genConf.isRef (t, r) = true ↔ isMutTag t)
+    (byteBound : heapLength middle.heap * (width / 8) < 2 ^ width)
+    (separated : SetSep.star (SetSep.star (SetSep.star
+      (wordHeap (curr + wordSemBytesInWord * BitVec.ofNat width (heapLength old)) current conf)
+      (wordHeap new middle.h2 conf)) (Misc.wordList pa xs))
+      (SetSep.star (SetSep.star (wordHeap curr old conf) (wordHeap k refs conf)) frame)
+      (SetSep.fun2Set (memory, fun address => domain address = true)))
+    (wordRun : wordGenGcPartialMoveRefList (2 ^ width) conf
+      (k, BitVec.ofNat width middle.a, pa, curr, memory, domain, true,
+       wordSemBytesInWord * BitVec.ofNat width genConf.genStart,
+       wordSemBytesInWord * BitVec.ofNat width genConf.refsStart,
+       k + wordSemBytesInWord * BitVec.ofNat width (heapLength refs)) = (i1, pa1, memory1, c1))
+    (length : xs.length = middle.n) (good : goodDimindex width)
+    (paEq : pa = new + wordSemBytesInWord * BitVec.ofNat width (heapLength middle.h2)) :
+    ∃ left right xs1 current1,
+      afterRefs.h2 = middle.h2 ++ left ∧ afterRefs.r4 = right ++ middle.r4 ∧
+      SetSep.star (SetSep.star (SetSep.star
+        (wordHeap (curr + wordSemBytesInWord * BitVec.ofNat width (heapLength old)) current1 conf)
+        (wordHeap new afterRefs.h2 conf)) (Misc.wordList pa1 xs1))
+        (SetSep.star (SetSep.star (wordHeap curr old conf) (wordHeap k refs1 conf)) frame)
+        (SetSep.fun2Set (memory1, fun address => domain address = true)) ∧
+      heapSegment (genConf.genStart, genConf.refsStart) afterRefs.heap = some (old, current1, refs) ∧
+      heapLength afterRefs.heap = heapLength middle.heap ∧ c1 = true ∧ i1 = BitVec.ofNat width afterRefs.a ∧
+      afterRefs.n = xs1.length ∧ (∀ element ∈ refs1, isRef element) ∧
+      middle.n = heapLength left + afterRefs.n + heapLength right ∧
+      pa1 = pa + wordSemBytesInWord * BitVec.ofNat width (heapLength left) := by
+  obtain ⟨left, right, leftEq, rightEq, clearRun⟩ :=
+    partialMoveRefList_withNilLemma genConf refs middle refs1 afterRefs run ok
+  let cleared := { middle with h2 := [], r4 := [] }
+  let clearedFinal := { afterRefs with h2 := left, r4 := right }
+  let nextFrame := SetSep.star (SetSep.star (wordHeap curr old conf) (wordHeap new middle.h2 conf)) frame
+  have inputMemory : SetSep.star (SetSep.star (SetSep.star
+      (wordHeap (curr + wordSemBytesInWord * BitVec.ofNat width (heapLength old)) current conf)
+      (Misc.wordList pa xs)) (wordHeap k refs conf)) nextFrame
+      (SetSep.fun2Set (memory, fun address => domain address = true)) := by
+    rw [partialFull_referenceFrame] at separated
+    exact separated
+  obtain ⟨xs1, current1, memoryResult, segment1, heapLen, success, indexEq, xsLen, outputRefs, accounting, finalPa⟩ :=
+    wordGenGcPartialMoveRefList_thm conf genConf refs (2 ^ width) xs refs1 cleared clearedFinal pa1 pa memory1 memory i1
+      nextFrame domain curr c1 k old current refs clearRun ok rfl rfl refsFuel limitEq heapBound ordered refBound segment
+      refsBound allRefs refClass byteBound inputMemory wordRun length good refsCount
+  have reconstructed := (congrFun (partialFull_dataFrame conf old current1 middle.h2 left refs1 curr new pa pa1 k xs1 frame paEq) _).mp memoryResult
+  refine ⟨left, right, xs1, current1, leftEq, rightEq, ?_, segment1, heapLen, success, indexEq, xsLen,
+    outputRefs, accounting, finalPa⟩
+  simpa only [leftEq] using reconstructed
+
 /-- Establish the copied-data scan invariant from the source heap partition,
 reference-size preservation, and the two allocation accounting equations. -/
 theorem partialFull_dataInvariant {α β : Type} (state : GcState α β)
@@ -278,6 +340,42 @@ theorem partialFull_dataInvariant {α β : Type} (state : GcState α β)
   simp only [partialLenInv, h1Empty, r4Empty, r3Empty, oldEq, List.nil_append, List.append_nil]
   rw [← whole]
   simp only [heapLength_append, refsLen]
+  omega
+
+/-- Restore the original-generation heap around the updated reference region
+after scanning the copied data. -/
+theorem partialFull_finalFrame {width : Nat} [NeZero width] (conf : Config)
+    (old current refs copied : List (HeapElement (WordLocW width) (HeapTag × List (WordLocW width))))
+    (curr new k pa : BitVec width) (xs : List (WordLocW width))
+    (frame : ((BitVec width × WordLocW width) → Prop) → Prop)
+    (kEq : k = curr + wordSemBytesInWord * BitVec.ofNat width (heapLength (old ++ current))) :
+    SetSep.star (SetSep.star (SetSep.star
+      (wordHeap (curr + wordSemBytesInWord * BitVec.ofNat width (heapLength old)) current conf)
+      (wordHeap new copied conf)) (Misc.wordList pa xs))
+      (SetSep.star (SetSep.star (wordHeap curr old conf) (wordHeap k refs conf)) frame) =
+    SetSep.star (SetSep.star (SetSep.star (wordHeap curr (old ++ current ++ refs) conf)
+      (wordHeap new copied conf)) (Misc.wordList pa xs)) frame := by
+  change k = curr + StackRemove.bytesInWord width * BitVec.ofNat width (heapLength (old ++ current)) at kEq
+  rw [wordHeapAppend (old ++ current) refs curr conf, wordHeapAppend old current curr conf, ← kEq]
+  simp only [wordSemBytesInWord, StackRemove.bytesInWord]
+  ac_rfl
+
+/-- At the end of the data scan, the copied region and remaining free space
+exactly fill the collected generation. -/
+theorem partialFull_outputBounds {α β : Type} (state : GcState α β)
+    (old current refs : List (HeapElement α β)) (start finish : Nat)
+    (segment : heapSegment (start, finish) state.heap = some (old, current, refs))
+    (h2Empty : state.h2 = []) (r4Empty : state.r4 = []) (r3Empty : state.r3 = []) (r2Empty : state.r2 = [])
+    (oldEq : state.old = old) (refsLen : heapLength state.r1 = heapLength refs)
+    (invariant : partialLenInv state) :
+    heapLength state.h1 ≤ heapLength current ∧
+      heapLength state.h1 + state.n + start = finish := by
+  obtain ⟨whole, oldLen, endLen, _⟩ := heapSegment_imp state.heap start finish old current refs segment
+  unfold partialLenInv at invariant
+  rw [← whole] at invariant
+  simp only [h2Empty, r4Empty, r3Empty, r2Empty, oldEq, List.nil_append, List.append_nil,
+    heapLength_append, refsLen] at invariant
+  simp only [heapLength_append] at endLen
   omega
 
 /-- The generic reference classifier agrees with mutable-tag recognition. -/
