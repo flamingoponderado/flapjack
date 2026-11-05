@@ -3465,7 +3465,7 @@ run_probe pan_sem_decs_stcnames_probeScript.sml pan_sem_decs_stcnames_probe.out 
 # shape_of on the Val (word_lab) constructor and the res_var finite-map
 # update/delete semantics (panPropsScript.sml:14, :220, :228, :236).
 run_probe pan_props_shape_res_var_probeScript.sml pan_props_shape_res_var_probe.out \
-  spv_one rv_some \
+  spv_one rv_some shape_of_val_typed shape_of_val_hypotheses word_constructor_typed value_constructors_typed shape_of_def_typed \
   "$cake_dir/pancake/semantics/panPropsScript.sml" \
   "$cake_dir/pancake/semantics"
 

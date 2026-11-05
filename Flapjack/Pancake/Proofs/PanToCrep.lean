@@ -276,29 +276,8 @@ theorem mapSomeMemLemma {α β : Type} (f : α → Option β)
   obtain ⟨y, hfy, hy⟩ := mapFlattenMemSomeSupport f xs ys zs z h hzs hz
   exact ⟨0, y, hfy, hy⟩
 
-/-- Faithful port of Cake `pan_to_crepProof$shape_of_alt`
-    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:1906`). HOL's
-    `Val (Word w)` is represented by `PanValue.word w`, and the context-free
-    `panSemShapeOf` counterpart retains the exact conclusion shape. -/
-@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "shape_of_alt"]
-theorem panSemShapeOf_word (value : α) :
-    panSemShapeOf (.word value) = .one := by
-  simp [panSemShapeOf]
-
-/-- Faithful port of Cake `pan_to_crepProof$cexp_heads_eq`
-    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:104`). The simplified
-    head collector is imported from the `crepProps` counterpart. -/
-@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "cexp_heads_eq"]
-theorem cexpHeads_eq_cexpHeadsSimp (expressions : List (List (CrepExp α))) :
-    cexpHeads expressions = cexpHeadsSimp expressions := by
-  induction expressions with
-  | nil => rfl
-  | cons expression expressions ih =>
-      cases expression with
-      | nil => simp [cexpHeads, cexpHeadsSimp]
-      | cons head tail =>
-          simp only [cexpHeads, ih, cexpHeadsSimp]
-          cases h : expressions.any List.isEmpty <;> simp [h]
+/-! HOL `shape_of_alt` and `cexp_heads_eq` remain to be ported with their
+    original word-label and polymorphic list carriers, respectively. -/
 
 /-- HOL `MAX_LIST_APPEND`: the maximum of an appended list is the maximum
     of the two constituent maxima. -/

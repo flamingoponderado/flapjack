@@ -58,9 +58,8 @@ example : crepEveryExpW (width := 64) isConst64 (.const (5 : BitVec 64)) = true 
 example : crepEveryExpW (width := 64) (fun _ => true)
     (.op .add [.load (.const (5 : BitVec 64)), .const 6]) = true := rfl
 
-/-- Width-indexed `cexpHeadsSimpW` over `CrepExp (BitVec 64)`: a non-empty
-    singleton yields the mapped head. -/
-example : cexpHeadsSimpW (width := 64) [[.const (1 : BitVec 64)]] =
+/-- A non-empty singleton yields its head. -/
+example : cexpHeadsSimp [[.const (1 : BitVec 64)]] =
     some [.const (1 : BitVec 64)] := rfl
 
 def parityGuard : Bool :=

@@ -1452,33 +1452,9 @@ theorem compile_decls_append_cake [LawfulBEq String] {width : Nat} [NeZero width
         context := second.context } :=
   compileDecsCake_append context decs rest
 
-/-- Exact-shaped port of Cake's `ALOOKUP_MAP3`
-    (`cakeml/pancake/proofs/pan_globalsProofScript.sml:2841`). HOL's `ALOOKUP`
-    is key-polymorphic; the reviewed `lookupInfo` is likewise key-polymorphic
-    (`alist$ALOOKUP` counterpart), and under `[LawfulBEq κ]` its `==` test
-    reflects HOL's `=`. The mapped value `(y, f z)` matches `OPTION_MAP (I ## f)`
-    exactly. -/
-@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "ALOOKUP_MAP3"]
-theorem ALOOKUP_MAP3 [BEq κ] [LawfulBEq κ] (f : γ → δ)
-    (entries : List (κ × (β × γ))) :
-    (fun name => lookupInfo name (entries.map (fun entry => (entry.1, entry.2.1, f entry.2.2)))) =
-      (fun name => (lookupInfo name entries).map (fun value => (value.1, f value.2))) := by
-  funext name
-  exact lookupInfo_map3 f name entries
 
-/-- Exact-shaped port of Cake's `ALOOKUP_MAP4`
-    (`cakeml/pancake/proofs/pan_globalsProofScript.sml:2851`). As for
-    `ALOOKUP_MAP3`, the key type is polymorphic and `[LawfulBEq κ]` makes the
-    `lookupInfo` equality reflect HOL's `=`. The mapped value `(y, f z, t)`
-    matches `OPTION_MAP (I ## (f ## I))` exactly. -/
-@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "ALOOKUP_MAP4"]
-theorem ALOOKUP_MAP4 [BEq κ] [LawfulBEq κ] (f : γ → δ)
-    (entries : List (κ × (β × γ × ε))) :
-    (fun name => lookupInfo name
-        (entries.map (fun entry => (entry.1, entry.2.1, f entry.2.2.1, entry.2.2.2)))) =
-      (fun name => (lookupInfo name entries).map (fun value => (value.1, f value.2.1, value.2.2))) := by
-  funext name
-  exact lookupInfo_map4 f name entries
+/-! HOL `ALOOKUP_MAP3` and `ALOOKUP_MAP4` remain to be ported without the
+    additional Boolean equality assumptions of their former analogues. -/
 
 /-! ## Exact ports of `pan_globals` declaration resorting
 

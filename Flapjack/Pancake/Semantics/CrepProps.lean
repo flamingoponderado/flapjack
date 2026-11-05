@@ -23,27 +23,13 @@ namespace Flapjack
 
 universe u
 
-/-- Faithful port of Cake `crepProps$cexp_heads_simp_def`
-    (`cakeml/pancake/semantics/crepPropsScript.sml:11`). HOL rejects the
-    argument when any inner list is empty, then maps total `HD` over the lists.
-    The Lean default `.var 0` gives `headD` a total empty-list value; the guard
-    makes that value unreachable in the result.
-
-    FLAPJACK-SPECIFIC (not an exact HOL port): generic over `CrepExp α`, while
-    HOL `crepLang$exp` is indexed by the word length. The exact width-indexed
-    tag is on `cexpHeadsSimpW` below. -/
+/-- Flapjack-specific head collector for Crep expressions. HOL's
+    `cexp_heads_simp_def` is element-polymorphic, so its faithful port remains
+    open. The empty-list guard makes the `headD` default unreachable. -/
 def cexpHeadsSimp : List (List (CrepExp α)) → Option (List (CrepExp α))
   | expressions =>
       if expressions.any List.isEmpty then none
       else some (expressions.map (fun expression => expression.headD (.var 0)))
-
-/-- Exact width-indexed counterpart of HOL `cexp_heads_simp_def` over
-    `CrepExp (BitVec width)`. -/
-@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "cexp_heads_simp_def"]
-def cexpHeadsSimpW {width : Nat} [NeZero width]
-    (expressions : List (List (CrepExp (BitVec width)))) :
-    Option (List (CrepExp (BitVec width))) :=
-  cexpHeadsSimp expressions
 
 mutual
 /-- Faithful port of Cake `crepProps$every_exp` from

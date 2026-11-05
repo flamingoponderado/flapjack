@@ -1374,7 +1374,7 @@ class ValidateInventoryTest(unittest.TestCase):
             self.assertIn("flapjack-pxn.18.3.5.8", reviewer)
 
 
-    def test_pansem_word_lab_carrier_is_reviewed_exact(self):
+    def test_pansem_word_lab_carrier_records_word_translation(self):
         key = ("Flapjack/Pancake/Semantics/PanSem.lean", "HolWordLab")
         self.assertNotIn(key, MAP["DOCUMENTED_MISMATCHES"])
         manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
@@ -1382,10 +1382,10 @@ class ValidateInventoryTest(unittest.TestCase):
             (record["lean_path"], record["lean_name"]): record for record in manifest
         }
         record = by_key[key]
-        self.assertEqual(record["statement_status"], "reviewed_exact")
+        self.assertEqual(record["statement_status"], "reviewed_words_as_type_indexed_bitvec")
         self.assertEqual((record["hol_path"], record["hol_name"]),
                          ("cakeml/pancake/semantics/panSemScript.sml", "word_lab"))
-        self.assertIn("flapjack-0lj.5", record["reviewer"])
+        self.assertTrue(record["words_as_type_indexed_bitvec"])
 
 
     def test_panprops_decs_stcnames_only_functions_exact_ports(self):

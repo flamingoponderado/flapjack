@@ -426,6 +426,9 @@ DEFINITION_RE = re.compile(
     r"(?:def|abbrev|opaque|theorem|lemma)\s+([^\s:({\[]+)"
 )
 DOCUMENTED_MISMATCHES = {
+    ('Flapjack/Pancake/Semantics/PanSem/ValueHOL.lean', 'shapeOfHOLExact'): ('cakeml/pancake/semantics/panSemScript.sml', 'shape_of_def', 'HOL-shaped word-indexed definition retained for faithful proofs; the required word qualifier is blocked until the checker supports the nested ValueHOL to HolWordLab to BitVec carrier.'),
+    ('Flapjack/Pancake/CrepToLoop.lean', 'rtVars'): ('cakeml/pancake/crep_to_loopScript.sml', 'rt_vars_def', 'Raw function map admits infinite support, unlike HOL finite maps; retained for faithful finite-map lookup proofs.'),
+    ('Flapjack/Pancake/CrepToLoop/StateRel.lean', 'makeVmapHOL'): ('cakeml/pancake/crep_to_loopScript.sml', 'make_vmap_def', 'Raw function map admits infinite support, unlike HOL finite maps; retained for faithful finite-map lookup proofs.'),
     ('Flapjack/Pancake/Semantics/PanCommonProps.lean', 'ctxtMax'): ('cakeml/pancake/semantics/pan_commonPropsScript.sml', 'ctxt_max_def', 'Raw function maps admit infinite support and Boolean equality adds assumptions absent from HOL; retained for faithful finite-map lookup proofs.'),
     ('Flapjack/Pancake/Semantics/PanCommonProps.lean', 'noOverlap'): ('cakeml/pancake/semantics/pan_commonPropsScript.sml', 'no_overlap_def', 'Raw function maps admit infinite support and Boolean equality adds assumptions absent from HOL; retained for faithful finite-map lookup proofs.'),
     ('Flapjack/Pancake/Semantics/PanCommonProps.lean', 'fmEmptyZipAlist'): ('cakeml/pancake/semantics/pan_commonPropsScript.sml', 'fm_empty_zip_alist', 'Raw function maps admit infinite support and Boolean equality adds assumptions absent from HOL; retained for faithful finite-map lookup proofs.'),
@@ -524,42 +527,6 @@ DOCUMENTED_MISMATCHES = {
         "flapjack-ds8 (bead flapjack-4ac.8): production String-keyed Prog/Decl carriers; "
         "HOL states it over the exact mlstring-keyed panLang syntax. Tag withdrawn; exact port "
         "tracked by flapjack-4ac.8 (blocked by flapjack-4ac.8.1).",
-    ),
-    ("Flapjack/Pancake/Proofs/PanSimp.lean", "expIdsRetToTailEq"): (
-        "cakeml/pancake/proofs/pan_simpProofScript.sml",
-        "exp_ids_ret_to_tail_eq",
-        "flapjack-ds8 (bead flapjack-4ac.8): production String-keyed Prog carriers; HOL uses exact "
-        "mlstring panLang. Tag withdrawn; exact port tracked by flapjack-4ac.8 (blocked by flapjack-4ac.8.1).",
-    ),
-    ("Flapjack/Pancake/Proofs/PanSimp.lean", "expIdsSeqAssocEq"): (
-        "cakeml/pancake/proofs/pan_simpProofScript.sml",
-        "exp_ids_seq_assoc_eq",
-        "flapjack-ds8 (bead flapjack-4ac.8): production String-keyed Prog carriers; HOL uses exact "
-        "mlstring panLang. Tag withdrawn; exact port tracked by flapjack-4ac.8 (blocked by flapjack-4ac.8.1).",
-    ),
-    ("Flapjack/Pancake/Proofs/PanSimp.lean", "expIdsCompileEq"): (
-        "cakeml/pancake/proofs/pan_simpProofScript.sml",
-        "exp_ids_compile_eq",
-        "flapjack-ds8 (bead flapjack-4ac.8): production String-keyed Prog carriers; HOL uses exact "
-        "mlstring panLang. Tag withdrawn; exact port tracked by flapjack-4ac.8 (blocked by flapjack-4ac.8.1).",
-    ),
-    ("Flapjack/Pancake/Proofs/PanSimp.lean", "sizeOfEidsPanSimpDeclsEq"): (
-        "cakeml/pancake/proofs/pan_simpProofScript.sml",
-        "size_of_eids_compile_eq",
-        "flapjack-ds8 (bead flapjack-4ac.8): production String-keyed Decl carriers; HOL uses exact "
-        "mlstring panLang. Tag withdrawn; exact port tracked by flapjack-4ac.8 (blocked by flapjack-4ac.8.1).",
-    ),
-    ("Flapjack/Pancake/Proofs/PanSimp.lean", "functionsCompileProg"): (
-        "cakeml/pancake/proofs/pan_simpProofScript.sml",
-        "functions_compile_prog",
-        "flapjack-ds8 (bead flapjack-4ac.8): production String-keyed Decl carriers; HOL uses exact "
-        "mlstring panLang. Tag withdrawn; exact port tracked by flapjack-4ac.8 (blocked by flapjack-4ac.8.1).",
-    ),
-    ("Flapjack/Pancake/Proofs/PanSimp.lean", "firstCompileProgAllDistinctPanSimp"): (
-        "cakeml/pancake/proofs/pan_simpProofScript.sml",
-        "first_compile_prog_all_distinct",
-        "flapjack-ds8 (bead flapjack-4ac.8): production String-keyed Decl carriers; HOL uses exact "
-        "mlstring panLang. Tag withdrawn; exact port tracked by flapjack-4ac.8 (blocked by flapjack-4ac.8.1).",
     ),
     ("Flapjack/Pancake/Proofs/PanGlobals/ShapeInfrastructure.lean", "evaluateDeclsFunctionsWf"): (
         "cakeml/pancake/proofs/pan_globalsProofScript.sml",
@@ -2087,8 +2054,6 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         ("Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean", "everyConvertVEq"),
         ("Flapjack/Pancake/Proofs/PanStructs/StructInfosOkExact.lean",
          "structInfosOkHOLExact_lookup_fields_nodup"),
-        ("Flapjack/Pancake/Proofs/PanGlobals.lean", "ALOOKUP_MAP3"),
-        ("Flapjack/Pancake/Proofs/PanGlobals.lean", "ALOOKUP_MAP4"),
         ("Flapjack/Pancake/Proofs/PanGlobals.lean", "numCasesLemma"),
         ("Flapjack/Pancake/PanGlobals.lean", "fpermName"),
         ("Flapjack/Pancake/PanGlobals.lean", "resortDeclsHOL"),

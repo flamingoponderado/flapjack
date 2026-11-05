@@ -38,7 +38,7 @@ structure LoopContext (α : Type u) where
     with `lookupNatInfo`'s first match, so the positional pairs are replayed
     most-recent-first (reversed): the first match then reproduces HOL's
     last-binding-wins behaviour.  `lookupNatInfo_crepMakeVmap_eq_flookup_makeVmapHOL`
-    proves the result agrees with the tagged `makeVmapHOL` for every parameter
+    proves the result agrees with the raw-map helper `makeVmapHOL` for every parameter
     list, duplicates included. -/
 def crepMakeVmap (params : List Nat) : NatInfoMap Nat :=
   (params.zip (List.range params.length)).reverse
@@ -271,24 +271,12 @@ def genTemps (n l : Nat) : List Nat := (List.range l).map (fun x => n + x)
 @[hol "cakeml/pancake/crep_to_loopScript.sml" "first_name_def"]
 def firstLoopName : Nat := 64
 
-/-- Exact port of HOL `rt_var_def`
-    (`cakeml/pancake/crep_to_loopScript.sml:105-111`): resolve a return
-    variable, mapping the "impossible" out-of-map case to `mx + 1`, which is
-    greater than every live temporary.  The key type is polymorphic exactly as
-    HOL infers (`fm : 'a |-> num`). -/
-@[hol "cakeml/pancake/crep_to_loopScript.sml" "rt_var_def"]
-def rtVar {κ : Type} (fm : FiniteMap κ Nat) (v : Option κ) (n mx : Nat) : Nat :=
-  match v with
-  | none => n
-  | some w =>
-      match FLOOKUP fm w with
-      | none => mx + 1
-      | some m => m
 
-/-- Exact port of HOL `rt_vars_def`
-    (`cakeml/pancake/crep_to_loopScript.sml:113-118`): resolve a list of
-    return variables; a missing variable yields the sentinel `[mx + 1]`. -/
-@[hol "cakeml/pancake/crep_to_loopScript.sml" "rt_vars_def"]
+/-! The faithful finite-map HOL `rt_var_def` remains to be ported. -/
+
+/-- Flapjack-specific lookup helper for HOL `rt_vars_def`: a missing variable
+    yields `[mx + 1]`. The map is a raw lookup function admitting infinite
+    support, so the faithful finite-map definition remains to be ported. -/
 def rtVars {κ : Type} (fm : FiniteMap κ Nat) (vs : List κ) (mx : Nat) : List Nat :=
   match vs.mapM (fun v => FLOOKUP fm v) with
   | none => [mx + 1]

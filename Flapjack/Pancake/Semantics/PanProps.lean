@@ -1774,23 +1774,7 @@ mutual
           panIsWfShapeValuesHOL_mapSnd_toHOL context fields]
 end
 
-/-- HOL `fdoms_eq_flookup_some_none` (`panPropsScript.sml:276`): if two finite
-    maps have the same domain, every defined lookup in the first is also defined
-    in the second. -/
-@[hol "cakeml/pancake/semantics/panPropsScript.sml" "fdoms_eq_flookup_some_none"]
-theorem fdoms_eq_flookup_some_none {α : Type} {β : Type} (fm fm' : FiniteMap α β) (n : α)
-    (v : β) (_vPrime : β) (hdom : FDOM fm = FDOM fm') (hv : FLOOKUP fm n = some v) :
-    ∃ v', FLOOKUP fm' n = some v' := by
-  have hmem : FDOM fm' n := by
-    rw [← hdom]
-    change fm n ≠ none
-    change fm n = some v at hv
-    rw [hv]
-    exact Option.some_ne_none v
-  change fm' n ≠ none at hmem
-  cases h' : fm' n with
-  | none => rw [h'] at hmem; exact absurd rfl hmem
-  | some v' => exact ⟨v', by change fm' n = some v'; rw [h']⟩
+/-! HOL `fdoms_eq_flookup_some_none` remains to be ported over finite maps. -/
 
 /-- HOL `OPT_MMAP_MEM_IMP` (`panPropsScript.sml:115`): if `OPT_MMAP f xs` succeeds
     with `ys`, every element of `ys` is the image under `f` of an element of `xs`.
@@ -1986,7 +1970,7 @@ theorem listRelFlattenWithShapeFlookup (shapes : List Shape) (names : List Nat)
 `panPropsScript.sml` states four small properties of HOL `shape_of`
 (`panPropsScript.sml:14`) and `res_var` (`panPropsScript.sml:220-240`) over the
 exact `panSem` carriers.  The exact Lean counterparts are `shapeOfHOLExact`
-(`PanSem/ValueHOL.lean`, tagged `shape_of_def`) and `resVarHOLExact`
+(`PanSem/ValueHOL.lean`, untagged pending nested-word qualifier support) and `resVarHOLExact`
 (`PanSem/LocalUpdatesExact.lean`, tagged `res_var_def`), so these lemmas are
 ported over those definitions rather than the production generic carriers used
 by `panValueShape` and `restorePanValueLocal`. -/
@@ -1994,7 +1978,8 @@ by `panValueShape` and `restorePanValueLocal`. -/
 /-- Exact port of HOL `panProps$shape_of_val` (`panPropsScript.sml:14`):
     `shape_of (Val x) = One`.  The `Val` payload is ignored, so the
     `HolWordLab` carrier does not affect the result. -/
-@[hol "cakeml/pancake/semantics/panPropsScript.sml" "shape_of_val"]
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "shape_of_val"
+  (words_as_type_indexed_bitvec)]
 theorem shapeOfHOLExact_val {width : Nat} [NeZero width] (value : HolWordLab width) :
     shapeOfHOLExact (.val value : ValueHOL width) =
       Flapjack.Pancake.PanLang.ShapeHOL.one := by
@@ -2113,7 +2098,7 @@ theorem sizeOfShapeWithContextHOL_eq (shape : ShapeHOL) (context : StructContext
 `panPropsScript.sml:171` states that a value whose `shape_of` is well-formed under
 the empty struct context has `LENGTH (flatten v) = size_of_shape (shape_of v)`.
 The exact Lean counterparts are `flattenHOL` (tagged `flatten_def`),
-`shapeOfHOLExact` (tagged `shape_of_def`), and `sizeOfShapeHOL` (tagged
+`shapeOfHOLExact` (untagged pending nested-word qualifier support), and `sizeOfShapeHOL` (tagged
 `size_of_shape_def`) over `ValueHOL`, with the context-less well-formedness
 rendered as `isWfShapeExactHOL [] shape = true` (HOL `is_wf_shape_nil` is the
 overload `is_wf_shape []`). -/

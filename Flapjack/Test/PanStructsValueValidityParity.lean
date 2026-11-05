@@ -300,19 +300,14 @@ example :
       some { fields := [("wrong", Shape.one)], size := 1 } := by
   simp [StructContext.toHOL, valueValidityFirstMatchContext, lookupInfo]
 
-/-- Direct check of the tagged HOL `fdoms_eq_flookup_some_none` on concrete maps. -/
+/-- Concrete lookup observations for maps with matching domains. -/
 example :
     ∃ v', FLOOKUP (fun n : Nat => if n = 2 then some 20 else none) 2 = some v' :=
-  fdoms_eq_flookup_some_none (fun n : Nat => if n = 2 then some 20 else none)
-    (fun n : Nat => if n = 2 then some 20 else none) 2 20 0 rfl rfl
+  ⟨20, rfl⟩
 
-/-- A map with the same domain but a different value still defines the lookup. -/
 example :
     ∃ v', FLOOKUP (fun n : Nat => if n = 2 then some 99 else none) 2 = some v' :=
-  fdoms_eq_flookup_some_none (fun n : Nat => if n = 2 then some 20 else none)
-    (fun n : Nat => if n = 2 then some 99 else none) 2 20 0 (by
-      funext k
-      by_cases hk : k = 2 <;> simp [FDOM, hk]) rfl
+  ⟨99, rfl⟩
 
 /-! ## Exact `pan_primop_is_wf_shape_v` over the exact carriers
     (HOL `panProps$pan_primop_is_wf_shape_v`, bead flapjack-4ac.4.14). -/

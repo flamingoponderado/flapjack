@@ -670,9 +670,8 @@ theorem panValueIsWf_isWfShape_panValueShape (structs : StructContext)
 
 /-- Flapjack's context-parameterized scalar-shape fact. Its extra
     `StructContext` argument means it is not itself the exact HOL
-    `shape_of_alt` statement; the context-free `panSemShapeOf` port and exact
-    proof counterpart live in `Pancake/Semantics/PanSem.lean` and
-    `Pancake/Proofs/PanToCrep.lean`. -/
+    `shape_of_alt` statement. The matching shape fact on the HOL value and
+    word-label carriers is `shapeOfHOLExact_val` in `PanProps.lean`. -/
 theorem panValueShape_word (structs : StructContext) (value : α) :
     panValueShape structs (.word value) = .one := by
   simp [panValueShape]

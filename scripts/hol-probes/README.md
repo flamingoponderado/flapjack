@@ -9605,3 +9605,5 @@ HOL evaluation so the source's choice-based marker extraction computes.
 configuration fields against the checked Lean wrapper. Regenerate with
 `CAKEML=/var/tmp/flapjack-cakeml-oracle HOL4=/home/zksecurity/HOL HOL_PROBE_ONLY=clos_to_bvl_incremental_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
 These finite observations do not establish the unrestricted pass correspondence.
+
+`pan_props_shape_res_var_probe.out` also captures the inferred HOL constructor types, `shape_of_def` clauses, and zero-hypothesis `shape_of_val` statement from the pinned CakeML/HOL revisions. The capture supports source review; it is not a cross-language equivalence proof.

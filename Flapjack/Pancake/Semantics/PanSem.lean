@@ -81,7 +81,8 @@ theorem panValueShape_eq_panSemShapeOf_tagged (context : StructContext) (value :
    and one `BitVec width` payload. The BitVec width is the canonical finite-word
    representation used throughout this port. The direct production-carrier
    conversions below remain Flapjack-specific infrastructure. -/
-@[hol "cakeml/pancake/semantics/panSemScript.sml" "word_lab"]
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "word_lab"
+  (words_as_type_indexed_bitvec)]
 inductive HolWordLab (width : Nat) [NeZero width] where
   | word (value : BitVec width)
   deriving BEq, DecidableEq, Repr

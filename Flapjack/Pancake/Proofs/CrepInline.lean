@@ -109,72 +109,10 @@ theorem not_some_is_none {α : Type u} (a : Option α) :
     (∀ v, a ≠ some v) ↔ a = none := by
   cases a <;> simp
 
-/-- CakeML's `fdom_eq_flookup_thm` (`crep_inlineProofScript.sml:784`): two
-    finite maps have the same domain iff each lookup in one is supported in the
-    other and a missing lookup in the first is missing in the second.  `FDOM`
-    is the repo finite-map domain predicate (`Flapjack/FiniteMap/Basic.lean`). -/
-@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "fdom_eq_flookup_thm"]
-theorem fdom_eq_flookup_thm {α : Type} {β : Type} (f1 f2 : FiniteMap α β) :
-    FDOM f1 = FDOM f2 ↔
-      (∀ x, (∃ v, FLOOKUP f1 x = some v) → (∃ v, FLOOKUP f2 x = some v)) ∧
-      (∀ x, FLOOKUP f1 x = none → FLOOKUP f2 x = none) := by
-  constructor
-  · intro h
-    constructor
-    · intro x hx
-      obtain ⟨v, hv⟩ := hx
-      have hv' : f1 x = some v := hv
-      have h1 : f1 x ≠ none := by rw [hv']; exact Option.some_ne_none v
-      have h2 : f2 x ≠ none := (congrFun h x).mp h1
-      cases hf2 : f2 x with
-      | none => exact absurd hf2 h2
-      | some w => exact ⟨w, hf2⟩
-    · intro x hx
-      have hx' : f1 x = none := hx
-      have h1 : ¬ (f1 x ≠ none) := fun hc => hc hx'
-      have h2 : ¬ (f2 x ≠ none) := fun hc => h1 ((congrFun h x).mpr hc)
-      cases hf2 : f2 x with
-      | none => exact hf2
-      | some w => exact (h2 (by rw [hf2]; exact Option.some_ne_none w)).elim
-  · rintro ⟨h12, hnone⟩
-    funext x
-    apply propext
-    constructor
-    · intro h1
-      have hx : ∃ v, f1 x = some v := by
-        cases hf1 : f1 x with
-        | none => exact absurd hf1 h1
-        | some v => exact ⟨v, rfl⟩
-      obtain ⟨w, hw⟩ := h12 x hx
-      change f2 x ≠ none
-      rw [show f2 x = some w from hw]
-      exact Option.some_ne_none w
-    · intro h2 hf1
-      exact h2 (hnone x hf1)
 
-/-- CakeML's `fdom_subset_flookup_thm` (`crep_inlineProofScript.sml:1456`):
-    `FDOM f` is contained in `FDOM g` iff every defined lookup in `f` is
-    defined in `g`.  Subset of the `FDOM` predicate is pointwise implication. -/
-@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "fdom_subset_flookup_thm"]
-theorem fdom_subset_flookup_thm {α : Type} {β : Type} (f g : FiniteMap α β) :
-    (∀ x, FDOM f x → FDOM g x) ↔
-      (∀ x p, FLOOKUP f x = some p → ∃ q, FLOOKUP g x = some q) := by
-  constructor
-  · intro h x p hp
-    have hf : f x ≠ none := by rw [show f x = some p from hp]; exact Option.some_ne_none p
-    have hg : g x ≠ none := h x hf
-    cases hx : g x with
-    | none => exact absurd hx hg
-    | some q => exact ⟨q, hx⟩
-  · intro h x hf
-    cases hx : f x with
-    | none => exact absurd hx hf
-    | some p =>
-        obtain ⟨q, hq⟩ := h x p hx
-        change g x ≠ none
-        rw [show g x = some q from hq]
-        exact Option.some_ne_none q
 
+/-! Faithful finite-map ports of HOL `fdom_eq_flookup_thm`,
+    `fdom_subset_flookup_thm`, and `fdoms_eq_opt_mmap_flookup_some` remain open. -/
 
 /-- CakeML's `OPT_MMAP_SOME_ALL` (`crep_inlineProofScript.sml:36`): the optional
     map over a list succeeds for some result exactly when every element maps to
@@ -215,30 +153,6 @@ theorem OPT_MMAP_ALL_EQ {α : Type} {β : Type} (f g : α → Option β) (l : Li
       simp only [List.mapM_cons, h a List.mem_cons_self,
         ih (fun e he => h e (List.mem_cons_of_mem a he))]
 
-/-- CakeML's `fdoms_eq_opt_mmap_flookup_some`
-    (`crep_inlineProofScript.sml:1833`): if two finite maps have the same
-    domain, an `OPT_MMAP` of `FLOOKUP` over the first succeeding implies the
-    same sequence over the second succeeds. -/
-@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "fdoms_eq_opt_mmap_flookup_some"]
-theorem fdoms_eq_opt_mmap_flookup_some {α : Type} {β : Type} (vs : List α)
-    (fm fm' : FiniteMap α β) (vals : List β) (hdom : FDOM fm = FDOM fm')
-    (h : vs.mapM (FLOOKUP fm) = some vals) :
-    ∃ z, vs.mapM (FLOOKUP fm') = some z := by
-  have hall : ∀ e, e ∈ vs → ∃ y, FLOOKUP fm e = some y :=
-    (OPT_MMAP_SOME_ALL (FLOOKUP fm) vs).mp ⟨vals, h⟩
-  refine (OPT_MMAP_SOME_ALL (FLOOKUP fm') vs).mpr ?_
-  intro e he
-  obtain ⟨y, hy⟩ := hall e he
-  have hmem : FDOM fm' e := by
-    rw [← hdom]
-    change fm e ≠ none
-    change fm e = some y at hy
-    rw [hy]
-    exact Option.some_ne_none y
-  change fm' e ≠ none at hmem
-  cases h' : fm' e with
-  | none => rw [h'] at hmem; exact absurd rfl hmem
-  | some z => exact ⟨z, by change fm' e = some z; rw [h']⟩
 
 /-! ## State and locals relations of `inline_prog_correct` -/
 

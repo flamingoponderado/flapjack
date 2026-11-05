@@ -126,7 +126,7 @@ abbrev StructContextHOL := List (StructName × StructInfoHOL)
     HOL uses `=`. Direct evidence: the review/audit bead
     `flapjack-pxn.18.3.6.5`, the equality to core `List.lookup`
     (`lookupInfo_eq_lookup`, `Proofs/PanStructs.lean:263`) under `[LawfulBEq
-    String]`, and the tagged `ALOOKUP_MAP3`/`ALOOKUP_MAP4` ports. -/
+    String]`. -/
 def lookupInfo [BEq κ] (key : κ) : List (κ × α) → Option α
   | [] => none
   | (candidate, value) :: entries =>
