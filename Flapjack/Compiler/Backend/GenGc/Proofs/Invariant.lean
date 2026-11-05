@@ -927,4 +927,93 @@ theorem gcInv_data_scan_children {α β : Type} (conf : Config β) (state : GcSt
     obtain ⟨rootValue, root, rootMember, path⟩ := parentReach
     exact ⟨rootValue, root, rootMember, path.tail ⟨xs, len, payload, u, oldFound, member⟩⟩
 
+/-- Children of the next unscanned reference object are valid in the current
+heap and reachable in the original heap. -/
+theorem gcInv_refs_scan_children {α β : Type} (conf : Config β) (state : GcState α β)
+    (heap0 : List (HeapElement α β)) (roots0 : List (HeapAddress α))
+    (xs : List (HeapAddress α)) (len : Nat) (payload : β) (pending : List (HeapElement α β))
+    (invariant : gcInv conf state heap0 roots0)
+    (head : state.r2 = .dataElement xs len payload :: pending) :
+    ∀ ptr u, .pointer ptr u ∈ xs →
+      isSomeDataOrForward (heapLookup ptr state.heap) ∧ reachableAddresses roots0 heap0 ptr := by
+  obtain ⟨allocated, _, _, _, _, heapGood, similar, _, _, _, _, _, _, _, _, _, surjective, entries⟩ := invariant
+  let boundary := state.a + state.n + heapLength (state.r4 ++ state.r3)
+  have atBoundary : heapAddresses (state.a + state.n)
+      (state.r4 ++ state.r3 ++ state.r2 ++ state.r1) boundary := by
+    rw [head]
+    simp only [List.append_assoc]
+    rw [← List.append_assoc state.r4 state.r3, heapAddresses_append]
+    simp [heapAddresses, boundary, heapLength_append, Nat.add_assoc]
+  obtain ⟨i, defined, mapEq⟩ := surjective boundary (Or.inr atBoundary)
+  cases lookup : (heapMap 0 state.heap).lookup i with
+  | none => exact False.elim (defined lookup)
+  | some j =>
+    have jEq : j = boundary := by
+      change holFapply (heapMap 0 state.heap) i = boundary at mapEq
+      rw [holFapply_of_lookup lookup] at mapEq
+      exact mapEq
+    obtain ⟨oldXs, size, data, oldFound, newFound, parentReach, _⟩ := entries i j lookup
+    subst j
+    rw [heapLength_append] at allocated
+    have notFinal : ¬ isFinal conf state boundary := by
+      simp only [isFinal, boundary, head, heapLength, List.map_cons,
+        List.sum_cons, elLength, not_or, not_and, not_lt, not_le]
+      simp only [heapLength, List.map_append, List.sum_append] at allocated ⊢
+      omega
+    simp only [notFinal, ↓reduceIte] at newFound
+    have boundaryEq : heapLength ((state.h1 ++ state.h2) ++ heapExpand state.n ++ state.r4 ++ state.r3) = boundary := by
+      simp only [heapLength_append, heapLength_heapExpand]
+      dsimp [boundary]
+      simp only [heapLength_append]
+      omega
+    have atHeap := heapLookup_prefix ((state.h1 ++ state.h2) ++ heapExpand state.n ++ state.r4 ++ state.r3)
+      (pending ++ state.r1) (.dataElement xs len payload)
+    rw [boundaryEq] at atHeap
+    have boundaryFound : heapLookup boundary
+        (state.h1 ++ state.h2 ++ heapExpand state.n ++ (state.r4 ++ state.r3 ++ state.r2 ++ state.r1)) =
+        some (.dataElement xs len payload) := by
+      simpa [head, List.append_assoc] using atHeap
+    have equalElements : HeapElement.dataElement oldXs size data = .dataElement xs len payload :=
+      Option.some.inj (newFound.symm.trans boundaryFound)
+    cases equalElements
+    intro ptr u member
+    have oldMember : .dataElement xs len payload ∈ heap0 := heapLookup_mem heap0 i _ oldFound
+    have originalData : isSomeDataElement (heapLookup ptr heap0) :=
+      heapGood.2.2 xs len payload ptr u ⟨oldMember, member⟩
+    refine ⟨heapSimilar_data_imp_dataOrForward heap0 state.heap ptr similar originalData, ?_⟩
+    obtain ⟨rootValue, root, rootMember, path⟩ := parentReach
+    exact ⟨rootValue, root, rootMember, path.tail ⟨xs, len, payload, u, oldFound, member⟩⟩
+
+/-- Moving the children of the next data object preserves the major
+invariant and extends the forwarding map. -/
+theorem gcInv_data_scan_move {α β : Type} (conf : Config β) (state : GcState α β)
+    (heap0 : List (HeapElement α β)) (roots0 xs : List (HeapAddress α))
+    (len : Nat) (payload : β) (pending : List (HeapElement α β))
+    (invariant : gcInv conf state heap0 roots0)
+    (head : state.h2 = .dataElement xs len payload :: pending) :
+    ∃ next,
+      gcMoveList conf state xs = (addrMap (heapMap1 next.heap) xs, next) ∧
+      (∀ ptr u, .pointer ptr u ∈ xs → (heapMap 0 next.heap).lookup ptr ≠ none) ∧
+      (∀ ptr, isSomeDataOrForward (heapLookup ptr state.heap) ↔ isSomeDataOrForward (heapLookup ptr next.heap)) ∧
+      (∀ i j, (heapMap 0 state.heap).lookup i = some j → (heapMap 0 next.heap).lookup i = some j) ∧
+      gcInv conf next heap0 roots0 :=
+  gcInv_moveList conf state heap0 roots0 xs invariant
+    (gcInv_data_scan_children conf state heap0 roots0 xs len payload pending invariant head)
+
+/-- Moving the children of the next reference object preserves the major
+invariant and extends the forwarding map. -/
+theorem gcInv_refs_scan_move {α β : Type} (conf : Config β) (state : GcState α β)
+    (heap0 : List (HeapElement α β)) (roots0 xs : List (HeapAddress α))
+    (len : Nat) (payload : β) (pending : List (HeapElement α β))
+    (invariant : gcInv conf state heap0 roots0)
+    (head : state.r2 = .dataElement xs len payload :: pending) :
+    ∃ next,
+      gcMoveList conf state xs = (addrMap (heapMap1 next.heap) xs, next) ∧
+      (∀ ptr u, .pointer ptr u ∈ xs → (heapMap 0 next.heap).lookup ptr ≠ none) ∧
+      (∀ ptr, isSomeDataOrForward (heapLookup ptr state.heap) ↔ isSomeDataOrForward (heapLookup ptr next.heap)) ∧
+      (∀ i j, (heapMap 0 state.heap).lookup i = some j → (heapMap 0 next.heap).lookup i = some j) ∧
+      gcInv conf next heap0 roots0 :=
+  gcInv_moveList conf state heap0 roots0 xs invariant
+    (gcInv_refs_scan_children conf state heap0 roots0 xs len payload pending invariant head)
+
 end Flapjack.Compiler.Backend.GenGc
