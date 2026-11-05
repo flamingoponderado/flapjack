@@ -784,4 +784,147 @@ theorem gcInv_move {α β : Type} (conf : Config β) (state : GcState α β)
         rw [nextHeap]
         exact submap i j lookup
 
+/-- Moving a list of valid roots preserves the major invariant, extends the
+forwarding map, and renames all roots by the final map. This source-shaped
+lemma remains untagged while the invariant's internal map is unreviewed. -/
+theorem gcInv_moveList {α β : Type} (conf : Config β) (state : GcState α β)
+    (heap0 : List (HeapElement α β)) (roots0 xs : List (HeapAddress α))
+    (invariant : gcInv conf state heap0 roots0)
+    (rootsValid : ∀ ptr u, .pointer ptr u ∈ xs →
+      isSomeDataOrForward (heapLookup ptr state.heap) ∧ reachableAddresses roots0 heap0 ptr) :
+    ∃ next,
+      gcMoveList conf state xs = (addrMap (heapMap1 next.heap) xs, next) ∧
+      (∀ ptr u, .pointer ptr u ∈ xs → (heapMap 0 next.heap).lookup ptr ≠ none) ∧
+      (∀ ptr, isSomeDataOrForward (heapLookup ptr state.heap) ↔ isSomeDataOrForward (heapLookup ptr next.heap)) ∧
+      (∀ i j, (heapMap 0 state.heap).lookup i = some j → (heapMap 0 next.heap).lookup i = some j) ∧
+      gcInv conf next heap0 roots0 := by
+  induction xs generalizing state with
+  | nil => exact ⟨state, by simp [gcMoveList, addrMap, invariant]⟩
+  | cons head tail ih =>
+    have headValid : ∀ ptr u, head = .pointer ptr u →
+        isSomeDataOrForward (heapLookup ptr state.heap) ∧ reachableAddresses roots0 heap0 ptr := by
+      intro ptr u eq
+      exact rootsValid ptr u (by simp [← eq])
+    obtain ⟨middle, move, headDomain, observation1, submap1, inv1⟩ :=
+      gcInv_move conf state heap0 roots0 head invariant headValid
+    have tailValid : ∀ ptr u, .pointer ptr u ∈ tail →
+        isSomeDataOrForward (heapLookup ptr middle.heap) ∧ reachableAddresses roots0 heap0 ptr := by
+      intro ptr u member
+      obtain ⟨valid, reach⟩ := rootsValid ptr u (by simp [member])
+      exact ⟨(observation1 ptr).mp valid, reach⟩
+    obtain ⟨next, moves, tailDomain, observation2, submap2, inv2⟩ := ih middle inv1 tailValid
+    have headApply : addrApply (heapMap1 middle.heap) head = addrApply (heapMap1 next.heap) head := by
+      cases head with
+      | data value => rfl
+      | pointer ptr value =>
+        have defined := headDomain ptr value rfl
+        cases found : (heapMap 0 middle.heap).lookup ptr with
+        | none => exact False.elim (defined found)
+        | some target =>
+          have later := submap2 ptr target found
+          simp [addrApply, heapMap1, holFapply_of_lookup found, holFapply_of_lookup later]
+    refine ⟨next, ?_, ?_, ?_, ?_, inv2⟩
+    · simp only [gcMoveList, move, headApply, moves]
+      cases head <;> rfl
+    · intro ptr u member
+      simp only [List.mem_cons] at member
+      rcases member with eq | member
+      · have defined := headDomain ptr u eq.symm
+        cases found : (heapMap 0 middle.heap).lookup ptr with
+        | none => exact False.elim (defined found)
+        | some target => rw [submap2 ptr target found]; simp
+      · exact tailDomain ptr u member
+    · intro ptr
+      exact (observation1 ptr).trans (observation2 ptr)
+    · intro i j old
+      exact submap2 i j (submap1 i j old)
+
+/-- Finishing an empty reference queue moves the scanned reference segment
+to the completed segment without changing the major collector invariant. -/
+theorem gcInv_refs_finish {α β : Type} (conf : Config β) (state : GcState α β)
+    (heap0 : List (HeapElement α β)) (roots0 : List (HeapAddress α))
+    (invariant : gcInv conf state heap0 roots0) (empty : state.r2 = []) :
+    gcInv conf { state with r3 := [], r1 := state.r3 ++ state.r1 } heap0 roots0 := by
+  classical
+  have finalEq (p : Nat) :
+      isFinal conf { state with r3 := [], r1 := state.r3 ++ state.r1 } p ↔ isFinal conf state p := by
+    simp only [isFinal, empty, heapLength, List.map_nil, List.sum_nil, Nat.add_zero]
+    omega
+  simp only [empty] at finalEq
+  obtain ⟨allocated, balance, free, size, ok, good, similar, h1, h2, r1, r2, r3, r4, refs,
+    into, injective, surjective, entries⟩ := invariant
+  simp only [gcInv, empty, List.append_nil, List.append_assoc]
+  refine ⟨allocated, ?_, free, size, ok, good, similar, h1, h2, ?_, ?_, ?_, r4, ?_, ?_, injective, ?_, ?_⟩
+  · simpa [empty, List.append_assoc] using balance
+  · intro h member
+    simp only [List.mem_append] at member
+    rcases member with member | member
+    · exact r3 h member
+    · exact r1 h member
+  · simp
+  · simp
+  · simpa [empty, List.append_assoc] using refs
+  · simpa [empty, List.append_assoc] using into
+  · simpa [empty, List.append_assoc] using surjective
+  · intro i j lookup
+    obtain ⟨xs, len, payload, original, copied, reachable, children⟩ := entries i j lookup
+    refine ⟨xs, len, payload, original, ?_, reachable, ?_⟩
+    · simp only [empty, List.append_nil, List.append_assoc, finalEq] at copied ⊢
+      split_ifs at copied ⊢ <;> assumption
+    · intro ptr value member final
+      apply children ptr value member
+      exact (finalEq j).mp final
+
+/-- Children of the next unscanned copied data object are valid in the
+current heap and reachable in the original heap. -/
+theorem gcInv_data_scan_children {α β : Type} (conf : Config β) (state : GcState α β)
+    (heap0 : List (HeapElement α β)) (roots0 : List (HeapAddress α))
+    (xs : List (HeapAddress α)) (len : Nat) (payload : β) (pending : List (HeapElement α β))
+    (invariant : gcInv conf state heap0 roots0)
+    (head : state.h2 = .dataElement xs len payload :: pending) :
+    ∀ ptr u, .pointer ptr u ∈ xs →
+      isSomeDataOrForward (heapLookup ptr state.heap) ∧ reachableAddresses roots0 heap0 ptr := by
+  obtain ⟨allocated, _, _, _, _, heapGood, similar, _, _, _, _, _, _, _, _, _, surjective, entries⟩ := invariant
+  have atBoundary : heapAddresses 0 (state.h1 ++ state.h2) (heapLength state.h1) := by
+    rw [head, heapAddresses_append]
+    simp [heapAddresses]
+  obtain ⟨i, defined, mapEq⟩ := surjective (heapLength state.h1) (Or.inl atBoundary)
+  cases lookup : (heapMap 0 state.heap).lookup i with
+  | none => exact False.elim (defined lookup)
+  | some j =>
+    have jEq : j = heapLength state.h1 := by
+      change holFapply (heapMap 0 state.heap) i = heapLength state.h1 at mapEq
+      rw [holFapply_of_lookup lookup] at mapEq
+      exact mapEq
+    obtain ⟨oldXs, size, data, oldFound, newFound, parentReach, _⟩ := entries i j lookup
+    subst j
+    have room : heapLength state.h1 + (len + 1) ≤ state.a := by
+      rw [heapLength_append, head] at allocated
+      simp [heapLength, elLength] at allocated ⊢
+      omega
+    have notFinal : ¬ isFinal conf state (heapLength state.h1) := by
+      simp only [isFinal, not_or, not_and, not_lt, not_le]
+      omega
+    simp only [notFinal, ↓reduceIte] at newFound
+    have boundary := heapLookup_prefix state.h1
+      (pending ++ heapExpand state.n ++ state.r4 ++ state.r3 ++ state.r2 ++ state.r1)
+      (.dataElement xs len payload)
+    have boundaryFound : heapLookup (heapLength state.h1)
+        (state.h1 ++ state.h2 ++ heapExpand state.n ++ state.r4 ++ state.r3 ++ state.r2 ++ state.r1) =
+        some (.dataElement xs len payload) := by
+      simpa [head, List.append_assoc] using boundary
+    have adjusted : heapLookup (heapLength state.h1)
+        (state.h1 ++ state.h2 ++ heapExpand state.n ++ (state.r4 ++ state.r3 ++ state.r2 ++ state.r1)) =
+        some (.dataElement xs len payload) := by simpa [List.append_assoc] using boundaryFound
+    have equalElements : HeapElement.dataElement oldXs size data = .dataElement xs len payload :=
+      Option.some.inj (newFound.symm.trans adjusted)
+    cases equalElements
+    intro ptr u member
+    have oldMember : .dataElement xs len payload ∈ heap0 := heapLookup_mem heap0 i _ oldFound
+    have originalData : isSomeDataElement (heapLookup ptr heap0) :=
+      heapGood.2.2 xs len payload ptr u ⟨oldMember, member⟩
+    refine ⟨heapSimilar_data_imp_dataOrForward heap0 state.heap ptr similar originalData, ?_⟩
+    obtain ⟨rootValue, root, rootMember, path⟩ := parentReach
+    exact ⟨rootValue, root, rootMember, path.tail ⟨xs, len, payload, u, oldFound, member⟩⟩
+
 end Flapjack.Compiler.Backend.GenGc
