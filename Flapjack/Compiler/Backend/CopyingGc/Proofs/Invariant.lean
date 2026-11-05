@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.CopyingGc
 import Flapjack.Compiler.Backend.GcShared.HeapSimilarity
 import Flapjack.Compiler.Backend.GcShared.Reachability
+import Flapjack.Compiler.Backend.GcShared.Related
 import Flapjack.Compiler.Backend.GcShared.ForwardPtr
 import Flapjack.Compiler.Backend.CopyingGc.Proofs.Append
 
@@ -766,5 +767,139 @@ theorem fullGc_invariant {α β : Type} (roots : List (HeapAddress α))
   refine ⟨heap2, a2, heap3, ?_, rootDomain, ?_⟩
   · simp [fullGc, moved, scanned, rootMap, status, allocated, finalHeap, heapGood.1, remaining, within]
   · simpa [status, remaining] using inv2
+
+/-- At the end of scanning, the forwarding-map domain is exactly the set of
+addresses reachable from the original roots. This Flapjack theorem derives
+the domain clause needed for the full collector heap relation. -/
+theorem gcInv_final_domain {α β : Type} (heap2 heap3 heap : List (HeapElement α β))
+    (a n limit : Nat) (ok : Bool) (roots : List (HeapAddress α))
+    (invariant : gcInv heap2 [] a n heap3 ok limit heap roots)
+    (rootDomain : ∀ ptr u, .pointer ptr u ∈ roots → (heapMap 0 heap3).lookup ptr ≠ none) :
+    (fun ptr => (heapMap 0 heap3).lookup ptr ≠ none) = reachableAddresses roots heap := by
+  obtain ⟨_, _, _, _, _, _, _, _, _, mapsInto, _, _, entries⟩ := invariant
+  funext ptr
+  apply propext
+  constructor
+  · intro defined
+    cases found : (heapMap 0 heap3).lookup ptr with
+    | none => exact False.elim (defined found)
+    | some target =>
+      obtain ⟨_, _, _, _, _, reach, _⟩ := entries ptr target found
+      exact reach
+  · intro reach
+    obtain ⟨value, source, member, path⟩ := reach
+    induction path with
+    | refl => exact rootDomain source value member
+    | @tail middle target path edge ih =>
+      cases found : (heapMap 0 heap3).lookup middle with
+      | none => exact False.elim (ih found)
+      | some mapped =>
+        have mapValue : heapMap1 heap3 middle = mapped := holFapply_of_lookup found
+        have address : heapAddresses 0 heap2 mapped := by
+          have bound := mapsInto middle (by rw [found]; simp)
+          simpa [mapValue] using bound
+        have below : mapped < heapLength heap2 := by
+          simpa using heapAddresses_less_heapLength heap2 0 mapped address
+        obtain ⟨xs, size, payload, oldFound, _, _, children⟩ := entries middle mapped found
+        obtain ⟨edgeRoots, edgeLen, edgeData, edgeValue, edgeFound, edgeMember⟩ := edge
+        have equal : HeapElement.dataElement xs size payload = .dataElement edgeRoots edgeLen edgeData :=
+          Option.some.inj (oldFound.symm.trans edgeFound)
+        cases equal
+        exact children target edgeValue edgeMember below
+
+/-- At the end of scanning, the forwarding-map range is exactly the set of
+data-element addresses in the copied heap. This is a Flapjack consequence of
+the final copying invariant. -/
+theorem gcInv_final_range {α β : Type} (heap2 heap3 heap : List (HeapElement α β))
+    (a n limit : Nat) (ok : Bool) (roots : List (HeapAddress α))
+    (invariant : gcInv heap2 [] a n heap3 ok limit heap roots) :
+    (fun target => ∃ ptr, (heapMap 0 heap3).lookup ptr = some target) =
+      (fun target => isSomeDataElement (heapLookup target heap2)) := by
+  obtain ⟨_, _, _, _, _, _, _, _, _, mapsInto, _, surjective, entries⟩ := invariant
+  funext target
+  apply propext
+  constructor
+  · rintro ⟨ptr, found⟩
+    have mapValue : heapMap1 heap3 ptr = target := holFapply_of_lookup found
+    have address : heapAddresses 0 heap2 target := by
+      have bound := mapsInto ptr (by rw [found]; simp)
+      simpa [mapValue] using bound
+    have below : target < heapLength heap2 := by
+      simpa using heapAddresses_less_heapLength heap2 0 target address
+    obtain ⟨xs, len, payload, _, copied, _, _⟩ := entries ptr target found
+    simp only [List.append_nil, below, ↓reduceIte] at copied
+    exact ⟨addrMap (heapMap1 heap3) xs, len, payload, copied⟩
+  · rintro ⟨xs, len, payload, found⟩
+    have address := GenGc.heapLookup_imp_heapAddresses heap2 target (.dataElement xs len payload) found
+    have inAddresses : heapAddresses 0 (heap2 ++ []) target := by simpa using address
+    obtain ⟨ptr, defined, mapValue⟩ := surjective target inAddresses
+    cases lookup : (heapMap 0 heap3).lookup ptr with
+    | none => exact False.elim (defined lookup)
+    | some value =>
+      have eq : value = target := by
+        change holFapply (heapMap 0 heap3) ptr = target at mapValue
+        rwa [holFapply_of_lookup lookup] at mapValue
+      exact ⟨ptr, eq ▸ lookup⟩
+
+/-- The final copying invariant establishes the abstract relation between the
+original heap and the copied heap. This is a Flapjack consequence of `gcInv`. -/
+theorem gcInv_final_related {α β : Type} (heap2 heap3 heap : List (HeapElement α β))
+    (a n limit : Nat) (ok : Bool) (roots : List (HeapAddress α))
+    (invariant : gcInv heap2 [] a n heap3 ok limit heap roots) :
+    gcRelated (heapMap 0 heap3) heap heap2 := by
+  obtain ⟨_, _, _, _, _, _, _, _, _, mapsInto, injective, _, entries⟩ := invariant
+  have entry : ∀ i, (heapMap 0 heap3).lookup i ≠ none →
+      ∃ xs len payload, heapLookup i heap = some (.dataElement xs len payload) ∧
+        heapLookup (heapMap1 heap3 i) heap2 = some (.dataElement (addrMap (heapMap1 heap3) xs) len payload) ∧
+        ∀ ptr value, .pointer ptr value ∈ xs → (heapMap 0 heap3).lookup ptr ≠ none := by
+    intro i defined
+    cases found : (heapMap 0 heap3).lookup i with
+    | none => exact False.elim (defined found)
+    | some mapped =>
+      have mapValue : heapMap1 heap3 i = mapped := holFapply_of_lookup found
+      have address : heapAddresses 0 heap2 mapped := by
+        have h := mapsInto i defined
+        simpa [mapValue] using h
+      have below : mapped < heapLength heap2 := by
+        simpa using heapAddresses_less_heapLength heap2 0 mapped address
+      obtain ⟨xs, len, payload, oldFound, newFound, _, childDomain⟩ := entries i mapped found
+      refine ⟨xs, len, payload, oldFound, ?_, ?_⟩
+      · simpa [mapValue, below] using newFound
+      · intro ptr value member
+        exact childDomain ptr value member below
+  refine ⟨?_, injective, ?_, ?_⟩
+  · intro i defined
+    obtain ⟨xs, len, payload, _, found, _⟩ := entry i defined
+    exact ⟨addrMap (heapMap1 heap3) xs, len, payload, found⟩
+  · intro i defined
+    obtain ⟨xs, len, payload, found, _, _⟩ := entry i defined
+    exact ⟨xs, len, payload, found⟩
+  · intro i xs len payload defined found
+    obtain ⟨xs', len', payload', oldFound, newFound, children⟩ := entry i defined
+    have eq : HeapElement.dataElement xs' len' payload' = .dataElement xs len payload :=
+      Option.some.inj (oldFound.symm.trans found)
+    cases eq
+    exact ⟨newFound, children⟩
+
+/-- Successful full collection supplies the source-domain, target-range,
+and heap-relation clauses of the abstract collector theorem. The source's
+heap-filter length equality remains to be proved separately. -/
+theorem fullGc_relation_clauses {α β : Type} (roots : List (HeapAddress α))
+    (heap : List (HeapElement α β)) (limit : Nat)
+    (rootOk : rootsOk roots heap) (heapGood : heapOk heap limit) :
+    ∃ (heap2 : List (HeapElement α β)) (a2 : Nat) (f : HolFiniteMapExact Nat Nat),
+      fullGc (roots, heap, limit) = (addrMap (holFapply f) roots, heap2, a2, true) ∧
+      (fun ptr => f.lookup ptr ≠ none) = reachableAddresses roots heap ∧
+      (fun target => ∃ ptr, f.lookup ptr = some target) =
+        (fun target => isSomeDataElement (heapLookup target heap2)) ∧
+      gcRelated f heap heap2 ∧
+      (∀ element ∈ heap2, isDataElement element) ∧ heapLength heap2 = a2 := by
+  obtain ⟨heap2, a2, heap3, run, rootDomain, invariant⟩ := fullGc_invariant roots heap limit rootOk heapGood
+  refine ⟨heap2, a2, heapMap 0 heap3, run, ?_, ?_, ?_, ?_, ?_⟩
+  · exact gcInv_final_domain heap2 heap3 heap a2 (limit - a2) limit true roots invariant rootDomain
+  · exact gcInv_final_range heap2 heap3 heap a2 (limit - a2) limit true roots invariant
+  · exact gcInv_final_related heap2 heap3 heap a2 (limit - a2) limit true roots invariant
+  · exact invariant.2.2.2.2.2.2.2.1
+  · simpa using invariant.2.1.symm
 
 end Flapjack.Compiler.Backend.CopyingGc
