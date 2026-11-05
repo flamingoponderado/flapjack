@@ -357,4 +357,28 @@ theorem seq64_outOfSpaceFirst_verified {C F : Type} (conf : Config) (secn label 
   seq64_outOfSpaceFirst conf secn label first second source target failure
     (verifiedFragment_resourceMono second fragment)
 
+/-- A source-safe allocation followed by an established fragment has the
+usual simulated outcome or the permitted allocation failure. This connects
+the real allocation sequence to the existing fragment simulation without
+assuming a safe heap or an active collector. -/
+theorem makeSpace_seq_verified {C F : Type} (conf : Config) (secn label l1 l2 : Nat)
+    (amount : Nat) (live : NumSet) (second : DataLang.Prog) (fragment : VerifiedFragment second)
+    (source : DataSem.State C F) (target : WordSemStateFiniteExact 64 C F)
+    (locs : List (Nat × Nat)) (related : stateRel64 conf l1 l2 source target none locs)
+    (safe : (DataSem.evaluate (.seq (.makeSpace amount live) second) source).1 ≠
+      some (.err (.abort .typeError))) :
+    outcomes64 conf secn label l1 l2 (.seq (.makeSpace amount live) second) source target locs ∨
+      outOfSpace64 conf secn label (.seq (.makeSpace amount live) second) source target := by
+  have firstSafe := seq_first_safe (.makeSpace amount live) second source safe
+  rcases makeSpace64_continue_or_outOfSpace conf secn label l1 l2 source target locs related
+      amount live firstSafe with continued | failure
+  · left
+    apply seq64_outcomes conf secn label l1 l2 (.makeSpace amount live) second source target locs
+      related safe (Or.inl continued)
+    intro s t rel valid
+    exact verifiedFragment64 conf secn l1 l2 second fragment
+      (compileControl64 conf secn label (.makeSpace amount live)).2 s t locs rel valid
+  · right
+    exact seq64_outOfSpaceFirst_verified conf secn label (.makeSpace amount live) second source target fragment failure
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Correct

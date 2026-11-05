@@ -277,6 +277,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Move
 import Flapjack.Compiler.Backend.Semantics.DataSem.EvaluateCode
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.BlockElement
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Fragment
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.FragmentSpace
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.BlockTagLength
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Code
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.CallFragmentCode
