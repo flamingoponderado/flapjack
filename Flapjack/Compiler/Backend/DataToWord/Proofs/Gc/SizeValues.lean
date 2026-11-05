@@ -5,6 +5,10 @@ import Flapjack.Misc.Multiword.Length
 import Flapjack.Misc.GoodDimindex
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Values
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv.Reference
+import Flapjack.Misc.Sptree.Subspt
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BytePacking
 
 /-! Source heap sizing facts used by collector soundness. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
@@ -286,5 +290,218 @@ theorem sizeOf_freshBlock_traversal {width : Nat} [NeZero width]
       simp [DataSem.sizeOfValues, fresh, result] at ⊢
       simp only [List.length_cons] at bound
       omega
+
+/-- Flapjack infrastructure: the source singleton sizing equation for a
+reference to a value array. -/
+theorem sizeOfValues_refArray (limits : DataSem.Limits) (bit : Bool) (index : Nat)
+    (values : List DataSem.Value) (refs : Spt (BvlSem.Ref DataSem.Value)) (seen : Spt Unit)
+    (found : sptLookup index refs = some (.valueArray values)) :
+    DataSem.sizeOfValues limits [.refPtr bit index] refs seen =
+      let (n, refs1, seen1) := DataSem.sizeOfValues limits values (sptDelete index refs) seen
+      (n + values.length + 1, refs1, seen1) := by
+  rw [DataSem.sizeOfValues]
+  split <;> simp_all
+
+/-- Flapjack infrastructure: a live value-array reference traverses its
+represented cell and children within the source sizing charge, provided the
+recursive child traversal meets its corresponding bound. -/
+theorem sizeOf_refArray_traversal {width : Nat} [NeZero width]
+    (limits : DataSem.Limits) (conf : Config) (bit : Bool) (index : Nat)
+    (values : List DataSem.Value) (remaining refs : Spt (BvlSem.Ref DataSem.Value)) (seen : Spt Unit)
+    (address : HeapAddress (WordLocW width)) (f tf : HolFiniteMapExact Nat Nat)
+    (heap : Memory.ValueHeap width) (be : Bool) (visited : List Nat)
+    (related : Memory.valueInv conf (.refPtr bit index) refs (address, f, tf, heap))
+    (noThunks : DataSem.noThunksInRefs refs)
+    (subset : sptSubspt remaining refs) (found : sptLookup index remaining = some (.valueArray values))
+    (refInv : Memory.bcRefInv conf index refs (f, tf, heap, be))
+    (childrenSound : ∀ ptr children,
+      List.Forall₂ (fun addr value => Memory.valueInv conf value refs (addr, f, tf, heap)) children values →
+      f.lookup index = some ptr → heapLookup ptr heap = some (Memory.refBlock children) →
+      ∃ after, traverseHeap heap (ptr :: visited) children after ∧
+        (after.map (Memory.lookupLen heap)).sum ≤
+          (DataSem.sizeOfValues limits values (sptDelete index remaining) seen).1 +
+            ((ptr :: visited).map (Memory.lookupLen heap)).sum) :
+    ∃ after, traverseHeap heap visited [address] after ∧
+      (after.map (Memory.lookupLen heap)).sum ≤
+        (DataSem.sizeOfValues limits [.refPtr bit index] remaining seen).1 +
+          (visited.map (Memory.lookupLen heap)).sum := by
+  have original := (sptSubsptLookup remaining refs).mp subset index (.valueArray values) found
+  have direct := (Memory.valueInv_refPtr_notThunk conf bit index refs address f tf heap
+    (noThunks index)).mp related
+  obtain ⟨⟨ptr, mapFound⟩, _, addressEq⟩ := direct
+  have address' : address = .pointer ptr (Memory.refPtrAnnot conf (sptLookup index refs)) := by
+    simpa [holFapply_of_lookup mapFound] using addressEq
+  subst address
+  have cell := refInv
+  simp only [Memory.bcRefInv, mapFound, original] at cell
+  obtain ⟨children, heapFound, valuesRel⟩ := cell
+  obtain ⟨after, traversal, bound⟩ := childrenSound ptr children valuesRel mapFound heapFound
+  refine ⟨after, ?_, ?_⟩
+  · rw [holFapply_of_lookup mapFound]
+    apply traverseHeap.visit (children := children)
+    · simpa [Memory.refBlock] using heapFound
+    · exact traversal
+  · have lengths := valuesRel.length_eq
+    have ptrCost : Memory.lookupLen heap ptr = values.length + 1 := by
+      simp [Memory.lookupLen, heapFound, Memory.refBlock, elLength, lengths]
+    simp only [List.map_cons, List.sum_cons, ptrCost] at bound
+    rw [sizeOfValues_refArray limits bit index values remaining seen found]
+    cases result : DataSem.sizeOfValues limits values (sptDelete index remaining) seen with
+    | mk n rest =>
+      cases rest
+      rw [result] at bound
+      dsimp only at bound ⊢
+      omega
+
+/-- Flapjack infrastructure: the source singleton sizing equation for a
+reference to a mutable block. -/
+theorem sizeOfValues_mutBlock (limits : DataSem.Limits) (bit : Bool) (index tag : Nat) (finalised : Bool)
+    (left : List DataSem.Value) (value : DataSem.Value) (right : List DataSem.Value)
+    (refs : Spt (BvlSem.Ref DataSem.Value)) (seen : Spt Unit)
+    (found : sptLookup index refs = some (.mutBlock tag finalised left value right)) :
+    DataSem.sizeOfValues limits [.refPtr bit index] refs seen =
+      let (n, refs1, seen1) := DataSem.sizeOfValues limits (left ++ [value] ++ right) (sptDelete index refs) seen
+      (n + left.length + right.length + 2, refs1, seen1) := by
+  rw [DataSem.sizeOfValues]
+  split <;> simp_all
+
+/-- Flapjack infrastructure: a live mutable-block reference traverses its
+represented cell and children within the source sizing charge, assuming the
+corresponding recursive child traversal bound. -/
+theorem sizeOf_mutBlock_traversal {width : Nat} [NeZero width]
+    (limits : DataSem.Limits) (conf : Config) (bit : Bool) (index tag : Nat) (finalised : Bool)
+    (left : List DataSem.Value) (value : DataSem.Value) (right : List DataSem.Value)
+    (remaining refs : Spt (BvlSem.Ref DataSem.Value)) (seen : Spt Unit)
+    (address : HeapAddress (WordLocW width)) (f tf : HolFiniteMapExact Nat Nat)
+    (heap : Memory.ValueHeap width) (be : Bool) (visited : List Nat)
+    (related : Memory.valueInv conf (.refPtr bit index) refs (address, f, tf, heap))
+    (noThunks : DataSem.noThunksInRefs refs)
+    (subset : sptSubspt remaining refs) (found : sptLookup index remaining = some (.mutBlock tag finalised left value right))
+    (refInv : Memory.bcRefInv conf index refs (f, tf, heap, be))
+    (childrenSound : ∀ ptr children,
+      List.Forall₂ (fun addr item => Memory.valueInv conf item refs (addr, f, tf, heap)) children (left ++ [value] ++ right) →
+      f.lookup index = some ptr → heapLookup ptr heap = some (Memory.blockRep tag children) →
+      ∃ after, traverseHeap heap (ptr :: visited) children after ∧
+        (after.map (Memory.lookupLen heap)).sum ≤
+          (DataSem.sizeOfValues limits (left ++ [value] ++ right) (sptDelete index remaining) seen).1 +
+            ((ptr :: visited).map (Memory.lookupLen heap)).sum) :
+    ∃ after, traverseHeap heap visited [address] after ∧
+      (after.map (Memory.lookupLen heap)).sum ≤
+        (DataSem.sizeOfValues limits [.refPtr bit index] remaining seen).1 +
+          (visited.map (Memory.lookupLen heap)).sum := by
+  have original := (sptSubsptLookup remaining refs).mp subset index (.mutBlock tag finalised left value right) found
+  have direct := (Memory.valueInv_refPtr_notThunk conf bit index refs address f tf heap
+    (noThunks index)).mp related
+  obtain ⟨⟨ptr, mapFound⟩, _, addressEq⟩ := direct
+  have address' : address = .pointer ptr (Memory.refPtrAnnot conf (sptLookup index refs)) := by
+    simpa [holFapply_of_lookup mapFound] using addressEq
+  subst address
+  have cell := refInv
+  simp only [Memory.bcRefInv, mapFound, original] at cell
+  obtain ⟨_, _, children, heapFound, valuesRel⟩ := cell
+  obtain ⟨after, traversal, bound⟩ := childrenSound ptr children valuesRel mapFound heapFound
+  refine ⟨after, ?_, ?_⟩
+  · rw [holFapply_of_lookup mapFound]
+    apply traverseHeap.visit (children := children)
+    · simpa [Memory.blockRep] using heapFound
+    · exact traversal
+  · have lengths := valuesRel.length_eq
+    have ptrCost : Memory.lookupLen heap ptr = left.length + right.length + 2 := by
+      simp [Memory.lookupLen, heapFound, Memory.blockRep, elLength, lengths]
+      omega
+    simp only [List.map_cons, List.sum_cons, ptrCost] at bound
+    rw [sizeOfValues_mutBlock limits bit index tag finalised left value right remaining seen found]
+    cases result : DataSem.sizeOfValues limits (left ++ [value] ++ right) (sptDelete index remaining) seen with
+    | mk n rest =>
+      cases rest
+      rw [result] at bound
+      dsimp only at bound ⊢
+      omega
+
+/-- Flapjack infrastructure: a source reference already removed from the
+remaining tree has zero sizing cost. -/
+theorem sizeOfValues_missingRef (limits : DataSem.Limits) (bit : Bool) (index : Nat)
+    (refs : Spt (BvlSem.Ref DataSem.Value)) (seen : Spt Unit)
+    (missing : sptLookup index refs = none) :
+    DataSem.sizeOfValues limits [.refPtr bit index] refs seen = (0, refs, seen) := by
+  rw [DataSem.sizeOfValues]
+  split <;> simp_all
+
+/-- Flapjack infrastructure: an already processed reference is traversed as
+an existing visited pointer and adds no source-size charge. -/
+theorem sizeOf_seenRef_traversal {width : Nat} [NeZero width]
+    (limits : DataSem.Limits) (conf : Config) (bit : Bool) (index : Nat)
+    (remaining refs : Spt (BvlSem.Ref DataSem.Value)) (seen : Spt Unit)
+    (address : HeapAddress (WordLocW width)) (f tf : HolFiniteMapExact Nat Nat)
+    (heap : Memory.ValueHeap width) (visited : List Nat)
+    (related : Memory.valueInv conf (.refPtr bit index) refs (address, f, tf, heap))
+    (noThunks : DataSem.noThunksInRefs refs) (missing : sptLookup index remaining = none)
+    (mapInRefs : ∀ key ptr, f.lookup key = some ptr → sptLookup key refs ≠ none)
+    (removedVisited : ∀ key ptr, sptLookup key refs ≠ none → sptLookup key remaining = none →
+      f.lookup key = some ptr → ptr ∈ visited) :
+    ∃ after, traverseHeap heap visited [address] after ∧
+      (after.map (Memory.lookupLen heap)).sum ≤
+        (DataSem.sizeOfValues limits [.refPtr bit index] remaining seen).1 +
+          (visited.map (Memory.lookupLen heap)).sum := by
+  have direct := (Memory.valueInv_refPtr_notThunk conf bit index refs address f tf heap
+    (noThunks index)).mp related
+  obtain ⟨⟨ptr, mapFound⟩, _, addressEq⟩ := direct
+  have present := removedVisited index ptr (mapInRefs index ptr mapFound) missing mapFound
+  have address' : address = .pointer ptr (Memory.refPtrAnnot conf (sptLookup index refs)) := by
+    simpa [holFapply_of_lookup mapFound] using addressEq
+  rw [address']
+  refine ⟨visited, traverseHeap.seen visited ptr _ present, ?_⟩
+  simp [sizeOfValues_missingRef limits bit index remaining seen missing]
+
+/-- Flapjack infrastructure: the source singleton sizing equation for a
+reference to a byte array. -/
+theorem sizeOfValues_byteArray (limits : DataSem.Limits) (bit : Bool) (index : Nat)
+    (compareByContents : Bool) (bytes : List (BitVec 8))
+    (refs : Spt (BvlSem.Ref DataSem.Value)) (seen : Spt Unit)
+    (found : sptLookup index refs = some (.byteArray compareByContents bytes)) :
+    DataSem.sizeOfValues limits [.refPtr bit index] refs seen =
+      (bytes.length / (DataSem.archSize limits / 8) + 2, sptDelete index refs, seen) := by
+  rw [DataSem.sizeOfValues]
+  split <;> simp_all
+
+/-- Flapjack infrastructure: a represented byte array is traversed for the
+same word count charged by source sizing. -/
+theorem sizeOf_byteArray_traversal {width : Nat} [NeZero width]
+    (limits : DataSem.Limits) (conf : Config) (bit : Bool) (index : Nat)
+    (compareByContents : Bool) (bytes : List (BitVec 8))
+    (remaining refs : Spt (BvlSem.Ref DataSem.Value)) (seen : Spt Unit)
+    (address : HeapAddress (WordLocW width)) (f tf : HolFiniteMapExact Nat Nat)
+    (heap : Memory.ValueHeap width) (be : Bool) (visited : List Nat)
+    (good : goodDimindex width) (architecture : limits.arch64Bit = decide (width = 64))
+    (related : Memory.valueInv conf (.refPtr bit index) refs (address, f, tf, heap))
+    (noThunks : DataSem.noThunksInRefs refs) (subset : sptSubspt remaining refs)
+    (found : sptLookup index remaining = some (.byteArray compareByContents bytes))
+    (refInv : Memory.bcRefInv conf index refs (f, tf, heap, be)) :
+    ∃ after, traverseHeap heap visited [address] after ∧
+      (after.map (Memory.lookupLen heap)).sum ≤
+        (DataSem.sizeOfValues limits [.refPtr bit index] remaining seen).1 +
+          (visited.map (Memory.lookupLen heap)).sum := by
+  have original := (sptSubsptLookup remaining refs).mp subset index (.byteArray compareByContents bytes) found
+  have direct := (Memory.valueInv_refPtr_notThunk conf bit index refs address f tf heap
+    (noThunks index)).mp related
+  obtain ⟨⟨ptr, mapFound⟩, _, addressEq⟩ := direct
+  have address' : address = .pointer ptr (Memory.refPtrAnnot conf (sptLookup index refs)) := by
+    simpa [holFapply_of_lookup mapFound] using addressEq
+  subst address
+  have cell := refInv
+  simp only [Memory.bcRefInv, mapFound, original] at cell
+  have widthEq : DataSem.archSize limits = width := by
+    rcases good with rfl | rfl <;> simp [DataSem.archSize, architecture]
+  refine ⟨ptr :: visited, ?_, ?_⟩
+  · rw [holFapply_of_lookup mapFound]
+    apply traverseHeap.visit (children := [])
+    · simpa [Memory.bytesRep] using cell
+    · exact traverseHeap.empty _
+  · simp only [List.map_cons, List.sum_cons]
+    rw [sizeOfValues_byteArray limits bit index compareByContents bytes remaining seen found]
+    simp only [widthEq]
+    have size : Memory.lookupLen heap ptr = bytes.length / (width / 8) + 2 := by
+      simp [Memory.lookupLen, cell, Memory.bytesRep, Memory.writeBytes_wordCount, elLength]
+    omega
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
