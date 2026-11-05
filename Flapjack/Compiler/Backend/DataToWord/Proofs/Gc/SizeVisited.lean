@@ -453,4 +453,123 @@ theorem sizeSound_cons {width : Nat} [NeZero width]
           · simp only [sizeOfValues_cons, tailResult, headResult]
             exact headCovered
 
+/-- Flapjack infrastructure: a singleton source value satisfies the sizing
+invariant when the recursive block and reference payload cases do. The cell
+invariant is required only for references reachable from this source value. -/
+theorem sizeSound_single {width : Nat} [NeZero width]
+    (limits : DataSem.Limits) (conf : Config) (value : DataSem.Value)
+    (refs remaining : Spt (BvlSem.Ref DataSem.Value)) (seen : Spt Unit)
+    (address : HeapAddress (WordLocW width)) (f tf : HolFiniteMapExact Nat Nat)
+    (heap : Memory.ValueHeap width) (be : Bool) (visited : List Nat)
+    (good : goodDimindex width) (architecture : limits.arch64Bit = decide (width = 64))
+    (related : Memory.valueInv conf value refs (address, f, tf, heap))
+    (noThunks : DataSem.noThunksInRefs refs) (subset : sptSubspt remaining refs)
+    (covered : sizeVisited refs remaining seen f tf visited)
+    (mapInRefs : ∀ key ptr, f.lookup key = some ptr → sptLookup key refs ≠ none)
+    (cells : ∀ key ptr, Memory.reachableRefs [value] refs key → f.lookup key = some ptr →
+      Memory.bcRefInv conf key refs (f, tf, heap, be))
+    (blocks : ∀ stamp tag head tail ptr children,
+      value = .block stamp tag (head :: tail) → (sptLookup stamp seen).isSome = false →
+      List.Forall₂ (fun item addr => Memory.valueInv conf item refs (addr, f, tf, heap)) (head :: tail) children →
+      tf.lookup stamp = some ptr → heapLookup ptr heap = some (Memory.blockRep tag children) →
+      sptSubspt remaining refs → sizeVisited refs remaining (sptInsert stamp () seen) f tf (ptr :: visited) →
+      sizeSound limits (head :: tail) refs remaining (sptInsert stamp () seen) children f tf heap (ptr :: visited))
+    (arrays : ∀ index values ptr children,
+      sptLookup index remaining = some (.valueArray values) →
+      List.Forall₂ (fun addr item => Memory.valueInv conf item refs (addr, f, tf, heap)) children values →
+      f.lookup index = some ptr → heapLookup ptr heap = some (Memory.refBlock children) →
+      sptSubspt (sptDelete index remaining) refs → sizeVisited refs (sptDelete index remaining) seen f tf (ptr :: visited) →
+      sizeSound limits values refs (sptDelete index remaining) seen children f tf heap (ptr :: visited))
+    (mutBlocks : ∀ index tag finalised left item right ptr children,
+      sptLookup index remaining = some (.mutBlock tag finalised left item right) →
+      List.Forall₂ (fun addr item => Memory.valueInv conf item refs (addr, f, tf, heap)) children (left ++ [item] ++ right) →
+      f.lookup index = some ptr → heapLookup ptr heap = some (Memory.blockRep tag children) →
+      sptSubspt (sptDelete index remaining) refs → sizeVisited refs (sptDelete index remaining) seen f tf (ptr :: visited) →
+      sizeSound limits (left ++ [item] ++ right) refs (sptDelete index remaining) seen children f tf heap (ptr :: visited)) :
+    sizeSound limits [value] refs remaining seen [address] f tf heap visited := by
+  cases value with
+  | number n => exact sizeSound_number limits conf n refs remaining seen address f tf heap visited good architecture related subset covered
+  | word64 w => exact sizeSound_word64 limits conf w refs remaining seen address f tf heap visited related subset covered
+  | codePtr n => exact sizeSound_codePtr limits conf n refs remaining seen address f tf heap visited related subset covered
+  | block stamp tag values =>
+    cases values with
+    | nil => exact sizeSound_emptyBlock limits conf stamp tag refs remaining seen address f tf heap visited related subset covered
+    | cons head tail =>
+      cases found : (sptLookup stamp seen).isSome with
+      | true => exact sizeSound_seenBlock limits conf stamp tag head tail refs remaining seen address f tf heap visited related found subset covered
+      | false =>
+        apply sizeSound_freshBlock limits conf stamp tag head tail refs remaining seen address f tf heap visited related found subset covered
+        intro ptr children relation mapped heapFound sub coverage
+        exact blocks stamp tag head tail ptr children rfl found relation mapped heapFound sub coverage
+  | refPtr bit index =>
+    cases found : sptLookup index remaining with
+    | none => exact sizeSound_seenRef limits conf bit index refs remaining seen address f tf heap visited related noThunks found mapInRefs subset covered
+    | some cell =>
+      have direct := (Memory.valueInv_refPtr_notThunk conf bit index refs address f tf heap (noThunks index)).mp related
+      obtain ⟨⟨ptr, mapped⟩, _, _⟩ := direct
+      have reachable : Memory.reachableRefs [.refPtr bit index] refs index := by
+        exact ⟨.refPtr bit index, index, by simp, by simp [Memory.getRefs], Relation.ReflTransGen.refl⟩
+      have cellInv := cells index ptr reachable mapped
+      cases cell with
+      | byteArray flag bytes => exact sizeSound_byteArray limits conf bit index flag bytes refs remaining seen address f tf heap be visited good architecture related noThunks subset found cellInv covered
+      | valueArray values =>
+        apply sizeSound_refArray limits conf bit index values refs remaining seen address f tf heap be visited related noThunks subset found cellInv covered
+        intro ptr children relation mapped heapFound sub coverage
+        exact arrays index values ptr children found relation mapped heapFound sub coverage
+      | mutBlock tag finalised left item right =>
+        apply sizeSound_mutBlock limits conf bit index tag finalised left item right refs remaining seen address f tf heap be visited related noThunks subset found cellInv covered
+        intro ptr children relation mapped heapFound sub coverage
+        exact mutBlocks index tag finalised left item right ptr children found relation mapped heapFound sub coverage
+      | thunk mode item =>
+        exact False.elim (noThunks index mode item ((sptSubsptLookup remaining refs).mp subset index _ found))
+
+/-- Flapjack infrastructure: reachability from block fields implies
+reachability from the block itself. -/
+theorem reachableRefs_blockFields (refs : Spt (BvlSem.Ref DataSem.Value))
+    (stamp tag : Nat) (values : List DataSem.Value) (target : Nat)
+    (reachable : Memory.reachableRefs values refs target) :
+    Memory.reachableRefs [.block stamp tag values] refs target := by
+  obtain ⟨root, start, member, inRoot, path⟩ := reachable
+  refine ⟨.block stamp tag values, start, by simp, ?_, path⟩
+  simp only [Memory.getRefs, List.mem_flatMap]
+  exact ⟨root, member, inRoot⟩
+
+/-- Flapjack infrastructure: reachability from a referenced cell's fields
+extends backward across its reference edge. -/
+theorem reachableRefs_refFields (refs : Spt (BvlSem.Ref DataSem.Value))
+    (bit : Bool) (index : Nat) (values : List DataSem.Value) (target : Nat)
+    (edges : ∀ start, start ∈ Memory.getRefs (.block 0 0 values) → Memory.refEdge refs index start)
+    (reachable : Memory.reachableRefs values refs target) :
+    Memory.reachableRefs [.refPtr bit index] refs target := by
+  obtain ⟨root, start, member, inRoot, path⟩ := reachable
+  have direct : Memory.refEdge refs index start := by
+    apply edges
+    simp only [Memory.getRefs, List.mem_flatMap]
+    exact ⟨root, member, inRoot⟩
+  refine ⟨.refPtr bit index, index, by simp, by simp [Memory.getRefs], ?_⟩
+  exact (Relation.ReflTransGen.single direct).trans path
+
+/-- Flapjack infrastructure: value-array children remain reachable from the
+reference that owns them. -/
+theorem reachableRefs_valueArray (refs : Spt (BvlSem.Ref DataSem.Value))
+    (bit : Bool) (index : Nat) (values : List DataSem.Value) (target : Nat)
+    (found : sptLookup index refs = some (.valueArray values))
+    (reachable : Memory.reachableRefs values refs target) :
+    Memory.reachableRefs [.refPtr bit index] refs target := by
+  apply reachableRefs_refFields refs bit index values target _ reachable
+  intro start member
+  simpa [Memory.refEdge, found] using member
+
+/-- Flapjack infrastructure: mutable-block children remain reachable from
+the reference that owns them. -/
+theorem reachableRefs_mutBlock (refs : Spt (BvlSem.Ref DataSem.Value))
+    (bit : Bool) (index tag : Nat) (finalised : Bool)
+    (left : List DataSem.Value) (value : DataSem.Value) (right : List DataSem.Value) (target : Nat)
+    (found : sptLookup index refs = some (.mutBlock tag finalised left value right))
+    (reachable : Memory.reachableRefs (left ++ [value] ++ right) refs target) :
+    Memory.reachableRefs [.refPtr bit index] refs target := by
+  apply reachableRefs_refFields refs bit index (left ++ [value] ++ right) target _ reachable
+  intro start member
+  simpa [Memory.refEdge, found] using member
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
