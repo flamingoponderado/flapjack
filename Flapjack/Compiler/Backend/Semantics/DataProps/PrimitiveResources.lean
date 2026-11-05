@@ -154,6 +154,99 @@ theorem doApp_word_resource_frame {C F : Type} (op : ClosLang.WordOp) (args : Li
     exact accounted_resource_frame _ args state accounted next value space run
       (fun before after v h => doAppAux_word_resource_frame op args before after v h)
 
+/-- Successful global-variable operations preserve the resource observations. -/
+theorem doAppAux_global_resource_frame {C F : Type} (op : ClosLang.GlobOp) (args : List Value)
+    (state next : State C F) (value : Value)
+    (run : doAppAux (.globOp op) args state = .val (value, next)) :
+    state.ffi.ioEvents <+: next.ffi.ioEvents ∧ BackendProps.optionLe state.stackMax next.stackMax ∧
+      (next.safeForSpace = true → state.safeForSpace = true) := by
+  cases op with
+  | allocGlobal => simp [doAppAux, applyNonFfi] at run
+  | globalsPtr =>
+    cases args with
+    | cons a rest => simp [doAppAux, applyNonFfi] at run
+    | nil =>
+      cases global : state.global with
+      | none => simp [doAppAux, applyNonFfi, global] at run
+      | some ptr =>
+        simp [doAppAux, applyNonFfi, global] at run
+        obtain ⟨rfl, rfl⟩ := run
+        simp [BackendProps.optionLe_refl]
+  | setGlobalsPtr =>
+    cases args with
+    | nil => simp [doAppAux, applyNonFfi] at run
+    | cons a rest =>
+      cases rest with
+      | cons b rest => simp [doAppAux, applyNonFfi] at run
+      | nil =>
+        cases a <;> simp [doAppAux, applyNonFfi] at run
+        case refPtr bit ptr =>
+          cases bit with
+          | false => simp at run
+          | true =>
+            simp at run
+            obtain ⟨rfl, rfl⟩ := run
+            simp [BackendProps.optionLe_refl]
+  | global index =>
+    cases args with
+    | cons a rest => simp [doAppAux, applyNonFfi] at run
+    | nil =>
+      cases global : state.global with
+      | none => simp [doAppAux, applyNonFfi, global] at run
+      | some ptr =>
+        cases found : sptLookup ptr state.refs with
+        | none => simp [doAppAux, applyNonFfi, global, found] at run
+        | some entry =>
+          cases entry with
+          | byteArray flag bytes => simp [doAppAux, applyNonFfi, global, found] at run
+          | thunk mode v => simp [doAppAux, applyNonFfi, global, found] at run
+          | mutBlock tag done left child right => simp [doAppAux, applyNonFfi, global, found] at run
+          | valueArray values =>
+            cases slot : values[index]? with
+            | none => simp [doAppAux, applyNonFfi, global, found, slot] at run
+            | some v =>
+              simp [doAppAux, applyNonFfi, global, found, slot] at run
+              obtain ⟨rfl, rfl⟩ := run
+              simp [BackendProps.optionLe_refl]
+  | setGlobal index =>
+    cases args with
+    | nil => simp [doAppAux, applyNonFfi] at run
+    | cons a rest =>
+      cases rest with
+      | cons b rest => simp [doAppAux, applyNonFfi] at run
+      | nil =>
+        cases global : state.global with
+        | none => simp [doAppAux, applyNonFfi, global] at run
+        | some ptr =>
+          cases found : sptLookup ptr state.refs with
+          | none => simp [doAppAux, applyNonFfi, global, found] at run
+          | some entry =>
+            cases entry with
+            | byteArray flag bytes => simp [doAppAux, applyNonFfi, global, found] at run
+            | thunk mode v => simp [doAppAux, applyNonFfi, global, found] at run
+            | mutBlock tag done left child right => simp [doAppAux, applyNonFfi, global, found] at run
+            | valueArray values =>
+              by_cases bound : index < values.length
+              · simp [doAppAux, applyNonFfi, global, found, bound] at run
+                obtain ⟨rfl, rfl⟩ := run
+                simp [BackendProps.optionLe_refl]
+              · simp [doAppAux, applyNonFfi, global, found, bound] at run
+
+
+/-- Global-variable operations preserve resources through all accounting. -/
+theorem doApp_global_resource_frame {C F : Type} (op : ClosLang.GlobOp) (args : List Value)
+    (state next : State C F) (value : Value)
+    (run : doApp (.globOp op) args state = .val (value, next)) :
+    state.ffi.ioEvents <+: next.ffi.ioEvents ∧ BackendProps.optionLe state.stackMax next.stackMax ∧
+      (next.safeForSpace = true → state.safeForSpace = true) := by
+  simp only [doApp] at run
+  cases space : doSpace (.globOp op) args state with
+  | none => simp [space] at run
+  | some accounted =>
+    simp only [space] at run
+    exact accounted_resource_frame _ args state accounted next value space run
+      (fun before after v h => doAppAux_global_resource_frame op args before after v h)
+
 /-- A successful code-label lookup does not change source resources. -/
 theorem doAppAux_label_resource_frame {C F : Type} (label : Nat) (args : List Value)
     (state next : State C F) (value : Value)

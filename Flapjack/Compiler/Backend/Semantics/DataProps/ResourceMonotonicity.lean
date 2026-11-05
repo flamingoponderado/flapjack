@@ -143,6 +143,14 @@ theorem resourceMono_labelAssign {C F : Type} (dest label : Nat)
   intro args before after value run
   exact doApp_label_resource_frame label args before after value run
 
+/-- Global-variable assignments satisfy source resource monotonicity. -/
+theorem resourceMono_globalAssign {C F : Type} (dest : Nat) (op : ClosLang.GlobOp)
+    (names : List Nat) (live : Option NumSet) (state : State C F) :
+    ResourceMono (.assign dest (.globOp op) names live) state := by
+  apply resourceMono_assign dest (.globOp op) names live state
+  intro args before after value run
+  exact doApp_global_resource_frame op args before after value run
+
 /-- Sequential source execution composes the three resource properties. -/
 theorem resourceMono_seq {C F : Type} (first second : DataLang.Prog) (state : State C F)
     (firstMono : ResourceMono first state)
