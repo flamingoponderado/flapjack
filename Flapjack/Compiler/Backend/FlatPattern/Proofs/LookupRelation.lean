@@ -294,6 +294,29 @@ theorem aLookupRel_mono {K A B : Type} (predicate predicate' : K → Prop)
     simp [leftLookup, rightLookup, optionRel] at old ⊢
   exact weaken key _ _ ⟨selected, old⟩
 
+/-- A key-preserving map transforms the value found by association lookup. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "ALOOKUP_MAP_3"]
+theorem aLookup_map_keyPreserving {K A B : Type} (f : K × A → K × B)
+    (xs : List (K × A)) (key : K) (keys : ∀ x ∈ xs, (f x).1 = x.1) :
+    holALookup (xs.map f) key = (holALookup xs key).map (fun value => (f (key, value)).2) := by
+  classical
+  induction xs with
+  | nil => simp [holALookup]
+  | cons pair rest ih =>
+    have first := keys pair (by simp)
+    have tail : ∀ x ∈ rest, (f x).1 = x.1 := by
+      intro x member
+      exact keys x (List.mem_cons_of_mem _ member)
+    obtain ⟨headKey, headValue⟩ := pair
+    cases result : f (headKey, headValue) with
+    | mk mappedKey mappedValue =>
+      have same : mappedKey = headKey := by simpa [result] using first
+      subst mappedKey
+      by_cases eq : key = headKey
+      · subst key
+        simp [holALookup, result]
+      · simp [holALookup, result, eq, ih tail]
+
 /-- Pointwise related mapped bindings induce related association-list lookups. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "ALOOKUP_rel_MAP_same"]
 theorem aLookupRel_map_same {X K A B : Type} (predicate : K → Prop) (relation : A → B → Prop)

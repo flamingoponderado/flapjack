@@ -143,6 +143,7 @@ theorem valueRel_leftCases (right : Value) :
       exact ⟨values', rfl, rel⟩
 
 /-- Bounded environment relatedness is monotone in the name bound. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "env_rel_mono"]
 theorem envRel_mono (i j : Nat) (left right : Environment Value)
     (related : EnvRel i left right) (bound : j ≤ i) : EnvRel j left right := by
   rw [envRel_iff_lookup] at related ⊢
@@ -150,6 +151,7 @@ theorem envRel_mono (i j : Nat) (left right : Environment Value)
   exact related name (Nat.lt_of_lt_of_le small bound)
 
 /-- Lookup of an in-range name yields related optional values. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "env_rel_ALOOKUP"]
 theorem envRel_lookup (n : Nat) (left right : Environment Value) (name : Flapjack.AstHOL.VarN)
     (related : EnvRel n left right) (bound : decNameToNum name < n) :
     optionRel ValueRel (holALookup left.v name) (holALookup right.v name) :=

@@ -13299,13 +13299,13 @@
     "reviewer": "Compared every source clause and typed HOL capture in pattern_exh_steps_probe.out, including HOL equality and conjunction for tag and length, literal same-type checks, and all fallback cases; the literal and term carriers are separately reviewed."
   },
   {
-    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
-    "hol_name": "ALOOKUP_rel_MAP_same",
-    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
-    "lean_name": "aLookupRel_map_same",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_pattern_install_relation_probe.out, including independent input and payload types; full source correspondence remains pending."
-  },
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "ALOOKUP_rel_MAP_same",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
+  "lean_name": "aLookupRel_map_same",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the HOL source and typed lookup_map_same capture: the mapped input type, key type and two value types are independent; the same pointwise key equality and predicate-guarded value relation imply the bounded association-lookup relation."
+},
   {
     "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
     "hol_name": "simple_basic_val_rel_def",
@@ -125128,5 +125128,29 @@
   "lean_name": "maxAddLe",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared the HOL source theorem and typed max_add_le capture: num MAX is Nat max, and the original additions, inequalities and connectives are retained."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "env_rel_mono",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/ValueRelationCases.lean",
+  "lean_name": "envRel_mono",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the HOL source and typed environment_relation_mono capture: the same bounded value environments, decreasing numeric bound and resulting environment relation are retained; the conjunctive premise is curried."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "env_rel_ALOOKUP",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/ValueRelationCases.lean",
+  "lean_name": "envRel_lookup",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the HOL source and typed environment_relation_lookup capture: related value environments and an in-range mlstring name imply the same option relation between association lookups; the conjunctive premise is curried."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "ALOOKUP_MAP_3",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
+  "lean_name": "aLookup_map_keyPreserving",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the HOL source and typed alookup_map_3 capture: three independent key, input-value and output-value types, membership-guarded first-component preservation, and the original mapped association lookup are retained; OPTION_MAP is Option.map."
 }
 ]
