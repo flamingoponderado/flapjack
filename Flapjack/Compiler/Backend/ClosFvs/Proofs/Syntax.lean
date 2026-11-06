@@ -301,18 +301,4 @@ decreasing_by all_goals subst_vars; simp_wf <;> omega
 
 end
 
-/-- The executed cleanup returns a closed list, preserves absent capture
-annotations and global safety, and keeps the global-write bag. This is
-Lean-side production-path composition, not a standalone HOL declaration. -/
-theorem compileBounded_invariants (fuel : Nat) (expressions : List Exp)
-    (safe : everyFnVarsNone expressions) :
-    ∃ output, expressions.mapM (removeBounded fuel 0) = some output ∧
-      ClosKnown.fvMax 0 output ∧ everyFnVarsNone output ∧
-      (esgcFreeList output ↔ esgcFreeList expressions) ∧ elistGlobals output = elistGlobals expressions := by
-  refine ⟨removeList 0 expressions, compileBounded_eq_source fuel expressions, ?_, ?_, ?_, ?_⟩
-  · exact removeList_fvMax expressions 0 safe
-  · exact (removeList_varsNone expressions 0).mpr safe
-  · exact removeList_esgcFree expressions 0
-  · exact removeList_globals expressions 0
-
 end Flapjack.Compiler.Backend.ClosFvs
