@@ -16,8 +16,8 @@ theorem holFmapAsFiniteSupportParamWitness_allocHoleHasVal_refs (refs : HolFinit
     mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
 
 /-- An extra environment slot identifies a fresh, unfinalised allocated hole. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "alloc_hole_has_val_def"
-  (fmap_as_finite_support_parameters := [f, refs])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "alloc_hole_has_val_def" (fmap_as_finite_support_parameters := [f, refs])] -/
 noncomputable def allocHoleHasVal (f : HolFiniteMapExact Nat Nat)
     (refs : HolFiniteMapExact Nat (Ref Value)) (extras : List Value) (ptrIndex childIndex : Nat) (c : Value) : Prop :=
   ∃ holePtr tag left right, ptrIndex < extras.length ∧
@@ -29,8 +29,8 @@ theorem holFmapAsFiniteSupportParamWitness_wfVars_list_rel_f (f : HolFiniteMapEx
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 
 /-- Well-formed variable selections yield pointwise related values. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "wf_vars_list_rel"
-  (fmap_as_finite_support_parameters := [f])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "wf_vars_list_rel" (fmap_as_finite_support_parameters := [f])] -/
 theorem wfVars_list_rel (vars : List Nat) (opt : Bool) (f : HolFiniteMapExact Nat Nat)
     (env1 env2 : List Value) (related : envRel opt f env1 env2) (wf : wfVars env1.length vars) :
     List.Forall₂ (valueRel f) (vars.map (fun n => holEl n env1)) (vars.map (fun n => holEl n env2)) := by
@@ -47,8 +47,8 @@ theorem holFmapAsFiniteSupportParamWitness_wfVars_env_rel_f (f : HolFiniteMapExa
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 
 /-- Selecting well-formed variables produces related unoptimized environments. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "wf_vars_env_rel"
-  (fmap_as_finite_support_parameters := [f])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "wf_vars_env_rel" (fmap_as_finite_support_parameters := [f])] -/
 theorem wfVars_env_rel (vars : List Nat) (opt : Bool) (f : HolFiniteMapExact Nat Nat)
     (env1 env2 : List Value) (related : envRel opt f env1 env2) (wf : wfVars env1.length vars) :
     envRel false f (vars.map (fun n => holEl n env1)) (vars.map (fun n => holEl n env2)) := by
@@ -59,8 +59,8 @@ theorem holFmapAsFiniteSupportParamWitness_wfVars_env_rel_opt_f (f : HolFiniteMa
 
 /-- Selecting well-formed variables and appending hole metadata produces a
 related optimized environment. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "wf_vars_env_rel_opt"
-  (fmap_as_finite_support_parameters := [f])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "wf_vars_env_rel_opt" (fmap_as_finite_support_parameters := [f])] -/
 theorem wfVars_env_rel_opt (vars : List Nat) (opt : Bool) (f : HolFiniteMapExact Nat Nat)
     (env1 env2 : List Value) (ptr : Nat) (idx : Int)
     (related : envRel opt f env1 env2) (wf : wfVars env1.length vars)
@@ -80,8 +80,8 @@ theorem holFmapAsFiniteSupportParamWitness_stateRefRel_sub_target (target : HolF
 
 /-- Removing a target reference outside the pointer-map range preserves the
 state-reference relation. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_ref_rel_sub"
-  (fmap_as_finite_support_parameters := [f, source, target])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_ref_rel_sub" (fmap_as_finite_support_parameters := [f, source, target])] -/
 theorem stateRefRel_sub (ptr : Nat) (f : HolFiniteMapExact Nat Nat)
     (source : HolFiniteMapExact Nat (Ref Value)) (target : HolFiniteMapExact Nat (Ref Value))
     (outside : ptr ∉ mapRange f) (related : stateRefRel f source target) :

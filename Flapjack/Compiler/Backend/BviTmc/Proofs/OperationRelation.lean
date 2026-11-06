@@ -54,8 +54,8 @@ private theorem intResultRelated (f : HolFiniteMapExact Nat Nat) (op : ClosLang.
   all_goals first | exact .number _ | exact .block _ [] [] .nil
 
 /-- The word-operation case of the source primitive simulation. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_word {C F : Type} (f : HolFiniteMapExact Nat Nat) (op : ClosLang.WordOp)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -82,8 +82,8 @@ theorem doApp_op_rel_word {C F : Type} (f : HolFiniteMapExact Nat Nat) (op : Clo
       exact found
 
 /-- The integer-operation case of the source primitive simulation. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_int {C F : Type} (f : HolFiniteMapExact Nat Nat) (op : ClosLang.IntOp)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -111,8 +111,8 @@ theorem doApp_op_rel_int {C F : Type} (f : HolFiniteMapExact Nat Nat) (op : Clos
 
 /-- The label case uses code-domain preservation to retain code pointers
 even when TMC rewrites the function body. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_label {C F : Type} (f : HolFiniteMapExact Nat Nat) (label : Nat)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -144,8 +144,8 @@ theorem doApp_op_rel_label {C F : Type} (f : HolFiniteMapExact Nat Nat) (label :
 
 /-- Reading the globals pointer preserves its translation through the
 TMC pointer map. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_globalsPtr {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -179,8 +179,8 @@ theorem doApp_op_rel_globalsPtr {C F : Type} (f : HolFiniteMapExact Nat Nat)
           exact found
 
 /-- Setting the globals pointer preserves the translated state relation. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_setGlobalsPtr {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -225,8 +225,8 @@ theorem doApp_op_rel_setGlobalsPtr {C F : Type} (f : HolFiniteMapExact Nat Nat)
 
 /-- Allocating globals is rejected by the BVI primitive dispatcher, so its
 successful-execution simulation case is impossible. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_allocGlobal {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -266,8 +266,8 @@ private theorem related_set (f : HolFiniteMapExact Nat Nat) {xs ys : List Value}
     | succ index => simpa using List.Forall₂.cons head (ih index)
 
 /-- Reading a global follows the translated pointer into related arrays. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_global {C F : Type} (f : HolFiniteMapExact Nat Nat) (index : Nat)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -312,8 +312,8 @@ theorem doApp_op_rel_global {C F : Type} (f : HolFiniteMapExact Nat Nat) (index 
               exact found
 
 /-- Writing a global updates related arrays while preserving separate holes. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_setGlobal {C F : Type} (f : HolFiniteMapExact Nat Nat) (index : Nat)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -375,8 +375,8 @@ theorem doApp_op_rel_setGlobal {C F : Type} (f : HolFiniteMapExact Nat Nat) (ind
               · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, sourceGlobal, sourceFound, bound] at run
 
 /-- All global operations satisfy the primitive simulation. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_glob {C F : Type} (f : HolFiniteMapExact Nat Nat) (op : ClosLang.GlobOp)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -414,8 +414,8 @@ private theorem finalise_related_identity (f : HolFiniteMapExact Nat Nat) (v w :
 
 /-- Finalising a related value leaves both related heaps unchanged, since
 the source heap relation excludes mutable constructor blocks. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_finalise_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, refsNext, nextMap, targetRefsNext])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_finalise_rel" (fmap_as_finite_support_relation := [BviState.refs, f, refsNext, nextMap, targetRefsNext])] -/
 theorem doApp_op_finalise_rel {C F : Type} (v : Value) (refsNext : HolFiniteMapExact Nat (Ref Value))
     (relatedValue result : Value) (f : HolFiniteMapExact Nat Nat)
     (source : BviState (Nat × C) F) (target : BviState C F)
@@ -438,8 +438,8 @@ theorem doApp_op_finalise_rel {C F : Type} (v : Value) (refsNext : HolFiniteMapE
   · simpa using statesRelated
 
 /-- The finalise-cons primitive preserves related values and heaps. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_finaliseCons {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -470,8 +470,8 @@ theorem doApp_op_rel_finaliseCons {C F : Type} (f : HolFiniteMapExact Nat Nat)
           exact found
 
 /-- Updating a mutable constructor cannot succeed in a related source heap. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_updateCons {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -495,8 +495,8 @@ theorem doApp_op_rel_updateCons {C F : Type} (f : HolFiniteMapExact Nat Nat)
 
 /-- Allocating an array of related values extends the pointer renaming with
 the fresh source and target addresses. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_ref {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -586,8 +586,8 @@ private theorem replicate_related (f : HolFiniteMapExact Nat Nat) (count : Nat) 
   | succ count ih => simpa only [List.replicate_succ] using List.Forall₂.cons related ih
 
 /-- Allocating repeated values extends the renaming at both fresh addresses. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_refArray {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -637,8 +637,8 @@ theorem doApp_op_rel_refArray {C F : Type} (f : HolFiniteMapExact Nat Nat)
         | refPtr flag ptr => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
 
 /-- Byte-array allocation preserves bytes and maps the fresh pointer. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_refByte {C F : Type} (f : HolFiniteMapExact Nat Nat) (flag : Bool)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -685,8 +685,8 @@ theorem doApp_op_rel_refByte {C F : Type} (f : HolFiniteMapExact Nat Nat) (flag 
                 simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, negative, byteValue]
 
 /-- The length of a value array is unchanged by pointer renaming. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_length {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -735,8 +735,8 @@ theorem doApp_op_rel_length {C F : Type} (f : HolFiniteMapExact Nat Nat)
                 exact found
 
 /-- The length of a byte array is unchanged by pointer renaming. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_lengthByte {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -784,8 +784,8 @@ theorem doApp_op_rel_lengthByte {C F : Type} (f : HolFiniteMapExact Nat Nat)
                 exact found
 
 /-- Element reads return related values from either blocks or reference arrays. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_el {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -862,8 +862,8 @@ theorem doApp_op_rel_el {C F : Type} (f : HolFiniteMapExact Nat Nat)
         | refPtr flag ptr => cases first <;> simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
 
 /-- Reading a byte through a mapped pointer returns the same integer. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_derefByte {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -916,8 +916,8 @@ theorem doApp_op_rel_derefByte {C F : Type} (f : HolFiniteMapExact Nat Nat)
                       exact present
 
 /-- Byte-array bounds checks agree for mapped pointers. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_boundsCheckByte {C F : Type} (f : HolFiniteMapExact Nat Nat) (loose : Bool)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -968,8 +968,8 @@ theorem doApp_op_rel_boundsCheckByte {C F : Type} (f : HolFiniteMapExact Nat Nat
                   exact present
 
 /-- Bounds checks agree for related value arrays of equal length. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_boundsCheckArray {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -1021,8 +1021,8 @@ theorem doApp_op_rel_boundsCheckArray {C F : Type} (f : HolFiniteMapExact Nat Na
                   exact present
 
 /-- Updating a value array preserves related cells and unrelated holes. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_update {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -1089,8 +1089,8 @@ theorem doApp_op_rel_update {C F : Type} (f : HolFiniteMapExact Nat Nat)
                         exact present
 
 /-- Updating a byte array preserves its contents on both sides and leaves holes intact. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_updateByte {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -1158,8 +1158,8 @@ theorem doApp_op_rel_updateByte {C F : Type} (f : HolFiniteMapExact Nat Nat)
                           exact present
 
 /-- Comparing byte arrays gives the same result after pointer renaming. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_stringCmp {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (fast : Bool) (op : Opb) (values relatedValues : List Value)
     (source sourceNext : BviState (Nat × C) F) (target : BviState C F) (value : Value)
@@ -1217,8 +1217,8 @@ theorem doApp_op_rel_stringCmp {C F : Type} (f : HolFiniteMapExact Nat Nat)
                       exact present
 
 /-- Bytewise XOR updates corresponding destination arrays identically. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_xorByte {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -1284,8 +1284,8 @@ theorem doApp_op_rel_xorByte {C F : Type} (f : HolFiniteMapExact Nat Nat)
                         exact present
 
 /-- Garbage-collector configuration leaves related states unchanged. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_configGC {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -1338,8 +1338,8 @@ private theorem rejected_memory_simulation {C F : Type} (f : HolFiniteMapExact N
   contradiction
 
 /-- The directly rejected byte-list conversion case. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_fromListByte {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -1354,8 +1354,8 @@ theorem doApp_op_rel_fromListByte {C F : Type} (f : HolFiniteMapExact Nat Nat)
   rejected_memory_simulation f .fromListByte values relatedValues source sourceNext target value rfl run
 
 /-- The directly rejected byte-array-to-list conversion case. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_toListByte {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -1370,8 +1370,8 @@ theorem doApp_op_rel_toListByte {C F : Type} (f : HolFiniteMapExact Nat Nat)
   rejected_memory_simulation f .toListByte values relatedValues source sourceNext target value rfl run
 
 /-- The directly rejected byte-vector concatenation case. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_concatByteVec {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -1386,8 +1386,8 @@ theorem doApp_op_rel_concatByteVec {C F : Type} (f : HolFiniteMapExact Nat Nat)
   rejected_memory_simulation f .concatByteVec values relatedValues source sourceNext target value rfl run
 
 /-- The directly rejected allocating byte-copy case. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_copyByte_new {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -1402,8 +1402,8 @@ theorem doApp_op_rel_copyByte_new {C F : Type} (f : HolFiniteMapExact Nat Nat)
   rejected_memory_simulation f (.copyByte true) values relatedValues source sourceNext target value rfl run
 
 /-- Mutable-constructor allocation is excluded by the original pass premise. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_mutCons {C F : Type} (f : HolFiniteMapExact Nat Nat) (tag index : Nat)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -1418,8 +1418,8 @@ theorem doApp_op_rel_mutCons {C F : Type} (f : HolFiniteMapExact Nat Nat) (tag i
   exact (noMutcons tag index rfl).elim
 
 /-- Byte-vector length is rejected by the delegated BVL dispatcher. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_lengthByteVec {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -1434,8 +1434,8 @@ theorem doApp_op_rel_lengthByteVec {C F : Type} (f : HolFiniteMapExact Nat Nat)
   simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
 
 /-- Byte-vector dereference is rejected by the delegated BVL dispatcher. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_derefByteVec {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -1451,8 +1451,8 @@ theorem doApp_op_rel_derefByteVec {C F : Type} (f : HolFiniteMapExact Nat Nat)
 
 /-- In-place byte copying preserves related heaps for independently mapped
 source and destination pointers, including when the pointers alias. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_copyByte_inPlace {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -1540,8 +1540,8 @@ theorem doApp_op_rel_copyByte_inPlace {C F : Type} (f : HolFiniteMapExact Nat Na
                                     exact present
 
 /-- Every memory operation satisfies the source primitive simulation. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_mem {C F : Type} (f : HolFiniteMapExact Nat Nat) (op : ClosLang.MemOp)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -1582,8 +1582,8 @@ theorem doApp_op_rel_mem {C F : Type} (f : HolFiniteMapExact Nat Nat) (op : Clos
   | configGC => exact doApp_op_rel_configGC f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
 
 /-- Structural equality gives the same result on related values and heaps. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_equal {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -1627,8 +1627,8 @@ theorem doApp_op_rel_equal {C F : Type} (f : HolFiniteMapExact Nat Nat)
                 exact present
 
 /-- Constructing a block preserves its pointwise-related fields. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_cons {C F : Type} (f : HolFiniteMapExact Nat Nat) (tag : Nat)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -1651,8 +1651,8 @@ theorem doApp_op_rel_cons {C F : Type} (f : HolFiniteMapExact Nat Nat) (tag : Na
     exact present
 
 /-- Converting a related list to a block preserves all of its fields. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_fromList {C F : Type} (f : HolFiniteMapExact Nat Nat) (tag : Nat)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -1706,8 +1706,8 @@ private theorem related_append (f : HolFiniteMapExact Nat Nat) {xs ys xs' ys' : 
   | cons head tail ih => exact .cons head ih
 
 /-- Appending related list values produces related lists. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_listAppend {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -1766,8 +1766,8 @@ private theorem elemAt_eq_el {C F : Type} (index : Nat) (argument : Value) (stat
   | some cell => cases cell <;> simp
 
 /-- Indexed block access agrees with the corresponding array-element read. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_elemAt {C F : Type} (f : HolFiniteMapExact Nat Nat) (index : Nat)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -1797,8 +1797,8 @@ theorem doApp_op_rel_elemAt {C F : Type} (f : HolFiniteMapExact Nat Nat) (index 
           valueRel, stateRel, submap, fresh, holes, unfinalised⟩
 
 /-- Related blocks have the same length. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_lengthBlock {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -1837,8 +1837,8 @@ theorem doApp_op_rel_lengthBlock {C F : Type} (f : HolFiniteMapExact Nat Nat)
             exact present
 
 /-- Tag and length tests agree on related blocks. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_tagLenEq {C F : Type} (f : HolFiniteMapExact Nat Nat) (tag length : Nat)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -1878,8 +1878,8 @@ theorem doApp_op_rel_tagLenEq {C F : Type} (f : HolFiniteMapExact Nat Nat) (tag 
 
 
 /-- Length tests agree on related blocks. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_lenEq {C F : Type} (f : HolFiniteMapExact Nat Nat) (length : Nat)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -1919,8 +1919,8 @@ theorem doApp_op_rel_lenEq {C F : Type} (f : HolFiniteMapExact Nat Nat) (length 
 
 
 /-- Tag tests agree on related blocks. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_tagEq {C F : Type} (f : HolFiniteMapExact Nat Nat) (tag : Nat)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -1968,8 +1968,8 @@ private theorem asBool_related (f : HolFiniteMapExact Nat Nat) (v w : Value)
     cases fields <;> simp [asBool]
 
 /-- Boolean negation agrees on related values. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_boolNot {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -2006,8 +2006,8 @@ theorem doApp_op_rel_boolNot {C F : Type} (f : HolFiniteMapExact Nat Nat)
             exact present
 
 /-- Boolean tests agree on related operands. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_boolTest {C F : Type} (f : HolFiniteMapExact Nat Nat) (test : AstHOL.Test)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -2054,8 +2054,8 @@ theorem doApp_op_rel_boolTest {C F : Type} (f : HolFiniteMapExact Nat Nat) (test
                   exact present
 
 /-- Bounds checks return the same boolean for related blocks. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_boundsCheckBlock {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -2100,8 +2100,8 @@ theorem doApp_op_rel_boundsCheckBlock {C F : Type} (f : HolFiniteMapExact Nat Na
                 exact present
 
 /-- Constant construction preserves the state relation across fresh strings. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_build {C F : Type} (f : HolFiniteMapExact Nat Nat) (parts : List ClosLang.ConstPart)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -2135,8 +2135,8 @@ theorem doApp_op_rel_build {C F : Type} (f : HolFiniteMapExact Nat Nat) (parts :
         BviSem.toBvl, BviSem.fromBvl, targetRun]
 
 /-- Block extension preserves the related prefix and selected slice. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_consExtend {C F : Type} (f : HolFiniteMapExact Nat Nat) (tag : Nat)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -2200,8 +2200,8 @@ theorem doApp_op_rel_consExtend {C F : Type} (f : HolFiniteMapExact Nat Nat) (ta
                         exact present
 
 /-- Constant comparison agrees for related values, including string references. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_equalConst {C F : Type} (f : HolFiniteMapExact Nat Nat) (part : ClosLang.ConstPart)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -2263,8 +2263,8 @@ theorem doApp_op_rel_equalConst {C F : Type} (f : HolFiniteMapExact Nat Nat) (pa
                 exact present
 
 /-- The BVI/BVL dispatcher rejects the obsolete constant operation. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_constant {C F : Type} (f : HolFiniteMapExact Nat Nat) (constant : ClosLang.Const)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -2279,8 +2279,8 @@ theorem doApp_op_rel_constant {C F : Type} (f : HolFiniteMapExact Nat Nat) (cons
   simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock] at run
 
 /-- Every block operation satisfies the source primitive simulation. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_block {C F : Type} (f : HolFiniteMapExact Nat Nat) (op : ClosLang.BlockOp)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -2311,8 +2311,8 @@ theorem doApp_op_rel_block {C F : Type} (f : HolFiniteMapExact Nat Nat) (op : Cl
   | build parts => exact doApp_op_rel_build f parts values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
 
 /-- Allocating a thunk preserves its related payload and extends the pointer map. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_allocThunk {C F : Type} (f : HolFiniteMapExact Nat Nat) (mode : AstHOL.ThunkMode)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -2350,8 +2350,8 @@ theorem doApp_op_rel_allocThunk {C F : Type} (f : HolFiniteMapExact Nat Nat) (mo
             BviSem.toBvl, BviSem.fromBvl, targetGood]
 
 /-- Updating a thunk preserves related payloads and untouched mutable holes. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_updateThunk {C F : Type} (f : HolFiniteMapExact Nat Nat) (mode : AstHOL.ThunkMode)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -2418,8 +2418,8 @@ theorem doApp_op_rel_updateThunk {C F : Type} (f : HolFiniteMapExact Nat Nat) (m
                           exact present
 
 /-- The force-thunk primitive is rejected by the BVL dispatcher. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_forceThunk {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -2434,8 +2434,8 @@ theorem doApp_op_rel_forceThunk {C F : Type} (f : HolFiniteMapExact Nat Nat)
   simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp] at run
 
 /-- Every thunk operation satisfies the source primitive simulation. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_thunk {C F : Type} (f : HolFiniteMapExact Nat Nat) (op : AstHOL.ThunkOp)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -2453,8 +2453,8 @@ theorem doApp_op_rel_thunk {C F : Type} (f : HolFiniteMapExact Nat Nat) (op : As
   | forceThunk => exact doApp_op_rel_forceThunk f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
 
 /-- External calls receive the same bytes and preserve related heaps and FFI state. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_ffi {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (name : Basis.Pure.MlString.MlString) (values relatedValues : List Value)
     (source sourceNext : BviState (Nat × C) F) (target : BviState C F) (value : Value)
@@ -2527,8 +2527,8 @@ theorem doApp_op_rel_ffi {C F : Type} (f : HolFiniteMapExact Nat Nat)
                             exact present
 
 /-- Dynamic installation preserves the primitive simulation. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel_install {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)
@@ -2552,8 +2552,8 @@ theorem doApp_op_rel_install {C F : Type} (f : HolFiniteMapExact Nat Nat)
 
 /-- Successful primitive operations are simulated by the TMC target,
 preserving related results, state, freshness and mutable-hole invariants. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel {C F : Type} (f : HolFiniteMapExact Nat Nat) (op : ClosLang.Op)
     (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
     (target : BviState C F) (value : Value)

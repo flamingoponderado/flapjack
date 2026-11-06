@@ -1882,8 +1882,8 @@ theorem heapLookup_similarData_raw {α β γ : Type} (conf : Config γ)
 
 /-- Related reference heaps preserve lookup results and their renamed child
 roots. The local HOL proof has not yet been replayed. -/
-@[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "heap_lookup_similar_data_IMP"
-  (fmap_as_finite_support_parameters := [f])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "heap_lookup_similar_data_IMP" (fmap_as_finite_support_parameters := [f])] -/
 theorem heapLookup_similarData {α β γ : Type} (conf : Config γ)
     (left right : List (HeapElement α β)) (n : Nat) (xs : List (HeapAddress α))
     (len : Nat) (payload : β) (f : HolFiniteMapExact Nat Nat)
@@ -2076,8 +2076,8 @@ theorem partialGc_heapLength {α β : Type} (conf : Config β)
 
 /-- Equal flattened root and reference traversals split at the original
 root-list boundary. The local HOL proof has not yet been replayed. -/
-@[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "ADDR_MAP_APPEND_LENGTH_IMP"
-  (fmap_as_finite_support_parameters := [f])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "ADDR_MAP_APPEND_LENGTH_IMP" (fmap_as_finite_support_parameters := [f])] -/
 theorem addrMap_appendLength {α β : Type} (conf : Config β)
     (roots roots1 : List (HeapAddress α)) (refs refs1 : List (HeapElement α β))
     (f : HolFiniteMapExact Nat Nat)

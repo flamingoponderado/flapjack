@@ -76,8 +76,8 @@ theorem holFmapAsFiniteSupportParamWitness_vRel_subspt_refs
   holFmapAsFiniteSupportParamWitness_vRel_refs refs key
 
 /-- Extending the code tree preserves related values. -/
-@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "v_rel_subspt"
-  (fmap_as_finite_support_parameters := [f, refs])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "v_rel_subspt" (fmap_as_finite_support_parameters := [f, refs])] -/
 theorem vRel_subspt {maxApp : Nat} (f : HolFiniteMapExact Nat Nat)
     (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value))
     {code1 code2 : Spt (Nat × Bvl.Exp)} {x y}
@@ -163,8 +163,8 @@ theorem holFmapAsFiniteSupportParamWitness_envRel_subspt_refs
   holFmapAsFiniteSupportParamWitness_vRel_refs refs key
 
 /-- Extending the code tree preserves related environments. -/
-@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "env_rel_subspt"
-  (fmap_as_finite_support_parameters := [f, refs])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "env_rel_subspt" (fmap_as_finite_support_parameters := [f, refs])] -/
 theorem envRel_subspt {maxApp : Nat} (f : HolFiniteMapExact Nat Nat)
     (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value))
     {code1 code2 : Spt (Nat × Bvl.Exp)} {xs ys}

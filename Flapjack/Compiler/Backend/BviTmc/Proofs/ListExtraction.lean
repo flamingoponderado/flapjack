@@ -372,8 +372,8 @@ termination_by expBudget e
 decreasing_by all_goals subst_vars; simp only [expBudget]; omega
 
 /-- Recursive-call extraction simulates evaluation for every argument list. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_bvi_to_cb_aux_inr"
-  (fmap_as_finite_support := [refs])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_bvi_to_cb_aux_inr" (fmap_as_finite_support := [refs])] -/
 theorem evaluateList_inr {C F : Type} (n loc tag : Nat) (args : List Bvi.Exp)
     (env : List Value) (state final : BviState C F) (result : BviResult)
     (bs : List Bvi.Exp) (cb : CallBlock)
@@ -413,8 +413,8 @@ decreasing_by all_goals subst_vars; simp only [listBudget]; omega
 end
 
 /-- The complete mutual recursive-call extraction simulation. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_bvi_to_cb_aux_inr_lemma"
-  (fmap_as_finite_support := [refs])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_bvi_to_cb_aux_inr_lemma" (fmap_as_finite_support := [refs])] -/
 theorem evaluate_inr_lemma {C F : Type} :
     (∀ (n loc tag : Nat) (e : Bvi.Exp) (env : List Value) (state final : BviState C F)
       (result : BviResult) (bs : List Bvi.Exp) (cb : CallBlock),
@@ -439,8 +439,8 @@ theorem evaluate_inr_lemma {C F : Type} :
   exact ⟨evaluateOne_inr, evaluateList_inr⟩
 
 /-- Successful call-block conversion preserves evaluation when let-bound. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_bvi_to_cb"
-  (fmap_as_finite_support := [refs])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_bvi_to_cb" (fmap_as_finite_support := [refs])] -/
 theorem evaluate_bvi_to_cb {C F : Type} (cb : CallBlock) (n loc : Nat) (e : Bvi.Exp)
     (env : List Value) (state final : BviState C F) (result : BviResult) (bs : List Bvi.Exp)
     (run : evaluate [e] env state = (result, final))

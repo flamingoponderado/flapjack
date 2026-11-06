@@ -15,8 +15,8 @@ theorem holFmapAsFiniteSupportParamWitness_eorRel_f (f : HolFiniteMapExact Nat N
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 
 /-- Exceptions relate their payloads, and returns relate their value lists. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "eor_rel_def"
-  (fmap_as_finite_support_parameters := [f])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "eor_rel_def" (fmap_as_finite_support_parameters := [f])] -/
 def eorRel (f : HolFiniteMapExact Nat Nat) : ExnOrRet → ExnOrRet → Prop
   | .exn a, .exn b => valueRel f a b
   | .ret a, .ret b => List.Forall₂ (valueRel f) a b
@@ -26,8 +26,8 @@ theorem holFmapAsFiniteSupportParamWitness_optResRel_f (f : HolFiniteMapExact Na
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 
 /-- Optimized workers return the unit block on success and related errors otherwise. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "opt_res_rel_def"
-  (fmap_as_finite_support_parameters := [f])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "opt_res_rel_def" (fmap_as_finite_support_parameters := [f])] -/
 def optResRel (f : HolFiniteMapExact Nat Nat) : BviResult → BviResult → Prop
   | .val _, .val [.block 0 []] => True
   | .err a, .err b => excRel (eorRel f) a b

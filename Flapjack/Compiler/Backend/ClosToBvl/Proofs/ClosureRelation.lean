@@ -63,8 +63,8 @@ theorem holFmapAsFiniteSupportParamWitness_clRel_subspt_refs
   holFmapAsFiniteSupportParamWitness_clRel_refs refs key
 
 /-- Extending the code tree preserves each closure layout. -/
-@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "cl_rel_subspt"
-  (fmap_as_finite_support_parameters := [refs])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "cl_rel_subspt" (fmap_as_finite_support_parameters := [refs])] -/
 theorem clRel_subspt {maxApp : Nat} {fs : Nat → Prop}
     (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value))
     {code1 code2 : Spt (Nat × Bvl.Exp)} {env cl target}

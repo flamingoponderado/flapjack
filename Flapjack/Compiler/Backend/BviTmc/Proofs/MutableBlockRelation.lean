@@ -34,8 +34,8 @@ theorem holFmapAsFiniteSupportParamWitness_mutableBlockRel_refs (refs : HolFinit
 
 /-- Relate a source value to an unfinished chain of target mutable blocks,
 removing each visited pointer to make cyclic structures fail. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "mb_rel_def"
-  (fmap_as_finite_support_parameters := [f, old, refs])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "mb_rel_def" (fmap_as_finite_support_parameters := [f, old, refs])] -/
 noncomputable def mutableBlockRel (f : HolFiniteMapExact Nat Nat) (old : HolFiniteMapExact Nat (Ref Value))
     (refs : HolFiniteMapExact Nat (Ref Value)) (source target : Value) : Prop := by
   classical
@@ -63,8 +63,8 @@ theorem holFmapAsFiniteSupportParamWitness_mutableBlockRel_cons_refs (refs : Hol
 
 /-- A fresh unfinished mutable block extends a related child and related
 left and right fields to a related source constructor. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "mb_rel_cons"
-  (fmap_as_finite_support_parameters := [f, old, refs])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "mb_rel_cons" (fmap_as_finite_support_parameters := [f, old, refs])] -/
 theorem mutableBlockRel_cons (f : HolFiniteMapExact Nat Nat) (old : HolFiniteMapExact Nat (Ref Value))
     (refs : HolFiniteMapExact Nat (Ref Value)) (ptr tag : Nat) (left left' : List Value)
     (child child' : Value) (right right' : List Value)
@@ -115,8 +115,8 @@ theorem holFmapAsFiniteSupportParamWitness_mutableBlockRel_delete_refs (refs : H
 
 /-- Removing an unfinished block whose child pointer is fresh preserves any
 existing mutable-block relation. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "mb_rel_del"
-  (fmap_as_finite_support_parameters := [f, old, refs])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "mb_rel_del" (fmap_as_finite_support_parameters := [f, old, refs])] -/
 theorem mutableBlockRel_delete (f : HolFiniteMapExact Nat Nat) (old : HolFiniteMapExact Nat (Ref Value))
     (refs : HolFiniteMapExact Nat (Ref Value)) (source target : Value) (ptr tag : Nat)
     (left : List Value) (childPtr : Nat) (right : List Value)

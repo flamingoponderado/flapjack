@@ -17,8 +17,8 @@ theorem holFmapAsFiniteSupportParamWitness_valueRel_f (f : HolFiniteMapExact Nat
 
 /-- Values are unchanged except that reference pointers are translated by
 the finite pointer map. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "v_rel"
-  (fmap_as_finite_support_parameters := [f])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "v_rel" (fmap_as_finite_support_parameters := [f])] -/
 inductive valueRel (f : HolFiniteMapExact Nat Nat) : Value → Value → Prop where
   | number (i : Int) : valueRel f (.number i) (.number i)
   | word64 (w : BitVec 64) : valueRel f (.word64 w) (.word64 w)
@@ -32,8 +32,8 @@ theorem holFmapAsFiniteSupportParamWitness_refRel_f (f : HolFiniteMapExact Nat N
 
 /-- Related reference cells contain related values; mutable blocks are
 intentionally absent from the source relation. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "ref_rel"
-  (fmap_as_finite_support_parameters := [f])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "ref_rel" (fmap_as_finite_support_parameters := [f])] -/
 inductive refRel (f : HolFiniteMapExact Nat Nat) : Ref Value → Ref Value → Prop where
   | byteArray (b : Bool) (bytes : List (BitVec 8)) : refRel f (.byteArray b bytes) (.byteArray b bytes)
   | valueArray (xs ys : List Value) : List.Forall₂ (valueRel f) xs ys → refRel f (.valueArray xs) (.valueArray ys)
@@ -44,8 +44,8 @@ theorem holFmapAsFiniteSupportParamWitness_envRel_f (f : HolFiniteMapExact Nat N
 
 /-- An optimized environment has two additional values describing the
 mutable hole; the non-optimized relation permits arbitrary extra values. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "env_rel_def"
-  (fmap_as_finite_support_parameters := [f])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "env_rel_def" (fmap_as_finite_support_parameters := [f])] -/
 noncomputable def envRel (opt : Bool) (f : HolFiniteMapExact Nat Nat) (source target : List Value) : Prop :=
   ∃ xs ys, target = xs ++ ys ∧ List.Forall₂ (valueRel f) source xs ∧
     (opt = true → ys.length = 2 ∧ ∃ ptr idx,
@@ -61,8 +61,8 @@ theorem holFmapAsFiniteSupportParamWitness_valueRel_submap_g (g : HolFiniteMapEx
     mapofBroad (maptoBroadlookup g) g.finiteSupport = g := by cases g; rfl
 
 /-- Extending the pointer map preserves related values. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "v_rel_submap"
-  (fmap_as_finite_support_parameters := [f, g])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "v_rel_submap" (fmap_as_finite_support_parameters := [f, g])] -/
 theorem valueRel_submap (f : HolFiniteMapExact Nat Nat) (g : HolFiniteMapExact Nat Nat) (v1 v2 : Value)
     (related : valueRel f v1 v2) (submap : finiteSubmap f g) : valueRel g v1 v2 := by
   cases related with
@@ -95,8 +95,8 @@ theorem holFmapAsFiniteSupportParamWitness_listRel_submap_g (g : HolFiniteMapExa
     mapofBroad (maptoBroadlookup g) g.finiteSupport = g := by cases g; rfl
 
 /-- Extending the pointer map preserves related lists. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "list_rel_submap"
-  (fmap_as_finite_support_parameters := [f, g])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "list_rel_submap" (fmap_as_finite_support_parameters := [f, g])] -/
 theorem listRel_submap (f : HolFiniteMapExact Nat Nat) (g : HolFiniteMapExact Nat Nat)
     (source target : List Value) (related : List.Forall₂ (valueRel f) source target)
     (submap : finiteSubmap f g) : List.Forall₂ (valueRel g) source target := by
@@ -110,8 +110,8 @@ theorem holFmapAsFiniteSupportParamWitness_envRel_submap_g (g : HolFiniteMapExac
     mapofBroad (maptoBroadlookup g) g.finiteSupport = g := by cases g; rfl
 
 /-- Extending the pointer map preserves related environments. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "env_rel_submap"
-  (fmap_as_finite_support_parameters := [f, g])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "env_rel_submap" (fmap_as_finite_support_parameters := [f, g])] -/
 theorem envRel_submap (opt : Bool) (f : HolFiniteMapExact Nat Nat) (g : HolFiniteMapExact Nat Nat)
     (source target : List Value) (related : envRel opt f source target) (submap : finiteSubmap f g) :
     envRel opt g source target := by
@@ -122,8 +122,8 @@ theorem holFmapAsFiniteSupportParamWitness_envRel_relax_f (f : HolFiniteMapExact
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 
 /-- Dropping the optimized-hole requirement preserves the environment relation. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "env_rel_relax_opt"
-  (fmap_as_finite_support_parameters := [f])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "env_rel_relax_opt" (fmap_as_finite_support_parameters := [f])] -/
 theorem envRel_relax (opt : Bool) (f : HolFiniteMapExact Nat Nat) (source target : List Value)
     (related : envRel opt f source target) : envRel false f source target := by
   obtain ⟨xs, ys, equal, pairs, _⟩ := related
@@ -133,8 +133,8 @@ theorem holFmapAsFiniteSupportParamWitness_envRel_cons_f (f : HolFiniteMapExact 
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 
 /-- Prefixing related values preserves related environments. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "env_rel_cons"
-  (fmap_as_finite_support_parameters := [f])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "env_rel_cons" (fmap_as_finite_support_parameters := [f])] -/
 theorem envRel_cons (opt : Bool) (f : HolFiniteMapExact Nat Nat) (source target : List Value)
     (a b : Value) (related : envRel opt f source target) (values : valueRel f a b) :
     envRel opt f (a :: source) (b :: target) := by
@@ -145,8 +145,8 @@ theorem holFmapAsFiniteSupportParamWitness_envRel_append_f (f : HolFiniteMapExac
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 
 /-- Prefixing lists of related values preserves related environments. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "env_rel_append"
-  (fmap_as_finite_support_parameters := [f])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "env_rel_append" (fmap_as_finite_support_parameters := [f])] -/
 theorem envRel_append (opt : Bool) (f : HolFiniteMapExact Nat Nat) (source target a b : List Value)
     (related : envRel opt f source target) (values : List.Forall₂ (valueRel f) a b) :
     envRel opt f (a ++ source) (b ++ target) := by
@@ -160,8 +160,8 @@ theorem holFmapAsFiniteSupportParamWitness_envRel_length_opt_f (f : HolFiniteMap
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 
 /-- Optimized environments contain precisely two additional values. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "env_rel_length_opt"
-  (fmap_as_finite_support_parameters := [f])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "env_rel_length_opt" (fmap_as_finite_support_parameters := [f])] -/
 theorem envRel_length_opt (f : HolFiniteMapExact Nat Nat) (source target : List Value)
     (related : envRel true f source target) : target.length = source.length + 2 := by
   obtain ⟨xs, ys, rfl, pairs, extras⟩ := related
@@ -173,8 +173,8 @@ theorem holFmapAsFiniteSupportParamWitness_envRel_length_non_opt_f (f : HolFinit
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 
 /-- An unoptimized target environment is at least as long as the source. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "env_rel_length_non_opt"
-  (fmap_as_finite_support_parameters := [f])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "env_rel_length_non_opt" (fmap_as_finite_support_parameters := [f])] -/
 theorem envRel_length_non_opt (f : HolFiniteMapExact Nat Nat) (source target : List Value)
     (related : envRel false f source target) : source.length ≤ target.length := by
   obtain ⟨xs, ys, rfl, pairs, _⟩ := related
@@ -185,8 +185,8 @@ theorem holFmapAsFiniteSupportParamWitness_envRel_length_f (f : HolFiniteMapExac
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 
 /-- Related target environments are at least as long as their sources. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "env_rel_length"
-  (fmap_as_finite_support_parameters := [f])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "env_rel_length" (fmap_as_finite_support_parameters := [f])] -/
 theorem envRel_length (opt : Bool) (f : HolFiniteMapExact Nat Nat) (source target : List Value)
     (related : envRel opt f source target) : source.length ≤ target.length := by
   cases opt with
@@ -198,8 +198,8 @@ theorem holFmapAsFiniteSupportParamWitness_envRel_strip_extras_f (f : HolFiniteM
 
 /-- An optimized environment splits into a related prefix and its two
 hole-management values. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "env_rel_strip_extras"
-  (fmap_as_finite_support_parameters := [f])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "env_rel_strip_extras" (fmap_as_finite_support_parameters := [f])] -/
 theorem envRel_strip_extras (f : HolFiniteMapExact Nat Nat) (source target : List Value)
     (related : envRel true f source target) :
     ∃ envPrefix ptr idx, envRel false f source envPrefix ∧
@@ -224,8 +224,8 @@ theorem holFmapAsFiniteSupportParamWitness_listToValue_rel_f (f : HolFiniteMapEx
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 
 /-- Encoding lists of related values yields related source list values. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "list_to_v_v_rel"
-  (fmap_as_finite_support_parameters := [f])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "list_to_v_v_rel" (fmap_as_finite_support_parameters := [f])] -/
 theorem listToValue_rel (f : HolFiniteMapExact Nat Nat) (xs ys : List Value)
     (related : List.Forall₂ (valueRel f) xs ys) : valueRel f (listToValue xs) (listToValue ys) := by
   induction related with
@@ -288,8 +288,8 @@ theorem holFmapAsFiniteSupportParamWitness_valueToList_rel_f (f : HolFiniteMapEx
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 
 /-- Decoding a related list value yields a list of related elements. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "v_to_list_v_rel"
-  (fmap_as_finite_support_parameters := [f])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "v_to_list_v_rel" (fmap_as_finite_support_parameters := [f])] -/
 theorem valueToList_rel (f : HolFiniteMapExact Nat Nat) (source : Value) (xs : List Value) (target : Value)
     (decoded : valueToList source = some xs) (related : valueRel f source target) :
     ∃ ys, valueToList target = some ys ∧ List.Forall₂ (valueRel f) xs ys := by
@@ -345,8 +345,8 @@ theorem holFmapAsFiniteSupportParamWitness_valueToBytes_rel_f (f : HolFiniteMapE
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 
 /-- Related list values decode to the same byte sequence. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "v_to_bytes_v_rel"
-  (fmap_as_finite_support_parameters := [f])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "v_to_bytes_v_rel" (fmap_as_finite_support_parameters := [f])] -/
 theorem valueToBytes_rel (v : Value) (bytes : List (BitVec 8)) (f : HolFiniteMapExact Nat Nat) (v' : Value)
     (decoded : valueToBytes v = some bytes) (related : valueRel f v v') : valueToBytes v' = some bytes := by
   have listDecoded := (valueToBytes_eq_some v bytes).mp decoded
@@ -358,8 +358,8 @@ theorem holFmapAsFiniteSupportParamWitness_valueToWords_rel_f (f : HolFiniteMapE
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 
 /-- Related list values decode to the same word sequence. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "v_to_words_v_rel"
-  (fmap_as_finite_support_parameters := [f])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "v_to_words_v_rel" (fmap_as_finite_support_parameters := [f])] -/
 theorem valueToWords_rel (v : Value) (words : List (BitVec 64)) (f : HolFiniteMapExact Nat Nat) (v' : Value)
     (decoded : valueToWords v = some words) (related : valueRel f v v') : valueToWords v' = some words := by
   have listDecoded := (valueToWords_eq_some v words).mp decoded
@@ -371,8 +371,8 @@ theorem holFmapAsFiniteSupportParamWitness_envRel_el_f (f : HolFiniteMapExact Na
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 
 /-- Related environments have related entries at every source index. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "env_rel_el"
-  (fmap_as_finite_support_parameters := [f])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "env_rel_el" (fmap_as_finite_support_parameters := [f])] -/
 theorem envRel_el (opt : Bool) (f : HolFiniteMapExact Nat Nat) (source target : List Value) (index : Nat)
     (related : envRel opt f source target) (bound : index < source.length) :
     valueRel f (holEl index source) (holEl index target) := by
@@ -412,8 +412,8 @@ theorem holFmapAsFiniteSupportParamWitness_listRel_envRel_f (f : HolFiniteMapExa
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 
 /-- Pointwise-related values form a non-optimised related environment. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "list_rel_env_rel"
-  (fmap_as_finite_support_parameters := [f])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "list_rel_env_rel" (fmap_as_finite_support_parameters := [f])] -/
 theorem listRel_envRel (f : HolFiniteMapExact Nat Nat) (source target : List Value)
     (related : List.Forall₂ (valueRel f) source target) : envRel false f source target := by
   exact ⟨target, [], by simp, related, by simp⟩
