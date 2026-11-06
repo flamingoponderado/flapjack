@@ -25,3 +25,6 @@ pmatch_list_nil=∀(refs :num |-> term) (v :term) (vs :term list) (p :pat) (ps :
 pmatch_list_cons=∀(refs :num |-> term) (p :pat) (ps :pat list) (v :term) (vs :term list). (pmatch_list refs (p::ps) (v::vs) :pmatchResult) = pand (pmatch refs p v :pmatchResult) (pmatch_list refs ps vs :pmatchResult)
 pmatch_comp_length=∀(ps :pat list) (vs :term list). (pmatch_list (refs :num |-> term) ps vs :pmatchResult) ≠ PTypeFailure ⇒ LENGTH vs = LENGTH ps
 pmatch_exh_length=∀(refs :num |-> term) (ps :pat list) (vs :term list). (pmatch_list refs ps vs :pmatchResult) ≠ PTypeFailure ⇒ LENGTH ps = LENGTH vs
+pmatch_list_append=∀(ps :pat list) (us :term list) (qs :pat list) (ws :term list) (refs :num |-> term). LENGTH ps = LENGTH us ⇒ (pmatch_list refs (ps ++ qs) (us ++ ws) :pmatchResult) = pand (pmatch_list refs ps us :pmatchResult) (pmatch_list refs qs ws :pmatchResult)
+length_anys=∀(n :num). LENGTH (anys n) = n
+pmatch_list_anys=∀(n :num) (vs :term list) (refs :num |-> term). (pmatch_list refs (anys n) vs :pmatchResult) = if LENGTH vs = n then PMatchSuccess else PTypeFailure

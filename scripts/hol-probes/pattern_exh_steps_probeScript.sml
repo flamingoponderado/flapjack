@@ -124,3 +124,21 @@ val pmatch_exh_length_replay = prove (
     LENGTH ps = LENGTH vs``,
   metis_tac [pattern_compTheory.pmatch_list_LENGTH]);
 val _ = show_local "pmatch_exh_length=" pmatch_exh_length_replay;
+val pmatch_list_append_replay = prove (
+  ``!ps us qs ws refs. LENGTH ps = LENGTH us ==>
+    pattern_semantics$pmatch_list refs (ps ++ qs) (us ++ ws) =
+    pattern_exh$pand (pattern_semantics$pmatch_list refs ps us)
+      (pattern_semantics$pmatch_list refs qs ws)``,
+  Induct >> Cases_on `us` >> fs [pmatch_list_nil_replay,
+    pmatch_list_cons_replay, pand_assoc_replay, pand_simps_replay]);
+val _ = show_local "pmatch_list_append=" pmatch_list_append_replay;
+val length_anys_replay = prove (
+  ``!n. LENGTH (pattern_exh$anys n) = n``,
+  Induct >> fs [pattern_exhTheory.anys_def]);
+val _ = show_local "length_anys=" length_anys_replay;
+val pmatch_list_anys_replay = prove (
+  ``!n vs refs. pattern_semantics$pmatch_list refs (pattern_exh$anys n) vs =
+    (if LENGTH vs = n then pattern_common$PMatchSuccess else pattern_common$PTypeFailure)``,
+  Induct >> Cases_on `vs` >> fs [pattern_exhTheory.anys_def,
+    pattern_semanticsTheory.pmatch_def]);
+val _ = show_local "pmatch_list_anys=" pmatch_list_anys_replay;

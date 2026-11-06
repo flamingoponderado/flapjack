@@ -70,6 +70,20 @@ theorem holFmapAsFiniteSupportParamWitness_pmatchList_length_source_refs
     ofBroad (toBroad refs) refs.finiteSupport = refs :=
   holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
 
+theorem holFmapAsFiniteSupportParamWitness_pmatchList_append_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_pmatchList_anys_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
+
 /-- A wildcard matches every term. -/
 @[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "pmatch_Any"
   (fmap_as_finite_support_parameters := [refs])]
@@ -105,6 +119,8 @@ theorem pmatchList_length_source (refs : HolFiniteMapExact Nat Term) (patterns :
   (PatternComp.pmatchList_length refs patterns values safe).symm
 
 /-- Matching appended pattern/value segments composes their three-valued results. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "pmatch_list_append"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem pmatchList_append (refs : HolFiniteMapExact Nat Term)
     (patterns rest : List Pat) (values more : List Term) (lengths : patterns.length = values.length) :
     pmatchList refs (patterns ++ rest) (values ++ more) =
@@ -119,10 +135,13 @@ theorem pmatchList_append (refs : HolFiniteMapExact Nat Term)
       have tailLength : patterns.length = values.length := by simpa using lengths
       simp only [List.cons_append, pmatchList_cons, ih values tailLength, pand_assoc]
 
-@[simp] theorem length_anys (n : Nat) : (anys n).length = n := by
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "LENGTH_anys", simp]
+theorem length_anys (n : Nat) : (anys n).length = n := by
   induction n <;> simp_all [anys]
 
 /-- Wildcard vectors succeed precisely when their widths agree. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "pmatch_list_anys"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem pmatchList_anys (refs : HolFiniteMapExact Nat Term) (n : Nat) (values : List Term) :
     pmatchList refs (anys n) values = if values.length = n then .success else .typeFailure := by
   induction n generalizing values with
