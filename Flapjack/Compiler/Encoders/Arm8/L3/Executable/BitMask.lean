@@ -869,4 +869,12 @@ theorem decodeBitMasks_mod (a b c : Nat) (i : Bool) :
   unfold decodeBitMasks
   simp only [Nat.mod_mod]
 
+
+/-- The `imms` field of `EncodeBitMask`: the L3 six-bit complement-or value is
+the closed `(63 - ((e * 2 - 1) % 64)) ||| ((S - 1) % 64)`. -/
+theorem imms_toNat (e S : Nat) :
+    (~~~(BitVec.ofNat 6 ((e * 2) - 1)) ||| BitVec.ofNat 6 (S - 1)).toNat =
+      (63 - ((e * 2 - 1) % 64)) ||| ((S - 1) % 64) := by
+  rw [BitVec.toNat_or, BitVec.toNat_not, BitVec.toNat_ofNat, BitVec.toNat_ofNat]
+
 end Flapjack.Compiler.Encoders.Arm8.L3
