@@ -669,7 +669,6 @@ import Flapjack.Compiler.Backend.PatternComp.Proofs.GuardCompilation
 import Flapjack.Compiler.Backend.PatternExh.Proofs.Soundness
 import Flapjack.Compiler.Backend.PatternComp.Proofs.Correctness
 import Flapjack.Test.PatternSemantics
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StoreValueRelCases
 import Flapjack.Compiler.Backend.SourceLet.Proofs
 import Flapjack.Compiler.Backend.SourceLet.Proofs.Evaluate
 import Flapjack.Compiler.Backend.SourceLet.Proofs.Repeated
@@ -1225,7 +1224,6 @@ import Flapjack.Compiler.Backend.SourceToFlat.ToBviIncremental
 import Flapjack.Compiler.Backend.SourceToFlat.ToDataIncremental
 import Flapjack.Compiler.Backend.SourceToFlat.ToWordIncremental
 import Flapjack.Compiler.Backend.SourceToFlat.ToRiscVIncremental
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.SourcePreprocessing
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.ValueRelation
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.StateRelation
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.Install
@@ -3110,9 +3108,6 @@ import Flapjack.CakeParser.ParseTree.Grammar
 import Flapjack.CakeParser.CfgGrammar
 import Flapjack.CakeParser.CfgValidation
 import Flapjack.CakeParser.CfgLocation
-import Flapjack.CakeParser.PegEvalMonotonic
-import Flapjack.CakeParser.PegEvalSuffix
-import Flapjack.CakeParser.PegRelation
 import Flapjack.TypeSystemHOL.Environments
 import Flapjack.TypeSystemHOL.TypeNames
 import Flapjack.TypeSystemHOL.Patterns

@@ -82,12 +82,6 @@ theorem allocTags1_arities {M N A : Type} (constructors : List (N × List A)) :
     simp only [allocTags1, eq, inc, List.map_cons] at ⊢
     exact congrArg (List.cons args.length) ih
 
-/-- The final tag table has the original constructor arities in order. -/
-theorem allocTags1_reverse_arities {M N A : Type} (constructors : List (N × List A)) :
-    ((allocTags1 constructors.reverse : Namespace M N Nat × Spt Nat × List (Nat × Nat)).2.2).reverse.map Prod.snd =
-      constructors.map (fun constructor => constructor.2.length) := by
-  rw [List.map_reverse, allocTags1_arities, List.map_reverse, List.reverse_reverse]
-
 /-- The tag table contains exactly the tags below the counter for each
 arity. This is an allocation invariant over the actual executable pass. -/
 theorem allocTags1_membership {M N A : Type} (constructors : List (N × List A)) :
@@ -1004,45 +998,6 @@ theorem factoredInvariant_installConstructorList {C F : Type} [Nonempty C]
         simp [next, finiteUpdate, FUPDATE_HOL, Ne.symm different]
       · simpa [next, finiteUpdate, FUPDATE_HOL, atKey] using
           fresh name' tag' arity' (List.mem_cons_of_mem _ present) key
-
-/-- The list-level invariant applies to a suffix of the actual allocator
-entries once a constructor of the type has been installed. Its distinctness
-and table membership follow from the allocator. -/
-theorem factoredInvariant_installAllocatedConstructors {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (gen : EnvironmentGenerationStore) (start finish : NextIndices) (other : Set (Nat × IndexKind))
-    (source : State F) (flat : FlatSem.State C F) (idx stamp : Nat)
-    (anchorTag anchorArity : Nat) (anchorName : ConN) (constructors : List (ConN × List AstT)) (skip : Nat)
-    (genv : GlobalEnv)
-    (valid : factoredInvariant interp transform gen genv (start, finish, other) source flat)
-    (table : genv.tys.lookup idx = some
-      (allocTags1 constructors : Namespace ModN ConN Nat × Spt Nat × List (Nat × Nat)).2.2)
-    (older : stamp < source.nextTypeStamp)
-    (anchor : genv.c.lookup ((anchorTag, some idx), anchorArity) = some (.typeStamp anchorName stamp))
-    (names : (constructors.map Prod.fst).Nodup)
-    (free : ∀ name tag arity, (name, tag, arity) ∈ (allocatedConstructorEntries (M := ModN) constructors).drop skip →
-      genv.c.lookup ((tag, some idx), arity) = none)
-    (fresh : ∀ name tag arity, (name, tag, arity) ∈ (allocatedConstructorEntries (M := ModN) constructors).drop skip →
-      ∀ key, genv.c.lookup key ≠ some (.typeStamp name stamp)) :
-    factoredInvariant interp transform gen
-      (installTypeConstructorList idx stamp ((allocatedConstructorEntries (M := ModN) constructors).drop skip) genv)
-      (start, finish, other) source flat := by
-  have distinct := allocatedConstructorEntries_nodup (M := ModN) constructors names
-  have namesTail : (((allocatedConstructorEntries (M := ModN) constructors).drop skip).map Prod.fst).Nodup := by
-    rw [List.map_drop]
-    exact List.Nodup.sublist (List.drop_sublist _ _) distinct.1
-  have keysTail : (((allocatedConstructorEntries (M := ModN) constructors).drop skip).map Prod.snd).Nodup := by
-    rw [List.map_drop]
-    exact List.Nodup.sublist (List.drop_sublist _ _) distinct.2
-  apply factoredInvariant_installConstructorList interp transform gen start finish other source flat idx stamp
-    (allocTags1 constructors : Namespace ModN ConN Nat × Spt Nat × List (Nat × Nat)).2.2
-    anchorTag anchorArity anchorName ((allocatedConstructorEntries (M := ModN) constructors).drop skip)
-    genv valid table older anchor namesTail keysTail
-  · intro name tag arity member
-    rw [← (allocatedConstructorEntries_projections (M := ModN) constructors).2]
-    exact List.mem_map.mpr ⟨(name, tag, arity), List.mem_of_mem_drop member, rfl⟩
-  · exact free
-  · exact fresh
 
 /-- Reserving a fresh type and installing all of its distinct constructor
 entries preserves the factored invariant, including for an empty type. -/

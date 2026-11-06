@@ -166,17 +166,6 @@ theorem boolValueRel_iff (genv : GlobalEnv) (ok : genvCOk genv.c) (b : Bool) (fl
     subst flat
     exact boolValue_related genv ok b
 
-/-- Successful source conditional selection agrees with the related flat
-value. This is infrastructure over the factored value relation. -/
-theorem doIf_related {α : Type} (genv : GlobalEnv) (ok : genvCOk genv.c)
-    (source : SemanticPrimitivesHOL.Value) (flat : FlatSem.Value) (yes no result : α)
-    (rel : ValueRel genv source flat) (evaluated : SemanticPrimitivesHOL.doIf source yes no = some result) :
-    FlatSem.doIf flat yes no = some result := by
-  obtain ⟨b, rfl, hresult⟩ := SemanticPrimitivesHOL.doIf_success_boolean source yes no result evaluated
-  have hflat := (boolValueRel_iff genv ok b flat).mp rel
-  subst flat
-  cases b <;> simp_all [FlatSem.doIf, FlatSem.boolValue, boolToTag, trueTag, falseTag, FlatLang.boolId]
-
 /-- Related original exception constructors under the constructor-map assumptions.
 This is infrastructure over the factored relation. -/
 theorem exceptionValues_related (genv : GlobalEnv) (ok : genvCOk genv.c) :
