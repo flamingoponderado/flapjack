@@ -125376,5 +125376,21 @@
   "lean_name": "Bag",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared HOL Type bag = 'a -> num with the Lean abbreviation alpha -> Nat; the typed bag operation captures confirm the same polymorphic function carrier."
+},
+{
+  "hol_path": "HOL/src/finite_maps/alistScript.sml",
+  "hol_name": "ALOOKUP_MEM",
+  "lean_path": "Flapjack/FiniteMap/AlistExact/Lookup.lean",
+  "lean_name": "holALookup_member",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source and typed alookup_member capture: key and value types are independent; a successful ALOOKUP implies membership of the same pair."
+},
+{
+  "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+  "hol_name": "find_recfun_ALOOKUP",
+  "lean_path": "Flapjack/SemanticPrimitivesProps/RecursiveFunctions.lean",
+  "lean_name": "findRecFun_alookup",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source and typed find_recfun_alookup capture: the mlstring name and both payload types remain independent, and the complete equality between recursive-function and association-list lookup is retained."
 }
 ]

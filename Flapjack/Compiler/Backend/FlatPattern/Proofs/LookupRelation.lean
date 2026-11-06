@@ -236,22 +236,6 @@ theorem aLookupRel_cons_false {K V : Type} (predicate : K → Prop) (relation : 
   all_goals have different : query ≠ key := by intro same; subst query; exact excluded selected
   all_goals simpa [holALookup, different] using related query selected
 
-/-- A successful association-list lookup identifies an actual list member. -/
-theorem holALookup_member {K V : Type} (entries : List (K × V)) (key : K) (value : V)
-    (found : holALookup entries key = some value) : (key, value) ∈ entries := by
-  classical
-  induction entries with
-  | nil => simp [holALookup] at found
-  | cons entry rest ih =>
-    obtain ⟨entryKey, entryValue⟩ := entry
-    by_cases same : key = entryKey
-    · subst entryKey
-      simp [holALookup] at found
-      subst entryValue
-      simp
-    · simp [holALookup, same] at found
-      exact List.mem_cons_of_mem _ (ih found)
-
 /-- A relation that is reflexive on the observed bindings relates a list to itself. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "ALOOKUP_rel_refl"]
 theorem aLookupRel_refl {K V : Type} (predicate : K → Prop) (relation : V → V → Prop)

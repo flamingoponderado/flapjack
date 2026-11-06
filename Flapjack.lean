@@ -1,4 +1,5 @@
 import Flapjack.SemanticPrimitivesHOL
+import Flapjack.SemanticPrimitivesProps.RecursiveFunctions
 import Flapjack.SemanticPrimitivesHOL.StoreSource
 import Flapjack.SemanticPrimitivesHOL.PatternMatch
 import Flapjack.SemanticPrimitivesHOL.Operations

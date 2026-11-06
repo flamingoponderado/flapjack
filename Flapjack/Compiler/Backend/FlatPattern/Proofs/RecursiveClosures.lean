@@ -1,3 +1,4 @@
+import Flapjack.SemanticPrimitivesProps.RecursiveFunctions
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelationCases
 import Mathlib.Data.List.Forall2
 
@@ -25,23 +26,6 @@ theorem findRecFun_compiled (cfg : Config) (name : VarN) (funs : List (VarN × V
     · subst fn
       simp [findRecFun]
     · simp [findRecFun, same, ih]
-
-/-- A successfully selected recursive body comes from an actual function
-entry, so its compiler bound follows from the bundle's bound. -/
-theorem findRecFun_member (name arg : VarN) (body : FlatLang.Exp)
-    (funs : List (VarN × VarN × FlatLang.Exp))
-    (found : findRecFun name funs = some (arg, body)) : (name, arg, body) ∈ funs := by
-  induction funs with
-  | nil => simp [findRecFun] at found
-  | cons head tail ih =>
-    obtain ⟨fn, param, expr⟩ := head
-    by_cases same : fn = name
-    · subst fn
-      simp [findRecFun] at found
-      obtain ⟨rfl, rfl⟩ := found
-      simp
-    · simp [findRecFun, same] at found
-      exact List.mem_cons_of_mem _ (ih found)
 
 /-- Mapping the bodies does not change the recursive function-name list. -/
 theorem compiledRecFuns_names (cfg : Config) (funs : List (VarN × VarN × FlatLang.Exp)) :
@@ -105,7 +89,10 @@ theorem doOpApp_recclosure (leftEnv : Environment Value)
       FlatSem.doOpApp [targetClosure, targetArg] = some (targetEnv, body') := by
   obtain ⟨n, captured, cfg, envs, bounds, rfl⟩ :=
     (valueRel_recclosure leftEnv funs name targetClosure).1 closures
-  have member := findRecFun_member name argName body funs found
+  have member : (name, argName, body) ∈ funs :=
+    Flapjack.holALookup_member funs name (argName, body) (by
+      rw [← Flapjack.SemanticPrimitivesProps.findRecFun_alookup]
+      exact found)
   have bodyBound : (compileExp cfg body).1 < n := by simpa using bounds (name, argName, body) member
   have recEnvs := envRel_buildRec n leftEnv captured cfg funs envs bounds
   cases compiled : compileExp cfg body with

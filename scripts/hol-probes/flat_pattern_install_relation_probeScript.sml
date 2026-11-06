@@ -95,6 +95,8 @@ val _ = show_thm "environment_relation_lookup=" flat_patternProofTheory.env_rel_
 val _ = show_thm "list_relation_replicate=" rich_listTheory.LIST_REL_REPLICATE_same;
 val _ = show_thm "list_relation_update=" listTheory.EVERY2_LUPDATE_same;
 val _ = show_thm "alookup_map_3=" flat_patternProofTheory.ALOOKUP_MAP_3;
+val _ = show_thm "find_recfun_alookup=" semanticPrimitivesPropsTheory.find_recfun_ALOOKUP;
+val _ = show_thm "alookup_member=" alistTheory.ALOOKUP_MEM;
 val _ = show_thm "lookup_map_same=" flat_patternProofTheory.ALOOKUP_rel_MAP_same;
 val _ = show_thm "do_opapp=" flat_patternProofTheory.do_opapp_thm;
 val _ = show_thm "do_opapp_reverse=" flat_patternProofTheory.do_opapp_thm_REVERSE;

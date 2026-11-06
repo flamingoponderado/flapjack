@@ -30,4 +30,22 @@ theorem lookup_exists_iff_mem_keys {K V : Type} [DecidableEq K]
   · rintro ⟨p, mem, rfl⟩
     exact ⟨p, mem, beq_self_eq_true _⟩
 
+/-- A successful association-list lookup identifies an actual list member. -/
+@[hol "HOL/src/finite_maps/alistScript.sml" "ALOOKUP_MEM"]
+theorem holALookup_member {K V : Type} (entries : List (K × V)) (key : K) (value : V)
+    (found : holALookup entries key = some value) : (key, value) ∈ entries := by
+  classical
+  induction entries with
+  | nil => simp [holALookup] at found
+  | cons entry rest ih =>
+    obtain ⟨entryKey, entryValue⟩ := entry
+    by_cases same : key = entryKey
+    · subst entryKey
+      simp [holALookup] at found
+      subst entryValue
+      simp
+    · simp [holALookup, same] at found
+      exact List.mem_cons_of_mem _ (ih found)
+
+
 end Flapjack
