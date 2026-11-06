@@ -72,25 +72,6 @@ theorem exprSim_literal {C F : Type} (genv : GlobalEnv) (compMap : Environment) 
   simp only [ExprSim, EvaluateHOL.evaluate, compileExp, FlatSem.evaluate]
   exact ⟨.value (.cons (.literal genv lit) .nil), statesRel⟩
 
-/-- Type annotations preserve a simulation of the annotated expression. -/
-theorem exprSim_tannot {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
-    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
-    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
-    (expr : AstHOL.Exp) (typ : AstHOL.AstT)
-    (sim : ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState expr) :
-    ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState (.tannot expr typ) := by
-  simpa only [ExprSim, EvaluateHOL.evaluate, compileExp] using sim
-
-/-- Source-location annotations preserve a simulation of the annotated expression. -/
-theorem exprSim_lannot {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
-    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
-    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
-    (expr : AstHOL.Exp) (loc : Misc.Location.Locs)
-    (sim : ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState expr) :
-    ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState (.lannot expr loc) := by
-  cases loc
-  simpa only [ExprSim, EvaluateHOL.evaluate, compileExp] using sim
-
 /-- Function creation preserves simulation when the captured local
 environment and the unshadowed global environment satisfy their relations. -/
 theorem exprSim_function {C F : Type} (genv : GlobalEnv) (compMap : Environment)
@@ -144,14 +125,6 @@ theorem exprSim_tuple {C F : Type} (genv : GlobalEnv) (compMap : Environment) (t
         rw [EvaluateHOL.evaluate, compileExp, FlatSem.evaluate, sourceRun, flatRun]
         simp only [doConCheck, ↓reduceIte]
         exact ⟨.abort error, nextRel⟩
-
-/-- A singleton expression simulation is an expression-list simulation. -/
-theorem exprListSim_singleton {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
-    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
-    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F) (expr : AstHOL.Exp)
-    (sim : ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState expr) :
-    ExprListSim genv compMap trace sourceEnv flatEnv sourceState flatState [expr] := by
-  simpa [ExprSim, ExprListSim, compileExps] using sim
 
 /-- A conditional propagates a related condition error on both sides. -/
 theorem exprSim_if_error {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)

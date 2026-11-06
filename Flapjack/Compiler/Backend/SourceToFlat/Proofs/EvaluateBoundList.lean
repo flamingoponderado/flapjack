@@ -31,7 +31,7 @@ theorem localExpressionListStep_singleton {C F : Type} [Nonempty C]
     (step : LocalExpressionStep interp transform genv start finish other source flat sourceEnv flatEnv trace compMap gen expr) :
     LocalExpressionListStep interp transform genv start finish other source flat sourceEnv flatEnv trace compMap gen [expr] := by
   obtain ⟨nextGenv, sim, post⟩ := step
-  refine ⟨nextGenv, exprListSim_singleton nextGenv compMap trace sourceEnv flatEnv source flat expr sim, ?_⟩
+  refine ⟨nextGenv, by simpa [ExprSim, ExprListSim, compileExps] using sim, ?_⟩
   cases result : (EvaluateHOL.evaluate source sourceEnv [expr]).2 with
   | val value => simpa only [result, compileExps] using post
   | err error =>

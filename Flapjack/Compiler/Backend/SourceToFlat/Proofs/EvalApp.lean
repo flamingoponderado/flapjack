@@ -186,23 +186,6 @@ theorem evaluate_compileEval_error {C F : Type}
     (.err error) operandRun
     (evaluate_evalBody_error env arguments last bytes words decs nextConfig error decoded positive declarationRun)
 
-/-- The generated Eval expression times out after installing the callback's
-next configuration when its operands exhaust the clock. -/
-theorem evaluate_compileEval_timeout {C F : Type}
-    (env : FlatSem.Environment FlatSem.Value) (state arguments : FlatSem.State C F)
-    (trace : List VarN) (compMap : Environment) (exprs : List AstHOL.Exp)
-    (a b c d bytes words : FlatSem.Value) (decs : List FlatLang.Exp)
-    (nextConfig : FlatSem.InstallConfig C)
-    (operandRun : FlatSem.evaluate env state (compileExps trace compMap exprs).reverse =
-      (arguments, .val [words, bytes, d, c, b, a]))
-    (decoded : FlatSem.doEval [bytes, words] arguments.evalConfig = some (decs, nextConfig, FlatSem.unitValue))
-    (zero : arguments.clock = 0) :
-    FlatSem.evaluate env state [compileExp trace compMap (.app .eval exprs)] =
-      ({ arguments with evalConfig := nextConfig }, .err (.abort .timeoutError)) := by
-  exact evaluate_compileEval_body env state arguments { arguments with evalConfig := nextConfig }
-    trace compMap exprs a b c d bytes words (.err (.abort .timeoutError)) operandRun
-    (evaluate_evalBody_timeout env arguments bytes words decs nextConfig decoded zero)
-
 /-- An operand error prevents pattern selection and propagates unchanged. -/
 theorem evaluate_compileEval_operand_error {C F : Type}
     (env : FlatSem.Environment FlatSem.Value) (state last : FlatSem.State C F)
@@ -402,10 +385,11 @@ theorem exprSim_eval_timeout {C F : Type} [Nonempty C]
     | intro _ _ clock _ => exact clock.symm.trans zero
   have sourceResult := evaluate_sourceEval_timeout sourceEnv evalEnv sourceState sourceArguments exprs
     [sa, sb, sc, sd, sourceBytes, sourceWords] decs begin (by simpa using sourceRun) decoded zero
-  have flatResult := evaluate_compileEval_timeout flatEnv flatState flatArguments trace compMap exprs
-    a b c d bytes words flatDecs
-    { flatArguments.evalConfig with compileOracle := Flapjack.holShiftSeq 1 flatArguments.evalConfig.compileOracle }
-    flatRun flatDecoded' flatZero
+  have flatResult := evaluate_compileEval_body flatEnv flatState flatArguments
+    { flatArguments with evalConfig :=
+      { flatArguments.evalConfig with compileOracle := Flapjack.holShiftSeq 1 flatArguments.evalConfig.compileOracle } }
+    trace compMap exprs a b c d bytes words (.err (.abort .timeoutError)) flatRun
+    (evaluate_evalBody_timeout flatEnv flatArguments bytes words flatDecs _ flatDecoded' flatZero)
   unfold ExprSim
   rw [sourceResult, flatResult]
   refine ⟨.abort .timeoutError, ?_⟩

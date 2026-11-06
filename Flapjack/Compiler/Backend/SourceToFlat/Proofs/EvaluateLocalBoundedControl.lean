@@ -485,7 +485,7 @@ theorem localEnvBounded_tannot {C F : Type} [Nonempty C]
     simpa [EvaluateHOL.evaluate] using bad
   obtain ⟨next, sim, post⟩ := ih genv start finish other source flat env sourceLocal flatEnv traces trace map gen clockBound localRel envInv tracesLen
     invariant generation exprSafe
-  refine ⟨next, exprSim_tannot next _ trace _ _ source flat expr typ sim, ?_⟩
+  refine ⟨next, by simpa only [ExprSim, EvaluateHOL.evaluate, compileExp] using sim, ?_⟩
   simpa only [EvaluateHOL.evaluate, compileExp] using post
 
 
@@ -502,7 +502,7 @@ theorem localEnvBounded_lannot {C F : Type} [Nonempty C]
     simpa [EvaluateHOL.evaluate] using bad
   obtain ⟨next, sim, post⟩ := ih genv start finish other source flat env sourceLocal flatEnv traces trace map gen clockBound localRel envInv tracesLen
     invariant generation exprSafe
-  refine ⟨next, exprSim_lannot next _ trace _ _ source flat expr loc sim, ?_⟩
+  refine ⟨next, by cases loc; simpa only [ExprSim, EvaluateHOL.evaluate, compileExp] using sim, ?_⟩
   cases loc
   simpa only [EvaluateHOL.evaluate, compileExp] using post
 

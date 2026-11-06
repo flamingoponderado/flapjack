@@ -112,8 +112,11 @@ theorem factoredDecBoundedIH_dlet_expression {C F : Type} [Nonempty C]
   have step := expressionIH genv start finish other source flat sourceEnv nsEmpty ⟨[]⟩ []
     ((AstHOL.patBindings pattern).reverse ++ trace) env gen clockBound (.empty genv)
     (by simpa using envInv) rfl invariant generation (by simpa only [sourceEq] using expressionSafe)
-  have expressionStep := (localExpressionStep_empty interp transform genv start finish other source flat sourceEnv
-    ((AstHOL.patBindings pattern).reverse ++ trace) env gen expr).mp (by simpa only [List.map_nil, sourceEq, mapEq] using step)
+  have expressionStep : DletExpressionStep interp transform genv start finish other source flat sourceEnv
+      ((AstHOL.patBindings pattern).reverse ++ trace) env gen expr := by
+    change LocalExpressionStep interp transform genv start finish other source flat sourceEnv ⟨[]⟩
+      ((AstHOL.patBindings pattern).reverse ++ trace) env gen expr
+    simpa only [List.map_nil, sourceEq, mapEq] using step
   exact evaluateDlet_case_factored interp transform genv start finish next other source sourceLast flat sourceEnv
     trace n n' env nextEnv gen nextGen location pattern expr flatDecs result
     sourceRun invariant compiled envInv notTypeError generation future bounded expressionStep
