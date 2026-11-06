@@ -206,13 +206,13 @@ theorem evaluate_remove_ticks_letrec {C F : Type} (names : List Flapjack.AstHOL.
               { source with clock := source.clock + (0 + traces.length) } = (.err (.abort .typeError), source) by
             rw [wrapped]
             simp [evaluate, sourceArity, sourceCapture])
-        | some values => simp [targetCapture, sourceCapture, ClosFvs.OptionRel] at captureRel
+        | some values => simp [targetCapture, sourceCapture, Flapjack.optionRel] at captureRel
       | some values =>
         cases sourceCapture : lookupVars indices envSource with
-        | none => simp [targetCapture, sourceCapture, ClosFvs.OptionRel] at captureRel
+        | none => simp [targetCapture, sourceCapture, Flapjack.optionRel] at captureRel
         | some sourceValues =>
           exact success sourceValues values arityOk sourceCapture targetCapture
-            (by simpa [targetCapture, sourceCapture, ClosFvs.OptionRel] using captureRel)
+            (by simpa [targetCapture, sourceCapture, Flapjack.optionRel] using captureRel)
     · have sourceBad : ¬ sourceFunctions.all (fun (arity, _) => arity ≤ source.maxApp && arity != 0) = true := by
         simpa [maxEq, removeFuns_all] using arityOk
       simp [evaluate, arityOk] at run

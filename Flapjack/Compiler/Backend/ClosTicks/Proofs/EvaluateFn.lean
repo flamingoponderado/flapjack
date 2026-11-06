@@ -30,19 +30,19 @@ termination_by sizeOf expression
 Flapjack infrastructure for the closure-construction case. -/
 theorem environment_lookupVars (indices : List Nat) (source target : List Value)
     (related : List.Forall₂ ValueRel source target) :
-    ClosFvs.OptionRel (List.Forall₂ ValueRel) (lookupVars indices source) (lookupVars indices target) := by
+    Flapjack.optionRel (List.Forall₂ ValueRel) (lookupVars indices source) (lookupVars indices target) := by
   induction indices with
-  | nil => simp [lookupVars, ClosFvs.OptionRel]
+  | nil => simp [lookupVars, Flapjack.optionRel]
   | cons index rest ih =>
     have head := environment_lookup source target related index
     cases left : source[index]? <;> cases right : target[index]? <;>
-      simp [ClosFvs.OptionRel, left, right] at head
-    · simp [lookupVars, left, right, ClosFvs.OptionRel]
+      simp [Flapjack.optionRel, left, right] at head
+    · simp [lookupVars, left, right, Flapjack.optionRel]
     · rename_i value nextValue
       cases leftTail : lookupVars rest source <;> cases rightTail : lookupVars rest target <;>
-        simp [ClosFvs.OptionRel, leftTail, rightTail] at ih
-      · simp [lookupVars, left, right, leftTail, rightTail, ClosFvs.OptionRel]
-      · simp [lookupVars, left, right, leftTail, rightTail, ClosFvs.OptionRel, head, ih]
+        simp [Flapjack.optionRel, leftTail, rightTail] at ih
+      · simp [lookupVars, left, right, leftTail, rightTail, Flapjack.optionRel]
+      · simp [lookupVars, left, right, leftTail, rightTail, Flapjack.optionRel, head, ih]
 
 namespace FnPort
 /-- The closure state has the reviewed canonical finite-map roundtrip. -/
@@ -109,13 +109,13 @@ theorem evaluate_remove_ticks_fn {C F : Type} (name : Flapjack.AstHOL.VarN)
           refine ⟨traces.length, .err (.abort .typeError), source, ?_, rfl, states⟩
           rw [wrapped]
           simp [evaluate, ← maxEq, arityOk, sourceCapture]
-        | some values => simp [capture, sourceCapture, ClosFvs.OptionRel] at captureRel
+        | some values => simp [capture, sourceCapture, Flapjack.optionRel] at captureRel
       | some values =>
         cases sourceCapture : lookupVars indices envSource with
-        | none => simp [capture, sourceCapture, ClosFvs.OptionRel] at captureRel
+        | none => simp [capture, sourceCapture, Flapjack.optionRel] at captureRel
         | some sourceValues =>
           have captures : List.Forall₂ ValueRel sourceValues values := by
-            simpa [capture, sourceCapture, ClosFvs.OptionRel] using captureRel
+            simpa [capture, sourceCapture, Flapjack.optionRel] using captureRel
           simp [evaluate, arityOk, capture] at run
           obtain ⟨rfl, rfl⟩ := run
           refine ⟨traces.length, .val [.closure location [] sourceValues arity sourceBody], source, ?_, ?_, states⟩

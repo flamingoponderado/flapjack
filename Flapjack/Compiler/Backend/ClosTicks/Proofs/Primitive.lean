@@ -30,20 +30,14 @@ theorem valueRelSimple : simpleValRel ValueRel := by
 /-- Updating corresponding reference entries preserves their lookup relation.
 This is Flapjack infrastructure for the primitive interface. -/
 theorem refLookup_update {C F : Type} (s t : State C F) (ptr : Nat)
-    (left right : Ref Value) (refs : ∀ key, ClosFvs.OptionRel RefRel (s.refs.lookup key) (t.refs.lookup key))
+    (left right : Ref Value) (refs : ∀ key, Flapjack.optionRel RefRel (s.refs.lookup key) (t.refs.lookup key))
     (related : RefRel left right) :
-    ∀ key, ClosFvs.OptionRel RefRel ((s.refs.updateEq (ptr, left)).lookup key)
+    ∀ key, Flapjack.optionRel RefRel ((s.refs.updateEq (ptr, left)).lookup key)
       ((t.refs.updateEq (ptr, right)).lookup key) := by
   intro key
   by_cases same : key = ptr
-  · subst key; simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, ClosFvs.OptionRel] using related
+  · subst key; simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, Flapjack.optionRel] using related
   · simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, same] using refs key
-
-/-- The two proof modules use the same option lifting. This is Flapjack
-infrastructure for the primitive interface. -/
-theorem optionRel_eq : ClosFvs.OptionRel ValueRel = optionRel ValueRel := by
-  funext left right
-  cases left <;> cases right <;> rfl
 
 /-- The tick-removal state relation satisfies the generic primitive interface. -/
 @[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "simple_state_rel"
@@ -53,29 +47,29 @@ theorem stateRelSimple {C F : Type} :
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro s t ptr ⟨missing, related⟩
     have lookup := related.2.2.2.2.2.2.2.2.1 ptr
-    cases left : s.refs.lookup ptr <;> simp_all [ClosFvs.OptionRel]
+    cases left : s.refs.lookup ptr <;> simp_all [Flapjack.optionRel]
   · intro bytes t s ptr ⟨found, related⟩
     have lookup := related.2.2.2.2.2.2.2.2.1 ptr
     cases left : s.refs.lookup ptr with
-    | none => simp [left, found, ClosFvs.OptionRel] at lookup
+    | none => simp [left, found, Flapjack.optionRel] at lookup
     | some value =>
-      simp only [left, found, ClosFvs.OptionRel] at lookup
+      simp only [left, found, Flapjack.optionRel] at lookup
       cases lookup
       rfl
   · intro values t s ptr ⟨found, related⟩
     have lookup := related.2.2.2.2.2.2.2.2.1 ptr
     cases left : s.refs.lookup ptr with
-    | none => simp [left, found, ClosFvs.OptionRel] at lookup
+    | none => simp [left, found, Flapjack.optionRel] at lookup
     | some value =>
-      simp only [left, found, ClosFvs.OptionRel] at lookup
+      simp only [left, found, Flapjack.optionRel] at lookup
       cases lookup with
       | valueArray xs _ rel => exact ⟨xs, rfl, rel⟩
   · intro mode value t s ptr ⟨found, related⟩
     have lookup := related.2.2.2.2.2.2.2.2.1 ptr
     cases left : s.refs.lookup ptr with
-    | none => simp [left, found, ClosFvs.OptionRel] at lookup
+    | none => simp [left, found, Flapjack.optionRel] at lookup
     | some entry =>
-      simp only [left, found, ClosFvs.OptionRel] at lookup
+      simp only [left, found, Flapjack.optionRel] at lookup
       cases lookup with
       | thunk _ v _ rel => exact ⟨v, rfl, rel⟩
   · intro s t related
@@ -83,8 +77,8 @@ theorem stateRelSimple {C F : Type} :
     · intro ptr
       have lookup := related.2.2.2.2.2.2.2.2.1 ptr
       cases left : s.refs.lookup ptr <;> cases right : t.refs.lookup ptr <;>
-        simp_all [ClosFvs.OptionRel]
-    · simpa only [optionRel_eq] using related.2.2.2.2.2.2.2.1
+        simp_all [Flapjack.optionRel]
+    · exact related.2.2.2.2.2.2.2.1
   · intro ffi s t related
     rcases related with ⟨aux, codeS, codeT, maxApp, positive, clock, _, globals, refs, compiler, oracle⟩
     exact ⟨aux, codeS, codeT, maxApp, positive, clock, rfl, globals, refs, compiler, oracle⟩
@@ -102,7 +96,7 @@ theorem stateRelSimple {C F : Type} :
       refLookup_update s t ptr _ _ refs (.thunk mode v w values), compiler, oracle⟩
   · intro s t xs ys ⟨related, values⟩
     rcases related with ⟨aux, codeS, codeT, maxApp, positive, clock, ffi, _, refs, compiler, oracle⟩
-    have globals : List.Forall₂ (ClosFvs.OptionRel ValueRel) xs ys := by simpa only [optionRel_eq] using values
+    have globals : List.Forall₂ (Flapjack.optionRel ValueRel) xs ys := by exact values
     exact ⟨aux, codeS, codeT, maxApp, positive, clock, ffi, globals, refs, compiler, oracle⟩
 
 namespace PrimitivePort

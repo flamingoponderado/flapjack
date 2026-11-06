@@ -49,31 +49,31 @@ theorem evaluate_remove_fvs_nil {C F : Type} (env nextEnv : List Value)
 
 /-- Related environments have related optional results at every index. -/
 theorem environment_lookup (env nextEnv : List Value) (related : List.Forall₂ ValueRel env nextEnv)
-    (index : Nat) : OptionRel ValueRel env[index]? nextEnv[index]? := by
+    (index : Nat) : optionRel ValueRel env[index]? nextEnv[index]? := by
   induction related generalizing index with
-  | nil => simp [OptionRel]
+  | nil => simp [optionRel]
   | cons head tail ih =>
     cases index with
-    | zero => simpa [OptionRel] using head
+    | zero => simpa [optionRel] using head
     | succ index => simpa using ih index
 
 /-- Capturing the same indices in related environments either fails on both
 sides or returns related values, in order. -/
 theorem environment_lookupVars (indices : List Nat) (env nextEnv : List Value)
     (related : List.Forall₂ ValueRel env nextEnv) :
-    OptionRel (List.Forall₂ ValueRel) (lookupVars indices env) (lookupVars indices nextEnv) := by
+    optionRel (List.Forall₂ ValueRel) (lookupVars indices env) (lookupVars indices nextEnv) := by
   induction indices with
-  | nil => simp [lookupVars, OptionRel]
+  | nil => simp [lookupVars, optionRel]
   | cons index rest ih =>
     have head := environment_lookup env nextEnv related index
     cases left : env[index]? <;> cases right : nextEnv[index]? <;>
-      simp [OptionRel, left, right] at head
-    · simp [lookupVars, left, right, OptionRel]
+      simp [optionRel, left, right] at head
+    · simp [lookupVars, left, right, optionRel]
     · rename_i value nextValue
       cases leftTail : lookupVars rest env <;> cases rightTail : lookupVars rest nextEnv <;>
-        simp [OptionRel, leftTail, rightTail] at ih
-      · simp [lookupVars, left, right, leftTail, rightTail, OptionRel]
-      · simp [lookupVars, left, right, leftTail, rightTail, OptionRel, head, ih]
+        simp [optionRel, leftTail, rightTail] at ih
+      · simp [lookupVars, left, right, leftTail, rightTail, optionRel]
+      · simp [lookupVars, left, right, leftTail, rightTail, optionRel, head, ih]
 
 /-- A successful capture contains one value per selected index. -/
 theorem lookupVars_length (indices : List Nat) (env values : List Value)
@@ -170,9 +170,9 @@ theorem evaluate_remove_fvs_var {C F : Type} (trace : BackendCommon.Tra) (index 
       have missing : env[index]? = none := List.getElem?_eq_none (Nat.le_of_not_gt h)
       simp [missing] at found
     cases nextFound : nextEnv[index]? with
-    | none => simp [found, nextFound, OptionRel] at lookup
+    | none => simp [found, nextFound, optionRel] at lookup
     | some nextValue =>
-      have values : ValueRel value nextValue := by simpa [found, nextFound, OptionRel] using lookup
+      have values : ValueRel value nextValue := by simpa [found, nextFound, optionRel] using lookup
       simp [evaluate, found] at run
       obtain ⟨rfl, rfl⟩ := run
       have codeEq : targetCode = [.var trace index] := by
@@ -670,13 +670,13 @@ theorem evaluate_remove_fvs_fn {C F : Type} (name : Flapjack.Basis.Pure.MlString
           obtain ⟨rfl, rfl⟩ := run
           exact ⟨.err (.abort .typeError), target,
             by simp [evaluate, maxEq, arityOk, nextCapture], rfl, states⟩
-        | some values => simp [capture, nextCapture, OptionRel] at captureRel
+        | some values => simp [capture, nextCapture, optionRel] at captureRel
       | some values =>
         cases nextCapture : lookupVars indices nextEnv with
-        | none => simp [capture, nextCapture, OptionRel] at captureRel
+        | none => simp [capture, nextCapture, optionRel] at captureRel
         | some nextValues =>
           have captures : List.Forall₂ ValueRel values nextValues := by
-            simpa [capture, nextCapture, OptionRel] using captureRel
+            simpa [capture, nextCapture, optionRel] using captureRel
           have length := lookupVars_length indices env values capture
           simp [evaluate, arityOk, capture] at run
           obtain ⟨rfl, rfl⟩ := run
@@ -789,13 +789,13 @@ theorem evaluate_remove_fvs_letrec {C F : Type} (names : List Flapjack.AstHOL.Va
           obtain ⟨rfl, rfl⟩ := run
           exact ⟨.err (.abort .typeError), target,
             by simp [evaluate, maxEq, removeFuns_all, arityOk, nextCapture], rfl, states⟩
-        | some values => simp [capture, nextCapture, OptionRel] at captureRel
+        | some values => simp [capture, nextCapture, optionRel] at captureRel
       | some values =>
         cases nextCapture : lookupVars indices nextEnv with
-        | none => simp [capture, nextCapture, OptionRel] at captureRel
+        | none => simp [capture, nextCapture, optionRel] at captureRel
         | some nextValues =>
           exact success values nextValues arityOk capture nextCapture
-            (lookupVars_length indices env values capture) (by simpa [capture, nextCapture, OptionRel] using captureRel)
+            (lookupVars_length indices env values capture) (by simpa [capture, nextCapture, optionRel] using captureRel)
     · simp [evaluate, arityOk] at run
       obtain ⟨rfl, rfl⟩ := run
       exact ⟨.err (.abort .typeError), target,

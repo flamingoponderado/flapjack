@@ -12,12 +12,12 @@ open Flapjack.SemanticPrimitivesHOL (Result)
 infrastructure for recursive closure inspection. -/
 theorem list_lookup_related {A B : Type} {relation : A → B → Prop} {left : List A} {right : List B}
     (related : List.Forall₂ relation left right) (index : Nat) :
-    ClosFvs.OptionRel relation left[index]? right[index]? := by
+    Flapjack.optionRel relation left[index]? right[index]? := by
   induction related generalizing index with
-  | nil => simp [ClosFvs.OptionRel]
+  | nil => simp [Flapjack.optionRel]
   | cons head tail ih =>
     cases index with
-    | zero => simpa [ClosFvs.OptionRel] using head
+    | zero => simpa [Flapjack.optionRel] using head
     | succ index => simpa using ih index
 
 /-- Related recursive bundles yield related closures at each index. This is
@@ -87,15 +87,15 @@ theorem destClosure_none_related (maxApp : Nat) (requested : Option Nat)
     | none =>
       cases found : functions[index]? with
       | none => simp [destClosure, found]
-      | some entry => simp [ClosFvs.OptionRel, found, targetFound] at lookup
+      | some entry => simp [Flapjack.optionRel, found, targetFound] at lookup
     | some targetEntry =>
       rcases targetEntry with ⟨nextArity, nextBody⟩
       cases found : functions[index]? with
-      | none => simp [ClosFvs.OptionRel, found, targetFound] at lookup
+      | none => simp [Flapjack.optionRel, found, targetFound] at lookup
       | some entry =>
         rcases entry with ⟨arity, body⟩
         have entries : FunctionRel (arity, body) (nextArity, nextBody) := by
-          simpa [ClosFvs.OptionRel, found, targetFound] using lookup
+          simpa [Flapjack.optionRel, found, targetFound] using lookup
         have arityEq : arity = nextArity := entries.1
         subst nextArity
         by_cases valid : (checkLoc maxApp requested (location.map (fun loc => 2 * index + loc))
@@ -142,11 +142,11 @@ theorem destClosure_partial_related (maxApp : Nat) (requested : Option Nat)
     | some targetEntry =>
       rcases targetEntry with ⟨nextArity, nextBody⟩
       cases found : functions[index]? with
-      | none => simp [ClosFvs.OptionRel, found, targetFound] at lookup
+      | none => simp [Flapjack.optionRel, found, targetFound] at lookup
       | some entry =>
         rcases entry with ⟨arity, body⟩
         have entries : FunctionRel (arity, body) (nextArity, nextBody) := by
-          simpa [ClosFvs.OptionRel, found, targetFound] using lookup
+          simpa [Flapjack.optionRel, found, targetFound] using lookup
         have arityEq : arity = nextArity := entries.1
         subst nextArity
         by_cases valid : (checkLoc maxApp requested (location.map (fun loc => 2 * index + loc))
@@ -214,11 +214,11 @@ theorem destClosure_full_related (maxApp : Nat) (requested : Option Nat)
     | some targetEntry =>
       rcases targetEntry with ⟨targetArity, targetBody⟩
       cases found : sourceFunctions[index]? with
-      | none => simp [ClosFvs.OptionRel, found, targetFound] at lookup
+      | none => simp [Flapjack.optionRel, found, targetFound] at lookup
       | some entry =>
         rcases entry with ⟨arity, sourceBody⟩
         have entries : FunctionRel (arity, sourceBody) (targetArity, targetBody) := by
-          simpa [ClosFvs.OptionRel, found, targetFound] using lookup
+          simpa [Flapjack.optionRel, found, targetFound] using lookup
         have arityEq : arity = targetArity := entries.1
         subst targetArity
         by_cases valid : (checkLoc maxApp requested (location.map (fun loc => 2 * index + loc))
