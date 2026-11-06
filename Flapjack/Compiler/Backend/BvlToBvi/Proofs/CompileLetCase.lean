@@ -87,13 +87,4 @@ theorem simulation_let_cons {C F : Type} (first : Bvl.Exp) (rest : List Bvl.Exp)
       rw [BviSem.evaluate, BviSem.fixClock_evaluate, shiftedBindings]
       simpa [List.map_append] using targetBody
 
-/-- Variable bindings and a variable body are an instance of the let simulation. -/
-theorem simulation_let_vars {C F : Type} (first : Nat) (rest : List Nat) (body : Nat)
-    (env : List Value) (source : BvlSem.State (Nat × C) F) :
-    simulation [.let ((first :: rest).map Bvl.Exp.var) (.var body)] env source := by
-  apply simulation_let_cons (.var first) (rest.map Bvl.Exp.var) (.var body) env source
-  · exact simulation_vars (first :: rest) env source
-  · intro mid values _
-    exact simulation_var body (values ++ env) mid
-
 end Flapjack.Compiler.Backend.BvlToBvi.Proofs

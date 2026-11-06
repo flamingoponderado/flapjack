@@ -108,11 +108,4 @@ theorem simulation_let_empty {C F : Type} (bindings : List Bvl.Exp) (body : Bvl.
       · intro key present
         exact (refsMidEq key present).trans (refsFinalEq key present)
 
-/-- Variable-only inner lets instantiate the empty-let simulation. -/
-theorem simulation_let_empty_vars {C F : Type} (indices : List Nat) (body : Nat)
-    (env : List Value) (source : BvlSem.State (Nat × C) F) :
-    simulation [.let [] (.let (indices.map Bvl.Exp.var) (.var body))] env source :=
-  simulation_let_empty (indices.map Bvl.Exp.var) (.var body) env source
-    (simulation_vars indices env source) (fun values => simulation_var body values source)
-
 end Flapjack.Compiler.Backend.BvlToBvi.Proofs

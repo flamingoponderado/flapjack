@@ -129,13 +129,4 @@ theorem simulation_if {C F : Type} (condition yes no : Bvl.Exp) (env : List Valu
           have branchRun : BvlSem.evaluate [yes] env mid = (res, next) := by simpa [bool] using run
           exact runBranch yes yesCode yesAux n1 nYes (yesIH mid midClock) branchRun yesCompiled yesInstalled shape.2.1 (by rfl)
 
-/-- Flapjack consequence: a conditional whose condition and branches are
-variables satisfies the simulation for any environment and source state. -/
-theorem simulation_if_vars {C F : Type} (condition yes no : Nat) (env : List Value)
-    (source : BvlSem.State (Nat × C) F) :
-    simulation [.ifThenElse (.var condition) (.var yes) (.var no)] env source :=
-  simulation_if (.var condition) (.var yes) (.var no) env source
-    (simulation_var condition env source) (fun mid _ => simulation_var yes env mid)
-    (fun mid _ => simulation_var no env mid)
-
 end Flapjack.Compiler.Backend.BvlToBvi.Proofs

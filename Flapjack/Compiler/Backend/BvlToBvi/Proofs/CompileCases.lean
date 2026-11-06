@@ -244,21 +244,6 @@ theorem simulation_raise {C F : Type} (body : Bvl.Exp) (env : List Value)
   exact compileExpsCorrect_raise body env source next n n2 res target ys aux relocate ih run notTypeError
     compiled related sourceOk envOk installed handlers global
 
-/-- Any finite sequence of ticks around a variable satisfies the simulation.
-This is a Flapjack consequence of the checked cases, not a separate HOL port. -/
-theorem simulation_ticks_var {C F : Type} (count index : Nat) (env : List Value)
-    (source : BvlSem.State (Nat × C) F) : simulation [Bvl.mkTick count (.var index)] env source := by
-  induction count generalizing source with
-  | zero => exact simulation_var index env source
-  | succ count ih => exact simulation_tick _ env source (ih (BvlSem.decClock 1 source))
-
-/-- Raising any finite sequence of ticks around a variable satisfies the
-simulation. This is a Flapjack consequence of the checked cases. -/
-theorem simulation_raise_ticks_var {C F : Type} (count index : Nat) (env : List Value)
-    (source : BvlSem.State (Nat × C) F) :
-    simulation [.raise (Bvl.mkTick count (.var index))] env source :=
-  simulation_raise _ env source (simulation_ticks_var count index env source)
-
 /-- Relocation leaves Boolean decoding unchanged. This Flapjack helper is
 used to compare conditional branches in the simulation. -/
 theorem asBool_adjustBv (relocate : Nat → Nat) (value : Value) :

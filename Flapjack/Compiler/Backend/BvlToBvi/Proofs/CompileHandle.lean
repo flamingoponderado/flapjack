@@ -194,13 +194,4 @@ theorem simulation_handle {C F : Type} (bindings : List Bvl.Exp) (body handler :
             · intro key present
               exact (refsMidEq key present).trans ((refsBodyEq key present).trans (refsBodyFinal key present))
 
-/-- Variable-only protected lets and variable handlers instantiate the
-handler simulation. -/
-theorem simulation_handle_vars {C F : Type} (indices : List Nat) (body handler : Nat)
-    (env : List Value) (source : BvlSem.State (Nat × C) F) :
-    simulation [.handle (.let (indices.map Bvl.Exp.var) (.var body)) (.var handler)] env source :=
-  simulation_handle (indices.map Bvl.Exp.var) (.var body) (.var handler) env source
-    (simulation_vars indices env source) (fun values => simulation_var body values source)
-    (fun exception mid _ => simulation_var handler (exception :: env) mid)
-
 end Flapjack.Compiler.Backend.BvlToBvi.Proofs

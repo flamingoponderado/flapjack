@@ -565,22 +565,6 @@ theorem simulationFor_var {C F : Type} (index : Nat) (env : List BvlSem.Value) (
   intro res s2 t1 n corr tail live run notTypeError vars tailShape fresh related livePresent exceptionJump
   exact compileCorrect_var index env s1 s2 res t1 n corr tail live run notTypeError vars tailShape fresh related livePresent exceptionJump
 
-/-- Every list of variable expressions satisfies the full simulation
-invariant, for any source environment and source state. -/
-theorem simulationFor_vars {C F : Type} (indices : List Nat) (env : List BvlSem.Value)
-    (s1 : BviSem.BviState C F) : simulationFor (indices.map Bvi.Exp.var) env s1 := by
-  induction indices generalizing s1 with
-  | nil => simpa using simulationFor_nil env s1
-  | cons index rest ih =>
-    cases rest with
-    | nil => simpa using simulationFor_var index env s1
-    | cons next more =>
-      simp only [List.map_cons]
-      apply compileCorrect_cons (.var index) (.var next) (more.map Bvi.Exp.var) env s1
-      · exact simulationFor_var index env s1
-      · intro _ smid _
-        simpa using ih smid
-
 private theorem jumpExc_decClock {C F : Type} (state : DataSem.State C F) :
     DataSem.jumpExc (DataSem.decClock state) = (DataSem.jumpExc state).map DataSem.decClock := by
   simp only [DataSem.jumpExc, DataSem.decClock]

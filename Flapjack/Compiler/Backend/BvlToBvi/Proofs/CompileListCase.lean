@@ -117,18 +117,4 @@ theorem simulation_cons {C F : Type} (first second : Bvl.Exp) (rest : List Bvl.E
           rw [targetTail]
           simp [mapSimulationResult, Flapjack.holHd]
 
-/-- Flapjack consequence: any list of variables satisfies the simulation,
-including intermediate errors and changes of the relocation map. -/
-theorem simulation_vars {C F : Type} (indices : List Nat) (env : List Value)
-    (source : BvlSem.State (Nat × C) F) :
-    simulation (indices.map Bvl.Exp.var) env source := by
-  induction indices generalizing source with
-  | nil => exact simulation_nil env source
-  | cons index indices ih =>
-    cases indices with
-    | nil => exact simulation_var index env source
-    | cons second rest =>
-      simpa using simulation_cons (.var index) (.var second) (rest.map Bvl.Exp.var) env source
-        (simulation_var index env source) (fun mid _ => ih mid)
-
 end Flapjack.Compiler.Backend.BvlToBvi.Proofs
