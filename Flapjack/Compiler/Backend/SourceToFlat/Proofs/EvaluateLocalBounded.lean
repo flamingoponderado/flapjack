@@ -7,32 +7,6 @@ namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL
 open OracleInvariant
 
-/-- An expression simulation restricted to states at or below a clock bound. -/
-def LocalEnvBoundedIH {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (limit : Nat) (expr : AstHOL.Exp) : Prop :=
-  ∀ (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
-    (source : State F) (flat : FlatSem.State C F) (baseEnv : SemEnv Value)
-    (sourceLocal : Namespace ModN VarN Value) (flatEnv : FlatSem.Environment FlatSem.Value)
-    (traces : List BackendCommon.Tra) (trace : List VarN) (baseMap : Environment) (gen : EnvironmentGenerationStore),
-    source.clock ≤ limit → EnvRel genv sourceLocal flatEnv.v →
-    GlobalEnvInv genv baseMap (fun n => n ∈ flatEnv.v.map Prod.fst) baseEnv →
-    traces.length = flatEnv.v.length → factoredInvariant interp transform gen genv (start, finish, other) source flat →
-    envGenRel gen source.evalState →
-    (∀ last, EvaluateHOL.evaluate source { baseEnv with v := nsAppend sourceLocal baseEnv.v } [expr] ≠
-      (last, .err (.abort .typeError))) →
-    LocalExpressionStep interp transform genv start finish other source flat
-      { baseEnv with v := nsAppend sourceLocal baseEnv.v } flatEnv trace
-      { baseMap with v := bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v } gen expr
-
-/-- An unbounded local simulation supplies every clock-bounded instance. -/
-theorem localEnvBounded_of_unbounded {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (limit : Nat) (expr : AstHOL.Exp) (ih : LocalEnvIH (F := F) interp transform expr) :
-    LocalEnvBoundedIH (F := F) interp transform limit expr := by
-  intro genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen _
-  exact ih genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen
-
 private theorem boundedSourceEvaluate_cons {F : Type} (source : State F) (env : SemEnv Value)
     (first second : AstHOL.Exp) (rest : List AstHOL.Exp) :
     EvaluateHOL.evaluate source env (first :: second :: rest) =

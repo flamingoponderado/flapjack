@@ -69,53 +69,45 @@ theorem factoredDecClockIH_of_smaller {C F : Type} [Nonempty C]
   exact smaller source.clock below decs genv env nextEnv sourceEnv trace source sourceLast flat
     start finish next other n n' gen nextGen flatDecs result (Nat.le_refl _)
 
-/-- An unbounded declaration simulation supplies any bounded instance. -/
-theorem factoredDecBoundedIH_of_unbounded {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (limit : Nat) (decs : List Dec) (ih : FactoredDecIH (F := F) interp transform decs) :
-    FactoredDecBoundedIH (F := F) interp transform limit decs := by
-  intro genv env nextEnv sourceEnv trace source sourceLast flat start finish next other n n' gen nextGen flatDecs result _
-  exact ih genv env nextEnv sourceEnv trace source sourceLast flat start finish next other n n' gen nextGen flatDecs result
-
 /-- Empty declaration lists satisfy the factored induction hypothesis. -/
-theorem factoredDecIH_empty {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) :
-    FactoredDecIH (F := F) interp transform [] := by
+theorem factoredDecBoundedIH_empty {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat) :
+    FactoredDecBoundedIH (F := F) interp transform limit [] := by
   intro genv env nextEnv sourceEnv trace source sourceLast flat start finish next other n n' gen nextGen
-    flatDecs result sourceRun invariant compiled envInv notTypeError generation future bounded
+    flatDecs result _ sourceRun invariant compiled envInv notTypeError generation future bounded
   exact evaluateDecs_empty_case interp transform genv env nextEnv sourceEnv trace source sourceLast flat
     start finish next other n n' gen nextGen flatDecs result sourceRun invariant compiled envInv notTypeError
     generation future bounded
 
 /-- Type-abbreviation declarations satisfy the factored induction hypothesis. -/
-theorem factoredDecIH_dtabbrev {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+theorem factoredDecBoundedIH_dtabbrev {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
     (location : Flapjack.Misc.Location.Locs) (typeVars : List TvarN) (name : TypeN) (typ : AstT) :
-    FactoredDecIH (F := F) interp transform [.dtabbrev location typeVars name typ] := by
+    FactoredDecBoundedIH (F := F) interp transform limit [.dtabbrev location typeVars name typ] := by
   intro genv env nextEnv sourceEnv trace source sourceLast flat start finish next other n n' gen nextGen
-    flatDecs result sourceRun invariant compiled envInv notTypeError generation future bounded
+    flatDecs result _ sourceRun invariant compiled envInv notTypeError generation future bounded
   exact evaluateDtabbrev_case interp transform genv env nextEnv sourceEnv trace source sourceLast flat
     start finish next other n n' gen nextGen location typeVars name typ flatDecs result sourceRun invariant compiled
     envInv notTypeError generation future bounded
 
 /-- Recursive declarations satisfy the factored induction hypothesis. -/
-theorem factoredDecIH_dletrec {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+theorem factoredDecBoundedIH_dletrec {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
     (location : Flapjack.Misc.Location.Locs) (funs : List (VarN × VarN × AstHOL.Exp)) :
-    FactoredDecIH (F := F) interp transform [.dletrec location funs] := by
+    FactoredDecBoundedIH (F := F) interp transform limit [.dletrec location funs] := by
   intro genv env nextEnv sourceEnv trace source sourceLast flat start finish next other n n' gen nextGen
-    flatDecs result sourceRun invariant compiled envInv notTypeError generation future bounded
+    flatDecs result _ sourceRun invariant compiled envInv notTypeError generation future bounded
   exact evaluateDletrec_case_factored interp transform genv env nextEnv sourceEnv trace funs source sourceLast flat
     start finish next other n n' gen nextGen location flatDecs result sourceRun invariant compiled envInv
     notTypeError generation future bounded
 
 /-- Environment declarations satisfy the factored induction hypothesis,
 including the oracle and generation updates. -/
-theorem factoredDecIH_denv {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (name : VarN) :
-    FactoredDecIH (F := F) interp transform [.denv name] := by
+theorem factoredDecBoundedIH_denv {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat) (name : VarN) :
+    FactoredDecBoundedIH (F := F) interp transform limit [.denv name] := by
   intro genv env nextEnv sourceEnv trace source sourceLast flat start finish next other n n' gen nextGen
-    flatDecs result sourceRun invariant compiled envInv notTypeError generation future bounded
+    flatDecs result _ sourceRun invariant compiled envInv notTypeError generation future bounded
   have futureCompiled : envGenFutureRel interp (compileDecs trace n start env gen [.denv name]).2.2.2.1
       source.evalState := by simpa [compiled] using future
   have boundedCompiled : idxPrev (compileDecs trace n start env gen [.denv name]).2.1 finish := by
@@ -346,7 +338,7 @@ theorem factoredDecBoundedIH_list {C F : Type} [Nonempty C]
     (singletons : ∀ dec, dec ∈ decs → FactoredDecBoundedIH (F := F) interp transform limit [dec]) :
     FactoredDecBoundedIH (F := F) interp transform limit decs := by
   induction decs with
-  | nil => exact factoredDecBoundedIH_of_unbounded interp transform limit [] (factoredDecIH_empty interp transform)
+  | nil => exact factoredDecBoundedIH_empty interp transform limit
   | cons first rest ih =>
     cases rest with
     | nil => exact singletons first (by simp)

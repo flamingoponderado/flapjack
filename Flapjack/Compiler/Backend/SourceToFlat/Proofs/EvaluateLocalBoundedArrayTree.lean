@@ -588,7 +588,10 @@ private theorem localEnvBounded_arrayTree {C F : Type} [Nonempty C]
     (expr : AstHOL.Exp) (covered : LocalEnvBoundedArrayExpression expr) : LocalEnvBoundedIH (F := F) interp transform limit expr := by
   induction covered with
   | base expr covered =>
-    exact localEnvBounded_of_unbounded interp transform limit expr (localEnvIH_covered interp transform expr covered)
+    cases covered with
+    | literal lit => exact localEnvBounded_literal interp transform limit lit
+    | variable_ id => exact localEnvBounded_variable interp transform limit id
+    | function_ name body => exact localEnvBounded_function interp transform limit name body
   | unaryBasicBadArity op args unary badArity _ ih =>
     exact localEnvBounded_unaryBasic_badArity interp transform limit op args unary badArity ih
   | binaryBasicBadArity op args binary badArity _ ih =>

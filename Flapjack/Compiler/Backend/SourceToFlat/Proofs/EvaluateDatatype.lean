@@ -1260,12 +1260,12 @@ theorem factoredInvariant_allocateTypeDefinitions {C F : Type} [Nonempty C]
 
 /-- Datatype declarations satisfy the factored declaration simulation. The
 factored relations remain subject to the separate HOL correspondence review. -/
-theorem factoredDecIH_dtype {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+theorem factoredDecBoundedIH_dtype {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
     (location : Flapjack.Misc.Location.Locs) (types : TypeDef) :
-    FactoredDecIH (F := F) interp transform [.dtype location types] := by
+    FactoredDecBoundedIH (F := F) interp transform limit [.dtype location types] := by
   intro genv env nextEnv sourceEnv trace source sourceLast flat start finish next other n n' gen nextGen
-    flatDecs result sourceRun invariant compiled _envInv notTypeError generation _future bounded
+    flatDecs result _ sourceRun invariant compiled _envInv notTypeError generation _future bounded
   have checked : types.all checkDupCtors = true := by
     cases h : types.all checkDupCtors with
     | true => rfl

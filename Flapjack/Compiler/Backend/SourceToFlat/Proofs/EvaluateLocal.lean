@@ -193,15 +193,15 @@ theorem factoredDecBoundedIH_singleton {C F : Type} [Nonempty C]
     (dec : Dec) : FactoredDecBoundedIH (F := F) interp transform limit [dec] := by
   cases dec with
   | dtabbrev location vars name typ =>
-    exact factoredDecBoundedIH_of_unbounded interp transform limit _ (factoredDecIH_dtabbrev interp transform location vars name typ)
+    exact factoredDecBoundedIH_dtabbrev interp transform limit location vars name typ
   | dletrec location funs =>
-    exact factoredDecBoundedIH_of_unbounded interp transform limit _ (factoredDecIH_dletrec interp transform location funs)
+    exact factoredDecBoundedIH_dletrec interp transform limit location funs
   | denv name =>
-    exact factoredDecBoundedIH_of_unbounded interp transform limit _ (factoredDecIH_denv interp transform name)
+    exact factoredDecBoundedIH_denv interp transform limit name
   | dexn location name types =>
-    exact factoredDecBoundedIH_of_unbounded interp transform limit _ (factoredDecIH_dexn interp transform location name types)
+    exact factoredDecBoundedIH_dexn interp transform limit location name types
   | dtype location types =>
-    exact factoredDecBoundedIH_of_unbounded interp transform limit _ (factoredDecIH_dtype interp transform location types)
+    exact factoredDecBoundedIH_dtype interp transform limit location types
   | dlet location pattern expr =>
     apply factoredDecBoundedIH_dlet_expression interp transform limit location pattern expr
     exact localEnvBounded_arrayTree_of_smaller interp transform limit smallerExprs smallerDecs expr

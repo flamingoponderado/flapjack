@@ -298,12 +298,12 @@ theorem globalEnvInv_exception (genv : GlobalEnv) (name : ConN) (idx arity stamp
 
 /-- Exception declarations satisfy the factored declaration induction
 hypothesis. The relations and evaluator carriers still need HOL review. -/
-theorem factoredDecIH_dexn {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+theorem factoredDecBoundedIH_dexn {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
     (location : Flapjack.Misc.Location.Locs) (name : ConN) (types : List AstT) :
-    FactoredDecIH (F := F) interp transform [.dexn location name types] := by
+    FactoredDecBoundedIH (F := F) interp transform limit [.dexn location name types] := by
   intro genv env nextEnv sourceEnv trace source sourceLast flat start finish next other n n' gen nextGen
-    flatDecs result sourceRun invariant compiled _envInv _notTypeError generation _future bounded
+    flatDecs result _ sourceRun invariant compiled _envInv _notTypeError generation _future bounded
   have compEq := compiled
   simp only [compileDecs, Prod.mk.injEq] at compEq
   obtain ⟨_, nextEq, envEq, genEq, codeEq⟩ := compEq

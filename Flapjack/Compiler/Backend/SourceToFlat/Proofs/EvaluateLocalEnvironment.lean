@@ -6,19 +6,17 @@ namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL
 open OracleInvariant
 
-/-- Induction hypothesis for arbitrary related local environments and their
-compiler traces. -/
-def LocalEnvIH {C F : Type} [Nonempty C]
+/-- An expression simulation restricted to states at or below a clock bound. -/
+def LocalEnvBoundedIH {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (expr : AstHOL.Exp) : Prop :=
+    (limit : Nat) (expr : AstHOL.Exp) : Prop :=
   ∀ (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
     (source : State F) (flat : FlatSem.State C F) (baseEnv : SemEnv Value)
     (sourceLocal : Namespace ModN VarN Value) (flatEnv : FlatSem.Environment FlatSem.Value)
     (traces : List BackendCommon.Tra) (trace : List VarN) (baseMap : Environment) (gen : EnvironmentGenerationStore),
-    EnvRel genv sourceLocal flatEnv.v →
+    source.clock ≤ limit → EnvRel genv sourceLocal flatEnv.v →
     GlobalEnvInv genv baseMap (fun n => n ∈ flatEnv.v.map Prod.fst) baseEnv →
-    traces.length = flatEnv.v.length →
-    factoredInvariant interp transform gen genv (start, finish, other) source flat →
+    traces.length = flatEnv.v.length → factoredInvariant interp transform gen genv (start, finish, other) source flat →
     envGenRel gen source.evalState →
     (∀ last, EvaluateHOL.evaluate source { baseEnv with v := nsAppend sourceLocal baseEnv.v } [expr] ≠
       (last, .err (.abort .typeError))) →
@@ -27,20 +25,20 @@ def LocalEnvIH {C F : Type} [Nonempty C]
       { baseMap with v := bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v } gen expr
 
 /-- Literals preserve arbitrary related local environments and both states. -/
-theorem localEnvIH_literal {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (lit : Lit) :
-    LocalEnvIH (F := F) interp transform (.lit lit) := by
-  intro genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen _ _ _ invariant generation _
+theorem localEnvBounded_literal {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat) (lit : Lit) :
+    LocalEnvBoundedIH (F := F) interp transform limit (.lit lit) := by
+  intro genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen _ _ _ _ invariant generation _
   refine ⟨genv, exprSim_literal genv _ trace _ flatEnv source flat invariant.2.2.1 lit, ?_⟩
   simpa only [EvaluateHOL.evaluate, compileExp, FlatSem.evaluate] using
     And.intro (GlobalGrowth.refl genv) (And.intro invariant
       (And.intro generation (oracForwardRel_refl interp source.evalState)))
 
 /-- Functions capture any related local environment. -/
-theorem localEnvIH_function {C F : Type} [Nonempty C]
+theorem localEnvBounded_function {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (name : VarN) (body : AstHOL.Exp) : LocalEnvIH (F := F) interp transform (.fn name body) := by
-  intro genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen localRel envInv length
+    (limit : Nat) (name : VarN) (body : AstHOL.Exp) : LocalEnvBoundedIH (F := F) interp transform limit (.fn name body) := by
+  intro genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen _ localRel envInv length
     invariant generation _
   refine ⟨genv, exprSim_function genv baseMap baseEnv sourceLocal flatEnv localRel envInv traces length
     source flat invariant.2.2.1 trace name body, ?_⟩
@@ -273,10 +271,10 @@ private theorem localLookup_exists_iff_mem (entries : List (VarN × FlatSem.Valu
 
 /-- Variable lookup respects local shadowing and falls back to the related
 global environment for names absent from the local stack. -/
-theorem localEnvIH_variable {C F : Type} [Nonempty C]
+theorem localEnvBounded_variable {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (id : Ident ModN VarN) : LocalEnvIH (F := F) interp transform (.var id) := by
-  intro genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen localRel envInv tracesLen
+    (limit : Nat) (id : Ident ModN VarN) : LocalEnvBoundedIH (F := F) interp transform limit (.var id) := by
+  intro genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen _ localRel envInv tracesLen
     invariant generation safe
   let sourceEnv := { baseEnv with v := nsAppend sourceLocal baseEnv.v }
   let compMap := { baseMap with v := bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v }
@@ -369,15 +367,5 @@ inductive LocalEnvExpression : AstHOL.Exp → Prop where
   | literal (lit : Lit) : LocalEnvExpression (.lit lit)
   | variable_ (id : Ident ModN VarN) : LocalEnvExpression (.var id)
   | function_ (name : VarN) (body : AstHOL.Exp) : LocalEnvExpression (.fn name body)
-
-/-- Covered expressions satisfy the preliminary arbitrary-local induction
-hypothesis, whose relations remain pending HOL review. -/
-theorem localEnvIH_covered {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (expr : AstHOL.Exp) (covered : LocalEnvExpression expr) : LocalEnvIH (F := F) interp transform expr := by
-  induction covered with
-  | literal lit => exact localEnvIH_literal interp transform lit
-  | variable_ id => exact localEnvIH_variable interp transform id
-  | function_ name body => exact localEnvIH_function interp transform name body
 
 end Flapjack.Compiler.Backend.SourceToFlat
