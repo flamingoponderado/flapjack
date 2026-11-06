@@ -310,16 +310,6 @@ theorem factoredDecIH_scoped {C F : Type} [Nonempty C]
     · apply factoredDecIH_list interp transform body
       exact bodyIH
 
-/-- Any list built from the covered base forms, modules and local blocks
-satisfies the factored declaration simulation. -/
-theorem factoredDecIH_scoped_list {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (decs : List Dec) (covered : ∀ dec, dec ∈ decs → FactoredScopedDec dec) :
-    FactoredDecIH (F := F) interp transform decs := by
-  apply factoredDecIH_list interp transform decs
-  intro dec member
-  exact factoredDecIH_scoped interp transform dec (covered dec member)
-
 /- Bounded versions retain the source clock bound across nested declarations. -/
 theorem factoredDecBoundedIH_dmod {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
@@ -520,15 +510,6 @@ theorem factoredAllBounded {C F : Type} [Nonempty C]
     · intro decs
       exact factoredDecBoundedIH_covered_list interp transform limit smallerExprs smallerDecs decs
         (fun dec _ => allDeclarations_covered dec)
-
-/-- Arbitrary source expressions satisfy the preliminary local simulation.
-The factored relations are not yet reviewed as the original HOL theorem. -/
-theorem localEnvIH_all {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (expr : AstHOL.Exp) : LocalEnvIH (F := F) interp transform expr := by
-  intro genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen
-  exact (factoredAllBounded (F := F) interp transform source.clock).1 expr genv start finish other
-    source flat baseEnv sourceLocal flatEnv traces trace baseMap gen (Nat.le_refl _)
 
 /-- Arbitrary source declaration lists satisfy the preliminary factored
 simulation. This is not yet the reviewed HOL pass-correctness statement. -/

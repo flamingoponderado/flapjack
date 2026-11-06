@@ -167,37 +167,4 @@ theorem factoredDecIH_dmod {C F : Type} [Nonempty C]
     exact factoredDecCase_liftModule interp transform genv source innerLast flat finish innerNext other innerGen
       innerEnv moduleName innerCode _ inner
 
-/-- Partial proof coverage extended recursively through module declarations.
-This predicate is proof bookkeeping, not a restriction on CakeML programs. -/
-inductive FactoredModuleTree : Dec → Prop where
-  | basic (dec : Dec) : FactoredDecSupported dec → FactoredModuleTree dec
-  | module_ (moduleName : ModN) (decs : List Dec) :
-      (∀ dec, dec ∈ decs → FactoredModuleTree dec) → FactoredModuleTree (.dmod moduleName decs)
-
-/-- All module trees built from the covered base cases satisfy the factored
-singleton simulation. -/
-theorem factoredDecIH_moduleTree {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (dec : Dec) (covered : FactoredModuleTree dec) : FactoredDecIH (F := F) interp transform [dec] := by
-  induction covered with
-  | basic dec supported =>
-    apply factoredDecIH_supported_list interp transform [dec]
-    intro item member
-    simp only [List.mem_singleton] at member
-    subst item
-    exact supported
-  | module_ moduleName decs _ ih =>
-    apply factoredDecIH_dmod interp transform moduleName decs
-    apply factoredDecIH_list interp transform decs
-    exact ih
-
-/-- Lists of covered module trees satisfy the factored declaration
-simulation, with arbitrary nesting of module declarations. -/
-theorem factoredDecIH_moduleTree_list {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (decs : List Dec) (covered : ∀ dec, dec ∈ decs → FactoredModuleTree dec) :
-    FactoredDecIH (F := F) interp transform decs := by
-  apply factoredDecIH_list interp transform decs
-  intro dec member
-  exact factoredDecIH_moduleTree interp transform dec (covered dec member)
 end Flapjack.Compiler.Backend.SourceToFlat

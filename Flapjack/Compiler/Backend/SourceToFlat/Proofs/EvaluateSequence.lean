@@ -77,15 +77,6 @@ theorem factoredDecBoundedIH_of_unbounded {C F : Type} [Nonempty C]
   intro genv env nextEnv sourceEnv trace source sourceLast flat start finish next other n n' gen nextGen flatDecs result _
   exact ih genv env nextEnv sourceEnv trace source sourceLast flat start finish next other n n' gen nextGen flatDecs result
 
-/-- Unbounded declaration simulations supply the smaller-clock hypothesis. -/
-theorem factoredDecClockIH_of_unbounded {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
-    (each : ∀ decs, FactoredDecIH (F := F) interp transform decs) :
-    FactoredDecClockIH (F := F) interp transform limit := by
-  intro decs genv env nextEnv sourceEnv trace source sourceLast flat start finish next other n n' gen nextGen
-    flatDecs result _
-  exact each decs genv env nextEnv sourceEnv trace source sourceLast flat start finish next other n n' gen nextGen flatDecs result
-
 /-- Empty declaration lists satisfy the factored induction hypothesis. -/
 theorem factoredDecIH_empty {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) :
@@ -144,48 +135,6 @@ theorem factoredDecIH_denv {C F : Type} [Nonempty C]
     exact ⟨rfl, domain, finalGeneration, finalEnv⟩
   · intro error impossible
     cases impossible
-
-/-- Literal-initialized value declarations satisfy the factored induction
-hypothesis for any source-safe pattern. -/
-theorem factoredDecIH_dlet_literal {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (lit : Lit) :
-    FactoredDecIH (F := F) interp transform [.dlet location pattern (.lit lit)] := by
-  intro genv env nextEnv sourceEnv trace source sourceLast flat start finish next other n n' gen nextGen
-    flatDecs result sourceRun invariant compiled envInv notTypeError generation future bounded
-  apply evaluateDlet_case_factored interp transform genv start finish next other source sourceLast flat sourceEnv
-    trace n n' env nextEnv gen nextGen location pattern (.lit lit) flatDecs result sourceRun invariant compiled
-    envInv notTypeError generation future bounded
-  exact dletExpressionStep_literal interp transform genv start finish other source flat sourceEnv
-    ((AstHOL.patBindings pattern).reverse ++ trace) env gen lit invariant generation
-
-/-- Function-initialized value declarations satisfy the factored induction
-hypothesis for any source-safe pattern. -/
-theorem factoredDecIH_dlet_function {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (name : VarN) (body : AstHOL.Exp) :
-    FactoredDecIH (F := F) interp transform [.dlet location pattern (.fn name body)] := by
-  intro genv env nextEnv sourceEnv trace source sourceLast flat start finish next other n n' gen nextGen
-    flatDecs result sourceRun invariant compiled envInv notTypeError generation future bounded
-  apply evaluateDlet_case_factored interp transform genv start finish next other source sourceLast flat sourceEnv
-    trace n n' env nextEnv gen nextGen location pattern (.fn name body) flatDecs result sourceRun invariant compiled
-    envInv notTypeError generation future bounded
-  exact dletExpressionStep_function interp transform genv start finish other source flat sourceEnv
-    ((AstHOL.patBindings pattern).reverse ++ trace) env gen name body envInv invariant generation
-
-/-- Global-variable-initialized value declarations satisfy the factored
-induction hypothesis; source safety supplies the variable lookup. -/
-theorem factoredDecIH_dlet_variable {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (id : Ident ModN VarN) :
-    FactoredDecIH (F := F) interp transform [.dlet location pattern (.var id)] := by
-  intro genv env nextEnv sourceEnv trace source sourceLast flat start finish next other n n' gen nextGen
-    flatDecs result sourceRun invariant compiled envInv notTypeError generation _future bounded
-  apply DletOutcomeAdvanced.toFactoredDecCase interp transform genv start finish next other source sourceLast flat
-    sourceEnv trace n n' env nextEnv gen nextGen location pattern (.var id) flatDecs result sourceRun compiled
-  exact evaluateDlet_variable_advanced interp transform genv start finish next other source sourceLast flat
-    sourceEnv trace n n' env nextEnv gen nextGen location pattern id flatDecs result compiled bounded sourceRun
-    notTypeError envInv invariant generation
 
 /-- Expression forms whose factored simulation is currently available in an
 empty local environment, including nested source annotations. -/
