@@ -106,12 +106,4 @@ def comp (rows : List (Pat × Nat)) : DTree :=
   let rows1 := if PatternExh.exhRows rows0 then insertAny rows0 else rows0
   patsToCode rows1
 
-/-- Execute pattern compilation with an explicit exhaustiveness budget.
-`none` means the budget was exhausted. This remains available to compare the
-bounded worklist against the total implementation. -/
-def compFuel (fuel : Nat) (rows : List (Pat × Nat)) : Option DTree := do
-  let rows0 := moveConstUp rows
-  let exhaustive ← PatternExh.exhRowsFuel fuel rows0
-  pure (patsToCode (if exhaustive then insertAny rows0 else rows0))
-
 end Flapjack.Compiler.Backend.PatternComp

@@ -44,23 +44,4 @@ def matsLen : List (List (List Pat)) → Nat
   | [] => 0
   | m :: ms => max (matLen m) (matsLen ms)
 
-/-- Bounded replay of HOL `exh_all`. Failure means the supplied step budget
-was exhausted; no claim that a particular budget suffices is made. This helper
-is not tagged as the total HOL recursion. -/
-def exhAllFuel : Nat → List (List (List Pat)) → Option Bool
-  | 0, _ => none
-  | _ + 1, [] => some true
-  | _ + 1, [] :: _ => some false
-  | fuel + 1, (r :: rows) :: ms =>
-      if r.isEmpty then exhAllFuel fuel ms
-      else match colCtors (r :: rows) with
-        | none => exhAllFuel fuel (defaultMat (r :: rows) :: ms)
-        | some cs => exhAllFuel fuel (specMats cs (r :: rows) ++ ms)
-
-/-- Bounded exhaustiveness check for pattern rows. The total HOL `exh_rows`
-is implemented separately; the source proof that `exh_all` agrees with it
-remains to be ported. -/
-def exhRowsFuel {α : Type} (fuel : Nat) (rows : List (Pat × α)) : Option Bool :=
-  exhAllFuel fuel [orRows rows]
-
 end Flapjack.Compiler.Backend.PatternExh
