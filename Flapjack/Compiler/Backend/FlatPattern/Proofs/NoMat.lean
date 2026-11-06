@@ -185,33 +185,6 @@ theorem noMat_projectionFold (trace : Tra) (value body : FlatLang.Exp)
     obtain ⟨⟨index, name⟩, work⟩ := entry
     simp [FlatProps.noMat, FlatProps.noMatList, valueSafe, ih]
 
-mutual
-private def bindingWeight : FlatLang.Pat → Nat
-  | .pcon _ ps => 1 + bindingWeights ps
-  | .pas p _ | .pref p => 1 + bindingWeight p
-  | _ => 1
-
-private def bindingWeights : List FlatLang.Pat → Nat
-  | [] => 0
-  | p :: ps => bindingWeight p + bindingWeights ps
-end
-
-private def bindingTodoWeight : List (FlatLang.Pat × Nat × FlatLang.Exp) → Nat
-  | [] => 0
-  | (p, _, _) :: rest => bindingWeight p + bindingTodoWeight rest
-
-private theorem bindingTodoWeight_append (xs ys : List (FlatLang.Pat × Nat × FlatLang.Exp)) :
-    bindingTodoWeight (xs ++ ys) = bindingTodoWeight xs + bindingTodoWeight ys := by
-  induction xs with
-  | nil => simp [bindingTodoWeight]
-  | cons x xs ih => cases x with | mk p pair => cases pair; simp [bindingTodoWeight, ih, Nat.add_assoc]
-
-private theorem patternEntries_weight (trace : Tra) (base start : Nat) (patterns : List FlatLang.Pat) :
-    bindingTodoWeight ((patternEntries trace base start patterns).map Prod.snd) = bindingWeights patterns := by
-  induction patterns generalizing start with
-  | nil => rfl
-  | cons p ps ih => simp [bindingTodoWeight, bindingWeights, ih]
-
 /-- Pattern binding preserves match-freedom of its worklist and continuation. -/
 theorem noMat_compilePatBindings (trace : Tra) (base : Nat)
     (todo : List (FlatLang.Pat × Nat × FlatLang.Exp)) (body : FlatLang.Exp)
@@ -219,80 +192,79 @@ theorem noMat_compilePatBindings (trace : Tra) (base : Nat)
     (todoSafe : ∀ pattern index expression, (pattern, index, expression) ∈ todo →
       FlatProps.noMat expression = true) :
     FlatProps.noMat (compilePatBindings trace base todo body).2 = true := by
-  suffices ∀ n todo, bindingTodoWeight todo = n → ∀ base,
-      (∀ pattern index expression, (pattern, index, expression) ∈ todo →
-        FlatProps.noMat expression = true) →
-      FlatProps.noMat (compilePatBindings trace base todo body).2 = true by
-    exact this _ todo rfl base todoSafe
-  intro n
-  induction n using Nat.strongRecOn with
-  | ind n ih =>
-    intro todo hn base todoSafe
-    cases todo with
-    | nil => simpa [compilePatBindings] using bodySafe
-    | cons item rest =>
-      obtain ⟨pattern, index, value⟩ := item
-      have valueSafe := todoSafe pattern index value (by simp)
-      have restSafe : ∀ p k e, (p, k, e) ∈ rest → FlatProps.noMat e = true := by
-        intro p k e member
-        exact todoSafe p k e (by simp [member])
-      cases pattern with
-      | pany | plit _ =>
-        rw [compilePatBindings]
-        exact ih _ (by simp [bindingTodoWeight, bindingWeight] at hn ⊢; omega) rest rfl base restSafe
-      | pvar name =>
-        have ih := ih _ (by simp [bindingTodoWeight, bindingWeight] at hn ⊢; omega) rest rfl base restSafe
-        cases run : compilePatBindings trace base rest body with
-        | mk used result =>
-          simp only [run] at ih
-          simp [compilePatBindings, run, FlatProps.noMat, valueSafe, ih]
-      | pcon tag patterns =>
-        have allSafe : ∀ p k e, (p, k, e) ∈ (patternEntries trace base 0 patterns).map Prod.snd ++ rest →
-            FlatProps.noMat e = true := by
-          intro p k e member
-          rcases List.mem_append.mp member with member | member
-          · exact noMat_patternEntries trace base 0 patterns p k e member
-          · exact restSafe p k e member
-        have ih := ih _ (by simp [bindingTodoWeight, bindingWeight, bindingTodoWeight_append, patternEntries_weight] at hn ⊢; omega)
-          ((patternEntries trace base 0 patterns).map Prod.snd ++ rest) rfl (base + 2 + patterns.length) allSafe
-        cases run : compilePatBindings trace (base + 2 + patterns.length)
-            ((patternEntries trace base 0 patterns).map Prod.snd ++ rest) body with
-        | mk used result =>
-          simp only [run] at ih
-          simp only [compilePatBindings, run]
-          exact noMat_projectionFold trace value result _ valueSafe ih
-      | pas pattern name =>
-        have allSafe : ∀ p k e, (p, k, e) ∈
-            (pattern, base + 1, .varLocal trace (encNumToName (base + 1))) :: rest →
-            FlatProps.noMat e = true := by
-          intro p k e member
-          simp only [List.mem_cons, Prod.mk.injEq] at member
-          rcases member with ⟨_, _, rfl⟩ | member
-          · simp [FlatProps.noMat]
-          · exact restSafe p k e member
-        have ih := ih _ (by simp [bindingTodoWeight, bindingWeight] at hn ⊢; omega)
-          ((pattern, base + 1, .varLocal trace (encNumToName (base + 1))) :: rest) rfl (base + 2) allSafe
-        cases run : compilePatBindings trace (base + 2)
-            ((pattern, base + 1, .varLocal trace (encNumToName (base + 1))) :: rest) body with
-        | mk used result =>
-          simp only [run] at ih
-          simp [compilePatBindings, run, FlatProps.noMat, valueSafe, ih]
-      | pref pattern =>
-        have allSafe : ∀ p k e, (p, k, e) ∈
-            (pattern, base + 1, .varLocal trace (encNumToName (base + 1))) :: rest →
-            FlatProps.noMat e = true := by
-          intro p k e member
-          simp only [List.mem_cons, Prod.mk.injEq] at member
-          rcases member with ⟨_, _, rfl⟩ | member
-          · simp [FlatProps.noMat]
-          · exact restSafe p k e member
-        have ih := ih _ (by simp [bindingTodoWeight, bindingWeight] at hn ⊢; omega)
-          ((pattern, base + 1, .varLocal trace (encNumToName (base + 1))) :: rest) rfl (base + 2) allSafe
-        cases run : compilePatBindings trace (base + 2)
-            ((pattern, base + 1, .varLocal trace (encNumToName (base + 1))) :: rest) body with
-        | mk used result =>
-          simp only [run] at ih
-          simp [compilePatBindings, run, FlatProps.noMat, FlatProps.noMatList, valueSafe, ih]
+  revert todoSafe
+  induction base, todo using compilePatBindings.induct trace body with
+  | case1 i =>
+    intro _
+    simpa [compilePatBindings] using bodySafe
+  | case2 i key expression rest ih =>
+    intro safe
+    rw [compilePatBindings]
+    apply ih
+    intro p k e member
+    exact safe p k e (by simp [member])
+  | case3 i key expression rest lit ih =>
+    intro safe
+    rw [compilePatBindings]
+    apply ih
+    intro p k e member
+    exact safe p k e (by simp [member])
+  | case4 i key expression rest name used continuation compiled ih =>
+    intro safe
+    have valueSafe := safe (.pvar name) key expression (by simp)
+    have restSafe : ∀ p k e, (p, k, e) ∈ rest → FlatProps.noMat e = true := by
+      intro p k e member
+      exact safe p k e (by simp [member])
+    have next := ih restSafe
+    rw [compiled] at next
+    simp [compilePatBindings, compiled, FlatProps.noMat, valueSafe, next]
+  | case5 i key expression rest stamp patterns entries used continuation compiled ih =>
+    dsimp only [entries] at compiled
+    intro safe
+    have valueSafe := safe (.pcon stamp patterns) key expression (by simp)
+    have restSafe : ∀ p k e, (p, k, e) ∈ rest → FlatProps.noMat e = true := by
+      intro p k e member
+      exact safe p k e (by simp [member])
+    have allSafe : ∀ p k e, (p, k, e) ∈ (patternEntries trace i 0 patterns).map Prod.snd ++ rest →
+        FlatProps.noMat e = true := by
+      intro p k e member
+      rcases List.mem_append.mp member with member | member
+      · exact noMat_patternEntries trace i 0 patterns p k e member
+      · exact restSafe p k e member
+    have next := ih allSafe
+    rw [compiled] at next
+    simp only [compilePatBindings, compiled]
+    exact noMat_projectionFold trace expression continuation _ valueSafe next
+  | case6 i key expression rest pattern name generated used continuation compiled ih =>
+    dsimp only [generated] at compiled
+    intro safe
+    have valueSafe := safe (.pas pattern name) key expression (by simp)
+    have allSafe : ∀ p k e, (p, k, e) ∈
+        (pattern, i + 1, .varLocal trace (encNumToName (i + 1))) :: rest →
+        FlatProps.noMat e = true := by
+      intro p k e member
+      simp only [List.mem_cons, Prod.mk.injEq] at member
+      rcases member with ⟨_, _, rfl⟩ | member
+      · simp [FlatProps.noMat]
+      · exact safe p k e (by simp [member])
+    have next := ih allSafe
+    rw [compiled] at next
+    simp [compilePatBindings, compiled, FlatProps.noMat, valueSafe, next]
+  | case7 i key expression rest pattern generated used continuation compiled ih =>
+    dsimp only [generated] at compiled
+    intro safe
+    have valueSafe := safe (.pref pattern) key expression (by simp)
+    have allSafe : ∀ p k e, (p, k, e) ∈
+        (pattern, i + 1, .varLocal trace (encNumToName (i + 1))) :: rest →
+        FlatProps.noMat e = true := by
+      intro p k e member
+      simp only [List.mem_cons, Prod.mk.injEq] at member
+      rcases member with ⟨_, _, rfl⟩ | member
+      · simp [FlatProps.noMat]
+      · exact safe p k e (by simp [member])
+    have next := ih allSafe
+    rw [compiled] at next
+    simp [compilePatBindings, compiled, FlatProps.noMat, FlatProps.noMatList, valueSafe, next]
 
 /-- A compiled branch remains match-free when its value and body are. -/
 theorem noMat_compilePatRhs (trace : Tra) (base : Nat) (value : FlatLang.Exp)
