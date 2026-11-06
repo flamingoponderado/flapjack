@@ -60,26 +60,4 @@ theorem evaluateBindingFold {A C F : Type} (f : A → Option MlString)
       simpa [List.foldr, fx, FlatSem.evaluate, evaluated, FlatSem.fixClock,
         List.reverse_cons, List.map_append, List.append_assoc] using rest
 
-/-- The HOL-shaped version keeps the unused variable's type independent and
-inhabited, as HOL types are. It remains untagged until the evaluator and the
-translation of HOL's inhabited type variables have been reviewed. The default
-for `THE NONE` is unobservable under `someName`. -/
-theorem evaluateBindingFoldHOLShape {A B C F : Type} [Nonempty B]
-    (f : A → Option MlString) (g : A → FlatLang.Exp) (h : A → FlatSem.Value)
-    (xs : List A) (newNames : MlString → Prop) (env : FlatSem.Environment FlatSem.Value)
-    (state : FlatSem.State C F) (trace : BackendCommon.Tra) (body : FlatLang.Exp)
-    (someName : ∀ x ∈ xs, (f x).isSome = true)
-    (fresh : ∀ _ : B, ∀ name, (∃ x, x ∈ xs ∧ (f x).getD (ofString "") = name) → newNames name)
-    (evaluateValue : ∀ x ∈ xs, ∀ env2,
-      aLookupRel (fun name => ¬ newNames name) Eq env2.v env.v →
-      FlatSem.evaluate env2 state [g x] = (state, .val [h x])) :
-    ∀ env2, aLookupRel (fun name => ¬ newNames name) Eq env2.v env.v →
-      FlatSem.evaluate env2 state [xs.foldr (fun x exp => .let_ trace (f x) (g x) exp) body] =
-      FlatSem.evaluate { env2 with v := (xs.reverse.map (fun x => ((f x).getD (ofString ""), h x))) ++ env2.v } state [body] := by
-  apply evaluateBindingFold f g h xs newNames env state trace body someName
-  · intro x member
-    obtain ⟨witness⟩ := ‹Nonempty B›
-    exact fresh witness _ ⟨x, member, rfl⟩
-  · exact evaluateValue
-
 end Flapjack.Compiler.Backend.FlatPattern
