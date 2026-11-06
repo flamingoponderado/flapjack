@@ -7,6 +7,20 @@ open Flapjack Flapjack.AstHOL Flapjack.Compiler.Backend
 open Flapjack.SemanticPrimitivesHOL (Result copyArray xorBytes storeAssign storeLookup)
 open Flapjack.SemanticPrimitivesProps (storeValueRel)
 
+/-- A list of related literals and locations is identical on the target side. -/
+theorem related_scalar_list {values values' : List FlatSem.Value} (related : List.Forall₂ ValueRel values values')
+    (scalar : ∀ value ∈ values, (∃ literal, value = .litv literal) ∨ (∃ flag index, value = .loc flag index)) :
+    values' = values := by
+  induction related with
+  | nil => rfl
+  | @cons value value' tail tail' valueRel tailRel ih =>
+    have headEq : value' = value := by
+      rcases scalar value (by simp) with ⟨literal, rfl⟩ | ⟨flag, index, rfl⟩
+      · exact (valueRel_lit literal value').1 valueRel
+      · exact (valueRel_loc flag index value').1 valueRel
+    have tailEq := ih (by intro value member; exact scalar value (List.mem_cons_of_mem _ member))
+    simp [headEq, tailEq]
+
 /-- A successful string-to-string copy has its three literal operands. -/
 theorem copyStrStr_operands {C F : Type} (state next : FlatSem.State C F) (values : List FlatSem.Value)
     (result : Result FlatSem.Value FlatSem.Value)
@@ -24,10 +38,10 @@ theorem doApp_copyStrStr_related {C F : Type} (cfg : Config) (source target sour
       StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
   obtain ⟨string, offset, length, rfl⟩ := copyStrStr_operands source sourceFinal values result run
   have equal : values' = [.litv (.strLit string), .litv (.intLit offset), .litv (.intLit length)] := by
-    apply related_literal_list related
+    apply related_scalar_list related
     intro value member
     simp only [List.mem_cons, List.not_mem_nil, or_false] at member
-    rcases member with rfl | rfl | rfl <;> exact ⟨_, rfl⟩
+    rcases member with rfl | rfl | rfl <;> exact Or.inl ⟨_, rfl⟩
   subst values'
   cases copied : copyArray (string.explode, offset) length none with
   | none =>
@@ -43,20 +57,6 @@ theorem doApp_copyStrStr_related {C F : Type} (cfg : Config) (source target sour
     exact ⟨target, .val (.litv (.strLit (.implode chars))),
       by simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy, copied],
       states, .value ((valueRel_lit _ _).2 rfl)⟩
-
-/-- A list of related literals and locations is identical on the target side. -/
-theorem related_scalar_list {values values' : List FlatSem.Value} (related : List.Forall₂ ValueRel values values')
-    (scalar : ∀ value ∈ values, (∃ literal, value = .litv literal) ∨ (∃ flag index, value = .loc flag index)) :
-    values' = values := by
-  induction related with
-  | nil => rfl
-  | @cons value value' tail tail' valueRel tailRel ih =>
-    have headEq : value' = value := by
-      rcases scalar value (by simp) with ⟨literal, rfl⟩ | ⟨flag, index, rfl⟩
-      · exact (valueRel_lit literal value').1 valueRel
-      · exact (valueRel_loc flag index value').1 valueRel
-    have tailEq := ih (by intro value member; exact scalar value (List.mem_cons_of_mem _ member))
-    simp [headEq, tailEq]
 
 /-- A successful byte-array-to-string copy has a location and two integer operands. -/
 theorem copyAw8Str_operands {C F : Type} (state next : FlatSem.State C F) (values : List FlatSem.Value)

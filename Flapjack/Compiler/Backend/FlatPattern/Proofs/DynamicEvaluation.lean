@@ -6,18 +6,6 @@ namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack Flapjack.AstHOL Flapjack.Compiler.Backend
 open Flapjack.SemanticPrimitivesHOL (Result)
 
-/-- A related literal-only value list has identical literal elements. -/
-theorem related_literal_list {left right : List FlatSem.Value}
-    (related : List.Forall₂ ValueRel left right)
-    (literals : ∀ value ∈ left, ∃ literal, value = .litv literal) : right = left := by
-  induction related with
-  | nil => rfl
-  | @cons head head' tail tail' headRel tailRel ih =>
-    obtain ⟨literal, rfl⟩ := literals head (by simp)
-    have headEq := (valueRel_lit literal head').1 headRel
-    have tailEq := ih (by intro value member; exact literals value (List.mem_cons_of_mem _ member))
-    simp [headEq, tailEq]
-
 /-- Related installation configurations expose corresponding oracle entries. -/
 theorem installConfRel_oracle {C : Type} (cfg : Config) (source target : FlatSem.InstallConfig C)
     (related : installConfRel cfg source target) (index : Nat) :
