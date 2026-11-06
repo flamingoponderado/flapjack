@@ -3,8 +3,7 @@ import Flapjack.Compiler.Backend.FlatPattern.Proofs.SourceApplication
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ThunkEvaluation
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.DynamicEvaluation
 
-/-! Clock-bounded application simulation for the proof-side flat pattern pass.
-The evaluator and relations remain pending HOL correspondence review. -/
+/-! Clock-bounded application simulation for the flat pattern pass. -/
 namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack Flapjack.AstHOL Flapjack.Compiler.Backend
 open Flapjack.SemanticPrimitivesHOL (Result)

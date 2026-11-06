@@ -1,8 +1,7 @@
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.DynamicEvaluation
 import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateClock
 
-/-! Flat declaration evaluation and expression simulation. The evaluator and
-proof-side relations remain pending HOL correspondence review. -/
+/-! Flat declaration evaluation and expression simulation. -/
 namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack Flapjack.AstHOL Flapjack.Compiler.Backend
 open Flapjack.SemanticPrimitivesHOL (Result)

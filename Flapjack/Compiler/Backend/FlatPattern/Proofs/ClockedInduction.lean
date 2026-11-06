@@ -1,8 +1,7 @@
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ClockedApplication
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ClockedDeclaration
 
-/-! Induction on the proof-side evaluator's clock and expression weight.
-The evaluator and relations remain pending HOL correspondence review. -/
+/-! Induction on the flat evaluator clock and expression weight. -/
 namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack Flapjack.AstHOL Flapjack.Compiler.Backend
 open Flapjack.Basis.Pure.MlString (ofString)

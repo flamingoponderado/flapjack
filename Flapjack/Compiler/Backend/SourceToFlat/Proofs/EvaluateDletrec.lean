@@ -1,4 +1,4 @@
-import Flapjack.Misc.Alist
+import Flapjack.FiniteMap.AlistExact.Lookup
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateDlet
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateEmptyDeclarations
 

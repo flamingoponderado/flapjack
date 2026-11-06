@@ -4,7 +4,9 @@ import Flapjack.Misc.ListEl
 /-! Enumerated-list properties used in the flat pattern proof. -/
 namespace Flapjack.Compiler.Backend.FlatPattern
 
-/-- An enumerated member has the corresponding offset and list element. -/
+/-- An enumerated member has the corresponding offset and list element.
+`Nonempty A` supplies the arbitrary out-of-bounds value of HOL's total EL;
+the stated index is in bounds. HOL type variables are inhabited. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "MEM_enumerate_EL"]
 theorem memEnumerateEl {A : Type} [Nonempty A] (xs : List A) (offset : Nat) (entry : Nat × A) :
     entry ∈ Flapjack.enumerate offset xs ↔

@@ -524,7 +524,7 @@ theorem patsToCode_correct (refs : HolFiniteMapExact Nat Term) (value : Term)
   | cons row rows ih =>
     obtain ⟨pattern, index⟩ := row
     have headSafe : pmatch refs pattern value ≠ .typeFailure :=
-      matchRows_member_safe refs value ((pattern, index) :: rows) safe (pattern, index) (by simp)
+      PatternExh.matchRows_member_safe refs value ((pattern, index) :: rows) safe (pattern, index) (by simp)
     have guardEq := patToGuard_correct refs value pattern [] value headSafe rfl
     cases head : pmatch refs pattern value with
     | typeFailure => exact (headSafe head).elim

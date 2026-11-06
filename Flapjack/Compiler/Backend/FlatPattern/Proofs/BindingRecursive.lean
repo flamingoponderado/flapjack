@@ -1,7 +1,6 @@
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.BindingSimulation
 
-/-! Recursive proof obligations for generated pattern bindings. The evaluator
-and carriers are still pending HOL correspondence review. -/
+/-! Recursive proof obligations for generated pattern bindings. -/
 namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack Flapjack.AstHOL Flapjack.Compiler.Backend
 open Flapjack.SemanticPrimitivesHOL (Result storeLookup)
@@ -441,8 +440,7 @@ theorem bindingSimulation_con {C F : Type} (trace : BackendCommon.Tra) (upper ke
         · exact nextBounds
 
 /-- The complete work-list simulation follows the compiler's own recursive
-induction. This proof-side theorem is untagged until the clocked evaluator and
-its HOL carriers have been reviewed. -/
+induction. This assembling helper is not a separate HOL declaration. -/
 theorem bindingSimulation_all {C F : Type} (trace : BackendCommon.Tra) (upper : Nat)
     (todo : List (FlatLang.Pat × Nat × FlatLang.Exp)) (body : FlatLang.Exp) :
     @BindingSimulation C F trace upper todo body := by

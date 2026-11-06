@@ -1,8 +1,7 @@
 import Flapjack.Compiler.Backend.PatternSemantics.Semantics
 
-/-! Row-matching safety for the exhaustiveness proof and pattern compiler.
-The `PatternComp` namespace preserves the name used by compiler proofs. -/
-namespace Flapjack.Compiler.Backend.PatternComp
+/-! Row-matching safety for the exhaustiveness proof and pattern compiler. -/
+namespace Flapjack.Compiler.Backend.PatternExh
 open Flapjack PatternCommon PatternSemantics
 
 private def toBroad (refs : HolFiniteMapExact Nat Term) : Nat → Option Term := refs.lookup
@@ -52,4 +51,4 @@ theorem matchRows_member_safe (refs : HolFiniteMapExact Nat Term) (value : Term)
       exact headSafe
     · exact ih tailSafe member
 
-end Flapjack.Compiler.Backend.PatternComp
+end Flapjack.Compiler.Backend.PatternExh
