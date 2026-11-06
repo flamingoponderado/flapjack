@@ -49,18 +49,6 @@ private theorem bindingRangeBag_add (start a b : Nat) :
     rw [eq]
     omega
 
-private theorem elistGlobals_append (xs ys : List FlatLang.Exp) :
-    elistGlobals (xs ++ ys) = unionGlobalBag (elistGlobals xs) (elistGlobals ys) := by
-  induction xs with
-  | nil =>
-    funext key
-    simp [elistGlobals, emptyGlobalBag, unionGlobalBag]
-  | cons x xs ih =>
-    simp only [List.cons_append, elistGlobals, ih]
-    funext key
-    simp only [unionGlobalBag]
-    omega
-
 /-- Generated variable initializers write precisely the allocated slot range. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "set_globals_make_varls"]
 theorem setGlobals_makeVarls (n : Nat) (t : Tra) (idx : Nat) (xs : List VarN) :

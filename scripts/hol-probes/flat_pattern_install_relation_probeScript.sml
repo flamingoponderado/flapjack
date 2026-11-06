@@ -110,6 +110,7 @@ val _ = show_thm "simple_equality=" flatPropsTheory.simple_do_eq_thm;
 val _ = show_thm "simple_store_assignment=" flatPropsTheory.simple_state_rel_store_assign;
 val _ = show_thm "simple_store_allocation=" flatPropsTheory.simple_state_rel_store_alloc;
 val _ = show_thm "simple_store_lookup=" flatPropsTheory.simple_state_rel_store_lookup;
+val _ = show_thm "elist_globals_append=" flatPropsTheory.elist_globals_append;
 val _ = show_thm "basic_nonclosure=" flat_patternProofTheory.simple_val_rel_step_isClosure;
 val _ = show_thm "simple_value_relation=" flat_patternProofTheory.simple_val_rel;
 val _ = show_thm "simple_state_relation=" flat_patternProofTheory.simple_state_rel;

@@ -125304,5 +125304,13 @@
   "lean_name": "forall₂_set",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared the HOL source and typed list_relation_update capture: both element types remain independent, the original conjunction of replacement and list relations and the complete conclusion are retained. HOL LUPDATE and Lean List.set have identical out-of-range behavior, with argument order adjusted."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "elist_globals_append",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/Globals.lean",
+  "lean_name": "elistGlobals_append",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the HOL source and typed elist_globals_append capture: both expression lists and the equality for their concatenated global bags are retained without premises. The reviewed GlobalBag is HOL's num-to-num bag, with unionGlobalBag implementing BAG_UNION pointwise."
 }
 ]
