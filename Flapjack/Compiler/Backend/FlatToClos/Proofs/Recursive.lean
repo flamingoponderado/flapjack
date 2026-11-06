@@ -49,7 +49,8 @@ theorem compileFuns_length (names : List (Option MlString)) (funs : List (VarN �
 
 /-- A distinct recursive function group resolves the function at an index
 to that entry's argument and body. -/
-theorem findRecFun_get (funs : List (VarN × VarN × FlatLang.Exp)) (index : Nat)
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "find_recfun_EL"]
+theorem findRecFun_get {α β : Type} (funs : List (VarN × α × β)) (index : Nat)
     (bound : index < funs.length) (distinct : (funs.map Prod.fst).Nodup) :
     findRecFun (funs[index]'bound).1 funs = some (funs[index]'bound).2 := by
   induction funs generalizing index with

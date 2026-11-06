@@ -1,5 +1,5 @@
 load "flat_to_closProofTheory";
-open HolKernel Parse boolLib bossLib;
+open HolKernel Parse boolLib bossLib listTheory pairTheory;
 open flat_to_closProofTheory;
 val _ = Globals.linewidth := 1000000;
 val _ = set_trace "Unicode" 0;
@@ -13,6 +13,15 @@ val _ = (print "copy_aw8_typed="; Lib.with_flag (Globals.show_types,true) print_
 val _ = (print "rules_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl v_rel_rules); print "\n");
 val _ = (print "induction_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl v_rel_ind); print "\n");
 val _ = (print "cases_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl v_rel_cases); print "\n");
+(* Typed replay of find_recfun_EL[local], using its original induction proof. *)
+val find_recfun_el_replay = prove
+  (``!(l0 : (mlstring # 'a # 'b) list) n.
+      n < LENGTH l0 /\ ALL_DISTINCT (MAP FST l0) ==>
+      semanticPrimitives$find_recfun (FST (EL n l0)) l0 = SOME (SND (EL n l0))``,
+   Induct >> fs [] >> simp [Once semanticPrimitivesTheory.find_recfun_def, FORALL_PROD] >>
+   rpt strip_tac >> Cases_on `n` >> fs [] >> rw [] >> fs [MEM_MAP] >>
+   fs [FORALL_PROD] >> fs [MEM_EL] >> metis_tac [PAIR,PAIR_EQ,FST]);
+val _ = (print "find_recfun_el_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl find_recfun_el_replay); print "\n");
 (* Typed replay of state_rel_dec_clock[local], which is not exported. *)
 val state_clock_replay = prove
   (``!(s : ('a, 'b) flatSem$state) (t : ('a, 'b) closSem$state).

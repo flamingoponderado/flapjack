@@ -125571,4 +125571,13 @@
   "fmap_as_finite_support": ["refs", "code"],
   "reviewer": "Compared local HOL source and state_rel_dec_clock_typed replay in flat_to_clos_relation_probe.out: shared compiler and FFI state carriers, state relation premise, original clock equality and decremented-state relation all match. Closure-state refs and code use the reviewed canonical finite-support carrier and witness."
 }
+,
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "find_recfun_EL",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Recursive.lean",
+  "lean_name": "findRecFun_get",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared local find_recfun_EL source and proved find_recfun_el_typed replay in flat_to_clos_relation_probe.out: the two recursive-entry payload types remain independent, with the original bounds, distinct names and indexed lookup conclusion. The in-bounds Lean getElem is HOL EL under the same bound."
+}
 ]
