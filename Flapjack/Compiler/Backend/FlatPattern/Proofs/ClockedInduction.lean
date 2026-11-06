@@ -1,3 +1,4 @@
+import Flapjack.SemanticPrimitivesProps.ResultRelation
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ClockedApplication
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ClockedDeclaration
 
@@ -177,11 +178,9 @@ theorem evaluateDecs_simulation_all {C F : Type} (cfg stateCfg : Config)
   evaluateDecs_simulation cfg stateCfg declarations (by intro declaration _; exact expressionSimulation_all cfg stateCfg declaration)
     source target sourceFinal outcome states run safe
 
-/-- The expression-list and declaration-list simulations in a single
-conjunction. This is proof-side infrastructure: `FlatSem.evaluate`, `ValueRel`,
-`EnvRel`, and `StateRel` have not yet completed HOL correspondence review, so
-this is not tagged as the original theorem. -/
-theorem compileExps_evaluate_proofSide {C F : Type} (stateCfg : Config) :
+/-- Expression-list and declaration-list compilation preserve evaluation. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "compile_exps_evaluate"]
+theorem compileExps_evaluate {C F : Type} (stateCfg : Config) :
     (∀ (env1 : FlatSem.Environment FlatSem.Value) (s1 : FlatSem.State C F)
       (xs : List FlatLang.Exp) (t1 : FlatSem.State C F)
       (r1 : SemanticPrimitivesHOL.Result (List FlatSem.Value) FlatSem.Value)
@@ -189,12 +188,13 @@ theorem compileExps_evaluate_proofSide {C F : Type} (stateCfg : Config) :
       (env2 : FlatSem.Environment FlatSem.Value) (s2 : FlatSem.State C F) (cfg : Config),
       FlatSem.evaluate env1 s1 xs = (t1, r1) → compileExps cfg xs = (i, sg, ys) →
       EnvRel n env1 env2 → StateRel stateCfg s1 s2 → i < n → r1 ≠ .err (.abort .typeError) →
-      ∃ t2 r2, FlatResultRel r1 r2 ∧ StateRel stateCfg t1 t2 ∧ FlatSem.evaluate env2 s2 ys = (t2, r2)) ∧
+      ∃ t2 r2, SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel r1 r2 ∧
+        StateRel stateCfg t1 t2 ∧ FlatSem.evaluate env2 s2 ys = (t2, r2)) ∧
     (∀ (s1 : FlatSem.State C F) (decs : List FlatLang.Exp) (s2 t1 : FlatSem.State C F)
       (cfg : Config) (decs' : List FlatLang.Exp) (res : Option (SemanticPrimitivesHOL.ErrorResult FlatSem.Value)),
       FlatSem.evaluateDecs s1 decs = (t1, res) → decs' = decs.map (compileDec cfg) →
       StateRel stateCfg s1 s2 → res ≠ some (.abort .typeError) →
-      ∃ t2 res', FlatSem.evaluateDecs s2 decs' = (t2, res') ∧ optionRel FlatErrorRel res res' ∧ StateRel stateCfg t1 t2) := by
+      ∃ t2 res', FlatSem.evaluateDecs s2 decs' = (t2, res') ∧ optionRel (SemanticPrimitivesProps.excRel ValueRel) res res' ∧ StateRel stateCfg t1 t2) := by
   constructor
   · intro env1 s1 xs t1 r1 i sg ys n env2 s2 cfg run compiled envs states bound safe
     have compiledBound : (compileExps cfg xs).1 < n := by simpa [compiled] using bound
@@ -202,11 +202,30 @@ theorem compileExps_evaluate_proofSide {C F : Type} (stateCfg : Config) :
       compileExps_simulation_upTo cfg stateCfg s1.clock xs
         (fun e _ => expressionSimulationUpTo_all s1.clock cfg stateCfg e)
         env1 env2 s1 s2 t1 r1 n (Nat.le_refl _) run envs states compiledBound safe
-    exact ⟨t2, r2, results, finalStates, by simpa [compiled] using targetRun⟩
+    have converted : SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel r1 r2 := by
+      cases results with
+      | values rel => exact rel
+      | error errors =>
+        cases errors with
+        | raise rel => exact rel
+        | abort _ => rfl
+    exact ⟨t2, r2, converted, finalStates, by simpa [compiled] using targetRun⟩
   · intro s1 decs s2 t1 cfg decs' res run compiled states safe
     subst decs'
     obtain ⟨t2, res', targetRun, finalStates, outcomes⟩ :=
       evaluateDecs_simulation_all cfg stateCfg s1 s2 t1 decs res states run safe
-    exact ⟨t2, res', targetRun, outcomes, finalStates⟩
+    have converted : optionRel (SemanticPrimitivesProps.excRel ValueRel) res res' := by
+      cases res with
+      | none =>
+        cases res' <;> simp_all [optionRel]
+      | some left =>
+        cases res' with
+        | none => simp_all [optionRel]
+        | some right =>
+          simp only [optionRel] at outcomes ⊢
+          cases outcomes with
+          | raise rel => exact rel
+          | abort _ => rfl
+    exact ⟨t2, res', targetRun, converted, finalStates⟩
 
 end Flapjack.Compiler.Backend.FlatPattern

@@ -125425,4 +125425,14 @@
   "statement_status": "reviewed_exact",
   "reviewer": "Compared the source and typed flat_value_to_bytes_relation capture: arbitrary simple relation, related values, and successful source word8-list decoding imply the identical target result. Fixed word8 values are represented by BitVec 8; all original premises are retained."
 }
+,
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "compile_exps_evaluate",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/ClockedInduction.lean",
+  "lean_name": "compileExps_evaluate",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared both conjuncts with flat_compile_exps_evaluate in flat_pattern_install_relation_probe.out. Independent compiler and FFI carriers, shared stateCfg, curried premises, existential targets and conclusion order match. LIST_REL uses Forall₂; OPTREL, exc_rel and result_rel use the reviewed optionRel, excRel and resultRel ports. Evaluation inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8) through its dependencies."
+}
 ]
