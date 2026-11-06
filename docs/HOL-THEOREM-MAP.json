@@ -11497,6 +11497,16 @@
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateLocal.lean",
+    "lean_name": "factoredCompileProg_correct",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "compile_prog_correct",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["c", "tys"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the typed compile_prog_correct capture: the original four conjunctive premises, four existential witnesses including the initial flat state, and the source and flat error results with unit payload carriers are retained. The existential global environment uses canonical finite maps for c and tys. Evaluation inherits reals_as_rational_cuts."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateLocal.lean",
     "lean_name": "initGlobalEnvInv",
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "init_global_env_inv_def",

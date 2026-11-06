@@ -296,7 +296,7 @@ run_probe source_to_flat_invariant_helpers_probeScript.sml source_to_flat_invari
   "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe source_to_flat_compile_correct_probeScript.sml source_to_flat_compile_correct_probe.out \
-  abort_typed compile_correct_typed compile_prog_semantics_typed \
+  abort_typed compile_correct_typed compile_prog_correct_typed compile_prog_semantics_typed \
   "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe flat_props_evaluate_match_probeScript.sml flat_props_evaluate_match_probe.out \

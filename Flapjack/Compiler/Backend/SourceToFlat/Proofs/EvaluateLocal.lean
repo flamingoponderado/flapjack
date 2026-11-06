@@ -743,24 +743,27 @@ theorem factoredPrecondition1_changeClock {C F A : Type} [Nonempty C]
     FactoredPrecondition1 interp transform { source with clock } sourceEnv config evalConfig decs := by
   simpa [FactoredPrecondition1] using precondition
 
-/-- Whole-program simulation in the original existential result shape, over
-the preliminary factored relations and precondition. -/
+/-- Whole-program simulation with the source and target results related. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "compile_prog_correct"
+  (fmap_as_finite_support := [c, tys])]
 theorem factoredCompileProg_correct {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
     (source sourceLast : State F) (sourceEnv : SemEnv Value) (config outputConfig : Config)
     (evalConfig : FlatSem.InstallConfig C) (decs : List Dec) (flatDecs : List FlatLang.Exp)
     (result : Result (SemEnv Value) Value)
-    (precondition : FactoredPrecondition1 interp transform source sourceEnv config evalConfig decs)
-    (compiled : compileProg config decs = (outputConfig, flatDecs))
-    (sourceRun : EvaluateHOL.evaluateDecs source sourceEnv decs = (sourceLast, result))
-    (safe : result ≠ .err (.abort .typeError)) :
-    ∃ finalFlat nextGenv flatError,
-      FlatSem.evaluateDecs (FlatSem.initialState source.ffi source.clock evalConfig) flatDecs = (finalFlat, flatError) ∧
+    (premises : FactoredPrecondition1 interp transform source sourceEnv config evalConfig decs ∧
+      compileProg config decs = (outputConfig, flatDecs) ∧
+      EvaluateHOL.evaluateDecs source sourceEnv decs = (sourceLast, result) ∧
+      result ≠ .err (.abort .typeError)) :
+    ∃ (initialFlat finalFlat : FlatSem.State C F) (nextGenv : GlobalEnv), ∃ flatError,
+      initialFlat = FlatSem.initialState source.ffi source.clock evalConfig ∧
+      FlatSem.evaluateDecs initialFlat flatDecs = (finalFlat, flatError) ∧
       StateRel nextGenv sourceLast finalFlat ∧
       (∀ resultEnv, result = .val resultEnv → flatError = none) ∧
       (∀ error, result = .err error → ∃ flatErr, flatError = some flatErr ∧
         flatErr ≠ .abort .typeError ∧
-        ResultRel (fun _ (_ : SemEnv Value) (_ : Unit) => True) nextGenv (.err error) (.err flatErr)) := by
+        ResultRel (fun _ (_ : Unit) (_ : Unit) => True) nextGenv (.err error) (.err flatErr)) := by
+  obtain ⟨precondition, compiled, sourceRun, safe⟩ := premises
   obtain ⟨steps, oracle, oracleConfig, startVar, sourceRefs, initialEnv, initialEval, initialIdx, stamps, emptyStore⟩ :=
     precondition
   generalize bodyCompiled : compileDecs [] 1 { config.next with vidx := config.next.vidx + 1 } config.modEnv
@@ -772,17 +775,21 @@ theorem factoredCompileProg_correct {C F : Type} [Nonempty C]
     initialEnv safe startVar initialIdx emptyStore
     initialEval steps oracle stamps sourceRefs rfl rfl oracleConfig
   obtain ⟨finalFlat, nextGenv, flatError, flatRun, states, success, errors⟩ := actual
-  refine ⟨finalFlat, nextGenv, flatError, ?_, states, ?_, ?_⟩
+  refine ⟨FlatSem.initialState source.ffi source.clock evalConfig, finalFlat, nextGenv, flatError,
+    rfl, ?_, states, ?_, ?_⟩
   · simpa [compiled] using flatRun
   · intro resultEnv resultEq
     exact (success resultEnv resultEq).1
   · intro error resultEq
     obtain ⟨flatErr, flatEq, related⟩ := errors error resultEq
-    refine ⟨flatErr, flatEq, ?_, related⟩
-    intro flatTypeError
-    subst flatErr
-    cases related
-    exact safe resultEq
+    refine ⟨flatErr, flatEq, ?_, ?_⟩
+    · intro flatTypeError
+      subst flatErr
+      cases related
+      exact safe resultEq
+    · cases related with
+      | raise related => exact .raise related
+      | abort error => exact .abort error
 
 /-- Source type safety at every clock rules out a flat type error at every
 clock for the compiled program, over the factored simulation relations. -/
@@ -805,11 +812,12 @@ theorem factoredCompileProg_noTypeError {C F : Type} [Nonempty C]
       .err (.abort .typeError)
     refine ⟨clock, ?_⟩
     simp [Flapjack.SemanticsHOL.evaluateProgWithClock, sourceRun, error]
-  obtain ⟨flatLast, genv, flatError, flatRun, _, success, errors⟩ :=
+  obtain ⟨initialFlat, flatLast, genv, flatError, initialEq, flatRun, _, success, errors⟩ :=
     factoredCompileProg_correct interp transform { source with clock } sourceLast sourceEnv config outputConfig
       evalConfig decs flatDecs result
-      (factoredPrecondition1_changeClock interp transform source sourceEnv config evalConfig decs clock precondition)
-      compiled sourceRun sourceSafe
+      ⟨factoredPrecondition1_changeClock interp transform source sourceEnv config evalConfig decs clock precondition,
+        compiled, sourceRun, sourceSafe⟩
+  subst initialFlat
   rw [flatRun]
   cases result with
   | val env => simp [success env rfl]
@@ -855,11 +863,12 @@ theorem factoredCompileProg_semantics_terminate {C F : Type} [Nonempty C]
       .err (.abort .typeError)
     refine ⟨clock, ?_⟩
     simp [Flapjack.SemanticsHOL.evaluateProgWithClock, sourceRun, error]
-  obtain ⟨actualFlat, genv, actualResult, actualRun, states, success, errors⟩ :=
+  obtain ⟨initialFlat, actualFlat, genv, actualResult, initialEq, actualRun, states, success, errors⟩ :=
     factoredCompileProg_correct interp transform { source with clock } sourceLast sourceEnv config outputConfig
       evalConfig decs flatDecs result
-      (factoredPrecondition1_changeClock interp transform source sourceEnv config evalConfig decs clock precondition)
-      compiled sourceRun sourceSafe
+      ⟨factoredPrecondition1_changeClock interp transform source sourceEnv config evalConfig decs clock precondition,
+        compiled, sourceRun, sourceSafe⟩
+  subst initialFlat
   rw [flatRun] at actualRun
   cases actualRun
   have equalFfi : sourceLast.ffi = flatLast.ffi := (stateRel_iff _ _ _).mp states |>.2.2.2
@@ -906,11 +915,12 @@ theorem factoredCompileProg_diverge_sourceTimeout {C F : Type} [Nonempty C]
       .err (.abort .typeError)
     refine ⟨clock, ?_⟩
     simp [Flapjack.SemanticsHOL.evaluateProgWithClock, sourceRun, error]
-  obtain ⟨flatLast, genv, flatResult, flatRun, _, success, errors⟩ :=
+  obtain ⟨initialFlat, flatLast, genv, flatResult, initialEq, flatRun, _, success, errors⟩ :=
     factoredCompileProg_correct interp transform { source with clock } sourceLast sourceEnv config outputConfig
       evalConfig decs flatDecs result
-      (factoredPrecondition1_changeClock interp transform source sourceEnv config evalConfig decs clock precondition)
-      compiled sourceRun sourceSafe
+      ⟨factoredPrecondition1_changeClock interp transform source sourceEnv config evalConfig decs clock precondition,
+        compiled, sourceRun, sourceSafe⟩
+  subst initialFlat
   have timeout : result = .err (.abort .timeoutError) := by
     cases result with
     | val env =>
@@ -951,11 +961,12 @@ theorem factoredCompileProg_clockFfi {C F : Type} [Nonempty C]
       .err (.abort .typeError)
     refine ⟨clock, ?_⟩
     simp [Flapjack.SemanticsHOL.evaluateProgWithClock, sourceRun, error]
-  obtain ⟨flatLast, genv, flatResult, flatRun, states, _, _⟩ :=
+  obtain ⟨initialFlat, flatLast, genv, flatResult, initialEq, flatRun, states, _, _⟩ :=
     factoredCompileProg_correct interp transform { source with clock } sourceLast sourceEnv config outputConfig
       evalConfig decs flatDecs result
-      (factoredPrecondition1_changeClock interp transform source sourceEnv config evalConfig decs clock precondition)
-      compiled sourceRun sourceSafe
+      ⟨factoredPrecondition1_changeClock interp transform source sourceEnv config evalConfig decs clock precondition,
+        compiled, sourceRun, sourceSafe⟩
+  subst initialFlat
   have ffiEq := (stateRel_iff genv sourceLast flatLast).mp states |>.2.2.2
   simpa [Flapjack.SemanticsHOL.evaluateProgWithClock, sourceRun, flatRun] using ffiEq
 
