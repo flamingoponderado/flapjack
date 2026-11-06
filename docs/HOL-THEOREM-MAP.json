@@ -13601,8 +13601,8 @@
     "hol_name": "EVERY_MAPi_simple",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/BindingFold.lean",
     "lean_name": "everyMapIdxSimple",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_pattern_global_flag_probe.out; independent input and output types retained. Review of MAPi and EVERY translations remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared HOL and the typed every_mapi_simple capture: independent input and output types, index-independence premise, and both EVERY conclusions match; MAPi is List.mapIdx and EVERY is membership quantification."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
