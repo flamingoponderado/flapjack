@@ -164,30 +164,6 @@ theorem evaluate_con_projection {C F : Type} (trace : BackendCommon.Tra)
     FlatSem.evaluate env state [.app trace (.el index) [expression]] = (state, .val [value]) := by
   simp [FlatSem.evaluate, pure, FlatSem.fixClock, FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppFlat, found]
 
-/-- A sequence of constructor field projections binds the selected values in
-the same order as the generated let fold. -/
-theorem evaluate_con_projection_fold {C F : Type} (trace : BackendCommon.Tra)
-    (expression body : FlatLang.Exp) (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F)
-    (stamp : Option (FlatLang.CtorId × FlatLang.TypeId)) (fields : List FlatSem.Value)
-    (entries : List (Nat × VarN × FlatSem.Value)) (newNames : VarN → Prop)
-    (fresh : ∀ entry ∈ entries, newNames entry.2.1)
-    (found : ∀ entry ∈ entries, fields[entry.1]? = some entry.2.2)
-    (pure : ∀ env2, aLookupRel (fun name => ¬ newNames name) Eq env2.v env.v →
-      FlatSem.evaluate env2 state [expression] = (state, .val [.conv stamp fields])) :
-    ∀ env2, aLookupRel (fun name => ¬ newNames name) Eq env2.v env.v →
-      FlatSem.evaluate env2 state [entries.foldr (fun entry exp =>
-        .let_ trace (some entry.2.1) (.app trace (.el entry.1) [expression]) exp) body] =
-      FlatSem.evaluate { env2 with v := entries.reverse.map (fun entry => (entry.2.1, entry.2.2)) ++ env2.v }
-        state [body] := by
-  apply evaluateBindingFold (fun entry => some entry.2.1)
-    (fun entry => .app trace (.el entry.1) [expression]) (fun entry => entry.2.2)
-    entries newNames env state trace body
-  · simp
-  · simpa using fresh
-  · intro entry member env2 related
-    exact evaluate_con_projection trace expression env2 state stamp fields entry.1 entry.2.2
-      (pure env2 related) (found entry member)
-
 /-- The constructor case executes the compiler's selected projections and
 continues with their values bound to the corresponding generated names. -/
 theorem compilePatBindings_con_evaluate {C F : Type} (trace : BackendCommon.Tra) (i key : Nat)
@@ -665,22 +641,6 @@ theorem compilePatBindings_var_evaluate {C F : Type} (trace : BackendCommon.Tra)
   cases compiled : compilePatBindings trace i rest body with
   | mk used result =>
     simp [compilePatBindings, compiled, FlatSem.evaluate, pure, FlatSem.fixClock]
-
-/-- The variable step also preserves the observed lookup relation with the
-matcher bindings extended by the same value. -/
-theorem compilePatBindings_var_step {C F : Type} (trace : BackendCommon.Tra) (i key bound : Nat)
-    (name : VarN) (expression body : FlatLang.Exp) (rest : List (FlatLang.Pat × Nat × FlatLang.Exp))
-    (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F) (value : FlatSem.Value)
-    (pre base : List (VarN × FlatSem.Value))
-    (pure : FlatSem.evaluate env state [expression] = (state, .val [value]))
-    (related : aLookupRel (fun n => decNameToNum n < bound) Eq env.v (pre ++ base)) :
-    let next := { env with v := (name, value) :: env.v }
-    FlatSem.evaluate env state [(compilePatBindings trace i ((.pvar name, key, expression) :: rest) body).2] =
-      FlatSem.evaluate next state [(compilePatBindings trace i rest body).2] ∧
-    aLookupRel (fun n => decNameToNum n < bound) Eq next.v (((name, value) :: pre) ++ base) := by
-  constructor
-  · exact compilePatBindings_var_evaluate trace i key name expression body rest env state value pure
-  · exact aLookupRel_cons _ _ name value value env.v (pre ++ base) (fun _ => rfl) related
 
 /-- Wildcard bindings introduce no code and leave the continuation untouched. -/
 theorem compilePatBindings_any_evaluate {C F : Type} (trace : BackendCommon.Tra) (i key : Nat)

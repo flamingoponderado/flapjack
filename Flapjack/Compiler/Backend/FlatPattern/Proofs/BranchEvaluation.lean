@@ -93,23 +93,4 @@ theorem evaluate_compilePatRhs {C F : Type} (trace : BackendCommon.Tra) (n m : N
   have eq := aLookupRel_eq_lookup _ _ _ name extRelated nameBound
   simpa only [eq] using h
 
-/-- The branch simulation also applies to an arbitrary environment update
-that installs the generated scrutinee binding. -/
-theorem evaluate_compilePatRhs_update {C F : Type} (trace : BackendCommon.Tra) (n m : Nat)
-    (pattern : FlatLang.Pat) (body : FlatLang.Exp) (state final : FlatSem.State C F)
-    (env1 env2 env3 : FlatSem.Environment FlatSem.Value) (update : List (VarN × FlatSem.Value) → List (VarN × FlatSem.Value))
-    (value : FlatSem.Value) (sourceBindings bindings : List (VarN × FlatSem.Value))
-    (result : Result (List FlatSem.Value) FlatSem.Value)
-    (evaluated : FlatSem.evaluate { env3 with v := update env3.v } state
-      [compilePatRhs trace n (.varLocal trace (encNumToName n)) (pattern, body)] = (final, result))
-    (matched : FlatSem.pmatch state pattern value [] = .match bindings)
-    (envRel : EnvRel m env1 env2)
-    (bindingRel : aLookupRel (fun name => decNameToNum name < m) ValueRel sourceBindings bindings)
-    (envEq : update env3.v = (encNumToName n, value) :: env2.v) (bound : n ≤ m)
-    (patBound : maxDecName (FlatLang.patBindings pattern) < n - 1) :
-    ∃ extEnv, FlatSem.evaluate extEnv state [body] = (final, result) ∧
-      EnvRel (n - 1) { env1 with v := sourceBindings ++ env1.v } extEnv := by
-  exact evaluate_compilePatRhs trace n m pattern body state final { env3 with v := update env3.v } env1 env2
-    value sourceBindings bindings result evaluated matched envRel bindingRel envEq bound patBound
-
 end Flapjack.Compiler.Backend.FlatPattern
