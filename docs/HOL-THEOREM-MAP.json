@@ -11571,6 +11571,33 @@
     "reviewer": "Compared do_eq_typed, replaying the original local HOL proof: the constructor-map premise and both complete value and value-list simulation conjuncts retain the original quantifiers, conjunctions and equality results. The global environment uses canonical finite maps for c and tys with a local roundtrip witness."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/PrimitiveType.lean",
+    "lean_name": "checked_valueToFlat_related",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "check_type_IMP_v_rel",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["c", "tys"],
+    "reviewer": "Compared check_type_to_flat_typed: the source type check and constructor-map condition imply the original value relation with v_to_flat. GlobalEnv uses canonical c and tys finite maps with the local witness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/PrimitiveType.lean",
+    "lean_name": "checked_flatToValue_related",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "check_type_v_rel_flat_to_v",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["c", "tys"],
+    "reviewer": "Compared check_type_from_flat_typed: the ordered type check, value relation and constructor-map condition imply the same flat_to_v equality. GlobalEnv uses canonical c and tys finite maps with the local witness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/PrimitiveType.lean",
+    "lean_name": "checked_flatToValue_list",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "check_type_v_rel_MAP_flat_to_v",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["c", "tys"],
+    "reviewer": "Compared check_type_from_flat_list_typed: EVERY is List.all = true, LIST_REL is Forall₂, and the ordered premises imply the original mapped conversion equality. GlobalEnv uses canonical c and tys finite maps with the local witness."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/WordLists.lean",
     "lean_name": "valueToWord8List_related",
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
