@@ -986,8 +986,10 @@ theorem doEval_oracle_combined {C F : Type} [Nonempty C]
   cases storeCfg
   rw [nextCfg] at storeNext
   cases storeNext
-  obtain ⟨decode', config', payload', chosen, decoded', envInv⟩ :=
-    srcOracEnvInvs_lookupEnvId (some decode) genv state envId output.1 value decs lookup invs.2.1 entry
+  obtain ⟨decode', config', payload', mapGen, compMap, chosen, decoded', generation, mapping, mapInv⟩ :=
+    srcOracEnvInvs_lookup (some decode) genv state envId output.1 value decs lookup invs.2.1 entry
+  have envInv : GlobalEnvInv genv (lookupEnvId envId config'.envs) (fun _ => False) output.1 := by
+    simpa [lookupEnvId, generation, mapping] using mapInv
   cases chosen
   rw [decoded] at decoded'
   cases decoded'

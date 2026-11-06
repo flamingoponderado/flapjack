@@ -370,22 +370,6 @@ theorem srcOracEnvInvs_lookup {C : Type} (interp : Option (Value → Option (Con
         subst decodedConfig
         exact ⟨decode, config, payload, mapGen, compMap, rfl, decoded, generationLookup, mapLookup, inv'⟩
 
-/-- The actual compiler environment lookup returns the map supplied by the
-source-oracle invariant. -/
-theorem srcOracEnvInvs_lookupEnvId {C : Type} (interp : Option (Value → Option (Config × C)))
-    (genv : GlobalEnv) (state : EvalOracleState) (envId : Nat × Nat)
-    (sourceEnv : SemEnv Value) (stateValue : Value) (decs : List Dec)
-    (lookup : lookupEnv state envId = some sourceEnv)
-    (invs : srcOracEnvInvs interp genv (some (.evalOracle state)))
-    (entry : state.oracle 0 = (envId, stateValue, decs)) :
-    ∃ decode config payload,
-      interp = some decode ∧ decode stateValue = some (config, payload) ∧
-      GlobalEnvInv genv (lookupEnvId envId config.envs) (fun _ => False) sourceEnv := by
-  obtain ⟨decode, config, payload, mapGen, compMap, chosen, decoded, generation, mapping, inv⟩ :=
-    srcOracEnvInvs_lookup interp genv state envId sourceEnv stateValue decs lookup invs entry
-  refine ⟨decode, config, payload, chosen, decoded, ?_⟩
-  simpa [lookupEnvId, generation, mapping] using inv
-
 /-- The source oracle is decodable at each step, and successive decoded
 configurations agree with incremental compilation. HOL types are inhabited;
 `Nonempty C` supplies the payload inhabitance needed for HOL's `THE NONE`. -/

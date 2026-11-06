@@ -125721,5 +125721,21 @@
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["refs", "code"],
   "reviewer": "Compared do_eval_install_typed in flat_to_clos_relation_probe.out: the complete premises, existential declarations/code/configuration/state, timeout branch, result equality, match-freedom, two-element input and nonzero-clock code equality match. Closure refs and code use the reviewed finite-support representation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "v_rel_to_bytes",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/InstallDecoding.lean",
+  "lean_name": "installBytes_related",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared v_rel_to_bytes_typed in flat_to_clos_relation_probe.out: source and closure values, fixed 8-bit byte list, conjunctive premise, decoded result and independent unused existential type match. Nonempty α represents HOL types' inhabitation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "v_rel_to_words",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/InstallDecoding.lean",
+  "lean_name": "installWords_related",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared v_rel_to_words_typed in flat_to_clos_relation_probe.out: source and closure values, fixed 64-bit word list, conjunctive premise, decoded result and independent unused existential type match. Nonempty α represents HOL types' inhabitation."
 }
 ]
