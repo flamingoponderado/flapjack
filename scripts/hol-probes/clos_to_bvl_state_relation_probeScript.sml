@@ -13,6 +13,7 @@ val _ = show "state_rel_typed=" clos_to_bvlProofTheory.state_rel_def;
 val _ = show "state_rel_clock_typed=" clos_to_bvlProofTheory.state_rel_clock;
 val _ = show "state_rel_refs_lookup_typed=" clos_to_bvlProofTheory.state_rel_refs_lookup;
 val _ = show "cl_rel_rules_typed=" clos_to_bvlProofTheory.cl_rel_rules;
+val _ = show "v_rel_bool_typed=" clos_to_bvlProofTheory.v_rel_Boolv;
 val _ = show "v_rel_rules_typed=" clos_to_bvlProofTheory.v_rel_rules;
 val _ = show "env_rel_typed=" clos_to_bvlProofTheory.env_rel_def;
 val _ = show "add_args_typed=" clos_to_bvlProofTheory.add_args_def;

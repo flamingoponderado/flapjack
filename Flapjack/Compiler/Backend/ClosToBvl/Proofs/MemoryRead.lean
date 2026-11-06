@@ -354,7 +354,7 @@ theorem memoryBoundsArray_dispatch {C F : Type} {f : HolFiniteMapExact Nat Nat}
                   let bound := decide (0 ≤ index ∧ index < Int.ofNat fields.length)
                   refine ⟨BvlSem.boolValue bound, ?_, rfl, ?_⟩
                   · simp [BvlSem.doApp, BvlSem.applyMemory, targetFound, fieldsRel.length_eq, bound]
-                  · simpa [bound] using (vRel_bool (maxApp := s.maxApp) (f := f) (refs := t.refs) (code := t.code) bound)
+                  · simpa [bound] using ((vRel_bool_iff s.maxApp f t.refs t.code bound (.number 0) (BvlSem.boolValue bound)).1.mpr rfl)
 
 /-- Failed mutable-array bounds checks report a source type error. -/
 theorem memoryBoundsArray_error {C F : Type} (args : List ClosSem.Value)
@@ -398,7 +398,7 @@ theorem memoryBoundsByte_dispatch {C F : Type} {f : HolFiniteMapExact Nat Nat}
               let bound := decide (0 ≤ index ∧ if loose then index ≤ Int.ofNat bytes.length else index < Int.ofNat bytes.length)
               refine ⟨BvlSem.boolValue bound, ?_, rfl, ?_⟩
               · simp [BvlSem.doApp, BvlSem.applyMemory, found, bound]
-              · simpa [bound] using (vRel_bool (maxApp := s.maxApp) (f := f) (refs := t.refs) (code := t.code) bound)
+              · simpa [bound] using ((vRel_bool_iff s.maxApp f t.refs t.code bound (.number 0) (BvlSem.boolValue bound)).1.mpr rfl)
         case refPtr.number flag ptr index =>
           cases related with
           | cons firstRel tail =>
@@ -421,7 +421,7 @@ theorem memoryBoundsByte_dispatch {C F : Type} {f : HolFiniteMapExact Nat Nat}
                   let bound := decide (0 ≤ index ∧ if loose then index ≤ Int.ofNat bytes.length else index < Int.ofNat bytes.length)
                   refine ⟨BvlSem.boolValue bound, ?_, rfl, ?_⟩
                   · simp [BvlSem.doApp, BvlSem.applyMemory, targetFound, bound]
-                  · simpa [bound] using (vRel_bool (maxApp := s.maxApp) (f := f) (refs := t.refs) (code := t.code) bound)
+                  · simpa [bound] using ((vRel_bool_iff s.maxApp f t.refs t.code bound (.number 0) (BvlSem.boolValue bound)).1.mpr rfl)
 
 /-- A failed byte bounds check reports a source type error. -/
 theorem memoryBoundsByte_error {C F : Type} (loose : Bool) (args : List ClosSem.Value)

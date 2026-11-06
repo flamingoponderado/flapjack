@@ -32,12 +32,6 @@ theorem vRel_numbers_inv {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
       have tailEq := ih _ tail
       simp [headEq, tailEq]
 
-/-- Boolean constants retain their value relation through tag translation. -/
-theorem vRel_bool {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
-    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)} (b : Bool) :
-    vRel maxApp f refs code (ClosSem.boolValue b) (BvlSem.boolValue b) := by
-  cases b <;> exact .block .nil
-
 /-- Successful integer primitives on numeric arguments produce related values. -/
 theorem doIntApp_numbers_rel {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
     {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
@@ -53,10 +47,10 @@ theorem doIntApp_numbers_rel {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
     cases args with
     | nil =>
       simp only [List.map, ClosSem.doIntApp, BvlSem.doIntApp] <;>
-        (try split_ifs) <;> first | exact True.intro | exact vRel_bool _
+        (try split_ifs) <;> first | exact True.intro | exact (vRel_bool_iff _ _ _ _ _ (.number 0) _).1.mpr rfl
     | cons b args =>
       cases args <;> simp only [List.map, ClosSem.doIntApp, BvlSem.doIntApp] <;>
-        (try split_ifs) <;> first | exact True.intro | exact vRel.number _ | exact vRel_bool _
+        (try split_ifs) <;> first | exact True.intro | exact vRel.number _ | exact (vRel_bool_iff _ _ _ _ _ (.number 0) _).1.mpr rfl
 
 /-- Related numeric arguments yield related results whenever the source
 integer primitive succeeds. -/

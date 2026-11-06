@@ -61,6 +61,46 @@ inductive vRel (maxApp : Nat) (f : HolFiniteMapExact Nat Nat)
         (.block 31 (.codePtr (partialAppFnLocation maxApp (numArgs - 1) (ys.length - 1)) ::
           .number (Int.ofNat (numArgs - 1 - argEnv.length)) :: cl' :: ys))
 
+/-- Canonical finite-map codec witnesses for Boolean value relatedness. -/
+theorem holFmapAsFiniteSupportParamWitness_vRel_bool_iff_f
+    (f : HolFiniteMapExact Nat Nat) (key : Nat) :
+    (ofBroad (toBroad f) f.finiteSupport).lookup key = f.lookup key ∧
+    (ofBroad (toBroad f) f.finiteSupport).finiteSupport = f.finiteSupport ∧
+    ofBroad (toBroad f) f.finiteSupport = f :=
+  holFmapAsFiniteSupportParamWitness_vRel_f f key
+
+theorem holFmapAsFiniteSupportParamWitness_vRel_bool_iff_refs
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_vRel_refs refs key
+
+/-- Related Boolean values are characterized in both directions. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "v_rel_Boolv"
+  (fmap_as_finite_support_parameters := [f, refs])]
+theorem vRel_bool_iff (maxApp : Nat) (f : HolFiniteMapExact Nat Nat)
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (code : Spt (Nat × Bvl.Exp))
+    (b : Bool) (source : ClosSem.Value) (target : BvlSem.Value) :
+    (vRel maxApp f refs code (ClosSem.boolValue b) target ↔ target = BvlSem.boolValue b) ∧
+    (vRel maxApp f refs code source (BvlSem.boolValue b) ↔ source = ClosSem.boolValue b) := by
+  cases b <;> simp only [ClosSem.boolValue, BvlSem.boolValue, BackendCommon.boolToTag,
+    BackendCommon.trueTag, BackendCommon.falseTag, ↓reduceIte]
+  all_goals constructor <;> constructor
+  all_goals try { intro h; cases h with
+    | block fields => cases fields; rfl
+    | closure _ closure => cases closure
+    | partialClosure _ _ _ _ _ added _ closure => cases closure <;> simp [addArgs] at added }
+  all_goals try { intro h; subst_vars; exact .block .nil }
+  case false.right.mp =>
+    intro h
+    generalize eq : (BvlSem.Value.block (if false = true then 1 else 0) []) = t at h
+    (cases h <;> simp_all [BackendCommon.closTagShift]); split at * <;> omega
+  case true.right.mp =>
+    intro h
+    generalize eq : (BvlSem.Value.block 1 []) = t at h
+    (cases h <;> simp_all [BackendCommon.closTagShift]); split at * <;> omega
+
 theorem holFmapAsFiniteSupportParamWitness_vRel_subspt_f
     (f : HolFiniteMapExact Nat Nat) (key : Nat) :
     (ofBroad (toBroad f) f.finiteSupport).lookup key = f.lookup key ∧

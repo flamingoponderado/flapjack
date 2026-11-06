@@ -39,7 +39,7 @@ theorem blockBoolean_dispatch {C F : Type} {f : HolFiniteMapExact Nat Nat}
             have targetDecoded := vRel_asBool head decoded
             simp [BlockBoolean.op, ClosSem.doApp, ClosSem.applyBlock, decoded] at run
             rcases run with ⟨rfl, rfl⟩
-            refine ⟨BvlSem.boolValue (!b), ?_, rfl, vRel_bool (!b)⟩
+            refine ⟨BvlSem.boolValue (!b), ?_, rfl, (vRel_bool_iff _ _ _ _ (!b) (.number 0) _).1.mpr rfl⟩
             simp [BlockBoolean.op, compileOp, BvlSem.doApp, BvlSem.applyBlock, targetDecoded]
       | cons b rest => simp [BlockBoolean.op, ClosSem.doApp, ClosSem.applyBlock] at run
   | test test =>
@@ -66,7 +66,7 @@ theorem blockBoolean_dispatch {C F : Type} {f : HolFiniteMapExact Nat Nat}
                   have targetSecond := vRel_asBool second secondBool
                   simp [BlockBoolean.op, ClosSem.doApp, ClosSem.applyBlock, firstBool, secondBool] at run
                   rcases run with ⟨rfl, rfl⟩
-                  refine ⟨BvlSem.boolValue (x == y), ?_, rfl, vRel_bool (x == y)⟩
+                  refine ⟨BvlSem.boolValue (x == y), ?_, rfl, (vRel_bool_iff _ _ _ _ (x == y) (.number 0) _).1.mpr rfl⟩
                   simp [BlockBoolean.op, compileOp, BvlSem.doApp, BvlSem.applyBlock, targetFirst, targetSecond]
         | cons c rest => simp [BlockBoolean.op, ClosSem.doApp, ClosSem.applyBlock] at run
 

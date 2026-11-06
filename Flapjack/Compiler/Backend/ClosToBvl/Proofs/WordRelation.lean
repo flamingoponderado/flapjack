@@ -96,7 +96,7 @@ theorem doWordApp_primitives {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
         all_goals try (simp only [ClosSem.intToByte] at run ⊢)
         all_goals repeat' (split at run <;> simp_all)
         all_goals try (rcases run with ⟨_, rfl⟩)
-        all_goals first | exact vRel.number _ | exact vRel.word64 _ | exact vRel_bool _
+        all_goals first | exact vRel.number _ | exact vRel.word64 _ | exact (vRel_bool_iff _ _ _ _ _ (.number 0) _).1.mpr rfl
       | cons c args =>
         cases args with
         | nil =>

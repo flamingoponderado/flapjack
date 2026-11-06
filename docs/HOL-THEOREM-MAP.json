@@ -125580,4 +125580,14 @@
   "statement_status": "reviewed_exact",
   "reviewer": "Compared local find_recfun_EL source and proved find_recfun_el_typed replay in flat_to_clos_relation_probe.out: the two recursive-entry payload types remain independent, with the original bounds, distinct names and indexed lookup conclusion. The in-bounds Lean getElem is HOL EL under the same bound."
 }
+,
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "v_rel_Boolv",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ValueRelation.lean",
+  "lean_name": "vRel_bool_iff",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f", "refs"],
+  "reviewer": "Compared v_rel_bool_typed in clos_to_bvl_state_relation_probe.out: both equivalences, independent source and target values, shared Boolean, code tree and parameters match. The HOL finite-map parameters f and refs use canonical finite-support codecs with same-module roundtrip witnesses."
+}
 ]
