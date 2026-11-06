@@ -78,7 +78,7 @@ theorem doApp_thunkUpdate_related {C F : Type} (cfg : Config) (source target sou
               | none => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, bad, assigned] at run
               | some refs =>
                 have entries : storeValueRel ValueRel (.thunk mode value) (.thunk mode value') := ⟨rfl, valueRel⟩
-                obtain ⟨refs', assigned', refsRel⟩ := storeAssign_related states.2.1 address entries assigned
+                obtain ⟨refs', assigned', refsRel⟩ := SemanticPrimitivesProps.storeAssign_related states.2.1 address entries assigned
                 simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, bad, assigned] at run
                 rcases run with ⟨rfl, rfl⟩
                 refine ⟨{ target with refs := refs' }, .val FlatSem.unitValue, ?_, ⟨states.1, refsRel, states.2.2⟩, .value ?_⟩

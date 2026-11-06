@@ -72,7 +72,7 @@ theorem doApp_refAssign_related {C F : Type} (cfg : Config)
           cases assigned : storeAssign index (.refv value) source.refs with
           | none => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, assigned] at run
           | some refs =>
-            have assigned' := storeAssign_related states.2.1 index (show storeValueRel ValueRel (.refv value) (.refv value') from valueRel) assigned
+            have assigned' := SemanticPrimitivesProps.storeAssign_related states.2.1 index (show storeValueRel ValueRel (.refv value) (.refv value') from valueRel) assigned
             obtain ⟨refs', assignTarget, refsRel⟩ := assigned'
             simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, assigned] at run
             rcases run with ⟨rfl, rfl⟩

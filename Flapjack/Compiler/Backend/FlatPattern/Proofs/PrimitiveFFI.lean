@@ -53,7 +53,7 @@ theorem doApp_ffi_related {C F : Type} (cfg : Config) (source target sourceFinal
                     | none => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, found, called, assigned] at run
                     | some refs =>
                       have entries : storeValueRel ValueRel (.w8array bytes') (.w8array bytes') := rfl
-                      obtain ⟨refs', assigned', refsRel⟩ := storeAssign_related states.2.1 address entries assigned
+                      obtain ⟨refs', assigned', refsRel⟩ := SemanticPrimitivesProps.storeAssign_related states.2.1 address entries assigned
                       simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, found, called, assigned] at run
                       rcases run with ⟨rfl, rfl⟩
                       refine ⟨{ target with refs := refs', ffi := ffi }, .val FlatSem.unitValue, ?_, ?_, .value ?_⟩

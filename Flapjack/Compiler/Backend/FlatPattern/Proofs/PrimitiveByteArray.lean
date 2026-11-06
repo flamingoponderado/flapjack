@@ -12,7 +12,7 @@ theorem stateRel_lookup_bytes {C F : Type} (cfg : Config) (source target : FlatS
     (states : StateRel cfg source target) (address : Nat) (bytes : List (BitVec 8))
     (found : storeLookup address source.refs = some (.w8array bytes)) :
     storeLookup address target.refs = some (.w8array bytes) := by
-  obtain ⟨entry, lookup, relation⟩ := storeValueRel_lookup states.2.1 address (.w8array bytes) found
+  obtain ⟨entry, lookup, relation⟩ := SemanticPrimitivesProps.storeValueRel_lookup states.2.1 address (.w8array bytes) found
   cases entry <;> simp [storeValueRel] at relation
   case w8array bytes' => simpa [← relation] using lookup
 
@@ -110,7 +110,7 @@ theorem updateIndexed_bytes_related {C F : Type} (cfg : Config) (source target s
     | some refs =>
       have entries : storeValueRel ValueRel (.w8array (bytes.set index.toNat byte))
           (.w8array (bytes.set index.toNat byte)) := rfl
-      obtain ⟨refs', assigned', refsRel⟩ := storeAssign_related states.2.1 address entries assigned
+      obtain ⟨refs', assigned', refsRel⟩ := SemanticPrimitivesProps.storeAssign_related states.2.1 address entries assigned
       simp [FlatSem.updateIndexed, bounds, assigned] at run
       rcases run with ⟨rfl, rfl⟩
       refine ⟨{ target with refs := refs' }, ?_, ⟨states.1, refsRel, states.2.2⟩, .value ?_⟩

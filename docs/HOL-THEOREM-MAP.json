@@ -125272,5 +125272,29 @@
   "lean_name": "simpleDoEq",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared the original generated first-conjunct theorem and typed simple_equality capture: all four values, Boolean result and original simple-relation and equality premises are retained; conjunction premises are curried."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "simple_state_rel_store_assign",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/SimpleStore.lean",
+  "lean_name": "simpleStateRel_storeAssign",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the HOL source and typed simple_store_assignment capture: the original assignment, state and store-value relation premises and existential updated target store are retained. Source and target compiler-state types are independent and their FFI type is shared; conjunction premises are curried."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "simple_state_rel_store_alloc",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/SimpleStore.lean",
+  "lean_name": "simpleStateRel_storeAlloc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the HOL source and typed simple_store_allocation capture: the original allocation equation, shared allocated index, and existential related updated target store are retained. Source and target compiler-state types are independent and their FFI type is shared; conjunction premises are curried."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "simple_state_rel_store_lookup",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/SimpleStore.lean",
+  "lean_name": "simpleStateRel_storeLookup",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the HOL source and typed simple_store_lookup capture: the original lookup and state premises and existential related target entry are retained. Source and target compiler-state types are independent and their FFI type is shared; conjunction premises are curried."
 }
 ]

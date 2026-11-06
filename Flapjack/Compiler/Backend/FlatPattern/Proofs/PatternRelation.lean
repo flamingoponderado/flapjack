@@ -1,6 +1,6 @@
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.RecursiveClosures
 import Flapjack.Compiler.Backend.Semantics.FlatSem.PatternMatch
-import Flapjack.Compiler.Backend.FlatProps.SimpleRelations
+import Flapjack.Compiler.Backend.FlatProps.SimpleStore
 
 /-! Pattern result and store lookup relations for flat pattern compilation. -/
 namespace Flapjack.Compiler.Backend.FlatPattern
@@ -34,29 +34,12 @@ theorem matchRel_imp (n : Nat) (left right : MatchResult (List (VarN × Value)))
         aLookupRel (fun name => decNameToNum name < n) ValueRel env1 env2 := by
   cases left <;> cases right <;> simp_all [MatchRel]
 
-/-- A related store entry can be found at the same index on the target side. -/
-theorem storeValueRel_lookup {A B : Type} {R : A → B → Prop} {left : List (StoreValue A)}
-    {right : List (StoreValue B)} (related : List.Forall₂ (storeValueRel R) left right)
-    (index : Nat) (value : StoreValue A) (found : storeLookup index left = some value) :
-    ∃ target, storeLookup index right = some target ∧ storeValueRel R value target := by
-  induction related generalizing index with
-  | nil => simp [storeLookup] at found
-  | @cons source target left right head tail ih =>
-    cases index with
-    | zero =>
-      simp [storeLookup] at found
-      subst value
-      exact ⟨target, rfl, head⟩
-    | succ index =>
-      simp only [storeLookup, List.getElem?_cons_succ] at found ⊢
-      exact ih index found
-
 /-- Related reference entries contain related values at the same location. -/
 theorem stateRel_lookup_ref {C F : Type} (cfg : Config) (source target : FlatSem.State C F)
     (states : StateRel cfg source target) (index : Nat) (value : Value)
     (found : storeLookup index source.refs = some (.refv value)) :
     ∃ value', storeLookup index target.refs = some (.refv value') ∧ ValueRel value value' := by
-  obtain ⟨entry, lookup, relation⟩ := storeValueRel_lookup states.2.1 index (.refv value) found
+  obtain ⟨entry, lookup, relation⟩ := SemanticPrimitivesProps.storeValueRel_lookup states.2.1 index (.refv value) found
   cases entry <;> simp [storeValueRel] at relation
   case refv value' => exact ⟨value', lookup, relation⟩
 

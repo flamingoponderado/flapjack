@@ -76,7 +76,7 @@ theorem stateRel_lookup_array {C F : Type} (cfg : Config) (source target : FlatS
     (states : StateRel cfg source target) (address : Nat) (items : List FlatSem.Value)
     (found : storeLookup address source.refs = some (.varray items)) :
     ∃ items', storeLookup address target.refs = some (.varray items') ∧ List.Forall₂ ValueRel items items' := by
-  obtain ⟨entry, lookup, relation⟩ := storeValueRel_lookup states.2.1 address (.varray items) found
+  obtain ⟨entry, lookup, relation⟩ := SemanticPrimitivesProps.storeValueRel_lookup states.2.1 address (.varray items) found
   cases entry <;> simp [storeValueRel] at relation
   case varray items' => exact ⟨items', lookup, relation⟩
 
@@ -157,7 +157,7 @@ theorem updateIndexed_array_related {C F : Type} (cfg : Config) (source target s
     | some refs =>
       have entries : storeValueRel ValueRel (.varray (items.set index.toNat value))
           (.varray (items'.set index.toNat value')) := forall₂_set itemsRel index.toNat values
-      obtain ⟨refs', assigned', refsRel⟩ := storeAssign_related states.2.1 address entries assigned
+      obtain ⟨refs', assigned', refsRel⟩ := SemanticPrimitivesProps.storeAssign_related states.2.1 address entries assigned
       simp [FlatSem.updateIndexed, bounds, assigned] at run
       rcases run with ⟨rfl, rfl⟩
       refine ⟨{ target with refs := refs' }, .val FlatSem.unitValue, ?_, ?_, .value ?_⟩
