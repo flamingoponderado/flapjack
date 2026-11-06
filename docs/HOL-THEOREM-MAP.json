@@ -125104,5 +125104,29 @@
   "hol_name": "match_rel_IMP",
   "lean_name": "matchRel_imp",
   "reviewer": "Compared match_rel_IMP with the typed match_relation_cases capture: the original premise, ordered failure alternatives with equality of results, and existential successful bindings with the bounded lookup relation are retained."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "MAX_ADD_LESS",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/MaxBounds.lean",
+  "lean_name": "maxAddLess",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the HOL source theorem and typed max_add_less capture: num MAX is Nat max, and the original additions, inequalities and connectives are retained."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "LESS_MAX_ADD",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/MaxBounds.lean",
+  "lean_name": "lessMaxAdd",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the HOL source theorem and typed less_max_add capture: num MAX is Nat max, and the original additions, inequalities and connectives are retained."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "MAX_ADD_LE",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/MaxBounds.lean",
+  "lean_name": "maxAddLe",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the HOL source theorem and typed max_add_le capture: num MAX is Nat max, and the original additions, inequalities and connectives are retained."
 }
 ]

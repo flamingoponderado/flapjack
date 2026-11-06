@@ -87,6 +87,9 @@ val _ = show_thm "initial_states=" flat_patternProofTheory.state_rel_initial_sta
 val _ = show_thm "match_relation=" flat_patternProofTheory.match_rel_def;
 val _ = show_thm "match_relation_simp=" flat_patternProofTheory.match_rel_thms;
 val _ = show_thm "match_relation_cases=" flat_patternProofTheory.match_rel_IMP;
+val _ = show_thm "max_add_less=" flat_patternProofTheory.MAX_ADD_LESS;
+val _ = show_thm "less_max_add=" flat_patternProofTheory.LESS_MAX_ADD;
+val _ = show_thm "max_add_le=" flat_patternProofTheory.MAX_ADD_LE;
 val _ = show_thm "lookup_map_same=" flat_patternProofTheory.ALOOKUP_rel_MAP_same;
 val _ = show_thm "do_opapp=" flat_patternProofTheory.do_opapp_thm;
 val _ = show_thm "pmatch_simulation=" flat_patternProofTheory.pmatch_thm;

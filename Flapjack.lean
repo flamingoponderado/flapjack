@@ -33,6 +33,7 @@ import Flapjack.Compiler.Backend.FlatPattern.Proofs.StateRelation
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelationCases
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.RecursiveClosures
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.PatternRelation
+import Flapjack.Compiler.Backend.FlatPattern.Proofs.MaxBounds
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.PatternList
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.MatchRows
 import Flapjack.SemanticPrimitivesHOL.Control
