@@ -89,14 +89,24 @@ theorem compileCorrect {C F α β : Type} [Nonempty C]
     obtain ⟨run, inv, envRel, length, generation, safe, compiled⟩ := premises
     rcases idxs with ⟨start, finish, other⟩
     subst flatExprs
-    obtain ⟨flatLast, flatResult, nextGenv, target, results, states, post⟩ :=
-      factoredCompileExpressions interp transform exprs genv start finish other source sourceLast flat env
-        flatEnv locals traces trace comp gen result run envRel length inv generation safe
-    refine ⟨flatLast, flatResult, nextGenv, target, results, states, ?_⟩
+    have sourceSafe : ∀ last, EvaluateHOL.evaluate source env exprs ≠ (last, .err (.abort .typeError)) := by
+      intro last bad
+      rw [run] at bad
+      exact safe (Prod.mk.inj bad).2
+    obtain ⟨nextGenv, simulation, post⟩ := factoredExpressionList_envAll interp transform exprs genv start finish other
+      source flat env flatEnv locals traces trace comp gen envRel length inv generation sourceSafe
+    unfold ExprListSim at simulation
+    generalize flatRun : FlatSem.evaluate flatEnv flat
+      (compileExps trace { comp with v := bindLocals traces locals comp.v } exprs) = flatPair at simulation post
+    obtain ⟨flatLast, flatResult⟩ := flatPair
+    change EvalResultRel nextGenv (EvaluateHOL.evaluate source env exprs).2 flatResult ∧
+      StateRel nextGenv (EvaluateHOL.evaluate source env exprs).1 flatLast at simulation
+    simp only [run] at simulation
+    refine ⟨flatLast, flatResult, nextGenv, rfl, simulation.1, simulation.2, ?_⟩
     cases result with
     | val values =>
       intro _
-      obtain ⟨growth, invariant, generation, forward⟩ := post
+      obtain ⟨growth, invariant, generation, forward⟩ := by simpa only [run] using post
       exact ⟨invariant, generation, forward, growth.constructors, growth.types,
         (globalGrowth_iff _ _).mp growth |>.1⟩
     | err error =>
@@ -104,7 +114,7 @@ theorem compileCorrect {C F α β : Type} [Nonempty C]
       | abort error => simp [resultAbort]
       | raise value =>
         intro _
-        obtain ⟨growth, invariant, generation, forward⟩ := post
+        obtain ⟨growth, invariant, generation, forward⟩ := by simpa only [run] using post
         exact ⟨invariant, generation, forward, growth.constructors, growth.types,
           (globalGrowth_iff _ _).mp growth |>.1⟩
   · intro source env value rows errorValue genv comp sourceLast result flatEnv flat flatValue flatRows flatError
@@ -112,19 +122,27 @@ theorem compileCorrect {C F α β : Type} [Nonempty C]
     obtain ⟨run, inv, envRel, valueRel, length, generation, safe, compiled, flatSafe, errorRel⟩ := premises
     rcases idxs with ⟨start, finish, other⟩
     subst flatRows
-    obtain ⟨flatLast, flatResult, nextGenv, target, results, states, post⟩ :=
-      factoredCompileMatch interp transform genv start finish other source sourceLast flat env flatEnv locals
-        traces trace comp gen value errorValue flatValue flatError rows result run envRel length inv generation
-        valueRel errorRel flatSafe safe
-    have target' : FlatProps.evaluateMatch flatEnv flat flatValue
+    have sourceSafe : ∀ last, EvaluateHOL.evaluateMatch source env value rows errorValue ≠
+        (last, .err (.abort .typeError)) := by
+      intro last bad
+      rw [run] at bad
+      exact safe (Prod.mk.inj bad).2
+    obtain ⟨nextGenv, simulation, post⟩ := factoredEvaluateMatch_envAll interp transform genv start finish other
+      source flat env flatEnv locals traces trace comp gen envRel length inv generation
+      value errorValue flatValue flatError valueRel errorRel rows flatSafe sourceSafe
+    generalize flatRun : flatEvaluateMatch flatEnv flat flatValue flatError
+      (compilePes trace { comp with v := bindLocals traces locals comp.v } rows) = flatPair at simulation post
+    obtain ⟨flatLast, flatResult⟩ := flatPair
+    simp only [run] at simulation
+    have target : FlatProps.evaluateMatch flatEnv flat flatValue
         (compilePes trace { comp with v := bindLocals traces locals comp.v } rows) flatError =
         (flatLast, flatResult) := by
-      simpa only [flatEvaluateMatch_eq_flatProps] using target
-    refine ⟨flatLast, flatResult, nextGenv, target', results, states, ?_⟩
+      simpa only [flatEvaluateMatch_eq_flatProps] using flatRun
+    refine ⟨flatLast, flatResult, nextGenv, target, simulation.1, simulation.2, ?_⟩
     cases result with
     | val values =>
       intro _
-      obtain ⟨growth, invariant, generation, forward⟩ := post
+      obtain ⟨growth, invariant, generation, forward⟩ := by simpa only [run] using post
       exact ⟨invariant, generation, forward, growth.constructors, growth.types,
         (globalGrowth_iff _ _).mp growth |>.1⟩
     | err error =>
@@ -132,7 +150,7 @@ theorem compileCorrect {C F α β : Type} [Nonempty C]
       | abort error => simp [resultAbort]
       | raise value =>
         intro _
-        obtain ⟨growth, invariant, generation, forward⟩ := post
+        obtain ⟨growth, invariant, generation, forward⟩ := by simpa only [run] using post
         exact ⟨invariant, generation, forward, growth.constructors, growth.types,
           (globalGrowth_iff _ _).mp growth |>.1⟩
   · intro source env decs sourceLast result path n start finish other comp flat next nextComp flatDecs n' genv gen
