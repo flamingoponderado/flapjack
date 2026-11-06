@@ -125609,4 +125609,13 @@
   "statement_status": "reviewed_exact",
   "reviewer": "Compared local env_rel_APPEND source and proved env_rel_append_typed replay in flat_to_clos_relation_probe.out: the name-prefix equality and all relation premises match; the overwritten environment has the independently polymorphic HOL carrier. replaceEnvValues renders HOL’s type-changing update of its single value field."
 }
+,
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "env_rel_CONS",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/ValueRelation.lean",
+  "lean_name": "envRel_cons",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared local env_rel_CONS source and proved env_rel_cons_typed replay in flat_to_clos_relation_probe.out: related values, both environment updates and binders match, including the independently polymorphic overwritten environment rendered by replaceEnvValues."
+}
 ]

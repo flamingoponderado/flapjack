@@ -139,23 +139,30 @@ theorem valueToList_related (source : FlatSem.Value) (target : ClosSem.Value)
     simp [FlatSem.valueToList] at decoded
 termination_by sizeOf source
 
-/-- A related binding can be pushed onto both environments, preserving
-shadowing and de Bruijn indices. This is proof-side infrastructure. -/
-theorem envRel_cons {env names values name source target}
-    (related : EnvRel env names values) (head : ValueRel source target) :
-    EnvRel { env with v := (name, source) :: env.v } (some name :: names) (target :: values) := by
+/-- Flapjack rendering of a type-changing update of the flat environment’s
+single value field; the previous field value is discarded. -/
+def replaceEnvValues {α β : Type} (_env : FlatSem.Environment α)
+    (values : List (VarN × β)) : FlatSem.Environment β := ⟨values⟩
+
+/-- A related binding extends both environments, preserving shadowing. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "env_rel_CONS"]
+theorem envRel_cons {α : Type} {env : FlatSem.Environment α}
+    {xs : List (VarN × FlatSem.Value)} {names : List (Option MlString)}
+    {values : List ClosSem.Value} {name : VarN} {source : FlatSem.Value} {target : ClosSem.Value}
+    (related : EnvRel (replaceEnvValues env xs) names values) (head : ValueRel source target) :
+    EnvRel (replaceEnvValues env ((name, source) :: xs)) (some name :: names) (target :: values) := by
   apply (envRel_iff_lookup _ _ _).2
   intro key value found
   by_cases same : key = name
   · subst key
-    simp at found
+    simp [replaceEnvValues] at found
     subst value
     exact ⟨target, by simp [nameIndex], head⟩
-  · have previous : env.v.lookup key = some value := by
+  · have previous : xs.lookup key = some value := by
       have different : (key == name) = false := by simp [same]
-      simpa [List.lookup_cons, different] using found
+      simpa [replaceEnvValues, List.lookup_cons, different] using found
     obtain ⟨target', targetFound, targetRelated⟩ :=
-      (envRel_iff_lookup env names values).1 related key value previous
+      (envRel_iff_lookup _ names values).1 related key value previous
     refine ⟨target', ?_, targetRelated⟩
     simpa [nameIndex, same] using targetFound
 
@@ -167,11 +174,6 @@ theorem envRel_skip {env names values} (related : EnvRel env names values) (targ
   obtain ⟨target', targetFound, targetRelated⟩ :=
     (envRel_iff_lookup env names values).1 related name value found
   exact ⟨target', by simpa [nameIndex] using targetFound, targetRelated⟩
-
-/-- Flapjack rendering of a type-changing update of the flat environment’s
-single value field; the previous field value is discarded. -/
-def replaceEnvValues {α β : Type} (_env : FlatSem.Environment α)
-    (values : List (VarN × β)) : FlatSem.Environment β := ⟨values⟩
 
 /-- Extending with a related ordered prefix preserves the environment
 relation, including duplicate-name shadowing. -/
@@ -199,6 +201,6 @@ theorem envRel_append {α : Type} {env : FlatSem.Environment FlatSem.Value}
     | mk name source =>
       cases prefixRelated with
       | cons head tail =>
-        simpa using envRel_cons (ih tail) head
+        simpa [replaceEnvValues] using envRel_cons (env := env) (ih tail) head
 
 end Flapjack.Compiler.Backend.FlatToClos

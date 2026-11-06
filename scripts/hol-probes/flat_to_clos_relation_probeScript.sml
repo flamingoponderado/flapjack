@@ -23,6 +23,7 @@ val env_cons_replay = prove
   (``env_rel (env with <| v := xs |>) m db /\ v_rel v1 v2 ==>
      env_rel (env with <| v := (n,v1) :: xs |>) (SOME n :: m) (v2 :: db)``,
    simp [combinTheory.K_DEF, env_cons_upd_replay]);
+val _ = (print "env_rel_cons_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl env_cons_replay); print "\n");
 val env_append_replay = prove
   (``!name_prefix prefix db_prefix env m db.
       env_rel env m db /\ LIST_REL v_rel (MAP SND prefix) db_prefix /\
