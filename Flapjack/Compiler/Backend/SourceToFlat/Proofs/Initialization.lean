@@ -285,7 +285,9 @@ theorem initGenv_idxRange_compileProg {C : Type}
 
 /-- Every typed constructor in the initial map belongs to its initial
 constructor group. -/
-theorem initGenv_typesOk : genvCTysOk initGenv.c initGenv.tys := by
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "init_genv_tys_ok"
+  (fmap_as_finite_support := [c, tys])]
+theorem initGenv_typesOk : genvCTysOk (initGenv : GlobalEnv).c (initGenv : GlobalEnv).tys := by
   intro cn tyId arity present
   cases lookup : initGenv.c.lookup ((cn, some tyId), arity) with
   | none => simp [lookup] at present
@@ -300,7 +302,9 @@ theorem initGenv_typesOk : genvCTysOk initGenv.c initGenv.tys := by
 
 /-- The initial constructor map has the required constructors and preserves
 constructor-type comparison and injectivity. -/
-theorem initGenv_constructorsOk : genvCOk initGenv.c := by
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "init_genv_ok"
+  (fmap_as_finite_support := [c, tys])]
+theorem initGenv_constructorsOk : genvCOk (initGenv : GlobalEnv).c := by
   have boolNames : ofString "False" ≠ ofString "True" := by decide
   have listNames : ofString "[]" ≠ ofString "::" := by decide
   obtain ⟨bools, lists, exceptions⟩ := initGenv_requiredConstructors

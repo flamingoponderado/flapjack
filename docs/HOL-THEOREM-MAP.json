@@ -11524,6 +11524,24 @@
     "reviewer": "Compared the typed replay of the local HOL theorem using its original proof: the three conjunctive premises and appended-environment conclusion are preserved, including the empty shadow set. The global environment uses canonical finite maps for c and tys with a local roundtrip witness."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/Initialization.lean",
+    "lean_name": "initGenv_typesOk",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "init_genv_tys_ok",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["c", "tys"],
+    "reviewer": "Compared initial_types_ok in the typed HOL capture: the initial constructor and type maps satisfy genv_c_tys_ok. The initial environment uses the reviewed canonical finite-map fields c and tys and the local roundtrip witness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/Initialization.lean",
+    "lean_name": "initGenv_constructorsOk",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "init_genv_ok",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["c", "tys"],
+    "reviewer": "Compared initial_env_ok in the typed HOL capture: the initial constructor map satisfies genv_c_ok. The initial environment uses the reviewed canonical finite-map fields c and tys and the local roundtrip witness."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/WordLists.lean",
     "lean_name": "valueToWord64List_related",
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
