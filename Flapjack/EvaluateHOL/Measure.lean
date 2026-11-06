@@ -12,14 +12,6 @@ theorem fixClock_fst_clock_le {σ τ α : Type} (state : State σ) (output : Sta
     (fixClock state output).1.clock ≤ state.clock := by
   simp [fixClock, Nat.min_le_right]
 
-/-- A positive clamped clock strictly decreases when a call consumes one tick. -/
-theorem decClock_fixClock_lt {σ τ α : Type} (state : State σ) (output : State τ × α)
-    (positive : 0 < (fixClock state output).1.clock) :
-    (decClock (fixClock state output).1).clock < state.clock := by
-  have bound := fixClock_fst_clock_le state output
-  simp only [decClock] at *
-  omega
-
 /-- Lean's list size is additive up to the empty-list constructor. -/
 theorem listSize_append {α : Type} [SizeOf α] (xs ys : List α) :
     sizeOf (xs ++ ys) + 1 = sizeOf xs + sizeOf ys := by
