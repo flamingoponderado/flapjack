@@ -19,8 +19,4 @@ def compileTotal (c : Config) (p : List AstHOL.Dec) : Config × List FlatLang.Ex
   let (next, code) := compileProg c p
   (next, compileFlatTotal next.patternCfg code)
 
-/-- Compatibility entry point for callers of the formerly bounded pipeline. -/
-def compile (c : Config) (p : List AstHOL.Dec) : Option (Config × List FlatLang.Exp) :=
-  some (compileTotal c p)
-
 end Flapjack.Compiler.Backend.SourceToFlat

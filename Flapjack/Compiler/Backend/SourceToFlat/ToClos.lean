@@ -15,9 +15,9 @@ passes and end-to-end output parity remain open. The fuel
 argument is retained for callers of the former bounded pattern implementation;
 pattern compilation itself is now total. -/
 def compileToClosFuel (_fuel : Nat) (c : Config) (p : List AstHOL.Dec) :
-    Option (Config × List ClosLang.Exp) := do
-  let (c', flat) ← compile c p
-  pure (c', FlatToClos.compileProg flat)
+    Option (Config × List ClosLang.Exp) :=
+  let (c', flat) := compileTotal c p
+  some (c', FlatToClos.compileProg flat)
 
 /-- Apply CakeML's source-to-source pass before the bounded source-to-closure
 pipeline. Correctness of the later closure/backend passes remains open. -/
