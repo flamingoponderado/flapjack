@@ -265,3 +265,35 @@ val col_ctors_thm_replay = prove (
   Cases_on `pattern_exh$col_ctors M` >> fs [pattern_exhTheory.ctor_inter_def] >>
   res_tac >> gvs []);
 val _ = show_local "col_ctors_thm=" col_ctors_thm_replay;
+val spec_row_thm_replay = prove (
+  ``!c r row refs v vs as.
+      pattern_exh$dest_val refs v = SOME (c,as) /\ MEM row (pattern_exh$spec_row c r) ==>
+      pattern_semantics$pmatch_list refs row (as ++ vs) =
+      pattern_semantics$pmatch_list refs r (v::vs)``,
+  ho_match_mp_tac pattern_exhTheory.spec_row_ind >> rw [pattern_exhTheory.spec_row_def] >>
+  TRY (PairCases_on `ts`) >> imp_res_tac length_dest_val_replay >>
+  gvs [dest_val_eq_some_replay, pmatch_list_append_replay, length_anys_replay, pattern_exhTheory.ctor_arity_def,
+       pattern_semanticsTheory.pmatch_def] >> every_case_tac >> fs [pattern_exhTheory.pand_def]);
+val _ = show_local "spec_row_thm=" spec_row_thm_replay;
+val spec_mat_mem_replay = prove (
+  ``!M c as refs v vs row.
+      pattern_exh$dest_val refs v = SOME (c,as) /\ MEM row (pattern_exh$spec_mat c M) ==>
+      ?r. MEM r M /\ pattern_semantics$pmatch_list refs row (as ++ vs) =
+                       pattern_semantics$pmatch_list refs r (v::vs)``,
+  Induct >> fs [pattern_exhTheory.spec_mat_def] >> rw []
+  >- (drule_all spec_row_thm_replay >> metis_tac []) >>
+  res_tac >> metis_tac []);
+val _ = show_local "spec_mat_mem=" spec_mat_mem_replay;
+val default_row_thm_replay = prove (
+  ``!r row refs v vs. MEM row (pattern_exh$default_row r) ==>
+      pattern_semantics$pmatch_list refs row vs = pattern_semantics$pmatch_list refs r (v::vs)``,
+  ho_match_mp_tac pattern_exhTheory.default_row_ind >> rw [pattern_exhTheory.default_row_def]);
+val _ = show_local "default_row_thm=" default_row_thm_replay;
+val default_mat_mem_replay = prove (
+  ``!M refs v vs row. MEM row (pattern_exh$default_mat M) ==>
+      ?r. MEM r M /\ pattern_semantics$pmatch_list refs row vs =
+                       pattern_semantics$pmatch_list refs r (v::vs)``,
+  Induct >> fs [pattern_exhTheory.default_mat_def] >> rw []
+  >- (drule default_row_thm_replay >> metis_tac []) >>
+  res_tac >> metis_tac []);
+val _ = show_local "default_mat_mem=" default_mat_mem_replay;

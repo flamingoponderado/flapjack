@@ -134,6 +134,34 @@ theorem holFmapAsFiniteSupportParamWitness_colCtors_sound_refs
     ofBroad (toBroad refs) refs.finiteSupport = refs :=
   holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
 
+theorem holFmapAsFiniteSupportParamWitness_specRow_match_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_specMat_member_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_defaultRow_match_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_defaultMat_member_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
+
 /-- A wildcard matches every term. -/
 @[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "pmatch_Any"
   (fmap_as_finite_support_parameters := [refs])]
@@ -227,6 +255,8 @@ theorem matchRows_exists_success (refs : HolFiniteMapExact Nat Term) (value : Te
 
 /-- A row retained by the default matrix matches the remaining values in
 exactly the same way as the original row matches the full vector. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "default_row_thm"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem defaultRow_match (refs : HolFiniteMapExact Nat Term) (value : Term) (values : List Term)
     (original row : List Pat) (member : row ∈ defaultRow original) :
     pmatchList refs row values = pmatchList refs original (value :: values) := by
@@ -236,6 +266,8 @@ theorem defaultRow_match (refs : HolFiniteMapExact Nat Term) (value : Term) (val
     cases pattern <;> simp_all [defaultRow, pmatchList_cons, pmatch, pand]
 
 /-- Every default-matrix row corresponds to a row in the original matrix. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "default_mat_MEM"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem defaultMat_member (refs : HolFiniteMapExact Nat Term) (value : Term) (values : List Term)
     (matrix : List (List Pat)) (row : List Pat) (member : row ∈ defaultMat matrix) :
     ∃ original ∈ matrix, pmatchList refs row values = pmatchList refs original (value :: values) := by
@@ -351,6 +383,8 @@ theorem mem_ctorKeep {α : Type} (left right : List α) (constructor : α) :
         · exact ⟨inRest, inRight⟩
 
 /-- Specializing a row preserves its match against the extracted arguments. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "spec_row_thm"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem specRow_match (refs : HolFiniteMapExact Nat Term) (value : Term) (values : List Term)
     (constructor : Ctor) (fields : List Term) (original row : List Pat)
     (found : destVal refs value = some (constructor, fields)) (member : row ∈ specRow constructor original) :
@@ -422,6 +456,8 @@ theorem specRow_match (refs : HolFiniteMapExact Nat Term) (value : Term) (values
         · simp [specRow, ctorEq] at member
 
 /-- Each row of a specialized matrix comes from an equally matching source row. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "spec_mat_MEM"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem specMat_member (refs : HolFiniteMapExact Nat Term) (value : Term) (values : List Term)
     (constructor : Ctor) (fields : List Term) (matrix : List (List Pat)) (row : List Pat)
     (found : destVal refs value = some (constructor, fields)) (member : row ∈ specMat constructor matrix) :
