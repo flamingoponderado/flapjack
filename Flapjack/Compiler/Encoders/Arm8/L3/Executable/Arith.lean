@@ -10,7 +10,8 @@ twelve-bit immediate, or the same twelve bits shifted left by twelve -- and
 `none` when the immediate fits neither; `ConditionalCompareImmediate` is
 encoded when the immediate fits the five-bit field and is `none` otherwise.
 This module proves `Arm8.encodeBytes` equals `L3.arm8Encode` for each of those
-cases, for either value of the `setFlags` field.
+cases; for `AddSubImmediate` this holds for either value of the `setFlags`
+field.
 
 No new HOL claim is introduced: the bridge relates two Lean renderings of the
 same instruction word.
@@ -162,7 +163,7 @@ theorem fits5_iff (imm : BitVec 64) :
     omega
 
 /-- `BitVec.setWidth` at a `Nat` argument is `BitVec.ofNat` of its `toNat`. -/
-theorem setWidth_eq_ofNat (w : Nat) (v : BitVec 64) :
+theorem setWidth64_eq_ofNat (w : Nat) (v : BitVec 64) :
     BitVec.setWidth w v = BitVec.ofNat w v.toNat := by
   apply BitVec.eq_of_toNat_eq
   simp only [BitVec.toNat_setWidth, BitVec.toNat_ofNat]
@@ -209,13 +210,13 @@ theorem encodeBytes_conditionalCompareImmediate (opc : Bool) (imm : BitVec 64) (
   · have hfit : (imm == BitVec.setWidth 64 (BitVec.ofNat 5 imm.toNat)) = false := by
       rw [Bool.eq_false_iff]
       intro he
-      rw [← setWidth_eq_ofNat 5 imm, beq_iff_eq] at he
+      rw [← setWidth64_eq_ofNat 5 imm, beq_iff_eq] at he
       exact h ((fits5_iff imm).mpr he)
     have hw : encodeInsn32 (.conditionalCompareImmediate opc imm cd (n, z, c, v) rn) = none := by
       simp only [encodeInsn32]
       rw [if_neg h]
     rw [encodeBytes_eq_of_encodeInsn32_none _ hw]
-    simp only [arm8Encode, arm8Encode_conditionalCompare, hfit, setWidth_eq_ofNat,
+    simp only [arm8Encode, arm8Encode_conditionalCompare, hfit, setWidth64_eq_ofNat,
       Bool.false_eq_true, if_false]
 
 end Flapjack.Compiler.Encoders.Arm8.L3
