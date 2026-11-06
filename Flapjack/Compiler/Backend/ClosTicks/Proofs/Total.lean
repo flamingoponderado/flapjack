@@ -89,9 +89,4 @@ theorem removeBounded_succeeds (fuel : Nat) (e : Exp) :
     obtain ⟨result, done⟩ := removeFuel_succeeds (max fuel (expBudget e + 1)) e bound
     exact ⟨result, by simp [removeBounded, h, done]⟩
 
-/-- Retrying preserves every previously successful tick-removal result. -/
-theorem removeBounded_eq_of_success (fuel : Nat) (e result : Exp)
-    (success : removeFuel fuel e = some result) : removeBounded fuel e = some result := by
-  simp [removeBounded, success]
-
 end Flapjack.Compiler.Backend.ClosTicks

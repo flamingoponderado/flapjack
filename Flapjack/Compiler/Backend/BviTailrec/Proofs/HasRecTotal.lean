@@ -72,9 +72,4 @@ theorem hasRecBounded_succeeds (fuel loc : Nat) (e : Exp) :
     obtain ⟨result, done⟩ := hasRecFuel_succeeds (max fuel (expBudget e + 1)) loc e bound
     exact ⟨result, by simp [hasRecBounded, h, done]⟩
 
-/-- The retry leaves every previously successful recursion result unchanged. -/
-theorem hasRecBounded_eq_of_success (fuel loc : Nat) (e : Exp) (result : Bool)
-    (success : hasRecFuel fuel loc e = some result) : hasRecBounded fuel loc e = some result := by
-  simp [hasRecBounded, success]
-
 end Flapjack.Compiler.Backend.BviTailrec

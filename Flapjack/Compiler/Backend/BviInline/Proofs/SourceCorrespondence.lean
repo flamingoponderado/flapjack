@@ -1,5 +1,4 @@
 import Flapjack.Compiler.Backend.BviInline.Source
-import Flapjack.Compiler.Backend.BviInline.Proofs.Total
 
 /-! Correspondence between source-shaped and executed BVI traversals. -/
 namespace Flapjack.Compiler.Backend.BviInline

@@ -45,11 +45,6 @@ theorem liftFuel_succeeds (fuel : Nat) (xs : List Exp) (n : Nat) (binds : List E
           obtain ⟨⟨xs', n'', binds''⟩, ht⟩ := ih xs n' binds' bs
           exact ⟨_, by simp [liftFuel, hd, hc, hy, ht]; rfl⟩
 
-/-- The total source lift cannot exhaust fuel. -/
-theorem liftBounded_succeeds (fuel : Nat) (xs : List Exp) (n : Nat) (binds : List Exp) :
-    ∃ result, liftBounded fuel xs n binds = some result :=
-  ⟨liftExpsHOL xs n binds, rfl⟩
-
 /-- Retrying preserves every successful result of the original traversal. -/
 theorem liftBounded_eq_of_success (fuel : Nat) (xs : List Exp) (n : Nat) (binds : List Exp)
     (result : List Exp × Nat × List Exp) (h : liftFuel fuel xs n binds = some result) :

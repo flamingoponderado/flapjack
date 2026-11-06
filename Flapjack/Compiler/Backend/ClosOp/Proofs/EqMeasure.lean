@@ -73,11 +73,6 @@ theorem eqListFuel_succeeds (fuel : Nat) (pairs : List (Exp × Exp))
               obtain ⟨first, hf⟩ := ih _ zipBound
               exact ⟨_, by simp [eqListFuel, hd, hx, hy, hne, hf, ht]; rfl⟩
 
-/-- Retried equality decomposition cannot exhaust traversal fuel. -/
-theorem eqListBounded_succeeds (fuel : Nat) (pairs : List (Exp × Exp)) :
-    ∃ result, eqListBounded fuel pairs = some result := by
-  exact ⟨_, rfl⟩
-
 /-- Retrying preserves every previously successful equality decomposition. -/
 theorem eqListBounded_eq_of_success (fuel : Nat) (pairs : List (Exp × Exp))
     (result : List Exp) (h : eqListFuel fuel pairs = some result) :

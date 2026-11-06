@@ -89,9 +89,4 @@ theorem compileBounded_succeeds (fuel : Nat) (e : Exp) :
     obtain ⟨result, done⟩ := compileFuel_succeeds (max fuel (expBudget e + 1)) e bound
     exact ⟨result, by simp [compileBounded, h, done]⟩
 
-/-- Retrying preserves every previously successful let-operation result. -/
-theorem compileBounded_eq_of_success (fuel : Nat) (e result : Exp)
-    (success : compileFuel fuel e = some result) : compileBounded fuel e = some result := by
-  simp [compileBounded, success]
-
 end Flapjack.Compiler.Backend.ClosLetop

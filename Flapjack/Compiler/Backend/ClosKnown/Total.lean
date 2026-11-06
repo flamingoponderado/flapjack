@@ -1,5 +1,5 @@
 import Flapjack.Compiler.Backend.ClosKnown.Fuel
-import Flapjack.Compiler.Backend.ClosOp.Proofs.FuelStable
+import Flapjack.Compiler.Backend.ClosOp.Proofs.SmartTotal
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.InlineDecrease
 /-! Total known-function traversal with a lexicographic termination measure.
 The list traversal implements the source recursion through mutually recursive

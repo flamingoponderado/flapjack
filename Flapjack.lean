@@ -453,7 +453,6 @@ import Flapjack.Compiler.Backend.ClosKnown.Proofs.KnownOpCorrect
 import Flapjack.Compiler.Backend.ClosOp.Proofs.LiftTotal
 import Flapjack.Compiler.Backend.ClosOp.Proofs.EqMeasure
 import Flapjack.Compiler.Backend.ClosOp.Proofs.SmartTotal
-import Flapjack.Compiler.Backend.ClosOp.Proofs.FuelStable
 import Flapjack.Compiler.Backend.ClosOp.Proofs.Matchers
 import Flapjack.Compiler.Backend.ClosOp.Proofs.LiftCorrect
 import Flapjack.Compiler.Backend.ClosOp.Proofs.EqPureSimple
@@ -842,7 +841,6 @@ import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateTicks
 import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateExpandEnv
 import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateCodeFull
 import Flapjack.Compiler.Backend.BvlInline.Proofs.Semantics
-import Flapjack.Compiler.Backend.BviInline.Proofs.Total
 import Flapjack.Compiler.Backend.BviInline.Proofs.SourceCorrespondence
 import Flapjack.Compiler.Backend.BviInline.Proofs.ExpRelation
 import Flapjack.Compiler.Backend.BviInline.Proofs.TickSemantics

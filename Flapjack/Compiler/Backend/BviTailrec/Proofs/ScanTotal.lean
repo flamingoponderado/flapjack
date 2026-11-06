@@ -85,19 +85,6 @@ theorem scanListBounded_succeeds (fuel : Nat) (ctx : List ValueType) (loc : Nat)
     obtain ⟨result, done⟩ := scanListFuel_succeeds (max fuel (listBudget xs + 1)) ctx loc xs bound
     exact ⟨result, by simp [scanListBounded, h, done]⟩
 
-/-- The scan retry preserves each result obtained using the original fuel. -/
-theorem scanBounded_eq_of_success (fuel : Nat) (ctx : List ValueType) (loc : Nat) (e : Exp)
-    (result : List ValueType × ValueType × Bool × Option AssocOp)
-    (success : scanFuel fuel ctx loc e = some result) : scanBounded fuel ctx loc e = some result := by
-  simp [scanBounded, success]
-
-/-- The list-scan retry preserves each result obtained using the original fuel. -/
-theorem scanListBounded_eq_of_success (fuel : Nat) (ctx : List ValueType) (loc : Nat) (xs : List Exp)
-    (result : List (List ValueType × ValueType × Bool × Option AssocOp))
-    (success : scanListFuel fuel ctx loc xs = some result) :
-    scanListBounded fuel ctx loc xs = some result := by
-  simp [scanListBounded, success]
-
 /-- Checking whether to optimize an expression cannot fail from scan fuel.
 The inner `none` is the ordinary decision not to rewrite. -/
 theorem checkExpFuel_succeeds (fuel loc arity : Nat) (e : Exp) :
