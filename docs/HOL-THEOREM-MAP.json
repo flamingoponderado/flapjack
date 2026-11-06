@@ -125539,6 +125539,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "MAPi_SNOC",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/CompileExp.lean",
+  "lean_name": "mapIdx_snoc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source and typed mapi_snoc capture: input and output types remain independent, with the same list, final element and indexed function binders; List.mapIdx and append of a singleton implement HOL MAPi and SNOC."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
   "hol_name": "compile_flat_BAG_ALL_DISTINCT",
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/BindingGlobals.lean",
   "lean_name": "compileFlat_bagAllDistinct",

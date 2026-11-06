@@ -33,3 +33,4 @@ val compile_flat_bag_all_distinct_local =
            source_to_flatProofTheory.compile_flat_sub_bag;
 val _ = if null (hyp compile_flat_bag_all_distinct_local) then () else raise Fail "local theorem has hypotheses";
 val _ = (print "compile_flat_bag_all_distinct_local="; print_term (concl compile_flat_bag_all_distinct_local); print "\n");
+val _ = (print "mapi_snoc="; print_term (concl source_to_flatProofTheory.MAPi_SNOC); print "\n");

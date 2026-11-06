@@ -3,6 +3,12 @@ import Flapjack.Compiler.Backend.SourceToFlat.CompileExp
 /-! List-shape prerequisite for the source-to-flat pass correctness proof. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 
+/-- Indexed mapping over a final element uses the preceding list length. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "MAPi_SNOC"]
+theorem mapIdx_snoc {α β : Type} (xs : List α) (x : α) (f : Nat → α → β) :
+    (xs ++ [x]).mapIdx f = xs.mapIdx f ++ [f xs.length x] :=
+  List.mapIdx_concat
+
 /-- Compiling an expression list preserves its length. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "compile_exps_length"]
 theorem compileExps_length (t : List Basis.Pure.MlString.MlString)
