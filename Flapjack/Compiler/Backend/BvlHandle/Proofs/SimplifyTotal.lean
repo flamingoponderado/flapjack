@@ -143,9 +143,4 @@ theorem simplifyBounded_succeeds (fuel : Nat) (e : Exp) :
     obtain ⟨result, done⟩ := simplifyFuel_succeeds (max fuel (expBudget e + 1)) e bound
     exact ⟨result, by simp [simplifyBounded, h, done]⟩
 
-/-- Previously successful simplifications are preserved by the retry. -/
-theorem simplifyBounded_eq_of_success (fuel : Nat) (e result : Exp)
-    (success : simplifyFuel fuel e = some result) : simplifyBounded fuel e = some result := by
-  simp [simplifyBounded, success]
-
 end Flapjack.Compiler.Backend.BvlHandle

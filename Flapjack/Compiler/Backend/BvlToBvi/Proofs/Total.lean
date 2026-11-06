@@ -112,11 +112,4 @@ theorem compileBounded_succeeds (fuel optFuel n : Nat) (exp : Bvl.Exp) :
     obtain ⟨result, done⟩ := compileFuel_succeeds (max fuel (expBudget exp + 1)) optFuel n exp bound
     exact ⟨result, by simp [compileBounded, h, done]⟩
 
-/-- The retry preserves the result of every successful original traversal. -/
-theorem compileBounded_eq_of_success (fuel optFuel n : Nat) (exp : Bvl.Exp)
-    (result : Bvi.Exp × List (Nat × Nat × Bvi.Exp) × Nat)
-    (success : compileFuel fuel optFuel n exp = some result) :
-    compileBounded fuel optFuel n exp = some result := by
-  simp [compileBounded, success]
-
 end Flapjack.Compiler.Backend.BvlToBvi

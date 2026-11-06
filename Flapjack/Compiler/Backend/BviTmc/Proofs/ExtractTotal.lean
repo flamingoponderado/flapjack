@@ -94,13 +94,6 @@ theorem extractListBounded_succeeds (fuel n loc tag : Nat) (xs : List Exp) :
     obtain ⟨result, done⟩ := extractListFuel_succeeds (max fuel (listBudget xs + 1)) n loc tag xs bound
     exact ⟨result, by simp [extractListBounded, h, done]⟩
 
-/-- The retry preserves every result from the original extraction budget. -/
-theorem extractListBounded_eq_of_success (fuel n loc tag : Nat) (xs : List Exp)
-    (result : Option (List Exp × Sum (List Nat) CallBlock))
-    (success : extractListFuel fuel n loc tag xs = some result) :
-    extractListBounded fuel n loc tag xs = some result := by
-  simp [extractListBounded, success]
-
 /-- Constructor-block extraction cannot fail from traversal fuel. The inner
 `none` still represents an expression that does not match the optimization. -/
 theorem toBlockFuel_succeeds (fuel n loc : Nat) (e : Exp) :

@@ -150,15 +150,4 @@ theorem adjustVarsBounded_succeeds (fuel depth shift : Nat) (e : Exp) :
     obtain ⟨result, done⟩ := adjustVarsFuel_succeeds (max fuel (expBudget e + 1)) depth shift e bound
     exact ⟨result, by simp [adjustVarsBounded, h, done]⟩
 
-/-- Raise-test retries preserve previously successful results. -/
-theorem canRaiseBounded_eq_of_success (fuel : Nat) (e : Exp) (result : Bool)
-    (success : canRaiseFuel fuel e = some result) : canRaiseBounded fuel e = some result := by
-  simp [canRaiseBounded, success]
-
-/-- Variable-adjustment retries preserve previously successful results. -/
-theorem adjustVarsBounded_eq_of_success (fuel depth shift : Nat) (e result : Exp)
-    (success : adjustVarsFuel fuel depth shift e = some result) :
-    adjustVarsBounded fuel depth shift e = some result := by
-  simp [adjustVarsBounded, success]
-
 end Flapjack.Compiler.Backend.BvlHandle

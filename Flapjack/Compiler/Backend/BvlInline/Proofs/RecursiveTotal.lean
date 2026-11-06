@@ -85,9 +85,4 @@ theorem recursiveFuel_succeeds (fuel name : Nat) (e : Exp) (bound : expBudget e 
       | false => exact ⟨result, by simpa [recursiveFuel, equal] using h⟩
       | true => exact ⟨true, by simp [recursiveFuel, equal]⟩
 
-/-- Retrying preserves every successful original recursion result. -/
-theorem recursiveBounded_eq_of_success (fuel name : Nat) (e : Exp) (result : Bool)
-    (success : recursiveFuel fuel name e = some result) : recursiveBounded fuel name e = some result := by
-  simp [recursiveBounded, success]
-
 end Flapjack.Compiler.Backend.BvlInline

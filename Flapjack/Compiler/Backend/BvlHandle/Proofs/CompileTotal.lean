@@ -87,10 +87,4 @@ theorem compileBounded_succeeds (fuel limit env : Nat) (e : Exp) :
     obtain ⟨result, done⟩ := compileFuel_succeeds (max fuel (expBudget e + 1)) limit env e bound
     exact ⟨result, by simp [compileBounded, h, done]⟩
 
-/-- Retrying preserves every previously successful live-variable result. -/
-theorem compileBounded_eq_of_success (fuel limit env : Nat) (e : Exp)
-    (result : Exp × DbVarSet × Nat × Bool) (success : compileFuel fuel limit env e = some result) :
-    compileBounded fuel limit env e = some result := by
-  simp [compileBounded, success]
-
 end Flapjack.Compiler.Backend.BvlHandle

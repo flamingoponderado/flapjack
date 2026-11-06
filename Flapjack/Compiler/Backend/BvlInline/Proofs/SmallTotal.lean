@@ -74,9 +74,4 @@ theorem smallListFuel_succeeds (fuel n : Nat) (xs : List Exp) (bound : listBudge
 termination_by fuel
 end
 
-/-- Retrying preserves every successful original size result. -/
-theorem smallExpBounded_eq_of_success (fuel limit : Nat) (e : Exp) (result : Nat)
-    (success : smallExpFuel fuel limit e = some result) : smallExpBounded fuel limit e = some result := by
-  simp [smallExpBounded, success]
-
 end Flapjack.Compiler.Backend.BvlInline

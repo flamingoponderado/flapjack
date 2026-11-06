@@ -81,12 +81,6 @@ theorem inlineExpFuel_succeeds (fuel : Nat) (cache : Spt (Nat × Exp)) (e : Exp)
           obtain ⟨arity, body⟩ := entry
           exact ⟨_, by simp [inlineExpFuel, hy, h]; rfl⟩
 
-/-- Every previously successful inlining result is preserved. -/
-theorem inlineExpBounded_eq_of_success (fuel : Nat) (cache : Spt (Nat × Exp)) (e result : Exp)
-    (success : inlineExpFuel fuel cache e = some result) :
-    inlineExpBounded fuel cache e = some result := by
-  simp [inlineExpBounded, success]
-
 /-- Tick removal succeeds under a structural fuel bound. -/
 theorem removeTicksFuel_succeeds (fuel : Nat) (e : Exp) (bound : expBudget e < fuel) :
     ∃ result, removeTicksFuel fuel e = some result := by
@@ -184,13 +178,5 @@ theorem letOpFuel_succeeds (fuel : Nat) (e : Exp) (bound : expBudget e < fuel) :
       obtain ⟨ys, hy⟩ := mapM_succeeds xs (letOpFuel fuel) (by
         intro x hx; apply ih; have := member_budget_lt xs x hx; omega)
       exact ⟨_, by simp [letOpFuel, hy]; rfl⟩
-
-theorem removeTicksBounded_eq_of_success (fuel : Nat) (e result : Exp)
-    (success : removeTicksFuel fuel e = some result) : removeTicksBounded fuel e = some result := by
-  simp [removeTicksBounded, success]
-
-theorem letOpBounded_eq_of_success (fuel : Nat) (e result : Exp)
-    (success : letOpFuel fuel e = some result) : letOpBounded fuel e = some result := by
-  simp [letOpBounded, success]
 
 end Flapjack.Compiler.Backend.BvlInline

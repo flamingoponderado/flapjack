@@ -89,12 +89,6 @@ theorem compileExpBounded_succeeds (fuel loc next arity : Nat) (e : Exp) :
     obtain ⟨result, done⟩ := compileExpFuel_succeeds (max fuel (expBudget e + 1)) loc next arity e bound
     exact ⟨result, by simp [compileExpBounded, h, done]⟩
 
-/-- The retry preserves any previously successful TMC conversion result. -/
-theorem compileExpBounded_eq_of_success (fuel loc next arity : Nat) (e : Exp)
-    (result : Option (Exp × Exp)) (success : compileExpFuel fuel loc next arity e = some result) :
-    compileExpBounded fuel loc next arity e = some result := by
-  simp [compileExpBounded, success]
-
 /-- Processing a program cannot fail due to TMC traversal fuel. -/
 theorem compileEachFuel_succeeds (fuel next : Nat) (code : List (Nat × Nat × Exp)) :
     ∃ result, compileEachFuel fuel next code = some result := by

@@ -103,10 +103,4 @@ theorem compileExpBounded_succeeds (fuel argc : Nat) (exp : Bvi.Exp) :
     simp only [compileExpBounded, h]
     simp [compileExpFuel, done]
 
-/-- Every previously successful result is unchanged by the retry wrapper. -/
-theorem compileExpBounded_eq_of_success (fuel argc : Nat) (exp : Bvi.Exp)
-    (result : DataLang.Prog) (success : compileExpFuel fuel argc exp = some result) :
-    compileExpBounded fuel argc exp = some result := by
-  simp [compileExpBounded, success]
-
 end Flapjack.Compiler.Backend.BviToData

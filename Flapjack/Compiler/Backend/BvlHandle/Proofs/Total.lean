@@ -52,12 +52,6 @@ theorem compileSeqsBounded_succeeds (fuel limit : Nat) (e : Exp) (acc : Option E
     obtain ⟨result, done⟩ := compileSeqsFuel_succeeds (max fuel (expBudget e + 1)) limit e acc bound
     exact ⟨result, by simp [compileSeqsBounded, h, done]⟩
 
-/-- Sequence retries preserve any successful original result. -/
-theorem compileSeqsBounded_eq_of_success (fuel limit : Nat) (e : Exp) (acc : Option Exp)
-    (result : Exp) (success : compileSeqsFuel fuel limit e acc = some result) :
-    compileSeqsBounded fuel limit e acc = some result := by
-  simp [compileSeqsBounded, success]
-
 /-- The full executable handler stage cannot fail from traversal fuel. This
 is not the original HOL pass-correctness theorem. -/
 theorem compileAnyFuel_succeeds (fuel : Nat) (splitSeq : Bool) (limit arity : Nat) (e : Exp) :

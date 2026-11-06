@@ -63,9 +63,4 @@ theorem pureBounded_succeeds (fuel n : Nat) (e : Exp) :
     obtain ⟨result, done⟩ := pureFuel_succeeds (max fuel (expBudget e + 1)) n e bound
     exact ⟨result, by simp [pureBounded, h, done]⟩
 
-/-- Retrying preserves every successful result from the original budget. -/
-theorem pureBounded_eq_of_success (fuel n : Nat) (e : Exp) (result : Bool)
-    (success : pureFuel fuel n e = some result) : pureBounded fuel n e = some result := by
-  simp [pureBounded, success]
-
 end Flapjack.Compiler.Backend.BviTmc
