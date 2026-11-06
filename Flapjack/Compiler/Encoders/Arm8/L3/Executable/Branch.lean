@@ -76,7 +76,7 @@ theorem arm8EncodeBytes_branchImmediate_gen (call : Bool) (imm : BitVec 64)
       holV2w_one_true, arm8BranchWordGen, if_true]
 
 /-- A `BranchImmediate` encodes to the same four bytes on both sides. -/
-theorem encodeBytes_branchImmediate (imm : BitVec 64) (call : Bool)
+theorem encodeBytes_branchImmediate_of_guard (imm : BitVec 64) (call : Bool)
     (hguard : (fitsSigned 28 imm && decide (imm.toNat % 4 = 0)) = true)
     (hl3 : BitVec.signExtend 64 (BitVec.setWidth 28
       (holWordExtract 26 27 2 imm ++ BitVec.ofNat 2 0)) = imm) :
@@ -115,7 +115,7 @@ theorem ofNat19_shift_eq (imm : BitVec 64) :
   rfl
 
 /-- A `BranchConditional` encodes to the same four bytes on both sides. -/
-theorem encodeBytes_branchConditional (imm : BitVec 64) (cond : Nat)
+theorem encodeBytes_branchConditional_of_guard (imm : BitVec 64) (cond : Nat)
     (hguard : (fitsSigned 21 imm && decide (imm.toNat % 4 = 0)) = true)
     (hl3 : BitVec.signExtend 64 (BitVec.setWidth 21
       (holWordExtract 19 20 2 imm ++ BitVec.ofNat 2 0)) = imm) :
@@ -127,5 +127,144 @@ theorem encodeBytes_branchConditional (imm : BitVec 64) (cond : Nat)
     simp only [hguard, if_true]
   rw [encodeBytes_eq_of_encodeInsn32 _ _ hw, fields_branchConditional, ofNat19_shift_eq]
   rw [arm8Encode, arm8Encode_branchConditional imm (BitVec.ofNat 4 cond) hl3]
+
+/-- The computable branch-immediate guard is exactly the L3 sign-extension guard
+at 28 bits. -/
+theorem branchGuard28_iff (imm : BitVec 64) :
+    (fitsSigned 28 imm && decide (imm.toNat % 4 = 0)) = true ↔
+      BitVec.signExtend 64 (BitVec.setWidth 28
+        (holWordExtract 26 27 2 imm ++ BitVec.ofNat 2 0)) = imm := by
+  have hx4 : (BitVec.setWidth 28
+      (holWordExtract 26 27 2 imm ++ BitVec.ofNat 2 0)).toNat % 4 = 0 := by
+    rw [BitVec.toNat_setWidth, BitVec.toNat_append]
+    simp only [BitVec.toNat_ofNat, Nat.shiftLeft_eq, Nat.or_zero, Nat.zero_mod]
+    rw [Nat.mod_mod_of_dvd _ (by norm_num : 4 ∣ 2 ^ 28)]
+    exact Nat.mul_mod_left _ _
+  constructor
+  · intro h
+    rw [Bool.and_eq_true, decide_eq_true_eq] at h
+    obtain ⟨hf, ha⟩ := h
+    rw [arm8BranchBits imm ha, BitVec.setWidth_setWidth_of_le imm (by decide)]
+    exact ((fitsSigned_iff_signExtend 28 (by decide) (by decide) imm).mp hf).symm
+  · intro h
+    have hmod : imm.toNat % 4 = 0 := by
+      rw [← h, BitVec.toNat_signExtend, BitVec.toNat_setWidth]
+      have hlt : (BitVec.setWidth 28
+          (holWordExtract 26 27 2 imm ++ BitVec.ofNat 2 0)).toNat < 2 ^ 64 := by
+        have := BitVec.isLt (BitVec.setWidth 28
+          (holWordExtract 26 27 2 imm ++ BitVec.ofNat 2 0))
+        omega
+      rw [Nat.mod_eq_of_lt hlt, Nat.add_mod, hx4]
+      split <;> norm_num
+    have hf : fitsSigned 28 imm = true := by
+      rw [fitsSigned_iff_signExtend 28 (by decide) (by decide)]
+      rw [← arm8BranchBits imm hmod]
+      exact h.symm
+    rw [Bool.and_eq_true, decide_eq_true_eq]
+    exact ⟨hf, hmod⟩
+
+/-- The computable conditional-branch guard is exactly the L3 sign-extension
+guard at 21 bits. -/
+theorem branchGuard21_iff (imm : BitVec 64) :
+    (fitsSigned 21 imm && decide (imm.toNat % 4 = 0)) = true ↔
+      BitVec.signExtend 64 (BitVec.setWidth 21
+        (holWordExtract 19 20 2 imm ++ BitVec.ofNat 2 0)) = imm := by
+  have hx4 : (BitVec.setWidth 21
+      (holWordExtract 19 20 2 imm ++ BitVec.ofNat 2 0)).toNat % 4 = 0 := by
+    rw [BitVec.toNat_setWidth, BitVec.toNat_append]
+    simp only [BitVec.toNat_ofNat, Nat.shiftLeft_eq, Nat.or_zero, Nat.zero_mod]
+    rw [Nat.mod_mod_of_dvd _ (by norm_num : 4 ∣ 2 ^ 21)]
+    exact Nat.mul_mod_left _ _
+  constructor
+  · intro h
+    rw [Bool.and_eq_true, decide_eq_true_eq] at h
+    obtain ⟨hf, ha⟩ := h
+    rw [arm8BranchCondBits imm ha, BitVec.setWidth_setWidth_of_le imm (by decide)]
+    exact ((fitsSigned_iff_signExtend 21 (by decide) (by decide) imm).mp hf).symm
+  · intro h
+    have hmod : imm.toNat % 4 = 0 := by
+      rw [← h, BitVec.toNat_signExtend, BitVec.toNat_setWidth]
+      have hlt : (BitVec.setWidth 21
+          (holWordExtract 19 20 2 imm ++ BitVec.ofNat 2 0)).toNat < 2 ^ 64 := by
+        have := BitVec.isLt (BitVec.setWidth 21
+          (holWordExtract 19 20 2 imm ++ BitVec.ofNat 2 0))
+        omega
+      rw [Nat.mod_eq_of_lt hlt, Nat.add_mod, hx4]
+      split <;> norm_num
+    have hf : fitsSigned 21 imm = true := by
+      rw [fitsSigned_iff_signExtend 21 (by decide) (by decide)]
+      rw [← arm8BranchCondBits imm hmod]
+      exact h.symm
+    rw [Bool.and_eq_true, decide_eq_true_eq]
+    exact ⟨hf, hmod⟩
+
+/-- When the L3 branch-immediate guard fails, `arm8Encode` is four zero bytes. -/
+theorem arm8EncodeBytes_branchImmediate_bad (call : Bool) (imm : BitVec 64)
+    (hl3 : ¬ (BitVec.signExtend 64 (BitVec.setWidth 28
+      (holWordExtract 26 27 2 imm ++ BitVec.ofNat 2 0)) = imm)) :
+    arm8Encode (.Branch (.BranchImmediate
+        (imm, if call then .BranchType_CALL else .BranchType_JMP))) = [0, 0, 0, 0] := by
+  have hc : (imm == BitVec.signExtend 64 (BitVec.setWidth 28
+      (holWordExtract 26 27 2 imm ++ BitVec.ofNat 2 0))) = false := by
+    rw [beq_eq_false_iff_ne]
+    intro h
+    exact hl3 h.symm
+  cases call <;>
+    simp only [arm8Encode, Encode, e_branch, hc, Bool.false_and, Bool.false_eq_true, if_false]
+
+/-- When the L3 conditional-branch guard fails, `arm8Encode` is four zero bytes. -/
+theorem arm8EncodeBytes_branchConditional_bad (imm : BitVec 64) (cd : BitVec 4)
+    (hl3 : ¬ (BitVec.signExtend 64 (BitVec.setWidth 21
+      (holWordExtract 19 20 2 imm ++ BitVec.ofNat 2 0)) = imm)) :
+    arm8Encode (.Branch (.BranchConditional (imm, cd))) = [0, 0, 0, 0] := by
+  have hc : (imm == BitVec.signExtend 64 (BitVec.setWidth 21
+      (holWordExtract 19 20 2 imm ++ BitVec.ofNat 2 0))) = false := by
+    rw [beq_eq_false_iff_ne]
+    intro h
+    exact hl3 h.symm
+  simp only [arm8Encode, Encode, e_branch, hc, Bool.false_eq_true, if_false]
+
+/-- A `BranchImmediate` encodes to the same four bytes on both sides, at every
+offset (both encoders fall back to zero bytes outside the range). -/
+theorem encodeBytes_branchImmediate (imm : BitVec 64) (call : Bool) :
+    encodeBytes (.branchImmediate imm call) =
+      arm8Encode (.Branch (.BranchImmediate
+        (imm, if call then .BranchType_CALL else .BranchType_JMP))) := by
+  by_cases hg : (fitsSigned 28 imm && decide (imm.toNat % 4 = 0)) = true
+  · exact encodeBytes_branchImmediate_of_guard imm call hg ((branchGuard28_iff imm).mp hg)
+  · have hl3 : ¬ (BitVec.signExtend 64 (BitVec.setWidth 28
+        (holWordExtract 26 27 2 imm ++ BitVec.ofNat 2 0)) = imm) :=
+      fun h => hg ((branchGuard28_iff imm).mpr h)
+    have hgf : (fitsSigned 28 imm && decide (imm.toNat % 4 = 0)) = false := by
+      cases h : (fitsSigned 28 imm && decide (imm.toNat % 4 = 0))
+      · rfl
+      · exact absurd h hg
+    have hw : encodeInsn32 (.branchImmediate imm call) = none := by
+      simp only [encodeInsn32]
+      rw [hgf]
+      simp
+    rw [encodeBytes_eq_of_encodeInsn32_none _ hw]
+    exact (arm8EncodeBytes_branchImmediate_bad call imm hl3).symm
+
+/-- A `BranchConditional` encodes to the same four bytes on both sides, at every
+offset. -/
+theorem encodeBytes_branchConditional (imm : BitVec 64) (cond : Nat) :
+    encodeBytes (.branchConditional imm cond) =
+      arm8Encode (.Branch (.BranchConditional (imm, BitVec.ofNat 4 cond))) := by
+  by_cases hg : (fitsSigned 21 imm && decide (imm.toNat % 4 = 0)) = true
+  · exact encodeBytes_branchConditional_of_guard imm cond hg ((branchGuard21_iff imm).mp hg)
+  · have hl3 : ¬ (BitVec.signExtend 64 (BitVec.setWidth 21
+        (holWordExtract 19 20 2 imm ++ BitVec.ofNat 2 0)) = imm) :=
+      fun h => hg ((branchGuard21_iff imm).mpr h)
+    have hgf : (fitsSigned 21 imm && decide (imm.toNat % 4 = 0)) = false := by
+      cases h : (fitsSigned 21 imm && decide (imm.toNat % 4 = 0))
+      · rfl
+      · exact absurd h hg
+    have hw : encodeInsn32 (.branchConditional imm cond) = none := by
+      simp only [encodeInsn32]
+      rw [hgf]
+      simp
+    rw [encodeBytes_eq_of_encodeInsn32_none _ hw]
+    exact (arm8EncodeBytes_branchConditional_bad imm (BitVec.ofNat 4 cond) hl3).symm
 
 end Flapjack.Compiler.Encoders.Arm8.L3
