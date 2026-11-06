@@ -277,6 +277,23 @@ theorem aLookupRel_cons {K A B : Type} (predicate : K → Prop) (relation : A �
     simpa [holALookup, optionRel] using head selected
   · simpa [holALookup, same] using tail query selected
 
+/-- Narrowing observed keys and weakening their value relation preserves
+related lookups. HOL's predicate premise quantifies two unused variables of
+independent inhabited types; these vacuous binders are omitted here. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "ALOOKUP_rel_mono"]
+theorem aLookupRel_mono {K A B : Type} (predicate predicate' : K → Prop)
+    (relation relation' : A → B → Prop) (left : List (K × A)) (right : List (K × B))
+    (related : aLookupRel predicate relation left right)
+    (narrow : ∀ key, predicate' key → predicate key)
+    (weaken : ∀ key leftValue rightValue,
+      predicate' key ∧ relation leftValue rightValue → relation' leftValue rightValue) :
+    aLookupRel predicate' relation' left right := by
+  intro key selected
+  have old := related key (narrow key selected)
+  cases leftLookup : holALookup left key <;> cases rightLookup : holALookup right key <;>
+    simp [leftLookup, rightLookup, optionRel] at old ⊢
+  exact weaken key _ _ ⟨selected, old⟩
+
 /-- Pointwise related mapped bindings induce related association-list lookups. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "ALOOKUP_rel_MAP_same"]
 theorem aLookupRel_map_same {X K A B : Type} (predicate : K → Prop) (relation : A → B → Prop)

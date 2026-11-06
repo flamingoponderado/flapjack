@@ -338,8 +338,11 @@ theorem bindingInputs_con_tail {C F : Type} (trace : BackendCommon.Tra) (lower u
             simpa [nonempty] using sptInsert_preserves_presence compiled.1 key item.2.1 present
         · have narrow : aLookupRel (fun name => lower < decNameToNum name ∧ decNameToNum name < upper)
               Eq env2.v (front ++ env.v) := by
-            intro name observed
-            exact related name ⟨observed.1, by omega⟩
+            apply aLookupRel_mono _ _ _ _ _ _ related
+            · intro name observed
+              exact ⟨observed.1, by omega⟩
+            · intro _ _ _ h
+              exact h.2
           exact (aLookupRel_append_right_false _ _ env2.v front env.v excluded).1 narrow
       · exact ih
 
