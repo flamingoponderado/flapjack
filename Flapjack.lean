@@ -986,9 +986,7 @@ import Flapjack.Compiler.Backend.ClosLetop.Proofs.Simulation
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.Semantics
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.Syntax
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.KnownPipelineSemantics
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.KnownPreparedSemantics
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.KnownLabelOracle
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.KnownInitialLabels
 import Flapjack.Compiler.Backend.ClosFvs.Proofs.Syntax
 import Flapjack.Compiler.Backend.SourceToSource
 import Flapjack.Compiler.Backend.ClosToBvl.Constants
@@ -1099,7 +1097,6 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.StubCode
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.AnnotatedPrepared
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.NumberedPrepared
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Incremental
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.CallLabels
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateRejected
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateOrdinary
 import Flapjack.Test.ClosToBvlRecursive
@@ -1223,11 +1220,6 @@ import Flapjack.Compiler.Backend.Semantics.ClosSem.CodeExtensionEvaluate
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.SourceChain
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.SourceChainSemantics
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.AnnotationCodeSemantics
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.CallPreparedSemantics
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.CallProductionSemantics
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.KnownCallLabels
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.KnownCallSemantics
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.KnownCallDriver
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Pure
 import Flapjack.Compiler.Backend.Semantics.ClosProps.PureEvaluate
 import Flapjack.Compiler.Backend.BvlToBvi.Analysis
