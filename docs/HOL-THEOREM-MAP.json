@@ -11562,6 +11562,15 @@
     "reviewer": "Compared both conjuncts and all quantified types and ordered premises against pmatch_replay_typed, obtained by replaying the original local HOL proof. The global environment uses canonical finite maps for c and tys with a local roundtrip witness."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/Equality.lean",
+    "lean_name": "equality_simulation",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "do_eq",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["c", "tys"],
+    "reviewer": "Compared do_eq_typed, replaying the original local HOL proof: the constructor-map premise and both complete value and value-list simulation conjuncts retain the original quantifiers, conjunctions and equality results. The global environment uses canonical finite maps for c and tys with a local roundtrip witness."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/WordLists.lean",
     "lean_name": "valueToWord8List_related",
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",

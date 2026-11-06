@@ -2,8 +2,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRelCases
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalEnvConditions
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Operations
 
-/-! Equality-simulation infrastructure over the factored source-to-flat value
-relation. The full HOL correspondence and equality theorem remain open. -/
+/-! Equality simulation over the source-to-flat value relation. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
 
@@ -146,19 +145,25 @@ theorem equality_list_preserved (genv : GlobalEnv) (ok : genvCOk genv.c)
 termination_by sizeOf xs
 end
 
-/-- Original-shaped equality simulation over the factored Lean value relation.
-This has no HOL tag because correspondence of that relation to HOL remains
-open. -/
+namespace EqualityPort
+/-- Roundtrip for the global environment's canonical finite maps. -/
+theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
+    GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env := GlobalEnv.holFmapAsFiniteSupportWitness env
+end EqualityPort
+
+/-- Equality of values and lists is preserved by the value relation. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_eq"
+  (fmap_as_finite_support := [c, tys])]
 theorem equality_simulation (genv : GlobalEnv) (ok : genvCOk genv.c) :
-    (∀ a b result fa fb, SemanticPrimitivesHOL.doEq a b = result →
-      ValueRel genv a fa → ValueRel genv b fb → FlatSem.doEq fa fb = result) ∧
-    (∀ xs ys result fxs fys, SemanticPrimitivesHOL.doEqList xs ys = result →
-      List.Forall₂ (ValueRel genv) xs fxs → List.Forall₂ (ValueRel genv) ys fys →
+    (∀ a b result fa fb, SemanticPrimitivesHOL.doEq a b = result ∧
+      ValueRel genv a fa ∧ ValueRel genv b fb → FlatSem.doEq fa fb = result) ∧
+    (∀ xs ys result fxs fys, SemanticPrimitivesHOL.doEqList xs ys = result ∧
+      List.Forall₂ (ValueRel genv) xs fxs ∧ List.Forall₂ (ValueRel genv) ys fys →
       FlatSem.doEqList fxs fys = result) := by
   constructor
-  · intro a b result fa fb sourceEq ha hb
+  · intro a b result fa fb ⟨sourceEq, ha, hb⟩
     exact (equality_preserved genv ok a b fa fb ha hb).trans sourceEq
-  · intro xs ys result fxs fys sourceEq hx hy
+  · intro xs ys result fxs fys ⟨sourceEq, hx, hy⟩
     exact (equality_list_preserved genv ok xs ys fxs fys
       ((valueListRel_iff genv xs fxs).mpr hx) ((valueListRel_iff genv ys fys).mpr hy)).trans sourceEq
 

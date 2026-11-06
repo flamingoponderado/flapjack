@@ -4,7 +4,7 @@ val rveq = rpt BasicProvers.VAR_EQ_TAC;
 val every_case_tac = BasicProvers.EVERY_CASE_TAC;
 val _ = Globals.linewidth := 1000000;
 
-(* Replay the local do_eq theorem and proof from source_to_flatProofScript.sml. *)
+(* Replay the local do_eq theorem and proof, retaining its inferred HOL types. *)
 val eq_thm = prove(
   ``∀genv. genv_c_ok genv.c ⇒
     (∀v1 v2 r v1_i1 v2_i1.

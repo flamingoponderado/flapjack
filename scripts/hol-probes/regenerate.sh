@@ -547,6 +547,10 @@ run_probe source_to_flat_env_domain_probeScript.sml source_to_flat_env_domain_pr
   env_domain_type env_domain_definition env_domain_append global_env_inv_append_typed \
   "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe source_to_flat_equality_probeScript.sml source_to_flat_equality_probe.out \
+  do_eq_typed \
+  "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe source_to_flat_make_varls_probeScript.sml source_to_flat_make_varls_probe.out \
   evaluate_make_varls_typed \
   "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
