@@ -13617,26 +13617,34 @@
     "hol_name": "ALOOKUP_rel_empty",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
     "lean_name": "aLookupRel_empty",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_pattern_global_flag_probe.out; independent key and value types retained. Complete declaration and lookup correspondence review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the HOL theorem and typed lookup_relation_empty capture: independent key and left/right value types, predicate, relation, and empty-list conclusion agree."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
     "hol_name": "ALOOKUP_rel_cons_false",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
     "lean_name": "aLookupRel_cons_false",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_pattern_global_flag_probe.out; independent key and value types retained. Complete declaration and lookup correspondence review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the HOL theorem and typed lookup_relation_cons_false capture: both conjuncts use the same inserted value and shared value type, with the original exclusion premise and equivalences."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
     "hol_name": "ALOOKUP_rel_refl",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
     "lean_name": "aLookupRel_refl",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_pattern_global_flag_probe.out; independent key and value types retained. Complete declaration and lookup correspondence review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the HOL theorem and typed lookup_relation_reflexive capture: the observed member premise and reflexive value relation agree, with conjunction curried in Lean."
   },
   {
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "env_set_v_noop",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/BindingFold.lean",
+  "lean_name": "envSetVNoop",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the HOL theorem and typed environment_set_noop capture: type-changing update of the sole v field preserves the independent source and destination value types and both environment binders."
+},
+{
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
     "hol_name": "ALOOKUP_rel_mono",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
@@ -13649,48 +13657,48 @@
     "hol_name": "ALOOKUP_rel_cons",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
     "lean_name": "aLookupRel_cons",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_pattern_global_flag_probe.out; independent key and value types retained. Complete declaration and lookup correspondence review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the HOL theorem and typed lookup_relation_cons capture: key predicate, independently typed payloads, head implication, tail relation, and conclusion agree."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
     "hol_name": "ALOOKUP_rel_mono_rel",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
     "lean_name": "aLookupRel_mono_rel",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_pattern_global_flag_probe.out; independent key and value types retained. Complete declaration and lookup correspondence review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the HOL theorem and typed lookup_relation_mono_rel capture: the universally quantified value relation implication and related lookup premise preserve independent payload types."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
     "hol_name": "ALOOKUP_rel_EQ_ALOOKUP",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
     "lean_name": "aLookupRel_eq_lookup",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_pattern_global_flag_probe.out; independent key and value types retained. Complete declaration and lookup correspondence review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the HOL theorem and typed lookup_relation_equal capture: equality relation, selected-key premise, and lookup equality agree."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
     "hol_name": "ALOOKUP_rel_APPEND_L_false",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
     "lean_name": "aLookupRel_append_left_false",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_pattern_global_flag_probe.out; independent key and value types retained. Complete declaration and lookup correspondence review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the HOL theorem and typed lookup_relation_append_false capture: the EVERY exclusion is expressed pointwise over prefix members; left and right payload types remain independent."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
     "hol_name": "ALOOKUP_rel_append_suff",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
     "lean_name": "aLookupRel_append",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_pattern_global_flag_probe.out; independent key and value types retained. Complete declaration and lookup correspondence review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the HOL theorem and typed lookup_relation_append capture: both component relations, append order, and independent left and right payload types agree."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
     "hol_name": "ALOOKUP_rel_eq_fst",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
     "lean_name": "aLookupRel_of_forall₂",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_pattern_global_flag_probe.out; independent key and value types retained. Complete declaration and lookup correspondence review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the HOL theorem and typed lookup_relation_fst capture: the pairwise equal keys and observed-key value relation are preserved for independently typed payloads."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",

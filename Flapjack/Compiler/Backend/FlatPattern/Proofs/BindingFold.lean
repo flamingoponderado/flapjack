@@ -6,6 +6,15 @@ namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack.Compiler.Backend
 open Flapjack.Basis.Pure.MlString
 
+/-- Replacing the sole environment field yields the source environment, even
+when the original environment has a different value type. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "env_set_v_noop"]
+theorem envSetVNoop {A B : Type} (base : FlatSem.Environment B) (env : FlatSem.Environment A) :
+    ({ base with v := env.v } : FlatSem.Environment A) = env := by
+  cases base
+  cases env
+  rfl
+
 /-- Index-independent predicates agree on indexed and ordinary maps. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "EVERY_MAPi_simple"]
 theorem everyMapIdxSimple {A B : Type} (predicate : B → Prop) (f : Nat → A → B)

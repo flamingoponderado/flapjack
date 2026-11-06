@@ -325,11 +325,8 @@ theorem aLookupRel_mono_rel {K A B : Type} (predicate : K → Prop) (relation re
     (left : List (K × A)) (right : List (K × B))
     (weaken : ∀ leftValue rightValue, relation leftValue rightValue → relation' leftValue rightValue)
     (related : aLookupRel predicate relation left right) : aLookupRel predicate relation' left right := by
-  intro key selected
-  have h := related key selected
-  cases leftLookup : holALookup left key <;> cases rightLookup : holALookup right key <;>
-    simp [leftLookup, rightLookup, optionRel] at h ⊢
-  exact weaken _ _ h
+  exact aLookupRel_mono predicate predicate relation relation' left right related
+    (fun _ selected => selected) (fun _ _ _ h => weaken _ _ h.2)
 
 /-- Equality-related lookup results are equal at observed keys. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "ALOOKUP_rel_EQ_ALOOKUP"]
