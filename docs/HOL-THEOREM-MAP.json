@@ -13233,7 +13233,7 @@
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateExpressions.lean",
     "lean_name": "adjustOracle_evaluate_Tannot",
     "statement_status": "pending_statement_review",
-    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
+    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the Lean assembly exists in OracleInduction.lean and remains pending correspondence review."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -13241,7 +13241,7 @@
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateExpressions.lean",
     "lean_name": "adjustOracle_evaluate_Lannot",
     "statement_status": "pending_statement_review",
-    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
+    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the Lean assembly exists in OracleInduction.lean and remains pending correspondence review."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -13249,7 +13249,7 @@
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateExpressions.lean",
     "lean_name": "adjustOracle_evaluate_Raise",
     "statement_status": "pending_statement_review",
-    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
+    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the Lean assembly exists in OracleInduction.lean and remains pending correspondence review."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -13257,7 +13257,7 @@
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateExpressions.lean",
     "lean_name": "adjustOracle_evaluate_Let",
     "statement_status": "pending_statement_review",
-    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
+    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the Lean assembly exists in OracleInduction.lean and remains pending correspondence review."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -13265,7 +13265,7 @@
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateExpressions.lean",
     "lean_name": "adjustOracle_evaluate_ExpsCons",
     "statement_status": "pending_statement_review",
-    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
+    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the Lean assembly exists in OracleInduction.lean and remains pending correspondence review."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -13273,7 +13273,7 @@
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateControl.lean",
     "lean_name": "adjustOracle_evaluate_If",
     "statement_status": "pending_statement_review",
-    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
+    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the Lean assembly exists in OracleInduction.lean and remains pending correspondence review."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -13281,7 +13281,7 @@
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateControl.lean",
     "lean_name": "adjustOracle_evaluate_Log",
     "statement_status": "pending_statement_review",
-    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
+    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the Lean assembly exists in OracleInduction.lean and remains pending correspondence review."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -13289,7 +13289,7 @@
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateControl.lean",
     "lean_name": "adjustOracle_evaluate_Con",
     "statement_status": "pending_statement_review",
-    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
+    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the Lean assembly exists in OracleInduction.lean and remains pending correspondence review."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -13297,7 +13297,7 @@
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateRecursive.lean",
     "lean_name": "adjustOracle_evaluate_Dmod",
     "statement_status": "pending_statement_review",
-    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
+    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the Lean assembly exists in OracleInduction.lean and remains pending correspondence review."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -13305,7 +13305,7 @@
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateRecursive.lean",
     "lean_name": "adjustOracle_evaluate_Dlocal",
     "statement_status": "pending_statement_review",
-    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
+    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the Lean assembly exists in OracleInduction.lean and remains pending correspondence review."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -13313,7 +13313,7 @@
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateRecursive.lean",
     "lean_name": "adjustOracle_evaluate_DecsCons",
     "statement_status": "pending_statement_review",
-    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
+    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the Lean assembly exists in OracleInduction.lean and remains pending correspondence review."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -13321,7 +13321,7 @@
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateRecursive.lean",
     "lean_name": "adjustOracle_evaluate_Dlet",
     "statement_status": "pending_statement_review",
-    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
+    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the Lean assembly exists in OracleInduction.lean and remains pending correspondence review."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -13329,7 +13329,7 @@
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateMatch.lean",
     "lean_name": "adjustOracle_evaluate_MatchCons",
     "statement_status": "pending_statement_review",
-    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
+    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the Lean assembly exists in OracleInduction.lean and remains pending correspondence review."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -13337,7 +13337,7 @@
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateMatch.lean",
     "lean_name": "adjustOracle_evaluate_Mat",
     "statement_status": "pending_statement_review",
-    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
+    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the Lean assembly exists in OracleInduction.lean and remains pending correspondence review."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -13345,7 +13345,7 @@
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateMatch.lean",
     "lean_name": "adjustOracle_evaluate_Handle",
     "statement_status": "pending_statement_review",
-    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
+    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the Lean assembly exists in OracleInduction.lean and remains pending correspondence review."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -13385,7 +13385,7 @@
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateEval.lean",
     "lean_name": "adjustOracle_evaluate_Eval",
     "statement_status": "pending_statement_review",
-    "reviewer": "Dynamic Eval application induction case; typed original captured in source_eval_oracle_adjust_probe.out. Evaluator, source AST and carrier correspondence and the clock-bounded induction-hypothesis shape require review; the complete theorem is not yet assembled."
+    "reviewer": "Dynamic Eval application induction case; typed original captured in source_eval_oracle_adjust_probe.out. Evaluator, source AST and carrier correspondence and the clock-bounded induction-hypothesis shape require review; the Lean assembly exists in OracleInduction.lean and remains pending correspondence review."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -13393,7 +13393,7 @@
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateMatch.lean",
     "lean_name": "adjustOracle_evaluate_MatchNil",
     "statement_status": "pending_statement_review",
-    "reviewer": "Match or match-containing expression induction case; the typed original is captured in source_eval_oracle_adjust_probe.out. Full evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
+    "reviewer": "Match or match-containing expression induction case; the typed original is captured in source_eval_oracle_adjust_probe.out. Full evaluator, source AST and carrier correspondence remain pending; the Lean assembly exists in OracleInduction.lean and remains pending correspondence review."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -13401,7 +13401,7 @@
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateExpressions.lean",
     "lean_name": "adjustOracle_evaluate_ExpsNil",
     "statement_status": "pending_statement_review",
-    "reviewer": "Expression-evaluation induction case; the typed original is captured in source_eval_oracle_adjust_probe.out. Full evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
+    "reviewer": "Expression-evaluation induction case; the typed original is captured in source_eval_oracle_adjust_probe.out. Full evaluator, source AST and carrier correspondence remain pending; the Lean assembly exists in OracleInduction.lean and remains pending correspondence review."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -13409,7 +13409,7 @@
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateExpressions.lean",
     "lean_name": "adjustOracle_evaluate_Lit",
     "statement_status": "pending_statement_review",
-    "reviewer": "Expression-evaluation induction case; the typed original is captured in source_eval_oracle_adjust_probe.out. Full evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
+    "reviewer": "Expression-evaluation induction case; the typed original is captured in source_eval_oracle_adjust_probe.out. Full evaluator, source AST and carrier correspondence remain pending; the Lean assembly exists in OracleInduction.lean and remains pending correspondence review."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -13417,7 +13417,7 @@
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateExpressions.lean",
     "lean_name": "adjustOracle_evaluate_Fn",
     "statement_status": "pending_statement_review",
-    "reviewer": "Expression-evaluation induction case; the typed original is captured in source_eval_oracle_adjust_probe.out. Full evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
+    "reviewer": "Expression-evaluation induction case; the typed original is captured in source_eval_oracle_adjust_probe.out. Full evaluator, source AST and carrier correspondence remain pending; the Lean assembly exists in OracleInduction.lean and remains pending correspondence review."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -13425,7 +13425,7 @@
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateDeclarations.lean",
     "lean_name": "adjustOracle_evaluate_DecsNil",
     "statement_status": "pending_statement_review",
-    "reviewer": "Single declaration-evaluation induction case; the typed original is captured in source_eval_oracle_adjust_probe.out. Full evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
+    "reviewer": "Single declaration-evaluation induction case; the typed original is captured in source_eval_oracle_adjust_probe.out. Full evaluator, source AST and carrier correspondence remain pending; the Lean assembly exists in OracleInduction.lean and remains pending correspondence review."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -13433,7 +13433,7 @@
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateDeclarations.lean",
     "lean_name": "adjustOracle_evaluate_Dexn",
     "statement_status": "pending_statement_review",
-    "reviewer": "Single declaration-evaluation induction case; the typed original is captured in source_eval_oracle_adjust_probe.out. Full evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
+    "reviewer": "Single declaration-evaluation induction case; the typed original is captured in source_eval_oracle_adjust_probe.out. Full evaluator, source AST and carrier correspondence remain pending; the Lean assembly exists in OracleInduction.lean and remains pending correspondence review."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -13441,7 +13441,7 @@
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateDeclarations.lean",
     "lean_name": "adjustOracle_evaluate_Denv",
     "statement_status": "pending_statement_review",
-    "reviewer": "Denv induction case only; the typed original is captured in source_eval_oracle_adjust_probe.out. Full evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
+    "reviewer": "Denv induction case only; the typed original is captured in source_eval_oracle_adjust_probe.out. Full evaluator, source AST and carrier correspondence remain pending; the Lean assembly exists in OracleInduction.lean and remains pending correspondence review."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
