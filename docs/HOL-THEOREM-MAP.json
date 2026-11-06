@@ -125538,6 +125538,14 @@
   "reviewer": "Compared the source and typed clos_elist_globals_append capture: both arguments are closure-expression lists, and the conclusion preserves the whole global-write bag using pointwise natural-number union. The checked closure-expression and global-bag definitions are shared by the proof."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "SND_eq",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateLocal.lean",
+  "lean_name": "snd_eq_iff",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source local theorem and typed snd_eq_local replay of its original proof: the product's two component types are independent and the second-projection equality is equivalent to existence of a first component yielding the same pair."
+},
+{
   "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml",
   "hol_name": "nsAll_nsAppend",
   "lean_path": "Flapjack/NamespaceProps.lean",

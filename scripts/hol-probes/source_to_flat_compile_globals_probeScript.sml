@@ -43,3 +43,6 @@ val _ = if null (hyp mem_size_lemma_local) then () else raise Fail "local theore
 val _ = (print "mem_size_lemma_local="; print_term (concl mem_size_lemma_local); print "\n");
 val _ = (print "ns_all_append="; print_term (concl namespacePropsTheory.nsAll_nsAppend); print "\n");
 val _ = (print "ns_all_extend_env="; print_term (concl source_to_flatProofTheory.nsAll_extend_env); print "\n");
+val snd_eq_local = Q.prove (`SND x = y ⇔ ∃a. x = (a,y)`, Cases_on `x` >> rw []);
+val _ = if null (hyp snd_eq_local) then () else raise Fail "local theorem has hypotheses";
+val _ = (print "snd_eq_local="; print_term (concl snd_eq_local); print "\n");

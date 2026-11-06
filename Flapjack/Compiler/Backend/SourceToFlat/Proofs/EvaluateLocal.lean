@@ -841,6 +841,13 @@ theorem factoredCompileProg_semantics_diverge {C F : Type} [Nonempty C]
   rw [eventEq]
   exact HolLList.buildLprefixLub_thm (Flapjack.SemanticsProps.evaluateProg_ioEventsChain source sourceEnv decs)
 
+/-- A pair has a given second component exactly when it can be decomposed with it. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "SND_eq"]
+theorem snd_eq_iff {α β : Type} (x : α × β) (y : β) :
+    x.2 = y ↔ ∃ a, x = (a, y) := by
+  cases x with
+  | mk a b => simp
+
 /-- The compiled flat program's observable behavior is a source behavior. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "compile_prog_semantics"]
 theorem factoredCompileProg_semantics {C F : Type} [Nonempty C]

@@ -30,3 +30,4 @@ list_size_theorem=(∀(f :α -> num). list_size f ([] :α list) = (0 :num)) ∧ 
 mem_size_lemma_local=list_size (sz :α -> num) (xs :α list) < (N :num) ⇒ MEM (x :α) xs ⇒ sz x < N
 ns_all_append=∀(f :(α, β) id -> γ -> bool) (e1 :(α, β, γ) namespace) (e2 :(α, β, γ) namespace). nsAll f e1 ∧ nsAll f e2 ⇒ nsAll f (nsAppend e1 e2)
 ns_all_extend_env=nsAll (P :(mlstring, mlstring) id -> var_name -> bool) (e1 :source_to_flat$environment).v ∧ nsAll P (e2 :source_to_flat$environment).v ⇒ nsAll P (extend_env e1 e2).v
+snd_eq_local=SND (x :β # α) = (y :α) ⇔ ∃(a :β). x = (a,y)
