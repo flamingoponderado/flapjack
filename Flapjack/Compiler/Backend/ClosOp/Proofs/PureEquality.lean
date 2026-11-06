@@ -26,9 +26,7 @@ private theorem evaluateEqual {C F : Type} (x y : ClosLang.Exp) (vx vy : Value)
   have reverseEq : doEq vy vx = .val b := by rw [ClosProps.doEqSym.1, eq]
   simp [doApp, applyBlock, reverseEq]
 
-/-- Direct-recognizer case of pure-equality correctness. -/
-@[hol "cakeml/compiler/backend/proofs/clos_opProofScript.sml" "eq_pure_thm"
-  (fmap_as_finite_support := [refs, code])]
+/-- Direct-recognizer case of pure-equality correctness. This Flapjack proof helper includes branch-selection premises. -/
 theorem eqPureThmDirect {C F : Type} (x y z : ClosLang.Exp) (vx vy : Value)
     (env : List Value) (s : State C F) (b : Bool) (direct : directEq x y = some z)
     (h : evaluate [x, y] env s = (.val [vx, vy], s) ∧ SimpleExp x ∧ SimpleExp y ∧
@@ -42,9 +40,7 @@ theorem eqPureThmDirect {C F : Type} (x y z : ClosLang.Exp) (vx vy : Value)
   simpa [result] using optimized
 
 /-- Fallback case of pure-equality correctness when neither operand is a
-constructor and the direct recognizer does not match. -/
-@[hol "cakeml/compiler/backend/proofs/clos_opProofScript.sml" "eq_pure_thm"
-  (fmap_as_finite_support := [refs, code])]
+constructor and the direct recognizer does not match. This Flapjack proof helper includes branch-selection premises. -/
 theorem eqPureThmFallback {C F : Type} (x y : ClosLang.Exp) (vx vy : Value)
     (env : List Value) (s : State C F) (b : Bool) (direct : directEq x y = none)
     (noX : cons x = none) (noY : cons y = none)
@@ -156,9 +152,7 @@ private theorem forall₂Zip {α β γ δ : Type} {R : α → γ → Prop} {S : 
     | nil => simp
     | cons h' t' => exact .cons ⟨h, h'⟩ (ih t')
 
-/-- Constructor mismatch case of the source pure-equality theorem. -/
-@[hol "cakeml/compiler/backend/proofs/clos_opProofScript.sml" "eq_pure_thm"
-  (fmap_as_finite_support := [refs, code])]
+/-- Constructor mismatch case of the source pure-equality theorem. This Flapjack proof helper includes branch-selection premises. -/
 theorem eqPureThmConstructorMismatch {C F : Type} (tx ty : BackendCommon.Tra)
     (tagX tagY : Nat) (xs ys : List ClosLang.Exp) (vx vy : Value)
     (env : List Value) (s : State C F) (b : Bool)
@@ -195,9 +189,7 @@ theorem eqPureThmConstructorMismatch {C F : Type} (tx ty : BackendCommon.Tra)
   simp [evaluate, doApp, applyBlock, boolValue, BackendCommon.falseTag]
 
 /-- Matching-constructor case of pure equality, with the source functional
-induction hypothesis for the zipped constructor fields. -/
-@[hol "cakeml/compiler/backend/proofs/clos_opProofScript.sml" "eq_pure_thm"
-  (fmap_as_finite_support := [refs, code])]
+induction hypothesis for the zipped constructor fields. This Flapjack proof helper includes branch-selection premises. -/
 theorem eqPureThmConstructorMatch {C F : Type} (tx ty : BackendCommon.Tra)
     (tagX tagY : Nat) (xs ys : List ClosLang.Exp) (vx vy : Value)
     (env : List Value) (s : State C F) (b : Bool)
@@ -264,9 +256,7 @@ theorem eqPureThmConstructorMatch {C F : Type} (tx ty : BackendCommon.Tra)
   exact recResult
 
 /-- One-constructor branch when the other value has a different tag or field
-count: the source tag-and-length test short-circuits to false. -/
-@[hol "cakeml/compiler/backend/proofs/clos_opProofScript.sml" "eq_pure_thm"
-  (fmap_as_finite_support := [refs, code])]
+count: the source tag-and-length test short-circuits to false. This Flapjack proof helper includes branch-selection premises. -/
 theorem eqPureThmOneConstructorMismatch {C F : Type} (tx : BackendCommon.Tra)
     (tagX tagY : Nat) (xs : List ClosLang.Exp) (y : ClosLang.Exp)
     (vx : Value) (fieldsY : List Value) (env : List Value) (s : State C F) (b : Bool)
@@ -339,9 +329,7 @@ private theorem fieldProjectionRel {C F : Type} (y : ClosLang.Exp) (tag : Nat)
   simp [doApp, applyBlock, List.getElem?_eq_getElem h2]
 
 /-- One-constructor branch with matching runtime tag and field count, using
-the source induction hypothesis for its generated projection pairs. -/
-@[hol "cakeml/compiler/backend/proofs/clos_opProofScript.sml" "eq_pure_thm"
-  (fmap_as_finite_support := [refs, code])]
+the source induction hypothesis for its generated projection pairs. This Flapjack proof helper includes branch-selection premises. -/
 theorem eqPureThmOneConstructorMatch {C F : Type} (tx : BackendCommon.Tra)
     (tagX tagY : Nat) (xs : List ClosLang.Exp) (y : ClosLang.Exp)
     (vx : Value) (fieldsY : List Value) (env : List Value) (s : State C F) (b : Bool)

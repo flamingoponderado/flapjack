@@ -129,7 +129,7 @@ private theorem starEmptyRight {α : Type} (p : (α → Prop) → Prop) : SetSep
   rw [SetSep.starComm, StackRemove.StackHeap.starEmptyLeft]
 
 /-- Immediate-root case of the major generational move simulation, preserving
-all original hypotheses and conclusions. Pointer cases remain open. -/
+all original hypotheses and conclusions. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "word_gen_gc_move_thm"
   (words_as_type_indexed_bitvec)]
 theorem wordGenGcMove_data {width : Nat} [NeZero width] (conf : Config)

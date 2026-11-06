@@ -166,9 +166,7 @@ theorem smartOpThmMany {C F : Type} (t : BackendCommon.Tra) (op : ClosLang.Op)
     evaluate [smartOp t op (x :: y :: z :: xs)] env s = (res, s1) := by
   simpa [smartOp, smartOp'] using h.1
 
-/-- A unary operand that does not match a constructor is left intact. -/
-@[hol "cakeml/compiler/backend/proofs/clos_opProofScript.sml" "SmartOp_thm"
-  (fmap_as_finite_support := [refs, code])]
+/-- A unary operand that does not match a constructor is left intact. This Flapjack proof helper includes branch-selection premises. -/
 theorem smartOpThmUnaryNoConstructor {C F : Type} (t : BackendCommon.Tra) (op : ClosLang.Op)
     (x : ClosLang.Exp) (env : List Value) (s s1 : State C F) (res : Result (List Value) Value)
     (noConstructor : cons x = none)
@@ -236,9 +234,7 @@ theorem smartOpThmInteger {C F : Type} (t : BackendCommon.Tra) (op : ClosLang.In
         all_goals try exact h.1
         all_goals exact (h.2 h.1.1.symm).elim
 
-/-- Other binary operations are unchanged by the source smart operation. -/
-@[hol "cakeml/compiler/backend/proofs/clos_opProofScript.sml" "SmartOp_thm"
-  (fmap_as_finite_support := [refs, code])]
+/-- Other binary operations are unchanged by the source smart operation. This Flapjack proof helper includes branch-selection premises. -/
 theorem smartOpThmOtherBinary {C F : Type} (t : BackendCommon.Tra) (op : ClosLang.Op)
     (x y : ClosLang.Exp) (env : List Value) (s s1 : State C F)
     (res : Result (List Value) Value)

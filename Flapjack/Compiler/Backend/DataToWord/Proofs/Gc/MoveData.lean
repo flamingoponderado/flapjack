@@ -15,7 +15,7 @@ private theorem starEmptyRight {α : Type} (p : (α → Prop) → Prop) : SetSep
   rw [SetSep.starComm, StackRemove.StackHeap.starEmptyLeft]
 
 /-- The `Data` case of `word_gc_move_thm`: moving an immediate or code
-location leaves the heap and memory unchanged. The pointer cases remain open. -/
+location leaves the heap and memory unchanged. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "word_gc_move_thm"
   (words_as_type_indexed_bitvec)]
 theorem wordGcMove_data {width : Nat} [NeZero width] (conf : Config)

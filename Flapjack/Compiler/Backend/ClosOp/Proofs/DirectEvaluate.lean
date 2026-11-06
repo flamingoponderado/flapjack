@@ -228,9 +228,7 @@ private theorem evalEqualNil {C F : Type} (trace : BackendCommon.Tra) (i j : Nat
     simp [evalNil, doApp, applyBlock, evalBool, hij, hji]
 
 /-- Nullary-constructor case of direct equality after both earlier source
-recognizer stages fail on the other operand. -/
-@[hol "cakeml/compiler/backend/proofs/clos_opProofScript.sml" "eq_direct_thm"
-  (fmap_as_finite_support := [refs, code])]
+recognizer stages fail on the other operand. This Flapjack proof helper includes branch-selection premises. -/
 theorem eqDirectThmNilLeft {C F : Type} (trace : BackendCommon.Tra) (tag : Nat)
     (y : ClosLang.Exp) (env : List Value) (s s1 : State C F)
     (res : Result (List Value) Value) (t : BackendCommon.Tra) (z : ClosLang.Exp)
@@ -294,9 +292,7 @@ theorem eqDirectThmNilLeft {C F : Type} (trace : BackendCommon.Tra) (tag : Nat)
           | cons arg rest => simp at shape
 
 /-- Symmetric nullary-constructor case after the earlier recognizer stages
-fail on the other operand. -/
-@[hol "cakeml/compiler/backend/proofs/clos_opProofScript.sml" "eq_direct_thm"
-  (fmap_as_finite_support := [refs, code])]
+fail on the other operand. This Flapjack proof helper includes branch-selection premises. -/
 theorem eqDirectThmNilRight {C F : Type} (trace : BackendCommon.Tra) (tag : Nat)
     (x : ClosLang.Exp) (env : List Value) (s s1 : State C F)
     (res : Result (List Value) Value) (t : BackendCommon.Tra) (z : ClosLang.Exp)
@@ -393,9 +389,7 @@ private theorem equalWordRight {C F : Type} (trace t : BackendCommon.Tra) (w : B
       cases value <;> simp [evalWord, doApp, applyBlock, ClosSem.doEq]
 
 /-- Source constant-recognizer case with a word literal on the left and
-neither recognizer matching the other operand. -/
-@[hol "cakeml/compiler/backend/proofs/clos_opProofScript.sml" "eq_direct_thm"
-  (fmap_as_finite_support := [refs, code])]
+neither recognizer matching the other operand. This Flapjack proof helper includes branch-selection premises. -/
 theorem eqDirectThmWordLeft {C F : Type} (trace : BackendCommon.Tra) (w : BitVec 64)
     (y : ClosLang.Exp) (env : List Value) (s s1 : State C F)
     (res : Result (List Value) Value) (t : BackendCommon.Tra) (z : ClosLang.Exp)
@@ -427,9 +421,7 @@ theorem eqDirectThmWordLeft {C F : Type} (trace : BackendCommon.Tra) (w : BitVec
   rw [← equalWordLeft trace t w y env s]
   exact h.1
 
-/-- Symmetric source constant-recognizer case for a word literal. -/
-@[hol "cakeml/compiler/backend/proofs/clos_opProofScript.sml" "eq_direct_thm"
-  (fmap_as_finite_support := [refs, code])]
+/-- Symmetric source constant-recognizer case for a word literal. This Flapjack proof helper includes branch-selection premises. -/
 theorem eqDirectThmWordRight {C F : Type} (trace : BackendCommon.Tra) (w : BitVec 64)
     (x : ClosLang.Exp) (env : List Value) (s s1 : State C F)
     (res : Result (List Value) Value) (t : BackendCommon.Tra) (z : ClosLang.Exp)
@@ -534,9 +526,7 @@ private theorem equalBlockIntRight {C F : Type} (trace t : BackendCommon.Tra) (w
       cases value <;> simp [evalBlockInt, doApp, applyBlock, ClosSem.doEq]
 
 /-- Source constant-recognizer case with a block-encoded integer literal on the left and
-neither recognizer matching the other operand. -/
-@[hol "cakeml/compiler/backend/proofs/clos_opProofScript.sml" "eq_direct_thm"
-  (fmap_as_finite_support := [refs, code])]
+neither recognizer matching the other operand. This Flapjack proof helper includes branch-selection premises. -/
 theorem eqDirectThmBlockIntLeft {C F : Type} (trace : BackendCommon.Tra) (w : Int)
     (y : ClosLang.Exp) (env : List Value) (s s1 : State C F)
     (res : Result (List Value) Value) (t : BackendCommon.Tra) (z : ClosLang.Exp)
@@ -568,9 +558,7 @@ theorem eqDirectThmBlockIntLeft {C F : Type} (trace : BackendCommon.Tra) (w : In
   rw [← equalBlockIntLeft trace t w y env s]
   exact h.1
 
-/-- Symmetric source constant-recognizer case for a block-encoded integer literal. -/
-@[hol "cakeml/compiler/backend/proofs/clos_opProofScript.sml" "eq_direct_thm"
-  (fmap_as_finite_support := [refs, code])]
+/-- Symmetric source constant-recognizer case for a block-encoded integer literal. This Flapjack proof helper includes branch-selection premises. -/
 theorem eqDirectThmBlockIntRight {C F : Type} (trace : BackendCommon.Tra) (w : Int)
     (x : ClosLang.Exp) (env : List Value) (s s1 : State C F)
     (res : Result (List Value) Value) (t : BackendCommon.Tra) (z : ClosLang.Exp)
@@ -675,9 +663,7 @@ private theorem equalStringRight {C F : Type} (trace t : BackendCommon.Tra) (w :
       cases value <;> simp [evalString, doApp, applyBlock, ClosSem.doEq, eq_comm]
 
 /-- Source constant-recognizer case with a string literal on the left and
-neither recognizer matching the other operand. -/
-@[hol "cakeml/compiler/backend/proofs/clos_opProofScript.sml" "eq_direct_thm"
-  (fmap_as_finite_support := [refs, code])]
+neither recognizer matching the other operand. This Flapjack proof helper includes branch-selection premises. -/
 theorem eqDirectThmStringLeft {C F : Type} (trace : BackendCommon.Tra) (w : Flapjack.Basis.Pure.MlString.MlString)
     (y : ClosLang.Exp) (env : List Value) (s s1 : State C F)
     (res : Result (List Value) Value) (t : BackendCommon.Tra) (z : ClosLang.Exp)
@@ -709,9 +695,7 @@ theorem eqDirectThmStringLeft {C F : Type} (trace : BackendCommon.Tra) (w : Flap
   rw [← equalStringLeft trace t w y env s]
   exact h.1
 
-/-- Symmetric source constant-recognizer case for a string literal. -/
-@[hol "cakeml/compiler/backend/proofs/clos_opProofScript.sml" "eq_direct_thm"
-  (fmap_as_finite_support := [refs, code])]
+/-- Symmetric source constant-recognizer case for a string literal. This Flapjack proof helper includes branch-selection premises. -/
 theorem eqDirectThmStringRight {C F : Type} (trace : BackendCommon.Tra) (w : Flapjack.Basis.Pure.MlString.MlString)
     (x : ClosLang.Exp) (env : List Value) (s s1 : State C F)
     (res : Result (List Value) Value) (t : BackendCommon.Tra) (z : ClosLang.Exp)
