@@ -120,12 +120,6 @@ theorem dletrec_sourceEnv (sourceEnv : SemEnv Value) (funs : List (VarN × VarN 
       rfl
   exact shape funs
 
-private theorem allocDefs_keys (names : List VarN) (n base : Nat) :
-    (allocDefs n base names).map Prod.fst = names := by
-  induction names generalizing n base with
-  | nil => rfl
-  | cons name names ih => simp [allocDefs, ih]
-
 /-- The compiled recursive group and source recursive environment have the
 same value and module domains. -/
 theorem dletrec_envDomainEq (env : Environment) (sourceEnv : SemEnv Value) (trace : List VarN)
@@ -140,7 +134,7 @@ theorem dletrec_envDomainEq (env : Environment) (sourceEnv : SemEnv Value) (trac
     cases id with
     | short name =>
       simp only [nsDom, alistToNs, nsLookup]
-      rw [Flapjack.lookup_exists_iff_mem_keys, Flapjack.lookup_exists_iff_mem_keys, allocDefs_keys]
+      rw [Flapjack.lookup_exists_iff_mem_keys, Flapjack.lookup_exists_iff_mem_keys, fst_allocDefs]
       simp [List.map_map, Function.comp_def]
     | long moduleName id => simp [nsDom, alistToNs, nsLookup]
   · funext path

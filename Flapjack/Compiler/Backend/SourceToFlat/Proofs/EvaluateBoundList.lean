@@ -55,7 +55,9 @@ theorem localExpressionListStep_empty {C F : Type} [Nonempty C]
   · simp only [EvaluateHOL.evaluate, compileExps, FlatSem.evaluate]
     exact ⟨GlobalGrowth.refl genv, invariant, generation, oracForwardRel_refl interp source.evalState⟩
 
-private theorem sourceEvaluate_cons {F : Type} (source : State F) (env : SemEnv Value)
+/-- Unfold the source evaluator on two or more expressions for simulation.
+This convenience equation has no separate HOL declaration. -/
+theorem sourceEvaluate_cons {F : Type} (source : State F) (env : SemEnv Value)
     (first second : AstHOL.Exp) (rest : List AstHOL.Exp) :
     EvaluateHOL.evaluate source env (first :: second :: rest) =
       let head := EvaluateHOL.evaluate source env [first]

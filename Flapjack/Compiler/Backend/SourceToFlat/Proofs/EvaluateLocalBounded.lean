@@ -7,20 +7,6 @@ namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL
 open OracleInvariant
 
-private theorem boundedSourceEvaluate_cons {F : Type} (source : State F) (env : SemEnv Value)
-    (first second : AstHOL.Exp) (rest : List AstHOL.Exp) :
-    EvaluateHOL.evaluate source env (first :: second :: rest) =
-      let head := EvaluateHOL.evaluate source env [first]
-      match head.2 with
-      | .err error => (head.1, .err error)
-      | .val values =>
-        let tail := EvaluateHOL.evaluate head.1 env (second :: rest)
-        match tail.2 with
-        | .err error => (tail.1, .err error)
-        | .val values' => (tail.1, .val (EvaluateHOL.headValue values :: values')) := by
-  rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source env [first] []).1]
-  rfl
-
 /-- Compose local expression induction hypotheses over an arbitrary list. -/
 theorem boundedEnvListStep_of_each {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
@@ -60,7 +46,7 @@ theorem boundedEnvListStep_of_each {C F : Type} [Nonempty C]
         intro last bad
         apply safe last
         change EvaluateHOL.evaluate source sourceEnv (first :: second :: tail) = _
-        simp only [boundedSourceEvaluate_cons, bad]
+        simp only [sourceEvaluate_cons, bad]
       have headStep := each first (by simp) genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen
         clockBound localRel envInv tracesLen invariant generation headSafe
       change LocalExpressionListStep interp transform genv start finish other source flat sourceEnv flatEnv trace
@@ -73,7 +59,7 @@ theorem boundedEnvListStep_of_each {C F : Type} [Nonempty C]
         intro last bad
         apply safe last
         change EvaluateHOL.evaluate source sourceEnv (first :: second :: tail) = _
-        simp only [boundedSourceEvaluate_cons, headRun, bad]
+        simp only [sourceEvaluate_cons, headRun, bad]
       apply ih
       · intro expr member
         exact each expr (List.mem_cons_of_mem _ member)

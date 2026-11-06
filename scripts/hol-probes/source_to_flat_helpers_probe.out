@@ -20,3 +20,4 @@ simple_dlet_def_typed=∀(p :ast$pat) (e :ast$exp). simple_dlet p e = case p of 
 concat_def_typed=∀(l :mlstring list). concat l = implode (CONCAT (MAP (λ(s :mlstring). case s of implode x => x) l))
 compile_funs_map_typed=∀(env :environment) (funs :(mlstring # mlstring # ast$exp) list). compile_funs (t :mlstring list) env funs = MAP (λ((f :mlstring),(x :mlstring),(e :ast$exp)). (f,x,(compile_exp (f::t) (env with v := nsBind x (Local None x) env.v) e :exp))) funs
 compile_exps_reverse_typed=∀(env :environment) (es :ast$exp list). (compile_exps (t :mlstring list) env (REVERSE es) :exp list) = REVERSE (compile_exps t env es :exp list)
+fst_alloc_defs_typed=∀(n :num) (next :num) (l :α list). MAP (FST :α # var_name -> α) (alloc_defs n next l) = l

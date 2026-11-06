@@ -464,30 +464,6 @@ theorem exprSim_eval_timeout_from_operands {C F : Type} [Nonempty C]
     sourceState sourceArguments flatState flatArguments exprs sa sb sc sd sourceBytes sourceWords
     a b c d bytes words evalEnv decs begin sourceRun flatRun valuesRel invariant' decoded zero
 
-private theorem six_values {α : Type} (xs : List α) (length : xs.length = 6) :
-    ∃ a b c d e f, xs = [a, b, c, d, e, f] := by
-  cases xs with
-  | nil => simp at length
-  | cons a xs =>
-    cases xs with
-    | nil => simp at length
-    | cons b xs =>
-      cases xs with
-      | nil => simp at length
-      | cons c xs =>
-        cases xs with
-        | nil => simp at length
-        | cons d xs =>
-          cases xs with
-          | nil => simp at length
-          | cons e xs =>
-            cases xs with
-            | nil => simp at length
-            | cons f xs =>
-              cases xs with
-              | nil => exact ⟨a, b, c, d, e, f, rfl⟩
-              | cons _ _ => simp at length
-
 /-- The successful callback and operand induction hypothesis determine the
 operand shape for a zero-clock Eval; no fixed operand list is assumed. -/
 theorem exprSim_eval_timeout_from_callback {C F : Type} [Nonempty C]
@@ -523,7 +499,7 @@ theorem exprSim_eval_timeout_from_callback {C F : Type} [Nonempty C]
         OracleInvariant.doEval_factoredInvariant_sourceShape interp transform sourceArguments flatArguments
           gen genv idxs invariant' sourceValues flatValues.reverse valuesRel (evalEnv, decs, begin) decoded
       have sourceLength : sourceValues.length = 6 := valuesRel.length_eq.trans flatLength
-      obtain ⟨sa, sb, sc, sd, bytes, words, rfl⟩ := six_values sourceValues sourceLength
+      obtain ⟨sa, sb, sc, sd, bytes, words, rfl⟩ := OracleInvariant.list_length_six sourceValues sourceLength
       exact exprSim_eval_timeout_from_operands interp transform gen genv idxs compMap trace sourceEnv flatEnv
         sourceState sourceArguments flatState exprs sa sb sc sd bytes words evalEnv decs begin
         (by simpa using sourceRun) operandSim (by simpa [flatRun] using invariant) decoded zero
@@ -831,7 +807,7 @@ theorem eval_success_from_declarations {C F : Type} [Nonempty C]
     eval_declarations_factored interp transform sourceArguments flatArguments oldGen oldGenv start finish other
       invariant sourceValues flatValues valuesRel evalEnv decs begin decoded positive limit clockBound decsIH sourceLast (.val newEnv)
       sourceDeclarations (by simp)
-  obtain ⟨a, b, c, d, bytes, words, rfl⟩ := six_values flatValues flatLength
+  obtain ⟨a, b, c, d, bytes, words, rfl⟩ := OracleInvariant.list_length_six flatValues flatLength
   obtain ⟨flatMiddle, finalGenv, flatError, bodyRun, states, post, success, error⟩ := decCase
   obtain ⟨finalInvariant, forward, finalGrowth⟩ := post (by simp)
   obtain ⟨flatErrorEq, newDomain, generation, newInv⟩ := success newEnv rfl
@@ -890,7 +866,7 @@ theorem eval_error_from_declarations {C F : Type} [Nonempty C]
     eval_declarations_factored interp transform sourceArguments flatArguments oldGen oldGenv start finish other
       invariant sourceValues flatValues valuesRel evalEnv decs begin decoded positive limit clockBound decsIH sourceLast (.err sourceError)
       sourceDeclarations (by simpa using safe)
-  obtain ⟨a, b, c, d, bytes, words, rfl⟩ := six_values flatValues flatLength
+  obtain ⟨a, b, c, d, bytes, words, rfl⟩ := OracleInvariant.list_length_six flatValues flatLength
   obtain ⟨flatLast, finalGenv, flatError, bodyRun, states, post, success, errors⟩ := decCase
   obtain ⟨errorValue, errorEq, errorRel⟩ := errors sourceError rfl
   subst flatError

@@ -110,12 +110,6 @@ theorem envDomainEq_alias {α : Type} (name : VarN) (idx : Nat) (trace : Tra) (v
     apply propext
     cases path <;> simp [nsDomMod, nsLookupMod, nsEmpty]
 
-private theorem allocDefs_keys {α : Type} (names : List α) (n base : Nat) :
-    (allocDefs n base names).map Prod.fst = names := by
-  induction names generalizing n base with
-  | nil => rfl
-  | cons name names ih => simp [allocDefs, ih]
-
 /-- Allocating a binding for every distinct source pattern name preserves
 the value and module domains of the source binding environment. -/
 theorem envDomainEq_patternBindings (genv : GlobalEnv)
@@ -138,7 +132,7 @@ theorem envDomainEq_patternBindings (genv : GlobalEnv)
     cases id with
     | short name =>
       simp only [nsDom, alistToNs, nsLookup]
-      rw [Flapjack.lookup_exists_iff_mem_keys, Flapjack.lookup_exists_iff_mem_keys, allocDefs_keys, namesEq]
+      rw [Flapjack.lookup_exists_iff_mem_keys, Flapjack.lookup_exists_iff_mem_keys, fst_allocDefs, namesEq]
       simp
     | long moduleName id => simp [nsDom, alistToNs, nsLookup]
   · funext path

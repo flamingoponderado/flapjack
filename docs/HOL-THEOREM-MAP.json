@@ -11552,6 +11552,14 @@
     "reviewer": "Compared the typed find_recfun_local replay of the original local proof: the same six quantified mlstring, function-list, expression and environment binders and successful lookup premise imply the same compiled lookup result and body compilation. MlString, source and flat expression, and compiler environment carriers agree with HOL."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Helpers.lean",
+    "lean_name": "fst_allocDefs",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "fst_alloc_defs",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared fst_alloc_defs_typed: for arbitrary counters and a polymorphic list, mapping first projection over allocDefs returns the original list. The binders remain universally quantified in HOL order, and the tagged allocDefs uses the same polymorphic name carrier."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/CompileExp.lean",
     "lean_name": "compileExps_reverse",
     "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",

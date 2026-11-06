@@ -815,7 +815,8 @@ theorem doEval_oracle_envGenFuture {C : Type} [Nonempty C]
       rw [compiled] at future
       simpa [envGenFutureRel, nextCfg] using future
 
-private theorem list_length_six {α : Type} (xs : List α) (length : xs.length = 6) :
+/-- Flapjack list infrastructure: expose the six operands used by the Eval proof. -/
+theorem list_length_six {α : Type} (xs : List α) (length : xs.length = 6) :
     ∃ a b c d e f, xs = [a, b, c, d, e, f] := by
   cases xs with
   | nil => simp at length
