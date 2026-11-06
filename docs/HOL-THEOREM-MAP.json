@@ -1,6 +1,14 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "pmatch_list_append_Match_exists",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/PatternList.lean",
+  "lean_name": "pmatchList_append_match_iff",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed pmatch_list_append_match capture, including the three existential witnesses, the split equation and threaded match results in source order. HOL free variables are universally bound in Lean; reviewed FlatSem pattern, value, state and match-result carriers agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
   "hol_name": "APPEND_LENGTH_EQ",
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/PatternList.lean",
   "lean_name": "appendLengthEq",

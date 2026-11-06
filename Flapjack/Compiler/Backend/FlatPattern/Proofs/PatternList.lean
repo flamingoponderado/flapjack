@@ -174,6 +174,7 @@ theorem pmatchList_append_match_split {C F : Type} (state : FlatSem.State C F)
 
 /-- Appended pattern lists match successfully exactly when their matches can
 be split into consecutive successful matches. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "pmatch_list_append_Match_exists"]
 theorem pmatchList_append_match_iff {C F : Type} (state : FlatSem.State C F)
     (left right : List FlatLang.Pat) (values : List Value) (bindings result : List (VarN × Value)) :
     FlatSem.pmatchList state (left ++ right) values bindings = .match result ↔
