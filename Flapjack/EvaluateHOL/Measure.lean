@@ -7,11 +7,6 @@ lexicographic clock and expression-list size measure. -/
 namespace Flapjack.EvaluateHOL
 open Flapjack.SemanticPrimitivesHOL
 
-/-- The source evaluator's clock clamp never increases the original clock. -/
-theorem fixClock_fst_clock_le {σ τ α : Type} (state : State σ) (output : State τ × α) :
-    (fixClock state output).1.clock ≤ state.clock := by
-  simp [fixClock, Nat.min_le_right]
-
 /-- Lean's list size is additive up to the empty-list constructor. -/
 theorem listSize_append {α : Type} [SizeOf α] (xs ys : List α) :
     sizeOf (xs ++ ys) + 1 = sizeOf xs + sizeOf ys := by

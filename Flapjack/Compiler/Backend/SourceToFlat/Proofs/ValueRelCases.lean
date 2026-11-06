@@ -93,13 +93,6 @@ theorem valueRel_location_iff (genv : GlobalEnv) (flag : Bool) (loc : Nat) (flat
     cases h
     exact .location genv loc flag
 
-/-- The source Eval environment value has no corresponding flat value in the
-current relation. -/
-theorem valueRel_source_env_false (genv : GlobalEnv) (env : SemEnv SemanticPrimitivesHOL.Value)
-    (id : Nat × Nat) (flat : FlatSem.Value) : ¬ ValueRel genv (.env env id) flat := by
-  intro h
-  cases h
-
 /-- A related source vector corresponds to a flat vector whose elements are
 pointwise related. -/
 theorem valueRel_vector_iff (genv : GlobalEnv) (sources : List SemanticPrimitivesHOL.Value)
@@ -140,27 +133,6 @@ theorem valueRel_conv_iff (genv : GlobalEnv) (stamp : Option Stamp)
     | some sourceCtor =>
       obtain ⟨flatCtor, rfl, lookup⟩ := condition
       exact valueRel_constructor genv sourceCtor flatCtor sources flats related lookup
-
-/-- Constructor inversion in the two-disjunct shape used by the original
-proof. This is a Flapjack infrastructure theorem. -/
-theorem valueRel_conv_cases (genv : GlobalEnv) (stamp : Option Stamp)
-    (sources : List SemanticPrimitivesHOL.Value) (flat : FlatSem.Value) :
-    ValueRel genv (.conv stamp sources) flat ↔
-      (∃ sourceCtor flatCtor flats, stamp = some sourceCtor ∧ flat = .conv (some flatCtor) flats ∧
-        List.Forall₂ (ValueRel genv) sources flats ∧
-        genv.c.lookup (flatCtor, sources.length) = some sourceCtor) ∨
-      (∃ flats, stamp = none ∧ flat = .conv none flats ∧ List.Forall₂ (ValueRel genv) sources flats) := by
-  constructor
-  · intro h
-    cases h with
-    | constructor _ ctor _ flats related lookup =>
-      exact Or.inl ⟨_, ctor, flats, rfl, rfl, (valueListRel_iff genv sources flats).mp related, lookup⟩
-    | tuple _ flats related =>
-      exact Or.inr ⟨flats, rfl, rfl, (valueListRel_iff genv sources flats).mp related⟩
-  · rintro (⟨sourceCtor, flatCtor, flats, rfl, rfl, related, lookup⟩ |
-      ⟨flats, rfl, rfl, related⟩)
-    · exact valueRel_constructor genv sourceCtor flatCtor sources flats related lookup
-    · exact valueRel_tuple genv sources flats related
 
 /-- An empty source local namespace relates only to an empty flat environment. -/
 theorem envRel_empty_iff (genv : GlobalEnv) (flatEnv : List (VarN × FlatSem.Value)) :

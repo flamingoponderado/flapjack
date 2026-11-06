@@ -523,38 +523,4 @@ theorem srcOracEnvInvs_advance {C : Type} [Nonempty C]
       subst gId
       simp [addEnvGeneration] at idBound
 
-/-- An oracle environment lookup and the first incremental step agree on the
-same compiler configuration and its stored global environment. This is
-infrastructure over the factored global environment relation. -/
-theorem sourceOracle_lookup_firstStep {C : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (genv : GlobalEnv) (state : EvalOracleState) (envId : Nat × Nat)
-    (sourceEnv : SemEnv Value) (stateValue : Value) (decs : List Dec)
-    (lookup : lookupEnv state envId = some sourceEnv)
-    (invs : srcOracInvs interp transform genv (some (.evalOracle state)))
-    (entry : state.oracle 0 = (envId, stateValue, decs)) :
-    ∃ decode config payload nextId nextValue nextDecs nextConfig nextPayload flatDecs,
-      interp = some decode ∧ decode stateValue = some (config, payload) ∧
-      GlobalEnvInv genv (lookupEnvId envId config.envs) (fun _ => False) sourceEnv ∧
-      state.oracle 1 = (nextId, nextValue, nextDecs) ∧
-      decode nextValue = some (nextConfig, nextPayload) ∧
-      incCompileProg envId config (transform decs) = (nextConfig, flatDecs) ∧
-      srcOracNextCfg (some decode) (some (.evalOracle state)) = some config := by
-  obtain ⟨decode, config, payload, chosen, decoded, globalInv⟩ :=
-    srcOracEnvInvs_lookupEnvId interp genv state envId sourceEnv stateValue decs lookup invs.2.1 entry
-  have steps := invs.1
-  rw [chosen] at steps
-  simp only [srcOracStepInvs] at steps
-  cases nextEntry : state.oracle 1 with
-  | mk nextId tail =>
-    cases tail with
-    | mk nextValue nextDecs =>
-      obtain ⟨nextConfig, nextPayload, nextDecoded⟩ := steps.1 1 nextId nextValue nextDecs nextEntry
-      have advance := steps.2 0 envId stateValue decs entry
-      simp only [Nat.zero_add, entry, nextEntry, decoded, nextDecoded, Flapjack.holThe] at advance
-      refine ⟨decode, config, payload, nextId, nextValue, nextDecs, nextConfig, nextPayload,
-        (incCompileProg envId config (transform decs)).2, chosen, decoded, globalInv, rfl,
-        nextDecoded, Prod.ext advance.symm rfl, ?_⟩
-      simp [srcOracNextCfg, srcOracNextCfgInner, entry, decoded]
-
 end Flapjack.Compiler.Backend.SourceToFlat.OracleInvariant

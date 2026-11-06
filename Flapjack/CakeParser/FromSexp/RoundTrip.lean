@@ -2236,35 +2236,6 @@ theorem decodeDec_some (s : Sexp) (d : Dec) :
     exact decodeDec_decsexp d
   exact ⟨⟨forward, backward⟩, ⟨fun h => forward h.symm, fun h => (backward h).symm⟩⟩
 
-/-- Successful whole-program decoding accepts a canonical declaration list. -/
-theorem decodeDecList_canonical (s : Sexp) (ds : List Dec)
-    (h : decodeDecList s = some ds) : listsexp (decsexpList ds) = s := by
-  induction s generalizing ds with
-  | sym name =>
-    simp only [decodeDecList] at h
-    split at h
-    next hn =>
-      simp at h
-      subst ds
-      simp only [beq_iff_eq] at hn
-      simp [decsexpList, listsexp, hn]
-      rfl
-    next => contradiction
-  | num _ | str _ => simp [decodeDecList] at h
-  | cons head tail _ ih =>
-    cases hh : decodeDec head with
-    | none => simp [decodeDecList, hh] at h
-    | some d =>
-      cases ht : decodeDecList tail with
-      | none => simp [decodeDecList, hh, ht] at h
-      | some rest =>
-        simp [decodeDecList, hh, ht] at h
-        subst ds
-        have eh := decodeDec_canonical head d hh
-        have et := ih rest ht
-        simp only [listsexp] at et
-        simp [decsexpList, listsexp, eh, et]
-
 @[hol "cakeml/compiler/parsing/fromSexpScript.sml" "decsexp_11"]
 theorem decsexp_injective (a b : Dec) : decsexp a = decsexp b ↔ a = b := by
   constructor
@@ -2273,25 +2244,5 @@ theorem decsexp_injective (a b : Dec) : decsexp a = decsexp b ↔ a = b := by
     simpa [decodeDec_decsexp] using decoded
   · rintro rfl
     rfl
-
-/-- The executable's whole-program encoder round trips through its
-declaration-list decoder. This assembles the HOL component lemmas for the
-Flapjack driver; it has no separate HOL declaration. -/
-theorem decodeProgram_toSexp (ds : List Dec) :
-    decodeDecList (Flapjack.CakeParser.ToSexp.program ds) = some ds := by
-  unfold Flapjack.CakeParser.ToSexp.program
-  rw [← decsexpList_eq_map]
-  exact decodeDecList_decsexpList ds
-
-/-- The driver's whole-program decoder and encoder are inverse on successful input. -/
-theorem decodeProgram_some (s : Sexp) (ds : List Dec) :
-    decodeDecList s = some ds ↔ Flapjack.CakeParser.ToSexp.program ds = s := by
-  constructor
-  · intro h
-    simpa [Flapjack.CakeParser.ToSexp.program, ← decsexpList_eq_map] using
-      decodeDecList_canonical s ds h
-  · intro h
-    rw [← h]
-    exact decodeProgram_toSexp ds
 
 end Flapjack.CakeParser.FromSexp

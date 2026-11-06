@@ -35,11 +35,4 @@ noncomputable def semanticsProg {σ : Type} (st : State σ) (env : SemEnv Value)
   | .fail =>
       ∃ clock, (evaluateProgWithClock st env clock prog).2 = .err (.abort .typeError)
 
-/-- An empty source program has exactly one observation: successful
-termination with the input FFI events. This is Flapjack infrastructure. -/
-theorem semanticsProg_nil_iff {σ : Type} (st : State σ) (env : SemEnv Value)
-    (behavior : HolBehaviour) :
-    semanticsProg st env [] behavior ↔ behavior = .terminate .success st.ffi.ioEvents := by
-  cases behavior <;> simp [semanticsProg, evaluateProgWithClock, evaluateDecs, and_assoc]
-
 end Flapjack.SemanticsHOL

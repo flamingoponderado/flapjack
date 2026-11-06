@@ -86,21 +86,6 @@ theorem adjustOracle_insertGenOracle {Config : Type} (ci : CompilerInstance Conf
   | none => rfl
   | some state => cases state <;> rfl
 
-/-- A successful source callback advances exactly one oracle entry when the
-compiled bytes, words, and next state agree. -/
-theorem doEvalOracle_success (compiler : CompilerFun) (transform : List Dec → List Dec)
-    (oracle : EvalOracleFun) (first second third fourth bytesValue wordsValue : Value)
-    (envId : Nat × Nat) (stateValue nextValue : Value) (decs : List Dec)
-    (bytes : List (BitVec 8)) (words : List (BitVec 64))
-    (entry : oracle 0 = (envId, stateValue, decs))
-    (compiled : compiler (envId, stateValue, decs) = some (nextValue, bytes, words))
-    (decodedBytes : valueToWord8List bytesValue = some bytes)
-    (decodedWords : valueToWord64List wordsValue = some words)
-    (next : nextValue = (oracle 1).2.1) :
-    doEvalOracle compiler transform [first, second, third, fourth, bytesValue, wordsValue] oracle =
-      some (envId, Flapjack.holShiftSeq 1 oracle, transform decs) := by
-  simp [doEvalOracle, entry, compiled, decodedBytes, decodedWords, next]
-
 /-- A successful six-argument callback exposes exactly the compiler output
 and decoded lists checked by the original oracle. -/
 theorem doEvalOracle_six_inv (compiler : CompilerFun) (transform : List Dec → List Dec)

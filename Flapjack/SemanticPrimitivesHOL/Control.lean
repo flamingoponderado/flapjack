@@ -17,14 +17,6 @@ def doLog (op : Lop) (value : Value) (expr : AstHOL.Exp) : Option ExpOrVal :=
   | .andalso, some false | .orelse, some true => some (.val value)
   | _, none => none
 
-/-- Flapjack infrastructure: a Boolean left operand either selects the right
-operand or returns the original Boolean value. -/
-theorem doLog_boolValue (op : Lop) (b : Bool) (expr : AstHOL.Exp) :
-    doLog op (boolValue b) expr =
-      if (op = .andalso ∧ b = true) ∨ (op = .orelse ∧ b = false) then
-        some (.exp expr) else some (.val (boolValue b)) := by
-  cases op <;> cases b <;> rfl
-
 @[hol "cakeml/semantics/semanticPrimitivesScript.sml" "do_if_def"]
 def doIf {α : Type} (value : Value) (yes no : α) : Option α :=
   match valueAsBool value with

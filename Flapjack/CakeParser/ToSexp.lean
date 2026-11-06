@@ -30,13 +30,11 @@ abbrev pattern := FromSexp.patsexp
 
 abbrev op := FromSexp.opsexp
 
-abbrev locPoint := FromSexp.locnsexp
 abbrev loc := FromSexp.locssexp
 abbrev log := FromSexp.logsexp
 
 abbrev exp := FromSexp.expsexp
 
-abbrev typeDef := FromSexp.typeDefsexp
 abbrev dec := FromSexp.decsexp
 
 def program (ds : List Dec) : Sexp := list (ds.map dec)

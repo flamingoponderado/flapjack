@@ -136,25 +136,6 @@ theorem patternListSimulation {C F : Type} (genv : GlobalEnv) (compMap compMap2 
           exact tailIH sources _ bound flatEnv envRel tail
         · exact envRel
 
-/-- Existential result form of pattern simulation. This is Flapjack
-infrastructure over the still-unreviewed factored relations. -/
-theorem pmatch_result_related {C F : Type} (genv : GlobalEnv) (compMap compMap2 : Environment)
-    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (sourceState : SemanticPrimitivesHOL.State F)
-    (flatState : FlatSem.State C F) (suffix bound : List (VarN × SemanticPrimitivesHOL.Value))
-    (flatEnv : List (VarN × FlatSem.Value)) (shadowers : VarN → Prop)
-    (inv : GlobalEnvInv genv compMap2 shadowers sourceEnv) (mapsEq : compMap2.c = compMap.c) (ok : genvCOk genv.c)
-    (typesOk : genvCTysOk genv.c genv.tys) (stateRel : StateRel genv sourceState flatState)
-    (pattern : Pat) (source : SemanticPrimitivesHOL.Value) (flat : FlatSem.Value)
-    (envRel : EnvRel genv (alistToNs bound) flatEnv) (valueRel : ValueRel genv source flat)
-    (result : MatchResult (List (VarN × SemanticPrimitivesHOL.Value)))
-    (evaluated : SemanticPrimitivesHOL.pmatch sourceEnv.c sourceState.refs pattern source (bound ++ suffix) = result) :
-    ∃ flatResult, FlatSem.pmatch flatState (compilePat compMap pattern) flat flatEnv = flatResult ∧
-      MatchResultRel genv suffix result flatResult := by
-  refine ⟨_, rfl, ?_⟩
-  rw [← evaluated]
-  exact patternSimulation genv compMap compMap2 sourceEnv sourceState flatState suffix shadowers inv mapsEq ok typesOk stateRel
-    pattern source flat bound flatEnv envRel valueRel
-
 /-- A successful source pattern match has a related flat binding list whose
 names are exactly the compiled pattern bindings, in order. This combines the
 pattern simulation with the flat matcher's binding-order property. -/
@@ -185,25 +166,6 @@ theorem pmatch_success_bindings {C F : Type} (genv : GlobalEnv) (compMap compMap
     have names := (FlatProps.pmatchBindings flatState).1 (compilePat compMap pattern) flat [] flatBindings flatMatch
     simpa using names
 
-/-- Existential result form for pattern lists. This is Flapjack infrastructure
-over the still-unreviewed factored relations. -/
-theorem pmatchList_result_related {C F : Type} (genv : GlobalEnv) (compMap compMap2 : Environment)
-    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (sourceState : SemanticPrimitivesHOL.State F)
-    (flatState : FlatSem.State C F) (suffix bound : List (VarN × SemanticPrimitivesHOL.Value))
-    (flatEnv : List (VarN × FlatSem.Value)) (shadowers : VarN → Prop)
-    (inv : GlobalEnvInv genv compMap2 shadowers sourceEnv) (mapsEq : compMap2.c = compMap.c)
-    (ok : genvCOk genv.c) (typesOk : genvCTysOk genv.c genv.tys) (stateRel : StateRel genv sourceState flatState)
-    (patterns : List Pat) (sources : List SemanticPrimitivesHOL.Value) (flats : List FlatSem.Value)
-    (envRel : EnvRel genv (alistToNs bound) flatEnv) (valuesRel : List.Forall₂ (ValueRel genv) sources flats)
-    (result : MatchResult (List (VarN × SemanticPrimitivesHOL.Value)))
-    (evaluated : SemanticPrimitivesHOL.pmatchList sourceEnv.c sourceState.refs patterns sources (bound ++ suffix) = result) :
-    ∃ flatResult, FlatSem.pmatchList flatState (patterns.map (compilePat compMap)) flats flatEnv = flatResult ∧
-      MatchResultRel genv suffix result flatResult := by
-  refine ⟨_, rfl, ?_⟩
-  rw [← evaluated]
-  exact patternListSimulation genv compMap compMap2 sourceEnv sourceState flatState suffix shadowers inv mapsEq ok typesOk stateRel
-    patterns sources flats bound flatEnv envRel valuesRel
-
 /-- Original-hypothesis shape for individual pattern simulation, over the
 factored relations. It remains untagged until those relations are reviewed. -/
 theorem pmatch_originalShape {C F : Type} (genv : GlobalEnv) (compMap compMap2 : Environment)
@@ -225,8 +187,10 @@ theorem pmatch_originalShape {C F : Type} (genv : GlobalEnv) (compMap compMap2 :
   subst constructors
   subst store
   subst bindings
-  exact pmatch_result_related genv compMap compMap2 sourceEnv sourceState flatState suffix bound flatEnv
-    shadowers inv mapsEq ok typesOk stateRel pattern source flat envRel valueRel result evaluated
+  refine ⟨_, rfl, ?_⟩
+  rw [← evaluated]
+  exact patternSimulation genv compMap compMap2 sourceEnv sourceState flatState suffix shadowers
+    inv mapsEq ok typesOk stateRel pattern source flat bound flatEnv envRel valueRel
 
 /-- Original-hypothesis shape for pattern-list simulation, over the factored
 relations. It remains untagged until those relations are reviewed. -/
@@ -249,7 +213,9 @@ theorem pmatchList_originalShape {C F : Type} (genv : GlobalEnv) (compMap compMa
   subst constructors
   subst store
   subst bindings
-  exact pmatchList_result_related genv compMap compMap2 sourceEnv sourceState flatState suffix bound flatEnv
-    shadowers inv mapsEq ok typesOk stateRel patterns sources flats envRel valuesRel result evaluated
+  refine ⟨_, rfl, ?_⟩
+  rw [← evaluated]
+  exact patternListSimulation genv compMap compMap2 sourceEnv sourceState flatState suffix shadowers
+    inv mapsEq ok typesOk stateRel patterns sources flats bound flatEnv envRel valuesRel
 
 end Flapjack.Compiler.Backend.SourceToFlat
