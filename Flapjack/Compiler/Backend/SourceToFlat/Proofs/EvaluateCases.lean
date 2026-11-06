@@ -55,36 +55,6 @@ theorem envRel_alist_lookup (genv : GlobalEnv) (source : List (VarN × SemanticP
   obtain ⟨flatValue, flatLookup, valueRel⟩ := envRel_lookup genv (alistToNs source) flat related name value sourceLookup
   exact ⟨flatValue, valueRel, flatLookup⟩
 
-/-- A function formed in a global environment and an empty flat local
-environment produces related closures. -/
-theorem evaluate_global_function_related {C F : Type} (genv : GlobalEnv) (compMap : Environment)
-    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value)
-    (globalInv : GlobalEnvInv genv compMap (fun _ => False) sourceEnv)
-    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
-    (statesRel : StateRel genv sourceState flatState) (trace : List VarN)
-    (name : VarN) (body : AstHOL.Exp) (fuel : Nat) :
-    let flatEnv : FlatSem.Environment FlatSem.Value := ⟨[]⟩
-    let compiledBody := compileExp trace
-      { compMap with v := nsBind name (.localName .none name) compMap.v } body
-    EvaluateHOL.evaluate sourceState sourceEnv [.fn name body] =
-      (sourceState, .val [.closure sourceEnv name body]) ∧
-    FlatSem.evaluateFuel (fuel + 1) flatEnv flatState [compileExp trace compMap (.fn name body)] =
-      some (flatState, .val [.closure flatEnv name compiledBody]) ∧
-    ValueRel genv (.closure sourceEnv name body) (.closure flatEnv name compiledBody) ∧
-    StateRel genv sourceState flatState := by
-  have inv : GlobalEnvInv genv compMap (fun n => n ∈ ([] : List VarN)) sourceEnv := by
-    simpa using globalInv
-  have related := ValueRel.closure genv compMap sourceEnv nsEmpty name body ⟨[]⟩ trace [.none]
-    (.empty genv) inv rfl
-  have appendEmpty : nsAppend (nsEmpty : Namespace ModN VarN SemanticPrimitivesHOL.Value) sourceEnv.v = sourceEnv.v := by
-    cases h : sourceEnv.v with
-    | bind values modules => simp [nsEmpty, nsAppend]
-  have closureRel : ValueRel genv (.closure sourceEnv name body)
-      (.closure ⟨[]⟩ name (compileExp trace
-        { compMap with v := nsBind name (.localName .none name) compMap.v } body)) := by
-    simpa [appendEmpty, bindLocals, nsBindList] using related
-  exact ⟨by simp [EvaluateHOL.evaluate], rfl, closureRel, statesRel⟩
-
 /-- A function captures related locals and preserves the global environment
 invariant. The trace list has the same length as the flat local environment. -/
 theorem evaluate_function_related {C F : Type} (genv : GlobalEnv) (compMap : Environment)

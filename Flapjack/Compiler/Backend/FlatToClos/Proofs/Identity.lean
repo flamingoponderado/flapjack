@@ -48,30 +48,6 @@ theorem evaluate_flat_conversion {C F : Type} (env : FlatSem.Environment FlatSem
   cases run : FlatSem.evaluate env state [argument] with
   | mk next result => cases result <;> rfl
 
-/-- Converting a byte character to an integer and then to a byte word
-preserves its eight bits. -/
-theorem char_word_roundtrip {C F : Type} (state : FlatSem.State C F) (byte : BitVec 8) :
-    FlatSem.applyResult state (.src (.fromTo .charT .intT)) [.litv (.char byte)] =
-      (state, .val [.litv (.intLit byte.toNat)]) ∧
-    FlatSem.applyResult state (.src (.fromTo .intT (.wordT .w8))) [.litv (.intLit byte.toNat)] =
-      (state, .val [.litv (.word8 byte)]) := by
-  simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection,
-    FlatSem.flatToValue, FlatSem.valueToFlat, SemanticPrimitivesHOL.doApp,
-    SemanticPrimitivesHOL.doAppNumericCore]
-
-/-- Converting a byte word to an integer and then to a character preserves
-its eight bits and stays within the character bounds. -/
-theorem word_char_roundtrip {C F : Type} (state : FlatSem.State C F) (byte : BitVec 8) :
-    FlatSem.applyResult state (.src (.fromTo (.wordT .w8) .intT)) [.litv (.word8 byte)] =
-      (state, .val [.litv (.intLit byte.toNat)]) ∧
-    FlatSem.applyResult state (.src (.fromTo .intT .charT)) [.litv (.intLit byte.toNat)] =
-      (state, .val [.litv (.char byte)]) := by
-  have bound : byte.toNat ≤ 255 := by have := byte.isLt; omega
-  have inRange : ¬((byte.toNat : Int) < 0 ∨ 255 < (byte.toNat : Int)) := by omega
-  simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection,
-    FlatSem.flatToValue, FlatSem.valueToFlat, SemanticPrimitivesHOL.doApp,
-    SemanticPrimitivesHOL.doAppNumericCore, inRange]
-
 /-- The character-to-integer-to-byte conversion pair is erased by the
 compiler; successful source conversion and the original closure value remain
 related. -/

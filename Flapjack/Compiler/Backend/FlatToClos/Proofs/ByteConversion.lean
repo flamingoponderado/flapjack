@@ -11,20 +11,6 @@ theorem intToByte_remainder (value : Int) :
     (0 : Int) ≤ value.fmod 256 := by
   simp [BitVec.toNat_ofInt, Int.fmod_eq_emod, Int.emod_nonneg]
 
-/-- The emitted remainder operation returns the closure representation of
-the source conversion result. -/
-theorem intToByte_operation {C F : Type} (state : ClosSem.State C F)
-    (trace : BackendCommon.Tra) (value : Int) :
-    ClosSem.evaluate [.op trace (.intOp .mod)
-      [.op trace (.intOp (.const 256)) [], .var trace 0]] [.number value] state =
-      (.val [.number (value.fmod 256)], state) ∧
-    ValueRel (.litv (.word8 (BitVec.ofInt 8 value))) (.number (value.fmod 256)) := by
-  have remainder := intToByte_remainder value
-  constructor
-  · simp [ClosSem.evaluate, ClosSem.fixClock, ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doIntApp]
-  · have rel := ValueRel.word8 (BitVec.ofInt 8 value)
-    simpa [remainder.1, Int.toNat_of_nonneg remainder.2] using rel
-
 /-- The emitted modulo expression evaluates its argument and propagates any
 argument error before applying the remainder operation. -/
 theorem evaluate_mod256_argument {C F : Type} (state : ClosSem.State C F)

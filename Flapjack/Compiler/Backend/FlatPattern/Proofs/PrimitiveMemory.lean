@@ -115,37 +115,4 @@ theorem doApp_arrayFixed_related {C F : Type} (cfg : Config)
   · exact ⟨states.1, forall₂_append_one states.2.1 related, states.2.2⟩
   · exact (valueRel_loc true source.refs.length _).2 rfl
 
-/-- Reading a reference through flat's zero-index projection preserves its
-contained value when the source read succeeds. -/
-theorem doApp_refRead_related {C F : Type} (cfg : Config)
-    (source target : FlatSem.State C F) (flag : Bool) (index : Nat) (value : FlatSem.Value)
-    (states : StateRel cfg source target)
-    (run : FlatSem.doApp source (.el 0) [.loc flag index] = some (source, .val value)) :
-    ∃ value', FlatSem.doApp target (.el 0) [.loc flag index] = some (target, .val value') ∧ ValueRel value value' := by
-  cases found : Flapjack.SemanticPrimitivesHOL.storeLookup index source.refs with
-  | none => simp [FlatSem.doApp, FlatSem.doAppFlat, found] at run
-  | some entry =>
-    cases entry with
-    | refv stored =>
-      simp [FlatSem.doApp, FlatSem.doAppFlat, found] at run
-      subst value
-      obtain ⟨value', found', related⟩ := stateRel_lookup_ref cfg source target states index stored found
-      exact ⟨value', by simp [FlatSem.doApp, FlatSem.doAppFlat, found'], related⟩
-    | w8array _ | varray _ | thunk _ _ => simp [FlatSem.doApp, FlatSem.doAppFlat, found] at run
-
-/-- Projection from related constructor values returns related fields. -/
-theorem doApp_constructorRead_related {C F : Type} (state target : FlatSem.State C F)
-    (index : Nat) (tag : Option (FlatLang.CtorId × FlatLang.TypeId))
-    (fields fields' : List FlatSem.Value) (value : FlatSem.Value)
-    (related : List.Forall₂ ValueRel fields fields')
-    (run : FlatSem.doApp state (.el index) [.conv tag fields] = some (state, .val value)) :
-    ∃ value', FlatSem.doApp target (.el index) [.conv tag fields'] = some (target, .val value') ∧ ValueRel value value' := by
-  cases found : fields[index]? with
-  | none => simp [FlatSem.doApp, FlatSem.doAppFlat, found] at run
-  | some field =>
-    simp [FlatSem.doApp, FlatSem.doAppFlat, found] at run
-    subst value
-    obtain ⟨field', found', fieldRel⟩ := forall₂_getElem_some related index field found
-    exact ⟨field', by simp [FlatSem.doApp, FlatSem.doAppFlat, found'], fieldRel⟩
-
 end Flapjack.Compiler.Backend.FlatPattern

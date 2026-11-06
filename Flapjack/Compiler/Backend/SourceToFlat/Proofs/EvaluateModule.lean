@@ -124,47 +124,5 @@ theorem factoredDecCase_liftModule {C F : Type} [Nonempty C]
       cases same
       exact errors error rfl
 
-/-- A module declaration satisfies the factored declaration induction
-hypothesis when its inner declaration list does. -/
-theorem factoredDecIH_dmod {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (moduleName : ModN) (decs : List Dec) (innerIH : FactoredDecIH (F := F) interp transform decs) :
-    FactoredDecIH (F := F) interp transform [.dmod moduleName decs] := by
-  intro genv env nextEnv sourceEnv trace source sourceLast flat start finish next other n n' gen nextGen
-    flatDecs result sourceRun invariant compiled envInv notTypeError generation future bounded
-  generalize innerCompiled : compileDecs (moduleName :: trace) n start env gen decs = innerTuple
-  obtain ⟨innerN, innerNext, innerEnv, innerGen, innerCode⟩ := innerTuple
-  have outerCompiled : compileDecs trace n start env gen [.dmod moduleName decs] =
-      (innerN, innerNext, liftEnv moduleName innerEnv, innerGen, innerCode) := by
-    simp [compileDecs, innerCompiled]
-  have compEq := compiled.symm.trans outerCompiled
-  simp only [Prod.mk.injEq] at compEq
-  obtain ⟨_, nextEq, envEq, genEq, codeEq⟩ := compEq
-  subst next
-  subst nextEnv
-  subst nextGen
-  subst flatDecs
-  generalize innerRun : EvaluateHOL.evaluateDecs source sourceEnv decs = innerPair
-  obtain ⟨innerLast, innerResult⟩ := innerPair
-  have resultEq : sourceLast = innerLast ∧ result =
-      (match innerResult with
-       | .val inner => .val ⟨nsLift moduleName inner.v, nsLift moduleName inner.c⟩
-       | .err error => .err error) := by
-    have h := sourceRun
-    simp only [EvaluateHOL.evaluateDecs, innerRun] at h
-    cases innerResult <;> simp_all
-  obtain ⟨lastEq, outEq⟩ := resultEq
-  subst sourceLast
-  subst result
-  have innerSafe : innerResult ≠ .err (.abort .typeError) := by
-    cases innerResult with
-    | val resultEnv => simp
-    | err error => simpa using notTypeError
-  have inner := innerIH genv env innerEnv sourceEnv (moduleName :: trace) source innerLast flat start finish
-    innerNext other n innerN gen innerGen innerCode innerResult innerRun invariant innerCompiled envInv innerSafe
-    generation future bounded
-  cases innerResult <;>
-    exact factoredDecCase_liftModule interp transform genv source innerLast flat finish innerNext other innerGen
-      innerEnv moduleName innerCode _ inner
 
 end Flapjack.Compiler.Backend.SourceToFlat

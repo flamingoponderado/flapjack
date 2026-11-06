@@ -1,4 +1,4 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalList
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalEnvironment
 import Flapjack.EvaluateHOL.ClockFull
 
 /-! Clock-bounded local expression and list simulation. These factored

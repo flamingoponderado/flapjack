@@ -136,17 +136,6 @@ theorem factoredDecIH_denv {C F : Type} [Nonempty C]
   · intro error impossible
     cases impossible
 
-/-- Expression forms whose factored simulation is currently available in an
-empty local environment, including nested source annotations. -/
-inductive FactoredSimpleExpression : AstHOL.Exp → Prop where
-  | literal (lit : Lit) : FactoredSimpleExpression (.lit lit)
-  | function (name : VarN) (body : AstHOL.Exp) : FactoredSimpleExpression (.fn name body)
-  | variable (id : Ident ModN VarN) : FactoredSimpleExpression (.var id)
-  | tannot (expr : AstHOL.Exp) (typ : AstT) : FactoredSimpleExpression expr →
-      FactoredSimpleExpression (.tannot expr typ)
-  | lannot (expr : AstHOL.Exp) (loc : Flapjack.Misc.Location.Locs) : FactoredSimpleExpression expr →
-      FactoredSimpleExpression (.lannot expr loc)
-
 /-- The source-safety condition for a value declaration excludes a type
 error from its initializer. -/
 theorem dlet_expression_safe {F : Type} (source : State F) (env : SemEnv Value)
@@ -158,70 +147,6 @@ theorem dlet_expression_safe {F : Type} (source : State F) (env : SemEnv Value)
   intro last bad
   apply safe last
   simp [EvaluateHOL.evaluateDecs, distinct, wellformed, bad]
-
-/-- Simple expressions and their annotations satisfy the factored expression
-step under the source non-type-error premise. -/
-theorem factoredSimpleExpression_step {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
-    (source : State F) (flat : FlatSem.State C F) (sourceEnv : SemEnv Value)
-    (trace : List VarN) (env : Environment) (gen : EnvironmentGenerationStore) (expr : AstHOL.Exp)
-    (supported : FactoredSimpleExpression expr)
-    (envInv : GlobalEnvInv genv env (fun _ => False) sourceEnv)
-    (invariant : factoredInvariant interp transform gen genv (start, finish, other) source flat)
-    (generation : envGenRel gen source.evalState)
-    (safe : ∀ last, EvaluateHOL.evaluate source sourceEnv [expr] ≠ (last, .err (.abort .typeError))) :
-    DletExpressionStep interp transform genv start finish other source flat sourceEnv trace env gen expr := by
-  induction supported with
-  | literal lit =>
-    exact dletExpressionStep_literal interp transform genv start finish other source flat
-      sourceEnv trace env gen lit invariant generation
-  | function name body =>
-    exact dletExpressionStep_function interp transform genv start finish other source flat
-      sourceEnv trace env gen name body envInv invariant generation
-  | «variable» id =>
-    cases lookup : nsLookup sourceEnv.v id with
-    | some value =>
-      exact dletExpressionStep_global interp transform genv start finish other source flat sourceEnv
-        trace env gen id value lookup envInv invariant generation
-    | none =>
-      have bad : EvaluateHOL.evaluate source sourceEnv [.var id] = (source, .err (.abort .typeError)) := by
-        simp [EvaluateHOL.evaluate, lookup, EvaluateHOL.typeError]
-      exact False.elim (safe source bad)
-  | tannot expr typ _ ih =>
-    apply dletExpressionStep_tannot interp transform genv start finish other source flat sourceEnv trace env gen expr typ
-    apply ih
-    intro last bad
-    apply safe last
-    simpa [EvaluateHOL.evaluate] using bad
-  | lannot expr loc _ ih =>
-    apply dletExpressionStep_lannot interp transform genv start finish other source flat sourceEnv trace env gen expr loc
-    apply ih
-    intro last bad
-    apply safe last
-    cases loc
-    simpa [EvaluateHOL.evaluate] using bad
-
-/-- Value declarations with a simple, possibly annotated initializer satisfy
-the factored declaration induction hypothesis. -/
-theorem factoredDecIH_dlet_simple {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp)
-    (supported : FactoredSimpleExpression expr) :
-    FactoredDecIH (F := F) interp transform [.dlet location pattern expr] := by
-  intro genv env nextEnv sourceEnv trace source sourceLast flat start finish next other n n' gen nextGen
-    flatDecs result sourceRun invariant compiled envInv notTypeError generation future bounded
-  have safe : ∀ last, EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern expr] ≠
-      (last, .err (.abort .typeError)) := by
-    intro last bad
-    apply notTypeError
-    exact congrArg Prod.snd (sourceRun.symm.trans bad)
-  apply evaluateDlet_case_factored interp transform genv start finish next other source sourceLast flat sourceEnv
-    trace n n' env nextEnv gen nextGen location pattern expr flatDecs result sourceRun invariant compiled
-    envInv notTypeError generation future bounded
-  exact factoredSimpleExpression_step interp transform genv start finish other source flat sourceEnv
-    ((AstHOL.patBindings pattern).reverse ++ trace) env gen expr supported envInv invariant generation
-    (dlet_expression_safe source sourceEnv location pattern expr safe)
 
 /-- Compose a successful first declaration with a tail induction hypothesis.
 The tail hypothesis has the same invariant, environment, generation and
@@ -542,8 +467,6 @@ inductive FactoredDecSupported : Dec → Prop where
   | letrec (location : Flapjack.Misc.Location.Locs) (funs : List (VarN × VarN × AstHOL.Exp)) :
       FactoredDecSupported (.dletrec location funs)
   | denv (name : VarN) : FactoredDecSupported (.denv name)
-  | simple (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp) :
-      FactoredSimpleExpression expr → FactoredDecSupported (.dlet location pattern expr)
 
 /-- Every finite list of the currently proved declaration forms satisfies the
 factored declaration simulation. Other forms and correspondence of the
@@ -558,6 +481,5 @@ theorem factoredDecIH_supported_list {C F : Type} [Nonempty C]
   | tabbrev location vars name typ => exact factoredDecIH_dtabbrev interp transform location vars name typ
   | letrec location funs => exact factoredDecIH_dletrec interp transform location funs
   | denv name => exact factoredDecIH_denv interp transform name
-  | simple location pattern expr expression => exact factoredDecIH_dlet_simple interp transform location pattern expr expression
 
 end Flapjack.Compiler.Backend.SourceToFlat

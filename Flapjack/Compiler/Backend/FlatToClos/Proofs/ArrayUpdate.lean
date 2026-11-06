@@ -104,32 +104,6 @@ theorem byteArrayUpdate_related {C F : Type} (source : FlatSem.State C F) (targe
   · rcases states with ⟨maxApp, ffi, clock, _, globals, values, install⟩
     exact ⟨maxApp, ffi, clock, newStores, globals, values, install⟩
 
-/-- Invalid checked value-array writes raise Subscript; unchecked writes
-report a type error at the primitive boundary. -/
-theorem arrayUpdate_outOfBounds {C F : Type} (source : FlatSem.State C F)
-    (pointer : Nat) (flag : Bool) (items : List FlatSem.Value) (index : Int) (value : FlatSem.Value)
-    (found : source.refs[pointer]? = some (.varray items))
-    (bad : index < 0 ∨ items.length ≤ index.toNat) :
-    FlatSem.doAppMemory source .aupdate [.loc flag pointer, .litv (.intLit index), value] =
-      some (some (source, .err (.raise FlatSem.subscriptExnV))) ∧
-    FlatSem.doAppMemory source .aupdateUnsafe [.loc flag pointer, .litv (.intLit index), value] = some none := by
-  rcases bad with negative | bound
-  · simp [FlatSem.doAppMemory, FlatSem.updateIndexed, FlatSem.boundsFailure, storeLookup, found, negative]
-  · simp [FlatSem.doAppMemory, FlatSem.updateIndexed, FlatSem.boundsFailure, storeLookup, found, bound]
-
-/-- Invalid checked byte-array writes raise Subscript; unchecked writes
-report a type error at the primitive boundary. -/
-theorem byteArrayUpdate_outOfBounds {C F : Type} (source : FlatSem.State C F)
-    (pointer : Nat) (flag : Bool) (bytes : List (BitVec 8)) (index : Int) (byte : BitVec 8)
-    (found : source.refs[pointer]? = some (.w8array bytes))
-    (bad : index < 0 ∨ bytes.length ≤ index.toNat) :
-    FlatSem.doAppMemory source .aw8update [.loc flag pointer, .litv (.intLit index), .litv (.word8 byte)] =
-      some (some (source, .err (.raise FlatSem.subscriptExnV))) ∧
-    FlatSem.doAppMemory source .aw8updateUnsafe [.loc flag pointer, .litv (.intLit index), .litv (.word8 byte)] = some none := by
-  rcases bad with negative | bound
-  · simp [FlatSem.doAppMemory, FlatSem.updateIndexed, FlatSem.boundsFailure, storeLookup, found, negative]
-  · simp [FlatSem.doAppMemory, FlatSem.updateIndexed, FlatSem.boundsFailure, storeLookup, found, bound]
-
 /-- The emitted checked byte write updates the target array for a valid index. -/
 theorem evaluate_checkedByteUpdate_inBounds {C F : Type} (state : ClosSem.State C F)
     (trace : BackendCommon.Tra) (env : List ClosSem.Value) (pointer : Nat) (flag : Bool)
