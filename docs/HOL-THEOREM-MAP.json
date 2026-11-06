@@ -111513,6 +111513,33 @@
     "reviewer": "Compared the source statement and typed local HOL proof replay in pattern_exh_steps_probe.out: any row produced by expanding a pattern list has the original list length."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Proofs/Soundness.lean",
+    "lean_name": "expand_sound",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "expand_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": ["refs"],
+    "reviewer": "Compared the pattern conjunct, preserving the membership and non-type-failure hypotheses and both conclusions against the typed local HOL proof replay in pattern_exh_steps_probe.out. The same-module witness checks the canonical finite-map parameter roundtrip; expand_thm assembles both source conjuncts."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Proofs/Soundness.lean",
+    "lean_name": "expandList_sound",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "expand_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": ["refs"],
+    "reviewer": "Compared the pattern-list conjunct, preserving the membership and non-type-failure hypotheses and both conclusions against the typed local HOL proof replay in pattern_exh_steps_probe.out. The same-module witness checks the canonical finite-map parameter roundtrip; expand_thm assembles both source conjuncts."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Proofs/Soundness.lean",
+    "lean_name": "expand_thm",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "expand_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": ["patternRefs", "listRefs"],
+    "reviewer": "Compared the complete source conjunction and its typed HOL proof replay in pattern_exh_steps_probe.out. The pattern and pattern-list conjuncts independently quantify patternRefs and listRefs at the canonical finite-map carrier, preserving all premises and conclusions."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/PatternExh/Exhaustive.lean",
     "lean_name": "exhRows",
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",

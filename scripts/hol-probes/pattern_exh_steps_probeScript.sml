@@ -183,3 +183,41 @@ val length_expand_list_replay = prove (
   ``!ps qs. MEM qs (pattern_exh$expand_list ps) ==> LENGTH qs = LENGTH ps``,
   Induct >> fs [pattern_exhTheory.expand_def, mem_mk_prods_replay] >> rw [] >> res_tac >> fs []);
 val _ = show_local "length_expand_list=" length_expand_list_replay;
+val _ = augment_srw_ss [rewrites [pand_simps_replay, pand_type_replay,
+  pand_success_replay, pmatch_any_replay, pmatch_list_nil_replay,
+  pmatch_list_cons_replay, pmatch_list_anys_replay, mem_ctor_nub_replay,
+  mem_ctor_keep_replay, mem_add_head_replay, mem_mk_prods_replay,
+  mem_mk_refs_replay, mem_mk_conses_replay, mem_mk_rows_replay]];
+val expand_thm_replay = prove (
+  ``(!p q refs v.
+      MEM q (pattern_exh$expand p) /\ pattern_semantics$pmatch refs p v <> pattern_common$PTypeFailure ==>
+      pattern_semantics$pmatch refs q v <> pattern_common$PTypeFailure /\
+      (pattern_semantics$pmatch refs q v = pattern_common$PMatchSuccess ==>
+       pattern_semantics$pmatch refs p v = pattern_common$PMatchSuccess)) /\
+    (!ps qs refs vs.
+      MEM qs (pattern_exh$expand_list ps) /\ pattern_semantics$pmatch_list refs ps vs <> pattern_common$PTypeFailure ==>
+      pattern_semantics$pmatch_list refs qs vs <> pattern_common$PTypeFailure /\
+      (pattern_semantics$pmatch_list refs qs vs = pattern_common$PMatchSuccess ==>
+       pattern_semantics$pmatch_list refs ps vs = pattern_common$PMatchSuccess))``,
+  ho_match_mp_tac pattern_semanticsTheory.pat_induction >> rpt conj_tac
+  >- fs [pattern_exhTheory.expand_def]
+  >- (rw [pattern_exhTheory.expand_def] >> imp_res_tac length_expand_list_replay >>
+      Cases_on `v` >> fs [pattern_semanticsTheory.pmatch_def] >>
+      Cases_on `o'` >> Cases_on `o''` >> fs [pattern_semanticsTheory.pmatch_def] >>
+      TRY (Cases_on `x`) >> fs [pattern_semanticsTheory.pmatch_def] >>
+      rw [] >> rfs [] >> res_tac >> fs [])
+  >- (rpt gen_tac >> strip_tac >> rpt gen_tac >> strip_tac >>
+      `pattern_semantics$pmatch refs p v <> pattern_common$PTypeFailure /\
+       pattern_semantics$pmatch refs p' v <> pattern_common$PTypeFailure` by
+        (qpat_x_assum `pattern_semantics$pmatch refs (pattern_semantics$Or _ _) _ <> _` mp_tac >>
+         fs [pattern_semanticsTheory.pmatch_def] >> every_case_tac >> fs []) >>
+      fs [pattern_exhTheory.expand_def] >> res_tac >> fs [pattern_semanticsTheory.pmatch_def] >>
+      Cases_on `pattern_semantics$pmatch refs p v` >>
+      Cases_on `pattern_semantics$pmatch refs p' v` >> fs [])
+  >- fs [pattern_exhTheory.expand_def]
+  >- (fs [pattern_exhTheory.expand_def] >> rw [] >>
+      Cases_on `v` >> fs [pattern_semanticsTheory.pmatch_def] >>
+      Cases_on `FLOOKUP refs n` >> fs [pattern_semanticsTheory.pmatch_def] >> res_tac >> fs [])
+  >- fs [pattern_exhTheory.expand_def]
+  >> fs [pattern_exhTheory.expand_def] >> rw [] >> Cases_on `vs` >> fs [] >> res_tac >> fs []);
+val _ = show_local "expand_thm=" expand_thm_replay;

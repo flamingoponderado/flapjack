@@ -84,6 +84,20 @@ theorem holFmapAsFiniteSupportParamWitness_pmatchList_anys_refs
     ofBroad (toBroad refs) refs.finiteSupport = refs :=
   holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
 
+theorem holFmapAsFiniteSupportParamWitness_expand_sound_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_expandList_sound_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
+
 /-- A wildcard matches every term. -/
 @[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "pmatch_Any"
   (fmap_as_finite_support_parameters := [refs])]
@@ -610,7 +624,10 @@ theorem expandList_length (patterns row : List Pat) (member : row ∈ expandList
     simp [ih tail tailMember]
 
 mutual
-/-- Expanding alternatives preserves non-error matching and reflects success. -/
+/-- The pattern conjunct of `expand_thm`: expansion preserves non-error
+matching and reflects success. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "expand_thm"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem expand_sound (pattern : Pat) (expanded : Pat) (refs : HolFiniteMapExact Nat Term) (value : Term)
     (member : expanded ∈ expand pattern) (safe : pmatch refs pattern value ≠ .typeFailure) :
     pmatch refs expanded value ≠ .typeFailure ∧
@@ -674,7 +691,10 @@ theorem expand_sound (pattern : Pat) (expanded : Pat) (refs : HolFiniteMapExact 
             split <;> simp_all
 termination_by sizeOf pattern
 
-/-- Expanding argument vectors preserves non-error matching and reflects success. -/
+/-- The list conjunct of `expand_thm`: expansion preserves non-error
+matching and reflects success. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "expand_thm"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem expandList_sound (patterns expanded : List Pat) (refs : HolFiniteMapExact Nat Term) (values : List Term)
     (member : expanded ∈ expandList patterns) (safe : pmatchList refs patterns values ≠ .typeFailure) :
     pmatchList refs expanded values ≠ .typeFailure ∧
@@ -704,6 +724,25 @@ theorem expandList_sound (patterns expanded : List Pat) (refs : HolFiniteMapExac
 termination_by sizeOf patterns
 end
 
+/-- Pattern and pattern-list expansion preserve non-error matching and reflect
+success, with independently quantified reference maps in the two conjuncts. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "expand_thm"
+  (fmap_as_finite_support_relation := [patternRefs, listRefs])]
+theorem expand_thm :
+    (∀ (pattern expanded : Pat) (patternRefs : HolFiniteMapExact Nat Term) (value : Term),
+      expanded ∈ expand pattern ∧ pmatch patternRefs pattern value ≠ .typeFailure →
+        pmatch patternRefs expanded value ≠ .typeFailure ∧
+          (pmatch patternRefs expanded value = .success → pmatch patternRefs pattern value = .success)) ∧
+    (∀ (patterns expanded : List Pat) (listRefs : HolFiniteMapExact Nat Term) (values : List Term),
+      expanded ∈ expandList patterns ∧ pmatchList listRefs patterns values ≠ .typeFailure →
+        pmatchList listRefs expanded values ≠ .typeFailure ∧
+          (pmatchList listRefs expanded values = .success → pmatchList listRefs patterns values = .success)) := by
+  constructor
+  · intro pattern expanded refs value assumptions
+    exact expand_sound pattern expanded refs value assumptions.1 assumptions.2
+  · intro patterns expanded refs values assumptions
+    exact expandList_sound patterns expanded refs values assumptions.1 assumptions.2
+
 /-- Each expanded matrix row originates in one input row and one of its
 expanded patterns. -/
 theorem orRows_member (rows : List (Pat × Nat)) (row : List Pat) (member : row ∈ orRows rows) :
@@ -721,7 +760,7 @@ theorem orRows_member (rows : List (Pat × Nat)) (row : List Pat) (member : row 
       exact ⟨original, originalIndex, List.mem_cons_of_mem _ inRest, expanded, expandedMember, equality⟩
 
 /-- Exhaustive rows cannot all fail when the row scan has no type error.
-HOL correspondence for the underlying matcher and map carrier remains pending. -/
+HOL correspondence for the row evaluator remains pending. -/
 theorem exhRows_sound (refs : HolFiniteMapExact Nat Term) (value : Term) (rows : List (Pat × Nat))
     (safe : matchRows refs rows value ≠ none) (exhaustive : exhRows rows = true) :
     matchRows refs rows value ≠ some .failure := by
