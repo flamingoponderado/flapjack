@@ -157,14 +157,6 @@ theorem expressionSimulationUpTo_all {C F : Type} (clock : Nat) :
     intro cfg stateCfg expression
     exact allWeights (FlatSem.expWeight expression) cfg stateCfg expression rfl
 
-/-- Every expression satisfies the proof-side forward simulation without a
-fixed external clock bound. -/
-theorem expressionSimulation_all {C F : Type} (cfg stateCfg : Config) (expression : FlatLang.Exp) :
-    ExpressionSimulation (C := C) (F := F) cfg stateCfg expression := by
-  intro sourceEnv targetEnv source target sourceFinal sourceResult n run envs states bound safe
-  exact expressionSimulationUpTo_all source.clock cfg stateCfg expression
-    sourceEnv targetEnv source target sourceFinal sourceResult n (by omega) run envs states bound safe
-
 /-- Expression-list and declaration-list compilation preserve evaluation. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "compile_exps_evaluate"]
 theorem compileExps_evaluate {C F : Type} (stateCfg : Config) :
@@ -200,9 +192,9 @@ theorem compileExps_evaluate {C F : Type} (stateCfg : Config) :
   · intro s1 decs s2 t1 cfg decs' res run compiled states safe
     subst decs'
     obtain ⟨t2, res', targetRun, finalStates, outcomes⟩ :=
-      evaluateDecs_simulation cfg stateCfg decs
-        (fun declaration _ => expressionSimulation_all cfg stateCfg declaration)
-        s1 s2 t1 res states run safe
+      evaluateDecs_simulation_upTo cfg stateCfg s1.clock decs
+        (fun declaration _ => expressionSimulationUpTo_all s1.clock cfg stateCfg declaration)
+        s1 s2 t1 res (Nat.le_refl _) states run safe
     exact ⟨t2, res', targetRun, outcomes, finalStates⟩
 
 end Flapjack.Compiler.Backend.FlatPattern

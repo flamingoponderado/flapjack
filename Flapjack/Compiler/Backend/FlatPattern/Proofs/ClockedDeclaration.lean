@@ -1,3 +1,5 @@
+import Flapjack.SemanticPrimitivesProps.ResultRelation
+import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateClock
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.DeclarationEvaluation
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ClockedExpressionCases
 
@@ -17,7 +19,7 @@ theorem evaluateDec_simulation_upTo {C F : Type} (cfg stateCfg : Config) (clock 
     (safe : outcome ≠ some (.abort .typeError)) :
     ∃ targetFinal targetOutcome,
       FlatSem.evaluateDec target (compileDec cfg declaration) = (targetFinal, targetOutcome) ∧
-      StateRel stateCfg sourceFinal targetFinal ∧ optionRel FlatErrorRel outcome targetOutcome := by
+      StateRel stateCfg sourceFinal targetFinal ∧ optionRel (SemanticPrimitivesProps.excRel ValueRel) outcome targetOutcome := by
   classical
   cases expressionRun : FlatSem.evaluate ⟨[]⟩ source [declaration] with
   | mk sourceNext expressionResult =>
@@ -38,7 +40,9 @@ theorem evaluateDec_simulation_upTo {C F : Type} (cfg stateCfg : Config) (clock 
       refine ⟨targetNext, some targetError, ?_, nextStates, ?_⟩
       · unfold FlatSem.evaluateDec compileDec
         rw [targetRun]
-      · exact errorsRel
+      · cases errorsRel with
+        | raise rel => exact rel
+        | abort _ => rfl
     | values valuesRel =>
       rename_i sourceValues targetValues
       have sourceShape : sourceNext = sourceFinal ∧
@@ -79,7 +83,7 @@ theorem evaluateDecs_simulation_upTo {C F : Type} (cfg stateCfg : Config) (clock
     (safe : outcome ≠ some (.abort .typeError)) :
     ∃ targetFinal targetOutcome,
       FlatSem.evaluateDecs target (declarations.map (compileDec cfg)) = (targetFinal, targetOutcome) ∧
-      StateRel stateCfg sourceFinal targetFinal ∧ optionRel FlatErrorRel outcome targetOutcome := by
+      StateRel stateCfg sourceFinal targetFinal ∧ optionRel (SemanticPrimitivesProps.excRel ValueRel) outcome targetOutcome := by
   induction declarations generalizing source target sourceFinal outcome with
   | nil =>
     simp [FlatSem.evaluateDecs] at run

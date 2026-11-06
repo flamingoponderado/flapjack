@@ -1,3 +1,4 @@
+import Flapjack.SemanticPrimitivesProps.ResultRelation
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ClockedExpressionList
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.SourceApplication
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ThunkEvaluation
@@ -469,7 +470,7 @@ theorem compile_eval_simulation_at_clock_boundedArgs {C F : Type} (cfg stateCfg 
       source.clock < clock → FlatSem.evaluateDecs source declarations = (sourceFinal, outcome) →
       StateRel stateCfg source target → outcome ≠ some (.abort .typeError) →
       ∃ targetFinal targetOutcome, FlatSem.evaluateDecs target (declarations.map (compileDec stateCfg)) =
-        (targetFinal, targetOutcome) ∧ StateRel stateCfg sourceFinal targetFinal ∧ optionRel FlatErrorRel outcome targetOutcome) :
+        (targetFinal, targetOutcome) ∧ StateRel stateCfg sourceFinal targetFinal ∧ optionRel (SemanticPrimitivesProps.excRel ValueRel) outcome targetOutcome) :
     ∀ (sourceEnv targetEnv : FlatSem.Environment FlatSem.Value) (source target sourceFinal : FlatSem.State C F)
       (sourceResult : Result (List FlatSem.Value) FlatSem.Value) (n : Nat),
       source.clock = clock →
@@ -574,7 +575,9 @@ theorem compile_eval_simulation_at_clock_boundedArgs {C F : Type} (cfg stateCfg 
               cases targetOutcome with
               | none => simp [optionRel] at outcomeRel
               | some targetError =>
-                have errorsRel : FlatErrorRel error targetError := by simpa [optionRel] using outcomeRel
+                have errorsRel : FlatErrorRel error targetError := by
+                  cases error <;> cases targetError <;>
+                    simp_all [optionRel, SemanticPrimitivesProps.excRel, FlatErrorRel.raise, FlatErrorRel.abort]
                 have sourceOuter := evaluate_eval_declarations sourceEnv source sourceNext sourceLast trace args sourceValues
                   declarations sourceConfig result (some error) argsRun decoded zero declsRun
                 have targetOuter := evaluate_eval_declarations targetEnv target targetNext targetLast trace (compileExps cfg args).2.2
