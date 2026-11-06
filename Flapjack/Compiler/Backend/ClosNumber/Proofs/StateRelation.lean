@@ -1,3 +1,4 @@
+import Flapjack.Misc.Option.Rel
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.ValueRelation
 import Flapjack.Compiler.Backend.Semantics.ClosSem.State
 import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyMemory
@@ -14,18 +15,12 @@ def RefRel (maxApp : Nat) : Ref Value → Ref Value → Prop
   | .thunk leftMode left, .thunk rightMode right => leftMode = rightMode ∧ ValueRel maxApp left right
   | _, _ => False
 
-/-- Option lifting used for globals and finite-map lookup results. -/
-def OptionRel {α β : Type} (relation : α → β → Prop) : Option α → Option β → Prop
-  | none, none => True
-  | some left, some right => relation left right
-  | _, _ => False
-
 /-- Pointwise option lifting states the same domain equality and related
 lookup results as HOL's finite-map relation. This helper has no separate HOL
 declaration. -/
 theorem optionRel_lookup_iff {K A B : Type} (relation : A → B → Prop)
     (left : HolFiniteMapExact K A) (right : HolFiniteMapExact K B) :
-    (∀ key, OptionRel relation (left.lookup key) (right.lookup key)) ↔
+    (∀ key, optionRel relation (left.lookup key) (right.lookup key)) ↔
       (∀ key, (∃ value, left.lookup key = some value) ↔
         ∃ value, right.lookup key = some value) ∧
       (∀ key a b, left.lookup key = some a → right.lookup key = some b → relation a b) := by
@@ -35,9 +30,9 @@ theorem optionRel_lookup_iff {K A B : Type} (relation : A → B → Prop)
     · intro key
       specialize h key
       cases leftEq : left.lookup key <;> cases rightEq : right.lookup key <;>
-        simp_all [OptionRel]
+        simp_all [optionRel]
     · intro key a b ha hb
-      simpa [ha, hb, OptionRel] using h key
+      simpa [ha, hb, optionRel] using h key
   · intro ⟨domains, entries⟩ key
     have same := domains key
     cases leftEq : left.lookup key with
@@ -65,8 +60,8 @@ def StateRel {C F : Type} (source : State (Nat × C) F) (target : State C F) : P
   source.clock = target.clock ∧ source.ffi = target.ffi ∧ target.maxApp = source.maxApp ∧
   source.compile = stateCc (ignoreTable compileInc) target.compile ∧
   target.compileOracle = stateCo (ignoreTable compileInc) source.compileOracle ∧
-  (∀ key, OptionRel (RefRel source.maxApp) (source.refs.lookup key) (target.refs.lookup key)) ∧
-  List.Forall₂ (OptionRel (ValueRel source.maxApp)) source.globals target.globals ∧
+  (∀ key, optionRel (RefRel source.maxApp) (source.refs.lookup key) (target.refs.lookup key)) ∧
+  List.Forall₂ (optionRel (ValueRel source.maxApp)) source.globals target.globals ∧
   (∀ index, (source.compileOracle index).2.2 = [] ∧
     ¬ ClosProps.containsAppSome source.maxApp (source.compileOracle index).2.1) ∧
   source.code = HolFiniteMapExact.empty ∧ target.code = HolFiniteMapExact.empty
@@ -86,7 +81,7 @@ theorem stateRel_withClock {C F : Type} {source : State (Nat × C) F} {target : 
     other components of the numbering state relation. -/
 theorem stateRel_withGlobals {C F : Type} {source : State (Nat × C) F} {target : State C F}
     (sourceGlobals targetGlobals : List (Option Value)) (related : StateRel source target)
-    (globalsRel : List.Forall₂ (OptionRel (ValueRel source.maxApp)) sourceGlobals targetGlobals) :
+    (globalsRel : List.Forall₂ (optionRel (ValueRel source.maxApp)) sourceGlobals targetGlobals) :
     StateRel { source with globals := sourceGlobals } { target with globals := targetGlobals } := by
   rcases related with ⟨clock, ffi, maxApp, compiler, oracle, refs, globals, safe, sourceCode, targetCode⟩
   exact ⟨clock, ffi, maxApp, compiler, oracle, refs, globalsRel, safe, sourceCode, targetCode⟩
@@ -108,29 +103,29 @@ theorem forall₂_set {α β : Type} {relation : α → β → Prop} {left : Lis
     element relation through the resulting option. -/
 theorem forall₂_getGlobal {α β : Type} {relation : α → β → Prop} {left : List α} {right : List β}
     (related : List.Forall₂ relation left right) (index : Nat) :
-    OptionRel relation (getGlobal index left) (getGlobal index right) := by
+    optionRel relation (getGlobal index left) (getGlobal index right) := by
   induction related generalizing index with
-  | nil => simp [getGlobal, OptionRel]
+  | nil => simp [getGlobal, optionRel]
   | cons head tail ih =>
     cases index with
-    | zero => simpa [getGlobal, OptionRel] using head
+    | zero => simpa [getGlobal, optionRel] using head
     | succ index => simpa [getGlobal] using ih index
 
 /-- Reading corresponding global slots preserves both uninitialized and
     out-of-range behavior, and relates every initialized value. -/
 theorem stateRel_getGlobal {C F : Type} {source : State (Nat × C) F} {target : State C F}
     (related : StateRel source target) (index : Nat) :
-    OptionRel (ValueRel source.maxApp) (getGlobal index source.globals).join
+    optionRel (ValueRel source.maxApp) (getGlobal index source.globals).join
       (getGlobal index target.globals).join := by
   have h := forall₂_getGlobal related.2.2.2.2.2.2.1 index
   cases left : getGlobal index source.globals with
   | none =>
-    cases right : getGlobal index target.globals <;> simp_all [OptionRel]
+    cases right : getGlobal index target.globals <;> simp_all [optionRel]
   | some leftSlot =>
     cases right : getGlobal index target.globals with
-    | none => simp_all [OptionRel]
+    | none => simp_all [optionRel]
     | some rightSlot =>
-      cases leftSlot <;> cases rightSlot <;> simp_all [OptionRel]
+      cases leftSlot <;> cases rightSlot <;> simp_all [optionRel]
 
 /-- Appending the same number of uninitialized global slots preserves the
     state relation. -/
@@ -138,7 +133,7 @@ theorem stateRel_allocGlobals {C F : Type} {source : State (Nat × C) F} {target
     (count : Nat) (related : StateRel source target) :
     StateRel { source with globals := source.globals ++ List.replicate count none }
       { target with globals := target.globals ++ List.replicate count none } := by
-  have blanks : List.Forall₂ (OptionRel (ValueRel source.maxApp))
+  have blanks : List.Forall₂ (optionRel (ValueRel source.maxApp))
       (List.replicate count none) (List.replicate count none) := by
     induction count with
     | zero => exact .nil
@@ -156,7 +151,7 @@ theorem stateRel_updateRefs {C F : Type} {source : State (Nat × C) F} {target :
   refine ⟨clock, ffi, maxApp, compiler, oracle, ?_, globals, safe, sourceCode, targetCode⟩
   intro key
   by_cases equal : key = index
-  · simp [HolFiniteMapExact.lookup_updateEq, Flapjack.FUPDATE_HOL, equal, OptionRel, refRel]
+  · simp [HolFiniteMapExact.lookup_updateEq, Flapjack.FUPDATE_HOL, equal, optionRel, refRel]
   · simpa [HolFiniteMapExact.lookup_updateEq, Flapjack.FUPDATE_HOL, equal] using refs key
 
 /-- Replacing both FFI states by the same state preserves the relation. -/
@@ -174,7 +169,7 @@ theorem stateRel_byteArray_lookup {C F : Type} {source : State (Nat × C) F} {ta
       target.refs.lookup index = some (.byteArray bytes) := by
   have h := related.2.2.2.2.2.1 index
   cases left : source.refs.lookup index <;> cases right : target.refs.lookup index <;>
-    simp_all [OptionRel, RefRel]
+    simp_all [optionRel, RefRel]
   rename_i leftRef rightRef
   cases leftRef <;> cases rightRef <;> simp_all
 
@@ -184,7 +179,7 @@ theorem stateRel_ref_unused {C F : Type} {source : State (Nat × C) F} {target :
     source.refs.lookup index = none ↔ target.refs.lookup index = none := by
   have h := related.2.2.2.2.2.1 index
   cases left : source.refs.lookup index <;> cases right : target.refs.lookup index <;>
-    simp_all [OptionRel]
+    simp_all [optionRel]
 
 /-- Allocation chooses the same least free reference in related stores. -/
 theorem stateRel_leastUnusedRef {C F : Type} {source : State (Nat × C) F} {target : State C F}
@@ -205,12 +200,12 @@ theorem stateRel_leastUnusedRef {C F : Type} {source : State (Nat × C) F} {targ
     relate its fields pointwise whenever it does. -/
 theorem stateRel_valueArray_lookup {C F : Type} {source : State (Nat × C) F} {target : State C F}
     (related : StateRel source target) (index : Nat) :
-    OptionRel (List.Forall₂ (ValueRel source.maxApp))
+    optionRel (List.Forall₂ (ValueRel source.maxApp))
       (match source.refs.lookup index with | some (.valueArray values) => some values | _ => none)
       (match target.refs.lookup index with | some (.valueArray values) => some values | _ => none) := by
   have h := related.2.2.2.2.2.1 index
   cases left : source.refs.lookup index <;> cases right : target.refs.lookup index <;>
-    simp_all [OptionRel, RefRel]
+    simp_all [optionRel, RefRel]
   rename_i leftRef rightRef
   cases leftRef <;> cases rightRef <;> simp_all
 
@@ -224,6 +219,6 @@ theorem initialState_stateRel {C F : Type} (ffi : HolFfiState F) (maxApp clock :
         (stateCc (ignoreTable compileInc) compiler) clock)
       (initialState ffi maxApp HolFiniteMapExact.empty
         (stateCo (ignoreTable compileInc) oracle) compiler clock) := by
-  simp [StateRel, initialState, HolFiniteMapExact.empty, OptionRel, safe]
+  simp [StateRel, initialState, HolFiniteMapExact.empty, optionRel, safe]
 
 end Flapjack.Compiler.Backend.ClosNumber
