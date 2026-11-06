@@ -9607,4 +9607,5 @@ recursive-environment theorem used by source-to-flat and flat-to-closure proofs.
 statement, including its independently polymorphic unused existential, and the
 polymorphic `maybe_all_list_SOME` theorem used in the word-list proof, and
 `genv_c_tys_ok_extend` with its four independent carrier types, and
-`genv_c_ok_extend` with its complete constructor compatibility premises.
+`genv_c_ok_extend` with its complete constructor compatibility premises,
+and the full `invariant_make_varls` initializer theorem.

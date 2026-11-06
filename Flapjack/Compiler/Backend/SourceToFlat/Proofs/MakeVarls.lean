@@ -119,33 +119,6 @@ theorem evaluate_makeVarls_indexed {C F : Type} (n : Nat) (trace : Tra) (idx : N
     pre post state n trace (by simpa [List.append_assoc] using slots)
   simpa [List.append_assoc, FlatSem.unitValue] using result
 
-/-- Executing the initializer also grows the global relation: previously
-initialized slots retain their values when the reserved block is filled. -/
-theorem evaluate_makeVarls_growth {C F : Type} (genv : GlobalEnv)
-    (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F)
-    (n : Nat) (trace : Tra) (idx len : Nat) (names : List VarN) (values : List FlatSem.Value)
-    (pre post : List (Option FlatSem.Value))
-    (globals : state.globals = genv.v)
-    (slots : state.globals = pre ++ (List.replicate len none ++ post))
-    (prefixLength : pre.length = idx) (length : values.length = names.length)
-    (slotLength : len = names.length)
-    (lookups : ∀ (i : Nat) (inValues : i < values.length),
-      env.v.lookup (names[i]'(by omega)) = some values[i]) :
-    FlatSem.evaluate env state [makeVarls n trace idx names] =
-        ({ state with globals := pre ++ (values.map some ++ post) }, .val [FlatSem.unitValue]) ∧
-      GlobalGrowth genv { genv with v := pre ++ (values.map some ++ post) } := by
-  have totalLookups : ∀ i, i < values.length →
-      env.v.lookup (Flapjack.holEl i names) = some (Flapjack.holEl i values) := by
-    intro i inValues
-    simpa only [Flapjack.holEl_eq_getElem i names (by omega),
-      Flapjack.holEl_eq_getElem i values inValues] using lookups i inValues
-  refine ⟨?_, ?_⟩
-  · simpa [List.append_assoc, FlatSem.unitValue] using
-      evaluate_makeVarls_indexed n trace idx names pre post state env values len
-        ⟨by simpa [List.append_assoc] using slots, prefixLength, length, slotLength, totalLookups⟩
-  · apply GlobalGrowth.fillNone genv pre (values.map some) post
-    simpa [List.length_map, length, slotLength] using globals.symm.trans slots
-
 /-- Updating the flat global slots and weakening the global relation preserves
 the factored state relation; references, clock, and FFI are unchanged. -/
 theorem stateRel_after_global_growth {C F : Type} (old new : GlobalEnv)

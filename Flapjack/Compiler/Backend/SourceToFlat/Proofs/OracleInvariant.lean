@@ -269,40 +269,5 @@ theorem idxRangeRel_blank {C : Type} (interp : Option (Value → Option (Config 
     previous nextMatch lengthMatch disjoint
   omega
 
-/-- The original index-range relation supplies the reserved slots for the
-factored declaration initialization. The full invariant's remaining oracle,
-state, and index postconditions are still separate obligations. -/
-theorem evaluate_makeVarls_idxRange {C F R : Type}
-    (interp : Option (Value → Option (Config × R))) (genv : GlobalEnv)
-    (sourceEnv : List (VarN × Value)) (flatEnv : List (VarN × FlatSem.Value))
-    (related : EnvRel genv (Flapjack.NamespaceHOL.alistToNs sourceEnv) flatEnv)
-    (distinct : (sourceEnv.map Prod.fst).Nodup)
-    (sourceState : State F) (flatState : FlatSem.State C F)
-    (stateRel : StateRel genv sourceState flatState) (globals : flatState.globals = genv.v)
-    (start finish : NextIndices) (other : Set (Nat × IndexKind))
-    (range : idxRangeRel interp genv sourceState.nextTypeStamp sourceState.nextExnStamp
-      sourceState.evalState (start, finish, other))
-    (lengthMatch : finIdxMatch genv.v.length finish (srcOracNextCfg interp sourceState.evalState))
-    (fits : flatEnv.length + start.vidx ≤ finish.vidx) (n : Nat) (trace : BackendCommon.Tra) :
-    ∃ pre post, pre.length = start.vidx ∧
-      flatState.globals = pre ++ (List.replicate flatEnv.length none ++ post) ∧
-      let values := flatEnv.reverse.map Prod.snd
-      let finalSlots := pre ++ (values.map some ++ post)
-      let finalEnv := { genv with v := finalSlots }
-      let finalState := { flatState with globals := finalSlots }
-      FlatSem.evaluate ⟨flatEnv⟩ flatState
-          [makeVarls n trace start.vidx (flatEnv.reverse.map Prod.fst)] =
-          (finalState, .val [FlatSem.unitValue]) ∧
-        GlobalGrowth genv finalEnv ∧ StateRel finalEnv sourceState finalState ∧
-        GlobalEnvInv finalEnv
-          { emptyEnv with v := Flapjack.NamespaceHOL.alistToNs (allocDefs n start.vidx (flatEnv.reverse.map Prod.fst)) }
-          (fun _ => False) ⟨Flapjack.NamespaceHOL.alistToNs sourceEnv, Flapjack.NamespaceHOL.nsEmpty⟩ := by
-  obtain ⟨pre, post, slots, size⟩ := idxRangeRel_blank interp genv sourceState.nextTypeStamp
-    sourceState.nextExnStamp sourceState.evalState start finish other flatEnv.length ⟨range, lengthMatch, fits⟩
-  have flatSlots : flatState.globals = pre ++ (List.replicate flatEnv.length none ++ post) := globals.trans slots
-  refine ⟨pre, post, size, flatSlots, ?_⟩
-  simpa [size] using evaluate_makeVarls_globalEnvInv genv sourceEnv flatEnv related distinct sourceState flatState
-    stateRel globals pre post flatSlots n trace
-
 end OracleInvariant
 end Flapjack.Compiler.Backend.SourceToFlat

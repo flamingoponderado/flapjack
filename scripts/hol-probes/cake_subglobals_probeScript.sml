@@ -128,3 +128,6 @@ val _ = (print "genv_c_tys_ok_extend_typed="; print_term (concl source_to_flatPr
 
 val _ = if null (hyp source_to_flatProofTheory.genv_c_ok_extend) then () else raise Fail "hypotheses: genv_c_ok_extend";
 val _ = (print "genv_c_ok_extend_typed="; print_term (concl source_to_flatProofTheory.genv_c_ok_extend); print "\n");
+
+val _ = if null (hyp source_to_flatProofTheory.invariant_make_varls) then () else raise Fail "hypotheses: invariant_make_varls";
+val _ = (print "invariant_make_varls_typed="; print_term (concl source_to_flatProofTheory.invariant_make_varls); print "\n");

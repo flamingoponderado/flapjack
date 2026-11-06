@@ -212,65 +212,6 @@ theorem evaluateDlet_alias_safe {C F : Type} [Nonempty C]
   exact ⟨value, stored, idx, nameTrace, sourceRun, compiled, flatRun, valueRel, newInv, invariant,
     GlobalGrowth.refl genv, idxPrev_refl next⟩
 
-/-- A successful source pattern match supplies the bindings used by the
-generated declaration initializer. After the reserved block is filled, those
-bindings satisfy the global environment invariant. -/
-theorem evaluateDlet_pattern_initializer {C F : Type} (genv : GlobalEnv)
-    (compMap compMap2 : Environment) (sourceEnv : SemEnv Value)
-    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
-    (shadowers : VarN → Prop) (envInv : GlobalEnvInv genv compMap2 shadowers sourceEnv)
-    (mapsEq : compMap2.c = compMap.c) (ok : genvCOk genv.c) (typesOk : genvCTysOk genv.c genv.tys)
-    (states : StateRel genv sourceState flatState) (globals : flatState.globals = genv.v)
-    (pattern : Pat) (sourceValue : Value) (flatValue : FlatSem.Value)
-    (valueRel : ValueRel genv sourceValue flatValue) (bindings : List (VarN × Value))
-    (matched : pmatch sourceEnv.c sourceState.refs pattern sourceValue [] = .match bindings)
-    (distinct : (AstHOL.patBindings pattern).Nodup) (pre post : List (Option FlatSem.Value))
-    (slots : flatState.globals = pre ++ (List.replicate (AstHOL.patBindings pattern).length none ++ post))
-    (n : Nat) :
-    ∃ flatBindings,
-      FlatSem.pmatch flatState (compilePat compMap pattern) flatValue [] = .match flatBindings ∧
-      EnvRel genv (alistToNs bindings) flatBindings ∧
-      flatBindings.map Prod.fst = AstHOL.patBindings pattern ∧
-      let finalSlots := pre ++ (flatBindings.reverse.map (fun p => some p.2) ++ post)
-      let finalGenv := { genv with v := finalSlots }
-      let finalFlat := { flatState with globals := finalSlots }
-      FlatSem.evaluate ⟨flatBindings⟩ flatState
-        [makeVarls 0 .none pre.length (AstHOL.patBindings pattern).reverse] =
-          (finalFlat, .val [FlatSem.unitValue]) ∧
-      GlobalGrowth genv finalGenv ∧ StateRel finalGenv sourceState finalFlat ∧
-      EnvDomainEq
-        { emptyEnv with v := alistToNs (allocDefs (n + 4) pre.length (AstHOL.patBindings pattern).reverse) }
-        ⟨alistToNs bindings, nsEmpty⟩ ∧
-      GlobalEnvInv finalGenv
-        { emptyEnv with v := alistToNs (allocDefs (n + 4) pre.length (AstHOL.patBindings pattern).reverse) }
-        (fun _ => False) ⟨alistToNs bindings, nsEmpty⟩ := by
-  obtain ⟨flatBindings, flatMatch, related, names⟩ :=
-    pmatch_success_sourceBindings genv compMap compMap2 sourceEnv sourceState flatState shadowers envInv
-      mapsEq ok typesOk states pattern sourceValue flatValue valueRel bindings matched
-  have namesRelated : bindings.map Prod.fst = flatBindings.map Prod.fst := by
-    have pairs := (envRel_alist_iff genv bindings flatBindings).mp related
-    clear matched flatMatch related names
-    induction pairs with
-    | nil => rfl
-    | cons head tail ih => simp only [List.map_cons, head.1, ih]
-  have bindingsDistinct : (bindings.map Prod.fst).Nodup := by simpa [namesRelated, names] using distinct
-  have lengthEq : flatBindings.length = (AstHOL.patBindings pattern).length := by
-    simpa using congrArg List.length names
-  have flatSlots : flatState.globals = pre ++ (List.replicate flatBindings.length none ++ post) := by
-    simpa [lengthEq] using slots
-  have initialized := evaluate_makeVarls_globalEnvInv genv bindings flatBindings related bindingsDistinct
-    sourceState flatState states globals pre post flatSlots 0 .none
-  have domain := envDomainEq_patternBindings genv bindings flatBindings pattern (n + 4) pre.length related names
-  refine ⟨flatBindings, flatMatch, related, names, ?_⟩
-  dsimp only
-  obtain ⟨run, growth, finalStates, finalEnv⟩ := initialized
-  refine ⟨?_, ?_, ?_, domain, ?_⟩
-  · simpa [List.map_reverse, names, Function.comp_def] using run
-  · simpa [List.map_map, Function.comp_def] using growth
-  · simpa [List.map_map, Function.comp_def] using finalStates
-  · rw [allocDefs_ignoreCounter (AstHOL.patBindings pattern).reverse (n + 4) 0 pre.length]
-    simpa [List.map_reverse, names, Function.comp_def] using finalEnv
-
 /-- A successful flat expression and pattern match run the generated
 initializer as the body of the declaration's match expression. -/
 theorem evaluateDlet_pattern_flat_success {C F : Type}
@@ -435,56 +376,6 @@ theorem evaluateDlet_pattern_error {C F : Type} (genv : GlobalEnv)
       · exact evaluateDlet_pattern_flat_error flat flatMiddle trace n next compMap gen location pattern expr _
           notAlias flatRun
 
-/-- Successful evaluation and matching of a non-alias declaration pattern
-produce related source and flat declarations and the resulting global
-environment invariant. The expression runs and post-expression relations are
-the expression induction hypothesis. -/
-theorem evaluateDlet_pattern_success {C F : Type} (genv : GlobalEnv)
-    (source sourceMiddle : SemanticPrimitivesHOL.State F) (flat flatMiddle : FlatSem.State C F)
-    (sourceEnv : SemEnv Value) (trace : List VarN) (n : Nat) (next : NextIndices)
-    (compMap compMap2 : Environment) (gen : EnvironmentGenerationStore)
-    (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp)
-    (value : Value) (flatValue : FlatSem.Value) (bindings : List (VarN × Value))
-    (notAlias : simpleDlet pattern expr = none) (distinct : (AstHOL.patBindings pattern).Nodup)
-    (wellformed : AstHOL.everyExp (oneConCheck sourceEnv.c) expr = true)
-    (sourceRun : EvaluateHOL.evaluate source sourceEnv [expr] = (sourceMiddle, .val [value]))
-    (flatRun : FlatSem.evaluate ⟨[]⟩ flat
-      [compileExp ((AstHOL.patBindings pattern).reverse ++ trace) compMap expr] = (flatMiddle, .val [flatValue]))
-    (matched : pmatch sourceEnv.c sourceMiddle.refs pattern value [] = .match bindings)
-    (shadowers : VarN → Prop) (envInv : GlobalEnvInv genv compMap2 shadowers sourceEnv)
-    (mapsEq : compMap2.c = compMap.c) (ok : genvCOk genv.c) (typesOk : genvCTysOk genv.c genv.tys)
-    (states : StateRel genv sourceMiddle flatMiddle) (globals : flatMiddle.globals = genv.v)
-    (valueRel : ValueRel genv value flatValue) (pre post : List (Option FlatSem.Value))
-    (slots : flatMiddle.globals = pre ++ (List.replicate (AstHOL.patBindings pattern).length none ++ post))
-    (prefixLength : pre.length = next.vidx) :
-    ∃ flatBindings : List (VarN × FlatSem.Value),
-      let finalSlots := pre ++ (flatBindings.reverse.map (fun p => some p.2) ++ post)
-      let finalGenv := { genv with v := finalSlots }
-      let finalFlat := { flatMiddle with globals := finalSlots }
-      flatBindings.map Prod.fst = AstHOL.patBindings pattern ∧
-      EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern expr] =
-        (sourceMiddle, .val ⟨alistToNs bindings, nsEmpty⟩) ∧
-      FlatSem.evaluateDecs flat (compileDecs trace n next compMap gen [.dlet location pattern expr]).2.2.2.2 =
-        (finalFlat, none) ∧
-      GlobalGrowth genv finalGenv ∧ StateRel finalGenv sourceMiddle finalFlat ∧
-      EnvDomainEq
-        { emptyEnv with v := alistToNs (allocDefs (n + 4) next.vidx (AstHOL.patBindings pattern).reverse) }
-        ⟨alistToNs bindings, nsEmpty⟩ ∧
-      GlobalEnvInv finalGenv
-        { emptyEnv with v := alistToNs (allocDefs (n + 4) next.vidx (AstHOL.patBindings pattern).reverse) }
-        (fun _ => False) ⟨alistToNs bindings, nsEmpty⟩ := by
-  obtain ⟨flatBindings, flatMatch, _, names, initRun, growth, finalStates, domain, finalEnv⟩ :=
-    evaluateDlet_pattern_initializer genv compMap compMap2 sourceEnv sourceMiddle flatMiddle shadowers envInv mapsEq
-      ok typesOk states globals pattern value flatValue valueRel bindings matched distinct pre post slots n
-  refine ⟨flatBindings, names, ?_, ?_, growth, finalStates, ?_, ?_⟩
-  · simp [EvaluateHOL.evaluateDecs, distinct, wellformed, sourceRun, matched,
-      EvaluateHOL.headValue, Flapjack.holHd]
-  · apply evaluateDlet_pattern_flat_success flat flatMiddle _ trace n next compMap gen location pattern expr
-      flatValue flatBindings notAlias distinct flatRun flatMatch
-    simpa [prefixLength] using initRun
-  · simpa [prefixLength] using domain
-  · simpa [prefixLength] using finalEnv
-
 /-- A successful non-alias declaration preserves the full factored invariant
 after all pattern bindings are initialized. Reserved slots are derived from
 the pre-initialization invariant and the index-block bound. -/
@@ -505,10 +396,7 @@ theorem evaluateDlet_pattern_factored {C F : Type} [Nonempty C]
     (mapsEq : compMap2.c = compMap.c) (valueRel : ValueRel genv value flatValue)
     (invariant : factoredInvariant interp transform gen genv (start, finish, other) sourceMiddle flatMiddle)
     (fits : start.vidx + (AstHOL.patBindings pattern).length ≤ finish.vidx) :
-    ∃ (flatBindings : List (VarN × FlatSem.Value)) (pre post : List (Option FlatSem.Value)),
-      let finalSlots := pre ++ (flatBindings.reverse.map (fun p => some p.2) ++ post)
-      let finalGenv := { genv with v := finalSlots }
-      let finalFlat := { flatMiddle with globals := finalSlots }
+    ∃ (finalGenv : GlobalEnv) (finalFlat : FlatSem.State C F),
       let finalNext := { start with vidx := start.vidx + (AstHOL.patBindings pattern).length }
       EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern expr] =
         (sourceMiddle, .val ⟨alistToNs bindings, nsEmpty⟩) ∧
@@ -528,24 +416,31 @@ theorem evaluateDlet_pattern_factored {C F : Type} [Nonempty C]
         (fun _ => False) ⟨alistToNs bindings, nsEmpty⟩ ∧
       factoredInvariant interp transform gen finalGenv (finalNext, finish, other) sourceMiddle finalFlat := by
   have invariantCopy := invariant
-  obtain ⟨ok, typesOk, states, range, _, _, globals, _, _, fin⟩ := invariantCopy
-  obtain ⟨pre, post, genSlots, prefixLength⟩ := idxRangeRel_blank interp genv sourceMiddle.nextTypeStamp
-    sourceMiddle.nextExnStamp sourceMiddle.evalState start finish other (AstHOL.patBindings pattern).length
-      ⟨range, by simpa [globals] using fin, by omega⟩
-  have slots : flatMiddle.globals = pre ++ (List.replicate (AstHOL.patBindings pattern).length none ++ post) :=
-    globals.symm.trans genSlots
-  obtain ⟨flatBindings, names, sourceResult, flatResult, growth, finalStates, domain, finalEnv⟩ :=
-    evaluateDlet_pattern_success genv source sourceMiddle flat flatMiddle sourceEnv trace n start compMap compMap2
-      gen location pattern expr value flatValue bindings notAlias distinct wellformed sourceRun flatRun matched
-      shadowers envInv mapsEq ok typesOk states globals.symm valueRel pre post slots prefixLength
-  have flatCount : flatBindings.length = (AstHOL.patBindings pattern).length := by
-    simpa using congrArg List.length names
-  have finalInvariant := factoredInvariant_fillBlock interp transform gen genv start finish other sourceMiddle
-    flatMiddle (flatBindings.reverse.map Prod.snd) pre post invariant (by simpa [flatCount] using slots)
-    prefixLength (by simpa [flatCount] using fits)
-  refine ⟨flatBindings, pre, post, sourceResult, ?_, flatResult, growth, finalStates, domain, finalEnv, ?_⟩
+  obtain ⟨ok, typesOk, states, _, _, _, _, _, _, _⟩ := invariantCopy
+  obtain ⟨flatBindings, flatMatch, related, names⟩ :=
+    pmatch_success_sourceBindings genv compMap compMap2 sourceEnv sourceMiddle flatMiddle shadowers envInv
+      mapsEq ok typesOk states pattern value flatValue valueRel bindings matched
+  have flatDistinct : (flatBindings.map Prod.fst).Nodup := by simpa [names] using distinct
+  obtain ⟨finalGenv, finalFlat, initRun, finalInv, constructors, types, slots, envResult⟩ :=
+    invariantMakeVarls interp transform gen genv start finish other sourceMiddle flatMiddle start.vidx
+      (flatBindings.map Prod.fst).reverse ⟨flatBindings⟩ 0 .none
+      ⟨invariant, rfl, by simpa [names] using fits, rfl, flatDistinct⟩
+  have growth : GlobalGrowth genv finalGenv := by
+    apply GlobalGrowth.ofSubglobals genv finalGenv slots
+    · rw [constructors]; exact fun _ _ h => h
+    · rw [types]; exact fun _ _ h => h
+  have related' := envRel_growth genv finalGenv growth _ _ related
+  have finalEnv := envResult bindings (n + 4) related'
+  have domain := envDomainEq_patternBindings genv bindings flatBindings pattern (n + 4) start.vidx related names
+  refine ⟨finalGenv, finalFlat, ?_, ?_, ?_, growth, finalInv.2.2.1, domain, ?_, ?_⟩
+  · simp [EvaluateHOL.evaluateDecs, distinct, wellformed, sourceRun, matched,
+      EvaluateHOL.headValue, Flapjack.holHd]
   · simp [compileDecs, notAlias, emptyEnv]
-  · simpa [flatCount, List.map_map, Function.comp_def] using finalInvariant
+  · apply evaluateDlet_pattern_flat_success flat flatMiddle finalFlat trace n start compMap gen location pattern expr
+      flatValue flatBindings notAlias distinct flatRun flatMatch
+    simpa [names] using initRun
+  · simpa [emptyEnv, names] using finalEnv
+  · simpa [names] using finalInv
 
 /-- Factored outcome for a single declaration. This relation is narrower than
 the full HOL correctness theorem: it does not yet carry oracle-forward or
@@ -678,7 +573,7 @@ theorem evaluateDlet_pattern_cases {C F : Type} [Nonempty C]
                 exact ⟨flatMiddle, genv, some (.raise FlatSem.bindExnV), flatDec, finalStates,
                   GlobalGrowth.refl genv, _, rfl, .raise errorRel, finalInvariant⟩
               | «match» bindings =>
-                obtain ⟨flatBindings, pre, post, sourceDec, compiled, flatDec, growth, finalStates,
+                obtain ⟨finalGenv, finalFlat, sourceDec, compiled, flatDec, growth, finalStates,
                   domain, finalEnv, finalInvariant⟩ :=
                   evaluateDlet_pattern_factored interp transform genv start finish other source sourceMiddle flat
                     flatMiddle sourceEnv trace n compMap compMap gen location pattern expr value flatValue bindings

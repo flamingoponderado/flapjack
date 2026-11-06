@@ -111,7 +111,9 @@ private theorem lookup_mem {α : Type} (entries : List (VarN × α)) (name : Var
       simp only [List.lookup_cons, different] at lookup
       exact List.mem_cons_of_mem _ (ih lookup)
 
-private theorem lookup_of_mem_nodup {α : Type} (entries : List (VarN × α))
+/-- Distinct names make membership determine lookup; this is list infrastructure
+for the original initializer proof, with no separate HOL declaration. -/
+theorem lookup_of_mem_nodup {α : Type} (entries : List (VarN × α))
     (name : VarN) (value : α) (member : (name, value) ∈ entries)
     (distinct : (entries.map Prod.fst).Nodup) : entries.lookup name = some value := by
   induction entries with
@@ -176,56 +178,5 @@ theorem globalEnvInv_allocDefs_reverse (genv : GlobalEnv)
         simpa [alistToNs, nsLookup, lookup_reverse_of_nodup source name distinct] using lookup
       | long moduleName id => simp [alistToNs, nsLookup] at lookup
     · exact constructors
-
-/-- Initializing a reserved block for a distinct declaration environment
-produces the flat state and the global invariant needed for later code. The
-factored relation and flat evaluator still await full HOL correspondence review. -/
-theorem evaluate_makeVarls_globalEnvInv {C F : Type} (genv : GlobalEnv)
-    (sourceEnv : List (VarN × SemanticPrimitivesHOL.Value))
-    (flatEnv : List (VarN × FlatSem.Value))
-    (related : EnvRel genv (alistToNs sourceEnv) flatEnv)
-    (distinct : (sourceEnv.map Prod.fst).Nodup)
-    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
-    (stateRel : StateRel genv sourceState flatState) (globals : flatState.globals = genv.v)
-    (pre post : List (Option FlatSem.Value))
-    (slots : flatState.globals = pre ++ (List.replicate flatEnv.length none ++ post))
-    (n : Nat) (trace : Tra) :
-    let values := flatEnv.reverse.map Prod.snd
-    let finalSlots := pre ++ (values.map some ++ post)
-    let finalEnv := { genv with v := finalSlots }
-    let finalState := { flatState with globals := finalSlots }
-    FlatSem.evaluate ⟨flatEnv⟩ flatState
-        [makeVarls n trace pre.length (flatEnv.reverse.map Prod.fst)] =
-        (finalState, .val [FlatSem.unitValue]) ∧
-      GlobalGrowth genv finalEnv ∧ StateRel finalEnv sourceState finalState ∧
-      GlobalEnvInv finalEnv
-        { emptyEnv with v := alistToNs (allocDefs n pre.length (flatEnv.reverse.map Prod.fst)) }
-        (fun _ => False) ⟨alistToNs sourceEnv, nsEmpty⟩ := by
-  dsimp only
-  have namesEq : sourceEnv.map Prod.fst = flatEnv.map Prod.fst := by
-    have pairRel := (envRel_alist_iff genv sourceEnv flatEnv).mp related
-    clear related distinct slots
-    induction pairRel with
-    | nil => rfl
-    | cons pair tail ih => simp only [List.map_cons, pair.1, ih]
-  have flatDistinct : (flatEnv.map Prod.fst).Nodup := by simpa [← namesEq] using distinct
-  have lookups : ∀ (i : Nat) (inValues : i < (flatEnv.reverse.map Prod.snd).length),
-      flatEnv.lookup ((flatEnv.reverse.map Prod.fst)[i]'(by simp_all)) =
-        some (flatEnv.reverse.map Prod.snd)[i] := by
-    intro i inValues
-    have inEntries : i < flatEnv.reverse.length := by simpa using inValues
-    have member : flatEnv.reverse[i]'inEntries ∈ flatEnv :=
-      List.mem_reverse.mp (List.getElem_mem inEntries)
-    have found := lookup_of_mem_nodup flatEnv _ _ member flatDistinct
-    simp only [List.getElem_map]
-    exact found
-  have runGrowth := evaluate_makeVarls_growth genv ⟨flatEnv⟩ flatState n trace pre.length flatEnv.length
-    (flatEnv.reverse.map Prod.fst) (flatEnv.reverse.map Prod.snd) pre post globals slots
-    rfl (by simp) (by simp) lookups
-  refine ⟨runGrowth.1, runGrowth.2, ?_, ?_⟩
-  · exact stateRel_after_global_growth genv _ runGrowth.2 sourceState flatState stateRel _
-  · apply globalEnvInv_allocDefs_reverse _ sourceEnv flatEnv
-      (envRel_growth genv _ runGrowth.2 _ _ related) distinct pre post
-    simp [List.map_map]
 
 end Flapjack.Compiler.Backend.SourceToFlat
