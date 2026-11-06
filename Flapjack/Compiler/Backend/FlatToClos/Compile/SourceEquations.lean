@@ -10,11 +10,6 @@ private theorem compileExps_eq_map (names : List (Option MlString)) (expressions
   | nil => simp [compileExps]
   | cons head tail ih => simp [compileExps, ih]
 
-/-- Compilation commutes with reversal of the expression list. -/
-theorem compile_reverse (names : List (Option MlString)) (expressions : List FlatLang.Exp) :
-    compile names expressions.reverse = (compile names expressions).reverse := by
-  simp [compile, compileExps_eq_map]
-
 /-- The executed compiler satisfies the source list equations. This is a
 kernel-checked source-comparison witness, not a separate HOL theorem. -/
 theorem compile_source_equations :
