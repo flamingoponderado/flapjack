@@ -85,6 +85,51 @@ theorem listRelALookup {K V : Type} (relation : K × V → K × V → Prop)
   cases leftEq : holALookup left key <;> cases rightEq : holALookup right key <;>
     simp_all [optionRel]
 
+/-- Flapjack helper: filtering twice is one filter when the second predicate
+implies the first on the list. This is not a separate HOL declaration. -/
+private theorem filter_filter_of_subsumed {A : Type} (first second : A → Bool)
+    (xs : List A) (subsumed : ∀ x ∈ xs, second x = true → first x = true) :
+    (xs.filter first).filter second = xs.filter second := by
+  induction xs with
+  | nil => rfl
+  | cons x xs ih =>
+    cases firstAt : first x <;> cases secondAt : second x <;>
+      simp_all [List.filter]
+
+/-- Flapjack helper: aligned list elements that agree on a filter predicate
+remain related after filtering. This is not a separate HOL declaration. -/
+private theorem forall₂_filter_of_members {A B : Type} (relation : A → B → Prop)
+    (first : A → Bool) (second : B → Bool) {xs : List A} {ys : List B}
+    (related : List.Forall₂ relation xs ys)
+    (agree : ∀ x ∈ xs, ∀ y ∈ ys, relation x y → first x = second y) :
+    List.Forall₂ relation (xs.filter first) (ys.filter second) := by
+  induction related with
+  | nil => simp
+  | @cons x y xs ys head tail ih =>
+    have same := agree x (by simp) y (by simp) head
+    have tailAgree : ∀ x ∈ xs, ∀ y ∈ ys, relation x y → first x = second y := by
+      intro a ha b hb hab
+      exact agree a (List.mem_cons_of_mem _ ha) b (List.mem_cons_of_mem _ hb) hab
+    have tailRelated := ih tailAgree
+    cases firstAt : first x <;> cases secondAt : second y <;>
+      simp_all [List.filter]
+
+/-- Related filtered lists remain related when both filters are narrowed in
+the same way on related entries. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "LIST_REL_FILTER_MONO"]
+theorem listRelFilterMono {A B : Type} (relation : A → B → Prop)
+    (p1 p3 : A → Bool) (p2 p4 : B → Bool) (xs : List A) (ys : List B)
+    (related : List.Forall₂ relation (xs.filter p1) (ys.filter p2))
+    (leftNarrow : ∀ x ∈ xs, p3 x = true → p1 x = true)
+    (rightNarrow : ∀ y ∈ ys, p4 y = true → p2 y = true)
+    (agree : ∀ x ∈ xs, ∀ y ∈ ys, relation x y → p3 x = p4 y) :
+    List.Forall₂ relation (xs.filter p3) (ys.filter p4) := by
+  have narrowed := forall₂_filter_of_members relation p3 p4 related (by
+    intro x hx y hy hxy
+    exact agree x (List.mem_filter.mp hx).1 y (List.mem_filter.mp hy).1 hxy)
+  simpa [filter_filter_of_subsumed p1 p3 xs leftNarrow,
+    filter_filter_of_subsumed p2 p4 ys rightNarrow] using narrowed
+
 /-- Related lookups for the keys selected by a predicate. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "ALOOKUP_rel_def"]
 def aLookupRel {K A B : Type} (predicate : K → Prop) (relation : A → B → Prop)

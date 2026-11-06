@@ -1,6 +1,14 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "LIST_REL_FILTER_MONO",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
+  "lean_name": "listRelFilterMono",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed list_rel_filter_mono capture with both independent element types, all four predicates, both narrowing premises, and the related-member agreement. Bool predicates with List.filter render HOL FILTER, Bool equality renders the HOL boolean equation, and Forall₂ renders LIST_REL."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
   "hol_name": "LIST_REL_ALOOKUP",
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
   "lean_name": "listRelALookup",

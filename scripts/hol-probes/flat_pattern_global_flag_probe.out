@@ -16,6 +16,7 @@ generated_name_roundtrip=dec_name_to_num (enc_num_to_name (i :num)) = i
 generated_name_injective=enc_num_to_name (i :num) = enc_num_to_name (j :num) ⇔ i = j
 list_rel_alookup_optrel=∀(xs :(α # β) list) (ys :(α # γ) list). LIST_REL (R :α # β -> α # γ -> bool) xs ys ∧ (∀(x :α # β) (y :α # γ). R x y ∧ MEM x xs ∧ MEM y ys ∧ ((v :α) = FST x ∨ v = FST y) ⇒ FST x = FST y ∧ (R2 :β -> γ -> bool) (SND x) (SND y)) ⇒ OPTREL R2 (ALOOKUP xs v) (ALOOKUP ys v)
 list_rel_alookup=∀(xs :(α # β) list) (ys :(α # β) list). LIST_REL (R :α # β -> α # β -> bool) xs ys ∧ (∀(x :α # β) (y :α # β). R x y ∧ MEM x xs ∧ MEM y ys ∧ ((v :α) = FST x ∨ v = FST y) ⇒ x = y) ⇒ ALOOKUP xs v = ALOOKUP ys v
+list_rel_filter_mono=∀(xs :α list) (ys :β list). LIST_REL (R :α -> β -> bool) (FILTER (P1 :α -> bool) xs) (FILTER (P2 :β -> bool) ys) ∧ (∀(x :α). MEM x xs ∧ (P3 :α -> bool) x ⇒ P1 x) ∧ (∀(y :β). MEM y ys ∧ (P4 :β -> bool) y ⇒ P2 y) ∧ (∀(x :α) (y :β). MEM x xs ∧ MEM y ys ∧ R x y ⇒ (P3 x ⇔ P4 y)) ⇒ LIST_REL R (FILTER P3 xs) (FILTER P4 ys)
 alookup_def=(∀(q :β). ALOOKUP ([] :(β # α) list) q = (NONE :α option)) ∧ ∀(y :α) (x :β) (t :(β # α) list) (q :β). ALOOKUP ((x,y)::t) q = if x = q then SOME y else ALOOKUP t q
 alookup_reversed_eq=(∀(q :α). ALOOKUP ([] :(α # β) list) q = (NONE :β option)) ∧ ∀(x :α) (y :β) (t :(α # β) list) (q :α). ALOOKUP ((x,y)::t) q = if q = x then SOME y else ALOOKUP t q
 optrel_def=∀(R :α -> β -> bool) (x :α option) (y :β option). OPTREL R x y ⇔ x = (NONE :α option) ∧ y = (NONE :β option) ∨ ∃(x0 :α) (y0 :β). x = SOME x0 ∧ y = SOME y0 ∧ R x0 y0
