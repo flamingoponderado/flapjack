@@ -122,3 +122,6 @@ val _ = capture "remove" ``source_to_flatProof$subglobals [SOME (1:num)] [NONE]`
 
 val _ = if null (hyp source_to_flatProofTheory.maybe_all_list_SOME) then () else raise Fail "hypotheses: maybe_all_list_SOME";
 val _ = (print "maybe_all_list_SOME_typed="; print_term (concl source_to_flatProofTheory.maybe_all_list_SOME); print "\n");
+
+val _ = if null (hyp source_to_flatProofTheory.genv_c_tys_ok_extend) then () else raise Fail "hypotheses: genv_c_tys_ok_extend";
+val _ = (print "genv_c_tys_ok_extend_typed="; print_term (concl source_to_flatProofTheory.genv_c_tys_ok_extend); print "\n");

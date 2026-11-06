@@ -1,3 +1,5 @@
+import Mathlib.Data.Set.Disjoint
+import Flapjack.FiniteMap.UnionExact
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalEnv
 import Flapjack.Compiler.Backend.BackendCommon.ConstructorTags
 import Flapjack.SemanticPrimitivesHOL.Conversions
@@ -82,6 +84,53 @@ theorem holFmapAsFiniteSupportParamWitness_genvCTysOk_genvC {α β γ δ : Type}
 theorem holFmapAsFiniteSupportParamWitness_genvCTysOk_genvTys {α β γ : Type}
     (genvTys : HolFiniteMapExact β (List (α × γ))) :
     GlobalMap.ofBroad (GlobalMap.toBroadlookup genvTys) genvTys.finiteSupport = genvTys := by cases genvTys; rfl
+
+/-- Disjoint type tables preserve constructor/type consistency under union. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "genv_c_tys_ok_extend"
+  (fmap_as_finite_support_parameters := [c, cExt, tys, tysExt])]
+theorem genvCTysOk_extend {α β γ δ : Type}
+    (c : HolFiniteMapExact ((α × Option β) × γ) δ)
+    (tys : HolFiniteMapExact β (List (α × γ)))
+    (cExt : HolFiniteMapExact ((α × Option β) × γ) δ)
+    (tysExt : HolFiniteMapExact β (List (α × γ)))
+    (premises : genvCTysOk c tys ∧ genvCTysOk cExt tysExt ∧
+      Disjoint { key | tys.lookup key ≠ none } { key | tysExt.lookup key ≠ none }) :
+    genvCTysOk (c.union cExt) (tys.union tysExt) := by
+  obtain ⟨left, right, disjoint⟩ := premises
+  intro cn tyId arity present
+  cases found : c.lookup ((cn, some tyId), arity) with
+  | some value =>
+    obtain ⟨ctors, table, member⟩ := left cn tyId arity (by simp [found])
+    exact ⟨ctors, by simp [HolFiniteMapExact.lookup_union, table], member⟩
+  | none =>
+    have presentExt : (cExt.lookup ((cn, some tyId), arity)).isSome := by
+      simpa [HolFiniteMapExact.lookup_union, found] using present
+    obtain ⟨ctors, table, member⟩ := right cn tyId arity presentExt
+    have absent : tys.lookup tyId = none := by
+      cases old : tys.lookup tyId with
+      | none => rfl
+      | some oldCtors =>
+        have impossible := Set.disjoint_left.mp disjoint (show tyId ∈ { key | tys.lookup key ≠ none } by simp [old])
+          (show tyId ∈ { key | tysExt.lookup key ≠ none } by simp [table])
+        exact False.elim impossible
+    exact ⟨ctors, by simp [HolFiniteMapExact.lookup_union, absent, table], member⟩
+
+/-- Canonical finite-map parameter codec witnesses. -/
+theorem holFmapAsFiniteSupportParamWitness_genvCTysOk_extend_c {α β γ δ : Type}
+    (c : HolFiniteMapExact ((α × Option β) × γ) δ) :
+    GlobalMap.ofBroad (GlobalMap.toBroadlookup c) c.finiteSupport = c := by cases c; rfl
+
+theorem holFmapAsFiniteSupportParamWitness_genvCTysOk_extend_cExt {α β γ δ : Type}
+    (cExt : HolFiniteMapExact ((α × Option β) × γ) δ) :
+    GlobalMap.ofBroad (GlobalMap.toBroadlookup cExt) cExt.finiteSupport = cExt := by cases cExt; rfl
+
+theorem holFmapAsFiniteSupportParamWitness_genvCTysOk_extend_tys {α β γ : Type}
+    (tys : HolFiniteMapExact β (List (α × γ))) :
+    GlobalMap.ofBroad (GlobalMap.toBroadlookup tys) tys.finiteSupport = tys := by cases tys; rfl
+
+theorem holFmapAsFiniteSupportParamWitness_genvCTysOk_extend_tysExt {α β γ : Type}
+    (tysExt : HolFiniteMapExact β (List (α × γ))) :
+    GlobalMap.ofBroad (GlobalMap.toBroadlookup tysExt) tysExt.finiteSupport = tysExt := by cases tysExt; rfl
 
 /-- The nil stamp occurs at exactly its original constructor key. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "genv_lookup_nil"

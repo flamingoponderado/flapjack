@@ -11600,6 +11600,15 @@
     "reviewer": "Compared the fully typed compile_funs_dom2 capture: the same arbitrary mlstring trace, source compiler environment, and list of source function triples yield equality of the compiled and source name lists. Both use the reviewed mlstring and environment carriers."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/GlobalEnvConditions.lean",
+    "lean_name": "genvCTysOk_extend",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "genv_c_tys_ok_extend",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": ["c", "cExt", "tys", "tysExt"],
+    "reviewer": "Compared the HOL source and genv_c_tys_ok_extend_typed: the constructor and type maps retain four independent type parameters; both original consistency premises and disjoint type-map domains imply consistency of the left-biased unions. FDOM is the set of keys with nonempty lookup, DISJOINT is set disjointness, and canonical finite-map inputs are named by the qualifier."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/WordLists.lean",
     "lean_name": "maybeAllList_some",
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",

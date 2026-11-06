@@ -9605,4 +9605,5 @@ recursive-environment theorem used by source-to-flat and flat-to-closure proofs.
 
 `cake_subglobals_probe.out` includes the fully typed `source_to_flat_do_eval`
 statement, including its independently polymorphic unused existential, and the
-polymorphic `maybe_all_list_SOME` theorem used in the word-list proof.
+polymorphic `maybe_all_list_SOME` theorem used in the word-list proof, and
+`genv_c_tys_ok_extend` with its four independent carrier types.
