@@ -1,4 +1,5 @@
 load "flat_patternProofTheory";
+load "mlstringTheory";
 open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
 val _ = Globals.show_types := true;
@@ -16,6 +17,21 @@ val _ = show_thm "expression_global_flag=" flat_patternProofTheory.compile_exp_s
 val _ = show_thm "tuple_global_flag=" flat_patternProofTheory.compile_exp_set_globals_tup;
 val _ = show_thm "global_bag_list_empty=" flatPropsTheory.elist_globals_eq_empty;
 val _ = show_thm "sum_string_ords=" flat_patternProofTheory.sum_string_ords_eq;
+val _ = show_thm "sum_string_ords_def=" flat_patternTheory.sum_string_ords_def;
+val _ = show_thm "dec_name_to_num_def=" flat_patternTheory.dec_name_to_num_def;
+val dec_name_to_num_explode = prove (
+  ``!name. flat_pattern$dec_name_to_num name =
+      case mlstring$explode name of
+      | a :: b :: rest =>
+          if a = #"." /\ b = #"." then flat_pattern$sum_string_ords 2 name else 0
+      | _ => 0``,
+  Cases THEN rename1 `strlit s` THEN Cases_on `s` THEN TRY (Cases_on `t`) THEN
+    simp [flat_patternTheory.dec_name_to_num_def, mlstringTheory.strlen_def,
+      mlstringTheory.strsub_def, mlstringTheory.explode_thm]);
+val _ = show_thm "dec_name_to_num_explode=" dec_name_to_num_explode;
+val _ = show_thm "dot_ord=" (EVAL ``ORD #"."``);
+val _ = show_thm "enc_num_to_name_aux_def=" flat_patternTheory.enc_num_to_name_aux_def;
+val _ = show_thm "enc_num_to_name_def=" flat_patternTheory.enc_num_to_name_def;
 val _ = show_thm "generated_name_aux=" flat_patternProofTheory.dec_enc_aux;
 val _ = show_thm "generated_name_roundtrip=" flat_patternProofTheory.dec_enc;
 val _ = show_thm "generated_name_injective=" flat_patternProofTheory.enc_num_to_name_inj;

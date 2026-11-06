@@ -4,14 +4,15 @@ import Flapjack.Compiler.Backend.FlatPattern.Names
 namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack.Basis.Pure.MlString
 
-/-- Character-offset summation is the sum of offsets after the dropped prefix. -/
+/-- Character-offset summation is the sum of offsets after the dropped prefix.
+This holds definitionally because the implementation uses HOL's proved closed
+form of the recursive definition. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "sum_string_ords_eq"]
 theorem sumStringOrds_eq (index : Nat) (name : MlString) :
     sumStringOrds index name = ((name.explode.drop index).map (fun c => c.toNat - 35)).foldr (· + ·) 0 := rfl
 
 /-- Decode an auxiliary generated name, including the offsets contributed by
-its existing suffix. The name carrier and original definitions remain pending
-HOL correspondence review. -/
+its existing suffix. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "dec_enc_aux"]
 theorem decEncAux (index : Nat) (suffix : List HolChar) :
     decNameToNum (.implode (encNumToNameAux index suffix)) =

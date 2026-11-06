@@ -5,6 +5,12 @@ expression_global_flag=(∀(cfg :config) (x :exp). FST (SND (compile_exp cfg x))
 tuple_global_flag=(∀(cfg :config) (x :exp) (i :num) (sg :bool) (y :exp). compile_exp cfg x = (i,sg,y) ⇒ (sg ⇔ set_globals x ≠ ({||} :num -> num))) ∧ (∀(cfg :config) (xs :exp list) (i :num) (sg :bool) (ys :exp list). compile_exps cfg xs = (i,sg,ys) ⇒ (sg ⇔ elist_globals xs ≠ ({||} :num -> num))) ∧ ∀(cfg :config) (ps :(flatLang$pat # exp) list) (i :num) (sg :bool) (ps2 :(flatLang$pat # exp) list). compile_match cfg ps = (i,sg,ps2) ⇒ (sg ⇔ elist_globals (MAP (SND :flatLang$pat # exp -> exp) ps) ≠ ({||} :num -> num))
 global_bag_list_empty=elist_globals (l :exp list) = ({||} :num -> num) ⇔ ∀(e :exp). MEM e l ⇒ set_globals e = ({||} :num -> num)
 sum_string_ords=sum_string_ords (i :num) (s :mlstring) = (SUM (MAP (λ(c :char). ORD c − (35 :num)) (DROP i (explode s))) :num)
+sum_string_ords_def=∀(str :mlstring) (i :num). sum_string_ords i str = if i < strlen str then ORD (strsub str i) − (35 :num) + sum_string_ords (i + (1 :num)) str else (0 :num)
+dec_name_to_num_def=∀(name :mlstring). dec_name_to_num name = if strlen name < (2 :num) then (0 :num) else if strsub name (0 :num) = #"." ∧ strsub name (1 :num) = #"." then sum_string_ords (2 :num) name else (0 :num)
+dec_name_to_num_explode=∀(name :mlstring). dec_name_to_num name = case explode name of ("" :string) => (0 :num) | STRING a ("" :string) => (0 :num) | STRING a (STRING b rest) => if a = #"." ∧ b = #"." then sum_string_ords (2 :num) name else (0 :num)
+dot_ord=ORD #"." = (46 :num)
+enc_num_to_name_aux_def=∀(xs :string) (i :num). enc_num_to_name_aux i xs = if i < (90 :num) then STRING #"." (STRING #"." (STRING (CHR (i + (35 :num))) xs)) else enc_num_to_name_aux (i − (90 :num)) (STRING #"}" xs)
+enc_num_to_name_def=∀(i :num). enc_num_to_name i = implode (enc_num_to_name_aux i ("" :string))
 generated_name_aux=∀(xs :string). dec_name_to_num (implode (enc_num_to_name_aux (i :num) xs)) = i + (SUM (MAP (λ(c :char). ORD c − (35 :num)) xs) :num)
 generated_name_roundtrip=dec_name_to_num (enc_num_to_name (i :num)) = i
 generated_name_injective=enc_num_to_name (i :num) = enc_num_to_name (j :num) ⇔ i = j

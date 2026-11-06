@@ -7,19 +7,23 @@ import Flapjack.Basis.Pure.MlString
 namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack.Basis.Pure.MlString
 
-/-- Sum the character offsets from position `i` to the end of the HOL string. -/
+/-- Sum the character offsets from position `i` to the end of the HOL string.
+The executable closed form is HOL's proved `sum_string_ords_eq`; the HOL
+definition itself is recursive over string indices. -/
 @[hol "cakeml/compiler/backend/flat_patternScript.sml" "sum_string_ords_def"]
 def sumStringOrds (i : Nat) (str : MlString) : Nat :=
   ((str.explode.drop i).map (fun c => c.toNat - 35)).foldr (· + ·) 0
 
-/-- Decode the reserved `..` name prefix; other names decode to zero. -/
+/-- Decode the reserved `..` name prefix; other names decode to zero. The HOL
+index tests agree with this list match, as replayed in the HOL probe. -/
 @[hol "cakeml/compiler/backend/flat_patternScript.sml" "dec_name_to_num_def"]
 def decNameToNum (name : MlString) : Nat :=
   match name.explode with
   | a :: b :: _ => if a = 46 && b = 46 then sumStringOrds 2 name else 0
   | _ => 0
 
-/-- Encode a number into the original byte-string name representation. -/
+/-- Encode a number into the original byte-string name representation. In the
+base case `i + 35 < 256`, so the byte construction agrees with HOL `CHR`. -/
 @[hol "cakeml/compiler/backend/flat_patternScript.sml" "enc_num_to_name_aux_def"]
 def encNumToNameAux (i : Nat) (xs : List HolChar) : List HolChar :=
   if i < 90 then 46 :: 46 :: BitVec.ofNat 8 (i + 35) :: xs

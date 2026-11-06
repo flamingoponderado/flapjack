@@ -13776,32 +13776,32 @@
     "hol_name": "sum_string_ords_eq",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GeneratedNames.lean",
     "lean_name": "sumStringOrds_eq",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_pattern_global_flag_probe.out. Name and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed sum_string_ords theorem capture. HOL SUM is foldr addition, and the theorem is definitional in Lean because sumStringOrds uses HOL’s proved closed form of the recursive definition."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
     "hol_name": "dec_enc_aux",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GeneratedNames.lean",
     "lean_name": "decEncAux",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_pattern_global_flag_probe.out. Name and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed generated_name_aux capture, including the independent suffix list, natural-number index and SUM offsets. The reviewed MlString and HolChar carriers and generated-name definitions match HOL."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
     "hol_name": "dec_enc",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GeneratedNames.lean",
     "lean_name": "decEnc",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_pattern_global_flag_probe.out. Name and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed generated_name_roundtrip capture and the reviewed generated-name definitions and MlString carrier."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
     "hol_name": "enc_num_to_name_inj",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GeneratedNames.lean",
     "lean_name": "encNumToName_inj",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_pattern_global_flag_probe.out. Name and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed generated_name_injective capture; the HOL boolean equation is rendered as an iff over the reviewed generated-name encoder."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
@@ -110124,32 +110124,32 @@
     "lean_name": "sumStringOrds",
     "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
     "hol_name": "sum_string_ords_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source definition transcribed; typed HOL capture and full statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed sum_string_ords_def and hypothesis-free sum_string_ords HOL theorem captures. Lean uses the theorem-proved closed form of the HOL index recursion; HOL SUM is foldr addition, ORD is HolChar.toNat and num subtraction is Nat subtraction."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Names.lean",
     "lean_name": "decNameToNum",
     "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
     "hol_name": "dec_name_to_num_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source definition transcribed; typed HOL capture and full statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed dec_name_to_num_def capture with the hypothesis-free dec_name_to_num_explode HOL replay and dot_ord. The list cases and byte equality reproduce the source length and index tests on the reviewed MlString carrier."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Names.lean",
     "lean_name": "encNumToNameAux",
     "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
     "hol_name": "enc_num_to_name_aux_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source definition transcribed; typed HOL capture and full statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed enc_num_to_name_aux_def capture. In the base case i < 90 implies i + 35 < 256, so BitVec.ofNat 8 agrees with HOL CHR; the dot and 125 characters and recursive subtraction agree on the reviewed character carrier."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Names.lean",
     "lean_name": "encNumToName",
     "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
     "hol_name": "enc_num_to_name_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source definition transcribed; typed HOL capture and full statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed enc_num_to_name_def capture: both implode the auxiliary result with an empty suffix, using the reviewed MlString carrier and auxiliary definition."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Names.lean",
