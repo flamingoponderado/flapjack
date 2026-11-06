@@ -1456,7 +1456,6 @@ import Flapjack.Compiler.Backend.FlatToClos.Proofs.CompileGlobals
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.CompileSafety
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.NoMti
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Syntactic
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.SourceInvariants
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Recursive
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.EvaluateCases
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Call
