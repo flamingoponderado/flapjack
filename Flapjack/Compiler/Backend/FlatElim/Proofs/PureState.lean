@@ -159,15 +159,6 @@ theorem pureEvaluation_fn {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     | mk bindings => simp [valueHasEval, envBindingsSafe, bodySafe]
   exact ⟨[.closure env argument body], related, rfl, by simpa [valuesNoEval] using closureSafe⟩
 
-/-- Clamping the clock after a pure step leaves the resulting state unchanged
-when both the initial and resulting states relate to the same target. -/
-theorem fixClock_of_same_target {C F : Type} (reachable : NumSet)
-    (source next target : FlatSem.State C F) (result : Result (List FlatSem.Value) FlatSem.Value)
-    (initial : flatStateRel reachable source target) (after : flatStateRel reachable next target) :
-    FlatSem.fixClock source (next, result) = (next, result) := by
-  have clocks : source.clock = next.clock := initial.1.trans after.1.symm
-  simp [FlatSem.fixClock, clocks]
-
 /-- The non-singleton list induction step for pure evaluation. The tail
 hypothesis is stated at the resulting state of the head evaluation. -/
 theorem pureEvaluation_list {C F : Type} (env : FlatSem.Environment FlatSem.Value)

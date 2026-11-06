@@ -152,27 +152,6 @@ theorem evaluate_simulation {C F : Type}
   · exact states
   · exact notTypeError
 
-/-- Match-free installed declarations preserve the proof-side state and
-unit-terminated result relations without additional simulation hypotheses. -/
-theorem evaluate_decs_unit_simulation {C F : Type}
-    (source : FlatSem.State C F) (target : ClosSem.State C F) (declarations : List FlatLang.Exp)
-    (states : StateRel source target) (safe : FlatProps.noMatDecs declarations = true)
-    (notTypeError : (FlatSem.evaluateDecs source declarations).2 ≠ some (.abort .typeError)) :
-    DecUnitSim source target declarations := by
-  have emptyEnv : EnvRel ⟨[]⟩ [] [] := by
-    apply (envRel_iff_lookup _ _ _).2
-    simp
-  apply evaluate_decs_unit_of_singletons declarations source.clock
-  · intro expression member next nextTarget _ nextStates notError
-    have expressionSafe : FlatProps.noMat expression = true := by
-      apply noMat_member declarations expression
-      · simpa [FlatProps.noMatDecs_eq_noMatList] using safe
-      · exact member
-    exact evaluate_singleton_simulation ⟨[]⟩ [] [] next nextTarget expression nextStates emptyEnv expressionSafe notError
-  · exact le_refl _
-  · exact states
-  · exact notTypeError
-
 /-- Match-free top-level declaration lists preserve the proof-side state and
 declaration result relations. -/
 theorem evaluate_decs_simulation {C F : Type}

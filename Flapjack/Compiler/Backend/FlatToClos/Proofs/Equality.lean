@@ -5,33 +5,6 @@ import Flapjack.Compiler.Backend.Semantics.FlatSem.Operations
 namespace Flapjack.Compiler.Backend.FlatToClos
 open Flapjack.SemanticPrimitivesHOL
 
-/-- List equality preserves a successful result if equality of related
-individual values does. This is an induction helper, not a HOL port. -/
-theorem doEqList_related_of_values
-    (step : ∀ s₁ t₁ s₂ t₂ b, ValueRel s₁ t₁ → ValueRel s₂ t₂ →
-      FlatSem.doEq s₁ s₂ = .val b → ClosSem.doEq t₁ t₂ = .val b)
-    {s₁ s₂ : List FlatSem.Value} {t₁ t₂ : List ClosSem.Value} (first : List.Forall₂ ValueRel s₁ t₁)
-    (second : List.Forall₂ ValueRel s₂ t₂) (b : Bool)
-    (result : FlatSem.doEqList s₁ s₂ = .val b) :
-    ClosSem.doEqList t₁ t₂ = .val b := by
-  induction first generalizing s₂ t₂ b with
-  | nil =>
-    cases second <;> simpa [FlatSem.doEqList, ClosSem.doEqList] using result
-  | @cons sourceHead targetHead _ _ head tail ih =>
-    cases second with
-    | nil => simpa [FlatSem.doEqList, ClosSem.doEqList] using result
-    | cons head₂ tail₂ =>
-      rename_i sourceHead₂ targetHead₂ _ _
-      cases h : FlatSem.doEq sourceHead sourceHead₂ with
-      | typeError => simp [FlatSem.doEqList, h] at result
-      | val value =>
-        have targetEq := step _ _ _ _ value head head₂ h
-        cases value with
-        | false => simpa [FlatSem.doEqList, ClosSem.doEqList, h, targetEq] using result
-        | true =>
-          simp only [FlatSem.doEqList, h] at result
-          simpa [ClosSem.doEqList, targetEq] using ih tail₂ b result
-
 /-- Successful comparisons of these two source values agree for every pair
 of related closure values. -/
 def ValueComparisonSim (s₁ s₂ : FlatSem.Value) : Prop :=

@@ -13,21 +13,6 @@ theorem compile_force_application (name : MlString) :
   simp [compile, compileExps, compileExp, destNop, FlatSem.appUnit, ClosSem.appUnit,
     compileOp, arg2, smartCons, nameIndex]
 
-/-- Binding related thunk payloads produces the related one-variable
-environments used by the generated force application. -/
-theorem force_environment (name : MlString) (source : FlatSem.Value) (target : ClosSem.Value)
-    (related : ValueRel source target) :
-    EnvRel ⟨[(name, source)]⟩ [some name] [target] := by
-  apply (envRel_iff_lookup _ _ _).2
-  intro key value found
-  by_cases same : key = name
-  · subst key
-    simp at found
-    subst value
-    exact ⟨target, by simp [nameIndex], related⟩
-  · have different : (key == name) = false := by simp [same]
-    simp [List.lookup_cons, different] at found
-
 /-- Simulate force-thunk after its arguments, using the induction hypothesis
 for the generated unit application when the thunk is unevaluated. -/
 theorem evaluate_force {C F : Type} (env : FlatSem.Environment FlatSem.Value)
