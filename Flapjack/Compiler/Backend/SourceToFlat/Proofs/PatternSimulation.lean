@@ -1,8 +1,7 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternRel
 import Flapjack.Compiler.Backend.FlatProps.PatternBindings
 
-/-! Assembly infrastructure for source-to-flat pattern preservation. The
-underlying value and state relations remain subject to HOL correspondence review. -/
+/-! Source-to-flat pattern preservation. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.SemanticPrimitivesHOL
 
@@ -166,56 +165,61 @@ theorem pmatch_success_bindings {C F : Type} (genv : GlobalEnv) (compMap compMap
     have names := (FlatProps.pmatchBindings flatState).1 (compilePat compMap pattern) flat [] flatBindings flatMatch
     simpa using names
 
-/-- Original-hypothesis shape for individual pattern simulation, over the
-factored relations. It remains untagged until those relations are reviewed. -/
-theorem pmatch_originalShape {C F : Type} (genv : GlobalEnv) (compMap compMap2 : Environment)
-    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (sourceState : SemanticPrimitivesHOL.State F)
-    (flatState : FlatSem.State C F) (constructors : Namespace ModN ConN (Nat × Stamp))
-    (store : Store SemanticPrimitivesHOL.Value) (bindings bound suffix : List (VarN × SemanticPrimitivesHOL.Value))
-    (flatEnv : List (VarN × FlatSem.Value)) (shadowers : VarN → Prop) (pattern : Pat)
-    (source : SemanticPrimitivesHOL.Value) (flat : FlatSem.Value)
-    (result : MatchResult (List (VarN × SemanticPrimitivesHOL.Value)))
-    (evaluated : SemanticPrimitivesHOL.pmatch constructors store pattern source bindings = result)
-    (stateRel : StateRel genv sourceState flatState) (inv : GlobalEnvInv genv compMap2 shadowers sourceEnv)
-    (ok : genvCOk genv.c) (typesOk : genvCTysOk genv.c genv.tys)
-    (constructorsEq : constructors = sourceEnv.c) (mapsEq : compMap2.c = compMap.c)
-    (bindingsEq : bindings = bound ++ suffix) (_globalsEq : flatState.globals = genv.v)
-    (storeEq : store = sourceState.refs) (valueRel : ValueRel genv source flat)
-    (envRel : EnvRel genv (alistToNs bound) flatEnv) :
-    ∃ flatResult, FlatSem.pmatch flatState (compilePat compMap pattern) flat flatEnv = flatResult ∧
-      MatchResultRel genv suffix result flatResult := by
-  subst constructors
-  subst store
-  subst bindings
-  refine ⟨_, rfl, ?_⟩
-  rw [← evaluated]
-  exact patternSimulation genv compMap compMap2 sourceEnv sourceState flatState suffix shadowers
-    inv mapsEq ok typesOk stateRel pattern source flat bound flatEnv envRel valueRel
+namespace PatternMatchPort
+/-- Roundtrip for the global environment's canonical finite maps. -/
+theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
+    GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env := GlobalEnv.holFmapAsFiniteSupportWitness env
+end PatternMatchPort
 
-/-- Original-hypothesis shape for pattern-list simulation, over the factored
-relations. It remains untagged until those relations are reviewed. -/
-theorem pmatchList_originalShape {C F : Type} (genv : GlobalEnv) (compMap compMap2 : Environment)
-    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (sourceState : SemanticPrimitivesHOL.State F)
-    (flatState : FlatSem.State C F) (constructors : Namespace ModN ConN (Nat × Stamp))
-    (store : Store SemanticPrimitivesHOL.Value) (bindings bound suffix : List (VarN × SemanticPrimitivesHOL.Value))
-    (flatEnv : List (VarN × FlatSem.Value)) (shadowers : VarN → Prop) (patterns : List Pat)
-    (sources : List SemanticPrimitivesHOL.Value) (flats : List FlatSem.Value)
-    (result : MatchResult (List (VarN × SemanticPrimitivesHOL.Value)))
-    (evaluated : SemanticPrimitivesHOL.pmatchList constructors store patterns sources bindings = result)
-    (inv : GlobalEnvInv genv compMap2 shadowers sourceEnv) (ok : genvCOk genv.c)
-    (typesOk : genvCTysOk genv.c genv.tys) (constructorsEq : constructors = sourceEnv.c)
-    (mapsEq : compMap2.c = compMap.c) (bindingsEq : bindings = bound ++ suffix)
-    (_globalsEq : flatState.globals = genv.v) (stateRel : StateRel genv sourceState flatState)
-    (storeEq : store = sourceState.refs) (valuesRel : List.Forall₂ (ValueRel genv) sources flats)
-    (envRel : EnvRel genv (alistToNs bound) flatEnv) :
-    ∃ flatResult, FlatSem.pmatchList flatState (patterns.map (compilePat compMap)) flats flatEnv = flatResult ∧
-      MatchResultRel genv suffix result flatResult := by
-  subst constructors
-  subst store
-  subst bindings
-  refine ⟨_, rfl, ?_⟩
-  rw [← evaluated]
-  exact patternListSimulation genv compMap compMap2 sourceEnv sourceState flatState suffix shadowers
-    inv mapsEq ok typesOk stateRel patterns sources flats bound flatEnv envRel valuesRel
+/-- Pattern and pattern-list matching are preserved by compilation. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "pmatch"
+  (fmap_as_finite_support := [c, tys])]
+theorem pmatch_source {C F : Type} (genv : GlobalEnv) (compMap2 : Environment)
+    (shadowers : VarN → Prop) (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (compMap : Environment) :
+    (∀ (constructors : Namespace ModN ConN (Nat × Stamp)) (store : Store SemanticPrimitivesHOL.Value)
+      (pattern : Pat) (source : SemanticPrimitivesHOL.Value)
+      (bindings : List (VarN × SemanticPrimitivesHOL.Value))
+      (result : MatchResult (List (VarN × SemanticPrimitivesHOL.Value)))
+      (bound suffix : List (VarN × SemanticPrimitivesHOL.Value)) (flatEnv : List (VarN × FlatSem.Value))
+      (flatState : FlatSem.State C F) (flat : FlatSem.Value) (sourceState : SemanticPrimitivesHOL.State F),
+      SemanticPrimitivesHOL.pmatch constructors store pattern source bindings = result ∧
+      StateRel genv sourceState flatState ∧ GlobalEnvInv genv compMap2 shadowers sourceEnv ∧
+      genvCOk genv.c ∧ genvCTysOk genv.c genv.tys ∧ constructors = sourceEnv.c ∧
+      compMap2.c = compMap.c ∧ bindings = bound ++ suffix ∧ flatState.globals = genv.v ∧
+      store = sourceState.refs ∧ ValueRel genv source flat ∧ EnvRel genv (alistToNs bound) flatEnv →
+      ∃ flatResult, FlatSem.pmatch flatState (compilePat compMap pattern) flat flatEnv = flatResult ∧
+        MatchResultRel genv suffix result flatResult) ∧
+    (∀ (constructors : Namespace ModN ConN (Nat × Stamp)) (store : Store SemanticPrimitivesHOL.Value)
+      (patterns : List Pat) (sources : List SemanticPrimitivesHOL.Value)
+      (bindings : List (VarN × SemanticPrimitivesHOL.Value))
+      (result : MatchResult (List (VarN × SemanticPrimitivesHOL.Value)))
+      (bound suffix : List (VarN × SemanticPrimitivesHOL.Value)) (flatEnv : List (VarN × FlatSem.Value))
+      (flatState : FlatSem.State C F) (flats : List FlatSem.Value) (sourceState : SemanticPrimitivesHOL.State F),
+      SemanticPrimitivesHOL.pmatchList constructors store patterns sources bindings = result ∧
+      GlobalEnvInv genv compMap2 shadowers sourceEnv ∧ genvCOk genv.c ∧ genvCTysOk genv.c genv.tys ∧
+      constructors = sourceEnv.c ∧ compMap2.c = compMap.c ∧ bindings = bound ++ suffix ∧
+      flatState.globals = genv.v ∧ StateRel genv sourceState flatState ∧ store = sourceState.refs ∧
+      List.Forall₂ (ValueRel genv) sources flats ∧ EnvRel genv (alistToNs bound) flatEnv →
+      ∃ flatResult, FlatSem.pmatchList flatState (patterns.map (compilePat compMap)) flats flatEnv = flatResult ∧
+        MatchResultRel genv suffix result flatResult) := by
+  constructor
+  · intro constructors store pattern source bindings result bound suffix flatEnv flatState flat sourceState premises
+    obtain ⟨evaluated, stateRel, inv, ok, typesOk, constructorsEq, mapsEq, bindingsEq, _, storeEq, valueRel, envRel⟩ := premises
+    subst constructors
+    subst store
+    subst bindings
+    refine ⟨_, rfl, ?_⟩
+    rw [← evaluated]
+    exact patternSimulation genv compMap compMap2 sourceEnv sourceState flatState suffix shadowers
+      inv mapsEq ok typesOk stateRel pattern source flat bound flatEnv envRel valueRel
+  · intro constructors store patterns sources bindings result bound suffix flatEnv flatState flats sourceState premises
+    obtain ⟨evaluated, inv, ok, typesOk, constructorsEq, mapsEq, bindingsEq, _, stateRel, storeEq, valuesRel, envRel⟩ := premises
+    subst constructors
+    subst store
+    subst bindings
+    refine ⟨_, rfl, ?_⟩
+    rw [← evaluated]
+    exact patternListSimulation genv compMap compMap2 sourceEnv sourceState flatState suffix shadowers
+      inv mapsEq ok typesOk stateRel patterns sources flats bound flatEnv envRel valuesRel
 
 end Flapjack.Compiler.Backend.SourceToFlat

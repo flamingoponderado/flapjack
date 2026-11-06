@@ -480,7 +480,7 @@ run_probe cake_flat_sem_eval_probeScript.sml cake_flat_sem_eval_probe.out \
   "$cake_dir/compiler/backend/semantics/flatSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe source_to_flat_pmatch_statement_probeScript.sml source_to_flat_pmatch_statement_probe.out \
-  pmatch_statement_typed \
+  pmatch_statement_typed pmatch_replay_typed \
   "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe source_to_flat_state_pattern_probeScript.sml source_to_flat_state_pattern_probe.out \
