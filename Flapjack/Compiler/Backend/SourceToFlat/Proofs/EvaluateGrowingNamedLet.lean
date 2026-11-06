@@ -1,4 +1,4 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateGrowingEquality
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateGrowingConstructors
 
 /-! Growing expression simulation in a local environment. These factored
 relations and this composition lemma are not yet reviewed HOL ports. -/

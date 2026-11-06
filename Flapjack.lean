@@ -518,13 +518,6 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateException
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateDatatype
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLiteralConstructors
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateGrowingConstructors
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateGrowingRaise
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateGrowingLet
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateGrowingIf
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateGrowingLog
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateGrowingArith
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateGrowingTest
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateGrowingEquality
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateGrowingNamedLet
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateBoundPure
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateBoundTest

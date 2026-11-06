@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateBoundPure
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateApply
 
 /-! Primitive comparisons of state-preserving local expressions over the
 preliminary factored source-to-flat relations. -/
@@ -408,83 +409,5 @@ theorem factoredExpressionIH_let_named_integerArith {C F : Type} [Nonempty C]
   intro genv start finish other source flat sourceEnv trace compMap gen value flatValue related _ invariant generation safe
   exact localExpressionStep_boundIntegerArith interp transform genv start finish other source flat sourceEnv trace compMap gen
     name value flatValue action left right leftCovered rightCovered related invariant generation safe
-
-/-- Expression trees may contain named bindings whose bodies are covered
-local pure expressions, alongside the previously covered constructs. -/
-inductive FactoredBoundExpression : AstHOL.Exp → Prop where
-  | base (expr : AstHOL.Exp) : FactoredEqualityExpression expr → FactoredBoundExpression expr
-  | constructor (name : Option (Ident ModN ConN)) (args : List AstHOL.Exp) :
-      (∀ expr, expr ∈ args → FactoredBoundExpression expr) → FactoredBoundExpression (.con name args)
-  | raise_ (body : AstHOL.Exp) : FactoredBoundExpression body → FactoredBoundExpression (.raise body)
-  | letAnonymous (first body : AstHOL.Exp) : FactoredBoundExpression first → FactoredBoundExpression body →
-      FactoredBoundExpression (.let_ none first body)
-  | letNamed (name : VarN) (first body : AstHOL.Exp) : FactoredBoundExpression first →
-      BoundPureExpression name body → FactoredBoundExpression (.let_ (some name) first body)
-  | letNamedTest (name : VarN) (first : AstHOL.Exp) (test : Test) (typ : PrimType) (left right : AstHOL.Exp) :
-      FactoredBoundExpression first → BoundPureExpression name left → BoundPureExpression name right →
-      FactoredBoundExpression (.let_ (some name) first (.app (.test test typ) [left, right]))
-  | letNamedEquality (name : VarN) (first left right : AstHOL.Exp) :
-      FactoredBoundExpression first → BoundPureExpression name left → BoundPureExpression name right →
-      FactoredBoundExpression (.let_ (some name) first (.app .equality [left, right]))
-  | letNamedIntegerArith (name : VarN) (first : AstHOL.Exp) (action : Arith) (left right : AstHOL.Exp) :
-      FactoredBoundExpression first → BoundPureExpression name left → BoundPureExpression name right →
-      FactoredBoundExpression (.let_ (some name) first (.app (.arith action .intT) [left, right]))
-  | if_ (cond yes no : AstHOL.Exp) : FactoredBoundExpression cond → FactoredBoundExpression yes →
-      FactoredBoundExpression no → FactoredBoundExpression (.if_ cond yes no)
-  | log (op : Lop) (left right : AstHOL.Exp) : FactoredBoundExpression left → FactoredBoundExpression right →
-      FactoredBoundExpression (.log op left right)
-  | integerArith (action : Arith) (left right : AstHOL.Exp) : FactoredBoundExpression left →
-      FactoredBoundExpression right → FactoredBoundExpression (.app (.arith action .intT) [left, right])
-  | test (test : Test) (typ : PrimType) (left right : AstHOL.Exp) : FactoredBoundExpression left →
-      FactoredBoundExpression right → FactoredBoundExpression (.app (.test test typ) [left, right])
-  | equality (left right : AstHOL.Exp) : FactoredBoundExpression left →
-      FactoredBoundExpression right → FactoredBoundExpression (.app .equality [left, right])
-  | tannot (expr : AstHOL.Exp) (typ : AstT) : FactoredBoundExpression expr → FactoredBoundExpression (.tannot expr typ)
-  | lannot (expr : AstHOL.Exp) (loc : Flapjack.Misc.Location.Locs) : FactoredBoundExpression expr →
-      FactoredBoundExpression (.lannot expr loc)
-
-/-- Covered expression trees satisfy the preliminary growing induction
-hypothesis; this is not a reviewed HOL theorem. -/
-theorem factoredExpressionIH_boundTree {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (expr : AstHOL.Exp) (covered : FactoredBoundExpression expr) :
-    FactoredExpressionIH (F := F) interp transform expr := by
-  induction covered with
-  | base expr supported => exact factoredExpressionIH_equalityTree interp transform expr supported
-  | constructor name args _ ih => exact factoredExpressionIH_constructor interp transform name args ih
-  | raise_ body _ ih => exact factoredExpressionIH_raise interp transform body ih
-  | letAnonymous first body _ _ firstIH bodyIH =>
-    exact factoredExpressionIH_let_anonymous interp transform first body firstIH bodyIH
-  | letNamed name first body _ pure firstIH =>
-    exact factoredExpressionIH_let_named_pure interp transform name first body pure firstIH
-  | letNamedTest name first test typ left right _ lc rc firstIH =>
-    exact factoredExpressionIH_let_named_test interp transform name first test typ left right lc rc firstIH
-  | letNamedEquality name first left right _ lc rc firstIH =>
-    exact factoredExpressionIH_let_named_equality interp transform name first left right lc rc firstIH
-  | letNamedIntegerArith name first action left right _ lc rc firstIH =>
-    exact factoredExpressionIH_let_named_integerArith interp transform name first action left right lc rc firstIH
-  | if_ cond yes no _ _ _ condIH yesIH noIH => exact factoredExpressionIH_if interp transform cond yes no condIH yesIH noIH
-  | log op left right _ _ leftIH rightIH => exact factoredExpressionIH_log interp transform op left right leftIH rightIH
-  | integerArith action left right _ _ leftIH rightIH =>
-    exact factoredExpressionIH_integerArith interp transform action left right leftIH rightIH
-  | test test typ left right _ _ leftIH rightIH =>
-    exact factoredExpressionIH_test interp transform test typ left right leftIH rightIH
-  | equality left right _ _ leftIH rightIH =>
-    exact factoredExpressionIH_equality interp transform left right leftIH rightIH
-  | tannot expr typ _ ih =>
-    intro genv start finish other source flat sourceEnv trace compMap gen envInv invariant generation safe
-    apply dletExpressionStep_tannot interp transform genv start finish other source flat sourceEnv trace compMap gen expr typ
-    apply ih genv start finish other source flat sourceEnv trace compMap gen envInv invariant generation
-    intro last bad
-    apply safe last
-    simpa [EvaluateHOL.evaluate] using bad
-  | lannot expr loc _ ih =>
-    intro genv start finish other source flat sourceEnv trace compMap gen envInv invariant generation safe
-    apply dletExpressionStep_lannot interp transform genv start finish other source flat sourceEnv trace compMap gen expr loc
-    apply ih genv start finish other source flat sourceEnv trace compMap gen envInv invariant generation
-    intro last bad
-    apply safe last
-    cases loc
-    simpa [EvaluateHOL.evaluate] using bad
 
 end Flapjack.Compiler.Backend.SourceToFlat
