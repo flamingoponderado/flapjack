@@ -1,3 +1,4 @@
+import Flapjack.Misc.Alist
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateDenv
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateControl
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternRows
@@ -109,17 +110,6 @@ theorem envDomainEq_alias {α : Type} (name : VarN) (idx : Nat) (trace : Tra) (v
     apply propext
     cases path <;> simp [nsDomMod, nsLookupMod, nsEmpty]
 
-private theorem lookup_exists_iff_key_mem {α : Type} (entries : List (VarN × α)) (name : VarN) :
-    (∃ value, entries.lookup name = some value) ↔ name ∈ entries.map Prod.fst := by
-  induction entries with
-  | nil => simp
-  | cons entry entries ih =>
-    obtain ⟨key, value⟩ := entry
-    by_cases equal : name = key
-    · subst key
-      simp
-    · simp [List.lookup_cons, BEq.beq, equal, ih]
-
 private theorem allocDefs_keys {α : Type} (names : List α) (n base : Nat) :
     (allocDefs n base names).map Prod.fst = names := by
   induction names generalizing n base with
@@ -148,7 +138,7 @@ theorem envDomainEq_patternBindings (genv : GlobalEnv)
     cases id with
     | short name =>
       simp only [nsDom, alistToNs, nsLookup]
-      rw [lookup_exists_iff_key_mem, lookup_exists_iff_key_mem, allocDefs_keys, namesEq]
+      rw [Flapjack.lookup_exists_iff_mem_keys, Flapjack.lookup_exists_iff_mem_keys, allocDefs_keys, namesEq]
       simp
     | long moduleName id => simp [nsDom, alistToNs, nsLookup]
   · funext path
