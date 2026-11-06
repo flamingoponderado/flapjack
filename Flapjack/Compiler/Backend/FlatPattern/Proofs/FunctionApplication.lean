@@ -55,40 +55,4 @@ theorem evaluate_call_body {C F : Type} (env : FlatSem.Environment FlatSem.Value
       FlatSem.evaluate callEnv (FlatSem.decClock { next with clock := min state.clock next.clock }) [body] := by
   simp [FlatSem.evaluate, argsRun, FlatSem.fixClock, call, positive]
 
-/-- If application arguments fail, the compiler preserves the error without
-executing the operator. -/
-theorem compile_app_args_error {C F : Type} (cfg stateCfg : Config) (trace : BackendCommon.Tra)
-    (op : FlatLang.Op) (args : List FlatLang.Exp) (n : Nat)
-    (sourceEnv targetEnv : FlatSem.Environment FlatSem.Value) (source target sourceNext : FlatSem.State C F)
-    (error : SemanticPrimitivesHOL.ErrorResult FlatSem.Value)
-    (argumentsIH : ∀ expression ∈ args, ExpressionSimulation (C := C) (F := F) cfg stateCfg expression)
-    (argsRun : FlatSem.evaluate sourceEnv source args.reverse = (sourceNext, .err error))
-    (envs : EnvRel n sourceEnv targetEnv) (states : StateRel stateCfg source target)
-    (bound : (compileExp cfg (.app trace op args)).1 < n) (safe : error ≠ .abort .typeError) :
-    ∃ (targetNext : FlatSem.State C F) (targetError : SemanticPrimitivesHOL.ErrorResult FlatSem.Value),
-      FlatSem.evaluate sourceEnv source [.app trace op args] =
-        ({ sourceNext with clock := min source.clock sourceNext.clock }, .err error) ∧
-      FlatSem.evaluate targetEnv target [(compileExp cfg (.app trace op args)).2.2] =
-        ({ targetNext with clock := min target.clock targetNext.clock }, .err targetError) ∧
-      StateRel stateCfg { sourceNext with clock := min source.clock sourceNext.clock }
-        { targetNext with clock := min target.clock targetNext.clock } ∧ FlatErrorRel error targetError := by
-  have argsBound : (compileExps cfg args).1 < n := by simpa [compileExp_app] using bound
-  have reversedBound := compileExps_reverse_bound cfg args n argsBound
-  have reversedIH : ∀ expression ∈ args.reverse, ExpressionSimulation (C := C) (F := F) cfg stateCfg expression := by
-    intro expression member
-    exact argumentsIH expression (by simpa using member)
-  have argsSim := compileExps_simulation cfg stateCfg args.reverse reversedIH
-  obtain ⟨targetNext, targetResult, targetArgsRun, nextStates, related⟩ := argsSim
-    sourceEnv targetEnv source target sourceNext (.err error) n argsRun envs states reversedBound (by simpa using safe)
-  cases related with
-  | error errorsRel =>
-    rename_i targetError
-    have compiledReverse : (compileExps cfg args.reverse).2.2 = (compileExps cfg args).2.2.reverse := by
-      simp [compileExps_rows, List.map_reverse]
-    have sourceOuter := evaluate_app_args_error sourceEnv source sourceNext trace op args error argsRun
-    have targetOuter := evaluate_app_args_error targetEnv target targetNext trace op (compileExps cfg args).2.2
-      targetError (by simpa [compiledReverse] using targetArgsRun)
-    exact ⟨targetNext, targetError, sourceOuter, by simpa [compileExp_app] using targetOuter,
-      stateRel_fixClock stateCfg source sourceNext target targetNext states nextStates, errorsRel⟩
-
 end Flapjack.Compiler.Backend.FlatPattern

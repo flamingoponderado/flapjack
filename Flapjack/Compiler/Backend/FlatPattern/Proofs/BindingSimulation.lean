@@ -511,35 +511,6 @@ theorem forall₂_of_getElem {A B : Type} (relation : A → B → Prop) (left : 
         intro k x y leftAt rightAt
         exact pointwise (k + 1) x y (by simpa using leftAt) (by simpa using rightAt)
 
-/-- A used generated constructor work item evaluates purely to its field in
-every environment related on the generated-name interval. -/
-theorem compilePatBindings_con_workitem_pure {C F : Type} (trace : BackendCommon.Tra) (i : Nat)
-    (patterns : List FlatLang.Pat) (body : FlatLang.Exp) (rest : List (FlatLang.Pat × Nat × FlatLang.Exp))
-    (env env2 : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F) (fields : List FlatSem.Value)
-    (item : FlatLang.Pat × Nat × FlatLang.Exp) :
-    let entries := patternEntries trace i 0 patterns
-    let compiled := compilePatBindings trace (i + 2 + patterns.length) (entries.map Prod.snd ++ rest) body
-    let selected := entries.filter (fun e => (sptLookup e.2.2.1 compiled.1).isSome)
-    let extended := selected.reverse.map (fun e => (e.1.2, (fields[e.1.1]?).getD FlatSem.unitValue)) ++ env.v
-    item ∈ entries.map Prod.snd → (sptLookup item.2.1 compiled.1).isSome = true →
-    aLookupRel (fun name => i < decNameToNum name ∧ decNameToNum name < i + 2 + patterns.length)
-      Eq env2.v extended →
-    ∃ value, FlatSem.evaluate env2 state [item.2.2] = (state, .val [value]) := by
-  let entries := patternEntries trace i 0 patterns
-  let compiled := compilePatBindings trace (i + 2 + patterns.length) (entries.map Prod.snd ++ rest) body
-  let selected := entries.filter (fun e => (sptLookup e.2.2.1 compiled.1).isSome)
-  let extended := selected.reverse.map (fun e => (e.1.2, (fields[e.1.1]?).getD FlatSem.unitValue)) ++ env.v
-  change item ∈ entries.map Prod.snd → (sptLookup item.2.1 compiled.1).isSome = true →
-    aLookupRel (fun name => i < decNameToNum name ∧ decNameToNum name < i + 2 + patterns.length)
-      Eq env2.v extended → _
-  intro member used related
-  obtain ⟨entry, inEntries, rfl⟩ := List.mem_map.mp member
-  have inSelected : entry ∈ selected := List.mem_filter.mpr ⟨inEntries, used⟩
-  have expression := (patternEntries_work_expression trace i 0 patterns entry inEntries).2
-  refine ⟨(fields[entry.1.1]?).getD FlatSem.unitValue, ?_⟩
-  rw [expression]
-  exact compilePatBindings_con_selected_pure trace i patterns body rest env env2 state fields entry inSelected related
-
 /-- Generated constructor work items and actual fields satisfy the pointwise
 pure-evaluation premise needed by the recursive binding simulation. -/
 theorem compilePatBindings_con_workitems_related {C F : Type} (trace : BackendCommon.Tra) (i : Nat)
@@ -641,22 +612,6 @@ theorem compilePatBindings_var_evaluate {C F : Type} (trace : BackendCommon.Tra)
   cases compiled : compilePatBindings trace i rest body with
   | mk used result =>
     simp [compilePatBindings, compiled, FlatSem.evaluate, pure, FlatSem.fixClock]
-
-/-- Wildcard bindings introduce no code and leave the continuation untouched. -/
-theorem compilePatBindings_any_evaluate {C F : Type} (trace : BackendCommon.Tra) (i key : Nat)
-    (expression body : FlatLang.Exp) (rest : List (FlatLang.Pat × Nat × FlatLang.Exp))
-    (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F) :
-    FlatSem.evaluate env state [(compilePatBindings trace i ((.pany, key, expression) :: rest) body).2] =
-      FlatSem.evaluate env state [(compilePatBindings trace i rest body).2] := by
-  simp [compilePatBindings]
-
-/-- Literal bindings introduce no code and leave the continuation untouched. -/
-theorem compilePatBindings_lit_evaluate {C F : Type} (trace : BackendCommon.Tra) (i key : Nat)
-    (lit : Lit) (expression body : FlatLang.Exp) (rest : List (FlatLang.Pat × Nat × FlatLang.Exp))
-    (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F) :
-    FlatSem.evaluate env state [(compilePatBindings trace i ((.plit lit, key, expression) :: rest) body).2] =
-      FlatSem.evaluate env state [(compilePatBindings trace i rest body).2] := by
-  simp [compilePatBindings]
 
 /-- An as-pattern binds the original value and copies it into the generated
 name used by the nested pattern's continuation. -/

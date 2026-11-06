@@ -444,24 +444,6 @@ def NaiveGuardCorrect {C F : Type} (trace : Tra) (expression : FlatLang.Exp)
     | .match _ => FlatSem.evaluate env state [naivePatternMatch trace [(pattern, expression)]] =
         (state, .val [FlatSem.boolValue true])
 
-/-- The corresponding guard obligation for one pattern. -/
-def NaiveGuardCase {C F : Type} (trace : Tra) (pattern : FlatLang.Pat) (expression : FlatLang.Exp)
-    (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F) (value : FlatSem.Value) : Prop :=
-  match FlatSem.pmatch state pattern value [] with
-  | .typeError => True
-  | .noMatch => FlatSem.evaluate env state [naivePatternMatch trace [(pattern, expression)]] =
-      (state, .val [FlatSem.boolValue false])
-  | .match _ => FlatSem.evaluate env state [naivePatternMatch trace [(pattern, expression)]] =
-      (state, .val [FlatSem.boolValue true])
-
-/-- Wildcard and variable patterns always produce a true naive guard. -/
-theorem naiveGuard_any_var {C F : Type} (trace : Tra) (expression : FlatLang.Exp)
-    (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F) (value : FlatSem.Value)
-    (name : VarN) :
-    NaiveGuardCase trace .pany expression env state value ∧
-    NaiveGuardCase trace (.pvar name) expression env state value := by
-  constructor <;> simpa [NaiveGuardCase, FlatSem.pmatch, naivePatternMatch] using evaluate_bool trace true env state
-
 /-- A literal work item either continues with the tail or returns false;
 later type errors are still reflected in the source match decision. -/
 theorem naiveList_literal {C F : Type} (trace : Tra) (lit : Lit) (expression : FlatLang.Exp)
@@ -498,17 +480,6 @@ theorem naiveList_literal {C F : Type} (trace : Tra) (lit : Lit) (expression : F
             all_goals subst answer
             all_goals simpa [naivePatternMatch, evaluate_smartIf, branch] using evaluate_bool trace false env state
           · simp [FlatSem.pmatchList, FlatSem.pmatch, same, sameType, matchDecision] at decision
-
-/-- An as-pattern has the same success, non-match and error outcome as its
-nested pattern, despite adding the alias to the match environment. -/
-theorem naiveGuard_as {C F : Type} (trace : Tra) (pattern : FlatLang.Pat) (name : VarN)
-    (expression : FlatLang.Exp) (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F)
-    (value : FlatSem.Value) (ih : NaiveGuardCase trace pattern expression env state value) :
-    NaiveGuardCase trace (.pas pattern name) expression env state value := by
-  have suffix := pmatch_append_bindings state pattern value [] [(name, value)]
-  simp only [List.nil_append] at suffix
-  cases result : FlatSem.pmatch state pattern value [] <;>
-    simp_all [NaiveGuardCase, FlatSem.pmatch, naivePatternMatch, appendMatchBindings]
 
 /-- Reference patterns replace their input expression with the corresponding
 pure store projection before continuing through the nested work list. -/
