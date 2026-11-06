@@ -46,7 +46,7 @@ theorem stateRelFuel_mono {C F : Type} {fuel : Nat} {g g' : State}
 theorem stateRelFuel_lookupRefs {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
     {source : ClosSem.State (NumSet × C) F} {target : ClosSem.State C F}
     (related : StateRelFuel fuel g allowed source target) (key : Nat) :
-    ClosMti.OptionRel (refRel (ValueRelFuel fuel g allowed target.code))
+    Flapjack.optionRel (refRel (ValueRelFuel fuel g allowed target.code))
       (source.refs.lookup key) (target.refs.lookup key) :=
   ClosMti.fmapRel_lookup related.2.2.2.2.1 key
 
@@ -72,24 +72,24 @@ theorem stateRelFuel_simple {C F : Type} (fuel : Nat) (g : State) (allowed : Set
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro s t ptr ⟨missing, codeEq, states⟩
     have lookup := stateRelFuel_lookupRefs states ptr
-    cases left : s.refs.lookup ptr <;> simp_all [ClosMti.OptionRel]
+    cases left : s.refs.lookup ptr <;> simp_all [Flapjack.optionRel]
   · intro bytes t s ptr ⟨found, codeEq, states⟩
     have lookup := stateRelFuel_lookupRefs states ptr
     rw [found] at lookup
     cases left : s.refs.lookup ptr with
-    | none => simp [ClosMti.OptionRel, left] at lookup
+    | none => simp [Flapjack.optionRel, left] at lookup
     | some value =>
       have refs : refRel (ValueRelFuel fuel g allowed code) value (.byteArray bytes) := by
-        simpa [ClosMti.OptionRel, left, codeEq] using lookup
+        simpa [Flapjack.optionRel, left, codeEq] using lookup
       cases value <;> simp_all [refRel]
   · intro values t s ptr ⟨found, codeEq, states⟩
     have lookup := stateRelFuel_lookupRefs states ptr
     rw [found] at lookup
     cases left : s.refs.lookup ptr with
-    | none => simp [ClosMti.OptionRel, left] at lookup
+    | none => simp [Flapjack.optionRel, left] at lookup
     | some value =>
       have refs : refRel (ValueRelFuel fuel g allowed code) value (.valueArray values) := by
-        simpa [ClosMti.OptionRel, left, codeEq] using lookup
+        simpa [Flapjack.optionRel, left, codeEq] using lookup
       cases value with
       | valueArray xs => exact ⟨xs, rfl, refs⟩
       | byteArray bytes => exact refs.elim
@@ -98,10 +98,10 @@ theorem stateRelFuel_simple {C F : Type} (fuel : Nat) (g : State) (allowed : Set
     have lookup := stateRelFuel_lookupRefs states ptr
     rw [found] at lookup
     cases left : s.refs.lookup ptr with
-    | none => simp [ClosMti.OptionRel, left] at lookup
+    | none => simp [Flapjack.optionRel, left] at lookup
     | some old =>
       have refs : refRel (ValueRelFuel fuel g allowed code) old (.thunk mode value) := by
-        simpa [ClosMti.OptionRel, left, codeEq] using lookup
+        simpa [Flapjack.optionRel, left, codeEq] using lookup
       cases old with
       | valueArray xs => exact refs.elim
       | byteArray bytes => exact refs.elim

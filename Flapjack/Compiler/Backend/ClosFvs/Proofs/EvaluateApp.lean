@@ -8,12 +8,12 @@ open Flapjack.SemanticPrimitivesHOL (Result)
 /-- Indexing related lists gives related optional entries. -/
 theorem list_lookup_related {A B : Type} {relation : A → B → Prop} {left : List A} {right : List B}
     (related : List.Forall₂ relation left right) (index : Nat) :
-    OptionRel relation left[index]? right[index]? := by
+    optionRel relation left[index]? right[index]? := by
   induction related generalizing index with
-  | nil => simp [OptionRel]
+  | nil => simp [optionRel]
   | cons head tail ih =>
     cases index with
-    | zero => simpa [OptionRel] using head
+    | zero => simpa [optionRel] using head
     | succ index => simpa using ih index
 
 /-- Recursive closures generated from related bundles and environments are
@@ -139,11 +139,11 @@ theorem destClosure_full_recclosure (maxApp : Nat) (requested location : Option 
   | some entry =>
     rcases entry with ⟨arity, body⟩
     cases targetFound : nextFunctions[index]? with
-    | none => simp [found, targetFound, OptionRel] at lookupRel
+    | none => simp [found, targetFound, optionRel] at lookupRel
     | some targetEntry =>
       rcases targetEntry with ⟨targetArity, targetBody⟩
       have entryRel : FunctionRel (env.length + functions.length) (arity, body) (targetArity, targetBody) := by
-        simpa [found, targetFound, OptionRel] using lookupRel
+        simpa [found, targetFound, optionRel] using lookupRel
       have arityEq : arity = targetArity := entryRel.1
       subst targetArity
       have bodyRel : CodeRel (arity + (env.length + functions.length)) [body] [targetBody] := entryRel.2
@@ -245,15 +245,15 @@ theorem destClosure_none_related (maxApp : Nat) (requested : Option Nat)
     | none =>
       cases targetFound : nextFunctions[index]? with
       | none => simp [destClosure, targetFound]
-      | some entry => simp [OptionRel, found, targetFound] at lookup
+      | some entry => simp [optionRel, found, targetFound] at lookup
     | some entry =>
       rcases entry with ⟨arity, body⟩
       cases targetFound : nextFunctions[index]? with
-      | none => simp [OptionRel, found, targetFound] at lookup
+      | none => simp [optionRel, found, targetFound] at lookup
       | some targetEntry =>
         rcases targetEntry with ⟨nextArity, nextBody⟩
         have entries : FunctionRel (env.length + functions.length) (arity, body) (nextArity, nextBody) := by
-          simpa [OptionRel, found, targetFound] using lookup
+          simpa [optionRel, found, targetFound] using lookup
         have arityEq : arity = nextArity := entries.1
         subst nextArity
         by_cases valid : (checkLoc maxApp requested (location.map (fun loc => 2 * index + loc))
@@ -300,11 +300,11 @@ theorem destClosure_partial_related (maxApp : Nat) (requested : Option Nat)
     | some entry =>
       rcases entry with ⟨arity, body⟩
       cases targetFound : nextFunctions[index]? with
-      | none => simp [OptionRel, found, targetFound] at lookup
+      | none => simp [optionRel, found, targetFound] at lookup
       | some targetEntry =>
         rcases targetEntry with ⟨nextArity, nextBody⟩
         have entries : FunctionRel (env.length + functions.length) (arity, body) (nextArity, nextBody) := by
-          simpa [OptionRel, found, targetFound] using lookup
+          simpa [optionRel, found, targetFound] using lookup
         have arityEq : arity = nextArity := entries.1
         subst nextArity
         by_cases valid : (checkLoc maxApp requested (location.map (fun loc => 2 * index + loc))

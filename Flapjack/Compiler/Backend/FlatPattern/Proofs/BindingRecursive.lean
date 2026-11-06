@@ -1,7 +1,6 @@
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.BindingSimulation
 
-/-! Recursive proof obligations for generated pattern bindings. The evaluator
-and carriers are still pending HOL correspondence review. -/
+/-! Recursive proof obligations for generated pattern bindings. -/
 namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack Flapjack.AstHOL Flapjack.Compiler.Backend
 open Flapjack.SemanticPrimitivesHOL (Result storeLookup)
@@ -441,8 +440,7 @@ theorem bindingSimulation_con {C F : Type} (trace : BackendCommon.Tra) (upper ke
         · exact nextBounds
 
 /-- The complete work-list simulation follows the compiler's own recursive
-induction. This proof-side theorem is untagged until the clocked evaluator and
-its HOL carriers have been reviewed. -/
+induction. This assembling helper is not a separate HOL declaration. -/
 theorem bindingSimulation_all {C F : Type} (trace : BackendCommon.Tra) (upper : Nat)
     (todo : List (FlatLang.Pat × Nat × FlatLang.Exp)) (body : FlatLang.Exp) :
     @BindingSimulation C F trace upper todo body := by
@@ -460,8 +458,9 @@ theorem bindingSimulation_all {C F : Type} (trace : BackendCommon.Tra) (upper : 
     exact bindingSimulation_ref trace i key pattern expression body rest ih
 
 /-- Work-list binding simulation with the compiler result exposed explicitly.
-The `BindingInputs` predicate packages the pointwise pure-evaluation premise;
-the evaluator and carriers remain pending comparison with the HOL theorem. -/
+HOL also quantifies an unused variable `vset` of an independent inhabited type;
+that vacuous binder is omitted. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "compile_pat_bindings_simulation"]
 theorem compilePatBindings_simulation {C F : Type} (trace : BackendCommon.Tra) (lower upper : Nat)
     (todo : List (FlatLang.Pat × Nat × FlatLang.Exp)) (body compiledBody : FlatLang.Exp) (used : NumSet)
     (state final : FlatSem.State C F) (values : List FlatSem.Value) (pre bindings : List (VarN × FlatSem.Value))
@@ -470,7 +469,10 @@ theorem compilePatBindings_simulation {C F : Type} (trace : BackendCommon.Tra) (
     (compiled : compilePatBindings trace upper todo body = (used, compiledBody))
     (matched : FlatSem.pmatchList state (todo.map Prod.fst) values pre = .match bindings)
     (evaluated : FlatSem.evaluate env state [compiledBody] = (final, result))
-    (inputs : BindingInputs lower upper used env state todo values)
+    (inputs : List.Forall₂ (fun item value => ∀ env2,
+      sptMem item.2.1 used ∧
+        aLookupRel (fun name => lower < decNameToNum name ∧ decNameToNum name < upper) Eq env2.v env.v →
+      pureEvalTo state env2 item.2.2 value) todo values)
     (preBound : ∀ entry ∈ pre, decNameToNum entry.1 < lower) (bound : lower < upper)
     (related : aLookupRel (fun name => decNameToNum name < lower) Eq env.v (pre ++ base))
     (itemBounds : ∀ item ∈ todo, (∀ name ∈ FlatLang.patBindings item.1, decNameToNum name < lower) ∧
@@ -479,7 +481,9 @@ theorem compilePatBindings_simulation {C F : Type} (trace : BackendCommon.Tra) (
       aLookupRel (fun name => decNameToNum name < lower) Eq env2.v (bindings ++ base) := by
   apply bindingSimulation_all trace upper todo body lower state values pre bindings env final result base matched
   · simpa [compiled] using evaluated
-  · simpa [compiled] using inputs
+  · have inputs' : BindingInputs lower upper used env state todo values := by
+      simpa only [BindingInputs, sptMem, sptDomain, and_imp] using inputs
+    simpa [compiled] using inputs'
   · exact preBound
   · exact bound
   · exact related

@@ -68,7 +68,7 @@ theorem initialState_related {C F : Type} (ffi : HolFfiState F) (maxApp clock : 
     StateRel (initialState ffi maxApp HolFiniteMapExact.empty oracle
         (stateCc (ignoreTable compileInc) compiler) clock)
       (initialState ffi maxApp HolFiniteMapExact.empty (stateCo (ignoreTable compileInc) oracle) compiler clock) := by
-  simp [StateRel, initialState, OptionRel, HolFiniteMapExact.empty, safe]
+  simp [StateRel, initialState, optionRel, HolFiniteMapExact.empty, safe]
 
 /-- Factored numbering-semantics helper; its separate safety premises are
 assembled into the source theorem below. It has no separate HOL declaration. -/

@@ -1,7 +1,7 @@
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ExpressionList
+import Flapjack.Compiler.Backend.FlatProps.EvaluateLength
 
-/-! Clock-bounded expression-list simulation for the flat pattern pass. The
-underlying evaluator and relations remain pending HOL review. -/
+/-! Clock-bounded expression-list simulation for the flat pattern pass. -/
 namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack Flapjack.AstHOL Flapjack.Compiler.Backend
 open Flapjack.SemanticPrimitivesHOL (Result)
@@ -81,7 +81,7 @@ theorem compileExps_simulation_upTo {C F : Type} (cfg stateCfg : Config) (clock 
             stateRel_fixClock stateCfg source sourceNext target targetNext states nextStates, .error errorsRel⟩
         | values valuesRel =>
           rename_i sourceValues targetValues
-          obtain ⟨value, valueEq⟩ := singletonSuccess first sourceEnv source sourceNext sourceValues firstRun
+          obtain ⟨value, valueEq⟩ := FlatProps.evaluate_sing sourceEnv source sourceNext first sourceValues firstRun
           subst sourceValues
           cases valuesRel with
           | cons valueRel tailRel =>

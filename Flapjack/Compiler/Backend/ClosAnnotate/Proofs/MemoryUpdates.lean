@@ -16,12 +16,12 @@ theorem updateArray_related {C F : Type} (source target : State C F) (states : S
     cases right : target.refs.lookup ptr with
     | none => exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory, right], by
         simp [doApp, applyMemory, left, AppResultRel, ResultRel]⟩
-    | some ref => simp [left, right, OptionRel] at refs
+    | some ref => simp [left, right, optionRel] at refs
   | some ref =>
     cases right : target.refs.lookup ptr with
-    | none => simp [left, right, OptionRel] at refs
+    | none => simp [left, right, optionRel] at refs
     | some nextRef =>
-      have refRel : RefRel ref nextRef := by simpa [left, right, OptionRel] using refs
+      have refRel : RefRel ref nextRef := by simpa [left, right, optionRel] using refs
       cases ref with
       | byteArray bytes =>
         cases nextRef <;> simp [RefRel] at refRel
@@ -89,12 +89,12 @@ theorem updateByte_related {C F : Type} (source target : State C F) (states : St
     cases right : target.refs.lookup ptr with
     | none => exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory, right], by
         simp [doApp, applyMemory, left, AppResultRel, ResultRel]⟩
-    | some ref => simp [left, right, OptionRel] at refs
+    | some ref => simp [left, right, optionRel] at refs
   | some ref =>
     cases right : target.refs.lookup ptr with
-    | none => simp [left, right, OptionRel] at refs
+    | none => simp [left, right, optionRel] at refs
     | some nextRef =>
-      have refRel : RefRel ref nextRef := by simpa [left, right, OptionRel] using refs
+      have refRel : RefRel ref nextRef := by simpa [left, right, optionRel] using refs
       cases ref with
       | valueArray fields =>
         cases nextRef <;> simp [RefRel] at refRel

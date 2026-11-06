@@ -1,62 +1,199 @@
 import Flapjack.Compiler.Backend.PatternComp.Proofs.RowSelection
 
 /-! Proof-side traversal and guard lemmas for the pattern compiler. The
-abstract term and finite-map carriers remain pending HOL correspondence review. -/
+remaining untagged traversal and guard declarations await HOL review. -/
 namespace Flapjack.Compiler.Backend.PatternComp
 open Flapjack PatternCommon PatternSemantics
 
+private def toBroad (refs : HolFiniteMapExact Nat Term) : Nat → Option Term := refs.lookup
+
+private def ofBroad (lookup : Nat → Option Term)
+    (support : ∃ keys : List Nat, ∀ key, lookup key ≠ none → key ∈ keys) :
+    HolFiniteMapExact Nat Term := ⟨lookup, support⟩
+
+/-- The canonical finite-map parameter roundtrips through its lookup view. -/
+theorem holFmapAsFiniteSupportParamWitness_pmatchList_length_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs := by
+  cases refs
+  exact ⟨rfl, rfl, rfl⟩
+
+theorem holFmapAsFiniteSupportParamWitness_walk_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatchList_length_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_walkList_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatchList_length_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_appPos_pos_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatchList_length_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_walk_sound_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatchList_length_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_walk_append_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatchList_length_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_dtEvalGuard_mkConj_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatchList_length_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_patToGuard_correct_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatchList_length_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_patsToGuard_correct_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatchList_length_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_dt_eval_guard_pat_to_guard_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatchList_length_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_dtEval_mkIf_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatchList_length_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_patsToCode_correct_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatchList_length_refs refs key
+
 /-- Traverse constructor fields and references along a list of indices. -/
-def walk (refs : HolFiniteMapExact Nat Term) : List Nat → Term → Option Term
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "walk_def"
+  (fmap_as_finite_support_parameters := [refs])]
+def walk (path : List Nat) (value : Term) (refs : HolFiniteMapExact Nat Term) : Option Term :=
+  match path, value with
   | [], value => some value
-  | index :: path, .term _ values => do
-    let value ← values[index]?
-    walk refs path value
-  | 0 :: path, .refPtr address => do
-    let value ← refs.lookup address
-    walk refs path value
+  | index :: path, .term _ values =>
+    if h : index < values.length then walk path values[index] refs else none
+  | index :: path, .refPtr address =>
+    if index ≠ 0 then none else
+      match refs.lookup address with
+      | none => none
+      | some value => walk path value refs
   | _ :: _, _ => none
 
 /-- The position representation and list traversal select the same term. -/
 theorem appPos_getPos (refs : HolFiniteMapExact Nat Term) (path : List Nat) (value : Term) :
-    appPos refs (getPos path) value = walk refs path value := by
+    appPos refs (getPos path) value = walk path value refs := by
   induction path generalizing value with
-  | nil => rfl
+  | nil => simp [getPos, appPos, walk]
   | cons index path ih =>
     cases value with
-    | term tag values => simp [getPos, appPos, walk, ih]
-    | refPtr address => cases index <;> simp [getPos, appPos, walk, ih]
+    | term tag values =>
+      by_cases h : index < values.length <;> simp [getPos, appPos_term, walk, h, ih]
+    | refPtr address =>
+      cases index with
+      | zero => cases found : refs.lookup address <;> simp [getPos, appPos, walk, ih, found]
+      | succ index => simp [getPos, appPos, walk]
     | litv lit => simp [getPos, appPos, walk]
     | other => simp [getPos, appPos, walk]
 
+/-- An in-bounds position enters the corresponding term field. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "app_pos_Pos"
+  (fmap_as_finite_support_parameters := [refs])]
+theorem appPos_pos (refs : HolFiniteMapExact Nat Term) (index : Nat) (fields : List Term)
+    (position : Position) (tag : Option Nat) (bound : index < fields.length) :
+    appPos refs (.pos index position) (.term tag fields) = appPos refs position fields[index] := by
+  simp [appPos_term, bound]
+
+/-- A successful list traversal determines the corresponding position lookup. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "walk_thm"
+  (fmap_as_finite_support_parameters := [refs])]
+theorem walk_sound (path : List Nat) (value : Term) (refs : HolFiniteMapExact Nat Term)
+    (selected : Term) (walked : walk path value refs = some selected) :
+    appPos refs (getPos path) value = some selected := by
+  rw [appPos_getPos]
+  exact walked
+
 /-- Traversing concatenated paths is sequential traversal. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "walk_append"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem walk_append (refs : HolFiniteMapExact Nat Term) (left right : List Nat) (value : Term) :
-    walk refs (left ++ right) value = (walk refs left value).bind (walk refs right) := by
+    walk (left ++ right) value refs =
+      match walk left value refs with
+      | none => none
+      | some selected => walk right selected refs := by
   induction left generalizing value with
   | nil => rfl
   | cons index left ih =>
     cases value with
-    | term tag values => simp [walk, ih, Option.bind_assoc]
-    | refPtr address => cases index <;> simp [walk, ih, Option.bind_assoc]
+    | term tag values =>
+      by_cases h : index < values.length <;> simp [walk, ih, h]
+    | refPtr address =>
+      cases index with
+      | zero => cases found : refs.lookup address <;> simp [walk, ih, found]
+      | succ index => simp [walk]
     | litv lit => simp [walk]
     | other => simp [walk]
 
+/-- The true-guard test recognizes exactly the true constructor. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "is_True_thm"]
+theorem isTrue_iff (guard : DGuard) : isTrue guard = true ↔ guard = .true_ := by
+  cases guard <;> simp [isTrue]
+
 /-- Removing literal-true conjuncts preserves guard evaluation, including errors. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "dt_eval_guard_mk_Conj"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem dtEvalGuard_mkConj (refs : HolFiniteMapExact Nat Term) (value : Term) (p q : DGuard) :
     dtEvalGuard refs value (mkConj p q) = dtEvalGuard refs value (.conj p q) := by
-  have bindTrue (x : Option Bool) :
-      x.bind (fun first => if first then some true else some false) = x := by
+  have matchTrue (x : Option Bool) :
+      (match x with | none => none | some true => some true | some false => some false) = x := by
     cases x with
     | none => rfl
     | some b => cases b <;> rfl
-  cases p <;> cases q <;> simp [mkConj, isTrue, dtEvalGuard, bindTrue]
+  cases p <;> cases q <;> simp [mkConj, isTrue, dtEvalGuard] <;> exact (matchTrue _).symm
 
 /-- Eliminating a literal-true guard preserves decision-tree evaluation. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "mk_If_thm"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem dtEval_mkIf (refs : HolFiniteMapExact Nat Term) (value : Term)
     (guard : DGuard) (yes no : DTree) :
     dtEval refs value (mkIf guard yes no) = dtEval refs value (.if_ guard yes no) := by
   cases guard <;> simp [mkIf, isTrue, dtEval, dtEvalGuard]
 
 /-- A pattern-list scan without a type error has equal input lengths. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "pmatch_list_LENGTH"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem pmatchList_length (refs : HolFiniteMapExact Nat Term) (patterns : List Pat)
     (values : List Term) (safe : pmatchList refs patterns values ≠ .typeFailure) :
     values.length = patterns.length := by
@@ -75,7 +212,7 @@ theorem pmatchList_length (refs : HolFiniteMapExact Nat Term) (patterns : List P
 /-- A literal guard at any valid path agrees with its non-error match. -/
 theorem patToGuard_lit_at (refs : HolFiniteMapExact Nat Term) (value selected : Term)
     (path : List Nat) (literal : Flapjack.AstHOL.Lit)
-    (walked : walk refs path.reverse value = some selected)
+    (walked : walk path.reverse value refs = some selected)
     (safe : pmatch refs (.lit literal) selected ≠ .typeFailure) :
     dtEvalGuard refs value (patToGuard path (.lit literal)) =
       some (decide (pmatch refs (.lit literal) selected = .success)) := by
@@ -120,10 +257,10 @@ theorem patToGuard_or_at (refs : HolFiniteMapExact Nat Term) (value selected : T
 theorem patToGuard_ref_at (refs : HolFiniteMapExact Nat Term) (value selected : Term)
     (path : List Nat) (pattern : Pat)
     (simulation : ∀ path' child, pmatch refs pattern child ≠ .typeFailure →
-      walk refs path'.reverse value = some child →
+      walk path'.reverse value refs = some child →
       dtEvalGuard refs value (patToGuard path' pattern) =
         some (decide (pmatch refs pattern child = .success)))
-    (walked : walk refs path.reverse value = some selected)
+    (walked : walk path.reverse value refs = some selected)
     (safe : pmatch refs (.ref pattern) selected ≠ .typeFailure) :
     dtEvalGuard refs value (patToGuard path (.ref pattern)) =
       some (decide (pmatch refs (.ref pattern) selected = .success)) := by
@@ -134,13 +271,15 @@ theorem patToGuard_ref_at (refs : HolFiniteMapExact Nat Term) (value selected : 
     | none => simp [pmatch, lookup] at safe
     | some child =>
       have childSafe : pmatch refs pattern child ≠ .typeFailure := by simpa [pmatch, lookup] using safe
-      have childWalk : walk refs (0 :: path).reverse value = some child := by
+      have childWalk : walk (0 :: path).reverse value refs = some child := by
         simp [List.reverse_cons, walk_append, walked, walk, lookup]
       simpa [patToGuard, pmatch, lookup] using simulation (0 :: path) child childSafe childWalk
 
 /-- Extract the constructor fields reached by a traversal, if any. -/
-def walkList (refs : HolFiniteMapExact Nat Term) (path : List Nat) (value : Term) : Option (List Term) :=
-  match walk refs path value with
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "walk_list_def"
+  (fmap_as_finite_support_parameters := [refs])]
+def walkList (path : List Nat) (value : Term) (refs : HolFiniteMapExact Nat Term) : Option (List Term) :=
+  match walk path value refs with
   | some (.term _ fields) => some fields
   | _ => none
 
@@ -148,9 +287,9 @@ def walkList (refs : HolFiniteMapExact Nat Term) (path : List Nat) (value : Term
 length to the path reaches the next field. -/
 theorem walkList_next (refs : HolFiniteMapExact Nat Term) (value : Term)
     (path : List Nat) (before after : List Term) (next : Term)
-    (walked : walkList refs path value = some (before ++ next :: after)) :
-    walk refs (path ++ [before.length]) value = some next := by
-  cases found : walk refs path value with
+    (walked : walkList path value refs = some (before ++ next :: after)) :
+    walk (path ++ [before.length]) value refs = some next := by
+  cases found : walk path value refs with
   | none => simp [walkList, found] at walked
   | some selected =>
     cases selected with
@@ -165,13 +304,13 @@ theorem walkList_next (refs : HolFiniteMapExact Nat Term) (value : Term)
 theorem patsToGuard_cons_at (refs : HolFiniteMapExact Nat Term) (value : Term)
     (path : List Nat) (before : List Term) (firstValue : Term) (otherValues : List Term)
     (first second : Pat) (otherPatterns : List Pat)
-    (walked : walkList refs path.reverse value = some (before ++ firstValue :: otherValues))
+    (walked : walkList path.reverse value refs = some (before ++ firstValue :: otherValues))
     (headSimulation : ∀ path' selected, pmatch refs first selected ≠ .typeFailure →
-      walk refs path'.reverse value = some selected →
+      walk path'.reverse value refs = some selected →
       dtEvalGuard refs value (patToGuard path' first) =
         some (decide (pmatch refs first selected = .success)))
     (tailSimulation : pmatchList refs (second :: otherPatterns) otherValues ≠ .typeFailure →
-      walkList refs path.reverse value = some ((before ++ [firstValue]) ++ otherValues) →
+      walkList path.reverse value refs = some ((before ++ [firstValue]) ++ otherValues) →
       dtEvalGuard refs value (patsToGuard path (before.length + 1) (second :: otherPatterns)) =
         some (decide (pmatchList refs (second :: otherPatterns) otherValues = .success)))
     (safe : pmatchList refs (first :: second :: otherPatterns) (firstValue :: otherValues) ≠ .typeFailure) :
@@ -185,9 +324,9 @@ theorem patsToGuard_cons_at (refs : HolFiniteMapExact Nat Term) (value : Term)
     cases head : pmatch refs first firstValue <;>
       cases tail : pmatchList refs (second :: otherPatterns) otherValues <;>
       simp_all [pmatchList]
-  have headWalk : walk refs (before.length :: path).reverse value = some firstValue := by
+  have headWalk : walk (before.length :: path).reverse value refs = some firstValue := by
     simpa [List.reverse_cons] using walkList_next refs value path.reverse before otherValues firstValue walked
-  have tailWalk : walkList refs path.reverse value = some ((before ++ [firstValue]) ++ otherValues) := by
+  have tailWalk : walkList path.reverse value refs = some ((before ++ [firstValue]) ++ otherValues) := by
     simpa [List.append_assoc] using walked
   have headGuard := headSimulation (before.length :: path) firstValue headSafe headWalk
   have tailGuard := tailSimulation tailSafe tailWalk
@@ -199,9 +338,9 @@ theorem patsToGuard_cons_at (refs : HolFiniteMapExact Nat Term) (value : Term)
 /-- The singleton pattern-list guard case. -/
 theorem patsToGuard_singleton_at (refs : HolFiniteMapExact Nat Term) (value : Term)
     (path : List Nat) (before : List Term) (selected : Term) (pattern : Pat)
-    (walked : walkList refs path.reverse value = some (before ++ [selected]))
+    (walked : walkList path.reverse value refs = some (before ++ [selected]))
     (simulation : ∀ path' child, pmatch refs pattern child ≠ .typeFailure →
-      walk refs path'.reverse value = some child →
+      walk path'.reverse value refs = some child →
       dtEvalGuard refs value (patToGuard path' pattern) =
         some (decide (pmatch refs pattern child = .success)))
     (safe : pmatchList refs [pattern] [selected] ≠ .typeFailure) :
@@ -209,7 +348,7 @@ theorem patsToGuard_singleton_at (refs : HolFiniteMapExact Nat Term) (value : Te
       some (decide (pmatchList refs [pattern] [selected] = .success)) := by
   have headSafe : pmatch refs pattern selected ≠ .typeFailure := by
     cases result : pmatch refs pattern selected <;> simp_all [pmatchList]
-  have headWalk : walk refs (before.length :: path).reverse value = some selected := by
+  have headWalk : walk (before.length :: path).reverse value refs = some selected := by
     simpa [List.reverse_cons] using walkList_next refs value path.reverse before [] selected walked
   have result := simulation (before.length :: path) selected headSafe headWalk
   cases head : pmatch refs pattern selected <;> simp_all [patsToGuard, pmatchList]
@@ -219,10 +358,10 @@ theorem patToGuard_consNone_at (refs : HolFiniteMapExact Nat Term) (value select
     (path : List Nat) (patterns : List Pat)
     (simulation : ∀ path' k fields before,
       pmatchList refs patterns fields ≠ .typeFailure → before.length = k →
-      walkList refs path'.reverse value = some (before ++ fields) → fields.length = patterns.length →
+      walkList path'.reverse value refs = some (before ++ fields) → fields.length = patterns.length →
       dtEvalGuard refs value (patsToGuard path' k patterns) =
         some (decide (pmatchList refs patterns fields = .success)))
-    (walked : walk refs path.reverse value = some selected)
+    (walked : walk path.reverse value refs = some selected)
     (safe : pmatch refs (.cons none patterns) selected ≠ .typeFailure) :
     dtEvalGuard refs value (patToGuard path (.cons none patterns)) =
       some (decide (pmatch refs (.cons none patterns) selected = .success)) := by
@@ -234,7 +373,7 @@ theorem patToGuard_consNone_at (refs : HolFiniteMapExact Nat Term) (value select
     | none =>
       have listSafe : pmatchList refs patterns fields ≠ .typeFailure := by simpa [pmatch] using safe
       have listLength := pmatchList_length refs patterns fields listSafe
-      have listWalk : walkList refs path.reverse value = some ([] ++ fields) := by simp [walkList, walked]
+      have listWalk : walkList path.reverse value refs = some ([] ++ fields) := by simp [walkList, walked]
       simpa [patToGuard, pmatch] using simulation path 0 fields [] listSafe rfl listWalk listLength
 
 /-- A tagged constructor guard agrees with matching when its field guards do. -/
@@ -242,10 +381,10 @@ theorem patToGuard_consSome_at (refs : HolFiniteMapExact Nat Term) (value select
     (path : List Nat) (tag : Nat) (siblings : Option (List (Nat × Nat))) (patterns : List Pat)
     (simulation : ∀ path' k fields before,
       pmatchList refs patterns fields ≠ .typeFailure → before.length = k →
-      walkList refs path'.reverse value = some (before ++ fields) → fields.length = patterns.length →
+      walkList path'.reverse value refs = some (before ++ fields) → fields.length = patterns.length →
       dtEvalGuard refs value (patsToGuard path' k patterns) =
         some (decide (pmatchList refs patterns fields = .success)))
-    (walked : walk refs path.reverse value = some selected)
+    (walked : walk path.reverse value refs = some selected)
     (safe : pmatch refs (.cons (some (tag, siblings)) patterns) selected ≠ .typeFailure) :
     dtEvalGuard refs value (patToGuard path (.cons (some (tag, siblings)) patterns)) =
       some (decide (pmatch refs (.cons (some (tag, siblings)) patterns) selected = .success)) := by
@@ -257,23 +396,26 @@ theorem patToGuard_consSome_at (refs : HolFiniteMapExact Nat Term) (value select
     | some actual =>
       by_cases tagsMatch : tag = actual ∧ patterns.length = fields.length
       · have listSafe : pmatchList refs patterns fields ≠ .typeFailure := by simpa [pmatch, tagsMatch] using safe
-        have listWalk : walkList refs path.reverse value = some ([] ++ fields) := by simp [walkList, walked]
+        have listWalk : walkList path.reverse value refs = some ([] ++ fields) := by simp [walkList, walked]
         have fieldsGuard := simulation path 0 fields [] listSafe rfl listWalk tagsMatch.2.symm
         simp [patToGuard, dtEvalGuard_mkConj, dtEvalGuard, appPos_getPos, walked,
           dtTest, tagsMatch.1, tagsMatch.2, pmatch, fieldsGuard]
       · have fail : pmatch refs (.cons (some (tag, siblings)) patterns) (.term (some actual) fields) = .failure := by
           simp only [pmatch, tagsMatch, ↓reduceIte] at safe ⊢
           split at safe <;> simp_all
-        simp [patToGuard, dtEvalGuard_mkConj, dtEvalGuard, appPos_getPos, walked, dtTest, fail]
-        simp_all
+        by_cases equal : tag = actual
+        · subst tag
+          simp_all [patToGuard, dtEvalGuard_mkConj, dtEvalGuard, appPos_getPos, dtTest]
+        · simp [patToGuard, dtEvalGuard_mkConj, dtEvalGuard, appPos_getPos, walked, dtTest, fail, equal]
 
 mutual
-/-- A generated guard agrees with every non-error pattern match reached by
-its path. The abstract carriers and matcher remain pending source review. -/
+/-- The pattern conjunct of the source guard-correctness theorem. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "dt_eval_guard_pat_to_guard"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem patToGuard_correct (refs : HolFiniteMapExact Nat Term) (value : Term) (pattern : Pat)
     (path : List Nat) (selected : Term)
     (safe : pmatch refs pattern selected ≠ .typeFailure)
-    (walked : walk refs path.reverse value = some selected) :
+    (walked : walk path.reverse value refs = some selected) :
     dtEvalGuard refs value (patToGuard path pattern) =
       some (decide (pmatch refs pattern selected = .success)) := by
   cases pattern with
@@ -309,11 +451,13 @@ theorem patToGuard_correct (refs : HolFiniteMapExact Nat Term) (value : Term) (p
       · exact safe
 termination_by sizeOf pattern
 
-/-- Generated field guards agree with every non-error pattern-list match. -/
+/-- The pattern-list conjunct of the source guard-correctness theorem. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "dt_eval_guard_pat_to_guard"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem patsToGuard_correct (refs : HolFiniteMapExact Nat Term) (value : Term) (patterns : List Pat)
     (path : List Nat) (k : Nat) (fields before : List Term)
     (safe : pmatchList refs patterns fields ≠ .typeFailure) (beforeLen : before.length = k)
-    (walked : walkList refs path.reverse value = some (before ++ fields))
+    (walked : walkList path.reverse value refs = some (before ++ fields))
     (fieldsLen : fields.length = patterns.length) :
     dtEvalGuard refs value (patsToGuard path k patterns) =
       some (decide (pmatchList refs patterns fields = .success)) := by
@@ -350,17 +494,37 @@ theorem patsToGuard_correct (refs : HolFiniteMapExact Nat Term) (value : Term) (
 termination_by sizeOf patterns
 end
 
-/-- Compiled decision trees select the same result as safe pattern-row matching.
-HOL correspondence for the underlying matcher and map carrier remains pending. -/
+/-- The complete guard-correctness conjunction with one shared reference map. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "dt_eval_guard_pat_to_guard"
+  (fmap_as_finite_support_parameters := [refs])]
+theorem dt_eval_guard_pat_to_guard (refs : HolFiniteMapExact Nat Term) (value : Term) :
+    (∀ (path : List Nat) (pattern : Pat) (selected : Term),
+      pmatch refs pattern selected ≠ .typeFailure ∧ walk path.reverse value refs = some selected →
+      dtEvalGuard refs value (patToGuard path pattern) =
+        some (decide (pmatch refs pattern selected = .success))) ∧
+    (∀ (path : List Nat) (k : Nat) (patterns : List Pat) (fields before : List Term),
+      pmatchList refs patterns fields ≠ .typeFailure ∧ before.length = k ∧
+        walkList path.reverse value refs = some (before ++ fields) ∧ fields.length = patterns.length →
+      dtEvalGuard refs value (patsToGuard path k patterns) =
+        some (decide (pmatchList refs patterns fields = .success))) := by
+  constructor
+  · intro path pattern selected ⟨safe, walked⟩
+    exact patToGuard_correct refs value pattern path selected safe walked
+  · intro path k patterns fields before ⟨safe, beforeLen, walked, fieldsLen⟩
+    exact patsToGuard_correct refs value patterns path k fields before safe beforeLen walked fieldsLen
+
+/-- Compiled decision trees select the same result as safe pattern-row matching. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "pat_to_code_thm"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem patsToCode_correct (refs : HolFiniteMapExact Nat Term) (value : Term)
     (rows : List (Pat × Nat)) (safe : matchRows refs rows value ≠ none) :
     dtEval refs value (patsToCode rows) = matchRows refs rows value := by
   induction rows with
-  | nil => rfl
+  | nil => simp [patsToCode, dtEval, matchRows]
   | cons row rows ih =>
     obtain ⟨pattern, index⟩ := row
     have headSafe : pmatch refs pattern value ≠ .typeFailure :=
-      matchRows_member_safe refs value ((pattern, index) :: rows) safe (pattern, index) (by simp)
+      PatternExh.matchRows_member_safe refs value ((pattern, index) :: rows) safe (pattern, index) (by simp)
     have guardEq := patToGuard_correct refs value pattern [] value headSafe rfl
     cases head : pmatch refs pattern value with
     | typeFailure => exact (headSafe head).elim

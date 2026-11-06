@@ -102,12 +102,12 @@ theorem evaluate_remove_ticks_nil {C F : Type} (envTarget : List Value)
 
 /-- Related environments return related values at each common index. -/
 theorem environment_lookup (source target : List Value) (related : List.Forall₂ ValueRel source target)
-    (index : Nat) : ClosFvs.OptionRel ValueRel source[index]? target[index]? := by
+    (index : Nat) : Flapjack.optionRel ValueRel source[index]? target[index]? := by
   induction related generalizing index with
-  | nil => simp [ClosFvs.OptionRel]
+  | nil => simp [Flapjack.optionRel]
   | cons head tail ih =>
     cases index with
-    | zero => simpa [ClosFvs.OptionRel] using head
+    | zero => simpa [Flapjack.optionRel] using head
     | succ index => simpa using ih index
 
 /-- The variable case of the reverse tick-removal simulation. -/
@@ -141,7 +141,7 @@ theorem evaluate_remove_ticks_var {C F : Type} (trace : BackendCommon.Tra) (inde
   cases found : envTarget[index]? with
   | none =>
     cases sourceFound : envSource[index]? with
-    | some value => simp [ClosFvs.OptionRel, sourceFound, found] at lookup
+    | some value => simp [Flapjack.optionRel, sourceFound, found] at lookup
     | none =>
       simp [evaluate, found] at run
       obtain ⟨rfl, rfl⟩ := run
@@ -150,10 +150,10 @@ theorem evaluate_remove_ticks_var {C F : Type} (trace : BackendCommon.Tra) (inde
       simp [restored, evaluate, sourceFound]
   | some value =>
     cases sourceFound : envSource[index]? with
-    | none => simp [ClosFvs.OptionRel, sourceFound, found] at lookup
+    | none => simp [Flapjack.optionRel, sourceFound, found] at lookup
     | some sourceValue =>
       have values : ValueRel sourceValue value := by
-        simpa [ClosFvs.OptionRel, sourceFound, found] using lookup
+        simpa [Flapjack.optionRel, sourceFound, found] using lookup
       simp [evaluate, found] at run
       obtain ⟨rfl, rfl⟩ := run
       refine ⟨traces.length, .val [sourceValue], source, ?_, .cons values .nil, states⟩

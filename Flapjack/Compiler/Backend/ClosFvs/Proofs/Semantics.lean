@@ -61,7 +61,7 @@ theorem initialState_related {C F : Type} (ffi : HolFfiState F) (maxApp clock : 
     (auxEmpty : ∀ index, (oracle index).2.2 = []) (positive : 1 ≤ maxApp) :
     StateRel (initialState ffi maxApp HolFiniteMapExact.empty oracle (pureCc compileInc compiler) clock)
       (initialState ffi maxApp HolFiniteMapExact.empty (pureCo compileInc ∘ oracle) compiler clock) := by
-  simp [StateRel, initialState, OptionRel, HolFiniteMapExact.empty, auxEmpty, positive]
+  simp [StateRel, initialState, optionRel, HolFiniteMapExact.empty, auxEmpty, positive]
 
 /-- The source traversal preserves whole-program observations under the
 original non-failure, oracle and maximum-application hypotheses. -/

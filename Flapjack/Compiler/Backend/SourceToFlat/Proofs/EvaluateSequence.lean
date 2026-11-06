@@ -459,27 +459,4 @@ theorem factoredDecBoundedIH_list {C F : Type} [Nonempty C]
         intro dec member
         exact singletons dec (by simp [member])
 
-/-- Declaration forms for which the factored singleton simulation has been
-proved. This predicate tracks a partial proof, not a language restriction. -/
-inductive FactoredDecSupported : Dec → Prop where
-  | tabbrev (location : Flapjack.Misc.Location.Locs) (vars : List TvarN) (name : TypeN) (typ : AstT) :
-      FactoredDecSupported (.dtabbrev location vars name typ)
-  | letrec (location : Flapjack.Misc.Location.Locs) (funs : List (VarN × VarN × AstHOL.Exp)) :
-      FactoredDecSupported (.dletrec location funs)
-  | denv (name : VarN) : FactoredDecSupported (.denv name)
-
-/-- Every finite list of the currently proved declaration forms satisfies the
-factored declaration simulation. Other forms and correspondence of the
-factored relations with HOL remain open. -/
-theorem factoredDecIH_supported_list {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (decs : List Dec)
-    (supported : ∀ dec, dec ∈ decs → FactoredDecSupported dec) :
-    FactoredDecIH (F := F) interp transform decs := by
-  apply factoredDecIH_list interp transform decs
-  intro dec member
-  cases supported dec member with
-  | tabbrev location vars name typ => exact factoredDecIH_dtabbrev interp transform location vars name typ
-  | letrec location funs => exact factoredDecIH_dletrec interp transform location funs
-  | denv name => exact factoredDecIH_denv interp transform name
-
 end Flapjack.Compiler.Backend.SourceToFlat

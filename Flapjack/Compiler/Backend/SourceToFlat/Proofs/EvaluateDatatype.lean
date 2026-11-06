@@ -57,16 +57,6 @@ theorem idxRangeRel_typeStamp_fresh {C : Type}
   intro name key found
   exact fresh name nextType (Nat.le_refl _) ⟨key, found⟩
 
-/-- Successful datatype validation guarantees that each individual type has
-distinct constructor names, the side condition used by tag allocation. -/
-theorem checkedTypeDef_constructor_names (types : TypeDef)
-    (checked : types.all checkDupCtors = true)
-    (parameters : List TvarN) (name : TypeN) (constructors : List (ConN × List AstT))
-    (member : (parameters, name, constructors) ∈ types) :
-    (constructors.map Prod.fst).Nodup := by
-  have valid := (List.all_eq_true.mp checked) _ member
-  simpa [checkDupCtors] using valid
-
 /-- Tag allocation records the arity of every constructor in input order. -/
 theorem allocTags1_arities {M N A : Type} (constructors : List (N × List A)) :
     ((allocTags1 constructors : Namespace M N Nat × Spt Nat × List (Nat × Nat)).2.2).map Prod.snd =

@@ -1,7 +1,7 @@
 import Flapjack.Compiler.Backend.PatternExh.Weights
 
-/-! Measure lemmas for the total exhaustiveness recursion. These reproduce the source termination lemmas; their statements
-remain pending full typed HOL review. -/
+/-! Measure lemmas for the total exhaustiveness recursion, reviewed against
+the source statements and typed HOL proof replays. -/
 namespace Flapjack.Compiler.Backend.PatternExh
 open PatternSemantics
 
@@ -26,7 +26,7 @@ theorem matWeight_append (xs ys : List (List Pat)) :
   | cons x xs ih => simp [matWeight, ih, Nat.add_assoc]
 
 @[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "mat_len_append"]
-theorem matLen_append (xs ys : List (List Pat)) :
+theorem matLen_append {α : Type} (xs ys : List (List α)) :
     matLen (xs ++ ys) = matLen xs + matLen ys := by
   induction xs with
   | nil => simp [matLen]
@@ -68,7 +68,7 @@ theorem matWeight_specMat_le (c : Ctor) (rows : List (List Pat)) :
 
 @[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "mat_weight_spec_row_less"]
 theorem matWeight_specRow_lt (c : Ctor) (p : Pat) (rest : List Pat)
-    (h : (ctorsOf p).isSome = true) :
+    (h : ctorsOf p ≠ none) :
     matWeight (specRow c (p :: rest)) < patsWeight (p :: rest) := by
   cases p with
   | any => simp [ctorsOf] at h

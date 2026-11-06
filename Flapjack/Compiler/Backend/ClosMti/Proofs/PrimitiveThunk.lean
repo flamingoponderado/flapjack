@@ -64,12 +64,12 @@ theorem primitiveSimulation_thunk_update {C F : Type} (mode : AstHOL.ThunkMode) 
             | false =>
               have lookup := stateRel_lookupRefs states index
               cases l : source.refs.lookup index with
-              | none => cases r : target.refs.lookup index <;> simp_all [OptionRel, doApp, excRel]
+              | none => cases r : target.refs.lookup index <;> simp_all [optionRel, doApp, excRel]
               | some leftRef =>
                 cases r : target.refs.lookup index with
-                | none => simp_all [OptionRel]
+                | none => simp_all [optionRel]
                 | some rightRef =>
-                  have refs : RefRel source.maxApp leftRef rightRef := by simpa [OptionRel, l, r] using lookup
+                  have refs : RefRel source.maxApp leftRef rightRef := by simpa [optionRel, l, r] using lookup
                   cases refs with
                   | byteArray bytes => simp [doApp, ← same, bad, l, r, excRel]
                   | valueArray fields nextFields rel => simp [doApp, ← same, bad, l, r, excRel]

@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateBlockCons
+import Mathlib.Data.List.Forall2
 
 /-! List encodings in the closure-to-BVL value relation. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
@@ -97,13 +98,6 @@ def BlockListOp.op : BlockListOp → ClosLang.Op
   | .fromList tag => .blockOp (.fromList tag)
   | .append => .blockOp .listAppend
 
-private theorem forall₂_append {α β : Type} {R : α → β → Prop}
-    {xs zs : List α} {ys ws : List β} (first : List.Forall₂ R xs ys)
-    (second : List.Forall₂ R zs ws) : List.Forall₂ R (xs ++ zs) (ys ++ ws) := by
-  induction first with
-  | nil => exact second
-  | cons head tail ih => exact .cons head ih
-
 /-- A successful list operation produces related results without state changes. -/
 theorem blockList_dispatch {C F : Type} {f : HolFiniteMapExact Nat Nat}
     (op : BlockListOp) (args : List ClosSem.Value) (targets : List BvlSem.Value)
@@ -157,7 +151,7 @@ theorem blockList_dispatch {C F : Type} {f : HolFiniteMapExact Nat Nat}
                   rcases run with ⟨rfl, rfl⟩
                   refine ⟨BvlSem.listToValue (ys ++ moreTarget), ?_, rfl, ?_⟩
                   · simp [BlockListOp.op, compileOp, BvlSem.doApp, BvlSem.applyBlock, targetA, targetB]
-                  · exact listToValue_related (forall₂_append firstRel secondRel)
+                  · exact listToValue_related (List.rel_append firstRel secondRel)
         | cons c rest => simp [BlockListOp.op, ClosSem.doApp, ClosSem.applyBlock] at run
 
 /-- A list primitive failure is a type error. -/

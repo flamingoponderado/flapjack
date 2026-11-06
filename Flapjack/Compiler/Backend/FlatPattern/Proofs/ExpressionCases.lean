@@ -192,7 +192,6 @@ theorem compileFuns_member_bound (cfg : Config) (funs : List (VarN × VarN × Fl
             rcases member with equal | later
             · subst entry
               simp [compileFuns, head, tail]
-              omega
             · have bound := ih later
               simp only [tail] at bound
               simp only [compileFuns, head, tail]

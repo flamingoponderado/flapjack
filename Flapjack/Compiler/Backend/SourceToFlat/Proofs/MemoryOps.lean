@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StoreUpdate
+import Flapjack.Misc.RichList
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveType
 import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyMemory
 import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyData
@@ -8,13 +9,6 @@ import Flapjack.SemanticPrimitivesHOL.ApplyNumeric
 The complete primitive-application theorem remains open. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.SemanticPrimitivesHOL
-
-/-- Flapjack list infrastructure: replication preserves a pointwise relation. -/
-theorem forall₂_replicate {α β : Type} {R : α → β → Prop} (n : Nat) (x : α) (y : β)
-    (related : R x y) : List.Forall₂ R (List.replicate n x) (List.replicate n y) := by
-  induction n with
-  | zero => exact .nil
-  | succ n ih => simpa only [List.replicate_succ] using List.Forall₂.cons related ih
 
 /-- Reference allocation produces related locations and states, preserving the
 reserved flat store entry. This is Flapjack infrastructure over the factored
@@ -82,7 +76,7 @@ theorem aalloc_related {C F : Type} (genv : GlobalEnv)
     flatAlloc.1.take 1 = flatState.refs.take 1 := by
   have ⟨nextRel, offset, reserved⟩ := stateRel_storeAlloc genv sourceState flatState statesRel
     (.varray (List.replicate size.toNat source)) (.varray (List.replicate size.toNat flat))
-    (.varray (forall₂_replicate size.toNat source flat valueRel))
+    (.varray ((forall₂_replicate_iff _ size.toNat source flat).mpr (fun _ => valueRel)))
   dsimp only
   have notNegative : ¬size < 0 := Int.not_lt.mpr nonnegative
   refine ⟨?_, ?_, ?_, nextRel, reserved⟩

@@ -78,7 +78,7 @@ def StateRel {C F : Type} (source target : State C F) : Prop :=
   (∀ n, (source.compileOracle n).2.2 = []) ∧
   source.code = HolFiniteMapExact.empty ∧ target.code = HolFiniteMapExact.empty ∧
   target.maxApp = source.maxApp ∧ 1 ≤ source.maxApp ∧ target.clock = source.clock ∧
-  target.ffi = source.ffi ∧ List.Forall₂ (ClosMti.OptionRel ValueRel) source.globals target.globals ∧
+  target.ffi = source.ffi ∧ List.Forall₂ (Flapjack.optionRel ValueRel) source.globals target.globals ∧
   fmapRel RefRel source.refs target.refs ∧
   source.compile = pureCc compileInc target.compile ∧
   target.compileOracle = pureCo compileInc ∘ source.compileOracle

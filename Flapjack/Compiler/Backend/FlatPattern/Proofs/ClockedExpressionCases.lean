@@ -44,7 +44,7 @@ theorem compile_raise_simulation_upTo {C F : Type} (cfg stateCfg : Config) (cloc
           exact ⟨targetNext, .err rightError, by simpa [compileExp, compiled] using targetOuter, nextStates, .error errorsRel⟩
         | values valuesRel =>
           rename_i sourceValues targetValues
-          obtain ⟨value, valueEq⟩ := singletonSuccess body sourceEnv source sourceNext sourceValues bodyRun
+          obtain ⟨value, valueEq⟩ := FlatProps.evaluate_sing sourceEnv source sourceNext body sourceValues bodyRun
           subst sourceValues
           cases valuesRel with
           | cons valueRel tailRel =>
@@ -102,7 +102,7 @@ theorem compile_if_simulation_upTo {C F : Type} (cfg stateCfg : Config) (clock :
                     stateRel_fixClock stateCfg source sourceNext target targetNext states nextStates, .error errorsRel⟩
                 | values valuesRel =>
                   rename_i sourceValues targetValues
-                  obtain ⟨value, valueEq⟩ := singletonSuccess condition sourceEnv source sourceNext sourceValues conditionRun
+                  obtain ⟨value, valueEq⟩ := FlatProps.evaluate_sing sourceEnv source sourceNext condition sourceValues conditionRun
                   subst sourceValues
                   cases valuesRel with
                   | cons valueRel tailRel =>
@@ -185,7 +185,7 @@ theorem compile_let_simulation_upTo {C F : Type} (cfg stateCfg : Config) (clock 
                 stateRel_fixClock stateCfg source sourceNext target targetNext states nextStates, .error errorsRel⟩
             | values valuesRel =>
               rename_i sourceValues targetValues
-              obtain ⟨value, valueEq⟩ := singletonSuccess first sourceEnv source sourceNext sourceValues firstRun
+              obtain ⟨value, valueEq⟩ := FlatProps.evaluate_sing sourceEnv source sourceNext first sourceValues firstRun
               subst sourceValues
               cases valuesRel with
               | cons valueRel tailRel =>
@@ -300,7 +300,7 @@ theorem compile_con_simulation_upTo {C F : Type} (cfg stateCfg : Config) (clock 
           have equal := sourceEval.symm.trans sourceOuter
           cases equal
           have constructorRel : ValueRel (.conv tag sourceValues.reverse) (.conv tag targetValues.reverse) :=
-            (valueRel_conv tag _ _).2 ⟨_, rfl, (valueRel_reverse valuesRel)⟩
+            (valueRel_conv tag _ _).2 ⟨_, rfl, (List.forall₂_reverse_iff.mpr valuesRel)⟩
           exact ⟨targetNext, _, by simpa [compileExp, compiled] using targetOuter,
             nextStates, .values (.cons constructorRel .nil)⟩
 
@@ -338,7 +338,7 @@ theorem compile_mat_simulation_upTo {C F : Type} (cfg stateCfg : Config) (clock 
       exact ⟨_, _, targetRun', stateRel_fixClock stateCfg source sourceNext target targetNext states nextStates, .error errorsRel⟩
     | values valuesRel =>
       rename_i values values'
-      obtain ⟨value, valuesEq⟩ := singletonSuccess scrutinee sourceEnv source sourceNext values scrutineeRun
+      obtain ⟨value, valuesEq⟩ := FlatProps.evaluate_sing sourceEnv source sourceNext scrutinee values scrutineeRun
       subst values
       cases valuesRel with
       | cons valueRel tailRel =>

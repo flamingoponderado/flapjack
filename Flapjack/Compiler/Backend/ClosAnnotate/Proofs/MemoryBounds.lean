@@ -9,17 +9,17 @@ def arrayBounds (index : Int) (ref : Option (Ref Value)) : Option Value :=
   (refValueArray ref).map (fun fields => boolValue (decide (0 ≤ index ∧ index < Int.ofNat fields.length)))
 
 /-- Related value-array references produce related bounds observations. -/
-theorem arrayBounds_related (index : Int) (left right : Option (Ref Value)) (related : OptionRel RefRel left right) :
-    OptionRel ValueRel (arrayBounds index left) (arrayBounds index right) := by
+theorem arrayBounds_related (index : Int) (left right : Option (Ref Value)) (related : optionRel RefRel left right) :
+    optionRel ValueRel (arrayBounds index left) (arrayBounds index right) := by
   have arrays := refValueArray_related left right related
   cases leftRun : refValueArray left with
-  | none => cases rightRun : refValueArray right <;> simp_all [arrayBounds, OptionRel]
+  | none => cases rightRun : refValueArray right <;> simp_all [arrayBounds, optionRel]
   | some fields =>
     cases rightRun : refValueArray right with
-    | none => simp [leftRun, rightRun, OptionRel] at arrays
+    | none => simp [leftRun, rightRun, optionRel] at arrays
     | some nextFields =>
-      have fieldsRel : List.Forall₂ ValueRel fields nextFields := by simpa [leftRun, rightRun, OptionRel] using arrays
-      simp only [arrayBounds, leftRun, rightRun, Option.map, OptionRel]
+      have fieldsRel : List.Forall₂ ValueRel fields nextFields := by simpa [leftRun, rightRun, optionRel] using arrays
+      simp only [arrayBounds, leftRun, rightRun, Option.map, optionRel]
       rw [fieldsRel.length_eq]
       exact .block _ [] [] .nil
 

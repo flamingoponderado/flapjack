@@ -173,12 +173,12 @@ theorem primitiveSimulation_memory_boundsCheckArray {C F : Type} :
           | number index =>
             have lookup := stateRel_lookupRefs states ptr
             cases l : source.refs.lookup ptr with
-            | none => cases r : target.refs.lookup ptr <;> simp_all [OptionRel, doApp, applyMemory, excRel]
+            | none => cases r : target.refs.lookup ptr <;> simp_all [optionRel, doApp, applyMemory, excRel]
             | some leftRef =>
               cases r : target.refs.lookup ptr with
-              | none => simp_all [OptionRel]
+              | none => simp_all [optionRel]
               | some rightRef =>
-                have refs : RefRel source.maxApp leftRef rightRef := by simpa [OptionRel, l, r] using lookup
+                have refs : RefRel source.maxApp leftRef rightRef := by simpa [optionRel, l, r] using lookup
                 cases refs with
                 | byteArray bytes => simp [doApp, applyMemory, l, r, excRel]
                 | thunk mode value next rel => simp [doApp, applyMemory, l, r, excRel]
@@ -214,12 +214,12 @@ theorem primitiveSimulation_memory_boundsCheckByte {C F : Type} (loose : Bool) :
           | number index =>
             have lookup := stateRel_lookupRefs states ptr
             cases l : source.refs.lookup ptr with
-            | none => cases r : target.refs.lookup ptr <;> simp_all [OptionRel, doApp, applyMemory, excRel]
+            | none => cases r : target.refs.lookup ptr <;> simp_all [optionRel, doApp, applyMemory, excRel]
             | some leftRef =>
               cases r : target.refs.lookup ptr with
-              | none => simp_all [OptionRel]
+              | none => simp_all [optionRel]
               | some rightRef =>
-                have refs : RefRel source.maxApp leftRef rightRef := by simpa [OptionRel, l, r] using lookup
+                have refs : RefRel source.maxApp leftRef rightRef := by simpa [optionRel, l, r] using lookup
                 cases refs with
                 | valueArray fields nextFields rel => simp [doApp, applyMemory, l, r, excRel]
                 | thunk mode value next rel => simp [doApp, applyMemory, l, r, excRel]

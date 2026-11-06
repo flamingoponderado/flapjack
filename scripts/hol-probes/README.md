@@ -1,3 +1,23 @@
+`pattern_exh_steps_probe.out` captures the typed original step-count and
+worklist equations, concrete results, the exported row-checker equation, and
+typed replays of the local append and worklist-equivalence lemmas. It also
+captures the three-valued pattern-result datatype, its combination definition,
+and typed replays of the local combination lemmas. It also captures the term
+datatype and matcher equations, with typed replays of the matcher base, length,
+append, wildcard-list, polymorphic constructor-membership, and expansion-length
+lemmas, the full mutual expansion soundness theorem, and the constructor
+extraction definition, its local characterization and length proofs, and the
+constructor-set and column soundness proofs, and specialization and default
+row and matrix preservation proofs, full mutual matrix soundness proof, and
+the row-matching definition, match-result carrier, local row safety and success
+proofs, the exported exhaustive-row theorem, and the weight definitions and
+termination-lemma proof replays, and typed exported pattern-compiler
+row-selection theorems, their case equation, and the polymorphic constant-row
+theorems, plus the retained-row EVERY, filter-safety, row-reordering, and wildcard-insertion
+theorems, traversal definitions and theorems, and the source decision-tree
+evaluator equations, guard-correctness theorem, and pattern compiler
+correctness theorem.
+
 `data_resource_mono_probe.out` captures the six exported data-semantics
 primitive and evaluator monotonicity statements with inferred configuration,
 FFI, value, and result carriers. The combined Lean resource proof exists, but
@@ -405,7 +425,7 @@ the complete carrier correspondence remains under review.
 
 `clos_sem_int_probe.out` captures the typed closure integer operation and signed division, remainder, zero-divisor, and bounded-comparison cases, including both-negative and exact divisions. `Flapjack/Test/ClosSemIntParity.lean` kernel-checks those concrete observations. These cases do not establish general integer-operation correspondence.
 
-`flat_pattern_global_flag_probe.out` captures the typed original global-write flag, generated-name, association-list relation, environment update, binding-fold evaluation, indexed-map predicate theorems, and the typed global-initialization safety results for decision expressions, bindings, naive matches, compiled patterns, and global-bag preservation and bounds for generated guards, pattern bindings, match compilation, expressions and declarations, plus expression and declaration safety and match-freedom. The binding-fold theorem's unused universally quantified variable has an independent HOL type; the Lean helper explicitly requires that type to be inhabited and remains untagged pending evaluator and type-translation review. Full source and carrier review remains pending for the other corresponding Lean statements.
+`flat_pattern_global_flag_probe.out` captures the typed original global-write flag, generated-name, association-list relation, environment update, binding-fold evaluation, indexed-map predicate theorems, and the typed global-initialization safety results for decision expressions, bindings, naive matches, compiled patterns, and global-bag preservation and bounds for generated guards, pattern bindings, match compilation, expressions and declarations, plus expression and declaration safety and match-freedom. The operator captures include the typed flag definition and a HOL proof that the singleton global bag reduces to the function used in Lean. Typed generated-name definitions and a HOL replay of the decoder’s explode-list cases support review of the executable name encoding. The list-rel lookup captures record the original independent payload types, membership premises, and equality specialization. The filter-monotonicity capture records its independent list element types and all four predicates. The two specialized filter-equality captures record HOL’s rewritten statements, including the retained agreement premise. The filter/lookup captures include the original retained-key premise and the flipped equality of the second theorem. The enumerate captures include the polymorphic definition, bounded EL membership statement, and distinctness theorem. The pure-evaluation capture records the original state, environment and result carriers. The append-equality capture records the equal-prefix-length premise. The pattern-list append capture records both match results and the intermediate bindings. The conditional captures retain their polymorphic branch type and Boolean premises. Typed HOL captures and proof replays also record association-list lookup with reversed equality operands and the four option-relation constructor cases. The binding-fold theorem's unused universally quantified variable has an independent HOL type; the untagged Lean helper omits that vacuous binder. Full source and carrier review remains pending for the other corresponding Lean statements.
 
 `source_to_flat_opassign_probe.out` captures successful and invalid original assignments on source and flat stores with the reserved-entry offset. Lean proves expression-level assignment simulation, including reversed operand evaluation, under the source non-type-error condition and preliminary relations; the observation is not a cross-language equivalence proof.
 
@@ -466,7 +486,7 @@ the complete carrier correspondence remains under review.
 
 `source_eval_adjust_local_probe.out` captures inferred types of the original script's local oracle-adjustment lemmas as typed terms. These local lemmas are not exported by the HOL theory; this capture does not replay their proofs.
 
-`flat_pattern_install_relation_probe.out` captures inferred types for pure backend compiler/oracle transformations, FlatPattern installation, value and state relations, and the pass's program-semantics theorem.
+`flat_pattern_install_relation_probe.out` captures inferred types for pure backend compiler/oracle transformations, FlatPattern installation, value, state and match-result relations, the local state-clock proof replay, match-result case theorems, maximum-offset arithmetic bounds, environment lookup and monotonicity results, the rich-list replication relation, key-preserving mapped lookup, application simulations and their reversed-argument form, flat closure and simple-relation statements, generic equality and store-operation prerequisites, and the pass's program-semantics theorem.
 
 `source_evaluate_decs_probe.out` captures the original typed equations for declaration evaluation over a head and an appended list. Lean checks corresponding statements; the underlying clocked evaluator and its carriers still require correspondence review.
 
@@ -9556,3 +9576,13 @@ configuration fields against the checked Lean wrapper. Regenerate with
 These finite observations do not establish the unrestricted pass correspondence.
 
 `pan_props_shape_res_var_probe.out` also captures the inferred HOL constructor types, `shape_of_def` clauses, and zero-hypothesis `shape_of_val` statement from the pinned CakeML/HOL revisions. The capture supports source review; it is not a cross-language equivalence proof.
+
+`flat_pattern_global_flag_probe.out` also captures the polymorphic HOL sptree
+lookup, insert, and domain equations and the domain/lookup theorem used by
+pattern binding. It replays the lookup-based domain characterization and the
+parity and conditional distribution needed by the Lean lookup clauses. These captures support source review, not cross-language
+equivalence.
+
+The same flat-pattern probe captures `compile_pat_bindings_def`, `compile_pat_rhs_def`, and the complete
+`compile_pat_bindings_simulation` statement with inferred source types, and
+the original `v_rel_l_cases` conjunction. These captures aid source review.

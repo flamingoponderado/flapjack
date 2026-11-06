@@ -158,13 +158,13 @@ theorem evaluate_let_op_letrec {C F : Type} (names : List Flapjack.AstHOL.VarN)
           obtain ⟨rfl, rfl⟩ := run
           exact ⟨.err (.abort .typeError), target,
             by simp [evaluate, maxEq, compileFuns_all, arityOk, nextCapture], rfl, states⟩
-        | some values => simp [capture, nextCapture, ClosMti.OptionRel] at captureRel
+        | some values => simp [capture, nextCapture, Flapjack.optionRel] at captureRel
       | some values =>
         cases nextCapture : lookupVars indices nextEnv with
-        | none => simp [capture, nextCapture, ClosMti.OptionRel] at captureRel
+        | none => simp [capture, nextCapture, Flapjack.optionRel] at captureRel
         | some nextValues =>
           exact success values nextValues arityOk capture nextCapture
-            (by simpa [capture, nextCapture, ClosMti.OptionRel] using captureRel)
+            (by simpa [capture, nextCapture, Flapjack.optionRel] using captureRel)
     · simp [evaluate, arityOk] at run
       obtain ⟨rfl, rfl⟩ := run
       exact ⟨.err (.abort .typeError), target,

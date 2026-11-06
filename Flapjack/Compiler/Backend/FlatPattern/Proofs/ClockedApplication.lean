@@ -3,8 +3,7 @@ import Flapjack.Compiler.Backend.FlatPattern.Proofs.SourceApplication
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ThunkEvaluation
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.DynamicEvaluation
 
-/-! Clock-bounded application simulation for the proof-side flat pattern pass.
-The evaluator and relations remain pending HOL correspondence review. -/
+/-! Clock-bounded application simulation for the flat pattern pass. -/
 namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack Flapjack.AstHOL Flapjack.Compiler.Backend
 open Flapjack.SemanticPrimitivesHOL (Result)
@@ -69,7 +68,7 @@ theorem compile_simpleSourceApp_simulation_upTo {C F : Type} (cfg stateCfg : Con
       | some outcome =>
         obtain ⟨sourceAfter, result⟩ := outcome
         obtain ⟨targetAfter, result', targetPrimitive, afterStates, resultRel⟩ := primitiveRel sourceFixed targetFixed sourceAfter sourceValues.reverse targetValues.reverse result
-          fixedStates (valueRel_reverse valuesRel) primitive
+          fixedStates (List.forall₂_reverse_iff.mpr valuesRel) primitive
         cases resultRel with
         | value values =>
           have eq := sourceOuter.symm.trans sourceEval
@@ -209,7 +208,7 @@ theorem compile_flatApp_simulation_upTo {C F : Type} (cfg stateCfg : Config) (tr
         obtain ⟨sourceAfter, result⟩ := outcome
         obtain ⟨targetAfter, result', targetPrimitive, afterStates, resultRel⟩ := doApp_flat_related
           stateCfg sourceFixed targetFixed sourceAfter op sourceValues.reverse targetValues.reverse result
-          fixedStates (valueRel_reverse valuesRel) notSource primitive
+          fixedStates (List.forall₂_reverse_iff.mpr valuesRel) notSource primitive
         cases resultRel with
         | value values =>
           have eq := sourceOuter.symm.trans sourceEval
@@ -300,7 +299,7 @@ theorem compile_call_simulation_at_clock_boundedArgs {C F : Type} (cfg stateCfg 
       | some selected =>
         obtain ⟨callEnv, body⟩ := selected
         obtain ⟨bodyBound, flag, compiledBody, targetCallEnv, bodyCfg, bodyCompiled, callEnvs, targetCall⟩ :=
-          doOpApp_simulation sourceValues.reverse targetValues.reverse callEnv body call (valueRel_reverse valuesRel)
+          doOpApp_simulation_reverse sourceValues targetValues callEnv body call valuesRel
         have targetClock : targetFixed.clock = sourceFixed.clock := fixedStates.1
         by_cases zero : sourceFixed.clock = 0
         · have targetZero : targetFixed.clock = 0 := by omega
@@ -428,7 +427,7 @@ theorem compile_force_simulation_at_clock_boundedArgs {C F : Type} (cfg stateCfg
                 exact safe sourceEval.2.symm
               let m := (compileExp cfg body).1 + 1
               have clockBound : sourceFixed.clock ≤ clock := by
-                simpa [sourceFixed, clockEq] using Nat.min_le_left source.clock sourceNext.clock
+                simp [sourceFixed, clockEq]
               obtain ⟨targetLast, targetResult, targetBodyRun, lastStates, resultRel⟩ := bodyIH
                 bodyEnv bodyEnv' sourceFixed targetFixed sourceLast bodyResult m clockBound bodyRun
                 (forceBody_envRel m value targetValue valueRelated) fixedStates (by simp [m, body]) bodySafe
@@ -525,7 +524,7 @@ theorem compile_eval_simulation_at_clock_boundedArgs {C F : Type} (cfg stateCfg 
         obtain ⟨declarations, sourceConfig, result⟩ := payload
         obtain ⟨targetConfig, targetValue, targetDecoded, installedStates, valueRel⟩ :=
           doEval_state_simulation stateCfg sourceFixed targetFixed sourceValues.reverse targetValues.reverse fixedStates
-            (valueRel_reverse valuesRel) declarations sourceConfig result decoded
+            (List.forall₂_reverse_iff.mpr valuesRel) declarations sourceConfig result decoded
         have targetClock : targetFixed.clock = sourceFixed.clock := fixedStates.1
         by_cases zero : sourceFixed.clock = 0
         · have targetZero : targetFixed.clock = 0 := by omega

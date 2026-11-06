@@ -25,6 +25,9 @@ import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleInduction
 import Flapjack.Compiler.Backend.FlatPattern.CompileOrder
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.InstallRelation
 import Flapjack.Compiler.Backend.FlatProps.ValueBasics
+import Flapjack.Compiler.Backend.FlatProps.SimpleRelations
+import Flapjack.Compiler.Backend.FlatProps.SimpleStore
+import Flapjack.Compiler.Backend.FlatProps.SimpleEquality
 import Flapjack.Compiler.Backend.FlatProps.NoMat
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelation
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelationRules
@@ -33,6 +36,7 @@ import Flapjack.Compiler.Backend.FlatPattern.Proofs.StateRelation
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelationCases
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.RecursiveClosures
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.PatternRelation
+import Flapjack.Compiler.Backend.FlatPattern.Proofs.MaxBounds
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.PatternList
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.MatchRows
 import Flapjack.SemanticPrimitivesHOL.Control
@@ -172,6 +176,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.MoveFull
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.MoveSourceState
 import Flapjack.Misc.Sptree.AlistInsertReverse
 import Flapjack.Misc.Address
+import Flapjack.Misc.RichList
 import Flapjack.Misc.Fun2SetUnion
 import Flapjack.Misc.UpdateList
 import Flapjack.Misc.DivModLemmas
@@ -604,6 +609,7 @@ import Flapjack.Compiler.Backend.FlatElim.Proofs.GlobalInvariants
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.GlobalFlag
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.GeneratedNames
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.LookupRelation
+import Flapjack.Compiler.Backend.FlatPattern.Proofs.Enumerate
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.BindingFold
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.BindingSimulation
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.BindingRecursive
@@ -859,7 +865,6 @@ import Flapjack.Compiler.Backend.BviTmc.Proofs.WellFormed
 import Flapjack.Compiler.Backend.BviTmc.Proofs.ExtractionWellFormed
 import Flapjack.Compiler.Backend.BviTmc.Proofs.ListExtraction
 import Flapjack.Compiler.Backend.BviTmc.Proofs.ResultRelation
-import Flapjack.Compiler.Backend.BviTmc.Proofs.EvaluateRewrite
 import Flapjack.Compiler.Backend.BviTmc.Proofs.FillHole
 import Flapjack.Compiler.Backend.BviTmc.Proofs.VariableSimulation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.TickSimulation

@@ -8,21 +8,6 @@ open Flapjack Flapjack.AstHOL Flapjack.Compiler.Backend
 open Flapjack.SemanticPrimitivesHOL (Result storeAlloc storeAssign)
 open Flapjack.SemanticPrimitivesProps (storeValueRel)
 
-/-- Pointwise related lists have equal lengths. -/
-theorem forall₂_length {A B : Type} {R : A → B → Prop} {xs : List A} {ys : List B}
-    (related : List.Forall₂ R xs ys) : xs.length = ys.length := by
-  induction related with
-  | nil => rfl
-  | cons _ _ ih => simp [ih]
-
-/-- Appending a pair of related entries preserves a pointwise relation. -/
-theorem forall₂_append_one {A B : Type} {R : A → B → Prop} {xs : List A} {ys : List B}
-    (related : List.Forall₂ R xs ys) {x : A} {y : B} (head : R x y) :
-    List.Forall₂ R (xs ++ [x]) (ys ++ [y]) := by
-  induction related with
-  | nil => exact .cons head .nil
-  | cons first _ ih => exact .cons first ih
-
 /-- Indexing a related list at a valid position finds a related element. -/
 theorem forall₂_getElem_some {A B : Type} {R : A → B → Prop} {xs : List A} {ys : List B}
     (related : List.Forall₂ R xs ys) (index : Nat) (x : A) (found : xs[index]? = some x) :
@@ -56,10 +41,10 @@ theorem doApp_refAlloc_related {C F : Type} (cfg : Config)
     | nil =>
       simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, storeAlloc] at run
       rcases run with ⟨rfl, rfl⟩
-      have lengths : target.refs.length = source.refs.length := (forall₂_length states.2.1).symm
+      have lengths : target.refs.length = source.refs.length := (List.Forall₂.length_eq states.2.1).symm
       refine ⟨{ target with refs := target.refs ++ [.refv value'] }, .loc true target.refs.length, ?_, ?_, ?_⟩
       · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, storeAlloc]
-      · exact ⟨states.1, forall₂_append_one states.2.1 head, states.2.2⟩
+      · exact ⟨states.1, List.rel_append states.2.1 (.cons head .nil), states.2.2⟩
       · exact (valueRel_loc true source.refs.length _).2 (by simp [lengths])
 
 /-- A successful reference assignment preserves related stores and returns
@@ -87,7 +72,7 @@ theorem doApp_refAssign_related {C F : Type} (cfg : Config)
           cases assigned : storeAssign index (.refv value) source.refs with
           | none => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, assigned] at run
           | some refs =>
-            have assigned' := storeAssign_related states.2.1 index (show storeValueRel ValueRel (.refv value) (.refv value') from valueRel) assigned
+            have assigned' := SemanticPrimitivesProps.storeAssign_related states.2.1 index (show storeValueRel ValueRel (.refv value) (.refv value') from valueRel) assigned
             obtain ⟨refs', assignTarget, refsRel⟩ := assigned'
             simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, assigned] at run
             rcases run with ⟨rfl, rfl⟩
@@ -107,12 +92,12 @@ theorem doApp_arrayFixed_related {C F : Type} (cfg : Config)
       FlatSem.doApp source (.src .aallocFixed) values = some (sourceFinal, .val result) ∧
       FlatSem.doApp target (.src .aallocFixed) values' = some (targetFinal, .val result) ∧
       StateRel cfg sourceFinal targetFinal ∧ ValueRel result result := by
-  have lengths : target.refs.length = source.refs.length := (forall₂_length states.2.1).symm
+  have lengths : target.refs.length = source.refs.length := (List.Forall₂.length_eq states.2.1).symm
   refine ⟨{ source with refs := source.refs ++ [.varray values] },
     { target with refs := target.refs ++ [.varray values'] }, .loc true source.refs.length, ?_, ?_, ?_, ?_⟩
   · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, storeAlloc]
   · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, storeAlloc, lengths]
-  · exact ⟨states.1, forall₂_append_one states.2.1 related, states.2.2⟩
+  · exact ⟨states.1, List.rel_append states.2.1 (.cons related .nil), states.2.2⟩
   · exact (valueRel_loc true source.refs.length _).2 rfl
 
 end Flapjack.Compiler.Backend.FlatPattern

@@ -88,7 +88,7 @@ theorem primitiveSimulation_block_elemAt {C F : Type} (index : Nat) :
       | block actual fields nextFields fieldsRel =>
         have lookupRel := forall₂_getElemRel fieldsRel index
         cases l : fields[index]? <;> cases r : nextFields[index]? <;>
-          simp_all [OptionRel, doApp, applyBlock, excRel]
+          simp_all [optionRel, doApp, applyBlock, excRel]
       | number _ | word64 _ | byteVector _ | refPtr _ _ | closure | recclosure | partialRecclosure =>
         simp [doApp, applyBlock, excRel]
     | cons head tail => simp [doApp, applyBlock, excRel]

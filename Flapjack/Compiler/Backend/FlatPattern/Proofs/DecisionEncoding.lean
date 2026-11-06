@@ -295,10 +295,10 @@ theorem decodePos_simulation {C F : Type} (trace : BackendCommon.Tra)
     | conv stamp fields =>
       cases found : fields[index]? with
       | none =>
-        simp [encodeValue, encodeValues_eq_map, PatternSemantics.appPos, List.getElem?_map, found] at selected
+        simp [encodeValue, encodeValues_eq_map, PatternSemantics.appPos_term, List.getElem?_map, found] at selected
       | some field =>
         have next : PatternSemantics.appPos (encodeRefs state) rest (encodeValue field) = some encoded := by
-          simpa [encodeValue, encodeValues_eq_map, PatternSemantics.appPos, List.getElem?_map, found] using selected
+          simpa [encodeValue, encodeValues_eq_map, PatternSemantics.appPos_term, List.getElem?_map, found] using selected
         have projected := evaluate_con_projection trace expression env state stamp fields index field pure found
         simpa [decodePos] using ih (.app trace (.el index) [expression]) field next projected
     | loc flag address =>
@@ -335,8 +335,14 @@ theorem decodeTest_simulation {C F : Type} (trace : BackendCommon.Tra)
       | none => simp [encodeValue, PatternSemantics.dtTest] at tested
       | some tagged =>
         obtain ⟨actual, typeId⟩ := tagged
+        have tagEq : (tag == actual) = decide (tag = actual) := by
+          apply Bool.eq_iff_iff.mpr
+          simp [beq_iff_eq]
+        have lengthEq : (length == fields.length) = decide (length = fields.length) := by
+          apply Bool.eq_iff_iff.mpr
+          simp [beq_iff_eq]
         have result : (tag == actual && length == fields.length) = answer := by
-          simpa [encodeValue, encodeValues_eq_map, PatternSemantics.dtTest] using tested
+          simpa [encodeValue, encodeValues_eq_map, PatternSemantics.dtTest, tagEq, lengthEq] using tested
         have guard := evaluate_tagLenEq trace expression env state tag actual typeId length fields pure
         have equalBool : (actual == tag && fields.length == length) = answer := by
           have tagSym : (actual == tag) = (tag == actual) := by
@@ -464,6 +470,7 @@ theorem simpGuard_preserves (refs : HolFiniteMapExact Nat PatternSemantics.Term)
       all_goals cases h : simpGuard guard <;> simp_all [simpGuard, PatternSemantics.dtEvalGuard]
       all_goals rename_i child
       all_goals cases child <;> simp_all [PatternSemantics.dtEvalGuard]
+      all_goals repeat' (split at ih <;> simp_all)
   | conj left right ihLeft ihRight =>
     cases leftEval : PatternSemantics.dtEvalGuard refs value left with
     | none => simp [PatternSemantics.dtEvalGuard, leftEval] at tested

@@ -17,7 +17,7 @@ theorem stateRel_updateRefFfi {C F : Type} (source target : State C F) (states :
   intro key
   by_cases same : key = index
   · subst key
-    simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, OptionRel] using refsRel
+    simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, optionRel] using refsRel
   · simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, same] using states.2.2.2.2.2.2.1 key
 
 /-- An FFI call uses the same bytes and shared external-call state on both
@@ -46,12 +46,12 @@ theorem primitiveSimulation_ffi {C F : Type} (name : Basis.Pure.MlString.MlStrin
               | none =>
                 exact ⟨.err (.abort .typeError), by simp [doApp, targetRef], by
                   simp [doApp, sourceRef, AppResultRel, ResultRel]⟩
-              | some ref => simp [sourceRef, targetRef, OptionRel] at refRel
+              | some ref => simp [sourceRef, targetRef, optionRel] at refRel
             | some ref =>
               cases targetRef : target.refs.lookup index with
-              | none => simp [sourceRef, targetRef, OptionRel] at refRel
+              | none => simp [sourceRef, targetRef, optionRel] at refRel
               | some nextRef =>
-                have refs : RefRel ref nextRef := by simpa [sourceRef, targetRef, OptionRel] using refRel
+                have refs : RefRel ref nextRef := by simpa [sourceRef, targetRef, optionRel] using refRel
                 cases ref with
                 | valueArray fields =>
                   cases nextRef <;> simp [RefRel] at refs

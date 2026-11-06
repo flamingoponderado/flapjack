@@ -10,7 +10,7 @@ namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL
 open OracleInvariant
 
-inductive LocalEnvBoundedArrayExpression : AstHOL.Exp → Prop where
+private inductive LocalEnvBoundedArrayExpression : AstHOL.Exp → Prop where
   | base (expr : AstHOL.Exp) : LocalEnvExpression expr → LocalEnvBoundedArrayExpression expr
   | unaryBasicBadArity (op : Op) (args : List AstHOL.Exp) : UnaryBasicOp op → args.length ≠ 1 →
       (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) → LocalEnvBoundedArrayExpression (.app op args)
@@ -207,7 +207,7 @@ inductive LocalEnvBoundedArrayExpression : AstHOL.Exp → Prop where
 
 /-- Arithmetic applications are covered whenever their operands are covered,
 including operations that reject their type or arity. -/
-theorem arithmeticExpression_covered (action : Arith) (typ : PrimType) (args : List AstHOL.Exp)
+private theorem arithmeticExpression_covered (action : Arith) (typ : PrimType) (args : List AstHOL.Exp)
     (each : ∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) :
     LocalEnvBoundedArrayExpression (.app (.arith action typ) args) := by
   cases args with
@@ -257,7 +257,7 @@ theorem arithmeticExpression_covered (action : Arith) (typ : PrimType) (args : L
           exact .arithExtremeArity action typ (first :: second :: third :: fourth :: rest) (Or.inr (by simp)) each
 
 /-- All ordinary unary primitive forms are covered when their operands are. -/
-theorem unaryBasicExpression_covered (op : Op) (args : List AstHOL.Exp) (unary : UnaryBasicOp op)
+private theorem unaryBasicExpression_covered (op : Op) (args : List AstHOL.Exp) (unary : UnaryBasicOp op)
     (each : ∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) :
     LocalEnvBoundedArrayExpression (.app op args) := by
   cases args with
@@ -280,7 +280,7 @@ theorem unaryBasicExpression_covered (op : Op) (args : List AstHOL.Exp) (unary :
       · exact .arrayLength first firstCovered
 
 /-- All ordinary binary primitive forms are covered when their operands are. -/
-theorem binaryBasicExpression_covered (op : Op) (args : List AstHOL.Exp) (binary : BinaryBasicOp op)
+private theorem binaryBasicExpression_covered (op : Op) (args : List AstHOL.Exp) (binary : BinaryBasicOp op)
     (each : ∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) :
     LocalEnvBoundedArrayExpression (.app op args) := by
   cases args with
@@ -310,7 +310,7 @@ theorem binaryBasicExpression_covered (op : Op) (args : List AstHOL.Exp) (binary
         · exact .configGC first second firstCovered secondCovered
 
 /-- All ordinary ternary primitive forms are covered when their operands are. -/
-theorem ternaryBasicExpression_covered (op : Op) (args : List AstHOL.Exp) (ternary : TernaryBasicOp op)
+private theorem ternaryBasicExpression_covered (op : Op) (args : List AstHOL.Exp) (ternary : TernaryBasicOp op)
     (each : ∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) :
     LocalEnvBoundedArrayExpression (.app op args) := by
   cases args with
@@ -338,7 +338,7 @@ theorem ternaryBasicExpression_covered (op : Op) (args : List AstHOL.Exp) (terna
 
 /-- Both byte-copy primitives are covered for every operand count when each
 operand is covered. -/
-theorem fiveArgBasicExpression_covered (op : Op) (args : List AstHOL.Exp) (copy : FiveArgBasicOp op)
+private theorem fiveArgBasicExpression_covered (op : Op) (args : List AstHOL.Exp) (copy : FiveArgBasicOp op)
     (each : ∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) :
     LocalEnvBoundedArrayExpression (.app op args) := by
   by_cases arity : args.length = 5
@@ -371,7 +371,7 @@ theorem fiveArgBasicExpression_covered (op : Op) (args : List AstHOL.Exp) (copy 
   · exact .fiveArgBasicBadArity op args copy arity each
 
 /-- Foreign-call applications are covered for every operand count. -/
-theorem ffiExpression_covered (name : Basis.Pure.MlString.MlString) (args : List AstHOL.Exp)
+private theorem ffiExpression_covered (name : Basis.Pure.MlString.MlString) (args : List AstHOL.Exp)
     (each : ∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) :
     LocalEnvBoundedArrayExpression (.app (.ffi name) args) := by
   cases args with
@@ -387,7 +387,7 @@ theorem ffiExpression_covered (name : Basis.Pure.MlString.MlString) (args : List
       | cons third rest => exact .ffiBadArity name (first :: second :: third :: rest) (by simp) each
 
 /-- Thunk allocation is covered for every operand count. -/
-theorem allocThunkExpression_covered (mode : ThunkMode) (args : List AstHOL.Exp)
+private theorem allocThunkExpression_covered (mode : ThunkMode) (args : List AstHOL.Exp)
     (each : ∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) :
     LocalEnvBoundedArrayExpression (.app (.thunkOp (.allocThunk mode)) args) := by
   cases args with
@@ -399,7 +399,7 @@ theorem allocThunkExpression_covered (mode : ThunkMode) (args : List AstHOL.Exp)
     | cons second rest => exact .allocThunkBadArity mode (first :: second :: rest) (by simp) each
 
 /-- Thunk update is covered for every operand count. -/
-theorem updateThunkExpression_covered (mode : ThunkMode) (args : List AstHOL.Exp)
+private theorem updateThunkExpression_covered (mode : ThunkMode) (args : List AstHOL.Exp)
     (each : ∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) :
     LocalEnvBoundedArrayExpression (.app (.thunkOp (.updateThunk mode)) args) := by
   cases args with
@@ -415,7 +415,7 @@ theorem updateThunkExpression_covered (mode : ThunkMode) (args : List AstHOL.Exp
       | cons third rest => exact .updateThunkBadArity mode (first :: second :: third :: rest) (by simp) each
 
 /-- Function applications are covered for every operand count. -/
-theorem callExpression_covered (args : List AstHOL.Exp)
+private theorem callExpression_covered (args : List AstHOL.Exp)
     (each : ∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) :
     LocalEnvBoundedArrayExpression (.app .opapp args) := by
   cases args with
@@ -431,7 +431,7 @@ theorem callExpression_covered (args : List AstHOL.Exp)
       | cons third rest => exact .callBadArity (first :: second :: third :: rest) (by simp) each
 
 /-- Thunk forcing is covered for every operand count. -/
-theorem forceThunkExpression_covered (args : List AstHOL.Exp)
+private theorem forceThunkExpression_covered (args : List AstHOL.Exp)
     (each : ∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) :
     LocalEnvBoundedArrayExpression (.app (.thunkOp .forceThunk) args) := by
   cases args with
@@ -443,7 +443,7 @@ theorem forceThunkExpression_covered (args : List AstHOL.Exp)
     | cons second rest => exact .forceThunkBadArity (first :: second :: rest) (by simp) each
 
 /-- Environment-ID applications are covered for every operand count. -/
-theorem envIdExpression_covered (args : List AstHOL.Exp)
+private theorem envIdExpression_covered (args : List AstHOL.Exp)
     (each : ∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) :
     LocalEnvBoundedArrayExpression (.app .envId args) := by
   cases args with
@@ -455,7 +455,7 @@ theorem envIdExpression_covered (args : List AstHOL.Exp)
     | cons second rest => exact .envIdBadArity (first :: second :: rest) (by simp) each
 
 /-- Empty-array allocation is covered for every operand count. -/
-theorem arrayEmptyExpression_covered (args : List AstHOL.Exp)
+private theorem arrayEmptyExpression_covered (args : List AstHOL.Exp)
     (each : ∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) :
     LocalEnvBoundedArrayExpression (.app .aallocEmpty args) := by
   cases args with
@@ -467,7 +467,7 @@ theorem arrayEmptyExpression_covered (args : List AstHOL.Exp)
     | cons second rest => exact .arrayEmptyBadArity (first :: second :: rest) (by simp) each
 
 /-- Conversion applications are covered for every operand count. -/
-theorem conversionExpression_covered (fromType toType : PrimType) (args : List AstHOL.Exp)
+private theorem conversionExpression_covered (fromType toType : PrimType) (args : List AstHOL.Exp)
     (each : ∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) :
     LocalEnvBoundedArrayExpression (.app (.fromTo fromType toType) args) := by
   cases args with
@@ -479,7 +479,7 @@ theorem conversionExpression_covered (fromType toType : PrimType) (args : List A
     | cons second rest => exact .conversionBadArity fromType toType (first :: second :: rest) (by simp) each
 
 /-- Shift applications are covered for every operand count. -/
-theorem shiftExpression_covered (size : WordSize) (shift : Shift) (amount : Nat) (args : List AstHOL.Exp)
+private theorem shiftExpression_covered (size : WordSize) (shift : Shift) (amount : Nat) (args : List AstHOL.Exp)
     (each : ∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) :
     LocalEnvBoundedArrayExpression (.app (.shift size shift amount) args) := by
   cases args with
@@ -493,7 +493,7 @@ theorem shiftExpression_covered (size : WordSize) (shift : Shift) (amount : Nat)
     | cons second rest => exact .shiftBadArity size shift amount (first :: second :: rest) (by simp) each
 
 /-- Equality and primitive comparisons are covered for every operand count. -/
-theorem comparisonExpression_covered (test : Option (Test × PrimType)) (args : List AstHOL.Exp)
+private theorem comparisonExpression_covered (test : Option (Test × PrimType)) (args : List AstHOL.Exp)
     (each : ∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) :
     LocalEnvBoundedArrayExpression (.app (match test with | none => .equality | some (test, typ) => .test test typ) args) := by
   cases test with
@@ -521,7 +521,7 @@ theorem comparisonExpression_covered (test : Option (Test × PrimType)) (args : 
 
 /-- Every source primitive application is covered when all of its operands
 are covered. This is structural coverage, not the full correctness theorem. -/
-theorem applicationExpression_covered (op : Op) (args : List AstHOL.Exp)
+private theorem applicationExpression_covered (op : Op) (args : List AstHOL.Exp)
     (each : ∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) :
     LocalEnvBoundedArrayExpression (.app op args) := by
   cases op with
@@ -551,7 +551,7 @@ theorem applicationExpression_covered (op : Op) (args : List AstHOL.Exp)
 
 /-- Every source expression has a structural coverage derivation. The
 simulation itself still depends on the preliminary factored relations. -/
-theorem allExpressions_covered : (expr : AstHOL.Exp) → LocalEnvBoundedArrayExpression expr
+private theorem allExpressions_covered : (expr : AstHOL.Exp) → LocalEnvBoundedArrayExpression expr
   | .raise body => .raise_ body (allExpressions_covered body)
   | .handle body rows => .handle body rows (allExpressions_covered body)
       (fun pat row _member => allExpressions_covered row)
@@ -581,7 +581,7 @@ decreasing_by
 
 /-- Covered expressions satisfy the preliminary arbitrary-local hypothesis;
 the relations remain pending HOL correspondence review. -/
-theorem localEnvBounded_arrayTree {C F : Type} [Nonempty C]
+private theorem localEnvBounded_arrayTree {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
     (limit : Nat) (calledIH : LocalEnvClockIH (F := F) interp transform limit)
     (decsIH : FactoredDecClockIH (F := F) interp transform limit)
@@ -722,28 +722,16 @@ theorem localEnvBounded_arrayTree {C F : Type} [Nonempty C]
 
 
 
-/-- The covered expression proof can be invoked directly from the expression
-and declaration induction hypotheses at smaller clocks. -/
+/-- Every expression satisfies the bounded simulation from the expression and
+declaration induction hypotheses at smaller clocks. -/
 theorem localEnvBounded_arrayTree_of_smaller {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
     (smallerExprs : ∀ n, n < limit → ∀ expr, LocalEnvBoundedIH (F := F) interp transform n expr)
     (smallerDecs : ∀ n, n < limit → ∀ decs, FactoredDecBoundedIH (F := F) interp transform n decs)
-    (expr : AstHOL.Exp) (covered : LocalEnvBoundedArrayExpression expr) :
+    (expr : AstHOL.Exp) :
     LocalEnvBoundedIH (F := F) interp transform limit expr :=
   localEnvBounded_arrayTree interp transform limit
     (localEnvClockIH_of_smaller interp transform limit smallerExprs)
-    (factoredDecClockIH_of_smaller interp transform limit smallerDecs) expr covered
-
-/-- A value declaration with a covered initializer follows from the same
-smaller-clock hypotheses as the initializer expression. -/
-theorem factoredDecBoundedIH_dlet_arrayTree {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
-    (smallerExprs : ∀ n, n < limit → ∀ expr, LocalEnvBoundedIH (F := F) interp transform n expr)
-    (smallerDecs : ∀ n, n < limit → ∀ decs, FactoredDecBoundedIH (F := F) interp transform n decs)
-    (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp)
-    (covered : LocalEnvBoundedArrayExpression expr) :
-    FactoredDecBoundedIH (F := F) interp transform limit [.dlet location pattern expr] := by
-  apply factoredDecBoundedIH_dlet_expression interp transform limit location pattern expr
-  exact localEnvBounded_arrayTree_of_smaller interp transform limit smallerExprs smallerDecs expr covered
+    (factoredDecClockIH_of_smaller interp transform limit smallerDecs) expr (allExpressions_covered expr)
 
 end Flapjack.Compiler.Backend.SourceToFlat

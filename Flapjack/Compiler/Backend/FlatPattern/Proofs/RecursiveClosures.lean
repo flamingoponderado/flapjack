@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelationCases
+import Mathlib.Data.List.Forall2
 
 /-! Recursive closure environment and application simulation infrastructure. -/
 namespace Flapjack.Compiler.Backend.FlatPattern
@@ -92,8 +93,7 @@ theorem envRel_buildRec (n : Nat) (left right : Environment Value) (cfg : Config
   exact aLookupRel_append _ _ _ _ _ _ prefixRel ((envRel_iff_lookup n left right).1 envs)
 
 /-- Recursive-closure application produces the compiled selected body and
-related recursive environments. This is a case of the proof-side simulation;
-the HOL value-relation correspondence remains pending. -/
+related recursive environments. This is a case of the application simulation. -/
 theorem doOpApp_recclosure (leftEnv : Environment Value)
     (funs : List (VarN × VarN × FlatLang.Exp)) (name argName : VarN) (body : FlatLang.Exp)
     (targetClosure arg targetArg : Value)
@@ -126,9 +126,8 @@ theorem doOpApp_recclosure (leftEnv : Environment Value)
         some ({ captured with v := (argName, targetArg) :: FlatSem.buildRecEnv (compiledRecFuns cfg funs) captured captured.v }, body')
       simp [FlatSem.doOpApp, compiledRecFuns_names, distinct, findRecFun_compiled, found, compileDec, compiled]
 
-/-- Function application simulation for arbitrary related input lists. This
-is the original result shape over the proof-side value relation; it remains
-untagged until that relation's HOL correspondence is reviewed. -/
+/-- Function application simulation for arbitrary related input lists. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "do_opapp_thm"]
 theorem doOpApp_simulation (source target : List Value) (env : Environment Value) (body : FlatLang.Exp)
     (run : FlatSem.doOpApp source = some (env, body)) (related : List.Forall₂ ValueRel source target) :
     ∃ i sg body' targetEnv cfg,
@@ -165,5 +164,15 @@ theorem doOpApp_simulation (source target : List Value) (env : Environment Value
                     obtain ⟨rfl, rfl⟩ := run
                     exact doOpApp_recclosure captured funs name argName expr _ arg _ funRel argRel distinct found
                 · simp [FlatSem.doOpApp, distinct] at run
+
+/-- Reversed related argument lists preserve function application. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "do_opapp_thm_REVERSE"]
+theorem doOpApp_simulation_reverse (source target : List Value) (env : Environment Value)
+    (body : FlatLang.Exp) (run : FlatSem.doOpApp source.reverse = some (env, body))
+    (related : List.Forall₂ ValueRel source target) :
+    ∃ i sg body' targetEnv cfg,
+      compileExp cfg body = (i, sg, body') ∧ EnvRel (i + 1) env targetEnv ∧
+      FlatSem.doOpApp target.reverse = some (targetEnv, body') :=
+  doOpApp_simulation source.reverse target.reverse env body run (List.forall₂_reverse_iff.mpr related)
 
 end Flapjack.Compiler.Backend.FlatPattern

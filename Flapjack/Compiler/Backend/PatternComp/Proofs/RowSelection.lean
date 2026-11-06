@@ -1,13 +1,78 @@
 import Flapjack.Compiler.Backend.PatternComp.Decision
-import Flapjack.Compiler.Backend.PatternSemantics.Semantics
+import Flapjack.Compiler.Backend.PatternExh.Proofs.Match
 
-/-! Row-selection lemmas for the pattern compiler. The finite-map carrier
-and abstract matcher remain pending HOL correspondence review. -/
+/-! Row-selection lemmas for the pattern compiler. -/
 namespace Flapjack.Compiler.Backend.PatternComp
 open Flapjack PatternCommon PatternSemantics
 
+private def toBroad (refs : HolFiniteMapExact Nat Term) : Nat → Option Term := refs.lookup
+
+private def ofBroad (lookup : Nat → Option Term)
+    (support : ∃ keys : List Nat, ∀ key, lookup key ≠ none → key ∈ keys) :
+    HolFiniteMapExact Nat Term := ⟨lookup, support⟩
+
+/-- The canonical finite-map parameter roundtrips through its lookup view. -/
+theorem holFmapAsFiniteSupportParamWitness_isAny_pmatch_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs := by
+  cases refs
+  exact ⟨rfl, rfl, rfl⟩
+
+theorem holFmapAsFiniteSupportParamWitness_matchRows_takeUntilAny_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_isAny_pmatch_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_matchRows_append_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_isAny_pmatch_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_isConstRow_failure_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_isAny_pmatch_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_nonConstRow_not_success_nullary_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_isAny_pmatch_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_matchRows_filter_safe_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_isAny_pmatch_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_matchRows_moveConstUp_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_isAny_pmatch_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_matchRows_insertAny_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_isAny_pmatch_refs refs key
+
 /-- A pattern containing an unconditional alternative cannot return a
 non-match, though it may still report a type failure. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "is_Any_pmatch"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem isAny_pmatch (refs : HolFiniteMapExact Nat Term) (value : Term) (pattern : Pat)
     (any : isAny pattern = true) : pmatch refs pattern value ≠ .failure := by
   cases pattern with
@@ -28,13 +93,15 @@ termination_by sizeOf pattern
 
 /-- Matching appended row lists checks the entire suffix for type failures
 even after a successful earlier match. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "match_append"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem matchRows_append (refs : HolFiniteMapExact Nat Term) (value : Term)
     (left right : List (Pat × Nat)) :
     matchRows refs (left ++ right) value =
       match matchRows refs left value with
       | none => none
-      | some (.success index) => if (matchRows refs right value).isSome then some (.success index) else none
-      | some .failure => matchRows refs right value := by
+      | some (.success index) => if matchRows refs right value ≠ none then some (.success index) else none
+      | some _ => matchRows refs right value := by
   induction left with
   | nil => simp [matchRows]
   | cons row left ih =>
@@ -49,7 +116,18 @@ theorem matchRows_append (refs : HolFiniteMapExact Nat Term) (value : Term)
         cases result <;> cases suffixResult : matchRows refs right value <;>
           simp_all [matchRows]
 
+/-- The exported source equation after reducing its constant application. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "pmatchResult_case_NONE" 92]
+theorem pmatchResult_case_none {α : Type} (result : PmatchResult) :
+    (match result with
+     | .success => (none : Option α)
+     | .failure => none
+     | .typeFailure => none) = none := by
+  cases result <;> rfl
+
 /-- Truncating after an unconditional row preserves any non-error result. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "match_take_until_Any"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem matchRows_takeUntilAny (refs : HolFiniteMapExact Nat Term) (value : Term)
     (rows : List (Pat × Nat)) (safe : matchRows refs rows value ≠ none) :
     matchRows refs (takeUntilAny rows) value = matchRows refs rows value := by
@@ -80,6 +158,8 @@ theorem matchRows_takeUntilAny (refs : HolFiniteMapExact Nat Term) (value : Term
 
 /-- Replacing the last pattern with a wildcard preserves non-failure
 results whenever the original rows do not produce a type error. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "match_insert_Any"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem matchRows_insertAny (refs : HolFiniteMapExact Nat Term) (value : Term)
     (rows : List (Pat × Nat)) (safe : matchRows refs rows value ≠ none) :
     matchRows refs (insertAny rows) value ≠ none ∧
@@ -118,6 +198,8 @@ theorem matchRows_insertAny (refs : HolFiniteMapExact Nat Term) (value : Term)
             simp [original, updated]
 
 /-- Removing rows cannot introduce a pattern type error. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "matdch_FILTER_NOT_NONE"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem matchRows_filter_safe (refs : HolFiniteMapExact Nat Term) (value : Term)
     (rows : List (Pat × Nat)) (predicate : Pat × Nat → Bool)
     (safe : matchRows refs rows value ≠ none) :
@@ -143,59 +225,35 @@ theorem matchRows_filter_safe (refs : HolFiniteMapExact Nat Term) (value : Term)
         | some result => simp [List.filter, keep, matchRows, head, result]
       · simpa [List.filter, keep] using filteredSafe
 
-/-- A nullary constructor cannot match a non-nullary term or a non-term. -/
-theorem isConstRow_not_success (refs : HolFiniteMapExact Nat Term) (value : Term)
-    (row : Pat × Nat) (constant : isConstRow row = true)
-    (notNullary : ∀ tag, value ≠ .term tag []) : pmatch refs row.1 value ≠ .success := by
-  obtain ⟨pattern, index⟩ := row
-  cases pattern with
-  | cons tag patterns =>
-    cases patterns with
-    | cons first rest => simp [isConstRow] at constant
-    | nil =>
-      cases value with
-      | litv lit => simp [pmatch]
-      | refPtr ref => simp [pmatch]
-      | other => simp [pmatch]
-      | term actual values =>
-        cases values with
-        | nil => exact (notNullary actual rfl).elim
-        | cons first rest =>
-          cases tag with
-          | none => cases actual <;> simp [pmatch, pmatchList]
-          | some tag =>
-            obtain ⟨tag, siblings⟩ := tag
-            cases actual <;> simp [pmatch] <;> split <;> simp
-  | any | lit _ | ref _ | or _ _ => simp [isConstRow] at constant
-
-/-- Every row in a successful row scan is individually free of type errors. -/
-theorem matchRows_member_safe (refs : HolFiniteMapExact Nat Term) (value : Term)
-    (rows : List (Pat × Nat)) (safe : matchRows refs rows value ≠ none)
-    (row : Pat × Nat) (member : row ∈ rows) : pmatch refs row.1 value ≠ .typeFailure := by
-  induction rows with
-  | nil => simp at member
-  | cons first rest ih =>
-    obtain ⟨pattern, index⟩ := first
-    have headSafe : pmatch refs pattern value ≠ .typeFailure := by
-      intro bad
-      apply safe
-      rw [matchRows, bad]
-    have tailSafe : matchRows refs rest value ≠ none := by
-      cases head : pmatch refs pattern value with
-      | typeFailure => exact (headSafe head).elim
-      | failure => simpa [matchRows, head] using safe
-      | success =>
-        cases tail : matchRows refs rest value with
-        | none =>
-          apply False.elim
-          apply safe
-          rw [matchRows, head, tail]
-        | some result => simp
-    simp only [List.mem_cons] at member
-    rcases member with equal | member
-    · subst row
-      exact headSafe
-    · exact ih tailSafe member
+/-- A safe constant row fails on a value that is not a nullary term. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "is_const_row_lemma"
+  (fmap_as_finite_support_parameters := [refs])]
+theorem isConstRow_failure {α : Type} (refs : HolFiniteMapExact Nat Term) (value : Term)
+    (pattern : Pat) (payload : α) (notNullary : ∀ tag, value ≠ .term tag [])
+    (constant : isConstRow (pattern, payload) = true)
+    (safe : pmatch refs pattern value ≠ .typeFailure) :
+    pmatch refs pattern value = .failure := by
+  have notSuccess : pmatch refs pattern value ≠ .success := by
+    cases pattern with
+    | cons tag patterns =>
+      cases patterns with
+      | cons first rest => simp [isConstRow] at constant
+      | nil =>
+        cases value with
+        | litv lit => simp [pmatch]
+        | refPtr ref => simp [pmatch]
+        | other => simp [pmatch]
+        | term actual values =>
+          cases values with
+          | nil => exact (notNullary actual rfl).elim
+          | cons first rest =>
+            cases tag with
+            | none => cases actual <;> simp [pmatch, pmatchList]
+            | some tag =>
+              obtain ⟨tag, siblings⟩ := tag
+              cases actual <;> simp [pmatch] <;> split <;> simp
+    | any | lit _ | ref _ | or _ _ => simp [isConstRow] at constant
+  cases result : pmatch refs pattern value <;> simp_all
 
 /-- Discarding rows that all fail leaves the selected result unchanged. -/
 theorem matchRows_filter_discard_failures (refs : HolFiniteMapExact Nat Term) (value : Term)
@@ -243,12 +301,8 @@ theorem matchRows_moveConstUp_nonNullary (refs : HolFiniteMapExact Nat Term) (va
   have truncSafe : matchRows refs truncated value ≠ none := by rw [truncEq]; exact safe
   have failures : ∀ row ∈ truncated, isConstRow row = true → pmatch refs row.1 value = .failure := by
     intro row member constant
-    have notSuccess := isConstRow_not_success refs value row constant notNullary
-    have notTypeFailure := matchRows_member_safe refs value truncated truncSafe row member
-    cases result : pmatch refs row.1 value with
-    | success => exact (notSuccess result).elim
-    | typeFailure => exact (notTypeFailure result).elim
-    | failure => rfl
+    have notTypeFailure := PatternExh.matchRows_member_safe refs value truncated truncSafe row member
+    exact isConstRow_failure refs value row.1 row.2 notNullary (by simpa using constant) notTypeFailure
   have filteredFailures : ∀ row ∈ truncated.filter isConstRow, pmatch refs row.1 value = .failure := by
     intro row member
     have membership := List.mem_filter.mp member
@@ -265,8 +319,10 @@ theorem matchRows_moveConstUp_nonNullary (refs : HolFiniteMapExact Nat Term) (va
 
 /-- A nonconstant row without alternatives or a wildcard cannot match a
 nullary constructor. -/
-theorem nonConstRow_not_success_nullary (refs : HolFiniteMapExact Nat Term)
-    (tag : Option Nat) (row : Pat × Nat)
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "not_is_const_row"
+  (fmap_as_finite_support_parameters := [refs])]
+theorem nonConstRow_not_success_nullary {α : Type} (refs : HolFiniteMapExact Nat Term)
+    (tag : Option Nat) (row : Pat × α)
     (nonconstant : isConstRow row = false) (noOr : isOrRow row = false)
     (noAny : isAny row.1 = false) : pmatch refs row.1 (.term tag []) ≠ .success := by
   obtain ⟨pattern, index⟩ := row
@@ -323,30 +379,28 @@ theorem matchRows_partition_last (refs : HolFiniteMapExact Nat Term) (value : Te
           simp [List.filter_append, List.filter, matchRows_append, matchRows, selected, head,
             preRowsResult, originalResult, unselectedFails]
 
-/-- Every row before the last retained row lacks an unconditional pattern. -/
-theorem takeUntilAny_prefix_noAny (rows preRows : List (Pat × Nat)) (last : Pat × Nat)
-    (decomposition : takeUntilAny rows = preRows ++ [last]) :
-    ∀ row ∈ preRows, isAny row.1 = false := by
-  induction rows generalizing preRows with
-  | nil =>
-    cases preRows <;> simp [takeUntilAny] at decomposition
+/-- Every retained row except the last lacks an unconditional pattern. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "EVERY_take_until_Any"]
+theorem every_takeUntilAny (rows : List (Pat × Nat)) :
+    ∀ row ∈ (takeUntilAny rows).reverse.tail, isAny row.1 = false := by
+  induction rows with
+  | nil => simp [takeUntilAny]
   | cons row rows ih =>
-    obtain ⟨pattern, index⟩ := row
-    cases preRows with
-    | nil => simp
-    | cons first rest =>
-      by_cases unconditional : isAny pattern = true
-      · simp [takeUntilAny, unconditional] at decomposition
-      · have equality : (pattern, index) :: takeUntilAny rows = first :: (rest ++ [last]) := by
-          simpa [takeUntilAny, unconditional] using decomposition
-        rcases List.cons.inj equality with ⟨rfl, tailEq⟩
-        have restProperty := ih rest tailEq
+    obtain ⟨pattern, payload⟩ := row
+    by_cases h : isAny pattern = true
+    · simp [takeUntilAny, h]
+    · cases hs : (takeUntilAny rows).reverse with
+      | nil => simp [takeUntilAny, h, hs]
+      | cons first rest =>
+        simp only [hs, List.tail_cons] at ih
+        simp only [takeUntilAny, h, Bool.false_eq_true, ↓reduceIte, List.reverse_cons, hs,
+          List.cons_append, List.tail_cons]
         intro candidate member
-        simp only [List.mem_cons] at member
-        rcases member with equal | member
+        simp only [List.mem_append, List.mem_singleton] at member
+        rcases member with member | equal
+        · exact ih candidate member
         · subst candidate
-          exact Bool.eq_false_iff.mpr unconditional
-        · exact restProperty candidate member
+          exact Bool.eq_false_iff.mpr h
 
 /-- Moving nullary constructor rows preserves safe matching for nullary values. -/
 theorem matchRows_moveConstUp_nullary (refs : HolFiniteMapExact Nat Term) (tag : Option Nat)
@@ -368,14 +422,19 @@ theorem matchRows_moveConstUp_nullary (refs : HolFiniteMapExact Nat Term) (tag :
     · have emptyTake : takeUntilAny rows = [] := empty
       simpa [moveConstUp, emptyTake, matchRows, empty, value] using truncEq
     · have decomposition : truncated = preRows ++ [last] := by simpa using decomposition
-      have noAny := takeUntilAny_prefix_noAny rows preRows last (by
-        simpa [truncated] using decomposition)
+      have noAny : ∀ row ∈ preRows, isAny row.1 = false := by
+        have h := every_takeUntilAny rows
+        have takeEq : takeUntilAny rows = preRows ++ [last] := by simpa [truncated] using decomposition
+        rw [takeEq] at h
+        simp only [List.reverse_append, List.reverse_cons, List.reverse_nil, List.nil_append] at h
+        intro row member
+        exact h row (List.mem_reverse.mpr member)
       have failures : ∀ row ∈ preRows, isConstRow row = false → pmatch refs row.1 value = .failure := by
         intro row member nonconstant
         have inTruncated : row ∈ truncated := by rw [decomposition]; simp [member]
         have notSuccess := nonConstRow_not_success_nullary refs tag row nonconstant
           (noOrMember row inTruncated) (noAny row member)
-        have notTypeFailure := matchRows_member_safe refs value truncated truncSafe row inTruncated
+        have notTypeFailure := PatternExh.matchRows_member_safe refs value truncated truncSafe row inTruncated
         cases result : pmatch refs row.1 value with
         | success => exact (notSuccess result).elim
         | typeFailure => exact (notTypeFailure result).elim
@@ -388,6 +447,8 @@ theorem matchRows_moveConstUp_nullary (refs : HolFiniteMapExact Nat Term) (tag :
       simpa [moveConstUp, truncated, skip] using reordered.trans truncEq
 
 /-- Moving nullary constructor rows preserves every non-error match result. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "match_move_const_up"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem matchRows_moveConstUp (refs : HolFiniteMapExact Nat Term) (value : Term)
     (rows : List (Pat × Nat)) (safe : matchRows refs rows value ≠ none) :
     matchRows refs (moveConstUp rows) value = matchRows refs rows value := by

@@ -1,3 +1,4 @@
+import Flapjack.Misc.Option.Rel
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.EnvironmentExtension
 import Flapjack.Compiler.Backend.Semantics.ClosSem.State
 import Flapjack.Compiler.Backend.BackendProps.Pure
@@ -5,12 +6,6 @@ import Flapjack.Compiler.Backend.BackendProps.Pure
 /-! Candidate state relation for closure annotation. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate
 open Flapjack Flapjack.Compiler.Backend.ClosSem Flapjack.Compiler.Backend.BackendProps
-
-/-- Lift a relation through optional map lookups. -/
-def OptionRel {α β : Type} (relation : α → β → Prop) : Option α → Option β → Prop
-  | none, none => True
-  | some left, some right => relation left right
-  | _, _ => False
 
 /-- Related reference payloads have matching constructors and related values. -/
 def RefRel : Ref Value → Ref Value → Prop
@@ -30,9 +25,9 @@ def StateRel {C F : Type} (source target : State C F) : Prop :=
   source.clock = target.clock ∧ source.ffi = target.ffi ∧ source.maxApp = target.maxApp ∧
   target.compileOracle = (pureCo compileInc ∘ source.compileOracle) ∧
   source.compile = pureCc compileInc target.compile ∧
-  List.Forall₂ (OptionRel ValueRel) source.globals target.globals ∧
-  (∀ key, OptionRel RefRel (source.refs.lookup key) (target.refs.lookup key)) ∧
-  (∀ key, OptionRel CodeRel (source.code.lookup key) (target.code.lookup key))
+  List.Forall₂ (optionRel ValueRel) source.globals target.globals ∧
+  (∀ key, optionRel RefRel (source.refs.lookup key) (target.refs.lookup key)) ∧
+  (∀ key, optionRel CodeRel (source.code.lookup key) (target.code.lookup key))
 
 /-- Code entries use exactly the source's singleton free-and-shift relation. -/
 theorem codeRel_iff (arity : Nat) (body : ClosLang.Exp) (target : Nat × ClosLang.Exp) :
@@ -52,6 +47,6 @@ theorem initialState_related {C F : Type} (ffi : HolFfiState F) (maxApp clock : 
     (oracle : CompileOracle C) (compiler : Compiler C) :
     StateRel (initialState ffi maxApp HolFiniteMapExact.empty oracle (pureCc compileInc compiler) clock)
       (initialState ffi maxApp HolFiniteMapExact.empty (pureCo compileInc ∘ oracle) compiler clock) := by
-  simp [StateRel, initialState, OptionRel, HolFiniteMapExact.empty]
+  simp [StateRel, initialState, optionRel, HolFiniteMapExact.empty]
 
 end Flapjack.Compiler.Backend.ClosAnnotate

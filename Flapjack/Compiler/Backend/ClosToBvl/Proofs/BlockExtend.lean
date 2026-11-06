@@ -1,15 +1,9 @@
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.BlockCompare
+import Mathlib.Data.List.Forall2
 
 /-! Block extension in the closure-to-BVL simulation. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
 open Flapjack.SemanticPrimitivesHOL Flapjack.Compiler.Backend.BackendCommon
-
-private theorem forall₂_append {α β : Type} {R : α → β → Prop}
-    {xs zs : List α} {ys ws : List β} (first : List.Forall₂ R xs ys)
-    (second : List.Forall₂ R zs ws) : List.Forall₂ R (xs ++ zs) (ys ++ ws) := by
-  induction first with
-  | nil => exact second
-  | cons head tail ih => exact .cons head ih
 
 /-- Block extension preserves the prefix and selected slice of related fields. -/
 theorem blockExtend_dispatch {C F : Type} {f : HolFiniteMapExact Nat Nat}
@@ -70,7 +64,7 @@ theorem blockExtend_dispatch {C F : Type} {f : HolFiniteMapExact Nat Nat}
                       have resultRel : List.Forall₂ (vRel s.maxApp f t.refs t.code)
                           (initial ++ (fields.drop lower.toNat).take len.toNat)
                           (targetInitial ++ (targetFields.drop lower.toNat).take len.toNat) :=
-                        forall₂_append initialRel (List.forall₂_take _ (List.forall₂_drop _ fieldsRel))
+                        List.rel_append initialRel (List.forall₂_take _ (List.forall₂_drop _ fieldsRel))
                       refine ⟨.block (closTagShift tag) _, ?_, rfl, .block resultRel⟩
                       simp only [BvlSem.doApp, BvlSem.applyBlock]
                       split_ifs; rfl

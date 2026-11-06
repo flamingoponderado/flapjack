@@ -4,6 +4,12 @@ import Flapjack.Compiler.Backend.Semantics.FlatSem
 namespace Flapjack.Compiler.Backend.FlatProps
 open Flapjack.Compiler.Backend.FlatSem
 
+/-- A closure value is either a single or recursive closure. -/
+@[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "isClosure_def"]
+def isClosure (value : Value) : Prop :=
+  (∃ env name body, value = .closure env name body) ∨
+    ∃ env functions name, value = .recclosure env functions name
+
 @[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "simple_basic_val_rel_def"]
 def simpleBasicValRel : Value → Value → Prop
   | .litv lit, value => value = .litv lit

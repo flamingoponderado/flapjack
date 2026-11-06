@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.ForeignCalls
+import Flapjack.Misc.RichList
 
 /-! Reference allocation under the closure-annotation state relation. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate
@@ -9,7 +10,7 @@ theorem stateRel_ref_unused {C F : Type} (source target : State C F) (states : S
     (index : Nat) : source.refs.lookup index = none ↔ target.refs.lookup index = none := by
   have related := states.2.2.2.2.2.2.1 index
   cases left : source.refs.lookup index <;> cases right : target.refs.lookup index <;>
-    simp [left, right, OptionRel] at related ⊢
+    simp [left, right, optionRel] at related ⊢
 
 /-- Equal reference domains give the same least fresh address. -/
 theorem stateRel_leastUnusedRef {C F : Type} (source target : State C F) (states : StateRel source target) :
@@ -43,13 +44,6 @@ theorem primitiveSimulation_ref {C F : Type} :
     refine ⟨.refPtr true index, ?_⟩
     simpa [index, states.2.1] using nextStates
 
-/-- Repeating related values produces related arrays. -/
-theorem forall₂_replicate (count : Nat) (value nextValue : Value) (related : ValueRel value nextValue) :
-    List.Forall₂ ValueRel (List.replicate count value) (List.replicate count nextValue) := by
-  induction count with
-  | zero => exact .nil
-  | succ count ih => simpa only [List.replicate_succ] using List.Forall₂.cons related ih
-
 /-- Array allocation picks the same address and initializes related values. -/
 theorem primitiveSimulation_refArray {C F : Type} :
     PrimitiveSimulation (C := C) (F := F) (.memOp .refArray) := by
@@ -72,7 +66,7 @@ theorem primitiveSimulation_refArray {C F : Type} :
           · rename_i value nextValue
             let index := leastUnusedRef source.refs
             have fresh : leastUnusedRef target.refs = index := (stateRel_leastUnusedRef source target states).symm
-            have arrays := forall₂_replicate count.toNat value nextValue valueRel
+            have arrays := (forall₂_replicate_iff ValueRel count.toNat value nextValue).mpr (fun _ => valueRel)
             have nextStates := stateRel_updateRefFfi source target states index
               (.valueArray (List.replicate count.toNat value))
               (.valueArray (List.replicate count.toNat nextValue)) arrays source.ffi

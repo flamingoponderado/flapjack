@@ -1,3 +1,4 @@
+import Flapjack.Misc.Option.Rel
 import Flapjack.Compiler.Backend.ClosFvs.Source
 import Flapjack.Compiler.Backend.Semantics.ClosSem.State
 import Flapjack.Compiler.Backend.BackendProps.Pure
@@ -47,12 +48,6 @@ inductive RefRel : Ref Value → Ref Value → Prop where
   | thunk (mode : Flapjack.AstHOL.ThunkMode) (source target : Value) :
       ValueRel source target → RefRel (.thunk mode source) (.thunk mode target)
 
-/-- Lift a relation through optional lookup or global-slot results. -/
-def OptionRel {α β : Type} (relation : α → β → Prop) : Option α → Option β → Prop
-  | none, none => True
-  | some left, some right => relation left right
-  | _, _ => False
-
 namespace StatePort
 /-- The closure state has the reviewed canonical finite-map roundtrip. -/
 theorem holFmapAsFiniteSupportWitness {C F : Type} :
@@ -68,8 +63,8 @@ def StateRel {C F : Type} (source target : State C F) : Prop :=
   (∀ n, (source.compileOracle n).2.2 = []) ∧
   source.code = HolFiniteMapExact.empty ∧ target.code = HolFiniteMapExact.empty ∧
   target.maxApp = source.maxApp ∧ 1 ≤ source.maxApp ∧ target.clock = source.clock ∧
-  target.ffi = source.ffi ∧ List.Forall₂ (OptionRel ValueRel) source.globals target.globals ∧
-  (∀ key, OptionRel RefRel (source.refs.lookup key) (target.refs.lookup key)) ∧
+  target.ffi = source.ffi ∧ List.Forall₂ (optionRel ValueRel) source.globals target.globals ∧
+  (∀ key, optionRel RefRel (source.refs.lookup key) (target.refs.lookup key)) ∧
   source.compile = pureCc compileInc target.compile ∧
   target.compileOracle = pureCo compileInc ∘ source.compileOracle
 

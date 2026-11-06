@@ -40,10 +40,10 @@ theorem valueToBytes_related (value nextValue : Value) (bytes : List (BitVec 8))
   have source := (valueToBytes_eq_some value bytes).mp decoded
   have relation := valueToList_related value nextValue related
   cases target : valueToList nextValue with
-  | none => simp [source, target, OptionRel] at relation
+  | none => simp [source, target, optionRel] at relation
   | some values =>
     have listRel : List.Forall₂ ValueRel (bytes.map (fun b => .number b.toNat)) values := by
-      simpa [source, target, OptionRel] using relation
+      simpa [source, target, optionRel] using relation
     have same : values = bytes.map (fun b => .number b.toNat) := by
       have listRel' : List.Forall₂ ValueRel
           ((bytes.map (fun b => (b.toNat : Int))).map Value.number) values := by
@@ -59,10 +59,10 @@ theorem valueToWords_related (value nextValue : Value) (words : List (BitVec 64)
   have source := (valueToWords_eq_some value words).mp decoded
   have relation := valueToList_related value nextValue related
   cases target : valueToList nextValue with
-  | none => simp [source, target, OptionRel] at relation
+  | none => simp [source, target, optionRel] at relation
   | some values =>
     have listRel : List.Forall₂ ValueRel (words.map Value.word64) values := by
-      simpa [source, target, OptionRel] using relation
+      simpa [source, target, optionRel] using relation
     have same := related_word_list words values listRel
     apply (valueToWords_eq_some nextValue words).mpr
     simpa [same] using target
@@ -71,8 +71,8 @@ theorem valueToWords_related (value nextValue : Value) (words : List (BitVec 64)
 entries preserves their relation, including repeated keys. -/
 theorem codeUpdates_related (source target : Nat → Option (Nat × ClosLang.Exp))
     (entries : List (Nat × Nat × ClosLang.Exp))
-    (related : ∀ key, OptionRel CodeRel (source key) (target key)) :
-    ∀ key, OptionRel CodeRel (FUPDATE_LIST_HOL source entries key)
+    (related : ∀ key, optionRel CodeRel (source key) (target key)) :
+    ∀ key, optionRel CodeRel (FUPDATE_LIST_HOL source entries key)
       (FUPDATE_LIST_HOL target (compile entries) key) := by
   induction entries generalizing source target with
   | nil => simpa [compile, FUPDATE_LIST_HOL] using related
@@ -83,7 +83,7 @@ theorem codeUpdates_related (source target : Nat → Option (Nat × ClosLang.Exp
     intro other
     by_cases same : other = key
     · subst other
-      simp [FUPDATE_HOL, OptionRel, CodeRel]
+      simp [FUPDATE_HOL, optionRel, CodeRel]
     · simpa [FUPDATE_HOL, same] using related other
 
 /-- Installing annotated code and advancing both oracles preserves the
@@ -144,7 +144,7 @@ theorem doInstall_related_nonType {C F : Type} (source target : State C F)
         intro key member
         have sourceNone := fresh key (by simpa [compile_keys] using member)
         have rel := states.2.2.2.2.2.2.2 key
-        cases targetLookup : target.code.lookup key <;> simp_all [OptionRel]
+        cases targetLookup : target.code.lookup key <;> simp_all [optionRel]
       have targetNodup : ((compile auxiliary).map Prod.fst).Nodup := by simpa [compile_keys] using nodup
       have targetFreshEntries : ∀ key arity body, (key, arity, body) ∈ compile auxiliary →
           target.code.lookup key = none := by

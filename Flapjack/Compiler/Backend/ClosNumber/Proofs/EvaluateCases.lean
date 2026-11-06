@@ -1317,7 +1317,7 @@ theorem primitiveSimulation_global_read {C F : Type} (index : Nat) :
     have readRel := stateRel_getGlobal stateRel index
     cases left : (getGlobal index source.globals).join <;>
       cases right : (getGlobal index target.globals).join <;>
-      simp_all [OptionRel, doApp, applyGlobal, ResultRel]
+      simp_all [optionRel, doApp, applyGlobal, ResultRel]
   | cons head tail =>
     cases tail with
     | nil =>
@@ -1328,7 +1328,7 @@ theorem primitiveSimulation_global_read {C F : Type} (index : Nat) :
         · have readRel := stateRel_getGlobal stateRel number.toNat
           cases left : (getGlobal number.toNat source.globals).join <;>
             cases right : (getGlobal number.toNat target.globals).join <;>
-            simp_all [OptionRel, doApp, applyGlobal, ResultRel]
+            simp_all [optionRel, doApp, applyGlobal, ResultRel]
           simp [show ¬ number < 0 by omega, readRel, stateRel]
       | word64 _ | block _ _ _ _ | byteVector _ | refPtr _ _ | closure | recclosure =>
         simp [doApp, applyGlobal, ResultRel]
@@ -1372,12 +1372,12 @@ theorem primitiveSimulation_global_set {C F : Type} (index : Nat) :
         stateRel_withGlobals _ _ stateRel (forall₂_set stateRel.2.2.2.2.2.2.1 index _ _ head)
       have unitRel : ValueRel source.maxApp unitValue unitValue := .block _ [] [] .nil
       cases left : getGlobal index source.globals with
-      | none => cases right : getGlobal index target.globals <;> simp_all [OptionRel, doApp, applyGlobal, ResultRel]
+      | none => cases right : getGlobal index target.globals <;> simp_all [optionRel, doApp, applyGlobal, ResultRel]
       | some leftValue =>
         cases right : getGlobal index target.globals with
-        | none => simp_all [OptionRel]
+        | none => simp_all [optionRel]
         | some rightValue =>
-          cases leftValue <;> cases rightValue <;> simp_all [OptionRel, doApp, applyGlobal, ResultRel]
+          cases leftValue <;> cases rightValue <;> simp_all [optionRel, doApp, applyGlobal, ResultRel]
     | cons head tail => simp [doApp, applyGlobal, ResultRel]
 
 /-- All global dispatcher cases satisfy the shared primitive obligation. -/
@@ -1474,10 +1474,10 @@ theorem primitiveSimulation_block_elemAt {C F : Type} (index : Nat) :
     | nil =>
       cases head with
       | block actual fields nextFields fieldsRel =>
-        have lookupRel : OptionRel (ValueRel source.maxApp) fields[index]? nextFields[index]? := by
+        have lookupRel : optionRel (ValueRel source.maxApp) fields[index]? nextFields[index]? := by
           simpa [getGlobal] using forall₂_getGlobal fieldsRel index
         cases left : fields[index]? <;> cases right : nextFields[index]? <;>
-          simp_all [OptionRel, doApp, applyBlock, ResultRel]
+          simp_all [optionRel, doApp, applyBlock, ResultRel]
       | number _ | word64 _ | byteVector _ | refPtr _ _ | closure | recclosure =>
         simp [doApp, applyBlock, ResultRel]
     | cons head tail => simp [doApp, applyBlock, ResultRel]
@@ -1729,7 +1729,7 @@ theorem primitiveSimulation_ffi {C F : Type} (name : Flapjack.Basis.Pure.MlStrin
           | refPtr flag index =>
             have refsRel := stateRel.2.2.2.2.2.1 index
             cases left : source.refs.lookup index <;> cases right : target.refs.lookup index <;>
-              simp_all [OptionRel, RefRel, doApp, ResultRel]
+              simp_all [optionRel, RefRel, doApp, ResultRel]
             rename_i leftRef rightRef
             cases leftRef <;> cases rightRef <;> simp_all
             rename_i leftBytes bytes
@@ -1844,7 +1844,7 @@ theorem primitiveSimulation_memory_length {C F : Type} :
       | refPtr flag index =>
         have refsRel := stateRel.2.2.2.2.2.1 index
         cases left : source.refs.lookup index <;> cases right : target.refs.lookup index <;>
-          simp_all [OptionRel, RefRel, doApp, applyMemory, ResultRel]
+          simp_all [optionRel, RefRel, doApp, applyMemory, ResultRel]
         rename_i leftRef rightRef
         cases leftRef <;> cases rightRef <;> simp_all
         rename_i fields nextFields
@@ -1874,24 +1874,24 @@ theorem primitiveSimulation_memory_el {C F : Type} :
           | block tag fields nextFields fieldsRel =>
             by_cases negative : index < 0
             · simp [doApp, applyMemory, negative, ResultRel]
-            · have lookupRel : OptionRel (ValueRel source.maxApp) fields[index.toNat]? nextFields[index.toNat]? := by
+            · have lookupRel : optionRel (ValueRel source.maxApp) fields[index.toNat]? nextFields[index.toNat]? := by
                 simpa [getGlobal] using forall₂_getGlobal fieldsRel index.toNat
               cases left : fields[index.toNat]? <;> cases right : nextFields[index.toNat]? <;>
-                simp_all [OptionRel, doApp, applyMemory, ResultRel]
+                simp_all [optionRel, doApp, applyMemory, ResultRel]
               simp [show ¬ index < 0 by omega, lookupRel, stateRel]
           | refPtr flag ptr =>
             have refsRel := stateRel.2.2.2.2.2.1 ptr
             cases left : source.refs.lookup ptr <;> cases right : target.refs.lookup ptr <;>
-              simp_all [OptionRel, RefRel, doApp, applyMemory, ResultRel]
+              simp_all [optionRel, RefRel, doApp, applyMemory, ResultRel]
             rename_i leftRef rightRef
             cases leftRef <;> cases rightRef <;> simp_all
             rename_i fields nextFields
             by_cases negative : index < 0
             · simp [negative]
-            · have lookupRel : OptionRel (ValueRel source.maxApp) fields[index.toNat]? nextFields[index.toNat]? := by
+            · have lookupRel : optionRel (ValueRel source.maxApp) fields[index.toNat]? nextFields[index.toNat]? := by
                 simpa [getGlobal] using forall₂_getGlobal refsRel index.toNat
               cases left : fields[index.toNat]? <;> cases right : nextFields[index.toNat]? <;>
-                simp_all [OptionRel]
+                simp_all [optionRel]
               simp [show ¬ index < 0 by omega, lookupRel, stateRel]
           | number _ | word64 _ | byteVector _ | closure | recclosure =>
             simp [doApp, applyMemory, ResultRel]
@@ -1921,7 +1921,7 @@ theorem primitiveSimulation_memory_update {C F : Type} :
             | number index =>
               have refsRel := stateRel.2.2.2.2.2.1 ptr
               cases left : source.refs.lookup ptr <;> cases right : target.refs.lookup ptr <;>
-                simp_all [OptionRel, RefRel, doApp, applyMemory, ResultRel]
+                simp_all [optionRel, RefRel, doApp, applyMemory, ResultRel]
               rename_i leftRef rightRef
               cases leftRef <;> cases rightRef <;> simp_all
               rename_i value nextValue fields nextFields
@@ -1952,7 +1952,7 @@ theorem primitiveSimulation_memory_lengthByte {C F : Type} :
       | refPtr flag index =>
         have refsRel := stateRel.2.2.2.2.2.1 index
         cases left : source.refs.lookup index <;> cases right : target.refs.lookup index <;>
-          simp_all [OptionRel, RefRel, doApp, applyMemory, ResultRel]
+          simp_all [optionRel, RefRel, doApp, applyMemory, ResultRel]
         rename_i leftRef rightRef
         cases leftRef <;> cases rightRef <;> simp_all
         exact .number _
@@ -1979,7 +1979,7 @@ theorem primitiveSimulation_memory_derefByte {C F : Type} :
           | number index =>
             have refsRel := stateRel.2.2.2.2.2.1 ptr
             cases left : source.refs.lookup ptr <;> cases right : target.refs.lookup ptr <;>
-              simp_all [OptionRel, RefRel, doApp, applyMemory, ResultRel]
+              simp_all [optionRel, RefRel, doApp, applyMemory, ResultRel]
             rename_i leftRef rightRef
             cases leftRef <;> cases rightRef <;> simp_all
             rename_i leftBytes bytes
@@ -2020,7 +2020,7 @@ theorem primitiveSimulation_memory_updateByte {C F : Type} :
               | number byte =>
                 have refsRel := stateRel.2.2.2.2.2.1 ptr
                 cases left : source.refs.lookup ptr <;> cases right : target.refs.lookup ptr <;>
-                  simp_all [OptionRel, RefRel, doApp, applyMemory, ResultRel]
+                  simp_all [optionRel, RefRel, doApp, applyMemory, ResultRel]
                 rename_i leftRef rightRef
                 cases leftRef <;> cases rightRef <;> simp_all
                 rename_i leftBytes bytes
@@ -2212,7 +2212,7 @@ theorem primitiveSimulation_memory_boundsCheckArray {C F : Type} :
           | number index =>
             have refsRel := stateRel.2.2.2.2.2.1 ptr
             cases left : source.refs.lookup ptr <;> cases right : target.refs.lookup ptr <;>
-              simp_all [OptionRel, RefRel, doApp, applyMemory, ResultRel]
+              simp_all [optionRel, RefRel, doApp, applyMemory, ResultRel]
             rename_i leftRef rightRef
             cases leftRef <;> cases rightRef <;> simp_all
             have lengths := refsRel.length_eq
@@ -2261,7 +2261,7 @@ theorem primitiveSimulation_memory_boundsCheckByte {C F : Type} (loose : Bool) :
           | number index =>
             have refsRel := stateRel.2.2.2.2.2.1 ptr
             cases left : source.refs.lookup ptr <;> cases right : target.refs.lookup ptr <;>
-              simp_all [OptionRel, RefRel, doApp, applyMemory, ResultRel]
+              simp_all [optionRel, RefRel, doApp, applyMemory, ResultRel]
             rename_i leftRef rightRef
             cases leftRef <;> cases rightRef <;> simp_all
             exact boolValue_related _ _
@@ -2289,7 +2289,7 @@ theorem primitiveSimulation_memory_xorByte {C F : Type} :
           | byteVector input =>
             have refsRel := stateRel.2.2.2.2.2.1 ptr
             cases left : source.refs.lookup ptr <;> cases right : target.refs.lookup ptr <;>
-              simp_all [OptionRel, RefRel, doApp, applyMemory, ResultRel]
+              simp_all [optionRel, RefRel, doApp, applyMemory, ResultRel]
             rename_i leftRef rightRef
             cases leftRef <;> cases rightRef <;> simp_all
             rename_i leftBytes bytes
@@ -2343,7 +2343,7 @@ theorem primitiveSimulation_memory_copyByte_new {C F : Type} :
               | number length =>
                 have refsRel := stateRel.2.2.2.2.2.1 ptr
                 cases left : source.refs.lookup ptr <;> cases right : target.refs.lookup ptr <;>
-                  simp_all [OptionRel, RefRel, doApp, applyMemory, ResultRel]
+                  simp_all [optionRel, RefRel, doApp, applyMemory, ResultRel]
                 rename_i leftRef rightRef
                 cases leftRef <;> cases rightRef <;> simp_all
                 rename_i leftBytes bytes
@@ -2377,7 +2377,7 @@ theorem copyByte_write_vector {C F : Type} (source : State (Nat × C) F) (target
         ValueRel source.maxApp value targetValue ∧ StateRel next targetNext := by
   have refsRel := stateRel.2.2.2.2.2.1 dst
   cases left : source.refs.lookup dst <;> cases right : target.refs.lookup dst <;>
-    simp_all [OptionRel, RefRel, doApp, applyMemory, ResultRel]
+    simp_all [optionRel, RefRel, doApp, applyMemory, ResultRel]
   rename_i leftRef rightRef
   cases leftRef <;> cases rightRef <;> simp_all
   rename_i leftBytes bytes
@@ -2405,7 +2405,7 @@ theorem copyByte_write_ref {C F : Type} (source : State (Nat × C) F) (target : 
         ValueRel source.maxApp value targetValue ∧ StateRel next targetNext := by
   have refsRel := stateRel.2.2.2.2.2.1 src
   cases left : source.refs.lookup src <;> cases right : target.refs.lookup src <;>
-    simp_all [OptionRel, RefRel, doApp, applyMemory, ResultRel]
+    simp_all [optionRel, RefRel, doApp, applyMemory, ResultRel]
   rename_i leftRef rightRef
   cases leftRef <;> cases rightRef <;> simp_all
   rename_i leftBytes bytes
@@ -2506,7 +2506,7 @@ theorem destThunk_related {C F : Type} (source : State (Nat × C) F) (target : S
   | refPtr flag index =>
     have refsRel := stateRel.2.2.2.2.2.1 index
     cases left : source.refs.lookup index <;> cases right : target.refs.lookup index <;>
-      simp_all [OptionRel, RefRel, destThunk, DestThunkRel]
+      simp_all [optionRel, RefRel, destThunk, DestThunkRel]
     rename_i leftRef rightRef
     cases leftRef <;> cases rightRef <;> simp_all
     cases flag <;> simp_all
@@ -2574,7 +2574,7 @@ theorem primitiveSimulation_thunk_update {C F : Type} (mode : Flapjack.AstHOL.Th
             | false =>
               have refsRel := stateRel.2.2.2.2.2.1 index
               cases left : source.refs.lookup index <;> cases right : target.refs.lookup index <;>
-                simp_all [OptionRel, RefRel, doApp, ResultRel]
+                simp_all [optionRel, RefRel, doApp, ResultRel]
               rename_i leftRef rightRef
               cases leftRef <;> cases rightRef <;> simp_all
               rename_i leftMode leftValue rightMode rightValue
@@ -2656,7 +2656,7 @@ theorem updateThunk_related {C F : Type} (source : State (Nat × C) F) (target :
                 simp_all [DestThunkRel, updateThunk]
               have refsRel := stateRel.2.2.2.2.2.1 index
               cases leftRef : source.refs.lookup index <;> cases rightRef : target.refs.lookup index <;>
-                simp_all [OptionRel, RefRel, storeThunk]
+                simp_all [optionRel, RefRel, storeThunk]
               rename_i sourceRef targetRef
               cases sourceRef <;> cases targetRef <;> simp_all
               rename_i leftMode leftValue rightMode rightValue

@@ -1,39 +1,239 @@
 import Flapjack.Compiler.Backend.PatternComp.Proofs.GuardCompilation
+import Aesop
 
 /-! Proof-side soundness infrastructure for CakeML's exhaustiveness matrix.
-The matcher and finite-map carriers remain pending HOL correspondence review. -/
+The row and decision-tree evaluators remain pending HOL correspondence review. -/
 namespace Flapjack.Compiler.Backend.PatternExh
 open Flapjack PatternCommon PatternSemantics PatternComp
 
 /-- Combine two pattern results, retaining any type failure. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "pand_def"]
 def pand : PmatchResult → PmatchResult → PmatchResult
   | .success, result => result
-  | .failure, .typeFailure => .typeFailure
-  | .failure, _ => .failure
+  | .failure, result => if result = .typeFailure then .typeFailure else .failure
   | .typeFailure, _ => .typeFailure
 
-@[simp] theorem pand_success_right (x : PmatchResult) : pand x .success = x := by
-  cases x <;> rfl
+/-- The source's identity and type-failure equations for `pand`. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "pand_simps"]
+theorem pand_simps (x y : PmatchResult) :
+    pand .success y = y ∧ pand x .success = x ∧
+    pand .typeFailure y = .typeFailure ∧ pand x .typeFailure = .typeFailure := by
+  cases x <;> cases y <;> simp [pand]
 
-@[simp] theorem pand_typeFailure_iff (x y : PmatchResult) :
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "pand_eq_PTypeFailure", simp]
+theorem pand_typeFailure_iff (x y : PmatchResult) :
     pand x y = .typeFailure ↔ x = .typeFailure ∨ y = .typeFailure := by
   cases x <;> cases y <;> simp [pand]
 
-@[simp] theorem pand_success_iff (x y : PmatchResult) :
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "pand_eq_PMatchSuccess", simp]
+theorem pand_success_iff (x y : PmatchResult) :
     pand x y = .success ↔ x = .success ∧ y = .success := by
   cases x <;> cases y <;> simp [pand]
 
-@[simp] theorem pand_assoc (x y z : PmatchResult) : pand (pand x y) z = pand x (pand y z) := by
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "pand_assoc", simp]
+theorem pand_assoc (x y z : PmatchResult) : pand (pand x y) z = pand x (pand y z) := by
   cases x <;> cases y <;> cases z <;> rfl
 
-@[simp] theorem pmatchList_cons (refs : HolFiniteMapExact Nat Term) (pattern : Pat)
+private def toBroad (refs : HolFiniteMapExact Nat Term) : Nat → Option Term :=
+  refs.lookup
+
+private def ofBroad (lookup : Nat → Option Term)
+    (support : ∃ keys : List Nat, ∀ key, lookup key ≠ none → key ∈ keys) :
+    HolFiniteMapExact Nat Term := ⟨lookup, support⟩
+
+/-- Canonical finite-map parameter roundtrips for the matcher lemmas. -/
+theorem holFmapAsFiniteSupportParamWitness_pmatch_any_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs := by
+  cases refs
+  exact ⟨rfl, rfl, rfl⟩
+
+theorem holFmapAsFiniteSupportParamWitness_pmatchList_nil_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_pmatchList_cons_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_pmatchList_length_source_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_pmatchList_append_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_pmatchList_anys_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_expand_sound_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_expandList_sound_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_destVal_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_destVal_eq_some_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_destVal_length_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_ctorsOf_sound_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_colCtors_sound_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_specRow_match_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_specMat_member_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_defaultRow_match_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_defaultMat_member_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_exhMatrix_sound_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_matchRows_exists_success_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_orRows_safe_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_orRows_hit_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_exhRows_sound_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
+
+/-- A wildcard matches every term. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "pmatch_Any"
+  (fmap_as_finite_support_parameters := [refs])]
+theorem pmatch_any (refs : HolFiniteMapExact Nat Term) (value : Term) :
+    pmatch refs .any value = .success := by
+  cases value <;> simp [pmatch]
+
+/-- Matching empty lists succeeds exactly in the source's three base cases. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "pmatch_list_nil"
+  (fmap_as_finite_support_parameters := [refs])]
+theorem pmatchList_nil (refs : HolFiniteMapExact Nat Term) (value : Term)
+    (values : List Term) (pattern : Pat) (patterns : List Pat) :
+    pmatchList refs [] [] = .success ∧
+    pmatchList refs [] (value :: values) = .typeFailure ∧
+    pmatchList refs (pattern :: patterns) [] = .typeFailure := by
+  simp [pmatchList]
+
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "pmatch_list_cons"
+  (fmap_as_finite_support_parameters := [refs]), simp]
+theorem pmatchList_cons (refs : HolFiniteMapExact Nat Term) (pattern : Pat)
     (patterns : List Pat) (value : Term) (values : List Term) :
     pmatchList refs (pattern :: patterns) (value :: values) =
       pand (pmatch refs pattern value) (pmatchList refs patterns values) := by
   cases head : pmatch refs pattern value <;>
     cases tail : pmatchList refs patterns values <;> simp [pmatchList, pand, head, tail]
 
+/-- A match without a type failure has equally long pattern and value lists. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "pmatch_list_LENGTH"
+  (fmap_as_finite_support_parameters := [refs])]
+theorem pmatchList_length_source (refs : HolFiniteMapExact Nat Term) (patterns : List Pat)
+    (values : List Term) (safe : pmatchList refs patterns values ≠ .typeFailure) :
+    patterns.length = values.length :=
+  (PatternComp.pmatchList_length refs patterns values safe).symm
+
 /-- Matching appended pattern/value segments composes their three-valued results. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "pmatch_list_append"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem pmatchList_append (refs : HolFiniteMapExact Nat Term)
     (patterns rest : List Pat) (values more : List Term) (lengths : patterns.length = values.length) :
     pmatchList refs (patterns ++ rest) (values ++ more) =
@@ -48,10 +248,13 @@ theorem pmatchList_append (refs : HolFiniteMapExact Nat Term)
       have tailLength : patterns.length = values.length := by simpa using lengths
       simp only [List.cons_append, pmatchList_cons, ih values tailLength, pand_assoc]
 
-@[simp] theorem length_anys (n : Nat) : (anys n).length = n := by
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "LENGTH_anys", simp]
+theorem length_anys (n : Nat) : (anys n).length = n := by
   induction n <;> simp_all [anys]
 
 /-- Wildcard vectors succeed precisely when their widths agree. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "pmatch_list_anys"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem pmatchList_anys (refs : HolFiniteMapExact Nat Term) (n : Nat) (values : List Term) :
     pmatchList refs (anys n) values = if values.length = n then .success else .typeFailure := by
   induction n generalizing values with
@@ -62,6 +265,8 @@ theorem pmatchList_anys (refs : HolFiniteMapExact Nat Term) (n : Nat) (values : 
     | cons value values => simp [anys, pmatch, pand, ih]
 
 /-- A successful row scan cannot return failure when a row matched. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "match_EXISTS"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem matchRows_exists_success (refs : HolFiniteMapExact Nat Term) (value : Term)
     (rows : List (Pat × Nat)) (safe : matchRows refs rows value ≠ none)
     (hit : ∃ row ∈ rows, pmatch refs row.1 value = .success) :
@@ -87,6 +292,8 @@ theorem matchRows_exists_success (refs : HolFiniteMapExact Nat Term) (value : Te
 
 /-- A row retained by the default matrix matches the remaining values in
 exactly the same way as the original row matches the full vector. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "default_row_thm"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem defaultRow_match (refs : HolFiniteMapExact Nat Term) (value : Term) (values : List Term)
     (original row : List Pat) (member : row ∈ defaultRow original) :
     pmatchList refs row values = pmatchList refs original (value :: values) := by
@@ -96,6 +303,8 @@ theorem defaultRow_match (refs : HolFiniteMapExact Nat Term) (value : Term) (val
     cases pattern <;> simp_all [defaultRow, pmatchList_cons, pmatch, pand]
 
 /-- Every default-matrix row corresponds to a row in the original matrix. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "default_mat_MEM"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem defaultMat_member (refs : HolFiniteMapExact Nat Term) (value : Term) (values : List Term)
     (matrix : List (List Pat)) (row : List Pat) (member : row ∈ defaultMat matrix) :
     ∃ original ∈ matrix, pmatchList refs row values = pmatchList refs original (value :: values) := by
@@ -110,6 +319,7 @@ theorem defaultMat_member (refs : HolFiniteMapExact Nat Term) (value : Term) (va
 
 /-- Rows generated for a list of constructors contain each corresponding
 specialized matrix. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "MEM_spec_mats"]
 theorem specMat_mem_specMats (constructors : List Ctor) (constructor : Ctor)
     (matrix : List (List Pat)) (member : constructor ∈ constructors) :
     specMat constructor matrix ∈ specMats constructors matrix := by
@@ -122,13 +332,38 @@ theorem specMat_mem_specMats (constructors : List Ctor) (constructor : Ctor)
     · simp [specMats, ih member]
 
 /-- Extract the constructor class and arguments of a term or valid reference. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "dest_val_def"
+  (fmap_as_finite_support_parameters := [refs])]
 def destVal (refs : HolFiniteMapExact Nat Term) : Term → Option (Ctor × List Term)
   | .term (some tag) fields => some (.tagC tag fields.length, fields)
   | .term none fields => some (.tupC fields.length, fields)
-  | .refPtr address => (refs.lookup address).map (fun value => (.refC, [value]))
+  | .refPtr address =>
+    match refs.lookup address with
+    | none => none
+    | some value => some (.refC, [value])
   | .litv _ | .other => none
 
+/-- The source characterization of successful constructor extraction. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "dest_val_eq_SOME"
+  (fmap_as_finite_support_parameters := [refs])]
+theorem destVal_eq_some (refs : HolFiniteMapExact Nat Term) (value : Term)
+    (constructor : Ctor) (fields : List Term) :
+    destVal refs value = some (constructor, fields) ↔
+      (∃ tag, value = .term (some tag) fields ∧ constructor = .tagC tag fields.length) ∨
+      (value = .term none fields ∧ constructor = .tupC fields.length) ∨
+      (∃ address child, value = .refPtr address ∧ refs.lookup address = some child ∧
+        fields = [child] ∧ constructor = .refC) := by
+  cases value with
+  | litv _ | other => simp [destVal]
+  | term tag values => cases tag <;> simp [destVal] <;> aesop
+  | refPtr address =>
+    cases lookup : refs.lookup address with
+    | none => simp [destVal, lookup]
+    | some child => simp [destVal, lookup]; aesop
+
 /-- The argument vector extracted from a value has the constructor's arity. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "LENGTH_dest_val"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem destVal_length (refs : HolFiniteMapExact Nat Term) (value : Term)
     (constructor : Ctor) (fields : List Term)
     (found : destVal refs value = some (constructor, fields)) :
@@ -142,26 +377,30 @@ theorem destVal_length (refs : HolFiniteMapExact Nat Term) (value : Term)
     cases lookup : refs.lookup address with
     | none => simp [destVal, lookup] at found
     | some val =>
-      simp only [destVal, lookup, Option.map_some, Option.some.injEq, Prod.mk.injEq] at found
+      simp only [destVal, lookup, Option.some.injEq, Prod.mk.injEq] at found
       rcases found with ⟨rfl, rfl⟩
       rfl
 
-/-- Duplicate removal preserves constructor membership. -/
-theorem mem_ctorNub (constructors : List Ctor) (constructor : Ctor) :
-    constructor ∈ ctorNub constructors ↔ constructor ∈ constructors := by
+/-- Duplicate removal preserves membership for every element type. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "MEM_ctor_nub"]
+theorem mem_ctorNub {α : Type} (constructors : List α) (constructor : α) :
+    constructor ∈ ctorNubHOL constructors ↔ constructor ∈ constructors := by
+  classical
   induction constructors with
-  | nil => simp [ctorNub]
+  | nil => simp [ctorNubHOL]
   | cons first rest ih =>
-    by_cases member : first ∈ rest <;> simp_all [ctorNub]
+    by_cases member : first ∈ rest <;> simp_all [ctorNubHOL]
 
-/-- Constructor intersection retains exactly the constructors in both lists. -/
-theorem mem_ctorKeep (left right : List Ctor) (constructor : Ctor) :
-    constructor ∈ ctorKeep left right ↔ constructor ∈ left ∧ constructor ∈ right := by
+/-- The source filter retains exactly the elements in both lists. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "MEM_ctor_keep"]
+theorem mem_ctorKeep {α : Type} (left right : List α) (constructor : α) :
+    constructor ∈ ctorKeepHOL left right ↔ constructor ∈ left ∧ constructor ∈ right := by
+  classical
   induction left with
-  | nil => simp [ctorKeep]
+  | nil => simp [ctorKeepHOL]
   | cons first rest ih =>
     by_cases member : first ∈ right
-    · simp only [ctorKeep, if_pos member, List.mem_cons, ih]
+    · simp only [ctorKeepHOL, if_pos member, List.mem_cons, ih]
       constructor
       · intro h
         rcases h with equal | both
@@ -171,7 +410,7 @@ theorem mem_ctorKeep (left right : List Ctor) (constructor : Ctor) :
         rcases h with equal | inRest
         · exact Or.inl equal
         · exact Or.inr ⟨inRest, inRight⟩
-    · simp only [ctorKeep, if_neg member, List.mem_cons, ih]
+    · simp only [ctorKeepHOL, if_neg member, List.mem_cons, ih]
       constructor
       · intro ⟨inRest, inRight⟩
         exact ⟨Or.inr inRest, inRight⟩
@@ -181,6 +420,8 @@ theorem mem_ctorKeep (left right : List Ctor) (constructor : Ctor) :
         · exact ⟨inRest, inRight⟩
 
 /-- Specializing a row preserves its match against the extracted arguments. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "spec_row_thm"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem specRow_match (refs : HolFiniteMapExact Nat Term) (value : Term) (values : List Term)
     (constructor : Ctor) (fields : List Term) (original row : List Pat)
     (found : destVal refs value = some (constructor, fields)) (member : row ∈ specRow constructor original) :
@@ -208,7 +449,7 @@ theorem specRow_match (refs : HolFiniteMapExact Nat Term) (value : Term) (values
           cases lookup : refs.lookup address with
           | none => simp [destVal, lookup] at found
           | some child =>
-            simp only [destVal, lookup, Option.map_some, Option.some.injEq, Prod.mk.injEq,
+            simp only [destVal, lookup, Option.some.injEq, Prod.mk.injEq,
               true_and] at found
             subst fields
             simp [pmatch, lookup]
@@ -252,6 +493,8 @@ theorem specRow_match (refs : HolFiniteMapExact Nat Term) (value : Term) (values
         · simp [specRow, ctorEq] at member
 
 /-- Each row of a specialized matrix comes from an equally matching source row. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "spec_mat_MEM"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem specMat_member (refs : HolFiniteMapExact Nat Term) (value : Term) (values : List Term)
     (constructor : Ctor) (fields : List Term) (matrix : List (List Pat)) (row : List Pat)
     (found : destVal refs value = some (constructor, fields)) (member : row ∈ specMat constructor matrix) :
@@ -267,6 +510,7 @@ theorem specMat_member (refs : HolFiniteMapExact Nat Term) (value : Term) (value
       exact ⟨original, List.mem_cons_of_mem _ inRest, result⟩
 
 /-- Tagged constructor membership corresponds to sibling-pair membership. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "MEM_tag_ctors"]
 theorem mem_tagCtors (siblings : List (Nat × Nat)) (tag arity : Nat) :
     Ctor.tagC tag arity ∈ tagCtors siblings ↔ (tag, arity) ∈ siblings := by
   induction siblings with
@@ -277,6 +521,8 @@ theorem mem_tagCtors (siblings : List (Nat × Nat)) (tag arity : Nat) :
 
 /-- An accepted pattern constructor set contains the class of any value
 that does not make the pattern type-fail. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "ctors_of_thm"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem ctorsOf_sound (refs : HolFiniteMapExact Nat Term) (pattern : Pat) (value : Term)
     (constructors : List Ctor) (known : ctorsOf pattern = some constructors)
     (safe : pmatch refs pattern value ≠ .typeFailure) :
@@ -304,7 +550,7 @@ theorem ctorsOf_sound (refs : HolFiniteMapExact Nat Term) (pattern : Pat) (value
         | some actual => simp [pmatch] at safe
         | none =>
           have listSafe : pmatchList refs patterns fields ≠ .typeFailure := by simpa [pmatch] using safe
-          have sameLength := pmatchList_length refs patterns fields listSafe
+          have sameLength := pmatchList_length_source refs patterns fields listSafe
           exact ⟨.tupC fields.length, fields, rfl, by simp [sameLength]⟩
     | some info =>
       obtain ⟨tag, siblings⟩ := info
@@ -320,7 +566,7 @@ theorem ctorsOf_sound (refs : HolFiniteMapExact Nat Term) (pattern : Pat) (value
           | none => simp [pmatch] at safe
           | some actual =>
             refine ⟨.tagC actual fields.length, fields, rfl, ?_⟩
-            rw [mem_ctorNub]
+            rw [ctorNub_eq_HOL, mem_ctorNub]
             simp only [List.mem_cons, Ctor.tagC.injEq, mem_tagCtors]
             by_cases same : tag = actual ∧ patterns.length = fields.length
             · exact Or.inl ⟨same.1.symm, same.2.symm⟩
@@ -331,6 +577,8 @@ theorem ctorsOf_sound (refs : HolFiniteMapExact Nat Term) (pattern : Pat) (value
 
 /-- If a column provides constructor information and its rows are safe,
 the current value has a constructor in that information. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "col_ctors_thm"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem colCtors_sound (refs : HolFiniteMapExact Nat Term) (value : Term) (values : List Term)
     (matrix : List (List Pat)) (constructors : List Ctor)
     (known : colCtors matrix = some constructors)
@@ -369,15 +617,20 @@ theorem colCtors_sound (refs : HolFiniteMapExact Nat Term) (value : Term) (value
           have ctorSame : headCtor = tailCtor := congrArg Prod.fst same
           subst tailCtor
           subst constructors
-          exact ⟨headCtor, headFields, headFound, (mem_ctorKeep headCtors tailCtors headCtor).mpr ⟨headMember, tailMember⟩⟩
+          refine ⟨headCtor, headFields, headFound, ?_⟩
+          rw [ctorKeep_eq_HOL]
+          exact (mem_ctorKeep headCtors tailCtors headCtor).mpr ⟨headMember, tailMember⟩
 
 /-- A matrix accepted by the exhaustiveness checker contains a matching row
 whenever every row is free of type errors. -/
-theorem exhMatrix_sound (matrix : List (List Pat)) :
-    ∀ (refs : HolFiniteMapExact Nat Term) (values : List Term),
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "exh_matrix_thm"
+  (fmap_as_finite_support_parameters := [refs])]
+theorem exhMatrix_sound (matrix : List (List Pat)) (refs : HolFiniteMapExact Nat Term) :
+    ∀ (values : List Term),
       exhMatrix matrix = true →
       (∀ row ∈ matrix, pmatchList refs row values ≠ .typeFailure) →
       ∃ row ∈ matrix, pmatchList refs row values = .success := by
+  revert refs
   refine exhMatrix.induct
     (motive1 := fun matrix => ∀ (refs : HolFiniteMapExact Nat Term) (values : List Term),
       exhMatrix matrix = true →
@@ -459,7 +712,36 @@ theorem exhMatrix_sound (matrix : List (List Pat)) :
     · exact ihFirst refs values both.1 safe
     · exact ihRest matrix member refs values both.2 safe
 
+/-- Both source matrix and matrix-list soundness statements, with independent
+reference maps for the two conjuncts. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "exh_matrix_thm"
+  (fmap_as_finite_support_relation := [matrixRefs, matricesRefs])]
+theorem exh_matrix_thm :
+    (∀ (matrix : List (List Pat)) (matrixRefs : HolFiniteMapExact Nat Term) (values : List Term),
+      exhMatrix matrix = true ∧ (∀ row ∈ matrix, pmatchList matrixRefs row values ≠ .typeFailure) →
+      ∃ row ∈ matrix, pmatchList matrixRefs row values = .success) ∧
+    (∀ (matrices : List (List (List Pat))) (matrix : List (List Pat))
+      (matricesRefs : HolFiniteMapExact Nat Term) (values : List Term),
+      exhMats matrices = true ∧ matrix ∈ matrices ∧
+        (∀ row ∈ matrix, pmatchList matricesRefs row values ≠ .typeFailure) →
+      ∃ row ∈ matrix, pmatchList matricesRefs row values = .success) := by
+  constructor
+  · intro matrix refs values ⟨accepted, safe⟩
+    exact exhMatrix_sound matrix refs values accepted safe
+  · intro matrices
+    induction matrices with
+    | nil =>
+      intro matrix refs values ⟨_, member, _⟩
+      simp at member
+    | cons first rest ih =>
+      intro matrix refs values ⟨accepted, member, safe⟩
+      have both : exhMatrix first = true ∧ exhMats rest = true := by simpa [exhMats] using accepted
+      rcases List.mem_cons.mp member with rfl | member
+      · exact exhMatrix_sound _ refs values both.1 safe
+      · exact ih matrix refs values ⟨both.2, member, safe⟩
+
 /-- Prefixing rows preserves their membership witnesses. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "MEM_add_head"]
 theorem mem_addHead {α : Type} (item : α) (rows : List (List α)) (row : List α) :
     row ∈ addHead item rows ↔ ∃ rest ∈ rows, row = item :: rest := by
   induction rows with
@@ -467,13 +749,15 @@ theorem mem_addHead {α : Type} (item : α) (rows : List (List α)) (row : List 
   | cons first rest ih => simp [addHead, ih, eq_comm]
 
 /-- Membership in a Cartesian product gives one choice from each input. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "MEM_mk_prods"]
 theorem mem_mkProds {α : Type} (items : List α) (rows : List (List α)) (row : List α) :
-    row ∈ mkProds items rows ↔ ∃ item ∈ items, ∃ rest ∈ rows, row = item :: rest := by
+    row ∈ mkProds items rows ↔ ∃ item rest, item ∈ items ∧ rest ∈ rows ∧ row = item :: rest := by
   induction items with
   | nil => simp [mkProds]
   | cons first rest ih => simp [mkProds, mem_addHead, ih, eq_comm]
 
 /-- Expanded reference patterns retain their original alternatives. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "MEM_mk_refs"]
 theorem mem_mkRefs (patterns : List Pat) (pattern : Pat) :
     pattern ∈ mkRefs patterns ↔ ∃ original ∈ patterns, pattern = .ref original := by
   induction patterns with
@@ -481,6 +765,7 @@ theorem mem_mkRefs (patterns : List Pat) (pattern : Pat) :
   | cons first rest ih => simp [mkRefs, ih, eq_comm]
 
 /-- Expanded constructor patterns retain their argument rows. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "MEM_mk_conses"]
 theorem mem_mkConses (info : Option (Nat × Option (List (Nat × Nat))))
     (rows : List (List Pat)) (pattern : Pat) :
     pattern ∈ mkConses info rows ↔ ∃ original ∈ rows, pattern = .cons info original := by
@@ -488,25 +773,30 @@ theorem mem_mkConses (info : Option (Nat × Option (List (Nat × Nat))))
   | nil => simp [mkConses]
   | cons first rest ih => simp [mkConses, ih, eq_comm]
 
-/-- Expanded one-column matrix rows retain their original pattern. -/
-theorem mem_mkRows (patterns : List Pat) (row : List Pat) :
-    row ∈ mkRows patterns ↔ ∃ original ∈ patterns, row = [original] := by
-  induction patterns with
+/-- Singleton rows retain exactly the original list elements. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "MEM_mk_rows"]
+theorem mem_mkRows {α : Type} (items : List α) (row : List α) :
+    row ∈ mkRows items ↔ ∃ original ∈ items, row = [original] := by
+  induction items with
   | nil => simp [mkRows]
   | cons first rest ih => simp [mkRows, ih, eq_comm]
 
 /-- Expanding a list of patterns does not change its width. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "LENGTH_expand_list"]
 theorem expandList_length (patterns row : List Pat) (member : row ∈ expandList patterns) :
     row.length = patterns.length := by
   induction patterns generalizing row with
   | nil => simp [expandList] at member; subst row; rfl
   | cons first rest ih =>
     simp only [expandList, mem_mkProds] at member
-    obtain ⟨item, _, tail, tailMember, rfl⟩ := member
+    obtain ⟨item, tail, _, tailMember, rfl⟩ := member
     simp [ih tail tailMember]
 
 mutual
-/-- Expanding alternatives preserves non-error matching and reflects success. -/
+/-- The pattern conjunct of `expand_thm`: expansion preserves non-error
+matching and reflects success. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "expand_thm"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem expand_sound (pattern : Pat) (expanded : Pat) (refs : HolFiniteMapExact Nat Term) (value : Term)
     (member : expanded ∈ expand pattern) (safe : pmatch refs pattern value ≠ .typeFailure) :
     pmatch refs expanded value ≠ .typeFailure ∧
@@ -570,7 +860,10 @@ theorem expand_sound (pattern : Pat) (expanded : Pat) (refs : HolFiniteMapExact 
             split <;> simp_all
 termination_by sizeOf pattern
 
-/-- Expanding argument vectors preserves non-error matching and reflects success. -/
+/-- The list conjunct of `expand_thm`: expansion preserves non-error
+matching and reflects success. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "expand_thm"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem expandList_sound (patterns expanded : List Pat) (refs : HolFiniteMapExact Nat Term) (values : List Term)
     (member : expanded ∈ expandList patterns) (safe : pmatchList refs patterns values ≠ .typeFailure) :
     pmatchList refs expanded values ≠ .typeFailure ∧
@@ -579,7 +872,7 @@ theorem expandList_sound (patterns expanded : List Pat) (refs : HolFiniteMapExac
   | nil => simp [expandList] at member; subst expanded; simp [safe]
   | cons first rest =>
     simp only [expandList, mem_mkProds] at member
-    obtain ⟨child, childMember, tail, tailMember, rfl⟩ := member
+    obtain ⟨child, tail, childMember, tailMember, rfl⟩ := member
     cases values with
     | nil => simp [pmatchList] at safe
     | cons value values =>
@@ -600,9 +893,28 @@ theorem expandList_sound (patterns expanded : List Pat) (refs : HolFiniteMapExac
 termination_by sizeOf patterns
 end
 
+/-- Pattern and pattern-list expansion preserve non-error matching and reflect
+success, with independently quantified reference maps in the two conjuncts. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "expand_thm"
+  (fmap_as_finite_support_relation := [patternRefs, listRefs])]
+theorem expand_thm :
+    (∀ (pattern expanded : Pat) (patternRefs : HolFiniteMapExact Nat Term) (value : Term),
+      expanded ∈ expand pattern ∧ pmatch patternRefs pattern value ≠ .typeFailure →
+        pmatch patternRefs expanded value ≠ .typeFailure ∧
+          (pmatch patternRefs expanded value = .success → pmatch patternRefs pattern value = .success)) ∧
+    (∀ (patterns expanded : List Pat) (listRefs : HolFiniteMapExact Nat Term) (values : List Term),
+      expanded ∈ expandList patterns ∧ pmatchList listRefs patterns values ≠ .typeFailure →
+        pmatchList listRefs expanded values ≠ .typeFailure ∧
+          (pmatchList listRefs expanded values = .success → pmatchList listRefs patterns values = .success)) := by
+  constructor
+  · intro pattern expanded refs value assumptions
+    exact expand_sound pattern expanded refs value assumptions.1 assumptions.2
+  · intro patterns expanded refs values assumptions
+    exact expandList_sound patterns expanded refs values assumptions.1 assumptions.2
+
 /-- Each expanded matrix row originates in one input row and one of its
-expanded patterns. -/
-theorem orRows_member (rows : List (Pat × Nat)) (row : List Pat) (member : row ∈ orRows rows) :
+expanded patterns. This Flapjack helper replaces the HOL proofs' row induction. -/
+theorem orRows_member {α : Type} (rows : List (Pat × α)) (row : List Pat) (member : row ∈ orRows rows) :
     ∃ pattern index, (pattern, index) ∈ rows ∧
       ∃ expanded ∈ expand pattern, row = [expanded] := by
   induction rows with
@@ -616,23 +928,42 @@ theorem orRows_member (rows : List (Pat × Nat)) (row : List Pat) (member : row 
     · obtain ⟨original, originalIndex, inRest, expanded, expandedMember, equality⟩ := ih later
       exact ⟨original, originalIndex, List.mem_cons_of_mem _ inRest, expanded, expandedMember, equality⟩
 
-/-- Exhaustive rows cannot all fail when the row scan has no type error.
-HOL correspondence for the underlying matcher and map carrier remains pending. -/
+/-- Expanded rows preserve non-type-failure for every original row. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "or_rows_ok"
+  (fmap_as_finite_support_parameters := [refs])]
+theorem orRows_safe {α : Type} (refs : HolFiniteMapExact Nat Term) (value : Term)
+    (rows : List (Pat × α)) (safe : ∀ row ∈ rows, pmatch refs row.1 value ≠ .typeFailure) :
+    ∀ row ∈ orRows rows, pmatchList refs row [value] ≠ .typeFailure := by
+  intro row member
+  obtain ⟨pattern, payload, originalMember, expanded, expandedMember, rfl⟩ := orRows_member rows row member
+  have originalSafe := safe (pattern, payload) originalMember
+  have expandedSafe := (expand_sound pattern expanded refs value expandedMember originalSafe).1
+  simpa [pmatchList_cons, pmatchList] using expandedSafe
+
+/-- A successful expanded row reflects success back to an original pattern. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "or_rows_hit"
+  (fmap_as_finite_support_parameters := [refs])]
+theorem orRows_hit {α : Type} (refs : HolFiniteMapExact Nat Term) (value : Term)
+    (rows : List (Pat × α)) (safe : ∀ row ∈ rows, pmatch refs row.1 value ≠ .typeFailure)
+    (hit : ∃ row ∈ orRows rows, pmatchList refs row [value] = .success) :
+    ∃ row ∈ rows, pmatch refs row.1 value = .success := by
+  obtain ⟨row, member, matched⟩ := hit
+  obtain ⟨pattern, payload, originalMember, expanded, expandedMember, rfl⟩ := orRows_member rows row member
+  have originalSafe := safe (pattern, payload) originalMember
+  have expandedHit : pmatch refs expanded value = .success := by simpa [pmatchList_cons, pmatchList] using matched
+  have originalHit := (expand_sound pattern expanded refs value expandedMember originalSafe).2 expandedHit
+  exact ⟨(pattern, payload), originalMember, originalHit⟩
+
+/-- Exhaustive rows cannot all fail when the row scan has no type error. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "exh_rows_thm"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem exhRows_sound (refs : HolFiniteMapExact Nat Term) (value : Term) (rows : List (Pat × Nat))
     (safe : matchRows refs rows value ≠ none) (exhaustive : exhRows rows = true) :
     matchRows refs rows value ≠ some .failure := by
-  have matrixSafe : ∀ row ∈ orRows rows, pmatchList refs row [value] ≠ .typeFailure := by
-    intro row member
-    obtain ⟨pattern, index, originalMember, expanded, expandedMember, rfl⟩ := orRows_member rows row member
-    have originalSafe := matchRows_member_safe refs value rows safe (pattern, index) originalMember
-    have expandedSafe := (expand_sound pattern expanded refs value expandedMember originalSafe).1
-    simpa [pmatchList_cons, pmatchList] using expandedSafe
-  obtain ⟨row, member, hit⟩ := exhMatrix_sound (orRows rows) refs [value] exhaustive matrixSafe
-  obtain ⟨pattern, index, originalMember, expanded, expandedMember, rfl⟩ := orRows_member rows row member
-  have originalSafe := matchRows_member_safe refs value rows safe (pattern, index) originalMember
-  have expandedHit : pmatch refs expanded value = .success := by simpa [pmatchList_cons, pmatchList] using hit
-  have originalHit := (expand_sound pattern expanded refs value expandedMember originalSafe).2 expandedHit
-  exact matchRows_exists_success refs value rows safe ⟨(pattern, index), originalMember, originalHit⟩
+  have rowSafe := matchRows_member_safe refs value rows safe
+  have matrixSafe := orRows_safe refs value rows rowSafe
+  have matrixHit := exhMatrix_sound (orRows rows) refs [value] exhaustive matrixSafe
+  exact matchRows_exists_success refs value rows safe (orRows_hit refs value rows rowSafe matrixHit)
 
 
 end Flapjack.Compiler.Backend.PatternExh

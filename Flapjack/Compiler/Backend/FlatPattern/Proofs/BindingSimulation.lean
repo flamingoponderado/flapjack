@@ -9,6 +9,12 @@ open Flapjack
 open Flapjack.AstHOL Flapjack.Compiler.Backend
 open Flapjack.SemanticPrimitivesHOL (storeLookup)
 
+/-- Evaluate one expression to one value without changing the state. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "pure_eval_to_def"]
+def pureEvalTo {C F : Type} (state : FlatSem.State C F)
+    (env : FlatSem.Environment FlatSem.Value) (expression : FlatLang.Exp) (value : FlatSem.Value) : Prop :=
+  FlatSem.evaluate env state [expression] = (state, .val [value])
+
 /-- A binding work list's expressions must evaluate purely whenever their
 generated keys are used and the generated-name interval is preserved. -/
 def BindingInputs {C F : Type} (lower upper : Nat) (used : NumSet)
@@ -17,7 +23,7 @@ def BindingInputs {C F : Type} (lower upper : Nat) (used : NumSet)
   List.Forall₂ (fun item value => ∀ env2,
     (sptLookup item.2.1 used).isSome = true →
     aLookupRel (fun name => lower < decNameToNum name ∧ decNameToNum name < upper) Eq env2.v env.v →
-    FlatSem.evaluate env2 state [item.2.2] = (state, .val [value])) todo values
+    pureEvalTo state env2 item.2.2 value) todo values
 
 /-- Inserting a key cannot remove any existing key from a numeric set. -/
 theorem sptInsert_preserves_presence (used : NumSet) (inserted key : Nat)
@@ -125,7 +131,7 @@ theorem bindingInputs_fresh_nested {C F : Type} (trace : BackendCommon.Tra) (low
       have found : env2.v.lookup generated = some freshValue := by
         rw [← holALookup_mlString, equalLookup]
         simp [holALookup, generated]
-      simp [FlatSem.evaluate, generated] at found ⊢
+      simp [pureEvalTo, FlatSem.evaluate, generated] at found ⊢
       simp [found]
     · induction tail with
       | nil => exact .nil
@@ -196,7 +202,11 @@ theorem compilePatBindings_con_evaluate {C F : Type} (trace : BackendCommon.Tra)
     (fun entry => FlatLang.Exp.app trace (.el entry.1.1) [expression])
     (fun entry => (fields[entry.1.1]?).getD FlatSem.unitValue)
     selected (fun name => i < decNameToNum name) env state trace compiled.2
-    (by simp) (by simpa using fun entry member => (props entry member).2)
+    (by simp) (by
+      intro name ⟨entry, member, eq⟩
+      simp only [Function.comp_apply, Flapjack.holThe] at eq
+      subst name
+      exact (props entry member).2)
     (by
       intro entry member env2 related
       have within := (props entry member).1
@@ -210,7 +220,7 @@ theorem compilePatBindings_con_evaluate {C F : Type} (trace : BackendCommon.Tra)
     env (aLookupRel_refl _ _ _ (by intros; rfl))
   cases h : compiled with
   | mk used result =>
-    simpa [compilePatBindings, entries, compiled, selected, h] using folded
+    simpa [compilePatBindings, entries, compiled, selected, h, Flapjack.holThe] using folded
 
 /-- The constructor expression needs to evaluate purely only when a field
 projection is selected. An empty selection emits no projection code. -/
@@ -332,8 +342,11 @@ theorem bindingInputs_con_tail {C F : Type} (trace : BackendCommon.Tra) (lower u
             simpa [nonempty] using sptInsert_preserves_presence compiled.1 key item.2.1 present
         · have narrow : aLookupRel (fun name => lower < decNameToNum name ∧ decNameToNum name < upper)
               Eq env2.v (front ++ env.v) := by
-            intro name observed
-            exact related name ⟨observed.1, by omega⟩
+            apply aLookupRel_mono _ _ _ _ _ _ related
+            · intro name observed
+              exact ⟨observed.1, by omega⟩
+            · intro _ _ _ h
+              exact h.2
           exact (aLookupRel_append_right_false _ _ env2.v front env.v excluded).1 narrow
       · exact ih
 
@@ -439,7 +452,7 @@ theorem patternEntries_work_expression (trace : BackendCommon.Tra) (i j : Nat) (
   induction patterns generalizing j with
   | nil => simp [patternEntries] at member
   | cons pattern patterns ih =>
-    simp only [patternEntries, List.mem_cons] at member
+    simp only [patternEntries_cons, List.mem_cons] at member
     rcases member with same | later
     · subst entry
       simp
@@ -459,7 +472,7 @@ theorem patternEntries_index (trace : BackendCommon.Tra) (i j k : Nat) (patterns
       subst entry
       simp
     | succ k =>
-      simp only [patternEntries, List.getElem?_cons_succ] at found
+      simp only [patternEntries_cons, List.getElem?_cons_succ] at found
       have h := ih (j + 1) k found
       omega
 
@@ -468,14 +481,14 @@ theorem patternEntries_length (trace : BackendCommon.Tra) (i j : Nat) (patterns 
     (patternEntries trace i j patterns).length = patterns.length := by
   induction patterns generalizing j with
   | nil => rfl
-  | cons pattern patterns ih => simp [patternEntries, ih]
+  | cons pattern patterns ih => simp [ih]
 
 /-- The generated work list preserves the original subpattern order. -/
 theorem patternEntries_patterns (trace : BackendCommon.Tra) (i j : Nat) (patterns : List FlatLang.Pat) :
     (patternEntries trace i j patterns).map (fun entry => entry.2.1) = patterns := by
   induction patterns generalizing j with
   | nil => rfl
-  | cons pattern patterns ih => simp [patternEntries, ih]
+  | cons pattern patterns ih => simp [ih]
 
 /-- Bindings of any member pattern occur among the aggregate bindings. -/
 theorem patBindings_mem_patsBindings (patterns : List FlatLang.Pat) (pattern : FlatLang.Pat) (name : VarN)

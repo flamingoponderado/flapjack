@@ -25,24 +25,20 @@ private theorem todoWeight_append (xs ys : List (FlatLang.Pat × FlatLang.Exp)) 
   | nil => simp [todoWeight]
   | cons x xs ih => cases x; simp [todoWeight, ih, Nat.add_assoc]
 
-/-- Generate indexed projections for the constructor's subpatterns. -/
-def children (t : Tra) (v : FlatLang.Exp) (j : Nat) : List FlatLang.Pat →
-    List (FlatLang.Pat × FlatLang.Exp)
-  | [] => []
-  | p :: ps => (p, .app t (.el j) [v]) :: children t v (j + 1) ps
-
-/-- The structurally recursive traversal has exactly the source `MAPi` order. -/
-private theorem children_eq_zipIdx (t : Tra) (v : FlatLang.Exp) (j : Nat) (ps : List FlatLang.Pat) :
-    children t v j ps = (ps.zipIdx j).map (fun (p, i) => (p, FlatLang.Exp.app t (.el i) [v])) := by
-  induction ps generalizing j with
+private theorem todoWeight_eq (todo : List (FlatLang.Pat × FlatLang.Exp)) :
+    todoWeight todo = naiveWeights (todo.map Prod.fst) := by
+  induction todo with
   | nil => rfl
-  | cons p ps ih => simp [children, List.zipIdx, ih]
+  | cons pair rest ih => cases pair; simp [todoWeight, naiveWeights, ih]
 
-private theorem childrenWeight (t : Tra) (v : FlatLang.Exp) (j : Nat) (ps : List FlatLang.Pat) :
-    todoWeight (children t v j ps) = naiveWeights ps := by
-  induction ps generalizing j with
-  | nil => rfl
-  | cons p ps ih => simp [children, todoWeight, naiveWeights, ih]
+/-- Indexed projections preserve the original pattern list. -/
+theorem mapIdx_pair_fst {α β : Type} (f : Nat → β) (ps : List α) :
+    (ps.mapIdx fun i p => (p, f i)).map Prod.fst = ps := by
+  apply List.ext_getElem <;> simp [List.getElem_mapIdx]
+
+private theorem mapIdxWeight (f : Nat → FlatLang.Exp) (ps : List FlatLang.Pat) :
+    todoWeight (ps.mapIdx fun i p => (p, f i)) = naiveWeights ps := by
+  rw [todoWeight_eq, mapIdx_pair_fst]
 
 /-- Construct the source's naive match guard. -/
 @[hol "cakeml/compiler/backend/flat_patternScript.sml" "naive_pattern_match_def"]
@@ -55,7 +51,7 @@ def naivePatternMatch (t : Tra) (todo : List (FlatLang.Pat × FlatLang.Exp)) : F
       | .plit l => FlatLang.smartIf t (.app t (.src .equality) [v, .lit t l])
           (naivePatternMatch t rest) (FlatLang.mkBool t false)
       | .pcon tag ps =>
-          let tail := naivePatternMatch t (children t v 0 ps ++ rest)
+          let tail := naivePatternMatch t (ps.mapIdx (fun i p => (p, .app t (.el i) [v])) ++ rest)
           match tag with
           | none => tail
           | some (tag, _) => FlatLang.smartIf t (.app t (.tagLenEq tag ps.length) [v])
@@ -65,7 +61,7 @@ def naivePatternMatch (t : Tra) (todo : List (FlatLang.Pat × FlatLang.Exp)) : F
 termination_by todoWeight todo
 decreasing_by
   all_goals simp_wf
-  all_goals simp [todoWeight, naiveWeight, todoWeight_append, childrenWeight]
+  all_goals simp [todoWeight, naiveWeight, todoWeight_append, mapIdxWeight]
   all_goals omega
 
 /-- Construct the source's ordered naive branch chain. -/

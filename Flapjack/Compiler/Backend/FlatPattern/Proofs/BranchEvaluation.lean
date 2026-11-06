@@ -38,7 +38,7 @@ theorem bindingInputs_single_generated {C F : Type} (trace : BackendCommon.Tra) 
     have found : env2.v.lookup (encNumToName n) = some value := by
       rw [← holALookup_mlString, eq, envEq]
       simp [holALookup]
-    simp [FlatSem.evaluate, found]
+    simp [pureEvalTo, FlatSem.evaluate, found]
   · exact .nil
 
 /-- Evaluate a compiled branch and recover an environment for its original

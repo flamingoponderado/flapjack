@@ -69,12 +69,12 @@ theorem vsub_complete_related {C F : Type} (genv : GlobalEnv)
       | none => cases unsafeOp <;> simp [doApp, doAppNumericCore, doAppBasic, FlatSem.doAppData,
           SemanticPrimitivesHOL.readIndexed, FlatSem.readIndexed, SemanticPrimitivesHOL.boundsFailure,
           FlatSem.boundsFailure, negative, src, dst, ResultRel.raise exceptionRel]
-      | some value => simp [src, dst, LookupRel] at pairRel
+      | some value => simp [src, dst, Flapjack.optionRel] at pairRel
     | some value =>
       cases dst : flatValues[index.toNat]? with
-      | none => simp [src, dst, LookupRel] at pairRel
+      | none => simp [src, dst, Flapjack.optionRel] at pairRel
       | some flatValue =>
-        simp only [src, dst, LookupRel] at pairRel
+        simp only [src, dst, Flapjack.optionRel] at pairRel
         cases unsafeOp <;> simp [doApp, doAppNumericCore, doAppBasic, FlatSem.doAppData,
           SemanticPrimitivesHOL.readIndexed, FlatSem.readIndexed, negative, src, dst, ResultRel.value pairRel]
 

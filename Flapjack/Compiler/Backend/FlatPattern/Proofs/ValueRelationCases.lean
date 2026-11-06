@@ -5,8 +5,8 @@ import Flapjack.Compiler.Backend.Semantics.FlatSem.Operations
 namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack.Compiler.Backend.FlatSem Flapjack.Compiler.Backend.FlatProps
 
-/-- Literal relatedness is exact equality. This and the following case lemmas
-are Flapjack consequences of the proof-side value relation. -/
+/-- Literal relatedness is exact equality. The following case lemmas are
+consequences of the source value relation. -/
 theorem valueRel_lit (lit : Flapjack.AstHOL.Lit) (right : Value) :
     ValueRel (.litv lit) right ↔ right = .litv lit := by
   constructor
@@ -86,8 +86,64 @@ theorem valueRel_recclosure (left : Environment Value)
   · rintro ⟨n, env, cfg, related, bounds, rfl⟩
     exact .recclosure related bounds
 
-/-- Bounded environment relatedness is monotone in the name bound. This
-follows from the proof-side relation and is not yet tagged as the HOL result. -/
+/-- The six source value constructors characterize related right-hand values. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "v_rel_l_cases"]
+theorem valueRel_leftCases (right : Value) :
+    (∀ lit, ValueRel (.litv lit) right ↔
+      right = .litv lit ∧ valueContainerXs right = []) ∧
+    (∀ stamp values, ValueRel (.conv stamp values) right ↔
+      (∃ values', right = .conv stamp values') ∧ List.Forall₂ ValueRel values (valueContainerXs right)) ∧
+    (∀ env name body, ValueRel (.closure env name body) right ↔
+      ∃ n env' cfg, right = .closure env' name (compileExp cfg body).2.2 ∧
+        EnvRel n env env' ∧ (compileExp cfg body).1 < n) ∧
+    (∀ env funs name, ValueRel (.recclosure env funs name) right ↔
+      ∃ n env' cfg, right = .recclosure env'
+        (funs.map fun (f, x, body) => (f, x, (compileExp cfg body).2.2)) name ∧
+        EnvRel n env env' ∧ ∀ entry ∈ funs, (compileExp cfg entry.2.2).1 < n) ∧
+    (∀ flag index, ValueRel (.loc flag index) right ↔
+      right = .loc flag index ∧ valueContainerXs right = []) ∧
+    (∀ values, ValueRel (.vectorv values) right ↔
+      (∃ values', right = .vectorv values') ∧ List.Forall₂ ValueRel values (valueContainerXs right)) := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
+  · intro lit
+    rw [valueRel_lit]
+    constructor
+    · intro h; subst right; simp [valueContainerXs]
+    · exact And.left
+  · intro stamp values
+    rw [valueRel_conv]
+    constructor
+    · rintro ⟨values', rfl, rel⟩
+      exact ⟨⟨values', rfl⟩, rel⟩
+    · rintro ⟨⟨values', rfl⟩, rel⟩
+      exact ⟨values', rfl, rel⟩
+  · intro env name body
+    rw [valueRel_closure]
+    simp only [compileDec]
+    constructor <;> rintro ⟨n, env', cfg, h₁, h₂, h₃⟩
+    · exact ⟨n, env', cfg, h₃, h₁, h₂⟩
+    · exact ⟨n, env', cfg, h₂, h₃, h₁⟩
+  · intro env funs name
+    rw [valueRel_recclosure]
+    simp only [compileDec]
+    constructor <;> rintro ⟨n, env', cfg, h₁, h₂, h₃⟩
+    · exact ⟨n, env', cfg, h₃, h₁, h₂⟩
+    · exact ⟨n, env', cfg, h₂, h₃, h₁⟩
+  · intro flag index
+    rw [valueRel_loc]
+    constructor
+    · intro h; subst right; simp [valueContainerXs]
+    · exact And.left
+  · intro values
+    rw [valueRel_vector]
+    constructor
+    · rintro ⟨values', rfl, rel⟩
+      exact ⟨⟨values', rfl⟩, rel⟩
+    · rintro ⟨⟨values', rfl⟩, rel⟩
+      exact ⟨values', rfl, rel⟩
+
+/-- Bounded environment relatedness is monotone in the name bound. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "env_rel_mono"]
 theorem envRel_mono (i j : Nat) (left right : Environment Value)
     (related : EnvRel i left right) (bound : j ≤ i) : EnvRel j left right := by
   rw [envRel_iff_lookup] at related ⊢
@@ -95,6 +151,7 @@ theorem envRel_mono (i j : Nat) (left right : Environment Value)
   exact related name (Nat.lt_of_lt_of_le small bound)
 
 /-- Lookup of an in-range name yields related optional values. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "env_rel_ALOOKUP"]
 theorem envRel_lookup (n : Nat) (left right : Environment Value) (name : Flapjack.AstHOL.VarN)
     (related : EnvRel n left right) (bound : decNameToNum name < n) :
     optionRel ValueRel (holALookup left.v name) (holALookup right.v name) :=
@@ -112,8 +169,7 @@ theorem envRel_cons (n : Nat) (left right : Environment Value) (name : Flapjack.
   · exact (envRel_iff_lookup n left right).1 related
 
 /-- The closure case of the application simulation: applying related closure
-and argument values produces a compiled body and related environments. The
-recursive-closure case and full original theorem remain open. -/
+and argument values produces a compiled body and related environments. -/
 theorem doOpApp_closure (leftEnv : Environment Value) (name : Flapjack.AstHOL.VarN)
     (body : FlatLang.Exp) (targetClosure arg targetArg : Value)
     (closures : ValueRel (.closure leftEnv name body) targetClosure) (args : ValueRel arg targetArg) :

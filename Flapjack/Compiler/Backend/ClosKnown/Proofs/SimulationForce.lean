@@ -23,12 +23,12 @@ theorem destThunk_pointer_related {C F : Type} {c : Config} {g : Spt ValApprox} 
   | none =>
     cases right : target.refs.lookup key with
     | none => simpa [destThunk, left, right] using DestThunkRel.badRef (c := c) (g := g)
-    | some value => simp [ClosMti.OptionRel, left, right] at lookup
+    | some value => simp [Flapjack.optionRel, left, right] at lookup
   | some value =>
     cases right : target.refs.lookup key with
-    | none => simp [ClosMti.OptionRel, left, right] at lookup
+    | none => simp [Flapjack.optionRel, left, right] at lookup
     | some next =>
-      have refs : RefRel c g value next := by simpa [ClosMti.OptionRel, left, right] using lookup
+      have refs : RefRel c g value next := by simpa [Flapjack.optionRel, left, right] using lookup
       cases refs with
       | byteArray bytes =>
         simpa [destThunk, left, right] using DestThunkRel.notThunk (c := c) (g := g)
@@ -67,12 +67,12 @@ theorem storeThunk_related {C F : Type} {c : Config} {g : Spt ValApprox} {source
   | none =>
     cases targetLookup : target.refs.lookup key with
     | none => simp [storeThunk, sourceLookup, targetLookup]
-    | some next => simp [ClosMti.OptionRel, sourceLookup, targetLookup] at lookup
+    | some next => simp [Flapjack.optionRel, sourceLookup, targetLookup] at lookup
   | some old =>
     cases targetLookup : target.refs.lookup key with
-    | none => simp [ClosMti.OptionRel, sourceLookup, targetLookup] at lookup
+    | none => simp [Flapjack.optionRel, sourceLookup, targetLookup] at lookup
     | some next =>
-      have refs : RefRel c g old next := by simpa [ClosMti.OptionRel, sourceLookup, targetLookup] using lookup
+      have refs : RefRel c g old next := by simpa [Flapjack.optionRel, sourceLookup, targetLookup] using lookup
       cases refs with
       | byteArray bytes => simp [storeThunk, sourceLookup, targetLookup]
       | valueArray xs ys rel => simp [storeThunk, sourceLookup, targetLookup]

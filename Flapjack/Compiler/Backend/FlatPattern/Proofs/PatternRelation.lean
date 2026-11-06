@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.RecursiveClosures
 import Flapjack.Compiler.Backend.Semantics.FlatSem.PatternMatch
+import Flapjack.Compiler.Backend.FlatProps.SimpleStore
 
 /-! Pattern result and store lookup relations for flat pattern compilation. -/
 namespace Flapjack.Compiler.Backend.FlatPattern
@@ -8,36 +9,37 @@ open Flapjack.SemanticPrimitivesHOL (MatchResult StoreValue storeLookup)
 open Flapjack.SemanticPrimitivesProps
 
 /-- Related pattern results preserve failure and type-error cases and relate
-successful bindings at the current name bound. This proof-side relation uses
-the unreviewed FlatPattern value relation and is not yet a tagged HOL port. -/
+successful bindings at the current name bound. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "match_rel_def"]
 def MatchRel (n : Nat) : MatchResult (List (VarN × Value)) → MatchResult (List (VarN × Value)) → Prop
   | .match left, .match right => aLookupRel (fun name => decNameToNum name < n) ValueRel left right
   | .noMatch, .noMatch | .typeError, .typeError => True
   | _, _ => False
 
-/-- A related store entry can be found at the same index on the target side. -/
-theorem storeValueRel_lookup {A B : Type} {R : A → B → Prop} {left : List (StoreValue A)}
-    {right : List (StoreValue B)} (related : List.Forall₂ (storeValueRel R) left right)
-    (index : Nat) (value : StoreValue A) (found : storeLookup index left = some value) :
-    ∃ target, storeLookup index right = some target ∧ storeValueRel R value target := by
-  induction related generalizing index with
-  | nil => simp [storeLookup] at found
-  | @cons source target left right head tail ih =>
-    cases index with
-    | zero =>
-      simp [storeLookup] at found
-      subst value
-      exact ⟨target, rfl, head⟩
-    | succ index =>
-      simp only [storeLookup, List.getElem?_cons_succ] at found ⊢
-      exact ih index found
+/-- Failure and type-error cases can only relate to themselves. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "match_rel_thms"]
+theorem matchRel_thms (n : Nat) (result : MatchResult (List (VarN × Value))) :
+    (MatchRel n .typeError result ↔ result = .typeError) ∧
+    (MatchRel n result .typeError ↔ result = .typeError) ∧
+    (MatchRel n .noMatch result ↔ result = .noMatch) ∧
+    (MatchRel n result .noMatch ↔ result = .noMatch) := by
+  cases result <;> simp [MatchRel]
+
+/-- Related results are equal failures or successful related bindings. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "match_rel_IMP"]
+theorem matchRel_imp (n : Nat) (left right : MatchResult (List (VarN × Value)))
+    (related : MatchRel n left right) :
+    (left = .noMatch ∧ left = right) ∨ (left = .typeError ∧ left = right) ∨
+      ∃ env1 env2, left = .match env1 ∧ right = .match env2 ∧
+        aLookupRel (fun name => decNameToNum name < n) ValueRel env1 env2 := by
+  cases left <;> cases right <;> simp_all [MatchRel]
 
 /-- Related reference entries contain related values at the same location. -/
 theorem stateRel_lookup_ref {C F : Type} (cfg : Config) (source target : FlatSem.State C F)
     (states : StateRel cfg source target) (index : Nat) (value : Value)
     (found : storeLookup index source.refs = some (.refv value)) :
     ∃ value', storeLookup index target.refs = some (.refv value') ∧ ValueRel value value' := by
-  obtain ⟨entry, lookup, relation⟩ := storeValueRel_lookup states.2.1 index (.refv value) found
+  obtain ⟨entry, lookup, relation⟩ := SemanticPrimitivesProps.storeValueRel_lookup states.2.1 index (.refv value) found
   cases entry <;> simp [storeValueRel] at relation
   case refv value' => exact ⟨value', lookup, relation⟩
 
@@ -196,7 +198,7 @@ theorem pmatchList_cons_related {C F : Type} (n : Nat) (source target : FlatSem.
 
 mutual
 /-- Pattern matching preserves related results when the source does not raise
-a type error. This uses the proof-side value relation pending its HOL review. -/
+a type error. -/
 theorem pmatch_related {C F : Type} (cfg : Config) (n : Nat) (source target : FlatSem.State C F)
     (pattern : FlatLang.Pat) (value value' : Value) (bindings bindings' : List (VarN × Value))
     (states : StateRel cfg source target) (values : ValueRel value value')
@@ -248,9 +250,8 @@ theorem pmatchList_related {C F : Type} (cfg : Config) (n : Nat) (source target 
 termination_by sizeOf patterns
 end
 
-/-- Existential form of the single-pattern and pattern-list simulations.
-The relations are the current proof-side translations, so this is not yet
-tagged as a reviewed port of the HOL theorem. -/
+/-- Existential form of the single-pattern and pattern-list simulations. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "pmatch_thm"]
 theorem pmatch_simulation {C F : Type} (cfg : Config) (n : Nat) :
     (∀ (source : FlatSem.State C F) pattern value bindings result target value' bindings',
       FlatSem.pmatch source pattern value bindings = result → result ≠ .typeError →
@@ -269,5 +270,51 @@ theorem pmatch_simulation {C F : Type} (cfg : Config) (n : Nat) :
   · intro source patterns values bindings result target values' bindings' resultEq safe states related envs
     subst result
     exact ⟨_, rfl, pmatchList_related cfg n source target patterns values values' bindings bindings' states related envs safe⟩
+
+/-- Basic related values are not closures. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "simple_val_rel_step_isClosure"]
+theorem simpleBasic_notClosure (left right : Value)
+    (related : FlatProps.simpleBasicValRel left right) :
+    ¬ FlatProps.isClosure left ∧ ¬ FlatProps.isClosure right := by
+  cases left <;> cases right <;> simp_all [FlatProps.simpleBasicValRel, FlatProps.isClosure]
+
+/-- The pattern compiler value relation is simple. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "simple_val_rel"]
+theorem simpleValueRel_valueRel : FlatProps.simpleValueRel ValueRel := by
+  constructor
+  · intro left right related
+    cases related with
+    | basic shape _ =>
+      have notClosures := simpleBasic_notClosure _ _ shape
+      exact iff_of_false notClosures.1 notClosures.2
+    | closure _ _ => simp [FlatProps.isClosure]
+    | recclosure _ _ => simp [FlatProps.isClosure]
+  · intro left right nonclosure
+    constructor
+    · intro related
+      cases related with
+      | basic shape contents => exact ⟨shape, contents⟩
+      | closure _ _ => simp [FlatProps.isClosure] at nonclosure
+      | recclosure _ _ => simp [FlatProps.isClosure] at nonclosure
+    · rintro ⟨shape, contents⟩
+      exact .basic shape contents
+
+/-- The pattern compiler state relation is simple. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "simple_state_rel"]
+theorem simpleStateRel_stateRel {C F : Type} (cfg : Config) :
+    FlatProps.simpleStateRel ValueRel (@StateRel C F cfg) := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
+  · intro source target related
+    exact related.2.1
+  · intro source target sourceRefs targetRefs related refs
+    exact ⟨related.1, refs, related.2.2.1, related.2.2.2.1, related.2.2.2.2⟩
+  · intro source target related
+    exact related.2.2.2.1
+  · intro source target sourceGlobals targetGlobals related globals
+    exact ⟨related.1, related.2.1, related.2.2.1, globals, related.2.2.2.2⟩
+  · intro source target related
+    exact related.2.2.1.symm
+  · intro source target sourceFfi targetFfi related ffi
+    exact ⟨related.1, related.2.1, ffi.symm, related.2.2.2.1, related.2.2.2.2⟩
 
 end Flapjack.Compiler.Backend.FlatPattern

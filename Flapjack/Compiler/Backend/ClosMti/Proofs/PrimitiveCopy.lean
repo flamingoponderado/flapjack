@@ -23,12 +23,12 @@ theorem primitiveSimulation_memory_xorByte {C F : Type} :
           | byteVector input =>
             have lookup := stateRel_lookupRefs states ptr
             cases l : source.refs.lookup ptr with
-            | none => cases r : target.refs.lookup ptr <;> simp_all [OptionRel, doApp, applyMemory, excRel]
+            | none => cases r : target.refs.lookup ptr <;> simp_all [optionRel, doApp, applyMemory, excRel]
             | some leftRef =>
               cases r : target.refs.lookup ptr with
-              | none => simp_all [OptionRel]
+              | none => simp_all [optionRel]
               | some rightRef =>
-                have refs : RefRel source.maxApp leftRef rightRef := by simpa [OptionRel, l, r] using lookup
+                have refs : RefRel source.maxApp leftRef rightRef := by simpa [optionRel, l, r] using lookup
                 cases refs with
                 | valueArray fields nextFields rel => simp [doApp, applyMemory, l, r, excRel]
                 | thunk mode value next rel => simp [doApp, applyMemory, l, r, excRel]
@@ -84,12 +84,12 @@ theorem primitiveSimulation_memory_copyByte_new {C F : Type} :
               | number length =>
                 have lookup := stateRel_lookupRefs states ptr
                 cases l : source.refs.lookup ptr with
-                | none => cases r : target.refs.lookup ptr <;> simp_all [OptionRel, doApp, applyMemory, excRel]
+                | none => cases r : target.refs.lookup ptr <;> simp_all [optionRel, doApp, applyMemory, excRel]
                 | some leftRef =>
                   cases r : target.refs.lookup ptr with
-                  | none => simp_all [OptionRel]
+                  | none => simp_all [optionRel]
                   | some rightRef =>
-                    have refs : RefRel source.maxApp leftRef rightRef := by simpa [OptionRel, l, r] using lookup
+                    have refs : RefRel source.maxApp leftRef rightRef := by simpa [optionRel, l, r] using lookup
                     cases refs with
                     | valueArray fields nextFields rel => simp [doApp, applyMemory, l, r, excRel]
                     | thunk mode value next rel => simp [doApp, applyMemory, l, r, excRel]
@@ -123,12 +123,12 @@ theorem copyByte_write_vector {C F : Type} (source target : State C F)
           [.byteVector input, .number offset, .number length, .refPtr flag dst, .number dstOffset] source = .val (sourceValue, sourceNext) := by
   have lookup := stateRel_lookupRefs states dst
   cases l : source.refs.lookup dst with
-  | none => cases r : target.refs.lookup dst <;> simp_all [OptionRel, doApp, applyMemory, excRel]
+  | none => cases r : target.refs.lookup dst <;> simp_all [optionRel, doApp, applyMemory, excRel]
   | some leftRef =>
     cases r : target.refs.lookup dst with
-    | none => simp_all [OptionRel]
+    | none => simp_all [optionRel]
     | some rightRef =>
-      have refs : RefRel source.maxApp leftRef rightRef := by simpa [OptionRel, l, r] using lookup
+      have refs : RefRel source.maxApp leftRef rightRef := by simpa [optionRel, l, r] using lookup
       cases refs with
       | valueArray fields nextFields rel => simp [doApp, applyMemory, l, r, excRel]
       | thunk mode value next rel => simp [doApp, applyMemory, l, r, excRel]
@@ -157,12 +157,12 @@ theorem copyByte_write_ref {C F : Type} (source target : State C F)
           [.refPtr srcFlag src, .number offset, .number length, .refPtr dstFlag dst, .number dstOffset] source = .val (sourceValue, sourceNext) := by
   have lookup := stateRel_lookupRefs states src
   cases l : source.refs.lookup src with
-  | none => cases r : target.refs.lookup src <;> simp_all [OptionRel, doApp, applyMemory, excRel]
+  | none => cases r : target.refs.lookup src <;> simp_all [optionRel, doApp, applyMemory, excRel]
   | some leftRef =>
     cases r : target.refs.lookup src with
-    | none => simp_all [OptionRel]
+    | none => simp_all [optionRel]
     | some rightRef =>
-      have refs : RefRel source.maxApp leftRef rightRef := by simpa [OptionRel, l, r] using lookup
+      have refs : RefRel source.maxApp leftRef rightRef := by simpa [optionRel, l, r] using lookup
       cases refs with
       | valueArray fields nextFields rel => simp [doApp, applyMemory, l, r, excRel]
       | thunk mode value next rel => simp [doApp, applyMemory, l, r, excRel]

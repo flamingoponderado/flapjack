@@ -170,22 +170,6 @@ termination_by funs => sizeOf funs
 decreasing_by all_goals simp_wf <;> omega
 end
 
-private theorem rowGlobals_eq_elist (rows : List (FlatLang.Pat × FlatLang.Exp)) :
-    rowGlobals rows = elistGlobals (rows.map Prod.snd) := by
-  induction rows with
-  | nil => simp [rowGlobals, elistGlobals]
-  | cons row rows ih =>
-    obtain ⟨p, e⟩ := row
-    simp [rowGlobals, elistGlobals, ih]
-
-private theorem funGlobals_eq_elist (funs : List (VarN × VarN × FlatLang.Exp)) :
-    funGlobals funs = elistGlobals (funs.map (fun (_, _, e) => e)) := by
-  induction funs with
-  | nil => simp [funGlobals, elistGlobals]
-  | cons fn funs ih =>
-    obtain ⟨name, arg, body⟩ := fn
-    simp [funGlobals, elistGlobals, ih]
-
 private theorem esgcFreeRows_iff (rows : List (FlatLang.Pat × FlatLang.Exp)) :
     esgcFreeRows rows ↔ esgcFreeList (rows.map Prod.snd) := by
   induction rows with
@@ -214,9 +198,9 @@ theorem compileExp_esgcFree :
   · intro t env rows
     obtain ⟨free, bag⟩ := compilePes_globalSafe t env rows
     exact ⟨(esgcFreeList_iff _).mp ((esgcFreeRows_iff _).mp free),
-      (rowGlobals_eq_elist _).symm.trans bag⟩
+      (rowGlobals_eq_elistGlobals _).symm.trans bag⟩
   · intro t env funs
     obtain ⟨free, bag⟩ := compileFuns_globalSafe t env funs
-    exact ⟨(esgcFreeList_iff _).mp free, (funGlobals_eq_elist _).symm.trans bag⟩
+    exact ⟨(esgcFreeList_iff _).mp free, (funGlobals_eq_elistGlobals _).symm.trans bag⟩
 
 end Flapjack.Compiler.Backend.SourceToFlat

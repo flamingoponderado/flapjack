@@ -21,7 +21,7 @@ theorem destThunk_related {C F : Type} (source target : State C F) (value nextVa
   | refPtr flag index =>
     have refs := stateRel_lookupRefs states index
     cases left : source.refs.lookup index <;> cases right : target.refs.lookup index <;>
-      simp_all [ClosMti.OptionRel, destThunk, DestThunkRel]
+      simp_all [Flapjack.optionRel, destThunk, DestThunkRel]
     cases refs with
     | byteArray bytes => simp
     | valueArray xs ys related => simp
@@ -75,7 +75,7 @@ theorem updateThunk_related {C F : Type} (source target : State C F)
                 simp_all [DestThunkRel, updateThunk]
               have refs := stateRel_lookupRefs states index
               cases leftRef : source.refs.lookup index <;> cases rightRef : target.refs.lookup index <;>
-                simp_all [ClosMti.OptionRel, storeThunk]
+                simp_all [Flapjack.optionRel, storeThunk]
               cases refs with
               | byteArray bytes => simp_all
               | valueArray xs ys related => simp_all
