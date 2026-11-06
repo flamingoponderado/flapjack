@@ -138,7 +138,7 @@ theorem countTrailing_eq (b : Bool) (w : BitVec 64) :
   simp [BitVec.ofNat_toNat]
 
 /-- Masking an OR whose first operand already fits `n` bits. -/
-private lemma lor_mod_two_pow_of_lt (a b n : Nat) (ha : a < 2 ^ n) :
+lemma lor_mod_two_pow_of_lt (a b n : Nat) (ha : a < 2 ^ n) :
     (a ||| b) % 2 ^ n = a ||| (b % 2 ^ n) := by
   apply Nat.eq_of_testBit_eq
   intro i
@@ -252,5 +252,38 @@ theorem ones_pad_eq (m k : Nat) (hk : k ≤ m) (hm : m ≤ 64) :
       omega)
   unfold ones
   rw [hbit, htoNat]
+
+/-- The computable rotation is the `BitVec` rotation at any width. -/
+theorem rotateRightWidth_eq_gen (m : Nat) (w : BitVec m) (n : Nat) :
+    rotateRightWidth m w.toNat n = (BitVec.rotateRight w n).toNat := by
+  rw [BitVec.toNat_rotateRight]
+  unfold rotateRightWidth
+  rw [Nat.mod_eq_of_lt w.isLt]
+  dsimp only
+  rw [lor_mod_two_pow_of_lt _ _ m (by
+    rw [Nat.shiftRight_eq_div_pow]
+    exact lt_of_le_of_lt (Nat.div_le_self _ _) w.isLt)]
+
+/-- `holRotate` moves the low `r % length` bits to the front, which is a right
+rotation of the word value. -/
+theorem holRotate_eq_drop_take (v : List Bool) (r : Nat) (hlen : 1 ≤ v.length) :
+    holRotate v r = v.drop (v.length - r % v.length) ++ v.take (v.length - r % v.length) := by
+  unfold holRotate holField holShiftr holFixwidth
+  dsimp only
+  set x := r % v.length with hx
+  have hxlt : x < v.length := Nat.mod_lt _ (by omega)
+  by_cases h0 : x = 0
+  · simp only [h0, Nat.sub_zero, List.drop_length, List.take_length]
+    split
+    · rfl
+    · rename_i h
+      exact absurd h0 (by tauto)
+  · have hv0 : ¬ v.length = 0 := by omega
+    have hx1 : x - 1 + 1 = x := Nat.sub_one_add_one h0
+    have hy1 : v.length - 1 + 1 - x = v.length - x := by omega
+    have hle : ¬ v.length < x := by omega
+    have hmin : min (v.length - x) v.length = v.length - x := Nat.min_eq_left (by omega)
+    simp only [hv0, false_or, h0, Nat.sub_zero, if_false, hx1, hy1, hle,
+      List.take_length, List.length_take, hmin, Nat.lt_irrefl, Nat.sub_self, List.drop_zero]
 
 end Flapjack.Compiler.Encoders.Arm8.L3
