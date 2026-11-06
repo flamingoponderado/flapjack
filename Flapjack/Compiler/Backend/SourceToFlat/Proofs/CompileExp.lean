@@ -1,7 +1,21 @@
 import Flapjack.Compiler.Backend.SourceToFlat.CompileExp
+import Flapjack.Misc.List.Size
 
 /-! List-shape prerequisite for the source-to-flat pass correctness proof. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
+
+/-- A list member's size is below any strict bound on the HOL list size. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "mem_size_lemma"]
+theorem mem_size_lemma {α : Type} (sz : α → Nat) (xs : List α) (N : Nat) (x : α)
+    (bound : listSizeHOL sz xs < N) (member : x ∈ xs) : sz x < N := by
+  induction xs with
+  | nil => simp at member
+  | cons head tail ih =>
+    simp only [List.mem_cons] at member
+    simp only [listSizeHOL] at bound
+    rcases member with rfl | member
+    · omega
+    · exact ih (by omega) member
 
 /-- Indexed mapping over a final element uses the preceding list length. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "MAPi_SNOC"]

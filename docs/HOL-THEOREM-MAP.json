@@ -125538,6 +125538,22 @@
   "reviewer": "Compared the source and typed clos_elist_globals_append capture: both arguments are closure-expression lists, and the conclusion preserves the whole global-write bag using pointwise natural-number union. The checked closure-expression and global-bag definitions are shared by the proof."
 },
 {
+  "hol_path": "HOL/src/list/src/listScript.sml",
+  "hol_name": "list_size_thm",
+  "lean_path": "Flapjack/Misc/List/Size.lean",
+  "lean_name": "listSizeHOL_thm",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source TypeBase-derived theorem and typed list_size_theorem capture: the nil and cons equations retain their quantifiers, polymorphic element carrier and left-associated natural addition."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "mem_size_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/CompileExp.lean",
+  "lean_name": "mem_size_lemma",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source local lemma and typed mem_size_lemma_local replay of its original proof: for an arbitrary element-size function and list, a strict list-size bound and membership imply the same strict bound on the member's size."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
   "hol_name": "MAPi_SNOC",
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/CompileExp.lean",

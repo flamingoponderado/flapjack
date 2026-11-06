@@ -25,3 +25,6 @@ bag_all_distinct=∀(b :α -> num). BAG_ALL_DISTINCT b ⇔ ∀(e :α). b e ≤ (
 bag_all_distinct_sub_bag=∀(s :α -> num) (t :α -> num). s ≤ t ∧ BAG_ALL_DISTINCT t ⇒ BAG_ALL_DISTINCT s
 compile_flat_bag_all_distinct_local=BAG_ALL_DISTINCT (elist_globals (p :exp list)) ⇒ BAG_ALL_DISTINCT (elist_globals (compile_flat (cfg :flat_pattern$config) p))
 mapi_snoc=∀(xs :α list) (x :α) (f :num -> α -> β). MAPi f (SNOC x xs) = SNOC (f (LENGTH xs) x) (MAPi f xs)
+list_size_definition=(∀(f :α -> num). list_size f ([] :α list) = (0 :num)) ∧ ∀(f :α -> num) (a0 :α) (a1 :α list). list_size f (a0::a1) = (1 :num) + (f a0 + list_size f a1)
+list_size_theorem=(∀(f :α -> num). list_size f ([] :α list) = (0 :num)) ∧ ∀(f :α -> num) (a0 :α) (a1 :α list). list_size f (a0::a1) = (1 :num) + f a0 + list_size f a1
+mem_size_lemma_local=list_size (sz :α -> num) (xs :α list) < (N :num) ⇒ MEM (x :α) xs ⇒ sz x < N

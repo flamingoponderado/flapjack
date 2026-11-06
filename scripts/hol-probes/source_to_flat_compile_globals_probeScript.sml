@@ -34,3 +34,10 @@ val compile_flat_bag_all_distinct_local =
 val _ = if null (hyp compile_flat_bag_all_distinct_local) then () else raise Fail "local theorem has hypotheses";
 val _ = (print "compile_flat_bag_all_distinct_local="; print_term (concl compile_flat_bag_all_distinct_local); print "\n");
 val _ = (print "mapi_snoc="; print_term (concl source_to_flatProofTheory.MAPi_SNOC); print "\n");
+val _ = (print "list_size_definition="; print_term (concl listTheory.list_size_def); print "\n");
+val _ = (print "list_size_theorem="; print_term (concl listTheory.list_size_thm); print "\n");
+val mem_size_lemma_local = Q.prove (
+  `list_size sz xs < N ==> (MEM x xs ⇒ sz x < N)`,
+  Induct_on `xs` >> rw [listTheory.list_size_def] >> fs []);
+val _ = if null (hyp mem_size_lemma_local) then () else raise Fail "local theorem has hypotheses";
+val _ = (print "mem_size_lemma_local="; print_term (concl mem_size_lemma_local); print "\n");
