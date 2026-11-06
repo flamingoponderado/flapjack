@@ -6,12 +6,21 @@ namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.Compiler.Backend.BackendCommon
 open Flapjack.Basis.Pure.MlString
 
-/-- Primitive type checks are preserved by related values. This is infrastructure
-over the factored relation, whose full HOL correspondence remains open. -/
-theorem valueRel_checkType (genv : GlobalEnv) (ok : genvCOk genv.c)
+namespace PrimitiveTypePort
+/-- The global environment has the canonical finite-map roundtrip. -/
+theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
+    GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env :=
+  GlobalEnv.holFmapAsFiniteSupportWitness env
+end PrimitiveTypePort
+
+/-- Primitive type checks are preserved by related values. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "v_rel_check_type"
+  (fmap_as_finite_support := [c, tys])]
+theorem valueRel_checkType (genv : GlobalEnv)
     (typ : PrimType) (source : SemanticPrimitivesHOL.Value) (flat : FlatSem.Value)
-    (rel : ValueRel genv source flat) (checked : SemanticPrimitivesHOL.checkType typ source = true) :
+    (premises : ValueRel genv source flat ∧ genvCOk genv.c ∧ SemanticPrimitivesHOL.checkType typ source = true) :
     FlatSem.checkType typ flat = true := by
+  obtain ⟨rel, ok, checked⟩ := premises
   cases rel with
   | literal lit =>
     cases typ with

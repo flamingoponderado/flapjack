@@ -125771,5 +125771,23 @@
   "lean_name": "envGenFutureRel_forward",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared env_gen_future_forward_typed in cake_subglobals_probe.out: both oracle states, the original conjunctive future and forward premises, and the future relation conclusion match."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "v_rel_check_type",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/PrimitiveType.lean",
+  "lean_name": "valueRel_checkType",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["c", "tys"],
+  "reviewer": "Compared v_rel_check_type_typed in source_to_flat_primitive_type_probe.out: the source and flat values, primitive type, original conjunctive value relation, constructor invariant and source check premises, and flat check conclusion match. GlobalEnv.c and tys use the reviewed finite-support representation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "init_global_env_inv_imp",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateLocal.lean",
+  "lean_name": "initGlobalEnvInv_imp",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["c", "tys"],
+  "reviewer": "Compared initial_global_imp in source_to_flat_init_probe.out: the initial global-environment invariant premise and global invariant conclusion over the empty name set match. GlobalEnv.c and tys use the reviewed finite-support representation."
 }
 ]

@@ -276,43 +276,6 @@ def initGlobalEnvInv {α : Type} (genv : GlobalEnv) (compMap : Environment) (env
           | some (tyId, ctors) => genv.tys.lookup tyId = some ctors
 end InitialEnv
 
-/-- The original initialization condition expressed using the preliminary
-factored global relation. Full cross-language correspondence remains under review. -/
-def FactoredInitGlobalEnvInv (genv : GlobalEnv) (compMap : Environment) (env : SemEnv Value) : Prop :=
-  env.v = nsEmpty ∧
-    match env.c with
-    | .bind entries modules => modules = [] ∧ ∀ name arity stamp, (name, (arity, stamp)) ∈ entries →
-        ∃ cn tyGroup, nsLookup compMap.c (.short name) = some (cn, tyGroup) ∧
-          genv.c.lookup ((cn, tyGroup.map Prod.fst), arity) = some stamp ∧
-          ∀ tyId ctors, tyGroup = some (tyId, ctors) → genv.tys.lookup tyId = some ctors
-
-/-- The factored initialization condition has exactly the source case shape. -/
-theorem factoredInitGlobalEnvInv_iff (genv : GlobalEnv) (compMap : Environment) (env : SemEnv Value) :
-    FactoredInitGlobalEnvInv genv compMap env ↔ InitialEnv.initGlobalEnvInv genv compMap env := by
-  unfold FactoredInitGlobalEnvInv InitialEnv.initGlobalEnvInv
-  cases env.c with
-  | bind entries modules =>
-    simp only
-    constructor <;> rintro ⟨values, empty, entriesValid⟩ <;> refine ⟨values, empty, ?_⟩
-    · rintro ⟨name, arity, stamp⟩ member
-      obtain ⟨cn, tyGroup, found, lookup, types⟩ := entriesValid name arity stamp member
-      simp only [found]
-      refine ⟨lookup, ?_⟩
-      cases tyGroup with
-      | none => trivial
-      | some group => exact types group.1 group.2 rfl
-    · intro name arity stamp member
-      have entry := entriesValid (name, arity, stamp) member
-      cases found : nsLookup compMap.c (.short name) with
-      | none => simp [found] at entry
-      | some pair =>
-        rcases pair with ⟨cn, tyGroup⟩
-        simp only [found] at entry
-        refine ⟨cn, tyGroup, rfl, entry.1, ?_⟩
-        intro tyId ctors eq
-        subst tyGroup
-        exact entry.2
-
 private theorem constructorLookup_member {α : Type} (entries : List (ConN × α)) (name : ConN) (value : α)
     (found : entries.lookup name = some value) : (name, value) ∈ entries := by
   induction entries with
@@ -330,10 +293,11 @@ private theorem constructorLookup_member {α : Type} (entries : List (ConN × α
       simp only [List.lookup_cons, different] at found
       exact List.mem_cons_of_mem _ (ih found)
 
-/-- The factored initialization condition supplies the global environment
-invariant needed by declaration simulation. -/
-theorem factoredInitGlobalEnvInv_imp (genv : GlobalEnv) (compMap : Environment) (env : SemEnv Value)
-    (initial : FactoredInitGlobalEnvInv genv compMap env) :
+/-- The initialization condition supplies the global environment invariant. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "init_global_env_inv_imp"
+  (fmap_as_finite_support := [c, tys])]
+theorem initGlobalEnvInv_imp (genv : GlobalEnv) (compMap : Environment) (env : SemEnv Value)
+    (initial : InitialEnv.initGlobalEnvInv genv compMap env) :
     GlobalEnvInv genv compMap (fun _ => False) env := by
   obtain ⟨emptyValues, constructors⟩ := initial
   cases envC : env.c with
@@ -350,7 +314,16 @@ theorem factoredInitGlobalEnvInv_imp (genv : GlobalEnv) (compMap : Environment) 
       | long module id => simp [nsLookup] at found
       | short name =>
         have member := constructorLookup_member entries name (arity, stamp) (by simpa [nsLookup] using found)
-        exact entriesValid name arity stamp member
+        have item := entriesValid (name, arity, stamp) member
+        cases selected : nsLookup compMap.c (.short name) with
+        | none => simp [selected] at item
+        | some pair =>
+          rcases pair with ⟨cn, group⟩
+          simp only [selected] at item
+          refine ⟨cn, group, rfl, item.1, ?_⟩
+          intro ty ctors eq
+          subst group
+          exact item.2
 
 namespace EnvAllRelPort
 
@@ -671,7 +644,7 @@ theorem factoredCompileProg_prepared {C F : Type} [Nonempty C]
       ⟨0, config.envs.next, .ln⟩ decs = (n, next, outEnv, outGen, body))
     (sourceRun : EvaluateHOL.evaluateDecs source sourceEnv decs = (sourceLast, result))
     (globalsEmpty : flat.globals = []) (refsEmpty : flat.refs = [])
-    (initialEnv : FactoredInitGlobalEnvInv genv config.modEnv sourceEnv)
+    (initialEnv : InitialEnv.initGlobalEnvInv genv config.modEnv sourceEnv)
     (invariant : factoredInvariant interp transform ⟨0, config.envs.next, .ln⟩ genv
       ({ config.next with vidx := config.next.vidx + 1 }, next, ∅) source
       { flat with globals := some (.loc true 0) :: List.replicate (next.vidx - config.next.vidx - 1) none,
@@ -691,7 +664,7 @@ theorem factoredCompileProg_prepared {C F : Type} [Nonempty C]
       { flat with globals := some (.loc true 0) :: List.replicate (next.vidx - config.next.vidx - 1) none,
                   refs := [.refv (.conv none [])] }
       { config.next with vidx := config.next.vidx + 1 } next next ∅ 1 n ⟨0, config.envs.next, .ln⟩ outGen body result
-      sourceRun invariant compiled (factoredInitGlobalEnvInv_imp genv config.modEnv sourceEnv initialEnv)
+      sourceRun invariant compiled (initGlobalEnvInv_imp genv config.modEnv sourceEnv initialEnv)
       safe generation future (idxPrev_refl next)
   refine ⟨finalFlat, nextGenv, flatError, ?_, states, success, errors⟩
   rw [evaluateCompileProg_continue flat config decs n next outEnv outGen body globalsEmpty refsEmpty compiled]
@@ -710,7 +683,7 @@ theorem factoredCompileProg_initial {C F : Type} [Nonempty C]
       ⟨0, config.envs.next, .ln⟩ decs = (n, next, outEnv, outGen, body))
     (sourceRun : EvaluateHOL.evaluateDecs source sourceEnv decs = (sourceLast, result))
     (globalsEmpty : flat.globals = []) (refsEmpty : flat.refs = [])
-    (initialEnv : FactoredInitGlobalEnvInv initGenv config.modEnv sourceEnv)
+    (initialEnv : InitialEnv.initGlobalEnvInv initGenv config.modEnv sourceEnv)
     (safe : result ≠ .err (.abort .typeError))
     (startVar : config.next.vidx = 0) (initialIdx : idxPrev initGenvNext config.next)
     (emptyStore : config.envs = emptyConfig.envs) (initialEval : initEvalStateOk source.evalState)
@@ -734,7 +707,7 @@ theorem factoredCompileProg_initial {C F : Type} [Nonempty C]
     { initGenv with v := some (.loc true 0) ::
         List.replicate (next.vidx - config.next.vidx - 1) none } sourceEnv source sourceLast flat
     n next outEnv outGen body result compiled sourceRun globalsEmpty refsEmpty
-  · simpa [FactoredInitGlobalEnvInv] using initialEnv
+  · simpa [InitialEnv.initGlobalEnvInv] using initialEnv
   · exact factoredInvariant_compileProg_initial interp transform config decs source flat n next outEnv outGen body
       compiled startVar initialIdx emptyStore initialEval steps oracle oracleConfig stamps sourceRefs clock ffi
   · exact safe
@@ -796,7 +769,7 @@ theorem factoredCompileProg_correct {C F : Type} [Nonempty C]
   have actual := factoredCompileProg_initial interp transform config decs sourceEnv source sourceLast
     (FlatSem.initialState source.ffi source.clock evalConfig)
     n next outEnv outGen body result bodyCompiled sourceRun rfl rfl
-    ((factoredInitGlobalEnvInv_iff _ _ _).mpr initialEnv) safe startVar initialIdx emptyStore
+    initialEnv safe startVar initialIdx emptyStore
     initialEval steps oracle stamps sourceRefs rfl rfl oracleConfig
   obtain ⟨finalFlat, nextGenv, flatError, flatRun, states, success, errors⟩ := actual
   refine ⟨finalFlat, nextGenv, flatError, ?_, states, ?_, ?_⟩

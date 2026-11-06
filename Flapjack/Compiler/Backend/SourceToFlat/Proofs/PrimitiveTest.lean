@@ -19,8 +19,8 @@ theorem doTest_related (genv : GlobalEnv) (ok : genvCOk genv.c)
     · simp only [Bool.and_eq_true] at checks
       have ca : SemanticPrimitivesHOL.checkType typ a = true := checks.1
       have cb : SemanticPrimitivesHOL.checkType typ b = true := checks.2
-      have cfa := valueRel_checkType genv ok typ a fa ha ca
-      have cfb := valueRel_checkType genv ok typ b fb hb cb
+      have cfa := valueRel_checkType genv typ a fa ⟨ha, ok, ca⟩
+      have cfb := valueRel_checkType genv typ b fb ⟨hb, ok, cb⟩
       have heq := equality_preserved genv ok a b fa fb ha hb
       cases typ <;> simp_all [SemanticPrimitivesHOL.doTest, FlatSem.doTest]
       cases ha <;> cases hb <;> simp_all [SemanticPrimitivesHOL.checkType, FlatSem.checkType]
