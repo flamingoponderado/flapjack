@@ -9576,3 +9576,13 @@ configuration fields against the checked Lean wrapper. Regenerate with
 These finite observations do not establish the unrestricted pass correspondence.
 
 `pan_props_shape_res_var_probe.out` also captures the inferred HOL constructor types, `shape_of_def` clauses, and zero-hypothesis `shape_of_val` statement from the pinned CakeML/HOL revisions. The capture supports source review; it is not a cross-language equivalence proof.
+
+`flat_pattern_global_flag_probe.out` also captures the polymorphic HOL sptree
+lookup, insert, and domain equations and the domain/lookup theorem used by
+pattern binding. It replays the lookup-based domain characterization and the
+parity and conditional distribution needed by the Lean lookup clauses. These captures support source review, not cross-language
+equivalence.
+
+The same flat-pattern probe captures `compile_pat_bindings_def`, `compile_pat_rhs_def`, and the complete
+`compile_pat_bindings_simulation` statement with inferred source types, and
+the original `v_rel_l_cases` conjunction. These captures aid source review.

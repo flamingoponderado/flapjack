@@ -77,8 +77,30 @@ val _ = show_thm "lookup_relation_append=" flat_patternProofTheory.ALOOKUP_rel_a
 val _ = show_thm "lookup_relation_equal=" flat_patternProofTheory.ALOOKUP_rel_EQ_ALOOKUP;
 val _ = show_thm "lookup_relation_fst=" flat_patternProofTheory.ALOOKUP_rel_eq_fst;
 val _ = show_thm "environment_set_noop=" flat_patternProofTheory.env_set_v_noop;
+val _ = show_thm "sptree_lookup=" sptreeTheory.lookup_def;
+val _ = show_thm "sptree_insert=" sptreeTheory.insert_def;
+val _ = show_thm "sptree_domain_lookup=" sptreeTheory.domain_lookup;
+val _ = show_thm "sptree_even_mod2=" arithmeticTheory.EVEN_MOD2;
+val _ = show_thm "sptree_domain=" sptreeTheory.domain_def;
+val sptree_domain_is_some = prove (
+  ``!t. sptree$domain t = {k | IS_SOME (sptree$lookup k t)}``,
+  simp [pred_setTheory.EXTENSION, sptreeTheory.domain_lookup, optionTheory.IS_SOME_EXISTS]);
+val _ = show_thm "sptree_domain_is_some=" sptree_domain_is_some;
+val sptree_lookup_distributed = prove (
+  ``(!k t1 t2. sptree$lookup k (BN t1 t2) =
+      if k = 0 then NONE else if k MOD 2 = 0 then
+        sptree$lookup ((k - 1) DIV 2) t1 else sptree$lookup ((k - 1) DIV 2) t2) /\
+    (!k a t1 t2. sptree$lookup k (BS t1 a t2) =
+      if k = 0 then SOME a else if k MOD 2 = 0 then
+        sptree$lookup ((k - 1) DIV 2) t1 else sptree$lookup ((k - 1) DIV 2) t2)``,
+  simp [sptreeTheory.lookup_def, arithmeticTheory.EVEN_MOD2, boolTheory.COND_RAND]);
+val _ = show_thm "sptree_lookup_distributed=" sptree_lookup_distributed;
 val _ = show_thm "binding_fold_evaluation=" flat_patternProofTheory.pat_bindings_evaluate_FOLDR_lemma;
 val _ = show_thm "every_mapi_simple=" flat_patternProofTheory.EVERY_MAPi_simple;
+val _ = show_thm "compile_pat_bindings_def=" flat_patternTheory.compile_pat_bindings_def;
+val _ = show_thm "compile_pat_rhs_def=" flat_patternTheory.compile_pat_rhs_def;
+val _ = show_thm "compile_pat_bindings_simulation=" flat_patternProofTheory.compile_pat_bindings_simulation;
+val _ = show_thm "value_relation_left_cases=" flat_patternProofTheory.v_rel_l_cases;
 val _ = show_thm "esgc_decode_pos=" flat_patternProofTheory.esgc_free_decode_pos;
 val _ = show_thm "esgc_decode_test=" flat_patternProofTheory.esgc_free_decode_test;
 val _ = show_thm "esgc_decode_guard=" flat_patternProofTheory.esgc_free_decode_guard;
