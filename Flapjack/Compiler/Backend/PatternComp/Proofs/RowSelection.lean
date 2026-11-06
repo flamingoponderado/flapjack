@@ -62,6 +62,13 @@ theorem holFmapAsFiniteSupportParamWitness_matchRows_moveConstUp_refs
     ofBroad (toBroad refs) refs.finiteSupport = refs :=
   holFmapAsFiniteSupportParamWitness_isAny_pmatch_refs refs key
 
+theorem holFmapAsFiniteSupportParamWitness_matchRows_insertAny_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_isAny_pmatch_refs refs key
+
 /-- A pattern containing an unconditional alternative cannot return a
 non-match, though it may still report a type failure. -/
 @[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "is_Any_pmatch"
@@ -151,6 +158,8 @@ theorem matchRows_takeUntilAny (refs : HolFiniteMapExact Nat Term) (value : Term
 
 /-- Replacing the last pattern with a wildcard preserves non-failure
 results whenever the original rows do not produce a type error. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "match_insert_Any"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem matchRows_insertAny (refs : HolFiniteMapExact Nat Term) (value : Term)
     (rows : List (Pat × Nat)) (safe : matchRows refs rows value ≠ none) :
     matchRows refs (insertAny rows) value ≠ none ∧

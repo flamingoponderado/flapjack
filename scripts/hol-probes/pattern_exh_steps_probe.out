@@ -85,3 +85,4 @@ comp_not_is_const_row=¬is_const_row ((p :pat),(x :α)) ∧ ¬is_Or_row (p,x) �
 comp_every_take_until_any=∀(rows :(pat # num) list). EVERY (λ((x :pat),(y :num)). ¬is_Any x) (TL (REVERSE (take_until_Any rows)))
 comp_filter_not_none=∀(xs :(pat # num) list). match (refs :num |-> term) xs (v :term) ≠ (NONE :matchResult option) ⇒ match refs (FILTER (P :pat # num -> bool) xs) v ≠ (NONE :matchResult option)
 comp_move_const_up=match (refs :num |-> term) (rows :(pat # num) list) (v :term) ≠ (NONE :matchResult option) ⇒ match refs (move_const_up rows) v = match refs rows v
+comp_match_insert_any=∀(rows :(pat # num) list). match (refs :num |-> term) rows (v :term) ≠ (NONE :matchResult option) ⇒ match refs (insert_Any rows) v ≠ (NONE :matchResult option) ∧ (match refs rows v ≠ SOME MatchFailure ⇒ match refs (insert_Any rows) v = match refs rows v)

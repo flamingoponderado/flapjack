@@ -505,3 +505,4 @@ val _ = show_local "comp_not_is_const_row=" pattern_compTheory.not_is_const_row;
 val _ = show_local "comp_every_take_until_any=" pattern_compTheory.EVERY_take_until_Any;
 val _ = show_local "comp_filter_not_none=" pattern_compTheory.matdch_FILTER_NOT_NONE;
 val _ = show_local "comp_move_const_up=" pattern_compTheory.match_move_const_up;
+val _ = show_local "comp_match_insert_any=" pattern_compTheory.match_insert_Any;
