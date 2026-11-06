@@ -31,7 +31,7 @@ FIXTURES = [
         "lean": "Flapjack/Test/CompileProgParity.lean",
         "lean_markers": ["compileProgTopEmptyParity", "compileProgTopDuplicateParity", "compileProgTopNestedParity", "shMemStoreAddressTempParity", "holInlineDuplicateParity", "holInlineNestedParity"],
         "related_lean": "Flapjack/Test/CompileProgParamsParity.lean",
-        "related_markers": ["twoWordParamParity", "twoWordParamNodup"],
+        "related_markers": ["twoWordParamParity", "#guard twoWordParamParity"],
         "covers": "empty input; direct compile_prog triples for inline calls including first duplicate binding and nested expansion; two-word function parameters; valid Global return destination; handled call with missing destination and a two-word payload",
     },
     {
