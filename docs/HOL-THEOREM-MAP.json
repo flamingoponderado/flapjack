@@ -1,6 +1,14 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "APPEND_LENGTH_EQ",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/PatternList.lean",
+  "lean_name": "appendLengthEq",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed append_length_eq capture: all lists share one element type, the equal-prefix-length premise and iff conclusion match, and ys and ys′ are free in HOL and universally bound in Lean."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
   "hol_name": "pmatch_list_Match_IMP_LENGTH",
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/PatternList.lean",
   "lean_name": "pmatchList_match_length",

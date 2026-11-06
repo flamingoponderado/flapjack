@@ -97,6 +97,24 @@ theorem pmatchList_match_length {C F : Type} (state : FlatSem.State C F)
           simpa [FlatSem.pmatchList, head] using matched
         simp [ih values next tail]
 
+/-- Equal-length prefixes can be cancelled from equal concatenations. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "APPEND_LENGTH_EQ"]
+theorem appendLengthEq {A : Type} (xs xs' ys ys' : List A) (lengths : xs.length = xs'.length) :
+    xs ++ ys = xs' ++ ys' ↔ xs = xs' ∧ ys = ys' := by
+  induction xs generalizing xs' with
+  | nil =>
+    cases xs' with
+    | nil => simp
+    | cons x xs' => simp at lengths
+  | cons x xs ih =>
+    cases xs' with
+    | nil => simp at lengths
+    | cons x' xs' =>
+      have tailLengths : xs.length = xs'.length := by simpa using lengths
+      simp only [List.cons_append, List.cons.injEq]
+      rw [ih xs' tailLengths]
+      simp [and_assoc]
+
 /-- Successful matches of successive pattern lists compose. -/
 theorem pmatchList_append_match {C F : Type} (state : FlatSem.State C F)
     (left right : List FlatLang.Pat) (leftValues rightValues : List Value)

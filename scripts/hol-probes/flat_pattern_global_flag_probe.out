@@ -27,6 +27,7 @@ enumerate_def=(∀(n :num). (enumerate n ([] :α list) :(num # α) list) = ([] :
 mem_enumerate_el=∀(xs :α list) (i :num) (x :num # α). MEM x (enumerate i xs :(num # α) list) ⇔ ∃(j :num). j < LENGTH xs ∧ x = (i + j,xs❲j❳)
 all_distinct_enumerate=∀(xs :α list) (i :num). ALL_DISTINCT (enumerate i xs :(num # α) list)
 pure_eval_to_def=∀(s :(α, β) state) (env :v environment) (exp :exp) (v :v). pure_eval_to s env exp v ⇔ (evaluate env s [exp] :(α, β) state # (v list, v) result) = (s,(Rval [v] :(v list, v) result))
+append_length_eq=∀(xs :α list) (xs' :α list). LENGTH xs = LENGTH xs' ⇒ (xs ++ (ys :α list) = xs' ++ (ys' :α list) ⇔ xs = xs' ∧ ys = ys')
 alookup_def=(∀(q :β). ALOOKUP ([] :(β # α) list) q = (NONE :α option)) ∧ ∀(y :α) (x :β) (t :(β # α) list) (q :β). ALOOKUP ((x,y)::t) q = if x = q then SOME y else ALOOKUP t q
 alookup_reversed_eq=(∀(q :α). ALOOKUP ([] :(α # β) list) q = (NONE :β option)) ∧ ∀(x :α) (y :β) (t :(α # β) list) (q :α). ALOOKUP ((x,y)::t) q = if q = x then SOME y else ALOOKUP t q
 optrel_def=∀(R :α -> β -> bool) (x :α option) (y :β option). OPTREL R x y ⇔ x = (NONE :α option) ∧ y = (NONE :β option) ∨ ∃(x0 :α) (y0 :β). x = SOME x0 ∧ y = SOME y0 ∧ R x0 y0
