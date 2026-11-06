@@ -41,16 +41,6 @@ theorem compileFuns_names (trace : List VarN) (env : Environment)
     rcases pair with ⟨name, arg, body⟩
     simp [compileFuns, ih]
 
-/-- Replicated empty traces bind exactly the recursive local function names. -/
-theorem bindLocals_recNames (env : Environment) (names : List VarN) :
-    bindLocals (List.replicate names.length .none) names env.v =
-      nsBindList (names.map fun name => (name, VarName.localName .none name)) env.v := by
-  unfold bindLocals
-  congr 1
-  induction names with
-  | nil => rfl
-  | cons name names ih => simp [List.replicate_succ, ih]
-
 /-- Each source recursive closure corresponds to the flat recursive closure
 formed by compiling the entire mutually recursive group. This uses the
 preliminary factored value relation and is not a reviewed HOL theorem. -/
@@ -68,8 +58,11 @@ theorem dletrec_closure_rel (genv : GlobalEnv) (env : Environment) (sourceEnv : 
   have appendEmpty : nsAppend (nsEmpty : Namespace ModN VarN Value) sourceEnv.v = sourceEnv.v := by
     cases sourceEnv.v
     simp [nsEmpty, nsAppend]
-  have bindEq := bindLocals_recNames env (funs.map Prod.fst)
-  simp only [List.length_map] at bindEq
+  have bindEq : bindLocals (List.replicate funs.length .none) (funs.map Prod.fst) env.v =
+      nsBindList ((funs.map Prod.fst).map (fun f => (f, VarName.localName .none f))) env.v := by
+    have empty : bindLocals [] [] env.v = env.v := rfl
+    simpa only [List.append_nil, empty, nsAppend_to_nsBindList] using
+      (nsAppend_bindLocals funs .none [] [] env.v).symm
   dsimp only at related
   simp only [List.map_nil, List.append_nil, bindEq, appendEmpty] at related
   cases sourceEnv

@@ -3,6 +3,22 @@ import Flapjack.NamespaceHOL
 /-! Properties of the original namespace operations. -/
 namespace Flapjack.NamespaceHOL
 
+/-- Appending an association-list namespace is the same as binding that list. -/
+@[hol "cakeml/semantics/proofs/namespacePropsScript.sml" "nsAppend_to_nsBindList"]
+theorem nsAppend_to_nsBindList {M N V : Type} (env : Namespace M N V) :
+    ∀ bindings : List (N × V), nsAppend (alistToNs bindings) env = nsBindList bindings env := by
+  intro bindings
+  symm
+  cases env with
+  | bind values modules =>
+    induction bindings with
+    | nil => rfl
+    | cons p rest ih =>
+      simp only [nsBindList, List.foldr_cons] at ih ⊢
+      rw [ih]
+      cases p
+      rfl
+
 section
 
 noncomputable local instance (α : Type) : DecidableEq α := Classical.typeDecidableEq α

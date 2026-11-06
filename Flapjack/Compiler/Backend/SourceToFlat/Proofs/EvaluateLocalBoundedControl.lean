@@ -530,7 +530,8 @@ theorem localEnvBounded_letrec {C F : Type} [Nonempty C]
   have names : flatLocal'.map Prod.fst = funs.map Prod.fst ++ flatEnv.v.map Prod.fst := by
     simp only [flatLocal', flatBuildRecEnv_names, compiled, compileFuns_names]
   have mapBind : bindLocals newTraces (funs.map Prod.fst ++ flatEnv.v.map Prod.fst) baseMap.v = newMap.v := by
-    simpa [newTraces, newMap, compMap] using (bindRecNames_bindLocals (funs.map Prod.fst) traces (flatEnv.v.map Prod.fst) baseMap.v).symm
+    simpa [newTraces, newMap, compMap, ← nsAppend_to_nsBindList] using
+      (nsAppend_bindLocals funs .none traces (flatEnv.v.map Prod.fst) baseMap.v).symm
   have extendedRel : EnvRel genv sourceLocal' flatLocal' := by
     have related := localRecEnv_related genv baseMap baseEnv sourceLocal flatEnv funs trace newTraces
       localRel envInv (by simp [newTraces, tracesLen])

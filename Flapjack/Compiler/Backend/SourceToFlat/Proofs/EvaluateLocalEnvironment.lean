@@ -82,22 +82,6 @@ theorem flatBuildRecEnv_names (funs : List (VarN × VarN × FlatLang.Exp))
       simp
   exact aux funs
 
-/-- The compiler's recursive-name bindings agree with the extended local
-trace list used by the arbitrary-environment induction hypothesis. -/
-theorem bindRecNames_bindLocals (names : List VarN) (traces : List BackendCommon.Tra)
-    (locals : List VarN) (compMap : Namespace ModN VarN VarName) :
-    nsBindList (names.map (fun name => (name, VarName.localName .none name)))
-        (bindLocals traces locals compMap) =
-      bindLocals (List.replicate names.length .none ++ traces) (names ++ locals) compMap := by
-  induction names with
-  | nil => rfl
-  | cons name tail ih =>
-    simp only [List.map_cons, List.length_cons, List.replicate_succ, List.cons_append]
-    simp only [nsBindList, List.foldr_cons]
-    unfold nsBindList at ih
-    rw [ih]
-    simp [bindLocals, nsBindList]
-
 /-- Namespace concatenation is associative. -/
 theorem local_nsAppend_assoc (a b c : Namespace ModN VarN Value) :
     nsAppend (nsAppend a b) c = nsAppend a (nsAppend b c) := by

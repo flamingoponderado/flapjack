@@ -75,3 +75,4 @@ val _ = show_thm "abort_compile_dec_result_local=" abort_compile_dec_result_loca
 
 val _ = show_thm "declare_env_store_env_id=" source_to_flatProofTheory.declare_env_store_env_id;
 val _ = show_thm "compile_funs_dom2=" source_to_flatProofTheory.compile_funs_dom2;
+val _ = show_thm "nsAppend_to_nsBindList=" namespacePropsTheory.nsAppend_to_nsBindList;

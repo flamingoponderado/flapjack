@@ -149,19 +149,6 @@ theorem lookup_recursive_bindings (sourceEnv : SemEnv Value)
       simp
     · simp [List.lookup_cons, BEq.beq, eq, ih]
 
-/-- Installing a binding list is namespace append with its association list. -/
-theorem nsBindList_eq_nsAppend {α : Type} (entries : List (VarN × α)) (env : Namespace ModN VarN α) :
-    nsBindList entries env = nsAppend (alistToNs entries) env := by
-  cases env with
-  | bind values modules =>
-    induction entries with
-    | nil => rfl
-    | cons entry tail ih =>
-      obtain ⟨name, value⟩ := entry
-      simp only [nsBindList, List.foldr_cons] at ih ⊢
-      rw [ih]
-      rfl
-
 /-- Every global slot in a top-level recursive group contains a closure
 related to the corresponding source recursive closure. -/
 theorem topRec_group_slot_related (genv : GlobalEnv) (baseMap : Environment) (sourceEnv : SemEnv Value)
@@ -225,7 +212,7 @@ theorem topRec_rebuilt_globalInv (genv : GlobalEnv) (baseMap : Environment) (sou
           obtain ⟨n, storedTrace, flatValue, found, bound, slot, related⟩ :=
             topRec_group_slot_related genv baseMap sourceEnv funs flatEnv newVars names originalInv empty closures name member
           apply GlobalLookupRel.intro genv _ (.short name) _ n flatValue storedTrace _ bound slot related
-          rw [nsBindList_eq_nsAppend, nsLookup_append_short]
+          rw [← nsAppend_to_nsBindList, nsLookup_append_short]
           simp [alistToNs, nsLookup, found]
         · have absent : newVars.lookup name = none := by
             cases found : newVars.lookup name with
@@ -245,7 +232,7 @@ theorem topRec_rebuilt_globalInv (genv : GlobalEnv) (baseMap : Environment) (sou
           cases rel with
           | intro _ _ _ n flatValue trace found bound slot related =>
             apply GlobalLookupRel.intro genv _ (.short name) value n flatValue trace _ bound slot related
-            rw [nsBindList_eq_nsAppend, nsLookup_append_short]
+            rw [← nsAppend_to_nsBindList, nsLookup_append_short]
             simpa [alistToNs, nsLookup, absent] using found
       | long moduleName rest =>
         have baseLookup : nsLookup sourceEnv.v (.long moduleName rest) = some value := by
@@ -255,7 +242,7 @@ theorem topRec_rebuilt_globalInv (genv : GlobalEnv) (baseMap : Environment) (sou
         cases rel with
         | intro _ _ _ n flatValue trace found bound slot related =>
           apply GlobalLookupRel.intro genv _ (.long moduleName rest) value n flatValue trace _ bound slot related
-          rw [nsBindList_eq_nsAppend, nsLookup_append_long]
+          rw [← nsAppend_to_nsBindList, nsLookup_append_long]
           simpa [alistToNs, nsLookupMod] using found
     · exact constructors
 

@@ -29,18 +29,6 @@ def bindLocals {ModuleName : Type} (traces : List Tra) (locals : List MlString)
     (compMap : Namespace ModuleName MlString VarName) : Namespace ModuleName MlString VarName :=
   nsBindList (List.zipWith (fun trace name => (name, VarName.localName trace name)) traces locals) compMap
 
-private theorem bindList_eq_append {M N V : Type} (bindings : List (N × V))
-    (env : Namespace M N V) : nsBindList bindings env = nsAppend (alistToNs bindings) env := by
-  cases env with
-  | bind values modules =>
-    induction bindings with
-    | nil => rfl
-    | cons p rest ih =>
-      simp only [nsBindList, List.foldr_cons] at ih ⊢
-      rw [ih]
-      cases p
-      rfl
-
 private theorem zipLocals_append {α : Type} (funs : List (MlString × α)) (trace : Tra)
     (traces : List Tra) (locals : List MlString) :
     List.zipWith (fun t x => (x, VarName.localName t x))
@@ -62,7 +50,7 @@ theorem nsAppend_bindLocals {ModuleName α : Type} (funs : List (MlString × α)
     nsAppend (alistToNs ((funs.map Prod.fst).map (fun name => (name, VarName.localName trace name))))
         (bindLocals traces locals compMap) =
       bindLocals (List.replicate funs.length trace ++ traces) (funs.map Prod.fst ++ locals) compMap := by
-  simp only [bindLocals, bindList_eq_append, zipLocals_append]
+  simp only [bindLocals, ← nsAppend_to_nsBindList, zipLocals_append]
   cases compMap
   simp [nsAppend, alistToNs, List.append_assoc]
 
