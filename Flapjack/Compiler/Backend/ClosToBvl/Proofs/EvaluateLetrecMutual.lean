@@ -116,33 +116,6 @@ theorem expressionSimulationBelow_letrec_mutual {C F : Type} (clockBound : Nat)
         exact False.elim (noTypeError run.1.symm)
 
 
-/-- The unrestricted result follows from its bounded form. -/
-theorem expressionSimulation_letrec_mutual {C F : Type}
-    (names : List Basis.Pure.MlString.MlString) (location : Option Nat) (selected : Option (List Nat))
-    (functions : List (Nat × ClosLang.Exp)) (body : ClosLang.Exp) (multi : 1 < functions.length)
-    (bodyIH : expressionSimulation (C := C) (F := F) [body]) :
-    expressionSimulation (C := C) (F := F) [.letrec names location selected functions body] := by
-  apply (expressionSimulation_iff_below _).2
-  intro clockBound
-  exact expressionSimulationBelow_letrec_mutual clockBound names location selected functions body multi (expressionSimulation_below clockBound [body] bodyIH)
-
-/-- All recursive-binding group shapes satisfy the candidate simulation when
-the enclosing body satisfies its induction hypothesis. -/
-theorem expressionSimulation_letrec {C F : Type}
-    (names : List Basis.Pure.MlString.MlString) (location : Option Nat) (selected : Option (List Nat))
-    (functions : List (Nat × ClosLang.Exp)) (body : ClosLang.Exp)
-    (bodyIH : expressionSimulation (C := C) (F := F) [body]) :
-    expressionSimulation (C := C) (F := F) [.letrec names location selected functions body] := by
-  cases functions with
-  | nil => exact expressionSimulation_letrec_nil names location selected body bodyIH
-  | cons first rest =>
-    cases rest with
-    | nil =>
-      obtain ⟨arity, functionBody⟩ := first
-      exact expressionSimulation_letrec_singleton names location selected arity functionBody body bodyIH
-    | cons second rest =>
-      exact expressionSimulation_letrec_mutual names location selected (first :: second :: rest) body (by simp) bodyIH
-
 /-- All recursive-binding group shapes preserve a common clock bound. -/
 theorem expressionSimulationBelow_letrec {C F : Type} (clockBound : Nat)
     (names : List Basis.Pure.MlString.MlString) (location : Option Nat) (selected : Option (List Nat))

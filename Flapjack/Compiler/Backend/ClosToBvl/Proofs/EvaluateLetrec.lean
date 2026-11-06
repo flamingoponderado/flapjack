@@ -35,15 +35,6 @@ theorem expressionSimulationBelow_letrec_nil {C F : Type} (clockBound : Nat)
           bodyCompiled bodyLoc annotations bodyVars installed envRelated states
 
 
-/-- The unrestricted result follows from its bounded form. -/
-theorem expressionSimulation_letrec_nil {C F : Type}
-    (names : List Basis.Pure.MlString.MlString) (location : Option Nat) (selected : Option (List Nat))
-    (body : ClosLang.Exp) (bodyIH : expressionSimulation (C := C) (F := F) [body]) :
-    expressionSimulation (C := C) (F := F) [.letrec names location selected [] body] := by
-  apply (expressionSimulation_iff_below _).2
-  intro clockBound
-  exact expressionSimulationBelow_letrec_nil clockBound names location selected body (expressionSimulation_below clockBound [body] bodyIH)
-
 /-- A singleton recursive group produces a closure with its own code pointer
 in the environment. The function body is installed before the enclosing body
 is evaluated. This candidate remains untagged pending carrier review. -/
@@ -137,15 +128,5 @@ theorem expressionSimulationBelow_letrec_singleton {C F : Type} (clockBound : Na
       · simp [ClosSem.evaluate, valid] at run
         exact False.elim (noTypeError run.1.symm)
 
-
-/-- The unrestricted result follows from its bounded form. -/
-theorem expressionSimulation_letrec_singleton {C F : Type}
-    (names : List Basis.Pure.MlString.MlString) (location : Option Nat) (selected : Option (List Nat))
-    (arity : Nat) (functionBody body : ClosLang.Exp)
-    (bodyIH : expressionSimulation (C := C) (F := F) [body]) :
-    expressionSimulation (C := C) (F := F) [.letrec names location selected [(arity, functionBody)] body] := by
-  apply (expressionSimulation_iff_below _).2
-  intro clockBound
-  exact expressionSimulationBelow_letrec_singleton clockBound names location selected arity functionBody body (expressionSimulation_below clockBound [body] bodyIH)
 
 end Flapjack.Compiler.Backend.ClosToBvl

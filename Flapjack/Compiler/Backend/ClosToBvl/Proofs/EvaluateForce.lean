@@ -35,17 +35,6 @@ theorem evaluatePost_force_evaluated {C F : Type} (s sMiddle : ClosSem.State C F
         simp [BvlSem.evaluate, targetFound]
       · exact .cons (by simpa [maxApp] using valueRel) .nil
 
-/-- An unevaluated target thunk with no clock times out before entering the
-installed forcing code. -/
-theorem evaluate_force_unevaluated_timeout {C F : Type} (t : BvlSem.State C F)
-    (env : List BvlSem.Value) (thunk function : BvlSem.Value) (location : Nat)
-    (found : BvlSem.destThunk thunk t.refs = .isThunk .notEvaluated function)
-    (installed : sptLookup location t.code = some (2, forceThunkCode)) (clock : t.clock = 0) :
-    BvlSem.evaluate [.force location 0] (thunk :: env) t =
-      (.err (.abort .timeoutError), { t with clock := 0 }) := by
-  rw [BvlSem.evaluate]
-  simp [found, BvlSem.findCode, installed, clock]
-
 /-- With clock available, forcing an unevaluated target thunk enters exactly
 the installed forcing code with the thunk and its function as arguments. -/
 theorem evaluate_force_unevaluated_enter {C F : Type} (t : BvlSem.State C F)
@@ -87,50 +76,6 @@ theorem force_source_shape {C F : Type} (trace : BackendCommon.Tra)
   | isThunk mode value =>
     obtain ⟨ptr, valuesEq, found⟩ := destThunk_isThunk_shape values sMiddle.refs mode value inspected
     exact ⟨ptr, mode, value, valuesEq, found⟩
-
-/-- The already-evaluated branch of the source force expression follows from
-the argument simulation, with the original compiler and installation premises. -/
-theorem expressionSimulation_force_evaluated_case {C F : Type}
-    (s sMiddle sFinal : ClosSem.State C F) (t : BvlSem.State C F)
-    (sourceEnv : List ClosSem.Value) (targetEnv : List BvlSem.Value)
-    (f : HolFiniteMapExact Nat Nat) (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (aux finalAux : List (Nat × Nat × Bvl.Exp)) (compiled : List Bvl.Exp)
-    (result : Result (List ClosSem.Value) ClosSem.Value) (thunk value : ClosSem.Value)
-    (argsRun : ClosSem.evaluate args sourceEnv s = (.val [thunk], sMiddle))
-    (found : ClosSem.destThunk [thunk] sMiddle.refs = .isThunk .evaluated value)
-    (run : ClosSem.evaluate [.op trace (.thunkOp .forceThunk) args] sourceEnv s = (result, sFinal))
-    (compile : compileExpsHOL s.maxApp [.op trace (.thunkOp .forceThunk) args] aux = (compiled, finalAux))
-    (locations : ClosProps.everyFnLocationSome [.op trace (.thunkOp .forceThunk) args])
-    (annotations : codeAnnotations s)
-    (varsAnnotated : ClosProps.everyFnVarsSome [.op trace (.thunkOp .forceThunk) args])
-    (installed : codeInstalled finalAux t.code) (envRelated : envRel s.maxApp f t.refs t.code sourceEnv targetEnv)
-    (states : stateRel f s t) (argsIH : expressionSimulation (C := C) (F := F) args) :
-    evaluatePost s sFinal t targetEnv f result compiled := by
-  cases argsCompile : compileExpListHOL s.maxApp args aux with
-  | mk targetArgs aux1 =>
-    have argsCompiled : compileExpsHOL s.maxApp args aux = (targetArgs, aux1) := by
-      rw [compileExps_eq_list]
-      exact argsCompile
-    have wholeCompiled : compileExpsHOL s.maxApp [.op trace (.thunkOp .forceThunk) args] aux =
-        ([.let targetArgs (.force (numStubs s.maxApp - 2) 0)], aux1) := by
-      rw [compileExps_eq_list]
-      simp [compileExpListHOL, compileExpHOL, argsCompile]
-    have equal := compile.symm.trans wholeCompiled
-    cases equal
-    have argsLoc : ClosProps.everyFnLocationSome args := by
-      simpa [ClosProps.everyFnLocationSome, ClosProps.fnLocationSomeExp] using locations
-    have argsVars : ClosProps.everyFnVarsSome args := by
-      simpa [ClosProps.everyFnVarsSome, ClosProps.fnVarsSomeExp] using varsAnnotated
-    have maxApp : sMiddle.maxApp = s.maxApp := by
-      have h := (ClosProps.evaluate_const (C := C) (F := F)).1 args sourceEnv s
-      rw [argsRun] at h
-      exact h
-    have post := argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs (.val [thunk])
-      argsRun (by simp) argsCompiled argsLoc annotations argsVars installed envRelated states
-    rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, argsRun] at run
-    simp [found] at run
-    rcases run with ⟨rfl, rfl⟩
-    exact evaluatePost_force_evaluated s sMiddle t targetEnv f targetArgs thunk value post found maxApp
 
 /-- Compiling the source thunk application produces a unit argument and an
 indirect closure call without adding auxiliary code. -/
@@ -478,24 +423,6 @@ theorem evaluatePost_force_unevaluated_success_below {C F : Type} (clockBound : 
 
 
 
-/-- The unrestricted application hypothesis supplies any finite bound. -/
-theorem evaluatePost_force_unevaluated_success {C F : Type}
-    (s sMiddle sFinal : ClosSem.State C F) (t : BvlSem.State C F)
-    (sourceEnv : List ClosSem.Value) (targetEnv : List BvlSem.Value)
-    (f : HolFiniteMapExact Nat Nat) (args : List ClosLang.Exp) (targetArgs : List Bvl.Exp)
-    (thunk function value : ClosSem.Value)
-    (argsRun : ClosSem.evaluate args sourceEnv s = (.val [thunk], sMiddle))
-    (found : ClosSem.destThunk [thunk] sMiddle.refs = .isThunk .notEvaluated function)
-    (appRun : ClosSem.evaluate [ClosSem.appUnit (.var .none 0)] [function] sMiddle = (.val [value], sFinal))
-    (nextRefs : HolFiniteMapExact Nat (ClosSem.Ref ClosSem.Value))
-    (updated : ClosSem.updateThunk [thunk] sFinal.refs [value] = some nextRefs)
-    (argsPost : evaluatePost s sMiddle t targetEnv f (.val [thunk]) targetArgs)
-    (appIH : expressionSimulation (C := C) (F := F) [ClosSem.appUnit (.var .none 0)]) :
-    evaluatePost s { sFinal with refs := nextRefs } t targetEnv f (.val [value])
-      [.let targetArgs (.force (numStubs s.maxApp - 2) 0)] := by
-  exact evaluatePost_force_unevaluated_success_below (sMiddle.clock + 1) s sMiddle sFinal t sourceEnv targetEnv f args targetArgs
-    thunk function value argsRun found appRun nextRefs updated argsPost (by omega) (expressionSimulation_below _ _ appIH)
-
 /-- Errors from an unevaluated thunk's recursive application propagate through
 argument binding and the target force instruction. -/
 theorem evaluatePost_force_unevaluated_error_below {C F : Type} (clockBound : Nat)
@@ -532,23 +459,6 @@ theorem evaluatePost_force_unevaluated_error_below {C F : Type} (clockBound : Na
   simpa [maxApp] using states.2.2.2.2.2.2.2.2.2.2.1
 
 
-
-/-- The unrestricted application hypothesis supplies any finite bound. -/
-theorem evaluatePost_force_unevaluated_error {C F : Type}
-    (s sMiddle sFinal : ClosSem.State C F) (t : BvlSem.State C F)
-    (sourceEnv : List ClosSem.Value) (targetEnv : List BvlSem.Value)
-    (f : HolFiniteMapExact Nat Nat) (args : List ClosLang.Exp) (targetArgs : List Bvl.Exp)
-    (thunk function : ClosSem.Value) (error : ErrorResult ClosSem.Value)
-    (argsRun : ClosSem.evaluate args sourceEnv s = (.val [thunk], sMiddle))
-    (found : ClosSem.destThunk [thunk] sMiddle.refs = .isThunk .notEvaluated function)
-    (appRun : ClosSem.evaluate [ClosSem.appUnit (.var .none 0)] [function] sMiddle = (.err error, sFinal))
-    (noType : Result.err error ≠ (Result.err (.abort .typeError) : Result (List ClosSem.Value) ClosSem.Value))
-    (argsPost : evaluatePost s sMiddle t targetEnv f (.val [thunk]) targetArgs)
-    (appIH : expressionSimulation (C := C) (F := F) [ClosSem.appUnit (.var .none 0)]) :
-    evaluatePost s sFinal t targetEnv f (.err error)
-      [.let targetArgs (.force (numStubs s.maxApp - 2) 0)] := by
-  exact evaluatePost_force_unevaluated_error_below (sMiddle.clock + 1) s sMiddle sFinal t sourceEnv targetEnv f args targetArgs
-    thunk function error argsRun found appRun noType argsPost (by omega) (expressionSimulation_below _ _ appIH)
 
 /-- The force expression case follows from the argument simulation and the
 recursive simulation of the source's generated unit application. This
@@ -640,17 +550,6 @@ theorem expressionSimulationBelow_force {C F : Type} (clockBound : Nat) (trace :
 
 
 
-
-/-- The unrestricted force case follows by choosing a bound per source state. -/
-theorem expressionSimulation_force {C F : Type} (trace : BackendCommon.Tra)
-    (args : List ClosLang.Exp) (argsIH : expressionSimulation (C := C) (F := F) args)
-    (appIH : expressionSimulation (C := C) (F := F) [ClosSem.appUnit (.var .none 0)]) :
-    expressionSimulation (C := C) (F := F) [.op trace (.thunkOp .forceThunk) args] := by
-  apply (expressionSimulation_iff_below _).2
-  intro clockBound
-  exact expressionSimulationBelow_force clockBound trace args
-    (expressionSimulation_below clockBound args argsIH)
-    (expressionSimulation_below clockBound _ appIH)
 
 /-- The application generated by forcing a thunk follows from the predecessor
 clock induction hypothesis for closure bodies. -/

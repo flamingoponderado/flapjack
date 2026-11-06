@@ -26,15 +26,6 @@ def RejectedOp.op : RejectedOp → ClosLang.Op
   | .updateCons => .memOp .updateCons
   | .finaliseCons => .memOp .finaliseCons
 
-/-- The current closure dispatcher rejects these operations for every argument
-list. This is a statement about the candidate source evaluator; it is not
-itself a port of a HOL correctness theorem. -/
-theorem rejectedOp_typeError {C F : Type} (op : RejectedOp)
-    (args : List ClosSem.Value) (s : ClosSem.State C F) :
-    ClosSem.doApp op.op args s = .err (.abort .typeError) := by
-  cases op <;> cases args <;> simp [RejectedOp.op, ClosSem.doApp, ClosSem.applyGlobal,
-    ClosSem.applyBlock, ClosSem.applyMemory]
-
 /-- Argument errors propagate through a compiled source-rejected operation. -/
 theorem evaluatePost_rejected_error {C F : Type} (s sFinal : ClosSem.State C F)
     (t : BvlSem.State C F) (targetEnv : List BvlSem.Value)

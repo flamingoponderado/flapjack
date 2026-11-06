@@ -171,38 +171,6 @@ theorem destClosure_direct_generic (maxApp address : Nat) (function : Value)
     rw [arityEq] at selected
     simp [destClosure, selected, checkLoc, bound, positive, take, List.append_assoc]
 
-/-- A saturated known-location call has no application continuation: after
-its clock cost it is exactly the clock-clamped evaluation of the body. -/
-theorem evaluateApp_direct_full {C F : Type} (address : Nat) (function : Value)
-    (args env rest : List Value) (body : ClosLang.Exp) (state : State C F)
-    (nonempty : args ≠ [])
-    (found : destClosure state.maxApp (some address) function args = some (.fullApp body env rest)) :
-    evaluateApp (some address) function args state =
-      if state.clock < args.length then (.err (.abort .timeoutError), { state with clock := 0 })
-      else fixClock (decClock args.length state) (evaluate [body] env (decClock args.length state)) := by
-  have empty := destClosure_direct_remaining_nil state.maxApp address function args env rest body found
-  subst rest
-  cases args with
-  | nil => contradiction
-  | cons first tail =>
-    rw [evaluateApp]
-    rw [found]
-    simp only [List.length_nil, Nat.sub_zero]
-    split
-    · rfl
-    · cases run : fixClock (decClock (first :: tail).length state)
-          (evaluate [body] env (decClock (first :: tail).length state)) with
-      | mk result next =>
-        cases result with
-        | err error => rfl
-        | val values =>
-          cases values with
-          | nil => rfl
-          | cons value rest =>
-            cases rest with
-            | nil => simp [evaluateApp]
-            | cons other remaining => rfl
-
 /-- Given a successful direct selection, generic and known-location source
 application have identical execution, including timeout and clock clamping. -/
 theorem evaluateApp_direct_eq_generic {C F : Type} (address : Nat) (function : Value)

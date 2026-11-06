@@ -102,70 +102,6 @@ theorem evaluatePost_cons_error {C F : Type}
     | cons second rest =>
       rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, run]
 
-/-- The multi-expression evaluator case follows from the head and tail
-simulation induction hypotheses. The hypotheses deliberately leave compiler
-accumulator bookkeeping to the enclosing pass proof. -/
-theorem evaluate_cons_post {C F : Type}
-    (s sFinal : ClosSem.State C F) (t : BvlSem.State C F)
-    (sourceEnv : List ClosSem.Value) (targetEnv : List BvlSem.Value)
-    (f : HolFiniteMapExact Nat Nat) (first second : ClosLang.Exp) (rest : List ClosLang.Exp)
-    (targetHead : Bvl.Exp) (targetTail : List Bvl.Exp) (tailNonempty : targetTail ≠ [])
-    (result : Result (List ClosSem.Value) ClosSem.Value)
-    (run : ClosSem.evaluate (first :: second :: rest) sourceEnv s = (result, sFinal))
-    (noTypeError : result ≠ .err (.abort .typeError))
-    (envRelated : envRel s.maxApp f t.refs t.code sourceEnv targetEnv)
-    (headIH : ∀ (headResult : Result (List ClosSem.Value) ClosSem.Value) (sMiddle : ClosSem.State C F),
-      ClosSem.evaluate [first] sourceEnv s = (headResult, sMiddle) →
-      headResult ≠ .err (.abort .typeError) →
-      evaluatePost s sMiddle t targetEnv f headResult [targetHead])
-    (tailIH : ∀ (sMiddle sLast : ClosSem.State C F) (tailResult : Result (List ClosSem.Value) ClosSem.Value)
-      (tMiddle : BvlSem.State C F) (fMiddle : HolFiniteMapExact Nat Nat),
-      ClosSem.evaluate (second :: rest) sourceEnv sMiddle = (tailResult, sLast) →
-      tailResult ≠ .err (.abort .typeError) → stateRel fMiddle sMiddle tMiddle →
-      envRel sMiddle.maxApp fMiddle tMiddle.refs tMiddle.code sourceEnv targetEnv →
-      codeAnnotations sMiddle → sptSubspt t.code tMiddle.code → sMiddle.maxApp = s.maxApp →
-      evaluatePost sMiddle sLast tMiddle targetEnv fMiddle tailResult targetTail) :
-    evaluatePost s sFinal t targetEnv f result (targetHead :: targetTail) := by
-  rw [ClosSem.evaluate, ClosSem.fixClock_evaluate] at run
-  cases headRun : ClosSem.evaluate [first] sourceEnv s with
-  | mk headResult sMiddle =>
-    rw [headRun] at run
-    cases headResult with
-    | err error =>
-      simp only at run
-      cases run
-      exact evaluatePost_cons_error s sFinal t targetEnv f targetHead targetTail tailNonempty error
-        (headIH (.err error) sFinal headRun noTypeError)
-    | val values =>
-      obtain ⟨value, rfl⟩ := ClosSem.evaluate_singleton_value first sourceEnv s sMiddle values headRun
-      cases tailRun : ClosSem.evaluate (second :: rest) sourceEnv sMiddle with
-      | mk tailResult sLast =>
-        simp only at run
-        rw [tailRun] at run
-        cases tailResult with
-        | val tailValues =>
-          simp at run
-          rcases run with ⟨rfl, rfl⟩
-          apply evaluatePost_cons_success s sMiddle sLast t sourceEnv targetEnv f first targetHead
-            value (.val tailValues) targetTail tailNonempty headRun envRelated (headIH _ _ headRun (by simp))
-          intro tMiddle fMiddle state env annotations growth
-          have maxApp : sMiddle.maxApp = s.maxApp := by
-            have h := (ClosProps.evaluate_const (C := C) (F := F)).1 [first] sourceEnv s
-            rw [headRun] at h
-            exact h
-          exact tailIH sMiddle sLast (.val tailValues) tMiddle fMiddle tailRun (by simp) state env annotations growth maxApp
-        | err error =>
-          simp at run
-          rcases run with ⟨rfl, rfl⟩
-          apply evaluatePost_cons_success s sMiddle sLast t sourceEnv targetEnv f first targetHead
-            value (.err error) targetTail tailNonempty headRun envRelated (headIH _ _ headRun (by simp))
-          intro tMiddle fMiddle state env annotations growth
-          have maxApp : sMiddle.maxApp = s.maxApp := by
-            have h := (ClosProps.evaluate_const (C := C) (F := F)).1 [first] sourceEnv s
-            rw [headRun] at h
-            exact h
-          exact tailIH sMiddle sLast (.err error) tMiddle fMiddle tailRun noTypeError state env annotations growth maxApp
-
 /-- The expression-side simulation statement for a fixed source expression
 list. It records the hypotheses of the source theorem while the underlying
 semantic carriers await correspondence review. -/
@@ -205,13 +141,6 @@ theorem expressionSimulation_below {C F : Type} (clockBound : Nat) (expressions 
   intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result _
   exact simulation s sFinal t sourceEnv targetEnv f aux finalAux compiled result
 
-/-- A simulation below a bound remains available below a smaller bound. -/
-theorem expressionSimulationBelow_mono {C F : Type} (small large : Nat) (expressions : List ClosLang.Exp)
-    (bound : small ≤ large) (simulation : expressionSimulationBelow (C := C) (F := F) large expressions) :
-    expressionSimulationBelow (C := C) (F := F) small expressions := by
-  intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result clock
-  exact simulation s sFinal t sourceEnv targetEnv f aux finalAux compiled result (by omega)
-
 /-- Proving the simulation at every finite clock bound suffices for the
 unrestricted expression simulation. -/
 theorem expressionSimulation_iff_below {C F : Type} (expressions : List ClosLang.Exp) :
@@ -222,58 +151,6 @@ theorem expressionSimulation_iff_below {C F : Type} (expressions : List ClosLang
     exact expressionSimulation_below clockBound expressions simulation
   · intro simulation s sFinal t sourceEnv targetEnv f aux finalAux compiled result
     exact simulation (s.clock + 1) s sFinal t sourceEnv targetEnv f aux finalAux compiled result (by omega)
-
-/-- The nonempty list case of the expression simulation, including the
-original compiler accumulator and code-installation premises. The two
-hypotheses are the source evaluator's head and tail induction hypotheses.
-This candidate remains untagged until semantic carrier correspondence is
-reviewed and the remaining cases are assembled. -/
-theorem expressionSimulation_cons {C F : Type} (first second : ClosLang.Exp)
-    (rest : List ClosLang.Exp)
-    (headIH : expressionSimulation (C := C) (F := F) [first])
-    (tailIH : expressionSimulation (C := C) (F := F) (second :: rest)) :
-    expressionSimulation (C := C) (F := F) (first :: second :: rest) := by
-  intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result run noTypeError compile
-    locations annotations varsAnnotated installed envRelated states
-  cases headCompile : compileExpHOL s.maxApp first aux with
-  | mk targetHead auxMiddle =>
-    have headCompiled : compileExpsHOL s.maxApp [first] aux = ([targetHead], auxMiddle) := by
-      rw [compileExps_eq_list]
-      simp [compileExpListHOL, headCompile]
-    cases tailCompile : compileExpsHOL s.maxApp (second :: rest) auxMiddle with
-    | mk targetTail auxLast =>
-      have compiledEq : compileExpsHOL s.maxApp (first :: second :: rest) aux =
-          (targetHead :: targetTail, auxLast) := by
-        simp [compileExpsHOL, compileExpsSingleton_eq, headCompile, tailCompile]
-      have equal := compile.symm.trans compiledEq
-      cases equal
-      have tailNonempty : targetTail ≠ [] := by
-        have length := compileExps_length s.maxApp (second :: rest) auxMiddle targetTail finalAux tailCompile
-        intro empty
-        simp [empty] at length
-      have headInstalled : codeInstalled auxMiddle t.code :=
-        compileExps_codeInstalled s.maxApp (second :: rest) auxMiddle finalAux targetTail t.code tailCompile installed
-      simp only [ClosProps.everyFnLocationSome] at locations
-      simp only [ClosProps.everyFnVarsSome] at varsAnnotated
-      have headLocations : ClosProps.everyFnLocationSome [first] := by
-        simpa [ClosProps.everyFnLocationSome] using locations.1
-      have tailLocations : ClosProps.everyFnLocationSome (second :: rest) := by
-        simpa [ClosProps.everyFnLocationSome] using locations.2
-      have headVars : ClosProps.everyFnVarsSome [first] := by
-        simpa [ClosProps.everyFnVarsSome] using varsAnnotated.1
-      have tailVars : ClosProps.everyFnVarsSome (second :: rest) := by
-        simpa [ClosProps.everyFnVarsSome] using varsAnnotated.2
-      apply evaluate_cons_post s sFinal t sourceEnv targetEnv f first second rest targetHead targetTail
-        tailNonempty result run noTypeError envRelated
-      · intro headResult sMiddle headRun headNotType
-        exact headIH s sMiddle t sourceEnv targetEnv f aux auxMiddle [targetHead] headResult headRun
-          headNotType headCompiled headLocations annotations headVars headInstalled envRelated states
-      · intro sMiddle sLast tailResult tMiddle fMiddle tailRun tailNotType middleStates middleEnv middleAnnotations growth maxApp
-        have tailCompiled : compileExpsHOL sMiddle.maxApp (second :: rest) auxMiddle = (targetTail, finalAux) := by
-          simpa [maxApp] using tailCompile
-        exact tailIH sMiddle sLast tMiddle sourceEnv targetEnv fMiddle auxMiddle finalAux targetTail tailResult
-          tailRun tailNotType tailCompiled tailLocations middleAnnotations tailVars
-          (codeInstalled_subspt installed growth) middleEnv middleStates
 
 /-- The empty expression list satisfies the source-shaped simulation. -/
 theorem expressionSimulation_nil {C F : Type} : expressionSimulation (C := C) (F := F) [] := by
@@ -289,19 +166,6 @@ theorem expressionSimulation_var {C F : Type} (trace : BackendCommon.Tra) (index
     locations annotations varsAnnotated installed envRelated states
   exact evaluate_var_post f s sFinal t sourceEnv targetEnv trace index aux finalAux compiled result run
     noTypeError compile locations annotations varsAnnotated installed envRelated states
-
-/-- Once each singleton case is established, the list case follows for all
-expression lists, with no additional semantic or installation assumptions. -/
-theorem expressionSimulation_lists {C F : Type}
-    (singleton : ∀ expression : ClosLang.Exp, expressionSimulation (C := C) (F := F) [expression]) :
-    ∀ expressions, expressionSimulation (C := C) (F := F) expressions := by
-  intro expressions
-  induction expressions with
-  | nil => exact expressionSimulation_nil
-  | cons first rest ih =>
-    cases rest with
-    | nil => exact singleton first
-    | cons second tail => exact expressionSimulation_cons first second tail (singleton first) ih
 
 /-- Sequential composition exposing the source clock bound to the tail. -/
 theorem evaluate_cons_post_clock {C F : Type}
