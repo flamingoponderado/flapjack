@@ -1,5 +1,29 @@
 [
 {
+  "hol_path": "HOL/src/finite_maps/alistScript.sml",
+  "hol_name": "ALOOKUP_def",
+  "lean_path": "Flapjack/Misc/Alist.lean",
+  "lean_name": "holALookup",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed alookup_def capture and hypothesis-free alookup_reversed_eq HOL replay. The replay reverses the equality operands to match Lean, with unrestricted key and value types."
+},
+{
+  "hol_path": "hol4/src/coretypes/optionScript.sml",
+  "hol_name": "OPTREL_def",
+  "lean_path": "Flapjack/Misc/Option/Rel.lean",
+  "lean_name": "optionRel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared optrel_def and the hypothesis-free optrel_clauses HOL replay. The four option-constructor cases match the Lean pattern match, with independent payload types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "LIST_REL_ALOOKUP_OPTREL",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
+  "lean_name": "listRelALookupOptRel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed list_rel_alookup_optrel capture, including both membership premises and the key condition. LIST_REL is Forall₂, OPTREL is the reviewed optionRel, ALOOKUP is the reviewed holALookup, and key and payload types remain independent."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "soundness_size_of",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/SizeSoundness.lean",

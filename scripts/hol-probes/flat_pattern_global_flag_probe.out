@@ -8,6 +8,11 @@ sum_string_ords=sum_string_ords (i :num) (s :mlstring) = (SUM (MAP (λ(c :char).
 generated_name_aux=∀(xs :string). dec_name_to_num (implode (enc_num_to_name_aux (i :num) xs)) = i + (SUM (MAP (λ(c :char). ORD c − (35 :num)) xs) :num)
 generated_name_roundtrip=dec_name_to_num (enc_num_to_name (i :num)) = i
 generated_name_injective=enc_num_to_name (i :num) = enc_num_to_name (j :num) ⇔ i = j
+list_rel_alookup_optrel=∀(xs :(α # β) list) (ys :(α # γ) list). LIST_REL (R :α # β -> α # γ -> bool) xs ys ∧ (∀(x :α # β) (y :α # γ). R x y ∧ MEM x xs ∧ MEM y ys ∧ ((v :α) = FST x ∨ v = FST y) ⇒ FST x = FST y ∧ (R2 :β -> γ -> bool) (SND x) (SND y)) ⇒ OPTREL R2 (ALOOKUP xs v) (ALOOKUP ys v)
+alookup_def=(∀(q :β). ALOOKUP ([] :(β # α) list) q = (NONE :α option)) ∧ ∀(y :α) (x :β) (t :(β # α) list) (q :β). ALOOKUP ((x,y)::t) q = if x = q then SOME y else ALOOKUP t q
+alookup_reversed_eq=(∀(q :α). ALOOKUP ([] :(α # β) list) q = (NONE :β option)) ∧ ∀(x :α) (y :β) (t :(α # β) list) (q :α). ALOOKUP ((x,y)::t) q = if q = x then SOME y else ALOOKUP t q
+optrel_def=∀(R :α -> β -> bool) (x :α option) (y :β option). OPTREL R x y ⇔ x = (NONE :α option) ∧ y = (NONE :β option) ∨ ∃(x0 :α) (y0 :β). x = SOME x0 ∧ y = SOME y0 ∧ R x0 y0
+optrel_clauses=(∀(R :α -> β -> bool). OPTREL R (NONE :α option) (NONE :β option)) ∧ (∀(R :α -> β -> bool) (x :α) (y :β). OPTREL R (SOME x) (SOME y) ⇔ R x y) ∧ (∀(R :α -> β -> bool) (x :α). ¬OPTREL R (SOME x) (NONE :β option)) ∧ ∀(R :α -> β -> bool) (y :β). ¬OPTREL R (NONE :α option) (SOME y)
 lookup_relation=∀(P :α -> bool) (R :β -> γ -> bool) (env1 :(α # β) list) (env2 :(α # γ) list). ALOOKUP_rel P R env1 env2 ⇔ ∀(x :α). P x ⇒ OPTREL R (ALOOKUP env1 x) (ALOOKUP env2 x)
 lookup_relation_empty=ALOOKUP_rel (P :α -> bool) (R :β -> γ -> bool) ([] :(α # β) list) ([] :(α # γ) list)
 lookup_relation_cons_false=(¬(P :α -> bool) (x :α) ⇒ (ALOOKUP_rel P (R :β -> β -> bool) ((x,(y :β))::(env1 :(α # β) list)) (env2 :(α # β) list) ⇔ ALOOKUP_rel P R env1 env2)) ∧ (¬P x ⇒ (ALOOKUP_rel P R env1 ((x,y)::env2) ⇔ ALOOKUP_rel P R env1 env2))

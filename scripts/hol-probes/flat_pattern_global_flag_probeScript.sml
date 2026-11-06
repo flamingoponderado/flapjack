@@ -19,6 +19,22 @@ val _ = show_thm "sum_string_ords=" flat_patternProofTheory.sum_string_ords_eq;
 val _ = show_thm "generated_name_aux=" flat_patternProofTheory.dec_enc_aux;
 val _ = show_thm "generated_name_roundtrip=" flat_patternProofTheory.dec_enc;
 val _ = show_thm "generated_name_injective=" flat_patternProofTheory.enc_num_to_name_inj;
+val _ = show_thm "list_rel_alookup_optrel=" flat_patternProofTheory.LIST_REL_ALOOKUP_OPTREL;
+val _ = show_thm "alookup_def=" alistTheory.ALOOKUP_def;
+val alookup_reversed_eq = prove (
+  ``(!q:'a. ALOOKUP ([]:('a # 'b) list) q = NONE) /\
+    (!x:'a. !y:'b. !t q. ALOOKUP ((x,y)::t) q =
+      if q = x then SOME y else ALOOKUP t q)``,
+  simp [alistTheory.ALOOKUP_def] THEN metis_tac []);
+val _ = show_thm "alookup_reversed_eq=" alookup_reversed_eq;
+val _ = show_thm "optrel_def=" optionTheory.OPTREL_def;
+val optrel_clauses = prove (
+  ``(!R:'a -> 'b -> bool. OPTREL R NONE NONE) /\
+    (!R:'a -> 'b -> bool. !x y. OPTREL R (SOME x) (SOME y) <=> R x y) /\
+    (!R:'a -> 'b -> bool. !x. ~OPTREL R (SOME x) NONE) /\
+    (!R:'a -> 'b -> bool. !y. ~OPTREL R NONE (SOME y))``,
+  simp [optionTheory.OPTREL_def]);
+val _ = show_thm "optrel_clauses=" optrel_clauses;
 val _ = show_thm "lookup_relation=" flat_patternProofTheory.ALOOKUP_rel_def;
 val _ = show_thm "lookup_relation_empty=" flat_patternProofTheory.ALOOKUP_rel_empty;
 val _ = show_thm "lookup_relation_cons_false=" flat_patternProofTheory.ALOOKUP_rel_cons_false;

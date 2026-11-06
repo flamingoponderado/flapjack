@@ -277,7 +277,11 @@ layout guide.
 | `misc/miscScript.sml` (`LLOOKUP` optional indexing and list-update laws) | `Flapjack/Misc/ListLookup.lean` |
 
 The pinned external `hol4/src/coretypes/optionScript.sml` counterpart is
-`Flapjack/Misc/Option.lean`.
+`Flapjack/Misc/Option.lean`, with `OPTREL_def` in the
+`Flapjack/Misc/Option/Rel.lean` submodule.
+
+The pinned `HOL/src/finite_maps/alistScript.sml` counterpart for
+`ALOOKUP_def` is `Flapjack/Misc/Alist.lean`.
 
 The pinned external `hol4/src/coalgebras/llistScript.sml` counterpart is
 `Flapjack/Misc/LList.lean`; `lprefix_lubScript.sml` chain and least-upper-bound

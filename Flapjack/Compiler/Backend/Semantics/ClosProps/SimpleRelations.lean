@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.Semantics.ClosSem.State
+import Flapjack.Misc.Option.Rel
 import Mathlib.Data.List.Forall2
 
 /-! Generic value conditions for closure-language simulations. -/
@@ -22,12 +23,6 @@ def simpleValRel (vr : Value → Value → Prop) : Prop :=
   (∀ x p b, vr x (.refPtr b p) ↔ x = .refPtr b p) ∧
   (∀ body arity env args loc x, vr x (.closure loc args env arity body) → isClos x) ∧
   (∀ index funs env args loc x, vr x (.recclosure loc args env funs index) → isClos x)
-
-/-- Standard option lifting used by the closure-state conditions. -/
-def optionRel {A B : Type} (r : A → B → Prop) : Option A → Option B → Prop
-  | none, none => True
-  | some a, some b => r a b
-  | _, _ => False
 
 /-- The closure state's canonical finite maps roundtrip through lookup and
 finite-support views. -/

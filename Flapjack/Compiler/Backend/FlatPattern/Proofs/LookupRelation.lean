@@ -1,17 +1,10 @@
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.GeneratedNames
+import Flapjack.Misc.Alist
+import Flapjack.Misc.Option.Rel
 import Batteries.Data.List.Basic
 
 /-! Association-list relations used by the pattern-binding simulation. -/
 namespace Flapjack.Compiler.Backend.FlatPattern
-
-/-- HOL-shaped association-list lookup with propositional key equality. This
-Flapjack helper avoids imposing a separate equality instance on HOL's
-polymorphic key type. -/
-noncomputable def holALookup {K V : Type} (entries : List (K × V)) (key : K) : Option V :=
-  open Classical in
-  match entries with
-  | [] => none
-  | (entryKey, value) :: rest => if key = entryKey then some value else holALookup rest key
 
 /-- Propositional lookup agrees with the evaluator's list lookup whenever the
 key's Boolean equality is lawful. -/
@@ -46,11 +39,35 @@ theorem holALookup_append {K V : Type} (left right : List (K × V)) (key : K) :
     obtain ⟨entryKey, value⟩ := entry
     by_cases same : key = entryKey <;> simp [holALookup, same, ih]
 
-/-- The original option relation for independently typed payloads. -/
-def optionRel {A B : Type} (relation : A → B → Prop) : Option A → Option B → Prop
-  | none, none => True
-  | some left, some right => relation left right
-  | _, _ => False
+/-- Related association lists have related lookups when matching keys identify
+related values. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "LIST_REL_ALOOKUP_OPTREL"]
+theorem listRelALookupOptRel {K A B : Type} (relation : K × A → K × B → Prop)
+    (valueRelation : A → B → Prop) (left : List (K × A)) (right : List (K × B)) (key : K)
+    (related : List.Forall₂ relation left right)
+    (matching : ∀ x y, relation x y → x ∈ left → y ∈ right →
+      (key = x.1 ∨ key = y.1) → x.1 = y.1 ∧ valueRelation x.2 y.2) :
+    optionRel valueRelation (holALookup left key) (holALookup right key) := by
+  classical
+  induction related with
+  | nil => simp [holALookup, optionRel]
+  | @cons x y xs ys head tail ih =>
+    have tailMatching : ∀ a b, relation a b → a ∈ xs → b ∈ ys →
+        (key = a.1 ∨ key = b.1) → a.1 = b.1 ∧ valueRelation a.2 b.2 := by
+      intro a b hab ha hb hit
+      exact matching a b hab (List.mem_cons_of_mem _ ha) (List.mem_cons_of_mem _ hb) hit
+    obtain ⟨kx, vx⟩ := x
+    obtain ⟨ky, vy⟩ := y
+    by_cases hx : key = kx
+    · have pair := matching (kx, vx) (ky, vy) head (by simp) (by simp) (Or.inl hx)
+      have sameKeys : kx = ky := pair.1
+      subst ky
+      simpa [holALookup, hx, optionRel] using pair.2
+    · by_cases hy : key = ky
+      · have pair := matching (kx, vx) (ky, vy) head (by simp) (by simp) (Or.inr hy)
+        exact (hx (hy.trans pair.1.symm)).elim
+      · simp only [holALookup, hx, hy, if_false]
+        exact ih tailMatching
 
 /-- Related lookups for the keys selected by a predicate. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "ALOOKUP_rel_def"]
