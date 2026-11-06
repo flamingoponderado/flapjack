@@ -15,18 +15,6 @@ inductive PrimitiveResultRel : Result FlatSem.Value FlatSem.Value → Result Fla
   | value {left right} : ValueRel left right → PrimitiveResultRel (.val left) (.val right)
   | error {left right} : FlatErrorRel left right → PrimitiveResultRel (.err left) (.err right)
 
-/-- A missing position is missing from both related lists. -/
-theorem forall₂_getElem_none {A B : Type} {R : A → B → Prop} {xs : List A} {ys : List B}
-    (related : List.Forall₂ R xs ys) (index : Nat) (absent : xs[index]? = none) : ys[index]? = none := by
-  induction related generalizing index with
-  | nil => simp
-  | cons _ _ ih =>
-    cases index with
-    | zero => simp at absent
-    | succ index =>
-      simp only [List.getElem?_cons_succ] at absent ⊢
-      exact ih index absent
-
 /-- The bounds exception is related to itself. -/
 theorem subscriptExn_related : ValueRel FlatSem.subscriptExnV FlatSem.subscriptExnV := by
   exact (valueRel_conv _ [] _).2 ⟨[], rfl, .nil⟩
@@ -48,7 +36,9 @@ theorem readIndexed_related {C F : Type} (source target : FlatSem.State C F) (un
       exact ⟨_, by simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative], .error (.raise subscriptExn_related)⟩
   · cases found : items[index.toNat]? with
     | none =>
-      have absent := forall₂_getElem_none related index.toNat found
+      have absent : items'[index.toNat]? = none := by
+        rw [List.getElem?_eq_none_iff] at found ⊢
+        simpa [List.Forall₂.length_eq related] using found
       cases unsafeOp with
       | true => simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative, found] at run
       | false =>
