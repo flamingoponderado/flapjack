@@ -1370,6 +1370,7 @@
     {"bytes": 706, "out": "source_to_flat_let_probe.out", "rows": 3, "sha256": "9fe1148ce12f67766545b8c89a7ed3993d5d2c32e3afc95ce7319ff874d15d5b"},
     {"bytes": 924, "out": "source_to_flat_list_conversion_probe.out", "rows": 4, "sha256": "7f3cc8c19b74b58ff599098130ba34df62d87c8bfb2475c4acbe74534c811023"},
     {"bytes": 569, "out": "source_to_flat_log_probe.out", "rows": 3, "sha256": "e7dd81ece351a32e73a3c747e11a8553636f1cad2419c66e6110792adebef92d"},
+    {"bytes": 641, "out": "source_to_flat_make_varls_probe.out", "rows": 1, "sha256": "aee16f064f794e56c97564180870695c8b68a77c087529c19c77e4a142d329fc"},
     {"bytes": 276, "out": "source_to_flat_mapi_probe.out", "rows": 2, "sha256": "f1a442ad1e2e9fe20665ec22d4535a65157b21b974d858a1e16d61d92bdb9352"},
     {"bytes": 645, "out": "source_to_flat_opassign_probe.out", "rows": 4, "sha256": "18e368d7cdba777d5aa80fc99cfb20fc10eaeefaa283657943243404d897e596"},
     {"bytes": 604, "out": "source_to_flat_opderef_probe.out", "rows": 4, "sha256": "e285faf05e035f2ebd803d36930b52f400fab8b524cbb024f6358aa025f1c50f"},

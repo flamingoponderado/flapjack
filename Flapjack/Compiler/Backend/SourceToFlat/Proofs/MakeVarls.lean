@@ -1,12 +1,14 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalWeakening
 import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateClock
+import Flapjack.Misc.ListEl
 
-/-! Evaluation of the generated global initialization expression. The flat
-semantics are not yet fully reviewed against HOL, so these results are
-Flapjack infrastructure and do not claim the original theorem. -/
+/-! Evaluation of the generated global initialization expression. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
 open Flapjack.Compiler.Backend.BackendCommon
+
+private instance : Nonempty VarN := ⟨Flapjack.Basis.Pure.MlString.ofString ""⟩
+private instance : Nonempty FlatSem.Value := ⟨.conv none []⟩
 
 /-- A single local binding initializes a previously empty global slot. -/
 theorem evaluate_globalVarInit {C F : Type} (env : FlatSem.Environment FlatSem.Value)
@@ -95,22 +97,27 @@ theorem lookup_forall₂_of_indices (env : FlatSem.Environment FlatSem.Value)
         change env.v.lookup (names[i]'(by omega)) = some values[i] at h
         exact h
 
-/-- Initialization with the original theorem's length and indexed-lookup
-hypotheses, stated over the current unreviewed flat evaluator. -/
-theorem evaluate_makeVarls_indexed {C F : Type} (env : FlatSem.Environment FlatSem.Value)
-    (state : FlatSem.State C F) (n : Nat) (trace : Tra) (idx len : Nat)
-    (names : List VarN) (values : List FlatSem.Value) (pre post : List (Option FlatSem.Value))
-    (slots : state.globals = pre ++ (List.replicate len none ++ post))
-    (prefixLength : pre.length = idx) (length : values.length = names.length)
-    (slotLength : len = names.length)
-    (lookups : ∀ (i : Nat) (inValues : i < values.length),
-      env.v.lookup (names[i]'(by omega)) = some values[i]) :
+/-- Initialization of the reserved globals from the local environment. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "evaluate_make_varls"]
+theorem evaluate_makeVarls_indexed {C F : Type} (n : Nat) (trace : Tra) (idx : Nat)
+    (names : List VarN) (pre post : List (Option FlatSem.Value)) (state : FlatSem.State C F)
+    (env : FlatSem.Environment FlatSem.Value) (values : List FlatSem.Value) (len : Nat)
+    (premises : state.globals = pre ++ List.replicate len none ++ post ∧
+      pre.length = idx ∧ values.length = names.length ∧ len = names.length ∧
+      (∀ i, i < values.length → env.v.lookup (Flapjack.holEl i names) = some (Flapjack.holEl i values))) :
     FlatSem.evaluate env state [makeVarls n trace idx names] =
-      ({ state with globals := pre ++ (values.map some ++ post) }, .val [FlatSem.unitValue]) := by
+      ({ state with globals := pre ++ values.map some ++ post }, .val [.conv none []]) := by
+  obtain ⟨slots, prefixLength, length, slotLength, lookups⟩ := premises
   subst idx
   subst len
-  exact evaluate_makeVarls env names values (lookup_forall₂_of_indices env names values length lookups)
-    pre post state n trace slots
+  have indexed : ∀ (i : Nat) (inValues : i < values.length),
+      env.v.lookup (names[i]'(by omega)) = some values[i] := by
+    intro i inValues
+    simpa only [Flapjack.holEl_eq_getElem i names (by omega),
+      Flapjack.holEl_eq_getElem i values inValues] using lookups i inValues
+  have result := evaluate_makeVarls env names values (lookup_forall₂_of_indices env names values length indexed)
+    pre post state n trace (by simpa [List.append_assoc] using slots)
+  simpa [List.append_assoc, FlatSem.unitValue] using result
 
 /-- Executing the initializer also grows the global relation: previously
 initialized slots retain their values when the reserved block is filled. -/
@@ -127,10 +134,17 @@ theorem evaluate_makeVarls_growth {C F : Type} (genv : GlobalEnv)
     FlatSem.evaluate env state [makeVarls n trace idx names] =
         ({ state with globals := pre ++ (values.map some ++ post) }, .val [FlatSem.unitValue]) ∧
       GlobalGrowth genv { genv with v := pre ++ (values.map some ++ post) } := by
-  refine ⟨evaluate_makeVarls_indexed env state n trace idx len names values pre post
-    slots prefixLength length slotLength lookups, ?_⟩
-  apply GlobalGrowth.fillNone genv pre (values.map some) post
-  simpa [List.length_map, length, slotLength] using globals.symm.trans slots
+  have totalLookups : ∀ i, i < values.length →
+      env.v.lookup (Flapjack.holEl i names) = some (Flapjack.holEl i values) := by
+    intro i inValues
+    simpa only [Flapjack.holEl_eq_getElem i names (by omega),
+      Flapjack.holEl_eq_getElem i values inValues] using lookups i inValues
+  refine ⟨?_, ?_⟩
+  · simpa [List.append_assoc, FlatSem.unitValue] using
+      evaluate_makeVarls_indexed n trace idx names pre post state env values len
+        ⟨by simpa [List.append_assoc] using slots, prefixLength, length, slotLength, totalLookups⟩
+  · apply GlobalGrowth.fillNone genv pre (values.map some) post
+    simpa [List.length_map, length, slotLength] using globals.symm.trans slots
 
 /-- Updating the flat global slots and weakening the global relation preserves
 the factored state relation; references, clock, and FFI are unchanged. -/

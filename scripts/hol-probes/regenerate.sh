@@ -547,6 +547,10 @@ run_probe source_to_flat_env_domain_probeScript.sml source_to_flat_env_domain_pr
   env_domain_type env_domain_definition env_domain_append global_env_inv_append_typed \
   "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe source_to_flat_make_varls_probeScript.sml source_to_flat_make_varls_probe.out \
+  evaluate_make_varls_typed \
+  "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe cake_flat_sem_pattern_probeScript.sml cake_flat_sem_pattern_probe.out \
   stamp_rules_typed stamp_cases_typed pmatch_typed rows_typed wildcard literal_same literal_mismatch literal_wrong_type tuple_length different_constructor wrong_constructor_type list_error_precedence \
   "$cake_dir/compiler/backend/semantics/flatSemScript.sml" "$cake_dir/compiler/backend/semantics"

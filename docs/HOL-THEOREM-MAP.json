@@ -11533,6 +11533,15 @@
     "reviewer": "Compared initial_types_ok in the typed HOL capture: the initial constructor and type maps satisfy genv_c_tys_ok. The initial environment uses the reviewed canonical finite-map fields c and tys and the local roundtrip witness."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/MakeVarls.lean",
+    "lean_name": "evaluate_makeVarls_indexed",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "evaluate_make_varls",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the typed replay of the original local proof: all five conjunctive premises use total HOL list indexing, and the resulting state update and literal unit constructor follow the same order. Flat evaluation inherits reals_as_rational_cuts."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/Initialization.lean",
     "lean_name": "initGenv_constructorsOk",
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
