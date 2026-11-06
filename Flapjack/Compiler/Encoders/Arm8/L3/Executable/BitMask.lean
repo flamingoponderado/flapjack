@@ -315,4 +315,73 @@ theorem holV2n_append (a b : List Bool) :
   rw [List.foldl_append]
   exact holV2n_shift (List.foldl v2nStep 0 a) b
 
+/-- The value of a non-empty list starts with its head. -/
+theorem holV2n_cons (x : Bool) (t : List Bool) :
+    holV2n (x :: t) = (if x then 1 else 0) * 2 ^ t.length + holV2n t := by
+  show List.foldl v2nStep (v2nStep 0 x) t = _
+  rw [holV2n_shift (v2nStep 0 x) t]
+  simp [v2nStep]
+
+/-- A list's value fits in its own width. -/
+theorem holV2n_lt (v : List Bool) : holV2n v < 2 ^ v.length := by
+  induction v with
+  | nil => simp [holV2n]
+  | cons x t ih =>
+    rw [holV2n_cons, List.length_cons, Nat.pow_succ]
+    have hb : (if x then 1 else 0) ≤ 1 := by cases x <;> simp
+    have hle : (if x then 1 else 0) * 2 ^ t.length ≤ 2 ^ t.length := by
+      calc (if x then 1 else 0) * 2 ^ t.length ≤ 1 * 2 ^ t.length :=
+            Nat.mul_le_mul_right _ hb
+        _ = 2 ^ t.length := Nat.one_mul _
+    omega
+
+/-- Bit `i` of a list's value is the `i`-th bit from the end, matching the
+`FCP` rendering in `holV2w`. -/
+theorem holV2n_testBit (v : List Bool) (i : Nat) :
+    (holV2n v).testBit i =
+      (decide (i < v.length) && v.getD (v.length - 1 - i) false) := by
+  induction v with
+  | nil => simp [holV2n]
+  | cons x t ih =>
+    rw [holV2n_cons]
+    rw [show (if x then 1 else 0) * 2 ^ t.length + holV2n t
+        = 2 ^ t.length * (if x then 1 else 0) + holV2n t by rw [Nat.mul_comm]]
+    rw [Nat.testBit_two_pow_mul_add _ (holV2n_lt t) i]
+    by_cases hi : i < t.length
+    · rw [if_pos hi, ih]
+      have h1 : i < t.length + 1 := by omega
+      simp only [List.length_cons, hi, h1, decide_true]
+      rw [show t.length + 1 - 1 - i = t.length - i by omega]
+      simp only [Bool.true_and]
+      rw [← List.getD_cons_succ]
+      congr 1
+      omega
+    · rw [if_neg hi]
+      by_cases heq : i = t.length
+      · subst heq
+        have h1 : t.length < t.length + 1 := by omega
+        simp only [h1, List.length_cons, Nat.add_sub_cancel, Nat.sub_self,
+          List.getD_cons_zero, decide_true, Bool.true_and]
+        cases x <;> simp [Nat.testBit_zero]
+      · have hlt : ¬ i < t.length + 1 := by omega
+        simp only [hlt, List.length_cons, decide_false, Bool.false_and]
+        have hk : 1 ≤ i - t.length := by omega
+        have h2 : 1 < 2 ^ (i - t.length) := by
+          have hp : 2 ^ 1 ≤ 2 ^ (i - t.length) :=
+            Nat.pow_le_pow_right (by decide : 0 < 2) hk
+          have h21 : 2 ^ 1 = 2 := by decide
+          omega
+        cases x <;> simp [Nat.testBit_lt_two_pow h2]
+
+/-- `bitstring$v2w` at an explicit width agrees with the numeric rendering of
+`holV2n` when the list fits. -/
+theorem holV2w_eq_ofNat (m : Nat) (v : List Bool) (_h : v.length ≤ m) :
+    holV2w m v = BitVec.ofNat m (holV2n v) := by
+  apply BitVec.eq_of_getLsbD_eq
+  intro i hi
+  show (holFcpWord (width := m)
+      (fun j => decide (j < v.length) && v.getD (v.length - 1 - j) false)).getLsbD i
+      = (BitVec.ofNat m (holV2n v)).getLsbD i
+  rw [getLsbD_holFcpWord, BitVec.getLsbD_ofNat, holV2n_testBit]
+
 end Flapjack.Compiler.Encoders.Arm8.L3
