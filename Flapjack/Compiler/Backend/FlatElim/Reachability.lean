@@ -155,14 +155,6 @@ theorem closureFuel_step (fuel : Nat) (reachable : NumSet) (tree : Spt NumSet) :
   classical
   simp only [closureFuel, beq_iff_eq, difference_size_zero_iff_subspt]
 
-/-- Run the elimination algorithm with explicit closure fuel. `none` reports
-exhaustion; the dynamic-evaluation guard returns the original program directly. -/
-def removeFlatProgFuel (fuel : Nat) (code : List Exp) : Option (List Exp) :=
-  if code.any hasEvalDec then some code
-  else
-    let (roots, tree) := analyseCode code
-    (closureFuel fuel roots tree).map (fun reachable => removeUnreachable reachable code)
-
 /-- Total dead-code elimination in the original pass order. Its executable
 closure recurrence is proved in `Proofs.Reachability`. -/
 @[hol "cakeml/compiler/backend/flat_elimScript.sml" "remove_flat_prog_def"]
@@ -171,8 +163,5 @@ def removeFlatProgTotal (code : List Exp) : List Exp :=
   else
     let (roots, tree) := analyseCode code
     removeUnreachable (closureTotal roots tree) code
-
-/-- Compatibility entry point for callers of the former bounded pass. -/
-def removeFlatProg (code : List Exp) : Option (List Exp) := some (removeFlatProgTotal code)
 
 end Flapjack.Compiler.Backend.FlatElim

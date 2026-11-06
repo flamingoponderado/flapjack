@@ -6,13 +6,6 @@ import Flapjack.Compiler.Backend.FlatPattern.CompileTotal
 
 namespace Flapjack.Compiler.Backend.SourceToFlat
 
-/-- Compile declarations and eliminate unreachable flat expressions. The
-option is retained for compatibility with callers of the formerly bounded
-pass. This is not HOL's complete `compile_def`. -/
-def compileProgElim (c : Config) (p : List AstHOL.Dec) : Option (Config × List FlatLang.Exp) :=
-  let (c', code) := compileProg c p
-  (FlatElim.removeFlatProg code).map (fun code' => (c', code'))
-
 /-- Flat elimination followed by pattern compilation, in the original pass
 order. -/
 @[hol "cakeml/compiler/backend/source_to_flatScript.sml" "compile_flat_def"]

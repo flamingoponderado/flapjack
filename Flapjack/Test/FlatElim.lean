@@ -117,13 +117,12 @@ private def roots : NumSet := sptInsert 1 () .ln
 -- HOL's lookup-based subset test recognizes a tree with no values even when
 -- it has noncanonical empty branch nodes.
 #guard closureFuel 1 (.ls ()) (.ls (.bn .ln .ln)) == some (.ls ())
-#guard (removeFlatProgFuel 0 [eval]).isSome
-#guard (removeFlatProgFuel 0 [pureSet]).isNone
-#guard (removeFlatProg [pureSet]).map List.length == some eliminate_pure_length
-#guard (removeFlatProg [eval, pureSet]).map List.length == some eval_bypass_length
-example : removeFlatProg [eval, pureSet] = some [eval, pureSet] := rfl
-#guard ((Flapjack.Compiler.Backend.SourceToFlat.compileProgElim
-  Flapjack.Compiler.Backend.SourceToFlat.emptyConfig []).map (fun result => result.2.length)) == some 2
+#guard (removeFlatProgTotal [pureSet]).length == eliminate_pure_length
+#guard (removeFlatProgTotal [eval, pureSet]).length == eval_bypass_length
+example : removeFlatProgTotal [eval, pureSet] = [eval, pureSet] := rfl
+#guard (Flapjack.Compiler.Backend.FlatElim.removeFlatProgTotal
+  (Flapjack.Compiler.Backend.SourceToFlat.compileProg
+    Flapjack.Compiler.Backend.SourceToFlat.emptyConfig []).2).length == 2
 #guard (Flapjack.Compiler.Backend.SourceToFlat.compileProg
   Flapjack.Compiler.Backend.SourceToFlat.emptyConfig []).1.next.vidx == empty_program_globals
 #guard empty_program_output

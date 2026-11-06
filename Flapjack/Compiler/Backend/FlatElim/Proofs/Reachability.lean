@@ -480,9 +480,4 @@ theorem removeFlatProgTotal_eq (code : List FlatLang.Exp) :
   · cases analyseCode code with
     | mk roots tree => simp [closureTotal_eq_closure]
 
-/-- Flat elimination cannot fail through exhaustion of its closure bound. -/
-theorem removeFlatProg_succeeds (code : List FlatLang.Exp) :
-    ∃ result, removeFlatProg code = some result := by
-  exact ⟨removeFlatProgTotal code, rfl⟩
-
 end Flapjack.Compiler.Backend.FlatElim
