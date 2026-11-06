@@ -9525,7 +9525,7 @@
     "lean_name": "stateRelOptRelRefs",
     "statement_status": "reviewed_fmap_as_finite_support",
     "fmap_as_finite_support": ["refs", "code"],
-    "reviewer": "Compared the original local theorem and its hypothesis-free typed proof replay in clos_mti_install_probe.out. Both states share independent compiler and FFI carriers; both directions retain their lookup equality premise and existential lookup with the original option lifting of refRel. The state uses the reviewed canonical finite-support refs and code maps and the local roundtrip witness."
+    "reviewer": "Compared the original local theorem and its hypothesis-free typed proof replay in clos_mti_install_probe.out. Both states share independent compiler and FFI carriers; both directions retain their lookup equality premise and existential lookup with the original option lifting of refRel. The state uses the reviewed canonical finite-support refs and code maps and the local roundtrip witness. OPTREL is the reviewed Flapjack.optionRel (OPTREL_def)."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",

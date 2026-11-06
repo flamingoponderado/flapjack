@@ -28,13 +28,13 @@ theorem destThunk_pointer_relatedFuel {C F : Type} {fuel : Nat} {g : State} {all
   | none =>
     cases right : target.refs.lookup key with
     | none => simpa [destThunk, left, right] using DestThunkRelFuel.badRef (fuel := fuel) (g := g) (allowed := allowed) (code := target.code)
-    | some value => simp [ClosMti.OptionRel, left, right] at lookup
+    | some value => simp [Flapjack.optionRel, left, right] at lookup
   | some value =>
     cases right : target.refs.lookup key with
-    | none => simp [ClosMti.OptionRel, left, right] at lookup
+    | none => simp [Flapjack.optionRel, left, right] at lookup
     | some next =>
       have refs : refRel (ValueRelFuel fuel g allowed target.code) value next := by
-        simpa [ClosMti.OptionRel, left, right] using lookup
+        simpa [Flapjack.optionRel, left, right] using lookup
       cases value with
       | byteArray bytes =>
         cases next <;> simp_all [refRel, destThunk]
@@ -83,13 +83,13 @@ theorem storeThunk_relatedFuel {C F : Type} {fuel : Nat} {g : State} {allowed : 
   | none =>
     cases targetLookup : target.refs.lookup key with
     | none => simp [storeThunk, sourceLookup, targetLookup]
-    | some next => simp [ClosMti.OptionRel, sourceLookup, targetLookup] at lookup
+    | some next => simp [Flapjack.optionRel, sourceLookup, targetLookup] at lookup
   | some old =>
     cases targetLookup : target.refs.lookup key with
-    | none => simp [ClosMti.OptionRel, sourceLookup, targetLookup] at lookup
+    | none => simp [Flapjack.optionRel, sourceLookup, targetLookup] at lookup
     | some next =>
       have refs : refRel (ValueRelFuel fuel g allowed target.code) old next := by
-        simpa [ClosMti.OptionRel, sourceLookup, targetLookup] using lookup
+        simpa [Flapjack.optionRel, sourceLookup, targetLookup] using lookup
       cases old with
       | byteArray bytes =>
         cases next <;> simp_all [refRel, storeThunk]

@@ -15,29 +15,29 @@ theorem stateRelSimple {C F : Type} (c : Config) (g : Spt ValApprox) :
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro s t ptr ⟨missing, related⟩
     have lookup := ClosMti.fmapRel_lookup related.2.2.2.2.2.2.2.2.1 ptr
-    cases left : s.refs.lookup ptr <;> simp_all [ClosMti.OptionRel]
+    cases left : s.refs.lookup ptr <;> simp_all [Flapjack.optionRel]
   · intro bytes t s ptr ⟨found, related⟩
     have lookup := ClosMti.fmapRel_lookup related.2.2.2.2.2.2.2.2.1 ptr
     cases left : s.refs.lookup ptr with
-    | none => simp [left, found, ClosMti.OptionRel] at lookup
+    | none => simp [left, found, Flapjack.optionRel] at lookup
     | some value =>
-      simp only [left, found, ClosMti.OptionRel] at lookup
+      simp only [left, found, Flapjack.optionRel] at lookup
       cases lookup
       rfl
   · intro values t s ptr ⟨found, related⟩
     have lookup := ClosMti.fmapRel_lookup related.2.2.2.2.2.2.2.2.1 ptr
     cases left : s.refs.lookup ptr with
-    | none => simp [left, found, ClosMti.OptionRel] at lookup
+    | none => simp [left, found, Flapjack.optionRel] at lookup
     | some value =>
-      simp only [left, found, ClosMti.OptionRel] at lookup
+      simp only [left, found, Flapjack.optionRel] at lookup
       cases lookup with
       | valueArray xs _ rel => exact ⟨xs, rfl, rel⟩
   · intro mode value t s ptr ⟨found, related⟩
     have lookup := ClosMti.fmapRel_lookup related.2.2.2.2.2.2.2.2.1 ptr
     cases left : s.refs.lookup ptr with
-    | none => simp [left, found, ClosMti.OptionRel] at lookup
+    | none => simp [left, found, Flapjack.optionRel] at lookup
     | some entry =>
-      simp only [left, found, ClosMti.OptionRel] at lookup
+      simp only [left, found, Flapjack.optionRel] at lookup
       cases lookup with
       | thunk _ v _ rel => exact ⟨v, rfl, rel⟩
   · intro s t related

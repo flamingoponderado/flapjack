@@ -10,7 +10,7 @@ theorem stateRel_ref_unused {C F : Type} {source target : State C F}
     source.refs.lookup index = none ↔ target.refs.lookup index = none := by
   have lookup := stateRel_lookupRefs related index
   cases left : source.refs.lookup index <;> cases right : target.refs.lookup index <;>
-    simp_all [OptionRel]
+    simp_all [optionRel]
 
 /-- Related stores choose the same least unused reference. -/
 theorem stateRel_leastUnusedRef {C F : Type} {source target : State C F}

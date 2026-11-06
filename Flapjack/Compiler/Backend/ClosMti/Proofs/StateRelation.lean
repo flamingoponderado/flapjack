@@ -1,3 +1,4 @@
+import Flapjack.Misc.Option.Rel
 import Flapjack.Compiler.Backend.ClosMti.Proofs.Relations
 import Flapjack.Compiler.Backend.Semantics.ClosSem.Thunk
 import Flapjack.Compiler.Backend.BackendProps.Pure
@@ -54,18 +55,11 @@ theorem stateRel_clock_maxApp {C F : Type} {source target : State C F}
   obtain ⟨_, _, _, maxEq, maxPos, clockEq, _⟩ := related
   exact ⟨clockEq.symm, maxEq.symm, maxEq ▸ maxPos⟩
 
-/-- Lift a relation through optional lookup results. This helper is shared
-Lean-side infrastructure rather than a separate HOL declaration. -/
-def OptionRel {A B : Type} (r : A → B → Prop) : Option A → Option B → Prop
-  | none, none => True
-  | some a, some b => r a b
-  | _, _ => False
-
 /-- A related pair of finite maps has related lookup results at every key. -/
 theorem fmapRel_lookup {K A B : Type} {r : A → B → Prop}
     {first : HolFiniteMapExact K A} {second : HolFiniteMapExact K B}
     (related : fmapRel r first second) (key : K) :
-    OptionRel r (first.lookup key) (second.lookup key) := by
+    optionRel r (first.lookup key) (second.lookup key) := by
   obtain ⟨domain, values⟩ := related
   cases left : first.lookup key with
   | none =>
@@ -105,7 +99,7 @@ theorem fmapRel_update {K A B : Type} [DecidableEq K] {r : A → B → Prop}
 /-- Related states expose related references at every address. -/
 theorem stateRel_lookupRefs {C F : Type} {source target : State C F}
     (related : StateRel source target) (key : Nat) :
-    OptionRel (RefRel source.maxApp) (source.refs.lookup key) (target.refs.lookup key) := by
+    optionRel (RefRel source.maxApp) (source.refs.lookup key) (target.refs.lookup key) := by
   exact fmapRel_lookup related.2.2.2.2.2.2.2.2.1 key
 
 /-- Either reference lookup can be completed with the related lookup from the
@@ -115,9 +109,9 @@ other state. -/
 theorem stateRelOptRelRefs {C F : Type} (source target : State C F) (key : Nat)
     (left right : Option (Ref Value)) :
     (StateRel source target ∧ source.refs.lookup key = left →
-      ∃ right', target.refs.lookup key = right' ∧ OptionRel (RefRel source.maxApp) left right') ∧
+      ∃ right', target.refs.lookup key = right' ∧ optionRel (RefRel source.maxApp) left right') ∧
     (StateRel source target ∧ target.refs.lookup key = right →
-      ∃ left', source.refs.lookup key = left' ∧ OptionRel (RefRel source.maxApp) left' right) := by
+      ∃ left', source.refs.lookup key = left' ∧ optionRel (RefRel source.maxApp) left' right) := by
   constructor
   · rintro ⟨states, lookup⟩
     exact ⟨target.refs.lookup key, rfl, lookup ▸ stateRel_lookupRefs states key⟩
@@ -176,23 +170,23 @@ theorem simpleStateRel {C F : Type} (maxApp : Nat) :
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro s t ptr ⟨missing, eq, states⟩
     have lookup := stateRel_lookupRefs states ptr
-    cases left : s.refs.lookup ptr <;> simp_all [OptionRel]
+    cases left : s.refs.lookup ptr <;> simp_all [optionRel]
   · intro bytes t s ptr ⟨found, eq, states⟩
     have lookup := stateRel_lookupRefs states ptr
     rw [found] at lookup
     cases left : s.refs.lookup ptr with
-    | none => simp [OptionRel, left] at lookup
+    | none => simp [optionRel, left] at lookup
     | some value =>
-      have refs : RefRel s.maxApp value (.byteArray bytes) := by simpa [OptionRel, left] using lookup
+      have refs : RefRel s.maxApp value (.byteArray bytes) := by simpa [optionRel, left] using lookup
       cases refs
       rfl
   · intro values t s ptr ⟨found, eq, states⟩
     have lookup := stateRel_lookupRefs states ptr
     rw [found] at lookup
     cases left : s.refs.lookup ptr with
-    | none => simp [OptionRel, left] at lookup
+    | none => simp [optionRel, left] at lookup
     | some value =>
-      have refs : RefRel s.maxApp value (.valueArray values) := by simpa [OptionRel, left] using lookup
+      have refs : RefRel s.maxApp value (.valueArray values) := by simpa [optionRel, left] using lookup
       cases refs with
       | valueArray leftValues _ rel =>
         exact ⟨leftValues, rfl, by simpa [eq] using rel⟩
@@ -200,9 +194,9 @@ theorem simpleStateRel {C F : Type} (maxApp : Nat) :
     have lookup := stateRel_lookupRefs states ptr
     rw [found] at lookup
     cases left : s.refs.lookup ptr with
-    | none => simp [OptionRel, left] at lookup
+    | none => simp [optionRel, left] at lookup
     | some old =>
-      have refs : RefRel s.maxApp old (.thunk mode value) := by simpa [OptionRel, left] using lookup
+      have refs : RefRel s.maxApp old (.thunk mode value) := by simpa [optionRel, left] using lookup
       cases refs with
       | thunk _ leftValue _ rel =>
         exact ⟨leftValue, rfl, by simpa [eq] using rel⟩
@@ -249,12 +243,12 @@ theorem destThunk_pointer_related {C F : Type} {source target : State C F}
   | none =>
     cases right : target.refs.lookup key with
     | none => simpa [destThunk, left, right] using DestThunkRel.badRef (maxApp := source.maxApp)
-    | some value => simp [OptionRel, left, right] at lookup
+    | some value => simp [optionRel, left, right] at lookup
   | some value =>
     cases right : target.refs.lookup key with
-    | none => simp [OptionRel, left, right] at lookup
+    | none => simp [optionRel, left, right] at lookup
     | some next =>
-      have refs : RefRel source.maxApp value next := by simpa [OptionRel, left, right] using lookup
+      have refs : RefRel source.maxApp value next := by simpa [optionRel, left, right] using lookup
       cases refs with
       | byteArray bytes =>
         simpa [destThunk, left, right] using DestThunkRel.notThunk (maxApp := source.maxApp)
@@ -293,12 +287,12 @@ theorem storeThunk_related {C F : Type} {source target : State C F}
   | none =>
     cases targetLookup : target.refs.lookup key with
     | none => simp [storeThunk, sourceLookup, targetLookup]
-    | some next => simp [OptionRel, sourceLookup, targetLookup] at lookup
+    | some next => simp [optionRel, sourceLookup, targetLookup] at lookup
   | some old =>
     cases targetLookup : target.refs.lookup key with
-    | none => simp [OptionRel, sourceLookup, targetLookup] at lookup
+    | none => simp [optionRel, sourceLookup, targetLookup] at lookup
     | some next =>
-      have refs : RefRel source.maxApp old next := by simpa [OptionRel, sourceLookup, targetLookup] using lookup
+      have refs : RefRel source.maxApp old next := by simpa [optionRel, sourceLookup, targetLookup] using lookup
       cases refs with
       | byteArray bytes => simp [storeThunk, sourceLookup, targetLookup]
       | valueArray xs ys rel => simp [storeThunk, sourceLookup, targetLookup]

@@ -30,7 +30,7 @@ theorem valueRelSimple : simpleValRel ValueRel := by
 /-- Related states expose related reference lookups. This helper is Lean-side
 infrastructure, not a standalone HOL declaration. -/
 theorem stateRel_lookupRefs {C F : Type} {s t : State C F} (related : StateRel s t) (key : Nat) :
-    ClosMti.OptionRel RefRel (s.refs.lookup key) (t.refs.lookup key) :=
+    Flapjack.optionRel RefRel (s.refs.lookup key) (t.refs.lookup key) :=
   ClosMti.fmapRel_lookup related.2.2.2.2.2.2.2.2.1 key
 
 /-- Updating corresponding references preserves the relation. This helper is
@@ -43,13 +43,8 @@ theorem stateRel_updateRefs {C F : Type} {s t : State C F} (related : StateRel s
   exact ⟨aux, codeS, codeT, maxApp, positive, clock, ffi, globals,
     ClosMti.fmapRel_update refs key left right values, compiler, oracle⟩
 
-/-- The option lifting used by the two interfaces agrees. This equality is
-Lean-side infrastructure, not a standalone HOL declaration. -/
-theorem optionRel_eq : ClosMti.OptionRel ValueRel = optionRel ValueRel := by
-  funext left right
-  cases left <;> cases right <;> rfl
-
 namespace PrimitivePort
+
 /-- The closure state has the canonical finite-map representation. -/
 theorem holFmapAsFiniteSupportWitness {C F : Type} :
     (∀ s : StateBroad C F, (State.ofBroad s).toBroad = s) ∧
@@ -63,34 +58,34 @@ theorem stateRelSimple {C F : Type} : simpleStateRel ValueRel (StateRel : State 
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro s t ptr ⟨missing, related⟩
     have lookup := stateRel_lookupRefs related ptr
-    cases left : s.refs.lookup ptr <;> simp_all [ClosMti.OptionRel]
+    cases left : s.refs.lookup ptr <;> simp_all [Flapjack.optionRel]
   · intro bytes t s ptr ⟨found, related⟩
     have lookup := stateRel_lookupRefs related ptr
     cases left : s.refs.lookup ptr with
-    | none => simp [left, found, ClosMti.OptionRel] at lookup
+    | none => simp [left, found, Flapjack.optionRel] at lookup
     | some value =>
-      simp only [left, found, ClosMti.OptionRel] at lookup
+      simp only [left, found, Flapjack.optionRel] at lookup
       cases lookup
       rfl
   · intro values t s ptr ⟨found, related⟩
     have lookup := stateRel_lookupRefs related ptr
     cases left : s.refs.lookup ptr with
-    | none => simp [left, found, ClosMti.OptionRel] at lookup
+    | none => simp [left, found, Flapjack.optionRel] at lookup
     | some value =>
-      simp only [left, found, ClosMti.OptionRel] at lookup
+      simp only [left, found, Flapjack.optionRel] at lookup
       cases lookup with
       | valueArray xs _ rel => exact ⟨xs, rfl, rel⟩
   · intro mode value t s ptr ⟨found, related⟩
     have lookup := stateRel_lookupRefs related ptr
     cases left : s.refs.lookup ptr with
-    | none => simp [left, found, ClosMti.OptionRel] at lookup
+    | none => simp [left, found, Flapjack.optionRel] at lookup
     | some entry =>
-      simp only [left, found, ClosMti.OptionRel] at lookup
+      simp only [left, found, Flapjack.optionRel] at lookup
       cases lookup with
       | thunk _ v _ rel => exact ⟨v, rfl, rel⟩
   · intro s t related
     refine ⟨related.2.2.2.2.2.2.1.symm, related.2.2.2.2.2.2.2.2.1.1, ?_⟩
-    simpa only [optionRel_eq] using related.2.2.2.2.2.2.2.1
+    exact related.2.2.2.2.2.2.2.1
   · intro ffi s t related
     rcases related with ⟨aux, codeS, codeT, maxApp, positive, clock, _, globals, refs, compiler, oracle⟩
     exact ⟨aux, codeS, codeT, maxApp, positive, clock, rfl, globals, refs, compiler, oracle⟩
@@ -102,7 +97,7 @@ theorem stateRelSimple {C F : Type} : simpleStateRel ValueRel (StateRel : State 
     exact stateRel_updateRefs related ptr _ _ (.thunk mode v w values)
   · intro s t xs ys ⟨related, values⟩
     rcases related with ⟨aux, codeS, codeT, maxApp, positive, clock, ffi, _, refs, compiler, oracle⟩
-    have globals : List.Forall₂ (ClosMti.OptionRel ValueRel) xs ys := by simpa only [optionRel_eq] using values
+    have globals : List.Forall₂ (Flapjack.optionRel ValueRel) xs ys := by exact values
     exact ⟨aux, codeS, codeT, maxApp, positive, clock, ffi, globals, refs, compiler, oracle⟩
 
 /-- Primitive operations preserve related values and states. -/

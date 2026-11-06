@@ -19,18 +19,18 @@ theorem forall₂_set {A B : Type} {rel : A → B → Prop} {left : List A} {rig
 /-- Corresponding global lookups preserve missing and uninitialized slots. -/
 theorem stateRel_getGlobal {C F : Type} {source target : State C F}
     (related : StateRel source target) (index : Nat) :
-    OptionRel (ValueRel source.maxApp) (getGlobal index source.globals).join
+    optionRel (ValueRel source.maxApp) (getGlobal index source.globals).join
       (getGlobal index target.globals).join := by
   have globals := related.2.2.2.2.2.2.2.1
   have lookup := forall₂_getElemRel globals index
   cases left : getGlobal index source.globals with
   | none =>
-    cases right : getGlobal index target.globals <;> simp_all [getGlobal, OptionRel]
+    cases right : getGlobal index target.globals <;> simp_all [getGlobal, optionRel]
   | some leftSlot =>
     cases right : getGlobal index target.globals with
-    | none => simp_all [getGlobal, OptionRel]
+    | none => simp_all [getGlobal, optionRel]
     | some rightSlot =>
-      cases leftSlot <;> cases rightSlot <;> simp_all [getGlobal, OptionRel, ValueRelOpt]
+      cases leftSlot <;> cases rightSlot <;> simp_all [getGlobal, optionRel, ValueRelOpt]
 
 /-- Appending equal numbers of empty globals preserves related states. -/
 theorem stateRel_allocGlobals {C F : Type} {source target : State C F}
@@ -53,7 +53,7 @@ theorem primitiveSimulation_global_read {C F : Type} (index : Nat) :
     have lookup := stateRel_getGlobal states index
     cases l : (getGlobal index source.globals).join <;>
       cases r : (getGlobal index target.globals).join <;>
-      simp_all [OptionRel, doApp, applyGlobal, excRel]
+      simp_all [optionRel, doApp, applyGlobal, excRel]
   | cons head tail =>
     cases tail with
     | nil =>
@@ -64,7 +64,7 @@ theorem primitiveSimulation_global_read {C F : Type} (index : Nat) :
         · have lookup := stateRel_getGlobal states number.toNat
           cases l : (getGlobal number.toNat source.globals).join <;>
             cases r : (getGlobal number.toNat target.globals).join <;>
-            simp_all [OptionRel, doApp, applyGlobal, excRel]
+            simp_all [optionRel, doApp, applyGlobal, excRel]
           simp [show ¬ number < 0 by omega, lookup, states]
       | word64 _ | block _ _ _ _ | byteVector _ | refPtr _ _ | closure | recclosure | partialRecclosure =>
         simp [doApp, applyGlobal, excRel]
@@ -110,13 +110,13 @@ theorem primitiveSimulation_global_set {C F : Type} (index : Nat) :
       have unitRel : ValueRel source.maxApp unitValue unitValue := .block _ [] [] .nil
       cases l : getGlobal index source.globals with
       | none => cases r : getGlobal index target.globals <;>
-          simp_all [getGlobal, OptionRel, ValueRelOpt, doApp, applyGlobal, excRel]
+          simp_all [getGlobal, optionRel, ValueRelOpt, doApp, applyGlobal, excRel]
       | some leftValue =>
         cases r : getGlobal index target.globals with
-        | none => simp_all [getGlobal, OptionRel]
+        | none => simp_all [getGlobal, optionRel]
         | some rightValue =>
           cases leftValue <;> cases rightValue <;>
-            simp_all [getGlobal, OptionRel, ValueRelOpt, doApp, applyGlobal, excRel]
+            simp_all [getGlobal, optionRel, ValueRelOpt, doApp, applyGlobal, excRel]
     | cons head tail => simp [doApp, applyGlobal, excRel]
 
 /-- All global operations satisfy the primitive simulation. -/

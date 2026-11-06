@@ -24,13 +24,13 @@ theorem primitiveSimulation_ffi {C F : Type} (name : Basis.Pure.MlString.MlStrin
             have refsRel := stateRel_lookupRefs states index
             cases l : source.refs.lookup index with
             | none =>
-              cases r : target.refs.lookup index <;> simp_all [OptionRel, doApp, excRel]
+              cases r : target.refs.lookup index <;> simp_all [optionRel, doApp, excRel]
             | some leftRef =>
               cases r : target.refs.lookup index with
-              | none => simp_all [OptionRel]
+              | none => simp_all [optionRel]
               | some rightRef =>
                 have refs : RefRel source.maxApp leftRef rightRef := by
-                  simpa [OptionRel, l, r] using refsRel
+                  simpa [optionRel, l, r] using refsRel
                 cases refs with
                 | valueArray left right relation => simp [doApp, l, r, excRel]
                 | thunk mode left right relation => simp [doApp, l, r, excRel]

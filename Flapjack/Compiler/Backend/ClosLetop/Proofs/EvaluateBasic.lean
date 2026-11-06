@@ -36,12 +36,12 @@ theorem evaluate_let_op_nil {C F : Type} (env nextEnv : List Value)
 /-- Related environments have related optional results at every index. This
 lookup lemma is Lean-side infrastructure, not a standalone HOL declaration. -/
 theorem environment_lookup (env nextEnv : List Value) (related : List.Forall₂ ValueRel env nextEnv)
-    (index : Nat) : ClosMti.OptionRel ValueRel env[index]? nextEnv[index]? := by
+    (index : Nat) : Flapjack.optionRel ValueRel env[index]? nextEnv[index]? := by
   induction related generalizing index with
-  | nil => simp [ClosMti.OptionRel]
+  | nil => simp [Flapjack.optionRel]
   | cons head tail ih =>
     cases index with
-    | zero => simpa [ClosMti.OptionRel] using head
+    | zero => simpa [Flapjack.optionRel] using head
     | succ index => simpa using ih index
 
 /-- Variables read related values, or both evaluations report a type error. -/
@@ -64,17 +64,17 @@ theorem evaluate_let_op_var {C F : Type} (trace : BackendCommon.Tra) (index : Na
   cases found : env[index]? with
   | none =>
     cases nextFound : nextEnv[index]? with
-    | some value => simp [ClosMti.OptionRel, found, nextFound] at lookup
+    | some value => simp [Flapjack.optionRel, found, nextFound] at lookup
     | none =>
       simp [evaluate, found] at run
       obtain ⟨rfl, rfl⟩ := run
       exact ⟨.err (.abort .typeError), target, by simp [evaluate, nextFound], rfl, states⟩
   | some value =>
     cases nextFound : nextEnv[index]? with
-    | none => simp [ClosMti.OptionRel, found, nextFound] at lookup
+    | none => simp [Flapjack.optionRel, found, nextFound] at lookup
     | some nextValue =>
       have values : ValueRel value nextValue := by
-        simpa [ClosMti.OptionRel, found, nextFound] using lookup
+        simpa [Flapjack.optionRel, found, nextFound] using lookup
       simp [evaluate, found] at run
       obtain ⟨rfl, rfl⟩ := run
       exact ⟨.val [nextValue], target, by simp [evaluate, nextFound], .cons values .nil, states⟩
@@ -460,19 +460,19 @@ theorem evaluate_let_op_if {C F : Type} (trace : BackendCommon.Tra)
 sides or returns related values, in order. This Lean-side helper has no standalone HOL declaration. -/
 theorem environment_lookupVars (indices : List Nat) (env nextEnv : List Value)
     (related : List.Forall₂ ValueRel env nextEnv) :
-    ClosMti.OptionRel (List.Forall₂ ValueRel) (lookupVars indices env) (lookupVars indices nextEnv) := by
+    Flapjack.optionRel (List.Forall₂ ValueRel) (lookupVars indices env) (lookupVars indices nextEnv) := by
   induction indices with
-  | nil => simp [lookupVars, ClosMti.OptionRel]
+  | nil => simp [lookupVars, Flapjack.optionRel]
   | cons index rest ih =>
     have head := environment_lookup env nextEnv related index
     cases left : env[index]? <;> cases right : nextEnv[index]? <;>
-      simp [ClosMti.OptionRel, left, right] at head
-    · simp [lookupVars, left, right, ClosMti.OptionRel]
+      simp [Flapjack.optionRel, left, right] at head
+    · simp [lookupVars, left, right, Flapjack.optionRel]
     · rename_i value nextValue
       cases leftTail : lookupVars rest env <;> cases rightTail : lookupVars rest nextEnv <;>
-        simp [ClosMti.OptionRel, leftTail, rightTail] at ih
-      · simp [lookupVars, left, right, leftTail, rightTail, ClosMti.OptionRel]
-      · simp [lookupVars, left, right, leftTail, rightTail, ClosMti.OptionRel, head, ih]
+        simp [Flapjack.optionRel, leftTail, rightTail] at ih
+      · simp [lookupVars, left, right, leftTail, rightTail, Flapjack.optionRel]
+      · simp [lookupVars, left, right, leftTail, rightTail, Flapjack.optionRel, head, ih]
 
 /-- Function construction preserves closure values and both capture and
 arity errors. -/
@@ -518,13 +518,13 @@ theorem evaluate_let_op_fn {C F : Type} (name : Flapjack.Basis.Pure.MlString.MlS
           obtain ⟨rfl, rfl⟩ := run
           exact ⟨.err (.abort .typeError), target,
             by simp [evaluate, maxEq, arityOk, nextCapture], rfl, states⟩
-        | some values => simp [capture, nextCapture, ClosMti.OptionRel] at captureRel
+        | some values => simp [capture, nextCapture, Flapjack.optionRel] at captureRel
       | some values =>
         cases nextCapture : lookupVars indices nextEnv with
-        | none => simp [capture, nextCapture, ClosMti.OptionRel] at captureRel
+        | none => simp [capture, nextCapture, Flapjack.optionRel] at captureRel
         | some nextValues =>
           have captures : List.Forall₂ ValueRel values nextValues := by
-            simpa [capture, nextCapture, ClosMti.OptionRel] using captureRel
+            simpa [capture, nextCapture, Flapjack.optionRel] using captureRel
           simp [evaluate, arityOk, capture] at run
           obtain ⟨rfl, rfl⟩ := run
           refine ⟨.val [.closure location [] nextValues arity

@@ -176,10 +176,10 @@ theorem evaluateRel_nil {C F : Type} (sourceCode : List ClosLang.Exp) :
 /-- Pointwise lookup preserves a list relation, including out-of-range indices. -/
 theorem forall₂_getElemRel {A B : Type} {rel : A → B → Prop} {left : List A} {right : List B}
     (related : List.Forall₂ rel left right) (index : Nat) :
-    OptionRel rel left[index]? right[index]? := by
+    optionRel rel left[index]? right[index]? := by
   induction related generalizing index with
   | nil => cases index <;> trivial
-  | cons head tail ih => cases index <;> simp_all [OptionRel]
+  | cons head tail ih => cases index <;> simp_all [optionRel]
 
 /-- Concatenating two pairs of related lists preserves their relation. -/
 theorem forall₂_append_lists {A B : Type} {rel : A → B → Prop}
@@ -216,12 +216,12 @@ theorem evaluateRel_var {C F : Type} (sourceCode : List ClosLang.Exp)
           obtain ⟨rfl, rfl⟩ := run
           exact ⟨.err (.abort .typeError), source, by simp [evaluate, sourceLookup],
             by simp [resultRel, excRel], states⟩
-        | some value => simp [OptionRel, sourceLookup, targetLookup] at lookups
+        | some value => simp [optionRel, sourceLookup, targetLookup] at lookups
       | some value =>
         cases targetLookup : targetEnv[index]? with
-        | none => simp [OptionRel, sourceLookup, targetLookup] at lookups
+        | none => simp [optionRel, sourceLookup, targetLookup] at lookups
         | some targetValue =>
-          simp [OptionRel, sourceLookup, targetLookup] at lookups
+          simp [optionRel, sourceLookup, targetLookup] at lookups
           simp [evaluate, targetLookup] at run
           obtain ⟨rfl, rfl⟩ := run
           exact ⟨.val [value], source, by simp [evaluate, sourceLookup],
