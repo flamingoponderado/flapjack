@@ -11544,6 +11544,14 @@
     "reviewer": "Compared the source and typed invariant_begin_alloc_blanks capture: compiler, FFI and initial-environment payload types remain independent; the original precondition, output-config equation, and initial-globals equation imply the same invariant over the allocated reference and blank globals. The global constructor and type maps use their canonical finite-map carrier."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/CompileExp.lean",
+    "lean_name": "compileFuns_map",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "compile_funs_map",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared compile_funs_map_typed: the free mlstring trace and universally quantified compiler environment and source function triples produce the same mapped flat function triples, with the same function trace, local binding and body compilation. The reviewed MlString, environment and expression carriers match HOL."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/FlatProps/ValueBasics.lean",
     "lean_name": "buildRecEnv_eq_map",
     "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",

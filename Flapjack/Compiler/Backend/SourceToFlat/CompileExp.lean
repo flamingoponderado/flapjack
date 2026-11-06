@@ -98,4 +98,17 @@ def compileFuns (t : List MlString) (env : Environment) :
         compileFuns t env funs
 end
 
+/-- Compiling a function group maps compilation over its entries. -/
+@[hol "cakeml/compiler/backend/source_to_flatScript.sml" "compile_funs_map"]
+theorem compileFuns_map (trace : List MlString) :
+    ∀ (env : Environment) (funs : List (MlString × MlString × AstHOL.Exp)),
+      compileFuns trace env funs = funs.map (fun (f, x, e) =>
+        (f, x, compileExp (f :: trace) { env with v := nsBind x (.localName .none x) env.v } e)) := by
+  intro env funs
+  induction funs with
+  | nil => rfl
+  | cons entry rest ih =>
+    rcases entry with ⟨name, arg, body⟩
+    simp [compileFuns, ih]
+
 end Flapjack.Compiler.Backend.SourceToFlat

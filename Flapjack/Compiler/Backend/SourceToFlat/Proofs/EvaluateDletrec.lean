@@ -35,11 +35,7 @@ theorem dletrec_conditions_of_safe {F : Type} (source : State F) (sourceEnv : Se
 theorem compileFuns_names (trace : List VarN) (env : Environment)
     (funs : List (VarN × VarN × AstHOL.Exp)) :
     (compileFuns trace env funs).map Prod.fst = funs.map Prod.fst := by
-  induction funs with
-  | nil => rfl
-  | cons pair rest ih =>
-    rcases pair with ⟨name, arg, body⟩
-    simp [compileFuns, ih]
+  simp [compileFuns_map, List.map_map, Function.comp_def]
 
 /-- Each source recursive closure corresponds to the flat recursive closure
 formed by compiling the entire mutually recursive group. This uses the
