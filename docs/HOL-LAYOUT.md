@@ -289,7 +289,7 @@ The pinned external `hol4/src/coretypes/optionScript.sml` counterpart is
 `Flapjack/Misc/Option/Rel.lean` submodule.
 
 The pinned `HOL/src/finite_maps/alistScript.sml` counterpart for
-`ALOOKUP_def` is `Flapjack/Misc/Alist.lean`.
+`ALOOKUP_def` is `Flapjack/FiniteMap/AlistExact/Lookup.lean`.
 
 The pinned external `hol4/src/coalgebras/llistScript.sml` counterpart is
 `Flapjack/Misc/LList.lean`; `lprefix_lubScript.sml` chain and least-upper-bound
