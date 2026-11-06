@@ -111800,6 +111800,28 @@
     "reviewer": "Compared the complete source theorem with the typed exported HOL capture: row payloads are natural numbers, and membership quantification expresses EVERY on TL of the reversed retained rows."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/PatternComp/Proofs/RowSelection.lean",
+    "lean_name": "matchRows_filter_safe",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml",
+    "hol_name": "matdch_FILTER_NOT_NONE",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "refs"
+    ],
+    "reviewer": "Compared the full source implication and typed exported HOL theorem, retaining an arbitrary Boolean predicate on pattern and natural-number pairs. The same-module witness checks the canonical finite-map parameter."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternComp/Proofs/RowSelection.lean",
+    "lean_name": "matchRows_moveConstUp",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml",
+    "hol_name": "match_move_const_up",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "refs"
+    ],
+    "reviewer": "Compared the source non-NONE premise and full reordered-match equality with the typed exported HOL theorem. The same-module witness checks the canonical finite-map parameter."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/PatternExh/Exhaustive.lean",
     "lean_name": "exhRows",
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",

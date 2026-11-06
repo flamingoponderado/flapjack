@@ -48,6 +48,20 @@ theorem holFmapAsFiniteSupportParamWitness_nonConstRow_not_success_nullary_refs
     ofBroad (toBroad refs) refs.finiteSupport = refs :=
   holFmapAsFiniteSupportParamWitness_isAny_pmatch_refs refs key
 
+theorem holFmapAsFiniteSupportParamWitness_matchRows_filter_safe_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_isAny_pmatch_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_matchRows_moveConstUp_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_isAny_pmatch_refs refs key
+
 /-- A pattern containing an unconditional alternative cannot return a
 non-match, though it may still report a type failure. -/
 @[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "is_Any_pmatch"
@@ -175,6 +189,8 @@ theorem matchRows_insertAny (refs : HolFiniteMapExact Nat Term) (value : Term)
             simp [original, updated]
 
 /-- Removing rows cannot introduce a pattern type error. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "matdch_FILTER_NOT_NONE"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem matchRows_filter_safe (refs : HolFiniteMapExact Nat Term) (value : Term)
     (rows : List (Pat × Nat)) (predicate : Pat × Nat → Bool)
     (safe : matchRows refs rows value ≠ none) :
@@ -422,6 +438,8 @@ theorem matchRows_moveConstUp_nullary (refs : HolFiniteMapExact Nat Term) (tag :
       simpa [moveConstUp, truncated, skip] using reordered.trans truncEq
 
 /-- Moving nullary constructor rows preserves every non-error match result. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "match_move_const_up"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem matchRows_moveConstUp (refs : HolFiniteMapExact Nat Term) (value : Term)
     (rows : List (Pat × Nat)) (safe : matchRows refs rows value ≠ none) :
     matchRows refs (moveConstUp rows) value = matchRows refs rows value := by

@@ -83,3 +83,5 @@ comp_case_none_export=(case (x :pmatchResult) of PMatchSuccess => (NONE :α opti
 comp_is_const_row=(∀(t :num option). (v :term) ≠ Term t ([] :term list)) ∧ is_const_row ((p_1 :pat),(p_2 :α)) ∧ (pmatch (refs :num |-> term) p_1 v :pmatchResult) ≠ PTypeFailure ⇒ (pmatch refs p_1 v :pmatchResult) = PMatchFailure
 comp_not_is_const_row=¬is_const_row ((p :pat),(x :α)) ∧ ¬is_Or_row (p,x) ∧ ¬is_Any p ⇒ (pmatch (refs :num |-> term) p (Term (t :num option) ([] :term list)) :pmatchResult) ≠ PMatchSuccess
 comp_every_take_until_any=∀(rows :(pat # num) list). EVERY (λ((x :pat),(y :num)). ¬is_Any x) (TL (REVERSE (take_until_Any rows)))
+comp_filter_not_none=∀(xs :(pat # num) list). match (refs :num |-> term) xs (v :term) ≠ (NONE :matchResult option) ⇒ match refs (FILTER (P :pat # num -> bool) xs) v ≠ (NONE :matchResult option)
+comp_move_const_up=match (refs :num |-> term) (rows :(pat # num) list) (v :term) ≠ (NONE :matchResult option) ⇒ match refs (move_const_up rows) v = match refs rows v
