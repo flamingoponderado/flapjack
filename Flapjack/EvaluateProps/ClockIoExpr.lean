@@ -1,4 +1,4 @@
-import Flapjack.EvaluateProps.ClockIoDecs
+import Flapjack.EvaluateProps.ClockIoCases
 
 /-! Recursive expression cases of the source clock-and-I/O invariant.
 The mutual evaluator theorem is assembled in ClockIoFull; source/carrier review remains open. -/
