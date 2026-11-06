@@ -125498,4 +125498,22 @@
   "statement_status": "reviewed_exact",
   "reviewer": "Compared flat_do_if_bool in flat_pattern_install_relation_probe.out: for an arbitrary Boolean and polymorphic branch carrier, doIf returns the chosen branch wrapped in SOME. The reviewed Boolean value and doIf definitions preserve the source representation."
 }
+,
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "pmatch_length",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/PatternBindings.lean",
+  "lean_name": "pmatchLength",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared flat_pmatch_length in flat_pattern_install_relation_probe.out: independent compiler and FFI state parameters, source match premise and complete binding-length conclusion agree; the proof follows HOL via pmatch_bindings and list lengths."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "lookup_thunk",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/StateRelation.lean",
+  "lean_name": "lookup_thunk",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "reviewer": "Compared lookup_thunk_typed in flat_to_clos_relation_probe.out: shared compiler and FFI carriers, state relation and source store lookup premises, target finite-map lookup and existential related value agree. Closure-state refs and code use the reviewed canonical finite-support carrier and witness."
+}
 ]
