@@ -92,8 +92,7 @@ theorem envRel_buildRec (n : Nat) (left right : Environment Value) (cfg : Config
   exact aLookupRel_append _ _ _ _ _ _ prefixRel ((envRel_iff_lookup n left right).1 envs)
 
 /-- Recursive-closure application produces the compiled selected body and
-related recursive environments. This is a case of the proof-side simulation;
-the HOL value-relation correspondence remains pending. -/
+related recursive environments. This is a case of the application simulation. -/
 theorem doOpApp_recclosure (leftEnv : Environment Value)
     (funs : List (VarN × VarN × FlatLang.Exp)) (name argName : VarN) (body : FlatLang.Exp)
     (targetClosure arg targetArg : Value)
@@ -126,9 +125,7 @@ theorem doOpApp_recclosure (leftEnv : Environment Value)
         some ({ captured with v := (argName, targetArg) :: FlatSem.buildRecEnv (compiledRecFuns cfg funs) captured captured.v }, body')
       simp [FlatSem.doOpApp, compiledRecFuns_names, distinct, findRecFun_compiled, found, compileDec, compiled]
 
-/-- Function application simulation for arbitrary related input lists. This
-is the original result shape over the proof-side value relation; it remains
-untagged until that relation's HOL correspondence is reviewed. -/
+/-- Function application simulation for arbitrary related input lists. -/
 theorem doOpApp_simulation (source target : List Value) (env : Environment Value) (body : FlatLang.Exp)
     (run : FlatSem.doOpApp source = some (env, body)) (related : List.Forall₂ ValueRel source target) :
     ∃ i sg body' targetEnv cfg,

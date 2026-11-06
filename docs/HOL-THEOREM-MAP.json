@@ -125064,4 +125064,13 @@
   "lean_name": "sptToListA",
   "statement_status": "pending_statement_review",
   "reviewer": "Tag present; typed capture and statement review pending."
-}]
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "v_rel_l_cases",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/ValueRelationCases.lean",
+  "lean_name": "valueRel_leftCases",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the original generated theorem and typed value_relation_left_cases capture: all six value constructors occur in source order, with the original right-hand value, container contents, closure equations, environment relations and compilation bounds. Universal closure distributes over the conjuncts; EVERY is rendered as membership quantification, and source FST and SND projections as .1 and .2.2."
+}
+]
