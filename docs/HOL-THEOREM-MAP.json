@@ -11544,6 +11544,14 @@
     "reviewer": "Compared the source and typed invariant_begin_alloc_blanks capture: compiler, FFI and initial-environment payload types remain independent; the original precondition, output-config equation, and initial-globals equation imply the same invariant over the allocated reference and blank globals. The global constructor and type maps use their canonical finite-map carrier."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/FlatProps/ValueBasics.lean",
+    "lean_name": "buildRecEnv_eq_map",
+    "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+    "hol_name": "build_rec_env_eq_MAP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared build_rec_env_eq_MAP_typed: the arbitrary mlstring-named flat function triples, closure environment and initial value bindings produce the same mapped recursive-closure prefix followed by the initial list. The reviewed MlString, flat expression, value and environment carriers agree with HOL; the tuple-pattern lambda is rendered with projections."
+  },
+  {
     "lean_path": "Flapjack/NamespaceProps.lean",
     "lean_name": "nsAppend_to_nsBindList",
     "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml",

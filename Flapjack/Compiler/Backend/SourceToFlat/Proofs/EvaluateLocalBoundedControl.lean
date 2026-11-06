@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.FlatProps.ValueBasics
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBounded
 
 /-! Clock-bounded local control-flow composition. These factored relations
@@ -528,7 +529,7 @@ theorem localEnvBounded_letrec {C F : Type} [Nonempty C]
     apply safe source
     simp [EvaluateHOL.evaluate, invalid, EvaluateHOL.typeError]
   have names : flatLocal'.map Prod.fst = funs.map Prod.fst ++ flatEnv.v.map Prod.fst := by
-    simp only [flatLocal', flatBuildRecEnv_names, compiled, compileFuns_names]
+    simp [flatLocal', FlatProps.buildRecEnv_eq_map, List.map_map, Function.comp_def, compiled, compileFuns_names]
   have mapBind : bindLocals newTraces (funs.map Prod.fst ++ flatEnv.v.map Prod.fst) baseMap.v = newMap.v := by
     simpa [newTraces, newMap, compMap, ← nsAppend_to_nsBindList] using
       (nsAppend_bindLocals funs .none traces (flatEnv.v.map Prod.fst) baseMap.v).symm

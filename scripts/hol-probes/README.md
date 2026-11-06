@@ -9595,3 +9595,6 @@ equivalence.
 The same flat-pattern probe captures `compile_pat_bindings_def`, `compile_pat_rhs_def`, and the complete
 `compile_pat_bindings_simulation` statement with inferred source types, and
 the original `v_rel_l_cases` conjunction. These captures aid source review.
+
+`flat_props_evaluate_match_probe.out` includes the typed `build_rec_env_eq_MAP`
+recursive-environment theorem used by source-to-flat and flat-to-closure proofs.

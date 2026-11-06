@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.FlatProps.ValueBasics
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.ValueRelation
 import Mathlib.Data.List.Forall2
 import Flapjack.Misc.ListEl
@@ -5,23 +6,6 @@ import Flapjack.Misc.ListEl
 /-! Recursive-environment prerequisites for flat-to-closure simulation. -/
 namespace Flapjack.Compiler.Backend.FlatToClos
 open Flapjack.AstHOL Flapjack.Basis.Pure.MlString Flapjack.SemanticPrimitivesHOL
-
-/-- Building recursive source bindings is an ordered prefix of closures. -/
-theorem buildRecEnv_eq_map (funs : List (VarN × VarN × FlatLang.Exp))
-    (env : FlatSem.Environment FlatSem.Value) (initial : List (VarN × FlatSem.Value)) :
-    FlatSem.buildRecEnv funs env initial =
-      funs.map (fun f => (f.1, FlatSem.Value.recclosure env funs f.1)) ++ initial := by
-  unfold FlatSem.buildRecEnv
-  have foldMap : ∀ xs : List (VarN × VarN × FlatLang.Exp),
-      xs.foldr (fun (f, _, _) acc => (f, FlatSem.Value.recclosure env funs f) :: acc) initial =
-        xs.map (fun f => (f.1, FlatSem.Value.recclosure env funs f.1)) ++ initial := by
-    intro xs
-    induction xs with
-    | nil => rfl
-    | cons first rest ih =>
-      rcases first with ⟨name, arg, body⟩
-      simp [ih]
-  exact foldMap funs
 
 /-- Pointwise related indexed elements give related mapped and generated lists. -/
 @[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "LIST_REL_MAP_GENLIST"]
@@ -132,6 +116,6 @@ theorem envRel_rec (funs : List (VarN × VarN × FlatLang.Exp))
     (targets := (List.range funs.length).map (fun i => ClosSem.Value.recclosure none [] values
       (compileFuns (funs.map (fun f => some f.1) ++ names) funs) i))
     environments (by simpa [List.map_map] using prefixRel) rfl
-  simpa [replaceEnvValues, buildRecEnv_eq_map, compileFuns_length, List.map_map, Function.comp_def] using extended
+  simpa [replaceEnvValues, FlatProps.buildRecEnv_eq_map, compileFuns_length, List.map_map, Function.comp_def] using extended
 
 end Flapjack.Compiler.Backend.FlatToClos

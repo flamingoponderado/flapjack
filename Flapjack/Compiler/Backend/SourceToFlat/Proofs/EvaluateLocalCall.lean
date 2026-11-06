@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.FlatProps.ValueBasics
 import Flapjack.FiniteMap.AlistExact.Lookup
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ThunkRel
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBounded
@@ -99,7 +100,7 @@ theorem doOpApp_recclosure_local (genv : GlobalEnv) (baseMap : Environment) (bas
   let recursiveLocal := buildRecEnv funs sourceEnv captured
   let recursiveFlat := FlatSem.buildRecEnv compiled flatCaptured flatCaptured.v
   have names : recursiveFlat.map Prod.fst = funs.map Prod.fst ++ flatCaptured.v.map Prod.fst := by
-    simp [recursiveFlat, compiled, flatBuildRecEnv_names, compileFuns_names]
+    simp [recursiveFlat, compiled, FlatProps.buildRecEnv_eq_map, List.map_map, Function.comp_def, compileFuns_names]
   have recursiveRel : EnvRel genv recursiveLocal recursiveFlat := by
     exact localRecEnv_related genv baseMap baseEnv captured flatCaptured funs trace traces locals globals len
   have newInv : GlobalEnvInv genv baseMap (fun n => n ∈ ((arg, flatArgument) :: recursiveFlat).map Prod.fst) baseEnv := by

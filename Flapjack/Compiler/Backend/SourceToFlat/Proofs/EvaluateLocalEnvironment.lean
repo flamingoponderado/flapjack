@@ -67,21 +67,6 @@ theorem buildRecEnv_nsAppend (funs : List (VarN × VarN × AstHOL.Exp)) (closure
       rfl
   exact aux funs
 
-/-- The flat recursive environment prepends the compiled function names. -/
-theorem flatBuildRecEnv_names (funs : List (VarN × VarN × FlatLang.Exp))
-    (closureEnv : FlatSem.Environment FlatSem.Value) (initial : List (VarN × FlatSem.Value)) :
-    (FlatSem.buildRecEnv funs closureEnv initial).map Prod.fst = funs.map Prod.fst ++ initial.map Prod.fst := by
-  have aux : ∀ remaining : List (VarN × VarN × FlatLang.Exp),
-      (remaining.foldr (fun (name, _, _) rest => (name, FlatSem.Value.recclosure closureEnv funs name) :: rest) initial).map Prod.fst =
-        remaining.map Prod.fst ++ initial.map Prod.fst := by
-    intro remaining
-    induction remaining with
-    | nil => rfl
-    | cons head tail _ =>
-      obtain ⟨name, arg, body⟩ := head
-      simp
-  exact aux funs
-
 /-- Namespace concatenation is associative. -/
 theorem local_nsAppend_assoc (a b c : Namespace ModN VarN Value) :
     nsAppend (nsAppend a b) c = nsAppend a (nsAppend b c) := by
