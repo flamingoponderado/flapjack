@@ -39,9 +39,10 @@ theorem holFmapAsFiniteSupportWitness {C F : Type} :
       (∀ s : BviState C F, BviState.ofBroad s.toBroad = s) :=
   BviSem.holFmapAsFiniteSupportWitness
 
-/-- The singleton conjunct of the source extraction lemma. -/
-/- Intended HOL counterpart, pending statement and finite-map carrier source review.
-   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_bvi_to_cb_aux_inl_lemma" (fmap_as_finite_support := [refs])] -/
+/-- The singleton conjunct of the source extraction lemma.
+
+Intended HOL counterpart, pending statement and finite-map carrier source review.
+Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_bvi_to_cb_aux_inl_lemma" (fmap_as_finite_support := [refs])] -/
 theorem evaluate_bvi_to_cb_aux_inl_single {C F : Type}
     (n loc tag : Nat) (e : Bvi.Exp) (bs : List Bvi.Exp) (vs : List Nat)
     (run : extractOneSource n loc tag e = some (bs, .inl vs)) :
@@ -135,9 +136,10 @@ theorem extractList_wf_inl (n loc tag : Nat) (args bs : List Bvi.Exp) (vs : List
     · exact le_trans (by decide) (Int.natCast_nonneg _)
     · exact Int.ofNat_le.mpr bound
 
-/-- Pure extraction preserves the expressions and retrieves their evaluated values. -/
-/- Intended HOL counterpart, pending statement and finite-map carrier source review.
-   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_bvi_to_cb_aux_inl" (fmap_as_finite_support := [refs])] -/
+/-- Pure extraction preserves the expressions and retrieves their evaluated values.
+
+Intended HOL counterpart, pending statement and finite-map carrier source review.
+Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_bvi_to_cb_aux_inl" (fmap_as_finite_support := [refs])] -/
 theorem evaluate_bvi_to_cb_aux_inl {C F : Type}
     (n loc tag : Nat) (args bs : List Bvi.Exp) (vs : List Nat)
     (run : extractListSource n loc tag args = some (bs, .inl vs)) :

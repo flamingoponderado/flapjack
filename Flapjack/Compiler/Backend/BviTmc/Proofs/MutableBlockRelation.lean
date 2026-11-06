@@ -33,9 +33,10 @@ theorem holFmapAsFiniteSupportParamWitness_mutableBlockRel_refs (refs : HolFinit
     mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
 
 /-- Relate a source value to an unfinished chain of target mutable blocks,
-removing each visited pointer to make cyclic structures fail. -/
-/- Intended HOL counterpart, pending statement and finite-map carrier source review.
-   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "mb_rel_def" (fmap_as_finite_support_parameters := [f, old, refs])] -/
+removing each visited pointer to make cyclic structures fail.
+
+Intended HOL counterpart, pending statement and finite-map carrier source review.
+Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "mb_rel_def" (fmap_as_finite_support_parameters := [f, old, refs])] -/
 noncomputable def mutableBlockRel (f : HolFiniteMapExact Nat Nat) (old : HolFiniteMapExact Nat (Ref Value))
     (refs : HolFiniteMapExact Nat (Ref Value)) (source target : Value) : Prop := by
   classical
@@ -62,9 +63,10 @@ theorem holFmapAsFiniteSupportParamWitness_mutableBlockRel_cons_refs (refs : Hol
     mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
 
 /-- A fresh unfinished mutable block extends a related child and related
-left and right fields to a related source constructor. -/
-/- Intended HOL counterpart, pending statement and finite-map carrier source review.
-   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "mb_rel_cons" (fmap_as_finite_support_parameters := [f, old, refs])] -/
+left and right fields to a related source constructor.
+
+Intended HOL counterpart, pending statement and finite-map carrier source review.
+Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "mb_rel_cons" (fmap_as_finite_support_parameters := [f, old, refs])] -/
 theorem mutableBlockRel_cons (f : HolFiniteMapExact Nat Nat) (old : HolFiniteMapExact Nat (Ref Value))
     (refs : HolFiniteMapExact Nat (Ref Value)) (ptr tag : Nat) (left left' : List Value)
     (child child' : Value) (right right' : List Value)
@@ -114,9 +116,10 @@ theorem holFmapAsFiniteSupportParamWitness_mutableBlockRel_delete_refs (refs : H
     mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
 
 /-- Removing an unfinished block whose child pointer is fresh preserves any
-existing mutable-block relation. -/
-/- Intended HOL counterpart, pending statement and finite-map carrier source review.
-   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "mb_rel_del" (fmap_as_finite_support_parameters := [f, old, refs])] -/
+existing mutable-block relation.
+
+Intended HOL counterpart, pending statement and finite-map carrier source review.
+Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "mb_rel_del" (fmap_as_finite_support_parameters := [f, old, refs])] -/
 theorem mutableBlockRel_delete (f : HolFiniteMapExact Nat Nat) (old : HolFiniteMapExact Nat (Ref Value))
     (refs : HolFiniteMapExact Nat (Ref Value)) (source target : Value) (ptr tag : Nat)
     (left : List Value) (childPtr : Nat) (right : List Value)

@@ -24,17 +24,19 @@ private theorem evaluateVars {C F : Type} (indices : List Nat) (env : List Value
   rw [results] at run
   exact run
 
-/-- Well-formed source variable lists evaluate to their environment entries. -/
-/- Intended HOL counterpart, pending statement and finite-map carrier source review.
-   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_vars_source" (fmap_as_finite_support := [refs])] -/
+/-- Well-formed source variable lists evaluate to their environment entries.
+
+Intended HOL counterpart, pending statement and finite-map carrier source review.
+Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_vars_source" (fmap_as_finite_support := [refs])] -/
 theorem evaluate_vars_source {C F : Type} (indices : List Nat) (env : List Value)
     (state : BviState (Nat × C) F) (wellFormed : wfVars env.length indices) :
     evaluate (indices.map Bvi.Exp.var) env state = (.val (indices.map fun n => holEl n env), state) :=
   evaluateVars indices env state wellFormed
 
-/-- A larger target environment also evaluates well-formed variable lists. -/
-/- Intended HOL counterpart, pending statement and finite-map carrier source review.
-   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_vars_target" (fmap_as_finite_support := [refs])] -/
+/-- A larger target environment also evaluates well-formed variable lists.
+
+Intended HOL counterpart, pending statement and finite-map carrier source review.
+Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_vars_target" (fmap_as_finite_support := [refs])] -/
 theorem evaluate_vars_target {C F : Type} (indices : List Nat) (n : Nat) (env : List Value)
     (state : BviState C F) (wellFormed : wfVars n indices) (length : n ≤ env.length) :
     evaluate (indices.map Bvi.Exp.var) env state = (.val (indices.map fun k => holEl k env), state) :=
@@ -66,9 +68,10 @@ private theorem evaluateVars_failure {C F : Type} (indices : List Nat) (env : Li
       simp [BviSem.evaluateTuple, head]
 
 /-- A variable-list evaluation that avoids a type error returns exactly its
-environment entries without changing the state. -/
-/- Intended HOL counterpart, pending statement and finite-map carrier source review.
-   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_var_list" (fmap_as_finite_support := [refs])] -/
+environment entries without changing the state.
+
+Intended HOL counterpart, pending statement and finite-map carrier source review.
+Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_var_list" (fmap_as_finite_support := [refs])] -/
 theorem evaluate_var_list {C F : Type} (indices : List Nat) (env : List Value)
     (state next : BviState C F) (result : BviResult)
     (run : evaluate (indices.map Bvi.Exp.var) env state = (result, next))
@@ -80,9 +83,10 @@ theorem evaluate_var_list {C F : Type} (indices : List Nat) (env : List Value)
     rw [run] at failure
     exact (notError (congrArg Prod.fst failure)).elim
 
-/-- Appending extra environment values preserves a successful variable-list evaluation. -/
-/- Intended HOL counterpart, pending statement and finite-map carrier source review.
-   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_vars_expand_env" (fmap_as_finite_support := [refs])] -/
+/-- Appending extra environment values preserves a successful variable-list evaluation.
+
+Intended HOL counterpart, pending statement and finite-map carrier source review.
+Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_vars_expand_env" (fmap_as_finite_support := [refs])] -/
 theorem evaluate_vars_expand_env {C F : Type} (indices : List Nat) (env : List Value)
     (state : BviState C F) (values extras : List Value)
     (run : evaluate (indices.map Bvi.Exp.var) env state = (.val values, state)) :
@@ -105,9 +109,10 @@ theorem evaluate_vars_expand_env {C F : Type} (indices : List Nat) (env : List V
   rw [sameValues] at extendedRun
   exact extendedRun.trans ((evaluateVars indices env state wellFormed).symm.trans run)
 
-/-- Shifting variable indices by a prefix length leaves their evaluation unchanged. -/
-/- Intended HOL counterpart, pending statement and finite-map carrier source review.
-   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_shift_vars" (fmap_as_finite_support := [refs])] -/
+/-- Shifting variable indices by a prefix length leaves their evaluation unchanged.
+
+Intended HOL counterpart, pending statement and finite-map carrier source review.
+Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_shift_vars" (fmap_as_finite_support := [refs])] -/
 theorem evaluate_shift_vars {C F : Type} (indices : List Nat) (env : List Value)
     (state : BviState C F) (prefixValues : List Value) :
     evaluate ((shiftVars prefixValues.length indices).map Bvi.Exp.var) (prefixValues ++ env) state =
@@ -136,18 +141,20 @@ theorem evaluate_shift_vars {C F : Type} (indices : List Nat) (env : List Value)
   · rw [evaluateVars_failure _ _ state (fun shifted => wellFormed (shiftedIff.mp shifted)),
       evaluateVars_failure _ _ state wellFormed]
 
-/-- The one-element prefix instance of variable shifting. -/
-/- Intended HOL counterpart, pending statement and finite-map carrier source review.
-   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_shift_vars_sing" (fmap_as_finite_support := [refs])] -/
+/-- The one-element prefix instance of variable shifting.
+
+Intended HOL counterpart, pending statement and finite-map carrier source review.
+Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_shift_vars_sing" (fmap_as_finite_support := [refs])] -/
 theorem evaluate_shift_vars_sing {C F : Type} (indices : List Nat) (env : List Value)
     (state : BviState C F) (value : Value) :
     evaluate ((shiftVars 1 indices).map Bvi.Exp.var) (value :: env) state =
       evaluate (indices.map Bvi.Exp.var) env state := by
   simpa using evaluate_shift_vars indices env state [value]
 
-/-- Adding binders and shifting variable indices preserves a non-type-error run. -/
-/- Intended HOL counterpart, pending statement and finite-map carrier source review.
-   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_var_list_binders" (fmap_as_finite_support := [refs])] -/
+/-- Adding binders and shifting variable indices preserves a non-type-error run.
+
+Intended HOL counterpart, pending statement and finite-map carrier source review.
+Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_var_list_binders" (fmap_as_finite_support := [refs])] -/
 theorem evaluate_var_list_binders {C F : Type} (indices : List Nat) (extras env : List Value)
     (state : BviState C F) (result : BviResult) (next : BviState C F)
     (run : evaluate (indices.map Bvi.Exp.var) env state = (result, next))
@@ -182,9 +189,10 @@ private theorem evaluateBindings {C F : Type} (args : List Bvi.Exp) (values : Li
         rw [show evaluate (indices.map Bvi.Exp.var) (ys ++ value :: values) state =
           (.val values, state) by simpa [List.append_assoc] using tail]
 
-/-- The bindings generated for successful arguments retrieve their values. -/
-/- Intended HOL counterpart, pending statement and finite-map carrier source review.
-   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_binders" (fmap_as_finite_support := [refs])] -/
+/-- The bindings generated for successful arguments retrieve their values.
+
+Intended HOL counterpart, pending statement and finite-map carrier source review.
+Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_binders" (fmap_as_finite_support := [refs])] -/
 theorem evaluate_binders {C F : Type} (args : List Bvi.Exp) (env : List Value)
     (state nextState : BviState C F) (values : List Value) (next next' : Nat)
     (indices : List Nat)
@@ -204,9 +212,10 @@ def callBlockToBvi (loc : Nat) : CallBlock → Bvi.Exp
       .op (.blockOp (.cons tag))
         (left.map Bvi.Exp.var ++ [callBlockToBvi loc child] ++ right.map Bvi.Exp.var)
 
-/-- Shifting a call skeleton preserves its evaluation under a prefixed environment. -/
-/- Intended HOL counterpart, pending statement and finite-map carrier source review.
-   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_shift_cb" (fmap_as_finite_support := [refs])] -/
+/-- Shifting a call skeleton preserves its evaluation under a prefixed environment.
+
+Intended HOL counterpart, pending statement and finite-map carrier source review.
+Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_shift_cb" (fmap_as_finite_support := [refs])] -/
 theorem evaluate_shift_cb {C F : Type} (cb : CallBlock) (loc : Nat) (env : List Value)
     (state : BviState C F) (bs : List Value) :
     evaluate [callBlockToBvi loc (shiftBlock bs.length cb)] (bs ++ env) state =
@@ -244,9 +253,10 @@ theorem evaluate_shift_cb {C F : Type} (cb : CallBlock) (loc : Nat) (env : List 
     simp only [shiftBlock, callBlockToBvi, BviSem.evaluate]
     rw [show evaluate _ _ state = evaluate _ env state from argsEqual]
 
-/-- The single-value environment-prefix instance for a call skeleton. -/
-/- Intended HOL counterpart, pending statement and finite-map carrier source review.
-   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_shift_cb_sing" (fmap_as_finite_support := [refs])] -/
+/-- The single-value environment-prefix instance for a call skeleton.
+
+Intended HOL counterpart, pending statement and finite-map carrier source review.
+Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_shift_cb_sing" (fmap_as_finite_support := [refs])] -/
 theorem evaluate_shift_cb_sing {C F : Type} (cb : CallBlock) (loc : Nat) (env : List Value)
     (state : BviState C F) (b : Value) :
     evaluate [callBlockToBvi loc (shiftBlock 1 cb)] (b :: env) state =

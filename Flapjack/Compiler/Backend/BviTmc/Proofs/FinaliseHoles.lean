@@ -16,9 +16,10 @@ theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_finalised_old {β γ :
 theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_finalised_new {β γ : Type} (new : HolFiniteMapExact β (Ref γ)) :
     mapofBroad (maptoBroadlookup new) new.finiteSupport = new := by cases new; rfl
 
-/-- Restoring a removed mutable block with the same child preserves holes. -/
-/- Intended HOL counterpart, pending statement and finite-map carrier source review.
-   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_unchanged_except_finalised" (fmap_as_finite_support_parameters := [f, old, new])] -/
+/-- Restoring a removed mutable block with the same child preserves holes.
+
+Intended HOL counterpart, pending statement and finite-map carrier source review.
+Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_unchanged_except_finalised" (fmap_as_finite_support_parameters := [f, old, new])] -/
 theorem holesUnchanged_finalised {α β γ δ : Type} (f : HolFiniteMapExact α β) (_p : δ) (ptr : β)
     (old : HolFiniteMapExact β (Ref γ)) (new : HolFiniteMapExact β (Ref γ))
     (tag : Nat) (fin1 : Bool) (left : List γ) (child : γ) (right : List γ) (fin2 : Bool)
@@ -47,9 +48,10 @@ theorem holFmapAsFiniteSupportParamWitness_holesStill_sub_refs {β γ : Type} (r
 theorem holFmapAsFiniteSupportParamWitness_holesStill_sub_refsNew {β γ : Type} (refsNew : HolFiniteMapExact β (Ref γ)) :
     mapofBroad (maptoBroadlookup refsNew) refsNew.finiteSupport = refsNew := by cases refsNew; rfl
 
-/-- Removing a location absent from the old domain preserves unfinalised holes. -/
-/- Intended HOL counterpart, pending statement and finite-map carrier source review.
-   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_still_not_finalised_sub" (fmap_as_finite_support_parameters := [f, refs, refsNew])] -/
+/-- Removing a location absent from the old domain preserves unfinalised holes.
+
+Intended HOL counterpart, pending statement and finite-map carrier source review.
+Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_still_not_finalised_sub" (fmap_as_finite_support_parameters := [f, refs, refsNew])] -/
 theorem holesStill_sub {α β γ : Type} (ptr : β) (refs : HolFiniteMapExact β (Ref γ))
     (f : HolFiniteMapExact α β) (refsNew : HolFiniteMapExact β (Ref γ))
     (absent : ptr ∉ refs.domain) (related : holesStillNotFinalised f refs refsNew) :
@@ -71,9 +73,10 @@ theorem holFmapAsFiniteSupportParamWitness_holesStill_non_dom_refs {β γ : Type
 theorem holFmapAsFiniteSupportParamWitness_holesStill_non_dom_refsNew {β γ : Type} (refsNew : HolFiniteMapExact β (Ref γ)) :
     mapofBroad (maptoBroadlookup refsNew) refsNew.finiteSupport = refsNew := by cases refsNew; rfl
 
-/-- Finalising a location outside the old domain preserves unfinalised holes. -/
-/- Intended HOL counterpart, pending statement and finite-map carrier source review.
-   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_still_not_finalised_non_dom" (fmap_as_finite_support_parameters := [f, refs, refsNew])] -/
+/-- Finalising a location outside the old domain preserves unfinalised holes.
+
+Intended HOL counterpart, pending statement and finite-map carrier source review.
+Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_still_not_finalised_non_dom" (fmap_as_finite_support_parameters := [f, refs, refsNew])] -/
 theorem holesStill_non_dom {α β γ : Type} (f : HolFiniteMapExact α β)
     (refs : HolFiniteMapExact β (Ref γ)) (refsNew : HolFiniteMapExact β (Ref γ)) (ptr : β)
     (tag : Nat) (left : List γ) (child : γ) (right : List γ)
