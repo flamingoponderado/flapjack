@@ -860,7 +860,6 @@ import Flapjack.Compiler.Backend.BviTmc.Proofs.WellFormed
 import Flapjack.Compiler.Backend.BviTmc.Proofs.ExtractionWellFormed
 import Flapjack.Compiler.Backend.BviTmc.Proofs.ListExtraction
 import Flapjack.Compiler.Backend.BviTmc.Proofs.ResultRelation
-import Flapjack.Compiler.Backend.BviTmc.Proofs.EvaluateRewrite
 import Flapjack.Compiler.Backend.BviTmc.Proofs.FillHole
 import Flapjack.Compiler.Backend.BviTmc.Proofs.VariableSimulation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.TickSimulation
