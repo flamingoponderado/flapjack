@@ -117,7 +117,8 @@ theorem pmatchList_con_worklist {C F : Type} (trace : BackendCommon.Tra) (upper 
     pmatchList_con_split state stamp patterns (rest.map Prod.fst) actual fields values pre bindings matched
   constructor
   · exact lengths
-  · have combined := pmatchList_append_match state patterns (rest.map Prod.fst) fields values pre intermediate bindings first second
+  · have combined := (pmatchList_append_match_iff state patterns (rest.map Prod.fst)
+      (fields ++ values) pre bindings).2 ⟨fields, values, intermediate, rfl, first, second⟩
     have patternEq : List.map (Prod.fst ∘ Prod.snd) (patternEntries trace upper 0 patterns) = patterns := by
       simpa only [Function.comp_def] using patternEntries_patterns trace upper 0 patterns
     simpa only [List.map_append, List.map_map, patternEq] using combined
