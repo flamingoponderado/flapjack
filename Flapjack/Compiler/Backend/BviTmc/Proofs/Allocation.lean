@@ -14,8 +14,8 @@ end AllocationWitness
 
 /-- Allocating related cells at fresh pointers preserves the state relation,
 extends the pointer map, and preserves existing mutable holes. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_rel_alloc"
-  (fmap_as_finite_support_relation := [BviState.refs, f])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_rel_alloc" (fmap_as_finite_support_relation := [BviState.refs, f])] -/
 theorem stateRel_alloc {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (source : BviState (Nat × C) F) (target : BviState C F) (src tgt : Nat) (v w : Ref Value)
     (related : stateRel f source target) (srcFresh : src ∉ source.refs.domain)

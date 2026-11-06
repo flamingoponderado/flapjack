@@ -20,8 +20,8 @@ theorem holFmapAsFiniteSupportParamWitness_mutableBlockRel_old_subset_smaller (s
     mapofBroad (maptoBroadlookup smaller) smaller.finiteSupport = smaller := by cases smaller; rfl
 
 /-- A mutable-block relation remains valid when the old domain shrinks. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "mb_rel_refs_old_subset"
-  (fmap_as_finite_support_parameters := [f, larger, refs, smaller])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "mb_rel_refs_old_subset" (fmap_as_finite_support_parameters := [f, larger, refs, smaller])] -/
 theorem mutableBlockRel_old_subset (f : HolFiniteMapExact Nat Nat)
     (larger : HolFiniteMapExact Nat (Ref Value)) (refs : HolFiniteMapExact Nat (Ref Value))
     (source target : Value) (smaller : HolFiniteMapExact Nat (Ref Value))

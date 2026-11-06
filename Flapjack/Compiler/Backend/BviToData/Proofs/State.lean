@@ -24,8 +24,8 @@ theorem holFmapAsFiniteSupportRelationWitness_BviState {C F : Type} :
 
 /-- The source relation between BVI and data states; data locals and resource
 accounting intentionally do not occur in this relation. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml" "state_rel_def"
-  (fmap_as_finite_support_relation := [BviState.refs])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml" "state_rel_def" (fmap_as_finite_support_relation := [BviState.refs])] -/
 def stateRel {C F : Type} (source : BviSem.BviState C F) (target : DataSem.State C F) : Prop :=
   source.clock = target.clock ∧ codeRel source.code target.code ∧
   target.compileOracle = (fun n => let (config, program) := source.compileOracle n; (config, compileProg program)) ∧
@@ -34,8 +34,8 @@ def stateRel {C F : Type} (source : BviSem.BviState C F) (target : DataSem.State
   source.ffi = target.ffi ∧ source.global = target.global
 
 /-- Decrementing both related clocks preserves the state relation. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml" "state_rel_dec_clock"
-  (fmap_as_finite_support_relation := [BviState.refs])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml" "state_rel_dec_clock" (fmap_as_finite_support_relation := [BviState.refs])] -/
 theorem stateRel_decClock {C F : Type} (source : BviSem.BviState C F) (target : DataSem.State C F)
     (related : stateRel source target) : stateRel (BviSem.decClock 1 source) (DataSem.decClock target) := by
   rcases related with ⟨clocks, rest⟩

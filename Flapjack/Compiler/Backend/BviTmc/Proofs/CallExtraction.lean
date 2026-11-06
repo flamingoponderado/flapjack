@@ -10,8 +10,8 @@ theorem holFmapAsFiniteSupportWitness {C F : Type} :
   BviSem.holFmapAsFiniteSupportWitness
 
 /-- The direct-call case of the original extraction simulation. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_bvi_to_cb_aux_inr_lemma"
-  (fmap_as_finite_support := [refs])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_bvi_to_cb_aux_inr_lemma" (fmap_as_finite_support := [refs])] -/
 theorem evaluate_bvi_to_cb_aux_inr_call {C F : Type}
     (n loc tag ticks : Nat) (dest : Option Nat) (args : List Bvi.Exp) (handler : Option Bvi.Exp)
     (env : List Value) (state final : BviState C F) (result : BviResult)
@@ -68,8 +68,8 @@ theorem evaluate_bvi_to_cb_aux_inr_call {C F : Type}
   next => simp at extracted
 
 /-- The direct-call case of source reconstruction correctness. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_bvi_to_cb"
-  (fmap_as_finite_support := [refs])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_bvi_to_cb" (fmap_as_finite_support := [refs])] -/
 theorem evaluate_bvi_to_cb_call {C F : Type}
     (cb : CallBlock) (n loc ticks : Nat) (dest : Option Nat) (args : List Bvi.Exp)
     (handler : Option Bvi.Exp) (env : List Value) (state final : BviState C F)
@@ -105,8 +105,8 @@ theorem evaluate_bvi_to_cb_call {C F : Type}
   next => simp at extracted
 
 /-- The singleton direct-call constructor case of reconstruction correctness. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_bvi_to_cb"
-  (fmap_as_finite_support := [refs])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_bvi_to_cb" (fmap_as_finite_support := [refs])] -/
 theorem evaluate_bvi_to_cb_constructor_call {C F : Type}
     (cb : CallBlock) (n loc tag ticks : Nat) (dest : Option Nat) (args : List Bvi.Exp)
     (handler : Option Bvi.Exp) (env : List Value) (state final : BviState C F)
@@ -135,8 +135,8 @@ theorem evaluate_bvi_to_cb_constructor_call {C F : Type}
 
 /-- The constructor-expression case, using the source induction hypothesis for
 the constructor's argument list. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_bvi_to_cb_aux_inr_lemma"
-  (fmap_as_finite_support := [refs])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_bvi_to_cb_aux_inr_lemma" (fmap_as_finite_support := [refs])] -/
 theorem evaluate_bvi_to_cb_aux_inr_constructor {C F : Type}
     (n loc tag childTag : Nat) (args : List Bvi.Exp)
     (ih : ∀ (env : List Value) (state final : BviState C F) (result : BviResult)
@@ -194,8 +194,8 @@ theorem evaluate_bvi_to_cb_aux_inr_constructor {C F : Type}
           simpa [errorEq] using run
 
 /-- The singleton-list case of the original mutual extraction simulation. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_bvi_to_cb_aux_inr_lemma"
-  (fmap_as_finite_support := [refs])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_bvi_to_cb_aux_inr_lemma" (fmap_as_finite_support := [refs])] -/
 theorem evaluate_bvi_to_cb_aux_inr_singleton {C F : Type}
     (n loc tag : Nat) (e : Bvi.Exp)
     (ih : ∀ (env : List Value) (state final : BviState C F) (result : BviResult)

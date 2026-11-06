@@ -19,8 +19,8 @@ theorem holFmapAsFiniteSupportParamWitness_stateRefRel_target (target : HolFinit
 
 /-- Every original reference is translated to a related target reference,
 and the pointer map is defined exactly on the source reference domain. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_ref_rel_def"
-  (fmap_as_finite_support_parameters := [f, source, target])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_ref_rel_def" (fmap_as_finite_support_parameters := [f, source, target])] -/
 def stateRefRel (f : HolFiniteMapExact Nat Nat) (source : HolFiniteMapExact Nat (Ref Value))
     (target : HolFiniteMapExact Nat (Ref Value)) : Prop :=
   f.domain = source.domain ∧ ∀ i v, source.lookup i = some v →
@@ -30,8 +30,8 @@ theorem holFmapAsFiniteSupportParamWitness_fmapInj_f (f : HolFiniteMapExact Nat 
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 
 /-- Pointer renaming is injective on its finite domain. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "fmap_inj_def"
-  (fmap_as_finite_support_parameters := [f])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "fmap_inj_def" (fmap_as_finite_support_parameters := [f])] -/
 def fmapInj (f : HolFiniteMapExact Nat Nat) : Prop :=
   ∀ p1 p2 q, f.lookup p1 = some q ∧ f.lookup p2 = some q → p1 = p2
 
@@ -41,8 +41,8 @@ theorem holFmapAsFiniteSupportParamWitness_refRel_submap_g (g : HolFiniteMapExac
     mapofBroad (maptoBroadlookup g) g.finiteSupport = g := by cases g; rfl
 
 /-- Extending the pointer map preserves the reference-cell relation. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "ref_rel_submap"
-  (fmap_as_finite_support_parameters := [f, g])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "ref_rel_submap" (fmap_as_finite_support_parameters := [f, g])] -/
 theorem refRel_submap (f : HolFiniteMapExact Nat Nat) (g : HolFiniteMapExact Nat Nat)
     (source target : Ref Value) (related : refRel f source target) (submap : finiteSubmap f g) :
     refRel g source target := by
@@ -55,8 +55,8 @@ theorem holFmapAsFiniteSupportParamWitness_fmapInj_update_f (f : HolFiniteMapExa
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 
 /-- Extending the pointer map at a fresh target keeps it injective. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "fmap_inj_update"
-  (fmap_as_finite_support_parameters := [f])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "fmap_inj_update" (fmap_as_finite_support_parameters := [f])] -/
 theorem fmapInj_update (f : HolFiniteMapExact Nat Nat) (key value : Nat) (injective : fmapInj f)
     (fresh : ∀ key', f.lookup key' ≠ some value) : fmapInj (f.updateEq (key, value)) := by
   intro p1 p2 q ⟨h1, h2⟩
@@ -87,8 +87,8 @@ theorem holFmapAsFiniteSupportParamWitness_stateRefRel_filled_target (target : H
 
 /-- Updating a target location outside the pointer-map range preserves the
 reference relation. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_ref_rel_filled"
-  (fmap_as_finite_support_parameters := [f, source, target])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_ref_rel_filled" (fmap_as_finite_support_parameters := [f, source, target])] -/
 theorem stateRefRel_filled (f : HolFiniteMapExact Nat Nat) (source : HolFiniteMapExact Nat (Ref Value))
     (target : HolFiniteMapExact Nat (Ref Value)) (key : Nat) (value : Ref Value)
     (related : stateRefRel f source target) (fresh : ∀ i, f.lookup i ≠ some key) :
@@ -112,8 +112,8 @@ theorem holFmapAsFiniteSupportParamWitness_stateRefRel_update_target (target : H
 
 /-- Updating related source and target cells preserves the heap relation
 when pointer renaming is injective. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_ref_rel_update"
-  (fmap_as_finite_support_parameters := [f, source, target])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_ref_rel_update" (fmap_as_finite_support_parameters := [f, source, target])] -/
 theorem stateRefRel_update (f : HolFiniteMapExact Nat Nat) (source : HolFiniteMapExact Nat (Ref Value))
     (target : HolFiniteMapExact Nat (Ref Value)) (ptr ptr' : Nat) (v w : Ref Value)
     (related : stateRefRel f source target) (injective : fmapInj f)
@@ -152,8 +152,8 @@ theorem holFmapAsFiniteSupportParamWitness_stateRefRel_alloc_target (target : Ho
 
 /-- Fresh source and target allocation extends the pointer map and keeps
 the reference heaps related. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_ref_rel_alloc"
-  (fmap_as_finite_support_parameters := [f, source, target])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_ref_rel_alloc" (fmap_as_finite_support_parameters := [f, source, target])] -/
 theorem stateRefRel_alloc (f : HolFiniteMapExact Nat Nat) (source : HolFiniteMapExact Nat (Ref Value))
     (target : HolFiniteMapExact Nat (Ref Value)) (src tgt : Nat) (v w : Ref Value)
     (related : stateRefRel f source target) (srcFresh : src ∉ source.domain) (_tgtFresh : tgt ∉ target.domain)
@@ -203,8 +203,8 @@ theorem holFmapAsFiniteSupportParamWitness_stateRefRel_lookup_target (target : H
     mapofBroad (maptoBroadlookup target) target.finiteSupport = target := by cases target; rfl
 
 /-- Every mapped source pointer resolves to related cells in both heaps. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_ref_rel_lookup"
-  (fmap_as_finite_support_parameters := [f, source, target])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_ref_rel_lookup" (fmap_as_finite_support_parameters := [f, source, target])] -/
 theorem stateRefRel_lookup (f : HolFiniteMapExact Nat Nat) (n m : Nat)
     (source : HolFiniteMapExact Nat (Ref Value)) (target : HolFiniteMapExact Nat (Ref Value))
     (mapped : f.lookup n = some m) (related : stateRefRel f source target) :
@@ -226,8 +226,8 @@ theorem holFmapAsFiniteSupportParamWitness_fmapInj_lookup_eq_f (f : HolFiniteMap
 
 /-- An injective pointer map identifies target pointers exactly when it
 identifies their source pointers. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "fmap_inj_flookup_eq"
-  (fmap_as_finite_support_parameters := [f])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "fmap_inj_flookup_eq" (fmap_as_finite_support_parameters := [f])] -/
 theorem fmapInj_lookup_eq (f : HolFiniteMapExact Nat Nat) (n m n' m' : Nat)
     (injective : fmapInj f) (left : f.lookup n = some m) (right : f.lookup n' = some m') :
     m = m' ↔ n = n' := by
@@ -248,8 +248,8 @@ theorem holFmapAsFiniteSupportParamWitness_no_mutblock_target (target : HolFinit
     mapofBroad (maptoBroadlookup target) target.finiteSupport = target := by cases target; rfl
 
 /-- A related source heap cannot already contain a TMC mutable block. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "no_mutblock"
-  (fmap_as_finite_support_parameters := [f, source, target])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "no_mutblock" (fmap_as_finite_support_parameters := [f, source, target])] -/
 theorem no_mutblock (f : HolFiniteMapExact Nat Nat) (source : HolFiniteMapExact Nat (Ref Value))
     (target : HolFiniteMapExact Nat (Ref Value)) (ptr tag : Nat) (finalised : Bool)
     (left : List Value) (child : Value) (right : List Value) (related : stateRefRel f source target)

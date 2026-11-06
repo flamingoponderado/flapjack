@@ -13,8 +13,8 @@ theorem holFmapAsFiniteSupportRelationWitness_BviState {C F : Type} :
   BviSem.holFmapAsFiniteSupportWitness
 
 /-- The empty-list case of the original TMC evaluation simulation. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_rewrite_tmc"
-  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap, wrapMap, workMap])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_rewrite_tmc" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap, wrapMap, workMap])] -/
 theorem evaluate_rewrite_tmc_nil {C F : Type} (n : Nat × Nat)
     (source : BviState (Nat × C) F) (env1 : List Value) (result : BviResult)
     (final : BviState (Nat × C) F) (opt : Bool) (f : HolFiniteMapExact Nat Nat)

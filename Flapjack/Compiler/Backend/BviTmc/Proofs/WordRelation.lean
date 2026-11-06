@@ -31,8 +31,8 @@ private theorem related_scalars_eq (f : HolFiniteMapExact Nat Nat) (values relat
 
 /-- Successful word operations can only consume scalar values, which the
 TMC value relation preserves exactly. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_word_app_v_rel"
-  (fmap_as_finite_support_parameters := [f])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_word_app_v_rel" (fmap_as_finite_support_parameters := [f])] -/
 theorem doWordApp_rel (f : HolFiniteMapExact Nat Nat) (op : ClosLang.WordOp)
     (values relatedValues : List Value) (result : Value) (run : doWordApp op values = some result)
     (related : List.Forall₂ (valueRel f) values relatedValues) : relatedValues = values := by
@@ -50,8 +50,8 @@ theorem holFmapAsFiniteSupportParamWitness_doWordApp_result_rel_f (f : HolFinite
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 
 /-- Successful word-operation results are related to themselves. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_word_app_v_rel_refl"
-  (fmap_as_finite_support_parameters := [f])]
+/- Intended HOL counterpart, pending statement and finite-map carrier source review.
+   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_word_app_v_rel_refl" (fmap_as_finite_support_parameters := [f])] -/
 theorem doWordApp_result_rel (f : HolFiniteMapExact Nat Nat) (op : ClosLang.WordOp)
     (values : List Value) (result : Value) (run : doWordApp op values = some result) :
     valueRel f result result := by
