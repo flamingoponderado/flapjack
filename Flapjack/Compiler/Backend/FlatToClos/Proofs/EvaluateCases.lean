@@ -109,24 +109,6 @@ theorem evaluate_lit {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     | exact EvalResultRel.value (.cons (ValueRel.word64 _) .nil)
     | exact EvalResultRel.value (.cons (ValueRel.float64 _) .nil)
 
-/-- Nullary tuples and constructors evaluate to related closure blocks. -/
-theorem evaluate_con_nil {C F : Type} (env : FlatSem.Environment FlatSem.Value)
-    (names : List (Option MlString)) (values : List ClosSem.Value)
-    (source : FlatSem.State C F) (target : ClosSem.State C F)
-    (trace : BackendCommon.Tra) (stamp : Option (FlatLang.CtorId × FlatLang.TypeId))
-    (states : StateRel source target) :
-    EvalSim env names values source target [.con trace stamp []] := by
-  cases stamp with
-  | none =>
-    simp [EvalSim, compile, compileExps, compileExp, smartCons, FlatSem.evaluate,
-      ClosSem.evaluate, ClosSem.fixClock, ClosSem.doApp, ClosSem.applyBlock, states,
-      EvalResultRel.value (.cons (ValueRel.tuple .nil) .nil)]
-  | some stamp =>
-    obtain ⟨tag, typeId⟩ := stamp
-    simp [EvalSim, compile, compileExps, compileExp, smartCons, FlatSem.evaluate,
-      ClosSem.evaluate, ClosSem.fixClock, ClosSem.doApp, ClosSem.applyBlock, states,
-      EvalResultRel.value (.cons (ValueRel.con .nil) .nil)]
-
 /-- Constructor translation preserves evaluation when its reversed
 argument list is simulated. -/
 theorem evaluate_con {C F : Type} (env : FlatSem.Environment FlatSem.Value)

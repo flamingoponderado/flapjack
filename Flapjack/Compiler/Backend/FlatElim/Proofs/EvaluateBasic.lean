@@ -348,65 +348,6 @@ theorem evaluate_keep_flatStateRel_appAssign {C F : Type} (tra : BackendCommon.T
       refine ⟨targetNext, ?_, nextRelated, closed, safe⟩
       simpa [FlatSem.evaluate, targetArgEval, FlatSem.fixClock] using applied
 
-/-- Ordinary primitive application preserves the evaluation simulation when
-its argument-list induction hypothesis holds. -/
-theorem evaluate_keep_flatStateRel_appOrdinary {C F : Type} (tra : BackendCommon.Tra)
-    (op : FlatLang.Op) (args : List FlatLang.Exp) (ordinary : ordinaryPrimitive op)
-    (ih : evaluationSimulation (C := C) (F := F) args.reverse) :
-    evaluationSimulation (C := C) (F := F) [.app tra op args] := by
-  intro env source next result reachable target run lookupsClosed related envClosed envSafe expressionsSafe notTypeError
-  have argsClosed : globalsWithin (findGlobalsList destGlobalVarLookup args.reverse) reachable := by
-    apply findLookupsList_reverse_within args reachable
-    have appClosed := (findLookupsList_within_iff _ _).mp lookupsClosed (.app tra op args) (by simp)
-    exact (findLookups_app_within tra op args reachable appClosed).1
-  have argsSafe : expressionsNoEval args.reverse := by
-    apply expressionsNoEval_reverse args
-    apply (hasEvalList_eq_false_iff args).mp
-    have safe := expressionsSafe (.app tra op args) (by simp)
-    simp [hasEval] at safe
-    exact safe.2
-  cases argEval : FlatSem.evaluate env source args.reverse with
-  | mk argState argResult =>
-    rw [evaluate_app_ordinary env source tra op args ordinary] at run
-    simp only [argEval, FlatSem.fixClock] at run
-    have argNotTypeError : argResult ≠ .err (.abort .typeError) := by
-      intro bad
-      subst argResult
-      simp at run
-      rcases run with ⟨_, rfl⟩
-      exact notTypeError rfl
-    obtain ⟨targetArgState, targetArgEval, argRelated, argClosed, argSafe⟩ :=
-      ih env source argState argResult reachable target argEval argsClosed related envClosed envSafe argsSafe argNotTypeError
-    have clampedRelated := flatStateRel_fixClock reachable source target argState targetArgState argResult related argRelated
-    simp only [FlatSem.fixClock] at clampedRelated
-    cases argResult with
-    | err error =>
-      simp only at run
-      rcases run with ⟨rfl, rfl⟩
-      refine ⟨{ targetArgState with clock := min target.clock targetArgState.clock }, ?_, clampedRelated, argClosed, argSafe⟩
-      rw [evaluate_app_ordinary env target tra op args ordinary]
-      simp [targetArgEval, FlatSem.fixClock]
-    | val values =>
-      simp only at run
-      have valuesClosed : globalsWithin (findValuesGlobals values.reverse) reachable := by
-        apply findValuesGlobals_reverse_within
-        simpa [findPrimitiveResultGlobals] using argClosed
-      have valuesSafe : valuesNoEval values.reverse := by
-        apply valuesNoEval_reverse
-        simpa [Flapjack.Compiler.Backend.FlatProps.resultValues] using argSafe
-      have opClosed : globalsWithin (findLookups (.app tra op [])) reachable := by
-        have appClosed := (findLookupsList_within_iff _ _).mp lookupsClosed (.app tra op args) (by simp)
-        exact (findLookups_app_within tra op args reachable appClosed).2
-      obtain ⟨targetNext, applied, nextRelated, closed, safe⟩ :=
-        applyResult_flatStateRel reachable
-          { argState with clock := min source.clock argState.clock }
-          { targetArgState with clock := min target.clock targetArgState.clock }
-          next op values.reverse result tra clampedRelated ordinary.1
-          valuesClosed opClosed valuesSafe run notTypeError
-      refine ⟨targetNext, ?_, nextRelated, closed, safe⟩
-      rw [evaluate_app_ordinary env target tra op args ordinary]
-      simpa [targetArgEval, FlatSem.fixClock] using applied
-
 /-- The constructor-expression case of the original evaluation simulation,
 assuming its argument-list induction hypothesis. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "evaluate_keep_flat_state_rel_eq_lemma"]
