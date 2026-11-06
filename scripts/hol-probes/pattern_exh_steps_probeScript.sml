@@ -119,3 +119,8 @@ val pmatch_list_cons_replay = prove (
   Cases_on `pattern_semantics$pmatch_list refs ps vs` >> fs []);
 val _ = show_local "pmatch_list_cons=" pmatch_list_cons_replay;
 val _ = show_local "pmatch_comp_length=" pattern_compTheory.pmatch_list_LENGTH;
+val pmatch_exh_length_replay = prove (
+  ``!refs ps vs. pattern_semantics$pmatch_list refs ps vs <> pattern_common$PTypeFailure ==>
+    LENGTH ps = LENGTH vs``,
+  metis_tac [pattern_compTheory.pmatch_list_LENGTH]);
+val _ = show_local "pmatch_exh_length=" pmatch_exh_length_replay;

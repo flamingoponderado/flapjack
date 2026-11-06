@@ -1,9 +1,24 @@
 import Flapjack.Compiler.Backend.PatternComp.Proofs.RowSelection
 
 /-! Proof-side traversal and guard lemmas for the pattern compiler. The
-abstract term and finite-map carriers remain pending HOL correspondence review. -/
+remaining untagged traversal and guard declarations await HOL review. -/
 namespace Flapjack.Compiler.Backend.PatternComp
 open Flapjack PatternCommon PatternSemantics
+
+private def toBroad (refs : HolFiniteMapExact Nat Term) : Nat → Option Term := refs.lookup
+
+private def ofBroad (lookup : Nat → Option Term)
+    (support : ∃ keys : List Nat, ∀ key, lookup key ≠ none → key ∈ keys) :
+    HolFiniteMapExact Nat Term := ⟨lookup, support⟩
+
+/-- The canonical finite-map parameter roundtrips through its lookup view. -/
+theorem holFmapAsFiniteSupportParamWitness_pmatchList_length_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs := by
+  cases refs
+  exact ⟨rfl, rfl, rfl⟩
 
 /-- Traverse constructor fields and references along a list of indices. -/
 def walk (refs : HolFiniteMapExact Nat Term) : List Nat → Term → Option Term
@@ -87,6 +102,8 @@ theorem patsToCode_of_guard_simulation (refs : HolFiniteMapExact Nat Term) (valu
       | some result => simp [patsToCode, dtEval_mkIf, dtEval, guardEq, head, matchRows, tail]
 
 /-- A pattern-list scan without a type error has equal input lengths. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "pmatch_list_LENGTH"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem pmatchList_length (refs : HolFiniteMapExact Nat Term) (patterns : List Pat)
     (values : List Term) (safe : pmatchList refs patterns values ≠ .typeFailure) :
     values.length = patterns.length := by

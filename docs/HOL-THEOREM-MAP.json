@@ -111389,6 +111389,24 @@
     "reviewer": "Compared the source statement and typed local HOL replay: matching two nonempty lists combines the head match and tail match with pand. Typed evidence is in pattern_exh_steps_probe.out; the same-module witness checks the canonical finite-map parameter roundtrip."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/PatternComp/Proofs/GuardCompilation.lean",
+    "lean_name": "pmatchList_length",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml",
+    "hol_name": "pmatch_list_LENGTH",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": ["refs"],
+    "reviewer": "Compared the typed source statement pmatch_comp_length in pattern_exh_steps_probe.out: a pattern-list match that is not a type failure has equal value and pattern lengths, in the same order. The same-module witness checks the canonical finite-map parameter roundtrip."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Proofs/Soundness.lean",
+    "lean_name": "pmatchList_length_source",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "pmatch_list_LENGTH",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": ["refs"],
+    "reviewer": "Compared the source statement and typed local HOL replay pmatch_exh_length in pattern_exh_steps_probe.out: a pattern-list match without type failure has pattern length equal to value length. The same-module witness checks the canonical finite-map parameter roundtrip."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/PatternExh/Exhaustive.lean",
     "lean_name": "exhRows",
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",

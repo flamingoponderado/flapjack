@@ -1,7 +1,7 @@
 import Flapjack.Compiler.Backend.PatternComp.Proofs.GuardCompilation
 
 /-! Proof-side soundness infrastructure for CakeML's exhaustiveness matrix.
-The matcher and finite-map carriers remain pending HOL correspondence review. -/
+The row and decision-tree evaluators remain pending HOL correspondence review. -/
 namespace Flapjack.Compiler.Backend.PatternExh
 open Flapjack PatternCommon PatternSemantics PatternComp
 
@@ -63,6 +63,13 @@ theorem holFmapAsFiniteSupportParamWitness_pmatchList_cons_refs
     ofBroad (toBroad refs) refs.finiteSupport = refs :=
   holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
 
+theorem holFmapAsFiniteSupportParamWitness_pmatchList_length_source_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
+
 /-- A wildcard matches every term. -/
 @[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "pmatch_Any"
   (fmap_as_finite_support_parameters := [refs])]
@@ -88,6 +95,14 @@ theorem pmatchList_cons (refs : HolFiniteMapExact Nat Term) (pattern : Pat)
       pand (pmatch refs pattern value) (pmatchList refs patterns values) := by
   cases head : pmatch refs pattern value <;>
     cases tail : pmatchList refs patterns values <;> simp [pmatchList, pand, head, tail]
+
+/-- A match without a type failure has equally long pattern and value lists. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "pmatch_list_LENGTH"
+  (fmap_as_finite_support_parameters := [refs])]
+theorem pmatchList_length_source (refs : HolFiniteMapExact Nat Term) (patterns : List Pat)
+    (values : List Term) (safe : pmatchList refs patterns values ≠ .typeFailure) :
+    patterns.length = values.length :=
+  (PatternComp.pmatchList_length refs patterns values safe).symm
 
 /-- Matching appended pattern/value segments composes their three-valued results. -/
 theorem pmatchList_append (refs : HolFiniteMapExact Nat Term)
@@ -360,7 +375,7 @@ theorem ctorsOf_sound (refs : HolFiniteMapExact Nat Term) (pattern : Pat) (value
         | some actual => simp [pmatch] at safe
         | none =>
           have listSafe : pmatchList refs patterns fields ≠ .typeFailure := by simpa [pmatch] using safe
-          have sameLength := pmatchList_length refs patterns fields listSafe
+          have sameLength := pmatchList_length_source refs patterns fields listSafe
           exact ⟨.tupC fields.length, fields, rfl, by simp [sameLength]⟩
     | some info =>
       obtain ⟨tag, siblings⟩ := info
