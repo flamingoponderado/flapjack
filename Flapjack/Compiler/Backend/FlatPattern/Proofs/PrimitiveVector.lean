@@ -9,22 +9,6 @@ namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack Flapjack.AstHOL Flapjack.Compiler.Backend
 open Flapjack.SemanticPrimitivesHOL (Result)
 
-/-- The flat list decoder inverts the canonical list constructor. -/
-theorem valueToList_listToValue (values : List FlatSem.Value) :
-    FlatSem.valueToList (FlatSem.listToValue values) = some values := by
-  induction values with
-  | nil => simp [FlatSem.valueToList, FlatSem.listToValue, BackendCommon.nilTag, FlatSem.listId]
-  | cons head tail ih => simp [FlatSem.valueToList, FlatSem.listToValue, BackendCommon.consTag, FlatSem.listId, ih]
-
-/-- Decoding related lists produces pointwise related elements. -/
-theorem valueToList_related (value value' : FlatSem.Value) (values : List FlatSem.Value)
-    (related : ValueRel value value') (decoded : FlatSem.valueToList value = some values) :
-    ∃ values', FlatSem.valueToList value' = some values' ∧ List.Forall₂ ValueRel values values' := by
-  have encoded := valueToList_inverse value values decoded
-  rw [← encoded] at related
-  obtain ⟨values', rfl, valuesRel⟩ := listToValue_related values value' related
-  exact ⟨values', valueToList_listToValue values', valuesRel⟩
-
 /-- List-to-vector conversion preserves arbitrary successful primitive results. -/
 theorem doApp_vectorFromList_related {C F : Type} (cfg : Config) (source target sourceFinal : FlatSem.State C F)
     (values values' : List FlatSem.Value) (result : Result FlatSem.Value FlatSem.Value)
@@ -41,7 +25,7 @@ theorem doApp_vectorFromList_related {C F : Type} (cfg : Config) (source target 
       cases decoded : FlatSem.valueToList value with
       | none => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, decoded] at run
       | some items =>
-        obtain ⟨items', decoded', itemsRel⟩ := valueToList_related value value' items valueRel decoded
+        obtain ⟨items', decoded', itemsRel⟩ := FlatProps.simpleValueToList ValueRel simpleValueRel_valueRel value value' items valueRel decoded
         simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, decoded] at run
         rcases run with ⟨rfl, rfl⟩
         refine ⟨target, .val (.vectorv items'), ?_, states, .value ?_⟩
@@ -95,8 +79,8 @@ theorem doApp_listAppend_related {C F : Type} (cfg : Config) (source target sour
           cases right : FlatSem.valueToList second with
           | none => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, left, right] at run
           | some ys =>
-            obtain ⟨xs', left', xsRel⟩ := valueToList_related first first' xs firstRel left
-            obtain ⟨ys', right', ysRel⟩ := valueToList_related second second' ys secondRel right
+            obtain ⟨xs', left', xsRel⟩ := FlatProps.simpleValueToList ValueRel simpleValueRel_valueRel first first' xs firstRel left
+            obtain ⟨ys', right', ysRel⟩ := FlatProps.simpleValueToList ValueRel simpleValueRel_valueRel second second' ys secondRel right
             simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, left, right] at run
             rcases run with ⟨rfl, rfl⟩
             refine ⟨target, .val (FlatSem.listToValue (xs' ++ ys')), ?_, states, .value ?_⟩

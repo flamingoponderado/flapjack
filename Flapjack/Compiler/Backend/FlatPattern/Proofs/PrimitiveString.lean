@@ -155,7 +155,7 @@ theorem doApp_stringConcat_related {C F : Type} (cfg : Config) (source target so
         cases concatenated : FlatSem.valuesToString items with
         | none => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, decoded, concatenated] at run
         | some string =>
-          obtain ⟨items', decoded', itemsRel⟩ := valueToList_related value value' items valueRel decoded
+          obtain ⟨items', decoded', itemsRel⟩ := FlatProps.simpleValueToList ValueRel simpleValueRel_valueRel value value' items valueRel decoded
           have concatenated' := FlatProps.simpleValuesToString ValueRel simpleValueRel_valueRel _ _ string itemsRel concatenated
           simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, decoded, concatenated] at run
           rcases run with ⟨rfl, rfl⟩
