@@ -49,20 +49,6 @@ theorem resultRel_termination_iff {A B C D : Type} (values : A → B → Prop) (
       subst rightAbort
       cases leftAbort <;> rfl
 
-/-- The outcome predicate agrees with the observation evaluator's clauses. -/
-theorem terminatingResult_iff {A B : Type} (result : SemanticPrimitivesHOL.Result A B)
-    (outcome : HolOutcome) : terminatingResult result outcome ↔
-    (match result, outcome with
-     | .err (.abort .timeoutError), _ => False
-     | .err (.abort (.ffiError event)), actual => actual = .ffiOutcome event
-     | _, actual => actual = .success) := by
-  cases result with
-  | val value => rfl
-  | err error =>
-    cases error with
-    | raise value => rfl
-    | abort reason => cases reason <;> rfl
-
 /-- Related clock-indexed results and equal FFI states imply equal
 observations, even when successful values use different representations. -/
 theorem semantics_eq_of_related_observations {C F : Type} (ffi : HolFfiState F) (maxApp : Nat)

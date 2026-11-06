@@ -118,14 +118,4 @@ theorem introMultiBounded_fuel_independent (fuel₁ fuel₂ maxApp : Nat) (e : E
   have equal := introMultiFuel_unique used₁ used₂ maxApp e result₁ result₂ firstRun secondRun
   rw [first, second, equal]
 
-/-- The executed pass has the same output for every initial fuel, whether
-multi-argument introduction is enabled or disabled. -/
-theorem compileFuel_fuel_independent (fuel₁ fuel₂ : Nat) (enabled : Bool)
-    (maxApp : Nat) (program : List Exp) :
-    compileFuel fuel₁ enabled maxApp program = compileFuel fuel₂ enabled maxApp program := by
-  have equal : introMultiBounded fuel₁ maxApp = introMultiBounded fuel₂ maxApp := by
-    funext e
-    exact introMultiBounded_fuel_independent fuel₁ fuel₂ maxApp e
-  simp [compileFuel, equal]
-
 end Flapjack.Compiler.Backend.ClosMti

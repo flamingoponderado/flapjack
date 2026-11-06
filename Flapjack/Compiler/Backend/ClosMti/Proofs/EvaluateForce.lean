@@ -184,21 +184,6 @@ theorem runForced_relatedWithin {C F : Type} (limit : Nat) (source target : Stat
                 by simp [runForced, sourceDest, sourceForceRun, sourceUpdate],
                 by simpa [resultRel, maxEq] using output, updatedStates⟩
 
-/-- The unrestricted force continuation, retained for existing callers. -/
-theorem runForced_related {C F : Type} (source target : State C F)
-    (sourceValues targetValues : List Value)
-    (targetResult : SemanticPrimitivesHOL.Result (List Value) Value) (targetFinal : State C F)
-    (run : runForced targetValues target = (targetResult, targetFinal))
-    (states : StateRel source target)
-    (values : List.Forall₂ (ValueRel source.maxApp) sourceValues targetValues)
-    (forceIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode [appUnit (.var .none 0)]) :
-    ∃ sourceResult sourceFinal,
-      runForced sourceValues source = (sourceResult, sourceFinal) ∧
-      resultRel (List.Forall₂ (ValueRel source.maxApp)) (ValueRel source.maxApp)
-        sourceResult targetResult ∧ StateRel sourceFinal targetFinal :=
-  runForced_relatedWithin source.clock source target sourceValues targetValues targetResult targetFinal
-    run states values (by omega) (fun code => evaluateRelAt_within source.clock code _ (forceIH code))
-
 /-- Forced-thunk expressions preserve the clock-bounded simulation. -/
 theorem evaluateRel_forceWithin {C F : Type} (limit : Nat) (trace : BackendCommon.Tra)
     (targetArgs sourceCode : List ClosLang.Exp)
