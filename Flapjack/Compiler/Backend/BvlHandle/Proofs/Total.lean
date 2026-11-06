@@ -52,13 +52,4 @@ theorem compileSeqsBounded_succeeds (fuel limit : Nat) (e : Exp) (acc : Option E
     obtain ⟨result, done⟩ := compileSeqsFuel_succeeds (max fuel (expBudget e + 1)) limit e acc bound
     exact ⟨result, by simp [compileSeqsBounded, h, done]⟩
 
-/-- The full executable handler stage cannot fail from traversal fuel. This
-is not the original HOL pass-correctness theorem. -/
-theorem compileAnyFuel_succeeds (fuel : Nat) (splitSeq : Bool) (limit arity : Nat) (e : Exp) :
-    ∃ result, compileAnyFuel fuel splitSeq limit arity e = some result := by
-  unfold compileAnyFuel
-  split
-  · exact compileSeqsBounded_succeeds fuel limit e none
-  · exact compileExpFuel_succeeds fuel limit arity e
-
 end Flapjack.Compiler.Backend.BvlHandle

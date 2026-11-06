@@ -26,19 +26,6 @@ theorem evaluate_compileExpression {C F : Type} (limit : Nat) (expression : Bvl.
     C F env env [] state (envRel_refl _ env) safe
   simpa [compileExpression, simplified] using correct.1
 
-/-- The production expression compiler returns a preserving result for any
-initial fuel, including when the bounded traversal retries. -/
-theorem evaluate_compileExpFuel {C F : Type} (fuel limit : Nat) (expression : Bvl.Exp)
-    (env : List Value) (state final : State C F)
-    (result : SemanticPrimitivesHOL.Result (List Value) Value)
-    (run : evaluate [expression] env state = (result, final))
-    (notType : result ≠ .err (.abort .typeError)) :
-    ∃ output, compileExpFuel fuel limit env.length expression = some output ∧
-      evaluate [output] env state = (result, final) :=
-  ⟨compileExpression limit env.length expression,
-    compileExpFuel_eq_source fuel limit env.length expression,
-    evaluate_compileExpression limit expression env state final result run notType⟩
-
 /-- The executable entry point preserves expression evaluation when
 sequence splitting is disabled. -/
 theorem evaluate_compileAnyFuel_noSplit {C F : Type} (fuel limit : Nat) (expression : Bvl.Exp)

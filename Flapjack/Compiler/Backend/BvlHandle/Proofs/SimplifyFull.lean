@@ -111,12 +111,4 @@ decreasing_by
   all_goals try omega
 end
 
-/-- The executed bounded simplifier returns an expression with the same
-evaluation as its input. -/
-theorem evaluate_simplifyBounded {C F : Type} (fuel : Nat) (expression : Bvl.Exp)
-    (env : List Value) (state : State C F) :
-    ∃ simplified, simplifyBounded fuel expression = some simplified ∧
-      evaluate [simplified] env state = evaluate [expression] env state :=
-  ⟨handleSimp expression, simplifyBounded_eq fuel expression, evaluate_handleSimp expression env state⟩
-
 end Flapjack.Compiler.Backend.BvlHandle.Proofs

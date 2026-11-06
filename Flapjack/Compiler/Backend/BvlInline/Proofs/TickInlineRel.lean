@@ -73,12 +73,4 @@ theorem expRelTickInline (cache : Spt (Nat × Exp)) (xs : List Exp) (source : Sp
     (compatible : CacheRelated cache source) : ExpRel source xs (tickInline cache xs) :=
   tickInlineList_related cache source compatible xs
 
-/-- The production inliner produces the same related expression. This
-fuel-bounded executable correspondence has no standalone HOL declaration. -/
-theorem inlineExpBounded_related (fuel : Nat) (cache source : Spt (Nat × Exp))
-    (compatible : CacheRelated cache source) (e : Exp) :
-    ∃ result, inlineExpBounded fuel cache e = some result ∧ ExpRel source [e] [result] := by
-  exact ⟨tickInlineSing cache e, inlineExpBounded_eq fuel cache e,
-    tickInlineSing_related cache source compatible e⟩
-
 end Flapjack.Compiler.Backend.BvlInline.Proofs
