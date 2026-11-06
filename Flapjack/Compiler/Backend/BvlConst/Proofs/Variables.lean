@@ -112,30 +112,4 @@ theorem evaluate_compile_force {C F : Type} (location index : Nat) (annotations 
         | _ => simp [valueRel] at rel
 
 
-/-- The executed bounded traversal agrees with the variable simulation for
-any fuel, including its retry path. This is Flapjack infrastructure. -/
-theorem evaluate_compileBounded_var {C F : Type} (fuel index : Nat)
-    (annotations : List (Option Bvl.Exp)) (source target : List Value)
-    (state final : State C F) (result : Flapjack.SemanticPrimitivesHOL.Result (List Value) Value)
-    (run : evaluateTuple ([.var index], source, state) = (result, final))
-    (related : envRel C F annotations source target)
-    (notTypeError : result ≠ .err (.abort .typeError)) :
-    ∃ output, compileBounded fuel annotations (.var index) = some output ∧
-      evaluateTuple ([output], target, state) = (result, final) := by
-  exact ⟨compileSing annotations (.var index), compileBounded_eq fuel annotations _,
-    evaluate_compile_var index annotations source target state final result run related notTypeError⟩
-
-/-- The executed bounded traversal agrees with the force simulation for any
-fuel. This is Flapjack infrastructure for the production path. -/
-theorem evaluate_compileBounded_force {C F : Type} (fuel location index : Nat)
-    (annotations : List (Option Bvl.Exp)) (source target : List Value)
-    (state final : State C F) (result : Flapjack.SemanticPrimitivesHOL.Result (List Value) Value)
-    (run : evaluateTuple ([.force location index], source, state) = (result, final))
-    (related : envRel C F annotations source target)
-    (notTypeError : result ≠ .err (.abort .typeError)) :
-    ∃ output, compileBounded fuel annotations (.force location index) = some output ∧
-      evaluateTuple ([output], target, state) = (result, final) := by
-  exact ⟨compileSing annotations (.force location index), compileBounded_eq fuel annotations _,
-    evaluate_compile_force location index annotations source target state final result run related notTypeError⟩
-
 end Flapjack.Compiler.Backend.BvlConst.Proofs

@@ -83,26 +83,4 @@ theorem evaluate_compile_if {C F : Type} (guard yes no : Bvl.Exp)
         · exact yesIH next final result run related notTypeError
 
 
-/-- Connect the conditional simulation to the executed bounded traversal. -/
-theorem evaluate_compileBounded_if {C F : Type} (fuel : Nat) (guard yes no : Bvl.Exp)
-    (annotations : List (Option Bvl.Exp)) (source target : List Value)
-    (state final : State C F) (result : Flapjack.SemanticPrimitivesHOL.Result (List Value) Value)
-    (guardIH : ∀ (s t : State C F) r, evaluateTuple ([guard], source, s) = (r, t) →
-      envRel C F annotations source target → r ≠ .err (.abort .typeError) →
-      evaluateTuple ([compileSing annotations guard], target, s) = (r, t))
-    (yesIH : ∀ (s t : State C F) r, evaluateTuple ([yes], source, s) = (r, t) →
-      envRel C F annotations source target → r ≠ .err (.abort .typeError) →
-      evaluateTuple ([compileSing annotations yes], target, s) = (r, t))
-    (noIH : ∀ (s t : State C F) r, evaluateTuple ([no], source, s) = (r, t) →
-      envRel C F annotations source target → r ≠ .err (.abort .typeError) →
-      evaluateTuple ([compileSing annotations no], target, s) = (r, t))
-    (run : evaluateTuple ([.ifThenElse guard yes no], source, state) = (result, final))
-    (related : envRel C F annotations source target)
-    (notTypeError : result ≠ .err (.abort .typeError)) :
-    ∃ output, compileBounded fuel annotations (.ifThenElse guard yes no) = some output ∧
-      evaluateTuple ([output], target, state) = (result, final) := by
-  exact ⟨compileSing annotations (.ifThenElse guard yes no), compileBounded_eq fuel annotations _,
-    evaluate_compile_if guard yes no annotations source target state final result guardIH yesIH noIH run related notTypeError⟩
-
-
 end Flapjack.Compiler.Backend.BvlConst.Proofs

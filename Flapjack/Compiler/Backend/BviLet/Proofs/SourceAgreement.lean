@@ -145,13 +145,6 @@ theorem compileFuel_eq_compileSing (fuel : Nat) (env : List Nat) (d : Nat) (exp 
           have bodyResult := ih (extractList (compileList env d (x :: xs)) ++ env) d _ bb
           simp [compileFuel, compileSing, allBindings, bodyResult]
 
-/-- The production retry agrees with the total optimizer when its initial
-fuel already exceeds the structural bound. -/
-theorem compileBounded_eq_compileSing_of_bound (fuel : Nat) (env : List Nat) (d : Nat) (exp : Exp)
-    (bound : expBudget exp < fuel) :
-    compileBounded fuel env d exp = some (compileSing env d exp) := by
-  simp [compileBounded, compileFuel_eq_compileSing fuel env d exp bound]
-
 /-- Every successful traversal agrees with the total source-shaped optimizer,
 regardless of the amount of fuel supplied. -/
 theorem compileFuel_success_eq (fuel : Nat) (env : List Nat) (d : Nat)

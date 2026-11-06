@@ -107,20 +107,4 @@ theorem evaluate_compile_op {C F : Type} (op : ClosLang.Op) (args : List Bvl.Exp
     smartOp_correct op (compileList annotations args) target state final result compiledOp notTypeError
 
 
-/-- Apply the operation simulation to the executed bounded traversal. This
-Flapjack helper retains the same recursive argument-list hypothesis. -/
-theorem evaluate_compileBounded_op {C F : Type} (fuel : Nat) (op : ClosLang.Op) (args : List Bvl.Exp)
-    (annotations : List (Option Bvl.Exp)) (source target : List Value)
-    (state final : State C F) (result : Flapjack.SemanticPrimitivesHOL.Result (List Value) Value)
-    (ih : ∀ (s t : State C F) r, evaluateTuple (args, source, s) = (r, t) →
-      envRel C F annotations source target → r ≠ .err (.abort .typeError) →
-      evaluateTuple (compileList annotations args, target, s) = (r, t))
-    (run : evaluateTuple ([.op op args], source, state) = (result, final))
-    (related : envRel C F annotations source target)
-    (notTypeError : result ≠ .err (.abort .typeError)) :
-    ∃ output, compileBounded fuel annotations (.op op args) = some output ∧
-      evaluateTuple ([output], target, state) = (result, final) := by
-  exact ⟨compileSing annotations (.op op args), compileBounded_eq fuel annotations _,
-    evaluate_compile_op op args annotations source target state final result ih run related notTypeError⟩
-
 end Flapjack.Compiler.Backend.BvlConst.Proofs
