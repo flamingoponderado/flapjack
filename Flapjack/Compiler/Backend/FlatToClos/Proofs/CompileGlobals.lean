@@ -12,7 +12,9 @@ open Flapjack.Compiler.Backend.FlatProps (GlobalBag emptyGlobalBag unionGlobalBa
 def shiftGlobalBag (bag : GlobalBag) : GlobalBag :=
   fun key => if key = 0 then 0 else bag (key - 1)
 
-private theorem shiftEmpty : shiftGlobalBag emptyGlobalBag = emptyGlobalBag := by
+/-- The global-key shift preserves the empty bag. This is Flapjack
+infrastructure for the original global-preservation proofs. -/
+theorem shiftEmpty : shiftGlobalBag emptyGlobalBag = emptyGlobalBag := by
   funext key
   simp [shiftGlobalBag, emptyGlobalBag]
 
@@ -154,18 +156,12 @@ private theorem compileExps_globals (m : List (Option MlString)) (xs : List Flat
     simp only [compileExps, FlatProps.elistGlobals, ClosProps.elistGlobals, shiftUnion]
     rw [compileExp_globals m x safe.1, ih safe.2]
 
-private theorem noMatList_iff (xs : List FlatLang.Exp) :
-    FlatProps.noMatList xs = true ↔ ∀ e ∈ xs, FlatProps.noMat e = true := by
-  induction xs with
-  | nil => simp [FlatProps.noMatList]
-  | cons x xs ih => simp [FlatProps.noMatList, ih]
-
 /-- Compiling match-free flat expressions shifts every global write by one. -/
 @[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "compile_set_globals"]
 theorem compile_setGlobals (m : List (Option MlString)) (xs : List FlatLang.Exp)
     (safe : ∀ e ∈ xs, FlatProps.noMat e = true) :
     ClosProps.elistGlobals (compile m xs) = shiftGlobalBag (FlatProps.elistGlobals xs) := by
-  exact compileExps_globals m xs ((noMatList_iff xs).mpr safe)
+  exact compileExps_globals m xs (by simpa [FlatProps.noMatList_eq_all] using safe)
 
 /-- Tuple-free source statement for an explicitly named compilation result. -/
 @[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "compile_eq_set_globals"]

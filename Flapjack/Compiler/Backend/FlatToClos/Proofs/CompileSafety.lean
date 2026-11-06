@@ -7,10 +7,6 @@ namespace Flapjack.Compiler.Backend.FlatToClos
 open Flapjack.Basis.Pure.MlString
 open Flapjack.Compiler.Backend.FlatProps (emptyGlobalBag unionGlobalBag)
 
-private theorem shiftEmpty : shiftGlobalBag emptyGlobalBag = emptyGlobalBag := by
-  funext key
-  simp [shiftGlobalBag, emptyGlobalBag]
-
 private theorem reverseSafe (xs : List ClosLang.Exp) (safe : ClosProps.esgcFreeList xs) :
     ClosProps.esgcFreeList xs.reverse := by
   rw [ClosProps.esgcFreeList_iff] at safe ⊢
@@ -117,12 +113,6 @@ theorem compileExp_safe (m : List (Option MlString)) (exp : FlatLang.Exp) :
     simp only [FlatProps.esgcFreeList] at safe
     simp [compileExps, ClosProps.esgcFreeList, ihe noMat.1 safe.1, ihes noMat.2 safe.2]
 
-private theorem noMatList_iff (xs : List FlatLang.Exp) :
-    FlatProps.noMatList xs = true ↔ ∀ e ∈ xs, FlatProps.noMat e = true := by
-  induction xs with
-  | nil => simp [FlatProps.noMatList]
-  | cons x xs ih => simp [FlatProps.noMatList, ih]
-
 private theorem compileExps_safe (m : List (Option MlString)) (xs : List FlatLang.Exp)
     (noMat : FlatProps.noMatList xs = true) (safe : FlatProps.esgcFreeList xs) :
     ClosProps.esgcFreeList (compileExps m xs) := by
@@ -140,7 +130,7 @@ theorem compile_esgcFree (m : List (Option MlString)) (xs : List FlatLang.Exp)
     (premises : (∀ e ∈ xs, FlatProps.esgcFree e) ∧ (∀ e ∈ xs, FlatProps.noMat e = true)) :
     ∀ e ∈ compile m xs, ClosProps.esgcFree e := by
   apply (ClosProps.esgcFreeList_iff _).mp
-  exact compileExps_safe m xs ((noMatList_iff xs).mpr premises.2) ((FlatProps.esgcFreeList_iff xs).mpr premises.1)
+  exact compileExps_safe m xs (by simpa [FlatProps.noMatList_eq_all] using premises.2) ((FlatProps.esgcFreeList_iff xs).mpr premises.1)
 
 /-- Compiling match-free, closure-safe declarations preserves closure safety. -/
 @[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "compile_decs_esgc_free"]
@@ -148,7 +138,7 @@ theorem compileDecs_esgcFree (ds : List FlatLang.Exp)
     (premises : (∀ e ∈ ds, FlatProps.esgcFree e) ∧ FlatProps.noMatDecs ds = true) :
     ∀ e ∈ compileDecs ds, ClosProps.esgcFree e := by
   apply compile_esgcFree [] ds
-  exact ⟨premises.1, (noMatList_iff ds).mp (by simpa [FlatProps.noMatDecs_eq_noMatList] using premises.2)⟩
+  exact ⟨premises.1, by simpa [FlatProps.noMatDecs_eq_noMatList, FlatProps.noMatList_eq_all] using premises.2⟩
 
 private theorem interpreterNoWrites :
     ClosProps.setGlobals ClosInterp.closInterpreter = emptyGlobalBag := by
