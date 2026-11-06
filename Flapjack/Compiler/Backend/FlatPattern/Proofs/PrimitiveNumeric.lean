@@ -106,12 +106,12 @@ theorem applyNumericProjection_related {C F : Type} (cfg : Config) (source targe
       | raise raised =>
         simp [FlatSem.applyNumericProjection, called] at run
         rcases run with ⟨rfl, rfl⟩
-        refine ⟨target, .err (.raise errorValue), ?_, states, .error (.raise errorRel)⟩
+        refine ⟨target, .err (.raise errorValue), ?_, states, .error errorRel⟩
         simp [FlatSem.applyNumericProjection, ffi, ← arguments, called]
       | abort abort =>
         simp [FlatSem.applyNumericProjection, called] at run
         rcases run with ⟨rfl, rfl⟩
-        refine ⟨target, .err (.abort abort), ?_, states, .error (.abort abort)⟩
+        refine ⟨target, .err (.abort abort), ?_, states, .error rfl⟩
         simp [FlatSem.applyNumericProjection, ffi, ← arguments, called]
 
 /-- Arithmetic application preserves related states and results. -/

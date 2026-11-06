@@ -146,7 +146,7 @@ theorem compile_handle_noMatch_forward {C F : Type} (cfg stateCfg : Config) (tra
     { sourceNext with clock := min sourceStart.clock sourceNext.clock }
     { targetNext with clock := min targetStart.clock targetNext.clock } value value' targetEnv dispatchEnv
     (.raise trace (.varLocal trace (encNumToName n))) states values rfl selected
-  have resultRel : FlatResultRel (.err (.raise value)) (.err (.raise value')) := .error (.raise values)
+  have resultRel : FlatResultRel (.err (.raise value)) (.err (.raise value')) := .error values
   refine ⟨_, _, _, _, sourceRun, ?_, states, resultRel⟩
   rw [compileExp_handle_body]
   rw [evaluate_handle_generated trace (encNumToName n) (compileExp cfg protectedExpr).2.2 _
@@ -189,10 +189,8 @@ theorem flatResultRel_notRaised (sourceResult targetResult : Result (List FlatSe
     ∀ value, targetResult ≠ .err (.raise value) := by
   cases related with
   | values related => simp
-  | error related =>
-    cases related with
-    | raise related => exact (notRaised _ rfl).elim
-    | abort reason => simp
+  | @error left right related =>
+    cases left <;> cases right <;> simp_all [SemanticPrimitivesProps.excRel]
 
 /-- Normal results and aborts pass through compiled handlers with their
 state and result relations preserved. -/

@@ -46,7 +46,7 @@ theorem doApp_ffi_related {C F : Type} (cfg : Config) (source target sourceFinal
                   | final event =>
                     simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, found, called] at run
                     rcases run with ⟨rfl, rfl⟩
-                    refine ⟨target, .err (.abort (.ffiError event)), ?_, states, .error (.abort _)⟩
+                    refine ⟨target, .err (.abort (.ffiError event)), ?_, states, .error rfl⟩
                     simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, found', ffiEq, called]
                   | ret ffi bytes' =>
                     cases assigned : storeAssign address (.w8array bytes') source.refs with

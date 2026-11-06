@@ -81,12 +81,12 @@ theorem readIndexed_literals_related {C F A : Type} (source target : FlatSem.Sta
   by_cases negative : index < 0
   · simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative] at run
     subst result
-    exact ⟨by simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative], .error (.raise subscriptExn_related)⟩
+    exact ⟨by simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative], .error subscriptExn_related⟩
   · cases found : items[index.toNat]? with
     | none =>
       simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative, found] at run
       subst result
-      exact ⟨by simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative, found], .error (.raise subscriptExn_related)⟩
+      exact ⟨by simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative, found], .error subscriptExn_related⟩
     | some item =>
       simp [FlatSem.readIndexed, negative, found] at run
       subst result

@@ -78,10 +78,11 @@ theorem compile_simpleSourceApp_simulation_upTo {C F : Type} (cfg stateCfg : Con
           refine ⟨targetAfter, .val [_], ?_, afterStates, .values (.cons values .nil)⟩
           simpa [compileExp_app, FlatSem.applyResult, targetFixed, targetPrimitive] using targetOuter
         | error errors =>
+          rename_i leftError rightError
           have eq := sourceOuter.symm.trans sourceEval
           simp [FlatSem.applyResult, sourceFixed, primitive] at eq
           rcases eq with ⟨rfl, rfl⟩
-          refine ⟨targetAfter, .err _, ?_, afterStates, .error errors⟩
+          refine ⟨targetAfter, .err rightError, ?_, afterStates, .error errors⟩
           simpa [compileExp_app, FlatSem.applyResult, targetFixed, targetPrimitive] using targetOuter
 
 
@@ -218,10 +219,11 @@ theorem compile_flatApp_simulation_upTo {C F : Type} (cfg stateCfg : Config) (tr
           refine ⟨targetAfter, .val [_], ?_, afterStates, .values (.cons values .nil)⟩
           simpa [compileExp_app, FlatSem.applyResult, targetFixed, targetPrimitive] using targetOuter
         | error errors =>
+          rename_i leftError rightError
           have eq := sourceOuter.symm.trans sourceEval
           simp [FlatSem.applyResult, sourceFixed, primitive] at eq
           rcases eq with ⟨rfl, rfl⟩
-          refine ⟨targetAfter, .err _, ?_, afterStates, .error errors⟩
+          refine ⟨targetAfter, .err rightError, ?_, afterStates, .error errors⟩
           simpa [compileExp_app, FlatSem.applyResult, targetFixed, targetPrimitive] using targetOuter
 
 /-- Every nonrecursive source application simulates up to the same clock
@@ -309,7 +311,7 @@ theorem compile_call_simulation_at_clock_boundedArgs {C F : Type} (cfg stateCfg 
             targetCallEnv compiledBody (by simpa [compiledReverse] using targetArgsRun) targetCall targetZero
           have equal := sourceEval.symm.trans sourceOuter
           cases equal
-          exact ⟨_, _, by simpa [compileExp_app] using targetOuter, fixedStates, .error (.abort .timeoutError)⟩
+          exact ⟨_, .err (.abort .timeoutError), by simpa [compileExp_app] using targetOuter, fixedStates, .error rfl⟩
         · have targetNonzero : targetFixed.clock ≠ 0 := by omega
           have sourceOuter := evaluate_call_body sourceEnv source sourceNext trace args sourceValues callEnv body argsRun call zero
           have targetOuter := evaluate_call_body targetEnv target targetNext trace (compileExps cfg args).2.2 targetValues
@@ -536,7 +538,7 @@ theorem compile_eval_simulation_at_clock_boundedArgs {C F : Type} (cfg stateCfg 
             (by simpa [compiledReverse] using targetArgsRun) targetDecoded targetZero
           have equal := sourceEval.symm.trans sourceOuter
           cases equal
-          exact ⟨_, _, by simpa [compileExp_app] using targetOuter, installedStates, .error (.abort .timeoutError)⟩
+          exact ⟨_, .err (.abort .timeoutError), by simpa [compileExp_app] using targetOuter, installedStates, .error rfl⟩
         · have targetNonzero : targetFixed.clock ≠ 0 := by omega
           let sourceInstalled := { sourceFixed with evalConfig := sourceConfig }
           let targetInstalled := { targetFixed with evalConfig := targetConfig }
@@ -575,9 +577,8 @@ theorem compile_eval_simulation_at_clock_boundedArgs {C F : Type} (cfg stateCfg 
               cases targetOutcome with
               | none => simp [optionRel] at outcomeRel
               | some targetError =>
-                have errorsRel : FlatErrorRel error targetError := by
-                  cases error <;> cases targetError <;>
-                    simp_all [optionRel, SemanticPrimitivesProps.excRel, FlatErrorRel.raise, FlatErrorRel.abort]
+                have errorsRel : SemanticPrimitivesProps.excRel ValueRel error targetError := by
+                  simpa [optionRel] using outcomeRel
                 have sourceOuter := evaluate_eval_declarations sourceEnv source sourceNext sourceLast trace args sourceValues
                   declarations sourceConfig result (some error) argsRun decoded zero declsRun
                 have targetOuter := evaluate_eval_declarations targetEnv target targetNext targetLast trace (compileExps cfg args).2.2

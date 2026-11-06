@@ -43,9 +43,7 @@ theorem evaluateDec_simulation_upTo {C F : Type} (cfg stateCfg : Config) (clock 
       refine ⟨targetNext, some targetError, ?_, nextStates, ?_⟩
       · unfold FlatSem.evaluateDec compileDec
         rw [targetRun]
-      · cases errorsRel with
-        | raise rel => exact rel
-        | abort _ => rfl
+      · exact errorsRel
     | values valuesRel =>
       rename_i sourceValues targetValues
       have sourceShape : sourceNext = sourceFinal ∧

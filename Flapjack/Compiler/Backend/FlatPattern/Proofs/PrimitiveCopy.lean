@@ -50,7 +50,7 @@ theorem doApp_copyStrStr_related {C F : Type} (cfg : Config) (source target sour
     rcases run with ⟨rfl, rfl⟩
     exact ⟨target, .err (.raise FlatSem.subscriptExnV),
       by simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData,
-        FlatSem.doAppCopy, FlatSem.boundsFailure, copied], states, .error (.raise subscriptExn_related)⟩
+        FlatSem.doAppCopy, FlatSem.boundsFailure, copied], states, .error subscriptExn_related⟩
   | some chars =>
     simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy, copied] at run
     rcases run with ⟨rfl, rfl⟩
@@ -96,7 +96,7 @@ theorem doApp_copyAw8Str_related {C F : Type} (cfg : Config) (source target sour
         rcases run with ⟨rfl, rfl⟩
         exact ⟨target, .err (.raise FlatSem.subscriptExnV),
           by simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy,
-            FlatSem.boundsFailure, found', copied], states, .error (.raise subscriptExn_related)⟩
+            FlatSem.boundsFailure, found', copied], states, .error subscriptExn_related⟩
       | some chars =>
         simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy, found, copied] at run
         rcases run with ⟨rfl, rfl⟩
@@ -195,7 +195,7 @@ theorem doApp_copyStrAw8_related {C F : Type} (cfg : Config) (source target sour
         rcases run with ⟨rfl, rfl⟩
         exact ⟨target, .err (.raise FlatSem.subscriptExnV),
           by simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy,
-            FlatSem.boundsFailure, found', copied], states, .error (.raise subscriptExn_related)⟩
+            FlatSem.boundsFailure, found', copied], states, .error subscriptExn_related⟩
       | some output =>
         cases assigned : storeAssign address (.w8array output) source.refs with
         | none => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy, found, copied, assigned] at run
@@ -259,7 +259,7 @@ theorem doApp_copyAw8Aw8_related {C F : Type} (cfg : Config) (source target sour
             rcases run with ⟨rfl, rfl⟩
             exact ⟨target, .err (.raise FlatSem.subscriptExnV),
               by simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy,
-                FlatSem.boundsFailure, sourceFound', destFound', copied], states, .error (.raise subscriptExn_related)⟩
+                FlatSem.boundsFailure, sourceFound', destFound', copied], states, .error subscriptExn_related⟩
           | some output =>
             cases assigned : storeAssign dst (.w8array output) source.refs with
             | none => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy, sourceFound, destFound, copied, assigned] at run

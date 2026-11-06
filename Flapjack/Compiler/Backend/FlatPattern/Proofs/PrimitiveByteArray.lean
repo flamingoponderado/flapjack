@@ -24,7 +24,7 @@ theorem doApp_byteArrayAlloc_related {C F : Type} (cfg : Config) (source target 
       FlatSem.doApp target (.src .aw8alloc) [.litv (.intLit size), .litv (.word8 byte)] = some (targetFinal, result) ∧
       StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result := by
   by_cases negative : size < 0
-  · refine ⟨source, target, .err (.raise FlatSem.subscriptExnV), ?_, ?_, states, .error (.raise subscriptExn_related)⟩
+  · refine ⟨source, target, .err (.raise FlatSem.subscriptExnV), ?_, ?_, states, .error subscriptExn_related⟩
     · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.boundsFailure, negative]
     · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.boundsFailure, negative]
   · have lengths : target.refs.length = source.refs.length := (List.Forall₂.length_eq states.2.1).symm
@@ -59,7 +59,7 @@ theorem readIndexed_bytes_related {C F : Type} (source target : FlatSem.State C 
     | false =>
       simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative] at run
       subst result
-      exact ⟨by simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative], .error (.raise subscriptExn_related)⟩
+      exact ⟨by simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative], .error subscriptExn_related⟩
   · cases found : bytes[index.toNat]? with
     | none =>
       cases unsafeOp with
@@ -67,7 +67,7 @@ theorem readIndexed_bytes_related {C F : Type} (source target : FlatSem.State C 
       | false =>
         simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative, found] at run
         subst result
-        exact ⟨by simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative, found], .error (.raise subscriptExn_related)⟩
+        exact ⟨by simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative, found], .error subscriptExn_related⟩
     | some byte =>
       simp [FlatSem.readIndexed, negative, found] at run
       subst result
@@ -104,7 +104,7 @@ theorem updateIndexed_bytes_related {C F : Type} (cfg : Config) (source target s
       simp [FlatSem.updateIndexed, FlatSem.boundsFailure, bounds] at run
       rcases run with ⟨rfl, rfl⟩
       exact ⟨target, by simp [FlatSem.updateIndexed, FlatSem.boundsFailure, bounds], states,
-        .error (.raise subscriptExn_related)⟩
+        .error subscriptExn_related⟩
   · cases assigned : storeAssign address (.w8array (bytes.set index.toNat byte)) source.refs with
     | none => simp [FlatSem.updateIndexed, bounds, assigned] at run
     | some refs =>

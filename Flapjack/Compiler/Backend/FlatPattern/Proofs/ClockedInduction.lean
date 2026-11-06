@@ -184,10 +184,7 @@ theorem compileExps_evaluate {C F : Type} (stateCfg : Config) :
     have converted : SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel r1 r2 := by
       cases results with
       | values rel => exact rel
-      | error errors =>
-        cases errors with
-        | raise rel => exact rel
-        | abort _ => rfl
+      | error errors => exact errors
     exact ⟨t2, r2, converted, finalStates, by simpa [compiled] using targetRun⟩
   · intro s1 decs s2 t1 cfg decs' res run compiled states safe
     subst decs'

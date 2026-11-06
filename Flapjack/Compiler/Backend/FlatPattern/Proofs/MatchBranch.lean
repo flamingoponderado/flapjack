@@ -1,3 +1,4 @@
+import Flapjack.SemanticPrimitivesProps.ResultRelation
 import Flapjack.Compiler.Backend.FlatProps.PatternMatch
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.CompiledMatch
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.MatchRows
@@ -77,17 +78,11 @@ theorem evaluate_compiled_match_default {C F : Type} (cfg stateCfg : Config) (tr
     dispatchEnv target value' pure targetSafe
   simpa [targetMatch] using dispatch
 
-/-- Related flat errors either raise related values or carry the same abort. -/
-inductive FlatErrorRel : SemanticPrimitivesHOL.ErrorResult FlatSem.Value →
-    SemanticPrimitivesHOL.ErrorResult FlatSem.Value → Prop where
-  | raise {left right} : ValueRel left right → FlatErrorRel (.raise left) (.raise right)
-  | abort (reason : SemanticPrimitivesHOL.Abort) : FlatErrorRel (.abort reason) (.abort reason)
-
 /-- Proof-side result relation for lists of values and errors. -/
 inductive FlatResultRel : Result (List FlatSem.Value) FlatSem.Value →
     Result (List FlatSem.Value) FlatSem.Value → Prop where
   | values {left right} : List.Forall₂ ValueRel left right → FlatResultRel (.val left) (.val right)
-  | error {left right} : FlatErrorRel left right → FlatResultRel (.err left) (.err right)
+  | error {left right} : SemanticPrimitivesProps.excRel ValueRel left right → FlatResultRel (.err left) (.err right)
 
 /-- A selected compiled row simulates its source body using the body's
 induction hypothesis. The target execution is constructed by evaluation. -/
@@ -267,7 +262,6 @@ theorem compile_mat_noMatch_forward {C F : Type} (cfg stateCfg : Config) (trace 
     (.raise trace (.con trace (some (0, none)) [])) states values rfl selected
   have resultRel : FlatResultRel (.err (.raise FlatSem.bindExnV)) (.err (.raise FlatSem.bindExnV)) := by
     apply FlatResultRel.error
-    apply FlatErrorRel.raise
     apply (valueRel_conv (some (BackendCommon.bindTag, none)) [] _).2
     exact ⟨[], rfl, .nil⟩
   refine ⟨_, _, _, _, sourceRun, ?_, states, resultRel⟩

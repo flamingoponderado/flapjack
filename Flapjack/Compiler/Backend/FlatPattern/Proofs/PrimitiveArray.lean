@@ -13,7 +13,7 @@ open Flapjack.SemanticPrimitivesProps (storeValueRel)
 /-- The single-value counterpart of the proof-side expression result relation. -/
 inductive PrimitiveResultRel : Result FlatSem.Value FlatSem.Value → Result FlatSem.Value FlatSem.Value → Prop where
   | value {left right} : ValueRel left right → PrimitiveResultRel (.val left) (.val right)
-  | error {left right} : FlatErrorRel left right → PrimitiveResultRel (.err left) (.err right)
+  | error {left right} : SemanticPrimitivesProps.excRel ValueRel left right → PrimitiveResultRel (.err left) (.err right)
 
 /-- The bounds exception is related to itself. -/
 theorem subscriptExn_related : ValueRel FlatSem.subscriptExnV FlatSem.subscriptExnV := by
@@ -33,7 +33,7 @@ theorem readIndexed_related {C F : Type} (source target : FlatSem.State C F) (un
     | false =>
       simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative] at run
       subst result
-      exact ⟨_, by simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative], .error (.raise subscriptExn_related)⟩
+      exact ⟨.err (.raise FlatSem.subscriptExnV), by simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative], .error subscriptExn_related⟩
   · cases found : items[index.toNat]? with
     | none =>
       have absent : items'[index.toNat]? = none := by
@@ -44,7 +44,7 @@ theorem readIndexed_related {C F : Type} (source target : FlatSem.State C F) (un
       | false =>
         simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative, found] at run
         subst result
-        exact ⟨_, by simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative, absent], .error (.raise subscriptExn_related)⟩
+        exact ⟨.err (.raise FlatSem.subscriptExnV), by simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative, absent], .error subscriptExn_related⟩
     | some value =>
       obtain ⟨value', found', valueRel⟩ := forall₂_getElem_some related index.toNat value found
       simp [FlatSem.readIndexed, negative, found] at run
@@ -83,7 +83,7 @@ theorem doApp_arrayAlloc_related {C F : Type} (cfg : Config) (source target : Fl
       StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
   by_cases negative : size < 0
   · refine ⟨source, target, .err (.raise FlatSem.subscriptExnV), .err (.raise FlatSem.subscriptExnV), ?_, ?_,
-      states, .error (.raise subscriptExn_related)⟩
+      states, .error subscriptExn_related⟩
     · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.boundsFailure, negative]
     · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.boundsFailure, negative]
   · have lengths : target.refs.length = source.refs.length := (List.Forall₂.length_eq states.2.1).symm
@@ -129,7 +129,7 @@ theorem updateIndexed_array_related {C F : Type} (cfg : Config) (source target s
     | false =>
       simp [FlatSem.updateIndexed, FlatSem.boundsFailure, bounds] at run
       rcases run with ⟨rfl, rfl⟩
-      refine ⟨target, .err (.raise FlatSem.subscriptExnV), ?_, states, .error (.raise subscriptExn_related)⟩
+      refine ⟨target, .err (.raise FlatSem.subscriptExnV), ?_, states, .error subscriptExn_related⟩
       simp [FlatSem.updateIndexed, FlatSem.boundsFailure, bounds']
   · have bounds' : ¬ (index < 0 ∨ items'.length ≤ index.toNat) := by simpa [lengths] using bounds
     cases assigned : storeAssign address (.varray (items.set index.toNat value)) source.refs with

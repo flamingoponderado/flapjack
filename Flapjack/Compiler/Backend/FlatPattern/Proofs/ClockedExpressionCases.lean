@@ -95,7 +95,7 @@ theorem compile_raise_simulation_upTo {C F : Type} (cfg stateCfg : Config) (cloc
             have equal := sourceEval.symm.trans sourceOuter
             cases equal
             exact ⟨targetNext, .err (.raise value'), by simpa [compileExp, compiled] using targetOuter,
-              nextStates, .error (.raise valueRel)⟩
+              nextStates, .error valueRel⟩
 
 
 /-- Clock-bounded version of the corresponding expression case. -/
@@ -465,67 +465,75 @@ theorem compile_handle_simulation_upTo {C F : Type} (cfg stateCfg : Config) (clo
       have equal := sourceEval.symm.trans sourceRun
       cases equal
       exact ⟨targetFinal, _, targetRun', finalRel, .values valuesRel⟩
-    | error errorRel =>
-      cases errorRel with
+    | @error leftError rightError errorRel =>
+      cases leftError with
       | abort reason =>
-        obtain ⟨sourceFinal', targetFinal, sourceRun, targetRun', finalRel⟩ :=
-          compile_handle_passthrough cfg stateCfg trace protectedExpr rows source sourceNext target targetNext
-            sourceEnv targetEnv _ _ protectedRun targetRun states nextStates (.error (.abort reason)) (by simp)
-        have equal := sourceEval.symm.trans sourceRun
-        cases equal
-        exact ⟨targetFinal, _, targetRun', finalRel, .error (.abort reason)⟩
-      | raise valuesRel =>
-        rename_i value value'
-        let sourceFixed := { sourceNext with clock := min source.clock sourceNext.clock }
-        let targetFixed := { targetNext with clock := min target.clock targetNext.clock }
-        have fixedStates : StateRel stateCfg sourceFixed targetFixed :=
-          stateRel_fixClock stateCfg source sourceNext target targetNext states nextStates
-        cases rowResult : FlatSem.pmatchRows rows sourceFixed value with
-        | typeError =>
-          have run := evaluate_handle_rowTypeError trace protectedExpr rows sourceEnv source sourceNext value
-            protectedRun rowResult
-          rw [sourceEval] at run
-          exact (safe (congrArg Prod.snd run)).elim
-        | noMatch =>
-          obtain ⟨sourceFinal', targetFinal, sourceResult', targetResult', sourceRun, targetRun', finalRel, resultRel⟩ :=
-            compile_handle_noMatch_forward cfg stateCfg trace protectedExpr rows source sourceNext target targetNext
-              sourceEnv targetEnv value value' protectedRun targetRun fixedStates valuesRel rowResult
+        cases rightError with
+        | raise _ => simp [SemanticPrimitivesProps.excRel] at errorRel
+        | abort targetReason =>
+          simp only [SemanticPrimitivesProps.excRel] at errorRel
+          subst targetReason
+          obtain ⟨sourceFinal', targetFinal, sourceRun, targetRun', finalRel⟩ :=
+            compile_handle_passthrough cfg stateCfg trace protectedExpr rows source sourceNext target targetNext
+              sourceEnv targetEnv _ _ protectedRun targetRun states nextStates (.error rfl) (by simp)
           have equal := sourceEval.symm.trans sourceRun
           cases equal
-          exact ⟨targetFinal, targetResult', targetRun', finalRel, resultRel⟩
-        | «match» selected =>
-          rcases selected with ⟨bindings, pattern, body⟩
-          have distinct : (FlatLang.patBindings pattern).Nodup := by
-            by_cases distinct : (FlatLang.patBindings pattern).Nodup
-            · exact distinct
-            · have run := evaluate_handle_duplicate trace protectedExpr rows sourceEnv source sourceNext value
+          exact ⟨targetFinal, _, targetRun', finalRel, .error rfl⟩
+      | raise value =>
+        cases rightError with
+        | abort _ => simp [SemanticPrimitivesProps.excRel] at errorRel
+        | raise value' =>
+          have valuesRel : ValueRel value value' := errorRel
+          let sourceFixed := { sourceNext with clock := min source.clock sourceNext.clock }
+          let targetFixed := { targetNext with clock := min target.clock targetNext.clock }
+          have fixedStates : StateRel stateCfg sourceFixed targetFixed :=
+            stateRel_fixClock stateCfg source sourceNext target targetNext states nextStates
+          cases rowResult : FlatSem.pmatchRows rows sourceFixed value with
+          | typeError =>
+            have run := evaluate_handle_rowTypeError trace protectedExpr rows sourceEnv source sourceNext value
+              protectedRun rowResult
+            rw [sourceEval] at run
+            exact (safe (congrArg Prod.snd run)).elim
+          | noMatch =>
+            obtain ⟨sourceFinal', targetFinal, sourceResult', targetResult', sourceRun, targetRun', finalRel, resultRel⟩ :=
+              compile_handle_noMatch_forward cfg stateCfg trace protectedExpr rows source sourceNext target targetNext
+                sourceEnv targetEnv value value' protectedRun targetRun fixedStates valuesRel rowResult
+            have equal := sourceEval.symm.trans sourceRun
+            cases equal
+            exact ⟨targetFinal, targetResult', targetRun', finalRel, resultRel⟩
+          | «match» selected =>
+            rcases selected with ⟨bindings, pattern, body⟩
+            have distinct : (FlatLang.patBindings pattern).Nodup := by
+              by_cases distinct : (FlatLang.patBindings pattern).Nodup
+              · exact distinct
+              · have run := evaluate_handle_duplicate trace protectedExpr rows sourceEnv source sourceNext value
+                  bindings pattern body protectedRun rowResult distinct
+                rw [sourceEval] at run
+                exact (safe (congrArg Prod.snd run)).elim
+            have sourceBody : FlatSem.evaluate { sourceEnv with v := bindings ++ sourceEnv.v } sourceFixed [body] =
+                (sourceFinal, sourceResult) := by
+              have run := evaluate_handle_selected trace protectedExpr rows sourceEnv source sourceNext value
                 bindings pattern body protectedRun rowResult distinct
-              rw [sourceEval] at run
-              exact (safe (congrArg Prod.snd run)).elim
-          have sourceBody : FlatSem.evaluate { sourceEnv with v := bindings ++ sourceEnv.v } sourceFixed [body] =
-              (sourceFinal, sourceResult) := by
-            have run := evaluate_handle_selected trace protectedExpr rows sourceEnv source sourceNext value
-              bindings pattern body protectedRun rowResult distinct
-            exact run.symm.trans sourceEval
-          have member := (FlatProps.pmatchRows_imp_pmatch rows sourceFixed value bindings pattern body rowResult).2
-          have bodySim := bodiesIH pattern body member
-          let generated := max (compileExp cfg protectedExpr).1 (compileMatch cfg rows).1 + 2
-          have bodyBound : (compileExp cfg body).1 < generated - 1 := by
-            have bodyLe := (compileMatch_member_bound cfg rows pattern body member).1
-            dsimp [generated]
-            omega
-          have bodyIH : ∀ extEnv,
-              EnvRel (generated - 1) { sourceEnv with v := bindings ++ sourceEnv.v } extEnv →
-              FlatSem.evaluate { sourceEnv with v := bindings ++ sourceEnv.v } sourceFixed [body] = (sourceFinal, sourceResult) →
-              ∃ targetFinal targetResult,
-                FlatSem.evaluate extEnv targetFixed [(compileExp cfg body).2.2] = (targetFinal, targetResult) ∧
-                StateRel stateCfg sourceFinal targetFinal ∧ FlatResultRel sourceResult targetResult := by
-            intro extEnv envRel evaluated
-            exact bodySim _ _ _ _ _ _ _ (by dsimp [sourceFixed]; omega) evaluated envRel fixedStates bodyBound safe
-          obtain ⟨_, targetFinal, targetResult, targetRun', finalRel, resultRel⟩ :=
-            compile_handle_selected_forward cfg stateCfg trace protectedExpr rows source sourceNext target targetNext sourceFinal
-              sourceEnv targetEnv value value' bindings pattern body sourceResult n protectedRun targetRun fixedStates
-              valuesRel envs (by dsimp [generated] at *; omega) rowResult distinct sourceBody bodyIH
-          exact ⟨targetFinal, targetResult, targetRun', finalRel, resultRel⟩
+              exact run.symm.trans sourceEval
+            have member := (FlatProps.pmatchRows_imp_pmatch rows sourceFixed value bindings pattern body rowResult).2
+            have bodySim := bodiesIH pattern body member
+            let generated := max (compileExp cfg protectedExpr).1 (compileMatch cfg rows).1 + 2
+            have bodyBound : (compileExp cfg body).1 < generated - 1 := by
+              have bodyLe := (compileMatch_member_bound cfg rows pattern body member).1
+              dsimp [generated]
+              omega
+            have bodyIH : ∀ extEnv,
+                EnvRel (generated - 1) { sourceEnv with v := bindings ++ sourceEnv.v } extEnv →
+                FlatSem.evaluate { sourceEnv with v := bindings ++ sourceEnv.v } sourceFixed [body] = (sourceFinal, sourceResult) →
+                ∃ targetFinal targetResult,
+                  FlatSem.evaluate extEnv targetFixed [(compileExp cfg body).2.2] = (targetFinal, targetResult) ∧
+                  StateRel stateCfg sourceFinal targetFinal ∧ FlatResultRel sourceResult targetResult := by
+              intro extEnv envRel evaluated
+              exact bodySim _ _ _ _ _ _ _ (by dsimp [sourceFixed]; omega) evaluated envRel fixedStates bodyBound safe
+            obtain ⟨_, targetFinal, targetResult, targetRun', finalRel, resultRel⟩ :=
+              compile_handle_selected_forward cfg stateCfg trace protectedExpr rows source sourceNext target targetNext sourceFinal
+                sourceEnv targetEnv value value' bindings pattern body sourceResult n protectedRun targetRun fixedStates
+                valuesRel envs (by dsimp [generated] at *; omega) rowResult distinct sourceBody bodyIH
+            exact ⟨targetFinal, targetResult, targetRun', finalRel, resultRel⟩
 
 end Flapjack.Compiler.Backend.FlatPattern
