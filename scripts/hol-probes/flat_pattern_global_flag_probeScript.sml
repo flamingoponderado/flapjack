@@ -6,6 +6,12 @@ fun show_thm label th =
   if null (hyp th) then (print label; print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
 val _ = show_thm "operator_global_flag=" flat_patternProofTheory.op_sets_globals_gbag;
+val _ = show_thm "operator_sets_globals_def=" flat_patternTheory.op_sets_globals_def;
+val singleton_global_bag = prove (
+  ``!n:num. flatProps$op_gbag (flatLang$GlobalVarInit n) =
+      (\x. if x = n then 1 else 0)``,
+  simp [flatPropsTheory.op_gbag_def, bagTheory.BAG_INSERT, bagTheory.EMPTY_BAG]);
+val _ = show_thm "singleton_global_bag=" singleton_global_bag;
 val _ = show_thm "expression_global_flag=" flat_patternProofTheory.compile_exp_set_globals_FST_SND;
 val _ = show_thm "tuple_global_flag=" flat_patternProofTheory.compile_exp_set_globals_tup;
 val _ = show_thm "global_bag_list_empty=" flatPropsTheory.elist_globals_eq_empty;

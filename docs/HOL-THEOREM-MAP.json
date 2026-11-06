@@ -13792,8 +13792,8 @@
     "hol_name": "op_sets_globals_gbag",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalFlag.lean",
     "lean_name": "opSetsGlobals_gbag",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_pattern_global_flag_probe.out. Compiler and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed operator_global_flag capture with the HOL boolean equation: Bool = true iff translates the same proposition. FlatLang.Op is reviewed exact; opSetsGlobals and opGlobalBag are reviewed against their typed source equations. The bag carrier is HOL num -> num, so no representation qualifier is needed."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
@@ -13816,8 +13816,8 @@
     "hol_name": "op_gbag_def",
     "lean_path": "Flapjack/Compiler/Backend/FlatProps/Globals.lean",
     "lean_name": "opGlobalBag",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_elim_value_globals_probe.out; HOL bags are natural-number-valued functions. Expression carriers and complete declaration review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared every flat operator clause with the typed global_bag_operator capture. The hypothesis-free singleton_global_bag HOL replay unfolds BAG_INSERT and EMPTY_BAG to the exact Nat-to-Nat singleton function used in Lean; other cases are the zero function. HOL bag is a function to num and Nat equality is HOL num equality, so no representation qualifier is needed."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
@@ -110140,8 +110140,8 @@
     "lean_name": "opSetsGlobals",
     "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
     "hol_name": "op_sets_globals_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source definition transcribed; typed HOL capture and full statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared every constructor against the typed operator_sets_globals_def capture. Only GlobalVarInit returns true; FlatLang.Op is the reviewed source carrier."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternCommon.lean",

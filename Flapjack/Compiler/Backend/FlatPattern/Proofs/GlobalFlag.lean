@@ -6,7 +6,7 @@ namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack.Compiler.Backend.FlatProps
 
 /-- The operator global-write flag is set exactly when its initialization
-bag is nonempty. The expression carriers remain pending HOL review. -/
+bag is nonempty. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "op_sets_globals_gbag"]
 theorem opSetsGlobals_gbag (op : FlatLang.Op) :
     opSetsGlobals op = true ↔ opGlobalBag op ≠ emptyGlobalBag := by
