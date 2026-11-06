@@ -516,13 +516,8 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateSequence
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateModule
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateException
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateDatatype
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLiteralConstructors
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateGrowingConstructors
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateGrowingNamedLet
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateBoundPure
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateBoundTest
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateBoundIf
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateBoundPair
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateBoundList
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateBoundConstructor
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateBoundControl
