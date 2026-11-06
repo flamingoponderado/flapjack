@@ -33,7 +33,56 @@ theorem pand_success_iff (x y : PmatchResult) :
 theorem pand_assoc (x y z : PmatchResult) : pand (pand x y) z = pand x (pand y z) := by
   cases x <;> cases y <;> cases z <;> rfl
 
-@[simp] theorem pmatchList_cons (refs : HolFiniteMapExact Nat Term) (pattern : Pat)
+private def toBroad (refs : HolFiniteMapExact Nat Term) : Nat → Option Term :=
+  refs.lookup
+
+private def ofBroad (lookup : Nat → Option Term)
+    (support : ∃ keys : List Nat, ∀ key, lookup key ≠ none → key ∈ keys) :
+    HolFiniteMapExact Nat Term := ⟨lookup, support⟩
+
+/-- Canonical finite-map parameter roundtrips for the matcher lemmas. -/
+theorem holFmapAsFiniteSupportParamWitness_pmatch_any_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs := by
+  cases refs
+  exact ⟨rfl, rfl, rfl⟩
+
+theorem holFmapAsFiniteSupportParamWitness_pmatchList_nil_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_pmatchList_cons_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
+
+/-- A wildcard matches every term. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "pmatch_Any"
+  (fmap_as_finite_support_parameters := [refs])]
+theorem pmatch_any (refs : HolFiniteMapExact Nat Term) (value : Term) :
+    pmatch refs .any value = .success := by
+  cases value <;> simp [pmatch]
+
+/-- Matching empty lists succeeds exactly in the source's three base cases. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "pmatch_list_nil"
+  (fmap_as_finite_support_parameters := [refs])]
+theorem pmatchList_nil (refs : HolFiniteMapExact Nat Term) (value : Term)
+    (values : List Term) (pattern : Pat) (patterns : List Pat) :
+    pmatchList refs [] [] = .success ∧
+    pmatchList refs [] (value :: values) = .typeFailure ∧
+    pmatchList refs (pattern :: patterns) [] = .typeFailure := by
+  simp [pmatchList]
+
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "pmatch_list_cons"
+  (fmap_as_finite_support_parameters := [refs]), simp]
+theorem pmatchList_cons (refs : HolFiniteMapExact Nat Term) (pattern : Pat)
     (patterns : List Pat) (value : Term) (values : List Term) :
     pmatchList refs (pattern :: patterns) (value :: values) =
       pand (pmatch refs pattern value) (pmatchList refs patterns values) := by

@@ -12916,8 +12916,8 @@
     "hol_name": "term",
     "lean_path": "Flapjack/Compiler/Backend/PatternSemantics/Semantics.lean",
     "lean_name": "Term",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Constructor types compared against the source datatype; complete carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed constructor signatures, cases and distinctness in pattern_exh_steps_probe.out: Term carries an optional natural tag and recursive term list, Litv carries the reviewed literal, RefPtr carries a natural, and Other has no fields. Lean preserves all four constructors and their field types."
   },
   {
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_semanticsScript.sml",
@@ -111334,6 +111334,59 @@
     "hol_name": "pand_assoc",
     "statement_status": "reviewed_exact",
     "reviewer": "Compared the typed local HOL replay with three independently quantified pmatchResult values and the same association order. The replay is recorded in pattern_exh_steps_probe.out."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternSemantics/Semantics.lean",
+    "lean_name": "isSiblingHOL",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_semanticsScript.sml",
+    "hol_name": "is_sibling_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed polymorphic is_sibling equations in pattern_exh_steps_probe.out: NONE accepts and SOME checks membership. The unrestricted type uses classical equality without an extra equality parameter; isSibling_eq_HOL proves agreement with the executed natural-pair specialization."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternSemantics/Semantics.lean",
+    "lean_name": "pmatch",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_semanticsScript.sml",
+    "hol_name": "pmatch_def",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": ["refs"],
+    "reviewer": "Compared the typed source pattern-matching clauses, including literal checks, constructor tags and arities, reference lookup, Or error propagation and fallback. The source sibling test is instantiated at natural-number pairs; isSibling_eq_HOL proves the executed specialization agrees with the unrestricted source operation. Typed evidence is in pattern_exh_steps_probe.out; the same-module witness checks the canonical finite-map parameter roundtrip."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternSemantics/Semantics.lean",
+    "lean_name": "pmatchList",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_semanticsScript.sml",
+    "hol_name": "pmatch_def",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": ["refs"],
+    "reviewer": "Compared all typed source list clauses, including the empty-list cases and preserving a later type failure after an earlier non-match. Typed evidence is in pattern_exh_steps_probe.out; the same-module witness checks the canonical finite-map parameter roundtrip."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Proofs/Soundness.lean",
+    "lean_name": "pmatch_any",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "pmatch_Any",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": ["refs"],
+    "reviewer": "Compared the source statement and typed local HOL replay: every term matches a wildcard. Typed evidence is in pattern_exh_steps_probe.out; the same-module witness checks the canonical finite-map parameter roundtrip."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Proofs/Soundness.lean",
+    "lean_name": "pmatchList_nil",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "pmatch_list_nil",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": ["refs"],
+    "reviewer": "Compared all three source conjuncts in the typed local HOL replay for empty and nonempty pattern and term lists. Typed evidence is in pattern_exh_steps_probe.out; the same-module witness checks the canonical finite-map parameter roundtrip."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Proofs/Soundness.lean",
+    "lean_name": "pmatchList_cons",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "pmatch_list_cons",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": ["refs"],
+    "reviewer": "Compared the source statement and typed local HOL replay: matching two nonempty lists combines the head match and tail match with pand. Typed evidence is in pattern_exh_steps_probe.out; the same-module witness checks the canonical finite-map parameter roundtrip."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternExh/Exhaustive.lean",

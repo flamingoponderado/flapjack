@@ -40,6 +40,10 @@ probe_needs_refresh() {
   local probe="$2"
   local source="$3"
   [[ ! -f "$output" || "$probe" -nt "$output" || "$source" -nt "$output" ]] ||
+    [[ "$(basename "$probe")" == pattern_exh_steps_probeScript.sml &&
+       ( "$cake_dir/compiler/backend/pattern_matching/pattern_commonScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/pattern_matching/pattern_semanticsScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/pattern_matching/pattern_compScript.sml" -nt "$output" ) ]] ||
     [[ "$(basename "$probe")" == clos_call_env_rel_probeScript.sml &&
        ( "$cake_dir/compiler/backend/proofs/clos_callProofScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/closLangScript.sml" -nt "$output" ) ]] ||
@@ -508,7 +512,7 @@ run_probe source_eval_oracle_adjust_probeScript.sml source_eval_oracle_adjust_pr
   "$cake_dir/compiler/backend/proofs/source_evalProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe pattern_exh_steps_probeScript.sml pattern_exh_steps_probe.out \
-  exh_steps exh_steps_examples pand pmatch_result_type pmatch_result_cases pmatch_result_distinct pand_simps pand_type pand_success pand_assoc exh_rows_eq exh_mats_append exh_all_thm exh_steps_list_append exh_all exh_all_examples \
+  exh_steps exh_steps_examples pand pmatch_result_type pmatch_result_cases pmatch_result_distinct pand_simps pand_type pand_success pand_assoc exh_rows_eq exh_mats_append exh_all_thm exh_steps_list_append exh_all exh_all_examples term_constructor_type litv_constructor_type term_cases term_distinct is_sibling pmatch pmatch_any pmatch_list_nil pmatch_list_cons pmatch_comp_length \
   "$cake_dir/compiler/backend/pattern_matching/pattern_exhScript.sml" "$cake_dir/compiler/backend/pattern_matching"
 
 run_probe flat_pattern_install_relation_probeScript.sml flat_pattern_install_relation_probe.out \

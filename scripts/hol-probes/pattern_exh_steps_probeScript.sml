@@ -1,4 +1,5 @@
 load "pattern_exhTheory";
+load "pattern_compTheory";
 load "preamble";
 open HolKernel Parse boolLib bossLib;
 open preamble;
@@ -89,3 +90,32 @@ val _ = print_term (rhs (concl (EVAL ``
    pattern_exh$exh_all [[[pattern_semantics$Ref pattern_semantics$Any]]]]
 ``)));
 val _ = print "\n";
+val _ = print "term_constructor_type=";
+val _ = print_type (type_of ``pattern_semantics$Term``);
+val _ = print "\n";
+val _ = print "litv_constructor_type=";
+val _ = print_type (type_of ``pattern_semantics$Litv``);
+val _ = print "\n";
+val _ = show_local "term_cases=" pattern_semanticsTheory.term_nchotomy;
+val _ = show_local "term_distinct=" pattern_semanticsTheory.term_distinct;
+val _ = show_local "is_sibling=" pattern_semanticsTheory.is_sibling_def;
+val _ = show_local "pmatch=" pattern_semanticsTheory.pmatch_def;
+val pmatch_any_replay = prove (
+  ``!refs v. pattern_semantics$pmatch refs pattern_semantics$Any v = pattern_common$PMatchSuccess``,
+  simp [pattern_semanticsTheory.pmatch_def]);
+val _ = show_local "pmatch_any=" pmatch_any_replay;
+val pmatch_list_nil_replay = prove (
+  ``!refs v vs p ps.
+    (pattern_semantics$pmatch_list refs [] [] = pattern_common$PMatchSuccess) /\
+    (pattern_semantics$pmatch_list refs [] (v::vs) = pattern_common$PTypeFailure) /\
+    (pattern_semantics$pmatch_list refs (p::ps) [] = pattern_common$PTypeFailure)``,
+  simp [pattern_semanticsTheory.pmatch_def]);
+val _ = show_local "pmatch_list_nil=" pmatch_list_nil_replay;
+val pmatch_list_cons_replay = prove (
+  ``!refs p ps v vs. pattern_semantics$pmatch_list refs (p::ps) (v::vs) =
+    pattern_exh$pand (pattern_semantics$pmatch refs p v) (pattern_semantics$pmatch_list refs ps vs)``,
+  simp [pattern_semanticsTheory.pmatch_def] >>
+  Cases_on `pattern_semantics$pmatch refs p v` >> fs [pattern_exhTheory.pand_def] >>
+  Cases_on `pattern_semantics$pmatch_list refs ps vs` >> fs []);
+val _ = show_local "pmatch_list_cons=" pmatch_list_cons_replay;
+val _ = show_local "pmatch_comp_length=" pattern_compTheory.pmatch_list_LENGTH;
