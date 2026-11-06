@@ -102,36 +102,6 @@ def decodeTypeDef : Sexp → Option TypeDef :=
   decodeList (decodePair (decodeList destString)
     (decodePair destString (decodeList (decodePair destString decodeTypeList))))
 
-/-- Compatibility entry point; type-definition decoding no longer uses fuel. -/
-def decodeTypeDefFuel (_fuel : Nat) : Sexp → Option TypeDef := decodeTypeDef
-
-/-- Decode declarations, including nested modules and local declarations. -/
-def decodeDecFuel : Nat → Sexp → Option Dec
-  | 0, _ => none
-  | fuel + 1, sexp => do
-    let (name, args) ← stripConstructor sexp
-    let decs := decodeList (decodeDecFuel fuel)
-    let funs := decodeFunctions
-    match args with
-    | [a] => if name == ascii "Denv" then (destString a).map Dec.denv else none
-    | [a, b] =>
-      if name == ascii "Dletrec" then do some (.dletrec (← decodeLoc a) (← funs b))
-      else if name == ascii "Dtype" then do some (.dtype (← decodeLoc a) (← decodeTypeDefFuel fuel b))
-      else if name == ascii "Dmod" then do some (.dmod (← destString a) (← decs b))
-      else if name == ascii "Dlocal" then do some (.dlocal (← decs a) (← decs b))
-      else none
-    | [a, b, c] =>
-      if name == ascii "Dlet" then do
-        some (.dlet (← decodeLoc a) (← decodePattern b) (← decodeExp c))
-      else if name == ascii "Dexn" then do
-        some (.dexn (← decodeLoc a) (← destString b) (← decodeTypeList c))
-      else none
-    | [a, b, c, d] =>
-      if name == ascii "Dtabbrev" then do
-        some (.dtabbrev (← decodeLoc a) (← decodeList destString b) (← destString c) (← decodeType d))
-      else none
-    | _ => none
-
 mutual
 /-- Decode declarations by recursion on the input S-expression. -/
 @[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexpdec_def"]
@@ -167,8 +137,5 @@ def decodeDecList : Sexp → Option (List Dec)
   | _ => none
 termination_by sexp => sizeOf sexp
 end
-
-/-- Decode the proper top-level list of declarations. -/
-def decodeProgramFuel (fuel : Nat) : Sexp → Option (List Dec) := decodeList (decodeDecFuel fuel)
 
 end Flapjack.CakeParser.FromSexp

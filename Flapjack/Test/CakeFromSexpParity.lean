@@ -184,8 +184,7 @@ example : declarationInputs.map (fun d => (decodeDec d).map CakeParser.ToSexp.de
 private def nestedDeclaration (depth : Nat) : Sexp :=
   (List.replicate depth ()).foldr (fun _ rest => node "Dmod" [str "M", list [rest]]) (node "Denv" [str "x"])
 
-example : (decodeDec (nestedDeclaration 64)).map CakeParser.ToSexp.dec = some (nestedDeclaration 64) ∧
-    (decodeDecFuel 64 (nestedDeclaration 64)).isNone = true := by native_decide
+example : (decodeDec (nestedDeclaration 64)).map CakeParser.ToSexp.dec = some (nestedDeclaration 64) := by native_decide
 
 example : [decodeOp (sym "Equality"), decodeOp (sym "Opapp"), decodeOp (sym "Aw8subunsafe"),
     decodeOp (sym "ForceThunk"), decodeOp (sym "Envid"), decodeOp (.cons (sym "FFI") (str "x\\00y")),
