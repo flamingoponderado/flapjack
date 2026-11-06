@@ -256,16 +256,4 @@ theorem compileExp_handle_bound (cfg : Config) (trace : BackendCommon.Tra)
         cases rest with
         | mk rowFlag compiledRows => simp [compileExp, first, matchResult]
 
-/-- The standard forward-simulation induction hypothesis for one expression.
-This is Flapjack proof infrastructure over the unreviewed flat evaluator. -/
-def ExpressionSimulation {C F : Type} (cfg stateCfg : Config) (expression : FlatLang.Exp) : Prop :=
-  ∀ (sourceEnv targetEnv : FlatSem.Environment FlatSem.Value) (source target sourceFinal : FlatSem.State C F)
-    (sourceResult : Result (List FlatSem.Value) FlatSem.Value) (n : Nat),
-    FlatSem.evaluate sourceEnv source [expression] = (sourceFinal, sourceResult) →
-    EnvRel n sourceEnv targetEnv → StateRel stateCfg source target → (compileExp cfg expression).1 < n →
-    sourceResult ≠ .err (.abort .typeError) →
-    ∃ targetFinal targetResult,
-      FlatSem.evaluate targetEnv target [(compileExp cfg expression).2.2] = (targetFinal, targetResult) ∧
-      StateRel stateCfg sourceFinal targetFinal ∧ FlatResultRel sourceResult targetResult
-
 end Flapjack.Compiler.Backend.FlatPattern

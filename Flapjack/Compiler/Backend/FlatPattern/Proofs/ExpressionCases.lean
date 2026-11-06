@@ -7,54 +7,6 @@ namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack Flapjack.AstHOL Flapjack.Compiler.Backend
 open Flapjack.SemanticPrimitivesHOL (Result)
 
-/-- Literal expressions preserve the state and value relation. -/
-theorem compile_lit_simulation {C F : Type} (cfg stateCfg : Config) (trace : BackendCommon.Tra) (literal : Lit) :
-    ExpressionSimulation (C := C) (F := F) cfg stateCfg (.lit trace literal) := by
-  intro sourceEnv targetEnv source target sourceFinal sourceResult n sourceEval envs states bound safe
-  simp [FlatSem.evaluate] at sourceEval
-  rcases sourceEval with ⟨rfl, rfl⟩
-  refine ⟨target, .val [.litv literal], ?_, states, .values ?_⟩
-  · simp [compileExp, FlatSem.evaluate]
-  · exact .cons ((valueRel_lit literal _).2 rfl) .nil
-
-/-- Variables are looked up at related names within the compiler's bound. -/
-theorem compile_var_simulation {C F : Type} (cfg stateCfg : Config) (trace : BackendCommon.Tra) (name : VarN) :
-    ExpressionSimulation (C := C) (F := F) cfg stateCfg (.varLocal trace name) := by
-  intro sourceEnv targetEnv source target sourceFinal sourceResult n sourceEval envs states bound safe
-  have nameBound : decNameToNum name < n := by simpa [compileExp] using bound
-  have lookupRel := envRel_lookup n sourceEnv targetEnv name envs nameBound
-  rw [holALookup_mlString, holALookup_mlString] at lookupRel
-  cases sourceLookup : sourceEnv.v.lookup name with
-  | none =>
-    simp [FlatSem.evaluate, sourceLookup] at sourceEval
-    rcases sourceEval with ⟨_, result⟩
-    exact (safe result.symm).elim
-  | some value =>
-    cases targetLookup : targetEnv.v.lookup name with
-    | none => simp [sourceLookup, targetLookup, optionRel] at lookupRel
-    | some value' =>
-      have values : ValueRel value value' := by simpa [sourceLookup, targetLookup, optionRel] using lookupRel
-      simp [FlatSem.evaluate, sourceLookup] at sourceEval
-      rcases sourceEval with ⟨rfl, rfl⟩
-      refine ⟨target, .val [value'], ?_, states, .values (.cons values .nil)⟩
-      simp [compileExp, FlatSem.evaluate, targetLookup]
-
-/-- Functions compile their bodies inside related closures. -/
-theorem compile_fn_simulation {C F : Type} (cfg stateCfg : Config) (trace : VarN)
-    (name : VarN) (body : FlatLang.Exp) :
-    ExpressionSimulation (C := C) (F := F) cfg stateCfg (.fn trace name body) := by
-  intro sourceEnv targetEnv source target sourceFinal sourceResult n sourceEval envs states bound safe
-  have bodyBound : (compileExp cfg body).1 < n := by
-    cases h : compileExp cfg body with
-    | mk i rest => cases rest with | mk flag compiled => simpa [compileExp, h] using bound
-  simp [FlatSem.evaluate] at sourceEval
-  rcases sourceEval with ⟨rfl, rfl⟩
-  have closureRel : ValueRel (.closure sourceEnv name body) (.closure targetEnv name (compileDec cfg body)) :=
-    .closure envs bodyBound
-  refine ⟨target, .val [.closure targetEnv name (compileDec cfg body)], ?_, states, .values (.cons closureRel .nil)⟩
-  cases h : compileExp cfg body with
-  | mk i rest => cases rest with | mk flag compiled => simp [compileExp, compileDec, FlatSem.evaluate, h]
-
 /-- Raising a value returned by the operand raises that value. -/
 theorem evaluate_raise_value {C F : Type} (trace : BackendCommon.Tra) (body : FlatLang.Exp)
     (env : FlatSem.Environment FlatSem.Value) (state next : FlatSem.State C F) (value : FlatSem.Value)

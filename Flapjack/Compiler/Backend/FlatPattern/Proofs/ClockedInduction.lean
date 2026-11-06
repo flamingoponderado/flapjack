@@ -58,11 +58,11 @@ theorem expressionSimulationUpTo_all {C F : Type} (clock : Nat) :
         intro cfg stateCfg expression weightEq
         cases expression with
         | lit trace literal =>
-          exact expressionSimulation_upTo cfg stateCfg clock _ (compile_lit_simulation cfg stateCfg trace literal)
+          exact compile_lit_simulation cfg stateCfg clock trace literal
         | varLocal trace name =>
-          exact expressionSimulation_upTo cfg stateCfg clock _ (compile_var_simulation cfg stateCfg trace name)
+          exact compile_var_simulation cfg stateCfg clock trace name
         | fn trace name body =>
-          exact expressionSimulation_upTo cfg stateCfg clock _ (compile_fn_simulation cfg stateCfg trace name body)
+          exact compile_fn_simulation cfg stateCfg clock trace name body
         | raise trace body =>
           apply compile_raise_simulation_upTo cfg stateCfg clock trace body
           apply weightIH (FlatSem.expWeight body) (by simp [FlatSem.expWeight] at weightEq; omega) cfg stateCfg body rfl
