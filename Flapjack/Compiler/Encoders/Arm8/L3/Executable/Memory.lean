@@ -120,4 +120,739 @@ theorem loadStoreGuard9_eq (v : BitVec 64) :
   rw [beq_iff_eq]
   exact fitsSigned_iff_signExtend 9 (by omega) (by omega) v
 
+/-- The nine-bit `holWordExtract` at width nine. -/
+theorem h9w_eq (offset : BitVec 64) :
+    holWordExtract 9 8 0 offset = BitVec.setWidth 9 offset := by
+  simp only [holWordExtract]
+  rw [holWordExtract_eq_setWidth 9 (a := 64) 8 0 offset (by omega) (by omega) (by omega)]
+  simp only [BitVec.ushiftRight_zero]
+
+/-- A 64-bit load encodes to the same four bytes on both sides. -/
+theorem encodeBytes_loadStore64_load (unsignedOffset : Bool) (offset : BitVec 64) (rn rt : Nat) :
+    encodeBytes (.loadStoreImmediate 3 false .load false unsignedOffset offset rn rt) =
+      arm8Encode (.LoadStore (.«LoadStoreImmediate@64»
+        ((3 : BitVec 64), false, .MemOp_LOAD, .AccType_NORMAL, false, false, false, false,
+         false, unsignedOffset, offset, BitVec.ofNat 5 rn, BitVec.ofNat 5 rt))) := by
+  have hiff12 : (offset == (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (3 : Nat)))) <<< (3 : Nat)) =
+      decide (offset = (BitVec.ofNat 64 ((offset >>> (3 : Nat)).toNat % 4096)) <<< (3 : Nat)) := by
+    apply Bool.eq_iff_iff.mpr
+    rw [beq_iff_eq, decide_eq_true_eq]
+    exact Iff.intro
+      (fun h => h.trans (congrArg (fun x : BitVec 64 => x <<< (3 : Nat)) (imm12_eq 3 offset).symm))
+      (fun h => h.trans (congrArg (fun x : BitVec 64 => x <<< (3 : Nat)) (imm12_eq 3 offset)))
+  have hiff9 : (offset == BitVec.signExtend 64 (holWordExtract 9 8 0 offset)) =
+      fitsSigned 9 offset := by
+    rw [h9w_eq]
+    apply Bool.eq_iff_iff.mpr
+    rw [beq_iff_eq]
+    exact (fitsSigned_iff_signExtend 9 (by omega) (by omega) offset).symm
+  by_cases h12 : (unsignedOffset && decide (offset = (BitVec.ofNat 64 ((offset >>> (3 : Nat)).toNat % 4096)) <<< (3 : Nat))) = true
+  · have hoff : offset = (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (3 : Nat)))) <<< (3 : Nat) := by
+      have h := of_decide_eq_true (Bool.and_eq_true_iff.mp h12).2
+      calc offset = (BitVec.ofNat 64 ((offset >>> (3 : Nat)).toNat % 4096)) <<< (3 : Nat) := h
+        _ = (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (3 : Nat)))) <<< (3 : Nat) := by
+            congr 1
+            exact imm12_eq 3 offset
+    have hu : unsignedOffset = true := (Bool.and_eq_true_iff.mp h12).1
+    have hw : encodeInsn32 (.loadStoreImmediate 3 false .load false unsignedOffset offset rn rt) =
+        some (fields [(2, 3), (6, 57), (2, 1), (12, ((offset >>> (3 : Nat)).toNat % 4096)),
+          (5, rn), (5, rt)]) := by
+      simp only [encodeInsn32]
+      split
+      · simp
+      · exact absurd h12 ‹_›
+    rw [hu] at hw
+    rw [hu, encodeBytes_eq_of_encodeInsn32 _ _ hw]
+    simp only [arm8Encode, arm8Encode_loadStoreImm12_load offset (BitVec.ofNat 5 rn) (BitVec.ofNat 5 rt) hoff,
+      fields_loadStoreImm12, imm12Word_eq]
+    rfl
+  · have hfall : (unsignedOffset && (offset == (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (3 : Nat)))) <<< (3 : Nat))) = false := by
+      cases hu : unsignedOffset
+      · rfl
+      · have hp : decide (offset = (BitVec.ofNat 64 ((offset >>> (3 : Nat)).toNat % 4096)) <<< (3 : Nat)) = false := by
+          have h := h12
+          rw [hu] at h
+          simpa using h
+        simp only [hiff12, hp, Bool.true_and]
+    by_cases h9 : fitsSigned 9 offset = true
+    · have hsx : offset = BitVec.signExtend 64 (holWordExtract 9 8 0 offset) := by
+        have h : (offset == BitVec.signExtend 64 (holWordExtract 9 8 0 offset)) = true := by
+          rw [hiff9]
+          exact h9
+        exact beq_iff_eq.mp h
+      have hw : encodeInsn32 (.loadStoreImmediate 3 false .load false unsignedOffset offset rn rt) =
+          some (fields [(2, 3), (6, 56), (2, 1), (1, 0), (9, offset.toNat % 512),
+            (1, 0), (1, 0), (5, rn), (5, rt)]) := by
+        simp only [encodeInsn32]
+        split
+        · exact absurd ‹_› h12
+        · simp
+      rw [encodeBytes_eq_of_encodeInsn32 _ _ hw]
+      simp only [arm8Encode, arm8Encode_loadStoreImm9_load offset unsignedOffset (BitVec.ofNat 5 rn) (BitVec.ofNat 5 rt)
+        hfall hsx, fields_loadStoreImm9, imm9Word_eq]
+    · have h9' : (offset == BitVec.signExtend 64 (holWordExtract 9 8 0 offset)) = false := by
+        rw [hiff9]
+        simpa [Bool.not_eq_true] using h9
+      have hg : ¬ (unsignedOffset = true ∧ offset = (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (3 : Nat)))) <<< (3 : Nat)) := by
+        intro h
+        have h' : (unsignedOffset && (offset == (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (3 : Nat)))) <<< (3 : Nat))) = true := by
+          simp only [Bool.and_eq_true_iff, beq_iff_eq]
+          exact ⟨h.1, h.2⟩
+        rw [h'] at hfall
+        exact absurd hfall (by decide)
+      have hs : BitVec.setWidth 2 (3 : BitVec 64) = BitVec.ofNat 2 3 := by decide
+      have h3 : (BitVec.ofNat 2 3).toNat = 3 := by decide
+      have hload : (MemOp.MemOp_LOAD == MemOp.MemOp_LOAD) = true := by decide
+      have hnrm : (AccType.AccType_NORMAL == AccType.AccType_NORMAL) = true := by decide
+      have hpref : (MemOp.MemOp_LOAD == MemOp.MemOp_PREFETCH) = false := by decide
+      have hstore : (MemOp.MemOp_LOAD == MemOp.MemOp_STORE) = false := by decide
+      have hnf : ((!false : Bool) = true) := rfl
+      have hw : encodeInsn32 (.loadStoreImmediate 3 false .load false unsignedOffset offset rn rt) =
+          none := by
+        simp only [encodeInsn32]
+        split
+        · exact absurd ‹_› h12
+        · rfl
+      rw [encodeBytes_eq_of_encodeInsn32_none _ hw]
+      simp only [arm8Encode, Encode, e_load_store, e_LoadStoreImmediate, hs, h3, hload, hnrm,
+        hpref, Bool.false_eq_true, if_false, hnf, if_true, Bool.and_true,
+        Bool.and_eq_true_iff, beq_iff_eq, hg, h9']
+
+/-- A 64-bit store encodes to the same four bytes on both sides. -/
+theorem encodeBytes_loadStore64_store (unsignedOffset : Bool) (offset : BitVec 64) (rn rt : Nat) :
+    encodeBytes (.loadStoreImmediate 3 false .store false unsignedOffset offset rn rt) =
+      arm8Encode (.LoadStore (.«LoadStoreImmediate@64»
+        ((3 : BitVec 64), false, .MemOp_STORE, .AccType_NORMAL, false, false, false, false,
+         false, unsignedOffset, offset, BitVec.ofNat 5 rn, BitVec.ofNat 5 rt))) := by
+  have hiff12 : (offset == (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (3 : Nat)))) <<< (3 : Nat)) =
+      decide (offset = (BitVec.ofNat 64 ((offset >>> (3 : Nat)).toNat % 4096)) <<< (3 : Nat)) := by
+    apply Bool.eq_iff_iff.mpr
+    rw [beq_iff_eq, decide_eq_true_eq]
+    exact Iff.intro
+      (fun h => h.trans (congrArg (fun x : BitVec 64 => x <<< (3 : Nat)) (imm12_eq 3 offset).symm))
+      (fun h => h.trans (congrArg (fun x : BitVec 64 => x <<< (3 : Nat)) (imm12_eq 3 offset)))
+  have hiff9 : (offset == BitVec.signExtend 64 (holWordExtract 9 8 0 offset)) =
+      fitsSigned 9 offset := by
+    rw [h9w_eq]
+    apply Bool.eq_iff_iff.mpr
+    rw [beq_iff_eq]
+    exact (fitsSigned_iff_signExtend 9 (by omega) (by omega) offset).symm
+  by_cases h12 : (unsignedOffset && decide (offset = (BitVec.ofNat 64 ((offset >>> (3 : Nat)).toNat % 4096)) <<< (3 : Nat))) = true
+  · have hoff : offset = (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (3 : Nat)))) <<< (3 : Nat) := by
+      have h := of_decide_eq_true (Bool.and_eq_true_iff.mp h12).2
+      calc offset = (BitVec.ofNat 64 ((offset >>> (3 : Nat)).toNat % 4096)) <<< (3 : Nat) := h
+        _ = (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (3 : Nat)))) <<< (3 : Nat) := by
+            congr 1
+            exact imm12_eq 3 offset
+    have hu : unsignedOffset = true := (Bool.and_eq_true_iff.mp h12).1
+    have hw : encodeInsn32 (.loadStoreImmediate 3 false .store false unsignedOffset offset rn rt) =
+        some (fields [(2, 3), (6, 57), (2, 0), (12, ((offset >>> (3 : Nat)).toNat % 4096)),
+          (5, rn), (5, rt)]) := by
+      simp only [encodeInsn32]
+      split
+      · simp
+      · exact absurd h12 ‹_›
+    rw [hu] at hw
+    rw [hu, encodeBytes_eq_of_encodeInsn32 _ _ hw]
+    simp only [arm8Encode, arm8Encode_loadStoreImm12_store offset (BitVec.ofNat 5 rn) (BitVec.ofNat 5 rt) hoff,
+      fields_loadStoreImm12, imm12Word_eq]
+    rfl
+  · have hfall : (unsignedOffset && (offset == (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (3 : Nat)))) <<< (3 : Nat))) = false := by
+      cases hu : unsignedOffset
+      · rfl
+      · have hp : decide (offset = (BitVec.ofNat 64 ((offset >>> (3 : Nat)).toNat % 4096)) <<< (3 : Nat)) = false := by
+          have h := h12
+          rw [hu] at h
+          simpa using h
+        simp only [hiff12, hp, Bool.true_and]
+    by_cases h9 : fitsSigned 9 offset = true
+    · have hsx : offset = BitVec.signExtend 64 (holWordExtract 9 8 0 offset) := by
+        have h : (offset == BitVec.signExtend 64 (holWordExtract 9 8 0 offset)) = true := by
+          rw [hiff9]
+          exact h9
+        exact beq_iff_eq.mp h
+      have hw : encodeInsn32 (.loadStoreImmediate 3 false .store false unsignedOffset offset rn rt) =
+          some (fields [(2, 3), (6, 56), (2, 0), (1, 0), (9, offset.toNat % 512),
+            (1, 0), (1, 0), (5, rn), (5, rt)]) := by
+        simp only [encodeInsn32]
+        split
+        · exact absurd ‹_› h12
+        · simp
+      rw [encodeBytes_eq_of_encodeInsn32 _ _ hw]
+      simp only [arm8Encode, arm8Encode_loadStoreImm9_store offset unsignedOffset (BitVec.ofNat 5 rn) (BitVec.ofNat 5 rt)
+        hfall hsx, fields_loadStoreImm9, imm9Word_eq]
+    · have h9' : (offset == BitVec.signExtend 64 (holWordExtract 9 8 0 offset)) = false := by
+        rw [hiff9]
+        simpa [Bool.not_eq_true] using h9
+      have hg : ¬ (unsignedOffset = true ∧ offset = (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (3 : Nat)))) <<< (3 : Nat)) := by
+        intro h
+        have h' : (unsignedOffset && (offset == (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (3 : Nat)))) <<< (3 : Nat))) = true := by
+          simp only [Bool.and_eq_true_iff, beq_iff_eq]
+          exact ⟨h.1, h.2⟩
+        rw [h'] at hfall
+        exact absurd hfall (by decide)
+      have hs : BitVec.setWidth 2 (3 : BitVec 64) = BitVec.ofNat 2 3 := by decide
+      have h3 : (BitVec.ofNat 2 3).toNat = 3 := by decide
+      have hload : (MemOp.MemOp_STORE == MemOp.MemOp_STORE) = true := by decide
+      have hnrm : (AccType.AccType_NORMAL == AccType.AccType_NORMAL) = true := by decide
+      have hpref : (MemOp.MemOp_STORE == MemOp.MemOp_PREFETCH) = false := by decide
+      have hstore : (MemOp.MemOp_STORE == MemOp.MemOp_STORE) = true := by decide
+      have hnf : ((!false : Bool) = true) := rfl
+      have hw : encodeInsn32 (.loadStoreImmediate 3 false .store false unsignedOffset offset rn rt) =
+          none := by
+        simp only [encodeInsn32]
+        split
+        · exact absurd ‹_› h12
+        · rfl
+      rw [encodeBytes_eq_of_encodeInsn32_none _ hw]
+      simp only [arm8Encode, Encode, e_load_store, e_LoadStoreImmediate, hs, h3, hload, hnrm,
+        hpref, Bool.false_eq_true, if_false, hnf, if_true, Bool.and_true,
+        Bool.and_eq_true_iff, beq_iff_eq, hg, h9']
+
+/-- A 32-bit load encodes to the same four bytes on both sides. -/
+theorem encodeBytes_loadStore32_load (unsignedOffset : Bool) (offset : BitVec 64) (rn rt : Nat) :
+    encodeBytes (.loadStoreImmediate 2 true .load false unsignedOffset offset rn rt) =
+      arm8Encode (.LoadStore (.«LoadStoreImmediate@32»
+        ((BitVec.ofNat 32 2), true, .MemOp_LOAD, .AccType_NORMAL, false, false, false, false,
+         false, unsignedOffset, offset, BitVec.ofNat 5 rn, BitVec.ofNat 5 rt))) := by
+  have hiff12 : (offset == (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (2 : Nat)))) <<< (2 : Nat)) =
+      decide (offset = (BitVec.ofNat 64 ((offset >>> (2 : Nat)).toNat % 4096)) <<< (2 : Nat)) := by
+    apply Bool.eq_iff_iff.mpr
+    rw [beq_iff_eq, decide_eq_true_eq]
+    exact Iff.intro
+      (fun h => h.trans (congrArg (fun x : BitVec 64 => x <<< (2 : Nat)) (imm12_eq 2 offset).symm))
+      (fun h => h.trans (congrArg (fun x : BitVec 64 => x <<< (2 : Nat)) (imm12_eq 2 offset)))
+  have hiff9 : (offset == BitVec.signExtend 64 (holWordExtract 9 8 0 offset)) =
+      fitsSigned 9 offset := by
+    rw [h9w_eq]
+    apply Bool.eq_iff_iff.mpr
+    rw [beq_iff_eq]
+    exact (fitsSigned_iff_signExtend 9 (by omega) (by omega) offset).symm
+  by_cases h12 : (unsignedOffset && decide (offset = (BitVec.ofNat 64 ((offset >>> (2 : Nat)).toNat % 4096)) <<< (2 : Nat))) = true
+  · have hoff : offset = (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (2 : Nat)))) <<< (2 : Nat) := by
+      have h := of_decide_eq_true (Bool.and_eq_true_iff.mp h12).2
+      calc offset = (BitVec.ofNat 64 ((offset >>> (2 : Nat)).toNat % 4096)) <<< (2 : Nat) := h
+        _ = (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (2 : Nat)))) <<< (2 : Nat) := by
+            congr 1
+            exact imm12_eq 2 offset
+    have hu : unsignedOffset = true := (Bool.and_eq_true_iff.mp h12).1
+    have hw : encodeInsn32 (.loadStoreImmediate 2 true .load false unsignedOffset offset rn rt) =
+        some (fields [(2, 2), (6, 57), (2, 1), (12, ((offset >>> (2 : Nat)).toNat % 4096)),
+          (5, rn), (5, rt)]) := by
+      simp only [encodeInsn32]
+      split
+      · simp
+      · exact absurd h12 ‹_›
+    rw [hu] at hw
+    rw [hu, encodeBytes_eq_of_encodeInsn32 _ _ hw]
+    simp only [arm8Encode, arm8Encode_loadStoreImm12_load32 offset (BitVec.ofNat 5 rn) (BitVec.ofNat 5 rt) hoff,
+      fields_loadStoreImm12, imm12Word_eq]
+    rfl
+  · have hfall : (unsignedOffset && (offset == (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (2 : Nat)))) <<< (2 : Nat))) = false := by
+      cases hu : unsignedOffset
+      · rfl
+      · have hp : decide (offset = (BitVec.ofNat 64 ((offset >>> (2 : Nat)).toNat % 4096)) <<< (2 : Nat)) = false := by
+          have h := h12
+          rw [hu] at h
+          simpa using h
+        simp only [hiff12, hp, Bool.true_and]
+    by_cases h9 : fitsSigned 9 offset = true
+    · have hsx : offset = BitVec.signExtend 64 (holWordExtract 9 8 0 offset) := by
+        have h : (offset == BitVec.signExtend 64 (holWordExtract 9 8 0 offset)) = true := by
+          rw [hiff9]
+          exact h9
+        exact beq_iff_eq.mp h
+      have hw : encodeInsn32 (.loadStoreImmediate 2 true .load false unsignedOffset offset rn rt) =
+          some (fields [(2, 2), (6, 56), (2, 1), (1, 0), (9, offset.toNat % 512),
+            (1, 0), (1, 0), (5, rn), (5, rt)]) := by
+        simp only [encodeInsn32]
+        split
+        · exact absurd ‹_› h12
+        · simp
+      rw [encodeBytes_eq_of_encodeInsn32 _ _ hw]
+      simp only [arm8Encode, arm8Encode_loadStoreImm9_load32 offset unsignedOffset (BitVec.ofNat 5 rn) (BitVec.ofNat 5 rt)
+        hfall hsx, fields_loadStoreImm9, imm9Word_eq]
+    · have h9' : (offset == BitVec.signExtend 64 (holWordExtract 9 8 0 offset)) = false := by
+        rw [hiff9]
+        simpa [Bool.not_eq_true] using h9
+      have hg : ¬ (unsignedOffset = true ∧ offset = (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (2 : Nat)))) <<< (2 : Nat)) := by
+        intro h
+        have h' : (unsignedOffset && (offset == (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (2 : Nat)))) <<< (2 : Nat))) = true := by
+          simp only [Bool.and_eq_true_iff, beq_iff_eq]
+          exact ⟨h.1, h.2⟩
+        rw [h'] at hfall
+        exact absurd hfall (by decide)
+      have hs : BitVec.setWidth 2 (BitVec.ofNat 32 2) = BitVec.ofNat 2 2 := by decide
+      have h3 : (BitVec.ofNat 2 2).toNat = 2 := by decide
+      have hload : (MemOp.MemOp_LOAD == MemOp.MemOp_LOAD) = true := by decide
+      have hnrm : (AccType.AccType_NORMAL == AccType.AccType_NORMAL) = true := by decide
+      have hpref : (MemOp.MemOp_LOAD == MemOp.MemOp_PREFETCH) = false := by decide
+      have hstore : (MemOp.MemOp_LOAD == MemOp.MemOp_STORE) = false := by decide
+      have hnf : ((!false : Bool) = true) := rfl
+      have hw : encodeInsn32 (.loadStoreImmediate 2 true .load false unsignedOffset offset rn rt) =
+          none := by
+        simp only [encodeInsn32]
+        split
+        · exact absurd ‹_› h12
+        · rfl
+      rw [encodeBytes_eq_of_encodeInsn32_none _ hw]
+      simp only [arm8Encode, Encode, e_load_store, e_LoadStoreImmediate, hs, h3, hload, hnrm,
+        hpref, Bool.false_eq_true, if_false, hnf, if_true, Bool.and_true,
+        Bool.and_eq_true_iff, beq_iff_eq, hg, h9']
+
+/-- A 32-bit store encodes to the same four bytes on both sides. -/
+theorem encodeBytes_loadStore32_store (unsignedOffset : Bool) (offset : BitVec 64) (rn rt : Nat) :
+    encodeBytes (.loadStoreImmediate 2 true .store false unsignedOffset offset rn rt) =
+      arm8Encode (.LoadStore (.«LoadStoreImmediate@32»
+        ((BitVec.ofNat 32 2), true, .MemOp_STORE, .AccType_NORMAL, false, false, false, false,
+         false, unsignedOffset, offset, BitVec.ofNat 5 rn, BitVec.ofNat 5 rt))) := by
+  have hiff12 : (offset == (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (2 : Nat)))) <<< (2 : Nat)) =
+      decide (offset = (BitVec.ofNat 64 ((offset >>> (2 : Nat)).toNat % 4096)) <<< (2 : Nat)) := by
+    apply Bool.eq_iff_iff.mpr
+    rw [beq_iff_eq, decide_eq_true_eq]
+    exact Iff.intro
+      (fun h => h.trans (congrArg (fun x : BitVec 64 => x <<< (2 : Nat)) (imm12_eq 2 offset).symm))
+      (fun h => h.trans (congrArg (fun x : BitVec 64 => x <<< (2 : Nat)) (imm12_eq 2 offset)))
+  have hiff9 : (offset == BitVec.signExtend 64 (holWordExtract 9 8 0 offset)) =
+      fitsSigned 9 offset := by
+    rw [h9w_eq]
+    apply Bool.eq_iff_iff.mpr
+    rw [beq_iff_eq]
+    exact (fitsSigned_iff_signExtend 9 (by omega) (by omega) offset).symm
+  by_cases h12 : (unsignedOffset && decide (offset = (BitVec.ofNat 64 ((offset >>> (2 : Nat)).toNat % 4096)) <<< (2 : Nat))) = true
+  · have hoff : offset = (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (2 : Nat)))) <<< (2 : Nat) := by
+      have h := of_decide_eq_true (Bool.and_eq_true_iff.mp h12).2
+      calc offset = (BitVec.ofNat 64 ((offset >>> (2 : Nat)).toNat % 4096)) <<< (2 : Nat) := h
+        _ = (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (2 : Nat)))) <<< (2 : Nat) := by
+            congr 1
+            exact imm12_eq 2 offset
+    have hu : unsignedOffset = true := (Bool.and_eq_true_iff.mp h12).1
+    have hw : encodeInsn32 (.loadStoreImmediate 2 true .store false unsignedOffset offset rn rt) =
+        some (fields [(2, 2), (6, 57), (2, 0), (12, ((offset >>> (2 : Nat)).toNat % 4096)),
+          (5, rn), (5, rt)]) := by
+      simp only [encodeInsn32]
+      split
+      · simp
+      · exact absurd h12 ‹_›
+    rw [hu] at hw
+    rw [hu, encodeBytes_eq_of_encodeInsn32 _ _ hw]
+    simp only [arm8Encode, arm8Encode_loadStoreImm12_store32 offset (BitVec.ofNat 5 rn) (BitVec.ofNat 5 rt) hoff,
+      fields_loadStoreImm12, imm12Word_eq]
+    rfl
+  · have hfall : (unsignedOffset && (offset == (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (2 : Nat)))) <<< (2 : Nat))) = false := by
+      cases hu : unsignedOffset
+      · rfl
+      · have hp : decide (offset = (BitVec.ofNat 64 ((offset >>> (2 : Nat)).toNat % 4096)) <<< (2 : Nat)) = false := by
+          have h := h12
+          rw [hu] at h
+          simpa using h
+        simp only [hiff12, hp, Bool.true_and]
+    by_cases h9 : fitsSigned 9 offset = true
+    · have hsx : offset = BitVec.signExtend 64 (holWordExtract 9 8 0 offset) := by
+        have h : (offset == BitVec.signExtend 64 (holWordExtract 9 8 0 offset)) = true := by
+          rw [hiff9]
+          exact h9
+        exact beq_iff_eq.mp h
+      have hw : encodeInsn32 (.loadStoreImmediate 2 true .store false unsignedOffset offset rn rt) =
+          some (fields [(2, 2), (6, 56), (2, 0), (1, 0), (9, offset.toNat % 512),
+            (1, 0), (1, 0), (5, rn), (5, rt)]) := by
+        simp only [encodeInsn32]
+        split
+        · exact absurd ‹_› h12
+        · simp
+      rw [encodeBytes_eq_of_encodeInsn32 _ _ hw]
+      simp only [arm8Encode, arm8Encode_loadStoreImm9_store32 offset unsignedOffset (BitVec.ofNat 5 rn) (BitVec.ofNat 5 rt)
+        hfall hsx, fields_loadStoreImm9, imm9Word_eq]
+    · have h9' : (offset == BitVec.signExtend 64 (holWordExtract 9 8 0 offset)) = false := by
+        rw [hiff9]
+        simpa [Bool.not_eq_true] using h9
+      have hg : ¬ (unsignedOffset = true ∧ offset = (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (2 : Nat)))) <<< (2 : Nat)) := by
+        intro h
+        have h' : (unsignedOffset && (offset == (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (2 : Nat)))) <<< (2 : Nat))) = true := by
+          simp only [Bool.and_eq_true_iff, beq_iff_eq]
+          exact ⟨h.1, h.2⟩
+        rw [h'] at hfall
+        exact absurd hfall (by decide)
+      have hs : BitVec.setWidth 2 (BitVec.ofNat 32 2) = BitVec.ofNat 2 2 := by decide
+      have h3 : (BitVec.ofNat 2 2).toNat = 2 := by decide
+      have hload : (MemOp.MemOp_STORE == MemOp.MemOp_STORE) = true := by decide
+      have hnrm : (AccType.AccType_NORMAL == AccType.AccType_NORMAL) = true := by decide
+      have hpref : (MemOp.MemOp_STORE == MemOp.MemOp_PREFETCH) = false := by decide
+      have hstore : (MemOp.MemOp_STORE == MemOp.MemOp_STORE) = true := by decide
+      have hnf : ((!false : Bool) = true) := rfl
+      have hw : encodeInsn32 (.loadStoreImmediate 2 true .store false unsignedOffset offset rn rt) =
+          none := by
+        simp only [encodeInsn32]
+        split
+        · exact absurd ‹_› h12
+        · rfl
+      rw [encodeBytes_eq_of_encodeInsn32_none _ hw]
+      simp only [arm8Encode, Encode, e_load_store, e_LoadStoreImmediate, hs, h3, hload, hnrm,
+        hpref, Bool.false_eq_true, if_false, hnf, if_true, Bool.and_true,
+        Bool.and_eq_true_iff, beq_iff_eq, hg, h9']
+
+/-- A 16-bit load encodes to the same four bytes on both sides. -/
+theorem encodeBytes_loadStore16_load (unsignedOffset : Bool) (offset : BitVec 64) (rn rt : Nat) :
+    encodeBytes (.loadStoreImmediate 1 true .load false unsignedOffset offset rn rt) =
+      arm8Encode (.LoadStore (.«LoadStoreImmediate@16»
+        ((BitVec.ofNat 16 1), true, .MemOp_LOAD, .AccType_NORMAL, false, false, false, false,
+         false, unsignedOffset, offset, BitVec.ofNat 5 rn, BitVec.ofNat 5 rt))) := by
+  have hiff12 : (offset == (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (1 : Nat)))) <<< (1 : Nat)) =
+      decide (offset = (BitVec.ofNat 64 ((offset >>> (1 : Nat)).toNat % 4096)) <<< (1 : Nat)) := by
+    apply Bool.eq_iff_iff.mpr
+    rw [beq_iff_eq, decide_eq_true_eq]
+    exact Iff.intro
+      (fun h => h.trans (congrArg (fun x : BitVec 64 => x <<< (1 : Nat)) (imm12_eq 1 offset).symm))
+      (fun h => h.trans (congrArg (fun x : BitVec 64 => x <<< (1 : Nat)) (imm12_eq 1 offset)))
+  have hiff9 : (offset == BitVec.signExtend 64 (holWordExtract 9 8 0 offset)) =
+      fitsSigned 9 offset := by
+    rw [h9w_eq]
+    apply Bool.eq_iff_iff.mpr
+    rw [beq_iff_eq]
+    exact (fitsSigned_iff_signExtend 9 (by omega) (by omega) offset).symm
+  by_cases h12 : (unsignedOffset && decide (offset = (BitVec.ofNat 64 ((offset >>> (1 : Nat)).toNat % 4096)) <<< (1 : Nat))) = true
+  · have hoff : offset = (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (1 : Nat)))) <<< (1 : Nat) := by
+      have h := of_decide_eq_true (Bool.and_eq_true_iff.mp h12).2
+      calc offset = (BitVec.ofNat 64 ((offset >>> (1 : Nat)).toNat % 4096)) <<< (1 : Nat) := h
+        _ = (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (1 : Nat)))) <<< (1 : Nat) := by
+            congr 1
+            exact imm12_eq 1 offset
+    have hu : unsignedOffset = true := (Bool.and_eq_true_iff.mp h12).1
+    have hw : encodeInsn32 (.loadStoreImmediate 1 true .load false unsignedOffset offset rn rt) =
+        some (fields [(2, 1), (6, 57), (2, 1), (12, ((offset >>> (1 : Nat)).toNat % 4096)),
+          (5, rn), (5, rt)]) := by
+      simp only [encodeInsn32]
+      split
+      · simp
+      · exact absurd h12 ‹_›
+    rw [hu] at hw
+    rw [hu, encodeBytes_eq_of_encodeInsn32 _ _ hw]
+    simp only [arm8Encode, arm8Encode_loadStoreImm12_load16 offset (BitVec.ofNat 5 rn) (BitVec.ofNat 5 rt) hoff,
+      fields_loadStoreImm12, imm12Word_eq]
+    rfl
+  · have hfall : (unsignedOffset && (offset == (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (1 : Nat)))) <<< (1 : Nat))) = false := by
+      cases hu : unsignedOffset
+      · rfl
+      · have hp : decide (offset = (BitVec.ofNat 64 ((offset >>> (1 : Nat)).toNat % 4096)) <<< (1 : Nat)) = false := by
+          have h := h12
+          rw [hu] at h
+          simpa using h
+        simp only [hiff12, hp, Bool.true_and]
+    by_cases h9 : fitsSigned 9 offset = true
+    · have hsx : offset = BitVec.signExtend 64 (holWordExtract 9 8 0 offset) := by
+        have h : (offset == BitVec.signExtend 64 (holWordExtract 9 8 0 offset)) = true := by
+          rw [hiff9]
+          exact h9
+        exact beq_iff_eq.mp h
+      have hw : encodeInsn32 (.loadStoreImmediate 1 true .load false unsignedOffset offset rn rt) =
+          some (fields [(2, 1), (6, 56), (2, 1), (1, 0), (9, offset.toNat % 512),
+            (1, 0), (1, 0), (5, rn), (5, rt)]) := by
+        simp only [encodeInsn32]
+        split
+        · exact absurd ‹_› h12
+        · simp
+      rw [encodeBytes_eq_of_encodeInsn32 _ _ hw]
+      simp only [arm8Encode, arm8Encode_loadStoreImm9_load16 offset unsignedOffset (BitVec.ofNat 5 rn) (BitVec.ofNat 5 rt)
+        hfall hsx, fields_loadStoreImm9, imm9Word_eq]
+    · have h9' : (offset == BitVec.signExtend 64 (holWordExtract 9 8 0 offset)) = false := by
+        rw [hiff9]
+        simpa [Bool.not_eq_true] using h9
+      have hg : ¬ (unsignedOffset = true ∧ offset = (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (1 : Nat)))) <<< (1 : Nat)) := by
+        intro h
+        have h' : (unsignedOffset && (offset == (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (1 : Nat)))) <<< (1 : Nat))) = true := by
+          simp only [Bool.and_eq_true_iff, beq_iff_eq]
+          exact ⟨h.1, h.2⟩
+        rw [h'] at hfall
+        exact absurd hfall (by decide)
+      have hs : BitVec.setWidth 2 (BitVec.ofNat 16 1) = BitVec.ofNat 2 1 := by decide
+      have h3 : (BitVec.ofNat 2 1).toNat = 1 := by decide
+      have hload : (MemOp.MemOp_LOAD == MemOp.MemOp_LOAD) = true := by decide
+      have hnrm : (AccType.AccType_NORMAL == AccType.AccType_NORMAL) = true := by decide
+      have hpref : (MemOp.MemOp_LOAD == MemOp.MemOp_PREFETCH) = false := by decide
+      have hstore : (MemOp.MemOp_LOAD == MemOp.MemOp_STORE) = false := by decide
+      have hnf : ((!false : Bool) = true) := rfl
+      have hw : encodeInsn32 (.loadStoreImmediate 1 true .load false unsignedOffset offset rn rt) =
+          none := by
+        simp only [encodeInsn32]
+        split
+        · exact absurd ‹_› h12
+        · rfl
+      rw [encodeBytes_eq_of_encodeInsn32_none _ hw]
+      simp only [arm8Encode, Encode, e_load_store, e_LoadStoreImmediate, hs, h3, hload, hnrm,
+        hpref, Bool.false_eq_true, if_false, hnf, if_true, Bool.and_true,
+        Bool.and_eq_true_iff, beq_iff_eq, hg, h9']
+
+/-- A 16-bit store encodes to the same four bytes on both sides. -/
+theorem encodeBytes_loadStore16_store (unsignedOffset : Bool) (offset : BitVec 64) (rn rt : Nat) :
+    encodeBytes (.loadStoreImmediate 1 true .store false unsignedOffset offset rn rt) =
+      arm8Encode (.LoadStore (.«LoadStoreImmediate@16»
+        ((BitVec.ofNat 16 1), true, .MemOp_STORE, .AccType_NORMAL, false, false, false, false,
+         false, unsignedOffset, offset, BitVec.ofNat 5 rn, BitVec.ofNat 5 rt))) := by
+  have hiff12 : (offset == (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (1 : Nat)))) <<< (1 : Nat)) =
+      decide (offset = (BitVec.ofNat 64 ((offset >>> (1 : Nat)).toNat % 4096)) <<< (1 : Nat)) := by
+    apply Bool.eq_iff_iff.mpr
+    rw [beq_iff_eq, decide_eq_true_eq]
+    exact Iff.intro
+      (fun h => h.trans (congrArg (fun x : BitVec 64 => x <<< (1 : Nat)) (imm12_eq 1 offset).symm))
+      (fun h => h.trans (congrArg (fun x : BitVec 64 => x <<< (1 : Nat)) (imm12_eq 1 offset)))
+  have hiff9 : (offset == BitVec.signExtend 64 (holWordExtract 9 8 0 offset)) =
+      fitsSigned 9 offset := by
+    rw [h9w_eq]
+    apply Bool.eq_iff_iff.mpr
+    rw [beq_iff_eq]
+    exact (fitsSigned_iff_signExtend 9 (by omega) (by omega) offset).symm
+  by_cases h12 : (unsignedOffset && decide (offset = (BitVec.ofNat 64 ((offset >>> (1 : Nat)).toNat % 4096)) <<< (1 : Nat))) = true
+  · have hoff : offset = (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (1 : Nat)))) <<< (1 : Nat) := by
+      have h := of_decide_eq_true (Bool.and_eq_true_iff.mp h12).2
+      calc offset = (BitVec.ofNat 64 ((offset >>> (1 : Nat)).toNat % 4096)) <<< (1 : Nat) := h
+        _ = (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (1 : Nat)))) <<< (1 : Nat) := by
+            congr 1
+            exact imm12_eq 1 offset
+    have hu : unsignedOffset = true := (Bool.and_eq_true_iff.mp h12).1
+    have hw : encodeInsn32 (.loadStoreImmediate 1 true .store false unsignedOffset offset rn rt) =
+        some (fields [(2, 1), (6, 57), (2, 0), (12, ((offset >>> (1 : Nat)).toNat % 4096)),
+          (5, rn), (5, rt)]) := by
+      simp only [encodeInsn32]
+      split
+      · simp
+      · exact absurd h12 ‹_›
+    rw [hu] at hw
+    rw [hu, encodeBytes_eq_of_encodeInsn32 _ _ hw]
+    simp only [arm8Encode, arm8Encode_loadStoreImm12_store16 offset (BitVec.ofNat 5 rn) (BitVec.ofNat 5 rt) hoff,
+      fields_loadStoreImm12, imm12Word_eq]
+    rfl
+  · have hfall : (unsignedOffset && (offset == (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (1 : Nat)))) <<< (1 : Nat))) = false := by
+      cases hu : unsignedOffset
+      · rfl
+      · have hp : decide (offset = (BitVec.ofNat 64 ((offset >>> (1 : Nat)).toNat % 4096)) <<< (1 : Nat)) = false := by
+          have h := h12
+          rw [hu] at h
+          simpa using h
+        simp only [hiff12, hp, Bool.true_and]
+    by_cases h9 : fitsSigned 9 offset = true
+    · have hsx : offset = BitVec.signExtend 64 (holWordExtract 9 8 0 offset) := by
+        have h : (offset == BitVec.signExtend 64 (holWordExtract 9 8 0 offset)) = true := by
+          rw [hiff9]
+          exact h9
+        exact beq_iff_eq.mp h
+      have hw : encodeInsn32 (.loadStoreImmediate 1 true .store false unsignedOffset offset rn rt) =
+          some (fields [(2, 1), (6, 56), (2, 0), (1, 0), (9, offset.toNat % 512),
+            (1, 0), (1, 0), (5, rn), (5, rt)]) := by
+        simp only [encodeInsn32]
+        split
+        · exact absurd ‹_› h12
+        · simp
+      rw [encodeBytes_eq_of_encodeInsn32 _ _ hw]
+      simp only [arm8Encode, arm8Encode_loadStoreImm9_store16 offset unsignedOffset (BitVec.ofNat 5 rn) (BitVec.ofNat 5 rt)
+        hfall hsx, fields_loadStoreImm9, imm9Word_eq]
+    · have h9' : (offset == BitVec.signExtend 64 (holWordExtract 9 8 0 offset)) = false := by
+        rw [hiff9]
+        simpa [Bool.not_eq_true] using h9
+      have hg : ¬ (unsignedOffset = true ∧ offset = (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (1 : Nat)))) <<< (1 : Nat)) := by
+        intro h
+        have h' : (unsignedOffset && (offset == (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (1 : Nat)))) <<< (1 : Nat))) = true := by
+          simp only [Bool.and_eq_true_iff, beq_iff_eq]
+          exact ⟨h.1, h.2⟩
+        rw [h'] at hfall
+        exact absurd hfall (by decide)
+      have hs : BitVec.setWidth 2 (BitVec.ofNat 16 1) = BitVec.ofNat 2 1 := by decide
+      have h3 : (BitVec.ofNat 2 1).toNat = 1 := by decide
+      have hload : (MemOp.MemOp_STORE == MemOp.MemOp_STORE) = true := by decide
+      have hnrm : (AccType.AccType_NORMAL == AccType.AccType_NORMAL) = true := by decide
+      have hpref : (MemOp.MemOp_STORE == MemOp.MemOp_PREFETCH) = false := by decide
+      have hstore : (MemOp.MemOp_STORE == MemOp.MemOp_STORE) = true := by decide
+      have hnf : ((!false : Bool) = true) := rfl
+      have hw : encodeInsn32 (.loadStoreImmediate 1 true .store false unsignedOffset offset rn rt) =
+          none := by
+        simp only [encodeInsn32]
+        split
+        · exact absurd ‹_› h12
+        · rfl
+      rw [encodeBytes_eq_of_encodeInsn32_none _ hw]
+      simp only [arm8Encode, Encode, e_load_store, e_LoadStoreImmediate, hs, h3, hload, hnrm,
+        hpref, Bool.false_eq_true, if_false, hnf, if_true, Bool.and_true,
+        Bool.and_eq_true_iff, beq_iff_eq, hg, h9']
+
+/-- A 8-bit load encodes to the same four bytes on both sides. -/
+theorem encodeBytes_loadStore8_load (unsignedOffset : Bool) (offset : BitVec 64) (rn rt : Nat) :
+    encodeBytes (.loadStoreImmediate 0 false .load false unsignedOffset offset rn rt) =
+      arm8Encode (.LoadStore (.«LoadStoreImmediate@8»
+        ((BitVec.ofNat 8 0), false, .MemOp_LOAD, .AccType_NORMAL, false, false, false, false,
+         false, unsignedOffset, offset, BitVec.ofNat 5 rn, BitVec.ofNat 5 rt))) := by
+  have hiff12 : (offset == (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (0 : Nat)))) <<< (0 : Nat)) =
+      decide (offset = (BitVec.ofNat 64 ((offset >>> (0 : Nat)).toNat % 4096)) <<< (0 : Nat)) := by
+    apply Bool.eq_iff_iff.mpr
+    rw [beq_iff_eq, decide_eq_true_eq]
+    exact Iff.intro
+      (fun h => h.trans (congrArg (fun x : BitVec 64 => x <<< (0 : Nat)) (imm12_eq 0 offset).symm))
+      (fun h => h.trans (congrArg (fun x : BitVec 64 => x <<< (0 : Nat)) (imm12_eq 0 offset)))
+  have hiff9 : (offset == BitVec.signExtend 64 (holWordExtract 9 8 0 offset)) =
+      fitsSigned 9 offset := by
+    rw [h9w_eq]
+    apply Bool.eq_iff_iff.mpr
+    rw [beq_iff_eq]
+    exact (fitsSigned_iff_signExtend 9 (by omega) (by omega) offset).symm
+  by_cases h12 : (unsignedOffset && decide (offset = (BitVec.ofNat 64 ((offset >>> (0 : Nat)).toNat % 4096)) <<< (0 : Nat))) = true
+  · have hoff : offset = (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (0 : Nat)))) <<< (0 : Nat) := by
+      have h := of_decide_eq_true (Bool.and_eq_true_iff.mp h12).2
+      calc offset = (BitVec.ofNat 64 ((offset >>> (0 : Nat)).toNat % 4096)) <<< (0 : Nat) := h
+        _ = (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (0 : Nat)))) <<< (0 : Nat) := by
+            congr 1
+            exact imm12_eq 0 offset
+    have hu : unsignedOffset = true := (Bool.and_eq_true_iff.mp h12).1
+    have hw : encodeInsn32 (.loadStoreImmediate 0 false .load false unsignedOffset offset rn rt) =
+        some (fields [(2, 0), (6, 57), (2, 1), (12, ((offset >>> (0 : Nat)).toNat % 4096)),
+          (5, rn), (5, rt)]) := by
+      simp only [encodeInsn32]
+      split
+      · simp
+      · exact absurd h12 ‹_›
+    rw [hu] at hw
+    rw [hu, encodeBytes_eq_of_encodeInsn32 _ _ hw]
+    simp only [arm8Encode, arm8Encode_loadStoreImm12_load8 offset (BitVec.ofNat 5 rn) (BitVec.ofNat 5 rt) hoff,
+      fields_loadStoreImm12, imm12Word_eq]
+    rfl
+  · have hfall : (unsignedOffset && (offset == (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (0 : Nat)))) <<< (0 : Nat))) = false := by
+      cases hu : unsignedOffset
+      · rfl
+      · have hp : decide (offset = (BitVec.ofNat 64 ((offset >>> (0 : Nat)).toNat % 4096)) <<< (0 : Nat)) = false := by
+          have h := h12
+          rw [hu] at h
+          simpa using h
+        simp only [hiff12, hp, Bool.true_and]
+    by_cases h9 : fitsSigned 9 offset = true
+    · have hsx : offset = BitVec.signExtend 64 (holWordExtract 9 8 0 offset) := by
+        have h : (offset == BitVec.signExtend 64 (holWordExtract 9 8 0 offset)) = true := by
+          rw [hiff9]
+          exact h9
+        exact beq_iff_eq.mp h
+      have hw : encodeInsn32 (.loadStoreImmediate 0 false .load false unsignedOffset offset rn rt) =
+          some (fields [(2, 0), (6, 56), (2, 1), (1, 0), (9, offset.toNat % 512),
+            (1, 0), (1, 0), (5, rn), (5, rt)]) := by
+        simp only [encodeInsn32]
+        split
+        · exact absurd ‹_› h12
+        · simp
+      rw [encodeBytes_eq_of_encodeInsn32 _ _ hw]
+      simp only [arm8Encode, arm8Encode_loadStoreImm9_load8 offset unsignedOffset (BitVec.ofNat 5 rn) (BitVec.ofNat 5 rt)
+        hfall hsx, fields_loadStoreImm9, imm9Word_eq]
+    · have h9' : (offset == BitVec.signExtend 64 (holWordExtract 9 8 0 offset)) = false := by
+        rw [hiff9]
+        simpa [Bool.not_eq_true] using h9
+      have hg : ¬ (unsignedOffset = true ∧ offset = (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (0 : Nat)))) <<< (0 : Nat)) := by
+        intro h
+        have h' : (unsignedOffset && (offset == (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (0 : Nat)))) <<< (0 : Nat))) = true := by
+          simp only [Bool.and_eq_true_iff, beq_iff_eq]
+          exact ⟨h.1, h.2⟩
+        rw [h'] at hfall
+        exact absurd hfall (by decide)
+      have hs : BitVec.setWidth 2 (BitVec.ofNat 8 0) = BitVec.ofNat 2 0 := by decide
+      have h3 : (BitVec.ofNat 2 0).toNat = 0 := by decide
+      have hload : (MemOp.MemOp_LOAD == MemOp.MemOp_LOAD) = true := by decide
+      have hnrm : (AccType.AccType_NORMAL == AccType.AccType_NORMAL) = true := by decide
+      have hpref : (MemOp.MemOp_LOAD == MemOp.MemOp_PREFETCH) = false := by decide
+      have hstore : (MemOp.MemOp_LOAD == MemOp.MemOp_STORE) = false := by decide
+      have hnf : ((!false : Bool) = true) := rfl
+      have hw : encodeInsn32 (.loadStoreImmediate 0 false .load false unsignedOffset offset rn rt) =
+          none := by
+        simp only [encodeInsn32]
+        split
+        · exact absurd ‹_› h12
+        · rfl
+      rw [encodeBytes_eq_of_encodeInsn32_none _ hw]
+      simp only [arm8Encode, Encode, e_load_store, e_LoadStoreImmediate, hs, h3, hload, hnrm,
+        hpref, Bool.false_eq_true, if_false, hnf, if_true, Bool.and_true,
+        Bool.and_eq_true_iff, beq_iff_eq, hg, h9']
+
+/-- A 8-bit store encodes to the same four bytes on both sides. -/
+theorem encodeBytes_loadStore8_store (unsignedOffset : Bool) (offset : BitVec 64) (rn rt : Nat) :
+    encodeBytes (.loadStoreImmediate 0 false .store false unsignedOffset offset rn rt) =
+      arm8Encode (.LoadStore (.«LoadStoreImmediate@8»
+        ((BitVec.ofNat 8 0), false, .MemOp_STORE, .AccType_NORMAL, false, false, false, false,
+         false, unsignedOffset, offset, BitVec.ofNat 5 rn, BitVec.ofNat 5 rt))) := by
+  have hiff12 : (offset == (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (0 : Nat)))) <<< (0 : Nat)) =
+      decide (offset = (BitVec.ofNat 64 ((offset >>> (0 : Nat)).toNat % 4096)) <<< (0 : Nat)) := by
+    apply Bool.eq_iff_iff.mpr
+    rw [beq_iff_eq, decide_eq_true_eq]
+    exact Iff.intro
+      (fun h => h.trans (congrArg (fun x : BitVec 64 => x <<< (0 : Nat)) (imm12_eq 0 offset).symm))
+      (fun h => h.trans (congrArg (fun x : BitVec 64 => x <<< (0 : Nat)) (imm12_eq 0 offset)))
+  have hiff9 : (offset == BitVec.signExtend 64 (holWordExtract 9 8 0 offset)) =
+      fitsSigned 9 offset := by
+    rw [h9w_eq]
+    apply Bool.eq_iff_iff.mpr
+    rw [beq_iff_eq]
+    exact (fitsSigned_iff_signExtend 9 (by omega) (by omega) offset).symm
+  by_cases h12 : (unsignedOffset && decide (offset = (BitVec.ofNat 64 ((offset >>> (0 : Nat)).toNat % 4096)) <<< (0 : Nat))) = true
+  · have hoff : offset = (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (0 : Nat)))) <<< (0 : Nat) := by
+      have h := of_decide_eq_true (Bool.and_eq_true_iff.mp h12).2
+      calc offset = (BitVec.ofNat 64 ((offset >>> (0 : Nat)).toNat % 4096)) <<< (0 : Nat) := h
+        _ = (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (0 : Nat)))) <<< (0 : Nat) := by
+            congr 1
+            exact imm12_eq 0 offset
+    have hu : unsignedOffset = true := (Bool.and_eq_true_iff.mp h12).1
+    have hw : encodeInsn32 (.loadStoreImmediate 0 false .store false unsignedOffset offset rn rt) =
+        some (fields [(2, 0), (6, 57), (2, 0), (12, ((offset >>> (0 : Nat)).toNat % 4096)),
+          (5, rn), (5, rt)]) := by
+      simp only [encodeInsn32]
+      split
+      · simp
+      · exact absurd h12 ‹_›
+    rw [hu] at hw
+    rw [hu, encodeBytes_eq_of_encodeInsn32 _ _ hw]
+    simp only [arm8Encode, arm8Encode_loadStoreImm12_store8 offset (BitVec.ofNat 5 rn) (BitVec.ofNat 5 rt) hoff,
+      fields_loadStoreImm12, imm12Word_eq]
+    rfl
+  · have hfall : (unsignedOffset && (offset == (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (0 : Nat)))) <<< (0 : Nat))) = false := by
+      cases hu : unsignedOffset
+      · rfl
+      · have hp : decide (offset = (BitVec.ofNat 64 ((offset >>> (0 : Nat)).toNat % 4096)) <<< (0 : Nat)) = false := by
+          have h := h12
+          rw [hu] at h
+          simpa using h
+        simp only [hiff12, hp, Bool.true_and]
+    by_cases h9 : fitsSigned 9 offset = true
+    · have hsx : offset = BitVec.signExtend 64 (holWordExtract 9 8 0 offset) := by
+        have h : (offset == BitVec.signExtend 64 (holWordExtract 9 8 0 offset)) = true := by
+          rw [hiff9]
+          exact h9
+        exact beq_iff_eq.mp h
+      have hw : encodeInsn32 (.loadStoreImmediate 0 false .store false unsignedOffset offset rn rt) =
+          some (fields [(2, 0), (6, 56), (2, 0), (1, 0), (9, offset.toNat % 512),
+            (1, 0), (1, 0), (5, rn), (5, rt)]) := by
+        simp only [encodeInsn32]
+        split
+        · exact absurd ‹_› h12
+        · simp
+      rw [encodeBytes_eq_of_encodeInsn32 _ _ hw]
+      simp only [arm8Encode, arm8Encode_loadStoreImm9_store8 offset unsignedOffset (BitVec.ofNat 5 rn) (BitVec.ofNat 5 rt)
+        hfall hsx, fields_loadStoreImm9, imm9Word_eq]
+    · have h9' : (offset == BitVec.signExtend 64 (holWordExtract 9 8 0 offset)) = false := by
+        rw [hiff9]
+        simpa [Bool.not_eq_true] using h9
+      have hg : ¬ (unsignedOffset = true ∧ offset = (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (0 : Nat)))) <<< (0 : Nat)) := by
+        intro h
+        have h' : (unsignedOffset && (offset == (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> (0 : Nat)))) <<< (0 : Nat))) = true := by
+          simp only [Bool.and_eq_true_iff, beq_iff_eq]
+          exact ⟨h.1, h.2⟩
+        rw [h'] at hfall
+        exact absurd hfall (by decide)
+      have hs : BitVec.setWidth 2 (BitVec.ofNat 8 0) = BitVec.ofNat 2 0 := by decide
+      have h3 : (BitVec.ofNat 2 0).toNat = 0 := by decide
+      have hload : (MemOp.MemOp_STORE == MemOp.MemOp_STORE) = true := by decide
+      have hnrm : (AccType.AccType_NORMAL == AccType.AccType_NORMAL) = true := by decide
+      have hpref : (MemOp.MemOp_STORE == MemOp.MemOp_PREFETCH) = false := by decide
+      have hstore : (MemOp.MemOp_STORE == MemOp.MemOp_STORE) = true := by decide
+      have hnf : ((!false : Bool) = true) := rfl
+      have hw : encodeInsn32 (.loadStoreImmediate 0 false .store false unsignedOffset offset rn rt) =
+          none := by
+        simp only [encodeInsn32]
+        split
+        · exact absurd ‹_› h12
+        · rfl
+      rw [encodeBytes_eq_of_encodeInsn32_none _ hw]
+      simp only [arm8Encode, Encode, e_load_store, e_LoadStoreImmediate, hs, h3, hload, hnrm,
+        hpref, Bool.false_eq_true, if_false, hnf, if_true, Bool.and_true,
+        Bool.and_eq_true_iff, beq_iff_eq, hg, h9']
+
 end Flapjack.Compiler.Encoders.Arm8.L3
