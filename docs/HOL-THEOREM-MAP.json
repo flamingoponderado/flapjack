@@ -11553,6 +11553,14 @@
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/CompileExp.lean",
+    "lean_name": "compileExps_reverse",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "compile_exps_reverse",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared compile_exps_reverse_typed: for the free mlstring trace and universally quantified compiler environment and source expression list, compiling the reversed list equals reversing the compiled flat expression list. The reviewed MlString, environment and expression carriers match HOL."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/CompileExp.lean",
     "lean_name": "compileFuns_map",
     "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
     "hol_name": "compile_funs_map",

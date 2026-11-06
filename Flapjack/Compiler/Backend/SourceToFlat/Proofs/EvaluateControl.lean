@@ -53,16 +53,6 @@ def ExprListSim {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace :
   let flat := FlatSem.evaluate flatEnv flatState (compileExps trace compMap expressions)
   EvalResultRel genv source.2 flat.2 ∧ StateRel genv source.1 flat.1
 
-/-- Compiling an expression list commutes with reversing its evaluation order. -/
-theorem compileExps_reverse (trace : List VarN) (compMap : Environment) (expressions : List AstHOL.Exp) :
-    compileExps trace compMap expressions.reverse = (compileExps trace compMap expressions).reverse := by
-  have mapEq : ∀ xs : List AstHOL.Exp, compileExps trace compMap xs = xs.map (compileExp trace compMap) := by
-    intro xs
-    induction xs with
-    | nil => rfl
-    | cons head tail ih => simp [compileExps, ih]
-  simp [mapEq]
-
 /-- A literal is simulated by the compiled literal. -/
 theorem exprSim_literal {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
     (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)

@@ -9601,4 +9601,4 @@ the original `v_rel_l_cases` conjunction. These captures aid source review.
 recursive-environment theorem used by source-to-flat and flat-to-closure proofs.
 
 `source_to_flat_helpers_probe.out` captures the typed `compile_funs_map`
-equation used by recursive-function proof helpers.
+and `compile_exps_reverse` equations used by compiler proof helpers.

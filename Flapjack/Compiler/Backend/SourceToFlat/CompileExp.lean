@@ -98,6 +98,19 @@ def compileFuns (t : List MlString) (env : Environment) :
         compileFuns t env funs
 end
 
+/-- Compiling an expression list commutes with reversal. -/
+@[hol "cakeml/compiler/backend/source_to_flatScript.sml" "compile_exps_reverse"]
+theorem compileExps_reverse (trace : List MlString) :
+    ∀ (compMap : Environment) (expressions : List AstHOL.Exp),
+      compileExps trace compMap expressions.reverse = (compileExps trace compMap expressions).reverse := by
+  intro compMap expressions
+  have mapEq : ∀ xs : List AstHOL.Exp, compileExps trace compMap xs = xs.map (compileExp trace compMap) := by
+    intro xs
+    induction xs with
+    | nil => rfl
+    | cons head tail ih => simp [compileExps, ih]
+  simp [mapEq]
+
 /-- Compiling a function group maps compilation over its entries. -/
 @[hol "cakeml/compiler/backend/source_to_flatScript.sml" "compile_funs_map"]
 theorem compileFuns_map (trace : List MlString) :

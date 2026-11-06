@@ -44,3 +44,6 @@ val _ = (print "concat_def_typed="; Lib.with_flag (Globals.show_types,true) prin
 
 val _ = if null (hyp compile_funs_map) then () else raise Fail "hypotheses: compile_funs_map";
 val _ = (print "compile_funs_map_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl compile_funs_map); print "\n");
+
+val _ = if null (hyp compile_exps_reverse) then () else raise Fail "hypotheses: compile_exps_reverse";
+val _ = (print "compile_exps_reverse_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl compile_exps_reverse); print "\n");
