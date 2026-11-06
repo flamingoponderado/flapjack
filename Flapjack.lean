@@ -2569,6 +2569,7 @@ import Flapjack.Compiler.Encoders.Arm8.L3.Defs
 import Flapjack.Compiler.Encoders.Arm8.L3.Ast
 import Flapjack.Compiler.Encoders.Arm8.L3.Configuration
 import Flapjack.Compiler.Encoders.Arm8.L3.Executable.Defs
+import Flapjack.Compiler.Encoders.Arm8.L3.Executable.Guards
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Infrastructure
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.MoveWide
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.LogicalImmediate
