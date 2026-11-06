@@ -420,35 +420,4 @@ theorem factoredExpressionIH_constructorTree {C F : Type} [Nonempty C]
     cases loc
     simpa [EvaluateHOL.evaluate] using bad
 
-/-- Declaration-level constructor case from a growing argument-list
-induction hypothesis. This is factored infrastructure, not the HOL theorem. -/
-theorem factoredDecIH_dlet_constructor_growing {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (location : Flapjack.Misc.Location.Locs) (pattern : Pat)
-    (name : Option (Ident ModN ConN)) (args : List AstHOL.Exp)
-    (argumentIH : ∀ (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
-      (source : State F) (flat : FlatSem.State C F) (sourceEnv : SemEnv Value)
-      (trace : List VarN) (compMap : Environment) (gen : EnvironmentGenerationStore),
-      GlobalEnvInv genv compMap (fun _ => False) sourceEnv →
-      factoredInvariant interp transform gen genv (start, finish, other) source flat →
-      envGenRel gen source.evalState →
-      (∀ last, EvaluateHOL.evaluate source sourceEnv [.con name args] ≠ (last, .err (.abort .typeError))) →
-      DletExpressionListStep interp transform genv start finish other source flat sourceEnv trace compMap gen args.reverse) :
-    FactoredDecIH (F := F) interp transform [.dlet location pattern (.con name args)] := by
-  intro genv env nextEnv sourceEnv trace source sourceLast flat start finish next other n n' gen nextGen
-    flatDecs result sourceRun invariant compiled envInv notTypeError generation future bounded
-  have safe : ∀ last, EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern (.con name args)] ≠
-      (last, .err (.abort .typeError)) := by
-    intro last bad
-    apply notTypeError
-    exact congrArg Prod.snd (sourceRun.symm.trans bad)
-  have exprSafe := dlet_expression_safe source sourceEnv location pattern (.con name args) safe
-  let argTrace := (AstHOL.patBindings pattern).reverse ++ trace
-  apply evaluateDlet_case_factored interp transform genv start finish next other source sourceLast flat sourceEnv
-    trace n n' env nextEnv gen nextGen location pattern (.con name args) flatDecs result
-    sourceRun invariant compiled envInv notTypeError generation future bounded
-  exact dletExpressionStep_constructor_growing interp transform genv start finish other source flat sourceEnv
-    argTrace env gen name args envInv exprSafe
-    (argumentIH genv start finish other source flat sourceEnv argTrace env gen envInv invariant generation exprSafe)
-
 end Flapjack.Compiler.Backend.SourceToFlat

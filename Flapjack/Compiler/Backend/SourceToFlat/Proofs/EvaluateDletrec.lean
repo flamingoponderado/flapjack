@@ -89,46 +89,6 @@ theorem dletrec_bindings_rel (genv : GlobalEnv) (env : Environment) (sourceEnv :
     have head := dletrec_closure_rel genv env sourceEnv trace funs name envInv
     simpa [alistToNs, nsBind] using EnvRel.bind genv name _ _ _ _ ih head
 
-/-- The source and flat recursive-environment builders produce related
-bindings for the complete group. This is a factored simulation helper. -/
-theorem dletrec_buildEnv_rel (genv : GlobalEnv) (env : Environment) (sourceEnv : SemEnv Value)
-    (trace : List VarN) (funs : List (VarN × VarN × AstHOL.Exp))
-    (envInv : GlobalEnvInv genv env (fun _ => False) sourceEnv) :
-    let compiled := compileFuns trace
-      { env with v := nsBindList ((funs.map Prod.fst).map
-        (fun f => (f, VarName.localName .none f))) env.v } funs
-    EnvRel genv (SemanticPrimitivesHOL.buildRecEnv funs sourceEnv nsEmpty)
-      (FlatSem.buildRecEnv compiled ⟨[]⟩ []) := by
-  let compiled := compileFuns trace
-    { env with v := nsBindList ((funs.map Prod.fst).map
-      (fun f => (f, VarName.localName .none f))) env.v } funs
-  have sourceShape (xs : List (VarN × VarN × AstHOL.Exp)) :
-      xs.foldr (fun (name, _, _) rest => nsBind name (.recclosure sourceEnv funs name) rest)
-        (nsEmpty : Namespace ModN VarN Value) =
-        alistToNs ((xs.map Prod.fst).map (fun name => (name, Value.recclosure sourceEnv funs name))) := by
-    induction xs with
-    | nil => rfl
-    | cons pair rest ih =>
-      rcases pair with ⟨name, arg, body⟩
-      simp only [List.foldr_cons, List.map_cons]
-      rw [ih]
-      rfl
-  have flatShape (xs : List (VarN × VarN × FlatLang.Exp)) :
-      xs.foldr (fun (name, _, _) rest => (name, FlatSem.Value.recclosure ⟨[]⟩ compiled name) :: rest) [] =
-        (xs.map Prod.fst).map (fun name => (name, FlatSem.Value.recclosure ⟨[]⟩ compiled name)) := by
-    induction xs with
-    | nil => rfl
-    | cons pair rest ih =>
-      rcases pair with ⟨name, arg, body⟩
-      simp [ih]
-  change EnvRel genv (SemanticPrimitivesHOL.buildRecEnv funs sourceEnv nsEmpty)
-    (FlatSem.buildRecEnv compiled ⟨[]⟩ [])
-  rw [SemanticPrimitivesHOL.buildRecEnv, sourceShape, FlatSem.buildRecEnv, flatShape]
-  have names : compiled.map Prod.fst = funs.map Prod.fst := by
-    exact compileFuns_names trace _ funs
-  rw [names]
-  exact dletrec_bindings_rel genv env sourceEnv trace funs (funs.map Prod.fst) envInv
-
 /-- The flat recursive environment contains closures in source-name order. -/
 theorem dletrec_flatEnv (env : Environment) (trace : List VarN)
     (funs : List (VarN × VarN × AstHOL.Exp)) :
@@ -280,57 +240,6 @@ theorem evaluateDletrec_flat {C F : Type} (flat final : FlatSem.State C F)
   rw [run]
   cases final
   simp_all [FlatSem.fixClock, FlatSem.unitValue]
-
-/-- Executing the compiled recursive declaration fills its reserved slots
-with related recursive closures. This does not yet establish the full
-factored invariant after initialization. -/
-theorem evaluateDletrec_initialized {C F R : Type}
-    (interp : Option (Value → Option (Config × R))) (genv : GlobalEnv)
-    (env : Environment) (sourceEnv : SemEnv Value) (trace : List VarN)
-    (funs : List (VarN × VarN × AstHOL.Exp))
-    (envInv : GlobalEnvInv genv env (fun _ => False) sourceEnv)
-    (distinct : (funs.map Prod.fst).Nodup)
-    (wellformed : funs.all (fun (_, _, expr) => everyExp (oneConCheck sourceEnv.c) expr) = true)
-    (sourceState : State F) (flatState : FlatSem.State C F)
-    (stateRel : StateRel genv sourceState flatState) (globals : flatState.globals = genv.v)
-    (start finish : NextIndices) (other : Set (Nat × IndexKind))
-    (range : idxRangeRel interp genv sourceState.nextTypeStamp sourceState.nextExnStamp
-      sourceState.evalState (start, finish, other))
-    (lengthMatch : finIdxMatch genv.v.length finish (srcOracNextCfg interp sourceState.evalState))
-    (fits : funs.length + start.vidx ≤ finish.vidx)
-    (n : Nat) (gen : EnvironmentGenerationStore) (location : Flapjack.Misc.Location.Locs) :
-    EvaluateHOL.evaluateDecs sourceState sourceEnv [.dletrec location funs] =
-      (sourceState, .val ⟨SemanticPrimitivesHOL.buildRecEnv funs sourceEnv nsEmpty, nsEmpty⟩) ∧
-    ∃ finalGenv finalState,
-      FlatSem.evaluateDecs flatState (compileDecs trace n start env gen [.dletrec location funs]).2.2.2.2 =
-        (finalState, none) ∧
-      GlobalGrowth genv finalGenv ∧ StateRel finalGenv sourceState finalState ∧
-      GlobalEnvInv finalGenv (compileDecs trace n start env gen [.dletrec location funs]).2.2.1
-        (fun _ => False) ⟨SemanticPrimitivesHOL.buildRecEnv funs sourceEnv nsEmpty, nsEmpty⟩ := by
-  constructor
-  · simp [EvaluateHOL.evaluateDecs, distinct, wellformed]
-  let compiled := compileFuns trace
-    { env with v := nsBindList ((funs.map Prod.fst).map
-      (fun f => (f, VarName.localName .none f))) env.v } funs
-  let flatBindings := (funs.map Prod.fst).map (fun name => (name, FlatSem.Value.recclosure ⟨[]⟩ compiled name))
-  obtain ⟨pre, post, _, _, run, growth, states, envResult⟩ :=
-    dletrec_initialize interp genv env sourceEnv trace funs envInv distinct sourceState flatState
-      stateRel globals start finish other range lengthMatch fits
-  let slots := pre ++ (flatBindings.reverse.map Prod.snd).map some ++ post
-  let finalState := { flatState with globals := slots }
-  let finalGenv := { genv with v := slots }
-  have nameShape : flatBindings.reverse.map Prod.fst = (funs.map Prod.fst).reverse := by
-    simp [flatBindings, List.map_reverse, List.map_map, Function.comp_def]
-  have flatEnv : FlatSem.buildRecEnv compiled ⟨[]⟩ [] = flatBindings :=
-    dletrec_flatEnv env trace funs
-  have bodyRun : FlatSem.evaluate ⟨FlatSem.buildRecEnv compiled ⟨[]⟩ []⟩ flatState
-      [makeVarls 0 .none start.vidx (funs.map Prod.fst).reverse] =
-        (finalState, .val [FlatSem.unitValue]) := by
-    simpa only [flatEnv, ← nameShape] using run
-  refine ⟨finalGenv, finalState, ?_, growth, states, ?_⟩
-  · exact evaluateDletrec_flat flatState finalState trace n start env gen location funs distinct bodyRun rfl
-  · simpa only [compileDecs, dletrec_sourceEnv, ← nameShape, emptyEnv, finalGenv, slots,
-      flatBindings, compiled, allocDefs_ignoreCounter _ (n + 1) 0 start.vidx] using envResult
 
 /-- A safe recursive declaration preserves the factored compiler invariant
 after filling its reserved globals. Its relations and evaluator carriers

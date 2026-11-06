@@ -136,29 +136,6 @@ theorem flatEvaluateList_state_of_singletons {C F : Type} (flat : FlatSem.State 
         subst finalState
         cases tailResult <;> rfl
 
-/-- The literal constructor arguments preserve both evaluator states. -/
-theorem literalConstructor_states {C F : Type} (source : State F) (sourceEnv : SemEnv Value)
-    (flat : FlatSem.State C F) (flatEnv : FlatSem.Environment FlatSem.Value)
-    (trace : List VarN) (compMap : Environment) (name : Option (Ident ModN ConN)) (lits : List Lit) :
-    (EvaluateHOL.evaluate source sourceEnv [.con name (lits.map AstHOL.Exp.lit)]).1 = source ∧
-      (FlatSem.evaluate flatEnv flat [compileExp trace compMap (.con name (lits.map AstHOL.Exp.lit))]).1 = flat := by
-  have sourceArgs := evaluate_literalList source sourceEnv lits.reverse
-  have flatArgs := flatEvaluate_literalList flat flatEnv trace compMap lits.reverse
-  simp only [List.map_reverse, compileExps_reverse] at sourceArgs flatArgs
-  constructor
-  · simp only [EvaluateHOL.evaluate]
-    split
-    · simp only [sourceArgs]
-      cases name with
-      | none => simp [buildConv]
-      | some id =>
-        cases lookup : nsLookup sourceEnv.c id with
-        | none => simp [buildConv, lookup, EvaluateHOL.typeError]
-        | some pair => cases pair; simp [buildConv, lookup]
-    · simp [EvaluateHOL.typeError]
-  · simp only [compileExp, FlatSem.evaluate]
-    simp [flatArgs]
-
 /-- A state-preserving expression simulation supplies the declaration
 expression step without changing the global environment. -/
 theorem dletExpressionStep_of_statePreserving {C F : Type} [Nonempty C]
