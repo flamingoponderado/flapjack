@@ -111573,6 +111573,28 @@
     "reviewer": "Compared the source implication and typed local HOL proof replay, preserving the successful-extraction premise and constructor-arity conclusion; the same-module witness checks the canonical parameter."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Proofs/Soundness.lean",
+    "lean_name": "ctorsOf_sound",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "ctors_of_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "refs"
+    ],
+    "reviewer": "Compared the complete source implication and typed local HOL proof replay: constructor information and non-type-failure imply the existence of an extracted constructor and arguments whose constructor belongs to the reported set. The same-module witness checks the canonical finite-map parameter."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Proofs/Soundness.lean",
+    "lean_name": "colCtors_sound",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "col_ctors_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "refs"
+    ],
+    "reviewer": "Compared the complete source statement and typed local HOL proof replay. Lean universal row membership expresses the source EVERY condition, retaining the non-type-failure condition and the existential extracted constructor and membership. The same-module witness checks the canonical finite-map parameter."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/PatternExh/Exhaustive.lean",
     "lean_name": "exhRows",
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",

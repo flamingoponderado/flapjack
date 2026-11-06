@@ -120,6 +120,20 @@ theorem holFmapAsFiniteSupportParamWitness_destVal_length_refs
     ofBroad (toBroad refs) refs.finiteSupport = refs :=
   holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
 
+theorem holFmapAsFiniteSupportParamWitness_ctorsOf_sound_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_colCtors_sound_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
+
 /-- A wildcard matches every term. -/
 @[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "pmatch_Any"
   (fmap_as_finite_support_parameters := [refs])]
@@ -434,6 +448,8 @@ theorem mem_tagCtors (siblings : List (Nat × Nat)) (tag arity : Nat) :
 
 /-- An accepted pattern constructor set contains the class of any value
 that does not make the pattern type-fail. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "ctors_of_thm"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem ctorsOf_sound (refs : HolFiniteMapExact Nat Term) (pattern : Pat) (value : Term)
     (constructors : List Ctor) (known : ctorsOf pattern = some constructors)
     (safe : pmatch refs pattern value ≠ .typeFailure) :
@@ -488,6 +504,8 @@ theorem ctorsOf_sound (refs : HolFiniteMapExact Nat Term) (pattern : Pat) (value
 
 /-- If a column provides constructor information and its rows are safe,
 the current value has a constructor in that information. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "col_ctors_thm"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem colCtors_sound (refs : HolFiniteMapExact Nat Term) (value : Term) (values : List Term)
     (matrix : List (List Pat)) (constructors : List Ctor)
     (known : colCtors matrix = some constructors)

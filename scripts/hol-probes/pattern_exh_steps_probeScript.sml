@@ -235,3 +235,33 @@ val length_dest_val_replay = prove (
   ``!refs v c as. pattern_exh$dest_val refs v = SOME (c,as) ==> LENGTH as = pattern_exh$ctor_arity c``,
   fs [dest_val_eq_some_replay] >> rw [] >> fs [pattern_exhTheory.ctor_arity_def]);
 val _ = show_local "length_dest_val=" length_dest_val_replay;
+val ctors_of_thm_replay = prove (
+  ``!p xs refs v. pattern_exh$ctors_of p = SOME xs /\
+      pattern_semantics$pmatch refs p v <> pattern_common$PTypeFailure ==>
+      ?c as. pattern_exh$dest_val refs v = SOME (c,as) /\ MEM c xs``,
+  rpt gen_tac >> Cases_on `p` >> fs [pattern_exhTheory.ctors_of_def]
+  >- (Cases_on `o'` >> fs [pattern_exhTheory.ctors_of_def]
+      >- (Cases_on `v` >> fs [pattern_semanticsTheory.pmatch_def] >>
+          Cases_on `o'` >> fs [pattern_semanticsTheory.pmatch_def,pattern_exhTheory.dest_val_def] >>
+          strip_tac >> imp_res_tac pmatch_exh_length_replay >> gvs []) >>
+      Cases_on `x` >> Cases_on `r` >> fs [pattern_exhTheory.ctors_of_def] >>
+      Cases_on `v` >> fs [pattern_semanticsTheory.pmatch_def] >>
+      Cases_on `o'` >> fs [pattern_semanticsTheory.pmatch_def,pattern_exhTheory.dest_val_def] >>
+      strip_tac >> gvs [mem_tag_ctors_replay] >>
+      Cases_on `q = x' /\ LENGTH l = LENGTH l'` >> fs [pattern_semanticsTheory.is_sibling_def] >>
+      Cases_on `MEM (x',LENGTH l') x` >> fs []) >>
+  Cases_on `v` >> fs [pattern_semanticsTheory.pmatch_def] >>
+  Cases_on `FLOOKUP refs n` >> fs [pattern_semanticsTheory.pmatch_def,pattern_exhTheory.dest_val_def]);
+val _ = show_local "ctors_of_thm=" ctors_of_thm_replay;
+val col_ctors_thm_replay = prove (
+  ``!M cs refs v vs.
+      pattern_exh$col_ctors M = SOME cs /\
+      EVERY (\r. pattern_semantics$pmatch_list refs r (v::vs) <> pattern_common$PTypeFailure) M ==>
+      ?c as. pattern_exh$dest_val refs v = SOME (c,as) /\ MEM c cs``,
+  ho_match_mp_tac pattern_exhTheory.col_ctors_ind >> rw [pattern_exhTheory.col_ctors_def] >>
+  Cases_on `pattern_exh$ctors_of p` >> fs [pattern_exhTheory.ctor_inter_def]
+  >- (res_tac >> fs []) >>
+  drule_all ctors_of_thm_replay >> strip_tac >>
+  Cases_on `pattern_exh$col_ctors M` >> fs [pattern_exhTheory.ctor_inter_def] >>
+  res_tac >> gvs []);
+val _ = show_local "col_ctors_thm=" col_ctors_thm_replay;
