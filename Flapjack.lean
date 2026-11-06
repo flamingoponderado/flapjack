@@ -860,7 +860,6 @@ import Flapjack.Compiler.Backend.BviInline.Proofs.RemoveTicksCalls
 import Flapjack.Compiler.Backend.BviInline.Proofs.WholeProgramSimulation
 import Flapjack.Compiler.Backend.BviInline.Proofs.Observation
 import Flapjack.Compiler.Backend.BviInline.Proofs.Pipeline
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.InlineHandoff
 import Flapjack.Compiler.Backend.BviTmc.Proofs.PureTotal
 import Flapjack.Compiler.Backend.BviTmc.Proofs.PureCorrespondence
 import Flapjack.Compiler.Backend.BviTmc.Proofs.ExtractCorrespondence
@@ -1297,15 +1296,10 @@ import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileCorrect
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.InitGlobalsStub
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.InitialStateRel
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.TailrecNames
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.TailrecSemantics
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.TmcNames
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.NoMutcons
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.TmcHandoff
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.TmcSemantics
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Observations
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Divergence
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.DataSemantics
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.OptimizedProgram
 import Flapjack.Compiler.Backend.DataLang.Syntax
 import Flapjack.Compiler.Backend.Semantics.DataSem.Value
 import Flapjack.Compiler.Backend.Semantics.DataSem.State

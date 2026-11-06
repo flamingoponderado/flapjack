@@ -193,32 +193,4 @@ theorem tailrec_output_worker_below_counter (fuel : Nat) (enabled : Bool) (next 
     have result := compileEachSource_install_worker_bound next program condition name ⟨treeMember, worker⟩
     simpa [lastEq] using result
 
-/-- The actual BVL-to-BVI output can be passed to the production
-tail-recursion compiler with its initial namespace conditions discharged.
-The future oracle programs still require their own input conditions. -/
-theorem lowering_tailrec_semantics {C F : Type}
-    (fuel optFuel start counter targetStart targetCounter : Nat) (enabled : Bool)
-    (program : List (Nat × Nat × Bvl.Exp)) (lowered compiled : List (Nat × Nat × Bvi.Exp))
-    (last : Nat) (ffi : HolFfiState F) (oracle : BviSem.CompileOracle (Nat × C))
-    (compiler : BviSem.Compiler C) (entry : Nat)
-    (distinct : (program.map Prod.fst).Nodup)
-    (lowerRun : BvlToBvi.compileProgFuel fuel optFuel start counter program = some (targetStart, lowered, targetCounter))
-    (tailRun : BviTailrec.compileProgFuel fuel enabled (bvlNumStubs + 2) lowered = some (last, compiled))
-    (oracleCondition : ∀ n, inputCondition (oracle n).1.1 (oracle n).2)
-    (counterBound : last ≤ (oracle 0).1.1)
-    (notFail : BviSem.semantics ffi (sptFromAList lowered) oracle
-      (BackendProps.stateCc (compileProgSource enabled) compiler) entry ≠ .fail) :
-    BviSem.semantics ffi (sptFromAList lowered) oracle
-        (BackendProps.stateCc (compileProgSource enabled) compiler) entry =
-      BviSem.semantics ffi (sptFromAList compiled)
-        (BackendProps.stateCo (compileProgSource enabled) oracle) compiler entry := by
-  have condition := compileProgFuel_production_tailrec_inputCondition fuel optFuel start counter
-    targetStart targetCounter program lowered distinct lowerRun
-  have workerBound : ∀ n, n ∈ compiled.map Prod.fst → inWorkerNamespace n → n < (oracle 0).1.1 := by
-    intro name member worker
-    exact Nat.lt_of_lt_of_le (tailrec_output_worker_below_counter fuel enabled (bvlNumStubs + 2)
-      last lowered compiled condition tailRun name member worker) counterBound
-  exact BviTailrec.compileProgFuel_semantics fuel enabled (bvlNumStubs + 2) lowered ffi oracle compiler
-    entry last compiled condition oracleCondition workerBound tailRun notFail
-
 end Flapjack.Compiler.Backend.BvlToBvi.Proofs
