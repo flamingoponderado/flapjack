@@ -1851,35 +1851,21 @@ The recognizer and shift rows are checked against the exact `crepDest2ExpHOL`
 definition; the obsolete fuel-bounded duplicate has been removed.
 The fixture also evaluates representative instances of the proof helper
 `dest_2exp_bound` at `cakeml/pancake/proofs/crep_arithProofScript.sml:10`;
-the Lean all-dimension support theorem remains untagged until its explicit
-finite-index and `word_log2` encodings are reviewed against HOL.
+the tagged Lean counterparts are in
+`Flapjack.Pancake.Proofs.CrepArith.MulConst`.
 `hol_fcp_index_n2w_probe.out` records direct HOL EVAL of `n2w` plus concrete
 instances of `word_index_n2w` and the underlying `BIT` values for zero, one,
 and the highest bit of an 8-bit word; it also records `dimindex (:8) = 8` to
 show the sampled indices are valid. The original definition is HOL4
 `wordsTheory.n2w_def` (`$HOL/src/n-bit/wordsScript.sml:54-56`);
 `word_index_n2w` at lines 1765-1774 states the general numeric-index equation.
-The kernel-checked canonical `Fin width`/BitVec equation
-`holWordBitsToBitVec_n2w` is in `Flapjack.Pancake.Semantics.CrepSem.Eval`; its
-zero/one/high-bit examples are in `Flapjack.Test.CrepSemEvalExactParity`.
-For any explicit `HolFiniteDimension`, `holFiniteWordN2W_at_index` proves that
-the arbitrary-index adapter returns `Nat.testBit value (encode index)`, which
-is the pointwise FCP `BIT` equation under the chosen finite-index encoding.
+The sampled `n2w` cases are checked using BitVec in
+`Flapjack.Test.CrepSemEvalExactParity`.
 `hol_word_arithmetic_probe.out` records the direct HOL4 definitions
 `word_add_def`, `word_mul_def`, and `word_sub_def` from the same external
 `wordsScript.sml`, along with the general `word_add_n2w` and `word_mul_n2w`
-theorems and 8-bit simplification examples. Lean's
-`holFiniteWordSourceAdd`/`holFiniteWordSourceMul` encode the source `n2w` of
-natural arithmetic on `w2n` values, with generic Fin-index transport theorems; the original 8-bit arithmetic
-rows are checked in `CrepSemEvalExactParity`. The pointwise `n2w`/`BIT`
-equation is proved for explicit finite dimensions. The recursive
-`finWordSBitSum` follows the numeric `Fin` indices and proves the `w2n`
-weighted `SBIT` sum equals BitVec `toNat`; the operation adapters are also
-rewritten to expose their `n2w`-of-SBitSum source shape. `holFiniteWordSourceSub`
-uses the corresponding two's-complement natural formula and its transport
-theorem; the test checks wraparound subtraction. The remaining representation
-gap is identifying a Lean `HolFiniteDimension` witness with HOL's implicit
-`finite_index` choice; the full Crep evaluator correspondence is still open.
+theorems and 8-bit simplification examples. The original arithmetic rows,
+including wraparound subtraction, are checked in `CrepSemEvalExactParity`.
 `word_op_finite_probe.out` records the original CakeML
 `wordLangTheory.word_op_def` list folds (And/Add/Or/Xor/Sub), including empty
 fold values and malformed subtraction arities. This worktree's CakeML submodule
@@ -1887,19 +1873,14 @@ has no compiled `wordLangTheory.ui`, so regenerate this probe against a
 read-only CakeML checkout with matching source and built theories by setting
 `CAKEML` (the checked output was generated from matching CakeML source commit
 `857f0d98da8f8a3580f3442338e697809308ede`).
-`holFiniteWord_wordOp_toBitVec` proves that the explicit finite-dimension
-wordOp list behavior maps through the Fin-index/BitVec conversion for every
-operator and argument list; the original 8-bit rows are checked on `wordOpHOL`
-in `Flapjack.Test.CrepSemEvalExactParity`. This remains untagged because the theorem
-uses explicit dimension data.
+The original 8-bit rows are checked on `wordOpHOL` in
+`Flapjack.Test.CrepSemEvalExactParity`.
 `word_sh_finite_probe.out` records the original `wordLang$word_sh_def`, its
 `dimindex` guard, and zero, valid, width, and above-width examples. Its source
-is `cakeml/compiler/backend/wordLangScript.sml`; the direct Lean transport
-`holFiniteWord_evalPanShift_toBitVec` covers all four shift operators for every
-explicit finite dimension. The original 8-bit rows are checked on
-`wordShiftHOL` in `Flapjack.Test.CrepSemEvalExactParity`. This is evaluator infrastructure and does
-not by itself establish the unrestricted HOL-polymorphic
-`simp_exp_correct1` statement. Regenerate against a read-only CakeML checkout
+is `cakeml/compiler/backend/wordLangScript.sml`. The original 8-bit rows are
+checked on `wordShiftHOL` in `Flapjack.Test.CrepSemEvalExactParity`; these
+examples do not establish the unrestricted `simp_exp_correct1` theorem.
+Regenerate against a read-only CakeML checkout
 with matching built theories by setting `CAKEML`; the checked output was
 generated from source commit `857f0d98da8f8a3580f3442338e697809308ede`.
 `pan_fixed_load_probe.out` prints HOL `mem_load_byte_def` and
@@ -1928,17 +1909,12 @@ of three while the HOL definition aligns using `LOG2 (dimindex DIV 8)`. The
 `holByteAlignedRiscVMemoryModel` overlay uses the source alignment formula and
 returns the probed byte while leaving the other RISC-V model operations
 explicit. Focused checks for the source overlay and production mismatch are in
-`Flapjack.Test.PanFixedLoadParity`. The generic finite-word
-`holFiniteWordSourceMemoryModel` adapter uses the same alignment formula and
-direct HOL `get_byte` index arithmetic; width-24 observations are checked on
-the exact BitVec evaluator and the RISC-V runtime. Its `aligned` operation is now expressed
-as divisibility by the requested byte alignment. The `setByte` operation
-implements the pointwise bit-slice cases from HOL `set_byte_def`, and
-`wordOfBytes` follows the recursive shape from HOL `word_of_bytes_def`.
-`word_byte_memory_probe.out` records those source definitions, the width-17
+`Flapjack.Test.PanFixedLoadParity`. Width-24 observations are checked on
+the exact BitVec evaluator and the RISC-V runtime.
+`word_byte_memory_probe.out` records the source definitions, the width-17
 four-write expansion, and direct HOL EVAL for little- and big-endian width-17
-fixtures, replayed on the BitVec byte operations in `PanFixedLoadParity`. A generic theorem relating the explicit dimension enumeration to
-HOL's native finite-index word operations remains open. The generic
+fixtures, replayed on the BitVec byte operations in `PanFixedLoadParity`.
+The generic
 Crep source helpers `crepHolEvalMemLoadByte` and `crepHolEvalMemLoad32`, plus
 their equations to `panModelReadByte`/`panModelRead32`, are in
 `Flapjack.Pancake.Semantics.CrepSem`; they keep the `PanMemoryModel` explicit
@@ -2009,8 +1985,7 @@ exact-carrier evaluation and Var/Const replays are in
 `Flapjack.Test.CrepeSimpExpParity`, alongside the tagged native evaluator cases in
 `Flapjack.Pancake.Proofs.CrepArith.HOLStateMapc`. These checks exercise the
 result shape, but do not close the polymorphic evaluator-preservation theorem
-`simp_exp_correct1`; the explicit finite-index adapter's relation to HOL's
-implicit word carrier remains open.
+`simp_exp_correct1`.
 `crep_eval_probe.out` records direct HOL EVAL of the `Const`, `Var`, `Load`,
 `LoadGlob`, `BaseAddr`, and `TopAddr` constructor cases from
 `cakeml/pancake/semantics/crepSemScript.sml:90-166`. The width-8 production
@@ -2026,8 +2001,7 @@ For the isolated `Const` case of local `simp_exp_correct1`, this direct
 `crep_eval_cmp_rv64_probe.out` records direct HOL `crepSem$eval` results for all
 eight `asm$word_cmp_def` constructors, including signed-versus-unsigned order,
 negations, and overlapping/disjoint bit tests. Matching exact-evaluator
-comparisons are checked in `Flapjack.Test.CrepSemEvalExactParity`; the generic
-finite-index-to-BitVec comparison equation is `holFiniteWord_evalPanCmp_toBitVec`.
+comparisons are checked in `Flapjack.Test.CrepSemEvalExactParity`.
 `pan_globals_compile_top_probe.out` records original Pancake HOL evaluation
 of `pan_globals$compile_top` for an absent start function (the total empty-list
 result), a present `main` entry, and a global initializer in a nonempty

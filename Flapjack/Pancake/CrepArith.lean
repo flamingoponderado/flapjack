@@ -19,8 +19,7 @@ namespace Flapjack
     (`crep_arithScript.sml:10-12`) over `CrepExpHOL`. Its implicit `width`
     ranges over every positive HOL word dimension; `BitVec width` is the
     canonical `Fin width → Bool` representation, so any finite HOL word index
-    of that cardinality is transported by reindexing. The generic executable
-    helper above stays untagged because it accepts any value carrier. -/
+    of that cardinality is transported by reindexing. -/
 @[hol "cakeml/pancake/crep_arithScript.sml" "dest_const_def"]
 def crepDestConstHOL {width : Nat} [NeZero width] :
     CrepExpHOL width → Option (BitVec width)
