@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveMemory
+import Flapjack.Misc.RichList
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.MatchBranch
 
 /-! Array primitive simulations for the proof-side flat pattern relations.
@@ -35,13 +36,6 @@ theorem forall₂_set {A B : Type} {R : A → B → Prop} {xs : List A} {ys : Li
     cases index with
     | zero => simpa using List.Forall₂.cons values tail
     | succ index => simpa using List.Forall₂.cons head (ih index)
-
-/-- Repeating related values yields related lists. -/
-theorem forall₂_replicate {A B : Type} {R : A → B → Prop} (count : Nat) {x : A} {y : B}
-    (related : R x y) : List.Forall₂ R (List.replicate count x) (List.replicate count y) := by
-  induction count with
-  | zero => exact .nil
-  | succ _ ih => exact .cons related ih
 
 /-- The bounds exception is related to itself. -/
 theorem subscriptExn_related : ValueRel FlatSem.subscriptExnV FlatSem.subscriptExnV := by
@@ -118,7 +112,7 @@ theorem doApp_arrayAlloc_related {C F : Type} (cfg : Config) (source target : Fl
       .val (.loc true source.refs.length), .val (.loc true source.refs.length), ?_, ?_, ?_, .value ?_⟩
     · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, Flapjack.SemanticPrimitivesHOL.storeAlloc, negative]
     · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, Flapjack.SemanticPrimitivesHOL.storeAlloc, negative, lengths]
-    · exact ⟨states.1, List.rel_append states.2.1 (.cons (forall₂_replicate size.toNat values) .nil), states.2.2⟩
+    · exact ⟨states.1, List.rel_append states.2.1 (.cons ((forall₂_replicate_iff ValueRel size.toNat value value').mpr (fun _ => values)) .nil), states.2.2⟩
     · exact (valueRel_loc true source.refs.length _).2 rfl
 
 /-- Array reads preserve both ordinary results and bounds exceptions. -/

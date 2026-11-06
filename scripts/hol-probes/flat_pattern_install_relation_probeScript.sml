@@ -92,6 +92,7 @@ val _ = show_thm "less_max_add=" flat_patternProofTheory.LESS_MAX_ADD;
 val _ = show_thm "max_add_le=" flat_patternProofTheory.MAX_ADD_LE;
 val _ = show_thm "environment_relation_mono=" flat_patternProofTheory.env_rel_mono;
 val _ = show_thm "environment_relation_lookup=" flat_patternProofTheory.env_rel_ALOOKUP;
+val _ = show_thm "list_relation_replicate=" rich_listTheory.LIST_REL_REPLICATE_same;
 val _ = show_thm "alookup_map_3=" flat_patternProofTheory.ALOOKUP_MAP_3;
 val _ = show_thm "lookup_map_same=" flat_patternProofTheory.ALOOKUP_rel_MAP_same;
 val _ = show_thm "do_opapp=" flat_patternProofTheory.do_opapp_thm;

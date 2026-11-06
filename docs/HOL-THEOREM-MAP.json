@@ -125176,5 +125176,13 @@
   "lean_name": "pmatch_simulation",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared the complete HOL source and typed pmatch_simulation capture: both single-pattern and pattern-list conjuncts retain their state, value and binding relations, source non-type-error premise, and existential target result with match relation. The conjunction premises are curried and the local nv_rel overload is expanded."
+},
+{
+  "hol_path": "HOL/src/list/src/rich_listScript.sml",
+  "hol_name": "LIST_REL_REPLICATE_same",
+  "lean_path": "Flapjack/Misc/RichList.lean",
+  "lean_name": "forall₂_replicate_iff",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the HOL source and typed list_relation_replicate capture: the two element types remain independent, LIST_REL and REPLICATE use List.Forall₂ and List.replicate, and the original equivalence and positive-length implication are retained."
 }
 ]

@@ -45,6 +45,7 @@ the cited name occurs in one of the two syntactic forms.
 | HOL script | Lean counterpart |
 | --- | --- |
 | `HOL/src/finite_maps/alistScript.sml` | `Flapjack/FiniteMap/AlistExact.lean` (canonical finite-support association-list map and first-entry lookup properties) |
+| `HOL/src/list/src/rich_listScript.sml` | `Flapjack/Misc/RichList.lean` (shared rich-list relation results) |
 | `compiler/backend/backend_passesScript.sml` | `Flapjack/Compiler/Backend/BackendPasses/Frontend.lean`, `BackendPasses/Closure.lean`, `BackendPasses/Bvi.lean`, `BackendPasses/Data.lean`, `BackendPasses/Word.lean`, `BackendPasses/WordOptimise.lean` and `BackendPasses/Stack.lean` (explorer snapshots through lab filtering) |
 | `compiler/backend/presLangScript.sml` | `Flapjack/Compiler/Backend/PresLang/Config.lean`, `PresLang/Source.lean`, `PresLang/Flat.lean`, `PresLang/Clos.lean`, `PresLang/Bvl.lean`, `PresLang/Bvi.lean`, `PresLang/Data.lean`, `PresLang/Asm.lean`, `PresLang/Lab.lean`, `PresLang/Word.lean` and `PresLang/Stack.lean` (explorer display; representation review and explorer wiring remain open) |
 | `semantics/tokensScript.sml` | `Flapjack/CakeParser/Tokens.lean` |

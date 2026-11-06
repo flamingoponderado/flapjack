@@ -21,7 +21,7 @@ theorem doApp_globalAlloc_related {C F : Type} (cfg : Config) (source target sou
     refine ⟨{ target with globals := target.globals ++ List.replicate count none }, .val FlatSem.unitValue, ?_, ?_, .value ?_⟩
     · simp [FlatSem.doApp, FlatSem.doAppFlat]
     · refine ⟨states.1, states.2.1, states.2.2.1, ?_, states.2.2.2.2⟩
-      exact List.rel_append states.2.2.2.1 (forall₂_replicate count (show optionRel ValueRel none none from trivial))
+      exact List.rel_append states.2.2.2.1 ((forall₂_replicate_iff (optionRel ValueRel) count none none).mpr (fun _ => trivial))
     · exact (valueRel_conv none [] _).2 ⟨[], rfl, .nil⟩
 
 /-- Initializing an uninitialized global preserves related values and states. -/
