@@ -11536,6 +11536,15 @@
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateLocal.lean",
+    "lean_name": "invariantBeginAllocBlanks",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "invariant_begin_alloc_blanks",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["c", "tys"],
+    "reviewer": "Compared the source and typed invariant_begin_alloc_blanks capture: compiler, FFI and initial-environment payload types remain independent; the original precondition, output-config equation, and initial-globals equation imply the same invariant over the allocated reference and blank globals. The global constructor and type maps use their canonical finite-map carrier."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateLocal.lean",
     "lean_name": "factoredPrecondition1_changeClock",
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "precondition1_change_clock",

@@ -50,3 +50,4 @@ val _ = show_eval "incremental_nonzero_next=" ``
   let (c', code) = source_to_flat$inc_compile_prog (3n, 7n) c [] in
     (c'.next.vidx, c'.envs.next, code)``;
 val _ = show_eval "incremental_empty=" ``SND (source_to_flat$inc_compile (0n,0n) source_to_flat$empty_config [])``;
+val _ = show_thm "invariant_begin_alloc_blanks=" source_to_flatProofTheory.invariant_begin_alloc_blanks;

@@ -412,63 +412,86 @@ theorem factoredCompileDeclarations {C F : Type} [Nonempty C]
   | val values => exact caseProof
   | err error => cases error <;> exact caseProof
 
-/-- The original initialization conditions establish the preliminary
-factored invariant immediately after allocation of the environment reference
-and blank globals. The factored relations still require HOL correspondence
-review. -/
-theorem factoredInvariant_compileProg_initial {C F : Type} [Nonempty C]
+/-- The source whole-program precondition, preserving independent compiler,
+FFI, and initial-environment value types. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "precondition1_def"]
+noncomputable def FactoredPrecondition1 {C F A : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (config : Config) (decs : List Dec) (source : State F) (flat : FlatSem.State C F)
-    (n : Nat) (next : NextIndices) (outEnv : Environment) (outGen : EnvironmentGenerationStore)
-    (body : List FlatLang.Exp)
-    (compiled : compileDecs [] 1 { config.next with vidx := config.next.vidx + 1 } config.modEnv
-      ⟨0, config.envs.next, .ln⟩ decs = (n, next, outEnv, outGen, body))
-    (startVar : config.next.vidx = 0) (initialIdx : idxPrev initGenvNext config.next)
-    (emptyStore : config.envs = emptyConfig.envs) (initialEval : initEvalStateOk source.evalState)
-    (steps : srcOracStepInvs interp transform source.evalState)
-    (oracle : oracRel interp transform source.evalState flat.evalConfig)
-    (oracleConfig : match srcOracNextCfg interp source.evalState with
-      | none => True
-      | some nextConfig => nextConfig = (compileProg config decs).1)
-    (stamps : ∀ entry ∈ initGenvEntries, match entry.2 with
-      | .typeStamp _ index => index < source.nextTypeStamp
-      | .exnStamp index => index < source.nextExnStamp)
-    (sourceRefs : source.refs = []) (clock : source.clock = flat.clock) (ffi : source.ffi = flat.ffi) :
+    (source : State F) (sourceEnv : SemEnv A) (config : Config)
+    (evalConfig : FlatSem.InstallConfig C) (decs : List Dec) : Prop :=
+  srcOracStepInvs interp transform source.evalState ∧
+  oracRel interp transform source.evalState evalConfig ∧
+  (match srcOracNextCfg interp source.evalState with
+    | none => True | some nextConfig => nextConfig = (compileProg config decs).1) ∧
+  config.next.vidx = 0 ∧ source.refs = [] ∧
+  InitialEnv.initGlobalEnvInv initGenv config.modEnv sourceEnv ∧
+  initEvalStateOk source.evalState ∧ idxPrev initGenvNext config.next ∧
+  (∀ entry ∈ initGenvEntries, match entry.2 with
+    | .typeStamp _ index => index < source.nextTypeStamp
+    | .exnStamp index => index < source.nextExnStamp) ∧
+  config.envs = emptyConfig.envs
+
+/-- Allocating the initial reference and blank globals establishes the invariant. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "invariant_begin_alloc_blanks"
+  (fmap_as_finite_support := [c, tys])]
+theorem invariantBeginAllocBlanks {C F A : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (source : State F) (sourceEnv : SemEnv A) (config : Config)
+    (evalConfig : FlatSem.InstallConfig C) (decs : List Dec) (outputConfig : Config)
+    (initialGlobals : List (Option FlatSem.Value))
+    (premises : FactoredPrecondition1 interp transform source sourceEnv config evalConfig decs ∧
+      outputConfig = (compileProg config decs).1 ∧
+      initialGlobals = some (.loc true 0) :: List.replicate (outputConfig.next.vidx - 1) none) :
     factoredInvariant interp transform ⟨0, config.envs.next, .ln⟩
-      { initGenv with v := some (.loc true 0) ::
-          List.replicate (next.vidx - config.next.vidx - 1) none }
-      ({ config.next with vidx := config.next.vidx + 1 }, next, ∅) source
-      { flat with globals := some (.loc true 0) :: List.replicate (next.vidx - config.next.vidx - 1) none,
-                  refs := [.refv (.conv none [])] } := by
+      { (initGenv : GlobalEnv) with v := initialGlobals } ({ config.next with vidx := 1 }, outputConfig.next, ∅) source
+      { FlatSem.initialState source.ffi source.clock evalConfig with
+        refs := [.refv (.conv none [])], globals := initialGlobals } := by
+  obtain ⟨precondition, outputEq, globalsEq⟩ := premises
+  obtain ⟨steps, oracle, oracleConfig, startVar, sourceRefs, _, initialEval, initialIdx, stamps, emptyStore⟩ :=
+    precondition
+  generalize compiled : compileDecs [] 1 { config.next with vidx := config.next.vidx + 1 } config.modEnv
+    ⟨0, config.envs.next, .ln⟩ decs = result
+  obtain ⟨n, next, outEnv, outGen, body⟩ := result
+  have outputNext : outputConfig.next = next := by
+    rw [outputEq]
+    simp [compileProg, compiled]
   have progress := compileDecs_idxPrev [] 1
     { config.next with vidx := config.next.vidx + 1 } config.modEnv
     ⟨0, config.envs.next, .ln⟩ decs n next outEnv outGen body compiled
-  refine ⟨initGenv_constructorsOk, initGenv_typesOk, ?_, ?_, ?_, oracle, rfl, ?_, ?_, ?_⟩
-  · apply StateRel.intro
-    · simp
-    · simp [sourceRefs]
-    · exact clock
-    · exact ffi
-  · exact initGenv_idxRange_compileProg interp source.evalState source.nextTypeStamp source.nextExnStamp
-      (next.vidx - config.next.vidx - 1) config decs n next outEnv outGen body compiled
-      startVar initialIdx stamps oracleConfig
-  · exact initEvalStateOk_srcOracInvs interp transform source.evalState _ config decs n next outEnv outGen
-      body compiled emptyStore initialEval steps oracleConfig
-  · simp [evalRefInv]
-  · simp [envGenInv]
-  · unfold finIdxMatch
-    cases eq : srcOracNextCfg interp source.evalState with
-    | none =>
-      simp only [idxPrev] at progress
-      simp [startVar] at progress ⊢
-      omega
-    | some nextConfig =>
-      simp only [eq] at oracleConfig ⊢
-      subst nextConfig
-      simp only [compileProg, compiled]
-      simp [startVar]
-      simp only [idxPrev] at progress
-      omega
+  have invariant : factoredInvariant interp transform ⟨0, config.envs.next, .ln⟩
+      { initGenv with v := some (.loc true 0) ::
+          List.replicate (next.vidx - config.next.vidx - 1) none }
+      ({ config.next with vidx := config.next.vidx + 1 }, next, ∅) source
+      { FlatSem.initialState source.ffi source.clock evalConfig with
+        globals := some (.loc true 0) :: List.replicate (next.vidx - config.next.vidx - 1) none,
+        refs := [.refv (.conv none [])] } := by
+    refine ⟨initGenv_constructorsOk, initGenv_typesOk, ?_, ?_, ?_, oracle, rfl, ?_, ?_, ?_⟩
+    · apply StateRel.intro
+      · simp
+      · simp [sourceRefs]
+      · rfl
+      · rfl
+    · exact initGenv_idxRange_compileProg interp source.evalState source.nextTypeStamp source.nextExnStamp
+        (next.vidx - config.next.vidx - 1) config decs n next outEnv outGen body compiled
+        startVar initialIdx stamps oracleConfig
+    · exact initEvalStateOk_srcOracInvs interp transform source.evalState _ config decs n next outEnv outGen
+        body compiled emptyStore initialEval steps oracleConfig
+    · simp [evalRefInv]
+    · simp [envGenInv]
+    · unfold finIdxMatch
+      cases eq : srcOracNextCfg interp source.evalState with
+      | none =>
+        simp only [idxPrev] at progress
+        simp [startVar] at progress ⊢
+        omega
+      | some nextConfig =>
+        simp only [eq] at oracleConfig ⊢
+        subst nextConfig
+        simp only [compileProg, compiled]
+        simp [startVar]
+        simp only [idxPrev] at progress
+        omega
+  simpa [outputNext, globalsEq, startVar] using invariant
 
 /-- Compose whole-program prefix execution with the factored declaration
 simulation. The prepared invariant and oracle conditions are explicit until
@@ -509,69 +532,6 @@ theorem factoredCompileProg_prepared {C F : Type} [Nonempty C]
   rw [evaluateCompileProg_continue flat config decs n next outEnv outGen body globalsEmpty refsEmpty compiled]
   exact flatRun
 
-/-- Whole-program simulation under the original initialization conditions,
-using preliminary factored relations whose HOL correspondence remains under
-review. -/
-theorem factoredCompileProg_initial {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (config : Config) (decs : List Dec) (sourceEnv : SemEnv Value)
-    (source sourceLast : State F) (flat : FlatSem.State C F)
-    (n : Nat) (next : NextIndices) (outEnv : Environment) (outGen : EnvironmentGenerationStore)
-    (body : List FlatLang.Exp) (result : Result (SemEnv Value) Value)
-    (compiled : compileDecs [] 1 { config.next with vidx := config.next.vidx + 1 } config.modEnv
-      ⟨0, config.envs.next, .ln⟩ decs = (n, next, outEnv, outGen, body))
-    (sourceRun : EvaluateHOL.evaluateDecs source sourceEnv decs = (sourceLast, result))
-    (globalsEmpty : flat.globals = []) (refsEmpty : flat.refs = [])
-    (initialEnv : InitialEnv.initGlobalEnvInv initGenv config.modEnv sourceEnv)
-    (safe : result ≠ .err (.abort .typeError))
-    (startVar : config.next.vidx = 0) (initialIdx : idxPrev initGenvNext config.next)
-    (emptyStore : config.envs = emptyConfig.envs) (initialEval : initEvalStateOk source.evalState)
-    (steps : srcOracStepInvs interp transform source.evalState)
-    (oracle : oracRel interp transform source.evalState flat.evalConfig)
-    (stamps : ∀ entry ∈ initGenvEntries, match entry.2 with
-      | .typeStamp _ index => index < source.nextTypeStamp
-      | .exnStamp index => index < source.nextExnStamp)
-    (sourceRefs : source.refs = []) (clock : source.clock = flat.clock) (ffi : source.ffi = flat.ffi)
-    (oracleConfig : match srcOracNextCfg interp source.evalState with
-      | none => True
-      | some nextConfig => nextConfig = (compileProg config decs).1) :
-    ∃ finalFlat nextGenv flatError,
-      FlatSem.evaluateDecs flat (compileProg config decs).2 = (finalFlat, flatError) ∧
-      StateRel nextGenv sourceLast finalFlat ∧
-      (∀ resultEnv, result = .val resultEnv → flatError = none ∧ EnvDomainEq outEnv resultEnv ∧
-        envGenRel outGen sourceLast.evalState ∧ GlobalEnvInv nextGenv outEnv (fun _ => False) resultEnv) ∧
-      (∀ error, result = .err error → ∃ flatErr, flatError = some flatErr ∧
-        ResultRel (fun _ (_ : SemEnv Value) (_ : Unit) => True) nextGenv (.err error) (.err flatErr)) := by
-  apply factoredCompileProg_prepared interp transform config decs
-    { initGenv with v := some (.loc true 0) ::
-        List.replicate (next.vidx - config.next.vidx - 1) none } sourceEnv source sourceLast flat
-    n next outEnv outGen body result compiled sourceRun globalsEmpty refsEmpty
-  · simpa [InitialEnv.initGlobalEnvInv] using initialEnv
-  · exact factoredInvariant_compileProg_initial interp transform config decs source flat n next outEnv outGen body
-      compiled startVar initialIdx emptyStore initialEval steps oracle oracleConfig stamps sourceRefs clock ffi
-  · exact safe
-  · simpa [emptyStore, emptyConfig] using initEvalStateOk_envGenRel source.evalState initialEval
-  · exact compileProg_envGenFutureRel interp source.evalState config decs n next outEnv outGen body compiled oracleConfig
-
-/-- The source whole-program precondition, preserving independent compiler,
-FFI, and initial-environment value types. -/
-@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "precondition1_def"]
-noncomputable def FactoredPrecondition1 {C F A : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (source : State F) (sourceEnv : SemEnv A) (config : Config)
-    (evalConfig : FlatSem.InstallConfig C) (decs : List Dec) : Prop :=
-  srcOracStepInvs interp transform source.evalState ∧
-  oracRel interp transform source.evalState evalConfig ∧
-  (match srcOracNextCfg interp source.evalState with
-    | none => True | some nextConfig => nextConfig = (compileProg config decs).1) ∧
-  config.next.vidx = 0 ∧ source.refs = [] ∧
-  InitialEnv.initGlobalEnvInv initGenv config.modEnv sourceEnv ∧
-  initEvalStateOk source.evalState ∧ idxPrev initGenvNext config.next ∧
-  (∀ entry ∈ initGenvEntries, match entry.2 with
-    | .typeStamp _ index => index < source.nextTypeStamp
-    | .exnStamp index => index < source.nextExnStamp) ∧
-  config.envs = emptyConfig.envs
-
 /-- Changing the source clock preserves the whole-program precondition. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "precondition1_change_clock"]
 theorem factoredPrecondition1_changeClock {C F A : Type} [Nonempty C]
@@ -603,16 +563,34 @@ theorem factoredCompileProg_correct {C F : Type} [Nonempty C]
         flatErr ≠ .abort .typeError ∧
         ResultRel (fun _ (_ : Unit) (_ : Unit) => True) nextGenv (.err error) (.err flatErr)) := by
   obtain ⟨precondition, compiled, sourceRun, safe⟩ := premises
-  obtain ⟨steps, oracle, oracleConfig, startVar, sourceRefs, initialEnv, initialEval, initialIdx, stamps, emptyStore⟩ :=
+  have originalPrecondition := precondition
+  obtain ⟨_, _, oracleConfig, startVar, _, initialEnv, initialEval, _, _, emptyStore⟩ :=
     precondition
   generalize bodyCompiled : compileDecs [] 1 { config.next with vidx := config.next.vidx + 1 } config.modEnv
     ⟨0, config.envs.next, .ln⟩ decs = compiledResult
   obtain ⟨n, next, outEnv, outGen, body⟩ := compiledResult
-  have actual := factoredCompileProg_initial interp transform config decs sourceEnv source sourceLast
-    (FlatSem.initialState source.ffi source.clock evalConfig)
-    n next outEnv outGen body result bodyCompiled sourceRun rfl rfl
-    initialEnv safe startVar initialIdx emptyStore
-    initialEval steps oracle stamps sourceRefs rfl rfl oracleConfig
+  let blanks : List (Option FlatSem.Value) :=
+    some (.loc true 0) :: List.replicate (next.vidx - config.next.vidx - 1) none
+  have outputNext : (compileProg config decs).1.next = next := by
+    simp [compileProg, bodyCompiled]
+  have blanksEq : blanks = some (.loc true 0) :: List.replicate ((compileProg config decs).1.next.vidx - 1) none := by
+    simp [blanks, outputNext, startVar]
+  have initialInvariant := invariantBeginAllocBlanks interp transform source sourceEnv config
+    evalConfig decs (compileProg config decs).1 blanks ⟨originalPrecondition, rfl, blanksEq⟩
+  have invariant : factoredInvariant interp transform ⟨0, config.envs.next, .ln⟩
+      { initGenv with v := blanks } ({ config.next with vidx := config.next.vidx + 1 }, next, ∅) source
+      { FlatSem.initialState source.ffi source.clock evalConfig with
+        globals := blanks, refs := [.refv (.conv none [])] } := by
+    simpa [outputNext, startVar] using initialInvariant
+  have envInv : InitialEnv.initGlobalEnvInv { initGenv with v := blanks } config.modEnv sourceEnv := by
+    simpa [InitialEnv.initGlobalEnvInv] using initialEnv
+  have generation : envGenRel ⟨0, config.envs.next, .ln⟩ source.evalState := by
+    simpa [emptyStore, emptyConfig] using initEvalStateOk_envGenRel source.evalState initialEval
+  have future := compileProg_envGenFutureRel interp source.evalState config decs n next outEnv outGen body
+    bodyCompiled oracleConfig
+  have actual := factoredCompileProg_prepared interp transform config decs { initGenv with v := blanks }
+    sourceEnv source sourceLast (FlatSem.initialState source.ffi source.clock evalConfig)
+    n next outEnv outGen body result bodyCompiled sourceRun rfl rfl envInv invariant safe generation future
   obtain ⟨finalFlat, nextGenv, flatError, flatRun, states, success, errors⟩ := actual
   refine ⟨FlatSem.initialState source.ffi source.clock evalConfig, finalFlat, nextGenv, flatError,
     rfl, ?_, states, ?_, ?_⟩
