@@ -9,9 +9,10 @@ import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.BranchConditional
 low 26/19 bits of the offset, guarded by a signed-range and four-byte-alignment
 test.  The L3 `Encode` instead tests that the offset is the sign extension of
 those bits.  This module proves `Arm8.encodeBytes` equals `L3.arm8Encode` for
-both forms, taking the two guards as hypotheses; the caller discharges them
-from the shared signed-range and alignment facts (`arm8BranchRoundtrip`,
-`arm8BranchCondRoundtrip`, `fitsSigned_iff_signExtend`).
+both forms unconditionally: `branchGuard28_iff`/`branchGuard21_iff` show the
+two guards are the same condition, `arm8EncodeBytes_*_bad` give the four
+zero bytes both encoders emit outside the range, and the main lemmas split on
+the guard internally, so no per-target hypothesis is needed.
 
 No new HOL claim is introduced: the bridge relates two Lean renderings of the
 same instruction word.
