@@ -125184,5 +125184,53 @@
   "lean_name": "forall₂_replicate_iff",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared the HOL source and typed list_relation_replicate capture: the two element types remain independent, LIST_REL and REPLICATE use List.Forall₂ and List.replicate, and the original equivalence and positive-length implication are retained."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "isClosure_def",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/ValueBasics.lean",
+  "lean_name": "isClosure",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the original definition and typed flat_is_closure capture: the closure and recursive-closure existential cases retain the source environment, name, body and function-list carriers and disjunct order."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "simple_val_rel_step_isClosure",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/PatternRelation.lean",
+  "lean_name": "simpleBasic_notClosure",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the HOL source and typed basic_nonclosure capture: the same basic-value relation premise implies both values are non-closures, in the original order."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "simple_val_rel_def",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/SimpleRelations.lean",
+  "lean_name": "simpleValueRel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the HOL definition and typed simple_value_relation_def capture: closure-status preservation and the original non-closure basic relation with pointwise contained-value relation are retained."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "simple_state_rel_def",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/SimpleRelations.lean",
+  "lean_name": "simpleStateRel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the HOL definition and typed simple_state_relation_def capture: the compiler-state types remain independent with a shared FFI type, and all six original store, globals, FFI and update conjuncts are retained; conjunction premises are curried."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "simple_val_rel",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/PatternRelation.lean",
+  "lean_name": "simpleValueRel_valueRel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the HOL source theorem and typed simple_value_relation capture: the generic simple value relation is instantiated with the original pattern-compiler value relation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "simple_state_rel",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/PatternRelation.lean",
+  "lean_name": "simpleStateRel_stateRel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the HOL source theorem and typed simple_state_relation capture: the generic simple state relation is instantiated with the pattern compiler state relation at the same compiler and FFI types."
 }
 ]

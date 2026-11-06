@@ -98,6 +98,14 @@ val _ = show_thm "lookup_map_same=" flat_patternProofTheory.ALOOKUP_rel_MAP_same
 val _ = show_thm "do_opapp=" flat_patternProofTheory.do_opapp_thm;
 val _ = show_thm "do_opapp_reverse=" flat_patternProofTheory.do_opapp_thm_REVERSE;
 val _ = show_thm "pmatch_simulation=" flat_patternProofTheory.pmatch_thm;
+val _ = show_thm "flat_is_closure=" flatPropsTheory.isClosure_def;
+val _ = show_thm "simple_value_relation_def=" flatPropsTheory.simple_val_rel_def;
+val _ = show_thm "simple_state_relation_def=" flatPropsTheory.simple_state_rel_def;
+val _ = show_thm "basic_nonclosure=" flat_patternProofTheory.simple_val_rel_step_isClosure;
+val _ = show_thm "simple_value_relation=" flat_patternProofTheory.simple_val_rel;
+val _ = show_thm "simple_state_relation=" flat_patternProofTheory.simple_state_rel;
+val _ = show_thm "simple_do_app=" flatPropsTheory.simple_do_app_thm;
+val _ = show_thm "do_app_simulation=" flat_patternProofTheory.do_app_thm;
 val _ = show_thm "compile_match_pmatch_rows=" flat_patternProofTheory.compile_match_pmatch_rows;
 val _ = show_thm "compile_match_EL=" flat_patternProofTheory.compile_match_EL;
 val _ = show_thm "pmatch_list_length=" flat_patternProofTheory.pmatch_list_Match_IMP_LENGTH;

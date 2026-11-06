@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.RecursiveClosures
 import Flapjack.Compiler.Backend.Semantics.FlatSem.PatternMatch
+import Flapjack.Compiler.Backend.FlatProps.SimpleRelations
 
 /-! Pattern result and store lookup relations for flat pattern compilation. -/
 namespace Flapjack.Compiler.Backend.FlatPattern
@@ -286,5 +287,51 @@ theorem pmatch_simulation {C F : Type} (cfg : Config) (n : Nat) :
   · intro source patterns values bindings result target values' bindings' resultEq safe states related envs
     subst result
     exact ⟨_, rfl, pmatchList_related cfg n source target patterns values values' bindings bindings' states related envs safe⟩
+
+/-- Basic related values are not closures. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "simple_val_rel_step_isClosure"]
+theorem simpleBasic_notClosure (left right : Value)
+    (related : FlatProps.simpleBasicValRel left right) :
+    ¬ FlatProps.isClosure left ∧ ¬ FlatProps.isClosure right := by
+  cases left <;> cases right <;> simp_all [FlatProps.simpleBasicValRel, FlatProps.isClosure]
+
+/-- The pattern compiler value relation is simple. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "simple_val_rel"]
+theorem simpleValueRel_valueRel : FlatProps.simpleValueRel ValueRel := by
+  constructor
+  · intro left right related
+    cases related with
+    | basic shape _ =>
+      have notClosures := simpleBasic_notClosure _ _ shape
+      exact iff_of_false notClosures.1 notClosures.2
+    | closure _ _ => simp [FlatProps.isClosure]
+    | recclosure _ _ => simp [FlatProps.isClosure]
+  · intro left right nonclosure
+    constructor
+    · intro related
+      cases related with
+      | basic shape contents => exact ⟨shape, contents⟩
+      | closure _ _ => simp [FlatProps.isClosure] at nonclosure
+      | recclosure _ _ => simp [FlatProps.isClosure] at nonclosure
+    · rintro ⟨shape, contents⟩
+      exact .basic shape contents
+
+/-- The pattern compiler state relation is simple. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "simple_state_rel"]
+theorem simpleStateRel_stateRel {C F : Type} (cfg : Config) :
+    FlatProps.simpleStateRel ValueRel (@StateRel C F cfg) := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
+  · intro source target related
+    exact related.2.1
+  · intro source target sourceRefs targetRefs related refs
+    exact ⟨related.1, refs, related.2.2.1, related.2.2.2.1, related.2.2.2.2⟩
+  · intro source target related
+    exact related.2.2.2.1
+  · intro source target sourceGlobals targetGlobals related globals
+    exact ⟨related.1, related.2.1, related.2.2.1, globals, related.2.2.2.2⟩
+  · intro source target related
+    exact related.2.2.1.symm
+  · intro source target sourceFfi targetFfi related ffi
+    exact ⟨related.1, related.2.1, ffi.symm, related.2.2.2.1, related.2.2.2.2⟩
 
 end Flapjack.Compiler.Backend.FlatPattern
