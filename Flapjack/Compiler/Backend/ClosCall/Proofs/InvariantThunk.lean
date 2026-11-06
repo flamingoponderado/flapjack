@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantOrdinaryOp
+import Flapjack.Compiler.Backend.ClosCall.Proofs.ApplicationSimulation
+import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateControlWellformed
+import Flapjack.Compiler.Backend.ClosCall.Proofs.RecursiveInvariant
+import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateForce
+import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveTotal
 
 /-! Related thunk inspection for direct-call simulation. -/
 namespace Flapjack.Compiler.Backend.ClosCall

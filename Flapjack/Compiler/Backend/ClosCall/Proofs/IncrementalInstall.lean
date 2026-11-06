@@ -4,20 +4,21 @@ import Flapjack.Compiler.Backend.BackendProps.OracleMonotonic
 import Flapjack.FiniteMap.AlistExact
 import Flapjack.Compiler.Backend.ClosCall.Proofs.IncrementalCode
 import Flapjack.Compiler.Backend.ClosCall.Proofs.AuxiliaryAppend
-import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantDirectCall
-import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantListSimulation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.InstallWellformed
 import Flapjack.Compiler.Backend.Semantics.ClosProps.AdjustOracle
-import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantOrdinaryOp
 import Flapjack.Compiler.Backend.ClosInterp.Proofs.PrimitiveRelation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.FunctionInvariant
-import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantRecursiveBinding
-import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantRetainedApplication
-import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantBodyPureApplication
-import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantBodyImpureApplication
 import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateOracleControl
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateOracleAdvance
 import Flapjack.Compiler.Backend.Semantics.ClosSem.SemanticsRelated
+import Flapjack.Compiler.Backend.ClosCall.Proofs.ApplicationSimulation
+import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateControlWellformed
+import Flapjack.Compiler.Backend.ClosCall.Proofs.RecursiveInvariant
+import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateForce
+import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveTotal
+import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantOrdinaryOp
+import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantThunk
+import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantRecursiveBinding
 
 /-! Incremental installation under direct-call conversion. -/
 namespace Flapjack.Compiler.Backend.ClosCall
