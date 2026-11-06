@@ -389,3 +389,104 @@ val or_rows_hit_replay = prove (
   >- (drule_all (CONJUNCT1 expand_thm_replay) >> fs []) >> metis_tac []);
 val _ = show_local "or_rows_hit=" or_rows_hit_replay;
 val _ = show_local "exh_rows_thm=" pattern_exhTheory.exh_rows_thm;
+val _ = show_local "pat_weight=" pattern_exhTheory.pat_weight_def;
+val _ = show_local "mat_weight=" pattern_exhTheory.mat_weight_def;
+val _ = show_local "mat_len=" pattern_exhTheory.mat_len_def;
+val _ = show_local "mats_weight=" pattern_exhTheory.mats_weight_def;
+val _ = show_local "mats_len=" pattern_exhTheory.mats_len_def;
+val pats_weight_append_replay = prove (
+  ``!xs ys. pattern_exh$pats_weight (xs ++ ys) = pattern_exh$pats_weight xs + pattern_exh$pats_weight ys``,
+  Induct >> fs [pattern_exhTheory.pat_weight_def]);
+val _ = show_local "pats_weight_append=" pats_weight_append_replay;
+val pats_weight_anys_replay = prove (
+  ``!n. pattern_exh$pats_weight (pattern_exh$anys n) = 0``,
+  Induct >> fs [pattern_exhTheory.anys_def, pattern_exhTheory.pat_weight_def]);
+val _ = show_local "pats_weight_anys=" pats_weight_anys_replay;
+val mat_weight_append_replay = prove (
+  ``!xs ys. pattern_exh$mat_weight (xs ++ ys) = pattern_exh$mat_weight xs + pattern_exh$mat_weight ys``,
+  Induct >> fs [pattern_exhTheory.mat_weight_def]);
+val _ = show_local "mat_weight_append=" mat_weight_append_replay;
+val mat_len_append_replay = prove (
+  ``!xs ys. pattern_exh$mat_len (xs ++ ys) = pattern_exh$mat_len xs + pattern_exh$mat_len ys``,
+  Induct >> fs [pattern_exhTheory.mat_len_def]);
+val _ = show_local "mat_len_append=" mat_len_append_replay;
+
+val mat_weight_spec_row_replay = prove (
+  ``!c r. pattern_exh$mat_weight (pattern_exh$spec_row c r) <= pattern_exh$pats_weight r``,
+  ho_match_mp_tac pattern_exhTheory.spec_row_ind
+  >> rw [pattern_exhTheory.spec_row_def,pattern_exhTheory.mat_weight_def,pattern_exhTheory.pat_weight_def,
+         pats_weight_append_replay,pats_weight_anys_replay]);
+val _ = show_local "mat_weight_spec_row=" mat_weight_spec_row_replay;
+
+val mat_weight_spec_mat_replay = prove (
+  ``!c rows. pattern_exh$mat_weight (pattern_exh$spec_mat c rows) <= pattern_exh$mat_weight rows``,
+  gen_tac >> Induct >> fs [pattern_exhTheory.spec_mat_def,pattern_exhTheory.mat_weight_def,mat_weight_append_replay]
+  >> rw []
+  >> match_mp_tac arithmeticTheory.LESS_EQ_LESS_EQ_MONO
+  >> fs [mat_weight_spec_row_replay]);
+val _ = show_local "mat_weight_spec_mat=" mat_weight_spec_mat_replay;
+
+val mat_weight_spec_row_less_replay = prove (
+  ``!c p r. pattern_exh$ctors_of p <> NONE ==>
+          pattern_exh$mat_weight (pattern_exh$spec_row c (p::r)) < pattern_exh$pats_weight (p::r)``,
+  gen_tac >> Cases >> fs [pattern_exhTheory.ctors_of_def]
+  >> rw [pattern_exhTheory.spec_row_def,pattern_exhTheory.mat_weight_def,pattern_exhTheory.pat_weight_def,pats_weight_append_replay]
+  >> rename [`Cons o' l`] >> Cases_on `o'`
+  >> fs [pattern_exhTheory.ctors_of_def,pattern_exhTheory.spec_row_def]
+  >> rw [pattern_exhTheory.mat_weight_def,pattern_exhTheory.pat_weight_def,pats_weight_append_replay]
+  >> rename [`Cons (SOME ts) l`] >> PairCases_on `ts`
+  >> Cases_on `ts1` >> fs [pattern_exhTheory.ctors_of_def]
+  >> rw [pattern_exhTheory.spec_row_def,pattern_exhTheory.mat_weight_def,pattern_exhTheory.pat_weight_def,pats_weight_append_replay]);
+val _ = show_local "mat_weight_spec_row_less=" mat_weight_spec_row_less_replay;
+
+val mat_weight_spec_mat_less_replay = prove (
+  ``!c rows cs. pattern_exh$col_ctors rows = SOME cs ==>
+              pattern_exh$mat_weight (pattern_exh$spec_mat c rows) < pattern_exh$mat_weight rows``,
+  gen_tac >> ho_match_mp_tac pattern_exhTheory.col_ctors_ind
+  >> rw [pattern_exhTheory.col_ctors_def,pattern_exhTheory.spec_mat_def,pattern_exhTheory.mat_weight_def,mat_weight_append_replay]
+  >- (fs [pattern_exhTheory.spec_row_def,pattern_exhTheory.mat_weight_def,pattern_exhTheory.pat_weight_def] >> res_tac >> fs [])
+  >> rename [`spec_row c (p::qs)`]
+  >> Cases_on `ctors_of p` >> fs [pattern_exhTheory.ctor_inter_def]
+  >-
+   (res_tac
+    >> qspecl_then [`c`,`p::qs`] mp_tac mat_weight_spec_row_replay >> fs [])
+  >> qspecl_then [`c`,`rows`] mp_tac mat_weight_spec_mat_replay
+  >> qspecl_then [`c`,`p`,`qs`] mp_tac mat_weight_spec_row_less_replay
+  >> fs []);
+val _ = show_local "mat_weight_spec_mat_less=" mat_weight_spec_mat_less_replay;
+
+val mat_weight_default_mat_replay = prove (
+  ``!rows. pattern_exh$mat_weight (pattern_exh$default_mat rows) <= pattern_exh$mat_weight rows``,
+  Induct >> fs [pattern_exhTheory.default_mat_def,pattern_exhTheory.mat_weight_def,mat_weight_append_replay]
+  >> Cases >> fs [pattern_exhTheory.default_row_def,pattern_exhTheory.mat_weight_def]
+  >> rename [`p::t`] >> Cases_on `p`
+  >> fs [pattern_exhTheory.default_row_def,pattern_exhTheory.mat_weight_def,pattern_exhTheory.pat_weight_def]);
+val _ = show_local "mat_weight_default_mat=" mat_weight_default_mat_replay;
+
+val mat_len_default_mat_replay = prove (
+  ``!rows. pattern_exh$mat_len (pattern_exh$default_mat rows) <= pattern_exh$mat_len rows``,
+  Induct >> fs [pattern_exhTheory.default_mat_def,pattern_exhTheory.mat_len_def,mat_len_append_replay]
+  >> Cases >> fs [pattern_exhTheory.default_row_def,pattern_exhTheory.mat_len_def]
+  >> rename [`p::t`] >> Cases_on `p`
+  >> fs [pattern_exhTheory.default_row_def,pattern_exhTheory.mat_len_def]);
+val _ = show_local "mat_len_default_mat=" mat_len_default_mat_replay;
+
+val mats_weight_spec_mats_replay = prove (
+  ``!cs rows ds.
+    pattern_exh$col_ctors rows = SOME ds ==>
+    pattern_exh$mats_weight (pattern_exh$spec_mats cs rows) < pattern_exh$mat_weight rows``,
+  Induct >> fs [pattern_exhTheory.spec_mats_def,pattern_exhTheory.mats_weight_def]
+  >- (rw [] >> qspecl_then [`RefC`,`rows`,`ds`] mp_tac mat_weight_spec_mat_less_replay >> fs [])
+  >> rw [] >> res_tac >> fs []
+  >> imp_res_tac mat_weight_spec_mat_less_replay >> fs []);
+val _ = show_local "mats_weight_spec_mats=" mats_weight_spec_mats_replay;
+
+val mat_len_default_mat_less_replay = prove (
+  ``!r rows. r <> [] ==>
+           pattern_exh$mat_len (pattern_exh$default_mat (r::rows)) < pattern_exh$mat_len (r::rows)``,
+  rpt gen_tac >> strip_tac
+  >> qspec_then `rows` mp_tac mat_len_default_mat_replay
+  >> Cases_on `r` >> fs [pattern_exhTheory.default_mat_def,pattern_exhTheory.mat_len_def,mat_len_append_replay]
+  >> rename [`p::t`] >> Cases_on `p`
+  >> fs [pattern_exhTheory.default_row_def,pattern_exhTheory.mat_len_def]);
+val _ = show_local "mat_len_default_mat_less=" mat_len_default_mat_less_replay;

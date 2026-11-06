@@ -28,7 +28,7 @@ def matWeight : List (List Pat) → Nat
 
 /-- Count all matrix columns across rows. -/
 @[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "mat_len_def"]
-def matLen : List (List Pat) → Nat
+def matLen {α : Type} : List (List α) → Nat
   | [] => 0
   | r :: rows => r.length + matLen rows
 
@@ -40,7 +40,7 @@ def matsWeight : List (List (List Pat)) → Nat
 
 /-- Largest matrix length in a list of matrices. -/
 @[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "mats_len_def"]
-def matsLen : List (List (List Pat)) → Nat
+def matsLen {α : Type} : List (List (List α)) → Nat
   | [] => 0
   | m :: ms => max (matLen m) (matsLen ms)
 

@@ -58,3 +58,20 @@ match_result_distinct=∀(a :num). MatchSuccess a ≠ MatchFailure
 or_rows_ok=∀(refs :num |-> term) (v :term) (rows :(pat # α) list). EVERY (λ((p :pat),(e :α)). (pmatch refs p v :pmatchResult) ≠ PTypeFailure) rows ⇒ EVERY (λ(r :pat list). (pmatch_list refs r [v] :pmatchResult) ≠ PTypeFailure) (or_rows rows)
 or_rows_hit=∀(refs :num |-> term) (v :term) (rows :(pat # α) list). EVERY (λ((p :pat),(e :α)). (pmatch refs p v :pmatchResult) ≠ PTypeFailure) rows ∧ EXISTS (λ(r :pat list). (pmatch_list refs r [v] :pmatchResult) = PMatchSuccess) (or_rows rows) ⇒ EXISTS (λ((p :pat),(e :α)). (pmatch refs p v :pmatchResult) = PMatchSuccess) rows
 exh_rows_thm=match (refs :num |-> term) (rows :(pat # num) list) (v :term) ≠ (NONE :matchResult option) ∧ exh_rows rows ⇒ match refs rows v ≠ SOME MatchFailure
+pat_weight=pat_weight Any = (0 :num) ∧ (∀(l :lit). pat_weight (Lit l :pat) = (0 :num)) ∧ (∀(p :pat) (q :pat). pat_weight (Or p q :pat) = (1 :num) + pat_weight p + pat_weight q) ∧ (∀(p :pat). pat_weight (Ref p) = (1 :num) + pat_weight p) ∧ (∀(t :(num # (num # num) list option) option) (ps :pat list). pat_weight (Cons t ps) = (1 :num) + pats_weight ps) ∧ pats_weight ([] :pat list) = (0 :num) ∧ ∀(p :pat) (ps :pat list). pats_weight (p::ps) = pat_weight p + pats_weight ps
+mat_weight=mat_weight ([] :pat list list) = (0 :num) ∧ ∀(r :pat list) (rows :pat list list). mat_weight (r::rows) = pats_weight r + mat_weight rows
+mat_len=mat_len ([] :α list list) = (0 :num) ∧ ∀(r :α list) (rows :α list list). mat_len (r::rows) = LENGTH r + mat_len rows
+mats_weight=mats_weight ([] :pat list list list) = (0 :num) ∧ ∀(m :pat list list) (ms :pat list list list). mats_weight (m::ms) = MAX (mat_weight m) (mats_weight ms)
+mats_len=mats_len ([] :α list list list) = (0 :num) ∧ ∀(m :α list list) (ms :α list list list). mats_len (m::ms) = MAX (mat_len m) (mats_len ms)
+pats_weight_append=∀(xs :pat list) (ys :pat list). pats_weight (xs ++ ys) = pats_weight xs + pats_weight ys
+pats_weight_anys=∀(n :num). pats_weight (anys n) = (0 :num)
+mat_weight_append=∀(xs :pat list list) (ys :pat list list). mat_weight (xs ++ ys) = mat_weight xs + mat_weight ys
+mat_len_append=∀(xs :α list list) (ys :α list list). mat_len (xs ++ ys) = mat_len xs + mat_len ys
+mat_weight_spec_row=∀(c :ctor) (r :pat list). mat_weight (spec_row c r) ≤ pats_weight r
+mat_weight_spec_mat=∀(c :ctor) (rows :pat list list). mat_weight (spec_mat c rows) ≤ mat_weight rows
+mat_weight_spec_row_less=∀(c :ctor) (p :pat) (r :pat list). ctors_of p ≠ (NONE :ctor list option) ⇒ mat_weight (spec_row c (p::r)) < pats_weight (p::r)
+mat_weight_spec_mat_less=∀(c :ctor) (rows :pat list list) (cs :ctor list). col_ctors rows = SOME cs ⇒ mat_weight (spec_mat c rows) < mat_weight rows
+mat_weight_default_mat=∀(rows :pat list list). mat_weight (default_mat rows) ≤ mat_weight rows
+mat_len_default_mat=∀(rows :pat list list). mat_len (default_mat rows) ≤ mat_len rows
+mats_weight_spec_mats=∀(cs :ctor list) (rows :pat list list) (ds :ctor list). col_ctors rows = SOME ds ⇒ mats_weight (spec_mats cs rows) < mat_weight rows
+mat_len_default_mat_less=∀(r :pat list) (rows :pat list list). r ≠ ([] :pat list) ⇒ mat_len (default_mat (r::rows)) < mat_len (r::rows)

@@ -10,7 +10,8 @@ extraction definition, its local characterization and length proofs, and the
 constructor-set and column soundness proofs, and specialization and default
 row and matrix preservation proofs, full mutual matrix soundness proof, and
 the row-matching definition, match-result carrier, local row safety and success
-proofs, and the exported exhaustive-row theorem.
+proofs, the exported exhaustive-row theorem, and the weight definitions and
+termination-lemma proof replays.
 
 `data_resource_mono_probe.out` captures the six exported data-semantics
 primitive and evaluator monotonicity statements with inferred configuration,
