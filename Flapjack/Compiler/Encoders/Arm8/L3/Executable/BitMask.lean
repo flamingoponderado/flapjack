@@ -753,4 +753,84 @@ lemma holPadLeft_length (c : Bool) (n : Nat) (s : List Bool) (h : s.length ≤ n
   simp only [List.length_append, List.length_replicate]
   omega
 
+/-- `DecodeBitMasks` at width 64 agrees with the computable `decodeBitMasks`
+for every input, including `immediate = false`: the `Nat` result maps through
+`BitVec.ofNat 64` to the L3 pair. -/
+theorem decodeBitMasks_eq (immN : BitVec 1) (imms immr : BitVec 6) (immediate : Bool) :
+    (decodeBitMasks immN.toNat imms.toNat immr.toNat immediate).map (fun p => (p.1, p.2)) =
+      (DecodeBitMasks (TM := 64) (immN, (imms, (immr, immediate)))).map
+        (fun p => (p.1.toNat, p.2.toNat)) := by
+  unfold decodeBitMasks DecodeBitMasks
+  simp only [decide_eq_true_eq, Int.ofNat_eq_natCast, Nat.cast_one]
+  rw [len_eq_l3]
+  split
+  · rfl
+  · rename_i hlen
+    have hlen1 : (1 : Int) ≤ HighestSetBit (TN := 7) (BitVec.setWidth 7 (immN ++ ~~~imms)) := by omega
+    obtain ⟨hlen_eq, hL6⟩ := HighestSetBit_pos_eq _ hlen1
+    have htoNat : (HighestSetBit (TN := 7) (BitVec.setWidth 7 (immN ++ ~~~imms))).toNat
+        = Nat.log2 (BitVec.setWidth 7 (immN ++ ~~~imms)).toNat := by rw [hlen_eq]; simp
+    have hnatAbs : (HighestSetBit (TN := 7) (BitVec.setWidth 7 (immN ++ ~~~imms))).natAbs
+        = Nat.log2 (BitVec.setWidth 7 (immN ++ ~~~imms)).toNat := by rw [hlen_eq]; simp
+    rw [htoNat, hnatAbs]
+    set L : Nat := Nat.log2 (BitVec.setWidth 7 (immN ++ ~~~imms)).toNat with hLdef
+    have hLpos : 1 ≤ L := by omega
+    have hS : (imms &&& holV2w 6 (Ones L)).toNat = imms.toNat % 64 &&& ones L := by
+      rw [Nat.mod_eq_of_lt imms.isLt, and_levels imms L hL6]
+    have hR : (immr &&& holV2w 6 (Ones L)).toNat = immr.toNat % 64 &&& ones L := by
+      rw [Nat.mod_eq_of_lt immr.isLt, and_levels immr L hL6]
+    have hbeq : ((imms &&& holV2w 6 (Ones L)) == holV2w 6 (Ones L))
+        = decide (imms.toNat % 64 &&& ones L = ones L) := by
+      have h0 : ((imms &&& holV2w 6 (Ones L)) == holV2w 6 (Ones L))
+          = decide ((imms &&& holV2w 6 (Ones L)) = holV2w 6 (Ones L)) := rfl
+      rw [h0, decide_eq_decide, BitVec.toNat_eq, hS, ones_eq L hL6]
+    rw [hbeq]
+    split
+    · rfl
+    · rename_i hcond
+      simp only [Option.map_some]
+      rw [hS, hR]
+      have hSL : (imms.toNat % 64 &&& ones L) < 2 ^ L := by
+        have h1 := and_levels_lt imms L hL6
+        rw [hS] at h1
+        exact h1
+      have hRL : (immr.toNat % 64 &&& ones L) < 2 ^ L := by
+        have h1 := and_levels_lt immr L hL6
+        rw [hR] at h1
+        exact h1
+      have hRLb : (immr &&& holV2w 6 (Ones L)).toNat < 2 ^ L := and_levels_lt immr L hL6
+      have hposE : 0 < 2 ^ L := Nat.two_pow_pos L
+      have hE64 : 2 ^ L ≤ 64 := Nat.pow_le_pow_right (by decide : 0 < 2) hL6
+      have hdvd : 2 ^ L ∣ 64 := by
+        rw [show (64 : Nat) = 2 ^ 6 by decide]
+        exact Nat.pow_dvd_pow 2 hL6
+      have hk1 : (imms.toNat % 64 &&& ones L) + 1 ≤ 2 ^ L := Nat.succ_le_of_lt hSL
+      have hk2 : ((imms.toNat % 64 &&& ones L) + 2 ^ L - (immr.toNat % 64 &&& ones L)) % 2 ^ L + 1 ≤ 2 ^ L :=
+        Nat.succ_le_of_lt (Nat.mod_lt _ hposE)
+      have hOk1 : (Ones ((imms.toNat % 64 &&& ones L) + 1)).length ≤ 2 ^ L := by
+        simp only [Ones, holPadLeft, List.length_append, List.length_replicate, List.length_nil]
+        exact hk1
+      have hlenW : (holRotate (holPadLeft false (2 ^ L) (Ones ((imms.toNat % 64 &&& ones L) + 1))) (immr.toNat % 64 &&& ones L)).length = 2 ^ L := by
+        rw [holRotate_length, holPadLeft_length _ _ _ hOk1]
+      have hfieldLen : (holField (L - 1) 0 (holW2v ((imms &&& holV2w 6 (Ones L)) - (immr &&& holV2w 6 (Ones L))))).length = L := by
+        unfold holField
+        rw [holFixwidth_length]
+        omega
+      have hOk2 : (Ones (holV2n (holField (L - 1) 0 (holW2v ((imms &&& holV2w 6 (Ones L)) - (immr &&& holV2w 6 (Ones L))))) + 1)).length ≤ 2 ^ L := by
+        simp only [Ones, holPadLeft, List.length_append, List.length_replicate, List.length_nil]
+        have h1 := holV2n_lt (holField (L - 1) 0 (holW2v ((imms &&& holV2w 6 (Ones L)) - (immr &&& holV2w 6 (Ones L)))))
+        rw [hfieldLen] at h1
+        exact Nat.succ_le_of_lt h1
+      have hlenT : (holPadLeft false (2 ^ L) (Ones (holV2n (holField (L - 1) 0 (holW2v ((imms &&& holV2w 6 (Ones L)) - (immr &&& holV2w 6 (Ones L))))) + 1))).length = 2 ^ L := by
+        rw [holPadLeft_length _ _ _ hOk2]
+      rw [Replicate_toNat _ (by rw [hlenW]; exact hposE) (by rw [hlenW]; exact hdvd)]
+      rw [hlenW, holV2n_holRotate_pad _ _ _ hk1 hposE hE64]
+      rw [Replicate_toNat _ (by rw [hlenT]; exact hposE) (by rw [hlenT]; exact hdvd)]
+      rw [hlenT, holV2n_sub_mod L (by omega) hL6 _ _ hRLb, hS, hR]
+      have hpadLen2 : (holPadLeft false (2 ^ L) (Ones (((imms.toNat % 64 &&& ones L) + 2 ^ L - (immr.toNat % 64 &&& ones L)) % 2 ^ L + 1))).length = 2 ^ L := by
+        rw [holPadLeft_length _ _ _ (by
+          simp only [Ones, holPadLeft, List.length_append, List.length_replicate, List.length_nil]
+          exact hk2)]
+      rw [← holV2w_toNat (2 ^ L) _ (by rw [hpadLen2]), ones_pad_eq _ _ hk2 hE64]
+
 end Flapjack.Compiler.Encoders.Arm8.L3
