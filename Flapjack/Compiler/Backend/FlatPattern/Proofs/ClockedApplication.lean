@@ -115,45 +115,8 @@ theorem compile_coveredSourceApp_simulation_upTo {C F : Type} (cfg stateCfg : Co
     case aw8update unsafeOp => cases unsafeOp <;> simp
     case vsub unsafeOp => cases unsafeOp <;> simp
   apply compile_simpleSourceApp_simulation_upTo cfg stateCfg trace op args clock notCall notEval notForce argumentsIH
-  intro source target sourceFinal values values' result states related run
-  cases covered with
-  | arith action typ => exact doApp_arith_related stateCfg source target sourceFinal action typ values values' result states related run
-  | fromTo sourceTyp targetTyp => exact doApp_fromTo_related stateCfg source target sourceFinal sourceTyp targetTyp values values' result states related run
-  | shift width shift amount => exact doApp_shift_related stateCfg source target sourceFinal width shift amount values values' result states related run
-  | test test typ => exact doApp_test_related stateCfg source target sourceFinal test typ values values' result states related run
-  | equality => exact doApp_equality_related stateCfg source target sourceFinal values values' result states related run
-  | opref => exact doApp_refAlloc_complete stateCfg source target sourceFinal values values' result states related run
-  | opassign => exact doApp_refAssign_complete stateCfg source target sourceFinal values values' result states related run
-  | opderef => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy] at run
-  | aallocEmpty => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy] at run
-  | envId => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy] at run
-  | aallocFixed => exact doApp_arrayFixed_complete stateCfg source target sourceFinal values values' result states related run
-  | aalloc => exact doApp_arrayAlloc_complete stateCfg source target sourceFinal values values' result states related run
-  | aw8alloc => exact doApp_byteArrayAlloc_complete stateCfg source target sourceFinal values values' result states related run
-  | alength => exact doApp_arrayLength_complete stateCfg source target sourceFinal values values' result states related run
-  | aw8length => exact doApp_byteArrayLength_complete stateCfg source target sourceFinal values values' result states related run
-  | aupdate unsafeOp => exact doApp_arrayUpdate_complete stateCfg source target sourceFinal unsafeOp values values' result states related run
-  | asub unsafeOp => exact doApp_arrayRead_complete stateCfg source target sourceFinal unsafeOp values values' result states related run
-  | aw8sub unsafeOp => exact doApp_byteArrayRead_complete stateCfg source target sourceFinal unsafeOp values values' result states related run
-  | aw8update unsafeOp => exact doApp_byteArrayUpdate_complete stateCfg source target sourceFinal unsafeOp values values' result states related run
-  | vfromList => exact doApp_vectorFromList_related stateCfg source target sourceFinal values values' result states related run
-  | vlength => exact doApp_vectorLength_related stateCfg source target sourceFinal values values' result states related run
-  | listAppend => exact doApp_listAppend_related stateCfg source target sourceFinal values values' result states related run
-  | strlen => exact doApp_stringLength_related stateCfg source target sourceFinal values values' result states related run
-  | explode => exact doApp_stringExplode_related stateCfg source target sourceFinal values values' result states related run
-  | implode => exact doApp_stringImplode_related stateCfg source target sourceFinal values values' result states related run
-  | strsub => exact doApp_stringSub_related stateCfg source target sourceFinal values values' result states related run
-  | strcat => exact doApp_stringConcat_related stateCfg source target sourceFinal values values' result states related run
-  | configGC => exact doApp_configGC_related stateCfg source target sourceFinal values values' result states related run
-  | copyStrStr => exact doApp_copyStrStr_related stateCfg source target sourceFinal values values' result states related run
-  | copyAw8Str => exact doApp_copyAw8Str_related stateCfg source target sourceFinal values values' result states related run
-  | copyStrAw8 => exact doApp_copyStrAw8_related stateCfg source target sourceFinal values values' result states related run
-  | copyAw8Aw8 => exact doApp_copyAw8Aw8_related stateCfg source target sourceFinal values values' result states related run
-  | xorAw8StrUnsafe => exact doApp_xorAw8Str_related stateCfg source target sourceFinal values values' result states related run
-  | vsub unsafeOp => exact doApp_vectorRead_related stateCfg source target sourceFinal unsafeOp values values' result states related run
-  | ffi name => exact doApp_ffi_related stateCfg source target sourceFinal name values values' result states related run
-  | allocThunk mode => exact doApp_thunkAlloc_related stateCfg source target sourceFinal mode values values' result states related run
-  | updateThunk mode => exact doApp_thunkUpdate_related stateCfg source target sourceFinal mode values values' result states related run
+  exact doApp_coveredSource_related stateCfg op covered
+
 
 
 /-- Every flat-specific primitive application simulates its compiled form,

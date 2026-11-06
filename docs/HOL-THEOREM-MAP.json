@@ -125703,5 +125703,14 @@
   "lean_name": "destConstants_imp",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared dest_constants_imp_typed in flat_to_clos_relation_probe.out: both list arguments, successful decoding premise and pointwise list relation match the source."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "do_app_thm",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/SourceApplication.lean",
+  "lean_name": "doApp_simulation",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared do_app_simulation in flat_pattern_install_relation_probe.out: independent compiler and FFI state types, original input arguments and two curried premises, result relation, final state relation and target execution match the typed HOL statement. The theorem inherits reals_as_rational_cuts through flat primitive evaluation."
 }
 ]
