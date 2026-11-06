@@ -125687,5 +125687,21 @@
   "fmap_as_finite_support": ["refs", "code"],
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared evaluate_smart_cons_typed in flat_to_clos_relation_probe.out: independent state types, trace, tag, expression list, environment and complete evaluation equality match. Closure state refs and code use the reviewed finite-support representation. The theorem inherits reals_as_rational_cuts through closure evaluation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "dest_Constant_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/SmartCons.lean",
+  "lean_name": "destConstant_iff",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared dest_constant_imp_typed in flat_to_clos_relation_probe.out: the full equivalence and all three existential operator forms, trace and constant equalities match the source."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "dest_Constants_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/SmartCons.lean",
+  "lean_name": "destConstants_imp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared dest_constants_imp_typed in flat_to_clos_relation_probe.out: both list arguments, successful decoding premise and pointwise list relation match the source."
 }
 ]
