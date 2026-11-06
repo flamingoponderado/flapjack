@@ -9833,6 +9833,15 @@
     "reviewer": "Compared compile_decs_correct2_typed: both evaluation equations, related initial states, no-Mat and non-type-error premises, final state relation and original result relation are retained. The success-list element type is independently polymorphic. Closure-state refs and code use canonical finite maps with the local witness; evaluation inherits reals_as_rational_cuts."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+    "hol_name": "evaluate_decs_sing",
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Declarations.lean",
+    "lean_name": "evaluate_decs_sing",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared evaluate_decs_sing_typed: for independent compiler and FFI state types, singleton declaration-list evaluation equals single-declaration evaluation. Both evaluated definitions inherit reals_as_rational_cuts."
+  },
+  {
     "hol_path": "HOL/src/finite_maps/alistScript.sml",
     "hol_name": "alist_to_fmap_def",
     "lean_path": "Flapjack/FiniteMap/AlistExact.lean",

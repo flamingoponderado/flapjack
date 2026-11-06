@@ -24,6 +24,7 @@ val _ = (print "dest_constants_evaluate_typed="; Lib.with_flag (Globals.show_typ
 val _ = (print "evaluate_smart_cons_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl evaluate_SmartCons); print "\n");
 val _ = (print "do_eval_install_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl do_eval_install); print "\n");
 val _ = (print "compile_decs_correct2_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl compile_decs_correct2); print "\n");
+(* The singleton declaration theorem has independent state type parameters. *)
 val _ = (print "evaluate_decs_sing_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl evaluate_decs_sing); print "\n");
 val _ = (print "v_rel_to_words_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl v_rel_to_words); print "\n");
 val _ = (print "v_rel_to_bytes_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl v_rel_to_bytes); print "\n");

@@ -6,6 +6,14 @@ import Flapjack.Compiler.Backend.Semantics.ClosProps.EvaluateAppend
 namespace Flapjack.Compiler.Backend.FlatToClos
 open Flapjack.SemanticPrimitivesHOL
 
+/-- Evaluating a singleton declaration list evaluates that declaration. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "evaluate_decs_sing"]
+theorem evaluate_decs_sing {C F : Type} (state : FlatSem.State C F) (declaration : FlatLang.Exp) :
+    FlatSem.evaluateDecs state [declaration] = FlatSem.evaluateDec state declaration := by
+  rw [FlatSem.evaluateDecs_cons]
+  cases evaluated : FlatSem.evaluateDec state declaration with
+  | mk next result => cases result <;> simp [FlatSem.evaluateDecs]
+
 /-- Declaration evaluation either succeeds with any target value list, or
 returns related exceptions and identical aborts. -/
 inductive DecResultRel : Option (ErrorResult FlatSem.Value) →
