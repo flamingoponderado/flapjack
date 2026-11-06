@@ -5,6 +5,63 @@ import Flapjack.Compiler.Backend.Semantics.FlatSem.Conversions
 namespace Flapjack.Compiler.Backend.FlatProps
 open Flapjack.Compiler.Backend.FlatSem
 
+set_option maxRecDepth 4096 in
+/-- Character-list decoding is preserved by any simple value relation. -/
+@[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "simple_v_to_char_list_v_rel"]
+theorem simpleValueToCharList (relation : Value → Value → Prop)
+    (simple : simpleValueRel relation) (left right : Value)
+    (chars : List Flapjack.Basis.Pure.MlString.HolChar)
+    (related : relation left right) (decoded : valueToCharList left = some chars) :
+    valueToCharList right = some chars := by
+  cases left with
+  | litv _ | loc _ _ | vectorv _ | closure _ _ _ | recclosure _ _ _ =>
+    simp [valueToCharList] at decoded
+  | conv stamp fields =>
+    have info := (simple.2 _ _ (by simp [isClosure])).1 related
+    obtain ⟨targetFields, rfl⟩ := info.1
+    have fieldsRel : List.Forall₂ relation fields targetFields := by
+      simpa [valueContainerXs] using info.2
+    cases fields with
+    | nil =>
+      cases fieldsRel
+      exact decoded
+    | cons head rest =>
+      cases rest with
+      | nil => simp [valueToCharList] at decoded
+      | cons tail more =>
+        cases more with
+        | cons _ _ => simp [valueToCharList] at decoded
+        | nil =>
+          cases fieldsRel with
+          | cons headRel tailRel =>
+            cases tailRel with
+            | cons tailRel remaining =>
+              cases remaining
+              cases head with
+              | litv literal =>
+                have headInfo := (simple.2 _ _ (by simp [isClosure])).1 headRel
+                have headEq := headInfo.1
+                simp only [simpleBasicValRel] at headEq
+                subst_vars
+                cases literal with
+                | char char =>
+                  cases stamp with
+                  | none => simp [valueToCharList] at decoded
+                  | some stamp =>
+                    obtain ⟨tag, typeId⟩ := stamp
+                    by_cases valid : tag = BackendCommon.consTag ∧ typeId = some listId
+                    · cases tailDecoded : valueToCharList tail with
+                      | none => simp [valueToCharList, valid, tailDecoded] at decoded
+                      | some tailChars =>
+                        have targetTail := simpleValueToCharList relation simple tail _ tailChars tailRel tailDecoded
+                        simpa [valueToCharList, valid, tailDecoded, targetTail] using decoded
+                    · simp [valueToCharList, valid] at decoded
+                | intLit _ | word8 _ | word64 _ | strLit _ | float64 _ =>
+                  simp [valueToCharList] at decoded
+              | conv _ _ | loc _ _ | vectorv _ | closure _ _ _ | recclosure _ _ _ =>
+                simp [valueToCharList] at decoded
+termination_by sizeOf left
+
 /-- Encoding pointwise related lists produces related flat values. -/
 @[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "simple_v_rel_list_to_v"]
 theorem simpleListToValue (relation : Value → Value → Prop)

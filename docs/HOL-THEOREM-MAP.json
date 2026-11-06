@@ -125392,5 +125392,13 @@
   "lean_name": "findRecFun_alookup",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared the source and typed find_recfun_alookup capture: the mlstring name and both payload types remain independent, and the complete equality between recursive-function and association-list lookup is retained."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "simple_v_to_char_list_v_rel",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/SimpleConversions.lean",
+  "lean_name": "simpleValueToCharList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source and typed simple_value_to_chars capture: an arbitrary simple relation and related values preserve the same successfully decoded HOL string, represented as a list of reviewed HolChar bytes. Both original premises and the full conclusion are retained."
 }
 ]
