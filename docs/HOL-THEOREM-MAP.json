@@ -11488,6 +11488,15 @@
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateLocal.lean",
+    "lean_name": "factoredCompileProg_semantics",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "compile_prog_semantics",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the typed compile_prog_semantics capture: independent compiler and FFI types, the same precondition and source safety premises, and source semantics of the flat semantics of the second projection of compile_prog. The semantics inherit reals_as_rational_cuts."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateLocal.lean",
     "lean_name": "initGlobalEnvInv",
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "init_global_env_inv_def",

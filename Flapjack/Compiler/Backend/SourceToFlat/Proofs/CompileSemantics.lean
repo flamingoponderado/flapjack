@@ -67,8 +67,9 @@ theorem factoredCompile_semantics {C F : Type} [Nonempty C]
   have relation : FlatPattern.installConfRel nextConfig.patternCfg middleConfig targetConfig := by
     simpa [cfgEq] using related
   have passes := factoredCompileFlat_semantics nextConfig.patternCfg source.ffi code middleConfig targetConfig relation noFail
-  have initialSem := factoredCompileProg_semantics interp transform source sourceEnv config nextConfig
-    middleConfig decs code initial compiled safe
+  have initialSem := factoredCompileProg_semantics interp transform source sourceEnv config
+    middleConfig decs initial safe
+  simp only [compiled] at initialSem
   rw [passes] at initialSem
   simpa [compileTotal, compiled] using initialSem
 

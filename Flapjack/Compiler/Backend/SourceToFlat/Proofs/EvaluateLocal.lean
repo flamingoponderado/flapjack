@@ -991,28 +991,28 @@ theorem factoredCompileProg_semantics_diverge {C F : Type} [Nonempty C]
   rw [eventEq]
   exact HolLList.buildLprefixLub_thm (Flapjack.SemanticsProps.evaluateProg_ioEventsChain source sourceEnv decs)
 
-/-- The flat program's complete observable behavior is a source behavior,
-under the factored precondition and simulation relations. The correspondence
-of these factored relations to HOL remains a separate review obligation. -/
+/-- The compiled flat program's observable behavior is a source behavior. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "compile_prog_semantics"]
 theorem factoredCompileProg_semantics {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (source : State F) (sourceEnv : SemEnv Value) (config outputConfig : Config)
-    (evalConfig : FlatSem.InstallConfig C) (decs : List Dec) (flatDecs : List FlatLang.Exp)
+    (source : State F) (sourceEnv : SemEnv Value) (config : Config)
+    (evalConfig : FlatSem.InstallConfig C) (decs : List Dec)
     (precondition : FactoredPrecondition1 interp transform source sourceEnv config evalConfig decs)
-    (compiled : compileProg config decs = (outputConfig, flatDecs))
     (safe : ¬ Flapjack.SemanticsHOL.semanticsProg source sourceEnv decs .fail) :
     Flapjack.SemanticsHOL.semanticsProg source sourceEnv decs
-      (FlatSem.semantics evalConfig source.ffi flatDecs) := by
-  cases behavior : FlatSem.semantics evalConfig source.ffi flatDecs with
-  | fail =>
-    exact False.elim (factoredCompileProg_semantics_ne_fail interp transform source sourceEnv config outputConfig
-      evalConfig decs flatDecs precondition compiled safe behavior)
-  | terminate outcome events =>
-    exact factoredCompileProg_semantics_terminate interp transform source sourceEnv config outputConfig
-      evalConfig decs flatDecs precondition compiled safe outcome events behavior
-  | diverge events =>
-    exact factoredCompileProg_semantics_diverge interp transform source sourceEnv config outputConfig
-      evalConfig decs flatDecs precondition compiled safe events behavior
+      (FlatSem.semantics evalConfig source.ffi (compileProg config decs).2) := by
+  cases compiled : compileProg config decs with
+  | mk outputConfig flatDecs =>
+   cases behavior : FlatSem.semantics evalConfig source.ffi flatDecs with
+   | fail =>
+     exact False.elim (factoredCompileProg_semantics_ne_fail interp transform source sourceEnv config outputConfig
+       evalConfig decs flatDecs precondition compiled safe behavior)
+   | terminate outcome events =>
+     exact factoredCompileProg_semantics_terminate interp transform source sourceEnv config outputConfig
+       evalConfig decs flatDecs precondition compiled safe outcome events behavior
+   | diverge events =>
+     exact factoredCompileProg_semantics_diverge interp transform source sourceEnv config outputConfig
+       evalConfig decs flatDecs precondition compiled safe events behavior
 
 /-- Match-row result in existential form, over the preliminary factored
 relations and the compiled-row safety premise. -/
