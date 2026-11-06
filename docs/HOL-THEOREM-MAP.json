@@ -125737,5 +125737,14 @@
   "lean_name": "installWords_related",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared v_rel_to_words_typed in flat_to_clos_relation_probe.out: source and closure values, fixed 64-bit word list, conjunctive premise, decoded result and independent unused existential type match. Nonempty α represents HOL types' inhabitation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "src_orac_env_invs_lookup_env",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleStep.lean",
+  "lean_name": "srcOracEnvInvs_lookup",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["c", "tys"],
+  "reviewer": "Compared orac_lookup_typed in cake_subglobals_probe.out: the three premises, HOL THE application, four existential witnesses, two tree lookups and global invariant over the empty set match. The global environment c and tys fields use the reviewed finite-support representation."
 }
 ]

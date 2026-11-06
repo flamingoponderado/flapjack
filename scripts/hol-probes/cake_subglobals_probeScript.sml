@@ -66,6 +66,7 @@ val _ = (print "orac_invs="; print_thm source_to_flatProofTheory.src_orac_invs_d
 val _ = (print "full_invariant="; print_thm source_to_flatProofTheory.invariant_def; print "\n");
 val _ = (print "orac_weak="; print_thm source_to_flatProofTheory.src_orac_invs_weak; print "\n");
 val _ = (print "orac_lookup="; print_thm source_to_flatProofTheory.src_orac_env_invs_lookup_env; print "\n");
+val _ = (print "orac_lookup_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl source_to_flatProofTheory.src_orac_env_invs_lookup_env); print "\n");
 val _ = (print "do_eval_oracle="; print_thm source_evalProofTheory.do_eval_oracle_def; print "\n");
 val _ = (print "orac_rel_inner="; print_thm source_to_flatProofTheory.orac_rel_inner_def; print "\n");
 val _ = (print "orac_rel="; print_thm source_to_flatProofTheory.orac_rel_def; print "\n");

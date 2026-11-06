@@ -333,20 +333,22 @@ theorem srcOracEnvInvs_growth {C : Type} (interp : Option (Value → Option (Con
       exact ⟨mapGen, compMap, generationLookup, mapLookup,
         globalEnvInv_growth old new growth compMap (fun _ => False) _ inv⟩
 
-/-- A source oracle environment lookup finds the corresponding stored compiler
-map and global invariant. This uses the factored relation and is not yet a
-reviewed port of the original HOL lookup theorem. -/
+/-- A source oracle environment lookup finds its stored compiler map and
+global invariant. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "src_orac_env_invs_lookup_env"
+  (fmap_as_finite_support := [c, tys])]
 theorem srcOracEnvInvs_lookup {C : Type} (interp : Option (Value → Option (Config × C)))
     (genv : GlobalEnv) (state : EvalOracleState) (envId : Nat × Nat)
     (sourceEnv : SemEnv Value) (stateValue : Value) (decs : List Dec)
-    (lookup : lookupEnv state envId = some sourceEnv)
-    (invs : srcOracEnvInvs interp genv (some (.evalOracle state)))
-    (entry : state.oracle 0 = (envId, stateValue, decs)) :
-    ∃ decode config payload mapGen compMap,
-      interp = some decode ∧ decode stateValue = some (config, payload) ∧
+    (premises : lookupEnv state envId = some sourceEnv ∧
+      srcOracEnvInvs interp genv (some (.evalOracle state)) ∧
+      state.oracle 0 = (envId, stateValue, decs)) :
+    ∃ config payload mapGen compMap,
+      (Flapjack.holThe interp) stateValue = some (config, payload) ∧
       Flapjack.sptLookup envId.1 config.envs.envGens = some mapGen ∧
       Flapjack.sptLookup envId.2 mapGen = some compMap ∧
       GlobalEnvInv genv compMap (fun _ => False) sourceEnv := by
+  obtain ⟨lookup, invs, entry⟩ := premises
   obtain ⟨config, next, _, _, envs⟩ := invs
   cases generation : state.envs[envId.1]? with
   | none => simp [lookupEnv, generation] at lookup
@@ -368,7 +370,7 @@ theorem srcOracEnvInvs_lookup {C : Type} (interp : Option (Value → Option (Con
         rcases result with ⟨decodedConfig, payload⟩
         simp [srcOracNextCfg, srcOracNextCfgInner, entry, decoded] at next
         subst decodedConfig
-        exact ⟨decode, config, payload, mapGen, compMap, rfl, decoded, generationLookup, mapLookup, inv'⟩
+        exact ⟨config, payload, mapGen, compMap, decoded, generationLookup, mapLookup, inv'⟩
 
 /-- The source oracle is decodable at each step, and successive decoded
 configurations agree with incremental compilation. HOL types are inhabited;
