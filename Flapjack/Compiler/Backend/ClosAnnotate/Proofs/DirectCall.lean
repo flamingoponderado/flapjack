@@ -55,9 +55,9 @@ theorem evaluate_call_step {C F : Type} (trace : BackendCommon.Tra) (ticks locat
         | some entry =>
           obtain ⟨arity, body⟩ := entry
           cases nextFound : targetMiddle.code.lookup location with
-          | none => simp [found, nextFound, OptionRel] at codeRel
+          | none => simp [found, nextFound, optionRel] at codeRel
           | some nextEntry =>
-            have entryRel : CodeRel (arity, body) nextEntry := by simpa [found, nextFound, OptionRel] using codeRel
+            have entryRel : CodeRel (arity, body) nextEntry := by simpa [found, nextFound, optionRel] using codeRel
             have nextEntryEq : nextEntry = (arity, annotateSing arity body) := entryRel
             subst nextEntry
             by_cases arityEq : values.length = arity

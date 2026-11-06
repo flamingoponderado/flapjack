@@ -15,17 +15,17 @@ theorem listToValue_related (left right : List Value) (related : List.Forall₂ 
 pointwise-related elements. This remains a candidate until the HOL value and
 evaluator carriers are reviewed. -/
 theorem valueToList_related (left right : Value) (related : ValueRel left right) :
-    OptionRel (List.Forall₂ ValueRel) (valueToList left) (valueToList right) := by
+    optionRel (List.Forall₂ ValueRel) (valueToList left) (valueToList right) := by
   cases related with
   | block tag leftFields rightFields fields =>
     cases fields with
     | nil =>
       by_cases nil : tag = BackendCommon.nilTag
-      · simp [valueToList, nil, OptionRel]
-      · simp [valueToList, nil, OptionRel]
+      · simp [valueToList, nil, optionRel]
+      · simp [valueToList, nil, optionRel]
     | cons first rest =>
       cases rest with
-      | nil => simp [valueToList, OptionRel]
+      | nil => simp [valueToList, optionRel]
       | cons tail rest =>
         cases rest with
         | nil =>
@@ -34,16 +34,16 @@ theorem valueToList_related (left right : Value) (related : ValueRel left right)
             have tails := valueToList_related _ _ tail
             cases leftTail : valueToList _ with
             | none =>
-              cases rightTail : valueToList _ <;> simp [leftTail, rightTail, OptionRel] at tails ⊢
+              cases rightTail : valueToList _ <;> simp [leftTail, rightTail, optionRel] at tails ⊢
             | some xs =>
               cases rightTail : valueToList _ with
-              | none => simp [leftTail, rightTail, OptionRel] at tails
+              | none => simp [leftTail, rightTail, optionRel] at tails
               | some ys =>
-                simp only [leftTail, rightTail, Option.map, OptionRel] at tails ⊢
+                simp only [leftTail, rightTail, Option.map, optionRel] at tails ⊢
                 exact .cons first tails
-          · simp [valueToList, cons, OptionRel]
-        | cons third rest => simp [valueToList, OptionRel]
-  | _ => simp [valueToList, OptionRel]
+          · simp [valueToList, cons, optionRel]
+        | cons third rest => simp [valueToList, optionRel]
+  | _ => simp [valueToList, optionRel]
 termination_by sizeOf left
 decreasing_by simp_wf; omega
 
@@ -66,12 +66,12 @@ theorem primitiveSimulation_fromList {C F : Type} (tag : Nat) :
         | none =>
           exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock, rightRun], by
             simp [doApp, applyBlock, leftRun, AppResultRel, ResultRel]⟩
-        | some ys => simp [leftRun, rightRun, OptionRel] at decoded
+        | some ys => simp [leftRun, rightRun, optionRel] at decoded
       | some xs =>
         cases rightRun : valueToList right with
-        | none => simp [leftRun, rightRun, OptionRel] at decoded
+        | none => simp [leftRun, rightRun, optionRel] at decoded
         | some ys =>
-          have fields : List.Forall₂ ValueRel xs ys := by simpa [leftRun, rightRun, OptionRel] using decoded
+          have fields : List.Forall₂ ValueRel xs ys := by simpa [leftRun, rightRun, optionRel] using decoded
           refine ⟨.val (.block tag ys, target), ?_, ?_⟩
           · simp [doApp, applyBlock, rightRun]
           · simpa [doApp, applyBlock, leftRun, AppResultRel] using And.intro (ValueRel.block tag xs ys fields) states
@@ -102,26 +102,26 @@ theorem primitiveSimulation_listAppend {C F : Type} :
           | none =>
             exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock, nextFirstRun], by
               simp [doApp, applyBlock, firstRun, AppResultRel, ResultRel]⟩
-          | some xs => simp [firstRun, nextFirstRun, OptionRel] at firstDecoded
+          | some xs => simp [firstRun, nextFirstRun, optionRel] at firstDecoded
         | some xs =>
           cases nextFirstRun : valueToList nextLeft with
-          | none => simp [firstRun, nextFirstRun, OptionRel] at firstDecoded
+          | none => simp [firstRun, nextFirstRun, optionRel] at firstDecoded
           | some nextXs =>
             have firstRel : List.Forall₂ ValueRel xs nextXs := by
-              simpa [firstRun, nextFirstRun, OptionRel] using firstDecoded
+              simpa [firstRun, nextFirstRun, optionRel] using firstDecoded
             cases secondRun : valueToList right with
             | none =>
               cases nextSecondRun : valueToList nextRight with
               | none =>
                 exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock, nextFirstRun, nextSecondRun], by
                   simp [doApp, applyBlock, firstRun, secondRun, AppResultRel, ResultRel]⟩
-              | some ys => simp [secondRun, nextSecondRun, OptionRel] at secondDecoded
+              | some ys => simp [secondRun, nextSecondRun, optionRel] at secondDecoded
             | some ys =>
               cases nextSecondRun : valueToList nextRight with
-              | none => simp [secondRun, nextSecondRun, OptionRel] at secondDecoded
+              | none => simp [secondRun, nextSecondRun, optionRel] at secondDecoded
               | some nextYs =>
                 have secondRel : List.Forall₂ ValueRel ys nextYs := by
-                  simpa [secondRun, nextSecondRun, OptionRel] using secondDecoded
+                  simpa [secondRun, nextSecondRun, optionRel] using secondDecoded
                 have appended : List.Forall₂ ValueRel (xs ++ ys) (nextXs ++ nextYs) :=
                   List.rel_append firstRel secondRel
                 refine ⟨.val (listToValue (nextXs ++ nextYs), target), ?_, ?_⟩

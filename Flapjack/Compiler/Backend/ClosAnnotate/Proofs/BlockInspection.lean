@@ -6,7 +6,7 @@ open Flapjack.Compiler.Backend.ClosSem Flapjack.Compiler.Backend.ClosProps
 
 /-- Lift related optional values to related state-preserving primitive results. -/
 theorem pureOption_result {C F : Type} (left right : Option Value) (source target : State C F)
-    (valuesRel : OptionRel ValueRel left right) (states : StateRel source target) :
+    (valuesRel : optionRel ValueRel left right) (states : StateRel source target) :
     ∃ outcome,
       (match right.map (fun value => (value, target)) with
        | none => .err (.abort .typeError) | some pair => .val pair) = outcome ∧
@@ -32,7 +32,7 @@ theorem primitiveSimulation_unaryBlock {C F : Type} (op : ClosLang.BlockOp)
       | [.block tag fields] => (inspect tag fields).map (fun value => (value, state))
       | _ => none)
     (preserves : ∀ tag fields nextFields, List.Forall₂ ValueRel fields nextFields →
-      OptionRel ValueRel (inspect tag fields) (inspect tag nextFields)) :
+      optionRel ValueRel (inspect tag fields) (inspect tag nextFields)) :
     PrimitiveSimulation (C := C) (F := F) (.blockOp op) := by
   intro values nextValues source target valuesRel states
   cases valuesRel with

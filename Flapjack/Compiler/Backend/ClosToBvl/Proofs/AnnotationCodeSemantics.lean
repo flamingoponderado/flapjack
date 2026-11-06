@@ -37,15 +37,15 @@ theorem initialState_annotated_code_related {C F : Type} (ffi : HolFfiState F) (
   simp only [ClosAnnotate.StateRel, initialState, true_and, List.Forall₂.nil]
   constructor
   · intro key
-    simp [ClosAnnotate.OptionRel, HolFiniteMapExact.empty]
+    simp [Flapjack.optionRel, HolFiniteMapExact.empty]
   · intro key
     rw [initialSourceCode_compile]
     simp only [HolFiniteMapExact.lookup_map2]
     cases h : (initialSourceCode program).lookup key with
-    | none => simp [ClosAnnotate.OptionRel]
+    | none => simp [Flapjack.optionRel]
     | some value =>
       obtain ⟨arity, body⟩ := value
-      simp [ClosAnnotate.OptionRel, ClosAnnotate.CodeRel]
+      simp [Flapjack.optionRel, ClosAnnotate.CodeRel]
 
 /-- Every installed source body is annotation-safe when the association-list
 bodies are safe. -/

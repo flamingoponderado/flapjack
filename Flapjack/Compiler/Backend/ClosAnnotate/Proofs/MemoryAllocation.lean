@@ -9,7 +9,7 @@ theorem stateRel_ref_unused {C F : Type} (source target : State C F) (states : S
     (index : Nat) : source.refs.lookup index = none ↔ target.refs.lookup index = none := by
   have related := states.2.2.2.2.2.2.1 index
   cases left : source.refs.lookup index <;> cases right : target.refs.lookup index <;>
-    simp [left, right, OptionRel] at related ⊢
+    simp [left, right, optionRel] at related ⊢
 
 /-- Equal reference domains give the same least fresh address. -/
 theorem stateRel_leastUnusedRef {C F : Type} (source target : State C F) (states : StateRel source target) :

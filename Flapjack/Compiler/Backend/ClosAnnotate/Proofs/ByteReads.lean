@@ -10,14 +10,14 @@ def refByteArray : Option (Ref Value) → Option (List (BitVec 8))
   | _ => none
 
 /-- Related references expose exactly the same optional byte contents. -/
-theorem refByteArray_related (left right : Option (Ref Value)) (related : OptionRel RefRel left right) :
+theorem refByteArray_related (left right : Option (Ref Value)) (related : optionRel RefRel left right) :
     refByteArray left = refByteArray right := by
   cases left with
-  | none => cases right <;> simp_all [OptionRel, refByteArray]
+  | none => cases right <;> simp_all [optionRel, refByteArray]
   | some leftRef =>
     cases right with
-    | none => simp [OptionRel] at related
-    | some rightRef => cases leftRef <;> cases rightRef <;> simp_all [OptionRel, RefRel, refByteArray]
+    | none => simp [optionRel] at related
+    | some rightRef => cases leftRef <;> cases rightRef <;> simp_all [optionRel, RefRel, refByteArray]
 
 /-- Obtain bytes either from a reference or from a byte vector. -/
 def observedBytes (reference : Bool) (value : Value) (refs : HolFiniteMapExact Nat (Ref Value)) :

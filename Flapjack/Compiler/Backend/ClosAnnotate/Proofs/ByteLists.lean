@@ -30,12 +30,12 @@ theorem decodedBytes_related (chunks : Bool) (left right : Value) (related : Val
   have decoded := valueToList_related left right related
   cases leftRun : valueToList left with
   | none =>
-    cases rightRun : valueToList right <;> simp_all [decodedBytes, OptionRel]
+    cases rightRun : valueToList right <;> simp_all [decodedBytes, optionRel]
   | some xs =>
     cases rightRun : valueToList right with
-    | none => simp [leftRun, rightRun, OptionRel] at decoded
+    | none => simp [leftRun, rightRun, optionRel] at decoded
     | some ys =>
-      have listRel : List.Forall₂ ValueRel xs ys := by simpa [leftRun, rightRun, OptionRel] using decoded
+      have listRel : List.Forall₂ ValueRel xs ys := by simpa [leftRun, rightRun, optionRel] using decoded
       have numbers := byteNumbers_related xs ys listRel
       have vectors := byteVectors_related xs ys listRel
       simp [decodedBytes, leftRun, rightRun, numbers, vectors]
