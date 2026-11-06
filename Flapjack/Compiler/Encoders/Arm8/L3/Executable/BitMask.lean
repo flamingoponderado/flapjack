@@ -628,4 +628,60 @@ theorem holV2n_holRotate_pad (esize k R : Nat) (hk : k ≤ esize) (he1 : 1 ≤ e
   rw [rotateRightWidth_eq_add esize (ones k) x hones hxlt]
   rw [Nat.shiftRight_eq_div_pow, Nat.add_comm]
 
+
+lemma holReplicate_succ (l : List Bool) (k : Nat) :
+    holReplicate l (k + 1) = l ++ holReplicate l k := by
+  unfold holReplicate
+  rw [List.replicate_succ, List.flatten_cons]
+
+lemma holReplicate_length (l : List Bool) (k : Nat) :
+    (holReplicate l k).length = l.length * k := by
+  induction k with
+  | zero => simp [holReplicate]
+  | succ k ih =>
+    rw [holReplicate_succ, List.length_append, ih, Nat.mul_succ]
+    omega
+
+/-- `k` copies of a list have the geometric-sum value: the element value
+times `(2 ^ (e * k) - 1) / (2 ^ e - 1)` for `e = l.length`. -/
+theorem holV2n_replicate (l : List Bool) (k : Nat) (hpos : 0 < l.length) :
+    holV2n (holReplicate l k) =
+      holV2n l * ((2 ^ (l.length * k) - 1) / (2 ^ l.length - 1)) := by
+  have hd : 0 < 2 ^ l.length - 1 := by
+    have h2 : 2 ^ 1 ≤ 2 ^ l.length := Nat.pow_le_pow_right (by decide) hpos
+    have := Nat.two_pow_pos l.length
+    omega
+  induction k with
+  | zero =>
+    simp [holReplicate, holV2n]
+  | succ k ih =>
+    have hlen := holReplicate_length l k
+    rw [holReplicate_succ, holV2n_append, hlen, ih]
+    have hp : 0 < 2 ^ l.length := Nat.two_pow_pos l.length
+    have hq : 0 < 2 ^ (l.length * k) := Nat.two_pow_pos _
+    have hmul : 2 ^ (l.length * (k + 1)) =
+        (2 ^ l.length - 1) * 2 ^ (l.length * k) + 2 ^ (l.length * k) := by
+      rw [Nat.mul_succ, Nat.pow_add]
+      have hL : 2 ^ l.length = (2 ^ l.length - 1) + 1 := by omega
+      nth_rewrite 1 [hL]
+      rw [Nat.mul_add, Nat.mul_one, Nat.mul_comm (2 ^ (l.length * k)) (2 ^ l.length - 1)]
+    have hkey : 2 ^ (l.length * (k + 1)) - 1 =
+        (2 ^ l.length - 1) * 2 ^ (l.length * k) + (2 ^ (l.length * k) - 1) := by
+      rw [hmul, Nat.add_sub_assoc (by omega : 1 ≤ 2 ^ (l.length * k))]
+    rw [hkey, Nat.mul_add_div hd, Nat.mul_add]
+
+/-- The L3 `Replicate` at width 64: the element value times the bitmask
+multiplier `(2 ^ 64 - 1) / (2 ^ esize - 1)`. -/
+theorem Replicate_toNat (l : List Bool) (hpos : 0 < l.length) (hdvd : l.length ∣ 64) :
+    (Replicate (TN := 64) l).toNat =
+      holV2n l * ((2 ^ 64 - 1) / (2 ^ l.length - 1)) := by
+  unfold Replicate
+  rw [holV2w_eq_ofNat, BitVec.toNat_ofNat]
+  have hlen : (holReplicate l (64 / l.length)).length = 64 := by
+    rw [holReplicate_length, Nat.mul_div_cancel' hdvd]
+  rw [Nat.mod_eq_of_lt (lt_of_lt_of_le (holV2n_lt _) (by rw [hlen]))]
+  rw [holV2n_replicate l _ hpos]
+  congr 1
+  rw [Nat.mul_div_cancel' hdvd]
+
 end Flapjack.Compiler.Encoders.Arm8.L3
