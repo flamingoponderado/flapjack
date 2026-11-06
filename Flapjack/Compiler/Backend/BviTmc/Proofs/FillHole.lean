@@ -64,9 +64,10 @@ theorem mutableBlockRel_of_valueRel (f : HolFiniteMapExact Nat Nat)
   cases related <;> simp only [mutableBlockRel.eq_def] <;> constructor <;> assumption
 
 /-- Filling a hole after related successful singleton evaluations preserves
-the TMC state and heap relations. -/
-/- Intended HOL counterpart, pending statement and finite-map carrier source review.
-   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_fill_hole_val" (fmap_as_finite_support_relation := [BviState.refs, f, fNext, fillMap])] -/
+the TMC state and heap relations.
+
+Intended HOL counterpart, pending statement and finite-map carrier source review.
+Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_fill_hole_val" (fmap_as_finite_support_relation := [BviState.refs, f, fNext, fillMap])] -/
 theorem evaluate_fill_hole_val {C F : Type} (e : Bvi.Exp)
     (f : HolFiniteMapExact Nat Nat) (fNext : HolFiniteMapExact Nat Nat)
     (env1 env2 : List Value) (source sourceNext : BviState (Nat × C) F)
@@ -136,9 +137,10 @@ theorem evaluate_fill_hole_val {C F : Type} (e : Bvi.Exp)
     refine ⟨length, holePtr, tag, false, left, right, pointer, idxEq, small, outside, ?_⟩
     simp [filled, updated, HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL]
 
-/-- Filling a hole preserves related successful results and propagates related errors. -/
-/- Intended HOL counterpart, pending statement and finite-map carrier source review.
-   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_fill_hole" (fmap_as_finite_support_relation := [BviState.refs, f, fNext, fillMap])] -/
+/-- Filling a hole preserves related successful results and propagates related errors.
+
+Intended HOL counterpart, pending statement and finite-map carrier source review.
+Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_fill_hole" (fmap_as_finite_support_relation := [BviState.refs, f, fNext, fillMap])] -/
 theorem evaluate_fill_hole {C F : Type} (e : Bvi.Exp)
     (f : HolFiniteMapExact Nat Nat) (fNext : HolFiniteMapExact Nat Nat)
     (env1 env2 : List Value) (source sourceNext : BviState (Nat × C) F)

@@ -9,9 +9,10 @@ theorem holFmapAsFiniteSupportRelationWitness_BviState {C F : Type} :
       (∀ s : BviState C F, BviState.ofBroad s.toBroad = s) :=
   BviSem.holFmapAsFiniteSupportWitness
 
-/-- A final FFI error is identical for related argument values and states. -/
-/- Intended HOL counterpart, pending statement and finite-map carrier source review.
-   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_err_rel" (fmap_as_finite_support_relation := [BviState.refs, f])] -/
+/-- A final FFI error is identical for related argument values and states.
+
+Intended HOL counterpart, pending statement and finite-map carrier source review.
+Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_err_rel" (fmap_as_finite_support_relation := [BviState.refs, f])] -/
 theorem doApp_op_err_rel {C F : Type} (name : Basis.Pure.MlString.MlString)
     (values relatedValues : List Value) (source : BviState (Nat × C) F) (target : BviState C F)
     (f : HolFiniteMapExact Nat Nat) (outcome : HolFinalEvent)

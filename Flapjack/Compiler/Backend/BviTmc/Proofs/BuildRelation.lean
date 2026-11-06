@@ -180,9 +180,10 @@ theorem doBuild_related (parts : List ClosLang.ConstPart) (f : HolFiniteMapExact
         exact secondSubmap key value (firstSubmap key value found)
 
 /-- The source constant-building loop preserves the value and heap relations,
-including freshness and hole invariants across every component. -/
-/- Intended HOL counterpart, pending statement and finite-map carrier source review.
-   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_build_v_rel" (fmap_as_finite_support_relation := [source, sourceNext, f, target, nextMap, targetNext])] -/
+including freshness and hole invariants across every component.
+
+Intended HOL counterpart, pending statement and finite-map carrier source review.
+Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_build_v_rel" (fmap_as_finite_support_relation := [source, sourceNext, f, target, nextMap, targetNext])] -/
 theorem doBuild_value_rel (parts : List ClosLang.ConstPart) (m : Nat → Value) (i : Nat)
     (source : HolFiniteMapExact Nat (Ref Value)) (value : Value)
     (sourceNext : HolFiniteMapExact Nat (Ref Value)) (f : HolFiniteMapExact Nat Nat)
@@ -199,9 +200,10 @@ theorem doBuild_value_rel (parts : List ClosLang.ConstPart) (m : Nat → Value) 
   simp only [run] at result heaps
   exact ⟨nextMap, value', targetNext, targetRun, result, heaps, inj, submap, fresh, holes, still⟩
 
-/-- Source constant construction preserves the value and heap relations. -/
-/- Intended HOL counterpart, pending statement and finite-map carrier source review.
-   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_build_const_v_rel" (fmap_as_finite_support_relation := [source, sourceNext, f, target, nextMap, targetNext])] -/
+/-- Source constant construction preserves the value and heap relations.
+
+Intended HOL counterpart, pending statement and finite-map carrier source review.
+Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_build_const_v_rel" (fmap_as_finite_support_relation := [source, sourceNext, f, target, nextMap, targetNext])] -/
 theorem doBuildConst_value_rel (parts : List ClosLang.ConstPart)
     (source : HolFiniteMapExact Nat (Ref Value)) (value : Value)
     (sourceNext : HolFiniteMapExact Nat (Ref Value)) (f : HolFiniteMapExact Nat Nat)

@@ -19,9 +19,10 @@ theorem holFmapAsFiniteSupportParamWitness_destThunk_notThunk_rel_refs (refs : H
 theorem holFmapAsFiniteSupportParamWitness_destThunk_notThunk_rel_target (target : HolFiniteMapExact Nat (Ref Value)) :
     mapofBroad (maptoBroadlookup target) target.finiteSupport = target := by cases target; rfl
 
-/-- A value that is not a thunk remains so under pointer renaming. -/
-/- Intended HOL counterpart, pending statement and finite-map carrier source review.
-   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "dest_thunk_not_thunk_rel" (fmap_as_finite_support_parameters := [refs, target, f])] -/
+/-- A value that is not a thunk remains so under pointer renaming.
+
+Intended HOL counterpart, pending statement and finite-map carrier source review.
+Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "dest_thunk_not_thunk_rel" (fmap_as_finite_support_parameters := [refs, target, f])] -/
 theorem destThunk_notThunk_rel (v v' : Value) (refs : HolFiniteMapExact Nat (Ref Value))
     (target : HolFiniteMapExact Nat (Ref Value)) (f : HolFiniteMapExact Nat Nat)
     (notThunk : BvlSem.destThunk v refs = .notThunk) (values : valueRel f v v')
@@ -56,9 +57,10 @@ theorem holFmapAsFiniteSupportParamWitness_destThunkRetRel_f (f : HolFiniteMapEx
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 
 /-- Related thunk observations agree on errors and modes and relate the
-payload values returned by thunk inspection. -/
-/- Intended HOL counterpart, pending statement and finite-map carrier source review.
-   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "dest_thunk_ret_rel_def" (fmap_as_finite_support_parameters := [f])] -/
+payload values returned by thunk inspection.
+
+Intended HOL counterpart, pending statement and finite-map carrier source review.
+Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "dest_thunk_ret_rel_def" (fmap_as_finite_support_parameters := [f])] -/
 def destThunkRetRel (f : HolFiniteMapExact Nat Nat) (a b : BviSem.DestThunkResult) : Prop :=
   (a = .badRef ∧ b = .badRef) ∨ (a = .notThunk ∧ b = .notThunk) ∨
     ∃ mode mode' v v', a = .isThunk mode v ∧ b = .isThunk mode' v' ∧ mode = mode' ∧ valueRel f v v'
@@ -70,9 +72,10 @@ theorem holFmapAsFiniteSupportRelationWitness_BviState {C F : Type} :
   BviSem.holFmapAsFiniteSupportWitness
 end ThunkWitness
 
-/-- Thunk observations at related environment entries are related. -/
-/- Intended HOL counterpart, pending statement and finite-map carrier source review.
-   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "dest_thunk_rel" (fmap_as_finite_support_relation := [BviState.refs, f])] -/
+/-- Thunk observations at related environment entries are related.
+
+Intended HOL counterpart, pending statement and finite-map carrier source review.
+Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "dest_thunk_rel" (fmap_as_finite_support_relation := [BviState.refs, f])] -/
 theorem destThunk_rel {C F : Type} (opt : Bool) (f : HolFiniteMapExact Nat Nat)
     (env1 env2 : List Value) (source : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
     (index : Nat) (env : envRel opt f env1 env2) (states : stateRel f source target)

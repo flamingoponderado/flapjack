@@ -13,9 +13,10 @@ theorem holFmapAsFiniteSupportRelationWitness_BviState {C F : Type} :
 end CallWitness
 
 /-- A successful direct or indirect source call resolves to related target
-arguments and either the same body or its wrapper and worker. -/
-/- Intended HOL counterpart, pending statement and finite-map carrier source review.
-   Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "find_code_rel" (fmap_as_finite_support_relation := [BviState.refs, f])] -/
+arguments and either the same body or its wrapper and worker.
+
+Intended HOL counterpart, pending statement and finite-map carrier source review.
+Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "find_code_rel" (fmap_as_finite_support_relation := [BviState.refs, f])] -/
 theorem findCode_rel {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (values relatedValues : List Value) (source : BviState (Nat × C) F) (target : BviState C F)
     (dest : Option Nat) (args : List Value) (body : Bvi.Exp)
