@@ -462,34 +462,6 @@ theorem naiveGuard_any_var {C F : Type} (trace : Tra) (expression : FlatLang.Exp
     NaiveGuardCase trace (.pvar name) expression env state value := by
   constructor <;> simpa [NaiveGuardCase, FlatSem.pmatch, naivePatternMatch] using evaluate_bool trace true env state
 
-/-- Literal guards compare same-typed literal values and return the match
-result's Boolean; incompatible literal types correspond to a match error. -/
-theorem naiveGuard_literal {C F : Type} (trace : Tra) (lit : Lit) (expression : FlatLang.Exp)
-    (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F) (value : FlatSem.Value)
-    (pure : FlatSem.evaluate env state [expression] = (state, .val [value])) :
-    NaiveGuardCase trace (.plit lit) expression env state value := by
-  cases value with
-  | litv actual =>
-    by_cases same : lit = actual
-    · subst actual
-      have guard := evaluate_literal_equality trace expression env state lit lit pure (litSameType_refl lit)
-      have branch := evaluate_if_pure_bool trace (.app trace (.src .equality) [expression, .lit trace lit])
-        (FlatLang.mkBool trace true) (FlatLang.mkBool trace false) true env state (by simpa using guard)
-      simpa [NaiveGuardCase, FlatSem.pmatch, naivePatternMatch, evaluate_smartIf, branch] using
-        evaluate_bool trace true env state
-    · by_cases typeSame : Flapjack.SemanticPrimitivesHOL.litSameType lit actual = true
-      · have otherType : Flapjack.SemanticPrimitivesHOL.litSameType actual lit = true := by
-          simpa [litSameType_symm actual lit] using typeSame
-        have guard := evaluate_literal_equality trace expression env state actual lit pure otherType
-        have different : actual ≠ lit := Ne.symm same
-        have branch := evaluate_if_pure_bool trace (.app trace (.src .equality) [expression, .lit trace lit])
-          (FlatLang.mkBool trace true) (FlatLang.mkBool trace false) false env state (by simpa [different] using guard)
-        simpa [NaiveGuardCase, FlatSem.pmatch, same, typeSame, naivePatternMatch, evaluate_smartIf, branch] using
-          evaluate_bool trace false env state
-      · simp [NaiveGuardCase, FlatSem.pmatch, same, typeSame]
-  | conv _ _ | closure _ _ _ | recclosure _ _ _ | loc _ _ | vectorv _ =>
-    simp [NaiveGuardCase, FlatSem.pmatch]
-
 /-- A literal work item either continues with the tail or returns false;
 later type errors are still reflected in the source match decision. -/
 theorem naiveList_literal {C F : Type} (trace : Tra) (lit : Lit) (expression : FlatLang.Exp)
@@ -537,27 +509,6 @@ theorem naiveGuard_as {C F : Type} (trace : Tra) (pattern : FlatLang.Pat) (name 
   simp only [List.nil_append] at suffix
   cases result : FlatSem.pmatch state pattern value [] <;>
     simp_all [NaiveGuardCase, FlatSem.pmatch, naivePatternMatch, appendMatchBindings]
-
-/-- Reference guards reduce to the nested guard after evaluating the same
-reference projection used by the matcher. -/
-theorem naiveGuard_ref {C F : Type} (trace : Tra) (pattern : FlatLang.Pat) (expression : FlatLang.Exp)
-    (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F) (value : FlatSem.Value)
-    (pure : FlatSem.evaluate env state [expression] = (state, .val [value]))
-    (ih : ∀ expression' value', FlatSem.evaluate env state [expression'] = (state, .val [value']) →
-      NaiveGuardCase trace pattern expression' env state value') :
-    NaiveGuardCase trace (.pref pattern) expression env state value := by
-  cases value with
-  | litv _ | conv _ _ | closure _ _ _ | recclosure _ _ _ | vectorv _ => simp [NaiveGuardCase, FlatSem.pmatch]
-  | loc flag index =>
-    cases found : storeLookup index state.refs with
-    | none => simp [NaiveGuardCase, FlatSem.pmatch, found]
-    | some entry =>
-      cases entry with
-      | w8array _ | varray _ | thunk _ _ => simp [NaiveGuardCase, FlatSem.pmatch, found]
-      | refv contents =>
-        have projected := evaluate_ref_projection trace expression env state flag index contents pure found
-        have nested := ih (.app trace (.el 0) [expression]) contents projected
-        simpa [NaiveGuardCase, FlatSem.pmatch, naivePatternMatch, found] using nested
 
 /-- Reference patterns replace their input expression with the corresponding
 pure store projection before continuing through the nested work list. -/
