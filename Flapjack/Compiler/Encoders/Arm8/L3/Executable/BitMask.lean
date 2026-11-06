@@ -684,4 +684,73 @@ theorem Replicate_toNat (l : List Bool) (hpos : 0 < l.length) (hdvd : l.length �
   congr 1
   rw [Nat.mul_div_cancel' hdvd]
 
+
+/-- A positive `HighestSetBit` at width 7 is a `Nat.log2`, hence at most 6. -/
+lemma HighestSetBit_pos_eq (w : BitVec 7) (h : 1 ≤ HighestSetBit (TN := 7) w) :
+    HighestSetBit (TN := 7) w = (Nat.log2 w.toNat : Int) ∧ Nat.log2 w.toNat ≤ 6 := by
+  rw [← highestSetBit_eq w] at h ⊢
+  unfold highestSetBit
+  by_cases hw : w.toNat = 0
+  · have hz : highestSetBit w.toNat = -1 := by
+      unfold highestSetBit
+      rw [if_pos hw]
+    omega
+  · rw [if_neg hw]
+    have h7 : Nat.log2 w.toNat < 7 := (Nat.log2_lt hw).mpr w.isLt
+    omega
+
+/-- The decoder's `levels` mask: the L3 six-bit conjunction is the computable
+`Nat` conjunction with `ones len`. -/
+theorem and_levels (a : BitVec 6) (len : Nat) (hlen : len ≤ 6) :
+    (a &&& holV2w 6 (Ones len)).toNat = a.toNat &&& ones len := by
+  rw [BitVec.toNat_and, ones_eq len hlen]
+
+/-- Masking with `levels` keeps the result inside `len` bits. -/
+theorem and_levels_lt (a : BitVec 6) (len : Nat) (hlen : len ≤ 6) :
+    (a &&& holV2w 6 (Ones len)).toNat < 2 ^ len := by
+  rw [and_levels a len hlen]
+  have hpos : 0 < 2 ^ len := Nat.two_pow_pos len
+  exact Nat.and_lt_two_pow _ (by unfold ones; omega)
+
+/-- The decoder's `len`: the computable `Nat` expression is the L3 7-bit word. -/
+theorem len_eq_l3 (immN : BitVec 1) (imms : BitVec 6) :
+    highestSetBit (((immN.toNat % 2) <<< 6) ||| (63 - imms.toNat % 64)) =
+      HighestSetBit (TN := 7) (BitVec.setWidth 7 (immN ++ ~~~imms)) := by
+  rw [len_eq immN imms]
+  have hw : BitVec.setWidth 7 (immN ++ ~~~imms) = BitVec.ofNat 7 ((immN ++ ~~~imms).toNat) := by
+    simp
+  rw [hw, ← highestSetBit_eq (BitVec.ofNat 7 ((immN ++ ~~~imms).toNat))]
+  congr 1
+  rw [BitVec.toNat_ofNat, Nat.mod_eq_of_lt]
+  exact (immN ++ ~~~imms).isLt
+
+/-- `holFixwidth` always produces `n` bits. -/
+lemma holFixwidth_length (n : Nat) (v : List Bool) : (holFixwidth n v).length = n := by
+  unfold holFixwidth
+  by_cases h : v.length < n
+  · simp only [h, if_true, holPadLeft, List.length_append, List.length_replicate]
+    omega
+  · simp only [h, if_false, List.length_drop]
+    omega
+
+/-- `holRotate` preserves the length. -/
+lemma holRotate_length (v : List Bool) (r : Nat) : (holRotate v r).length = v.length := by
+  unfold holRotate
+  dsimp only
+  split
+  · rfl
+  · rename_i h
+    unfold holField
+    simp only [List.length_append, holFixwidth_length]
+    have hl : v.length ≠ 0 := by tauto
+    have hx : r % v.length < v.length := Nat.mod_lt _ (by omega)
+    omega
+
+/-- `holPadLeft` fills up to `n` when the input is short. -/
+lemma holPadLeft_length (c : Bool) (n : Nat) (s : List Bool) (h : s.length ≤ n) :
+    (holPadLeft c n s).length = n := by
+  unfold holPadLeft
+  simp only [List.length_append, List.length_replicate]
+  omega
+
 end Flapjack.Compiler.Encoders.Arm8.L3
