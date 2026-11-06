@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Safety
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.ErrorPropagation
 
 /-! Ordinary primitive-operation cases of closure annotation. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate
@@ -34,14 +35,6 @@ theorem evaluate_ordinary_op_values {C F : Type} (trace : BackendCommon.Tra) (op
   | install => exact False.elim (notInstall rfl)
   | label _ | ffi _ | intOp _ | wordOp _ | blockOp _ | globOp _ | memOp _ =>
     rfl
-
-/-- Evaluation of an ordinary operation when its arguments fail. -/
-theorem evaluate_op_error {C F : Type} (trace : BackendCommon.Tra) (op : ClosLang.Op)
-    (args : List ClosLang.Exp) (env : List Value) (source middle : State C F)
-    (error : Flapjack.SemanticPrimitivesHOL.ErrorResult Value)
-    (argsRun : evaluate args env source = (.err error, middle)) :
-    evaluate [.op trace op args] env source = (.err error, middle) := by
-  rw [evaluate, fixClock_evaluate, argsRun]
 
 /-- Constructing a block preserves the primitive relation for any related fields. -/
 theorem primitiveSimulation_cons {C F : Type} (tag : Nat) :
