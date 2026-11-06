@@ -1,5 +1,5 @@
 import Flapjack.Compiler.Backend.FlatProps.SimpleRelations
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Conversions
+import Flapjack.Compiler.Backend.Semantics.FlatSem.Eval
 
 /-! List conversion properties for simple flat value relations. -/
 namespace Flapjack.Compiler.Backend.FlatProps
@@ -160,5 +160,50 @@ theorem simpleValuesToString (relation : Value → Value → Prop)
           simpa [valuesToString, tailRun, targetTail] using run
       | intLit _ | word8 _ | word64 _ | char _ | float64 _ => simp [valuesToString] at run
     | conv _ _ | loc _ _ | vectorv _ | closure _ _ _ | recclosure _ _ _ => simp [valuesToString] at run
+
+
+/-- Simple relations preserve lists made solely from literal values.
+This factors the inline HOL list-relation reasoning for byte and word decoders. -/
+private theorem simpleLiteralMap_eq {α : Type} (relation : Value → Value → Prop)
+    (simple : simpleValueRel relation) (literal : α → Flapjack.AstHOL.Lit)
+    (items : List α) (target : List Value)
+    (related : List.Forall₂ relation (items.map (Value.litv ∘ literal)) target) :
+    target = items.map (Value.litv ∘ literal) := by
+  induction items generalizing target with
+  | nil => cases related; rfl
+  | cons item rest ih =>
+    simp only [List.map_cons, Function.comp_apply] at related ⊢
+    cases related with
+    | cons head tail =>
+      have shape := ((simple.2 _ _ (by simp [isClosure])).1 head).1
+      have eq := ih _ tail
+      simp [simpleBasicValRel] at shape
+      simp [shape, eq]
+
+/-- Simple relations preserve successful byte-list decoding. -/
+@[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "simple_val_rel_v_to_bytes"]
+theorem simpleValueToBytes (relation : Value → Value → Prop)
+    (simple : simpleValueRel relation) (left right : Value) (bytes : List (BitVec 8))
+    (related : relation left right) (decoded : valueToBytes left = some bytes) :
+    valueToBytes right = some bytes := by
+  have source := (valueToBytes_eq_some left bytes).1 decoded
+  obtain ⟨target, targetDecoded, targetRel⟩ :=
+    simpleValueToList relation simple left right _ related source
+  have equal := simpleLiteralMap_eq relation simple Flapjack.AstHOL.Lit.word8 bytes target targetRel
+  apply (valueToBytes_eq_some right bytes).2
+  simpa [equal] using targetDecoded
+
+/-- Simple relations preserve successful 64-bit word-list decoding. -/
+@[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "simple_val_rel_v_to_words"]
+theorem simpleValueToWords (relation : Value → Value → Prop)
+    (simple : simpleValueRel relation) (left right : Value) (words : List (BitVec 64))
+    (related : relation left right) (decoded : valueToWords left = some words) :
+    valueToWords right = some words := by
+  have source := (valueToWords_eq_some left words).1 decoded
+  obtain ⟨target, targetDecoded, targetRel⟩ :=
+    simpleValueToList relation simple left right _ related source
+  have equal := simpleLiteralMap_eq relation simple Flapjack.AstHOL.Lit.word64 words target targetRel
+  apply (valueToWords_eq_some right words).2
+  simpa [equal] using targetDecoded
 
 end Flapjack.Compiler.Backend.FlatProps

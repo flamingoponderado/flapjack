@@ -125408,5 +125408,21 @@
   "lean_name": "simpleValueToList",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared the source and typed simple_value_to_list capture: arbitrary simple relation and related values preserve a successful source list decode through an existential target list, with the original pointwise list relation and no additional premises."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "simple_val_rel_v_to_words",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/SimpleConversions.lean",
+  "lean_name": "simpleValueToWords",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source and typed flat_value_to_words_relation capture: arbitrary simple relation, related values, and successful source word64-list decoding imply the identical target result. Fixed word64 values are represented by BitVec 64; all original premises are retained."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "simple_val_rel_v_to_bytes",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/SimpleConversions.lean",
+  "lean_name": "simpleValueToBytes",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source and typed flat_value_to_bytes_relation capture: arbitrary simple relation, related values, and successful source word8-list decoding imply the identical target result. Fixed word8 values are represented by BitVec 8; all original premises are retained."
 }
 ]
