@@ -24,80 +24,6 @@ theorem evaluate_simpleSourceApp_values {C F : Type} (env : FlatSem.Environment 
       FlatSem.applyResult { next with clock := min state.clock next.clock } (.src op) values.reverse := by
   cases op <;> simp_all [FlatSem.evaluate, FlatSem.fixClock]
 
-/-- Nonrecursive source applications simulate their arguments and then use
-the primitive-operation correspondence proved for their operator. -/
-theorem compile_simpleSourceApp_simulation {C F : Type} (cfg stateCfg : Config) (trace : BackendCommon.Tra)
-    (op : Op) (args : List FlatLang.Exp)
-    (notCall : op ≠ .opapp) (notEval : op ≠ .eval) (notForce : op ≠ .thunkOp .forceThunk)
-    (argumentsIH : ∀ expression ∈ args, ExpressionSimulation (C := C) (F := F) cfg stateCfg expression)
-    (primitiveRel : ∀ (source target sourceFinal : FlatSem.State C F) (values values' : List FlatSem.Value)
-      (result : Result FlatSem.Value FlatSem.Value), StateRel stateCfg source target → List.Forall₂ ValueRel values values' →
-      FlatSem.doApp source (.src op) values = some (sourceFinal, result) →
-      ∃ targetFinal result', FlatSem.doApp target (.src op) values' = some (targetFinal, result') ∧
-        StateRel stateCfg sourceFinal targetFinal ∧ PrimitiveResultRel result result') :
-    ExpressionSimulation (C := C) (F := F) cfg stateCfg (.app trace (.src op) args) := by
-  intro sourceEnv targetEnv source target sourceFinal sourceResult n sourceEval envs states bound safe
-  have argsBound : (compileExps cfg args).1 < n := by simpa [compileExp_app] using bound
-  have reversedBound := compileExps_reverse_bound cfg args n argsBound
-  have reversedIH : ∀ expression ∈ args.reverse, ExpressionSimulation (C := C) (F := F) cfg stateCfg expression := by
-    intro expression member
-    exact argumentsIH expression (by simpa using member)
-  have argsSim := compileExps_simulation cfg stateCfg args.reverse reversedIH
-  have compiledReverse : (compileExps cfg args.reverse).2.2 = (compileExps cfg args).2.2.reverse := by
-    simp [compileExps_rows, List.map_reverse]
-  cases argsRun : FlatSem.evaluate sourceEnv source args.reverse with
-  | mk sourceNext argsResult =>
-    have argsSafe : argsResult ≠ .err (.abort .typeError) := by
-      intro bad
-      subst argsResult
-      have outer := evaluate_app_args_error sourceEnv source sourceNext trace (.src op) args (.abort .typeError) argsRun
-      rw [sourceEval] at outer
-      exact safe (congrArg Prod.snd outer)
-    obtain ⟨targetNext, targetArgsResult, targetArgsRun, nextStates, related⟩ := argsSim
-      sourceEnv targetEnv source target sourceNext argsResult n argsRun envs states reversedBound argsSafe
-    cases related with
-    | error errorsRel =>
-      rename_i leftError rightError
-      have sourceOuter := evaluate_app_args_error sourceEnv source sourceNext trace (.src op) args leftError argsRun
-      have targetOuter := evaluate_app_args_error targetEnv target targetNext trace (.src op)
-        (compileExps cfg args).2.2 rightError (by simpa [compiledReverse] using targetArgsRun)
-      have equal := sourceEval.symm.trans sourceOuter
-      cases equal
-      exact ⟨_, _, by simpa [compileExp_app] using targetOuter,
-        stateRel_fixClock stateCfg source sourceNext target targetNext states nextStates, .error errorsRel⟩
-    | values valuesRel =>
-      rename_i sourceValues targetValues
-      let sourceFixed := { sourceNext with clock := min source.clock sourceNext.clock }
-      let targetFixed := { targetNext with clock := min target.clock targetNext.clock }
-      have fixedStates : StateRel stateCfg sourceFixed targetFixed :=
-        stateRel_fixClock stateCfg source sourceNext target targetNext states nextStates
-      have sourceOuter := evaluate_simpleSourceApp_values sourceEnv source sourceNext trace op args sourceValues notCall notEval notForce argsRun
-      have targetOuter := evaluate_simpleSourceApp_values targetEnv target targetNext trace op (compileExps cfg args).2.2
-        targetValues notCall notEval notForce (by simpa [compiledReverse] using targetArgsRun)
-      cases primitive : FlatSem.doApp sourceFixed (.src op) sourceValues.reverse with
-      | none =>
-        have bad : sourceResult = .err (.abort .typeError) := by
-          have eq := sourceOuter.symm.trans sourceEval
-          simpa [FlatSem.applyResult, sourceFixed, primitive] using (congrArg Prod.snd eq).symm
-        exact (safe bad).elim
-      | some outcome =>
-        obtain ⟨sourceAfter, result⟩ := outcome
-        obtain ⟨targetAfter, result', targetPrimitive, afterStates, resultRel⟩ := primitiveRel sourceFixed targetFixed sourceAfter sourceValues.reverse targetValues.reverse result
-          fixedStates (valueRel_reverse valuesRel) primitive
-        cases resultRel with
-        | value values =>
-          have eq := sourceOuter.symm.trans sourceEval
-          simp [FlatSem.applyResult, sourceFixed, primitive] at eq
-          rcases eq with ⟨rfl, rfl⟩
-          refine ⟨targetAfter, .val [_], ?_, afterStates, .values (.cons values .nil)⟩
-          simpa [compileExp_app, FlatSem.applyResult, targetFixed, targetPrimitive] using targetOuter
-        | error errors =>
-          have eq := sourceOuter.symm.trans sourceEval
-          simp [FlatSem.applyResult, sourceFixed, primitive] at eq
-          rcases eq with ⟨rfl, rfl⟩
-          refine ⟨targetAfter, .err _, ?_, afterStates, .error errors⟩
-          simpa [compileExp_app, FlatSem.applyResult, targetFixed, targetPrimitive] using targetOuter
-
 /-- Reference allocation preserves arbitrary successful primitive results. -/
 theorem doApp_refAlloc_complete {C F : Type} (cfg : Config) (source target sourceFinal : FlatSem.State C F)
     (values values' : List FlatSem.Value) (result : Result FlatSem.Value FlatSem.Value)
@@ -273,75 +199,6 @@ inductive CoveredSourcePrimitive : Op → Prop where
   | allocThunk (mode : ThunkMode) : CoveredSourcePrimitive (.thunkOp (.allocThunk mode))
   | updateThunk (mode : ThunkMode) : CoveredSourcePrimitive (.thunkOp (.updateThunk mode))
 
-/-- Arithmetic, conversion, shift, typed comparison, references, arrays,
- list, vector and string operations, FFI and explicit thunk applications simulate
-their compiled expressions using only argument induction hypotheses. -/
-theorem compile_coveredSourceApp_simulation {C F : Type} (cfg stateCfg : Config) (trace : BackendCommon.Tra)
-    (op : Op) (args : List FlatLang.Exp) (covered : CoveredSourcePrimitive op)
-    (argumentsIH : ∀ expression ∈ args, ExpressionSimulation (C := C) (F := F) cfg stateCfg expression) :
-    ExpressionSimulation (C := C) (F := F) cfg stateCfg (.app trace (.src op) args) := by
-  have notCall : op ≠ .opapp := by
-    cases covered <;> simp
-    case aupdate unsafeOp => cases unsafeOp <;> simp
-    case asub unsafeOp => cases unsafeOp <;> simp
-    case aw8sub unsafeOp => cases unsafeOp <;> simp
-    case aw8update unsafeOp => cases unsafeOp <;> simp
-    case vsub unsafeOp => cases unsafeOp <;> simp
-  have notEval : op ≠ .eval := by
-    cases covered <;> simp
-    case aupdate unsafeOp => cases unsafeOp <;> simp
-    case asub unsafeOp => cases unsafeOp <;> simp
-    case aw8sub unsafeOp => cases unsafeOp <;> simp
-    case aw8update unsafeOp => cases unsafeOp <;> simp
-    case vsub unsafeOp => cases unsafeOp <;> simp
-  have notForce : op ≠ .thunkOp .forceThunk := by
-    cases covered <;> simp
-    case aupdate unsafeOp => cases unsafeOp <;> simp
-    case asub unsafeOp => cases unsafeOp <;> simp
-    case aw8sub unsafeOp => cases unsafeOp <;> simp
-    case aw8update unsafeOp => cases unsafeOp <;> simp
-    case vsub unsafeOp => cases unsafeOp <;> simp
-  apply compile_simpleSourceApp_simulation cfg stateCfg trace op args notCall notEval notForce argumentsIH
-  intro source target sourceFinal values values' result states related run
-  cases covered with
-  | arith action typ => exact doApp_arith_related stateCfg source target sourceFinal action typ values values' result states related run
-  | fromTo sourceTyp targetTyp => exact doApp_fromTo_related stateCfg source target sourceFinal sourceTyp targetTyp values values' result states related run
-  | shift width shift amount => exact doApp_shift_related stateCfg source target sourceFinal width shift amount values values' result states related run
-  | test test typ => exact doApp_test_related stateCfg source target sourceFinal test typ values values' result states related run
-  | equality => exact doApp_equality_related stateCfg source target sourceFinal values values' result states related run
-  | opref => exact doApp_refAlloc_complete stateCfg source target sourceFinal values values' result states related run
-  | opassign => exact doApp_refAssign_complete stateCfg source target sourceFinal values values' result states related run
-  | opderef => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy] at run
-  | aallocEmpty => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy] at run
-  | envId => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy] at run
-  | aallocFixed => exact doApp_arrayFixed_complete stateCfg source target sourceFinal values values' result states related run
-  | aalloc => exact doApp_arrayAlloc_complete stateCfg source target sourceFinal values values' result states related run
-  | aw8alloc => exact doApp_byteArrayAlloc_complete stateCfg source target sourceFinal values values' result states related run
-  | alength => exact doApp_arrayLength_complete stateCfg source target sourceFinal values values' result states related run
-  | aw8length => exact doApp_byteArrayLength_complete stateCfg source target sourceFinal values values' result states related run
-  | aupdate unsafeOp => exact doApp_arrayUpdate_complete stateCfg source target sourceFinal unsafeOp values values' result states related run
-  | asub unsafeOp => exact doApp_arrayRead_complete stateCfg source target sourceFinal unsafeOp values values' result states related run
-  | aw8sub unsafeOp => exact doApp_byteArrayRead_complete stateCfg source target sourceFinal unsafeOp values values' result states related run
-  | aw8update unsafeOp => exact doApp_byteArrayUpdate_complete stateCfg source target sourceFinal unsafeOp values values' result states related run
-  | vfromList => exact doApp_vectorFromList_related stateCfg source target sourceFinal values values' result states related run
-  | vlength => exact doApp_vectorLength_related stateCfg source target sourceFinal values values' result states related run
-  | listAppend => exact doApp_listAppend_related stateCfg source target sourceFinal values values' result states related run
-  | strlen => exact doApp_stringLength_related stateCfg source target sourceFinal values values' result states related run
-  | explode => exact doApp_stringExplode_related stateCfg source target sourceFinal values values' result states related run
-  | implode => exact doApp_stringImplode_related stateCfg source target sourceFinal values values' result states related run
-  | strsub => exact doApp_stringSub_related stateCfg source target sourceFinal values values' result states related run
-  | strcat => exact doApp_stringConcat_related stateCfg source target sourceFinal values values' result states related run
-  | configGC => exact doApp_configGC_related stateCfg source target sourceFinal values values' result states related run
-  | copyStrStr => exact doApp_copyStrStr_related stateCfg source target sourceFinal values values' result states related run
-  | copyAw8Str => exact doApp_copyAw8Str_related stateCfg source target sourceFinal values values' result states related run
-  | copyStrAw8 => exact doApp_copyStrAw8_related stateCfg source target sourceFinal values values' result states related run
-  | copyAw8Aw8 => exact doApp_copyAw8Aw8_related stateCfg source target sourceFinal values values' result states related run
-  | xorAw8StrUnsafe => exact doApp_xorAw8Str_related stateCfg source target sourceFinal values values' result states related run
-  | vsub unsafeOp => exact doApp_vectorRead_related stateCfg source target sourceFinal unsafeOp values values' result states related run
-  | ffi name => exact doApp_ffi_related stateCfg source target sourceFinal name values values' result states related run
-  | allocThunk mode => exact doApp_thunkAlloc_related stateCfg source target sourceFinal mode values values' result states related run
-  | updateThunk mode => exact doApp_thunkUpdate_related stateCfg source target sourceFinal mode values values' result states related run
-
 /-- All source operations other than calls, dynamic evaluation, and forcing
 are covered by the proof-side primitive simulation. Three operations are
 covered because the current evaluator always rejects them; their fidelity to
@@ -395,13 +252,4 @@ theorem covered_simpleSourcePrimitive (op : Op) (notCall : op ≠ .opapp)
       | updateThunk mode => exact .updateThunk mode
       | forceThunk => exact (notForce rfl).elim)
 
-/-- Every nonrecursive source application simulates its compiled form using
-the argument induction hypotheses in the current proof-side evaluator. -/
-theorem compile_nonrecursiveSourceApp_simulation {C F : Type} (cfg stateCfg : Config) (trace : BackendCommon.Tra)
-    (op : Op) (args : List FlatLang.Exp) (notCall : op ≠ .opapp)
-    (notEval : op ≠ .eval) (notForce : op ≠ .thunkOp .forceThunk)
-    (argumentsIH : ∀ expression ∈ args, ExpressionSimulation (C := C) (F := F) cfg stateCfg expression) :
-    ExpressionSimulation (C := C) (F := F) cfg stateCfg (.app trace (.src op) args) :=
-  compile_coveredSourceApp_simulation cfg stateCfg trace op args
-    (covered_simpleSourcePrimitive op notCall notEval notForce) argumentsIH
 end Flapjack.Compiler.Backend.FlatPattern
