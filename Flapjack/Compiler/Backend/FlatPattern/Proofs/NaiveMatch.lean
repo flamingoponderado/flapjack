@@ -1,3 +1,4 @@
+import Flapjack.SemanticPrimitivesProps.Literals
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.BranchEvaluation
 import Mathlib.Data.List.Forall2
 
@@ -7,6 +8,7 @@ namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack Flapjack.AstHOL Flapjack.Compiler.Backend
 open Flapjack.Compiler.Backend.BackendCommon
 open Flapjack.SemanticPrimitivesHOL (storeLookup)
+open Flapjack.SemanticPrimitivesProps (litSameType_refl litSameType_sym)
 
 /-- Evaluating the flat Boolean expression yields the corresponding value. -/
 theorem evaluate_bool {C F : Type} (trace : Tra) (b : Bool)
@@ -152,14 +154,6 @@ theorem naiveList_as {C F : Type} (trace : Tra) (pattern : FlatLang.Pat) (name :
     have nestedPure : List.Forall₂ (fun expression value => FlatSem.evaluate env state [expression] = (state, .val [value]))
         (((pattern, expression) :: rest).map Prod.snd) (value :: values) := by simpa using pure
     simpa [naivePatternMatch] using ih env state (value :: values) ((name, value) :: bindings) answer nestedPure nested
-
-/-- Literal type compatibility is reflexive and symmetric. -/
-theorem litSameType_refl (lit : Lit) : Flapjack.SemanticPrimitivesHOL.litSameType lit lit = true := by
-  cases lit <;> rfl
-
-theorem litSameType_symm (left right : Lit) :
-    Flapjack.SemanticPrimitivesHOL.litSameType left right = Flapjack.SemanticPrimitivesHOL.litSameType right left := by
-  cases left <;> cases right <;> rfl
 
 /-- A conditional with a pure Boolean guard evaluates its selected branch. -/
 theorem evaluate_if_pure_bool {C F : Type} (trace : Tra) (guard yes no : FlatLang.Exp)
@@ -436,7 +430,7 @@ theorem naiveList_literal {C F : Type} (trace : Tra) (lit : Lit) (expression : F
           simpa [naivePatternMatch, evaluate_smartIf, branch] using tailEval
         · by_cases sameType : Flapjack.SemanticPrimitivesHOL.litSameType lit actual = true
           · have otherType : Flapjack.SemanticPrimitivesHOL.litSameType actual lit = true := by
-              simpa [litSameType_symm actual lit] using sameType
+              exact litSameType_sym lit actual sameType
             have guard := evaluate_literal_equality trace expression env state actual lit first otherType
             have different : actual ≠ lit := Ne.symm same
             have branch := evaluate_if_pure_bool trace (.app trace (.src .equality) [expression, .lit trace lit])

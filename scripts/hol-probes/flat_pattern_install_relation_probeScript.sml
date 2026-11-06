@@ -41,6 +41,8 @@ val _ = show_thm "fst_pure_co=" backendPropsTheory.FST_pure_co;
 val _ = show_thm "pure_co_comp=" backendPropsTheory.pure_co_comb_pure_co;
 val _ = show_thm "pure_co_id=" backendPropsTheory.pure_co_I;
 val _ = show_thm "pure_cc_id=" backendPropsTheory.pure_cc_I;
+val _ = show_thm "lit_type_refl=" semanticPrimitivesPropsTheory.lit_same_type_refl;
+val _ = show_thm "lit_type_sym=" semanticPrimitivesPropsTheory.lit_same_type_sym;
 val _ = show_thm "install_relation=" flat_patternProofTheory.install_conf_rel_def;
 val _ = show_thm "compile_exp_con_clause=" (List.nth (CONJUNCTS flat_patternTheory.compile_exp_def, 3));
 val _ = show_thm "compile_exp_app_clause=" (List.nth (CONJUNCTS flat_patternTheory.compile_exp_def, 5));

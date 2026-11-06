@@ -150,7 +150,7 @@ theorem encodePmatch_simulation {C F : Type} (state : FlatSem.State C F)
     | litv actual =>
       by_cases same : lit = actual
       · subst actual
-        simp [encodePat, encodeValue, PatternSemantics.pmatch, FlatSem.pmatch, litSameType_refl, encodeMatchResult]
+        simp [encodePat, encodeValue, PatternSemantics.pmatch, FlatSem.pmatch, Flapjack.SemanticPrimitivesProps.litSameType_refl, encodeMatchResult]
       · by_cases sameType : Flapjack.SemanticPrimitivesHOL.litSameType lit actual = true
         · simp [encodePat, encodeValue, PatternSemantics.pmatch, FlatSem.pmatch, same, sameType, encodeMatchResult]
         · simp [FlatSem.pmatch, same, sameType] at safe
@@ -364,7 +364,7 @@ theorem decodeTest_simulation {C F : Type} (trace : BackendCommon.Tra)
       · have result : decide (lit = actual) = answer := by
           simpa [encodeValue, PatternSemantics.dtTest, sameType] using tested
         have otherType : Flapjack.SemanticPrimitivesHOL.litSameType actual lit = true := by
-          simpa [litSameType_symm actual lit] using sameType
+          exact Flapjack.SemanticPrimitivesProps.litSameType_sym lit actual sameType
         have guard := evaluate_literal_equality trace expression env state actual lit pure otherType
         have equalBool : decide (actual = lit) = answer := by
           simpa [eq_comm] using result

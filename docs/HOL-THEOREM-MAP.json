@@ -125455,4 +125455,21 @@
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared decs_semantics in flat_pattern_install_relation_probe.out: shared compiler and independent FFI carriers, installation relation, non-failure premise, separate compilation configuration and semantics equality agree. Evaluation inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
 }
+,
+{
+  "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+  "hol_name": "lit_same_type_refl",
+  "lean_path": "Flapjack/SemanticPrimitivesProps/Literals.lean",
+  "lean_name": "litSameType_refl",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared lit_type_refl in flat_pattern_install_relation_probe.out: every HOL literal has the same literal type as itself. Lean uses the reviewed literal and Boolean carriers and the reviewed litSameType definition."
+},
+{
+  "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+  "hol_name": "lit_same_type_sym",
+  "lean_path": "Flapjack/SemanticPrimitivesProps/Literals.lean",
+  "lean_name": "litSameType_sym",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared lit_type_sym in flat_pattern_install_relation_probe.out: HOL literal-type compatibility implies its converse, with the same two literal binders and premise. Lean uses the reviewed literal and Boolean carriers and litSameType definition."
+}
 ]

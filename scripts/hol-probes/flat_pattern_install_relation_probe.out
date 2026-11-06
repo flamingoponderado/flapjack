@@ -33,6 +33,8 @@ fst_pure_co=FST (pure_co (co :γ -> β) (x :α # γ)) = FST x
 pure_co_comp=(pure_co (f :δ -> γ) :β # δ -> β # γ) ∘ (pure_co (g :ε -> δ) :β # ε -> β # δ) ∘ (co :α -> β # ε) = (pure_co (f ∘ g) :β # ε -> β # γ) ∘ co
 pure_co_id=(pure_co (I :β -> β) :α # β -> α # β) = (I :α # β -> α # β)
 pure_cc_id=(pure_cc (I :β -> β) :(α -> β -> γ) -> α -> β -> γ) = (I :(α -> β -> γ) -> α -> β -> γ)
+lit_type_refl=∀(l :lit). lit_same_type l l
+lit_type_sym=∀(l1 :lit) (l2 :lit). lit_same_type l1 l2 ⇒ lit_same_type l2 l1
 install_relation=∀(pat_cfg :config) (ic1 :α install_config) (ic2 :α install_config). install_conf_rel pat_cfg ic1 ic2 ⇔ ic2.compile_oracle = (pure_co (MAP (compile_dec pat_cfg)) :α # exp list -> α # exp list) ∘ ic1.compile_oracle ∧ ic1.compile = pure_cc (MAP (compile_dec pat_cfg)) ic2.compile
 compile_exp_con_clause=∀(xs :exp list) (ts :(num # num option) option) (t :tra) (cfg :config). compile_exp cfg (Con t ts xs :exp) = (let ((i :num),(sg :bool),(ys :exp list)) = compile_exps cfg (REVERSE xs) in (i,sg,(Con t ts (REVERSE ys) :exp)))
 compile_exp_app_clause=∀(xs :exp list) (t :tra) (op :op) (cfg :config). compile_exp cfg (App t op xs :exp) = (let ((i :num),(sg :bool),(ys :exp list)) = compile_exps cfg (REVERSE xs) in (i,sg ∨ op_sets_globals op,(App t op (REVERSE ys) :exp)))
