@@ -10,119 +10,11 @@ open Flapjack Flapjack.AstHOL Flapjack.Compiler.Backend
 open Flapjack.SemanticPrimitivesHOL (Result)
 open Flapjack.Basis.Pure.MlString (ofString)
 
-/-- Nonrecursive source applications simulate their arguments and then use
-the primitive-operation correspondence proved for their operator. -/
-theorem compile_simpleSourceApp_simulation_upTo {C F : Type} (cfg stateCfg : Config) (trace : BackendCommon.Tra)
-    (op : Op) (args : List FlatLang.Exp) (clock : Nat)
-    (notCall : op ≠ .opapp) (notEval : op ≠ .eval) (notForce : op ≠ .thunkOp .forceThunk)
-    (argumentsIH : ∀ expression ∈ args, ExpressionSimulationUpTo (C := C) (F := F) cfg stateCfg clock expression)
-    (primitiveRel : ∀ (source target sourceFinal : FlatSem.State C F) (values values' : List FlatSem.Value)
-      (result : Result FlatSem.Value FlatSem.Value), StateRel stateCfg source target → List.Forall₂ ValueRel values values' →
-      FlatSem.doApp source (.src op) values = some (sourceFinal, result) →
-      ∃ targetFinal result', FlatSem.doApp target (.src op) values' = some (targetFinal, result') ∧
-        StateRel stateCfg sourceFinal targetFinal ∧ PrimitiveResultRel result result') :
-    ExpressionSimulationUpTo (C := C) (F := F) cfg stateCfg clock (.app trace (.src op) args) := by
-  intro sourceEnv targetEnv source target sourceFinal sourceResult n clockBound sourceEval envs states bound safe
-  have argsBound : (compileExps cfg args).1 < n := by simpa [compileExp_app] using bound
-  have reversedBound := compileExps_reverse_bound cfg args n argsBound
-  have reversedIH : ∀ expression ∈ args.reverse, ExpressionSimulationUpTo (C := C) (F := F) cfg stateCfg clock expression := by
-    intro expression member
-    exact argumentsIH expression (by simpa using member)
-  have argsSim := compileExps_simulation_upTo cfg stateCfg clock args.reverse reversedIH
-  have compiledReverse : (compileExps cfg args.reverse).2.2 = (compileExps cfg args).2.2.reverse := by
-    simp [compileExps_rows, List.map_reverse]
-  cases argsRun : FlatSem.evaluate sourceEnv source args.reverse with
-  | mk sourceNext argsResult =>
-    have argsSafe : argsResult ≠ .err (.abort .typeError) := by
-      intro bad
-      subst argsResult
-      have outer := evaluate_app_args_error sourceEnv source sourceNext trace (.src op) args (.abort .typeError) argsRun
-      rw [sourceEval] at outer
-      exact safe (congrArg Prod.snd outer)
-    obtain ⟨targetNext, targetArgsResult, targetArgsRun, nextStates, related⟩ := argsSim
-      sourceEnv targetEnv source target sourceNext argsResult n clockBound argsRun envs states reversedBound argsSafe
-    cases related with
-    | error errorsRel =>
-      rename_i leftError rightError
-      have sourceOuter := evaluate_app_args_error sourceEnv source sourceNext trace (.src op) args leftError argsRun
-      have targetOuter := evaluate_app_args_error targetEnv target targetNext trace (.src op)
-        (compileExps cfg args).2.2 rightError (by simpa [compiledReverse] using targetArgsRun)
-      have equal := sourceEval.symm.trans sourceOuter
-      cases equal
-      exact ⟨_, _, by simpa [compileExp_app] using targetOuter,
-        stateRel_fixClock stateCfg source sourceNext target targetNext states nextStates, .error errorsRel⟩
-    | values valuesRel =>
-      rename_i sourceValues targetValues
-      let sourceFixed := { sourceNext with clock := min source.clock sourceNext.clock }
-      let targetFixed := { targetNext with clock := min target.clock targetNext.clock }
-      have fixedStates : StateRel stateCfg sourceFixed targetFixed :=
-        stateRel_fixClock stateCfg source sourceNext target targetNext states nextStates
-      have sourceOuter := evaluate_simpleSourceApp_values sourceEnv source sourceNext trace op args sourceValues notCall notEval notForce argsRun
-      have targetOuter := evaluate_simpleSourceApp_values targetEnv target targetNext trace op (compileExps cfg args).2.2
-        targetValues notCall notEval notForce (by simpa [compiledReverse] using targetArgsRun)
-      cases primitive : FlatSem.doApp sourceFixed (.src op) sourceValues.reverse with
-      | none =>
-        have bad : sourceResult = .err (.abort .typeError) := by
-          have eq := sourceOuter.symm.trans sourceEval
-          simpa [FlatSem.applyResult, sourceFixed, primitive] using (congrArg Prod.snd eq).symm
-        exact (safe bad).elim
-      | some outcome =>
-        obtain ⟨sourceAfter, result⟩ := outcome
-        obtain ⟨targetAfter, result', targetPrimitive, afterStates, resultRel⟩ := primitiveRel sourceFixed targetFixed sourceAfter sourceValues.reverse targetValues.reverse result
-          fixedStates (List.forall₂_reverse_iff.mpr valuesRel) primitive
-        cases resultRel with
-        | value values =>
-          have eq := sourceOuter.symm.trans sourceEval
-          simp [FlatSem.applyResult, sourceFixed, primitive] at eq
-          rcases eq with ⟨rfl, rfl⟩
-          refine ⟨targetAfter, .val [_], ?_, afterStates, .values (.cons values .nil)⟩
-          simpa [compileExp_app, FlatSem.applyResult, targetFixed, targetPrimitive] using targetOuter
-        | error errors =>
-          rename_i leftError rightError
-          have eq := sourceOuter.symm.trans sourceEval
-          simp [FlatSem.applyResult, sourceFixed, primitive] at eq
-          rcases eq with ⟨rfl, rfl⟩
-          refine ⟨targetAfter, .err rightError, ?_, afterStates, .error errors⟩
-          simpa [compileExp_app, FlatSem.applyResult, targetFixed, targetPrimitive] using targetOuter
-
-
-/-- Arithmetic, conversion, shift, typed comparison, references, arrays,
- list, vector and string operations, FFI and explicit thunk applications simulate
-their compiled expressions using only argument induction hypotheses. -/
-theorem compile_coveredSourceApp_simulation_upTo {C F : Type} (cfg stateCfg : Config) (trace : BackendCommon.Tra)
-    (op : Op) (args : List FlatLang.Exp) (clock : Nat) (covered : CoveredSourcePrimitive op)
-    (argumentsIH : ∀ expression ∈ args, ExpressionSimulationUpTo (C := C) (F := F) cfg stateCfg clock expression) :
-    ExpressionSimulationUpTo (C := C) (F := F) cfg stateCfg clock (.app trace (.src op) args) := by
-  have notCall : op ≠ .opapp := by
-    cases covered <;> simp
-    case aupdate unsafeOp => cases unsafeOp <;> simp
-    case asub unsafeOp => cases unsafeOp <;> simp
-    case aw8sub unsafeOp => cases unsafeOp <;> simp
-    case aw8update unsafeOp => cases unsafeOp <;> simp
-    case vsub unsafeOp => cases unsafeOp <;> simp
-  have notEval : op ≠ .eval := by
-    cases covered <;> simp
-    case aupdate unsafeOp => cases unsafeOp <;> simp
-    case asub unsafeOp => cases unsafeOp <;> simp
-    case aw8sub unsafeOp => cases unsafeOp <;> simp
-    case aw8update unsafeOp => cases unsafeOp <;> simp
-    case vsub unsafeOp => cases unsafeOp <;> simp
-  have notForce : op ≠ .thunkOp .forceThunk := by
-    cases covered <;> simp
-    case aupdate unsafeOp => cases unsafeOp <;> simp
-    case asub unsafeOp => cases unsafeOp <;> simp
-    case aw8sub unsafeOp => cases unsafeOp <;> simp
-    case aw8update unsafeOp => cases unsafeOp <;> simp
-    case vsub unsafeOp => cases unsafeOp <;> simp
-  apply compile_simpleSourceApp_simulation_upTo cfg stateCfg trace op args clock notCall notEval notForce argumentsIH
-  exact doApp_coveredSource_related stateCfg op covered
-
-
-
-/-- Every flat-specific primitive application simulates its compiled form,
-assuming the usual induction hypotheses for its argument expressions. -/
-theorem compile_flatApp_simulation_upTo {C F : Type} (cfg stateCfg : Config) (trace : BackendCommon.Tra)
-    (op : FlatLang.Op) (args : List FlatLang.Exp) (clock : Nat) (notSource : ∀ sourceOp, op ≠ .src sourceOp)
+/-- Flapjack induction step for nonrecursive primitive applications. -/
+theorem compile_simpleApp_simulation_upTo {C F : Type} (cfg stateCfg : Config) (trace : BackendCommon.Tra)
+    (op : FlatLang.Op) (args : List FlatLang.Exp) (clock : Nat)
+    (notCall : op ≠ .src .opapp) (notEval : op ≠ .src .eval)
+    (notForce : op ≠ .src (.thunkOp .forceThunk))
     (argumentsIH : ∀ expression ∈ args, ExpressionSimulationUpTo (C := C) (F := F) cfg stateCfg clock expression) :
     ExpressionSimulationUpTo (C := C) (F := F) cfg stateCfg clock (.app trace op args) := by
   intro sourceEnv targetEnv source target sourceFinal sourceResult n clockBound sourceEval envs states bound safe
@@ -160,9 +52,9 @@ theorem compile_flatApp_simulation_upTo {C F : Type} (cfg stateCfg : Config) (tr
       let targetFixed := { targetNext with clock := min target.clock targetNext.clock }
       have fixedStates : StateRel stateCfg sourceFixed targetFixed :=
         stateRel_fixClock stateCfg source sourceNext target targetNext states nextStates
-      have sourceOuter := evaluate_flatApp_values sourceEnv source sourceNext trace op args sourceValues notSource argsRun
-      have targetOuter := evaluate_flatApp_values targetEnv target targetNext trace op (compileExps cfg args).2.2
-        targetValues notSource (by simpa [compiledReverse] using targetArgsRun)
+      have sourceOuter := evaluate_simpleApp_values sourceEnv source sourceNext trace op args sourceValues notCall notEval notForce argsRun
+      have targetOuter := evaluate_simpleApp_values targetEnv target targetNext trace op (compileExps cfg args).2.2
+        targetValues notCall notEval notForce (by simpa [compiledReverse] using targetArgsRun)
       cases primitive : FlatSem.doApp sourceFixed op sourceValues.reverse with
       | none =>
         have bad : sourceResult = .err (.abort .typeError) := by
@@ -171,33 +63,29 @@ theorem compile_flatApp_simulation_upTo {C F : Type} (cfg stateCfg : Config) (tr
         exact (safe bad).elim
       | some outcome =>
         obtain ⟨sourceAfter, result⟩ := outcome
-        obtain ⟨targetAfter, result', targetPrimitive, afterStates, resultRel⟩ := doApp_flat_related
-          stateCfg sourceFixed targetFixed sourceAfter op sourceValues.reverse targetValues.reverse result
-          fixedStates (List.forall₂_reverse_iff.mpr valuesRel) notSource primitive
-        cases resultRel with
-        | value values =>
-          have eq := sourceOuter.symm.trans sourceEval
-          simp [FlatSem.applyResult, sourceFixed, primitive] at eq
-          rcases eq with ⟨rfl, rfl⟩
-          refine ⟨targetAfter, .val [_], ?_, afterStates, .values (.cons values .nil)⟩
-          simpa [compileExp_app, FlatSem.applyResult, targetFixed, targetPrimitive] using targetOuter
-        | error errors =>
-          rename_i leftError rightError
-          have eq := sourceOuter.symm.trans sourceEval
-          simp [FlatSem.applyResult, sourceFixed, primitive] at eq
-          rcases eq with ⟨rfl, rfl⟩
-          refine ⟨targetAfter, .err rightError, ?_, afterStates, .error errors⟩
-          simpa [compileExp_app, FlatSem.applyResult, targetFixed, targetPrimitive] using targetOuter
+        obtain ⟨targetAfter, result', relation, afterStates, targetPrimitive⟩ := doApp_simulation
+          sourceFixed sourceValues.reverse sourceAfter result targetFixed targetValues.reverse op stateCfg
+          primitive ⟨fixedStates, List.forall₂_reverse_iff.mpr valuesRel⟩
+        cases result with
+        | val value =>
+          cases result' with
+          | err error' => exact False.elim relation
+          | val value' =>
+            have eq := sourceOuter.symm.trans sourceEval
+            simp [FlatSem.applyResult, sourceFixed, primitive] at eq
+            rcases eq with ⟨rfl, rfl⟩
+            refine ⟨targetAfter, .val [_], ?_, afterStates, .values (.cons relation .nil)⟩
+            simpa [compileExp_app, FlatSem.applyResult, targetFixed, targetPrimitive] using targetOuter
+        | err error =>
+          cases result' with
+          | val value' => exact False.elim relation
+          | err error' =>
+            have eq := sourceOuter.symm.trans sourceEval
+            simp [FlatSem.applyResult, sourceFixed, primitive] at eq
+            rcases eq with ⟨rfl, rfl⟩
+            refine ⟨targetAfter, .err error', ?_, afterStates, .error relation⟩
+            simpa [compileExp_app, FlatSem.applyResult, targetFixed, targetPrimitive] using targetOuter
 
-/-- Every nonrecursive source application simulates up to the same clock
-bound, assuming its arguments do. -/
-theorem compile_nonrecursiveSourceApp_simulation_upTo {C F : Type} (cfg stateCfg : Config) (trace : BackendCommon.Tra)
-    (op : Op) (args : List FlatLang.Exp) (clock : Nat) (notCall : op ≠ .opapp)
-    (notEval : op ≠ .eval) (notForce : op ≠ .thunkOp .forceThunk)
-    (argumentsIH : ∀ expression ∈ args, ExpressionSimulationUpTo (C := C) (F := F) cfg stateCfg clock expression) :
-    ExpressionSimulationUpTo (C := C) (F := F) cfg stateCfg clock (.app trace (.src op) args) :=
-  compile_coveredSourceApp_simulation_upTo cfg stateCfg trace op args clock
-    (covered_simpleSourcePrimitive op notCall notEval notForce) argumentsIH
 
 /-- Calls simulate their selected closure body, using an induction hypothesis
 for arbitrary compiled closure bodies at smaller clocks. -/

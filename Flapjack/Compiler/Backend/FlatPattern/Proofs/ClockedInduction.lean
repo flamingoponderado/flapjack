@@ -146,14 +146,14 @@ theorem expressionSimulationUpTo_all {C F : Type} (clock : Nat) :
                   intro bodySourceEnv bodyTargetEnv bodySource bodyTarget bodyFinal bodyResult bodyN bodyClock bodyRun bodyEnvs bodyStates bodyBound bodySafe
                   exact generatedIH bodySourceEnv bodyTargetEnv bodySource bodyTarget bodyFinal bodyResult bodyN (by omega)
                     bodyRun bodyEnvs bodyStates bodyBound bodySafe
-                · exact compile_nonrecursiveSourceApp_simulation_upTo cfg stateCfg trace sourceOp args clock isCall isEval isForce argsIH
-          | globalVarAlloc count => exact compile_flatApp_simulation_upTo cfg stateCfg trace (.globalVarAlloc count) args clock (by intro _; simp) argsIH
-          | globalVarInit index => exact compile_flatApp_simulation_upTo cfg stateCfg trace (.globalVarInit index) args clock (by intro _; simp) argsIH
-          | globalVarLookup index => exact compile_flatApp_simulation_upTo cfg stateCfg trace (.globalVarLookup index) args clock (by intro _; simp) argsIH
-          | tagLenEq tag length => exact compile_flatApp_simulation_upTo cfg stateCfg trace (.tagLenEq tag length) args clock (by intro _; simp) argsIH
-          | lenEq length => exact compile_flatApp_simulation_upTo cfg stateCfg trace (.lenEq length) args clock (by intro _; simp) argsIH
-          | el index => exact compile_flatApp_simulation_upTo cfg stateCfg trace (.el index) args clock (by intro _; simp) argsIH
-          | id => exact compile_flatApp_simulation_upTo cfg stateCfg trace .id args clock (by intro _; simp) argsIH
+                · exact compile_simpleApp_simulation_upTo cfg stateCfg trace (.src sourceOp) args clock (by simpa using isCall) (by simpa using isEval) (by simpa using isForce) argsIH
+          | globalVarAlloc count => exact compile_simpleApp_simulation_upTo cfg stateCfg trace (.globalVarAlloc count) args clock (by simp) (by simp) (by simp) argsIH
+          | globalVarInit index => exact compile_simpleApp_simulation_upTo cfg stateCfg trace (.globalVarInit index) args clock (by simp) (by simp) (by simp) argsIH
+          | globalVarLookup index => exact compile_simpleApp_simulation_upTo cfg stateCfg trace (.globalVarLookup index) args clock (by simp) (by simp) (by simp) argsIH
+          | tagLenEq tag length => exact compile_simpleApp_simulation_upTo cfg stateCfg trace (.tagLenEq tag length) args clock (by simp) (by simp) (by simp) argsIH
+          | lenEq length => exact compile_simpleApp_simulation_upTo cfg stateCfg trace (.lenEq length) args clock (by simp) (by simp) (by simp) argsIH
+          | el index => exact compile_simpleApp_simulation_upTo cfg stateCfg trace (.el index) args clock (by simp) (by simp) (by simp) argsIH
+          | id => exact compile_simpleApp_simulation_upTo cfg stateCfg trace .id args clock (by simp) (by simp) (by simp) argsIH
     intro cfg stateCfg expression
     exact allWeights (FlatSem.expWeight expression) cfg stateCfg expression rfl
 
