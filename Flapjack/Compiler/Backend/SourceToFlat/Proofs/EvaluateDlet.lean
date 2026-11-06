@@ -797,20 +797,6 @@ theorem compileDlet_valueIndex (trace : List VarN) (n : Nat) (start : NextIndice
       cases lookup : nsLookup compMap.v id <;> simp [compileDecs, found, lookup]
       case some binding => cases binding <;> rfl
 
-/-- Compiling one value declaration never decreases an allocation counter.
-This specialized helper has no separate HOL declaration. -/
-theorem compileDlet_idxPrev (trace : List VarN) (n : Nat) (start : NextIndices)
-    (compMap : Environment) (gen : EnvironmentGenerationStore)
-    (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp) :
-    idxPrev start (compileDecs trace n start compMap gen [.dlet location pattern expr]).2.1 := by
-  cases found : simpleDlet pattern expr with
-  | none => simp [compileDecs, found, idxPrev]
-  | some pair =>
-    cases pair with
-    | mk name id =>
-      cases lookup : nsLookup compMap.v id <;> simp [compileDecs, found, lookup, idxPrev]
-      case some binding => cases binding <;> simp
-
 /-- The compiler's index-order premise supplies the reserved-slot bound used
 by the factored declaration simulation. This helper has no separate HOL
 declaration. -/
@@ -1017,7 +1003,7 @@ theorem DletOutcomeGrowing.advance {C F : Type} [Nonempty C]
         obtain ⟨growth, invariant, generation, forward⟩ := rest
         have advanced := factoredInvariant_shrink interp transform gen nextGenv start
           (compileDecs trace n start compMap gen [.dlet location pattern expr]).2.1 finish other
-          sourceLast flatLast invariant (compileDlet_idxPrev trace n start compMap gen location pattern expr) bounded
+          sourceLast flatLast invariant (OracleInvariant.compileDecs_idxPrev_core trace n start compMap gen [.dlet location pattern expr]) bounded
         exact ⟨growth, by simpa [compileDlet_generationStore] using advanced,
           by simpa [compileDlet_generationStore] using generation, forward⟩
 
