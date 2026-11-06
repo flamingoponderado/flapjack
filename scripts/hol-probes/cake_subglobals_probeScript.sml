@@ -125,3 +125,6 @@ val _ = (print "maybe_all_list_SOME_typed="; print_term (concl source_to_flatPro
 
 val _ = if null (hyp source_to_flatProofTheory.genv_c_tys_ok_extend) then () else raise Fail "hypotheses: genv_c_tys_ok_extend";
 val _ = (print "genv_c_tys_ok_extend_typed="; print_term (concl source_to_flatProofTheory.genv_c_tys_ok_extend); print "\n");
+
+val _ = if null (hyp source_to_flatProofTheory.genv_c_ok_extend) then () else raise Fail "hypotheses: genv_c_ok_extend";
+val _ = (print "genv_c_ok_extend_typed="; print_term (concl source_to_flatProofTheory.genv_c_ok_extend); print "\n");

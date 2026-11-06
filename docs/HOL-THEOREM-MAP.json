@@ -11601,6 +11601,15 @@
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/GlobalEnvConditions.lean",
+    "lean_name": "genvCOk_extend",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "genv_c_ok_extend",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": ["c", "cExt"],
+    "reviewer": "Compared the HOL source and genv_c_ok_extend_typed: the original constructor-map validity and all new/new and new/old compatibility, freshness and type-index conditions imply validity of the left-biased union. The two canonical finite-map input carriers are named by the qualifier."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/GlobalEnvConditions.lean",
     "lean_name": "genvCTysOk_extend",
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "genv_c_tys_ok_extend",
