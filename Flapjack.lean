@@ -26,6 +26,7 @@ import Flapjack.Compiler.Backend.FlatPattern.CompileOrder
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.InstallRelation
 import Flapjack.Compiler.Backend.FlatProps.ValueBasics
 import Flapjack.Compiler.Backend.FlatProps.SimpleRelations
+import Flapjack.Compiler.Backend.FlatProps.SimpleEquality
 import Flapjack.Compiler.Backend.FlatProps.NoMat
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelation
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelationRules

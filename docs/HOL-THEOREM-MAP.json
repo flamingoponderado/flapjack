@@ -125256,5 +125256,21 @@
   "lean_name": "simpleValueRel_isClosure",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared the HOL source and typed simple_value_relation_closure capture: the original simple-relation and value-relation hypotheses imply the same closure-status equivalence; the conjunctive premise is curried."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "simple_do_eq_thm_ind",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/SimpleEquality.lean",
+  "lean_name": "simpleDoEq_ind",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the HOL source and typed simple_equality_induction capture: both value and list conjuncts retain the simple-relation, successful-result and pairwise relation premises, the same Boolean result, and the original quantification; conjunction premises are curried."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "simple_do_eq_thm",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/SimpleEquality.lean",
+  "lean_name": "simpleDoEq",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the original generated first-conjunct theorem and typed simple_equality capture: all four values, Boolean result and original simple-relation and equality premises are retained; conjunction premises are curried."
 }
 ]
