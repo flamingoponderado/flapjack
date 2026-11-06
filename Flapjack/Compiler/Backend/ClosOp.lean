@@ -11,14 +11,6 @@ private def intConst : Exp → Option Int := destOpNil destConst
 private def nil : Exp → Option Nat := destOpNil destCons
 private def constant : Exp → Option ConstPart := destOpNil destConstant
 
-/-- The source pair matcher agrees with the previous pair of Flapjack
-matchers; this is infrastructure without a separate HOL theorem. -/
-theorem destOpConsts_eq_previous (x y : Exp) :
-    destOpConsts x y = match intConst x, intConst y with
-      | some i, some j => some (i, j)
-      | _, _ => none := by
-  unfold destOpConsts intConst
-  cases hx : destOpNil destConst x <;> cases hy : destOpNil destConst y <;> simp_all
 private def eqConst (p : ConstPart) (x : Exp) : Exp := .op .none (.blockOp (.equalConst p)) [x]
 
 @[hol "cakeml/compiler/backend/clos_opScript.sml" "eq_direct_const_def"]

@@ -1,8 +1,7 @@
 import Flapjack.Compiler.Backend.ClosKnown.Inline
 
 /-! The following facts justify the recursive inlining decrease for the
-checked Flapjack implementation. The option-valued wrappers are infrastructure;
-the corresponding total source theorem is in `Inline.DecisionCorrect`. -/
+checked Flapjack implementation. The option-valued wrappers are infrastructure. -/
 namespace Flapjack.Compiler.Backend.ClosKnown
 
 /-- An inlining decision containing a body requires a positive factor. -/

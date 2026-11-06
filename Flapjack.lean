@@ -368,7 +368,6 @@ import Flapjack.Compiler.Backend.Bvl.Syntax
 import Flapjack.Compiler.Backend.ClosToBvl.Config
 import Flapjack.Compiler.Backend.ClosKnown.Config
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.InlineTotal
-import Flapjack.Compiler.Backend.ClosKnown.Inline.DecisionCorrect
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.Syntax
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.SyntaxOracle
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.ApproxSyntax
@@ -406,7 +405,6 @@ import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxTotal
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.ValueRelation
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.AppExact
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.StateOracle
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.IncrementalAgreement
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.KnownSubspt
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.StateOracleDisjoint
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationTick
