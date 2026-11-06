@@ -375,7 +375,7 @@ theorem holV2n_testBit (v : List Bool) (i : Nat) :
 
 /-- `bitstring$v2w` at an explicit width agrees with the numeric rendering of
 `holV2n` when the list fits. -/
-theorem holV2w_eq_ofNat (m : Nat) (v : List Bool) (_h : v.length ≤ m) :
+theorem holV2w_eq_ofNat (m : Nat) (v : List Bool) :
     holV2w m v = BitVec.ofNat m (holV2n v) := by
   apply BitVec.eq_of_getLsbD_eq
   intro i hi
@@ -383,5 +383,134 @@ theorem holV2w_eq_ofNat (m : Nat) (v : List Bool) (_h : v.length ≤ m) :
       (fun j => decide (j < v.length) && v.getD (v.length - 1 - j) false)).getLsbD i
       = (BitVec.ofNat m (holV2n v)).getLsbD i
   rw [getLsbD_holFcpWord, BitVec.getLsbD_ofNat, holV2n_testBit]
+
+
+lemma holW2v_length_general {width : Nat} [NeZero width] (w : BitVec width) :
+    (holW2v w).length = width := by
+  unfold holW2v
+  simp
+
+lemma getLsbD_eq_testBit (w : BitVec 6) (i : Nat) :
+    w.getLsbD i = w.toNat.testBit i := by
+  rw [BitVec.getLsbD_eq_getElem?_getD]
+  by_cases h : i < 6
+  · rw [BitVec.getElem?_eq_getElem h, BitVec.getElem_eq_testBit_toNat]
+    simp
+  · have hle : 2 ^ 6 ≤ 2 ^ i := Nat.pow_le_pow_right (by decide) (Nat.le_of_not_lt h)
+    rw [Nat.testBit_lt_two_pow (lt_of_lt_of_le w.isLt hle)]
+    simp [h]
+
+/-- The numeric value of the `FCP`-rendered list of a word is the word. -/
+theorem holV2n_holW2v (w : BitVec 6) : holV2n (holW2v w) = w.toNat := by
+  apply Nat.eq_of_testBit_eq
+  intro i
+  rw [holV2n_testBit]
+  simp only [holW2v_length_general]
+  by_cases hi : i < 6
+  · simp only [hi, decide_true, Bool.true_and]
+    rw [List.getD_eq_getElem?_getD]
+    unfold holW2v
+    rw [List.getElem?_eq_getElem (by rw [List.length_map, List.length_range]; omega)]
+    simp only [List.getElem_map, List.getElem_range]
+    rw [show 6 - 1 - (6 - 1 - i) = i by omega]
+    exact getLsbD_eq_testBit w i
+  · simp only [hi, decide_false, Bool.false_and]
+    have hle : 2 ^ 6 ≤ 2 ^ i := Nat.pow_le_pow_right (by decide) (Nat.le_of_not_lt hi)
+    rw [Nat.testBit_lt_two_pow (lt_of_lt_of_le w.isLt hle)]
+
+lemma holV2n_replicate_false (k : Nat) : holV2n (List.replicate k false) = 0 := by
+  induction k with
+  | zero => simp [holV2n]
+  | succ k ih =>
+    rw [List.replicate_succ, holV2n_cons]
+    simp only [Bool.false_eq_true, if_false, Nat.zero_mul, Nat.zero_add]
+    exact ih
+
+/-- Truncation and left-padding with `false` do not change the value modulo
+the new width. -/
+theorem holV2n_fixwidth (n : Nat) (v : List Bool) :
+    holV2n (holFixwidth n v) = holV2n v % 2 ^ n := by
+  unfold holFixwidth
+  by_cases h : v.length < n
+  · rw [if_pos h]
+    unfold holPadLeft
+    rw [holV2n_append, holV2n_replicate_false]
+    simp only [Nat.zero_mul, Nat.zero_add]
+    exact (Nat.mod_eq_of_lt (lt_of_lt_of_le (holV2n_lt v)
+      (Nat.pow_le_pow_right (by decide) (Nat.le_of_lt h)))).symm
+  · rw [if_neg h]
+    have hle : n ≤ v.length := Nat.le_of_not_lt h
+    have hlen : (v.drop (v.length - n)).length = n := by
+      rw [List.length_drop]; omega
+    have happ : holV2n v = holV2n (v.take (v.length - n)) *
+        2 ^ (v.drop (v.length - n)).length + holV2n (v.drop (v.length - n)) := by
+      rw [← holV2n_append (v.take (v.length - n)) (v.drop (v.length - n))]
+      rw [List.take_append_drop]
+    rw [happ, hlen, Nat.add_comm]
+    rw [Nat.add_mul_mod_self_right]
+    have hlt : holV2n (v.drop (v.length - n)) < 2 ^ n := by
+      have h1 := holV2n_lt (v.drop (v.length - n))
+      rw [hlen] at h1
+      exact h1
+    exact (Nat.mod_eq_of_lt hlt).symm
+
+/-- Dropping the low `m` bits divides the value by `2 ^ m`. -/
+theorem holV2n_shiftr (v : List Bool) (m : Nat) :
+    holV2n (holShiftr v m) = holV2n v / 2 ^ m := by
+  unfold holShiftr
+  by_cases hm : m ≤ v.length
+  · have hlen : (v.drop (v.length - m)).length = m := by
+      rw [List.length_drop]; omega
+    have happ : holV2n v = holV2n (v.take (v.length - m)) *
+        2 ^ (v.drop (v.length - m)).length + holV2n (v.drop (v.length - m)) := by
+      rw [← holV2n_append (v.take (v.length - m)) (v.drop (v.length - m))]
+      rw [List.take_append_drop]
+    rw [happ, hlen, Nat.add_comm]
+    rw [Nat.add_mul_div_right _ _ (Nat.two_pow_pos m)]
+    have hlt : holV2n (v.drop (v.length - m)) < 2 ^ m := by
+      have h1 := holV2n_lt (v.drop (v.length - m))
+      rw [hlen] at h1
+      exact h1
+    rw [Nat.div_eq_of_lt hlt]
+    simp
+  · have hlt : v.length < m := Nat.lt_of_not_le hm
+    rw [show v.length - m = 0 by omega, List.take_zero]
+    show (0 : Nat) = holV2n v / 2 ^ m
+    rw [Nat.div_eq_of_lt (lt_of_lt_of_le (holV2n_lt v)
+      (Nat.pow_le_pow_right (by decide) (Nat.le_of_lt hlt)))]
+
+/-- `holField h l v` is the value of `v` shifted right by `l` and truncated
+to `h + 1 - l` bits. -/
+theorem holV2n_holField (h l : Nat) (v : List Bool) :
+    holV2n (holField h l v) = (holV2n v / 2 ^ l) % 2 ^ (h + 1 - l) := by
+  unfold holField
+  rw [holV2n_fixwidth, holV2n_shiftr]
+
+/-- Wrapping six-bit subtraction reduced modulo `2 ^ n`. -/
+lemma toNat_sub_mod (n : Nat) (hn : n ≤ 6) (w v : BitVec 6)
+    (_hw : w.toNat < 2 ^ n) (hv : v.toNat < 2 ^ n) :
+    (w - v).toNat % 2 ^ n = (w.toNat + 2 ^ n - v.toNat) % 2 ^ n := by
+  rw [BitVec.toNat_sub]
+  rw [Nat.mod_mod_of_dvd _ (Nat.pow_dvd_pow 2 hn)]
+  have hpow : 2 ^ n * 2 ^ (6 - n) = 2 ^ 6 := by
+    rw [← Nat.pow_add]; congr 1; omega
+  have hexp : 2 ^ n * (2 ^ (6 - n) - 1) = 2 ^ 6 - 2 ^ n := by
+    rw [Nat.mul_sub_left_distrib, Nat.mul_one, hpow]
+  have hle : 2 ^ n ≤ 2 ^ 6 := Nat.pow_le_pow_right (by decide) hn
+  have key : 2 ^ 6 - v.toNat + w.toNat =
+      (w.toNat + 2 ^ n - v.toNat) + 2 ^ n * (2 ^ (6 - n) - 1) := by
+    rw [hexp]
+    omega
+  rw [key, Nat.add_mul_mod_self_left]
+
+/-- The L3 decoder's `telem` count: the low `len` bits of the wrapping
+six-bit `S - R`, matching the computable `(S + 2 ^ len - R) % 2 ^ len`. -/
+theorem holV2n_sub_mod (len : Nat) (hlen : 1 ≤ len) (hlen6 : len ≤ 6)
+    (S R : BitVec 6) (hS : S.toNat < 2 ^ len) (hR : R.toNat < 2 ^ len) :
+    holV2n (holField (len - 1) 0 (holW2v (S - R))) =
+      (S.toNat + 2 ^ len - R.toNat) % 2 ^ len := by
+  rw [holV2n_holField, holV2n_holW2v]
+  rw [Nat.sub_zero, Nat.pow_zero, Nat.div_one, Nat.sub_one_add_one (by omega : len ≠ 0)]
+  exact toNat_sub_mod len hlen6 S R hS hR
 
 end Flapjack.Compiler.Encoders.Arm8.L3
