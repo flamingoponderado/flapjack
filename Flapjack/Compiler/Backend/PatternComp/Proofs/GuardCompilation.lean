@@ -102,24 +102,6 @@ theorem pmatchList_length (refs : HolFiniteMapExact Nat Term) (patterns : List P
           simp_all [pmatchList]
       simp [ih values tailSafe]
 
-/-- The generated wildcard guard always agrees with wildcard matching. -/
-theorem patToGuard_any (refs : HolFiniteMapExact Nat Term) (value : Term) :
-    dtEvalGuard refs value (patToGuard [] .any) =
-      some (decide (pmatch refs .any value = .success)) := by
-  simp [patToGuard, dtEvalGuard, pmatch]
-
-/-- The generated literal guard agrees with every non-error literal match. -/
-theorem patToGuard_lit (refs : HolFiniteMapExact Nat Term) (value : Term)
-    (literal : Flapjack.AstHOL.Lit) (safe : pmatch refs (.lit literal) value ≠ .typeFailure) :
-    dtEvalGuard refs value (patToGuard [] (.lit literal)) =
-      some (decide (pmatch refs (.lit literal) value = .success)) := by
-  cases value with
-  | term _ _ | refPtr _ | other => simp [pmatch] at safe
-  | litv actual =>
-    simp only [patToGuard, List.reverse_nil, getPos, dtEvalGuard, appPos,
-      dtTest, pmatch] at safe ⊢
-    split at safe <;> simp_all
-
 /-- A literal guard at any valid path agrees with its non-error match. -/
 theorem patToGuard_lit_at (refs : HolFiniteMapExact Nat Term) (value selected : Term)
     (path : List Nat) (literal : Flapjack.AstHOL.Lit)
