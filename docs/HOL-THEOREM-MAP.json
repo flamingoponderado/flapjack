@@ -125538,6 +125538,22 @@
   "reviewer": "Compared the source and typed clos_elist_globals_append capture: both arguments are closure-expression lists, and the conclusion preserves the whole global-write bag using pointwise natural-number union. The checked closure-expression and global-bag definitions are shared by the proof."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "compile_flat_BAG_ALL_DISTINCT",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/BindingGlobals.lean",
+  "lean_name": "compileFlat_bagAllDistinct",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source local MATCH_MP construction and its typed compile_flat_bag_all_distinct_local replay: the original distinct input-bag premise implies distinctness after compile_flat, with the same config and flat-expression list."
+},
+{
+  "hol_path": "HOL/src/bag/bagScript.sml",
+  "hol_name": "BAG_ALL_DISTINCT_SUB_BAG",
+  "lean_path": "Flapjack/Misc/Bag.lean",
+  "lean_name": "bagAllDistinct_subBag",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source and typed bag_all_distinct_sub_bag capture: arbitrary same-carrier bags satisfy the original conjunction of sub-bag and distinct-super-bag premises, yielding distinctness of the sub-bag."
+},
+{
   "hol_path": "HOL/src/bag/bagScript.sml",
   "hol_name": "BAG_ALL_DISTINCT",
   "lean_path": "Flapjack/Misc/Bag.lean",

@@ -22,3 +22,5 @@ sub_bag=∀(b1 :α -> num) (b2 :α -> num). b1 ≤ b2 ⇔ ∀(x :α) (n :num). B
 bag_in=∀(e :α) (b :α -> num). e ⋲ b ⇔ BAG_INN e (1 :num) b
 sub_bag_imp=(B1 :α -> num) ≤ (B2 :α -> num) ⇒ (x :α) ⋲ B1 ⇒ x ⋲ B2
 bag_all_distinct=∀(b :α -> num). BAG_ALL_DISTINCT b ⇔ ∀(e :α). b e ≤ (1 :num)
+bag_all_distinct_sub_bag=∀(s :α -> num) (t :α -> num). s ≤ t ∧ BAG_ALL_DISTINCT t ⇒ BAG_ALL_DISTINCT s
+compile_flat_bag_all_distinct_local=BAG_ALL_DISTINCT (elist_globals (p :exp list)) ⇒ BAG_ALL_DISTINCT (elist_globals (compile_flat (cfg :flat_pattern$config) p))

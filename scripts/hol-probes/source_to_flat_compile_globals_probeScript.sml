@@ -27,3 +27,9 @@ val _ = (print "sub_bag="; print_term (concl bagTheory.SUB_BAG); print "\n");
 val _ = (print "bag_in="; print_term (concl bagTheory.BAG_IN); print "\n");
 val _ = (print "sub_bag_imp="; print_term (concl source_to_flatProofTheory.SUB_BAG_IMP); print "\n");
 val _ = (print "bag_all_distinct="; print_term (concl bagTheory.BAG_ALL_DISTINCT); print "\n");
+val _ = (print "bag_all_distinct_sub_bag="; print_term (concl bagTheory.BAG_ALL_DISTINCT_SUB_BAG); print "\n");
+val compile_flat_bag_all_distinct_local =
+  MATCH_MP (bagTheory.BAG_ALL_DISTINCT_SUB_BAG |> REWRITE_RULE [GSYM AND_IMP_INTRO])
+           source_to_flatProofTheory.compile_flat_sub_bag;
+val _ = if null (hyp compile_flat_bag_all_distinct_local) then () else raise Fail "local theorem has hypotheses";
+val _ = (print "compile_flat_bag_all_distinct_local="; print_term (concl compile_flat_bag_all_distinct_local); print "\n");

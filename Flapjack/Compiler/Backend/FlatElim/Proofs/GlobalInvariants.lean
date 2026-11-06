@@ -65,9 +65,7 @@ expression carriers remain pending HOL correspondence review. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "remove_flat_prog_distinct_globals"]
 theorem removeFlatProg_distinctGlobals (declarations : List FlatLang.Exp)
     (distinct : Flapjack.bagAllDistinct (elistGlobals declarations)) :
-    Flapjack.bagAllDistinct (elistGlobals (removeFlatProgTotal declarations)) := by
-  intro key
-  have bound := removeFlatProg_subBag declarations key (elistGlobals (removeFlatProgTotal declarations) key) (Nat.le_refl _)
-  exact Nat.le_trans bound (distinct key)
+    Flapjack.bagAllDistinct (elistGlobals (removeFlatProgTotal declarations)) :=
+  Flapjack.bagAllDistinct_subBag _ _ ⟨removeFlatProg_subBag declarations, distinct⟩
 
 end Flapjack.Compiler.Backend.FlatElim

@@ -166,6 +166,13 @@ theorem compileFlat_subBag (cfg : FlatPattern.Config) (p : List FlatLang.Exp) :
     (elistGlobals (FlatElim.removeFlatProgTotal p) key) (Nat.le_refl _)
   exact Nat.le_trans bound (Nat.le_trans pattern elim)
 
+/-- Flat compilation preserves distinct global writes. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "compile_flat_BAG_ALL_DISTINCT"]
+theorem compileFlat_bagAllDistinct (cfg : FlatPattern.Config) (p : List FlatLang.Exp)
+    (distinct : Flapjack.bagAllDistinct (elistGlobals p)) :
+    Flapjack.bagAllDistinct (elistGlobals (compileFlatTotal cfg p)) :=
+  Flapjack.bagAllDistinct_subBag _ _ ⟨compileFlat_subBag cfg p, distinct⟩
+
 private theorem bindingRangeBag_distinct (start count : Nat) :
     ∀ key, bindingRangeBag start count key ≤ 1 := by
   have inj : Function.Injective (start + ·) := fun _ _ h => Nat.add_left_cancel h
@@ -189,17 +196,13 @@ theorem compile_globals_distinct (c : Config) (p : List Dec) :
   generalize hc : compileDecs [] 1 next c.modEnv envs p = result
   obtain ⟨n', next', env', envs', code⟩ := result
   simp only [hc] at body
-  intro key
-  have bound := compileFlat_subBag c.patternCfg (globAlloc next' c :: allocEnvRef :: code) key
-    (elistGlobals (compileFlatTotal c.patternCfg (globAlloc next' c :: allocEnvRef :: code)) key) (Nat.le_refl _)
-  change elistGlobals (compileFlatTotal c.patternCfg (globAlloc next' c :: allocEnvRef :: code)) key ≤
-    elistGlobals (globAlloc next' c :: allocEnvRef :: code) key at bound
   have program : (compileTotal c p).2 =
       compileFlatTotal c.patternCfg (globAlloc next' c :: allocEnvRef :: code) := by
     simp only [next, envs] at hc
     simp [compileTotal, compileProg, hc]
   rw [program]
-  apply Nat.le_trans bound
+  apply compileFlat_bagAllDistinct
+  intro key
   have distinct := bindingRangeBag_distinct next.vidx (numBindingsList p) key
   have zero := bindingRangeBag_below next.vidx (numBindingsList p) 0 (by simp [next])
   simp only [elistGlobals, globAlloc, allocEnvRef, setGlobals, opGlobalBag,

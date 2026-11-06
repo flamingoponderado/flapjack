@@ -24,6 +24,13 @@ def bagIn {α : Type} (e : α) (b : Bag α) : Prop := bagInn e 1 b
 @[hol "HOL/src/bag/bagScript.sml" "BAG_ALL_DISTINCT"]
 def bagAllDistinct {α : Type} (b : Bag α) : Prop := ∀ e, b e ≤ 1
 
+/-- A sub-bag of an all-distinct bag is all-distinct. -/
+@[hol "HOL/src/bag/bagScript.sml" "BAG_ALL_DISTINCT_SUB_BAG"]
+theorem bagAllDistinct_subBag {α : Type} (s t : Bag α)
+    (premises : subBag s t ∧ bagAllDistinct t) : bagAllDistinct s := by
+  intro e
+  exact Nat.le_trans (premises.1 e (s e) (Nat.le_refl _)) (premises.2 e)
+
 /-- The constant-zero bag. -/
 @[hol "HOL/src/bag/bagScript.sml" "EMPTY_BAG"]
 def emptyBag {α : Type} : Bag α := fun _ => 0
