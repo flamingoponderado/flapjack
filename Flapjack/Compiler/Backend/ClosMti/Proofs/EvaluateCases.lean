@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.ClosMti.Proofs.Applications
+import Mathlib.Data.List.Forall2
 import Flapjack.Compiler.Backend.Semantics.ClosProps.InstallConst
 import Flapjack.SemanticPrimitivesProps.ResultRelation
 
@@ -180,15 +181,6 @@ theorem forall₂_getElemRel {A B : Type} {rel : A → B → Prop} {left : List 
   induction related generalizing index with
   | nil => cases index <;> trivial
   | cons head tail ih => cases index <;> simp_all [optionRel]
-
-/-- Concatenating two pairs of related lists preserves their relation. -/
-theorem forall₂_append_lists {A B : Type} {rel : A → B → Prop}
-    {left leftTail : List A} {right rightTail : List B}
-    (first : List.Forall₂ rel left right) (second : List.Forall₂ rel leftTail rightTail) :
-    List.Forall₂ rel (left ++ leftTail) (right ++ rightTail) := by
-  induction first with
-  | nil => exact second
-  | cons head tail ih => exact .cons head ih
 
 /-- The variable case of the backward evaluation simulation. -/
 theorem evaluateRel_var {C F : Type} (sourceCode : List ClosLang.Exp)
@@ -498,7 +490,7 @@ theorem evaluateRel_letWithin {C F : Type} (limit : Nat) (trace : BackendCommon.
                 (sourceValues ++ sourceEnv) (targetValues ++ targetEnv) := by
               have values : List.Forall₂ (ValueRel sourceMiddle.maxApp) sourceValues targetValues := by
                 simpa [resultRel, maxEq] using bindingsRel
-              exact forall₂_append_lists values (by simpa [maxEq] using env)
+              exact List.rel_append values (by simpa [maxEq] using env)
             have bodyCode : CodeRel sourceMiddle.maxApp [body] [targetBody] := by
               simp [CodeRel, introList, bodyUnary, bodyEq, maxEq]
             have targetBodyRun : evaluate [targetBody] (targetValues ++ targetEnv) targetMiddle =

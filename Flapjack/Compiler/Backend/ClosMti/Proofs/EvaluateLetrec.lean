@@ -127,7 +127,7 @@ theorem evaluateRel_letrecWithin {C F : Type} (limit : Nat) (names : List Basis.
           (((List.range functions.length).map (fun i => Value.recclosure none [] sourceEnv functions i)) ++ sourceEnv)
           (((List.range (functions.map (introFun source.maxApp)).length).map
             (fun i => Value.recclosure none [] targetEnv (functions.map (introFun source.maxApp)) i)) ++ targetEnv) :=
-        forall₂_append_lists recursiveRel env
+        List.rel_append recursiveRel env
       have bodyCode : CodeRel source.maxApp [body] [targetBody] := by
         simp [CodeRel, introList, bodyUnary, bodyEq]
       have targetBodyRun : evaluate [targetBody]

@@ -145,7 +145,7 @@ theorem evaluateApp_recclosure_full_related {C F : Type} (source target : State 
   have proxy := evaluateApp_recclosure_full_eq target targetArgs targetSupplied targetEnv functions
     index arity targetBody targetNonempty targetBound selected targetSuppliedBound targetFull
   rw [proxy]
-  have combined := forall₂_append_lists recursiveRel envRel
+  have combined := List.rel_append recursiveRel envRel
   simpa [List.append_assoc] using
     evaluateApp_closure_full_related source target sourceArgs targetArgs sourceSupplied targetSupplied
       (recursive ++ sourceEnv)
@@ -209,7 +209,7 @@ theorem evaluateApp_recclosure_partial_related {C F : Type} (source target : Sta
   · have sourceClock : sourceArgs.length ≤ source.clock := by omega
     have sourceRun := evaluateApps_nestedFns_short sourceArgs names sourceBody
       (sourceSupplied ++ recursive ++ sourceEnv) source sourceClock partialCount (by omega)
-    have combined := forall₂_append_lists argsRel suppliedRel
+    have combined := List.rel_append argsRel suppliedRel
     have nextArity : 1 + (names.drop sourceArgs.length).length +
         (sourceArgs ++ sourceSupplied).length = arity := by
       simp [List.length_drop, List.length_append]

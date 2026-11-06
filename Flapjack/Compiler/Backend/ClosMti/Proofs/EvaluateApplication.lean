@@ -88,7 +88,7 @@ theorem evaluateApp_closure_partial {C F : Type} (source target : State C F)
       (sourceSupplied ++ sourceEnv) source sourceClock partialCount (by omega)
     have combined : List.Forall₂ (ValueRel source.maxApp)
         (sourceArgs ++ sourceSupplied) (targetArgs ++ targetSupplied) :=
-      forall₂_append_lists argsRel suppliedRel
+      List.rel_append argsRel suppliedRel
     have nextArity : 1 + (names.drop sourceArgs.length).length +
         (sourceArgs ++ sourceSupplied).length = arity := by
       simp [List.length_drop, List.length_append]
@@ -256,7 +256,7 @@ theorem evaluateApp_closure_exact_related_of_clock {C F : Type} (source target :
   have clocks : StateRel (decClock sourceArgs.length source) (decClock targetArgs.length target) := by
     have related := stateRel_withClock states (source.clock - sourceArgs.length)
     simpa [decClock, agreement.1, argsLength] using related
-  have environments := forall₂_append_lists argsRel (forall₂_append_lists suppliedRel envRel)
+  have environments := List.rel_append argsRel (List.rel_append suppliedRel envRel)
   rw [evaluateApps_nestedFns_exact source sourceArgs (sourceSupplied ++ sourceEnv) names sourceBody
     exactArgs clock (by omega),
     evaluateApp_closure_exact target targetArgs targetSupplied targetEnv arity targetBody
@@ -412,7 +412,7 @@ theorem evaluateApp_closure_full_related {C F : Type} (source target : State C F
     have reversed := (List.forall₂_reverse_iff).2 argsRel
     have consumed := (List.forall₂_reverse_iff).2 (List.forall₂_take (1 + names.length) reversed)
     have remaining := (List.forall₂_reverse_iff).2 (List.forall₂_drop (1 + names.length) reversed)
-    have environments := forall₂_append_lists consumed (forall₂_append_lists suppliedRel envRel)
+    have environments := List.rel_append consumed (List.rel_append suppliedRel envRel)
     rw [evaluateApps_nestedFns_long sourceArgs names sourceBody (sourceSupplied ++ sourceEnv) source
       (by omega) full (by omega),
       evaluateApp_closure_full target targetArgs targetSupplied targetEnv arity targetBody

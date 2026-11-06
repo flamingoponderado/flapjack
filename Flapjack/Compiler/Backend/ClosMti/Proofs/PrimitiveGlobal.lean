@@ -42,7 +42,7 @@ theorem stateRel_allocGlobals {C F : Type} {source target : State C F}
     induction count with
     | zero => exact .nil
     | succ n ih => exact .cons trivial ih
-  exact stateRel_withGlobals related _ _ (forall₂_append_lists related.2.2.2.2.2.2.2.1 blanks)
+  exact stateRel_withGlobals related _ _ (List.rel_append related.2.2.2.2.2.2.2.1 blanks)
 
 /-- Global reads preserve missing slots and relate initialized values. -/
 theorem primitiveSimulation_global_read {C F : Type} (index : Nat) :
