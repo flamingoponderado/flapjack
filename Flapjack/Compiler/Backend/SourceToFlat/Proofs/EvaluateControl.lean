@@ -85,12 +85,15 @@ theorem exprSim_function {C F : Type} (genv : GlobalEnv) (compMap : Environment)
     (name : VarN) (body : AstHOL.Exp) :
     ExprSim genv { compMap with v := bindLocals traces (flatEnv.v.map Prod.fst) compMap.v } trace
       { globalEnv with v := nsAppend sourceLocal globalEnv.v } flatEnv sourceState flatState (.fn name body) := by
-  obtain ⟨sourceRun, flatRun, related, nextRel⟩ :=
-    evaluate_function_unbounded genv compMap globalEnv sourceLocal flatEnv localRel globalInv traces length
-      sourceState flatState statesRel trace name body
-  unfold ExprSim
-  rw [sourceRun, flatRun]
-  exact ⟨.value (.cons related .nil), nextRel⟩
+  have related := ValueRel.closure genv compMap globalEnv sourceLocal name body flatEnv trace (.none :: traces)
+    localRel globalInv (by simpa using length)
+  have closureRel : ValueRel genv (.closure { globalEnv with v := nsAppend sourceLocal globalEnv.v } name body)
+      (.closure flatEnv name (compileExp trace
+        { compMap with v := (nsBind name (VarName.localName .none name)
+          (bindLocals traces (flatEnv.v.map Prod.fst) compMap.v)) } body)) := by
+    simpa [bindLocals, nsBindList] using related
+  simp only [ExprSim, EvaluateHOL.evaluate, compileExp, FlatSem.evaluate]
+  exact ⟨.value (.cons closureRel .nil), statesRel⟩
 
 /-- Tuple construction is simulated when the reversed argument list is
 simulated. Values are restored to source order after evaluation. -/
