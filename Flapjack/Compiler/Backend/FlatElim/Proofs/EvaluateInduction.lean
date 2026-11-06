@@ -443,7 +443,7 @@ theorem evaluate_selectedRow_bounded {C F : Type} (rows : List (FlatLang.Pat × 
       flatStateRel reachable next targetNext ∧ globalsWithin (findPrimitiveResultGlobals result) reachable ∧
       valuesNoEval (Flapjack.Compiler.Backend.FlatProps.resultValues result) := by
   obtain ⟨pattern, matched⟩ := selectRow_success source rows value noMatch bindings body selected
-  have member := pmatchRows_selected_mem rows source value bindings pattern body matched
+  have member := (FlatProps.pmatchRows_imp_pmatch rows source value bindings pattern body matched).2
   have invariants := selectRow_invariants reachable source rows value noMatch bindings body selected
     rowsClosed rowsSafe valueClosed valueSafe related.2.2.2.2.1 related.2.2.2.2.2
   exact rowIH pattern body member { env with v := bindings ++ env.v } source stateBound next result reachable target run

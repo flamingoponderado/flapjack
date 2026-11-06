@@ -315,7 +315,7 @@ theorem selectRow_invariants {C F : Type} (reachable : NumSet) (state : FlatSem.
     globalsWithin (findLookups body) reachable ∧ hasEval body = false ∧
       bindingsWithin bindings reachable ∧ bindingsNoEval bindings := by
   obtain ⟨pattern, matched⟩ := selectRow_success state rows value noMatch bindings body selected
-  have member := pmatchRows_selected_mem rows state value bindings pattern body matched
+  have member := (FlatProps.pmatchRows_imp_pmatch rows state value bindings pattern body matched).2
   have bindingInvariants := pmatchRows_selected_invariants rows state value bindings pattern body reachable
     matched valueSafe refsSafe valueClosed refsClosed
   refine ⟨?_, hasEvalPats_member rows pattern body member rowsSafe, bindingInvariants.2, bindingInvariants.1⟩
@@ -358,7 +358,7 @@ theorem evaluate_selectedRow {C F : Type} (rows : List (FlatLang.Pat × FlatLang
       flatStateRel reachable next targetNext ∧ globalsWithin (findPrimitiveResultGlobals result) reachable ∧
       valuesNoEval (Flapjack.Compiler.Backend.FlatProps.resultValues result) := by
   obtain ⟨pattern, matched⟩ := selectRow_success source rows value noMatch bindings body selected
-  have member := pmatchRows_selected_mem rows source value bindings pattern body matched
+  have member := (FlatProps.pmatchRows_imp_pmatch rows source value bindings pattern body matched).2
   have invariants := selectRow_invariants reachable source rows value noMatch bindings body selected
     rowsClosed rowsSafe valueClosed valueSafe related.2.2.2.2.1 related.2.2.2.2.2
   exact rowIH pattern body member { env with v := bindings ++ env.v } source next result reachable target run

@@ -272,14 +272,6 @@ theorem esgcFree_compilePatBindings (trace : Tra) (base : Nat)
           simp only [run] at ih
           simp [compilePatBindings, run, esgcFree, esgcFreeList, valueSafe, ih]
 
-private theorem unionEmptyLeft (b : GlobalBag) : unionGlobalBag emptyGlobalBag b = b := by
-  funext k
-  simp [unionGlobalBag, emptyGlobalBag]
-
-private theorem unionEmptyRight (b : GlobalBag) : unionGlobalBag b emptyGlobalBag = b := by
-  funext k
-  simp [unionGlobalBag, emptyGlobalBag]
-
 private theorem setGlobals_mkBool (t : Tra) (b : Bool) :
     setGlobals (mkBool t b) = emptyGlobalBag := by
   simp [mkBool, setGlobals, elistGlobals]
@@ -288,13 +280,13 @@ private theorem setGlobals_smartIf (t : Tra) (c x y : FlatLang.Exp)
     (hc : setGlobals c = emptyGlobalBag) (hx : setGlobals x = emptyGlobalBag)
     (hy : setGlobals y = emptyGlobalBag) :
     setGlobals (smartIf t c x y) = emptyGlobalBag := by
-  cases c <;> simp_all [smartIf, setGlobals, unionEmptyRight]
+  cases c <;> simp_all [smartIf, setGlobals, FlatProps.unionGlobalBag_empty_right]
   case con t tag args =>
-    cases tag <;> cases args <;> try simp_all [setGlobals, unionEmptyRight]
+    cases tag <;> cases args <;> try simp_all [setGlobals, FlatProps.unionGlobalBag_empty_right]
     case some.nil pair =>
       obtain ⟨tag, typ⟩ := pair
-      cases typ <;> try simp_all [setGlobals, unionEmptyRight]
-      all_goals split_ifs <;> simp_all [setGlobals, unionEmptyRight]
+      cases typ <;> try simp_all [setGlobals, FlatProps.unionGlobalBag_empty_right]
+      all_goals split_ifs <;> simp_all [setGlobals, FlatProps.unionGlobalBag_empty_right]
 
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "set_globals_decode_pos"]
 theorem setGlobals_decodePos (t : Tra) (p : Position) (exp : FlatLang.Exp)
@@ -303,12 +295,12 @@ theorem setGlobals_decodePos (t : Tra) (p : Position) (exp : FlatLang.Exp)
   | emptyPos => exact safe
   | pos index rest ih =>
     apply ih
-    simp [setGlobals, elistGlobals, opGlobalBag, safe, unionEmptyRight]
+    simp [setGlobals, elistGlobals, opGlobalBag, safe, FlatProps.unionGlobalBag_empty_right]
 
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "set_globals_decode_test"]
 theorem setGlobals_decodeTest (t : Tra) (d : DTest) (exp : FlatLang.Exp)
     (safe : setGlobals exp = emptyGlobalBag) : setGlobals (decodeTest t d exp) = emptyGlobalBag := by
-  cases d <;> simp [decodeTest, setGlobals, elistGlobals, opGlobalBag, safe, unionEmptyRight]
+  cases d <;> simp [decodeTest, setGlobals, elistGlobals, opGlobalBag, safe, FlatProps.unionGlobalBag_empty_right]
 
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "set_globals_decode_guard"]
 theorem setGlobals_decodeGuard (t : Tra) (exp : FlatLang.Exp) (gd : DGuard)
@@ -316,7 +308,7 @@ theorem setGlobals_decodeGuard (t : Tra) (exp : FlatLang.Exp) (gd : DGuard)
   induction gd with
   | true_ => exact setGlobals_mkBool t true
   | posTest pos test => exact setGlobals_decodeTest t test _ (setGlobals_decodePos t pos exp safe)
-  | not gd ih => simp [decodeGuard, setGlobals, elistGlobals, opGlobalBag, ih, setGlobals_mkBool, unionEmptyRight]
+  | not gd ih => simp [decodeGuard, setGlobals, elistGlobals, opGlobalBag, ih, setGlobals_mkBool, FlatProps.unionGlobalBag_empty_right]
   | conj a b ihA ihB => exact setGlobals_smartIf t _ _ _ ihA ihB (setGlobals_mkBool t false)
   | disj a b ihA ihB => exact setGlobals_smartIf t _ _ _ ihA (setGlobals_mkBool t true) ihB
 
@@ -328,7 +320,7 @@ theorem setGlobals_children (trace : Tra) (value : FlatLang.Exp) (patterns : Lis
   intro pattern expression member
   obtain ⟨i, _, eq⟩ := List.mem_mapIdx.mp member
   obtain ⟨_, rfl⟩ := Prod.mk.inj eq
-  simpa [setGlobals, elistGlobals, opGlobalBag, unionEmptyLeft, unionEmptyRight] using safe
+  simpa [setGlobals, elistGlobals, opGlobalBag, FlatProps.unionGlobalBag_empty_left, FlatProps.unionGlobalBag_empty_right] using safe
 
 /-- Naive matching generates a global-initialization-safe guard when each worklist value is
 global-initialization-safe. -/
@@ -349,7 +341,7 @@ theorem setGlobals_naivePatternMatch_aux (trace : Tra) (todo : List (FlatLang.Pa
       exact safe pattern expression (by simp [member])
     simp only [naivePatternMatch]
     apply setGlobals_smartIf
-    · simp [setGlobals, elistGlobals, opGlobalBag, valueSafe, unionEmptyRight]
+    · simp [setGlobals, elistGlobals, opGlobalBag, valueSafe, FlatProps.unionGlobalBag_empty_right]
     · exact ih restSafe
     · exact setGlobals_mkBool trace false
   | case5 value rest patterns ih =>
@@ -364,7 +356,7 @@ theorem setGlobals_naivePatternMatch_aux (trace : Tra) (todo : List (FlatLang.Pa
     have valueSafe := safe (.pcon (some (tag, typ)) patterns) value (by simp)
     simp only [naivePatternMatch]
     apply setGlobals_smartIf
-    · simp [setGlobals, elistGlobals, opGlobalBag, valueSafe, unionEmptyRight]
+    · simp [setGlobals, elistGlobals, opGlobalBag, valueSafe, FlatProps.unionGlobalBag_empty_right]
     · apply ih
       intro pattern expression member
       rcases List.mem_append.mp member with member | member
@@ -386,7 +378,7 @@ theorem setGlobals_naivePatternMatch_aux (trace : Tra) (todo : List (FlatLang.Pa
     intro pattern' expression member
     simp only [List.mem_cons, Prod.mk.injEq] at member
     rcases member with ⟨_, rfl⟩ | member
-    · simpa [setGlobals, elistGlobals, opGlobalBag, unionEmptyLeft, unionEmptyRight] using valueSafe
+    · simpa [setGlobals, elistGlobals, opGlobalBag, FlatProps.unionGlobalBag_empty_left, FlatProps.unionGlobalBag_empty_right] using valueSafe
     · exact safe pattern' expression (by simp [member])
 
 
@@ -454,7 +446,7 @@ private theorem setGlobals_projectionFold (trace : Tra) (value body : FlatLang.E
   | nil => rfl
   | cons entry rest ih =>
     obtain ⟨⟨index, name⟩, work⟩ := entry
-    simp [setGlobals, elistGlobals, opGlobalBag, valueSafe, ih, unionEmptyLeft, unionEmptyRight]
+    simp [setGlobals, elistGlobals, opGlobalBag, valueSafe, ih, FlatProps.unionGlobalBag_empty_left, FlatProps.unionGlobalBag_empty_right]
 
 /-- Pattern binding preserves the global bag when worklist values have empty bags. -/
 theorem setGlobals_compilePatBindings_aux (trace : Tra) (base : Nat)
@@ -488,7 +480,7 @@ theorem setGlobals_compilePatBindings_aux (trace : Tra) (base : Nat)
         cases run : compilePatBindings trace base rest body with
         | mk used result =>
           simp only [run] at ih
-          simp [compilePatBindings, run, setGlobals, valueSafe, ih, unionEmptyLeft]
+          simp [compilePatBindings, run, setGlobals, valueSafe, ih, FlatProps.unionGlobalBag_empty_left]
       | pcon tag patterns =>
         have allSafe : ∀ p k e, (p, k, e) ∈ (patternEntries trace base 0 patterns).map Prod.snd ++ rest →
             setGlobals e = emptyGlobalBag := by
@@ -519,7 +511,7 @@ theorem setGlobals_compilePatBindings_aux (trace : Tra) (base : Nat)
             ((pattern, base + 1, .varLocal trace (encNumToName (base + 1))) :: rest) body with
         | mk used result =>
           simp only [run] at ih
-          simp [compilePatBindings, run, setGlobals, valueSafe, ih, unionEmptyLeft]
+          simp [compilePatBindings, run, setGlobals, valueSafe, ih, FlatProps.unionGlobalBag_empty_left]
       | pref pattern =>
         have allSafe : ∀ p k e, (p, k, e) ∈
             (pattern, base + 1, .varLocal trace (encNumToName (base + 1))) :: rest →
@@ -535,7 +527,7 @@ theorem setGlobals_compilePatBindings_aux (trace : Tra) (base : Nat)
             ((pattern, base + 1, .varLocal trace (encNumToName (base + 1))) :: rest) body with
         | mk used result =>
           simp only [run] at ih
-          simp [compilePatBindings, run, setGlobals, elistGlobals, opGlobalBag, elistGlobals, valueSafe, ih, unionEmptyLeft, unionEmptyRight]
+          simp [compilePatBindings, run, setGlobals, elistGlobals, opGlobalBag, elistGlobals, valueSafe, ih, FlatProps.unionGlobalBag_empty_left, FlatProps.unionGlobalBag_empty_right]
 
 /-- Pattern binding leaves the continuation's global bag unchanged. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "set_globals_compile_pat_bindings"]

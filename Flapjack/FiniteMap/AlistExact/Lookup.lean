@@ -18,7 +18,8 @@ noncomputable def holALookup {K V : Type} (entries : List (K × V)) (key : K) : 
 
 /-- Core association-list lookup succeeds exactly at a listed key. This
 Flapjack helper connects native lookup with key-domain reasoning used in the
-HOL proofs; it is not a port of a theorem about HOL ALOOKUP. -/
+HOL proofs; it is not a port of a theorem about HOL ALOOKUP. Native lookup
+uses the BEq instance derived from the stated DecidableEq instance. -/
 theorem lookup_exists_iff_mem_keys {K V : Type} [DecidableEq K]
     (entries : List (K × V)) (key : K) :
     (∃ value, entries.lookup key = some value) ↔ key ∈ entries.map Prod.fst := by

@@ -102,6 +102,9 @@ simple_store_lookup=simple_state_rel (vr :v -> v -> bool) (sr :(α, β) state ->
 simple_list_to_value=simple_val_rel (vr :v -> v -> bool) ⇒ ∀(x :v list) (y :v list). LIST_REL vr x y ⇒ vr (list_to_v x) (list_to_v y)
 simple_values_to_string=simple_val_rel (vr :v -> v -> bool) ⇒ ∀(vs :v list) (ws :v list) (str :mlstring). LIST_REL vr vs ws ∧ vs_to_string vs = SOME str ⇒ vs_to_string ws = SOME str
 elist_globals_append=elist_globals ((xs :exp list) ++ (ys :exp list)) = elist_globals xs ⊎ elist_globals ys
+bag_empty_def=({||} :α -> num) = (K (0 :num) :α -> num)
+bag_union_def=∀(b :α -> num) (c :α -> num). b ⊎ c = (λ(x :α). b x + c x)
+bag_union_empty=(∀(b :α -> num). b ⊎ ({||} :α -> num) = b) ∧ (∀(b :β -> num). ({||} :β -> num) ⊎ b = b) ∧ ∀(b1 :γ -> num) (b2 :γ -> num). b1 ⊎ b2 = ({||} :γ -> num) ⇔ b1 = ({||} :γ -> num) ∧ b2 = ({||} :γ -> num)
 basic_nonclosure=simple_basic_val_rel (x :v) (y :v) ⇒ ¬isClosure x ∧ ¬isClosure y
 simple_value_relation=simple_val_rel v_rel
 simple_state_relation=simple_state_rel v_rel (state_rel (cfg :config) :(α, β) state -> (α, β) state -> bool)

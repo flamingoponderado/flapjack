@@ -73,14 +73,6 @@ theorem setGlobals_makeVarls (n : Nat) (t : Tra) (idx : Nat) (xs : List VarN) :
       funext key
       simp [unionGlobalBag, emptyGlobalBag]
 
-private theorem unionEmptyL (bag : GlobalBag) : unionGlobalBag emptyGlobalBag bag = bag := by
-  funext key
-  simp [unionGlobalBag, emptyGlobalBag]
-
-private theorem unionEmptyR (bag : GlobalBag) : unionGlobalBag bag emptyGlobalBag = bag := by
-  funext key
-  simp [unionGlobalBag, emptyGlobalBag]
-
 /-- Declaration output writes precisely the consecutive allocated global slots. -/
 theorem compileDecs_globals (t : List MlString) (n : Nat) (next : NextIndices)
     (env : Environment) (envs : EnvironmentGenerationStore) :
@@ -99,14 +91,14 @@ theorem compileDecs_globals (t : List MlString) (n : Nat) (next : NextIndices)
       | none =>
         have he := compileExp_globalSafe ((patBindings p).reverse ++ t) env e
         simp [compileDecs, h, numBindingsList, numBindings, elistGlobals, setGlobals,
-          rowGlobals, setGlobals_makeVarls, he.2, unionEmptyL, unionEmptyR]
+          rowGlobals, setGlobals_makeVarls, he.2, FlatProps.unionGlobalBag_empty_left, FlatProps.unionGlobalBag_empty_right]
     | dletrec loc funs =>
       let names := funs.map Prod.fst
       let newEnv := NamespaceHOL.nsBindList (names.map fun x => (x, VarName.localName .none x)) env.v
       have hf := compileFuns_globalSafe t { env with v := newEnv } funs
       simp only [newEnv, names, List.map_map] at hf
       simp [compileDecs, numBindingsList, numBindings, elistGlobals, setGlobals,
-        setGlobals_makeVarls, hf.2, unionEmptyR]
+        setGlobals_makeVarls, hf.2, FlatProps.unionGlobalBag_empty_right]
     | dtype loc types => simp [compileDecs, numBindingsList, numBindings, elistGlobals, bindingRangeBag_zero]
     | dtabbrev loc vars name typ => simp [compileDecs, numBindingsList, numBindings, elistGlobals, bindingRangeBag_zero]
     | dexn loc name types => simp [compileDecs, numBindingsList, numBindings, elistGlobals, bindingRangeBag_zero]
@@ -130,7 +122,7 @@ theorem compileDecs_globals (t : List MlString) (n : Nat) (next : NextIndices)
       rw [hlocal, hbody, hcount, bindingRangeBag_add]
     | denv name =>
       simp [compileDecs, numBindingsList, numBindings, elistGlobals, setGlobals, opGlobalBag,
-        envIdTuple, bindingRangeBag_succ, bindingRangeBag_zero, unionEmptyL, unionEmptyR]
+        envIdTuple, bindingRangeBag_succ, bindingRangeBag_zero, FlatProps.unionGlobalBag_empty_left, FlatProps.unionGlobalBag_empty_right]
   | d :: d2 :: ds => by
     have hfirst := compileDecs_globals t n next env envs [d]
     have hcount := compileDecs_bindingCount t n next env envs [d]

@@ -12,10 +12,6 @@ open Flapjack.Compiler.Backend.FlatProps (GlobalBag emptyGlobalBag unionGlobalBa
 def shiftGlobalBag (bag : GlobalBag) : GlobalBag :=
   fun key => if key = 0 then 0 else bag (key - 1)
 
-private theorem unionEmptyR (bag : GlobalBag) : unionGlobalBag bag emptyGlobalBag = bag := by
-  funext key
-  simp [unionGlobalBag, emptyGlobalBag]
-
 private theorem shiftEmpty : shiftGlobalBag emptyGlobalBag = emptyGlobalBag := by
   funext key
   simp [shiftGlobalBag, emptyGlobalBag]
@@ -74,7 +70,7 @@ theorem compileExp_globals (m : List (Option MlString)) (exp : FlatLang.Exp) :
     all_goals simp [FlatProps.noMat, FlatProps.noMatList] at safe
     all_goals rw [compileExp.eq_def]; dsimp only; rw [found]
     all_goals simpa [FlatProps.setGlobals, FlatProps.elistGlobals, FlatProps.opGlobalBag,
-      unionEmptyR] using ih safe
+      FlatProps.unionGlobalBag_empty_right] using ih safe
   | case6 m t op es found ih =>
     intro safe
     have hs := ih (by simpa [FlatProps.noMat] using safe)

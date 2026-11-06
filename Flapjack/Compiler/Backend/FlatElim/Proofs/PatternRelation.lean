@@ -84,32 +84,6 @@ theorem flatStateRel_pmatchRows {C F : Type} (reachable : NumSet)
     obtain ⟨pattern, expr⟩ := row
     simp only [FlatSem.pmatchRows, (flatStateRel_pmatch reachable removed).1 source pattern value [] related, ih]
 
-/-- A selected match row belongs to the original row list. -/
-theorem pmatchRows_selected_mem {C F : Type} (rows : List (FlatLang.Pat × FlatLang.Exp))
-    (state : FlatSem.State C F) (value : FlatSem.Value) (bindings : List (VarN × FlatSem.Value))
-    (pattern : FlatLang.Pat) (body : FlatLang.Exp)
-    (selected : FlatSem.pmatchRows rows state value = .match (bindings, pattern, body)) :
-    (pattern, body) ∈ rows := by
-  induction rows with
-  | nil => simp [FlatSem.pmatchRows] at selected
-  | cons row rest ih =>
-    obtain ⟨p, e⟩ := row
-    cases found : FlatSem.pmatch state p value [] with
-    | typeError => simp [FlatSem.pmatchRows, found] at selected
-    | noMatch =>
-      exact List.mem_cons_of_mem _ (ih (by simpa [FlatSem.pmatchRows, found] using selected))
-    | «match» first =>
-      cases tail : FlatSem.pmatchRows rest state value with
-      | typeError => simp [FlatSem.pmatchRows, found, tail] at selected
-      | noMatch =>
-        simp [FlatSem.pmatchRows, found, tail] at selected
-        rcases selected with ⟨_, rfl, rfl⟩
-        simp
-      | «match» tailResult =>
-        simp [FlatSem.pmatchRows, found, tail] at selected
-        rcases selected with ⟨_, rfl, rfl⟩
-        simp
-
 /-- A member expression's global lookups occur in the list analysis. -/
 theorem findLookupsList_member (body : FlatLang.Exp) (bodies : List FlatLang.Exp)
     (member : body ∈ bodies) (key : Nat) (found : sptMem key (findLookups body)) :
@@ -135,7 +109,7 @@ theorem pmatchRows_findLookups {C F R : Type} (rows : List (FlatLang.Pat × Flat
   intro key found
   apply bounded key
   apply findLookupsList_member body _ _ key found
-  exact List.mem_map.mpr ⟨(pattern, body), pmatchRows_selected_mem rows state value bindings pattern body selected, rfl⟩
+  exact List.mem_map.mpr ⟨(pattern, body), (FlatProps.pmatchRows_imp_pmatch rows state value bindings pattern body selected).2, rfl⟩
 
 /-- A reference value contributes its globals to the store analysis. -/
 theorem findRefsGlobals_ref_mem (refs : List (StoreValue FlatSem.Value))

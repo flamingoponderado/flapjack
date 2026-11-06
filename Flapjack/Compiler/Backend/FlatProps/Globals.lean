@@ -1,16 +1,25 @@
+import Flapjack.Misc.Bag
 import Flapjack.Compiler.Backend.FlatLang
 
 /-! Global-initialization bags and closure-freedom for flat expressions. -/
 namespace Flapjack.Compiler.Backend.FlatProps
 
-/-- HOL bags are functions from elements to natural-number multiplicities. -/
-abbrev GlobalBag := Nat → Nat
+/-- Global bags are HOL bags indexed by natural numbers. -/
+abbrev GlobalBag := Flapjack.Bag Nat
 
-/-- The empty global bag. -/
+/-- The empty global bag, definitionally the natural-indexed `emptyBag`. -/
 def emptyGlobalBag : GlobalBag := fun _ => 0
 
-/-- Pointwise union of global bags. -/
+/-- Pointwise union, definitionally the natural-indexed `bagUnion`. -/
 def unionGlobalBag (left right : GlobalBag) : GlobalBag := fun key => left key + right key
+
+/-- The generic bag left identity at the global-bag carrier. -/
+theorem unionGlobalBag_empty_left (bag : GlobalBag) : unionGlobalBag emptyGlobalBag bag = bag :=
+  Flapjack.bagUnion_empty_left bag
+
+/-- The generic bag right identity at the global-bag carrier. -/
+theorem unionGlobalBag_empty_right (bag : GlobalBag) : unionGlobalBag bag emptyGlobalBag = bag :=
+  Flapjack.bagUnion_empty_right bag
 
 /-- A global-initialization operator contributes its destination once. -/
 @[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "op_gbag_def"]
@@ -114,7 +123,8 @@ def esgcFreeRows : List (FlatLang.Pat × FlatLang.Exp) → Prop
 termination_by rows => sizeOf rows
 end
 
-/-- The list traversal renders HOL's EVERY predicate over global-safety checks. -/
+/-- Flapjack infrastructure: the list traversal renders HOL's EVERY predicate
+over global-safety checks. This correspondence has no separate HOL declaration. -/
 theorem esgcFreeList_iff (xs : List FlatLang.Exp) :
     esgcFreeList xs ↔ ∀ x ∈ xs, esgcFree x := by
   induction xs with

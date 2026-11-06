@@ -14216,7 +14216,7 @@
     "lean_path": "Flapjack/Compiler/Backend/FlatProps/Globals.lean",
     "lean_name": "opGlobalBag",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared every flat operator clause with the typed global_bag_operator capture. The hypothesis-free singleton_global_bag HOL replay unfolds BAG_INSERT and EMPTY_BAG to the exact Nat-to-Nat singleton function used in Lean; other cases are the zero function. HOL bag is a function to num and Nat equality is HOL num equality, so no representation qualifier is needed."
+    "reviewer": "Compared every flat operator clause with the typed global_bag_operator capture. The hypothesis-free singleton_global_bag HOL replay unfolds BAG_INSERT and EMPTY_BAG to the exact Nat-to-Nat singleton function used in Lean; other cases are the zero function. HOL bag is a function to num and Nat equality is HOL num equality, so no representation qualifier is needed. emptyGlobalBag is definitionally the Nat instance of the tagged polymorphic emptyBag."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
@@ -14224,7 +14224,7 @@
     "lean_path": "Flapjack/Compiler/Backend/FlatProps/Globals.lean",
     "lean_name": "setGlobals",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared every clause with the typed global_bag_expressions capture and the reviewed FlatLang.Exp carrier. The rowGlobals_eq_elistGlobals and funGlobals_eq_elistGlobals theorems establish the mapped-list traversals used by Handle, Mat and Letrec. HOL bags are num -> num; emptyGlobalBag is EMPTY_BAG and unionGlobalBag is BAG_UNION pointwise addition."
+    "reviewer": "Compared every clause with the typed global_bag_expressions capture and the reviewed FlatLang.Exp carrier. The rowGlobals_eq_elistGlobals and funGlobals_eq_elistGlobals theorems establish the mapped-list traversals used by Handle, Mat and Letrec. HOL bags are num -> num; emptyGlobalBag and unionGlobalBag are definitionally the Nat instances of the tagged polymorphic emptyBag (EMPTY_BAG) and bagUnion (BAG_UNION)."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
@@ -14232,7 +14232,7 @@
     "lean_path": "Flapjack/Compiler/Backend/FlatProps/Globals.lean",
     "lean_name": "elistGlobals",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared the empty and cons clauses with the typed global_bag_expressions capture and the reviewed FlatLang.Exp carrier. HOL bags are num -> num; emptyGlobalBag is EMPTY_BAG and unionGlobalBag is BAG_UNION pointwise addition."
+    "reviewer": "Compared the empty and cons clauses with the typed global_bag_expressions capture and the reviewed FlatLang.Exp carrier. HOL bags are num -> num; emptyGlobalBag and unionGlobalBag are definitionally the Nat instances of the tagged polymorphic emptyBag (EMPTY_BAG) and bagUnion (BAG_UNION)."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
@@ -125319,7 +125319,7 @@
   "lean_path": "Flapjack/Compiler/Backend/FlatProps/Globals.lean",
   "lean_name": "elistGlobals_append",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared the HOL source and typed elist_globals_append capture: both expression lists and the equality for their concatenated global bags are retained without premises. The reviewed GlobalBag is HOL's num-to-num bag, with unionGlobalBag implementing BAG_UNION pointwise."
+  "reviewer": "Compared the HOL source and typed elist_globals_append capture: both expression lists and the equality for their concatenated global bags are retained without premises. The reviewed GlobalBag is HOL's num-to-num bag; unionGlobalBag is definitionally the Nat instance of the tagged polymorphic bagUnion (BAG_UNION)."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
@@ -125344,5 +125344,37 @@
   "lean_name": "pmatchRows_imp_pmatch",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared the source and typed flat_selected_pattern_match capture: the row-body payload, compiler state and FFI state types remain independent. The single successful row-scan premise yields both original conclusions: matching the selected pattern from empty bindings and membership of the selected pattern/body pair in the original rows."
+},
+{
+  "hol_path": "HOL/src/bag/bagScript.sml",
+  "hol_name": "EMPTY_BAG",
+  "lean_path": "Flapjack/Misc/Bag.lean",
+  "lean_name": "emptyBag",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source and typed bag_empty_def capture: HOL bags are polymorphic functions to num and K 0 is the constant-zero function."
+},
+{
+  "hol_path": "HOL/src/bag/bagScript.sml",
+  "hol_name": "BAG_UNION",
+  "lean_path": "Flapjack/Misc/Bag.lean",
+  "lean_name": "bagUnion",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source and typed bag_union_def capture: both operands have the same arbitrary element type and union adds natural multiplicities pointwise."
+},
+{
+  "hol_path": "HOL/src/bag/bagScript.sml",
+  "hol_name": "BAG_UNION_EMPTY",
+  "lean_path": "Flapjack/Misc/Bag.lean",
+  "lean_name": "bagUnion_empty",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared all three source conjuncts and typed bag_union_empty capture: right and left identities and the empty-union equivalence are retained, with independent element types alpha, beta and gamma across conjuncts."
+},
+{
+  "hol_path": "HOL/src/bag/bagScript.sml",
+  "hol_name": "bag",
+  "lean_path": "Flapjack/Misc/Bag.lean",
+  "lean_name": "Bag",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared HOL Type bag = 'a -> num with the Lean abbreviation alpha -> Nat; the typed bag operation captures confirm the same polymorphic function carrier."
 }
 ]
