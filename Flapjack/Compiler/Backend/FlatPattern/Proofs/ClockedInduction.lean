@@ -203,18 +203,6 @@ theorem compileExps_evaluate {C F : Type} (stateCfg : Config) :
       evaluateDecs_simulation cfg stateCfg decs
         (fun declaration _ => expressionSimulation_all cfg stateCfg declaration)
         s1 s2 t1 res states run safe
-    have converted : optionRel (SemanticPrimitivesProps.excRel ValueRel) res res' := by
-      cases res with
-      | none =>
-        cases res' <;> simp_all [optionRel]
-      | some left =>
-        cases res' with
-        | none => simp_all [optionRel]
-        | some right =>
-          simp only [optionRel] at outcomes ⊢
-          cases outcomes with
-          | raise rel => exact rel
-          | abort _ => rfl
-    exact ⟨t2, res', targetRun, converted, finalStates⟩
+    exact ⟨t2, res', targetRun, outcomes, finalStates⟩
 
 end Flapjack.Compiler.Backend.FlatPattern
