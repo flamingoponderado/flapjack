@@ -34,13 +34,15 @@ private theorem labelsBound_append {s0 s1 s2 : State} {xs ys : List Nat}
     · exact Or.inr ⟨loc, List.mem_append_left _ inX, eq⟩
   · exact Or.inr ⟨loc, List.mem_append_right _ inY, eq⟩
 
-private theorem codeLocations_map_snd (fns : List (Nat × Exp)) :
+/-- Flapjack bookkeeping for locating function bodies; no separate HOL theorem. -/
+theorem codeLocations_map_snd (fns : List (Nat × Exp)) :
     codeLocations (fns.map Prod.snd) = codeLocationsFuns fns := by
   induction fns with
   | nil => rfl
   | cons fn fns ih => cases fn; simp [codeLocations, codeLocationsFuns, ih]
 
-private theorem codeList_bound (loc : Nat) (fns : List (Nat × Exp)) (state : State) :
+/-- Flapjack bookkeeping for labels emitted by code lists; no separate HOL theorem. -/
+theorem codeList_bound (loc : Nat) (fns : List (Nat × Exp)) (state : State) :
     LabelsBound state (codeList loc fns state)
       ((List.range fns.length).map (fun i => loc + 2 * i)) := by
   intro label member

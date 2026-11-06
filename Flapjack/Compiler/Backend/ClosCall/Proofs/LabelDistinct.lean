@@ -46,24 +46,6 @@ private theorem bound_sequence {xs ys : List Nat} {s0 s1 s2 : State}
     · exact Or.inr ⟨loc, List.mem_append_left _ inX, eq⟩
   · exact Or.inr ⟨loc, List.mem_append_right _ inY, eq⟩
 
-private theorem codeLocations_map_snd (fns : List (Nat × Exp)) :
-    codeLocations (fns.map Prod.snd) = codeLocationsFuns fns := by
-  induction fns with
-  | nil => rfl
-  | cons fn fns ih => cases fn; simp [codeLocations, codeLocationsFuns, ih]
-
-private theorem codeList_bound (loc : Nat) (fns : List (Nat × Exp)) (state : State) :
-    LabelsBound state (codeList loc fns state)
-      ((List.range fns.length).map (fun i => loc + 2 * i)) := by
-  intro label member
-  rw [codeList_labels] at member
-  simp only [List.mem_append, List.mem_reverse, List.mem_map, List.mem_range] at member ⊢
-  rcases member with ⟨i, bound, rfl⟩ | old
-  · right
-    refine ⟨loc + 2 * i, ⟨i, bound, rfl⟩, ?_⟩
-    omega
-  · exact Or.inl old
-
 mutual
 /-- A successful traversal preserves distinct emitted labels when its input
 closure locations are distinct and their successors are fresh. This theorem
