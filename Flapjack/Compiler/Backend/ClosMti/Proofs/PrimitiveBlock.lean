@@ -359,12 +359,4 @@ theorem primitiveSimulation_block {C F : Type} (op : ClosLang.BlockOp) :
   | equalConst constant => exact primitiveSimulation_block_equalConst constant
   | build constants => exact primitiveSimulation_block_build constants
 
-/-- Block expressions satisfy the backward evaluation simulation. -/
-theorem evaluateRel_block {C F : Type} (trace : BackendCommon.Tra) (op : ClosLang.BlockOp)
-    (targetArgs sourceCode : List ClosLang.Exp)
-    (argsIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode targetArgs) :
-    @EvaluateRelAt C F sourceCode [.op trace (.blockOp op) targetArgs] :=
-  evaluateRel_ordinary trace (.blockOp op) targetArgs sourceCode (by simp) (by simp)
-    argsIH (primitiveSimulation_block op)
-
 end Flapjack.Compiler.Backend.ClosMti

@@ -109,28 +109,4 @@ theorem primitiveSimulation_memory_refByte {C F : Type} :
           cases second <;> simp [doApp, applyMemory, excRel]
       | cons head tail => simp [doApp, applyMemory, excRel]
 
-/-- Reference allocation satisfies the backward evaluation simulation. -/
-theorem evaluateRel_memory_ref {C F : Type} (trace : BackendCommon.Tra)
-    (targetArgs sourceCode : List ClosLang.Exp)
-    (argsIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode targetArgs) :
-    @EvaluateRelAt C F sourceCode [.op trace (.memOp .ref) targetArgs] :=
-  evaluateRel_ordinary trace (.memOp .ref) targetArgs sourceCode (by simp) (by simp)
-    argsIH primitiveSimulation_memory_ref
-
-/-- Value-array allocation satisfies the backward evaluation simulation. -/
-theorem evaluateRel_memory_refArray {C F : Type} (trace : BackendCommon.Tra)
-    (targetArgs sourceCode : List ClosLang.Exp)
-    (argsIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode targetArgs) :
-    @EvaluateRelAt C F sourceCode [.op trace (.memOp .refArray) targetArgs] :=
-  evaluateRel_ordinary trace (.memOp .refArray) targetArgs sourceCode (by simp) (by simp)
-    argsIH primitiveSimulation_memory_refArray
-
-/-- Byte-array allocation satisfies the backward evaluation simulation. -/
-theorem evaluateRel_memory_refByte {C F : Type} (trace : BackendCommon.Tra)
-    (targetArgs sourceCode : List ClosLang.Exp)
-    (argsIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode targetArgs) :
-    @EvaluateRelAt C F sourceCode [.op trace (.memOp (.refByte false)) targetArgs] :=
-  evaluateRel_ordinary trace (.memOp (.refByte false)) targetArgs sourceCode (by simp) (by simp)
-    argsIH primitiveSimulation_memory_refByte
-
 end Flapjack.Compiler.Backend.ClosMti

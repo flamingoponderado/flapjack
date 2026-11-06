@@ -52,12 +52,4 @@ theorem primitiveSimulation_ffi {C F : Type} (name : Basis.Pure.MlString.MlStrin
           cases second <;> simp [doApp, excRel]
       | cons head tail => simp [doApp, excRel]
 
-/-- FFI expressions satisfy the backward evaluation simulation. -/
-theorem evaluateRel_ffi {C F : Type} (trace : BackendCommon.Tra)
-    (name : Basis.Pure.MlString.MlString) (targetArgs sourceCode : List ClosLang.Exp)
-    (argsIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode targetArgs) :
-    @EvaluateRelAt C F sourceCode [.op trace (.ffi name) targetArgs] :=
-  evaluateRel_ordinary trace (.ffi name) targetArgs sourceCode (by simp) (by simp)
-    argsIH (primitiveSimulation_ffi name)
-
 end Flapjack.Compiler.Backend.ClosMti

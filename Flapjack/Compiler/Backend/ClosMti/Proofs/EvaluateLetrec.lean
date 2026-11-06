@@ -140,16 +140,4 @@ theorem evaluateRel_letrecWithin {C F : Type} (limit : Nat) (names : List Basis.
       refine ⟨sourceResult, sourceFinal, ?_, bodyRel, finalStates⟩
       simpa [evaluate, valid.1] using sourceBodyRun
 
-/-- The unrestricted recursive-binding case, retained for existing callers. -/
-theorem evaluateRel_letrec {C F : Type} (names : List Basis.Pure.MlString.MlString)
-    (location : Option Nat) (vars : Option (List Nat))
-    (targetFunctions : List (Nat × ClosLang.Exp)) (targetBody : ClosLang.Exp)
-    (bodyIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode [targetBody])
-    (sourceCode : List ClosLang.Exp) :
-    @EvaluateRelAt C F sourceCode [.letrec names location vars targetFunctions targetBody] := by
-  intro targetEnv target sourceEnv targetFinal source targetResult
-  exact evaluateRel_letrecWithin source.clock names location vars targetFunctions targetBody
-    (fun code => evaluateRelAt_within source.clock code _ (bodyIH code)) sourceCode
-    targetEnv target sourceEnv targetFinal source targetResult (by omega)
-
 end Flapjack.Compiler.Backend.ClosMti

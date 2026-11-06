@@ -155,19 +155,6 @@ theorem evaluate_related {C F : Type} (sourceCode targetCode : List ClosLang.Exp
   exact (evaluate_mutual_within (C := C) (F := F) source.clock).2 sourceCode targetCode
     targetEnv target sourceEnv targetFinal source targetResult (by omega)
 
-/-- Application simulation for the current Lean closure evaluator. -/
-theorem evaluateApp_related {C F : Type} (source target : State C F)
-    (sourceFunction targetFunction : Value) (sourceArgs targetArgs : List Value)
-    (states : StateRel source target) (functions : ValueRel source.maxApp sourceFunction targetFunction)
-    (args : List.Forall₂ (ValueRel source.maxApp) sourceArgs targetArgs)
-    (bound : sourceArgs.length ≤ source.maxApp) :
-    resultRel (List.Forall₂ (ValueRel source.maxApp)) (ValueRel source.maxApp)
-      (evaluateApps sourceFunction sourceArgs source).1 (evaluateApp none targetFunction targetArgs target).1 ∧
-    StateRel (evaluateApps sourceFunction sourceArgs source).2
-      (evaluateApp none targetFunction targetArgs target).2 :=
-  (evaluate_mutual_within (C := C) (F := F) source.clock).1 source target sourceFunction targetFunction
-    sourceArgs targetArgs (by omega) states functions args bound
-
 /-- Forward correctness of multi-argument introduction for the current Lean
 closure evaluator. The source and target carriers and evaluator still need
 HOL correspondence review, so this source-shaped result is not tagged as a

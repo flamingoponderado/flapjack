@@ -259,16 +259,4 @@ theorem evaluateRel_forceWithin {C F : Type} (limit : Nat) (trace : BackendCommo
               exact sourceContinuation
             · simpa [maxEq] using continuationRel
 
-/-- The unrestricted force case, retained for existing callers. -/
-theorem evaluateRel_force {C F : Type} (trace : BackendCommon.Tra)
-    (targetArgs sourceCode : List ClosLang.Exp)
-    (argsIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode targetArgs)
-    (forceIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode [appUnit (.var .none 0)]) :
-    @EvaluateRelAt C F sourceCode [.op trace (.thunkOp .forceThunk) targetArgs] := by
-  intro targetEnv target sourceEnv targetFinal source targetResult
-  exact evaluateRel_forceWithin source.clock trace targetArgs sourceCode
-    (fun code => evaluateRelAt_within source.clock code _ (argsIH code))
-    (fun code => evaluateRelAt_within source.clock code _ (forceIH code))
-    targetEnv target sourceEnv targetFinal source targetResult (by omega)
-
 end Flapjack.Compiler.Backend.ClosMti

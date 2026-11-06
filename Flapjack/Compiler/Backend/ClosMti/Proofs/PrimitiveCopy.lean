@@ -251,12 +251,4 @@ theorem primitiveSimulation_memory {C F : Type} (op : ClosLang.MemOp) :
     simp [doApp, applyMemory, excRel]
   | configGC => exact primitiveSimulation_memory_configGC
 
-/-- Memory expressions satisfy the backward evaluator simulation. -/
-theorem evaluateRel_memory {C F : Type} (trace : BackendCommon.Tra) (op : ClosLang.MemOp)
-    (targetArgs sourceCode : List ClosLang.Exp)
-    (argsIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode targetArgs) :
-    @EvaluateRelAt C F sourceCode [.op trace (.memOp op) targetArgs] :=
-  evaluateRel_ordinary trace (.memOp op) targetArgs sourceCode (by simp) (by simp)
-    argsIH (primitiveSimulation_memory op)
-
 end Flapjack.Compiler.Backend.ClosMti

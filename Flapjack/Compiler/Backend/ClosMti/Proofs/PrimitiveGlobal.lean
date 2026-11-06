@@ -130,12 +130,4 @@ theorem primitiveSimulation_global {C F : Type} (op : ClosLang.GlobOp) :
     intro source target left right states values
     simp [doApp, applyGlobal, excRel]
 
-/-- Global-operation expressions satisfy the backward simulation. -/
-theorem evaluateRel_global {C F : Type} (trace : BackendCommon.Tra) (op : ClosLang.GlobOp)
-    (targetArgs sourceCode : List ClosLang.Exp)
-    (argsIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode targetArgs) :
-    @EvaluateRelAt C F sourceCode [.op trace (.globOp op) targetArgs] :=
-  evaluateRel_ordinary trace (.globOp op) targetArgs sourceCode (by simp) (by simp)
-    argsIH (primitiveSimulation_global op)
-
 end Flapjack.Compiler.Backend.ClosMti

@@ -245,40 +245,4 @@ theorem primitiveSimulation_memory_configGC {C F : Type} :
         cases first <;> cases second <;> simp [doApp, applyMemory, excRel, states, unitValue, ValueRel.block]
       | cons head tail => simp [doApp, applyMemory, excRel]
 
-/-- Memory operations covered by the byte-vector and bounds simulations. -/
-inductive CoveredMemoryOp : ClosLang.MemOp → Prop where
-  | fromListByte : CoveredMemoryOp .fromListByte
-  | concatByteVec : CoveredMemoryOp .concatByteVec
-  | toListByte : CoveredMemoryOp .toListByte
-  | lengthByteVec : CoveredMemoryOp .lengthByteVec
-  | derefByteVec : CoveredMemoryOp .derefByteVec
-  | stringCmp (fast : Bool) (op : Opb) : CoveredMemoryOp (.stringCmp fast op)
-  | boundsCheckArray : CoveredMemoryOp .boundsCheckArray
-  | boundsCheckByte (loose : Bool) : CoveredMemoryOp (.boundsCheckByte loose)
-  | configGC : CoveredMemoryOp .configGC
-
-/-- The covered byte-vector and bounds operations satisfy the primitive
-simulation. This subset is infrastructure for the full memory case. -/
-theorem primitiveSimulation_coveredMemory {C F : Type} {op : ClosLang.MemOp}
-    (covered : CoveredMemoryOp op) : @PrimitiveSimulation C F (.memOp op) := by
-  cases covered with
-  | fromListByte => exact primitiveSimulation_memory_fromListByte
-  | concatByteVec => exact primitiveSimulation_memory_concatByteVec
-  | toListByte => exact primitiveSimulation_memory_toListByte
-  | lengthByteVec => exact primitiveSimulation_memory_lengthByteVec
-  | derefByteVec => exact primitiveSimulation_memory_derefByteVec
-  | stringCmp fast op => exact primitiveSimulation_memory_stringCmp fast op
-  | boundsCheckArray => exact primitiveSimulation_memory_boundsCheckArray
-  | boundsCheckByte loose => exact primitiveSimulation_memory_boundsCheckByte loose
-  | configGC => exact primitiveSimulation_memory_configGC
-
-/-- Covered memory expressions satisfy the evaluation simulation. -/
-theorem evaluateRel_coveredMemory {C F : Type} (trace : BackendCommon.Tra)
-    (op : ClosLang.MemOp) (targetArgs sourceCode : List ClosLang.Exp)
-    (covered : CoveredMemoryOp op)
-    (argsIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode targetArgs) :
-    @EvaluateRelAt C F sourceCode [.op trace (.memOp op) targetArgs] :=
-  evaluateRel_ordinary trace (.memOp op) targetArgs sourceCode (by simp) (by simp)
-    argsIH (primitiveSimulation_coveredMemory covered)
-
 end Flapjack.Compiler.Backend.ClosMti

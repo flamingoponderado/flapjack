@@ -339,19 +339,6 @@ theorem evaluateRel_consWithin {C F : Type} (limit : Nat) (targetHead targetSeco
                               simpa [resultRel, maxEq] using tailRel
                             simpa [resultRel] using List.Forall₂.cons valuesRel restRel
 
-/-- The unrestricted multi-expression case, retained for existing callers. -/
-theorem evaluateRel_cons {C F : Type} (targetHead targetSecond : ClosLang.Exp)
-    (targetTail : List ClosLang.Exp)
-    (headIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode [targetHead])
-    (tailIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode (targetSecond :: targetTail))
-    (sourceCode : List ClosLang.Exp) :
-    @EvaluateRelAt C F sourceCode (targetHead :: targetSecond :: targetTail) := by
-  intro targetEnv target sourceEnv targetFinal source targetResult
-  exact evaluateRel_consWithin source.clock targetHead targetSecond targetTail
-    (fun code => evaluateRelAt_within source.clock code _ (headIH code))
-    (fun code => evaluateRelAt_within source.clock code _ (tailIH code)) sourceCode
-    targetEnv target sourceEnv targetFinal source targetResult (by omega)
-
 /-- The tick case preserves a clock-bounded simulation. -/
 theorem evaluateRel_tickWithin {C F : Type} (limit : Nat) (trace : BackendCommon.Tra)
     (targetBody : ClosLang.Exp)
@@ -393,16 +380,6 @@ theorem evaluateRel_tickWithin {C F : Type} (limit : Nat) (trace : BackendCommon
             targetResult (by simp [decClock]; omega) targetRun env decStates bodyCode
         exact ⟨result, final, by simpa [evaluate, sourceNonzero] using bodyRun,
           resultRel, finalStates⟩
-
-/-- The unrestricted tick case, retained for existing callers. -/
-theorem evaluateRel_tick {C F : Type} (trace : BackendCommon.Tra) (targetBody : ClosLang.Exp)
-    (bodyIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode [targetBody])
-    (sourceCode : List ClosLang.Exp) :
-    @EvaluateRelAt C F sourceCode [.tick trace targetBody] := by
-  intro targetEnv target sourceEnv targetFinal source targetResult
-  exact evaluateRel_tickWithin source.clock trace targetBody
-    (fun code => evaluateRelAt_within source.clock code _ (bodyIH code)) sourceCode
-    targetEnv target sourceEnv targetFinal source targetResult (by omega)
 
 /-- Raising preserves a clock-bounded simulation of its body. -/
 theorem evaluateRel_raiseWithin {C F : Type} (limit : Nat) (trace : BackendCommon.Tra)
@@ -468,16 +445,6 @@ theorem evaluateRel_raiseWithin {C F : Type} (limit : Nat) (trace : BackendCommo
                     exact ⟨.err (.raise sourceValue), sourceFinal,
                       by rw [evaluate, sourceBodyRun]; rfl,
                       by simpa [resultRel, excRel] using valueRel, finalStates⟩
-
-/-- The unrestricted raise case, retained for existing callers. -/
-theorem evaluateRel_raise {C F : Type} (trace : BackendCommon.Tra) (targetBody : ClosLang.Exp)
-    (bodyIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode [targetBody])
-    (sourceCode : List ClosLang.Exp) :
-    @EvaluateRelAt C F sourceCode [.raise trace targetBody] := by
-  intro targetEnv target sourceEnv targetFinal source targetResult
-  exact evaluateRel_raiseWithin source.clock trace targetBody
-    (fun code => evaluateRelAt_within source.clock code _ (bodyIH code)) sourceCode
-    targetEnv target sourceEnv targetFinal source targetResult (by omega)
 
 /-- Local bindings preserve a clock-bounded simulation. -/
 theorem evaluateRel_letWithin {C F : Type} (limit : Nat) (trace : BackendCommon.Tra)
@@ -545,19 +512,6 @@ theorem evaluateRel_letWithin {C F : Type} (limit : Nat) (trace : BackendCommon.
             · rw [evaluate, fixClock_evaluate, sourceBindingsRun]
               exact sourceBodyRun
             · simpa [maxEq] using bodyRel
-
-/-- The unrestricted local-binding case, retained for existing callers. -/
-theorem evaluateRel_let {C F : Type} (trace : BackendCommon.Tra)
-    (targetBindings : List ClosLang.Exp) (targetBody : ClosLang.Exp)
-    (bindingsIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode targetBindings)
-    (bodyIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode [targetBody])
-    (sourceCode : List ClosLang.Exp) :
-    @EvaluateRelAt C F sourceCode [.let trace targetBindings targetBody] := by
-  intro targetEnv target sourceEnv targetFinal source targetResult
-  exact evaluateRel_letWithin source.clock trace targetBindings targetBody
-    (fun code => evaluateRelAt_within source.clock code _ (bindingsIH code))
-    (fun code => evaluateRelAt_within source.clock code _ (bodyIH code)) sourceCode
-    targetEnv target sourceEnv targetFinal source targetResult (by omega)
 
 /-- Exception handlers preserve a clock-bounded simulation. -/
 theorem evaluateRel_handleWithin {C F : Type} (limit : Nat) (trace : BackendCommon.Tra)
@@ -639,19 +593,6 @@ theorem evaluateRel_handleWithin {C F : Type} (limit : Nat) (trace : BackendComm
                 · rw [evaluate, fixClock_evaluate, sourceBodyRun]
                   exact sourceHandlerRun
                 · simpa [maxEq] using handlerRel
-
-/-- The unrestricted handler case, retained for existing callers. -/
-theorem evaluateRel_handle {C F : Type} (trace : BackendCommon.Tra)
-    (targetBody targetHandler : ClosLang.Exp)
-    (bodyIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode [targetBody])
-    (handlerIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode [targetHandler])
-    (sourceCode : List ClosLang.Exp) :
-    @EvaluateRelAt C F sourceCode [.handle trace targetBody targetHandler] := by
-  intro targetEnv target sourceEnv targetFinal source targetResult
-  exact evaluateRel_handleWithin source.clock trace targetBody targetHandler
-    (fun code => evaluateRelAt_within source.clock code _ (bodyIH code))
-    (fun code => evaluateRelAt_within source.clock code _ (handlerIH code)) sourceCode
-    targetEnv target sourceEnv targetFinal source targetResult (by omega)
 
 /-- Conditional evaluation preserves a clock-bounded simulation. -/
 theorem evaluateRel_ifWithin {C F : Type} (limit : Nat) (trace : BackendCommon.Tra)
@@ -765,21 +706,6 @@ theorem evaluateRel_ifWithin {C F : Type} (limit : Nat) (trace : BackendCommon.T
                         · rw [evaluate, fixClock_evaluate, sourceConditionRun]
                           simpa [sourceBool] using sourceRun
                         · simpa [maxEq] using branchRel
-
-/-- The unrestricted conditional case, retained for existing callers. -/
-theorem evaluateRel_if {C F : Type} (trace : BackendCommon.Tra)
-    (targetCondition targetYes targetNo : ClosLang.Exp)
-    (conditionIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode [targetCondition])
-    (yesIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode [targetYes])
-    (noIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode [targetNo])
-    (sourceCode : List ClosLang.Exp) :
-    @EvaluateRelAt C F sourceCode [.ifThenElse trace targetCondition targetYes targetNo] := by
-  intro targetEnv target sourceEnv targetFinal source targetResult
-  exact evaluateRel_ifWithin source.clock trace targetCondition targetYes targetNo
-    (fun code => evaluateRelAt_within source.clock code _ (conditionIH code))
-    (fun code => evaluateRelAt_within source.clock code _ (yesIH code))
-    (fun code => evaluateRelAt_within source.clock code _ (noIH code)) sourceCode
-    targetEnv target sourceEnv targetFinal source targetResult (by omega)
 
 /-- Collected unary functions evaluate to related source and target closures. -/
 theorem evaluateRel_fn {C F : Type} (name : Basis.Pure.MlString.MlString)

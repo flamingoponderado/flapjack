@@ -117,14 +117,4 @@ theorem evaluateRel_allOrdinaryWithin {C F : Type} (limit : Nat) (trace : Backen
   evaluateRel_ordinaryWithin limit trace op targetArgs sourceCode notInstall notForce argsIH
     (primitiveSimulation_ordinary op notInstall notForce)
 
-/-- Every ordinary operation expression satisfies the backward evaluation
-simulation under its argument induction hypothesis. -/
-theorem evaluateRel_allOrdinary {C F : Type} (trace : BackendCommon.Tra) (op : ClosLang.Op)
-    (targetArgs sourceCode : List ClosLang.Exp)
-    (notInstall : op ≠ .install) (notForce : op ≠ .thunkOp .forceThunk)
-    (argsIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode targetArgs) :
-    @EvaluateRelAt C F sourceCode [.op trace op targetArgs] :=
-  evaluateRel_ordinary trace op targetArgs sourceCode notInstall notForce argsIH
-    (primitiveSimulation_ordinary op notInstall notForce)
-
 end Flapjack.Compiler.Backend.ClosMti
