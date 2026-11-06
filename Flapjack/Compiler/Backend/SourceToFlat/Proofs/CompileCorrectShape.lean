@@ -13,6 +13,12 @@ def resultAbort {α β : Type} (result : Result α β) : Prop :=
   | .err (.abort _) => True
   | _ => False
 
+/-- Combining declaration environments does not change whether a result aborts. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "abort_compile_dec_result"]
+theorem abort_combineDecResult {α : Type} (env : SemEnv Value) (result : Result (SemEnv Value) α) :
+    resultAbort (combineDecResult env result) ↔ resultAbort result := by
+  cases result <;> rfl
+
 namespace CompileCorrectPort
 
 /-- The global carrier uses the reviewed canonical finite-map representation. -/

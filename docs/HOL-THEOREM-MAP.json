@@ -11553,6 +11553,14 @@
     "reviewer": "Compared the source local theorem and typed invariant_env_gen_inv_local replay: the original invariant premise uses the same index triple, independent compiler and FFI types, and canonical global-environment maps; the conclusion is the original environment-generation invariant."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/CompileCorrectShape.lean",
+    "lean_name": "abort_combineDecResult",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "abort_compile_dec_result",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the source local theorem and typed abort_compile_dec_result_local replay: the declaration environment has the original value carrier, the error payload remains arbitrary, and combining results preserves precisely the abort predicate."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/Initialization.lean",
     "lean_name": "initGenv_stamp_fresh",
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",

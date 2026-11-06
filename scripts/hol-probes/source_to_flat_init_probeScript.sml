@@ -68,3 +68,7 @@ val invariant_env_gen_inv_local = Q.prove (
    source_to_flatProof$env_gen_inv gen`,
   simp [source_to_flatProofTheory.invariant_def]);
 val _ = show_thm "invariant_env_gen_inv_local=" invariant_env_gen_inv_local;
+val abort_compile_dec_result_local = Q.prove (
+  `source_to_flatProof$abort (semanticPrimitives$combine_dec_result env r) = source_to_flatProof$abort r`,
+  Cases_on `r` >> simp [semanticPrimitivesTheory.combine_dec_result_def]);
+val _ = show_thm "abort_compile_dec_result_local=" abort_compile_dec_result_local;
