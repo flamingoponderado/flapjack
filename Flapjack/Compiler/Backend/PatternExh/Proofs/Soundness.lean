@@ -169,6 +169,13 @@ theorem holFmapAsFiniteSupportParamWitness_exhMatrix_sound_refs
     ofBroad (toBroad refs) refs.finiteSupport = refs :=
   holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
 
+theorem holFmapAsFiniteSupportParamWitness_matchRows_exists_success_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
+
 /-- A wildcard matches every term. -/
 @[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "pmatch_Any"
   (fmap_as_finite_support_parameters := [refs])]
@@ -237,6 +244,8 @@ theorem pmatchList_anys (refs : HolFiniteMapExact Nat Term) (n : Nat) (values : 
     | cons value values => simp [anys, pmatch, pand, ih]
 
 /-- A successful row scan cannot return failure when a row matched. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "match_EXISTS"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem matchRows_exists_success (refs : HolFiniteMapExact Nat Term) (value : Term)
     (rows : List (Pat × Nat)) (safe : matchRows refs rows value ≠ none)
     (hit : ∃ row ∈ rows, pmatch refs row.1 value = .success) :

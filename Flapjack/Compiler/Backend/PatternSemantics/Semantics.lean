@@ -3,7 +3,7 @@ import Flapjack.SemanticPrimitivesHOL
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
 
 /-! Semantics of pattern-compiler inputs and decision trees. The remaining
-decision-tree and row evaluators await HOL source and carrier review. -/
+decision-tree evaluators await HOL source and carrier review. -/
 namespace Flapjack.Compiler.Backend.PatternSemantics
 open Flapjack Flapjack.AstHOL PatternCommon
 open Flapjack.SemanticPrimitivesHOL (litSameType)
@@ -60,6 +60,13 @@ theorem holFmapAsFiniteSupportParamWitness_pmatchList_refs
     ofBroad (toBroad refs) refs.finiteSupport = refs :=
   holFmapAsFiniteSupportParamWitness_pmatch_refs refs key
 
+theorem holFmapAsFiniteSupportParamWitness_matchRows_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_refs refs key
+
 mutual
 /-- Match one pattern against an abstract term and finite reference map. -/
 @[hol "cakeml/compiler/backend/pattern_matching/pattern_semanticsScript.sml" "pmatch_def"
@@ -105,6 +112,8 @@ termination_by sizeOf patterns
 end
 
 /-- Select the first matching row while still checking later rows for errors. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_semanticsScript.sml" "match_def"
+  (fmap_as_finite_support_parameters := [refs])]
 def matchRows (refs : HolFiniteMapExact Nat Term) : List (Pat × Nat) → Term → Option MatchResult
   | [], _ => some .failure
   | (pattern, result) :: rows, value =>

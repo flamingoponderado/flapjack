@@ -1,5 +1,5 @@
 import Flapjack.Compiler.Backend.PatternComp.Decision
-import Flapjack.Compiler.Backend.PatternSemantics.Semantics
+import Flapjack.Compiler.Backend.PatternExh.Proofs.Match
 
 /-! Row-selection lemmas for the pattern compiler. The finite-map carrier
 and abstract matcher remain pending HOL correspondence review. -/
@@ -167,35 +167,6 @@ theorem isConstRow_not_success (refs : HolFiniteMapExact Nat Term) (value : Term
             obtain ⟨tag, siblings⟩ := tag
             cases actual <;> simp [pmatch] <;> split <;> simp
   | any | lit _ | ref _ | or _ _ => simp [isConstRow] at constant
-
-/-- Every row in a successful row scan is individually free of type errors. -/
-theorem matchRows_member_safe (refs : HolFiniteMapExact Nat Term) (value : Term)
-    (rows : List (Pat × Nat)) (safe : matchRows refs rows value ≠ none)
-    (row : Pat × Nat) (member : row ∈ rows) : pmatch refs row.1 value ≠ .typeFailure := by
-  induction rows with
-  | nil => simp at member
-  | cons first rest ih =>
-    obtain ⟨pattern, index⟩ := first
-    have headSafe : pmatch refs pattern value ≠ .typeFailure := by
-      intro bad
-      apply safe
-      rw [matchRows, bad]
-    have tailSafe : matchRows refs rest value ≠ none := by
-      cases head : pmatch refs pattern value with
-      | typeFailure => exact (headSafe head).elim
-      | failure => simpa [matchRows, head] using safe
-      | success =>
-        cases tail : matchRows refs rest value with
-        | none =>
-          apply False.elim
-          apply safe
-          rw [matchRows, head, tail]
-        | some result => simp
-    simp only [List.mem_cons] at member
-    rcases member with equal | member
-    · subst row
-      exact headSafe
-    · exact ih tailSafe member
 
 /-- Discarding rows that all fail leaves the selected result unchanged. -/
 theorem matchRows_filter_discard_failures (refs : HolFiniteMapExact Nat Term) (value : Term)

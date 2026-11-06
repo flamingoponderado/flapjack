@@ -8,7 +8,8 @@ append, wildcard-list, polymorphic constructor-membership, and expansion-length
 lemmas, the full mutual expansion soundness theorem, and the constructor
 extraction definition, its local characterization and length proofs, and the
 constructor-set and column soundness proofs, and specialization and default
-row and matrix preservation proofs, and full mutual matrix soundness proof.
+row and matrix preservation proofs, full mutual matrix soundness proof, and
+the row-matching definition, match-result carrier, and local safety and success proofs.
 
 `data_resource_mono_probe.out` captures the six exported data-semantics
 primitive and evaluator monotonicity statements with inferred configuration,

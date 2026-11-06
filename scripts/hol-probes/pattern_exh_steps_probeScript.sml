@@ -352,3 +352,22 @@ val exh_matrix_thm_replay = prove (
   >- fs []
   >> fs [pattern_exhTheory.exh_matrix_def] >> rw [] >> fs [] >> res_tac);
 val _ = show_local "exh_matrix_thm=" exh_matrix_thm_replay;
+val _ = show_local "match_def=" pattern_semanticsTheory.match_def;
+val match_no_ptypefailure_replay = prove (
+  ``!refs v rows. pattern_semantics$match refs rows v <> NONE ==>
+      EVERY (\(p,e). pattern_semantics$pmatch refs p v <> pattern_common$PTypeFailure) rows``,
+  rpt gen_tac >> Induct_on `rows` >> fs [pattern_semanticsTheory.match_def, pairTheory.FORALL_PROD] >> rw [] >>
+  Cases_on `pattern_semantics$pmatch refs p_1 v` >> fs [] >> every_case_tac >> fs []);
+val _ = show_local "match_no_ptypefailure=" match_no_ptypefailure_replay;
+val match_exists_replay = prove (
+  ``!refs v rows. pattern_semantics$match refs rows v <> NONE /\
+      EXISTS (\(p,e). pattern_semantics$pmatch refs p v = pattern_common$PMatchSuccess) rows ==>
+      pattern_semantics$match refs rows v <> SOME pattern_common$MatchFailure``,
+  rpt gen_tac >> Induct_on `rows` >> fs [pattern_semanticsTheory.match_def, pairTheory.FORALL_PROD] >> rw [] >>
+  Cases_on `pattern_semantics$pmatch refs p_1 v` >> fs [] >> every_case_tac >> fs []);
+val _ = show_local "match_exists=" match_exists_replay;
+val _ = print "match_result_type=";
+val _ = print_type (type_of ``pattern_common$MatchSuccess``);
+val _ = print "\n";
+val _ = show_local "match_result_cases=" pattern_commonTheory.matchResult_nchotomy;
+val _ = show_local "match_result_distinct=" pattern_commonTheory.matchResult_distinct;
