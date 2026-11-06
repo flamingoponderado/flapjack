@@ -258,17 +258,6 @@ theorem envRel_no_modules (genv : GlobalEnv) (source : Namespace ModN VarN Value
     | bind values modules => simpa [nsBind, nsLookupMod] using ih
 termination_by flat.length
 
-private theorem localLookup_exists_iff_mem (entries : List (VarN × FlatSem.Value)) (name : VarN) :
-    (∃ value, entries.lookup name = some value) ↔ name ∈ entries.map Prod.fst := by
-  induction entries with
-  | nil => simp
-  | cons entry entries ih =>
-    obtain ⟨key, value⟩ := entry
-    by_cases equal : name = key
-    · subst key
-      simp
-    · simp [List.lookup_cons, BEq.beq, equal, ih]
-
 /-- Variable lookup respects local shadowing and falls back to the related
 global environment for names absent from the local stack. -/
 theorem localEnvBounded_variable {C F : Type} [Nonempty C]
@@ -325,7 +314,7 @@ theorem localEnvBounded_variable {C F : Type} [Nonempty C]
     | none =>
       have absent : name ∉ flatEnv.v.map Prod.fst := by
         intro member
-        obtain ⟨v, found⟩ := (localLookup_exists_iff_mem flatEnv.v name).mpr member
+        obtain ⟨v, found⟩ := (Flapjack.lookup_exists_iff_mem_keys flatEnv.v name).mpr member
         rw [flatLookup] at found
         contradiction
       apply globalCase (.short name)
