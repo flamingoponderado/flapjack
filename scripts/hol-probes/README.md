@@ -1,3 +1,6 @@
+`pattern_exh_steps_probe.out` captures the typed original step-count equations
+and four concrete results used to check the Lean proof-side traversal.
+
 `data_resource_mono_probe.out` captures the six exported data-semantics
 primitive and evaluator monotonicity statements with inferred configuration,
 FFI, value, and result carriers. The combined Lean resource proof exists, but

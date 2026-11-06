@@ -111241,6 +111241,22 @@
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternExh/Exhaustive.lean",
+    "lean_name": "exhSteps",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "exh_steps_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed equations in pattern_exh_steps_probe.out: the matrix traversal counts one for an empty matrix or leading empty row and otherwise adds one before recursing on defaultMat or specMats. This proof-side measure is not yet used by the executed exhaustiveness checker."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Exhaustive.lean",
+    "lean_name": "exhStepsList",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "exh_steps_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed equations in pattern_exh_steps_probe.out: the empty matrix list has count zero and a cons sums the head and tail counts. This proof-side measure is not yet used by the executed exhaustiveness checker."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Exhaustive.lean",
     "lean_name": "exhRows",
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
     "hol_name": "exh_rows_def",
