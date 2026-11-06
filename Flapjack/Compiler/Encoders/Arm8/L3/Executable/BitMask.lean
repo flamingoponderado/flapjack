@@ -861,4 +861,12 @@ theorem encodeBitMaskAux_eq (imm : BitVec 64) :
     rw [countTrailing_eq true (BitVec.rotateRight imm (CountTrailing (TN := 64) (true, imm) +
       CountTrailing (TN := 64) (false, BitVec.rotateRight imm (CountTrailing (TN := 64) (true, imm)))))]
 
+
+/-- The closed decoder only reads `immN % 2`, `imms % 64` and `immr % 64`, so
+reducing its arguments changes nothing. -/
+theorem decodeBitMasks_mod (a b c : Nat) (i : Bool) :
+    decodeBitMasks a b c i = decodeBitMasks (a % 2) (b % 64) (c % 64) i := by
+  unfold decodeBitMasks
+  simp only [Nat.mod_mod]
+
 end Flapjack.Compiler.Encoders.Arm8.L3
