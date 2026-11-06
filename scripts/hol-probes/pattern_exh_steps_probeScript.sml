@@ -512,3 +512,6 @@ val _ = show_local "comp_app_pos_pos=" pattern_compTheory.app_pos_Pos;
 val _ = show_local "comp_walk_thm=" pattern_compTheory.walk_thm;
 val _ = show_local "comp_walk_append=" pattern_compTheory.walk_append;
 val _ = show_local "sem_app_pos_def=" pattern_semanticsTheory.app_pos_def;
+val _ = show_local "sem_dt_test_def=" pattern_semanticsTheory.dt_test_def;
+val _ = show_local "sem_dt_eval_guard_def=" pattern_semanticsTheory.dt_eval_guard_def;
+val _ = show_local "sem_dt_eval_def=" pattern_semanticsTheory.dt_eval_def;

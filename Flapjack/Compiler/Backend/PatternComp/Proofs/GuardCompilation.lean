@@ -127,12 +127,12 @@ theorem walk_append (refs : HolFiniteMapExact Nat Term) (left right : List Nat) 
 /-- Removing literal-true conjuncts preserves guard evaluation, including errors. -/
 theorem dtEvalGuard_mkConj (refs : HolFiniteMapExact Nat Term) (value : Term) (p q : DGuard) :
     dtEvalGuard refs value (mkConj p q) = dtEvalGuard refs value (.conj p q) := by
-  have bindTrue (x : Option Bool) :
-      x.bind (fun first => if first then some true else some false) = x := by
+  have matchTrue (x : Option Bool) :
+      (match x with | none => none | some true => some true | some false => some false) = x := by
     cases x with
     | none => rfl
     | some b => cases b <;> rfl
-  cases p <;> cases q <;> simp [mkConj, isTrue, dtEvalGuard, bindTrue]
+  cases p <;> cases q <;> simp [mkConj, isTrue, dtEvalGuard] <;> exact (matchTrue _).symm
 
 /-- Eliminating a literal-true guard preserves decision-tree evaluation. -/
 theorem dtEval_mkIf (refs : HolFiniteMapExact Nat Term) (value : Term)
@@ -352,8 +352,10 @@ theorem patToGuard_consSome_at (refs : HolFiniteMapExact Nat Term) (value select
       · have fail : pmatch refs (.cons (some (tag, siblings)) patterns) (.term (some actual) fields) = .failure := by
           simp only [pmatch, tagsMatch, ↓reduceIte] at safe ⊢
           split at safe <;> simp_all
-        simp [patToGuard, dtEvalGuard_mkConj, dtEvalGuard, appPos_getPos, walked, dtTest, fail]
-        simp_all
+        by_cases equal : tag = actual
+        · subst tag
+          simp_all [patToGuard, dtEvalGuard_mkConj, dtEvalGuard, appPos_getPos, dtTest]
+        · simp [patToGuard, dtEvalGuard_mkConj, dtEvalGuard, appPos_getPos, walked, dtTest, fail, equal]
 
 mutual
 /-- A generated guard agrees with every non-error pattern match reached by
@@ -444,7 +446,7 @@ theorem patsToCode_correct (refs : HolFiniteMapExact Nat Term) (value : Term)
     (rows : List (Pat × Nat)) (safe : matchRows refs rows value ≠ none) :
     dtEval refs value (patsToCode rows) = matchRows refs rows value := by
   induction rows with
-  | nil => rfl
+  | nil => simp [patsToCode, dtEval, matchRows]
   | cons row rows ih =>
     obtain ⟨pattern, index⟩ := row
     have headSafe : pmatch refs pattern value ≠ .typeFailure :=

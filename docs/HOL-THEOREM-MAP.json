@@ -12924,8 +12924,8 @@
     "hol_name": "dt_test_def",
     "lean_path": "Flapjack/Compiler/Backend/PatternSemantics/Semantics.lean",
     "lean_name": "dtTest",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed source captured in flat_pattern_install_relation_probe.out; complete literal and term carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared every source clause and typed HOL capture in pattern_exh_steps_probe.out, including HOL equality and conjunction for tag and length, literal same-type checks, and all fallback cases; the literal and term carriers are separately reviewed."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
@@ -111897,6 +111897,28 @@
       "refs"
     ],
     "reviewer": "Compared the complete source case expression for traversal of appended paths with the typed exported theorem. The same-module witness checks the canonical finite-map parameter."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternSemantics/Semantics.lean",
+    "lean_name": "dtEvalGuard",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_semanticsScript.sml",
+    "hol_name": "dt_eval_guard_def",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "refs"
+    ],
+    "reviewer": "Compared every source case and typed HOL capture, including NONE propagation and short-circuit results for conjunction and disjunction. The same-module witness checks the canonical finite-map parameter."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternSemantics/Semantics.lean",
+    "lean_name": "dtEval",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_semanticsScript.sml",
+    "hol_name": "dt_eval_def",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "refs"
+    ],
+    "reviewer": "Compared all source clauses and typed HOL capture, including the NONE case and recursion on the selected branch. The same-module witness checks the canonical finite-map parameter."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternExh/Exhaustive.lean",

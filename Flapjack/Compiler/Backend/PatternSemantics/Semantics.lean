@@ -2,8 +2,7 @@ import Flapjack.Compiler.Backend.PatternSemantics
 import Flapjack.SemanticPrimitivesHOL
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
 
-/-! Semantics of pattern-compiler inputs and decision trees. The remaining
-decision-tree evaluators await HOL source and carrier review. -/
+/-! Semantics of pattern-compiler inputs and decision trees. -/
 namespace Flapjack.Compiler.Backend.PatternSemantics
 open Flapjack Flapjack.AstHOL PatternCommon
 open Flapjack.SemanticPrimitivesHOL (litSameType)
@@ -74,6 +73,20 @@ theorem holFmapAsFiniteSupportParamWitness_appPos_refs
     ofBroad (toBroad refs) refs.finiteSupport = refs :=
   holFmapAsFiniteSupportParamWitness_pmatch_refs refs key
 
+theorem holFmapAsFiniteSupportParamWitness_dtEvalGuard_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_dtEval_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_refs refs key
+
 mutual
 /-- Match one pattern against an abstract term and finite reference map. -/
 @[hol "cakeml/compiler/backend/pattern_matching/pattern_semanticsScript.sml" "pmatch_def"
@@ -135,7 +148,7 @@ def matchRows (refs : HolFiniteMapExact Nat Term) : List (Pat × Nat) → Term �
 @[hol "cakeml/compiler/backend/pattern_matching/pattern_semanticsScript.sml" "dt_test_def"]
 def dtTest (test : DTest) (value : Term) : Option Bool :=
   match test, value with
-  | .tagLenEq tag length, .term (some actual) values => some (tag == actual && length == values.length)
+  | .tagLenEq tag length, .term (some actual) values => some (decide (tag = actual ∧ length = values.length))
   | .litEq lit, .litv actual => if litSameType lit actual then some (decide (lit = actual)) else none
   | _, _ => none
 
@@ -166,26 +179,41 @@ theorem appPos_term (refs : HolFiniteMapExact Nat Term) (index : Nat) (rest : Po
   | succ index ih => cases values <;> simp [appPos, ih]
 
 /-- Evaluate a guard with the source's short-circuit and error behavior. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_semanticsScript.sml" "dt_eval_guard_def"
+  (fmap_as_finite_support_parameters := [refs])]
 def dtEvalGuard (refs : HolFiniteMapExact Nat Term) (value : Term) : DGuard → Option Bool
   | .true_ => some true
-  | .posTest position test => do
-    let selected ← appPos refs position value
-    dtTest test selected
-  | .not guard => (dtEvalGuard refs value guard).map (! ·)
-  | .conj left right => do
-    let first ← dtEvalGuard refs value left
-    if first then dtEvalGuard refs value right else some false
-  | .disj left right => do
-    let first ← dtEvalGuard refs value left
-    if first then some true else dtEvalGuard refs value right
+  | .posTest position test =>
+    match appPos refs position value with
+    | none => none
+    | some selected => dtTest test selected
+  | .not guard =>
+    match dtEvalGuard refs value guard with
+    | none => none
+    | some result => some (!result)
+  | .conj left right =>
+    match dtEvalGuard refs value left with
+    | none => none
+    | some true => dtEvalGuard refs value right
+    | some false => some false
+  | .disj left right =>
+    match dtEvalGuard refs value left with
+    | none => none
+    | some true => some true
+    | some false => dtEvalGuard refs value right
 
 /-- Evaluate a decision tree; a type-failure leaf produces `none`. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_semanticsScript.sml" "dt_eval_def"
+  (fmap_as_finite_support_parameters := [refs])]
 def dtEval (refs : HolFiniteMapExact Nat Term) (value : Term) : DTree → Option MatchResult
   | .leaf index => some (.success index)
   | .fail => some .failure
   | .typeFail => none
-  | .if_ guard yes no => do
-    let selected ← dtEvalGuard refs value guard
-    if selected then dtEval refs value yes else dtEval refs value no
+  | .if_ guard yes no =>
+    match dtEvalGuard refs value guard with
+    | none => none
+    | some selected => dtEval refs value (if selected then yes else no)
+termination_by tree => sizeOf tree
+decreasing_by all_goals split <;> simp_wf <;> omega
 
 end Flapjack.Compiler.Backend.PatternSemantics
