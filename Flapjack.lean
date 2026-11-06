@@ -973,6 +973,7 @@ import Flapjack.Compiler.Backend.SourceToSource
 import Flapjack.Compiler.Backend.ClosToBvl.Constants
 import Flapjack.Compiler.Backend.ClosToBvl.Layout
 import Flapjack.Compiler.Backend.ClosToBvl.Sort
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.SortPermutation
 import Flapjack.Compiler.Backend.ClosToBvl.Names
 import Flapjack.Compiler.Backend.ClosNumber
 import Flapjack.Compiler.Backend.ClosToBvl.ExtractName

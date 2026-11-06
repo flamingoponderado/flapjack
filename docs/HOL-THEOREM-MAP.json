@@ -111458,8 +111458,8 @@
     "lean_name": "codeSplit",
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
     "hol_name": "code_split_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; typed HOL capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared code_split_def_typed in clos_to_bvl_state_relation_probe.out: the polymorphic list carrier, empty case and recursive accumulator swap match HOL."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Sort.lean",
@@ -125617,5 +125617,13 @@
   "lean_name": "envRel_cons",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared local env_rel_CONS source and proved env_rel_cons_typed replay in flat_to_clos_relation_probe.out: related values, both environment updates and binders match, including the independently polymorphic overwritten environment rendered by replaceEnvValues."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "code_split_IMP_PERM",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SortPermutation.lean",
+  "lean_name": "codeSplit_imp_perm",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared code_split_perm_typed in clos_to_bvl_state_relation_probe.out: all five polymorphic list arguments, split equality and permutation conclusion match HOL, without an equality-instance premise."
 }
 ]
