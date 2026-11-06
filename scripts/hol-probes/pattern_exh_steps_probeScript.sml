@@ -493,3 +493,12 @@ val _ = show_local "mat_len_default_mat_less=" mat_len_default_mat_less_replay;
 val _ = show_local "comp_is_any_pmatch=" pattern_compTheory.is_Any_pmatch;
 val _ = show_local "comp_take_until_any=" pattern_compTheory.match_take_until_Any;
 val _ = show_local "comp_match_append=" pattern_compTheory.match_append;
+val comp_case_none_local_replay = prove (
+  ``(case x of pattern_common$PMatchSuccess => NONE
+            | pattern_common$PMatchFailure => NONE
+            | pattern_common$PTypeFailure => K NONE NONE) = NONE``,
+  Cases_on `x` >> fs []);
+val _ = show_local "comp_case_none_local=" comp_case_none_local_replay;
+val _ = show_local "comp_case_none_export=" pattern_compTheory.pmatchResult_case_NONE;
+val _ = show_local "comp_is_const_row=" pattern_compTheory.is_const_row_lemma;
+val _ = show_local "comp_not_is_const_row=" pattern_compTheory.not_is_const_row;

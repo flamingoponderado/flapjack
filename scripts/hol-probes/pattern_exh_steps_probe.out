@@ -78,3 +78,7 @@ mat_len_default_mat_less=∀(r :pat list) (rows :pat list list). r ≠ ([] :pat 
 comp_is_any_pmatch=∀(p :pat). is_Any p ⇒ (pmatch (refs :num |-> term) p (v :term) :pmatchResult) ≠ PMatchFailure
 comp_take_until_any=∀(rows :(pat # num) list). match (refs :num |-> term) rows (v :term) ≠ (NONE :matchResult option) ⇒ match refs (take_until_Any rows) v = match refs rows v
 comp_match_append=∀(xs :(pat # num) list) (ys :(pat # num) list) (refs :num |-> term) (v :term). match refs (xs ++ ys) v = case match refs xs v of (NONE :matchResult option) => (NONE :matchResult option) | SOME (MatchSuccess e) => if match refs ys v ≠ (NONE :matchResult option) then SOME (MatchSuccess e) else (NONE :matchResult option) | SOME MatchFailure => match refs ys v
+comp_case_none_local=(case (x :pmatchResult) of PMatchSuccess => (NONE :α option) | PMatchFailure => (NONE :α option) | PTypeFailure => K (NONE :α option) (NONE :β option)) = (NONE :α option)
+comp_case_none_export=(case (x :pmatchResult) of PMatchSuccess => (NONE :α option) | PMatchFailure => (NONE :α option) | PTypeFailure => (NONE :α option)) = (NONE :α option)
+comp_is_const_row=(∀(t :num option). (v :term) ≠ Term t ([] :term list)) ∧ is_const_row ((p_1 :pat),(p_2 :α)) ∧ (pmatch (refs :num |-> term) p_1 v :pmatchResult) ≠ PTypeFailure ⇒ (pmatch refs p_1 v :pmatchResult) = PMatchFailure
+comp_not_is_const_row=¬is_const_row ((p :pat),(x :α)) ∧ ¬is_Or_row (p,x) ∧ ¬is_Any p ⇒ (pmatch (refs :num |-> term) p (Term (t :num option) ([] :term list)) :pmatchResult) ≠ PMatchSuccess

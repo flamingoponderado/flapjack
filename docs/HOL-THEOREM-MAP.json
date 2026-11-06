@@ -111761,6 +111761,37 @@
     "reviewer": "Compared the complete source case expression with the typed exported HOL theorem, retaining the suffix non-NONE condition and arbitrary fallback result. The same-module witness checks the canonical finite-map parameter."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/PatternComp/Proofs/RowSelection.lean",
+    "lean_name": "pmatchResult_case_none",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml",
+    "hol_name": "pmatchResult_case_NONE",
+    "hol_line": 92,
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the source exported equation and typed HOL capture: the result Option carrier is arbitrary. The line 84 local uses K with an independent second type; the line 92 export reduces that application and eliminates the second type."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternComp/Proofs/RowSelection.lean",
+    "lean_name": "isConstRow_failure",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml",
+    "hol_name": "is_const_row_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "refs"
+    ],
+    "reviewer": "Compared the full source non-nullary, constant-row and non-type-failure premises and failure conclusion against the typed exported theorem; the row payload is arbitrary. The same-module witness checks the canonical finite-map parameter."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternComp/Proofs/RowSelection.lean",
+    "lean_name": "nonConstRow_not_success_nullary",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml",
+    "hol_name": "not_is_const_row",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "refs"
+    ],
+    "reviewer": "Compared all three source negative premises and the non-success conclusion against the typed exported theorem; the row payload is arbitrary. The same-module witness checks the canonical finite-map parameter."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/PatternExh/Exhaustive.lean",
     "lean_name": "exhRows",
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
