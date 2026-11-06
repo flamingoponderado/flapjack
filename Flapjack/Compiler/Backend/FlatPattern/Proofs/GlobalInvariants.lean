@@ -10,7 +10,9 @@ open Flapjack.Compiler.Backend.FlatProps
 private theorem esgcFree_mkBool (t : Tra) (b : Bool) : esgcFree (mkBool t b) := by
   simp [mkBool, esgcFree, esgcFreeList]
 
-private theorem esgcFree_smartIf (t : Tra) (c x y : FlatLang.Exp)
+/-- Flapjack helper: smart conditionals preserve branch global safety.
+HOL uses the cases within its proofs. -/
+theorem esgcFree_smartIf (t : Tra) (c x y : FlatLang.Exp)
     (hc : esgcFree c) (hx : esgcFree x) (hy : esgcFree y) :
     esgcFree (smartIf t c x y) := by
   cases c <;> simp_all [smartIf, esgcFree]
@@ -363,7 +365,8 @@ theorem setGlobals_naivePatternMatch (t : Tra) (xs : List (FlatLang.Pat × FlatL
   intro p e member
   exact safe (p, e) member
 
-private theorem setGlobals_smartIf_le (t : Tra) (c x y : FlatLang.Exp) (key : Nat) :
+/-- Flapjack helper: smart conditionals do not add global writes. HOL reasons by cases. -/
+theorem setGlobals_smartIf_le (t : Tra) (c x y : FlatLang.Exp) (key : Nat) :
     setGlobals (smartIf t c x y) key ≤
       setGlobals c key + setGlobals x key + setGlobals y key := by
   cases c <;> simp [smartIf, setGlobals, unionGlobalBag]

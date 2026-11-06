@@ -13,16 +13,6 @@ private theorem rangeBag_member (start count key : Nat)
   have less : i < count := List.mem_range.mp imem
   omega
 
-private theorem globals_append (xs ys : List FlatLang.Exp) :
-    elistGlobals (xs ++ ys) = unionGlobalBag (elistGlobals xs) (elistGlobals ys) := by
-  induction xs with
-  | nil => funext key; simp [elistGlobals, emptyGlobalBag, unionGlobalBag]
-  | cons x xs ih =>
-    simp only [List.cons_append, elistGlobals, ih]
-    funext key
-    simp only [unionGlobalBag]
-    omega
-
 /-- Every incremental compilation initializes slots inside its allocated range. -/
 theorem incCompile_globals_range (envId : Nat × Nat) (c : Config) (p : List Dec) :
     let result := incCompile envId c p
@@ -55,7 +45,7 @@ theorem incCompile_globals_range (envId : Nat × Nat) (c : Config) (p : List Dec
       (globAlloc next' c :: (code ++ [storeEnvId envs'.generation envs'.next])) key
     have h : 0 < bindingRangeBag c.next.vidx (numBindingsList p) key := by
       simp only [elistGlobals, globAlloc, storeEnvId, setGlobals, opGlobalBag, envIdTuple,
-        globals_append, body, unionGlobalBag, emptyGlobalBag] at bound
+        elistGlobals_append, body, unionGlobalBag, emptyGlobalBag] at bound
       simp only [globAlloc, storeEnvId, envIdTuple] at positive
       omega
     have range := rangeBag_member c.next.vidx (numBindingsList p) key h

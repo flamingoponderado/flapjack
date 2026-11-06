@@ -6,16 +6,6 @@ namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack.Compiler.Backend.BackendCommon FlatLang PatternCommon PatternSemantics
 open Flapjack.Compiler.Backend.FlatProps
 
-private theorem smartIf_bagBound (t : Tra) (c x y : FlatLang.Exp) (key : Nat) :
-    setGlobals (smartIf t c x y) key ≤ setGlobals c key + setGlobals x key + setGlobals y key := by
-  cases c <;> simp [smartIf, setGlobals, unionGlobalBag]
-  case con t tag args =>
-    cases tag <;> cases args <;> simp [setGlobals, elistGlobals, emptyGlobalBag, unionGlobalBag]
-    case some.nil pair =>
-      obtain ⟨tag, typ⟩ := pair
-      cases typ <;> simp [setGlobals, elistGlobals, emptyGlobalBag, unionGlobalBag]
-      all_goals split_ifs <;> simp [setGlobals, elistGlobals, emptyGlobalBag, unionGlobalBag]
-
 private theorem compiledRows_empty (cfg : Config) (ps : List (FlatLang.Pat × FlatLang.Exp))
     (j : Nat) (sgp : Bool) (ps2 : List (FlatLang.Pat × FlatLang.Exp))
     (eqp : compileMatch cfg ps = (j, sgp, ps2))
@@ -110,7 +100,7 @@ theorem compileExp_bagBounds (cfg : Config) (exp : FlatLang.Exp) :
   | case10 t x1 x2 x3 i sg1 y1 eq1 j sg2 y2 eq2 k sg3 y3 eq3 ih1 ih2 ih3 =>
     intro key
     simp only [compileExp, eq1, eq2, eq3, setGlobals, unionGlobalBag]
-    have bound := smartIf_bagBound t y1 y2 y3 key
+    have bound := setGlobals_smartIf_le t y1 y2 y3 key
     have h1 := ih1 key; have h2 := ih2 key; have h3 := ih3 key
     simp only [eq1] at h1; simp only [eq2] at h2; simp only [eq3] at h3
     omega
