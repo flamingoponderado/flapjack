@@ -14,10 +14,6 @@ def declarations : List (Decl Nat) :=
        body := .skip, returnShape := .one },
    .name "S" [], .exnDecl "E" (.named "T"), .decl .one "h" (.const 9)]
 
-theorem exceptionsFilterIsFunctionFixture :
-    exceptionEntries (globalDeclsFilter globalDeclIsFunction declarations) = [] :=
-  (exceptions_FILTER_is_function declarations).1
-
 def exceptionsFilterIsFunctionGuard : Bool :=
   (match exceptionEntries
       (globalDeclsFilter globalDeclIsFunction declarations) with

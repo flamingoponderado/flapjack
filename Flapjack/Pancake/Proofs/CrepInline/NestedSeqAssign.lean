@@ -6,8 +6,8 @@ import Flapjack.Pancake.Semantics.CrepProps
 
 Counterparts of `cakeml/pancake/proofs/crep_inlineProofScript.sml:1802-1891`
 (bead `flapjack-pxn.18.5.5.47.1`), used by `transform_eoc_correct` and
-`transform_branch_correct`.  `fdoms_eq_opt_mmap_flookup_some` (`:1833`) is
-already ported in `Flapjack.Pancake.Proofs.CrepInline`.
+`transform_branch_correct`. The faithful HOL `fdoms_eq_opt_mmap_flookup_some`
+statement over finite maps remains to be ported.
 
 Renderings, as in the other crep_inline ports:
 * `FLOOKUP fm` is `fm.lookup`, `OPT_MMAP` is `List.mapM`;

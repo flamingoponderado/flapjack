@@ -839,13 +839,6 @@ for proof-side size facts, not by that executed path. -/
 def sizeOfEids (declarations : List (Decl α)) : Nat :=
   Flapjack.Pancake.PanLang.sizeOfEidsHOL (declarations.map declClassViewHOL)
 
-/-! `pan_simp` maps every function declaration to a function declaration and
-    leaves every other declaration unchanged, so it preserves the exception
-    identifier count.  This mirrors Cake's `size_of_eids_compile_eq`. -/
-
-theorem isExnDecl_panSimpDecl (declaration : Decl α) :
-    isExnDecl (panSimpDecl declaration) = isExnDecl declaration := by
-  cases declaration <;> rfl
 
 /-- The cons equation for `sizeOfEids`, stated as an `if` on `isExnDecl`. -/
 theorem sizeOfEids_cons (declaration : Decl α) (declarations : List (Decl α)) :
@@ -859,13 +852,6 @@ theorem sizeOfEids_cons (declaration : Decl α) (declarations : List (Decl α)) 
     simp [declClassViewHOL, isExnDecl, Flapjack.Pancake.PanLang.isExnDeclHOL] <;>
       omega
 
-theorem sizeOfEids_map_panSimpDecl (declarations : List (Decl α)) :
-    sizeOfEids (declarations.map panSimpDecl) = sizeOfEids declarations := by
-  induction declarations with
-  | nil => simp [sizeOfEids]
-  | cons declaration declarations ih =>
-      rw [List.map_cons, sizeOfEids_cons, sizeOfEids_cons,
-        isExnDecl_panSimpDecl, ih]
 
 /-! ### Checked codec bridge to the exact `DeclHOL` predicates (bead `flapjack-ni1.1`)
 

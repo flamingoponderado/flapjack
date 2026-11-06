@@ -1434,11 +1434,12 @@ for. -/
     (.seq (.annot "location" "(1:1 1:5)") .skip)
     (.seq (.annot "location" "(1:6 1:10)") .tick)))
 
--- A declaration's range covers the statements it scopes over.
+-- The default shape contributes an unknown starting location; the retained
+-- return-expression child supplies the return statement's range.
 #guard sameAst (parseProgram ofI "var x = 1; return x;" (locations := true))
-  (.ok (.seq (.annot "location" "(1:1 1:18)")
+  (.ok (.seq (.annot "location" "(UNKNOWN 1:18)")
     (.dec "x" .one (.const 1)
-      (.seq (.annot "location" "(1:10 1:18)") (.return (.var .local "x"))))))
+      (.seq (.annot "location" "(1:17 1:18)") (.return (.var .local "x"))))))
 
 -- Ranges track rows through a multi-line function.
 #guard sameAst (parseTopDecs ofI "fun f() {\n  skip;\n  tick;\n}" (locations := true))
@@ -1453,7 +1454,7 @@ for. -/
 -- `SkipK` leaf carrying `unknown_loc`, and `conv_Prog` annotates every leaf it
 -- converts, so `(UNKNOWN UNKNOWN)` is upstream's own output here.
 #guard sameAst (parseProgram ofI "if 1 { skip; }" (locations := true))
-  (.ok (.seq (.annot "location" "(1:1 1:12)")
+  (.ok (.seq (.annot "location" "(1:4 UNKNOWN)")
     (.ite (.const 1)
       (.seq (.annot "location" "(1:7 1:11)") .skip)
       (.seq (.annot "location" "(UNKNOWN UNKNOWN)") .skip))))

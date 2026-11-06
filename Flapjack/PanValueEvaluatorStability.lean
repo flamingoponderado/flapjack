@@ -123,42 +123,6 @@ theorem evalPanValueExp_update_local_not_mem
       try simp only [eq_comm]
   exact hmain expression memoryAccess hname
 
-theorem evalPanValueExps_update_local_not_mem
-    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
-    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
-    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
-    [BEq String] [LawfulBEq String]
-    (structs : StructContext)
-    (locals globals : VarName → Option (PanValue α))
-    (memory : α → Option (PanValue α))
-    (baseAddress topAddress bytesInWord : α)
-    (expressions : List (Exp α))
-    (memoryAccess : Option (PanValueMemoryAccess α))
-    (name : VarName) (replacement : PanValue α)
-    (hname : ∀ expression ∈ expressions,
-      name ∉ expLocalVars expression) :
-    evalPanValueExps structs (updatePanValueMap locals name replacement) globals
-      memory baseAddress topAddress bytesInWord expressions memoryAccess =
-    evalPanValueExps structs locals globals memory baseAddress topAddress
-      bytesInWord expressions memoryAccess := by
-  induction expressions with
-  | nil => simp [evalPanValueExps, evalPanValueExp.evalPanValueExps]
-  | cons expression expressions ih =>
-      have hexpression := evalPanValueExp_update_local_not_mem structs locals
-        globals memory baseAddress topAddress bytesInWord expression memoryAccess
-        name replacement (hname expression (by simp))
-      have hexpressions := ih (fun expression' hmem =>
-        hname expression' (by simp [hmem]))
-      have hexpressions' :
-          evalPanValueExp.evalPanValueExps structs
-              (updatePanValueMap locals name replacement) globals memory
-              baseAddress topAddress bytesInWord expressions memoryAccess =
-            evalPanValueExp.evalPanValueExps structs locals globals memory
-              baseAddress topAddress bytesInWord expressions memoryAccess := by
-        simpa only [evalPanValueExps] using hexpressions
-      simp [evalPanValueExps, evalPanValueExp.evalPanValueExps,
-        hexpression, hexpressions']
-
 /-! Cake's `FUPDATE_LIST` applies a sequence of local bindings.  Keeping the
     operation explicit gives the Lean port the same reusable interface as
     Pancake's `eval_distinct_lists_not_affect'` theorem, while avoiding any

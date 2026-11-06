@@ -28,9 +28,7 @@ fun print_eval label q =
    (sha256 569dafb0a2182549a1de3491a4472a22338cd93c87fe6b6c193f902cbfb1e759). *)
 
 (* The `genlist_vmax_*` rows additionally exercise the left-operand shape of
-   HOL `genlist_vmax_distinct_lists_compiled_exps`, the source of the
-   width-indexed Lean statement
-   `Flapjack.genlistVmaxDistinctListsCompiledExpsW`
+   HOL `genlist_vmax_distinct_lists_compiled_exps`
    (bead flapjack-pxn.18.4.3.78.3). *)
 val _ = print_eval "distinct_true" ``pan_common$distinct_lists [1;2] [3;4]``;
 val _ = print_eval "distinct_false_right_hit" ``pan_common$distinct_lists [1;2] [2;4]``;

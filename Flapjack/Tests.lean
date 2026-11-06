@@ -1,4 +1,5 @@
 import Flapjack.Test.WordUnreachEncoderBoundary
+import Flapjack.Test.AbstractGenerationalGcParity
 import Flapjack.Test.SetNewTriggerParity
 import Flapjack.Test.GenGcMoveRefsParity
 import Flapjack.Test.GenPartialMoveDataParity

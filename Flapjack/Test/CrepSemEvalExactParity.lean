@@ -62,6 +62,38 @@ def exactState64 : CrepSemHOLState 64 Unit where
   baseAddr := word64 0
   topAddr := word64 0
 
+-- Width-24 state from the LoadByte and Load32 HOL probes. All other state
+-- fields are irrelevant to these expression evaluations.
+def exactDomain24 (address : BitVec 24) : Prop := address = 4
+
+def exactState24 (bigEndian : Bool) : CrepSemHOLState 24 Unit where
+  locals := HolFiniteMapExact.empty
+  globals := HolFiniteMapExact.empty
+  code := HolFiniteMapExact.empty
+  memory := fun address => if address == 4 then .word 0x332211 else .word 0
+  memaddrs := exactDomain24
+  shMemaddrs := fun _ => False
+  clock := 0
+  be := bigEndian
+  ffi := exactFfi
+  baseAddr := 0
+  topAddr := 0
+
+local instance : DecidablePred exactDomain24 := by
+  intro address
+  unfold exactDomain24
+  infer_instance
+
+-- The explicit decider is related to the HOL-facing evaluator by
+-- `evalCrepSemHOLExpWithDecider_eq`.
+def evalExact24 (bigEndian : Bool) (expression : CrepExpHOL 24) :=
+  evalCrepSemHOLExpWithDecider (exactState24 bigEndian)
+    (fun address => (show Decidable (address = (4 : BitVec 24)) from inferInstance)) expression
+
+#guard evalExact24 false (.loadByte (.const 5)) == some (.word 0x33)
+#guard evalExact24 true (.loadByte (.const 5)) == some (.word 0x11)
+#guard evalExact24 false (.load32 (.const 4)) == some (.word 0x113322)
+
 local instance : DecidablePred exactState64.memaddrs := by
   intro address
   change Decidable (address = word64 8)
@@ -110,6 +142,81 @@ def evalExact64 (expression : CrepExpHOL 64) :=
     some (.word (word64 0x55667788))
 #guard evalExact64 (.loadByte (.const (word64 8))) ==
     some (.word (word64 136))
+
+-- `crep_eval_cmp_rv64_probe.out`: all comparison constructors and both
+-- overlapping and disjoint bit tests, on the exact HOL evaluator carrier.
+#guard evalExact64 (.cmp .equal (.const 5) (.const 5)) == some (.word 1)
+#guard evalExact64 (.cmp .equal (.const 5) (.const 6)) == some (.word 0)
+#guard evalExact64 (.cmp .lower (.const 3) (.const 5)) == some (.word 1)
+#guard evalExact64 (.cmp .less (.const 0xFFFFFFFFFFFFFFFF) (.const 1)) == some (.word 1)
+#guard evalExact64 (.cmp .notEqual (.const 5) (.const 6)) == some (.word 1)
+#guard evalExact64 (.cmp .notLower (.const 5) (.const 3)) == some (.word 1)
+#guard evalExact64 (.cmp .notLess (.const 1) (.const 0xFFFFFFFFFFFFFFFF)) == some (.word 1)
+#guard evalExact64 (.cmp .test (.const 0xF0) (.const 0x10)) == some (.word 0)
+#guard evalExact64 (.cmp .test (.const 0xF0) (.const 0x0F)) == some (.word 1)
+#guard evalExact64 (.cmp .notTest (.const 0xF0) (.const 0x10)) == some (.word 1)
+
+-- `crep_eval_shift_rv64_probe.out`: all shift operators and their bounds.
+#guard evalExact64 (.shift .lsl (.const 1) (.const 3)) == some (.word 8)
+#guard evalExact64 (.shift .lsr (.const 16) (.const 2)) == some (.word 4)
+#guard evalExact64 (.shift .asr (.const 0x8000000000000000) (.const 4)) ==
+  some (.word 0xF800000000000000)
+#guard evalExact64 (.shift .ror (.const 1) (.const 1)) ==
+  some (.word 0x8000000000000000)
+#guard evalExact64 (.shift .lsl (.const 7) (.const 0)) == some (.word 7)
+#guard evalExact64 (.shift .lsl (.const 7) (.const 64)) == none
+
+-- Preserve the previous total-domain source evaluator load observations.
+def exactEverywhere64 : CrepSemHOLState 64 Unit :=
+  { exactState64 with
+    memory := fun _ => .word 0x0807060504030201
+    memaddrs := fun _ => True }
+
+def evalExactEverywhere64 (expression : CrepExpHOL 64) :=
+  evalCrepSemHOLExpWithDecider exactEverywhere64 (fun _ => isTrue True.intro) expression
+
+#guard evalExactEverywhere64 (.load32 (.const 0)) == some (.word 0x04030201)
+#guard evalExactEverywhere64 (.loadByte (.const 0)) == some (.word 1)
+
+-- Eight-bit rows from `hol_word_arithmetic_probe.out`.
+#guard (3 : BitVec 8) + 5 == 8
+#guard (3 : BitVec 8) * 5 == 15
+#guard (3 : BitVec 8) - 5 == 254
+
+-- Original `word_op_finite_probe.out` list-fold and arity rows.
+#guard wordOpHOL .add ([3, 5] : List (BitVec 8)) == some 8
+#guard wordOpHOL .add ([] : List (BitVec 8)) == some 0
+#guard wordOpHOL .and ([] : List (BitVec 8)) == some 255
+#guard wordOpHOL .or ([] : List (BitVec 8)) == some 0
+#guard wordOpHOL .xor ([] : List (BitVec 8)) == some 0
+#guard wordOpHOL .sub ([3, 5] : List (BitVec 8)) == some 254
+#guard wordOpHOL .sub ([3] : List (BitVec 8)) == none
+#guard wordOpHOL .sub ([1, 2, 3] : List (BitVec 8)) == none
+#guard wordOpHOL .add ([3] : List (BitVec 8)) == some 3
+#guard wordOpHOL .add ([1, 2, 3] : List (BitVec 8)) == some 6
+#guard wordOpHOL .and ([12, 10] : List (BitVec 8)) == some 8
+#guard wordOpHOL .and ([15, 6, 3] : List (BitVec 8)) == some 2
+#guard wordOpHOL .or ([12, 3] : List (BitVec 8)) == some 15
+#guard wordOpHOL .or ([1, 2, 4] : List (BitVec 8)) == some 7
+#guard wordOpHOL .xor ([15, 10] : List (BitVec 8)) == some 5
+#guard wordOpHOL .xor ([1, 2, 4] : List (BitVec 8)) == some 7
+#guard wordOpHOL .sub ([] : List (BitVec 8)) == none
+
+-- Original `word_sh_finite_probe.out` word and amount cases.
+#guard wordShiftHOL .lsl (3 : BitVec 8) 0 == some 3
+#guard wordShiftHOL .lsl (3 : BitVec 8) 1 == some 6
+#guard wordShiftHOL .lsr (128 : BitVec 8) 7 == some 1
+#guard wordShiftHOL .asr (128 : BitVec 8) 1 == some 192
+#guard wordShiftHOL .ror (3 : BitVec 8) 1 == some 129
+#guard wordShiftHOL .lsl (3 : BitVec 8) 8 == none
+#guard wordShiftHOL .lsl (3 : BitVec 8) 9 == none
+
+-- The source `n2w` probe's low and high bit observations.
+#guard !(BitVec.ofNat 8 0).getLsbD 0
+#guard (BitVec.ofNat 8 1).getLsbD 0
+#guard !(BitVec.ofNat 8 1).getLsbD 1
+#guard (BitVec.ofNat 8 128).getLsbD 7
+#guard !(BitVec.ofNat 8 128).getLsbD 6
 
 #guard evalExact8AtClock 5
     (.op .sub [.const (word8 7), .const (word8 2)]) ==

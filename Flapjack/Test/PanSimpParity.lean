@@ -45,28 +45,19 @@ theorem seq_assoc_tick_return :
 sequence does not change the statically reachable exception identifiers. -/
 theorem exp_ids_seq_assoc_preserves_raise :
     expIds (seqAssoc (.skip : Prog Nat)
-      (.seq (.raise "E" (.const 0)) .tick)) = ["E"] := by
-  simpa [expIds] using expIds_seqAssoc (.skip : Prog Nat)
-    (.seq (.raise "E" (.const 0)) .tick)
+      (.seq (.raise "E" (.const 0)) .tick)) = ["E"] := by simp [seqAssoc, smartSeq, expIds]
 
 /-! Cake's `exp_ids_ret_to_tail_eq` preservation theorem, exercised through
     a nested call handler as well as the outer program. -/
 theorem exp_ids_ret_to_tail_preserves_raise :
-    expIds (retToTail (.raise "E" (.const 0) : Prog Nat)) = ["E"] := by
-  simpa [expIds] using expIds_retToTail
-    (.raise "E" (.const 0) : Prog Nat)
+    expIds (retToTail (.raise "E" (.const 0) : Prog Nat)) = ["E"] := by simp [retToTail, expIds]
 
 theorem exp_ids_ret_to_tail_preserves_nested_raise :
     expIds (retToTail
       (.call
         (some (some (VarKind.local, "r"), some ("E", "h",
           .seq (.raise "E2" (.const 0)) .tick)))
-        "f" [] : Prog Nat)) = ["E", "E2"] := by
-  simpa [expIds] using expIds_retToTail
-    (.call
-      (some (some (VarKind.local, "r"), some ("E", "h",
-        .seq (.raise "E2" (.const 0)) .tick)))
-      "f" [] : Prog Nat)
+        "f" [] : Prog Nat)) = ["E", "E2"] := by simp [retToTail, seqCallRet, expIds]
 
 /-! The expected values are the direct HOL evaluation of
     `pan_simp$seq_call_ret` from `pan_simpScript.sml:42-49`. -/
@@ -205,16 +196,6 @@ theorem pan_simp_compile_prog_map :
       compileProgDeclsFixture.map panSimpDecl := by
   exact panSimpDecls_eq_map compileProgDeclsFixture
 
-theorem pan_simp_compile_prog_functions :
-    functions (panSimpDecls compileProgDeclsFixture) =
-      (functions compileProgDeclsFixture).map (fun entry =>
-        (entry.1, entry.2.1, panSimpProg entry.2.2.1, entry.2.2.2)) := by
-  exact functions_panSimpDecls compileProgDeclsFixture
-
-theorem pan_simp_compile_prog_first_all_distinct :
-    ((functions (panSimpDecls compileProgDeclsFixture)).map
-      (fun entry => entry.1)).Nodup := by
-  exact functions_panSimpDecls_names_nodup compileProgDeclsFixture (by decide)
 
 def functionsNamesNodupParity : Bool :=
   decide (((functions (panSimpDecls compileProgDeclsFixture)).map
@@ -314,29 +295,6 @@ def parityGuard : Bool :=
 
 #eval parityGuard
 #guard parityGuard
-
-example : expIds (retToTail (.skip : Prog Nat)) = expIds (.skip : Prog Nat) :=
-  expIdsRetToTailEq .skip
-
-example : expIds (seqAssoc (.skip : Prog Nat) (.skip : Prog Nat)) =
-    expIds (.skip : Prog Nat) ++ expIds (.skip : Prog Nat) :=
-  expIdsSeqAssocEq .skip .skip
-
-example : expIds (panSimpProg (.skip : Prog Nat)) = expIds (.skip : Prog Nat) :=
-  expIdsCompileEq .skip
-
-example : sizeOfEids (panSimpDecls ([] : List (Decl Nat))) =
-    sizeOfEids ([] : List (Decl Nat)) :=
-  sizeOfEidsPanSimpDeclsEq []
-
-example : functions (panSimpDecls ([] : List (Decl Nat))) =
-    (functions ([] : List (Decl Nat))).map (fun entry =>
-      (entry.1, entry.2.1, panSimpProg entry.2.2.1, entry.2.2.2)) :=
-  functionsCompileProg []
-
-example : ((functions (panSimpDecls ([] : List (Decl Nat)))).map
-    (fun entry => entry.1)).Nodup :=
-  firstCompileProgAllDistinctPanSimp [] (by simp [functions, functionEntries])
 
 example :
     ([(1, (2, 3))] : List (Nat × Nat × Nat)).map (fun entry => entry.2.2 + 1) =

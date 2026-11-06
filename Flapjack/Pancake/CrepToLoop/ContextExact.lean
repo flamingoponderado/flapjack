@@ -442,8 +442,8 @@ decreasing_by
 /-- HOL `make_vmap` (`crep_to_loopScript.sml:230-233`) on the canonical
 finite-support carrier: `FEMPTY |++ ZIP (params, GENLIST I (LENGTH params))`, so
 a later duplicate parameter shadows an earlier one. Untagged helper for the
-exact `comp_func_def` port; the tagged production rendering `makeVmapHOL` stays
-function-backed. -/
+exact `comp_func_def` port; the production lookup rendering `makeVmapHOL` is
+function-backed and untagged. -/
 def makeVmapExact (params : List Nat) : HolFiniteMapExact Nat Nat :=
   HolFiniteMapExact.updateListEq HolFiniteMapExact.empty
     (params.zip (List.range params.length))

@@ -45,8 +45,8 @@ wrong: a rule's result is a *list* of trees, not one, because `ProgNT`'s final
 `ShapedIdentNT` contributes two children rather than a node of its own, which
 is why `conv_params` reads a flat shape/name sequence.
 
-Node ranges come from the tokens a rule consumed, which is upstream's
-`ptree_list_loc` whenever the children cover the rule.
+Node ranges use `ptree_list_loc` over the retained children, as in the source
+grammar; consumed tokens that are not retained do not extend the range.
 
 `Grammar.lean` has one function per `panPEG` rule, named after it, in the same
 order and with the same ordered choices. Every optional or repeated piece

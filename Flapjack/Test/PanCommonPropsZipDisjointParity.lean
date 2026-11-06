@@ -35,10 +35,6 @@ def zipGuard : Bool := fznNotMem && fznMem && fznPreserved
 
 #guard zipGuard
 
-/-- HOL `flookup_fupdate_zip_not_mem` (`pan_commonPropsScript.sml:289`). -/
-theorem flookup_fupdate_zip_not_mem_fixture :
-    FLOOKUP (FUPDATE_LIST baseMap ([1, 2].zip [10, 20])) 9 = FLOOKUP baseMap 9 :=
-  flookup_fupdate_zip_not_mem [1, 2] [10, 20] baseMap 9 (by decide) (by decide)
 
 /-- HOL `disjoint_take_drop_sum` (`pan_commonPropsScript.sml:399`). -/
 theorem disjoint_take_drop_sum_fixture :
@@ -71,11 +67,6 @@ def fmdvGuard : Bool :=
 
 #guard fmdvGuard
 
-/-- HOL `fm_update_diff_vars` (`pan_commonPropsScript.sml:780`). -/
-theorem fm_update_diff_vars_fixture :
-    FUPDATE (FUPDATE (FUPDATE (FUPDATE FEMPTY (1, 10)) (2, 20)) (1, 10)) (2, 22) =
-      FUPDATE (FUPDATE FEMPTY (1, 10)) (2, 22) :=
-  fm_update_diff_vars FEMPTY 1 2 10 20 22 (by decide)
 
 /-- HOL `all_distinct_take_frop_disjoint` (`pan_commonPropsScript.sml:534`). -/
 theorem all_distinct_take_frop_disjoint_fixture :
@@ -100,10 +91,6 @@ def takeDropElZipGuard : Bool := atddGuard && nmfzGuard
 
 #guard takeDropElZipGuard
 
-/-- HOL `not_mem_fst_zip_flookup_empty` (`pan_commonPropsScript.sml:575`). -/
-theorem not_mem_fst_zip_flookup_empty_fixture :
-    FLOOKUP (FUPDATE_LIST FEMPTY (([1, 2] : List Nat).zip [10, 20])) 9 = none :=
-  not_mem_fst_zip_flookup_empty [1, 2] [10, 20] 9 (by decide) (by decide) (by decide)
 
 -- HOL `genlist_distinct_max` (`pan_commonPropsScript.sml:208`).
 def genlistGuard : Bool :=

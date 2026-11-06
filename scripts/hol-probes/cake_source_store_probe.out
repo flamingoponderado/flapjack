@@ -1,0 +1,55 @@
+type_stamp_type=:mlstring -> num -> stamp
+exn_stamp_type=:num -> stamp
+sem_env_v_type=:α sem_env -> (mlstring, mlstring, α) namespace
+sem_env_c_type=:α sem_env -> (mlstring, mlstring, num # stamp) namespace
+litv_type=:lit -> v
+conv_type=:stamp option -> v list -> v
+loc_type=:bool -> num -> v
+vector_type=:v list -> v
+env_type=:v sem_env -> num # num -> v
+store_ref_type=:α -> α store_v
+store_bytes_type=:word8 list -> α store_v
+store_array_type=:α list -> α store_v
+store_thunk_type=:thunk_mode -> α -> α store_v
+decs_compiler_state_type=:eval_decs_state -> v
+decs_env_counter_type=:eval_decs_state -> num # num # num
+decs_decode_type=:eval_decs_state -> v -> dec list option
+oracle_source_type=:eval_oracle_state -> num -> (num # num) # v # dec list
+oracle_envs_type=:eval_oracle_state -> v sem_env list list
+oracle_generation_type=:eval_oracle_state -> num
+eval_decs_type=:eval_decs_state -> eval_state
+eval_oracle_type=:eval_oracle_state -> eval_state
+state_clock_type=:'ffi state -> num
+state_refs_type=:'ffi state -> v store_v list
+state_type_stamp_type=:'ffi state -> num
+state_exn_stamp_type=:'ffi state -> num
+abort_type_error_type=:abort
+abort_timeout_type=:abort
+abort_ffi_type=:final_event -> abort
+error_raise_type=:α -> α error_result
+error_abort_type=:abort -> α error_result
+result_value_type=:α -> (α, β) result
+result_error_type=:α error_result -> (β, α) result
+match_none_type=:α match_result
+match_error_type=:α match_result
+match_success_type=:α -> α match_result
+closure_type=:v sem_env -> mlstring -> exp -> v
+recclosure_type=:v sem_env -> (mlstring # mlstring # exp) list -> mlstring -> v
+store_assign_type=:num -> α store_v -> α store_v list -> α store_v list option
+compiler_type=:eval_decs_state -> (num # num) # v # dec list -> (v # word8 list # word64 list) option
+oracle_type=:eval_oracle_state -> v list -> (num -> (num # num) # v # dec list) -> ((num # num) # (num -> (num # num) # v # dec list) # dec list) option
+state_ffi_type=:'ffi state -> 'ffi ffi_state
+state_eval_type=:'ffi state -> eval_state option
+store_same_type_def=⊢ ∀(v1 :α store_v) (v2 :α store_v). store_v_same_type v1 v2 ⇔ case (v1,v2) of (Refv v9,Refv v19) => T | (Refv v9,(W8array v20 :α store_v)) => F | (Refv v9,Varray v21) => F | (Refv v9,Thunk v22 v23) => F | ((W8array v10 :α store_v),Refv v29) => F | ((W8array v10 :α store_v),(W8array v30 :α store_v)) => T | ((W8array v10 :α store_v),Varray v31) => F | ((W8array v10 :α store_v),Thunk v32 v33) => F | (Varray v11,Refv v39) => F | (Varray v11,(W8array v40 :α store_v)) => F | (Varray v11,Varray v41) => T | (Varray v11,Thunk v42 v43) => F | (Thunk v12 v13,Refv v49) => F | (Thunk v12 v13,(W8array v50 :α store_v)) => F | (Thunk v12 v13,Varray v51) => F | (Thunk Evaluated v13,Thunk v52 v53) => F | (Thunk NotEvaluated v13,Thunk v52 v53) => T
+empty_store_def=⊢ (empty_store :α store_v list) = ([] :α store_v list)
+store_lookup_def=⊢ ∀(l :num) (st :α store_v list). store_lookup l st = if l < LENGTH st then SOME st❲l❳ else (NONE :α store_v option)
+store_alloc_def=⊢ ∀(v :α store_v) (st :α store_v list). store_alloc v st = (st ++ [v],LENGTH st)
+store_assign_def=⊢ ∀(n :num) (v :α store_v) (st :α store_v list). store_assign n v st = if n < LENGTH st ∧ store_v_same_type st❲n❳ v then SOME st❲n ↦ v❳ else (NONE :α store_v list option)
+ref_same=T
+thunk_update=T
+thunk_final=F
+allocation=([Refv (3 :num); Refv (7 :num)],(1 :num))
+lookup=SOME (Refv (3 :num))
+update=SOME [Refv (7 :num)]
+invalid=(NONE :num store_v list option)
+wrong_type=(NONE :num store_v list option)

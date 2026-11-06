@@ -1,0 +1,2 @@
+source_opref_typed=SOME (([Refv (Litv (IntLit (7 :int)) :semanticPrimitives$v)],(ffi :α ffi_state)),(Rval (Loc T (0 :num) :semanticPrimitives$v) :(semanticPrimitives$v, semanticPrimitives$v) result))
+flat_opref_typed=SOME ((st :(α, β) flatSem$state) with refs := [Refv (Litv (IntLit (0 :int)) :v); Refv (Litv (IntLit (7 :int)) :v)],(Rval (Loc T (1 :num) :v) :(v, v) result))

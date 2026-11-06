@@ -1,0 +1,22 @@
+(* Constructor types of the pinned bignum mini-language. *)
+load "word_bignumTheory";
+open HolKernel Parse boolLib bossLib;
+val _ = Globals.linewidth := 1000000;
+val _ = Globals.show_types := true;
+fun ty name term = (print (name ^ "="); print_type (type_of term); print "\n");
+val _ = ty "skip" ``word_bignum$Skip``;
+val _ = ty "assign" ``word_bignum$Assign``;
+val _ = ty "delete" ``word_bignum$Delete``;
+val _ = ty "seq" ``word_bignum$Seq``;
+val _ = ty "load" ``word_bignum$Load``;
+val _ = ty "store" ``word_bignum$Store``;
+val _ = ty "if" ``word_bignum$If``;
+val _ = ty "swap" ``word_bignum$Swap``;
+val _ = ty "add" ``word_bignum$Add``;
+val _ = ty "sub" ``word_bignum$Sub``;
+val _ = ty "mul" ``word_bignum$Mul``;
+val _ = ty "div" ``word_bignum$Div``;
+val _ = ty "loop" ``word_bignum$Loop``;
+val _ = ty "continue" ``word_bignum$Continue``;
+val _ = ty "rec" ``word_bignum$Rec``;
+val _ = ty "loop_body" ``word_bignum$LoopBody``;

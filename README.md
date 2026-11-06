@@ -42,7 +42,9 @@ Flapjack is an in-progress Lean 4 port of the formally verified Pancake compiler
   port of CakeML's full L3 x86-64 semantics; see [`docs/X64.md`](docs/X64.md).
 - Other backends, including 32-bit ARM and 32-bit x86, have not yet been ported
   to Lean.
-- The CakeML front end has not been ported to Lean.
+- An experimental CakeML front end and `cake` executable compile CakeML source
+  to RISC-V. The ports are bounded, and full output parity and end-to-end
+  correctness remain unproved; see [parity testing](docs/PARITY-TESTING.md).
 
 The Lean specifications and their implications still require independent review. See
 [`docs/SOUNDNESS.md`](docs/SOUNDNESS.md) for limitations and
@@ -62,6 +64,17 @@ byte goldens:
 ```sh
 lake test
 ```
+
+Compile CakeML source to RISC-V assembly with the experimental frontend:
+
+```sh
+lake exe cake --target=riscv < program.cml > program.riscv.S
+```
+
+For output comparisons, pass `--target=riscv` to both compilers. Flapjack's
+`cake` defaults to RISC-V; the pinned upstream `cake` defaults to x86-64,
+which this executable does not support. The tested output comparisons do not
+establish equivalence for all inputs.
 
 Compile a Pancake source file through the source-facing RV64I path:
 

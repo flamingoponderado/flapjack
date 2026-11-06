@@ -360,40 +360,23 @@ example :
 #guard nativeProgramParityGuard
 #guard finiteMapLoadStoreParityGuard
 
-/-! The direct HOL rows `struct_skip`, `struct_break`, `struct_continue`,
-`struct_tick`, `struct_annot`, and `struct_seq` in `compile_def_probe.out`
-exercise the first exact-carrier `compile_def` slice. The support premise
-admits only those constructors, so unsupported constructors are not silently
-treated as successful compiler cases. -/
+/-! The direct HOL structural rows exercise the exact recursive compiler. -/
 
 open Flapjack.Pancake.PanLang
 
-def exactSkipSupported : CompileProgStructuralFragmentHOL
-    (ProgHOL.skip : ProgHOL 8) := .skip
-
-def exactControlSeqSupported : CompileProgStructuralFragmentHOL
-    (ProgHOL.seq ProgHOL.skip (ProgHOL.seq ProgHOL.break ProgHOL.continue) : ProgHOL 8) :=
-  .seq .skip (.seq .break .continue)
-
-def exactTickSupported : CompileProgStructuralFragmentHOL
-    (ProgHOL.tick : ProgHOL 8) := .tick
-
-def exactBreakSupported : CompileProgStructuralFragmentHOL
-    (ProgHOL.break : ProgHOL 8) := .break
-
-def exactContinueSupported : CompileProgStructuralFragmentHOL
-    (ProgHOL.continue : ProgHOL 8) := .continue
-
-def exactAnnotSupported : CompileProgStructuralFragmentHOL
-    (ProgHOL.annot (.implode []) (.implode []) : ProgHOL 8) := .annot _ _
+private def exactStructuralContext : PanToCrepContextExact 8 where
+  vars := HolFiniteMapExact.empty
+  funcs := HolFiniteMapExact.empty
+  eids := HolFiniteMapExact.empty
+  vmax := 0
 
 def exactStructuralSliceParity : Bool :=
-  let compiledSkip := compileProgStructuralFragmentHOL exactSkipSupported
-  let controls := compileProgStructuralFragmentHOL exactControlSeqSupported
-  let compiledTick := compileProgStructuralFragmentHOL exactTickSupported
-  let compiledBreak := compileProgStructuralFragmentHOL exactBreakSupported
-  let compiledContinue := compileProgStructuralFragmentHOL exactContinueSupported
-  let annot := compileProgStructuralFragmentHOL exactAnnotSupported
+  let compiledSkip := compileProgExactHOLW exactStructuralContext .skip
+  let controls := compileProgExactHOLW exactStructuralContext (.seq .skip (.seq .break .continue))
+  let compiledTick := compileProgExactHOLW exactStructuralContext .tick
+  let compiledBreak := compileProgExactHOLW exactStructuralContext .break
+  let compiledContinue := compileProgExactHOLW exactStructuralContext .continue
+  let annot := compileProgExactHOLW exactStructuralContext (.annot (.implode []) (.implode []))
   (match compiledSkip with | .skip => true | _ => false) &&
     (match controls with
     | .seq .skip (.seq (.break 0) (.continue 0)) => true

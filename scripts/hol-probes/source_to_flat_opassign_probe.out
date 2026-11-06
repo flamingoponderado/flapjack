@@ -1,0 +1,4 @@
+source_assign_typed=SOME (([Refv (Litv (IntLit (9 :int)) :semanticPrimitives$v)],(ffi :α ffi_state)),(Rval (Conv (NONE :stamp option) ([] :semanticPrimitives$v list)) :(semanticPrimitives$v, semanticPrimitives$v) result))
+flat_assign_typed=SOME ((st :(α, β) flatSem$state) with refs := [Refv (Litv (IntLit (0 :int)) :v); Refv (Litv (IntLit (9 :int)) :v)],(Rval (Conv (NONE :(num # num option) option) ([] :v list)) :(v, v) result))
+source_bad_typed=(NONE :((semanticPrimitives$v store_v list # α ffi_state) # (semanticPrimitives$v, semanticPrimitives$v) result) option)
+flat_bad_typed=(NONE :((α, β) flatSem$state # (v, v) result) option)

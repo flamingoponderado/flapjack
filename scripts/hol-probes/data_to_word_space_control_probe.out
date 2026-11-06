@@ -1,0 +1,3 @@
+do_space_code_const_typed=do_space (op :closLang$op) (vs :v list) (s :(α, β) dataSem$state) = SOME (s1 :(α, β) dataSem$state) ⇒ s1.code = s.code ∧ s1.compile_oracle = s.compile_oracle
+cut_state_opt_ffi_typed=cut_state_opt (names_opt :sptree$num_set option) (r :(α, β) dataSem$state) = SOME (v1 :(α, β) dataSem$state) ⇒ v1.ffi = r.ffi
+MEM_join_env_cut_env_typed=∀(a :v # α word_loc) (t :α word_loc sptree$num_map) (r :sptree$num_set) (s :v sptree$num_map). MEM a (join_env (x :v sptree$num_map) (toAList (inter t (adjust_set x)))) ∧ cut_env r s = SOME x ⇒ MEM a (join_env s (toAList (inter t (adjust_set s))))

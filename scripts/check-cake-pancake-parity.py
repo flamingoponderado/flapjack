@@ -1,0 +1,110 @@
+#!/usr/bin/env python3
+"""Compare the cake executable's Pancake mode with the pinned CakeML driver."""
+import argparse
+import importlib.util
+import subprocess
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+spec = importlib.util.spec_from_file_location('cake_cli_parity', ROOT / 'scripts/check-cake-cli-parity.py')
+parity = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(parity)
+
+# Include real compiler output, FFI ordering, globals and warning-producing
+# programs, comparing the complete warning output separately below.
+CASES = [
+    ('Flapjack/Test/OriginalPancake/empty_locals.pnk', []),
+    ('Flapjack/Test/OriginalPancake/hello.pnk', []),
+    ('Flapjack/Test/OriginalPancake/recursive_global_main.pnk', []),
+    ('Flapjack/Test/OriginalPancake/f01189_ffi_stub_order.pnk', ['--no_warn']),
+    ('Flapjack/Test/OriginalPancake/f00068_allocator_return.pnk', ['--no_warn']),
+    ('Flapjack/Test/OriginalPancake/bitmap_calls.pnk', ['--no_warn', '--reg_alg=0']),
+    ('Flapjack/Test/OriginalPancake/bitmap_calls.pnk', ['--no_warn', '--reg_alg=2']),
+    ('Flapjack/Test/OriginalPancake/bitmap_calls.pnk', ['--no_warn', '--jump=true', '--hash_size=3']),
+    ('Flapjack/Test/OriginalPancake/hello.pnk', ['--no_warn', '--types', '--print_sexp', '--gc=gen10']),
+    ('Flapjack/Test/OriginalPancake/const_return.pnk', ['--main_return=true']),
+    ('Flapjack/Test/OriginalPancake/exported_entries.pnk', ['--main_return=true']),
+    ('Flapjack/Test/OriginalPancake/exported_entries.pnk', ['--main_return=false']),
+    ('Flapjack/Test/OriginalPancake/exported_entries.pnk', ['--main_return=true', '--main_return=false']),
+]
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--reference', type=Path, required=True)
+    parser.add_argument('--cake', type=Path, default=ROOT / '.lake/build/bin/cake')
+    args = parser.parse_args()
+    parity.check_pinned_reference(args.reference)
+    for path, options in CASES:
+        source = (ROOT / path).read_bytes()
+        results = []
+        for executable in (args.reference, args.cake):
+            result = subprocess.run([str(executable), '--target=riscv', '--pancake', *options],
+                                    input=source, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=180)
+            results.append((result.returncode, result.stdout, result.stderr))
+        if results[0][0] != 0 or not results[0][1] or results[0][2]:
+            raise SystemExit(f'{path} {options}: pinned compiler did not succeed silently')
+        if results[0] != results[1]:
+            raise SystemExit(f'{path} {options}: exit status or complete output differs')
+        print(f'{path} {options}: complete output matches pinned CakeML', flush=True)
+    diagnostic_cases = [
+        (b'fun 1 main() { return missing; }\n', []),
+        (b'fun 1 main() { return missing; }\n', ['--no_warn']),
+        (b'fun 1 main() { return 0; var x = 1; }\n', []),
+        (b'fun 1 main() { return 0; var x = 1; }\n', ['--no_warn']),
+        (b'fun 1 main() { return foo(); }', []),
+        (b'fun 1 main() { break; }', []),
+        (b'fun 1 main() { continue; }', []),
+        (b'fun 1 main() { var x = 1; var x = 2; return x; }', []),
+        (b'fun 1 main() { return 0; missing(); }', []),
+        (b'fun 1 main() { return 0; missing(); }', ['--no_warn']),
+        (b'fun 1 main() { return 1?; }\n', []),
+        (b'fun 1 main() { return 1; }\n /*', []),
+        (b'fun 1 main() { return 1; }\n $ %', []),
+        (b'fun 1 main() { /* x', ['--no_warn']),
+        (b'foo # 123', []),
+        (b'\n\nfun 1 main() { return 1?; }\nnext line\n', []),
+        ((ROOT / 'Flapjack/Test/OriginalPancake/f01189_ffi_stub_order.pnk').read_bytes(), []),
+    ]
+    for source, options in diagnostic_cases:
+        results = []
+        for executable in (args.reference, args.cake):
+            result = subprocess.run([str(executable), '--target=riscv', '--pancake', *options],
+                                    input=source, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=180)
+            results.append((result.returncode, result.stdout, result.stderr))
+        if results[0] != results[1]:
+            raise SystemExit(f'Pancake diagnostic differs for {source[:80]!r} {options}')
+        print(f'Pancake diagnostic matches pinned CakeML: {source[:60]!r} {options}', flush=True)
+    lexical_cases = 0
+    for byte in range(128):
+        source = b'fun 1 main() { return 1; }\n' + bytes([byte])
+        command = ['--target=riscv', '--pancake']
+        reference = subprocess.run([str(args.reference), *command], input=source,
+                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=180)
+        if not reference.stderr.startswith((b'### ERROR: parse error\nUnrecognised',
+                                            b'### ERROR: parse error\nMalformed')):
+            continue
+        lexical_cases += 1
+        actual = subprocess.run([str(args.cake), *command], input=source,
+                                stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=180)
+        if (reference.returncode, reference.stdout, reference.stderr) != (
+                actual.returncode, actual.stdout, actual.stderr):
+            raise SystemExit(f'Pancake lexical diagnostic differs for ASCII byte {byte}')
+    if lexical_cases != 38:
+        raise SystemExit(f'expected 38 ASCII lexical-error cases, got {lexical_cases}')
+    print(f'{lexical_cases} ASCII lexical diagnostics match pinned CakeML', flush=True)
+    for options in (['--target=bad'], ['--target=bad', '--sexp=bad'],
+                    ['--target=riscv', '--sexp=bad', '--exclude_prelude=bad'],
+                    ['--target=riscv', '--reg_alg=bad', '--gc=bad']):
+        results = []
+        for executable in (args.reference, args.cake):
+            result = subprocess.run([str(executable), '--pancake', *options], input=b'',
+                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=180)
+            results.append((result.returncode, result.stdout, result.stderr))
+        if results[0] != results[1] or results[0][0] != 1:
+            raise SystemExit(f'{options}: Pancake configuration error differs from pinned CakeML')
+        print(f'{options}: configuration error matches pinned CakeML', flush=True)
+
+
+if __name__ == '__main__':
+    main()

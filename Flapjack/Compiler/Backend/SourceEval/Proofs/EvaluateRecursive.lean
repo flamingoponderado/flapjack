@@ -1,0 +1,199 @@
+import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateDeclarations
+import Flapjack.EvaluateProps.Declarations
+
+/-! Recursive declaration cases of source evaluator oracle adjustment. -/
+namespace Flapjack.Compiler.Backend.SourceEval.Proofs
+open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.EvaluateHOL Flapjack.EvaluateProps
+
+/-- Declaration adjustment at one input state and environment. This
+Flapjack predicate allows the Eval case to use its clock-bounded induction
+hypothesis without requiring a theorem for every input state. -/
+def DecsOracleAdjustedAt {Config F : Type} (ci : CompilerInstance Config)
+    (f compile : List Dec → List Dec) (state : State F) (env : SemEnv Value) (program : List Dec) : Prop :=
+  ∀ (next : State F) (result : Result (SemEnv Value) Value),
+    evaluateDecs state env program = (next, result) →
+    isInsertOracle ci f state.evalState → result ≠ .err (.abort .typeError) →
+    isInsertOracle ci f next.evalState ∧
+      evaluateDecs { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env program =
+        ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result)
+
+/-- Expression adjustment at a fixed input state and environment. This
+Flapjack predicate represents the hypothesis for one recursive evaluation. -/
+def ExpsOracleAdjustedAt {Config F : Type} (ci : CompilerInstance Config)
+    (f compile : List Dec → List Dec) (state : State F) (env : SemEnv Value)
+    (expressions : List AstHOL.Exp) : Prop :=
+  ∀ (next : State F) (result : Result (List Value) Value),
+    evaluate state env expressions = (next, result) →
+    isInsertOracle ci f state.evalState → result ≠ .err (.abort .typeError) →
+    isInsertOracle ci f next.evalState ∧
+      evaluate { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env expressions =
+        ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result)
+
+/-- Module case of the original evaluator induction, using the induction
+hypothesis for its contained declarations. -/
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
+theorem adjustOracle_evaluate_Dmod {Config F : Type} (ci : CompilerInstance Config)
+    (f compile : List Dec → List Dec) (_compilePreserve : DeclarationCompilerPreserves (F := F) compile)
+    (name : ModN) (ds : List Dec)
+    (state next : State F) (env : SemEnv Value) (ih : DecsOracleAdjustedAt ci f compile state env ds) (result : Result (SemEnv Value) Value)
+    (source : evaluateDecs state env [.dmod name ds] = (next, result))
+    (inserted : isInsertOracle ci f state.evalState)
+    (safe : result ≠ .err (.abort .typeError)) :
+    isInsertOracle ci f next.evalState ∧
+      evaluateDecs { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env [.dmod name ds] =
+        ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result) := by
+  cases run : evaluateDecs state env ds with
+  | mk middle inner =>
+    cases inner with
+    | err error =>
+      have pair : (middle, .err error) = (next, result) := by simpa [evaluateDecs, run] using source
+      have innerSafe : (Result.err error : Result (SemEnv Value) Value) ≠ .err (.abort .typeError) := by
+        intro bad
+        apply safe
+        have h := congrArg Prod.snd pair
+        simpa [bad] using h.symm
+      obtain ⟨middleInserted, replacement⟩ := ih middle (.err error) run inserted innerSafe
+      cases pair
+      exact ⟨middleInserted, by simp [evaluateDecs, replacement]⟩
+    | val innerEnv =>
+      have pair : (middle, .val { v := Flapjack.NamespaceHOL.nsLift name innerEnv.v,
+                                  c := Flapjack.NamespaceHOL.nsLift name innerEnv.c }) = (next, result) := by
+        simpa [evaluateDecs, run] using source
+      obtain ⟨middleInserted, replacement⟩ := ih middle (.val innerEnv) run inserted (by simp)
+      cases pair
+      exact ⟨middleInserted, by simp [evaluateDecs, replacement]⟩
+
+/-- Local-declaration case, with induction hypotheses for the private and
+visible declarations. -/
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
+theorem adjustOracle_evaluate_Dlocal {Config F : Type} (ci : CompilerInstance Config)
+    (f compile : List Dec → List Dec) (_compilePreserve : DeclarationCompilerPreserves (F := F) compile)
+    (locals body : List Dec) (state next : State F) (env : SemEnv Value)
+    (localsIH : DecsOracleAdjustedAt ci f compile state env locals)
+    (bodyIH : ∀ (middle : State F) (innerEnv : SemEnv Value),
+      evaluateDecs state env locals = (middle, .val innerEnv) →
+      DecsOracleAdjustedAt ci f compile middle (extendDecEnv innerEnv env) body) (result : Result (SemEnv Value) Value)
+    (source : evaluateDecs state env [.dlocal locals body] = (next, result))
+    (inserted : isInsertOracle ci f state.evalState)
+    (safe : result ≠ .err (.abort .typeError)) :
+    isInsertOracle ci f next.evalState ∧
+      evaluateDecs { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env [.dlocal locals body] =
+        ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result) := by
+  rw [evaluateDecs_local] at source ⊢
+  cases run : evaluateDecs state env locals with
+  | mk middle inner =>
+    cases inner with
+    | err error =>
+      have pair : (middle, .err error) = (next, result) := by simpa [run] using source
+      have innerSafe : (Result.err error : Result (SemEnv Value) Value) ≠ .err (.abort .typeError) := by
+        intro bad
+        apply safe
+        have h := congrArg Prod.snd pair
+        simpa [bad] using h.symm
+      obtain ⟨middleInserted, replacement⟩ := localsIH middle (.err error) run inserted innerSafe
+      cases pair
+      exact ⟨middleInserted, by simp [replacement]⟩
+    | val innerEnv =>
+      have bodyRun : evaluateDecs middle (extendDecEnv innerEnv env) body = (next, result) := by
+        simpa [run] using source
+      obtain ⟨middleInserted, replacement⟩ := localsIH middle (.val innerEnv) run inserted (by simp)
+      obtain ⟨nextInserted, bodyReplacement⟩ :=
+        bodyIH middle innerEnv run next result bodyRun middleInserted safe
+      exact ⟨nextInserted, by simpa [replacement] using bodyReplacement⟩
+
+/-- Non-singleton declaration-list case of the evaluator induction. -/
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
+theorem adjustOracle_evaluate_DecsCons {Config F : Type} (ci : CompilerInstance Config)
+    (f compile : List Dec → List Dec) (_compilePreserve : DeclarationCompilerPreserves (F := F) compile)
+    (first second : Dec) (rest : List Dec)
+    (state next : State F) (env : SemEnv Value)
+    (firstIH : DecsOracleAdjustedAt ci f compile state env [first])
+    (tailIH : ∀ (middle : State F) (innerEnv : SemEnv Value),
+      evaluateDecs state env [first] = (middle, .val innerEnv) →
+      DecsOracleAdjustedAt ci f compile middle (extendDecEnv innerEnv env) (second :: rest)) (result : Result (SemEnv Value) Value)
+    (source : evaluateDecs state env (first :: second :: rest) = (next, result))
+    (inserted : isInsertOracle ci f state.evalState)
+    (safe : result ≠ .err (.abort .typeError)) :
+    isInsertOracle ci f next.evalState ∧
+      evaluateDecs { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env (first :: second :: rest) =
+        ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result) := by
+  rw [evaluateDecs_cons] at source ⊢
+  cases run : evaluateDecs state env [first] with
+  | mk middle inner =>
+    cases inner with
+    | err error =>
+      have pair : (middle, .err error) = (next, result) := by simpa [run] using source
+      have innerSafe : (Result.err error : Result (SemEnv Value) Value) ≠ .err (.abort .typeError) := by
+        intro bad
+        apply safe
+        have h := congrArg Prod.snd pair
+        simpa [bad] using h.symm
+      obtain ⟨middleInserted, replacement⟩ := firstIH middle (.err error) run inserted innerSafe
+      cases pair
+      exact ⟨middleInserted, by simp [replacement]⟩
+    | val innerEnv =>
+      cases tailRun : evaluateDecs middle (extendDecEnv innerEnv env) (second :: rest) with
+      | mk final tailResult =>
+        have pair : (final, combineDecResult innerEnv tailResult) = (next, result) := by
+          simpa [run, tailRun] using source
+        have tailSafe : tailResult ≠ .err (.abort .typeError) := by
+          intro bad
+          apply safe
+          have h := congrArg Prod.snd pair
+          simpa [bad, combineDecResult] using h.symm
+        obtain ⟨middleInserted, replacement⟩ := firstIH middle (.val innerEnv) run inserted (by simp)
+        obtain ⟨finalInserted, tailReplacement⟩ :=
+          tailIH middle innerEnv run final tailResult tailRun middleInserted tailSafe
+        cases pair
+        exact ⟨finalInserted, by simp [replacement, tailReplacement]⟩
+
+/-- Value-declaration case of the evaluator induction. -/
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
+theorem adjustOracle_evaluate_Dlet {Config F : Type} (ci : CompilerInstance Config)
+    (f compile : List Dec → List Dec) (_compilePreserve : DeclarationCompilerPreserves (F := F) compile)
+    (locs : Flapjack.Misc.Location.Locs) (pat : Pat) (expr : AstHOL.Exp)
+    (state next : State F) (env : SemEnv Value)
+    (ih : ((patBindings pat).Nodup ∧ everyExp (oneConCheck env.c) expr = true) →
+      ExpsOracleAdjustedAt ci f compile state env [expr]) (result : Result (SemEnv Value) Value)
+    (source : evaluateDecs state env [.dlet locs pat expr] = (next, result))
+    (inserted : isInsertOracle ci f state.evalState)
+    (safe : result ≠ .err (.abort .typeError)) :
+    isInsertOracle ci f next.evalState ∧
+      evaluateDecs { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env [.dlet locs pat expr] =
+        ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result) := by
+  classical
+  by_cases check : (patBindings pat).Nodup ∧ everyExp (oneConCheck env.c) expr = true
+  · cases run : evaluate state env [expr] with
+    | mk middle inner =>
+      cases inner with
+      | err error =>
+        have pair : (middle, .err error) = (next, result) := by simpa [evaluateDecs, check, run] using source
+        have innerSafe : (Result.err error : Result (List Value) Value) ≠ .err (.abort .typeError) := by
+          intro bad
+          apply safe
+          have h := congrArg Prod.snd pair
+          have errorEq : error = .abort .typeError := Result.err.inj bad
+          simpa [errorEq] using h.symm
+        obtain ⟨middleInserted, replacement⟩ := ih check middle (.err error) run inserted innerSafe
+        cases pair
+        exact ⟨middleInserted, by simp [evaluateDecs, check, replacement]⟩
+      | val values =>
+        obtain ⟨middleInserted, replacement⟩ := ih check middle (.val values) run inserted (by simp)
+        cases matched : pmatch env.c middle.refs pat (headValue values) [] with
+        | typeError =>
+          simp [evaluateDecs, check, run, matched, typeError] at source
+          obtain ⟨_, rfl⟩ := source
+          exact (safe rfl).elim
+        | noMatch =>
+          simp [evaluateDecs, check, run, matched] at source
+          obtain ⟨rfl, rfl⟩ := source
+          exact ⟨middleInserted, by simp [evaluateDecs, check, replacement, matched]⟩
+        | «match» bindings =>
+          simp [evaluateDecs, check, run, matched] at source
+          obtain ⟨rfl, rfl⟩ := source
+          exact ⟨middleInserted, by simp [evaluateDecs, check, replacement, matched]⟩
+  · simp [evaluateDecs, check, typeError] at source
+    obtain ⟨_, rfl⟩ := source
+    exact (safe rfl).elim
+
+end Flapjack.Compiler.Backend.SourceEval.Proofs

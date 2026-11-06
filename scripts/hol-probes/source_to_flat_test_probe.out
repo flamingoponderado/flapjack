@@ -1,0 +1,1 @@
+do_test_lemma_typed=do_test (test :test) (ty :prim_type) (v1 :semanticPrimitives$v) (v2 :semanticPrimitives$v) = Eq_val (b :bool) ∧ genv_c_ok (genv :global_env).c ∧ (v_rel genv v1 (w1 :v) :bool) ∧ (v_rel genv v2 (w2 :v) :bool) ⇒ do_test test ty w1 w2 = Eq_val b

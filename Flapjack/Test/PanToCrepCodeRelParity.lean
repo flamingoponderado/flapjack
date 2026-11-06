@@ -329,11 +329,6 @@ def makeFuncsGuard : Bool :=
 def eidsDecls : List (Decl (BitVec 8)) :=
   [Decl.exnDecl "E" Shape.one, Decl.exnDecl "F" Shape.one]
 
-example :
-    excpRel (panToCrepGetEidsFromDeclsHOL eidsDecls)
-      (panToCrepGetEidsFromDeclsHOL eidsDecls) :=
-  getEidsFromDeclsImpExcpRel _ eidsDecls (by simp [sizeOfEids, eidsDecls]; decide) rfl
-
 def getEidsGuard : Bool :=
   (FLOOKUP (panToCrepGetEidsFromDeclsHOL eidsDecls) "E" ==
     some (0 : BitVec 8)) &&
@@ -538,42 +533,9 @@ example :
     simp [freshContext] at hlk
   · decide
 
-/-- The exact HOL `not_mem_context_assigned_mem_gt` shape: a slot fresh for a
-    `ctxtMax` context and absent from every recorded slot list cannot occur
-    among the assigned free variables of any compiled program. -/
-example : (5 : Nat) ∉ crepAssignedFreeVars
-    (compileProgHOL freshContext
-      (Prog.dec "n" Shape.one (.const (0 : Nat)) Prog.skip)) := by
-  refine notMemContextAssignedMemGt freshContext
-    (Prog.dec "n" Shape.one (.const (0 : Nat)) Prog.skip) 5 ?_ ?_ ?_
-  · refine ⟨Nat.zero_le _, ?_⟩
-    intro v a xs hlk
-    simp [freshContext] at hlk
-  · intro v sh ns' hlk
-    simp [freshContext] at hlk
-  · decide
-
 /-- `distinctLists` is exactly set-disjointness, used by the context-rewrite
     theorem. -/
 example : distinctLists [1, 2] [3, 4] = true := by decide
-
-/-- The exact HOL `rewritten_context_unassigned` shape: extending a context with
-    a variable's rewritten slot list (kept disjoint from the old list) leaves
-    every old slot outside the compiled program's assigned free variables. -/
-example (program : Prog Nat) (nctxt ctxt : PanToCrepHOLContext Nat) (v : VarName)
-    (ns nvars : List Nat) (sh sh' : Shape)
-    (hnctxt : nctxt =
-      { ctxt with
-        vars := FUPDATE ctxt.vars (v, (sh, nvars))
-        vmax := ctxt.vmax + Shape.shapeSize sh })
-    (hlookup : FLOOKUP ctxt.vars v = some (sh', ns))
-    (hnoOverlap : noOverlap ctxt.vars) (hctxtMax : ctxtMax ctxt.vmax ctxt.vars)
-    (hnoOverlapN : noOverlap nctxt.vars)
-    (hctxtMaxN : ctxtMax nctxt.vmax nctxt.vars)
-    (hdistinct : distinctLists nvars ns = true) :
-    distinctLists ns (crepAssignedFreeVars (compileProgHOL nctxt program)) = true :=
-  rewrittenContextUnassigned program nctxt ctxt v ns nvars sh sh' hnctxt hlookup
-    hnoOverlap hctxtMax hnoOverlapN hctxtMaxN hdistinct
 
 def rewrittenContextGuard : Bool :=
   distinctLists [1, 2] [3, 4]

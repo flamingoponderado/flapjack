@@ -16,4 +16,10 @@ inductive Exp where
   | force : Nat → Nat → Exp
   | op : ClosLang.Op → List Exp → Exp
 
+/-- Apply the BVL tick constructor repeatedly. -/
+@[hol "cakeml/compiler/backend/bvlScript.sml" "mk_tick_def"]
+def mkTick : Nat → Exp → Exp
+  | 0, e => e
+  | n + 1, e => .tick (mkTick n e)
+
 end Flapjack.Compiler.Backend.Bvl

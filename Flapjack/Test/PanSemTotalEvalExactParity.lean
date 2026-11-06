@@ -443,6 +443,36 @@ def returnRaiseRows : Bool :=
     | _ => false
   returnOk && raiseOk && raiseMissing
 
+/-! Recursive evaluator counterparts of the direct HOL statement rows in
+`pan_sem_total_fragment_stmt_probe.out`. -/
+def recursiveStatementRows : Bool :=
+  let returnMissing := match recursiveExact (.return (.var .local (ml "missing"))) baseState with
+    | some (some .error, state) => state.clock == 5 && localWord state "x" == some 7
+    | _ => false
+  let returnOversize := match recursiveExact
+      (.return (.rstruct (List.replicate 33 (.const 1)))) baseState with
+    | some (some .error, state) => state.clock == 5 && localWord state "x" == some 7
+    | _ => false
+  let raiseMismatch := match recursiveExact (.raise (ml "E") (.rstruct [])) baseState with
+    | some (some .error, state) => state.clock == 5 && localWord state "x" == some 7
+    | _ => false
+  let ifAssign := match recursiveExact
+      (.ite (.const 1) (.assign .local (ml "x") (.const 9)) .skip) baseState with
+    | some (none, state) => state.clock == 5 && localWord state "x" == some 9
+    | _ => false
+  let sequenceReturn := match recursiveExact
+      (.seq (.assign .local (ml "x") (.const 9)) (.return (.const 7))) baseState with
+    | some (some (.returned (.val (.word value))), state) =>
+        value.toNat == 7 && state.clock == 5 && (state.locals (ml "x")).isNone
+    | _ => false
+  let sequenceRaise := match recursiveExact
+      (.seq (.raise (ml "E") (.const 4)) (.assign .local (ml "x") (.const 9))) baseState with
+    | some (some (.exception name (.val (.word value))), state) =>
+        name == ml "E" && value.toNat == 4 && state.clock == 5 &&
+          (state.locals (ml "x")).isNone
+    | _ => false
+  returnMissing && returnOversize && raiseMismatch && ifAssign && sequenceReturn && sequenceRaise
+
 def sharedMemoryRows : Bool :=
   let loadOutOfDomain := match exactDispatch
       (.shMemLoad .opW .local (ml "x") (.const 8)) baseState with
@@ -857,6 +887,7 @@ def recursiveDecRows : Bool :=
 #guard storeRows
 #guard recursiveStoreRows
 #guard returnRaiseRows
+#guard recursiveStatementRows
 #guard sharedMemoryRows
 #guard extCallRows
 #guard recursiveExtCallRows
@@ -962,7 +993,10 @@ def runChecks : IO Bool := do
   if recursivePrimitiveRows then
     IO.println "PASS exact recursive dispatcher Primitive rows match HOL"
   else IO.println "FAIL exact recursive dispatcher Primitive rows match HOL"
-  pure (skipBreakTickRows && assignPrimitiveRows && storeRows && returnRaiseRows &&
+  if recursiveStatementRows then
+    IO.println "PASS exact recursive statement rows match HOL"
+  else IO.println "FAIL exact recursive statement rows match HOL"
+  pure (skipBreakTickRows && assignPrimitiveRows && storeRows && returnRaiseRows && recursiveStatementRows &&
     sharedMemoryRows && extCallRows && recursiveExtCallRows && recursiveShMemRows &&
     recursiveStoreRows && stateOwnedCallRows && stateOwnedCallNegativeRows &&
     stateOwnedCallDestinationRows &&

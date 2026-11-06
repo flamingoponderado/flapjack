@@ -1,0 +1,117 @@
+load "preamble"; load "source_to_flatProofTheory";
+open HolKernel Parse boolLib bossLib preamble;
+val _ = Globals.linewidth := 1000000;
+val _ = Globals.show_types := true;
+val _ = (print "subglobals_type="; print_type (type_of ``source_to_flatProof$subglobals``); print "\n");
+val _ = (print "subglobals_definition="; print_thm source_to_flatProofTheory.subglobals_def; print "\n");
+val _ = (print "inc_compile_env_submap="; print_thm source_to_flatProofTheory.inc_compile_prog_env_submap; print "\n");
+val _ = (print "compile_decs_generation="; print_thm source_to_flatProofTheory.compile_decs_generation; print "\n");
+val _ = (print "compile_decs_env_gen_inv="; print_thm source_to_flatProofTheory.compile_decs_env_gen_inv; print "\n");
+val _ = (print "compile_decs_idx_prev="; print_thm source_to_flatProofTheory.compile_decs_idx_prev; print "\n");
+val _ = (print "inc_compile_idx_prev="; print_thm source_to_flatProofTheory.inc_compile_prog_idx_prev; print "\n");
+val _ = (print "eval_ref_inv="; print_thm source_to_flatProofTheory.eval_ref_inv_def; print "\n");
+val _ = (print "orac_config_envs_subspt="; print_thm source_to_flatProofTheory.orac_config_envs_subspt_def; print "\n");
+val _ = (print "orac_config_envs_subspt_trans="; print_thm source_to_flatProofTheory.orac_config_envs_subspt_trans; print "\n");
+val _ = (print "orac_config_envs_subspt_refl="; print_thm source_to_flatProofTheory.orac_config_envs_subspt_refl; print "\n");
+val _ = (print "eval_state_call_rel="; print_thm source_to_flatProofTheory.eval_state_call_rel_def; print "\n");
+val _ = (print "eval_state_call_rel_refl="; print_thm source_to_flatProofTheory.eval_state_call_rel_refl; print "\n");
+val _ = (print "eval_state_call_rel_trans="; print_thm source_to_flatProofTheory.eval_state_call_rel_trans; print "\n");
+val _ = (print "orac_forward_rel="; print_thm source_to_flatProofTheory.orac_forward_rel_def; print "\n");
+val _ = (print "orac_forward_rel_refl="; print_thm source_to_flatProofTheory.orac_forward_rel_refl; print "\n");
+val _ = (print "orac_forward_rel_trans="; print_thm source_to_flatProofTheory.orac_forward_rel_trans; print "\n");
+(* Typed replays of the two local lemmas immediately preceding compile_correct[App]. *)
+val pmatchDrop = prove (
+  ``LENGTH (vs : flatSem$v list) = 6 ==>
+    flatSem$pmatch_rows [(flatLang$Pcon NONE [flatLang$Pany; flatLang$Pany; flatLang$Pany;
+      flatLang$Pany; flatLang$Pvar b; flatLang$Pvar w], exp)] st (flatSem$Conv NONE vs) =
+    Match ([(w, LAST vs); (b, EL 4 vs)],
+      flatLang$Pcon NONE [flatLang$Pany; flatLang$Pany; flatLang$Pany; flatLang$Pany;
+        flatLang$Pvar b; flatLang$Pvar w], exp)``,
+  simp [flatSemTheory.pmatch_rows_def, flatSemTheory.pmatch_def, flatSemTheory.pmatch_stamps_ok_cases] >>
+  rpt (rename [`flatSem$pmatch_list _ _ pm_vs _`] >> Cases_on `pm_vs` >> simp [flatSemTheory.pmatch_def, ADD1]));
+val _ = (print "pmatch_rows_drop_4_replay="; print_thm pmatchDrop; print "\n");
+val dropFour = prove (
+  ``LENGTH (vs : 'a list) = 6 ==> [EL 4 vs; LAST vs] = DROP 4 vs``,
+  rw [LIST_EQ_REWRITE] >> Cases_on `x` >> fs [HD_DROP] >>
+  Cases_on `n` >> fs [EL_DROP] >> DEP_REWRITE_TAC [LAST_EL] >> simp [] >> strip_tac >> fs []);
+val _ = (print "drop_4_via_el_replay="; print_thm dropFour; print "\n");
+val _ = (print "submap_fresh="; print_thm source_to_flatProofTheory.submap_distinct_fupdate_flookup; print "\n");
+val _ = (print "submap_update="; print_thm source_to_flatProofTheory.submap_fupdate_flookup; print "\n");
+val _ = (print "subglobals_none="; print_thm source_to_flatProofTheory.subglobals_NONE; print "\n");
+val _ = (print "subglobals_add_none="; print_thm source_to_flatProofTheory.subglobals_add_NONE; print "\n");
+val _ = (print "idx_kind_type="; print_type (type_of ``source_to_flatProof$Idx_Var``); print "\n");
+val _ = (print "idx_prev="; print_thm source_to_flatProofTheory.idx_prev_def; print "\n");
+val _ = (print "idx_prev_refl="; print_thm source_to_flatProofTheory.idx_prev_refl; print "\n");
+val _ = (print "idx_prev_trans="; print_thm source_to_flatProofTheory.idx_prev_trans; print "\n");
+val _ = (print "idx_block="; print_thm source_to_flatProofTheory.idx_block_def; print "\n");
+val _ = (print "idx_final_block="; print_thm source_to_flatProofTheory.idx_final_block_def; print "\n");
+val _ = (print "idx_block_union_final="; print_thm source_to_flatProofTheory.idx_block_union_final; print "\n");
+val _ = (print "init_global_env_inv="; print_thm source_to_flatProofTheory.init_global_env_inv_def; print "\n");
+val _ = (print "idx_allocated="; print_thm source_to_flatProofTheory.genv_allocated_idxs_def; print "\n");
+val _ = (print "idx_disjoint="; print_thm source_to_flatProofTheory.ALL_DISJOINT_DEF; print "\n");
+val _ = (print "idx_finish="; print_thm source_to_flatProofTheory.fin_idx_match_def; print "\n");
+val _ = (print "orac_next_inner="; print_thm source_to_flatProofTheory.src_orac_next_cfg_inner_def; print "\n");
+val _ = (print "orac_next="; print_thm source_to_flatProofTheory.src_orac_next_cfg_def; print "\n");
+val _ = (print "idx_range="; print_thm source_to_flatProofTheory.idx_range_rel_def; print "\n");
+val _ = (print "idx_range_shrink="; print_thm source_to_flatProofTheory.idx_range_shrink; print "\n");
+val _ = (print "idx_blank="; print_thm source_to_flatProofTheory.idx_range_rel_v_REPLICATE_NONE; print "\n");
+val _ = (print "orac_step="; print_thm source_to_flatProofTheory.src_orac_step_invs_def; print "\n");
+val _ = (print "env_gen_inv="; print_thm source_to_flatProofTheory.env_gen_inv_def; print "\n");
+val _ = (print "env_store_inv="; print_thm source_to_flatProofTheory.env_store_inv_def; print "\n");
+val _ = (print "env_gen_rel="; print_thm source_to_flatProofTheory.env_gen_rel_def; print "\n");
+val _ = (print "env_gen_future="; print_thm source_to_flatProofTheory.env_gen_future_rel_def; print "\n");
+val _ = (print "orac_env_inv="; print_thm source_to_flatProofTheory.src_orac_env_invs_def; print "\n");
+val _ = (print "orac_gen_inv="; print_thm source_to_flatProofTheory.src_orac_gen_inv_def; print "\n");
+val _ = (print "orac_invs="; print_thm source_to_flatProofTheory.src_orac_invs_def; print "\n");
+val _ = (print "full_invariant="; print_thm source_to_flatProofTheory.invariant_def; print "\n");
+val _ = (print "orac_weak="; print_thm source_to_flatProofTheory.src_orac_invs_weak; print "\n");
+val _ = (print "orac_lookup="; print_thm source_to_flatProofTheory.src_orac_env_invs_lookup_env; print "\n");
+val _ = (print "do_eval_oracle="; print_thm source_evalProofTheory.do_eval_oracle_def; print "\n");
+val _ = (print "orac_rel_inner="; print_thm source_to_flatProofTheory.orac_rel_inner_def; print "\n");
+val _ = (print "orac_rel="; print_thm source_to_flatProofTheory.orac_rel_def; print "\n");
+val _ = (print "orac_rel_some="; print_thm source_to_flatProofTheory.orac_rel_SOME_eval; print "\n");
+val _ = (print "inc_compile_nonempty="; print_thm source_to_flatProofTheory.inc_compile_prog_nonempty; print "\n");
+val _ = (print "word8_rel="; print_thm source_to_flatProofTheory.v_to_word8_list_rel; print "\n");
+val _ = (print "word64_rel="; print_thm source_to_flatProofTheory.v_to_word64_list_rel; print "\n");
+val _ = (print "source_to_flat_do_eval="; print_thm source_to_flatProofTheory.do_eval; print "\n");
+val fstSndEq = prove (``FST = (\ (a,b). a) /\ SND = (\ (a,b). b)``, simp [FUN_EQ_THM, FORALL_PROD]);
+val firstStep = prove (``source_to_flatProof$src_orac_step_invs interp g (SOME (EvalOracle es)) ==>
+  ?i_f env_id0 st_v0 decs0 fdecs0 c0 x0 env_id1 st_v1 decs1 c1 x1.
+    interp = SOME i_f /\ es.oracle 0 = (env_id0, st_v0, decs0) /\
+    es.oracle 1 = (env_id1, st_v1, decs1) /\ i_f st_v0 = SOME (c0, x0) /\
+    i_f st_v1 = SOME (c1, x1) /\
+    source_to_flat$inc_compile_prog env_id0 c0 (g decs0) = (c1, fdecs0) /\
+    source_to_flatProof$src_orac_next_cfg (SOME i_f) (SOME (EvalOracle es)) = SOME c0``,
+  rw [] >> simp [PAIR_FST_SND_EQ, fstSndEq] >>
+  rpt (pairarg_tac >> fs []) >> rveq >> fs [] >>
+  fs [source_to_flatProofTheory.src_orac_step_invs_def, EXISTS_PROD] >>
+  every_case_tac >> fs [] >> res_tac >> fs [] >>
+  pairarg_tac >> fs [] >> rfs [] >> fs [] >>
+  simp [source_to_flatProofTheory.src_orac_next_cfg_def,
+        source_to_flatProofTheory.src_orac_next_cfg_inner_def]);
+val _ = (print "orac_first_step="; print_thm firstStep; print "\n");
+val refl = prove (``∀g : 'a option list. source_to_flatProof$subglobals g g``,
+  simp [source_to_flatProofTheory.subglobals_def]);
+val _ = (print "refl_replay="; print_thm refl; print "\n");
+val trans = prove (``∀g1 g2 g3 : 'a option list.
+  source_to_flatProof$subglobals g1 g2 ∧ source_to_flatProof$subglobals g2 g3 ⇒
+  source_to_flatProof$subglobals g1 g3``,
+  rw [source_to_flatProofTheory.subglobals_def] >> res_tac >> fs []);
+val _ = (print "trans_replay="; print_thm trans; print "\n");
+val append_replay = prove (``∀g1 g2 g3 : 'a option list.
+    source_to_flatProof$subglobals (g1 ++ g2) (g1 ++ g3) = source_to_flatProof$subglobals g2 g3 ∧
+    (LENGTH g2 = LENGTH g3 ⇒
+      source_to_flatProof$subglobals (g2 ++ g1) (g3 ++ g1) = source_to_flatProof$subglobals g2 g3)``,
+  rw [source_to_flatProofTheory.subglobals_def] >> eq_tac >> rw []
+  >- (first_x_assum (qspec_then `n + LENGTH (g1:'a option list)` mp_tac) >> rw [EL_APPEND_EQN])
+  >- (first_x_assum (qspec_then `n - LENGTH (g1:'a option list)` mp_tac) >> rw [EL_APPEND_EQN] >> fs [EL_APPEND_EQN])
+  >- (first_x_assum (qspec_then `n` mp_tac) >> rw [EL_APPEND_EQN])
+  >- (Cases_on `n < LENGTH g3` >> fs [EL_APPEND_EQN] >> rfs [] >> fs []));
+val _ = (print "append_replay="; print_thm append_replay; print "\n");
+fun capture label term = (print (label ^ "="); print_term (rhs (concl (EVAL term))); print "\n");
+val _ = capture "empty" ``source_to_flatProof$subglobals [] [SOME (1:num)]``;
+val _ = capture "fill_empty" ``source_to_flatProof$subglobals [SOME (1:num); NONE] [SOME 1; SOME 2]``;
+val _ = capture "append" ``source_to_flatProof$subglobals [SOME (1:num); NONE] [SOME 1; SOME 2; SOME 3]``;
+val _ = capture "shorter" ``source_to_flatProof$subglobals [NONE; NONE] [NONE] : bool``;
+val _ = capture "overwrite" ``source_to_flatProof$subglobals [SOME (1:num); NONE] [SOME 2; NONE]``;
+val _ = capture "remove" ``source_to_flatProof$subglobals [SOME (1:num)] [NONE]``;

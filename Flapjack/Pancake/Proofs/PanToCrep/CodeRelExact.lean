@@ -5,7 +5,7 @@ import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
 /-!
 Exact-carrier code relation for the HOL Pancake-to-Crep correctness boundary.
 This lives below the counterpart proof module because it complements
-`codeRelW` without changing that production-carrier relation.
+the production relation without changing its carrier.
 -/
 
 namespace Flapjack
@@ -226,7 +226,7 @@ theorem mkCtxtCodeImpCodeRelExactHOLW {width : Nat} [NeZero width]
     imported `code_rel_def` tag; the same-module checked witness
     `holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact` validates the
     context carrier. This tags only the exact proof-side relation, not the
-    production `codeRel`/`codeRelW`, which remain on the parent bead.
+    production `codeRel`, which remains on the parent bead.
 
     The combined `(fmap_as_finite_support_relation := [...])` +
     `(words_as_type_indexed_bitvec)` qualifiers are attached, matching the
@@ -306,7 +306,7 @@ theorem holFmapAsFiniteSupportRelationWitness_CrepSemHOLState
     on `code`, so the proof is HOL's
     `rw [code_rel_def, empty_locals_def, panSemTheory.empty_locals_def] >>
     metis_tac[]`. This tags only the exact proof-side theorem, not the
-    production `codeRel`/`codeRelW` carriers.
+    production `codeRel` carrier.
 
     The combined `(fmap_as_finite_support_relation := [...])` +
     `(words_as_type_indexed_bitvec)` qualifiers are attached; see the schema

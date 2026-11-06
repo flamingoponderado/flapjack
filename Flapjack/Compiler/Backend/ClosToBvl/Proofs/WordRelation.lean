@@ -1,0 +1,122 @@
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.IntegerRelation
+import Flapjack.Compiler.Backend.Semantics.BvlSem.Word
+
+/-! Word primitive correspondence for the closure-to-BVL simulation. -/
+namespace Flapjack.Compiler.Backend.ClosToBvl
+
+/-- Word-sized values cannot change representation through the value relation. -/
+theorem vRel_word64_inv {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
+    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
+    {w : BitVec 64} {target : BvlSem.Value} (related : vRel maxApp f refs code (.word64 w) target) :
+    target = .word64 w := by
+  cases related with
+  | word64 => rfl
+  | closure _ closure => cases closure
+  | partialClosure _ _ _ _ _ added _ closure => cases closure <;> simp [addArgs] at added
+
+def wordPrimitive : ClosSem.Value → Prop
+  | .number _ | .word64 _ => True
+  | _ => False
+
+/-- Successful word operations consume only numeric or word values. -/
+theorem doWordApp_success_args (op : ClosLang.WordOp) (args : List ClosSem.Value)
+    (result : ClosSem.Value) (success : ClosSem.doWordApp op args = some result) :
+    ∀ value ∈ args, wordPrimitive value := by
+  cases op <;> cases args with
+  | nil => simp
+  | cons a args =>
+    cases args with
+    | nil =>
+      cases a <;> simp_all [ClosSem.doWordApp, ClosSem.doWordAppIntegral, wordPrimitive]
+    | cons b args =>
+      cases args with
+      | nil =>
+        cases a <;> simp_all [ClosSem.doWordApp, ClosSem.doWordAppIntegral, wordPrimitive] <;>
+          cases b <;> simp_all
+      | cons c args =>
+        cases args with
+        | nil =>
+          cases a <;> simp_all [ClosSem.doWordApp, ClosSem.doWordAppIntegral, wordPrimitive] <;>
+            cases b <;> simp_all <;>
+            cases c <;> simp_all
+        | cons d rest => simp [ClosSem.doWordApp, ClosSem.doWordAppIntegral] at success
+
+/-- Source integer and word values share their representations with BVL. -/
+def primitiveToBvl : ClosSem.Value → BvlSem.Value
+  | .number n => .number n
+  | .word64 w => .word64 w
+  | _ => .block 0 []
+
+/-- Related primitive argument lists have the canonical BVL representation. -/
+theorem related_primitives {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
+    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
+    {args : List ClosSem.Value} {targets : List BvlSem.Value}
+    (related : List.Forall₂ (vRel maxApp f refs code) args targets)
+    (valid : ∀ value ∈ args, wordPrimitive value) : targets = args.map primitiveToBvl := by
+  induction related with
+  | nil => rfl
+  | @cons a b xs ys head tail ih =>
+    have validHead := valid a (by simp)
+    have validTail : ∀ value ∈ xs, wordPrimitive value := by
+      intro value member
+      exact valid value (by simp [member])
+    have tailEq := ih validTail
+    cases a with
+    | number n => simp [primitiveToBvl, vRel_number_inv head, tailEq]
+    | word64 w => simp [primitiveToBvl, vRel_word64_inv head, tailEq]
+    | block | byteVector | refPtr | closure | recclosure => contradiction
+
+
+/-- Successful word operations produce related results for canonical arguments. -/
+theorem doWordApp_primitives {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
+    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
+    (op : ClosLang.WordOp) (args : List ClosSem.Value)
+    (valid : ∀ value ∈ args, wordPrimitive value) (source : ClosSem.Value)
+    (run : ClosSem.doWordApp op args = some source) :
+    ∃ target, BvlSem.doWordApp op (args.map primitiveToBvl) = some target ∧
+      vRel maxApp f refs code source target := by
+  cases op <;> (try cases ‹AstHOL.WordSize›) <;> (try cases ‹AstHOL.Test›) <;> (try cases ‹Bool›) <;>
+    cases args with
+  | nil => simp [ClosSem.doWordApp, ClosSem.doWordAppIntegral] at run
+  | cons a args =>
+    cases args with
+    | nil =>
+      cases a <;> simp_all [wordPrimitive, primitiveToBvl, ClosSem.doWordApp,
+        ClosSem.doWordAppIntegral, BvlSem.doWordApp, BvlSem.doWordAppIntegral]
+      all_goals try (simp only [ClosSem.intToByte] at run ⊢)
+      all_goals repeat' (split at run <;> simp_all)
+      all_goals try (rcases run with ⟨_, rfl⟩)
+      all_goals first | exact vRel.number _ | exact vRel.word64 _
+    | cons b args =>
+      cases args with
+      | nil =>
+        cases a <;> simp_all [wordPrimitive, primitiveToBvl, ClosSem.doWordApp,
+          ClosSem.doWordAppIntegral, BvlSem.doWordApp, BvlSem.doWordAppIntegral] <;>
+          cases b <;> simp_all
+        all_goals try (simp only [ClosSem.intToByte] at run ⊢)
+        all_goals repeat' (split at run <;> simp_all)
+        all_goals try (rcases run with ⟨_, rfl⟩)
+        all_goals first | exact vRel.number _ | exact vRel.word64 _ | exact vRel_bool _
+      | cons c args =>
+        cases args with
+        | nil =>
+          cases a <;> simp_all [wordPrimitive, primitiveToBvl, ClosSem.doWordApp,
+            ClosSem.doWordAppIntegral, BvlSem.doWordApp, BvlSem.doWordAppIntegral] <;>
+            cases b <;> simp_all <;> cases c <;> simp_all
+          all_goals subst source; exact vRel.word64 _
+        | cons d rest => simp [ClosSem.doWordApp, ClosSem.doWordAppIntegral] at run
+
+/-- Successful word primitives preserve the relation for arbitrary related
+argument lists. This includes the shared floating-point model. -/
+theorem doWordApp_related {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
+    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
+    (op : ClosLang.WordOp) (args : List ClosSem.Value) (targets : List BvlSem.Value)
+    (related : List.Forall₂ (vRel maxApp f refs code) args targets)
+    (source : ClosSem.Value) (success : ClosSem.doWordApp op args = some source) :
+    ∃ target, BvlSem.doWordApp op targets = some target ∧ vRel maxApp f refs code source target := by
+  have valid := doWordApp_success_args op args source success
+  have targetEq := related_primitives related valid
+  subst targets
+  exact doWordApp_primitives op args valid source success
+
+end Flapjack.Compiler.Backend.ClosToBvl

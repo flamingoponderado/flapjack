@@ -52,4 +52,17 @@ def decInlineFactor (c : Config) : Config :=
 def resetInlineFactor (c : Config) : Config :=
   { c with inlineFactor := c.initialInlineFactor }
 
+/-- Read the retained value approximations, or the empty tree if the pass is
+disabled. -/
+@[hol "cakeml/compiler/backend/clos_knownScript.sml" "option_val_approx_spt_def"]
+def optionValApproxSpt : Option Config → Spt ValApprox
+  | none => .ln
+  | some config => config.valApproxSpt
+
+/-- Replace retained value approximations without enabling a disabled pass. -/
+@[hol "cakeml/compiler/backend/clos_knownScript.sml" "option_upd_val_spt_def"]
+def optionUpdValSpt (approximations : Spt ValApprox) : Option Config → Option Config
+  | none => none
+  | some config => some { config with valApproxSpt := approximations }
+
 end Flapjack.Compiler.Backend.ClosKnown

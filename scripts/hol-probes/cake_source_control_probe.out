@@ -1,0 +1,10 @@
+if_type=:v -> α -> α -> α option
+combine_type=:v sem_env -> (v sem_env, α) result -> (v sem_env, α) result
+if_true=SOME (1 :num)
+if_false=SOME (2 :num)
+if_invalid=(NONE :num option)
+and_true=SOME (Exp (Var (Short «x» :(mlstring, mlstring) id)))
+and_false=SOME (Val (Conv (SOME (TypeStamp «False» (0 :num))) ([] :v list)))
+constructors=SOME ((0 :num),TypeStamp «A» (6 :num))
+duplicates=F
+failure=(Rerr (Rraise (3 :num)) :(v sem_env, num) result)

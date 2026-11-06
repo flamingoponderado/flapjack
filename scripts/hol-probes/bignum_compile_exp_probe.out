@@ -1,0 +1,5 @@
+compile_exp_type=:α exp -> α exp
+binary=Op Add [(Lookup (Temp (33w :word5)) :64 exp); (Const (7w :word64) :64 exp)]
+unary=(Const (0w :word64) :64 exp)
+lookup=(Const (0w :word64) :64 exp)
+shift=ShiftN Lsl (Lookup (Temp (2w :word5)) :64 exp) (3 :num)

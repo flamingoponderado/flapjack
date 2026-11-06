@@ -1,0 +1,6 @@
+variables_type=:tra -> num -> num -> closLang$exp list
+variables_def=!(t :tra) (n :num) (i :num). GENLIST_Var t i n = if n = (0 :num) then ([] :closLang$exp list) else GENLIST_Var t (i + (1 :num)) (n - (1 :num)) ++ [(Var t (n - (1 :num)) :closLang$exp)]
+calls_list_type=:tra -> num -> num -> (num # 'a) list -> (num # closLang$exp) list
+calls_list_def=(!(t :tra) (loc :num) (i :num). calls_list t i loc ([] :(num # 'a) list) = ([] :(num # closLang$exp) list)) /\ !(xs :(num # 'a) list) (v0 :'a) (t :tra) (n :num) (loc :num) (i :num). calls_list t i loc ((n,v0)::xs) = (n,Call t (0 :num) (loc + (1 :num)) (GENLIST_Var t (1 :num) n))::calls_list t (i + (1 :num)) (loc + (2 :num)) xs
+calls_list_mapi=!(loc :num) (tra :'a) (n :num). (calls_list (t :tra) n loc :(num # 'b) list -> (num # closLang$exp) list) = MAPi (\(i :num) (p :num # 'b). (FST p,Call t (0 :num) (loc + (2 :num) * i + (1 :num)) (GENLIST_Var t (1 :num) (FST p))))
+cases=([Var None 0; Var None 1; Var None 2],[(2,Call None 0 11 [Var None 0; Var None 1]); (0,Call None 0 13 []); (1,Call None 0 15 [Var None 0])])

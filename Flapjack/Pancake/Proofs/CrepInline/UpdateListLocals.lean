@@ -8,8 +8,8 @@ import Flapjack.Pancake.Semantics.PanCommonProps
 Counterparts of `cakeml/pancake/proofs/crep_inlineProofScript.sml:2586-2717`
 (bead `flapjack-pxn.18.5.5.48`), used by the inlined `Tail`/`Nontail` paths of
 `inline_prog_correct`'s Call case.  The cluster also contains
-`FOLDL_res_var_ZIP_lookup_var` and `FOLDL_res_var_ZIP_lookup`, which are
-already ported in `Flapjack.Pancake.Proofs.CrepInline`.
+`foldl_res_var_zip_lookup_var_exact` and `foldl_res_var_zip_lookup_exact`
+in `Flapjack.Pancake.Proofs.CrepInline`.
 
 Renderings, as in the other crep_inline ports:
 * HOL `|++` (`FUPDATE_LIST`) on a finite map is `HolFiniteMapExact.updateListEq`;

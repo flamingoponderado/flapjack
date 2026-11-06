@@ -1,0 +1,2 @@
+v_to_bytes_eq=∀(x :v). v_to_bytes (data_to_bvi_v x) = v_to_bytes x
+v_to_words_eq=∀(x :v). v_to_words (data_to_bvi_v x) = v_to_words x

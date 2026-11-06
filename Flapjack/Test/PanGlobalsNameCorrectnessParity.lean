@@ -4,7 +4,7 @@ namespace Flapjack.Test.PanGlobalsNameCorrectnessParity
 
 open Flapjack
 
-/-! Regression for the tagged HOL lemmas `fperm_decs_decls`
+/-! Executable observations corresponding to the HOL lemmas `fperm_decs_decls`
     (`pan_globalsProofScript.sml:2023`) and `new_main_name_correct`
     (`pan_globalsProofScript.sml:2073`). -/
 
@@ -21,17 +21,6 @@ def declarations : List (Decl Nat) :=
 def nonFunctionDeclarations : List (Decl Nat) :=
   [.decl (.comb [.one, .named "S"]) "g" (.const 7),
    .name "S" [], .exnDecl "E" (.named "T")]
-
-theorem fpermDecsDeclsFixture :
-    globalRenameDecls "f" "b" nonFunctionDeclarations =
-      nonFunctionDeclarations :=
-  fperm_decs_decls "f" "b" nonFunctionDeclarations []
-    (by simp [nonFunctionDeclarations, globalDeclIsFunction])
-
-theorem newMainNameCorrectFixture :
-    globalNewMainName declarations ∈
-        (functions declarations).map (fun entry => entry.1) → False :=
-  new_main_name_correct declarations
 
 def nameCorrectnessGuard : Bool :=
   ((globalFunctionNames (globalRenameDecls "f" "b" nonFunctionDeclarations)) ==

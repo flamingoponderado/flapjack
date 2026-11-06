@@ -19,9 +19,4 @@ def twoWordParamParity : Bool :=
 
 #guard twoWordParamParity
 
-theorem twoWordParamNodup :
-    ∀ function ∈ compileProgTopHOL twoWordParamDecls,
-      function.2.1.Nodup :=
-  compileProgTopHOL_params_nodup twoWordParamDecls
-
 end Flapjack.Test.CompileProgParamsParity

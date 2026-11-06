@@ -1,4 +1,5 @@
 import Flapjack.Pancake.CrepArith
+import Flapjack.Misc.Words.Log2
 
 /-!
 # Exact-carrier parity for the `crep_arith` ports
@@ -24,6 +25,20 @@ set_option linter.unusedSimpArgs false
 namespace Flapjack.Test.CrepArithExactParity
 
 open Flapjack
+
+-- Expose the generated recursive equation for concrete multiplication rows.
+theorem simpMul {width : Nat} [NeZero width] (left right : CrepExpHOL width) :
+    crepSimpExpHOL (.crepOp .mul [left, right]) =
+      match crepDestConstHOL (crepSimpExpHOL left), crepDestConstHOL (crepSimpExpHOL right) with
+      | some x, some y => .const (x * y)
+      | some x, none => crepMulConstHOL (crepSimpExpHOL right) x
+      | none, some y => crepMulConstHOL (crepSimpExpHOL left) y
+      | none, none => .crepOp .mul [crepSimpExpHOL left, crepSimpExpHOL right] := by
+  have h : List.map crepSimpExpHOL [left, right] =
+      [crepSimpExpHOL left, crepSimpExpHOL right] := rfl
+  rw [crepSimpExpHOL.eq_1 [left, right]
+    (crepSimpExpHOL left) (crepSimpExpHOL right) h]
+  rfl
 
 private abbrev E := CrepExpHOL 8
 private abbrev P := CrepProgHOL 8
@@ -92,6 +107,18 @@ example : crepDest2ExpHOL (width := 8) 3 1 = some 3 := by simp [crepDest2ExpHOL]
 example : crepDest2ExpHOL (width := 8) 0 3 = none := by simp [crepDest2ExpHOL]
 example : crepDest2ExpHOL (width := 8) 0 6 = none := by simp [crepDest2ExpHOL]
 
+-- Remaining recognizer, shift, and word_log2 bound rows of the HOL probe.
+example : crepDest2ExpHOL (width := 8) 4 4 = some 6 := by simp [crepDest2ExpHOL]
+example : crepDest2ExpHOL (width := 8) 0 255 = none := by simp [crepDest2ExpHOL]
+example : (1 : BitVec 8) <<< 3 = 8 := by decide
+example : (1 : BitVec 8) <<< 7 = 128 := by decide
+example : crepDest2ExpHOL (width := 8) 3 1 = some 3 →
+    3 ≤ 3 + (holWordLog2 (1 : BitVec 8)).toNat := by intro _; decide
+example : crepDest2ExpHOL (width := 8) 4 4 = some 6 →
+    6 ≤ 4 + (holWordLog2 (4 : BitVec 8)).toNat := by intro _; decide
+example : crepDest2ExpHOL (width := 8) 0 8 = some 3 →
+    3 ≤ 0 + (holWordLog2 (8 : BitVec 8)).toNat := by intro _; decide
+
 -- `crep_mul_const_probe.out` (kernel-checked)
 example : crepMulConstHOL (width := 8) (.var 2) 0 = .const 0 := by
   simp [crepMulConstHOL, crepDest2ExpHOL]
@@ -122,6 +149,41 @@ example : crepMulConstHOL (width := 8) (.var 2) 8 =
 #guard isDecReturn (crepSimpProgHOL (width := 8) (.dec 1 (mul (.const 2) (.const 3)) (.return [.var 1])))
 #guard isStoreVar2Shift (crepSimpProgHOL (width := 8) (.store (.var 2) (mul (.var 3) (.const 2))))
 #guard isBreak3 (crepSimpProgHOL (width := 8) (.break 3))
+
+-- Remaining full program rows in `crep_simp_prog_probe.out`.
+#guard match crepSimpProgHOL (width := 8) (.store32 (.var 2) (mul (.var 3) (.const 2))) with
+  | .store32 (.var 2) (.shift .lsl (.var 3) (.const 1)) => true | _ => false
+#guard match crepSimpProgHOL (width := 8) (.storeByte (.var 2) (mul (.var 3) (.const 2))) with
+  | .storeByte (.var 2) (.shift .lsl (.var 3) (.const 1)) => true | _ => false
+#guard match crepSimpProgHOL (width := 8) (.storeGlob 4 (mul (.var 3) (.const 2))) with
+  | .storeGlob 4 (.shift .lsl (.var 3) (.const 1)) => true | _ => false
+#guard match crepSimpProgHOL (width := 8)
+    (.seq (.ite (mul (.var 2) (.const 2)) (.assign 1 (.const 4))
+      (.while (mul (.var 3) (.const 2)) .skip)) (.return [mul (.var 4) (.const 2)])) with
+  | .seq (.ite (.shift .lsl (.var 2) (.const 1)) (.assign 1 (.const 4))
+      (.while (.shift .lsl (.var 3) (.const 1)) .skip))
+      (.return [.shift .lsl (.var 4) (.const 1)]) => true | _ => false
+#guard match crepSimpProgHOL (width := 8)
+    (.call none (Flapjack.Basis.Pure.MlString.ofString "f") [mul (.var 2) (.const 2)]) with
+  | .call none name [.shift .lsl (.var 2) (.const 1)] =>
+      name == Flapjack.Basis.Pure.MlString.ofString "f" | _ => false
+#guard match crepSimpProgHOL (width := 8)
+    (.call (some ([1], some (7, .assign 2 (mul (.var 3) (.const 2)))))
+      (Flapjack.Basis.Pure.MlString.ofString "f") [.var 4]) with
+  | .call (some ([1], some (7, .assign 2 (.shift .lsl (.var 3) (.const 1))))) name [.var 4] =>
+      name == Flapjack.Basis.Pure.MlString.ofString "f"
+  | _ => false
+#guard match crepSimpProgHOL (width := 8)
+    (.seq (.shMem .load 1 (mul (.var 2) (.const 2))) (.return [mul (.var 3) (.const 2)])) with
+  | .seq (.shMem .load 1 (.shift .lsl (.var 2) (.const 1)))
+      (.return [.shift .lsl (.var 3) (.const 1)]) => true | _ => false
+
+-- Preserve the earlier constant-folding regression inputs on the executed carrier.
+#guard match crepSimpExpHOL (width := 8) (mul (.const 7) (.const 9)) with
+  | .const 63 => true | _ => false
+#guard match crepSimpProgHOL (width := 8)
+    (.seq (.assign 0 (mul (.const 6) (.const 7))) (.return [mul (.const 8) (.const 5)])) with
+  | .seq (.assign 0 (.const 42)) (.return [.const 40]) => true | _ => false
 
 -- `crep_dest_2exp_probe` / `crep_mul_const_probe` executable rows
 #guard crepDest2ExpHOL (width := 8) 0 8 == some 3

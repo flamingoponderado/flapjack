@@ -1,1 +1,3 @@
 option_le_SOME_typed=option_le (x :num option) (SOME (n :num)) ⇔ ∃(m :num). x = SOME m ∧ m ≤ n
+Saved definition ____ "get_limits_def"
+get_limits_def_typed=∀(c :data_to_word$config) (t :(α, γ, 'ffi) wordSem$state). get_limits c t = <|stack_limit := t.stack_limit; heap_limit := w2n (theWord t.store⟨HeapLength⟩) DIV (dimindex (:α) DIV (8 :num)); length_limit := c.len_size; arch_64_bit := (dimindex (:α) = (64 :num)); has_fp_ops := c.has_fp_ops; has_fp_tops := c.has_fp_tern|>

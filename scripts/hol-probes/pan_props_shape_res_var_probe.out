@@ -3,3 +3,12 @@ rv_hit=SOME (ValWord 7w)
 rv_miss=SOME (ValWord 3w)
 rv_diff=T
 rv_some=T
+shape_of_val_typed=shape_of (Val (x :α word_lab)) = One
+shape_of_val_hypotheses=0
+word_constructor_typed=:α word -> α word_lab
+value_constructors_typed=:α word_lab -> α v;:α v list -> α v;:mlstring -> (mlstring # α v) list -> α v;
+shape_of_def_typed=(∀(v0 :α word). shape_of (ValWord v0) = One) ∧
+(∀(vs :α v list).
+   shape_of (RStruct vs) = Comb (MAP (λ(a :α v). shape_of a) vs)) ∧
+∀(v1 :(mlstring # α v) list) (nm :mlstring).
+  shape_of (NStruct nm v1) = Named nm
