@@ -9530,7 +9530,8 @@ HOL hypotheses.
 `declare_env_store_env_id` and `compile_funs_dom2` in the source-to-flat
 initialization probe capture the exported, fully typed declaration/store and
 recursive-function name theorems; `nsAppend_to_nsBindList` captures the
-namespace binding theorem used by the same proofs.
+namespace binding theorem used by the same proofs. `find_recfun_local`
+replays and captures the original local recursive-function lookup proof.
 
 `source_to_flat_init_probe.out` captures the typed original source-to-flat
 initialization definitions and evaluates the initial constructor entries and

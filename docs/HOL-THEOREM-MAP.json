@@ -11544,6 +11544,14 @@
     "reviewer": "Compared the source and typed invariant_begin_alloc_blanks capture: compiler, FFI and initial-environment payload types remain independent; the original precondition, output-config equation, and initial-globals equation imply the same invariant over the allocated reference and blank globals. The global constructor and type maps use their canonical finite-map carrier."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateLocalCall.lean",
+    "lean_name": "findRecFun_compileFuns",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "find_recfun",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed find_recfun_local replay of the original local proof: the same six quantified mlstring, function-list, expression and environment binders and successful lookup premise imply the same compiled lookup result and body compilation. MlString, source and flat expression, and compiler environment carriers agree with HOL."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/CompileExp.lean",
     "lean_name": "compileFuns_map",
     "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",

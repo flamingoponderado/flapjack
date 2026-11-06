@@ -76,3 +76,18 @@ val _ = show_thm "abort_compile_dec_result_local=" abort_compile_dec_result_loca
 val _ = show_thm "declare_env_store_env_id=" source_to_flatProofTheory.declare_env_store_env_id;
 val _ = show_thm "compile_funs_dom2=" source_to_flatProofTheory.compile_funs_dom2;
 val _ = show_thm "nsAppend_to_nsBindList=" namespacePropsTheory.nsAppend_to_nsBindList;
+
+load "preamble";
+open preamble semanticPrimitivesTheory source_to_flatTheory namespaceTheory;
+val find_recfun_local = Q.prove (
+  `!x funs e comp_map y t.
+    find_recfun x funs = SOME (y,e) ==>
+    find_recfun x (compile_funs t comp_map funs) =
+      SOME (y, compile_exp (x::t) (comp_map with v := nsBind y (Local None y) comp_map.v) e)`,
+  induct_on `funs` >>
+  srw_tac[][Once find_recfun_def, compile_exp_def] >>
+  PairCases_on `h` >>
+  full_simp_tac(srw_ss())[] >>
+  every_case_tac >>
+  full_simp_tac(srw_ss())[Once find_recfun_def, compile_exp_def]);
+val _ = show_thm "find_recfun_local=" find_recfun_local;

@@ -10,21 +10,24 @@ namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL
 open OracleInvariant
 
-/-- Looking up a compiled recursive function preserves its name and argument
-and compiles its body under the same recursive environment. -/
-theorem findRecFun_compileFuns (name : VarN) (trace : List VarN) (env : Environment)
-    (funs : List (VarN × VarN × AstHOL.Exp)) :
-    findRecFun name (compileFuns trace env funs) =
-      (findRecFun name funs).map (fun (arg, body) =>
-        (arg, compileExp (name :: trace) { env with v := nsBind arg (.localName .none arg) env.v } body)) := by
+/-- A found recursive function remains found after compiling the group. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "find_recfun"]
+theorem findRecFun_compileFuns (name : VarN) (funs : List (VarN × VarN × AstHOL.Exp))
+    (body : AstHOL.Exp) (env : Environment) (arg : VarN) (trace : List VarN)
+    (found : findRecFun name funs = some (arg, body)) :
+    findRecFun name (compileFuns trace env funs) = some
+      (arg, compileExp (name :: trace) { env with v := nsBind arg (.localName .none arg) env.v } body) := by
   induction funs with
-  | nil => rfl
+  | nil => simp [findRecFun] at found
   | cons head tail ih =>
-    obtain ⟨fn, arg, body⟩ := head
+    obtain ⟨fn, param, expr⟩ := head
     by_cases eq : fn = name
     · subst fn
+      simp [findRecFun] at found
+      obtain ⟨rfl, rfl⟩ := found
       simp [compileFuns, findRecFun]
-    · simp [compileFuns, findRecFun, eq, ih]
+    · simp [findRecFun, eq] at found
+      simpa [compileFuns, findRecFun, eq] using ih found
 
 /-- Calling related non-recursive closures creates related argument
 bindings and compiles the function body under the extended local traces. -/
@@ -123,7 +126,7 @@ theorem doOpApp_recclosure_local (genv : GlobalEnv) (baseMap : Environment) (bas
     rfl
   have compiledFound : findRecFun name compiled = some (arg,
       compileExp (name :: trace) { recMap with v := nsBind arg (.localName .none arg) recMap.v } body) := by
-    simp [compiled, findRecFun_compileFuns, found]
+    exact findRecFun_compileFuns name funs body recMap arg trace found
   have flatDistinct : (compiled.map Prod.fst).Nodup := by simpa [compiled, compileFuns_names] using distinct
   have mapBind : bindLocals (.none :: traces) (((arg, flatArgument) :: recursiveFlat).map Prod.fst) baseMap.v =
       nsBind arg (.localName .none arg) recMap.v := by
