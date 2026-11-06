@@ -1146,51 +1146,6 @@ theorem doApp_int_simulation {C F : Type} (op : ClosLang.IntOp) (args nextArgs :
     have valueRel := doIntApp_result_related source.maxApp op args value run
     simp [doApp, applyNumeric, ← same, run, valueRel, stateRel]
 
-/-- Integer primitive expressions preserve evaluation after numbering, given
-    the induction hypothesis for their argument expressions. -/
-theorem evaluate_intOp {C F : Type} (trace : BackendCommon.Tra) (op : ClosLang.IntOp)
-    (args : List ClosLang.Exp) (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.intOp op) args] := by
-  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
-  have argsSafe : ¬ ClosProps.containsAppSome source.maxApp args := by
-    simpa [ClosProps.containsAppSome, ClosProps.containsAppSomeExp] using safe
-  cases argsRun : evaluate args env source with
-  | mk argsResult middle =>
-    cases argsResult with
-    | err error =>
-      rw [evaluate, fixClock_evaluate, argsRun] at run
-      cases run
-      obtain ⟨targetResult, targetMiddle, targetRun, resultRel, middleRel⟩ :=
-        argsIH env nextEnv source target (.err error) middle start argsRun noType argsSafe envRel stateRel
-      cases targetResult with
-      | val values => cases error <;> simp [ResultRel] at resultRel
-      | err targetError =>
-        refine ⟨.err targetError, targetMiddle, ?_, resultRel, middleRel⟩
-        simp only [renumberList, renumber]
-        rw [evaluate, fixClock_evaluate, targetRun]
-    | val values =>
-      have argsNoType : (Result.val values : Result (List Value) Value) ≠ .err (.abort .typeError) := by simp
-      obtain ⟨targetResult, targetMiddle, targetRun, argsRel, middleRel⟩ :=
-        argsIH env nextEnv source target (.val values) middle start argsRun argsNoType argsSafe envRel stateRel
-      cases targetResult with
-      | err error => cases error <;> simp [ResultRel] at argsRel
-      | val nextValues =>
-        have same := doIntApp_related source.maxApp op (List.rel_reverse argsRel)
-        cases numeric : doIntApp op values.reverse with
-        | none =>
-          rw [evaluate, fixClock_evaluate, argsRun] at run
-          simp [doApp, applyNumeric, numeric] at run
-          exact False.elim (noType run.1.symm)
-        | some value =>
-          have valueRel := doIntApp_result_related source.maxApp op values.reverse value numeric
-          rw [evaluate, fixClock_evaluate, argsRun] at run
-          simp [doApp, applyNumeric, numeric] at run
-          obtain ⟨rfl, rfl⟩ := run
-          refine ⟨.val [value], targetMiddle, ?_, .cons valueRel .nil, middleRel⟩
-          simp only [renumberList, renumber]
-          rw [evaluate, fixClock_evaluate, targetRun]
-          simp [doApp, applyNumeric, ← same, numeric]
-
 /-- Related arguments give identical word-primitive observations, including
     the existing floating-point operations and their FpSemHOL assumptions. -/
 theorem doWordApp_related (maxApp : Nat) (op : ClosLang.WordOp) {args nextArgs : List Value}
