@@ -72,29 +72,6 @@ theorem compileProg_evaluate_related {C F : Type}
     cases result <;> rfl
 
 
-/-- Pattern-compiled declarations satisfy the match-freedom prerequisite of
-the executable flat-to-closure initializer. The installation correspondence
-still uses the proof-side incremental compiler. -/
-theorem compilePatternProg_evaluate_related {C F : Type}
-    (patternConfig : FlatPattern.Config)
-    (ffi : Flapjack.HolFfiState F) (maxApp clock : Nat) (config : FlatSem.InstallConfig C)
-    (oracle : ClosSem.CompileOracle C) (compiler : ClosSem.Compiler C) (declarations : List FlatLang.Exp)
-    (positive : 0 < maxApp) (install : installConfigRel config oracle compiler)
-    (notTypeError : (FlatSem.evaluateDecs (FlatSem.initialState ffi clock config)
-      (declarations.map (FlatPattern.compileDec patternConfig))).2 ≠ some (.abort .typeError)) :
-    ∃ result finalTarget,
-      DecResultRel (FlatSem.evaluateDecs (FlatSem.initialState ffi clock config)
-        (declarations.map (FlatPattern.compileDec patternConfig))).2 result ∧
-      StateRel (FlatSem.evaluateDecs (FlatSem.initialState ffi clock config)
-        (declarations.map (FlatPattern.compileDec patternConfig))).1 finalTarget ∧
-      ClosSem.evaluate (compileProg (declarations.map (FlatPattern.compileDec patternConfig))) []
-        (ClosSem.initialState ffi maxApp HolFiniteMapExact.empty oracle compiler clock) =
-        (match result with
-         | .val values => (.val (ClosSem.unitValue :: values), finalTarget)
-         | .err error => (.err error, finalTarget)) := by
-  exact compileProg_evaluate_related ffi maxApp clock config oracle compiler _ positive install
-    (FlatPattern.noMat_compileDecs patternConfig declarations) notTypeError
-
 /-- A non-failing source program yields a related closure evaluation after
 the complete source-to-flat pass. This composes the factored source semantics
 and the proof-side flat-to-closure initialization relation; neither is yet a
