@@ -1,8 +1,23 @@
 load "flat_to_closProofTheory";
 open HolKernel Parse boolLib bossLib listTheory pairTheory;
 open flat_to_closProofTheory;
+open rich_listTheory;
 val _ = Globals.linewidth := 1000000;
 val _ = set_trace "Unicode" 0;
+(* Replay the local indexed-list relation theorem using its original proof. *)
+val list_rel_map_genlist_replay = Q.prove (
+  `!funs f1 f2 R.
+    (!n. n < LENGTH funs ==> R (f1 (EL n funs)) (f2 n)) ==>
+    LIST_REL R (MAP f1 funs) (GENLIST f2 (LENGTH funs))`,
+  recInduct SNOC_INDUCT >> fs [] >>
+  fs [GENLIST,MAP_SNOC,LIST_REL_SNOC] >> rpt strip_tac
+  >- (first_x_assum match_mp_tac >>
+      metis_tac [EL_SNOC,DECIDE ``n<m ==> n < SUC m``]) >>
+  first_x_assum (qspec_then `LENGTH l` mp_tac) >>
+  fs [SNOC_APPEND,EL_LENGTH_APPEND]);
+val _ = if null (hyp list_rel_map_genlist_replay) then () else raise Fail "local theorem has hypotheses";
+val _ = (print "list_rel_map_genlist_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl list_rel_map_genlist_replay); print "\n");
 val _ = (print "findi_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl indexedListsTheory.findi_def); print "\n");
 val _ = (print "compile_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl flat_to_closTheory.compile_def); print "\n");
 val _ = (print "compile_decs_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl flat_to_closTheory.compile_decs_def); print "\n");

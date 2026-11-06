@@ -9843,6 +9843,14 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+    "hol_name": "LIST_REL_MAP_GENLIST",
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Recursive.lean",
+    "lean_name": "listRel_map_genlist",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared list_rel_map_genlist_typed, replaying the original local HOL proof: the independent element and result types, total EL lookup premise, mapped input and GENLIST output coincide. Nonempty models HOL type inhabitation; range mapped through the generator gives GENLIST in ascending index order."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
     "hol_name": "evaluate_Let_error",
     "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/ErrorPropagation.lean",
     "lean_name": "evaluate_let_error",

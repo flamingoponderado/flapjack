@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.ValueRelation
 import Mathlib.Data.List.Forall2
+import Flapjack.Misc.ListEl
 
 /-! Recursive-environment prerequisites for flat-to-closure simulation. -/
 namespace Flapjack.Compiler.Backend.FlatToClos
@@ -22,21 +23,17 @@ theorem buildRecEnv_eq_map (funs : List (VarN × VarN × FlatLang.Exp))
       simp [ih]
   exact foldMap funs
 
-/-- Each recursive source closure corresponds to the generated closure at
-the same index. -/
-theorem recClosureList_related (funs : List (VarN × VarN × FlatLang.Exp))
-    (env : FlatSem.Environment FlatSem.Value) (names : List (Option MlString)) (values : List ClosSem.Value)
-    (environments : EnvRel env names values) (distinct : (funs.map Prod.fst).Nodup)
-    (safe : FlatProps.noMatFuns funs = true) :
-    List.Forall₂ ValueRel
-      (funs.map (fun f => FlatSem.Value.recclosure env funs f.1))
-      ((List.range funs.length).map (fun i => ClosSem.Value.recclosure none [] values
-        (compileFuns (funs.map (fun f => some f.1) ++ names) funs) i)) := by
+/-- Pointwise related indexed elements give related mapped and generated lists. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "LIST_REL_MAP_GENLIST"]
+theorem listRel_map_genlist {α β γ : Type} [Nonempty α] (items : List α)
+    (first : α → β) (second : Nat → γ) (rel : β → γ → Prop)
+    (pointwise : ∀ i, i < items.length → rel (first (Flapjack.holEl i items)) (second i)) :
+    List.Forall₂ rel (items.map first) ((List.range items.length).map second) := by
   apply List.forall₂_of_length_eq_of_get
   · simp
   · intro i leftBound rightBound
-    have bound : i < funs.length := by simpa using leftBound
-    simpa using (ValueRel.recclosure bound environments distinct safe)
+    have bound : i < items.length := by simpa using leftBound
+    simpa [Flapjack.holEl_eq_getElem i items bound] using pointwise i bound
 
 /-- Compiling a recursive function group preserves its length. -/
 theorem compileFuns_length (names : List (Option MlString)) (funs : List (VarN × VarN × FlatLang.Exp)) :
@@ -120,7 +117,16 @@ theorem envRel_rec (funs : List (VarN × VarN × FlatLang.Exp))
       ((List.range (compileFuns (funs.map (fun f => some f.1) ++ names) funs).length).map
         (fun i => ClosSem.Value.recclosure none [] values
           (compileFuns (funs.map (fun f => some f.1) ++ names) funs) i) ++ values) := by
-  have prefixRel := recClosureList_related funs env names values environments distinct safe
+  have : Nonempty (VarN × VarN × FlatLang.Exp) :=
+    ⟨(ofString "", ofString "", .varLocal .none (ofString ""))⟩
+  have prefixRel : List.Forall₂ ValueRel
+      (funs.map (fun f => FlatSem.Value.recclosure env funs f.1))
+      ((List.range funs.length).map (fun i => ClosSem.Value.recclosure none [] values
+        (compileFuns (funs.map (fun f => some f.1) ++ names) funs) i)) := by
+    apply listRel_map_genlist
+    intro i bound
+    simpa [Flapjack.holEl_eq_getElem i funs bound] using
+      (ValueRel.recclosure bound environments distinct safe)
   have extended := envRel_append (env1 := env)
     (entries := funs.map (fun f => (f.1, FlatSem.Value.recclosure env funs f.1)))
     (targets := (List.range funs.length).map (fun i => ClosSem.Value.recclosure none [] values
