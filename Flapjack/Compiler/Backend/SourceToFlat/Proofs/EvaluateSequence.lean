@@ -170,7 +170,7 @@ theorem factoredDecCase_append_success {C F : Type} [Nonempty C]
   subst firstError
   have baseMid := globalEnvInv_growth genv midGenv firstGrowth baseMap (fun _ => False) baseEnv baseInv
   have combinedInv := globalEnvInv_append_factored midGenv firstMap baseMap firstEnv baseEnv
-    firstDomain firstEnvInv baseMid
+    ⟨firstDomain, firstEnvInv, baseMid⟩
   have futureMid := envGenFutureRel_forward interp lastGen source.evalState middle.evalState ⟨future, firstForward⟩
   obtain ⟨lastFlat, lastGenv, tailError, tailRun, lastStates, tailPost, tailSuccess, tailErrors⟩ :=
     tailIH midGenv midFlat firstInvariant combinedInv firstGeneration futureMid
@@ -192,7 +192,7 @@ theorem factoredDecCase_append_success {C F : Type} [Nonempty C]
       subst resultEnv
       exact ⟨noError, envDomainEq_append tailMap firstMap tailEnv firstEnv ⟨tailDomain, firstDomain⟩,
         tailGeneration, globalEnvInv_append_factored lastGenv tailMap firstMap tailEnv firstEnv
-          tailDomain tailEnvInv firstFinal⟩
+          ⟨tailDomain, tailEnvInv, firstFinal⟩⟩
     · intro error impossible
       cases impossible
   | err error =>

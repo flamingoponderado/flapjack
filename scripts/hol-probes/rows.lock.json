@@ -1357,7 +1357,7 @@
     {"bytes": 15386, "out": "source_to_flat_compile_probe.out", "rows": 4, "sha256": "afcff0c7c9bede4d967988047a63f5be2aac5971ea88a67ec8ce526dbbfa2ae9"},
     {"bytes": 1993, "out": "source_to_flat_config_probe.out", "rows": 22, "sha256": "ca5aa762284bb4d17df7e0d2596155e7a4993b3afbd1b01d5118be7d80b0f1c7"},
     {"bytes": 1100, "out": "source_to_flat_constructor_probe.out", "rows": 3, "sha256": "11c21a6a6e65066259af56b3f485db57bd2ec332c4cdec962fd45c224ade4fad"},
-    {"bytes": 609, "out": "source_to_flat_env_domain_probe.out", "rows": 3, "sha256": "79bcea0a9bcd4fe6b36e1f6f5bfb74105e08ccf61b89c4d42223ec60de30fe6c"},
+    {"bytes": 1091, "out": "source_to_flat_env_domain_probe.out", "rows": 4, "sha256": "96aa4465aa1aecda37995ce0c6d1eb983a2635e4a14767baad3664c0034c51ca"},
     {"bytes": 1884, "out": "source_to_flat_envrel_probe.out", "rows": 6, "sha256": "a24f6c1b7c59d980d4e3aeaec62cf23c5999393cb0d5dec7e870539bac15f4b9"},
     {"bytes": 582, "out": "source_to_flat_equality_probe.out", "rows": 1, "sha256": "10c0336d92e8eace2e7bbb3d0480c96292d721ffe04a08b575877181f19d3ae4"},
     {"bytes": 188, "out": "source_to_flat_exps_length_probe.out", "rows": 2, "sha256": "9c65e64f94889d2a1fe08a3d2097a60c35337d55171b166493e8e1e6a2f61280"},

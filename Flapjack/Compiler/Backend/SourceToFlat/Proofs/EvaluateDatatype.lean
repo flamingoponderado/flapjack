@@ -1251,7 +1251,7 @@ theorem factoredInvariant_allocateTypeDefinitions {C F : Type} [Nonempty C]
     obtain ⟨lastValid, lastGrowth, lastInv⟩ := ih nextGenv nextStart nextSource nextValid (by simp [nextStart] at fits ⊢; omega) checkedRest
     have carriedInv := globalEnvInv_growth nextGenv _ lastGrowth _ (fun _ => False) _ nextInv
     have domain := envDomainEq_datatypeConstructorNamespace nextStart.tidx nextSource.nextTypeStamp rest
-    have combined := globalEnvInv_append_factored _ _ _ _ _ domain lastInv carriedInv
+    have combined := globalEnvInv_append_factored _ _ _ _ _ ⟨domain, lastInv, carriedInv⟩
     refine ⟨?_, ?_, ?_⟩
     · simpa [allocateTypeDefinitions, nextGenv, nextStart, nextSource, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using lastValid
     · simpa [allocateTypeDefinitions, nextGenv, nextStart, nextSource] using nextGrowth.trans lastGrowth

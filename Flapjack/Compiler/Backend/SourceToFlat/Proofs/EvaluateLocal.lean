@@ -41,7 +41,7 @@ theorem factoredDecCase_local_success {C F : Type} [Nonempty C]
   subst localError
   have baseMid := globalEnvInv_growth genv midGenv localGrowth baseMap (fun _ => False) baseEnv baseInv
   have combinedInv := globalEnvInv_append_factored midGenv localMap baseMap localEnv baseEnv
-    localDomain localEnvInv baseMid
+    ⟨localDomain, localEnvInv, baseMid⟩
   have futureMid := envGenFutureRel_forward interp bodyGen source.evalState middle.evalState ⟨future, localForward⟩
   obtain ⟨lastFlat, lastGenv, bodyError, bodyRun, lastStates, bodyPost, bodySuccess, bodyErrors⟩ :=
     bodyIH midGenv midFlat localInvariant combinedInv localGeneration futureMid

@@ -11515,6 +11515,15 @@
     "reviewer": "Compared the typed v_to_word8_list_rel capture: the fixed eight-bit list and all three conjunctive premises and the target decoding conclusion match. The global environment uses canonical finite maps for c and tys, with the local roundtrip witness."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EnvironmentDomain.lean",
+    "lean_name": "globalEnvInv_append_factored",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "global_env_inv_append",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["c", "tys"],
+    "reviewer": "Compared the typed replay of the local HOL theorem using its original proof: the three conjunctive premises and appended-environment conclusion are preserved, including the empty shadow set. The global environment uses canonical finite maps for c and tys with a local roundtrip witness."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/WordLists.lean",
     "lean_name": "valueToWord64List_related",
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",

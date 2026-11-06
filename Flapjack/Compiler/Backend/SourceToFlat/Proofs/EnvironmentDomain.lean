@@ -163,16 +163,23 @@ theorem envDomainEq_append (first second : Environment) (sourceFirst sourceSecon
     nsDom_append_preserved _ _ _ _ c1 c2 cm1,
     nsDomMod_append_preserved _ _ _ _ cm1 cm2⟩
 
-/-- The factored global environment invariant composes across declaration
-extensions. This is untagged until the factored value and global relations
-have been reviewed as corresponding to their HOL inductive relations. -/
+namespace GlobalEnvAppendPort
+/-- Roundtrip for the global environment's canonical finite maps. -/
+theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
+    GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env := GlobalEnv.holFmapAsFiniteSupportWitness env
+end GlobalEnvAppendPort
+
+/-- The global environment invariant composes across declaration extensions. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "global_env_inv_append"
+  (fmap_as_finite_support := [c, tys])]
 theorem globalEnvInv_append_factored (genv : GlobalEnv)
     (first second : Environment) (sourceFirst sourceSecond : SemEnv Value)
-    (domain : EnvDomainEq first sourceFirst)
-    (firstInv : GlobalEnvInv genv first (fun _ => False) sourceFirst)
-    (secondInv : GlobalEnvInv genv second (fun _ => False) sourceSecond) :
+    (premises : EnvDomainEq first sourceFirst ∧
+      GlobalEnvInv genv first (fun _ => False) sourceFirst ∧
+      GlobalEnvInv genv second (fun _ => False) sourceSecond) :
     GlobalEnvInv genv (extendEnv first second) (fun _ => False)
       (extendDecEnv sourceFirst sourceSecond) := by
+  obtain ⟨domain, firstInv, secondInv⟩ := premises
   obtain ⟨values1, constructors1⟩ := (globalEnvInv_iff genv first (fun _ => False) sourceFirst).mp firstInv
   obtain ⟨values2, constructors2⟩ := (globalEnvInv_iff genv second (fun _ => False) sourceSecond).mp secondInv
   obtain ⟨valueDomain, valueModules, constructorDomain, constructorModules⟩ := domain
@@ -273,7 +280,7 @@ theorem evalDeclaredEnvMap_factored {C : Type}
   have baseNew := globalEnvInv_growth oldGenv newGenv growth (lookupEnvId envId config.envs)
     (fun _ => False) sourceEnv baseInv
   exact ⟨mapGen, _, lookupCurrent, stored,
-    globalEnvInv_append_factored newGenv _ _ sourceNew sourceEnv newDomain newInv baseNew⟩
+    globalEnvInv_append_factored newGenv _ _ sourceNew sourceEnv ⟨newDomain, newInv, baseNew⟩⟩
 
 /-- The Eval success path can declare its extended environment and execute
 the generated ID store using the compiler map retained by the oracle. This

@@ -544,7 +544,7 @@ run_probe flat_elim_value_globals_probeScript.sml flat_elim_value_globals_probe.
   "$cake_dir/compiler/backend/proofs/flat_elimProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe source_to_flat_env_domain_probeScript.sml source_to_flat_env_domain_probe.out \
-  env_domain_type env_domain_definition env_domain_append \
+  env_domain_type env_domain_definition env_domain_append global_env_inv_append_typed \
   "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe cake_flat_sem_pattern_probeScript.sml cake_flat_sem_pattern_probe.out \
