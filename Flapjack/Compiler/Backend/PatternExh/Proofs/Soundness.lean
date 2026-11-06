@@ -599,6 +599,7 @@ theorem mem_mkRows {α : Type} (items : List α) (row : List α) :
   | cons first rest ih => simp [mkRows, ih, eq_comm]
 
 /-- Expanding a list of patterns does not change its width. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "LENGTH_expand_list"]
 theorem expandList_length (patterns row : List Pat) (member : row ∈ expandList patterns) :
     row.length = patterns.length := by
   induction patterns generalizing row with

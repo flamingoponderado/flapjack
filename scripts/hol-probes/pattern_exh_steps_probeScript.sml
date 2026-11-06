@@ -179,3 +179,7 @@ val mem_mk_rows_replay = prove (
   ``!ps r. MEM r (pattern_exh$mk_rows ps) <=> ?p. MEM p ps /\ r = [p]``,
   Induct >> fs [pattern_exhTheory.mk_rows_def] >> metis_tac []);
 val _ = show_local "mem_mk_rows=" mem_mk_rows_replay;
+val length_expand_list_replay = prove (
+  ``!ps qs. MEM qs (pattern_exh$expand_list ps) ==> LENGTH qs = LENGTH ps``,
+  Induct >> fs [pattern_exhTheory.expand_def, mem_mk_prods_replay] >> rw [] >> res_tac >> fs []);
+val _ = show_local "length_expand_list=" length_expand_list_replay;

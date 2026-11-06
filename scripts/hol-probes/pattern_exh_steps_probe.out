@@ -37,3 +37,4 @@ mem_mk_prods=∀(xs :α list) (yss :α list list) (zs :α list). MEM zs (mk_prod
 mem_mk_refs=∀(ps :pat list) (q :pat). MEM q (mk_refs ps) ⇔ ∃(p :pat). MEM p ps ∧ q = Ref p
 mem_mk_conses=∀(pss :pat list list) (t :(num # (num # num) list option) option) (q :pat). MEM q (mk_conses t pss) ⇔ ∃(ps :pat list). MEM ps pss ∧ q = Cons t ps
 mem_mk_rows=∀(ps :α list) (r :α list). MEM r (mk_rows ps) ⇔ ∃(p :α). MEM p ps ∧ r = [p]
+length_expand_list=∀(ps :pat list) (qs :pat list). MEM qs (expand_list ps) ⇒ LENGTH qs = LENGTH ps
