@@ -19,8 +19,7 @@ def opGlobalBag : FlatLang.Op → GlobalBag
   | _ => emptyGlobalBag
 
 mutual
-/-- Global initializations in a flat expression, with their multiplicities.
-The expression carriers remain pending HOL correspondence review. -/
+/-- Global initializations in a flat expression, with their multiplicities. -/
 @[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "set_globals_def"]
 def setGlobals : FlatLang.Exp → GlobalBag
   | .raise _ expression | .fn _ _ expression => setGlobals expression
@@ -52,6 +51,27 @@ def funGlobals : List (Flapjack.AstHOL.VarN × Flapjack.AstHOL.VarN × FlatLang.
   | (_, _, body) :: rest => unionGlobalBag (setGlobals body) (funGlobals rest)
 termination_by funs => sizeOf funs
 end
+
+/-- Flapjack helper: the row traversal equals HOL's mapped list traversal;
+this equality is not a separate HOL declaration. -/
+theorem rowGlobals_eq_elistGlobals (rows : List (FlatLang.Pat × FlatLang.Exp)) :
+    rowGlobals rows = elistGlobals (rows.map Prod.snd) := by
+  induction rows with
+  | nil => simp [rowGlobals, elistGlobals]
+  | cons row rest ih =>
+    obtain ⟨pattern, body⟩ := row
+    simp [rowGlobals, elistGlobals, ih]
+
+/-- Flapjack helper: the function traversal equals HOL's mapped list traversal;
+this equality is not a separate HOL declaration. -/
+theorem funGlobals_eq_elistGlobals
+    (funs : List (Flapjack.AstHOL.VarN × Flapjack.AstHOL.VarN × FlatLang.Exp)) :
+    funGlobals funs = elistGlobals (funs.map (fun (_, _, body) => body)) := by
+  induction funs with
+  | nil => simp [funGlobals, elistGlobals]
+  | cons fn rest ih =>
+    obtain ⟨name, arg, body⟩ := fn
+    simp [funGlobals, elistGlobals, ih]
 
 mutual
 /-- No function body captures a global initialization. The expression

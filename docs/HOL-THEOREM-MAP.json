@@ -13824,16 +13824,16 @@
     "hol_name": "compile_exp_set_globals_FST_SND",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalFlag.lean",
     "lean_name": "compileExp_setGlobals_flag",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_pattern_global_flag_probe.out. Compiler and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all three conjuncts and their carriers with the typed expression_global_flag capture. Bool = true iff renders the HOL boolean equation; the compiler, global-bag traversal, and FlatLang expression and pattern carriers are reviewed."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
     "hol_name": "compile_exp_set_globals_tup",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalFlag.lean",
     "lean_name": "compileExp_setGlobals_tuple",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_pattern_global_flag_probe.out. Compiler and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all three tuple-premise conjuncts and their binders with the typed tuple_global_flag capture. Bool = true iff renders the HOL boolean equation; the compiler, global-bag traversal, and FlatLang expression and pattern carriers are reviewed."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
@@ -13848,16 +13848,16 @@
     "hol_name": "set_globals_def",
     "lean_path": "Flapjack/Compiler/Backend/FlatProps/Globals.lean",
     "lean_name": "setGlobals",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_elim_value_globals_probe.out; HOL bags are natural-number-valued functions. Expression carriers and complete declaration review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared every clause with the typed global_bag_expressions capture and the reviewed FlatLang.Exp carrier. The rowGlobals_eq_elistGlobals and funGlobals_eq_elistGlobals theorems establish the mapped-list traversals used by Handle, Mat and Letrec. HOL bags are num -> num; emptyGlobalBag is EMPTY_BAG and unionGlobalBag is BAG_UNION pointwise addition."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
     "hol_name": "set_globals_def",
     "lean_path": "Flapjack/Compiler/Backend/FlatProps/Globals.lean",
     "lean_name": "elistGlobals",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_elim_value_globals_probe.out; HOL bags are natural-number-valued functions. Expression carriers and complete declaration review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the empty and cons clauses with the typed global_bag_expressions capture and the reviewed FlatLang.Exp carrier. HOL bags are num -> num; emptyGlobalBag is EMPTY_BAG and unionGlobalBag is BAG_UNION pointwise addition."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",

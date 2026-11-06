@@ -184,18 +184,8 @@ theorem compileFuns_globalFlag (cfg : Config) (funs : List (Flapjack.AstHOL.VarN
 termination_by sizeOf funs
 end
 
-/-- The row traversal is the original list traversal over row bodies. -/
-theorem rowGlobals_eq_elistGlobals (rows : List (FlatLang.Pat × FlatLang.Exp)) :
-    rowGlobals rows = elistGlobals (rows.map Prod.snd) := by
-  induction rows with
-  | nil => simp [rowGlobals, elistGlobals]
-  | cons row rest ih =>
-    obtain ⟨pattern, body⟩ := row
-    simp [rowGlobals, elistGlobals, ih]
-
 /-- The compiler's global-write metadata records exactly whether each
-source expression, list, or pattern-row list initializes a global. The
-compiler and expression carriers remain pending HOL correspondence review. -/
+source expression, list, or pattern-row list initializes a global. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "compile_exp_set_globals_FST_SND"]
 theorem compileExp_setGlobals_flag :
     (∀ cfg expression, (compileExp cfg expression).2.1 = true ↔ setGlobals expression ≠ emptyGlobalBag) ∧
@@ -205,8 +195,7 @@ theorem compileExp_setGlobals_flag :
   intro cfg rows
   simpa [rowGlobals_eq_elistGlobals] using compileMatch_globalFlag cfg rows
 
-/-- The tuple form of the pattern compiler's global-write metadata theorem.
-The compiler and expression carriers remain pending HOL review. -/
+/-- The tuple form of the pattern compiler's global-write metadata theorem. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "compile_exp_set_globals_tup"]
 theorem compileExp_setGlobals_tuple :
     (∀ cfg expression index flag output, compileExp cfg expression = (index, flag, output) →
