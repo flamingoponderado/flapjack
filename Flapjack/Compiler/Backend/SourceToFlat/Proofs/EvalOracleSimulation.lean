@@ -442,41 +442,62 @@ theorem factoredInvariant_declareEnv {C F : Type} [Nonempty C]
     omega
   · simpa [sourceState, nextEq] using fin
 
-/-- Oracle-mode declaration and the generated flat store satisfy the
-declaration step over the factored invariant. This is not yet the complete
-HOL theorem: the no-Eval case and correspondence of the factored relations
-remain to be established. -/
-theorem declareEnv_storeEnvId_factored {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (gen : EnvironmentGenerationStore) (genv : GlobalEnv)
+/-- Declaring an environment agrees with execution of the generated store. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "declare_env_store_env_id"
+  (fmap_as_finite_support := [c, tys])]
+theorem declareEnv_storeEnvId {C F : Type} [Nonempty C]
+    (source : SemanticPrimitivesHOL.State F) (env : SemEnv Value) (value : Value)
+    (after : Option EvalState) (interp : Option (Value → Option (Config × C)))
+    (transform : List Dec → List Dec) (gen : EnvironmentGenerationStore) (genv : GlobalEnv)
     (idxs : NextIndices × NextIndices × Set (Nat × IndexKind))
-    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
-    (state : EvalOracleState) (env : SemEnv Value) (value : Value) (after : Option EvalState)
-    (sourceState : source.evalState = some (.evalOracle state))
-    (valid : factoredInvariant interp transform gen genv idxs source flat)
-    (generation : envGenRel gen source.evalState)
-    (declared : declareEnv source.evalState env = some (value, after))
-    (newMap : ∀ config, srcOracNextCfg interp source.evalState = some config →
-      ∃ mapGen compMap, Flapjack.sptLookup gen.generation config.envs.envGens = some mapGen ∧
-        Flapjack.sptLookup gen.next mapGen = some compMap ∧
-        GlobalEnvInv genv compMap (fun _ => False) env) :
+    (flat : FlatSem.State C F) (genId id : Nat)
+    (premises : declareEnv source.evalState env = some (value, after) ∧
+      factoredInvariant interp transform gen genv idxs source flat ∧
+      envGenRel gen source.evalState ∧ genId = gen.generation ∧ id = gen.next ∧
+      (match srcOracNextCfg interp source.evalState with
+      | none => True
+      | some config =>
+        match Flapjack.sptLookup genId config.envs.envGens with
+        | none => False
+        | some mapGen =>
+          match Flapjack.sptLookup id mapGen with
+          | none => False
+          | some compMap => GlobalEnvInv genv compMap (fun _ => False) env)) :
     ∃ stored : FlatSem.Value,
-      FlatSem.evaluateDecs flat [storeEnvId gen.generation gen.next] =
+      FlatSem.evaluateDecs flat [storeEnvId genId id] =
         ({ flat with refs := .refv stored :: flat.refs.tail }, none) ∧
       factoredInvariant interp transform { gen with next := gen.next + 1 } genv idxs
         { source with evalState := after } flat ∧
       (∃ globals, flat.globals = some (.loc true 0) :: globals) ∧
-      ValueRel genv value stored ∧ oracForwardRel interp source.evalState after ∧
-      envGenRel { gen with next := gen.next + 1 } after := by
-  have genRel : envGenRel gen (some (.evalOracle state)) := by simpa [sourceState] using generation
-  have decl : declareEnv (some (.evalOracle state)) env = some (value, after) := by
-    simpa [sourceState] using declared
-  have ⟨_, _, _, _, _, _, _, reserved, _, _⟩ := valid
-  obtain ⟨globals, old, refs, globalEq, refsEq⟩ := evalRefInv_heads flat reserved
-  obtain ⟨stored, execution, valueRel, forward, nextGen, _⟩ :=
-    declareEnv_storeEnvId_oracle interp state flat genv gen env value after genRel reserved decl
-  refine ⟨stored, execution, ?_, ⟨globals, globalEq⟩, valueRel, ?_, nextGen⟩
-  · cases found : state.envs[state.generation]? with
+      ValueRel genv value stored ∧ oracForwardRel interp source.evalState after := by
+  obtain ⟨declared, valid, generation, rfl, rfl, mapCase⟩ := premises
+  have newMap : ∀ config, srcOracNextCfg interp source.evalState = some config →
+      ∃ mapGen compMap, Flapjack.sptLookup gen.generation config.envs.envGens = some mapGen ∧
+        Flapjack.sptLookup gen.next mapGen = some compMap ∧
+        GlobalEnvInv genv compMap (fun _ => False) env := by
+    intro config cfg
+    rw [cfg] at mapCase
+    cases genLookup : Flapjack.sptLookup gen.generation config.envs.envGens with
+    | none => simp [genLookup] at mapCase
+    | some mapGen =>
+      cases mapLookup : Flapjack.sptLookup gen.next mapGen with
+      | none => simp [genLookup, mapLookup] at mapCase
+      | some compMap => exact ⟨mapGen, compMap, rfl, mapLookup, by simpa [genLookup, mapLookup] using mapCase⟩
+  have ⟨_, _, _, _, _, oracle, _, _, _, _⟩ := valid
+  cases sourceState : source.evalState with
+  | none => simp [sourceState, declareEnv] at declared
+  | some mode =>
+    obtain ⟨_, state, _, modeEq⟩ := oracRel_some interp transform mode flat.evalConfig
+      (by simpa [sourceState] using oracle)
+    subst mode
+    have genRel : envGenRel gen (some (.evalOracle state)) := by
+      simpa [sourceState] using generation
+    have decl : declareEnv (some (.evalOracle state)) env = some (value, after) := by
+      simpa [sourceState] using declared
+    have ⟨_, _, _, _, _, _, _, reserved, _, _⟩ := valid
+    obtain ⟨globals, old, refs, globalEq, refsEq⟩ := evalRefInv_heads flat reserved
+    have forward := declareEnv_oracle_forward interp state env value after decl
+    cases found : state.envs[state.generation]? with
     | none => simp [declareEnv, found] at decl
     | some storedEnvs =>
       have genEq : gen.generation = state.generation := genRel.1
@@ -488,46 +509,19 @@ theorem declareEnv_storeEnvId_factored {C F : Type} [Nonempty C]
         intro config next
         simpa [sourceState, genEq, idEq] using newMap config (by simpa [sourceState] using next)
       simp [declareEnv, found] at decl
-      obtain ⟨_, afterEq⟩ := decl
+      obtain ⟨valueEq, afterEq⟩ := decl
+      subst value
       subst after
-      exact factoredInvariant_declareEnv interp transform gen genv idxs source flat state env storedEnvs
-        sourceState found valid map
-  · simpa [sourceState] using forward
-
-/-- Declaration and the generated store satisfy the original theorem's
-control-flow cases over the factored invariant. The relations underlying that
-invariant have not yet been reviewed as HOL-equivalent. -/
-theorem declareEnv_storeEnvId_factored_all {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (gen : EnvironmentGenerationStore) (genv : GlobalEnv)
-    (idxs : NextIndices × NextIndices × Set (Nat × IndexKind))
-    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
-    (env : SemEnv Value) (value : Value) (after : Option EvalState)
-    (valid : factoredInvariant interp transform gen genv idxs source flat)
-    (generation : envGenRel gen source.evalState)
-    (declared : declareEnv source.evalState env = some (value, after))
-    (newMap : ∀ config, srcOracNextCfg interp source.evalState = some config →
-      ∃ mapGen compMap, Flapjack.sptLookup gen.generation config.envs.envGens = some mapGen ∧
-        Flapjack.sptLookup gen.next mapGen = some compMap ∧
-        GlobalEnvInv genv compMap (fun _ => False) env) :
-    ∃ stored : FlatSem.Value,
-      FlatSem.evaluateDecs flat [storeEnvId gen.generation gen.next] =
-        ({ flat with refs := .refv stored :: flat.refs.tail }, none) ∧
-      factoredInvariant interp transform { gen with next := gen.next + 1 } genv idxs
-        { source with evalState := after } flat ∧
-      (∃ globals, flat.globals = some (.loc true 0) :: globals) ∧
-      ValueRel genv value stored ∧ oracForwardRel interp source.evalState after ∧
-      envGenRel { gen with next := gen.next + 1 } after := by
-  have ⟨_, _, _, _, _, oracle, _, _, _, _⟩ := valid
-  cases sourceState : source.evalState with
-  | none => simp [sourceState, declareEnv] at declared
-  | some mode =>
-    obtain ⟨_, state, _, modeEq⟩ := oracRel_some interp transform mode flat.evalConfig
-      (by simpa [sourceState] using oracle)
-    subst mode
-    simpa [sourceState] using
-      declareEnv_storeEnvId_factored interp transform gen genv idxs source flat state
-        env value after sourceState valid generation declared newMap
+      let stored : FlatSem.Value := .conv none
+        [.litv (.intLit (gen.generation : Int)), .litv (.intLit (gen.next : Int))]
+      refine ⟨stored, ?_, ?_, ⟨globals, globalEq⟩, ?_, forward⟩
+      · simpa [stored, refsEq] using evaluateStoreEnvId flat gen.generation gen.next globals old refs globalEq refsEq
+      · exact factoredInvariant_declareEnv interp transform gen genv idxs source flat state env storedEnvs
+          sourceState found valid map
+      · dsimp [stored, natToValue]
+        rw [genEq, idEq]
+        apply valueRel_tuple
+        exact .cons (.literal genv _) (.cons (.literal genv _) .nil)
 
 /-- Advancing both compiler oracles preserves their pointwise relationship.
 Environment generation changes do not affect this relationship. -/

@@ -9527,6 +9527,9 @@ source-review evidence, not a cross-language equivalence proof. It also
 replays the local `env_domain_eq_append` theorem with inferred types and no
 HOL hypotheses.
 
+`declare_env_store_env_id` in the source-to-flat initialization probe captures
+the exported, fully typed environment declaration and store theorem.
+
 `source_to_flat_init_probe.out` captures the typed original source-to-flat
 initialization definitions and evaluates the initial constructor entries and
 next indices, together with the flat initial state, observational semantics,

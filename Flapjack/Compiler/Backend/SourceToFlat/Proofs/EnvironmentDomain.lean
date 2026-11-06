@@ -324,9 +324,36 @@ theorem evalDeclare_store_factored {C F : Type} [Nonempty C]
   dsimp only
   have newMap := evalDeclaredEnvMap_factored interp envId config next decs flatDecs before source.evalState
     oldGenv newGenv sourceEnv sourceNew compiled nextCfg forward growth baseInv newDomain newInv
-  obtain ⟨stored, run, nextInvariant, globals, related, nextForward, nextGeneration⟩ :=
-    OracleInvariant.declareEnv_storeEnvId_factored_all interp transform _ newGenv idxs source flat
-      (extendDecEnv sourceNew sourceEnv) value after invariant generation declared newMap
+  let gen := (compileDecs [] 1 config.next (lookupEnvId envId config.envs)
+    ⟨0, config.envs.next, .ln⟩ decs).2.2.2.1
+  have mapCase : (match OracleInvariant.srcOracNextCfg interp source.evalState with
+      | none => True
+      | some cfg =>
+        match Flapjack.sptLookup gen.generation cfg.envs.envGens with
+        | none => False
+        | some mapGen =>
+          match Flapjack.sptLookup gen.next mapGen with
+          | none => False
+          | some compMap => GlobalEnvInv newGenv compMap (fun _ => False) (extendDecEnv sourceNew sourceEnv)) := by
+    cases cfg : OracleInvariant.srcOracNextCfg interp source.evalState with
+    | none => trivial
+    | some cfgValue =>
+      obtain ⟨mapGen, compMap, genLookup, mapLookup, inv⟩ := newMap cfgValue cfg
+      simpa [gen, genLookup, mapLookup] using inv
+  have nextGeneration : OracleInvariant.envGenRel { gen with next := gen.next + 1 } after := by
+    obtain ⟨_, _, _, _, _, oracle, _, _, _, _⟩ := invariant
+    cases sourceState : source.evalState with
+    | none => simp [sourceState, declareEnv] at declared
+    | some mode =>
+      obtain ⟨_, state, _, modeEq⟩ := OracleInvariant.oracRel_some interp transform mode flat.evalConfig
+        (by simpa [sourceState] using oracle)
+      subst mode
+      exact OracleInvariant.declareEnv_oracle_generation state gen _ value after
+        (by simpa [gen, sourceState] using generation) (by simpa [sourceState] using declared)
+  obtain ⟨stored, run, nextInvariant, globals, related, nextForward⟩ :=
+    OracleInvariant.declareEnv_storeEnvId source (extendDecEnv sourceNew sourceEnv) value after
+      interp transform gen newGenv idxs flat gen.generation gen.next
+      ⟨declared, invariant, generation, rfl, rfl, mapCase⟩
   exact ⟨stored, run, nextInvariant,
     OracleInvariant.factoredInvariant_changeEvalRef interp transform _ newGenv idxs _ flat stored nextInvariant,
     globals, related, nextForward, nextGeneration⟩

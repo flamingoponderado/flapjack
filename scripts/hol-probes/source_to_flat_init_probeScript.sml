@@ -72,3 +72,5 @@ val abort_compile_dec_result_local = Q.prove (
   `source_to_flatProof$abort (semanticPrimitives$combine_dec_result env r) = source_to_flatProof$abort r`,
   Cases_on `r` >> simp [semanticPrimitivesTheory.combine_dec_result_def]);
 val _ = show_thm "abort_compile_dec_result_local=" abort_compile_dec_result_local;
+
+val _ = show_thm "declare_env_store_env_id=" source_to_flatProofTheory.declare_env_store_env_id;

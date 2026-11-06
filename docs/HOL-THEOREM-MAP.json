@@ -11545,6 +11545,16 @@
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvalOracleSimulation.lean",
+    "lean_name": "declareEnv_storeEnvId",
+    "inherits_reals_as_rational_cuts": true,
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "declare_env_store_env_id",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["c", "tys"],
+    "reviewer": "Compared the typed declare_env_store_env_id capture: the conjunctive premises retain the independent ID binders and nested oracle map cases, and the existential conclusion retains the execution, updated invariant, globals, value relation and oracle-forward facts. Compiler payload and FFI types are independent; the global finite maps use the canonical carrier. HOL TL is rendered by List.tail, which agrees because the invariant's reserved-reference condition forces refs to be nonempty. The theorem inherits the reals_as_rational_cuts assumption through the source and flat value semantics."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvalOracleSimulation.lean",
     "lean_name": "invariantEnvGenInv",
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "invariant_env_gen_inv",
