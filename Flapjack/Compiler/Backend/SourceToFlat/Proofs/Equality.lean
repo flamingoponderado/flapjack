@@ -31,28 +31,6 @@ theorem constructor_lookup_same_type (genv : GlobalEnv) (ok : genvCOk genv.c)
       FlatSem.ctorSameType (some cn1) (some cn2)) :=
   ok.2.2.2.1 cn1 cn2 arity1 arity2 s1 s2 h1 h2
 
-/-- Equality is preserved for two related literals. This is a case lemma over
-the still-unreviewed factored relation, not a port of the full HOL theorem. -/
-theorem equality_literal_case (genv : GlobalEnv) (a b : Lit) (fa fb : FlatSem.Value)
-    (ha : ValueRel genv (.litv a) fa) (hb : ValueRel genv (.litv b) fb) :
-    FlatSem.doEq fa fb = SemanticPrimitivesHOL.doEq (.litv a) (.litv b) := by
-  have ha' := (valueRel_literal_iff genv a fa).mp ha
-  have hb' := (valueRel_literal_iff genv b fb).mp hb
-  subst fa
-  subst fb
-  simp [FlatSem.doEq, SemanticPrimitivesHOL.doEq]
-
-/-- Equality is preserved for related locations, including rejected equality
-flags. This is a case lemma over the factored relation. -/
-theorem equality_location_case (genv : GlobalEnv) (ba bb : Bool) (a b : Nat)
-    (fa fb : FlatSem.Value) (ha : ValueRel genv (.loc ba a) fa) (hb : ValueRel genv (.loc bb b) fb) :
-    FlatSem.doEq fa fb = SemanticPrimitivesHOL.doEq (.loc ba a) (.loc bb b) := by
-  have ha' := (valueRel_location_iff genv ba a fa).mp ha
-  have hb' := (valueRel_location_iff genv bb b fb).mp hb
-  subst fa
-  subst fb
-  simp [FlatSem.doEq, SemanticPrimitivesHOL.doEq]
-
 /-- Named-constructor equality follows from the list induction hypothesis and
 the original constructor-map consistency conditions. This is a Flapjack case
 lemma over the factored value relation. -/

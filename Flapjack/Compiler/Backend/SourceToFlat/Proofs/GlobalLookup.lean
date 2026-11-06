@@ -29,19 +29,4 @@ theorem globalLookupRel_doApp {C F : Type} (genv : GlobalEnv) (compMap : Environ
     refine ⟨n, flat, trace, lookup, valueRel, ?_⟩
     simp [FlatSem.doAppFlat, globalsEq, slotLookup]
 
-/-- A non-shadowed source binding in the global environment invariant is
-fetched by its compiled global lookup. This is Flapjack infrastructure over
-the factored relations and the partial flat-operation dispatcher. -/
-theorem globalEnvInv_doApp {C F : Type} (genv : GlobalEnv) (compMap : Environment)
-    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (shadowers : VarN → Prop)
-    (id : Ident ModN VarN) (source : SemanticPrimitivesHOL.Value) (state : FlatSem.State C F)
-    (globalsEq : state.globals = genv.v) (inv : GlobalEnvInv genv compMap shadowers sourceEnv)
-    (unshadowed : ¬(∃ name, shadowers name ∧ id = .short name))
-    (lookup : nsLookup sourceEnv.v id = some source) :
-    ∃ n flat trace, nsLookup compMap.v id = some (.glob trace n) ∧ ValueRel genv source flat ∧
-      FlatSem.doAppFlat state (.globalVarLookup n) [] = some (some (state, .val flat)) := by
-  cases inv with
-  | intro _ _ _ values constructors =>
-    exact globalLookupRel_doApp genv compMap id source state globalsEq (values id source unshadowed lookup)
-
 end Flapjack.Compiler.Backend.SourceToFlat

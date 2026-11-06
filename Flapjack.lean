@@ -689,7 +689,6 @@ import Flapjack.Compiler.Backend.FlatPattern.Encode
 import Flapjack.Compiler.Backend.FlatPattern.Bindings
 import Flapjack.Compiler.Backend.FlatPattern.Patterns
 import Flapjack.Compiler.Backend.SourceToFlat.ToClos
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.CompileTotal
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.Elimination
 import Flapjack.Compiler.Backend.SourceToFlat.ToBvi
 import Flapjack.Compiler.Backend.SourceToFlat.ToData
