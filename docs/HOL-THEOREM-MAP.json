@@ -11601,6 +11601,15 @@
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvalOracleSimulation.lean",
+    "lean_name": "doEval_correct",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "do_eval",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["c", "tys"],
+    "reviewer": "Compared source_to_flat_do_eval in cake_subglobals_probe.out with the full typed HOL statement: the same source success, invariant and list relation imply the same existential flat callback configuration, compilation, invariant and oracle/global preservation conclusions. The unused fin_idx existential retains its independent polymorphic HOL type and HOL inhabitance as Nonempty; compiler payload and FFI types remain independent. The canonical global environment c and tys fields are qualified."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvalOracleSimulation.lean",
     "lean_name": "declareEnv_storeEnvId",
     "inherits_reals_as_rational_cuts": true,
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",

@@ -371,10 +371,12 @@ theorem exprSim_eval_timeout {C F : Type} [Nonempty C]
       sourceArguments.evalState = some (evalEnv, decs, begin))
     (zero : sourceArguments.clock = 0) :
     ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState (.app .eval exprs) := by
-  obtain ⟨_, _, _, _, flatDecs, _, _, _, _, flatDecoded, _, _, _, _, _, _, _, _, _, _, _, _, _, _⟩ :=
-    OracleInvariant.doEval_factoredInvariant_sourceShape interp transform sourceArguments flatArguments gen genv
-      idxs invariant [sa, sb, sc, sd, sourceBytes, sourceWords] [a, b, c, d, bytes, words]
-      valuesRel (evalEnv, decs, begin) decoded
+  obtain ⟨_, _, _, flatDecs, flatConfig, _, _, _, _, _, _, flatDecoded, _⟩ :=
+    OracleInvariant.doEval_correct (Fin := Nat) [sa, sb, sc, sd, sourceBytes, sourceWords]
+      sourceArguments evalEnv decs begin interp transform gen genv idxs flatArguments
+      [a, b, c, d, bytes, words] ⟨decoded, invariant, valuesRel⟩
+  have configEq := OracleInvariant.flatDoEval_config _ _ _ _ _ flatDecoded
+  subst flatConfig
   have flatDecoded' : FlatSem.doEval [bytes, words] flatArguments.evalConfig =
       some (flatDecs, { flatArguments.evalConfig with
         compileOracle := Flapjack.holShiftSeq 1 flatArguments.evalConfig.compileOracle }, FlatSem.unitValue) := by
@@ -495,9 +497,9 @@ theorem exprSim_eval_timeout_from_callback {C F : Type} [Nonempty C]
         simpa using List.forall₂_reverse_iff.mpr reversedRel
       have invariant' : OracleInvariant.factoredInvariant interp transform gen genv idxs sourceArguments flatArguments := by
         simpa [flatRun] using invariant
-      obtain ⟨_, _, _, _, _, _, _, _, _, _, flatLength, _⟩ :=
-        OracleInvariant.doEval_factoredInvariant_sourceShape interp transform sourceArguments flatArguments
-          gen genv idxs invariant' sourceValues flatValues.reverse valuesRel (evalEnv, decs, begin) decoded
+      obtain ⟨_, _, _, _, _, _, _, _, _, _, _, _, flatLength, _⟩ :=
+        OracleInvariant.doEval_correct (Fin := Nat) sourceValues sourceArguments evalEnv decs begin
+          interp transform gen genv idxs flatArguments flatValues.reverse ⟨decoded, invariant', valuesRel⟩
       have sourceLength : sourceValues.length = 6 := valuesRel.length_eq.trans flatLength
       obtain ⟨sa, sb, sc, sd, bytes, words, rfl⟩ := OracleInvariant.list_length_six sourceValues sourceLength
       exact exprSim_eval_timeout_from_operands interp transform gen genv idxs compMap trace sourceEnv flatEnv
@@ -689,10 +691,13 @@ theorem eval_declaration_context {C F : Type} [Nonempty C]
        | some (.evalOracle prior) => ∃ beginState, begin = some (.evalOracle beginState) ∧
            beginState.envs = (addEnvGeneration prior).envs ∧ beginState.generation = (addEnvGeneration prior).generation
        | _ => False) ∧ (EvaluateHOL.decClock { source with evalState := begin }).clock < source.clock := by
-  obtain ⟨baseGenv, envId, config, next, flatDecs, start', finish', other', indexEq, flatDecoded, flatLength,
-    compiled, nonempty, postInv, generation, future, envInv, nextCfg, previous, cGrowth, tGrowth, vGrowth,
-    oracleSubmap, oracleShape⟩ := OracleInvariant.doEval_factoredInvariant_sourceShape interp transform source flat
-      gen genv (start, finish, other) invariant sourceValues flatValues valuesRel (evalEnv, decs, begin) decoded
+  obtain ⟨baseGenv, envId, config, flatDecs, flatConfig, next, start', finish', _, other', indexEq,
+    flatDecoded, flatLength, compiled, nonempty, postInv, generation, future, envInv, nextCfg, previous,
+    cGrowth, tGrowth, vGrowth, oracleSubmap, oracleShape⟩ :=
+    OracleInvariant.doEval_correct (Fin := Nat) sourceValues source evalEnv decs begin interp transform
+      gen genv (start, finish, other) flat flatValues ⟨decoded, invariant, valuesRel⟩
+  have configEq := OracleInvariant.flatDoEval_config _ _ _ _ _ flatDecoded
+  subst flatConfig
   simp only [Prod.mk.injEq] at indexEq
   obtain ⟨rfl, rfl, rfl⟩ := indexEq
   generalize bodyEq : compileDecs [] 1 config.next (lookupEnvId envId config.envs)
