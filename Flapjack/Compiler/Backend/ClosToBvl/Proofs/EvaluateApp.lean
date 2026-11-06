@@ -250,26 +250,6 @@ theorem evaluate_mkClCall_direct_env {C F : Type} (s : BvlSem.State C F)
     values tag ptr fields body (by simpa [closure] using clRun) argsRun argsNonempty lookup
   simpa [env, closure] using h
 
-/-- A generic application with exactly enough evaluated arguments invokes the
-installed closure body with the generated argument environment. -/
-theorem evaluate_appTarget_generic_exact {C F : Type} (s middle next : BvlSem.State C F)
-    (env : List BvlSem.Value) (maxApp : Nat) (args : List Bvl.Exp) (function body : Bvl.Exp)
-    (values : List BvlSem.Value) (tag ptr : Nat) (fields : List BvlSem.Value)
-    (argsRun : BvlSem.evaluate args env s = (.val values, middle))
-    (functionRun : BvlSem.evaluate [function] env middle =
-      (.val [.block tag (.codePtr ptr :: .number (Int.ofNat (values.length - 1)) :: fields)], next))
-    (nonempty : values ≠ []) (lookup : sptLookup ptr next.code = some (values.length + 1, body)) :
-    BvlSem.evaluate [appTarget maxApp none args function] env s =
-      if next.clock < values.length then (.err (.abort .timeoutError), { next with clock := 0 })
-      else BvlSem.evaluate [body]
-        (values ++ [.block tag (.codePtr ptr :: .number (Int.ofNat (values.length - 1)) :: fields)])
-        (BvlSem.decClock values.length next) := by
-  have lengths : values.length = args.length := by
-    have h := BvlSem.evaluate_length args env s middle values argsRun
-    exact h
-  rw [evaluate_appTarget_generic s middle next env maxApp args function values _ argsRun functionRun]
-  simpa [← lengths] using evaluate_mkClCall_direct_env next values env tag ptr fields body nonempty lookup
-
 /-- The generated free-variable selectors read the payload after the two
 closure metadata fields, preserving both its order and the target state. -/
 theorem evaluate_freeLet {C F : Type} (n : Nat) (s : BvlSem.State C F)
