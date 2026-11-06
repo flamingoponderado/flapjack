@@ -508,7 +508,7 @@ run_probe source_eval_oracle_adjust_probeScript.sml source_eval_oracle_adjust_pr
   "$cake_dir/compiler/backend/proofs/source_evalProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe pattern_exh_steps_probeScript.sml pattern_exh_steps_probe.out \
-  exh_steps exh_steps_examples exh_steps_list_append exh_all exh_all_examples \
+  exh_steps exh_steps_examples exh_mats_append exh_steps_list_append exh_all exh_all_examples \
   "$cake_dir/compiler/backend/pattern_matching/pattern_exhScript.sml" "$cake_dir/compiler/backend/pattern_matching"
 
 run_probe flat_pattern_install_relation_probeScript.sml flat_pattern_install_relation_probe.out \

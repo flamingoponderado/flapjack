@@ -111273,6 +111273,14 @@
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternExh/Exhaustive.lean",
+    "lean_name": "exhMats_append",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "exh_mats_append",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the local theorem and typed HOL replay in pattern_exh_steps_probe.out: exhaustiveness of appended matrix lists equals the conjunction of exhaustiveness for each list. Lean Bool equality expresses the HOL boolean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Exhaustive.lean",
     "lean_name": "exhRows",
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
     "hol_name": "exh_rows_def",

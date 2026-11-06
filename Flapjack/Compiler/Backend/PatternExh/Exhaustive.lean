@@ -173,6 +173,14 @@ decreasing_by
   all_goals rw [_hcol]
   all_goals simp
 
+/-- Exhaustiveness of concatenated matrix lists is conjunctive. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "exh_mats_append"]
+theorem exhMats_append (xs ys : List (List (List Pat))) :
+    exhMats (xs ++ ys) = (exhMats xs && exhMats ys) := by
+  induction xs with
+  | nil => simp [exhMats]
+  | cons x xs ih => simp [exhMats, ih, Bool.and_assoc]
+
 /-- Decide exhaustiveness of a list of pattern rows. -/
 @[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "exh_rows_def"]
 def exhRows {α : Type} (rows : List (Pat × α)) : Bool := exhMatrix (orRows rows)

@@ -13,6 +13,13 @@ val _ = print_term (rhs (concl (EVAL ``
    pattern_exh$exh_steps [[pattern_semantics$Ref pattern_semantics$Any]]]
 ``)));
 val _ = print "\n";
+val mats_append_replay = prove (
+  ``!xs ys. pattern_exh$exh_mats (xs ++ ys) <=>
+      pattern_exh$exh_mats xs /\ pattern_exh$exh_mats ys``,
+  Induct >> fs [pattern_exhTheory.exh_matrix_def] >> metis_tac []);
+val _ = if null (hyp mats_append_replay) then
+  (print "exh_mats_append="; print_term (concl mats_append_replay); print "\n")
+  else raise Fail "matrix append replay has hypotheses";
 val append_replay = prove (
   ``!xs ys. pattern_exh$exh_steps_list (xs ++ ys) =
       pattern_exh$exh_steps_list xs + pattern_exh$exh_steps_list ys``,
