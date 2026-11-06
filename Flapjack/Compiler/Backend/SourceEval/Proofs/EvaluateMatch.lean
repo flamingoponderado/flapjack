@@ -4,19 +4,6 @@ import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateExpressions
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.EvaluateHOL Flapjack.NamespaceHOL
 
-/-- Match-evaluation induction hypothesis for a fixed clause list. This
-Flapjack predicate is proof infrastructure, not a separate HOL declaration. -/
-def MatchOracleAdjusted {Config F : Type} (ci : CompilerInstance Config)
-    (f compile : List Dec → List Dec) (clauses : List (Pat × AstHOL.Exp)) : Prop :=
-  ∀ (state next : State F) (env : SemEnv Value) (value errValue : Value)
-    (result : Result (List Value) Value),
-    evaluateMatch state env value clauses errValue = (next, result) →
-    isInsertOracle ci f state.evalState → result ≠ .err (.abort .typeError) →
-    isInsertOracle ci f next.evalState ∧
-    evaluateMatch { state with evalState := adjustOracle ci (compile ∘ f) state.evalState }
-      env value clauses errValue =
-        ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result)
-
 /-- Match adjustment at one state, environment, scrutinee and error value. This
 Flapjack predicate represents a single recursive evaluator hypothesis. -/
 def MatchOracleAdjustedAt {Config F : Type} (ci : CompilerInstance Config)

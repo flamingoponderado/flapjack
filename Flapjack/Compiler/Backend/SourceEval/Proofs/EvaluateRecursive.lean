@@ -5,17 +5,6 @@ import Flapjack.EvaluateProps.Declarations
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.EvaluateHOL Flapjack.EvaluateProps
 
-/-- The declaration induction hypothesis at a fixed declaration list. This is
-Flapjack proof infrastructure, not a separate HOL declaration. -/
-def DecsOracleAdjusted {Config F : Type} (ci : CompilerInstance Config)
-    (f compile : List Dec → List Dec) (program : List Dec) : Prop :=
-  ∀ (state next : State F) (env : SemEnv Value) (result : Result (SemEnv Value) Value),
-    evaluateDecs state env program = (next, result) →
-    isInsertOracle ci f state.evalState → result ≠ .err (.abort .typeError) →
-    isInsertOracle ci f next.evalState ∧
-    evaluateDecs { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env program =
-      ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result)
-
 /-- Declaration adjustment at one input state and environment. This
 Flapjack predicate allows the Eval case to use its clock-bounded induction
 hypothesis without requiring a theorem for every input state. -/
@@ -27,17 +16,6 @@ def DecsOracleAdjustedAt {Config F : Type} (ci : CompilerInstance Config)
     isInsertOracle ci f next.evalState ∧
       evaluateDecs { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env program =
         ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result)
-
-/-- Expression induction hypothesis at a fixed list of expressions. This is
-Flapjack proof infrastructure, not a separate HOL declaration. -/
-def ExpsOracleAdjusted {Config F : Type} (ci : CompilerInstance Config)
-    (f compile : List Dec → List Dec) (expressions : List AstHOL.Exp) : Prop :=
-  ∀ (state next : State F) (env : SemEnv Value) (result : Result (List Value) Value),
-    evaluate state env expressions = (next, result) →
-    isInsertOracle ci f state.evalState → result ≠ .err (.abort .typeError) →
-    isInsertOracle ci f next.evalState ∧
-    evaluate { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env expressions =
-      ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result)
 
 /-- Expression adjustment at a fixed input state and environment. This
 Flapjack predicate represents the hypothesis for one recursive evaluation. -/
