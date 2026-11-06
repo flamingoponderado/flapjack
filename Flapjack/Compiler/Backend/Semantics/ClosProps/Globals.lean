@@ -41,6 +41,17 @@ def funGlobals : List (Nat × ClosLang.Exp) → GlobalBag
 termination_by fs => sizeOf fs
 end
 
+/-- Global-write bags distribute over concatenation of closure expressions. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "elist_globals_append"]
+theorem elistGlobals_append (xs ys : List ClosLang.Exp) :
+    elistGlobals (xs ++ ys) = unionGlobalBag (elistGlobals xs) (elistGlobals ys) := by
+  induction xs with
+  | nil => funext key; simp [elistGlobals, emptyGlobalBag, unionGlobalBag]
+  | cons x xs ih =>
+    simp only [List.cons_append, elistGlobals, ih]
+    funext key
+    simp [unionGlobalBag, Nat.add_assoc]
+
 mutual
 /-- No closure body captures a global write. -/
 @[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "esgc_free_def" 1836]

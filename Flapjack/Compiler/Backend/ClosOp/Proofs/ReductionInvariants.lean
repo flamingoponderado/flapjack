@@ -86,14 +86,6 @@ theorem redEsgc (xs ys : List Exp) (h : RedRel xs ys) :
   rw [← esgcFreeList_iff, ← esgcFreeList_iff]
   exact redEsgcList xs ys h
 
-/-- Flapjack proof infrastructure, not a separate HOL theorem. -/
-private theorem globalsAppend (xs ys : List Exp) :
-    elistGlobals (xs ++ ys) = unionGlobalBag (elistGlobals xs) (elistGlobals ys) := by
-  funext k
-  induction xs with
-  | nil => simp [elistGlobals, emptyGlobalBag, unionGlobalBag]
-  | cons x xs ih => simp [elistGlobals, unionGlobalBag, ih, Nat.add_assoc]
-
 /-- Reduction preserves the complete global-write bag. -/
 @[hol "cakeml/compiler/backend/proofs/clos_opProofScript.sml" "red_rel_elist_globals"]
 theorem redGlobals (xs ys : List Exp) (h : RedRel xs ys) : elistGlobals xs = elistGlobals ys := by
@@ -112,7 +104,7 @@ theorem redGlobals (xs ys : List Exp) (h : RedRel xs ys) : elistGlobals xs = eli
     have h1 := congrFun ihx k
     have h2 := congrFun ihy k
     simp [elistGlobals, unionGlobalBag, emptyGlobalBag] at h1 h2
-    simp [elistGlobals, globalsAppend, unionGlobalBag]
+    simp [elistGlobals, ClosProps.elistGlobals_append, unionGlobalBag]
     omega
   | letE xs x x1 t hx hy ihx ihy =>
     funext k
@@ -127,7 +119,7 @@ theorem redGlobals (xs ys : List Exp) (h : RedRel xs ys) : elistGlobals xs = eli
     have h2 := congrFun ihy k
     have h3 := congrFun ihz k
     simp [elistGlobals, unionGlobalBag, emptyGlobalBag] at h1 h2 h3
-    simp [elistGlobals, globalsAppend, setGlobals, emptyGlobalBag, unionGlobalBag]
+    simp [elistGlobals, ClosProps.elistGlobals_append, setGlobals, emptyGlobalBag, unionGlobalBag]
     omega
 
 /-- Smart operation preserves purity, global writes and closure safety. -/

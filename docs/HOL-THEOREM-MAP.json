@@ -125530,6 +125530,14 @@
   "reviewer": "Compared the source and typed flat_selected_pattern_match capture: the row-body payload, compiler state and FFI state types remain independent. The single successful row-scan premise yields both original conclusions: matching the selected pattern from empty bindings and membership of the selected pattern/body pair in the original rows."
 },
 {
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+  "hol_name": "elist_globals_append",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/Globals.lean",
+  "lean_name": "elistGlobals_append",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source and typed clos_elist_globals_append capture: both arguments are closure-expression lists, and the conclusion preserves the whole global-write bag using pointwise natural-number union. The checked closure-expression and global-bag definitions are shared by the proof."
+},
+{
   "hol_path": "HOL/src/bag/bagScript.sml",
   "hol_name": "EMPTY_BAG",
   "lean_path": "Flapjack/Misc/Bag.lean",

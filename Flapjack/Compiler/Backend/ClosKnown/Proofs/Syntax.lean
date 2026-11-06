@@ -23,9 +23,7 @@ theorem everyFnVarsNone_append (xs ys : List ClosLang.Exp) :
 /-- Flapjack helper: global initialization multiplicities add over
 concatenated expression lists. -/
 theorem elistGlobals_append (xs ys : List ClosLang.Exp) (key : Nat) :
-    elistGlobals (xs ++ ys) key = elistGlobals xs key + elistGlobals ys key := by
-  induction xs with
-  | nil => simp [elistGlobals, emptyGlobalBag]
-  | cons x xs ih => simp [elistGlobals, unionGlobalBag, ih, Nat.add_assoc]
+    elistGlobals (xs ++ ys) key = elistGlobals xs key + elistGlobals ys key :=
+  congrFun (ClosProps.elistGlobals_append xs ys) key
 
 end Flapjack.Compiler.Backend.ClosKnown

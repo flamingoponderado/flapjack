@@ -25,3 +25,4 @@ compile_syntactic=(0 :num) < (max_app :num) ⇒ ∀(m :mlstring option list) (e 
 compile_decs_syntactic=∀(decs :exp list). EVERY no_mti (compile_decs decs) ∧ every_Fn_vs_NONE (compile_decs decs) ∧ ((0 :num) < (max_app :num) ⇒ ¬contains_App_SOME max_app (compile_decs decs))
 compile_prog_syntactic=∀(decs :exp list). EVERY no_mti (compile_prog decs) ∧ every_Fn_vs_NONE (compile_prog decs) ∧ ((0 :num) < (max_app :num) ⇒ ¬contains_App_SOME max_app (compile_prog decs))
 inc_compile_syntactic=EVERY no_mti (FST (inc_compile_decs (decs :exp list) :closLang$exp list # α list)) ∧ every_Fn_vs_NONE (FST (inc_compile_decs decs :closLang$exp list # β list)) ∧ ((0 :num) < (max_app :num) ⇒ ¬contains_App_SOME max_app (FST (inc_compile_decs decs :closLang$exp list # γ list)))
+clos_elist_globals_append=∀(a :closLang$exp list) (b :closLang$exp list). elist_globals (a ++ b) = elist_globals a ⊎ elist_globals b

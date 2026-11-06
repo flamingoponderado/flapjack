@@ -391,7 +391,7 @@ Regenerate with `HOL_PROBE_ONLY=data_sem_stack_probeScript.sml scripts/hol-probe
 `clos_to_bvl_recursive_types_probe.out` also records the typed original singleton/list converter and program conversion. The Lean checked converter is proved equal to the original compile_exps and program conversions through the ported singleton/list equivalence; pass semantics remain open.
 
 `flat_to_clos_globals_probe.out` captures typed closure global-write and safety
-definitions, SmartCons preservation lemmas, and flat-to-closure global bag theorems. Regenerate with
+definitions, the global-bag append theorem, SmartCons preservation lemmas, and flat-to-closure global bag theorems. Regenerate with
 `HOL_PROBE_ONLY=flat_to_clos_globals_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `backend_oracle_monotonic_probe.out` records typed state-oracle and compiler-callback definitions, oracle projections, callback success and failure examples, and

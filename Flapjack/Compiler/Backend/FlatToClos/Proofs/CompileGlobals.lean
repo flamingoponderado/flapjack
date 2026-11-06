@@ -28,22 +28,12 @@ private theorem shiftOp (op : FlatLang.Op) :
   funext key
   simp [shiftGlobalBag, loweredOpBag_shift]
 
-private theorem closGlobals_append (xs ys : List ClosLang.Exp) :
-    ClosProps.elistGlobals (xs ++ ys) = unionGlobalBag (ClosProps.elistGlobals xs) (ClosProps.elistGlobals ys) := by
-  induction xs with
-  | nil => funext key; simp [ClosProps.elistGlobals, unionGlobalBag, emptyGlobalBag]
-  | cons x xs ih =>
-    simp only [List.cons_append, ClosProps.elistGlobals, ih]
-    funext key
-    simp only [unionGlobalBag]
-    omega
-
 private theorem closGlobals_reverse (xs : List ClosLang.Exp) :
     ClosProps.elistGlobals xs.reverse = ClosProps.elistGlobals xs := by
   induction xs with
   | nil => rfl
   | cons x xs ih =>
-    simp only [List.reverse_cons, closGlobals_append, ih, ClosProps.elistGlobals]
+    simp only [List.reverse_cons, ClosProps.elistGlobals_append, ih, ClosProps.elistGlobals]
     funext key
     simp [unionGlobalBag, emptyGlobalBag, Nat.add_comm]
 

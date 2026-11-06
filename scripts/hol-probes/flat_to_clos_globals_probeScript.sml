@@ -31,3 +31,4 @@ val _ = show "compile_syntactic=" flat_to_closProofTheory.compile_syntactic_prop
 val _ = show "compile_decs_syntactic=" flat_to_closProofTheory.compile_decs_syntactic_props;
 val _ = show "compile_prog_syntactic=" flat_to_closProofTheory.compile_prog_syntactic_props;
 val _ = show "inc_compile_syntactic=" flat_to_closProofTheory.FST_inc_compile_syntactic_props;
+val _ = show "clos_elist_globals_append=" closPropsTheory.elist_globals_append;
