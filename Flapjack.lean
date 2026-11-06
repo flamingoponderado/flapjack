@@ -450,13 +450,10 @@ import Flapjack.Compiler.Backend.ClosKnown.Proofs.SourceEquations
 import Flapjack.Compiler.Backend.Semantics.ClosProps.GlobalSafety
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.ApproxGlobalSafety
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.KnownOpCorrect
-import Flapjack.Compiler.Backend.ClosOp.Proofs.LiftTotal
-import Flapjack.Compiler.Backend.ClosOp.Proofs.EqMeasure
 import Flapjack.Compiler.Backend.ClosOp.Proofs.SmartTotal
 import Flapjack.Compiler.Backend.ClosOp.Proofs.Matchers
 import Flapjack.Compiler.Backend.ClosOp.Proofs.LiftCorrect
 import Flapjack.Compiler.Backend.ClosOp.Proofs.EqPureSimple
-import Flapjack.Compiler.Backend.ClosOp.Proofs.SmartSource
 import Flapjack.Compiler.Backend.ClosOp.Proofs.Reduction
 import Flapjack.Compiler.Backend.ClosOp.Proofs.LiftReduction
 import Flapjack.Compiler.Backend.ClosOp.Proofs.EqDirectReduction

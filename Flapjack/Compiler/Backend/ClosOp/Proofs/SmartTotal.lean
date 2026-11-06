@@ -1,5 +1,6 @@
-import Flapjack.Compiler.Backend.ClosOp.Proofs.EqMeasure
-import Flapjack.Compiler.Backend.ClosOp.Proofs.LiftTotal
+import Flapjack.Compiler.Backend.ClosOp
+import Flapjack.Compiler.Backend.ClosOp.EqBudget
+import Flapjack.Compiler.Backend.ClosLang.Proofs.Budget
 
 /-! Executable smart-operation totality, independent of HOL correctness. -/
 namespace Flapjack.Compiler.Backend.ClosOp

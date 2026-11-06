@@ -8867,7 +8867,7 @@
     "lean_path": "Flapjack/Compiler/Backend/ClosOp.lean",
     "lean_name": "smartOp",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared smart_typed: fixed source trace and original operation and operands are retained on NONE; SOME returns the optimized expression. The executable invokes this definition and smartSourceSame proves agreement with its former checked implementation."
+    "reviewer": "Compared smart_typed: fixed source trace and original operation and operands are retained on NONE; SOME returns the optimized expression. The executable invokes this definition."
   }
 ,
   {
@@ -8884,7 +8884,7 @@
     "lean_path": "Flapjack/Compiler/Backend/ClosOp.lean",
     "lean_name": "eqPure",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared eq_pure_typed: the same two closure expressions are decomposed as a singleton pair list, flattened with the reviewed misc append, and combined with ConjList. The smart constructor executes this definition and eqPure_eq_bounded proves definitional agreement with the former composition."
+    "reviewer": "Compared eq_pure_typed: the same two closure expressions are decomposed as a singleton pair list, flattened with the reviewed misc append, and combined with ConjList. The smart constructor executes this definition."
   }
 ,
   {
@@ -8901,7 +8901,7 @@
     "lean_path": "Flapjack/Compiler/Backend/ClosOp.lean",
     "lean_name": "eqPureList",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared eq_pure_list_typed and every source clause, including exact AppList tree constructors, singleton and multi-pair structure, constructor tag and length checks, reversed zipped fields, zero-based MAPi fields and swapped one-sided case. The executed wrapper flattens this source tree, and eqListBounded_eq_previous proves agreement with the prior retry implementation for every input. The eq_tree probe checks source tree shape and order."
+    "reviewer": "Compared eq_pure_list_typed and every source clause, including exact AppList tree constructors, singleton and multi-pair structure, constructor tag and length checks, reversed zipped fields, zero-based MAPi fields and swapped one-sided case. The executed smart constructor flattens this source tree. The eq_tree probe checks source tree shape and order."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
@@ -8966,7 +8966,7 @@
     "lean_path": "Flapjack/Compiler/Backend/ClosOp.lean",
     "lean_name": "liftExpsHOL",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared lift_exps_typed and every source clause, including existing bindings, increasing the index only for lifted expressions, recursive constructor children before the remaining expressions, and None traces on constructed expressions. The production checked interface calls this total definition; liftBounded_eq_previous proves equality with the former fuel-and-retry implementation for every input. The regenerated lift observation checks nonzero indices, existing bindings and nested effect order."
+    "reviewer": "Compared lift_exps_typed and every source clause, including existing bindings, increasing the index only for lifted expressions, recursive constructor children before the remaining expressions, and None traces on constructed expressions. The executed smart constructor calls this total definition. The regenerated lift observation checks nonzero indices, existing bindings and nested effect order."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
@@ -9102,7 +9102,7 @@
     "lean_path": "Flapjack/Compiler/Backend/ClosOp.lean",
     "lean_name": "consOp",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared cons_op_typed, matcher order, index bounds, de Bruijn index subtraction, tag and length comparisons and fallback. The executable calls this source matcher composition; consOp_eq_previous proves agreement with the previous pattern-based implementation."
+    "reviewer": "Compared cons_op_typed, matcher order, index bounds, de Bruijn index subtraction, tag and length comparisons and fallback. The executable calls this source matcher composition."
   },
   {
     "hol_path": "cakeml/compiler/backend/clos_opScript.sml",
@@ -9142,7 +9142,7 @@
     "lean_path": "Flapjack/Compiler/Backend/ClosOp.lean",
     "lean_name": "directEq",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared eq_direct_typed: integer, constant and nullary-constructor recognizers run in source order, with the first successful result retained. directEq_eq_previous proves agreement with the former Flapjack implementation for every input; the executable calls this definition."
+    "reviewer": "Compared eq_direct_typed: integer, constant and nullary-constructor recognizers run in source order, with the first successful result retained. The executable calls this definition."
   },
   {
     "hol_path": "cakeml/compiler/backend/clos_opScript.sml",
