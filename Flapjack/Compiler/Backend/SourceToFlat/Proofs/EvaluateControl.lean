@@ -53,35 +53,6 @@ def ExprListSim {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace :
   let flat := FlatSem.evaluate flatEnv flatState (compileExps trace compMap expressions)
   EvalResultRel genv source.2 flat.2 ∧ StateRel genv source.1 flat.1
 
-/-- Expression-list results remain related after global growth. -/
-theorem evalResultRel_growth (old new : GlobalEnv) (growth : GlobalGrowth old new)
-    (source : Result (List SemanticPrimitivesHOL.Value) SemanticPrimitivesHOL.Value)
-    (flat : Result (List FlatSem.Value) FlatSem.Value)
-    (related : EvalResultRel old source flat) : EvalResultRel new source flat := by
-  cases related with
-  | value rel => exact .value (valueList_growth old new growth _ _ rel)
-  | raise rel => exact .raise (valueRel_growth old new growth _ _ rel)
-  | abort error => exact .abort error
-
-/-- A simulation remains valid when its global relation grows. The evaluator
-runs are unchanged; this weakens only their result and state relations. -/
-theorem exprSim_growth {C F : Type} (old new : GlobalEnv) (growth : GlobalGrowth old new)
-    (compMap : Environment) (trace : List VarN)
-    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
-    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F) (expr : AstHOL.Exp)
-    (sim : ExprSim old compMap trace sourceEnv flatEnv sourceState flatState expr) :
-    ExprSim new compMap trace sourceEnv flatEnv sourceState flatState expr := by
-  exact ⟨evalResultRel_growth old new growth _ _ sim.1, stateRel_growth old new growth _ _ sim.2⟩
-
-/-- Expression-list simulations admit the same weakening. -/
-theorem exprListSim_growth {C F : Type} (old new : GlobalEnv) (growth : GlobalGrowth old new)
-    (compMap : Environment) (trace : List VarN)
-    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
-    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F) (exprs : List AstHOL.Exp)
-    (sim : ExprListSim old compMap trace sourceEnv flatEnv sourceState flatState exprs) :
-    ExprListSim new compMap trace sourceEnv flatEnv sourceState flatState exprs := by
-  exact ⟨evalResultRel_growth old new growth _ _ sim.1, stateRel_growth old new growth _ _ sim.2⟩
-
 /-- Compiling an expression list commutes with reversing its evaluation order. -/
 theorem compileExps_reverse (trace : List VarN) (compMap : Environment) (expressions : List AstHOL.Exp) :
     compileExps trace compMap expressions.reverse = (compileExps trace compMap expressions).reverse := by
@@ -119,37 +90,6 @@ theorem exprSim_lannot {C F : Type} (genv : GlobalEnv) (compMap : Environment) (
     ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState (.lannot expr loc) := by
   cases loc
   simpa only [ExprSim, EvaluateHOL.evaluate, compileExp] using sim
-
-/-- A related local binding is simulated by its compiled local lookup. -/
-theorem exprSim_local {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
-    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
-    (envRel : EnvRel genv sourceEnv.v flatEnv.v)
-    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
-    (statesRel : StateRel genv sourceState flatState) (name : VarN) (t : BackendCommon.Tra)
-    (compiled : nsLookup compMap.v (.short name) = some (.localName t name))
-    (source : SemanticPrimitivesHOL.Value) (lookup : nsLookup sourceEnv.v (.short name) = some source) :
-    ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState (.var (.short name)) := by
-  obtain ⟨flat, sourceRun, flatRun, valueRel, nextRel⟩ :=
-    evaluate_local_unbounded genv compMap sourceEnv flatEnv envRel sourceState flatState statesRel
-      trace name t compiled source lookup
-  unfold ExprSim
-  rw [sourceRun, flatRun]
-  exact ⟨.value (.cons valueRel .nil), nextRel⟩
-
-/-- A related global binding is simulated by its compiled global lookup. -/
-theorem exprSim_global {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
-    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
-    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
-    (statesRel : StateRel genv sourceState flatState) (globalsEq : flatState.globals = genv.v)
-    (id : Ident ModN VarN) (source : SemanticPrimitivesHOL.Value)
-    (lookup : nsLookup sourceEnv.v id = some source) (related : GlobalLookupRel genv compMap id source) :
-    ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState (.var id) := by
-  obtain ⟨flat, sourceRun, flatRun, valueRel, nextRel⟩ :=
-    evaluate_global_unbounded genv compMap sourceEnv flatEnv sourceState flatState statesRel globalsEq
-      trace id source lookup related
-  unfold ExprSim
-  rw [sourceRun, flatRun]
-  exact ⟨.value (.cons valueRel .nil), nextRel⟩
 
 /-- Function creation preserves simulation when the captured local
 environment and the unshadowed global environment satisfy their relations. -/
@@ -295,15 +235,6 @@ theorem exprListSim_singleton {C F : Type} (genv : GlobalEnv) (compMap : Environ
     ExprListSim genv compMap trace sourceEnv flatEnv sourceState flatState [expr] := by
   simpa [ExprSim, ExprListSim, compileExps] using sim
 
-/-- The empty expression list preserves related states. -/
-theorem exprListSim_nil {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
-    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
-    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
-    (statesRel : StateRel genv sourceState flatState) :
-    ExprListSim genv compMap trace sourceEnv flatEnv sourceState flatState [] := by
-  simp only [ExprListSim, EvaluateHOL.evaluate, compileExps, FlatSem.evaluate]
-  exact ⟨.value .nil, statesRel⟩
-
 /-- Sequencing two or more expressions preserves simulation when the head and
 tail induction hypotheses hold. -/
 theorem exprListSim_cons {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
@@ -374,70 +305,6 @@ theorem exprListSim_cons {C F : Type} (genv : GlobalEnv) (compMap : Environment)
                   | raise errorRel => exact ⟨.raise errorRel, lastRel⟩
                   | abort error => exact ⟨.abort error, lastRel⟩
 
-/-- A two-literal tuple gives a concrete composition of expression-list and
-tuple simulation, including right-to-left argument evaluation. -/
-theorem exprSim_tuple_literals {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
-    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
-    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
-    (statesRel : StateRel genv sourceState flatState) (first second : Lit) :
-    ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState (.con none [.lit first, .lit second]) := by
-  apply exprSim_tuple
-  simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
-  apply exprListSim_cons
-  · exact exprSim_literal genv compMap trace sourceEnv flatEnv sourceState flatState statesRel second
-  · intro source flat related
-    apply exprListSim_singleton
-    exact exprSim_literal genv compMap trace sourceEnv flatEnv source flat related first
-
-/-- Conditional simulation for a successfully evaluated Boolean condition.
-The condition and both branches are supplied as expression induction
-hypotheses. Error outcomes and the full pass invariants remain separate. -/
-theorem exprSim_if_boolean {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
-    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
-    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
-    (cond yes no : AstHOL.Exp) (ok : genvCOk genv.c) (b : Bool)
-    (sourceNext : SemanticPrimitivesHOL.State F)
-    (sourceCondition : EvaluateHOL.evaluate sourceState sourceEnv [cond] =
-      (sourceNext, .val [SemanticPrimitivesHOL.boolValue b]))
-    (conditionSim : ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState cond)
-    (yesSim : ∀ (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F),
-      StateRel genv source flat → ExprSim genv compMap trace sourceEnv flatEnv source flat yes)
-    (noSim : ∀ (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F),
-      StateRel genv source flat → ExprSim genv compMap trace sourceEnv flatEnv source flat no) :
-    ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState (.if_ cond yes no) := by
-  unfold ExprSim at conditionSim
-  rw [sourceCondition] at conditionSim
-  cases flatCondition : FlatSem.evaluate flatEnv flatState [compileExp trace compMap cond] with
-  | mk flatNext flatResult =>
-    rw [flatCondition] at conditionSim
-    obtain ⟨resultRel, nextRel⟩ := conditionSim
-    cases resultRel with
-    | value valuesRel =>
-      cases valuesRel with
-      | cons head tail =>
-        cases tail with
-        | nil =>
-          have flatBoolean := (boolValueRel_iff genv ok b _).mp head
-          subst_vars
-          have sourceStep : EvaluateHOL.evaluate sourceState sourceEnv [.if_ cond yes no] =
-              EvaluateHOL.evaluate sourceNext sourceEnv [if b then yes else no] := by
-            rw [EvaluateHOL.evaluate]
-            rw [(EvaluateHOL.fixClockEvaluate sourceState sourceEnv [cond] []).1, sourceCondition]
-            simp only [EvaluateHOL.headValue, Flapjack.holHd]
-            rw [SemanticPrimitivesHOL.doIf_boolValue]
-          have flatStep : FlatSem.evaluate flatEnv flatState [compileExp trace compMap (.if_ cond yes no)] =
-              FlatSem.evaluate flatEnv flatNext [compileExp trace compMap (if b then yes else no)] := by
-            rw [compileExp, FlatSem.evaluate]
-            rw [(FlatSem.fixClock_evaluations flatEnv flatState [compileExp trace compMap cond]
-              (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatCondition]
-            cases b <;> simp [FlatSem.doIf, FlatSem.boolValue, BackendCommon.boolToTag,
-              BackendCommon.trueTag, BackendCommon.falseTag, FlatLang.boolId]
-          unfold ExprSim
-          rw [sourceStep, flatStep]
-          cases b with
-          | false => simpa [ExprSim] using noSim sourceNext flatNext nextRel
-          | true => simpa [ExprSim] using yesSim sourceNext flatNext nextRel
-
 /-- A conditional propagates a related condition error on both sides. -/
 theorem exprSim_if_error {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
     (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
@@ -471,60 +338,6 @@ theorem exprSim_if_error {C F : Type} (genv : GlobalEnv) (compMap : Environment)
           [compileExp trace compMap cond] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatCondition]
         exact ⟨.abort error, nextRel⟩
 
-/-- A Boolean left operand of a logical expression either selects the right
-operand or returns the short-circuit Boolean, preserving related states. -/
-theorem exprSim_log_boolean {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
-    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
-    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
-    (op : Lop) (left right : AstHOL.Exp) (ok : genvCOk genv.c) (b : Bool)
-    (sourceNext : SemanticPrimitivesHOL.State F)
-    (sourceLeft : EvaluateHOL.evaluate sourceState sourceEnv [left] =
-      (sourceNext, .val [SemanticPrimitivesHOL.boolValue b]))
-    (leftSim : ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState left)
-    (rightSim : ∀ (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F),
-      StateRel genv source flat → ExprSim genv compMap trace sourceEnv flatEnv source flat right) :
-    ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState (.log op left right) := by
-  unfold ExprSim at leftSim
-  rw [sourceLeft] at leftSim
-  cases flatLeft : FlatSem.evaluate flatEnv flatState [compileExp trace compMap left] with
-  | mk flatNext flatResult =>
-    rw [flatLeft] at leftSim
-    obtain ⟨resultRel, nextRel⟩ := leftSim
-    cases resultRel with
-    | value valuesRel =>
-      cases valuesRel with
-      | cons head tail =>
-        cases tail with
-        | nil =>
-          have flatBoolean := (boolValueRel_iff genv ok b _).mp head
-          subst_vars
-          have sourceStep : EvaluateHOL.evaluate sourceState sourceEnv [.log op left right] =
-              if (op = .andalso ∧ b = true) ∨ (op = .orelse ∧ b = false) then
-                EvaluateHOL.evaluate sourceNext sourceEnv [right]
-              else (sourceNext, .val [SemanticPrimitivesHOL.boolValue b]) := by
-            rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate sourceState sourceEnv [left] []).1, sourceLeft]
-            simp only [EvaluateHOL.headValue, Flapjack.holHd]
-            cases op <;> cases b <;> rfl
-          have flatStep : FlatSem.evaluate flatEnv flatState [compileExp trace compMap (.log op left right)] =
-              if (op = .andalso ∧ b = true) ∨ (op = .orelse ∧ b = false) then
-                FlatSem.evaluate flatEnv flatNext [compileExp trace compMap right]
-              else (flatNext, .val [FlatSem.boolValue b]) := by
-            cases op <;> cases b <;>
-              rw [compileExp, FlatSem.evaluate,
-                (FlatSem.fixClock_evaluations flatEnv flatState [compileExp trace compMap left]
-                  (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatLeft] <;>
-              simp [FlatSem.doIf, FlatSem.boolValue, BackendCommon.boolToTag,
-                BackendCommon.trueTag, BackendCommon.falseTag, FlatLang.boolId,
-                FlatLang.mkBool, FlatSem.evaluate]
-          unfold ExprSim
-          rw [sourceStep, flatStep]
-          cases op <;> cases b
-          all_goals simp only [reduceCtorEq, Bool.false_eq_true, Bool.true_eq_false, false_and, true_and,
-            false_or, true_or, ↓reduceIte]
-          all_goals first
-            | exact ⟨.value (.cons (boolValue_related genv ok _) .nil), nextRel⟩
-            | simpa [ExprSim] using rightSim sourceNext flatNext nextRel
-
 /-- A logical expression propagates a related left-operand error. -/
 theorem exprSim_log_error {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
     (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
@@ -557,77 +370,6 @@ theorem exprSim_log_error {C F : Type} (genv : GlobalEnv) (compMap : Environment
         cases op <;> rw [compileExp, FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flatState
           [compileExp trace compMap left] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatLeft]
         all_goals exact ⟨.abort error, nextRel⟩
-
-/-- Logical-expression simulation for every source execution that does not
-end in a type error. The hypotheses are the operand induction simulations. -/
-theorem exprSim_log {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
-    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
-    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
-    (op : Lop) (left right : AstHOL.Exp) (ok : genvCOk genv.c)
-    (leftSim : ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState left)
-    (notTypeError : ∀ next : SemanticPrimitivesHOL.State F,
-      EvaluateHOL.evaluate sourceState sourceEnv [.log op left right] ≠ (next, .err (.abort .typeError)))
-    (rightSim : ∀ (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F),
-      StateRel genv source flat → ExprSim genv compMap trace sourceEnv flatEnv source flat right) :
-    ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState (.log op left right) := by
-  cases leftRun : EvaluateHOL.evaluate sourceState sourceEnv [left] with
-  | mk next result =>
-    cases result with
-    | err error =>
-      exact exprSim_log_error genv compMap trace sourceEnv flatEnv sourceState flatState op left right
-        next error leftRun leftSim
-    | val values =>
-      obtain ⟨value, rfl⟩ := EvaluateProps.evaluateSingFull sourceState next sourceEnv left values leftRun
-      cases selection : SemanticPrimitivesHOL.doLog op value right with
-      | none =>
-        have bad : EvaluateHOL.evaluate sourceState sourceEnv [.log op left right] =
-            (next, .err (.abort .typeError)) := by
-          rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate sourceState sourceEnv [left] []).1, leftRun]
-          simp only [EvaluateHOL.headValue, Flapjack.holHd]
-          rw [selection]
-          rfl
-        exact (notTypeError next bad).elim
-      | some result =>
-        obtain ⟨b, valueEq⟩ := SemanticPrimitivesHOL.doLog_success_boolean op value right result selection
-        subst value
-        exact exprSim_log_boolean genv compMap trace sourceEnv flatEnv sourceState flatState op left right ok b
-          next leftRun leftSim rightSim
-
-/-- Conditional simulation for all non-type-error source outcomes. -/
-theorem exprSim_if {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
-    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
-    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
-    (cond yes no : AstHOL.Exp) (ok : genvCOk genv.c)
-    (conditionSim : ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState cond)
-    (notTypeError : ∀ next : SemanticPrimitivesHOL.State F,
-      EvaluateHOL.evaluate sourceState sourceEnv [.if_ cond yes no] ≠ (next, .err (.abort .typeError)))
-    (yesSim : ∀ (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F),
-      StateRel genv source flat → ExprSim genv compMap trace sourceEnv flatEnv source flat yes)
-    (noSim : ∀ (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F),
-      StateRel genv source flat → ExprSim genv compMap trace sourceEnv flatEnv source flat no) :
-    ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState (.if_ cond yes no) := by
-  cases conditionRun : EvaluateHOL.evaluate sourceState sourceEnv [cond] with
-  | mk next result =>
-    cases result with
-    | err error =>
-      exact exprSim_if_error genv compMap trace sourceEnv flatEnv sourceState flatState cond yes no
-        next error conditionRun conditionSim
-    | val values =>
-      obtain ⟨value, rfl⟩ := EvaluateProps.evaluateSingFull sourceState next sourceEnv cond values conditionRun
-      cases selection : SemanticPrimitivesHOL.doIf value yes no with
-      | none =>
-        have bad : EvaluateHOL.evaluate sourceState sourceEnv [.if_ cond yes no] =
-            (next, .err (.abort .typeError)) := by
-          rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate sourceState sourceEnv [cond] []).1, conditionRun]
-          simp only [EvaluateHOL.headValue, Flapjack.holHd]
-          rw [selection]
-          rfl
-        exact (notTypeError next bad).elim
-      | some branch =>
-        obtain ⟨b, valueEq, _⟩ := SemanticPrimitivesHOL.doIf_success_boolean value yes no branch selection
-        subst value
-        exact exprSim_if_boolean genv compMap trace sourceEnv flatEnv sourceState flatState cond yes no ok b
-          next conditionRun conditionSim yesSim noSim
 
 /-- Raise simulation from the operand induction hypothesis. -/
 theorem exprSim_raise {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
@@ -670,173 +412,5 @@ theorem exprSim_raise {C F : Type} (genv : GlobalEnv) (compMap : Environment) (t
               rw [EvaluateHOL.evaluate, sourceRun, compileExp, FlatSem.evaluate, flatRun]
               simp only [EvaluateHOL.headValue, Flapjack.holHd]
               exact ⟨.raise valueRel, nextRel⟩
-
-/-- An exception handler preserves a simulated body result when the body does
-not raise an exception; its rows are irrelevant for values and aborts. -/
-theorem exprSim_handle_unraised {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
-    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
-    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F) (body : AstHOL.Exp)
-    (rows : List (Pat × AstHOL.Exp))
-    (bodySim : ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState body)
-    (notRaised : ∀ value, (EvaluateHOL.evaluate sourceState sourceEnv [body]).2 ≠ .err (.raise value)) :
-    ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState (.handle body rows) := by
-  unfold ExprSim at bodySim
-  cases sourceRun : EvaluateHOL.evaluate sourceState sourceEnv [body] with
-  | mk sourceNext sourceResult =>
-    rw [sourceRun] at bodySim
-    cases flatRun : FlatSem.evaluate flatEnv flatState [compileExp trace compMap body] with
-    | mk flatNext flatResult =>
-      rw [flatRun] at bodySim
-      obtain ⟨related, nextRel⟩ := bodySim
-      cases related with
-      | value valuesRel =>
-        unfold ExprSim
-        rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate sourceState sourceEnv [body] []).1, sourceRun]
-        rw [compileExp, FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flatState
-          [compileExp trace compMap body] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
-        exact ⟨.value valuesRel, nextRel⟩
-      | abort error =>
-        unfold ExprSim
-        rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate sourceState sourceEnv [body] []).1, sourceRun]
-        rw [compileExp, FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flatState
-          [compileExp trace compMap body] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
-        exact ⟨.abort error, nextRel⟩
-      | raise valueRel =>
-        rename_i sourceValue flatValue
-        have contradiction := notRaised sourceValue
-        rw [sourceRun] at contradiction
-        exact (contradiction rfl).elim
-
-/-- An empty exception handler preserves the expression's result, including
-re-raising an exception after no rows match. -/
-theorem exprSim_handle_empty {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
-    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
-    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F) (body : AstHOL.Exp)
-    (bodySim : ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState body) :
-    ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState (.handle body []) := by
-  unfold ExprSim at bodySim
-  cases sourceRun : EvaluateHOL.evaluate sourceState sourceEnv [body] with
-  | mk sourceNext sourceResult =>
-    rw [sourceRun] at bodySim
-    cases flatRun : FlatSem.evaluate flatEnv flatState [compileExp trace compMap body] with
-    | mk flatNext flatResult =>
-      rw [flatRun] at bodySim
-      obtain ⟨related, nextRel⟩ := bodySim
-      cases related with
-      | value valuesRel =>
-        unfold ExprSim
-        rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate sourceState sourceEnv [body] []).1, sourceRun]
-        rw [compileExp, FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flatState
-          [compileExp trace compMap body] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
-        exact ⟨.value valuesRel, nextRel⟩
-      | abort error =>
-        unfold ExprSim
-        rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate sourceState sourceEnv [body] []).1, sourceRun]
-        rw [compileExp, FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flatState
-          [compileExp trace compMap body] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
-        exact ⟨.abort error, nextRel⟩
-      | raise valueRel =>
-        unfold ExprSim
-        rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate sourceState sourceEnv [body] []).1, sourceRun]
-        rw [compileExp, FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flatState
-          [compileExp trace compMap body] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
-        simp only [List.map_nil, canPmatchAll, List.all_nil, ↓reduceIte, EvaluateHOL.evaluateMatch,
-          compilePes, FlatSem.selectRow, FlatSem.pmatchRows]
-        exact ⟨.raise valueRel, nextRel⟩
-
-/-- An anonymous let evaluates its body in the unchanged environments after
-the first expression succeeds, and propagates related errors otherwise. -/
-theorem exprSim_let_anonymous {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
-    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
-    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
-    (first body : AstHOL.Exp)
-    (firstSim : ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState first)
-    (bodySim : ∀ (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F),
-      StateRel genv source flat → ExprSim genv compMap trace sourceEnv flatEnv source flat body) :
-    ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState (.let_ none first body) := by
-  unfold ExprSim at firstSim
-  cases sourceRun : EvaluateHOL.evaluate sourceState sourceEnv [first] with
-  | mk sourceNext sourceResult =>
-    rw [sourceRun] at firstSim
-    cases flatRun : FlatSem.evaluate flatEnv flatState [compileExp trace compMap first] with
-    | mk flatNext flatResult =>
-      rw [flatRun] at firstSim
-      obtain ⟨related, nextRel⟩ := firstSim
-      cases related with
-      | raise valueRel =>
-        unfold ExprSim
-        rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate sourceState sourceEnv [first] []).1, sourceRun]
-        rw [compileExp, FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flatState
-          [compileExp trace compMap first] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
-        exact ⟨.raise valueRel, nextRel⟩
-      | abort error =>
-        unfold ExprSim
-        rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate sourceState sourceEnv [first] []).1, sourceRun]
-        rw [compileExp, FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flatState
-          [compileExp trace compMap first] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
-        exact ⟨.abort error, nextRel⟩
-      | value _ =>
-        unfold ExprSim
-        rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate sourceState sourceEnv [first] []).1, sourceRun]
-        rw [compileExp, FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flatState
-          [compileExp trace compMap first] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
-        simpa [ExprSim, nsOptBind] using bodySim sourceNext flatNext nextRel
-
-/-- A named let binding preserves simulation when the binding expression and
-body simulations hold for related values and states. The body uses the
-extended source, flat, and compilation environments. -/
-theorem exprSim_let_named {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
-    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
-    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
-    (name : VarN) (first body : AstHOL.Exp)
-    (firstSim : ExprSim genv compMap (name :: trace) sourceEnv flatEnv sourceState flatState first)
-    (bodySim : ∀ (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
-      (value : SemanticPrimitivesHOL.Value) (flatValue : FlatSem.Value),
-      StateRel genv source flat → ValueRel genv value flatValue →
-      ExprSim genv { compMap with v := nsBind name (.localName .none name) compMap.v } trace
-        { sourceEnv with v := nsBind name value sourceEnv.v }
-        { flatEnv with v := (name, flatValue) :: flatEnv.v } source flat body) :
-    ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState (.let_ (some name) first body) := by
-  unfold ExprSim at firstSim
-  cases sourceRun : EvaluateHOL.evaluate sourceState sourceEnv [first] with
-  | mk sourceNext sourceResult =>
-    rw [sourceRun] at firstSim
-    cases flatRun : FlatSem.evaluate flatEnv flatState [compileExp (name :: trace) compMap first] with
-    | mk flatNext flatResult =>
-      rw [flatRun] at firstSim
-      obtain ⟨related, nextRel⟩ := firstSim
-      cases sourceResult with
-      | err error =>
-        cases error with
-        | raise value =>
-          cases related with
-          | raise valueRel =>
-            unfold ExprSim
-            rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate sourceState sourceEnv [first] []).1, sourceRun]
-            rw [compileExp, FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flatState
-              [compileExp (name :: trace) compMap first] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
-            exact ⟨.raise valueRel, nextRel⟩
-        | abort error =>
-          cases related with
-          | abort =>
-            unfold ExprSim
-            rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate sourceState sourceEnv [first] []).1, sourceRun]
-            rw [compileExp, FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flatState
-              [compileExp (name :: trace) compMap first] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
-            exact ⟨.abort error, nextRel⟩
-      | val values =>
-        obtain ⟨value, rfl⟩ := EvaluateProps.evaluateSingFull sourceState sourceNext sourceEnv first values sourceRun
-        cases related with
-        | value valuesRel =>
-          cases valuesRel with
-          | cons valueRel tail =>
-            cases tail with
-            | nil =>
-              unfold ExprSim
-              rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate sourceState sourceEnv [first] []).1, sourceRun]
-              rw [compileExp, FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flatState
-                [compileExp (name :: trace) compMap first] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
-              simp only [EvaluateHOL.headValue, Flapjack.holHd, nsOptBind]
-              simpa [ExprSim] using bodySim sourceNext flatNext value _ nextRel valueRel
 
 end Flapjack.Compiler.Backend.SourceToFlat
