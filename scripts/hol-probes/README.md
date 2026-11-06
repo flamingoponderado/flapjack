@@ -15,7 +15,8 @@ termination-lemma proof replays, and typed exported pattern-compiler
 row-selection theorems, their case equation, and the polymorphic constant-row
 theorems, plus the retained-row EVERY, filter-safety, row-reordering, and wildcard-insertion
 theorems, traversal definitions and theorems, and the source decision-tree
-evaluator equations.
+evaluator equations, guard-correctness theorem, and pattern compiler
+correctness theorem.
 
 `data_resource_mono_probe.out` captures the six exported data-semantics
 primitive and evaluator monotonicity statements with inferred configuration,

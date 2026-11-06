@@ -111921,6 +111921,91 @@
     "reviewer": "Compared all source clauses and typed HOL capture, including the NONE case and recursion on the selected branch. The same-module witness checks the canonical finite-map parameter."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/PatternComp/Proofs/GuardCompilation.lean",
+    "lean_name": "isTrue_iff",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml",
+    "hol_name": "is_True_thm",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the source true-guard equivalence with its typed local HOL proof replay; the Boolean predicate is rendered as equality to true."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternComp/Proofs/GuardCompilation.lean",
+    "lean_name": "dtEvalGuard_mkConj",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml",
+    "hol_name": "dt_eval_guard_mk_Conj",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "refs"
+    ],
+    "reviewer": "Compared the full source guard evaluation equality against the typed local HOL proof replay. The same-module witness checks the canonical finite-map parameter."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternComp/Proofs/GuardCompilation.lean",
+    "lean_name": "patToGuard_correct",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml",
+    "hol_name": "dt_eval_guard_pat_to_guard",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "refs"
+    ],
+    "reviewer": "Compared the source pattern conjunct, including safety, successful traversal and guard result, against the typed exported theorem. The same-module witness checks the canonical finite-map parameter."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternComp/Proofs/GuardCompilation.lean",
+    "lean_name": "patsToGuard_correct",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml",
+    "hol_name": "dt_eval_guard_pat_to_guard",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "refs"
+    ],
+    "reviewer": "Compared the source pattern-list conjunct and all four premises against the typed exported theorem. The same-module witness checks the canonical finite-map parameter."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternComp/Proofs/GuardCompilation.lean",
+    "lean_name": "dt_eval_guard_pat_to_guard",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml",
+    "hol_name": "dt_eval_guard_pat_to_guard",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "refs"
+    ],
+    "reviewer": "Compared the complete source conjunction and typed exported theorem, preserving the shared free reference map and value, per-conjunct quantifiers, ordered premises and conclusions. The same-module witness checks the canonical finite-map parameter."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternComp/Proofs/GuardCompilation.lean",
+    "lean_name": "dtEval_mkIf",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml",
+    "hol_name": "mk_If_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "refs"
+    ],
+    "reviewer": "Compared the complete source decision-tree evaluation equality with the typed local HOL proof replay. The same-module witness checks the canonical finite-map parameter."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternComp/Proofs/GuardCompilation.lean",
+    "lean_name": "patsToCode_correct",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml",
+    "hol_name": "pat_to_code_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "refs"
+    ],
+    "reviewer": "Compared the source non-NONE premise and full decision-tree match equality with the typed exported theorem. The same-module witness checks the canonical finite-map parameter."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternComp/Proofs/Correctness.lean",
+    "lean_name": "comp_correct",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml",
+    "hol_name": "comp_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "refs"
+    ],
+    "reviewer": "Compared the source non-NONE premise and pattern compiler evaluation equality with the typed exported theorem; the compiled row checker uses its proved worklist implementation. The same-module witness checks the canonical finite-map parameter."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/PatternExh/Exhaustive.lean",
     "lean_name": "exhRows",
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",

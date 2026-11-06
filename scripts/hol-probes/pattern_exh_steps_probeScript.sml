@@ -515,3 +515,22 @@ val _ = show_local "sem_app_pos_def=" pattern_semanticsTheory.app_pos_def;
 val _ = show_local "sem_dt_test_def=" pattern_semanticsTheory.dt_test_def;
 val _ = show_local "sem_dt_eval_guard_def=" pattern_semanticsTheory.dt_eval_guard_def;
 val _ = show_local "sem_dt_eval_def=" pattern_semanticsTheory.dt_eval_def;
+val is_true_thm_replay = prove (
+  ``pattern_comp$is_True t <=> t = pattern_semantics$True``,
+  Cases_on `t` >> fs [pattern_compTheory.is_True_def]);
+val _ = show_local "comp_is_true_thm=" is_true_thm_replay;
+val guard_mk_conj_replay = prove (
+  ``pattern_semantics$dt_eval_guard refs v (pattern_comp$mk_Conj p q) =
+    pattern_semantics$dt_eval_guard refs v (pattern_semantics$Conj p q)``,
+  rw [pattern_compTheory.mk_Conj_def] >> fs [is_true_thm_replay,pattern_semanticsTheory.dt_eval_guard_def] >>
+  rveq >> fs [] >> every_case_tac >> fs []);
+val _ = show_local "comp_guard_mk_conj=" guard_mk_conj_replay;
+val _ = show_local "comp_guard_correct=" pattern_compTheory.dt_eval_guard_pat_to_guard;
+val mk_if_thm_replay = prove (
+  ``pattern_semantics$dt_eval refs v (pattern_comp$mk_If g p q) =
+    pattern_semantics$dt_eval refs v (pattern_semantics$If g p q)``,
+  rw [pattern_compTheory.mk_If_def] >> fs [is_true_thm_replay, pattern_semanticsTheory.dt_eval_def,
+    pattern_semanticsTheory.dt_eval_guard_def]);
+val _ = show_local "comp_mk_if_thm=" mk_if_thm_replay;
+val _ = show_local "comp_pat_to_code_thm=" pattern_compTheory.pat_to_code_thm;
+val _ = show_local "comp_comp_thm=" pattern_compTheory.comp_thm;

@@ -55,6 +55,48 @@ theorem holFmapAsFiniteSupportParamWitness_walk_append_refs
     ofBroad (toBroad refs) refs.finiteSupport = refs :=
   holFmapAsFiniteSupportParamWitness_pmatchList_length_refs refs key
 
+theorem holFmapAsFiniteSupportParamWitness_dtEvalGuard_mkConj_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatchList_length_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_patToGuard_correct_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatchList_length_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_patsToGuard_correct_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatchList_length_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_dt_eval_guard_pat_to_guard_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatchList_length_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_dtEval_mkIf_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatchList_length_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_patsToCode_correct_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatchList_length_refs refs key
+
 /-- Traverse constructor fields and references along a list of indices. -/
 @[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "walk_def"
   (fmap_as_finite_support_parameters := [refs])]
@@ -124,7 +166,14 @@ theorem walk_append (refs : HolFiniteMapExact Nat Term) (left right : List Nat) 
     | litv lit => simp [walk]
     | other => simp [walk]
 
+/-- The true-guard test recognizes exactly the true constructor. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "is_True_thm"]
+theorem isTrue_iff (guard : DGuard) : isTrue guard = true ↔ guard = .true_ := by
+  cases guard <;> simp [isTrue]
+
 /-- Removing literal-true conjuncts preserves guard evaluation, including errors. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "dt_eval_guard_mk_Conj"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem dtEvalGuard_mkConj (refs : HolFiniteMapExact Nat Term) (value : Term) (p q : DGuard) :
     dtEvalGuard refs value (mkConj p q) = dtEvalGuard refs value (.conj p q) := by
   have matchTrue (x : Option Bool) :
@@ -135,6 +184,8 @@ theorem dtEvalGuard_mkConj (refs : HolFiniteMapExact Nat Term) (value : Term) (p
   cases p <;> cases q <;> simp [mkConj, isTrue, dtEvalGuard] <;> exact (matchTrue _).symm
 
 /-- Eliminating a literal-true guard preserves decision-tree evaluation. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "mk_If_thm"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem dtEval_mkIf (refs : HolFiniteMapExact Nat Term) (value : Term)
     (guard : DGuard) (yes no : DTree) :
     dtEval refs value (mkIf guard yes no) = dtEval refs value (.if_ guard yes no) := by
@@ -358,8 +409,9 @@ theorem patToGuard_consSome_at (refs : HolFiniteMapExact Nat Term) (value select
         · simp [patToGuard, dtEvalGuard_mkConj, dtEvalGuard, appPos_getPos, walked, dtTest, fail, equal]
 
 mutual
-/-- A generated guard agrees with every non-error pattern match reached by
-its path. The abstract carriers and matcher remain pending source review. -/
+/-- The pattern conjunct of the source guard-correctness theorem. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "dt_eval_guard_pat_to_guard"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem patToGuard_correct (refs : HolFiniteMapExact Nat Term) (value : Term) (pattern : Pat)
     (path : List Nat) (selected : Term)
     (safe : pmatch refs pattern selected ≠ .typeFailure)
@@ -399,7 +451,9 @@ theorem patToGuard_correct (refs : HolFiniteMapExact Nat Term) (value : Term) (p
       · exact safe
 termination_by sizeOf pattern
 
-/-- Generated field guards agree with every non-error pattern-list match. -/
+/-- The pattern-list conjunct of the source guard-correctness theorem. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "dt_eval_guard_pat_to_guard"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem patsToGuard_correct (refs : HolFiniteMapExact Nat Term) (value : Term) (patterns : List Pat)
     (path : List Nat) (k : Nat) (fields before : List Term)
     (safe : pmatchList refs patterns fields ≠ .typeFailure) (beforeLen : before.length = k)
@@ -440,8 +494,28 @@ theorem patsToGuard_correct (refs : HolFiniteMapExact Nat Term) (value : Term) (
 termination_by sizeOf patterns
 end
 
-/-- Compiled decision trees select the same result as safe pattern-row matching.
-HOL correspondence for the underlying matcher and map carrier remains pending. -/
+/-- The complete guard-correctness conjunction with one shared reference map. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "dt_eval_guard_pat_to_guard"
+  (fmap_as_finite_support_parameters := [refs])]
+theorem dt_eval_guard_pat_to_guard (refs : HolFiniteMapExact Nat Term) (value : Term) :
+    (∀ (path : List Nat) (pattern : Pat) (selected : Term),
+      pmatch refs pattern selected ≠ .typeFailure ∧ walk path.reverse value refs = some selected →
+      dtEvalGuard refs value (patToGuard path pattern) =
+        some (decide (pmatch refs pattern selected = .success))) ∧
+    (∀ (path : List Nat) (k : Nat) (patterns : List Pat) (fields before : List Term),
+      pmatchList refs patterns fields ≠ .typeFailure ∧ before.length = k ∧
+        walkList path.reverse value refs = some (before ++ fields) ∧ fields.length = patterns.length →
+      dtEvalGuard refs value (patsToGuard path k patterns) =
+        some (decide (pmatchList refs patterns fields = .success))) := by
+  constructor
+  · intro path pattern selected ⟨safe, walked⟩
+    exact patToGuard_correct refs value pattern path selected safe walked
+  · intro path k patterns fields before ⟨safe, beforeLen, walked, fieldsLen⟩
+    exact patsToGuard_correct refs value patterns path k fields before safe beforeLen walked fieldsLen
+
+/-- Compiled decision trees select the same result as safe pattern-row matching. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "pat_to_code_thm"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem patsToCode_correct (refs : HolFiniteMapExact Nat Term) (value : Term)
     (rows : List (Pat × Nat)) (safe : matchRows refs rows value ≠ none) :
     dtEval refs value (patsToCode rows) = matchRows refs rows value := by
