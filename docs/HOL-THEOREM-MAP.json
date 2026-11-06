@@ -11527,6 +11527,15 @@
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateLocal.lean",
+    "lean_name": "factoredEnvAllRel_source_cases",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "env_all_rel_cases",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["c", "tys"],
+    "reviewer": "Compared env_all_rel_cases_typed: the three existential witnesses, record equalities, binding-list existential and both relation conjuncts match. The two-field source environment update preserves its constructor field. GlobalEnv uses canonical finite maps for c and tys with the local roundtrip witness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateLocal.lean",
     "lean_name": "factoredPrecondition1_changeClock",
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "precondition1_change_clock",

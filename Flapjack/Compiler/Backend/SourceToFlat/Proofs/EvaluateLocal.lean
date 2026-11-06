@@ -344,8 +344,9 @@ def FactoredEnvAllRel (genv : GlobalEnv) (compMap : Environment) (sourceEnv : Se
     sourceLocal = alistToNs bindings ∧ bindings.map Prod.fst = locals ∧
     GlobalEnvInv genv compMap (fun name => name ∈ locals) baseEnv ∧ EnvRel genv sourceLocal flatEnv.v
 
-/-- The definition exposes the original combined-environment case shape.
-This is Flapjack infrastructure, with no separately named HOL theorem. -/
+/-- The combined environment relation exposes its original case structure. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "env_all_rel_cases"
+  (fmap_as_finite_support := [c, tys])]
 theorem factoredEnvAllRel_source_cases (genv : GlobalEnv) (compMap : Environment)
     (sourceEnv : SemEnv Value) (flatEnv : FlatSem.Environment FlatSem.Value) (locals : List VarN) :
     FactoredEnvAllRel genv compMap sourceEnv flatEnv locals ↔
