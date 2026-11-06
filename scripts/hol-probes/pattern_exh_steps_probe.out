@@ -55,3 +55,6 @@ match_exists=∀(refs :num |-> term) (v :term) (rows :(pat # num) list). match r
 match_result_type=:num -> matchResult
 match_result_cases=∀(mm :matchResult). (∃(n :num). mm = MatchSuccess n) ∨ mm = MatchFailure
 match_result_distinct=∀(a :num). MatchSuccess a ≠ MatchFailure
+or_rows_ok=∀(refs :num |-> term) (v :term) (rows :(pat # α) list). EVERY (λ((p :pat),(e :α)). (pmatch refs p v :pmatchResult) ≠ PTypeFailure) rows ⇒ EVERY (λ(r :pat list). (pmatch_list refs r [v] :pmatchResult) ≠ PTypeFailure) (or_rows rows)
+or_rows_hit=∀(refs :num |-> term) (v :term) (rows :(pat # α) list). EVERY (λ((p :pat),(e :α)). (pmatch refs p v :pmatchResult) ≠ PTypeFailure) rows ∧ EXISTS (λ(r :pat list). (pmatch_list refs r [v] :pmatchResult) = PMatchSuccess) (or_rows rows) ⇒ EXISTS (λ((p :pat),(e :α)). (pmatch refs p v :pmatchResult) = PMatchSuccess) rows
+exh_rows_thm=match (refs :num |-> term) (rows :(pat # num) list) (v :term) ≠ (NONE :matchResult option) ∧ exh_rows rows ⇒ match refs rows v ≠ SOME MatchFailure

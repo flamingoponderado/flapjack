@@ -371,3 +371,21 @@ val _ = print_type (type_of ``pattern_common$MatchSuccess``);
 val _ = print "\n";
 val _ = show_local "match_result_cases=" pattern_commonTheory.matchResult_nchotomy;
 val _ = show_local "match_result_distinct=" pattern_commonTheory.matchResult_distinct;
+val or_rows_ok_replay = prove (
+  ``!refs v rows. EVERY (\(p,e). pattern_semantics$pmatch refs p v <> pattern_common$PTypeFailure) rows ==>
+     EVERY (\r. pattern_semantics$pmatch_list refs r [v] <> pattern_common$PTypeFailure)
+       (pattern_exh$or_rows rows)``,
+  rpt gen_tac >> Induct_on `rows` >> fs [pattern_exhTheory.or_rows_def,pairTheory.FORALL_PROD] >> rw [] >>
+  fs [listTheory.EVERY_MEM] >> rw [] >> fs [] >>
+  drule_all (CONJUNCT1 expand_thm_replay) >> fs []);
+val _ = show_local "or_rows_ok=" or_rows_ok_replay;
+val or_rows_hit_replay = prove (
+  ``!refs v rows. EVERY (\(p,e). pattern_semantics$pmatch refs p v <> pattern_common$PTypeFailure) rows /\
+     EXISTS (\r. pattern_semantics$pmatch_list refs r [v] = pattern_common$PMatchSuccess)
+       (pattern_exh$or_rows rows) ==>
+     EXISTS (\(p,e). pattern_semantics$pmatch refs p v = pattern_common$PMatchSuccess) rows``,
+  rpt gen_tac >> Induct_on `rows` >> fs [pattern_exhTheory.or_rows_def,pairTheory.FORALL_PROD] >> rw [] >>
+  fs [listTheory.EXISTS_MEM] >> rw [] >> fs []
+  >- (drule_all (CONJUNCT1 expand_thm_replay) >> fs []) >> metis_tac []);
+val _ = show_local "or_rows_hit=" or_rows_hit_replay;
+val _ = show_local "exh_rows_thm=" pattern_exhTheory.exh_rows_thm;

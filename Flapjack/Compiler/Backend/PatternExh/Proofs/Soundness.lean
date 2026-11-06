@@ -176,6 +176,27 @@ theorem holFmapAsFiniteSupportParamWitness_matchRows_exists_success_refs
     ofBroad (toBroad refs) refs.finiteSupport = refs :=
   holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
 
+theorem holFmapAsFiniteSupportParamWitness_orRows_safe_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_orRows_hit_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_exhRows_sound_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
+
 /-- A wildcard matches every term. -/
 @[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "pmatch_Any"
   (fmap_as_finite_support_parameters := [refs])]
@@ -892,8 +913,8 @@ theorem expand_thm :
     exact expandList_sound patterns expanded refs values assumptions.1 assumptions.2
 
 /-- Each expanded matrix row originates in one input row and one of its
-expanded patterns. -/
-theorem orRows_member (rows : List (Pat × Nat)) (row : List Pat) (member : row ∈ orRows rows) :
+expanded patterns. This Flapjack helper replaces the HOL proofs' row induction. -/
+theorem orRows_member {α : Type} (rows : List (Pat × α)) (row : List Pat) (member : row ∈ orRows rows) :
     ∃ pattern index, (pattern, index) ∈ rows ∧
       ∃ expanded ∈ expand pattern, row = [expanded] := by
   induction rows with
@@ -907,23 +928,42 @@ theorem orRows_member (rows : List (Pat × Nat)) (row : List Pat) (member : row 
     · obtain ⟨original, originalIndex, inRest, expanded, expandedMember, equality⟩ := ih later
       exact ⟨original, originalIndex, List.mem_cons_of_mem _ inRest, expanded, expandedMember, equality⟩
 
-/-- Exhaustive rows cannot all fail when the row scan has no type error.
-HOL correspondence for the row evaluator remains pending. -/
+/-- Expanded rows preserve non-type-failure for every original row. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "or_rows_ok"
+  (fmap_as_finite_support_parameters := [refs])]
+theorem orRows_safe {α : Type} (refs : HolFiniteMapExact Nat Term) (value : Term)
+    (rows : List (Pat × α)) (safe : ∀ row ∈ rows, pmatch refs row.1 value ≠ .typeFailure) :
+    ∀ row ∈ orRows rows, pmatchList refs row [value] ≠ .typeFailure := by
+  intro row member
+  obtain ⟨pattern, payload, originalMember, expanded, expandedMember, rfl⟩ := orRows_member rows row member
+  have originalSafe := safe (pattern, payload) originalMember
+  have expandedSafe := (expand_sound pattern expanded refs value expandedMember originalSafe).1
+  simpa [pmatchList_cons, pmatchList] using expandedSafe
+
+/-- A successful expanded row reflects success back to an original pattern. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "or_rows_hit"
+  (fmap_as_finite_support_parameters := [refs])]
+theorem orRows_hit {α : Type} (refs : HolFiniteMapExact Nat Term) (value : Term)
+    (rows : List (Pat × α)) (safe : ∀ row ∈ rows, pmatch refs row.1 value ≠ .typeFailure)
+    (hit : ∃ row ∈ orRows rows, pmatchList refs row [value] = .success) :
+    ∃ row ∈ rows, pmatch refs row.1 value = .success := by
+  obtain ⟨row, member, matched⟩ := hit
+  obtain ⟨pattern, payload, originalMember, expanded, expandedMember, rfl⟩ := orRows_member rows row member
+  have originalSafe := safe (pattern, payload) originalMember
+  have expandedHit : pmatch refs expanded value = .success := by simpa [pmatchList_cons, pmatchList] using matched
+  have originalHit := (expand_sound pattern expanded refs value expandedMember originalSafe).2 expandedHit
+  exact ⟨(pattern, payload), originalMember, originalHit⟩
+
+/-- Exhaustive rows cannot all fail when the row scan has no type error. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "exh_rows_thm"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem exhRows_sound (refs : HolFiniteMapExact Nat Term) (value : Term) (rows : List (Pat × Nat))
     (safe : matchRows refs rows value ≠ none) (exhaustive : exhRows rows = true) :
     matchRows refs rows value ≠ some .failure := by
-  have matrixSafe : ∀ row ∈ orRows rows, pmatchList refs row [value] ≠ .typeFailure := by
-    intro row member
-    obtain ⟨pattern, index, originalMember, expanded, expandedMember, rfl⟩ := orRows_member rows row member
-    have originalSafe := matchRows_member_safe refs value rows safe (pattern, index) originalMember
-    have expandedSafe := (expand_sound pattern expanded refs value expandedMember originalSafe).1
-    simpa [pmatchList_cons, pmatchList] using expandedSafe
-  obtain ⟨row, member, hit⟩ := exhMatrix_sound (orRows rows) refs [value] exhaustive matrixSafe
-  obtain ⟨pattern, index, originalMember, expanded, expandedMember, rfl⟩ := orRows_member rows row member
-  have originalSafe := matchRows_member_safe refs value rows safe (pattern, index) originalMember
-  have expandedHit : pmatch refs expanded value = .success := by simpa [pmatchList_cons, pmatchList] using hit
-  have originalHit := (expand_sound pattern expanded refs value expandedMember originalSafe).2 expandedHit
-  exact matchRows_exists_success refs value rows safe ⟨(pattern, index), originalMember, originalHit⟩
+  have rowSafe := matchRows_member_safe refs value rows safe
+  have matrixSafe := orRows_safe refs value rows rowSafe
+  have matrixHit := exhMatrix_sound (orRows rows) refs [value] exhaustive matrixSafe
+  exact matchRows_exists_success refs value rows safe (orRows_hit refs value rows rowSafe matrixHit)
 
 
 end Flapjack.Compiler.Backend.PatternExh
