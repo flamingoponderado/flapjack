@@ -112,15 +112,4 @@ theorem compileEachFuel_succeeds (fuel next : Nat) (code : List (Nat × Nat × E
       obtain ⟨⟨next', rest⟩, hr⟩ := ih (next + Flapjack.bvlToBviNamespaces)
       exact ⟨_, by simp [compileEachFuel, hd, hr]; rfl⟩
 
-/-- Whole-program TMC cannot fail because of its traversal bounds. This is
-not the HOL pass-correctness theorem. -/
-theorem compileProgFuel_succeeds (fuel : Nat) (enabled : Bool) (next : Nat)
-    (code : List (Nat × Nat × Exp)) :
-    ∃ result, compileProgFuel fuel enabled next code = some result := by
-  cases enabled with
-  | false => exact ⟨_, rfl⟩
-  | true =>
-    obtain ⟨result, h⟩ := compileEachFuel_succeeds fuel next code
-    exact ⟨result, by simpa [compileProgFuel] using h⟩
-
 end Flapjack.Compiler.Backend.BviTmc

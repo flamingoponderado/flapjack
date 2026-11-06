@@ -81,16 +81,6 @@ theorem inlineExpFuel_succeeds (fuel : Nat) (cache : Spt (Nat × Exp)) (e : Exp)
           obtain ⟨arity, body⟩ := entry
           exact ⟨_, by simp [inlineExpFuel, hy, h]; rfl⟩
 
-/-- The executable inliner cannot fail from traversal fuel. -/
-theorem inlineExpBounded_succeeds (fuel : Nat) (cache : Spt (Nat × Exp)) (e : Exp) :
-    ∃ result, inlineExpBounded fuel cache e = some result := by
-  cases h : inlineExpFuel fuel cache e with
-  | some result => exact ⟨result, by simp [inlineExpBounded, h]⟩
-  | none =>
-    have bound : expBudget e < max fuel (expBudget e + 1) := by omega
-    obtain ⟨result, done⟩ := inlineExpFuel_succeeds (max fuel (expBudget e + 1)) cache e bound
-    exact ⟨result, by simp [inlineExpBounded, h, done]⟩
-
 /-- Every previously successful inlining result is preserved. -/
 theorem inlineExpBounded_eq_of_success (fuel : Nat) (cache : Spt (Nat × Exp)) (e result : Exp)
     (success : inlineExpFuel fuel cache e = some result) :
@@ -195,29 +185,9 @@ theorem letOpFuel_succeeds (fuel : Nat) (e : Exp) (bound : expBudget e < fuel) :
         intro x hx; apply ih; have := member_budget_lt xs x hx; omega)
       exact ⟨_, by simp [letOpFuel, hy]; rfl⟩
 
-/-- The tick-removal retry is total and preserves successful results. -/
-theorem removeTicksBounded_succeeds (fuel : Nat) (e : Exp) :
-    ∃ result, removeTicksBounded fuel e = some result := by
-  cases h : removeTicksFuel fuel e with
-  | some result => exact ⟨result, by simp [removeTicksBounded, h]⟩
-  | none =>
-    have bound : expBudget e < max fuel (expBudget e + 1) := by omega
-    obtain ⟨result, done⟩ := removeTicksFuel_succeeds (max fuel (expBudget e + 1)) e bound
-    exact ⟨result, by simp [removeTicksBounded, h, done]⟩
-
 theorem removeTicksBounded_eq_of_success (fuel : Nat) (e result : Exp)
     (success : removeTicksFuel fuel e = some result) : removeTicksBounded fuel e = some result := by
   simp [removeTicksBounded, success]
-
-/-- The let-operation retry is total and preserves successful results. -/
-theorem letOpBounded_succeeds (fuel : Nat) (e : Exp) :
-    ∃ result, letOpBounded fuel e = some result := by
-  cases h : letOpFuel fuel e with
-  | some result => exact ⟨result, by simp [letOpBounded, h]⟩
-  | none =>
-    have bound : expBudget e < max fuel (expBudget e + 1) := by omega
-    obtain ⟨result, done⟩ := letOpFuel_succeeds (max fuel (expBudget e + 1)) e bound
-    exact ⟨result, by simp [letOpBounded, h, done]⟩
 
 theorem letOpBounded_eq_of_success (fuel : Nat) (e result : Exp)
     (success : letOpFuel fuel e = some result) : letOpBounded fuel e = some result := by

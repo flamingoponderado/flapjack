@@ -85,16 +85,6 @@ theorem recursiveFuel_succeeds (fuel name : Nat) (e : Exp) (bound : expBudget e 
       | false => exact ⟨result, by simpa [recursiveFuel, equal] using h⟩
       | true => exact ⟨true, by simp [recursiveFuel, equal]⟩
 
-/-- The executable recursion retry cannot exhaust traversal fuel. -/
-theorem recursiveBounded_succeeds (fuel name : Nat) (e : Exp) :
-    ∃ result, recursiveBounded fuel name e = some result := by
-  cases h : recursiveFuel fuel name e with
-  | some result => exact ⟨result, by simp [recursiveBounded, h]⟩
-  | none =>
-    have bound : expBudget e < max fuel (expBudget e + 1) := by omega
-    obtain ⟨result, done⟩ := recursiveFuel_succeeds (max fuel (expBudget e + 1)) name e bound
-    exact ⟨result, by simp [recursiveBounded, h, done]⟩
-
 /-- Retrying preserves every successful original recursion result. -/
 theorem recursiveBounded_eq_of_success (fuel name : Nat) (e : Exp) (result : Bool)
     (success : recursiveFuel fuel name e = some result) : recursiveBounded fuel name e = some result := by

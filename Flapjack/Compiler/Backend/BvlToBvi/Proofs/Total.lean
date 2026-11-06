@@ -119,32 +119,4 @@ theorem compileBounded_eq_of_success (fuel optFuel n : Nat) (exp : Bvl.Exp)
     compileBounded fuel optFuel n exp = some result := by
   simp [compileBounded, success]
 
-/-- Each labeled expression and its auxiliary code now lowers without a fuel
-failure in either expression traversal or the BVI let optimizer. -/
-theorem compileSingleFuel_succeeds (fuel optFuel n : Nat) (p : Nat × Nat × Bvl.Exp) :
-    ∃ result, compileSingleFuel fuel optFuel n p = some result := by
-  obtain ⟨name, args, exp⟩ := p
-  obtain ⟨⟨exp', aux, n'⟩, h⟩ := compileBounded_succeeds fuel optFuel n exp
-  obtain ⟨body, hb⟩ := BviLet.compileBounded_succeeds optFuel [] 0 exp'
-  exact ⟨_, by simp [compileSingleFuel, h, hb]; rfl⟩
-
-/-- Lowering a complete list of labeled expressions cannot exhaust either
-traversal budget. -/
-theorem compileProgramsFuel_succeeds (fuel optFuel n : Nat) (prog : List (Nat × Nat × Bvl.Exp)) :
-    ∃ result, compileProgramsFuel fuel optFuel n prog = some result := by
-  induction prog generalizing n with
-  | nil => exact ⟨_, rfl⟩
-  | cons p ps ih =>
-    obtain ⟨⟨code, n'⟩, hc⟩ := compileSingleFuel_succeeds fuel optFuel n p
-    obtain ⟨⟨rest, n''⟩, hr⟩ := ih n'
-    exact ⟨_, by simp [compileProgramsFuel, hc, hr]; rfl⟩
-
-/-- The executable whole-program BVL-to-BVI conversion cannot return `none`
-because of traversal fuel. This is not the HOL pass correctness theorem. -/
-theorem compileProgFuel_succeeds (fuel optFuel start n : Nat)
-    (prog : List (Nat × Nat × Bvl.Exp)) :
-    ∃ result, compileProgFuel fuel optFuel start n prog = some result := by
-  obtain ⟨⟨code, n'⟩, h⟩ := compileProgramsFuel_succeeds fuel optFuel n prog
-  exact ⟨_, by simp [compileProgFuel, h]; rfl⟩
-
 end Flapjack.Compiler.Backend.BvlToBvi

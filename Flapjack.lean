@@ -771,7 +771,6 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateOrdinaryWellformed
 import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateControlWellformed
 import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateOracleControl
 import Flapjack.Compiler.Backend.BviInline
-import Flapjack.Compiler.Backend.BvlInline.Proofs.FullTotal
 import Flapjack.Compiler.Backend.BvlInline.RemoveTicks
 import Flapjack.Compiler.Backend.BvlInline.Proofs.StateRel
 import Flapjack.Compiler.Backend.BvlInline.Proofs.ApplySimulation

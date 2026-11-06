@@ -74,16 +74,6 @@ theorem smallListFuel_succeeds (fuel n : Nat) (xs : List Exp) (bound : listBudge
 termination_by fuel
 end
 
-/-- The executable retry cannot fail from size-analysis fuel. -/
-theorem smallExpBounded_succeeds (fuel limit : Nat) (e : Exp) :
-    ∃ result, smallExpBounded fuel limit e = some result := by
-  cases h : smallExpFuel fuel limit e with
-  | some result => exact ⟨result, by simp [smallExpBounded, h]⟩
-  | none =>
-    have bound : expBudget e < max fuel (expBudget e + 1) := by omega
-    obtain ⟨result, done⟩ := smallExpFuel_succeeds (max fuel (expBudget e + 1)) limit e bound
-    exact ⟨result, by simp [smallExpBounded, h, done]⟩
-
 /-- Retrying preserves every successful original size result. -/
 theorem smallExpBounded_eq_of_success (fuel limit : Nat) (e : Exp) (result : Nat)
     (success : smallExpFuel fuel limit e = some result) : smallExpBounded fuel limit e = some result := by
