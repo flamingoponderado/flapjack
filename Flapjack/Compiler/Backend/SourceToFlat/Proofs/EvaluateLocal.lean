@@ -203,7 +203,8 @@ theorem factoredDecBoundedIH_singleton {C F : Type} [Nonempty C]
   | dtype location types =>
     exact factoredDecBoundedIH_of_unbounded interp transform limit _ (factoredDecIH_dtype interp transform location types)
   | dlet location pattern expr =>
-    exact factoredDecBoundedIH_dlet_arrayTree interp transform limit smallerExprs smallerDecs location pattern expr (allExpressions_covered expr)
+    apply factoredDecBoundedIH_dlet_expression interp transform limit location pattern expr
+    exact localEnvBounded_arrayTree_of_smaller interp transform limit smallerExprs smallerDecs expr
   | dmod moduleName decs =>
     apply factoredDecBoundedIH_dmod interp transform limit moduleName decs
     apply factoredDecBoundedIH_list interp transform limit decs
@@ -240,7 +241,6 @@ theorem factoredAllBounded {C F : Type} [Nonempty C]
     constructor
     · intro expr
       exact localEnvBounded_arrayTree_of_smaller interp transform limit smallerExprs smallerDecs expr
-        (allExpressions_covered expr)
     · intro decs
       apply factoredDecBoundedIH_list interp transform limit decs
       intro dec _
