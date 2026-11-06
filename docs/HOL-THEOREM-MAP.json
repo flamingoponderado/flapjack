@@ -11544,6 +11544,15 @@
     "reviewer": "Compared the source and typed invariant_begin_alloc_blanks capture: compiler, FFI and initial-environment payload types remain independent; the original precondition, output-config equation, and initial-globals equation imply the same invariant over the allocated reference and blank globals. The global constructor and type maps use their canonical finite-map carrier."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvalOracleSimulation.lean",
+    "lean_name": "invariantEnvGenInv",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "invariant_env_gen_inv",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["c", "tys"],
+    "reviewer": "Compared the source local theorem and typed invariant_env_gen_inv_local replay: the original invariant premise uses the same index triple, independent compiler and FFI types, and canonical global-environment maps; the conclusion is the original environment-generation invariant."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/Initialization.lean",
     "lean_name": "initGenv_stamp_fresh",
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",

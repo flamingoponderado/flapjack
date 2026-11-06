@@ -31,6 +31,19 @@ noncomputable def factoredInvariant {C F : Type} [Nonempty C]
   evalRefInv (flat.globals.take 1) (flat.refs.take 1) ∧ envGenInv gen ∧
   finIdxMatch flat.globals.length idxs.2.1 (srcOracNextCfg interp source.evalState)
 
+/-- The full invariant entails the environment-generation invariant. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "invariant_env_gen_inv"
+  (fmap_as_finite_support := [c, tys])]
+theorem invariantEnvGenInv {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (gen : EnvironmentGenerationStore) (genv : GlobalEnv)
+    (idx endIdx : NextIndices) (other : Set (Nat × IndexKind))
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (valid : factoredInvariant interp transform gen genv (idx, endIdx, other) source flat) :
+    envGenInv gen := by
+  obtain ⟨_, _, _, _, _, _, _, _, genInv, _⟩ := valid
+  exact genInv
+
 /-- Replacing both clocks by the same value preserves the simulation invariant. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "invariant_change_clock"
   (fmap_as_finite_support := [c, tys])]

@@ -270,8 +270,7 @@ theorem factoredDecBoundedIH_cons {C F : Type} [Nonempty C]
   subst nextEnv
   subst nextGen
   subst flatDecs
-  have invariantCopy := invariant
-  obtain ⟨_, _, _, _, _, _, _, _, validGen, _⟩ := invariantCopy
+  have validGen := invariantEnvGenInv interp transform gen genv start finish other source flat invariant
   have validFirst := (compileDecs_envGenInv trace n start env gen [first] n1 next1 env1 gen1 code1
     firstCompiled validGen).1
   have validFinal := (compileDecs_envGenInv trace n1 next1 (extendEnv env1 env) gen1 (second :: rest)

@@ -63,3 +63,8 @@ val precondition_stamp_helper_local = Q.prove (
   fs [listTheory.MEM_MAP, pairTheory.EXISTS_PROD, listTheory.EVERY_MEM] >>
   res_tac >> fs []);
 val _ = show_thm "precondition_stamp_helper_local=" precondition_stamp_helper_local;
+val invariant_env_gen_inv_local = Q.prove (
+  `source_to_flatProof$invariant interp g gen genv (idx,end_idx,os) s s_i1 ==>
+   source_to_flatProof$env_gen_inv gen`,
+  simp [source_to_flatProofTheory.invariant_def]);
+val _ = show_thm "invariant_env_gen_inv_local=" invariant_env_gen_inv_local;
