@@ -15,6 +15,11 @@ The computable `Insn` carries `Arm8.LogicalOp` and the L3 `instruction` carries
 hypothesis that both encoders give them the same two-bit field.  The caller
 supplies that hypothesis from the shared `arm8BopEnc` lowering.
 
+There is no `_bad` companion for this form: `arm8Ast` never emits an undefined
+opcode pair or a shift amount of 64 or more here (the three call sites use
+`AND`/`ORR` with `setFlags` false or `AND` with `setFlags` true, all with
+`imm = 0`), so the guard always holds at every call site.
+
 No new HOL claim is introduced: the bridge relates two Lean renderings of the
 same instruction word.
 -/
