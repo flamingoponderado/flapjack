@@ -111450,8 +111450,8 @@
     "lean_name": "chainExps",
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
     "hol_name": "chain_exps_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; typed HOL capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared chain_exps_def_typed in clos_to_bvl_state_relation_probe.out: empty, singleton and longer input clauses, dummy expression, labels, call and recursive suffix match the original closure expression carrier."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Sort.lean",
@@ -125515,5 +125515,22 @@
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["refs", "code"],
   "reviewer": "Compared lookup_thunk_typed in flat_to_clos_relation_probe.out: shared compiler and FFI carriers, state relation and source store lookup premises, target finite-map lookup and existential related value agree. Closure-state refs and code use the reviewed canonical finite-support carrier and witness."
+}
+,
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "chain_exps_code_locs",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ChainLocations.lean",
+  "lean_name": "chainExps_codeLocations",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared chain_exps_code_locs_typed in clos_to_bvl_state_relation_probe.out: original numeric start and closure-expression list binders, mapped tuple body projection and full code-locations equality agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "chain_exps_every_Fn_vs_NONE",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/AnnotationCodeSemantics.lean",
+  "lean_name": "chainExps_varsNone",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared chain_exps_vars_none_typed in clos_to_bvl_state_relation_probe.out: original start and expression-list binders, mapped tuple body projection and both directions of everyFnVarsNone agree."
 }
 ]

@@ -6,6 +6,9 @@ val _ = Globals.show_types := true;
 fun show label th = if null (hyp th) then
   (print label; print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
+val _ = show "chain_exps_def_typed=" clos_to_bvlTheory.chain_exps_def;
+val _ = show "chain_exps_code_locs_typed=" clos_to_bvlProofTheory.chain_exps_code_locs;
+val _ = show "chain_exps_vars_none_typed=" clos_to_bvlProofTheory.chain_exps_every_Fn_vs_NONE;
 val _ = show "state_rel_typed=" clos_to_bvlProofTheory.state_rel_def;
 val _ = show "state_rel_clock_typed=" clos_to_bvlProofTheory.state_rel_clock;
 val _ = show "state_rel_refs_lookup_typed=" clos_to_bvlProofTheory.state_rel_refs_lookup;
