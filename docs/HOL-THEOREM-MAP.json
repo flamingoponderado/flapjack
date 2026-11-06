@@ -125312,5 +125312,21 @@
   "lean_name": "elistGlobals_append",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared the HOL source and typed elist_globals_append capture: both expression lists and the equality for their concatenated global bags are retained without premises. The reviewed GlobalBag is HOL's num-to-num bag, with unionGlobalBag implementing BAG_UNION pointwise."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "simple_v_rel_list_to_v",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/SimpleConversions.lean",
+  "lean_name": "simpleListToValue",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source and typed simple_list_to_value capture: the arbitrary simple value relation, independent related lists, original relation premise, and relation between both encoded lists are preserved. The simpleValueRel premise is the original HOL assumption; listToValue is the reviewed flat list encoding."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "simple_vs_to_string_v_rel",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/SimpleConversions.lean",
+  "lean_name": "simpleValuesToString",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the HOL source and typed simple_values_to_string capture: arbitrary simple relation, related lists and successful source result imply the same target MlString. The simpleValueRel assumption is the original premise; the reviewed flat valuesToString uses the exact MlString byte carrier."
 }
 ]
