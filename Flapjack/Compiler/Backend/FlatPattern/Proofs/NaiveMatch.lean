@@ -161,11 +161,6 @@ theorem litSameType_symm (left right : Lit) :
     Flapjack.SemanticPrimitivesHOL.litSameType left right = Flapjack.SemanticPrimitivesHOL.litSameType right left := by
   cases left <;> cases right <;> rfl
 
-/-- Boolean values choose the expected conditional branch. -/
-theorem doIf_bool {A : Type} (b : Bool) (yes no : A) :
-    FlatSem.doIf (FlatSem.boolValue b) yes no = some (if b then yes else no) := by
-  cases b <;> simp [FlatSem.doIf, FlatSem.boolValue, FlatLang.boolId, boolToTag, trueTag, falseTag]
-
 /-- A conditional with a pure Boolean guard evaluates its selected branch. -/
 theorem evaluate_if_pure_bool {C F : Type} (trace : Tra) (guard yes no : FlatLang.Exp)
     (b : Bool) (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F)

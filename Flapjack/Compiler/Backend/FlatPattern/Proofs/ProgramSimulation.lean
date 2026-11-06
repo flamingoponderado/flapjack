@@ -37,22 +37,10 @@ theorem compileDecs_evalSim {C F : Type} (cfg cfg2 : Config) (ffi : HolFfiState 
 
 /-- The observable termination class of a declaration result. -/
 def outcomeObservation (result : Option (SemanticPrimitivesHOL.ErrorResult FlatSem.Value)) (outcome : HolOutcome) : Prop :=
-  match result with
-  | some (.abort (.ffiError event)) => outcome = HolOutcome.ffiOutcome event
-  | some (.abort _) => False
-  | _ => outcome = HolOutcome.success
-
-/-- The factored outcome predicate has the same cases as the observation. -/
-theorem outcomeObservation_cases (result : Option (SemanticPrimitivesHOL.ErrorResult FlatSem.Value)) (outcome : HolOutcome) :
-    (match result, outcome with
-     | some (.abort (.ffiError event)), outcome => outcome = HolOutcome.ffiOutcome event
-     | some (.abort _), _ => False
-     | _, outcome => outcome = HolOutcome.success) ↔ outcomeObservation result outcome := by
-  cases result with
-  | none => rfl
-  | some error => cases error with
-    | raise value => rfl
-    | abort reason => cases reason <;> rfl
+  match result, outcome with
+  | some (.abort (.ffiError event)), outcome => outcome = HolOutcome.ffiOutcome event
+  | some (.abort _), _ => False
+  | _, outcome => outcome = HolOutcome.success
 
 /-- Related declaration outcomes have the same observable termination class. -/
 theorem outcomeRel_observation (source target : Option (SemanticPrimitivesHOL.ErrorResult FlatSem.Value))
@@ -117,9 +105,9 @@ theorem compileDecs_semantics_of_safe {C F : Type} (cfg cfg2 : Config) (ffi : Ho
       refine ⟨clock, (FlatSem.evaluateDecs (FlatSem.initialState ffi clock targetConfig) (source.map (compileDec cfg2))).1,
         (FlatSem.evaluateDecs (FlatSem.initialState ffi clock targetConfig) (source.map (compileDec cfg2))).2, outcome,
         Prod.eta _, ?_, ?_⟩
-      · apply (outcomeObservation_cases _ outcome).2
+      · change outcomeObservation _ outcome
         apply (outcomeRel_observation _ _ observed.1 outcome).1
-        exact (outcomeObservation_cases result outcome).1 outcomeEq
+        exact outcomeEq
       · simpa [← observed.2] using behaviorEq
     · rintro ⟨clock, state, result, outcome, run, outcomeEq, behaviorEq⟩
       have observed := observations clock
@@ -127,9 +115,9 @@ theorem compileDecs_semantics_of_safe {C F : Type} (cfg cfg2 : Config) (ffi : Ho
       refine ⟨clock, (FlatSem.evaluateDecs (FlatSem.initialState ffi clock sourceConfig) source).1,
         (FlatSem.evaluateDecs (FlatSem.initialState ffi clock sourceConfig) source).2, outcome,
         Prod.eta _, ?_, ?_⟩
-      · apply (outcomeObservation_cases _ outcome).2
+      · change outcomeObservation _ outcome
         apply (outcomeRel_observation _ _ observed.1 outcome).2
-        exact (outcomeObservation_cases result outcome).1 outcomeEq
+        exact outcomeEq
       · simpa [observed.2] using behaviorEq
   have tracesEq :
       (fun trace => ∃ clock, trace = HolLList.fromList (FlatSem.evaluateDecs
