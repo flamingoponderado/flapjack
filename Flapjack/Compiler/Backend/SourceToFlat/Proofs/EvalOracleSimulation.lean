@@ -86,16 +86,18 @@ theorem invariantGenvCOk {C F : Type} [Nonempty C]
     (valid : factoredInvariant interp transform gen genv idxs source flat) :
     genvCOk genv.c := valid.1
 
-/-- Shrinking the reserved block preserves the invariant. This supporting
-lemma has no separate HOL declaration. -/
-theorem factoredInvariant_shrink {C F : Type} [Nonempty C]
+/-- Shrinking the index block preserves the invariant. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "invariant_idx_range_shrink"
+  (fmap_as_finite_support := [c, tys])]
+theorem invariantIdxRangeShrink {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
     (gen : EnvironmentGenerationStore) (genv : GlobalEnv)
     (start next finish : NextIndices) (other : Set (Nat × IndexKind))
     (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
-    (valid : factoredInvariant interp transform gen genv (start, finish, other) source flat)
-    (previous : idxPrev start next) (bounded : idxPrev next finish) :
+    (premises : factoredInvariant interp transform gen genv (start, finish, other) source flat ∧
+      idxPrev start next ∧ idxPrev next finish) :
     factoredInvariant interp transform gen genv (next, finish, other) source flat := by
+  obtain ⟨valid, previous, bounded⟩ := premises
   obtain ⟨cOk, tysOk, states, range, invs, orac, globals, reserved, genInv, fin⟩ := valid
   exact ⟨cOk, tysOk, states, idxRangeRel_shrink interp genv _ _ _ start next finish other
     ⟨range, previous, bounded⟩, invs, orac, globals, reserved, genInv, fin⟩
@@ -112,24 +114,10 @@ theorem invariantIdxRangeShrinkGen {C F : Type} [Nonempty C]
       idxPrev start next ∧ idxPrev next finish ∧ (envGenInv gen → envGenInv newGen)) :
     factoredInvariant interp transform newGen genv (next, finish, other) source flat := by
   obtain ⟨valid, previous, bounded, generations⟩ := premises
-  have shrunk := factoredInvariant_shrink interp transform gen genv start next finish other
-    source flat valid previous bounded
+  have shrunk := invariantIdxRangeShrink interp transform gen genv start next finish other
+    source flat ⟨valid, previous, bounded⟩
   obtain ⟨cOk, tysOk, states, range, invs, orac, globals, reserved, genInv, fin⟩ := shrunk
   exact ⟨cOk, tysOk, states, range, invs, orac, globals, reserved, generations genInv, fin⟩
-
-/-- Shrinking the index block preserves the invariant. -/
-@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "invariant_idx_range_shrink"
-  (fmap_as_finite_support := [c, tys])]
-theorem invariantIdxRangeShrink {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (gen : EnvironmentGenerationStore) (genv : GlobalEnv)
-    (start next finish : NextIndices) (other : Set (Nat × IndexKind))
-    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
-    (premises : factoredInvariant interp transform gen genv (start, finish, other) source flat ∧
-      idxPrev start next ∧ idxPrev next finish) :
-    factoredInvariant interp transform gen genv (next, finish, other) source flat :=
-  factoredInvariant_shrink interp transform gen genv start next finish other source flat
-    premises.1 premises.2.1 premises.2.2
 
 /-- Replacing the reserved first reference preserves the simulation invariant. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "invariant_change_eval_ref"
