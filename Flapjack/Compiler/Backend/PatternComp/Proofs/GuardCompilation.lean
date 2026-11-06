@@ -71,36 +71,6 @@ theorem dtEval_mkIf (refs : HolFiniteMapExact Nat Term) (value : Term)
     dtEval refs value (mkIf guard yes no) = dtEval refs value (.if_ guard yes no) := by
   cases guard <;> simp [mkIf, isTrue, dtEval, dtEvalGuard]
 
-/-- Decision-tree construction preserves a safe row match when every generated
-pattern guard has been shown to simulate its corresponding pattern. This is a
-conditional infrastructure lemma; the guard simulation is established below. -/
-theorem patsToCode_of_guard_simulation (refs : HolFiniteMapExact Nat Term) (value : Term)
-    (rows : List (Pat × Nat))
-    (guardSimulation : ∀ pattern, pmatch refs pattern value ≠ .typeFailure →
-      dtEvalGuard refs value (patToGuard [] pattern) =
-        some (decide (pmatch refs pattern value = .success)))
-    (safe : matchRows refs rows value ≠ none) :
-    dtEval refs value (patsToCode rows) = matchRows refs rows value := by
-  induction rows with
-  | nil => rfl
-  | cons row rows ih =>
-    obtain ⟨pattern, index⟩ := row
-    have headSafe : pmatch refs pattern value ≠ .typeFailure :=
-      matchRows_member_safe refs value ((pattern, index) :: rows) safe (pattern, index) (by simp)
-    have guardEq := guardSimulation pattern headSafe
-    cases head : pmatch refs pattern value with
-    | typeFailure => exact (headSafe head).elim
-    | failure =>
-      have tailSafe : matchRows refs rows value ≠ none := by simpa [matchRows, head] using safe
-      simpa [patsToCode, dtEval_mkIf, dtEval, guardEq, head, matchRows] using ih tailSafe
-    | success =>
-      cases tail : matchRows refs rows value with
-      | none =>
-        have bad : matchRows refs ((pattern, index) :: rows) value = none := by
-          rw [matchRows, head, tail]
-        exact (safe bad).elim
-      | some result => simp [patsToCode, dtEval_mkIf, dtEval, guardEq, head, matchRows, tail]
-
 /-- A pattern-list scan without a type error has equal input lengths. -/
 @[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "pmatch_list_LENGTH"
   (fmap_as_finite_support_parameters := [refs])]
@@ -402,9 +372,25 @@ HOL correspondence for the underlying matcher and map carrier remains pending. -
 theorem patsToCode_correct (refs : HolFiniteMapExact Nat Term) (value : Term)
     (rows : List (Pat × Nat)) (safe : matchRows refs rows value ≠ none) :
     dtEval refs value (patsToCode rows) = matchRows refs rows value := by
-  apply patsToCode_of_guard_simulation refs value rows
-  · intro pattern patternSafe
-    exact patToGuard_correct refs value pattern [] value patternSafe rfl
-  · exact safe
+  induction rows with
+  | nil => rfl
+  | cons row rows ih =>
+    obtain ⟨pattern, index⟩ := row
+    have headSafe : pmatch refs pattern value ≠ .typeFailure :=
+      matchRows_member_safe refs value ((pattern, index) :: rows) safe (pattern, index) (by simp)
+    have guardEq := patToGuard_correct refs value pattern [] value headSafe rfl
+    cases head : pmatch refs pattern value with
+    | typeFailure => exact (headSafe head).elim
+    | failure =>
+      have tailSafe : matchRows refs rows value ≠ none := by simpa [matchRows, head] using safe
+      simpa [patsToCode, dtEval_mkIf, dtEval, guardEq, head, matchRows] using ih tailSafe
+    | success =>
+      cases tail : matchRows refs rows value with
+      | none =>
+        have bad : matchRows refs ((pattern, index) :: rows) value = none := by
+          rw [matchRows, head, tail]
+        exact (safe bad).elim
+      | some result => simp [patsToCode, dtEval_mkIf, dtEval, guardEq, head, matchRows, tail]
+
 
 end Flapjack.Compiler.Backend.PatternComp
