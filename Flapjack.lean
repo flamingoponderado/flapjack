@@ -2577,6 +2577,7 @@ import Flapjack.Compiler.Encoders.Arm8.L3.Executable.Shift
 import Flapjack.Compiler.Encoders.Arm8.L3.Executable.Logical
 import Flapjack.Compiler.Encoders.Arm8.L3.Executable.Branch
 import Flapjack.Compiler.Encoders.Arm8.L3.Executable.Address
+import Flapjack.Compiler.Encoders.Arm8.L3.Executable.BitMask
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Infrastructure
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.MoveWide
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.LogicalImmediate
