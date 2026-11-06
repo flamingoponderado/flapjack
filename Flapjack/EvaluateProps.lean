@@ -21,13 +21,6 @@ def callFFIRelHOL {σ : Type} (before after : HolFfiState σ) : Prop :=
   ∃ (name : HolFfiName) (configuration bytes returned : List (BitVec 8)),
     callFFIHOL before name configuration bytes = .ret after returned
 
-/-- Flapjack infrastructure: HOL's empty external call supplies a genuine
-successful step for every native FFI state, independently of its oracle. -/
-theorem callFFIRelHOL_refl {σ : Type} (state : HolFfiState σ) :
-    callFFIRelHOL state state := by
-  refine ⟨.extCall (Basis.Pure.MlString.MlString.implode []), [], [], [], ?_⟩
-  simp [callFFIHOL]
-
 @[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "call_FFI_rel_consts"]
 theorem callFFIRelHOL_consts {σ : Type} (s1 s2 : HolFfiState σ)
     (h : callFFIRelHOL s1 s2) : s2.oracle = s1.oracle := by
