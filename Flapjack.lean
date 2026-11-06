@@ -604,6 +604,7 @@ import Flapjack.Compiler.Backend.FlatElim.Proofs.GlobalInvariants
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.GlobalFlag
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.GeneratedNames
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.LookupRelation
+import Flapjack.Compiler.Backend.FlatPattern.Proofs.Enumerate
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.BindingFold
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.BindingSimulation
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.BindingRecursive

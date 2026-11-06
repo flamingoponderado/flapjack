@@ -439,7 +439,7 @@ theorem patternEntries_work_expression (trace : BackendCommon.Tra) (i j : Nat) (
   induction patterns generalizing j with
   | nil => simp [patternEntries] at member
   | cons pattern patterns ih =>
-    simp only [patternEntries, List.mem_cons] at member
+    simp only [patternEntries_cons, List.mem_cons] at member
     rcases member with same | later
     · subst entry
       simp
@@ -459,7 +459,7 @@ theorem patternEntries_index (trace : BackendCommon.Tra) (i j k : Nat) (patterns
       subst entry
       simp
     | succ k =>
-      simp only [patternEntries, List.getElem?_cons_succ] at found
+      simp only [patternEntries_cons, List.getElem?_cons_succ] at found
       have h := ih (j + 1) k found
       omega
 
@@ -468,14 +468,14 @@ theorem patternEntries_length (trace : BackendCommon.Tra) (i j : Nat) (patterns 
     (patternEntries trace i j patterns).length = patterns.length := by
   induction patterns generalizing j with
   | nil => rfl
-  | cons pattern patterns ih => simp [patternEntries, ih]
+  | cons pattern patterns ih => simp [ih]
 
 /-- The generated work list preserves the original subpattern order. -/
 theorem patternEntries_patterns (trace : BackendCommon.Tra) (i j : Nat) (patterns : List FlatLang.Pat) :
     (patternEntries trace i j patterns).map (fun entry => entry.2.1) = patterns := by
   induction patterns generalizing j with
   | nil => rfl
-  | cons pattern patterns ih => simp [patternEntries, ih]
+  | cons pattern patterns ih => simp [ih]
 
 /-- Bindings of any member pattern occur among the aggregate bindings. -/
 theorem patBindings_mem_patsBindings (patterns : List FlatLang.Pat) (pattern : FlatLang.Pat) (name : VarN)

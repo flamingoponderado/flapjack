@@ -1,5 +1,29 @@
 [
 {
+  "hol_path": "cakeml/misc/miscScript.sml",
+  "hol_name": "enumerate_def",
+  "lean_path": "Flapjack/Misc/Enumerate.lean",
+  "lean_name": "enumerate",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed enumerate_def capture: both clauses, generic element type, index increment and (index, element) pair order match. The executed pattern compiler uses this definition through patternEntries and its source-shaped map."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "MEM_enumerate_EL",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/Enumerate.lean",
+  "lean_name": "memEnumerateEl",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed mem_enumerate_el capture, including the bounded existential and (offset + index, EL index xs) pair. The reviewed holEl uses Nonempty to represent HOL type inhabitation; no bound or membership premise is changed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "ALL_DISTINCT_enumerate",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/Enumerate.lean",
+  "lean_name": "allDistinctEnumerate",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed all_distinct_enumerate capture. List.Nodup renders ALL_DISTINCT and the theorem has no extra typeclass premise."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
   "hol_name": "FILTER_EQ_ALOOKUP_EQ",
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
@@ -112115,7 +112139,7 @@
     "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
     "hol_name": "compile_pat_bindings_def",
     "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed and termination kernel-checked; typed HOL capture and full statement review remain pending."
+    "reviewer": "Source clauses transcribed and termination kernel-checked; typed HOL capture and full statement review remain pending. The constructor work items now execute the reviewed enumerate followed by the source-shaped map through patternEntries."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/BindingsTotal.lean",

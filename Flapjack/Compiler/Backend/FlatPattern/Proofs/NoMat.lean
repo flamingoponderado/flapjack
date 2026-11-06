@@ -172,7 +172,7 @@ theorem noMat_patternEntries (trace : Tra) (base start : Nat) (patterns : List F
   | nil => simp [patternEntries]
   | cons first rest ih =>
     intro pattern index expression member
-    simp only [patternEntries, List.map_cons, List.mem_cons, Prod.mk.injEq] at member
+    simp only [patternEntries_cons, List.map_cons, List.mem_cons, Prod.mk.injEq] at member
     rcases member with ⟨_, _, rfl⟩ | member
     · simp [FlatProps.noMat]
     · exact ih (start + 1) pattern index expression member
@@ -214,7 +214,7 @@ private theorem patternEntries_weight (trace : Tra) (base start : Nat) (patterns
     bindingTodoWeight ((patternEntries trace base start patterns).map Prod.snd) = bindingWeights patterns := by
   induction patterns generalizing start with
   | nil => rfl
-  | cons p ps ih => simp [patternEntries, bindingTodoWeight, bindingWeights, ih]
+  | cons p ps ih => simp [bindingTodoWeight, bindingWeights, ih]
 
 /-- Pattern binding preserves match-freedom of its worklist and continuation. -/
 theorem noMat_compilePatBindings (trace : Tra) (base : Nat)

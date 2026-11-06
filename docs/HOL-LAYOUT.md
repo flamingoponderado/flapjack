@@ -275,6 +275,7 @@ layout guide.
 | translator/monadic/monad_base/ml_monadBaseScript.sml | Flapjack/Translator/Monadic/MonadBase.lean (fixed arrays in `MonadBase/Arrays.lean`) |
 | `misc/miscScript.sml` (`the`) | `Flapjack/Misc/MiscThe.lean` |
 | `misc/miscScript.sml` (`LLOOKUP` optional indexing and list-update laws) | `Flapjack/Misc/ListLookup.lean` |
+| `misc/miscScript.sml` (`enumerate`) | `Flapjack/Misc/Enumerate.lean` |
 
 The pinned external `hol4/src/coretypes/optionScript.sml` counterpart is
 `Flapjack/Misc/Option.lean`, with `OPTREL_def` in the

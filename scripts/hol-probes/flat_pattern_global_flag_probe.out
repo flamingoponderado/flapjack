@@ -23,6 +23,9 @@ filter_eq_mono=∀(xs :α list) (ys :α list). FILTER (P1 :α -> bool) xs = FILT
 filter_eq_mono_trans=∀(xs :α list) (ys :α list). FILTER (P1 :α -> bool) xs = ys ∧ (∀(x :α). MEM x xs ∧ (P3 :α -> bool) x ⇒ P1 x) ∧ (∀(x :α) (y :α). MEM x xs ∧ MEM y ys ∧ x = y ⇒ (P3 x ⇔ P3 y)) ⇒ FILTER P3 xs = FILTER P3 ys
 filter_eq_alookup_eq=∀(xs :(α # β) list) (ys :(α # β) list). FILTER (P :α # β -> bool) xs = ys ∧ (∀(z :β). P ((x :α),z)) ⇒ ALOOKUP xs x = ALOOKUP ys x
 alookup_filter_eq=∀(xs :(α # β) list). (∀(z :β). (P :α # β -> bool) ((x :α),z)) ⇒ ALOOKUP (FILTER P xs) x = ALOOKUP xs x
+enumerate_def=(∀(n :num). (enumerate n ([] :α list) :(num # α) list) = ([] :(num # α) list)) ∧ ∀(n :num) (x :α) (xs :α list). (enumerate n (x::xs) :(num # α) list) = (n,x)::(enumerate (n + (1 :num)) xs :(num # α) list)
+mem_enumerate_el=∀(xs :α list) (i :num) (x :num # α). MEM x (enumerate i xs :(num # α) list) ⇔ ∃(j :num). j < LENGTH xs ∧ x = (i + j,xs❲j❳)
+all_distinct_enumerate=∀(xs :α list) (i :num). ALL_DISTINCT (enumerate i xs :(num # α) list)
 alookup_def=(∀(q :β). ALOOKUP ([] :(β # α) list) q = (NONE :α option)) ∧ ∀(y :α) (x :β) (t :(β # α) list) (q :β). ALOOKUP ((x,y)::t) q = if x = q then SOME y else ALOOKUP t q
 alookup_reversed_eq=(∀(q :α). ALOOKUP ([] :(α # β) list) q = (NONE :β option)) ∧ ∀(x :α) (y :β) (t :(α # β) list) (q :α). ALOOKUP ((x,y)::t) q = if q = x then SOME y else ALOOKUP t q
 optrel_def=∀(R :α -> β -> bool) (x :α option) (y :β option). OPTREL R x y ⇔ x = (NONE :α option) ∧ y = (NONE :β option) ∨ ∃(x0 :α) (y0 :β). x = SOME x0 ∧ y = SOME y0 ∧ R x0 y0

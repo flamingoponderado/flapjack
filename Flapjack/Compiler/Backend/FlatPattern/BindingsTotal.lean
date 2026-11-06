@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.FlatPattern.Names
+import Flapjack.Misc.Enumerate
 import Flapjack.Misc.Sptree
 
 /-! Total pattern binding, using a decreasing count of pattern nodes. -/
@@ -27,24 +28,23 @@ private theorem todoWeight_append (xs ys : List (FlatLang.Pat × Nat × FlatLang
   | nil => simp [todoWeight]
   | cons x xs ih => cases x with | mk p pair => cases pair; simp [todoWeight, ih, Nat.add_assoc]
 
-/-- Generated projection names and work items for constructor arguments. -/
-def patternEntries (t : Tra) (i j : Nat) : List FlatLang.Pat →
-    List ((Nat × MlString) × (FlatLang.Pat × Nat × FlatLang.Exp))
-  | [] => []
-  | p :: ps =>
-      let key := i + 1 + j
-      let name := encNumToName key
-      ((j, name), (p, key, .varLocal t name)) :: patternEntries t i (j + 1) ps
-
-/-- The generated entries follow the source `enumerate` traversal exactly. -/
-private theorem patternEntries_eq_zipIdx (t : Tra) (i j : Nat) (ps : List FlatLang.Pat) :
-    patternEntries t i j ps = (ps.zipIdx j).map (fun (p, k) =>
+/-- Flapjack helper for the source's enumerate-and-map expression that creates
+projection names and work items for constructor arguments. -/
+def patternEntries (t : Tra) (i j : Nat) (ps : List FlatLang.Pat) :
+    List ((Nat × MlString) × (FlatLang.Pat × Nat × FlatLang.Exp)) :=
+  (Flapjack.enumerate j ps).map (fun (k, p) =>
       let key := i + 1 + k
       let name := encNumToName key
-      ((k, name), (p, key, FlatLang.Exp.varLocal t name))) := by
-  induction ps generalizing j with
-  | nil => rfl
-  | cons p ps ih => simp [patternEntries, List.zipIdx, ih]
+      ((k, name), (p, key, FlatLang.Exp.varLocal t name)))
+
+/-- Flapjack helper: the source enumeration exposes its first work item. This
+equation is not a separate HOL declaration. -/
+@[simp] theorem patternEntries_cons (t : Tra) (i j : Nat) (p : FlatLang.Pat)
+    (ps : List FlatLang.Pat) :
+    patternEntries t i j (p :: ps) =
+      ((j, encNumToName (i + 1 + j)),
+        (p, i + 1 + j, .varLocal t (encNumToName (i + 1 + j)))) ::
+          patternEntries t i (j + 1) ps := rfl
 
 /-- Generated entries use consecutive field indices and the corresponding
 encoded temporary names. -/
@@ -56,7 +56,7 @@ theorem patternEntries_member (t : Tra) (i j : Nat) (ps : List FlatLang.Pat)
   induction ps generalizing j with
   | nil => simp [patternEntries] at member
   | cons p ps ih =>
-    simp only [patternEntries, List.mem_cons] at member
+    simp only [patternEntries, Flapjack.enumerate, List.map_cons, List.mem_cons] at member
     rcases member with same | later
     · subst entry
       simp
@@ -68,7 +68,7 @@ private theorem entriesWeight (t : Tra) (i j : Nat) (ps : List FlatLang.Pat) :
     todoWeight ((patternEntries t i j ps).map Prod.snd) = bindWeights ps := by
   induction ps generalizing j with
   | nil => rfl
-  | cons p ps ih => simp [patternEntries, todoWeight, bindWeights, ih]
+  | cons p ps ih => simp [todoWeight, bindWeights, ih]
 
 /-- Bind pattern variables and record which source projections are used. -/
 @[hol "cakeml/compiler/backend/flat_patternScript.sml" "compile_pat_bindings_def"]
