@@ -67,6 +67,13 @@ theorem holFmapAsFiniteSupportParamWitness_matchRows_refs
     ofBroad (toBroad refs) refs.finiteSupport = refs :=
   holFmapAsFiniteSupportParamWitness_pmatch_refs refs key
 
+theorem holFmapAsFiniteSupportParamWitness_appPos_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_refs refs key
+
 mutual
 /-- Match one pattern against an abstract term and finite reference map. -/
 @[hol "cakeml/compiler/backend/pattern_matching/pattern_semanticsScript.sml" "pmatch_def"
@@ -132,17 +139,31 @@ def dtTest (test : DTest) (value : Term) : Option Bool :=
   | .litEq lit, .litv actual => if litSameType lit actual then some (decide (lit = actual)) else none
   | _, _ => none
 
-/-- Follow a position through constructor fields or a reference. The direct
-index lookup implements the source's recursion over the field list. -/
+/-- Follow a position through constructor fields or a reference. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_semanticsScript.sml" "app_pos_def"
+  (fmap_as_finite_support_parameters := [refs])]
 def appPos (refs : HolFiniteMapExact Nat Term) : Position → Term → Option Term
   | .emptyPos, value => some value
-  | .pos index rest, .term _ values => do
-    let value ← values[index]?
-    appPos refs rest value
-  | .pos 0 rest, .refPtr index => do
-    let value ← refs.lookup index
-    appPos refs rest value
+  | .pos 0 rest, .refPtr address =>
+    match refs.lookup address with
+    | none => none
+    | some value => appPos refs rest value
+  | .pos 0 rest, .term _ (value :: _) => appPos refs rest value
+  | .pos (index + 1) rest, .term tag (_ :: values) =>
+    appPos refs (.pos index rest) (.term tag values)
   | .pos _ _, _ => none
+termination_by position _ => sizeOf position
+decreasing_by all_goals simp_wf
+
+/-- Indexing form of the source traversal through a term's fields. This
+Flapjack helper supports proofs that reason about successful list lookup. -/
+theorem appPos_term (refs : HolFiniteMapExact Nat Term) (index : Nat) (rest : Position)
+    (tag : Option Nat) (values : List Term) :
+    appPos refs (.pos index rest) (.term tag values) =
+      (values[index]?).bind (appPos refs rest) := by
+  induction index generalizing values with
+  | zero => cases values <;> simp [appPos]
+  | succ index ih => cases values <;> simp [appPos, ih]
 
 /-- Evaluate a guard with the source's short-circuit and error behavior. -/
 def dtEvalGuard (refs : HolFiniteMapExact Nat Term) (value : Term) : DGuard → Option Bool

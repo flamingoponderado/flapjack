@@ -295,10 +295,10 @@ theorem decodePos_simulation {C F : Type} (trace : BackendCommon.Tra)
     | conv stamp fields =>
       cases found : fields[index]? with
       | none =>
-        simp [encodeValue, encodeValues_eq_map, PatternSemantics.appPos, List.getElem?_map, found] at selected
+        simp [encodeValue, encodeValues_eq_map, PatternSemantics.appPos_term, List.getElem?_map, found] at selected
       | some field =>
         have next : PatternSemantics.appPos (encodeRefs state) rest (encodeValue field) = some encoded := by
-          simpa [encodeValue, encodeValues_eq_map, PatternSemantics.appPos, List.getElem?_map, found] using selected
+          simpa [encodeValue, encodeValues_eq_map, PatternSemantics.appPos_term, List.getElem?_map, found] using selected
         have projected := evaluate_con_projection trace expression env state stamp fields index field pure found
         simpa [decodePos] using ih (.app trace (.el index) [expression]) field next projected
     | loc flag address =>

@@ -506,3 +506,9 @@ val _ = show_local "comp_every_take_until_any=" pattern_compTheory.EVERY_take_un
 val _ = show_local "comp_filter_not_none=" pattern_compTheory.matdch_FILTER_NOT_NONE;
 val _ = show_local "comp_move_const_up=" pattern_compTheory.match_move_const_up;
 val _ = show_local "comp_match_insert_any=" pattern_compTheory.match_insert_Any;
+val _ = show_local "comp_walk_def=" pattern_compTheory.walk_def;
+val _ = show_local "comp_walk_list_def=" pattern_compTheory.walk_list_def;
+val _ = show_local "comp_app_pos_pos=" pattern_compTheory.app_pos_Pos;
+val _ = show_local "comp_walk_thm=" pattern_compTheory.walk_thm;
+val _ = show_local "comp_walk_append=" pattern_compTheory.walk_append;
+val _ = show_local "sem_app_pos_def=" pattern_semanticsTheory.app_pos_def;

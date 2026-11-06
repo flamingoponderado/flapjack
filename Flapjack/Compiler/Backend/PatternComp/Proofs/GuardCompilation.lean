@@ -35,11 +35,16 @@ def walk (refs : HolFiniteMapExact Nat Term) : List Nat → Term → Option Term
 theorem appPos_getPos (refs : HolFiniteMapExact Nat Term) (path : List Nat) (value : Term) :
     appPos refs (getPos path) value = walk refs path value := by
   induction path generalizing value with
-  | nil => rfl
+  | nil => simp [getPos, appPos, walk]
   | cons index path ih =>
     cases value with
-    | term tag values => simp [getPos, appPos, walk, ih]
-    | refPtr address => cases index <;> simp [getPos, appPos, walk, ih]
+    | term tag values =>
+      simp only [getPos, appPos_term, walk]
+      cases values[index]? <;> simp [ih]
+    | refPtr address =>
+      cases index with
+      | zero => cases found : refs.lookup address <;> simp [getPos, appPos, walk, ih, found]
+      | succ index => simp [getPos, appPos, walk]
     | litv lit => simp [getPos, appPos, walk]
     | other => simp [getPos, appPos, walk]
 

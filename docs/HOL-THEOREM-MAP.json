@@ -111833,6 +111833,17 @@
     "reviewer": "Compared the source non-NONE premise and both conclusions, including the nested no-match-failure premise, against the typed exported HOL theorem. The same-module witness checks the canonical finite-map parameter."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/PatternSemantics/Semantics.lean",
+    "lean_name": "appPos",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_semanticsScript.sml",
+    "hol_name": "app_pos_def",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "refs"
+    ],
+    "reviewer": "Compared the source and typed HOL equations, preserving zero-index reference lookup, head selection, successor traversal through the term tail, and all failure cases. The same-module witness checks the canonical finite-map parameter; appPos_term proves the equivalent option-indexing characterization used by existing proofs."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/PatternExh/Exhaustive.lean",
     "lean_name": "exhRows",
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
