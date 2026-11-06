@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.BranchEvaluation
+import Mathlib.Data.List.Forall2
 
 /-! Evaluation facts for the naive pattern dispatcher. The clocked evaluator
 remains pending source and carrier review. -/
@@ -194,40 +195,6 @@ theorem evaluate_tagLenEq {C F : Type} (trace : Tra) (expression : FlatLang.Exp)
       (state, .val [FlatSem.boolValue (actual == tag && fields.length == expected)]) := by
   simp [FlatSem.evaluate, pure, FlatSem.fixClock, FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppFlat]
 
-/-- The naive constructor expansion preserves the subpattern order. -/
-theorem naiveChildren_patterns (trace : Tra) (expression : FlatLang.Exp) (index : Nat)
-    (patterns : List FlatLang.Pat) : (children trace expression index patterns).map Prod.fst = patterns := by
-  induction patterns generalizing index with
-  | nil => rfl
-  | cons pattern patterns ih => simp [children, ih]
-
-/-- The generated field expressions evaluate to the matching constructor
-fields, starting after an arbitrary prefix. -/
-theorem naiveChildren_pure_aux {C F : Type} (trace : Tra) (expression : FlatLang.Exp)
-    (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F)
-    (stamp : Option (FlatLang.CtorId × FlatLang.TypeId)) (front values : List FlatSem.Value)
-    (patterns : List FlatLang.Pat) (lengths : patterns.length = values.length)
-    (pure : FlatSem.evaluate env state [expression] = (state, .val [.conv stamp (front ++ values)])) :
-    List.Forall₂ (fun expression value => FlatSem.evaluate env state [expression] = (state, .val [value]))
-      ((children trace expression front.length patterns).map Prod.snd) values := by
-  induction patterns generalizing front values with
-  | nil =>
-    cases values with
-    | nil => exact .nil
-    | cons _ _ => simp at lengths
-  | cons pattern patterns ih =>
-    cases values with
-    | nil => simp at lengths
-    | cons value values =>
-      simp only [children, List.map_cons]
-      apply List.Forall₂.cons
-      · exact evaluate_con_projection trace expression env state stamp (front ++ value :: values) front.length value pure (by simp)
-      · have tailPure : FlatSem.evaluate env state [expression] =
-            (state, .val [.conv stamp ((front ++ [value]) ++ values)]) := by
-          simpa [List.append_assoc] using pure
-        have h := ih (front ++ [value]) values (by simpa using lengths) tailPure
-        simpa using h
-
 /-- The complete generated projection list evaluates to the constructor's
 fields in order. -/
 theorem naiveChildren_pure {C F : Type} (trace : Tra) (expression : FlatLang.Exp)
@@ -236,8 +203,12 @@ theorem naiveChildren_pure {C F : Type} (trace : Tra) (expression : FlatLang.Exp
     (patterns : List FlatLang.Pat) (lengths : patterns.length = fields.length)
     (pure : FlatSem.evaluate env state [expression] = (state, .val [.conv stamp fields])) :
     List.Forall₂ (fun expression value => FlatSem.evaluate env state [expression] = (state, .val [value]))
-      ((children trace expression 0 patterns).map Prod.snd) fields := by
-  simpa using naiveChildren_pure_aux trace expression env state stamp [] fields patterns lengths pure
+      ((patterns.mapIdx (fun i p => (p, FlatLang.Exp.app trace (.el i) [expression]))).map Prod.snd) fields := by
+  apply List.forall₂_iff_get.mpr
+  refine ⟨by simp [lengths], ?_⟩
+  intro i leftBound rightBound
+  simp only [List.get_eq_getElem, List.getElem_map, List.getElem_mapIdx]
+  exact evaluate_con_projection trace expression env state stamp fields i _ pure (List.getElem?_eq_getElem rightBound)
 
 /-- When constructor stamps and arities match, expanding its fields into the
 work list preserves the match decision, including later type errors. -/
@@ -327,7 +298,7 @@ constructor and pattern have the same tag and arity. -/
 theorem naiveList_con_matching {C F : Type} (trace : Tra)
     (stamp : Option (FlatLang.CtorId × FlatLang.TypeGroupId)) (patterns : List FlatLang.Pat)
     (expression : FlatLang.Exp) (rest : List (FlatLang.Pat × FlatLang.Exp))
-    (ih : @NaiveListCorrect C F trace (children trace expression 0 patterns ++ rest))
+    (ih : @NaiveListCorrect C F trace (patterns.mapIdx (fun i p => (p, FlatLang.Exp.app trace (.el i) [expression])) ++ rest))
     (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F)
     (actual : Option (FlatLang.CtorId × FlatLang.TypeId)) (fields values : List FlatSem.Value)
     (bindings : List (VarN × FlatSem.Value)) (answer : Bool)
@@ -342,7 +313,7 @@ theorem naiveList_con_matching {C F : Type} (trace : Tra)
       (state, .val [FlatSem.boolValue answer]) := by
   have childPure := naiveChildren_pure trace expression env state actual fields patterns same.2 pure
   have allPure : List.Forall₂ (fun expression value => FlatSem.evaluate env state [expression] = (state, .val [value]))
-      ((children trace expression 0 patterns ++ rest).map Prod.snd) (fields ++ values) := by
+      ((patterns.mapIdx (fun i p => (p, FlatLang.Exp.app trace (.el i) [expression])) ++ rest).map Prod.snd) (fields ++ values) := by
     simp only [List.map_append]
     have appendProof : ∀ xs ys vs ws,
         List.Forall₂ (fun expression value => FlatSem.evaluate env state [expression] = (state, .val [value])) xs vs →
@@ -355,8 +326,8 @@ theorem naiveList_con_matching {C F : Type} (trace : Tra)
     exact appendProof _ _ _ _ childPure tailPure
   have expanded := pmatchList_con_expanded_decision state stamp patterns (rest.map Prod.fst) actual fields values bindings compatible same
   have nestedDecision : matchDecision (FlatSem.pmatchList state
-      ((children trace expression 0 patterns ++ rest).map Prod.fst) (fields ++ values) bindings) = some answer := by
-    simpa [List.map_append, naiveChildren_patterns] using expanded.symm.trans decision
+      ((patterns.mapIdx (fun i p => (p, FlatLang.Exp.app trace (.el i) [expression])) ++ rest).map Prod.fst) (fields ++ values) bindings) = some answer := by
+    simpa [List.map_append, mapIdx_pair_fst] using expanded.symm.trans decision
   have nested := ih env state (fields ++ values) bindings answer allPure nestedDecision
   cases stamp with
   | none => simpa [naivePatternMatch] using nested
@@ -372,7 +343,7 @@ theorem naiveList_con_matching {C F : Type} (trace : Tra)
       have guardTrue : FlatSem.evaluate env state [.app trace (.tagLenEq tag patterns.length) [expression]] =
           (state, .val [FlatSem.boolValue true]) := by simpa [same.2] using guard
       have branch := evaluate_if_pure_bool trace (.app trace (.tagLenEq tag patterns.length) [expression])
-        (naivePatternMatch trace (children trace expression 0 patterns ++ rest)) (FlatLang.mkBool trace false)
+        (naivePatternMatch trace (patterns.mapIdx (fun i p => (p, FlatLang.Exp.app trace (.el i) [expression])) ++ rest)) (FlatLang.mkBool trace false)
         true env state guardTrue
       simpa [naivePatternMatch, evaluate_smartIf, branch] using nested
 
@@ -380,7 +351,7 @@ theorem naiveList_con_matching {C F : Type} (trace : Tra)
 theorem naiveList_con {C F : Type} (trace : Tra)
     (stamp : Option (FlatLang.CtorId × FlatLang.TypeGroupId)) (patterns : List FlatLang.Pat)
     (expression : FlatLang.Exp) (rest : List (FlatLang.Pat × FlatLang.Exp))
-    (ih : @NaiveListCorrect C F trace (children trace expression 0 patterns ++ rest)) :
+    (ih : @NaiveListCorrect C F trace (patterns.mapIdx (fun i p => (p, FlatLang.Exp.app trace (.el i) [expression])) ++ rest)) :
     @NaiveListCorrect C F trace ((.pcon stamp patterns, expression) :: rest) := by
   intro env state values bindings answer pure decision
   cases values with
@@ -403,7 +374,7 @@ theorem naiveList_con {C F : Type} (trace : Tra)
               rw [← failed]
               simpa using decision
             cases stamp with
-            | none => cases compatible <;> simp_all
+            | none => cases compatible; simp_all
             | some patternTag =>
               obtain ⟨tag, group⟩ := patternTag
               cases actual with
@@ -423,7 +394,7 @@ theorem naiveList_con {C F : Type} (trace : Tra)
                 have guardFalse : FlatSem.evaluate env state [.app trace (.tagLenEq tag patterns.length) [expression]] =
                     (state, .val [FlatSem.boolValue false]) := by simpa [cond] using guard
                 have branch := evaluate_if_pure_bool trace (.app trace (.tagLenEq tag patterns.length) [expression])
-                  (naivePatternMatch trace (children trace expression 0 patterns ++ rest)) (FlatLang.mkBool trace false)
+                  (naivePatternMatch trace (patterns.mapIdx (fun i p => (p, FlatLang.Exp.app trace (.el i) [expression])) ++ rest)) (FlatLang.mkBool trace false)
                   false env state guardFalse
                 cases result : FlatSem.pmatchList state (rest.map Prod.fst) values bindings <;>
                   simp [result, matchDecision, combineMatchDecisions] at failedDecision

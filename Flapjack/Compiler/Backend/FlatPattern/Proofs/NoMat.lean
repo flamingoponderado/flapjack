@@ -69,18 +69,14 @@ theorem noMat_decodeDtree (trace : Tra) (branches : Spt FlatLang.Exp) (value def
     · exact noMat_smartIf trace _ _ _ (noMat_decodeGuard trace value _ valueSafe) ihYes ihNo
 
 /-- Every generated child projection of a match-free expression is match-free. -/
-theorem noMat_children (trace : Tra) (value : FlatLang.Exp) (start : Nat) (patterns : List FlatLang.Pat)
+theorem noMat_children (trace : Tra) (value : FlatLang.Exp) (patterns : List FlatLang.Pat)
     (safe : FlatProps.noMat value = true) :
-    ∀ pattern expression, (pattern, expression) ∈ children trace value start patterns →
-      FlatProps.noMat expression = true := by
-  induction patterns generalizing start with
-  | nil => simp [children]
-  | cons first rest ih =>
-    intro pattern expression member
-    simp only [children, List.mem_cons, Prod.mk.injEq] at member
-    rcases member with ⟨_, rfl⟩ | member
-    · simpa [FlatProps.noMat, FlatProps.noMatList] using safe
-    · exact ih (start + 1) pattern expression member
+    ∀ pattern expression, (pattern, expression) ∈
+      patterns.mapIdx (fun i p => (p, .app trace (.el i) [value])) → FlatProps.noMat expression = true := by
+  intro pattern expression member
+  obtain ⟨i, _, eq⟩ := List.mem_mapIdx.mp member
+  obtain ⟨_, rfl⟩ := Prod.mk.inj eq
+  simpa [FlatProps.noMat, FlatProps.noMatList] using safe
 
 /-- Naive matching generates a match-free guard when each worklist value is
 match-free. -/
@@ -110,7 +106,7 @@ theorem noMat_naivePatternMatch (trace : Tra) (todo : List (FlatLang.Pat × Flat
     apply ih
     intro pattern expression member
     rcases List.mem_append.mp member with member | member
-    · exact noMat_children trace value 0 patterns valueSafe pattern expression member
+    · exact noMat_children trace value patterns valueSafe pattern expression member
     · exact safe pattern expression (by simp [member])
   | case6 value rest patterns tag typ ih =>
     have valueSafe := safe (.pcon (some (tag, typ)) patterns) value (by simp)
@@ -120,7 +116,7 @@ theorem noMat_naivePatternMatch (trace : Tra) (todo : List (FlatLang.Pat × Flat
     · apply ih
       intro pattern expression member
       rcases List.mem_append.mp member with member | member
-      · exact noMat_children trace value 0 patterns valueSafe pattern expression member
+      · exact noMat_children trace value patterns valueSafe pattern expression member
       · exact safe pattern expression (by simp [member])
     · exact noMat_mkBool trace false
   | case7 value rest pattern name ih =>

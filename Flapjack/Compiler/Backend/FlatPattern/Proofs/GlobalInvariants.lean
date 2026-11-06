@@ -46,18 +46,14 @@ theorem esgcFree_decodeGuard (t : Tra) (exp : FlatLang.Exp) (gd : DGuard)
   | disj a b ihA ihB => exact esgcFree_smartIf t _ _ _ ihA (esgcFree_mkBool t true) ihB
 
 /-- Every generated child projection of a global-initialization-safe expression is global-initialization-safe. -/
-theorem esgcFree_children (trace : Tra) (value : FlatLang.Exp) (start : Nat) (patterns : List FlatLang.Pat)
+theorem esgcFree_children (trace : Tra) (value : FlatLang.Exp) (patterns : List FlatLang.Pat)
     (safe : esgcFree value) :
-    ∀ pattern expression, (pattern, expression) ∈ children trace value start patterns →
-      esgcFree expression := by
-  induction patterns generalizing start with
-  | nil => simp [children]
-  | cons first rest ih =>
-    intro pattern expression member
-    simp only [children, List.mem_cons, Prod.mk.injEq] at member
-    rcases member with ⟨_, rfl⟩ | member
-    · simpa [esgcFree, esgcFreeList] using safe
-    · exact ih (start + 1) pattern expression member
+    ∀ pattern expression, (pattern, expression) ∈
+      patterns.mapIdx (fun i p => (p, .app trace (.el i) [value])) → esgcFree expression := by
+  intro pattern expression member
+  obtain ⟨i, _, eq⟩ := List.mem_mapIdx.mp member
+  obtain ⟨_, rfl⟩ := Prod.mk.inj eq
+  simpa [esgcFree, esgcFreeList] using safe
 
 /-- Naive matching generates a global-initialization-safe guard when each worklist value is
 global-initialization-safe. -/
@@ -87,7 +83,7 @@ theorem esgcFree_naivePatternMatch (trace : Tra) (todo : List (FlatLang.Pat × F
     apply ih
     intro pattern expression member
     rcases List.mem_append.mp member with member | member
-    · exact esgcFree_children trace value 0 patterns valueSafe pattern expression member
+    · exact esgcFree_children trace value patterns valueSafe pattern expression member
     · exact safe pattern expression (by simp [member])
   | case6 value rest patterns tag typ ih =>
     have valueSafe := safe (.pcon (some (tag, typ)) patterns) value (by simp)
@@ -97,7 +93,7 @@ theorem esgcFree_naivePatternMatch (trace : Tra) (todo : List (FlatLang.Pat × F
     · apply ih
       intro pattern expression member
       rcases List.mem_append.mp member with member | member
-      · exact esgcFree_children trace value 0 patterns valueSafe pattern expression member
+      · exact esgcFree_children trace value patterns valueSafe pattern expression member
       · exact safe pattern expression (by simp [member])
     · exact esgcFree_mkBool trace false
   | case7 value rest pattern name ih =>
@@ -325,18 +321,14 @@ theorem setGlobals_decodeGuard (t : Tra) (exp : FlatLang.Exp) (gd : DGuard)
   | disj a b ihA ihB => exact setGlobals_smartIf t _ _ _ ihA (setGlobals_mkBool t true) ihB
 
 /-- Every generated child projection of a global-initialization-safe expression is global-initialization-safe. -/
-theorem setGlobals_children (trace : Tra) (value : FlatLang.Exp) (start : Nat) (patterns : List FlatLang.Pat)
+theorem setGlobals_children (trace : Tra) (value : FlatLang.Exp) (patterns : List FlatLang.Pat)
     (safe : setGlobals value = emptyGlobalBag) :
-    ∀ pattern expression, (pattern, expression) ∈ children trace value start patterns →
-      setGlobals expression = emptyGlobalBag := by
-  induction patterns generalizing start with
-  | nil => simp [children]
-  | cons first rest ih =>
-    intro pattern expression member
-    simp only [children, List.mem_cons, Prod.mk.injEq] at member
-    rcases member with ⟨_, rfl⟩ | member
-    · simpa [setGlobals, elistGlobals, opGlobalBag, unionEmptyLeft, unionEmptyRight] using safe
-    · exact ih (start + 1) pattern expression member
+    ∀ pattern expression, (pattern, expression) ∈
+      patterns.mapIdx (fun i p => (p, .app trace (.el i) [value])) → setGlobals expression = emptyGlobalBag := by
+  intro pattern expression member
+  obtain ⟨i, _, eq⟩ := List.mem_mapIdx.mp member
+  obtain ⟨_, rfl⟩ := Prod.mk.inj eq
+  simpa [setGlobals, elistGlobals, opGlobalBag, unionEmptyLeft, unionEmptyRight] using safe
 
 /-- Naive matching generates a global-initialization-safe guard when each worklist value is
 global-initialization-safe. -/
@@ -366,7 +358,7 @@ theorem setGlobals_naivePatternMatch_aux (trace : Tra) (todo : List (FlatLang.Pa
     apply ih
     intro pattern expression member
     rcases List.mem_append.mp member with member | member
-    · exact setGlobals_children trace value 0 patterns valueSafe pattern expression member
+    · exact setGlobals_children trace value patterns valueSafe pattern expression member
     · exact safe pattern expression (by simp [member])
   | case6 value rest patterns tag typ ih =>
     have valueSafe := safe (.pcon (some (tag, typ)) patterns) value (by simp)
@@ -376,7 +368,7 @@ theorem setGlobals_naivePatternMatch_aux (trace : Tra) (todo : List (FlatLang.Pa
     · apply ih
       intro pattern expression member
       rcases List.mem_append.mp member with member | member
-      · exact setGlobals_children trace value 0 patterns valueSafe pattern expression member
+      · exact setGlobals_children trace value patterns valueSafe pattern expression member
       · exact safe pattern expression (by simp [member])
     · exact setGlobals_mkBool trace false
   | case7 value rest pattern name ih =>

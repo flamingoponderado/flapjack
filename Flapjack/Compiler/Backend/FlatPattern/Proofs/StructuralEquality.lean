@@ -124,7 +124,7 @@ theorem doEq_related (first second first' second' : FlatSem.Value)
   · have targetDifferent : equalityShape first' ≠ equalityShape second' := by omega
     rw [doEq_differentShape first second same, doEq_differentShape first' second' targetDifferent]
 termination_by sizeOf first
-decreasing_by all_goals simp_wf; all_goals subst_vars; all_goals assumption
+decreasing_by all_goals subst_vars; all_goals assumption
 
 /-- General equality preserves successful primitive results for related values. -/
 theorem doApp_equality_related {C F : Type} (cfg : Config) (source target sourceFinal : FlatSem.State C F)
