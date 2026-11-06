@@ -164,111 +164,16 @@ theorem doApp_byteArrayAlloc_complete {C F : Type} (cfg : Config) (source target
         | conv _ _ | loc _ _ | vectorv _ | closure _ _ _ | recclosure _ _ _ =>
           simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
 
-/-- Source operators whose primitive relation has been established here. -/
-inductive CoveredSourcePrimitive : Op → Prop where
-  | arith (action : Arith) (typ : PrimType) : CoveredSourcePrimitive (.arith action typ)
-  | fromTo (source target : PrimType) : CoveredSourcePrimitive (.fromTo source target)
-  | shift (width : WordSize) (shift : Shift) (amount : Nat) : CoveredSourcePrimitive (.shift width shift amount)
-  | test (test : Test) (typ : PrimType) : CoveredSourcePrimitive (.test test typ)
-  | equality : CoveredSourcePrimitive .equality
-  | opref : CoveredSourcePrimitive .opref
-  | opassign : CoveredSourcePrimitive .opassign
-  | opderef : CoveredSourcePrimitive .opderef
-  | aallocEmpty : CoveredSourcePrimitive .aallocEmpty
-  | envId : CoveredSourcePrimitive .envId
-  | aallocFixed : CoveredSourcePrimitive .aallocFixed
-  | aalloc : CoveredSourcePrimitive .aalloc
-  | aw8alloc : CoveredSourcePrimitive .aw8alloc
-  | alength : CoveredSourcePrimitive .alength
-  | aw8length : CoveredSourcePrimitive .aw8length
-  | aupdate (unsafeOp : Bool) : CoveredSourcePrimitive (if unsafeOp then .aupdateUnsafe else .aupdate)
-  | asub (unsafeOp : Bool) : CoveredSourcePrimitive (if unsafeOp then .asubUnsafe else .asub)
-  | aw8sub (unsafeOp : Bool) : CoveredSourcePrimitive (if unsafeOp then .aw8subUnsafe else .aw8sub)
-  | aw8update (unsafeOp : Bool) : CoveredSourcePrimitive (if unsafeOp then .aw8updateUnsafe else .aw8update)
-  | vfromList : CoveredSourcePrimitive .vfromList
-  | vlength : CoveredSourcePrimitive .vlength
-  | listAppend : CoveredSourcePrimitive .listAppend
-  | strlen : CoveredSourcePrimitive .strlen
-  | explode : CoveredSourcePrimitive .explode
-  | implode : CoveredSourcePrimitive .implode
-  | strsub : CoveredSourcePrimitive .strsub
-  | strcat : CoveredSourcePrimitive .strcat
-  | configGC : CoveredSourcePrimitive .configGC
-  | copyStrStr : CoveredSourcePrimitive .copyStrStr
-  | copyAw8Str : CoveredSourcePrimitive .copyAw8Str
-  | copyStrAw8 : CoveredSourcePrimitive .copyStrAw8
-  | copyAw8Aw8 : CoveredSourcePrimitive .copyAw8Aw8
-  | xorAw8StrUnsafe : CoveredSourcePrimitive .xorAw8StrUnsafe
-  | vsub (unsafeOp : Bool) : CoveredSourcePrimitive (if unsafeOp then .vsubUnsafe else .vsub)
-  | ffi (name : Flapjack.Basis.Pure.MlString.MlString) : CoveredSourcePrimitive (.ffi name)
-  | allocThunk (mode : ThunkMode) : CoveredSourcePrimitive (.thunkOp (.allocThunk mode))
-  | updateThunk (mode : ThunkMode) : CoveredSourcePrimitive (.thunkOp (.updateThunk mode))
-
-/-- All source operations other than calls, dynamic evaluation, and forcing
-are covered by the proof-side primitive simulation. Three operations are
-covered because the current evaluator always rejects them; their fidelity to
-the HOL evaluator remains part of the outstanding correspondence review. -/
-theorem covered_simpleSourcePrimitive (op : Op) (notCall : op ≠ .opapp)
-    (notEval : op ≠ .eval) (notForce : op ≠ .thunkOp .forceThunk) : CoveredSourcePrimitive op := by
-  cases op <;> try contradiction
-  all_goals first
-    | exact .arith _ _
-    | exact .fromTo _ _
-    | exact .shift _ _ _
-    | exact .equality
-    | exact .test _ _
-    | exact .opassign
-    | exact .opref
-    | exact .opderef
-    | exact .aw8alloc
-    | exact .aw8sub false
-    | exact .aw8sub true
-    | exact .aw8length
-    | exact .aw8update false
-    | exact .aw8update true
-    | exact .copyStrStr
-    | exact .copyStrAw8
-    | exact .copyAw8Str
-    | exact .copyAw8Aw8
-    | exact .xorAw8StrUnsafe
-    | exact .implode
-    | exact .explode
-    | exact .strsub
-    | exact .strlen
-    | exact .strcat
-    | exact .vfromList
-    | exact .vsub false
-    | exact .vsub true
-    | exact .vlength
-    | exact .aalloc
-    | exact .aallocEmpty
-    | exact .aallocFixed
-    | exact .asub false
-    | exact .asub true
-    | exact .alength
-    | exact .aupdate false
-    | exact .aupdate true
-    | exact .listAppend
-    | exact .configGC
-    | exact .ffi _
-    | exact .envId
-    | (rename_i thunk; cases thunk with
-      | allocThunk mode => exact .allocThunk mode
-      | updateThunk mode => exact .updateThunk mode
-      | forceThunk => exact (notForce rfl).elim)
-
-
-/-- Flapjack dispatch infrastructure for the source cases of `do_app_thm`;
-HOL instead derives that theorem from `simple_do_app_thm`. -/
-theorem doApp_coveredSource_related {C F : Type} (cfg : Config) (op : Op)
-    (covered : CoveredSourcePrimitive op)
+/-- Flapjack intermediate for source operators in `do_app_thm`; HOL derives
+the full theorem from `simple_do_app_thm`. -/
+theorem doApp_source_related {C F : Type} (cfg : Config) (op : Op)
     (source target sourceFinal : FlatSem.State C F) (values values' : List FlatSem.Value)
     (result : Result FlatSem.Value FlatSem.Value) (states : StateRel cfg source target)
     (related : List.Forall₂ ValueRel values values')
     (run : FlatSem.doApp source (.src op) values = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.doApp target (.src op) values' = some (targetFinal, result') ∧
       StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
-  cases covered with
+  cases op with
   | arith action typ => exact doApp_arith_related cfg source target sourceFinal action typ values values' result states related run
   | fromTo sourceTyp targetTyp => exact doApp_fromTo_related cfg source target sourceFinal sourceTyp targetTyp values values' result states related run
   | shift width shift amount => exact doApp_shift_related cfg source target sourceFinal width shift amount values values' result states related run
@@ -284,10 +189,14 @@ theorem doApp_coveredSource_related {C F : Type} (cfg : Config) (op : Op)
   | aw8alloc => exact doApp_byteArrayAlloc_complete cfg source target sourceFinal values values' result states related run
   | alength => exact doApp_arrayLength_complete cfg source target sourceFinal values values' result states related run
   | aw8length => exact doApp_byteArrayLength_complete cfg source target sourceFinal values values' result states related run
-  | aupdate unsafeOp => exact doApp_arrayUpdate_complete cfg source target sourceFinal unsafeOp values values' result states related run
-  | asub unsafeOp => exact doApp_arrayRead_complete cfg source target sourceFinal unsafeOp values values' result states related run
-  | aw8sub unsafeOp => exact doApp_byteArrayRead_complete cfg source target sourceFinal unsafeOp values values' result states related run
-  | aw8update unsafeOp => exact doApp_byteArrayUpdate_complete cfg source target sourceFinal unsafeOp values values' result states related run
+  | aupdate => exact doApp_arrayUpdate_complete cfg source target sourceFinal false values values' result states related run
+  | aupdateUnsafe => exact doApp_arrayUpdate_complete cfg source target sourceFinal true values values' result states related run
+  | asub => exact doApp_arrayRead_complete cfg source target sourceFinal false values values' result states related run
+  | asubUnsafe => exact doApp_arrayRead_complete cfg source target sourceFinal true values values' result states related run
+  | aw8sub => exact doApp_byteArrayRead_complete cfg source target sourceFinal false values values' result states related run
+  | aw8subUnsafe => exact doApp_byteArrayRead_complete cfg source target sourceFinal true values values' result states related run
+  | aw8update => exact doApp_byteArrayUpdate_complete cfg source target sourceFinal false values values' result states related run
+  | aw8updateUnsafe => exact doApp_byteArrayUpdate_complete cfg source target sourceFinal true values values' result states related run
   | vfromList => exact doApp_vectorFromList_related cfg source target sourceFinal values values' result states related run
   | vlength => exact doApp_vectorLength_related cfg source target sourceFinal values values' result states related run
   | listAppend => exact doApp_listAppend_related cfg source target sourceFinal values values' result states related run
@@ -302,31 +211,15 @@ theorem doApp_coveredSource_related {C F : Type} (cfg : Config) (op : Op)
   | copyStrAw8 => exact doApp_copyStrAw8_related cfg source target sourceFinal values values' result states related run
   | copyAw8Aw8 => exact doApp_copyAw8Aw8_related cfg source target sourceFinal values values' result states related run
   | xorAw8StrUnsafe => exact doApp_xorAw8Str_related cfg source target sourceFinal values values' result states related run
-  | vsub unsafeOp => exact doApp_vectorRead_related cfg source target sourceFinal unsafeOp values values' result states related run
+  | vsub => exact doApp_vectorRead_related cfg source target sourceFinal false values values' result states related run
+  | vsubUnsafe => exact doApp_vectorRead_related cfg source target sourceFinal true values values' result states related run
   | ffi name => exact doApp_ffi_related cfg source target sourceFinal name values values' result states related run
-  | allocThunk mode => exact doApp_thunkAlloc_related cfg source target sourceFinal mode values values' result states related run
-  | updateThunk mode => exact doApp_thunkUpdate_related cfg source target sourceFinal mode values values' result states related run
-
-/-- Flapjack intermediate for source operators in `do_app_thm`; HOL derives
-the full theorem from `simple_do_app_thm`. -/
-theorem doApp_source_related {C F : Type} (cfg : Config) (op : Op)
-    (source target sourceFinal : FlatSem.State C F) (values values' : List FlatSem.Value)
-    (result : Result FlatSem.Value FlatSem.Value) (states : StateRel cfg source target)
-    (related : List.Forall₂ ValueRel values values')
-    (run : FlatSem.doApp source (.src op) values = some (sourceFinal, result)) :
-    ∃ targetFinal result', FlatSem.doApp target (.src op) values' = some (targetFinal, result') ∧
-      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
-  by_cases call : op = .opapp
-  · subst op
-    simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy] at run
-  by_cases eval : op = .eval
-  · subst op
-    simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy] at run
-  by_cases force : op = .thunkOp .forceThunk
-  · subst op
-    simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at run
-  exact doApp_coveredSource_related cfg op (covered_simpleSourcePrimitive op call eval force)
-    source target sourceFinal values values' result states related run
+  | opapp | eval => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy] at run
+  | thunkOp thunk =>
+    cases thunk with
+    | allocThunk mode => exact doApp_thunkAlloc_related cfg source target sourceFinal mode values values' result states related run
+    | updateThunk mode => exact doApp_thunkUpdate_related cfg source target sourceFinal mode values values' result states related run
+    | forceThunk => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at run
 
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "do_app_thm"]
 theorem doApp_simulation {C F : Type} (source : FlatSem.State C F) (values : List FlatSem.Value)
