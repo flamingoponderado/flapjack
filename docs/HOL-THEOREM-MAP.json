@@ -1,6 +1,22 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "FILTER_EQ_MONO",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
+  "lean_name": "filterEqMono",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed filter_eq_mono capture. Specialization of LIST_REL_FILTER_MONO at R = (=); the single element type, both narrowing premises and entry-equality agreement match HOL."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "FILTER_EQ_MONO_TRANS",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
+  "lean_name": "filterEqMonoTrans",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed filter_eq_mono_trans capture. The HOL rewrite removes the right-narrowing premise; the trivially true P3 agreement premise remains in the Lean statement."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
   "hol_name": "COND_false",
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
   "lean_name": "condFalse",

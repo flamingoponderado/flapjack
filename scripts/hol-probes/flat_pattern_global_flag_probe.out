@@ -19,6 +19,8 @@ list_rel_alookup=∀(xs :(α # β) list) (ys :(α # β) list). LIST_REL (R :α #
 list_rel_filter_mono=∀(xs :α list) (ys :β list). LIST_REL (R :α -> β -> bool) (FILTER (P1 :α -> bool) xs) (FILTER (P2 :β -> bool) ys) ∧ (∀(x :α). MEM x xs ∧ (P3 :α -> bool) x ⇒ P1 x) ∧ (∀(y :β). MEM y ys ∧ (P4 :β -> bool) y ⇒ P2 y) ∧ (∀(x :α) (y :β). MEM x xs ∧ MEM y ys ∧ R x y ⇒ (P3 x ⇔ P4 y)) ⇒ LIST_REL R (FILTER P3 xs) (FILTER P4 ys)
 cond_false=¬(P :bool) ⇒ (if P then (x :α) else (y :α)) = y
 cond_true=(P :bool) ⇒ (if P then (x :α) else (y :α)) = x
+filter_eq_mono=∀(xs :α list) (ys :α list). FILTER (P1 :α -> bool) xs = FILTER (P2 :α -> bool) ys ∧ (∀(x :α). MEM x xs ∧ (P3 :α -> bool) x ⇒ P1 x) ∧ (∀(y :α). MEM y ys ∧ (P4 :α -> bool) y ⇒ P2 y) ∧ (∀(x :α) (y :α). MEM x xs ∧ MEM y ys ∧ x = y ⇒ (P3 x ⇔ P4 y)) ⇒ FILTER P3 xs = FILTER P4 ys
+filter_eq_mono_trans=∀(xs :α list) (ys :α list). FILTER (P1 :α -> bool) xs = ys ∧ (∀(x :α). MEM x xs ∧ (P3 :α -> bool) x ⇒ P1 x) ∧ (∀(x :α) (y :α). MEM x xs ∧ MEM y ys ∧ x = y ⇒ (P3 x ⇔ P3 y)) ⇒ FILTER P3 xs = FILTER P3 ys
 alookup_def=(∀(q :β). ALOOKUP ([] :(β # α) list) q = (NONE :α option)) ∧ ∀(y :α) (x :β) (t :(β # α) list) (q :β). ALOOKUP ((x,y)::t) q = if x = q then SOME y else ALOOKUP t q
 alookup_reversed_eq=(∀(q :α). ALOOKUP ([] :(α # β) list) q = (NONE :β option)) ∧ ∀(x :α) (y :β) (t :(α # β) list) (q :α). ALOOKUP ((x,y)::t) q = if q = x then SOME y else ALOOKUP t q
 optrel_def=∀(R :α -> β -> bool) (x :α option) (y :β option). OPTREL R x y ⇔ x = (NONE :α option) ∧ y = (NONE :β option) ∨ ∃(x0 :α) (y0 :β). x = SOME x0 ∧ y = SOME y0 ∧ R x0 y0

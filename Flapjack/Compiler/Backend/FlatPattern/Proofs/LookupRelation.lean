@@ -142,6 +142,51 @@ theorem condTrue {A : Type} (condition : Bool) (yes no : A) (isTrue : condition 
     (if condition then yes else no) = yes := by
   simp [isTrue]
 
+/-- Flapjack helper: list relation under equality is list equality. This is
+used to state HOL's equality specializations without duplicating their proof. -/
+private theorem forall₂_eq_iff {A : Type} (xs ys : List A) :
+    List.Forall₂ Eq xs ys ↔ xs = ys := by
+  constructor
+  · intro related
+    induction related with
+    | nil => rfl
+    | cons same tail ih => cases same; simp [ih]
+  · intro same
+    subst ys
+    induction xs with
+    | nil => exact .nil
+    | cons x xs ih => exact .cons rfl ih
+
+/-- Equal filtered lists remain equal after compatible narrowing. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "FILTER_EQ_MONO"]
+theorem filterEqMono {A : Type} (p1 p2 p3 p4 : A → Bool) (xs ys : List A)
+    (filtered : xs.filter p1 = ys.filter p2)
+    (leftNarrow : ∀ x ∈ xs, p3 x = true → p1 x = true)
+    (rightNarrow : ∀ y ∈ ys, p4 y = true → p2 y = true)
+    (agree : ∀ x ∈ xs, ∀ y ∈ ys, x = y → p3 x = p4 y) :
+    xs.filter p3 = ys.filter p4 := by
+  apply (forall₂_eq_iff _ _).mp
+  exact listRelFilterMono Eq p1 p3 p2 p4 xs ys
+    ((forall₂_eq_iff _ _).mpr filtered) leftNarrow rightNarrow agree
+
+/-- Filtering a list and then narrowing agrees with narrowing its filtered
+result. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "FILTER_EQ_MONO_TRANS"]
+theorem filterEqMonoTrans {A : Type} (p1 p3 : A → Bool) (xs ys : List A)
+    (filtered : xs.filter p1 = ys)
+    (leftNarrow : ∀ x ∈ xs, p3 x = true → p1 x = true)
+    (agree : ∀ x ∈ xs, ∀ y ∈ ys, x = y → p3 x = p3 y) :
+    xs.filter p3 = ys.filter p3 := by
+  apply filterEqMono p1 (fun _ => true) p3 p3 xs ys
+  · have all : ys.filter (fun _ => true) = ys := by
+      induction ys with
+      | nil => rfl
+      | cons y ys ih => simp [List.filter]
+    simpa only [all] using filtered
+  · exact leftNarrow
+  · simp
+  · exact agree
+
 /-- Related lookups for the keys selected by a predicate. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "ALOOKUP_rel_def"]
 def aLookupRel {K A B : Type} (predicate : K → Prop) (relation : A → B → Prop)
