@@ -38,6 +38,8 @@ val _ = show_thm "generated_name_injective=" flat_patternProofTheory.enc_num_to_
 val _ = show_thm "list_rel_alookup_optrel=" flat_patternProofTheory.LIST_REL_ALOOKUP_OPTREL;
 val _ = show_thm "list_rel_alookup=" flat_patternProofTheory.LIST_REL_ALOOKUP;
 val _ = show_thm "list_rel_filter_mono=" flat_patternProofTheory.LIST_REL_FILTER_MONO;
+val _ = show_thm "cond_false=" flat_patternProofTheory.COND_false;
+val _ = show_thm "cond_true=" flat_patternProofTheory.COND_true;
 val _ = show_thm "alookup_def=" alistTheory.ALOOKUP_def;
 val alookup_reversed_eq = prove (
   ``(!q:'a. ALOOKUP ([]:('a # 'b) list) q = NONE) /\

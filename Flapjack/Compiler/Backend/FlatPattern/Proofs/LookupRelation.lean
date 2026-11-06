@@ -130,6 +130,18 @@ theorem listRelFilterMono {A B : Type} (relation : A → B → Prop)
   simpa [filter_filter_of_subsumed p1 p3 xs leftNarrow,
     filter_filter_of_subsumed p2 p4 ys rightNarrow] using narrowed
 
+/-- A false condition selects the second branch. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "COND_false"]
+theorem condFalse {A : Type} (condition : Bool) (yes no : A) (isFalse : condition = false) :
+    (if condition then yes else no) = no := by
+  simp [isFalse]
+
+/-- A true condition selects the first branch. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "COND_true"]
+theorem condTrue {A : Type} (condition : Bool) (yes no : A) (isTrue : condition = true) :
+    (if condition then yes else no) = yes := by
+  simp [isTrue]
+
 /-- Related lookups for the keys selected by a predicate. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "ALOOKUP_rel_def"]
 def aLookupRel {K A B : Type} (predicate : K → Prop) (relation : A → B → Prop)

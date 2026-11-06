@@ -1,6 +1,22 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "COND_false",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
+  "lean_name": "condFalse",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed cond_false capture, including the shared polymorphic branch type and Boolean condition. HOL \u00acP is condition = false; the conclusion selects the same branch."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "COND_true",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
+  "lean_name": "condTrue",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed cond_true capture, including the shared polymorphic branch type and Boolean condition. HOL P is condition = true; the conclusion selects the same branch."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
   "hol_name": "LIST_REL_FILTER_MONO",
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
   "lean_name": "listRelFilterMono",
