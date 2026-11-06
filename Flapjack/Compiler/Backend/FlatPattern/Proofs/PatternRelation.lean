@@ -8,12 +8,30 @@ open Flapjack.SemanticPrimitivesHOL (MatchResult StoreValue storeLookup)
 open Flapjack.SemanticPrimitivesProps
 
 /-- Related pattern results preserve failure and type-error cases and relate
-successful bindings at the current name bound. This proof-side relation uses
-the unreviewed FlatPattern value relation and is not yet a tagged HOL port. -/
+successful bindings at the current name bound. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "match_rel_def"]
 def MatchRel (n : Nat) : MatchResult (List (VarN × Value)) → MatchResult (List (VarN × Value)) → Prop
   | .match left, .match right => aLookupRel (fun name => decNameToNum name < n) ValueRel left right
   | .noMatch, .noMatch | .typeError, .typeError => True
   | _, _ => False
+
+/-- Failure and type-error cases can only relate to themselves. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "match_rel_thms"]
+theorem matchRel_thms (n : Nat) (result : MatchResult (List (VarN × Value))) :
+    (MatchRel n .typeError result ↔ result = .typeError) ∧
+    (MatchRel n result .typeError ↔ result = .typeError) ∧
+    (MatchRel n .noMatch result ↔ result = .noMatch) ∧
+    (MatchRel n result .noMatch ↔ result = .noMatch) := by
+  cases result <;> simp [MatchRel]
+
+/-- Related results are equal failures or successful related bindings. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "match_rel_IMP"]
+theorem matchRel_imp (n : Nat) (left right : MatchResult (List (VarN × Value)))
+    (related : MatchRel n left right) :
+    (left = .noMatch ∧ left = right) ∨ (left = .typeError ∧ left = right) ∨
+      ∃ env1 env2, left = .match env1 ∧ right = .match env2 ∧
+        aLookupRel (fun name => decNameToNum name < n) ValueRel env1 env2 := by
+  cases left <;> cases right <;> simp_all [MatchRel]
 
 /-- A related store entry can be found at the same index on the target side. -/
 theorem storeValueRel_lookup {A B : Type} {R : A → B → Prop} {left : List (StoreValue A)}

@@ -125080,5 +125080,29 @@
   "lean_name": "stateRel_imp_clock",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared the local HOL source theorem and the typed state_relation_clock replay of its proof: the source and target share the same independent compiler and FFI types, and the original state relation implies the clock equality in the same direction."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "match_rel_def",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/PatternRelation.lean",
+  "lean_name": "MatchRel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared match_rel_def and the typed match_relation capture: the successful match payload is an mlstring/value association list and uses the original bounded lookup relation. Equal failures and type errors hold, and all other constructor pairs are false; the local nv_rel overload is expanded."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/PatternRelation.lean",
+  "statement_status": "reviewed_exact",
+  "hol_name": "match_rel_thms",
+  "lean_name": "matchRel_thms",
+  "reviewer": "Compared match_rel_thms with the typed match_relation_simp capture: all four type-error and no-match equivalences retain the original order, result carrier and equality direction."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/PatternRelation.lean",
+  "statement_status": "reviewed_exact",
+  "hol_name": "match_rel_IMP",
+  "lean_name": "matchRel_imp",
+  "reviewer": "Compared match_rel_IMP with the typed match_relation_cases capture: the original premise, ordered failure alternatives with equality of results, and existential successful bindings with the bounded lookup relation are retained."
 }
 ]

@@ -84,6 +84,9 @@ val state_relation_clock = prove (
   simp [flat_patternProofTheory.state_rel_def]);
 val _ = show_thm "state_relation_clock=" state_relation_clock;
 val _ = show_thm "initial_states=" flat_patternProofTheory.state_rel_initial_state;
+val _ = show_thm "match_relation=" flat_patternProofTheory.match_rel_def;
+val _ = show_thm "match_relation_simp=" flat_patternProofTheory.match_rel_thms;
+val _ = show_thm "match_relation_cases=" flat_patternProofTheory.match_rel_IMP;
 val _ = show_thm "lookup_map_same=" flat_patternProofTheory.ALOOKUP_rel_MAP_same;
 val _ = show_thm "do_opapp=" flat_patternProofTheory.do_opapp_thm;
 val _ = show_thm "pmatch_simulation=" flat_patternProofTheory.pmatch_thm;
