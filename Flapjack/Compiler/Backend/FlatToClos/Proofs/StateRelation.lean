@@ -142,15 +142,6 @@ theorem lookup_array {C F : Type} {source : FlatSem.State C F} {target : ClosSem
   change source.refs[index]? = some (.varray values) at found
   simpa [found] using store
 
-/-- A related thunk retains its mode and has a related payload. -/
-theorem lookup_thunk {C F : Type} {source : FlatSem.State C F} {target : ClosSem.State C F}
-    {index mode value} (related : StateRel source target)
-    (found : storeLookup index source.refs = some (.thunk mode value)) :
-    ∃ value', target.refs.lookup index = some (.thunk mode value') ∧ ValueRel value value' := by
-  have store := related.2.2.2.1 index
-  change source.refs[index]? = some (.thunk mode value) at found
-  simpa [found] using store
-
 /-- Decrementing both clocks preserves the state relation. -/
 theorem stateRel_decClock {C F : Type} {source : FlatSem.State C F} {target : ClosSem.State C F}
     (related : StateRel source target) :

@@ -100,14 +100,4 @@ theorem pmatchBindings {C F : Type} (state : FlatSem.State C F) :
         simp only [FlatLang.patsBindings]
         rw [second, first, List.append_assoc]
 
-/-- Successful matching produces one binding for each pattern name, in
-addition to the input bindings. -/
-theorem pmatchLength {C F : Type} (state : FlatSem.State C F) (pattern : FlatLang.Pat)
-    (value : FlatSem.Value) (bindings result : List (VarN × FlatSem.Value))
-    (run : FlatSem.pmatch state pattern value bindings = .match result) :
-    result.length = (FlatLang.patBindings pattern).length + bindings.length := by
-  have names := (pmatchBindings state).1 pattern value bindings result run
-  have lengths := congrArg List.length names
-  simpa using lengths
-
 end Flapjack.Compiler.Backend.FlatProps
