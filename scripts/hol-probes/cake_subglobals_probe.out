@@ -69,3 +69,4 @@ append=∀(n :num). n < (2 :num) ∧ IS_SOME [SOME (1 :num); (NONE :num option)]
 shorter=F
 overwrite=∀(n :num). n < (2 :num) ∧ IS_SOME [SOME (1 :num); (NONE :num option)]❲n❳ ⇒ [SOME (1 :num); (NONE :num option)]❲n❳ = [SOME (2 :num); (NONE :num option)]❲n❳
 remove=∀(n :num). n < (1 :num) ∧ IS_SOME [SOME (1 :num)]❲n❳ ⇒ [SOME (1 :num)]❲n❳ = [(NONE :num option)]❲n❳
+maybe_all_list_SOME_typed=∀(xs :α option list) (ys :α list). maybe_all_list xs = SOME ys ⇒ xs = MAP (SOME :α -> α option) ys

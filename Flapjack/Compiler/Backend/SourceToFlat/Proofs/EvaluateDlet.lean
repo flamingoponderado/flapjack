@@ -868,7 +868,7 @@ theorem DletOutcomeGrowing.advance {C F : Type} [Nonempty C]
         obtain ⟨growth, invariant, generation, forward⟩ := rest
         have advanced := invariantIdxRangeShrink interp transform gen nextGenv start
           (compileDecs trace n start compMap gen [.dlet location pattern expr]).2.1 finish other
-          sourceLast flatLast ⟨invariant, OracleInvariant.compileDecs_idxPrev_core trace n start compMap gen [.dlet location pattern expr], bounded⟩
+          sourceLast flatLast ⟨invariant, OracleInvariant.compileDecs_idxPrev trace n start compMap gen [.dlet location pattern expr] _ _ _ _ _ rfl, bounded⟩
         exact ⟨growth, by simpa [compileDlet_generationStore] using advanced,
           by simpa [compileDlet_generationStore] using generation, forward⟩
 

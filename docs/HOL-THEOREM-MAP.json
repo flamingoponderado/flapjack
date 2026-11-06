@@ -11600,6 +11600,14 @@
     "reviewer": "Compared the fully typed compile_funs_dom2 capture: the same arbitrary mlstring trace, source compiler environment, and list of source function triples yield equality of the compiled and source name lists. Both use the reviewed mlstring and environment carriers."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/WordLists.lean",
+    "lean_name": "maybeAllList_some",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "maybe_all_list_SOME",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared maybe_all_list_SOME_typed: for all option lists and result lists over the same arbitrary type, successful maybeAllList yields the input as the result mapped by Some. The quantified binders, success premise and equality orientation match HOL."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvalOracleSimulation.lean",
     "lean_name": "doEval_correct",
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",

@@ -236,8 +236,8 @@ theorem incCompileProg_declaredEnvMap (envId : Nat × Nat) (config : Config) (de
     ⟨0, config.envs.next, .ln⟩ decs = result
   rcases result with ⟨n, indices, env, gen, compiledDecs⟩
   have generation : gen.generation = config.envs.next := by
-    simpa [h] using OracleInvariant.compileDecs_generation_core [] 1 config.next (lookupEnvId envId config.envs)
-      ⟨0, config.envs.next, .ln⟩ decs
+    exact OracleInvariant.compileDecs_generation [] 1 config.next (lookupEnvId envId config.envs)
+      ⟨0, config.envs.next, .ln⟩ decs n indices env gen compiledDecs h
   refine ⟨Flapjack.sptInsert gen.next (extendEnv env (lookupEnvId envId config.envs)) gen.envs, ?_, ?_⟩
   · simp [incCompileProg, h, generation, Flapjack.sptLookup_sptInsert_same]
   · simpa [h] using Flapjack.sptLookup_sptInsert_same gen.next

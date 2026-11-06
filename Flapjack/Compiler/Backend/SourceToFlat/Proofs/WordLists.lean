@@ -11,27 +11,34 @@ theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
     GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env := GlobalEnv.holFmapAsFiniteSupportWitness env
 end WordListsPort
 
+/-- Successful collection of options preserves the complete list shape. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "maybe_all_list_SOME"]
+theorem maybeAllList_some {α : Type} : ∀ (xs : List (Option α)) (ys : List α),
+    maybeAllList xs = some ys → xs = ys.map some := by
+  intro xs
+  induction xs with
+  | nil => intro ys h; simp [maybeAllList] at h; subst ys; rfl
+  | cons head tail ih =>
+    intro ys h
+    cases head with
+    | none => simp [maybeAllList] at h
+    | some x =>
+      cases result : maybeAllList tail with
+      | none => simp [maybeAllList, result] at h
+      | some rest =>
+        simp [maybeAllList, result] at h
+        subst ys
+        simp [ih rest result]
+
 private theorem maybeAllList_shape {α β : Type} (decode : α → Option β) (encode : β → α)
     (recover : ∀ x y, decode x = some y → x = encode y) :
     ∀ xs ys, maybeAllList (xs.map decode) = some ys → xs = ys.map encode := by
-  intro xs
-  induction xs with
-  | nil =>
-    intro ys h
-    simp [maybeAllList] at h
-    subst ys
-    rfl
-  | cons head tail ih =>
-    intro ys h
-    cases headResult : decode head with
-    | none => simp [maybeAllList, headResult] at h
-    | some value =>
-      cases tailResult : maybeAllList (tail.map decode) with
-      | none => simp [maybeAllList, headResult, tailResult] at h
-      | some values =>
-        simp [maybeAllList, headResult, tailResult] at h
-        subst ys
-        simp [recover head value headResult, ih values tailResult]
+  intro xs ys success
+  have equal := maybeAllList_some (xs.map decode) ys success
+  have rel : List.Forall₂ (fun x y => decode x = some y) xs ys := by
+    simpa only [← List.forall₂_eq_eq_eq, List.forall₂_map_left_iff, List.forall₂_map_right_iff] using equal
+  have recovered := rel.imp recover
+  simpa only [← List.forall₂_map_right_iff, List.forall₂_eq_eq_eq] using recovered
 
 private theorem related_literals (genv : GlobalEnv) (lits : List Lit) (flat : List FlatSem.Value)
     (related : List.Forall₂ (ValueRel genv) (lits.map Value.litv) flat) :

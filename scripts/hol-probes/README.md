@@ -9604,4 +9604,5 @@ recursive-environment theorem used by source-to-flat and flat-to-closure proofs.
 `compile_exps_reverse`, and `fst_alloc_defs` equations used by compiler proof helpers.
 
 `cake_subglobals_probe.out` includes the fully typed `source_to_flat_do_eval`
-statement, including its independently polymorphic unused existential.
+statement, including its independently polymorphic unused existential, and the
+polymorphic `maybe_all_list_SOME` theorem used in the word-list proof.

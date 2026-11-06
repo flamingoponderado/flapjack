@@ -119,3 +119,6 @@ val _ = capture "append" ``source_to_flatProof$subglobals [SOME (1:num); NONE] [
 val _ = capture "shorter" ``source_to_flatProof$subglobals [NONE; NONE] [NONE] : bool``;
 val _ = capture "overwrite" ``source_to_flatProof$subglobals [SOME (1:num); NONE] [SOME 2; NONE]``;
 val _ = capture "remove" ``source_to_flatProof$subglobals [SOME (1:num)] [NONE]``;
+
+val _ = if null (hyp source_to_flatProofTheory.maybe_all_list_SOME) then () else raise Fail "hypotheses: maybe_all_list_SOME";
+val _ = (print "maybe_all_list_SOME_typed="; print_term (concl source_to_flatProofTheory.maybe_all_list_SOME); print "\n");
