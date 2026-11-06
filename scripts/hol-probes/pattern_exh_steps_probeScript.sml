@@ -502,3 +502,4 @@ val _ = show_local "comp_case_none_local=" comp_case_none_local_replay;
 val _ = show_local "comp_case_none_export=" pattern_compTheory.pmatchResult_case_NONE;
 val _ = show_local "comp_is_const_row=" pattern_compTheory.is_const_row_lemma;
 val _ = show_local "comp_not_is_const_row=" pattern_compTheory.not_is_const_row;
+val _ = show_local "comp_every_take_until_any=" pattern_compTheory.EVERY_take_until_Any;

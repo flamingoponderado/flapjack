@@ -13,7 +13,7 @@ the row-matching definition, match-result carrier, local row safety and success
 proofs, the exported exhaustive-row theorem, and the weight definitions and
 termination-lemma proof replays, and typed exported pattern-compiler
 row-selection theorems, their case equation, and the polymorphic constant-row
-theorems.
+theorems, plus the retained-row EVERY theorem.
 
 `data_resource_mono_probe.out` captures the six exported data-semantics
 primitive and evaluator monotonicity statements with inferred configuration,

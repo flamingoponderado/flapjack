@@ -354,30 +354,28 @@ theorem matchRows_partition_last (refs : HolFiniteMapExact Nat Term) (value : Te
           simp [List.filter_append, List.filter, matchRows_append, matchRows, selected, head,
             preRowsResult, originalResult, unselectedFails]
 
-/-- Every row before the last retained row lacks an unconditional pattern. -/
-theorem takeUntilAny_prefix_noAny (rows preRows : List (Pat × Nat)) (last : Pat × Nat)
-    (decomposition : takeUntilAny rows = preRows ++ [last]) :
-    ∀ row ∈ preRows, isAny row.1 = false := by
-  induction rows generalizing preRows with
-  | nil =>
-    cases preRows <;> simp [takeUntilAny] at decomposition
+/-- Every retained row except the last lacks an unconditional pattern. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "EVERY_take_until_Any"]
+theorem every_takeUntilAny (rows : List (Pat × Nat)) :
+    ∀ row ∈ (takeUntilAny rows).reverse.tail, isAny row.1 = false := by
+  induction rows with
+  | nil => simp [takeUntilAny]
   | cons row rows ih =>
-    obtain ⟨pattern, index⟩ := row
-    cases preRows with
-    | nil => simp
-    | cons first rest =>
-      by_cases unconditional : isAny pattern = true
-      · simp [takeUntilAny, unconditional] at decomposition
-      · have equality : (pattern, index) :: takeUntilAny rows = first :: (rest ++ [last]) := by
-          simpa [takeUntilAny, unconditional] using decomposition
-        rcases List.cons.inj equality with ⟨rfl, tailEq⟩
-        have restProperty := ih rest tailEq
+    obtain ⟨pattern, payload⟩ := row
+    by_cases h : isAny pattern = true
+    · simp [takeUntilAny, h]
+    · cases hs : (takeUntilAny rows).reverse with
+      | nil => simp [takeUntilAny, h, hs]
+      | cons first rest =>
+        simp only [hs, List.tail_cons] at ih
+        simp only [takeUntilAny, h, Bool.false_eq_true, ↓reduceIte, List.reverse_cons, hs,
+          List.cons_append, List.tail_cons]
         intro candidate member
-        simp only [List.mem_cons] at member
-        rcases member with equal | member
+        simp only [List.mem_append, List.mem_singleton] at member
+        rcases member with member | equal
+        · exact ih candidate member
         · subst candidate
-          exact Bool.eq_false_iff.mpr unconditional
-        · exact restProperty candidate member
+          exact Bool.eq_false_iff.mpr h
 
 /-- Moving nullary constructor rows preserves safe matching for nullary values. -/
 theorem matchRows_moveConstUp_nullary (refs : HolFiniteMapExact Nat Term) (tag : Option Nat)
@@ -399,8 +397,13 @@ theorem matchRows_moveConstUp_nullary (refs : HolFiniteMapExact Nat Term) (tag :
     · have emptyTake : takeUntilAny rows = [] := empty
       simpa [moveConstUp, emptyTake, matchRows, empty, value] using truncEq
     · have decomposition : truncated = preRows ++ [last] := by simpa using decomposition
-      have noAny := takeUntilAny_prefix_noAny rows preRows last (by
-        simpa [truncated] using decomposition)
+      have noAny : ∀ row ∈ preRows, isAny row.1 = false := by
+        have h := every_takeUntilAny rows
+        have takeEq : takeUntilAny rows = preRows ++ [last] := by simpa [truncated] using decomposition
+        rw [takeEq] at h
+        simp only [List.reverse_append, List.reverse_cons, List.reverse_nil, List.nil_append] at h
+        intro row member
+        exact h row (List.mem_reverse.mpr member)
       have failures : ∀ row ∈ preRows, isConstRow row = false → pmatch refs row.1 value = .failure := by
         intro row member nonconstant
         have inTruncated : row ∈ truncated := by rw [decomposition]; simp [member]

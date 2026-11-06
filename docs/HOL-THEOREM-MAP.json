@@ -111792,6 +111792,14 @@
     "reviewer": "Compared all three source negative premises and the non-success conclusion against the typed exported theorem; the row payload is arbitrary. The same-module witness checks the canonical finite-map parameter."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/PatternComp/Proofs/RowSelection.lean",
+    "lean_name": "every_takeUntilAny",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml",
+    "hol_name": "EVERY_take_until_Any",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete source theorem with the typed exported HOL capture: row payloads are natural numbers, and membership quantification expresses EVERY on TL of the reversed retained rows."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/PatternExh/Exhaustive.lean",
     "lean_name": "exhRows",
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
