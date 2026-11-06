@@ -181,6 +181,22 @@ theorem exhMats_append (xs ys : List (List (List Pat))) :
   | nil => simp [exhMats]
   | cons x xs ih => simp [exhMats, ih, Bool.and_assoc]
 
+/-- The worklist traversal agrees with the matrix-list checker. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "exh_all_thm"]
+theorem exhAll_correct (ms : List (List (List Pat))) : exhAll ms = exhMats ms := by
+  induction ms using exhAll.induct with
+  | case1 => simp [exhAll, exhMats]
+  | case2 tail => simp [exhAll, exhMats, exhMatrix]
+  | case3 r rows rest h ih => simpa [exhAll, exhMats, exhMatrix, h] using ih
+  | case4 r rows rest h hc ih =>
+    simp only [exhAll, exhMats, exhMatrix, h, Bool.false_eq_true, ↓reduceIte]
+    rw [hc]
+    simpa [exhMats] using ih
+  | case5 r rows rest h cs hc ih =>
+    simp only [exhAll, exhMats, exhMatrix, h, Bool.false_eq_true, ↓reduceIte]
+    rw [hc]
+    simpa [exhMats_append] using ih
+
 /-- Decide exhaustiveness of a list of pattern rows. -/
 @[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "exh_rows_def"]
 def exhRows {α : Type} (rows : List (Pat × α)) : Bool := exhMatrix (orRows rows)

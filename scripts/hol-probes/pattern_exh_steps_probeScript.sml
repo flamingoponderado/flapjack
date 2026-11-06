@@ -1,5 +1,7 @@
 load "pattern_exhTheory";
+load "preamble";
 open HolKernel Parse boolLib bossLib;
+open preamble;
 val _ = Globals.linewidth := 1000000;
 val _ = Globals.show_types := true;
 val _ = if null (hyp pattern_exhTheory.exh_steps_def) then
@@ -20,6 +22,15 @@ val mats_append_replay = prove (
 val _ = if null (hyp mats_append_replay) then
   (print "exh_mats_append="; print_term (concl mats_append_replay); print "\n")
   else raise Fail "matrix append replay has hypotheses";
+val all_replay = prove (
+  ``!ms. pattern_exh$exh_all ms <=> pattern_exh$exh_mats ms``,
+  ho_match_mp_tac pattern_exhTheory.exh_all_ind >>
+  rw [pattern_exhTheory.exh_all_def, pattern_exhTheory.exh_matrix_def] >>
+  simp [Once pattern_exhTheory.exh_matrix_def] >>
+  every_case_tac >> fs [mats_append_replay]);
+val _ = if null (hyp all_replay) then
+  (print "exh_all_thm="; print_term (concl all_replay); print "\n")
+  else raise Fail "worklist replay has hypotheses";
 val append_replay = prove (
   ``!xs ys. pattern_exh$exh_steps_list (xs ++ ys) =
       pattern_exh$exh_steps_list xs + pattern_exh$exh_steps_list ys``,

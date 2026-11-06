@@ -111281,6 +111281,14 @@
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternExh/Exhaustive.lean",
+    "lean_name": "exhAll_correct",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "exh_all_thm",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the original local theorem and typed HOL proof replay in pattern_exh_steps_probe.out: for every matrix worklist the worklist checker equals the matrix-list checker. Lean Boolean equality represents the HOL Boolean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Exhaustive.lean",
     "lean_name": "exhRows",
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
     "hol_name": "exh_rows_def",
