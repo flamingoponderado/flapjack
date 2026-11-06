@@ -75,3 +75,6 @@ mat_weight_default_mat=∀(rows :pat list list). mat_weight (default_mat rows) �
 mat_len_default_mat=∀(rows :pat list list). mat_len (default_mat rows) ≤ mat_len rows
 mats_weight_spec_mats=∀(cs :ctor list) (rows :pat list list) (ds :ctor list). col_ctors rows = SOME ds ⇒ mats_weight (spec_mats cs rows) < mat_weight rows
 mat_len_default_mat_less=∀(r :pat list) (rows :pat list list). r ≠ ([] :pat list) ⇒ mat_len (default_mat (r::rows)) < mat_len (r::rows)
+comp_is_any_pmatch=∀(p :pat). is_Any p ⇒ (pmatch (refs :num |-> term) p (v :term) :pmatchResult) ≠ PMatchFailure
+comp_take_until_any=∀(rows :(pat # num) list). match (refs :num |-> term) rows (v :term) ≠ (NONE :matchResult option) ⇒ match refs (take_until_Any rows) v = match refs rows v
+comp_match_append=∀(xs :(pat # num) list) (ys :(pat # num) list) (refs :num |-> term) (v :term). match refs (xs ++ ys) v = case match refs xs v of (NONE :matchResult option) => (NONE :matchResult option) | SOME (MatchSuccess e) => if match refs ys v ≠ (NONE :matchResult option) then SOME (MatchSuccess e) else (NONE :matchResult option) | SOME MatchFailure => match refs ys v

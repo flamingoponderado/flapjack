@@ -1,13 +1,43 @@
 import Flapjack.Compiler.Backend.PatternComp.Decision
 import Flapjack.Compiler.Backend.PatternExh.Proofs.Match
 
-/-! Row-selection lemmas for the pattern compiler. The finite-map carrier
-and abstract matcher remain pending HOL correspondence review. -/
+/-! Row-selection lemmas for the pattern compiler. -/
 namespace Flapjack.Compiler.Backend.PatternComp
 open Flapjack PatternCommon PatternSemantics
 
+private def toBroad (refs : HolFiniteMapExact Nat Term) : Nat → Option Term := refs.lookup
+
+private def ofBroad (lookup : Nat → Option Term)
+    (support : ∃ keys : List Nat, ∀ key, lookup key ≠ none → key ∈ keys) :
+    HolFiniteMapExact Nat Term := ⟨lookup, support⟩
+
+/-- The canonical finite-map parameter roundtrips through its lookup view. -/
+theorem holFmapAsFiniteSupportParamWitness_isAny_pmatch_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs := by
+  cases refs
+  exact ⟨rfl, rfl, rfl⟩
+
+theorem holFmapAsFiniteSupportParamWitness_matchRows_takeUntilAny_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_isAny_pmatch_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_matchRows_append_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_isAny_pmatch_refs refs key
+
 /-- A pattern containing an unconditional alternative cannot return a
 non-match, though it may still report a type failure. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "is_Any_pmatch"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem isAny_pmatch (refs : HolFiniteMapExact Nat Term) (value : Term) (pattern : Pat)
     (any : isAny pattern = true) : pmatch refs pattern value ≠ .failure := by
   cases pattern with
@@ -28,13 +58,15 @@ termination_by sizeOf pattern
 
 /-- Matching appended row lists checks the entire suffix for type failures
 even after a successful earlier match. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "match_append"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem matchRows_append (refs : HolFiniteMapExact Nat Term) (value : Term)
     (left right : List (Pat × Nat)) :
     matchRows refs (left ++ right) value =
       match matchRows refs left value with
       | none => none
-      | some (.success index) => if (matchRows refs right value).isSome then some (.success index) else none
-      | some .failure => matchRows refs right value := by
+      | some (.success index) => if matchRows refs right value ≠ none then some (.success index) else none
+      | some _ => matchRows refs right value := by
   induction left with
   | nil => simp [matchRows]
   | cons row left ih =>
@@ -50,6 +82,8 @@ theorem matchRows_append (refs : HolFiniteMapExact Nat Term) (value : Term)
           simp_all [matchRows]
 
 /-- Truncating after an unconditional row preserves any non-error result. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "match_take_until_Any"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem matchRows_takeUntilAny (refs : HolFiniteMapExact Nat Term) (value : Term)
     (rows : List (Pat × Nat)) (safe : matchRows refs rows value ≠ none) :
     matchRows refs (takeUntilAny rows) value = matchRows refs rows value := by

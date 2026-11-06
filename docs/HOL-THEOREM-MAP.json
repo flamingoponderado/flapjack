@@ -111728,6 +111728,39 @@
     "reviewer": "Compared both source premises and the final no-match-failure conclusion with the typed exported HOL theorem; row payloads are natural numbers as required by match. The same-module witness checks the canonical finite-map parameter."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/PatternComp/Proofs/RowSelection.lean",
+    "lean_name": "isAny_pmatch",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml",
+    "hol_name": "is_Any_pmatch",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "refs"
+    ],
+    "reviewer": "Compared the source unconditional-pattern premise and non-failure conclusion with the typed exported HOL theorem. The same-module witness checks the canonical finite-map parameter."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternComp/Proofs/RowSelection.lean",
+    "lean_name": "matchRows_takeUntilAny",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml",
+    "hol_name": "match_take_until_Any",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "refs"
+    ],
+    "reviewer": "Compared the source non-type-failure premise and full row-truncation equality with the typed exported HOL theorem. The same-module witness checks the canonical finite-map parameter."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternComp/Proofs/RowSelection.lean",
+    "lean_name": "matchRows_append",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml",
+    "hol_name": "match_append",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "refs"
+    ],
+    "reviewer": "Compared the complete source case expression with the typed exported HOL theorem, retaining the suffix non-NONE condition and arbitrary fallback result. The same-module witness checks the canonical finite-map parameter."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/PatternExh/Exhaustive.lean",
     "lean_name": "exhRows",
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",

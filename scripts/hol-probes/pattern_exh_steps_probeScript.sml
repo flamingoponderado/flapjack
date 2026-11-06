@@ -490,3 +490,6 @@ val mat_len_default_mat_less_replay = prove (
   >> rename [`p::t`] >> Cases_on `p`
   >> fs [pattern_exhTheory.default_row_def,pattern_exhTheory.mat_len_def]);
 val _ = show_local "mat_len_default_mat_less=" mat_len_default_mat_less_replay;
+val _ = show_local "comp_is_any_pmatch=" pattern_compTheory.is_Any_pmatch;
+val _ = show_local "comp_take_until_any=" pattern_compTheory.match_take_until_Any;
+val _ = show_local "comp_match_append=" pattern_compTheory.match_append;
