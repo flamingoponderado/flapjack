@@ -297,3 +297,58 @@ val default_mat_mem_replay = prove (
   >- (drule default_row_thm_replay >> metis_tac []) >>
   res_tac >> metis_tac []);
 val _ = show_local "default_mat_mem=" default_mat_mem_replay;
+
+val exh_matrix_thm_replay = prove (
+  ``(!M refs vs.
+     pattern_exh$exh_matrix M /\ EVERY (\r. pattern_semantics$pmatch_list refs r vs <> pattern_common$PTypeFailure) M ==>
+     EXISTS (\r. pattern_semantics$pmatch_list refs r vs = pattern_common$PMatchSuccess) M) /\
+  (!ms m refs vs.
+     pattern_exh$exh_mats ms /\ MEM m ms /\
+     EVERY (\r. pattern_semantics$pmatch_list refs r vs <> pattern_common$PTypeFailure) m ==>
+     EXISTS (\r. pattern_semantics$pmatch_list refs r vs = pattern_common$PMatchSuccess) m)``,
+  ho_match_mp_tac pattern_exhTheory.exh_matrix_ind >> rpt conj_tac
+  >- (* the empty matrix is never accepted *) fs [pattern_exhTheory.exh_matrix_def]
+  >-
+   (rpt gen_tac >> strip_tac >> rpt gen_tac >> strip_tac
+    >> qpat_x_assum `exh_matrix _` mp_tac
+    >> simp [Once pattern_exhTheory.exh_matrix_def]
+    >> Cases_on `NULL r` >> fs []
+    >- (* a row of width zero: the value vector must be empty too, and
+             then that row matches *)
+     (Cases_on `r` >> fs [] >> Cases_on `vs` >> fs [])
+    >> `?v vs'. vs = v::vs'` by
+         (Cases_on `vs` >> fs [] >> Cases_on `r` >> fs [])
+    >> gvs []
+    >> Cases_on `col_ctors (r::rows)` >> fs []
+    >- (* nothing is known about the column, so only the wildcard rows
+             can be relied on: work in the default matrix *)
+     (strip_tac
+      >> first_x_assum (qspecl_then [`refs`,`vs'`] mp_tac)
+      >> impl_tac
+      >- (fs [EVERY_MEM] >> rw []
+             >> drule default_mat_mem_replay
+             >> disch_then (qspecl_then [`refs`,`v`,`vs'`] strip_assume_tac)
+             >> gvs [] >> res_tac >> fs [])
+      >> fs [EXISTS_MEM] >> rw []
+      >> drule default_mat_mem_replay
+      >> disch_then (qspecl_then [`refs`,`v`,`vs'`] strip_assume_tac)
+      >> gvs [] >> metis_tac [])
+    >> (* the column's constructors are known, so the value has one of
+          them: work in the matrix specialised for it *)
+    strip_tac
+    >> `EVERY (\r. pmatch_list refs r (v::vs') <> PTypeFailure) (r::rows)` by fs []
+    >> drule_all col_ctors_thm_replay >> strip_tac
+    >> first_x_assum
+         (qspecl_then [`spec_mat c (r::rows)`,`refs`,`as ++ vs'`] mp_tac)
+    >> impl_tac
+    >- (fs [mem_spec_mats_replay,EVERY_MEM] >> rw []
+           >> drule_all spec_mat_mem_replay
+           >> disch_then (qspec_then `vs'` strip_assume_tac)
+           >> gvs [] >> res_tac >> fs [])
+    >> fs [EXISTS_MEM] >> rw []
+    >> drule_all spec_mat_mem_replay
+    >> disch_then (qspec_then `vs'` strip_assume_tac)
+    >> gvs [] >> metis_tac [])
+  >- fs []
+  >> fs [pattern_exhTheory.exh_matrix_def] >> rw [] >> fs [] >> res_tac);
+val _ = show_local "exh_matrix_thm=" exh_matrix_thm_replay;

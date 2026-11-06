@@ -162,6 +162,13 @@ theorem holFmapAsFiniteSupportParamWitness_defaultMat_member_refs
     ofBroad (toBroad refs) refs.finiteSupport = refs :=
   holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
 
+theorem holFmapAsFiniteSupportParamWitness_exhMatrix_sound_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
+
 /-- A wildcard matches every term. -/
 @[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "pmatch_Any"
   (fmap_as_finite_support_parameters := [refs])]
@@ -586,11 +593,14 @@ theorem colCtors_sound (refs : HolFiniteMapExact Nat Term) (value : Term) (value
 
 /-- A matrix accepted by the exhaustiveness checker contains a matching row
 whenever every row is free of type errors. -/
-theorem exhMatrix_sound (matrix : List (List Pat)) :
-    ∀ (refs : HolFiniteMapExact Nat Term) (values : List Term),
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "exh_matrix_thm"
+  (fmap_as_finite_support_parameters := [refs])]
+theorem exhMatrix_sound (matrix : List (List Pat)) (refs : HolFiniteMapExact Nat Term) :
+    ∀ (values : List Term),
       exhMatrix matrix = true →
       (∀ row ∈ matrix, pmatchList refs row values ≠ .typeFailure) →
       ∃ row ∈ matrix, pmatchList refs row values = .success := by
+  revert refs
   refine exhMatrix.induct
     (motive1 := fun matrix => ∀ (refs : HolFiniteMapExact Nat Term) (values : List Term),
       exhMatrix matrix = true →
@@ -671,6 +681,34 @@ theorem exhMatrix_sound (matrix : List (List Pat)) :
     rcases member with rfl | member
     · exact ihFirst refs values both.1 safe
     · exact ihRest matrix member refs values both.2 safe
+
+/-- Both source matrix and matrix-list soundness statements, with independent
+reference maps for the two conjuncts. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "exh_matrix_thm"
+  (fmap_as_finite_support_relation := [matrixRefs, matricesRefs])]
+theorem exh_matrix_thm :
+    (∀ (matrix : List (List Pat)) (matrixRefs : HolFiniteMapExact Nat Term) (values : List Term),
+      exhMatrix matrix = true ∧ (∀ row ∈ matrix, pmatchList matrixRefs row values ≠ .typeFailure) →
+      ∃ row ∈ matrix, pmatchList matrixRefs row values = .success) ∧
+    (∀ (matrices : List (List (List Pat))) (matrix : List (List Pat))
+      (matricesRefs : HolFiniteMapExact Nat Term) (values : List Term),
+      exhMats matrices = true ∧ matrix ∈ matrices ∧
+        (∀ row ∈ matrix, pmatchList matricesRefs row values ≠ .typeFailure) →
+      ∃ row ∈ matrix, pmatchList matricesRefs row values = .success) := by
+  constructor
+  · intro matrix refs values ⟨accepted, safe⟩
+    exact exhMatrix_sound matrix refs values accepted safe
+  · intro matrices
+    induction matrices with
+    | nil =>
+      intro matrix refs values ⟨_, member, _⟩
+      simp at member
+    | cons first rest ih =>
+      intro matrix refs values ⟨accepted, member, safe⟩
+      have both : exhMatrix first = true ∧ exhMats rest = true := by simpa [exhMats] using accepted
+      rcases List.mem_cons.mp member with rfl | member
+      · exact exhMatrix_sound _ refs values both.1 safe
+      · exact ih matrix refs values ⟨both.2, member, safe⟩
 
 /-- Prefixing rows preserves their membership witnesses. -/
 @[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "MEM_add_head"]

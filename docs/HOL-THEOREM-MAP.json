@@ -111639,6 +111639,29 @@
     "reviewer": "Compared source transformed-row membership and the existential original row with match-result equality against the typed local HOL proof replay. The same-module witness checks the canonical finite-map parameter."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Proofs/Soundness.lean",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "exh_matrix_thm",
+    "lean_name": "exhMatrix_sound",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "refs"
+    ],
+    "reviewer": "Compared the matrix conjunct of the source theorem and typed local HOL proof replay, preserving accepted matrix, non-type-failure of every row, and an existential successful row. The same-module witness checks the canonical finite-map parameter."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Proofs/Soundness.lean",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "exh_matrix_thm",
+    "lean_name": "exh_matrix_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "matrixRefs",
+      "matricesRefs"
+    ],
+    "reviewer": "Compared both conjuncts of the source theorem and typed local HOL proof replay. The matrix and matrix-list conjuncts independently quantify their canonical finite-map references; EVERY and EXISTS are rendered as universal and existential list membership."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/PatternExh/Exhaustive.lean",
     "lean_name": "exhRows",
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
