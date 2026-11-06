@@ -239,7 +239,13 @@ example : Flapjack.Compiler.Backend.PatternExh.specRow (.tagC 2 1)
 #guard [Flapjack.Compiler.Backend.PatternExh.exhSteps [],
   Flapjack.Compiler.Backend.PatternExh.exhSteps [[]],
   Flapjack.Compiler.Backend.PatternExh.exhSteps [[.any]],
-  Flapjack.Compiler.Backend.PatternExh.exhStepsList [[], [[.any]]]] == [1, 1, 2, 3]
+  Flapjack.Compiler.Backend.PatternExh.exhStepsList [[], [[.any]]],
+  Flapjack.Compiler.Backend.PatternExh.exhSteps [[.ref .any]]] == [1, 1, 2, 3, 3]
+#guard [Flapjack.Compiler.Backend.PatternExh.exhAll [],
+  Flapjack.Compiler.Backend.PatternExh.exhAll [[]],
+  Flapjack.Compiler.Backend.PatternExh.exhAll [[[]]],
+  Flapjack.Compiler.Backend.PatternExh.exhAll [[[.any]]],
+  Flapjack.Compiler.Backend.PatternExh.exhAll [[[.ref .any]]]] == [true, false, true, true, true]
 #guard [Flapjack.Compiler.Backend.PatternExh.exhRows ([] : List (Flapjack.Compiler.Backend.PatternSemantics.Pat × Nat)),
   Flapjack.Compiler.Backend.PatternExh.exhRows [(.any, 0)],
   Flapjack.Compiler.Backend.PatternExh.exhRows [(.lit (.intLit 1), 0)],

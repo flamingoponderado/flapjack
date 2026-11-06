@@ -154,6 +154,25 @@ theorem exhStepsList_append (xs ys : List (List (List Pat))) :
   | nil => simp [exhStepsList]
   | cons x xs ih => simp [exhStepsList, ih, Nat.add_assoc]
 
+/-- Check a worklist of pattern matrices using the source's step measure.
+The executed checker still uses `exhMatrix`. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "exh_all_def"]
+def exhAll (ms : List (List (List Pat))) : Bool :=
+  match ms with
+  | [] => true
+  | [] :: _ => false
+  | (r :: rows) :: rest =>
+      if _hrow : r.isEmpty then exhAll rest
+      else match _hcol : colCtors (r :: rows) with
+        | none => exhAll (defaultMat (r :: rows) :: rest)
+        | some cs => exhAll (specMats cs (r :: rows) ++ rest)
+termination_by exhStepsList ms
+decreasing_by
+  all_goals simp_wf
+  all_goals simp_all [exhStepsList, exhSteps, exhStepsList_append]
+  all_goals rw [_hcol]
+  all_goals simp
+
 /-- Decide exhaustiveness of a list of pattern rows. -/
 @[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "exh_rows_def"]
 def exhRows {α : Type} (rows : List (Pat × α)) : Bool := exhMatrix (orRows rows)

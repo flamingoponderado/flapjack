@@ -1,5 +1,5 @@
-`pattern_exh_steps_probe.out` captures the typed original step-count equations,
-four concrete results, and a typed replay of the local append lemma.
+`pattern_exh_steps_probe.out` captures the typed original step-count and
+worklist equations, concrete results, and a typed replay of the local append lemma.
 
 `data_resource_mono_probe.out` captures the six exported data-semantics
 primitive and evaluator monotonicity statements with inferred configuration,
