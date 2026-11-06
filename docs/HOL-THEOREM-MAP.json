@@ -125296,5 +125296,13 @@
   "lean_name": "simpleStateRel_storeLookup",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared the HOL source and typed simple_store_lookup capture: the original lookup and state premises and existential related target entry are retained. Source and target compiler-state types are independent and their FFI type is shared; conjunction premises are curried."
+},
+{
+  "hol_path": "HOL/src/list/src/listScript.sml",
+  "hol_name": "EVERY2_LUPDATE_same",
+  "lean_path": "Flapjack/Misc/List.lean",
+  "lean_name": "forall₂_set",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the HOL source and typed list_relation_update capture: both element types remain independent, the original conjunction of replacement and list relations and the complete conclusion are retained. HOL LUPDATE and Lean List.set have identical out-of-range behavior, with argument order adjusted."
 }
 ]

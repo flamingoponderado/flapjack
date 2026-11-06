@@ -1,3 +1,4 @@
+import Flapjack.Misc.List
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Operations
 
 /-! Global-store primitives under the annotation state relation. -/
@@ -14,17 +15,6 @@ theorem optionRel_getElem {α β : Type} {R : α → β → Prop} (left : List �
   | cons head tail ih => cases index with
     | zero => exact head
     | succ index => exact ih index
-
-/-- Updating corresponding positions in related lists preserves their
-pointwise relation, including out-of-range updates. -/
-theorem forall₂_set {α β : Type} {R : α → β → Prop} (left : List α) (right : List β)
-    (related : List.Forall₂ R left right) (index : Nat) (x : α) (y : β) (xy : R x y) :
-    List.Forall₂ R (left.set index x) (right.set index y) := by
-  induction related generalizing index with
-  | nil => cases index <;> exact .nil
-  | cons head tail ih => cases index with
-    | zero => exact .cons xy tail
-    | succ index => exact .cons head (ih index)
 
 /-- Updating the globals of two related states preserves their relation when
 the updated lists are pointwise related. -/
@@ -123,8 +113,8 @@ theorem global_set_result {C F : Type} (source target : State C F) (states : Sta
       | none =>
         cases y with
         | none =>
-          have globalsRel := forall₂_set source.globals target.globals states.2.2.2.2.2.1
-            index (some value) (some nextValue) valuesRel
+          have globalsRel := Flapjack.forall₂_set _ source.globals target.globals (some value) (some nextValue)
+            index ⟨valuesRel, states.2.2.2.2.2.1⟩
           have nextStates := stateRel_withGlobals source target states _ _ globalsRel
           refine ⟨.val (unitValue, { target with globals := target.globals.set index (some nextValue) }), ?_, ?_⟩
           · simp [doApp, applyGlobal, right]

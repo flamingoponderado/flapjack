@@ -1,3 +1,4 @@
+import Flapjack.Misc.List
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveMemory
 import Flapjack.Misc.RichList
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.MatchBranch
@@ -25,17 +26,6 @@ theorem forall₂_getElem_none {A B : Type} {R : A → B → Prop} {xs : List A}
     | succ index =>
       simp only [List.getElem?_cons_succ] at absent ⊢
       exact ih index absent
-
-/-- Replacing related elements at the same position preserves the list relation. -/
-theorem forall₂_set {A B : Type} {R : A → B → Prop} {xs : List A} {ys : List B}
-    (related : List.Forall₂ R xs ys) (index : Nat) {x : A} {y : B} (values : R x y) :
-    List.Forall₂ R (xs.set index x) (ys.set index y) := by
-  induction related generalizing index with
-  | nil => simp
-  | cons head tail ih =>
-    cases index with
-    | zero => simpa using List.Forall₂.cons values tail
-    | succ index => simpa using List.Forall₂.cons head (ih index)
 
 /-- The bounds exception is related to itself. -/
 theorem subscriptExn_related : ValueRel FlatSem.subscriptExnV FlatSem.subscriptExnV := by
@@ -156,7 +146,7 @@ theorem updateIndexed_array_related {C F : Type} (cfg : Config) (source target s
     | none => simp [FlatSem.updateIndexed, bounds, assigned] at run
     | some refs =>
       have entries : storeValueRel ValueRel (.varray (items.set index.toNat value))
-          (.varray (items'.set index.toNat value')) := forall₂_set itemsRel index.toNat values
+          (.varray (items'.set index.toNat value')) := Flapjack.forall₂_set _ _ _ _ _ index.toNat ⟨values, itemsRel⟩
       obtain ⟨refs', assigned', refsRel⟩ := SemanticPrimitivesProps.storeAssign_related states.2.1 address entries assigned
       simp [FlatSem.updateIndexed, bounds, assigned] at run
       rcases run with ⟨rfl, rfl⟩

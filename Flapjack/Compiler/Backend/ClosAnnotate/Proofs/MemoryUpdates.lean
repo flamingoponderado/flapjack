@@ -42,7 +42,7 @@ theorem updateArray_related {C F : Type} (source target : State C F) (states : S
           · refine ⟨.err (.abort .typeError), ?_, ?_⟩
             · simp only [doApp, applyMemory, right, ← sameLength, if_pos invalid]
             · simp only [doApp, applyMemory, left, if_pos invalid, AppResultRel, ResultRel]
-          · have updated := forall₂_set fields nextFields fieldsRel index.toNat value nextValue valuesRel
+          · have updated := Flapjack.forall₂_set _ fields nextFields value nextValue index.toNat ⟨valuesRel, fieldsRel⟩
             have nextStates := stateRel_updateRefFfi source target states ptr
               (.valueArray (fields.set index.toNat value)) (.valueArray (nextFields.set index.toNat nextValue))
               updated source.ffi
