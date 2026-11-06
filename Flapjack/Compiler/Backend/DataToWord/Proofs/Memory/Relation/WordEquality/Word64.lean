@@ -136,13 +136,14 @@ theorem wordEqThm0_word64 {width : Nat} [NeZero width] (conf : DataToWord.Config
       obtain ⟨first2, dom2'', second2, len2, head2⟩ := data2
       have sameHeader : h1 = h2 := head1.trans head2.symm
       rw [← sameHeader] at mem2
-      have mask : h1 &&& 12 ≠ 0 := by bv_decide
+      have mask : h1 &&& 12 ≠ 0 := by exact bitAnd12NeZero (by omega) h1 bit31
       have enough : (WordGcFunctions.decodeLength conf h1).toNat < limit := by rw [len1]; norm_num at bound ⊢; omega
       have position (a : BitVec 32) : a + StackRemove.bytesInWord 32 * (2 : BitVec 32) =
-          a + (StackRemove.bytesInWord 32 <<< 1) := by bv_decide
+          a + (StackRemove.bytesInWord 32 <<< 1) := by
+        congr 1
       have previous (a : BitVec 32) :
           (a + StackRemove.bytesInWord 32 * 2) - StackRemove.bytesInWord 32 =
-            a + StackRemove.bytesInWord 32 := by bv_decide
+            a + StackRemove.bytesInWord 32 := by bv_omega
       obtain ⟨result, loop, correct⟩ := loopTwo domain memory
         (a1 + StackRemove.bytesInWord 32 * 2) (a2 + StackRemove.bytesInWord 32 * 2)
         ((v1 >>> 32).setWidth 32) (v1.setWidth 32) ((v2 >>> 32).setWidth 32) (v2.setWidth 32)
@@ -155,7 +156,7 @@ theorem wordEqThm0_word64 {width : Nat} [NeZero width] (conf : DataToWord.Config
           (a2 + StackRemove.bytesInWord 32 * WordGcFunctions.decodeLength conf h1) domain memory = some result := by
         simpa [len1] using loop
       have eqParts : (((v1 >>> 32).setWidth 32 = (v2 >>> 32).setWidth 32) ∧
-          v1.setWidth 32 = v2.setWidth 32) ↔ v1 = v2 := by bv_decide
+          v1.setWidth 32 = v2.setWidth 32) ↔ v1 = v2 := bitWord64Split v1 v2
       refine ⟨result, limit - 1 - (WordGcFunctions.decodeLength conf h1).toNat, 0, ?_, ?_, ?_⟩
       · exact eqStep conf store domain memory limit 0 w1 w2 a1 a2 h1 result eq low1 low2 real1 real2
           dom1 dom2 mem1 mem2 mask bit21 bit31 enough loop'
@@ -168,7 +169,7 @@ theorem wordEqThm0_word64 {width : Nat} [NeZero width] (conf : DataToWord.Config
       obtain ⟨first2, len2, head2⟩ := data2
       have sameHeader : h1 = h2 := head1.trans head2.symm
       rw [← sameHeader] at mem2
-      have mask : h1 &&& 12 ≠ 0 := by bv_decide
+      have mask : h1 &&& 12 ≠ 0 := by exact bitAnd12NeZero (by omega) h1 bit31
       have enough : (WordGcFunctions.decodeLength conf h1).toNat < limit := by rw [len1]; norm_num at bound ⊢; omega
       obtain ⟨result, loop, correct⟩ := loopOne domain memory
         (a1 + StackRemove.bytesInWord 64) (a2 + StackRemove.bytesInWord 64) v1 v2

@@ -110,7 +110,7 @@ theorem wordEqThm0_number {width : Nat} [NeZero width] (conf : DataToWord.Config
         change (h2.getLsbD 4 = true ↔ i2 < 0) at sign2
         change WordGcFunctions.decodeLength conf h1 = BitVec.ofNat width (n2mw i1.natAbs : List (BitVec width)).length at decoded1
         change WordGcFunctions.decodeLength conf h2 = BitVec.ofNat width (n2mw i2.natAbs : List (BitVec width)).length at decoded2
-        have mask : h1 &&& 12 ≠ 0 := by rcases good with hw | hw <;> subst width <;> bv_decide
+        have mask : h1 &&& 12 ≠ 0 := bitAnd12NeZero (by rcases good with hw | hw <;> omega) h1 h13
         have power : 2 ^ (width - 4) ≤ 2 ^ width := Nat.pow_le_pow_right (by decide) (by omega)
         have small1 : (n2mw i1.natAbs : List (BitVec width)).length < 2 ^ width := lt_of_lt_of_le bound1 power
         have small2 : (n2mw i2.natAbs : List (BitVec width)).length < 2 ^ width := lt_of_lt_of_le bound2 power

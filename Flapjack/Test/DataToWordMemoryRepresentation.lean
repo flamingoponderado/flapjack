@@ -113,14 +113,14 @@ example : allOnes (width := 8) 8 4 = 0xF0 := by decide
 example : refPtrAnnot (width := 8) config
     (some (.mutBlock 1 false [42] 9 []) : Option (BvlSem.Ref Nat)) = .word 12 := by decide
 
-example : writeBytes (width := 32) [0x11, 0x22, 0x33] [0xAABBCCDD, 0x11223344] false =
-    [0xAA332211, 0x11223344] := by native_decide
+#guard writeBytes (width := 32) [0x11, 0x22, 0x33] [0xAABBCCDD, 0x11223344] false =
+    [0xAA332211, 0x11223344]
 
-example : writeBytes (width := 32) [0x11, 0x22, 0x33] [0xAABBCCDD, 0x11223344] true =
-    [0x112233DD, 0x11223344] := by native_decide
+#guard writeBytes (width := 32) [0x11, 0x22, 0x33] [0xAABBCCDD, 0x11223344] true =
+    [0x112233DD, 0x11223344]
 
-example : writeBytes (width := 64) [1, 2, 3, 4, 5, 6, 7, 8, 9] [0, 0] false =
-    [0x0807060504030201, 9] := by native_decide
+#guard writeBytes (width := 64) [1, 2, 3, 4, 5, 6, 7, 8, 9] [0, 0] false =
+    [0x0807060504030201, 9]
 
 example : ClockValueInv (width := 32) 0 config (.number (-2)) .ln
     (.data (.word (smallnum (-2))), HolFiniteMapExact.empty, HolFiniteMapExact.empty, []) := by

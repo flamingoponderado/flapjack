@@ -20,7 +20,7 @@ theorem smallInt_byte {width : Nat} [NeZero width] (good : goodDimindex width) (
 
 /-- The immediate byte encoding commutes with the source bitwise operations.
 This is Flapjack bit-vector infrastructure. -/
-theorem smallnum_byte_bitwise {width : Nat} [NeZero width] (good : goodDimindex width) (i j : BitVec 8) :
+theorem smallnum_byte_bitwise {width : Nat} [NeZero width] (_good : goodDimindex width) (i j : BitVec 8) :
     (smallnum (width := width) (Int.ofNat i.toNat) &&& smallnum (Int.ofNat j.toNat) =
       smallnum (Int.ofNat (i &&& j).toNat)) ∧
     (smallnum (width := width) (Int.ofNat i.toNat) ||| smallnum (Int.ofNat j.toNat) =
@@ -28,8 +28,14 @@ theorem smallnum_byte_bitwise {width : Nat} [NeZero width] (good : goodDimindex 
     (smallnum (width := width) (Int.ofNat i.toNat) ^^^ smallnum (Int.ofNat j.toNat) =
       smallnum (Int.ofNat (i ^^^ j).toNat)) := by
   simp only [smallnum_byte]
-  rcases good with h | h <;> subst width <;> constructor
-  all_goals bv_decide
+  constructor
+  · rw [bitFourMulEqShift, bitFourMulEqShift, bitFourMulEqShift,
+      ← BitVec.shiftLeft_and_distrib, BitVec.setWidth_and]
+  constructor
+  · rw [bitFourMulEqShift, bitFourMulEqShift, bitFourMulEqShift,
+      ← BitVec.shiftLeft_or_distrib, BitVec.setWidth_or]
+  · rw [bitFourMulEqShift, bitFourMulEqShift, bitFourMulEqShift,
+      ← BitVec.shiftLeft_xor_distrib, BitVec.setWidth_xor]
 
 /-- Bitwise and on byte-valued integers preserves the full memory relation. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "memory_rel_And"

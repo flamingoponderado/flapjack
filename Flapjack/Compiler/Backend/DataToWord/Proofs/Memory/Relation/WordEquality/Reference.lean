@@ -83,7 +83,17 @@ theorem wordEqThm0_refPtrTrue {width : Nat} [NeZero width] (conf : DataToWord.Co
     have content2 := memoryRel_refPtrTrueContent conf be next refs space store memory domain index2 w2 a2 h2
       vars tail addr2 mem2 good
     have mask : h1 &&& 12 ≠ 0 := by
-      rcases good with hw | hw <;> subst width <;> bv_decide
+      intro hz
+      have widthBound : 3 < width := by rcases good with hw | hw <;> omega
+      have bit := congrArg (fun y => y.getLsbD 2) hz
+      have hb : (12 : BitVec width).getLsbD 2 = true := by
+        rw [show (12 : BitVec width) = BitVec.ofNat width 12 from rfl, BitVec.getLsbD_ofNat]
+        simp [show 2 < width by omega, show Nat.testBit 12 2 = true by decide]
+      have hzbit : (0 : BitVec width).getLsbD 2 = false := by simp [BitVec.getLsbD]
+      have h2 : h1.getLsbD 2 = false := by
+        simpa only [BitVec.getLsbD_and, hb, Bool.and_true, hzbit] using bit
+      have h3 := bits1.mpr h2
+      exact bitAnd12NeZero widthBound h1 h3 hz
     by_cases both : (∃ bytes, sptLookup index1 refs = some (.byteArray true bytes)) ∧
         (∃ bytes, sptLookup index2 refs = some (.byteArray true bytes))
     · obtain ⟨⟨bytes1, found1⟩, ⟨bytes2, found2⟩⟩ := both

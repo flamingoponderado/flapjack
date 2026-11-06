@@ -10,17 +10,17 @@ private def initial : ProductionState :=
   ⟨#[0, 0, 0, 0], #[-3, 0, -3, 2], #[1, 1, 1, 1], #[2, 0, 3, 1],
     #[(3, (0, 1)), (1, (2, 3)), (2, (4, 5))]⟩
 
-example :
+#guard
     let (result, state) := Production.sortRegs 0 4 initial
-    (result, state.sorted_regs.toList) = (.success (), [0, 2, 1, 3]) := by native_decide
+    (result, state.sorted_regs.toList) = (.success (), [0, 2, 1, 3])
 
-example :
+#guard
     let (result, state) := Production.sortMoves 0 3 initial
     (result, state.sorted_moves.toList) =
-      (.success (), [(1, (2, 3)), (2, (4, 5)), (3, (0, 1))]) := by native_decide
+      (.success (), [(1, (2, 3)), (2, (4, 5)), (3, (0, 1))])
 
-example : (Production.sortMoves 0 4 initial).1 = .failure .Subscript := by native_decide
+#guard (Production.sortMoves 0 4 initial).1 = .failure .Subscript
 
-example : (Production.sortRegs 0 5 initial).1 = .failure .Subscript := by native_decide
+#guard (Production.sortRegs 0 5 initial).1 = .failure .Subscript
 
 end Flapjack.Test.LinearScanProductionSorting

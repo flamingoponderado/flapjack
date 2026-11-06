@@ -16,36 +16,36 @@ private def number : Sexp → Option Nat
   | .num n => some n
   | _ => none
 
-example : [decodeControl (bytes "abc"), decodeControl (bytes "\\\\"),
+#guard [decodeControl (bytes "abc"), decodeControl (bytes "\\\\"),
     decodeControl (bytes "\\00"), decodeControl (bytes "\\1F"),
     decodeControl (bytes "\\7F"), decodeControl (bytes "\\FF"),
     decodeControl (bytes "\\20"), decodeControl (bytes "\\5C"),
     decodeControl (bytes "\\1f"), decodeControl (bytes "\\FG"),
     decodeControl (bytes "\\"), decodeControl [31], decodeControl (bytes "x\\00y")] =
     [some (bytes "abc"), some [92], some [0], some [31], some [127], some [255],
-     none, none, none, none, none, none, some [120, 0, 121]] := by native_decide
+     none, none, none, none, none, none, some [120, 0, 121]]
 
-example : [decodeList number (list []), decodeList number (list [.num 1, .num 2, .num 3]),
+#guard [decodeList number (list []), decodeList number (list [.num 1, .num 2, .num 3]),
     decodeList number (.cons (.num 1) (.num 2)), decodeList number (list [str "x"])] =
-    [some [], some [1, 2, 3], none, none] := by native_decide
+    [some [], some [1, 2, 3], none, none]
 
-example : [decodeOption number (sym "NONE"), decodeOption number (node "SOME" [.num 5]),
+#guard [decodeOption number (sym "NONE"), decodeOption number (node "SOME" [.num 5]),
     decodeOption number (node "SOME" [.num 1, .num 2]), decodeOption number (sym "SOME")] =
-    [some none, some (some 5), none, none] := by native_decide
+    [some none, some (some 5), none, none]
 
-example : [decodeIdFuel destString 10 (node "Short" [str "x"]),
+#guard [decodeIdFuel destString 10 (node "Short" [str "x"]),
     decodeIdFuel destString 10 (node "Long" [str "M", node "Short" [str "x"]]),
     decodeIdFuel destString 10 (node "Long" [str "M", sym "x"])] =
-    [some (.short (ofString "x")), some (.long (ofString "M") (.short (ofString "x"))), none] := by native_decide
+    [some (.short (ofString "x")), some (.long (ofString "M") (.short (ofString "x"))), none]
 
-example : [decodeId destString (node "Short" [str "x"]),
+#guard [decodeId destString (node "Short" [str "x"]),
     decodeId destString (node "Long" [str "M", node "Short" [str "x"]]),
     decodeId destString (node "Long" [str "M", sym "x"]),
     decodeId destString (node "Long" [str "A", node "Long" [str "B", node "Short" [str "x"]]]),
     decodeId destString (.cons (sym "Short") (.cons (str "x") (sym "bad"))),
     decodeId destString (node "Long" [str "A", node "Short" [str "x"], .num 1])] =
     [some (.short (ofString "x")), some (.long (ofString "M") (.short (ofString "x"))), none,
-     some (.long (ofString "A") (.long (ofString "B") (.short (ofString "x")))), none, none] := by native_decide
+     some (.long (ofString "A") (.long (ofString "B") (.short (ofString "x")))), none, none]
 
 private def nestedIdentifier (depth : Nat) : Sexp :=
   (List.replicate depth ()).foldr (fun _ rest => node "Long" [str "M", rest]) (node "Short" [str "x"])
@@ -53,10 +53,10 @@ private def nestedIdentifier (depth : Nat) : Sexp :=
 private def expectedIdentifier (depth : Nat) : Ident MlString MlString :=
   (List.replicate depth ()).foldr (fun _ rest => .long (ofString "M") rest) (.short (ofString "x"))
 
-example : decodeId destString (nestedIdentifier 64) = some (expectedIdentifier 64) ∧
-    decodeIdFuel destString 64 (nestedIdentifier 64) = none := by native_decide
+#guard decodeId destString (nestedIdentifier 64) = some (expectedIdentifier 64) ∧
+    decodeIdFuel destString 64 (nestedIdentifier 64) = none
 
-example : [decodeLiteral (.num 0), decodeLiteral (.num 12), decodeLiteral (str "a\\00b"),
+#guard [decodeLiteral (.num 0), decodeLiteral (.num 12), decodeLiteral (str "a\\00b"),
     decodeLiteral (node "-" [.num 0]), decodeLiteral (node "-" [.num 12]),
     decodeLiteral (node "char" [str "z"]), decodeLiteral (node "char" [str "ab"]),
     decodeLiteral (node "word8" [.num 255]), decodeLiteral (node "word8" [.num 256]),
@@ -65,12 +65,12 @@ example : [decodeLiteral (.num 0), decodeLiteral (.num 12), decodeLiteral (str "
     decodeLiteral (node "float64" [.num 42])] =
     [some (.intLit 0), some (.intLit 12), some (.strLit (.implode [97, 0, 98])),
      none, some (.intLit (-12)), some (.char 122), none, some (.word8 255), none,
-     some (.word64 18446744073709551615), none, some (.float64 42)] := by native_decide
+     some (.word64 18446744073709551615), none, some (.float64 42)]
 
-example : [decodeLoc (list [sym "unk", sym "eof"]),
+#guard [decodeLoc (list [sym "unk", sym "eof"]),
     decodeLoc (list [list [.num 1, .num 2], list [.num 3, .num 4]]),
     decodeLoc (list [sym "bad", sym "unk"]), decodeLoc (list [.num 1])] =
-    [some (.locs .unknownPt .eofPt), some (.locs (.posn 1 2) (.posn 3 4)), none, none] := by native_decide
+    [some (.locs .unknownPt .eofPt), some (.locs (.posn 1 2) (.posn 3 4)), none, none]
 
 private def typeCases : Bool := Id.run do
   let a := node "Atvar" [str "a"]
@@ -107,9 +107,9 @@ private def patternCases : Bool := Id.run do
   | _ => return false
   return (decodePatternFuel 20 (node "Pany" [.num 1])).isNone
 
-example : typeCases = true ∧ patternCases = true := by native_decide
+#guard typeCases = true ∧ patternCases = true
 
-example : [decodeType (node "Atvar" [str "a"]),
+#guard [decodeType (node "Atvar" [str "a"]),
     decodeType (node "Atfun" [node "Atvar" [str "a"], node "Attup" [list []]]),
     decodeType (node "Atapp" [list [node "Atvar" [str "a"]], node "Short" [str "list"]]),
     decodeType (node "Atvar" [sym "x"]),
@@ -119,13 +119,13 @@ example : [decodeType (node "Atvar" [str "a"]),
     [some (node "Atvar" [str "a"]),
      some (node "Atfun" [node "Atvar" [str "a"], node "Attup" [list []]]),
      some (node "Atapp" [list [node "Atvar" [str "a"]], node "Short" [str "list"]]), none,
-     some (node "Attup" [list [node "Atvar" [str "a"], node "Atvar" [str "b"]]]), none, none] := by native_decide
+     some (node "Attup" [list [node "Atvar" [str "a"], node "Atvar" [str "b"]]]), none, none]
 
 private def nestedType (depth : Nat) : Sexp :=
   (List.replicate depth ()).foldr (fun _ rest => node "Attup" [list [rest]]) (node "Atvar" [str "a"])
 
-example : (decodeType (nestedType 64)).map CakeParser.ToSexp.type = some (nestedType 64) ∧
-    (decodeTypeFuel 64 (nestedType 64)).isNone = true := by native_decide
+#guard (decodeType (nestedType 64)).map CakeParser.ToSexp.type = some (nestedType 64) ∧
+    (decodeTypeFuel 64 (nestedType 64)).isNone = true
 
 private def patternInputs : List Sexp :=
   [str "x", node "Pany" [], node "Plit" [.num 42],
@@ -137,15 +137,15 @@ private def patternInputs : List Sexp :=
    node "Pcon" [sym "NONE", .cons (str "x") (sym "bad")],
    .cons (sym "Pany") (sym "bad")]
 
-example : patternInputs.map (fun p => (decodePattern p).map CakeParser.ToSexp.pattern) =
+#guard patternInputs.map (fun p => (decodePattern p).map CakeParser.ToSexp.pattern) =
     (patternInputs.take 6).map some ++
-      [none, some (node "Pcon" [sym "NONE", list [node "Pref" [str "x"], node "Pany" []]]), none, none] := by native_decide
+      [none, some (node "Pcon" [sym "NONE", list [node "Pref" [str "x"], node "Pany" []]]), none, none]
 
 private def nestedPattern (depth : Nat) : Sexp :=
   (List.replicate depth ()).foldr (fun _ rest => node "Pref" [rest]) (str "x")
 
-example : (decodePattern (nestedPattern 64)).map CakeParser.ToSexp.pattern = some (nestedPattern 64) ∧
-    (decodePatternFuel 64 (nestedPattern 64)).isNone = true := by native_decide
+#guard (decodePattern (nestedPattern 64)).map CakeParser.ToSexp.pattern = some (nestedPattern 64) ∧
+    (decodePatternFuel 64 (nestedPattern 64)).isNone = true
 
 private def expressionInputs : List Sexp :=
   [node "Lit" [.num 1], node "Var" [node "Short" [str "x"]],
@@ -158,14 +158,14 @@ private def expressionInputs : List Sexp :=
    node "App" [sym "Opref", .cons (node "Lit" [.num 1]) (sym "bad")],
    node "Mat" [node "Lit" [.num 1], list [str "x"]], node "Lit" [.num 1, .num 2]]
 
-example : expressionInputs.map (fun e => (decodeExp e).map CakeParser.ToSexp.exp) =
-    (expressionInputs.take 8).map some ++ [none, none, none] := by native_decide
+#guard expressionInputs.map (fun e => (decodeExp e).map CakeParser.ToSexp.exp) =
+    (expressionInputs.take 8).map some ++ [none, none, none]
 
 private def nestedExpression (depth : Nat) : Sexp :=
   (List.replicate depth ()).foldr (fun _ rest => node "Raise" [rest]) (node "Lit" [.num 1])
 
-example : (decodeExp (nestedExpression 64)).map CakeParser.ToSexp.exp = some (nestedExpression 64) ∧
-    (decodeExpFuel 64 (nestedExpression 64)).isNone = true := by native_decide
+#guard (decodeExp (nestedExpression 64)).map CakeParser.ToSexp.exp = some (nestedExpression 64) ∧
+    (decodeExpFuel 64 (nestedExpression 64)).isNone = true
 
 private def declarationInputs : List Sexp :=
   let loc := list [sym "unk", sym "unk"]
@@ -178,15 +178,15 @@ private def declarationInputs : List Sexp :=
    node "Dmod" [str "M", .cons (node "Denv" [str "x"]) (sym "bad")],
    node "Dlet" [sym "unk"]]
 
-example : declarationInputs.map (fun d => (decodeDec d).map CakeParser.ToSexp.dec) =
-    (declarationInputs.take 7).map some ++ [none, none] := by native_decide
+#guard declarationInputs.map (fun d => (decodeDec d).map CakeParser.ToSexp.dec) =
+    (declarationInputs.take 7).map some ++ [none, none]
 
 private def nestedDeclaration (depth : Nat) : Sexp :=
   (List.replicate depth ()).foldr (fun _ rest => node "Dmod" [str "M", list [rest]]) (node "Denv" [str "x"])
 
-example : (decodeDec (nestedDeclaration 64)).map CakeParser.ToSexp.dec = some (nestedDeclaration 64) := by native_decide
+#guard (decodeDec (nestedDeclaration 64)).map CakeParser.ToSexp.dec = some (nestedDeclaration 64)
 
-example : [decodeOp (sym "Equality"), decodeOp (sym "Opapp"), decodeOp (sym "Aw8subunsafe"),
+#guard [decodeOp (sym "Equality"), decodeOp (sym "Opapp"), decodeOp (sym "Aw8subunsafe"),
     decodeOp (sym "ForceThunk"), decodeOp (sym "Envid"), decodeOp (.cons (sym "FFI") (str "x\\00y")),
     decodeOp (.cons (sym "AllocThunk") (sym "Evaluated")),
     decodeOp (.cons (sym "UpdateThunk") (sym "NotEvaluated")),
@@ -199,6 +199,6 @@ example : [decodeOp (sym "Equality"), decodeOp (sym "Opapp"), decodeOp (sym "Aw8
      some (.ffi (.implode [120, 0, 121])), some (.thunkOp (.allocThunk .evaluated)),
      some (.thunkOp (.updateThunk .notEvaluated)), some (.shift .w64 .ror 123),
      some (.arith .add .intT), some (.fromTo (.wordT .w8) (.wordT .w64)),
-     some (.test (.altCompare .leq) .intT), none, none] := by native_decide
+     some (.test (.altCompare .leq) .intT), none, none]
 
 end Flapjack.Test.CakeFromSexpParity
