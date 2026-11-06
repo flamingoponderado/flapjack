@@ -286,4 +286,33 @@ theorem holRotate_eq_drop_take (v : List Bool) (r : Nat) (hlen : 1 ≤ v.length)
     simp only [hv0, false_or, h0, Nat.sub_zero, if_false, hx1, hy1, hle,
       List.take_length, List.length_take, hmin, Nat.lt_irrefl, Nat.sub_self, List.drop_zero]
 
+/-- The fold step of `holV2n`. -/
+private def v2nStep (acc : Nat) (b : Bool) : Nat := 2 * acc + (if b then 1 else 0)
+
+/-- The fold of `holV2n` from an arbitrary accumulator is that accumulator
+times `2 ^ length` plus the value of the list. -/
+private theorem holV2n_shift (acc : Nat) (b : List Bool) :
+    List.foldl v2nStep acc b = acc * 2 ^ b.length + holV2n b := by
+  induction b generalizing acc with
+  | nil => simp [holV2n]
+  | cons x t ih =>
+    have hcons : holV2n (x :: t) = v2nStep 0 x * 2 ^ t.length + holV2n t := by
+      show List.foldl v2nStep (v2nStep 0 x) t = _
+      exact ih (v2nStep 0 x)
+    simp only [List.foldl_cons, List.length_cons, hcons]
+    rw [ih (v2nStep acc x)]
+    simp only [v2nStep]
+    rw [Nat.pow_succ]
+    simp only [Nat.add_mul, Nat.mul_assoc]
+    simp only [Nat.zero_mul]
+    ac_rfl
+
+/-- The value of a concatenation: the first part is the high bits. -/
+theorem holV2n_append (a b : List Bool) :
+    holV2n (a ++ b) = holV2n a * 2 ^ b.length + holV2n b := by
+  show List.foldl v2nStep 0 (a ++ b) =
+      List.foldl v2nStep 0 a * 2 ^ b.length + List.foldl v2nStep 0 b
+  rw [List.foldl_append]
+  exact holV2n_shift (List.foldl v2nStep 0 a) b
+
 end Flapjack.Compiler.Encoders.Arm8.L3
