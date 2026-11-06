@@ -450,8 +450,6 @@ import Flapjack.Compiler.Backend.ClosKnown.Proofs.SourceEquations
 import Flapjack.Compiler.Backend.Semantics.ClosProps.GlobalSafety
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.ApproxGlobalSafety
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.KnownOpCorrect
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.MergeTotal
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.ZeroInlineTotal
 import Flapjack.Compiler.Backend.ClosOp.Proofs.LiftTotal
 import Flapjack.Compiler.Backend.ClosOp.Proofs.EqMeasure
 import Flapjack.Compiler.Backend.ClosOp.Proofs.SmartTotal

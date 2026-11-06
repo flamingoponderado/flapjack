@@ -9166,7 +9166,7 @@
     "lean_path": "Flapjack/Compiler/Backend/ClosKnown/KnownOp.lean",
     "lean_name": "knownOpHOL",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared known_op_typed and every source clause. The global carrier is the constructor-for-constructor spt tree; lookup and insert were compared with the pinned HOL definitions, including non-well-formed trees. Tuple EL uses the source signed bounds and a checked in-range list index. The executed wrapper calls this total operation; knownOpFuel_eq_previous proves equality with the former implementation for every operation, argument list and tree. The regenerated edge probe checks negative and out-of-range indices, impossible arguments, extra arguments and an invalid tree update."
+    "reviewer": "Compared known_op_typed and every source clause. The global carrier is the constructor-for-constructor spt tree; lookup and insert were compared with the pinned HOL definitions, including non-well-formed trees. Tuple EL uses the source signed bounds and a checked in-range list index. The executed traversal calls this total operation. The regenerated edge probe checks negative and out-of-range indices, impossible arguments, extra arguments and an invalid tree update."
   },
   {
     "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
@@ -9175,7 +9175,7 @@
     "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Merge.lean",
     "lean_name": "mergeHOL",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared merge_typed and the original definition at line 278, including both Impossible cases, equal-length and equal-tag tuples, every closure field and the fallback. mergeListHOL_eq_zip checks the source-order pair traversal used for equal-length MAP2. Kernel-checked LawfulBEq instances establish structural equality of the complete closure expression and nested constants. The production wrapper calls this total function; mergeBounded_eq_previous proves agreement with the former fuel-and-retry algorithm under the current equality instance."
+    "reviewer": "Compared merge_typed and the original definition at line 278, including both Impossible cases, equal-length and equal-tag tuples, every closure field and the fallback. mergeListHOL_eq_zip checks the source-order pair traversal used for equal-length MAP2. Kernel-checked LawfulBEq instances establish structural equality of the complete closure expression and nested constants. The production traversal calls this total function."
   },
   {
     "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
