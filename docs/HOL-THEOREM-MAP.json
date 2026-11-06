@@ -125590,4 +125590,14 @@
   "fmap_as_finite_support_parameters": ["f", "refs"],
   "reviewer": "Compared v_rel_bool_typed in clos_to_bvl_state_relation_probe.out: both equivalences, independent source and target values, shared Boolean, code tree and parameters match. The HOL finite-map parameters f and refs use canonical finite-support codecs with same-module roundtrip witnesses."
 }
+,
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "v_rel_Unit",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ValueRelation.lean",
+  "lean_name": "vRel_unit_iff",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f", "refs"],
+  "reviewer": "Compared v_rel_unit_typed in clos_to_bvl_state_relation_probe.out: both unit equivalences, independent source and target values, code tree and relation parameters match. HOL finite-map parameters f and refs use canonical finite-support codecs with same-module roundtrip witnesses."
+}
 ]

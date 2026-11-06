@@ -101,6 +101,33 @@ theorem vRel_bool_iff (maxApp : Nat) (f : HolFiniteMapExact Nat Nat)
     generalize eq : (BvlSem.Value.block 1 []) = t at h
     (cases h <;> simp_all [BackendCommon.closTagShift]); split at * <;> omega
 
+/-- Canonical finite-map codec witnesses for unit value relatedness. -/
+theorem holFmapAsFiniteSupportParamWitness_vRel_unit_iff_f
+    (f : HolFiniteMapExact Nat Nat) (key : Nat) :
+    (ofBroad (toBroad f) f.finiteSupport).lookup key = f.lookup key ∧
+    (ofBroad (toBroad f) f.finiteSupport).finiteSupport = f.finiteSupport ∧
+    ofBroad (toBroad f) f.finiteSupport = f :=
+  holFmapAsFiniteSupportParamWitness_vRel_f f key
+
+theorem holFmapAsFiniteSupportParamWitness_vRel_unit_iff_refs
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_vRel_refs refs key
+
+/-- Related unit values are characterized in both directions. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "v_rel_Unit"
+  (fmap_as_finite_support_parameters := [f, refs])]
+theorem vRel_unit_iff (maxApp : Nat) (f : HolFiniteMapExact Nat Nat)
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (code : Spt (Nat × Bvl.Exp))
+    (source : ClosSem.Value) (target : BvlSem.Value) :
+    (vRel maxApp f refs code ClosSem.unitValue target ↔ target = BvlSem.unitValue) ∧
+    (vRel maxApp f refs code source BvlSem.unitValue ↔ source = ClosSem.unitValue) := by
+  simpa [ClosSem.unitValue, BvlSem.unitValue, ClosSem.boolValue, BvlSem.boolValue,
+    BackendCommon.boolToTag, BackendCommon.falseTag] using
+    vRel_bool_iff maxApp f refs code false source target
+
 theorem holFmapAsFiniteSupportParamWitness_vRel_subspt_f
     (f : HolFiniteMapExact Nat Nat) (key : Nat) :
     (ofBroad (toBroad f) f.finiteSupport).lookup key = f.lookup key ∧
