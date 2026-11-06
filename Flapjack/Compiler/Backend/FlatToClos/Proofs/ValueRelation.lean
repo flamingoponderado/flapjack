@@ -97,16 +97,16 @@ theorem envRel_iff_lookup (env : FlatSem.Environment FlatSem.Value)
       cases h'
       exact related
 
-/-- Related element lists encode to related flat and closure list values.
-This proof-side lemma follows the corresponding HOL list conversion lemma. -/
+/-- Related element lists encode to related flat and closure list values. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "IMP_v_rel_to_list"]
 theorem listToValue_related {source target} (related : List.Forall₂ ValueRel source target) :
     ValueRel (FlatSem.listToValue source) (ClosSem.listToValue target) := by
   induction related with
   | nil => exact .con .nil
   | cons head tail ih => exact .con (.cons head (.cons ih .nil))
 
-/-- Decoding a related flat list yields a related closure list. This uses the
-proof-side relation, whose HOL correspondence remains under review. -/
+/-- Decoding a related flat list yields a related closure list. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "v_rel_to_list"]
 theorem valueToList_related (source : FlatSem.Value) (target : ClosSem.Value)
     (sourceValues : List FlatSem.Value) (related : ValueRel source target)
     (decoded : FlatSem.valueToList source = some sourceValues) :

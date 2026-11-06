@@ -15,6 +15,11 @@ val _ = (print "induction_typed="; Lib.with_flag (Globals.show_types,true) print
 val _ = (print "cases_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl v_rel_cases); print "\n");
 val _ = (print "v_rel_bool_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl v_rel_Boolv); print "\n");
 val _ = (print "v_rel_unit_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl v_rel_Unitv); print "\n");
+val _ = (print "v_rel_to_list_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl v_rel_to_list); print "\n");
+val _ = (print "imp_v_rel_to_list_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl IMP_v_rel_to_list); print "\n");
+val _ = (print "dest_constant_evaluate_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl dest_Constant_evaluate); print "\n");
+val _ = (print "dest_constants_evaluate_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl dest_Constants_evaluate); print "\n");
+val _ = (print "evaluate_smart_cons_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl evaluate_SmartCons); print "\n");
 (* Typed replay of the local environment extension lemmas. *)
 val env_cons_upd_replay = prove
   (``env_rel (env with v updated_by f) m db /\ v_rel v1 v2 ==>

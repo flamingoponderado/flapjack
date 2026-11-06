@@ -5,8 +5,18 @@ import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClock
 namespace Flapjack.Compiler.Backend.FlatToClos
 open Flapjack.SemanticPrimitivesHOL
 
+namespace SmartConsPort
+/-- The closure state uses the canonical finite-map representation. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : ClosSem.StateBroad C F, (ClosSem.State.ofBroad s).toBroad = s) ∧
+      (∀ s : ClosSem.State C F, ClosSem.State.ofBroad s.toBroad = s) :=
+  ClosSem.holFmapAsFiniteSupportWitness
+end SmartConsPort
+
 /-- A recognized closure constant evaluates to its constant value without
-changing the state. The evaluator remains pending HOL correspondence review. -/
+changing the state. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "dest_Constant_evaluate"
+  (fmap_as_finite_support := [refs, code])]
 theorem destConstant_evaluate {C F : Type} (expression : ClosLang.Exp) (constant : ClosLang.Const)
     (env : List ClosSem.Value) (state : ClosSem.State C F)
     (decoded : destConstant expression = some constant) :
@@ -34,6 +44,8 @@ theorem destConstant_evaluate {C F : Type} (expression : ClosLang.Exp) (constant
 
 /-- A list of recognized constants evaluates to their values without
 changing the state. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "dest_Constants_evaluate"
+  (fmap_as_finite_support := [refs, code])]
 theorem destConstants_evaluate {C F : Type} (expressions : List ClosLang.Exp)
     (constants : List ClosLang.Const) (env : List ClosSem.Value) (state : ClosSem.State C F)
     (decoded : destConstants expressions = some constants) :
@@ -64,6 +76,8 @@ theorem destConstants_evaluate {C F : Type} (expressions : List ClosLang.Exp)
           simp [restEval]
 
 /-- Folding constant constructor arguments preserves closure evaluation. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "evaluate_SmartCons"
+  (fmap_as_finite_support := [refs, code])]
 theorem smartCons_evaluate {C F : Type} (trace : BackendCommon.Tra) (tag : Nat)
     (expressions : List ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State C F) :
     ClosSem.evaluate [smartCons trace tag expressions] env state =

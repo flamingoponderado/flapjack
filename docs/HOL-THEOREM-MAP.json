@@ -125641,5 +125641,51 @@
   "lean_name": "vRel_unit",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared v_rel_unit_typed in flat_to_clos_relation_probe.out: the closure-value binder and complete equivalence with the zero-tag empty block match the original."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "IMP_v_rel_to_list",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/ValueRelation.lean",
+  "lean_name": "listToValue_related",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared imp_v_rel_to_list_typed in flat_to_clos_relation_probe.out: both element-list binders, the list relation premise and flat and closure list encodings match the original reviewed carriers."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "v_rel_to_list",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/ValueRelation.lean",
+  "lean_name": "valueToList_related",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared v_rel_to_list_typed in flat_to_clos_relation_probe.out: both value binders, source list, relation and decoding premises, existential target list and both conclusions match the original reviewed carriers."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "dest_Constant_evaluate",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/SmartCons.lean",
+  "lean_name": "destConstant_evaluate",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared dest_constant_evaluate_typed in flat_to_clos_relation_probe.out: independent state type parameters, constant decoding premise, evaluation result and unchanged state match. Closure state refs and code use the reviewed finite-support representation. The theorem inherits reals_as_rational_cuts through closure evaluation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "dest_Constants_evaluate",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/SmartCons.lean",
+  "lean_name": "destConstants_evaluate",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared dest_constants_evaluate_typed in flat_to_clos_relation_probe.out: independent state types, list decoding premise, mapped result and unchanged state match. Closure state refs and code use the reviewed finite-support representation. The theorem inherits reals_as_rational_cuts through closure evaluation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "evaluate_SmartCons",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/SmartCons.lean",
+  "lean_name": "smartCons_evaluate",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_smart_cons_typed in flat_to_clos_relation_probe.out: independent state types, trace, tag, expression list, environment and complete evaluation equality match. Closure state refs and code use the reviewed finite-support representation. The theorem inherits reals_as_rational_cuts through closure evaluation."
 }
 ]
