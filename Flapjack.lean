@@ -1033,7 +1033,6 @@ import Flapjack.Compiler.Backend.ClosToBvl.Layout.Auxiliary
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Integer
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.IntegerRelation
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateInteger
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Word
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.WordRelation
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateWord
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateBlockCons

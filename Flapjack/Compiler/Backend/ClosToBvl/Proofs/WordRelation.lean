@@ -1,5 +1,5 @@
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.IntegerRelation
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Word
+import Flapjack.Compiler.Backend.Semantics.BvlSem.Word
 
 /-! Word primitive correspondence for the closure-to-BVL simulation. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
@@ -66,37 +66,6 @@ theorem related_primitives {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
     | word64 w => simp [primitiveToBvl, vRel_word64_inv head, tailEq]
     | block | byteVector | refPtr | closure | recclosure => contradiction
 
-
-/-- Binary 64-bit operations preserve the value relation. -/
-theorem wordOp64_related {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
-    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
-    (op : BackendCommon.Opw) (a b : BitVec 64) (x y : BvlSem.Value)
-    (first : vRel maxApp f refs code (.word64 a) x)
-    (second : vRel maxApp f refs code (.word64 b) y) :
-    ∃ source target, ClosSem.doWordApp (.wordOpw .w64 op) [.word64 a, .word64 b] = some source ∧
-      BvlSem.doWordApp (.wordOpw .w64 op) [x, y] = some target ∧
-      vRel maxApp f refs code source target := by
-  have := vRel_word64_inv first
-  have := vRel_word64_inv second
-  subst x; subst y
-  exact ⟨_, _, (wordOp64_agree op a b).1, (wordOp64_agree op a b).2, .word64 _⟩
-
-/-- Ternary floating-point operations preserve the value relation under the
-shared floating-point model. -/
-theorem fpTop_related {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
-    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
-    (op : FpTop) (a b c : BitVec 64) (x y z : BvlSem.Value)
-    (first : vRel maxApp f refs code (.word64 a) x)
-    (second : vRel maxApp f refs code (.word64 b) y)
-    (third : vRel maxApp f refs code (.word64 c) z) :
-    ∃ source target, ClosSem.doWordApp (.fpTop op) [.word64 a, .word64 b, .word64 c] = some source ∧
-      BvlSem.doWordApp (.fpTop op) [x, y, z] = some target ∧
-      vRel maxApp f refs code source target := by
-  have := vRel_word64_inv first
-  have := vRel_word64_inv second
-  have := vRel_word64_inv third
-  subst x; subst y; subst z
-  exact ⟨_, _, rfl, rfl, .word64 _⟩
 
 /-- Successful word operations produce related results for canonical arguments. -/
 theorem doWordApp_primitives {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
