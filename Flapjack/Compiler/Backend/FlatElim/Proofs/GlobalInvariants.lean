@@ -5,9 +5,6 @@ import Flapjack.Compiler.Backend.FlatProps.Globals
 namespace Flapjack.Compiler.Backend.FlatElim
 open Flapjack.Compiler.Backend.FlatProps
 
-/-- The original all-distinct predicate for a bag. -/
-def globalBagDistinct (bag : GlobalBag) : Prop := ∀ key, bag key ≤ 1
-
 /-- Filtering cannot increase the multiplicity of any initialization. -/
 theorem elistGlobals_filter_sub (predicate : FlatLang.Exp → Bool) (expressions : List FlatLang.Exp) :
     Flapjack.subBag (elistGlobals (expressions.filter predicate)) (elistGlobals expressions) := by
@@ -67,8 +64,8 @@ theorem removeFlatProg_esgcFree (declarations : List FlatLang.Exp)
 expression carriers remain pending HOL correspondence review. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "remove_flat_prog_distinct_globals"]
 theorem removeFlatProg_distinctGlobals (declarations : List FlatLang.Exp)
-    (distinct : globalBagDistinct (elistGlobals declarations)) :
-    globalBagDistinct (elistGlobals (removeFlatProgTotal declarations)) := by
+    (distinct : Flapjack.bagAllDistinct (elistGlobals declarations)) :
+    Flapjack.bagAllDistinct (elistGlobals (removeFlatProgTotal declarations)) := by
   intro key
   have bound := removeFlatProg_subBag declarations key (elistGlobals (removeFlatProgTotal declarations) key) (Nat.le_refl _)
   exact Nat.le_trans bound (distinct key)

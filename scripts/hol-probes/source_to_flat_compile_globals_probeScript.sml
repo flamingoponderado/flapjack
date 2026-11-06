@@ -26,3 +26,4 @@ val _ = (print "bag_inn="; print_term (concl bagTheory.BAG_INN); print "\n");
 val _ = (print "sub_bag="; print_term (concl bagTheory.SUB_BAG); print "\n");
 val _ = (print "bag_in="; print_term (concl bagTheory.BAG_IN); print "\n");
 val _ = (print "sub_bag_imp="; print_term (concl source_to_flatProofTheory.SUB_BAG_IMP); print "\n");
+val _ = (print "bag_all_distinct="; print_term (concl bagTheory.BAG_ALL_DISTINCT); print "\n");

@@ -13156,13 +13156,13 @@
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml", "hol_name": "compile_globals_BAG_ALL_DISTINCT",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/BindingGlobals.lean", "lean_name": "compile_globals_distinct",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared source lines 5889-5904 and HOL bagScript BAG_ALL_DISTINCT definition: the original no-duplicate condition is exactly forall key, bag key <= 1. All source inputs and the compile second component agree. Typed original theorem captured in source_to_flat_compile_globals_probe.out."
+    "reviewer": "Compared source lines 5889-5904 and the typed capture: the conclusion uses the tagged HOL BAG_ALL_DISTINCT definition on the second component of compile, with the original inputs."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml", "hol_name": "inc_compile_globals_BAG_ALL_DISTINCT",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/BindingGlobals.lean", "lean_name": "incCompile_globals_distinct",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared source lines 5906 onward and HOL bagScript BAG_ALL_DISTINCT definition. The environment identifier is a pair of naturals and the second component of the original incremental compilation is used, with the same pointwise multiplicity bound. Typed original theorem captured in source_to_flat_compile_globals_probe.out."
+    "reviewer": "Compared source lines 5906 onward and the typed capture: the environment identifier is a pair of naturals and the tagged HOL BAG_ALL_DISTINCT predicate applies to the second component of incremental compilation."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml", "hol_name": "num_bindings_def",
@@ -125536,6 +125536,14 @@
   "lean_name": "elistGlobals_append",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared the source and typed clos_elist_globals_append capture: both arguments are closure-expression lists, and the conclusion preserves the whole global-write bag using pointwise natural-number union. The checked closure-expression and global-bag definitions are shared by the proof."
+},
+{
+  "hol_path": "HOL/src/bag/bagScript.sml",
+  "hol_name": "BAG_ALL_DISTINCT",
+  "lean_path": "Flapjack/Misc/Bag.lean",
+  "lean_name": "bagAllDistinct",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source and typed bag_all_distinct capture: for an arbitrary element type, every bag multiplicity is at most one."
 },
 {
   "hol_path": "HOL/src/bag/bagScript.sml",

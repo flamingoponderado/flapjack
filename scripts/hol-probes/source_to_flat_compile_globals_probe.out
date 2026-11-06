@@ -21,3 +21,4 @@ bag_inn=∀(e :α) (n :num) (b :α -> num). BAG_INN e n b ⇔ b e ≥ n
 sub_bag=∀(b1 :α -> num) (b2 :α -> num). b1 ≤ b2 ⇔ ∀(x :α) (n :num). BAG_INN x n b1 ⇒ BAG_INN x n b2
 bag_in=∀(e :α) (b :α -> num). e ⋲ b ⇔ BAG_INN e (1 :num) b
 sub_bag_imp=(B1 :α -> num) ≤ (B2 :α -> num) ⇒ (x :α) ⋲ B1 ⇒ x ⋲ B2
+bag_all_distinct=∀(b :α -> num). BAG_ALL_DISTINCT b ⇔ ∀(e :α). b e ≤ (1 :num)

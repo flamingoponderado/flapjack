@@ -182,7 +182,7 @@ private theorem bindingRangeBag_below (start count key : Nat) (below : key < sta
 /-- The complete source-to-flat compiler initializes each global at most once. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "compile_globals_BAG_ALL_DISTINCT"]
 theorem compile_globals_distinct (c : Config) (p : List Dec) :
-    FlatElim.globalBagDistinct (elistGlobals (compileTotal c p).2) := by
+    Flapjack.bagAllDistinct (elistGlobals (compileTotal c p).2) := by
   let next := { c.next with vidx := c.next.vidx + 1 }
   let envs : EnvironmentGenerationStore := { next := 0, generation := c.envs.next, envs := .ln }
   have body := compileDecs_globals [] 1 next c.modEnv envs p
@@ -213,7 +213,7 @@ theorem compile_globals_distinct (c : Config) (p : List Dec) :
 /-- Incremental source-to-flat compilation also initializes each slot at most once. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "inc_compile_globals_BAG_ALL_DISTINCT"]
 theorem incCompile_globals_distinct (envId : Nat × Nat) (c : Config) (p : List Dec) :
-    FlatElim.globalBagDistinct (elistGlobals (incCompile envId c p).2) := by
+    Flapjack.bagAllDistinct (elistGlobals (incCompile envId c p).2) := by
   let env := lookupEnvId envId c.envs
   let envs : EnvironmentGenerationStore := { next := 0, generation := c.envs.next, envs := .ln }
   have body := compileDecs_globals [] 1 c.next env envs p

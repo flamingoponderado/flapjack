@@ -20,6 +20,10 @@ def subBag {α : Type} (b₁ b₂ : Bag α) : Prop :=
 @[hol "HOL/src/bag/bagScript.sml" "BAG_IN"]
 def bagIn {α : Type} (e : α) (b : Bag α) : Prop := bagInn e 1 b
 
+/-- Every element has multiplicity at most one. -/
+@[hol "HOL/src/bag/bagScript.sml" "BAG_ALL_DISTINCT"]
+def bagAllDistinct {α : Type} (b : Bag α) : Prop := ∀ e, b e ≤ 1
+
 /-- The constant-zero bag. -/
 @[hol "HOL/src/bag/bagScript.sml" "EMPTY_BAG"]
 def emptyBag {α : Type} : Bag α := fun _ => 0
