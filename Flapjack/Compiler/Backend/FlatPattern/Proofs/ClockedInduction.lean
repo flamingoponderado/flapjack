@@ -165,19 +165,6 @@ theorem expressionSimulation_all {C F : Type} (cfg stateCfg : Config) (expressio
   exact expressionSimulationUpTo_all source.clock cfg stateCfg expression
     sourceEnv targetEnv source target sourceFinal sourceResult n (by omega) run envs states bound safe
 
-/-- Compiled declaration lists preserve related states and non-type-error
-outcomes in the current proof-side evaluator. -/
-theorem evaluateDecs_simulation_all {C F : Type} (cfg stateCfg : Config)
-    (source target sourceFinal : FlatSem.State C F) (declarations : List FlatLang.Exp)
-    (outcome : Option (SemanticPrimitivesHOL.ErrorResult FlatSem.Value))
-    (states : StateRel stateCfg source target) (run : FlatSem.evaluateDecs source declarations = (sourceFinal, outcome))
-    (safe : outcome ≠ some (.abort .typeError)) :
-    ∃ targetFinal targetOutcome,
-      FlatSem.evaluateDecs target (declarations.map (compileDec cfg)) = (targetFinal, targetOutcome) ∧
-      StateRel stateCfg sourceFinal targetFinal ∧ optionRel FlatErrorRel outcome targetOutcome :=
-  evaluateDecs_simulation cfg stateCfg declarations (by intro declaration _; exact expressionSimulation_all cfg stateCfg declaration)
-    source target sourceFinal outcome states run safe
-
 /-- Expression-list and declaration-list compilation preserve evaluation. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "compile_exps_evaluate"]
 theorem compileExps_evaluate {C F : Type} (stateCfg : Config) :
@@ -213,7 +200,9 @@ theorem compileExps_evaluate {C F : Type} (stateCfg : Config) :
   · intro s1 decs s2 t1 cfg decs' res run compiled states safe
     subst decs'
     obtain ⟨t2, res', targetRun, finalStates, outcomes⟩ :=
-      evaluateDecs_simulation_all cfg stateCfg s1 s2 t1 decs res states run safe
+      evaluateDecs_simulation cfg stateCfg decs
+        (fun declaration _ => expressionSimulation_all cfg stateCfg declaration)
+        s1 s2 t1 res states run safe
     have converted : optionRel (SemanticPrimitivesProps.excRel ValueRel) res res' := by
       cases res with
       | none =>
