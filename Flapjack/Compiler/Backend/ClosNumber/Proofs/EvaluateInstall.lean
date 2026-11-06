@@ -241,19 +241,4 @@ theorem evaluate_install_step {C F : Type} (trace : BackendCommon.Tra) (args : L
           exact targetInstall
         · simpa [middleMax] using resultRel
 
-/-- Unrestricted form of the installation case, derived from its clock-bounded
-step for callers that already have simulations at every state. -/
-theorem evaluate_install {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args)
-    (programIH : ∀ expressions, EvalSimulation (C := C) (F := F) expressions) :
-    EvalSimulation (C := C) (F := F) [.op trace .install args] := by
-  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
-  have argsAt : EvalSimulationAt source args := by
-    intro env nextEnv target result next start run noType safe envRel stateRel
-    exact argsIH env nextEnv source target result next start run noType safe envRel stateRel
-  apply evaluate_install_step trace args env nextEnv source target argsAt result sourceNext start
-    run noType safe envRel stateRel
-  intro expressions state _ env nextEnv target result next start run noType safe envRel stateRel
-  exact programIH expressions env nextEnv state target result next start run noType safe envRel stateRel
-
 end Flapjack.Compiler.Backend.ClosNumber

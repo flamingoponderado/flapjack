@@ -482,14 +482,6 @@ theorem evaluate_tick_step {C F : Type} (trace : BackendCommon.Tra) (body : Clos
     refine ⟨targetResult, targetNext, ?_, resultRel, nextRel⟩
     simpa [renumberList, renumber, evaluate, targetNonzero] using targetRun
 
-/-- Unrestricted tick case, derived from the local-state step. -/
-theorem evaluate_tick {C F : Type} (trace : BackendCommon.Tra) (body : ClosLang.Exp)
-    (bodyIH : EvalSimulation (C := C) (F := F) [body]) :
-    EvalSimulation (C := C) (F := F) [.tick trace body] := by
-  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
-  exact evaluate_tick_step trace body source (evalSimulation_at bodyIH (decClock 1 source))
-    env nextEnv target result sourceNext start run noType safe envRel stateRel
-
 /-- Raising a value preserves the numbering relation, assuming the body
 simulation. The evaluator's singleton-result theorem supplies the raised value. -/
 theorem evaluate_raise_step {C F : Type} (trace : BackendCommon.Tra) (body : ClosLang.Exp)
@@ -535,14 +527,6 @@ theorem evaluate_raise_step {C F : Type} (trace : BackendCommon.Tra) (body : Clo
               refine ⟨.err (.raise _), targetNext, ?_, valueRel, nextRel⟩
               simp only [renumberList] at targetRun
               simp [renumberList, renumber, evaluate, targetRun]
-
-/-- Unrestricted raise case, derived from the local-state step. -/
-theorem evaluate_raise {C F : Type} (trace : BackendCommon.Tra) (body : ClosLang.Exp)
-    (bodyIH : EvalSimulation (C := C) (F := F) [body]) :
-    EvalSimulation (C := C) (F := F) [.raise trace body] := by
-  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
-  exact evaluate_raise_step trace body source (evalSimulation_at bodyIH source)
-    env nextEnv target result sourceNext start run noType safe envRel stateRel
 
 /-- Sequencing preserves the simulation when the first expression and the
 remaining nonempty list satisfy their respective induction hypotheses. -/
@@ -635,16 +619,6 @@ theorem evaluate_cons_step {C F : Type} (first second : ClosLang.Exp) (rest : Li
                       rw [ClosProps.evaluate_cons_value _ _ _ _ _ _ targetRun, targetRestRun]
                     · exact List.Forall₂.cons valueRel (by simpa [ResultRel, maxEq] using restRel)
 
-/-- Unrestricted list case, derived from the local-state step. -/
-theorem evaluate_cons {C F : Type} (first second : ClosLang.Exp) (rest : List ClosLang.Exp)
-    (firstIH : EvalSimulation (C := C) (F := F) [first])
-    (restIH : EvalSimulation (C := C) (F := F) (second :: rest)) :
-    EvalSimulation (C := C) (F := F) (first :: second :: rest) := by
-  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
-  exact evaluate_cons_step first second rest source (evalSimulation_at firstIH source)
-    (fun state _ => evalSimulation_at restIH state) env nextEnv target result sourceNext start
-    run noType safe envRel stateRel
-
 /-- A let expression preserves evaluation when its bindings and body satisfy
     their simulations. The environment is extended in the evaluator's order. -/
 theorem evaluate_let_step {C F : Type} (trace : BackendCommon.Tra)
@@ -705,17 +679,6 @@ theorem evaluate_let_step {C F : Type} (trace : BackendCommon.Tra)
           rw [evaluate, fixClock_evaluate, targetRun]
           exact targetBodyRun
         · simpa [maxEq] using bodyRel
-
-/-- Unrestricted let case, derived from the local-state step. -/
-theorem evaluate_let {C F : Type} (trace : BackendCommon.Tra)
-    (bindings : List ClosLang.Exp) (body : ClosLang.Exp)
-    (bindingsIH : EvalSimulation (C := C) (F := F) bindings)
-    (bodyIH : EvalSimulation (C := C) (F := F) [body]) :
-    EvalSimulation (C := C) (F := F) [.let trace bindings body] := by
-  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
-  exact evaluate_let_step trace bindings body source (evalSimulation_at bindingsIH source)
-    (fun state _ => evalSimulation_at bodyIH state) env nextEnv target result sourceNext start
-    run noType safe envRel stateRel
 
 /-- A handler preserves normal and abort results and evaluates related handlers
     with related raised values prepended to their environments. -/
@@ -799,16 +762,6 @@ theorem evaluate_handle_step {C F : Type} (trace : BackendCommon.Tra)
               rw [evaluate, fixClock_evaluate, targetRun]
               exact targetHandlerRun
             · simpa [maxEq] using handlerRel
-
-/-- Unrestricted handler case, derived from the local-state step. -/
-theorem evaluate_handle {C F : Type} (trace : BackendCommon.Tra) (body handler : ClosLang.Exp)
-    (bodyIH : EvalSimulation (C := C) (F := F) [body])
-    (handlerIH : EvalSimulation (C := C) (F := F) [handler]) :
-    EvalSimulation (C := C) (F := F) [.handle trace body handler] := by
-  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
-  exact evaluate_handle_step trace body handler source (evalSimulation_at bodyIH source)
-    (fun state _ => evalSimulation_at handlerIH state) env nextEnv target result sourceNext start
-    run noType safe envRel stateRel
 
 /-- Numbering preserves the evaluator's Boolean observation. -/
 theorem valueRel_asBool {maxApp : Nat} {left right : Value}
@@ -921,17 +874,6 @@ theorem evaluate_if_step {C F : Type} (trace : BackendCommon.Tra) (condition yes
                     simpa [targetDecision] using targetBranchRun
                   · simpa [maxEq] using branchRel
 
-/-- Unrestricted conditional case, derived from the local-state step. -/
-theorem evaluate_if {C F : Type} (trace : BackendCommon.Tra) (condition yes no : ClosLang.Exp)
-    (conditionIH : EvalSimulation (C := C) (F := F) [condition])
-    (yesIH : EvalSimulation (C := C) (F := F) [yes])
-    (noIH : EvalSimulation (C := C) (F := F) [no]) :
-    EvalSimulation (C := C) (F := F) [.ifThenElse trace condition yes no] := by
-  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
-  exact evaluate_if_step trace condition yes no source (evalSimulation_at conditionIH source)
-    (fun state _ => evalSimulation_at yesIH state) (fun state _ => evalSimulation_at noIH state)
-    env nextEnv target result sourceNext start run noType safe envRel stateRel
-
 /-- Recursive closure creation preserves the related environment and evaluates
     the numbered body under corresponding recursive function bundles. -/
 theorem evaluate_letrec_step {C F : Type} (names : List Flapjack.AstHOL.VarN)
@@ -977,16 +919,6 @@ theorem evaluate_letrec_step {C F : Type} (names : List Flapjack.AstHOL.VarN)
       cases selected <;> simp_all
   · simp [arityOk] at run
     exact False.elim (noType run.1.symm)
-
-/-- Unrestricted recursive-let case, derived from the local-state step. -/
-theorem evaluate_letrec {C F : Type} (names : List Flapjack.AstHOL.VarN)
-    (location : Option Nat) (selected : Option (List Nat))
-    (functions : List (Nat × ClosLang.Exp)) (body : ClosLang.Exp)
-    (bodyIH : EvalSimulation (C := C) (F := F) [body]) :
-    EvalSimulation (C := C) (F := F) [.letrec names location selected functions body] := by
-  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
-  exact evaluate_letrec_step names location selected functions body source (evalSimulation_at bodyIH source)
-    env nextEnv target result sourceNext start run noType safe envRel stateRel
 
 /-- Indirect application at one source state. Argument and function
 simulations are limited to reachable clocks, and application is available at
@@ -1116,23 +1048,6 @@ theorem evaluate_app_step {C F : Type} (trace : BackendCommon.Tra)
                         simpa using targetAppRun
                       · simpa [lastMax, middleMax] using resultRel
 
-/-- Unrestricted application case, derived from the clock-bounded step. -/
-theorem evaluate_app {C F : Type} (trace : BackendCommon.Tra)
-    (function : ClosLang.Exp) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args)
-    (functionIH : EvalSimulation (C := C) (F := F) [function])
-    (applicationIH : AppSimulation (C := C) (F := F)) :
-    EvalSimulation (C := C) (F := F) [.app trace none function args] := by
-  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
-  apply evaluate_app_step trace function args env nextEnv source target result sourceNext start
-    run noType safe envRel stateRel
-  · intro env nextEnv target result next start run noType safe envRel stateRel
-    exact argsIH env nextEnv source target result next start run noType safe envRel stateRel
-  · intro state _ env nextEnv target result next start run noType safe envRel stateRel
-    exact functionIH env nextEnv state target result next start run noType safe envRel stateRel
-  · intro function nextFunction args nextArgs state target result next _ run noType related argsRel stateRel
-    exact applicationIH function nextFunction args nextArgs state target result next run noType related argsRel stateRel
-
 /-- Directly annotated applications cannot satisfy the simulation's source
     side condition; numbering correctness only considers indirect calls here. -/
 theorem evaluate_app_some {C F : Type} (trace : BackendCommon.Tra) (location : Nat)
@@ -1179,16 +1094,6 @@ theorem evaluate_call_step {C F : Type} (trace : BackendCommon.Tra) (ticks locat
       rw [evaluate, fixClock_evaluate, argsRun] at run
       simp [findCode, emptyCode, HolFiniteMapExact.empty] at run
       exact False.elim (noType run.1.symm)
-
-/-- Unrestricted direct-call case derived from its local-state step. -/
-theorem evaluate_call {C F : Type} (trace : BackendCommon.Tra) (ticks location : Nat)
-    (args : List ClosLang.Exp) (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.call trace ticks location args] := by
-  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
-  apply evaluate_call_step trace ticks location args env nextEnv source target result sourceNext start
-    run noType safe envRel stateRel
-  intro env nextEnv target result next start run noType safe envRel stateRel
-  exact argsIH env nextEnv source target result next start run noType safe envRel stateRel
 
 /-- Integer operations inspect only numeric values, which numbering preserves. -/
 theorem doIntApp_related (maxApp : Nat) (op : ClosLang.IntOp) {args nextArgs : List Value}
@@ -1413,19 +1318,6 @@ theorem evaluate_ordinaryOp_step {C F : Type} (trace : BackendCommon.Tra)
             dsimp only
             rw [targetPrimRun]
           · exact .cons (by simpa [maxEq] using valueRel) .nil
-
-/-- Unrestricted ordinary-operation case derived from its local-state step. -/
-theorem evaluate_ordinaryOp {C F : Type} (trace : BackendCommon.Tra)
-    (op : ClosLang.Op) (args : List ClosLang.Exp)
-    (notInstall : op ≠ .install) (notForce : op ≠ .thunkOp .forceThunk)
-    (argsIH : EvalSimulation (C := C) (F := F) args)
-    (primitiveIH : PrimitiveSimulation (C := C) (F := F) op) :
-    EvalSimulation (C := C) (F := F) [.op trace op args] := by
-  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
-  apply evaluate_ordinaryOp_step trace op args notInstall notForce env nextEnv source target result sourceNext start
-    run noType safe envRel stateRel ?_ primitiveIH
-  intro env nextEnv target result next start run noType safe envRel stateRel
-  exact argsIH env nextEnv source target result next start run noType safe envRel stateRel
 
 /-- Integer primitives satisfy the shared ordinary-operation obligation. -/
 theorem primitiveSimulation_int {C F : Type} (op : ClosLang.IntOp) :
@@ -1864,12 +1756,6 @@ theorem primitiveSimulation_block {C F : Type} (op : ClosLang.BlockOp) :
   | equalConst constant => exact primitiveSimulation_block_equalConst constant
   | build constants => exact primitiveSimulation_block_build constants
 
-/-- Block expressions preserve evaluation under location numbering. -/
-theorem evaluate_blockOp {C F : Type} (trace : BackendCommon.Tra) (op : ClosLang.BlockOp)
-    (args : List ClosLang.Exp) (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.blockOp op) args] :=
-  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH (primitiveSimulation_block op)
-
 /-- FFI calls preserve matching byte-array contents, events and final errors. -/
 theorem primitiveSimulation_ffi {C F : Type} (name : Flapjack.Basis.Pure.MlString.MlString) :
     PrimitiveSimulation (C := C) (F := F) (.ffi name) := by
@@ -1906,13 +1792,6 @@ theorem primitiveSimulation_ffi {C F : Type} (name : Flapjack.Basis.Pure.MlStrin
         | number _ | word64 _ | block _ _ _ _ | refPtr _ _ | closure | recclosure =>
           cases second <;> simp [doApp, ResultRel]
       | cons head tail => simp [doApp, ResultRel]
-
-/-- FFI expressions preserve evaluation and event state through numbering. -/
-theorem evaluate_ffi {C F : Type} (trace : BackendCommon.Tra)
-    (name : Flapjack.Basis.Pure.MlString.MlString) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.ffi name) args] :=
-  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH (primitiveSimulation_ffi name)
 
 /-- Allocating a value array chooses the same fresh address and writes related
     fields into both reference stores. -/
