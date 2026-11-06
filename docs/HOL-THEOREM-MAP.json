@@ -125755,5 +125755,21 @@
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
   "reviewer": "Compared pmatch_stamps_ok in source_to_flat_global_env_probe.out with inferred types: the original state and namespace assumptions, independent generic namespace types, all map lookups and constructor side conditions and stamp conclusion match. Classical equality supplies HOL equality on the generic namespace types without extra hypotheses. GlobalEnv.c and tys use the reviewed finite-support representation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "compile_decs_future_rel",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleStep.lean",
+  "lean_name": "compileDecs_futureRel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_decs_future_typed in cake_subglobals_probe.out: all compiler inputs and five outputs, original conjunctive premises and future relation conclusion match."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "env_gen_future_rel_forward",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleStep.lean",
+  "lean_name": "envGenFutureRel_forward",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared env_gen_future_forward_typed in cake_subglobals_probe.out: both oracle states, the original conjunctive future and forward premises, and the future relation conclusion match."
 }
 ]

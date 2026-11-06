@@ -244,17 +244,18 @@ def envGenFutureRel {C : Type} (interp : Option (Value → Option (Config × C))
     Flapjack.sptLookup gen.generation config.envs.envGens = some genFinal ∧
       Flapjack.sptSubspt gen.envs genFinal
 
-/-- A future relation for the output of declaration compilation also holds
-for its input generation store. This helper follows the original proof's
-generation-preservation and submap argument; typed HOL review is pending. -/
+/-- A future relation for declaration compilation's output also holds for
+its input generation store. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "compile_decs_future_rel"]
 theorem compileDecs_futureRel {C : Type} (interp : Option (Value → Option (Config × C)))
     (trace : List Flapjack.Basis.Pure.MlString.MlString) (n : Nat) (start : NextIndices)
     (env : Environment) (gen : EnvironmentGenerationStore) (decs : List Dec)
     (n' : Nat) (next : NextIndices) (nextEnv : Environment)
     (nextGen : EnvironmentGenerationStore) (flatDecs : List FlatLang.Exp) (evalState : Option EvalState)
-    (compiled : compileDecs trace n start env gen decs = (n', next, nextEnv, nextGen, flatDecs))
-    (future : envGenFutureRel interp nextGen evalState) (valid : envGenInv gen) :
+    (premises : compileDecs trace n start env gen decs = (n', next, nextEnv, nextGen, flatDecs) ∧
+      envGenFutureRel interp nextGen evalState ∧ envGenInv gen) :
     envGenFutureRel interp gen evalState := by
+  obtain ⟨compiled, future, valid⟩ := premises
   have generation := compileDecs_generation trace n start env gen decs n' next nextEnv nextGen flatDecs compiled
   have submap := (compileDecs_envGenInv trace n start env gen decs n' next nextEnv nextGen flatDecs compiled valid).2
   unfold envGenFutureRel at future ⊢
@@ -265,12 +266,13 @@ theorem compileDecs_futureRel {C : Type} (interp : Option (Value → Option (Con
     obtain ⟨final, lookup, subset⟩ := future
     exact ⟨final, by simpa [generation] using lookup, Flapjack.sptSubsptTrans _ _ _ ⟨submap, subset⟩⟩
 
-/-- Moving forward through the source oracle preserves its future relation.
-This helper follows the original submap argument; typed HOL review is pending. -/
+/-- Moving forward through the source oracle preserves its future relation. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "env_gen_future_rel_forward"]
 theorem envGenFutureRel_forward {C : Type} (interp : Option (Value → Option (Config × C)))
     (gen : EnvironmentGenerationStore) (before after : Option EvalState)
-    (future : envGenFutureRel interp gen before) (forward : oracForwardRel interp before after) :
+    (premises : envGenFutureRel interp gen before ∧ oracForwardRel interp before after) :
     envGenFutureRel interp gen after := by
+  obtain ⟨future, forward⟩ := premises
   unfold envGenFutureRel at future ⊢
   have configs := forward.1
   unfold oracConfigEnvsSubspt at configs

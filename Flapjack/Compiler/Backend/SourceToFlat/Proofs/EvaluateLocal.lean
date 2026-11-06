@@ -42,7 +42,7 @@ theorem factoredDecCase_local_success {C F : Type} [Nonempty C]
   have baseMid := globalEnvInv_growth genv midGenv localGrowth baseMap (fun _ => False) baseEnv baseInv
   have combinedInv := globalEnvInv_append_factored midGenv localMap baseMap localEnv baseEnv
     localDomain localEnvInv baseMid
-  have futureMid := envGenFutureRel_forward interp bodyGen source.evalState middle.evalState future localForward
+  have futureMid := envGenFutureRel_forward interp bodyGen source.evalState middle.evalState ⟨future, localForward⟩
   obtain ⟨lastFlat, lastGenv, bodyError, bodyRun, lastStates, bodyPost, bodySuccess, bodyErrors⟩ :=
     bodyIH midGenv midFlat localInvariant combinedInv localGeneration futureMid
   have flatRun : FlatSem.evaluateDecs flat (localCode ++ bodyCode) = (lastFlat, bodyError) := by
@@ -141,7 +141,7 @@ theorem factoredDecBoundedIH_dlocal {C F : Type} [Nonempty C]
     n2 next2 env2 gen2 code2 bodyCompiled
   have firstBound := idxPrev_trans next1 next2 finish ⟨previous, bounded⟩
   have firstFuture := compileDecs_futureRel interp trace n1 next1 (extendEnv env1 env) gen1 body
-    n2 next2 env2 gen2 code2 source.evalState bodyCompiled future validFirst
+    n2 next2 env2 gen2 code2 source.evalState ⟨bodyCompiled, future, validFirst⟩
   generalize localRun : EvaluateHOL.evaluateDecs source sourceEnv locals = localResult
   obtain ⟨middle, localResult⟩ := localResult
   have clockFix : EvaluateHOL.fixClock source (EvaluateHOL.evaluateDecs source sourceEnv locals) =

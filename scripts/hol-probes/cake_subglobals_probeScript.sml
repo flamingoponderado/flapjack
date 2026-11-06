@@ -60,6 +60,8 @@ val _ = (print "env_gen_inv="; print_thm source_to_flatProofTheory.env_gen_inv_d
 val _ = (print "env_store_inv="; print_thm source_to_flatProofTheory.env_store_inv_def; print "\n");
 val _ = (print "env_gen_rel="; print_thm source_to_flatProofTheory.env_gen_rel_def; print "\n");
 val _ = (print "env_gen_future="; print_thm source_to_flatProofTheory.env_gen_future_rel_def; print "\n");
+val _ = (print "compile_decs_future_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl source_to_flatProofTheory.compile_decs_future_rel); print "\n");
+val _ = (print "env_gen_future_forward_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl source_to_flatProofTheory.env_gen_future_rel_forward); print "\n");
 val _ = (print "orac_env_inv="; print_thm source_to_flatProofTheory.src_orac_env_invs_def; print "\n");
 val _ = (print "orac_gen_inv="; print_thm source_to_flatProofTheory.src_orac_gen_inv_def; print "\n");
 val _ = (print "orac_invs="; print_thm source_to_flatProofTheory.src_orac_invs_def; print "\n");

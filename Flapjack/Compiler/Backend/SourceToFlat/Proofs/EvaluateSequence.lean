@@ -171,7 +171,7 @@ theorem factoredDecCase_append_success {C F : Type} [Nonempty C]
   have baseMid := globalEnvInv_growth genv midGenv firstGrowth baseMap (fun _ => False) baseEnv baseInv
   have combinedInv := globalEnvInv_append_factored midGenv firstMap baseMap firstEnv baseEnv
     firstDomain firstEnvInv baseMid
-  have futureMid := envGenFutureRel_forward interp lastGen source.evalState middle.evalState future firstForward
+  have futureMid := envGenFutureRel_forward interp lastGen source.evalState middle.evalState ⟨future, firstForward⟩
   obtain ⟨lastFlat, lastGenv, tailError, tailRun, lastStates, tailPost, tailSuccess, tailErrors⟩ :=
     tailIH midGenv midFlat firstInvariant combinedInv firstGeneration futureMid
   have flatRun : FlatSem.evaluateDecs flat (firstCode ++ tailCode) = (lastFlat, tailError) := by
@@ -280,7 +280,7 @@ theorem factoredDecBoundedIH_cons {C F : Type} [Nonempty C]
     n2 next2 env2 gen2 code2 tailCompiled
   have firstBound := idxPrev_trans next1 next2 finish ⟨previous, bounded⟩
   have firstFuture := compileDecs_futureRel interp trace n1 next1 (extendEnv env1 env) gen1
-    (second :: rest) n2 next2 env2 gen2 code2 source.evalState tailCompiled future validFirst
+    (second :: rest) n2 next2 env2 gen2 code2 source.evalState ⟨tailCompiled, future, validFirst⟩
   generalize firstRun : EvaluateHOL.evaluateDecs source sourceEnv [first] = firstResult
   obtain ⟨middle, firstResult⟩ := firstResult
   have clockFix : EvaluateHOL.fixClock source (EvaluateHOL.evaluateDecs source sourceEnv [first]) =
