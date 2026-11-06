@@ -1,7 +1,6 @@
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.HandleBranch
 
-/-! Composition of the match-expression cases. The evaluator's HOL
-correspondence remains pending review. -/
+/-! Composition of the match-expression cases. -/
 namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack Flapjack.AstHOL Flapjack.Compiler.Backend
 open Flapjack.SemanticPrimitivesHOL (Result)

@@ -13,16 +13,16 @@
   "hol_name": "domain_def",
   "lean_path": "Flapjack/Misc/Sptree.lean",
   "lean_name": "sptDomain",
-  "statement_status": "reviewed_exact",
-  "reviewer": "Compared the four HOL domain_def clauses and typed sptree_domain capture. Lean uses the lookup characterization, justified by the typed HOL sptree_domain_is_some replay; sptMem_ln, sptMem_ls, sptMem_bn and sptMem_bs prove the constructor clauses. Sets are characteristic predicates."
+  "statement_status": "documented_mismatch",
+  "reviewer": "HOL defines domain by four recursive set clauses; the Lean predicate uses lookup instead. Its membership clauses are kernel-checked, but the source-shaped definition and set representation remain to be reviewed."
 },
 {
   "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
   "hol_name": "domain_lookup",
   "lean_path": "Flapjack/Misc/Sptree.lean",
   "lean_name": "sptMem_iff_lookup",
-  "statement_status": "reviewed_exact",
-  "reviewer": "Compared the typed sptree_domain_lookup capture: membership in the reviewed sptDomain is equivalent to existence of a successful sptLookup. The proof is definitional from the reviewed lookup-characterization rendering of domain."
+  "statement_status": "pending_statement_review",
+  "reviewer": "Compared the typed sptree_domain_lookup capture: membership in the lookup-defined sptDomain is equivalent to existence of a successful sptLookup. The domain definition itself is pending source-shape and set-representation review."
 },
 {
   "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
@@ -38,7 +38,7 @@
   "lean_path": "Flapjack/Misc/Sptree.lean",
   "lean_name": "sptLookup",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared pinned HOL lookup_def and typed sptree_lookup capture; the HOL sptree_lookup_distributed replay proves the COND_RAND form used by Lean, and EVEN_MOD2 establishes the parity test. Key subtraction and division match."
+  "reviewer": "Compared pinned HOL lookup_def and typed sptree_lookup capture; the HOL sptree_lookup_distributed replay proves the COND_RAND form used by Lean, which moves the EVEN choice outside the recursive call, and EVEN_MOD2 establishes the parity test. Key subtraction and division match."
 },
 {
   "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
@@ -172,7 +172,7 @@
 {
   "hol_path": "HOL/src/finite_maps/alistScript.sml",
   "hol_name": "ALOOKUP_def",
-  "lean_path": "Flapjack/Misc/Alist.lean",
+  "lean_path": "Flapjack/FiniteMap/AlistExact/Lookup.lean",
   "lean_name": "holALookup",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared the typed alookup_def capture and hypothesis-free alookup_reversed_eq HOL replay. The replay reverses the equality operands to match Lean, with unrestricted key and value types."
@@ -183,7 +183,7 @@
   "lean_path": "Flapjack/Misc/Option/Rel.lean",
   "lean_name": "optionRel",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared optrel_def and the hypothesis-free optrel_clauses HOL replay. The four option-constructor cases match the Lean pattern match, with independent payload types."
+  "reviewer": "Compared optrel_def and the hypothesis-free HOL optrel_clauses replay: HOL uses a disjunction with an existential, and the replay derives the four constructor cases used by the Lean match. Payload types remain independent."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
@@ -14152,7 +14152,7 @@
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GeneratedNames.lean",
     "lean_name": "sumStringOrds_eq",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared the typed sum_string_ords theorem capture. HOL SUM is foldr addition, and the theorem is definitional in Lean because sumStringOrds uses HOL’s proved closed form of the recursive definition."
+    "reviewer": "Compared the typed sum_string_ords theorem capture. HOL SUM is foldr addition. The proof uses sumStringOrds_indexEquation, which kernel-checks that the executable closed form satisfies the HOL recursive definition."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
@@ -110474,7 +110474,7 @@
     "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
     "hol_name": "sum_string_ords_def",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared the typed sum_string_ords_def and hypothesis-free sum_string_ords HOL theorem captures. Lean uses the theorem-proved closed form of the HOL index recursion; HOL SUM is foldr addition, ORD is HolChar.toNat and num subtraction is Nat subtraction."
+    "reviewer": "Compared the typed sum_string_ords_def and hypothesis-free sum_string_ords HOL theorem captures. Lean uses the closed form and proves the HOL index-recursive equation in sumStringOrds_indexEquation; HOL SUM is foldr addition, ORD is HolChar.toNat and num subtraction is Nat subtraction."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Names.lean",
@@ -110482,7 +110482,7 @@
     "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
     "hol_name": "dec_name_to_num_def",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared the typed dec_name_to_num_def capture with the hypothesis-free dec_name_to_num_explode HOL replay and dot_ord. The list cases and byte equality reproduce the source length and index tests on the reviewed MlString carrier."
+    "reviewer": "Compared the typed dec_name_to_num_def capture with the hypothesis-free dec_name_to_num_explode HOL replay and dot_ord. The kernel-checked decNameToNum_indexEquation proves that the list cases and byte equality reproduce the source length and index tests on the reviewed MlString carrier."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Names.lean",
@@ -111618,7 +111618,7 @@
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
     "hol_name": "exh_steps_def",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared the typed equations in pattern_exh_steps_probe.out: the matrix traversal counts one for an empty matrix or leading empty row and otherwise adds one before recursing on defaultMat or specMats. This proof-side measure is not yet used by the executed exhaustiveness checker."
+    "reviewer": "Compared the typed equations in pattern_exh_steps_probe.out: the matrix traversal counts one for an empty matrix or leading empty row and otherwise adds one before recursing on defaultMat or specMats. The measure is used by exhAll; the compiler reaches it through the kernel-proved exhRows_eq_worklist csimp rewrite."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternExh/Exhaustive.lean",
@@ -111626,7 +111626,7 @@
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
     "hol_name": "exh_steps_def",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared the typed equations in pattern_exh_steps_probe.out: the empty matrix list has count zero and a cons sums the head and tail counts. This proof-side measure is not yet used by the executed exhaustiveness checker."
+    "reviewer": "Compared the typed equations in pattern_exh_steps_probe.out: the empty matrix list has count zero and a cons sums the head and tail counts. The measure is used by exhAll; the compiler reaches it through the kernel-proved exhRows_eq_worklist csimp rewrite."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternExh/Exhaustive.lean",
@@ -111707,6 +111707,14 @@
     "hol_name": "pand_assoc",
     "statement_status": "reviewed_exact",
     "reviewer": "Compared the typed local HOL replay with three independently quantified pmatchResult values and the same association order. The replay is recorded in pattern_exh_steps_probe.out."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternSemantics/Semantics.lean",
+    "lean_name": "isSibling",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_semanticsScript.sml",
+    "hol_name": "is_sibling_def",
+    "statement_status": "documented_mismatch",
+    "reviewer": "The executed version specializes the HOL-polymorphic element type to Nat pairs. isSiblingHOL is the unrestricted port, and isSibling_eq_HOL proves agreement at this specialization."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternSemantics/Semantics.lean",

@@ -1,7 +1,6 @@
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.FunctionApplication
 
-/-! Dynamic compiler input preservation for the flat pattern pass. The flat
-evaluator and the proof-side value/state relations remain pending HOL review. -/
+/-! Dynamic compiler input preservation for the flat pattern pass. -/
 namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack Flapjack.AstHOL Flapjack.Compiler.Backend
 open Flapjack.SemanticPrimitivesHOL (Result)

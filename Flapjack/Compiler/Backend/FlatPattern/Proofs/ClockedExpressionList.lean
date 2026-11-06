@@ -1,8 +1,7 @@
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ExpressionList
 import Flapjack.Compiler.Backend.FlatProps.EvaluateLength
 
-/-! Clock-bounded expression-list simulation for the flat pattern pass. The
-underlying evaluator and relations remain pending HOL review. -/
+/-! Clock-bounded expression-list simulation for the flat pattern pass. -/
 namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack Flapjack.AstHOL Flapjack.Compiler.Backend
 open Flapjack.SemanticPrimitivesHOL (Result)

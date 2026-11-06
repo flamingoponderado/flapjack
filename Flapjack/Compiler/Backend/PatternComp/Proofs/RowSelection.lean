@@ -301,7 +301,7 @@ theorem matchRows_moveConstUp_nonNullary (refs : HolFiniteMapExact Nat Term) (va
   have truncSafe : matchRows refs truncated value ≠ none := by rw [truncEq]; exact safe
   have failures : ∀ row ∈ truncated, isConstRow row = true → pmatch refs row.1 value = .failure := by
     intro row member constant
-    have notTypeFailure := matchRows_member_safe refs value truncated truncSafe row member
+    have notTypeFailure := PatternExh.matchRows_member_safe refs value truncated truncSafe row member
     exact isConstRow_failure refs value row.1 row.2 notNullary (by simpa using constant) notTypeFailure
   have filteredFailures : ∀ row ∈ truncated.filter isConstRow, pmatch refs row.1 value = .failure := by
     intro row member
@@ -434,7 +434,7 @@ theorem matchRows_moveConstUp_nullary (refs : HolFiniteMapExact Nat Term) (tag :
         have inTruncated : row ∈ truncated := by rw [decomposition]; simp [member]
         have notSuccess := nonConstRow_not_success_nullary refs tag row nonconstant
           (noOrMember row inTruncated) (noAny row member)
-        have notTypeFailure := matchRows_member_safe refs value truncated truncSafe row inTruncated
+        have notTypeFailure := PatternExh.matchRows_member_safe refs value truncated truncSafe row inTruncated
         cases result : pmatch refs row.1 value with
         | success => exact (notSuccess result).elim
         | typeFailure => exact (notTypeFailure result).elim

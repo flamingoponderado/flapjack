@@ -29,6 +29,12 @@ state-transition, error, hypothesis, and conclusion details must still match
 HOL. See [`AGENTS.md`](../AGENTS.md#qualify-only-named-list-to-array-state-fields)
 for the review rule.
 
+The checked-in `hol4/` directory contains selected vendored HOL scripts used
+by existing references. The `HOL/` submodule pins the complete source tree;
+references use it for scripts absent from the vendored subset. For example,
+the vendored option and sptree scripts match the corresponding files in the
+pinned `HOL/` checkout, while `alistScript.sml` is taken from `HOL/`.
+
 ## ML bindings versus declarations
 
 `scripts/check-hol-refs.py` recognizes a HOL declaration in two forms: a
@@ -44,7 +50,7 @@ the cited name occurs in one of the two syntactic forms.
 
 | HOL script | Lean counterpart |
 | --- | --- |
-| `HOL/src/finite_maps/alistScript.sml` | `Flapjack/FiniteMap/AlistExact.lean` (canonical finite-support association-list map and first-entry lookup properties) |
+| `HOL/src/finite_maps/alistScript.sml` | `Flapjack/FiniteMap/AlistExact.lean` and its `Lookup.lean` submodule (canonical finite-support association-list map and HOL ALOOKUP) |
 | `HOL/src/list/src/rich_listScript.sml` | `Flapjack/Misc/RichList.lean` (shared rich-list relation results) |
 | `compiler/backend/backend_passesScript.sml` | `Flapjack/Compiler/Backend/BackendPasses/Frontend.lean`, `BackendPasses/Closure.lean`, `BackendPasses/Bvi.lean`, `BackendPasses/Data.lean`, `BackendPasses/Word.lean`, `BackendPasses/WordOptimise.lean` and `BackendPasses/Stack.lean` (explorer snapshots through lab filtering) |
 | `compiler/backend/presLangScript.sml` | `Flapjack/Compiler/Backend/PresLang/Config.lean`, `PresLang/Source.lean`, `PresLang/Flat.lean`, `PresLang/Clos.lean`, `PresLang/Bvl.lean`, `PresLang/Bvi.lean`, `PresLang/Data.lean`, `PresLang/Asm.lean`, `PresLang/Lab.lean`, `PresLang/Word.lean` and `PresLang/Stack.lean` (explorer display; representation review and explorer wiring remain open) |

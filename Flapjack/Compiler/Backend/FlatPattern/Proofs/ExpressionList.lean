@@ -1,7 +1,6 @@
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ExpressionCases
 
-/-! Ordered expression-list simulation for the flat pattern compiler. The
-underlying evaluator and value/state relations remain pending HOL review. -/
+/-! Ordered expression-list simulation for the flat pattern compiler. -/
 namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack Flapjack.AstHOL Flapjack.Compiler.Backend
 open Flapjack.SemanticPrimitivesHOL (Result)

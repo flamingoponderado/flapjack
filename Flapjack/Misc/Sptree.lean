@@ -134,10 +134,10 @@ library. HOL sets are rendered as predicates, matching the
 `fun key => (lookup key t).isSome`, so `k IN domain t` is `sptMem k t` and
 `domain t1 SUBSET domain t2` is `forall k, sptMem k t1 -> sptMem k t2`. -/
 
-/-- Predicate rendering of HOL `domain` on the exact spt carrier. The typed
-`sptree_domain_is_some` HOL replay justifies its lookup-based form from
-`domain_lookup`; the four constructor clauses are proved below as `sptMem_*`. -/
-@[hol "hol4/src/finite_maps/sptreeScript.sml" "domain_def"]
+/-- Lookup-based predicate for the tree domain. HOL defines `domain` by
+recursive set clauses; a reviewed representation of sets and a source-shaped
+definition are still needed before this can be tagged as `domain_def`. The
+membership clauses `sptMem_*` below establish this predicate's behavior. -/
 def sptDomain {α : Type} (tree : Spt α) : Nat → Prop :=
   fun key => (sptLookup key tree).isSome
 
