@@ -1,16 +1,10 @@
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.HandleBranch
-import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateLength
 
 /-! Composition of the match-expression cases. The evaluator's HOL
 correspondence remains pending review. -/
 namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack Flapjack.AstHOL Flapjack.Compiler.Backend
 open Flapjack.SemanticPrimitivesHOL (Result)
-
-/-- The successful evaluation of an expression yields exactly one value. -/
-def SingletonSuccess {C F : Type} (expression : FlatLang.Exp) : Prop :=
-  ∀ (env : FlatSem.Environment FlatSem.Value) (state next : FlatSem.State C F) (values : List FlatSem.Value),
-    FlatSem.evaluate env state [expression] = (next, .val values) → ∃ value, values = [value]
 
 /-- An error in a match scrutinee propagates through the source match. -/
 theorem evaluate_mat_error {C F : Type} (trace : BackendCommon.Tra)
@@ -68,16 +62,5 @@ theorem compileExp_mat_bound (cfg : Config) (trace : BackendCommon.Tra)
       | mk rowBound rest =>
         cases rest with
         | mk rowFlag compiledRows => simp [compileExp, first, matchResult]
-
-/-- Every scrutinee has the singleton-result property in the current evaluator. -/
-theorem singletonSuccess {C F : Type} (expression : FlatLang.Exp) : SingletonSuccess (C := C) (F := F) expression := by
-  intro env state next values run
-  have length := FlatSem.evaluate_singleton_length env state next expression values run
-  cases values with
-  | nil => simp at length
-  | cons value rest =>
-    cases rest with
-    | nil => exact ⟨value, rfl⟩
-    | cons first rest => simp at length
 
 end Flapjack.Compiler.Backend.FlatPattern

@@ -214,7 +214,7 @@ theorem pmatchList_cons_related {C F : Type} (n : Nat) (source target : FlatSem.
 
 mutual
 /-- Pattern matching preserves related results when the source does not raise
-a type error. This uses the proof-side value relation pending its HOL review. -/
+a type error. -/
 theorem pmatch_related {C F : Type} (cfg : Config) (n : Nat) (source target : FlatSem.State C F)
     (pattern : FlatLang.Pat) (value value' : Value) (bindings bindings' : List (VarN × Value))
     (states : StateRel cfg source target) (values : ValueRel value value')
@@ -266,9 +266,8 @@ theorem pmatchList_related {C F : Type} (cfg : Config) (n : Nat) (source target 
 termination_by sizeOf patterns
 end
 
-/-- Existential form of the single-pattern and pattern-list simulations.
-The relations are the current proof-side translations, so this is not yet
-tagged as a reviewed port of the HOL theorem. -/
+/-- Existential form of the single-pattern and pattern-list simulations. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "pmatch_thm"]
 theorem pmatch_simulation {C F : Type} (cfg : Config) (n : Nat) :
     (∀ (source : FlatSem.State C F) pattern value bindings result target value' bindings',
       FlatSem.pmatch source pattern value bindings = result → result ≠ .typeError →

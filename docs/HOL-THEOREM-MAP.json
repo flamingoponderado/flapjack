@@ -125168,5 +125168,13 @@
   "lean_name": "doOpApp_simulation_reverse",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared the HOL source and typed do_opapp_reverse capture: the source and target argument lists are reversed only for application, the pointwise value relation is on the original lists, and all original existential witnesses and conclusions are retained."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "pmatch_thm",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/PatternRelation.lean",
+  "lean_name": "pmatch_simulation",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the complete HOL source and typed pmatch_simulation capture: both single-pattern and pattern-list conjuncts retain their state, value and binding relations, source non-type-error premise, and existential target result with match relation. The conjunction premises are curried and the local nv_rel overload is expanded."
 }
 ]
