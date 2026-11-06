@@ -115,16 +115,6 @@ theorem expressionSimulationBelow_copyByteNew {C F : Type} (clockBound : Nat) (t
 
 
 
-/-- The unrestricted result follows by choosing a bound for each source state. -/
-theorem expressionSimulation_copyByteNew {C F : Type} (trace : BackendCommon.Tra)
-    (args : List ClosLang.Exp)
-    (argsIH : expressionSimulation (C := C) (F := F) args) :
-    expressionSimulation (C := C) (F := F) [.op trace (.memOp (.copyByte true)) args] := by
-  apply (expressionSimulation_iff_below _).2
-  intro clockBound
-  apply expressionSimulationBelow_copyByteNew clockBound trace args
-  exact expressionSimulation_below clockBound args argsIH
-
 /-- Argument errors propagate through an in-place byte copy. -/
 theorem evaluatePost_copyByteInto_error {C F : Type} (s sFinal : ClosSem.State C F)
     (t : BvlSem.State C F) (targetEnv : List BvlSem.Value)
@@ -238,15 +228,5 @@ theorem expressionSimulationBelow_copyByteInto {C F : Type} (clockBound : Nat) (
           exact evaluatePost_copyByteInto_success s sMiddle last t targetEnv f targetArgs values value argsPost appRun maxApp
 
 
-
-/-- The unrestricted result follows by choosing a bound for each source state. -/
-theorem expressionSimulation_copyByteInto {C F : Type} (trace : BackendCommon.Tra)
-    (args : List ClosLang.Exp)
-    (argsIH : expressionSimulation (C := C) (F := F) args) :
-    expressionSimulation (C := C) (F := F) [.op trace (.memOp (.copyByte false)) args] := by
-  apply (expressionSimulation_iff_below _).2
-  intro clockBound
-  apply expressionSimulationBelow_copyByteInto clockBound trace args
-  exact expressionSimulation_below clockBound args argsIH
 
 end Flapjack.Compiler.Backend.ClosToBvl

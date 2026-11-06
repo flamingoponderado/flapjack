@@ -114,14 +114,4 @@ theorem expressionSimulationBelow_byteToList {C F : Type} (clockBound : Nat) (tr
 
 
 
-/-- The unrestricted result follows by choosing a bound for each source state. -/
-theorem expressionSimulation_byteToList {C F : Type} (trace : BackendCommon.Tra)
-    (args : List ClosLang.Exp)
-    (argsIH : expressionSimulation (C := C) (F := F) args) :
-    expressionSimulation (C := C) (F := F) [.op trace (.memOp .toListByte) args] := by
-  apply (expressionSimulation_iff_below _).2
-  intro clockBound
-  apply expressionSimulationBelow_byteToList clockBound trace args
-  exact expressionSimulation_below clockBound args argsIH
-
 end Flapjack.Compiler.Backend.ClosToBvl

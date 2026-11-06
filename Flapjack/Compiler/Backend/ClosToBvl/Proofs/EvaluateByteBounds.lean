@@ -114,14 +114,4 @@ theorem expressionSimulationBelow_memoryBoundsByte {C F : Type} (clockBound : Na
 
 
 
-/-- The unrestricted result follows by choosing a bound for each source state. -/
-theorem expressionSimulation_memoryBoundsByte {C F : Type} (trace : BackendCommon.Tra)
-    (loose : Bool) (args : List ClosLang.Exp)
-    (argsIH : expressionSimulation (C := C) (F := F) args) :
-    expressionSimulation (C := C) (F := F) [.op trace (.memOp (.boundsCheckByte loose)) args] := by
-  apply (expressionSimulation_iff_below _).2
-  intro clockBound
-  apply expressionSimulationBelow_memoryBoundsByte clockBound trace loose args
-  exact expressionSimulation_below clockBound args argsIH
-
 end Flapjack.Compiler.Backend.ClosToBvl

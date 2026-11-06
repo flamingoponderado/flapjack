@@ -114,14 +114,4 @@ theorem expressionSimulationBelow_byteStringCmp {C F : Type} (clockBound : Nat) 
 
 
 
-/-- The unrestricted result follows by choosing a bound for each source state. -/
-theorem expressionSimulation_byteStringCmp {C F : Type} (trace : BackendCommon.Tra)
-    (fast : Bool) (op : Flapjack.Opb) (args : List ClosLang.Exp)
-    (argsIH : expressionSimulation (C := C) (F := F) args) :
-    expressionSimulation (C := C) (F := F) [.op trace (.memOp (.stringCmp fast op)) args] := by
-  apply (expressionSimulation_iff_below _).2
-  intro clockBound
-  apply expressionSimulationBelow_byteStringCmp clockBound trace fast op args
-  exact expressionSimulation_below clockBound args argsIH
-
 end Flapjack.Compiler.Backend.ClosToBvl

@@ -142,16 +142,6 @@ theorem expressionSimulationBelow_updateByte {C F : Type} (clockBound : Nat) (tr
 
 
 
-/-- The unrestricted result follows by choosing a bound for each source state. -/
-theorem expressionSimulation_updateByte {C F : Type} (trace : BackendCommon.Tra)
-    (args : List ClosLang.Exp)
-    (argsIH : expressionSimulation (C := C) (F := F) args) :
-    expressionSimulation (C := C) (F := F) [.op trace (.memOp .updateByte) args] := by
-  apply (expressionSimulation_iff_below _).2
-  intro clockBound
-  apply expressionSimulationBelow_updateByte clockBound trace args
-  exact expressionSimulation_below clockBound args argsIH
-
 /-- Argument errors propagate through a array write. -/
 theorem evaluatePost_updateArray_error {C F : Type} (s sFinal : ClosSem.State C F)
     (t : BvlSem.State C F) (targetEnv : List BvlSem.Value)
@@ -273,15 +263,5 @@ theorem expressionSimulationBelow_updateArray {C F : Type} (clockBound : Nat) (t
           exact evaluatePost_updateArray_success s sMiddle last t targetEnv f targetArgs values value argsPost appRun maxApp
 
 
-
-/-- The unrestricted result follows by choosing a bound for each source state. -/
-theorem expressionSimulation_updateArray {C F : Type} (trace : BackendCommon.Tra)
-    (args : List ClosLang.Exp)
-    (argsIH : expressionSimulation (C := C) (F := F) args) :
-    expressionSimulation (C := C) (F := F) [.op trace (.memOp .update) args] := by
-  apply (expressionSimulation_iff_below _).2
-  intro clockBound
-  apply expressionSimulationBelow_updateArray clockBound trace args
-  exact expressionSimulation_below clockBound args argsIH
 
 end Flapjack.Compiler.Backend.ClosToBvl

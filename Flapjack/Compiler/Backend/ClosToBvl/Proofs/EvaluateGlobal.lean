@@ -113,16 +113,6 @@ theorem expressionSimulationBelow_global {C F : Type} (clockBound : Nat) (trace 
           exact evaluatePost_global_success s sMiddle last t targetEnv f index targetArgs values value argsPost appRun maxApp
 
 
-/-- The unrestricted result follows by choosing a bound for each source state. -/
-theorem expressionSimulation_global {C F : Type} (trace : BackendCommon.Tra)
-    (index : Nat) (args : List ClosLang.Exp)
-    (argsIH : expressionSimulation (C := C) (F := F) args) :
-    expressionSimulation (C := C) (F := F) [.op trace (.globOp (.global index)) args] := by
-  apply (expressionSimulation_iff_below _).2
-  intro clockBound
-  apply expressionSimulationBelow_global clockBound trace index args
-  exact expressionSimulation_below clockBound args argsIH
-
 /-- Argument errors propagate through global allocation. -/
 theorem evaluatePost_alloc_error {C F : Type} (s sFinal : ClosSem.State C F)
     (t : BvlSem.State C F) (targetEnv : List BvlSem.Value)
@@ -221,16 +211,6 @@ theorem expressionSimulationBelow_alloc {C F : Type} (clockBound : Nat) (trace :
           rcases run with ⟨rfl, rfl⟩
           exact evaluatePost_alloc_success s sMiddle last t targetEnv f targetArgs values value argsPost appRun maxApp
 
-
-/-- The unrestricted result follows by choosing a bound for each source state. -/
-theorem expressionSimulation_alloc {C F : Type} (trace : BackendCommon.Tra)
-    (args : List ClosLang.Exp)
-    (argsIH : expressionSimulation (C := C) (F := F) args) :
-    expressionSimulation (C := C) (F := F) [.op trace (.globOp .allocGlobal) args] := by
-  apply (expressionSimulation_iff_below _).2
-  intro clockBound
-  apply expressionSimulationBelow_alloc clockBound trace args
-  exact expressionSimulation_below clockBound args argsIH
 
 /-- Argument errors propagate through a global write. -/
 theorem evaluatePost_setGlobal_error {C F : Type} (s sFinal : ClosSem.State C F)
@@ -342,15 +322,5 @@ theorem expressionSimulationBelow_setGlobal {C F : Type} (clockBound : Nat) (tra
           rcases run with ⟨rfl, rfl⟩
           exact evaluatePost_setGlobal_success s sMiddle last t targetEnv f index targetArgs values value argsPost appRun maxApp
 
-
-/-- The unrestricted result follows by choosing a bound for each source state. -/
-theorem expressionSimulation_setGlobal {C F : Type} (trace : BackendCommon.Tra)
-    (index : Nat) (args : List ClosLang.Exp)
-    (argsIH : expressionSimulation (C := C) (F := F) args) :
-    expressionSimulation (C := C) (F := F) [.op trace (.globOp (.setGlobal index)) args] := by
-  apply (expressionSimulation_iff_below _).2
-  intro clockBound
-  apply expressionSimulationBelow_setGlobal clockBound trace index args
-  exact expressionSimulation_below clockBound args argsIH
 
 end Flapjack.Compiler.Backend.ClosToBvl

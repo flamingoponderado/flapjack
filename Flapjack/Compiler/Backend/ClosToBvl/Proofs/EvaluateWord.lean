@@ -55,57 +55,6 @@ theorem evaluatePost_word_success {C F : Type} (s sMiddle : ClosSem.State C F)
       simp [BvlSem.doApp, BvlSem.applyNumeric, targetWord]
     · exact List.Forall₂.cons (by simpa [maxApp] using valueRel) .nil
 
-/-- The word-operation expression case follows from the argument-list
-induction hypothesis. This candidate remains untagged pending review of the
-semantic carriers and the assembled pass theorem. -/
-theorem expressionSimulation_word {C F : Type} (trace : BackendCommon.Tra)
-    (op : ClosLang.WordOp) (args : List ClosLang.Exp)
-    (argsIH : expressionSimulation (C := C) (F := F) args) :
-    expressionSimulation (C := C) (F := F) [.op trace (.wordOp op) args] := by
-  intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result run noTypeError compile
-    locations annotations varsAnnotated installed envRelated states
-  cases argsCompile : compileExpListHOL s.maxApp args aux with
-  | mk targetArgs aux1 =>
-    have argsCompiled : compileExpsHOL s.maxApp args aux = (targetArgs, aux1) := by
-      rw [compileExps_eq_list]
-      exact argsCompile
-    have wholeCompiled : compileExpsHOL s.maxApp [.op trace (.wordOp op) args] aux =
-        ([.op (.wordOp op) targetArgs], aux1) := by
-      rw [compileExps_eq_list]
-      simp [compileExpListHOL, compileExpHOL, argsCompile, compileOp]
-    have equal := compile.symm.trans wholeCompiled
-    cases equal
-    have argsLoc : ClosProps.everyFnLocationSome args := by
-      simpa [ClosProps.everyFnLocationSome, ClosProps.fnLocationSomeExp] using locations
-    have argsVars : ClosProps.everyFnVarsSome args := by
-      simpa [ClosProps.everyFnVarsSome, ClosProps.fnVarsSomeExp] using varsAnnotated
-    rw [ClosSem.evaluate, ClosSem.fixClock_evaluate] at run
-    cases argsRun : ClosSem.evaluate args sourceEnv s with
-    | mk argsResult sMiddle =>
-      rw [argsRun] at run
-      cases argsResult with
-      | err error =>
-        simp at run
-        rcases run with ⟨rfl, rfl⟩
-        exact evaluatePost_word_error s sMiddle t targetEnv f op targetArgs error
-          (argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs (.err error)
-            argsRun noTypeError argsCompiled argsLoc annotations argsVars installed envRelated states)
-      | val values =>
-        have maxApp : sMiddle.maxApp = s.maxApp := by
-          have h := (ClosProps.evaluate_const (C := C) (F := F)).1 args sourceEnv s
-          rw [argsRun] at h
-          exact h
-        have argsPost := argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs (.val values)
-          argsRun (by simp) argsCompiled argsLoc annotations argsVars installed envRelated states
-        cases wordRun : ClosSem.doWordApp op values.reverse with
-        | none =>
-          simp [ClosSem.doApp, ClosSem.applyNumeric, wordRun] at run
-          exact False.elim (noTypeError run.1.symm)
-        | some value =>
-          simp [ClosSem.doApp, ClosSem.applyNumeric, wordRun] at run
-          rcases run with ⟨rfl, rfl⟩
-          exact evaluatePost_word_success s sMiddle t targetEnv f op targetArgs values value argsPost wordRun maxApp
-
 /-- Bounded simulation for the operator and its argument expressions. -/
 theorem expressionSimulationBelow_word {C F : Type} (clockBound : Nat) (trace : BackendCommon.Tra)
     (op : ClosLang.WordOp) (args : List ClosLang.Exp)

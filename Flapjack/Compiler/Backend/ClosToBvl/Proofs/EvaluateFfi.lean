@@ -134,14 +134,4 @@ theorem expressionSimulationBelow_ffi {C F : Type} (clockBound : Nat) (trace : B
         exact evaluatePost_ffi_call s sMiddle sFinal t targetEnv f name targetArgs values result argsPost run noTypeError maxApp
 
 
-/-- The unrestricted result follows by choosing a bound for each source state. -/
-theorem expressionSimulation_ffi {C F : Type} (trace : BackendCommon.Tra)
-    (name : MlString) (args : List ClosLang.Exp)
-    (argsIH : expressionSimulation (C := C) (F := F) args) :
-    expressionSimulation (C := C) (F := F) [.op trace (.ffi name) args] := by
-  apply (expressionSimulation_iff_below _).2
-  intro clockBound
-  apply expressionSimulationBelow_ffi clockBound trace name args
-  exact expressionSimulation_below clockBound args argsIH
-
 end Flapjack.Compiler.Backend.ClosToBvl
