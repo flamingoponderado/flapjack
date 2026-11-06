@@ -300,7 +300,7 @@ theorem compile_con_simulation_upTo {C F : Type} (cfg stateCfg : Config) (clock 
           have equal := sourceEval.symm.trans sourceOuter
           cases equal
           have constructorRel : ValueRel (.conv tag sourceValues.reverse) (.conv tag targetValues.reverse) :=
-            (valueRel_conv tag _ _).2 ⟨_, rfl, (valueRel_reverse valuesRel)⟩
+            (valueRel_conv tag _ _).2 ⟨_, rfl, (List.forall₂_reverse_iff.mpr valuesRel)⟩
           exact ⟨targetNext, _, by simpa [compileExp, compiled] using targetOuter,
             nextStates, .values (.cons constructorRel .nil)⟩
 

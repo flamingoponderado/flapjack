@@ -34,8 +34,8 @@ theorem doEq_constructor_step (leftTag rightTag : Option (FlatLang.CtorId × Fla
     (elementIH : ∀ x ∈ xs, ∀ y ∈ ys, ∀ x' y', ValueRel x x' → ValueRel y y' →
       FlatSem.doEq x y = FlatSem.doEq x' y') :
     FlatSem.doEq (.conv leftTag xs) (.conv rightTag ys) = FlatSem.doEq (.conv leftTag xs') (.conv rightTag ys') := by
-  have leftLen := forall₂_length leftRel
-  have rightLen := forall₂_length rightRel
+  have leftLen := List.Forall₂.length_eq leftRel
+  have rightLen := List.Forall₂.length_eq rightRel
   have lists := doEqList_related leftRel rightRel elementIH
   simp [FlatSem.doEq, ← leftLen, ← rightLen, ← lists]
 
@@ -45,8 +45,8 @@ theorem doEq_vector_step (xs xs' ys ys' : List FlatSem.Value) (leftRel : List.Fo
     (elementIH : ∀ x ∈ xs, ∀ y ∈ ys, ∀ x' y', ValueRel x x' → ValueRel y y' →
       FlatSem.doEq x y = FlatSem.doEq x' y') :
     FlatSem.doEq (.vectorv xs) (.vectorv ys) = FlatSem.doEq (.vectorv xs') (.vectorv ys') := by
-  have leftLen := forall₂_length leftRel
-  have rightLen := forall₂_length rightRel
+  have leftLen := List.Forall₂.length_eq leftRel
+  have rightLen := List.Forall₂.length_eq rightRel
   have lists := doEqList_related leftRel rightRel elementIH
   simp [FlatSem.doEq, ← leftLen, ← rightLen, ← lists]
 

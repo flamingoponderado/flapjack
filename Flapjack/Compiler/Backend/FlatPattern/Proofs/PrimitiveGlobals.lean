@@ -6,14 +6,6 @@ namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack Flapjack.AstHOL Flapjack.Compiler.Backend
 open Flapjack.SemanticPrimitivesHOL (Result)
 
-/-- Appending pointwise related lists preserves their relation. -/
-theorem forall₂_append_lists {A B : Type} {R : A → B → Prop} {xs : List A} {ys : List B}
-    (related : List.Forall₂ R xs ys) {xs' : List A} {ys' : List B} (related' : List.Forall₂ R xs' ys') :
-    List.Forall₂ R (xs ++ xs') (ys ++ ys') := by
-  induction related with
-  | nil => exact related'
-  | cons head _ ih => exact .cons head ih
-
 /-- Global allocation preserves the corresponding uninitialized slots. -/
 theorem doApp_globalAlloc_related {C F : Type} (cfg : Config) (source target sourceFinal : FlatSem.State C F)
     (count : Nat) (values values' : List FlatSem.Value) (result : Result FlatSem.Value FlatSem.Value)
@@ -29,7 +21,7 @@ theorem doApp_globalAlloc_related {C F : Type} (cfg : Config) (source target sou
     refine ⟨{ target with globals := target.globals ++ List.replicate count none }, .val FlatSem.unitValue, ?_, ?_, .value ?_⟩
     · simp [FlatSem.doApp, FlatSem.doAppFlat]
     · refine ⟨states.1, states.2.1, states.2.2.1, ?_, states.2.2.2.2⟩
-      exact forall₂_append_lists states.2.2.2.1 (forall₂_replicate count (show optionRel ValueRel none none from trivial))
+      exact List.rel_append states.2.2.2.1 (forall₂_replicate count (show optionRel ValueRel none none from trivial))
     · exact (valueRel_conv none [] _).2 ⟨[], rfl, .nil⟩
 
 /-- Initializing an uninitialized global preserves related values and states. -/
@@ -120,7 +112,7 @@ theorem doApp_lenEq_related {C F : Type} (cfg : Config) (source target sourceFin
       cases value with
       | conv tag fields =>
         obtain ⟨fields', rfl, fieldsRel⟩ := (valueRel_conv tag fields value').1 head
-        have lengths := forall₂_length fieldsRel
+        have lengths := List.Forall₂.length_eq fieldsRel
         simp [FlatSem.doApp, FlatSem.doAppFlat] at run
         rcases run with ⟨rfl, rfl⟩
         refine ⟨target, .val (FlatSem.boolValue (fields.length == length)), ?_, states, .value ?_⟩
@@ -150,7 +142,7 @@ theorem doApp_tagLenEq_related {C F : Type} (cfg : Config) (source target source
         | some pair =>
           obtain ⟨actual, typeId⟩ := pair
           obtain ⟨fields', rfl, fieldsRel⟩ := (valueRel_conv (some (actual, typeId)) fields value').1 head
-          have lengths := forall₂_length fieldsRel
+          have lengths := List.Forall₂.length_eq fieldsRel
           simp [FlatSem.doApp, FlatSem.doAppFlat] at run
           rcases run with ⟨rfl, rfl⟩
           refine ⟨target, .val (FlatSem.boolValue (actual == tag && fields.length == length)), ?_, states, .value ?_⟩

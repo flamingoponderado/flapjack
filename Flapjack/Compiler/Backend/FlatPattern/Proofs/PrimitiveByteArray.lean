@@ -27,13 +27,13 @@ theorem doApp_byteArrayAlloc_related {C F : Type} (cfg : Config) (source target 
   · refine ⟨source, target, .err (.raise FlatSem.subscriptExnV), ?_, ?_, states, .error (.raise subscriptExn_related)⟩
     · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.boundsFailure, negative]
     · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.boundsFailure, negative]
-  · have lengths : target.refs.length = source.refs.length := (forall₂_length states.2.1).symm
+  · have lengths : target.refs.length = source.refs.length := (List.Forall₂.length_eq states.2.1).symm
     refine ⟨{ source with refs := source.refs ++ [.w8array (List.replicate size.toNat byte)] },
       { target with refs := target.refs ++ [.w8array (List.replicate size.toNat byte)] },
       .val (.loc true source.refs.length), ?_, ?_, ?_, .value ?_⟩
     · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, storeAlloc, negative]
     · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, storeAlloc, negative, lengths]
-    · exact ⟨states.1, forall₂_append_one states.2.1 rfl, states.2.2⟩
+    · exact ⟨states.1, List.rel_append states.2.1 (.cons rfl .nil), states.2.2⟩
     · exact (valueRel_loc true source.refs.length _).2 rfl
 
 /-- Byte-array length agrees for related stores. -/

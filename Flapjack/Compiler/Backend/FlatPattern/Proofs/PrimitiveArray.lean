@@ -93,7 +93,7 @@ theorem doApp_arrayLength_related {C F : Type} (cfg : Config) (source target : F
     ∃ result, FlatSem.doApp source (.src .alength) [.loc flag address] = some (source, .val result) ∧
       FlatSem.doApp target (.src .alength) [.loc flag address] = some (target, .val result) ∧ ValueRel result result := by
   obtain ⟨items', found', related⟩ := stateRel_lookup_array cfg source target states address items found
-  have lengths := forall₂_length related
+  have lengths := List.Forall₂.length_eq related
   refine ⟨.litv (.intLit items.length), ?_, ?_, (valueRel_lit _ _).2 rfl⟩
   · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, found]
   · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, found', ← lengths]
@@ -112,13 +112,13 @@ theorem doApp_arrayAlloc_related {C F : Type} (cfg : Config) (source target : Fl
       states, .error (.raise subscriptExn_related)⟩
     · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.boundsFailure, negative]
     · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.boundsFailure, negative]
-  · have lengths : target.refs.length = source.refs.length := (forall₂_length states.2.1).symm
+  · have lengths : target.refs.length = source.refs.length := (List.Forall₂.length_eq states.2.1).symm
     refine ⟨{ source with refs := source.refs ++ [.varray (List.replicate size.toNat value)] },
       { target with refs := target.refs ++ [.varray (List.replicate size.toNat value')] },
       .val (.loc true source.refs.length), .val (.loc true source.refs.length), ?_, ?_, ?_, .value ?_⟩
     · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, Flapjack.SemanticPrimitivesHOL.storeAlloc, negative]
     · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, Flapjack.SemanticPrimitivesHOL.storeAlloc, negative, lengths]
-    · exact ⟨states.1, forall₂_append_one states.2.1 (forall₂_replicate size.toNat values), states.2.2⟩
+    · exact ⟨states.1, List.rel_append states.2.1 (.cons (forall₂_replicate size.toNat values) .nil), states.2.2⟩
     · exact (valueRel_loc true source.refs.length _).2 rfl
 
 /-- Array reads preserve both ordinary results and bounds exceptions. -/
@@ -147,7 +147,7 @@ theorem updateIndexed_array_related {C F : Type} (cfg : Config) (source target s
     (run : FlatSem.updateIndexed source unsafeOp address items index value .varray = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.updateIndexed target unsafeOp address items' index value' .varray =
       some (targetFinal, result') ∧ StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
-  have lengths : items'.length = items.length := (forall₂_length itemsRel).symm
+  have lengths : items'.length = items.length := (List.Forall₂.length_eq itemsRel).symm
   by_cases bounds : index < 0 ∨ items.length ≤ index.toNat
   · have bounds' : index < 0 ∨ items'.length ≤ index.toNat := by simpa [lengths] using bounds
     cases unsafeOp with

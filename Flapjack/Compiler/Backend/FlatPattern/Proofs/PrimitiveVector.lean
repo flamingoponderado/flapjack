@@ -70,7 +70,7 @@ theorem doApp_vectorLength_related {C F : Type} (cfg : Config) (source target so
       cases value with
       | vectorv items =>
         obtain ⟨items', rfl, itemsRel⟩ := (valueRel_vector items value').1 valueRel
-        have lengths := forall₂_length itemsRel
+        have lengths := List.Forall₂.length_eq itemsRel
         simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at run
         rcases run with ⟨rfl, rfl⟩
         exact ⟨target, .val (.litv (.intLit items.length)),
@@ -107,7 +107,7 @@ theorem doApp_listAppend_related {C F : Type} (cfg : Config) (source target sour
             rcases run with ⟨rfl, rfl⟩
             refine ⟨target, .val (FlatSem.listToValue (xs' ++ ys')), ?_, states, .value ?_⟩
             · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, left', right']
-            · exact listToValue_pair_related (forall₂_append_lists xsRel ysRel)
+            · exact listToValue_pair_related (List.rel_append xsRel ysRel)
 
 /-- Checked and unsafe vector reads preserve related values and errors. -/
 theorem doApp_vectorRead_related {C F : Type} (cfg : Config) (source target sourceFinal : FlatSem.State C F)

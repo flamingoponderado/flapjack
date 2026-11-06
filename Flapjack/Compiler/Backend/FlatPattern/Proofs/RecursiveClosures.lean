@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelationCases
+import Mathlib.Data.List.Forall2
 
 /-! Recursive closure environment and application simulation infrastructure. -/
 namespace Flapjack.Compiler.Backend.FlatPattern
@@ -125,21 +126,6 @@ theorem doOpApp_recclosure (leftEnv : Environment Value)
         some ({ captured with v := (argName, targetArg) :: FlatSem.buildRecEnv (compiledRecFuns cfg funs) captured captured.v }, body')
       simp [FlatSem.doOpApp, compiledRecFuns_names, distinct, findRecFun_compiled, found, compileDec, compiled]
 
-/-- Reversing related value lists preserves their pointwise relation. -/
-theorem valueRel_reverse {left right : List FlatSem.Value} (related : List.Forall₂ ValueRel left right) :
-    List.Forall₂ ValueRel left.reverse right.reverse := by
-  have appendRel : ∀ {a b c d : List FlatSem.Value}, List.Forall₂ ValueRel a b →
-      List.Forall₂ ValueRel c d → List.Forall₂ ValueRel (a ++ c) (b ++ d) := by
-    intro a b c d first second
-    induction first with
-    | nil => exact second
-    | cons head tail ih => exact .cons head ih
-  induction related with
-  | nil => exact .nil
-  | cons head tail ih =>
-    simp only [List.reverse_cons]
-    exact appendRel ih (.cons head .nil)
-
 /-- Function application simulation for arbitrary related input lists. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "do_opapp_thm"]
 theorem doOpApp_simulation (source target : List Value) (env : Environment Value) (body : FlatLang.Exp)
@@ -187,6 +173,6 @@ theorem doOpApp_simulation_reverse (source target : List Value) (env : Environme
     ∃ i sg body' targetEnv cfg,
       compileExp cfg body = (i, sg, body') ∧ EnvRel (i + 1) env targetEnv ∧
       FlatSem.doOpApp target.reverse = some (targetEnv, body') :=
-  doOpApp_simulation source.reverse target.reverse env body run (valueRel_reverse related)
+  doOpApp_simulation source.reverse target.reverse env body run (List.forall₂_reverse_iff.mpr related)
 
 end Flapjack.Compiler.Backend.FlatPattern

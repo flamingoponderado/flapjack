@@ -69,7 +69,7 @@ theorem compile_simpleSourceApp_simulation_upTo {C F : Type} (cfg stateCfg : Con
       | some outcome =>
         obtain ⟨sourceAfter, result⟩ := outcome
         obtain ⟨targetAfter, result', targetPrimitive, afterStates, resultRel⟩ := primitiveRel sourceFixed targetFixed sourceAfter sourceValues.reverse targetValues.reverse result
-          fixedStates (valueRel_reverse valuesRel) primitive
+          fixedStates (List.forall₂_reverse_iff.mpr valuesRel) primitive
         cases resultRel with
         | value values =>
           have eq := sourceOuter.symm.trans sourceEval
@@ -209,7 +209,7 @@ theorem compile_flatApp_simulation_upTo {C F : Type} (cfg stateCfg : Config) (tr
         obtain ⟨sourceAfter, result⟩ := outcome
         obtain ⟨targetAfter, result', targetPrimitive, afterStates, resultRel⟩ := doApp_flat_related
           stateCfg sourceFixed targetFixed sourceAfter op sourceValues.reverse targetValues.reverse result
-          fixedStates (valueRel_reverse valuesRel) notSource primitive
+          fixedStates (List.forall₂_reverse_iff.mpr valuesRel) notSource primitive
         cases resultRel with
         | value values =>
           have eq := sourceOuter.symm.trans sourceEval
@@ -525,7 +525,7 @@ theorem compile_eval_simulation_at_clock_boundedArgs {C F : Type} (cfg stateCfg 
         obtain ⟨declarations, sourceConfig, result⟩ := payload
         obtain ⟨targetConfig, targetValue, targetDecoded, installedStates, valueRel⟩ :=
           doEval_state_simulation stateCfg sourceFixed targetFixed sourceValues.reverse targetValues.reverse fixedStates
-            (valueRel_reverse valuesRel) declarations sourceConfig result decoded
+            (List.forall₂_reverse_iff.mpr valuesRel) declarations sourceConfig result decoded
         have targetClock : targetFixed.clock = sourceFixed.clock := fixedStates.1
         by_cases zero : sourceFixed.clock = 0
         · have targetZero : targetFixed.clock = 0 := by omega
