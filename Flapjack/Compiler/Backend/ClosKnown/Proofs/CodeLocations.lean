@@ -30,12 +30,4 @@ theorem compile_codeLocationsBag (config outputConfig : Option Config) (program 
       simpa [ClosLetop.compileList_codeLocations, ClosTicks.removeList_codeLocations,
         ClosFvs.compile, ClosFvs.removeList_codeLocations] using bound
 
-/-- The bounded executable optimizer inherits the source label-multiset bound. -/
-theorem compileFuel_codeLocationsBag (fuel : Nat) (config outputConfig : Option Config)
-    (program output : List ClosLang.Exp) (run : compileFuel fuel config program = some (outputConfig, output)) :
-    ∀ label, (codeLocations output).count label ≤ (codeLocations program).count label := by
-  have source := compileFuel_eq_source fuel config program
-  rw [run] at source
-  exact compile_codeLocationsBag config outputConfig program output (Option.some.inj source.symm)
-
 end Flapjack.Compiler.Backend.ClosKnown
