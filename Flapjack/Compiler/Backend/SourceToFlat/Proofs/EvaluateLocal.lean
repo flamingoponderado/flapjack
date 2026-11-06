@@ -149,74 +149,15 @@ theorem factoredDecIH_dlocal {C F : Type} [Nonempty C]
       next1 finish next2 other n1 n2 gen1 gen2 code2 result bodyRun midInvariant bodyCompiled midInv notTypeError
       midGeneration midFuture bounded
 
-/-- Partial proof coverage recursively extended through modules and local
-blocks. This is proof bookkeeping and does not constrain CakeML programs. -/
+/-- Non-value declaration cases used by the bounded simulation. -/
 inductive FactoredScopedDec : Dec → Prop where
   | basic (dec : Dec) : FactoredDecSupported dec → FactoredScopedDec dec
   | exception_ (location : Flapjack.Misc.Location.Locs) (name : ConN) (types : List AstT) :
       FactoredScopedDec (.dexn location name types)
   | datatype_ (location : Flapjack.Misc.Location.Locs) (types : TypeDef) :
       FactoredScopedDec (.dtype location types)
-  | literalConstructor (location : Flapjack.Misc.Location.Locs) (pattern : Pat)
-      (name : Option (Ident ModN ConN)) (lits : List Lit) :
-      FactoredScopedDec (.dlet location pattern (.con name (lits.map AstHOL.Exp.lit)))
-  | pureConstructor (location : Flapjack.Misc.Location.Locs) (pattern : Pat)
-      (name : Option (Ident ModN ConN)) (args : List (Lit ⊕ (VarN × AstHOL.Exp))) :
-      FactoredScopedDec (.dlet location pattern (.con name (args.map pureConstructorArgument)))
-  | constructorExpression (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp) :
-      FactoredConstructorExpression expr → FactoredScopedDec (.dlet location pattern expr)
-  | raisedExpression (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp) :
-      FactoredRaisedExpression expr → FactoredScopedDec (.dlet location pattern expr)
-  | letExpression (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp) :
-      FactoredLetExpression expr → FactoredScopedDec (.dlet location pattern expr)
-  | ifExpression (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp) :
-      FactoredIfExpression expr → FactoredScopedDec (.dlet location pattern expr)
-  | logExpression (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp) :
-      FactoredLogExpression expr → FactoredScopedDec (.dlet location pattern expr)
-  | arithExpression (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp) :
-      FactoredArithExpression expr → FactoredScopedDec (.dlet location pattern expr)
-  | testExpression (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp) :
-      FactoredTestExpression expr → FactoredScopedDec (.dlet location pattern expr)
-  | equalityExpression (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp) :
-      FactoredEqualityExpression expr → FactoredScopedDec (.dlet location pattern expr)
-  | namedSelf (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (name : VarN) (first : AstHOL.Exp) :
-      FactoredEqualityExpression first →
-      FactoredScopedDec (.dlet location pattern (.let_ (some name) first (.var (.short name))))
-  | boundExpression (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp) :
-      FactoredBoundExpression expr → FactoredScopedDec (.dlet location pattern expr)
-  | boundLocal (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (name : VarN) (first body : AstHOL.Exp) :
-      FactoredBoundExpression first → BoundLocalExpression name body →
-      FactoredScopedDec (.dlet location pattern (.let_ (some name) first body))
-  | boundRecursive (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (name : VarN) (first body : AstHOL.Exp) :
-      FactoredBoundExpression first → BoundRecursiveExpression name body →
-      FactoredScopedDec (.dlet location pattern (.let_ (some name) first body))
-  | boundTuple (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (name : VarN) (first body : AstHOL.Exp) :
-      FactoredBoundExpression first → BoundTupleExpression name body →
-      FactoredScopedDec (.dlet location pattern (.let_ (some name) first body))
-  | boundConstructor (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (name : VarN) (first body : AstHOL.Exp) :
-      FactoredBoundExpression first → BoundConstructorExpression name body →
-      FactoredScopedDec (.dlet location pattern (.let_ (some name) first body))
-  | boundControl (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (name : VarN) (first body : AstHOL.Exp) :
-      FactoredBoundExpression first → BoundControlExpression name body →
-      FactoredScopedDec (.dlet location pattern (.let_ (some name) first body))
-  | localEnvironment (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp) :
-      LocalEnvExpression expr → FactoredScopedDec (.dlet location pattern expr)
-  | localControl (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp) :
-      LocalEnvControlExpression expr → FactoredScopedDec (.dlet location pattern expr)
-  | localConstructor (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp) :
-      LocalEnvConstructorExpression expr → FactoredScopedDec (.dlet location pattern expr)
-  | localPrimitive (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp) :
-      LocalEnvPrimitiveExpression expr → FactoredScopedDec (.dlet location pattern expr)
-  | localArray (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp) :
-      LocalEnvArrayExpression expr → FactoredScopedDec (.dlet location pattern expr)
-  | module_ (moduleName : ModN) (decs : List Dec) :
-      (∀ dec, dec ∈ decs → FactoredScopedDec dec) → FactoredScopedDec (.dmod moduleName decs)
-  | local_ (locals body : List Dec) :
-      (∀ dec, dec ∈ locals → FactoredScopedDec dec) →
-      (∀ dec, dec ∈ body → FactoredScopedDec dec) → FactoredScopedDec (.dlocal locals body)
 
-/-- Covered nested module and local declarations satisfy the factored
-singleton simulation. The factored relations still need HOL review. -/
+/-- The selected declaration cases satisfy the factored singleton simulation. -/
 theorem factoredDecIH_scoped {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
     (dec : Dec) (covered : FactoredScopedDec dec) : FactoredDecIH (F := F) interp transform [dec] := by
@@ -229,86 +170,6 @@ theorem factoredDecIH_scoped {C F : Type} [Nonempty C]
     exact supported
   | exception_ location name types => exact factoredDecIH_dexn interp transform location name types
   | datatype_ location types => exact factoredDecIH_dtype interp transform location types
-  | literalConstructor location pattern name lits =>
-    exact factoredDecIH_dlet_literalConstructor interp transform location pattern name lits
-  | pureConstructor location pattern name args =>
-    exact factoredDecIH_dlet_pureConstructor interp transform location pattern name args
-  | constructorExpression location pattern expr covered =>
-    exact factoredDecIH_dlet_expression interp transform location pattern expr
-      (factoredExpressionIH_constructorTree interp transform expr covered)
-  | raisedExpression location pattern expr covered =>
-    exact factoredDecIH_dlet_expression interp transform location pattern expr
-      (factoredExpressionIH_raisedTree interp transform expr covered)
-  | letExpression location pattern expr covered =>
-    exact factoredDecIH_dlet_expression interp transform location pattern expr
-      (factoredExpressionIH_letTree interp transform expr covered)
-  | ifExpression location pattern expr covered =>
-    exact factoredDecIH_dlet_expression interp transform location pattern expr
-      (factoredExpressionIH_ifTree interp transform expr covered)
-  | logExpression location pattern expr covered =>
-    exact factoredDecIH_dlet_expression interp transform location pattern expr
-      (factoredExpressionIH_logTree interp transform expr covered)
-  | arithExpression location pattern expr covered =>
-    exact factoredDecIH_dlet_expression interp transform location pattern expr
-      (factoredExpressionIH_arithTree interp transform expr covered)
-  | testExpression location pattern expr covered =>
-    exact factoredDecIH_dlet_expression interp transform location pattern expr
-      (factoredExpressionIH_testTree interp transform expr covered)
-  | equalityExpression location pattern expr covered =>
-    exact factoredDecIH_dlet_expression interp transform location pattern expr
-      (factoredExpressionIH_equalityTree interp transform expr covered)
-  | namedSelf location pattern name first covered =>
-    exact factoredDecIH_dlet_expression interp transform location pattern _
-      (factoredExpressionIH_let_named_self interp transform name first
-        (factoredExpressionIH_equalityTree interp transform first covered))
-  | boundExpression location pattern expr covered =>
-    exact factoredDecIH_dlet_expression interp transform location pattern expr
-      (factoredExpressionIH_boundTree interp transform expr covered)
-  | boundLocal location pattern name first body firstCovered bodyCovered =>
-    exact factoredDecIH_dlet_expression interp transform location pattern _
-      (factoredExpressionIH_let_named_local interp transform name first body bodyCovered
-        (factoredExpressionIH_boundTree interp transform first firstCovered))
-  | boundRecursive location pattern name first body firstCovered bodyCovered =>
-    exact factoredDecIH_dlet_expression interp transform location pattern _
-      (factoredExpressionIH_let_named_recursive interp transform name first body bodyCovered
-        (factoredExpressionIH_boundTree interp transform first firstCovered))
-  | boundTuple location pattern name first body firstCovered bodyCovered =>
-    exact factoredDecIH_dlet_expression interp transform location pattern _
-      (factoredExpressionIH_let_named_tuple interp transform name first body bodyCovered
-        (factoredExpressionIH_boundTree interp transform first firstCovered))
-  | boundConstructor location pattern name first body firstCovered bodyCovered =>
-    exact factoredDecIH_dlet_expression interp transform location pattern _
-      (factoredExpressionIH_let_named_constructor interp transform name first body bodyCovered
-        (factoredExpressionIH_boundTree interp transform first firstCovered))
-  | boundControl location pattern name first body firstCovered bodyCovered =>
-    exact factoredDecIH_dlet_expression interp transform location pattern _
-      (factoredExpressionIH_let_named_control interp transform name first body bodyCovered
-        (factoredExpressionIH_boundTree interp transform first firstCovered))
-  | localEnvironment location pattern expr covered =>
-    exact factoredDecIH_dlet_expression interp transform location pattern expr
-      (localEnvIH_to_factored interp transform expr (localEnvIH_covered interp transform expr covered))
-  | localControl location pattern expr covered =>
-    exact factoredDecIH_dlet_expression interp transform location pattern expr
-      (localEnvIH_to_factored interp transform expr (localEnvIH_controlTree interp transform expr covered))
-  | localConstructor location pattern expr covered =>
-    exact factoredDecIH_dlet_expression interp transform location pattern expr
-      (localEnvIH_to_factored interp transform expr (localEnvIH_constructorTree interp transform expr covered))
-  | localPrimitive location pattern expr covered =>
-    exact factoredDecIH_dlet_expression interp transform location pattern expr
-      (localEnvIH_to_factored interp transform expr (localEnvIH_primitiveTree interp transform expr covered))
-  | localArray location pattern expr covered =>
-    exact factoredDecIH_dlet_expression interp transform location pattern expr
-      (localEnvIH_to_factored interp transform expr (localEnvIH_arrayTree interp transform expr covered))
-  | module_ moduleName decs _ ih =>
-    apply factoredDecIH_dmod interp transform moduleName decs
-    apply factoredDecIH_list interp transform decs
-    exact ih
-  | local_ locals body _ _ localIH bodyIH =>
-    apply factoredDecIH_dlocal interp transform locals body
-    · apply factoredDecIH_list interp transform locals
-      exact localIH
-    · apply factoredDecIH_list interp transform body
-      exact bodyIH
 
 /- Bounded versions retain the source clock bound across nested declarations. -/
 theorem factoredDecBoundedIH_dmod {C F : Type} [Nonempty C]
