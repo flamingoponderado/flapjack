@@ -125731,6 +125731,14 @@
   "reviewer": "Compared local env_rel_CONS source and proved env_rel_cons_typed replay in flat_to_clos_relation_probe.out: related values, both environment updates and binders match, including the independently polymorphic overwritten environment rendered by replaceEnvValues."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "env_rel_CONS_upd",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/ValueRelation.lean",
+  "lean_name": "envRel_cons_upd",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed env_rel_cons_upd_typed replay of the local HOL proof: the original environment payload type is independent, the update function changes it to flat values, and both conjunctive premises and the extended relation match. replaceEnvValues renders the type-changing record update."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
   "hol_name": "code_split_IMP_PERM",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SortPermutation.lean",

@@ -188,6 +188,17 @@ theorem envRel_cons {α : Type} {env : FlatSem.Environment α}
     refine ⟨target', ?_, targetRelated⟩
     simpa [nameIndex, same] using targetFound
 
+/-- A type-changing value-field update can be extended by related values. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "env_rel_CONS_upd"]
+theorem envRel_cons_upd {α : Type} (env : FlatSem.Environment α)
+    (update : List (VarN × α) → List (VarN × FlatSem.Value))
+    (names : List (Option MlString)) (values : List ClosSem.Value)
+    (source : FlatSem.Value) (target : ClosSem.Value) (name : VarN)
+    (premises : EnvRel (replaceEnvValues env (update env.v)) names values ∧ ValueRel source target) :
+    EnvRel (replaceEnvValues env ((fun xs => (name, source) :: update xs) env.v))
+      (some name :: names) (target :: values) := by
+  exact envRel_cons premises.1 premises.2
+
 /-- An unnamed binding consumes a target slot without adding a source name. -/
 theorem envRel_skip {env names values} (related : EnvRel env names values) (target : ClosSem.Value) :
     EnvRel env (none :: names) (target :: values) := by
