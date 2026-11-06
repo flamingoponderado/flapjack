@@ -159,12 +159,12 @@ theorem compileDecs_elistGlobals (t : List MlString) (n : Nat) (next : NextIndic
 /-- Elimination and pattern compilation cannot increase global-write counts. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "compile_flat_sub_bag"]
 theorem compileFlat_subBag (cfg : FlatPattern.Config) (p : List FlatLang.Exp) :
-    ∀ key, elistGlobals (compileFlatTotal cfg p) key ≤ elistGlobals p key := by
-  intro key
+    Flapjack.subBag (elistGlobals (compileFlatTotal cfg p)) (elistGlobals p) := by
+  intro key count bound
   have pattern := FlatPattern.compileDecs_elistGlobals cfg (FlatElim.removeFlatProgTotal p) key
   have elim := FlatElim.removeFlatProg_subBag p key
     (elistGlobals (FlatElim.removeFlatProgTotal p) key) (Nat.le_refl _)
-  exact Nat.le_trans pattern elim
+  exact Nat.le_trans bound (Nat.le_trans pattern elim)
 
 private theorem bindingRangeBag_distinct (start count : Nat) :
     ∀ key, bindingRangeBag start count key ≤ 1 := by
@@ -191,6 +191,9 @@ theorem compile_globals_distinct (c : Config) (p : List Dec) :
   simp only [hc] at body
   intro key
   have bound := compileFlat_subBag c.patternCfg (globAlloc next' c :: allocEnvRef :: code) key
+    (elistGlobals (compileFlatTotal c.patternCfg (globAlloc next' c :: allocEnvRef :: code)) key) (Nat.le_refl _)
+  change elistGlobals (compileFlatTotal c.patternCfg (globAlloc next' c :: allocEnvRef :: code)) key ≤
+    elistGlobals (globAlloc next' c :: allocEnvRef :: code) key at bound
   have program : (compileTotal c p).2 =
       compileFlatTotal c.patternCfg (globAlloc next' c :: allocEnvRef :: code) := by
     simp only [next, envs] at hc

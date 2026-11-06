@@ -6,6 +6,12 @@ namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.Compiler.Backend.FlatProps
 open Flapjack.Compiler.Backend.BackendProps
 
+/-- Membership is preserved by the HOL sub-bag relation. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "SUB_BAG_IMP"]
+theorem subBag_imp {α : Type} (b₁ b₂ : Flapjack.Bag α) (x : α)
+    (sub : Flapjack.subBag b₁ b₂) (member : Flapjack.bagIn x b₁) : Flapjack.bagIn x b₂ :=
+  sub x 1 member
+
 private theorem rangeBag_member (start count key : Nat)
     (positive : 0 < bindingRangeBag start count key) : start ≤ key ∧ key < start + count := by
   have member : key ∈ (List.range count).map (start + ·) := List.count_pos_iff.mp positive
@@ -72,6 +78,9 @@ theorem compileTotal_globals_range (c : Config) (p : List Dec) :
   rw [outCode] at positive
   rw [outNext]
   have bound := compileFlat_subBag c.patternCfg (globAlloc next' c :: allocEnvRef :: code) key
+    (elistGlobals (compileFlatTotal c.patternCfg (globAlloc next' c :: allocEnvRef :: code)) key) (Nat.le_refl _)
+  change elistGlobals (compileFlatTotal c.patternCfg (globAlloc next' c :: allocEnvRef :: code)) key ≤
+    elistGlobals (globAlloc next' c :: allocEnvRef :: code) key at bound
   simp only [elistGlobals, globAlloc, allocEnvRef, setGlobals, opGlobalBag, body,
     unionGlobalBag, emptyGlobalBag] at bound
   simp only [globAlloc, allocEnvRef] at positive

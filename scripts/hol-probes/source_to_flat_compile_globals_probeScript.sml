@@ -22,3 +22,7 @@ val _ = (print "compile_flat_sub_bag="; print_term (concl source_to_flatProofThe
 val _ = (print "compile_globals_distinct="; print_term (concl source_to_flatProofTheory.compile_globals_BAG_ALL_DISTINCT); print "\n");
 val _ = (print "inc_compile_globals_distinct="; print_term (concl source_to_flatProofTheory.inc_compile_globals_BAG_ALL_DISTINCT); print "\n");
 val _ = (print "monotonic_globals_oracle="; print_term (concl source_to_flatProofTheory.monotonic_globals_state_co_compile); print "\n");
+val _ = (print "bag_inn="; print_term (concl bagTheory.BAG_INN); print "\n");
+val _ = (print "sub_bag="; print_term (concl bagTheory.SUB_BAG); print "\n");
+val _ = (print "bag_in="; print_term (concl bagTheory.BAG_IN); print "\n");
+val _ = (print "sub_bag_imp="; print_term (concl source_to_flatProofTheory.SUB_BAG_IMP); print "\n");

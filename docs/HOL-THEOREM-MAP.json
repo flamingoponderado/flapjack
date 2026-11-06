@@ -13150,7 +13150,7 @@
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml", "hol_name": "compile_flat_sub_bag",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/BindingGlobals.lean", "lean_name": "compileFlat_subBag",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared source lines 5874-5883. HOL subbag on num -> num is the same pointwise natural-number inequality; the proof composes flat elimination and pattern compilation bounds. Typed original theorem captured in source_to_flat_compile_globals_probe.out."
+    "reviewer": "Compared source lines 5874-5883 and the typed compile_flat_sub_bag capture. The conclusion uses the tagged HOL SUB_BAG definition on the complete global bags; the proof composes flat elimination and pattern compilation bounds."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml", "hol_name": "compile_globals_BAG_ALL_DISTINCT",
@@ -125536,6 +125536,38 @@
   "lean_name": "elistGlobals_append",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared the source and typed clos_elist_globals_append capture: both arguments are closure-expression lists, and the conclusion preserves the whole global-write bag using pointwise natural-number union. The checked closure-expression and global-bag definitions are shared by the proof."
+},
+{
+  "hol_path": "HOL/src/bag/bagScript.sml",
+  "hol_name": "BAG_INN",
+  "lean_path": "Flapjack/Misc/Bag.lean",
+  "lean_name": "bagInn",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source and typed bag_inn capture: an element has multiplicity at least n exactly when n is at most the bag's natural-number count, with an arbitrary element type."
+},
+{
+  "hol_path": "HOL/src/bag/bagScript.sml",
+  "hol_name": "SUB_BAG",
+  "lean_path": "Flapjack/Misc/Bag.lean",
+  "lean_name": "subBag",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source and typed sub_bag capture: for arbitrary element and natural multiplicity, membership with that multiplicity in the first bag implies membership in the second."
+},
+{
+  "hol_path": "HOL/src/bag/bagScript.sml",
+  "hol_name": "BAG_IN",
+  "lean_path": "Flapjack/Misc/Bag.lean",
+  "lean_name": "bagIn",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source and typed bag_in capture: membership is BAG_INN at multiplicity one for the same arbitrary element and bag."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "SUB_BAG_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/GlobalOracle.lean",
+  "lean_name": "subBag_imp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source and typed sub_bag_imp capture: for arbitrary element type and two bags, sub-bag inclusion and membership of x in the first imply membership of x in the second, with no extra premises."
 },
 {
   "hol_path": "HOL/src/bag/bagScript.sml",

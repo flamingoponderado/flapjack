@@ -7,6 +7,19 @@ namespace Flapjack
 @[hol "HOL/src/bag/bagScript.sml" "bag"]
 abbrev Bag (α : Type) := α → Nat
 
+/-- Membership of an element with at least a given multiplicity. -/
+@[hol "HOL/src/bag/bagScript.sml" "BAG_INN"]
+def bagInn {α : Type} (e : α) (n : Nat) (b : Bag α) : Prop := n ≤ b e
+
+/-- Every multiplicity in the first bag is present in the second. -/
+@[hol "HOL/src/bag/bagScript.sml" "SUB_BAG"]
+def subBag {α : Type} (b₁ b₂ : Bag α) : Prop :=
+  ∀ x n, bagInn x n b₁ → bagInn x n b₂
+
+/-- An element belongs to a bag when its multiplicity is at least one. -/
+@[hol "HOL/src/bag/bagScript.sml" "BAG_IN"]
+def bagIn {α : Type} (e : α) (b : Bag α) : Prop := bagInn e 1 b
+
 /-- The constant-zero bag. -/
 @[hol "HOL/src/bag/bagScript.sml" "EMPTY_BAG"]
 def emptyBag {α : Type} : Bag α := fun _ => 0

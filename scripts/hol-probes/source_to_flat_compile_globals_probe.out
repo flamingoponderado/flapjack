@@ -17,3 +17,7 @@ compile_flat_sub_bag=elist_globals (compile_flat (cfg :flat_pattern$config) (p :
 compile_globals_distinct=BAG_ALL_DISTINCT (elist_globals (SND (compile (c :config) (prog :dec list))))
 inc_compile_globals_distinct=BAG_ALL_DISTINCT (elist_globals (SND (inc_compile (env_id :num # num) (c :config) (prog :dec list))))
 monotonic_globals_oracle=compile (conf :config) (prog :dec list) = ((conf' :config),(p :exp list)) ∧ FST (FST ((orac :num -> (config # α) # (num # num) # β) (0 :num))) = conf' ∧ is_state_oracle (λ(c :config) ((env_id :num # num),(decs :β)). inc_compile env_id c ((f :β -> dec list) decs)) orac ⇒ oracle_monotonic (IMAGE SUC ∘ (SET_OF_BAG :(num -> num) -> num -> bool) ∘ elist_globals ∘ (SND :α # exp list -> exp list)) $< ((0 :num) INSERT IMAGE SUC (SET_OF_BAG (elist_globals p))) (state_co (λ(c :config) ((env_id :num # num),(decs :β)). inc_compile env_id c (f decs)) orac)
+bag_inn=∀(e :α) (n :num) (b :α -> num). BAG_INN e n b ⇔ b e ≥ n
+sub_bag=∀(b1 :α -> num) (b2 :α -> num). b1 ≤ b2 ⇔ ∀(x :α) (n :num). BAG_INN x n b1 ⇒ BAG_INN x n b2
+bag_in=∀(e :α) (b :α -> num). e ⋲ b ⇔ BAG_INN e (1 :num) b
+sub_bag_imp=(B1 :α -> num) ≤ (B2 :α -> num) ⇒ (x :α) ⋲ B1 ⇒ x ⋲ B2
