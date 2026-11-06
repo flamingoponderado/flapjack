@@ -1001,7 +1001,9 @@ theorem doEval_oracle_combined {C F : Type} [Nonempty C]
     idxPrev_trans finish config.next next.next ⟨finishPrev, prev⟩, submap⟩
   cases states with
   | intro nonempty refs clock ffi =>
-    exact .intro _ _ nonempty (storeList_growth genv _ growth _ _ refs) clock ffi
+    have conditions := (globalGrowth_iff genv _).mp growth
+    exact .intro _ _ nonempty
+      (storeList_weak genv _ _ _ ⟨refs, conditions.1, conditions.2.1, conditions.2.2⟩) clock ffi
 
 /-- A successful source Eval has a corresponding flat Eval and preserves the
 compiler invariants and global-environment relationships. -/

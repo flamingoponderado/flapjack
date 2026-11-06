@@ -131,3 +131,17 @@ val _ = (print "genv_c_ok_extend_typed="; print_term (concl source_to_flatProofT
 
 val _ = if null (hyp source_to_flatProofTheory.invariant_make_varls) then () else raise Fail "hypotheses: invariant_make_varls";
 val _ = (print "invariant_make_varls_typed="; print_term (concl source_to_flatProofTheory.invariant_make_varls); print "\n");
+
+val _ = if null (hyp source_to_flatProofTheory.LIST_REL_sv_rel_weak) then () else raise Fail "hypotheses: LIST_REL_sv_rel_weak";
+val _ = (print "LIST_REL_sv_rel_weak_typed="; print_term (concl source_to_flatProofTheory.LIST_REL_sv_rel_weak); print "\n");
+
+val sv_rel_weak_replay = prove (
+  ``!genv sv sv' genv'.
+    source_to_flatProof$sv_rel genv sv sv' ∧
+    genv.c ⊑ genv'.c ∧ genv.tys ⊑ genv'.tys ∧
+    source_to_flatProof$subglobals genv.v genv'.v ⇒
+    source_to_flatProof$sv_rel genv' sv sv'``,
+  srw_tac [][source_to_flatProofTheory.sv_rel_cases] >>
+  metis_tac [source_to_flatProofTheory.v_rel_weak, LIST_REL_EL_EQN]);
+val _ = if null (hyp sv_rel_weak_replay) then () else raise Fail "hypotheses: sv_rel_weak_replay";
+val _ = (print "sv_rel_weak_replay="; print_term (concl sv_rel_weak_replay); print "\n");

@@ -9608,4 +9608,5 @@ statement, including its independently polymorphic unused existential, and the
 polymorphic `maybe_all_list_SOME` theorem used in the word-list proof, and
 `genv_c_tys_ok_extend` with its four independent carrier types, and
 `genv_c_ok_extend` with its complete constructor compatibility premises,
-and the full `invariant_make_varls` initializer theorem.
+the full `invariant_make_varls` initializer theorem, and
+`LIST_REL_sv_rel_weak` for store-list weakening and a typed replay of the local `sv_rel_weak` theorem.

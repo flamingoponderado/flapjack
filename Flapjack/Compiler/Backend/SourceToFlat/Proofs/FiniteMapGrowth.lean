@@ -3,11 +3,6 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalWeakening
 /-! Finite-map growth lemmas for source-to-flat global environments. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 
-/-- Lookup characterization of finite-map submap, over the canonical
-finite-support carrier. -/
-def finiteSubmap {α β : Type} (f g : HolFiniteMapExact α β) : Prop :=
-  ∀ key value, f.lookup key = some value → g.lookup key = some value
-
 /-- Canonical finite-map update using HOL equality. -/
 noncomputable def finiteUpdate {α β : Type} (f : HolFiniteMapExact α β) (key : α) (value : β) :
     HolFiniteMapExact α β := by

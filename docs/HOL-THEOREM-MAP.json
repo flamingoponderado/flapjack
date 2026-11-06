@@ -11600,6 +11600,24 @@
     "reviewer": "Compared the fully typed compile_funs_dom2 capture: the same arbitrary mlstring trace, source compiler environment, and list of source function triples yield equality of the compiled and source name lists. Both use the reviewed mlstring and environment carriers."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "sv_rel_weak",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/GlobalWeakening.lean",
+    "lean_name": "storeValueRel_weak",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["c", "tys"],
+    "reviewer": "Compared the original local theorem with sv_rel_weak_replay in cake_subglobals_probe.out: both quantify the old global environment, source and flat store values, and new global environment, with the same relation, constructor submap, type submap and subglobals conjunction in that order. The global environment c and tys fields use the canonical finite-support representation."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/GlobalWeakening.lean",
+    "lean_name": "storeList_weak",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "LIST_REL_sv_rel_weak",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["c", "tys"],
+    "reviewer": "Compared LIST_REL_sv_rel_weak_typed with the HOL source: the original store-list relation, subglobals and both finite-submap premises imply the same store-list relation under the new global environment. The source and flat store-value carriers are unchanged; canonical c and tys fields are qualified."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateDenv.lean",
     "lean_name": "invariantMakeVarls",
     "inherits_reals_as_rational_cuts": true,
