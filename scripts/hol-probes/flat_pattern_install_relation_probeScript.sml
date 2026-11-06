@@ -79,6 +79,10 @@ val _ = show_thm "value_rule_closure=" (List.nth (CONJUNCTS flat_patternProofThe
 val _ = show_thm "value_rule_recclosure=" (List.nth (CONJUNCTS flat_patternProofTheory.v_rel_rules, 2));
 val _ = show_thm "value_rule_env=" (List.nth (CONJUNCTS flat_patternProofTheory.v_rel_rules, 3));
 val _ = show_thm "state_relation=" flat_patternProofTheory.state_rel_def;
+val state_relation_clock = prove (
+  ``!cfg s t. flat_patternProof$state_rel cfg s t ==> t.clock = s.clock``,
+  simp [flat_patternProofTheory.state_rel_def]);
+val _ = show_thm "state_relation_clock=" state_relation_clock;
 val _ = show_thm "initial_states=" flat_patternProofTheory.state_rel_initial_state;
 val _ = show_thm "lookup_map_same=" flat_patternProofTheory.ALOOKUP_rel_MAP_same;
 val _ = show_thm "do_opapp=" flat_patternProofTheory.do_opapp_thm;

@@ -125072,5 +125072,13 @@
   "lean_name": "valueRel_leftCases",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared the original generated theorem and typed value_relation_left_cases capture: all six value constructors occur in source order, with the original right-hand value, container contents, closure equations, environment relations and compilation bounds. Universal closure distributes over the conjuncts; EVERY is rendered as membership quantification, and source FST and SND projections as .1 and .2.2."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "state_rel_IMP_clock",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/StateRelation.lean",
+  "lean_name": "stateRel_imp_clock",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the local HOL source theorem and the typed state_relation_clock replay of its proof: the source and target share the same independent compiler and FFI types, and the original state relation implies the clock equality in the same direction."
 }
 ]

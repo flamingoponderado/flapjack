@@ -23,4 +23,10 @@ theorem stateRel_initial {C F : Type} (cfg : Config) (ffi : HolFfiState F) (cloc
     StateRel cfg (FlatSem.initialState ffi clock source) (FlatSem.initialState ffi clock target) := by
   simp [StateRel, FlatSem.initialState, related]
 
+/-- Related flat states have equal clocks. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "state_rel_IMP_clock"]
+theorem stateRel_imp_clock {C F : Type} (cfg : Config) (source target : FlatSem.State C F)
+    (related : StateRel cfg source target) : target.clock = source.clock :=
+  related.1
+
 end Flapjack.Compiler.Backend.FlatPattern
