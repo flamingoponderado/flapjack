@@ -754,10 +754,10 @@ lemma holPadLeft_length (c : Bool) (n : Nat) (s : List Bool) (h : s.length ≤ n
   omega
 
 /-- `DecodeBitMasks` at width 64 agrees with the computable `decodeBitMasks`
-for every input, including `immediate = false`: the `Nat` result maps through
-`BitVec.ofNat 64` to the L3 pair. -/
+for every input, including `immediate = false`: the L3 pair maps through
+`toNat` to the computable `Nat` pair. -/
 theorem decodeBitMasks_eq (immN : BitVec 1) (imms immr : BitVec 6) (immediate : Bool) :
-    (decodeBitMasks immN.toNat imms.toNat immr.toNat immediate).map (fun p => (p.1, p.2)) =
+    decodeBitMasks immN.toNat imms.toNat immr.toNat immediate =
       (DecodeBitMasks (TM := 64) (immN, (imms, (immr, immediate)))).map
         (fun p => (p.1.toNat, p.2.toNat)) := by
   unfold decodeBitMasks DecodeBitMasks
@@ -832,5 +832,6 @@ theorem decodeBitMasks_eq (immN : BitVec 1) (imms immr : BitVec 6) (immediate : 
           simp only [Ones, holPadLeft, List.length_append, List.length_replicate, List.length_nil]
           exact hk2)]
       rw [← holV2w_toNat (2 ^ L) _ (by rw [hpadLen2]), ones_pad_eq _ _ hk2 hE64]
+
 
 end Flapjack.Compiler.Encoders.Arm8.L3
