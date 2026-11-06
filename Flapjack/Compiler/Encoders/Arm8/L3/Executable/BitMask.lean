@@ -390,32 +390,23 @@ lemma holW2v_length_general {width : Nat} [NeZero width] (w : BitVec width) :
   unfold holW2v
   simp
 
-lemma getLsbD_eq_testBit (w : BitVec 6) (i : Nat) :
-    w.getLsbD i = w.toNat.testBit i := by
-  rw [BitVec.getLsbD_eq_getElem?_getD]
-  by_cases h : i < 6
-  · rw [BitVec.getElem?_eq_getElem h, BitVec.getElem_eq_testBit_toNat]
-    simp
-  · have hle : 2 ^ 6 ≤ 2 ^ i := Nat.pow_le_pow_right (by decide) (Nat.le_of_not_lt h)
-    rw [Nat.testBit_lt_two_pow (lt_of_lt_of_le w.isLt hle)]
-    simp [h]
-
 /-- The numeric value of the `FCP`-rendered list of a word is the word. -/
-theorem holV2n_holW2v (w : BitVec 6) : holV2n (holW2v w) = w.toNat := by
+theorem holV2n_holW2v {width : Nat} [NeZero width] (w : BitVec width) :
+    holV2n (holW2v w) = w.toNat := by
   apply Nat.eq_of_testBit_eq
   intro i
   rw [holV2n_testBit]
   simp only [holW2v_length_general]
-  by_cases hi : i < 6
+  by_cases hi : i < width
   · simp only [hi, decide_true, Bool.true_and]
     rw [List.getD_eq_getElem?_getD]
     unfold holW2v
     rw [List.getElem?_eq_getElem (by rw [List.length_map, List.length_range]; omega)]
     simp only [List.getElem_map, List.getElem_range]
-    rw [show 6 - 1 - (6 - 1 - i) = i by omega]
-    exact getLsbD_eq_testBit w i
+    rw [show width - 1 - (width - 1 - i) = i by omega]
+    exact (BitVec.testBit_toNat w).symm
   · simp only [hi, decide_false, Bool.false_and]
-    have hle : 2 ^ 6 ≤ 2 ^ i := Nat.pow_le_pow_right (by decide) (Nat.le_of_not_lt hi)
+    have hle : 2 ^ width ≤ 2 ^ i := Nat.pow_le_pow_right (by decide) (Nat.le_of_not_lt hi)
     rw [Nat.testBit_lt_two_pow (lt_of_lt_of_le w.isLt hle)]
 
 lemma holV2n_replicate_false (k : Nat) : holV2n (List.replicate k false) = 0 := by
@@ -488,7 +479,7 @@ theorem holV2n_holField (h l : Nat) (v : List Bool) :
 
 /-- Wrapping six-bit subtraction reduced modulo `2 ^ n`. -/
 lemma toNat_sub_mod (n : Nat) (hn : n ≤ 6) (w v : BitVec 6)
-    (_hw : w.toNat < 2 ^ n) (hv : v.toNat < 2 ^ n) :
+    (hv : v.toNat < 2 ^ n) :
     (w - v).toNat % 2 ^ n = (w.toNat + 2 ^ n - v.toNat) % 2 ^ n := by
   rw [BitVec.toNat_sub]
   rw [Nat.mod_mod_of_dvd _ (Nat.pow_dvd_pow 2 hn)]
@@ -506,11 +497,135 @@ lemma toNat_sub_mod (n : Nat) (hn : n ≤ 6) (w v : BitVec 6)
 /-- The L3 decoder's `telem` count: the low `len` bits of the wrapping
 six-bit `S - R`, matching the computable `(S + 2 ^ len - R) % 2 ^ len`. -/
 theorem holV2n_sub_mod (len : Nat) (hlen : 1 ≤ len) (hlen6 : len ≤ 6)
-    (S R : BitVec 6) (hS : S.toNat < 2 ^ len) (hR : R.toNat < 2 ^ len) :
+    (S R : BitVec 6) (hR : R.toNat < 2 ^ len) :
     holV2n (holField (len - 1) 0 (holW2v (S - R))) =
       (S.toNat + 2 ^ len - R.toNat) % 2 ^ len := by
   rw [holV2n_holField, holV2n_holW2v]
   rw [Nat.sub_zero, Nat.pow_zero, Nat.div_one, Nat.sub_one_add_one (by omega : len ≠ 0)]
-  exact toNat_sub_mod len hlen6 S R hS hR
+  exact toNat_sub_mod len hlen6 S R hR
+
+
+/-- The high bits of a list: `take` shifts the value right. -/
+theorem holV2n_take (v : List Bool) (m : Nat) :
+    holV2n (v.take m) = holV2n v / 2 ^ (v.length - m) := by
+  have happ : holV2n v = holV2n (v.take m) * 2 ^ (v.drop m).length + holV2n (v.drop m) := by
+    rw [← holV2n_append (v.take m) (v.drop m)]
+    rw [List.take_append_drop]
+  have hlen : (v.drop m).length = v.length - m := List.length_drop ..
+  have hlt : holV2n (v.drop m) < 2 ^ (v.length - m) := by
+    have h1 := holV2n_lt (v.drop m)
+    rw [hlen] at h1
+    exact h1
+  rw [happ, hlen, Nat.add_comm]
+  rw [Nat.add_mul_div_right _ _ (Nat.two_pow_pos _)]
+  rw [Nat.div_eq_of_lt hlt]
+  simp
+
+/-- The low bits of a list: `drop` reduces the value modulo the new width. -/
+theorem holV2n_drop (v : List Bool) (m : Nat) :
+    holV2n (v.drop m) = holV2n v % 2 ^ (v.length - m) := by
+  have happ : holV2n v = holV2n (v.take m) * 2 ^ (v.drop m).length + holV2n (v.drop m) := by
+    rw [← holV2n_append (v.take m) (v.drop m)]
+    rw [List.take_append_drop]
+  have hlen : (v.drop m).length = v.length - m := List.length_drop ..
+  have hlt : holV2n (v.drop m) < 2 ^ (v.length - m) := by
+    have h1 := holV2n_lt (v.drop m)
+    rw [hlen] at h1
+    exact h1
+  rw [happ, hlen, Nat.add_comm]
+  rw [Nat.add_mul_mod_self_right]
+  exact (Nat.mod_eq_of_lt hlt).symm
+
+/-- A right rotation by `x < width` splits the value into its low `x` bits
+(shifted up) and its high bits. -/
+theorem rotateRightWidth_eq_add (width v x : Nat) (hv : v < 2 ^ width) (hx : x < width) :
+    rotateRightWidth width v x = (v >>> x) + (v % 2 ^ x) * 2 ^ (width - x) := by
+  have ha : v >>> x < 2 ^ (width - x) := by
+    rw [Nat.shiftRight_eq_div_pow]
+    exact Nat.div_lt_of_lt_mul (by
+      rw [← Nat.pow_add, Nat.add_comm, Nat.sub_add_cancel (by omega)]
+      exact hv)
+  have hsum : (v >>> x) + (v % 2 ^ x) * 2 ^ (width - x) < 2 ^ width := by
+    have h2 : v % 2 ^ x ≤ 2 ^ x - 1 := by
+      have := Nat.mod_lt v (Nat.two_pow_pos x); omega
+    have h3 : (v % 2 ^ x) * 2 ^ (width - x) ≤ (2 ^ x - 1) * 2 ^ (width - x) :=
+      Nat.mul_le_mul_right _ h2
+    have h4 : (2 ^ x - 1) * 2 ^ (width - x) = 2 ^ width - 2 ^ (width - x) := by
+      rw [Nat.sub_mul, Nat.one_mul]
+      congr 1
+      rw [← Nat.pow_add]
+      congr 1
+      omega
+    have hf : 2 ^ (width - x) ≤ 2 ^ width :=
+      Nat.pow_le_pow_right (by decide) (by omega)
+    rw [h4] at h3
+    omega
+  unfold rotateRightWidth
+  rw [Nat.mod_eq_of_lt hv, Nat.mod_eq_of_lt hx]
+  apply Nat.eq_of_testBit_eq
+  intro i
+  rw [Nat.testBit_mod_two_pow, Nat.testBit_lor, Nat.testBit_shiftRight,
+    Nat.testBit_shiftLeft]
+  by_cases hi : i < width
+  · simp only [hi, decide_true, Bool.true_and]
+    rw [Nat.mul_comm (v % 2 ^ x) (2 ^ (width - x))]
+    rw [Nat.add_comm (v >>> x)]
+    rw [Nat.testBit_two_pow_mul_add _ ha i]
+    by_cases hj : i < width - x
+    · rw [if_pos hj]
+      have hge : ¬ (width - x ≤ i) := by omega
+      simp only [hge, decide_false, Bool.false_and, Bool.or_false]
+      rw [Nat.testBit_shiftRight]
+    · rw [if_neg hj]
+      have hge : width - x ≤ i := by omega
+      simp only [hge, decide_true, Bool.true_and]
+      have hxw : width ≤ x + i := by omega
+      have h2 : 2 ^ width ≤ 2 ^ (x + i) := Nat.pow_le_pow_right (by decide) hxw
+      rw [Nat.testBit_lt_two_pow (lt_of_lt_of_le hv h2), Bool.false_or]
+      rw [Nat.testBit_mod_two_pow]
+      have h3 : i - (width - x) < x := by omega
+      simp only [h3, decide_true, Bool.true_and]
+  · simp only [hi, decide_false, Bool.false_and]
+    have h2 : 2 ^ width ≤ 2 ^ i := Nat.pow_le_pow_right (by decide) (Nat.le_of_not_lt hi)
+    rw [Nat.testBit_lt_two_pow (lt_of_lt_of_le hsum h2)]
+
+/-- A word whose list fits its width has the list's value. -/
+theorem holV2w_toNat (m : Nat) (v : List Bool) (h : v.length ≤ m) :
+    (holV2w m v).toNat = holV2n v := by
+  rw [holV2w_eq_ofNat, BitVec.toNat_ofNat]
+  exact Nat.mod_eq_of_lt (lt_of_lt_of_le (holV2n_lt v) (Nat.pow_le_pow_right (by decide) h))
+
+/-- The L3 decoder's `welem`: rotating the padded `Ones (S + 1)` list equals
+the computable rotation of the `esize`-bit `ones (S + 1)`. -/
+theorem holV2n_holRotate_pad (esize k R : Nat) (hk : k ≤ esize) (he1 : 1 ≤ esize)
+    (he64 : esize ≤ 64) :
+    holV2n (holRotate (holPadLeft false esize (Ones k)) R) =
+      rotateRightWidth esize (ones k) R := by
+  have hvlen : (holPadLeft false esize (Ones k)).length = esize := by
+    simp only [Ones, holPadLeft, List.length_append, List.length_replicate, List.length_nil]
+    omega
+  have hv : holV2n (holPadLeft false esize (Ones k)) = ones k := by
+    rw [← holV2w_toNat esize _ (by omega)]
+    exact ones_pad_eq esize k hk he64
+  set x := R % esize with hxdef
+  have hxlt : x < esize := Nat.mod_lt _ (by omega)
+  have htake : (List.take (esize - x) (holPadLeft false esize (Ones k))).length = esize - x := by
+    rw [List.length_take, hvlen]
+    exact Nat.min_eq_left (by omega)
+  rw [holRotate_eq_drop_take _ R (by omega)]
+  rw [hvlen, ← hxdef]
+  rw [holV2n_append, htake, holV2n_drop, holV2n_take, hvlen, hv]
+  rw [show esize - (esize - x) = x by omega]
+  have hones : ones k < 2 ^ esize := by
+    have h1 : 2 ^ k ≤ 2 ^ esize := Nat.pow_le_pow_right (by decide) hk
+    have h2 : 0 < 2 ^ k := Nat.two_pow_pos k
+    unfold ones
+    omega
+  have hxmod : x % esize = x := Nat.mod_eq_of_lt hxlt
+  rw [show rotateRightWidth esize (ones k) R = rotateRightWidth esize (ones k) x from by
+    unfold rotateRightWidth
+    rw [← hxdef, hxmod]]
+  rw [rotateRightWidth_eq_add esize (ones k) x hones hxlt]
+  rw [Nat.shiftRight_eq_div_pow, Nat.add_comm]
 
 end Flapjack.Compiler.Encoders.Arm8.L3
