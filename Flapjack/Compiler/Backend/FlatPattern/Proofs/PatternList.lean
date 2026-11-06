@@ -1,7 +1,7 @@
 import Flapjack.Compiler.Backend.Semantics.FlatSem.PatternMatch
 
 /-! Successful pattern-list matches for the pattern-binding simulation.
-These proof-side statements await HOL carrier and statement review. -/
+The untagged supporting statements are reviewed independently. -/
 namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack.AstHOL Flapjack.Compiler.Backend.FlatSem
 open Flapjack.SemanticPrimitivesHOL (MatchResult storeLookup)
@@ -75,6 +75,7 @@ termination_by sizeOf patterns
 end
 
 /-- Successful list matching consumes exactly one value per pattern. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "pmatch_list_Match_IMP_LENGTH"]
 theorem pmatchList_match_length {C F : Type} (state : FlatSem.State C F)
     (patterns : List FlatLang.Pat) (values : List Value) (bindings result : List (VarN × Value))
     (matched : FlatSem.pmatchList state patterns values bindings = .match result) :

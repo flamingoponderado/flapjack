@@ -9,6 +9,12 @@ open Flapjack
 open Flapjack.AstHOL Flapjack.Compiler.Backend
 open Flapjack.SemanticPrimitivesHOL (storeLookup)
 
+/-- Evaluate one expression to one value without changing the state. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "pure_eval_to_def"]
+def pureEvalTo {C F : Type} (state : FlatSem.State C F)
+    (env : FlatSem.Environment FlatSem.Value) (expression : FlatLang.Exp) (value : FlatSem.Value) : Prop :=
+  FlatSem.evaluate env state [expression] = (state, .val [value])
+
 /-- A binding work list's expressions must evaluate purely whenever their
 generated keys are used and the generated-name interval is preserved. -/
 def BindingInputs {C F : Type} (lower upper : Nat) (used : NumSet)
@@ -17,7 +23,7 @@ def BindingInputs {C F : Type} (lower upper : Nat) (used : NumSet)
   List.Forall₂ (fun item value => ∀ env2,
     (sptLookup item.2.1 used).isSome = true →
     aLookupRel (fun name => lower < decNameToNum name ∧ decNameToNum name < upper) Eq env2.v env.v →
-    FlatSem.evaluate env2 state [item.2.2] = (state, .val [value])) todo values
+    pureEvalTo state env2 item.2.2 value) todo values
 
 /-- Inserting a key cannot remove any existing key from a numeric set. -/
 theorem sptInsert_preserves_presence (used : NumSet) (inserted key : Nat)
@@ -125,7 +131,7 @@ theorem bindingInputs_fresh_nested {C F : Type} (trace : BackendCommon.Tra) (low
       have found : env2.v.lookup generated = some freshValue := by
         rw [← holALookup_mlString, equalLookup]
         simp [holALookup, generated]
-      simp [FlatSem.evaluate, generated] at found ⊢
+      simp [pureEvalTo, FlatSem.evaluate, generated] at found ⊢
       simp [found]
     · induction tail with
       | nil => exact .nil

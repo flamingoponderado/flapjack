@@ -47,6 +47,7 @@ val _ = show_thm "alookup_filter_eq=" flat_patternProofTheory.ALOOKUP_FILTER_EQ;
 val _ = show_thm "enumerate_def=" miscTheory.enumerate_def;
 val _ = show_thm "mem_enumerate_el=" flat_patternProofTheory.MEM_enumerate_EL;
 val _ = show_thm "all_distinct_enumerate=" flat_patternProofTheory.ALL_DISTINCT_enumerate;
+val _ = show_thm "pure_eval_to_def=" flat_patternProofTheory.pure_eval_to_def;
 val _ = show_thm "alookup_def=" alistTheory.ALOOKUP_def;
 val alookup_reversed_eq = prove (
   ``(!q:'a. ALOOKUP ([]:('a # 'b) list) q = NONE) /\
