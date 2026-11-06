@@ -49,10 +49,11 @@ theorem evaluate_decs_unit_of_singletons {C F : Type}
     (clockLe : source.clock ≤ clockBound) (states : StateRel source target)
     (notTypeError : (FlatSem.evaluateDecs source declarations).2 ≠ some (.abort .typeError)) :
     DecUnitSim source target declarations := by
+  apply decUnitSim_of_decSim source target declarations
   induction declarations generalizing source target with
-  | nil => exact evaluate_decs_unit_nil source target states
+  | nil => exact evaluate_decs_nil source target states
   | cons first rest ih =>
-    apply evaluate_decs_unit_cons source target first rest
+    apply evaluate_decs_cons source target first rest
     · exact singletons first (by simp) source target clockLe states
     · intro next nextTarget nextStates nextClock nextNot
       apply ih

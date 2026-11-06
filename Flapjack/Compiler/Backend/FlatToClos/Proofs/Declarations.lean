@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.EvaluateCases
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
+import Flapjack.Compiler.Backend.Semantics.ClosProps.EvaluateAppend
 
 /-! Declaration sequencing for the proof-side flat-to-closure simulation. -/
 namespace Flapjack.Compiler.Backend.FlatToClos
@@ -112,78 +113,26 @@ def DecUnitSim {C F : Type} (source : FlatSem.State C F) (target : ClosSem.State
   let clos := ClosSem.evaluate (compileDecs declarations ++ compileDecs [.con .none none []]) [] target
   StateRel flat.1 clos.2 ∧ DecUnitResultRel flat.2 clos.1
 
-/-- The appended unit expression handles the empty declaration list. -/
-theorem evaluate_decs_unit_nil {C F : Type} (source : FlatSem.State C F) (target : ClosSem.State C F)
-    (states : StateRel source target) : DecUnitSim source target [] := by
-  simpa [DecUnitSim, FlatSem.evaluateDecs, compileDecs, compile, compileExps, compileExp, smartCons,
-    ClosSem.evaluate, ClosSem.fixClock, ClosSem.doApp, ClosSem.applyBlock, ClosSem.unitValue] using
-    And.intro states (DecUnitResultRel.success [])
-
-/-- Compose one declaration with the remaining unit-terminated sequence. -/
-theorem evaluate_decs_unit_cons {C F : Type} (source : FlatSem.State C F) (target : ClosSem.State C F)
-    (declaration : FlatLang.Exp) (rest : List FlatLang.Exp)
-    (firstSim : (FlatSem.evaluate ⟨[]⟩ source [declaration]).2 ≠ .err (.abort .typeError) →
-      EvalSim ⟨[]⟩ [] [] source target [declaration])
-    (restSim : ∀ (next : FlatSem.State C F) (nextTarget : ClosSem.State C F),
-      StateRel next nextTarget → next.clock ≤ source.clock →
-      (FlatSem.evaluateDecs next rest).2 ≠ some (.abort .typeError) → DecUnitSim next nextTarget rest)
-    (notTypeError : (FlatSem.evaluateDecs source (declaration :: rest)).2 ≠ some (.abort .typeError)) :
-    DecUnitSim source target (declaration :: rest) := by
-  have firstNotTypeError : (FlatSem.evaluate ⟨[]⟩ source [declaration]).2 ≠ .err (.abort .typeError) := by
-    intro failure
-    apply notTypeError
-    rw [FlatSem.evaluateDecs_cons]
-    unfold FlatSem.evaluateDec
-    simp only [failure]
-  have firstSim := firstSim firstNotTypeError
-  unfold EvalSim at firstSim
+/-- Appending the installation unit expression preserves a declaration
+simulation. This Flapjack intermediate uses the HOL append evaluation theorem. -/
+theorem decUnitSim_of_decSim {C F : Type} (source : FlatSem.State C F) (target : ClosSem.State C F)
+    (declarations : List FlatLang.Exp) (simulation : DecSim source target declarations) :
+    DecUnitSim source target declarations := by
+  unfold DecSim at simulation
   unfold DecUnitSim
-  simp only [compileDecs, compile, compileExps, List.cons_append] at firstSim ⊢
-  rw [FlatSem.evaluateDecs_cons] at notTypeError ⊢
-  unfold FlatSem.evaluateDec at notTypeError ⊢
-  cases flatRun : FlatSem.evaluate ⟨[]⟩ source [declaration] with
-  | mk next flatResult =>
-    cases closRun : ClosSem.evaluate [compileExp [] declaration] [] target with
-    | mk closResult nextTarget =>
-      simp only [flatRun, closRun] at firstSim notTypeError ⊢
-      rcases firstSim with ⟨states, results⟩
+  rw [ClosProps.evaluateAppend]
+  cases flatRun : FlatSem.evaluateDecs source declarations with
+  | mk flatState flatResult =>
+    cases closRun : ClosSem.evaluate (compileDecs declarations) [] target with
+    | mk closResult closState =>
+      simp only [flatRun, closRun] at simulation ⊢
+      obtain ⟨states, results⟩ := simulation
       cases results with
-      | abort error =>
-        rw [ClosProps.evaluate_cons_error _ _ _ _ _ _ closRun]
-        exact ⟨states, .abort error⟩
-      | raise related =>
-        rw [ClosProps.evaluate_cons_error _ _ _ _ _ _ closRun]
-        exact ⟨states, .raise related⟩
-      | value related =>
-        have length := FlatSem.evaluate_singleton_length ⟨[]⟩ source next declaration _ flatRun
-        cases related with
-        | nil => simp at length
-        | cons head tail =>
-          cases tail with
-          | cons _ _ => simp at length
-          | nil =>
-            rename_i sourceValue targetValue
-            have sourceUnit : sourceValue = FlatSem.unitValue := by
-              cases sourceValue <;> simp [FlatSem.unitValue] at notTypeError ⊢
-              case conv stamp fields => cases stamp <;> cases fields <;> simp_all
-            subst sourceValue
-            have targetUnit := (vRel_unit targetValue).mp head
-            subst targetValue
-            rw [ClosProps.evaluate_cons_value _ _ _ _ _ _ closRun]
-            simp [FlatSem.unitValue] at notTypeError ⊢
-            have bound := FlatSem.evaluate_clock_spec.1 ⟨[]⟩ source next [declaration] _ flatRun
-            have restRelated := restSim next nextTarget states bound notTypeError
-            simp only [DecUnitSim, compileDecs, compile] at restRelated
-            cases closTail : ClosSem.evaluate (compileExps [] rest ++ compileExps [] [.con .none none []]) [] nextTarget with
-            | mk tailResult lastTarget =>
-              cases flatTail : FlatSem.evaluateDecs next rest with
-              | mk last tailError =>
-                simp only [compileExps] at closTail restRelated
-                simp only [closTail, flatTail] at restRelated ⊢
-                rcases restRelated with ⟨lastStates, tailRel⟩
-                cases tailRel with
-                | success prior => exact ⟨lastStates, .success (ClosSem.unitValue :: prior)⟩
-                | raise valueRel => exact ⟨lastStates, .raise valueRel⟩
-                | abort error => exact ⟨lastStates, .abort error⟩
+      | success values =>
+        simpa [compileDecs, compile, compileExps, compileExp, smartCons, ClosSem.evaluate,
+          ClosSem.fixClock, ClosSem.doApp, ClosSem.applyBlock, ClosSem.unitValue] using
+          And.intro states (DecUnitResultRel.success values)
+      | raise related => exact ⟨states, .raise related⟩
+      | abort error => exact ⟨states, .abort error⟩
 
 end Flapjack.Compiler.Backend.FlatToClos
