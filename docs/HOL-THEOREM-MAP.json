@@ -111269,7 +111269,7 @@
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
     "hol_name": "exh_all_def",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared the typed worklist equations in pattern_exh_steps_probe.out: empty worklist, empty matrix, empty leading row, and the default and specialization cases agree, with termination by the source step measure. The executed checker still uses exhMatrix; its correspondence to this worklist remains to be proved."
+    "reviewer": "Compared the typed worklist equations in pattern_exh_steps_probe.out: empty worklist, empty matrix, empty leading row, and the default and specialization cases agree, with termination by the source step measure. The tagged exhRows_eq proves equivalence to exhMatrix, and a kernel-checked compiler rewrite runs the worklist form."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternExh/Exhaustive.lean",

@@ -154,8 +154,7 @@ theorem exhStepsList_append (xs ys : List (List (List Pat))) :
   | nil => simp [exhStepsList]
   | cons x xs ih => simp [exhStepsList, ih, Nat.add_assoc]
 
-/-- Check a worklist of pattern matrices using the source's step measure.
-The executed checker still uses `exhMatrix`. -/
+/-- Check a worklist of pattern matrices using the source's step measure. -/
 @[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "exh_all_def"]
 def exhAll (ms : List (List (List Pat))) : Bool :=
   match ms with
@@ -206,5 +205,14 @@ def exhRows {α : Type} (rows : List (Pat × α)) : Bool := exhMatrix (orRows ro
 theorem exhRows_eq {α : Type} (rows : List (Pat × α)) :
     exhRows rows = exhAll [orRows rows] := by
   simp [exhRows, exhAll_correct, exhMats]
+
+/-- Executable form of `exhRows`, justified by `exhRows_eq`. -/
+def exhRowsWorklist {α : Type} (rows : List (Pat × α)) : Bool :=
+  exhAll [orRows rows]
+
+/-- Compile the row checker with the source worklist execution equation. -/
+@[csimp] theorem exhRows_eq_worklist : @exhRows = @exhRowsWorklist := by
+  funext α rows
+  exact exhRows_eq rows
 
 end Flapjack.Compiler.Backend.PatternExh
