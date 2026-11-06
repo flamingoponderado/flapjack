@@ -118,7 +118,11 @@ bit-vector infrastructure for identifying immediate values. -/
 theorem smallnum_lowBit {width : Nat} [NeZero width] (good : goodDimindex width) (i : Int) :
     (smallnum (width := width) i).getLsbD 0 = false := by
   have masked := smallnum_mask good i
-  rcases good with h32 | h64 <;> subst width <;> bv_decide
+  have bit := congrArg (fun x => x.getLsbD 0) masked
+  rw [show (1 : BitVec width) = BitVec.ofNat width 1 from rfl] at bit
+  simp only [BitVec.getLsbD_and, BitVec.getLsbD_not, BitVec.getLsbD_ofNat] at bit
+  have positive : 0 < width := Nat.pos_of_ne_zero (NeZero.ne width)
+  simpa [positive] using bit.symm
 
 /-- A heap address with an unannotated pointer has its low bit set. This is
 Flapjack bit-vector infrastructure for identifying heap pointers. -/

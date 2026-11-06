@@ -99,7 +99,7 @@ theorem word64Rep_injective {width : Nat} [NeZero width] (good : goodDimindex wi
     (same : (word64Rep (width := width) (α := WordLocW width) w1) = word64Rep w2) : w1 = w2 := by
   rcases good with width32 | width64 <;> subst width
   · simp [word64Rep] at same
-    bv_decide
+    exact (bitWord64Split w1 w2).mp same
   · simp [word64Rep] at same
     exact same
 

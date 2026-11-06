@@ -263,7 +263,9 @@ theorem memoryRel_bignumCmp {width : Nat} [NeZero width] (conf : Config) (be : B
     have h := congrArg BitVec.toNat decoded
     simpa [BitVec.toNat_ofNat, Nat.mod_eq_of_lt length1, Nat.mod_eq_of_lt length2] using h
   have maskBit (x : BitVec width) : ((16 : BitVec width) &&& x = 0) ↔ x.getLsbD 4 = false := by
-    rcases good with hw | hw <;> subst width <;> bv_decide
+    rw [BitVec.and_comm]
+    apply bitAnd16EqZero
+    rcases good with hw | hw <;> omega
   rw [maskBit, maskBit] at sameMask
   have signEq : (i1 < 0 ↔ i2 < 0) := by
     cases b1 : (makeHeader (width := width) conf (((if i1 < 0 then 1 else 0) <<< 2) ||| 3)

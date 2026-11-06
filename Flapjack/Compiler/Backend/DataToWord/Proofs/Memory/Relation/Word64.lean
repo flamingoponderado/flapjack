@@ -51,7 +51,7 @@ private theorem word64Heap {width : Nat} [NeZero width] (conf : DataToWord.Confi
     · simpa using h1
     · have shiftEq : (StackRemove.bytesInWord width <<< 1) =
           StackRemove.bytesInWord width + StackRemove.bytesInWord width := by
-        rcases good with hw | hw <;> subst width <;> bv_decide
+        rcases good with hw | hw <;> subst width <;> decide
       rw [shiftEq]
       simpa [BitVec.two_mul, BitVec.add_assoc] using h2
   · simp only [word64Rep, small, ↓reduceIte, wordEl, wordPayload, List.isEmpty_nil,

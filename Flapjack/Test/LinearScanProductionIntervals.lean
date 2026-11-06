@@ -12,18 +12,18 @@ private def initial : ProductionState :=
 
 private def smallTree : ClashTree := .delta [1] [0]
 
-example :
+#guard
     let (result, state) := Production.getIntervals smallTree initial
     (result, state.int_beg.toList, state.int_end.toList) =
-      (.success (-3), [-2, 0], [-1, 0]) := by native_decide
+      (.success (-3), [-2, 0], [-1, 0])
 
-example :
+#guard
     let (result, state) := Production.getIntervals (.delta [2] []) initial
-    (result, state.toSource) = (.failure .Subscript, initial.toSource) := by native_decide
+    (result, state.toSource) = (.failure .Subscript, initial.toSource)
 
-example :
+#guard
     let (result, state) := Production.getIntervals (.delta [0, 2] []) initial
     (result, state.int_beg.toList, state.int_end.toList) =
-      (.failure .Subscript, [0, 1], [1, 1]) := by native_decide
+      (.failure .Subscript, [0, 1], [1, 1])
 
 end Flapjack.Test.LinearScanProductionIntervals

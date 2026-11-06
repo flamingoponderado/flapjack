@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.StackOperations
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Numbers
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BitLemmas
 
 /-! Small integers in the data-to-word abstract heap invariant. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
@@ -81,7 +82,8 @@ theorem smallnum_mask {width : Nat} [NeZero width] (good : goodDimindex width) (
     (smallnum (width := width) i &&& ~~~(1 : BitVec width)) = smallnum i := by
   rw [smallnum_eq_inlined]
   rcases good with width32 | width64 <;> subst width
-  all_goals split <;> simp only [BitVec.ofNat_mul] <;> bv_decide
+  all_goals split <;> apply bitAndNotOneEq <;> rw [bitLowToNat] <;>
+    simp [BitVec.toNat_neg] <;> omega
 
 /-- A small integer and its tagged word can be added to the full memory relation. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "IMP_memory_rel_Number"

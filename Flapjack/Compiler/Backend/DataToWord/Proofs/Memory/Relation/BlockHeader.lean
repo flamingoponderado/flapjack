@@ -99,8 +99,15 @@ theorem encodedBlockHeader_bits {width : Nat} [NeZero width] (conf : Config) (ta
     subst h
     have h2 : ¬ (2 : Nat) ≥ width - conf.lenSize := by omega
     have h3 : ¬ (3 : Nat) ≥ width - conf.lenSize := by omega
-    rcases good with hw | hw <;> subst width <;>
-      simp [makeHeader, BitVec.ofNat_mul, h2, h3] <;> bv_decide
+    have mul : BitVec.ofNat width 4 * BitVec.ofNat width tag =
+        BitVec.ofNat width tag <<< (2 : Nat) := bitFourMulEqShift _
+    rcases good with hw | hw <;> subst width
+    all_goals
+      simp only [makeHeader, BitVec.ofNat_mul]
+      rw [BitVec.mul_comm (BitVec.ofNat _ tag)]
+      rw [mul]
+      simp only [BitVec.getLsbD_or, BitVec.getLsbD_shiftLeft, BitVec.getLsbD_ofNat]
+      refine ⟨?_, ?_⟩ <;> simp <;> intro h <;> omega
   next cond => contradiction
 
 /-- Empty block encodings retain their value under the immediate marker mask.
@@ -109,7 +116,12 @@ theorem blockNil_mask {width : Nat} [NeZero width] (good : goodDimindex width) (
     (blockNil (width := width) tag &&& ~~~(1 : BitVec width)) =
       BitVec.ofNat width tag * 16 + 2 ∧
     (blockNil (width := width) tag &&& ~~~(1 : BitVec width)).getLsbD 0 = false := by
-  rcases good with h | h <;> subst width <;> simp [blockNil] <;> bv_decide
+  have low : (blockNil (width := width) tag).getLsbD 0 = false := by
+    rcases good with h | h <;> subst width <;> rw [bitLowToNat] <;> simp [blockNil]
+  rw [bitAndNotOneEq _ low]
+  constructor
+  · rcases good with h | h <;> subst width <;> simp [blockNil] <;> bv_omega
+  · exact low
 
 /-- A related constructor is either an immediate empty block or a pointer to
 a valid concrete block header with a bounded timestamp. -/

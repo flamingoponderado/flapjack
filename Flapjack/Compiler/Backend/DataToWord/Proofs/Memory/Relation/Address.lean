@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Store
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BitLemmas
 
 /-! Concrete addresses and offsets for the data-to-word memory relation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
@@ -79,7 +80,7 @@ theorem getRealOffset_thm {width : Nat} [NeZero width] (index : Nat) :
       some (StackRemove.bytesInWord width + BitVec.ofNat width index * StackRemove.bytesInWord width) := by
   intro good
   rcases good with h | h <;> subst width <;>
-    simp [getRealOffset, StackRemove.bytesInWord, BitVec.ofNat_mul] <;> bv_decide
+    simp [getRealOffset, StackRemove.bytesInWord, BitVec.ofNat_mul] <;> bv_omega
 
 /-- Pointer tag bits vanish when shifted past the complete pointer field. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "get_lowerbits_LSL_shift_length"
@@ -116,7 +117,7 @@ theorem bounded_shift_roundtrip {width : Nat} [NeZero width] (n k : Nat)
 This is Flapjack bit-vector infrastructure for address recovery. -/
 theorem shiftWordBytes {width : Nat} [NeZero width] (good : goodDimindex width) (n : BitVec width) :
     (n <<< wordShiftAmount width) = n * StackRemove.bytesInWord width := by
-  rcases good with h | h <;> subst width <;> simp [wordShiftAmount, StackRemove.bytesInWord] <;> bv_decide
+  rcases good with h | h <;> subst width <;> simp [wordShiftAmount, StackRemove.bytesInWord] <;> bv_omega
 
 /-- A heap-bounded encoded pointer recovers the expected simple machine address.
 This Flapjack helper is the simple-address component of the combined theorem. -/
@@ -196,7 +197,18 @@ theorem bounded_shift_partial {width : Nat} [NeZero width] (n s k : Nat) (ks : k
 word widths. This is Flapjack bit-vector infrastructure. -/
 theorem pointerMarker_cancel {width : Nat} [NeZero width] (good : goodDimindex width) (n curr : BitVec width) :
     curr + ((n <<< wordShiftAmount width) ||| 1) - 1 = curr + (n <<< wordShiftAmount width) := by
-  rcases good with h | h <;> subst width <;> simp [wordShiftAmount] <;> bv_decide
+  have shifted (k : Nat) (positive : 0 < k) : (n <<< k) &&& 1 = 0 := by
+    apply BitVec.eq_of_getLsbD_eq
+    intro i hi
+    rw [BitVec.getLsbD_and, BitVec.getLsbD_shiftLeft]
+    have widthPositive : 0 < width := Nat.pos_of_ne_zero (NeZero.ne width)
+    cases i with
+    | zero => simp [positive, widthPositive]
+    | succ j => simp
+  have positive : 0 < wordShiftAmount width := by
+    rcases good with h | h <;> subst width <;> simp [wordShiftAmount]
+  rw [← BitVec.add_eq_or_of_and_eq_zero _ _ (shifted _ positive)]
+  rw [← BitVec.add_assoc, BitVec.add_sub_cancel]
 
 /-- The combined address theorem's store argument has the canonical
 lookup-and-support roundtrip. -/

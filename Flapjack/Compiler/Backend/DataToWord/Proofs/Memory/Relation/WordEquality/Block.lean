@@ -144,7 +144,7 @@ theorem wordEqThm0_block {width : Nat} [NeZero width] (conf : DataToWord.Config)
         simp only [nonempty2, ↓reduceIte] at cases2
         obtain ⟨a1, h1, _, h13, h12, addr1, mem1, dom1, decoded1, lenBound1, encoded1, _⟩ := cases1
         obtain ⟨a2, h2, _, h23, h22, addr2, mem2, dom2, decoded2, lenBound2, encoded2, _⟩ := cases2
-        have mask : h1 &&& 12 = 0 := by rcases good with hw | hw <;> subst width <;> bv_decide
+        have mask : h1 &&& 12 = 0 := by exact bitAnd12EqZero h1 h12 h13
         have closWord1 := memoryRel_isClos conf be next refs space store memory domain stamp1 tag1 xs w1 a1 h1
           ((.block stamp2 tag2 ys, .word w2) :: vars) ⟨rel, low1, addr1, mem1, good⟩
         have closWord2 := memoryRel_isClos conf be next refs space store memory domain stamp2 tag2 ys w2 a2 h2

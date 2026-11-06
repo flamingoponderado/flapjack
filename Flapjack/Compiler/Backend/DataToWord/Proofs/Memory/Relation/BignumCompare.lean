@@ -196,7 +196,9 @@ theorem memoryRel_bignumEqualHeader {width : Nat} [NeZero width] (conf : DataToW
     simpa [BitVec.toNat_ofNat, Nat.mod_eq_of_lt small1, Nat.mod_eq_of_lt small2] using h
   have loop := bignumWordLoop i1 i2 f1 f2 a1 a2 domain memory sameSign sameLength small1 words1 words2
   have maskBit (x : BitVec width) : ((16 : BitVec width) &&& x = 0) ↔ x.getLsbD 4 = false := by
-    rcases good with hw | hw <;> subst width <;> bv_decide
+    rw [BitVec.and_comm]
+    apply bitAnd16EqZero
+    rcases good with hw | hw <;> omega
   rw [← sameHeader]
   by_cases neg : i1 < 0
   · have bit := sign1.mpr neg
@@ -270,7 +272,8 @@ theorem memoryRel_bignumDifferentHeader {width : Nat} [NeZero width] (conf : Dat
     · have neg2 : ¬ i2 < 0 := fun h => neg (sign.mpr h)
       simp [neg, neg2, len]
   have maskBit (x : BitVec width) : (x &&& 16 = 0) ↔ x.getLsbD 4 = false := by
-    rcases good with hw | hw <;> subst width <;> bv_decide
+    apply bitAnd16EqZero
+    rcases good with hw | hw <;> omega
   have mask1 : (makeHeader (width := width) conf (((if i1 < 0 then 1 else 0) <<< 2) ||| 3)
         (n2mw i1.natAbs : List (BitVec width)).length &&& 16 = 0) ↔ ¬ i1 < 0 := by
     rw [maskBit]
@@ -376,7 +379,8 @@ theorem memoryRel_smallBignumCompare {width : Nat} [NeZero width] (conf : DataTo
   obtain ⟨different, correct⟩ := smallBignumCompare i1 i2 good small large
   refine ⟨different, w, address, _, loc, addr, mem, dom, ?_⟩
   have maskBit (x : BitVec width) : (x &&& 16 = 0) ↔ x.getLsbD 4 = false := by
-    rcases good with hw | hw <;> subst width <;> bv_decide
+    apply bitAnd16EqZero
+    rcases good with hw | hw <;> omega
   by_cases negative : i2 < 0
   · have bit := sign.mpr negative
     have maskNe : makeHeader (width := width) conf (((if i2 < 0 then 1 else 0) <<< 2) ||| 3)
