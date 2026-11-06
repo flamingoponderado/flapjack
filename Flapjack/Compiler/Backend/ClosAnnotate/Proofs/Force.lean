@@ -186,15 +186,4 @@ theorem evaluate_force_step {C F : Type} (trace : BackendCommon.Tra) (args : Lis
                       dsimp only
                       rw [targetUpdate]
 
-/-- An unrestricted generated-call simulation gives the unrestricted force
-case. The state-indexed theorem above remains available for the mutual proof. -/
-theorem evaluate_force {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args)
-    (forceIH : EvalSimulation (C := C) (F := F) [appUnit (.var .none 0)]) :
-    EvalSimulation (C := C) (F := F) [.op trace (.thunkOp .forceThunk) args] := by
-  intro env source nextEnv target result sourceNext m l index run noType length vars safe code oracle states
-  exact evaluate_force_step trace args source (evalSimulation_at argsIH source)
-    (fun middle _ => evalSimulation_at forceIH middle)
-    env nextEnv target result sourceNext m l index run noType length vars safe code oracle states
-
 end Flapjack.Compiler.Backend.ClosAnnotate

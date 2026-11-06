@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Install
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.RecursiveFunctions
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Let
+import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Control
+import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.PureBindings
 
 /-! State-local steps for the evaluator induction. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate
