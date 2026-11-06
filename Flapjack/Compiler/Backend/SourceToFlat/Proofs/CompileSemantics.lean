@@ -12,12 +12,6 @@ namespace Flapjack.Compiler.Backend.SourceToFlat
 
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
 
-/-- The declaration compiler updates indices and environments, while preserving
-the pattern compiler configuration. -/
-theorem compileProg_patternCfg (config : Config) (decs : List Dec) :
-    (compileProg config decs).1.patternCfg = config.patternCfg := by
-  simp only [compileProg]
-
 /-- Flat elimination and pattern compilation preserve non-failing behavior
 under the pattern pass's installation-configuration relation. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "compile_flat_correct"]
@@ -64,7 +58,7 @@ theorem sourceCompile_semantics {C F : Type} [Nonempty C]
   generalize compiled : compileProg config decs = pair
   obtain ⟨nextConfig, code⟩ := pair
   have cfgEq : nextConfig.patternCfg = config.patternCfg := by
-    have h := compileProg_patternCfg config decs
+    have h : (compileProg config decs).1.patternCfg = config.patternCfg := by simp only [compileProg]
     simpa [compiled] using h
   have noFail := factoredCompileProg_semantics_ne_fail interp transform source sourceEnv config nextConfig
     middleConfig decs code initial compiled safe

@@ -104,11 +104,4 @@ theorem finiteSubmap_update {α β : Type} (f : HolFiniteMapExact α β) (key : 
     · apply old k v
       simpa [finiteUpdate, finiteErase, FUPDATE_HOL, FDOMSUB_HOL, eq] using lookup
 
-/-- The original subglobal and submap hypotheses imply the concrete growth
-condition used by the factored source-to-flat simulation. -/
-theorem GlobalGrowth.ofSubmaps (old new : GlobalEnv) (slots : subglobals old.v new.v)
-    (constructors : finiteSubmap old.c new.c) (types : finiteSubmap old.tys new.tys) :
-    GlobalGrowth old new :=
-  GlobalGrowth.ofSubglobals old new slots constructors types
-
 end Flapjack.Compiler.Backend.SourceToFlat

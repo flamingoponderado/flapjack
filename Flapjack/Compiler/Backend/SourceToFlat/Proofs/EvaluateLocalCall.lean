@@ -9,17 +9,6 @@ namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL
 open OracleInvariant
 
-/-- Decrementing both evaluator clocks preserves the factored invariant.
-This is used before entering a function body. -/
-theorem factoredInvariant_decClock {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (gen : EnvironmentGenerationStore) (genv : GlobalEnv)
-    (idxs : NextIndices × NextIndices × Set (Nat × IndexKind))
-    (source : State F) (flat : FlatSem.State C F)
-    (invariant : factoredInvariant interp transform gen genv idxs source flat) :
-    factoredInvariant interp transform gen genv idxs (EvaluateHOL.decClock source) (FlatSem.decClock flat) := by
-  exact (invariantDecClock interp transform gen genv idxs source flat invariant).2
-
 /-- Looking up a compiled recursive function preserves its name and argument
 and compiles its body under the same recursive environment. -/
 theorem findRecFun_compileFuns (name : VarN) (trace : List VarN) (env : Environment)
@@ -494,7 +483,7 @@ theorem localCallResult_related {C F : Type} [Nonempty C]
       omega
     obtain ⟨nextGenv, bodySim, bodyPost⟩ := calledIH body genv start finish other
       (EvaluateHOL.decClock source) (FlatSem.decClock flat) baseEnv sourceLocal flatLocal traces trace baseMap gen
-      smaller locals globals len (factoredInvariant_decClock interp transform gen genv (start, finish, other) source flat invariant)
+      smaller locals globals len ((invariantDecClock interp transform gen genv (start, finish, other) source flat invariant).2)
       generation bodySafe
     refine ⟨nextGenv, ?_, ?_⟩
     · simpa [sourceCallResult, srcApp, zero, flatCallResult, dstApp, flatNonzero, ExprSim] using bodySim

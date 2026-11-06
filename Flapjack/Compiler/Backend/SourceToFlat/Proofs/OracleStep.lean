@@ -410,7 +410,7 @@ theorem srcOracInvs_growth {C : Type} [Nonempty C]
       finiteSubmap old.tys new.tys ∧ subglobals old.v new.v) :
     srcOracInvs interp transform new evalState := by
   obtain ⟨⟨steps, envs, gen⟩, constructors, types, slots⟩ := premises
-  have growth := GlobalGrowth.ofSubmaps old new slots constructors types
+  have growth := GlobalGrowth.ofSubglobals old new slots constructors types
   exact ⟨steps, srcOracEnvInvs_growth interp old new growth evalState envs, gen⟩
 
 /-- The first two source-oracle entries expose consecutive incremental

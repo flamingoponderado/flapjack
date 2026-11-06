@@ -742,10 +742,10 @@ theorem eval_declaration_context {C F : Type} [Nonempty C]
     simp [incCompileProg, bodyEq] at compiled
     exact congrArg Config.next compiled.1
   subst newNext
-  have decInv := factoredInvariant_decClock interp transform ⟨0, config.envs.next, .ln⟩ baseGenv
+  have decInv := (OracleInvariant.invariantDecClock interp transform ⟨0, config.envs.next, .ln⟩ baseGenv
     (config.next, next.next, idxBlock start finish ∪ other)
     { source with evalState := begin }
-    { flat with globals := flat.globals ++ List.replicate (next.next.vidx - config.next.vidx) none, evalConfig := { flat.evalConfig with compileOracle := Flapjack.holShiftSeq 1 flat.evalConfig.compileOracle } } postInv
+    { flat with globals := flat.globals ++ List.replicate (next.next.vidx - config.next.vidx) none, evalConfig := { flat.evalConfig with compileOracle := Flapjack.holShiftSeq 1 flat.evalConfig.compileOracle } } postInv).2
   refine ⟨baseGenv, envId, config, next, flatDecs, n, newMap, nextGen, body, flatDecoded, flatLength,
     compiled, bodyEq, decInv, generation, ?_, envInv, nextCfg, previous, ?_, oracleSubmap, oracleShape, ?_⟩
   · simpa [bodyEq] using future
