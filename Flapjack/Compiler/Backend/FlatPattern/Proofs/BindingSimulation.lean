@@ -1,3 +1,4 @@
+import Mathlib.Data.List.Forall2
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.BindingFold
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.PatternList
 import Flapjack.Compiler.Backend.FlatPattern.BindingsTotal
@@ -503,27 +504,6 @@ theorem patBindings_mem_patsBindings (patterns : List FlatLang.Pat) (pattern : F
     · have h := ih later
       simp [FlatLang.patsBindings, h]
 
-/-- Equal-length lists satisfy a pointwise relation when their option-valued
-lookups satisfy it at every index. -/
-theorem forall₂_of_getElem {A B : Type} (relation : A → B → Prop) (left : List A) (right : List B)
-    (lengths : left.length = right.length)
-    (pointwise : ∀ (k : Nat) (x : A) (y : B), left[k]? = some x → right[k]? = some y → relation x y) :
-    List.Forall₂ relation left right := by
-  induction left generalizing right with
-  | nil =>
-    cases right with
-    | nil => exact .nil
-    | cons _ _ => simp at lengths
-  | cons first left ih =>
-    cases right with
-    | nil => simp at lengths
-    | cons second right =>
-      apply List.Forall₂.cons
-      · exact pointwise 0 first second rfl rfl
-      · apply ih right (by simpa using lengths)
-        intro k x y leftAt rightAt
-        exact pointwise (k + 1) x y (by simpa using leftAt) (by simpa using rightAt)
-
 /-- Generated constructor work items and actual fields satisfy the pointwise
 pure-evaluation premise needed by the recursive binding simulation. -/
 theorem compilePatBindings_con_workitems_related {C F : Type} (trace : BackendCommon.Tra) (i : Nat)
@@ -546,14 +526,17 @@ theorem compilePatBindings_con_workitems_related {C F : Type} (trace : BackendCo
       ∀ env2, aLookupRel (fun name => i < decNameToNum name ∧ decNameToNum name < i + 2 + patterns.length)
         Eq env2.v extended → FlatSem.evaluate env2 state [item.2.2] = (state, .val [value]))
       (entries.map Prod.snd) fields
-  apply forall₂_of_getElem
+  apply List.forall₂_of_length_eq_of_get
   · simpa [entries, patternEntries_length] using lengths
-  · intro k item value itemAt valueAt used env2 related
+  · intro k leftBound rightBound used env2 related
+    have itemAt : (entries.map Prod.snd)[k]? = some ((entries.map Prod.snd).get ⟨k, leftBound⟩) := List.getElem?_eq_getElem leftBound
+    have valueAt : fields[k]? = some (fields.get ⟨k, rightBound⟩) := List.getElem?_eq_getElem rightBound
     cases entryAt : entries[k]? with
     | none => simp [List.getElem?_map, entryAt] at itemAt
     | some entry =>
-      have itemEq : entry.2 = item := by simpa [List.getElem?_map, entryAt] using itemAt
-      subst item
+      have itemEq : entry.2 = (entries.map Prod.snd).get ⟨k, leftBound⟩ := by
+        simpa [List.getElem?_map, entryAt] using itemAt
+      rw [← itemEq] at used ⊢
       have inEntries : entry ∈ entries := List.mem_of_getElem? entryAt
       have inSelected : entry ∈ selected := List.mem_filter.mpr ⟨inEntries, used⟩
       have index := patternEntries_index trace i 0 k patterns entry entryAt

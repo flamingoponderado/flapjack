@@ -101,4 +101,11 @@ def esgcFreeRows : List (FlatLang.Pat × FlatLang.Exp) → Prop
 termination_by rows => sizeOf rows
 end
 
+/-- The list traversal renders HOL's EVERY predicate over global-safety checks. -/
+theorem esgcFreeList_iff (xs : List FlatLang.Exp) :
+    esgcFreeList xs ↔ ∀ x ∈ xs, esgcFree x := by
+  induction xs with
+  | nil => simp [esgcFreeList]
+  | cons x xs ih => simp [esgcFreeList, ih]
+
 end Flapjack.Compiler.Backend.FlatProps

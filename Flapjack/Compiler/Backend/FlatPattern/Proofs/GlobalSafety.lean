@@ -133,12 +133,6 @@ theorem compileExp_safe (cfg : Config) (exp : FlatLang.Exp) :
   | case16 => trivial
   | case17 => trivial
 
-private theorem listSafe_iff (xs : List FlatLang.Exp) :
-    esgcFreeList xs ↔ ∀ x ∈ xs, esgcFree x := by
-  induction xs with
-  | nil => simp [esgcFreeList]
-  | cons x xs ih => simp [esgcFreeList, ih]
-
 private theorem compileExps_safe (cfg : Config) (xs : List FlatLang.Exp) :
     esgcFreeList xs → esgcFreeList (compileExps cfg xs).2.2 := by
   induction xs with
@@ -184,9 +178,9 @@ theorem compileExp_esgcFree :
   · intro cfg exp n sg exp' h
     simpa only [h.1] using compileExp_safe cfg exp h.2
   · intro cfg exps n sg exps' h
-    have out := compileExps_safe cfg exps ((listSafe_iff exps).mpr h.2)
+    have out := compileExps_safe cfg exps ((FlatProps.esgcFreeList_iff exps).mpr h.2)
     rw [h.1] at out
-    exact (listSafe_iff exps').mp out
+    exact (FlatProps.esgcFreeList_iff exps').mp out
   · intro cfg rows n sg rows' h
     have input : esgcFreeRows rows := (rowsSafe_iff rows).mpr (by
       intro p e member
