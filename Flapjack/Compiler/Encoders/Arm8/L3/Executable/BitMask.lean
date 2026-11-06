@@ -206,4 +206,51 @@ theorem ones_eq (n : Nat) (hn : n ≤ 6) :
   unfold ones
   rw [hbit, htoNat]
 
+/-- The decoder's `len` argument: the computable Nat is the L3 7-bit word
+`immN ++ ~~~imms`. -/
+theorem len_eq (immN : BitVec 1) (imms : BitVec 6) :
+    ((immN.toNat % 2) <<< 6) ||| (63 - imms.toNat % 64) = (immN ++ ~~~imms).toNat := by
+  rw [BitVec.toNat_append]
+  simp only [BitVec.toNat_not, Nat.reducePow]
+  have h1 : immN.toNat < 2 := immN.isLt
+  have h2 : imms.toNat < 64 := imms.isLt
+  rw [Nat.mod_eq_of_lt h1, Nat.mod_eq_of_lt h2]
+
+/-- `ones k` is the L3 `holV2w m (holPadLeft false m (Ones k))` at any width
+`m ≥ k`, used for the rotated element of the decoder. -/
+theorem ones_pad_eq (m k : Nat) (hk : k ≤ m) (hm : m ≤ 64) :
+    (holV2w m (holPadLeft false m (Ones k))).toNat = ones k := by
+  have hbit : holV2w m (holPadLeft false m (Ones k)) = BitVec.ofNat m (2 ^ k - 1) := by
+    apply BitVec.eq_of_getLsbD_eq
+    intro i hi
+    unfold holV2w Flapjack.RiscV.L3.holV2w
+    rw [getLsbD_holFcpWord]
+    simp only [holPadLeft, Ones, List.length_replicate, List.length_append,
+      List.length_nil, Nat.sub_zero, List.append_nil, Nat.sub_add_cancel hk,
+      BitVec.getLsbD_ofNat]
+    rw [List.getD_eq_getElem?_getD]
+    by_cases h : i < k
+    · have hge : ¬ m - 1 - i < (List.replicate (m - k) false).length := by
+        simp only [List.length_replicate]; omega
+      rw [List.getElem?_append, if_neg hge]
+      simp only [List.length_replicate]
+      rw [List.getElem?_eq_getElem (by
+        rw [List.length_replicate]; omega)]
+      simp [hi, h, Nat.testBit_two_pow_sub_one]
+    · have hlt : m - 1 - i < (List.replicate (m - k) false).length := by
+        simp only [List.length_replicate]; omega
+      rw [List.getElem?_append, if_pos hlt]
+      rw [List.getElem?_eq_getElem (by
+        rw [List.length_replicate]; omega)]
+      simp [hi, h, Nat.testBit_two_pow_sub_one]
+  have htoNat : (BitVec.ofNat m (2 ^ k - 1)).toNat = 2 ^ k - 1 := by
+    rw [BitVec.toNat_ofNat]
+    exact Nat.mod_eq_of_lt (by
+      have h2 : 2 ^ k ≤ 2 ^ m := Nat.pow_le_pow_right (by decide) hk
+      have h3 : 2 ^ m ≤ 2 ^ 64 := Nat.pow_le_pow_right (by decide) hm
+      have hpos : 0 < 2 ^ k := Nat.two_pow_pos k
+      omega)
+  unfold ones
+  rw [hbit, htoNat]
+
 end Flapjack.Compiler.Encoders.Arm8.L3
