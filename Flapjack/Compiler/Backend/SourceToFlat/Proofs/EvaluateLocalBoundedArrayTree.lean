@@ -11,7 +11,7 @@ open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL
 open OracleInvariant
 
 inductive LocalEnvBoundedArrayExpression : AstHOL.Exp → Prop where
-  | base (expr : AstHOL.Exp) : LocalEnvPrimitiveExpression expr → LocalEnvBoundedArrayExpression expr
+  | base (expr : AstHOL.Exp) : LocalEnvExpression expr → LocalEnvBoundedArrayExpression expr
   | unaryBasicBadArity (op : Op) (args : List AstHOL.Exp) : UnaryBasicOp op → args.length ≠ 1 →
       (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) → LocalEnvBoundedArrayExpression (.app op args)
   | binaryBasicBadArity (op : Op) (args : List AstHOL.Exp) : BinaryBasicOp op → args.length ≠ 2 →
@@ -555,11 +555,11 @@ theorem allExpressions_covered : (expr : AstHOL.Exp) → LocalEnvBoundedArrayExp
   | .raise body => .raise_ body (allExpressions_covered body)
   | .handle body rows => .handle body rows (allExpressions_covered body)
       (fun pat row _member => allExpressions_covered row)
-  | .lit lit => .base _ (.base _ (.base _ (.base _ (.literal lit))))
+  | .lit lit => .base _ (.literal lit)
   | .con none args => .tuple args (fun expr _member => allExpressions_covered expr)
   | .con (some id) args => .constructor id args (fun expr _member => allExpressions_covered expr)
-  | .var id => .base _ (.base _ (.base _ (.base _ (.variable_ id))))
-  | .fn name body => .base _ (.base _ (.base _ (.base _ (.function_ name body))))
+  | .var id => .base _ (.variable_ id)
+  | .fn name body => .base _ (.function_ name body)
   | .app op args => applicationExpression_covered op args (fun expr _member => allExpressions_covered expr)
   | .log op left right => .log op left right (allExpressions_covered left) (allExpressions_covered right)
   | .if_ cond yes no => .if_ cond yes no (allExpressions_covered cond)
@@ -588,7 +588,7 @@ theorem localEnvBounded_arrayTree {C F : Type} [Nonempty C]
     (expr : AstHOL.Exp) (covered : LocalEnvBoundedArrayExpression expr) : LocalEnvBoundedIH (F := F) interp transform limit expr := by
   induction covered with
   | base expr covered =>
-    exact localEnvBounded_of_unbounded interp transform limit expr (localEnvIH_primitiveTree interp transform expr covered)
+    exact localEnvBounded_of_unbounded interp transform limit expr (localEnvIH_covered interp transform expr covered)
   | unaryBasicBadArity op args unary badArity _ ih =>
     exact localEnvBounded_unaryBasic_badArity interp transform limit op args unary badArity ih
   | binaryBasicBadArity op args binary badArity _ ih =>

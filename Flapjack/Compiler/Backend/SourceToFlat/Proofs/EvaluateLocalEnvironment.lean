@@ -26,130 +26,6 @@ def LocalEnvIH {C F : Type} [Nonempty C]
       { baseEnv with v := nsAppend sourceLocal baseEnv.v } flatEnv trace
       { baseMap with v := bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v } gen expr
 
-/-- Named local bindings extend the related environments and compose the
-initializer and body simulations, including shadowing and early errors. -/
-theorem localEnvIH_let_named {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (name : VarN) (first body : AstHOL.Exp)
-    (firstIH : LocalEnvIH (F := F) interp transform first)
-    (bodyIH : LocalEnvIH (F := F) interp transform body) :
-    LocalEnvIH (F := F) interp transform (.let_ (some name) first body) := by
-  intro genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen localRel envInv tracesLen invariant generation safe
-  let sourceEnv := { baseEnv with v := nsAppend sourceLocal baseEnv.v }
-  let compMap := { baseMap with v := bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v }
-  have firstSafe : ∀ last, EvaluateHOL.evaluate source sourceEnv [first] ≠ (last, .err (.abort .typeError)) := by
-    intro last bad
-    apply safe last
-    rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv [first] []).1, bad]
-  obtain ⟨middleGenv, firstSim, firstPost⟩ := firstIH genv start finish other source flat baseEnv sourceLocal flatEnv traces
-    (name :: trace) baseMap gen localRel envInv tracesLen invariant generation firstSafe
-  unfold ExprSim at firstSim
-  generalize sourceFirst : EvaluateHOL.evaluate source sourceEnv [first] = sourceResult at firstSim firstPost
-  obtain ⟨middleSource, sourceResult⟩ := sourceResult
-  generalize flatFirst : FlatSem.evaluate flatEnv flat [compileExp (name :: trace) compMap first] = flatResult at firstSim firstPost
-  obtain ⟨middleFlat, flatResult⟩ := flatResult
-  obtain ⟨firstRelated, firstStates⟩ := firstSim
-  cases firstRelated with
-  | abort error =>
-    refine ⟨middleGenv, ?_, ?_⟩
-    · unfold ExprSim
-      rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv [first] []).1, sourceFirst]
-      rw [compileExp, FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flat
-        [compileExp (name :: trace) compMap first] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatFirst]
-      exact ⟨.abort error, firstStates⟩
-    · rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv [first] []).1, sourceFirst]
-      trivial
-  | raise valueRel =>
-    refine ⟨middleGenv, ?_, ?_⟩
-    · unfold ExprSim
-      rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv [first] []).1, sourceFirst]
-      rw [compileExp, FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flat
-        [compileExp (name :: trace) compMap first] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatFirst]
-      exact ⟨.raise valueRel, firstStates⟩
-    · rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv [first] []).1, sourceFirst]
-      rw [compileExp, FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flat
-        [compileExp (name :: trace) compMap first] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatFirst]
-      exact firstPost
-  | @value sourceValues flatValues valuesRel =>
-    obtain ⟨value, sourceEq⟩ := EvaluateProps.evaluateSingFull source middleSource sourceEnv first sourceValues sourceFirst
-    subst sourceValues
-    cases valuesRel with
-    | cons related tail =>
-      cases tail with
-      | nil =>
-        rename_i flatValue
-        obtain ⟨firstGrowth, middleInvariant, middleGeneration, firstForward⟩ := firstPost
-        have middleEnv := globalEnvInv_growth genv middleGenv firstGrowth baseMap
-          (fun n => n ∈ flatEnv.v.map Prod.fst) baseEnv envInv
-        have extendedInv : GlobalEnvInv middleGenv baseMap
-            (fun n => n ∈ ((name, flatValue) :: flatEnv.v).map Prod.fst) baseEnv := by
-          cases middleEnv with
-          | intro _ _ _ values constructors =>
-            apply GlobalEnvInv.intro
-            · intro id v fresh lookup
-              apply values id v _ lookup
-              intro ⟨n, mem, eq⟩
-              apply fresh
-              exact ⟨n, by simp [mem], eq⟩
-            · exact constructors
-        have extendedRel := EnvRel.bind middleGenv name value sourceLocal flatEnv.v flatValue
-          (envRel_growth genv middleGenv firstGrowth sourceLocal flatEnv.v localRel) related
-        have sourceBind : nsAppend (nsBind name value sourceLocal) baseEnv.v = nsBind name value sourceEnv.v := by
-          cases sourceLocal
-          cases envEq : baseEnv.v
-          simp [sourceEnv, envEq, nsAppend, nsBind]
-        have mapBind : bindLocals (.none :: traces) (((name, flatValue) :: flatEnv.v).map Prod.fst) baseMap.v =
-            nsBind name (.localName .none name) compMap.v := by
-          simp [bindLocals, nsBindList, compMap]
-        simp only [List.map_cons] at mapBind
-        have bodySafe : ∀ last, EvaluateHOL.evaluate middleSource
-            { sourceEnv with v := nsBind name value sourceEnv.v } [body] ≠ (last, .err (.abort .typeError)) := by
-          intro last bad
-          apply safe last
-          rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv [first] []).1, sourceFirst]
-          simpa [nsOptBind, EvaluateHOL.headValue, Flapjack.holHd] using bad
-        obtain ⟨finalGenv, bodySim, bodyPost⟩ := bodyIH middleGenv start finish other middleSource middleFlat
-          baseEnv (nsBind name value sourceLocal) { flatEnv with v := (name, flatValue) :: flatEnv.v }
-          (.none :: traces) trace baseMap gen extendedRel extendedInv (by simpa using tracesLen)
-          middleInvariant middleGeneration (by simpa [sourceBind] using bodySafe)
-        have bodySim : ExprSim finalGenv { compMap with v := nsBind name (.localName .none name) compMap.v }
-            trace { sourceEnv with v := nsBind name value sourceEnv.v }
-            { flatEnv with v := (name, flatValue) :: flatEnv.v } middleSource middleFlat body := by
-          simpa [sourceBind, mapBind] using bodySim
-        have bodyPost := bodyPost
-        simp only [sourceBind] at bodyPost
-        have sourceOuter : EvaluateHOL.evaluate source sourceEnv [.let_ (some name) first body] =
-            EvaluateHOL.evaluate middleSource { sourceEnv with v := nsBind name value sourceEnv.v } [body] := by
-          rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv [first] []).1, sourceFirst]
-          simp [nsOptBind, EvaluateHOL.headValue, Flapjack.holHd]
-        have flatOuter : FlatSem.evaluate flatEnv flat [compileExp trace compMap (.let_ (some name) first body)] =
-            FlatSem.evaluate { flatEnv with v := (name, flatValue) :: flatEnv.v } middleFlat
-              [compileExp trace { compMap with v := nsBind name (.localName .none name) compMap.v } body] := by
-          rw [compileExp, FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flat
-            [compileExp (name :: trace) compMap first] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatFirst]
-          rfl
-        refine ⟨finalGenv, ?_, ?_⟩
-        · unfold ExprSim at bodySim ⊢
-          rw [sourceOuter, flatOuter]
-          exact bodySim
-        · rw [sourceOuter, flatOuter]
-          cases result : (EvaluateHOL.evaluate middleSource
-              { sourceEnv with v := nsBind name value sourceEnv.v } [body]).2 with
-          | err error =>
-            cases error with
-            | abort error => simp
-            | raise value =>
-              rw [result] at bodyPost
-              obtain ⟨growth, finalInvariant, finalGeneration, bodyForward⟩ := bodyPost
-              exact ⟨firstGrowth.trans growth, finalInvariant, finalGeneration,
-                oracForwardRel_trans interp _ _ _ ⟨firstForward, bodyForward⟩⟩
-          | val values =>
-            rw [result] at bodyPost
-            obtain ⟨growth, finalInvariant, finalGeneration, bodyForward⟩ := bodyPost
-            exact ⟨firstGrowth.trans growth, finalInvariant, finalGeneration,
-              oracForwardRel_trans interp _ _ _ ⟨firstForward, bodyForward⟩⟩
-
-
 /-- Literals preserve arbitrary related local environments and both states. -/
 theorem localEnvIH_literal {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (lit : Lit) :
@@ -488,14 +364,11 @@ theorem localEnvIH_variable {C F : Type} [Nonempty C]
         · rw [sourceRun, flatRun]
           exact ⟨GlobalGrowth.refl genv, invariant, generation, oracForwardRel_refl interp source.evalState⟩
 
-/-- A first set of recursively nested named bindings, literals, and closure
-creation, using arbitrary related local environments. -/
+/-- Leaf expressions using arbitrary related local environments. -/
 inductive LocalEnvExpression : AstHOL.Exp → Prop where
   | literal (lit : Lit) : LocalEnvExpression (.lit lit)
   | variable_ (id : Ident ModN VarN) : LocalEnvExpression (.var id)
   | function_ (name : VarN) (body : AstHOL.Exp) : LocalEnvExpression (.fn name body)
-  | letNamed (name : VarN) (first body : AstHOL.Exp) : LocalEnvExpression first → LocalEnvExpression body →
-      LocalEnvExpression (.let_ (some name) first body)
 
 /-- Covered expressions satisfy the preliminary arbitrary-local induction
 hypothesis, whose relations remain pending HOL review. -/
@@ -506,7 +379,5 @@ theorem localEnvIH_covered {C F : Type} [Nonempty C]
   | literal lit => exact localEnvIH_literal interp transform lit
   | variable_ id => exact localEnvIH_variable interp transform id
   | function_ name body => exact localEnvIH_function interp transform name body
-  | letNamed name first body _ _ firstIH bodyIH =>
-    exact localEnvIH_let_named interp transform name first body firstIH bodyIH
 
 end Flapjack.Compiler.Backend.SourceToFlat
