@@ -70,4 +70,52 @@ theorem encodeBytes_bitfieldMove (inzero extend : Bool) (immr imms rn rd : Nat)
     wmask tmask immr imms (BitVec.ofNat 5 rn) (BitVec.ofNat 5 rd) hopc' himmr himms hmasks,
     fields_bitfieldMove]
 
+/-- When a field does not fit six bits, `Encode`'s range guard fails and both
+sides emit four zero bytes. -/
+theorem arm8Encode_bitfieldMove_bad (inzero extend : Bool) (wmask tmask : BitVec 64)
+    (immr imms : Nat) (rn rd : BitVec 5)
+    (hbad : ¬ (immr < 64 ∧ imms < 64)) :
+    arm8Encode (.Data (.«BitfieldMove@64»
+        ((1 : BitVec 64), (inzero, (extend, (wmask, (tmask,
+          (immr, (imms, (rn, rd)))))))))) = [0, 0, 0, 0] := by
+  have h1 : (immr == immr % 64) = false ∨ (imms == imms % 64) = false := by
+    by_cases h : immr < 64
+    · right
+      have hne : imms ≠ imms % 64 := by omega
+      simp [hne]
+    · left
+      have hne : immr ≠ immr % 64 := by omega
+      simp [hne]
+  simp only [arm8Encode, Encode, e_data]
+  cases inzero <;> cases extend
+  all_goals
+    first
+    | rfl
+    | (rcases h1 with h | h <;>
+        simp only [BitVec.toNat_ofNat, h, Bool.false_and, Bool.and_false,
+          Bool.false_eq_true, if_false, reduceIte])
+
+/-- The same instruction on the computable side, when a field does not fit six
+bits.  This is the companion of `encodeBytes_bitfieldMove` for shift amounts of
+64 or more (reachable from `lsr`/`asr` with a raw shift amount). -/
+theorem encodeBytes_bitfieldMove_bad (inzero extend : Bool) (immr imms rn rd : Nat)
+    (n : Nat) (wmask tmask : BitVec 64)
+    (hopc : bitfieldOpBits inzero extend = some n)
+    (hbad : ¬ (immr < 64 ∧ imms < 64)) :
+    encodeBytes (.bitfieldMove inzero extend immr imms rn rd) =
+      arm8Encode (.Data (.«BitfieldMove@64»
+        ((1 : BitVec 64), (inzero, (extend, (wmask, (tmask,
+          (immr, (imms, (BitVec.ofNat 5 rn, BitVec.ofNat 5 rd)))))))))) := by
+  have hguard : (immr < 64 && imms < 64) = false := by
+    by_cases h : immr < 64
+    · have h2 : ¬ imms < 64 := by omega
+      simp [h, h2]
+    · simp [h]
+  have hw : encodeInsn32 (.bitfieldMove inzero extend immr imms rn rd) = none := by
+    simp only [encodeInsn32]
+    simp only [hopc, hguard, Bool.false_eq_true, if_false]
+  rw [encodeBytes_eq_of_encodeInsn32_none _ hw]
+  exact (arm8Encode_bitfieldMove_bad inzero extend wmask tmask immr imms
+    (BitVec.ofNat 5 rn) (BitVec.ofNat 5 rd) hbad).symm
+
 end Flapjack.Compiler.Encoders.Arm8.L3
