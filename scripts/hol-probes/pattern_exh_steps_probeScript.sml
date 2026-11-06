@@ -221,3 +221,17 @@ val expand_thm_replay = prove (
   >- fs [pattern_exhTheory.expand_def]
   >> fs [pattern_exhTheory.expand_def] >> rw [] >> Cases_on `vs` >> fs [] >> res_tac >> fs []);
 val _ = show_local "expand_thm=" expand_thm_replay;
+val _ = show_local "dest_val=" pattern_exhTheory.dest_val_def;
+val dest_val_eq_some_replay = prove (
+  ``!refs v c as. pattern_exh$dest_val refs v = SOME (c,as) <=>
+    (?t. v = pattern_semantics$Term (SOME t) as /\ c = pattern_exh$TagC t (LENGTH as)) \/
+    (v = pattern_semantics$Term NONE as /\ c = pattern_exh$TupC (LENGTH as)) \/
+    (?r w. v = pattern_semantics$RefPtr r /\ FLOOKUP refs r = SOME w /\ as = [w] /\ c = pattern_exh$RefC)``,
+  rpt gen_tac >> Cases_on `v` >> fs [pattern_exhTheory.dest_val_def]
+  >- (Cases_on `o'` >> fs [pattern_exhTheory.dest_val_def] >> metis_tac [])
+  >> CASE_TAC >> fs [] >> metis_tac []);
+val _ = show_local "dest_val_eq_some=" dest_val_eq_some_replay;
+val length_dest_val_replay = prove (
+  ``!refs v c as. pattern_exh$dest_val refs v = SOME (c,as) ==> LENGTH as = pattern_exh$ctor_arity c``,
+  fs [dest_val_eq_some_replay] >> rw [] >> fs [pattern_exhTheory.ctor_arity_def]);
+val _ = show_local "length_dest_val=" length_dest_val_replay;

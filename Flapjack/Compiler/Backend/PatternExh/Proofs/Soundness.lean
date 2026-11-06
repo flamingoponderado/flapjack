@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.PatternComp.Proofs.GuardCompilation
+import Aesop
 
 /-! Proof-side soundness infrastructure for CakeML's exhaustiveness matrix.
 The row and decision-tree evaluators remain pending HOL correspondence review. -/
@@ -92,6 +93,27 @@ theorem holFmapAsFiniteSupportParamWitness_expand_sound_refs
   holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
 
 theorem holFmapAsFiniteSupportParamWitness_expandList_sound_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_destVal_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_destVal_eq_some_refs
+    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
+
+theorem holFmapAsFiniteSupportParamWitness_destVal_length_refs
     (refs : HolFiniteMapExact Nat Term) (key : Nat) :
     (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
     (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
@@ -227,13 +249,38 @@ theorem specMat_mem_specMats (constructors : List Ctor) (constructor : Ctor)
     · simp [specMats, ih member]
 
 /-- Extract the constructor class and arguments of a term or valid reference. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "dest_val_def"
+  (fmap_as_finite_support_parameters := [refs])]
 def destVal (refs : HolFiniteMapExact Nat Term) : Term → Option (Ctor × List Term)
   | .term (some tag) fields => some (.tagC tag fields.length, fields)
   | .term none fields => some (.tupC fields.length, fields)
-  | .refPtr address => (refs.lookup address).map (fun value => (.refC, [value]))
+  | .refPtr address =>
+    match refs.lookup address with
+    | none => none
+    | some value => some (.refC, [value])
   | .litv _ | .other => none
 
+/-- The source characterization of successful constructor extraction. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "dest_val_eq_SOME"
+  (fmap_as_finite_support_parameters := [refs])]
+theorem destVal_eq_some (refs : HolFiniteMapExact Nat Term) (value : Term)
+    (constructor : Ctor) (fields : List Term) :
+    destVal refs value = some (constructor, fields) ↔
+      (∃ tag, value = .term (some tag) fields ∧ constructor = .tagC tag fields.length) ∨
+      (value = .term none fields ∧ constructor = .tupC fields.length) ∨
+      (∃ address child, value = .refPtr address ∧ refs.lookup address = some child ∧
+        fields = [child] ∧ constructor = .refC) := by
+  cases value with
+  | litv _ | other => simp [destVal]
+  | term tag values => cases tag <;> simp [destVal] <;> aesop
+  | refPtr address =>
+    cases lookup : refs.lookup address with
+    | none => simp [destVal, lookup]
+    | some child => simp [destVal, lookup]; aesop
+
 /-- The argument vector extracted from a value has the constructor's arity. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "LENGTH_dest_val"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem destVal_length (refs : HolFiniteMapExact Nat Term) (value : Term)
     (constructor : Ctor) (fields : List Term)
     (found : destVal refs value = some (constructor, fields)) :
@@ -247,7 +294,7 @@ theorem destVal_length (refs : HolFiniteMapExact Nat Term) (value : Term)
     cases lookup : refs.lookup address with
     | none => simp [destVal, lookup] at found
     | some val =>
-      simp only [destVal, lookup, Option.map_some, Option.some.injEq, Prod.mk.injEq] at found
+      simp only [destVal, lookup, Option.some.injEq, Prod.mk.injEq] at found
       rcases found with ⟨rfl, rfl⟩
       rfl
 
@@ -317,7 +364,7 @@ theorem specRow_match (refs : HolFiniteMapExact Nat Term) (value : Term) (values
           cases lookup : refs.lookup address with
           | none => simp [destVal, lookup] at found
           | some child =>
-            simp only [destVal, lookup, Option.map_some, Option.some.injEq, Prod.mk.injEq,
+            simp only [destVal, lookup, Option.some.injEq, Prod.mk.injEq,
               true_and] at found
             subst fields
             simp [pmatch, lookup]

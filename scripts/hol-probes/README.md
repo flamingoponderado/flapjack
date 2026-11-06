@@ -5,7 +5,8 @@ captures the three-valued pattern-result datatype, its combination definition,
 and typed replays of the local combination lemmas. It also captures the term
 datatype and matcher equations, with typed replays of the matcher base, length,
 append, wildcard-list, polymorphic constructor-membership, and expansion-length
-lemmas, plus the full mutual expansion soundness theorem.
+lemmas, the full mutual expansion soundness theorem, and the constructor
+extraction definition and its local characterization and length proofs.
 
 `data_resource_mono_probe.out` captures the six exported data-semantics
 primitive and evaluator monotonicity statements with inferred configuration,
