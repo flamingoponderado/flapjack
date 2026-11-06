@@ -177,15 +177,6 @@ theorem containsClosuresFuel_succeeds (fuel : Nat) (e : Exp) (bound : expBudget 
         · apply ih; have := member_budget_lt xs e he; omega)
       exact ⟨result, by simpa [containsClosuresFuel] using h⟩
 
-/-- The source size analysis cannot exhaust traversal fuel. -/
-theorem sizeBounded_succeeds (fuel : Nat) (e : Exp) : ∃ result, sizeBounded fuel e = some result := by
-  exact ⟨getSizeHOL e, rfl⟩
-
-/-- Retried closure detection cannot exhaust traversal fuel. -/
-theorem containsClosuresBounded_succeeds (fuel : Nat) (e : Exp) :
-    ∃ result, containsClosuresBounded fuel e = some result := by
-  exact ⟨containsClosuresHOL [e], rfl⟩
-
 /-- Retrying preserves previously successful size results. -/
 theorem sizeBounded_eq_of_success (fuel : Nat) (e : Exp) (result : Nat)
     (success : sizeFuel fuel e = some result) : sizeBounded fuel e = some result := by
@@ -230,11 +221,6 @@ theorem containsClosuresBounded_eq_retry (fuel : Nat) (e : Exp) :
     have same := containsClosuresFuel_correct _ e result retry
     simp [containsClosuresBounded, containsClosuresHOL, same]
 
-/-- Constructing an approximation cannot fail from size-analysis fuel. -/
-theorem closApproxFuel_succeeds (fuel maxSize loc arity : Nat) (body : Exp) :
-    ∃ result, closApproxFuel fuel maxSize loc arity body = some result := by
-  exact ⟨closApproxHOL maxSize loc arity body, rfl⟩
-
 /-- The source short-circuit decision agrees with the prior full-size
 implementation, for every expression and bound. -/
 theorem closApproxFuel_eq_fullSize (fuel maxSize loc arity : Nat) (body : Exp) :
@@ -243,10 +229,5 @@ theorem closApproxFuel_eq_fullSize (fuel maxSize loc arity : Nat) (body : Exp) :
       pure (if size ≤ maxSize then .clos loc arity body size else .closNoInline loc arity)) := by
   by_cases bound : getSizeHOL body ≤ maxSize <;>
     simp [closApproxFuel, closApproxHOL, getSizeSc_eq, sizeBounded, bound]
-
-/-- An inlining decision cannot fail from closure or free-variable traversal fuel. -/
-theorem decideInlineFuel_succeeds (fuel : Nat) (c : Config) (approx : ValApprox)
-    (loc : Option Nat) (arity : Nat) : ∃ result, decideInlineFuel fuel c approx loc arity = some result := by
-  exact ⟨decideInlineHOL c approx loc arity, rfl⟩
 
 end Flapjack.Compiler.Backend.ClosKnown

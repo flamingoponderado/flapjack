@@ -58,11 +58,6 @@ theorem mergeFuel_succeeds (fuel : Nat) (a b : ValApprox) (bound : approxBudget 
       | _ => exact ⟨_, rfl⟩
     | _ => cases b <;> simp only [mergeFuel] <;> (try split) <;> exact ⟨_, rfl⟩
 
-/-- The executable merge retry cannot exhaust traversal fuel. -/
-theorem mergeBounded_succeeds (fuel : Nat) (a b : ValApprox) :
-    ∃ result, mergeBounded fuel a b = some result :=
-  ⟨mergeHOL a b, rfl⟩
-
 /-- Every previously successful fuel-bounded result is preserved. This is
 Flapjack infrastructure, with no HOL fuel-bounded counterpart. -/
 theorem mergeBounded_eq_of_success (fuel : Nat) (a b result : ValApprox)
