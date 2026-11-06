@@ -31,6 +31,7 @@ theorem dletrec_conditions_of_safe {F : Type} (source : State F) (sourceEnv : Se
     exact False.elim (safe source bad)
 
 /-- Compiling recursive functions preserves their ordered names. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "compile_funs_dom2"]
 theorem compileFuns_names (trace : List VarN) (env : Environment)
     (funs : List (VarN × VarN × AstHOL.Exp)) :
     (compileFuns trace env funs).map Prod.fst = funs.map Prod.fst := by

@@ -67,16 +67,6 @@ theorem buildRecEnv_nsAppend (funs : List (VarN × VarN × AstHOL.Exp)) (closure
       rfl
   exact aux funs
 
-/-- Compilation preserves the names and order of a recursive function group. -/
-theorem compileFuns_local_names (trace : List VarN) (env : Environment)
-    (funs : List (VarN × VarN × AstHOL.Exp)) :
-    (compileFuns trace env funs).map Prod.fst = funs.map Prod.fst := by
-  induction funs with
-  | nil => rfl
-  | cons head tail ih =>
-    obtain ⟨name, arg, body⟩ := head
-    simp [compileFuns, ih]
-
 /-- The flat recursive environment prepends the compiled function names. -/
 theorem flatBuildRecEnv_names (funs : List (VarN × VarN × FlatLang.Exp))
     (closureEnv : FlatSem.Environment FlatSem.Value) (initial : List (VarN × FlatSem.Value)) :

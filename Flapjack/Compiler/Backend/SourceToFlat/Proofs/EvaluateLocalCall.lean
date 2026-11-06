@@ -99,7 +99,7 @@ theorem doOpApp_recclosure_local (genv : GlobalEnv) (baseMap : Environment) (bas
   let recursiveLocal := buildRecEnv funs sourceEnv captured
   let recursiveFlat := FlatSem.buildRecEnv compiled flatCaptured flatCaptured.v
   have names : recursiveFlat.map Prod.fst = funs.map Prod.fst ++ flatCaptured.v.map Prod.fst := by
-    simp [recursiveFlat, compiled, flatBuildRecEnv_names, compileFuns_local_names]
+    simp [recursiveFlat, compiled, flatBuildRecEnv_names, compileFuns_names]
   have recursiveRel : EnvRel genv recursiveLocal recursiveFlat := by
     exact localRecEnv_related genv baseMap baseEnv captured flatCaptured funs trace traces locals globals len
   have newInv : GlobalEnvInv genv baseMap (fun n => n ∈ ((arg, flatArgument) :: recursiveFlat).map Prod.fst) baseEnv := by
@@ -123,7 +123,7 @@ theorem doOpApp_recclosure_local (genv : GlobalEnv) (baseMap : Environment) (bas
   have compiledFound : findRecFun name compiled = some (arg,
       compileExp (name :: trace) { recMap with v := nsBind arg (.localName .none arg) recMap.v } body) := by
     simp [compiled, findRecFun_compileFuns, found]
-  have flatDistinct : (compiled.map Prod.fst).Nodup := by simpa [compiled, compileFuns_local_names] using distinct
+  have flatDistinct : (compiled.map Prod.fst).Nodup := by simpa [compiled, compileFuns_names] using distinct
   have mapBind : bindLocals (.none :: traces) (((arg, flatArgument) :: recursiveFlat).map Prod.fst) baseMap.v =
       nsBind arg (.localName .none arg) recMap.v := by
     simp [names, recMap, bindLocals, nsBindList]

@@ -528,7 +528,7 @@ theorem localEnvBounded_letrec {C F : Type} [Nonempty C]
     apply safe source
     simp [EvaluateHOL.evaluate, invalid, EvaluateHOL.typeError]
   have names : flatLocal'.map Prod.fst = funs.map Prod.fst ++ flatEnv.v.map Prod.fst := by
-    simp only [flatLocal', flatBuildRecEnv_names, compiled, compileFuns_local_names]
+    simp only [flatLocal', flatBuildRecEnv_names, compiled, compileFuns_names]
   have mapBind : bindLocals newTraces (funs.map Prod.fst ++ flatEnv.v.map Prod.fst) baseMap.v = newMap.v := by
     simpa [newTraces, newMap, compMap] using (bindRecNames_bindLocals (funs.map Prod.fst) traces (flatEnv.v.map Prod.fst) baseMap.v).symm
   have extendedRel : EnvRel genv sourceLocal' flatLocal' := by
@@ -568,7 +568,7 @@ theorem localEnvBounded_letrec {C F : Type} [Nonempty C]
     simp [EvaluateHOL.evaluate, distinct]
   have flatOuter : FlatSem.evaluate flatEnv flat [compileExp trace compMap (.letrec funs body)] =
       FlatSem.evaluate { flatEnv with v := flatLocal' } flat [compileExp trace newMap body] := by
-    simp [compileExp, FlatSem.evaluate, compiled, flatLocal', newMap, compileFuns_local_names, distinct]
+    simp [compileExp, FlatSem.evaluate, compiled, flatLocal', newMap, compileFuns_names, distinct]
   refine ⟨nextGenv, ?_, ?_⟩
   · unfold ExprSim at bodySim ⊢
     rw [sourceOuter, flatOuter]

@@ -11544,6 +11544,14 @@
     "reviewer": "Compared the source and typed invariant_begin_alloc_blanks capture: compiler, FFI and initial-environment payload types remain independent; the original precondition, output-config equation, and initial-globals equation imply the same invariant over the allocated reference and blank globals. The global constructor and type maps use their canonical finite-map carrier."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateDletrec.lean",
+    "lean_name": "compileFuns_names",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "compile_funs_dom2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the fully typed compile_funs_dom2 capture: the same arbitrary mlstring trace, source compiler environment, and list of source function triples yield equality of the compiled and source name lists. Both use the reviewed mlstring and environment carriers."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvalOracleSimulation.lean",
     "lean_name": "declareEnv_storeEnvId",
     "inherits_reals_as_rational_cuts": true,
