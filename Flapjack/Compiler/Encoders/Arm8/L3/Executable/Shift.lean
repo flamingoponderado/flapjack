@@ -9,7 +9,9 @@ the two six-bit fields, and returns `none` when the pair has no opcode or a
 field does not fit six bits.  The L3 `Encode` additionally requires the
 `DecodeBitMasks` of those fields to succeed, which every `arm8_ast` call site
 guarantees by pattern-matching on it.  This module proves `Arm8.encodeBytes`
-equals `L3.arm8Encode` under that hypothesis.
+equals `L3.arm8Encode` under that hypothesis, and also for fields that do not
+fit six bits, where both encoders emit four zero bytes and no `DecodeBitMasks`
+hypothesis is needed.
 
 No new HOL claim is introduced: the bridge relates two Lean renderings of the
 same instruction word.
@@ -99,8 +101,7 @@ theorem arm8Encode_bitfieldMove_bad (inzero extend : Bool) (wmask tmask : BitVec
 bits.  This is the companion of `encodeBytes_bitfieldMove` for shift amounts of
 64 or more (reachable from `lsr`/`asr` with a raw shift amount). -/
 theorem encodeBytes_bitfieldMove_bad (inzero extend : Bool) (immr imms rn rd : Nat)
-    (n : Nat) (wmask tmask : BitVec 64)
-    (hopc : bitfieldOpBits inzero extend = some n)
+    (wmask tmask : BitVec 64)
     (hbad : ¬ (immr < 64 ∧ imms < 64)) :
     encodeBytes (.bitfieldMove inzero extend immr imms rn rd) =
       arm8Encode (.Data (.«BitfieldMove@64»
@@ -113,7 +114,9 @@ theorem encodeBytes_bitfieldMove_bad (inzero extend : Bool) (immr imms rn rd : N
     · simp [h]
   have hw : encodeInsn32 (.bitfieldMove inzero extend immr imms rn rd) = none := by
     simp only [encodeInsn32]
-    simp only [hopc, hguard, Bool.false_eq_true, if_false]
+    cases hb : bitfieldOpBits inzero extend with
+    | none => rfl
+    | some m => simp only [hguard, Bool.false_eq_true, if_false]
   rw [encodeBytes_eq_of_encodeInsn32_none _ hw]
   exact (arm8Encode_bitfieldMove_bad inzero extend wmask tmask immr imms
     (BitVec.ofNat 5 rn) (BitVec.ofNat 5 rd) hbad).symm
