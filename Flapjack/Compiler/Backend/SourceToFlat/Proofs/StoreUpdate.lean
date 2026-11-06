@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StateRel
+import Mathlib.Data.List.Forall2
 
 /-! Store-update infrastructure for the factored source-to-flat state relation.
 The underlying value and state relations remain subject to HOL review. -/
@@ -16,15 +17,6 @@ theorem forall₂_set {α β : Type} {R : α → β → Prop} {xs : List α} {ys
     cases n with
     | zero => simp only [List.set_cons_zero]; exact .cons replacement tail
     | succ n => simp only [List.set_cons_succ]; exact .cons head (ih n)
-
-/-- Flapjack infrastructure: appending related values preserves a pointwise
-list relation. -/
-theorem forall₂_append_one {α β : Type} {R : α → β → Prop} {xs : List α} {ys : List β}
-    (related : List.Forall₂ R xs ys) (x : α) (y : β) (replacement : R x y) :
-    List.Forall₂ R (xs ++ [x]) (ys ++ [y]) := by
-  induction related with
-  | nil => exact .cons replacement .nil
-  | cons head tail ih => exact .cons head ih
 
 /-- Successful source store assignment has a related flat assignment at the
 same list index. This is infrastructure over the factored value relation. -/
@@ -106,7 +98,7 @@ theorem stateRel_storeAlloc {C F : Type} (genv : GlobalEnv)
   | intro nonempty refs clock ffi =>
     obtain ⟨reserved, rest, hflat⟩ := List.exists_cons_of_ne_nil nonempty
     have relatedRest : List.Forall₂ (StoreValueRel genv) source.refs rest := by simpa [hflat] using refs
-    have updatedRel := forall₂_append_one relatedRest value flatValue valueRel
+    have updatedRel := List.rel_append relatedRest (.cons valueRel .nil)
     constructor
     · apply StateRel.intro
       · simp [storeAlloc, hflat]
