@@ -155,14 +155,20 @@ theorem naiveList_as {C F : Type} (trace : Tra) (pattern : FlatLang.Pat) (name :
         (((pattern, expression) :: rest).map Prod.snd) (value :: values) := by simpa using pure
     simpa [naivePatternMatch] using ih env state (value :: values) ((name, value) :: bindings) answer nestedPure nested
 
+/-- A Boolean value selects its corresponding conditional branch. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "do_if_Boolv"]
+theorem doIf_bool {A : Type} (b : Bool) (yes no : A) :
+    FlatSem.doIf (FlatSem.boolValue b) yes no = some (if b then yes else no) := by
+  cases b <;> simp [FlatSem.doIf, FlatSem.boolValue, FlatLang.boolId, boolToTag, trueTag, falseTag]
+
 /-- A conditional with a pure Boolean guard evaluates its selected branch. -/
 theorem evaluate_if_pure_bool {C F : Type} (trace : Tra) (guard yes no : FlatLang.Exp)
     (b : Bool) (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F)
     (pure : FlatSem.evaluate env state [guard] = (state, .val [FlatSem.boolValue b])) :
     FlatSem.evaluate env state [.if_ trace guard yes no] =
       FlatSem.evaluate env state [if b then yes else no] := by
-  cases b <;> simp [FlatSem.evaluate, pure, FlatSem.fixClock, FlatSem.doIf, FlatSem.boolValue,
-    FlatLang.boolId, boolToTag, trueTag, falseTag]
+  simp [FlatSem.evaluate, pure, FlatSem.fixClock]
+  rw [doIf_bool]
 
 /-- Equality of same-typed literal values evaluates to their Boolean equality. -/
 theorem evaluate_literal_equality {C F : Type} (trace : Tra) (expression : FlatLang.Exp)
