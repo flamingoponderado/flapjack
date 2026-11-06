@@ -69,6 +69,22 @@ theorem listRelALookupOptRel {K A B : Type} (relation : K × A → K × B → Pr
       · simp only [holALookup, hx, hy, if_false]
         exact ih tailMatching
 
+/-- Related association lists have equal lookups when matching keys identify
+equal entries. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "LIST_REL_ALOOKUP"]
+theorem listRelALookup {K V : Type} (relation : K × V → K × V → Prop)
+    (left right : List (K × V)) (key : K) (related : List.Forall₂ relation left right)
+    (matching : ∀ x y, relation x y → x ∈ left → y ∈ right →
+      (key = x.1 ∨ key = y.1) → x = y) :
+    holALookup left key = holALookup right key := by
+  have result := listRelALookupOptRel relation Eq left right key related (by
+    intro x y hxy hx hy hit
+    have same := matching x y hxy hx hy hit
+    subst y
+    exact ⟨rfl, rfl⟩)
+  cases leftEq : holALookup left key <;> cases rightEq : holALookup right key <;>
+    simp_all [optionRel]
+
 /-- Related lookups for the keys selected by a predicate. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "ALOOKUP_rel_def"]
 def aLookupRel {K A B : Type} (predicate : K → Prop) (relation : A → B → Prop)

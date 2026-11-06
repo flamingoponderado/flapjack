@@ -1,5 +1,13 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "LIST_REL_ALOOKUP",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
+  "lean_name": "listRelALookup",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed list_rel_alookup capture, including both membership premises and full pair equality. Both lists use the same key and value types; LIST_REL is Forall₂ and ALOOKUP is the reviewed holALookup."
+},
+{
   "hol_path": "HOL/src/finite_maps/alistScript.sml",
   "hol_name": "ALOOKUP_def",
   "lean_path": "Flapjack/Misc/Alist.lean",
