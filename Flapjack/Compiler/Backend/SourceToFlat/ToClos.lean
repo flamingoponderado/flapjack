@@ -1,5 +1,4 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Eliminate
-import Flapjack.Compiler.Backend.FlatPattern.Compile
 import Flapjack.Compiler.Backend.FlatPattern.CompileTotal
 import Flapjack.Compiler.Backend.FlatToClos.Compile
 import Flapjack.Compiler.Backend.SourceToSource
