@@ -116,6 +116,8 @@ theorem stateRel_shiftInstall {C F : Type} {source : FlatSem.State C F} {target 
   exact ⟨maxApp, ffi, clock, store, globals, values, installConfigRel_shift _ _ _ install offset⟩
 
 /-- A related scalar reference is represented by a singleton value array. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "lookup_refv"
+  (fmap_as_finite_support := [refs, code])]
 theorem lookup_ref {C F : Type} {source : FlatSem.State C F} {target : ClosSem.State C F}
     {index value} (related : StateRel source target)
     (found : storeLookup index source.refs = some (.refv value)) :
@@ -125,6 +127,8 @@ theorem lookup_ref {C F : Type} {source : FlatSem.State C F} {target : ClosSem.S
   simpa [found] using store
 
 /-- A related byte array has exactly the same contents. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "lookup_byte_array"
+  (fmap_as_finite_support := [refs, code])]
 theorem lookup_byteArray {C F : Type} {source : FlatSem.State C F} {target : ClosSem.State C F}
     {index bytes} (related : StateRel source target)
     (found : storeLookup index source.refs = some (.w8array bytes)) :
@@ -134,6 +138,8 @@ theorem lookup_byteArray {C F : Type} {source : FlatSem.State C F} {target : Clo
   simpa [found] using store
 
 /-- A related value array has elementwise related contents. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "lookup_array"
+  (fmap_as_finite_support := [refs, code])]
 theorem lookup_array {C F : Type} {source : FlatSem.State C F} {target : ClosSem.State C F}
     {index values} (related : StateRel source target)
     (found : storeLookup index source.refs = some (.varray values)) :
@@ -154,11 +160,13 @@ theorem lookup_thunk {C F : Type} {source : FlatSem.State C F} {target : ClosSem
   simpa [found] using store
 
 /-- Decrementing both clocks preserves the state relation. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "state_rel_dec_clock"
+  (fmap_as_finite_support := [refs, code])]
 theorem stateRel_decClock {C F : Type} {source : FlatSem.State C F} {target : ClosSem.State C F}
     (related : StateRel source target) :
-    StateRel (FlatSem.decClock source) (ClosSem.decClock 1 target) := by
+    source.clock = target.clock ∧ StateRel (FlatSem.decClock source) (ClosSem.decClock 1 target) := by
   rcases related with ⟨maxApp, ffi, clock, store, globals, values, install⟩
-  exact ⟨maxApp, ffi, by simp [FlatSem.decClock, ClosSem.decClock, clock], store, globals, values, install⟩
+  exact ⟨clock, maxApp, ffi, by simp [FlatSem.decClock, ClosSem.decClock, clock], store, globals, values, install⟩
 
 /-- Initial closure state used in the original flat-to-closure proof. -/
 def initialStateProofSide {C F : Type} (interpreter : Bool) (ffi : HolFfiState F)

@@ -99,6 +99,6 @@ theorem evaluate_call_related {C F : Type} (source : FlatSem.State C F) (target 
   · have targetNonzero : target.clock ≠ 0 := by omega
     simp only [zero, targetNonzero, ↓reduceIte] at notTypeError ⊢
     simpa [EvalSim, compile, compileExps] using
-      bodySim names env zero envRel safe (stateRel_decClock states) notTypeError
+      bodySim names env zero envRel safe (stateRel_decClock states).2 notTypeError
 
 end Flapjack.Compiler.Backend.FlatToClos

@@ -106,12 +106,12 @@ theorem eval_install_related {C F : Type} (source : FlatSem.State C F) (target :
     have unchanged : FlatSem.decClock { source with evalConfig := config } = { source with evalConfig := config } := by
       cases source
       simp_all [FlatSem.decClock]
-    have rel := stateRel_decClock advancedRel
+    have rel := (stateRel_decClock advancedRel).2
     rw [unchanged] at rel
     simp [runFlatEval, runInstalled, install, zero, targetZero, EvalResultRel.abort]
     simpa [zero] using rel
   · have targetNonzero : target.clock ≠ 0 := by omega
-    have rel := stateRel_decClock advancedRel
+    have rel := (stateRel_decClock advancedRel).2
     simp only [runFlatEval, zero, ↓reduceIte] at notTypeError ⊢
     simp only [runInstalled, install, targetNonzero, ↓reduceIte] at ⊢
     have decsNot : (FlatSem.evaluateDecs (FlatSem.decClock { source with evalConfig := config }) decs).2 ≠

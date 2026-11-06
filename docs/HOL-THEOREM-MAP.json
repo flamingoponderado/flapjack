@@ -125533,4 +125533,42 @@
   "statement_status": "reviewed_exact",
   "reviewer": "Compared chain_exps_vars_none_typed in clos_to_bvl_state_relation_probe.out: original start and expression-list binders, mapped tuple body projection and both directions of everyFnVarsNone agree."
 }
+,
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "lookup_refv",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/StateRelation.lean",
+  "lean_name": "lookup_ref",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "reviewer": "Compared lookup_refv_typed in flat_to_clos_relation_probe.out: shared compiler and FFI state carriers, original state-relation and store-lookup premises, and existential related singleton reference conclusion match. Closure-state refs and code use the reviewed canonical finite-support carrier and witness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "lookup_byte_array",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/StateRelation.lean",
+  "lean_name": "lookup_byteArray",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "reviewer": "Compared lookup_byte_array_typed in flat_to_clos_relation_probe.out: shared compiler and FFI state carriers, original state-relation and store-lookup premises, and identical fixed-width byte array conclusion match. Closure-state refs and code use the reviewed canonical finite-support carrier and witness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "lookup_array",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/StateRelation.lean",
+  "lean_name": "lookup_array",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "reviewer": "Compared lookup_array_typed in flat_to_clos_relation_probe.out: shared compiler and FFI state carriers, original state-relation and store-lookup premises, and existential pointwise related value array conclusion match. Closure-state refs and code use the reviewed canonical finite-support carrier and witness."
+}
+,
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "state_rel_dec_clock",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/StateRelation.lean",
+  "lean_name": "stateRel_decClock",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "reviewer": "Compared local HOL source and state_rel_dec_clock_typed replay in flat_to_clos_relation_probe.out: shared compiler and FFI state carriers, state relation premise, original clock equality and decremented-state relation all match. Closure-state refs and code use the reviewed canonical finite-support carrier and witness."
+}
 ]
