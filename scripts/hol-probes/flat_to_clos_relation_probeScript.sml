@@ -22,6 +22,7 @@ val _ = (print "dest_constants_imp_typed="; Lib.with_flag (Globals.show_types,tr
 val _ = (print "dest_constant_evaluate_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl dest_Constant_evaluate); print "\n");
 val _ = (print "dest_constants_evaluate_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl dest_Constants_evaluate); print "\n");
 val _ = (print "evaluate_smart_cons_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl evaluate_SmartCons); print "\n");
+val _ = (print "do_eval_install_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl do_eval_install); print "\n");
 (* Typed replay of the local environment extension lemmas. *)
 val env_cons_upd_replay = prove
   (``env_rel (env with v updated_by f) m db /\ v_rel v1 v2 ==>

@@ -98,9 +98,27 @@ theorem eval_install_related {C F : Type} (source : FlatSem.State C F) (target :
     (notTypeError : (runFlatEval source config decs).2 ≠ .err (.abort .typeError)) :
     StateRel (runFlatEval source config decs).1 (runInstalled targetValues target).2 ∧
       EvalResultRel (runFlatEval source config decs).2 (runInstalled targetValues target).1 := by
-  obtain ⟨advanced, advancedRel, valueEq, safe, install⟩ :=
-    doEval_install source target sourceValues targetValues decs config value run states values
+  obtain ⟨installedDecs, exps, installedConfig, advanced, advancedRel, resultEq, install, safe, _, expsEq⟩ :=
+    doEval_install source target sourceValues targetValues (decs, config, value) ⟨run, states, values⟩
+  simp only [Prod.mk.injEq] at resultEq
+  obtain ⟨rfl, rfl, valueEq⟩ := resultEq
   have clocks := states.2.2.1
+  have advancedClock : advanced.clock = target.clock := by
+    have relationClock := advancedRel.2.2.1
+    simp only at relationClock
+    omega
+  have install' : ClosSem.doInstall targetValues target =
+      (if target.clock = 0 then
+        (.err (.abort .timeoutError), ClosSem.decClock 1 advanced)
+      else
+        (.val (compileDecs decs ++ compileDecs [.con .none none []]), ClosSem.decClock 1 advanced)) := by
+    rw [← advancedClock]
+    by_cases zero : advanced.clock = 0
+    · have unchanged : ClosSem.decClock 1 advanced = advanced := by
+        cases advanced
+        simp_all [ClosSem.decClock]
+      simpa [zero, unchanged] using install
+    · simpa [zero, expsEq zero, compileDecs] using install
   by_cases zero : source.clock = 0
   · have targetZero : target.clock = 0 := by omega
     have unchanged : FlatSem.decClock { source with evalConfig := config } = { source with evalConfig := config } := by
@@ -108,12 +126,12 @@ theorem eval_install_related {C F : Type} (source : FlatSem.State C F) (target :
       simp_all [FlatSem.decClock]
     have rel := (stateRel_decClock advancedRel).2
     rw [unchanged] at rel
-    simp [runFlatEval, runInstalled, install, zero, targetZero, EvalResultRel.abort]
+    simp [runFlatEval, runInstalled, install', zero, targetZero, EvalResultRel.abort]
     simpa [zero] using rel
   · have targetNonzero : target.clock ≠ 0 := by omega
     have rel := (stateRel_decClock advancedRel).2
     simp only [runFlatEval, zero, ↓reduceIte] at notTypeError ⊢
-    simp only [runInstalled, install, targetNonzero, ↓reduceIte] at ⊢
+    simp only [runInstalled, install', targetNonzero, ↓reduceIte] at ⊢
     have decsNot : (FlatSem.evaluateDecs (FlatSem.decClock { source with evalConfig := config }) decs).2 ≠
         some (.abort .typeError) := by
       intro bad

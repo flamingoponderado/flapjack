@@ -125712,5 +125712,14 @@
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared do_app_simulation in flat_pattern_install_relation_probe.out: independent compiler and FFI state types, original input arguments and two curried premises, result relation, final state relation and target execution match the typed HOL statement. The theorem inherits reals_as_rational_cuts through flat primitive evaluation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "do_eval_install",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Install.lean",
+  "lean_name": "doEval_install",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "reviewer": "Compared do_eval_install_typed in flat_to_clos_relation_probe.out: the complete premises, existential declarations/code/configuration/state, timeout branch, result equality, match-freedom, two-element input and nonzero-clock code equality match. Closure refs and code use the reviewed finite-support representation."
 }
 ]
