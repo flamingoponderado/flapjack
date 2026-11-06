@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternSimulation
+import Flapjack.Compiler.Backend.FlatProps.PatternBindings
 
 /-! Pattern-row prerequisites over the preliminary source-to-flat relations.
 Full correspondence of these relations with HOL remains open. -/
@@ -24,8 +25,10 @@ theorem compilePat_bindings (compMap : Environment) (pattern : Pat) :
     intro pattern patterns head tail
     simp [FlatLang.patsBindings, AstHOL.patsBindings, head, tail]
 
-/-- Successful source matching yields related flat bindings in source pattern
-order. This combines pattern simulation with binding-order preservation. -/
+/-- A successful source pattern match has a related flat binding list whose
+names are exactly the source pattern bindings, in order. This Flapjack helper
+combines pattern simulation with the flat matcher's binding-order property;
+HOL uses those results inside `compile_correct` rather than naming this lemma. -/
 theorem pmatch_success_sourceBindings {C F : Type} (genv : GlobalEnv) (compMap compMap2 : Environment)
     (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (sourceState : SemanticPrimitivesHOL.State F)
     (flatState : FlatSem.State C F) (shadowers : VarN → Prop)
@@ -38,10 +41,20 @@ theorem pmatch_success_sourceBindings {C F : Type} (genv : GlobalEnv) (compMap c
       FlatSem.pmatch flatState (compilePat compMap pattern) flat [] = .match flatBindings ∧
       EnvRel genv (alistToNs bindings) flatBindings ∧
       flatBindings.map Prod.fst = AstHOL.patBindings pattern := by
-  obtain ⟨flatBindings, matchedFlat, related, names⟩ :=
-    pmatch_success_bindings genv compMap compMap2 sourceEnv sourceState flatState shadowers inv mapsEq ok
-      typesOk stateRel pattern source flat valueRel bindings matched
-  exact ⟨flatBindings, matchedFlat, related, by simpa [compilePat_bindings] using names⟩
+  have rel := patternSimulation genv compMap compMap2 sourceEnv sourceState flatState [] shadowers
+    inv mapsEq ok typesOk stateRel pattern source flat [] [] (by simpa [alistToNs, nsEmpty] using EnvRel.empty genv)
+    valueRel
+  simp only [List.nil_append, matched] at rel
+  cases flatMatch : FlatSem.pmatch flatState (compilePat compMap pattern) flat [] with
+  | typeError => simp [flatMatch, MatchResultRel] at rel
+  | noMatch => simp [flatMatch, MatchResultRel] at rel
+  | «match» flatBindings =>
+    simp only [flatMatch, MatchResultRel, List.append_nil] at rel
+    obtain ⟨bound, boundEq, envRel⟩ := rel
+    subst bound
+    refine ⟨flatBindings, rfl, envRel, ?_⟩
+    have names := (FlatProps.pmatchBindings flatState).1 (compilePat compMap pattern) flat [] flatBindings flatMatch
+    simpa [compilePat_bindings] using names
 
 /-- If every source pattern is type-compatible, matching the compiled rows
 cannot fail with a flat pattern type error. This is Flapjack infrastructure
