@@ -78,12 +78,6 @@ theorem evaluate_compiled_match_default {C F : Type} (cfg stateCfg : Config) (tr
     dispatchEnv target value' pure targetSafe
   simpa [targetMatch] using dispatch
 
-/-- Proof-side result relation for lists of values and errors. -/
-inductive FlatResultRel : Result (List FlatSem.Value) FlatSem.Value →
-    Result (List FlatSem.Value) FlatSem.Value → Prop where
-  | values {left right} : List.Forall₂ ValueRel left right → FlatResultRel (.val left) (.val right)
-  | error {left right} : SemanticPrimitivesProps.excRel ValueRel left right → FlatResultRel (.err left) (.err right)
-
 /-- A selected compiled row simulates its source body using the body's
 induction hypothesis. The target execution is constructed by evaluation. -/
 theorem compiled_match_branch_forward {C F : Type} (cfg stateCfg : Config) (trace : BackendCommon.Tra)
@@ -103,12 +97,12 @@ theorem compiled_match_branch_forward {C F : Type} (cfg stateCfg : Config) (trac
       FlatSem.evaluate { sourceEnv with v := bindings ++ sourceEnv.v } source [body] = (sourceFinal, sourceResult) →
       ∃ targetFinal targetResult,
         FlatSem.evaluate extEnv target [(compileExp cfg body).2.2] = (targetFinal, targetResult) ∧
-        StateRel stateCfg sourceFinal targetFinal ∧ FlatResultRel sourceResult targetResult) :
+        StateRel stateCfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel sourceResult targetResult) :
     ∃ targetFinal targetResult,
       FlatSem.evaluate dispatchEnv target
         [compilePats cfg (compileMatch cfg rows).2.1 trace n
           (.varLocal trace (encNumToName n)) default (compileMatch cfg rows).2.2] = (targetFinal, targetResult) ∧
-      StateRel stateCfg sourceFinal targetFinal ∧ FlatResultRel sourceResult targetResult := by
+      StateRel stateCfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel sourceResult targetResult := by
   cases targetRun : FlatSem.evaluate dispatchEnv target
       [compilePats cfg (compileMatch cfg rows).2.1 trace n
         (.varLocal trace (encNumToName n)) default (compileMatch cfg rows).2.2] with
@@ -205,11 +199,11 @@ theorem compile_mat_selected_forward {C F : Type} (cfg stateCfg : Config) (trace
       ∃ targetFinal targetResult,
         FlatSem.evaluate extEnv { targetNext with clock := min targetStart.clock targetNext.clock }
           [(compileExp cfg body).2.2] = (targetFinal, targetResult) ∧
-        StateRel stateCfg sourceFinal targetFinal ∧ FlatResultRel sourceResult targetResult) :
+        StateRel stateCfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel sourceResult targetResult) :
     FlatSem.evaluate sourceEnv sourceStart [.mat trace scrutinee rows] = (sourceFinal, sourceResult) ∧
     ∃ targetFinal targetResult,
       FlatSem.evaluate targetEnv targetStart [(compileExp cfg (.mat trace scrutinee rows)).2.2] =
-        (targetFinal, targetResult) ∧ StateRel stateCfg sourceFinal targetFinal ∧ FlatResultRel sourceResult targetResult := by
+        (targetFinal, targetResult) ∧ StateRel stateCfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel sourceResult targetResult := by
   let n := max (compileExp cfg scrutinee).1 (compileMatch cfg rows).1 + 2
   let dispatchEnv := { targetEnv with v := (encNumToName n, value') :: targetEnv.v }
   have sourceRun := evaluate_mat_selected trace scrutinee rows sourceEnv sourceStart sourceNext value
@@ -252,7 +246,7 @@ theorem compile_mat_noMatch_forward {C F : Type} (cfg stateCfg : Config) (trace 
     ∃ sourceFinal targetFinal sourceResult targetResult,
       FlatSem.evaluate sourceEnv sourceStart [.mat trace scrutinee rows] = (sourceFinal, sourceResult) ∧
       FlatSem.evaluate targetEnv targetStart [(compileExp cfg (.mat trace scrutinee rows)).2.2] =
-        (targetFinal, targetResult) ∧ StateRel stateCfg sourceFinal targetFinal ∧ FlatResultRel sourceResult targetResult := by
+        (targetFinal, targetResult) ∧ StateRel stateCfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel sourceResult targetResult := by
   let n := max (compileExp cfg scrutinee).1 (compileMatch cfg rows).1 + 2
   let dispatchEnv := { targetEnv with v := (encNumToName n, value') :: targetEnv.v }
   have sourceRun := evaluate_mat_noMatch trace scrutinee rows sourceEnv sourceStart sourceNext value sourceScrutinee selected
@@ -260,8 +254,7 @@ theorem compile_mat_noMatch_forward {C F : Type} (cfg stateCfg : Config) (trace 
     { sourceNext with clock := min sourceStart.clock sourceNext.clock }
     { targetNext with clock := min targetStart.clock targetNext.clock } value value' targetEnv dispatchEnv
     (.raise trace (.con trace (some (0, none)) [])) states values rfl selected
-  have resultRel : FlatResultRel (.err (.raise FlatSem.bindExnV)) (.err (.raise FlatSem.bindExnV)) := by
-    apply FlatResultRel.error
+  have resultRel : SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel (.err (.raise FlatSem.bindExnV)) (.err (.raise FlatSem.bindExnV)) := by
     apply (valueRel_conv (some (BackendCommon.bindTag, none)) [] _).2
     exact ⟨[], rfl, .nil⟩
   refine ⟨_, _, _, _, sourceRun, ?_, states, resultRel⟩

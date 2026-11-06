@@ -181,11 +181,7 @@ theorem compileExps_evaluate {C F : Type} (stateCfg : Config) :
       compileExps_simulation_upTo cfg stateCfg s1.clock xs
         (fun e _ => expressionSimulationUpTo_all s1.clock cfg stateCfg e)
         env1 env2 s1 s2 t1 r1 n (Nat.le_refl _) run envs states compiledBound safe
-    have converted : SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel r1 r2 := by
-      cases results with
-      | values rel => exact rel
-      | error errors => exact errors
-    exact ⟨t2, r2, converted, finalStates, by simpa [compiled] using targetRun⟩
+    exact ⟨t2, r2, results, finalStates, by simpa [compiled] using targetRun⟩
   · intro s1 decs s2 t1 cfg decs' res run compiled states safe
     subst decs'
     obtain ⟨t2, res', targetRun, finalStates, outcomes⟩ :=

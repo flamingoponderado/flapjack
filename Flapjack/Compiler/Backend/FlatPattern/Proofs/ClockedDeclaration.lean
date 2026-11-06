@@ -34,9 +34,9 @@ theorem evaluateDec_simulation_upTo {C F : Type} (cfg stateCfg : Config) (clock 
       exact aLookupRel_empty _ _
     obtain ⟨targetNext, targetResult, targetRun, nextStates, related⟩ := expressionIH
       ⟨[]⟩ ⟨[]⟩ source target sourceNext expressionResult n clockBound expressionRun emptyEnvs states (by dsimp [n]; omega) expressionSafe
-    cases related with
-    | error errorsRel =>
-      rename_i sourceError targetError
+    cases expressionResult <;> cases targetResult <;> simp only [SemanticPrimitivesProps.resultRel] at related
+    case err.err sourceError targetError =>
+      have errorsRel := related
       have sourceShape : sourceNext = sourceFinal ∧ some sourceError = outcome := by
         simpa [FlatSem.evaluateDec, expressionRun] using run
       rcases sourceShape with ⟨rfl, rfl⟩
@@ -44,8 +44,8 @@ theorem evaluateDec_simulation_upTo {C F : Type} (cfg stateCfg : Config) (clock 
       · unfold FlatSem.evaluateDec compileDec
         rw [targetRun]
       · exact errorsRel
-    | values valuesRel =>
-      rename_i sourceValues targetValues
+    case val.val sourceValues targetValues =>
+      have valuesRel := related
       have sourceShape : sourceNext = sourceFinal ∧
           (if sourceValues = [FlatSem.unitValue] then none else some (.abort .typeError)) = outcome := by
         cases sourceValues with

@@ -36,18 +36,18 @@ theorem compile_simpleApp_simulation_upTo {C F : Type} (cfg stateCfg : Config) (
       exact safe (congrArg Prod.snd outer)
     obtain ⟨targetNext, targetArgsResult, targetArgsRun, nextStates, related⟩ := argsSim
       sourceEnv targetEnv source target sourceNext argsResult n clockBound argsRun envs states reversedBound argsSafe
-    cases related with
-    | error errorsRel =>
-      rename_i leftError rightError
+    cases argsResult <;> cases targetArgsResult <;> simp only [SemanticPrimitivesProps.resultRel] at related
+    case err.err leftError rightError =>
+      have errorsRel := related
       have sourceOuter := evaluate_app_args_error sourceEnv source sourceNext trace op args leftError argsRun
       have targetOuter := evaluate_app_args_error targetEnv target targetNext trace op
         (compileExps cfg args).2.2 rightError (by simpa [compiledReverse] using targetArgsRun)
       have equal := sourceEval.symm.trans sourceOuter
       cases equal
-      exact ⟨_, _, by simpa [compileExp_app] using targetOuter,
-        stateRel_fixClock stateCfg source sourceNext target targetNext states nextStates, .error errorsRel⟩
-    | values valuesRel =>
-      rename_i sourceValues targetValues
+      exact ⟨_, .err rightError, by simpa [compileExp_app] using targetOuter,
+        stateRel_fixClock stateCfg source sourceNext target targetNext states nextStates, errorsRel⟩
+    case val.val sourceValues targetValues =>
+      have valuesRel := related
       let sourceFixed := { sourceNext with clock := min source.clock sourceNext.clock }
       let targetFixed := { targetNext with clock := min target.clock targetNext.clock }
       have fixedStates : StateRel stateCfg sourceFixed targetFixed :=
@@ -74,7 +74,7 @@ theorem compile_simpleApp_simulation_upTo {C F : Type} (cfg stateCfg : Config) (
             have eq := sourceOuter.symm.trans sourceEval
             simp [FlatSem.applyResult, sourceFixed, primitive] at eq
             rcases eq with ⟨rfl, rfl⟩
-            refine ⟨targetAfter, .val [_], ?_, afterStates, .values (.cons relation .nil)⟩
+            refine ⟨targetAfter, .val [_], ?_, afterStates, (.cons relation .nil)⟩
             simpa [compileExp_app, FlatSem.applyResult, targetFixed, targetPrimitive] using targetOuter
         | err error =>
           cases result' with
@@ -83,7 +83,7 @@ theorem compile_simpleApp_simulation_upTo {C F : Type} (cfg stateCfg : Config) (
             have eq := sourceOuter.symm.trans sourceEval
             simp [FlatSem.applyResult, sourceFixed, primitive] at eq
             rcases eq with ⟨rfl, rfl⟩
-            refine ⟨targetAfter, .err error', ?_, afterStates, .error relation⟩
+            refine ⟨targetAfter, .err error', ?_, afterStates, relation⟩
             simpa [compileExp_app, FlatSem.applyResult, targetFixed, targetPrimitive] using targetOuter
 
 
@@ -99,7 +99,7 @@ theorem compile_call_simulation_at_clock_boundedArgs {C F : Type} (cfg stateCfg 
       EnvRel n sourceEnv targetEnv → StateRel stateCfg source target → (compileExp bodyCfg body).1 < n →
       sourceResult ≠ .err (.abort .typeError) →
       ∃ targetFinal targetResult, FlatSem.evaluate targetEnv target [(compileExp bodyCfg body).2.2] =
-        (targetFinal, targetResult) ∧ StateRel stateCfg sourceFinal targetFinal ∧ FlatResultRel sourceResult targetResult) :
+        (targetFinal, targetResult) ∧ StateRel stateCfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel sourceResult targetResult) :
     ∀ (sourceEnv targetEnv : FlatSem.Environment FlatSem.Value) (source target sourceFinal : FlatSem.State C F)
       (sourceResult : Result (List FlatSem.Value) FlatSem.Value) (n : Nat),
       source.clock = clock →
@@ -109,7 +109,7 @@ theorem compile_call_simulation_at_clock_boundedArgs {C F : Type} (cfg stateCfg 
       sourceResult ≠ .err (.abort .typeError) →
       ∃ targetFinal targetResult,
         FlatSem.evaluate targetEnv target [(compileExp cfg (.app trace (.src .opapp) args)).2.2] =
-          (targetFinal, targetResult) ∧ StateRel stateCfg sourceFinal targetFinal ∧ FlatResultRel sourceResult targetResult := by
+          (targetFinal, targetResult) ∧ StateRel stateCfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel sourceResult targetResult := by
   intro sourceEnv targetEnv source target sourceFinal sourceResult n clockEq sourceEval envs states bound safe
   have argsBound : (compileExps cfg args).1 < n := by simpa [compileExp_app] using bound
   have reversedBound := compileExps_reverse_bound cfg args n argsBound
@@ -129,18 +129,18 @@ theorem compile_call_simulation_at_clock_boundedArgs {C F : Type} (cfg stateCfg 
       exact safe (congrArg Prod.snd outer)
     obtain ⟨targetNext, targetArgsResult, targetArgsRun, nextStates, related⟩ := argsSim
       sourceEnv targetEnv source target sourceNext argsResult n (by omega) argsRun envs states reversedBound argsSafe
-    cases related with
-    | error errorsRel =>
-      rename_i leftError rightError
+    cases argsResult <;> cases targetArgsResult <;> simp only [SemanticPrimitivesProps.resultRel] at related
+    case err.err leftError rightError =>
+      have errorsRel := related
       have sourceOuter := evaluate_app_args_error sourceEnv source sourceNext trace (.src .opapp) args leftError argsRun
       have targetOuter := evaluate_app_args_error targetEnv target targetNext trace (.src .opapp)
         (compileExps cfg args).2.2 rightError (by simpa [compiledReverse] using targetArgsRun)
       have equal := sourceEval.symm.trans sourceOuter
       cases equal
-      exact ⟨_, _, by simpa [compileExp_app] using targetOuter,
-        stateRel_fixClock stateCfg source sourceNext target targetNext states nextStates, .error errorsRel⟩
-    | values valuesRel =>
-      rename_i sourceValues targetValues
+      exact ⟨_, .err rightError, by simpa [compileExp_app] using targetOuter,
+        stateRel_fixClock stateCfg source sourceNext target targetNext states nextStates, errorsRel⟩
+    case val.val sourceValues targetValues =>
+      have valuesRel := related
       let sourceFixed := { sourceNext with clock := min source.clock sourceNext.clock }
       let targetFixed := { targetNext with clock := min target.clock targetNext.clock }
       have fixedStates : StateRel stateCfg sourceFixed targetFixed :=
@@ -162,7 +162,7 @@ theorem compile_call_simulation_at_clock_boundedArgs {C F : Type} (cfg stateCfg 
             targetCallEnv compiledBody (by simpa [compiledReverse] using targetArgsRun) targetCall targetZero
           have equal := sourceEval.symm.trans sourceOuter
           cases equal
-          exact ⟨_, .err (.abort .timeoutError), by simpa [compileExp_app] using targetOuter, fixedStates, .error rfl⟩
+          exact ⟨_, .err (.abort .timeoutError), by simpa [compileExp_app] using targetOuter, fixedStates, rfl⟩
         · have targetNonzero : targetFixed.clock ≠ 0 := by omega
           have sourceOuter := evaluate_call_body sourceEnv source sourceNext trace args sourceValues callEnv body argsRun call zero
           have targetOuter := evaluate_call_body targetEnv target targetNext trace (compileExps cfg args).2.2 targetValues
@@ -199,7 +199,7 @@ theorem compile_force_simulation_at_clock_boundedArgs {C F : Type} (cfg stateCfg
       sourceResult ≠ .err (.abort .typeError) →
       ∃ targetFinal targetResult,
         FlatSem.evaluate targetEnv target [(compileExp cfg (FlatSem.appUnit (.varLocal .none (ofString "f")))).2.2] =
-          (targetFinal, targetResult) ∧ StateRel stateCfg sourceFinal targetFinal ∧ FlatResultRel sourceResult targetResult) :
+          (targetFinal, targetResult) ∧ StateRel stateCfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel sourceResult targetResult) :
     ∀ (sourceEnv targetEnv : FlatSem.Environment FlatSem.Value) (source target sourceFinal : FlatSem.State C F)
       (sourceResult : Result (List FlatSem.Value) FlatSem.Value) (n : Nat),
       source.clock = clock →
@@ -209,7 +209,7 @@ theorem compile_force_simulation_at_clock_boundedArgs {C F : Type} (cfg stateCfg
       sourceResult ≠ .err (.abort .typeError) →
       ∃ targetFinal targetResult,
         FlatSem.evaluate targetEnv target [(compileExp cfg (.app trace (.src (.thunkOp .forceThunk)) args)).2.2] =
-          (targetFinal, targetResult) ∧ StateRel stateCfg sourceFinal targetFinal ∧ FlatResultRel sourceResult targetResult := by
+          (targetFinal, targetResult) ∧ StateRel stateCfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel sourceResult targetResult := by
   intro sourceEnv targetEnv source target sourceFinal sourceResult n clockEq sourceEval envs states bound safe
   have argsBound : (compileExps cfg args).1 < n := by simpa [compileExp_app] using bound
   have reversedBound := compileExps_reverse_bound cfg args n argsBound
@@ -229,18 +229,18 @@ theorem compile_force_simulation_at_clock_boundedArgs {C F : Type} (cfg stateCfg
       exact safe (congrArg Prod.snd outer)
     obtain ⟨targetNext, targetArgsResult, targetArgsRun, nextStates, related⟩ := argsSim
       sourceEnv targetEnv source target sourceNext argsResult n (by omega) argsRun envs states reversedBound argsSafe
-    cases related with
-    | error errorsRel =>
-      rename_i leftError rightError
+    cases argsResult <;> cases targetArgsResult <;> simp only [SemanticPrimitivesProps.resultRel] at related
+    case err.err leftError rightError =>
+      have errorsRel := related
       have sourceOuter := evaluate_app_args_error sourceEnv source sourceNext trace (.src (.thunkOp .forceThunk)) args leftError argsRun
       have targetOuter := evaluate_app_args_error targetEnv target targetNext trace (.src (.thunkOp .forceThunk))
         (compileExps cfg args).2.2 rightError (by simpa [compiledReverse] using targetArgsRun)
       have equal := sourceEval.symm.trans sourceOuter
       cases equal
-      exact ⟨_, _, by simpa [compileExp_app] using targetOuter,
-        stateRel_fixClock stateCfg source sourceNext target targetNext states nextStates, .error errorsRel⟩
-    | values valuesRel =>
-      rename_i sourceValues targetValues
+      exact ⟨_, .err rightError, by simpa [compileExp_app] using targetOuter,
+        stateRel_fixClock stateCfg source sourceNext target targetNext states nextStates, errorsRel⟩
+    case val.val sourceValues targetValues =>
+      have valuesRel := related
       have targetArgsRun' : FlatSem.evaluate targetEnv target (compileExps cfg args).2.2.reverse =
           (targetNext, .val targetValues) := by simpa [compiledReverse] using targetArgsRun
       let sourceFixed := { sourceNext with clock := min source.clock sourceNext.clock }
@@ -263,7 +263,7 @@ theorem compile_force_simulation_at_clock_boundedArgs {C F : Type} (cfg stateCfg
           | evaluated =>
             simp [FlatSem.evaluate, argsRun, FlatSem.fixClock, sourceFixed, thunk] at sourceEval
             rcases sourceEval with ⟨rfl, rfl⟩
-            refine ⟨targetFixed, .val [targetValue], ?_, fixedStates, .values (.cons valueRelated .nil)⟩
+            refine ⟨targetFixed, .val [targetValue], ?_, fixedStates, (.cons valueRelated .nil)⟩
             simp [compileExp_app, FlatSem.evaluate, targetArgsRun', FlatSem.fixClock, targetFixed, targetThunk]
           | notEvaluated =>
             let body := FlatSem.appUnit (.varLocal .none (ofString "f"))
@@ -290,16 +290,16 @@ theorem compile_force_simulation_at_clock_boundedArgs {C F : Type} (cfg stateCfg
               have targetBody' : FlatSem.evaluate ⟨[(ofString "f", targetValue)]⟩
                   { targetNext with clock := min target.clock targetNext.clock }
                   [FlatSem.appUnit (.varLocal .none (ofString "f"))] = (targetLast, targetResult) := targetBody
-              cases resultRel with
-              | error errors =>
-                rename_i leftError rightError
+              cases bodyResult <;> cases targetResult <;> simp only [SemanticPrimitivesProps.resultRel] at resultRel
+              case err.err leftError rightError =>
+                have errors := resultRel
                 simp [FlatSem.evaluate, argsRun, FlatSem.fixClock, sourceFixed, thunk, bodyRun'] at sourceEval
                 rcases sourceEval with ⟨rfl, rfl⟩
-                refine ⟨targetLast, .err rightError, ?_, lastStates, .error errors⟩
+                refine ⟨targetLast, .err rightError, ?_, lastStates, errors⟩
                 simp [compileExp_app, FlatSem.evaluate, targetArgsRun', FlatSem.fixClock,
                   targetFixed, targetThunk, targetBody']
-              | values results =>
-                rename_i leftValues rightValues
+              case val.val leftValues rightValues =>
+                have results := resultRel
                 cases updated : FlatSem.updateThunk sourceValues sourceLast.refs leftValues with
                 | none =>
                   simp [FlatSem.evaluate, argsRun, FlatSem.fixClock, sourceFixed, thunk, bodyRun', updated] at sourceEval
@@ -308,7 +308,7 @@ theorem compile_force_simulation_at_clock_boundedArgs {C F : Type} (cfg stateCfg
                   obtain ⟨refs', updated', refsRel⟩ := updateThunk_related valuesRel results lastStates.2.1 updated
                   simp [FlatSem.evaluate, argsRun, FlatSem.fixClock, sourceFixed, thunk, bodyRun', updated] at sourceEval
                   rcases sourceEval with ⟨rfl, rfl⟩
-                  refine ⟨{ targetLast with refs := refs' }, .val rightValues, ?_, ?_, .values results⟩
+                  refine ⟨{ targetLast with refs := refs' }, .val rightValues, ?_, ?_, results⟩
                   · simp [compileExp_app, FlatSem.evaluate, targetArgsRun', FlatSem.fixClock,
                       targetFixed, targetThunk, targetBody', updated']
                   · exact ⟨lastStates.1, refsRel, lastStates.2.2⟩
@@ -333,7 +333,7 @@ theorem compile_eval_simulation_at_clock_boundedArgs {C F : Type} (cfg stateCfg 
       sourceResult ≠ .err (.abort .typeError) →
       ∃ targetFinal targetResult,
         FlatSem.evaluate targetEnv target [(compileExp cfg (.app trace (.src .eval) args)).2.2] =
-          (targetFinal, targetResult) ∧ StateRel stateCfg sourceFinal targetFinal ∧ FlatResultRel sourceResult targetResult := by
+          (targetFinal, targetResult) ∧ StateRel stateCfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel sourceResult targetResult := by
   intro sourceEnv targetEnv source target sourceFinal sourceResult n clockEq sourceEval envs states bound safe
   have argsBound : (compileExps cfg args).1 < n := by simpa [compileExp_app] using bound
   have reversedBound := compileExps_reverse_bound cfg args n argsBound
@@ -353,18 +353,18 @@ theorem compile_eval_simulation_at_clock_boundedArgs {C F : Type} (cfg stateCfg 
       exact safe (congrArg Prod.snd outer)
     obtain ⟨targetNext, targetArgsResult, targetArgsRun, nextStates, related⟩ := argsSim
       sourceEnv targetEnv source target sourceNext argsResult n (by omega) argsRun envs states reversedBound argsSafe
-    cases related with
-    | error errorsRel =>
-      rename_i leftError rightError
+    cases argsResult <;> cases targetArgsResult <;> simp only [SemanticPrimitivesProps.resultRel] at related
+    case err.err leftError rightError =>
+      have errorsRel := related
       have sourceOuter := evaluate_app_args_error sourceEnv source sourceNext trace (.src .eval) args leftError argsRun
       have targetOuter := evaluate_app_args_error targetEnv target targetNext trace (.src .eval)
         (compileExps cfg args).2.2 rightError (by simpa [compiledReverse] using targetArgsRun)
       have equal := sourceEval.symm.trans sourceOuter
       cases equal
-      exact ⟨_, _, by simpa [compileExp_app] using targetOuter,
-        stateRel_fixClock stateCfg source sourceNext target targetNext states nextStates, .error errorsRel⟩
-    | values valuesRel =>
-      rename_i sourceValues targetValues
+      exact ⟨_, .err rightError, by simpa [compileExp_app] using targetOuter,
+        stateRel_fixClock stateCfg source sourceNext target targetNext states nextStates, errorsRel⟩
+    case val.val sourceValues targetValues =>
+      have valuesRel := related
       let sourceFixed := { sourceNext with clock := min source.clock sourceNext.clock }
       let targetFixed := { targetNext with clock := min target.clock targetNext.clock }
       have fixedStates : StateRel stateCfg sourceFixed targetFixed :=
@@ -389,7 +389,7 @@ theorem compile_eval_simulation_at_clock_boundedArgs {C F : Type} (cfg stateCfg 
             (by simpa [compiledReverse] using targetArgsRun) targetDecoded targetZero
           have equal := sourceEval.symm.trans sourceOuter
           cases equal
-          exact ⟨_, .err (.abort .timeoutError), by simpa [compileExp_app] using targetOuter, installedStates, .error rfl⟩
+          exact ⟨_, .err (.abort .timeoutError), by simpa [compileExp_app] using targetOuter, installedStates, rfl⟩
         · have targetNonzero : targetFixed.clock ≠ 0 := by omega
           let sourceInstalled := { sourceFixed with evalConfig := sourceConfig }
           let targetInstalled := { targetFixed with evalConfig := targetConfig }
@@ -423,7 +423,7 @@ theorem compile_eval_simulation_at_clock_boundedArgs {C F : Type} (cfg stateCfg 
                   (by simpa [compiledReverse] using targetArgsRun) targetDecoded targetNonzero targetDeclsRun
                 have equal := sourceEval.symm.trans sourceOuter
                 cases equal
-                exact ⟨targetLast, _, by simpa [compileExp_app] using targetOuter, finalRel, .values (.cons valueRel .nil)⟩
+                exact ⟨targetLast, .val [targetValue], by simpa [compileExp_app] using targetOuter, finalRel, (.cons valueRel .nil)⟩
             | some error =>
               cases targetOutcome with
               | none => simp [optionRel] at outcomeRel
@@ -437,6 +437,6 @@ theorem compile_eval_simulation_at_clock_boundedArgs {C F : Type} (cfg stateCfg 
                   (by simpa [compiledReverse] using targetArgsRun) targetDecoded targetNonzero targetDeclsRun
                 have equal := sourceEval.symm.trans sourceOuter
                 cases equal
-                exact ⟨targetLast, _, by simpa [compileExp_app] using targetOuter, finalRel, .error errorsRel⟩
+                exact ⟨targetLast, .err targetError, by simpa [compileExp_app] using targetOuter, finalRel, errorsRel⟩
 
 end Flapjack.Compiler.Backend.FlatPattern

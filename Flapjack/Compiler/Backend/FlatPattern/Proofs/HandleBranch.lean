@@ -99,11 +99,11 @@ theorem compile_handle_selected_forward {C F : Type} (cfg stateCfg : Config) (tr
       ∃ targetFinal targetResult,
         FlatSem.evaluate extEnv { targetNext with clock := min targetStart.clock targetNext.clock }
           [(compileExp cfg body).2.2] = (targetFinal, targetResult) ∧
-        StateRel stateCfg sourceFinal targetFinal ∧ FlatResultRel sourceResult targetResult) :
+        StateRel stateCfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel sourceResult targetResult) :
     FlatSem.evaluate sourceEnv sourceStart [.handle trace protectedExpr rows] = (sourceFinal, sourceResult) ∧
     ∃ targetFinal targetResult,
       FlatSem.evaluate targetEnv targetStart [(compileExp cfg (.handle trace protectedExpr rows)).2.2] =
-        (targetFinal, targetResult) ∧ StateRel stateCfg sourceFinal targetFinal ∧ FlatResultRel sourceResult targetResult := by
+        (targetFinal, targetResult) ∧ StateRel stateCfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel sourceResult targetResult := by
   let n := max (compileExp cfg protectedExpr).1 (compileMatch cfg rows).1 + 2
   let dispatchEnv := { targetEnv with v := (encNumToName n, value') :: targetEnv.v }
   have sourceRun := evaluate_handle_selected trace protectedExpr rows sourceEnv sourceStart sourceNext value
@@ -138,7 +138,7 @@ theorem compile_handle_noMatch_forward {C F : Type} (cfg stateCfg : Config) (tra
     ∃ sourceFinal targetFinal sourceResult targetResult,
       FlatSem.evaluate sourceEnv sourceStart [.handle trace protectedExpr rows] = (sourceFinal, sourceResult) ∧
       FlatSem.evaluate targetEnv targetStart [(compileExp cfg (.handle trace protectedExpr rows)).2.2] =
-        (targetFinal, targetResult) ∧ StateRel stateCfg sourceFinal targetFinal ∧ FlatResultRel sourceResult targetResult := by
+        (targetFinal, targetResult) ∧ StateRel stateCfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel sourceResult targetResult := by
   let n := max (compileExp cfg protectedExpr).1 (compileMatch cfg rows).1 + 2
   let dispatchEnv := { targetEnv with v := (encNumToName n, value') :: targetEnv.v }
   have sourceRun := evaluate_handle_noMatch trace protectedExpr rows sourceEnv sourceStart sourceNext value sourceProtected selected
@@ -146,7 +146,7 @@ theorem compile_handle_noMatch_forward {C F : Type} (cfg stateCfg : Config) (tra
     { sourceNext with clock := min sourceStart.clock sourceNext.clock }
     { targetNext with clock := min targetStart.clock targetNext.clock } value value' targetEnv dispatchEnv
     (.raise trace (.varLocal trace (encNumToName n))) states values rfl selected
-  have resultRel : FlatResultRel (.err (.raise value)) (.err (.raise value')) := .error values
+  have resultRel : SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel (.err (.raise value)) (.err (.raise value')) := values
   refine ⟨_, _, _, _, sourceRun, ?_, states, resultRel⟩
   rw [compileExp_handle_body]
   rw [evaluate_handle_generated trace (encNumToName n) (compileExp cfg protectedExpr).2.2 _
@@ -184,13 +184,13 @@ theorem stateRel_fixClock {C F : Type} (cfg : Config)
 
 /-- Related results agree on whether an exception was raised. -/
 theorem flatResultRel_notRaised (sourceResult targetResult : Result (List FlatSem.Value) FlatSem.Value)
-    (related : FlatResultRel sourceResult targetResult)
+    (related : SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel sourceResult targetResult)
     (notRaised : ∀ value, sourceResult ≠ .err (.raise value)) :
     ∀ value, targetResult ≠ .err (.raise value) := by
-  cases related with
-  | values related => simp
-  | @error left right related =>
-    cases left <;> cases right <;> simp_all [SemanticPrimitivesProps.excRel]
+  cases sourceResult <;> cases targetResult <;>
+    simp_all [SemanticPrimitivesProps.resultRel, SemanticPrimitivesProps.excRel]
+  all_goals rename_i left right
+  all_goals cases left <;> cases right <;> simp_all
 
 /-- Normal results and aborts pass through compiled handlers with their
 state and result relations preserved. -/
@@ -203,7 +203,7 @@ theorem compile_handle_passthrough {C F : Type} (cfg stateCfg : Config) (trace :
     (targetProtected : FlatSem.evaluate targetEnv targetStart [(compileExp cfg protectedExpr).2.2] =
       (targetNext, targetResult))
     (starts : StateRel stateCfg sourceStart targetStart) (nexts : StateRel stateCfg sourceNext targetNext)
-    (related : FlatResultRel sourceResult targetResult)
+    (related : SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel sourceResult targetResult)
     (notRaised : ∀ value, sourceResult ≠ .err (.raise value)) :
     ∃ sourceFinal targetFinal,
       FlatSem.evaluate sourceEnv sourceStart [.handle trace protectedExpr rows] = (sourceFinal, sourceResult) ∧
