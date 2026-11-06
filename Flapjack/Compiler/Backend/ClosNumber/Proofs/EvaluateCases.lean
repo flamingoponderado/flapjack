@@ -69,21 +69,6 @@ def AppSimulation {C F : Type} : Prop :=
       evaluateApp none nextFunction nextArgs target = (targetResult, targetNext) ∧
       ResultRel source.maxApp result targetResult ∧ StateRel sourceNext targetNext
 
-/-- Application simulations restricted to strictly smaller argument lists.
-    This supplies the well-founded recursive hypothesis for over-application. -/
-def AppSimulationBelow {C F : Type} (bound : Nat) : Prop :=
-  ∀ (function nextFunction : Value) (args nextArgs : List Value)
-    (source : State (Nat × C) F) (target : State C F)
-    (result : Result (List Value) Value) (sourceNext : State (Nat × C) F),
-    args.length < bound →
-    evaluateApp none function args source = (result, sourceNext) →
-    result ≠ .err (.abort .typeError) →
-    ValueRel source.maxApp function nextFunction →
-    List.Forall₂ (ValueRel source.maxApp) args nextArgs → StateRel source target →
-    ∃ targetResult targetNext,
-      evaluateApp none nextFunction nextArgs target = (targetResult, targetNext) ∧
-      ResultRel source.maxApp result targetResult ∧ StateRel sourceNext targetNext
-
 /-- Indirect applications starting at clocks strictly below the bound. -/
 def AppSimulationClockBelow {C F : Type} (clock : Nat) : Prop :=
   ∀ (function nextFunction : Value) (args nextArgs : List Value)
@@ -356,25 +341,6 @@ theorem appSimulation_clock_step {C F : Type} (function nextFunction : Value)
             result sourceNext run found insufficient related argsRel stateRel
         · exact evaluateApp_full function nextFunction first rest nextArgs source target body bodyEnv remaining
             result sourceNext run found insufficient noType related argsRel stateRel (bodyIH body) applicationIH
-
-/-- Indirect application simulation follows by clock induction, assuming
-simulations of all closure bodies. The body assumption remains a mutual
- evaluator obligation. -/
-theorem appSimulation_of_bodySimulations {C F : Type}
-    (bodyIH : ∀ body, EvalSimulation (C := C) (F := F) [body]) :
-    AppSimulation (C := C) (F := F) := by
-  have bounded : ∀ clock, AppSimulationClockBelow (C := C) (F := F) clock := by
-    intro clock
-    induction clock using Nat.strong_induction_on with
-    | h clock ih =>
-      intro function nextFunction args nextArgs source target result sourceNext smaller run noType related argsRel stateRel
-      apply appSimulation_clock_step function nextFunction args nextArgs source target result sourceNext
-        run noType related argsRel stateRel ?_ (ih source.clock smaller)
-      intro body state _ env nextEnv target result next start run noType safe envRel stateRel
-      exact bodyIH body env nextEnv state target result next start run noType safe envRel stateRel
-  intro function nextFunction args nextArgs source target result sourceNext run noType related argsRel stateRel
-  exact bounded (source.clock + 1) function nextFunction args nextArgs source target result sourceNext
-    (Nat.lt_succ_self _) run noType related argsRel stateRel
 
 /-- An environment lookup preserves a pointwise relation. -/
 theorem related_lookup {α β : Type} {relation : α → β → Prop} {left : List α} {right : List β}
@@ -1362,51 +1328,6 @@ theorem doWordApp_result_related (maxApp : Nat) (op : ClosLang.WordOp) (args : L
     all_goals try (subst value; exact .number _)
     all_goals try (subst value; exact .word64 _)
 
-/-- Word primitive expressions preserve evaluation after numbering, given
-    the induction hypothesis for their argument expressions. -/
-theorem evaluate_wordOp {C F : Type} (trace : BackendCommon.Tra) (op : ClosLang.WordOp)
-    (args : List ClosLang.Exp) (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.wordOp op) args] := by
-  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
-  have argsSafe : ¬ ClosProps.containsAppSome source.maxApp args := by
-    simpa [ClosProps.containsAppSome, ClosProps.containsAppSomeExp] using safe
-  cases argsRun : evaluate args env source with
-  | mk argsResult middle =>
-    cases argsResult with
-    | err error =>
-      rw [evaluate, fixClock_evaluate, argsRun] at run
-      cases run
-      obtain ⟨targetResult, targetMiddle, targetRun, resultRel, middleRel⟩ :=
-        argsIH env nextEnv source target (.err error) middle start argsRun noType argsSafe envRel stateRel
-      cases targetResult with
-      | val values => cases error <;> simp [ResultRel] at resultRel
-      | err targetError =>
-        refine ⟨.err targetError, targetMiddle, ?_, resultRel, middleRel⟩
-        simp only [renumberList, renumber]
-        rw [evaluate, fixClock_evaluate, targetRun]
-    | val values =>
-      have argsNoType : (Result.val values : Result (List Value) Value) ≠ .err (.abort .typeError) := by simp
-      obtain ⟨targetResult, targetMiddle, targetRun, argsRel, middleRel⟩ :=
-        argsIH env nextEnv source target (.val values) middle start argsRun argsNoType argsSafe envRel stateRel
-      cases targetResult with
-      | err error => cases error <;> simp [ResultRel] at argsRel
-      | val nextValues =>
-        have same := doWordApp_related source.maxApp op (List.rel_reverse argsRel)
-        cases numeric : doWordApp op values.reverse with
-        | none =>
-          rw [evaluate, fixClock_evaluate, argsRun] at run
-          simp [doApp, applyNumeric, numeric] at run
-          exact False.elim (noType run.1.symm)
-        | some value =>
-          have valueRel := doWordApp_result_related source.maxApp op values.reverse value numeric
-          rw [evaluate, fixClock_evaluate, argsRun] at run
-          simp [doApp, applyNumeric, numeric] at run
-          obtain ⟨rfl, rfl⟩ := run
-          refine ⟨.val [value], targetMiddle, ?_, .cons valueRel .nil, middleRel⟩
-          simp only [renumberList, renumber]
-          rw [evaluate, fixClock_evaluate, targetRun]
-          simp [doApp, applyNumeric, ← same, numeric]
-
 /-- Proof-side simulation obligation for a closure primitive dispatcher. -/
 def PrimitiveSimulation {C F : Type} (op : ClosLang.Op) : Prop :=
   ∀ (args nextArgs : List Value) (source : State (Nat × C) F) (target : State C F),
@@ -1539,12 +1460,6 @@ theorem primitiveSimulation_block_cons {C F : Type} (tag : Nat) :
   simp only [doApp, applyBlock]
   exact ⟨.block tag nextArgs, target, rfl, .block tag args nextArgs argsRel, stateRel⟩
 
-/-- Block construction composes the shared primitive and argument simulations. -/
-theorem evaluate_block_cons {C F : Type} (trace : BackendCommon.Tra) (tag : Nat)
-    (args : List ClosLang.Exp) (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.blockOp (.cons tag)) args] :=
-  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH (primitiveSimulation_block_cons tag)
-
 /-- Global reads preserve missing slots and relate successful values, for
     both fixed and dynamically selected indices. -/
 theorem primitiveSimulation_global_read {C F : Type} (index : Nat) :
@@ -1628,12 +1543,6 @@ theorem primitiveSimulation_global {C F : Type} (op : ClosLang.GlobOp) :
   | globalsPtr | setGlobalsPtr =>
     intro args nextArgs source target argsRel stateRel
     simp [doApp, applyGlobal, ResultRel]
-
-/-- Global expressions preserve evaluation through numbering. -/
-theorem evaluate_globalOp {C F : Type} (trace : BackendCommon.Tra) (op : ClosLang.GlobOp)
-    (args : List ClosLang.Exp) (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.globOp op) args] :=
-  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH (primitiveSimulation_global op)
 
 /-- Testing a block's tag and length yields the same Boolean after numbering. -/
 theorem primitiveSimulation_block_tagLenEq {C F : Type} (tag length : Nat) :
@@ -2087,24 +1996,6 @@ theorem primitiveSimulation_memory_refByte {C F : Type} :
           cases second <;> simp [doApp, applyMemory, ResultRel]
       | cons head tail => simp [doApp, applyMemory, ResultRel]
 
-/-- Allocation expressions use the shared primitive and argument simulations. -/
-theorem evaluate_memory_ref {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.memOp .ref) args] :=
-  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH primitiveSimulation_memory_ref
-
-/-- Replicated value-array expressions preserve evaluation through numbering. -/
-theorem evaluate_memory_refArray {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.memOp .refArray) args] :=
-  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH primitiveSimulation_memory_refArray
-
-/-- Byte-array allocation expressions preserve evaluation through numbering. -/
-theorem evaluate_memory_refByte {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.memOp (.refByte false)) args] :=
-  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH primitiveSimulation_memory_refByte
-
 /-- Reading a value-array length observes equal lengths and the same invalid
     reference cases in related stores. -/
 theorem primitiveSimulation_memory_length {C F : Type} :
@@ -2214,24 +2105,6 @@ theorem primitiveSimulation_memory_update {C F : Type} :
             cases second <;> simp [doApp, applyMemory, ResultRel]
         | cons head tail => simp [doApp, applyMemory, ResultRel]
 
-/-- Value-array length expressions preserve evaluation through numbering. -/
-theorem evaluate_memory_length {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.memOp .length) args] :=
-  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH primitiveSimulation_memory_length
-
-/-- Indexed block and value-array reads preserve evaluation through numbering. -/
-theorem evaluate_memory_el {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.memOp .el) args] :=
-  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH primitiveSimulation_memory_el
-
-/-- Value-array updates preserve evaluation through numbering. -/
-theorem evaluate_memory_update {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.memOp .update) args] :=
-  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH primitiveSimulation_memory_update
-
 /-- Byte-array length reads agree for valid and invalid references. -/
 theorem primitiveSimulation_memory_lengthByte {C F : Type} :
     PrimitiveSimulation (C := C) (F := F) (.memOp .lengthByte) := by
@@ -2333,24 +2206,6 @@ theorem primitiveSimulation_memory_updateByte {C F : Type} :
           | number _ | word64 _ | block _ _ _ _ | byteVector _ | closure | recclosure =>
             simp [doApp, applyMemory, ResultRel]
         | cons head tail => simp [doApp, applyMemory, ResultRel]
-
-/-- Byte-array length expressions preserve evaluation through numbering. -/
-theorem evaluate_memory_lengthByte {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.memOp .lengthByte) args] :=
-  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH primitiveSimulation_memory_lengthByte
-
-/-- Byte-array read expressions preserve evaluation through numbering. -/
-theorem evaluate_memory_derefByte {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.memOp .derefByte) args] :=
-  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH primitiveSimulation_memory_derefByte
-
-/-- Byte-array write expressions preserve evaluation through numbering. -/
-theorem evaluate_memory_updateByte {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.memOp .updateByte) args] :=
-  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH primitiveSimulation_memory_updateByte
 
 /-- Numbering preserves the byte-vector decoder, including malformed lists. -/
 theorem byteVectors_related (maxApp : Nat) {left right : List Value}
@@ -2504,42 +2359,6 @@ theorem primitiveSimulation_memory_stringCmp {C F : Type} (fast : Bool) (op : Fl
           simp [doApp, applyMemory, ResultRel]
       | cons head tail => simp [doApp, applyMemory, ResultRel]
 
-/-- Byte-list decoding expressions preserve evaluation through numbering. -/
-theorem evaluate_memory_fromListByte {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.memOp .fromListByte) args] :=
-  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH primitiveSimulation_memory_fromListByte
-
-/-- Byte-vector concatenation expressions preserve evaluation. -/
-theorem evaluate_memory_concatByteVec {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.memOp .concatByteVec) args] :=
-  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH primitiveSimulation_memory_concatByteVec
-
-/-- Byte-list encoding expressions preserve evaluation. -/
-theorem evaluate_memory_toListByte {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.memOp .toListByte) args] :=
-  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH primitiveSimulation_memory_toListByte
-
-/-- Byte-vector length expressions preserve evaluation. -/
-theorem evaluate_memory_lengthByteVec {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.memOp .lengthByteVec) args] :=
-  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH primitiveSimulation_memory_lengthByteVec
-
-/-- Byte-vector index expressions preserve evaluation. -/
-theorem evaluate_memory_derefByteVec {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.memOp .derefByteVec) args] :=
-  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH primitiveSimulation_memory_derefByteVec
-
-/-- String comparison expressions preserve evaluation. -/
-theorem evaluate_memory_stringCmp {C F : Type} (trace : BackendCommon.Tra) (fast : Bool) (op : Flapjack.Opb)
-    (args : List ClosLang.Exp) (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.memOp (.stringCmp fast op)) args] :=
-  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH (primitiveSimulation_memory_stringCmp fast op)
-
 /-- Value-array bounds checks observe the same length and index in related
     stores, including invalid-reference and invalid-arity cases. -/
 theorem primitiveSimulation_memory_boundsCheckArray {C F : Type} :
@@ -2618,24 +2437,6 @@ theorem primitiveSimulation_memory_boundsCheckByte {C F : Type} (loose : Bool) :
           simp [doApp, applyMemory, ResultRel]
       | cons head tail => simp [doApp, applyMemory, ResultRel]
 
-/-- Value-array bounds-check expressions preserve evaluation. -/
-theorem evaluate_memory_boundsCheckArray {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.memOp .boundsCheckArray) args] :=
-  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH primitiveSimulation_memory_boundsCheckArray
-
-/-- Byte bounds-check expressions preserve evaluation. -/
-theorem evaluate_memory_boundsCheckByte {C F : Type} (trace : BackendCommon.Tra) (loose : Bool)
-    (args : List ClosLang.Exp) (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.memOp (.boundsCheckByte loose)) args] :=
-  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH (primitiveSimulation_memory_boundsCheckByte loose)
-
-/-- GC configuration expressions preserve evaluation. -/
-theorem evaluate_memory_configGC {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.memOp .configGC) args] :=
-  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH primitiveSimulation_memory_configGC
-
 /-- XOR updates matching byte arrays and rejects the same invalid inputs. -/
 theorem primitiveSimulation_memory_xorByte {C F : Type} :
     PrimitiveSimulation (C := C) (F := F) (.memOp .xorByte) := by
@@ -2669,12 +2470,6 @@ theorem primitiveSimulation_memory_xorByte {C F : Type} :
         | number _ | word64 _ | block _ _ _ _ | byteVector _ | closure | recclosure =>
           simp [doApp, applyMemory, ResultRel]
       | cons head tail => simp [doApp, applyMemory, ResultRel]
-
-/-- XOR byte-array expressions preserve evaluation. -/
-theorem evaluate_memory_xorByte {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.memOp .xorByte) args] :=
-  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH primitiveSimulation_memory_xorByte
 
 /-- Copying a byte slice into a new vector preserves both vector and
     byte-array inputs and reports the same invalid bounds. -/
@@ -2730,12 +2525,6 @@ theorem primitiveSimulation_memory_copyByte_new {C F : Type} :
           | number _ | word64 _ | block _ _ _ _ | closure | recclosure =>
             simp [doApp, applyMemory, ResultRel]
         | cons head tail => simp [doApp, applyMemory, ResultRel]
-
-/-- Copy-to-vector expressions preserve evaluation under numbering. -/
-theorem evaluate_memory_copyByte_new {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.memOp (.copyByte true)) args] :=
-  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH primitiveSimulation_memory_copyByte_new
 
 /-- Copying a byte vector into a related byte-array destination preserves the
     copied bytes, bounds errors and the updated store. -/
@@ -2834,12 +2623,6 @@ theorem primitiveSimulation_memory_copyByte_write {C F : Type} :
                 cases first <;> simp [doApp, applyMemory, ResultRel]
             | cons head tail => simp [doApp, applyMemory, ResultRel]
 
-/-- In-place byte-copy expressions preserve evaluation. -/
-theorem evaluate_memory_copyByte_write {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.memOp (.copyByte false)) args] :=
-  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH primitiveSimulation_memory_copyByte_write
-
 /-- Every memory operation in the proof-side dispatcher preserves the
     numbering relation. Its source correspondence remains to be reviewed. -/
 theorem primitiveSimulation_memory {C F : Type} (op : ClosLang.MemOp) :
@@ -2873,12 +2656,6 @@ theorem primitiveSimulation_memory {C F : Type} (op : ClosLang.MemOp) :
     intro args nextArgs source target argsRel stateRel
     simp [doApp, applyMemory, ResultRel]
   | configGC => exact primitiveSimulation_memory_configGC
-
-/-- Memory expressions preserve evaluation under location numbering. -/
-theorem evaluate_memoryOp {C F : Type} (trace : BackendCommon.Tra) (op : ClosLang.MemOp)
-    (args : List ClosLang.Exp) (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.memOp op) args] :=
-  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH (primitiveSimulation_memory op)
 
 /-- Thunk inspection preserves its cases and relates the stored value. -/
 def DestThunkRel (maxApp : Nat) : DestThunkResult → DestThunkResult → Prop
@@ -2997,18 +2774,6 @@ theorem primitiveSimulation_ordinary {C F : Type} (op : ClosLang.Op)
     | forceThunk => exact (notForce rfl).elim
     | allocThunk mode => exact primitiveSimulation_thunk_alloc mode
     | updateThunk mode => exact primitiveSimulation_thunk_update mode
-
-/-- Thunk allocation expressions preserve evaluation. -/
-theorem evaluate_thunk_alloc {C F : Type} (trace : BackendCommon.Tra) (mode : Flapjack.AstHOL.ThunkMode)
-    (args : List ClosLang.Exp) (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.thunkOp (.allocThunk mode)) args] :=
-  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH (primitiveSimulation_thunk_alloc mode)
-
-/-- Thunk update expressions preserve evaluation. -/
-theorem evaluate_thunk_update {C F : Type} (trace : BackendCommon.Tra) (mode : Flapjack.AstHOL.ThunkMode)
-    (args : List ClosLang.Exp) (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.thunkOp (.updateThunk mode)) args] :=
-  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH (primitiveSimulation_thunk_update mode)
 
 /-- Thunk inspection also preserves invalid-arity cases for related lists. -/
 theorem destThunk_list_related {C F : Type} (source : State (Nat × C) F) (target : State C F)
@@ -3223,18 +2988,5 @@ theorem evaluate_forceThunk_step {C F : Type} (trace : BackendCommon.Tra) (args 
                         dsimp only
                         rw [targetUpdate]
                       · simpa [ResultRel, lastMax, middleMax] using forcedRel
-
-/-- Unrestricted thunk-force case derived from its local-state step. -/
-theorem evaluate_forceThunk {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args)
-    (forceIH : EvalSimulation (C := C) (F := F) [appUnit (.var .none 0)]) :
-    EvalSimulation (C := C) (F := F) [.op trace (.thunkOp .forceThunk) args] := by
-  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
-  apply evaluate_forceThunk_step trace args env nextEnv source target result sourceNext start
-    run noType safe envRel stateRel
-  · intro env nextEnv target result next start run noType safe envRel stateRel
-    exact argsIH env nextEnv source target result next start run noType safe envRel stateRel
-  · intro state _ env nextEnv target result next start run noType safe envRel stateRel
-    exact forceIH env nextEnv state target result next start run noType safe envRel stateRel
 
 end Flapjack.Compiler.Backend.ClosNumber
