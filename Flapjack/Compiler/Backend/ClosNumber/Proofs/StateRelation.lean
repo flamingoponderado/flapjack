@@ -1,3 +1,4 @@
+import Flapjack.Misc.List
 import Flapjack.Misc.Option.Rel
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.ValueRelation
 import Flapjack.Compiler.Backend.Semantics.ClosSem.State
@@ -85,19 +86,6 @@ theorem stateRel_withGlobals {C F : Type} {source : State (Nat × C) F} {target 
     StateRel { source with globals := sourceGlobals } { target with globals := targetGlobals } := by
   rcases related with ⟨clock, ffi, maxApp, compiler, oracle, refs, globals, safe, sourceCode, targetCode⟩
   exact ⟨clock, ffi, maxApp, compiler, oracle, refs, globalsRel, safe, sourceCode, targetCode⟩
-
-/-- Updating corresponding list entries preserves a pointwise relation,
-    including the evaluator's out-of-range behavior. -/
-theorem forall₂_set {α β : Type} {relation : α → β → Prop} {left : List α} {right : List β}
-    (related : List.Forall₂ relation left right) (index : Nat) (value : α) (nextValue : β)
-    (valueRel : relation value nextValue) :
-    List.Forall₂ relation (left.set index value) (right.set index nextValue) := by
-  induction related generalizing index with
-  | nil => simp
-  | cons head tail ih =>
-    cases index with
-    | zero => exact .cons valueRel tail
-    | succ index => exact .cons head (ih index)
 
 /-- Lookup distinguishes missing entries and present entries while lifting the
     element relation through the resulting option. -/

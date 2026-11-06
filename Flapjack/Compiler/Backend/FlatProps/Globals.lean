@@ -52,6 +52,19 @@ def funGlobals : List (Flapjack.AstHOL.VarN × Flapjack.AstHOL.VarN × FlatLang.
 termination_by funs => sizeOf funs
 end
 
+/-- Global-initialization bags of appended expression lists combine by union. -/
+@[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "elist_globals_append"]
+theorem elistGlobals_append (xs ys : List FlatLang.Exp) :
+    elistGlobals (xs ++ ys) = unionGlobalBag (elistGlobals xs) (elistGlobals ys) := by
+  induction xs with
+  | nil =>
+    funext key
+    simp [elistGlobals, emptyGlobalBag, unionGlobalBag]
+  | cons x xs ih =>
+    simp only [List.cons_append, elistGlobals, ih]
+    funext key
+    simp [unionGlobalBag, Nat.add_assoc]
+
 /-- Flapjack helper: the row traversal equals HOL's mapped list traversal;
 this equality is not a separate HOL declaration. -/
 theorem rowGlobals_eq_elistGlobals (rows : List (FlatLang.Pat × FlatLang.Exp)) :
@@ -100,5 +113,12 @@ def esgcFreeRows : List (FlatLang.Pat × FlatLang.Exp) → Prop
   | (_, body) :: rest => esgcFree body ∧ esgcFreeRows rest
 termination_by rows => sizeOf rows
 end
+
+/-- The list traversal renders HOL's EVERY predicate over global-safety checks. -/
+theorem esgcFreeList_iff (xs : List FlatLang.Exp) :
+    esgcFreeList xs ↔ ∀ x ∈ xs, esgcFree x := by
+  induction xs with
+  | nil => simp [esgcFreeList]
+  | cons x xs ih => simp [esgcFreeList, ih]
 
 end Flapjack.Compiler.Backend.FlatProps

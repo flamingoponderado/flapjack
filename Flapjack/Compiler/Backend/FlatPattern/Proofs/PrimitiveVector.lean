@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.FlatProps.SimpleConversions
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveAccess
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.DynamicEvaluation
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveGlobals
@@ -23,13 +24,6 @@ theorem valueToList_related (value value' : FlatSem.Value) (values : List FlatSe
   rw [← encoded] at related
   obtain ⟨values', rfl, valuesRel⟩ := listToValue_related values value' related
   exact ⟨values', valueToList_listToValue values', valuesRel⟩
-
-/-- Constructing flat lists from related elements produces related values. -/
-theorem listToValue_pair_related {values values' : List FlatSem.Value} (related : List.Forall₂ ValueRel values values') :
-    ValueRel (FlatSem.listToValue values) (FlatSem.listToValue values') := by
-  induction related with
-  | nil => exact (valueRel_conv _ [] _).2 ⟨[], rfl, .nil⟩
-  | cons head _ ih => exact (valueRel_conv _ _ _).2 ⟨_, rfl, .cons head (.cons ih .nil)⟩
 
 /-- List-to-vector conversion preserves arbitrary successful primitive results. -/
 theorem doApp_vectorFromList_related {C F : Type} (cfg : Config) (source target sourceFinal : FlatSem.State C F)
@@ -107,7 +101,7 @@ theorem doApp_listAppend_related {C F : Type} (cfg : Config) (source target sour
             rcases run with ⟨rfl, rfl⟩
             refine ⟨target, .val (FlatSem.listToValue (xs' ++ ys')), ?_, states, .value ?_⟩
             · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, left', right']
-            · exact listToValue_pair_related (List.rel_append xsRel ysRel)
+            · exact FlatProps.simpleListToValue ValueRel simpleValueRel_valueRel _ _ (List.rel_append xsRel ysRel)
 
 /-- Checked and unsafe vector reads preserve related values and errors. -/
 theorem doApp_vectorRead_related {C F : Type} (cfg : Config) (source target sourceFinal : FlatSem.State C F)

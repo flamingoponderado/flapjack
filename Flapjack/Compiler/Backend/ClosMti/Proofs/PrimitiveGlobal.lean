@@ -1,20 +1,9 @@
+import Flapjack.Misc.List
 import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluatePrimitive
 
 /-! Global primitive operations for multi-argument introduction. -/
 namespace Flapjack.Compiler.Backend.ClosMti
 open Flapjack ClosSem SemanticPrimitivesProps
-
-/-- Replacing corresponding positions in related lists preserves their relation. -/
-theorem forall₂_set {A B : Type} {rel : A → B → Prop} {left : List A} {right : List B}
-    (related : List.Forall₂ rel left right) (index : Nat) (value : A) (nextValue : B)
-    (valueRel : rel value nextValue) :
-    List.Forall₂ rel (left.set index value) (right.set index nextValue) := by
-  induction related generalizing index with
-  | nil => simp
-  | cons head tail ih =>
-    cases index with
-    | zero => exact .cons valueRel tail
-    | succ index => exact .cons head (ih index)
 
 /-- Corresponding global lookups preserve missing and uninitialized slots. -/
 theorem stateRel_getGlobal {C F : Type} {source target : State C F}
@@ -106,7 +95,7 @@ theorem primitiveSimulation_global_set {C F : Type} (index : Nat) :
       have slots := forall₂_getElemRel globals index
       have updated : StateRel { source with globals := source.globals.set index (some value) }
           { target with globals := target.globals.set index (some nextValue) } :=
-        stateRel_withGlobals states _ _ (forall₂_set globals index _ _ head)
+        stateRel_withGlobals states _ _ (Flapjack.forall₂_set _ _ _ _ _ index ⟨head, globals⟩)
       have unitRel : ValueRel source.maxApp unitValue unitValue := .block _ [] [] .nil
       cases l : getGlobal index source.globals with
       | none => cases r : getGlobal index target.globals <;>

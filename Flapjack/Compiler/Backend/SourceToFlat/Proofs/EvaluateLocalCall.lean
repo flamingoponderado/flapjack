@@ -1,3 +1,4 @@
+import Flapjack.FiniteMap.AlistExact.Lookup
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ThunkRel
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBounded
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRelCases
@@ -159,18 +160,6 @@ theorem lookup_recursive_bindings (sourceEnv : SemEnv Value)
       simp
     · simp [List.lookup_cons, BEq.beq, eq, ih]
 
-/-- An association list has a value at exactly its listed keys. -/
-theorem lookup_key_exists {α : Type} (entries : List (VarN × α)) (name : VarN) :
-    (∃ value, entries.lookup name = some value) ↔ name ∈ entries.map Prod.fst := by
-  induction entries with
-  | nil => simp
-  | cons entry tail ih =>
-    obtain ⟨key, value⟩ := entry
-    by_cases eq : name = key
-    · subst key
-      simp
-    · simp [List.lookup_cons, BEq.beq, eq, ih]
-
 /-- Installing a binding list is namespace append with its association list. -/
 theorem nsBindList_eq_nsAppend {α : Type} (entries : List (VarN × α)) (env : Namespace ModN VarN α) :
     nsBindList entries env = nsAppend (alistToNs entries) env := by
@@ -253,7 +242,7 @@ theorem topRec_rebuilt_globalInv (genv : GlobalEnv) (baseMap : Environment) (sou
             cases found : newVars.lookup name with
             | none => rfl
             | some item =>
-              have key := (lookup_key_exists newVars name).mp ⟨item, found⟩
+              have key := (Flapjack.lookup_exists_iff_mem_keys newVars name).mp ⟨item, found⟩
               rw [names] at key
               simp only [List.map_reverse, List.mem_reverse] at key
               exact (member key).elim

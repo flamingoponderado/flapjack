@@ -1,3 +1,4 @@
+import Flapjack.Misc.List
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.EvaluateCases
 
 /-! Global lookup cases for the proof-side flat-to-closure simulation. -/
@@ -39,19 +40,6 @@ theorem evaluate_globalAlloc {C F : Type} (env : FlatSem.Environment FlatSem.Val
     ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doIntApp, allocated, updated,
     FlatSem.unitValue, ClosSem.unitValue, EvalResultRel.value (.cons (ValueRel.tuple .nil) .nil)]
 
-private theorem forall₂_set {α β : Type} {R : α → β → Prop} {left : List α} {right : List β}
-    (related : List.Forall₂ R left right) (index : Nat) (bound : index < left.length)
-    (a : α) (b : β) (head : R a b) : List.Forall₂ R (left.set index a) (right.set index b) := by
-  induction related generalizing index with
-  | nil => simp at bound
-  | cons item tail ih =>
-    cases index with
-    | zero => simpa using List.Forall₂.cons head tail
-    | succ index =>
-      apply List.Forall₂.cons item
-      apply ih
-      simpa using bound
-
 /-- Initializing corresponding empty slots preserves the global relation. -/
 theorem stateRel_initGlobal {C F : Type} (source : FlatSem.State C F) (target : ClosSem.State C F)
     (index : Nat) (value : FlatSem.Value) (targetValue : ClosSem.Value)
@@ -68,7 +56,7 @@ theorem stateRel_initGlobal {C F : Type} (source : FlatSem.State C F) (target : 
   rw [slotEq] at relation
   have targetEq : target.globals.tail[index] = none := by
     cases found : target.globals.tail[index] <;> simp_all [optionalValueRel]
-  have updated := forall₂_set slots index bound (some value) (some targetValue) related
+  have updated := Flapjack.forall₂_set _ _ _ (some value) (some targetValue) index ⟨related, slots⟩
   cases globals : target.globals with
   | nil => simp [globals] at nonempty
   | cons first rest =>

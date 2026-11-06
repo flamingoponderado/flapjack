@@ -1,0 +1,21 @@
+import Flapjack.HolRef
+import Batteries.Data.List.Basic
+
+/-! List relation results from HOL list. -/
+namespace Flapjack
+
+/-- Updating corresponding positions with related values preserves the list relation. -/
+@[hol "HOL/src/list/src/listScript.sml" "EVERY2_LUPDATE_same"]
+theorem forall₂_set {α β : Type} (relation : α → β → Prop)
+    (left : List α) (right : List β) (value : α) (nextValue : β) (index : Nat)
+    (premise : relation value nextValue ∧ List.Forall₂ relation left right) :
+    List.Forall₂ relation (left.set index value) (right.set index nextValue) := by
+  obtain ⟨replacement, related⟩ := premise
+  induction related generalizing index with
+  | nil => simp
+  | cons head tail ih =>
+    cases index with
+    | zero => simp only [List.set_cons_zero]; exact .cons replacement tail
+    | succ n => simp only [List.set_cons_succ]; exact .cons head (ih n)
+
+end Flapjack

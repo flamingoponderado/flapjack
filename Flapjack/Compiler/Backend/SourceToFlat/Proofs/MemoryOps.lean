@@ -337,7 +337,7 @@ theorem aupdate_related {C F : Type} (genv : GlobalEnv)
     simp [storeAssign, lookup', storeValueSameType]
   obtain ⟨flatRefs, flatAssigned, reserved, nextRel⟩ := stateRel_storeAssign genv sourceState flatState statesRel n
     (.varray (values.set index.toNat value)) (.varray (flatValues.set index.toNat flatValue))
-    (.varray (forall₂_set valuesRel index.toNat value flatValue valueRel)) _ assigned
+    (.varray (Flapjack.forall₂_set _ _ _ value flatValue index.toNat ⟨valueRel, valuesRel⟩)) _ assigned
   have notNegative : ¬index < 0 := Int.not_lt.mpr nonnegative
   have notTooLarge : ¬values.length ≤ index.toNat := Nat.not_le.mpr inBounds
   have flatNotTooLarge : ¬flatValues.length ≤ index.toNat := by

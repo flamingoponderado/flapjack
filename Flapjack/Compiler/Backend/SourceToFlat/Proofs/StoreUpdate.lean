@@ -1,3 +1,4 @@
+import Flapjack.Misc.List
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StateRel
 import Mathlib.Data.List.Forall2
 
@@ -5,18 +6,6 @@ import Mathlib.Data.List.Forall2
 The underlying value and state relations remain subject to HOL review. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.SemanticPrimitivesHOL
-
-/-- Flapjack infrastructure: pointwise related lists remain related after
-updating the same index with related elements. -/
-theorem forall₂_set {α β : Type} {R : α → β → Prop} {xs : List α} {ys : List β}
-    (related : List.Forall₂ R xs ys) (n : Nat) (x : α) (y : β) (replacement : R x y) :
-    List.Forall₂ R (xs.set n x) (ys.set n y) := by
-  induction related generalizing n with
-  | nil => simp
-  | cons head tail ih =>
-    cases n with
-    | zero => simp only [List.set_cons_zero]; exact .cons replacement tail
-    | succ n => simp only [List.set_cons_succ]; exact .cons head (ih n)
 
 /-- Successful source store assignment has a related flat assignment at the
 same list index. This is infrastructure over the factored value relation. -/
@@ -41,7 +30,7 @@ theorem storeAssign_related (genv : GlobalEnv)
       · simp [storeAssign, flatLookup, flatSame]
       · have sourceEq : source.set n value = source' := by simpa [storeAssign, oldLookup, same] using assigned
         rw [← sourceEq]
-        exact forall₂_set storesRel n value flatValue valueRel
+        exact Flapjack.forall₂_set _ _ _ value flatValue n ⟨valueRel, storesRel⟩
 
 /-- A successful source assignment has a flat assignment one slot later,
 preserving the reserved entry and the state relation. This is infrastructure

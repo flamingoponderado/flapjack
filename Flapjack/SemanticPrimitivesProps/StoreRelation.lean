@@ -1,3 +1,4 @@
+import Flapjack.Misc.List
 import Flapjack.SemanticPrimitivesHOL
 import Batteries.Data.List.Basic
 
@@ -30,20 +31,6 @@ theorem storeValueRel_lookup {A B : Type} {R : A → B → Prop} {left : List (S
     | succ index =>
       simp only [storeLookup, List.getElem?_cons_succ] at found ⊢
       exact ih index found
-
-/-- Replacing corresponding entries preserves the pointwise store relation.
-HOL proves this update fact inline when needed. -/
-theorem storeValueRel_set {A B : Type} {R : A → B → Prop}
-    {left : List (StoreValue A)} {right : List (StoreValue B)}
-    (related : List.Forall₂ (storeValueRel R) left right) (index : Nat)
-    (value : StoreValue A) (value' : StoreValue B) (values : storeValueRel R value value') :
-    List.Forall₂ (storeValueRel R) (left.set index value) (right.set index value') := by
-  induction related generalizing index with
-  | nil => simp
-  | cons head tail ih =>
-    cases index with
-    | zero => simpa using List.Forall₂.cons values tail
-    | succ index => simpa using List.Forall₂.cons head (ih index)
 
 /-- Store assignment makes the same type check on related entries.
 HOL performs this type comparison inline. -/
@@ -81,7 +68,7 @@ theorem storeAssign_related {A B : Type} {R : A → B → Prop}
       refine ⟨right.set index value', ?_, ?_⟩
       · simp [storeAssign, found', valid']
       · rw [← resultEq]
-        exact storeValueRel_set stores index value value' values
+        exact Flapjack.forall₂_set _ _ _ value value' index ⟨values, stores⟩
     · simp [storeAssign, found, valid] at assigned
 
 /-- Inspecting related stores at the same index preserves absence.

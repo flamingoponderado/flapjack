@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.FlatProps.PatternMatch
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.CompiledMatch
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.MatchRows
 
@@ -6,26 +7,6 @@ proof-side state/value relations remain pending HOL correspondence review. -/
 namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack Flapjack.AstHOL Flapjack.Compiler.Backend
 open Flapjack.SemanticPrimitivesHOL (Result)
-
-/-- A selected row's pattern matches with exactly the returned bindings. -/
-theorem pmatchRows_selected_match {C F E : Type} (state : FlatSem.State C F) (value : FlatSem.Value)
-    (rows : List (FlatLang.Pat × E)) (bindings : List (VarN × FlatSem.Value))
-    (pattern : FlatLang.Pat) (body : E)
-    (selected : FlatSem.pmatchRows rows state value = .match (bindings, pattern, body)) :
-    FlatSem.pmatch state pattern value [] = .match bindings := by
-  induction rows with
-  | nil => simp [FlatSem.pmatchRows] at selected
-  | cons row rows ih =>
-    obtain ⟨first, expression⟩ := row
-    cases head : FlatSem.pmatch state first value [] with
-    | typeError => simp [FlatSem.pmatchRows, head] at selected
-    | noMatch =>
-      have tail : FlatSem.pmatchRows rows state value = .match (bindings, pattern, body) := by
-        simpa [FlatSem.pmatchRows, head] using selected
-      exact ih tail
-    | «match» newBindings =>
-      cases tail : FlatSem.pmatchRows rows state value <;>
-        simp_all [FlatSem.pmatchRows]
 
 /-- If a source row matches, compiled pattern dispatch evaluates its compiled
 body under an environment related to the source's bound-variable environment.
@@ -62,8 +43,8 @@ theorem evaluate_compiled_match_branch {C F : Type} (cfg stateCfg : Config) (tra
       [compilePatRhs trace n (.varLocal trace (encNumToName n)) (pattern, compiledBody)] = (final, result) := by
     rw [targetMatch] at dispatch
     exact dispatch.symm.trans evaluated
-  have patternMatch := pmatchRows_selected_match target value' (compileMatch cfg rows).2.2
-    targetBindings pattern compiledBody targetMatch
+  have patternMatch := (FlatProps.pmatchRows_imp_pmatch (compileMatch cfg rows).2.2 target value'
+    targetBindings pattern compiledBody targetMatch).1
   have patternBound : maxDecName (FlatLang.patBindings pattern) < n - 1 := by omega
   obtain ⟨extEnv, extEval, extRelated⟩ := evaluate_compilePatRhs trace n m pattern compiledBody
     target final dispatchEnv sourceEnv targetEnv value' bindings targetBindings result branchEval patternMatch

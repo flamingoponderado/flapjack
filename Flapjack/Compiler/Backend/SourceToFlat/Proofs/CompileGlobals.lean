@@ -21,19 +21,13 @@ private theorem unionEmpty : unionGlobalBag emptyGlobalBag emptyGlobalBag = empt
 /-- Safety of one compiled expression with respect to global writes. -/
 def CompiledGlobalSafe (e : FlatLang.Exp) : Prop := esgcFree e ∧ setGlobals e = emptyGlobalBag
 
-private theorem esgcFreeList_iff (xs : List FlatLang.Exp) :
-    esgcFreeList xs ↔ ∀ x ∈ xs, esgcFree x := by
-  induction xs with
-  | nil => simp [esgcFreeList]
-  | cons x xs ih => simp [esgcFreeList, ih]
-
 private theorem reverse_safe (xs : List FlatLang.Exp) (hfree : esgcFreeList xs)
     (hbag : elistGlobals xs = emptyGlobalBag) :
     esgcFreeList xs.reverse ∧ elistGlobals xs.reverse = emptyGlobalBag := by
   constructor
-  · apply (esgcFreeList_iff _).mpr
+  · apply (FlatProps.esgcFreeList_iff _).mpr
     intro x hx
-    exact (esgcFreeList_iff xs).mp hfree x (List.mem_reverse.mp hx)
+    exact (FlatProps.esgcFreeList_iff xs).mp hfree x (List.mem_reverse.mp hx)
   · apply (elistGlobals_eq_empty _).mpr
     intro x hx
     exact (elistGlobals_eq_empty xs).mp hbag x (List.mem_reverse.mp hx)
@@ -194,13 +188,13 @@ theorem compileExp_esgcFree :
     exact compileExp_globalSafe t env e
   · intro t env es
     obtain ⟨free, bag⟩ := compileExps_globalSafe t env es
-    exact ⟨(esgcFreeList_iff _).mp free, bag⟩
+    exact ⟨(FlatProps.esgcFreeList_iff _).mp free, bag⟩
   · intro t env rows
     obtain ⟨free, bag⟩ := compilePes_globalSafe t env rows
-    exact ⟨(esgcFreeList_iff _).mp ((esgcFreeRows_iff _).mp free),
+    exact ⟨(FlatProps.esgcFreeList_iff _).mp ((esgcFreeRows_iff _).mp free),
       (rowGlobals_eq_elistGlobals _).symm.trans bag⟩
   · intro t env funs
     obtain ⟨free, bag⟩ := compileFuns_globalSafe t env funs
-    exact ⟨(esgcFreeList_iff _).mp free, (funGlobals_eq_elistGlobals _).symm.trans bag⟩
+    exact ⟨(FlatProps.esgcFreeList_iff _).mp free, (funGlobals_eq_elistGlobals _).symm.trans bag⟩
 
 end Flapjack.Compiler.Backend.SourceToFlat

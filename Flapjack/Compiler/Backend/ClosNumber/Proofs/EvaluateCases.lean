@@ -1369,7 +1369,7 @@ theorem primitiveSimulation_global_set {C F : Type} (index : Nat) :
       have slots := forall₂_getGlobal stateRel.2.2.2.2.2.2.1 index
       have updated : StateRel { source with globals := source.globals.set index (some value) }
           { target with globals := target.globals.set index (some nextValue) } :=
-        stateRel_withGlobals _ _ stateRel (forall₂_set stateRel.2.2.2.2.2.2.1 index _ _ head)
+        stateRel_withGlobals _ _ stateRel (Flapjack.forall₂_set _ _ _ _ _ index ⟨head, stateRel.2.2.2.2.2.2.1⟩)
       have unitRel : ValueRel source.maxApp unitValue unitValue := .block _ [] [] .nil
       cases left : getGlobal index source.globals with
       | none => cases right : getGlobal index target.globals <;> simp_all [optionRel, doApp, applyGlobal, ResultRel]
@@ -1928,7 +1928,7 @@ theorem primitiveSimulation_memory_update {C F : Type} :
               have lengths := refsRel.length_eq
               by_cases invalid : index < 0 ∨ index.toNat ≥ fields.length
               · simp [← lengths, invalid]
-              · have fieldsUpdated := forall₂_set refsRel index.toNat value nextValue third
+              · have fieldsUpdated := Flapjack.forall₂_set _ _ _ value nextValue index.toNat ⟨third, refsRel⟩
                 have updated := stateRel_updateRefs ptr (.valueArray (fields.set index.toNat value))
                   (.valueArray (nextFields.set index.toNat nextValue)) stateRel fieldsUpdated
                 have unitRel : ValueRel source.maxApp unitValue unitValue := .block _ [] [] .nil

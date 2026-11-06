@@ -1,27 +1,9 @@
+import Flapjack.Compiler.Backend.FlatProps.PatternMatch
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.PatternRelation
 
 /-! Simulations for ordered match rows. -/
 namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack.AstHOL Flapjack.Compiler.Backend.FlatSem
-
-/-- A successful row match returns a pattern and body from the input rows. -/
-theorem pmatchRows_match_mem {C F E : Type} (state : FlatSem.State C F) (value : Value)
-    (rows : List (FlatLang.Pat × E)) (env : List (VarN × Value)) (pattern : FlatLang.Pat) (body : E)
-    (matched : FlatSem.pmatchRows rows state value = .match (env, pattern, body)) :
-    (pattern, body) ∈ rows := by
-  induction rows with
-  | nil => simp [FlatSem.pmatchRows] at matched
-  | cons row rows ih =>
-    obtain ⟨p, e⟩ := row
-    cases head : FlatSem.pmatch state p value [] with
-    | typeError => simp [FlatSem.pmatchRows, head] at matched
-    | noMatch =>
-      have tail : FlatSem.pmatchRows rows state value = .match (env, pattern, body) := by
-        simpa [FlatSem.pmatchRows, head] using matched
-      exact List.mem_cons_of_mem _ (ih tail)
-    | «match» next =>
-      cases tail : FlatSem.pmatchRows rows state value <;>
-        simp_all [FlatSem.pmatchRows]
 
 /-- Mapping row bodies preserves the first matching pattern and its related
 bindings, provided the source row match does not raise a type error. The
@@ -171,7 +153,7 @@ theorem compileMatch_pmatchRows_index {C F : Type} (cfg stateCfg : Config) (n : 
       aLookupRel (fun key => decNameToNum key < n) ValueRel env env' ∧
       FlatSem.pmatchRows (compileMatch cfg rows).2.2 target value' =
         .match (env', pattern, (compileExp cfg body).2.2) := by
-  obtain ⟨i, index⟩ := List.mem_iff_getElem?.1 (pmatchRows_match_mem source value rows env pattern body matched)
+  obtain ⟨i, index⟩ := List.mem_iff_getElem?.1 ((FlatProps.pmatchRows_imp_pmatch rows source value env pattern body matched).2)
   have sim := compileMatch_pmatchRows_related cfg stateCfg n source target value value' states values rows
   simp only [matched] at sim
   obtain ⟨env', envs, targetMatch⟩ := sim

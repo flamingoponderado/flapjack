@@ -117,12 +117,6 @@ theorem compileExp_safe (m : List (Option MlString)) (exp : FlatLang.Exp) :
     simp only [FlatProps.esgcFreeList] at safe
     simp [compileExps, ClosProps.esgcFreeList, ihe noMat.1 safe.1, ihes noMat.2 safe.2]
 
-private theorem flatSafeList_iff (xs : List FlatLang.Exp) :
-    FlatProps.esgcFreeList xs ↔ ∀ e ∈ xs, FlatProps.esgcFree e := by
-  induction xs with
-  | nil => simp [FlatProps.esgcFreeList]
-  | cons x xs ih => simp [FlatProps.esgcFreeList, ih]
-
 private theorem noMatList_iff (xs : List FlatLang.Exp) :
     FlatProps.noMatList xs = true ↔ ∀ e ∈ xs, FlatProps.noMat e = true := by
   induction xs with
@@ -146,7 +140,7 @@ theorem compile_esgcFree (m : List (Option MlString)) (xs : List FlatLang.Exp)
     (premises : (∀ e ∈ xs, FlatProps.esgcFree e) ∧ (∀ e ∈ xs, FlatProps.noMat e = true)) :
     ∀ e ∈ compile m xs, ClosProps.esgcFree e := by
   apply (ClosProps.esgcFreeList_iff _).mp
-  exact compileExps_safe m xs ((noMatList_iff xs).mpr premises.2) ((flatSafeList_iff xs).mpr premises.1)
+  exact compileExps_safe m xs ((noMatList_iff xs).mpr premises.2) ((FlatProps.esgcFreeList_iff xs).mpr premises.1)
 
 /-- Compiling match-free, closure-safe declarations preserves closure safety. -/
 @[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "compile_decs_esgc_free"]

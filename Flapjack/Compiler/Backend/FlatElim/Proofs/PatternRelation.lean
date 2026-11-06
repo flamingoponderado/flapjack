@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.FlatProps.PatternMatch
 import Flapjack.Compiler.Backend.FlatElim.Proofs.StateRelation
 import Flapjack.Compiler.Backend.Semantics.FlatSem.PatternMatch
 
@@ -418,32 +419,6 @@ theorem pmatch_not_has_Eval {C F : Type} :
       bindingsNoEval result) := by
   exact ⟨fun state => (pmatchNoEval_aux state).1, fun state => (pmatchNoEval_aux state).2⟩
 
-/-- A selected row's bindings come from matching that row's pattern. -/
-theorem pmatchRows_selected_match {C F : Type} (rows : List (FlatLang.Pat × FlatLang.Exp))
-    (state : FlatSem.State C F) (value : FlatSem.Value) (bindings : List (VarN × FlatSem.Value))
-    (pattern : FlatLang.Pat) (body : FlatLang.Exp)
-    (selected : FlatSem.pmatchRows rows state value = .match (bindings, pattern, body)) :
-    FlatSem.pmatch state pattern value [] = .match bindings := by
-  induction rows with
-  | nil => simp [FlatSem.pmatchRows] at selected
-  | cons row rest ih =>
-    obtain ⟨p, e⟩ := row
-    cases found : FlatSem.pmatch state p value [] with
-    | typeError => simp [FlatSem.pmatchRows, found] at selected
-    | noMatch =>
-      exact ih (by simpa [FlatSem.pmatchRows, found] using selected)
-    | «match» first =>
-      cases tail : FlatSem.pmatchRows rest state value with
-      | typeError => simp [FlatSem.pmatchRows, found, tail] at selected
-      | noMatch =>
-        simp [FlatSem.pmatchRows, found, tail] at selected
-        rcases selected with ⟨rfl, rfl, rfl⟩
-        exact found
-      | «match» tailResult =>
-        simp [FlatSem.pmatchRows, found, tail] at selected
-        rcases selected with ⟨rfl, rfl, rfl⟩
-        exact found
-
 /-- The selected row's environment satisfies both invariants needed by the
 flat-elimination evaluation simulation. This combines the original matching
 lemmas with the row-selection definition. -/
@@ -455,7 +430,7 @@ theorem pmatchRows_selected_invariants {C F : Type} (rows : List (FlatLang.Pat �
     (valueReachable : globalsWithin (findValueGlobals value) reachable)
     (storeReachable : globalsWithin (findRefsGlobals state.refs) reachable) :
     bindingsNoEval bindings ∧ bindingsWithin bindings reachable := by
-  have matched := pmatchRows_selected_match rows state value bindings pattern body selected
+  have matched := (FlatProps.pmatchRows_imp_pmatch rows state value bindings pattern body selected).1
   constructor
   · exact (pmatch_not_has_Eval.1 state pattern value [] bindings matched valueSafe storeSafe
       (by simp [bindingsNoEval]))

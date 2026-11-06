@@ -82,6 +82,7 @@ max_add_le=MAX (i :num) (j :num) + (k :num) ≤ (l :num) ⇔ i + k ≤ l ∧ j +
 environment_relation_mono=env_rel (i :num) (env1 :v environment) (env2 :v environment) ∧ (j :num) ≤ i ⇒ env_rel j env1 env2
 environment_relation_lookup=env_rel (N :num) (env1 :v environment) (env2 :v environment) ∧ dec_name_to_num (n :mlstring) < N ⇒ OPTREL v_rel (ALOOKUP env1.v n) (ALOOKUP env2.v n)
 list_relation_replicate=LIST_REL (P :α -> β -> bool) (REPLICATE (n :num) (x :α)) (REPLICATE n (y :β)) ⇔ (0 :num) < n ⇒ P x y
+list_relation_update=∀(P :α -> β -> bool) (l1 :α list) (l2 :β list) (v1 :α) (v2 :β) (n :num). P v1 v2 ∧ LIST_REL P l1 l2 ⇒ LIST_REL P l1❲n ↦ v1❳ l2❲n ↦ v2❳
 alookup_map_3=(∀(x :α # β). MEM x (xs :(α # β) list) ⇒ FST ((f :α # β -> α # γ) x) = FST x) ⇒ ALOOKUP (MAP f xs) (x :α) = OPTION_MAP (λ(y :β). SND (f (x,y))) (ALOOKUP xs x)
 lookup_map_same=(∀(x :α). MEM x (xs :α list) ⇒ FST ((f :α -> β # γ) x) = FST ((g :α -> β # δ) x) ∧ ((P :β -> bool) (FST (g x)) ⇒ (R :γ -> δ -> bool) (SND (f x)) (SND (g x)))) ⇒ ALOOKUP_rel P R (MAP f xs) (MAP g xs)
 do_opapp=(do_opapp (vs1 :v list) :(v environment # exp) option) = SOME ((env1 :v environment),(exp :exp)) ∧ LIST_REL v_rel vs1 (vs2 :v list) ⇒ ∃(i :num) (sg :bool) (exp' :exp) (env2 :v environment) (cfg :config). compile_exp cfg exp = (i,sg,exp') ∧ env_rel (i + (1 :num)) env1 env2 ∧ (do_opapp vs2 :(v environment # exp) option) = SOME (env2,exp')
@@ -98,6 +99,9 @@ simple_equality=∀(x1 :v) (y1 :v) (x2 :v) (y2 :v) (b :bool). simple_val_rel (vr
 simple_store_assignment=simple_state_rel (vr :v -> v -> bool) (sr :(α, β) state -> (γ, β) state -> bool) ∧ store_assign (lnum :num) (x :v store_v) (s :(α, β) state).refs = SOME (srefs' :v store_v list) ∧ sr s (t :(γ, β) state) ∧ sv_rel vr x (y :v store_v) ⇒ ∃(trefs' :v store_v list). store_assign lnum y t.refs = SOME trefs' ∧ sr (s with refs := srefs') (t with refs := trefs')
 simple_store_allocation=simple_state_rel (vr :v -> v -> bool) (sr :(α, β) state -> (γ, β) state -> bool) ∧ store_alloc (x :v store_v) (s :(α, β) state).refs = ((srefs' :v store_v list),(lnum :num)) ∧ sr s (t :(γ, β) state) ∧ sv_rel vr x (y :v store_v) ⇒ ∃(trefs' :v store_v list). store_alloc y t.refs = (trefs',lnum) ∧ sr (s with refs := srefs') (t with refs := trefs')
 simple_store_lookup=simple_state_rel (vr :v -> v -> bool) (sr :(α, β) state -> (γ, β) state -> bool) ∧ store_lookup (lnum :num) (s :(α, β) state).refs = SOME (x :v store_v) ∧ sr s (t :(γ, β) state) ⇒ ∃(y :v store_v). store_lookup lnum t.refs = SOME y ∧ sv_rel vr x y
+simple_list_to_value=simple_val_rel (vr :v -> v -> bool) ⇒ ∀(x :v list) (y :v list). LIST_REL vr x y ⇒ vr (list_to_v x) (list_to_v y)
+simple_values_to_string=simple_val_rel (vr :v -> v -> bool) ⇒ ∀(vs :v list) (ws :v list) (str :mlstring). LIST_REL vr vs ws ∧ vs_to_string vs = SOME str ⇒ vs_to_string ws = SOME str
+elist_globals_append=elist_globals ((xs :exp list) ++ (ys :exp list)) = elist_globals xs ⊎ elist_globals ys
 basic_nonclosure=simple_basic_val_rel (x :v) (y :v) ⇒ ¬isClosure x ∧ ¬isClosure y
 simple_value_relation=simple_val_rel v_rel
 simple_state_relation=simple_state_rel v_rel (state_rel (cfg :config) :(α, β) state -> (α, β) state -> bool)

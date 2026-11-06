@@ -125304,5 +125304,45 @@
   "lean_name": "simpleStateRel_storeLookup",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared the HOL source and typed simple_store_lookup capture: the original lookup and state premises and existential related target entry are retained. Source and target compiler-state types are independent and their FFI type is shared; conjunction premises are curried."
+},
+{
+  "hol_path": "HOL/src/list/src/listScript.sml",
+  "hol_name": "EVERY2_LUPDATE_same",
+  "lean_path": "Flapjack/Misc/List.lean",
+  "lean_name": "forall₂_set",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the HOL source and typed list_relation_update capture: both element types remain independent, the original conjunction of replacement and list relations and the complete conclusion are retained. HOL LUPDATE and Lean List.set have identical out-of-range behavior, with argument order adjusted."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "elist_globals_append",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/Globals.lean",
+  "lean_name": "elistGlobals_append",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the HOL source and typed elist_globals_append capture: both expression lists and the equality for their concatenated global bags are retained without premises. The reviewed GlobalBag is HOL's num-to-num bag, with unionGlobalBag implementing BAG_UNION pointwise."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "simple_v_rel_list_to_v",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/SimpleConversions.lean",
+  "lean_name": "simpleListToValue",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source and typed simple_list_to_value capture: the arbitrary simple value relation, independent related lists, original relation premise, and relation between both encoded lists are preserved. The simpleValueRel premise is the original HOL assumption; listToValue is the reviewed flat list encoding."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "simple_vs_to_string_v_rel",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/SimpleConversions.lean",
+  "lean_name": "simpleValuesToString",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the HOL source and typed simple_values_to_string capture: arbitrary simple relation, related lists and successful source result imply the same target MlString. The simpleValueRel assumption is the original premise; the reviewed flat valuesToString uses the exact MlString byte carrier."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "pmatch_rows_IMP_pmatch",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/PatternMatch.lean",
+  "lean_name": "pmatchRows_imp_pmatch",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source and typed flat_selected_pattern_match capture: the row-body payload, compiler state and FFI state types remain independent. The single successful row-scan premise yields both original conclusions: matching the selected pattern from empty bindings and membership of the selected pattern/body pair in the original rows."
 }
 ]

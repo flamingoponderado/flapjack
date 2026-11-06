@@ -147,7 +147,7 @@ theorem primitiveSimulation_memory_update {C F : Type} :
                     have lengths := rel.length_eq
                     by_cases invalid : index < 0 ∨ index.toNat ≥ fields.length
                     · simp [doApp, applyMemory, l, r, ← lengths, invalid, excRel]
-                    · have fieldsUpdated := forall₂_set rel index.toNat value nextValue third
+                    · have fieldsUpdated := Flapjack.forall₂_set _ _ _ value nextValue index.toNat ⟨third, rel⟩
                       have updated := stateRel_updateRefs states ptr (.valueArray (fields.set index.toNat value))
                         (.valueArray (nextFields.set index.toNat nextValue)) (.valueArray _ _ fieldsUpdated)
                       have unitRel : ValueRel source.maxApp unitValue unitValue := .block _ [] [] .nil

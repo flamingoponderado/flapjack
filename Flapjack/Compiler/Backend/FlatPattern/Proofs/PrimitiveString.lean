@@ -122,7 +122,7 @@ theorem doApp_stringExplode_related {C F : Type} (cfg : Config) (source target s
           rcases run with ⟨rfl, rfl⟩
           refine ⟨target, .val (FlatSem.listToValue (string.explode.map (.litv ∘ Lit.char))), ?_, states, .value ?_⟩
           · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData]
-          · apply listToValue_pair_related
+          · apply FlatProps.simpleListToValue ValueRel simpleValueRel_valueRel
             simpa [List.map_map, Function.comp_def] using literalValues_related (string.explode.map Lit.char)
         | intLit _ | word8 _ | word64 _ | char _ | float64 _ =>
           simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at run
@@ -193,27 +193,6 @@ theorem doApp_stringSub_related {C F : Type} (cfg : Config) (source target sourc
         | conv _ _ | loc _ _ | vectorv _ | closure _ _ _ | recclosure _ _ _ =>
           simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at run
 
-/-- Concatenating related lists of strings returns the same byte string. -/
-theorem valuesToString_related {values values' : List FlatSem.Value} (related : List.Forall₂ ValueRel values values')
-    (result : Flapjack.Basis.Pure.MlString.MlString) (run : FlatSem.valuesToString values = some result) :
-    FlatSem.valuesToString values' = some result := by
-  induction related generalizing result with
-  | nil => simpa [FlatSem.valuesToString] using run
-  | @cons value value' tail tail' valueRel tailRel ih =>
-    cases value with
-    | litv literal =>
-      have eq := (valueRel_lit literal value').1 valueRel
-      subst value'
-      cases literal with
-      | strLit string =>
-        cases tailRun : FlatSem.valuesToString tail with
-        | none => simp [FlatSem.valuesToString, tailRun] at run
-        | some rest =>
-          have targetTail := ih rest tailRun
-          simpa [FlatSem.valuesToString, tailRun, targetTail] using run
-      | intLit _ | word8 _ | word64 _ | char _ | float64 _ => simp [FlatSem.valuesToString] at run
-    | conv _ _ | loc _ _ | vectorv _ | closure _ _ _ | recclosure _ _ _ => simp [FlatSem.valuesToString] at run
-
 /-- String concatenation preserves arbitrary successful primitive results. -/
 theorem doApp_stringConcat_related {C F : Type} (cfg : Config) (source target sourceFinal : FlatSem.State C F)
     (values values' : List FlatSem.Value) (result : Result FlatSem.Value FlatSem.Value)
@@ -234,7 +213,7 @@ theorem doApp_stringConcat_related {C F : Type} (cfg : Config) (source target so
         | none => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, decoded, concatenated] at run
         | some string =>
           obtain ⟨items', decoded', itemsRel⟩ := valueToList_related value value' items valueRel decoded
-          have concatenated' := valuesToString_related itemsRel string concatenated
+          have concatenated' := FlatProps.simpleValuesToString ValueRel simpleValueRel_valueRel _ _ string itemsRel concatenated
           simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, decoded, concatenated] at run
           rcases run with ⟨rfl, rfl⟩
           exact ⟨target, .val (.litv (.strLit string)),

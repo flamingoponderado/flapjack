@@ -1,3 +1,4 @@
+import Flapjack.FiniteMap.AlistExact.Lookup
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateDlet
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateEmptyDeclarations
 
@@ -129,17 +130,6 @@ theorem dletrec_sourceEnv (sourceEnv : SemEnv Value) (funs : List (VarN × VarN 
       rfl
   exact shape funs
 
-private theorem lookup_exists_iff_key_mem {α : Type} (entries : List (VarN × α)) (name : VarN) :
-    (∃ value, entries.lookup name = some value) ↔ name ∈ entries.map Prod.fst := by
-  induction entries with
-  | nil => simp
-  | cons entry entries ih =>
-    obtain ⟨key, value⟩ := entry
-    by_cases equal : name = key
-    · subst key
-      simp
-    · simp [List.lookup_cons, BEq.beq, equal, ih]
-
 private theorem allocDefs_keys (names : List VarN) (n base : Nat) :
     (allocDefs n base names).map Prod.fst = names := by
   induction names generalizing n base with
@@ -160,7 +150,7 @@ theorem dletrec_envDomainEq (env : Environment) (sourceEnv : SemEnv Value) (trac
     cases id with
     | short name =>
       simp only [nsDom, alistToNs, nsLookup]
-      rw [lookup_exists_iff_key_mem, lookup_exists_iff_key_mem, allocDefs_keys]
+      rw [Flapjack.lookup_exists_iff_mem_keys, Flapjack.lookup_exists_iff_mem_keys, allocDefs_keys]
       simp [List.map_map, Function.comp_def]
     | long moduleName id => simp [nsDom, alistToNs, nsLookup]
   · funext path

@@ -52,7 +52,7 @@ theorem doApp_globalInit_related {C F : Type} (cfg : Config) (source target sour
             refine ⟨{ target with globals := target.globals.set index (some value') }, .val FlatSem.unitValue, ?_, ?_, .value ?_⟩
             · simp [FlatSem.doApp, FlatSem.doAppFlat, found']
             · exact ⟨states.1, states.2.1, states.2.2.1,
-                forall₂_set states.2.2.2.1 index (show optionRel ValueRel (some value) (some value') from values), states.2.2.2.2⟩
+                Flapjack.forall₂_set _ _ _ _ _ index ⟨(show optionRel ValueRel (some value) (some value') from values), states.2.2.2.1⟩, states.2.2.2.2⟩
             · exact (valueRel_conv none [] _).2 ⟨[], rfl, .nil⟩
 
 /-- A successful global lookup finds a related value in the target state. -/

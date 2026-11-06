@@ -87,12 +87,6 @@ decreasing_by
     | (have positive : 0 < sizeOf d2 := by cases d2 <;> simp <;> omega
        omega)
 
-private theorem esgcFreeList_iff (xs : List FlatLang.Exp) :
-    esgcFreeList xs ↔ ∀ x ∈ xs, esgcFree x := by
-  induction xs with
-  | nil => simp [esgcFreeList]
-  | cons x xs ih => simp [esgcFreeList, ih]
-
 /-- The emitted declarations do not initialize globals inside functions. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "compile_decs_esgc_free"]
 theorem compileDecs_esgcFree (t : List MlString) (n : Nat) (next : NextIndices)
@@ -103,7 +97,7 @@ theorem compileDecs_esgcFree (t : List MlString) (n : Nat) (next : NextIndices)
     ∀ e ∈ code, esgcFree e := by
   have h := compileDecs_esgcList t n next env envs ds
   rw [compiled] at h
-  exact (esgcFreeList_iff code).mp h
+  exact (FlatProps.esgcFreeList_iff code).mp h
 
 private theorem compileProg_esgcList (c : Config) (p : List Dec) :
     esgcFreeList (compileProg c p).2 := by
@@ -122,7 +116,7 @@ theorem compileProg_esgcFree (c : Config) (p : List Dec) (c1 : Config)
     ∀ e ∈ p1, esgcFree e := by
   have h := compileProg_esgcList c p
   rw [compiled] at h
-  exact (esgcFreeList_iff p1).mp h
+  exact (FlatProps.esgcFreeList_iff p1).mp h
 
 /-- Incremental compilation also keeps global initialization outside functions. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "inc_compile_prog_esgc_free"]
@@ -134,7 +128,7 @@ theorem incCompileProg_esgcFree (envId : Nat × Nat) (c : Config) (p : List Dec)
   generalize hc : compileDecs [] 1 c.next env envs p = result
   obtain ⟨n', next', env', envs', code⟩ := result
   simp only [hc] at h
-  apply (esgcFreeList_iff _).mp
+  apply (FlatProps.esgcFreeList_iff _).mp
   simpa [incCompileProg, env, envs, hc, esgcFreeList, esgcFreeList_append,
     esgcFree, globAlloc, storeEnvId, envIdTuple] using h
 
