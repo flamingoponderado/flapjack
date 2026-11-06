@@ -111449,6 +111449,62 @@
     "reviewer": "Compared the source and typed local HOL replay in pattern_exh_steps_probe.out: membership in the filtered list is equivalent to membership in both input lists for an unrestricted element type. The Lean theorem uses the reviewed polymorphic HOL-shaped operation and has no equality-instance hypothesis."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Proofs/Soundness.lean",
+    "lean_name": "mem_tagCtors",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "MEM_tag_ctors",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the source and typed local HOL replay in pattern_exh_steps_probe.out: membership of TagC t a corresponds exactly to membership of (t,a) in the sibling list."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Proofs/Soundness.lean",
+    "lean_name": "specMat_mem_specMats",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "MEM_spec_mats",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the source and typed local HOL replay in pattern_exh_steps_probe.out: each constructor member contributes its specialized matrix."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Proofs/Soundness.lean",
+    "lean_name": "mem_addHead",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "MEM_add_head",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the source and typed local HOL replay in pattern_exh_steps_probe.out: row membership is witnessed by an input row prefixed with the given element, for arbitrary element type."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Proofs/Soundness.lean",
+    "lean_name": "mem_mkProds",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "MEM_mk_prods",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the source and typed local HOL replay in pattern_exh_steps_probe.out: product-row membership is witnessed by an element and a row from the respective inputs, for arbitrary element type."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Proofs/Soundness.lean",
+    "lean_name": "mem_mkRefs",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "MEM_mk_refs",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the source and typed local HOL replay in pattern_exh_steps_probe.out: reference-pattern membership is witnessed by an original pattern."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Proofs/Soundness.lean",
+    "lean_name": "mem_mkConses",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "MEM_mk_conses",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the source and typed local HOL replay in pattern_exh_steps_probe.out: constructor-pattern membership is witnessed by an original pattern row."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Proofs/Soundness.lean",
+    "lean_name": "mem_mkRows",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "MEM_mk_rows",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the source and typed local HOL replay in pattern_exh_steps_probe.out: singleton-row membership is witnessed by an original list element, for arbitrary element type."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/PatternExh/Exhaustive.lean",
     "lean_name": "exhRows",
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",

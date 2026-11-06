@@ -150,3 +150,32 @@ val mem_ctor_keep_replay = prove (
   ``!xs ys x. MEM x (pattern_exh$ctor_keep xs ys) <=> MEM x xs /\ MEM x ys``,
   Induct >> fs [pattern_exhTheory.ctor_keep_def] >> rw [] >> metis_tac []);
 val _ = show_local "mem_ctor_keep=" mem_ctor_keep_replay;
+val mem_tag_ctors_replay = prove (
+  ``!sibs t a. MEM (pattern_exh$TagC t a) (pattern_exh$tag_ctors sibs) <=> MEM (t,a) sibs``,
+  Induct >> fs [pattern_exhTheory.tag_ctors_def, pairTheory.FORALL_PROD] >> metis_tac []);
+val _ = show_local "mem_tag_ctors=" mem_tag_ctors_replay;
+val mem_spec_mats_replay = prove (
+  ``!cs c rows. MEM c cs ==> MEM (pattern_exh$spec_mat c rows) (pattern_exh$spec_mats cs rows)``,
+  Induct >> fs [pattern_exhTheory.spec_mats_def] >> metis_tac []);
+val _ = show_local "mem_spec_mats=" mem_spec_mats_replay;
+val mem_add_head_replay = prove (
+  ``!yss x ys. MEM ys (pattern_exh$add_head x yss) <=> ?zs. MEM zs yss /\ ys = x::zs``,
+  Induct >> fs [pattern_exhTheory.add_head_def] >> metis_tac []);
+val _ = show_local "mem_add_head=" mem_add_head_replay;
+val mem_mk_prods_replay = prove (
+  ``!xs yss zs. MEM zs (pattern_exh$mk_prods xs yss) <=>
+    ?x ys. MEM x xs /\ MEM ys yss /\ zs = x::ys``,
+  Induct >> fs [pattern_exhTheory.mk_prods_def, mem_add_head_replay] >> metis_tac []);
+val _ = show_local "mem_mk_prods=" mem_mk_prods_replay;
+val mem_mk_refs_replay = prove (
+  ``!ps q. MEM q (pattern_exh$mk_refs ps) <=> ?p. MEM p ps /\ q = pattern_semantics$Ref p``,
+  Induct >> fs [pattern_exhTheory.mk_refs_def] >> metis_tac []);
+val _ = show_local "mem_mk_refs=" mem_mk_refs_replay;
+val mem_mk_conses_replay = prove (
+  ``!pss t q. MEM q (pattern_exh$mk_conses t pss) <=> ?ps. MEM ps pss /\ q = pattern_semantics$Cons t ps``,
+  Induct >> fs [pattern_exhTheory.mk_conses_def] >> metis_tac []);
+val _ = show_local "mem_mk_conses=" mem_mk_conses_replay;
+val mem_mk_rows_replay = prove (
+  ``!ps r. MEM r (pattern_exh$mk_rows ps) <=> ?p. MEM p ps /\ r = [p]``,
+  Induct >> fs [pattern_exhTheory.mk_rows_def] >> metis_tac []);
+val _ = show_local "mem_mk_rows=" mem_mk_rows_replay;

@@ -200,6 +200,7 @@ theorem defaultMat_member (refs : HolFiniteMapExact Nat Term) (value : Term) (va
 
 /-- Rows generated for a list of constructors contain each corresponding
 specialized matrix. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "MEM_spec_mats"]
 theorem specMat_mem_specMats (constructors : List Ctor) (constructor : Ctor)
     (matrix : List (List Pat)) (member : constructor ∈ constructors) :
     specMat constructor matrix ∈ specMats constructors matrix := by
@@ -361,6 +362,7 @@ theorem specMat_member (refs : HolFiniteMapExact Nat Term) (value : Term) (value
       exact ⟨original, List.mem_cons_of_mem _ inRest, result⟩
 
 /-- Tagged constructor membership corresponds to sibling-pair membership. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "MEM_tag_ctors"]
 theorem mem_tagCtors (siblings : List (Nat × Nat)) (tag arity : Nat) :
     Ctor.tagC tag arity ∈ tagCtors siblings ↔ (tag, arity) ∈ siblings := by
   induction siblings with
@@ -556,6 +558,7 @@ theorem exhMatrix_sound (matrix : List (List Pat)) :
     · exact ihRest matrix member refs values both.2 safe
 
 /-- Prefixing rows preserves their membership witnesses. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "MEM_add_head"]
 theorem mem_addHead {α : Type} (item : α) (rows : List (List α)) (row : List α) :
     row ∈ addHead item rows ↔ ∃ rest ∈ rows, row = item :: rest := by
   induction rows with
@@ -563,13 +566,15 @@ theorem mem_addHead {α : Type} (item : α) (rows : List (List α)) (row : List 
   | cons first rest ih => simp [addHead, ih, eq_comm]
 
 /-- Membership in a Cartesian product gives one choice from each input. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "MEM_mk_prods"]
 theorem mem_mkProds {α : Type} (items : List α) (rows : List (List α)) (row : List α) :
-    row ∈ mkProds items rows ↔ ∃ item ∈ items, ∃ rest ∈ rows, row = item :: rest := by
+    row ∈ mkProds items rows ↔ ∃ item rest, item ∈ items ∧ rest ∈ rows ∧ row = item :: rest := by
   induction items with
   | nil => simp [mkProds]
   | cons first rest ih => simp [mkProds, mem_addHead, ih, eq_comm]
 
 /-- Expanded reference patterns retain their original alternatives. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "MEM_mk_refs"]
 theorem mem_mkRefs (patterns : List Pat) (pattern : Pat) :
     pattern ∈ mkRefs patterns ↔ ∃ original ∈ patterns, pattern = .ref original := by
   induction patterns with
@@ -577,6 +582,7 @@ theorem mem_mkRefs (patterns : List Pat) (pattern : Pat) :
   | cons first rest ih => simp [mkRefs, ih, eq_comm]
 
 /-- Expanded constructor patterns retain their argument rows. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "MEM_mk_conses"]
 theorem mem_mkConses (info : Option (Nat × Option (List (Nat × Nat))))
     (rows : List (List Pat)) (pattern : Pat) :
     pattern ∈ mkConses info rows ↔ ∃ original ∈ rows, pattern = .cons info original := by
@@ -584,10 +590,11 @@ theorem mem_mkConses (info : Option (Nat × Option (List (Nat × Nat))))
   | nil => simp [mkConses]
   | cons first rest ih => simp [mkConses, ih, eq_comm]
 
-/-- Expanded one-column matrix rows retain their original pattern. -/
-theorem mem_mkRows (patterns : List Pat) (row : List Pat) :
-    row ∈ mkRows patterns ↔ ∃ original ∈ patterns, row = [original] := by
-  induction patterns with
+/-- Singleton rows retain exactly the original list elements. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "MEM_mk_rows"]
+theorem mem_mkRows {α : Type} (items : List α) (row : List α) :
+    row ∈ mkRows items ↔ ∃ original ∈ items, row = [original] := by
+  induction items with
   | nil => simp [mkRows]
   | cons first rest ih => simp [mkRows, ih, eq_comm]
 
@@ -598,7 +605,7 @@ theorem expandList_length (patterns row : List Pat) (member : row ∈ expandList
   | nil => simp [expandList] at member; subst row; rfl
   | cons first rest ih =>
     simp only [expandList, mem_mkProds] at member
-    obtain ⟨item, _, tail, tailMember, rfl⟩ := member
+    obtain ⟨item, tail, _, tailMember, rfl⟩ := member
     simp [ih tail tailMember]
 
 mutual
@@ -675,7 +682,7 @@ theorem expandList_sound (patterns expanded : List Pat) (refs : HolFiniteMapExac
   | nil => simp [expandList] at member; subst expanded; simp [safe]
   | cons first rest =>
     simp only [expandList, mem_mkProds] at member
-    obtain ⟨child, childMember, tail, tailMember, rfl⟩ := member
+    obtain ⟨child, tail, childMember, tailMember, rfl⟩ := member
     cases values with
     | nil => simp [pmatchList] at safe
     | cons value values =>
