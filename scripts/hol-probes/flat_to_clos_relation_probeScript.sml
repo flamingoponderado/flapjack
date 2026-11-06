@@ -13,6 +13,25 @@ val _ = (print "copy_aw8_typed="; Lib.with_flag (Globals.show_types,true) print_
 val _ = (print "rules_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl v_rel_rules); print "\n");
 val _ = (print "induction_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl v_rel_ind); print "\n");
 val _ = (print "cases_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl v_rel_cases); print "\n");
+(* Typed replay of the local environment extension lemmas. *)
+val env_cons_upd_replay = prove
+  (``env_rel (env with v updated_by f) m db /\ v_rel v1 v2 ==>
+     env_rel (env with v updated_by (\xs. (n,v1) :: f xs)) (SOME n :: m) (v2 :: db)``,
+   fs [env_rel_def, indexedListsTheory.findi_def, GSYM arithmeticTheory.ADD1] >>
+   rw [] >> fs [] >> rw [] >> fs []);
+val env_cons_replay = prove
+  (``env_rel (env with <| v := xs |>) m db /\ v_rel v1 v2 ==>
+     env_rel (env with <| v := (n,v1) :: xs |>) (SOME n :: m) (v2 :: db)``,
+   simp [combinTheory.K_DEF, env_cons_upd_replay]);
+val env_append_replay = prove
+  (``!name_prefix prefix db_prefix env m db.
+      env_rel env m db /\ LIST_REL v_rel (MAP SND prefix) db_prefix /\
+      name_prefix = MAP (SOME o FST) prefix ==>
+      env_rel (env1 with <| v := prefix ++ env.v |>) (name_prefix ++ m) (db_prefix ++ db)``,
+   Induct >> fs [] >- (rw [env_rel_def]) >>
+   Cases_on `prefix` >> fs [PULL_EXISTS] >> rw [] >>
+   PairCases_on `h` >> fs [] >> match_mp_tac env_cons_replay >> fs []);
+val _ = (print "env_rel_append_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl env_append_replay); print "\n");
 (* Typed replay of find_recfun_EL[local], using its original induction proof. *)
 val find_recfun_el_replay = prove
   (``!(l0 : (mlstring # 'a # 'b) list) n.

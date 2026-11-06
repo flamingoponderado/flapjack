@@ -121,11 +121,11 @@ theorem envRel_rec (funs : List (VarN × VarN × FlatLang.Exp))
         (fun i => ClosSem.Value.recclosure none [] values
           (compileFuns (funs.map (fun f => some f.1) ++ names) funs) i) ++ values) := by
   have prefixRel := recClosureList_related funs env names values environments distinct safe
-  have extended := envRel_append
+  have extended := envRel_append (env1 := env)
     (entries := funs.map (fun f => (f.1, FlatSem.Value.recclosure env funs f.1)))
     (targets := (List.range funs.length).map (fun i => ClosSem.Value.recclosure none [] values
       (compileFuns (funs.map (fun f => some f.1) ++ names) funs) i))
-    environments (by simpa [List.map_map] using prefixRel)
-  simpa [buildRecEnv_eq_map, compileFuns_length, List.map_map, Function.comp_def] using extended
+    environments (by simpa [List.map_map] using prefixRel) rfl
+  simpa [replaceEnvValues, buildRecEnv_eq_map, compileFuns_length, List.map_map, Function.comp_def] using extended
 
 end Flapjack.Compiler.Backend.FlatToClos

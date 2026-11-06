@@ -125600,4 +125600,13 @@
   "fmap_as_finite_support_parameters": ["f", "refs"],
   "reviewer": "Compared v_rel_unit_typed in clos_to_bvl_state_relation_probe.out: both unit equivalences, independent source and target values, code tree and relation parameters match. HOL finite-map parameters f and refs use canonical finite-support codecs with same-module roundtrip witnesses."
 }
+,
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "env_rel_APPEND",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/ValueRelation.lean",
+  "lean_name": "envRel_append",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared local env_rel_APPEND source and proved env_rel_append_typed replay in flat_to_clos_relation_probe.out: the name-prefix equality and all relation premises match; the overwritten environment has the independently polymorphic HOL carrier. replaceEnvValues renders HOL’s type-changing update of its single value field."
+}
 ]

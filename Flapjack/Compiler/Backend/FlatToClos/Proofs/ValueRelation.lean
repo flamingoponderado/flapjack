@@ -168,13 +168,28 @@ theorem envRel_skip {env names values} (related : EnvRel env names values) (targ
     (envRel_iff_lookup env names values).1 related name value found
   exact ⟨target', by simpa [nameIndex] using targetFound, targetRelated⟩
 
+/-- Flapjack rendering of a type-changing update of the flat environment’s
+single value field; the previous field value is discarded. -/
+def replaceEnvValues {α β : Type} (_env : FlatSem.Environment α)
+    (values : List (VarN × β)) : FlatSem.Environment β := ⟨values⟩
+
 /-- Extending with a related ordered prefix preserves the environment
 relation, including duplicate-name shadowing. -/
-theorem envRel_append {env names values entries targets}
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "env_rel_APPEND"]
+theorem envRel_append {α : Type} {env : FlatSem.Environment FlatSem.Value}
+    {env1 : FlatSem.Environment α}
+    {names namePrefix : List (Option MlString)} {values targets : List ClosSem.Value}
+    {entries : List (VarN × FlatSem.Value)}
     (related : EnvRel env names values)
-    (prefixRelated : List.Forall₂ ValueRel (entries.map Prod.snd) targets) :
-    EnvRel { env with v := entries ++ env.v }
-      (entries.map (fun entry => some entry.1) ++ names) (targets ++ values) := by
+    (prefixRelated : List.Forall₂ ValueRel (entries.map Prod.snd) targets)
+    (prefixNames : namePrefix = entries.map (fun entry => some entry.1)) :
+    EnvRel (replaceEnvValues env1 (entries ++ env.v))
+      (namePrefix ++ names) (targets ++ values) := by
+  subst namePrefix
+  have envEq : replaceEnvValues env1 (entries ++ env.v) = { env with v := entries ++ env.v } := by
+    cases env; rfl
+  rw [envEq]
+  clear envEq
   induction entries generalizing targets with
   | nil =>
     cases prefixRelated
