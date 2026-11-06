@@ -9532,7 +9532,8 @@ initialization definitions and evaluates the initial constructor entries and
 next indices, together with the flat initial state, observational semantics,
 flat pass order, and the empty incremental compiler output.
 It also captures the complete initial-allocation invariant theorem and its
-independent compiler, FFI, and environment payload types.
+independent compiler, FFI, and environment payload types, and replays the
+local initial-stamp freshness theorem with inferred types.
 It also records all three conjuncts of `compile_correct` with inferred types,
 including the independent success types in the declaration error relation.
 It supports source review and finite regression checks; it is not
