@@ -19,7 +19,7 @@ theorem doApp_stringLength_related {C F : Type} (cfg : Config) (source target so
     (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
     (run : FlatSem.doApp source (.src .strlen) values = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.doApp target (.src .strlen) values' = some (targetFinal, result') ∧
-      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
   cases related with
   | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at run
   | @cons value value' tail tail' valueRel rest =>
@@ -36,7 +36,7 @@ theorem doApp_stringLength_related {C F : Type} (cfg : Config) (source target so
           rcases run with ⟨rfl, rfl⟩
           exact ⟨target, .val (.litv (.intLit string.explode.length)),
             by simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData],
-            states, .value ((valueRel_lit _ _).2 rfl)⟩
+            states, ((valueRel_lit _ _).2 rfl)⟩
         | intLit _ | word8 _ | word64 _ | char _ | float64 _ =>
           simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at run
       | conv _ _ | loc _ _ | vectorv _ | closure _ _ _ | recclosure _ _ _ =>
@@ -48,7 +48,7 @@ theorem doApp_stringExplode_related {C F : Type} (cfg : Config) (source target s
     (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
     (run : FlatSem.doApp source (.src .explode) values = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.doApp target (.src .explode) values' = some (targetFinal, result') ∧
-      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
   cases related with
   | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at run
   | @cons value value' tail tail' valueRel rest =>
@@ -63,7 +63,7 @@ theorem doApp_stringExplode_related {C F : Type} (cfg : Config) (source target s
         | strLit string =>
           simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at run
           rcases run with ⟨rfl, rfl⟩
-          refine ⟨target, .val (FlatSem.listToValue (string.explode.map (.litv ∘ Lit.char))), ?_, states, .value ?_⟩
+          refine ⟨target, .val (FlatSem.listToValue (string.explode.map (.litv ∘ Lit.char))), ?_, states, ?_⟩
           · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData]
           · apply FlatProps.simpleListToValue ValueRel simpleValueRel_valueRel
             simpa [List.map_map, Function.comp_def] using literalValues_related (string.explode.map Lit.char)
@@ -77,20 +77,20 @@ including checked bounds exceptions. -/
 theorem readIndexed_literals_related {C F A : Type} (source target : FlatSem.State C F) (items : List A)
     (index : Int) (literal : A → Lit) (result : Result FlatSem.Value FlatSem.Value)
     (run : FlatSem.readIndexed source false items index (.litv ∘ literal) = some (source, result)) :
-    FlatSem.readIndexed target false items index (.litv ∘ literal) = some (target, result) ∧ PrimitiveResultRel result result := by
+    FlatSem.readIndexed target false items index (.litv ∘ literal) = some (target, result) ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result := by
   by_cases negative : index < 0
   · simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative] at run
     subst result
-    exact ⟨by simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative], .error subscriptExn_related⟩
+    exact ⟨by simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative], subscriptExn_related⟩
   · cases found : items[index.toNat]? with
     | none =>
       simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative, found] at run
       subst result
-      exact ⟨by simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative, found], .error subscriptExn_related⟩
+      exact ⟨by simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative, found], subscriptExn_related⟩
     | some item =>
       simp [FlatSem.readIndexed, negative, found] at run
       subst result
-      exact ⟨by simp [FlatSem.readIndexed, negative, found], .value ((valueRel_lit _ _).2 rfl)⟩
+      exact ⟨by simp [FlatSem.readIndexed, negative, found], ((valueRel_lit _ _).2 rfl)⟩
 
 /-- String indexing preserves returned bytes and checked bounds exceptions. -/
 theorem doApp_stringSub_related {C F : Type} (cfg : Config) (source target sourceFinal : FlatSem.State C F)
@@ -98,7 +98,7 @@ theorem doApp_stringSub_related {C F : Type} (cfg : Config) (source target sourc
     (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
     (run : FlatSem.doApp source (.src .strsub) values = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.doApp target (.src .strsub) values' = some (targetFinal, result') ∧
-      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
   cases related with
   | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at run
   | @cons value value' tail tail' valueRel rest =>
@@ -142,7 +142,7 @@ theorem doApp_stringConcat_related {C F : Type} (cfg : Config) (source target so
     (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
     (run : FlatSem.doApp source (.src .strcat) values = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.doApp target (.src .strcat) values' = some (targetFinal, result') ∧
-      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
   cases related with
   | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at run
   | @cons value value' tail tail' valueRel rest =>
@@ -161,7 +161,7 @@ theorem doApp_stringConcat_related {C F : Type} (cfg : Config) (source target so
           rcases run with ⟨rfl, rfl⟩
           exact ⟨target, .val (.litv (.strLit string)),
             by simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, decoded', concatenated'],
-            states, .value ((valueRel_lit _ _).2 rfl)⟩
+            states, ((valueRel_lit _ _).2 rfl)⟩
 
 /-- Imploding a character list preserves the returned byte string. -/
 theorem doApp_stringImplode_related {C F : Type} (cfg : Config) (source target sourceFinal : FlatSem.State C F)
@@ -169,7 +169,7 @@ theorem doApp_stringImplode_related {C F : Type} (cfg : Config) (source target s
     (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
     (run : FlatSem.doApp source (.src .implode) values = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.doApp target (.src .implode) values' = some (targetFinal, result') ∧
-      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
   cases related with
   | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at run
   | @cons value value' tail tail' valueRel rest =>
@@ -184,7 +184,7 @@ theorem doApp_stringImplode_related {C F : Type} (cfg : Config) (source target s
         rcases run with ⟨rfl, rfl⟩
         exact ⟨target, .val (.litv (.strLit (.implode chars))),
           by simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, decoded'],
-          states, .value ((valueRel_lit _ _).2 rfl)⟩
+          states, ((valueRel_lit _ _).2 rfl)⟩
 
 /-- GC configuration preserves successful unit results for related operands. -/
 theorem doApp_configGC_related {C F : Type} (cfg : Config) (source target sourceFinal : FlatSem.State C F)
@@ -192,7 +192,7 @@ theorem doApp_configGC_related {C F : Type} (cfg : Config) (source target source
     (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
     (run : FlatSem.doApp source (.src .configGC) values = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.doApp target (.src .configGC) values' = some (targetFinal, result') ∧
-      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
   cases related with
   | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at run
   | @cons first first' tail tail' firstRel rest =>
@@ -218,7 +218,7 @@ theorem doApp_configGC_related {C F : Type} (cfg : Config) (source target source
                 rcases run with ⟨rfl, rfl⟩
                 exact ⟨target, .val FlatSem.unitValue,
                   by simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData],
-                  states, .value ((valueRel_conv none [] _).2 ⟨[], rfl, .nil⟩)⟩
+                  states, ((valueRel_conv none [] _).2 ⟨[], rfl, .nil⟩)⟩
               | word8 _ | word64 _ | char _ | strLit _ | float64 _ =>
                 simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at run
             | conv _ _ | loc _ _ | vectorv _ | closure _ _ _ | recclosure _ _ _ =>

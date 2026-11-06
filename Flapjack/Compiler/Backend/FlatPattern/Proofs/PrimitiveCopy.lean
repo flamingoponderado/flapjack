@@ -35,7 +35,7 @@ theorem doApp_copyStrStr_related {C F : Type} (cfg : Config) (source target sour
     (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
     (run : FlatSem.doApp source (.src .copyStrStr) values = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.doApp target (.src .copyStrStr) values' = some (targetFinal, result') ∧
-      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
   obtain ⟨string, offset, length, rfl⟩ := copyStrStr_operands source sourceFinal values result run
   have equal : values' = [.litv (.strLit string), .litv (.intLit offset), .litv (.intLit length)] := by
     apply related_scalar_list related
@@ -50,13 +50,13 @@ theorem doApp_copyStrStr_related {C F : Type} (cfg : Config) (source target sour
     rcases run with ⟨rfl, rfl⟩
     exact ⟨target, .err (.raise FlatSem.subscriptExnV),
       by simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData,
-        FlatSem.doAppCopy, FlatSem.boundsFailure, copied], states, .error subscriptExn_related⟩
+        FlatSem.doAppCopy, FlatSem.boundsFailure, copied], states, subscriptExn_related⟩
   | some chars =>
     simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy, copied] at run
     rcases run with ⟨rfl, rfl⟩
     exact ⟨target, .val (.litv (.strLit (.implode chars))),
       by simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy, copied],
-      states, .value ((valueRel_lit _ _).2 rfl)⟩
+      states, ((valueRel_lit _ _).2 rfl)⟩
 
 /-- A successful byte-array-to-string copy has a location and two integer operands. -/
 theorem copyAw8Str_operands {C F : Type} (state next : FlatSem.State C F) (values : List FlatSem.Value)
@@ -72,7 +72,7 @@ theorem doApp_copyAw8Str_related {C F : Type} (cfg : Config) (source target sour
     (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
     (run : FlatSem.doApp source (.src .copyAw8Str) values = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.doApp target (.src .copyAw8Str) values' = some (targetFinal, result') ∧
-      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
   obtain ⟨flag, address, offset, length, rfl⟩ := copyAw8Str_operands source sourceFinal values result run
   have equal : values' = [.loc flag address, .litv (.intLit offset), .litv (.intLit length)] := by
     apply related_scalar_list related
@@ -96,13 +96,13 @@ theorem doApp_copyAw8Str_related {C F : Type} (cfg : Config) (source target sour
         rcases run with ⟨rfl, rfl⟩
         exact ⟨target, .err (.raise FlatSem.subscriptExnV),
           by simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy,
-            FlatSem.boundsFailure, found', copied], states, .error subscriptExn_related⟩
+            FlatSem.boundsFailure, found', copied], states, subscriptExn_related⟩
       | some chars =>
         simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy, found, copied] at run
         rcases run with ⟨rfl, rfl⟩
         exact ⟨target, .val (.litv (.strLit (.implode chars))),
           by simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy, found', copied],
-          states, .value ((valueRel_lit _ _).2 rfl)⟩
+          states, ((valueRel_lit _ _).2 rfl)⟩
     | refv _ | varray _ | thunk _ _ =>
       simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy, found] at run
 
@@ -120,7 +120,7 @@ theorem doApp_xorAw8Str_related {C F : Type} (cfg : Config) (source target sourc
     (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
     (run : FlatSem.doApp source (.src .xorAw8StrUnsafe) values = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.doApp target (.src .xorAw8StrUnsafe) values' = some (targetFinal, result') ∧
-      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
   obtain ⟨flag, address, string, rfl⟩ := xorAw8Str_operands source sourceFinal values result run
   have equal : values' = [.loc flag address, .litv (.strLit string)] := by
     apply related_scalar_list related
@@ -146,7 +146,7 @@ theorem doApp_xorAw8Str_related {C F : Type} (cfg : Config) (source target sourc
           obtain ⟨refs', assigned', refsRel⟩ := SemanticPrimitivesProps.storeAssign_related states.2.1 address entries assigned
           simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy, found, xored, assigned] at run
           rcases run with ⟨rfl, rfl⟩
-          refine ⟨{ target with refs := refs' }, .val FlatSem.unitValue, ?_, ⟨states.1, refsRel, states.2.2⟩, .value ?_⟩
+          refine ⟨{ target with refs := refs' }, .val FlatSem.unitValue, ?_, ⟨states.1, refsRel, states.2.2⟩, ?_⟩
           · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy, found', xored, assigned']
           · exact (valueRel_conv none [] _).2 ⟨[], rfl, .nil⟩
     | refv _ | varray _ | thunk _ _ =>
@@ -169,7 +169,7 @@ theorem doApp_copyStrAw8_related {C F : Type} (cfg : Config) (source target sour
     (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
     (run : FlatSem.doApp source (.src .copyStrAw8) values = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.doApp target (.src .copyStrAw8) values' = some (targetFinal, result') ∧
-      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
   obtain ⟨string, offset, length, flag, address, dstOffset, rfl⟩ := copyStrAw8_operands source sourceFinal values result run
   have equal : values' = [.litv (.strLit string), .litv (.intLit offset), .litv (.intLit length), .loc flag address, .litv (.intLit dstOffset)] := by
     apply related_scalar_list related
@@ -195,7 +195,7 @@ theorem doApp_copyStrAw8_related {C F : Type} (cfg : Config) (source target sour
         rcases run with ⟨rfl, rfl⟩
         exact ⟨target, .err (.raise FlatSem.subscriptExnV),
           by simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy,
-            FlatSem.boundsFailure, found', copied], states, .error subscriptExn_related⟩
+            FlatSem.boundsFailure, found', copied], states, subscriptExn_related⟩
       | some output =>
         cases assigned : storeAssign address (.w8array output) source.refs with
         | none => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy, found, copied, assigned] at run
@@ -204,7 +204,7 @@ theorem doApp_copyStrAw8_related {C F : Type} (cfg : Config) (source target sour
           obtain ⟨refs', assigned', refsRel⟩ := SemanticPrimitivesProps.storeAssign_related states.2.1 address entries assigned
           simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy, found, copied, assigned] at run
           rcases run with ⟨rfl, rfl⟩
-          refine ⟨{ target with refs := refs' }, .val FlatSem.unitValue, ?_, ⟨states.1, refsRel, states.2.2⟩, .value ?_⟩
+          refine ⟨{ target with refs := refs' }, .val FlatSem.unitValue, ?_, ⟨states.1, refsRel, states.2.2⟩, ?_⟩
           · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy, found', copied, assigned']
           · exact (valueRel_conv none [] _).2 ⟨[], rfl, .nil⟩
     | refv _ | varray _ | thunk _ _ =>
@@ -227,7 +227,7 @@ theorem doApp_copyAw8Aw8_related {C F : Type} (cfg : Config) (source target sour
     (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
     (run : FlatSem.doApp source (.src .copyAw8Aw8) values = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.doApp target (.src .copyAw8Aw8) values' = some (targetFinal, result') ∧
-      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
   obtain ⟨srcFlag, src, offset, length, dstFlag, dst, dstOffset, rfl⟩ := copyAw8Aw8_operands source sourceFinal values result run
   have equal : values' = [.loc srcFlag src, .litv (.intLit offset), .litv (.intLit length), .loc dstFlag dst, .litv (.intLit dstOffset)] := by
     apply related_scalar_list related
@@ -259,7 +259,7 @@ theorem doApp_copyAw8Aw8_related {C F : Type} (cfg : Config) (source target sour
             rcases run with ⟨rfl, rfl⟩
             exact ⟨target, .err (.raise FlatSem.subscriptExnV),
               by simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy,
-                FlatSem.boundsFailure, sourceFound', destFound', copied], states, .error subscriptExn_related⟩
+                FlatSem.boundsFailure, sourceFound', destFound', copied], states, subscriptExn_related⟩
           | some output =>
             cases assigned : storeAssign dst (.w8array output) source.refs with
             | none => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy, sourceFound, destFound, copied, assigned] at run
@@ -268,7 +268,7 @@ theorem doApp_copyAw8Aw8_related {C F : Type} (cfg : Config) (source target sour
               obtain ⟨refs', assigned', refsRel⟩ := SemanticPrimitivesProps.storeAssign_related states.2.1 dst entries assigned
               simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy, sourceFound, destFound, copied, assigned] at run
               rcases run with ⟨rfl, rfl⟩
-              refine ⟨{ target with refs := refs' }, .val FlatSem.unitValue, ?_, ⟨states.1, refsRel, states.2.2⟩, .value ?_⟩
+              refine ⟨{ target with refs := refs' }, .val FlatSem.unitValue, ?_, ⟨states.1, refsRel, states.2.2⟩, ?_⟩
               · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy, sourceFound', destFound', copied, assigned']
               · exact (valueRel_conv none [] _).2 ⟨[], rfl, .nil⟩
         | refv _ | varray _ | thunk _ _ =>

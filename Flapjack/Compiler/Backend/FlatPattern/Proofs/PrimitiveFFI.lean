@@ -15,7 +15,7 @@ theorem doApp_ffi_related {C F : Type} (cfg : Config) (source target sourceFinal
     (related : List.Forall₂ ValueRel values values')
     (run : FlatSem.doApp source (.src (.ffi name)) values = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.doApp target (.src (.ffi name)) values' = some (targetFinal, result') ∧
-      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
   cases related with
   | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at run
   | @cons config config' tail tail' configRel rest =>
@@ -46,7 +46,7 @@ theorem doApp_ffi_related {C F : Type} (cfg : Config) (source target sourceFinal
                   | final event =>
                     simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, found, called] at run
                     rcases run with ⟨rfl, rfl⟩
-                    refine ⟨target, .err (.abort (.ffiError event)), ?_, states, .error rfl⟩
+                    refine ⟨target, .err (.abort (.ffiError event)), ?_, states, rfl⟩
                     simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, found', ffiEq, called]
                   | ret ffi bytes' =>
                     cases assigned : storeAssign address (.w8array bytes') source.refs with
@@ -56,7 +56,7 @@ theorem doApp_ffi_related {C F : Type} (cfg : Config) (source target sourceFinal
                       obtain ⟨refs', assigned', refsRel⟩ := SemanticPrimitivesProps.storeAssign_related states.2.1 address entries assigned
                       simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, found, called, assigned] at run
                       rcases run with ⟨rfl, rfl⟩
-                      refine ⟨{ target with refs := refs', ffi := ffi }, .val FlatSem.unitValue, ?_, ?_, .value ?_⟩
+                      refine ⟨{ target with refs := refs', ffi := ffi }, .val FlatSem.unitValue, ?_, ?_, ?_⟩
                       · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, found', ffiEq, called, assigned']
                       · exact ⟨states.1, refsRel, rfl, states.2.2.2⟩
                       · exact (valueRel_conv none [] _).2 ⟨[], rfl, .nil⟩

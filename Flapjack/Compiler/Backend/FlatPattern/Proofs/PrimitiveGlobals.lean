@@ -12,13 +12,13 @@ theorem doApp_globalAlloc_related {C F : Type} (cfg : Config) (source target sou
     (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
     (run : FlatSem.doApp source (.globalVarAlloc count) values = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.doApp target (.globalVarAlloc count) values' = some (targetFinal, result') ∧
-      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
   cases related with
   | cons _ _ => simp [FlatSem.doApp, FlatSem.doAppFlat] at run
   | nil =>
     simp [FlatSem.doApp, FlatSem.doAppFlat] at run
     rcases run with ⟨rfl, rfl⟩
-    refine ⟨{ target with globals := target.globals ++ List.replicate count none }, .val FlatSem.unitValue, ?_, ?_, .value ?_⟩
+    refine ⟨{ target with globals := target.globals ++ List.replicate count none }, .val FlatSem.unitValue, ?_, ?_, ?_⟩
     · simp [FlatSem.doApp, FlatSem.doAppFlat]
     · refine ⟨states.1, states.2.1, states.2.2.1, ?_, states.2.2.2.2⟩
       exact List.rel_append states.2.2.2.1 ((forall₂_replicate_iff (optionRel ValueRel) count none none).mpr (fun _ => trivial))
@@ -30,7 +30,7 @@ theorem doApp_globalInit_related {C F : Type} (cfg : Config) (source target sour
     (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
     (run : FlatSem.doApp source (.globalVarInit index) values = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.doApp target (.globalVarInit index) values' = some (targetFinal, result') ∧
-      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
   cases related with
   | nil => simp [FlatSem.doApp, FlatSem.doAppFlat] at run
   | @cons value value' tail tail' values rest =>
@@ -49,7 +49,7 @@ theorem doApp_globalInit_related {C F : Type} (cfg : Config) (source target sour
           | none =>
             simp [FlatSem.doApp, FlatSem.doAppFlat, found] at run
             rcases run with ⟨rfl, rfl⟩
-            refine ⟨{ target with globals := target.globals.set index (some value') }, .val FlatSem.unitValue, ?_, ?_, .value ?_⟩
+            refine ⟨{ target with globals := target.globals.set index (some value') }, .val FlatSem.unitValue, ?_, ?_, ?_⟩
             · simp [FlatSem.doApp, FlatSem.doAppFlat, found']
             · exact ⟨states.1, states.2.1, states.2.2.1,
                 Flapjack.forall₂_set _ _ _ _ _ index ⟨(show optionRel ValueRel (some value) (some value') from values), states.2.2.2.1⟩, states.2.2.2.2⟩
@@ -61,7 +61,7 @@ theorem doApp_globalLookup_related {C F : Type} (cfg : Config) (source target so
     (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
     (run : FlatSem.doApp source (.globalVarLookup index) values = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.doApp target (.globalVarLookup index) values' = some (targetFinal, result') ∧
-      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
   cases related with
   | cons _ _ => simp [FlatSem.doApp, FlatSem.doAppFlat] at run
   | nil =>
@@ -77,7 +77,7 @@ theorem doApp_globalLookup_related {C F : Type} (cfg : Config) (source target so
         | some value' =>
           simp [FlatSem.doApp, FlatSem.doAppFlat, found] at run
           rcases run with ⟨rfl, rfl⟩
-          exact ⟨target, .val value', by simp [FlatSem.doApp, FlatSem.doAppFlat, found'], states, .value slotRel⟩
+          exact ⟨target, .val value', by simp [FlatSem.doApp, FlatSem.doAppFlat, found'], states, slotRel⟩
 
 /-- The flat identity primitive returns related values. -/
 theorem doApp_id_related {C F : Type} (cfg : Config) (source target sourceFinal : FlatSem.State C F)
@@ -85,7 +85,7 @@ theorem doApp_id_related {C F : Type} (cfg : Config) (source target sourceFinal 
     (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
     (run : FlatSem.doApp source .id values = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.doApp target .id values' = some (targetFinal, result') ∧
-      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
   cases related with
   | nil => simp [FlatSem.doApp, FlatSem.doAppFlat] at run
   | @cons value value' tail tail' values rest =>
@@ -94,7 +94,7 @@ theorem doApp_id_related {C F : Type} (cfg : Config) (source target sourceFinal 
     | nil =>
       simp [FlatSem.doApp, FlatSem.doAppFlat] at run
       rcases run with ⟨rfl, rfl⟩
-      exact ⟨target, .val value', by simp [FlatSem.doApp, FlatSem.doAppFlat], states, .value values⟩
+      exact ⟨target, .val value', by simp [FlatSem.doApp, FlatSem.doAppFlat], states, values⟩
 
 /-- Flat constructor-length tests agree on related arguments. -/
 theorem doApp_lenEq_related {C F : Type} (cfg : Config) (source target sourceFinal : FlatSem.State C F)
@@ -102,7 +102,7 @@ theorem doApp_lenEq_related {C F : Type} (cfg : Config) (source target sourceFin
     (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
     (run : FlatSem.doApp source (.lenEq length) values = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.doApp target (.lenEq length) values' = some (targetFinal, result') ∧
-      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
   cases related with
   | nil => simp [FlatSem.doApp, FlatSem.doAppFlat] at run
   | @cons value value' tail tail' head rest =>
@@ -115,7 +115,7 @@ theorem doApp_lenEq_related {C F : Type} (cfg : Config) (source target sourceFin
         have lengths := List.Forall₂.length_eq fieldsRel
         simp [FlatSem.doApp, FlatSem.doAppFlat] at run
         rcases run with ⟨rfl, rfl⟩
-        refine ⟨target, .val (FlatSem.boolValue (fields.length == length)), ?_, states, .value ?_⟩
+        refine ⟨target, .val (FlatSem.boolValue (fields.length == length)), ?_, states, ?_⟩
         · simp [FlatSem.doApp, FlatSem.doAppFlat, ← lengths]
         · cases fields.length == length <;> simp [FlatSem.boolValue] <;>
             exact (valueRel_conv _ [] _).2 ⟨[], rfl, .nil⟩
@@ -128,7 +128,7 @@ theorem doApp_tagLenEq_related {C F : Type} (cfg : Config) (source target source
     (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
     (run : FlatSem.doApp source (.tagLenEq tag length) values = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.doApp target (.tagLenEq tag length) values' = some (targetFinal, result') ∧
-      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
   cases related with
   | nil => simp [FlatSem.doApp, FlatSem.doAppFlat] at run
   | @cons value value' tail tail' head rest =>
@@ -145,7 +145,7 @@ theorem doApp_tagLenEq_related {C F : Type} (cfg : Config) (source target source
           have lengths := List.Forall₂.length_eq fieldsRel
           simp [FlatSem.doApp, FlatSem.doAppFlat] at run
           rcases run with ⟨rfl, rfl⟩
-          refine ⟨target, .val (FlatSem.boolValue (actual == tag && fields.length == length)), ?_, states, .value ?_⟩
+          refine ⟨target, .val (FlatSem.boolValue (actual == tag && fields.length == length)), ?_, states, ?_⟩
           · simp [FlatSem.doApp, FlatSem.doAppFlat, ← lengths]
           · cases (actual == tag && fields.length == length) <;> simp [FlatSem.boolValue] <;>
               exact (valueRel_conv _ [] _).2 ⟨[], rfl, .nil⟩
@@ -158,7 +158,7 @@ theorem doApp_el_related {C F : Type} (cfg : Config) (source target sourceFinal 
     (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
     (run : FlatSem.doApp source (.el index) values = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.doApp target (.el index) values' = some (targetFinal, result') ∧
-      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
   cases related with
   | nil => simp [FlatSem.doApp, FlatSem.doAppFlat] at run
   | @cons value value' tail tail' head rest =>
@@ -174,7 +174,7 @@ theorem doApp_el_related {C F : Type} (cfg : Config) (source target sourceFinal 
           simp [FlatSem.doApp, FlatSem.doAppFlat, found] at run
           rcases run with ⟨rfl, rfl⟩
           obtain ⟨field', found', fieldRel⟩ := forall₂_getElem_some fieldsRel index field found
-          exact ⟨target, .val field', by simp [FlatSem.doApp, FlatSem.doAppFlat, found'], states, .value fieldRel⟩
+          exact ⟨target, .val field', by simp [FlatSem.doApp, FlatSem.doAppFlat, found'], states, fieldRel⟩
       | loc flag address =>
         have eq := (valueRel_loc flag address value').1 head
         subst value'
@@ -189,7 +189,7 @@ theorem doApp_el_related {C F : Type} (cfg : Config) (source target sourceFinal 
               simp [FlatSem.doApp, FlatSem.doAppFlat, found] at run
               rcases run with ⟨rfl, rfl⟩
               obtain ⟨field', found', fieldRel⟩ := stateRel_lookup_ref cfg source target states address field found
-              exact ⟨target, .val field', by simp [FlatSem.doApp, FlatSem.doAppFlat, found'], states, .value fieldRel⟩
+              exact ⟨target, .val field', by simp [FlatSem.doApp, FlatSem.doAppFlat, found'], states, fieldRel⟩
             | w8array _ | varray _ | thunk _ _ => simp [FlatSem.doApp, FlatSem.doAppFlat, found] at run
       | litv _ | vectorv _ | closure _ _ _ | recclosure _ _ _ =>
         simp [FlatSem.doApp, FlatSem.doAppFlat] at run
@@ -202,7 +202,7 @@ theorem doApp_flat_related {C F : Type} (cfg : Config) (source target sourceFina
     (notSource : ∀ sourceOp, op ≠ .src sourceOp)
     (run : FlatSem.doApp source op values = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.doApp target op values' = some (targetFinal, result') ∧
-      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
   cases op with
   | src sourceOp => exact (notSource sourceOp rfl).elim
   | globalVarAlloc count => exact doApp_globalAlloc_related cfg source target sourceFinal count values values' result states related run

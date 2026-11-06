@@ -27,7 +27,7 @@ theorem doApp_arrayLength_complete {C F : Type} (cfg : Config) (source target so
     (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
     (run : FlatSem.doApp source (.src .alength) values = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.doApp target (.src .alength) values' = some (targetFinal, result') ∧
-      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
   cases related with
   | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
   | @cons value value' tail tail' values rest =>
@@ -46,7 +46,7 @@ theorem doApp_arrayLength_complete {C F : Type} (cfg : Config) (source target so
             obtain ⟨value, sourceRun, targetRun, valueRel⟩ := doApp_arrayLength_related cfg source target flag address items states found
             have equal := sourceRun.symm.trans run
             cases equal
-            exact ⟨target, .val value, targetRun, states, .value valueRel⟩
+            exact ⟨target, .val value, targetRun, states, valueRel⟩
           | refv _ | w8array _ | thunk _ _ => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, found] at run
       | litv _ | conv _ _ | vectorv _ | closure _ _ _ | recclosure _ _ _ =>
         simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
@@ -57,7 +57,7 @@ theorem doApp_byteArrayLength_complete {C F : Type} (cfg : Config) (source targe
     (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
     (run : FlatSem.doApp source (.src .aw8length) values = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.doApp target (.src .aw8length) values' = some (targetFinal, result') ∧
-      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
   cases related with
   | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
   | @cons value value' tail tail' values rest =>
@@ -76,7 +76,7 @@ theorem doApp_byteArrayLength_complete {C F : Type} (cfg : Config) (source targe
             obtain ⟨value, sourceRun, targetRun, valueRel⟩ := doApp_byteArrayLength_related cfg source target flag address bytes states found
             have equal := sourceRun.symm.trans run
             cases equal
-            exact ⟨target, .val value, targetRun, states, .value valueRel⟩
+            exact ⟨target, .val value, targetRun, states, valueRel⟩
           | refv _ | varray _ | thunk _ _ => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, found] at run
       | litv _ | conv _ _ | vectorv _ | closure _ _ _ | recclosure _ _ _ =>
         simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
@@ -87,7 +87,7 @@ theorem doApp_arrayUpdate_complete {C F : Type} (cfg : Config) (source target so
     (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
     (run : FlatSem.doApp source (.src (if unsafeOp then .aupdateUnsafe else .aupdate)) values = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.doApp target (.src (if unsafeOp then .aupdateUnsafe else .aupdate)) values' =
-      some (targetFinal, result') ∧ StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      some (targetFinal, result') ∧ StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
   cases related with
   | nil => cases unsafeOp <;> simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
   | @cons loc loc' tail tail' locRel rest =>
@@ -130,7 +130,7 @@ theorem doApp_arrayRead_complete {C F : Type} (cfg : Config) (source target sour
     (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
     (run : FlatSem.doApp source (.src (if unsafeOp then .asubUnsafe else .asub)) values = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.doApp target (.src (if unsafeOp then .asubUnsafe else .asub)) values' =
-      some (targetFinal, result') ∧ StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      some (targetFinal, result') ∧ StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
   cases related with
   | nil => cases unsafeOp <;> simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
   | @cons loc loc' tail tail' locRel rest =>
@@ -178,7 +178,7 @@ theorem doApp_byteArrayRead_complete {C F : Type} (cfg : Config) (source target 
     (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
     (run : FlatSem.doApp source (.src (if unsafeOp then .aw8subUnsafe else .aw8sub)) values = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.doApp target (.src (if unsafeOp then .aw8subUnsafe else .aw8sub)) values' =
-      some (targetFinal, result') ∧ StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      some (targetFinal, result') ∧ StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
   cases related with
   | nil => cases unsafeOp <;> simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
   | @cons loc loc' tail tail' locRel rest =>
@@ -225,7 +225,7 @@ theorem doApp_byteArrayUpdate_complete {C F : Type} (cfg : Config) (source targe
     (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
     (run : FlatSem.doApp source (.src (if unsafeOp then .aw8updateUnsafe else .aw8update)) values = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.doApp target (.src (if unsafeOp then .aw8updateUnsafe else .aw8update)) values' =
-      some (targetFinal, result') ∧ StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      some (targetFinal, result') ∧ StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
   cases related with
   | nil => cases unsafeOp <;> simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
   | @cons loc loc' tail tail' locRel rest =>

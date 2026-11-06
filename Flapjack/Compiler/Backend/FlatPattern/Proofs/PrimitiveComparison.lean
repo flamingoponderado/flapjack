@@ -53,7 +53,7 @@ theorem doApp_test_related {C F : Type} (cfg : Config) (source target sourceFina
     (related : List.Forall₂ ValueRel values values')
     (run : FlatSem.doApp source (.src (.test test typ)) values = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.doApp target (.src (.test test typ)) values' = some (targetFinal, result') ∧
-      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
   cases related with
   | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric] at run
   | @cons first first' tail tail' firstRel rest =>
@@ -70,6 +70,6 @@ theorem doApp_test_related {C F : Type} (cfg : Config) (source target sourceFina
           simp [FlatSem.doApp, FlatSem.doAppNumeric, tested] at run
           rcases run with ⟨rfl, rfl⟩
           exact ⟨target, .val (FlatSem.boolValue boolean), by simp [FlatSem.doApp, FlatSem.doAppNumeric, tested'],
-            states, .value (boolValue_related boolean)⟩
+            states, (boolValue_related boolean)⟩
 
 end Flapjack.Compiler.Backend.FlatPattern

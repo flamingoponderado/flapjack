@@ -35,12 +35,12 @@ theorem doApp_refAlloc_complete {C F : Type} (cfg : Config) (source target sourc
     (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
     (run : FlatSem.doApp source (.src .opref) values = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.doApp target (.src .opref) values' = some (targetFinal, result') ∧
-      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
   cases result with
   | val value =>
     obtain ⟨targetFinal, value', targetRun, finalStates, valueRel⟩ :=
       doApp_refAlloc_related cfg source target values values' states related sourceFinal value run
-    exact ⟨targetFinal, .val value', targetRun, finalStates, .value valueRel⟩
+    exact ⟨targetFinal, .val value', targetRun, finalStates, valueRel⟩
   | err error =>
     cases values with
     | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
@@ -54,12 +54,12 @@ theorem doApp_refAssign_complete {C F : Type} (cfg : Config) (source target sour
     (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
     (run : FlatSem.doApp source (.src .opassign) values = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.doApp target (.src .opassign) values' = some (targetFinal, result') ∧
-      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
   cases result with
   | val value =>
     obtain ⟨targetFinal, value', targetRun, finalStates, valueRel⟩ :=
       doApp_refAssign_related cfg source target values values' states related sourceFinal value run
-    exact ⟨targetFinal, .val value', targetRun, finalStates, .value valueRel⟩
+    exact ⟨targetFinal, .val value', targetRun, finalStates, valueRel⟩
   | err error =>
     cases values with
     | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
@@ -83,12 +83,12 @@ theorem doApp_arrayFixed_complete {C F : Type} (cfg : Config) (source target sou
     (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
     (run : FlatSem.doApp source (.src .aallocFixed) values = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.doApp target (.src .aallocFixed) values' = some (targetFinal, result') ∧
-      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
   obtain ⟨sourceAfter, targetAfter, value, sourceRun, targetRun, finalStates, valueRel⟩ :=
     doApp_arrayFixed_related cfg source target values values' states related
   have equal := sourceRun.symm.trans run
   cases equal
-  exact ⟨targetAfter, .val value, targetRun, finalStates, .value valueRel⟩
+  exact ⟨targetAfter, .val value, targetRun, finalStates, valueRel⟩
 
 /-- Value-array allocation preserves arbitrary successful primitive results. -/
 theorem doApp_arrayAlloc_complete {C F : Type} (cfg : Config) (source target sourceFinal : FlatSem.State C F)
@@ -96,7 +96,7 @@ theorem doApp_arrayAlloc_complete {C F : Type} (cfg : Config) (source target sou
     (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
     (run : FlatSem.doApp source (.src .aalloc) values = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.doApp target (.src .aalloc) values' = some (targetFinal, result') ∧
-      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
   cases related with
   | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
   | @cons size size' tail tail' sizeRel rest =>
@@ -128,7 +128,7 @@ theorem doApp_byteArrayAlloc_complete {C F : Type} (cfg : Config) (source target
     (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
     (run : FlatSem.doApp source (.src .aw8alloc) values = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.doApp target (.src .aw8alloc) values' = some (targetFinal, result') ∧
-      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
   cases related with
   | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
   | @cons size size' tail tail' sizeRel rest =>
@@ -172,7 +172,7 @@ theorem doApp_source_related {C F : Type} (cfg : Config) (op : Op)
     (related : List.Forall₂ ValueRel values values')
     (run : FlatSem.doApp source (.src op) values = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.doApp target (.src op) values' = some (targetFinal, result') ∧
-      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
   cases op with
   | arith action typ => exact doApp_arith_related cfg source target sourceFinal action typ values values' result states related run
   | fromTo sourceTyp targetTyp => exact doApp_fromTo_related cfg source target sourceFinal sourceTyp targetTyp values values' result states related run
@@ -230,16 +230,13 @@ theorem doApp_simulation {C F : Type} (source : FlatSem.State C F) (values : Lis
     ∃ targetFinal result', SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' ∧
       StateRel cfg sourceFinal targetFinal ∧ FlatSem.doApp target op values' = some (targetFinal, result') := by
   have sim : ∃ targetFinal result', FlatSem.doApp target op values' = some (targetFinal, result') ∧
-      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
     by_cases isSource : ∃ sourceOp, op = .src sourceOp
     · obtain ⟨sourceOp, rfl⟩ := isSource
       exact doApp_source_related cfg sourceOp source target sourceFinal values values' result premises.1 premises.2 run
     · exact doApp_flat_related cfg source target sourceFinal op values values' result premises.1 premises.2
         (fun sourceOp eq => isSource ⟨sourceOp, eq⟩) run
   obtain ⟨targetFinal, result', targetRun, finalStates, related⟩ := sim
-  refine ⟨targetFinal, result', ?_, finalStates, targetRun⟩
-  cases related with
-  | value values => exact values
-  | error errors => exact errors
+  exact ⟨targetFinal, result', related, finalStates, targetRun⟩
 
 end Flapjack.Compiler.Backend.FlatPattern

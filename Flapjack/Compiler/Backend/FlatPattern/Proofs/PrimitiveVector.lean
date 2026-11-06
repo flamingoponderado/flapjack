@@ -15,7 +15,7 @@ theorem doApp_vectorFromList_related {C F : Type} (cfg : Config) (source target 
     (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
     (run : FlatSem.doApp source (.src .vfromList) values = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.doApp target (.src .vfromList) values' = some (targetFinal, result') ∧
-      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
   cases related with
   | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at run
   | @cons value value' tail tail' valueRel rest =>
@@ -28,7 +28,7 @@ theorem doApp_vectorFromList_related {C F : Type} (cfg : Config) (source target 
         obtain ⟨items', decoded', itemsRel⟩ := FlatProps.simpleValueToList ValueRel simpleValueRel_valueRel value value' items valueRel decoded
         simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, decoded] at run
         rcases run with ⟨rfl, rfl⟩
-        refine ⟨target, .val (.vectorv items'), ?_, states, .value ?_⟩
+        refine ⟨target, .val (.vectorv items'), ?_, states, ?_⟩
         · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, decoded']
         · exact (valueRel_vector items _).2 ⟨items', rfl, itemsRel⟩
 
@@ -38,7 +38,7 @@ theorem doApp_vectorLength_related {C F : Type} (cfg : Config) (source target so
     (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
     (run : FlatSem.doApp source (.src .vlength) values = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.doApp target (.src .vlength) values' = some (targetFinal, result') ∧
-      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
   cases related with
   | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at run
   | @cons value value' tail tail' valueRel rest =>
@@ -53,7 +53,7 @@ theorem doApp_vectorLength_related {C F : Type} (cfg : Config) (source target so
         rcases run with ⟨rfl, rfl⟩
         exact ⟨target, .val (.litv (.intLit items.length)),
           by simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, ← lengths],
-          states, .value ((valueRel_lit _ _).2 rfl)⟩
+          states, ((valueRel_lit _ _).2 rfl)⟩
       | litv _ | conv _ _ | loc _ _ | closure _ _ _ | recclosure _ _ _ =>
         simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at run
 
@@ -63,7 +63,7 @@ theorem doApp_listAppend_related {C F : Type} (cfg : Config) (source target sour
     (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
     (run : FlatSem.doApp source (.src .listAppend) values = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.doApp target (.src .listAppend) values' = some (targetFinal, result') ∧
-      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
   cases related with
   | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at run
   | @cons first first' tail tail' firstRel rest =>
@@ -83,7 +83,7 @@ theorem doApp_listAppend_related {C F : Type} (cfg : Config) (source target sour
             obtain ⟨ys', right', ysRel⟩ := FlatProps.simpleValueToList ValueRel simpleValueRel_valueRel second second' ys secondRel right
             simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, left, right] at run
             rcases run with ⟨rfl, rfl⟩
-            refine ⟨target, .val (FlatSem.listToValue (xs' ++ ys')), ?_, states, .value ?_⟩
+            refine ⟨target, .val (FlatSem.listToValue (xs' ++ ys')), ?_, states, ?_⟩
             · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, left', right']
             · exact FlatProps.simpleListToValue ValueRel simpleValueRel_valueRel _ _ (List.rel_append xsRel ysRel)
 
@@ -93,7 +93,7 @@ theorem doApp_vectorRead_related {C F : Type} (cfg : Config) (source target sour
     (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
     (run : FlatSem.doApp source (.src (if unsafeOp then .vsubUnsafe else .vsub)) values = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.doApp target (.src (if unsafeOp then .vsubUnsafe else .vsub)) values' =
-      some (targetFinal, result') ∧ StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      some (targetFinal, result') ∧ StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
   cases related with
   | nil => cases unsafeOp <;> simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at run
   | @cons vector vector' tail tail' vectorRel rest =>

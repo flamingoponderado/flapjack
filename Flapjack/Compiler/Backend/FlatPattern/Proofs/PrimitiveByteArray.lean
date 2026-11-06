@@ -22,15 +22,15 @@ theorem doApp_byteArrayAlloc_related {C F : Type} (cfg : Config) (source target 
     ∃ sourceFinal targetFinal result,
       FlatSem.doApp source (.src .aw8alloc) [.litv (.intLit size), .litv (.word8 byte)] = some (sourceFinal, result) ∧
       FlatSem.doApp target (.src .aw8alloc) [.litv (.intLit size), .litv (.word8 byte)] = some (targetFinal, result) ∧
-      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result := by
+      StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result := by
   by_cases negative : size < 0
-  · refine ⟨source, target, .err (.raise FlatSem.subscriptExnV), ?_, ?_, states, .error subscriptExn_related⟩
+  · refine ⟨source, target, .err (.raise FlatSem.subscriptExnV), ?_, ?_, states, subscriptExn_related⟩
     · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.boundsFailure, negative]
     · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.boundsFailure, negative]
   · have lengths : target.refs.length = source.refs.length := (List.Forall₂.length_eq states.2.1).symm
     refine ⟨{ source with refs := source.refs ++ [.w8array (List.replicate size.toNat byte)] },
       { target with refs := target.refs ++ [.w8array (List.replicate size.toNat byte)] },
-      .val (.loc true source.refs.length), ?_, ?_, ?_, .value ?_⟩
+      .val (.loc true source.refs.length), ?_, ?_, ?_, ?_⟩
     · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, storeAlloc, negative]
     · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, storeAlloc, negative, lengths]
     · exact ⟨states.1, List.rel_append states.2.1 (.cons rfl .nil), states.2.2⟩
@@ -52,14 +52,14 @@ theorem readIndexed_bytes_related {C F : Type} (source target : FlatSem.State C 
     (bytes : List (BitVec 8)) (index : Int) (result : Result FlatSem.Value FlatSem.Value)
     (run : FlatSem.readIndexed source unsafeOp bytes index (.litv ∘ Lit.word8) = some (source, result)) :
     FlatSem.readIndexed target unsafeOp bytes index (.litv ∘ Lit.word8) = some (target, result) ∧
-      PrimitiveResultRel result result := by
+      SemanticPrimitivesProps.resultRel ValueRel ValueRel result result := by
   by_cases negative : index < 0
   · cases unsafeOp with
     | true => simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative] at run
     | false =>
       simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative] at run
       subst result
-      exact ⟨by simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative], .error subscriptExn_related⟩
+      exact ⟨by simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative], subscriptExn_related⟩
   · cases found : bytes[index.toNat]? with
     | none =>
       cases unsafeOp with
@@ -67,11 +67,11 @@ theorem readIndexed_bytes_related {C F : Type} (source target : FlatSem.State C 
       | false =>
         simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative, found] at run
         subst result
-        exact ⟨by simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative, found], .error subscriptExn_related⟩
+        exact ⟨by simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative, found], subscriptExn_related⟩
     | some byte =>
       simp [FlatSem.readIndexed, negative, found] at run
       subst result
-      exact ⟨by simp [FlatSem.readIndexed, negative, found], .value ((valueRel_lit _ _).2 rfl)⟩
+      exact ⟨by simp [FlatSem.readIndexed, negative, found], ((valueRel_lit _ _).2 rfl)⟩
 
 /-- Byte-array reads preserve checked and unsafe behavior through the dispatcher. -/
 theorem doApp_byteArrayRead_related {C F : Type} (cfg : Config) (source target : FlatSem.State C F)
@@ -81,7 +81,7 @@ theorem doApp_byteArrayRead_related {C F : Type} (cfg : Config) (source target :
     (run : FlatSem.doApp source (.src (if unsafeOp then .aw8subUnsafe else .aw8sub))
       [.loc flag address, .litv (.intLit index)] = some (source, result)) :
     FlatSem.doApp target (.src (if unsafeOp then .aw8subUnsafe else .aw8sub))
-      [.loc flag address, .litv (.intLit index)] = some (target, result) ∧ PrimitiveResultRel result result := by
+      [.loc flag address, .litv (.intLit index)] = some (target, result) ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result := by
   have found' := stateRel_lookup_bytes cfg source target states address bytes found
   have unequal : (Op.aw8sub == Op.aw8subUnsafe) = false := by decide
   have read : FlatSem.readIndexed source unsafeOp bytes index (.litv ∘ Lit.word8) = some (source, result) := by
@@ -96,7 +96,7 @@ theorem updateIndexed_bytes_related {C F : Type} (cfg : Config) (source target s
     (result : Result FlatSem.Value FlatSem.Value) (states : StateRel cfg source target)
     (run : FlatSem.updateIndexed source unsafeOp address bytes index byte .w8array = some (sourceFinal, result)) :
     ∃ targetFinal, FlatSem.updateIndexed target unsafeOp address bytes index byte .w8array = some (targetFinal, result) ∧
-      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result := by
+      StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result := by
   by_cases bounds : index < 0 ∨ bytes.length ≤ index.toNat
   · cases unsafeOp with
     | true => simp [FlatSem.updateIndexed, FlatSem.boundsFailure, bounds] at run
@@ -104,7 +104,7 @@ theorem updateIndexed_bytes_related {C F : Type} (cfg : Config) (source target s
       simp [FlatSem.updateIndexed, FlatSem.boundsFailure, bounds] at run
       rcases run with ⟨rfl, rfl⟩
       exact ⟨target, by simp [FlatSem.updateIndexed, FlatSem.boundsFailure, bounds], states,
-        .error subscriptExn_related⟩
+        subscriptExn_related⟩
   · cases assigned : storeAssign address (.w8array (bytes.set index.toNat byte)) source.refs with
     | none => simp [FlatSem.updateIndexed, bounds, assigned] at run
     | some refs =>
@@ -113,7 +113,7 @@ theorem updateIndexed_bytes_related {C F : Type} (cfg : Config) (source target s
       obtain ⟨refs', assigned', refsRel⟩ := SemanticPrimitivesProps.storeAssign_related states.2.1 address entries assigned
       simp [FlatSem.updateIndexed, bounds, assigned] at run
       rcases run with ⟨rfl, rfl⟩
-      refine ⟨{ target with refs := refs' }, ?_, ⟨states.1, refsRel, states.2.2⟩, .value ?_⟩
+      refine ⟨{ target with refs := refs' }, ?_, ⟨states.1, refsRel, states.2.2⟩, ?_⟩
       · simp [FlatSem.updateIndexed, bounds, assigned']
       · exact (valueRel_conv none [] _).2 ⟨[], rfl, .nil⟩
 
@@ -126,7 +126,7 @@ theorem doApp_byteArrayUpdate_related {C F : Type} (cfg : Config) (source target
       [.loc flag address, .litv (.intLit index), .litv (.word8 byte)] = some (sourceFinal, result)) :
     ∃ targetFinal, FlatSem.doApp target (.src (if unsafeOp then .aw8updateUnsafe else .aw8update))
       [.loc flag address, .litv (.intLit index), .litv (.word8 byte)] = some (targetFinal, result) ∧
-      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result := by
+      StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result := by
   have found' := stateRel_lookup_bytes cfg source target states address bytes found
   have unequal : (Op.aw8update == Op.aw8updateUnsafe) = false := by decide
   have update : FlatSem.updateIndexed source unsafeOp address bytes index byte .w8array = some (sourceFinal, result) := by
