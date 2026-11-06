@@ -396,41 +396,4 @@ theorem indexInvariant_blank_block (genv : GlobalEnv) (start finish final : Next
   exact split_blank_slots genv.v start.vidx count rangeBound
     (blank_of_unallocated genv start.vidx count rangeBound free)
 
-/-- Index-block disjointness and the final-counter conditions supply the
-reserved slots for the factored declaration initialization step. The full
-source oracle invariant and remaining postconditions are not yet included. -/
-theorem evaluate_makeVarls_indexInvariant {C F : Type} (genv : GlobalEnv)
-    (sourceEnv : List (Flapjack.AstHOL.VarN × Flapjack.SemanticPrimitivesHOL.Value))
-    (flatEnv : List (Flapjack.AstHOL.VarN × FlatSem.Value))
-    (related : EnvRel genv (Flapjack.NamespaceHOL.alistToNs sourceEnv) flatEnv)
-    (distinct : (sourceEnv.map Prod.fst).Nodup)
-    (sourceState : Flapjack.SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
-    (stateRel : StateRel genv sourceState flatState) (globals : flatState.globals = genv.v)
-    (start finish final : NextIndices) (other : Set (Nat × IndexKind)) (next : Option Config)
-    (previous : idxPrev finish final)
-    (nextMatch : match next with | none => True | some config => final = config.next)
-    (lengthMatch : finIdxMatch genv.v.length finish next)
-    (disjoint : allDisjoint [idxBlock start finish, idxFinalBlock final, other, genvAllocatedIndices genv])
-    (fits : start.vidx + flatEnv.length ≤ finish.vidx)
-    (n : Nat) (trace : BackendCommon.Tra) :
-    ∃ pre post, pre.length = start.vidx ∧
-      flatState.globals = pre ++ (List.replicate flatEnv.length none ++ post) ∧
-      let values := flatEnv.reverse.map Prod.snd
-      let finalSlots := pre ++ (values.map some ++ post)
-      let finalEnv := { genv with v := finalSlots }
-      let finalState := { flatState with globals := finalSlots }
-      FlatSem.evaluate ⟨flatEnv⟩ flatState
-          [makeVarls n trace start.vidx (flatEnv.reverse.map Prod.fst)] =
-          (finalState, .val [FlatSem.unitValue]) ∧
-        GlobalGrowth genv finalEnv ∧ StateRel finalEnv sourceState finalState ∧
-        GlobalEnvInv finalEnv
-          { emptyEnv with v := Flapjack.NamespaceHOL.alistToNs (allocDefs n start.vidx (flatEnv.reverse.map Prod.fst)) }
-          (fun _ => False) ⟨Flapjack.NamespaceHOL.alistToNs sourceEnv, Flapjack.NamespaceHOL.nsEmpty⟩ := by
-  have finishBound := endIdx_le_length genv.v.length finish final next previous nextMatch lengthMatch
-  have rangeBound : start.vidx + flatEnv.length ≤ genv.v.length := Nat.le_trans fits finishBound
-  have free := free_variable_range genv start finish
-    (currentBlock_disjoint_allocated genv start finish final other disjoint) flatEnv.length fits
-  exact evaluate_makeVarls_unallocated genv sourceEnv flatEnv related distinct sourceState flatState
-    stateRel globals start.vidx rangeBound free n trace
-
 end Flapjack.Compiler.Backend.SourceToFlat

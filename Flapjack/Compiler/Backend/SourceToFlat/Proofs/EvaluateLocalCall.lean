@@ -522,33 +522,6 @@ theorem localCallResult_related {C F : Type} [Nonempty C]
         rw [result] at bodyPost
         simpa [EvaluateHOL.decClock] using bodyPost
 
-/-- Simulate the deferred call performed by thunk forcing. The update of the
-thunk cell after a successful call remains a separate obligation. -/
-theorem localThunkCall_related {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (limit : Nat) (calledIH : LocalEnvClockIH (F := F) interp transform limit)
-    (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
-    (source : State F) (flat : FlatSem.State C F) (gen : EnvironmentGenerationStore)
-    (invariant : factoredInvariant interp transform gen genv (start, finish, other) source flat)
-    (generation : envGenRel gen source.evalState) (clockBound : source.clock ≤ limit)
-    (function : Value) (flatFunction : FlatSem.Value) (functionRel : ValueRel genv function flatFunction)
-    (successful : doOpApp [function, .conv none []] ≠ none)
-    (safe : ∀ last, sourceCallResult source function (.conv none []) ≠ (last, .err (.abort .typeError))) :
-    let src := sourceCallResult source function (.conv none [])
-    let dst := FlatSem.evaluate ⟨[(Basis.Pure.MlString.ofString "f", flatFunction)]⟩ flat
-      [FlatSem.appUnit (.varLocal .none (Basis.Pure.MlString.ofString "f"))]
-    ∃ nextGenv, (EvalResultRel nextGenv src.2 dst.2 ∧ StateRel nextGenv src.1 dst.1) ∧
-      match src.2 with
-      | .err (.abort _) => True
-      | _ => GlobalGrowth genv nextGenv ∧
-          factoredInvariant interp transform gen nextGenv (start, finish, other) src.1 dst.1 ∧
-          envGenRel gen src.1.evalState ∧ oracForwardRel interp source.evalState src.1.evalState := by
-  have unitRel : ValueRel genv (.conv none []) FlatSem.unitValue := .tuple genv [] [] (.nil genv)
-  simpa only [flatCallResult_appUnit] using
-    localCallResult_related interp transform limit calledIH genv start finish other source flat gen
-      invariant generation clockBound function (.conv none []) flatFunction FlatSem.unitValue
-      functionRel unitRel successful safe
-
 /-- After a deferred call returns, update the original thunk cell in both
 stores and preserve the factored invariant. This is an intermediate step in
 forcing, over relations that still require HOL correspondence review. -/
@@ -595,27 +568,6 @@ noncomputable def sourceThunkCallResult {F : Type} (source : State F) (address :
   | .val values => match SemanticPrimitivesHOL.updateThunk [.loc false address] next.1.refs values with
     | none => EvaluateHOL.typeError next.1
     | some refs => ({ next.1 with refs := refs }, .val values)
-
-/-- Expand the source deferred call in the same order as the force evaluator. -/
-theorem sourceThunkCallResult_eq {F : Type} (source : State F) (address : Nat) (function : Value) :
-    sourceThunkCallResult source address function =
-      match doOpApp [function, .conv none []] with
-      | none => EvaluateHOL.typeError source
-      | some (env, body) =>
-        if source.clock = 0 then EvaluateHOL.timeoutError source else
-        let next := EvaluateHOL.evaluate (EvaluateHOL.decClock source) env [body]
-        match next.2 with
-        | .err error => (next.1, .err error)
-        | .val values => match SemanticPrimitivesHOL.updateThunk [.loc false address] next.1.refs values with
-          | none => EvaluateHOL.typeError next.1
-          | some refs => ({ next.1 with refs := refs }, .val values) := by
-  cases app : doOpApp [function, .conv none []] with
-  | none => simp [sourceThunkCallResult, sourceCallResult, app, EvaluateHOL.typeError]
-  | some call =>
-    obtain ⟨env, body⟩ := call
-    by_cases zero : source.clock = 0
-    · simp [sourceThunkCallResult, sourceCallResult, app, zero, EvaluateHOL.timeoutError]
-    · simp [sourceThunkCallResult, sourceCallResult, app, zero]
 
 /-- Finish the flat deferred call by updating the shifted thunk cell. -/
 noncomputable def flatThunkCallResult {C F : Type} (flat : FlatSem.State C F) (address : Nat)

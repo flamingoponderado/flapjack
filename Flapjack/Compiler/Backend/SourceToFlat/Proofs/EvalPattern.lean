@@ -53,20 +53,4 @@ theorem dropFour_viaEl {α : Type} [Nonempty α] (values : List α) (length : va
   obtain ⟨a, b, c, d, e, f, rfl⟩ := lengthSix values length
   simp [holEl, holHd, holLast]
 
-/-- The two bindings selected by the compiled Eval pattern are precisely the
-arguments consumed by a successful flat Eval callback. -/
-theorem evalPattern_matches_doEval {C F E : Type} (values : List FlatSem.Value)
-    (bytes words : VarN) (body : E) (state : FlatSem.State C F)
-    (decs : List FlatLang.Exp) (next : FlatSem.InstallConfig C) (result : FlatSem.Value)
-    (length : values.length = 6)
-    (decoded : FlatSem.doEval (values.drop 4) state.evalConfig = some (decs, next, result)) :
-    FlatSem.pmatchRows
-        [(.pcon none [.pany, .pany, .pany, .pany, .pvar bytes, .pvar words], body)]
-        state (.conv none values) =
-      .match ([(words, holLast values), (bytes, holEl 4 values)],
-        .pcon none [.pany, .pany, .pany, .pany, .pvar bytes, .pvar words], body) ∧
-    FlatSem.doEval [holEl 4 values, holLast values] state.evalConfig = some (decs, next, result) := by
-  exact ⟨pmatchRows_dropFour values bytes words body state length,
-    (dropFour_viaEl values length).symm ▸ decoded⟩
-
 end Flapjack.Compiler.Backend.SourceToFlat
