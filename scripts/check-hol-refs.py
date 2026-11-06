@@ -50,6 +50,9 @@ from collections.abc import Iterable
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+HOL_INDUCTIVE_BLOCKS = runpy.run_path(
+    str(Path(__file__).with_name("hol_sml_declarations.py"))
+)["inductive_block_declarations"]
 HOL_RELN_TUPLES = runpy.run_path(
     str(Path(__file__).with_name("hol_sml_declarations.py"))
 )["hol_reln_tuple_declarations"]
@@ -4743,6 +4746,13 @@ def hol_declaration_lines(
                 match = header.match(line) or sml_val.match(line)
                 if match:
                     names.setdefault(match.group(1), []).append(number)
+        # HOL IndDefLib.save_theorems generates these names from the block.
+        # This records provenance, not elaboration or statement equivalence.
+        for generated, number, _end in HOL_INDUCTIVE_BLOCKS(
+            path.read_text(encoding="utf-8", errors="replace")
+        ):
+            for name in generated:
+                names.setdefault(name, []).append(number)
         for generated, number, _end in HOL_RELN_TUPLES(
             path.read_text(encoding="utf-8", errors="replace")
         ):
