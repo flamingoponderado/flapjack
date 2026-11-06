@@ -6,24 +6,31 @@ namespace Flapjack.Compiler.Backend.PatternExh
 open Flapjack PatternCommon PatternSemantics PatternComp
 
 /-- Combine two pattern results, retaining any type failure. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "pand_def"]
 def pand : PmatchResult → PmatchResult → PmatchResult
   | .success, result => result
-  | .failure, .typeFailure => .typeFailure
-  | .failure, _ => .failure
+  | .failure, result => if result = .typeFailure then .typeFailure else .failure
   | .typeFailure, _ => .typeFailure
 
-@[simp] theorem pand_success_right (x : PmatchResult) : pand x .success = x := by
-  cases x <;> rfl
+/-- The source's identity and type-failure equations for `pand`. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "pand_simps"]
+theorem pand_simps (x y : PmatchResult) :
+    pand .success y = y ∧ pand x .success = x ∧
+    pand .typeFailure y = .typeFailure ∧ pand x .typeFailure = .typeFailure := by
+  cases x <;> cases y <;> simp [pand]
 
-@[simp] theorem pand_typeFailure_iff (x y : PmatchResult) :
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "pand_eq_PTypeFailure", simp]
+theorem pand_typeFailure_iff (x y : PmatchResult) :
     pand x y = .typeFailure ↔ x = .typeFailure ∨ y = .typeFailure := by
   cases x <;> cases y <;> simp [pand]
 
-@[simp] theorem pand_success_iff (x y : PmatchResult) :
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "pand_eq_PMatchSuccess", simp]
+theorem pand_success_iff (x y : PmatchResult) :
     pand x y = .success ↔ x = .success ∧ y = .success := by
   cases x <;> cases y <;> simp [pand]
 
-@[simp] theorem pand_assoc (x y z : PmatchResult) : pand (pand x y) z = pand x (pand y z) := by
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "pand_assoc", simp]
+theorem pand_assoc (x y z : PmatchResult) : pand (pand x y) z = pand x (pand y z) := by
   cases x <;> cases y <;> cases z <;> rfl
 
 @[simp] theorem pmatchList_cons (refs : HolFiniteMapExact Nat Term) (pattern : Pat)

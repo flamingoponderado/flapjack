@@ -1,5 +1,13 @@
 exh_steps=exh_steps ([] :pat list list) = (1 :num) ∧ (∀(rows :pat list list) (r :pat list). exh_steps (r::rows) = if NULL r then (1 :num) else case col_ctors (r::rows) of (NONE :ctor list option) => (1 :num) + exh_steps (default_mat (r::rows)) | SOME cs => (1 :num) + exh_steps_list (spec_mats cs (r::rows))) ∧ exh_steps_list ([] :pat list list list) = (0 :num) ∧ ∀(ms :pat list list list) (m :pat list list). exh_steps_list (m::ms) = exh_steps m + exh_steps_list ms
 exh_steps_examples=[(1 :num); (1 :num); (2 :num); (3 :num); (3 :num)]
+pand=(∀(y :pmatchResult). pand PMatchSuccess y = y) ∧ (∀(y :pmatchResult). pand PMatchFailure y = if y = PTypeFailure then PTypeFailure else PMatchFailure) ∧ ∀(y :pmatchResult). pand PTypeFailure y = PTypeFailure
+pmatch_result_type=:pmatchResult
+pmatch_result_cases=∀(a :pmatchResult). a = PMatchSuccess ∨ a = PMatchFailure ∨ a = PTypeFailure
+pmatch_result_distinct=PMatchSuccess ≠ PMatchFailure ∧ PMatchSuccess ≠ PTypeFailure ∧ PMatchFailure ≠ PTypeFailure
+pand_simps=∀(x :pmatchResult) (y :pmatchResult). pand PMatchSuccess y = y ∧ pand x PMatchSuccess = x ∧ pand PTypeFailure y = PTypeFailure ∧ pand x PTypeFailure = PTypeFailure
+pand_type=∀(x :pmatchResult) (y :pmatchResult). pand x y = PTypeFailure ⇔ x = PTypeFailure ∨ y = PTypeFailure
+pand_success=∀(x :pmatchResult) (y :pmatchResult). pand x y = PMatchSuccess ⇔ x = PMatchSuccess ∧ y = PMatchSuccess
+pand_assoc=∀(x :pmatchResult) (y :pmatchResult) (z :pmatchResult). pand (pand x y) z = pand x (pand y z)
 exh_rows_eq=exh_rows (rows :(pat # α) list) ⇔ exh_all [or_rows rows]
 exh_mats_append=∀(xs :pat list list list) (ys :pat list list list). exh_mats (xs ++ ys) ⇔ exh_mats xs ∧ exh_mats ys
 exh_all_thm=∀(ms :pat list list list). exh_all ms ⇔ exh_mats ms

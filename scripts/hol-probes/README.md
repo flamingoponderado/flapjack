@@ -1,6 +1,8 @@
 `pattern_exh_steps_probe.out` captures the typed original step-count and
 worklist equations, concrete results, the exported row-checker equation, and
-typed replays of the local append and worklist-equivalence lemmas.
+typed replays of the local append and worklist-equivalence lemmas. It also
+captures the three-valued pattern-result datatype, its combination definition,
+and typed replays of the local combination lemmas.
 
 `data_resource_mono_probe.out` captures the six exported data-semantics
 primitive and evaluator monotonicity statements with inferred configuration,

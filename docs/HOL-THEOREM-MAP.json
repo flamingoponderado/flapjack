@@ -110156,8 +110156,8 @@
     "lean_name": "PmatchResult",
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_commonScript.sml",
     "hol_name": "pmatchResult",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source transcribed; independent typed HOL capture and full statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared pattern_common's three nullary constructors with the typed pmatchResult case and distinctness theorems captured in pattern_exh_steps_probe.out. Lean has the same three constructors and no fields."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternCommon.lean",
@@ -111294,6 +111294,46 @@
     "hol_name": "exh_rows_eq",
     "statement_status": "reviewed_exact",
     "reviewer": "Compared the exported typed HOL statement in pattern_exh_steps_probe.out: the row payload is independently polymorphic and the source checker equals the singleton worklist after orRows. Lean Boolean equality represents the HOL Boolean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Proofs/Soundness.lean",
+    "lean_name": "pand",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "pand_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed HOL equations in pattern_exh_steps_probe.out and the three-constructor pmatchResult carrier: success returns the second result, failure propagates only a type failure, and type failure is absorbing."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Proofs/Soundness.lean",
+    "lean_name": "pand_simps",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "pand_simps",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all four source conjuncts and the typed local HOL replay: success is a two-sided identity and type failure absorbs either argument. The replay is recorded in pattern_exh_steps_probe.out."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Proofs/Soundness.lean",
+    "lean_name": "pand_typeFailure_iff",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "pand_eq_PTypeFailure",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed local HOL replay: the combined result is a type failure exactly when either input is a type failure. The replay is recorded in pattern_exh_steps_probe.out."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Proofs/Soundness.lean",
+    "lean_name": "pand_success_iff",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "pand_eq_PMatchSuccess",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed local HOL replay: the combined result is success exactly when both inputs are success. The replay is recorded in pattern_exh_steps_probe.out."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Proofs/Soundness.lean",
+    "lean_name": "pand_assoc",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "pand_assoc",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed local HOL replay with three independently quantified pmatchResult values and the same association order. The replay is recorded in pattern_exh_steps_probe.out."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternExh/Exhaustive.lean",

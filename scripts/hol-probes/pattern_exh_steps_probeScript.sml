@@ -15,6 +15,43 @@ val _ = print_term (rhs (concl (EVAL ``
    pattern_exh$exh_steps [[pattern_semantics$Ref pattern_semantics$Any]]]
 ``)));
 val _ = print "\n";
+val _ = if null (hyp pattern_exhTheory.pand_def) then
+  (print "pand="; print_term (concl pattern_exhTheory.pand_def); print "\n")
+  else raise Fail "pand_def has hypotheses";
+val _ = print "pmatch_result_type=";
+val _ = print_type (type_of ``pattern_common$PMatchSuccess``);
+val _ = print "\n";
+val _ = print "pmatch_result_cases=";
+val _ = print_term (concl pattern_commonTheory.pmatchResult_nchotomy);
+val _ = print "\n";
+val _ = print "pmatch_result_distinct=";
+val _ = print_term (concl pattern_commonTheory.pmatchResult_distinct);
+val _ = print "\n";
+val pand_simps_replay = prove (
+  ``!x y. pattern_exh$pand pattern_common$PMatchSuccess y = y /\
+    pattern_exh$pand x pattern_common$PMatchSuccess = x /\
+    pattern_exh$pand pattern_common$PTypeFailure y = pattern_common$PTypeFailure /\
+    pattern_exh$pand x pattern_common$PTypeFailure = pattern_common$PTypeFailure``,
+  Cases_on `x` >> fs [pattern_exhTheory.pand_def]);
+val pand_type_replay = prove (
+  ``!x y. (pattern_exh$pand x y = pattern_common$PTypeFailure) <=>
+    x = pattern_common$PTypeFailure \/ y = pattern_common$PTypeFailure``,
+  Cases_on `x` >> Cases_on `y` >> fs [pattern_exhTheory.pand_def]);
+val pand_success_replay = prove (
+  ``!x y. (pattern_exh$pand x y = pattern_common$PMatchSuccess) <=>
+    x = pattern_common$PMatchSuccess /\ y = pattern_common$PMatchSuccess``,
+  Cases_on `x` >> Cases_on `y` >> fs [pattern_exhTheory.pand_def]);
+val pand_assoc_replay = prove (
+  ``!x y z. pattern_exh$pand (pattern_exh$pand x y) z =
+    pattern_exh$pand x (pattern_exh$pand y z)``,
+  Cases_on `x` >> Cases_on `y` >> Cases_on `z` >> fs [pattern_exhTheory.pand_def]);
+fun show_local label th =
+  if null (hyp th) then (print label; print_term (concl th); print "\n")
+  else raise Fail (label ^ " has hypotheses");
+val _ = show_local "pand_simps=" pand_simps_replay;
+val _ = show_local "pand_type=" pand_type_replay;
+val _ = show_local "pand_success=" pand_success_replay;
+val _ = show_local "pand_assoc=" pand_assoc_replay;
 val _ = if null (hyp pattern_exhTheory.exh_rows_eq) then
   (print "exh_rows_eq="; print_term (concl pattern_exhTheory.exh_rows_eq); print "\n")
   else raise Fail "exh_rows_eq has hypotheses";
