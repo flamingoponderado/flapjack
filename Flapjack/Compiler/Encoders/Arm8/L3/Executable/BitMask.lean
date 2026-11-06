@@ -877,4 +877,72 @@ theorem imms_toNat (e S : Nat) :
       (63 - ((e * 2 - 1) % 64)) ||| ((S - 1) % 64) := by
   rw [BitVec.toNat_or, BitVec.toNat_not, BitVec.toNat_ofNat, BitVec.toNat_ofNat]
 
+open Flapjack Compiler.Encoders.Arm8 Compiler.Encoders.Asm Compiler.Encoders.AsmSem
+
+theorem encodeBitMask_eq (imm : BitVec 64) :
+    (encodeBitMask imm).map (fun p => (p.1 % 2, p.2.1 % 64, p.2.2 % 64)) =
+      (EncodeBitMask (TN := 64) imm).map
+        (fun p => (p.1.toNat, p.2.1.toNat, p.2.2.toNat)) := by
+  unfold encodeBitMask EncodeBitMask
+  rw [encodeBitMaskAux_eq imm]
+  generalize h : EncodeBitMaskAux (TN := 64) imm = aux
+  rcases aux with ⟨e, S, R⟩
+  by_cases he : e = 64
+  · have hb : (e == 64) = true := by rw [beq_iff_eq]; exact he
+    simp only [if_pos he, if_pos hb]
+    rw [decodeBitMasks_mod]
+    rw [show (1 : Nat) % 2 = (BitVec.ofNat 1 1).toNat from rfl,
+        show ((S - 1) % 64) = (BitVec.ofNat 6 (S - 1)).toNat from rfl,
+        show (R % 64) = (BitVec.ofNat 6 R).toNat from rfl]
+    rw [decodeBitMasks_eq (BitVec.ofNat 1 1) (BitVec.ofNat 6 (S - 1)) (BitVec.ofNat 6 R) true]
+    cases hD : DecodeBitMasks (TM := 64) (BitVec.ofNat 1 1, (BitVec.ofNat 6 (S - 1), (BitVec.ofNat 6 R, true))) with
+    | none => simp only [Option.map_none]
+    | some v =>
+      obtain ⟨imm2, w2⟩ := v
+      simp only [Option.map_some]
+      have hcond : ((imm == imm2) = true) = (imm2.toNat = imm.toNat) := by
+        have h1 : ((imm == imm2) = true) = (imm = imm2) := propext beq_iff_eq
+        rw [h1, BitVec.toNat_eq]
+        exact propext eq_comm
+      simp only [hcond]
+      by_cases hc : imm2.toNat = imm.toNat
+      · simp only [if_pos hc, Option.map_some]
+        congr 1
+      · simp only [if_neg hc, Option.map_none]
+  · have hb : ¬ ((e == 64) = true) := by rw [beq_iff_eq]; exact he
+    simp only [if_neg he, if_neg hb]
+    have hbnd : ((63 - (e * 2 - 1) % 64) ||| ((S - 1) % 64)) < 64 := by
+      have h1 : 63 - (e * 2 - 1) % 64 < 2 ^ 6 := by
+        have := Nat.mod_lt (e * 2 - 1) (by decide : 0 < 64)
+        omega
+      have h2 : (S - 1) % 64 < 2 ^ 6 := by
+        have := Nat.mod_lt (S - 1) (by decide : 0 < 64)
+        omega
+      simpa using Nat.or_lt_two_pow h1 h2
+    rw [decodeBitMasks_mod]
+    rw [show (0 : Nat) % 2 = (BitVec.ofNat 1 0).toNat from rfl,
+        show ((63 - (e * 2 - 1) % 64) ||| ((S - 1) % 64)) % 64 =
+          (~~~(BitVec.ofNat 6 (e * 2 - 1)) ||| BitVec.ofNat 6 (S - 1)).toNat from by
+          rw [Nat.mod_eq_of_lt hbnd, imms_toNat],
+        show (R % 64) = (BitVec.ofNat 6 R).toNat from rfl]
+    rw [decodeBitMasks_eq (BitVec.ofNat 1 0)
+      (~~~(BitVec.ofNat 6 (e * 2 - 1)) ||| BitVec.ofNat 6 (S - 1)) (BitVec.ofNat 6 R) true]
+    cases hD : DecodeBitMasks (TM := 64)
+        (BitVec.ofNat 1 0, ((~~~(BitVec.ofNat 6 (e * 2 - 1)) ||| BitVec.ofNat 6 (S - 1)),
+          (BitVec.ofNat 6 R, true))) with
+    | none => simp only [Option.map_none]
+    | some v =>
+      obtain ⟨imm2, w2⟩ := v
+      simp only [Option.map_some]
+      have hcond : ((imm == imm2) = true) = (imm2.toNat = imm.toNat) := by
+        have h1 : ((imm == imm2) = true) = (imm = imm2) := propext beq_iff_eq
+        rw [h1, BitVec.toNat_eq]
+        exact propext eq_comm
+      simp only [hcond]
+      by_cases hc : imm2.toNat = imm.toNat
+      · simp only [if_pos hc, Option.map_some]
+        simp only [BitVec.toNat_ofNat, Nat.reducePow, imms_toNat, Nat.mod_eq_of_lt hbnd]
+      · simp only [if_neg hc, Option.map_none]
+
+
 end Flapjack.Compiler.Encoders.Arm8.L3
