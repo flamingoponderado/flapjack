@@ -124,28 +124,4 @@ theorem primitiveSimulation_tagLenEq {C F : Type} (tag length : Nat) :
     rw [related.length_eq]
     exact .block _ [] [] .nil
 
-/-- The five block-inspection operations are simulated when their arguments are. -/
-theorem evaluate_blockInspection {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args) :
-    (∀ index, EvalSimulation (C := C) (F := F) [.op trace (.blockOp (.elemAt index)) args]) ∧
-    (∀ tag, EvalSimulation (C := C) (F := F) [.op trace (.blockOp (.tagEq tag)) args]) ∧
-    EvalSimulation (C := C) (F := F) [.op trace (.blockOp .lengthBlock) args] ∧
-    (∀ length, EvalSimulation (C := C) (F := F) [.op trace (.blockOp (.lenEq length)) args]) ∧
-    (∀ tag length, EvalSimulation (C := C) (F := F) [.op trace (.blockOp (.tagLenEq tag length)) args]) := by
-  refine ⟨?_, ?_, ?_, ?_, ?_⟩
-  · intro index
-    exact evaluate_ordinary_op trace _ args (by intro h; cases h) (by intro h; cases h)
-      argsIH (primitiveSimulation_elemAt index)
-  · intro tag
-    exact evaluate_ordinary_op trace _ args (by intro h; cases h) (by intro h; cases h)
-      argsIH (primitiveSimulation_tagEq tag)
-  · exact evaluate_ordinary_op trace _ args (by intro h; cases h) (by intro h; cases h)
-      argsIH primitiveSimulation_lengthBlock
-  · intro length
-    exact evaluate_ordinary_op trace _ args (by intro h; cases h) (by intro h; cases h)
-      argsIH (primitiveSimulation_lenEq length)
-  · intro tag length
-    exact evaluate_ordinary_op trace _ args (by intro h; cases h) (by intro h; cases h)
-      argsIH (primitiveSimulation_tagLenEq tag length)
-
 end Flapjack.Compiler.Backend.ClosAnnotate

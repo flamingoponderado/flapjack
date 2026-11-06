@@ -78,13 +78,6 @@ theorem primitiveSimulation_fromList {C F : Type} (tag : Nat) :
     | cons first rest =>
       exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel]⟩
 
-/-- List-to-block conversion is simulated when its arguments are. -/
-theorem evaluate_fromList_op {C F : Type} (trace : BackendCommon.Tra) (tag : Nat)
-    (args : List ClosLang.Exp) (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.blockOp (.fromList tag)) args] :=
-  evaluate_ordinary_op trace _ args (by intro h; cases h) (by intro h; cases h)
-    argsIH (primitiveSimulation_fromList tag)
-
 /-- Appending two encoded lists preserves their related elements and agrees
 on decoding failures. -/
 theorem primitiveSimulation_listAppend {C F : Type} :
@@ -137,12 +130,5 @@ theorem primitiveSimulation_listAppend {C F : Type} :
                     And.intro (listToValue_related _ _ appended) states
       | cons third rest =>
         exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel]⟩
-
-/-- List append is simulated when its argument list is. -/
-theorem evaluate_listAppend_op {C F : Type} (trace : BackendCommon.Tra)
-    (args : List ClosLang.Exp) (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.blockOp .listAppend) args] :=
-  evaluate_ordinary_op trace _ args (by intro h; cases h) (by intro h; cases h)
-    argsIH primitiveSimulation_listAppend
 
 end Flapjack.Compiler.Backend.ClosAnnotate

@@ -197,11 +197,4 @@ theorem primitiveSimulation_globalOp {C F : Type} (op : ClosLang.GlobOp) :
     intro values nextValues source target valuesRel states
     exact ⟨.err (.abort .typeError), by simp [doApp, applyGlobal], by simp [doApp, applyGlobal, AppResultRel, ResultRel]⟩
 
-/-- Global operations are simulated when their argument lists are. -/
-theorem evaluate_global_op {C F : Type} (trace : BackendCommon.Tra) (op : ClosLang.GlobOp)
-    (args : List ClosLang.Exp) (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.globOp op) args] :=
-  evaluate_ordinary_op trace _ args (by intro h; cases h) (by intro h; cases h)
-    argsIH (primitiveSimulation_globalOp op)
-
 end Flapjack.Compiler.Backend.ClosAnnotate

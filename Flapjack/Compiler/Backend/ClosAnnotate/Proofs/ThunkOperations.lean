@@ -212,12 +212,4 @@ theorem primitiveSimulation_ordinary {C F : Type} (op : ClosLang.Op)
     | updateThunk mode => exact primitiveSimulation_thunkUpdate mode
   | install => exact False.elim (notInstall rfl)
 
-/-- Ordinary operations preserve the candidate evaluator simulation. -/
-theorem evaluate_ordinary_all {C F : Type} (trace : BackendCommon.Tra) (op : ClosLang.Op)
-    (args : List ClosLang.Exp) (notInstall : op ≠ .install) (notForce : op ≠ .thunkOp .forceThunk)
-    (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace op args] :=
-  evaluate_ordinary_op trace op args notInstall notForce argsIH
-    (primitiveSimulation_ordinary op notInstall notForce)
-
 end Flapjack.Compiler.Backend.ClosAnnotate

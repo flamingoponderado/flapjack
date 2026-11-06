@@ -77,11 +77,4 @@ theorem primitiveSimulation_block {C F : Type} (op : ClosLang.BlockOp) :
     intro args nextArgs source target argsRel states
     exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel]⟩
 
-/-- Every proof-side block operation is simulated when its argument list is. -/
-theorem evaluate_block_op {C F : Type} (trace : BackendCommon.Tra) (op : ClosLang.BlockOp)
-    (args : List ClosLang.Exp) (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.blockOp op) args] :=
-  evaluate_ordinary_op trace _ args (by intro h; cases h) (by intro h; cases h)
-    argsIH (primitiveSimulation_block op)
-
 end Flapjack.Compiler.Backend.ClosAnnotate

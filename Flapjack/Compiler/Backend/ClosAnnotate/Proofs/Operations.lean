@@ -116,31 +116,4 @@ theorem primitiveSimulation_cons {C F : Type} (tag : Nat) :
   exact ⟨.val (.block tag nextValues, target), by simp [doApp, applyBlock], by
     simpa [doApp, applyBlock, AppResultRel] using And.intro (ValueRel.block tag values nextValues related) states⟩
 
-/-- Block construction is simulated whenever its argument list is. -/
-theorem evaluate_cons_op {C F : Type} (trace : BackendCommon.Tra) (tag : Nat)
-    (args : List ClosLang.Exp) (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.blockOp (.cons tag)) args] :=
-  evaluate_ordinary_op trace _ args (by intro h; cases h) (by intro h; cases h)
-    argsIH (primitiveSimulation_cons tag)
-
-/-- Integer constants have identical results or type errors on related lists. -/
-theorem primitiveSimulation_intConst {C F : Type} (value : Int) :
-    PrimitiveSimulation (C := C) (F := F) (.intOp (.const value)) := by
-  intro values nextValues source target related states
-  cases related with
-  | nil =>
-    exact ⟨.val (.number value, target), by simp [doApp, applyNumeric, doIntApp], by
-      simpa [doApp, applyNumeric, doIntApp, AppResultRel] using And.intro (ValueRel.number value) states⟩
-  | cons head tail =>
-    refine ⟨.err (.abort .typeError), ?_, ?_⟩
-    · simp [doApp, applyNumeric, doIntApp]
-    · simp [doApp, applyNumeric, doIntApp, AppResultRel, ResultRel]
-
-/-- Integer literal evaluation follows from the argument simulation. -/
-theorem evaluate_intConst_op {C F : Type} (trace : BackendCommon.Tra) (value : Int)
-    (args : List ClosLang.Exp) (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.intOp (.const value)) args] :=
-  evaluate_ordinary_op trace _ args (by intro h; cases h) (by intro h; cases h)
-    argsIH (primitiveSimulation_intConst value)
-
 end Flapjack.Compiler.Backend.ClosAnnotate

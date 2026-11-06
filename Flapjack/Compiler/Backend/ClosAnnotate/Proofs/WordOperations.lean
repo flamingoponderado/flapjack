@@ -78,11 +78,4 @@ theorem primitiveSimulation_word {C F : Type} (op : ClosLang.WordOp) :
     · simpa [doApp, applyNumeric, result, AppResultRel] using
         And.intro (doWordApp_result_related op values value result) states
 
-/-- Word and floating-point operations are simulated when their arguments are. -/
-theorem evaluate_word_op {C F : Type} (trace : BackendCommon.Tra) (op : ClosLang.WordOp)
-    (args : List ClosLang.Exp) (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.wordOp op) args] :=
-  evaluate_ordinary_op trace _ args (by intro h; cases h) (by intro h; cases h)
-    argsIH (primitiveSimulation_word op)
-
 end Flapjack.Compiler.Backend.ClosAnnotate

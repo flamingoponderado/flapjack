@@ -75,13 +75,6 @@ theorem primitiveSimulation_decodedBytes {C F : Type} (chunks : Bool) :
     | cons first rest => cases chunks <;>
         exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
 
-/-- Byte-list conversions are simulated when their arguments are. -/
-theorem evaluate_decodedBytes_op {C F : Type} (trace : BackendCommon.Tra) (chunks : Bool) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.memOp (if chunks then .concatByteVec else .fromListByte)) args] :=
-  evaluate_ordinary_op trace _ args (by intro h; cases h) (by intro h; cases h)
-    argsIH (primitiveSimulation_decodedBytes chunks)
-
 /-- A byte vector converts to a related encoded list of byte numbers. -/
 theorem primitiveSimulation_toListByte {C F : Type} :
     PrimitiveSimulation (C := C) (F := F) (.memOp .toListByte) := by
@@ -105,12 +98,5 @@ theorem primitiveSimulation_toListByte {C F : Type} :
       | _ => exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
     | cons first rest =>
       exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
-
-/-- Byte-vector-to-list conversion is simulated when its arguments are. -/
-theorem evaluate_toListByte_op {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.memOp .toListByte) args] :=
-  evaluate_ordinary_op trace _ args (by intro h; cases h) (by intro h; cases h)
-    argsIH primitiveSimulation_toListByte
 
 end Flapjack.Compiler.Backend.ClosAnnotate

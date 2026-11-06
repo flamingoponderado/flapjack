@@ -101,13 +101,6 @@ theorem primitiveSimulation_boundsCheckBlock {C F : Type} :
       | cons third rest =>
         exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel]⟩
 
-/-- The candidate evaluator simulates block bounds checks on simulated arguments. -/
-theorem evaluate_boundsCheckBlock {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.blockOp .boundsCheckBlock) args] :=
-  evaluate_ordinary_op trace _ args (by intro h; cases h) (by intro h; cases h)
-    argsIH primitiveSimulation_boundsCheckBlock
-
 /-- A constant translates to a value related to itself, including nested
 constructor constants. -/
 theorem makeConst_related (constant : ClosLang.Const) : ValueRel (makeConst constant) (makeConst constant) := by
@@ -135,24 +128,5 @@ theorem primitiveSimulation_constant {C F : Type} (constant : ClosLang.Const) :
     · simpa [doApp, applyBlock, AppResultRel] using And.intro (makeConst_related constant) states
   | cons head tail =>
     exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel]⟩
-
-/-- Constant construction is simulated when its argument list is. -/
-theorem evaluate_constant_op {C F : Type} (trace : BackendCommon.Tra) (constant : ClosLang.Const)
-    (args : List ClosLang.Exp) (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.blockOp (.constant constant)) args] :=
-  evaluate_ordinary_op trace _ args (by intro h; cases h) (by intro h; cases h)
-    argsIH (primitiveSimulation_constant constant)
-
-/-- The candidate evaluator simulates Boolean operations when its arguments are simulated. -/
-theorem evaluate_boolean_ops {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.blockOp .boolNot) args] ∧
-    (∀ test, EvalSimulation (C := C) (F := F) [.op trace (.blockOp (.boolTest test)) args]) := by
-  constructor
-  · exact evaluate_ordinary_op trace _ args (by intro h; cases h) (by intro h; cases h)
-      argsIH primitiveSimulation_boolNot
-  · intro test
-    exact evaluate_ordinary_op trace _ args (by intro h; cases h) (by intro h; cases h)
-      argsIH (primitiveSimulation_boolTest test)
 
 end Flapjack.Compiler.Backend.ClosAnnotate

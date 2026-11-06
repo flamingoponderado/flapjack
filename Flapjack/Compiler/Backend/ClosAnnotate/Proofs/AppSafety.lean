@@ -110,17 +110,6 @@ theorem evaluate_app_preserves_safe_step {C F : Type} (trace : BackendCommon.Tra
               omega
             exact appIH location _ values last next result (by omega) run lastSafe.1 lastSafe.2
 
-/-- Unrestricted form of the application-expression safety step. -/
-theorem evaluate_app_preserves_safe {C F : Type} (trace : BackendCommon.Tra) (location : Option Nat)
-    (function : ClosLang.Exp) (args : List ClosLang.Exp)
-    (argsIH : PreservesCodeOracle (C := C) (F := F) args)
-    (functionIH : PreservesCodeOracle (C := C) (F := F) [function])
-    (appIH : ∀ clock, AppPreservesBelow (C := C) (F := F) clock) :
-    PreservesCodeOracle (C := C) (F := F) [.app trace location function args] := by
-  intro env source result next run code oracle
-  exact evaluate_app_preserves_safe_step trace location function args source (preservesCodeOracle_at argsIH source)
-    (fun state _ => preservesCodeOracle_at functionIH state) (appIH (source.clock + 1)) env result next run code oracle
-
 /-- Direct calls preserve safety through their arguments and selected body. -/
 theorem evaluate_call_preserves_safe_step {C F : Type} (trace : BackendCommon.Tra) (ticks location : Nat)
     (args : List ClosLang.Exp) (source : State C F) (argsIH : PreservesCodeOracleAt source args)
@@ -154,15 +143,6 @@ theorem evaluate_call_preserves_safe_step {C F : Type} (trace : BackendCommon.Tr
           apply bodyIH body (decClock (ticks + 1) middle) smaller bodyEnv result next run
           · simpa [CodeSafe, decClock] using middleSafe.1
           · simpa [OracleSafe, decClock] using middleSafe.2
-
-/-- Unrestricted form of the direct-call safety step. -/
-theorem evaluate_call_preserves_safe {C F : Type} (trace : BackendCommon.Tra) (ticks location : Nat)
-    (args : List ClosLang.Exp) (argsIH : PreservesCodeOracle (C := C) (F := F) args)
-    (bodyIH : ∀ body, PreservesCodeOracle (C := C) (F := F) [body]) :
-    PreservesCodeOracle (C := C) (F := F) [.call trace ticks location args] := by
-  intro env source result next run code oracle
-  exact evaluate_call_preserves_safe_step trace ticks location args source (preservesCodeOracle_at argsIH source)
-    (fun body state _ => preservesCodeOracle_at (bodyIH body) state) env result next run code oracle
 
 /-- Forcing a thunk changes at most its reference store after evaluating the
 thunk body, so code and oracle safety are retained. -/
@@ -207,14 +187,5 @@ theorem evaluate_force_preserves_safe_step {C F : Type} (trace : BackendCommon.T
                 rw [updated] at run
                 cases run
                 simpa [CodeSafe, OracleSafe] using lastSafe
-
-/-- Unrestricted form of the thunk-force safety step. -/
-theorem evaluate_force_preserves_safe {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (argsIH : PreservesCodeOracle (C := C) (F := F) args)
-    (forceIH : PreservesCodeOracle (C := C) (F := F) [appUnit (.var .none 0)]) :
-    PreservesCodeOracle (C := C) (F := F) [.op trace (.thunkOp .forceThunk) args] := by
-  intro env source result next run code oracle
-  exact evaluate_force_preserves_safe_step trace args source (preservesCodeOracle_at argsIH source)
-    (fun state _ => preservesCodeOracle_at forceIH state) env result next run code oracle
 
 end Flapjack.Compiler.Backend.ClosAnnotate

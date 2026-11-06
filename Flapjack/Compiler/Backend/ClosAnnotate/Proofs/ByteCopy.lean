@@ -80,13 +80,6 @@ theorem primitiveSimulation_copyByteNew {C F : Type} :
         | cons fourth rest =>
           exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
 
-/-- Copy-to-vector expressions are simulated when their arguments are. -/
-theorem evaluate_copyByteNew_op {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.memOp (.copyByte true)) args] :=
-  evaluate_ordinary_op trace _ args (by intro h; cases h) (by intro h; cases h)
-    argsIH primitiveSimulation_copyByteNew
-
 /-- Compute the new destination bytes for an in-place copy. -/
 def copyByteWrite (value : Value) (offset length : Int) (dst : Nat) (dstOffset : Int)
     (refs : HolFiniteMapExact Nat (Ref Value)) : Option (List (BitVec 8)) := do
@@ -197,14 +190,5 @@ theorem primitiveSimulation_copyByteWrite {C F : Type} :
                   exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
             | cons sixth rest =>
               exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
-
-/-- Both forms of byte copy are simulated when their arguments are. -/
-theorem evaluate_copyByte_op {C F : Type} (trace : BackendCommon.Tra) (fresh : Bool) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.memOp (.copyByte fresh)) args] := by
-  apply evaluate_ordinary_op trace _ args (by intro h; cases h) (by intro h; cases h) argsIH
-  cases fresh
-  · exact primitiveSimulation_copyByteWrite
-  · exact primitiveSimulation_copyByteNew
 
 end Flapjack.Compiler.Backend.ClosAnnotate

@@ -72,13 +72,6 @@ theorem primitiveSimulation_refLength {C F : Type} (byte : Bool) :
     | cons first rest => cases byte <;>
         exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
 
-/-- Reference length expressions are simulated when their arguments are. -/
-theorem evaluate_refLength_op {C F : Type} (trace : BackendCommon.Tra) (byte : Bool) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.memOp (if byte then .lengthByte else .length)) args] :=
-  evaluate_ordinary_op trace _ args (by intro h; cases h) (by intro h; cases h)
-    argsIH (primitiveSimulation_refLength byte)
-
 /-- Extract a value array from an optional reference. -/
 def refValueArray : Option (Ref Value) → Option (List Value)
   | some (.valueArray values) => some values
@@ -167,12 +160,5 @@ theorem primitiveSimulation_el {C F : Type} : PrimitiveSimulation (C := C) (F :=
             exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
       | cons third rest =>
         exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
-
-/-- Indexed value reads are simulated when their arguments are. -/
-theorem evaluate_el_op {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.memOp .el) args] :=
-  evaluate_ordinary_op trace _ args (by intro h; cases h) (by intro h; cases h)
-    argsIH primitiveSimulation_el
 
 end Flapjack.Compiler.Backend.ClosAnnotate

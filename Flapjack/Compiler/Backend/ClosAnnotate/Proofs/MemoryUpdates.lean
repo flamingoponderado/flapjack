@@ -78,13 +78,6 @@ theorem primitiveSimulation_update {C F : Type} :
         | cons fourth rest =>
           exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
 
-/-- Array updates are simulated when their arguments are. -/
-theorem evaluate_update_op {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.memOp .update) args] :=
-  evaluate_ordinary_op trace _ args (by intro h; cases h) (by intro h; cases h)
-    argsIH primitiveSimulation_update
-
 /-- A byte-array write either fails on both sides or updates identical bytes. -/
 theorem updateByte_related {C F : Type} (source target : State C F) (states : StateRel source target)
     (flag : Bool) (ptr : Nat) (index byte : Int) :
@@ -164,12 +157,5 @@ theorem primitiveSimulation_updateByte {C F : Type} :
               exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
         | cons fourth rest =>
           exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
-
-/-- Byte-array updates are simulated when their arguments are. -/
-theorem evaluate_updateByte_op {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.memOp .updateByte) args] :=
-  evaluate_ordinary_op trace _ args (by intro h; cases h) (by intro h; cases h)
-    argsIH primitiveSimulation_updateByte
 
 end Flapjack.Compiler.Backend.ClosAnnotate

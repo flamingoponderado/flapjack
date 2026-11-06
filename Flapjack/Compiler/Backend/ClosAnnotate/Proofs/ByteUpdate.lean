@@ -72,11 +72,4 @@ theorem primitiveSimulation_xorByte {C F : Type} :
       | cons third rest =>
         exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
 
-/-- Byte-array XOR is simulated when its arguments are. -/
-theorem evaluate_xorByte_op {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.memOp .xorByte) args] :=
-  evaluate_ordinary_op trace _ args (by intro h; cases h) (by intro h; cases h)
-    argsIH primitiveSimulation_xorByte
-
 end Flapjack.Compiler.Backend.ClosAnnotate

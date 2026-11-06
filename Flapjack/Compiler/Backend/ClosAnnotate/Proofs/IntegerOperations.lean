@@ -60,11 +60,4 @@ theorem primitiveSimulation_int {C F : Type} (op : ClosLang.IntOp) :
     · simpa [doApp, applyNumeric, result, AppResultRel] using
         And.intro (doIntApp_result_related op values value result) states
 
-/-- Integer operations are simulated once their argument lists are. -/
-theorem evaluate_integer_op {C F : Type} (trace : BackendCommon.Tra) (op : ClosLang.IntOp)
-    (args : List ClosLang.Exp) (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.intOp op) args] :=
-  evaluate_ordinary_op trace _ args (by intro h; cases h) (by intro h; cases h)
-    argsIH (primitiveSimulation_int op)
-
 end Flapjack.Compiler.Backend.ClosAnnotate

@@ -155,11 +155,4 @@ theorem evaluate_preserves_safe {C F : Type} :
   · intro clock location function args source next result smaller run code oracle
     exact (all source.clock).1 source rfl location function args next result run code oracle
 
-/-- Sequencing simulation no longer requires a separate safety hypothesis. -/
-theorem evaluate_cons_of_simulations {C F : Type} (first second : ClosLang.Exp) (rest : List ClosLang.Exp)
-    (firstIH : EvalSimulation (C := C) (F := F) [first])
-    (restIH : EvalSimulation (C := C) (F := F) (second :: rest)) :
-    EvalSimulation (C := C) (F := F) (first :: second :: rest) :=
-  evaluate_cons first second rest firstIH restIH (evaluate_preserves_safe.1 [first])
-
 end Flapjack.Compiler.Backend.ClosAnnotate

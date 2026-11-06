@@ -75,13 +75,6 @@ theorem primitiveSimulation_equal {C F : Type} :
       | cons third rest =>
         exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel]⟩
 
-/-- Block equality is simulated when its argument list is. -/
-theorem evaluate_equal_op {C F : Type} (trace : BackendCommon.Tra)
-    (args : List ClosLang.Exp) (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.blockOp .equal) args] :=
-  evaluate_ordinary_op trace _ args (by intro h; cases h) (by intro h; cases h)
-    argsIH primitiveSimulation_equal
-
 /-- Constant comparisons produce related Boolean results or matching type
 errors on related values. -/
 theorem primitiveSimulation_equalConst {C F : Type} (part : ClosLang.ConstPart) :
@@ -98,12 +91,5 @@ theorem primitiveSimulation_equalConst {C F : Type} (part : ClosLang.ConstPart) 
       all_goals exact .block _ [] [] .nil
     | cons first rest =>
       exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel]⟩
-
-/-- Constant comparison is simulated when its arguments are. -/
-theorem evaluate_equalConst_op {C F : Type} (trace : BackendCommon.Tra) (part : ClosLang.ConstPart)
-    (args : List ClosLang.Exp) (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.blockOp (.equalConst part)) args] :=
-  evaluate_ordinary_op trace _ args (by intro h; cases h) (by intro h; cases h)
-    argsIH (primitiveSimulation_equalConst part)
 
 end Flapjack.Compiler.Backend.ClosAnnotate

@@ -108,13 +108,6 @@ theorem primitiveSimulation_byteAt {C F : Type} (reference : Bool) :
       | cons third rest => cases reference <;>
           exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
 
-/-- Byte-read expressions are simulated when their arguments are. -/
-theorem evaluate_byteAt_op {C F : Type} (trace : BackendCommon.Tra) (reference : Bool) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.memOp (if reference then .derefByte else .derefByteVec)) args] :=
-  evaluate_ordinary_op trace _ args (by intro h; cases h) (by intro h; cases h)
-    argsIH (primitiveSimulation_byteAt reference)
-
 /-- Bounds checks accept both byte vectors and byte-array references. -/
 def byteBounds (loose : Bool) (value : Value) (index : Int)
     (refs : HolFiniteMapExact Nat (Ref Value)) : Option Value := do
@@ -182,13 +175,6 @@ theorem primitiveSimulation_byteBounds {C F : Type} (loose : Bool) :
       | cons third rest =>
         exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
 
-/-- Byte bounds checks are simulated when their arguments are. -/
-theorem evaluate_byteBounds_op {C F : Type} (trace : BackendCommon.Tra) (loose : Bool) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.memOp (.boundsCheckByte loose)) args] :=
-  evaluate_ordinary_op trace _ args (by intro h; cases h) (by intro h; cases h)
-    argsIH (primitiveSimulation_byteBounds loose)
-
 /-- Byte-vector lengths agree for related values. -/
 theorem primitiveSimulation_lengthByteVec {C F : Type} :
     PrimitiveSimulation (C := C) (F := F) (.memOp .lengthByteVec) := by
@@ -233,17 +219,5 @@ theorem primitiveSimulation_stringCmp {C F : Type} (fast : Bool) (op : Opb) :
             exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
       | cons third rest =>
         exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
-
-/-- Byte-vector length and string comparisons follow the evaluator simulation. -/
-theorem evaluate_byteObservations {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.memOp .lengthByteVec) args] ∧
-    (∀ fast op, EvalSimulation (C := C) (F := F) [.op trace (.memOp (.stringCmp fast op)) args]) := by
-  constructor
-  · exact evaluate_ordinary_op trace _ args (by intro h; cases h) (by intro h; cases h)
-      argsIH primitiveSimulation_lengthByteVec
-  · intro fast op
-    exact evaluate_ordinary_op trace _ args (by intro h; cases h) (by intro h; cases h)
-      argsIH (primitiveSimulation_stringCmp fast op)
 
 end Flapjack.Compiler.Backend.ClosAnnotate

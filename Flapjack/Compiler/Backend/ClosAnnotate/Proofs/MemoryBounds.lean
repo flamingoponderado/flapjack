@@ -78,15 +78,4 @@ theorem primitiveSimulation_configGC {C F : Type} :
       | cons third rest =>
         exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
 
-/-- Both observations are simulated when their argument lists are. -/
-theorem evaluate_memoryBounds {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.memOp .boundsCheckArray) args] ∧
-    EvalSimulation (C := C) (F := F) [.op trace (.memOp .configGC) args] := by
-  constructor
-  · exact evaluate_ordinary_op trace _ args (by intro h; cases h) (by intro h; cases h)
-      argsIH primitiveSimulation_boundsCheckArray
-  · exact evaluate_ordinary_op trace _ args (by intro h; cases h) (by intro h; cases h)
-      argsIH primitiveSimulation_configGC
-
 end Flapjack.Compiler.Backend.ClosAnnotate

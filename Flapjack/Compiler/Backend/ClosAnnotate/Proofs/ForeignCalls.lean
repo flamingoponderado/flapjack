@@ -86,42 +86,10 @@ theorem primitiveSimulation_ffi {C F : Type} (name : Basis.Pure.MlString.MlStrin
       | cons third rest =>
         exact ⟨.err (.abort .typeError), by simp [doApp], by simp [doApp, AppResultRel, ResultRel]⟩
 
-/-- Foreign calls are simulated when their arguments are. -/
-theorem evaluate_ffi_op {C F : Type} (trace : BackendCommon.Tra) (name : Basis.Pure.MlString.MlString)
-    (args : List ClosLang.Exp) (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.ffi name) args] :=
-  evaluate_ordinary_op trace _ args (by intro h; cases h) (by intro h; cases h)
-    argsIH (primitiveSimulation_ffi name)
-
 /-- The current proof-side dispatcher rejects labels on both sides. -/
 theorem primitiveSimulation_label {C F : Type} (label : Nat) :
     PrimitiveSimulation (C := C) (F := F) (.label label) := by
   intro values nextValues source target valuesRel states
   exact ⟨.err (.abort .typeError), by simp [doApp], by simp [doApp, AppResultRel, ResultRel]⟩
-
-/-- Primitive simulation for all non-memory operations whose evaluator
-does not enter installation or thunk control flow. -/
-theorem primitiveSimulation_nonMemory {C F : Type} (op : ClosLang.Op)
-    (notMemory : ∀ mem, op ≠ .memOp mem) (notThunk : ∀ thunk, op ≠ .thunkOp thunk)
-    (notInstall : op ≠ .install) : PrimitiveSimulation (C := C) (F := F) op := by
-  cases op with
-  | label label => exact primitiveSimulation_label label
-  | ffi name => exact primitiveSimulation_ffi name
-  | intOp operation => exact primitiveSimulation_int operation
-  | wordOp operation => exact primitiveSimulation_word operation
-  | blockOp operation => exact primitiveSimulation_block operation
-  | globOp operation => exact primitiveSimulation_globalOp operation
-  | memOp operation => exact False.elim (notMemory operation rfl)
-  | thunkOp operation => exact False.elim (notThunk operation rfl)
-  | install => exact False.elim (notInstall rfl)
-
-/-- The candidate evaluator simulates all ordinary non-memory operations. -/
-theorem evaluate_nonMemory_op {C F : Type} (trace : BackendCommon.Tra) (op : ClosLang.Op)
-    (args : List ClosLang.Exp) (notMemory : ∀ mem, op ≠ .memOp mem)
-    (notThunk : ∀ thunk, op ≠ .thunkOp thunk) (notInstall : op ≠ .install)
-    (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace op args] :=
-  evaluate_ordinary_op trace op args notInstall (notThunk _) argsIH
-    (primitiveSimulation_nonMemory op notMemory notThunk notInstall)
 
 end Flapjack.Compiler.Backend.ClosAnnotate

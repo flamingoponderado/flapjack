@@ -43,13 +43,6 @@ theorem primitiveSimulation_ref {C F : Type} :
     refine ⟨.refPtr true index, ?_⟩
     simpa [index, states.2.1] using nextStates
 
-/-- Reference allocation is simulated when its arguments are. -/
-theorem evaluate_ref_op {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.memOp .ref) args] :=
-  evaluate_ordinary_op trace _ args (by intro h; cases h) (by intro h; cases h)
-    argsIH primitiveSimulation_ref
-
 /-- Repeating related values produces related arrays. -/
 theorem forall₂_replicate (count : Nat) (value nextValue : Value) (related : ValueRel value nextValue) :
     List.Forall₂ ValueRel (List.replicate count value) (List.replicate count nextValue) := by
@@ -93,13 +86,6 @@ theorem primitiveSimulation_refArray {C F : Type} :
           exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
       | cons third rest =>
         exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
-
-/-- Array allocation is simulated when its arguments are. -/
-theorem evaluate_refArray_op {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.memOp .refArray) args] :=
-  evaluate_ordinary_op trace _ args (by intro h; cases h) (by intro h; cases h)
-    argsIH primitiveSimulation_refArray
 
 /-- Byte-array allocation has matching validation and preserves byte contents. -/
 theorem primitiveSimulation_refByte {C F : Type} (flag : Bool) :
@@ -148,12 +134,5 @@ theorem primitiveSimulation_refByte {C F : Type} (flag : Bool) :
               exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
         | cons third rest =>
           exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
-
-/-- Byte-array allocation is simulated when its arguments are. -/
-theorem evaluate_refByte_op {C F : Type} (trace : BackendCommon.Tra) (flag : Bool) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.op trace (.memOp (.refByte flag)) args] :=
-  evaluate_ordinary_op trace _ args (by intro h; cases h) (by intro h; cases h)
-    argsIH (primitiveSimulation_refByte flag)
 
 end Flapjack.Compiler.Backend.ClosAnnotate
