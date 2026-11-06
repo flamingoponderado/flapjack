@@ -184,84 +184,44 @@ theorem factoredDecBoundedIH_dlocal {C F : Type} [Nonempty C]
       (Nat.le_trans (EvaluateHOL.evaluateDecsClockFull source middle sourceEnv locals _ localRun) clockBound) bodyRun midInvariant bodyCompiled midInv notTypeError
       midGeneration midFuture bounded
 
-/-- Declaration forms with bounded simulations, including value declarations
-whose initializers use the bounded expression proof. -/
-inductive FactoredBoundedDec : Dec → Prop where
-  | tabbrev (location : Flapjack.Misc.Location.Locs) (vars : List TvarN) (name : TypeN) (typ : AstT) :
-      FactoredBoundedDec (.dtabbrev location vars name typ)
-  | letrec (location : Flapjack.Misc.Location.Locs) (funs : List (VarN × VarN × AstHOL.Exp)) :
-      FactoredBoundedDec (.dletrec location funs)
-  | denv (name : VarN) : FactoredBoundedDec (.denv name)
-  | exception_ (location : Flapjack.Misc.Location.Locs) (name : ConN) (types : List AstT) :
-      FactoredBoundedDec (.dexn location name types)
-  | datatype_ (location : Flapjack.Misc.Location.Locs) (types : TypeDef) :
-      FactoredBoundedDec (.dtype location types)
-  | value (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp) :
-      LocalEnvBoundedArrayExpression expr → FactoredBoundedDec (.dlet location pattern expr)
-  | module_ (moduleName : ModN) (decs : List Dec) :
-      (∀ dec, dec ∈ decs → FactoredBoundedDec dec) → FactoredBoundedDec (.dmod moduleName decs)
-  | local_ (locals body : List Dec) :
-      (∀ dec, dec ∈ locals → FactoredBoundedDec dec) →
-      (∀ dec, dec ∈ body → FactoredBoundedDec dec) → FactoredBoundedDec (.dlocal locals body)
-
-/-- Every source declaration has a structural bounded-coverage derivation. -/
-theorem allDeclarations_covered : (dec : Dec) → FactoredBoundedDec dec
-  | .dlet location pattern expr => .value location pattern expr (allExpressions_covered expr)
-  | .dletrec location funs => .letrec location funs
-  | .dtype location types => .datatype_ location types
-  | .dtabbrev location vars name typ => .tabbrev location vars name typ
-  | .dexn location name types => .exception_ location name types
-  | .dmod name decs => .module_ name decs (fun dec _member => allDeclarations_covered dec)
-  | .dlocal locals body => .local_ locals body
-      (fun dec _member => allDeclarations_covered dec) (fun dec _member => allDeclarations_covered dec)
-  | .denv name => .denv name
-termination_by dec => sizeOf dec
-decreasing_by
-  all_goals simp_wf
-  all_goals have h := List.sizeOf_lt_of_mem _member
-  all_goals omega
-
-/-- Singleton simulations for recursively covered bounded declarations. -/
-theorem factoredDecBoundedIH_covered {C F : Type} [Nonempty C]
+/-- Every singleton declaration has a bounded simulation, by structural
+induction on the source declaration and its nested declaration lists. -/
+theorem factoredDecBoundedIH_singleton {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
     (smallerExprs : ∀ n, n < limit → ∀ expr, LocalEnvBoundedIH (F := F) interp transform n expr)
     (smallerDecs : ∀ n, n < limit → ∀ decs, FactoredDecBoundedIH (F := F) interp transform n decs)
-    (dec : Dec) (covered : FactoredBoundedDec dec) :
-    FactoredDecBoundedIH (F := F) interp transform limit [dec] := by
-  induction covered with
-  | tabbrev location vars name typ =>
+    (dec : Dec) : FactoredDecBoundedIH (F := F) interp transform limit [dec] := by
+  cases dec with
+  | dtabbrev location vars name typ =>
     exact factoredDecBoundedIH_of_unbounded interp transform limit _ (factoredDecIH_dtabbrev interp transform location vars name typ)
-  | letrec location funs =>
+  | dletrec location funs =>
     exact factoredDecBoundedIH_of_unbounded interp transform limit _ (factoredDecIH_dletrec interp transform location funs)
   | denv name =>
     exact factoredDecBoundedIH_of_unbounded interp transform limit _ (factoredDecIH_denv interp transform name)
-  | exception_ location name types =>
+  | dexn location name types =>
     exact factoredDecBoundedIH_of_unbounded interp transform limit _ (factoredDecIH_dexn interp transform location name types)
-  | datatype_ location types =>
+  | dtype location types =>
     exact factoredDecBoundedIH_of_unbounded interp transform limit _ (factoredDecIH_dtype interp transform location types)
-  | value location pattern expr covered =>
-    exact factoredDecBoundedIH_dlet_arrayTree interp transform limit smallerExprs smallerDecs location pattern expr covered
-  | module_ moduleName decs _ ih =>
+  | dlet location pattern expr =>
+    exact factoredDecBoundedIH_dlet_arrayTree interp transform limit smallerExprs smallerDecs location pattern expr (allExpressions_covered expr)
+  | dmod moduleName decs =>
     apply factoredDecBoundedIH_dmod interp transform limit moduleName decs
     apply factoredDecBoundedIH_list interp transform limit decs
-    exact ih
-  | local_ locals body _ _ localIH bodyIH =>
+    intro child member
+    exact factoredDecBoundedIH_singleton interp transform limit smallerExprs smallerDecs child
+  | dlocal locals body =>
     apply factoredDecBoundedIH_dlocal interp transform limit locals body
     · apply factoredDecBoundedIH_list interp transform limit locals
-      exact localIH
+      intro child member
+      exact factoredDecBoundedIH_singleton interp transform limit smallerExprs smallerDecs child
     · apply factoredDecBoundedIH_list interp transform limit body
-      exact bodyIH
-
-/-- Covered declaration lists compose under smaller-clock hypotheses. -/
-theorem factoredDecBoundedIH_covered_list {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
-    (smallerExprs : ∀ n, n < limit → ∀ expr, LocalEnvBoundedIH (F := F) interp transform n expr)
-    (smallerDecs : ∀ n, n < limit → ∀ decs, FactoredDecBoundedIH (F := F) interp transform n decs)
-    (decs : List Dec) (covered : ∀ dec, dec ∈ decs → FactoredBoundedDec dec) :
-    FactoredDecBoundedIH (F := F) interp transform limit decs := by
-  apply factoredDecBoundedIH_list interp transform limit decs
-  intro dec member
-  exact factoredDecBoundedIH_covered interp transform limit smallerExprs smallerDecs dec (covered dec member)
+      intro child member
+      exact factoredDecBoundedIH_singleton interp transform limit smallerExprs smallerDecs child
+termination_by sizeOf dec
+decreasing_by
+  all_goals simp_wf
+  all_goals have h := List.sizeOf_lt_of_mem member
+  all_goals omega
 
 /-- Simultaneous expression and declaration simulation at every clock bound.
 This closes the clock induction over the preliminary factored relations; it is
@@ -282,8 +242,9 @@ theorem factoredAllBounded {C F : Type} [Nonempty C]
       exact localEnvBounded_arrayTree_of_smaller interp transform limit smallerExprs smallerDecs expr
         (allExpressions_covered expr)
     · intro decs
-      exact factoredDecBoundedIH_covered_list interp transform limit smallerExprs smallerDecs decs
-        (fun dec _ => allDeclarations_covered dec)
+      apply factoredDecBoundedIH_list interp transform limit decs
+      intro dec _
+      exact factoredDecBoundedIH_singleton interp transform limit smallerExprs smallerDecs dec
 
 /-- Arbitrary source declaration lists satisfy the preliminary factored
 simulation. This is not yet the reviewed HOL pass-correctness statement. -/
