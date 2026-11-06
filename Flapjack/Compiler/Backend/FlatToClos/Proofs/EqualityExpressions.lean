@@ -85,6 +85,6 @@ theorem evaluate_polymorphicEquality {C F : Type} (env : FlatSem.Environment Fla
                   value pointerRel indexRel eq
                 simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, eq,
                   ClosSem.doApp, ClosSem.applyBlock, targetEq, states,
-                  EvalResultRel.value (.cons (boolValue_related _) .nil)]
+                  EvalResultRel.value (.cons ((vRel_bool _ _).mpr rfl) .nil)]
 
 end Flapjack.Compiler.Backend.FlatToClos

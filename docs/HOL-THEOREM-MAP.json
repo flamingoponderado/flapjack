@@ -125625,5 +125625,21 @@
   "lean_name": "codeSplit_imp_perm",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared code_split_perm_typed in clos_to_bvl_state_relation_probe.out: all five polymorphic list arguments, split equality and permutation conclusion match HOL, without an equality-instance premise."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "v_rel_Boolv",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/ValueRelation.lean",
+  "lean_name": "vRel_bool",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared v_rel_bool_typed in flat_to_clos_relation_probe.out: the Boolean and closure-value binders and complete equivalence match the original flat and closure Boolean constructors."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "v_rel_Unitv",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/ValueRelation.lean",
+  "lean_name": "vRel_unit",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared v_rel_unit_typed in flat_to_clos_relation_probe.out: the closure-value binder and complete equivalence with the zero-tag empty block match the original."
 }
 ]

@@ -103,7 +103,7 @@ theorem evaluate_charCompare {C F : Type} (env : FlatSem.Environment FlatSem.Val
                   simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doTest,
                     ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doWordApp, ClosSem.doWordAppIntegral,
                     leftBound, rightBound, numCmp_intCmp, states,
-                    EvalResultRel.value (.cons (boolValue_related _) .nil)]
+                    EvalResultRel.value (.cons ((vRel_bool _ _).mpr rfl) .nil)]
 
 
 /-- Word8 ordering rejects any argument count other than two. -/
@@ -187,7 +187,7 @@ theorem evaluate_word8Compare {C F : Type} (env : FlatSem.Environment FlatSem.Va
                   simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doTest,
                     ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doWordApp, ClosSem.doWordAppIntegral,
                     leftBound, rightBound, numCmp_intCmp, states,
-                    EvalResultRel.value (.cons (boolValue_related _) .nil)]
+                    EvalResultRel.value (.cons ((vRel_bool _ _).mpr rfl) .nil)]
 
 
 end Flapjack.Compiler.Backend.FlatToClos

@@ -83,7 +83,7 @@ theorem evaluate_float64Compare {C F : Type} (env : FlatSem.Environment FlatSem.
                   cases cmp <;> simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric,
                     FlatSem.doTest, ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doWordApp,
                     fpSemFpCmp, fpSemFpCmpComp, states,
-                    EvalResultRel.value (.cons (boolValue_related _) .nil)]
+                    EvalResultRel.value (.cons ((vRel_bool _ _).mpr rfl) .nil)]
 
 
 end Flapjack.Compiler.Backend.FlatToClos

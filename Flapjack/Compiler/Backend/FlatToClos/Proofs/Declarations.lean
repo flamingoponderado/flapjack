@@ -27,12 +27,6 @@ theorem evaluate_decs_nil {C F : Type} (source : FlatSem.State C F) (target : Cl
   simpa [DecSim, FlatSem.evaluateDecs, compileDecs, compile, compileExps, ClosSem.evaluate] using
     And.intro states (DecResultRel.success [])
 
-/-- The only closure value related to flat unit is closure unit. -/
-theorem unitValue_target (target : ClosSem.Value) (related : ValueRel FlatSem.unitValue target) :
-    target = ClosSem.unitValue := by
-  cases related with
-  | tuple fields => cases fields; rfl
-
 /-- Compose the simulation of the first declaration with the induction
 hypothesis for the remaining declarations. -/
 theorem evaluate_decs_cons {C F : Type} (source : FlatSem.State C F) (target : ClosSem.State C F)
@@ -82,7 +76,7 @@ theorem evaluate_decs_cons {C F : Type} (source : FlatSem.State C F) (target : C
               cases sourceValue <;> simp [FlatSem.unitValue] at notTypeError ⊢
               case conv stamp fields => cases stamp <;> cases fields <;> simp_all
             subst sourceValue
-            have targetUnit := unitValue_target targetValue head
+            have targetUnit := (vRel_unit targetValue).mp head
             subst targetValue
             rw [ClosProps.evaluate_cons_value _ _ _ _ _ _ closRun]
             simp [FlatSem.unitValue] at notTypeError ⊢
@@ -173,7 +167,7 @@ theorem evaluate_decs_unit_cons {C F : Type} (source : FlatSem.State C F) (targe
               cases sourceValue <;> simp [FlatSem.unitValue] at notTypeError ⊢
               case conv stamp fields => cases stamp <;> cases fields <;> simp_all
             subst sourceValue
-            have targetUnit := unitValue_target targetValue head
+            have targetUnit := (vRel_unit targetValue).mp head
             subst targetValue
             rw [ClosProps.evaluate_cons_value _ _ _ _ _ _ closRun]
             simp [FlatSem.unitValue] at notTypeError ⊢

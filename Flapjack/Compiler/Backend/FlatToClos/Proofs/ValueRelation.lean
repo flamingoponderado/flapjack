@@ -50,6 +50,28 @@ inductive EnvRel : FlatSem.Environment FlatSem.Value → List (Option MlString) 
       EnvRel env names values
 end
 
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "v_rel_Boolv"]
+theorem vRel_bool (b : Bool) (target : ClosSem.Value) :
+    ValueRel (FlatSem.boolValue b) target ↔ target = ClosSem.boolValue b := by
+  constructor
+  · intro related
+    cases b <;> cases related with
+      | con fields => cases fields; rfl
+  · intro equal
+    subst target
+    cases b <;> exact .con .nil
+
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "v_rel_Unitv"]
+theorem vRel_unit (target : ClosSem.Value) :
+    ValueRel FlatSem.unitValue target ↔ target = .block 0 [] := by
+  constructor
+  · intro related
+    cases related with
+    | tuple fields => cases fields; rfl
+  · intro equal
+    subst target
+    exact .tuple .nil
+
 /-- The positivity-friendly environment rule is equivalent to requiring a
 related target value at every source lookup. This is a Lean representation
 lemma, not a cross-language correspondence proof. -/

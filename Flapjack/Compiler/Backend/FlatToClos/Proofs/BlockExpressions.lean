@@ -1,4 +1,7 @@
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.BlockOperations
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.ValueRelation
+import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyFlat
+import Flapjack.Compiler.Backend.Semantics.FlatSem.Primitives
+import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBasic
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.EvaluateCases
 
 /-! Block-test expression cases for the proof-side pass simulation. -/
@@ -51,7 +54,7 @@ theorem evaluate_lenEq {C F : Type} (env : FlatSem.Environment FlatSem.Value)
             all_goals rename_i related
             all_goals have sameLength : _ := related.length_eq
             all_goals rw [← sameLength]
-            all_goals exact ⟨states, .value (.cons (boolValue_related _) .nil)⟩
+            all_goals exact ⟨states, .value (.cons ((vRel_bool _ _).mpr rfl) .nil)⟩
 
 /-- A constructor tag-and-length test evaluates to related Boolean values. -/
 theorem evaluate_tagLenEq {C F : Type} (env : FlatSem.Environment FlatSem.Value)
@@ -98,6 +101,6 @@ theorem evaluate_tagLenEq {C F : Type} (env : FlatSem.Environment FlatSem.Value)
             rename_i related
             have sameLength := related.length_eq
             rw [← sameLength]
-            exact ⟨states, .value (.cons (boolValue_related _) .nil)⟩
+            exact ⟨states, .value (.cons ((vRel_bool _ _).mpr rfl) .nil)⟩
 
 end Flapjack.Compiler.Backend.FlatToClos

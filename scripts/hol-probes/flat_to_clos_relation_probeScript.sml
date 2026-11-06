@@ -13,6 +13,8 @@ val _ = (print "copy_aw8_typed="; Lib.with_flag (Globals.show_types,true) print_
 val _ = (print "rules_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl v_rel_rules); print "\n");
 val _ = (print "induction_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl v_rel_ind); print "\n");
 val _ = (print "cases_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl v_rel_cases); print "\n");
+val _ = (print "v_rel_bool_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl v_rel_Boolv); print "\n");
+val _ = (print "v_rel_unit_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl v_rel_Unitv); print "\n");
 (* Typed replay of the local environment extension lemmas. *)
 val env_cons_upd_replay = prove
   (``env_rel (env with v updated_by f) m db /\ v_rel v1 v2 ==>

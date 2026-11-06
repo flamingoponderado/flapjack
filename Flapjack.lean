@@ -1467,7 +1467,6 @@ import Flapjack.Compiler.Backend.Semantics.ClosProps.InstallConst
 import Flapjack.Compiler.Backend.Semantics.ClosProps.NoMtiSyntactic
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Thunk
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Force
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.BlockOperations
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Equality
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.EqualityExpressions
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.BlockExpressions

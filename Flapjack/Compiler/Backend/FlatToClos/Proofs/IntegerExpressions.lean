@@ -1,6 +1,9 @@
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.IntegerOperations
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.EvaluateCases
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.BlockOperations
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.ValueRelation
+import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyFlat
+import Flapjack.Compiler.Backend.Semantics.FlatSem.Primitives
+import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBasic
 
 /-! Integer-expression cases for flat-to-closure simulation. -/
 namespace Flapjack.Compiler.Backend.FlatToClos
@@ -577,7 +580,7 @@ theorem evaluate_intCmpLt {C F : Type} (env : FlatSem.Environment FlatSem.Value)
                   have cmp := (intCmp_predicates left right).1
                   simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doTest,
                     ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doIntApp, cmp, states,
-                    EvalResultRel.value (.cons (boolValue_related _) .nil)]
+                    EvalResultRel.value (.cons ((vRel_bool _ _).mpr rfl) .nil)]
 
 
 /-- Integer less-or-equal comparison rejects any argument count other than two. -/
@@ -659,7 +662,7 @@ theorem evaluate_intCmpLeq {C F : Type} (env : FlatSem.Environment FlatSem.Value
                   have cmp := (intCmp_predicates left right).2.1
                   simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doTest,
                     ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doIntApp, cmp, states,
-                    EvalResultRel.value (.cons (boolValue_related _) .nil)]
+                    EvalResultRel.value (.cons ((vRel_bool _ _).mpr rfl) .nil)]
 
 
 /-- Integer greater-than comparison rejects any argument count other than two. -/
@@ -741,7 +744,7 @@ theorem evaluate_intCmpGt {C F : Type} (env : FlatSem.Environment FlatSem.Value)
                   have cmp := (intCmp_predicates left right).2.2.1
                   simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doTest,
                     ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doIntApp, cmp, states,
-                    EvalResultRel.value (.cons (boolValue_related _) .nil)]
+                    EvalResultRel.value (.cons ((vRel_bool _ _).mpr rfl) .nil)]
 
 
 /-- Integer greater-or-equal comparison rejects any argument count other than two. -/
@@ -823,7 +826,7 @@ theorem evaluate_intCmpGeq {C F : Type} (env : FlatSem.Environment FlatSem.Value
                   have cmp := (intCmp_predicates left right).2.2.2
                   simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doTest,
                     ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doIntApp, cmp, states,
-                    EvalResultRel.value (.cons (boolValue_related _) .nil)]
+                    EvalResultRel.value (.cons ((vRel_bool _ _).mpr rfl) .nil)]
 
 
 /-- Integer equality rejects any argument count other than two. -/
@@ -904,7 +907,7 @@ theorem evaluate_intEquality {C F : Type} (env : FlatSem.Environment FlatSem.Val
                 case int right =>
                   simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doTest,
                     FlatSem.checkType, FlatSem.doEq, litSameType, ClosSem.doApp, ClosSem.applyBlock,
-                    ClosSem.doEq, states, EvalResultRel.value (.cons (boolValue_related _) .nil)]
+                    ClosSem.doEq, states, EvalResultRel.value (.cons ((vRel_bool _ _).mpr rfl) .nil)]
 
 
 /-- Char equality rejects any argument count other than two. -/
@@ -990,7 +993,7 @@ theorem evaluate_charEquality {C F : Type} (env : FlatSem.Environment FlatSem.Va
                   simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doTest,
                     FlatSem.checkType, FlatSem.doEq, litSameType, ClosSem.doApp, ClosSem.applyNumeric,
                     ClosSem.doWordApp, ClosSem.doWordAppIntegral, leftBound, rightBound, eqBytes,
-                    states, EvalResultRel.value (.cons (boolValue_related _) .nil)]
+                    states, EvalResultRel.value (.cons ((vRel_bool _ _).mpr rfl) .nil)]
 
 
 /-- Word8 equality rejects any argument count other than two. -/
@@ -1076,7 +1079,7 @@ theorem evaluate_word8Equality {C F : Type} (env : FlatSem.Environment FlatSem.V
                   simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doTest,
                     FlatSem.checkType, FlatSem.doEq, litSameType, ClosSem.doApp, ClosSem.applyNumeric,
                     ClosSem.doWordApp, ClosSem.doWordAppIntegral, leftBound, rightBound, eqBytes,
-                    states, EvalResultRel.value (.cons (boolValue_related _) .nil)]
+                    states, EvalResultRel.value (.cons ((vRel_bool _ _).mpr rfl) .nil)]
 
 
 /-- Word64 equality rejects any argument count other than two. -/
@@ -1157,7 +1160,7 @@ theorem evaluate_word64Equality {C F : Type} (env : FlatSem.Environment FlatSem.
                 case word64 right =>
                   simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doTest,
                     FlatSem.checkType, FlatSem.doEq, litSameType, ClosSem.doApp, ClosSem.applyBlock,
-                    ClosSem.doEq, states, EvalResultRel.value (.cons (boolValue_related _) .nil)]
+                    ClosSem.doEq, states, EvalResultRel.value (.cons ((vRel_bool _ _).mpr rfl) .nil)]
 
 
 /-- String equality rejects any argument count other than two. -/
@@ -1240,7 +1243,7 @@ theorem evaluate_stringEquality {C F : Type} (env : FlatSem.Environment FlatSem.
                     cases left; cases right; simp [Flapjack.Basis.Pure.MlString.MlString.explode]
                   simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doTest,
                     FlatSem.checkType, FlatSem.doEq, litSameType, ClosSem.doApp, ClosSem.applyBlock,
-                    ClosSem.doEq, sameBytes, states, EvalResultRel.value (.cons (boolValue_related _) .nil)]
+                    ClosSem.doEq, sameBytes, states, EvalResultRel.value (.cons ((vRel_bool _ _).mpr rfl) .nil)]
 
 /-- Floating-point equality rejects any argument count other than two. -/
 theorem float64Equality_wrong_arity {C F : Type} (state : FlatSem.State C F)
@@ -1319,7 +1322,7 @@ theorem evaluate_float64Equality {C F : Type} (env : FlatSem.Environment FlatSem
                 cases indexRel <;> try (simp_all)
                 case float64 right =>
                   simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doTest,
-                    FlatSem.checkType, ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doWordApp, states, EvalResultRel.value (.cons (boolValue_related _) .nil)]
+                    FlatSem.checkType, ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doWordApp, states, EvalResultRel.value (.cons ((vRel_bool _ _).mpr rfl) .nil)]
 
 
 /-- Boolean equality rejects any argument count other than two. -/
@@ -1408,7 +1411,7 @@ theorem evaluate_boolEquality {C F : Type} (env : FlatSem.Environment FlatSem.Va
                     rename_i _ _ valid _
                     rcases valid with ⟨⟨_, leftTag⟩, _, rightTag⟩
                     rcases leftTag with leftTag | leftTag <;> rcases rightTag with rightTag | rightTag <;>
-                      simp_all [EvalResultRel.value (.cons (boolValue_related _) .nil)]
+                      simp_all [EvalResultRel.value (.cons ((vRel_bool _ _).mpr rfl) .nil)]
 
 
 /-- Primitive equality simulation for every source primitive type. This

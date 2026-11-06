@@ -82,7 +82,7 @@ theorem evaluate_stringCompare {C F : Type} (env : FlatSem.Environment FlatSem.V
                 case string right =>
                   simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doTest,
                     ClosSem.doApp, ClosSem.applyMemory, states,
-                    EvalResultRel.value (.cons (boolValue_related _) .nil)]
+                    EvalResultRel.value (.cons ((vRel_bool _ _).mpr rfl) .nil)]
 
 
 /-- Alternate string ordering rejects any argument count other than two. -/
@@ -163,7 +163,7 @@ theorem evaluate_stringAltCompare {C F : Type} (env : FlatSem.Environment FlatSe
                 case string right =>
                   simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doTest,
                     ClosSem.doApp, ClosSem.applyMemory, states,
-                    EvalResultRel.value (.cons (boolValue_related _) .nil)]
+                    EvalResultRel.value (.cons ((vRel_bool _ _).mpr rfl) .nil)]
 
 
 end Flapjack.Compiler.Backend.FlatToClos
