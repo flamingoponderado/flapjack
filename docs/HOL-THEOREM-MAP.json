@@ -9823,6 +9823,16 @@
     "reviewer": "Compared compile_correct_typed and the original two conjuncts: arbitrary initial related states and environments, no-Mat and non-type-error premises, existential target result and state, post-state relation and the source result relations all match. The declaration conjunct retains the independent success-list payload type; Nonempty models HOL type inhabitation and its witness is constructed without a successful-target premise. Source and target share the source's compiler and FFI types; the reviewed closure state uses canonical refs and code maps with the local roundtrip witness. The source and target evaluators, compiler, relations and no-Mat predicates are source-reviewed; evaluator floating-point dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8. The assembled theorem is kernel-checked; source review and HOL probes are not a cross-language equivalence proof."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+    "hol_name": "compile_decs_correct2",
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/CompileCorrectShape.lean",
+    "lean_name": "compileDecs_correct2",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared compile_decs_correct2_typed: both evaluation equations, related initial states, no-Mat and non-type-error premises, final state relation and original result relation are retained. The success-list element type is independently polymorphic. Closure-state refs and code use canonical finite maps with the local witness; evaluation inherits reals_as_rational_cuts."
+  },
+  {
     "hol_path": "HOL/src/finite_maps/alistScript.sml",
     "hol_name": "alist_to_fmap_def",
     "lean_path": "Flapjack/FiniteMap/AlistExact.lean",
