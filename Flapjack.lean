@@ -29,6 +29,7 @@ import Flapjack.Compiler.Backend.FlatProps.SimpleRelations
 import Flapjack.Compiler.Backend.FlatProps.SimpleStore
 import Flapjack.Compiler.Backend.FlatProps.SimpleEquality
 import Flapjack.Compiler.Backend.FlatProps.SimpleConversions
+import Flapjack.Compiler.Backend.FlatProps.PatternMatch
 import Flapjack.Compiler.Backend.FlatProps.NoMat
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelation
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelationRules

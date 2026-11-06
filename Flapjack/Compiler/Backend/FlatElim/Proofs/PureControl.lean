@@ -295,7 +295,7 @@ theorem pureEvaluation_mat {C F : Type} (env : FlatSem.Environment FlatSem.Value
       change FlatSem.selectRow bodyState rows value FlatSem.bindExnV = .ok (bindings, branch) at selected
       obtain ⟨pattern, matched⟩ := selectRow_success bodyState rows value FlatSem.bindExnV bindings branch selected
       have member := pmatchRows_selected_mem rows bodyState value bindings pattern branch matched
-      have patternMatch := pmatchRows_selected_match rows bodyState value bindings pattern branch matched
+      have patternMatch := (FlatProps.pmatchRows_imp_pmatch rows bodyState value bindings pattern branch matched).1
       have bindingSafe := pmatch_not_has_Eval.1 bodyState pattern value [] bindings patternMatch valueSafe
         bodyRelated.2.2.2.2.2 (by simp [bindingsNoEval])
       have branchSafe := hasEvalPats_member rows pattern branch member safe.2

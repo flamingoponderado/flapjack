@@ -374,7 +374,7 @@ theorem compile_mat_simulation_upTo {C F : Type} (cfg stateCfg : Config) (clock 
             have run := evaluate_mat_selected trace scrutinee rows sourceEnv source sourceNext value
               bindings pattern body scrutineeRun rowResult distinct
             exact run.symm.trans sourceEval
-          have member := pmatchRows_match_mem sourceFixed value rows bindings pattern body rowResult
+          have member := (FlatProps.pmatchRows_imp_pmatch rows sourceFixed value bindings pattern body rowResult).2
           have bodySim := bodiesIH pattern body member
           let generated := max (compileExp cfg scrutinee).1 (compileMatch cfg rows).1 + 2
           have bodyBound : (compileExp cfg body).1 < generated - 1 := by
@@ -467,7 +467,7 @@ theorem compile_handle_simulation_upTo {C F : Type} (cfg stateCfg : Config) (clo
             have run := evaluate_handle_selected trace protectedExpr rows sourceEnv source sourceNext value
               bindings pattern body protectedRun rowResult distinct
             exact run.symm.trans sourceEval
-          have member := pmatchRows_match_mem sourceFixed value rows bindings pattern body rowResult
+          have member := (FlatProps.pmatchRows_imp_pmatch rows sourceFixed value bindings pattern body rowResult).2
           have bodySim := bodiesIH pattern body member
           let generated := max (compileExp cfg protectedExpr).1 (compileMatch cfg rows).1 + 2
           have bodyBound : (compileExp cfg body).1 < generated - 1 := by

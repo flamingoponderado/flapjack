@@ -125336,5 +125336,13 @@
   "lean_name": "simpleValuesToString",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared the HOL source and typed simple_values_to_string capture: arbitrary simple relation, related lists and successful source result imply the same target MlString. The simpleValueRel assumption is the original premise; the reviewed flat valuesToString uses the exact MlString byte carrier."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "pmatch_rows_IMP_pmatch",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/PatternMatch.lean",
+  "lean_name": "pmatchRows_imp_pmatch",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source and typed flat_selected_pattern_match capture: the row-body payload, compiler state and FFI state types remain independent. The single successful row-scan premise yields both original conclusions: matching the selected pattern from empty bindings and membership of the selected pattern/body pair in the original rows."
 }
 ]
