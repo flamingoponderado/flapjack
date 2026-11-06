@@ -93,22 +93,6 @@ theorem evaluate_evalBody_timeout {C F : Type}
   have namesDistinct : ofString "bytes" ≠ ofString "words" := by decide
   simp [List.lookup, BEq.beq, namesDistinct, FlatSem.evaluate, FlatSem.fixClock, decoded, zero]
 
-/-- A rejected Eval callback reports a type error in the unchanged state. -/
-theorem evaluate_evalBody_rejected {C F : Type}
-    (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F)
-    (bytes words : FlatSem.Value)
-    (decoded : FlatSem.doEval [bytes, words] state.evalConfig = none) :
-    let evalEnv : FlatSem.Environment FlatSem.Value :=
-      { env with v := (ofString "words", words) :: (ofString "bytes", bytes) :: env.v }
-    let body : FlatLang.Exp :=
-      .let_ .none none (.app .none (.src .eval)
-        ([ofString "bytes", ofString "words"].map (.varLocal .none)))
-        (.let_ .none (some (ofString "r")) (.app .none (.globalVarLookup 0) [])
-          (.app .none (.el 0) [.varLocal .none (ofString "r")]))
-    FlatSem.evaluate evalEnv state [body] = (state, .err (.abort .typeError)) := by
-  have namesDistinct : ofString "bytes" ≠ ofString "words" := by decide
-  simp [List.lookup, BEq.beq, namesDistinct, FlatSem.evaluate, FlatSem.fixClock, decoded]
-
 /-- The generated six-element pattern binds the last two operands before
 running the Eval body. This isolates pattern selection from the body result. -/
 theorem evaluate_compileEval_body {C F : Type}
@@ -218,20 +202,6 @@ theorem evaluate_compileEval_timeout {C F : Type}
   exact evaluate_compileEval_body env state arguments { arguments with evalConfig := nextConfig }
     trace compMap exprs a b c d bytes words (.err (.abort .timeoutError)) operandRun
     (evaluate_evalBody_timeout env arguments bytes words decs nextConfig decoded zero)
-
-/-- A rejected callback propagates the same type error through the complete
-generated expression. -/
-theorem evaluate_compileEval_rejected {C F : Type}
-    (env : FlatSem.Environment FlatSem.Value) (state arguments : FlatSem.State C F)
-    (trace : List VarN) (compMap : Environment) (exprs : List AstHOL.Exp)
-    (a b c d bytes words : FlatSem.Value)
-    (operandRun : FlatSem.evaluate env state (compileExps trace compMap exprs).reverse =
-      (arguments, .val [words, bytes, d, c, b, a]))
-    (decoded : FlatSem.doEval [bytes, words] arguments.evalConfig = none) :
-    FlatSem.evaluate env state [compileExp trace compMap (.app .eval exprs)] =
-      (arguments, .err (.abort .typeError)) := by
-  exact evaluate_compileEval_body env state arguments arguments trace compMap exprs a b c d bytes words
-    (.err (.abort .typeError)) operandRun (evaluate_evalBody_rejected env arguments bytes words decoded)
 
 /-- An operand error prevents pattern selection and propagates unchanged. -/
 theorem evaluate_compileEval_operand_error {C F : Type}
@@ -977,73 +947,6 @@ theorem eval_error_from_declarations {C F : Type} [Nonempty C]
       current invariant (by simpa [EvaluateHOL.decClock] using forward) previous initialForward beginShape
     rw [sourceResult, flatResult]
     exact ⟨baseGrowth.trans finalGrowth, restored.1, restored.2.2 priorGeneration, restored.2.1⟩
-
-/-- At clock zero, dynamic evaluation either propagates an operand error or
-reaches the corresponding timeout after decoding. This establishes the Eval
-base case of the bounded local simulation without a declaration hypothesis. -/
-theorem localEnvBounded_eval_zero {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (exprs : List AstHOL.Exp)
-    (each : ∀ expr, expr ∈ exprs → LocalEnvBoundedIH (F := F) interp transform 0 expr) :
-    LocalEnvBoundedIH (F := F) interp transform 0 (.app .eval exprs) := by
-  intro genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen clockBound localRel envInv tracesLen invariant generation safe
-  let sourceEnv := { baseEnv with v := NamespaceHOL.nsAppend sourceLocal baseEnv.v }
-  let compMap := { baseMap with v := bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v }
-  have argsSafe : ∀ last, EvaluateHOL.evaluate source sourceEnv exprs.reverse ≠ (last, .err (.abort .typeError)) := by
-    intro last bad
-    apply safe last
-    change EvaluateHOL.evaluate source sourceEnv [.app .eval exprs] = _
-    rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv exprs.reverse []).1, bad]
-  obtain ⟨nextGenv, argsSim, post⟩ := boundedEnvListStep_of_each interp transform 0 exprs.reverse
-    (fun expr member => each expr (List.mem_reverse.mp member)) genv start finish other source flat
-    baseEnv sourceLocal flatEnv traces trace baseMap gen clockBound localRel envInv tracesLen invariant generation argsSafe
-  have argsSimCopy := argsSim
-  unfold ExprListSim at argsSim
-  rw [compileExps_reverse] at argsSim post
-  generalize sourceRun : EvaluateHOL.evaluate source sourceEnv exprs.reverse = sourceResult at argsSim post
-  obtain ⟨nextSource, sourceResult⟩ := sourceResult
-  generalize flatRun : FlatSem.evaluate flatEnv flat (compileExps trace compMap exprs).reverse = flatResult at argsSim post
-  obtain ⟨nextFlat, flatResult⟩ := flatResult
-  obtain ⟨related, states⟩ := argsSim
-  cases related with
-  | abort error =>
-    refine ⟨nextGenv, ?_, ?_⟩
-    · exact exprSim_eval_operand_error nextGenv compMap trace sourceEnv flatEnv source flat exprs nextSource _ sourceRun argsSimCopy
-    · rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv exprs.reverse []).1, sourceRun]
-      trivial
-  | raise valueRel =>
-    refine ⟨nextGenv, ?_, ?_⟩
-    · exact exprSim_eval_operand_error nextGenv compMap trace sourceEnv flatEnv source flat exprs nextSource _ sourceRun argsSimCopy
-    · rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv exprs.reverse []).1, sourceRun]
-      rw [evaluate_compileEval_operand_error flatEnv flat nextFlat trace compMap exprs _ flatRun]
-      exact post
-  | @value sourceValues flatValues valuesRel =>
-    obtain ⟨growth, nextInvariant, nextGeneration, forward⟩ := post
-    have nextZero : nextSource.clock = 0 := by
-      have bound := EvaluateHOL.evaluateClockFull source nextSource sourceEnv exprs.reverse _ sourceRun
-      omega
-    cases decoded : SemanticPrimitivesHOL.doEval sourceValues.reverse nextSource.evalState with
-    | none =>
-      exfalso
-      apply safe nextSource
-      change EvaluateHOL.evaluate source sourceEnv [.app .eval exprs] = _
-      rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv exprs.reverse []).1, sourceRun]
-      cases nextSource
-      simp [getOpClass, EvaluateHOL.fixClock, EvaluateHOL.doEvalRes, decoded]
-    | some decodedValue =>
-      obtain ⟨evalEnv, decs, begin⟩ := decodedValue
-      refine ⟨nextGenv, ?_, ?_⟩
-      · apply exprSim_eval_timeout_from_callback interp transform gen nextGenv (start, finish, other)
-          compMap trace sourceEnv flatEnv source nextSource flat exprs sourceValues.reverse evalEnv decs begin
-        · simpa using sourceRun
-        · exact argsSimCopy
-        · simpa [flatRun] using nextInvariant
-        · exact decoded
-        · exact nextZero
-      · have sourceTimeout := evaluate_sourceEval_timeout sourceEnv evalEnv source nextSource exprs
-          sourceValues.reverse decs begin (by simpa using sourceRun) decoded nextZero
-        rw [sourceTimeout]
-        trivial
 
 /-- Dynamic evaluation composes bounded operand simulations with the declaration
 induction hypothesis for decoded declarations. -/

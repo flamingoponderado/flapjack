@@ -1,7 +1,9 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvalApp
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedArray
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedData
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedTree
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedPrimitive
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedMatch
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalCall
 
 /-! Bounded expression composition including arrays and function calls. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
@@ -743,42 +745,5 @@ theorem factoredDecBoundedIH_dlet_arrayTree {C F : Type} [Nonempty C]
     FactoredDecBoundedIH (F := F) interp transform limit [.dlet location pattern expr] := by
   apply factoredDecBoundedIH_dlet_expression interp transform limit location pattern expr
   exact localEnvBounded_arrayTree_of_smaller interp transform limit smallerExprs smallerDecs expr covered
-
-/-- Dynamic evaluation is simulated for covered operands, assuming the
-declaration induction hypothesis for every decoded declaration list. -/
-theorem localEnvBounded_eval_arrayTree {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (limit : Nat) (calledIH : LocalEnvClockIH (F := F) interp transform limit)
-    (decsIH : FactoredDecClockIH (F := F) interp transform limit)
-    (exprs : List AstHOL.Exp) (covered : ∀ expr, expr ∈ exprs → LocalEnvBoundedArrayExpression expr) :
-    LocalEnvBoundedIH (F := F) interp transform limit (.app .eval exprs) := by
-  apply localEnvBounded_eval interp transform limit decsIH exprs
-  intro expr member
-  exact localEnvBounded_arrayTree interp transform limit calledIH decsIH expr (covered expr member)
-
-/-- At clock zero the smaller-clock function-call hypothesis is vacuous. -/
-theorem localEnvClockIH_zero {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) :
-    LocalEnvClockIH (F := F) interp transform 0 := by
-  intro expr genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen below
-  omega
-
-/-- At clock zero the smaller-clock declaration hypothesis is vacuous. -/
-theorem factoredDecClockIH_zero {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) :
-    FactoredDecClockIH (F := F) interp transform 0 := by
-  intro decs genv env nextEnv sourceEnv trace source sourceLast flat start finish next other n n' gen nextGen flatDecs result below
-  omega
-
-/-- Dynamic evaluation at clock zero is simulated when its operands are
-covered by the bounded expression proof. -/
-theorem localEnvBounded_eval_zero_arrayTree {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (exprs : List AstHOL.Exp) (covered : ∀ expr, expr ∈ exprs → LocalEnvBoundedArrayExpression expr) :
-    LocalEnvBoundedIH (F := F) interp transform 0 (.app .eval exprs) := by
-  apply localEnvBounded_eval_zero interp transform exprs
-  intro expr member
-  exact localEnvBounded_arrayTree interp transform 0 (localEnvClockIH_zero interp transform)
-    (factoredDecClockIH_zero interp transform) expr (covered expr member)
 
 end Flapjack.Compiler.Backend.SourceToFlat
