@@ -1,4 +1,5 @@
-import Flapjack.Compiler.Backend.FlatPattern.Bindings
+import Flapjack.Compiler.Backend.FlatPattern.Names
+import Flapjack.Misc.Sptree
 
 /-! Total pattern binding, using a decreasing count of pattern nodes. -/
 namespace Flapjack.Compiler.Backend.FlatPattern

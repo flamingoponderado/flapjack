@@ -32,7 +32,6 @@ import Flapjack.Compiler.Backend.DataToWord.Variables
 import Flapjack.Compiler.Backend.FlatPattern.Names
 import Flapjack.Compiler.Backend.FlatPattern.Decode
 import Flapjack.Compiler.Backend.FlatPattern.Encode
-import Flapjack.Compiler.Backend.FlatPattern.Bindings
 import Flapjack.Compiler.Backend.FlatPattern.Patterns
 import Flapjack.Compiler.Backend.PatternComp.Decision
 import Flapjack.Compiler.Backend.PatternExh.Matrix
@@ -240,16 +239,16 @@ example : Flapjack.Compiler.Backend.PatternComp.compFuel 0 [(.any, 7)] = none :=
   Flapjack.Compiler.Backend.PatternExh.exhRows
     [(.cons (some (0, some [(0,0), (1,0)])) [], 0),
      (.cons (some (1, some [(0,0), (1,0)])) [], 1)]] == pattern_exhaustive
-example : compilePatRhsFuel 1 .none 0 (.varLocal .none (ofString "v"))
-    (.pvar (ofString "x"), lit) =
-    some (.let_ .none (some (ofString "x")) (.varLocal .none (ofString "v")) lit) := rfl
-example : (compilePatRhsFuel 0 .none 0 (.varLocal .none (ofString "v"))
-    (.pvar (ofString "x"), lit)).isNone = true := rfl
+#guard match compilePatRhs .none 0 (.varLocal .none (ofString "v"))
+    (.pvar (ofString "x"), lit) with
+  | .let_ .none (some x) (.varLocal .none v) (.lit .none (.intLit 1)) =>
+      x == ofString "x" && v == ofString "v"
+  | _ => false
 #guard pattern_bind_variable
-#guard match compilePatsFuel 4 (Flapjack.Compiler.Backend.FlatPattern.initConfig 0) false
+#guard match compilePats (Flapjack.Compiler.Backend.FlatPattern.initConfig 0) false
     .none 0 (.varLocal .none (ofString "v")) (.lit .none (.intLit 0))
     [(.pvar (ofString "x"), lit)] with
-  | some (.let_ .none (some x) (.varLocal .none v) (.lit .none (.intLit 1))) =>
+  | .let_ .none (some x) (.varLocal .none v) (.lit .none (.intLit 1)) =>
       x == ofString "x" && v == ofString "v"
   | _ => false
 #guard pattern_compile_branch
@@ -260,13 +259,13 @@ example : (compilePatRhsFuel 0 .none 0 (.varLocal .none (ofString "v"))
       x == ofString "x" && v == ofString "v"
   | _ => false
 #guard pattern_naive_branch
-#guard match compilePatsFuel 30 (Flapjack.Compiler.Backend.FlatPattern.initConfig 0) false
+#guard match compilePats (Flapjack.Compiler.Backend.FlatPattern.initConfig 0) false
     .none 0 (.varLocal .none (ofString "v")) (.lit .none (.intLit 0))
     [(.pcon (some (2, none)) [.pvar (ofString "x")], .varLocal .none (ofString "x"))] with
-  | some (.if_ .none (.app .none (.tagLenEq 2 1) [.varLocal .none v])
+  | .if_ .none (.app .none (.tagLenEq 2 1) [.varLocal .none v])
       (.let_ .none (some temp) (.app .none (.el 0) [.varLocal .none v'])
         (.let_ .none (some x) (.varLocal .none temp') (.varLocal .none x')))
-      (.lit .none (.intLit 0))) =>
+      (.lit .none (.intLit 0)) =>
       v == ofString "v" && v' == ofString "v" && temp == ofString "..%" && temp' == temp &&
         x == ofString "x" && x' == x
   | _ => false
