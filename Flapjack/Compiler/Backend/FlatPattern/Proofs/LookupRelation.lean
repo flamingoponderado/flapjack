@@ -187,6 +187,31 @@ theorem filterEqMonoTrans {A : Type} (p1 p3 : A → Bool) (xs ys : List A)
   · simp
   · exact agree
 
+/-- Filtering preserves lookup when every entry for the queried key is kept. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "FILTER_EQ_ALOOKUP_EQ"]
+theorem filterEqALookupEq {K V : Type} (predicate : K × V → Bool)
+    (xs ys : List (K × V)) (key : K) (filtered : xs.filter predicate = ys)
+    (kept : ∀ value, predicate (key, value) = true) :
+    holALookup xs key = holALookup ys key := by
+  classical
+  subst ys
+  induction xs with
+  | nil => rfl
+  | cons entry rest ih =>
+    obtain ⟨entryKey, value⟩ := entry
+    by_cases same : key = entryKey
+    · subst entryKey
+      simp [List.filter, kept value, holALookup]
+    · cases selected : predicate (entryKey, value) <;>
+        simp [List.filter, selected, holALookup, same, ih]
+
+/-- Looking up after such a filter gives the original lookup. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "ALOOKUP_FILTER_EQ"]
+theorem aLookupFilterEq {K V : Type} (predicate : K × V → Bool)
+    (xs : List (K × V)) (key : K) (kept : ∀ value, predicate (key, value) = true) :
+    holALookup (xs.filter predicate) key = holALookup xs key :=
+  (filterEqALookupEq predicate xs (xs.filter predicate) key rfl kept).symm
+
 /-- Related lookups for the keys selected by a predicate. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "ALOOKUP_rel_def"]
 def aLookupRel {K A B : Type} (predicate : K → Prop) (relation : A → B → Prop)

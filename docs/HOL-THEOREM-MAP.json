@@ -1,6 +1,22 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "FILTER_EQ_ALOOKUP_EQ",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
+  "lean_name": "filterEqALookupEq",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed filter_eq_alookup_eq capture with independent key and value types and the reviewed ALOOKUP definition. Both filtered-list equality and the universal retained-key premise are preserved."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "ALOOKUP_FILTER_EQ",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
+  "lean_name": "aLookupFilterEq",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed alookup_filter_eq capture with independent key and value types and the reviewed ALOOKUP definition. HOL SIMP_RULE eliminates the intermediate list and GSYM flips the equation; the universal retained-key premise is preserved."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
   "hol_name": "FILTER_EQ_MONO",
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
   "lean_name": "filterEqMono",
