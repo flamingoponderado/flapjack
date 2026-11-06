@@ -110,19 +110,4 @@ theorem evaluate_con_error {C F : Type} (env : FlatSem.Environment FlatSem.Value
     FlatSem.evaluate env state [.con trace tag args] = (next, .err error) := by
   simp [FlatSem.evaluate, run]
 
-/-- Reversing related value lists preserves their pointwise relation. -/
-theorem valueRel_reverse {left right : List FlatSem.Value} (related : List.Forall₂ ValueRel left right) :
-    List.Forall₂ ValueRel left.reverse right.reverse := by
-  have appendRel : ∀ {a b c d : List FlatSem.Value}, List.Forall₂ ValueRel a b →
-      List.Forall₂ ValueRel c d → List.Forall₂ ValueRel (a ++ c) (b ++ d) := by
-    intro a b c d first second
-    induction first with
-    | nil => exact second
-    | cons head tail ih => exact .cons head ih
-  induction related with
-  | nil => exact .nil
-  | cons head tail ih =>
-    simp only [List.reverse_cons]
-    exact appendRel ih (.cons head .nil)
-
 end Flapjack.Compiler.Backend.FlatPattern

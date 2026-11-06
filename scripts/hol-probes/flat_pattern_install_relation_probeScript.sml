@@ -95,6 +95,7 @@ val _ = show_thm "environment_relation_lookup=" flat_patternProofTheory.env_rel_
 val _ = show_thm "alookup_map_3=" flat_patternProofTheory.ALOOKUP_MAP_3;
 val _ = show_thm "lookup_map_same=" flat_patternProofTheory.ALOOKUP_rel_MAP_same;
 val _ = show_thm "do_opapp=" flat_patternProofTheory.do_opapp_thm;
+val _ = show_thm "do_opapp_reverse=" flat_patternProofTheory.do_opapp_thm_REVERSE;
 val _ = show_thm "pmatch_simulation=" flat_patternProofTheory.pmatch_thm;
 val _ = show_thm "compile_match_pmatch_rows=" flat_patternProofTheory.compile_match_pmatch_rows;
 val _ = show_thm "compile_match_EL=" flat_patternProofTheory.compile_match_EL;

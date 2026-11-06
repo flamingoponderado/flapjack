@@ -125152,5 +125152,21 @@
   "lean_name": "aLookup_map_keyPreserving",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared the HOL source and typed alookup_map_3 capture: three independent key, input-value and output-value types, membership-guarded first-component preservation, and the original mapped association lookup are retained; OPTION_MAP is Option.map."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "do_opapp_thm",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/RecursiveClosures.lean",
+  "lean_name": "doOpApp_simulation",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the HOL source and typed do_opapp capture: the original source application and pointwise value-relation premises imply the same five existential witnesses, compiler equation, bounded environment relation and target application; the conjunctive premise is curried."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "do_opapp_thm_REVERSE",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/RecursiveClosures.lean",
+  "lean_name": "doOpApp_simulation_reverse",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the HOL source and typed do_opapp_reverse capture: the source and target argument lists are reversed only for application, the pointwise value relation is on the original lists, and all original existential witnesses and conclusions are retained."
 }
 ]
