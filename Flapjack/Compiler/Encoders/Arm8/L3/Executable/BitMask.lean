@@ -834,4 +834,31 @@ theorem decodeBitMasks_eq (immN : BitVec 1) (imms immr : BitVec 6) (immediate : 
       rw [← holV2w_toNat (2 ^ L) _ (by rw [hpadLen2]), ones_pad_eq _ _ hk2 hE64]
 
 
+/-- `EncodeBitMaskAux` at width 64 agrees with the computable
+`encodeBitMaskAux`: both count the same trailing runs on the same rotations. -/
+theorem encodeBitMaskAux_eq (imm : BitVec 64) :
+    encodeBitMaskAux imm.toNat = EncodeBitMaskAux (TN := 64) imm := by
+  unfold encodeBitMaskAux EncodeBitMaskAux
+  simp only [Nat.mod_eq_of_lt imm.isLt]
+  rw [countTrailing_eq true imm]
+  have hbeq : ((CountTrailing (TN := 64) (true, imm) == 0) = true) =
+      (CountTrailing (TN := 64) (true, imm) = 0) := propext beq_iff_eq
+  simp only [hbeq]
+  split
+  · rename_i h0
+    rw [countTrailing_eq false imm]
+    rw [rotateRightWidth_eq imm (CountTrailing (TN := 64) (false, imm))]
+    rw [countTrailing_eq true (BitVec.rotateRight imm (CountTrailing (TN := 64) (false, imm)))]
+    rw [rotateRightWidth_eq imm (CountTrailing (TN := 64) (false, imm) +
+      CountTrailing (TN := 64) (true, BitVec.rotateRight imm (CountTrailing (TN := 64) (false, imm))))]
+    rw [countTrailing_eq false (BitVec.rotateRight imm (CountTrailing (TN := 64) (false, imm) +
+      CountTrailing (TN := 64) (true, BitVec.rotateRight imm (CountTrailing (TN := 64) (false, imm)))))]
+  · rename_i h0
+    rw [rotateRightWidth_eq imm (CountTrailing (TN := 64) (true, imm))]
+    rw [countTrailing_eq false (BitVec.rotateRight imm (CountTrailing (TN := 64) (true, imm)))]
+    rw [rotateRightWidth_eq imm (CountTrailing (TN := 64) (true, imm) +
+      CountTrailing (TN := 64) (false, BitVec.rotateRight imm (CountTrailing (TN := 64) (true, imm))))]
+    rw [countTrailing_eq true (BitVec.rotateRight imm (CountTrailing (TN := 64) (true, imm) +
+      CountTrailing (TN := 64) (false, BitVec.rotateRight imm (CountTrailing (TN := 64) (true, imm)))))]
+
 end Flapjack.Compiler.Encoders.Arm8.L3
