@@ -111257,6 +111257,14 @@
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternExh/Exhaustive.lean",
+    "lean_name": "exhStepsList_append",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "exh_steps_list_append",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the original local theorem and its typed HOL replay in pattern_exh_steps_probe.out: the step count of appended matrix lists is the sum of their counts, with both lists universally quantified."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Exhaustive.lean",
     "lean_name": "exhRows",
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
     "hol_name": "exh_rows_def",

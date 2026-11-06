@@ -1,2 +1,3 @@
 exh_steps=exh_steps ([] :pat list list) = (1 :num) ∧ (∀(rows :pat list list) (r :pat list). exh_steps (r::rows) = if NULL r then (1 :num) else case col_ctors (r::rows) of (NONE :ctor list option) => (1 :num) + exh_steps (default_mat (r::rows)) | SOME cs => (1 :num) + exh_steps_list (spec_mats cs (r::rows))) ∧ exh_steps_list ([] :pat list list list) = (0 :num) ∧ ∀(ms :pat list list list) (m :pat list list). exh_steps_list (m::ms) = exh_steps m + exh_steps_list ms
 exh_steps_examples=[(1 :num); (1 :num); (2 :num); (3 :num)]
+exh_steps_list_append=∀(xs :pat list list list) (ys :pat list list list). exh_steps_list (xs ++ ys) = exh_steps_list xs + exh_steps_list ys

@@ -146,6 +146,14 @@ decreasing_by
       omega
 end
 
+/-- The step count of concatenated matrix lists is additive. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "exh_steps_list_append"]
+theorem exhStepsList_append (xs ys : List (List (List Pat))) :
+    exhStepsList (xs ++ ys) = exhStepsList xs + exhStepsList ys := by
+  induction xs with
+  | nil => simp [exhStepsList]
+  | cons x xs ih => simp [exhStepsList, ih, Nat.add_assoc]
+
 /-- Decide exhaustiveness of a list of pattern rows. -/
 @[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "exh_rows_def"]
 def exhRows {α : Type} (rows : List (Pat × α)) : Bool := exhMatrix (orRows rows)

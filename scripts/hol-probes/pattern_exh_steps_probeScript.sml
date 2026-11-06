@@ -12,3 +12,10 @@ val _ = print_term (rhs (concl (EVAL ``
    pattern_exh$exh_steps_list [ []; [[pattern_semantics$Any]] ]]
 ``)));
 val _ = print "\n";
+val append_replay = prove (
+  ``!xs ys. pattern_exh$exh_steps_list (xs ++ ys) =
+      pattern_exh$exh_steps_list xs + pattern_exh$exh_steps_list ys``,
+  Induct >> simp [pattern_exhTheory.exh_steps_def]);
+val _ = if null (hyp append_replay) then
+  (print "exh_steps_list_append="; print_term (concl append_replay); print "\n")
+  else raise Fail "append replay has hypotheses";
