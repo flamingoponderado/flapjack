@@ -564,7 +564,7 @@ run_probe source_to_flat_primitive_type_probeScript.sml source_to_flat_primitive
   "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe source_to_flat_list_conversion_probeScript.sml source_to_flat_list_conversion_probe.out \
-  v_to_char_list_typed v_to_list_typed \
+  v_to_char_list_typed v_to_list_typed v_to_word8_list_rel_typed v_to_word64_list_rel_typed \
   "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe cake_flat_sem_conversions_probeScript.sml cake_flat_sem_conversions_probe.out \

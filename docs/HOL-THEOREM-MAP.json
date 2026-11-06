@@ -11506,6 +11506,24 @@
     "reviewer": "Compared the typed compile_prog_correct capture: the original four conjunctive premises, four existential witnesses including the initial flat state, and the source and flat error results with unit payload carriers are retained. The existential global environment uses canonical finite maps for c and tys. Evaluation inherits reals_as_rational_cuts."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/WordLists.lean",
+    "lean_name": "valueToWord8List_related",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "v_to_word8_list_rel",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["c", "tys"],
+    "reviewer": "Compared the typed v_to_word8_list_rel capture: the fixed eight-bit list and all three conjunctive premises and the target decoding conclusion match. The global environment uses canonical finite maps for c and tys, with the local roundtrip witness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/WordLists.lean",
+    "lean_name": "valueToWord64List_related",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "v_to_word64_list_rel",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["c", "tys"],
+    "reviewer": "Compared the typed v_to_word64_list_rel capture: the fixed 64-bit list and all three conjunctive premises and the target decoding conclusion match. The global environment uses canonical finite maps for c and tys, with the local roundtrip witness."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateLocal.lean",
     "lean_name": "initGlobalEnvInv",
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",

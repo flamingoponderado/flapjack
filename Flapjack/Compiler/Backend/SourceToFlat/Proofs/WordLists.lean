@@ -1,10 +1,15 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ListConversion
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Eval
 
-/-! Byte and word list decoding across the factored source-to-flat value
-relation. The underlying relation is still awaiting HOL correspondence review. -/
+/-! Byte and word list decoding across the source-to-flat value relation. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
+
+namespace WordListsPort
+/-- Roundtrip for the global environment's canonical finite maps. -/
+theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
+    GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env := GlobalEnv.holFmapAsFiniteSupportWitness env
+end WordListsPort
 
 private theorem maybeAllList_shape {α β : Type} (decode : α → Option β) (encode : β → α)
     (recover : ∀ x y, decode x = some y → x = encode y) :
@@ -49,12 +54,14 @@ private theorem word64_recover (value : Value) (word : BitVec 64)
   cases value <;> try (simp [valueToWord64] at decoded)
   case litv lit => cases lit <;> simp_all
 
-/-- Successful source byte-list decoding is preserved by related flat values.
-This is a factored counterpart of the original proof obligation. -/
-theorem valueToWord8List_related (genv : GlobalEnv) (ok : genvCOk genv.c)
+/-- Successful source byte-list decoding is preserved by related flat values. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "v_to_word8_list_rel"
+  (fmap_as_finite_support := [c, tys])]
+theorem valueToWord8List_related (genv : GlobalEnv)
     (source : Value) (flat : FlatSem.Value) (bytes : List (BitVec 8))
-    (decoded : valueToWord8List source = some bytes) (related : ValueRel genv source flat) :
+    (premises : valueToWord8List source = some bytes ∧ ValueRel genv source flat ∧ genvCOk genv.c) :
     FlatSem.valueToBytes flat = some bytes := by
+  obtain ⟨decoded, related, ok⟩ := premises
   cases sourceList : valueToList source with
   | none => simp [valueToWord8List, sourceList] at decoded
   | some values =>
@@ -69,12 +76,14 @@ theorem valueToWord8List_related (genv : GlobalEnv) (ok : genvCOk genv.c)
     apply (FlatSem.valueToBytes_eq_some flat bytes).mpr
     simpa [flatShape] using flatDecoded
 
-/-- Successful source 64-bit word-list decoding is preserved by related flat
-values. This is a factored counterpart of the original proof obligation. -/
-theorem valueToWord64List_related (genv : GlobalEnv) (ok : genvCOk genv.c)
+/-- Successful source 64-bit word-list decoding is preserved by related flat values. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "v_to_word64_list_rel"
+  (fmap_as_finite_support := [c, tys])]
+theorem valueToWord64List_related (genv : GlobalEnv)
     (source : Value) (flat : FlatSem.Value) (words : List (BitVec 64))
-    (decoded : valueToWord64List source = some words) (related : ValueRel genv source flat) :
+    (premises : valueToWord64List source = some words ∧ ValueRel genv source flat ∧ genvCOk genv.c) :
     FlatSem.valueToWords flat = some words := by
+  obtain ⟨decoded, related, ok⟩ := premises
   cases sourceList : valueToList source with
   | none => simp [valueToWord64List, sourceList] at decoded
   | some values =>

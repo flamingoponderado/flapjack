@@ -36,3 +36,5 @@ fun show_thm label th =
   else raise Fail (label ^ " has hypotheses");
 val _ = show_thm "v_to_char_list_typed=" chars_thm;
 val _ = show_thm "v_to_list_typed=" list_thm;
+val _ = show_thm "v_to_word8_list_rel_typed=" source_to_flatProofTheory.v_to_word8_list_rel;
+val _ = show_thm "v_to_word64_list_rel_typed=" source_to_flatProofTheory.v_to_word64_list_rel;

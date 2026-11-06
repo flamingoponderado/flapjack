@@ -603,8 +603,8 @@ theorem doEvalOracle_flatCallback {C : Type} [Nonempty C]
       obtain ⟨nextFlat, flatOracle, flatCompiled, nextRel⟩ :=
         oracRelInner_first decode state compiler transform flatConfig oracleRel envId stateValue nextValue
           decs config payload bytes words entry decoded compiled
-      have flatBytesDecoded := valueToWord8List_related genv constructors bytesValue flatBytes bytes decodedBytes bytesRel
-      have flatWordsDecoded := valueToWord64List_related genv constructors wordsValue flatWords words decodedWords wordsRel
+      have flatBytesDecoded := valueToWord8List_related genv bytesValue flatBytes bytes ⟨decodedBytes, bytesRel, constructors⟩
+      have flatWordsDecoded := valueToWord64List_related genv wordsValue flatWords words ⟨decodedWords, wordsRel, constructors⟩
       cases nextEntry : state.oracle 1 with
       | mk nextId nextRest =>
         cases nextRest with
