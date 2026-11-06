@@ -5259,7 +5259,7 @@
     "lean_name": "StateRel",
     "statement_status": "reviewed_fmap_as_finite_support",
     "fmap_as_finite_support": ["refs", "code"],
-    "reviewer": "Compared state_rel_typed, ref_rel_def_typed and fmap_rel_def_typed in clos_number_correctness_probe.out. The independent FFI and compiler carriers, clock/FFI/max-app equalities, callback and oracle adapters, globals, oracle safety and empty code conditions match the original. RefRel specializes the exact three original reference cases to the reviewed value relation; optionRel_lookup_iff proves the pointwise lookup form states equal domains and related entries. Both states use the reviewed canonical refs and code maps with a local broad-carrier roundtrip witness. This representation review and Lean checking do not prove cross-language equivalence."
+    "reviewer": "Compared state_rel_typed, ref_rel_def_typed and fmap_rel_def_typed in clos_number_correctness_probe.out. The independent FFI and compiler carriers, clock/FFI/max-app equalities, callback and oracle adapters, globals, oracle safety and empty code conditions match the original. RefRel specializes the exact three original reference cases to the reviewed value relation; optionRel_lookup_iff proves the pointwise lookup form states equal domains and related entries. Both states use the reviewed canonical refs and code maps with a local broad-carrier roundtrip witness. This representation review and Lean checking do not prove cross-language equivalence. OPTREL is the reviewed Flapjack.optionRel (OPTREL_def)."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
@@ -5729,7 +5729,7 @@
     "lean_name": "StateRel",
     "statement_status": "reviewed_fmap_as_finite_support",
     "fmap_as_finite_support": ["refs", "code"],
-    "reviewer": "Compared state_rel_typed and the source FMAP_REL definition: independent compiler and FFI carriers, empty auxiliary code and code maps, maximum arity and clocks, FFI, related globals and references, and compiler/oracle adapters match. Pointwise option relation gives the original equal-domain lookup relation. The canonical refs and code carriers have a local broad-carrier roundtrip witness. Source review and Lean checking do not establish cross-language equivalence."
+    "reviewer": "Compared state_rel_typed and the source FMAP_REL definition: independent compiler and FFI carriers, empty auxiliary code and code maps, maximum arity and clocks, FFI, related globals and references, and compiler/oracle adapters match. Pointwise option relation gives the original equal-domain lookup relation. The canonical refs and code carriers have a local broad-carrier roundtrip witness. Source review and Lean checking do not establish cross-language equivalence. OPTREL is the reviewed Flapjack.optionRel (OPTREL_def)."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
@@ -5877,7 +5877,7 @@
     "lean_name": "StateRel",
     "statement_status": "reviewed_fmap_as_finite_support",
     "fmap_as_finite_support": ["refs", "code"],
-    "reviewer": "Compared state_rel_typed: empty oracle auxiliary lists and code maps, max-application positivity and equality, clock and FFI equality, related global slots and reference entries, and the original pure compiler/oracle adapters are retained. Pointwise optional lookup states equal domains and related present entries, matching HOL fmap_rel. The two states share the original independent compiler and FFI carriers and canonical refs and code fields, with a local broad-state roundtrip witness. Source review and Lean checking do not establish cross-language equivalence."
+    "reviewer": "Compared state_rel_typed: empty oracle auxiliary lists and code maps, max-application positivity and equality, clock and FFI equality, related global slots and reference entries, and the original pure compiler/oracle adapters are retained. Pointwise optional lookup states equal domains and related present entries, matching HOL fmap_rel. The two states share the original independent compiler and FFI carriers and canonical refs and code fields, with a local broad-state roundtrip witness. Source review and Lean checking do not establish cross-language equivalence. OPTREL is the reviewed Flapjack.optionRel (OPTREL_def)."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
@@ -121909,7 +121909,7 @@
   "lean_name": "StateRel",
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["refs", "code"],
-  "reviewer": "Compared state_rel_typed and fmap_rel_typed: independent compiler and FFI carriers, empty auxiliary code and code maps, maximum arity, clocks, FFI, related globals and references, and compiler/oracle adapters agree. The canonical refs and code carriers have a local broad-state roundtrip witness."
+  "reviewer": "Compared state_rel_typed and fmap_rel_typed: independent compiler and FFI carriers, empty auxiliary code and code maps, maximum arity, clocks, FFI, related globals and references, and compiler/oracle adapters agree. The canonical refs and code carriers have a local broad-state roundtrip witness. OPTREL is the reviewed Flapjack.optionRel (OPTREL_def)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
