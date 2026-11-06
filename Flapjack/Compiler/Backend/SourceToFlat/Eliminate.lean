@@ -19,10 +19,6 @@ order. -/
 def compileFlatTotal (cfg : FlatPattern.Config) (code : List FlatLang.Exp) : List FlatLang.Exp :=
   (FlatElim.removeFlatProgTotal code).map (FlatPattern.compileDec cfg)
 
-/-- Compatibility entry point for callers of the formerly bounded pass. -/
-def compileFlat (cfg : FlatPattern.Config) (code : List FlatLang.Exp) : Option (List FlatLang.Exp) :=
-  some (compileFlatTotal cfg code)
-
 /-- Complete source-to-flat pass, using the output configuration's pattern
 settings. -/
 @[hol "cakeml/compiler/backend/source_to_flatScript.sml" "compile_def"]

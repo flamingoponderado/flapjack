@@ -11,16 +11,6 @@ import Flapjack.Compiler.Backend.StackRemove.StubNames
 /-! Restricted CakeML AST to RISC-V backend composition. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 
-/-- For RISC-V the general backend rule agrees with the prior specialized
-floating-point configuration update for every data configuration. This is a
-Flapjack compatibility lemma for replacing that update, with no HOL original. -/
-theorem riscvEnsureFpConfOk (config : DataToWord.Config) :
-    Backend.ensureFpConfOk Flapjack.Compiler.Encoders.RiscV.Target.riscvConfig config =
-      { config with
-        hasFpOps := decide (1 < (Flapjack.Compiler.Encoders.RiscV.Target.riscvConfig).fpRegCount)
-        hasFpTern := false } := by
-  rfl
-
 /-- Execute the existing RISC-V word optimizer and backend after the checked
 source-to-word route. The caller supplies the symbol-name map: source and
 stub name propagation and the default frontend optimizations are not supplied
