@@ -28,3 +28,5 @@ mapi_snoc=∀(xs :α list) (x :α) (f :num -> α -> β). MAPi f (SNOC x xs) = SN
 list_size_definition=(∀(f :α -> num). list_size f ([] :α list) = (0 :num)) ∧ ∀(f :α -> num) (a0 :α) (a1 :α list). list_size f (a0::a1) = (1 :num) + (f a0 + list_size f a1)
 list_size_theorem=(∀(f :α -> num). list_size f ([] :α list) = (0 :num)) ∧ ∀(f :α -> num) (a0 :α) (a1 :α list). list_size f (a0::a1) = (1 :num) + f a0 + list_size f a1
 mem_size_lemma_local=list_size (sz :α -> num) (xs :α list) < (N :num) ⇒ MEM (x :α) xs ⇒ sz x < N
+ns_all_append=∀(f :(α, β) id -> γ -> bool) (e1 :(α, β, γ) namespace) (e2 :(α, β, γ) namespace). nsAll f e1 ∧ nsAll f e2 ⇒ nsAll f (nsAppend e1 e2)
+ns_all_extend_env=nsAll (P :(mlstring, mlstring) id -> var_name -> bool) (e1 :source_to_flat$environment).v ∧ nsAll P (e2 :source_to_flat$environment).v ⇒ nsAll P (extend_env e1 e2).v

@@ -1,8 +1,27 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Helpers
+import Flapjack.NamespaceProps
 
 /-! Binding source variable names and traces in the source-to-flat proof. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.NamespaceHOL Flapjack.Basis.Pure.MlString Flapjack.Compiler.Backend.BackendCommon
+
+/-- Extending compiler environments preserves a predicate on variable bindings. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "nsAll_extend_env"]
+theorem nsAll_extendEnv (P : Ident MlString MlString → VarName → Prop) (e1 e2 : Environment)
+    (premises : nsAll P e1.v ∧ nsAll P e2.v) : nsAll P (extendEnv e1 e2).v := by
+  have same : Classical.typeDecidableEq MlString = (inferInstance : DecidableEq MlString) :=
+    Subsingleton.elim _ _
+  have premises' : @nsAll MlString MlString VarName (Classical.typeDecidableEq MlString)
+      (Classical.typeDecidableEq MlString) P e1.v ∧
+      @nsAll MlString MlString VarName (Classical.typeDecidableEq MlString)
+        (Classical.typeDecidableEq MlString) P e2.v := by
+    rw [same]
+    exact premises
+  have result := nsAll_nsAppend P e1.v e2.v premises'
+  change @nsAll MlString MlString VarName (Classical.typeDecidableEq MlString)
+    (Classical.typeDecidableEq MlString) P (nsAppend e1.v e2.v) at result
+  rw [same] at result
+  simpa only [extendEnv] using result
 
 /-- Bind each name to the local variable with its corresponding trace. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "bind_locals_def"]

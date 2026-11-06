@@ -125538,6 +125538,22 @@
   "reviewer": "Compared the source and typed clos_elist_globals_append capture: both arguments are closure-expression lists, and the conclusion preserves the whole global-write bag using pointwise natural-number union. The checked closure-expression and global-bag definitions are shared by the proof."
 },
 {
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml",
+  "hol_name": "nsAll_nsAppend",
+  "lean_path": "Flapjack/NamespaceProps.lean",
+  "lean_name": "nsAll_nsAppend",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source and typed ns_all_append capture: module, name and value types are independent; the two nsAll premises and appended-namespace conclusion agree. Classical equality instances implement HOL equality without introducing decidable-equality binders."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "nsAll_extend_env",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/BindLocals.lean",
+  "lean_name": "nsAll_extendEnv",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source and typed ns_all_extend_env capture: the predicate uses the original MlString identifiers and VarName values, and the conjunction of both environment premises implies nsAll on the extended variable namespace."
+},
+{
   "hol_path": "HOL/src/list/src/listScript.sml",
   "hol_name": "list_size_thm",
   "lean_path": "Flapjack/Misc/List/Size.lean",
