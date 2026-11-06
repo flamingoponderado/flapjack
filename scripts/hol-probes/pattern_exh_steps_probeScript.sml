@@ -142,3 +142,11 @@ val pmatch_list_anys_replay = prove (
   Induct >> Cases_on `vs` >> fs [pattern_exhTheory.anys_def,
     pattern_semanticsTheory.pmatch_def]);
 val _ = show_local "pmatch_list_anys=" pmatch_list_anys_replay;
+val mem_ctor_nub_replay = prove (
+  ``!l x. MEM x (pattern_exh$ctor_nub l) <=> MEM x l``,
+  Induct >> fs [pattern_exhTheory.ctor_nub_def] >> rw [] >> metis_tac []);
+val _ = show_local "mem_ctor_nub=" mem_ctor_nub_replay;
+val mem_ctor_keep_replay = prove (
+  ``!xs ys x. MEM x (pattern_exh$ctor_keep xs ys) <=> MEM x xs /\ MEM x ys``,
+  Induct >> fs [pattern_exhTheory.ctor_keep_def] >> rw [] >> metis_tac []);
+val _ = show_local "mem_ctor_keep=" mem_ctor_keep_replay;

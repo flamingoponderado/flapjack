@@ -236,22 +236,26 @@ theorem destVal_length (refs : HolFiniteMapExact Nat Term) (value : Term)
       rcases found with ⟨rfl, rfl⟩
       rfl
 
-/-- Duplicate removal preserves constructor membership. -/
-theorem mem_ctorNub (constructors : List Ctor) (constructor : Ctor) :
-    constructor ∈ ctorNub constructors ↔ constructor ∈ constructors := by
+/-- Duplicate removal preserves membership for every element type. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "MEM_ctor_nub"]
+theorem mem_ctorNub {α : Type} (constructors : List α) (constructor : α) :
+    constructor ∈ ctorNubHOL constructors ↔ constructor ∈ constructors := by
+  classical
   induction constructors with
-  | nil => simp [ctorNub]
+  | nil => simp [ctorNubHOL]
   | cons first rest ih =>
-    by_cases member : first ∈ rest <;> simp_all [ctorNub]
+    by_cases member : first ∈ rest <;> simp_all [ctorNubHOL]
 
-/-- Constructor intersection retains exactly the constructors in both lists. -/
-theorem mem_ctorKeep (left right : List Ctor) (constructor : Ctor) :
-    constructor ∈ ctorKeep left right ↔ constructor ∈ left ∧ constructor ∈ right := by
+/-- The source filter retains exactly the elements in both lists. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "MEM_ctor_keep"]
+theorem mem_ctorKeep {α : Type} (left right : List α) (constructor : α) :
+    constructor ∈ ctorKeepHOL left right ↔ constructor ∈ left ∧ constructor ∈ right := by
+  classical
   induction left with
-  | nil => simp [ctorKeep]
+  | nil => simp [ctorKeepHOL]
   | cons first rest ih =>
     by_cases member : first ∈ right
-    · simp only [ctorKeep, if_pos member, List.mem_cons, ih]
+    · simp only [ctorKeepHOL, if_pos member, List.mem_cons, ih]
       constructor
       · intro h
         rcases h with equal | both
@@ -261,7 +265,7 @@ theorem mem_ctorKeep (left right : List Ctor) (constructor : Ctor) :
         rcases h with equal | inRest
         · exact Or.inl equal
         · exact Or.inr ⟨inRest, inRight⟩
-    · simp only [ctorKeep, if_neg member, List.mem_cons, ih]
+    · simp only [ctorKeepHOL, if_neg member, List.mem_cons, ih]
       constructor
       · intro ⟨inRest, inRight⟩
         exact ⟨Or.inr inRest, inRight⟩
@@ -410,7 +414,7 @@ theorem ctorsOf_sound (refs : HolFiniteMapExact Nat Term) (pattern : Pat) (value
           | none => simp [pmatch] at safe
           | some actual =>
             refine ⟨.tagC actual fields.length, fields, rfl, ?_⟩
-            rw [mem_ctorNub]
+            rw [ctorNub_eq_HOL, mem_ctorNub]
             simp only [List.mem_cons, Ctor.tagC.injEq, mem_tagCtors]
             by_cases same : tag = actual ∧ patterns.length = fields.length
             · exact Or.inl ⟨same.1.symm, same.2.symm⟩
@@ -459,7 +463,9 @@ theorem colCtors_sound (refs : HolFiniteMapExact Nat Term) (value : Term) (value
           have ctorSame : headCtor = tailCtor := congrArg Prod.fst same
           subst tailCtor
           subst constructors
-          exact ⟨headCtor, headFields, headFound, (mem_ctorKeep headCtors tailCtors headCtor).mpr ⟨headMember, tailMember⟩⟩
+          refine ⟨headCtor, headFields, headFound, ?_⟩
+          rw [ctorKeep_eq_HOL]
+          exact (mem_ctorKeep headCtors tailCtors headCtor).mpr ⟨headMember, tailMember⟩
 
 /-- A matrix accepted by the exhaustiveness checker contains a matching row
 whenever every row is free of type errors. -/

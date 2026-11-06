@@ -111433,6 +111433,22 @@
     "reviewer": "Compared the source statement and typed local HOL replay in pattern_exh_steps_probe.out: for every natural n, the list anys n has length n."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Proofs/Soundness.lean",
+    "lean_name": "mem_ctorNub",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "MEM_ctor_nub",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the source and typed local HOL replay in pattern_exh_steps_probe.out: membership in duplicate elimination is equivalent to membership in the input for an unrestricted element type. The Lean theorem uses the reviewed polymorphic HOL-shaped operation and has no equality-instance hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Proofs/Soundness.lean",
+    "lean_name": "mem_ctorKeep",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "MEM_ctor_keep",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the source and typed local HOL replay in pattern_exh_steps_probe.out: membership in the filtered list is equivalent to membership in both input lists for an unrestricted element type. The Lean theorem uses the reviewed polymorphic HOL-shaped operation and has no equality-instance hypothesis."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/PatternExh/Exhaustive.lean",
     "lean_name": "exhRows",
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",

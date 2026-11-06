@@ -512,7 +512,7 @@ run_probe source_eval_oracle_adjust_probeScript.sml source_eval_oracle_adjust_pr
   "$cake_dir/compiler/backend/proofs/source_evalProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe pattern_exh_steps_probeScript.sml pattern_exh_steps_probe.out \
-  exh_steps exh_steps_examples pand pmatch_result_type pmatch_result_cases pmatch_result_distinct pand_simps pand_type pand_success pand_assoc exh_rows_eq exh_mats_append exh_all_thm exh_steps_list_append exh_all exh_all_examples term_constructor_type litv_constructor_type term_cases term_distinct is_sibling pmatch pmatch_any pmatch_list_nil pmatch_list_cons pmatch_comp_length pmatch_exh_length pmatch_list_append length_anys pmatch_list_anys \
+  exh_steps exh_steps_examples pand pmatch_result_type pmatch_result_cases pmatch_result_distinct pand_simps pand_type pand_success pand_assoc exh_rows_eq exh_mats_append exh_all_thm exh_steps_list_append exh_all exh_all_examples term_constructor_type litv_constructor_type term_cases term_distinct is_sibling pmatch pmatch_any pmatch_list_nil pmatch_list_cons pmatch_comp_length pmatch_exh_length pmatch_list_append length_anys pmatch_list_anys mem_ctor_nub mem_ctor_keep \
   "$cake_dir/compiler/backend/pattern_matching/pattern_exhScript.sml" "$cake_dir/compiler/backend/pattern_matching"
 
 run_probe flat_pattern_install_relation_probeScript.sml flat_pattern_install_relation_probe.out \
