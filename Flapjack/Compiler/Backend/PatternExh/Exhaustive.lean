@@ -201,4 +201,10 @@ theorem exhAll_correct (ms : List (List (List Pat))) : exhAll ms = exhMats ms :=
 @[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "exh_rows_def"]
 def exhRows {α : Type} (rows : List (Pat × α)) : Bool := exhMatrix (orRows rows)
 
+/-- The source row checker agrees with the worklist execution equation. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "exh_rows_eq"]
+theorem exhRows_eq {α : Type} (rows : List (Pat × α)) :
+    exhRows rows = exhAll [orRows rows] := by
+  simp [exhRows, exhAll_correct, exhMats]
+
 end Flapjack.Compiler.Backend.PatternExh

@@ -15,6 +15,9 @@ val _ = print_term (rhs (concl (EVAL ``
    pattern_exh$exh_steps [[pattern_semantics$Ref pattern_semantics$Any]]]
 ``)));
 val _ = print "\n";
+val _ = if null (hyp pattern_exhTheory.exh_rows_eq) then
+  (print "exh_rows_eq="; print_term (concl pattern_exhTheory.exh_rows_eq); print "\n")
+  else raise Fail "exh_rows_eq has hypotheses";
 val mats_append_replay = prove (
   ``!xs ys. pattern_exh$exh_mats (xs ++ ys) <=>
       pattern_exh$exh_mats xs /\ pattern_exh$exh_mats ys``,
