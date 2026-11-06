@@ -13638,6 +13638,16 @@
   },
   {
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "pat_bindings_evaluate_FOLDR_lemma",
+  "hol_line": 358,
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/BindingFold.lean",
+  "lean_name": "evaluateBindingFold",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the HOL theorem and typed binding_fold_evaluation capture: IMAGE of THE over set xs is Set.image of holThe over list membership; the vacuous quantifier of independent inhabited type beta is omitted. The theorem inherits reals_as_rational_cuts through the reviewed flat evaluator."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
   "hol_name": "env_set_v_noop",
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/BindingFold.lean",
   "lean_name": "envSetVNoop",

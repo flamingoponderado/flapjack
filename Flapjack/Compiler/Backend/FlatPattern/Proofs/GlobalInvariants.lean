@@ -718,7 +718,6 @@ theorem setGlobals_compilePats (cfg : Config) (naive : Bool) (t : Tra) (n : Nat)
       (setGlobals_branchTree _ branchesSafe)
     simp only [compilePats, Bool.false_eq_true, ↓reduceIte]
     rw [result, allEmpty]
-    exact Nat.le_refl _
 
 private theorem esgcFree_zip_right_mem {α β : Type} (xs : List α) (ys : List β) (a : α) (b : β)
     (member : (a, b) ∈ xs.zip ys) : b ∈ ys := by

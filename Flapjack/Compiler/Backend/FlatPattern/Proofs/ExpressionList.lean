@@ -32,7 +32,7 @@ theorem compileExps_cons_bounds (cfg : Config) (first : FlatLang.Exp) (rest : Li
       cases tail : compileExps cfg rest with
       | mk tailBound part =>
         cases part with
-        | mk tailFlag compiledTail => simp [compileExps, head, tail]; omega
+        | mk tailFlag compiledTail => simp [compileExps, head, tail]
 
 /-- An error in the first expression stops a nonempty expression list. -/
 theorem evaluate_list_first_error {C F : Type} (env : FlatSem.Environment FlatSem.Value)

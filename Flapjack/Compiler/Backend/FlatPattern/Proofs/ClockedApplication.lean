@@ -428,7 +428,7 @@ theorem compile_force_simulation_at_clock_boundedArgs {C F : Type} (cfg stateCfg
                 exact safe sourceEval.2.symm
               let m := (compileExp cfg body).1 + 1
               have clockBound : sourceFixed.clock ≤ clock := by
-                simpa [sourceFixed, clockEq] using Nat.min_le_left source.clock sourceNext.clock
+                simp [sourceFixed, clockEq]
               obtain ⟨targetLast, targetResult, targetBodyRun, lastStates, resultRel⟩ := bodyIH
                 bodyEnv bodyEnv' sourceFixed targetFixed sourceLast bodyResult m clockBound bodyRun
                 (forceBody_envRel m value targetValue valueRelated) fixedStates (by simp [m, body]) bodySafe

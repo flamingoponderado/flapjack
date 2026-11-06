@@ -202,7 +202,11 @@ theorem compilePatBindings_con_evaluate {C F : Type} (trace : BackendCommon.Tra)
     (fun entry => FlatLang.Exp.app trace (.el entry.1.1) [expression])
     (fun entry => (fields[entry.1.1]?).getD FlatSem.unitValue)
     selected (fun name => i < decNameToNum name) env state trace compiled.2
-    (by simp) (by simpa using fun entry member => (props entry member).2)
+    (by simp) (by
+      intro name ⟨entry, member, eq⟩
+      simp only [Function.comp_apply, Flapjack.holThe] at eq
+      subst name
+      exact (props entry member).2)
     (by
       intro entry member env2 related
       have within := (props entry member).1
@@ -216,7 +220,7 @@ theorem compilePatBindings_con_evaluate {C F : Type} (trace : BackendCommon.Tra)
     env (aLookupRel_refl _ _ _ (by intros; rfl))
   cases h : compiled with
   | mk used result =>
-    simpa [compilePatBindings, entries, compiled, selected, h] using folded
+    simpa [compilePatBindings, entries, compiled, selected, h, Flapjack.holThe] using folded
 
 /-- The constructor expression needs to evaluate purely only when a field
 projection is selected. An empty selection emits no projection code. -/
