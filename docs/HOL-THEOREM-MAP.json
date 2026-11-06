@@ -111844,6 +111844,61 @@
     "reviewer": "Compared the source and typed HOL equations, preserving zero-index reference lookup, head selection, successor traversal through the term tail, and all failure cases. The same-module witness checks the canonical finite-map parameter; appPos_term proves the equivalent option-indexing characterization used by existing proofs."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/PatternComp/Proofs/GuardCompilation.lean",
+    "lean_name": "walk",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml",
+    "hol_name": "walk_def",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "refs"
+    ],
+    "reviewer": "Compared the full source equations and typed capture, including path-value-reference argument order, the explicit in-bounds term index, and the guarded finite-map reference lookup. The same-module witness checks the canonical finite-map parameter."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternComp/Proofs/GuardCompilation.lean",
+    "lean_name": "walkList",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml",
+    "hol_name": "walk_list_def",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "refs"
+    ],
+    "reviewer": "Compared the complete source case expression and typed capture, retaining only successful term field lists. The same-module witness checks the canonical finite-map parameter."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternComp/Proofs/GuardCompilation.lean",
+    "lean_name": "appPos_pos",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml",
+    "hol_name": "app_pos_Pos",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "refs"
+    ],
+    "reviewer": "Compared the source in-bounds premise and position-lookup equality with the typed exported theorem; Lean indexed access is guarded by the same bound. The same-module witness checks the canonical finite-map parameter."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternComp/Proofs/GuardCompilation.lean",
+    "lean_name": "walk_sound",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml",
+    "hol_name": "walk_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "refs"
+    ],
+    "reviewer": "Compared the source successful-walk premise and position-lookup conclusion with the typed exported theorem. The same-module witness checks the canonical finite-map parameter."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternComp/Proofs/GuardCompilation.lean",
+    "lean_name": "walk_append",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml",
+    "hol_name": "walk_append",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "refs"
+    ],
+    "reviewer": "Compared the complete source case expression for traversal of appended paths with the typed exported theorem. The same-module witness checks the canonical finite-map parameter."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/PatternExh/Exhaustive.lean",
     "lean_name": "exhRows",
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
