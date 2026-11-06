@@ -100,7 +100,15 @@ val _ = show_thm "do_opapp_reverse=" flat_patternProofTheory.do_opapp_thm_REVERS
 val _ = show_thm "pmatch_simulation=" flat_patternProofTheory.pmatch_thm;
 val _ = show_thm "flat_is_closure=" flatPropsTheory.isClosure_def;
 val _ = show_thm "simple_value_relation_def=" flatPropsTheory.simple_val_rel_def;
+val _ = show_thm "simple_value_relation_rewrite=" (DISCH_ALL flatPropsTheory.simple_val_rel_rew);
+val _ = show_thm "simple_value_relation_simps=" flatPropsTheory.simple_val_rel_simps;
+val _ = show_thm "simple_value_relation_closure=" flatPropsTheory.simple_val_rel_isClosure;
 val _ = show_thm "simple_state_relation_def=" flatPropsTheory.simple_state_rel_def;
+val _ = show_thm "simple_equality_induction=" flatPropsTheory.simple_do_eq_thm_ind;
+val _ = show_thm "simple_equality=" flatPropsTheory.simple_do_eq_thm;
+val _ = show_thm "simple_store_assignment=" flatPropsTheory.simple_state_rel_store_assign;
+val _ = show_thm "simple_store_allocation=" flatPropsTheory.simple_state_rel_store_alloc;
+val _ = show_thm "simple_store_lookup=" flatPropsTheory.simple_state_rel_store_lookup;
 val _ = show_thm "basic_nonclosure=" flat_patternProofTheory.simple_val_rel_step_isClosure;
 val _ = show_thm "simple_value_relation=" flat_patternProofTheory.simple_val_rel;
 val _ = show_thm "simple_state_relation=" flat_patternProofTheory.simple_state_rel;

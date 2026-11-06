@@ -125232,5 +125232,29 @@
   "lean_name": "simpleStateRel_stateRel",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared the HOL source theorem and typed simple_state_relation capture: the generic simple state relation is instantiated with the pattern compiler state relation at the same compiler and FFI types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "simple_val_rel_rew",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/SimpleRelations.lean",
+  "lean_name": "simpleValueRel_rewrite",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the HOL source theorem with the typed simple_value_relation_rewrite capture: HOL stores simple_val_rel as an assumption, discharged as a premise in the capture and Lean; the non-closure decomposition is unchanged."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "simple_val_rel_simps",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/SimpleRelations.lean",
+  "lean_name": "simpleValueRel_simps",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the HOL source and typed simple_value_relation_simps capture: all four non-closure constructor clauses retain their order, implications, right-value quantifiers and shared constructor-field list."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "simple_val_rel_isClosure",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/SimpleRelations.lean",
+  "lean_name": "simpleValueRel_isClosure",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the HOL source and typed simple_value_relation_closure capture: the original simple-relation and value-relation hypotheses imply the same closure-status equivalence; the conjunctive premise is curried."
 }
 ]

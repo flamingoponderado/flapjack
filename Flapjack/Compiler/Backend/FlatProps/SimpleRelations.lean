@@ -14,6 +14,44 @@ def simpleValueRel (relation : Value → Value → Prop) : Prop :=
     (relation left right ↔ simpleBasicValRel left right ∧
       List.Forall₂ relation (valueContainerXs left) (valueContainerXs right))
 
+/-- For a non-closure, a simple relation decomposes into its basic shape and contents.
+HOL stores `simple_val_rel vr` as an assumption of this theorem; it is
+discharged as a premise here and in the typed probe. -/
+@[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "simple_val_rel_rew"]
+theorem simpleValueRel_rewrite (relation : Value → Value → Prop)
+    (simple : simpleValueRel relation) :
+    ∀ left right, ¬ isClosure left →
+      (relation left right ↔ simpleBasicValRel left right ∧
+        List.Forall₂ relation (valueContainerXs left) (valueContainerXs right)) :=
+  simple.2
+
+/-- The non-closure cases of a simple value relation. -/
+@[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "simple_val_rel_simps"]
+theorem simpleValueRel_simps (relation : Value → Value → Prop) (lit : Flapjack.AstHOL.Lit)
+    (stamp : Option (FlatLang.CtorId × FlatLang.TypeId)) (values : List Value)
+    (flag : Bool) (index : Nat) :
+    (simpleValueRel relation → ∀ right,
+      relation (.litv lit) right ↔ simpleBasicValRel (.litv lit) right ∧
+        List.Forall₂ relation (valueContainerXs (.litv lit)) (valueContainerXs right)) ∧
+    (simpleValueRel relation → ∀ right,
+      relation (.conv stamp values) right ↔ simpleBasicValRel (.conv stamp values) right ∧
+        List.Forall₂ relation (valueContainerXs (.conv stamp values)) (valueContainerXs right)) ∧
+    (simpleValueRel relation → ∀ right,
+      relation (.loc flag index) right ↔ simpleBasicValRel (.loc flag index) right ∧
+        List.Forall₂ relation (valueContainerXs (.loc flag index)) (valueContainerXs right)) ∧
+    (simpleValueRel relation → ∀ right,
+      relation (.vectorv values) right ↔ simpleBasicValRel (.vectorv values) right ∧
+        List.Forall₂ relation (valueContainerXs (.vectorv values)) (valueContainerXs right)) := by
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> intro simple right <;>
+    apply simpleValueRel_rewrite relation simple <;> simp [isClosure]
+
+/-- Related values have the same closure status under a simple relation. -/
+@[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "simple_val_rel_isClosure"]
+theorem simpleValueRel_isClosure (relation : Value → Value → Prop) (left right : Value)
+    (simple : simpleValueRel relation) (related : relation left right) :
+    isClosure left ↔ isClosure right :=
+  simple.1 left right related
+
 /-- A simple state relation is stable under related store and global updates
 and equal FFI updates. Compiler-state types may differ across the relation. -/
 @[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "simple_state_rel_def"]
