@@ -165,11 +165,6 @@ theorem expressionSimulation_all {C F : Type} (cfg stateCfg : Config) (expressio
   exact expressionSimulationUpTo_all source.clock cfg stateCfg expression
     sourceEnv targetEnv source target sourceFinal sourceResult n (by omega) run envs states bound safe
 
-/-- Every expression list satisfies the corresponding proof-side simulation. -/
-theorem expressionsSimulation_all {C F : Type} (cfg stateCfg : Config) (expressions : List FlatLang.Exp) :
-    ExpressionsSimulation (C := C) (F := F) cfg stateCfg expressions :=
-  compileExps_simulation cfg stateCfg expressions (by intro expression _; exact expressionSimulation_all cfg stateCfg expression)
-
 /-- Compiled declaration lists preserve related states and non-type-error
 outcomes in the current proof-side evaluator. -/
 theorem evaluateDecs_simulation_all {C F : Type} (cfg stateCfg : Config)
@@ -204,8 +199,10 @@ theorem compileExps_evaluate_proofSide {C F : Type} (stateCfg : Config) :
   constructor
   · intro env1 s1 xs t1 r1 i sg ys n env2 s2 cfg run compiled envs states bound safe
     have compiledBound : (compileExps cfg xs).1 < n := by simpa [compiled] using bound
-    obtain ⟨t2, r2, targetRun, finalStates, results⟩ := expressionsSimulation_all cfg stateCfg xs
-      env1 env2 s1 s2 t1 r1 n run envs states compiledBound safe
+    obtain ⟨t2, r2, targetRun, finalStates, results⟩ :=
+      compileExps_simulation_upTo cfg stateCfg s1.clock xs
+        (fun e _ => expressionSimulationUpTo_all s1.clock cfg stateCfg e)
+        env1 env2 s1 s2 t1 r1 n (Nat.le_refl _) run envs states compiledBound safe
     exact ⟨t2, r2, results, finalStates, by simpa [compiled] using targetRun⟩
   · intro s1 decs s2 t1 cfg decs' res run compiled states safe
     subst decs'
