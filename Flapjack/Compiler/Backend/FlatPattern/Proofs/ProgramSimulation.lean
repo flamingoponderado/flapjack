@@ -1,16 +1,13 @@
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ClockedInduction
 import Flapjack.Compiler.Backend.FlatProps.EvalSim
 
-/-! Program-level simulation for the proof-side flat pattern compiler. The
-evaluator and relations remain pending HOL correspondence review. -/
+/-! Program-level simulation for the flat pattern compiler. -/
 namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack Flapjack.AstHOL Flapjack.Compiler.Backend
 
-/-- Related installation configurations and compiled declarations give a
-program evaluation simulation with no additional target clock. This is
-Flapjack proof-side infrastructure until the evaluator and value relation are
-reviewed against HOL. -/
-theorem compileDecs_evalSim_proofSide {C F : Type} (cfg cfg2 : Config) (ffi : HolFfiState F)
+/-- Related installation configurations give a program evaluation simulation. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "compile_decs_eval_sim"]
+theorem compileDecs_evalSim {C F : Type} (cfg cfg2 : Config) (ffi : HolFfiState F)
     (source target : List FlatLang.Exp) (sourceConfig targetConfig : FlatSem.InstallConfig C)
     (configs : installConfRel cfg sourceConfig targetConfig) :
     FlatProps.evalSim ffi source target sourceConfig targetConfig
@@ -157,11 +154,9 @@ theorem compileDecs_semantics_of_safe {C F : Type} (cfg cfg2 : Config) (ffi : Ho
   simp only [sourceNoError, targetNoError, if_false]
   rw [terminatingEq, tracesEq]
 
-/-- A non-failing source program and related installation configurations
-have the same proof-side observational behavior after pattern compilation.
-This is not tagged as the HOL semantics theorem because the evaluator and
-relations have not completed cross-language review. -/
-theorem compileDecs_semantics_proofSide {C F : Type} (cfg cfg2 : Config) (ffi : HolFfiState F)
+/-- Pattern compilation preserves the semantics of a non-failing program. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "compile_decs_semantics"]
+theorem compileDecs_semantics {C F : Type} (cfg cfg2 : Config) (ffi : HolFfiState F)
     (source : List FlatLang.Exp) (sourceConfig targetConfig : FlatSem.InstallConfig C)
     (configs : installConfRel cfg sourceConfig targetConfig)
     (notFail : FlatSem.semantics sourceConfig ffi source ≠ .fail) :

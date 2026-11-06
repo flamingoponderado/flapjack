@@ -67,6 +67,7 @@ val _ = show_thm "comp_get_pos=" pattern_compTheory.get_pos_def;
 val _ = show_thm "comp_pat_to_guard=" pattern_compTheory.pat_to_guard_def;
 val _ = show_thm "comp_pats_to_code=" pattern_compTheory.pats_to_code_def;
 val _ = show_thm "comp_definition=" pattern_compTheory.comp_def;
+val _ = show_thm "decs_eval_sim=" flat_patternProofTheory.compile_decs_eval_sim;
 val _ = show_thm "decs_semantics=" flat_patternProofTheory.compile_decs_semantics;
 val _ = show_thm "basic_values=" flatPropsTheory.simple_basic_val_rel_def;
 val _ = show_thm "value_contents=" flatPropsTheory.v_container_xs_def;
