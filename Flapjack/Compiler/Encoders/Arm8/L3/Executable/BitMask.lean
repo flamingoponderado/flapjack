@@ -160,4 +160,50 @@ theorem rotateRightWidth_eq (w : BitVec 64) (n : Nat) :
     rw [Nat.shiftRight_eq_div_pow]
     exact lt_of_le_of_lt (Nat.div_le_self _ _) w.isLt)]
 
+/-- The computable `highestSetBit` is the L3 `HighestSetBit` at width 7. -/
+theorem highestSetBit_eq (w : BitVec 7) :
+    highestSetBit w.toNat = HighestSetBit (TN := 7) w := by
+  unfold highestSetBit HighestSetBit holWordLog2
+  by_cases h : w.toNat = 0
+  · have hw : (w == (BitVec.ofNat 7 0)) = true := by
+      rw [beq_iff_eq]
+      apply BitVec.eq_of_toNat_eq
+      simp [h]
+    simp [h, hw]
+  · have hw : (w == (BitVec.ofNat 7 0)) = false := by
+      rw [beq_eq_false_iff_ne]
+      intro hh
+      apply h
+      rw [hh]; rfl
+    have hlt : Nat.log2 w.toNat < 7 := (Nat.log2_lt h).mpr w.isLt
+    simp only [h, hw, Bool.false_eq_true, if_false]
+    have htoNat : (BitVec.ofNat 7 (Nat.log2 w.toNat)).toNat = Nat.log2 w.toNat := by
+      rw [BitVec.toNat_ofNat]
+      exact Nat.mod_eq_of_lt (by omega)
+    rw [BitVec.toInt_eq_toNat_bmod, htoNat]
+    symm
+    apply Int.bmod_eq_of_le <;> omega
+
+/-- The computable `ones` is the L3 `Ones` at width 6. -/
+theorem ones_eq (n : Nat) (hn : n ≤ 6) :
+    ones n = (holV2w 6 (Ones n)).toNat := by
+  have hbit : holV2w 6 (Ones n) = BitVec.ofNat 6 (2 ^ n - 1) := by
+    apply BitVec.eq_of_getLsbD_eq
+    intro i hi
+    unfold holV2w Flapjack.RiscV.L3.holV2w
+    rw [getLsbD_holFcpWord]
+    unfold Ones holPadLeft
+    simp only [List.length_replicate, List.append_nil, BitVec.getLsbD_ofNat]
+    by_cases h : i < n
+    · have hidx : n - 1 - i < n := by omega
+      simp [hi, h, hidx, Nat.testBit_two_pow_sub_one]
+    · simp [hi, h, Nat.testBit_two_pow_sub_one]
+  have htoNat : (BitVec.ofNat 6 (2 ^ n - 1)).toNat = 2 ^ n - 1 := by
+    rw [BitVec.toNat_ofNat]
+    exact Nat.mod_eq_of_lt (by
+      have h2 : 2 ^ n ≤ 64 := Nat.pow_le_pow_right (by decide) hn
+      omega)
+  unfold ones
+  rw [hbit, htoNat]
+
 end Flapjack.Compiler.Encoders.Arm8.L3
