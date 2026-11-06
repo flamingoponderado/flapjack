@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRel
+import Flapjack.Misc.Option.Rel
 
 /-! Source-to-flat store and state relations. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
@@ -78,21 +79,14 @@ theorem forall₂_lookup {α β : Type} {R : α → β → Prop} {xs : List α} 
       simp only [List.getElem?_cons_succ] at lookup ⊢
       exact ih n lookup
 
-/-- Flapjack option infrastructure for pointwise related successful or absent
-lookups. -/
-def LookupRel {α β : Type} (R : α → β → Prop) : Option α → Option β → Prop
-  | none, none => True
-  | some x, some y => R x y
-  | _, _ => False
-
 /-- Pointwise related lists have related indexed lookups, including absence. -/
 theorem forall₂_lookupRel {α β : Type} {R : α → β → Prop} {xs : List α} {ys : List β}
-    (related : List.Forall₂ R xs ys) (n : Nat) : LookupRel R xs[n]? ys[n]? := by
+    (related : List.Forall₂ R xs ys) (n : Nat) : Flapjack.optionRel R xs[n]? ys[n]? := by
   induction related generalizing n with
-  | nil => simp [LookupRel]
+  | nil => simp [Flapjack.optionRel]
   | cons head tail ih =>
     cases n with
-    | zero => simpa [LookupRel] using head
+    | zero => simpa [Flapjack.optionRel] using head
     | succ n => simpa using ih n
 
 /-- Source and flat store lookups agree at the original one-slot offset. This
@@ -100,7 +94,7 @@ is infrastructure over the factored source-to-flat value relation. -/
 theorem stateRel_lookup {C F : Type} (genv : GlobalEnv)
     (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
     (related : StateRel genv source flat) (n : Nat) :
-    LookupRel (StoreValueRel genv) (storeLookup n source.refs) (storeLookup (n + 1) flat.refs) := by
+    Flapjack.optionRel (StoreValueRel genv) (storeLookup n source.refs) (storeLookup (n + 1) flat.refs) := by
   cases related with
   | intro nonempty refs _ _ =>
     obtain ⟨entry, rest, hflat⟩ := List.exists_cons_of_ne_nil nonempty

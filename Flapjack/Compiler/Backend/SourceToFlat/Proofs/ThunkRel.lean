@@ -32,12 +32,12 @@ theorem destThunk_related {C F : Type} (genv : GlobalEnv)
     | none =>
       cases hflat : storeLookup (n + 1) flatState.refs with
       | none => simpa [SemanticPrimitivesHOL.destThunk, FlatSem.destThunk, hsrc, hflat] using DestThunkRel.badRef (genv := genv)
-      | some value => simp [LookupRel, hsrc, hflat] at lookupRel
+      | some value => simp [Flapjack.optionRel, hsrc, hflat] at lookupRel
     | some sourceValue =>
       cases hflat : storeLookup (n + 1) flatState.refs with
-      | none => simp [LookupRel, hsrc, hflat] at lookupRel
+      | none => simp [Flapjack.optionRel, hsrc, hflat] at lookupRel
       | some flatValue =>
-        simp only [LookupRel, hsrc, hflat] at lookupRel
+        simp only [Flapjack.optionRel, hsrc, hflat] at lookupRel
         cases lookupRel with
         | refv valueRel =>
           simpa [SemanticPrimitivesHOL.destThunk, FlatSem.destThunk, hsrc, hflat] using DestThunkRel.notThunk (genv := genv)
