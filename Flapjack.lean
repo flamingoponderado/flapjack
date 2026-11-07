@@ -31,6 +31,15 @@ import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationHandle
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationMatchCons
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationMat
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationLet
+import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationLetrec
+import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationDeclarations
+import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationDenv
+import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationDlet
+import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationModules
+import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationDecsCons
+import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationStamps
+import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationIf
+import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationLog
 import Flapjack.SemanticPrimitivesProps.OpApp
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EnvironmentConstructors
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EnvironmentEmpty
