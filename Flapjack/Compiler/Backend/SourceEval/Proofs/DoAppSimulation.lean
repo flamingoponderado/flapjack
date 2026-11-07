@@ -15,14 +15,14 @@ namespace Flapjack.Compiler.Backend.SourceEval.Proofs
 open Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesProps Flapjack.AstHOL
 
 /-- Flapjack proof infrastructure: compare the outcomes of thunk inspection. -/
-private def destRel (oracle : EvalOracleState) : DestThunkResult → DestThunkResult → Prop
+def destRel (oracle : EvalOracleState) : DestThunkResult → DestThunkResult → Prop
   | .badRef, .badRef => True
   | .notThunk, .notThunk => True
   | .isThunk mode x, .isThunk mode' y => mode = mode' ∧ ValueRel oracle x y
   | _, _ => False
 
 /-- Flapjack proof infrastructure: related stores preserve thunk inspection. -/
-private theorem destRelated (oracle : EvalOracleState) (s t : Store Value) (v w : Value)
+theorem destRelated (oracle : EvalOracleState) (s t : Store Value) (v w : Value)
     (stores : List.Forall₂ (storeValueRel (ValueRel oracle)) s t)
     (values : ValueRel oracle v w) : destRel oracle (destThunk [v] s) (destThunk [w] t) := by
   cases values with
@@ -42,6 +42,48 @@ private theorem destRelated (oracle : EvalOracleState) (s t : Store Value) (v w 
         obtain ⟨rfl, related⟩ := related
         cases flag <;> simp [related]
   | _ => simp [destThunk, destRel]
+
+/-- Flapjack infrastructure for the force case: related stores and operands preserve successful thunk updates. HOL proves this inline in the evaluator simulation. -/
+theorem updateThunk_related (oracle : EvalOracleState) (source target : Store Value)
+    (targets targets' values values' : List Value) (updated : Store Value)
+    (stores : List.Forall₂ (storeValueRel (ValueRel oracle)) source target)
+    (targetRel : List.Forall₂ (ValueRel oracle) targets targets')
+    (valueRel : List.Forall₂ (ValueRel oracle) values values')
+    (run : updateThunk targets source values = some updated) :
+    ∃ updated', updateThunk targets' target values' = some updated' ∧
+      List.Forall₂ (storeValueRel (ValueRel oracle)) updated updated' := by
+  cases targets with
+  | nil => simp [updateThunk] at run
+  | cons v vs =>
+    cases targetRel with
+    | cons vRel vsRel =>
+      cases vs with
+      | cons v vs => simp [updateThunk] at run
+      | nil =>
+        cases vsRel
+        cases values with
+        | nil => simp [updateThunk] at run
+        | cons value rest =>
+          cases valueRel with
+          | @cons _ value' _ _ valRel restRel =>
+            cases rest with
+            | cons value rest => simp [updateThunk] at run
+            | nil =>
+              cases restRel
+              cases vRel with
+              | loc flag index =>
+                cases flag with
+                | true => simp [updateThunk] at run
+                | false =>
+                  have inspection := destRelated oracle source target value value' stores valRel
+                  cases src : destThunk [value] source <;>
+                    cases dst : destThunk [value'] target <;>
+                    simp_all [updateThunk, destRel]
+                  obtain ⟨updated', assigned, rel⟩ :=
+                    storeAssign_related stores index (show storeValueRel (ValueRel oracle)
+                      (.thunk .evaluated value) (.thunk .evaluated value') from ⟨rfl, valRel⟩) run
+                  exact ⟨updated', assigned, rel⟩
+              | _ => simp [updateThunk] at run
 
 /-- Flapjack proof infrastructure: related operands agree on invalid thunk updates. -/
 private theorem badRelated (oracle : EvalOracleState) (s t : Store Value) (v w : Value) (mode : ThunkMode)
