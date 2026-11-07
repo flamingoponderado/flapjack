@@ -6,6 +6,12 @@ fun show_thm label th =
   if null (hyp th) then (print label; print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
 fun show_eval label tm = (print label; print_term (rhs (concl (EVAL tm))); print "\n");
+val fst_snd_eq_case_replay = Q.prove (
+  `FST = (\ (a, b). a) /\ SND = (\ (a, b). b)`,
+  simp [FUN_EQ_THM, FORALL_PROD]);
+val _ = show_thm "fst_snd_eq_case_replay=" fst_snd_eq_case_replay;
+val _ = show_thm "inj_definition_typed=" pred_setTheory.INJ_DEF;
+val _ = show_thm "some_f_inj_eq_typed=" source_to_flatProofTheory.some_f_inj_eq;
 val _ = show_thm "alloc_tags_invariant_typed=" source_to_flatProofTheory.alloc_tags_invariant;
 val _ = show_thm "alookup_map_3_typed=" source_to_flatProofTheory.ALOOKUP_MAP_3;
 val _ = show_thm "alloc_tags1_imp_typed=" source_to_flatProofTheory.alloc_tags1_imp;

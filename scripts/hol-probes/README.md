@@ -9664,6 +9664,8 @@ replays the local `not_abort_IMP_cases`, `build_tdefs_no_mod`,
 `nsAppend_foldl'`, and `nsAppend_foldl` proofs.
 It also captures the typed `alloc_tags_invariant`, `alloc_tags1_imp`, and
 `ALOOKUP_MAP_3` statements for source comparison.
+It captures `INJ_DEF` and `some_f_inj_eq` with inferred types and replays the
+local `FST_SND_EQ_CASE` proof with all four component types visible.
 
 The same probe replays the original local `ALOOKUP_alloc_defs` proof with
 independent inferred key and value types.

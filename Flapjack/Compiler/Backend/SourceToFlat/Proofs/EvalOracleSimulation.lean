@@ -7,6 +7,12 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StoreEnvId
 namespace Flapjack.Compiler.Backend.SourceToFlat.OracleInvariant
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
 
+/-- Pair projections agree with the corresponding pattern functions. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "FST_SND_EQ_CASE"]
+theorem fstSnd_eq_case {α β γ δ : Type} :
+    (Prod.fst : α × β → α) = (fun (a, _) => a) ∧
+      (Prod.snd : γ × δ → δ) = (fun (_, b) => b) := ⟨rfl, rfl⟩
+
 namespace InvariantPort
 
 /-- Roundtrip for the global carrier's canonical finite maps. -/

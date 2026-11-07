@@ -14451,6 +14451,30 @@
     "reviewer": "Compared the source local theorem and typed invariant_env_gen_inv_local replay: the original invariant premise uses the same index triple, independent compiler and FFI types, and canonical global-environment maps; the conclusion is the original environment-generation invariant."
   },
   {
+    "lean_name": "fstSnd_eq_case",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvalOracleSimulation.lean",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "FST_SND_EQ_CASE",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared fst_snd_eq_case_replay in source_to_flat_init_probe.out: the two projection-function equations retain four independent component types and the original conjunction. The local HOL tactic is replayed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/WordLists.lean",
+    "lean_name": "some_f_inj_eq",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "some_f_inj_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared some_f_inj_eq_typed in source_to_flat_init_probe.out: independent domain and codomain types, INJ on the two universal sets, grouped equality premise and HOL option-valued choice conclusion agree."
+  },
+  {
+    "lean_path": "Flapjack/Misc/PredSet.lean",
+    "lean_name": "holInj",
+    "hol_path": "HOL/src/pred_set/src/pred_setScript.sml",
+    "hol_name": "INJ_DEF",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared inj_definition_typed in source_to_flat_init_probe.out: arbitrary domain and codomain predicate sets, mapping into the target and the guarded injectivity implication retain their original conjunctive structure."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateDatatype.lean",
     "lean_name": "allocTags1_imp",
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
