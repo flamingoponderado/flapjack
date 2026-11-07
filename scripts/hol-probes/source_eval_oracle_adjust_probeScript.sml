@@ -112,3 +112,7 @@ val _ = show_thm "source_do_eq_simulation=" source_evalProofTheory.do_eq;
 val _ = show_thm "source_do_eq_induction=" semanticPrimitivesTheory.do_eq_ind;
 val _ = show_thm "source_store_assign=" source_evalProofTheory.store_assign;
 val _ = show_thm "source_store_lookup=" source_evalProofTheory.store_lookup;
+val _ = show_thm "source_value_relation_list_encoding=" source_evalProofTheory.v_rel_list_to_v;
+val _ = show_thm "source_value_to_list_relation=" source_evalProofTheory.v_to_list;
+val _ = show_thm "source_value_to_char_list_relation=" source_evalProofTheory.v_to_char_list;
+val _ = show_thm "source_values_to_string_relation=" source_evalProofTheory.vs_to_string;

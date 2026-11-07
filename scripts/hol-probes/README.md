@@ -9636,3 +9636,7 @@ polymorphic `maybe_all_list_SOME` theorem used in the word-list proof, and
 `genv_c_ok_extend` with its complete constructor compatibility premises,
 the full `invariant_make_varls` initializer theorem, and
 `LIST_REL_sv_rel_weak` for store-list weakening and a typed replay of the local `sv_rel_weak` theorem, and the value and environment weakening theorems.
+
+`source_eval_oracle_adjust_probe.out` also captures the typed list encoding, list
+decoding, character-list decoding, and string-decoding value-relation theorems.
+These captures support statement review, not cross-language equivalence.

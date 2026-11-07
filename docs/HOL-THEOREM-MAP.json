@@ -1,6 +1,38 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "v_rel_list_to_v",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/Conversions.lean",
+  "lean_name": "vRelListToValue",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed source_value_relation_list_encoding in source_eval_oracle_adjust_probe.out: The list encodings are related if and only if their elements are pointwise related."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "v_to_list",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/Conversions.lean",
+  "lean_name": "valueToList_related",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed source_value_to_list_relation in source_eval_oracle_adjust_probe.out: Successful decoding and related input values imply an existential target decoding with pointwise related elements."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "v_to_char_list",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/Conversions.lean",
+  "lean_name": "valueToCharList_related",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed source_value_to_char_list_relation in source_eval_oracle_adjust_probe.out: Related values preserve the successful decoded HOL character list exactly."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "vs_to_string",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/Conversions.lean",
+  "lean_name": "valuesToString_related",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed source_values_to_string_relation in source_eval_oracle_adjust_probe.out: Pointwise related value lists preserve successful decoding to the same mlstring."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "store_assign",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/Store.lean",
   "lean_name": "storeAssign_simulation",
