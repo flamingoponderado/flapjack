@@ -16439,8 +16439,9 @@
     "hol_name": "adjust_oracle_evaluate",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateExpressions.lean",
     "lean_name": "adjustOracle_evaluate_Let",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. The compiler-preservation premise now follows HOL directly. This induction case still uses curried evaluation premises, different binder ordering, and, where applicable, induction hypotheses that do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independently compared the value-guarded induction case against typed adjust_evaluate and evaluate_induction in source_eval_oracle_adjust_probe.out:8 and :10. The literal compiler premise, binders, ordered induction hypotheses, intermediate equations and conclusion match. Evaluation inherits reals_as_rational_cuts; see SOUNDNESS item 8."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -16456,16 +16457,18 @@
     "hol_name": "adjust_oracle_evaluate",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateControl.lean",
     "lean_name": "adjustOracle_evaluate_If",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. The compiler-preservation premise now follows HOL directly. This induction case still uses curried evaluation premises, different binder ordering, and, where applicable, induction hypotheses that do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independently compared the value-guarded induction case against typed adjust_evaluate and evaluate_induction in source_eval_oracle_adjust_probe.out:8 and :10. The literal compiler premise, binders, ordered induction hypotheses, intermediate equations and conclusion match. Evaluation inherits reals_as_rational_cuts; see SOUNDNESS item 8."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
     "hol_name": "adjust_oracle_evaluate",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateControl.lean",
     "lean_name": "adjustOracle_evaluate_Log",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. The compiler-preservation premise now follows HOL directly. This induction case still uses curried evaluation premises, different binder ordering, and, where applicable, induction hypotheses that do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independently compared the value-guarded induction case against typed adjust_evaluate and evaluate_induction in source_eval_oracle_adjust_probe.out:8 and :10. The literal compiler premise, binders, ordered induction hypotheses, intermediate equations and conclusion match. Evaluation inherits reals_as_rational_cuts; see SOUNDNESS item 8."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -16517,24 +16520,27 @@
     "hol_name": "adjust_oracle_evaluate",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateMatch.lean",
     "lean_name": "adjustOracle_evaluate_MatchCons",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. The compiler-preservation premise now follows HOL directly. This induction case still uses curried evaluation premises, different binder ordering, and, where applicable, induction hypotheses that do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independently compared the value-guarded induction case against typed adjust_evaluate and evaluate_induction in source_eval_oracle_adjust_probe.out:8 and :10. The literal compiler premise, binders, ordered induction hypotheses, intermediate equations and conclusion match. Evaluation inherits reals_as_rational_cuts; see SOUNDNESS item 8."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
     "hol_name": "adjust_oracle_evaluate",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateMatch.lean",
     "lean_name": "adjustOracle_evaluate_Mat",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. The compiler-preservation premise now follows HOL directly. This induction case still uses curried evaluation premises, different binder ordering, and, where applicable, induction hypotheses that do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independently compared the value-guarded induction case against typed adjust_evaluate and evaluate_induction in source_eval_oracle_adjust_probe.out:8 and :10. The literal compiler premise, binders, ordered induction hypotheses, intermediate equations and conclusion match. Evaluation inherits reals_as_rational_cuts; see SOUNDNESS item 8."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
     "hol_name": "adjust_oracle_evaluate",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateMatch.lean",
     "lean_name": "adjustOracle_evaluate_Handle",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. The compiler-preservation premise now follows HOL directly. This induction case still uses curried evaluation premises, different binder ordering, and, where applicable, induction hypotheses that do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independently compared the value-guarded induction case against typed adjust_evaluate and evaluate_induction in source_eval_oracle_adjust_probe.out:8 and :10. The literal compiler premise, binders, ordered induction hypotheses, intermediate equations and conclusion match. Evaluation inherits reals_as_rational_cuts; see SOUNDNESS item 8."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",

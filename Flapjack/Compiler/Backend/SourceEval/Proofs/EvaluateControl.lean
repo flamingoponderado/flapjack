@@ -6,22 +6,21 @@ open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.EvaluateHOL
 
 /-- Conditional-expression case of the original evaluator induction. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
-theorem adjustOracle_evaluate_If {Config F : Type} (ci : CompilerInstance Config)
-    (f compile : List Dec → List Dec) (_compilePreserve : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
+theorem adjustOracle_evaluate_If {Config F : Type} (compile : List Dec → List Dec)
+    (ci : CompilerInstance Config) (f : List Dec → List Dec)
+    (_preserves : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
       (res : Result (SemEnv Value) Value),
       evaluateDecs s env ds = (next, res) ∧ res ≠ .err (.abort .typeError) →
         evaluateDecs s env (compile ds) = (next, res))
-    (condition yes no : AstHOL.Exp)
-    (state next : State F) (env : SemEnv Value)
-    (conditionIH : ExpsOracleAdjustedAt compile ci f state env [condition])
-    (branchIH : ∀ (middle : State F) (values : List Value) (branch : AstHOL.Exp),
-      evaluate state env [condition] = (middle, .val values) → doIf (headValue values) yes no = some branch →
-      ExpsOracleAdjustedAt compile ci f middle env [branch]) (result : Result (List Value) Value)
-    (source : evaluate state env [.if_ condition yes no] = (next, result))
-    (inserted : isInsertOracle ci f state.evalState) (safe : result ≠ .err (.abort .typeError)) :
-    isInsertOracle ci f next.evalState ∧
-      evaluate { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env [.if_ condition yes no] =
-        ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result) := by
+    (state : State F) (env : SemEnv Value) (condition yes no : AstHOL.Exp)
+    (ih : (∀ (middle : State F) (outcome : Result (List Value) Value) (values : List Value) (branch : AstHOL.Exp),
+      evaluate state env [condition] = (middle, outcome) ∧ outcome = .val values ∧
+        doIf (headValue values) yes no = some branch →
+        ExpsOracleAdjustedAt compile ci f middle env [branch]) ∧
+      ExpsOracleAdjustedAt compile ci f state env [condition]) :
+    ExpsOracleAdjustedAt compile ci f state env [.if_ condition yes no] := by
+  obtain ⟨branchIH, conditionIH⟩ := ih
+  intro next result ⟨source, inserted, safe⟩
   let adjusted := { state with evalState := adjustOracle ci (compile ∘ f) state.evalState }
   simp only [evaluate, (fixClockEvaluate state env [condition] []).1] at source
   change isInsertOracle ci f next.evalState ∧
@@ -54,7 +53,7 @@ theorem adjustOracle_evaluate_If {Config F : Type} (ci : CompilerInstance Config
         rw [chosen] at source
         have branchRun : evaluate middle env [branch] = (next, result) := by simpa using source
         obtain ⟨nextInserted, branchReplacement⟩ :=
-          branchIH middle values branch run chosen next result ⟨branchRun, middleInserted, safe⟩
+          branchIH middle (.val values) values branch ⟨run, rfl, chosen⟩ next result ⟨branchRun, middleInserted, safe⟩
         refine ⟨nextInserted, ?_⟩
         rw [replacement]
         dsimp only
@@ -63,22 +62,22 @@ theorem adjustOracle_evaluate_If {Config F : Type} (ci : CompilerInstance Config
 
 /-- Short-circuit Boolean case of the original evaluator induction. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
-theorem adjustOracle_evaluate_Log {Config F : Type} (ci : CompilerInstance Config)
-    (f compile : List Dec → List Dec) (_compilePreserve : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
+theorem adjustOracle_evaluate_Log {Config F : Type} (compile : List Dec → List Dec)
+    (ci : CompilerInstance Config) (f : List Dec → List Dec)
+    (_preserves : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
       (res : Result (SemEnv Value) Value),
       evaluateDecs s env ds = (next, res) ∧ res ≠ .err (.abort .typeError) →
         evaluateDecs s env (compile ds) = (next, res))
-    (op : Lop) (first second : AstHOL.Exp)
-    (state next : State F) (env : SemEnv Value)
-    (firstIH : ExpsOracleAdjustedAt compile ci f state env [first])
-    (secondIH : ∀ (middle : State F) (values : List Value) (branch : AstHOL.Exp),
-      evaluate state env [first] = (middle, .val values) → doLog op (headValue values) second = some (.exp branch) →
-      ExpsOracleAdjustedAt compile ci f middle env [branch]) (result : Result (List Value) Value)
-    (source : evaluate state env [.log op first second] = (next, result))
-    (inserted : isInsertOracle ci f state.evalState) (safe : result ≠ .err (.abort .typeError)) :
-    isInsertOracle ci f next.evalState ∧
-      evaluate { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env [.log op first second] =
-        ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result) := by
+    (state : State F) (env : SemEnv Value) (op : Lop) (first second : AstHOL.Exp)
+    (ih : (∀ (middle : State F) (outcome : Result (List Value) Value) (values : List Value)
+      (selection : ExpOrVal) (branch : AstHOL.Exp),
+      evaluate state env [first] = (middle, outcome) ∧ outcome = .val values ∧
+        doLog op (headValue values) second = some selection ∧ selection = .exp branch →
+        ExpsOracleAdjustedAt compile ci f middle env [branch]) ∧
+      ExpsOracleAdjustedAt compile ci f state env [first]) :
+    ExpsOracleAdjustedAt compile ci f state env [.log op first second] := by
+  obtain ⟨secondIH, firstIH⟩ := ih
+  intro next result ⟨source, inserted, safe⟩
   let adjusted := { state with evalState := adjustOracle ci (compile ∘ f) state.evalState }
   simp only [evaluate, (fixClockEvaluate state env [first] []).1] at source
   change isInsertOracle ci f next.evalState ∧
@@ -122,7 +121,7 @@ theorem adjustOracle_evaluate_Log {Config F : Type} (ci : CompilerInstance Confi
           subst branch
           rw [selected] at source
           have branchRun : evaluate middle env [second] = (next, result) := by simpa using source
-          obtain ⟨nextInserted, branchReplacement⟩ := secondIH middle values second run selected next result ⟨branchRun, middleInserted, safe⟩
+          obtain ⟨nextInserted, branchReplacement⟩ := secondIH middle (.val values) values (.exp second) second ⟨run, rfl, selected, rfl⟩ next result ⟨branchRun, middleInserted, safe⟩
           refine ⟨nextInserted, ?_⟩
           rw [replacement]
           dsimp only

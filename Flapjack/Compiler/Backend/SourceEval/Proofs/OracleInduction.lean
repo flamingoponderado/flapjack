@@ -51,41 +51,48 @@ theorem evaluateOracleFull {Config F : Type} (ci : CompilerInstance Config)
         intro _
         exact evaluateOracleFull ci f compile preserves state { env with v := buildRecEnv funs env env.v } [body]
       | let_ name bound body =>
-        apply adjustOracle_evaluate_Let ci f compile preserves name bound body state next env ?_ ?_ result run inserted safe
-        · exact evaluateOracleFull ci f compile preserves state env [bound]
-        · intro middle values boundRun
-          have clockBound := evaluateClockFull state middle env [bound] (.val values) boundRun
-          exact evaluateOracleFull ci f compile preserves middle { env with v := nsOptBind name (headValue values) env.v } [body]
+        refine adjustOracle_evaluate_Let compile ci f preserves state env name bound body
+          ⟨?_, evaluateOracleFull ci f compile preserves state env [bound]⟩ next result ⟨run, inserted, safe⟩
+        intro middle outcome values ⟨boundRun, outcomeEq⟩
+        subst outcome
+        have clockBound := evaluateClockFull state middle env [bound] (.val values) boundRun
+        exact evaluateOracleFull ci f compile preserves middle { env with v := nsOptBind name (headValue values) env.v } [body]
       | if_ condition yes no =>
-        apply adjustOracle_evaluate_If ci f compile preserves condition yes no state next env ?_ ?_ result run inserted safe
-        · exact evaluateOracleFull ci f compile preserves state env [condition]
-        · intro middle values branch conditionRun chosen
-          have clockBound := evaluateClockFull state middle env [condition] (.val values) conditionRun
-          rcases doIf_selected (headValue values) yes no branch chosen with equal | equal
-          · subst branch
-            exact evaluateOracleFull ci f compile preserves middle env [yes]
-          · subst branch
-            exact evaluateOracleFull ci f compile preserves middle env [no]
+        refine adjustOracle_evaluate_If compile ci f preserves state env condition yes no
+          ⟨?_, evaluateOracleFull ci f compile preserves state env [condition]⟩ next result ⟨run, inserted, safe⟩
+        intro middle outcome values branch ⟨conditionRun, outcomeEq, chosen⟩
+        subst outcome
+        have clockBound := evaluateClockFull state middle env [condition] (.val values) conditionRun
+        rcases doIf_selected (headValue values) yes no branch chosen with equal | equal
+        · subst branch
+          exact evaluateOracleFull ci f compile preserves middle env [yes]
+        · subst branch
+          exact evaluateOracleFull ci f compile preserves middle env [no]
       | log op first second =>
-        apply adjustOracle_evaluate_Log ci f compile preserves op first second state next env ?_ ?_ result run inserted safe
-        · exact evaluateOracleFull ci f compile preserves state env [first]
-        · intro middle values branch firstRun chosen
-          have clockBound := evaluateClockFull state middle env [first] (.val values) firstRun
-          have equal := doLog_selected op (headValue values) second branch chosen
-          subst branch
-          exact evaluateOracleFull ci f compile preserves middle env [second]
+        refine adjustOracle_evaluate_Log compile ci f preserves state env op first second
+          ⟨?_, evaluateOracleFull ci f compile preserves state env [first]⟩ next result ⟨run, inserted, safe⟩
+        intro middle outcome values selection branch ⟨firstRun, outcomeEq, chosen, selectionEq⟩
+        subst outcome
+        subst selection
+        have clockBound := evaluateClockFull state middle env [first] (.val values) firstRun
+        have equal := doLog_selected op (headValue values) second branch chosen
+        subst branch
+        exact evaluateOracleFull ci f compile preserves middle env [second]
       | mat expr clauses =>
-        apply adjustOracle_evaluate_Mat ci f compile preserves expr clauses state next env ?_ ?_ result run inserted safe
-        · exact evaluateOracleFull ci f compile preserves state env [expr]
-        · intro middle values exprRun _
-          have clockBound := evaluateClockFull state middle env [expr] (.val values) exprRun
-          exact evaluateMatchOracleFull ci f compile preserves middle env (headValue values) clauses bindExnV
+        refine adjustOracle_evaluate_Mat compile ci f preserves state env expr clauses
+          ⟨?_, evaluateOracleFull ci f compile preserves state env [expr]⟩ next result ⟨run, inserted, safe⟩
+        intro middle outcome values ⟨exprRun, outcomeEq, _⟩
+        subst outcome
+        have clockBound := evaluateClockFull state middle env [expr] (.val values) exprRun
+        exact evaluateMatchOracleFull ci f compile preserves middle env (headValue values) clauses bindExnV
       | handle expr clauses =>
-        apply adjustOracle_evaluate_Handle ci f compile preserves expr clauses state next env ?_ ?_ result run inserted safe
-        · exact evaluateOracleFull ci f compile preserves state env [expr]
-        · intro middle value exprRun _
-          have clockBound := evaluateClockFull state middle env [expr] (.err (.raise value)) exprRun
-          exact evaluateMatchOracleFull ci f compile preserves middle env value clauses value
+        refine adjustOracle_evaluate_Handle compile ci f preserves state env expr clauses
+          ⟨?_, evaluateOracleFull ci f compile preserves state env [expr]⟩ next result ⟨run, inserted, safe⟩
+        intro middle outcome err value ⟨exprRun, outcomeEq, errEq, _⟩
+        subst outcome
+        subst err
+        have clockBound := evaluateClockFull state middle env [expr] (.err (.raise value)) exprRun
+        exact evaluateMatchOracleFull ci f compile preserves middle env value clauses value
       | app op args =>
         apply adjustOracle_evaluate_App ci f compile preserves state next env op args ?_ ?_ ?_ ?_ result run inserted safe
         · exact evaluateOracleFull ci f compile preserves state env args.reverse
@@ -128,10 +135,11 @@ theorem evaluateMatchOracleFull {Config F : Type} (ci : CompilerInstance Config)
   | cons clause rest =>
     cases clause with
     | mk pat expr =>
-      apply adjustOracle_evaluate_MatchCons ci f compile preserves pat expr rest state next env value errValue ?_ ?_ result run inserted safe
-      · intro bindings _ _
+      refine adjustOracle_evaluate_MatchCons compile ci f preserves state env value pat expr rest errValue
+        ⟨?_, ?_⟩ next result ⟨run, inserted, safe⟩
+      · intro bindings ⟨_, _⟩
         exact evaluateOracleFull ci f compile preserves state { env with v := nsAppend (alistToNs bindings) env.v } [expr]
-      · intro _ _
+      · intro ⟨_, _⟩
         exact evaluateMatchOracleFull ci f compile preserves state env value rest errValue
 termination_by (state.clock, sizeOf clauses)
 decreasing_by

@@ -180,22 +180,21 @@ theorem adjustOracle_evaluate_Raise {Config F : Type} (compile : List Dec → Li
 /-- Let-expression case, using the induction hypotheses for the bound and
 body expressions. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
-theorem adjustOracle_evaluate_Let {Config F : Type} (ci : CompilerInstance Config)
-    (f compile : List Dec → List Dec) (_compilePreserve : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
+theorem adjustOracle_evaluate_Let {Config F : Type} (compile : List Dec → List Dec)
+    (ci : CompilerInstance Config) (f : List Dec → List Dec)
+    (_preserves : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
       (res : Result (SemEnv Value) Value),
       evaluateDecs s env ds = (next, res) ∧ res ≠ .err (.abort .typeError) →
         evaluateDecs s env (compile ds) = (next, res))
-    (name : Option VarN) (bound body : AstHOL.Exp)
-    (state next : State F) (env : SemEnv Value)
-    (boundIH : ExpsOracleAdjustedAt compile ci f state env [bound])
-    (bodyIH : ∀ (middle : State F) (values : List Value), evaluate state env [bound] = (middle, .val values) →
-      ExpsOracleAdjustedAt compile ci f middle
-        { env with v := Flapjack.NamespaceHOL.nsOptBind name (headValue values) env.v } [body]) (result : Result (List Value) Value)
-    (source : evaluate state env [.let_ name bound body] = (next, result))
-    (inserted : isInsertOracle ci f state.evalState) (safe : result ≠ .err (.abort .typeError)) :
-    isInsertOracle ci f next.evalState ∧
-      evaluate { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env [.let_ name bound body] =
-        ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result) := by
+    (state : State F) (env : SemEnv Value) (name : Option VarN) (bound body : AstHOL.Exp)
+    (ih : (∀ (middle : State F) (outcome : Result (List Value) Value) (values : List Value),
+      evaluate state env [bound] = (middle, outcome) ∧ outcome = .val values →
+        ExpsOracleAdjustedAt compile ci f middle
+          { env with v := Flapjack.NamespaceHOL.nsOptBind name (headValue values) env.v } [body]) ∧
+      ExpsOracleAdjustedAt compile ci f state env [bound]) :
+    ExpsOracleAdjustedAt compile ci f state env [.let_ name bound body] := by
+  obtain ⟨bodyIH, boundIH⟩ := ih
+  intro next result ⟨source, inserted, safe⟩
   let adjusted := { state with evalState := adjustOracle ci (compile ∘ f) state.evalState }
   simp only [evaluate, (fixClockEvaluate state env [bound] []).1] at source
   change isInsertOracle ci f next.evalState ∧
@@ -219,7 +218,7 @@ theorem adjustOracle_evaluate_Let {Config F : Type} (ci : CompilerInstance Confi
       have bodyRun : evaluate middle { env with v := Flapjack.NamespaceHOL.nsOptBind name (headValue values) env.v } [body] =
           (next, result) := by simpa [run] using source
       obtain ⟨middleInserted, replacement⟩ := boundIH middle (.val values) ⟨run, inserted, (by simp)⟩
-      obtain ⟨nextInserted, bodyReplacement⟩ := bodyIH middle values run next result ⟨bodyRun, middleInserted, safe⟩
+      obtain ⟨nextInserted, bodyReplacement⟩ := bodyIH middle (.val values) values ⟨run, rfl⟩ next result ⟨bodyRun, middleInserted, safe⟩
       exact ⟨nextInserted, by simpa [adjusted, replacement] using bodyReplacement⟩
 
 /-- Non-singleton expression-list case of the original evaluator induction. -/
