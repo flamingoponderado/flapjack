@@ -14356,16 +14356,18 @@
     "hol_name": "compile_semantics",
     "lean_path": "Flapjack/Compiler/Backend/SourceLet/Proofs/Semantics.lean",
     "lean_name": "compile_semantics",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in source_let_proof_probe.out. Source observational semantics, evaluator, AST carriers, and executable pass require correspondence review."
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared compile_semantics in source_let_proof_probe.out: both require non-failing source semantics and the given source behavior, and conclude the same behavior for compiled declarations. The original conjunction is curried; state, FFI, environment, AST, behavior, compiler and semantics carriers match their reviewed translations. Evaluation inherits reals_as_rational_cuts."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_sourceProofScript.sml",
     "hol_name": "compile_semantics",
     "lean_path": "Flapjack/Compiler/Backend/SourceToSource/Proofs.lean",
     "lean_name": "compile_semantics",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in source_to_source_proof_probe.out. Source observational semantics, evaluator, AST carriers, and executable pass require correspondence review."
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared compile_semantics in source_to_source_proof_probe.out: both preserve any source behavior through the source-to-source compile function under the original non-failure premise. The original conjunction is curried; reviewed source semantics, compiler and carriers match. Evaluation inherits reals_as_rational_cuts."
   },
   {
     "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
@@ -111706,8 +111708,8 @@
     "lean_name": "compile",
     "hol_path": "cakeml/compiler/backend/source_to_sourceScript.sml",
     "hol_name": "compile_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared compile_definition and compile_type in source_to_source_proof_probe.out: the HOL declaration-list function equals source_let compile_decs, and Lean eta-expands that same reviewed function over the reviewed declaration carrier."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BackendCommon/ClosTags.lean",

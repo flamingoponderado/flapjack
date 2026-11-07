@@ -330,6 +330,29 @@ example : Flapjack.Compiler.Backend.SourceToSource.compile
     ↓reduceIte, List.reverse_cons, List.reverse_nil, List.nil_append,
     Flapjack.Compiler.Backend.SourceLet.compileDecs.eq_1]
 #guard source_let_lifting
+example : Flapjack.Compiler.Backend.SourceLet.compileDecs
+    [.dmod (ofString "M") [.dlet Flapjack.Misc.Location.unknownLoc .pany
+      (.let_ none (.lit (.intLit 1))
+        (.let_ (some (ofString "x")) (.lit (.intLit 2)) (.var (.short (ofString "x")))))]] =
+    [.dmod (ofString "M") [.dlocal
+      [.dlet Flapjack.Misc.Location.unknownLoc .pany (.lit (.intLit 1)),
+       .dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "x")) (.lit (.intLit 2))]
+      [.dlet Flapjack.Misc.Location.unknownLoc .pany (.var (.short (ofString "x")))]]] := by
+  rw [Flapjack.Compiler.Backend.SourceLet.compileDecs.eq_def]
+  dsimp only
+  rw [Flapjack.Compiler.Backend.SourceLet.liftLets.eq_def]
+  simp only [Flapjack.Compiler.Backend.SourceLet.liftLet, List.isEmpty, ↓reduceIte]
+  rw [Flapjack.Compiler.Backend.SourceLet.compileDecs.eq_def]
+  dsimp only
+  rw [Flapjack.Compiler.Backend.SourceLet.liftLets.eq_def]
+  simp only [Flapjack.Compiler.Backend.SourceLet.liftLet, List.isEmpty, ↓reduceIte]
+  rw [Flapjack.Compiler.Backend.SourceLet.liftLets.eq_def]
+  simp only [Flapjack.Compiler.Backend.SourceLet.liftLet, List.isEmpty, ↓reduceIte]
+  rw [Flapjack.Compiler.Backend.SourceLet.liftLets.eq_def]
+  simp only [Flapjack.Compiler.Backend.SourceLet.liftLet, List.isEmpty, Bool.false_eq_true,
+    ↓reduceIte, List.reverse_cons, List.reverse_nil, List.nil_append,
+    Flapjack.Compiler.Backend.SourceLet.compileDecs.eq_1]
+  rfl
 #guard referenceOutput (Flapjack.Compiler.Backend.SourceToFlat.compileCakeToClosFuel 100
     Flapjack.Compiler.Backend.SourceToFlat.emptyConfig
     [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "x"))

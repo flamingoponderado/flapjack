@@ -500,11 +500,11 @@ run_probe source_to_flat_store_relation_probeScript.sml source_to_flat_store_rel
   "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe source_let_proof_probeScript.sml source_let_proof_probe.out \
-  lift_prefix lift_modules_locals lift_single_evaluation lift_all_evaluation compile_declarations compile_semantics compile_semantics_oracle lift_start dest_let_definition dest_letrec_definition lift_let_definition lift_lets_definition compile_decs_definition \
+  lift_prefix lift_modules_locals lift_single_evaluation lift_all_evaluation compile_declarations compile_semantics compile_semantics_oracle lift_start dest_let_definition dest_letrec_definition lift_let_definition lift_lets_definition compile_decs_definition nested_lifts \
   "$cake_dir/compiler/backend/proofs/source_letProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe source_to_source_proof_probeScript.sml source_to_source_proof_probe.out \
-  compile_semantics compile_semantics_oracle \
+  compile_semantics compile_semantics_oracle compile_definition compile_type \
   "$cake_dir/compiler/backend/proofs/source_to_sourceProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe source_eval_oracle_adjust_probeScript.sml source_eval_oracle_adjust_probe.out \

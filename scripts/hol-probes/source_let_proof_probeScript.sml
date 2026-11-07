@@ -24,3 +24,12 @@ val _ = show_thm "dest_letrec_definition=" source_letTheory.dest_Letrec_def;
 val _ = show_thm "lift_let_definition=" source_letTheory.lift_let_def;
 val _ = show_thm "lift_lets_definition=" source_letTheory.lift_lets_def;
 val _ = show_thm "compile_decs_definition=" source_letTheory.compile_decs_def;
+val nested_lifts = ``source_let$compile_decs
+  [ast$Dmod «M» [ast$Dlet location$unknown_loc ast$Pany
+    (ast$Let NONE (ast$Lit (ast$IntLit 1))
+      (ast$Let (SOME «x») (ast$Lit (ast$IntLit 2)) (ast$Var (namespace$Short «x»))))]] =
+  [ast$Dmod «M» [ast$Dlocal
+    [ast$Dlet location$unknown_loc ast$Pany (ast$Lit (ast$IntLit 1));
+     ast$Dlet location$unknown_loc (ast$Pvar «x») (ast$Lit (ast$IntLit 2))]
+    [ast$Dlet location$unknown_loc ast$Pany (ast$Var (namespace$Short «x»))]]]``;
+val _ = show_thm "nested_lifts=" (EVAL nested_lifts);
