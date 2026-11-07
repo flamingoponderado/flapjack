@@ -1,69 +1,76 @@
 import Flapjack.EvaluateHOL.ClockFull
 import Flapjack.EvaluateProps.DoApp
 
-/-! Constructor cases of the original mutual source evaluator FFI theorem.
-The mutual induction is assembled in `EvaluateFfiFull`.
-These cases inherit the evaluator's pending carrier review and floating-point
-rational-cut assumption. -/
+/-! Flapjack proof helpers used by the assembled source evaluator FFI theorem. -/
 namespace Flapjack.EvaluateProps
 open Flapjack.EvaluateHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL Flapjack.AstHOL
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_call_FFI_rel"]
+/-- Flapjack helper for the assembled FFI theorem; its induction hypotheses
+are specialized proof infrastructure rather than literal HOL case clauses. -/
 theorem evaluateFfi_nil {σ : Type} (st : State σ) (env : SemEnv Value) :
     Relation.ReflTransGen callFFIRelHOL st.ffi (evaluate st env []).1.ffi := by
   simp only [evaluate]
   exact Relation.ReflTransGen.refl
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_call_FFI_rel"]
+/-- Flapjack helper for the assembled FFI theorem; its induction hypotheses
+are specialized proof infrastructure rather than literal HOL case clauses. -/
 theorem evaluateFfi_lit {σ : Type} (st : State σ) (env : SemEnv Value) (lit : Lit) :
     Relation.ReflTransGen callFFIRelHOL st.ffi (evaluate st env [.lit lit]).1.ffi := by
   simp only [evaluate]
   exact Relation.ReflTransGen.refl
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_call_FFI_rel"]
+/-- Flapjack helper for the assembled FFI theorem; its induction hypotheses
+are specialized proof infrastructure rather than literal HOL case clauses. -/
 theorem evaluateFfi_fun {σ : Type} (st : State σ) (env : SemEnv Value) (name : VarN) (body : AstHOL.Exp) :
     Relation.ReflTransGen callFFIRelHOL st.ffi (evaluate st env [.fn name body]).1.ffi := by
   simp only [evaluate]
   exact Relation.ReflTransGen.refl
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_call_FFI_rel"]
+/-- Flapjack helper for the assembled FFI theorem; its induction hypotheses
+are specialized proof infrastructure rather than literal HOL case clauses. -/
 theorem evaluateFfi_var {σ : Type} (st : State σ) (env : SemEnv Value) (name : Ident ModN VarN) :
     Relation.ReflTransGen callFFIRelHOL st.ffi (evaluate st env [.var name]).1.ffi := by
   simp only [evaluate]
   split <;> simp [typeError, Relation.ReflTransGen.refl]
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_call_FFI_rel"]
+/-- Flapjack helper for the assembled FFI theorem; its induction hypotheses
+are specialized proof infrastructure rather than literal HOL case clauses. -/
 theorem evaluateMatchFfi_nil {σ : Type} (st : State σ) (env : SemEnv Value) (value errorValue : Value) :
     Relation.ReflTransGen callFFIRelHOL st.ffi (evaluateMatch st env value [] errorValue).1.ffi := by
   simp only [evaluateMatch]
   exact Relation.ReflTransGen.refl
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_call_FFI_rel"]
+/-- Flapjack helper for the assembled FFI theorem; its induction hypotheses
+are specialized proof infrastructure rather than literal HOL case clauses. -/
 theorem evaluateDecsFfi_nil {σ : Type} (st : State σ) (env : SemEnv Value) :
     Relation.ReflTransGen callFFIRelHOL st.ffi (evaluateDecs st env []).1.ffi := by
   simp only [evaluateDecs]
   exact Relation.ReflTransGen.refl
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_call_FFI_rel"]
+/-- Flapjack helper for the assembled FFI theorem; its induction hypotheses
+are specialized proof infrastructure rather than literal HOL case clauses. -/
 theorem evaluateFfi_raise {σ : Type} (st : State σ) (env : SemEnv Value) (expr : AstHOL.Exp)
     (ih : Relation.ReflTransGen callFFIRelHOL st.ffi (evaluate st env [expr]).1.ffi) :
     Relation.ReflTransGen callFFIRelHOL st.ffi (evaluate st env [.raise expr]).1.ffi := by
   simp only [evaluate]
   cases h : (evaluate st env [expr]).2 <;> simp_all
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_call_FFI_rel"]
+/-- Flapjack helper for the assembled FFI theorem; its induction hypotheses
+are specialized proof infrastructure rather than literal HOL case clauses. -/
 theorem evaluateFfi_tannot {σ : Type} (st : State σ) (env : SemEnv Value) (expr : AstHOL.Exp) (typ : AstT)
     (ih : Relation.ReflTransGen callFFIRelHOL st.ffi (evaluate st env [expr]).1.ffi) :
     Relation.ReflTransGen callFFIRelHOL st.ffi (evaluate st env [.tannot expr typ]).1.ffi := by
   simpa only [evaluate] using ih
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_call_FFI_rel"]
+/-- Flapjack helper for the assembled FFI theorem; its induction hypotheses
+are specialized proof infrastructure rather than literal HOL case clauses. -/
 theorem evaluateFfi_lannot {σ : Type} (st : State σ) (env : SemEnv Value) (expr : AstHOL.Exp) (loc : Misc.Location.Locs)
     (ih : Relation.ReflTransGen callFFIRelHOL st.ffi (evaluate st env [expr]).1.ffi) :
     Relation.ReflTransGen callFFIRelHOL st.ffi (evaluate st env [.lannot expr loc]).1.ffi := by
   simpa only [evaluate] using ih
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_call_FFI_rel"]
+/-- Flapjack helper for the assembled FFI theorem; its induction hypotheses
+are specialized proof infrastructure rather than literal HOL case clauses. -/
 theorem evaluateFfi_cons {σ : Type} (st : State σ) (env : SemEnv Value)
     (first second : AstHOL.Exp) (rest : List AstHOL.Exp)
     (ihFirst : Relation.ReflTransGen callFFIRelHOL st.ffi (evaluate st env [first]).1.ffi)
@@ -92,7 +99,8 @@ theorem evaluateFfi_cons {σ : Type} (st : State σ) (env : SemEnv Value)
     cases ht : (evaluate firstResult.1 env (second :: rest)).2 <;>
       simpa only [hv, ht] using ihFirst.trans tailRel
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_call_FFI_rel"]
+/-- Flapjack helper for the assembled FFI theorem; its induction hypotheses
+are specialized proof infrastructure rather than literal HOL case clauses. -/
 theorem evaluateMatchFfi_cons {σ : Type} (st : State σ) (env : SemEnv Value)
     (value errorValue : Value) (pat : Pat) (expr : AstHOL.Exp) (rest : List (Pat × AstHOL.Exp))
     (ihRest : Relation.ReflTransGen callFFIRelHOL st.ffi (evaluateMatch st env value rest errorValue).1.ffi)
@@ -105,28 +113,32 @@ theorem evaluateMatchFfi_cons {σ : Type} (st : State σ) (env : SemEnv Value)
   · split <;> simp_all [typeError, Relation.ReflTransGen.refl]
   · simp [typeError, Relation.ReflTransGen.refl]
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_call_FFI_rel"]
+/-- Flapjack helper for the assembled FFI theorem; its induction hypotheses
+are specialized proof infrastructure rather than literal HOL case clauses. -/
 theorem evaluateDecsFfi_tabbrev {σ : Type} (st : State σ) (env : SemEnv Value)
     (loc : Misc.Location.Locs) (vars : List TvarN) (name : TypeN) (typ : AstT) :
     Relation.ReflTransGen callFFIRelHOL st.ffi (evaluateDecs st env [.dtabbrev loc vars name typ]).1.ffi := by
   simp only [evaluateDecs]
   exact Relation.ReflTransGen.refl
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_call_FFI_rel"]
+/-- Flapjack helper for the assembled FFI theorem; its induction hypotheses
+are specialized proof infrastructure rather than literal HOL case clauses. -/
 theorem evaluateDecsFfi_exn {σ : Type} (st : State σ) (env : SemEnv Value)
     (loc : Misc.Location.Locs) (name : ConN) (types : List AstT) :
     Relation.ReflTransGen callFFIRelHOL st.ffi (evaluateDecs st env [.dexn loc name types]).1.ffi := by
   simp only [evaluateDecs]
   exact Relation.ReflTransGen.refl
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_call_FFI_rel"]
+/-- Flapjack helper for the assembled FFI theorem; its induction hypotheses
+are specialized proof infrastructure rather than literal HOL case clauses. -/
 theorem evaluateDecsFfi_type {σ : Type} (st : State σ) (env : SemEnv Value)
     (loc : Misc.Location.Locs) (types : List (List TvarN × TypeN × List (ConN × List AstT))) :
     Relation.ReflTransGen callFFIRelHOL st.ffi (evaluateDecs st env [.dtype loc types]).1.ffi := by
   simp only [evaluateDecs]
   split <;> simp [typeError, Relation.ReflTransGen.refl]
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_call_FFI_rel"]
+/-- Flapjack helper for the assembled FFI theorem; its induction hypotheses
+are specialized proof infrastructure rather than literal HOL case clauses. -/
 theorem evaluateDecsFfi_mod {σ : Type} (st : State σ) (env : SemEnv Value)
     (name : ModN) (decs : List Dec)
     (ih : Relation.ReflTransGen callFFIRelHOL st.ffi (evaluateDecs st env decs).1.ffi) :
@@ -134,7 +146,8 @@ theorem evaluateDecsFfi_mod {σ : Type} (st : State σ) (env : SemEnv Value)
   simp only [evaluateDecs]
   cases h : (evaluateDecs st env decs).2 <;> simpa only [h] using ih
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_call_FFI_rel"]
+/-- Flapjack helper for the assembled FFI theorem; its induction hypotheses
+are specialized proof infrastructure rather than literal HOL case clauses. -/
 theorem evaluateDecsFfi_cons {σ : Type} (st : State σ) (env : SemEnv Value)
     (first second : Dec) (rest : List Dec)
     (ihFirst : Relation.ReflTransGen callFFIRelHOL st.ffi (evaluateDecs st env [first]).1.ffi)
@@ -161,7 +174,8 @@ theorem evaluateDecsFfi_cons {σ : Type} (st : State σ) (env : SemEnv Value)
     have tailRel := ihTail firstResult.1 inner firstEq
     simpa only [hv] using ihFirst.trans tailRel
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_call_FFI_rel"]
+/-- Flapjack helper for the assembled FFI theorem; its induction hypotheses
+are specialized proof infrastructure rather than literal HOL case clauses. -/
 theorem evaluateDecsFfi_local {σ : Type} (st : State σ) (env : SemEnv Value)
     (localDecs decs : List Dec)
     (ihLocal : Relation.ReflTransGen callFFIRelHOL st.ffi (evaluateDecs st env localDecs).1.ffi)
@@ -184,7 +198,8 @@ theorem evaluateDecsFfi_local {σ : Type} (st : State σ) (env : SemEnv Value)
       simpa only [hv] using (Prod.eta first).symm
     simpa only [hv] using ihLocal.trans (ihBody first.1 inner firstEq)
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_call_FFI_rel"]
+/-- Flapjack helper for the assembled FFI theorem; its induction hypotheses
+are specialized proof infrastructure rather than literal HOL case clauses. -/
 theorem evaluateDecsFfi_let {σ : Type} (st : State σ) (env : SemEnv Value)
     (loc : Misc.Location.Locs) (pat : Pat) (expr : AstHOL.Exp)
     (ih : Relation.ReflTransGen callFFIRelHOL st.ffi (evaluate st env [expr]).1.ffi) :
@@ -198,7 +213,8 @@ theorem evaluateDecsFfi_let {σ : Type} (st : State σ) (env : SemEnv Value)
       split <;> simpa only [typeError] using ih
   · simp [typeError, Relation.ReflTransGen.refl]
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_call_FFI_rel"]
+/-- Flapjack helper for the assembled FFI theorem; its induction hypotheses
+are specialized proof infrastructure rather than literal HOL case clauses. -/
 theorem evaluateFfi_con {σ : Type} (st : State σ) (env : SemEnv Value)
     (name : Option (Ident ModN ConN)) (args : List AstHOL.Exp)
     (ih : Relation.ReflTransGen callFFIRelHOL st.ffi (evaluate st env args.reverse).1.ffi) :
@@ -212,20 +228,23 @@ theorem evaluateFfi_con {σ : Type} (st : State σ) (env : SemEnv Value)
       split <;> simpa only [typeError] using ih
   · simp [typeError, Relation.ReflTransGen.refl]
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_call_FFI_rel"]
+/-- Flapjack helper for the assembled FFI theorem; its induction hypotheses
+are specialized proof infrastructure rather than literal HOL case clauses. -/
 theorem evaluateDecsFfi_env {σ : Type} (st : State σ) (env : SemEnv Value) (name : TvarN) :
     Relation.ReflTransGen callFFIRelHOL st.ffi (evaluateDecs st env [.denv name]).1.ffi := by
   simp only [evaluateDecs]
   split <;> simp [typeError, Relation.ReflTransGen.refl]
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_call_FFI_rel"]
+/-- Flapjack helper for the assembled FFI theorem; its induction hypotheses
+are specialized proof infrastructure rather than literal HOL case clauses. -/
 theorem evaluateDecsFfi_letrec {σ : Type} (st : State σ) (env : SemEnv Value)
     (loc : Misc.Location.Locs) (funs : List (VarN × VarN × AstHOL.Exp)) :
     Relation.ReflTransGen callFFIRelHOL st.ffi (evaluateDecs st env [.dletrec loc funs]).1.ffi := by
   simp only [evaluateDecs]
   split <;> simp [typeError, Relation.ReflTransGen.refl]
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_call_FFI_rel"]
+/-- Flapjack helper for the assembled FFI theorem; its induction hypotheses
+are specialized proof infrastructure rather than literal HOL case clauses. -/
 theorem evaluateFfi_letrec {σ : Type} (st : State σ) (env : SemEnv Value)
     (funs : List (VarN × VarN × AstHOL.Exp)) (body : AstHOL.Exp)
     (ih : Relation.ReflTransGen callFFIRelHOL st.ffi
@@ -236,7 +255,8 @@ theorem evaluateFfi_letrec {σ : Type} (st : State σ) (env : SemEnv Value)
   · exact ih
   · simp [typeError, Relation.ReflTransGen.refl]
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_call_FFI_rel"]
+/-- Flapjack helper for the assembled FFI theorem; its induction hypotheses
+are specialized proof infrastructure rather than literal HOL case clauses. -/
 theorem evaluateFfi_let {σ : Type} (st : State σ) (env : SemEnv Value)
     (name : Option VarN) (first body : AstHOL.Exp)
     (ihFirst : Relation.ReflTransGen callFFIRelHOL st.ffi (evaluate st env [first]).1.ffi)
@@ -261,7 +281,8 @@ theorem evaluateFfi_let {σ : Type} (st : State σ) (env : SemEnv Value)
       simpa only [hv] using (Prod.eta firstResult).symm
     simpa only [hv] using ihFirst.trans (ihBody firstResult.1 values firstEq)
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_call_FFI_rel"]
+/-- Flapjack helper for the assembled FFI theorem; its induction hypotheses
+are specialized proof infrastructure rather than literal HOL case clauses. -/
 theorem evaluateFfi_if {σ : Type} (st : State σ) (env : SemEnv Value)
     (test yes no : AstHOL.Exp)
     (ihTest : Relation.ReflTransGen callFFIRelHOL st.ffi (evaluate st env [test]).1.ffi)
@@ -290,7 +311,8 @@ theorem evaluateFfi_if {σ : Type} (st : State σ) (env : SemEnv Value)
     | none => simpa only [hc, typeError] using ihTest
     | some chosen => simpa only [hc] using ihTest.trans (ihBranch first.1 values chosen firstEq hc)
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_call_FFI_rel"]
+/-- Flapjack helper for the assembled FFI theorem; its induction hypotheses
+are specialized proof infrastructure rather than literal HOL case clauses. -/
 theorem evaluateFfi_log {σ : Type} (st : State σ) (env : SemEnv Value)
     (op : Lop) (firstExpr second : AstHOL.Exp)
     (ihFirst : Relation.ReflTransGen callFFIRelHOL st.ffi (evaluate st env [firstExpr]).1.ffi)
@@ -323,7 +345,8 @@ theorem evaluateFfi_log {σ : Type} (st : State σ) (env : SemEnv Value)
       | val v => simpa only [hc] using ihFirst
       | exp chosen => simpa only [hc] using ihFirst.trans (ihBranch first.1 values chosen firstEq hc)
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_call_FFI_rel"]
+/-- Flapjack helper for the assembled FFI theorem; its induction hypotheses
+are specialized proof infrastructure rather than literal HOL case clauses. -/
 theorem evaluateFfi_mat {σ : Type} (st : State σ) (env : SemEnv Value)
     (expr : AstHOL.Exp) (clauses : List (Pat × AstHOL.Exp))
     (ihExpr : Relation.ReflTransGen callFFIRelHOL st.ffi (evaluate st env [expr]).1.ffi)
@@ -353,7 +376,8 @@ theorem evaluateFfi_mat {σ : Type} (st : State σ) (env : SemEnv Value)
     · exact ihExpr.trans (ihMatch first.1 values firstEq)
     · simpa only [typeError] using ihExpr
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_call_FFI_rel"]
+/-- Flapjack helper for the assembled FFI theorem; its induction hypotheses
+are specialized proof infrastructure rather than literal HOL case clauses. -/
 theorem evaluateFfi_handle {σ : Type} (st : State σ) (env : SemEnv Value)
     (expr : AstHOL.Exp) (clauses : List (Pat × AstHOL.Exp))
     (ihExpr : Relation.ReflTransGen callFFIRelHOL st.ffi (evaluate st env [expr]).1.ffi)
@@ -392,7 +416,8 @@ theorem doEvalRes_ffi {σ β : Type} (values : List Value) (st : State σ) :
   unfold doEvalRes
   split <;> rfl
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_call_FFI_rel"]
+/-- Flapjack helper for the assembled FFI theorem; its induction hypotheses
+are specialized proof infrastructure rather than literal HOL case clauses. -/
 theorem evaluateFfi_app {σ : Type} (st : State σ) (env : SemEnv Value)
     (op : AstHOL.Op) (args : List AstHOL.Exp)
     (ihArgs : Relation.ReflTransGen callFFIRelHOL st.ffi (evaluate st env args.reverse).1.ffi)
