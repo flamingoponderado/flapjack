@@ -69,6 +69,7 @@ val record_forward_trans_sym = REWRITE_RULE [Once CONJ_COMM] source_evalProofThe
 val _ = show_thm "record_forward_trans_sym_replay=" record_forward_trans_sym;
 val _ = show_thm "evaluate_record_forward=" source_evalProofTheory.evaluate_is_record_forward;
 val _ = show_thm "insert_oracle_correct=" source_evalProofTheory.insert_oracle_correct;
+val _ = show_thm "evaluate_record_suffix=" source_evalProofTheory.evaluate_record_suffix;
 val spt_mem_to_list_a = prove(
   ``!t acc x. MEM x (sptree$toListA acc t) <=> MEM x acc \/ ?k. sptree$lookup k t = SOME x``,
   simp [sptreeTheory.toListA_append, GSYM sptreeTheory.toList_def, sptreeTheory.MEM_toList] >> metis_tac []);

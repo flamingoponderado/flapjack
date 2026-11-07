@@ -40,6 +40,7 @@ import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulation
 import Flapjack.Compiler.Backend.SourceEval.Proofs.RecordForwardBase
 import Flapjack.Compiler.Backend.SourceEval.Proofs.RecordForward
 import Flapjack.Compiler.Backend.SourceEval.Proofs.InsertCorrect
+import Flapjack.Compiler.Backend.SourceEval.Proofs.RecordSuffixBase
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationModules
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationDecsCons
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationStamps

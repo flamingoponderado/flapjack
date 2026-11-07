@@ -1,6 +1,141 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "evaluate_record_suffix",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/RecordSuffixBase.lean",
+  "lean_name": "evaluateRecordSuffix_ExpsNil",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the complete HOL theorem is not yet assembled. Compare the typed evaluate_record_suffix and evaluate_induction captures in source_eval_oracle_adjust_probe.out:57 and :10. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "evaluate_record_suffix",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/RecordSuffixBase.lean",
+  "lean_name": "evaluateRecordSuffix_Lit",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the complete HOL theorem is not yet assembled. Compare the typed evaluate_record_suffix and evaluate_induction captures in source_eval_oracle_adjust_probe.out:57 and :10. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "evaluate_record_suffix",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/RecordSuffixBase.lean",
+  "lean_name": "evaluateRecordSuffix_Fn",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the complete HOL theorem is not yet assembled. Compare the typed evaluate_record_suffix and evaluate_induction captures in source_eval_oracle_adjust_probe.out:57 and :10. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "evaluate_record_suffix",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/RecordSuffixBase.lean",
+  "lean_name": "evaluateRecordSuffix_Var",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the complete HOL theorem is not yet assembled. Compare the typed evaluate_record_suffix and evaluate_induction captures in source_eval_oracle_adjust_probe.out:57 and :10. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "evaluate_record_suffix",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/RecordSuffixBase.lean",
+  "lean_name": "evaluateRecordSuffix_Tannot",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the complete HOL theorem is not yet assembled. Compare the typed evaluate_record_suffix and evaluate_induction captures in source_eval_oracle_adjust_probe.out:57 and :10. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "evaluate_record_suffix",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/RecordSuffixBase.lean",
+  "lean_name": "evaluateRecordSuffix_Lannot",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the complete HOL theorem is not yet assembled. Compare the typed evaluate_record_suffix and evaluate_induction captures in source_eval_oracle_adjust_probe.out:57 and :10. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "evaluate_record_suffix",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/RecordSuffixBase.lean",
+  "lean_name": "evaluateRecordSuffix_MatchNil",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the complete HOL theorem is not yet assembled. Compare the typed evaluate_record_suffix and evaluate_induction captures in source_eval_oracle_adjust_probe.out:57 and :10. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "evaluate_record_suffix",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/RecordSuffixBase.lean",
+  "lean_name": "evaluateRecordSuffix_DecsNil",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the complete HOL theorem is not yet assembled. Compare the typed evaluate_record_suffix and evaluate_induction captures in source_eval_oracle_adjust_probe.out:57 and :10. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "evaluate_record_suffix",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/RecordSuffixBase.lean",
+  "lean_name": "evaluateRecordSuffix_Dtabbrev",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the complete HOL theorem is not yet assembled. Compare the typed evaluate_record_suffix and evaluate_induction captures in source_eval_oracle_adjust_probe.out:57 and :10. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "evaluate_record_suffix",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/RecordSuffixBase.lean",
+  "lean_name": "evaluateRecordSuffix_Dexn",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the complete HOL theorem is not yet assembled. Compare the typed evaluate_record_suffix and evaluate_induction captures in source_eval_oracle_adjust_probe.out:57 and :10. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "evaluate_record_suffix",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/RecordSuffixBase.lean",
+  "lean_name": "evaluateRecordSuffix_Dtype",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the complete HOL theorem is not yet assembled. Compare the typed evaluate_record_suffix and evaluate_induction captures in source_eval_oracle_adjust_probe.out:57 and :10. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "evaluate_record_suffix",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/RecordSuffixBase.lean",
+  "lean_name": "evaluateRecordSuffix_Dletrec",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the complete HOL theorem is not yet assembled. Compare the typed evaluate_record_suffix and evaluate_induction captures in source_eval_oracle_adjust_probe.out:57 and :10. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "evaluate_record_suffix",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/RecordSuffixBase.lean",
+  "lean_name": "evaluateRecordSuffix_Denv",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the complete HOL theorem is not yet assembled. Compare the typed evaluate_record_suffix and evaluate_induction captures in source_eval_oracle_adjust_probe.out:57 and :10. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "evaluate_record_suffix",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/RecordSuffixBase.lean",
+  "lean_name": "evaluateRecordSuffix_ExpsCons",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the complete HOL theorem is not yet assembled. Compare the typed evaluate_record_suffix and evaluate_induction captures in source_eval_oracle_adjust_probe.out:57 and :10. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "evaluate_record_suffix",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/RecordSuffixBase.lean",
+  "lean_name": "evaluateRecordSuffix_DecsCons",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the complete HOL theorem is not yet assembled. Compare the typed evaluate_record_suffix and evaluate_induction captures in source_eval_oracle_adjust_probe.out:57 and :10. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "insert_oracle_correct",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/InsertCorrectBase.lean",
   "lean_name": "insertOracleCorrect_ExpsNil",
