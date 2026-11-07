@@ -9649,3 +9649,6 @@ concrete-value uniqueness for the recording simulation.
 
 The source evaluator probe also captures the typed associativity theorem for
 declaration-environment extension from semanticPrimitivesProps.
+
+The source evaluator probe captures the full typed primitive-application
+simulation, including its unused polymorphic existential witness.
