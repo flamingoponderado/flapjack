@@ -1,4 +1,5 @@
 import Flapjack.Misc.List
+import Flapjack.Misc.ListLookupRel
 import Flapjack.SemanticPrimitivesHOL
 import Batteries.Data.List.Basic
 
@@ -31,18 +32,8 @@ the source evaluator proof. -/
 theorem storeValueRel_lookup {A B : Type} {R : A → B → Prop} {left : List (StoreValue A)}
     {right : List (StoreValue B)} (related : List.Forall₂ (storeValueRel R) left right)
     (index : Nat) (value : StoreValue A) (found : storeLookup index left = some value) :
-    ∃ target, storeLookup index right = some target ∧ storeValueRel R value target := by
-  induction related generalizing index with
-  | nil => simp [storeLookup] at found
-  | @cons source target left right head tail ih =>
-    cases index with
-    | zero =>
-      simp [storeLookup] at found
-      subst value
-      exact ⟨target, rfl, head⟩
-    | succ index =>
-      simp only [storeLookup, List.getElem?_cons_succ] at found ⊢
-      exact ih index found
+    ∃ target, storeLookup index right = some target ∧ storeValueRel R value target :=
+  Flapjack.forall₂_lookup related index value found
 
 /-- Store assignment makes the same type check on related entries.
 HOL performs this type comparison inline. -/
@@ -90,14 +81,11 @@ theorem storeValueRel_lookup_none {A B : Type} {R : A → B → Prop}
     {left : List (StoreValue A)} {right : List (StoreValue B)}
     (related : List.Forall₂ (storeValueRel R) left right) (index : Nat)
     (absent : storeLookup index left = none) : storeLookup index right = none := by
-  induction related generalizing index with
-  | nil => simp [storeLookup]
-  | cons _ _ ih =>
-    cases index with
-    | zero => simp [storeLookup] at absent
-    | succ index =>
-      simp only [storeLookup, List.getElem?_cons_succ] at absent ⊢
-      exact ih index absent
+  change left[index]? = none at absent
+  change right[index]? = none
+  have rel := Flapjack.forall₂_lookupRel related index
+  rw [absent] at rel
+  cases found : right[index]? <;> simp_all [Flapjack.optionRel]
 
 
 end Flapjack.SemanticPrimitivesProps
