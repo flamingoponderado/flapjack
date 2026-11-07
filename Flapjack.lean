@@ -75,7 +75,6 @@ import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateRecursive
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateExpressions
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateMatch
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateControl
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateEval
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateApp
 import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleInduction
 import Flapjack.Compiler.Backend.FlatPattern.CompileOrder
