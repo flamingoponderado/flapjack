@@ -758,6 +758,7 @@ import Flapjack.Compiler.Backend.ClosMti.Proofs.Syntactic
 import Flapjack.Compiler.Backend.ClosMti.Proofs.NoLabels
 import Flapjack.Compiler.Backend.ClosMti.Proofs.Arity
 import Flapjack.Compiler.Backend.ClosMti.Proofs.Globals
+import Flapjack.Compiler.Backend.ClosMti.Proofs.GlobalTraversal
 import Flapjack.Compiler.Backend.ClosCall.Proofs.Total
 import Flapjack.Compiler.Backend.ClosCall.Proofs.IncrementalOracle
 import Flapjack.Compiler.Backend.ClosCall.Proofs.IncrementalCode

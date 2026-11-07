@@ -1,6 +1,22 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+  "hol_name": "intro_multi_preserves_elist_globals",
+  "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/GlobalTraversal.lean",
+  "lean_name": "intro_multi_preserves_elist_globals",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed source in clos_mti_correct_probe.out: both binders and transformed-to-original global bag equality agree; the bag operations are the reviewed HOL multiplicity-function operations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+  "hol_name": "compile_preserves_elist_globals",
+  "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/GlobalTraversal.lean",
+  "lean_name": "compile_preserves_elist_globals",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed source in clos_mti_correct_probe.out: free maximum, enabled flag and expression list, and transformed-to-original global bag equality agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
   "hol_name": "collect_args_preserves_set_globals",
   "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Globals.lean",
   "lean_name": "collectArgs_preserves_setGlobals",
