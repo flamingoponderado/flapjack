@@ -108,13 +108,6 @@ def compileIncFuelOracle {C : Type} (fuel : Nat) (oracle : Nat → (Config × C)
   let (_, compiled) ← compileIncFuel? fuel entry.1.1 entry.2
   pure (entry.1.2, compiled)
 
-/-- Adapt incremental direct-call conversion to a downstream compiler. -/
-def compileIncCallsFuelCallback {C : Type} (fuel : Nat) (downstream : BvlSem.Compiler C) :
-    ClosSem.Compiler (Config × C) := fun (config, downstreamConfig) program => do
-  let (nextConfig, compiled) ← compileIncCallsFuel? fuel config program
-  let (bytes, data, nextDownstream) ← downstream downstreamConfig compiled
-  pure (bytes, data, (nextConfig, nextDownstream))
-
 /-- Adapt a downstream BVL compiler into a closure compiler, passing the
 updated closure configuration onward only when both stages succeed. -/
 def compileIncNoOptsCallback {C : Type} (downstream : BvlSem.Compiler C) :
@@ -137,20 +130,6 @@ def compileIncNoOptsOracle {C : Type} (oracle : Nat → (Config × C) × ClosSem
     (index : Nat) : Option (C × List (Nat × Nat × Bvl.Exp)) := do
   let entry := oracle index
   let (_, compiled) ← compileIncNoOpts? entry.1.1 entry.2
-  pure (entry.1.2, compiled)
-
-/-- Oracle adapter for the multi-argument incremental path. -/
-def compileIncMtiFuelOracle {C : Type} (fuel : Nat) (oracle : Nat → (Config × C) × ClosSem.Program)
-    (index : Nat) : Option (C × List (Nat × Nat × Bvl.Exp)) := do
-  let entry := oracle index
-  let (_, compiled) ← compileIncMtiFuel? fuel entry.1.1 entry.2
-  pure (entry.1.2, compiled)
-
-/-- Oracle adapter for incremental direct-call conversion. -/
-def compileIncCallsFuelOracle {C : Type} (fuel : Nat) (oracle : Nat → (Config × C) × ClosSem.Program)
-    (index : Nat) : Option (C × List (Nat × Nat × Bvl.Exp)) := do
-  let entry := oracle index
-  let (_, compiled) ← compileIncCallsFuel? fuel entry.1.1 entry.2
   pure (entry.1.2, compiled)
 
 end Flapjack.Compiler.Backend.ClosToBvl

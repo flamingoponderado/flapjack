@@ -7,7 +7,7 @@ open Flapjack.Compiler.Backend.ClosToBvl
 
 /-- A hash table returns exactly the entries in the source association list. -/
 @[hol "cakeml/compiler/backend/proofs/clos_constantProofScript.sml" "good_hash_table_def"]
-def goodHashTable (tree : Spt (List (ConstPart × Nat))) (aux : List (ConstPart × Nat)) : Prop :=
+def goodHashTable {α : Type} (tree : Spt (List (ConstPart × α))) (aux : List (ConstPart × α)) : Prop :=
   ∀ key value, lookupPart key aux = some value ↔
     ∃ bucket, sptLookup (partHash (updateTag key)) tree = some bucket ∧
       ClosToBvl.lookupPart (updateTag key) bucket = some value

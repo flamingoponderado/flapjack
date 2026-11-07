@@ -126001,7 +126001,7 @@
   "lean_path": "Flapjack/Compiler/Backend/ClosConstant/Proofs/Flatten.lean",
   "lean_name": "makePart",
   "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "reviewer": "Typed original captured in clos_constant_probe.out. HOL polymorphic ALOOKUP uses equality on a generic part type; Lean uses DecidableEq, whose decisions are proof-irrelevant and can be supplied classically. Full dependency and carrier review remains pending."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_constantProofScript.sml",
@@ -126057,7 +126057,7 @@
   "lean_path": "Flapjack/Compiler/Backend/ClosConstant/Proofs/Hash.lean",
   "lean_name": "goodHashTable",
   "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "reviewer": "Typed original captured in clos_constant_probe.out. The finite-map bucket and association-list payload remain independently generic, matching HOL; full dependency and carrier review remains pending."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_constantProofScript.sml",
@@ -126065,7 +126065,7 @@
   "lean_path": "Flapjack/Compiler/Backend/ClosConstant/Proofs/HashParts.lean",
   "lean_name": "addParts_thm",
   "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "reviewer": "Typed original captured in clos_constant_probe.out. Each conjunct retains its independently typed vacuous shadowed binder, modeled by a Nonempty type and element. Full dependency and carrier review remains pending."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_constantProofScript.sml",

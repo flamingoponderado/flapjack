@@ -9347,6 +9347,10 @@ run_probe l3_step_immediate_comparison_nop_probeScript.sml l3_step_immediate_com
   "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
 
+run_probe clos_constant_probeScript.sml clos_constant_probe.out \
+  cc_ALOOKUP_conses_ok_IMP cc_IMP_conses_ok_CONS cc_add_part_thm cc_add_parts_thm cc_build_prime_def cc_build_const_prime_def cc_build_const_def cc_build_const_to_parts cc_build_def cc_build_map_APPEND cc_build_map_def cc_build_map_ignore cc_build_mem_thm cc_build_part_prime_def cc_build_part_def cc_compile_const_thm cc_conses_ok_def cc_good_hash_table_def cc_make_const_thm cc_make_part_def cc_parts_acc cc_parts_def cc_parts_thm cc_to_parts_def cc_update_tag_11 cc_update_tag_def \
+  "$cake_dir/compiler/backend/proofs/clos_constantProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe prim_sem_env_probeScript.sml prim_sem_env_probe.out \
   add_type prim_type "$cake_dir/semantics/primTypesScript.sml" "$cake_dir/semantics"
 

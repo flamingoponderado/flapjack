@@ -9716,3 +9716,9 @@ proof and captures the inferred source and flat list types.
 `source_to_flat_value_relation_probe.out` includes a typed parse of local `do_opapp`; its local HOL proof is not replayed.
 
 `cake_evaluate_ffi_props_probe.out` captures the typed empty-evaluation, stamp-monotonicity, and reference-length statements.
+
+`clos_constant_probe.out` records inferred HOL types for the tagged closure-constant
+definitions and theorems, together with the missing `conses_ok`, `parts_thm`,
+and `make_const_thm` declarations. Regenerate with
+`HOL_PROBE_ONLY=clos_constant_probeScript.sml scripts/hol-probes/regenerate.sh`.
+The capture supports source comparison; it does not prove Lean correspondence.

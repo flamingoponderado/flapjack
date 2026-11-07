@@ -111,29 +111,4 @@ theorem buildAux_index (entries : List (Nat × Bvl.Exp)) (i : Nat)
       have eq : i + 2 + 2 * k = i + 2 * (k + 1) := by omega
       simpa only [buildAux, eq] using member
 
-/-- A label in the output of recursive-code construction either belonged to
-the input accumulator or is one of the fresh, evenly spaced group labels. -/
-theorem buildAux_label_mem (entries : List (Nat × Bvl.Exp)) (start : Nat)
-    (aux : List (Nat × Nat × Bvl.Exp)) (label : Nat)
-    (member : label ∈ (buildAux start entries aux).2.map Prod.fst) :
-    label ∈ aux.map Prod.fst ∨ ∃ index, index < entries.length ∧ label = start + 2 * index := by
-  induction entries generalizing start aux with
-  | nil =>
-    left
-    simpa [buildAux] using member
-  | cons entry rest ih =>
-    obtain ⟨arity, body⟩ := entry
-    have next : label ∈ (buildAux (start + 2) rest ((start, arity, body) :: aux)).2.map Prod.fst := by
-      simpa [buildAux] using member
-    rcases ih (start + 2) ((start, arity, body) :: aux) next with old | ⟨index, bound, equal⟩
-    · simp only [List.map_cons, List.mem_cons] at old
-      cases old with
-      | inl equal =>
-        right
-        exact ⟨0, by simp, by simpa using equal⟩
-      | inr found => exact Or.inl found
-    · right
-      refine ⟨index + 1, by simp; omega, ?_⟩
-      omega
-
 end Flapjack.Compiler.Backend.ClosToBvl
