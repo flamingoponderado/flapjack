@@ -1,6 +1,22 @@
 [
 {
   "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml",
+  "hol_name": "nsLookup_nsEmpty",
+  "lean_path": "Flapjack/NamespaceProps/EmptyLookup.lean",
+  "lean_name": "nsLookup_nsEmpty",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed namespace_empty_lookup in source_eval_oracle_adjust_probe.out: the identifier's module and name carriers and the namespace's value carrier are independent, and lookup of every identifier returns none."
+},
+{
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml",
+  "hol_name": "nsLookupMod_nsEmpty",
+  "lean_path": "Flapjack/NamespaceProps/EmptyLookup.lean",
+  "lean_name": "nsLookupMod_nsEmpty",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed namespace_empty_module_lookup in source_eval_oracle_adjust_probe.out: all three namespace carriers are independent, and every nonempty module path returns none."
+},
+{
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml",
   "hol_name": "nsLookup_nsLift",
   "lean_path": "Flapjack/NamespaceProps/LiftLookup.lean",
   "lean_name": "nsLookup_nsLift",

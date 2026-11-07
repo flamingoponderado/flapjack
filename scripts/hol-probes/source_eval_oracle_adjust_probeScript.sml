@@ -89,6 +89,8 @@ val _ = show_thm "namespace_lift_domain=" namespacePropsTheory.nsDom_nsLift;
 val _ = show_thm "namespace_lift_module_domain=" namespacePropsTheory.nsDomMod_nsLift;
 val _ = show_thm "namespace_lift_lookup=" namespacePropsTheory.nsLookup_nsLift;
 val _ = show_thm "namespace_lift_module_lookup=" namespacePropsTheory.nsLookupMod_nsLift;
+val _ = show_thm "namespace_empty_lookup=" namespacePropsTheory.nsLookup_nsEmpty;
+val _ = show_thm "namespace_empty_module_lookup=" namespacePropsTheory.nsLookupMod_nsEmpty;
 val _ = show_thm "source_value_relation_rules=" source_evalProofTheory.v_rel_rules;
 val _ = show_thm "source_value_relation_cases=" source_evalProofTheory.v_rel_cases;
 val _ = show_thm "source_value_relation_induction=" source_evalProofTheory.v_rel_ind;

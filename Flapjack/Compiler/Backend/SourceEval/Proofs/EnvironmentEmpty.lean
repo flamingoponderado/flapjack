@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.SourceEval.Proofs.Environment
+import Flapjack.NamespaceProps.EmptyLookup
 
 /-! Empty namespaces in the source evaluator environment relation. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs
@@ -17,13 +18,9 @@ theorem envRel_nsEmpty {α β : Type} (rel : Value → α → Prop)
     (envRel rel left { rightBase with v := nsEmpty } ↔
       left.c = rightBase.c ∧ nsDom left.v = nsDom (nsEmpty : Namespace ModN VarN α) ∧
         nsDomMod left.v = nsDomMod (nsEmpty : Namespace ModN VarN α)) := by
-  have emptyLookup : ∀ {T : Type} (id : Ident ModN VarN),
-      nsLookup (nsEmpty : Namespace ModN VarN T) id = none := by
-    intro T id
-    cases id <;> rfl
   constructor
   · intro right
-    simp [envRel, emptyLookup]
-  · simp [envRel, emptyLookup]
+    simp [envRel, nsLookup_nsEmpty]
+  · simp [envRel, nsLookup_nsEmpty]
 
 end Flapjack.Compiler.Backend.SourceEval.Proofs
