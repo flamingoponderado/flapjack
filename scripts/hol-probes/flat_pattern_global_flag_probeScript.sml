@@ -124,3 +124,8 @@ val _ = show_thm "no_mat_definition=" flatPropsTheory.no_Mat_def;
 val _ = show_thm "no_mat_decs_definition=" flatPropsTheory.no_Mat_decs_def;
 val _ = show_thm "compile_exp_no_mat=" flat_patternProofTheory.compile_exp_no_Mat;
 val _ = show_thm "compile_decs_no_mat=" flat_patternProofTheory.compile_decs_no_Mat;
+val _ = show_thm "decode_pos_definition=" flat_patternTheory.decode_pos_def;
+val _ = show_thm "decode_test_definition=" flat_patternTheory.decode_test_def;
+val _ = show_thm "simp_guard_definition=" flat_patternTheory.simp_guard_def;
+val _ = show_thm "decode_guard_definition=" flat_patternTheory.decode_guard_def;
+val _ = show_thm "decode_dtree_definition=" flat_patternTheory.decode_dtree_def;

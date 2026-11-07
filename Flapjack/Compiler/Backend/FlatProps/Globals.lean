@@ -96,8 +96,7 @@ theorem funGlobals_eq_elistGlobals
     simp [funGlobals, elistGlobals, ih]
 
 mutual
-/-- No function body captures a global initialization. The expression
-carriers remain pending HOL correspondence review. -/
+/-- No function body captures a global initialization. -/
 @[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "esgc_free_def" 836]
 def esgcFree : FlatLang.Exp → Prop
   | .raise _ expression => esgcFree expression

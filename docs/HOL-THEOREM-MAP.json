@@ -20,8 +20,8 @@
   "hol_name": "esgc_free_decode_dtree",
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalInvariants.lean",
   "lean_name": "esgcFree_decodeDtree",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Compared esgc_decode_dtree in flat_pattern_global_flag_probe.out: the original single conjunctive premise contains safety of the value and default and EVERY safety over toList of the complete sparse tree; the conclusion is safety of the decoded tree. Universal membership expresses HOL EVERY. Pending full review of dependent FlatPattern definition carriers; esgc_free_def remains pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared esgc_decode_dtree in flat_pattern_global_flag_probe.out: the original single conjunctive premise contains safety of the value and default and EVERY safety over toList of the complete sparse tree; the conclusion is safety of the decoded tree. Universal membership expresses HOL EVERY."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
@@ -89,39 +89,39 @@
   "hol_name": "decode_test_simulation",
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/DecisionEncoding.lean",
   "lean_name": "decodeTest_simulation",
-  "statement_status": "pending_statement_review",
+  "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared decode_test_simulation in flat_pattern_install_relation_probe.out: the independent encoded value and its equality to the source value encoding are retained in the three-conjunct premise, with pureEvalTo in the original premise and conclusion. FlatSem evaluation inherits reals_as_rational_cuts. Pending review of the referenced FlatPattern decode definition carriers."
+  "reviewer": "Compared decode_test_simulation in flat_pattern_install_relation_probe.out: the independent encoded value and its equality to the source value encoding are retained in the three-conjunct premise, with pureEvalTo in the original premise and conclusion. FlatSem evaluation inherits reals_as_rational_cuts."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
   "hol_name": "decode_pos_simulation",
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/DecisionEncoding.lean",
   "lean_name": "decodePos_simulation",
-  "statement_status": "pending_statement_review",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
   "fmap_as_finite_support_result_observations": ["encodeRefs"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared decode_pos_simulation in flat_pattern_install_relation_probe.out: the original quantified position, expression and value, conjunctive premise and existential encoded-result and pure-evaluation conclusion match. The imported reviewed encodeRefs represents the computed HOL finite map, and FlatSem evaluation inherits reals_as_rational_cuts. Pending review of the referenced FlatPattern decode definition carriers."
+  "reviewer": "Compared decode_pos_simulation in flat_pattern_install_relation_probe.out: the original quantified position, expression and value, conjunctive premise and existential encoded-result and pure-evaluation conclusion match. The imported reviewed encodeRefs represents the computed HOL finite map, and FlatSem evaluation inherits reals_as_rational_cuts."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
   "hol_name": "decode_guard_simulation",
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/DecisionEncoding.lean",
   "lean_name": "decodeGuard_simulation",
-  "statement_status": "pending_statement_review",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
   "fmap_as_finite_support_result_observations": ["encodeRefs"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared decode_guard_simulation in flat_pattern_install_relation_probe.out: the universally quantified boolean, original conjunctive premise and pure decoded-guard evaluation match. The imported reviewed encodeRefs represents the computed HOL finite map, and FlatSem evaluation inherits reals_as_rational_cuts. Pending review of the referenced FlatPattern decode definition carriers."
+  "reviewer": "Compared decode_guard_simulation in flat_pattern_install_relation_probe.out: the universally quantified boolean, original conjunctive premise and pure decoded-guard evaluation match. The imported reviewed encodeRefs represents the computed HOL finite map, and FlatSem evaluation inherits reals_as_rational_cuts."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
   "hol_name": "decode_dtree_simulation",
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/DecisionEncoding.lean",
   "lean_name": "decodeDtree_simulation",
-  "statement_status": "pending_statement_review",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
   "fmap_as_finite_support_result_observations": ["encodeRefs"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared decode_dtree_simulation in flat_pattern_install_relation_probe.out: the original conjunctive premise and evaluation of the success lookup or default branch match, including the explicit inner option match. The imported reviewed encodeRefs represents the computed HOL finite map, and FlatSem evaluation inherits reals_as_rational_cuts. Pending full review of the decode_dtree_def carrier."
+  "reviewer": "Compared decode_dtree_simulation in flat_pattern_install_relation_probe.out: the original conjunctive premise and evaluation of the success lookup or default branch match, including the explicit inner option match. The imported reviewed encodeRefs represents the computed HOL finite map, and FlatSem evaluation inherits reals_as_rational_cuts."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
@@ -13635,20 +13635,20 @@
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml", "hol_name": "set_globals_decode_pos",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalInvariants.lean", "lean_name": "setGlobals_decodePos",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Compared source lines 1952-2023 and inferred types in flat_pattern_global_flag_probe.out. Global bags have the HOL num -> num carrier, and traces, expression, pattern and decision carriers match the tagged syntax. Position decoding preserves an empty global bag. Pending review of the referenced FlatPattern decode definition carriers."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 1952-2023 and inferred types in flat_pattern_global_flag_probe.out. Global bags have the HOL num -> num carrier, and traces, expression, pattern and decision carriers match the tagged syntax. Position decoding preserves an empty global bag."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml", "hol_name": "set_globals_decode_test",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalInvariants.lean", "lean_name": "setGlobals_decodeTest",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Compared source lines 1952-2023 and inferred types in flat_pattern_global_flag_probe.out. Global bags have the HOL num -> num carrier, and traces, expression, pattern and decision carriers match the tagged syntax. Both atomic test forms preserve an empty global bag. Pending review of the referenced FlatPattern decode definition carriers."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 1952-2023 and inferred types in flat_pattern_global_flag_probe.out. Global bags have the HOL num -> num carrier, and traces, expression, pattern and decision carriers match the tagged syntax. Both atomic test forms preserve an empty global bag."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml", "hol_name": "set_globals_decode_guard",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalInvariants.lean", "lean_name": "setGlobals_decodeGuard",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Compared source lines 1952-2023 and inferred types in flat_pattern_global_flag_probe.out. Global bags have the HOL num -> num carrier, and traces, expression, pattern and decision carriers match the tagged syntax. Every guard constructor preserves an empty global bag. Pending review of the referenced FlatPattern decode definition carriers."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 1952-2023 and inferred types in flat_pattern_global_flag_probe.out. Global bags have the HOL num -> num carrier, and traces, expression, pattern and decision carriers match the tagged syntax. Every guard constructor preserves an empty global bag."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml", "hol_name": "set_globals_compile_pat_bindings",
@@ -13673,20 +13673,20 @@
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml", "hol_name": "esgc_free_decode_pos",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalInvariants.lean", "lean_name": "esgcFree_decodePos",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Compared source lines 2163-2231 and inferred types in flat_pattern_global_flag_probe.out. Trace, flat expressions, patterns, decision-test and guard carriers match the corresponding definitions. Position recursion preserves the esgc_free premise. Pending full review of dependent FlatPattern definition carriers; esgc_free_def remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 2163-2231 and inferred types in flat_pattern_global_flag_probe.out. Trace, flat expressions, patterns, decision-test and guard carriers match the corresponding definitions. Position recursion preserves the esgc_free premise."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml", "hol_name": "esgc_free_decode_test",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalInvariants.lean", "lean_name": "esgcFree_decodeTest",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Compared source lines 2163-2231 and inferred types in flat_pattern_global_flag_probe.out. Trace, flat expressions, patterns, decision-test and guard carriers match the corresponding definitions. Both atomic-test constructors preserve the esgc_free premise. Pending full review of dependent FlatPattern definition carriers; esgc_free_def remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 2163-2231 and inferred types in flat_pattern_global_flag_probe.out. Trace, flat expressions, patterns, decision-test and guard carriers match the corresponding definitions. Both atomic-test constructors preserve the esgc_free premise."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml", "hol_name": "esgc_free_decode_guard",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalInvariants.lean", "lean_name": "esgcFree_decodeGuard",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Compared source lines 2163-2231 and inferred types in flat_pattern_global_flag_probe.out. Trace, flat expressions, patterns, decision-test and guard carriers match the corresponding definitions. All guard constructors preserve the esgc_free premise, including smart conditionals. Pending full review of dependent FlatPattern definition carriers; esgc_free_def remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 2163-2231 and inferred types in flat_pattern_global_flag_probe.out. Trace, flat expressions, patterns, decision-test and guard carriers match the corresponding definitions. All guard constructors preserve the esgc_free premise, including smart conditionals."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml", "hol_name": "esgc_free_compile_pat_bindings",
@@ -15000,8 +15000,8 @@
     "hol_name": "esgc_free_def",
     "lean_path": "Flapjack/Compiler/Backend/FlatProps/Globals.lean",
     "lean_name": "esgcFree",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_elim_value_globals_probe.out; HOL bags are natural-number-valued functions. Expression carriers and complete declaration review remain pending.",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all constructor clauses with global_closure_free in flat_elim_value_globals_probe.out and the reviewed FlatLang.Exp carrier. The recursive list and row traversals express EVERY and EVERY after MAP SND; funGlobals_eq_elistGlobals establishes the Letrec body traversal. The reviewed setGlobals and emptyGlobalBag use HOL natural-multiplicity bags.",
     "hol_line": 836
   },
   {
@@ -111339,40 +111339,40 @@
     "lean_name": "decodePos",
     "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
     "hol_name": "decode_pos_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source transcribed; independent typed HOL capture and full statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared decode_pos_definition in flat_pattern_global_flag_probe.out: both position constructors preserve the original trace and recursively construct the El application with a singleton list."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Decode.lean",
     "lean_name": "decodeTest",
     "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
     "hol_name": "decode_test_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source transcribed; independent typed HOL capture and full statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared decode_test_definition in flat_pattern_global_flag_probe.out: TagLenEq and LitEq construct the same flat operations, argument order and literal expression."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Decode.lean",
     "lean_name": "simpGuard",
     "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
     "hol_name": "simp_guard_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source transcribed; independent typed HOL capture and full statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared simp_guard_definition in flat_pattern_global_flag_probe.out: all conjunction and disjunction tests, simplification order, double negation and remaining identity cases agree on the reviewed dGuard carrier."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Decode.lean",
     "lean_name": "decodeGuard",
     "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
     "hol_name": "decode_guard_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source transcribed; independent typed HOL capture and full statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared decode_guard_definition in flat_pattern_global_flag_probe.out: all five guard cases and recursive operand order agree; mkBool and smartIf use the reviewed flatLang Bool and SmartIf definitions."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Decode.lean",
     "lean_name": "decodeDtree",
     "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
     "hol_name": "decode_dtree_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source transcribed; independent typed HOL capture and full statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared decode_dtree_definition in flat_pattern_global_flag_probe.out: lookup getD is the same NONE/SOME match, the TypeFail name is the ASCII mlstring impossible-case, and the fail and conditional clauses retain source branch order and simplification tests. simpGuard, decodeGuard, smartIf and the Spt lookup use reviewed counterparts."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Encode.lean",
