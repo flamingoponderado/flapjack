@@ -34,16 +34,16 @@ theorem esgcFree_decodePos (t : Tra) (p : Position) (exp : FlatLang.Exp)
     simpa [esgcFree, esgcFreeList] using safe
 
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "esgc_free_decode_test"]
-theorem esgcFree_decodeTest (t : Tra) (d : DTest) (exp : FlatLang.Exp)
+theorem esgcFree_decodeTest (exp : FlatLang.Exp) (t : Tra) (d : DTest)
     (safe : esgcFree exp) : esgcFree (decodeTest t d exp) := by
   cases d <;> simp [decodeTest, esgcFree, esgcFreeList, safe]
 
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "esgc_free_decode_guard"]
-theorem esgcFree_decodeGuard (t : Tra) (exp : FlatLang.Exp) (gd : DGuard)
+theorem esgcFree_decodeGuard (exp : FlatLang.Exp) (t : Tra) (gd : DGuard)
     (safe : esgcFree exp) : esgcFree (decodeGuard t exp gd) := by
   induction gd with
   | true_ => exact esgcFree_mkBool t true
-  | posTest pos test => exact esgcFree_decodeTest t test _ (esgcFree_decodePos t pos exp safe)
+  | posTest pos test => exact esgcFree_decodeTest _ t test (esgcFree_decodePos t pos exp safe)
   | not gd ih => simp [decodeGuard, esgcFree, esgcFreeList, ih, esgcFree_mkBool]
   | conj a b ihA ihB => exact esgcFree_smartIf t _ _ _ ihA ihB (esgcFree_mkBool t false)
   | disj a b ihA ihB => exact esgcFree_smartIf t _ _ _ ihA (esgcFree_mkBool t true) ihB
@@ -273,16 +273,16 @@ theorem setGlobals_decodePos (t : Tra) (p : Position) (exp : FlatLang.Exp)
     simp [setGlobals, elistGlobals, opGlobalBag, safe, FlatProps.unionGlobalBag_empty_right]
 
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "set_globals_decode_test"]
-theorem setGlobals_decodeTest (t : Tra) (d : DTest) (exp : FlatLang.Exp)
+theorem setGlobals_decodeTest (exp : FlatLang.Exp) (t : Tra) (d : DTest)
     (safe : setGlobals exp = emptyGlobalBag) : setGlobals (decodeTest t d exp) = emptyGlobalBag := by
   cases d <;> simp [decodeTest, setGlobals, elistGlobals, opGlobalBag, safe, FlatProps.unionGlobalBag_empty_right]
 
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "set_globals_decode_guard"]
-theorem setGlobals_decodeGuard (t : Tra) (exp : FlatLang.Exp) (gd : DGuard)
+theorem setGlobals_decodeGuard (exp : FlatLang.Exp) (t : Tra) (gd : DGuard)
     (safe : setGlobals exp = emptyGlobalBag) : setGlobals (decodeGuard t exp gd) = emptyGlobalBag := by
   induction gd with
   | true_ => exact setGlobals_mkBool t true
-  | posTest pos test => exact setGlobals_decodeTest t test _ (setGlobals_decodePos t pos exp safe)
+  | posTest pos test => exact setGlobals_decodeTest _ t test (setGlobals_decodePos t pos exp safe)
   | not gd ih => simp [decodeGuard, setGlobals, elistGlobals, opGlobalBag, ih, setGlobals_mkBool, FlatProps.unionGlobalBag_empty_right]
   | conj a b ihA ihB => exact setGlobals_smartIf t _ _ _ ihA ihB (setGlobals_mkBool t false)
   | disj a b ihA ihB => exact setGlobals_smartIf t _ _ _ ihA (setGlobals_mkBool t true) ihB
@@ -536,7 +536,7 @@ theorem esgcFree_decodeDtree (value default : FlatLang.Exp) (branches : Spt Flat
     split_ifs
     · exact ihYes
     · exact ihNo
-    · exact esgcFree_smartIf trace _ _ _ (esgcFree_decodeGuard trace value _ valueSafe) ihYes ihNo
+    · exact esgcFree_smartIf trace _ _ _ (esgcFree_decodeGuard value trace _ valueSafe) ihYes ihNo
 
 /-- Decoding preserves empty global bags for a safe value, default, and
 all expressions in the branch tree. -/
@@ -560,7 +560,7 @@ theorem setGlobals_decodeDtree (value default : FlatLang.Exp) (branches : Spt Fl
     split_ifs
     · exact ihYes
     · exact ihNo
-    · exact setGlobals_smartIf trace _ _ _ (setGlobals_decodeGuard trace value _ valueSafe) ihYes ihNo
+    · exact setGlobals_smartIf trace _ _ _ (setGlobals_decodeGuard value trace _ valueSafe) ihYes ihNo
 
 
 /-- A compiled branch remains global-initialization-safe when its value and body are. -/
