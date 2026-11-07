@@ -52,9 +52,4 @@ decreasing_by all_goals subst_vars; simp_wf <;> omega
 
 end
 
-/-- Incremental numbering's name marker also leaves captures absent. -/
-theorem compileInc_varsNone (start : Nat) (expressions : List Exp) :
-    everyFnVarsNone (compileInc start expressions).2 ↔ everyFnVarsNone expressions := by
-  simp [compileInc, everyFnVarsNone, fnVarsNoneExp, renumberList_varsNone]
-
 end Flapjack.Compiler.Backend.ClosNumber

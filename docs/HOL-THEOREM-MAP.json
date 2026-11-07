@@ -1,5 +1,17 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+  "hol_name": "semantics_compile",
+  "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Semantics.lean",
+  "lean_name": "semantics_compile",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": [
+    "Flapjack.HolFiniteMapExact.holEmpty"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete typed semantics_compile in clos_mti_correct_probe.out, including free-variable order, the non-failure and compiler/oracle equality premises, conditional unary assumptions, and target-to-source equality. FEMPTY is the reviewed canonical holEmpty producer; ClosSem.semantics inherits the reals_as_rational_cuts assumption in docs/SOUNDNESS.md item 8."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
   "hol_name": "chain_installed_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SourceChain.lean",
