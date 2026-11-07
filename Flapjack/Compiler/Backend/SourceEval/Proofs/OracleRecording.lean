@@ -87,4 +87,51 @@ theorem oracleAgrees_backward (oracle : EvalOracleFun) (second first : Option Ev
       intro j hj
       exact (agrees j (by omega)).trans (savedPrefix (j + 1) ⟨by omega, by omega⟩)
 
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "recorded_orac_wf_step"]
+theorem recordedOracleWellFormed_step (compiler : CompilerFun) (oracle : EvalOracleFun)
+    (args : CompilerArgs) (nextValue bytesValue wordsValue : Value)
+    (premises : recordedOracleWellFormed compiler oracle ∧
+      compilerAgrees compiler args (nextValue, bytesValue, wordsValue) ∧
+      (0 < (oracle 0).1.1 → args.2.1 = (oracle 0).2.1)) :
+    recordedOracleWellFormed compiler (fun j =>
+      if j = 0 then (((oracle 0).1.1 + 1, 0), nextValue, [])
+      else if j = (oracle 0).1.1 + 1 then args else oracle j) := by
+  classical
+  obtain ⟨wf, agrees, previous⟩ := premises
+  have compiled : ∃ bytes words, compiler args = some (nextValue, bytes, words) := by
+    obtain ⟨id, state, decs⟩ := args
+    cases compiledEq : compiler (id, state, decs) with
+    | none => simp [compilerAgrees, compiledEq] at agrees
+    | some triple =>
+      obtain ⟨result, bytes, words⟩ := triple
+      cases decodedBytes : valueToWord8List bytesValue with
+      | none => simp [compilerAgrees, compiledEq, decodedBytes] at agrees
+      | some decodedBytes =>
+        cases decodedWords : valueToWord64List wordsValue with
+        | none => simp [compilerAgrees, compiledEq, decodedBytes, decodedWords] at agrees
+        | some decodedWords =>
+          simp [compilerAgrees, compiledEq, decodedBytes, decodedWords] at agrees
+          exact ⟨bytes, words, by simp [agrees.1]⟩
+  obtain ⟨bytes, words, compiled⟩ := compiled
+  have ⟨last, middle⟩ := wf
+  constructor
+  · intro _
+    refine ⟨(nextValue, bytes, words), ?_, ?_⟩
+    · simpa using compiled
+    · simp
+  · intro j hj
+    have positive : 0 < j := hj.2
+    have bound : j < (oracle 0).1.1 + 1 := by simpa using hj.1
+    by_cases atLast : j = (oracle 0).1.1
+    · subst j
+      obtain ⟨result, oldCompiled, oldState⟩ := last positive
+      refine ⟨result, ?_, ?_⟩
+      · simpa [show (oracle 0).1.1 ≠ 0 by omega] using oldCompiled
+      · simpa using (previous positive).trans oldState
+    · have below : j < (oracle 0).1.1 := by omega
+      obtain ⟨result, oldCompiled, oldState⟩ := middle j ⟨below, positive⟩
+      refine ⟨result, ?_, ?_⟩
+      · simpa [show j ≠ 0 by omega, show j ≠ (oracle 0).1.1 + 1 by omega] using oldCompiled
+      · simpa [show j + 1 ≠ 0 by omega, atLast] using oldState
+
 end Flapjack.Compiler.Backend.SourceEval.Proofs

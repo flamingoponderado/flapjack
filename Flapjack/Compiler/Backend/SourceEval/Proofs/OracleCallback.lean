@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.SourceEval.Proofs
+import Lean.Elab.Tactic.Omega
 
 /-! The source evaluator's recording callback and its input decoders. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs
@@ -16,6 +17,43 @@ def valueToEnvId : Value → Option (Nat × Nat)
       | some generation, some id => some (generation, id)
       | _, _ => none
   | _ => none
+
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "v_to_nat_SOME"]
+theorem valueToNat_some (value : Value) (n : Nat) (decoded : valueToNat value = some n) :
+    value = natToValue n := by
+  cases value with
+  | litv lit =>
+    cases lit <;> simp_all [valueToNat, natToValue] <;> omega
+  | _ => simp [valueToNat] at decoded
+
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "v_to_env_id_SOME"]
+theorem valueToEnvId_some (value : Value) (id : Nat × Nat)
+    (decoded : valueToEnvId value = some id) :
+    value = .conv none [natToValue id.1, natToValue id.2] := by
+  cases value with
+  | conv stamp values =>
+    cases stamp with
+    | some stamp => simp [valueToEnvId] at decoded
+    | none =>
+      cases values with
+      | nil => simp [valueToEnvId] at decoded
+      | cons first rest =>
+        cases rest with
+        | nil => simp [valueToEnvId] at decoded
+        | cons second rest =>
+          cases rest with
+          | cons _ _ => simp [valueToEnvId] at decoded
+          | nil =>
+            cases firstDecoded : valueToNat first with
+            | none => simp [valueToEnvId, firstDecoded] at decoded
+            | some generation =>
+              cases secondDecoded : valueToNat second with
+              | none => simp [valueToEnvId, firstDecoded, secondDecoded] at decoded
+              | some number =>
+                simp [valueToEnvId, firstDecoded, secondDecoded] at decoded
+                subst id
+                rw [valueToNat_some first generation firstDecoded, valueToNat_some second number secondDecoded]
+  | _ => simp [valueToEnvId] at decoded
 
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "do_eval_record_def"]
 noncomputable def doEvalRecord {Config : Type} (ci : CompilerInstance Config)

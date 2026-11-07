@@ -49,3 +49,6 @@ val _ = show_thm "value_to_env_id=" source_evalProofTheory.v_to_env_id_def;
 val _ = show_thm "do_eval_record=" source_evalProofTheory.do_eval_record_def;
 val _ = show_thm "is_record=" source_evalProofTheory.is_record_def;
 val _ = show_thm "is_record_imp=" source_evalProofTheory.is_record_IMP;
+val _ = show_thm "recorded_wf_step=" source_evalProofTheory.recorded_orac_wf_step;
+val _ = show_thm "value_to_nat_some=" source_evalProofTheory.v_to_nat_SOME;
+val _ = show_thm "value_to_env_id_some=" source_evalProofTheory.v_to_env_id_SOME;

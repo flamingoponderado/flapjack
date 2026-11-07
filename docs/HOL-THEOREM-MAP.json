@@ -14385,6 +14385,14 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "recorded_orac_wf_step",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleRecording.lean",
+    "lean_name": "recordedOracleWellFormed_step",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared recorded_wf_step in source_eval_oracle_adjust_probe.out: the original three conjunctive premises include compiler agreement and conditional previous-state equality, and the conclusion preserves the complete invariant for the zero-first, successor-second oracle update. CompilerAgrees fixes the original word8 and word64 payloads."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
     "hol_name": "v_to_nat_def",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleCallback.lean",
     "lean_name": "valueToNat",
@@ -14398,6 +14406,22 @@
     "lean_name": "valueToEnvId",
     "statement_status": "reviewed_exact",
     "reviewer": "Compared value_to_env_id in source_eval_oracle_adjust_probe.out: only an unstamped constructor with exactly two natural-decodable values yields their ordered pair."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "v_to_nat_SOME",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleCallback.lean",
+    "lean_name": "valueToNat_some",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared value_to_nat_some in source_eval_oracle_adjust_probe.out: a successful natural decoding implies the original source value is exactly natToValue of the decoded natural."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "v_to_env_id_SOME",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleCallback.lean",
+    "lean_name": "valueToEnvId_some",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared value_to_env_id_some in source_eval_oracle_adjust_probe.out: a successful environment-ID decoding reconstructs the unstamped constructor from the natural encodings of the two ordered components."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
