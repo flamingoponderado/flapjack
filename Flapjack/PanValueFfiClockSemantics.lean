@@ -1083,49 +1083,21 @@ theorem evalPanValueFfiClockProgramEntry_route_eq
       (fun _ => none) state.globals state.memory entryFfi clock none entry arguments false
     rw [hrun]
 
-/-- Evaluate a program through the source boundary: evaluate its declarations
-    with the selected expression route, then run the entry call and enforce the
-    single-value return shape.
+/-- Evaluate a program with a route builder that receives the collected
+    structure context. The builder's evaluator is produced once and reused for
+    the declaration and entry phases, so the RV64 HOL-routed runner does not
+    repeat the declaration setup. `evalPanValueFfiClockProgram` is the
+    constant-builder case and is defined through this function, so the two
+    runners cannot drift.
 
     It has no single HOL declaration: HOL's `semantics_decls` runs
     `decs_stcnames`, then `evaluate_decls`, then `semantics s' start`; this
-    runner performs the same sequence with the fuel/clock evaluator. The
-    differences from HOL are the ones listed on `evalPanValueFfiClockProgramEntry`,
-    plus the struct-context seed: HOL's `decs_stcnames []` starts from an empty
-    context, while this runner collects structs from the initial source
-    context. -/
-def evalPanValueFfiClockProgram
-    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
-    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
-    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
-    (context : PanValueFfiContext α)
-    (initial : PanValueFfiProgramState α σ)
-    (clock : Nat)
-    (primitive : PanPrimitiveHandler α)
-    (handler : PanValueStatefulFfiHandler α σ)
-    (fuel : Nat) (declarations : List (Decl α))
-    (entry : FunName) (arguments : List (Exp α))
-    (memoryAccess : Option (PanValueMemoryAccess α) := none)
-    (memoryHandler : Option (PanValueMemoryFfiHandler α σ) := none)
-    (evaluator : Option (PanExprEvaluator α) := none) :
-    Option (PanValueFfiClockResult α σ) := do
-  let state ← evalPanValueDeclarations initial.source declarations
-    (memoryAccess := memoryAccess) (evaluator := evaluator)
-  evalPanValueFfiClockProgramEntry context primitive handler state
-    (fuel := fuel) (entryFfi := initial.ffi) (clock := clock) entry arguments
-    (memoryAccess := memoryAccess) (memoryHandler := memoryHandler)
-    (evaluator := evaluator)
-
-/-- Evaluate a program with a route builder that receives the collected
-    structure context. `evalPanValueFfiClockProgram` is the constant-builder
-    case: `evalPanValueFfiClockProgram_eq` states that the two agree when the
-    builder ignores the collected context and returns the fixed evaluator. The
-    builder's evaluator is produced once and reused for the declaration and
-    entry phases, so the RV64 HOL-routed runner does not repeat the declaration
-    setup. It has no single HOL declaration: HOL's `semantics_decls` fixes one
-    expression evaluator, so choosing one from the collected structure context
-    is Flapjack-only plumbing over the same `decs_stcnames` / `evaluate_decls` /
-    `semantics s' start` sequence. -/
+    runner performs the same sequence with the fuel/clock evaluator, and HOL
+    fixes one expression evaluator, so choosing one from the collected
+    structure context is Flapjack-only plumbing over the same sequence. The
+    differences from HOL are the ones listed on
+    `evalPanValueFfiClockProgramEntry`, plus the struct-context seed noted on
+    `evalPanValueFfiClockProgram`. -/
 def evalPanValueFfiClockProgramWithRoute
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
@@ -1148,9 +1120,40 @@ def evalPanValueFfiClockProgramWithRoute
     (memoryAccess := memoryAccess) (memoryHandler := memoryHandler)
     (evaluator := evaluator)
 
-/-- The constant-builder case: the generic program runner agrees with
-    `evalPanValueFfiClockProgramWithRoute` when the builder ignores the collected
-    structure context and returns the fixed evaluator. -/
+/-- Evaluate a program through the source boundary: evaluate its declarations
+    with the selected expression route, then run the entry call and enforce the
+    single-value return shape. Defined through `evalPanValueFfiClockProgramWithRoute`
+    with a constant route builder, so the generic and routed runners share one
+    declaration/entry sequence.
+
+    It has no single HOL declaration: HOL's `semantics_decls` runs
+    `decs_stcnames`, then `evaluate_decls`, then `semantics s' start`; this
+    runner performs the same sequence with the fuel/clock evaluator. The
+    differences from HOL are the ones listed on `evalPanValueFfiClockProgramEntry`,
+    plus the struct-context seed: HOL's `decs_stcnames []` starts from an empty
+    context, while this runner collects structs from the initial source
+    context. -/
+def evalPanValueFfiClockProgram
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (context : PanValueFfiContext α)
+    (initial : PanValueFfiProgramState α σ)
+    (clock : Nat)
+    (primitive : PanPrimitiveHandler α)
+    (handler : PanValueStatefulFfiHandler α σ)
+    (fuel : Nat) (declarations : List (Decl α))
+    (entry : FunName) (arguments : List (Exp α))
+    (memoryAccess : Option (PanValueMemoryAccess α) := none)
+    (memoryHandler : Option (PanValueMemoryFfiHandler α σ) := none)
+    (evaluator : Option (PanExprEvaluator α) := none) :
+    Option (PanValueFfiClockResult α σ) :=
+  evalPanValueFfiClockProgramWithRoute context initial clock primitive handler fuel
+    declarations entry arguments memoryAccess memoryHandler (fun _ => evaluator)
+
+/-- The constant-builder case is definitional: `evalPanValueFfiClockProgram` is
+    `evalPanValueFfiClockProgramWithRoute` with a builder that ignores the
+    collected structure context and returns the fixed evaluator. -/
 theorem evalPanValueFfiClockProgram_eq
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
@@ -1164,14 +1167,38 @@ theorem evalPanValueFfiClockProgram_eq
     evalPanValueFfiClockProgram context initial clock primitive handler fuel decls entry arguments
       memoryAccess memoryHandler evaluator =
     evalPanValueFfiClockProgramWithRoute context initial clock primitive handler fuel decls
-      entry arguments memoryAccess memoryHandler (fun _ => evaluator) := by
-  rw [evalPanValueFfiClockProgram, evalPanValueFfiClockProgramWithRoute,
-    evalPanValueDeclarations_eq, evalPanValueDeclarationsWithRoute]
-  cases hcollect : collectPanValueStructs decls initial.source.structs with
+      entry arguments memoryAccess memoryHandler (fun _ => evaluator) := rfl
+
+/-- Unfolded form of `evalPanValueFfiClockProgram`: the constant-builder case of
+    `evalPanValueFfiClockProgramWithRoute`, with declaration evaluation written
+    through `evalPanValueDeclarations`. Kept as the shape the program-level
+    route proofs reason about. -/
+theorem evalPanValueFfiClockProgram_unfolded
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (context : PanValueFfiContext α) (initial : PanValueFfiProgramState α σ)
+    (clock : Nat) (primitive : PanPrimitiveHandler α) (handler : PanValueStatefulFfiHandler α σ)
+    (fuel : Nat) (declarations : List (Decl α)) (entry : FunName) (arguments : List (Exp α))
+    (memoryAccess : Option (PanValueMemoryAccess α))
+    (memoryHandler : Option (PanValueMemoryFfiHandler α σ))
+    (evaluator : Option (PanExprEvaluator α)) :
+    evalPanValueFfiClockProgram context initial clock primitive handler fuel declarations entry arguments
+      memoryAccess memoryHandler evaluator =
+      (do
+        let state ← evalPanValueDeclarations initial.source declarations
+          (memoryAccess := memoryAccess) (evaluator := evaluator)
+        evalPanValueFfiClockProgramEntry context primitive handler state
+          (fuel := fuel) (entryFfi := initial.ffi) (clock := clock) entry arguments
+          (memoryAccess := memoryAccess) (memoryHandler := memoryHandler)
+          (evaluator := evaluator)) := by
+  simp only [evalPanValueFfiClockProgram, evalPanValueFfiClockProgramWithRoute,
+    evalPanValueDeclarationsWithRoute, evalPanValueDeclarations_eq]
+  cases hstructs : collectPanValueStructs declarations initial.source.structs with
   | none => simp
   | some structs =>
     cases hstate : evalPanValueDeclarationsWithStructs structs
-        { initial.source with structs := structs } decls memoryAccess evaluator with
+        { initial.source with structs := structs } declarations memoryAccess evaluator with
     | none => simp [hstate]
     | some st => simp [hstate]
 
@@ -1196,7 +1223,7 @@ theorem evalPanValueFfiClockProgram_route_eq
   have hdecl := evalPanValueDeclarations_route_eq initial.source.bytesInWord access run
     (fun structs globals memory base top e => h structs (fun _ => none) globals memory base top e)
     initial.source rfl decls
-  simp only [evalPanValueFfiClockProgram, hdecl]
+  simp only [evalPanValueFfiClockProgram_unfolded, hdecl]
   cases hd : evalPanValueDeclarations initial.source decls access none with
   | none => simp
   | some state =>
