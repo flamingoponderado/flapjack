@@ -76,7 +76,7 @@ example
       some (.returned locals globals memory [value]) := by
   have hempty : evalPanValueDeclarations sourceDeclarationInitialState []
       (memoryAccess := memoryAccess) = some sourceDeclarationInitialState := by
-    simp [evalPanValueDeclarations, collectPanValueStructs,
+    simp [evalPanValueDeclarations_eq, collectPanValueStructs,
       evalPanValueDeclarationsWithStructs]
   exact evalPanValueProgram_of_declarations_and_returned_call
     sourceDeclarationInitialState primitive ffi fuel [] entry arguments
@@ -110,7 +110,7 @@ example
       some (.raised locals globals memory exception value) := by
   have hempty : evalPanValueDeclarations sourceDeclarationInitialState []
       (memoryAccess := memoryAccess) = some sourceDeclarationInitialState := by
-    simp [evalPanValueDeclarations, collectPanValueStructs,
+    simp [evalPanValueDeclarations_eq, collectPanValueStructs,
       evalPanValueDeclarationsWithStructs]
   exact evalPanValueProgram_of_declarations_and_raised_call
     sourceDeclarationInitialState primitive ffi fuel [] entry arguments
@@ -147,7 +147,7 @@ example
       none := by
   have hempty : evalPanValueDeclarations sourceDeclarationInitialState []
       (memoryAccess := memoryAccess) = some sourceDeclarationInitialState := by
-    simp [evalPanValueDeclarations, collectPanValueStructs,
+    simp [evalPanValueDeclarations_eq, collectPanValueStructs,
       evalPanValueDeclarationsWithStructs]
   exact evalPanValueProgram_of_declarations_and_returned_shape_mismatch
     sourceDeclarationInitialState primitive ffi fuel [] entry arguments
