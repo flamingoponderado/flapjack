@@ -1,6 +1,30 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "abort_def",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/Abort.lean",
+  "lean_name": "abort",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source_abort_definition in source_eval_oracle_adjust_probe.out: the result and error payloads are independent and all three result forms match."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "abort_simps",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/Abort.lean",
+  "lean_name": "abort_simps",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source_abort_simps in source_eval_oracle_adjust_probe.out: all three conjuncts retain their independent result carriers and the original abort, raise, and value conclusions."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "abort_imp_intro",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/Abort.lean",
+  "lean_name": "abort_imp_intro",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed HOL proof replay source_abort_imp_intro_replay in source_eval_oracle_adjust_probe.out: the independent result carriers, paired case premises, and non-abort implication match."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "do_eval_sim",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/DoEvalSimulation.lean",
   "lean_name": "doEval_sim",

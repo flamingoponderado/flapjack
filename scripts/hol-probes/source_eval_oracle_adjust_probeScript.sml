@@ -160,6 +160,14 @@ val _ = show_thm "source_state_relation_clock=" source_evalProofTheory.s_rel_clo
 val _ = show_thm "source_concrete_value_relation=" source_evalProofTheory.concrete_v_rel;
 val _ = show_thm "extend_declaration_environment_assoc=" semanticPrimitivesPropsTheory.extend_dec_env_assoc;
 val _ = show_thm "source_do_app_simulation=" source_evalProofTheory.do_app_sim;
+val _ = show_thm "source_abort_definition=" source_evalProofTheory.abort_def;
+val _ = show_thm "source_abort_simps=" source_evalProofTheory.abort_simps;
+val source_abort_imp_intro_replay = Q.prove (
+  `(!v. x = Rval v ==> P) /\ (!e. x = Rerr (Rraise e) ==> P) ==> (~ source_evalProof$abort x ==> P)`,
+  simp [source_evalProofTheory.abort_def] \\
+  every_case_tac \\
+  simp []);
+val _ = show_thm "source_abort_imp_intro_replay=" source_abort_imp_intro_replay;
 val _ = show_thm "source_do_eval_simulation=" source_evalProofTheory.do_eval_sim;
 val _ = show_thm "source_declare_env_simulation=" source_evalProofTheory.declare_env_sim;
 val _ = show_thm "source_pairarg_to_pair_map=" source_evalProofTheory.pairarg_to_pair_map;

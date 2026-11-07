@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocal
+import Flapjack.Compiler.Backend.SourceEval.Proofs.Abort
 
 /-! Source-to-flat simulations and their assembly into the original
 expression, match-row, and declaration correctness theorem. -/
@@ -8,10 +9,8 @@ open Flapjack.Compiler.Backend.SourceToFlat.OracleInvariant
 
 /-- Whether a source result is an abort rather than a value or raised exception. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "abort_def"]
-def resultAbort {α β : Type} (result : Result α β) : Prop :=
-  match result with
-  | .err (.abort _) => True
-  | _ => False
+abbrev resultAbort {α β : Type} (result : Result α β) : Prop :=
+  SourceEval.Proofs.abort result
 
 /-- Combining declaration environments does not change whether a result aborts. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "abort_compile_dec_result"]
@@ -127,7 +126,7 @@ theorem compileCorrect {C F α β : Type} [Nonempty C]
         (globalGrowth_iff _ _).mp growth |>.1⟩
     | err error =>
       cases error with
-      | abort error => simp [resultAbort]
+      | abort error => simp [resultAbort, SourceEval.Proofs.abort]
       | raise value =>
         intro _
         obtain ⟨growth, invariant, generation, forward⟩ := by simpa only [run] using post
@@ -169,7 +168,7 @@ theorem compileCorrect {C F α β : Type} [Nonempty C]
         (globalGrowth_iff _ _).mp growth |>.1⟩
     | err error =>
       cases error with
-      | abort error => simp [resultAbort]
+      | abort error => simp [resultAbort, SourceEval.Proofs.abort]
       | raise value =>
         intro _
         obtain ⟨growth, invariant, generation, forward⟩ := by simpa only [run] using post
@@ -189,7 +188,7 @@ theorem compileCorrect {C F α β : Type} [Nonempty C]
         exact ⟨invariant, forward, growth.constructors, growth.types, (globalGrowth_iff _ _).mp growth |>.1⟩
       | err error =>
         cases error with
-        | abort error => simp [resultAbort]
+        | abort error => simp [resultAbort, SourceEval.Proofs.abort]
         | raise value =>
           intro _
           obtain ⟨invariant, forward, growth⟩ := post trivial
