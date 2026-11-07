@@ -492,7 +492,7 @@ run_probe source_to_flat_global_env_probeScript.sml source_to_flat_global_env_pr
   "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe source_to_flat_value_relation_probeScript.sml source_to_flat_value_relation_probe.out \
-  value_rel_type env_rel_type global_inv_type value_rel_rules value_rel_induction value_rel_cases env_rel_LIST_REL env_all_rel_cases_typed v_rel_eqns_local do_opapp_local_statement \
+  value_rel_type env_rel_type global_inv_type value_rel_rules value_rel_induction value_rel_cases env_rel_LIST_REL env_all_rel_cases_typed v_rel_eqns_local v_rel_eqns_non_global_replay do_opapp_local_statement \
   "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe source_to_flat_store_relation_probeScript.sml source_to_flat_store_relation_probe.out \

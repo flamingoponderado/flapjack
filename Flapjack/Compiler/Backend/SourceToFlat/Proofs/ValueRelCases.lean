@@ -169,6 +169,56 @@ theorem envRel_bind_iff (genv : GlobalEnv) (name : VarN) (source : SemanticPrimi
   · rintro ⟨flat, tail, hValue, hEnv, rfl⟩
     exact .bind genv name source env tail flat hEnv hValue
 
+/-- The non-global constructor equations derived from the mutual value relation. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "v_rel_eqns_non_global"
+  (fmap_as_finite_support := [c, tys])]
+theorem valueRel_eqns_nonGlobal :
+    (∀ (v : FlatSem.Value) (l : Lit) (genv : GlobalEnv),
+      ValueRel genv (.litv l) v ↔ v = .litv l) ∧
+    (∀ (vs : List Value) (v : FlatSem.Value) (genv : GlobalEnv) (cn : Option Stamp),
+      ValueRel genv (.conv cn vs) v ↔
+        (∃ cn' cn'' vs'', cn = some cn' ∧ v = .conv (some cn'') vs'' ∧
+          List.Forall₂ (ValueRel genv) vs vs'' ∧ genv.c.lookup (cn'', vs.length) = some cn') ∨
+        ∃ vs'', cn = none ∧ v = .conv none vs'' ∧ List.Forall₂ (ValueRel genv) vs vs'') ∧
+    (∀ (v : FlatSem.Value) (l : Nat) (genv : GlobalEnv) (b : Bool),
+      ValueRel genv (.loc b l) v ↔ v = .loc b (l + 1)) ∧
+    (∀ (vs : List Value) (v : FlatSem.Value) (genv : GlobalEnv),
+      ValueRel genv (.vectorv vs) v ↔ ∃ vs'', v = .vectorv vs'' ∧ List.Forall₂ (ValueRel genv) vs vs'') ∧
+    (∀ (genv : GlobalEnv) (env' : List (VarN × FlatSem.Value)),
+      EnvRel genv nsEmpty env' ↔ env' = []) ∧
+    (∀ (x : VarN) (v : Value) (genv : GlobalEnv) (env' : List (VarN × FlatSem.Value))
+      (env : Namespace ModN VarN Value), EnvRel genv (nsBind x v env) env' ↔
+        ∃ tail v', env' = (x, v') :: tail ∧ EnvRel genv env tail ∧ ValueRel genv v v') ∧
+    (∀ (v : FlatSem.Value) (id : Nat × Nat) (genv : GlobalEnv) (e : SemEnv Value),
+      ValueRel genv (.env e id) v ↔ False) := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · intro v l genv; exact valueRel_literal_iff genv l v
+  · intro vs v genv cn
+    constructor
+    · intro related
+      cases related with
+      | constructor _ ctor _ flats rel lookup =>
+        exact Or.inl ⟨_, ctor, flats, rfl, rfl, (valueListRel_iff genv vs flats).mp rel, lookup⟩
+      | tuple _ flats rel =>
+        exact Or.inr ⟨flats, rfl, rfl, (valueListRel_iff genv vs flats).mp rel⟩
+    · rintro (⟨cn', cn'', vs'', rfl, rfl, rel, lookup⟩ | ⟨vs'', rfl, rfl, rel⟩)
+      · exact valueRel_constructor genv cn' cn'' vs vs'' rel lookup
+      · exact valueRel_tuple genv vs vs'' rel
+  · intro v l genv b; exact valueRel_location_iff genv b l v
+  · intro vs v genv; exact valueRel_vector_iff genv vs v
+  · intro genv env'; exact envRel_empty_iff genv env'
+  · intro x v genv env' env
+    rw [envRel_bind_iff]
+    constructor
+    · rintro ⟨v', tail, values, envs, eq⟩
+      exact ⟨tail, v', eq, envs, values⟩
+    · rintro ⟨tail, v', eq, envs, values⟩
+      exact ⟨v', tail, values, envs, eq⟩
+  · intro v id genv e
+    constructor
+    · intro related; cases related
+    · intro impossible; exact impossible.elim
+
 /-- An association-list source environment relates exactly when corresponding
 names agree and corresponding values satisfy the factored relation. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "env_rel_LIST_REL"

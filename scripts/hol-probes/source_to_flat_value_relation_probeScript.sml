@@ -25,6 +25,11 @@ val local_eqns =
   |> map (SIMP_CONV (srw_ss ()) [Once v_rel_cases])
   |> map GEN_ALL |> LIST_CONJ;
 val _ = show_thm "v_rel_eqns_local=" local_eqns;
+val local_eqns_non_global =
+  local_eqns |> BODY_CONJUNCTS
+    |> filter (null o find_terms (can (match_term ``global_env_inv``)) o concl)
+    |> map GEN_ALL |> LIST_CONJ;
+val _ = show_thm "v_rel_eqns_non_global_replay=" local_eqns_non_global;
 
 (* Parse the original local do_opapp statement; its proof depends on local
    source-script declarations not exported by source_to_flatProofTheory. *)

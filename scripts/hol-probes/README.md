@@ -9679,6 +9679,9 @@ independent inferred key and value types.
 The source-to-flat initialization probe captures the complete typed
 `can_pmatch_all_IMP_pmatch_rows` theorem.
 
+`source_to_flat_value_relation_probe.out` replays the derived local
+`v_rel_eqns_non_global` theorem after reconstructing the original case equations.
+
 The source evaluator probe captures the typed pair-pattern to pair-map
 function equation, including its four independent type variables.
 

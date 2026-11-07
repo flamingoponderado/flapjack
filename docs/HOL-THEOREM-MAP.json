@@ -13967,6 +13967,15 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "v_rel_eqns_non_global",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/ValueRelCases.lean",
+    "lean_name": "valueRel_eqns_nonGlobal",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["c", "tys"],
+    "reviewer": "Compared v_rel_eqns_non_global_replay in source_to_flat_value_relation_probe.out: the original seven conjuncts retain quantified binder order, constructor alternatives, environment binding witnesses and false Env case. The original local derivation is replayed. GlobalEnv c and tys use the canonical finite-support representation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "env_rel_LIST_REL",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/ValueRelCases.lean",
     "lean_name": "envRel_alist_iff",
