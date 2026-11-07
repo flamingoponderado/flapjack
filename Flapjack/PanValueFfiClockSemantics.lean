@@ -1151,24 +1151,6 @@ def evalPanValueFfiClockProgram
   evalPanValueFfiClockProgramWithRoute context initial clock primitive handler fuel
     declarations entry arguments memoryAccess memoryHandler (fun _ => evaluator)
 
-/-- The constant-builder case is definitional: `evalPanValueFfiClockProgram` is
-    `evalPanValueFfiClockProgramWithRoute` with a builder that ignores the
-    collected structure context and returns the fixed evaluator. -/
-theorem evalPanValueFfiClockProgram_eq
-    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
-    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
-    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
-    (context : PanValueFfiContext α) (initial : PanValueFfiProgramState α σ)
-    (clock : Nat) (primitive : PanPrimitiveHandler α) (handler : PanValueStatefulFfiHandler α σ)
-    (fuel : Nat) (decls : List (Decl α)) (entry : FunName) (arguments : List (Exp α))
-    (memoryAccess : Option (PanValueMemoryAccess α))
-    (memoryHandler : Option (PanValueMemoryFfiHandler α σ))
-    (evaluator : Option (PanExprEvaluator α)) :
-    evalPanValueFfiClockProgram context initial clock primitive handler fuel decls entry arguments
-      memoryAccess memoryHandler evaluator =
-    evalPanValueFfiClockProgramWithRoute context initial clock primitive handler fuel decls
-      entry arguments memoryAccess memoryHandler (fun _ => evaluator) := rfl
-
 /-- Unfolded form of `evalPanValueFfiClockProgram`: the constant-builder case of
     `evalPanValueFfiClockProgramWithRoute`, with declaration evaluation written
     through `evalPanValueDeclarations`. Kept as the shape the program-level
