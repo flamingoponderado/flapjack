@@ -1,5 +1,21 @@
 [
 {
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml",
+  "hol_name": "nsDom_nsLift",
+  "lean_path": "Flapjack/NamespaceProps/LiftDomains.lean",
+  "lean_name": "nsDom_nsLift",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed namespace_lift_domain in source_eval_oracle_adjust_probe.out: arbitrary module, name and namespace value types, the lifted domain and IMAGE under the long-identifier constructor agree; Lean Set.image is the predicate-set image."
+},
+{
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml",
+  "hol_name": "nsDomMod_nsLift",
+  "lean_path": "Flapjack/NamespaceProps/LiftDomains.lean",
+  "lean_name": "nsDomMod_nsLift",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed namespace_lift_module_domain in source_eval_oracle_adjust_probe.out: arbitrary module, name and namespace value types, the empty path inserted into the image of CONS mn, and both sides agree using predicate sets."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "env_rel_nsLift",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EnvironmentLift.lean",
