@@ -1,6 +1,46 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "s_rel_def",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/StateRelation.lean",
+  "lean_name": "stateRel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source_state_relation_definition in source_eval_oracle_adjust_probe.out: all existential witnesses, record update, related stores, Eval callback and compiler equations, initial-state implications, environment-generation counter, bound and recorded-oracle condition occur in the same order. Compiler and FFI types are independent. The original EL is holEl, with the generation bound retained."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "es_forward_def",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/StateRelation.lean",
+  "lean_name": "envStoreForward",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source_environment_forward_definition in source_eval_oracle_adjust_probe.out: the original length inequality and preservation of every successful environment lookup are retained."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "es_forward_refl",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/StateRelation.lean",
+  "lean_name": "envStoreForward_refl",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source_environment_forward_refl in source_eval_oracle_adjust_probe.out: every oracle state is forward-related to itself."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "es_forward_trans",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/StateRelation.lean",
+  "lean_name": "envStoreForward_trans",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source_environment_forward_trans in source_eval_oracle_adjust_probe.out: the single conjunction of the two forward relations implies their composition."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "v_rel_forward",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/StateRelation.lean",
+  "lean_name": "valueRel_forward",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source_value_relation_forward in source_eval_oracle_adjust_probe.out: for arbitrary values, the original value relation and forward environment-store relation imply the value relation at the later oracle state. Both original curried premises are retained."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "v_rel_l_simps",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/ValueRelationSimps.lean",
   "lean_name": "valueRel_leftSimps",

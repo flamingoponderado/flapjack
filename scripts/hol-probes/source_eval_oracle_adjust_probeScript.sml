@@ -80,3 +80,8 @@ val _ = show_thm "source_value_relation_concrete=" source_evalProofTheory.v_rel_
 val _ = show_thm "source_environment_relation_concrete=" source_evalProofTheory.env_rel_concrete_v;
 val _ = show_thm "source_value_relation_left_simps=" source_evalProofTheory.v_rel_l_simps;
 val _ = show_thm "source_value_relation_boolean=" source_evalProofTheory.v_rel_Boolv;
+val _ = show_thm "source_state_relation_definition=" source_evalProofTheory.s_rel_def;
+val _ = show_thm "source_environment_forward_definition=" source_evalProofTheory.es_forward_def;
+val _ = show_thm "source_environment_forward_refl=" source_evalProofTheory.es_forward_refl;
+val _ = show_thm "source_environment_forward_trans=" source_evalProofTheory.es_forward_trans;
+val _ = show_thm "source_value_relation_forward=" source_evalProofTheory.v_rel_forward;
