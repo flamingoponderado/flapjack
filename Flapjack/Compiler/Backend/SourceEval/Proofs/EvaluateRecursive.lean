@@ -33,7 +33,10 @@ def ExpsOracleAdjustedAt {Config F : Type} (ci : CompilerInstance Config)
 hypothesis for its contained declarations. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
 theorem adjustOracle_evaluate_Dmod {Config F : Type} (ci : CompilerInstance Config)
-    (f compile : List Dec → List Dec) (_compilePreserve : DeclarationCompilerPreserves (F := F) compile)
+    (f compile : List Dec → List Dec) (_compilePreserve : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
+      (res : Result (SemEnv Value) Value),
+      evaluateDecs s env ds = (next, res) ∧ res ≠ .err (.abort .typeError) →
+        evaluateDecs s env (compile ds) = (next, res))
     (name : ModN) (ds : List Dec)
     (state next : State F) (env : SemEnv Value) (ih : DecsOracleAdjustedAt ci f compile state env ds) (result : Result (SemEnv Value) Value)
     (source : evaluateDecs state env [.dmod name ds] = (next, result))
@@ -67,7 +70,10 @@ theorem adjustOracle_evaluate_Dmod {Config F : Type} (ci : CompilerInstance Conf
 visible declarations. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
 theorem adjustOracle_evaluate_Dlocal {Config F : Type} (ci : CompilerInstance Config)
-    (f compile : List Dec → List Dec) (_compilePreserve : DeclarationCompilerPreserves (F := F) compile)
+    (f compile : List Dec → List Dec) (_compilePreserve : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
+      (res : Result (SemEnv Value) Value),
+      evaluateDecs s env ds = (next, res) ∧ res ≠ .err (.abort .typeError) →
+        evaluateDecs s env (compile ds) = (next, res))
     (locals body : List Dec) (state next : State F) (env : SemEnv Value)
     (localsIH : DecsOracleAdjustedAt ci f compile state env locals)
     (bodyIH : ∀ (middle : State F) (innerEnv : SemEnv Value),
@@ -104,7 +110,10 @@ theorem adjustOracle_evaluate_Dlocal {Config F : Type} (ci : CompilerInstance Co
 /-- Non-singleton declaration-list case of the evaluator induction. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
 theorem adjustOracle_evaluate_DecsCons {Config F : Type} (ci : CompilerInstance Config)
-    (f compile : List Dec → List Dec) (_compilePreserve : DeclarationCompilerPreserves (F := F) compile)
+    (f compile : List Dec → List Dec) (_compilePreserve : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
+      (res : Result (SemEnv Value) Value),
+      evaluateDecs s env ds = (next, res) ∧ res ≠ .err (.abort .typeError) →
+        evaluateDecs s env (compile ds) = (next, res))
     (first second : Dec) (rest : List Dec)
     (state next : State F) (env : SemEnv Value)
     (firstIH : DecsOracleAdjustedAt ci f compile state env [first])
@@ -150,7 +159,10 @@ theorem adjustOracle_evaluate_DecsCons {Config F : Type} (ci : CompilerInstance 
 /-- Value-declaration case of the evaluator induction. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
 theorem adjustOracle_evaluate_Dlet {Config F : Type} (ci : CompilerInstance Config)
-    (f compile : List Dec → List Dec) (_compilePreserve : DeclarationCompilerPreserves (F := F) compile)
+    (f compile : List Dec → List Dec) (_compilePreserve : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
+      (res : Result (SemEnv Value) Value),
+      evaluateDecs s env ds = (next, res) ∧ res ≠ .err (.abort .typeError) →
+        evaluateDecs s env (compile ds) = (next, res))
     (locs : Flapjack.Misc.Location.Locs) (pat : Pat) (expr : AstHOL.Exp)
     (state next : State F) (env : SemEnv Value)
     (ih : ((patBindings pat).Nodup ∧ everyExp (oneConCheck env.c) expr = true) →

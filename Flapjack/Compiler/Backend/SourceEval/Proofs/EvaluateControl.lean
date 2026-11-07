@@ -7,7 +7,10 @@ open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.EvaluateHOL
 /-- Conditional-expression case of the original evaluator induction. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
 theorem adjustOracle_evaluate_If {Config F : Type} (ci : CompilerInstance Config)
-    (f compile : List Dec → List Dec) (_compilePreserve : DeclarationCompilerPreserves (F := F) compile)
+    (f compile : List Dec → List Dec) (_compilePreserve : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
+      (res : Result (SemEnv Value) Value),
+      evaluateDecs s env ds = (next, res) ∧ res ≠ .err (.abort .typeError) →
+        evaluateDecs s env (compile ds) = (next, res))
     (condition yes no : AstHOL.Exp)
     (state next : State F) (env : SemEnv Value)
     (conditionIH : ExpsOracleAdjustedAt ci f compile state env [condition])
@@ -61,7 +64,10 @@ theorem adjustOracle_evaluate_If {Config F : Type} (ci : CompilerInstance Config
 /-- Short-circuit Boolean case of the original evaluator induction. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
 theorem adjustOracle_evaluate_Log {Config F : Type} (ci : CompilerInstance Config)
-    (f compile : List Dec → List Dec) (_compilePreserve : DeclarationCompilerPreserves (F := F) compile)
+    (f compile : List Dec → List Dec) (_compilePreserve : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
+      (res : Result (SemEnv Value) Value),
+      evaluateDecs s env ds = (next, res) ∧ res ≠ .err (.abort .typeError) →
+        evaluateDecs s env (compile ds) = (next, res))
     (op : Lop) (first second : AstHOL.Exp)
     (state next : State F) (env : SemEnv Value)
     (firstIH : ExpsOracleAdjustedAt ci f compile state env [first])
@@ -126,7 +132,10 @@ theorem adjustOracle_evaluate_Log {Config F : Type} (ci : CompilerInstance Confi
 /-- Constructor-expression case of the original evaluator induction. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
 theorem adjustOracle_evaluate_Con {Config F : Type} (ci : CompilerInstance Config)
-    (f compile : List Dec → List Dec) (_compilePreserve : DeclarationCompilerPreserves (F := F) compile)
+    (f compile : List Dec → List Dec) (_compilePreserve : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
+      (res : Result (SemEnv Value) Value),
+      evaluateDecs s env ds = (next, res) ∧ res ≠ .err (.abort .typeError) →
+        evaluateDecs s env (compile ds) = (next, res))
     (name : Option (Flapjack.NamespaceHOL.Ident ModN ConN)) (args : List AstHOL.Exp)
     (state next : State F) (env : SemEnv Value)
     (argsIH : doConCheck env.c name args.length = true → ExpsOracleAdjustedAt ci f compile state env args.reverse) (result : Result (List Value) Value)

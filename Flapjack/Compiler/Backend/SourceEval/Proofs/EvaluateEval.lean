@@ -78,7 +78,10 @@ outputs lead to the same observable state and result. This is Flapjack proof
 infrastructure, conditional only on the corresponding declaration induction
 hypothesis and original compiler-preservation premise. -/
 theorem continueEval_adjust {Config F : Type} (ci : CompilerInstance Config)
-    (f compile : List Dec → List Dec) (preserves : DeclarationCompilerPreserves (F := F) compile)
+    (f compile : List Dec → List Dec) (preserves : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
+      (res : Result (SemEnv Value) Value),
+      evaluateDecs s env ds = (next, res) ∧ res ≠ .err (.abort .typeError) →
+        evaluateDecs s env (compile ds) = (next, res))
     (before decoded next : State F) (env : SemEnv Value) (decs : List Dec)
     (ih : decoded.clock ≠ 0 → DecsOracleAdjustedAt ci f compile (decClock decoded) env decs)
     (result : Result (List Value) Value) (run : continueEval before decoded env decs = (next, result))
@@ -105,7 +108,7 @@ theorem continueEval_adjust {Config F : Type} (ci : CompilerInstance Config)
         simpa [continueEval, clock, evaluated] using run
       obtain ⟨afterInserted, original⟩ :=
         ih clock after inner evaluated (by simpa [decClock] using inserted) innerSafe
-      have compiled := preserves _ _ env decs inner original innerSafe
+      have compiled := preserves _ env decs _ inner ⟨original, innerSafe⟩
       simp only [decClock] at original compiled
       obtain ⟨nextInserted, finish⟩ := finishEval_adjust ci f compile before after next env inner result sourceFinish afterInserted safe
       refine ⟨nextInserted, ?_, ?_⟩
@@ -118,7 +121,10 @@ argument and decoder runs as premises. Its declaration induction hypothesis is
 restricted to the actual decremented-clock state. It is not the full HOL
 induction case. -/
 theorem evaluate_eval_adjust_success {Config F : Type} (ci : CompilerInstance Config)
-    (f compile : List Dec → List Dec) (preserves : DeclarationCompilerPreserves (F := F) compile)
+    (f compile : List Dec → List Dec) (preserves : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
+      (res : Result (SemEnv Value) Value),
+      evaluateDecs s env ds = (next, res) ∧ res ≠ .err (.abort .typeError) →
+        evaluateDecs s env (compile ds) = (next, res))
     (state middle decoded next : State F) (env evalEnv : SemEnv Value)
     (args : List AstHOL.Exp) (values : List Value) (decs : List Dec)
     (argsIH : ExpsOracleAdjustedAt ci f compile state env args.reverse)
@@ -149,7 +155,10 @@ theorem evaluate_eval_adjust_success {Config F : Type} (ci : CompilerInstance Co
 application induction case, using the decoded declarations at the actual
 decremented-clock state. -/
 theorem adjustOracle_evaluate_Eval {Config F : Type} (ci : CompilerInstance Config)
-    (f compile : List Dec → List Dec) (preserves : DeclarationCompilerPreserves (F := F) compile)
+    (f compile : List Dec → List Dec) (preserves : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
+      (res : Result (SemEnv Value) Value),
+      evaluateDecs s env ds = (next, res) ∧ res ≠ .err (.abort .typeError) →
+        evaluateDecs s env (compile ds) = (next, res))
     (state next : State F) (env : SemEnv Value) (args : List AstHOL.Exp)
     (argsIH : ExpsOracleAdjustedAt ci f compile state env args.reverse)
     (decsIH : ∀ (middle decoded : State F) (values : List Value) (evalEnv : SemEnv Value) (decs : List Dec),

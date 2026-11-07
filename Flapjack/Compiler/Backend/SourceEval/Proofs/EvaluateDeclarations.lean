@@ -5,13 +5,6 @@ import Flapjack.EvaluateHOL.ClockFull
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.EvaluateHOL
 
-/-- Declaration-compiler preservation assumption from the HOL induction. -/
-def DeclarationCompilerPreserves {F : Type} (compile : List Dec → List Dec) : Prop :=
-  ∀ (state next : State F) (env : SemEnv Value) (ds : List Dec)
-    (result : Result (SemEnv Value) Value),
-    evaluateDecs state env ds = (next, result) → result ≠ .err (.abort .typeError) →
-    evaluateDecs state env (compile ds) = (next, result)
-
 /-- Type-abbreviation declaration case of the source evaluator induction. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
 theorem adjustOracle_evaluate_Dtabbrev {Config F : Type} (compile : List Dec → List Dec)

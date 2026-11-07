@@ -7,7 +7,10 @@ open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.EvaluateHOL
 /-- Flapjack proof infrastructure for the ordinary primitive-operation branch
 of HOL's application induction case; HOL has no separate Simple case. -/
 theorem adjustOracle_evaluate_AppSimple {Config F : Type} (ci : CompilerInstance Config)
-    (f compile : List Dec → List Dec) (_preserves : DeclarationCompilerPreserves (F := F) compile)
+    (f compile : List Dec → List Dec) (_preserves : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
+      (res : Result (SemEnv Value) Value),
+      evaluateDecs s env ds = (next, res) ∧ res ≠ .err (.abort .typeError) →
+        evaluateDecs s env (compile ds) = (next, res))
     (state next : State F) (env : SemEnv Value) (op : Op) (args : List AstHOL.Exp) (opClass : getOpClass op = .simple)
     (argsIH : ExpsOracleAdjustedAt ci f compile state env args.reverse)
     (result : Result (List Value) Value)
@@ -53,7 +56,10 @@ theorem adjustOracle_evaluate_AppSimple {Config F : Type} (ci : CompilerInstance
 /-- Flapjack proof infrastructure for the function-application branch of HOL's
 application induction case, using the decremented-clock body hypothesis. -/
 theorem adjustOracle_evaluate_AppFunction {Config F : Type} (ci : CompilerInstance Config)
-    (f compile : List Dec → List Dec) (_preserves : DeclarationCompilerPreserves (F := F) compile)
+    (f compile : List Dec → List Dec) (_preserves : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
+      (res : Result (SemEnv Value) Value),
+      evaluateDecs s env ds = (next, res) ∧ res ≠ .err (.abort .typeError) →
+        evaluateDecs s env (compile ds) = (next, res))
     (state next : State F) (env : SemEnv Value) (op : Op) (args : List AstHOL.Exp)
     (opClass : getOpClass op = .funApp) (argsIH : ExpsOracleAdjustedAt ci f compile state env args.reverse)
     (bodyIH : ∀ (middle : State F) (values : List Value) (callEnv : SemEnv Value) (body : AstHOL.Exp),
@@ -106,7 +112,10 @@ theorem adjustOracle_evaluate_AppFunction {Config F : Type} (ci : CompilerInstan
 /-- Flapjack proof infrastructure for the thunk-forcing branch of HOL's
 application induction case, using the decremented-clock body hypothesis. -/
 theorem adjustOracle_evaluate_AppForce {Config F : Type} (ci : CompilerInstance Config)
-    (f compile : List Dec → List Dec) (_preserves : DeclarationCompilerPreserves (F := F) compile)
+    (f compile : List Dec → List Dec) (_preserves : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
+      (res : Result (SemEnv Value) Value),
+      evaluateDecs s env ds = (next, res) ∧ res ≠ .err (.abort .typeError) →
+        evaluateDecs s env (compile ds) = (next, res))
     (state next : State F) (env : SemEnv Value) (op : Op) (args : List AstHOL.Exp)
     (opClass : getOpClass op = .force) (argsIH : ExpsOracleAdjustedAt ci f compile state env args.reverse)
     (bodyIH : ∀ (middle : State F) (values : List Value) (thunk : Value)
@@ -202,7 +211,10 @@ theorem adjustOracle_evaluate_AppForce {Config F : Type} (ci : CompilerInstance 
 classes with the corresponding evaluator induction hypotheses. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
 theorem adjustOracle_evaluate_App {Config F : Type} (ci : CompilerInstance Config)
-    (f compile : List Dec → List Dec) (preserves : DeclarationCompilerPreserves (F := F) compile)
+    (f compile : List Dec → List Dec) (preserves : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
+      (res : Result (SemEnv Value) Value),
+      evaluateDecs s env ds = (next, res) ∧ res ≠ .err (.abort .typeError) →
+        evaluateDecs s env (compile ds) = (next, res))
     (state next : State F) (env : SemEnv Value) (op : Op) (args : List AstHOL.Exp)
     (argsIH : ExpsOracleAdjustedAt ci f compile state env args.reverse)
     (functionIH : getOpClass op = .funApp → ∀ (middle : State F) (values : List Value) (callEnv : SemEnv Value) (body : AstHOL.Exp),

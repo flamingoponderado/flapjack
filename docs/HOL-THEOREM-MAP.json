@@ -16335,7 +16335,7 @@
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateExpressions.lean",
     "lean_name": "adjustOracle_evaluate_Letrec",
     "statement_status": "pending_statement_review",
-    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. This induction case uses curried source, insertion and non-type-error premises, a curried compiler-preservation predicate and different binder ordering; these are equivalent but do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
+    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. The compiler-preservation premise now follows HOL directly. This induction case still uses curried evaluation premises, different binder ordering, and, where applicable, induction hypotheses that do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -16412,7 +16412,7 @@
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateExpressions.lean",
     "lean_name": "adjustOracle_evaluate_Tannot",
     "statement_status": "pending_statement_review",
-    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. This induction case uses curried source, insertion and non-type-error premises, a curried compiler-preservation predicate and different binder ordering; these are equivalent but do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
+    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. The compiler-preservation premise now follows HOL directly. This induction case still uses curried evaluation premises, different binder ordering, and, where applicable, induction hypotheses that do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -16420,7 +16420,7 @@
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateExpressions.lean",
     "lean_name": "adjustOracle_evaluate_Lannot",
     "statement_status": "pending_statement_review",
-    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. This induction case uses curried source, insertion and non-type-error premises, a curried compiler-preservation predicate and different binder ordering; these are equivalent but do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
+    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. The compiler-preservation premise now follows HOL directly. This induction case still uses curried evaluation premises, different binder ordering, and, where applicable, induction hypotheses that do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -16428,7 +16428,7 @@
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateExpressions.lean",
     "lean_name": "adjustOracle_evaluate_Raise",
     "statement_status": "pending_statement_review",
-    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. This induction case uses curried source, insertion and non-type-error premises, a curried compiler-preservation predicate and different binder ordering; these are equivalent but do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
+    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. The compiler-preservation premise now follows HOL directly. This induction case still uses curried evaluation premises, different binder ordering, and, where applicable, induction hypotheses that do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -16436,7 +16436,7 @@
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateExpressions.lean",
     "lean_name": "adjustOracle_evaluate_Let",
     "statement_status": "pending_statement_review",
-    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. This induction case uses curried source, insertion and non-type-error premises, a curried compiler-preservation predicate and different binder ordering; these are equivalent but do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
+    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. The compiler-preservation premise now follows HOL directly. This induction case still uses curried evaluation premises, different binder ordering, and, where applicable, induction hypotheses that do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -16444,7 +16444,7 @@
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateExpressions.lean",
     "lean_name": "adjustOracle_evaluate_ExpsCons",
     "statement_status": "pending_statement_review",
-    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. This induction case uses curried source, insertion and non-type-error premises, a curried compiler-preservation predicate and different binder ordering; these are equivalent but do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
+    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. The compiler-preservation premise now follows HOL directly. This induction case still uses curried evaluation premises, different binder ordering, and, where applicable, induction hypotheses that do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -16452,7 +16452,7 @@
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateControl.lean",
     "lean_name": "adjustOracle_evaluate_If",
     "statement_status": "pending_statement_review",
-    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. This induction case uses curried source, insertion and non-type-error premises, a curried compiler-preservation predicate and different binder ordering; these are equivalent but do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
+    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. The compiler-preservation premise now follows HOL directly. This induction case still uses curried evaluation premises, different binder ordering, and, where applicable, induction hypotheses that do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -16460,7 +16460,7 @@
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateControl.lean",
     "lean_name": "adjustOracle_evaluate_Log",
     "statement_status": "pending_statement_review",
-    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. This induction case uses curried source, insertion and non-type-error premises, a curried compiler-preservation predicate and different binder ordering; these are equivalent but do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
+    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. The compiler-preservation premise now follows HOL directly. This induction case still uses curried evaluation premises, different binder ordering, and, where applicable, induction hypotheses that do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -16468,7 +16468,7 @@
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateControl.lean",
     "lean_name": "adjustOracle_evaluate_Con",
     "statement_status": "pending_statement_review",
-    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. This induction case uses curried source, insertion and non-type-error premises, a curried compiler-preservation predicate and different binder ordering; these are equivalent but do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
+    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. The compiler-preservation premise now follows HOL directly. This induction case still uses curried evaluation premises, different binder ordering, and, where applicable, induction hypotheses that do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -16476,7 +16476,7 @@
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateRecursive.lean",
     "lean_name": "adjustOracle_evaluate_Dmod",
     "statement_status": "pending_statement_review",
-    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. This induction case uses curried source, insertion and non-type-error premises, a curried compiler-preservation predicate and different binder ordering; these are equivalent but do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
+    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. The compiler-preservation premise now follows HOL directly. This induction case still uses curried evaluation premises, different binder ordering, and, where applicable, induction hypotheses that do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -16484,7 +16484,7 @@
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateRecursive.lean",
     "lean_name": "adjustOracle_evaluate_Dlocal",
     "statement_status": "pending_statement_review",
-    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. This induction case uses curried source, insertion and non-type-error premises, a curried compiler-preservation predicate and different binder ordering; these are equivalent but do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
+    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. The compiler-preservation premise now follows HOL directly. This induction case still uses curried evaluation premises, different binder ordering, and, where applicable, induction hypotheses that do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -16492,7 +16492,7 @@
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateRecursive.lean",
     "lean_name": "adjustOracle_evaluate_DecsCons",
     "statement_status": "pending_statement_review",
-    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. This induction case uses curried source, insertion and non-type-error premises, a curried compiler-preservation predicate and different binder ordering; these are equivalent but do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
+    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. The compiler-preservation premise now follows HOL directly. This induction case still uses curried evaluation premises, different binder ordering, and, where applicable, induction hypotheses that do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -16500,7 +16500,7 @@
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateRecursive.lean",
     "lean_name": "adjustOracle_evaluate_Dlet",
     "statement_status": "pending_statement_review",
-    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. This induction case uses curried source, insertion and non-type-error premises, a curried compiler-preservation predicate and different binder ordering; these are equivalent but do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
+    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. The compiler-preservation premise now follows HOL directly. This induction case still uses curried evaluation premises, different binder ordering, and, where applicable, induction hypotheses that do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -16508,7 +16508,7 @@
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateMatch.lean",
     "lean_name": "adjustOracle_evaluate_MatchCons",
     "statement_status": "pending_statement_review",
-    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. This induction case uses curried source, insertion and non-type-error premises, a curried compiler-preservation predicate and different binder ordering; these are equivalent but do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
+    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. The compiler-preservation premise now follows HOL directly. This induction case still uses curried evaluation premises, different binder ordering, and, where applicable, induction hypotheses that do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -16516,7 +16516,7 @@
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateMatch.lean",
     "lean_name": "adjustOracle_evaluate_Mat",
     "statement_status": "pending_statement_review",
-    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. This induction case uses curried source, insertion and non-type-error premises, a curried compiler-preservation predicate and different binder ordering; these are equivalent but do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
+    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. The compiler-preservation premise now follows HOL directly. This induction case still uses curried evaluation premises, different binder ordering, and, where applicable, induction hypotheses that do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -16524,7 +16524,7 @@
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateMatch.lean",
     "lean_name": "adjustOracle_evaluate_Handle",
     "statement_status": "pending_statement_review",
-    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. This induction case uses curried source, insertion and non-type-error premises, a curried compiler-preservation predicate and different binder ordering; these are equivalent but do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
+    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. The compiler-preservation premise now follows HOL directly. This induction case still uses curried evaluation premises, different binder ordering, and, where applicable, induction hypotheses that do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -16532,7 +16532,7 @@
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateApp.lean",
     "lean_name": "adjustOracle_evaluate_App",
     "statement_status": "pending_statement_review",
-    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. This induction case uses curried source, insertion and non-type-error premises, a curried compiler-preservation predicate and different binder ordering; these are equivalent but do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
+    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. The compiler-preservation premise now follows HOL directly. This induction case still uses curried evaluation premises, different binder ordering, and, where applicable, induction hypotheses that do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -16540,7 +16540,7 @@
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateMatch.lean",
     "lean_name": "adjustOracle_evaluate_MatchNil",
     "statement_status": "pending_statement_review",
-    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. This induction case uses curried source, insertion and non-type-error premises, a curried compiler-preservation predicate and different binder ordering; these are equivalent but do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
+    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. The compiler-preservation premise now follows HOL directly. This induction case still uses curried evaluation premises, different binder ordering, and, where applicable, induction hypotheses that do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",

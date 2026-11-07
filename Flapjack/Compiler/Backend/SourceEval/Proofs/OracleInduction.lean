@@ -10,18 +10,15 @@ open Flapjack.SemanticsHOL
 mutual
 /-- Expression part of the oracle-adjusted evaluator induction. -/
 theorem evaluateOracleFull {Config F : Type} (ci : CompilerInstance Config)
-    (f compile : List Dec → List Dec) (preserves : DeclarationCompilerPreserves (F := F) compile)
+    (f compile : List Dec → List Dec) (preserves : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
+      (res : Result (SemEnv Value) Value),
+      evaluateDecs s env ds = (next, res) ∧ res ≠ .err (.abort .typeError) →
+        evaluateDecs s env (compile ds) = (next, res))
     (state : State F) (env : SemEnv Value) (exprs : List AstHOL.Exp) :
     ExpsOracleAdjustedAt ci f compile state env exprs := by
   intro next result run inserted safe
-  have literalPreserves : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec)
-      (after : State F) (res : Result (SemEnv Value) Value),
-      evaluateDecs s env ds = (after, res) ∧ res ≠ .err (.abort .typeError) →
-        evaluateDecs s env (compile ds) = (after, res) := by
-    intro s env ds after res h
-    exact preserves s after env ds res h.1 h.2
   cases exprs with
-  | nil => exact adjustOracle_evaluate_ExpsNil compile ci f literalPreserves state env next result ⟨run, inserted, safe⟩
+  | nil => exact adjustOracle_evaluate_ExpsNil compile ci f preserves state env next result ⟨run, inserted, safe⟩
   | cons first rest =>
     cases rest with
     | cons second tail =>
@@ -32,9 +29,9 @@ theorem evaluateOracleFull {Config F : Type} (ci : CompilerInstance Config)
         exact evaluateOracleFull ci f compile preserves middle env (second :: tail)
     | nil =>
       cases first with
-      | lit lit => exact adjustOracle_evaluate_Lit compile ci f literalPreserves state env lit next result ⟨run, inserted, safe⟩
-      | var name => exact adjustOracle_evaluate_Var compile ci f literalPreserves state env name next result ⟨run, inserted, safe⟩
-      | fn name body => exact adjustOracle_evaluate_Fn compile ci f literalPreserves state env name body next result ⟨run, inserted, safe⟩
+      | lit lit => exact adjustOracle_evaluate_Lit compile ci f preserves state env lit next result ⟨run, inserted, safe⟩
+      | var name => exact adjustOracle_evaluate_Var compile ci f preserves state env name next result ⟨run, inserted, safe⟩
+      | fn name body => exact adjustOracle_evaluate_Fn compile ci f preserves state env name body next result ⟨run, inserted, safe⟩
       | raise expr =>
         exact adjustOracle_evaluate_Raise ci f compile preserves expr state next env
           (evaluateOracleFull ci f compile preserves state env [expr]) result run inserted safe
@@ -118,7 +115,10 @@ decreasing_by
 
 /-- Pattern-match part of the oracle-adjusted evaluator induction. -/
 theorem evaluateMatchOracleFull {Config F : Type} (ci : CompilerInstance Config)
-    (f compile : List Dec → List Dec) (preserves : DeclarationCompilerPreserves (F := F) compile)
+    (f compile : List Dec → List Dec) (preserves : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
+      (res : Result (SemEnv Value) Value),
+      evaluateDecs s env ds = (next, res) ∧ res ≠ .err (.abort .typeError) →
+        evaluateDecs s env (compile ds) = (next, res))
     (state : State F) (env : SemEnv Value) (value : Value) (clauses : List (Pat × AstHOL.Exp)) (errValue : Value) :
     MatchOracleAdjustedAt ci f compile state env value clauses errValue := by
   intro next result run inserted safe
@@ -144,18 +144,15 @@ decreasing_by
 
 /-- Declaration part of the oracle-adjusted evaluator induction. -/
 theorem evaluateDecsOracleFull {Config F : Type} (ci : CompilerInstance Config)
-    (f compile : List Dec → List Dec) (preserves : DeclarationCompilerPreserves (F := F) compile)
+    (f compile : List Dec → List Dec) (preserves : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
+      (res : Result (SemEnv Value) Value),
+      evaluateDecs s env ds = (next, res) ∧ res ≠ .err (.abort .typeError) →
+        evaluateDecs s env (compile ds) = (next, res))
     (state : State F) (env : SemEnv Value) (decs : List Dec) :
     DecsOracleAdjustedAt ci f compile state env decs := by
   intro next result run inserted safe
-  have literalPreserves : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec)
-      (after : State F) (res : Result (SemEnv Value) Value),
-      evaluateDecs s env ds = (after, res) ∧ res ≠ .err (.abort .typeError) →
-        evaluateDecs s env (compile ds) = (after, res) := by
-    intro s env ds after res h
-    exact preserves s after env ds res h.1 h.2
   cases decs with
-  | nil => exact adjustOracle_evaluate_DecsNil compile ci f literalPreserves state env next result ⟨run, inserted, safe⟩
+  | nil => exact adjustOracle_evaluate_DecsNil compile ci f preserves state env next result ⟨run, inserted, safe⟩
   | cons first rest =>
     cases rest with
     | cons second tail =>
@@ -166,11 +163,11 @@ theorem evaluateDecsOracleFull {Config F : Type} (ci : CompilerInstance Config)
         exact evaluateDecsOracleFull ci f compile preserves middle (extendDecEnv inner env) (second :: tail)
     | nil =>
       cases first with
-      | dtabbrev loc vars name typ => exact adjustOracle_evaluate_Dtabbrev compile ci f literalPreserves state env loc vars name typ next result ⟨run, inserted, safe⟩
-      | dexn loc name types => exact adjustOracle_evaluate_Dexn compile ci f literalPreserves state env loc name types next result ⟨run, inserted, safe⟩
-      | dtype loc types => exact adjustOracle_evaluate_Dtype compile ci f literalPreserves state env loc types next result ⟨run, inserted, safe⟩
-      | denv name => exact adjustOracle_evaluate_Denv compile ci f literalPreserves state env name next result ⟨run, inserted, safe⟩
-      | dletrec loc funs => exact adjustOracle_evaluate_Dletrec compile ci f literalPreserves state env loc funs next result ⟨run, inserted, safe⟩
+      | dtabbrev loc vars name typ => exact adjustOracle_evaluate_Dtabbrev compile ci f preserves state env loc vars name typ next result ⟨run, inserted, safe⟩
+      | dexn loc name types => exact adjustOracle_evaluate_Dexn compile ci f preserves state env loc name types next result ⟨run, inserted, safe⟩
+      | dtype loc types => exact adjustOracle_evaluate_Dtype compile ci f preserves state env loc types next result ⟨run, inserted, safe⟩
+      | denv name => exact adjustOracle_evaluate_Denv compile ci f preserves state env name next result ⟨run, inserted, safe⟩
+      | dletrec loc funs => exact adjustOracle_evaluate_Dletrec compile ci f preserves state env loc funs next result ⟨run, inserted, safe⟩
       | dmod name ds =>
         exact adjustOracle_evaluate_Dmod ci f compile preserves name ds state next env
           (evaluateDecsOracleFull ci f compile preserves state env ds) result run inserted safe
@@ -225,16 +222,13 @@ theorem adjust_oracle_evaluate {Config F : Type} (compile : List Dec → List De
       isInsertOracle ci f next.evalState ∧
         evaluateDecs { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env decs =
           ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result)) := by
-  have internal : DeclarationCompilerPreserves (F := F) compile := by
-    intro state next env decs result run safe
-    exact preserves state env decs next result ⟨run, safe⟩
   refine ⟨?_, ?_, ?_⟩
   · intro state env exprs next result ⟨run, inserted, safe⟩
-    exact evaluateOracleFull ci f compile internal state env exprs next result run inserted safe
+    exact evaluateOracleFull ci f compile preserves state env exprs next result run inserted safe
   · intro state env value clauses errValue next result ⟨run, inserted, safe⟩
-    exact evaluateMatchOracleFull ci f compile internal state env value clauses errValue next result run inserted safe
+    exact evaluateMatchOracleFull ci f compile preserves state env value clauses errValue next result run inserted safe
   · intro state env decs next result ⟨run, inserted, safe⟩
-    exact evaluateDecsOracleFull ci f compile internal state env decs next result run inserted safe
+    exact evaluateDecsOracleFull ci f compile preserves state env decs next result run inserted safe
 
 /-- HOL's local specialization of the declaration component at a chosen clock. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_ev_decs"]
