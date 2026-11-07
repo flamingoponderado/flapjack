@@ -64,16 +64,18 @@ theorem related_charList (chars : List HolChar) (target : List ClosSem.Value)
       cases head
       simp [ih _ tail]
 
-/-- Decoding related flat and closure lists yields the same character bytes. -/
-theorem valueToCharList_related (source : FlatSem.Value) (target : ClosSem.Value)
-    (chars : List HolChar) (related : ValueRel source target)
-    (decoded : FlatSem.valueToCharList source = some chars) :
-    ClosSem.valueToList target = some (chars.map (fun byte => .number byte.toNat)) := by
+/-- Decoding a related flat character list yields its closure number list. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "v_rel_v_to_char_list"]
+theorem valueToCharList_related (source : FlatSem.Value) (chars : List HolChar)
+    (target : ClosSem.Value)
+    (premises : FlatSem.valueToCharList source = some chars ∧ ValueRel source target) :
+    ClosSem.valueToList target = some ((chars.map (fun c => c.toNat)).map (fun n => .number (Int.ofNat n))) := by
+  obtain ⟨decoded, related⟩ := premises
   have flatList := charList_valueList source chars decoded
   obtain ⟨targetValues, targetDecoded, valuesRelated⟩ :=
     valueToList_related source target _ related flatList
   rw [related_charList chars targetValues valuesRelated] at targetDecoded
-  exact targetDecoded
+  simpa [List.map_map, Function.comp_def] using targetDecoded
 
 /-- String construction rejects any argument count other than one. -/
 theorem stringImplode_wrong_arity {C F : Type} (state : FlatSem.State C F)
@@ -146,8 +148,9 @@ theorem evaluate_stringImplode {C F : Type} (env : FlatSem.Environment FlatSem.V
               simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
                 FlatSem.doAppData, decoded] at resultShape
             | some items =>
-              have targetDecoded := valueToCharList_related sourceValue targetValue items head decoded
-              have targetApplied := ClosSem.applyMemory_fromCharList nextTarget targetValue items targetDecoded
+              have targetDecoded := valueToCharList_related sourceValue items targetValue ⟨decoded, head⟩
+              have targetApplied := ClosSem.applyMemory_fromCharList nextTarget targetValue items
+                (by simpa [List.map_map, Function.comp_def] using targetDecoded)
               have resultRel : ValueRel (.litv (.strLit (.implode items))) (.byteVector items) := by
                 simpa using (ValueRel.string (.implode items))
               simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,

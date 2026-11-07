@@ -1,26 +1,34 @@
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Test
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.Equality
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveType
+
+/-! Primitive comparison preservation for source-to-flat simulation. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
 
-/-- A successful source primitive test yields the same Boolean for related
-flat values. This is infrastructure over the factored relation, whose full
-HOL correspondence remains open. -/
-theorem doTest_related (genv : GlobalEnv) (ok : genvCOk genv.c)
-    (test : Test) (typ : PrimType) (a b : SemanticPrimitivesHOL.Value)
-    (fa fb : FlatSem.Value) (result : Bool)
-    (ha : ValueRel genv a fa) (hb : ValueRel genv b fb)
-    (h : SemanticPrimitivesHOL.doTest test typ a b = .val result) :
+namespace PrimitiveTestPort
+/-- Canonical global finite-map carrier roundtrip. -/
+theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
+    GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env := GlobalEnv.holFmapAsFiniteSupportWitness env
+end PrimitiveTestPort
+
+/-- A successful source primitive test yields the same Boolean for related flat values. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_test_lemma"
+  (fmap_as_finite_support := [c, tys])]
+theorem doTest_related (test : Test) (typ : PrimType) (a b : SemanticPrimitivesHOL.Value)
+    (result : Bool) (genv : GlobalEnv) (fa fb : FlatSem.Value)
+    (premises : SemanticPrimitivesHOL.doTest test typ a b = .val result ∧
+      genvCOk genv.c ∧ ValueRel genv a fa ∧ ValueRel genv b fb) :
     FlatSem.doTest test typ fa fb = .val result := by
+  obtain ⟨h, ok, ha, hb⟩ := premises
   cases test with
   | equal =>
     by_cases checks : SemanticPrimitivesHOL.checkType typ a && SemanticPrimitivesHOL.checkType typ b
     · simp only [Bool.and_eq_true] at checks
       have ca : SemanticPrimitivesHOL.checkType typ a = true := checks.1
       have cb : SemanticPrimitivesHOL.checkType typ b = true := checks.2
-      have cfa := valueRel_checkType genv ok typ a fa ha ca
-      have cfb := valueRel_checkType genv ok typ b fb hb cb
+      have cfa := valueRel_checkType genv typ a fa ⟨ha, ok, ca⟩
+      have cfb := valueRel_checkType genv typ b fb ⟨hb, ok, cb⟩
       have heq := equality_preserved genv ok a b fa fb ha hb
       cases typ <;> simp_all [SemanticPrimitivesHOL.doTest, FlatSem.doTest]
       cases ha <;> cases hb <;> simp_all [SemanticPrimitivesHOL.checkType, FlatSem.checkType]

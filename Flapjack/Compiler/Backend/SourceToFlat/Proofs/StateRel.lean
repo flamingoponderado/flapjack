@@ -1,5 +1,5 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRel
-import Flapjack.Misc.Option.Rel
+import Flapjack.Misc.ListLookupRel
 
 /-! Source-to-flat store and state relations. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
@@ -61,33 +61,6 @@ theorem stateRel_iff {C F : Type} (genv : GlobalEnv)
     | intro nonempty refs clock ffi => exact ⟨nonempty, refs, clock, ffi⟩
   · rintro ⟨nonempty, refs, clock, ffi⟩
     exact .intro source flat nonempty refs clock ffi
-
-/-- Flapjack list infrastructure: a pointwise relation preserves successful
-indexed lookup. -/
-theorem forall₂_lookup {α β : Type} {R : α → β → Prop} {xs : List α} {ys : List β}
-    (related : List.Forall₂ R xs ys) (n : Nat) (x : α) (lookup : xs[n]? = some x) :
-    ∃ y, ys[n]? = some y ∧ R x y := by
-  induction related generalizing n with
-  | nil => simp at lookup
-  | @cons a b xs ys head tail ih =>
-    cases n with
-    | zero =>
-      simp at lookup
-      subst x
-      exact ⟨b, rfl, head⟩
-    | succ n =>
-      simp only [List.getElem?_cons_succ] at lookup ⊢
-      exact ih n lookup
-
-/-- Pointwise related lists have related indexed lookups, including absence. -/
-theorem forall₂_lookupRel {α β : Type} {R : α → β → Prop} {xs : List α} {ys : List β}
-    (related : List.Forall₂ R xs ys) (n : Nat) : Flapjack.optionRel R xs[n]? ys[n]? := by
-  induction related generalizing n with
-  | nil => simp [Flapjack.optionRel]
-  | cons head tail ih =>
-    cases n with
-    | zero => simpa [Flapjack.optionRel] using head
-    | succ n => simpa using ih n
 
 /-- Source and flat store lookups agree at the original one-slot offset. This
 is infrastructure over the factored source-to-flat value relation. -/

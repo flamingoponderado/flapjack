@@ -17,6 +17,25 @@ open Classical in
 noncomputable def holOptionSome {α : Type} (P : α → Prop) : Option α :=
   if h : ∃ x, P x then some (Classical.choose h) else none
 
+/-- Optional choice returns exactly the unique satisfying value. This
+Flapjack helper has no separate HOL declaration. -/
+theorem holOptionSome_eq_some_iff {α : Type} (P : α → Prop)
+    (unique : ∀ x y, P x → P y → x = y) (value : α) :
+    holOptionSome P = some value ↔ P value := by
+  classical
+  unfold holOptionSome
+  by_cases existsValue : ∃ x, P x
+  · simp only [existsValue, dif_pos, Option.some.injEq]
+    constructor
+    · intro same
+      rw [← same]
+      exact Classical.choose_spec existsValue
+    · intro valid
+      exact unique _ _ (Classical.choose_spec existsValue) valid
+  · simp [existsValue]
+    intro valid
+    exact existsValue ⟨value, valid⟩
+
 /-- Flapjack consequence of the guarded choice definition: selected values satisfy the predicate. -/
 theorem holOptionSome_some {α : Type} {P : α → Prop} {x : α}
     (h : holOptionSome P = some x) : P x := by

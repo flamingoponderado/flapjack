@@ -1,8 +1,23 @@
 load "flat_to_closProofTheory";
-open HolKernel Parse boolLib bossLib;
+open HolKernel Parse boolLib bossLib listTheory pairTheory;
 open flat_to_closProofTheory;
+open rich_listTheory;
 val _ = Globals.linewidth := 1000000;
 val _ = set_trace "Unicode" 0;
+(* Replay the local indexed-list relation theorem using its original proof. *)
+val list_rel_map_genlist_replay = Q.prove (
+  `!funs f1 f2 R.
+    (!n. n < LENGTH funs ==> R (f1 (EL n funs)) (f2 n)) ==>
+    LIST_REL R (MAP f1 funs) (GENLIST f2 (LENGTH funs))`,
+  recInduct SNOC_INDUCT >> fs [] >>
+  fs [GENLIST,MAP_SNOC,LIST_REL_SNOC] >> rpt strip_tac
+  >- (first_x_assum match_mp_tac >>
+      metis_tac [EL_SNOC,DECIDE ``n<m ==> n < SUC m``]) >>
+  first_x_assum (qspec_then `LENGTH l` mp_tac) >>
+  fs [SNOC_APPEND,EL_LENGTH_APPEND]);
+val _ = if null (hyp list_rel_map_genlist_replay) then () else raise Fail "local theorem has hypotheses";
+val _ = (print "list_rel_map_genlist_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl list_rel_map_genlist_replay); print "\n");
 val _ = (print "findi_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl indexedListsTheory.findi_def); print "\n");
 val _ = (print "compile_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl flat_to_closTheory.compile_def); print "\n");
 val _ = (print "compile_decs_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl flat_to_closTheory.compile_decs_def); print "\n");
@@ -13,7 +28,68 @@ val _ = (print "copy_aw8_typed="; Lib.with_flag (Globals.show_types,true) print_
 val _ = (print "rules_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl v_rel_rules); print "\n");
 val _ = (print "induction_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl v_rel_ind); print "\n");
 val _ = (print "cases_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl v_rel_cases); print "\n");
+val _ = (print "env_rel_def_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl env_rel_def); print "\n");
+val _ = (print "proof_initial_state_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl initial_state'_def); print "\n");
+val _ = (print "state_rel_initial_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl state_rel_initial_state); print "\n");
+val _ = (print "v_rel_bool_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl v_rel_Boolv); print "\n");
+val _ = (print "v_rel_unit_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl v_rel_Unitv); print "\n");
+val _ = (print "v_rel_to_list_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl v_rel_to_list); print "\n");
+val _ = (print "imp_v_rel_to_list_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl IMP_v_rel_to_list); print "\n");
+val _ = (print "dest_constant_imp_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl dest_Constant_IMP); print "\n");
+val _ = (print "dest_constants_imp_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl dest_Constants_IMP); print "\n");
+val _ = (print "dest_constant_evaluate_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl dest_Constant_evaluate); print "\n");
+val _ = (print "dest_constants_evaluate_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl dest_Constants_evaluate); print "\n");
+val _ = (print "evaluate_smart_cons_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl evaluate_SmartCons); print "\n");
+val _ = (print "do_eval_install_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl do_eval_install); print "\n");
+val _ = (print "compile_decs_correct2_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl compile_decs_correct2); print "\n");
+(* The singleton declaration theorem has independent state type parameters. *)
+val _ = (print "evaluate_decs_sing_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl evaluate_decs_sing); print "\n");
+val _ = (print "evaluate_let_error_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl evaluate_Let_error); print "\n");
+val _ = (print "evaluate_op_error_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl evaluate_Op_error); print "\n");
+val _ = (print "v_rel_to_words_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl v_rel_to_words); print "\n");
+val _ = (print "v_rel_to_bytes_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl v_rel_to_bytes); print "\n");
+(* Typed replay of the local environment extension lemmas. *)
+val env_cons_upd_replay = prove
+  (``env_rel (env with v updated_by f) m db /\ v_rel v1 v2 ==>
+     env_rel (env with v updated_by (\xs. (n,v1) :: f xs)) (SOME n :: m) (v2 :: db)``,
+   fs [env_rel_def, indexedListsTheory.findi_def, GSYM arithmeticTheory.ADD1] >>
+   rw [] >> fs [] >> rw [] >> fs []);
+val env_cons_replay = prove
+  (``env_rel (env with <| v := xs |>) m db /\ v_rel v1 v2 ==>
+     env_rel (env with <| v := (n,v1) :: xs |>) (SOME n :: m) (v2 :: db)``,
+   simp [combinTheory.K_DEF, env_cons_upd_replay]);
+val _ = (print "env_rel_cons_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl env_cons_replay); print "\n");
+val _ = (print "env_rel_cons_upd_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl env_cons_upd_replay); print "\n");
+val env_append_replay = prove
+  (``!name_prefix prefix db_prefix env m db.
+      env_rel env m db /\ LIST_REL v_rel (MAP SND prefix) db_prefix /\
+      name_prefix = MAP (SOME o FST) prefix ==>
+      env_rel (env1 with <| v := prefix ++ env.v |>) (name_prefix ++ m) (db_prefix ++ db)``,
+   Induct >> fs [] >- (rw [env_rel_def]) >>
+   Cases_on `prefix` >> fs [PULL_EXISTS] >> rw [] >>
+   PairCases_on `h` >> fs [] >> match_mp_tac env_cons_replay >> fs []);
+val _ = (print "env_rel_append_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl env_append_replay); print "\n");
+(* Typed replay of find_recfun_EL[local], using its original induction proof. *)
+val find_recfun_el_replay = prove
+  (``!(l0 : (mlstring # 'a # 'b) list) n.
+      n < LENGTH l0 /\ ALL_DISTINCT (MAP FST l0) ==>
+      semanticPrimitives$find_recfun (FST (EL n l0)) l0 = SOME (SND (EL n l0))``,
+   Induct >> fs [] >> simp [Once semanticPrimitivesTheory.find_recfun_def, FORALL_PROD] >>
+   rpt strip_tac >> Cases_on `n` >> fs [] >> rw [] >> fs [MEM_MAP] >>
+   fs [FORALL_PROD] >> fs [MEM_EL] >> metis_tac [PAIR,PAIR_EQ,FST]);
+val _ = (print "find_recfun_el_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl find_recfun_el_replay); print "\n");
+(* Typed replay of state_rel_dec_clock[local], which is not exported. *)
+val state_clock_replay = prove
+  (``!(s : ('a, 'b) flatSem$state) (t : ('a, 'b) closSem$state).
+      state_rel s t ==> s.clock = t.clock /\
+        state_rel (flatSem$dec_clock s) (closSem$dec_clock 1 t)``,
+   simp [state_rel_def, flatSemTheory.dec_clock_def, closSemTheory.dec_clock_def]);
+val _ = (print "state_rel_dec_clock_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl state_clock_replay); print "\n");
 val _ = (print "state_rel_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl state_rel_def); print "\n");
+val _ = (print "lookup_refv_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl lookup_refv); print "\n");
+val _ = (print "lookup_byte_array_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl lookup_byte_array); print "\n");
+val _ = (print "lookup_array_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl lookup_array); print "\n");
+val _ = (print "lookup_thunk_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl lookup_thunk); print "\n");
 val _ = (print "store_rel_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl store_rel_def); print "\n");
 val _ = (print "inc_compile_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl inc_compile_decs'_def); print "\n");
 val _ = (print "install_rel_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl install_config_rel'_def); print "\n");
@@ -24,3 +100,29 @@ val _ = (print "compile_semantics_prime_typed="; Lib.with_flag (Globals.show_typ
 val _ = (print "install_rel_unprimed_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl install_config_rel_def); print "\n");
 val _ = (print "compile_semantics_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl compile_semantics); print "\n");
 val _ = (print "compile_correct_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl compile_correct); print "\n");
+
+(* Replay the local initializer syntax theorem with the original case split. *)
+val no_mti_compile_init_replay = Q.prove (
+  `closProps$no_mti (clos_interp$compile_init b)`,
+  Cases_on `b` >> fs [] >> EVAL_TAC);
+val _ = (print "no_mti_compile_init_replay="; Lib.with_flag (Globals.show_types,true) print_term (concl no_mti_compile_init_replay); print "\n");
+
+(* Replay the complete local callback-composition theorem. *)
+val inc_compile_decs_intro_replay = Q.prove (
+  `backendProps$pure_co (clos_interp$insert_interp ## I) o
+     backendProps$pure_co flat_to_closProof$inc_compile_decs' o f =
+   backendProps$pure_co flat_to_clos$inc_compile_decs o f /\
+   backendProps$pure_cc flat_to_closProof$inc_compile_decs'
+     (backendProps$pure_cc (clos_interp$insert_interp ## I) cc) =
+   backendProps$pure_cc flat_to_clos$inc_compile_decs cc`,
+  fs [backendPropsTheory.pure_co_def, FUN_EQ_THM, backendPropsTheory.pure_cc_def,
+      flat_to_closTheory.inc_compile_decs_def, FORALL_PROD, inc_compile_decs'_def] >> rw [] >>
+  Cases_on `f x` >> fs [] >>
+  fs [flat_to_closTheory.inc_compile_decs_def, inc_compile_decs'_def]);
+val _ = (print "inc_compile_decs_intro_replay="; Lib.with_flag (Globals.show_types,true) print_term (concl inc_compile_decs_intro_replay); print "\n");
+
+val _ = if null (hyp v_rel_v_to_char_list) then () else raise Fail "hypotheses: v_rel_v_to_char_list";
+val _ = (print "v_rel_v_to_char_list_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl v_rel_v_to_char_list); print "\n");
+
+val _ = if null (hyp imp_cmp_eq_num_cmp) then () else raise Fail "hypotheses: imp_cmp_eq_num_cmp";
+val _ = (print "imp_cmp_eq_num_cmp_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl imp_cmp_eq_num_cmp); print "\n");

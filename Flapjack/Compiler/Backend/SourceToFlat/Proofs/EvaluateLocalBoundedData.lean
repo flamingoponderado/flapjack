@@ -507,7 +507,7 @@ theorem localEnvBounded_strlen {C F : Type} [Nonempty C]
         (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
       exact post
   | @value sourceValues flatValues valuesRel =>
-    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source nextSource sourceEnv body sourceValues sourceRun
+    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source sourceEnv body nextSource sourceValues sourceRun
     cases valuesRel with
     | cons valueRel tail =>
       cases tail with
@@ -619,7 +619,7 @@ theorem localEnvBounded_vfromList {C F : Type} [Nonempty C]
         (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
       exact post
   | @value sourceValues flatValues valuesRel =>
-    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source nextSource sourceEnv body sourceValues sourceRun
+    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source sourceEnv body nextSource sourceValues sourceRun
     cases valuesRel with
     | cons valueRel tail =>
       cases tail with
@@ -639,7 +639,7 @@ theorem localEnvBounded_vfromList {C F : Type} [Nonempty C]
           | none => simp [doApp, doAppNumericCore, doAppBasic, decoded] at successful
           | some values => exact ⟨values, rfl⟩
         obtain ⟨values, decoded⟩ := sourceDecode
-        obtain ⟨flatValues, flatDecoded, relatedValues⟩ := valueToList_related nextGenv nextInvariant.1 operand flatOperand values valueRel decoded
+        obtain ⟨flatValues, flatDecoded, relatedValues⟩ := valueToList_related nextGenv nextInvariant.1 operand flatOperand values ⟨valueRel, decoded⟩
         have resultRel : ValueRel nextGenv (.vectorv values) (.vectorv flatValues) :=
           valueRel_vector nextGenv values flatValues relatedValues
         refine ⟨nextGenv, ?_, ?_⟩
@@ -734,7 +734,7 @@ theorem localEnvBounded_strcat {C F : Type} [Nonempty C]
         (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
       exact post
   | @value sourceValues flatValues valuesRel =>
-    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source nextSource sourceEnv body sourceValues sourceRun
+    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source sourceEnv body nextSource sourceValues sourceRun
     cases valuesRel with
     | cons valueRel tail =>
       cases tail with
@@ -754,15 +754,13 @@ theorem localEnvBounded_strcat {C F : Type} [Nonempty C]
           | none => simp [doApp, doAppNumericCore, doAppBasic, decoded] at successful
           | some values => exact ⟨values, rfl⟩
         obtain ⟨values, decoded⟩ := sourceDecode
-        obtain ⟨flatValues, flatDecoded, relatedValues⟩ := valueToList_related nextGenv nextInvariant.1 operand flatOperand values valueRel decoded
+        obtain ⟨flatValues, flatDecoded, relatedValues⟩ := valueToList_related nextGenv nextInvariant.1 operand flatOperand values ⟨valueRel, decoded⟩
         have stringDecode : ∃ str, valuesToString values = some str := by
           cases result : valuesToString values with
           | none => simp [doApp, doAppNumericCore, doAppBasic, decoded, result] at successful
           | some str => exact ⟨str, rfl⟩
         obtain ⟨str, stringDecoded⟩ := stringDecode
-        have flatStringDecoded : FlatSem.valuesToString flatValues = some str := by
-          rw [← valuesToString_related nextGenv values flatValues relatedValues]
-          exact stringDecoded
+        have flatStringDecoded := valuesToString_related nextGenv values flatValues str relatedValues stringDecoded
         have resultRel : ValueRel nextGenv (.litv (.strLit str)) (.litv (.strLit str)) := .literal nextGenv _
         refine ⟨nextGenv, ?_, ?_⟩
         · unfold ExprSim
@@ -856,7 +854,7 @@ theorem localEnvBounded_implode {C F : Type} [Nonempty C]
         (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
       exact post
   | @value sourceValues flatValues valuesRel =>
-    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source nextSource sourceEnv body sourceValues sourceRun
+    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source sourceEnv body nextSource sourceValues sourceRun
     cases valuesRel with
     | cons valueRel tail =>
       cases tail with
@@ -876,7 +874,7 @@ theorem localEnvBounded_implode {C F : Type} [Nonempty C]
           | none => simp [doApp, doAppNumericCore, doAppBasic, decoded] at successful
           | some chars => exact ⟨chars, rfl⟩
         obtain ⟨chars, decoded⟩ := sourceDecode
-        have flatDecoded := valueToCharList_related nextGenv nextInvariant.1 operand flatOperand chars valueRel decoded
+        have flatDecoded := valueToCharList_related nextGenv nextInvariant.1 operand flatOperand chars ⟨valueRel, decoded⟩
         have resultRel : ValueRel nextGenv (.litv (.strLit (.implode chars))) (.litv (.strLit (.implode chars))) :=
           .literal nextGenv _
         refine ⟨nextGenv, ?_, ?_⟩
@@ -971,7 +969,7 @@ theorem localEnvBounded_explode {C F : Type} [Nonempty C]
         (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
       exact post
   | @value sourceValues flatValues valuesRel =>
-    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source nextSource sourceEnv body sourceValues sourceRun
+    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source sourceEnv body nextSource sourceValues sourceRun
     cases valuesRel with
     | cons valueRel tail =>
       cases tail with
@@ -999,7 +997,7 @@ theorem localEnvBounded_explode {C F : Type} [Nonempty C]
           induction str.explode with
           | nil => exact .nil
           | cons char rest ih => exact .cons (.literal nextGenv (.char char)) ih
-        have resultRel := listToValue_related nextGenv nextInvariant.1.2.2.1 _ _ itemsRel
+        have resultRel := listToValue_related nextGenv _ _ ⟨nextInvariant.1.2.2.1, itemsRel⟩
         refine ⟨nextGenv, ?_, ?_⟩
         · unfold ExprSim
           rw [EvaluateHOL.evaluate]
@@ -1092,7 +1090,7 @@ theorem localEnvBounded_vlength {C F : Type} [Nonempty C]
         (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
       exact post
   | @value sourceValues flatValues valuesRel =>
-    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source nextSource sourceEnv body sourceValues sourceRun
+    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source sourceEnv body nextSource sourceValues sourceRun
     cases valuesRel with
     | cons valueRel tail =>
       cases tail with
@@ -1714,14 +1712,14 @@ theorem localEnvBounded_listAppend {C F : Type} [Nonempty C]
             | none => simp [doApp, doAppNumericCore, doAppBasic, leftDecoded, decoded] at successful
             | some values => exact ⟨values, rfl⟩
           obtain ⟨rightValues, rightDecoded⟩ := rightDecoded
-          obtain ⟨flatLeft, flatLeftDecoded, leftRel⟩ := valueToList_related nextGenv nextInvariant.1 sourceSize flatSize leftValues sizeRel leftDecoded
-          obtain ⟨flatRight, flatRightDecoded, rightRel⟩ := valueToList_related nextGenv nextInvariant.1 sourceValue flatValue rightValues valueRel rightDecoded
+          obtain ⟨flatLeft, flatLeftDecoded, leftRel⟩ := valueToList_related nextGenv nextInvariant.1 sourceSize flatSize leftValues ⟨sizeRel, leftDecoded⟩
+          obtain ⟨flatRight, flatRightDecoded, rightRel⟩ := valueToList_related nextGenv nextInvariant.1 sourceValue flatValue rightValues ⟨valueRel, rightDecoded⟩
           have appendedRel : List.Forall₂ (ValueRel nextGenv) (leftValues ++ rightValues) (flatLeft ++ flatRight) := by
             clear leftDecoded flatLeftDecoded
             induction leftRel with
             | nil => exact rightRel
             | cons head _ ih => exact .cons head ih
-          have resultRel := listToValue_related nextGenv nextInvariant.1.2.2.1 _ _ appendedRel
+          have resultRel := listToValue_related nextGenv _ _ ⟨nextInvariant.1.2.2.1, appendedRel⟩
           refine ⟨nextGenv, ?_, ?_⟩
           · unfold ExprSim
             rw [EvaluateHOL.evaluate]
@@ -1949,7 +1947,7 @@ theorem localEnvBounded_envId {C F : Type} [Nonempty C]
       rw [flatRun]
       exact post
   | @value sourceValues flatValues valuesRel =>
-    obtain ⟨value, rfl⟩ := EvaluateProps.evaluateSingFull source nextSource sourceEnv body sourceValues sourceRun
+    obtain ⟨value, rfl⟩ := EvaluateProps.evaluateSingFull source sourceEnv body nextSource sourceValues sourceRun
     cases valuesRel with
     | cons valueRel tail =>
       cases tail with
@@ -2675,7 +2673,7 @@ theorem localEnvBounded_allocThunk {C F : Type} [Nonempty C]
         (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
       exact post
   | @value sourceValues flatValues valuesRel =>
-    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source nextSource sourceEnv body sourceValues sourceRun
+    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source sourceEnv body nextSource sourceValues sourceRun
     cases valuesRel with
     | cons valueRel tail =>
       cases tail with

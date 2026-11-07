@@ -1,5 +1,5 @@
 import Flapjack.Compiler.Backend.Semantics.ClosSem.Apply
-import Flapjack.Misc.Option
+import Flapjack.Misc.Option.Characterization
 import Aesop
 
 /-! Correspondence between closure byte traversals and the guarded choices
@@ -33,16 +33,6 @@ theorem byteNumbers_eq_some (values : List Value) (bytes : List (BitVec 8)) :
   | cons head tail ih =>
     cases head <;> cases bytes <;> simp_all [byteNumbers, Option.bind_eq_some_iff, intToByte_iff]
 
-private theorem option_eq_choice {α : Type} (decoded : Option α) (P : α → Prop)
-    (characterization : ∀ x, decoded = some x ↔ P x) : decoded = Flapjack.holOptionSome P := by
-  cases choice : Flapjack.holOptionSome P with
-  | none =>
-    cases result : decoded with
-    | none => rfl
-    | some value =>
-      exact False.elim (Flapjack.holOptionSome_none choice value ((characterization value).mp result))
-  | some value => exact (characterization value).mpr (Flapjack.holOptionSome_some choice)
-
 /-- Decode a closure list of byte-vector chunks. -/
 def byteVectorChunks (value : Value) : Option (List (List (BitVec 8))) :=
   (valueToList value).bind byteVectors
@@ -56,7 +46,7 @@ theorem byteVectorChunks_eq_some (value : Value) (chunks : List (List (BitVec 8)
 theorem byteVectorChunks_eq_holChoice (value : Value) :
     byteVectorChunks value = Flapjack.holOptionSome
       (fun chunks : List (List (BitVec 8)) => valueToList value = some (chunks.map Value.byteVector)) := by
-  exact option_eq_choice _ _ (byteVectorChunks_eq_some value)
+  exact Flapjack.option_eq_holChoice _ _ (byteVectorChunks_eq_some value)
 
 /-- Decode byte-valued integer elements as their natural numbers. -/
 def byteNaturalValues (values : List Value) : Option (List Nat) :=
@@ -106,7 +96,7 @@ theorem byteNaturalList_eq_holChoice (value : Value) :
     byteNaturalList value = Flapjack.holOptionSome
       (fun numbers : List Nat => valueToList value = some (numbers.map (fun n => .number n)) ∧
         ∀ n ∈ numbers, n < 256) := by
-  exact option_eq_choice _ _ (byteNaturalList_eq_some value)
+  exact Flapjack.option_eq_holChoice _ _ (byteNaturalList_eq_some value)
 
 /-- Converting the selected naturals back to bytes gives the actual traversal
 used by the closure primitive dispatcher. -/

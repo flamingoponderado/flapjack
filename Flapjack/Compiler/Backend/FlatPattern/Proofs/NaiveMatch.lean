@@ -1,3 +1,4 @@
+import Flapjack.SemanticPrimitivesProps.Literals
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.BranchEvaluation
 import Mathlib.Data.List.Forall2
 
@@ -7,10 +8,12 @@ namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack Flapjack.AstHOL Flapjack.Compiler.Backend
 open Flapjack.Compiler.Backend.BackendCommon
 open Flapjack.SemanticPrimitivesHOL (storeLookup)
+open Flapjack.SemanticPrimitivesProps (litSameType_refl litSameType_sym)
 
 /-- Evaluating the flat Boolean expression yields the corresponding value. -/
-theorem evaluate_bool {C F : Type} (trace : Tra) (b : Bool)
-    (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F) :
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "evaluate_Bool"]
+theorem evaluate_bool {C F : Type}
+    (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F) (trace : Tra) (b : Bool) :
     FlatSem.evaluate env state [FlatLang.mkBool trace b] = (state, .val [FlatSem.boolValue b]) := by
   cases b <;> simp [FlatSem.evaluate, FlatLang.mkBool, FlatSem.boolValue]
 
@@ -104,7 +107,7 @@ theorem naiveList_nil {C F : Type} (trace : Tra) : @NaiveListCorrect C F trace [
   | nil =>
     simp [FlatSem.pmatchList, matchDecision] at decision
     subst answer
-    simpa [naivePatternMatch] using evaluate_bool trace true env state
+    simpa [naivePatternMatch] using evaluate_bool env state trace true
   | cons _ _ => simp [FlatSem.pmatchList, matchDecision] at decision
 
 /-- Wildcards pass the work-list match and guard directly to the tail. -/
@@ -153,15 +156,8 @@ theorem naiveList_as {C F : Type} (trace : Tra) (pattern : FlatLang.Pat) (name :
         (((pattern, expression) :: rest).map Prod.snd) (value :: values) := by simpa using pure
     simpa [naivePatternMatch] using ih env state (value :: values) ((name, value) :: bindings) answer nestedPure nested
 
-/-- Literal type compatibility is reflexive and symmetric. -/
-theorem litSameType_refl (lit : Lit) : Flapjack.SemanticPrimitivesHOL.litSameType lit lit = true := by
-  cases lit <;> rfl
-
-theorem litSameType_symm (left right : Lit) :
-    Flapjack.SemanticPrimitivesHOL.litSameType left right = Flapjack.SemanticPrimitivesHOL.litSameType right left := by
-  cases left <;> cases right <;> rfl
-
-/-- Boolean values choose the expected conditional branch. -/
+/-- A Boolean value selects its corresponding conditional branch. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "do_if_Boolv"]
 theorem doIf_bool {A : Type} (b : Bool) (yes no : A) :
     FlatSem.doIf (FlatSem.boolValue b) yes no = some (if b then yes else no) := by
   cases b <;> simp [FlatSem.doIf, FlatSem.boolValue, FlatLang.boolId, boolToTag, trueTag, falseTag]
@@ -172,8 +168,8 @@ theorem evaluate_if_pure_bool {C F : Type} (trace : Tra) (guard yes no : FlatLan
     (pure : FlatSem.evaluate env state [guard] = (state, .val [FlatSem.boolValue b])) :
     FlatSem.evaluate env state [.if_ trace guard yes no] =
       FlatSem.evaluate env state [if b then yes else no] := by
-  cases b <;> simp [FlatSem.evaluate, pure, FlatSem.fixClock, FlatSem.doIf, FlatSem.boolValue,
-    FlatLang.boolId, boolToTag, trueTag, falseTag]
+  simp [FlatSem.evaluate, pure, FlatSem.fixClock]
+  rw [doIf_bool]
 
 /-- Equality of same-typed literal values evaluates to their Boolean equality. -/
 theorem evaluate_literal_equality {C F : Type} (trace : Tra) (expression : FlatLang.Exp)
@@ -258,8 +254,9 @@ theorem pmatchList_con_failed_decision {C F : Type} (state : FlatSem.State C F)
     simp [FlatSem.pmatchList, head, tail, matchDecision, combineMatchDecisions]
 
 /-- Smart conditionals agree with ordinary conditionals in flat evaluation. -/
-theorem evaluate_smartIf {C F : Type} (trace : Tra) (guard yes no : FlatLang.Exp)
-    (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F) :
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "evaluate_SmartIf"]
+theorem evaluate_smartIf {C F : Type} (env : FlatSem.Environment FlatSem.Value)
+    (state : FlatSem.State C F) (trace : Tra) (guard yes no : FlatLang.Exp) :
     FlatSem.evaluate env state [FlatLang.smartIf trace guard yes no] =
       FlatSem.evaluate env state [.if_ trace guard yes no] := by
   cases guard <;> try rfl
@@ -282,14 +279,14 @@ theorem evaluate_smartIf {C F : Type} (trace : Tra) (guard yes no : FlatLang.Exp
               subst tag
               simpa [FlatLang.mkBool, boolToTag] using
                 (evaluate_if_pure_bool trace (.con guardTrace (some (trueTag, some FlatLang.boolId)) []) yes no true
-                  env state (by simpa [FlatLang.mkBool, boolToTag] using evaluate_bool guardTrace true env state)).symm
+                  env state (by simpa [FlatLang.mkBool, boolToTag] using evaluate_bool env state guardTrace true)).symm
             · split
               · rename_i tagEq tagNe typeEq
                 subst typeId
                 subst tag
                 simpa [FlatLang.mkBool, boolToTag] using
                   (evaluate_if_pure_bool trace (.con guardTrace (some (falseTag, some FlatLang.boolId)) []) yes no false
-                    env state (by simpa [FlatLang.mkBool, boolToTag] using evaluate_bool guardTrace false env state)).symm
+                    env state (by simpa [FlatLang.mkBool, boolToTag] using evaluate_bool env state guardTrace false)).symm
               · rfl
           · rfl
 
@@ -399,7 +396,7 @@ theorem naiveList_con {C F : Type} (trace : Tra)
                 cases result : FlatSem.pmatchList state (rest.map Prod.fst) values bindings <;>
                   simp [result, matchDecision, combineMatchDecisions] at failedDecision
                 all_goals subst answer
-                all_goals simpa [naivePatternMatch, evaluate_smartIf, branch] using evaluate_bool trace false env state
+                all_goals simpa [naivePatternMatch, evaluate_smartIf, branch] using evaluate_bool env state trace false
         · have head : FlatSem.pmatch state (.pcon stamp patterns) (.conv actual fields) bindings = .typeError := by
             simp [FlatSem.pmatch, compatible]
           simp [FlatSem.pmatchList, head, matchDecision] at decision
@@ -441,7 +438,7 @@ theorem naiveList_literal {C F : Type} (trace : Tra) (lit : Lit) (expression : F
           simpa [naivePatternMatch, evaluate_smartIf, branch] using tailEval
         · by_cases sameType : Flapjack.SemanticPrimitivesHOL.litSameType lit actual = true
           · have otherType : Flapjack.SemanticPrimitivesHOL.litSameType actual lit = true := by
-              simpa [litSameType_symm actual lit] using sameType
+              exact litSameType_sym lit actual sameType
             have guard := evaluate_literal_equality trace expression env state actual lit first otherType
             have different : actual ≠ lit := Ne.symm same
             have branch := evaluate_if_pure_bool trace (.app trace (.src .equality) [expression, .lit trace lit])
@@ -449,7 +446,7 @@ theorem naiveList_literal {C F : Type} (trace : Tra) (lit : Lit) (expression : F
             cases result : FlatSem.pmatchList state (rest.map Prod.fst) values bindings <;>
               simp [FlatSem.pmatchList, FlatSem.pmatch, same, sameType, result, matchDecision] at decision
             all_goals subst answer
-            all_goals simpa [naivePatternMatch, evaluate_smartIf, branch] using evaluate_bool trace false env state
+            all_goals simpa [naivePatternMatch, evaluate_smartIf, branch] using evaluate_bool env state trace false
           · simp [FlatSem.pmatchList, FlatSem.pmatch, same, sameType, matchDecision] at decision
 
 /-- Reference patterns replace their input expression with the corresponding
@@ -556,17 +553,23 @@ theorem naivePatternMatches_from_guards {C F : Type} (trace : Tra) (expression d
 
 /-- The ordered naive dispatcher selects the same body as the source matcher
 when its scrutinee evaluates purely and matching does not type-error. -/
-theorem naivePatternMatches_correct {C F : Type} (trace : Tra) (expression default : FlatLang.Exp)
-    (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F) (value : FlatSem.Value)
-    (rows : List (FlatLang.Pat × FlatLang.Exp))
-    (pure : FlatSem.evaluate env state [expression] = (state, .val [value]))
-    (safe : FlatSem.pmatchRows rows state value ≠ .typeError) :
-    FlatSem.evaluate env state [naivePatternMatches trace expression rows default] =
-      FlatSem.evaluate env state [match FlatSem.pmatchRows rows state value with
-        | .match (_, _, body) => body
-        | _ => default] :=
-  naivePatternMatches_from_guards trace expression default env state value
-    (naiveGuardCorrect_of_pure trace expression env state value pure) rows safe
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "naive_pattern_matches_correct"]
+theorem naivePatternMatches_correct {C F : Type} (state : FlatSem.State C F)
+    (env : FlatSem.Environment FlatSem.Value) :
+    ∀ (trace : Tra) (expression : FlatLang.Exp) (rows : List (FlatLang.Pat × FlatLang.Exp))
+      (default output : FlatLang.Exp) (value : FlatSem.Value)
+      (result : Flapjack.SemanticPrimitivesHOL.MatchResult (List (VarN × FlatSem.Value) × FlatLang.Pat × FlatLang.Exp)),
+    naivePatternMatches trace expression rows default = output ∧
+      pureEvalTo state env expression value ∧ FlatSem.pmatchRows rows state value = result ∧
+      result ≠ .typeError →
+    FlatSem.evaluate env state [output] = match result with
+      | .match (_, _, body) => FlatSem.evaluate env state [body]
+      | _ => FlatSem.evaluate env state [default] := by
+  intro trace expression rows default output value result ⟨rfl, pure, matched, safe⟩
+  have full := naivePatternMatches_from_guards trace expression default env state value
+    (naiveGuardCorrect_of_pure trace expression env state value pure) rows (by simpa [matched] using safe)
+  rw [matched] at full
+  cases result <;> simpa using full
 
 /-- Transform the body carried by a successful row result, preserving both
 non-match and type-error results. -/
@@ -628,7 +631,9 @@ theorem evaluate_compilePats_naive {C F : Type} (cfg : Config) (trace : Tra) (n 
     change FlatSem.pmatchRows (rows.map fun (pattern, body) => (pattern, f pattern body)) state value ≠ .typeError
     rw [mappedResult]
     cases h : FlatSem.pmatchRows rows state value <;> simp_all [mapRowResult]
-  have dispatch := naivePatternMatches_correct trace expression default env state value mapped pure mappedSafe
+  have dispatch := naivePatternMatches_correct state env trace expression mapped default
+    (naivePatternMatches trace expression mapped default) value (FlatSem.pmatchRows mapped state value)
+    ⟨rfl, pure, rfl, mappedSafe⟩
   have compiledRows : List.zip (rows.map Prod.fst) (rows.map (compilePatRhs trace n expression)) = mapped := by
     simpa [mapped, f] using zip_row_bodies rows f
   cases original : FlatSem.pmatchRows rows state value with

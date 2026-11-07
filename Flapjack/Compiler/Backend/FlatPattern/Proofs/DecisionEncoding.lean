@@ -1,5 +1,7 @@
 import Flapjack.Compiler.Backend.PatternSemantics.Semantics
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.NaiveMatch
+import Flapjack.Compiler.Backend.FlatPattern.Proofs.BindingSimulation
+import Flapjack.Compiler.Backend.FlatPattern.Proofs.DecisionEncoding.Encoding
 
 /-! Encoding of flat values and references for decision-tree simulation.
 The source evaluator and carriers remain pending HOL correspondence review. -/
@@ -12,51 +14,6 @@ def encodeMatchResult {A : Type} : Flapjack.SemanticPrimitivesHOL.MatchResult A 
   | .match _ => .success
   | .noMatch => .failure
   | .typeError => .typeFailure
-
-mutual
-/-- Project flat values into the pattern compiler's abstract value domain. -/
-def encodeValue : FlatSem.Value → PatternSemantics.Term
-  | .litv lit => .litv lit
-  | .conv stamp values => .term (stamp.map Prod.fst) (encodeValues values)
-  | .loc _ index => .refPtr index
-  | _ => .other
-termination_by value => sizeOf value
-
-/-- Encode constructor fields in their original order. -/
-def encodeValues : List FlatSem.Value → List PatternSemantics.Term
-  | [] => []
-  | value :: values => encodeValue value :: encodeValues values
-termination_by values => sizeOf values
-end
-
-/-- The auxiliary list traversal agrees with mapping the value encoding. -/
-theorem encodeValues_eq_map (values : List FlatSem.Value) : encodeValues values = values.map encodeValue := by
-  induction values with
-  | nil => simp [encodeValues]
-  | cons value values ih => simp [encodeValues, ih]
-
-/-- A finite map containing exactly the reference-valued entries of a flat
-store. The map's support is bounded by the source store length. -/
-def encodeRefs {C F : Type} (state : FlatSem.State C F) : HolFiniteMapExact Nat PatternSemantics.Term where
-  lookup index := match storeLookup index state.refs with
-    | some (.refv value) => some (encodeValue value)
-    | _ => none
-  finiteSupport := by
-    refine ⟨List.range state.refs.length, ?_⟩
-    intro index present
-    apply List.mem_range.mpr
-    by_cases inside : index < state.refs.length
-    · exact inside
-    · have absent : storeLookup index state.refs = none := by
-        apply List.getElem?_eq_none_iff.mpr
-        omega
-      simp [absent] at present
-
-/-- Encoded reference lookup agrees with the original flat store lookup. -/
-theorem encodeRefs_lookup {C F : Type} (state : FlatSem.State C F) (index : Nat) :
-    (encodeRefs state).lookup index = match storeLookup index state.refs with
-      | some (.refv value) => some (encodeValue value)
-      | _ => none := rfl
 
 /-- A compatible tagged flat constructor appears in the abstract sibling
 group, or the group is absent for an exception. -/
@@ -150,7 +107,7 @@ theorem encodePmatch_simulation {C F : Type} (state : FlatSem.State C F)
     | litv actual =>
       by_cases same : lit = actual
       · subst actual
-        simp [encodePat, encodeValue, PatternSemantics.pmatch, FlatSem.pmatch, litSameType_refl, encodeMatchResult]
+        simp [encodePat, encodeValue, PatternSemantics.pmatch, FlatSem.pmatch, Flapjack.SemanticPrimitivesProps.litSameType_refl, encodeMatchResult]
       · by_cases sameType : Flapjack.SemanticPrimitivesHOL.litSameType lit actual = true
         · simp [encodePat, encodeValue, PatternSemantics.pmatch, FlatSem.pmatch, same, sameType, encodeMatchResult]
         · simp [FlatSem.pmatch, same, sameType] at safe
@@ -215,6 +172,34 @@ theorem encodePmatchList_simulation {C F : Type} (state : FlatSem.State C F)
 termination_by sizeOf patterns
 end
 
+open Classical in
+/-- Encoding preserves both single and list pattern matches when the source
+result is not a type error. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "encode_pat_match_simulation"
+  (fmap_as_finite_support_result_observations := [encodeRefs])]
+theorem encodePatMatch_simulation {C F : Type} :
+    (∀ (state : FlatSem.State C F) (pattern : FlatLang.Pat)
+      (value : FlatSem.Value) (bindings : List (Flapjack.AstHOL.VarN × FlatSem.Value))
+      (result : Flapjack.SemanticPrimitivesHOL.MatchResult (List (Flapjack.AstHOL.VarN × FlatSem.Value))),
+      FlatSem.pmatch state pattern value bindings = result ∧ result ≠ .typeError →
+      PatternSemantics.pmatch (encodeRefs state) (encodePat pattern) (encodeValue value) =
+        if result = .noMatch then .failure else .success) ∧
+    (∀ (state : FlatSem.State C F) (patterns : List FlatLang.Pat)
+      (values : List FlatSem.Value) (bindings : List (Flapjack.AstHOL.VarN × FlatSem.Value))
+      (result : Flapjack.SemanticPrimitivesHOL.MatchResult (List (Flapjack.AstHOL.VarN × FlatSem.Value))),
+      FlatSem.pmatchList state patterns values bindings = result ∧ result ≠ .typeError →
+      PatternSemantics.pmatchList (encodeRefs state) (patterns.map encodePat) (values.map encodeValue) =
+        if result = .noMatch then .failure else .success) := by
+  constructor
+  · intro state pattern value bindings result ⟨run, safe⟩
+    have sim := encodePmatch_simulation state pattern value bindings (by simpa [run] using safe)
+    rw [run] at sim
+    cases result <;> simp_all [encodeMatchResult]
+  · intro state patterns values bindings result ⟨run, safe⟩
+    have sim := encodePmatchList_simulation state patterns values bindings (by simpa [run] using safe)
+    rw [run] at sim
+    cases result <;> simp_all [encodeMatchResult]
+
 /-- Encoded pattern lists retain the source row ordering and selected index;
 an original type error imposes no result obligation. -/
 theorem encodeRows_simulation {C F E : Type} (state : FlatSem.State C F) (value : FlatSem.Value)
@@ -275,14 +260,18 @@ theorem encodeRows_simulation {C F E : Type} (state : FlatSem.State C F) (value 
 
 /-- Following an encoded position can be replayed by evaluating the generated
 flat projections, yielding a value with the same encoding. -/
-theorem decodePos_simulation {C F : Type} (trace : BackendCommon.Tra)
-    (state : FlatSem.State C F) (env : FlatSem.Environment FlatSem.Value)
-    (position : PatternCommon.Position) (expression : FlatLang.Exp) (value : FlatSem.Value)
-    (encoded : PatternSemantics.Term)
-    (selected : PatternSemantics.appPos (encodeRefs state) position (encodeValue value) = some encoded)
-    (pure : FlatSem.evaluate env state [expression] = (state, .val [value])) :
-    ∃ result, encoded = encodeValue result ∧
-      FlatSem.evaluate env state [decodePos trace expression position] = (state, .val [result]) := by
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "decode_pos_simulation"
+  (fmap_as_finite_support_result_observations := [encodeRefs])]
+theorem decodePos_simulation {C F : Type} (state : FlatSem.State C F)
+    (env : FlatSem.Environment FlatSem.Value) (encoded : PatternSemantics.Term) (trace : BackendCommon.Tra) :
+    ∀ (position : PatternCommon.Position) (expression : FlatLang.Exp) (value : FlatSem.Value),
+    PatternSemantics.appPos (encodeRefs state) position (encodeValue value) = some encoded ∧
+      pureEvalTo state env expression value →
+    ∃ result, encoded = encodeValue result ∧ pureEvalTo state env (decodePos trace expression position) result := by
+  intro position expression value ⟨selected, pure⟩
+  change FlatSem.evaluate env state [expression] = (state, .val [value]) at pure
+  change ∃ result, encoded = encodeValue result ∧
+    FlatSem.evaluate env state [decodePos trace expression position] = (state, .val [result])
   induction position generalizing expression value with
   | emptyPos =>
     simp [PatternSemantics.appPos] at selected
@@ -319,12 +308,17 @@ theorem decodePos_simulation {C F : Type} (trace : BackendCommon.Tra)
 
 /-- A successful abstract atomic test is reproduced by its decoded flat
 expression on a purely evaluated value. -/
-theorem decodeTest_simulation {C F : Type} (trace : BackendCommon.Tra)
-    (state : FlatSem.State C F) (env : FlatSem.Environment FlatSem.Value)
-    (test : PatternSemantics.DTest) (expression : FlatLang.Exp) (value : FlatSem.Value) (answer : Bool)
-    (tested : PatternSemantics.dtTest test (encodeValue value) = some answer)
-    (pure : FlatSem.evaluate env state [expression] = (state, .val [value])) :
-    FlatSem.evaluate env state [decodeTest trace test expression] = (state, .val [FlatSem.boolValue answer]) := by
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "decode_test_simulation"]
+theorem decodeTest_simulation {C F : Type} (test : PatternSemantics.DTest)
+    (encoded : PatternSemantics.Term) (answer : Bool) (state : FlatSem.State C F)
+    (env : FlatSem.Environment FlatSem.Value) (expression : FlatLang.Exp) (value : FlatSem.Value)
+    (trace : BackendCommon.Tra)
+    (premises : PatternSemantics.dtTest test encoded = some answer ∧
+      pureEvalTo state env expression value ∧ encoded = encodeValue value) :
+    pureEvalTo state env (decodeTest trace test expression) (FlatSem.boolValue answer) := by
+  obtain ⟨tested, pure, rfl⟩ := premises
+  change FlatSem.evaluate env state [expression] = (state, .val [value]) at pure
+  change FlatSem.evaluate env state [decodeTest trace test expression] = (state, .val [FlatSem.boolValue answer])
   cases test with
   | tagLenEq tag length =>
     cases value with
@@ -364,7 +358,7 @@ theorem decodeTest_simulation {C F : Type} (trace : BackendCommon.Tra)
       · have result : decide (lit = actual) = answer := by
           simpa [encodeValue, PatternSemantics.dtTest, sameType] using tested
         have otherType : Flapjack.SemanticPrimitivesHOL.litSameType actual lit = true := by
-          simpa [litSameType_symm actual lit] using sameType
+          exact Flapjack.SemanticPrimitivesProps.litSameType_sym lit actual sameType
         have guard := evaluate_literal_equality trace expression env state actual lit pure otherType
         have equalBool : decide (actual = lit) = answer := by
           simpa [eq_comm] using result
@@ -384,27 +378,32 @@ theorem evaluate_bool_negation {C F : Type} (trace : BackendCommon.Tra)
 
 /-- A successful abstract guard evaluates to the same Boolean after decoding
 to flat expressions, including short-circuiting conjunction and disjunction. -/
-theorem decodeGuard_simulation {C F : Type} (trace : BackendCommon.Tra)
-    (state : FlatSem.State C F) (env : FlatSem.Environment FlatSem.Value)
-    (guard : PatternSemantics.DGuard) (expression : FlatLang.Exp) (value : FlatSem.Value) (answer : Bool)
-    (tested : PatternSemantics.dtEvalGuard (encodeRefs state) (encodeValue value) guard = some answer)
-    (pure : FlatSem.evaluate env state [expression] = (state, .val [value])) :
-    FlatSem.evaluate env state [decodeGuard trace expression guard] = (state, .val [FlatSem.boolValue answer]) := by
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "decode_guard_simulation"
+  (fmap_as_finite_support_result_observations := [encodeRefs])]
+theorem decodeGuard_simulation {C F : Type} (state : FlatSem.State C F) (value : FlatSem.Value)
+    (guard : PatternSemantics.DGuard) (env : FlatSem.Environment FlatSem.Value)
+    (expression : FlatLang.Exp) (trace : BackendCommon.Tra) : ∀ answer : Bool,
+    PatternSemantics.dtEvalGuard (encodeRefs state) (encodeValue value) guard = some answer ∧
+      pureEvalTo state env expression value →
+    pureEvalTo state env (decodeGuard trace expression guard) (FlatSem.boolValue answer) := by
+  intro answer ⟨tested, pure⟩
+  change FlatSem.evaluate env state [expression] = (state, .val [value]) at pure
+  change FlatSem.evaluate env state [decodeGuard trace expression guard] = (state, .val [FlatSem.boolValue answer])
   induction guard generalizing answer with
   | true_ =>
     simp [PatternSemantics.dtEvalGuard] at tested
     subst answer
-    simpa [decodeGuard] using evaluate_bool trace true env state
+    simpa [decodeGuard] using evaluate_bool env state trace true
   | posTest position test =>
     cases selected : PatternSemantics.appPos (encodeRefs state) position (encodeValue value) with
     | none => simp [PatternSemantics.dtEvalGuard, selected] at tested
     | some encoded =>
       have testResult : PatternSemantics.dtTest test encoded = some answer := by
         simpa [PatternSemantics.dtEvalGuard, selected] using tested
-      obtain ⟨field, encoding, fieldPure⟩ := decodePos_simulation trace state env position expression value encoded selected pure
+      obtain ⟨field, encoding, fieldPure⟩ := decodePos_simulation state env encoded trace position expression value ⟨selected, pure⟩
       subst encoded
-      simpa [decodeGuard] using decodeTest_simulation trace state env test (decodePos trace expression position)
-        field answer testResult fieldPure
+      simpa [decodeGuard, pureEvalTo] using decodeTest_simulation test (encodeValue field) answer state env
+        (decodePos trace expression position) field trace ⟨testResult, fieldPure, rfl⟩
   | not guard ih =>
     cases guardResult : PatternSemantics.dtEvalGuard (encodeRefs state) (encodeValue value) guard with
     | none => simp [PatternSemantics.dtEvalGuard, guardResult] at tested
@@ -425,7 +424,7 @@ theorem decodeGuard_simulation {C F : Type} (trace : BackendCommon.Tra)
         have guardPure := ihLeft false leftResult
         have branch := evaluate_if_pure_bool trace (decodeGuard trace expression left) (decodeGuard trace expression right)
           (FlatLang.mkBool trace false) false env state guardPure
-        simpa [decodeGuard, evaluate_smartIf, branch] using evaluate_bool trace false env state
+        simpa [decodeGuard, evaluate_smartIf, branch] using evaluate_bool env state trace false
       | true =>
         have rightResult : PatternSemantics.dtEvalGuard (encodeRefs state) (encodeValue value) right = some answer := by
           simpa [PatternSemantics.dtEvalGuard, leftResult] using tested
@@ -451,9 +450,27 @@ theorem decodeGuard_simulation {C F : Type} (trace : BackendCommon.Tra)
         have guardPure := ihLeft true leftResult
         have branch := evaluate_if_pure_bool trace (decodeGuard trace expression left) (FlatLang.mkBool trace true)
           (decodeGuard trace expression right) true env state guardPure
-        simpa [decodeGuard, evaluate_smartIf, branch] using evaluate_bool trace true env state
+        simpa [decodeGuard, evaluate_smartIf, branch] using evaluate_bool env state trace true
+
+private def toBroadGuardRefs (refs : HolFiniteMapExact Nat PatternSemantics.Term) :
+    Nat → Option PatternSemantics.Term := refs.lookup
+
+private def ofBroadGuardRefs (lookup : Nat → Option PatternSemantics.Term)
+    (support : ∃ keys : List Nat, ∀ key, lookup key ≠ none → key ∈ keys) :
+    HolFiniteMapExact Nat PatternSemantics.Term := ⟨lookup, support⟩
+
+/-- The canonical finite-map parameter roundtrips through its lookup view. -/
+theorem holFmapAsFiniteSupportParamWitness_simpGuard_preserves_refs
+    (refs : HolFiniteMapExact Nat PatternSemantics.Term) (key : Nat) :
+    (ofBroadGuardRefs (toBroadGuardRefs refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroadGuardRefs (toBroadGuardRefs refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroadGuardRefs (toBroadGuardRefs refs) refs.finiteSupport = refs := by
+  cases refs
+  exact ⟨rfl, rfl, rfl⟩
 
 /-- Guard simplification preserves every successful abstract guard outcome. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "simp_guard_thm"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem simpGuard_preserves (refs : HolFiniteMapExact Nat PatternSemantics.Term)
     (value : PatternSemantics.Term) (guard : PatternSemantics.DGuard) (answer : Bool)
     (tested : PatternSemantics.dtEvalGuard refs value guard = some answer) :
@@ -548,21 +565,27 @@ theorem simpGuard_preserves (refs : HolFiniteMapExact Nat PatternSemantics.Term)
 /-- A successfully evaluated abstract decision tree selects the same branch
 after decoding to flat expressions. Type-failure trees are excluded by the
 successful abstract evaluation premise. -/
-theorem decodeDtree_simulation {C F : Type} (trace : BackendCommon.Tra)
-    (branches : Spt FlatLang.Exp) (expression default : FlatLang.Exp)
-    (state : FlatSem.State C F) (env : FlatSem.Environment FlatSem.Value)
-    (value : FlatSem.Value) (tree : PatternSemantics.DTree) (result : PatternCommon.MatchResult)
-    (evaluated : PatternSemantics.dtEval (encodeRefs state) (encodeValue value) tree = some result)
-    (pure : FlatSem.evaluate env state [expression] = (state, .val [value])) :
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "decode_dtree_simulation"
+  (fmap_as_finite_support_result_observations := [encodeRefs])]
+theorem decodeDtree_simulation {C F : Type} (state : FlatSem.State C F) (value : FlatSem.Value)
+    (tree : PatternSemantics.DTree) (result : PatternCommon.MatchResult)
+    (env : FlatSem.Environment FlatSem.Value) (expression : FlatLang.Exp) (trace : BackendCommon.Tra)
+    (branches : Spt FlatLang.Exp) (default : FlatLang.Exp)
+    (premises : PatternSemantics.dtEval (encodeRefs state) (encodeValue value) tree = some result ∧
+      pureEvalTo state env expression value) :
     FlatSem.evaluate env state [decodeDtree trace branches expression default tree] =
       FlatSem.evaluate env state [match result with
-        | .success index => (sptLookup index branches).getD default
+        | .success index => match sptLookup index branches with
+          | some branch => branch
+          | none => default
         | .failure => default] := by
+  obtain ⟨evaluated, pure⟩ := premises
+  change FlatSem.evaluate env state [expression] = (state, .val [value]) at pure
   induction tree generalizing result with
   | leaf index =>
     simp [PatternSemantics.dtEval] at evaluated
     subst result
-    rfl
+    cases found : sptLookup index branches <;> simp [decodeDtree, found]
   | fail =>
     simp [PatternSemantics.dtEval] at evaluated
     subst result
@@ -573,7 +596,7 @@ theorem decodeDtree_simulation {C F : Type} (trace : BackendCommon.Tra)
     | none => simp [PatternSemantics.dtEval, guardEval] at evaluated
     | some b =>
       have simplified := simpGuard_preserves (encodeRefs state) (encodeValue value) guard b guardEval
-      have decoded := decodeGuard_simulation trace state env (simpGuard guard) expression value b simplified pure
+      have decoded := decodeGuard_simulation state value (simpGuard guard) env expression trace b ⟨simplified, pure⟩
       cases b with
       | false =>
         have noEval : PatternSemantics.dtEval (encodeRefs state) (encodeValue value) no = some result := by

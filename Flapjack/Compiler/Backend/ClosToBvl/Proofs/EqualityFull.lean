@@ -110,7 +110,7 @@ theorem blockEqual_dispatch {C F : Type} {f : HolFiniteMapExact Nat Nat}
               have targetResult := same.symm.trans result
               simp [ClosSem.doApp, ClosSem.applyBlock, result] at run
               rcases run with ⟨rfl, rfl⟩
-              refine ⟨BvlSem.boolValue flag, ?_, rfl, vRel_bool flag⟩
+              refine ⟨BvlSem.boolValue flag, ?_, rfl, (vRel_bool_iff _ _ _ _ flag (.number 0) _).1.mpr rfl⟩
               simp [BvlSem.doApp, BvlSem.applyBlock, targetResult]
       | cons c rest => simp [ClosSem.doApp, ClosSem.applyBlock] at run
 

@@ -3,11 +3,6 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalWeakening
 /-! Finite-map growth lemmas for source-to-flat global environments. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 
-/-- Lookup characterization of finite-map submap, over the canonical
-finite-support carrier. -/
-def finiteSubmap {α β : Type} (f g : HolFiniteMapExact α β) : Prop :=
-  ∀ key value, f.lookup key = some value → g.lookup key = some value
-
 /-- Canonical finite-map update using HOL equality. -/
 noncomputable def finiteUpdate {α β : Type} (f : HolFiniteMapExact α β) (key : α) (value : β) :
     HolFiniteMapExact α β := by
@@ -103,12 +98,5 @@ theorem finiteSubmap_update {α β : Type} (f : HolFiniteMapExact α β) (key : 
       exact atKey
     · apply old k v
       simpa [finiteUpdate, finiteErase, FUPDATE_HOL, FDOMSUB_HOL, eq] using lookup
-
-/-- The original subglobal and submap hypotheses imply the concrete growth
-condition used by the factored source-to-flat simulation. -/
-theorem GlobalGrowth.ofSubmaps (old new : GlobalEnv) (slots : subglobals old.v new.v)
-    (constructors : finiteSubmap old.c new.c) (types : finiteSubmap old.tys new.tys) :
-    GlobalGrowth old new :=
-  GlobalGrowth.ofSubglobals old new slots constructors types
 
 end Flapjack.Compiler.Backend.SourceToFlat

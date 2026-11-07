@@ -15,6 +15,12 @@ the components `p.1`, `p.2` (HOL `UNCURRY`).
 
 namespace Flapjack
 
+/-- HOL `RPROD_DEF`: pair two independent binary relations componentwise. -/
+@[hol "HOL/src/coretypes/pairScript.sml" "RPROD_DEF"]
+def holRprod {α β γ δ : Type} (R1 : α → β → Prop) (R2 : γ → δ → Prop)
+    (p : α × γ) (q : β × δ) : Prop :=
+  R1 p.1 q.1 ∧ R2 p.2 q.2
+
 /-- Exact HOL `LEX_DEF` (`pairScript.sml:786-791`):
 `(R1 LEX R2) = \(s,t) (u,v). R1 s u \/ (s = u) /\ R2 t v`. -/
 @[hol "HOL/src/coretypes/pairScript.sml" "LEX_DEF"]

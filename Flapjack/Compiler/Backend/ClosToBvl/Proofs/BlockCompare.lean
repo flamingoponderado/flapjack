@@ -54,7 +54,7 @@ theorem blockCompare_dispatch {C F : Type} {f : HolFiniteMapExact Nat Nat}
             have eq := vRel_number_inv head
             subst_vars
             rcases run with ⟨rfl, rfl⟩
-            exact ⟨_, rfl, vRel_bool _⟩
+            exact ⟨_, rfl, (vRel_bool_iff _ _ _ _ _ (.number 0) _).1.mpr rfl⟩
       | cons b rest => simp [BlockCompare.op, ClosSem.doApp, ClosSem.applyBlock] at run
   | wordEq w =>
     cases args with
@@ -70,7 +70,7 @@ theorem blockCompare_dispatch {C F : Type} {f : HolFiniteMapExact Nat Nat}
             have eq := vRel_word64_inv head
             subst_vars
             rcases run with ⟨rfl, rfl⟩
-            exact ⟨_, rfl, vRel_bool _⟩
+            exact ⟨_, rfl, (vRel_bool_iff _ _ _ _ _ (.number 0) _).1.mpr rfl⟩
       | cons b rest => simp [BlockCompare.op, ClosSem.doApp, ClosSem.applyBlock] at run
   | stringEq text =>
     cases args with
@@ -85,7 +85,7 @@ theorem blockCompare_dispatch {C F : Type} {f : HolFiniteMapExact Nat Nat}
             cases tail
             obtain ⟨ptr, rfl, found⟩ := vRel_byteVector_inv head
             rcases run with ⟨rfl, rfl⟩
-            refine ⟨_, ?_, vRel_bool _⟩
+            refine ⟨_, ?_, (vRel_bool_iff _ _ _ _ _ (.number 0) _).1.mpr rfl⟩
             simp [compileOp, BvlSem.doApp, BvlSem.applyBlock, found]
       | cons b rest => simp [BlockCompare.op, ClosSem.doApp, ClosSem.applyBlock] at run
   | bounds =>
@@ -112,8 +112,8 @@ theorem blockCompare_dispatch {C F : Type} {f : HolFiniteMapExact Nat Nat}
                   have lengths := fieldsRel.length_eq
                   rcases run with ⟨rfl, rfl⟩
                   refine ⟨_, rfl, ?_⟩
-                  simpa [lengths] using (vRel_bool (maxApp := s.maxApp) (f := f) (refs := t.refs) (code := t.code)
-                      (decide (0 ≤ index ∧ index < Int.ofNat fields.length)))
+                  simpa [lengths] using ((vRel_bool_iff s.maxApp f t.refs t.code (decide (0 ≤ index ∧ index < Int.ofNat fields.length)) (.number 0)
+                      (BvlSem.boolValue (decide (0 ≤ index ∧ index < Int.ofNat fields.length)))).1.mpr rfl)
         | cons c rest => simp [BlockCompare.op, ClosSem.doApp, ClosSem.applyBlock] at run
 
 /-- These comparisons fail only with a type error. -/

@@ -116,6 +116,8 @@ theorem stateRel_shiftInstall {C F : Type} {source : FlatSem.State C F} {target 
   exact ⟨maxApp, ffi, clock, store, globals, values, installConfigRel_shift _ _ _ install offset⟩
 
 /-- A related scalar reference is represented by a singleton value array. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "lookup_refv"
+  (fmap_as_finite_support := [refs, code])]
 theorem lookup_ref {C F : Type} {source : FlatSem.State C F} {target : ClosSem.State C F}
     {index value} (related : StateRel source target)
     (found : storeLookup index source.refs = some (.refv value)) :
@@ -125,6 +127,8 @@ theorem lookup_ref {C F : Type} {source : FlatSem.State C F} {target : ClosSem.S
   simpa [found] using store
 
 /-- A related byte array has exactly the same contents. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "lookup_byte_array"
+  (fmap_as_finite_support := [refs, code])]
 theorem lookup_byteArray {C F : Type} {source : FlatSem.State C F} {target : ClosSem.State C F}
     {index bytes} (related : StateRel source target)
     (found : storeLookup index source.refs = some (.w8array bytes)) :
@@ -134,6 +138,8 @@ theorem lookup_byteArray {C F : Type} {source : FlatSem.State C F} {target : Clo
   simpa [found] using store
 
 /-- A related value array has elementwise related contents. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "lookup_array"
+  (fmap_as_finite_support := [refs, code])]
 theorem lookup_array {C F : Type} {source : FlatSem.State C F} {target : ClosSem.State C F}
     {index values} (related : StateRel source target)
     (found : storeLookup index source.refs = some (.varray values)) :
@@ -143,6 +149,8 @@ theorem lookup_array {C F : Type} {source : FlatSem.State C F} {target : ClosSem
   simpa [found] using store
 
 /-- A related thunk retains its mode and has a related payload. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "lookup_thunk"
+  (fmap_as_finite_support := [refs, code])]
 theorem lookup_thunk {C F : Type} {source : FlatSem.State C F} {target : ClosSem.State C F}
     {index mode value} (related : StateRel source target)
     (found : storeLookup index source.refs = some (.thunk mode value)) :
@@ -152,13 +160,23 @@ theorem lookup_thunk {C F : Type} {source : FlatSem.State C F} {target : ClosSem
   simpa [found] using store
 
 /-- Decrementing both clocks preserves the state relation. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "state_rel_dec_clock"
+  (fmap_as_finite_support := [refs, code])]
 theorem stateRel_decClock {C F : Type} {source : FlatSem.State C F} {target : ClosSem.State C F}
     (related : StateRel source target) :
-    StateRel (FlatSem.decClock source) (ClosSem.decClock 1 target) := by
+    source.clock = target.clock ∧ StateRel (FlatSem.decClock source) (ClosSem.decClock 1 target) := by
   rcases related with ⟨maxApp, ffi, clock, store, globals, values, install⟩
-  exact ⟨maxApp, ffi, by simp [FlatSem.decClock, ClosSem.decClock, clock], store, globals, values, install⟩
+  exact ⟨clock, maxApp, ffi, by simp [FlatSem.decClock, ClosSem.decClock, clock], store, globals, values, install⟩
+
+/-- The closure state roundtrips through its canonical finite-map view. -/
+theorem holFmapAsFiniteSupportRelationWitness_State {C F : Type} :
+    (∀ s : ClosSem.StateBroad C F, (ClosSem.State.ofBroad s).toBroad = s) ∧
+      (∀ s : ClosSem.State C F, ClosSem.State.ofBroad s.toBroad = s) :=
+  ClosSem.holFmapAsFiniteSupportRelationWitness_State
 
 /-- Initial closure state used in the original flat-to-closure proof. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "initial_state'_def"
+  (fmap_as_finite_support_relation := [State.refs, State.code, code])]
 def initialStateProofSide {C F : Type} (interpreter : Bool) (ffi : HolFfiState F)
     (maxApp : Nat) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
     (oracle : ClosSem.CompileOracle C) (compiler : ClosSem.Compiler C) (clock : Nat) : ClosSem.State C F :=
@@ -167,12 +185,15 @@ def initialStateProofSide {C F : Type} (interpreter : Bool) (ffi : HolFfiState F
 
 /-- Initial states satisfy the proof-side relation when the installation
 configurations agree and at least unary calls are supported. -/
-theorem initialStates_related {C F : Type} (interpreter : Bool) (ffi : HolFfiState F)
-    (maxApp clock : Nat) (config : FlatSem.InstallConfig C)
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "state_rel_initial_state"
+  (fmap_as_finite_support := [refs, code])]
+theorem initialStates_related {C F : Type} (maxApp : Nat) (config : FlatSem.InstallConfig C)
     (oracle : ClosSem.CompileOracle C) (compiler : ClosSem.Compiler C)
-    (positive : 0 < maxApp) (install : installConfigRel config oracle compiler) :
+    (ffi : HolFfiState F) (clock : Nat) (interpreter : Bool)
+    (premises : 0 < maxApp ∧ installConfigRel config oracle compiler) :
     StateRel (FlatSem.initialState ffi clock config)
-      (initialStateProofSide interpreter ffi maxApp HolFiniteMapExact.empty oracle compiler clock) := by
+      (initialStateProofSide interpreter ffi maxApp HolFiniteMapExact.empty oracle compiler clock : ClosSem.State C F) := by
+  obtain ⟨positive, install⟩ := premises
   refine ⟨positive, rfl, rfl, ?_, by simp [initialStateProofSide, ClosSem.initialState], ?_, install⟩
   · intro index
     simp [FlatSem.initialState, initialStateProofSide, ClosSem.initialState, HolFiniteMapExact.empty]

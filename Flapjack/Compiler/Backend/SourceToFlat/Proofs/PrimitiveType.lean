@@ -6,12 +6,21 @@ namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.Compiler.Backend.BackendCommon
 open Flapjack.Basis.Pure.MlString
 
-/-- Primitive type checks are preserved by related values. This is infrastructure
-over the factored relation, whose full HOL correspondence remains open. -/
-theorem valueRel_checkType (genv : GlobalEnv) (ok : genvCOk genv.c)
+namespace PrimitiveTypePort
+/-- The global environment has the canonical finite-map roundtrip. -/
+theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
+    GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env :=
+  GlobalEnv.holFmapAsFiniteSupportWitness env
+end PrimitiveTypePort
+
+/-- Primitive type checks are preserved by related values. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "v_rel_check_type"
+  (fmap_as_finite_support := [c, tys])]
+theorem valueRel_checkType (genv : GlobalEnv)
     (typ : PrimType) (source : SemanticPrimitivesHOL.Value) (flat : FlatSem.Value)
-    (rel : ValueRel genv source flat) (checked : SemanticPrimitivesHOL.checkType typ source = true) :
+    (premises : ValueRel genv source flat ∧ genvCOk genv.c ∧ SemanticPrimitivesHOL.checkType typ source = true) :
     FlatSem.checkType typ flat = true := by
+  obtain ⟨rel, ok, checked⟩ := premises
   cases rel with
   | literal lit =>
     cases typ with
@@ -47,12 +56,14 @@ theorem valueRel_checkType (genv : GlobalEnv) (ok : genvCOk genv.c)
   | closure => cases typ <;> simp_all [SemanticPrimitivesHOL.checkType]
   | recclosure => cases typ <;> simp_all [SemanticPrimitivesHOL.checkType]
   | topRecclosure => cases typ <;> simp_all [SemanticPrimitivesHOL.checkType]
-/-- Checked source values relate to their flat conversions. This is infrastructure
-over the factored relation, whose full HOL correspondence remains open. -/
-theorem checked_valueToFlat_related (genv : GlobalEnv) (ok : genvCOk genv.c)
-    (typ : PrimType) (source : SemanticPrimitivesHOL.Value)
-    (checked : SemanticPrimitivesHOL.checkType typ source = true) :
+/-- Checked source values relate to their flat conversions. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "check_type_IMP_v_rel"
+  (fmap_as_finite_support := [c, tys])]
+theorem checked_valueToFlat_related (genv : GlobalEnv) (typ : PrimType)
+    (source : SemanticPrimitivesHOL.Value)
+    (premises : SemanticPrimitivesHOL.checkType typ source = true ∧ genvCOk genv.c) :
     ValueRel genv source (FlatSem.valueToFlat source) := by
+  obtain ⟨checked, ok⟩ := premises
   cases source with
   | litv lit => exact .literal genv lit
   | conv stamp values =>
@@ -83,12 +94,14 @@ theorem checked_valueToFlat_related (genv : GlobalEnv) (ok : genvCOk genv.c)
               · simpa [FlatSem.boolValue, boolToTag, boolTypeNum] using ok.1.2
   | _ => cases typ <;> simp_all [SemanticPrimitivesHOL.checkType]
 
-/-- Converting a related flat value back recovers a checked source value. This is
-infrastructure over the factored relation, whose full HOL correspondence remains open. -/
-theorem checked_flatToValue_related (genv : GlobalEnv) (ok : genvCOk genv.c)
-    (typ : PrimType) (source : SemanticPrimitivesHOL.Value) (flat : FlatSem.Value)
-    (checked : SemanticPrimitivesHOL.checkType typ source = true)
-    (rel : ValueRel genv source flat) : FlatSem.flatToValue flat = source := by
+/-- Converting a related flat value back recovers a checked source value. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "check_type_v_rel_flat_to_v"
+  (fmap_as_finite_support := [c, tys])]
+theorem checked_flatToValue_related (genv : GlobalEnv) (typ : PrimType)
+    (source : SemanticPrimitivesHOL.Value) (flat : FlatSem.Value)
+    (premises : SemanticPrimitivesHOL.checkType typ source = true ∧
+      ValueRel genv source flat ∧ genvCOk genv.c) : FlatSem.flatToValue flat = source := by
+  obtain ⟨checked, rel, ok⟩ := premises
   cases rel with
   | literal lit => rfl
   | constructor stamp ctor sources flats fields lookup =>
@@ -121,18 +134,20 @@ theorem checked_flatToValue_related (genv : GlobalEnv) (ok : genvCOk genv.c)
   | closure => cases typ <;> simp_all [SemanticPrimitivesHOL.checkType]
   | recclosure => cases typ <;> simp_all [SemanticPrimitivesHOL.checkType]
   | topRecclosure => cases typ <;> simp_all [SemanticPrimitivesHOL.checkType]
-/-- Conversion back to source values preserves a pointwise-related, checked list.
-This is infrastructure over the factored relation, whose HOL correspondence remains open. -/
-theorem checked_flatToValue_list (genv : GlobalEnv) (ok : genvCOk genv.c)
-    (typ : PrimType) (xs : List SemanticPrimitivesHOL.Value) (ys : List FlatSem.Value)
-    (checked : xs.all (SemanticPrimitivesHOL.checkType typ) = true)
-    (related : List.Forall₂ (ValueRel genv) xs ys) :
+/-- Conversion back to source values preserves a pointwise-related, checked list. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "check_type_v_rel_MAP_flat_to_v"
+  (fmap_as_finite_support := [c, tys])]
+theorem checked_flatToValue_list (genv : GlobalEnv) (typ : PrimType)
+    (xs : List SemanticPrimitivesHOL.Value) (ys : List FlatSem.Value)
+    (premises : xs.all (SemanticPrimitivesHOL.checkType typ) = true ∧
+      List.Forall₂ (ValueRel genv) xs ys ∧ genvCOk genv.c) :
     ys.map FlatSem.flatToValue = xs := by
+  obtain ⟨checked, related, ok⟩ := premises
   induction related with
   | nil => rfl
   | cons head tail ih =>
     simp only [List.all_cons, Bool.and_eq_true] at checked
-    simp only [List.map_cons, checked_flatToValue_related genv ok typ _ _ checked.1 head,
+    simp only [List.map_cons, checked_flatToValue_related genv typ _ _ ⟨checked.1, head, ok⟩,
       ih checked.2]
 
 /-- Related Boolean constructors under the original constructor-map assumptions.

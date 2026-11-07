@@ -100,12 +100,14 @@ theorem decsPreserve_local {F : Type} (locals locals' body body' : List Dec)
       rw [replacement]
       exact bodyIH next last (extendDecEnv localEnv env) result bodyRun safe
 
-/-- A successful lifting sequence preserves evaluation of its declaration.
-This Flapjack helper specializes the repeated-lifting theorem. -/
-theorem decsPreserve_lifted {F : Type} (d : Dec) (pre : List Dec) (final : Dec)
-    (lifted : liftLets [] d = some (pre, final)) :
-    DecsPreserve (F := F) [d] [.dlocal pre [final]] := by
-  intro state next env result source safe
+/-- Starting with no preceding declarations preserves a successful lift. -/
+@[hol "cakeml/compiler/backend/proofs/source_letProofScript.sml" "evaluate_lift_start"]
+theorem evaluate_lift_start {F : Type} (d : Dec) (state : State F) (env : SemEnv Value)
+    (next : State F) (result : Result (SemEnv Value) Value) (pre : List Dec) (final : Dec)
+    (premises : evaluateDecs state env [d] = (next, result) ∧
+      result ≠ .err (.abort .typeError) ∧ liftLets [] d = some (pre, final)) :
+    evaluateDecs state env [.dlocal pre [final]] = (next, result) := by
+  obtain ⟨source, safe, lifted⟩ := premises
   let empty : SemEnv Value := ⟨nsEmpty, nsEmpty⟩
   have emptyRun : evaluateDecs state env ([] : List Dec).reverse = (state, .val empty) := by
     simp only [List.reverse_nil, evaluateDecs]
@@ -113,54 +115,53 @@ theorem decsPreserve_lifted {F : Type} (d : Dec) (pre : List Dec) (final : Dec)
   have emptyExtend : extendDecEnv empty env = env := by
     cases env with
     | mk vars constructors => cases vars; cases constructors; rfl
-  apply evaluate_lift_lets [] d state state next env empty result pre final emptyRun
-  · simpa only [emptyExtend] using source
-  · exact safe
-  · exact lifted
-
-/-- All declarations compiled by source let-lifting preserve their clocked
-evaluation whenever the source result is not a type error. This Flapjack
-predicate form assembles the result-shaped HOL theorem below. -/
-theorem compileDecs_preserve {F : Type} (ds : List Dec) : DecsPreserve (F := F) ds (compileDecs ds) := by
-  induction ds using compileDecs.induct with
-  | case1 =>
-    intro state next env result source safe
-    simpa [compileDecs] using source
-  | case2 d ds pre final lifted ih =>
-    have head := decsPreserve_lifted (F := F) d pre final lifted
-    have compiled : compileDecs (d :: ds) = .dlocal pre [final] :: compileDecs ds := by
-      rw [compileDecs.eq_def]
-      dsimp only
-      rw [lifted]
-    rw [compiled]
-    exact decsPreserve_cons d (.dlocal pre [final]) ds (compileDecs ds) head ih
-  | case3 ds name inner lifted innerIH tailIH =>
-    have head := decsPreserve_module name inner (compileDecs inner) innerIH
-    simpa only [compileDecs, lifted] using decsPreserve_cons (.dmod name inner) (.dmod name (compileDecs inner))
-      ds (compileDecs ds) head tailIH
-  | case4 ds locals body lifted localIH bodyIH tailIH =>
-    have head := decsPreserve_local locals (compileDecs locals) body (compileDecs body) localIH bodyIH
-    simpa only [compileDecs, lifted] using decsPreserve_cons (.dlocal locals body)
-      (.dlocal (compileDecs locals) (compileDecs body)) ds (compileDecs ds) head tailIH
-  | case5 d ds lifted noMod noLocal tailIH =>
-    have head : DecsPreserve (F := F) [d] [d] := by
-      intro state next env result source safe
-      exact source
-    have compiled : compileDecs (d :: ds) = d :: compileDecs ds := by
-      cases d with
-      | dmod name inner => exact (noMod name inner rfl).elim
-      | dlocal locals body => exact (noLocal locals body rfl).elim
-      | _ => simp [compileDecs, lifted]
-    rw [compiled]
-    exact decsPreserve_cons d d ds (compileDecs ds) head tailIH
+  apply evaluate_lift_lets [] d state env state empty next result pre final
+  exact ⟨emptyRun, by simpa only [emptyExtend] using source, safe, lifted⟩
 
 /-- The original declaration-list evaluation preservation theorem for source
 let-lifting, including the non-type-error hypothesis. -/
 @[hol "cakeml/compiler/backend/proofs/source_letProofScript.sml" "compile_decs_correct"]
-theorem compile_decs_correct {F : Type} (state next : State F) (env : SemEnv Value)
-    (ds : List Dec) (result : Result (SemEnv Value) Value)
-    (source : evaluateDecs state env ds = (next, result)) (safe : result ≠ .err (.abort .typeError)) :
-    evaluateDecs state env (compileDecs ds) = (next, result) :=
-  compileDecs_preserve ds state next env result source safe
+theorem compile_decs_correct {F : Type} (state : State F) (env : SemEnv Value)
+    (ds : List Dec) (next : State F) (result : Result (SemEnv Value) Value)
+    (premises : evaluateDecs state env ds = (next, result) ∧ result ≠ .err (.abort .typeError)) :
+    evaluateDecs state env (compileDecs ds) = (next, result) := by
+  obtain ⟨source, safe⟩ := premises
+  have preserve : ∀ ds : List Dec, DecsPreserve (F := F) ds (compileDecs ds) := by
+    intro ds
+    induction ds using compileDecs.induct with
+    | case1 =>
+      intro state next env result source safe
+      simpa [compileDecs] using source
+    | case2 d ds pre final lifted ih =>
+      have head : DecsPreserve (F := F) [d] [.dlocal pre [final]] := by
+        intro state next env result source safe
+        exact evaluate_lift_start d state env next result pre final ⟨source, safe, lifted⟩
+      have compiled : compileDecs (d :: ds) = .dlocal pre [final] :: compileDecs ds := by
+        rw [compileDecs.eq_def]
+        dsimp only
+        rw [lifted]
+      rw [compiled]
+      exact decsPreserve_cons d (.dlocal pre [final]) ds (compileDecs ds) head ih
+    | case3 ds name inner lifted innerIH tailIH =>
+      have head := decsPreserve_module name inner (compileDecs inner) innerIH
+      simpa only [compileDecs, lifted] using decsPreserve_cons (.dmod name inner) (.dmod name (compileDecs inner))
+        ds (compileDecs ds) head tailIH
+    | case4 ds locals body lifted localIH bodyIH tailIH =>
+      have head := decsPreserve_local locals (compileDecs locals) body (compileDecs body) localIH bodyIH
+      simpa only [compileDecs, lifted] using decsPreserve_cons (.dlocal locals body)
+        (.dlocal (compileDecs locals) (compileDecs body)) ds (compileDecs ds) head tailIH
+    | case5 d ds lifted noMod noLocal tailIH =>
+      have head : DecsPreserve (F := F) [d] [d] := by
+        intro state next env result source safe
+        exact source
+      have compiled : compileDecs (d :: ds) = d :: compileDecs ds := by
+        cases d with
+        | dmod name inner => exact (noMod name inner rfl).elim
+        | dlocal locals body => exact (noLocal locals body rfl).elim
+        | _ => simp [compileDecs, lifted]
+      rw [compiled]
+      exact decsPreserve_cons d d ds (compileDecs ds) head tailIH
+
+  exact preserve ds state next env result source safe
 
 end Flapjack.Compiler.Backend.SourceLet

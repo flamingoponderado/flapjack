@@ -168,27 +168,10 @@ private theorem interpreter_noMti : noMti ClosInterp.closInterpreter := by
     ClosInterp.interpreterCall_eq, ClosInterp.interpreterCallList_eq,
     ClosInterp.interpreterIsCase_eq, noMti, noMtiList, noMtiFuns]
 
-private theorem compileInit_noMti (b : Bool) : noMti (ClosInterp.compileInit b) := by
+/-- Interpreter initialization satisfies the pre-multi-argument syntax invariant. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "no_mti_compile_init"]
+theorem compileInit_noMti (b : Bool) : noMti (ClosInterp.compileInit b) := by
   cases b <;> simp [ClosInterp.compileInit, ClosInterp.interpreterCons_eq,
     ClosInterp.interpreterVar_eq, noMti, noMtiList, interpreter_noMti]
-
-/-- Flapjack helper: normal flat-to-closure compilation and interpreter
-attachment produce pre-MTI syntax. The HOL theorem additionally states two
-other syntax properties. -/
-theorem compileProg_noMti (ds : List FlatLang.Exp) :
-    ∀ e ∈ compileProg ds, noMti e := by
-  have safe := compileDecs_noMti ds
-  simpa [compileProg, ClosInterp.attachInterpreter, compileInit_noMti] using safe
-
-/-- Flapjack helper: the incremental path produces pre-MTI syntax. The HOL
-theorem additionally states two other syntax properties. -/
-theorem incCompileDecs_noMti {α : Type} (ds : List FlatLang.Exp) :
-    ∀ e ∈ (incCompileDecs (α := α) ds).1, noMti e := by
-  intro e member
-  apply ClosInterp.insertInterp_noMti e _ member
-  intro x sourceMember
-  rcases List.mem_append.mp sourceMember with original | unit
-  · exact compileDecs_noMti ds x original
-  · exact compileDecs_noMti [.con .none none []] x unit
 
 end Flapjack.Compiler.Backend.FlatToClos

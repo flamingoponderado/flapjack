@@ -13,6 +13,7 @@ val _ = show_thm "value_rel_rules=" source_to_flatProofTheory.v_rel_rules;
 val _ = show_thm "value_rel_induction=" source_to_flatProofTheory.v_rel_ind;
 val _ = show_thm "value_rel_cases=" source_to_flatProofTheory.v_rel_cases;
 val _ = show_thm "env_rel_LIST_REL=" source_to_flatProofTheory.env_rel_LIST_REL;
+val _ = show_thm "env_all_rel_cases_typed=" source_to_flatProofTheory.env_all_rel_cases;
 
 (* Replay the original local case-equation construction. *)
 open source_to_flatProofTheory;

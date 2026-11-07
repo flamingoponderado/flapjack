@@ -50,6 +50,28 @@ inductive EnvRel : FlatSem.Environment FlatSem.Value → List (Option MlString) 
       EnvRel env names values
 end
 
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "v_rel_Boolv"]
+theorem vRel_bool (b : Bool) (target : ClosSem.Value) :
+    ValueRel (FlatSem.boolValue b) target ↔ target = ClosSem.boolValue b := by
+  constructor
+  · intro related
+    cases b <;> cases related with
+      | con fields => cases fields; rfl
+  · intro equal
+    subst target
+    cases b <;> exact .con .nil
+
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "v_rel_Unitv"]
+theorem vRel_unit (target : ClosSem.Value) :
+    ValueRel FlatSem.unitValue target ↔ target = .block 0 [] := by
+  constructor
+  · intro related
+    cases related with
+    | tuple fields => cases fields; rfl
+  · intro equal
+    subst target
+    exact .tuple .nil
+
 /-- The positivity-friendly environment rule is equivalent to requiring a
 related target value at every source lookup. This is a Lean representation
 lemma, not a cross-language correspondence proof. -/
@@ -75,16 +97,16 @@ theorem envRel_iff_lookup (env : FlatSem.Environment FlatSem.Value)
       cases h'
       exact related
 
-/-- Related element lists encode to related flat and closure list values.
-This proof-side lemma follows the corresponding HOL list conversion lemma. -/
+/-- Related element lists encode to related flat and closure list values. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "IMP_v_rel_to_list"]
 theorem listToValue_related {source target} (related : List.Forall₂ ValueRel source target) :
     ValueRel (FlatSem.listToValue source) (ClosSem.listToValue target) := by
   induction related with
   | nil => exact .con .nil
   | cons head tail ih => exact .con (.cons head (.cons ih .nil))
 
-/-- Decoding a related flat list yields a related closure list. This uses the
-proof-side relation, whose HOL correspondence remains under review. -/
+/-- Decoding a related flat list yields a related closure list. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "v_rel_to_list"]
 theorem valueToList_related (source : FlatSem.Value) (target : ClosSem.Value)
     (sourceValues : List FlatSem.Value) (related : ValueRel source target)
     (decoded : FlatSem.valueToList source = some sourceValues) :
@@ -139,25 +161,43 @@ theorem valueToList_related (source : FlatSem.Value) (target : ClosSem.Value)
     simp [FlatSem.valueToList] at decoded
 termination_by sizeOf source
 
-/-- A related binding can be pushed onto both environments, preserving
-shadowing and de Bruijn indices. This is proof-side infrastructure. -/
-theorem envRel_cons {env names values name source target}
-    (related : EnvRel env names values) (head : ValueRel source target) :
-    EnvRel { env with v := (name, source) :: env.v } (some name :: names) (target :: values) := by
+/-- Flapjack rendering of a type-changing update of the flat environment’s
+single value field; the previous field value is discarded. -/
+def replaceEnvValues {α β : Type} (_env : FlatSem.Environment α)
+    (values : List (VarN × β)) : FlatSem.Environment β := ⟨values⟩
+
+/-- A related binding extends both environments, preserving shadowing. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "env_rel_CONS"]
+theorem envRel_cons {α : Type} {env : FlatSem.Environment α}
+    {xs : List (VarN × FlatSem.Value)} {names : List (Option MlString)}
+    {values : List ClosSem.Value} {name : VarN} {source : FlatSem.Value} {target : ClosSem.Value}
+    (related : EnvRel (replaceEnvValues env xs) names values) (head : ValueRel source target) :
+    EnvRel (replaceEnvValues env ((name, source) :: xs)) (some name :: names) (target :: values) := by
   apply (envRel_iff_lookup _ _ _).2
   intro key value found
   by_cases same : key = name
   · subst key
-    simp at found
+    simp [replaceEnvValues] at found
     subst value
     exact ⟨target, by simp [nameIndex], head⟩
-  · have previous : env.v.lookup key = some value := by
+  · have previous : xs.lookup key = some value := by
       have different : (key == name) = false := by simp [same]
-      simpa [List.lookup_cons, different] using found
+      simpa [replaceEnvValues, List.lookup_cons, different] using found
     obtain ⟨target', targetFound, targetRelated⟩ :=
-      (envRel_iff_lookup env names values).1 related key value previous
+      (envRel_iff_lookup _ names values).1 related key value previous
     refine ⟨target', ?_, targetRelated⟩
     simpa [nameIndex, same] using targetFound
+
+/-- A type-changing value-field update can be extended by related values. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "env_rel_CONS_upd"]
+theorem envRel_cons_upd {α : Type} (env : FlatSem.Environment α)
+    (update : List (VarN × α) → List (VarN × FlatSem.Value))
+    (names : List (Option MlString)) (values : List ClosSem.Value)
+    (source : FlatSem.Value) (target : ClosSem.Value) (name : VarN)
+    (premises : EnvRel (replaceEnvValues env (update env.v)) names values ∧ ValueRel source target) :
+    EnvRel (replaceEnvValues env ((fun xs => (name, source) :: update xs) env.v))
+      (some name :: names) (target :: values) := by
+  exact envRel_cons premises.1 premises.2
 
 /-- An unnamed binding consumes a target slot without adding a source name. -/
 theorem envRel_skip {env names values} (related : EnvRel env names values) (target : ClosSem.Value) :
@@ -170,11 +210,21 @@ theorem envRel_skip {env names values} (related : EnvRel env names values) (targ
 
 /-- Extending with a related ordered prefix preserves the environment
 relation, including duplicate-name shadowing. -/
-theorem envRel_append {env names values entries targets}
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "env_rel_APPEND"]
+theorem envRel_append {α : Type} {env : FlatSem.Environment FlatSem.Value}
+    {env1 : FlatSem.Environment α}
+    {names namePrefix : List (Option MlString)} {values targets : List ClosSem.Value}
+    {entries : List (VarN × FlatSem.Value)}
     (related : EnvRel env names values)
-    (prefixRelated : List.Forall₂ ValueRel (entries.map Prod.snd) targets) :
-    EnvRel { env with v := entries ++ env.v }
-      (entries.map (fun entry => some entry.1) ++ names) (targets ++ values) := by
+    (prefixRelated : List.Forall₂ ValueRel (entries.map Prod.snd) targets)
+    (prefixNames : namePrefix = entries.map (fun entry => some entry.1)) :
+    EnvRel (replaceEnvValues env1 (entries ++ env.v))
+      (namePrefix ++ names) (targets ++ values) := by
+  subst namePrefix
+  have envEq : replaceEnvValues env1 (entries ++ env.v) = { env with v := entries ++ env.v } := by
+    cases env; rfl
+  rw [envEq]
+  clear envEq
   induction entries generalizing targets with
   | nil =>
     cases prefixRelated
@@ -184,6 +234,6 @@ theorem envRel_append {env names values entries targets}
     | mk name source =>
       cases prefixRelated with
       | cons head tail =>
-        simpa using envRel_cons (ih tail) head
+        simpa [replaceEnvValues] using envRel_cons (env := env) (ih tail) head
 
 end Flapjack.Compiler.Backend.FlatToClos

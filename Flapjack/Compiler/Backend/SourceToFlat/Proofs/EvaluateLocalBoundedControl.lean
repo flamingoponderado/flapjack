@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.FlatProps.ValueBasics
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBounded
 
 /-! Clock-bounded local control-flow composition. These factored relations
@@ -51,7 +52,7 @@ theorem localEnvBounded_let_named {C F : Type} [Nonempty C]
         [compileExp (name :: trace) compMap first] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatFirst]
       exact firstPost
   | @value sourceValues flatValues valuesRel =>
-    obtain ⟨value, sourceEq⟩ := EvaluateProps.evaluateSingFull source middleSource sourceEnv first sourceValues sourceFirst
+    obtain ⟨value, sourceEq⟩ := EvaluateProps.evaluateSingFull source sourceEnv first middleSource sourceValues sourceFirst
     subst sourceValues
     cases valuesRel with
     | cons related tail =>
@@ -169,7 +170,7 @@ theorem localEnvBounded_if {C F : Type} [Nonempty C]
       [compileExp trace compMap cond] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatCond]
     exact condPost
   | @value sourceValues flatValues valuesRel =>
-    obtain ⟨conditionValue, sourceEq⟩ := EvaluateProps.evaluateSingFull source middleSource sourceEnv cond sourceValues sourceCond
+    obtain ⟨conditionValue, sourceEq⟩ := EvaluateProps.evaluateSingFull source sourceEnv cond middleSource sourceValues sourceCond
     subst sourceValues
     cases valuesRel with
     | cons valueRel tail =>
@@ -273,7 +274,7 @@ theorem localEnvBounded_log {C F : Type} [Nonempty C]
     cases op <;> rw [compileExp, FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flat
       [compileExp trace compMap left] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatLeft] <;> exact leftPost
   | @value sourceValues flatValues valuesRel =>
-    obtain ⟨leftValue, sourceEq⟩ := EvaluateProps.evaluateSingFull source middleSource sourceEnv left sourceValues sourceLeft
+    obtain ⟨leftValue, sourceEq⟩ := EvaluateProps.evaluateSingFull source sourceEnv left middleSource sourceValues sourceLeft
     subst sourceValues
     cases valuesRel with
     | cons valueRel tail =>
@@ -394,7 +395,7 @@ theorem localEnvBounded_let_anonymous {C F : Type} [Nonempty C]
         [compileExp trace compMap first] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatFirst]
       exact firstPost
   | @value sourceValues flatValues valuesRel =>
-    obtain ⟨sourceValue, sourceEq⟩ := EvaluateProps.evaluateSingFull source middleSource sourceEnv first sourceValues sourceFirst
+    obtain ⟨sourceValue, sourceEq⟩ := EvaluateProps.evaluateSingFull source sourceEnv first middleSource sourceValues sourceFirst
     subst sourceValues
     cases valuesRel with
     | cons headValueRel tail =>
@@ -485,7 +486,7 @@ theorem localEnvBounded_tannot {C F : Type} [Nonempty C]
     simpa [EvaluateHOL.evaluate] using bad
   obtain ⟨next, sim, post⟩ := ih genv start finish other source flat env sourceLocal flatEnv traces trace map gen clockBound localRel envInv tracesLen
     invariant generation exprSafe
-  refine ⟨next, exprSim_tannot next _ trace _ _ source flat expr typ sim, ?_⟩
+  refine ⟨next, by simpa only [ExprSim, EvaluateHOL.evaluate, compileExp] using sim, ?_⟩
   simpa only [EvaluateHOL.evaluate, compileExp] using post
 
 
@@ -502,7 +503,7 @@ theorem localEnvBounded_lannot {C F : Type} [Nonempty C]
     simpa [EvaluateHOL.evaluate] using bad
   obtain ⟨next, sim, post⟩ := ih genv start finish other source flat env sourceLocal flatEnv traces trace map gen clockBound localRel envInv tracesLen
     invariant generation exprSafe
-  refine ⟨next, exprSim_lannot next _ trace _ _ source flat expr loc sim, ?_⟩
+  refine ⟨next, by cases loc; simpa only [ExprSim, EvaluateHOL.evaluate, compileExp] using sim, ?_⟩
   cases loc
   simpa only [EvaluateHOL.evaluate, compileExp] using post
 
@@ -528,9 +529,10 @@ theorem localEnvBounded_letrec {C F : Type} [Nonempty C]
     apply safe source
     simp [EvaluateHOL.evaluate, invalid, EvaluateHOL.typeError]
   have names : flatLocal'.map Prod.fst = funs.map Prod.fst ++ flatEnv.v.map Prod.fst := by
-    simp only [flatLocal', flatBuildRecEnv_names, compiled, compileFuns_local_names]
+    simp [flatLocal', FlatProps.buildRecEnv_eq_map, List.map_map, Function.comp_def, compiled, compileFuns_names]
   have mapBind : bindLocals newTraces (funs.map Prod.fst ++ flatEnv.v.map Prod.fst) baseMap.v = newMap.v := by
-    simpa [newTraces, newMap, compMap] using (bindRecNames_bindLocals (funs.map Prod.fst) traces (flatEnv.v.map Prod.fst) baseMap.v).symm
+    simpa [newTraces, newMap, compMap, ← nsAppend_to_nsBindList] using
+      (nsAppend_bindLocals funs .none traces (flatEnv.v.map Prod.fst) baseMap.v).symm
   have extendedRel : EnvRel genv sourceLocal' flatLocal' := by
     have related := localRecEnv_related genv baseMap baseEnv sourceLocal flatEnv funs trace newTraces
       localRel envInv (by simp [newTraces, tracesLen])
@@ -546,7 +548,7 @@ theorem localEnvBounded_letrec {C F : Type} [Nonempty C]
         exact ⟨n, by rw [names]; simp [mem], eq⟩
       · exact constructors
   have sourceBind : nsAppend sourceLocal' baseEnv.v = buildRecEnv funs sourceEnv sourceEnv.v := by
-    simpa [sourceLocal'] using (buildRecEnv_nsAppend funs sourceEnv sourceLocal baseEnv.v).symm
+    simp only [sourceLocal', sourceEnv, Flapjack.SemanticPrimitivesProps.buildRecEnv_merge funs (), ← nsAppend_assoc]
   have bodySafe : ∀ last, EvaluateHOL.evaluate source { sourceEnv with v := buildRecEnv funs sourceEnv sourceEnv.v }
       [body] ≠ (last, .err (.abort .typeError)) := by
     intro last bad
@@ -568,7 +570,7 @@ theorem localEnvBounded_letrec {C F : Type} [Nonempty C]
     simp [EvaluateHOL.evaluate, distinct]
   have flatOuter : FlatSem.evaluate flatEnv flat [compileExp trace compMap (.letrec funs body)] =
       FlatSem.evaluate { flatEnv with v := flatLocal' } flat [compileExp trace newMap body] := by
-    simp [compileExp, FlatSem.evaluate, compiled, flatLocal', newMap, compileFuns_local_names, distinct]
+    simp [compileExp, FlatSem.evaluate, compiled, flatLocal', newMap, compileFuns_names, distinct]
   refine ⟨nextGenv, ?_, ?_⟩
   · unfold ExprSim at bodySim ⊢
     rw [sourceOuter, flatOuter]

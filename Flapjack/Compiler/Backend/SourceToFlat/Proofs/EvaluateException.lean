@@ -1,3 +1,4 @@
+import Flapjack.FiniteMap.MapKeys
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateSequence
 
 /-! Exception-declaration prerequisites for the factored source-to-flat
@@ -135,84 +136,6 @@ theorem idxRangeRel_installException {C : Type}
         simpa [finiteUpdate, FUPDATE_HOL, same] using found
       exact exceptions cn (by omega) ⟨key, original⟩
 
-/-- Installing an exception constructor does not change typed-constructor
-lookup, so the type-constructor consistency condition is preserved. -/
-theorem genvCTysOk_installException (genv : GlobalEnv) (idx arity stamp : Nat)
-    (valid : genvCTysOk genv.c genv.tys) :
-    genvCTysOk (finiteUpdate genv.c ((idx, none), arity) (.exnStamp stamp)) genv.tys := by
-  classical
-  intro cn tyId a present
-  apply valid cn tyId a
-  simpa [finiteUpdate, FUPDATE_HOL] using present
-
-/-- Every existing constructor is an exception exactly when its flat type
-identifier is absent. The built-in division exception supplies the reference
-point for the constructor-map compatibility condition. -/
-theorem genvCOk_exception_class (genv : GlobalEnv) (valid : genvCOk genv.c)
-    (cn : FlatLang.CtorId × FlatLang.TypeId) (arity : Nat) (stamp : Stamp)
-    (lookup : genv.c.lookup (cn, arity) = some stamp) :
-    SemanticPrimitivesHOL.sameType (.exnStamp 0) stamp = true ↔ cn.2 = none := by
-  have h := valid.2.2.2.1 (Flapjack.Compiler.Backend.BackendCommon.divTag, none) cn 0 arity
-    divStamp stamp valid.2.1.1 lookup
-  cases stamp <;> simpa [SemanticPrimitivesHOL.ctorSameType, SemanticPrimitivesHOL.sameType,
-    FlatSem.ctorSameType, divStamp, eq_comm] using h
-
-/-- A fresh exception index and source stamp preserve constructor-map
-compatibility when the new exception constructor is installed. -/
-theorem genvCOk_installException (genv : GlobalEnv) (idx arity stamp : Nat)
-    (valid : genvCOk genv.c)
-    (free : genv.c.lookup ((idx, none), arity) = none)
-    (fresh : ∀ key, genv.c.lookup key ≠ some (.exnStamp stamp)) :
-    genvCOk (finiteUpdate genv.c ((idx, none), arity) (.exnStamp stamp)) := by
-  classical
-  let updated := finiteUpdate genv.c ((idx, none), arity) (.exnStamp stamp)
-  have growth := GlobalGrowth.installException genv idx arity stamp free
-  have oldLookup {key value} (h : genv.c.lookup key = some value) : updated.lookup key = some value :=
-    growth.constructors key value h
-  have classify (cn : FlatLang.CtorId × FlatLang.TypeId) (a : Nat) (s : Stamp)
-      (h : updated.lookup (cn, a) = some s) :
-      ((cn, a) = ((idx, none), arity) ∧ s = .exnStamp stamp) ∨ genv.c.lookup (cn, a) = some s := by
-    by_cases same : (cn, a) = ((idx, none), arity)
-    · left
-      refine ⟨same, ?_⟩
-      simp [updated, finiteUpdate, FUPDATE_HOL, same] at h
-      exact h.symm
-    · right
-      simpa [updated, finiteUpdate, FUPDATE_HOL, same] using h
-  refine ⟨⟨oldLookup valid.1.1, oldLookup valid.1.2⟩,
-    ⟨oldLookup valid.2.1.1, oldLookup valid.2.1.2.1, oldLookup valid.2.1.2.2.1, oldLookup valid.2.1.2.2.2⟩,
-    ⟨oldLookup valid.2.2.1.1, oldLookup valid.2.2.1.2⟩, ?_, ?_⟩
-  · intro cn1 cn2 a1 a2 s1 s2 h1 h2
-    rcases classify cn1 a1 s1 h1 with ⟨eq1, rfl⟩ | old1 <;>
-      rcases classify cn2 a2 s2 h2 with ⟨eq2, rfl⟩ | old2
-    · cases cn1; cases cn2
-      simp_all [SemanticPrimitivesHOL.ctorSameType, SemanticPrimitivesHOL.sameType, FlatSem.ctorSameType]
-    · have kind := genvCOk_exception_class genv valid cn2 a2 s2 old2
-      cases cn1 with
-      | mk c t =>
-        cases cn2 with
-        | mk c' t' =>
-          cases s2 <;> cases t' <;>
-            simp_all [SemanticPrimitivesHOL.ctorSameType, SemanticPrimitivesHOL.sameType, FlatSem.ctorSameType]
-    · have kind := genvCOk_exception_class genv valid cn1 a1 s1 old1
-      cases cn1 with
-      | mk c t =>
-        cases cn2 with
-        | mk c' t' =>
-          cases s1 <;> cases t <;>
-            simp_all [SemanticPrimitivesHOL.ctorSameType, SemanticPrimitivesHOL.sameType, FlatSem.ctorSameType]
-    · exact valid.2.2.2.1 cn1 cn2 a1 a2 s1 s2 old1 old2
-  · intro cn1 cn2 a1 a2 s h1 h2
-    rcases classify cn1 a1 s h1 with ⟨eq1, eqStamp1⟩ | old1 <;>
-      rcases classify cn2 a2 s h2 with ⟨eq2, eqStamp2⟩ | old2
-    · cases cn1; cases cn2
-      simp_all
-    · subst s
-      exact False.elim (fresh (cn2, a2) old2)
-    · subst s
-      exact False.elim (fresh (cn1, a1) old1)
-    · exact valid.2.2.2.2 cn1 cn2 a1 a2 s old1 old2
-
 /-- Installing a fresh exception stamp preserves the factored invariant and
 advances both source and compiler exception counters. -/
 theorem factoredInvariant_installException {C F : Type} [Nonempty C]
@@ -244,9 +167,60 @@ theorem factoredInvariant_installException {C F : Type} [Nonempty C]
   have nextInvs : srcOracInvs interp transform
       { genv with c := finiteUpdate genv.c ((start.eidx, none), arity) (.exnStamp source.nextExnStamp) }
       source.evalState := ⟨invs.1, srcOracEnvInvs_growth interp genv _ growth _ invs.2.1, invs.2.2⟩
-  exact ⟨genvCOk_installException genv start.eidx arity source.nextExnStamp cOk free fresh,
-    genvCTysOk_installException genv start.eidx arity source.nextExnStamp typesOk,
-    nextStates, nextRange, nextInvs, oracle, globals, reserved, genInv, fin⟩
+  have constructorOk : genvCOk
+      (finiteUpdate genv.c ((start.eidx, none), arity) (.exnStamp source.nextExnStamp)) := by
+    classical
+    let key : ConstructorKey := ((start.eidx, none), arity)
+    let stamp := Stamp.exnStamp source.nextExnStamp
+    let singleton := finiteUpdate HolFiniteMapExact.empty key stamp
+    have lookupSingleton (k : ConstructorKey) (v : Stamp)
+        (h : singleton.lookup k = some v) : k = key ∧ v = stamp := by
+      by_cases same : k = key
+      · subst k
+        simp [singleton, finiteUpdate, FUPDATE_HOL] at h
+        exact ⟨rfl, h.symm⟩
+      · simp [singleton, finiteUpdate, FUPDATE_HOL, HolFiniteMapExact.empty, same] at h
+    have bridge : finiteUpdate genv.c key stamp = genv.c.union singleton := by
+      apply HolFiniteMapExact.ext_lookup
+      intro k
+      by_cases same : k = key
+      · subst k
+        simp [HolFiniteMapExact.lookup_union, singleton, finiteUpdate, FUPDATE_HOL, free, key]
+      · cases oldLookup : genv.c.lookup k <;>
+          simp [HolFiniteMapExact.lookup_union, singleton, finiteUpdate, FUPDATE_HOL,
+            HolFiniteMapExact.empty, same, oldLookup]
+    rw [show finiteUpdate genv.c ((start.eidx, none), arity) (.exnStamp source.nextExnStamp) =
+      finiteUpdate genv.c key stamp from rfl, bridge]
+    apply genvCOk_extend genv.c singleton
+    refine ⟨cOk, ?_⟩
+    intro cn a s found
+    obtain ⟨keyEq, stampEq⟩ := lookupSingleton (cn, a) s found
+    have fields : cn = (start.eidx, none) ∧ a = arity := by simpa [key] using keyEq
+    obtain ⟨rfl, arityEq⟩ := fields
+    subst a
+    subst s
+    refine ⟨by simp [stamp, SemanticPrimitivesHOL.sameType], ?_, ?_⟩
+    · intro cn' a' s' found'
+      obtain ⟨keyEq', stampEq'⟩ := lookupSingleton (cn', a') s' found'
+      have fields' : cn' = (start.eidx, none) ∧ a' = arity := by simpa [key] using keyEq'
+      obtain ⟨rfl, arityEq'⟩ := fields'
+      subst a'
+      subst s'
+      simp [stamp, SemanticPrimitivesHOL.sameType, FlatSem.ctorSameType]
+    · intro cn' a' s' old
+      refine ⟨?_, by simp, ?_⟩
+      · intro eq
+        apply fresh (cn', a')
+        simpa [stamp, ← eq] using old
+      · intro name name' n impossible
+        simp [stamp] at impossible
+  have typesOk' : genvCTysOk
+      (finiteUpdate genv.c ((start.eidx, none), arity) (.exnStamp source.nextExnStamp)) genv.tys := by
+    classical
+    intro cn tyId a present
+    apply typesOk cn tyId a
+    simpa [finiteUpdate, FUPDATE_HOL] using present
+  exact ⟨constructorOk, typesOk', nextStates, nextRange, nextInvs, oracle, globals, reserved, genInv, fin⟩
 
 /-- The source and compiler exception declarations export the same domains. -/
 theorem envDomainEq_exception (name : ConN) (idx arity stamp : Nat) :
@@ -298,12 +272,12 @@ theorem globalEnvInv_exception (genv : GlobalEnv) (name : ConN) (idx arity stamp
 
 /-- Exception declarations satisfy the factored declaration induction
 hypothesis. The relations and evaluator carriers still need HOL review. -/
-theorem factoredDecIH_dexn {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+theorem factoredDecBoundedIH_dexn {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
     (location : Flapjack.Misc.Location.Locs) (name : ConN) (types : List AstT) :
-    FactoredDecIH (F := F) interp transform [.dexn location name types] := by
+    FactoredDecBoundedIH (F := F) interp transform limit [.dexn location name types] := by
   intro genv env nextEnv sourceEnv trace source sourceLast flat start finish next other n n' gen nextGen
-    flatDecs result sourceRun invariant compiled _envInv _notTypeError generation _future bounded
+    flatDecs result _ sourceRun invariant compiled _envInv _notTypeError generation _future bounded
   have compEq := compiled
   simp only [compileDecs, Prod.mk.injEq] at compEq
   obtain ⟨_, nextEq, envEq, genEq, codeEq⟩ := compEq

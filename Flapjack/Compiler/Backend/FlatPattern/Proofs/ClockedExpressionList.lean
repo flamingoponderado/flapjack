@@ -15,7 +15,7 @@ def ExpressionSimulationUpTo {C F : Type} (cfg stateCfg : Config) (clock : Nat) 
     sourceResult ≠ .err (.abort .typeError) →
     ∃ targetFinal targetResult,
       FlatSem.evaluate targetEnv target [(compileExp cfg expression).2.2] = (targetFinal, targetResult) ∧
-      StateRel stateCfg sourceFinal targetFinal ∧ FlatResultRel sourceResult targetResult
+      StateRel stateCfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel sourceResult targetResult
 
 /-- Expression-list simulation restricted to the same clock bound. -/
 def ExpressionsSimulationUpTo {C F : Type} (cfg stateCfg : Config) (clock : Nat) (expressions : List FlatLang.Exp) : Prop :=
@@ -26,7 +26,7 @@ def ExpressionsSimulationUpTo {C F : Type} (cfg stateCfg : Config) (clock : Nat)
     sourceResult ≠ .err (.abort .typeError) →
     ∃ targetFinal targetResult,
       FlatSem.evaluate targetEnv target (compileExps cfg expressions).2.2 = (targetFinal, targetResult) ∧
-      StateRel stateCfg sourceFinal targetFinal ∧ FlatResultRel sourceResult targetResult
+      StateRel stateCfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel sourceResult targetResult
 
 /-- Compiling an expression list preserves evaluation when each member satisfies
 the expression induction hypothesis. -/
@@ -38,7 +38,7 @@ theorem compileExps_simulation_upTo {C F : Type} (cfg stateCfg : Config) (clock 
     intro sourceEnv targetEnv source target sourceFinal sourceResult n clockBound sourceEval envs states bound safe
     simp [FlatSem.evaluate] at sourceEval
     rcases sourceEval with ⟨rfl, rfl⟩
-    exact ⟨target, .val [], by simp [compileExps, FlatSem.evaluate], states, .values .nil⟩
+    exact ⟨target, .val [], by simp [compileExps, FlatSem.evaluate], states, .nil⟩
   | cons first rest ih =>
     have firstIH := membersIH first (by simp)
     have restIH : ∀ expression ∈ rest, ExpressionSimulationUpTo (C := C) (F := F) cfg stateCfg clock expression := by
@@ -69,18 +69,18 @@ theorem compileExps_simulation_upTo {C F : Type} (cfg stateCfg : Config) (clock 
           exact safe (congrArg Prod.snd outer)
         obtain ⟨targetNext, targetFirstResult, targetFirstRun, nextStates, firstRelated⟩ := firstIH
           sourceEnv targetEnv source target sourceNext firstResult n clockBound firstRun envs states firstBound firstSafe
-        cases firstRelated with
-        | error errorsRel =>
-          rename_i leftError rightError
+        cases firstResult <;> cases targetFirstResult <;> simp only [SemanticPrimitivesProps.resultRel] at firstRelated
+        case err.err leftError rightError =>
+          have errorsRel := firstRelated
           have sourceOuter := evaluate_list_first_error sourceEnv source sourceNext first second rest leftError firstRun
           have targetOuter := evaluate_list_first_error targetEnv target targetNext (compileExp cfg first).2.2
             ((compileExp cfg second).2.2) (rest.map (fun expression => (compileExp cfg expression).2.2)) rightError targetFirstRun
           have equal := sourceEval.symm.trans sourceOuter
           cases equal
-          exact ⟨_, _, by simpa [compileExps_rows] using targetOuter,
-            stateRel_fixClock stateCfg source sourceNext target targetNext states nextStates, .error errorsRel⟩
-        | values valuesRel =>
-          rename_i sourceValues targetValues
+          exact ⟨_, .err rightError, by simpa [compileExps_rows] using targetOuter,
+            stateRel_fixClock stateCfg source sourceNext target targetNext states nextStates, errorsRel⟩
+        case val.val sourceValues targetValues =>
+          have valuesRel := firstRelated
           obtain ⟨value, valueEq⟩ := FlatProps.evaluate_sing sourceEnv source sourceNext first sourceValues firstRun
           subst sourceValues
           cases valuesRel with
@@ -101,9 +101,9 @@ theorem compileExps_simulation_upTo {C F : Type} (cfg stateCfg : Config) (clock 
                 exact safe (congrArg Prod.snd outer)
               obtain ⟨targetLast, targetTailResult, targetTailRun, finalRel, tailRelated⟩ := tailSim
                 sourceEnv targetEnv sourceFixed targetFixed sourceLast tailResult n (by dsimp [sourceFixed]; omega) tailRun envs fixedStates tailBound tailSafe
-              cases tailRelated with
-              | error errorsRel =>
-                rename_i leftError rightError
+              cases tailResult <;> cases targetTailResult <;> simp only [SemanticPrimitivesProps.resultRel] at tailRelated
+              case err.err leftError rightError =>
+                have errorsRel := tailRelated
                 have sourceOuter := evaluate_list_tail_error sourceEnv source sourceNext sourceLast first second rest value
                   leftError firstRun tailRun
                 have targetOuter := evaluate_list_tail_error targetEnv target targetNext targetLast (compileExp cfg first).2.2
@@ -111,9 +111,9 @@ theorem compileExps_simulation_upTo {C F : Type} (cfg stateCfg : Config) (clock 
                   rightError targetFirstRun (by simpa [compileExps_rows] using targetTailRun)
                 have equal := sourceEval.symm.trans sourceOuter
                 cases equal
-                exact ⟨targetLast, _, by simpa [compileExps_rows] using targetOuter, finalRel, .error errorsRel⟩
-              | values tailValuesRel =>
-                rename_i sourceTailValues targetTailValues
+                exact ⟨targetLast, .err rightError, by simpa [compileExps_rows] using targetOuter, finalRel, errorsRel⟩
+              case val.val sourceTailValues targetTailValues =>
+                have tailValuesRel := tailRelated
                 have sourceOuter := evaluate_list_values sourceEnv source sourceNext sourceLast first second rest value
                   sourceTailValues firstRun tailRun
                 have targetOuter := evaluate_list_values targetEnv target targetNext targetLast (compileExp cfg first).2.2
@@ -121,8 +121,8 @@ theorem compileExps_simulation_upTo {C F : Type} (cfg stateCfg : Config) (clock 
                   targetTailValues targetFirstRun (by simpa [compileExps_rows] using targetTailRun)
                 have equal := sourceEval.symm.trans sourceOuter
                 cases equal
-                exact ⟨targetLast, _, by simpa [compileExps_rows] using targetOuter, finalRel,
-                  .values (.cons valueRel tailValuesRel)⟩
+                exact ⟨targetLast, .val (value' :: targetTailValues), by simpa [compileExps_rows] using targetOuter, finalRel,
+                  (.cons valueRel tailValuesRel)⟩
 
 
 end Flapjack.Compiler.Backend.FlatPattern

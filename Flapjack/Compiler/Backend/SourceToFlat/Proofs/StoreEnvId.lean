@@ -97,42 +97,5 @@ theorem evalRefInv_heads {C F : Type} (flat : FlatSem.State C F)
       subst first
       exact ⟨globals, old, refs, rfl, rfl⟩
 
-/-- In oracle mode, declaring an environment and running its generated flat
-store agree on the environment ID, update the reserved reference, and retain
-the oracle-forward relation. The full declaration invariant is still a
-separate obligation. -/
-theorem declareEnv_storeEnvId_oracle {C F : Type} (interp : Option (Value → Option (Config × C)))
-    (state : EvalOracleState) (flat : FlatSem.State C F) (genv : GlobalEnv)
-    (gen : EnvironmentGenerationStore) (env : SemEnv Value) (value : Value) (after : Option EvalState)
-    (generation : envGenRel gen (some (.evalOracle state)))
-    (reserved : evalRefInv (flat.globals.take 1) (flat.refs.take 1))
-    (declared : declareEnv (some (.evalOracle state)) env = some (value, after)) :
-    ∃ stored : FlatSem.Value,
-      FlatSem.evaluateDecs flat [storeEnvId gen.generation gen.next] =
-        ({ flat with refs := .refv stored :: flat.refs.tail }, none) ∧
-      ValueRel genv value stored ∧ oracForwardRel interp (some (.evalOracle state)) after ∧
-      envGenRel { gen with next := gen.next + 1 } after ∧
-      evalRefInv (flat.globals.take 1) ((.refv stored :: flat.refs.tail).take 1) := by
-  obtain ⟨globals, old, refs, globalEq, refsEq⟩ := evalRefInv_heads flat reserved
-  have forward := declareEnv_oracle_forward interp state env value after declared
-  have generationAfter := declareEnv_oracle_generation state gen env value after generation declared
-  cases found : state.envs[state.generation]? with
-  | none => simp [declareEnv, found] at declared
-  | some storedEnvs =>
-    have genEq : gen.generation = state.generation := generation.1
-    have idEq : gen.next = storedEnvs.length := by simpa [found] using generation.2.2
-    simp [declareEnv, found] at declared
-    obtain ⟨valueEq, _⟩ := declared
-    subst value
-    let stored : FlatSem.Value := .conv none
-      [.litv (.intLit (gen.generation : Int)), .litv (.intLit (gen.next : Int))]
-    refine ⟨stored, ?_, ?_, forward, generationAfter, ?_⟩
-    · simpa [stored, refsEq] using evaluateStoreEnvId flat gen.generation gen.next globals old refs globalEq refsEq
-    · dsimp [stored, natToValue]
-      rw [genEq, idEq]
-      apply valueRel_tuple
-      exact .cons (.literal genv _) (.cons (.literal genv _) .nil)
-    · simp [evalRefInv, globalEq]
-
 end OracleInvariant
 end Flapjack.Compiler.Backend.SourceToFlat

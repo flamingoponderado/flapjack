@@ -3,20 +3,27 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalEnvConditions
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Conversions
 import Flapjack.SemanticPrimitivesHOL.Conversions
 
-/-! List conversion compatibility over the factored source-to-flat relation.
-The relation's full correspondence to HOL remains open. -/
+/-! List conversion compatibility over the source-to-flat value relation. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.SemanticPrimitivesHOL
 open Flapjack.Compiler.Backend.BackendCommon
 open Flapjack.Basis.Pure.MlString
 
+namespace ListConversionPort
+/-- Canonical global finite-map carrier roundtrip. -/
+theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
+    GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env := GlobalEnv.holFmapAsFiniteSupportWitness env
+end ListConversionPort
+
 /-- Related lists encode to related source and flat list values when the
-constructor map contains the list stamps. This is Flapjack infrastructure
-over the factored relation, not a tagged HOL theorem. -/
-theorem listToValue_related (genv : GlobalEnv) (hasLists : hasLists genv.c)
+constructor map contains the list stamps. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "list_to_v_v_rel"
+  (fmap_as_finite_support := [c, tys])]
+theorem listToValue_related (genv : GlobalEnv)
     (xs : List SemanticPrimitivesHOL.Value) (ys : List FlatSem.Value)
-    (related : List.Forall₂ (ValueRel genv) xs ys) :
+    (premises : hasLists genv.c ∧ List.Forall₂ (ValueRel genv) xs ys) :
     ValueRel genv (SemanticPrimitivesHOL.listToValue xs) (FlatSem.listToValue ys) := by
+  obtain ⟨hasLists, related⟩ := premises
   induction related with
   | nil =>
     apply ValueRel.constructor
@@ -27,25 +34,33 @@ theorem listToValue_related (genv : GlobalEnv) (hasLists : hasLists genv.c)
     · exact .cons genv _ _ _ _ head (.cons genv _ _ _ _ ih (.nil genv))
     · exact hasLists.1
 
-/-- Concatenating related lists of values gives the same optional string.
-This is Flapjack infrastructure over the factored relation. -/
+/-- Related lists preserve successful string decoding. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "vs_to_string"
+  (fmap_as_finite_support := [c, tys])]
 theorem valuesToString_related (genv : GlobalEnv)
-    (xs : List SemanticPrimitivesHOL.Value) (ys : List FlatSem.Value)
-    (related : List.Forall₂ (ValueRel genv) xs ys) :
-    SemanticPrimitivesHOL.valuesToString xs = FlatSem.valuesToString ys := by
-  induction related with
-  | nil => rfl
-  | cons head tail ih =>
-    cases head <;> try (rfl)
-    case literal lit => cases lit <;> simp [SemanticPrimitivesHOL.valuesToString, FlatSem.valuesToString, ih]
+    (xs : List SemanticPrimitivesHOL.Value) (ys : List FlatSem.Value) (value : MlString)
+    (related : List.Forall₂ (ValueRel genv) xs ys)
+    (decoded : SemanticPrimitivesHOL.valuesToString xs = some value) :
+    FlatSem.valuesToString ys = some value := by
+  have same : SemanticPrimitivesHOL.valuesToString xs = FlatSem.valuesToString ys := by
+    clear decoded
+    induction related with
+    | nil => rfl
+    | cons head tail ih =>
+      cases head <;> try (rfl)
+      case literal lit => cases lit <;> simp [SemanticPrimitivesHOL.valuesToString, FlatSem.valuesToString, ih]
+  rw [← same]
+  exact decoded
 
-/-- Successful source-list decoding is preserved by related flat values.
-This is infrastructure over the factored relation, whose HOL correspondence remains open. -/
+/-- Successful source-list decoding is preserved by related flat values. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "v_to_list"
+  (fmap_as_finite_support := [c, tys])]
 theorem valueToList_related (genv : GlobalEnv) (ok : genvCOk genv.c)
     (source : SemanticPrimitivesHOL.Value) (flat : FlatSem.Value)
     (xs : List SemanticPrimitivesHOL.Value)
-    (rel : ValueRel genv source flat) (decoded : SemanticPrimitivesHOL.valueToList source = some xs) :
+    (premises : ValueRel genv source flat ∧ SemanticPrimitivesHOL.valueToList source = some xs) :
     ∃ ys, FlatSem.valueToList flat = some ys ∧ List.Forall₂ (ValueRel genv) xs ys := by
+  obtain ⟨rel, decoded⟩ := premises
   induction source using SemanticPrimitivesHOL.valueToList.induct generalizing flat xs with
   | case1 =>
     simp [SemanticPrimitivesHOL.valueToList] at decoded
@@ -80,13 +95,15 @@ theorem valueToList_related (genv : GlobalEnv) (ok : genvCOk genv.c)
     simp only [SemanticPrimitivesHOL.valueToList] at decoded
     simp at decoded
 
-/-- Successful source-character-list decoding is preserved by related flat values.
-This is infrastructure over the factored relation, whose HOL correspondence remains open. -/
+/-- Successful source-character-list decoding is preserved by related flat values. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "v_to_char_list"
+  (fmap_as_finite_support := [c, tys])]
 theorem valueToCharList_related (genv : GlobalEnv) (ok : genvCOk genv.c)
     (source : SemanticPrimitivesHOL.Value) (flat : FlatSem.Value)
     (xs : List HolChar)
-    (rel : ValueRel genv source flat) (decoded : SemanticPrimitivesHOL.valueToCharList source = some xs) :
+    (premises : ValueRel genv source flat ∧ SemanticPrimitivesHOL.valueToCharList source = some xs) :
     FlatSem.valueToCharList flat = some xs := by
+  obtain ⟨rel, decoded⟩ := premises
   induction source using SemanticPrimitivesHOL.valueToCharList.induct generalizing flat xs with
   | case1 =>
     simp [SemanticPrimitivesHOL.valueToCharList] at decoded

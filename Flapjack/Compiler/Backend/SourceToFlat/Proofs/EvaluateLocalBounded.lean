@@ -7,46 +7,6 @@ namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL
 open OracleInvariant
 
-/-- An expression simulation restricted to states at or below a clock bound. -/
-def LocalEnvBoundedIH {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (limit : Nat) (expr : AstHOL.Exp) : Prop :=
-  ∀ (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
-    (source : State F) (flat : FlatSem.State C F) (baseEnv : SemEnv Value)
-    (sourceLocal : Namespace ModN VarN Value) (flatEnv : FlatSem.Environment FlatSem.Value)
-    (traces : List BackendCommon.Tra) (trace : List VarN) (baseMap : Environment) (gen : EnvironmentGenerationStore),
-    source.clock ≤ limit → EnvRel genv sourceLocal flatEnv.v →
-    GlobalEnvInv genv baseMap (fun n => n ∈ flatEnv.v.map Prod.fst) baseEnv →
-    traces.length = flatEnv.v.length → factoredInvariant interp transform gen genv (start, finish, other) source flat →
-    envGenRel gen source.evalState →
-    (∀ last, EvaluateHOL.evaluate source { baseEnv with v := nsAppend sourceLocal baseEnv.v } [expr] ≠
-      (last, .err (.abort .typeError))) →
-    LocalExpressionStep interp transform genv start finish other source flat
-      { baseEnv with v := nsAppend sourceLocal baseEnv.v } flatEnv trace
-      { baseMap with v := bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v } gen expr
-
-/-- An unbounded local simulation supplies every clock-bounded instance. -/
-theorem localEnvBounded_of_unbounded {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (limit : Nat) (expr : AstHOL.Exp) (ih : LocalEnvIH (F := F) interp transform expr) :
-    LocalEnvBoundedIH (F := F) interp transform limit expr := by
-  intro genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen _
-  exact ih genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen
-
-private theorem boundedSourceEvaluate_cons {F : Type} (source : State F) (env : SemEnv Value)
-    (first second : AstHOL.Exp) (rest : List AstHOL.Exp) :
-    EvaluateHOL.evaluate source env (first :: second :: rest) =
-      let head := EvaluateHOL.evaluate source env [first]
-      match head.2 with
-      | .err error => (head.1, .err error)
-      | .val values =>
-        let tail := EvaluateHOL.evaluate head.1 env (second :: rest)
-        match tail.2 with
-        | .err error => (tail.1, .err error)
-        | .val values' => (tail.1, .val (EvaluateHOL.headValue values :: values')) := by
-  rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source env [first] []).1]
-  rfl
-
 /-- Compose local expression induction hypotheses over an arbitrary list. -/
 theorem boundedEnvListStep_of_each {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
@@ -86,7 +46,7 @@ theorem boundedEnvListStep_of_each {C F : Type} [Nonempty C]
         intro last bad
         apply safe last
         change EvaluateHOL.evaluate source sourceEnv (first :: second :: tail) = _
-        simp only [boundedSourceEvaluate_cons, bad]
+        simp only [sourceEvaluate_cons, bad]
       have headStep := each first (by simp) genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen
         clockBound localRel envInv tracesLen invariant generation headSafe
       change LocalExpressionListStep interp transform genv start finish other source flat sourceEnv flatEnv trace
@@ -99,7 +59,7 @@ theorem boundedEnvListStep_of_each {C F : Type} [Nonempty C]
         intro last bad
         apply safe last
         change EvaluateHOL.evaluate source sourceEnv (first :: second :: tail) = _
-        simp only [boundedSourceEvaluate_cons, headRun, bad]
+        simp only [sourceEvaluate_cons, headRun, bad]
       apply ih
       · intro expr member
         exact each expr (List.mem_cons_of_mem _ member)
@@ -128,18 +88,18 @@ theorem factoredDecBoundedIH_dlet_expression {C F : Type} [Nonempty C]
     apply notTypeError
     exact congrArg Prod.snd (sourceRun.symm.trans bad)
   have expressionSafe := dlet_expression_safe source sourceEnv location pattern expr safe
-  have emptyAppend : nsAppend nsEmpty sourceEnv.v = sourceEnv.v := by
-    cases sourceEnv.v
-    rfl
   have sourceEq : { sourceEnv with v := nsAppend nsEmpty sourceEnv.v } = sourceEnv := by
-    simp only [emptyAppend]
+    simp only [(nsAppend_nsEmpty sourceEnv.v).2]
   have mapEq : { env with v := bindLocals [] [] env.v } = env := by
     simp [bindLocals, nsBindList]
   have step := expressionIH genv start finish other source flat sourceEnv nsEmpty ⟨[]⟩ []
     ((AstHOL.patBindings pattern).reverse ++ trace) env gen clockBound (.empty genv)
     (by simpa using envInv) rfl invariant generation (by simpa only [sourceEq] using expressionSafe)
-  have expressionStep := (localExpressionStep_empty interp transform genv start finish other source flat sourceEnv
-    ((AstHOL.patBindings pattern).reverse ++ trace) env gen expr).mp (by simpa only [List.map_nil, sourceEq, mapEq] using step)
+  have expressionStep : DletExpressionStep interp transform genv start finish other source flat sourceEnv
+      ((AstHOL.patBindings pattern).reverse ++ trace) env gen expr := by
+    change LocalExpressionStep interp transform genv start finish other source flat sourceEnv ⟨[]⟩
+      ((AstHOL.patBindings pattern).reverse ++ trace) env gen expr
+    simpa only [List.map_nil, sourceEq, mapEq] using step
   exact evaluateDlet_case_factored interp transform genv start finish next other source sourceLast flat sourceEnv
     trace n n' env nextEnv gen nextGen location pattern expr flatDecs result
     sourceRun invariant compiled envInv notTypeError generation future bounded expressionStep

@@ -26,7 +26,7 @@ theorem gapproxDisjointRw {α : Type} (g : Spt α) (x y : ClosLang.Exp)
       Disjoint {i | sptMem i g} {i | opGlobalBag opn i ≠ 0}) := by
   simp only [gapproxDisjoint, Set.disjoint_left, Set.mem_ofPred_eq, not_not,
     elistGlobals, setGlobals, FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag,
-    Nat.add_zero, Nat.add_eq_zero_iff, forall_and]
+    Nat.add_zero, Nat.add_eq_zero_iff, forall_and, Flapjack.bagUnion, Flapjack.emptyBag]
   tauto
 
 /-- Every future oracle program is disjoint from the approximation domain. -/
@@ -71,7 +71,7 @@ private theorem flattenWritesExists (parts : List (List ClosLang.Exp)) (key : Na
     (written : elistGlobals parts.flatten key ≠ 0) :
     ∃ es ∈ parts, elistGlobals es key ≠ 0 := by
   induction parts with
-  | nil => simp [elistGlobals, FlatProps.emptyGlobalBag] at written
+  | nil => simp [elistGlobals, FlatProps.emptyGlobalBag, Flapjack.emptyBag] at written
   | cons es rest ih =>
     simp only [List.flatten_cons, elistGlobals_append] at written
     by_cases head : elistGlobals es key = 0

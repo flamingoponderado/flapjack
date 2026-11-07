@@ -17,3 +17,17 @@ compile_flat_sub_bag=elist_globals (compile_flat (cfg :flat_pattern$config) (p :
 compile_globals_distinct=BAG_ALL_DISTINCT (elist_globals (SND (compile (c :config) (prog :dec list))))
 inc_compile_globals_distinct=BAG_ALL_DISTINCT (elist_globals (SND (inc_compile (env_id :num # num) (c :config) (prog :dec list))))
 monotonic_globals_oracle=compile (conf :config) (prog :dec list) = ((conf' :config),(p :exp list)) ∧ FST (FST ((orac :num -> (config # α) # (num # num) # β) (0 :num))) = conf' ∧ is_state_oracle (λ(c :config) ((env_id :num # num),(decs :β)). inc_compile env_id c ((f :β -> dec list) decs)) orac ⇒ oracle_monotonic (IMAGE SUC ∘ (SET_OF_BAG :(num -> num) -> num -> bool) ∘ elist_globals ∘ (SND :α # exp list -> exp list)) $< ((0 :num) INSERT IMAGE SUC (SET_OF_BAG (elist_globals p))) (state_co (λ(c :config) ((env_id :num # num),(decs :β)). inc_compile env_id c (f decs)) orac)
+bag_inn=∀(e :α) (n :num) (b :α -> num). BAG_INN e n b ⇔ b e ≥ n
+sub_bag=∀(b1 :α -> num) (b2 :α -> num). b1 ≤ b2 ⇔ ∀(x :α) (n :num). BAG_INN x n b1 ⇒ BAG_INN x n b2
+bag_in=∀(e :α) (b :α -> num). e ⋲ b ⇔ BAG_INN e (1 :num) b
+sub_bag_imp=(B1 :α -> num) ≤ (B2 :α -> num) ⇒ (x :α) ⋲ B1 ⇒ x ⋲ B2
+bag_all_distinct=∀(b :α -> num). BAG_ALL_DISTINCT b ⇔ ∀(e :α). b e ≤ (1 :num)
+bag_all_distinct_sub_bag=∀(s :α -> num) (t :α -> num). s ≤ t ∧ BAG_ALL_DISTINCT t ⇒ BAG_ALL_DISTINCT s
+compile_flat_bag_all_distinct_local=BAG_ALL_DISTINCT (elist_globals (p :exp list)) ⇒ BAG_ALL_DISTINCT (elist_globals (compile_flat (cfg :flat_pattern$config) p))
+mapi_snoc=∀(xs :α list) (x :α) (f :num -> α -> β). MAPi f (SNOC x xs) = SNOC (f (LENGTH xs) x) (MAPi f xs)
+list_size_definition=(∀(f :α -> num). list_size f ([] :α list) = (0 :num)) ∧ ∀(f :α -> num) (a0 :α) (a1 :α list). list_size f (a0::a1) = (1 :num) + (f a0 + list_size f a1)
+list_size_theorem=(∀(f :α -> num). list_size f ([] :α list) = (0 :num)) ∧ ∀(f :α -> num) (a0 :α) (a1 :α list). list_size f (a0::a1) = (1 :num) + f a0 + list_size f a1
+mem_size_lemma_local=list_size (sz :α -> num) (xs :α list) < (N :num) ⇒ MEM (x :α) xs ⇒ sz x < N
+ns_all_append=∀(f :(α, β) id -> γ -> bool) (e1 :(α, β, γ) namespace) (e2 :(α, β, γ) namespace). nsAll f e1 ∧ nsAll f e2 ⇒ nsAll f (nsAppend e1 e2)
+ns_all_extend_env=nsAll (P :(mlstring, mlstring) id -> var_name -> bool) (e1 :source_to_flat$environment).v ∧ nsAll P (e2 :source_to_flat$environment).v ⇒ nsAll P (extend_env e1 e2).v
+snd_eq_local=SND (x :β # α) = (y :α) ⇔ ∃(a :β). x = (a,y)

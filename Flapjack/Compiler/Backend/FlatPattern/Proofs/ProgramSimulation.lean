@@ -1,16 +1,13 @@
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ClockedInduction
 import Flapjack.Compiler.Backend.FlatProps.EvalSim
 
-/-! Program-level simulation for the proof-side flat pattern compiler. The
-evaluator and relations remain pending HOL correspondence review. -/
+/-! Program-level simulation for the flat pattern compiler. -/
 namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack Flapjack.AstHOL Flapjack.Compiler.Backend
 
-/-- Related installation configurations and compiled declarations give a
-program evaluation simulation with no additional target clock. This is
-Flapjack proof-side infrastructure until the evaluator and value relation are
-reviewed against HOL. -/
-theorem compileDecs_evalSim_proofSide {C F : Type} (cfg cfg2 : Config) (ffi : HolFfiState F)
+/-- Related installation configurations give a program evaluation simulation. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "compile_decs_eval_sim"]
+theorem compileDecs_evalSim {C F : Type} (cfg cfg2 : Config) (ffi : HolFfiState F)
     (source target : List FlatLang.Exp) (sourceConfig targetConfig : FlatSem.InstallConfig C)
     (configs : installConfRel cfg sourceConfig targetConfig) :
     FlatProps.evalSim ffi source target sourceConfig targetConfig
@@ -19,8 +16,8 @@ theorem compileDecs_evalSim_proofSide {C F : Type} (cfg cfg2 : Config) (ffi : Ho
   have sourceSafe : sourceResult ≠ some (.abort .typeError) := by simpa using safe
   subst target
   have states := stateRel_initial cfg ffi clock sourceConfig targetConfig configs
-  obtain ⟨targetState, targetResult, targetRun, finalStates, results⟩ :=
-    evaluateDecs_simulation_all cfg2 cfg _ _ sourceState source sourceResult states run sourceSafe
+  obtain ⟨targetState, targetResult, targetRun, results, finalStates⟩ :=
+    (compileExps_evaluate cfg).2 _ source _ sourceState cfg2 _ sourceResult run rfl states sourceSafe
   refine ⟨0, targetResult, targetState, by simpa using targetRun, finalStates.2.2.1.symm, ?_, ?_, ?_⟩
   · intro isNone
     subst sourceResult
@@ -30,38 +27,24 @@ theorem compileDecs_evalSim_proofSide {C F : Type} (cfg cfg2 : Config) (ffi : Ho
     cases targetResult with
     | none => simp [optionRel] at results
     | some error =>
-      cases results with
-      | raise values => exact ⟨_, rfl⟩
+      cases error <;> simp_all [optionRel, SemanticPrimitivesProps.excRel]
   · intro abort isAbort
     subst sourceResult
     cases targetResult with
     | none => simp [optionRel] at results
     | some error =>
-      cases results with
-      | abort reason => rfl
+      cases error <;> simp_all [optionRel, SemanticPrimitivesProps.excRel]
 
 /-- The observable termination class of a declaration result. -/
 def outcomeObservation (result : Option (SemanticPrimitivesHOL.ErrorResult FlatSem.Value)) (outcome : HolOutcome) : Prop :=
-  match result with
-  | some (.abort (.ffiError event)) => outcome = HolOutcome.ffiOutcome event
-  | some (.abort _) => False
-  | _ => outcome = HolOutcome.success
-
-/-- The factored outcome predicate has the same cases as the observation. -/
-theorem outcomeObservation_cases (result : Option (SemanticPrimitivesHOL.ErrorResult FlatSem.Value)) (outcome : HolOutcome) :
-    (match result, outcome with
-     | some (.abort (.ffiError event)), outcome => outcome = HolOutcome.ffiOutcome event
-     | some (.abort _), _ => False
-     | _, outcome => outcome = HolOutcome.success) ↔ outcomeObservation result outcome := by
-  cases result with
-  | none => rfl
-  | some error => cases error with
-    | raise value => rfl
-    | abort reason => cases reason <;> rfl
+  match result, outcome with
+  | some (.abort (.ffiError event)), outcome => outcome = HolOutcome.ffiOutcome event
+  | some (.abort _), _ => False
+  | _, outcome => outcome = HolOutcome.success
 
 /-- Related declaration outcomes have the same observable termination class. -/
 theorem outcomeRel_observation (source target : Option (SemanticPrimitivesHOL.ErrorResult FlatSem.Value))
-    (related : optionRel FlatErrorRel source target) (outcome : HolOutcome) :
+    (related : optionRel (SemanticPrimitivesProps.excRel ValueRel) source target) (outcome : HolOutcome) :
     outcomeObservation source outcome ↔ outcomeObservation target outcome := by
   cases source with
   | none => cases target <;> simp_all [optionRel, outcomeObservation]
@@ -69,25 +52,22 @@ theorem outcomeRel_observation (source target : Option (SemanticPrimitivesHOL.Er
     cases target with
     | none => simp [optionRel] at related
     | some targetError =>
-      cases related with
-      | raise values => rfl
-      | abort reason => cases reason <;> rfl
+      cases sourceError <;> cases targetError <;>
+        simp_all [optionRel, SemanticPrimitivesProps.excRel, outcomeObservation]
 
 /-- A related optional outcome cannot introduce a type error. -/
 theorem outcomeRel_noTypeError (source target : Option (SemanticPrimitivesHOL.ErrorResult FlatSem.Value))
-    (related : optionRel FlatErrorRel source target) (safe : source ≠ some (.abort .typeError)) :
+    (related : optionRel (SemanticPrimitivesProps.excRel ValueRel) source target) (safe : source ≠ some (.abort .typeError)) :
     target ≠ some (.abort .typeError) := by
   intro bad
   subst target
   cases source with
   | none => simp [optionRel] at related
   | some error =>
-    cases related with
-    | abort reason => exact safe rfl
+    cases error <;> simp_all [optionRel, SemanticPrimitivesProps.excRel]
 
-/-- If every source clock avoids type errors, compiled declarations have the
-same proof-side observational behavior. The equality does not claim HOL
-correspondence for the evaluator or relations used here. -/
+/-- Flapjack helper for the program semantics theorem: source clocks that
+avoid type errors yield equal observations. -/
 theorem compileDecs_semantics_of_safe {C F : Type} (cfg cfg2 : Config) (ffi : HolFfiState F)
     (source : List FlatLang.Exp) (sourceConfig targetConfig : FlatSem.InstallConfig C)
     (configs : installConfRel cfg sourceConfig targetConfig)
@@ -96,7 +76,7 @@ theorem compileDecs_semantics_of_safe {C F : Type} (cfg cfg2 : Config) (ffi : Ho
     FlatSem.semantics sourceConfig ffi source = FlatSem.semantics targetConfig ffi (source.map (compileDec cfg2)) := by
   classical
   have observations : ∀ clock,
-      optionRel FlatErrorRel
+      optionRel (SemanticPrimitivesProps.excRel ValueRel)
         (FlatSem.evaluateDecs (FlatSem.initialState ffi clock sourceConfig) source).2
         (FlatSem.evaluateDecs (FlatSem.initialState ffi clock targetConfig) (source.map (compileDec cfg2))).2 ∧
       (FlatSem.evaluateDecs (FlatSem.initialState ffi clock sourceConfig) source).1.ffi =
@@ -105,9 +85,9 @@ theorem compileDecs_semantics_of_safe {C F : Type} (cfg cfg2 : Config) (ffi : Ho
     cases run : FlatSem.evaluateDecs (FlatSem.initialState ffi clock sourceConfig) source with
     | mk sourceState sourceResult =>
       have sourceSafe : sourceResult ≠ some (.abort .typeError) := by simpa [run] using safe clock
-      obtain ⟨targetState, targetResult, targetRun, finalStates, results⟩ :=
-        evaluateDecs_simulation_all cfg2 cfg _ _ sourceState source sourceResult
-          (stateRel_initial cfg ffi clock sourceConfig targetConfig configs) run sourceSafe
+      obtain ⟨targetState, targetResult, targetRun, results, finalStates⟩ :=
+        (compileExps_evaluate cfg).2 _ source _ sourceState cfg2 _ sourceResult run rfl
+          (stateRel_initial cfg ffi clock sourceConfig targetConfig configs) sourceSafe
       simpa [run, targetRun] using And.intro results finalStates.2.2.1.symm
   have targetSafe : ∀ clock,
       (FlatSem.evaluateDecs (FlatSem.initialState ffi clock targetConfig) (source.map (compileDec cfg2))).2 ≠
@@ -125,9 +105,9 @@ theorem compileDecs_semantics_of_safe {C F : Type} (cfg cfg2 : Config) (ffi : Ho
       refine ⟨clock, (FlatSem.evaluateDecs (FlatSem.initialState ffi clock targetConfig) (source.map (compileDec cfg2))).1,
         (FlatSem.evaluateDecs (FlatSem.initialState ffi clock targetConfig) (source.map (compileDec cfg2))).2, outcome,
         Prod.eta _, ?_, ?_⟩
-      · apply (outcomeObservation_cases _ outcome).2
+      · change outcomeObservation _ outcome
         apply (outcomeRel_observation _ _ observed.1 outcome).1
-        exact (outcomeObservation_cases result outcome).1 outcomeEq
+        exact outcomeEq
       · simpa [← observed.2] using behaviorEq
     · rintro ⟨clock, state, result, outcome, run, outcomeEq, behaviorEq⟩
       have observed := observations clock
@@ -135,9 +115,9 @@ theorem compileDecs_semantics_of_safe {C F : Type} (cfg cfg2 : Config) (ffi : Ho
       refine ⟨clock, (FlatSem.evaluateDecs (FlatSem.initialState ffi clock sourceConfig) source).1,
         (FlatSem.evaluateDecs (FlatSem.initialState ffi clock sourceConfig) source).2, outcome,
         Prod.eta _, ?_, ?_⟩
-      · apply (outcomeObservation_cases _ outcome).2
+      · change outcomeObservation _ outcome
         apply (outcomeRel_observation _ _ observed.1 outcome).2
-        exact (outcomeObservation_cases result outcome).1 outcomeEq
+        exact outcomeEq
       · simpa [observed.2] using behaviorEq
   have tracesEq :
       (fun trace => ∃ clock, trace = HolLList.fromList (FlatSem.evaluateDecs
@@ -157,11 +137,9 @@ theorem compileDecs_semantics_of_safe {C F : Type} (cfg cfg2 : Config) (ffi : Ho
   simp only [sourceNoError, targetNoError, if_false]
   rw [terminatingEq, tracesEq]
 
-/-- A non-failing source program and related installation configurations
-have the same proof-side observational behavior after pattern compilation.
-This is not tagged as the HOL semantics theorem because the evaluator and
-relations have not completed cross-language review. -/
-theorem compileDecs_semantics_proofSide {C F : Type} (cfg cfg2 : Config) (ffi : HolFfiState F)
+/-- Pattern compilation preserves the semantics of a non-failing program. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "compile_decs_semantics"]
+theorem compileDecs_semantics {C F : Type} (cfg cfg2 : Config) (ffi : HolFfiState F)
     (source : List FlatLang.Exp) (sourceConfig targetConfig : FlatSem.InstallConfig C)
     (configs : installConfRel cfg sourceConfig targetConfig)
     (notFail : FlatSem.semantics sourceConfig ffi source ≠ .fail) :

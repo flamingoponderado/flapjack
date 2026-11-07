@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateControl
+import Flapjack.EvaluateHOL.EvalDispatch
 
 /-! Dynamic Eval dispatch in the source evaluator's oracle adjustment. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs
@@ -24,45 +25,13 @@ theorem doEvalRes_adjust_success {Config F β : Type} (ci : CompilerInstance Con
     obtain ⟨foundEnv, foundDecs, evalState⟩ := output
     simp [doEvalRes, run] at success
     obtain ⟨rfl, rfl, rfl⟩ := success
-    obtain ⟨adjusted, nextInserted⟩ := doEval_adjust ci f compile values state.evalState foundEnv foundDecs evalState run inserted
+    obtain ⟨adjusted, nextInserted⟩ := doEval_adjust values state.evalState foundEnv foundDecs evalState ci f compile ⟨run, inserted⟩
     refine ⟨nextInserted, ?_⟩
     rcases adjusted with transformed | unchanged
     · left
       simp [doEvalRes, transformed]
     · right
       simp [doEvalRes, unchanged]
-
-/-- The Eval callback can choose either declarations returned by the oracle or
-their compiled form. If the original evaluation is safe, both choices give the
-same adjusted evaluation. This Flapjack lemma combines the induction
-hypothesis with the declaration compiler-preservation premise. -/
-theorem evaluateDecs_adjusted_compiled {Config F : Type} (ci : CompilerInstance Config)
-    (f compile : List Dec → List Dec) (preserves : DeclarationCompilerPreserves (F := F) compile)
-    (decs : List Dec) (state next : State F) (env : SemEnv Value)
-    (ih : DecsOracleAdjustedAt ci f compile state env decs) (result : Result (SemEnv Value) Value)
-    (run : evaluateDecs state env decs = (next, result))
-    (inserted : isInsertOracle ci f state.evalState) (safe : result ≠ .err (.abort .typeError)) :
-    isInsertOracle ci f next.evalState ∧
-      evaluateDecs { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env decs =
-        ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result) ∧
-      evaluateDecs { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env (compile decs) =
-        ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result) := by
-  obtain ⟨nextInserted, replacement⟩ := ih next result run inserted safe
-  exact ⟨nextInserted, replacement, preserves _ _ env decs result replacement safe⟩
-
-/-- The final environment and error handling of the Eval branch. This is a
-Flapjack factorization of the corresponding evaluator clause, not a separate
-HOL declaration. -/
-def finishEval {F : Type} (before after : State F) (env : SemEnv Value)
-    (result : Result (SemEnv Value) Value) : State F × Result (List Value) Value :=
-  match result with
-  | .val newEnv => match declareEnv after.evalState (extendDecEnv newEnv env) with
-    | none => typeError after
-    | some (value, evalState) =>
-      ({ after with evalState := resetEnvGeneration before.evalState evalState }, .val [value])
-  | .err (.abort err) => (after, .err (.abort err))
-  | .err err =>
-    ({ after with evalState := resetEnvGeneration before.evalState after.evalState }, .err err)
 
 /-- Oracle adjustment commutes with Eval's final environment/error handling.
 The insertion invariant for the evaluated declarations is retained unless the
@@ -99,19 +68,10 @@ theorem finishEval_adjust {Config F : Type} (ci : CompilerInstance Config)
       obtain ⟨value, evalState⟩ := pair
       simp [finishEval, declared] at run
       obtain ⟨rfl, rfl⟩ := run
-      have evalInserted := declareEnv_isInsert ci f _ (extendDecEnv newEnv env) value evalState declared inserted
+      have evalInserted := declareEnv_isInsert _ (extendDecEnv newEnv env) value evalState ci f ⟨declared, inserted⟩
       constructor
       · simpa only [isInsert_reset] using evalInserted
       · simp [finishEval, declareEnv_adjust, declared, adjustOracle_reset]
-
-/-- Eval continuation after successful decoding, with the evaluator's
-clock clamp removed using `fixClockEvaluate`. This factorization is Flapjack
-proof infrastructure and has no separate HOL declaration. -/
-noncomputable def continueEval {F : Type} (before decoded : State F) (env : SemEnv Value)
-    (decs : List Dec) : State F × Result (List Value) Value :=
-  if decoded.clock = 0 then timeoutError decoded else
-    let evaluated := evaluateDecs (decClock decoded) env decs
-    finishEval before evaluated.1 env evaluated.2
 
 /-- Once Eval has decoded its declarations, both possible adjusted callback
 outputs lead to the same observable state and result. This is Flapjack proof
@@ -143,44 +103,14 @@ theorem continueEval_adjust {Config F : Type} (ci : CompilerInstance Config)
         simpa [continueEval, clock, evaluated, bad, finishEval] using h.symm
       have sourceFinish : finishEval before after env inner = (next, result) := by
         simpa [continueEval, clock, evaluated] using run
-      obtain ⟨afterInserted, original, compiled⟩ :=
-        evaluateDecs_adjusted_compiled ci f compile preserves decs (decClock decoded) after env (ih clock) inner
-          evaluated (by simpa [decClock] using inserted) innerSafe
+      obtain ⟨afterInserted, original⟩ :=
+        ih clock after inner evaluated (by simpa [decClock] using inserted) innerSafe
+      have compiled := preserves _ _ env decs inner original innerSafe
       simp only [decClock] at original compiled
       obtain ⟨nextInserted, finish⟩ := finishEval_adjust ci f compile before after next env inner result sourceFinish afterInserted safe
       refine ⟨nextInserted, ?_, ?_⟩
       · simpa [continueEval, clock, decClock, original] using finish
       · simpa [continueEval, clock, decClock, compiled] using finish
-
-/-- The successful Eval-dispatch branch of the faithful evaluator is exactly
-the factored continuation above. This Flapjack lemma connects the proof
-infrastructure to the actual evaluator clause. -/
-theorem evaluate_eval_success {F : Type} (state middle decoded : State F) (env evalEnv : SemEnv Value)
-    (args : List AstHOL.Exp) (values : List Value) (decs : List Dec)
-    (argsRun : evaluate state env args.reverse = (middle, .val values))
-    (decodedRun : doEvalRes (β := Value) values.reverse middle = (decoded, .val (evalEnv, decs))) :
-    evaluate state env [.app .eval args] = continueEval middle decoded evalEnv decs := by
-  have fixedDecode : fixClock middle (doEvalRes (β := Value) values.reverse middle) =
-      doEvalRes (β := Value) values.reverse middle := by
-    apply fixClock_eq_of_bound
-    simp [doEvalRes_clock]
-  simp only [evaluate]
-  rw [(fixClockEvaluate state env args.reverse []).1, argsRun]
-  simp only [getOpClass]
-  rw [fixedDecode, decodedRun]
-  dsimp only
-  by_cases clock : decoded.clock = 0
-  · simp [clock, continueEval]
-  · simp only [clock, if_false, (fixClockEvaluate (decClock decoded) evalEnv [] decs).2]
-    cases run : evaluateDecs (decClock decoded) evalEnv decs with
-    | mk after inner =>
-      cases inner with
-      | val newEnv =>
-        cases h : declareEnv after.evalState (extendDecEnv newEnv evalEnv) <;>
-          simp [run, continueEval, clock, finishEval, h]
-        all_goals split <;> simp_all
-      | err error =>
-        cases error <;> simp [run, continueEval, clock, finishEval]
 
 /-- Successful dynamic Eval branch, composed against the actual evaluator.
 This Flapjack lemma is a case-building step: it still takes the successful
@@ -215,31 +145,9 @@ theorem evaluate_eval_adjust_success {Config F : Type} (ci : CompilerInstance Co
   · rw [evaluate_eval_success _ _ _ env evalEnv args values decs adjustedArgs unchanged]
     exact original
 
-/-- Dynamic Eval propagates an error from evaluating its arguments. This
-Flapjack helper unfolds the corresponding evaluator clause. -/
-theorem evaluate_eval_args_error {F : Type} (state middle : State F) (env : SemEnv Value)
-    (args : List AstHOL.Exp) (error : ErrorResult Value)
-    (argsRun : evaluate state env args.reverse = (middle, .err error)) :
-    evaluate state env [.app .eval args] = (middle, .err error) := by
-  simp only [evaluate]
-  rw [(fixClockEvaluate state env args.reverse []).1, argsRun]
-
-/-- If dynamic Eval cannot decode its input, the evaluator reports a type
-error. This Flapjack helper unfolds the corresponding evaluator clause. -/
-theorem evaluate_eval_decode_failure {F : Type} (state middle : State F) (env : SemEnv Value)
-    (args : List AstHOL.Exp) (values : List Value)
-    (argsRun : evaluate state env args.reverse = (middle, .val values))
-    (decodeFailure : doEval values.reverse middle.evalState = none) :
-    evaluate state env [.app .eval args] = (middle, .err (.abort .typeError)) := by
-  simp only [evaluate]
-  rw [(fixClockEvaluate state env args.reverse []).1, argsRun]
-  simp [getOpClass, doEvalRes, decodeFailure, fixClock]
-
-/-- Dynamic Eval application case of the original evaluator induction. The
-declaration induction hypothesis applies only to the decoded declarations at
-the actual decremented-clock state, when decoding succeeds and the clock is
-nonzero. -/
-@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
+/-- Flapjack proof infrastructure for the dynamic Eval branch of HOL's
+application induction case, using the decoded declarations at the actual
+decremented-clock state. -/
 theorem adjustOracle_evaluate_Eval {Config F : Type} (ci : CompilerInstance Config)
     (f compile : List Dec → List Dec) (preserves : DeclarationCompilerPreserves (F := F) compile)
     (state next : State F) (env : SemEnv Value) (args : List AstHOL.Exp)

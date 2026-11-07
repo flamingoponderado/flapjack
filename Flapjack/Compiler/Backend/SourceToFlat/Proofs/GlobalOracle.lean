@@ -6,22 +6,18 @@ namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.Compiler.Backend.FlatProps
 open Flapjack.Compiler.Backend.BackendProps
 
+/-- Membership is preserved by the HOL sub-bag relation. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "SUB_BAG_IMP"]
+theorem subBag_imp {α : Type} (b₁ b₂ : Flapjack.Bag α) (x : α)
+    (sub : Flapjack.subBag b₁ b₂) (member : Flapjack.bagIn x b₁) : Flapjack.bagIn x b₂ :=
+  sub x 1 member
+
 private theorem rangeBag_member (start count key : Nat)
     (positive : 0 < bindingRangeBag start count key) : start ≤ key ∧ key < start + count := by
   have member : key ∈ (List.range count).map (start + ·) := List.count_pos_iff.mp positive
   obtain ⟨i, imem, rfl⟩ := List.mem_map.mp member
   have less : i < count := List.mem_range.mp imem
   omega
-
-private theorem globals_append (xs ys : List FlatLang.Exp) :
-    elistGlobals (xs ++ ys) = unionGlobalBag (elistGlobals xs) (elistGlobals ys) := by
-  induction xs with
-  | nil => funext key; simp [elistGlobals, emptyGlobalBag, unionGlobalBag]
-  | cons x xs ih =>
-    simp only [List.cons_append, elistGlobals, ih]
-    funext key
-    simp only [unionGlobalBag]
-    omega
 
 /-- Every incremental compilation initializes slots inside its allocated range. -/
 theorem incCompile_globals_range (envId : Nat × Nat) (c : Config) (p : List Dec) :
@@ -55,7 +51,7 @@ theorem incCompile_globals_range (envId : Nat × Nat) (c : Config) (p : List Dec
       (globAlloc next' c :: (code ++ [storeEnvId envs'.generation envs'.next])) key
     have h : 0 < bindingRangeBag c.next.vidx (numBindingsList p) key := by
       simp only [elistGlobals, globAlloc, storeEnvId, setGlobals, opGlobalBag, envIdTuple,
-        globals_append, body, unionGlobalBag, emptyGlobalBag] at bound
+        elistGlobals_append, body, unionGlobalBag, emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] at bound
       simp only [globAlloc, storeEnvId, envIdTuple] at positive
       omega
     have range := rangeBag_member c.next.vidx (numBindingsList p) key h
@@ -82,8 +78,11 @@ theorem compileTotal_globals_range (c : Config) (p : List Dec) :
   rw [outCode] at positive
   rw [outNext]
   have bound := compileFlat_subBag c.patternCfg (globAlloc next' c :: allocEnvRef :: code) key
+    (elistGlobals (compileFlatTotal c.patternCfg (globAlloc next' c :: allocEnvRef :: code)) key) (Nat.le_refl _)
+  change elistGlobals (compileFlatTotal c.patternCfg (globAlloc next' c :: allocEnvRef :: code)) key ≤
+    elistGlobals (globAlloc next' c :: allocEnvRef :: code) key at bound
   simp only [elistGlobals, globAlloc, allocEnvRef, setGlobals, opGlobalBag, body,
-    unionGlobalBag, emptyGlobalBag] at bound
+    unionGlobalBag, emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] at bound
   simp only [globAlloc, allocEnvRef] at positive
   by_cases zero : key = 0
   · subst key

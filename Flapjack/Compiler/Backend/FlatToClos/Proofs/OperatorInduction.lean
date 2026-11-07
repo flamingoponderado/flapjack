@@ -95,7 +95,7 @@ theorem evaluate_operator_from_induction {C F : Type}
     · have emptyEnv : EnvRel ⟨[]⟩ [] [] := by
         apply (envRel_iff_lookup _ _ _).2
         simp
-      simpa using envRel_cons (name := ofString "f") emptyEnv related
+      simpa [replaceEnvValues] using envRel_cons (env := (⟨[]⟩ : FlatSem.Environment FlatSem.Value)) (name := ofString "f") emptyEnv related
   · intro decs next nextTarget related smaller safeDecs decsNot
     apply evaluate_decs_unit_of_singletons decs next.clock
     · intro expression member after afterTarget bound afterStates afterNot

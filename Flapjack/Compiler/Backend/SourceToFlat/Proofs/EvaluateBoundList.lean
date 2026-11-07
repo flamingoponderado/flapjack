@@ -31,7 +31,7 @@ theorem localExpressionListStep_singleton {C F : Type} [Nonempty C]
     (step : LocalExpressionStep interp transform genv start finish other source flat sourceEnv flatEnv trace compMap gen expr) :
     LocalExpressionListStep interp transform genv start finish other source flat sourceEnv flatEnv trace compMap gen [expr] := by
   obtain ⟨nextGenv, sim, post⟩ := step
-  refine ⟨nextGenv, exprListSim_singleton nextGenv compMap trace sourceEnv flatEnv source flat expr sim, ?_⟩
+  refine ⟨nextGenv, by simpa [ExprSim, ExprListSim, compileExps] using sim, ?_⟩
   cases result : (EvaluateHOL.evaluate source sourceEnv [expr]).2 with
   | val value => simpa only [result, compileExps] using post
   | err error =>
@@ -55,7 +55,9 @@ theorem localExpressionListStep_empty {C F : Type} [Nonempty C]
   · simp only [EvaluateHOL.evaluate, compileExps, FlatSem.evaluate]
     exact ⟨GlobalGrowth.refl genv, invariant, generation, oracForwardRel_refl interp source.evalState⟩
 
-private theorem sourceEvaluate_cons {F : Type} (source : State F) (env : SemEnv Value)
+/-- Unfold the source evaluator on two or more expressions for simulation.
+This convenience equation has no separate HOL declaration. -/
+theorem sourceEvaluate_cons {F : Type} (source : State F) (env : SemEnv Value)
     (first second : AstHOL.Exp) (rest : List AstHOL.Exp) :
     EvaluateHOL.evaluate source env (first :: second :: rest) =
       let head := EvaluateHOL.evaluate source env [first]
@@ -127,7 +129,7 @@ theorem localExpressionListStep_cons {C F : Type} [Nonempty C]
     · rw [sourceEvaluate_cons, sourceHead, flatEvaluate_cons, flatHead]
       exact headPost
   | @value sourceValues flatValues headValues =>
-    obtain ⟨sourceValue, sourceEq⟩ := EvaluateProps.evaluateSingFull source middleSource sourceEnv first sourceValues sourceHead
+    obtain ⟨sourceValue, sourceEq⟩ := EvaluateProps.evaluateSingFull source sourceEnv first middleSource sourceValues sourceHead
     subst sourceValues
     cases headValues with
     | cons headValue tailValues =>

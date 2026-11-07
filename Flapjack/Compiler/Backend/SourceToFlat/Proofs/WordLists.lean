@@ -1,32 +1,30 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ListConversion
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Eval
 
-/-! Byte and word list decoding across the factored source-to-flat value
-relation. The underlying relation is still awaiting HOL correspondence review. -/
+/-! Byte and word list decoding across the source-to-flat value relation. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
+
+namespace WordListsPort
+/-- Roundtrip for the global environment's canonical finite maps. -/
+theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
+    GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env := GlobalEnv.holFmapAsFiniteSupportWitness env
+end WordListsPort
+
+/-- Successful collection of options preserves the complete list shape. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "maybe_all_list_SOME"]
+theorem maybeAllList_some {α : Type} : ∀ (xs : List (Option α)) (ys : List α),
+    maybeAllList xs = some ys → xs = ys.map some := maybeAllList_reconstruct
 
 private theorem maybeAllList_shape {α β : Type} (decode : α → Option β) (encode : β → α)
     (recover : ∀ x y, decode x = some y → x = encode y) :
     ∀ xs ys, maybeAllList (xs.map decode) = some ys → xs = ys.map encode := by
-  intro xs
-  induction xs with
-  | nil =>
-    intro ys h
-    simp [maybeAllList] at h
-    subst ys
-    rfl
-  | cons head tail ih =>
-    intro ys h
-    cases headResult : decode head with
-    | none => simp [maybeAllList, headResult] at h
-    | some value =>
-      cases tailResult : maybeAllList (tail.map decode) with
-      | none => simp [maybeAllList, headResult, tailResult] at h
-      | some values =>
-        simp [maybeAllList, headResult, tailResult] at h
-        subst ys
-        simp [recover head value headResult, ih values tailResult]
+  intro xs ys success
+  have equal := maybeAllList_some (xs.map decode) ys success
+  have rel : List.Forall₂ (fun x y => decode x = some y) xs ys := by
+    simpa only [← List.forall₂_eq_eq_eq, List.forall₂_map_left_iff, List.forall₂_map_right_iff] using equal
+  have recovered := rel.imp recover
+  simpa only [← List.forall₂_map_right_iff, List.forall₂_eq_eq_eq] using recovered
 
 private theorem related_literals (genv : GlobalEnv) (lits : List Lit) (flat : List FlatSem.Value)
     (related : List.Forall₂ (ValueRel genv) (lits.map Value.litv) flat) :
@@ -49,19 +47,21 @@ private theorem word64_recover (value : Value) (word : BitVec 64)
   cases value <;> try (simp [valueToWord64] at decoded)
   case litv lit => cases lit <;> simp_all
 
-/-- Successful source byte-list decoding is preserved by related flat values.
-This is a factored counterpart of the original proof obligation. -/
-theorem valueToWord8List_related (genv : GlobalEnv) (ok : genvCOk genv.c)
+/-- Successful source byte-list decoding is preserved by related flat values. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "v_to_word8_list_rel"
+  (fmap_as_finite_support := [c, tys])]
+theorem valueToWord8List_related (genv : GlobalEnv)
     (source : Value) (flat : FlatSem.Value) (bytes : List (BitVec 8))
-    (decoded : valueToWord8List source = some bytes) (related : ValueRel genv source flat) :
+    (premises : valueToWord8List source = some bytes ∧ ValueRel genv source flat ∧ genvCOk genv.c) :
     FlatSem.valueToBytes flat = some bytes := by
+  obtain ⟨decoded, related, ok⟩ := premises
   cases sourceList : valueToList source with
   | none => simp [valueToWord8List, sourceList] at decoded
   | some values =>
     have decodedList : maybeAllList (values.map valueToWord8) = some bytes := by
       simpa [valueToWord8List, sourceList] using decoded
     have shape := maybeAllList_shape valueToWord8 (fun b => Value.litv (.word8 b)) word8_recover values bytes decodedList
-    obtain ⟨flatValues, flatDecoded, listRel⟩ := valueToList_related genv ok source flat values related sourceList
+    obtain ⟨flatValues, flatDecoded, listRel⟩ := valueToList_related genv ok source flat values ⟨related, sourceList⟩
     rw [shape] at listRel
     have flatShape : flatValues = bytes.map (FlatSem.Value.litv ∘ Lit.word8) := by
       simpa [List.map_map, Function.comp_def] using related_literals genv (bytes.map Lit.word8) flatValues
@@ -69,19 +69,21 @@ theorem valueToWord8List_related (genv : GlobalEnv) (ok : genvCOk genv.c)
     apply (FlatSem.valueToBytes_eq_some flat bytes).mpr
     simpa [flatShape] using flatDecoded
 
-/-- Successful source 64-bit word-list decoding is preserved by related flat
-values. This is a factored counterpart of the original proof obligation. -/
-theorem valueToWord64List_related (genv : GlobalEnv) (ok : genvCOk genv.c)
+/-- Successful source 64-bit word-list decoding is preserved by related flat values. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "v_to_word64_list_rel"
+  (fmap_as_finite_support := [c, tys])]
+theorem valueToWord64List_related (genv : GlobalEnv)
     (source : Value) (flat : FlatSem.Value) (words : List (BitVec 64))
-    (decoded : valueToWord64List source = some words) (related : ValueRel genv source flat) :
+    (premises : valueToWord64List source = some words ∧ ValueRel genv source flat ∧ genvCOk genv.c) :
     FlatSem.valueToWords flat = some words := by
+  obtain ⟨decoded, related, ok⟩ := premises
   cases sourceList : valueToList source with
   | none => simp [valueToWord64List, sourceList] at decoded
   | some values =>
     have decodedList : maybeAllList (values.map valueToWord64) = some words := by
       simpa [valueToWord64List, sourceList] using decoded
     have shape := maybeAllList_shape valueToWord64 (fun w => Value.litv (.word64 w)) word64_recover values words decodedList
-    obtain ⟨flatValues, flatDecoded, listRel⟩ := valueToList_related genv ok source flat values related sourceList
+    obtain ⟨flatValues, flatDecoded, listRel⟩ := valueToList_related genv ok source flat values ⟨related, sourceList⟩
     rw [shape] at listRel
     have flatShape : flatValues = words.map (FlatSem.Value.litv ∘ Lit.word64) := by
       simpa [List.map_map, Function.comp_def] using related_literals genv (words.map Lit.word64) flatValues

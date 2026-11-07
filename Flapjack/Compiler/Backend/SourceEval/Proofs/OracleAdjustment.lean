@@ -14,7 +14,9 @@ theorem isInsertDecs {Config : Type} (ci : CompilerInstance Config)
 theorem declareEnv_adjust {Config : Type} (ci : CompilerInstance Config)
     (f : List Dec → List Dec) (es : Option EvalState) (env : SemEnv Value) :
     declareEnv (adjustOracle ci f es) env =
-      (declareEnv es env).map (fun (x, es₂) => (x, adjustOracle ci f es₂)) := by
+      match declareEnv es env with
+      | none => none
+      | some (x, es₂) => some (x, adjustOracle ci f es₂) := by
   cases es with
   | none => rfl
   | some es =>
@@ -83,11 +85,11 @@ theorem isInsert_reset {Config : Type} (ci : CompilerInstance Config)
       all_goals first | rfl | exact iff_of_true (isInsertDecs ci f _) (isInsertDecs ci f _) | simp [isInsertOracle_iff_callback]
 
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "declare_env_is_insert"]
-theorem declareEnv_isInsert {Config : Type} (ci : CompilerInstance Config)
-    (f : List Dec → List Dec) (es : Option EvalState) (env : SemEnv Value)
-    (x : Value) (es₂ : Option EvalState)
-    (declared : declareEnv es env = some (x, es₂))
-    (inserted : isInsertOracle ci f es) : isInsertOracle ci f es₂ := by
+theorem declareEnv_isInsert {Config : Type} (es : Option EvalState) (env : SemEnv Value)
+    (x : Value) (es₂ : Option EvalState) (ci : CompilerInstance Config) (f : List Dec → List Dec)
+    (premises : declareEnv es env = some (x, es₂) ∧ isInsertOracle ci f es) :
+    isInsertOracle ci f es₂ := by
+  obtain ⟨declared, inserted⟩ := premises
   cases es with
   | none => simp [declareEnv] at declared
   | some es =>
@@ -117,14 +119,14 @@ theorem doEvalOracle_comp (compiler : CompilerFun) (f g : List Dec → List Dec)
   all_goals repeat' (split <;> simp_all)
 
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "do_eval_adjust"]
-theorem doEval_adjust {Config : Type} (ci : CompilerInstance Config)
-    (f g : List Dec → List Dec) (values : List Value) (es : Option EvalState)
+theorem doEval_adjust {Config : Type} (values : List Value) (es : Option EvalState)
     (env : SemEnv Value) (decs : List Dec) (es₁ : Option EvalState)
-    (success : doEval values es = some (env, decs, es₁))
-    (inserted : isInsertOracle ci f es) :
+    (ci : CompilerInstance Config) (f g : List Dec → List Dec)
+    (premises : doEval values es = some (env, decs, es₁) ∧ isInsertOracle ci f es) :
     (doEval values (adjustOracle ci (g ∘ f) es) = some (env, g decs, adjustOracle ci (g ∘ f) es₁) ∨
      doEval values (adjustOracle ci (g ∘ f) es) = some (env, decs, adjustOracle ci (g ∘ f) es₁)) ∧
     isInsertOracle ci f es₁ := by
+  obtain ⟨success, inserted⟩ := premises
   classical
   cases es with
   | none => simp [doEval] at success

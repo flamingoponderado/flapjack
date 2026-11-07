@@ -25,7 +25,7 @@ theorem evaluate_ordinary_op_step {C F : Type} (trace : BackendCommon.Tra) (op :
   | mk argsResult middle =>
     cases argsResult with
     | err error =>
-      rw [evaluate_op_error trace op args env source middle error argsRun] at run
+      rw [FlatToClos.evaluate_op_error args env source middle error trace op argsRun] at run
       cases run
       obtain ⟨targetResult, targetMiddle, targetRun, resultRel, middleRel⟩ :=
         argsIH env nextEnv target (.err error) sourceNext m l index argsRun noType length argsVars
@@ -36,7 +36,7 @@ theorem evaluate_ordinary_op_step {C F : Type} (trace : BackendCommon.Tra) (op :
         refine ⟨.err targetError, targetMiddle, ?_, resultRel, middleRel⟩
         rw [altFree_op]
         simp only [shiftList, shiftSing]
-        exact evaluate_op_error _ _ _ _ _ _ _ targetRun
+        exact FlatToClos.evaluate_op_error _ _ _ _ _ _ _ targetRun
     | val values =>
       have valuesNoType : (Result.val values : Result (List Value) Value) ≠ .err (.abort .typeError) := by simp
       obtain ⟨targetResult, targetMiddle, targetRun, resultRel, middleRel⟩ :=

@@ -1,4 +1,5 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleSemantics
+import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleAdjustment
+import Flapjack.EvaluateHOL.ClockFull
 
 /-! Oracle adjustment cases for the source evaluator's declarations. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs
@@ -123,7 +124,7 @@ theorem adjustOracle_evaluate_Denv {Config F : Type} (ci : CompilerInstance Conf
     simp [evaluateDecs, declared] at source
     obtain ⟨rfl, rfl⟩ := source
     constructor
-    · exact declareEnv_isInsert ci f _ env value evalState declared inserted
+    · exact declareEnv_isInsert _ env value evalState ci f ⟨declared, inserted⟩
     · simp [evaluateDecs, declareEnv_adjust, declared]
 
 end Flapjack.Compiler.Backend.SourceEval.Proofs

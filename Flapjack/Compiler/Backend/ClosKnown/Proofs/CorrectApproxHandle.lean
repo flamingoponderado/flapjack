@@ -50,7 +50,7 @@ theorem knownCorrectApproxHandle {C F : Type} (c : Config) (trace : BackendCommo
   rcases h with ⟨known, run, unique, related, approx, disjoint, oracle, safe, envSafe, exprSafe, approxSafe, globalsSafe⟩
   have uniqueBoth : uniqueSetGlobals ([body] ++ [handler]) s0.compileOracle := by
     simpa [uniqueSetGlobals, elistGlobals, setGlobals, FlatProps.unionGlobalBag,
-      FlatProps.emptyGlobalBag, Nat.add_assoc] using unique
+      FlatProps.emptyGlobalBag, Nat.add_assoc, Flapjack.bagUnion, Flapjack.emptyBag] using unique
   have ⟨bodyUnique, handlerUnique, swappedUnique⟩ := Cons.uniqueParts [body] [handler] s0.compileOracle uniqueBoth
   have ⟨bodyDisjoint, handlerDisjoint⟩ :=
     (mglobalsDisjointRw s0.globals body handler body handler body [] trace .install [] none none [] 0 0).2.2.1.mp disjoint

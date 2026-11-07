@@ -34,7 +34,7 @@ theorem knownCorrect0Call {C F : Type} (trace : BackendCommon.Tra) (ticks dest :
   have argsSyntax : everyFnVarsNone xs := by simpa [everyFnVarsNone, fnVarsNoneExp] using inputSyntax
   have argsDisjoint : mglobalsDisjoint s0.globals xs := by
     simpa [mglobalsDisjoint, elistGlobals, setGlobals, FlatProps.unionGlobalBag,
-      FlatProps.emptyGlobalBag] using disjoint
+      FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] using disjoint
   have argsSafe : ∀ e ∈ xs, esgcFree e := by
     have h := exprSafe (.call trace ticks dest xs) (by simp)
     simpa [esgcFree, esgcFreeList_iff] using h
@@ -42,7 +42,7 @@ theorem knownCorrect0Call {C F : Type} (trace : BackendCommon.Tra) (ticks dest :
     simpa [fvMax, freeVars, freeVarExp] using free
   have argsUnique : uniqueSetGlobals xs s0.compileOracle := by
     simpa [uniqueSetGlobals, elistGlobals_append, elistGlobals, setGlobals, FlatProps.unionGlobalBag,
-      FlatProps.emptyGlobalBag] using unique
+      FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] using unique
   cases hk : knownListTotal c xs aenv g0 with
   | mk ea g1 =>
     rw [knownListTotal_call, hk] at known

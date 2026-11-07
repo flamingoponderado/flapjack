@@ -42,10 +42,10 @@ theorem knownCorrectApproxOpForce {C F : Type} (c : Config) (trace : BackendComm
   have callRun := run
   have argsUnique : uniqueSetGlobals xs s0.compileOracle := by
     simpa [uniqueSetGlobals, elistGlobals_append, elistGlobals, setGlobals, opGlobalBag,
-      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag] using unique
+      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] using unique
   have argsDisjoint : mglobalsDisjoint s0.globals xs := by
     simpa [mglobalsDisjoint, elistGlobals, setGlobals, opGlobalBag,
-      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag] using disjoint
+      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] using disjoint
   have argsSafe : ∀ e ∈ xs, esgcFree e := by
     have h := exprSafe (.op trace (.thunkOp .forceThunk) xs) (by simp)
     simpa [esgcFree, esgcFreeList_iff] using h
@@ -89,7 +89,7 @@ theorem knownCorrectApproxOpForce {C F : Type} (c : Config) (trace : BackendComm
                 simp [appUnit, esgcFree, esgcFreeList]
               have forceEmpty : elistGlobals [appUnit (.var .none 0)] = FlatProps.emptyGlobalBag := by
                 funext i
-                simp [appUnit, elistGlobals, setGlobals, opGlobalBag, FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag]
+                simp [appUnit, elistGlobals, setGlobals, opGlobalBag, FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
               have lastApprox := ApproxRuntime.stateGlobalsApproxEvaluateEmpty [appUnit (.var .none 0)] [value]
                 middle forceResult last g1 he safety.1 (by simpa using valueSafe) forceSafe forceEmpty middleOracle argApprox.1
               rw [he] at run

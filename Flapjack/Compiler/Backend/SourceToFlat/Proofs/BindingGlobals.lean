@@ -18,7 +18,7 @@ def bindingRangeBag (start count : Nat) : GlobalBag :=
 
 private theorem bindingRangeBag_zero (start : Nat) : bindingRangeBag start 0 = emptyGlobalBag := by
   funext key
-  simp [bindingRangeBag, emptyGlobalBag]
+  simp [bindingRangeBag, emptyGlobalBag, Flapjack.emptyBag]
 
 private theorem bindingRangeBag_succ (start count : Nat) :
     bindingRangeBag start (count + 1) =
@@ -27,10 +27,10 @@ private theorem bindingRangeBag_succ (start count : Nat) :
   by_cases h : key = start
   · subst key
     simp [bindingRangeBag, List.range_succ_eq_map, List.map_map, Function.comp_def,
-      unionGlobalBag, Nat.add_comm, Nat.add_left_comm]
+      unionGlobalBag, Nat.add_comm, Nat.add_left_comm, Flapjack.bagUnion]
   · have h' : start ≠ key := Ne.symm h
     simp [bindingRangeBag, List.range_succ_eq_map, List.map_map, Function.comp_def,
-      unionGlobalBag, Nat.add_comm, Nat.add_left_comm, h, h']
+      unionGlobalBag, Nat.add_comm, Nat.add_left_comm, h, h', Flapjack.bagUnion]
 
 private theorem bindingRangeBag_add (start a b : Nat) :
     bindingRangeBag start (a + b) =
@@ -39,12 +39,12 @@ private theorem bindingRangeBag_add (start a b : Nat) :
   | zero =>
     simp only [Nat.zero_add, bindingRangeBag_zero, Nat.add_zero]
     funext key
-    simp [unionGlobalBag, emptyGlobalBag]
+    simp [unionGlobalBag, emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
   | succ a ih =>
     simp only [Nat.succ_add]
     rw [bindingRangeBag_succ, ih, bindingRangeBag_succ]
     funext key
-    simp only [unionGlobalBag]
+    simp only [unionGlobalBag, Flapjack.bagUnion]
     have eq : start + (a + 1) = start + 1 + a := by omega
     rw [eq]
     omega
@@ -62,24 +62,16 @@ theorem setGlobals_makeVarls (n : Nat) (t : Tra) (idx : Nat) (xs : List VarN) :
       by_cases h : key = idx
       · subst key
         simp [makeVarls, setGlobals, elistGlobals, opGlobalBag, unionGlobalBag,
-          emptyGlobalBag, bindingRangeBag]
+          emptyGlobalBag, bindingRangeBag, Flapjack.bagUnion, Flapjack.emptyBag]
       · have h' : idx ≠ key := Ne.symm h
         simp [makeVarls, setGlobals, elistGlobals, opGlobalBag, unionGlobalBag,
-          emptyGlobalBag, bindingRangeBag, h, h']
+          emptyGlobalBag, bindingRangeBag, h, h', Flapjack.bagUnion, Flapjack.emptyBag]
     | cons y ys =>
       rw [show (x :: y :: ys).length = (y :: ys).length + 1 by simp]
       rw [bindingRangeBag_succ]
       simp only [makeVarls, setGlobals, elistGlobals, opGlobalBag, ih]
       funext key
-      simp [unionGlobalBag, emptyGlobalBag]
-
-private theorem unionEmptyL (bag : GlobalBag) : unionGlobalBag emptyGlobalBag bag = bag := by
-  funext key
-  simp [unionGlobalBag, emptyGlobalBag]
-
-private theorem unionEmptyR (bag : GlobalBag) : unionGlobalBag bag emptyGlobalBag = bag := by
-  funext key
-  simp [unionGlobalBag, emptyGlobalBag]
+      simp [unionGlobalBag, emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
 
 /-- Declaration output writes precisely the consecutive allocated global slots. -/
 theorem compileDecs_globals (t : List MlString) (n : Nat) (next : NextIndices)
@@ -99,14 +91,14 @@ theorem compileDecs_globals (t : List MlString) (n : Nat) (next : NextIndices)
       | none =>
         have he := compileExp_globalSafe ((patBindings p).reverse ++ t) env e
         simp [compileDecs, h, numBindingsList, numBindings, elistGlobals, setGlobals,
-          rowGlobals, setGlobals_makeVarls, he.2, unionEmptyL, unionEmptyR]
+          rowGlobals, setGlobals_makeVarls, he.2, Flapjack.bagUnion_empty_left, Flapjack.bagUnion_empty_right]
     | dletrec loc funs =>
       let names := funs.map Prod.fst
       let newEnv := NamespaceHOL.nsBindList (names.map fun x => (x, VarName.localName .none x)) env.v
       have hf := compileFuns_globalSafe t { env with v := newEnv } funs
       simp only [newEnv, names, List.map_map] at hf
       simp [compileDecs, numBindingsList, numBindings, elistGlobals, setGlobals,
-        setGlobals_makeVarls, hf.2, unionEmptyR]
+        setGlobals_makeVarls, hf.2, Flapjack.bagUnion_empty_right]
     | dtype loc types => simp [compileDecs, numBindingsList, numBindings, elistGlobals, bindingRangeBag_zero]
     | dtabbrev loc vars name typ => simp [compileDecs, numBindingsList, numBindings, elistGlobals, bindingRangeBag_zero]
     | dexn loc name types => simp [compileDecs, numBindingsList, numBindings, elistGlobals, bindingRangeBag_zero]
@@ -130,7 +122,7 @@ theorem compileDecs_globals (t : List MlString) (n : Nat) (next : NextIndices)
       rw [hlocal, hbody, hcount, bindingRangeBag_add]
     | denv name =>
       simp [compileDecs, numBindingsList, numBindings, elistGlobals, setGlobals, opGlobalBag,
-        envIdTuple, bindingRangeBag_succ, bindingRangeBag_zero, unionEmptyL, unionEmptyR]
+        envIdTuple, bindingRangeBag_succ, bindingRangeBag_zero, Flapjack.bagUnion_empty_left, Flapjack.bagUnion_empty_right]
   | d :: d2 :: ds => by
     have hfirst := compileDecs_globals t n next env envs [d]
     have hcount := compileDecs_bindingCount t n next env envs [d]
@@ -167,12 +159,19 @@ theorem compileDecs_elistGlobals (t : List MlString) (n : Nat) (next : NextIndic
 /-- Elimination and pattern compilation cannot increase global-write counts. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "compile_flat_sub_bag"]
 theorem compileFlat_subBag (cfg : FlatPattern.Config) (p : List FlatLang.Exp) :
-    ∀ key, elistGlobals (compileFlatTotal cfg p) key ≤ elistGlobals p key := by
-  intro key
+    Flapjack.subBag (elistGlobals (compileFlatTotal cfg p)) (elistGlobals p) := by
+  intro key count bound
   have pattern := FlatPattern.compileDecs_elistGlobals cfg (FlatElim.removeFlatProgTotal p) key
   have elim := FlatElim.removeFlatProg_subBag p key
     (elistGlobals (FlatElim.removeFlatProgTotal p) key) (Nat.le_refl _)
-  exact Nat.le_trans pattern elim
+  exact Nat.le_trans bound (Nat.le_trans pattern elim)
+
+/-- Flat compilation preserves distinct global writes. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "compile_flat_BAG_ALL_DISTINCT"]
+theorem compileFlat_bagAllDistinct (cfg : FlatPattern.Config) (p : List FlatLang.Exp)
+    (distinct : Flapjack.bagAllDistinct (elistGlobals p)) :
+    Flapjack.bagAllDistinct (elistGlobals (compileFlatTotal cfg p)) :=
+  Flapjack.bagAllDistinct_subBag _ _ ⟨compileFlat_subBag cfg p, distinct⟩
 
 private theorem bindingRangeBag_distinct (start count : Nat) :
     ∀ key, bindingRangeBag start count key ≤ 1 := by
@@ -190,25 +189,24 @@ private theorem bindingRangeBag_below (start count key : Nat) (below : key < sta
 /-- The complete source-to-flat compiler initializes each global at most once. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "compile_globals_BAG_ALL_DISTINCT"]
 theorem compile_globals_distinct (c : Config) (p : List Dec) :
-    FlatElim.globalBagDistinct (elistGlobals (compileTotal c p).2) := by
+    Flapjack.bagAllDistinct (elistGlobals (compileTotal c p).2) := by
   let next := { c.next with vidx := c.next.vidx + 1 }
   let envs : EnvironmentGenerationStore := { next := 0, generation := c.envs.next, envs := .ln }
   have body := compileDecs_globals [] 1 next c.modEnv envs p
   generalize hc : compileDecs [] 1 next c.modEnv envs p = result
   obtain ⟨n', next', env', envs', code⟩ := result
   simp only [hc] at body
-  intro key
-  have bound := compileFlat_subBag c.patternCfg (globAlloc next' c :: allocEnvRef :: code) key
   have program : (compileTotal c p).2 =
       compileFlatTotal c.patternCfg (globAlloc next' c :: allocEnvRef :: code) := by
     simp only [next, envs] at hc
     simp [compileTotal, compileProg, hc]
   rw [program]
-  apply Nat.le_trans bound
+  apply compileFlat_bagAllDistinct
+  intro key
   have distinct := bindingRangeBag_distinct next.vidx (numBindingsList p) key
   have zero := bindingRangeBag_below next.vidx (numBindingsList p) 0 (by simp [next])
   simp only [elistGlobals, globAlloc, allocEnvRef, setGlobals, opGlobalBag,
-    body, unionGlobalBag, emptyGlobalBag]
+    body, unionGlobalBag, emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
   by_cases eq : key = 0
   · subst key
     simp [zero]
@@ -218,7 +216,7 @@ theorem compile_globals_distinct (c : Config) (p : List Dec) :
 /-- Incremental source-to-flat compilation also initializes each slot at most once. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "inc_compile_globals_BAG_ALL_DISTINCT"]
 theorem incCompile_globals_distinct (envId : Nat × Nat) (c : Config) (p : List Dec) :
-    FlatElim.globalBagDistinct (elistGlobals (incCompile envId c p).2) := by
+    Flapjack.bagAllDistinct (elistGlobals (incCompile envId c p).2) := by
   let env := lookupEnvId envId c.envs
   let envs : EnvironmentGenerationStore := { next := 0, generation := c.envs.next, envs := .ln }
   have body := compileDecs_globals [] 1 c.next env envs p
@@ -237,7 +235,7 @@ theorem incCompile_globals_distinct (envId : Nat × Nat) (c : Config) (p : List 
   apply Nat.le_trans bound
   have distinct := bindingRangeBag_distinct c.next.vidx (numBindingsList p) key
   simp only [elistGlobals, globAlloc, storeEnvId, setGlobals, opGlobalBag,
-    envIdTuple, elistGlobals_append, body, unionGlobalBag, emptyGlobalBag]
+    envIdTuple, elistGlobals_append, body, unionGlobalBag, emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
   simpa using distinct
 
 end Flapjack.Compiler.Backend.SourceToFlat

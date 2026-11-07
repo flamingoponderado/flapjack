@@ -1,0 +1,71 @@
+import Flapjack.HolRef
+import Flapjack.Compiler.Backend.SourceEval.Proofs.StateRelation
+import Flapjack.EvaluateHOL
+namespace Flapjack.Compiler.Backend.SourceEval.Proofs
+open Flapjack.SemanticPrimitivesHOL Flapjack.EvaluateHOL
+
+/-- Pair-pattern application agrees with the componentwise pair map. -/
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "pairarg_to_pair_map"]
+theorem pairArg_to_pairMap {α β γ δ : Type} (f : α → γ) (g : β → δ) :
+    (fun (p : α × β) => match p with | (x, y) => (f x, g y)) = Prod.map f g := by
+  funext ⟨x, y⟩
+  rfl
+
+/-- Related recording states have equal clocks and remain related after decrement. -/
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "s_rel_clock"]
+theorem stateRel_clock {Config F : Type} (ci : CompilerInstance Config) (s t : State F)
+    (related : stateRel ci s t) : s.clock = t.clock ∧ stateRel ci (decClock s) (decClock t) := by
+  obtain ⟨dec, oracle, refs, target, stores, source, callback, rest⟩ := related
+  subst t
+  refine ⟨rfl, dec, oracle, refs, ?_, stores, source, callback, rest⟩
+  rfl
+
+/-- Updating both clocks preserves the source recording-state relation. -/
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "s_rel_clock2"]
+theorem stateRel_setClock {Config F : Type} (ci : CompilerInstance Config) (s t : State F)
+    (k : Nat) (related : stateRel ci s t) :
+    stateRel ci { s with clock := k } { t with clock := k } := by
+  obtain ⟨dec, oracle, refs, rfl, stores, remainder⟩ := related
+  exact ⟨dec, oracle, refs, rfl, stores, remainder⟩
+
+/-- Oracle agreement determines any event inside the recorded prefix. -/
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "orac_agrees_s_rel_IMP"]
+theorem oracleAgrees_stateRel {Config F : Type} (oracle : EvalOracleFun) (t : State F)
+    (ci : CompilerInstance Config) (s : State F) (i : Nat)
+    (agrees : oracleAgrees oracle t.evalState) (related : stateRel ci s t)
+    (bound : i < ((oracleState t.evalState).oracle 0).1.1) :
+    oracle i = (oracleState t.evalState).oracle (i + 1) := by
+  obtain ⟨dec, recorded, refs, rfl, stores, rest⟩ := related
+  exact agrees i bound
+
+
+private theorem concreteRelatedLists (xs ys : List Value)
+    (related : List.Forall₂ (fun x y => concreteValue x = true → y = x) xs ys)
+    (concrete : concreteValues xs = true) : ys = xs := by
+  induction related with
+  | nil => rfl
+  | cons head tail ih =>
+    simp only [concreteValues, Bool.and_eq_true] at concrete
+    simp only [head concrete.1, ih concrete.2]
+
+/-- A concrete source value can only be related to itself. -/
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "concrete_v_rel"]
+theorem concreteValue_rel (es : EvalOracleState) :
+    ∀ x y, ValueRel es x y → concreteValue x = true → y = x := by
+  apply valueRel_hol_induction es (fun x y => concreteValue x = true → y = x)
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · intro env id encoded env1 _ concrete
+    simp [concreteValue] at concrete
+  · intro xs ys related concrete
+    have equal := concreteRelatedLists xs ys related (by simpa [concreteValue] using concrete)
+    simp [equal]
+  · intro stamp xs ys related concrete
+    have equal := concreteRelatedLists xs ys related (by simpa [concreteValue] using concrete)
+    simp [equal]
+  · intro env env1 name body _ concrete
+    simp [concreteValue] at concrete
+  · intro env env1 funs name _ concrete
+    simp [concreteValue] at concrete
+  · intro lit _; rfl
+  · intro flag index _; rfl
+end Flapjack.Compiler.Backend.SourceEval.Proofs

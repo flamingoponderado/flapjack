@@ -1,12 +1,13 @@
 import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
+import Flapjack.HolRef
 
-/-! Composition of the proof-side flat declaration evaluator. The evaluator
-has not yet completed HOL correspondence review. -/
+/-! Composition of the flat declaration evaluator. -/
 namespace Flapjack.Compiler.Backend.FlatSem
 
 /-- Evaluation of an appended declaration list stops at the first error, or
-continues with the second list after the first succeeds. This is untagged
-until the proof-side flat evaluator is reviewed against HOL. -/
+continues with the second list after the first succeeds. HOL's three unused
+universally quantified variables are vacuous and omitted here. -/
+@[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "evaluate_decs_append"]
 theorem evaluateDecs_append {C F : Type} (state : State C F)
     (first second : List FlatLang.Exp) :
     evaluateDecs state (first ++ second) =

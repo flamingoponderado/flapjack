@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalEnvConditions
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StateRel
 import Flapjack.Compiler.Backend.Semantics.FlatSem.PatternMatch
 
 /-! Constructor-map prerequisites for source-to-flat pattern matching. -/
@@ -78,4 +79,30 @@ theorem genvCOk_pmatchStamps (genvC : HolFiniteMapExact ConstructorKey Stamp)
     subst cs1
     subst cs2
     exact .constructor flatCn cn' ty ty ctors l l' rfl member1 member2
+
+namespace PatternStampsPort
+/-- The global environment has the canonical finite-map roundtrip. -/
+theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
+    GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env :=
+  GlobalEnv.holFmapAsFiniteSupportWitness env
+end PatternStampsPort
+
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "genv_c_ok_pmatch_stamps_ok"
+  (fmap_as_finite_support := [c, tys])]
+theorem genvCOk_pmatchStamps_source {C F M N : Type} (genv : GlobalEnv)
+    (source : SemanticPrimitivesHOL.State F) (target : FlatSem.State C F)
+    (compMap : Flapjack.NamespaceHOL.Namespace M N (FlatLang.CtorId × FlatLang.TypeGroupId))
+    (name : Flapjack.NamespaceHOL.Ident M N) (flatCn : FlatLang.CtorId)
+    (group : FlatLang.TypeGroupId) (flatStamp : FlatLang.CtorId × FlatLang.TypeId)
+    (l l' : Nat) (src src' : Stamp)
+    (premises : StateRel genv source target ∧
+      @Flapjack.NamespaceHOL.nsLookup M N _ (Classical.decEq M) (Classical.decEq N) compMap name = some (flatCn, group) ∧
+      sameType src src' = true ∧ genvCOk genv.c ∧ genvCTysOk genv.c genv.tys ∧
+      genv.c.lookup ((flatCn, group.map Prod.fst), l) = some src ∧
+      genv.c.lookup (flatStamp, l') = some src' ∧
+      (∀ ty constructors, group = some (ty, constructors) → genv.tys.lookup ty = some constructors)) :
+    FlatSem.PmatchStampsOk (some (flatCn, group)) (some flatStamp) l l' := by
+  obtain ⟨_, _, same, ok, typesOk, lookup1, lookup2, groupLookup⟩ := premises
+  exact genvCOk_pmatchStamps genv.c genv.tys flatCn group flatStamp l l' src src'
+    ok typesOk same lookup1 lookup2 groupLookup
 end Flapjack.Compiler.Backend.SourceToFlat

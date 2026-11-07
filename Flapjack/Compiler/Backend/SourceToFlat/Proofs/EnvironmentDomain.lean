@@ -1,155 +1,10 @@
+import Flapjack.NamespaceProps.Append
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateDenv
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvalDeclarations
 
 /-! Namespace-domain facts needed by sequential declaration simulation. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.SemanticPrimitivesHOL
-
-/-- A short lookup in an appended namespace chooses the first available
-binding. -/
-theorem nsLookup_append_short {M N V : Type} [DecidableEq M] [DecidableEq N]
-    (first second : Namespace M N V) (name : N) :
-    nsLookup (nsAppend first second) (.short name) =
-      (nsLookup first (.short name)).orElse (fun _ => nsLookup second (.short name)) := by
-  cases first with
-  | bind firstValues firstModules =>
-    cases second with
-    | bind secondValues secondModules =>
-      simp [nsAppend, nsLookup, List.lookup_append]
-
-/-- A long lookup uses the first namespace whenever it contains the initial
-module, even if the rest of the lookup fails. -/
-theorem nsLookup_append_long {M N V : Type} [DecidableEq M] [DecidableEq N]
-    (first second : Namespace M N V) (moduleName : M) (rest : Ident M N) :
-    nsLookup (nsAppend first second) (.long moduleName rest) =
-      match nsLookupMod first [moduleName] with
-      | none => nsLookup second (.long moduleName rest)
-      | some _ => nsLookup first (.long moduleName rest) := by
-  cases first with
-  | bind firstValues firstModules =>
-    cases second with
-    | bind secondValues secondModules =>
-      cases found : firstModules.lookup moduleName <;>
-        simp [nsAppend, nsLookup, nsLookupMod, List.lookup_append, found]
-
-/-- Module lookup in an append has the same first-module shadowing rule. -/
-theorem nsLookupMod_append_cons {M N V : Type} [DecidableEq M]
-    (first second : Namespace M N V) (moduleName : M) (rest : List M) :
-    nsLookupMod (nsAppend first second) (moduleName :: rest) =
-      match nsLookupMod first [moduleName] with
-      | none => nsLookupMod second (moduleName :: rest)
-      | some _ => nsLookupMod first (moduleName :: rest) := by
-  cases first with
-  | bind firstValues firstModules =>
-    cases second with
-    | bind secondValues secondModules =>
-      cases found : firstModules.lookup moduleName <;>
-        simp [nsAppend, nsLookupMod, List.lookup_append, found]
-
-/-- Corresponding namespaces retain corresponding value domains after
-left-biased append, including module shadowing. -/
-theorem nsDom_append_preserved {M N V W : Type} [DecidableEq M] [DecidableEq N]
-    (first second : Namespace M N V) (first' second' : Namespace M N W)
-    (firstDomain : nsDom first = nsDom first') (secondDomain : nsDom second = nsDom second')
-    (firstModules : nsDomMod first = nsDomMod first') :
-    nsDom (nsAppend first second) = nsDom (nsAppend first' second') := by
-  funext id
-  apply propext
-  have firstAt := congrFun firstDomain id
-  have secondAt := congrFun secondDomain id
-  change (∃ v, nsLookup first id = some v) = (∃ v, nsLookup first' id = some v) at firstAt
-  change (∃ v, nsLookup second id = some v) = (∃ v, nsLookup second' id = some v) at secondAt
-  change (∃ v, nsLookup (nsAppend first second) id = some v) ↔
-    (∃ v, nsLookup (nsAppend first' second') id = some v)
-  cases id with
-  | short name =>
-    simp only [nsLookup_append_short]
-    cases h1 : nsLookup first (.short name) <;> cases h2 : nsLookup first' (.short name) <;>
-      cases h3 : nsLookup second (.short name) <;> cases h4 : nsLookup second' (.short name) <;>
-      simp_all
-  | long moduleName rest =>
-    have modulesAt := congrFun firstModules [moduleName]
-    change (∃ v, nsLookupMod first [moduleName] = some v) =
-      (∃ v, nsLookupMod first' [moduleName] = some v) at modulesAt
-    simp only [nsLookup_append_long]
-    cases h1 : nsLookupMod first [moduleName] <;> cases h2 : nsLookupMod first' [moduleName] <;>
-      simp_all
-
-/-- Module domains also agree after left-biased append. -/
-theorem nsDomMod_append_preserved {M N V W : Type} [DecidableEq M]
-    (first second : Namespace M N V) (first' second' : Namespace M N W)
-    (firstModules : nsDomMod first = nsDomMod first')
-    (secondModules : nsDomMod second = nsDomMod second') :
-    nsDomMod (nsAppend first second) = nsDomMod (nsAppend first' second') := by
-  funext path
-  apply propext
-  have firstAt := congrFun firstModules path
-  have secondAt := congrFun secondModules path
-  change (∃ v, nsLookupMod first path = some v) = (∃ v, nsLookupMod first' path = some v) at firstAt
-  change (∃ v, nsLookupMod second path = some v) = (∃ v, nsLookupMod second' path = some v) at secondAt
-  change (∃ v, nsLookupMod (nsAppend first second) path = some v) ↔
-    (∃ v, nsLookupMod (nsAppend first' second') path = some v)
-  cases path with
-  | nil => simp [nsLookupMod]
-  | cons moduleName rest =>
-    have modulesAt := congrFun firstModules [moduleName]
-    change (∃ v, nsLookupMod first [moduleName] = some v) =
-      (∃ v, nsLookupMod first' [moduleName] = some v) at modulesAt
-    simp only [nsLookupMod_append_cons]
-    cases h1 : nsLookupMod first [moduleName] <;> cases h2 : nsLookupMod first' [moduleName] <;>
-      simp_all
-
-/-- Pointwise lookup correspondence is preserved by namespace extension
-when the leading namespaces have the same value and module domains. -/
-theorem nsLookup_append_transfer {M N V W : Type} [DecidableEq M] [DecidableEq N]
-    (first second : Namespace M N V) (first' second' : Namespace M N W)
-    (firstDomain : nsDom first = nsDom first') (firstModules : nsDomMod first = nsDomMod first')
-    (id : Ident M N) (value : W) (rel : W → V → Prop)
-    (firstRelated : ∀ v, nsLookup first' id = some v →
-      ∃ w, nsLookup first id = some w ∧ rel v w)
-    (secondRelated : ∀ v, nsLookup second' id = some v →
-      ∃ w, nsLookup second id = some w ∧ rel v w)
-    (sourceLookup : nsLookup (nsAppend first' second') id = some value) :
-    ∃ w, nsLookup (nsAppend first second) id = some w ∧ rel value w := by
-  cases id with
-  | short name =>
-    rw [nsLookup_append_short] at sourceLookup ⊢
-    cases src : nsLookup first' (.short name) with
-    | some v =>
-      simp [src] at sourceLookup
-      subst v
-      obtain ⟨w, lookup, related⟩ := firstRelated value src
-      exact ⟨w, by simp [lookup], related⟩
-    | none =>
-      have firstNone : nsLookup first (.short name) = none := by
-        have h := congrFun firstDomain (.short name)
-        change (∃ v, nsLookup first (.short name) = some v) =
-          (∃ v, nsLookup first' (.short name) = some v) at h
-        cases found : nsLookup first (.short name) <;> simp_all
-      have sourceSecond : nsLookup second' (.short name) = some value := by simpa [src] using sourceLookup
-      obtain ⟨w, lookup, related⟩ := secondRelated value sourceSecond
-      exact ⟨w, by simp [firstNone, lookup], related⟩
-  | long moduleName rest =>
-    rw [nsLookup_append_long] at sourceLookup ⊢
-    have modules := congrFun firstModules [moduleName]
-    change (∃ v, nsLookupMod first [moduleName] = some v) =
-      (∃ v, nsLookupMod first' [moduleName] = some v) at modules
-    cases srcModule : nsLookupMod first' [moduleName] with
-    | none =>
-      have firstNone : nsLookupMod first [moduleName] = none := by
-        cases found : nsLookupMod first [moduleName] <;> simp_all
-      have sourceSecond : nsLookup second' (.long moduleName rest) = some value := by
-        simpa [srcModule] using sourceLookup
-      obtain ⟨w, lookup, related⟩ := secondRelated value sourceSecond
-      exact ⟨w, by simp [firstNone, lookup], related⟩
-    | some sourceModule =>
-      have firstSome : ∃ targetModule, nsLookupMod first [moduleName] = some targetModule := by
-        cases found : nsLookupMod first [moduleName] <;> simp_all
-      obtain ⟨targetModule, targetLookup⟩ := firstSome
-      have sourceFirst : nsLookup first' (.long moduleName rest) = some value := by
-        simpa [srcModule] using sourceLookup
-      obtain ⟨w, lookup, related⟩ := firstRelated value sourceFirst
-      exact ⟨w, by simp [targetLookup, lookup], related⟩
 
 /-- Extending compiler and source environments preserves their value,
 constructor, and module domains. -/
@@ -158,21 +13,27 @@ theorem envDomainEq_append (first second : Environment) (sourceFirst sourceSecon
     (premises : EnvDomainEq first sourceFirst ∧ EnvDomainEq second sourceSecond) :
     EnvDomainEq (extendEnv first second) (extendDecEnv sourceFirst sourceSecond) := by
   obtain ⟨⟨v1, vm1, c1, cm1⟩, ⟨v2, vm2, c2, cm2⟩⟩ := premises
-  exact ⟨nsDom_append_preserved _ _ _ _ v1 v2 vm1,
-    nsDomMod_append_preserved _ _ _ _ vm1 vm2,
-    nsDom_append_preserved _ _ _ _ c1 c2 cm1,
-    nsDomMod_append_preserved _ _ _ _ cm1 cm2⟩
+  have values := nsDom_nsAppend_equal first.v second.v sourceFirst.v sourceSecond.v ⟨v1, v2, vm1, vm2⟩
+  have constructors := nsDom_nsAppend_equal first.c second.c sourceFirst.c sourceSecond.c ⟨c1, c2, cm1, cm2⟩
+  exact ⟨values.1, values.2, constructors.1, constructors.2⟩
 
-/-- The factored global environment invariant composes across declaration
-extensions. This is untagged until the factored value and global relations
-have been reviewed as corresponding to their HOL inductive relations. -/
+namespace GlobalEnvAppendPort
+/-- Roundtrip for the global environment's canonical finite maps. -/
+theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
+    GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env := GlobalEnv.holFmapAsFiniteSupportWitness env
+end GlobalEnvAppendPort
+
+/-- The global environment invariant composes across declaration extensions. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "global_env_inv_append"
+  (fmap_as_finite_support := [c, tys])]
 theorem globalEnvInv_append_factored (genv : GlobalEnv)
     (first second : Environment) (sourceFirst sourceSecond : SemEnv Value)
-    (domain : EnvDomainEq first sourceFirst)
-    (firstInv : GlobalEnvInv genv first (fun _ => False) sourceFirst)
-    (secondInv : GlobalEnvInv genv second (fun _ => False) sourceSecond) :
+    (premises : EnvDomainEq first sourceFirst ∧
+      GlobalEnvInv genv first (fun _ => False) sourceFirst ∧
+      GlobalEnvInv genv second (fun _ => False) sourceSecond) :
     GlobalEnvInv genv (extendEnv first second) (fun _ => False)
       (extendDecEnv sourceFirst sourceSecond) := by
+  obtain ⟨domain, firstInv, secondInv⟩ := premises
   obtain ⟨values1, constructors1⟩ := (globalEnvInv_iff genv first (fun _ => False) sourceFirst).mp firstInv
   obtain ⟨values2, constructors2⟩ := (globalEnvInv_iff genv second (fun _ => False) sourceSecond).mp secondInv
   obtain ⟨valueDomain, valueModules, constructorDomain, constructorModules⟩ := domain
@@ -229,8 +90,8 @@ theorem incCompileProg_declaredEnvMap (envId : Nat × Nat) (config : Config) (de
     ⟨0, config.envs.next, .ln⟩ decs = result
   rcases result with ⟨n, indices, env, gen, compiledDecs⟩
   have generation : gen.generation = config.envs.next := by
-    simpa [h] using OracleInvariant.compileDecs_generation_core [] 1 config.next (lookupEnvId envId config.envs)
-      ⟨0, config.envs.next, .ln⟩ decs
+    exact OracleInvariant.compileDecs_generation [] 1 config.next (lookupEnvId envId config.envs)
+      ⟨0, config.envs.next, .ln⟩ decs n indices env gen compiledDecs h
   refine ⟨Flapjack.sptInsert gen.next (extendEnv env (lookupEnvId envId config.envs)) gen.envs, ?_, ?_⟩
   · simp [incCompileProg, h, generation, Flapjack.sptLookup_sptInsert_same]
   · simpa [h] using Flapjack.sptLookup_sptInsert_same gen.next
@@ -273,7 +134,7 @@ theorem evalDeclaredEnvMap_factored {C : Type}
   have baseNew := globalEnvInv_growth oldGenv newGenv growth (lookupEnvId envId config.envs)
     (fun _ => False) sourceEnv baseInv
   exact ⟨mapGen, _, lookupCurrent, stored,
-    globalEnvInv_append_factored newGenv _ _ sourceNew sourceEnv newDomain newInv baseNew⟩
+    globalEnvInv_append_factored newGenv _ _ sourceNew sourceEnv ⟨newDomain, newInv, baseNew⟩⟩
 
 /-- The Eval success path can declare its extended environment and execute
 the generated ID store using the compiler map retained by the oracle. This
@@ -317,9 +178,36 @@ theorem evalDeclare_store_factored {C F : Type} [Nonempty C]
   dsimp only
   have newMap := evalDeclaredEnvMap_factored interp envId config next decs flatDecs before source.evalState
     oldGenv newGenv sourceEnv sourceNew compiled nextCfg forward growth baseInv newDomain newInv
-  obtain ⟨stored, run, nextInvariant, globals, related, nextForward, nextGeneration⟩ :=
-    OracleInvariant.declareEnv_storeEnvId_factored_all interp transform _ newGenv idxs source flat
-      (extendDecEnv sourceNew sourceEnv) value after invariant generation declared newMap
+  let gen := (compileDecs [] 1 config.next (lookupEnvId envId config.envs)
+    ⟨0, config.envs.next, .ln⟩ decs).2.2.2.1
+  have mapCase : (match OracleInvariant.srcOracNextCfg interp source.evalState with
+      | none => True
+      | some cfg =>
+        match Flapjack.sptLookup gen.generation cfg.envs.envGens with
+        | none => False
+        | some mapGen =>
+          match Flapjack.sptLookup gen.next mapGen with
+          | none => False
+          | some compMap => GlobalEnvInv newGenv compMap (fun _ => False) (extendDecEnv sourceNew sourceEnv)) := by
+    cases cfg : OracleInvariant.srcOracNextCfg interp source.evalState with
+    | none => trivial
+    | some cfgValue =>
+      obtain ⟨mapGen, compMap, genLookup, mapLookup, inv⟩ := newMap cfgValue cfg
+      simpa [gen, genLookup, mapLookup] using inv
+  have nextGeneration : OracleInvariant.envGenRel { gen with next := gen.next + 1 } after := by
+    obtain ⟨_, _, _, _, _, oracle, _, _, _, _⟩ := invariant
+    cases sourceState : source.evalState with
+    | none => simp [sourceState, declareEnv] at declared
+    | some mode =>
+      obtain ⟨_, state, _, modeEq⟩ := OracleInvariant.oracRel_some interp transform mode flat.evalConfig
+        (by simpa [sourceState] using oracle)
+      subst mode
+      exact OracleInvariant.declareEnv_oracle_generation state gen _ value after
+        (by simpa [gen, sourceState] using generation) (by simpa [sourceState] using declared)
+  obtain ⟨stored, run, nextInvariant, globals, related, nextForward⟩ :=
+    OracleInvariant.declareEnv_storeEnvId source (extendDecEnv sourceNew sourceEnv) value after
+      interp transform gen newGenv idxs flat gen.generation gen.next
+      ⟨declared, invariant, generation, rfl, rfl, mapCase⟩
   exact ⟨stored, run, nextInvariant,
     OracleInvariant.factoredInvariant_changeEvalRef interp transform _ newGenv idxs _ flat stored nextInvariant,
     globals, related, nextForward, nextGeneration⟩

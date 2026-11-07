@@ -80,7 +80,7 @@ theorem byteStringCmp_dispatch {C F : Type} {f : HolFiniteMapExact Nat Nat}
               cases tail
               obtain ⟨firstPtr, rfl, firstFound⟩ := vRel_byteVector_inv firstRel
               obtain ⟨secondPtr, rfl, secondFound⟩ := vRel_byteVector_inv secondRel
-              refine ⟨BvlSem.boolValue (strCmp fast op (.implode firstBytes) (.implode secondBytes)), ?_, rfl, vRel_bool _⟩
+              refine ⟨BvlSem.boolValue (strCmp fast op (.implode firstBytes) (.implode secondBytes)), ?_, rfl, (vRel_bool_iff _ _ _ _ _ (.number 0) _).1.mpr rfl⟩
               simp [BvlSem.doApp, BvlSem.applyMemory, firstFound, secondFound]
 
 /-- Failed string comparison reports a source type error. -/

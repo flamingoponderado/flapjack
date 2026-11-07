@@ -90,27 +90,4 @@ noncomputable def doApp {σ : Type} (state : Store Value × HolFfiState σ) (op 
     | some result => result
     | none => (doAppBasic state op values).getD none
 
-/-- Source reference allocation preserves the FFI state and returns the old
-store length as the new location. -/
-@[hol "cakeml/semantics/semanticPrimitivesScript.sml" "do_app_def"]
-theorem doApp_opref {σ : Type} (store : Store Value) (ffi : HolFfiState σ) (value : Value) :
-    doApp (store, ffi) .opref [value] =
-      some ((store ++ [.refv value], ffi), .val (.loc true store.length)) := by
-  rfl
-
-/-- Fixed array allocation retains all supplied values in order. -/
-@[hol "cakeml/semantics/semanticPrimitivesScript.sml" "do_app_def"]
-theorem doApp_aallocFixed {σ : Type} (store : Store Value) (ffi : HolFfiState σ)
-    (values : List Value) :
-    doApp (store, ffi) .aallocFixed values =
-      some ((store ++ [.varray values], ffi), .val (.loc true store.length)) := by
-  rfl
-
-/-- Source GC configuration accepts two integers and leaves the state intact. -/
-@[hol "cakeml/semantics/semanticPrimitivesScript.sml" "do_app_def"]
-theorem doApp_configGC {σ : Type} (store : Store Value) (ffi : HolFfiState σ) (a b : Int) :
-    doApp (store, ffi) .configGC [.litv (.intLit a), .litv (.intLit b)] =
-      some ((store, ffi), .val (.conv none [])) := by
-  rfl
-
 end Flapjack.SemanticPrimitivesHOL

@@ -49,7 +49,7 @@ theorem knownCorrect0If {C F : Type} (trace : BackendCommon.Tra) (cond yes no : 
     intro n i
     have bound := unique n i
     simp only [elistGlobals_append, elistGlobals, setGlobals, FlatProps.unionGlobalBag,
-      FlatProps.emptyGlobalBag, Nat.add_zero] at bound ⊢
+      FlatProps.emptyGlobalBag, Nat.add_zero, Flapjack.bagUnion, Flapjack.emptyBag] at bound ⊢
     omega
   have ⟨condUnique, branchesUnique, swappedUnique⟩ := CorrectApprox.Cons.uniqueParts [cond] ([yes] ++ [no]) s0.compileOracle uniqueAll
   have ⟨condDisjoint, yesDisjoint, noDisjoint⟩ :=

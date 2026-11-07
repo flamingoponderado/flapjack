@@ -5,8 +5,7 @@ namespace Flapjack.Compiler.Backend.FlatProps
 open Flapjack.SemanticPrimitivesHOL
 
 /-- Simulation of flat declaration evaluation, allowing a target clock
-extension and preserving FFI state and result class. The evaluator and
-carriers remain pending HOL correspondence review. -/
+extension and preserving FFI state and result class. -/
 @[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "eval_sim_def"]
 def evalSim {C₁ C₂ F : Type} (ffi : HolFfiState F) (source target : List FlatLang.Exp)
     (sourceConfig : FlatSem.InstallConfig C₁) (targetConfig : FlatSem.InstallConfig C₂)

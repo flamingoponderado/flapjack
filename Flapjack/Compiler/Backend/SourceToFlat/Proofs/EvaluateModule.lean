@@ -1,3 +1,4 @@
+import Flapjack.NamespaceProps.Lift
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateSequence
 
 /-! Module declaration simulation over the preliminary factored relations. -/
@@ -12,43 +13,10 @@ theorem envDomainEq_lift (moduleName : ModN) (compMap : Environment) (sourceEnv 
     EnvDomainEq (liftEnv moduleName compMap)
       ⟨nsLift moduleName sourceEnv.v, nsLift moduleName sourceEnv.c⟩ := by
   obtain ⟨values, valueModules, constructors, constructorModules⟩ := domain
-  refine ⟨?_, ?_, ?_, ?_⟩
-  · funext id
-    apply propext
-    cases id with
-    | short name => simp [liftEnv, nsDom, nsLift, nsLookup]
-    | long head rest =>
-      by_cases same : head = moduleName
-      · subst head
-        simpa [liftEnv, nsDom, nsLift, nsLookup] using congrFun values rest
-      · simp [liftEnv, nsDom, nsLift, nsLookup, List.lookup, BEq.beq, same]
-  · funext path
-    apply propext
-    cases path with
-    | nil => simp [liftEnv, nsDomMod, nsLookupMod]
-    | cons head rest =>
-      by_cases same : head = moduleName
-      · subst head
-        simpa [liftEnv, nsDomMod, nsLift, nsLookupMod] using congrFun valueModules rest
-      · simp [liftEnv, nsDomMod, nsLift, nsLookupMod, List.lookup, BEq.beq, same]
-  · funext id
-    apply propext
-    cases id with
-    | short name => simp [liftEnv, nsDom, nsLift, nsLookup]
-    | long head rest =>
-      by_cases same : head = moduleName
-      · subst head
-        simpa [liftEnv, nsDom, nsLift, nsLookup] using congrFun constructors rest
-      · simp [liftEnv, nsDom, nsLift, nsLookup, List.lookup, BEq.beq, same]
-  · funext path
-    apply propext
-    cases path with
-    | nil => simp [liftEnv, nsDomMod, nsLookupMod]
-    | cons head rest =>
-      by_cases same : head = moduleName
-      · subst head
-        simpa [liftEnv, nsDomMod, nsLift, nsLookupMod] using congrFun constructorModules rest
-      · simp [liftEnv, nsDomMod, nsLift, nsLookupMod, List.lookup, BEq.beq, same]
+  exact ⟨nsDom_lift_eq moduleName _ _ values,
+    nsDomMod_lift_eq moduleName _ _ valueModules,
+    nsDom_lift_eq moduleName _ _ constructors,
+    nsDomMod_lift_eq moduleName _ _ constructorModules⟩
 
 /-- Lifting related environments into a module preserves the factored
 global-environment invariant. -/
@@ -62,26 +30,26 @@ theorem globalEnvInv_lift (genv : GlobalEnv) (moduleName : ModN)
     apply GlobalEnvInv.intro
     · intro id value _ lookup
       cases id with
-      | short name => simp [nsLift, nsLookup] at lookup
+      | short name => simp [nsLookup_nsLift] at lookup
       | long head rest =>
         by_cases same : head = moduleName
         · subst head
-          have inner : nsLookup sourceEnv.v rest = some value := by simpa [nsLift, nsLookup] using lookup
+          have inner : nsLookup sourceEnv.v rest = some value := by simpa [nsLookup_nsLift] using lookup
           have related := values rest value (by simp) inner
           cases related with
           | intro _ _ _ idx flat trace compiled bound slot relation =>
-            exact .intro _ _ _ _ idx flat trace (by simpa [liftEnv, nsLift, nsLookup] using compiled) bound slot relation
-        · simp [nsLift, nsLookup, List.lookup, BEq.beq, same] at lookup
+            exact .intro _ _ _ _ idx flat trace (by simpa [liftEnv, nsLookup_nsLift] using compiled) bound slot relation
+        · simp [nsLookup_nsLift, Ne.symm same] at lookup
     · intro id arity stamp lookup
       cases id with
-      | short name => simp [nsLift, nsLookup] at lookup
+      | short name => simp [nsLookup_nsLift] at lookup
       | long head rest =>
         by_cases same : head = moduleName
         · subst head
-          have inner : nsLookup sourceEnv.c rest = some (arity, stamp) := by simpa [nsLift, nsLookup] using lookup
+          have inner : nsLookup sourceEnv.c rest = some (arity, stamp) := by simpa [nsLookup_nsLift] using lookup
           obtain ⟨cn, group, compiled, mapped, types⟩ := constructors rest arity stamp inner
-          exact ⟨cn, group, by simpa [liftEnv, nsLift, nsLookup] using compiled, mapped, types⟩
-        · simp [nsLift, nsLookup, List.lookup, BEq.beq, same] at lookup
+          exact ⟨cn, group, by simpa [liftEnv, nsLookup_nsLift] using compiled, mapped, types⟩
+        · simp [nsLookup_nsLift, Ne.symm same] at lookup
 
 /-- Lift the result of an inner declaration simulation into a module. The
 flat code, state, index and oracle outcomes remain those of the inner case. -/

@@ -1,4 +1,6 @@
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.DeclarationEvaluation
+import Flapjack.SemanticPrimitivesProps.ResultRelation
+import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateClock
+import Flapjack.Compiler.Backend.FlatPattern.Proofs.DynamicEvaluation
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ClockedExpressionCases
 
 /-! Clock-bounded declaration simulation for flat pattern compilation. The
@@ -17,7 +19,7 @@ theorem evaluateDec_simulation_upTo {C F : Type} (cfg stateCfg : Config) (clock 
     (safe : outcome ≠ some (.abort .typeError)) :
     ∃ targetFinal targetOutcome,
       FlatSem.evaluateDec target (compileDec cfg declaration) = (targetFinal, targetOutcome) ∧
-      StateRel stateCfg sourceFinal targetFinal ∧ optionRel FlatErrorRel outcome targetOutcome := by
+      StateRel stateCfg sourceFinal targetFinal ∧ optionRel (SemanticPrimitivesProps.excRel ValueRel) outcome targetOutcome := by
   classical
   cases expressionRun : FlatSem.evaluate ⟨[]⟩ source [declaration] with
   | mk sourceNext expressionResult =>
@@ -27,11 +29,14 @@ theorem evaluateDec_simulation_upTo {C F : Type} (cfg stateCfg : Config) (clock 
       simp [FlatSem.evaluateDec, expressionRun] at run
       exact safe run.2.symm
     let n := (compileExp cfg declaration).1 + 1
+    have emptyEnvs : EnvRel n ⟨[]⟩ ⟨[]⟩ := by
+      apply (envRel_iff_lookup n _ _).2
+      exact aLookupRel_empty _ _
     obtain ⟨targetNext, targetResult, targetRun, nextStates, related⟩ := expressionIH
-      ⟨[]⟩ ⟨[]⟩ source target sourceNext expressionResult n clockBound expressionRun (envRel_empty n) states (by dsimp [n]; omega) expressionSafe
-    cases related with
-    | error errorsRel =>
-      rename_i sourceError targetError
+      ⟨[]⟩ ⟨[]⟩ source target sourceNext expressionResult n clockBound expressionRun emptyEnvs states (by dsimp [n]; omega) expressionSafe
+    cases expressionResult <;> cases targetResult <;> simp only [SemanticPrimitivesProps.resultRel] at related
+    case err.err sourceError targetError =>
+      have errorsRel := related
       have sourceShape : sourceNext = sourceFinal ∧ some sourceError = outcome := by
         simpa [FlatSem.evaluateDec, expressionRun] using run
       rcases sourceShape with ⟨rfl, rfl⟩
@@ -39,8 +44,8 @@ theorem evaluateDec_simulation_upTo {C F : Type} (cfg stateCfg : Config) (clock 
       · unfold FlatSem.evaluateDec compileDec
         rw [targetRun]
       · exact errorsRel
-    | values valuesRel =>
-      rename_i sourceValues targetValues
+    case val.val sourceValues targetValues =>
+      have valuesRel := related
       have sourceShape : sourceNext = sourceFinal ∧
           (if sourceValues = [FlatSem.unitValue] then none else some (.abort .typeError)) = outcome := by
         cases sourceValues with
@@ -60,7 +65,10 @@ theorem evaluateDec_simulation_upTo {C F : Type} (cfg stateCfg : Config) (clock 
         | cons unitRel tailRel =>
           cases tailRel
           rename_i targetValue
-          have unitEq := valueRel_unit targetValue unitRel
+          have unitEq : targetValue = FlatSem.unitValue := by
+            obtain ⟨values, equal, fields⟩ := (valueRel_conv none [] targetValue).1 unitRel
+            cases fields
+            exact equal
           subst targetValue
           refine ⟨targetNext, none, ?_, nextStates, ?_⟩
           · unfold FlatSem.evaluateDec compileDec
@@ -79,7 +87,7 @@ theorem evaluateDecs_simulation_upTo {C F : Type} (cfg stateCfg : Config) (clock
     (safe : outcome ≠ some (.abort .typeError)) :
     ∃ targetFinal targetOutcome,
       FlatSem.evaluateDecs target (declarations.map (compileDec cfg)) = (targetFinal, targetOutcome) ∧
-      StateRel stateCfg sourceFinal targetFinal ∧ optionRel FlatErrorRel outcome targetOutcome := by
+      StateRel stateCfg sourceFinal targetFinal ∧ optionRel (SemanticPrimitivesProps.excRel ValueRel) outcome targetOutcome := by
   induction declarations generalizing source target sourceFinal outcome with
   | nil =>
     simp [FlatSem.evaluateDecs] at run

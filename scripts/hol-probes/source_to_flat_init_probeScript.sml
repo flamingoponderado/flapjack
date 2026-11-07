@@ -17,6 +17,7 @@ val _ = show_thm "precondition1=" source_to_flatProofTheory.precondition1_def;
 val _ = show_thm "precondition1_change_clock=" source_to_flatProofTheory.precondition1_change_clock;
 val _ = show_thm "precondition=" source_to_flatProofTheory.precondition_def;
 val _ = show_thm "source_compile_semantics=" source_to_flatProofTheory.compile_semantics;
+val _ = show_thm "source_compile_flat_correct=" source_to_flatProofTheory.compile_flat_correct;
 val _ = show_thm "source_compile_correct=" source_to_flatProofTheory.compile_correct;
 val _ = show_thm "source_compile_prog=" source_to_flatTheory.compile_prog_def;
 val _ = show_thm "source_glob_alloc=" source_to_flatTheory.glob_alloc_def;
@@ -25,6 +26,7 @@ val _ = show_thm "source_lookup_env_id=" source_to_flatTheory.lookup_env_id_def;
 val _ = show_thm "source_store_env_id=" source_to_flatTheory.store_env_id_def;
 val _ = show_thm "source_inc_compile_prog=" source_to_flatTheory.inc_compile_prog_def;
 val _ = show_thm "spt_from_list=" sptreeTheory.fromList_def;
+(* Initial environment theorem captures include HOL's inferred types. *)
 val _ = show_thm "initial_env_ok=" source_to_flatProofTheory.init_genv_ok;
 val _ = show_thm "initial_types_ok=" source_to_flatProofTheory.init_genv_tys_ok;
 val _ = show_thm "keep_global_allocation=" source_to_flatProofTheory.keep_glob_alloc;
@@ -48,3 +50,84 @@ val _ = show_eval "incremental_nonzero_next=" ``
   let (c', code) = source_to_flat$inc_compile_prog (3n, 7n) c [] in
     (c'.next.vidx, c'.envs.next, code)``;
 val _ = show_eval "incremental_empty=" ``SND (source_to_flat$inc_compile (0n,0n) source_to_flat$empty_config [])``;
+val _ = show_thm "invariant_begin_alloc_blanks=" source_to_flatProofTheory.invariant_begin_alloc_blanks;
+val _ = show_thm "invariant_imp_state_rel=" source_to_flatProofTheory.invariant_IMP_s_rel;
+(* Replay the original local theorem, which is not exported by its theory. *)
+val precondition_stamp_helper_local = Q.prove (
+  `EVERY (\(_, stamp). case stamp of TypeStamp cn t => t < type_stamp
+     | ExnStamp cn => cn < exn_stamp) source_to_flatProof$init_genv_els ==>
+   (∀cn t. t ≥ type_stamp ==> TypeStamp cn t ∉ FRANGE (source_to_flatProof$init_genv).c) ∧
+   (∀cn. cn ≥ exn_stamp ==> ExnStamp cn ∉ FRANGE (source_to_flatProof$init_genv).c)`,
+  rw [source_to_flatProofTheory.init_genv_def] >> CCONTR_TAC >> fs [] >>
+  dxrule_then assume_tac
+    (MATCH_MP miscTheory.SUBSET_IMP (SPEC_ALL finite_mapTheory.FRANGE_FUPDATE_LIST_SUBSET)) >>
+  fs [listTheory.MEM_MAP, pairTheory.EXISTS_PROD, listTheory.EVERY_MEM] >>
+  res_tac >> fs []);
+val _ = show_thm "precondition_stamp_helper_local=" precondition_stamp_helper_local;
+val invariant_env_gen_inv_local = Q.prove (
+  `source_to_flatProof$invariant interp g gen genv (idx,end_idx,os) s s_i1 ==>
+   source_to_flatProof$env_gen_inv gen`,
+  simp [source_to_flatProofTheory.invariant_def]);
+val _ = show_thm "invariant_env_gen_inv_local=" invariant_env_gen_inv_local;
+val abort_compile_dec_result_local = Q.prove (
+  `source_to_flatProof$abort (semanticPrimitives$combine_dec_result env r) = source_to_flatProof$abort r`,
+  Cases_on `r` >> simp [semanticPrimitivesTheory.combine_dec_result_def]);
+val _ = show_thm "abort_compile_dec_result_local=" abort_compile_dec_result_local;
+
+val _ = show_thm "declare_env_store_env_id=" source_to_flatProofTheory.declare_env_store_env_id;
+val _ = show_thm "compile_funs_dom2=" source_to_flatProofTheory.compile_funs_dom2;
+val _ = show_thm "nsAppend_to_nsBindList=" namespacePropsTheory.nsAppend_to_nsBindList;
+
+load "preamble";
+open preamble semanticPrimitivesTheory source_to_flatTheory namespaceTheory;
+val find_recfun_local = Q.prove (
+  `!x funs e comp_map y t.
+    find_recfun x funs = SOME (y,e) ==>
+    find_recfun x (compile_funs t comp_map funs) =
+      SOME (y, compile_exp (x::t) (comp_map with v := nsBind y (Local None y) comp_map.v) e)`,
+  induct_on `funs` >>
+  srw_tac[][Once find_recfun_def, compile_exp_def] >>
+  PairCases_on `h` >>
+  full_simp_tac(srw_ss())[] >>
+  every_case_tac >>
+  full_simp_tac(srw_ss())[Once find_recfun_def, compile_exp_def]);
+val _ = show_thm "find_recfun_local=" find_recfun_local;
+val _ = show_thm "nsAppend_assoc=" namespacePropsTheory.nsAppend_assoc;
+val _ = show_thm "nsLookup_nsBind=" namespacePropsTheory.nsLookup_nsBind;
+val _ = show_thm "build_rec_env_merge=" semanticPrimitivesPropsTheory.build_rec_env_merge;
+val _ = show_thm "nsAppend_nsEmpty=" namespacePropsTheory.nsAppend_nsEmpty;
+
+(* Typed parsing of the local theorem; this does not replay its HOL proof. *)
+val global_env_inv_extend_typed = ``!pat_env genv pat_env' tt g1 g2.
+  source_to_flatProof$env_rel genv (namespace$alist_to_ns pat_env) pat_env' /\
+  genv.v = g1 ++ MAP SOME (REVERSE (MAP SND pat_env')) ++ g2 /\
+  ALL_DISTINCT (MAP FST pat_env) ==>
+  source_to_flatProof$global_env_inv genv
+    <|c := namespace$nsEmpty;
+      v := namespace$alist_to_ns (source_to_flat$alloc_defs tt (LENGTH g1)
+        (REVERSE (MAP FST pat_env')))|>
+    {} <|v := namespace$alist_to_ns pat_env; c := namespace$nsEmpty|>``;
+val _ = (print "global_env_inv_extend_typed="; print_term global_env_inv_extend_typed; print "\n");
+
+(* Replay the original local allocation-lookup theorem. *)
+open alistTheory listTheory source_to_flatTheory;
+val alookup_alloc_defs_local = Q.prove (
+  `!env x v l tt.
+    ALOOKUP (REVERSE env) x = SOME v ==>
+    ?n t. ALOOKUP (alloc_defs tt l (MAP FST (REVERSE env))) x = SOME (Glob t (l + n)) /\
+      n < LENGTH (MAP FST env) /\
+      EL n (REVERSE (MAP SOME (MAP SND env))) = SOME v`,
+  Induct_on `env` >>
+  rw [ALOOKUP_APPEND, alloc_defs_append] >>
+  every_case_tac >> fs [alloc_defs_def] >-
+    (PairCases_on `h` >> fs [EL_APPEND_EQN]) >-
+    (PairCases_on `h` >> fs [] >> first_x_assum drule >>
+     disch_then (qspecl_then [`l`,`tt`] mp_tac) >> rw []) >-
+    (PairCases_on `h` >> fs [] >> rw [] >> fs [ALOOKUP_NONE, MAP_REVERSE] >>
+     drule ALOOKUP_MEM >> rw [] >>
+     `MEM h0 (MAP FST (alloc_defs tt l (REVERSE (MAP FST env))))`
+       by (rw [MEM_MAP] >> metis_tac [FST]) >> fs [fst_alloc_defs]) >-
+    (first_x_assum drule >> disch_then (qspecl_then [`l`,`tt`] mp_tac) >> rw [EL_APPEND_EQN]));
+val _ = show_thm "alookup_alloc_defs_local=" alookup_alloc_defs_local;
+
+val _ = show_thm "can_pmatch_all_implies_rows=" source_to_flatProofTheory.can_pmatch_all_IMP_pmatch_rows;

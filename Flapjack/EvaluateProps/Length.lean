@@ -1,14 +1,14 @@
 import Flapjack.EvaluateHOL.ClockFull
+import Flapjack.HolRef
 import Lean.Elab.Tactic.Omega
 
-/-! Source evaluator result-length infrastructure. Full HOL statement and
-carrier review remains open. -/
+/-! Source evaluator result-length theorems. -/
 namespace Flapjack.EvaluateProps
 open Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL Flapjack.AstHOL Flapjack.EvaluateHOL
 
 mutual
-/-- A successful source expression-list evaluation returns one value per
-expression. This is untagged pending full source-evaluator review. -/
+/-- Expression component of the mutual length induction. This helper is
+Flapjack infrastructure used to prove the complete HOL theorem below. -/
 theorem evaluateLengthFull {σ : Type} (st next : State σ) (env : SemEnv Value)
     (expressions : List AstHOL.Exp) (values : List Value)
     (run : evaluate st env expressions = (next, .val values)) : values.length = expressions.length := by
@@ -272,11 +272,30 @@ decreasing_by
   all_goals omega
 end
 
-/-- A successful singleton expression evaluation returns exactly one value.
-This corollary is Flapjack infrastructure; the HOL theorem's full source and
-carrier correspondence review remains pending. -/
-theorem evaluateSingFull {σ : Type} (st next : State σ) (env : SemEnv Value)
-    (expr : AstHOL.Exp) (values : List Value)
+/-- Successful expression and match evaluations have the original result
+lengths; the declaration component retains HOL's trivial conclusion. -/
+@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_length"]
+theorem evaluate_length {σ : Type} :
+    (∀ (st : State σ) (env : SemEnv Value) (expressions : List AstHOL.Exp)
+      (next : State σ) (values : List Value),
+      evaluate st env expressions = (next, .val values) → values.length = expressions.length) ∧
+    (∀ (st : State σ) (env : SemEnv Value) (value : Value) (rows : List (Pat × AstHOL.Exp))
+      (errorValue : Value) (next : State σ) (values : List Value),
+      evaluateMatch st env value rows errorValue = (next, .val values) → values.length = 1) ∧
+    (∀ (st : State σ) (env : SemEnv Value) (decs : List Dec)
+      (next : State σ) (result : SemEnv Value),
+      evaluateDecs st env decs = (next, .val result) → True) := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro st env expressions next values run
+    exact evaluateLengthFull st next env expressions values run
+  · intro st env value rows errorValue next values run
+    exact evaluateMatchLengthFull st next env value rows errorValue values run
+  · intros; trivial
+
+/-- A successful singleton expression evaluation returns exactly one value. -/
+@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_sing"]
+theorem evaluateSingFull {σ : Type} (st : State σ) (env : SemEnv Value)
+    (expr : AstHOL.Exp) (next : State σ) (values : List Value)
     (run : evaluate st env [expr] = (next, .val values)) : ∃ value, values = [value] := by
   have length := evaluateLengthFull st next env [expr] values run
   cases values with

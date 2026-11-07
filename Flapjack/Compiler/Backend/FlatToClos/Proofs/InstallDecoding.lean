@@ -28,20 +28,26 @@ private theorem wordList_related (words : List (BitVec 64)) (target : List ClosS
       simp [ih _ tail]
 
 /-- Related flat and closure values decode to the same installation bytes. -/
-theorem installBytes_related (source : FlatSem.Value) (target : ClosSem.Value)
-    (related : ValueRel source target) (bytes : List (BitVec 8))
-    (decoded : FlatSem.valueToBytes source = some bytes) :
-    ClosSem.valueToBytes target = some bytes := by
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "v_rel_to_bytes"]
+theorem installBytes_related {α : Type} [Nonempty α] (source : FlatSem.Value) (target : ClosSem.Value)
+    (bytes : List (BitVec 8))
+    (premises : ValueRel source target ∧ FlatSem.valueToBytes source = some bytes) :
+    ∃ _ : α, ClosSem.valueToBytes target = some bytes := by
+  obtain ⟨related, decoded⟩ := premises
+  refine ⟨Classical.choice inferInstance, ?_⟩
   have listDecoded := (FlatSem.valueToBytes_eq_some source bytes).1 decoded
   obtain ⟨values, targetDecoded, valuesRelated⟩ := valueToList_related source target _ related listDecoded
   apply (ClosSem.valueToBytes_eq_some target bytes).2
   simpa [byteList_related bytes values valuesRelated] using targetDecoded
 
 /-- Related flat and closure values decode to the same installation words. -/
-theorem installWords_related (source : FlatSem.Value) (target : ClosSem.Value)
-    (related : ValueRel source target) (words : List (BitVec 64))
-    (decoded : FlatSem.valueToWords source = some words) :
-    ClosSem.valueToWords target = some words := by
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "v_rel_to_words"]
+theorem installWords_related {α : Type} [Nonempty α] (source : FlatSem.Value) (target : ClosSem.Value)
+    (words : List (BitVec 64))
+    (premises : ValueRel source target ∧ FlatSem.valueToWords source = some words) :
+    ∃ _ : α, ClosSem.valueToWords target = some words := by
+  obtain ⟨related, decoded⟩ := premises
+  refine ⟨Classical.choice inferInstance, ?_⟩
   have listDecoded := (FlatSem.valueToWords_eq_some source words).1 decoded
   obtain ⟨values, targetDecoded, valuesRelated⟩ := valueToList_related source target _ related listDecoded
   apply (ClosSem.valueToWords_eq_some target words).2

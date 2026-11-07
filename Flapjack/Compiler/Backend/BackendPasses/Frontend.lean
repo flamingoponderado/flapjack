@@ -25,7 +25,7 @@ structure FrontendStages where
 each intermediate result. The final output is the same value used by the
 normal source-to-closure compiler. -/
 def captureFrontend (config : SourceToFlat.Config) (decls : List AstHOL.Dec) : FrontendStages :=
-  let lifted := SourceLet.compileDecs decls
+  let lifted := SourceToSource.compile decls
   let (config, rawFlat) := SourceToFlat.compileProg config lifted
   let reducedFlat := FlatElim.removeFlatProgTotal rawFlat
   let patternedFlat := reducedFlat.map (FlatPattern.compileDec config.patternCfg)

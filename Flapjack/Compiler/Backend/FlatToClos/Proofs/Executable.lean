@@ -56,7 +56,7 @@ theorem compileProg_evaluate_related {C F : Type}
          | .err error => (.err error, finalTarget)) := by
   let interpreter := ClosLang.hasInstallList (compileDecs declarations)
   let initial := initialStateProofSide interpreter ffi maxApp HolFiniteMapExact.empty oracle compiler clock
-  have initialRel := initialStates_related interpreter ffi maxApp clock config oracle compiler positive install
+  have initialRel := initialStates_related maxApp config oracle compiler ffi clock interpreter ⟨positive, install⟩
   have simulated := evaluate_decs_simulation (FlatSem.initialState ffi clock config) initial declarations
     initialRel safe notTypeError
   have initRun := evaluate_compileInit interpreter ffi maxApp clock HolFiniteMapExact.empty oracle compiler positive

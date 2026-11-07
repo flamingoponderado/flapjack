@@ -1,20 +1,30 @@
 import Flapjack.Compiler.Backend.Semantics.FlatSem.PatternMatch
+import Flapjack.HolRef
 
-/-! Binding order for the flat pattern matcher. The carrier and evaluator
-correspondence remains under review, so these results are untagged. -/
+/-! Binding order for the flat pattern matcher. -/
 namespace Flapjack.Compiler.Backend.FlatProps
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
 open Flapjack.Compiler.Backend
 
 /-- Successful flat matching prepends exactly the pattern's binding names;
 the list case covers the recursive matcher used for constructor arguments. -/
-theorem pmatchBindings {C F : Type} (state : FlatSem.State C F) :
-    (∀ pattern value bindings result,
+@[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "pmatch_bindings"]
+theorem pmatchBindings {C F : Type} :
+    (∀ (state : FlatSem.State C F) pattern value bindings result,
       FlatSem.pmatch state pattern value bindings = .match result →
         result.map Prod.fst = FlatLang.patBindings pattern ++ bindings.map Prod.fst) ∧
-    (∀ patterns values bindings result,
+    (∀ (state : FlatSem.State C F) patterns values bindings result,
       FlatSem.pmatchList state patterns values bindings = .match result →
         result.map Prod.fst = FlatLang.patsBindings patterns ++ bindings.map Prod.fst) := by
+  suffices allStates : ∀ state : FlatSem.State C F,
+      (∀ pattern value bindings result,
+        FlatSem.pmatch state pattern value bindings = .match result →
+          result.map Prod.fst = FlatLang.patBindings pattern ++ bindings.map Prod.fst) ∧
+      (∀ patterns values bindings result,
+        FlatSem.pmatchList state patterns values bindings = .match result →
+          result.map Prod.fst = FlatLang.patsBindings patterns ++ bindings.map Prod.fst) by
+    exact ⟨fun state => (allStates state).1, fun state => (allStates state).2⟩
+  intro state
   have all : ∀ pattern : FlatLang.Pat,
       ∀ value bindings result, FlatSem.pmatch state pattern value bindings = .match result →
         result.map Prod.fst = FlatLang.patBindings pattern ++ bindings.map Prod.fst := by
@@ -100,13 +110,13 @@ theorem pmatchBindings {C F : Type} (state : FlatSem.State C F) :
         simp only [FlatLang.patsBindings]
         rw [second, first, List.append_assoc]
 
-/-- Successful matching produces one binding for each pattern name, in
-addition to the input bindings. -/
+/-- Successful matching adds one binding for each pattern name. -/
+@[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "pmatch_length"]
 theorem pmatchLength {C F : Type} (state : FlatSem.State C F) (pattern : FlatLang.Pat)
     (value : FlatSem.Value) (bindings result : List (VarN × FlatSem.Value))
     (run : FlatSem.pmatch state pattern value bindings = .match result) :
     result.length = (FlatLang.patBindings pattern).length + bindings.length := by
-  have names := (pmatchBindings state).1 pattern value bindings result run
+  have names := pmatchBindings.1 state pattern value bindings result run
   have lengths := congrArg List.length names
   simpa using lengths
 

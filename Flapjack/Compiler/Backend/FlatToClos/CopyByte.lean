@@ -66,7 +66,7 @@ theorem copyByteStr_noGlobals (t : Tra) :
   simp [copyByteStr, copyChecks, subscriptRaise,
     Flapjack.Compiler.Backend.ClosProps.setGlobals, Flapjack.Compiler.Backend.ClosProps.elistGlobals,
     Flapjack.Compiler.Backend.ClosProps.opGlobalBag, Flapjack.Compiler.Backend.FlatProps.unionGlobalBag,
-    Flapjack.Compiler.Backend.FlatProps.emptyGlobalBag]
+    Flapjack.Compiler.Backend.FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
 
 /-- Flapjack helper: array-copy checks contribute no global writes. -/
 theorem copyByteAw8_noGlobals (t : Tra) :
@@ -76,6 +76,6 @@ theorem copyByteAw8_noGlobals (t : Tra) :
   simp [copyByteAw8, copyChecks, subscriptRaise,
     Flapjack.Compiler.Backend.ClosProps.setGlobals, Flapjack.Compiler.Backend.ClosProps.elistGlobals,
     Flapjack.Compiler.Backend.ClosProps.opGlobalBag, Flapjack.Compiler.Backend.FlatProps.unionGlobalBag,
-    Flapjack.Compiler.Backend.FlatProps.emptyGlobalBag]
+    Flapjack.Compiler.Backend.FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
 
 end Flapjack.Compiler.Backend.FlatToClos

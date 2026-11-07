@@ -86,7 +86,7 @@ theorem evaluate_if_length_step {C F : Type} (env : Environment Value) (state ne
   · split at run
     · simp_all
     · rename_i branch selected
-      have choice := doIf_selected _ yes no branch selected
+      have choice := doIf_either_or _ yes no branch selected
       rcases choice with rfl | rfl
       · exact yesIH _ next values bound run
       · exact noIH _ next values bound run

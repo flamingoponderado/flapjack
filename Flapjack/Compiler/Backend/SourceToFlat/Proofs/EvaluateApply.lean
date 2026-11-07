@@ -82,7 +82,7 @@ theorem exprSim_opref {C F : Type} (genv : GlobalEnv) (compMap : Environment) (t
               [compileExp trace compMap body] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
             exact ⟨.abort error, nextRel⟩
       | val values =>
-        obtain ⟨value, rfl⟩ := EvaluateProps.evaluateSingFull sourceState sourceNext sourceEnv body values sourceRun
+        obtain ⟨value, rfl⟩ := EvaluateProps.evaluateSingFull sourceState sourceEnv body sourceNext values sourceRun
         cases related with
         | value valuesRel =>
           cases valuesRel with
@@ -153,7 +153,7 @@ theorem exprSim_opderef {C F : Type} (genv : GlobalEnv) (compMap : Environment) 
               [compileExp trace compMap body] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
             exact ⟨.abort error, nextRel⟩
       | val values =>
-        obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull sourceState sourceNext sourceEnv body values sourceRun
+        obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull sourceState sourceEnv body sourceNext values sourceRun
         cases related with
         | value valuesRel =>
           cases valuesRel with
@@ -464,7 +464,7 @@ theorem exprSim_test {C F : Type} (genv : GlobalEnv) (compMap : Environment) (tr
                   rw [(EvaluateHOL.fixClockEvaluate sourceState sourceEnv [right, left] []).1, sourceRun]
                   simp [getOpClass, doApp, comparison, EvaluateHOL.typeError]
                 | val b =>
-                  have flatComparison := doTest_related genv ok test typ sourceLeft sourceRight flatLeft flatRight b leftRel rightRel comparison
+                  have flatComparison := doTest_related test typ sourceLeft sourceRight b genv flatLeft flatRight ⟨comparison, ok, leftRel, rightRel⟩
                   unfold ExprSim
                   rw [EvaluateHOL.evaluate]
                   simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
@@ -1056,7 +1056,7 @@ theorem exprSim_word8Shift {C F : Type} (genv : GlobalEnv) (compMap : Environmen
               [compileExp trace compMap body] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
             exact ⟨.abort error, nextRel⟩
       | val values =>
-        obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull sourceState sourceNext sourceEnv body values sourceRun
+        obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull sourceState sourceEnv body sourceNext values sourceRun
         cases related with
         | value valuesRel =>
           cases valuesRel with
@@ -1137,7 +1137,7 @@ theorem exprSim_word64Shift {C F : Type} (genv : GlobalEnv) (compMap : Environme
               [compileExp trace compMap body] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
             exact ⟨.abort error, nextRel⟩
       | val values =>
-        obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull sourceState sourceNext sourceEnv body values sourceRun
+        obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull sourceState sourceEnv body sourceNext values sourceRun
         cases related with
         | value valuesRel =>
           cases valuesRel with
@@ -1218,7 +1218,7 @@ theorem exprSim_conversion {C F : Type} (genv : GlobalEnv) (compMap : Environmen
               [compileExp trace compMap body] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
             exact ⟨.abort error, nextRel⟩
       | val values =>
-        obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull sourceState sourceNext sourceEnv body values sourceRun
+        obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull sourceState sourceEnv body sourceNext values sourceRun
         cases related with
         | value valuesRel =>
           cases valuesRel with
@@ -1323,7 +1323,7 @@ theorem exprSim_floatUnary {C F : Type} (genv : GlobalEnv) (compMap : Environmen
               [compileExp trace compMap body] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
             exact ⟨.abort error, nextRel⟩
       | val values =>
-        obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull sourceState sourceNext sourceEnv body values sourceRun
+        obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull sourceState sourceEnv body sourceNext values sourceRun
         cases related with
         | value valuesRel =>
           cases valuesRel with
@@ -1428,7 +1428,7 @@ theorem exprSim_booleanNot {C F : Type} (genv : GlobalEnv) (compMap : Environmen
               [compileExp trace compMap body] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
             exact ⟨.abort error, nextRel⟩
       | val values =>
-        obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull sourceState sourceNext sourceEnv body values sourceRun
+        obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull sourceState sourceEnv body sourceNext values sourceRun
         cases related with
         | value valuesRel =>
           cases valuesRel with

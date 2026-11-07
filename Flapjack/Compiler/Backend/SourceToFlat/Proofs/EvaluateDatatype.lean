@@ -1,4 +1,6 @@
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.AllocDefsLookup
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateException
+import Flapjack.NamespaceProps
 
 /-! Prerequisites for the datatype-declaration case of the preliminary
 factored source-to-flat simulation. These helpers do not claim the upstream
@@ -228,13 +230,6 @@ private theorem zipConstructor_member_arity {N A : Type} (constructors : List (N
       · obtain ⟨args, found, length⟩ := ih restTags arities'.2 name tag arity member
         exact ⟨args, List.mem_cons_of_mem _ found, length⟩
 
-/-- Every allocator entry refers to a source constructor with the same
-name and arity. -/
-theorem allocatedConstructorEntries_source {M N A : Type} (constructors : List (N × List A))
-    (name : N) (tag arity : Nat) (member : (name, tag, arity) ∈ allocatedConstructorEntries (M := M) constructors) :
-    ∃ args, (name, args) ∈ constructors ∧ args.length = arity := by
-  exact zipConstructor_member_arity constructors _ (allocTags1_arities (M := M) constructors) name tag arity member
-
 private theorem constructorLookup_exists_iff_key_mem {α : Type} (entries : List (ConN × α)) (name : ConN) :
     (∃ value, entries.lookup name = some value) ↔ name ∈ entries.map Prod.fst := by
   induction entries with
@@ -245,43 +240,6 @@ private theorem constructorLookup_exists_iff_key_mem {α : Type} (entries : List
     · subst key
       simp
     · simp [List.lookup_cons, BEq.beq, equal, ih]
-
-private theorem constructorLookup_of_mem_nodup {α : Type} (entries : List (ConN × α))
-    (name : ConN) (value : α) (member : (name, value) ∈ entries)
-    (distinct : (entries.map Prod.fst).Nodup) : entries.lookup name = some value := by
-  induction entries with
-  | nil => simp at member
-  | cons head tail ih =>
-    rcases head with ⟨key, current⟩
-    simp only [List.map_cons, List.nodup_cons] at distinct
-    rcases List.mem_cons.mp member with same | tailMember
-    · cases same
-      simp
-    · have different : name ≠ key := by
-        intro equal
-        subst key
-        exact distinct.1 (List.mem_map.mpr ⟨(name, value), tailMember, rfl⟩)
-      have compare : (name == key) = false := by
-        change decide (name = key) = false
-        simp [different]
-      simp [List.lookup_cons, compare, ih tailMember distinct.2]
-
-private theorem constructorLookup_mem {α : Type} (entries : List (ConN × α)) (name : ConN) (value : α)
-    (lookup : entries.lookup name = some value) : (name, value) ∈ entries := by
-  induction entries with
-  | nil => simp at lookup
-  | cons head tail ih =>
-    rcases head with ⟨key, current⟩
-    by_cases same : name = key
-    · subst key
-      simp at lookup
-      subst current
-      simp
-    · have different : (name == key) = false := by
-        change decide (name = key) = false
-        simp [same]
-      simp only [List.lookup_cons, different] at lookup
-      exact List.mem_cons_of_mem _ (ih lookup)
 
 /-- A named source constructor with a unique name appears in the allocator's
 entry list with its source arity. -/
@@ -297,9 +255,9 @@ theorem allocatedConstructorEntries_find {M A : Type} (constructors : List (ConN
   change entryName' = name at entryName
   subst entryName'
   obtain ⟨args', sourceMember, length⟩ :=
-    allocatedConstructorEntries_source (M := M) constructors name tag arity entryMember
-  have found := constructorLookup_of_mem_nodup constructors name args member distinct
-  have found' := constructorLookup_of_mem_nodup constructors name args' sourceMember distinct
+    zipConstructor_member_arity constructors _ (allocTags1_arities (M := M) constructors) name tag arity entryMember
+  have found := lookup_of_mem_nodup constructors name args member distinct
+  have found' := lookup_of_mem_nodup constructors name args' sourceMember distinct
   have same : args' = args := Option.some.inj (found'.symm.trans found)
   subst args'
   subst arity
@@ -904,7 +862,8 @@ theorem globalEnvInv_allocTags (genv : GlobalEnv) (idx stamp : Nat)
     | long moduleName rest => simp [nsLookup, alistToNs] at lookup
     | short name =>
       change (buildConstrs stamp constructors).reverse.lookup name = some (arity, sourceStamp) at lookup
-      have sourceMember := List.mem_reverse.mp (constructorLookup_mem _ name (arity, sourceStamp) lookup)
+      have sourceMember := List.mem_reverse.mp (holALookup_member (buildConstrs stamp constructors).reverse name (arity, sourceStamp)
+        (by simpa [holALookup_eq_lookup] using lookup))
       simp only [buildConstrs, List.mem_map] at sourceMember
       obtain ⟨constructor, constructorMember, equality⟩ := sourceMember
       rcases constructor with ⟨constructorName, args⟩
@@ -916,7 +875,7 @@ theorem globalEnvInv_allocTags (genv : GlobalEnv) (idx stamp : Nat)
       have compilerMember : (constructorName, (tag, some (idx, tags))) ∈
           entries.map (fun (name, tag, _) => (name, (tag, some (idx, tags)))) :=
         List.mem_map.mpr ⟨(constructorName, tag, args.length), entryMember, rfl⟩
-      have compilerLookup := constructorLookup_of_mem_nodup _ constructorName (tag, some (idx, tags)) compilerMember compilerNames
+      have compilerLookup := lookup_of_mem_nodup _ constructorName (tag, some (idx, tags)) compilerMember compilerNames
       refine ⟨tag, some (idx, tags), ?_, ?_, ?_⟩
       · rw [allocTags_namespace_entries]
         exact compilerLookup
@@ -1143,11 +1102,6 @@ def datatypeConstructorNamespace : Nat → TypeDef → Namespace ModN ConN (Nat 
   | idx, (_, _, constructors) :: rest =>
     nsAppend (datatypeConstructorNamespace (idx + 1) rest) (allocTags idx constructors).1
 
-private theorem namespaceAppend_assoc {M N A : Type} (first second third : Namespace M N A) :
-    nsAppend (nsAppend first second) third = nsAppend first (nsAppend second third) := by
-  cases first; cases second; cases third
-  simp [nsAppend, List.append_assoc]
-
 /-- The recursive namespace above is exactly the compiler's indexed fold,
 including its ordering of shadowed constructors. -/
 theorem datatypeConstructorNamespace_fold (types : TypeDef) (idx offset : Nat)
@@ -1162,7 +1116,7 @@ theorem datatypeConstructorNamespace_fold (types : TypeDef) (idx offset : Nat)
     rcases td with ⟨parameters, typeName, constructors⟩
     simp only [List.zipIdx_cons, List.map_cons, List.foldl_cons, datatypeConstructorNamespace]
     rw [ih]
-    rw [namespaceAppend_assoc]
+    rw [← nsAppend_assoc]
     simp only [Nat.add_assoc]
 
 /-- The compiler's datatype case returns this recursively described
@@ -1251,7 +1205,7 @@ theorem factoredInvariant_allocateTypeDefinitions {C F : Type} [Nonempty C]
     obtain ⟨lastValid, lastGrowth, lastInv⟩ := ih nextGenv nextStart nextSource nextValid (by simp [nextStart] at fits ⊢; omega) checkedRest
     have carriedInv := globalEnvInv_growth nextGenv _ lastGrowth _ (fun _ => False) _ nextInv
     have domain := envDomainEq_datatypeConstructorNamespace nextStart.tidx nextSource.nextTypeStamp rest
-    have combined := globalEnvInv_append_factored _ _ _ _ _ domain lastInv carriedInv
+    have combined := globalEnvInv_append_factored _ _ _ _ _ ⟨domain, lastInv, carriedInv⟩
     refine ⟨?_, ?_, ?_⟩
     · simpa [allocateTypeDefinitions, nextGenv, nextStart, nextSource, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using lastValid
     · simpa [allocateTypeDefinitions, nextGenv, nextStart, nextSource] using nextGrowth.trans lastGrowth
@@ -1260,12 +1214,12 @@ theorem factoredInvariant_allocateTypeDefinitions {C F : Type} [Nonempty C]
 
 /-- Datatype declarations satisfy the factored declaration simulation. The
 factored relations remain subject to the separate HOL correspondence review. -/
-theorem factoredDecIH_dtype {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+theorem factoredDecBoundedIH_dtype {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
     (location : Flapjack.Misc.Location.Locs) (types : TypeDef) :
-    FactoredDecIH (F := F) interp transform [.dtype location types] := by
+    FactoredDecBoundedIH (F := F) interp transform limit [.dtype location types] := by
   intro genv env nextEnv sourceEnv trace source sourceLast flat start finish next other n n' gen nextGen
-    flatDecs result sourceRun invariant compiled _envInv notTypeError generation _future bounded
+    flatDecs result _ sourceRun invariant compiled _envInv notTypeError generation _future bounded
   have checked : types.all checkDupCtors = true := by
     cases h : types.all checkDupCtors with
     | true => rfl

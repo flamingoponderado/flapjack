@@ -41,7 +41,9 @@ theorem compileDecs_syntacticProps (maxApp : Nat) (ds : List FlatLang.Exp) :
 theorem compileProg_syntacticProps (maxApp : Nat) (ds : List FlatLang.Exp) :
     (∀ e ∈ compileProg ds, noMti e) ∧ everyFnVarsNone (compileProg ds) ∧
       (0 < maxApp → ¬ containsAppSome maxApp (compileProg ds)) := by
-  have safe := compileProg_noMti ds
+  have safe : ∀ e ∈ compileProg ds, noMti e := by
+    have compiled := compileDecs_noMti ds
+    simpa [compileProg, ClosInterp.attachInterpreter, compileInit_noMti] using compiled
   have properties := noMtiList_syntactic 1 (by decide) (compileProg ds) safe
   exact ⟨safe, properties.1, fun positive => (noMtiList_syntactic maxApp positive _ safe).2⟩
 
@@ -51,9 +53,16 @@ theorem incCompileDecs_syntacticProps {α β γ : Type} (maxApp : Nat) (ds : Lis
     (∀ e ∈ (incCompileDecs (α := α) ds).1, noMti e) ∧
       everyFnVarsNone (incCompileDecs (α := β) ds).1 ∧
       (0 < maxApp → ¬ containsAppSome maxApp (incCompileDecs (α := γ) ds).1) := by
-  have safe := incCompileDecs_noMti (α := α) ds
-  have safeBeta := incCompileDecs_noMti (α := β) ds
-  have safeGamma := incCompileDecs_noMti (α := γ) ds
+  have safeAll : ∀ {X : Type}, ∀ e ∈ (incCompileDecs (α := X) ds).1, noMti e := by
+    intro X e member
+    apply ClosInterp.insertInterp_noMti e _ member
+    intro x sourceMember
+    rcases List.mem_append.mp sourceMember with original | unit
+    · exact compileDecs_noMti ds x original
+    · exact compileDecs_noMti [.con .none none []] x unit
+  have safe := safeAll (X := α)
+  have safeBeta := safeAll (X := β)
+  have safeGamma := safeAll (X := γ)
   have properties := noMtiList_syntactic 1 (by decide) _ safeBeta
   exact ⟨safe, properties.1, fun positive => (noMtiList_syntactic maxApp positive _ safeGamma).2⟩
 

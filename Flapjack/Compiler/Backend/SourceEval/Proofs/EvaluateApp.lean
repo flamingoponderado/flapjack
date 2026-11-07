@@ -4,9 +4,8 @@ import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateEval
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.EvaluateHOL
 
-/-- The ordinary primitive-operation subcase of the original application
-induction case. The other operation classes are separate evaluator cases. -/
-@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
+/-- Flapjack proof infrastructure for the ordinary primitive-operation branch
+of HOL's application induction case; HOL has no separate Simple case. -/
 theorem adjustOracle_evaluate_AppSimple {Config F : Type} (ci : CompilerInstance Config)
     (f compile : List Dec → List Dec) (_preserves : DeclarationCompilerPreserves (F := F) compile)
     (state next : State F) (env : SemEnv Value) (op : Op) (args : List AstHOL.Exp) (opClass : getOpClass op = .simple)
@@ -51,10 +50,8 @@ theorem adjustOracle_evaluate_AppSimple {Config F : Type} (ci : CompilerInstance
         refine ⟨middleInserted, ?_⟩
         simp [adjusted, replacement, opClass, app]
 
-/-- Function-application subcase of the original evaluator induction. The
-body induction hypothesis is required only for an actual call with a nonzero
-clock, at its decremented-clock input. -/
-@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
+/-- Flapjack proof infrastructure for the function-application branch of HOL's
+application induction case, using the decremented-clock body hypothesis. -/
 theorem adjustOracle_evaluate_AppFunction {Config F : Type} (ci : CompilerInstance Config)
     (f compile : List Dec → List Dec) (_preserves : DeclarationCompilerPreserves (F := F) compile)
     (state next : State F) (env : SemEnv Value) (op : Op) (args : List AstHOL.Exp)
@@ -106,10 +103,8 @@ theorem adjustOracle_evaluate_AppFunction {Config F : Type} (ci : CompilerInstan
             bodyIH middle values callEnv body argsRun app clock next result bodyRun (by simpa [decClock] using middleInserted) safe
           exact ⟨nextInserted, by simpa [adjusted, replacement, opClass, app, clock, decClock] using bodyReplacement⟩
 
-/-- Thunk-forcing subcase of the original application induction. Its body
-induction hypothesis is needed only for an actual unevaluated thunk call at a
-nonzero clock. -/
-@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
+/-- Flapjack proof infrastructure for the thunk-forcing branch of HOL's
+application induction case, using the decremented-clock body hypothesis. -/
 theorem adjustOracle_evaluate_AppForce {Config F : Type} (ci : CompilerInstance Config)
     (f compile : List Dec → List Dec) (_preserves : DeclarationCompilerPreserves (F := F) compile)
     (state next : State F) (env : SemEnv Value) (op : Op) (args : List AstHOL.Exp)
@@ -203,12 +198,6 @@ theorem adjustOracle_evaluate_AppForce {Config F : Type} (ci : CompilerInstance 
                     cases pair
                     exact ⟨afterInserted, by simp [adjusted, replacement, opClass, thunkRun, app, clock, decClock, bodyReplacement, updated]⟩
 
-/-- Only the Eval operator belongs to the evaluator's Eval operation class.
-This Flapjack lemma follows from the source operation-class definition. -/
-theorem opClass_eval_eq (op : Op) (h : getOpClass op = .evalOp) : op = .eval := by
-  cases op <;> simp_all [getOpClass]
-  case thunkOp thunk => cases thunk <;> simp_all
-
 /-- The complete application-expression case, assembling all four operation
 classes with the corresponding evaluator induction hypotheses. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
@@ -240,7 +229,9 @@ theorem adjustOracle_evaluate_App {Config F : Type} (ci : CompilerInstance Confi
   | funApp => exact adjustOracle_evaluate_AppFunction ci f compile preserves state next env op args opClass argsIH (functionIH opClass) result source inserted safe
   | force => exact adjustOracle_evaluate_AppForce ci f compile preserves state next env op args opClass argsIH (forceIH opClass) result source inserted safe
   | evalOp =>
-    have eq := opClass_eval_eq op opClass
+    have eq : op = .eval := by
+      cases op <;> simp_all [getOpClass]
+      case thunkOp thunk => cases thunk <;> simp_all
     subst op
     exact adjustOracle_evaluate_Eval ci f compile preserves state next env args argsIH (evalIH rfl) result source inserted safe
 

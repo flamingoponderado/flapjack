@@ -5,22 +5,15 @@ import Flapjack.Compiler.Backend.FlatProps.Globals
 namespace Flapjack.Compiler.Backend.FlatElim
 open Flapjack.Compiler.Backend.FlatProps
 
-/-- The original bag inclusion relation, expressed through multiplicities. -/
-def subGlobalBag (left right : GlobalBag) : Prop :=
-  ∀ key count, count ≤ left key → count ≤ right key
-
-/-- The original all-distinct predicate for a bag. -/
-def globalBagDistinct (bag : GlobalBag) : Prop := ∀ key, bag key ≤ 1
-
 /-- Filtering cannot increase the multiplicity of any initialization. -/
 theorem elistGlobals_filter_sub (predicate : FlatLang.Exp → Bool) (expressions : List FlatLang.Exp) :
-    subGlobalBag (elistGlobals (expressions.filter predicate)) (elistGlobals expressions) := by
+    Flapjack.subBag (elistGlobals (expressions.filter predicate)) (elistGlobals expressions) := by
   have counts : ∀ key, elistGlobals (expressions.filter predicate) key ≤ elistGlobals expressions key := by
     intro key
     induction expressions with
     | nil => simp [elistGlobals, emptyGlobalBag]
     | cons expression rest ih =>
-      cases keep : predicate expression <;> simp [List.filter, keep, elistGlobals, unionGlobalBag] at * <;> omega
+      cases keep : predicate expression <;> simp [List.filter, keep, elistGlobals, unionGlobalBag, Flapjack.bagUnion] at * <;> omega
   intro key count bound
   exact Nat.le_trans bound (counts key)
 
@@ -28,9 +21,9 @@ theorem elistGlobals_filter_sub (predicate : FlatLang.Exp → Bool) (expressions
 expression carriers remain pending HOL correspondence review. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "remove_flat_prog_sub_bag"]
 theorem removeFlatProg_subBag (declarations : List FlatLang.Exp) :
-    subGlobalBag (elistGlobals (removeFlatProgTotal declarations)) (elistGlobals declarations) := by
+    Flapjack.subBag (elistGlobals (removeFlatProgTotal declarations)) (elistGlobals declarations) := by
   cases safe : declarations.any hasEvalDec with
-  | true => simp [removeFlatProgTotal, safe, subGlobalBag]
+  | true => simp [removeFlatProgTotal, safe, Flapjack.subBag, Flapjack.bagInn]
   | false =>
     cases analysis : analyseCode declarations with
     | mk roots tree =>
@@ -46,7 +39,7 @@ theorem removeFlatProg_globals_empty (declarations : List FlatLang.Exp)
   funext key
   have bound := removeFlatProg_subBag declarations key (elistGlobals (removeFlatProgTotal declarations) key) (Nat.le_refl _)
   rw [empty] at bound
-  simp [emptyGlobalBag] at bound ⊢
+  simp [Flapjack.bagInn, emptyGlobalBag, Flapjack.emptyBag] at bound ⊢
   exact bound
 
 /-- Removing declarations preserves the original per-expression
@@ -71,10 +64,8 @@ theorem removeFlatProg_esgcFree (declarations : List FlatLang.Exp)
 expression carriers remain pending HOL correspondence review. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "remove_flat_prog_distinct_globals"]
 theorem removeFlatProg_distinctGlobals (declarations : List FlatLang.Exp)
-    (distinct : globalBagDistinct (elistGlobals declarations)) :
-    globalBagDistinct (elistGlobals (removeFlatProgTotal declarations)) := by
-  intro key
-  have bound := removeFlatProg_subBag declarations key (elistGlobals (removeFlatProgTotal declarations) key) (Nat.le_refl _)
-  exact Nat.le_trans bound (distinct key)
+    (distinct : Flapjack.bagAllDistinct (elistGlobals declarations)) :
+    Flapjack.bagAllDistinct (elistGlobals (removeFlatProgTotal declarations)) :=
+  Flapjack.bagAllDistinct_subBag _ _ ⟨removeFlatProg_subBag declarations, distinct⟩
 
 end Flapjack.Compiler.Backend.FlatElim

@@ -100,12 +100,14 @@ theorem initGenv_lookup_mem (key : ConstructorKey) (stamp : Stamp)
 
 /-- The original initial-stamp condition excludes every initial constructor
 stamp from the source state's fresh-stamp ranges. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "precondition_stamp_helper"
+  (fmap_as_finite_support := [c])]
 theorem initGenv_stamp_fresh (nextType nextExn : Nat)
     (bounded : ∀ entry ∈ initGenvEntries, match entry.2 with
       | .typeStamp _ index => index < nextType
       | .exnStamp index => index < nextExn) :
-    (∀ name index, nextType ≤ index → ¬ ∃ key, initGenv.c.lookup key = some (.typeStamp name index)) ∧
-    (∀ index, nextExn ≤ index → ¬ ∃ key, initGenv.c.lookup key = some (.exnStamp index)) := by
+    (∀ name index, nextType ≤ index → ¬ ∃ key, (initGenv : GlobalEnv).c.lookup key = some (.typeStamp name index)) ∧
+    (∀ index, nextExn ≤ index → ¬ ∃ key, (initGenv : GlobalEnv).c.lookup key = some (.exnStamp index)) := by
   constructor
   · intro name index fresh ⟨key, lookup⟩
     have bound := bounded (key, .typeStamp name index) (initGenv_lookup_mem key _ lookup)
@@ -285,7 +287,9 @@ theorem initGenv_idxRange_compileProg {C : Type}
 
 /-- Every typed constructor in the initial map belongs to its initial
 constructor group. -/
-theorem initGenv_typesOk : genvCTysOk initGenv.c initGenv.tys := by
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "init_genv_tys_ok"
+  (fmap_as_finite_support := [c, tys])]
+theorem initGenv_typesOk : genvCTysOk (initGenv : GlobalEnv).c (initGenv : GlobalEnv).tys := by
   intro cn tyId arity present
   cases lookup : initGenv.c.lookup ((cn, some tyId), arity) with
   | none => simp [lookup] at present
@@ -300,7 +304,9 @@ theorem initGenv_typesOk : genvCTysOk initGenv.c initGenv.tys := by
 
 /-- The initial constructor map has the required constructors and preserves
 constructor-type comparison and injectivity. -/
-theorem initGenv_constructorsOk : genvCOk initGenv.c := by
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "init_genv_ok"
+  (fmap_as_finite_support := [c, tys])]
+theorem initGenv_constructorsOk : genvCOk (initGenv : GlobalEnv).c := by
   have boolNames : ofString "False" ≠ ofString "True" := by decide
   have listNames : ofString "[]" ≠ ofString "::" := by decide
   obtain ⟨bools, lists, exceptions⟩ := initGenv_requiredConstructors

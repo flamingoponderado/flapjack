@@ -88,7 +88,7 @@ theorem applyNumericProjection_related {C F : Type} (cfg : Config) (source targe
     (related : List.Forall₂ ValueRel values values') (errorRel : ValueRel errorValue errorValue)
     (run : FlatSem.applyNumericProjection source op values errorValue = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.applyNumericProjection target op values' errorValue = some (targetFinal, result') ∧
-      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
   have arguments := flatToValue_map_related related
   have ffi := states.2.2.1
   cases called : SemanticPrimitivesHOL.doApp ([], source.ffi) op (values.map FlatSem.flatToValue) with
@@ -99,19 +99,19 @@ theorem applyNumericProjection_related {C F : Type} (cfg : Config) (source targe
     | val value =>
       simp [FlatSem.applyNumericProjection, called] at run
       rcases run with ⟨rfl, rfl⟩
-      refine ⟨target, .val (FlatSem.valueToFlat value), ?_, states, .value (valueToFlat_related value)⟩
+      refine ⟨target, .val (FlatSem.valueToFlat value), ?_, states, (valueToFlat_related value)⟩
       simp [FlatSem.applyNumericProjection, ffi, ← arguments, called]
     | err error =>
       cases error with
       | raise raised =>
         simp [FlatSem.applyNumericProjection, called] at run
         rcases run with ⟨rfl, rfl⟩
-        refine ⟨target, .err (.raise errorValue), ?_, states, .error (.raise errorRel)⟩
+        refine ⟨target, .err (.raise errorValue), ?_, states, errorRel⟩
         simp [FlatSem.applyNumericProjection, ffi, ← arguments, called]
       | abort abort =>
         simp [FlatSem.applyNumericProjection, called] at run
         rcases run with ⟨rfl, rfl⟩
-        refine ⟨target, .err (.abort abort), ?_, states, .error (.abort abort)⟩
+        refine ⟨target, .err (.abort abort), ?_, states, rfl⟩
         simp [FlatSem.applyNumericProjection, ffi, ← arguments, called]
 
 /-- Arithmetic application preserves related states and results. -/
@@ -121,7 +121,7 @@ theorem doApp_arith_related {C F : Type} (cfg : Config) (source target sourceFin
     (related : List.Forall₂ ValueRel values values')
     (run : FlatSem.doApp source (.src (.arith action typ)) values = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.doApp target (.src (.arith action typ)) values' = some (targetFinal, result') ∧
-      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
   have run' : FlatSem.applyNumericProjection source (.arith action typ) values FlatSem.divExnV = some (sourceFinal, result) := by
     simpa [FlatSem.doApp, FlatSem.doAppNumeric] using run
   obtain ⟨targetFinal, result', targetRun, finalStates, resultRel⟩ :=
@@ -136,7 +136,7 @@ theorem doApp_fromTo_related {C F : Type} (cfg : Config) (source target sourceFi
     (related : List.Forall₂ ValueRel values values')
     (run : FlatSem.doApp source (.src (.fromTo sourceTyp targetTyp)) values = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.doApp target (.src (.fromTo sourceTyp targetTyp)) values' = some (targetFinal, result') ∧
-      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
   have run' : FlatSem.applyNumericProjection source (.fromTo sourceTyp targetTyp) values FlatSem.chrExnV = some (sourceFinal, result) := by
     simpa [FlatSem.doApp, FlatSem.doAppNumeric] using run
   obtain ⟨targetFinal, result', targetRun, finalStates, resultRel⟩ :=
@@ -151,7 +151,7 @@ theorem doApp_shift_related {C F : Type} (cfg : Config) (source target sourceFin
     (related : List.Forall₂ ValueRel values values')
     (run : FlatSem.doApp source (.src (.shift width shift amount)) values = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.doApp target (.src (.shift width shift amount)) values' = some (targetFinal, result') ∧
-      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
   have run' : FlatSem.applyNumericProjection source (.shift width shift amount) values FlatSem.divExnV = some (sourceFinal, result) := by
     simpa [FlatSem.doApp, FlatSem.doAppNumeric] using run
   obtain ⟨targetFinal, result', targetRun, finalStates, resultRel⟩ :=

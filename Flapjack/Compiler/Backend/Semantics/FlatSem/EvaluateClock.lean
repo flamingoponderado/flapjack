@@ -2,8 +2,8 @@ import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyClock
 import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
 import Lean.Elab.Tactic.Omega
 
-/-! Clock preservation for flat evaluation and its declaration projections.
-The source-shaped theorem is stated in `EvaluateSource`. -/
+/-! Clock preservation and clock clamping for flat evaluation and its
+declaration projections. -/
 namespace Flapjack.Compiler.Backend.FlatSem
 open Flapjack.SemanticPrimitivesHOL
 
@@ -123,7 +123,7 @@ theorem evaluate_if_clock_step {C F : Type} (env : Environment Value) (state : S
     split
     · exact bound
     · rename_i body selected
-      have choice := doIf_selected _ yes no body selected
+      have choice := doIf_either_or _ yes no body selected
       rcases choice with rfl | rfl
       · exact Nat.le_trans (yesClock next bound) bound
       · exact Nat.le_trans (noClock next bound) bound
@@ -313,8 +313,8 @@ theorem evaluate_force_clock_step {C F : Type} (env : Environment Value) (state 
           | some refs => simpa [thunk, bodyRun, updated] using resultBound
 
 /-- Clock preservation for expressions and declaration lists, proved by
-explicit nested strong induction on clock and expression weight. This is
-untagged until the underlying flat evaluator has completed HOL review. -/
+explicit nested strong induction on clock and expression weight. This
+induction helper has no separate HOL declaration. -/
 theorem evaluate_clock_mutual {C F : Type} :
     (∀ (env : Environment Value) (state : State C F) (expressions : List FlatLang.Exp),
       (evaluate env state expressions).1.clock ≤ state.clock) ∧
@@ -473,29 +473,31 @@ theorem evaluateDec_clock {C F : Type} (state : State C F) (declaration : FlatLa
   | err error => exact bound
   | val values => dsimp only; split <;> exact bound
 
-/-- Clock preservation in explicit result-pair form for expressions, single
-declarations, and declaration lists. -/
+/-- Expression, single-declaration and declaration-list evaluation do not
+increase the clock. -/
+@[hol "cakeml/compiler/backend/semantics/flatSemScript.sml" "evaluate_clock"]
 theorem evaluate_clock_spec {C F : Type} :
-    (∀ (env : Environment Value) (state next : State C F) (expressions : List FlatLang.Exp)
-      (result : Result (List Value) Value), evaluate env state expressions = (next, result) →
-      next.clock ≤ state.clock) ∧
-    (∀ (state next : State C F) (declaration : FlatLang.Exp) (result : Option (ErrorResult Value)),
-      evaluateDec state declaration = (next, result) → next.clock ≤ state.clock) ∧
-    (∀ (state next : State C F) (declarations : List FlatLang.Exp) (result : Option (ErrorResult Value)),
-      evaluateDecs state declarations = (next, result) → next.clock ≤ state.clock) := by
+    (∀ (env : Environment Value) (state : State C F) (expressions : List FlatLang.Exp)
+      (result : Result (List Value) Value) (next : State C F),
+      evaluate env state expressions = (next, result) → next.clock ≤ state.clock) ∧
+    (∀ (state : State C F) (declaration : FlatLang.Exp) (result : Option (ErrorResult Value))
+      (next : State C F), evaluateDec state declaration = (next, result) → next.clock ≤ state.clock) ∧
+    (∀ (state : State C F) (declarations : List FlatLang.Exp) (result : Option (ErrorResult Value))
+      (next : State C F), evaluateDecs state declarations = (next, result) → next.clock ≤ state.clock) := by
   refine ⟨?_, ?_, ?_⟩
-  · intro env state next expressions result run
+  · intro env state expressions result next run
     have bound := evaluate_clock_mutual.1 env state expressions
     simpa [run] using bound
-  · intro state next declaration result run
+  · intro state declaration result next run
     have bound := evaluateDec_clock state declaration
     simpa [run] using bound
-  · intro state next declarations result run
+  · intro state declarations result next run
     have bound := evaluate_clock_mutual.2 state declarations
     simpa [run] using bound
 
 /-- Clock clamping is redundant after any expression, declaration, or
 declaration-list evaluation in the current clocked evaluator. -/
+@[hol "cakeml/compiler/backend/semantics/flatSemScript.sml" "fix_clock_evaluate"]
 theorem fixClock_evaluations {C F : Type} (env : Environment Value) (state : State C F)
     (expressions : List FlatLang.Exp) (declaration : FlatLang.Exp) (declarations : List FlatLang.Exp) :
     fixClock state (evaluate env state expressions) = evaluate env state expressions ∧

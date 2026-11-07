@@ -14,10 +14,6 @@ theorem opGlobalBag_astOpToFlatOp (op : AstHOL.Op) :
     opGlobalBag (astOpToFlatOp op) = emptyGlobalBag := by
   cases op <;> rfl
 
-private theorem unionEmpty : unionGlobalBag emptyGlobalBag emptyGlobalBag = emptyGlobalBag := by
-  funext key
-  simp [unionGlobalBag, emptyGlobalBag]
-
 /-- Safety of one compiled expression with respect to global writes. -/
 def CompiledGlobalSafe (e : FlatLang.Exp) : Prop := esgcFree e ∧ setGlobals e = emptyGlobalBag
 
@@ -46,7 +42,7 @@ private theorem foldLets_safe (xs : List FlatLang.Exp) (body : FlatLang.Exp)
     have bags : setGlobals x = emptyGlobalBag ∧ elistGlobals xs = emptyGlobalBag :=
       unionGlobalBag_eq_empty _ _ |>.mp hbag
     have rest := ih hs bags.2
-    simpa [CompiledGlobalSafe, esgcFree, setGlobals, bags.1, rest.1, rest.2, unionEmpty] using hx
+    simpa [CompiledGlobalSafe, esgcFree, setGlobals, bags.1, rest.1, rest.2, Flapjack.bagUnion_empty_right] using hx
 
 mutual
 /-- Compiled expressions introduce no global initialization. -/
@@ -58,7 +54,7 @@ theorem compileExp_globalSafe (t : List MlString) (env : Environment) :
   | .handle e rows => by
       have h := compileExp_globalSafe t env e
       have hs := compilePes_globalSafe t env rows
-      simp [CompiledGlobalSafe, compileExp, esgcFree, setGlobals, h.1, h.2, hs.1, hs.2, unionEmpty]
+      simp [CompiledGlobalSafe, compileExp, esgcFree, setGlobals, h.1, h.2, hs.1, hs.2, Flapjack.bagUnion_empty_right]
   | .lit _ => by simp [CompiledGlobalSafe, compileExp, esgcFree, setGlobals]
   | .con name es => by
       have h := compileExps_globalSafe t env es
@@ -66,7 +62,7 @@ theorem compileExp_globalSafe (t : List MlString) (env : Environment) :
   | .var id => by
       cases lookup : nsLookup env.v id with
       | none => simp [CompiledGlobalSafe, compileExp, lookup, esgcFree, setGlobals]
-      | some name => cases name <;> simp [CompiledGlobalSafe, compileExp, lookup, compileVar, esgcFree, esgcFreeList, setGlobals, elistGlobals, opGlobalBag, unionEmpty]
+      | some name => cases name <;> simp [CompiledGlobalSafe, compileExp, lookup, compileVar, esgcFree, esgcFreeList, setGlobals, elistGlobals, opGlobalBag, Flapjack.bagUnion_empty_right]
   | .fn x body => by
       have h := compileExp_globalSafe t { env with v := nsBind x (.localName .none x) env.v } body
       simp [CompiledGlobalSafe, compileExp, esgcFree, setGlobals, h.2]
@@ -77,53 +73,53 @@ theorem compileExp_globalSafe (t : List MlString) (env : Environment) :
         simp only [compileExp, ↓reduceIte]
         have rev := reverse_safe (compileExps t env es) hs.1 hs.2
         apply foldLets_safe _ _ rev.1 rev.2
-        simp [CompiledGlobalSafe, esgcFree, esgcFreeList, setGlobals, elistGlobals, opGlobalBag, unionEmpty]
+        simp [CompiledGlobalSafe, esgcFree, esgcFreeList, setGlobals, elistGlobals, opGlobalBag, Flapjack.bagUnion_empty_right]
       · by_cases eval : op = .eval
         · subst op
           simp [CompiledGlobalSafe, compileExp, esgcFree, esgcFreeList, esgcFreeRows, setGlobals,
-            rowGlobals, elistGlobals, opGlobalBag, hs.1, hs.2, unionEmpty]
+            rowGlobals, elistGlobals, opGlobalBag, hs.1, hs.2, Flapjack.bagUnion_empty_right]
         · by_cases envId : op = .envId
           · subst op
             cases es with
-            | nil => simp [CompiledGlobalSafe, compileExp, compileExps, esgcFree, esgcFreeList, setGlobals, elistGlobals, opGlobalBag, unionEmpty]
+            | nil => simp [CompiledGlobalSafe, compileExp, compileExps, esgcFree, esgcFreeList, setGlobals, elistGlobals, opGlobalBag, Flapjack.bagUnion_empty_right]
             | cons e es =>
               cases es with
               | nil => simpa [compileExp, compileExps] using compileExp_globalSafe t env e
               | cons e' rest =>
-                simp [CompiledGlobalSafe, compileExp, esgcFree, setGlobals, opGlobalBag, hs.1, hs.2, unionEmpty]
+                simp [CompiledGlobalSafe, compileExp, esgcFree, setGlobals, opGlobalBag, hs.1, hs.2, Flapjack.bagUnion_empty_right]
           · simp [CompiledGlobalSafe, compileExp, empty, eval, envId, esgcFree, setGlobals,
-              opGlobalBag_astOpToFlatOp, hs.1, hs.2, unionEmpty]
+              opGlobalBag_astOpToFlatOp, hs.1, hs.2, Flapjack.bagUnion_empty_right]
   | .log op a b => by
       have ha := compileExp_globalSafe t env a
       have hb := compileExp_globalSafe t env b
       cases op <;> simp [CompiledGlobalSafe, compileExp, esgcFree, esgcFreeList, setGlobals, FlatLang.mkBool,
-        elistGlobals, ha.1, ha.2, hb.1, hb.2, unionEmpty]
+        elistGlobals, ha.1, ha.2, hb.1, hb.2, Flapjack.bagUnion_empty_right]
   | .if_ a b c => by
       have ha := compileExp_globalSafe t env a
       have hb := compileExp_globalSafe t env b
       have hc := compileExp_globalSafe t env c
-      simp [CompiledGlobalSafe, compileExp, esgcFree, setGlobals, ha.1, ha.2, hb.1, hb.2, hc.1, hc.2, unionEmpty]
+      simp [CompiledGlobalSafe, compileExp, esgcFree, setGlobals, ha.1, ha.2, hb.1, hb.2, hc.1, hc.2, Flapjack.bagUnion_empty_right]
   | .mat e rows => by
       have h := compileExp_globalSafe t env e
       have hs := compilePes_globalSafe t env rows
-      simp [CompiledGlobalSafe, compileExp, esgcFree, setGlobals, h.1, h.2, hs.1, hs.2, unionEmpty]
+      simp [CompiledGlobalSafe, compileExp, esgcFree, setGlobals, h.1, h.2, hs.1, hs.2, Flapjack.bagUnion_empty_right]
   | .let_ name a b => by
       cases name with
       | none =>
         have ha := compileExp_globalSafe t env a
         have hb := compileExp_globalSafe t env b
-        simp [CompiledGlobalSafe, compileExp, esgcFree, setGlobals, ha.1, ha.2, hb.1, hb.2, unionEmpty]
+        simp [CompiledGlobalSafe, compileExp, esgcFree, setGlobals, ha.1, ha.2, hb.1, hb.2, Flapjack.bagUnion_empty_right]
       | some x =>
         have ha := compileExp_globalSafe (x :: t) env a
         have hb := compileExp_globalSafe t { env with v := nsBind x (.localName .none x) env.v } b
-        simp [CompiledGlobalSafe, compileExp, esgcFree, setGlobals, ha.1, ha.2, hb.1, hb.2, unionEmpty]
+        simp [CompiledGlobalSafe, compileExp, esgcFree, setGlobals, ha.1, ha.2, hb.1, hb.2, Flapjack.bagUnion_empty_right]
   | .letrec funs body => by
       let names := funs.map Prod.fst
       let newEnv := nsBindList (names.map fun x => (x, VarName.localName .none x)) env.v
       have hf := compileFuns_globalSafe t { env with v := newEnv } funs
       have hb := compileExp_globalSafe t { env with v := newEnv } body
       simp only [newEnv, names, List.map_map] at hf hb
-      simp [CompiledGlobalSafe, compileExp, esgcFree, setGlobals, hf.2, hb.1, hb.2, unionEmpty]
+      simp [CompiledGlobalSafe, compileExp, esgcFree, setGlobals, hf.2, hb.1, hb.2, Flapjack.bagUnion_empty_right]
   | .tannot e _ => compileExp_globalSafe t env e
   | .lannot e (.locs _ _) => compileExp_globalSafe t env e
 termination_by e => sizeOf e
@@ -136,7 +132,7 @@ theorem compileExps_globalSafe (t : List MlString) (env : Environment) :
   | e :: es => by
       have h := compileExp_globalSafe t env e
       have hs := compileExps_globalSafe t env es
-      simp [compileExps, esgcFreeList, elistGlobals, h.1, h.2, hs.1, hs.2, unionEmpty]
+      simp [compileExps, esgcFreeList, elistGlobals, h.1, h.2, hs.1, hs.2, Flapjack.bagUnion_empty_right]
 termination_by es => sizeOf es
 decreasing_by all_goals simp_wf <;> omega
 
@@ -147,7 +143,7 @@ theorem compilePes_globalSafe (t : List MlString) (env : Environment) :
   | (p, e) :: rows => by
       have h := compileExp_globalSafe t { env with v := nsBindList (patTups .none (AstHOL.patBindings p)) env.v } e
       have hs := compilePes_globalSafe t env rows
-      simp [compilePes, esgcFreeRows, rowGlobals, h.1, h.2, hs.1, hs.2, unionEmpty]
+      simp [compilePes, esgcFreeRows, rowGlobals, h.1, h.2, hs.1, hs.2, Flapjack.bagUnion_empty_right]
 termination_by rows => sizeOf rows
 decreasing_by all_goals simp_wf <;> omega
 
@@ -159,7 +155,7 @@ theorem compileFuns_globalSafe (t : List MlString) (env : Environment) :
   | (f, x, e) :: funs => by
       have h := compileExp_globalSafe (f :: t) { env with v := nsBind x (.localName .none x) env.v } e
       have hs := compileFuns_globalSafe t env funs
-      simp [compileFuns, esgcFreeList, funGlobals, h.1, h.2, hs.1, hs.2, unionEmpty]
+      simp [compileFuns, esgcFreeList, funGlobals, h.1, h.2, hs.1, hs.2, Flapjack.bagUnion_empty_right]
 termination_by funs => sizeOf funs
 decreasing_by all_goals simp_wf <;> omega
 end

@@ -74,18 +74,18 @@ theorem blockInspect_related {C F : Type} {maxApp : Nat} {f : HolFiniteMapExact 
     refine ⟨ClosSem.boolValue (fields.length == n), BvlSem.boolValue (targetFields.length == n), ?_, ?_, ?_⟩
     · rfl
     · rfl
-    · simpa [lengths] using (vRel_bool (maxApp := maxApp) (f := f) (refs := t.refs) (code := t.code) (fields.length == n))
+    · simpa [lengths] using ((vRel_bool_iff maxApp f t.refs t.code (fields.length == n) (.number 0) (BvlSem.boolValue (fields.length == n))).1.mpr rfl)
   | tagEq n =>
     refine ⟨ClosSem.boolValue (tag == n), BvlSem.boolValue (closTagShift tag == closTagShift n), ?_, ?_, ?_⟩
     · rfl
     · rfl
-    · simpa [congrFun tagEq n] using (vRel_bool (maxApp := maxApp) (f := f) (refs := t.refs) (code := t.code) (tag == n))
+    · simpa [congrFun tagEq n] using ((vRel_bool_iff maxApp f t.refs t.code (tag == n) (.number 0) (BvlSem.boolValue (tag == n))).1.mpr rfl)
   | tagLengthEq n len =>
     refine ⟨ClosSem.boolValue (tag == n && fields.length == len),
       BvlSem.boolValue (closTagShift tag == closTagShift n && targetFields.length == len), ?_, ?_, ?_⟩
     · rfl
     · rfl
-    · simpa [lengths, congrFun tagEq n] using (vRel_bool (maxApp := maxApp) (f := f) (refs := t.refs) (code := t.code) (tag == n && fields.length == len))
+    · simpa [lengths, congrFun tagEq n] using ((vRel_bool_iff maxApp f t.refs t.code (tag == n && fields.length == len) (.number 0) (BvlSem.boolValue (tag == n && fields.length == len))).1.mpr rfl)
 
 /-- A successful inspection receives exactly one block. -/
 theorem blockInspect_success_shape {C F : Type} (op : BlockInspect)

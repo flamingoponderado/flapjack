@@ -89,4 +89,32 @@ theorem compileCorrect_sourceShape {C F α : Type} [Nonempty α] :
     refine ⟨_, _, Prod.eta _, relation.1, values, ?_⟩
     cases result <;> exact resultRel
 
+/-- The two concrete declaration evaluations have related final states and results. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "compile_decs_correct2"
+  (fmap_as_finite_support := [refs, code])]
+theorem compileDecs_correct2 {C F α : Type}
+    (source : FlatSem.State C F) (declarations : List FlatLang.Exp)
+    (sourceResult : FlatSem.State C F × Option (ErrorResult FlatSem.Value))
+    (target : ClosSem.State C F) (targetResult : Result (List ClosSem.Value) ClosSem.Value)
+    (targetLast : ClosSem.State C F)
+    (premises : FlatSem.evaluateDecs source declarations = sourceResult ∧
+      ClosSem.evaluate (compileDecs declarations) [] target = (targetResult, targetLast) ∧
+      StateRel source target ∧ FlatProps.noMatDecs declarations = true ∧
+      sourceResult.2 ≠ some (.abort .typeError)) :
+    StateRel sourceResult.1 targetLast ∧
+      SemanticPrimitivesProps.resultRel (fun (_ : List α) (_ : List ClosSem.Value) => True) ValueRel
+        (match sourceResult.2 with | none => .val [] | some error => .err error) targetResult := by
+  obtain ⟨sourceRun, targetRun, states, safe, notTypeError⟩ := premises
+  obtain ⟨sourceLast, sourceError⟩ := sourceResult
+  have noError : (FlatSem.evaluateDecs source declarations).2 ≠ some (.abort .typeError) := by
+    simpa [sourceRun] using notTypeError
+  have simulated := evaluate_decs_simulation source target declarations states safe noError
+  have relation : StateRel sourceLast targetLast ∧ DecResultRel sourceError targetResult := by
+    simpa [DecSim, sourceRun, targetRun] using simulated
+  refine ⟨relation.1, ?_⟩
+  cases relation.2 with
+  | success values => trivial
+  | raise related => exact related
+  | abort error => rfl
+
 end Flapjack.Compiler.Backend.FlatToClos

@@ -232,12 +232,17 @@ theorem compileSemantics_source {C F : Type} (ffi : HolFfiState F)
     simp [initialOracle, pureCo, h, incCompileDecsProofSide]
   have attachment := ClosInterp.attachInterpreter_semantics_source (compileDecs decs) ffi maxApp initialOracle compiler
     (by simpa [compileProg, initialCompiler, HolFiniteMapExact.holEmpty] using initialSafe) ⟨emptyAux, positive⟩
+  have oracleFactor : pureCo incCompileDecs ∘ config.compileOracle =
+      pureCo ClosInterp.insertProgram ∘ pureCo incCompileDecsProofSide ∘ config.compileOracle := by
+    have factor := (incCompileDecs_intro (P := Nat × Nat × ClosLang.Exp) config.compileOracle
+      (fun (_ : Unit) (_ : List ClosLang.Exp × List Unit) => ())).1
+    exact factor.symm
   have complete : ClosSem.semantics ffi maxApp HolFiniteMapExact.empty
       (pureCo incCompileDecs ∘ config.compileOracle) compiler (compileProg decs) =
       FlatSem.semantics config ffi decs := by
     calc
       _ = ClosSem.semantics ffi maxApp HolFiniteMapExact.empty initialOracle initialCompiler (compileProg decs) := by
-        simpa [initialOracle, initialCompiler, compileProg, incrementalOracle_factor, HolFiniteMapExact.holEmpty] using attachment
+        simpa [initialOracle, initialCompiler, compileProg, oracleFactor, HolFiniteMapExact.holEmpty] using attachment
       _ = _ := flatClos
   simpa [oracleEq, HolFiniteMapExact.holEmpty] using complete
 

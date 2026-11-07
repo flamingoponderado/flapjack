@@ -5,6 +5,14 @@ import Flapjack.Compiler.Backend.FlatToClos.Proofs.InstallDecoding
 namespace Flapjack.Compiler.Backend.FlatToClos
 open Flapjack.SemanticPrimitivesHOL Flapjack.Compiler.Backend.BackendProps
 
+namespace InstallPort
+/-- The closure state uses the canonical finite-map representation. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : ClosSem.StateBroad C F, (ClosSem.State.ofBroad s).toBroad = s) ∧
+      (∀ s : ClosSem.State C F, ClosSem.State.ofBroad s.toBroad = s) :=
+  ClosSem.holFmapAsFiniteSupportWitness
+end InstallPort
+
 /-- Invert a successful flat Eval request. The decoded inputs and compiler
 output are retained for the corresponding closure installation. -/
 theorem doEval_success_parts {C : Type} (values : List FlatSem.Value)
@@ -51,23 +59,29 @@ theorem doEval_success_parts {C : Type} (values : List FlatSem.Value)
                     rfl, byteResult, wordResult, rfl, compilerResult, nonempty, nextEq, rfl, rfl⟩
                 · simp at run
 
-/-- A successful flat Eval request installs its translated declarations in
-the related closure state. This proof-side simulation remains untagged until
-the value, state, and evaluator carriers have been reviewed against HOL. -/
+/-- A successful flat Eval request installs related closure declarations. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "do_eval_install"
+  (fmap_as_finite_support := [refs, code])]
 theorem doEval_install {C F : Type} (source : FlatSem.State C F) (target : ClosSem.State C F)
     (sourceValues : List FlatSem.Value) (targetValues : List ClosSem.Value)
-    (decs : List FlatLang.Exp) (nextConfig : FlatSem.InstallConfig C) (value : FlatSem.Value)
-    (run : FlatSem.doEval sourceValues source.evalConfig = some (decs, nextConfig, value))
-    (states : StateRel source target) (values : List.Forall₂ ValueRel sourceValues targetValues) :
-    ∃ advanced : ClosSem.State C F,
+    (result : List FlatLang.Exp × FlatSem.InstallConfig C × FlatSem.Value)
+    (premises : FlatSem.doEval sourceValues source.evalConfig = some result ∧
+      StateRel source target ∧ List.Forall₂ ValueRel sourceValues targetValues) :
+    ∃ (decs : List FlatLang.Exp) (exps : List ClosLang.Exp)
+      (nextConfig : FlatSem.InstallConfig C) (advanced : ClosSem.State C F),
       StateRel { source with evalConfig := nextConfig } advanced ∧
-      value = FlatSem.unitValue ∧ FlatProps.noMatDecs decs = true ∧
+      result = (decs, nextConfig, FlatSem.unitValue) ∧
       ClosSem.doInstall targetValues target =
-        (if target.clock = 0 then
-          (.err (.abort .timeoutError), ClosSem.decClock 1 advanced)
+        (if advanced.clock = 0 then
+          (.err (.abort .timeoutError), advanced)
         else
-          (.val (compileDecs decs ++ compileDecs [.con .none none []]), ClosSem.decClock 1 advanced)) := by
+          (.val (exps ++ compile [] [.con .none none []]), ClosSem.decClock 1 advanced)) ∧
+      FlatProps.noMatDecs decs = true ∧
+      (∃ envv dsv, sourceValues = [envv, dsv]) ∧
+      (advanced.clock ≠ 0 → exps = compileDecs decs) := by
   classical
+  obtain ⟨run, states, values⟩ := premises
+  obtain ⟨decs, nextConfig, value⟩ := result
   obtain ⟨bytesValue, wordsValue, bytes, words, compilerState, nextState, sourceEq,
     bytesDecoded, wordsDecoded, oracleResult, compilerResult, nonempty, nextEq, configEq, valueEq⟩ :=
     doEval_success_parts sourceValues source.evalConfig nextConfig decs value run
@@ -78,8 +92,8 @@ theorem doEval_install {C F : Type} (source : FlatSem.State C F) (target : ClosS
     | cons wordsRelated rest =>
       cases rest
       rename_i targetBytes targetWords
-      have targetBytesDecoded := installBytes_related bytesValue targetBytes bytesRelated bytes bytesDecoded
-      have targetWordsDecoded := installWords_related wordsValue targetWords wordsRelated words wordsDecoded
+      have targetBytesDecoded := (installBytes_related (α := Unit) bytesValue targetBytes bytes ⟨bytesRelated, bytesDecoded⟩).choose_spec
+      have targetWordsDecoded := (installWords_related (α := Unit) wordsValue targetWords words ⟨wordsRelated, wordsDecoded⟩).choose_spec
       rcases states.2.2.2.2.2.2 with ⟨safe, oracleEq, compileEq⟩
       have oracleTarget : target.compileOracle 0 =
           (compilerState, incCompileDecsProofSide decs) := by
@@ -96,9 +110,11 @@ theorem doEval_install {C F : Type} (source : FlatSem.State C F) (target : ClosS
         simpa [oracleResult] using safe 0
       let advanced : ClosSem.State C F :=
         { target with compileOracle := Flapjack.holShiftSeq 1 target.compileOracle }
-      refine ⟨advanced, ?_, valueEq, safeDecs, ?_⟩
+      refine ⟨decs, compileDecs decs, nextConfig, advanced, ?_, ?_, ?_, safeDecs,
+        ⟨bytesValue, wordsValue, rfl⟩, fun _ => rfl⟩
       · rw [configEq]
         exact stateRel_shiftInstall states 1
+      · simp [valueEq]
       · have emptyUpdate : target.code.updateListEq [] = target.code := by
           cases target.code
           rfl
@@ -107,5 +123,6 @@ theorem doEval_install {C F : Type} (source : FlatSem.State C F) (target : ClosS
           incCompileDecsProofSide, compilerTarget, nextTarget, advanced, ClosSem.decClock,
           FlatToClos.compileDecs, FlatToClos.compile, FlatToClos.compileExps,
           emptyUpdate]
+        split <;> simp_all
 
 end Flapjack.Compiler.Backend.FlatToClos

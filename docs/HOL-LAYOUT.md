@@ -50,9 +50,11 @@ the cited name occurs in one of the two syntactic forms.
 
 | HOL script | Lean counterpart |
 | --- | --- |
+| `HOL/src/bag/bagScript.sml` | `Flapjack/Misc/Bag.lean` (polymorphic bag carrier and union laws) |
 | `HOL/src/finite_maps/alistScript.sml` | `Flapjack/FiniteMap/AlistExact.lean` and its `Lookup.lean` submodule (canonical finite-support association-list map and HOL ALOOKUP) |
 | `HOL/src/list/src/listScript.sml` | `Flapjack/Misc/List.lean` (shared list-relation results) |
 | `HOL/src/list/src/rich_listScript.sml` | `Flapjack/Misc/RichList.lean` (shared rich-list relation results) |
+| `HOL/src/num/theories/WhileScript.sml` | `Flapjack/Misc/OptionLeast.lean` (optional least natural witness) |
 | `compiler/backend/backend_passesScript.sml` | `Flapjack/Compiler/Backend/BackendPasses/Frontend.lean`, `BackendPasses/Closure.lean`, `BackendPasses/Bvi.lean`, `BackendPasses/Data.lean`, `BackendPasses/Word.lean`, `BackendPasses/WordOptimise.lean` and `BackendPasses/Stack.lean` (explorer snapshots through lab filtering) |
 | `compiler/backend/presLangScript.sml` | `Flapjack/Compiler/Backend/PresLang/Config.lean`, `PresLang/Source.lean`, `PresLang/Flat.lean`, `PresLang/Clos.lean`, `PresLang/Bvl.lean`, `PresLang/Bvi.lean`, `PresLang/Data.lean`, `PresLang/Asm.lean`, `PresLang/Lab.lean`, `PresLang/Word.lean` and `PresLang/Stack.lean` (explorer display; representation review and explorer wiring remain open) |
 | `semantics/tokensScript.sml` | `Flapjack/CakeParser/Tokens.lean` |
@@ -77,7 +79,7 @@ the cited name occurs in one of the two syntactic forms.
 | `compiler/backend/backend_commonScript.sml` | `Flapjack/Compiler/Backend/BackendCommon.lean` and its `BackendCommon/BvlStubs.lean` and `BackendCommon/SmallInt.lean` submodules (`BackendCommon/BoolTags.lean`: Boolean tags; `BackendCommon/ConstructorTags.lean`: list and exception tags) |
 | `compiler/backend/proofs/word_depthProofScript.sml` | `Flapjack/Compiler/Backend/WordDepthProof/` (`Helpers.lean` lines 12-146 helper lemmas; `CallGraphLemma.lean` `max_depth_call_graph_lemma` assembled from the per-case `CallGraphLemma/*` pieces; `CallGraph.lean` `max_depth_call_graph`, `max_depth_Call_NONE`) |
 | `compiler/backend/flatLangScript.sml` | `Flapjack/Compiler/Backend/FlatLang.lean` (`op`, `ctor_id`, `type_id`, `type_group_id`, `pat`, `pat_bindings_def`, `exp`, `bool_id_def`, `Bool_def`, `SmartIf_def`; the script has no `dec` datatype) |
-| `compiler/backend/source_letScript.sml` | `Flapjack/Compiler/Backend/SourceLet.lean` (source `Let`/`Letrec` lifting; pending statement review) |
+| `compiler/backend/source_letScript.sml` | `Flapjack/Compiler/Backend/SourceLet.lean` (source `Let`/`Letrec` lifting) |
 | `compiler/backend/proofs/source_letProofScript.sml` | `Flapjack/Compiler/Backend/SourceLet/Proofs.lean`, `SourceLet/Proofs/Evaluate.lean`, `SourceLet/Proofs/Repeated.lean`, `SourceLet/Proofs/Correct.lean`, and `SourceLet/Proofs/Semantics.lean` (clocked evaluation and observable semantics preservation; oracle-adjustment theorem and correspondence review remain open) |
 | `compiler/backend/proofs/source_to_sourceProofScript.sml` | `Flapjack/Compiler/Backend/SourceToSource/Proofs.lean` (observable semantics preservation; oracle-adjustment theorem and correspondence review remain open) |
 | `compiler/backend/source_to_sourceScript.sml` | `Flapjack/Compiler/Backend/SourceToSource.lean` (source pass driver; pending statement review) |
@@ -192,9 +194,10 @@ the cited name occurs in one of the two syntactic forms.
 | `HOL/examples/formal-languages/context-free/locationScript.sml` | `Flapjack/Misc/Location.lean` and `Flapjack/Misc/Location/Merge.lean` (source positions and location merging) |
 | `semantics/semanticsScript.sml` | `Flapjack/SemanticsHOL.lean` and `Flapjack/SemanticsHOL/Typed.lean` (clock-indexed behavior, source state and post-parse semantics; original parser relation and source initialization remain open) |
 | `semantics/semanticPrimitivesScript.sml` | `Flapjack/SemanticPrimitivesHOL.lean` and its `PatternMatch`, `Operations`, `Conversions`, `Thunk`, `EvalState`, `Concrete`, `Eval`, `Control`, `Array`, `Primitives`, `Compare`, `Test`, `Apply`, and `ApplyNumeric` submodules (source values, evaluator state, pattern matching, primitive helpers, a source application dispatcher pending complete review, and proof-side dynamic Eval; statement review pending) |
-| `semantics/proofs/semanticPrimitivesPropsScript.sml` | `Flapjack/SemanticPrimitivesProps/` (store-entry and result relations; correspondence review pending) |
+| `semantics/proofs/semanticPrimitivesPropsScript.sml` | `Flapjack/SemanticPrimitivesProps/` (store-entry, result relation, environment extension and recursive lookup properties; remaining correspondence review is pending) |
 | `semantics/evaluateScript.sml` | `Flapjack/EvaluateHOL.lean` and its `Definition`, `Measure`, `Clock`, and `ClockFull` submodules (clock and result helpers and the mutually recursive evaluator; full source and carrier review pending) |
 | `semantics/namespaceScript.sml` | `Flapjack/NamespaceHOL.lean` (`alist`, `namespace`, `id` and every namespace operation of lines 14-117) |
+| `semantics/proofs/namespacePropsScript.sml` | `Flapjack/NamespaceProps.lean` (namespace operation properties) |
 | `semantics/primTypesScript.sml` | `Flapjack/PrimTypesHOL.lean` and `Flapjack/PrimTypesHOL/Types.lean` (primitive declaration program, semantic initialization and declarative type environment; source and carrier review pending) |
 | `compiler/backend/stack_namesScript.sml` | `Flapjack/Compiler/Backend/StackNames.lean` |
 | `compiler/backend/proofs/stack_namesProofScript.sml` | `Flapjack/Compiler/Backend/StackNames/` (`NamesOk.lean` names_ok lemmas, `AsmAdmissibility/` stack_asm_ok, `Proofs/RenameState.lean` rename_state group over the MAP_KEYS rendering in `Flapjack/FiniteMap/MapKeys.lean`, `Proofs/CompCorrect.lean` comp_correct, `Proofs/CompileSemantics.lean` compile_semantics(_alt), `Proofs/MakeInit.lean` make_init_def/make_init_semantics, `Proofs/LabelsCallArgs.lean` stack_names_lab_pres/stack_names_call_args) |

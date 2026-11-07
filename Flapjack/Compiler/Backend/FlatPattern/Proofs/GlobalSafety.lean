@@ -24,7 +24,7 @@ private theorem bagEmpty_of_bound (out input : GlobalBag)
     out = emptyGlobalBag := by
   funext key
   have h := bound key
-  simp only [empty, emptyGlobalBag] at h ⊢
+  simp only [empty, emptyGlobalBag, Flapjack.emptyBag] at h ⊢
   omega
 
 private theorem compileFuns_bagBounds (cfg : Config)
@@ -45,18 +45,8 @@ private theorem compileFuns_bagBounds (cfg : Config)
         have h2 := ih key
         simp only [he] at h1
         simp only [hfs] at h2
-        simp only [compileFuns, he, hfs, funGlobals, unionGlobalBag]
+        simp only [compileFuns, he, hfs, funGlobals, unionGlobalBag, Flapjack.bagUnion]
         omega
-
-private theorem safe_smartIf (t : Tra) (c x y : FlatLang.Exp)
-    (hc : esgcFree c) (hx : esgcFree x) (hy : esgcFree y) : esgcFree (smartIf t c x y) := by
-  cases c <;> simp_all [smartIf, esgcFree]
-  case con t tag args =>
-    cases tag <;> cases args <;> try simp_all [esgcFree]
-    case some.nil pair =>
-      obtain ⟨tag, typ⟩ := pair
-      cases typ <;> try simp_all [esgcFree]
-      all_goals split_ifs <;> simp_all [esgcFree]
 
 /-- Expression safety is preserved by pattern compilation. -/
 theorem compileExp_safe (cfg : Config) (exp : FlatLang.Exp) :
@@ -111,7 +101,7 @@ theorem compileExp_safe (cfg : Config) (exp : FlatLang.Exp) :
   | case10 t x1 x2 x3 i sg1 y1 eq1 j sg2 y2 eq2 k sg3 y3 eq3 ih1 ih2 ih3 =>
     simp only [esgcFree, compileExp, eq1, eq2, eq3]
     intro safe
-    apply safe_smartIf
+    apply esgcFree_smartIf
     · simpa [eq1] using ih1 safe.1
     · simpa [eq2] using ih2 safe.2.1
     · simpa [eq3] using ih3 safe.2.2

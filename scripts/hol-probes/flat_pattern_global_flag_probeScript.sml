@@ -6,6 +6,17 @@ val _ = Globals.show_types := true;
 fun show_thm label th =
   if null (hyp th) then (print label; print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
+val _ = show_thm "no_mat_decode_pos=" flat_patternProofTheory.decode_pos_no_Mat;
+val _ = show_thm "no_mat_decode_test=" flat_patternProofTheory.decode_test_no_Mat;
+val _ = show_thm "no_mat_decode_guard=" flat_patternProofTheory.decode_guard_no_Mat;
+val _ = show_thm "no_mat_compile_bindings=" flat_patternProofTheory.compile_pat_bindings_no_Mat;
+val _ = show_thm "no_mat_naive_match=" flat_patternProofTheory.naive_pattern_match_no_Mat;
+val _ = show_thm "no_mat_naive_matches=" flat_patternProofTheory.naive_pattern_matches_no_Mat;
+val _ = show_thm "no_mat_compile_pats=" flat_patternProofTheory.compile_pats_no_Mat;
+val _ = show_thm "globals_decode_dtree=" flat_patternProofTheory.set_globals_decode_dtree_empty;
+val _ = show_thm "set_toList_fromList=" flat_patternProofTheory.set_toList_fromList;
+val _ = show_thm "no_mat_decode_dtree=" flat_patternProofTheory.decode_dtree_no_Mat;
+val _ = show_thm "esgc_decode_dtree=" flat_patternProofTheory.esgc_free_decode_dtree;
 val _ = show_thm "operator_global_flag=" flat_patternProofTheory.op_sets_globals_gbag;
 val _ = show_thm "operator_sets_globals_def=" flat_patternTheory.op_sets_globals_def;
 val singleton_global_bag = prove (
@@ -123,3 +134,12 @@ val _ = show_thm "no_mat_definition=" flatPropsTheory.no_Mat_def;
 val _ = show_thm "no_mat_decs_definition=" flatPropsTheory.no_Mat_decs_def;
 val _ = show_thm "compile_exp_no_mat=" flat_patternProofTheory.compile_exp_no_Mat;
 val _ = show_thm "compile_decs_no_mat=" flat_patternProofTheory.compile_decs_no_Mat;
+val _ = show_thm "decode_pos_definition=" flat_patternTheory.decode_pos_def;
+val _ = show_thm "decode_test_definition=" flat_patternTheory.decode_test_def;
+val _ = show_thm "simp_guard_definition=" flat_patternTheory.simp_guard_def;
+val _ = show_thm "decode_guard_definition=" flat_patternTheory.decode_guard_def;
+val _ = show_thm "decode_dtree_definition=" flat_patternTheory.decode_dtree_def;
+val _ = show_thm "encode_pat_definition=" flat_patternTheory.encode_pat_def;
+val _ = show_thm "naive_match_definition=" flat_patternTheory.naive_pattern_match_def;
+val _ = show_thm "naive_matches_definition=" flat_patternTheory.naive_pattern_matches_def;
+val _ = show_thm "max_dec_name_definition=" flat_patternTheory.max_dec_name_def;

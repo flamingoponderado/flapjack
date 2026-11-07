@@ -12,7 +12,7 @@ theorem doApp_equality_related {C F : Type} (cfg : Config) (source target source
     (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
     (run : FlatSem.doApp source (.src .equality) values = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.doApp target (.src .equality) values' = some (targetFinal, result') ∧
-      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
   cases related with
   | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric] at run
   | @cons first first' tail tail' firstRel rest =>
@@ -30,6 +30,6 @@ theorem doApp_equality_related {C F : Type} (cfg : Config) (source target source
           simp [FlatSem.doApp, FlatSem.doAppNumeric, compared] at run
           rcases run with ⟨rfl, rfl⟩
           exact ⟨target, .val (FlatSem.boolValue boolean), by simp [FlatSem.doApp, FlatSem.doAppNumeric, compared'],
-            states, .value (boolValue_related boolean)⟩
+            states, (boolValue_related boolean)⟩
 
 end Flapjack.Compiler.Backend.FlatPattern

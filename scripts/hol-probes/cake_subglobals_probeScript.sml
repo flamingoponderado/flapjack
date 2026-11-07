@@ -60,12 +60,15 @@ val _ = (print "env_gen_inv="; print_thm source_to_flatProofTheory.env_gen_inv_d
 val _ = (print "env_store_inv="; print_thm source_to_flatProofTheory.env_store_inv_def; print "\n");
 val _ = (print "env_gen_rel="; print_thm source_to_flatProofTheory.env_gen_rel_def; print "\n");
 val _ = (print "env_gen_future="; print_thm source_to_flatProofTheory.env_gen_future_rel_def; print "\n");
+val _ = (print "compile_decs_future_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl source_to_flatProofTheory.compile_decs_future_rel); print "\n");
+val _ = (print "env_gen_future_forward_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl source_to_flatProofTheory.env_gen_future_rel_forward); print "\n");
 val _ = (print "orac_env_inv="; print_thm source_to_flatProofTheory.src_orac_env_invs_def; print "\n");
 val _ = (print "orac_gen_inv="; print_thm source_to_flatProofTheory.src_orac_gen_inv_def; print "\n");
 val _ = (print "orac_invs="; print_thm source_to_flatProofTheory.src_orac_invs_def; print "\n");
 val _ = (print "full_invariant="; print_thm source_to_flatProofTheory.invariant_def; print "\n");
 val _ = (print "orac_weak="; print_thm source_to_flatProofTheory.src_orac_invs_weak; print "\n");
 val _ = (print "orac_lookup="; print_thm source_to_flatProofTheory.src_orac_env_invs_lookup_env; print "\n");
+val _ = (print "orac_lookup_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl source_to_flatProofTheory.src_orac_env_invs_lookup_env); print "\n");
 val _ = (print "do_eval_oracle="; print_thm source_evalProofTheory.do_eval_oracle_def; print "\n");
 val _ = (print "orac_rel_inner="; print_thm source_to_flatProofTheory.orac_rel_inner_def; print "\n");
 val _ = (print "orac_rel="; print_thm source_to_flatProofTheory.orac_rel_def; print "\n");
@@ -73,6 +76,7 @@ val _ = (print "orac_rel_some="; print_thm source_to_flatProofTheory.orac_rel_SO
 val _ = (print "inc_compile_nonempty="; print_thm source_to_flatProofTheory.inc_compile_prog_nonempty; print "\n");
 val _ = (print "word8_rel="; print_thm source_to_flatProofTheory.v_to_word8_list_rel; print "\n");
 val _ = (print "word64_rel="; print_thm source_to_flatProofTheory.v_to_word64_list_rel; print "\n");
+val _ = if null (hyp source_to_flatProofTheory.do_eval) then () else raise Fail "hypotheses: source_to_flat_do_eval";
 val _ = (print "source_to_flat_do_eval="; print_thm source_to_flatProofTheory.do_eval; print "\n");
 val fstSndEq = prove (``FST = (\ (a,b). a) /\ SND = (\ (a,b). b)``, simp [FUN_EQ_THM, FORALL_PROD]);
 val firstStep = prove (``source_to_flatProof$src_orac_step_invs interp g (SOME (EvalOracle es)) ==>
@@ -115,3 +119,39 @@ val _ = capture "append" ``source_to_flatProof$subglobals [SOME (1:num); NONE] [
 val _ = capture "shorter" ``source_to_flatProof$subglobals [NONE; NONE] [NONE] : bool``;
 val _ = capture "overwrite" ``source_to_flatProof$subglobals [SOME (1:num); NONE] [SOME 2; NONE]``;
 val _ = capture "remove" ``source_to_flatProof$subglobals [SOME (1:num)] [NONE]``;
+
+val _ = if null (hyp source_to_flatProofTheory.maybe_all_list_SOME) then () else raise Fail "hypotheses: maybe_all_list_SOME";
+val _ = (print "maybe_all_list_SOME_typed="; print_term (concl source_to_flatProofTheory.maybe_all_list_SOME); print "\n");
+
+val _ = if null (hyp source_to_flatProofTheory.genv_c_tys_ok_extend) then () else raise Fail "hypotheses: genv_c_tys_ok_extend";
+val _ = (print "genv_c_tys_ok_extend_typed="; print_term (concl source_to_flatProofTheory.genv_c_tys_ok_extend); print "\n");
+
+val _ = if null (hyp source_to_flatProofTheory.genv_c_ok_extend) then () else raise Fail "hypotheses: genv_c_ok_extend";
+val _ = (print "genv_c_ok_extend_typed="; print_term (concl source_to_flatProofTheory.genv_c_ok_extend); print "\n");
+
+val _ = if null (hyp source_to_flatProofTheory.invariant_make_varls) then () else raise Fail "hypotheses: invariant_make_varls";
+val _ = (print "invariant_make_varls_typed="; print_term (concl source_to_flatProofTheory.invariant_make_varls); print "\n");
+
+val _ = if null (hyp source_to_flatProofTheory.LIST_REL_sv_rel_weak) then () else raise Fail "hypotheses: LIST_REL_sv_rel_weak";
+val _ = (print "LIST_REL_sv_rel_weak_typed="; print_term (concl source_to_flatProofTheory.LIST_REL_sv_rel_weak); print "\n");
+
+val sv_rel_weak_replay = prove (
+  ``!genv sv sv' genv'.
+    source_to_flatProof$sv_rel genv sv sv' ∧
+    genv.c ⊑ genv'.c ∧ genv.tys ⊑ genv'.tys ∧
+    source_to_flatProof$subglobals genv.v genv'.v ⇒
+    source_to_flatProof$sv_rel genv' sv sv'``,
+  srw_tac [][source_to_flatProofTheory.sv_rel_cases] >>
+  metis_tac [source_to_flatProofTheory.v_rel_weak, LIST_REL_EL_EQN]);
+val _ = if null (hyp sv_rel_weak_replay) then () else raise Fail "hypotheses: sv_rel_weak_replay";
+val _ = (print "sv_rel_weak_replay="; print_term (concl sv_rel_weak_replay); print "\n");
+
+val _ = if null (hyp source_to_flatProofTheory.v_rel_weak) then () else raise Fail "hypotheses: v_rel_weak";
+val _ = (print "v_rel_weak_typed="; print_term (concl source_to_flatProofTheory.v_rel_weak); print "\n");
+val _ = if null (hyp source_to_flatProofTheory.env_rel_weak) then () else raise Fail "hypotheses: env_rel_weak";
+val _ = (print "env_rel_weak_typed="; print_term (concl source_to_flatProofTheory.env_rel_weak); print "\n");
+val _ = if null (hyp source_to_flatProofTheory.global_env_inv_weak) then () else raise Fail "hypotheses: global_env_inv_weak";
+val _ = (print "global_env_inv_weak_typed="; print_term (concl source_to_flatProofTheory.global_env_inv_weak); print "\n");
+
+val _ = if null (hyp source_to_flatProofTheory.list_to_v_v_rel) then () else raise Fail "hypotheses: list_to_v_v_rel";
+val _ = (print "list_to_value_related_typed="; print_term (concl source_to_flatProofTheory.list_to_v_v_rel); print "\n");

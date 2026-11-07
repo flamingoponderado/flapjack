@@ -103,7 +103,7 @@ theorem pureEvaluation_if {C F : Type} (env : FlatSem.Environment FlatSem.Value)
       rcases run with ⟨_, rfl⟩
       exact (notTypeError rfl).elim
     · rename_i branch selected
-      have choice := FlatSem.doIf_selected value yes no branch selected
+      have choice := FlatSem.doIf_either_or value yes no branch selected
       rcases choice with yesEq | noEq
       · rw [yesEq] at run
         exact yesIH condState (by omega) next result reachable target run (singletonPure yes pure.1.2)
@@ -294,8 +294,8 @@ theorem pureEvaluation_mat {C F : Type} (env : FlatSem.Environment FlatSem.Value
       simp only [bodyEval, clocks, Nat.min_self] at selected
       change FlatSem.selectRow bodyState rows value FlatSem.bindExnV = .ok (bindings, branch) at selected
       obtain ⟨pattern, matched⟩ := selectRow_success bodyState rows value FlatSem.bindExnV bindings branch selected
-      have member := pmatchRows_selected_mem rows bodyState value bindings pattern branch matched
-      have patternMatch := (FlatProps.pmatchRows_imp_pmatch rows bodyState value bindings pattern branch matched).1
+      obtain ⟨patternMatch, member⟩ :=
+        FlatProps.pmatchRows_imp_pmatch rows bodyState value bindings pattern branch matched
       have bindingSafe := pmatch_not_has_Eval.1 bodyState pattern value [] bindings patternMatch valueSafe
         bodyRelated.2.2.2.2.2 (by simp [bindingsNoEval])
       have branchSafe := hasEvalPats_member rows pattern branch member safe.2

@@ -142,7 +142,7 @@ decreasing_by
   all_goals try simp_all only [expsWeight_reverse]
   all_goals try simp only [Prod.lex_def, expsWeight, expWeight, fixClock, decClock]
   all_goals try (have := expWeight_pos second)
-  all_goals try (have _h := doIf_selected _ _ _ _ (by assumption); rcases _h with _h | _h <;> subst_vars)
+  all_goals try (have _h := doIf_either_or _ _ _ _ (by assumption); rcases _h with _h | _h <;> subst_vars)
   all_goals try (have _h := selectRow_weight _ _ _ _ _ _ (by assumption))
   all_goals try (have _h := appUnit_force_weight _ _)
   all_goals try dsimp only [updated] at *

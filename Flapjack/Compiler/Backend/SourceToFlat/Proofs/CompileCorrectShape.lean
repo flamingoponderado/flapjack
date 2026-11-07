@@ -1,170 +1,22 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocal
+import Flapjack.Compiler.Backend.SourceEval.Proofs.Abort
 
 /-! Source-to-flat simulations and their assembly into the original
 expression, match-row, and declaration correctness theorem. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
-open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
+open Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.SemanticPrimitivesHOL
 open Flapjack.Compiler.Backend.SourceToFlat.OracleInvariant
 
 /-- Whether a source result is an abort rather than a value or raised exception. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "abort_def"]
-def resultAbort {α β : Type} (result : Result α β) : Prop :=
-  match result with
-  | .err (.abort _) => True
-  | _ => False
+abbrev resultAbort {α β : Type} (result : Result α β) : Prop :=
+  SourceEval.Proofs.abort result
 
-/-- An error-only result relation is independent of its unused success types. -/
-theorem resultRel_error_change_payload {α β γ δ : Type} (g : GlobalEnv)
-    (source : ErrorResult Value) (flat : ErrorResult FlatSem.Value)
-    (related : ResultRel (fun _ (_ : α) (_ : β) => True) g (.err source) (.err flat)) :
-    ResultRel (fun _ (_ : γ) (_ : δ) => True) g (.err source) (.err flat) := by
-  cases related with
-  | raise h => exact .raise h
-  | abort error => exact .abort error
-
-/-- The expression-list simulation with the source theorem's compiled-output
-equality and explicit map and global-growth conclusions. -/
-theorem sourceCompileCorrect_expressions {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (source sourceLast : State F) (env : SemEnv Value) (exprs : List AstHOL.Exp)
-    (result : Result (List Value) Value) (genv : GlobalEnv) (comp : Environment)
-    (flatEnv : FlatSem.Environment FlatSem.Value) (flat : FlatSem.State C F)
-    (flatExprs : List FlatLang.Exp) (locals : List VarN) (trace : List VarN)
-    (traces : List BackendCommon.Tra) (gen : EnvironmentGenerationStore)
-    (idxs : NextIndices × NextIndices × Set (Nat × IndexKind))
-    (run : EvaluateHOL.evaluate source env exprs = (sourceLast, result))
-    (inv : factoredInvariant interp transform gen genv idxs source flat)
-    (envRel : FactoredEnvAllRel genv comp env flatEnv locals)
-    (length : traces.length = locals.length) (generation : envGenRel gen source.evalState)
-    (safe : result ≠ .err (.abort .typeError))
-    (compiled : flatExprs = compileExps trace { comp with v := bindLocals traces locals comp.v } exprs) :
-    ∃ flatLast flatResult nextGenv,
-      FlatSem.evaluate flatEnv flat flatExprs = (flatLast, flatResult) ∧
-      EvalResultRel nextGenv result flatResult ∧ StateRel nextGenv sourceLast flatLast ∧
-      (¬ resultAbort result →
-        factoredInvariant interp transform gen nextGenv idxs sourceLast flatLast ∧
-        envGenRel gen sourceLast.evalState ∧ oracForwardRel interp source.evalState sourceLast.evalState ∧
-        finiteSubmap genv.c nextGenv.c ∧ finiteSubmap genv.tys nextGenv.tys ∧
-        subglobals genv.v nextGenv.v) := by
-  rcases idxs with ⟨start, finish, other⟩
-  subst flatExprs
-  obtain ⟨flatLast, flatResult, nextGenv, target, results, states, post⟩ :=
-    factoredCompileExpressions interp transform exprs genv start finish other source sourceLast flat env
-      flatEnv locals traces trace comp gen result run envRel length inv generation safe
-  refine ⟨flatLast, flatResult, nextGenv, target, results, states, ?_⟩
-  cases result with
-  | val values =>
-    intro _
-    obtain ⟨growth, invariant, generation, forward⟩ := post
-    exact ⟨invariant, generation, forward, growth.constructors, growth.types,
-      (globalGrowth_iff _ _).mp growth |>.1⟩
-  | err error =>
-    cases error with
-    | abort error => simp [resultAbort]
-    | raise value =>
-      intro _
-      obtain ⟨growth, invariant, generation, forward⟩ := post
-      exact ⟨invariant, generation, forward, growth.constructors, growth.types,
-        (globalGrowth_iff _ _).mp growth |>.1⟩
-
-/-- The match-row simulation with the source theorem's compiled-output,
-pattern-safety, and explicit map and global-growth conclusions. -/
-theorem sourceCompileCorrect_match {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (source sourceLast : State F) (env : SemEnv Value) (value errorValue : Value)
-    (rows : List (Pat × AstHOL.Exp)) (result : Result (List Value) Value)
-    (genv : GlobalEnv) (comp : Environment) (flatEnv : FlatSem.Environment FlatSem.Value)
-    (flat : FlatSem.State C F) (flatValue flatError : FlatSem.Value)
-    (flatRows : List (FlatLang.Pat × FlatLang.Exp)) (locals : List VarN) (trace : List VarN)
-    (traces : List BackendCommon.Tra) (gen : EnvironmentGenerationStore)
-    (idxs : NextIndices × NextIndices × Set (Nat × IndexKind))
-    (run : EvaluateHOL.evaluateMatch source env value rows errorValue = (sourceLast, result))
-    (inv : factoredInvariant interp transform gen genv idxs source flat)
-    (envRel : FactoredEnvAllRel genv comp env flatEnv locals) (valueRel : ValueRel genv value flatValue)
-    (length : traces.length = locals.length) (generation : envGenRel gen source.evalState)
-    (safe : result ≠ .err (.abort .typeError))
-    (compiled : flatRows = compilePes trace { comp with v := bindLocals traces locals comp.v } rows)
-    (flatSafe : FlatSem.pmatchRows flatRows flat flatValue ≠ .typeError)
-    (errorRel : ValueRel genv errorValue flatError) :
-    ∃ flatLast flatResult nextGenv,
-      FlatProps.evaluateMatch flatEnv flat flatValue flatRows flatError = (flatLast, flatResult) ∧
-      EvalResultRel nextGenv result flatResult ∧ StateRel nextGenv sourceLast flatLast ∧
-      (¬ resultAbort result →
-        factoredInvariant interp transform gen nextGenv idxs sourceLast flatLast ∧
-        envGenRel gen sourceLast.evalState ∧ oracForwardRel interp source.evalState sourceLast.evalState ∧
-        finiteSubmap genv.c nextGenv.c ∧ finiteSubmap genv.tys nextGenv.tys ∧
-        subglobals genv.v nextGenv.v) := by
-  rcases idxs with ⟨start, finish, other⟩
-  subst flatRows
-  obtain ⟨flatLast, flatResult, nextGenv, target, results, states, post⟩ :=
-    factoredCompileMatch interp transform genv start finish other source sourceLast flat env flatEnv locals
-      traces trace comp gen value errorValue flatValue flatError rows result run envRel length inv generation
-      valueRel errorRel flatSafe safe
-  have target' : FlatProps.evaluateMatch flatEnv flat flatValue
-      (compilePes trace { comp with v := bindLocals traces locals comp.v } rows) flatError =
-      (flatLast, flatResult) := by
-    simpa only [flatEvaluateMatch_eq_flatProps] using target
-  refine ⟨flatLast, flatResult, nextGenv, target', results, states, ?_⟩
-  cases result with
-  | val values =>
-    intro _
-    obtain ⟨growth, invariant, generation, forward⟩ := post
-    exact ⟨invariant, generation, forward, growth.constructors, growth.types,
-      (globalGrowth_iff _ _).mp growth |>.1⟩
-  | err error =>
-    cases error with
-    | abort error => simp [resultAbort]
-    | raise value =>
-      intro _
-      obtain ⟨growth, invariant, generation, forward⟩ := post
-      exact ⟨invariant, generation, forward, growth.constructors, growth.types,
-        (globalGrowth_iff _ _).mp growth |>.1⟩
-
-/-- The declaration-list simulation with independently polymorphic unused
-success types in the error-result relation, as in the source theorem. -/
-theorem sourceCompileCorrect_declarations {C F α β : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (source sourceLast : State F) (env : SemEnv Value) (decs : List Dec)
-    (result : Result (SemEnv Value) Value) (path : List VarN) (n n' : Nat)
-    (start finish next : NextIndices) (other : Set (Nat × IndexKind))
-    (comp nextComp : Environment) (flat : FlatSem.State C F) (flatDecs : List FlatLang.Exp)
-    (genv : GlobalEnv) (gen nextGen : EnvironmentGenerationStore)
-    (run : EvaluateHOL.evaluateDecs source env decs = (sourceLast, result))
-    (inv : factoredInvariant interp transform gen genv (start, finish, other) source flat)
-    (compiled : compileDecs path n start comp gen decs = (n', next, nextComp, nextGen, flatDecs))
-    (envInv : GlobalEnvInv genv comp (fun _ => False) env) (safe : result ≠ .err (.abort .typeError))
-    (generation : envGenRel gen source.evalState) (future : envGenFutureRel interp nextGen source.evalState)
-    (bounded : idxPrev next finish) :
-    ∃ flatLast nextGenv flatError,
-      FlatSem.evaluateDecs flat flatDecs = (flatLast, flatError) ∧ StateRel nextGenv sourceLast flatLast ∧
-      (¬ resultAbort result →
-        factoredInvariant interp transform nextGen nextGenv (next, finish, other) sourceLast flatLast ∧
-        oracForwardRel interp source.evalState sourceLast.evalState ∧
-        finiteSubmap genv.c nextGenv.c ∧ finiteSubmap genv.tys nextGenv.tys ∧
-        subglobals genv.v nextGenv.v) ∧
-      (∀ resultEnv, result = .val resultEnv → flatError = none ∧ EnvDomainEq nextComp resultEnv ∧
-        envGenRel nextGen sourceLast.evalState ∧ GlobalEnvInv nextGenv nextComp (fun _ => False) resultEnv) ∧
-      (∀ error, result = .err error → ∃ flatErr, flatError = some flatErr ∧
-        ResultRel (fun _ (_ : α) (_ : β) => True) nextGenv (.err error) (.err flatErr)) := by
-  obtain ⟨flatLast, nextGenv, flatError, target, states, post, success, errors⟩ :=
-    factoredCompileDeclarations interp transform decs genv comp nextComp env path source sourceLast flat
-      start finish next other n n' gen nextGen flatDecs result run inv compiled envInv safe generation future bounded
-  refine ⟨flatLast, nextGenv, flatError, target, states, ?_, success, ?_⟩
-  · cases result with
-    | val values =>
-      intro _
-      obtain ⟨invariant, forward, growth⟩ := post trivial
-      exact ⟨invariant, forward, growth.constructors, growth.types, (globalGrowth_iff _ _).mp growth |>.1⟩
-    | err error =>
-      cases error with
-      | abort error => simp [resultAbort]
-      | raise value =>
-        intro _
-        obtain ⟨invariant, forward, growth⟩ := post trivial
-        exact ⟨invariant, forward, growth.constructors, growth.types, (globalGrowth_iff _ _).mp growth |>.1⟩
-  · intro error err
-    obtain ⟨flatErr, output, related⟩ := errors error err
-    exact ⟨flatErr, output, resultRel_error_change_payload nextGenv error flatErr related⟩
+/-- Combining declaration environments does not change whether a result aborts. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "abort_compile_dec_result"]
+theorem abort_combineDecResult {α : Type} (env : SemEnv Value) (result : Result (SemEnv Value) α) :
+    resultAbort (combineDecResult env result) ↔ resultAbort result := by
+  cases result <;> rfl
 
 namespace CompileCorrectPort
 
@@ -240,19 +92,112 @@ theorem compileCorrect {C F α β : Type} [Nonempty C]
   refine ⟨?_, ?_, ?_⟩
   · intro source env exprs sourceLast result genv comp flatEnv flat flatExprs locals trace traces gen idxs premises
     obtain ⟨run, inv, envRel, length, generation, safe, compiled⟩ := premises
-    exact sourceCompileCorrect_expressions interp transform source sourceLast env exprs result genv comp flatEnv
-      flat flatExprs locals trace traces gen idxs run inv envRel length generation safe compiled
+    rcases idxs with ⟨start, finish, other⟩
+    subst flatExprs
+    have names := factoredEnvAllRel_names genv comp env flatEnv locals envRel
+    subst locals
+    obtain ⟨baseEnv, sourceLocal, bindings, sourceEq, _, _, envInv, localRel⟩ := envRel
+    subst env
+    have sourceSafe : ∀ last, EvaluateHOL.evaluate source { baseEnv with v := nsAppend sourceLocal baseEnv.v }
+        exprs ≠ (last, .err (.abort .typeError)) := by
+      intro last bad
+      rw [run] at bad
+      exact safe (Prod.mk.inj bad).2
+    obtain ⟨nextGenv, simulation, post⟩ := boundedEnvListStep_of_each interp transform source.clock exprs
+      (fun expr _ => (factoredAllBounded (F := F) interp transform source.clock).1 expr)
+      genv start finish other source flat baseEnv sourceLocal flatEnv traces trace comp gen
+      (Nat.le_refl _) localRel envInv (by simpa using length) inv generation sourceSafe
+    unfold ExprListSim at simulation
+    generalize flatRun : FlatSem.evaluate flatEnv flat
+      (compileExps trace { comp with v := bindLocals traces (flatEnv.v.map Prod.fst) comp.v } exprs) =
+        flatPair at simulation post
+    obtain ⟨flatLast, flatResult⟩ := flatPair
+    change EvalResultRel nextGenv
+      (EvaluateHOL.evaluate source { baseEnv with v := nsAppend sourceLocal baseEnv.v } exprs).2 flatResult ∧
+      StateRel nextGenv (EvaluateHOL.evaluate source { baseEnv with v := nsAppend sourceLocal baseEnv.v } exprs).1
+        flatLast at simulation
+    simp only [run] at simulation
+    refine ⟨flatLast, flatResult, nextGenv, rfl, simulation.1, simulation.2, ?_⟩
+    cases result with
+    | val values =>
+      intro _
+      obtain ⟨growth, invariant, generation, forward⟩ := by simpa only [run] using post
+      exact ⟨invariant, generation, forward, growth.constructors, growth.types,
+        (globalGrowth_iff _ _).mp growth |>.1⟩
+    | err error =>
+      cases error with
+      | abort error => simp [resultAbort, SourceEval.Proofs.abort]
+      | raise value =>
+        intro _
+        obtain ⟨growth, invariant, generation, forward⟩ := by simpa only [run] using post
+        exact ⟨invariant, generation, forward, growth.constructors, growth.types,
+          (globalGrowth_iff _ _).mp growth |>.1⟩
   · intro source env value rows errorValue genv comp sourceLast result flatEnv flat flatValue flatRows flatError
       locals trace traces gen idxs premises
     obtain ⟨run, inv, envRel, valueRel, length, generation, safe, compiled, flatSafe, errorRel⟩ := premises
-    exact sourceCompileCorrect_match interp transform source sourceLast env value errorValue rows result genv comp
-      flatEnv flat flatValue flatError flatRows locals trace traces gen idxs run inv envRel valueRel length generation
-      safe compiled flatSafe errorRel
+    rcases idxs with ⟨start, finish, other⟩
+    subst flatRows
+    have names := factoredEnvAllRel_names genv comp env flatEnv locals envRel
+    subst locals
+    obtain ⟨baseEnv, sourceLocal, bindings, sourceEq, _, _, envInv, localRel⟩ := envRel
+    subst env
+    have sourceSafe : ∀ last, EvaluateHOL.evaluateMatch source { baseEnv with v := nsAppend sourceLocal baseEnv.v }
+        value rows errorValue ≠ (last, .err (.abort .typeError)) := by
+      intro last bad
+      rw [run] at bad
+      exact safe (Prod.mk.inj bad).2
+    obtain ⟨nextGenv, simulation, post⟩ := boundedEvaluateMatch_related_flatSafe interp transform source.clock
+      genv start finish other source flat baseEnv sourceLocal flatEnv traces trace comp gen (Nat.le_refl _)
+      localRel envInv (by simpa using length) inv generation value errorValue flatValue flatError valueRel errorRel
+      rows flatSafe sourceSafe (fun _ body _ => (factoredAllBounded (F := F) interp transform source.clock).1 body)
+    generalize flatRun : flatEvaluateMatch flatEnv flat flatValue flatError
+      (compilePes trace { comp with v := bindLocals traces (flatEnv.v.map Prod.fst) comp.v } rows) =
+        flatPair at simulation post
+    obtain ⟨flatLast, flatResult⟩ := flatPair
+    simp only [run] at simulation
+    have target : FlatProps.evaluateMatch flatEnv flat flatValue
+        (compilePes trace { comp with v := bindLocals traces (flatEnv.v.map Prod.fst) comp.v } rows) flatError =
+        (flatLast, flatResult) := by
+      simpa only [flatEvaluateMatch_eq_flatProps] using flatRun
+    refine ⟨flatLast, flatResult, nextGenv, target, simulation.1, simulation.2, ?_⟩
+    cases result with
+    | val values =>
+      intro _
+      obtain ⟨growth, invariant, generation, forward⟩ := by simpa only [run] using post
+      exact ⟨invariant, generation, forward, growth.constructors, growth.types,
+        (globalGrowth_iff _ _).mp growth |>.1⟩
+    | err error =>
+      cases error with
+      | abort error => simp [resultAbort, SourceEval.Proofs.abort]
+      | raise value =>
+        intro _
+        obtain ⟨growth, invariant, generation, forward⟩ := by simpa only [run] using post
+        exact ⟨invariant, generation, forward, growth.constructors, growth.types,
+          (globalGrowth_iff _ _).mp growth |>.1⟩
   · intro source env decs sourceLast result path n start finish other comp flat next nextComp flatDecs n' genv gen
       nextGen premises
     obtain ⟨run, inv, compiled, envInv, safe, generation, future, bounded⟩ := premises
-    exact sourceCompileCorrect_declarations (α := α) (β := β) interp transform source sourceLast env decs result path
-      n n' start finish next other comp nextComp flat flatDecs genv gen nextGen run inv compiled envInv safe
-      generation future bounded
+    obtain ⟨flatLast, nextGenv, flatError, target, states, post, success, errors⟩ :=
+      factoredCompileDeclarations interp transform decs genv comp nextComp env path source sourceLast flat
+        start finish next other n n' gen nextGen flatDecs result run inv compiled envInv safe generation future bounded
+    refine ⟨flatLast, nextGenv, flatError, target, states, ?_, success, ?_⟩
+    · cases result with
+      | val values =>
+        intro _
+        obtain ⟨invariant, forward, growth⟩ := post trivial
+        exact ⟨invariant, forward, growth.constructors, growth.types, (globalGrowth_iff _ _).mp growth |>.1⟩
+      | err error =>
+        cases error with
+        | abort error => simp [resultAbort, SourceEval.Proofs.abort]
+        | raise value =>
+          intro _
+          obtain ⟨invariant, forward, growth⟩ := post trivial
+          exact ⟨invariant, forward, growth.constructors, growth.types, (globalGrowth_iff _ _).mp growth |>.1⟩
+    · intro error err
+      obtain ⟨flatErr, output, related⟩ := errors error err
+      refine ⟨flatErr, output, ?_⟩
+      cases related with
+      | raise values => exact .raise values
+      | abort abort => exact .abort abort
 
 end Flapjack.Compiler.Backend.SourceToFlat

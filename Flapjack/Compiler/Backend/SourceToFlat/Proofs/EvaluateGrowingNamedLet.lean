@@ -22,15 +22,4 @@ def LocalExpressionStep {C F : Type} [Nonempty C]
         factoredInvariant interp transform gen nextGenv (start, finish, other) result.1 flatResult.1 ∧
         envGenRel gen result.1.evalState ∧ oracForwardRel interp source.evalState result.1.evalState
 
-/-- A declaration expression step is the empty-local instance of the more
-general step. -/
-theorem localExpressionStep_empty {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
-    (source : State F) (flat : FlatSem.State C F) (sourceEnv : SemEnv Value)
-    (trace : List VarN) (compMap : Environment) (gen : EnvironmentGenerationStore) (expr : AstHOL.Exp) :
-    LocalExpressionStep interp transform genv start finish other source flat sourceEnv ⟨[]⟩ trace compMap gen expr ↔
-      DletExpressionStep interp transform genv start finish other source flat sourceEnv trace compMap gen expr := by
-  rfl
-
 end Flapjack.Compiler.Backend.SourceToFlat

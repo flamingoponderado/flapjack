@@ -57,7 +57,7 @@ theorem evaluate_application {C F : Type} (env : FlatSem.Environment FlatSem.Val
             have functionNot : (FlatSem.evaluate env next [function]).2 ≠ .err (.abort .typeError) := by
               intro bad
               simp [bad] at notTypeError
-            have argBound := FlatSem.evaluate_clock_spec.1 env source next [argument] _ flatArg
+            have argBound := FlatSem.evaluate_clock_spec.1 env source [argument] _ next flatArg
             have functionRelated := functionSim next nextTarget argStates argBound functionNot
             simp only [EvalSim, compile, compileExps] at functionRelated
             rw [ClosSem.fixClock_evaluate]
@@ -85,7 +85,7 @@ theorem evaluate_application {C F : Type} (env : FlatSem.Environment FlatSem.Val
                       | some pair =>
                         obtain ⟨nextEnv, body⟩ := pair
                         simp [applied] at notTypeError ⊢
-                        have funBound := FlatSem.evaluate_clock_spec.1 env next after [function] _ flatFunction
+                        have funBound := FlatSem.evaluate_clock_spec.1 env next [function] _ after flatFunction
                         have afterBound : after.clock ≤ source.clock := le_trans funBound argBound
                         exact evaluate_call_related after afterTarget sourceFunction targetFunction sourceArg targetArg
                           nextEnv body funStates head argRel applied

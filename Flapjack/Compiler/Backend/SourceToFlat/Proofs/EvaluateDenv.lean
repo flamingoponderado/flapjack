@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.AllocDefsLookup
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvalOracleSimulation
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.MakeVarls
 import Flapjack.EvaluateHOL.Definition
@@ -111,8 +112,11 @@ theorem factoredInvariant_fillSlot {C F : Type} [Nonempty C]
     source flat valid fits
   obtain ⟨cOk, tysOk, states, range, invs, orac, globals, reserved, genInv, fin⟩ := valid
   have growth := GlobalGrowth.fillSlot genv start.vidx value (by simpa [globals] using empty)
-  have nextStates := stateRel_after_global_growth genv _ growth source flat states
-    (flat.globals.set start.vidx (some value))
+  have nextStates : StateRel { genv with v := genv.v.set start.vidx (some value) } source
+      { flat with globals := flat.globals.set start.vidx (some value) } := by
+    have weakened := stateRel_growth genv _ growth source flat states
+    cases weakened with
+    | intro nonempty refs clock ffi => exact .intro source _ nonempty refs clock ffi
   have nextRange := idxRangeRel_fillSlot interp genv source.nextTypeStamp source.nextExnStamp
     source.evalState start finish other value range (by simpa [globals] using empty) fits
   have nextReserved : evalRefInv
@@ -169,6 +173,79 @@ theorem factoredInvariant_fillBlock {C F : Type} [Nonempty C]
       { start with vidx := start.vidx + 1 } { flat with globals := flat.globals.set start.vidx (some value) }
       (pre ++ [some value]) advanced (by simpa using flatSet) nextPrefix remainingFits
     simpa [List.append_assoc, List.map_cons, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using remaining
+
+namespace MakeVarlsInvariantPort
+/-- Canonical global finite-map carrier roundtrip. -/
+theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
+    GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env := GlobalEnv.holFmapAsFiniteSupportWitness env
+end MakeVarlsInvariantPort
+
+/-- Initializing an environment's variables preserves the compiler invariant. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "invariant_make_varls"
+  (fmap_as_finite_support := [c, tys])]
+theorem invariantMakeVarls {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (gen : EnvironmentGenerationStore) (genv : GlobalEnv) (start finish : NextIndices)
+    (other : Set (Nat × IndexKind)) (source : State F) (flat : FlatSem.State C F)
+    (vidx : Nat) (vars : List VarN) (env : FlatSem.Environment FlatSem.Value)
+    (n : Nat) (trace : BackendCommon.Tra)
+    (premises : factoredInvariant interp transform gen genv (start, finish, other) source flat ∧
+      start.vidx = vidx ∧ start.vidx + vars.length ≤ finish.vidx ∧
+      vars = (env.v.map Prod.fst).reverse ∧ (env.v.map Prod.fst).Nodup) :
+    ∃ (genv' : GlobalEnv) (flat' : FlatSem.State C F),
+      FlatSem.evaluate env flat [makeVarls n trace vidx vars] = (flat', .val [FlatSem.unitValue]) ∧
+      factoredInvariant interp transform gen genv'
+        ({ start with vidx := start.vidx + vars.length }, finish, other) source flat' ∧
+      genv'.c = genv.c ∧ genv'.tys = genv.tys ∧ subglobals genv.v genv'.v ∧
+      ∀ (env1 : List (VarN × Value)) (tt : Nat), EnvRel genv' (alistToNs env1) env.v →
+        GlobalEnvInv genv' { c := nsEmpty, v := alistToNs (allocDefs tt vidx (env.v.map Prod.fst).reverse) }
+          (fun _ => False) ⟨alistToNs env1, nsEmpty⟩ := by
+  obtain ⟨valid, idxEq, fits, varsEq, distinct⟩ := premises
+  subst vidx
+  subst vars
+  let names := env.v.reverse.map Prod.fst
+  let values := env.v.reverse.map Prod.snd
+  have fits' : start.vidx + values.length ≤ finish.vidx := by simpa [values] using fits
+  have range := valid.2.2.2.1
+  have globals := valid.2.2.2.2.2.2.1
+  have final := valid.2.2.2.2.2.2.2.2.2
+  obtain ⟨pre, post, slots, preLength⟩ := idxRangeRel_blank interp genv source.nextTypeStamp source.nextExnStamp
+    source.evalState start finish other values.length ⟨range, by simpa [globals] using final, by omega⟩
+  have flatSlots : flat.globals = pre ++ (List.replicate values.length none ++ post) := globals.symm.trans slots
+  have lookups : ∀ (i : Nat) (bound : i < values.length),
+      env.v.lookup (names[i]'(by simp [names, values] at bound ⊢; omega)) = some values[i] := by
+    intro i bound
+    have h : i < env.v.reverse.length := by simpa [values] using bound
+    have member : env.v.reverse[i]'h ∈ env.v := List.mem_reverse.mp (List.getElem_mem h)
+    have found := lookup_of_mem_nodup env.v _ _ member distinct
+    simpa [names, values, List.get_eq_getElem] using found
+  have run := evaluate_makeVarls env names values
+    (lookup_forall₂_of_indices env names values (by simp [names, values]) lookups)
+    pre post flat n trace (by simpa [names, values] using flatSlots)
+  let genv' := { genv with v := pre ++ (values.map some ++ post) }
+  let flat' := { flat with globals := pre ++ (values.map some ++ post) }
+  have nextInv := factoredInvariant_fillBlock interp transform gen genv start finish other source flat
+    values pre post valid flatSlots preLength fits'
+  refine ⟨genv', flat', ?_, ?_, rfl, rfl, ?_, ?_⟩
+  · simpa [names, values, flat', preLength, List.map_reverse] using run
+  · simpa [genv', flat', values] using nextInv
+  · rw [slots]
+    simpa [genv', values] using subglobals_fill_none pre (values.map some) post
+  · intro env1 tt related
+    have namesEq : env1.map Prod.fst = env.v.map Prod.fst := by
+      have pairs := (envRel_alist_iff genv' env1 env.v).mp related
+      have aux : ∀ {xs : List (VarN × Value)} {ys : List (VarN × FlatSem.Value)},
+          List.Forall₂ (fun x y => x.1 = y.1 ∧ ValueRel genv' x.2 y.2) xs ys →
+          xs.map Prod.fst = ys.map Prod.fst := by
+        intro xs ys h
+        induction h with
+        | nil => rfl
+        | cons head tail ih => simp only [List.map_cons, head.1, ih]
+      exact aux pairs
+    have sourceDistinct : (env1.map Prod.fst).Nodup := by simpa [namesEq] using distinct
+    have inv := globalEnvInv_allocDefs_reverse env1 genv' env.v tt pre post
+      ⟨related, by simp [genv', values, List.map_map], sourceDistinct⟩
+    simpa [preLength, List.map_reverse, emptyEnv] using inv
 
 /-- A compiled environment declaration initializes its allocated global slot
 with the current generation and environment ID. -/
@@ -384,7 +461,7 @@ theorem factoredInvariant_denv {C F : Type} [Nonempty C]
         source flat state env storedEnvs sourceState found valid newMap
       have newGenInv : envGenInv
           { gen with next := gen.next + 1, envs := Flapjack.sptInsert gen.next compMap gen.envs } := by
-        simpa [compileDecs] using (compileDecs_envGenInv_core trace n start compMap gen [.denv name] genInv).1
+        simpa [compileDecs] using (compileDecs_envGenInv trace n start compMap gen [.denv name] _ _ _ _ _ rfl genInv).1
       have changed := factoredInvariant_changeGen interp transform _ _ genv (start, finish, other)
         _ flat afterDecl newGenInv
       have final := factoredInvariant_fillSlot interp transform _ genv start finish other _ flat

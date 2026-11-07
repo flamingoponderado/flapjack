@@ -1,16 +1,17 @@
+import Flapjack.Misc.Bag
 import Flapjack.Compiler.Backend.FlatLang
 
 /-! Global-initialization bags and closure-freedom for flat expressions. -/
 namespace Flapjack.Compiler.Backend.FlatProps
 
-/-- HOL bags are functions from elements to natural-number multiplicities. -/
-abbrev GlobalBag := Nat → Nat
+/-- Global bags are HOL bags indexed by natural numbers. -/
+abbrev GlobalBag := Flapjack.Bag Nat
 
-/-- The empty global bag. -/
-def emptyGlobalBag : GlobalBag := fun _ => 0
+/-- The empty global bag uses the generic HOL bag. -/
+abbrev emptyGlobalBag : GlobalBag := Flapjack.emptyBag
 
-/-- Pointwise union of global bags. -/
-def unionGlobalBag (left right : GlobalBag) : GlobalBag := fun key => left key + right key
+/-- Global-bag union is generic HOL bag union. -/
+abbrev unionGlobalBag : GlobalBag → GlobalBag → GlobalBag := Flapjack.bagUnion
 
 /-- A global-initialization operator contributes its destination once. -/
 @[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "op_gbag_def"]
@@ -59,11 +60,11 @@ theorem elistGlobals_append (xs ys : List FlatLang.Exp) :
   induction xs with
   | nil =>
     funext key
-    simp [elistGlobals, emptyGlobalBag, unionGlobalBag]
+    simp [elistGlobals, emptyGlobalBag, unionGlobalBag, Flapjack.emptyBag, Flapjack.bagUnion]
   | cons x xs ih =>
     simp only [List.cons_append, elistGlobals, ih]
     funext key
-    simp [unionGlobalBag, Nat.add_assoc]
+    simp [unionGlobalBag, Flapjack.bagUnion, Nat.add_assoc]
 
 /-- Flapjack helper: the row traversal equals HOL's mapped list traversal;
 this equality is not a separate HOL declaration. -/
@@ -87,8 +88,7 @@ theorem funGlobals_eq_elistGlobals
     simp [funGlobals, elistGlobals, ih]
 
 mutual
-/-- No function body captures a global initialization. The expression
-carriers remain pending HOL correspondence review. -/
+/-- No function body captures a global initialization. -/
 @[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "esgc_free_def" 836]
 def esgcFree : FlatLang.Exp → Prop
   | .raise _ expression => esgcFree expression
@@ -114,7 +114,8 @@ def esgcFreeRows : List (FlatLang.Pat × FlatLang.Exp) → Prop
 termination_by rows => sizeOf rows
 end
 
-/-- The list traversal renders HOL's EVERY predicate over global-safety checks. -/
+/-- Flapjack infrastructure: the list traversal renders HOL's EVERY predicate
+over global-safety checks. This correspondence has no separate HOL declaration. -/
 theorem esgcFreeList_iff (xs : List FlatLang.Exp) :
     esgcFreeList xs ↔ ∀ x ∈ xs, esgcFree x := by
   induction xs with

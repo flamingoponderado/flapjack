@@ -1,23 +1,9 @@
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.ArrayRead
+import Flapjack.Misc.List
 
 /-! Array-update prerequisites for flat-to-closure simulation. -/
 namespace Flapjack.Compiler.Backend.FlatToClos
 open Flapjack.SemanticPrimitivesHOL
-
-/-- Replacing corresponding elements preserves a list relation. -/
-theorem valueList_set_related {source : List FlatSem.Value} {target : List ClosSem.Value}
-    (related : List.Forall₂ ValueRel source target) (index : Nat) (bound : index < source.length)
-    (value : FlatSem.Value) (targetValue : ClosSem.Value) (valueRel : ValueRel value targetValue) :
-    List.Forall₂ ValueRel (source.set index value) (target.set index targetValue) := by
-  induction related generalizing index with
-  | nil => simp at bound
-  | cons item tail ih =>
-    cases index with
-    | zero => simpa using List.Forall₂.cons valueRel tail
-    | succ index =>
-      apply List.Forall₂.cons item
-      apply ih
-      simpa using bound
 
 /-- Replacing an existing value array with a related one preserves the store relation. -/
 theorem storeRel_setArray (refs : Store FlatSem.Value)
@@ -67,7 +53,7 @@ theorem arrayUpdate_related {C F : Type} (source : FlatSem.State C F) (target : 
   have sameLength := related.length_eq
   have targetBound : index.toNat < targetItems.length := by omega
   have notBound : ¬items.length ≤ index.toNat := by omega
-  have newRelated := valueList_set_related related index.toNat bound value targetValue valueRel
+  have newRelated := Flapjack.forall₂_set ValueRel _ _ value targetValue index.toNat ⟨valueRel, related⟩
   have newStores := storeRel_setArray source.refs target.refs pointer items _ _ states.2.2.2.1 found newRelated
   refine ⟨{ target with refs := target.refs.updateEq (pointer, .valueArray (targetItems.set index.toNat targetValue)) }, ?_, ?_, ?_, ?_⟩
   · simp [FlatSem.doAppMemory, FlatSem.updateIndexed, storeLookup, found, nonnegative, notBound,
@@ -334,7 +320,7 @@ theorem checkedArrayUpdate_body_related {C F : Type} (source : FlatSem.State C F
     · have targetBound : index.toNat < targetItems.length := by omega
       have targetBody := evaluate_checkedArrayUpdate_inBounds target trace env pointer flag targetItems index targetValue targetFound negative targetBound
       have notBound : ¬items.length ≤ index.toNat := by omega
-      have newRelated := valueList_set_related related index.toNat bound value targetValue valueRel
+      have newRelated := Flapjack.forall₂_set ValueRel _ _ value targetValue index.toNat ⟨valueRel, related⟩
       have newStores := storeRel_setArray source.refs target.refs pointer items _ _ states.2.2.2.1 found newRelated
       have newStates : StateRel { source with refs := source.refs.set pointer (.varray (items.set index.toNat value)) }
           { target with refs := target.refs.updateEq (pointer, .valueArray (targetItems.set index.toNat targetValue)) } := by

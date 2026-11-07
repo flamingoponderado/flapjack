@@ -18,7 +18,7 @@ theorem compileArith_globals (t : Tra) (a : Flapjack.AstHOL.Arith)
     setGlobals (compileArith t a ty xs) = elistGlobals xs := by
   funext key
   cases ty <;> cases a <;> simp [compileArith, setGlobals, elistGlobals, opGlobalBag,
-    Flapjack.Compiler.Backend.FlatProps.unionGlobalBag, Flapjack.Compiler.Backend.FlatProps.emptyGlobalBag]
+    Flapjack.Compiler.Backend.FlatProps.unionGlobalBag, Flapjack.Compiler.Backend.FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
 
 /-- Primitive lowering preserves closure safety for safe operand lists. -/
 theorem compileOp_safe (t : Tra) (op : FlatLang.Op) (xs : List ClosLang.Exp)
@@ -72,7 +72,7 @@ theorem loweredOpBag_shift (op : FlatLang.Op) (key : Nat) :
     loweredOpBag op key = if key = 0 then 0 else
       Flapjack.Compiler.Backend.FlatProps.opGlobalBag op (key - 1) := by
   cases op <;> simp [loweredOpBag, Flapjack.Compiler.Backend.FlatProps.opGlobalBag,
-    Flapjack.Compiler.Backend.FlatProps.emptyGlobalBag]
+    Flapjack.Compiler.Backend.FlatProps.emptyGlobalBag, Flapjack.emptyBag]
   case globalVarInit n =>
     cases key with
     | zero => simp
@@ -87,57 +87,57 @@ theorem compileOp_globals (t : Tra) (op : FlatLang.Op) (xs : List ClosLang.Exp) 
   | src op =>
     cases op <;> simp [compileOp, setGlobals, elistGlobals, opGlobalBag, loweredOpBag,
       Flapjack.Compiler.Backend.FlatProps.unionGlobalBag, Flapjack.Compiler.Backend.FlatProps.emptyGlobalBag,
-      compileArith_globals, copyByteStr_noGlobals, copyByteAw8_noGlobals]
+      compileArith_globals, copyByteStr_noGlobals, copyByteAw8_noGlobals, Flapjack.bagUnion, Flapjack.emptyBag]
     case opapp | opassign =>
       cases xs with
       | nil => simp [arg2, setGlobals, elistGlobals,
-          Flapjack.Compiler.Backend.FlatProps.unionGlobalBag, Flapjack.Compiler.Backend.FlatProps.emptyGlobalBag]
+          Flapjack.Compiler.Backend.FlatProps.unionGlobalBag, Flapjack.Compiler.Backend.FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
       | cons x xs =>
         cases xs with
         | nil => simp [arg2, setGlobals, elistGlobals,
-            Flapjack.Compiler.Backend.FlatProps.unionGlobalBag, Flapjack.Compiler.Backend.FlatProps.emptyGlobalBag]
+            Flapjack.Compiler.Backend.FlatProps.unionGlobalBag, Flapjack.Compiler.Backend.FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
         | cons y ys =>
           cases ys <;> simp [arg2, setGlobals, elistGlobals, opGlobalBag,
-            Flapjack.Compiler.Backend.FlatProps.unionGlobalBag, Flapjack.Compiler.Backend.FlatProps.emptyGlobalBag]
+            Flapjack.Compiler.Backend.FlatProps.unionGlobalBag, Flapjack.Compiler.Backend.FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
           all_goals omega
     case test test ty =>
       cases ty <;> cases test
       all_goals try cases ‹Flapjack.AstHOL.WordSize›
       all_goals try cases ‹Opb›
       all_goals simp [setGlobals, opGlobalBag, Flapjack.Compiler.Backend.FlatProps.unionGlobalBag,
-        Flapjack.Compiler.Backend.FlatProps.emptyGlobalBag]
+        Flapjack.Compiler.Backend.FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
     case fromTo a b =>
       cases a <;> cases b
       all_goals try cases ‹Flapjack.AstHOL.WordSize›
       all_goals try cases ‹Flapjack.AstHOL.WordSize›
       all_goals try simp [setGlobals, opGlobalBag, Flapjack.Compiler.Backend.FlatProps.unionGlobalBag,
-        Flapjack.Compiler.Backend.FlatProps.emptyGlobalBag]
+        Flapjack.Compiler.Backend.FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
       all_goals cases xs with
         | nil => simp [arg1, setGlobals, elistGlobals, opGlobalBag,
-            Flapjack.Compiler.Backend.FlatProps.unionGlobalBag, Flapjack.Compiler.Backend.FlatProps.emptyGlobalBag]
+            Flapjack.Compiler.Backend.FlatProps.unionGlobalBag, Flapjack.Compiler.Backend.FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
         | cons x xs => cases xs <;> simp [arg1, setGlobals, elistGlobals, opGlobalBag,
-            Flapjack.Compiler.Backend.FlatProps.unionGlobalBag, Flapjack.Compiler.Backend.FlatProps.emptyGlobalBag]
+            Flapjack.Compiler.Backend.FlatProps.unionGlobalBag, Flapjack.Compiler.Backend.FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
   | globalVarAlloc n => simp [compileOp, setGlobals, elistGlobals, opGlobalBag, loweredOpBag,
-      Flapjack.Compiler.Backend.FlatProps.unionGlobalBag, Flapjack.Compiler.Backend.FlatProps.emptyGlobalBag]
+      Flapjack.Compiler.Backend.FlatProps.unionGlobalBag, Flapjack.Compiler.Backend.FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
   | globalVarInit n => simp [compileOp, setGlobals, opGlobalBag, loweredOpBag,
-      Flapjack.Compiler.Backend.FlatProps.unionGlobalBag]
+      Flapjack.Compiler.Backend.FlatProps.unionGlobalBag, Flapjack.bagUnion]
   | globalVarLookup n => simp [compileOp, setGlobals, opGlobalBag, loweredOpBag,
-      Flapjack.Compiler.Backend.FlatProps.unionGlobalBag, Flapjack.Compiler.Backend.FlatProps.emptyGlobalBag]
+      Flapjack.Compiler.Backend.FlatProps.unionGlobalBag, Flapjack.Compiler.Backend.FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
   | tagLenEq tag n => simp [compileOp, setGlobals, opGlobalBag, loweredOpBag,
-      Flapjack.Compiler.Backend.FlatProps.unionGlobalBag, Flapjack.Compiler.Backend.FlatProps.emptyGlobalBag]
+      Flapjack.Compiler.Backend.FlatProps.unionGlobalBag, Flapjack.Compiler.Backend.FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
   | lenEq n => simp [compileOp, setGlobals, opGlobalBag, loweredOpBag,
-      Flapjack.Compiler.Backend.FlatProps.unionGlobalBag, Flapjack.Compiler.Backend.FlatProps.emptyGlobalBag]
+      Flapjack.Compiler.Backend.FlatProps.unionGlobalBag, Flapjack.Compiler.Backend.FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
   | el n =>
     cases xs with
     | nil => simp [compileOp, arg1, setGlobals, elistGlobals, loweredOpBag,
-        Flapjack.Compiler.Backend.FlatProps.unionGlobalBag, Flapjack.Compiler.Backend.FlatProps.emptyGlobalBag]
+        Flapjack.Compiler.Backend.FlatProps.unionGlobalBag, Flapjack.Compiler.Backend.FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
     | cons x xs => cases xs <;> simp [compileOp, arg1, setGlobals, elistGlobals, opGlobalBag, loweredOpBag,
-        Flapjack.Compiler.Backend.FlatProps.unionGlobalBag, Flapjack.Compiler.Backend.FlatProps.emptyGlobalBag]
+        Flapjack.Compiler.Backend.FlatProps.unionGlobalBag, Flapjack.Compiler.Backend.FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
   | id =>
     cases xs with
     | nil => simp [compileOp, arg1, setGlobals, elistGlobals, loweredOpBag,
-        Flapjack.Compiler.Backend.FlatProps.unionGlobalBag, Flapjack.Compiler.Backend.FlatProps.emptyGlobalBag]
+        Flapjack.Compiler.Backend.FlatProps.unionGlobalBag, Flapjack.Compiler.Backend.FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
     | cons x xs => cases xs <;> simp [compileOp, arg1, setGlobals, elistGlobals, loweredOpBag,
-        Flapjack.Compiler.Backend.FlatProps.unionGlobalBag, Flapjack.Compiler.Backend.FlatProps.emptyGlobalBag]
+        Flapjack.Compiler.Backend.FlatProps.unionGlobalBag, Flapjack.Compiler.Backend.FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
 
 end Flapjack.Compiler.Backend.FlatToClos

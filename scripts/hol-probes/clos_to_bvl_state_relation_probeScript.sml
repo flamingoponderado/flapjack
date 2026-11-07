@@ -6,10 +6,17 @@ val _ = Globals.show_types := true;
 fun show label th = if null (hyp th) then
   (print label; print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
+val _ = show "code_split_def_typed=" clos_to_bvlTheory.code_split_def;
+val _ = show "code_split_perm_typed=" clos_to_bvlProofTheory.code_split_IMP_PERM;
+val _ = show "chain_exps_def_typed=" clos_to_bvlTheory.chain_exps_def;
+val _ = show "chain_exps_code_locs_typed=" clos_to_bvlProofTheory.chain_exps_code_locs;
+val _ = show "chain_exps_vars_none_typed=" clos_to_bvlProofTheory.chain_exps_every_Fn_vs_NONE;
 val _ = show "state_rel_typed=" clos_to_bvlProofTheory.state_rel_def;
 val _ = show "state_rel_clock_typed=" clos_to_bvlProofTheory.state_rel_clock;
 val _ = show "state_rel_refs_lookup_typed=" clos_to_bvlProofTheory.state_rel_refs_lookup;
 val _ = show "cl_rel_rules_typed=" clos_to_bvlProofTheory.cl_rel_rules;
+val _ = show "v_rel_unit_typed=" clos_to_bvlProofTheory.v_rel_Unit;
+val _ = show "v_rel_bool_typed=" clos_to_bvlProofTheory.v_rel_Boolv;
 val _ = show "v_rel_rules_typed=" clos_to_bvlProofTheory.v_rel_rules;
 val _ = show "env_rel_typed=" clos_to_bvlProofTheory.env_rel_def;
 val _ = show "add_args_typed=" clos_to_bvlProofTheory.add_args_def;

@@ -4,6 +4,20 @@ import Flapjack.Compiler.Backend.ClosNumber.Proofs.LocationInvariants
 /-! Label bounds for chained top-level closure expressions. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
 
+/-- Chaining expressions preserves their closure-code locations. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "chain_exps_code_locs"]
+theorem chainExps_codeLocations (start : Nat) (expressions : List ClosLang.Exp) :
+    ClosProps.codeLocations ((chainExps start expressions).map (fun (_, _, body) => body)) =
+      ClosProps.codeLocations expressions := by
+  induction expressions generalizing start with
+  | nil => simp [chainExps, ClosProps.codeLocations, ClosProps.codeLocationsExp]
+  | cons first rest ih =>
+    cases rest with
+    | nil => simp [chainExps, ClosProps.codeLocations]
+    | cons second tail =>
+      simpa [chainExps, ClosProps.codeLocations, ClosProps.codeLocationsExp] using
+        congrArg (fun locations => ClosProps.codeLocationsExp first ++ locations) (ih (start + 1))
+
 /-- The labels assigned by chaining occupy the reserved top-level interval,
 including its single dummy entry when the expression list is empty. -/
 theorem chainExps_label_bounds (start : Nat) (expressions : List ClosLang.Exp)

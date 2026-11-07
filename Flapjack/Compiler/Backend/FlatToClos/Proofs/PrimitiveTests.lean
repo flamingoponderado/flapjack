@@ -24,7 +24,9 @@ theorem evaluate_primitiveTest {C F : Type} (env : FlatSem.Environment FlatSem.V
   | equal => exact evaluate_primitiveEquality env names values source target trace typ args argsSim notTypeError
   | compare cmp =>
     cases typ with
-    | boolT => exact evaluate_invalidCompare env names values source target trace cmp .boolT (Or.inl rfl) args argsSim notTypeError
+    | boolT =>
+      exact evaluate_rejectedPrimitiveTest env names values source target trace (.compare cmp) .boolT
+        (compare_rejects_invalid cmp .boolT (Or.inl rfl)) args argsSim notTypeError
     | intT => exact evaluate_intCompare env names values source target trace cmp args argsSim notTypeError
     | charT => exact evaluate_charCompare env names values source target trace cmp args argsSim notTypeError
     | strT => exact evaluate_stringCompare env names values source target trace cmp args argsSim notTypeError
@@ -32,11 +34,14 @@ theorem evaluate_primitiveTest {C F : Type} (env : FlatSem.Environment FlatSem.V
     | wordT size =>
       cases size with
       | w8 => exact evaluate_word8Compare env names values source target trace cmp args argsSim notTypeError
-      | w64 => exact evaluate_invalidCompare env names values source target trace cmp (.wordT .w64) (Or.inr rfl) args argsSim notTypeError
+      | w64 =>
+        exact evaluate_rejectedPrimitiveTest env names values source target trace (.compare cmp) (.wordT .w64)
+          (compare_rejects_invalid cmp (.wordT .w64) (Or.inr rfl)) args argsSim notTypeError
   | altCompare cmp =>
     by_cases isString : typ = .strT
     · subst typ
       exact evaluate_stringAltCompare env names values source target trace cmp args argsSim notTypeError
-    · exact evaluate_nonStringAltCompare env names values source target trace cmp typ isString args argsSim notTypeError
+    · exact evaluate_rejectedPrimitiveTest env names values source target trace (.altCompare cmp) typ
+        (altCompare_rejects_nonString cmp typ isString) args argsSim notTypeError
 
 end Flapjack.Compiler.Backend.FlatToClos

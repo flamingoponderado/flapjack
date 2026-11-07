@@ -26,7 +26,7 @@ theorem doApp_thunkAlloc_related {C F : Type} (cfg : Config) (source target sour
     (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
     (run : FlatSem.doApp source (.src (.thunkOp (.allocThunk mode))) values = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.doApp target (.src (.thunkOp (.allocThunk mode))) values' = some (targetFinal, result') ∧
-      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
   cases related with
   | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at run
   | @cons value value' tail tail' values rest =>
@@ -41,7 +41,7 @@ theorem doApp_thunkAlloc_related {C F : Type} (cfg : Config) (source target sour
         simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, storeAlloc, bad] at run
         rcases run with ⟨rfl, rfl⟩
         have lengths : target.refs.length = source.refs.length := (List.Forall₂.length_eq states.2.1).symm
-        refine ⟨{ target with refs := target.refs ++ [.thunk mode value'] }, .val (.loc false source.refs.length), ?_, ?_, .value ?_⟩
+        refine ⟨{ target with refs := target.refs ++ [.thunk mode value'] }, .val (.loc false source.refs.length), ?_, ?_, ?_⟩
         · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, storeAlloc, bad', lengths]
         · exact ⟨states.1, List.rel_append states.2.1 (.cons ⟨rfl, values⟩ .nil), states.2.2⟩
         · exact (valueRel_loc false source.refs.length _).2 rfl
@@ -52,7 +52,7 @@ theorem doApp_thunkUpdate_related {C F : Type} (cfg : Config) (source target sou
     (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
     (run : FlatSem.doApp source (.src (.thunkOp (.updateThunk mode))) values = some (sourceFinal, result)) :
     ∃ targetFinal result', FlatSem.doApp target (.src (.thunkOp (.updateThunk mode))) values' = some (targetFinal, result') ∧
-      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+      StateRel cfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' := by
   cases related with
   | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at run
   | @cons loc loc' tail tail' locRel rest =>
@@ -81,7 +81,7 @@ theorem doApp_thunkUpdate_related {C F : Type} (cfg : Config) (source target sou
                 obtain ⟨refs', assigned', refsRel⟩ := SemanticPrimitivesProps.storeAssign_related states.2.1 address entries assigned
                 simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, bad, assigned] at run
                 rcases run with ⟨rfl, rfl⟩
-                refine ⟨{ target with refs := refs' }, .val FlatSem.unitValue, ?_, ⟨states.1, refsRel, states.2.2⟩, .value ?_⟩
+                refine ⟨{ target with refs := refs' }, .val FlatSem.unitValue, ?_, ⟨states.1, refsRel, states.2.2⟩, ?_⟩
                 · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, bad', assigned']
                 · exact (valueRel_conv none [] _).2 ⟨[], rfl, .nil⟩
         | litv _ | conv _ _ | vectorv _ | closure _ _ _ | recclosure _ _ _ =>

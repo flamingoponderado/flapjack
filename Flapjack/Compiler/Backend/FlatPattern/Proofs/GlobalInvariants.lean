@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.NoMat
 import Flapjack.Compiler.Backend.FlatProps.GlobalBagProperties
+import Flapjack.Misc.Sptree.ToList
 import Mathlib.Tactic.SplitIfs
 
 /-! Global-initialization safety of generated pattern decision expressions. -/
@@ -10,7 +11,9 @@ open Flapjack.Compiler.Backend.FlatProps
 private theorem esgcFree_mkBool (t : Tra) (b : Bool) : esgcFree (mkBool t b) := by
   simp [mkBool, esgcFree, esgcFreeList]
 
-private theorem esgcFree_smartIf (t : Tra) (c x y : FlatLang.Exp)
+/-- Flapjack helper: smart conditionals preserve branch global safety.
+HOL uses the cases within its proofs. -/
+theorem esgcFree_smartIf (t : Tra) (c x y : FlatLang.Exp)
     (hc : esgcFree c) (hx : esgcFree x) (hy : esgcFree y) :
     esgcFree (smartIf t c x y) := by
   cases c <;> simp_all [smartIf, esgcFree]
@@ -31,16 +34,16 @@ theorem esgcFree_decodePos (t : Tra) (p : Position) (exp : FlatLang.Exp)
     simpa [esgcFree, esgcFreeList] using safe
 
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "esgc_free_decode_test"]
-theorem esgcFree_decodeTest (t : Tra) (d : DTest) (exp : FlatLang.Exp)
+theorem esgcFree_decodeTest (exp : FlatLang.Exp) (t : Tra) (d : DTest)
     (safe : esgcFree exp) : esgcFree (decodeTest t d exp) := by
   cases d <;> simp [decodeTest, esgcFree, esgcFreeList, safe]
 
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "esgc_free_decode_guard"]
-theorem esgcFree_decodeGuard (t : Tra) (exp : FlatLang.Exp) (gd : DGuard)
+theorem esgcFree_decodeGuard (exp : FlatLang.Exp) (t : Tra) (gd : DGuard)
     (safe : esgcFree exp) : esgcFree (decodeGuard t exp gd) := by
   induction gd with
   | true_ => exact esgcFree_mkBool t true
-  | posTest pos test => exact esgcFree_decodeTest t test _ (esgcFree_decodePos t pos exp safe)
+  | posTest pos test => exact esgcFree_decodeTest _ t test (esgcFree_decodePos t pos exp safe)
   | not gd ih => simp [decodeGuard, esgcFree, esgcFreeList, ih, esgcFree_mkBool]
   | conj a b ihA ihB => exact esgcFree_smartIf t _ _ _ ihA ihB (esgcFree_mkBool t false)
   | disj a b ihA ihB => exact esgcFree_smartIf t _ _ _ ihA (esgcFree_mkBool t true) ihB
@@ -163,33 +166,6 @@ theorem esgcFree_projectionFold (trace : Tra) (value body : FlatLang.Exp)
     obtain ⟨⟨index, name⟩, work⟩ := entry
     simp [esgcFree, esgcFreeList, valueSafe, ih]
 
-mutual
-private def bindingWeight : FlatLang.Pat → Nat
-  | .pcon _ ps => 1 + bindingWeights ps
-  | .pas p _ | .pref p => 1 + bindingWeight p
-  | _ => 1
-
-private def bindingWeights : List FlatLang.Pat → Nat
-  | [] => 0
-  | p :: ps => bindingWeight p + bindingWeights ps
-end
-
-private def bindingTodoWeight : List (FlatLang.Pat × Nat × FlatLang.Exp) → Nat
-  | [] => 0
-  | (p, _, _) :: rest => bindingWeight p + bindingTodoWeight rest
-
-private theorem bindingTodoWeight_append (xs ys : List (FlatLang.Pat × Nat × FlatLang.Exp)) :
-    bindingTodoWeight (xs ++ ys) = bindingTodoWeight xs + bindingTodoWeight ys := by
-  induction xs with
-  | nil => simp [bindingTodoWeight]
-  | cons x xs ih => cases x with | mk p pair => cases pair; simp [bindingTodoWeight, ih, Nat.add_assoc]
-
-private theorem patternEntries_weight (trace : Tra) (base start : Nat) (patterns : List FlatLang.Pat) :
-    bindingTodoWeight ((patternEntries trace base start patterns).map Prod.snd) = bindingWeights patterns := by
-  induction patterns generalizing start with
-  | nil => rfl
-  | cons p ps ih => simp [bindingTodoWeight, bindingWeights, ih]
-
 /-- Pattern binding preserves global-initialization safety of its worklist and continuation. -/
 theorem esgcFree_compilePatBindings (trace : Tra) (base : Nat)
     (todo : List (FlatLang.Pat × Nat × FlatLang.Exp)) (body : FlatLang.Exp)
@@ -197,88 +173,79 @@ theorem esgcFree_compilePatBindings (trace : Tra) (base : Nat)
     (todoSafe : ∀ pattern index expression, (pattern, index, expression) ∈ todo →
       esgcFree expression) :
     esgcFree (compilePatBindings trace base todo body).2 := by
-  suffices ∀ n todo, bindingTodoWeight todo = n → ∀ base,
-      (∀ pattern index expression, (pattern, index, expression) ∈ todo →
-        esgcFree expression) →
-      esgcFree (compilePatBindings trace base todo body).2 by
-    exact this _ todo rfl base todoSafe
-  intro n
-  induction n using Nat.strongRecOn with
-  | ind n ih =>
-    intro todo hn base todoSafe
-    cases todo with
-    | nil => simpa [compilePatBindings] using bodySafe
-    | cons item rest =>
-      obtain ⟨pattern, index, value⟩ := item
-      have valueSafe := todoSafe pattern index value (by simp)
-      have restSafe : ∀ p k e, (p, k, e) ∈ rest → esgcFree e := by
-        intro p k e member
-        exact todoSafe p k e (by simp [member])
-      cases pattern with
-      | pany | plit _ =>
-        rw [compilePatBindings]
-        exact ih _ (by simp [bindingTodoWeight, bindingWeight] at hn ⊢; omega) rest rfl base restSafe
-      | pvar name =>
-        have ih := ih _ (by simp [bindingTodoWeight, bindingWeight] at hn ⊢; omega) rest rfl base restSafe
-        cases run : compilePatBindings trace base rest body with
-        | mk used result =>
-          simp only [run] at ih
-          simp [compilePatBindings, run, esgcFree, valueSafe, ih]
-      | pcon tag patterns =>
-        have allSafe : ∀ p k e, (p, k, e) ∈ (patternEntries trace base 0 patterns).map Prod.snd ++ rest →
-            esgcFree e := by
-          intro p k e member
-          rcases List.mem_append.mp member with member | member
-          · exact esgcFree_patternEntries trace base 0 patterns p k e member
-          · exact restSafe p k e member
-        have ih := ih _ (by simp [bindingTodoWeight, bindingWeight, bindingTodoWeight_append, patternEntries_weight] at hn ⊢; omega)
-          ((patternEntries trace base 0 patterns).map Prod.snd ++ rest) rfl (base + 2 + patterns.length) allSafe
-        cases run : compilePatBindings trace (base + 2 + patterns.length)
-            ((patternEntries trace base 0 patterns).map Prod.snd ++ rest) body with
-        | mk used result =>
-          simp only [run] at ih
-          simp only [compilePatBindings, run]
-          exact esgcFree_projectionFold trace value result _ valueSafe ih
-      | pas pattern name =>
-        have allSafe : ∀ p k e, (p, k, e) ∈
-            (pattern, base + 1, .varLocal trace (encNumToName (base + 1))) :: rest →
-            esgcFree e := by
-          intro p k e member
-          simp only [List.mem_cons, Prod.mk.injEq] at member
-          rcases member with ⟨_, _, rfl⟩ | member
-          · simp [esgcFree]
-          · exact restSafe p k e member
-        have ih := ih _ (by simp [bindingTodoWeight, bindingWeight] at hn ⊢; omega)
-          ((pattern, base + 1, .varLocal trace (encNumToName (base + 1))) :: rest) rfl (base + 2) allSafe
-        cases run : compilePatBindings trace (base + 2)
-            ((pattern, base + 1, .varLocal trace (encNumToName (base + 1))) :: rest) body with
-        | mk used result =>
-          simp only [run] at ih
-          simp [compilePatBindings, run, esgcFree, valueSafe, ih]
-      | pref pattern =>
-        have allSafe : ∀ p k e, (p, k, e) ∈
-            (pattern, base + 1, .varLocal trace (encNumToName (base + 1))) :: rest →
-            esgcFree e := by
-          intro p k e member
-          simp only [List.mem_cons, Prod.mk.injEq] at member
-          rcases member with ⟨_, _, rfl⟩ | member
-          · simp [esgcFree]
-          · exact restSafe p k e member
-        have ih := ih _ (by simp [bindingTodoWeight, bindingWeight] at hn ⊢; omega)
-          ((pattern, base + 1, .varLocal trace (encNumToName (base + 1))) :: rest) rfl (base + 2) allSafe
-        cases run : compilePatBindings trace (base + 2)
-            ((pattern, base + 1, .varLocal trace (encNumToName (base + 1))) :: rest) body with
-        | mk used result =>
-          simp only [run] at ih
-          simp [compilePatBindings, run, esgcFree, esgcFreeList, valueSafe, ih]
-
-private theorem unionEmptyLeft (b : GlobalBag) : unionGlobalBag emptyGlobalBag b = b := by
-  funext k
-  simp [unionGlobalBag, emptyGlobalBag]
-
-private theorem unionEmptyRight (b : GlobalBag) : unionGlobalBag b emptyGlobalBag = b := by
-  funext k
-  simp [unionGlobalBag, emptyGlobalBag]
+  revert todoSafe
+  induction base, todo using compilePatBindings.induct trace body with
+  | case1 i =>
+    intro _
+    simpa [compilePatBindings] using bodySafe
+  | case2 i key expression rest ih =>
+    intro safe
+    rw [compilePatBindings]
+    apply ih
+    intro p k e member
+    exact safe p k e (by simp [member])
+  | case3 i key expression rest lit ih =>
+    intro safe
+    rw [compilePatBindings]
+    apply ih
+    intro p k e member
+    exact safe p k e (by simp [member])
+  | case4 i key expression rest name used continuation compiled ih =>
+    intro safe
+    have valueSafe := safe (.pvar name) key expression (by simp)
+    have restSafe : ∀ p k e, (p, k, e) ∈ rest → esgcFree e := by
+      intro p k e member
+      exact safe p k e (by simp [member])
+    have next := ih restSafe
+    rw [compiled] at next
+    simp [compilePatBindings, compiled, esgcFree, valueSafe, next]
+  | case5 i key expression rest stamp patterns entries used continuation compiled ih =>
+    dsimp only [entries] at compiled
+    intro safe
+    have valueSafe := safe (.pcon stamp patterns) key expression (by simp)
+    have restSafe : ∀ p k e, (p, k, e) ∈ rest → esgcFree e := by
+      intro p k e member
+      exact safe p k e (by simp [member])
+    have allSafe : ∀ p k e, (p, k, e) ∈ (patternEntries trace i 0 patterns).map Prod.snd ++ rest →
+        esgcFree e := by
+      intro p k e member
+      rcases List.mem_append.mp member with member | member
+      · exact esgcFree_patternEntries trace i 0 patterns p k e member
+      · exact restSafe p k e member
+    have next := ih allSafe
+    rw [compiled] at next
+    simp only [compilePatBindings, compiled]
+    exact esgcFree_projectionFold trace expression continuation _ valueSafe next
+  | case6 i key expression rest pattern name generated used continuation compiled ih =>
+    dsimp only [generated] at compiled
+    intro safe
+    have valueSafe := safe (.pas pattern name) key expression (by simp)
+    have allSafe : ∀ p k e, (p, k, e) ∈
+        (pattern, i + 1, .varLocal trace (encNumToName (i + 1))) :: rest →
+        esgcFree e := by
+      intro p k e member
+      simp only [List.mem_cons, Prod.mk.injEq] at member
+      rcases member with ⟨_, _, rfl⟩ | member
+      · simp [esgcFree]
+      · exact safe p k e (by simp [member])
+    have next := ih allSafe
+    rw [compiled] at next
+    simp [compilePatBindings, compiled, esgcFree, valueSafe, next]
+  | case7 i key expression rest pattern generated used continuation compiled ih =>
+    dsimp only [generated] at compiled
+    intro safe
+    have valueSafe := safe (.pref pattern) key expression (by simp)
+    have allSafe : ∀ p k e, (p, k, e) ∈
+        (pattern, i + 1, .varLocal trace (encNumToName (i + 1))) :: rest →
+        esgcFree e := by
+      intro p k e member
+      simp only [List.mem_cons, Prod.mk.injEq] at member
+      rcases member with ⟨_, _, rfl⟩ | member
+      · simp [esgcFree]
+      · exact safe p k e (by simp [member])
+    have next := ih allSafe
+    rw [compiled] at next
+    simp [compilePatBindings, compiled, esgcFree, esgcFreeList, valueSafe, next]
 
 private theorem setGlobals_mkBool (t : Tra) (b : Bool) :
     setGlobals (mkBool t b) = emptyGlobalBag := by
@@ -288,13 +255,13 @@ private theorem setGlobals_smartIf (t : Tra) (c x y : FlatLang.Exp)
     (hc : setGlobals c = emptyGlobalBag) (hx : setGlobals x = emptyGlobalBag)
     (hy : setGlobals y = emptyGlobalBag) :
     setGlobals (smartIf t c x y) = emptyGlobalBag := by
-  cases c <;> simp_all [smartIf, setGlobals, unionEmptyRight]
+  cases c <;> simp_all [smartIf, setGlobals, Flapjack.bagUnion_empty_right]
   case con t tag args =>
-    cases tag <;> cases args <;> try simp_all [setGlobals, unionEmptyRight]
+    cases tag <;> cases args <;> try simp_all [setGlobals, Flapjack.bagUnion_empty_right]
     case some.nil pair =>
       obtain ⟨tag, typ⟩ := pair
-      cases typ <;> try simp_all [setGlobals, unionEmptyRight]
-      all_goals split_ifs <;> simp_all [setGlobals, unionEmptyRight]
+      cases typ <;> try simp_all [setGlobals, Flapjack.bagUnion_empty_right]
+      all_goals split_ifs <;> simp_all [setGlobals, Flapjack.bagUnion_empty_right]
 
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "set_globals_decode_pos"]
 theorem setGlobals_decodePos (t : Tra) (p : Position) (exp : FlatLang.Exp)
@@ -303,20 +270,20 @@ theorem setGlobals_decodePos (t : Tra) (p : Position) (exp : FlatLang.Exp)
   | emptyPos => exact safe
   | pos index rest ih =>
     apply ih
-    simp [setGlobals, elistGlobals, opGlobalBag, safe, unionEmptyRight]
+    simp [setGlobals, elistGlobals, opGlobalBag, safe, Flapjack.bagUnion_empty_right]
 
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "set_globals_decode_test"]
-theorem setGlobals_decodeTest (t : Tra) (d : DTest) (exp : FlatLang.Exp)
+theorem setGlobals_decodeTest (exp : FlatLang.Exp) (t : Tra) (d : DTest)
     (safe : setGlobals exp = emptyGlobalBag) : setGlobals (decodeTest t d exp) = emptyGlobalBag := by
-  cases d <;> simp [decodeTest, setGlobals, elistGlobals, opGlobalBag, safe, unionEmptyRight]
+  cases d <;> simp [decodeTest, setGlobals, elistGlobals, opGlobalBag, safe, Flapjack.bagUnion_empty_right]
 
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "set_globals_decode_guard"]
-theorem setGlobals_decodeGuard (t : Tra) (exp : FlatLang.Exp) (gd : DGuard)
+theorem setGlobals_decodeGuard (exp : FlatLang.Exp) (t : Tra) (gd : DGuard)
     (safe : setGlobals exp = emptyGlobalBag) : setGlobals (decodeGuard t exp gd) = emptyGlobalBag := by
   induction gd with
   | true_ => exact setGlobals_mkBool t true
-  | posTest pos test => exact setGlobals_decodeTest t test _ (setGlobals_decodePos t pos exp safe)
-  | not gd ih => simp [decodeGuard, setGlobals, elistGlobals, opGlobalBag, ih, setGlobals_mkBool, unionEmptyRight]
+  | posTest pos test => exact setGlobals_decodeTest _ t test (setGlobals_decodePos t pos exp safe)
+  | not gd ih => simp [decodeGuard, setGlobals, elistGlobals, opGlobalBag, ih, setGlobals_mkBool, Flapjack.bagUnion_empty_right]
   | conj a b ihA ihB => exact setGlobals_smartIf t _ _ _ ihA ihB (setGlobals_mkBool t false)
   | disj a b ihA ihB => exact setGlobals_smartIf t _ _ _ ihA (setGlobals_mkBool t true) ihB
 
@@ -328,7 +295,7 @@ theorem setGlobals_children (trace : Tra) (value : FlatLang.Exp) (patterns : Lis
   intro pattern expression member
   obtain ⟨i, _, eq⟩ := List.mem_mapIdx.mp member
   obtain ⟨_, rfl⟩ := Prod.mk.inj eq
-  simpa [setGlobals, elistGlobals, opGlobalBag, unionEmptyLeft, unionEmptyRight] using safe
+  simpa [setGlobals, elistGlobals, opGlobalBag, Flapjack.bagUnion_empty_left, Flapjack.bagUnion_empty_right] using safe
 
 /-- Naive matching generates a global-initialization-safe guard when each worklist value is
 global-initialization-safe. -/
@@ -349,7 +316,7 @@ theorem setGlobals_naivePatternMatch_aux (trace : Tra) (todo : List (FlatLang.Pa
       exact safe pattern expression (by simp [member])
     simp only [naivePatternMatch]
     apply setGlobals_smartIf
-    · simp [setGlobals, elistGlobals, opGlobalBag, valueSafe, unionEmptyRight]
+    · simp [setGlobals, elistGlobals, opGlobalBag, valueSafe, Flapjack.bagUnion_empty_right]
     · exact ih restSafe
     · exact setGlobals_mkBool trace false
   | case5 value rest patterns ih =>
@@ -364,7 +331,7 @@ theorem setGlobals_naivePatternMatch_aux (trace : Tra) (todo : List (FlatLang.Pa
     have valueSafe := safe (.pcon (some (tag, typ)) patterns) value (by simp)
     simp only [naivePatternMatch]
     apply setGlobals_smartIf
-    · simp [setGlobals, elistGlobals, opGlobalBag, valueSafe, unionEmptyRight]
+    · simp [setGlobals, elistGlobals, opGlobalBag, valueSafe, Flapjack.bagUnion_empty_right]
     · apply ih
       intro pattern expression member
       rcases List.mem_append.mp member with member | member
@@ -386,7 +353,7 @@ theorem setGlobals_naivePatternMatch_aux (trace : Tra) (todo : List (FlatLang.Pa
     intro pattern' expression member
     simp only [List.mem_cons, Prod.mk.injEq] at member
     rcases member with ⟨_, rfl⟩ | member
-    · simpa [setGlobals, elistGlobals, opGlobalBag, unionEmptyLeft, unionEmptyRight] using valueSafe
+    · simpa [setGlobals, elistGlobals, opGlobalBag, Flapjack.bagUnion_empty_left, Flapjack.bagUnion_empty_right] using valueSafe
     · exact safe pattern' expression (by simp [member])
 
 
@@ -399,16 +366,17 @@ theorem setGlobals_naivePatternMatch (t : Tra) (xs : List (FlatLang.Pat × FlatL
   intro p e member
   exact safe (p, e) member
 
-private theorem setGlobals_smartIf_le (t : Tra) (c x y : FlatLang.Exp) (key : Nat) :
+/-- Flapjack helper: smart conditionals do not add global writes. HOL reasons by cases. -/
+theorem setGlobals_smartIf_le (t : Tra) (c x y : FlatLang.Exp) (key : Nat) :
     setGlobals (smartIf t c x y) key ≤
       setGlobals c key + setGlobals x key + setGlobals y key := by
-  cases c <;> simp [smartIf, setGlobals, unionGlobalBag]
+  cases c <;> simp [smartIf, setGlobals, unionGlobalBag, Flapjack.bagUnion]
   case con t tag args =>
-    cases tag <;> cases args <;> simp [setGlobals, elistGlobals, emptyGlobalBag, unionGlobalBag]
+    cases tag <;> cases args <;> simp [setGlobals, elistGlobals, emptyGlobalBag, unionGlobalBag, Flapjack.emptyBag, Flapjack.bagUnion]
     case some.nil pair =>
       obtain ⟨tag, typ⟩ := pair
-      cases typ <;> simp [setGlobals, elistGlobals, emptyGlobalBag, unionGlobalBag]
-      all_goals split_ifs <;> simp [setGlobals, elistGlobals, emptyGlobalBag, unionGlobalBag]
+      cases typ <;> simp [setGlobals, elistGlobals, emptyGlobalBag, unionGlobalBag, Flapjack.emptyBag, Flapjack.bagUnion]
+      all_goals split_ifs <;> simp [setGlobals, elistGlobals, emptyGlobalBag, unionGlobalBag, Flapjack.emptyBag, Flapjack.bagUnion]
 
 /-- The generated naive branch chain cannot add global writes. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "set_globals_naive_pattern_matches"]
@@ -419,7 +387,7 @@ theorem setGlobals_naivePatternMatches (t : Tra) (x : FlatLang.Exp)
       elistGlobals (dflt :: ps.map Prod.snd) key := by
   intro key
   induction ps with
-  | nil => simp [naivePatternMatches, elistGlobals, unionGlobalBag, emptyGlobalBag]
+  | nil => simp [naivePatternMatches, elistGlobals, unionGlobalBag, emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
   | cons row rest ih =>
     obtain ⟨p, body⟩ := row
     have guardSafe : setGlobals (naivePatternMatch t [(p, x)]) = emptyGlobalBag := by
@@ -428,8 +396,8 @@ theorem setGlobals_naivePatternMatches (t : Tra) (x : FlatLang.Exp)
     have bound := setGlobals_smartIf_le t (naivePatternMatch t [(p, x)]) body
       (naivePatternMatches t x rest dflt) key
     simp only [naivePatternMatches]
-    simp only [guardSafe, emptyGlobalBag, Nat.zero_add] at bound
-    simp only [List.map_cons, elistGlobals, unionGlobalBag] at ih ⊢
+    simp only [guardSafe, emptyGlobalBag, Flapjack.emptyBag, Nat.zero_add] at bound
+    simp only [List.map_cons, elistGlobals, unionGlobalBag, Flapjack.bagUnion] at ih ⊢
     omega
 
 private theorem setGlobals_patternEntries (trace : Tra) (base start : Nat) (patterns : List FlatLang.Pat) :
@@ -454,7 +422,7 @@ private theorem setGlobals_projectionFold (trace : Tra) (value body : FlatLang.E
   | nil => rfl
   | cons entry rest ih =>
     obtain ⟨⟨index, name⟩, work⟩ := entry
-    simp [setGlobals, elistGlobals, opGlobalBag, valueSafe, ih, unionEmptyLeft, unionEmptyRight]
+    simp [setGlobals, elistGlobals, opGlobalBag, valueSafe, ih, Flapjack.bagUnion_empty_left, Flapjack.bagUnion_empty_right]
 
 /-- Pattern binding preserves the global bag when worklist values have empty bags. -/
 theorem setGlobals_compilePatBindings_aux (trace : Tra) (base : Nat)
@@ -462,80 +430,80 @@ theorem setGlobals_compilePatBindings_aux (trace : Tra) (base : Nat)
     (todoSafe : ∀ pattern index expression, (pattern, index, expression) ∈ todo →
       setGlobals expression = emptyGlobalBag) :
     setGlobals (compilePatBindings trace base todo body).2 = setGlobals body := by
-  suffices ∀ n todo, bindingTodoWeight todo = n → ∀ base,
-      (∀ pattern index expression, (pattern, index, expression) ∈ todo →
-        setGlobals expression = emptyGlobalBag) →
-      setGlobals (compilePatBindings trace base todo body).2 = setGlobals body by
-    exact this _ todo rfl base todoSafe
-  intro n
-  induction n using Nat.strongRecOn with
-  | ind n ih =>
-    intro todo hn base todoSafe
-    cases todo with
-    | nil => simp [compilePatBindings]
-    | cons item rest =>
-      obtain ⟨pattern, index, value⟩ := item
-      have valueSafe := todoSafe pattern index value (by simp)
-      have restSafe : ∀ p k e, (p, k, e) ∈ rest → setGlobals e = emptyGlobalBag := by
-        intro p k e member
-        exact todoSafe p k e (by simp [member])
-      cases pattern with
-      | pany | plit _ =>
-        rw [compilePatBindings]
-        exact ih _ (by simp [bindingTodoWeight, bindingWeight] at hn ⊢; omega) rest rfl base restSafe
-      | pvar name =>
-        have ih := ih _ (by simp [bindingTodoWeight, bindingWeight] at hn ⊢; omega) rest rfl base restSafe
-        cases run : compilePatBindings trace base rest body with
-        | mk used result =>
-          simp only [run] at ih
-          simp [compilePatBindings, run, setGlobals, valueSafe, ih, unionEmptyLeft]
-      | pcon tag patterns =>
-        have allSafe : ∀ p k e, (p, k, e) ∈ (patternEntries trace base 0 patterns).map Prod.snd ++ rest →
-            setGlobals e = emptyGlobalBag := by
-          intro p k e member
-          rcases List.mem_append.mp member with member | member
-          · exact setGlobals_patternEntries trace base 0 patterns p k e member
-          · exact restSafe p k e member
-        have ih := ih _ (by simp [bindingTodoWeight, bindingWeight, bindingTodoWeight_append, patternEntries_weight] at hn ⊢; omega)
-          ((patternEntries trace base 0 patterns).map Prod.snd ++ rest) rfl (base + 2 + patterns.length) allSafe
-        cases run : compilePatBindings trace (base + 2 + patterns.length)
-            ((patternEntries trace base 0 patterns).map Prod.snd ++ rest) body with
-        | mk used result =>
-          simp only [run] at ih
-          simp only [compilePatBindings, run]
-          exact (setGlobals_projectionFold trace value result _ valueSafe).trans ih
-      | pas pattern name =>
-        have allSafe : ∀ p k e, (p, k, e) ∈
-            (pattern, base + 1, .varLocal trace (encNumToName (base + 1))) :: rest →
-            setGlobals e = emptyGlobalBag := by
-          intro p k e member
-          simp only [List.mem_cons, Prod.mk.injEq] at member
-          rcases member with ⟨_, _, rfl⟩ | member
-          · simp [setGlobals]
-          · exact restSafe p k e member
-        have ih := ih _ (by simp [bindingTodoWeight, bindingWeight] at hn ⊢; omega)
-          ((pattern, base + 1, .varLocal trace (encNumToName (base + 1))) :: rest) rfl (base + 2) allSafe
-        cases run : compilePatBindings trace (base + 2)
-            ((pattern, base + 1, .varLocal trace (encNumToName (base + 1))) :: rest) body with
-        | mk used result =>
-          simp only [run] at ih
-          simp [compilePatBindings, run, setGlobals, valueSafe, ih, unionEmptyLeft]
-      | pref pattern =>
-        have allSafe : ∀ p k e, (p, k, e) ∈
-            (pattern, base + 1, .varLocal trace (encNumToName (base + 1))) :: rest →
-            setGlobals e = emptyGlobalBag := by
-          intro p k e member
-          simp only [List.mem_cons, Prod.mk.injEq] at member
-          rcases member with ⟨_, _, rfl⟩ | member
-          · simp [setGlobals]
-          · exact restSafe p k e member
-        have ih := ih _ (by simp [bindingTodoWeight, bindingWeight] at hn ⊢; omega)
-          ((pattern, base + 1, .varLocal trace (encNumToName (base + 1))) :: rest) rfl (base + 2) allSafe
-        cases run : compilePatBindings trace (base + 2)
-            ((pattern, base + 1, .varLocal trace (encNumToName (base + 1))) :: rest) body with
-        | mk used result =>
-          simp only [run] at ih
-          simp [compilePatBindings, run, setGlobals, elistGlobals, opGlobalBag, elistGlobals, valueSafe, ih, unionEmptyLeft, unionEmptyRight]
+  revert todoSafe
+  induction base, todo using compilePatBindings.induct trace body with
+  | case1 i =>
+    intro _
+    simp [compilePatBindings]
+  | case2 i key expression rest ih =>
+    intro safe
+    rw [compilePatBindings]
+    apply ih
+    intro p k e member
+    exact safe p k e (by simp [member])
+  | case3 i key expression rest lit ih =>
+    intro safe
+    rw [compilePatBindings]
+    apply ih
+    intro p k e member
+    exact safe p k e (by simp [member])
+  | case4 i key expression rest name used continuation compiled ih =>
+    intro safe
+    have valueSafe := safe (.pvar name) key expression (by simp)
+    have restSafe : ∀ p k e, (p, k, e) ∈ rest → setGlobals e = emptyGlobalBag := by
+      intro p k e member
+      exact safe p k e (by simp [member])
+    have next := ih restSafe
+    rw [compiled] at next
+    simp [compilePatBindings, compiled, setGlobals, valueSafe, next, Flapjack.bagUnion_empty_left]
+  | case5 i key expression rest stamp patterns entries used continuation compiled ih =>
+    dsimp only [entries] at compiled
+    intro safe
+    have valueSafe := safe (.pcon stamp patterns) key expression (by simp)
+    have restSafe : ∀ p k e, (p, k, e) ∈ rest → setGlobals e = emptyGlobalBag := by
+      intro p k e member
+      exact safe p k e (by simp [member])
+    have allSafe : ∀ p k e, (p, k, e) ∈ (patternEntries trace i 0 patterns).map Prod.snd ++ rest →
+        setGlobals e = emptyGlobalBag := by
+      intro p k e member
+      rcases List.mem_append.mp member with member | member
+      · exact setGlobals_patternEntries trace i 0 patterns p k e member
+      · exact restSafe p k e member
+    have next := ih allSafe
+    rw [compiled] at next
+    simp only [compilePatBindings, compiled]
+    exact (setGlobals_projectionFold trace expression continuation _ valueSafe).trans next
+  | case6 i key expression rest pattern name generated used continuation compiled ih =>
+    dsimp only [generated] at compiled
+    intro safe
+    have valueSafe := safe (.pas pattern name) key expression (by simp)
+    have allSafe : ∀ p k e, (p, k, e) ∈
+        (pattern, i + 1, .varLocal trace (encNumToName (i + 1))) :: rest →
+        setGlobals e = emptyGlobalBag := by
+      intro p k e member
+      simp only [List.mem_cons, Prod.mk.injEq] at member
+      rcases member with ⟨_, _, rfl⟩ | member
+      · simp [setGlobals]
+      · exact safe p k e (by simp [member])
+    have next := ih allSafe
+    rw [compiled] at next
+    simp [compilePatBindings, compiled, setGlobals, valueSafe, next, Flapjack.bagUnion_empty_left]
+  | case7 i key expression rest pattern generated used continuation compiled ih =>
+    dsimp only [generated] at compiled
+    intro safe
+    have valueSafe := safe (.pref pattern) key expression (by simp)
+    have allSafe : ∀ p k e, (p, k, e) ∈
+        (pattern, i + 1, .varLocal trace (encNumToName (i + 1))) :: rest →
+        setGlobals e = emptyGlobalBag := by
+      intro p k e member
+      simp only [List.mem_cons, Prod.mk.injEq] at member
+      rcases member with ⟨_, _, rfl⟩ | member
+      · simp [setGlobals]
+      · exact safe p k e (by simp [member])
+    have next := ih allSafe
+    rw [compiled] at next
+    simp [compilePatBindings, compiled, setGlobals, elistGlobals, opGlobalBag, valueSafe, next,
+      Flapjack.bagUnion_empty_left, Flapjack.bagUnion_empty_right]
 
 /-- Pattern binding leaves the continuation's global bag unchanged. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "set_globals_compile_pat_bindings"]
@@ -547,45 +515,52 @@ theorem setGlobals_compilePatBindings (t : Tra) (i : Nat)
   intro p k e mem
   exact safe (p, k, e) mem
 
-/-- Decoding a decision tree preserves global-initialization safety when every reachable
-branch and the default are global-initialization-safe. -/
-theorem esgcFree_decodeDtree (trace : Tra) (branches : Spt FlatLang.Exp) (value default : FlatLang.Exp) (tree : DTree)
-    (valueSafe : esgcFree value) (defaultSafe : esgcFree default)
-    (branchesSafe : ∀ index branch, sptLookup index branches = some branch → esgcFree branch) :
+/-- Decoding a decision tree preserves global-initialization safety. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "esgc_free_decode_dtree"]
+theorem esgcFree_decodeDtree (value default : FlatLang.Exp) (branches : Spt FlatLang.Exp)
+    (trace : Tra) (tree : DTree)
+    (premises : esgcFree value ∧ esgcFree default ∧
+      ∀ branch ∈ sptToList branches, esgcFree branch) :
     esgcFree (decodeDtree trace branches value default tree) := by
+  obtain ⟨valueSafe, defaultSafe, branchesSafe⟩ := premises
   induction tree with
   | fail => exact defaultSafe
   | typeFail => simp [decodeDtree, esgcFree]
   | leaf index =>
     cases found : sptLookup index branches with
     | none => simpa [decodeDtree, found] using defaultSafe
-    | some branch => simpa [decodeDtree, found] using branchesSafe index branch found
+    | some branch =>
+      simpa [decodeDtree, found] using branchesSafe branch ((sptMemToList branch branches).2 ⟨index, found⟩)
   | if_ guard yes no ihYes ihNo =>
     simp only [decodeDtree]
     split_ifs
     · exact ihYes
     · exact ihNo
-    · exact esgcFree_smartIf trace _ _ _ (esgcFree_decodeGuard trace value _ valueSafe) ihYes ihNo
+    · exact esgcFree_smartIf trace _ _ _ (esgcFree_decodeGuard value trace _ valueSafe) ihYes ihNo
 
-/-- Decoding a decision tree preserves empty global bags when every reachable
-branch and the default are global-write-free. -/
-theorem setGlobals_decodeDtree_aux (trace : Tra) (branches : Spt FlatLang.Exp) (value default : FlatLang.Exp) (tree : DTree)
-    (valueSafe : setGlobals value = emptyGlobalBag) (defaultSafe : setGlobals default = emptyGlobalBag)
-    (branchesSafe : ∀ index branch, sptLookup index branches = some branch → setGlobals branch = emptyGlobalBag) :
+/-- Decoding preserves empty global bags for a safe value, default, and
+all expressions in the branch tree. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "set_globals_decode_dtree_empty"]
+theorem setGlobals_decodeDtree (value default : FlatLang.Exp) (branches : Spt FlatLang.Exp)
+    (trace : Tra) (tree : DTree)
+    (premises : setGlobals value = emptyGlobalBag ∧ setGlobals default = emptyGlobalBag ∧
+      ∀ branch ∈ sptToList branches, setGlobals branch = emptyGlobalBag) :
     setGlobals (decodeDtree trace branches value default tree) = emptyGlobalBag := by
+  obtain ⟨valueSafe, defaultSafe, branchesSafe⟩ := premises
   induction tree with
   | fail => exact defaultSafe
   | typeFail => simp [decodeDtree, setGlobals]
   | leaf index =>
     cases found : sptLookup index branches with
     | none => simpa [decodeDtree, found] using defaultSafe
-    | some branch => simpa [decodeDtree, found] using branchesSafe index branch found
+    | some branch =>
+      simpa [decodeDtree, found] using branchesSafe branch ((sptMemToList branch branches).2 ⟨index, found⟩)
   | if_ guard yes no ihYes ihNo =>
     simp only [decodeDtree]
     split_ifs
     · exact ihYes
     · exact ihNo
-    · exact setGlobals_smartIf trace _ _ _ (setGlobals_decodeGuard trace value _ valueSafe) ihYes ihNo
+    · exact setGlobals_smartIf trace _ _ _ (setGlobals_decodeGuard value trace _ valueSafe) ihYes ihNo
 
 
 /-- A compiled branch remains global-initialization-safe when its value and body are. -/
@@ -606,75 +581,6 @@ private theorem setGlobals_compilePatRhs (trace : Tra) (base : Nat) (value : Fla
     setGlobals (compilePatRhs trace base value (pattern, body)) = setGlobals body := by
   apply setGlobals_compilePatBindings trace (base + 1) [(pattern, base, value)] body
   simp [safe]
-
-/-- Every lookup in a branch-table fold is safe if the input tree and all
-inserted expressions are safe. -/
-theorem esgcFree_branchFold (branches : List FlatLang.Exp) (start : Nat) (tree : Spt FlatLang.Exp)
-    (treeSafe : ∀ index branch, sptLookup index tree = some branch → esgcFree branch)
-    (branchesSafe : ∀ branch, branch ∈ branches → esgcFree branch) :
-    ∀ index branch, sptLookup index (branches.foldl (fun (state : Nat × Spt FlatLang.Exp) item =>
-      (state.1 + 1, sptInsert state.1 item state.2)) (start, tree)).2 = some branch →
-      esgcFree branch := by
-  induction branches generalizing start tree with
-  | nil => exact treeSafe
-  | cons first rest ih =>
-    simp only [List.foldl_cons]
-    apply ih (start + 1) (sptInsert start first tree)
-    · intro index branch found
-      by_cases equal : index = start
-      · subst index
-        rw [sptLookup_sptInsert_same] at found
-        cases found
-        exact branchesSafe first (by simp)
-      · rw [sptLookup_sptInsert_ne start index first tree equal] at found
-        exact treeSafe index branch found
-    · intro branch member
-      exact branchesSafe branch (by simp [member])
-
-/-- The branch table generated by pattern compilation contains only safe
-expressions when all its inputs are safe. -/
-theorem esgcFree_branchTree (branches : List FlatLang.Exp)
-    (branchesSafe : ∀ branch, branch ∈ branches → esgcFree branch) :
-    ∀ index branch, sptLookup index (branchTree branches) = some branch → esgcFree branch := by
-  apply esgcFree_branchFold branches 0 .ln
-  · intro index branch found
-    simp [sptLookup] at found
-  · exact branchesSafe
-
-/-- Every lookup in a branch-table fold is safe if the input tree and all
-inserted expressions are safe. -/
-theorem setGlobals_branchFold (branches : List FlatLang.Exp) (start : Nat) (tree : Spt FlatLang.Exp)
-    (treeSafe : ∀ index branch, sptLookup index tree = some branch → setGlobals branch = emptyGlobalBag)
-    (branchesSafe : ∀ branch, branch ∈ branches → setGlobals branch = emptyGlobalBag) :
-    ∀ index branch, sptLookup index (branches.foldl (fun (state : Nat × Spt FlatLang.Exp) item =>
-      (state.1 + 1, sptInsert state.1 item state.2)) (start, tree)).2 = some branch →
-      setGlobals branch = emptyGlobalBag := by
-  induction branches generalizing start tree with
-  | nil => exact treeSafe
-  | cons first rest ih =>
-    simp only [List.foldl_cons]
-    apply ih (start + 1) (sptInsert start first tree)
-    · intro index branch found
-      by_cases equal : index = start
-      · subst index
-        rw [sptLookup_sptInsert_same] at found
-        cases found
-        exact branchesSafe first (by simp)
-      · rw [sptLookup_sptInsert_ne start index first tree equal] at found
-        exact treeSafe index branch found
-    · intro branch member
-      exact branchesSafe branch (by simp [member])
-
-/-- The branch table generated by pattern compilation contains only safe
-expressions when all its inputs are safe. -/
-theorem setGlobals_branchTree (branches : List FlatLang.Exp)
-    (branchesSafe : ∀ branch, branch ∈ branches → setGlobals branch = emptyGlobalBag) :
-    ∀ index branch, sptLookup index (branchTree branches) = some branch → setGlobals branch = emptyGlobalBag := by
-  apply setGlobals_branchFold branches 0 .ln
-  · intro index branch found
-    simp [sptLookup] at found
-  · exact branchesSafe
-
 
 private theorem compiledRows_globals (t : Tra) (i : Nat) (x : FlatLang.Exp)
     (ps : List (FlatLang.Pat × FlatLang.Exp)) (safe : setGlobals x = emptyGlobalBag) :
@@ -713,24 +619,16 @@ theorem setGlobals_compilePats (cfg : Config) (naive : Bool) (t : Tra) (n : Nat)
       apply parts body
       simp only [List.mem_cons, List.mem_map]
       exact Or.inr ⟨(p, body), hmem, rfl⟩
-    have result := setGlobals_decodeDtree_aux t _ x dflt
-      (PatternComp.comp (ps.zipIdx.map fun ((p, _), j) => (encodePat p, j))) safe.2 defaultSafe
-      (setGlobals_branchTree _ branchesSafe)
+    have result := setGlobals_decodeDtree x dflt (branchTree (ps.map (compilePatRhs t n x))) t
+      (PatternComp.comp (ps.zipIdx.map fun ((p, _), j) => (encodePat p, j)))
+      ⟨safe.2, defaultSafe, by
+        intro branch member
+        apply branchesSafe branch
+        have eq := congrArg (fun (values : Set FlatLang.Exp) => branch ∈ values)
+          (setToList_fromList (ps.map (compilePatRhs t n x)))
+        exact eq.mp member⟩
     simp only [compilePats, Bool.false_eq_true, ↓reduceIte]
     rw [result, allEmpty]
-
-private theorem esgcFree_zip_right_mem {α β : Type} (xs : List α) (ys : List β) (a : α) (b : β)
-    (member : (a, b) ∈ xs.zip ys) : b ∈ ys := by
-  induction xs generalizing ys with
-  | nil => simp at member
-  | cons x xs ih =>
-    cases ys with
-    | nil => simp at member
-    | cons y ys =>
-      simp only [List.zip_cons_cons, List.mem_cons, Prod.mk.injEq] at member
-      rcases member with ⟨_, rfl⟩ | member
-      · simp
-      · exact List.mem_cons_of_mem _ (ih ys member)
 
 /-- Both implementations of branch compilation preserve global-initialization safety. -/
 theorem esgcFree_compilePats (cfg : Config) (naive : Bool) (trace : Tra) (base : Nat)
@@ -746,12 +644,18 @@ theorem esgcFree_compilePats (cfg : Config) (naive : Bool) (trace : Tra) (base :
   cases naive with
   | false =>
     simp only [compilePats, Bool.false_eq_true, ↓reduceIte]
-    exact esgcFree_decodeDtree trace _ value default _ valueSafe defaultSafe (esgcFree_branchTree _ branchesSafe)
+    apply esgcFree_decodeDtree value default _ trace _
+    refine ⟨valueSafe, defaultSafe, ?_⟩
+    intro branch member
+    apply branchesSafe branch
+    have eq := congrArg (fun (values : Set FlatLang.Exp) => branch ∈ values)
+      (setToList_fromList (rows.map (compilePatRhs trace base value)))
+    exact eq.mp member
   | true =>
     simp only [compilePats, ↓reduceIte]
     apply esgcFree_naivePatternMatches trace value default _ valueSafe defaultSafe
     intro pattern branch member
-    exact branchesSafe branch (esgcFree_zip_right_mem _ _ pattern branch member)
+    exact branchesSafe branch (List.of_mem_zip member).2
 
 
 

@@ -1,3 +1,4 @@
+import Flapjack.SemanticPrimitivesProps.ResultRelation
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ClockedApplication
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ClockedDeclaration
 
@@ -57,11 +58,11 @@ theorem expressionSimulationUpTo_all {C F : Type} (clock : Nat) :
         intro cfg stateCfg expression weightEq
         cases expression with
         | lit trace literal =>
-          exact expressionSimulation_upTo cfg stateCfg clock _ (compile_lit_simulation cfg stateCfg trace literal)
+          exact compile_lit_simulation cfg stateCfg clock trace literal
         | varLocal trace name =>
-          exact expressionSimulation_upTo cfg stateCfg clock _ (compile_var_simulation cfg stateCfg trace name)
+          exact compile_var_simulation cfg stateCfg clock trace name
         | fn trace name body =>
-          exact expressionSimulation_upTo cfg stateCfg clock _ (compile_fn_simulation cfg stateCfg trace name body)
+          exact compile_fn_simulation cfg stateCfg clock trace name body
         | raise trace body =>
           apply compile_raise_simulation_upTo cfg stateCfg clock trace body
           apply weightIH (FlatSem.expWeight body) (by simp [FlatSem.expWeight] at weightEq; omega) cfg stateCfg body rfl
@@ -145,43 +146,20 @@ theorem expressionSimulationUpTo_all {C F : Type} (clock : Nat) :
                   intro bodySourceEnv bodyTargetEnv bodySource bodyTarget bodyFinal bodyResult bodyN bodyClock bodyRun bodyEnvs bodyStates bodyBound bodySafe
                   exact generatedIH bodySourceEnv bodyTargetEnv bodySource bodyTarget bodyFinal bodyResult bodyN (by omega)
                     bodyRun bodyEnvs bodyStates bodyBound bodySafe
-                · exact compile_nonrecursiveSourceApp_simulation_upTo cfg stateCfg trace sourceOp args clock isCall isEval isForce argsIH
-          | globalVarAlloc count => exact compile_flatApp_simulation_upTo cfg stateCfg trace (.globalVarAlloc count) args clock (by intro _; simp) argsIH
-          | globalVarInit index => exact compile_flatApp_simulation_upTo cfg stateCfg trace (.globalVarInit index) args clock (by intro _; simp) argsIH
-          | globalVarLookup index => exact compile_flatApp_simulation_upTo cfg stateCfg trace (.globalVarLookup index) args clock (by intro _; simp) argsIH
-          | tagLenEq tag length => exact compile_flatApp_simulation_upTo cfg stateCfg trace (.tagLenEq tag length) args clock (by intro _; simp) argsIH
-          | lenEq length => exact compile_flatApp_simulation_upTo cfg stateCfg trace (.lenEq length) args clock (by intro _; simp) argsIH
-          | el index => exact compile_flatApp_simulation_upTo cfg stateCfg trace (.el index) args clock (by intro _; simp) argsIH
-          | id => exact compile_flatApp_simulation_upTo cfg stateCfg trace .id args clock (by intro _; simp) argsIH
+                · exact compile_simpleApp_simulation_upTo cfg stateCfg trace (.src sourceOp) args clock (by simpa using isCall) (by simpa using isEval) (by simpa using isForce) argsIH
+          | globalVarAlloc count => exact compile_simpleApp_simulation_upTo cfg stateCfg trace (.globalVarAlloc count) args clock (by simp) (by simp) (by simp) argsIH
+          | globalVarInit index => exact compile_simpleApp_simulation_upTo cfg stateCfg trace (.globalVarInit index) args clock (by simp) (by simp) (by simp) argsIH
+          | globalVarLookup index => exact compile_simpleApp_simulation_upTo cfg stateCfg trace (.globalVarLookup index) args clock (by simp) (by simp) (by simp) argsIH
+          | tagLenEq tag length => exact compile_simpleApp_simulation_upTo cfg stateCfg trace (.tagLenEq tag length) args clock (by simp) (by simp) (by simp) argsIH
+          | lenEq length => exact compile_simpleApp_simulation_upTo cfg stateCfg trace (.lenEq length) args clock (by simp) (by simp) (by simp) argsIH
+          | el index => exact compile_simpleApp_simulation_upTo cfg stateCfg trace (.el index) args clock (by simp) (by simp) (by simp) argsIH
+          | id => exact compile_simpleApp_simulation_upTo cfg stateCfg trace .id args clock (by simp) (by simp) (by simp) argsIH
     intro cfg stateCfg expression
     exact allWeights (FlatSem.expWeight expression) cfg stateCfg expression rfl
 
-/-- Every expression satisfies the proof-side forward simulation without a
-fixed external clock bound. -/
-theorem expressionSimulation_all {C F : Type} (cfg stateCfg : Config) (expression : FlatLang.Exp) :
-    ExpressionSimulation (C := C) (F := F) cfg stateCfg expression := by
-  intro sourceEnv targetEnv source target sourceFinal sourceResult n run envs states bound safe
-  exact expressionSimulationUpTo_all source.clock cfg stateCfg expression
-    sourceEnv targetEnv source target sourceFinal sourceResult n (by omega) run envs states bound safe
-
-/-- Compiled declaration lists preserve related states and non-type-error
-outcomes in the current proof-side evaluator. -/
-theorem evaluateDecs_simulation_all {C F : Type} (cfg stateCfg : Config)
-    (source target sourceFinal : FlatSem.State C F) (declarations : List FlatLang.Exp)
-    (outcome : Option (SemanticPrimitivesHOL.ErrorResult FlatSem.Value))
-    (states : StateRel stateCfg source target) (run : FlatSem.evaluateDecs source declarations = (sourceFinal, outcome))
-    (safe : outcome ≠ some (.abort .typeError)) :
-    ∃ targetFinal targetOutcome,
-      FlatSem.evaluateDecs target (declarations.map (compileDec cfg)) = (targetFinal, targetOutcome) ∧
-      StateRel stateCfg sourceFinal targetFinal ∧ optionRel FlatErrorRel outcome targetOutcome :=
-  evaluateDecs_simulation cfg stateCfg declarations (by intro declaration _; exact expressionSimulation_all cfg stateCfg declaration)
-    source target sourceFinal outcome states run safe
-
-/-- The expression-list and declaration-list simulations in a single
-conjunction. This is proof-side infrastructure: `FlatSem.evaluate`, `ValueRel`,
-`EnvRel`, and `StateRel` have not yet completed HOL correspondence review, so
-this is not tagged as the original theorem. -/
-theorem compileExps_evaluate_proofSide {C F : Type} (stateCfg : Config) :
+/-- Expression-list and declaration-list compilation preserve evaluation. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "compile_exps_evaluate"]
+theorem compileExps_evaluate {C F : Type} (stateCfg : Config) :
     (∀ (env1 : FlatSem.Environment FlatSem.Value) (s1 : FlatSem.State C F)
       (xs : List FlatLang.Exp) (t1 : FlatSem.State C F)
       (r1 : SemanticPrimitivesHOL.Result (List FlatSem.Value) FlatSem.Value)
@@ -189,12 +167,13 @@ theorem compileExps_evaluate_proofSide {C F : Type} (stateCfg : Config) :
       (env2 : FlatSem.Environment FlatSem.Value) (s2 : FlatSem.State C F) (cfg : Config),
       FlatSem.evaluate env1 s1 xs = (t1, r1) → compileExps cfg xs = (i, sg, ys) →
       EnvRel n env1 env2 → StateRel stateCfg s1 s2 → i < n → r1 ≠ .err (.abort .typeError) →
-      ∃ t2 r2, FlatResultRel r1 r2 ∧ StateRel stateCfg t1 t2 ∧ FlatSem.evaluate env2 s2 ys = (t2, r2)) ∧
+      ∃ t2 r2, SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel r1 r2 ∧
+        StateRel stateCfg t1 t2 ∧ FlatSem.evaluate env2 s2 ys = (t2, r2)) ∧
     (∀ (s1 : FlatSem.State C F) (decs : List FlatLang.Exp) (s2 t1 : FlatSem.State C F)
       (cfg : Config) (decs' : List FlatLang.Exp) (res : Option (SemanticPrimitivesHOL.ErrorResult FlatSem.Value)),
       FlatSem.evaluateDecs s1 decs = (t1, res) → decs' = decs.map (compileDec cfg) →
       StateRel stateCfg s1 s2 → res ≠ some (.abort .typeError) →
-      ∃ t2 res', FlatSem.evaluateDecs s2 decs' = (t2, res') ∧ optionRel FlatErrorRel res res' ∧ StateRel stateCfg t1 t2) := by
+      ∃ t2 res', FlatSem.evaluateDecs s2 decs' = (t2, res') ∧ optionRel (SemanticPrimitivesProps.excRel ValueRel) res res' ∧ StateRel stateCfg t1 t2) := by
   constructor
   · intro env1 s1 xs t1 r1 i sg ys n env2 s2 cfg run compiled envs states bound safe
     have compiledBound : (compileExps cfg xs).1 < n := by simpa [compiled] using bound
@@ -206,7 +185,9 @@ theorem compileExps_evaluate_proofSide {C F : Type} (stateCfg : Config) :
   · intro s1 decs s2 t1 cfg decs' res run compiled states safe
     subst decs'
     obtain ⟨t2, res', targetRun, finalStates, outcomes⟩ :=
-      evaluateDecs_simulation_all cfg stateCfg s1 s2 t1 decs res states run safe
+      evaluateDecs_simulation_upTo cfg stateCfg s1.clock decs
+        (fun declaration _ => expressionSimulationUpTo_all s1.clock cfg stateCfg declaration)
+        s1 s2 t1 res (Nat.le_refl _) states run safe
     exact ⟨t2, res', targetRun, outcomes, finalStates⟩
 
 end Flapjack.Compiler.Backend.FlatPattern

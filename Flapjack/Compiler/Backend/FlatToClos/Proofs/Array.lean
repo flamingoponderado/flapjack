@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Memory
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.EvaluateCases
+import Flapjack.Misc.RichList
 
 /-! Array-store prerequisites for flat-to-closure simulation. -/
 namespace Flapjack.Compiler.Backend.FlatToClos
@@ -108,14 +109,6 @@ theorem evaluate_allocFixed {C F : Type} (env : FlatSem.Environment FlatSem.Valu
           storeAlloc, ClosSem.doApp, ClosSem.applyMemory, index, updated,
           EvalResultRel.value (.cons (ValueRel.loc true next.refs.length) .nil)]
 
-/-- Repeated related values form related arrays of the same length. -/
-theorem replicate_values_related (count : Nat) (value : FlatSem.Value) (targetValue : ClosSem.Value)
-    (related : ValueRel value targetValue) :
-    List.Forall₂ ValueRel (List.replicate count value) (List.replicate count targetValue) := by
-  induction count with
-  | zero => exact .nil
-  | succ count ih => exact .cons related ih
-
 /-- The sized-array check raises the source Subscript exception for a
 negative size, without changing either store. -/
 theorem allocArray_negative {C F : Type} (source : FlatSem.State C F)
@@ -178,7 +171,7 @@ theorem allocArray_body_related {C F : Type} (source : FlatSem.State C F)
       states, EvalResultRel.raise (allocArray_negative source size value negative).2]
   · have index := leastUnusedRef_eq_length source.refs target.refs states.2.2.2.1
     have updated := stateRel_allocArray source target (List.replicate size.toNat value)
-      (List.replicate size.toNat targetValue) states (replicate_values_related _ _ _ related)
+      (List.replicate size.toNat targetValue) states ((Flapjack.forall₂_replicate_iff ValueRel _ value targetValue).mpr (fun _ => related))
     simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
       storeAlloc, negative, evaluate_allocArray_body_nonnegative target trace env size targetValue negative,
       index, updated, EvalResultRel.value (.cons (ValueRel.loc true source.refs.length) .nil)]

@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.FlatProps.ValueBasics
 import Flapjack.FiniteMap.AlistExact.Lookup
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ThunkRel
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBounded
@@ -9,32 +10,24 @@ namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL
 open OracleInvariant
 
-/-- Decrementing both evaluator clocks preserves the factored invariant.
-This is used before entering a function body. -/
-theorem factoredInvariant_decClock {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (gen : EnvironmentGenerationStore) (genv : GlobalEnv)
-    (idxs : NextIndices × NextIndices × Set (Nat × IndexKind))
-    (source : State F) (flat : FlatSem.State C F)
-    (invariant : factoredInvariant interp transform gen genv idxs source flat) :
-    factoredInvariant interp transform gen genv idxs (EvaluateHOL.decClock source) (FlatSem.decClock flat) := by
-  exact (invariantDecClock interp transform gen genv idxs source flat invariant).2
-
-/-- Looking up a compiled recursive function preserves its name and argument
-and compiles its body under the same recursive environment. -/
-theorem findRecFun_compileFuns (name : VarN) (trace : List VarN) (env : Environment)
-    (funs : List (VarN × VarN × AstHOL.Exp)) :
-    findRecFun name (compileFuns trace env funs) =
-      (findRecFun name funs).map (fun (arg, body) =>
-        (arg, compileExp (name :: trace) { env with v := nsBind arg (.localName .none arg) env.v } body)) := by
+/-- A found recursive function remains found after compiling the group. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "find_recfun"]
+theorem findRecFun_compileFuns (name : VarN) (funs : List (VarN × VarN × AstHOL.Exp))
+    (body : AstHOL.Exp) (env : Environment) (arg : VarN) (trace : List VarN)
+    (found : findRecFun name funs = some (arg, body)) :
+    findRecFun name (compileFuns trace env funs) = some
+      (arg, compileExp (name :: trace) { env with v := nsBind arg (.localName .none arg) env.v } body) := by
   induction funs with
-  | nil => rfl
+  | nil => simp [findRecFun] at found
   | cons head tail ih =>
-    obtain ⟨fn, arg, body⟩ := head
+    obtain ⟨fn, param, expr⟩ := head
     by_cases eq : fn = name
     · subst fn
+      simp [findRecFun] at found
+      obtain ⟨rfl, rfl⟩ := found
       simp [compileFuns, findRecFun]
-    · simp [compileFuns, findRecFun, eq, ih]
+    · simp [findRecFun, eq] at found
+      simpa [compileFuns, findRecFun, eq] using ih found
 
 /-- Calling related non-recursive closures creates related argument
 bindings and compiles the function body under the extended local traces. -/
@@ -110,7 +103,7 @@ theorem doOpApp_recclosure_local (genv : GlobalEnv) (baseMap : Environment) (bas
   let recursiveLocal := buildRecEnv funs sourceEnv captured
   let recursiveFlat := FlatSem.buildRecEnv compiled flatCaptured flatCaptured.v
   have names : recursiveFlat.map Prod.fst = funs.map Prod.fst ++ flatCaptured.v.map Prod.fst := by
-    simp [recursiveFlat, compiled, flatBuildRecEnv_names, compileFuns_local_names]
+    simp [recursiveFlat, compiled, FlatProps.buildRecEnv_eq_map, List.map_map, Function.comp_def, compileFuns_names]
   have recursiveRel : EnvRel genv recursiveLocal recursiveFlat := by
     exact localRecEnv_related genv baseMap baseEnv captured flatCaptured funs trace traces locals globals len
   have newInv : GlobalEnvInv genv baseMap (fun n => n ∈ ((arg, flatArgument) :: recursiveFlat).map Prod.fst) baseEnv := by
@@ -126,15 +119,16 @@ theorem doOpApp_recclosure_local (genv : GlobalEnv) (baseMap : Environment) (bas
   have sourceBind : nsAppend (nsBind arg argument recursiveLocal) baseEnv.v =
       nsBind arg argument (buildRecEnv funs sourceEnv sourceEnv.v) := by
     have recBind : buildRecEnv funs sourceEnv sourceEnv.v = nsAppend recursiveLocal baseEnv.v := by
-      simpa [sourceEnv, recursiveLocal] using buildRecEnv_nsAppend funs sourceEnv captured baseEnv.v
+      simp only [sourceEnv, recursiveLocal,
+        Flapjack.SemanticPrimitivesProps.buildRecEnv_merge funs () , ← nsAppend_assoc]
     rw [recBind]
     cases recursiveLocal
     cases baseEnv.v
     rfl
   have compiledFound : findRecFun name compiled = some (arg,
       compileExp (name :: trace) { recMap with v := nsBind arg (.localName .none arg) recMap.v } body) := by
-    simp [compiled, findRecFun_compileFuns, found]
-  have flatDistinct : (compiled.map Prod.fst).Nodup := by simpa [compiled, compileFuns_local_names] using distinct
+    exact findRecFun_compileFuns name funs body recMap arg trace found
+  have flatDistinct : (compiled.map Prod.fst).Nodup := by simpa [compiled, compileFuns_names] using distinct
   have mapBind : bindLocals (.none :: traces) (((arg, flatArgument) :: recursiveFlat).map Prod.fst) baseMap.v =
       nsBind arg (.localName .none arg) recMap.v := by
     simp [names, recMap, bindLocals, nsBindList]
@@ -159,19 +153,6 @@ theorem lookup_recursive_bindings (sourceEnv : SemEnv Value)
     · subst head
       simp
     · simp [List.lookup_cons, BEq.beq, eq, ih]
-
-/-- Installing a binding list is namespace append with its association list. -/
-theorem nsBindList_eq_nsAppend {α : Type} (entries : List (VarN × α)) (env : Namespace ModN VarN α) :
-    nsBindList entries env = nsAppend (alistToNs entries) env := by
-  cases env with
-  | bind values modules =>
-    induction entries with
-    | nil => rfl
-    | cons entry tail ih =>
-      obtain ⟨name, value⟩ := entry
-      simp only [nsBindList, List.foldr_cons] at ih ⊢
-      rw [ih]
-      rfl
 
 /-- Every global slot in a top-level recursive group contains a closure
 related to the corresponding source recursive closure. -/
@@ -210,12 +191,8 @@ theorem topRec_rebuilt_globalInv (genv : GlobalEnv) (baseMap : Environment) (sou
       { sourceEnv with v := buildRecEnv funs sourceEnv sourceEnv.v } := by
   have sourceShape : buildRecEnv funs sourceEnv sourceEnv.v =
       nsAppend (alistToNs ((funs.map Prod.fst).map (fun x => (x, Value.recclosure sourceEnv funs x)))) sourceEnv.v := by
-    have h := buildRecEnv_nsAppend funs sourceEnv nsEmpty sourceEnv.v
-    have emptyAppend : nsAppend (nsEmpty : Namespace ModN VarN Value) sourceEnv.v = sourceEnv.v := by
-      cases sourceEnv.v
-      rfl
-    rw [emptyAppend, dletrec_sourceEnv] at h
-    exact h
+    simpa only [List.map_map, Function.comp_def] using
+      Flapjack.SemanticPrimitivesProps.buildRecEnv_merge funs () sourceEnv sourceEnv.v
   cases globals with
   | intro _ _ _ values constructors =>
     apply GlobalEnvInv.intro
@@ -236,7 +213,7 @@ theorem topRec_rebuilt_globalInv (genv : GlobalEnv) (baseMap : Environment) (sou
           obtain ⟨n, storedTrace, flatValue, found, bound, slot, related⟩ :=
             topRec_group_slot_related genv baseMap sourceEnv funs flatEnv newVars names originalInv empty closures name member
           apply GlobalLookupRel.intro genv _ (.short name) _ n flatValue storedTrace _ bound slot related
-          rw [nsBindList_eq_nsAppend, nsLookup_append_short]
+          rw [← nsAppend_to_nsBindList, nsLookup_append_short]
           simp [alistToNs, nsLookup, found]
         · have absent : newVars.lookup name = none := by
             cases found : newVars.lookup name with
@@ -256,7 +233,7 @@ theorem topRec_rebuilt_globalInv (genv : GlobalEnv) (baseMap : Environment) (sou
           cases rel with
           | intro _ _ _ n flatValue trace found bound slot related =>
             apply GlobalLookupRel.intro genv _ (.short name) value n flatValue trace _ bound slot related
-            rw [nsBindList_eq_nsAppend, nsLookup_append_short]
+            rw [← nsAppend_to_nsBindList, nsLookup_append_short]
             simpa [alistToNs, nsLookup, absent] using found
       | long moduleName rest =>
         have baseLookup : nsLookup sourceEnv.v (.long moduleName rest) = some value := by
@@ -266,7 +243,7 @@ theorem topRec_rebuilt_globalInv (genv : GlobalEnv) (baseMap : Environment) (sou
         cases rel with
         | intro _ _ _ n flatValue trace found bound slot related =>
           apply GlobalLookupRel.intro genv _ (.long moduleName rest) value n flatValue trace _ bound slot related
-          rw [nsBindList_eq_nsAppend, nsLookup_append_long]
+          rw [← nsAppend_to_nsBindList, nsLookup_append_long]
           simpa [alistToNs, nsLookupMod] using found
     · exact constructors
 
@@ -437,7 +414,7 @@ theorem sourceCallResult_value_singleton {F : Type} (source : State F) (function
     · simp [sourceCallResult, h, zero, EvaluateHOL.timeoutError] at called
     · have run : EvaluateHOL.evaluate (EvaluateHOL.decClock source) env [body] = (after, .val values) := by
         simpa [sourceCallResult, h, zero] using called
-      exact EvaluateProps.evaluateSingFull (EvaluateHOL.decClock source) after env body values run
+      exact EvaluateProps.evaluateSingFull (EvaluateHOL.decClock source) env body after values run
 
 /-- The flat thunk-forcing expansion applies its stored function to unit.
 This relates the evaluator's synthetic expression to the call simulation. -/
@@ -494,7 +471,7 @@ theorem localCallResult_related {C F : Type} [Nonempty C]
       omega
     obtain ⟨nextGenv, bodySim, bodyPost⟩ := calledIH body genv start finish other
       (EvaluateHOL.decClock source) (FlatSem.decClock flat) baseEnv sourceLocal flatLocal traces trace baseMap gen
-      smaller locals globals len (factoredInvariant_decClock interp transform gen genv (start, finish, other) source flat invariant)
+      smaller locals globals len ((invariantDecClock interp transform gen genv (start, finish, other) source flat invariant).2)
       generation bodySafe
     refine ⟨nextGenv, ?_, ?_⟩
     · simpa [sourceCallResult, srcApp, zero, flatCallResult, dstApp, flatNonzero, ExprSim] using bodySim
@@ -859,7 +836,7 @@ theorem localEnvBounded_forceThunk {C F : Type} [Nonempty C]
         (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
       exact post
   | @value sourceValues flatValues valuesRel =>
-    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source nextSource sourceEnv body sourceValues sourceRun
+    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source sourceEnv body nextSource sourceValues sourceRun
     cases valuesRel with
     | cons operandRel tail =>
       cases tail with

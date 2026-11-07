@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.ValueRelation
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Operations
+import Mathlib.Data.List.Forall2
 
 /-! Proof-side facts for polymorphic equality during flat-to-closure lowering. -/
 namespace Flapjack.Compiler.Backend.FlatToClos
@@ -56,12 +57,6 @@ theorem listComparisonSim_cons_nil (head : FlatSem.Value) (tail : List FlatSem.V
   cases second
   simpa [FlatSem.doEqList, ClosSem.doEqList] using result
 
-private theorem related_length {source : List FlatSem.Value} {target : List ClosSem.Value}
-    (related : List.Forall₂ ValueRel source target) : source.length = target.length := by
-  induction related with
-  | nil => rfl
-  | cons _ _ ih => simp [ih]
-
 /-- Successful vector comparison is preserved when the field-list comparison is preserved. -/
 theorem doEq_vector_related_of_lists
     {s₁ s₂ : List FlatSem.Value} {t₁ t₂ : List ClosSem.Value}
@@ -70,7 +65,7 @@ theorem doEq_vector_related_of_lists
     (b : Bool) (result : FlatSem.doEq (.vectorv s₁) (.vectorv s₂) = .val b) :
     ClosSem.doEq (.block 0 t₁) (.block 0 t₂) = .val b := by
   have lengths : (s₁.length = s₂.length) ↔ (t₁.length = t₂.length) := by
-    rw [← related_length first, ← related_length second]
+    rw [← first.length_eq, ← second.length_eq]
   by_cases same : s₁.length = s₂.length
   · have related := step t₁ t₂ b first second (by simpa [FlatSem.doEq, same] using result)
     simpa [ClosSem.doEq, lengths.mp same] using related
@@ -85,7 +80,7 @@ theorem doEq_tuple_related_of_lists
     (b : Bool) (result : FlatSem.doEq (.conv none s₁) (.conv none s₂) = .val b) :
     ClosSem.doEq (.block 0 t₁) (.block 0 t₂) = .val b := by
   have lengths : (s₁.length = s₂.length) ↔ (t₁.length = t₂.length) := by
-    rw [← related_length first, ← related_length second]
+    rw [← first.length_eq, ← second.length_eq]
   by_cases same : s₁.length = s₂.length
   · have related := step t₁ t₂ b first second (by simpa [FlatSem.doEq, same] using result)
     simpa [ClosSem.doEq, lengths.mp same] using related
@@ -103,7 +98,7 @@ theorem doEq_con_related_of_lists
       (.conv (some (tag₂, type₂)) s₂) = .val b) :
     ClosSem.doEq (.block tag₁ t₁) (.block tag₂ t₂) = .val b := by
   have lengths : (s₁.length = s₂.length) ↔ (t₁.length = t₂.length) := by
-    rw [← related_length first, ← related_length second]
+    rw [← first.length_eq, ← second.length_eq]
   by_cases types : type₁ = type₂
   · subst type₂
     by_cases tags : tag₁ = tag₂
@@ -219,8 +214,8 @@ theorem valueComparisonSim_conv_no_rec
       | tuple first =>
         cases second with
         | tuple second =>
-          have len₁ := related_length first
-          have len₂ := related_length second
+          have len₁ := first.length_eq
+          have len₂ := second.length_eq
           simp_all [FlatSem.doEq, FlatSem.ctorSameType, ClosSem.doEq]
     | some stamp => simp [FlatSem.doEq, FlatSem.ctorSameType] at result
   | some stamp₁ =>
@@ -233,8 +228,8 @@ theorem valueComparisonSim_conv_no_rec
       | con first =>
         cases second with
         | con second =>
-          have len₁ := related_length first
-          have len₂ := related_length second
+          have len₁ := first.length_eq
+          have len₂ := second.length_eq
           by_cases tags : tag₁ = tag₂ <;> by_cases types : type₁ = type₂ <;>
             simp_all [FlatSem.doEq, FlatSem.ctorSameType, ClosSem.doEq]
 
@@ -246,8 +241,8 @@ theorem valueComparisonSim_vector_no_rec (xs ys : List FlatSem.Value)
   | vector first =>
     cases second with
     | vector second =>
-      have len₁ := related_length first
-      have len₂ := related_length second
+      have len₁ := first.length_eq
+      have len₂ := second.length_eq
       simp_all [FlatSem.doEq, ClosSem.doEq]
 
 /-- A false head comparison terminates the list comparison. -/
@@ -302,8 +297,7 @@ theorem doEq_simulation :
   · intro a n body b funs m; exact valueComparisonSim_closure_rec a b n m body funs
   · intro a funs n b m body; exact valueComparisonSim_rec_closure a b n m body funs
   · intro a funs₁ n b funs₂ m; exact valueComparisonSim_rec_rec a b n m funs₁ funs₂
-  · intro left right noLit noLoc noCon noVector noCC noCR noRC noRR
-    intro target₁ target₂ b first second result
+  · intro left right noLit noLoc noCon noVector noCC noCR noRC noRR target₁ target₂ b first second result
     cases left <;> cases right
     all_goals first
       | exact False.elim (noLit _ _ rfl rfl)

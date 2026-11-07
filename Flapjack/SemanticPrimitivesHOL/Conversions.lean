@@ -75,6 +75,25 @@ def maybeAllList {α : Type} : List (Option α) → Option (List α)
   | none :: _ => none
   | some head :: tail => (maybeAllList tail).map (head :: ·)
 
+/-- A successful option traversal reconstructs its inputs. This shared
+infrastructure has separate HOL counterparts in source compiler proofs. -/
+theorem maybeAllList_reconstruct {α : Type} : ∀ (xs : List (Option α)) (ys : List α),
+    maybeAllList xs = some ys → xs = ys.map some := by
+  intro xs
+  induction xs with
+  | nil => intro ys h; simp [maybeAllList] at h; subst ys; rfl
+  | cons head tail ih =>
+    intro ys h
+    cases head with
+    | none => simp [maybeAllList] at h
+    | some x =>
+      cases result : maybeAllList tail with
+      | none => simp [maybeAllList, result] at h
+      | some rest =>
+        simp [maybeAllList, result] at h
+        subst ys
+        simp [ih rest result]
+
 @[hol "cakeml/semantics/semanticPrimitivesScript.sml" "v_to_word8_def"]
 def valueToWord8 : Value → Option (BitVec 8)
   | .litv (.word8 word) => some word

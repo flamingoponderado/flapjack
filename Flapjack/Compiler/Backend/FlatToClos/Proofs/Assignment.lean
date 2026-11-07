@@ -85,7 +85,7 @@ theorem evaluate_assignment {C F : Type} (env : FlatSem.Environment FlatSem.Valu
             have refNot : (FlatSem.evaluate env next [reference]).2 ≠ .err (.abort .typeError) := by
               intro bad
               simp [bad] at notTypeError
-            have bound := FlatSem.evaluate_clock_spec.1 env source next [value] _ flatValue
+            have bound := FlatSem.evaluate_clock_spec.1 env source [value] _ next flatValue
             have refRelated := referenceSim next nextTarget states bound refNot
             simp only [EvalSim, compile, compileExps] at refRelated
             cases flatRef : FlatSem.evaluate env next [reference] with

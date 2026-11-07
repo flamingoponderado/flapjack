@@ -53,16 +53,6 @@ def ExprListSim {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace :
   let flat := FlatSem.evaluate flatEnv flatState (compileExps trace compMap expressions)
   EvalResultRel genv source.2 flat.2 ∧ StateRel genv source.1 flat.1
 
-/-- Compiling an expression list commutes with reversing its evaluation order. -/
-theorem compileExps_reverse (trace : List VarN) (compMap : Environment) (expressions : List AstHOL.Exp) :
-    compileExps trace compMap expressions.reverse = (compileExps trace compMap expressions).reverse := by
-  have mapEq : ∀ xs : List AstHOL.Exp, compileExps trace compMap xs = xs.map (compileExp trace compMap) := by
-    intro xs
-    induction xs with
-    | nil => rfl
-    | cons head tail ih => simp [compileExps, ih]
-  simp [mapEq]
-
 /-- A literal is simulated by the compiled literal. -/
 theorem exprSim_literal {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
     (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
@@ -71,25 +61,6 @@ theorem exprSim_literal {C F : Type} (genv : GlobalEnv) (compMap : Environment) 
     ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState (.lit lit) := by
   simp only [ExprSim, EvaluateHOL.evaluate, compileExp, FlatSem.evaluate]
   exact ⟨.value (.cons (.literal genv lit) .nil), statesRel⟩
-
-/-- Type annotations preserve a simulation of the annotated expression. -/
-theorem exprSim_tannot {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
-    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
-    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
-    (expr : AstHOL.Exp) (typ : AstHOL.AstT)
-    (sim : ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState expr) :
-    ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState (.tannot expr typ) := by
-  simpa only [ExprSim, EvaluateHOL.evaluate, compileExp] using sim
-
-/-- Source-location annotations preserve a simulation of the annotated expression. -/
-theorem exprSim_lannot {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
-    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
-    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
-    (expr : AstHOL.Exp) (loc : Misc.Location.Locs)
-    (sim : ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState expr) :
-    ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState (.lannot expr loc) := by
-  cases loc
-  simpa only [ExprSim, EvaluateHOL.evaluate, compileExp] using sim
 
 /-- Function creation preserves simulation when the captured local
 environment and the unshadowed global environment satisfy their relations. -/
@@ -104,12 +75,15 @@ theorem exprSim_function {C F : Type} (genv : GlobalEnv) (compMap : Environment)
     (name : VarN) (body : AstHOL.Exp) :
     ExprSim genv { compMap with v := bindLocals traces (flatEnv.v.map Prod.fst) compMap.v } trace
       { globalEnv with v := nsAppend sourceLocal globalEnv.v } flatEnv sourceState flatState (.fn name body) := by
-  obtain ⟨sourceRun, flatRun, related, nextRel⟩ :=
-    evaluate_function_unbounded genv compMap globalEnv sourceLocal flatEnv localRel globalInv traces length
-      sourceState flatState statesRel trace name body
-  unfold ExprSim
-  rw [sourceRun, flatRun]
-  exact ⟨.value (.cons related .nil), nextRel⟩
+  have related := ValueRel.closure genv compMap globalEnv sourceLocal name body flatEnv trace (.none :: traces)
+    localRel globalInv (by simpa using length)
+  have closureRel : ValueRel genv (.closure { globalEnv with v := nsAppend sourceLocal globalEnv.v } name body)
+      (.closure flatEnv name (compileExp trace
+        { compMap with v := (nsBind name (VarName.localName .none name)
+          (bindLocals traces (flatEnv.v.map Prod.fst) compMap.v)) } body)) := by
+    simpa [bindLocals, nsBindList] using related
+  simp only [ExprSim, EvaluateHOL.evaluate, compileExp, FlatSem.evaluate]
+  exact ⟨.value (.cons closureRel .nil), statesRel⟩
 
 /-- Tuple construction is simulated when the reversed argument list is
 simulated. Values are restored to source order after evaluation. -/
@@ -144,14 +118,6 @@ theorem exprSim_tuple {C F : Type} (genv : GlobalEnv) (compMap : Environment) (t
         rw [EvaluateHOL.evaluate, compileExp, FlatSem.evaluate, sourceRun, flatRun]
         simp only [doConCheck, ↓reduceIte]
         exact ⟨.abort error, nextRel⟩
-
-/-- A singleton expression simulation is an expression-list simulation. -/
-theorem exprListSim_singleton {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
-    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
-    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F) (expr : AstHOL.Exp)
-    (sim : ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState expr) :
-    ExprListSim genv compMap trace sourceEnv flatEnv sourceState flatState [expr] := by
-  simpa [ExprSim, ExprListSim, compileExps] using sim
 
 /-- A conditional propagates a related condition error on both sides. -/
 theorem exprSim_if_error {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
@@ -249,7 +215,7 @@ theorem exprSim_raise {C F : Type} (genv : GlobalEnv) (compMap : Environment) (t
             rw [EvaluateHOL.evaluate, sourceRun, compileExp, FlatSem.evaluate, flatRun]
             exact ⟨.abort error, nextRel⟩
       | val values =>
-        obtain ⟨value, rfl⟩ := EvaluateProps.evaluateSingFull sourceState sourceNext sourceEnv body values sourceRun
+        obtain ⟨value, rfl⟩ := EvaluateProps.evaluateSingFull sourceState sourceEnv body sourceNext values sourceRun
         cases related with
         | value valuesRel =>
           cases valuesRel with

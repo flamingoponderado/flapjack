@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.Semantics.ClosSem.State
 import Flapjack.Misc.ShiftSeq
+import Flapjack.Misc.Option
 
 /-! Dynamic installation in the proof-side closure semantics. -/
 namespace Flapjack.Compiler.Backend.ClosSem
@@ -20,59 +21,31 @@ noncomputable def valueToWords (value : Value) : Option (List (BitVec 64)) := by
   exact if h : ∃ words, valueToList value = some (words.map Value.word64) then
     some (Classical.choose h) else none
 
-private theorem listMap_injective {α β : Type} (f : α → β) (injective : Function.Injective f) :
-    Function.Injective (List.map f) := by
-  intro xs ys equal
-  induction xs generalizing ys with
-  | nil => cases ys <;> simp_all
-  | cons x xs ih =>
-    cases ys with
-    | nil => simp at equal
-    | cons y ys =>
-      simp only [List.map_cons, List.cons.injEq] at equal
-      simp [injective equal.1, ih equal.2]
-
-private theorem uniqueChoice_eq_some {α : Type} (P : α → Prop)
-    (unique : ∀ x y, P x → P y → x = y) (value : α) :
-    (by classical exact if h : ∃ x, P x then some (Classical.choose h) else none) = some value ↔ P value := by
-  classical
-  by_cases existsValue : ∃ x, P x
-  · simp only [existsValue, dif_pos, Option.some.injEq]
-    constructor
-    · intro same
-      rw [← same]
-      exact Classical.choose_spec existsValue
-    · intro valid
-      exact unique _ _ (Classical.choose_spec existsValue) valid
-  · simp [existsValue]
-    intro valid
-    exact existsValue ⟨value, valid⟩
-
 /-- The closure byte decoder succeeds exactly for its encoded byte list. -/
 theorem valueToBytes_eq_some (value : Value) (bytes : List (BitVec 8)) :
     valueToBytes value = some bytes ↔
       valueToList value = some (bytes.map (fun b => .number b.toNat)) := by
   classical
-  apply uniqueChoice_eq_some
+  apply holOptionSome_eq_some_iff
   intro xs ys hx hy
-  apply listMap_injective (fun b : BitVec 8 => Value.number b.toNat)
+  apply (List.map_inj_right (f := fun b : BitVec 8 => Value.number b.toNat) ?_).mp
+  · exact Option.some.inj (hx.symm.trans hy)
   · intro x y equal
     injection equal with same
     apply BitVec.eq_of_toNat_eq
     exact Int.ofNat.inj same
-  · exact Option.some.inj (hx.symm.trans hy)
 
 /-- The closure word decoder succeeds exactly for its encoded word list. -/
 theorem valueToWords_eq_some (value : Value) (words : List (BitVec 64)) :
     valueToWords value = some words ↔ valueToList value = some (words.map Value.word64) := by
   classical
-  apply uniqueChoice_eq_some
+  apply holOptionSome_eq_some_iff
   intro xs ys hx hy
-  apply listMap_injective Value.word64
+  apply (List.map_inj_right (f := Value.word64) ?_).mp
+  · exact Option.some.inj (hx.symm.trans hy)
   · intro x y equal
     cases equal
     rfl
-  · exact Option.some.inj (hx.symm.trans hy)
 
 namespace InstallPort
 /-- The installation state uses the canonical finite-map representation. -/

@@ -16,6 +16,7 @@ val _ = show_thm "dest_litv_typed=" flatSemTheory.dest_Litv_def;
 val _ = show_thm "v_to_flat_typed=" flatSemTheory.v_to_flat_def;
 val _ = show_thm "flat_to_v_typed=" flatSemTheory.flat_to_v_def;
 val _ = show_thm "v_rel_check_type_typed=" source_to_flatProofTheory.v_rel_check_type;
+(* Capture the checked conversion theorem family with inferred types. *)
 val _ = show_thm "check_type_to_flat_typed=" source_to_flatProofTheory.check_type_IMP_v_rel;
 val _ = show_thm "check_type_from_flat_typed=" source_to_flatProofTheory.check_type_v_rel_flat_to_v;
 val _ = show_thm "check_type_from_flat_list_typed=" source_to_flatProofTheory.check_type_v_rel_MAP_flat_to_v;

@@ -1,4 +1,6 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateBoundControl
+import Flapjack.NamespaceProps
+import Flapjack.SemanticPrimitivesProps.RecursiveFunctions
 
 /-! Growing expression simulation for arbitrary related local environments.
 These factored relations remain pending HOL correspondence review. -/
@@ -6,19 +8,17 @@ namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL
 open OracleInvariant
 
-/-- Induction hypothesis for arbitrary related local environments and their
-compiler traces. -/
-def LocalEnvIH {C F : Type} [Nonempty C]
+/-- An expression simulation restricted to states at or below a clock bound. -/
+def LocalEnvBoundedIH {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (expr : AstHOL.Exp) : Prop :=
+    (limit : Nat) (expr : AstHOL.Exp) : Prop :=
   ∀ (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
     (source : State F) (flat : FlatSem.State C F) (baseEnv : SemEnv Value)
     (sourceLocal : Namespace ModN VarN Value) (flatEnv : FlatSem.Environment FlatSem.Value)
     (traces : List BackendCommon.Tra) (trace : List VarN) (baseMap : Environment) (gen : EnvironmentGenerationStore),
-    EnvRel genv sourceLocal flatEnv.v →
+    source.clock ≤ limit → EnvRel genv sourceLocal flatEnv.v →
     GlobalEnvInv genv baseMap (fun n => n ∈ flatEnv.v.map Prod.fst) baseEnv →
-    traces.length = flatEnv.v.length →
-    factoredInvariant interp transform gen genv (start, finish, other) source flat →
+    traces.length = flatEnv.v.length → factoredInvariant interp transform gen genv (start, finish, other) source flat →
     envGenRel gen source.evalState →
     (∀ last, EvaluateHOL.evaluate source { baseEnv with v := nsAppend sourceLocal baseEnv.v } [expr] ≠
       (last, .err (.abort .typeError))) →
@@ -27,96 +27,26 @@ def LocalEnvIH {C F : Type} [Nonempty C]
       { baseMap with v := bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v } gen expr
 
 /-- Literals preserve arbitrary related local environments and both states. -/
-theorem localEnvIH_literal {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (lit : Lit) :
-    LocalEnvIH (F := F) interp transform (.lit lit) := by
-  intro genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen _ _ _ invariant generation _
+theorem localEnvBounded_literal {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat) (lit : Lit) :
+    LocalEnvBoundedIH (F := F) interp transform limit (.lit lit) := by
+  intro genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen _ _ _ _ invariant generation _
   refine ⟨genv, exprSim_literal genv _ trace _ flatEnv source flat invariant.2.2.1 lit, ?_⟩
   simpa only [EvaluateHOL.evaluate, compileExp, FlatSem.evaluate] using
     And.intro (GlobalGrowth.refl genv) (And.intro invariant
       (And.intro generation (oracForwardRel_refl interp source.evalState)))
 
 /-- Functions capture any related local environment. -/
-theorem localEnvIH_function {C F : Type} [Nonempty C]
+theorem localEnvBounded_function {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (name : VarN) (body : AstHOL.Exp) : LocalEnvIH (F := F) interp transform (.fn name body) := by
-  intro genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen localRel envInv length
+    (limit : Nat) (name : VarN) (body : AstHOL.Exp) : LocalEnvBoundedIH (F := F) interp transform limit (.fn name body) := by
+  intro genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen _ localRel envInv length
     invariant generation _
   refine ⟨genv, exprSim_function genv baseMap baseEnv sourceLocal flatEnv localRel envInv traces length
     source flat invariant.2.2.1 trace name body, ?_⟩
   simpa only [EvaluateHOL.evaluate, compileExp, FlatSem.evaluate] using
     And.intro (GlobalGrowth.refl genv) (And.intro invariant
       (And.intro generation (oracForwardRel_refl interp source.evalState)))
-
-/-- Recursive source bindings commute with appending a surrounding namespace. -/
-theorem buildRecEnv_nsAppend (funs : List (VarN × VarN × AstHOL.Exp)) (closureEnv : SemEnv Value)
-    (localEnv globalEnv : Namespace ModN VarN Value) :
-    buildRecEnv funs closureEnv (nsAppend localEnv globalEnv) =
-      nsAppend (buildRecEnv funs closureEnv localEnv) globalEnv := by
-  have aux : ∀ remaining : List (VarN × VarN × AstHOL.Exp),
-      remaining.foldr (fun (name, _, _) rest => nsBind name (.recclosure closureEnv funs name) rest)
-          (nsAppend localEnv globalEnv) =
-        nsAppend (remaining.foldr (fun (name, _, _) rest => nsBind name (.recclosure closureEnv funs name) rest)
-          localEnv) globalEnv := by
-    intro remaining
-    induction remaining with
-    | nil => rfl
-    | cons head tail ih =>
-      obtain ⟨name, arg, body⟩ := head
-      simp only [List.foldr_cons, ih]
-      cases tailEnv : tail.foldr (fun (name, _, _) rest => nsBind name (.recclosure closureEnv funs name) rest) localEnv
-      cases globalEnv
-      rfl
-  exact aux funs
-
-/-- Compilation preserves the names and order of a recursive function group. -/
-theorem compileFuns_local_names (trace : List VarN) (env : Environment)
-    (funs : List (VarN × VarN × AstHOL.Exp)) :
-    (compileFuns trace env funs).map Prod.fst = funs.map Prod.fst := by
-  induction funs with
-  | nil => rfl
-  | cons head tail ih =>
-    obtain ⟨name, arg, body⟩ := head
-    simp [compileFuns, ih]
-
-/-- The flat recursive environment prepends the compiled function names. -/
-theorem flatBuildRecEnv_names (funs : List (VarN × VarN × FlatLang.Exp))
-    (closureEnv : FlatSem.Environment FlatSem.Value) (initial : List (VarN × FlatSem.Value)) :
-    (FlatSem.buildRecEnv funs closureEnv initial).map Prod.fst = funs.map Prod.fst ++ initial.map Prod.fst := by
-  have aux : ∀ remaining : List (VarN × VarN × FlatLang.Exp),
-      (remaining.foldr (fun (name, _, _) rest => (name, FlatSem.Value.recclosure closureEnv funs name) :: rest) initial).map Prod.fst =
-        remaining.map Prod.fst ++ initial.map Prod.fst := by
-    intro remaining
-    induction remaining with
-    | nil => rfl
-    | cons head tail _ =>
-      obtain ⟨name, arg, body⟩ := head
-      simp
-  exact aux funs
-
-/-- The compiler's recursive-name bindings agree with the extended local
-trace list used by the arbitrary-environment induction hypothesis. -/
-theorem bindRecNames_bindLocals (names : List VarN) (traces : List BackendCommon.Tra)
-    (locals : List VarN) (compMap : Namespace ModN VarN VarName) :
-    nsBindList (names.map (fun name => (name, VarName.localName .none name)))
-        (bindLocals traces locals compMap) =
-      bindLocals (List.replicate names.length .none ++ traces) (names ++ locals) compMap := by
-  induction names with
-  | nil => rfl
-  | cons name tail ih =>
-    simp only [List.map_cons, List.length_cons, List.replicate_succ, List.cons_append]
-    simp only [nsBindList, List.foldr_cons]
-    unfold nsBindList at ih
-    rw [ih]
-    simp [bindLocals, nsBindList]
-
-/-- Namespace concatenation is associative. -/
-theorem local_nsAppend_assoc (a b c : Namespace ModN VarN Value) :
-    nsAppend (nsAppend a b) c = nsAppend a (nsAppend b c) := by
-  cases a
-  cases b
-  cases c
-  simp [nsAppend, List.append_assoc]
 
 /-- Constructing a local recursive environment preserves the factored
 source-to-flat value relation for every mutually recursive closure. -/
@@ -152,11 +82,6 @@ theorem localRecEnv_related (genv : GlobalEnv) (baseMap : Environment)
   exact helper funs
 
 
-private theorem nsLookup_bind_same {α : Type} (env : Namespace ModN VarN α) (name : VarN) (value : α) :
-    nsLookup (nsBind name value env) (.short name) = some value := by
-  cases env
-  simp [nsBind, nsLookup]
-
 /-- A compiled local lookup selects a trace for the first matching local name. -/
 theorem bindLocals_lookup_hit (locals : List (VarN × FlatSem.Value)) (traces : List BackendCommon.Tra)
     (base : Namespace ModN VarN VarName) (name : VarN) (value : FlatSem.Value)
@@ -175,7 +100,7 @@ theorem bindLocals_lookup_hit (locals : List (VarN × FlatSem.Value)) (traces : 
         refine ⟨tr, ?_⟩
         change nsLookup (nsBind name (.localName tr name) (bindLocals traces (rest.map Prod.fst) base))
           (.short name) = _
-        exact nsLookup_bind_same _ name _
+        exact nsLookup_nsBind.1 name _ _
       · have neq : (name == key) = false := by
           change decide (name = key) = false
           simp [same]
@@ -238,7 +163,7 @@ theorem envRel_source_missing (genv : GlobalEnv) (source : Namespace ModN VarN V
   | bind key sourceValue sourceEnv flatEnv flatValue envRel valueRel =>
     by_cases same : name = key
     · subst key
-      rw [nsLookup_bind_same] at missing
+      rw [nsLookup_nsBind.1] at missing
       contradiction
     · have neq : (name == key) = false := by
         change decide (name = key) = false
@@ -260,23 +185,12 @@ theorem envRel_no_modules (genv : GlobalEnv) (source : Namespace ModN VarN Value
     | bind values modules => simpa [nsBind, nsLookupMod] using ih
 termination_by flat.length
 
-private theorem localLookup_exists_iff_mem (entries : List (VarN × FlatSem.Value)) (name : VarN) :
-    (∃ value, entries.lookup name = some value) ↔ name ∈ entries.map Prod.fst := by
-  induction entries with
-  | nil => simp
-  | cons entry entries ih =>
-    obtain ⟨key, value⟩ := entry
-    by_cases equal : name = key
-    · subst key
-      simp
-    · simp [List.lookup_cons, BEq.beq, equal, ih]
-
 /-- Variable lookup respects local shadowing and falls back to the related
 global environment for names absent from the local stack. -/
-theorem localEnvIH_variable {C F : Type} [Nonempty C]
+theorem localEnvBounded_variable {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (id : Ident ModN VarN) : LocalEnvIH (F := F) interp transform (.var id) := by
-  intro genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen localRel envInv tracesLen
+    (limit : Nat) (id : Ident ModN VarN) : LocalEnvBoundedIH (F := F) interp transform limit (.var id) := by
+  intro genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen _ localRel envInv tracesLen
     invariant generation safe
   let sourceEnv := { baseEnv with v := nsAppend sourceLocal baseEnv.v }
   let compMap := { baseMap with v := bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v }
@@ -327,7 +241,7 @@ theorem localEnvIH_variable {C F : Type} [Nonempty C]
     | none =>
       have absent : name ∉ flatEnv.v.map Prod.fst := by
         intro member
-        obtain ⟨v, found⟩ := (localLookup_exists_iff_mem flatEnv.v name).mpr member
+        obtain ⟨v, found⟩ := (Flapjack.lookup_exists_iff_mem_keys flatEnv.v name).mpr member
         rw [flatLookup] at found
         contradiction
       apply globalCase (.short name)
@@ -369,15 +283,5 @@ inductive LocalEnvExpression : AstHOL.Exp → Prop where
   | literal (lit : Lit) : LocalEnvExpression (.lit lit)
   | variable_ (id : Ident ModN VarN) : LocalEnvExpression (.var id)
   | function_ (name : VarN) (body : AstHOL.Exp) : LocalEnvExpression (.fn name body)
-
-/-- Covered expressions satisfy the preliminary arbitrary-local induction
-hypothesis, whose relations remain pending HOL review. -/
-theorem localEnvIH_covered {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (expr : AstHOL.Exp) (covered : LocalEnvExpression expr) : LocalEnvIH (F := F) interp transform expr := by
-  induction covered with
-  | literal lit => exact localEnvIH_literal interp transform lit
-  | variable_ id => exact localEnvIH_variable interp transform id
-  | function_ name body => exact localEnvIH_function interp transform name body
 
 end Flapjack.Compiler.Backend.SourceToFlat

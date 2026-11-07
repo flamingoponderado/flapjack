@@ -1,3 +1,4 @@
+import Flapjack.SemanticPrimitivesProps.RecursiveFunctions
 import Flapjack.Compiler.Backend.FlatElim.Proofs.EvaluateBasic
 
 /-! Control-flow cases of the flat-elimination evaluation simulation. -/
@@ -69,7 +70,7 @@ theorem evaluate_keep_flatStateRel_if {C F : Type} (tra : BackendCommon.Tra)
         rcases run with ⟨_, rfl⟩
         exact (notTypeError rfl).elim
       · rename_i branch selected
-        have choice := FlatSem.doIf_selected value yes no branch selected
+        have choice := FlatSem.doIf_either_or value yes no branch selected
         rcases choice with yesEq | noEq
         · rw [yesEq] at run
           obtain ⟨targetNext, evaluated, nextRelated, closed, safe⟩ :=
@@ -315,7 +316,7 @@ theorem selectRow_invariants {C F : Type} (reachable : NumSet) (state : FlatSem.
     globalsWithin (findLookups body) reachable ∧ hasEval body = false ∧
       bindingsWithin bindings reachable ∧ bindingsNoEval bindings := by
   obtain ⟨pattern, matched⟩ := selectRow_success state rows value noMatch bindings body selected
-  have member := pmatchRows_selected_mem rows state value bindings pattern body matched
+  have member := (FlatProps.pmatchRows_imp_pmatch rows state value bindings pattern body matched).2
   have bindingInvariants := pmatchRows_selected_invariants rows state value bindings pattern body reachable
     matched valueSafe refsSafe valueClosed refsClosed
   refine ⟨?_, hasEvalPats_member rows pattern body member rowsSafe, bindingInvariants.2, bindingInvariants.1⟩
@@ -358,7 +359,7 @@ theorem evaluate_selectedRow {C F : Type} (rows : List (FlatLang.Pat × FlatLang
       flatStateRel reachable next targetNext ∧ globalsWithin (findPrimitiveResultGlobals result) reachable ∧
       valuesNoEval (Flapjack.Compiler.Backend.FlatProps.resultValues result) := by
   obtain ⟨pattern, matched⟩ := selectRow_success source rows value noMatch bindings body selected
-  have member := pmatchRows_selected_mem rows source value bindings pattern body matched
+  have member := (FlatProps.pmatchRows_imp_pmatch rows source value bindings pattern body matched).2
   have invariants := selectRow_invariants reachable source rows value noMatch bindings body selected
     rowsClosed rowsSafe valueClosed valueSafe related.2.2.2.2.1 related.2.2.2.2.2
   exact rowIH pattern body member { env with v := bindings ++ env.v } source next result reachable target run
@@ -571,23 +572,6 @@ theorem evaluate_keep_flatStateRel_handle {C F : Type} (tra : BackendCommon.Tra)
             cases same
             exact evaluated
 
-/-- A successful recursive-function lookup identifies an actual member of
-the function list. -/
-theorem findRecFun_member (name arg : Flapjack.AstHOL.VarN) (body : FlatLang.Exp)
-    (funs : List (Flapjack.AstHOL.VarN × Flapjack.AstHOL.VarN × FlatLang.Exp))
-    (found : findRecFun name funs = some (arg, body)) : (name, arg, body) ∈ funs := by
-  induction funs with
-  | nil => simp [findRecFun] at found
-  | cons entry rest ih =>
-    obtain ⟨f, x, e⟩ := entry
-    by_cases same : f = name
-    · subst f
-      simp [findRecFun] at found
-      rcases found with ⟨rfl, rfl⟩
-      simp
-    · simp [findRecFun, same] at found
-      exact List.mem_cons_of_mem _ (ih found)
-
 /-- Each recursive body contributes its lookups to the function-list analysis. -/
 theorem findGlobalsFuns_member (funs : List (Flapjack.AstHOL.VarN × Flapjack.AstHOL.VarN × FlatLang.Exp))
     (name arg : Flapjack.AstHOL.VarN) (body : FlatLang.Exp) (member : (name, arg, body) ∈ funs)
@@ -639,7 +623,10 @@ theorem recclosureApplication_invariants (env : FlatSem.Environment FlatSem.Valu
     globalsWithin (findLookups body) reachable ∧ hasEval body = false ∧
       globalsWithin (findEnvGlobals { env with v := (arg, value) :: FlatSem.buildRecEnv funs env env.v }) reachable ∧
       bindingsNoEval ((arg, value) :: FlatSem.buildRecEnv funs env env.v) := by
-  have member := findRecFun_member name arg body funs found
+  have member : (name, arg, body) ∈ funs :=
+    Flapjack.holALookup_member funs name (arg, body) (by
+      rw [← Flapjack.SemanticPrimitivesProps.findRecFun_alookup]
+      exact found)
   cases env with
   | mk bindings =>
     simp only [findValueGlobals, findBindingsGlobals_eq_map, globalsWithin_union] at closureClosed

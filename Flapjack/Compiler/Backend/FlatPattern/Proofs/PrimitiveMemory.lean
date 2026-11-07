@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ThunkRelation
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Apply
+import Flapjack.Misc.ListLookupRel
 
 /-! Reference operations for the flat pattern compiler. These results use
 the proof-side evaluator and relations, which remain pending HOL review. -/
@@ -7,22 +8,6 @@ namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack Flapjack.AstHOL Flapjack.Compiler.Backend
 open Flapjack.SemanticPrimitivesHOL (Result storeAlloc storeAssign)
 open Flapjack.SemanticPrimitivesProps (storeValueRel)
-
-/-- Indexing a related list at a valid position finds a related element. -/
-theorem forall₂_getElem_some {A B : Type} {R : A → B → Prop} {xs : List A} {ys : List B}
-    (related : List.Forall₂ R xs ys) (index : Nat) (x : A) (found : xs[index]? = some x) :
-    ∃ y, ys[index]? = some y ∧ R x y := by
-  induction related generalizing index with
-  | nil => simp at found
-  | @cons first second xs ys head tail ih =>
-    cases index with
-    | zero =>
-      simp at found
-      subst x
-      exact ⟨second, rfl, head⟩
-    | succ index =>
-      simp only [List.getElem?_cons_succ] at found ⊢
-      exact ih index found
 
 /-- Allocating a reference to related values produces related stores and the
 same location. -/

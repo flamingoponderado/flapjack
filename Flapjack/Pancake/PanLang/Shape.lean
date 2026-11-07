@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Pancake.PanLang
 public import Flapjack.Basis.Pure.MlString
+public import Flapjack.Misc.List.Size
 
 @[expose] public section
 
@@ -409,13 +410,6 @@ statement. -/
 /-- HOL `char_size` (`HOL/src/string/stringScript.sml:179`): `char_size c = 0`
     for every `char`.  Needed only to spell HOL's generated `mlstring_size`. -/
 def holCharSize (_ : Flapjack.Basis.Pure.MlString.HolChar) : Nat := 0
-
-/-- HOL's generated list size: `list_size f [] = 0` and
-    `list_size f (x :: xs) = 1 + f x + list_size f xs`
-    (`HOL/src/list/src/listScript.sml:529-532`). -/
-def listSizeHOL {α : Type} (f : α → Nat) : List α → Nat
-  | [] => 0
-  | x :: xs => 1 + f x + listSizeHOL f xs
 
 /-- HOL's generated `mlstring_size` (for `Datatype: mlstring = implode string`,
     `cakeml/basis/pure/mlstringScript.sml:19-21`):

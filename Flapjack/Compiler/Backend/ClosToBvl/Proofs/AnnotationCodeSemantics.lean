@@ -7,6 +7,20 @@ namespace Flapjack.Compiler.Backend.ClosToBvl
 open Flapjack Flapjack.Compiler.Backend.ClosSem Flapjack.Compiler.Backend.ClosProps
 open Flapjack.Compiler.Backend.BackendProps
 
+/-- Chaining preserves the absence of function-variable annotations. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "chain_exps_every_Fn_vs_NONE"]
+theorem chainExps_varsNone (start : Nat) (expressions : List ClosLang.Exp) :
+    everyFnVarsNone ((chainExps start expressions).map (fun (_, _, body) => body)) ↔
+      everyFnVarsNone expressions := by
+  induction expressions generalizing start with
+  | nil => simp [chainExps, everyFnVarsNone, fnVarsNoneExp]
+  | cons first rest ih =>
+    cases rest with
+    | nil => simp [chainExps, everyFnVarsNone]
+    | cons second tail =>
+      have step := ih (start + 1)
+      simp [chainExps, everyFnVarsNone, fnVarsNoneExp, step]
+
 /-- Annotating every association-list entry preserves its first-match lookup,
 including when the source program contains duplicate labels. -/
 theorem initialSourceCode_compile (program : List (Nat × Nat × ClosLang.Exp)) :

@@ -1,4 +1,5 @@
 import Flapjack.Misc.List
+import Flapjack.Misc.ListLookupRel
 import Flapjack.SemanticPrimitivesHOL
 import Batteries.Data.List.Basic
 
@@ -14,23 +15,25 @@ def storeValueRel {A B : Type} (relation : A → B → Prop) : StoreValue A → 
   | .thunk mode left, .thunk mode' right => mode = mode' ∧ relation left right
   | _, _ => False
 
+/-- Pointwise implication lifts through the complete store-value relation. -/
+@[hol "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml" "sv_rel_mono"]
+theorem storeValueRel_mono {A B : Type} (P Q : A → B → Prop)
+    (monotone : ∀ x y, P x y → Q x y) (x : StoreValue A) (y : StoreValue B)
+    (related : storeValueRel P x y) : storeValueRel Q x y := by
+  cases x <;> cases y <;> simp_all [storeValueRel]
+  case varray.varray _ _ =>
+    induction related with
+    | nil => exact .nil
+    | cons head _ ih => exact .cons (monotone _ _ head) ih
+
 /-- A related store entry can be found at the same index on the target side.
-HOL proves this lookup fact inline when needed. -/
+This shared curried helper is used by the HOL-shaped `store_lookup` port in
+the source evaluator proof. -/
 theorem storeValueRel_lookup {A B : Type} {R : A → B → Prop} {left : List (StoreValue A)}
     {right : List (StoreValue B)} (related : List.Forall₂ (storeValueRel R) left right)
     (index : Nat) (value : StoreValue A) (found : storeLookup index left = some value) :
-    ∃ target, storeLookup index right = some target ∧ storeValueRel R value target := by
-  induction related generalizing index with
-  | nil => simp [storeLookup] at found
-  | @cons source target left right head tail ih =>
-    cases index with
-    | zero =>
-      simp [storeLookup] at found
-      subst value
-      exact ⟨target, rfl, head⟩
-    | succ index =>
-      simp only [storeLookup, List.getElem?_cons_succ] at found ⊢
-      exact ih index found
+    ∃ target, storeLookup index right = some target ∧ storeValueRel R value target :=
+  Flapjack.forall₂_lookup related index value found
 
 /-- Store assignment makes the same type check on related entries.
 HOL performs this type comparison inline. -/
@@ -44,7 +47,8 @@ theorem storeValueRel_sameType {A B : Type} {R : A → B → Prop}
     cases m <;> cases m' <;> simp_all
 
 /-- A successful store assignment has a related successful assignment.
-This list-level helper factors the inline HOL store reasoning. -/
+This shared curried helper is used by the HOL-shaped `store_assign` port in
+the source evaluator proof. -/
 theorem storeAssign_related {A B : Type} {R : A → B → Prop}
     {left : Store A} {right : Store B} {value : StoreValue A} {value' : StoreValue B}
     (stores : List.Forall₂ (storeValueRel R) left right) (index : Nat)
@@ -77,14 +81,11 @@ theorem storeValueRel_lookup_none {A B : Type} {R : A → B → Prop}
     {left : List (StoreValue A)} {right : List (StoreValue B)}
     (related : List.Forall₂ (storeValueRel R) left right) (index : Nat)
     (absent : storeLookup index left = none) : storeLookup index right = none := by
-  induction related generalizing index with
-  | nil => simp [storeLookup]
-  | cons _ _ ih =>
-    cases index with
-    | zero => simp [storeLookup] at absent
-    | succ index =>
-      simp only [storeLookup, List.getElem?_cons_succ] at absent ⊢
-      exact ih index absent
+  change left[index]? = none at absent
+  change right[index]? = none
+  have rel := Flapjack.forall₂_lookupRel related index
+  rw [absent] at rel
+  cases found : right[index]? <;> simp_all [Flapjack.optionRel]
 
 
 end Flapjack.SemanticPrimitivesProps

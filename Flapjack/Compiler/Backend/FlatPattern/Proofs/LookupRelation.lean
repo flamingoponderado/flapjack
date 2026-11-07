@@ -1,43 +1,11 @@
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.GeneratedNames
-import Flapjack.FiniteMap.AlistExact.Lookup
+import Flapjack.FiniteMap.AlistExact.LookupAgreement
 import Flapjack.Misc.Option.Rel
 import Batteries.Data.List.Basic
+import Mathlib.Data.List.Forall2
 
 /-! Association-list relations used by the pattern-binding simulation. -/
 namespace Flapjack.Compiler.Backend.FlatPattern
-
-/-- Propositional lookup agrees with the evaluator's list lookup whenever the
-key's Boolean equality is lawful. -/
-theorem holALookup_eq_lookup {K V : Type} [BEq K] [LawfulBEq K] (entries : List (K × V)) (key : K) :
-    holALookup entries key = entries.lookup key := by
-  classical
-  induction entries with
-  | nil => rfl
-  | cons entry rest ih =>
-    obtain ⟨entryKey, value⟩ := entry
-    by_cases same : key = entryKey
-    · subst entryKey
-      simp [holALookup]
-    · have beqFalse : (key == entryKey) = false := by
-        cases h : key == entryKey <;> simp_all [beq_iff_eq]
-      simp [holALookup, List.lookup_cons, same, beqFalse, ih]
-
-/-- The HOL-shaped lookup agrees with flat evaluation's lookup on mlstring
-identifiers. -/
-theorem holALookup_mlString {V : Type} (entries : List (Flapjack.Basis.Pure.MlString.MlString × V))
-    (key : Flapjack.Basis.Pure.MlString.MlString) : holALookup entries key = entries.lookup key := by
-  exact holALookup_eq_lookup entries key
-
-/-- Association-list lookup searches the right list only when the left list
-does not contain the key. -/
-theorem holALookup_append {K V : Type} (left right : List (K × V)) (key : K) :
-    holALookup (left ++ right) key = (holALookup left key).orElse (fun _ => holALookup right key) := by
-  classical
-  induction left with
-  | nil => simp [holALookup]
-  | cons entry rest ih =>
-    obtain ⟨entryKey, value⟩ := entry
-    by_cases same : key = entryKey <;> simp [holALookup, same, ih]
 
 /-- Related association lists have related lookups when matching keys identify
 related values. -/
@@ -142,21 +110,6 @@ theorem condTrue {A : Type} (condition : Bool) (yes no : A) (isTrue : condition 
     (if condition then yes else no) = yes := by
   simp [isTrue]
 
-/-- Flapjack helper: list relation under equality is list equality. This is
-used to state HOL's equality specializations without duplicating their proof. -/
-private theorem forall₂_eq_iff {A : Type} (xs ys : List A) :
-    List.Forall₂ Eq xs ys ↔ xs = ys := by
-  constructor
-  · intro related
-    induction related with
-    | nil => rfl
-    | cons same tail ih => cases same; simp [ih]
-  · intro same
-    subst ys
-    induction xs with
-    | nil => exact .nil
-    | cons x xs ih => exact .cons rfl ih
-
 /-- Equal filtered lists remain equal after compatible narrowing. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "FILTER_EQ_MONO"]
 theorem filterEqMono {A : Type} (p1 p2 p3 p4 : A → Bool) (xs ys : List A)
@@ -165,9 +118,9 @@ theorem filterEqMono {A : Type} (p1 p2 p3 p4 : A → Bool) (xs ys : List A)
     (rightNarrow : ∀ y ∈ ys, p4 y = true → p2 y = true)
     (agree : ∀ x ∈ xs, ∀ y ∈ ys, x = y → p3 x = p4 y) :
     xs.filter p3 = ys.filter p4 := by
-  apply (forall₂_eq_iff _ _).mp
-  exact listRelFilterMono Eq p1 p3 p2 p4 xs ys
-    ((forall₂_eq_iff _ _).mpr filtered) leftNarrow rightNarrow agree
+  have related := listRelFilterMono Eq p1 p3 p2 p4 xs ys
+    (by simpa only [List.forall₂_eq_eq_eq] using filtered) leftNarrow rightNarrow agree
+  simpa only [List.forall₂_eq_eq_eq] using related
 
 /-- Filtering a list and then narrowing agrees with narrowing its filtered
 result. -/
@@ -235,22 +188,6 @@ theorem aLookupRel_cons_false {K V : Type} (predicate : K → Prop) (relation : 
   constructor <;> intro excluded <;> unfold aLookupRel <;> constructor <;> intro related query selected
   all_goals have different : query ≠ key := by intro same; subst query; exact excluded selected
   all_goals simpa [holALookup, different] using related query selected
-
-/-- A successful association-list lookup identifies an actual list member. -/
-theorem holALookup_member {K V : Type} (entries : List (K × V)) (key : K) (value : V)
-    (found : holALookup entries key = some value) : (key, value) ∈ entries := by
-  classical
-  induction entries with
-  | nil => simp [holALookup] at found
-  | cons entry rest ih =>
-    obtain ⟨entryKey, entryValue⟩ := entry
-    by_cases same : key = entryKey
-    · subst entryKey
-      simp [holALookup] at found
-      subst entryValue
-      simp
-    · simp [holALookup, same] at found
-      exact List.mem_cons_of_mem _ (ih found)
 
 /-- A relation that is reflexive on the observed bindings relates a list to itself. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "ALOOKUP_rel_refl"]
