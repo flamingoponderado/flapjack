@@ -148,8 +148,14 @@ theorem evaluateDecsOracleFull {Config F : Type} (ci : CompilerInstance Config)
     (state : State F) (env : SemEnv Value) (decs : List Dec) :
     DecsOracleAdjustedAt ci f compile state env decs := by
   intro next result run inserted safe
+  have literalPreserves : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec)
+      (after : State F) (res : Result (SemEnv Value) Value),
+      evaluateDecs s env ds = (after, res) ∧ res ≠ .err (.abort .typeError) →
+        evaluateDecs s env (compile ds) = (after, res) := by
+    intro s env ds after res h
+    exact preserves s after env ds res h.1 h.2
   cases decs with
-  | nil => exact adjustOracle_evaluate_DecsNil ci f compile preserves state next env result run inserted safe
+  | nil => exact adjustOracle_evaluate_DecsNil compile ci f literalPreserves state env next result ⟨run, inserted, safe⟩
   | cons first rest =>
     cases rest with
     | cons second tail =>
@@ -160,11 +166,11 @@ theorem evaluateDecsOracleFull {Config F : Type} (ci : CompilerInstance Config)
         exact evaluateDecsOracleFull ci f compile preserves middle (extendDecEnv inner env) (second :: tail)
     | nil =>
       cases first with
-      | dtabbrev loc vars name typ => exact adjustOracle_evaluate_Dtabbrev ci f compile preserves state next env loc vars name typ result run inserted safe
-      | dexn loc name types => exact adjustOracle_evaluate_Dexn ci f compile preserves state next env loc name types result run inserted safe
-      | dtype loc types => exact adjustOracle_evaluate_Dtype ci f compile preserves state next env loc types result run inserted safe
-      | denv name => exact adjustOracle_evaluate_Denv ci f compile preserves state next env name result run inserted safe
-      | dletrec loc funs => exact adjustOracle_evaluate_Dletrec ci f compile preserves state next env loc funs result run inserted safe
+      | dtabbrev loc vars name typ => exact adjustOracle_evaluate_Dtabbrev compile ci f literalPreserves state env loc vars name typ next result ⟨run, inserted, safe⟩
+      | dexn loc name types => exact adjustOracle_evaluate_Dexn compile ci f literalPreserves state env loc name types next result ⟨run, inserted, safe⟩
+      | dtype loc types => exact adjustOracle_evaluate_Dtype compile ci f literalPreserves state env loc types next result ⟨run, inserted, safe⟩
+      | denv name => exact adjustOracle_evaluate_Denv compile ci f literalPreserves state env name next result ⟨run, inserted, safe⟩
+      | dletrec loc funs => exact adjustOracle_evaluate_Dletrec compile ci f literalPreserves state env loc funs next result ⟨run, inserted, safe⟩
       | dmod name ds =>
         exact adjustOracle_evaluate_Dmod ci f compile preserves name ds state next env
           (evaluateDecsOracleFull ci f compile preserves state env ds) result run inserted safe

@@ -15605,26 +15605,26 @@
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml", "hol_name": "FST_inc_compile_esgc_free",
     "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/CompileSafety.lean", "lean_name": "incCompileDecs_esgcFree",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Compared original source lines 2594-2601 and inferred types in flat_to_clos_globals_probe.out. The source EVERY and no_Mat_decs premises, closure EVERY conclusion and independently polymorphic second pair component match the HOL statement. Pending review of the FlatProps esgc_free_def carrier and any referenced FlatPattern definitions."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared original source lines 2594-2601 and inferred types in flat_to_clos_globals_probe.out. The source EVERY and no_Mat_decs premises, closure EVERY conclusion and independently polymorphic second pair component match the HOL statement. Independently compared against flat_to_clos_globals_probe.out and the reviewed FlatProps, ClosProps and FlatToClos compiler carriers; these statements do not reference FlatPattern."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml", "hol_name": "compile_prog_esgc_free",
     "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/CompileSafety.lean", "lean_name": "compileProg_esgcFree",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Compared source lines 2434-2443 and inferred types in flat_to_clos_globals_probe.out. The EVERY source premise, no_Mat_decs premise and EVERY closure conclusion retain the original carriers; membership quantification expresses EVERY and no_Mat_decs is represented as Bool equal to true. The attached interpreter initializer is safe in both installation branches, including the interpreter body. Pending review of the FlatProps esgc_free_def carrier and any referenced FlatPattern definitions."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 2434-2443 and inferred types in flat_to_clos_globals_probe.out. The EVERY source premise, no_Mat_decs premise and EVERY closure conclusion retain the original carriers; membership quantification expresses EVERY and no_Mat_decs is represented as Bool equal to true. The attached interpreter initializer is safe in both installation branches, including the interpreter body. Independently compared against flat_to_clos_globals_probe.out and the reviewed FlatProps, ClosProps and FlatToClos compiler carriers; these statements do not reference FlatPattern."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml", "hol_name": "compile_esgc_free",
     "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/CompileSafety.lean", "lean_name": "compile_esgcFree",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Compared source lines 2374-2420 and inferred types in flat_to_clos_globals_probe.out. The two EVERY premises and the EVERY conclusion have the same source and closure expression carriers; membership quantification expresses EVERY, and no_Mat is represented as a Bool equal to true. The proof handles conversion elimination, recursive functions and all expression cases. Pending review of the FlatProps esgc_free_def carrier and any referenced FlatPattern definitions."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 2374-2420 and inferred types in flat_to_clos_globals_probe.out. The two EVERY premises and the EVERY conclusion have the same source and closure expression carriers; membership quantification expresses EVERY, and no_Mat is represented as a Bool equal to true. The proof handles conversion elimination, recursive functions and all expression cases. Independently compared against flat_to_clos_globals_probe.out and the reviewed FlatProps, ClosProps and FlatToClos compiler carriers; these statements do not reference FlatPattern."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml", "hol_name": "compile_decs_esgc_free",
     "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/CompileSafety.lean", "lean_name": "compileDecs_esgcFree",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Compared source lines 2422-2432 and inferred types in flat_to_clos_globals_probe.out. The EVERY source premise, no_Mat_decs premise and EVERY closure conclusion have the same declaration-list carriers; membership quantification expresses EVERY and no_Mat_decs is represented as a Bool equal to true. Pending review of the FlatProps esgc_free_def carrier and any referenced FlatPattern definitions."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 2422-2432 and inferred types in flat_to_clos_globals_probe.out. The EVERY source premise, no_Mat_decs premise and EVERY closure conclusion have the same declaration-list carriers; membership quantification expresses EVERY and no_Mat_decs is represented as a Bool equal to true. Independently compared against flat_to_clos_globals_probe.out and the reviewed FlatProps, ClosProps and FlatToClos compiler carriers; these statements do not reference FlatPattern."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml", "hol_name": "compile_set_globals",
@@ -16298,24 +16298,27 @@
     "hol_name": "adjust_oracle_evaluate",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateDeclarations.lean",
     "lean_name": "adjustOracle_evaluate_Dtabbrev",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. This induction case uses curried source, insertion and non-type-error premises, a curried compiler-preservation predicate and different binder ordering; these are equivalent but do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the exact declaration case against the typed adjust_evaluate and evaluate_induction captures in source_eval_oracle_adjust_probe.out:8 and :10. The original compiler-preservation premise, case binders, conjunctive evaluation premises and conclusion match. Evaluation inherits reals_as_rational_cuts; see SOUNDNESS item 8."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
     "hol_name": "adjust_oracle_evaluate",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateDeclarations.lean",
     "lean_name": "adjustOracle_evaluate_Dtype",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. This induction case uses curried source, insertion and non-type-error premises, a curried compiler-preservation predicate and different binder ordering; these are equivalent but do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the exact declaration case against the typed adjust_evaluate and evaluate_induction captures in source_eval_oracle_adjust_probe.out:8 and :10. The original compiler-preservation premise, case binders, conjunctive evaluation premises and conclusion match. Evaluation inherits reals_as_rational_cuts; see SOUNDNESS item 8."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
     "hol_name": "adjust_oracle_evaluate",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateDeclarations.lean",
     "lean_name": "adjustOracle_evaluate_Dletrec",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. This induction case uses curried source, insertion and non-type-error premises, a curried compiler-preservation predicate and different binder ordering; these are equivalent but do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the exact declaration case against the typed adjust_evaluate and evaluate_induction captures in source_eval_oracle_adjust_probe.out:8 and :10. The original compiler-preservation premise, case binders, conjunctive evaluation premises and conclusion match. Evaluation inherits reals_as_rational_cuts; see SOUNDNESS item 8."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -16571,24 +16574,27 @@
     "hol_name": "adjust_oracle_evaluate",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateDeclarations.lean",
     "lean_name": "adjustOracle_evaluate_DecsNil",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. This induction case uses curried source, insertion and non-type-error premises, a curried compiler-preservation predicate and different binder ordering; these are equivalent but do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the exact declaration case against the typed adjust_evaluate and evaluate_induction captures in source_eval_oracle_adjust_probe.out:8 and :10. The original compiler-preservation premise, case binders, conjunctive evaluation premises and conclusion match. Evaluation inherits reals_as_rational_cuts; see SOUNDNESS item 8."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
     "hol_name": "adjust_oracle_evaluate",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateDeclarations.lean",
     "lean_name": "adjustOracle_evaluate_Dexn",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. This induction case uses curried source, insertion and non-type-error premises, a curried compiler-preservation predicate and different binder ordering; these are equivalent but do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the exact declaration case against the typed adjust_evaluate and evaluate_induction captures in source_eval_oracle_adjust_probe.out:8 and :10. The original compiler-preservation premise, case binders, conjunctive evaluation premises and conclusion match. Evaluation inherits reals_as_rational_cuts; see SOUNDNESS item 8."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
     "hol_name": "adjust_oracle_evaluate",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateDeclarations.lean",
     "lean_name": "adjustOracle_evaluate_Denv",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. This induction case uses curried source, insertion and non-type-error premises, a curried compiler-preservation predicate and different binder ordering; these are equivalent but do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the exact declaration case against the typed adjust_evaluate and evaluate_induction captures in source_eval_oracle_adjust_probe.out:8 and :10. The original compiler-preservation premise, case binders, conjunctive evaluation premises and conclusion match. Evaluation inherits reals_as_rational_cuts; see SOUNDNESS item 8."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
