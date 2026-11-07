@@ -9659,6 +9659,9 @@ simulation, including its unused polymorphic existential witness.
 `source_to_flat_init_probe.out` includes a typed parse of the local
 `global_env_inv_extend` statement; the HOL proof is not replayed.
 
+The same probe captures typed `abort_simps` and `nsLookup_nsBind_If` and
+replays the local `not_abort_IMP_cases` proof.
+
 The same probe replays the original local `ALOOKUP_alloc_defs` proof with
 independent inferred key and value types.
 

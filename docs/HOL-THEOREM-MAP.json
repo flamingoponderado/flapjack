@@ -14452,6 +14452,30 @@
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/CompileCorrectShape.lean",
+    "lean_name": "resultAbort_simps",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "abort_simps",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared abort_simps_typed in source_to_flat_init_probe.out: the three conjuncts retain independent result carriers and the abort, raised exception and value cases."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/CompileCorrectShape.lean",
+    "lean_name": "notAbort_imp_cases",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "not_abort_IMP_cases",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared not_abort_imp_cases_replay in source_to_flat_init_probe.out with the original local proof: the result and proposition, implication and abort-or-nonabort conclusion agree."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/CompileCorrectShape.lean",
+    "lean_name": "nsLookup_nsBind_if",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "nsLookup_nsBind_If",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared nsLookup_nsBind_If_typed in source_to_flat_init_probe.out: independent module, name and value types and the original lookup, conditional and equality agree. Classical equality supplies Lean's decidable-equality instances without additional premises."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/CompileCorrectShape.lean",
     "lean_name": "abort_combineDecResult",
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "abort_compile_dec_result",

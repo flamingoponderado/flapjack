@@ -1,11 +1,18 @@
-load "source_to_flatProofTheory";
-open HolKernel Parse boolLib bossLib;
+load "preamble"; load "source_to_flatProofTheory";
+open HolKernel Parse boolLib bossLib preamble;
 val _ = Globals.linewidth := 1000000;
 val _ = Globals.show_types := true;
 fun show_thm label th =
   if null (hyp th) then (print label; print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
 fun show_eval label tm = (print label; print_term (rhs (concl (EVAL tm))); print "\n");
+val _ = show_thm "abort_simps_typed=" source_to_flatProofTheory.abort_simps;
+val _ = show_thm "nsLookup_nsBind_If_typed=" source_to_flatProofTheory.nsLookup_nsBind_If;
+val not_abort_imp_cases_replay = Q.prove (
+  `(~ source_to_flatProof$abort r ==> P) ==>
+    ((?a. r = Rerr (Rabort a)) \/ (~ source_to_flatProof$abort r /\ P))`,
+  simp [source_to_flatProofTheory.abort_def] >> every_case_tac >> simp []);
+val _ = show_thm "not_abort_imp_cases_replay=" not_abort_imp_cases_replay;
 val _ = show_thm "eval_state_ok=" source_to_flatProofTheory.init_eval_state_ok_def;
 val _ = show_thm "type_entries=" source_to_flatProofTheory.init_genv_ty_els_def;
 val _ = show_thm "constructor_entries=" source_to_flatProofTheory.init_genv_els_def;
