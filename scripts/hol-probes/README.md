@@ -504,7 +504,7 @@ integer-conversion and full value/list equality-simulation statements and the
 equality induction scheme are also captured with inferred types, as are the
 heterogeneous store assignment and lookup theorems.
 
-`source_eval_adjust_local_probe.out` captures inferred types of the original script's local oracle-adjustment lemmas as typed terms. These lemmas are not exported by the HOL theory; the probe additionally replays the original proofs of `declare_env_adjust` and `adjust_oracle_reset`.
+`source_eval_adjust_local_probe.out` captures inferred types of the original script's local oracle-adjustment lemmas as typed terms. These lemmas are not exported by the HOL theory; the probe additionally replays the original proofs of `s_rel_clock2`, `extract_oracle_SOME_SUC`, `declare_env_adjust`, and `adjust_oracle_reset`.
 
 `flat_pattern_install_relation_probe.out` captures inferred types for pure backend compiler/oracle transformations, FlatPattern installation, value, state and match-result relations, the state clock-decrement theorem and local state-clock proof replay, match-result case theorems, maximum-offset arithmetic bounds, environment lookup and monotonicity results, the rich-list replication relation, key-preserving mapped lookup, application simulations and their reversed-argument form, flat closure and simple-relation statements, generic equality and store-operation prerequisites, and the pass's program-semantics theorem.
 

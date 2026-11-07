@@ -15036,6 +15036,15 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "extract_oracle_SOME_SUC",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleExtraction.lean",
+    "lean_name": "extractOracle_isSome_succ",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the local source theorem and its closed typed proof replay extract_oracle_some_suc_replay in source_eval_adjust_local_probe.out. The state has an arbitrary FFI carrier; successful extraction at the successor implies successful extraction at the original index. Extraction inherits reals_as_rational_cuts through the source evaluator."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
     "hol_name": "orac_agrees_def",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleRecording.lean",
     "lean_name": "oracleAgrees",

@@ -10,6 +10,15 @@ val s_rel_clock2_replay = prove (
   simp [semanticPrimitivesTheory.state_component_equality]);
 val _ = if null (hyp s_rel_clock2_replay) then () else raise Fail "s_rel_clock2 hypotheses";
 val _ = show_term "s_rel_clock2_replay=" (concl s_rel_clock2_replay);
+val extract_oracle_some_suc_replay = prove (
+  ``IS_SOME (source_evalProof$extract_oracle s env decs (SUC i)) ==>
+    IS_SOME (source_evalProof$extract_oracle s env decs i)``,
+  simp [source_evalProofTheory.extract_oracle_def] >>
+  DEEP_INTRO_TAC WhileTheory.OLEAST_INTRO >>
+  DEEP_INTRO_TAC WhileTheory.OLEAST_INTRO >>
+  rw [] >> simp [UNCURRY] >> res_tac >> simp []);
+val _ = if null (hyp extract_oracle_some_suc_replay) then () else raise Fail "extract_oracle_some_suc hypotheses";
+val _ = show_term "extract_oracle_some_suc_replay=" (concl extract_oracle_some_suc_replay);
 val _ = show_term "is_insert_decs="
   ``source_evalProof$is_insert_oracle ci f (SOME (semanticPrimitives$EvalDecs eds))``;
 val _ = show_term "declare_env_adjust="
