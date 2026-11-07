@@ -1,5 +1,13 @@
 [
 {
+  "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+  "hol_name": "do_opapp_cases",
+  "lean_path": "Flapjack/SemanticPrimitivesProps/OpApp.lean",
+  "lean_name": "doOpApp_cases",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source_do_opapp_cases in source_eval_oracle_adjust_probe.out: both closure cases preserve the original existential order, application lookup, distinctness, environment update and body equalities."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "abort_def",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/Abort.lean",

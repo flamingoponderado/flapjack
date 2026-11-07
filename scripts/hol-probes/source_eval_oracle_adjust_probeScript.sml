@@ -159,6 +159,7 @@ val _ = show_thm "source_list_rel_check_type_replay=" source_list_rel_check_type
 val _ = show_thm "source_state_relation_clock=" source_evalProofTheory.s_rel_clock;
 val _ = show_thm "source_concrete_value_relation=" source_evalProofTheory.concrete_v_rel;
 val _ = show_thm "extend_declaration_environment_assoc=" semanticPrimitivesPropsTheory.extend_dec_env_assoc;
+val _ = show_thm "source_do_opapp_cases=" semanticPrimitivesPropsTheory.do_opapp_cases;
 val _ = show_thm "source_do_app_simulation=" source_evalProofTheory.do_app_sim;
 val _ = show_thm "source_abort_definition=" source_evalProofTheory.abort_def;
 val _ = show_thm "source_abort_simps=" source_evalProofTheory.abort_simps;

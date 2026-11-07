@@ -23,6 +23,7 @@ import Flapjack.Compiler.Backend.SourceEval.Proofs.DoAppSimulation
 import Flapjack.Compiler.Backend.SourceEval.Proofs.DeclareEnvSimulation
 import Flapjack.Compiler.Backend.SourceEval.Proofs.DoEvalSimulation
 import Flapjack.Compiler.Backend.SourceEval.Proofs.Abort
+import Flapjack.SemanticPrimitivesProps.OpApp
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EnvironmentConstructors
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EnvironmentEmpty
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EnvironmentLift
