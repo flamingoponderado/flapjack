@@ -42,20 +42,28 @@ theorem bindingInputs_single_generated {C F : Type} (trace : BackendCommon.Tra) 
   · exact .nil
 
 /-- Evaluate a compiled branch and recover an environment for its original
-body, related to the source bindings and source environment. -/
-theorem evaluate_compilePatRhs {C F : Type} (trace : BackendCommon.Tra) (n m : Nat)
-    (pattern : FlatLang.Pat) (body : FlatLang.Exp) (state final : FlatSem.State C F)
-    (env env1 env2 : FlatSem.Environment FlatSem.Value) (value : FlatSem.Value)
-    (sourceBindings bindings : List (VarN × FlatSem.Value)) (result : Result (List FlatSem.Value) FlatSem.Value)
-    (evaluated : FlatSem.evaluate env state
-      [compilePatRhs trace n (.varLocal trace (encNumToName n)) (pattern, body)] = (final, result))
-    (matched : FlatSem.pmatch state pattern value [] = .match bindings)
-    (envRel : EnvRel m env1 env2)
-    (bindingRel : aLookupRel (fun name => decNameToNum name < m) ValueRel sourceBindings bindings)
-    (envEq : env.v = (encNumToName n, value) :: env2.v) (bound : n ≤ m)
-    (patBound : maxDecName (FlatLang.patBindings pattern) < n - 1) :
+body. HOL's type-changing update of the single-field environment is rendered
+by rebuilding it from `f env3.v`, retaining the independent input carrier. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "evaluate_compile_pat_rhs"]
+theorem evaluate_compilePatRhs {C F A : Type} (env3 : FlatSem.Environment A)
+    (f : List (VarN × A) → List (VarN × FlatSem.Value)) (state : FlatSem.State C F)
+    (trace : BackendCommon.Tra) (n : Nat) (pattern : FlatLang.Pat) (body : FlatLang.Exp)
+    (final : FlatSem.State C F) (result : Result (List FlatSem.Value) FlatSem.Value)
+    (value : FlatSem.Value) (bindings : List (VarN × FlatSem.Value)) (m : Nat)
+    (env1 env2 : FlatSem.Environment FlatSem.Value) (sourceBindings : List (VarN × FlatSem.Value))
+    (premises : FlatSem.evaluate ⟨f env3.v⟩ state
+      [compilePatRhs trace n (.varLocal trace (encNumToName n)) (pattern, body)] = (final, result) ∧
+    FlatSem.pmatch state pattern value [] = .match bindings ∧ EnvRel m env1 env2 ∧
+    aLookupRel (fun name => decNameToNum name < m) ValueRel sourceBindings bindings ∧
+    f env3.v = (encNumToName n, value) :: env2.v ∧ n ≤ m ∧
+    maxDecName (FlatLang.patBindings pattern) < n - 1) :
     ∃ extEnv, FlatSem.evaluate extEnv state [body] = (final, result) ∧
       EnvRel (n - 1) { env1 with v := sourceBindings ++ env1.v } extEnv := by
+  obtain ⟨evaluated, matched, envRel, bindingRel, envEq, bound, patBound⟩ := premises
+  let env : FlatSem.Environment FlatSem.Value := ⟨f env3.v⟩
+  change FlatSem.evaluate env state
+    [compilePatRhs trace n (.varLocal trace (encNumToName n)) (pattern, body)] = (final, result) at evaluated
+  change env.v = (encNumToName n, value) :: env2.v at envEq
   have positive : 0 < n := by omega
   let todo := [(pattern, n, FlatLang.Exp.varLocal trace (encNumToName n))]
   let compiled := compilePatBindings trace (n + 1) todo body

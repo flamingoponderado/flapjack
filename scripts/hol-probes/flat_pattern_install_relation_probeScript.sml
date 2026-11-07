@@ -6,6 +6,7 @@ fun show_thm label th =
   if null (hyp th) then (print label; print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
 fun show_type label tm = (print label; print_type (type_of tm); print "\n");
+val _ = show_thm "flat_state_rel_dec_clock=" flat_patternProofTheory.state_rel_dec_clock;
 val _ = show_type "pattern_cons_type=" ``pattern_semantics$Cons``;
 val _ = show_type "pattern_lit_type=" ``pattern_semantics$Lit``;
 val _ = show_type "pattern_pos_type=" ``pattern_common$Pos``;

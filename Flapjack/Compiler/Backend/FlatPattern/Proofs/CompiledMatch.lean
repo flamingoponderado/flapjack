@@ -84,17 +84,18 @@ theorem evaluate_compilePats_decision {C F : Type} (cfg : Config) (trace : Backe
       (branchTree branches) default ⟨treeEval, pure⟩
     simpa [compilePats, encoded, branches, source, lookup] using decoded
 
-/-- Both pattern-compilation paths evaluate the branch chosen by FlatLang's
-matcher. The source evaluator and map carriers remain pending HOL review. -/
-theorem evaluate_compilePats {C F : Type} (cfg : Config) (naive : Bool) (trace : BackendCommon.Tra) (n : Nat)
-    (expression default : FlatLang.Exp) (rows : List (FlatLang.Pat × FlatLang.Exp))
-    (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F) (value : FlatSem.Value)
-    (pure : FlatSem.evaluate env state [expression] = (state, .val [value]))
-    (safe : FlatSem.pmatchRows rows state value ≠ .typeError) :
+/-- Both pattern-compilation paths evaluate the branch chosen by FlatLang's matcher. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "evaluate_compile_pats"]
+theorem evaluate_compilePats {C F : Type} (rows : List (FlatLang.Pat × FlatLang.Exp))
+    (state : FlatSem.State C F) (value : FlatSem.Value) (env : FlatSem.Environment FlatSem.Value)
+    (expression : FlatLang.Exp) (cfg : Config) (naive : Bool) (trace : BackendCommon.Tra) (n : Nat)
+    (default : FlatLang.Exp)
+    (premises : FlatSem.pmatchRows rows state value ≠ .typeError ∧ pureEvalTo state env expression value) :
     FlatSem.evaluate env state [compilePats cfg naive trace n expression default rows] =
       FlatSem.evaluate env state [match FlatSem.pmatchRows rows state value with
         | .match (_, pattern, body) => compilePatRhs trace n expression (pattern, body)
         | _ => default] := by
+  obtain ⟨safe, pure⟩ := premises
   cases naive with
   | false => exact evaluate_compilePats_decision cfg trace n expression default rows env state value pure safe
   | true => exact evaluate_compilePats_naive cfg trace n expression default rows env state value pure safe

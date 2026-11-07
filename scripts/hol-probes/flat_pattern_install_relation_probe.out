@@ -1,3 +1,4 @@
+flat_state_rel_dec_clock=state_rel (cfg :config) (s1 :(α, β) state) (s2 :(α, β) state) ⇒ state_rel cfg (dec_clock s1) (dec_clock s2)
 pattern_cons_type=:(num # (num # num) list option) option -> pat list -> pat
 pattern_lit_type=:lit -> pat
 pattern_pos_type=:num -> position -> position

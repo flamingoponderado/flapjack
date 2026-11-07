@@ -190,6 +190,7 @@ theorem doOpApp_closure (leftEnv : Environment Value) (name : Flapjack.AstHOL.Va
       simp [FlatSem.doOpApp, compileDec, compiled]
 
 /-- Decrementing both clocks preserves the proof-side state relation. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "state_rel_dec_clock"]
 theorem stateRel_decClock {C F : Type} (cfg : Config) (source target : FlatSem.State C F)
     (related : StateRel cfg source target) :
     StateRel cfg (FlatSem.decClock source) (FlatSem.decClock target) := by

@@ -1,6 +1,50 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "naive_pattern_matches_correct",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/NaiveMatch.lean",
+  "lean_name": "naivePatternMatches_correct",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared naive_pattern_matches_correct in flat_pattern_install_relation_probe.out: the universally quantified generated expression and match result remain independent, with both defining equations and the pure-evaluation and non-type-error premises in the original conjunction; each result case returns the original evaluation. Evaluation inherits reals_as_rational_cuts."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "evaluate_compile_pat_rhs",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/BranchEvaluation.lean",
+  "lean_name": "evaluate_compilePatRhs",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_compile_pat_rhs in flat_pattern_install_relation_probe.out: all seven conjunctive premises, the updated environment function, independent input environment carrier and existential related result environment match. The single-field environment is reconstructed after the type-changing update; evaluation inherits reals_as_rational_cuts."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "evaluate_compile_pats",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/CompiledMatch.lean",
+  "lean_name": "evaluate_compilePats",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_compile_pats in flat_pattern_install_relation_probe.out: the non-type-error and pure-evaluation conjuncts and the complete matched-row or default evaluation conclusion match. Evaluation inherits reals_as_rational_cuts."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "evaluate_SmartIf",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/NaiveMatch.lean",
+  "lean_name": "evaluate_smartIf",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_SmartIf in flat_pattern_install_relation_probe.out: evaluating SmartIf equals evaluating the ordinary If for independent compiler and FFI carriers; evaluation inherits reals_as_rational_cuts."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "state_rel_dec_clock",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/ValueRelationCases.lean",
+  "lean_name": "stateRel_decClock",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared flat_state_rel_dec_clock in flat_pattern_install_relation_probe.out: the original state relation implies the relation after decrementing both clocks, retaining independent compiler and FFI carriers."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
   "hol_name": "encode_val_def",
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/DecisionEncoding/Encoding.lean",
   "lean_name": "encodeValue",

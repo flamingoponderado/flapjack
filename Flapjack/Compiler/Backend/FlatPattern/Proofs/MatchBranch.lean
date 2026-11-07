@@ -37,9 +37,8 @@ theorem evaluate_compiled_match_branch {C F : Type} (cfg stateCfg : Config) (tra
       (target, .val [value']) := by simp [FlatSem.evaluate, found]
   have targetSafe : FlatSem.pmatchRows (compileMatch cfg rows).2.2 target value' ≠ .typeError := by
     rw [targetMatch]; simp
-  have dispatch := evaluate_compilePats cfg (compileMatch cfg rows).2.1 trace n
-    (.varLocal trace (encNumToName n)) default (compileMatch cfg rows).2.2
-    dispatchEnv target value' pure targetSafe
+  have dispatch := evaluate_compilePats (compileMatch cfg rows).2.2 target value' dispatchEnv
+    (.varLocal trace (encNumToName n)) cfg (compileMatch cfg rows).2.1 trace n default ⟨targetSafe, pure⟩
   have branchEval : FlatSem.evaluate dispatchEnv target
       [compilePatRhs trace n (.varLocal trace (encNumToName n)) (pattern, compiledBody)] = (final, result) := by
     rw [targetMatch] at dispatch
@@ -47,9 +46,9 @@ theorem evaluate_compiled_match_branch {C F : Type} (cfg stateCfg : Config) (tra
   have patternMatch := (FlatProps.pmatchRows_imp_pmatch (compileMatch cfg rows).2.2 target value'
     targetBindings pattern compiledBody targetMatch).1
   have patternBound : maxDecName (FlatLang.patBindings pattern) < n - 1 := by omega
-  obtain ⟨extEnv, extEval, extRelated⟩ := evaluate_compilePatRhs trace n m pattern compiledBody
-    target final dispatchEnv sourceEnv targetEnv value' bindings targetBindings result branchEval patternMatch
-    envs bindingRel dispatchEq nameBound patternBound
+  obtain ⟨extEnv, extEval, extRelated⟩ := evaluate_compilePatRhs dispatchEnv id target trace n pattern compiledBody
+    final result value' targetBindings m sourceEnv targetEnv bindings
+    ⟨branchEval, patternMatch, envs, bindingRel, dispatchEq, nameBound, patternBound⟩
   exact ⟨extEnv, by simpa [compiled] using extEval, extRelated⟩
 
 /-- When the source rows do not match, compiled dispatch evaluates the
@@ -73,9 +72,8 @@ theorem evaluate_compiled_match_default {C F : Type} (cfg stateCfg : Config) (tr
       (target, .val [value']) := by simp [FlatSem.evaluate, found]
   have targetSafe : FlatSem.pmatchRows (compileMatch cfg rows).2.2 target value' ≠ .typeError := by
     rw [targetMatch]; simp
-  have dispatch := evaluate_compilePats cfg (compileMatch cfg rows).2.1 trace n
-    (.varLocal trace (encNumToName n)) default (compileMatch cfg rows).2.2
-    dispatchEnv target value' pure targetSafe
+  have dispatch := evaluate_compilePats (compileMatch cfg rows).2.2 target value' dispatchEnv
+    (.varLocal trace (encNumToName n)) cfg (compileMatch cfg rows).2.1 trace n default ⟨targetSafe, pure⟩
   simpa [targetMatch] using dispatch
 
 /-- A selected compiled row simulates its source body using the body's

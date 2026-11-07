@@ -254,8 +254,9 @@ theorem pmatchList_con_failed_decision {C F : Type} (state : FlatSem.State C F)
     simp [FlatSem.pmatchList, head, tail, matchDecision, combineMatchDecisions]
 
 /-- Smart conditionals agree with ordinary conditionals in flat evaluation. -/
-theorem evaluate_smartIf {C F : Type} (trace : Tra) (guard yes no : FlatLang.Exp)
-    (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F) :
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "evaluate_SmartIf"]
+theorem evaluate_smartIf {C F : Type} (env : FlatSem.Environment FlatSem.Value)
+    (state : FlatSem.State C F) (trace : Tra) (guard yes no : FlatLang.Exp) :
     FlatSem.evaluate env state [FlatLang.smartIf trace guard yes no] =
       FlatSem.evaluate env state [.if_ trace guard yes no] := by
   cases guard <;> try rfl
@@ -552,17 +553,23 @@ theorem naivePatternMatches_from_guards {C F : Type} (trace : Tra) (expression d
 
 /-- The ordered naive dispatcher selects the same body as the source matcher
 when its scrutinee evaluates purely and matching does not type-error. -/
-theorem naivePatternMatches_correct {C F : Type} (trace : Tra) (expression default : FlatLang.Exp)
-    (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F) (value : FlatSem.Value)
-    (rows : List (FlatLang.Pat × FlatLang.Exp))
-    (pure : FlatSem.evaluate env state [expression] = (state, .val [value]))
-    (safe : FlatSem.pmatchRows rows state value ≠ .typeError) :
-    FlatSem.evaluate env state [naivePatternMatches trace expression rows default] =
-      FlatSem.evaluate env state [match FlatSem.pmatchRows rows state value with
-        | .match (_, _, body) => body
-        | _ => default] :=
-  naivePatternMatches_from_guards trace expression default env state value
-    (naiveGuardCorrect_of_pure trace expression env state value pure) rows safe
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "naive_pattern_matches_correct"]
+theorem naivePatternMatches_correct {C F : Type} (state : FlatSem.State C F)
+    (env : FlatSem.Environment FlatSem.Value) :
+    ∀ (trace : Tra) (expression : FlatLang.Exp) (rows : List (FlatLang.Pat × FlatLang.Exp))
+      (default output : FlatLang.Exp) (value : FlatSem.Value)
+      (result : Flapjack.SemanticPrimitivesHOL.MatchResult (List (VarN × FlatSem.Value) × FlatLang.Pat × FlatLang.Exp)),
+    naivePatternMatches trace expression rows default = output ∧
+      pureEvalTo state env expression value ∧ FlatSem.pmatchRows rows state value = result ∧
+      result ≠ .typeError →
+    FlatSem.evaluate env state [output] = match result with
+      | .match (_, _, body) => FlatSem.evaluate env state [body]
+      | _ => FlatSem.evaluate env state [default] := by
+  intro trace expression rows default output value result ⟨rfl, pure, matched, safe⟩
+  have full := naivePatternMatches_from_guards trace expression default env state value
+    (naiveGuardCorrect_of_pure trace expression env state value pure) rows (by simpa [matched] using safe)
+  rw [matched] at full
+  cases result <;> simpa using full
 
 /-- Transform the body carried by a successful row result, preserving both
 non-match and type-error results. -/
@@ -624,7 +631,9 @@ theorem evaluate_compilePats_naive {C F : Type} (cfg : Config) (trace : Tra) (n 
     change FlatSem.pmatchRows (rows.map fun (pattern, body) => (pattern, f pattern body)) state value ≠ .typeError
     rw [mappedResult]
     cases h : FlatSem.pmatchRows rows state value <;> simp_all [mapRowResult]
-  have dispatch := naivePatternMatches_correct trace expression default env state value mapped pure mappedSafe
+  have dispatch := naivePatternMatches_correct state env trace expression mapped default
+    (naivePatternMatches trace expression mapped default) value (FlatSem.pmatchRows mapped state value)
+    ⟨rfl, pure, rfl, mappedSafe⟩
   have compiledRows : List.zip (rows.map Prod.fst) (rows.map (compilePatRhs trace n expression)) = mapped := by
     simpa [mapped, f] using zip_row_bodies rows f
   cases original : FlatSem.pmatchRows rows state value with
