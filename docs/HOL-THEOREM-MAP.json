@@ -471,6 +471,14 @@
   "reviewer": "Compared no_mat_naive_matches in flat_pattern_global_flag_probe.out: the binders retain the HOL order and the single premise covers the value, default, and mapped row bodies. Membership renders EVERY and equality to true renders no_Mat."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "v_rel_v_to_char_list",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/StringConstruction.lean",
+  "lean_name": "valueToCharList_related",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared HOL source and v_rel_v_to_char_list_typed in flat_to_clos_relation_probe.out: the source, character list and target binders and the decoding/value-relation conjunction match. BitVec.toNat on HolChar implements ORD, and the nested maps preserve the Number of integer-coerced ordinal result."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
   "hol_name": "do_test_lemma",
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/PrimitiveTest.lean",

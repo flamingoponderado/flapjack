@@ -9695,3 +9695,6 @@ with its conjunctive premise and inferred worklist triple type.
 
 `cake_subglobals_probe.out` captures `list_to_v_v_rel` with both source and
 flat list types and its complete conjunctive premise.
+
+`flat_to_clos_relation_probe.out` captures `v_rel_v_to_char_list` with
+its flat value, character-list, and closure value types.

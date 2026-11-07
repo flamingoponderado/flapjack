@@ -120,3 +120,6 @@ val inc_compile_decs_intro_replay = Q.prove (
   Cases_on `f x` >> fs [] >>
   fs [flat_to_closTheory.inc_compile_decs_def, inc_compile_decs'_def]);
 val _ = (print "inc_compile_decs_intro_replay="; Lib.with_flag (Globals.show_types,true) print_term (concl inc_compile_decs_intro_replay); print "\n");
+
+val _ = if null (hyp v_rel_v_to_char_list) then () else raise Fail "hypotheses: v_rel_v_to_char_list";
+val _ = (print "v_rel_v_to_char_list_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl v_rel_v_to_char_list); print "\n");
