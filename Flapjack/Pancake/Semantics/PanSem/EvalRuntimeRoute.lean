@@ -262,6 +262,11 @@ def PanSemRiscV64ProgramInput.toOwner (input : PanSemRiscV64ProgramInput σ) :
   baseAddress := input.initial.source.baseAddress
   topAddress := input.initial.source.topAddress
 
+/-- The memory access derived from the input's source memory domains. -/
+def PanSemRiscV64ProgramInput.access (input : PanSemRiscV64ProgramInput σ) :
+    Option (PanValueMemoryAccess (RiscV.Word 64)) :=
+  some (panSemBitVec64MemoryAccess input.toOwner)
+
 /-- RV64 declaration-to-entry execution through the HOL expression route.
     The input supplies the source memory domains and byte order. A non-RV64
     byte count keeps the generic evaluator, preserving its previous behavior. -/
@@ -274,91 +279,17 @@ def panSemEvaluateRiscV64ProgramViaHOL
     (entry : FunName) (arguments : List (Exp (RiscV.Word 64)))
     (memoryHandler : Option (PanValueMemoryFfiHandler (RiscV.Word 64) σ) := none) :
     Option (PanValueFfiClockResult (RiscV.Word 64) σ) :=
-  let access := some (panSemBitVec64MemoryAccess input.toOwner)
   if input.initial.source.bytesInWord = panSemBitVec64BytesInWord then do
     let structs ← collectPanValueStructs decls input.initial.source.structs
     let cache := panSemExpressionContextCache structs
     let run := panSemExpressionRouteRun { input.toOwner with structs := structs } cache rfl
     let state ← evalPanValueDeclarationsWithStructs structs
-      { input.initial.source with structs := structs } decls access (some run)
+      { input.initial.source with structs := structs } decls input.access (some run)
     evalPanValueFfiClockProgramEntry context primitive handler state fuel input.initial.ffi clock
-      entry arguments (memoryAccess := access) (memoryHandler := memoryHandler)
+      entry arguments (memoryAccess := input.access) (memoryHandler := memoryHandler)
       (evaluator := some run)
   else
     evalPanValueFfiClockProgram context input.initial clock primitive handler fuel decls entry arguments
-      (memoryAccess := access) (memoryHandler := memoryHandler)
-
-/-- A pointwise-correct expression route preserves the RV64 declaration-to-entry
-    result: the HOL-routed runner agrees with the generic program runner on the
-    same declarations, memory access and handler. Unlike
-    `evalPanValueFfiClockProgram_route_eq`, this covers the routed runner's own
-    declaration phase (`evalPanValueDeclarationsWithStructs` with pre-collected
-    structs) as well as the shared entry tail.
-
-    It has no HOL original: it relates two Lean runners (the generic program
-    runner and the RV64 HOL-routed one), which HOL's single `semantics_decls`
-    path does not distinguish.
-
-    The `hroute` hypothesis is the route-correctness obligation itself — that
-    the guarded HOL route agrees with `evalPanValueExp` for every state — and it
-    is not discharged here. This theorem is therefore a conditional reduction;
-    it does not by itself prove that the two runners agree unconditionally. -/
-theorem panSemEvaluateRiscV64ProgramViaHOL_route_eq
-    (context : PanValueFfiContext (RiscV.Word 64))
-    (input : PanSemRiscV64ProgramInput σ)
-    (clock : Nat) (primitive : PanPrimitiveHandler (RiscV.Word 64))
-    (handler : PanValueStatefulFfiHandler (RiscV.Word 64) σ)
-    (fuel : Nat) (decls : List (Decl (RiscV.Word 64)))
-    (entry : FunName) (arguments : List (Exp (RiscV.Word 64)))
-    (memoryHandler : Option (PanValueMemoryFfiHandler (RiscV.Word 64) σ))
-    (hbytes : input.initial.source.bytesInWord = panSemBitVec64BytesInWord)
-    (hroute : ∀ structs locals globals memory base top e,
-      panSemExpressionRouteRun { input.toOwner with structs := structs }
-        (panSemExpressionContextCache structs) rfl
-        structs locals globals memory base top panSemBitVec64BytesInWord
-        (some (panSemBitVec64MemoryAccess input.toOwner)) e =
-      evalPanValueExp structs locals globals memory base top panSemBitVec64BytesInWord e
-        (some (panSemBitVec64MemoryAccess input.toOwner))) :
-    panSemEvaluateRiscV64ProgramViaHOL context input clock primitive handler fuel decls entry arguments
-      memoryHandler =
-    evalPanValueFfiClockProgram context input.initial clock primitive handler fuel decls entry arguments
-      (memoryAccess := some (panSemBitVec64MemoryAccess input.toOwner))
-      (memoryHandler := memoryHandler) := by
-  rw [panSemEvaluateRiscV64ProgramViaHOL, ite_eq_left hbytes]
-  simp only [evalPanValueFfiClockProgram, evalPanValueDeclarations]
-  cases hs : collectPanValueStructs decls input.initial.source.structs with
-  | none => simp
-  | some structs =>
-    simp only [Option.bind_eq_bind, Option.bind_some]
-    have hdecl := evalPanValueDeclarationsWithStructs_route_eq structs panSemBitVec64BytesInWord
-      (some (panSemBitVec64MemoryAccess input.toOwner))
-      (panSemExpressionRouteRun { input.toOwner with structs := structs }
-        (panSemExpressionContextCache structs) rfl)
-      (fun globals memory base top e => hroute structs (fun _ => none) globals memory base top e)
-      decls { input.initial.source with structs := structs } (by simpa using hbytes)
-    simp only [hdecl]
-    cases hd : evalPanValueDeclarationsWithStructs structs
-      { input.initial.source with structs := structs } decls
-      (some (panSemBitVec64MemoryAccess input.toOwner)) none with
-    | none => simp
-    | some state =>
-      simp only [Option.bind_some]
-      have hb : state.bytesInWord = panSemBitVec64BytesInWord := by
-        have h := evalPanValueDeclarationsWithStructs_bytesInWord structs
-          (some (panSemBitVec64MemoryAccess input.toOwner)) none decls
-          { input.initial.source with structs := structs } state hd
-        simpa [hbytes] using h
-      have hstate : state.structs = structs :=
-        evalPanValueDeclarationsWithStructs_structs structs
-          (some (panSemBitVec64MemoryAccess input.toOwner)) none decls
-          { input.initial.source with structs := structs } state rfl hd
-      exact evalPanValueFfiClockProgramEntry_route_eq context primitive handler state fuel
-        input.initial.ffi clock entry arguments (some (panSemBitVec64MemoryAccess input.toOwner))
-        memoryHandler
-        (panSemExpressionRouteRun { input.toOwner with structs := structs }
-          (panSemExpressionContextCache structs) rfl)
-        (fun locals globals memory e => by
-          simpa [hb, hstate] using
-            hroute structs locals globals memory state.baseAddress state.topAddress e)
+      (memoryAccess := input.access) (memoryHandler := memoryHandler)
 
 end Flapjack
