@@ -472,6 +472,15 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "simp_guard_thm",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/DecisionEncoding.lean",
+  "lean_name": "simpGuard_preserves",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["refs"],
+  "reviewer": "Compared HOL source and simp_guard_thm in flat_pattern_install_relation_probe.out: the free finite map and term precede guard and Boolean, and a successful original evaluation implies the same simplified result. The refs parameter uses the canonical finite-support map with a lookup codec witness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
   "hol_name": "encode_pat_match_simulation",
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/DecisionEncoding.lean",
   "lean_name": "encodePatMatch_simulation",

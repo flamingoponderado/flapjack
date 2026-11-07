@@ -452,7 +452,25 @@ theorem decodeGuard_simulation {C F : Type} (state : FlatSem.State C F) (value :
           (decodeGuard trace expression right) true env state guardPure
         simpa [decodeGuard, evaluate_smartIf, branch] using evaluate_bool env state trace true
 
+private def toBroadGuardRefs (refs : HolFiniteMapExact Nat PatternSemantics.Term) :
+    Nat → Option PatternSemantics.Term := refs.lookup
+
+private def ofBroadGuardRefs (lookup : Nat → Option PatternSemantics.Term)
+    (support : ∃ keys : List Nat, ∀ key, lookup key ≠ none → key ∈ keys) :
+    HolFiniteMapExact Nat PatternSemantics.Term := ⟨lookup, support⟩
+
+/-- The canonical finite-map parameter roundtrips through its lookup view. -/
+theorem holFmapAsFiniteSupportParamWitness_simpGuard_preserves_refs
+    (refs : HolFiniteMapExact Nat PatternSemantics.Term) (key : Nat) :
+    (ofBroadGuardRefs (toBroadGuardRefs refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroadGuardRefs (toBroadGuardRefs refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroadGuardRefs (toBroadGuardRefs refs) refs.finiteSupport = refs := by
+  cases refs
+  exact ⟨rfl, rfl, rfl⟩
+
 /-- Guard simplification preserves every successful abstract guard outcome. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "simp_guard_thm"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem simpGuard_preserves (refs : HolFiniteMapExact Nat PatternSemantics.Term)
     (value : PatternSemantics.Term) (guard : PatternSemantics.DGuard) (answer : Bool)
     (tested : PatternSemantics.dtEvalGuard refs value guard = some answer) :
