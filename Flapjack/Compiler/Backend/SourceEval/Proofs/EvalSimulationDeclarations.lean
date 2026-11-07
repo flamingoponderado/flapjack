@@ -6,17 +6,6 @@ import Flapjack.NamespaceProps.EmptyLookup
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs
 open Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesProps Flapjack.EvaluateHOL
 
-/-- Flapjack induction infrastructure with no separate HOL declaration: the declaration conjunct of the mutual simulation. -/
-def DecsSimAt {Config F : Type} (ci : CompilerInstance Config) (s : State F)
-    (env : SemEnv Value) (decs : List Dec) : Prop :=
-  ∀ (s' : State F) (res : Result (SemEnv Value) Value) (t : State F) (env' : SemEnv Value),
-    evaluateDecs s env decs = (s', res) ∧ stateRel ci s t ∧
-      envRel (ValueRel (oracleState t.evalState)) env env' ∧ res ≠ .err (.abort .typeError) →
-    ∃ es' t' res', evaluateDecs t env' decs = (t', res') ∧ stateRel ci s' t' ∧
-      es' = oracleState t'.evalState ∧ resultRel (envRel (ValueRel es')) (ValueRel es') res res' ∧
-      envStoreForward (oracleState t.evalState) es' ∧ (¬ abort res' → envStackForward (oracleState t.evalState) es')
-
-
 /-- Recursive function declarations preserve the source evaluator simulation. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "eval_simulation"]
 theorem evalSimulation_Dletrec {Config F : Type} (ci : CompilerInstance Config) (s : State F)
