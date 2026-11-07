@@ -62,16 +62,16 @@ equal length. The evaluator and carriers remain pending HOL review. -/
 theorem totalPat_imp {C F : Type} :
     (∀ (state : FlatSem.State C F) (pattern : FlatLang.Pat) (value : FlatSem.Value)
       (bindings : List (Flapjack.AstHOL.VarN × FlatSem.Value)) (result : MatchResult (List (Flapjack.AstHOL.VarN × FlatSem.Value))),
-      FlatSem.pmatch state pattern value bindings = result → totalPat pattern = true → result ≠ .noMatch) ∧
+      FlatSem.pmatch state pattern value bindings = result ∧ totalPat pattern = true → result ≠ .noMatch) ∧
     (∀ (state : FlatSem.State C F) (patterns : List FlatLang.Pat) (values : List FlatSem.Value)
       (bindings : List (Flapjack.AstHOL.VarN × FlatSem.Value)) (result : MatchResult (List (Flapjack.AstHOL.VarN × FlatSem.Value))),
-      patterns.length = values.length → FlatSem.pmatchList state patterns values bindings = result →
+      patterns.length = values.length ∧ FlatSem.pmatchList state patterns values bindings = result ∧
       totalPatList patterns = true → result ≠ .noMatch) := by
   constructor
-  · intro state pattern value bindings result matched total
+  · intro state pattern value bindings result ⟨matched, total⟩
     rw [← matched]
     exact totalPat_notNoMatch state pattern value bindings total
-  · intro state patterns values bindings result sameLength matched total
+  · intro state patterns values bindings result ⟨sameLength, matched, total⟩
     rw [← matched]
     exact totalPatList_notNoMatch state patterns values bindings sameLength total
 

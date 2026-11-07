@@ -329,9 +329,10 @@ theorem valueToList_invariants (value : FlatSem.Value) (values : List FlatSem.Va
 /-- Decoding a list cannot add global dependencies. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "find_v_globals_v_to_list"]
 theorem findValueGlobals_valueToList (value : FlatSem.Value) (reachable : NumSet)
-    (values : List FlatSem.Value) (closed : globalsWithin (findValueGlobals value) reachable)
-    (decoded : FlatSem.valueToList value = some values) :
+    (values : List FlatSem.Value) (premises : globalsWithin (findValueGlobals value) reachable ∧
+      FlatSem.valueToList value = some values) :
     globalsWithin (findValuesGlobals values) reachable := by
+  obtain ⟨closed, decoded⟩ := premises
   induction value using FlatSem.valueToList.induct generalizing values with
   | case1 cid tid valid =>
     simp [FlatSem.valueToList, valid] at decoded
@@ -355,9 +356,10 @@ theorem findValueGlobals_valueToList (value : FlatSem.Value) (reachable : NumSet
 /-- Encoding a list cannot add global dependencies. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "find_v_globals_list_to_v"]
 theorem findValueGlobals_listToValue (values : List FlatSem.Value) (reachable : NumSet)
-    (value : FlatSem.Value) (closed : globalsWithin (findValuesGlobals values) reachable)
-    (encoded : FlatSem.listToValue values = value) :
+    (value : FlatSem.Value) (premises : globalsWithin (findValuesGlobals values) reachable ∧
+      FlatSem.listToValue values = value) :
     globalsWithin (findValueGlobals value) reachable := by
+  obtain ⟨closed, encoded⟩ := premises
   subst value
   induction values with
   | nil => simp [FlatSem.listToValue, findValueGlobals, findValuesGlobals, globalsWithin, sptMem, sptDomain]
@@ -369,10 +371,11 @@ theorem findValueGlobals_listToValue (values : List FlatSem.Value) (reachable : 
 /-- Encoding an append preserves the combined global-dependency bound. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "find_v_globals_list_to_v_APPEND"]
 theorem findValueGlobals_listToValue_append (left : List FlatSem.Value) (reachable : NumSet)
-    (right : List FlatSem.Value) (leftClosed : globalsWithin (findValuesGlobals left) reachable)
-    (rightClosed : globalsWithin (findValuesGlobals right) reachable) :
+    (right : List FlatSem.Value) (premises : globalsWithin (findValuesGlobals left) reachable ∧
+      globalsWithin (findValuesGlobals right) reachable) :
     globalsWithin (findValueGlobals (FlatSem.listToValue (left ++ right))) reachable := by
-  apply findValueGlobals_listToValue (left ++ right) reachable _ ?_ rfl
+  obtain ⟨leftClosed, rightClosed⟩ := premises
+  apply findValueGlobals_listToValue (left ++ right) reachable _ ⟨?_, rfl⟩
   apply (findValuesGlobals_within_iff _ _).mpr
   intro value member
   rcases List.mem_append.mp member with leftMember | rightMember

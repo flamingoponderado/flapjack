@@ -103,9 +103,10 @@ set when every row body has already been analysed. -/
 theorem pmatchRows_findLookups {C F R : Type} (rows : List (FlatLang.Pat × FlatLang.Exp))
     (state : FlatSem.State C F) (value : FlatSem.Value) (bindings : List (VarN × FlatSem.Value))
     (pattern : FlatLang.Pat) (body : FlatLang.Exp) (reachable : Spt R)
-    (selected : FlatSem.pmatchRows rows state value = .match (bindings, pattern, body))
-    (bounded : ∀ key, sptMem key (findGlobalsList destGlobalVarLookup (rows.map Prod.snd)) → sptMem key reachable) :
+    (premises : FlatSem.pmatchRows rows state value = .match (bindings, pattern, body) ∧
+      ∀ key, sptMem key (findGlobalsList destGlobalVarLookup (rows.map Prod.snd)) → sptMem key reachable) :
     ∀ key, sptMem key (findLookups body) → sptMem key reachable := by
+  obtain ⟨selected, bounded⟩ := premises
   intro key found
   apply bounded key
   apply findLookupsList_member body _ _ key found
