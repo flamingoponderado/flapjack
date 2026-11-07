@@ -32,6 +32,7 @@ import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationMatchCons
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationMat
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationLet
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationIf
+import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationLog
 import Flapjack.SemanticPrimitivesProps.OpApp
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EnvironmentConstructors
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EnvironmentEmpty
