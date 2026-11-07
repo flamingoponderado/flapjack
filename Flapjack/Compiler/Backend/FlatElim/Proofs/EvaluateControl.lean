@@ -70,7 +70,7 @@ theorem evaluate_keep_flatStateRel_if {C F : Type} (tra : BackendCommon.Tra)
         rcases run with ⟨_, rfl⟩
         exact (notTypeError rfl).elim
       · rename_i branch selected
-        have choice := FlatSem.doIf_selected value yes no branch selected
+        have choice := FlatSem.doIf_either_or value yes no branch selected
         rcases choice with yesEq | noEq
         · rw [yesEq] at run
           obtain ⟨targetNext, evaluated, nextRelated, closed, safe⟩ :=

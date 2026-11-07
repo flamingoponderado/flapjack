@@ -160,7 +160,7 @@ theorem compile_if_simulation_upTo {C F : Type} (cfg stateCfg : Config) (clock :
                       have same := doIf_related value value' yes no branch valueRel selected
                       have sourceOuter := evaluate_if_selected trace condition yes no branch sourceEnv source sourceNext value conditionRun selected
                       have sourceBranch := sourceOuter.symm.trans sourceEval
-                      have choice := FlatSem.doIf_selected value yes no branch selected
+                      have choice := FlatSem.doIf_either_or value yes no branch selected
                       rcases choice with choice | choice
                       · subst branch
                         have targetSelected : FlatSem.doIf value' ye ze = some ye := by

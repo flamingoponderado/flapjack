@@ -123,7 +123,7 @@ theorem evaluate_length {C F : Type} :
                 split at run
                 · simp at run
                 · rename_i branch selected
-                  have choice := doIf_selected _ yes no branch selected
+                  have choice := doIf_either_or _ yes no branch selected
                   rcases choice with yesEq | noEq
                   · rw [yesEq] at run
                     have length := exprIH env intermediate next [yes] values (by omega)

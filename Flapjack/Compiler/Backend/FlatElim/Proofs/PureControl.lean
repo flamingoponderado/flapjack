@@ -103,7 +103,7 @@ theorem pureEvaluation_if {C F : Type} (env : FlatSem.Environment FlatSem.Value)
       rcases run with ⟨_, rfl⟩
       exact (notTypeError rfl).elim
     · rename_i branch selected
-      have choice := FlatSem.doIf_selected value yes no branch selected
+      have choice := FlatSem.doIf_either_or value yes no branch selected
       rcases choice with yesEq | noEq
       · rw [yesEq] at run
         exact yesIH condState (by omega) next result reachable target run (singletonPure yes pure.1.2)

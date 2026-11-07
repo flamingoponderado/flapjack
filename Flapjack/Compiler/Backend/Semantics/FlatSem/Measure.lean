@@ -107,12 +107,6 @@ theorem selectRow_weight {C F : Type} (rows : List (FlatLang.Pat × FlatLang.Exp
       exact pmatchRows_weight rows state value rowBindings pattern expr found
     · simp [selectRow, found, distinct] at selected
 
-/-- A successful conditional chooses one of the two original branches. -/
-theorem doIf_selected {α : Type} (value : Value) (yes no result : α)
-    (selected : doIf value yes no = some result) : result = yes ∨ result = no := by
-  unfold doIf at selected
-  repeat' split at selected <;> simp_all
-
 /-- The thunk-forcing expansion has less weight than any force application. -/
 theorem appUnit_force_weight (trace : BackendCommon.Tra) (args : List FlatLang.Exp) :
     expWeight (appUnit (.varLocal .none (ofString "f"))) <

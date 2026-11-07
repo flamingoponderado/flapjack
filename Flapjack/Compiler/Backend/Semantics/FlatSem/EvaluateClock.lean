@@ -123,7 +123,7 @@ theorem evaluate_if_clock_step {C F : Type} (env : Environment Value) (state : S
     split
     · exact bound
     · rename_i body selected
-      have choice := doIf_selected _ yes no body selected
+      have choice := doIf_either_or _ yes no body selected
       rcases choice with rfl | rfl
       · exact Nat.le_trans (yesClock next bound) bound
       · exact Nat.le_trans (noClock next bound) bound
