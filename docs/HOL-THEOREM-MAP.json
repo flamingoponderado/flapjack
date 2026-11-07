@@ -80,6 +80,23 @@
   "reviewer": "Compared the local original at line 2003 and its closed typed proof replay s_rel_clock2_replay in source_eval_adjust_local_probe.out. Both states share an FFI carrier, the compiler carrier is independent, and one arbitrary natural clock is assigned to both related states. The source relation and state carriers are reviewed."
 },
 {
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "pmatch_bindings",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/PatternBindings.lean",
+  "lean_name": "pmatchBindings",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared flat_pmatch_bindings in flat_pattern_install_relation_probe.out: both conjuncts separately quantify their states while sharing independent compiler and FFI types, and preserve the successful match premises and exact pattern-name and environment-name append conclusions."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "evaluate_decs_append",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/EvaluateDecs.lean",
+  "lean_name": "evaluateDecs_append",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared flat_evaluate_decs_append in flat_pattern_install_relation_probe.out: the state and both declaration lists retain their order and both result cases match. The three independently typed extra HOL binders are vacuous and omitted, as documented beside the theorem. Evaluation inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
   "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
   "hol_name": "evaluate_length",
   "lean_path": "Flapjack/EvaluateProps/Length.lean",

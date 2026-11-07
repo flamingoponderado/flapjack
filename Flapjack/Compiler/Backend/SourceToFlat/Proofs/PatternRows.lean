@@ -53,7 +53,7 @@ theorem pmatch_success_sourceBindings {C F : Type} (genv : GlobalEnv) (compMap c
     obtain ⟨bound, boundEq, envRel⟩ := rel
     subst bound
     refine ⟨flatBindings, rfl, envRel, ?_⟩
-    have names := (FlatProps.pmatchBindings flatState).1 (compilePat compMap pattern) flat [] flatBindings flatMatch
+    have names := FlatProps.pmatchBindings.1 flatState (compilePat compMap pattern) flat [] flatBindings flatMatch
     simpa [compilePat_bindings] using names
 
 /-- If every source pattern is type-compatible, matching the compiled rows
@@ -116,12 +116,12 @@ theorem flatPmatchRows_bindingNames {C F E : Type} (state : FlatSem.State C F)
       | noMatch =>
         simp only [FlatSem.pmatchRows, matched, restResult, MatchResult.match.injEq, Prod.mk.injEq] at selected
         obtain ⟨rfl, rfl, rfl⟩ := selected
-        have names := (FlatProps.pmatchBindings state).1 headPattern value [] found matched
+        have names := FlatProps.pmatchBindings.1 state headPattern value [] found matched
         simpa using names
       | «match» other =>
         simp only [FlatSem.pmatchRows, matched, restResult, MatchResult.match.injEq, Prod.mk.injEq] at selected
         obtain ⟨rfl, rfl, rfl⟩ := selected
-        have names := (FlatProps.pmatchBindings state).1 headPattern value [] found matched
+        have names := FlatProps.pmatchBindings.1 state headPattern value [] found matched
         simpa using names
 
 /-- Select the first source pattern that matches. This comparison helper does

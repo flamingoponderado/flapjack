@@ -509,6 +509,7 @@ heterogeneous store assignment and lookup theorems.
 The `orac_agrees_s_rel_IMP` replay adds `orac_s_def` to the source proof's simplification step.
 
 `flat_pattern_install_relation_probe.out` captures inferred types for pure backend compiler/oracle transformations, FlatPattern installation, value, state and match-result relations, the state clock-decrement theorem and local state-clock proof replay, match-result case theorems, maximum-offset arithmetic bounds, environment lookup and monotonicity results, the rich-list replication relation, key-preserving mapped lookup, application simulations and their reversed-argument form, flat closure and simple-relation statements, generic equality and store-operation prerequisites, and the pass's program-semantics theorem.
+It also captures flat pattern-binding names and declaration evaluation over appended lists, including the latter's independently typed vacuous binders.
 
 `source_evaluate_decs_probe.out` captures the original typed equations for declaration evaluation over a head and an appended list. Lean checks corresponding statements; the underlying clocked evaluator and its carriers still require correspondence review.
 
