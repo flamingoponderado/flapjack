@@ -472,6 +472,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "compile_match_EL",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/MatchRows.lean",
+  "lean_name": "compileMatch_index",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_match_EL in flat_pattern_install_relation_probe.out. The compilation equation, input bound and EL equality form one premise; the existential body compilation, output EL and both name bounds are retained. The input bound and preserved row length put both EL accesses in range, where holEl agrees with list indexing."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
   "hol_name": "compile_pats_no_Mat",
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/NoMat.lean",
   "lean_name": "noMat_compilePats",
