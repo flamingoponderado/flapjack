@@ -999,7 +999,7 @@ theorem localEnvBounded_explode {C F : Type} [Nonempty C]
           induction str.explode with
           | nil => exact .nil
           | cons char rest ih => exact .cons (.literal nextGenv (.char char)) ih
-        have resultRel := listToValue_related nextGenv nextInvariant.1.2.2.1 _ _ itemsRel
+        have resultRel := listToValue_related nextGenv _ _ ⟨nextInvariant.1.2.2.1, itemsRel⟩
         refine ⟨nextGenv, ?_, ?_⟩
         · unfold ExprSim
           rw [EvaluateHOL.evaluate]
@@ -1721,7 +1721,7 @@ theorem localEnvBounded_listAppend {C F : Type} [Nonempty C]
             induction leftRel with
             | nil => exact rightRel
             | cons head _ ih => exact .cons head ih
-          have resultRel := listToValue_related nextGenv nextInvariant.1.2.2.1 _ _ appendedRel
+          have resultRel := listToValue_related nextGenv _ _ ⟨nextInvariant.1.2.2.1, appendedRel⟩
           refine ⟨nextGenv, ?_, ?_⟩
           · unfold ExprSim
             rw [EvaluateHOL.evaluate]

@@ -152,3 +152,6 @@ val _ = if null (hyp source_to_flatProofTheory.env_rel_weak) then () else raise 
 val _ = (print "env_rel_weak_typed="; print_term (concl source_to_flatProofTheory.env_rel_weak); print "\n");
 val _ = if null (hyp source_to_flatProofTheory.global_env_inv_weak) then () else raise Fail "hypotheses: global_env_inv_weak";
 val _ = (print "global_env_inv_weak_typed="; print_term (concl source_to_flatProofTheory.global_env_inv_weak); print "\n");
+
+val _ = if null (hyp source_to_flatProofTheory.list_to_v_v_rel) then () else raise Fail "hypotheses: list_to_v_v_rel";
+val _ = (print "list_to_value_related_typed="; print_term (concl source_to_flatProofTheory.list_to_v_v_rel); print "\n");

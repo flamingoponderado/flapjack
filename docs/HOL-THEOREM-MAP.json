@@ -471,6 +471,15 @@
   "reviewer": "Compared no_mat_naive_matches in flat_pattern_global_flag_probe.out: the binders retain the HOL order and the single premise covers the value, default, and mapped row bodies. Membership renders EVERY and equality to true renders no_Mat."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "list_to_v_v_rel",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/ListConversion.lean",
+  "lean_name": "listToValue_related",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["c", "tys"],
+  "reviewer": "Compared source and list_to_value_related_typed in cake_subglobals_probe.out: free global environment precedes the two explicitly quantified lists, and the conjunction of has_lists and LIST_REL implies the source-to-flat list value relation. The c and tys fields use the reviewed finite-map carrier."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
   "hol_name": "simp_guard_thm",
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/DecisionEncoding.lean",

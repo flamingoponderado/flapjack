@@ -3,20 +3,27 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalEnvConditions
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Conversions
 import Flapjack.SemanticPrimitivesHOL.Conversions
 
-/-! List conversion compatibility over the factored source-to-flat relation.
-The relation's full correspondence to HOL remains open. -/
+/-! List conversion compatibility over the source-to-flat value relation. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.SemanticPrimitivesHOL
 open Flapjack.Compiler.Backend.BackendCommon
 open Flapjack.Basis.Pure.MlString
 
+namespace ListConversionPort
+/-- Canonical global finite-map carrier roundtrip. -/
+theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
+    GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env := GlobalEnv.holFmapAsFiniteSupportWitness env
+end ListConversionPort
+
 /-- Related lists encode to related source and flat list values when the
-constructor map contains the list stamps. This is Flapjack infrastructure
-over the factored relation, not a tagged HOL theorem. -/
-theorem listToValue_related (genv : GlobalEnv) (hasLists : hasLists genv.c)
+constructor map contains the list stamps. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "list_to_v_v_rel"
+  (fmap_as_finite_support := [c, tys])]
+theorem listToValue_related (genv : GlobalEnv)
     (xs : List SemanticPrimitivesHOL.Value) (ys : List FlatSem.Value)
-    (related : List.Forall₂ (ValueRel genv) xs ys) :
+    (premises : hasLists genv.c ∧ List.Forall₂ (ValueRel genv) xs ys) :
     ValueRel genv (SemanticPrimitivesHOL.listToValue xs) (FlatSem.listToValue ys) := by
+  obtain ⟨hasLists, related⟩ := premises
   induction related with
   | nil =>
     apply ValueRel.constructor

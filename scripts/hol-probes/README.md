@@ -9692,3 +9692,6 @@ with its conjunctive premise and inferred worklist triple type.
 
 `flat_pattern_global_flag_probe.out` captures the three `decode_pos_no_Mat`,
 `decode_test_no_Mat`, and `decode_guard_no_Mat` statements and their carriers.
+
+`cake_subglobals_probe.out` captures `list_to_v_v_rel` with both source and
+flat list types and its complete conjunctive premise.
