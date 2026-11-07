@@ -116048,33 +116048,6 @@
   "reviewer": "Compared every typed do_app_definition case in cake_source_apply_probe.out with the assembled numeric and basic dispatchers, including argument shapes, guarded arithmetic and conversions, safe and unsafe bounds, byte and array copies, list encodings, Eval and Opapp fallback, thunk operations, and FFI return and final cases. HOL characters and word8s use the reviewed identical eight-bit carrier; FFI state remains independently polymorphic. The original proof and Lean source equations cover reference allocation, fixed array allocation and GC configuration. Floating operations inherit the rational-cut assumption in SOUNDNESS item 8; these checks do not prove cross-language correspondence. Inherits the reals_as_rational_cuts assumption through its dependencies."
 },
   {
-  "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
-  "hol_name": "do_app_def",
-  "lean_path": "Flapjack/SemanticPrimitivesHOL/ApplyNumeric.lean",
-  "lean_name": "doApp_opref",
-  "statement_status": "reviewed_exact",
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared the complete Opref clause and typed opref_equation HOL replay: allocate Refv at the end of the store, preserve arbitrary FFI state and return the old length as a true-flagged location. The equation invokes doApp and inherits its floating-point assumption through the declaration dependency. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-  {
-  "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
-  "hol_name": "do_app_def",
-  "lean_path": "Flapjack/SemanticPrimitivesHOL/ApplyNumeric.lean",
-  "lean_name": "doApp_aallocFixed",
-  "statement_status": "reviewed_exact",
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared the complete AallocFixed clause and typed fixed_equation HOL replay: preserve an arbitrary value list in the appended Varray, preserve arbitrary FFI state and return the old length as a true-flagged location. The equation invokes doApp and inherits its floating-point assumption through the declaration dependency. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-  {
-  "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
-  "hol_name": "do_app_def",
-  "lean_path": "Flapjack/SemanticPrimitivesHOL/ApplyNumeric.lean",
-  "lean_name": "doApp_configGC",
-  "statement_status": "reviewed_exact",
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared the complete ConfigGC clause and typed config_equation HOL replay: any two integer literals return the unit constructor without changing the store or arbitrary FFI state. The equation invokes doApp and inherits its floating-point assumption through the declaration dependency. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-  {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "add_decs_generation_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/EvalState.lean",
