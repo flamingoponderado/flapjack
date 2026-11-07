@@ -32,4 +32,15 @@ theorem mapM_eq_map {α β : Type} (visit : α → Option β) (f : α → β)
   | nil => rfl
   | cons first rest ih => simp only [List.map_cons, first, ih]
 
+/-- Mapping an option-valued function succeeds when it succeeds on every
+member of the input list. -/
+theorem mapM_succeeds {α β : Type} (xs : List α) (f : α → Option β)
+    (h : ∀ x ∈ xs, ∃ y, f x = some y) : ∃ ys, xs.mapM f = some ys := by
+  induction xs with
+  | nil => exact ⟨[], rfl⟩
+  | cons x xs ih =>
+    obtain ⟨y, hy⟩ := h x (by simp)
+    obtain ⟨ys, hys⟩ := ih (by intro z hz; exact h z (by simp [hz]))
+    exact ⟨y :: ys, by simp [List.mapM_cons, hy, hys]⟩
+
 end Flapjack

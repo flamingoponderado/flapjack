@@ -1,3 +1,4 @@
+import Flapjack.Misc.Option.MapM
 import Flapjack.Compiler.Backend.BvlHandle
 
 /-! Structural sufficiency of handler helper traversals. These lemmas are
@@ -30,15 +31,6 @@ private theorem foldRec_succeeds {α : Type} (xs : List α) (f : α → Option B
       obtain ⟨value, hv⟩ := h x (by simp)
       obtain ⟨result, hr⟩ := ih value (by intro y hy; exact h y (by simp [hy]))
       exact ⟨result, by simpa [hv] using hr⟩
-
-private theorem mapM_succeeds {α β : Type} (xs : List α) (f : α → Option β)
-    (h : ∀ x ∈ xs, ∃ y, f x = some y) : ∃ ys, xs.mapM f = some ys := by
-  induction xs with
-  | nil => exact ⟨[], rfl⟩
-  | cons x xs ih =>
-    obtain ⟨y, hy⟩ := h x (by simp)
-    obtain ⟨ys, hys⟩ := ih (by intro z hz; exact h z (by simp [hz]))
-    exact ⟨y :: ys, by simp [List.mapM_cons, hy, hys]⟩
 
 /-- Raise detection succeeds under a structural traversal bound. -/
 theorem canRaiseFuel_succeeds (fuel : Nat) (e : Exp) (bound : expBudget e < fuel) :
