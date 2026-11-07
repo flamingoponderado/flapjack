@@ -94,21 +94,32 @@ theorem evaluateOracleFull {Config F : Type} (ci : CompilerInstance Config)
         have clockBound := evaluateClockFull state middle env [expr] (.err (.raise value)) exprRun
         exact evaluateMatchOracleFull ci f compile preserves middle env value clauses value
       | app op args =>
-        apply adjustOracle_evaluate_App ci f compile preserves state next env op args ?_ ?_ ?_ ?_ result run inserted safe
-        · exact evaluateOracleFull ci f compile preserves state env args.reverse
-        · intro _ middle values callEnv body argsRun _ nonzero
+        refine adjustOracle_evaluate_App compile ci f preserves state env op args
+          ⟨?_, ?_, ?_, evaluateOracleFull ci f compile preserves state env args.reverse⟩
+          next result ⟨run, inserted, safe⟩
+        · intro middle outcome values pair callEnv body ⟨argsRun, outcomeEq, _, _, pairEq, nonzero⟩
+          subst outcome
+          subst pair
           have clockBound := evaluateClockFull state middle env args.reverse (.val values) argsRun
           exact evaluateOracleFull ci f compile preserves (decClock middle) callEnv [body]
-        · intro _ middle values thunk callEnv body argsRun _ _ nonzero
-          have clockBound := evaluateClockFull state middle env args.reverse (.val values) argsRun
-          exact evaluateOracleFull ci f compile preserves (decClock middle) callEnv [body]
-        · intro _ middle decoded values evalEnv decs argsRun decodedRun nonzero
+        · intro middle outcome values decoded decodedResult pair evalEnv decs
+            ⟨argsRun, outcomeEq, _, decodedRun, resultEq, pairEq, nonzero⟩
+          subst outcome
+          subst decodedResult
+          subst pair
           have clockBound := evaluateClockFull state middle env args.reverse (.val values) argsRun
           have clockEq : decoded.clock = middle.clock := by
             have hclock := congrArg (fun pair => pair.1.clock) decodedRun
             have hc := doEvalRes_clock values.reverse middle (β := Value)
             exact hclock.symm.trans hc
           exact evaluateDecsOracleFull ci f compile preserves (decClock decoded) evalEnv decs
+        · intro middle outcome values mode thunk pair callEnv body
+            ⟨argsRun, outcomeEq, _, _, modeEq, _, pairEq, nonzero⟩
+          subst outcome
+          subst mode
+          subst pair
+          have clockBound := evaluateClockFull state middle env args.reverse (.val values) argsRun
+          exact evaluateOracleFull ci f compile preserves (decClock middle) callEnv [body]
 termination_by (state.clock, sizeOf exprs)
 decreasing_by
   all_goals try subst_vars
