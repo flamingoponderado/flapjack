@@ -421,6 +421,7 @@ theorem localEnvBounded_let_anonymous {C F : Type} [Nonempty C]
             FlatSem.evaluate flatEnv middleFlat [compileExp trace compMap body] := by
           rw [compileExp, FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flat
             [compileExp trace compMap first] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatFirst]
+          simp
         refine ⟨finalGenv, ?_, ?_⟩
         · unfold ExprSim at bodySim ⊢
           rw [sourceOuter, flatOuter]

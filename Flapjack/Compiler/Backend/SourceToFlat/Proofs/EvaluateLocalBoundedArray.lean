@@ -5,6 +5,11 @@ namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL
 open OracleInvariant
 
+/-- A missing optional name leaves every binding list unchanged. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "opt_bind_lem"]
+theorem optBind_none {K V : Type} :
+    (optBind (none : Option K) : V → List (K × V) → List (K × V)) = fun _ env => env := rfl
+
 /-- Updating a flat environment's value bindings by the identity leaves it unchanged. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "env_updated_lem"]
 theorem flatEnvironment_update_identity {α : Type} (env : FlatSem.Environment α) :

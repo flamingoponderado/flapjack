@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Apply
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Eval
 import Flapjack.Compiler.Backend.Semantics.FlatSem.PatternMatch
+import Flapjack.Misc.OptBind
 
 /-! A fuel-bounded version of the original flat evaluator. Fuel exhaustion is
 represented separately from the original clock timeout. The unbounded HOL
@@ -136,7 +137,7 @@ noncomputable def evaluateFuel {C F : Type} : Nat → Environment Value → Stat
         | .err error => some (next, .err error)
         | .val [] => some (typeError next)
         | .val (value :: _) =>
-          let bindings := match name with | none => env.v | some name => (name, value) :: env.v
+          let bindings := optBind name value env.v
           evaluateFuel fuel { env with v := bindings } next [body]
       | .letrec _ funs body =>
         if (funs.map Prod.fst).Nodup then

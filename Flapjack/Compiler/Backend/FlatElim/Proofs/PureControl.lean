@@ -55,11 +55,11 @@ theorem pureEvaluation_let {C F : Type} (env : FlatSem.Environment FlatSem.Value
     simp only [clocks, Nat.min_self] at run
     cases name with
     | none =>
-      simp only at run
+      simp only [optBind_none_apply] at run
       exact bodyIH env firstState (by omega) next result reachable target run (singletonPure body pure.2)
         envSafe (singletonExpression_noEval body safe.2) (singletonLocations body reachable disjoint.2) firstRelated notTypeError
     | some name =>
-      simp only at run
+      simp only [optBind_some_apply] at run
       have extendedSafe : bindingsNoEval ((name, value) :: env.v) := by
         simpa [bindingsNoEval] using And.intro valueSafe envSafe
       exact bodyIH { env with v := (name, value) :: env.v } firstState (by omega) next result reachable target run

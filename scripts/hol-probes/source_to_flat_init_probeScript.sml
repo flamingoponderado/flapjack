@@ -6,6 +6,10 @@ fun show_thm label th =
   if null (hyp th) then (print label; print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
 fun show_eval label tm = (print label; print_term (rhs (concl (EVAL tm))); print "\n");
+val _ = show_thm "opt_bind_definition_typed=" miscTheory.opt_bind_def;
+val opt_bind_lem_replay = Q.prove (
+  `misc$opt_bind NONE = \x y. y`, rw [FUN_EQ_THM, miscTheory.opt_bind_def]);
+val _ = show_thm "opt_bind_lem_replay=" opt_bind_lem_replay;
 val env_updated_lem_replay = Q.prove (
   `env with v updated_by (\y. y) = (env : 'a flatSem$environment)`,
   rw [flatSemTheory.environment_component_equality]);

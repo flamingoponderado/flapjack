@@ -1,3 +1,5 @@
+opt_bind_definition_typed=∀(n :α option) (v :β) (e :(α # β) list). opt_bind n v e = case n of (NONE :α option) => e | SOME n' => (n',v)::e
+opt_bind_lem_replay=(opt_bind (NONE :β option) :α -> (β # α) list -> (β # α) list) = (λ(x :α) (y :(β # α) list). y)
 env_updated_lem_replay=(env :α environment) with v updated_by (λ(y :(mlstring # α) list). y) = env
 all_disjoint_cons_typed=(ALL_DISJOINT [(x :α -> bool)] ⇔ T) ∧ (ALL_DISJOINT (x::(y :α -> bool)::(zs :(α -> bool) list)) ⇔ DISJOINT x y ∧ ALL_DISJOINT (x ∪ y::zs))
 idx_types_forall_typed=(∀(x :idx_types). (P :idx_types -> bool) x) ⇔ P Idx_Var ∧ P Idx_Type ∧ P Idx_Exn

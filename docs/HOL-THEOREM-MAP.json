@@ -340,6 +340,22 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "opt_bind_lem",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateLocalBoundedArray.lean",
+  "lean_name": "optBind_none",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared opt_bind_lem_replay in source_to_flat_init_probe.out: independent name and value types and the original equality of optional-binding functions agree. The local HOL proof is replayed."
+},
+{
+  "hol_path": "cakeml/misc/miscScript.sml",
+  "hol_name": "opt_bind_def",
+  "lean_path": "Flapjack/Misc/OptBind.lean",
+  "lean_name": "optBind",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared opt_bind_definition_typed in source_to_flat_init_probe.out: independent name and value types, optional-name case and association-list update agree. The flat fuel-bounded and clocked evaluators use the shared definition."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
   "hol_name": "env_updated_lem",
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateLocalBoundedArray.lean",
   "lean_name": "flatEnvironment_update_identity",
