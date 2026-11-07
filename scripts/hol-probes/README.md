@@ -178,7 +178,8 @@ source review of the Lean ports, not the complete pass correctness theorem.
 
 `source_to_flat_invariant_helpers_probe.out` captures the inferred original
 global-vector and constructor-map consequences, index-range shrinking with
-and without a generation change, and reserved Eval-reference update. These
+and without a generation change, reserved Eval-reference update, and the
+end-of-Eval invariant with its independent FFI types. These
 statements support review of their Lean ports, not pass correctness.
 
 `source_to_flat_compile_correct_probe.out` captures the polymorphic abort

@@ -11145,6 +11145,15 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "invariant_end_eval",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvalOracleSimulation.lean",
+    "lean_name": "invariantEndEval",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["c", "tys"],
+    "reviewer": "Compared end_eval_typed in source_to_flat_invariant_helpers_probe.out: current and previous FFI carriers are independent, the six conjunctive premises include the full oracle-state case, and the three conclusions use the original reset operation. The compiler payload is shared and its explicit inhabitance supplies HOL's THE. The qualifier covers the invariant's canonical c and tys finite maps."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "statement_status": "reviewed_fmap_as_finite_support",
     "fmap_as_finite_support": [
       "c",

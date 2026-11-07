@@ -292,7 +292,7 @@ run_probe source_to_flat_invariant_clock_probeScript.sml source_to_flat_invarian
   "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe source_to_flat_invariant_helpers_probeScript.sml source_to_flat_invariant_helpers_probe.out \
-  globals_typed constructors_typed shrink_typed shrink_gen_typed eval_ref_typed \
+  globals_typed constructors_typed shrink_typed shrink_gen_typed eval_ref_typed end_eval_typed \
   "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe source_to_flat_compile_correct_probeScript.sml source_to_flat_compile_correct_probe.out \

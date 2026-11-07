@@ -8,3 +8,4 @@ val _ = (print "constructors_typed="; Lib.with_flag (Globals.show_types,true) pr
 val _ = (print "shrink_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl invariant_idx_range_shrink); print "\n");
 val _ = (print "shrink_gen_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl invariant_idx_range_shrink_gen); print "\n");
 val _ = (print "eval_ref_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl invariant_change_eval_ref); print "\n");
+val _ = (print "end_eval_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl invariant_end_eval); print "\n");

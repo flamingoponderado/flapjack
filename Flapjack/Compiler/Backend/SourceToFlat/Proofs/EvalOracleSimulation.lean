@@ -310,30 +310,34 @@ theorem factoredInvariant_resetOracle {C F : Type} [Nonempty C]
   · simpa [mode] using oracle
   · simpa [mode, srcOracNextCfg, resetEnvGeneration] using fin
 
-/-- Source-shaped Eval return lemma over the factored invariant. It retains
-the original oracle-shape premise; the factored relations remain unreviewed. -/
-theorem factoredInvariant_endEval_sourceShape {C F : Type} [Nonempty C]
+/-- Restore the outer invariant and oracle relations after an Eval execution. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "invariant_end_eval"
+  (fmap_as_finite_support := [c, tys])]
+theorem invariantEndEval {C F G : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (gen innerGen : EnvironmentGenerationStore) (oldGenv genv : GlobalEnv)
-    (start finish innerStart innerFinish : NextIndices) (other : Set (Nat × IndexKind))
-    (prevSource source : SemanticPrimitivesHOL.State F) (prevFlat flat : FlatSem.State C F)
+    (innerGen : EnvironmentGenerationStore) (genv : GlobalEnv)
+    (innerStart innerFinish start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (gen : EnvironmentGenerationStore) (oldGenv : GlobalEnv)
+    (prevSource : SemanticPrimitivesHOL.State G) (prevFlat : FlatSem.State C G)
     (begin : Option EvalState)
-    (current : factoredInvariant interp transform innerGen genv
-      (innerStart, innerFinish, idxBlock start finish ∪ other) source flat)
-    (previousInv : factoredInvariant interp transform gen oldGenv (start, finish, other) prevSource prevFlat)
-    (forward : oracForwardRel interp begin source.evalState)
-    (indices : idxPrev finish innerFinish)
-    (initialForward : oracConfigEnvsSubspt interp prevSource.evalState begin)
-    (beginShape : match prevSource.evalState with
+    (premises : factoredInvariant interp transform innerGen genv
+      (innerStart, innerFinish, idxBlock start finish ∪ other) source flat ∧
+    factoredInvariant interp transform gen oldGenv (start, finish, other) prevSource prevFlat ∧
+    oracForwardRel interp begin source.evalState ∧
+    idxPrev finish innerFinish ∧
+    oracConfigEnvsSubspt interp prevSource.evalState begin ∧
+    (match prevSource.evalState with
       | some (.evalOracle prior) => ∃ beginState, begin = some (.evalOracle beginState) ∧
           beginState.envs = (addEnvGeneration prior).envs ∧
           beginState.generation = (addEnvGeneration prior).generation
-      | _ => False) :
-    let reset := resetEnvGeneration prevSource.evalState source.evalState
+      | _ => False)) :
     factoredInvariant interp transform gen genv (start, finish, other)
-      { source with evalState := reset } flat ∧
-    oracForwardRel interp prevSource.evalState reset ∧
-    (envGenRel gen prevSource.evalState → envGenRel gen reset) := by
+      { source with evalState := resetEnvGeneration prevSource.evalState source.evalState } flat ∧
+    oracForwardRel interp prevSource.evalState (resetEnvGeneration prevSource.evalState source.evalState) ∧
+    (envGenRel gen prevSource.evalState →
+      envGenRel gen (resetEnvGeneration prevSource.evalState source.evalState)) := by
+  obtain ⟨current, previousInv, forward, indices, initialForward, beginShape⟩ := premises
   cases priorMode : prevSource.evalState with
   | none => simp [priorMode] at beginShape
   | some mode =>

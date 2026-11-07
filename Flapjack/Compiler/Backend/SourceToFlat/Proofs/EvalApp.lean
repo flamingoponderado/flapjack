@@ -623,11 +623,11 @@ theorem evaluate_eval_declare_and_restore {C F : Type} [Nonempty C]
       generation declared
   have fullForward := OracleInvariant.oracForwardRel_trans interp begin sourceLast.evalState after
     ⟨forward, nextForward⟩
-  have restored := OracleInvariant.factoredInvariant_endEval_sourceShape interp transform oldGen
-    { gen with next := gen.next + 1 } oldGenv newGenv start finish innerStart innerFinish other
-    sourceArguments { sourceLast with evalState := after } flatArguments
-    { flatMiddle with refs := .refv stored :: flatMiddle.refs.tail } begin
-    nextInvariant previousInv (by simpa using fullForward) indices initialForward beginShape
+  have restored := OracleInvariant.invariantEndEval interp transform
+    { gen with next := gen.next + 1 } newGenv innerStart innerFinish start finish other
+    { sourceLast with evalState := after } { flatMiddle with refs := .refv stored :: flatMiddle.refs.tail }
+    oldGen oldGenv sourceArguments flatArguments begin
+    ⟨nextInvariant, previousInv, (by simpa using fullForward), indices, initialForward, beginShape⟩
   refine ⟨stored, ?_, flatResult, related, .value (.cons related .nil), ?_, ?_, ?_, ?_⟩
   · exact evaluate_sourceEval_success sourceEnv evalEnv newEnv sourceInitial sourceArguments sourceLast
       exprs sourceValues decs begin after value sourceRun sourceDecoded sourcePositive sourceDeclarations declared
@@ -885,9 +885,9 @@ theorem eval_error_from_declarations {C F : Type} [Nonempty C]
   | abort error => simp [sourceResult]
   | raise value =>
     obtain ⟨current, forward, finalGrowth⟩ := post (by simp)
-    have restored := OracleInvariant.factoredInvariant_endEval_sourceShape interp transform oldGen nextGen
-      oldGenv finalGenv start finish nextConfig.next nextConfig.next other sourceArguments sourceLast flatArguments flatLast begin
-      current invariant (by simpa [EvaluateHOL.decClock] using forward) previous initialForward beginShape
+    have restored := OracleInvariant.invariantEndEval interp transform nextGen finalGenv
+      nextConfig.next nextConfig.next start finish other sourceLast flatLast oldGen oldGenv sourceArguments flatArguments begin
+      ⟨current, invariant, (by simpa [EvaluateHOL.decClock] using forward), previous, initialForward, beginShape⟩
     rw [sourceResult, flatResult]
     exact ⟨baseGrowth.trans finalGrowth, restored.1, restored.2.2 priorGeneration, restored.2.1⟩
 
