@@ -6,43 +6,28 @@ open ClosLang ClosProps
 private theorem mapM_noLabels (f : Exp → Option Exp) (source target : List Exp)
     (pointwise : ∀ e result, f e = some result → noLabels e → noLabels result)
     (run : source.mapM f = some target) (valid : noLabelsList source) : noLabelsList target := by
-  induction source generalizing target with
-  | nil => simp at run; subst target; simp [noLabelsList]
+  have rel := mapM_rel f (fun e result => noLabels e → noLabels result) pointwise source target run
+  clear run
+  induction rel with
+  | nil => simp [noLabelsList]
   | cons first rest ih =>
-    simp only [noLabelsList] at valid
-    cases head : f first with
-    | none => simp [List.mapM_cons, head] at run
-    | some next =>
-      cases tail : rest.mapM f with
-      | none => simp [List.mapM_cons, head, tail] at run
-      | some nextRest =>
-        have equal : next :: nextRest = target := by simpa [List.mapM_cons, head, tail] using run
-        subst target
-        simp only [noLabelsList]
-        exact ⟨pointwise first next head valid.1, ih nextRest tail valid.2⟩
+    simp only [noLabelsList] at valid ⊢
+    exact ⟨first valid.1, ih valid.2⟩
 
 private theorem mapM_funs_noLabels (f : Nat × Exp → Option (Nat × Exp))
     (source target : List (Nat × Exp))
     (pointwise : ∀ entry result, f entry = some result → noLabels entry.2 → noLabels result.2)
     (run : source.mapM f = some target) (valid : noLabelsFuns source) : noLabelsFuns target := by
-  induction source generalizing target with
-  | nil => simp at run; subst target; simp [noLabelsFuns]
-  | cons first rest ih =>
-    cases first with
-    | mk arity body =>
-      simp only [noLabelsFuns] at valid
-      cases head : f (arity, body) with
-      | none => simp [List.mapM_cons, head] at run
-      | some next =>
-        cases tail : rest.mapM f with
-        | none => simp [List.mapM_cons, head, tail] at run
-        | some nextRest =>
-          have equal : next :: nextRest = target := by simpa [List.mapM_cons, head, tail] using run
-          subst target
-          cases next with
-          | mk nextArity nextBody =>
-            simp only [noLabelsFuns]
-            exact ⟨pointwise (arity, body) (nextArity, nextBody) head valid.1, ih nextRest tail valid.2⟩
+  have rel := mapM_rel f (fun entry result => noLabels entry.2 → noLabels result.2) pointwise source target run
+  clear run
+  induction rel with
+  | nil => simp [noLabelsFuns]
+  | @cons a b xs ys first rest ih =>
+    cases a
+    cases b
+    simp only [noLabelsFuns] at valid ⊢
+    exact ⟨first valid.1, ih valid.2⟩
+
 private theorem fuel_noLabels (fuel maxApp : Nat) (expression result : Exp)
     (run : introMultiFuel fuel maxApp expression = some result) (valid : noLabels expression) :
     noLabels result := by

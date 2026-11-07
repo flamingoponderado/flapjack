@@ -7,39 +7,25 @@ open Flapjack.Compiler.Backend.FlatProps (unionGlobalBag)
 private theorem mapM_globals (f : Exp → Option Exp) (source target : List Exp)
     (pointwise : ∀ e result, f e = some result → setGlobals result = setGlobals e)
     (run : source.mapM f = some target) : elistGlobals target = elistGlobals source := by
-  induction source generalizing target with
-  | nil => simp at run; subst target; rfl
-  | cons first rest ih =>
-    cases head : f first with
-    | none => simp [List.mapM_cons, head] at run
-    | some next =>
-      cases tail : rest.mapM f with
-      | none => simp [List.mapM_cons, head, tail] at run
-      | some nextRest =>
-        have equal : next :: nextRest = target := by simpa [List.mapM_cons, head, tail] using run
-        subst target
-        simp only [elistGlobals, pointwise first next head, ih nextRest tail]
+  have rel := mapM_rel f (fun e result => setGlobals result = setGlobals e) pointwise source target run
+  clear run
+  induction rel with
+  | nil => rfl
+  | cons first rest ih => simp only [elistGlobals, first, ih]
 
 private theorem mapM_funs_globals (f : Nat × Exp → Option (Nat × Exp))
     (source target : List (Nat × Exp))
     (pointwise : ∀ entry result, f entry = some result → setGlobals result.2 = setGlobals entry.2)
     (run : source.mapM f = some target) : funGlobals target = funGlobals source := by
-  induction source generalizing target with
-  | nil => simp at run; subst target; rfl
-  | cons first rest ih =>
-    cases first with
-    | mk arity body =>
-      cases head : f (arity, body) with
-      | none => simp [List.mapM_cons, head] at run
-      | some next =>
-        cases tail : rest.mapM f with
-        | none => simp [List.mapM_cons, head, tail] at run
-        | some nextRest =>
-          have equal : next :: nextRest = target := by simpa [List.mapM_cons, head, tail] using run
-          subst target
-          cases next with
-          | mk nextArity nextBody =>
-            simp only [funGlobals, pointwise _ _ head, ih nextRest tail]
+  have rel := mapM_rel f (fun entry result => setGlobals result.2 = setGlobals entry.2) pointwise source target run
+  clear run
+  induction rel with
+  | nil => rfl
+  | @cons a b xs ys first rest ih =>
+    cases a
+    cases b
+    simp only [funGlobals, first, ih]
+
 private theorem fuel_globals (fuel maxApp : Nat) (expression result : Exp)
     (run : introMultiFuel fuel maxApp expression = some result) : setGlobals result = setGlobals expression := by
   induction fuel generalizing expression result with
@@ -238,20 +224,13 @@ theorem compile_preserves_elist_globals (maxApp : Nat) (enabled : Bool) (es : Li
 private theorem mapM_esgcFree (f : Exp → Option Exp) (source target : List Exp)
     (pointwise : ∀ e result, f e = some result → esgcFree e → esgcFree result)
     (run : source.mapM f = some target) (valid : esgcFreeList source) : esgcFreeList target := by
-  induction source generalizing target with
-  | nil => simp at run; subst target; simp [esgcFreeList]
+  have rel := mapM_rel f (fun e result => esgcFree e → esgcFree result) pointwise source target run
+  clear run
+  induction rel with
+  | nil => simp [esgcFreeList]
   | cons first rest ih =>
-    simp only [esgcFreeList] at valid
-    cases head : f first with
-    | none => simp [List.mapM_cons, head] at run
-    | some next =>
-      cases tail : rest.mapM f with
-      | none => simp [List.mapM_cons, head, tail] at run
-      | some nextRest =>
-        have equal : next :: nextRest = target := by simpa [List.mapM_cons, head, tail] using run
-        subst target
-        simp only [esgcFreeList]
-        exact ⟨pointwise first next head valid.1, ih nextRest tail valid.2⟩
+    simp only [esgcFreeList] at valid ⊢
+    exact ⟨first valid.1, ih valid.2⟩
 
 private theorem fuel_esgcFree (fuel maxApp : Nat) (expression result : Exp)
     (run : introMultiFuel fuel maxApp expression = some result) (valid : esgcFree expression) :

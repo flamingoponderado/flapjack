@@ -207,18 +207,14 @@ theorem containsAppSome_collectApps (maxApp : Nat) (args : List Exp) (expression
   rw [run] at invariant
   simpa [containsAppSome] using invariant
 
-/-- A pointwise traversal that preserves application safety also preserves it
-over the complete list. -/
-theorem mapM_containsAppSome (maxApp : Nat) (f : Exp → Option Exp) (source target : List Exp)
-    (pointwise : ∀ e result, f e = some result →
-      (containsAppSomeExp maxApp e ↔ containsAppSomeExp maxApp result))
-    (run : source.mapM f = some target) :
-    containsAppSome maxApp source ↔ containsAppSome maxApp target := by
+/-- Flapjack proof infrastructure: successful option traversals relate their
+source and target elements pointwise. -/
+theorem mapM_rel {A B : Type} (f : A → Option B) (r : A → B → Prop)
+    (pointwise : ∀ a b, f a = some b → r a b)
+    (source : List A) (target : List B) (run : source.mapM f = some target) :
+    List.Forall₂ r source target := by
   induction source generalizing target with
-  | nil =>
-    simp at run
-    subst target
-    rfl
+  | nil => simp at run; subst target; exact .nil
   | cons first rest ih =>
     cases head : f first with
     | none => simp [List.mapM_cons, head] at run
@@ -228,32 +224,36 @@ theorem mapM_containsAppSome (maxApp : Nat) (f : Exp → Option Exp) (source tar
       | some nextRest =>
         have equal : next :: nextRest = target := by simpa [List.mapM_cons, head, tail] using run
         subst target
-        simp only [containsAppSome, pointwise first next head, ih nextRest tail]
+        exact .cons (pointwise first next head) (ih nextRest tail)
+
+/-- A pointwise traversal that preserves application safety also preserves it
+over the complete list. -/
+private theorem mapM_containsAppSome (maxApp : Nat) (f : Exp → Option Exp) (source target : List Exp)
+    (pointwise : ∀ e result, f e = some result →
+      (containsAppSomeExp maxApp e ↔ containsAppSomeExp maxApp result))
+    (run : source.mapM f = some target) :
+    containsAppSome maxApp source ↔ containsAppSome maxApp target := by
+  have rel := mapM_rel f (fun e result => containsAppSomeExp maxApp e ↔ containsAppSomeExp maxApp result) pointwise source target run
+  clear run
+  induction rel with
+  | nil => rfl
+  | cons first rest ih => simp only [containsAppSome, first, ih]
 
 /-- The corresponding traversal property for recursive function bundles. -/
-theorem mapM_funs_containsAppSome (maxApp : Nat) (f : Nat × Exp → Option (Nat × Exp))
+private theorem mapM_funs_containsAppSome (maxApp : Nat) (f : Nat × Exp → Option (Nat × Exp))
     (source target : List (Nat × Exp))
     (pointwise : ∀ entry result, f entry = some result →
       (containsAppSomeExp maxApp entry.2 ↔ containsAppSomeExp maxApp result.2))
     (run : source.mapM f = some target) :
     containsAppSomeFuns maxApp source ↔ containsAppSomeFuns maxApp target := by
-  induction source generalizing target with
-  | nil =>
-    simp at run
-    subst target
-    rfl
-  | cons first rest ih =>
-    cases head : f first with
-    | none => simp [List.mapM_cons, head] at run
-    | some next =>
-      cases tail : rest.mapM f with
-      | none => simp [List.mapM_cons, head, tail] at run
-      | some nextRest =>
-        have equal : next :: nextRest = target := by simpa [List.mapM_cons, head, tail] using run
-        subst target
-        cases first
-        cases next
-        simp only [containsAppSomeFuns, pointwise _ _ head, ih nextRest tail]
+  have rel := mapM_rel f (fun entry result => containsAppSomeExp maxApp entry.2 ↔ containsAppSomeExp maxApp result.2) pointwise source target run
+  clear run
+  induction rel with
+  | nil => rfl
+  | @cons a b xs ys first rest ih =>
+    cases a
+    cases b
+    simp only [containsAppSomeFuns, first, ih]
 
 /-- Every successful executable traversal preserves application safety. -/
 theorem introMultiFuel_containsAppSome (fuel maxApp : Nat) (expression result : Exp)
@@ -439,51 +439,32 @@ theorem introMultiFuel_containsAppSome (fuel maxApp : Nat) (expression result : 
 
 /-- A pointwise traversal that preserves absence of captured-variable annotations also preserves it
 over the complete list. -/
-theorem mapM_varsNone (f : Exp → Option Exp) (source target : List Exp)
+private theorem mapM_varsNone (f : Exp → Option Exp) (source target : List Exp)
     (pointwise : ∀ e result, f e = some result →
       (fnVarsNoneExp e ↔ fnVarsNoneExp result))
     (run : source.mapM f = some target) :
     everyFnVarsNone source ↔ everyFnVarsNone target := by
-  induction source generalizing target with
-  | nil =>
-    simp at run
-    subst target
-    rfl
-  | cons first rest ih =>
-    cases head : f first with
-    | none => simp [List.mapM_cons, head] at run
-    | some next =>
-      cases tail : rest.mapM f with
-      | none => simp [List.mapM_cons, head, tail] at run
-      | some nextRest =>
-        have equal : next :: nextRest = target := by simpa [List.mapM_cons, head, tail] using run
-        subst target
-        simp only [everyFnVarsNone, pointwise first next head, ih nextRest tail]
+  have rel := mapM_rel f (fun e result => fnVarsNoneExp e ↔ fnVarsNoneExp result) pointwise source target run
+  clear run
+  induction rel with
+  | nil => rfl
+  | cons first rest ih => simp only [everyFnVarsNone, first, ih]
 
 /-- The corresponding traversal property for recursive function bundles. -/
-theorem mapM_funs_varsNone (f : Nat × Exp → Option (Nat × Exp))
+private theorem mapM_funs_varsNone (f : Nat × Exp → Option (Nat × Exp))
     (source target : List (Nat × Exp))
     (pointwise : ∀ entry result, f entry = some result →
       (fnVarsNoneExp entry.2 ↔ fnVarsNoneExp result.2))
     (run : source.mapM f = some target) :
     fnVarsNoneFuns source ↔ fnVarsNoneFuns target := by
-  induction source generalizing target with
-  | nil =>
-    simp at run
-    subst target
-    rfl
-  | cons first rest ih =>
-    cases head : f first with
-    | none => simp [List.mapM_cons, head] at run
-    | some next =>
-      cases tail : rest.mapM f with
-      | none => simp [List.mapM_cons, head, tail] at run
-      | some nextRest =>
-        have equal : next :: nextRest = target := by simpa [List.mapM_cons, head, tail] using run
-        subst target
-        cases first
-        cases next
-        simp only [fnVarsNoneFuns, pointwise _ _ head, ih nextRest tail]
+  have rel := mapM_rel f (fun entry result => fnVarsNoneExp entry.2 ↔ fnVarsNoneExp result.2) pointwise source target run
+  clear run
+  induction rel with
+  | nil => rfl
+  | @cons a b xs ys first rest ih =>
+    cases a
+    cases b
+    simp only [fnVarsNoneFuns, first, ih]
 
 /-- Every successful executable traversal preserves absence of captured-variable annotations. -/
 theorem introMultiFuel_varsNone (fuel maxApp : Nat) (expression result : Exp)
