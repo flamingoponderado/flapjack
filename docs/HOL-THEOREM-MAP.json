@@ -2,6 +2,15 @@
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "eval_simulation",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvalSimulationHandle.lean",
+  "lean_name": "evalSimulation_Handle",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Handle case retains the guarded match induction hypothesis, both result equations, and the expression induction hypothesis in HOL order. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "eval_simulation",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvalSimulationConstructors.lean",
   "lean_name": "evalSimulation_Con",
   "statement_status": "reviewed_exact",
