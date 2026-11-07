@@ -424,6 +424,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "compile_pat_bindings_no_Mat",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/NoMat.lean",
+  "lean_name": "noMat_compilePatBindings",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared no_mat_compile_bindings in flat_pattern_global_flag_probe.out: the four quantified binders and single conjunction retain the body and EVERY worklist-expression conditions, and the conclusion observes the second result component."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
   "hol_name": "naive_pattern_match_no_Mat",
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/NoMat.lean",
   "lean_name": "noMat_naivePatternMatch",

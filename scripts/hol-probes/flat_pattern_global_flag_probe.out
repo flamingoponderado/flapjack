@@ -1,3 +1,4 @@
+no_mat_compile_bindings=∀(t :tra) (i :num) (n_bindings :(flatLang$pat # num # exp) list) (exp :exp). no_Mat exp ∧ EVERY (λ((_0 :flatLang$pat),(_1 :num),(v_exp :exp)). no_Mat v_exp) n_bindings ⇒ no_Mat (SND (compile_pat_bindings t i n_bindings exp))
 no_mat_naive_match=∀(t :tra) (xs :(flatLang$pat # exp) list). EVERY (no_Mat ∘ (SND :flatLang$pat # exp -> exp)) xs ⇒ no_Mat (naive_pattern_match t xs)
 no_mat_naive_matches=∀(t :tra) (x :exp) (xs :(flatLang$pat # exp) list) (dflt :exp). EVERY no_Mat (x::dflt::MAP (SND :flatLang$pat # exp -> exp) xs) ⇒ no_Mat (naive_pattern_matches t x xs dflt)
 no_mat_compile_pats=no_Mat (dflt :exp) ∧ no_Mat (x :exp) ∧ EVERY no_Mat (MAP (SND :flatLang$pat # exp -> exp) (ps :(flatLang$pat # exp) list)) ⇒ no_Mat (compile_pats (cfg :config) (naive :bool) (t :tra) (N :num) x dflt ps)

@@ -9686,3 +9686,6 @@ with its original binder order and complete EVERY premise.
 
 `flat_pattern_global_flag_probe.out` captures `naive_pattern_match_no_Mat`
 and its EVERY condition on worklist second components.
+
+`flat_pattern_global_flag_probe.out` captures `compile_pat_bindings_no_Mat`
+with its conjunctive premise and inferred worklist triple type.

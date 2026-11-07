@@ -207,12 +207,18 @@ theorem noMat_projectionFold (trace : Tra) (value body : FlatLang.Exp)
     simp [FlatProps.noMat, FlatProps.noMatList, valueSafe, ih]
 
 /-- Pattern binding preserves match-freedom of its worklist and continuation. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "compile_pat_bindings_no_Mat"]
 theorem noMat_compilePatBindings (trace : Tra) (base : Nat)
     (todo : List (FlatLang.Pat × Nat × FlatLang.Exp)) (body : FlatLang.Exp)
-    (bodySafe : FlatProps.noMat body = true)
-    (todoSafe : ∀ pattern index expression, (pattern, index, expression) ∈ todo →
-      FlatProps.noMat expression = true) :
+    (premises : FlatProps.noMat body = true ∧
+      ∀ item ∈ todo, FlatProps.noMat item.2.2 = true) :
     FlatProps.noMat (compilePatBindings trace base todo body).2 = true := by
+  obtain ⟨bodySafe, safe⟩ := premises
+  have todoSafe : ∀ pattern index expression, (pattern, index, expression) ∈ todo →
+      FlatProps.noMat expression = true := by
+    intro pattern index expression member
+    exact safe (pattern, index, expression) member
+  clear safe
   revert todoSafe
   induction base, todo using compilePatBindings.induct trace body with
   | case1 i =>
@@ -292,10 +298,11 @@ theorem noMat_compilePatRhs (trace : Tra) (base : Nat) (value : FlatLang.Exp)
     (pattern : FlatLang.Pat) (body : FlatLang.Exp)
     (valueSafe : FlatProps.noMat value = true) (bodySafe : FlatProps.noMat body = true) :
     FlatProps.noMat (compilePatRhs trace base value (pattern, body)) = true := by
-  apply noMat_compilePatBindings trace (base + 1) [(pattern, base, value)] body bodySafe
-  intro p k e member
-  simp only [List.mem_singleton, Prod.mk.injEq] at member
-  obtain ⟨_, _, rfl⟩ := member
+  apply noMat_compilePatBindings trace (base + 1) [(pattern, base, value)] body
+  refine ⟨bodySafe, ?_⟩
+  intro item member
+  simp only [List.mem_singleton] at member
+  subst item
   exact valueSafe
 
 
