@@ -1,6 +1,15 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "extract_oracle_SUC_st",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleExtractSuccessor.lean",
+  "lean_name": "extract_oracle_SUC_st",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete statement and inferred carriers against the original local proof replay extract_oracle_suc_st_replay in source_eval_oracle_adjust_probe.out:61. Binders, premises and conclusion match. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "extract_oracle_0_st",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleExtractInitial.lean",
   "lean_name": "extract_oracle_0_st",
