@@ -109,7 +109,7 @@ theorem knownCorrect0OpSetGlobal {C F : Type} (trace : BackendCommon.Tra) (index
     intro n k
     have bound := unique n k
     simp only [elistGlobals_append, elistGlobals, setGlobals,
-      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Nat.add_zero] at bound ⊢
+      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Nat.add_zero, Flapjack.bagUnion, Flapjack.emptyBag] at bound ⊢
     omega
   have argsDisjoint : mglobalsDisjoint s0.globals xs := by
     have parts := (mglobalsDisjointRw s0.globals (.var .none 0) (.var .none 0)
@@ -140,7 +140,7 @@ theorem knownCorrect0OpSetGlobal {C F : Type} (trace : BackendCommon.Tra) (index
           intro k
           have bound := unique 0 k
           simp only [elistGlobals_append, elistGlobals, setGlobals,
-            FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, firstNExps, Nat.add_zero] at bound
+            FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, firstNExps, Nat.add_zero, Flapjack.bagUnion, Flapjack.emptyBag] at bound
           omega⟩
       have subArgsNext : sptSubspt g1 (nextG s0) := by
         intro key member

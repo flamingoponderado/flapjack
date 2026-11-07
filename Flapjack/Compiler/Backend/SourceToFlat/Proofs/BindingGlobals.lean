@@ -18,7 +18,7 @@ def bindingRangeBag (start count : Nat) : GlobalBag :=
 
 private theorem bindingRangeBag_zero (start : Nat) : bindingRangeBag start 0 = emptyGlobalBag := by
   funext key
-  simp [bindingRangeBag, emptyGlobalBag]
+  simp [bindingRangeBag, emptyGlobalBag, Flapjack.emptyBag]
 
 private theorem bindingRangeBag_succ (start count : Nat) :
     bindingRangeBag start (count + 1) =
@@ -27,10 +27,10 @@ private theorem bindingRangeBag_succ (start count : Nat) :
   by_cases h : key = start
   · subst key
     simp [bindingRangeBag, List.range_succ_eq_map, List.map_map, Function.comp_def,
-      unionGlobalBag, Nat.add_comm, Nat.add_left_comm]
+      unionGlobalBag, Nat.add_comm, Nat.add_left_comm, Flapjack.bagUnion]
   · have h' : start ≠ key := Ne.symm h
     simp [bindingRangeBag, List.range_succ_eq_map, List.map_map, Function.comp_def,
-      unionGlobalBag, Nat.add_comm, Nat.add_left_comm, h, h']
+      unionGlobalBag, Nat.add_comm, Nat.add_left_comm, h, h', Flapjack.bagUnion]
 
 private theorem bindingRangeBag_add (start a b : Nat) :
     bindingRangeBag start (a + b) =
@@ -39,12 +39,12 @@ private theorem bindingRangeBag_add (start a b : Nat) :
   | zero =>
     simp only [Nat.zero_add, bindingRangeBag_zero, Nat.add_zero]
     funext key
-    simp [unionGlobalBag, emptyGlobalBag]
+    simp [unionGlobalBag, emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
   | succ a ih =>
     simp only [Nat.succ_add]
     rw [bindingRangeBag_succ, ih, bindingRangeBag_succ]
     funext key
-    simp only [unionGlobalBag]
+    simp only [unionGlobalBag, Flapjack.bagUnion]
     have eq : start + (a + 1) = start + 1 + a := by omega
     rw [eq]
     omega
@@ -62,16 +62,16 @@ theorem setGlobals_makeVarls (n : Nat) (t : Tra) (idx : Nat) (xs : List VarN) :
       by_cases h : key = idx
       · subst key
         simp [makeVarls, setGlobals, elistGlobals, opGlobalBag, unionGlobalBag,
-          emptyGlobalBag, bindingRangeBag]
+          emptyGlobalBag, bindingRangeBag, Flapjack.bagUnion, Flapjack.emptyBag]
       · have h' : idx ≠ key := Ne.symm h
         simp [makeVarls, setGlobals, elistGlobals, opGlobalBag, unionGlobalBag,
-          emptyGlobalBag, bindingRangeBag, h, h']
+          emptyGlobalBag, bindingRangeBag, h, h', Flapjack.bagUnion, Flapjack.emptyBag]
     | cons y ys =>
       rw [show (x :: y :: ys).length = (y :: ys).length + 1 by simp]
       rw [bindingRangeBag_succ]
       simp only [makeVarls, setGlobals, elistGlobals, opGlobalBag, ih]
       funext key
-      simp [unionGlobalBag, emptyGlobalBag]
+      simp [unionGlobalBag, emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
 
 /-- Declaration output writes precisely the consecutive allocated global slots. -/
 theorem compileDecs_globals (t : List MlString) (n : Nat) (next : NextIndices)
@@ -91,14 +91,14 @@ theorem compileDecs_globals (t : List MlString) (n : Nat) (next : NextIndices)
       | none =>
         have he := compileExp_globalSafe ((patBindings p).reverse ++ t) env e
         simp [compileDecs, h, numBindingsList, numBindings, elistGlobals, setGlobals,
-          rowGlobals, setGlobals_makeVarls, he.2, FlatProps.unionGlobalBag_empty_left, FlatProps.unionGlobalBag_empty_right]
+          rowGlobals, setGlobals_makeVarls, he.2, Flapjack.bagUnion_empty_left, Flapjack.bagUnion_empty_right]
     | dletrec loc funs =>
       let names := funs.map Prod.fst
       let newEnv := NamespaceHOL.nsBindList (names.map fun x => (x, VarName.localName .none x)) env.v
       have hf := compileFuns_globalSafe t { env with v := newEnv } funs
       simp only [newEnv, names, List.map_map] at hf
       simp [compileDecs, numBindingsList, numBindings, elistGlobals, setGlobals,
-        setGlobals_makeVarls, hf.2, FlatProps.unionGlobalBag_empty_right]
+        setGlobals_makeVarls, hf.2, Flapjack.bagUnion_empty_right]
     | dtype loc types => simp [compileDecs, numBindingsList, numBindings, elistGlobals, bindingRangeBag_zero]
     | dtabbrev loc vars name typ => simp [compileDecs, numBindingsList, numBindings, elistGlobals, bindingRangeBag_zero]
     | dexn loc name types => simp [compileDecs, numBindingsList, numBindings, elistGlobals, bindingRangeBag_zero]
@@ -122,7 +122,7 @@ theorem compileDecs_globals (t : List MlString) (n : Nat) (next : NextIndices)
       rw [hlocal, hbody, hcount, bindingRangeBag_add]
     | denv name =>
       simp [compileDecs, numBindingsList, numBindings, elistGlobals, setGlobals, opGlobalBag,
-        envIdTuple, bindingRangeBag_succ, bindingRangeBag_zero, FlatProps.unionGlobalBag_empty_left, FlatProps.unionGlobalBag_empty_right]
+        envIdTuple, bindingRangeBag_succ, bindingRangeBag_zero, Flapjack.bagUnion_empty_left, Flapjack.bagUnion_empty_right]
   | d :: d2 :: ds => by
     have hfirst := compileDecs_globals t n next env envs [d]
     have hcount := compileDecs_bindingCount t n next env envs [d]
@@ -206,7 +206,7 @@ theorem compile_globals_distinct (c : Config) (p : List Dec) :
   have distinct := bindingRangeBag_distinct next.vidx (numBindingsList p) key
   have zero := bindingRangeBag_below next.vidx (numBindingsList p) 0 (by simp [next])
   simp only [elistGlobals, globAlloc, allocEnvRef, setGlobals, opGlobalBag,
-    body, unionGlobalBag, emptyGlobalBag]
+    body, unionGlobalBag, emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
   by_cases eq : key = 0
   · subst key
     simp [zero]
@@ -235,7 +235,7 @@ theorem incCompile_globals_distinct (envId : Nat × Nat) (c : Config) (p : List 
   apply Nat.le_trans bound
   have distinct := bindingRangeBag_distinct c.next.vidx (numBindingsList p) key
   simp only [elistGlobals, globAlloc, storeEnvId, setGlobals, opGlobalBag,
-    envIdTuple, elistGlobals_append, body, unionGlobalBag, emptyGlobalBag]
+    envIdTuple, elistGlobals_append, body, unionGlobalBag, emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
   simpa using distinct
 
 end Flapjack.Compiler.Backend.SourceToFlat

@@ -13,7 +13,7 @@ theorem elistGlobals_filter_sub (predicate : FlatLang.Exp → Bool) (expressions
     induction expressions with
     | nil => simp [elistGlobals, emptyGlobalBag]
     | cons expression rest ih =>
-      cases keep : predicate expression <;> simp [List.filter, keep, elistGlobals, unionGlobalBag] at * <;> omega
+      cases keep : predicate expression <;> simp [List.filter, keep, elistGlobals, unionGlobalBag, Flapjack.bagUnion] at * <;> omega
   intro key count bound
   exact Nat.le_trans bound (counts key)
 
@@ -39,7 +39,7 @@ theorem removeFlatProg_globals_empty (declarations : List FlatLang.Exp)
   funext key
   have bound := removeFlatProg_subBag declarations key (elistGlobals (removeFlatProgTotal declarations) key) (Nat.le_refl _)
   rw [empty] at bound
-  simp [Flapjack.bagInn, emptyGlobalBag] at bound ⊢
+  simp [Flapjack.bagInn, emptyGlobalBag, Flapjack.emptyBag] at bound ⊢
   exact bound
 
 /-- Removing declarations preserves the original per-expression

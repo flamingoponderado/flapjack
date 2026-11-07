@@ -216,10 +216,10 @@ theorem knownCorrect0OpForce {C F : Type} (trace : BackendCommon.Tra)
     sub0, sub1, mono, free, envRel, unique, stateOracle, envEq, noType⟩ := h
   have argsUnique : uniqueSetGlobals xs s0.compileOracle := by
     simpa [uniqueSetGlobals, elistGlobals_append, elistGlobals, setGlobals, opGlobalBag,
-      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag] using unique
+      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] using unique
   have argsDisjoint : mglobalsDisjoint s0.globals xs := by
     simpa [mglobalsDisjoint, elistGlobals, setGlobals, opGlobalBag,
-      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag] using disjoint
+      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] using disjoint
   have argsSafe : ∀ e ∈ xs, esgcFree e := by
     have safeOp := exprSafe (.op trace (.thunkOp .forceThunk) xs) (by simp)
     simpa [esgcFree, esgcFreeList_iff] using safeOp

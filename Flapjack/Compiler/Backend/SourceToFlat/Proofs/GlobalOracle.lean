@@ -51,7 +51,7 @@ theorem incCompile_globals_range (envId : Nat × Nat) (c : Config) (p : List Dec
       (globAlloc next' c :: (code ++ [storeEnvId envs'.generation envs'.next])) key
     have h : 0 < bindingRangeBag c.next.vidx (numBindingsList p) key := by
       simp only [elistGlobals, globAlloc, storeEnvId, setGlobals, opGlobalBag, envIdTuple,
-        elistGlobals_append, body, unionGlobalBag, emptyGlobalBag] at bound
+        elistGlobals_append, body, unionGlobalBag, emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] at bound
       simp only [globAlloc, storeEnvId, envIdTuple] at positive
       omega
     have range := rangeBag_member c.next.vidx (numBindingsList p) key h
@@ -82,7 +82,7 @@ theorem compileTotal_globals_range (c : Config) (p : List Dec) :
   change elistGlobals (compileFlatTotal c.patternCfg (globAlloc next' c :: allocEnvRef :: code)) key ≤
     elistGlobals (globAlloc next' c :: allocEnvRef :: code) key at bound
   simp only [elistGlobals, globAlloc, allocEnvRef, setGlobals, opGlobalBag, body,
-    unionGlobalBag, emptyGlobalBag] at bound
+    unionGlobalBag, emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] at bound
   simp only [globAlloc, allocEnvRef] at positive
   by_cases zero : key = 0
   · subst key

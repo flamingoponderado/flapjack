@@ -15,7 +15,7 @@ private theorem knownOpEmpty (op : ClosLang.Op) (args : List ValApprox) (g0 : Sp
     cases op with
     | setGlobal i =>
       have contradiction := congrFun empty i
-      simp [opGlobalBag, FlatProps.emptyGlobalBag] at contradiction
+      simp [opGlobalBag, FlatProps.emptyGlobalBag, Flapjack.emptyBag] at contradiction
     | global i =>
       cases args <;> simp_all [knownOpHOL]
       all_goals split at run <;> simp_all
@@ -95,6 +95,6 @@ theorem inlineBodyGlobalsUnchanged (c : Config) (approx : ValApprox) (loc : Opti
   apply knownUnchangedGlobals (decInlineFactor c) [body] env g eas after
   refine ⟨run, ?_⟩
   funext i
-  simp [elistGlobals, FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, emptyBody]
+  simp [elistGlobals, FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, emptyBody, Flapjack.bagUnion, Flapjack.emptyBag]
 
 end Flapjack.Compiler.Backend.ClosKnown.KnownUnchanged

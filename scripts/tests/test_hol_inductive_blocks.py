@@ -35,6 +35,16 @@ class InductiveBlocksTest(unittest.TestCase):
         text = "Theorem earlier:\n T\nProof simp[] QED\nInductive ok:\n P\nEnd\n"
         self.assertEqual(DECLS(text), [(("ok_rules", "ok_ind", "ok_strongind", "ok_cases"), 4, 6)])
 
+    def test_list_cons_in_theorem_binding_is_not_a_block_header(self):
+        text = "Theorem refs_defs = LIST_CONJ (a :: b :: c)\nInductive inferred:\n P\nEnd\n"
+        self.assertEqual(DECLS(text), [(("inferred_rules", "inferred_ind", "inferred_strongind", "inferred_cases"), 2, 4)])
+
+    def test_semicolon_after_qed_closes_theorem(self):
+        for terminator in ("QED;", "Proof simp[] QED;", "QED; (* comment *)"):
+            with self.subTest(terminator=terminator):
+                text = f"Theorem a:\n T\nProof\n simp[]\n{terminator}\nInductive r:\n P\nEnd\n"
+                self.assertEqual(DECLS(text), [(("r_rules", "r_ind", "r_strongind", "r_cases"), 6, 8)])
+
     def test_reference_index_records_ambiguity(self):
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "sampleScript.sml"

@@ -143,10 +143,10 @@ theorem knownCorrect0OpGlobal {C F : Type} (trace : BackendCommon.Tra) (index : 
     sub0, sub1, mono, free, envRel, unique, stateOracle, envEq, noType⟩ := h
   have argsUnique : uniqueSetGlobals xs s0.compileOracle := by
     simpa [uniqueSetGlobals, elistGlobals_append, elistGlobals, setGlobals, opGlobalBag,
-      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag] using unique
+      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] using unique
   have argsDisjoint : mglobalsDisjoint s0.globals xs := by
     simpa [mglobalsDisjoint, elistGlobals, setGlobals, opGlobalBag,
-      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag] using disjoint
+      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] using disjoint
   have argsSafe : ∀ e ∈ xs, esgcFree e := by
     have safeOp := exprSafe (.op trace (.globOp (.global index)) xs) (by simp)
     simpa [esgcFree, esgcFreeList_iff] using safeOp
@@ -166,7 +166,7 @@ theorem knownCorrect0OpGlobal {C F : Type} (trace : BackendCommon.Tra) (index : 
       simp only [Prod.mk.injEq] at known
       rcases known with ⟨rfl, rfl⟩
       have ⟨subArgs, subOp⟩ := subsptKnownOpElistGlobals c xs aenv g0 argEas g1
-        (.globOp (.global index)) (argEas.map Prod.snd).reverse g2 a ⟨hk, ho, sub0, by simp [opGlobalBag, FlatProps.emptyGlobalBag]⟩
+        (.globOp (.global index)) (argEas.map Prod.snd).reverse g2 a ⟨hk, ho, sub0, by simp [opGlobalBag, FlatProps.emptyGlobalBag, Flapjack.emptyBag]⟩
       have subArgsNext : sptSubspt g1 (nextG s0) := by
         intro key member
         obtain ⟨mid, eq1⟩ := subOp key member
@@ -209,7 +209,7 @@ theorem knownCorrect0OpGlobal {C F : Type} (trace : BackendCommon.Tra) (index : 
             argsRelated argApprox.2 middleApprox run noType
         have ⟨nextEq, finalGlobals, finalOracle, finalDisjoint⟩ :=
           Ordinary.ordinaryOpStateInvariants trace (.globOp (.global index)) xs env1full s0 middle s
-            argResult res1 (by simp) (by simp) (by simp [opGlobalBag, FlatProps.emptyGlobalBag])
+            argResult res1 (by simp) (by simp) (by simp [opGlobalBag, FlatProps.emptyGlobalBag, Flapjack.emptyBag])
             hr run midGlobals midOracleState midOracle
         exact ⟨targetResult, targetFinal, by simpa using targetRun,
           by simpa [nextEq] using resultRelated, by simpa [nextEq] using finalState,

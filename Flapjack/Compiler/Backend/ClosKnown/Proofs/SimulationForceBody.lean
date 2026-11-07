@@ -56,10 +56,10 @@ theorem forceBodySimulation {C F : Type} (c : Config)
     simp [appUnit, esgcFree, esgcFreeList]
   have exprDisjoint : mglobalsDisjoint source.globals [appUnit (.var .none 0)] := by
     simp [mglobalsDisjoint, appUnit, elistGlobals, setGlobals, opGlobalBag,
-      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag]
+      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
   have exprUnique : uniqueSetGlobals [appUnit (.var .none 0)] source.compileOracle := by
     simpa [uniqueSetGlobals, appUnit, elistGlobals, setGlobals, opGlobalBag,
-      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag] using unique
+      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] using unique
   have exprFv : fvMax 1 [appUnit (.var .none 0)] := by
     simp [fvMax, appUnit, freeVars, freeVarExp]
   have step := ih result final [value] [] [other] [] target c (nextG source) (nextG source)

@@ -31,7 +31,7 @@ theorem knownAppRuntimeApprox {C F : Type} (c : Config) (trace : BackendCommon.T
     intro n i
     have bound := unique n i
     simp only [elistGlobals_append, elistGlobals, setGlobals,
-      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Nat.add_zero] at bound ⊢
+      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Nat.add_zero, Flapjack.bagUnion, Flapjack.emptyBag] at bound ⊢
     omega
   have ⟨argsUnique, fnUnique, swappedUnique⟩ := Cons.uniqueParts xs [x] s0.compileOracle uniqueBoth
   have ⟨fnDisjoint, argsDisjoint⟩ :=
@@ -186,7 +186,7 @@ theorem inlineAppValueApprox {C F : Type} (c : Config) (trace : BackendCommon.Tr
     intro n i
     have bound := unique n i
     simp only [elistGlobals_append, elistGlobals, setGlobals,
-      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Nat.add_zero] at bound ⊢
+      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Nat.add_zero, Flapjack.bagUnion, Flapjack.emptyBag] at bound ⊢
     omega
   have ⟨argsUnique, fnUnique, swappedUnique⟩ := Cons.uniqueParts xs [x] s0.compileOracle uniqueBoth
   have ⟨fnDisjoint, argsDisjoint⟩ :=
@@ -265,9 +265,9 @@ theorem inlineAppValueApprox {C F : Type} (c : Config) (trace : BackendCommon.Tr
                 ⟨nilUniqueSetGlobals [x] middle.compileOracle nextUnique, fnRun⟩
               have bodyUnique : uniqueSetGlobals [body] next.compileOracle := by
                 simpa [uniqueSetGlobals, elistGlobals, setGlobals, bodyEmpty,
-                  FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag] using bodyUnique0
+                  FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] using bodyUnique0
               have bodyDisjoint : mglobalsDisjoint next.globals [body] := by
-                simp [mglobalsDisjoint, elistGlobals, bodyEmpty, FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag]
+                simp [mglobalsDisjoint, elistGlobals, bodyEmpty, FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
               have appRun : evaluateApp none (.closure (some target) [] captures values.length body) values next = (.val vs, s) := by
                 simpa [evaluate, argsRun, fixClock, Nat.min_eq_right middleClock, fnRun,
                   Nat.min_eq_right nextClock, valuesLength] using valRun

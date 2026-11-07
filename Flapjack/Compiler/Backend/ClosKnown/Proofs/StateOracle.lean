@@ -52,7 +52,7 @@ theorem stateRelFirstNExps {C F : Type} (c : Config) (g : Spt ValApprox)
     ∀ i, elistGlobals (List.flatten (firstNExps t.compileOracle n)) i ≤
       elistGlobals (List.flatten (firstNExps s.compileOracle n)) i := by
   induction n with
-  | zero => simp [firstNExps, elistGlobals, FlatProps.emptyGlobalBag]
+  | zero => simp [firstNExps, elistGlobals, FlatProps.emptyGlobalBag, Flapjack.emptyBag]
   | succ n ih =>
     have step := stateRelCoElistGlobals c g s t n h
     have ts := firstNExpsShiftSeq t.compileOracle 1 n

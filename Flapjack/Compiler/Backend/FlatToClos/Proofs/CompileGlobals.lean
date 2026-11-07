@@ -16,12 +16,12 @@ def shiftGlobalBag (bag : GlobalBag) : GlobalBag :=
 infrastructure for the original global-preservation proofs. -/
 theorem shiftEmpty : shiftGlobalBag emptyGlobalBag = emptyGlobalBag := by
   funext key
-  simp [shiftGlobalBag, emptyGlobalBag]
+  simp [shiftGlobalBag, emptyGlobalBag, Flapjack.emptyBag]
 
 private theorem shiftUnion (a b : GlobalBag) :
     shiftGlobalBag (unionGlobalBag a b) = unionGlobalBag (shiftGlobalBag a) (shiftGlobalBag b) := by
   funext key
-  by_cases h : key = 0 <;> simp [shiftGlobalBag, unionGlobalBag, h]
+  by_cases h : key = 0 <;> simp [shiftGlobalBag, unionGlobalBag, h, Flapjack.bagUnion]
 
 private theorem shiftOp (op : FlatLang.Op) :
     shiftGlobalBag (FlatProps.opGlobalBag op) = loweredOpBag op := by
@@ -35,7 +35,7 @@ private theorem closGlobals_reverse (xs : List ClosLang.Exp) :
   | cons x xs ih =>
     simp only [List.reverse_cons, ClosProps.elistGlobals_append, ih, ClosProps.elistGlobals]
     funext key
-    simp [unionGlobalBag, emptyGlobalBag, Nat.add_comm]
+    simp [unionGlobalBag, emptyGlobalBag, Nat.add_comm, Flapjack.bagUnion, Flapjack.emptyBag]
 
 /-- Every match-free expression preserves its shifted global-write bag. -/
 theorem compileExp_globals (m : List (Option MlString)) (exp : FlatLang.Exp) :
@@ -62,7 +62,7 @@ theorem compileExp_globals (m : List (Option MlString)) (exp : FlatLang.Exp) :
     all_goals simp [FlatProps.noMat, FlatProps.noMatList] at safe
     all_goals rw [compileExp.eq_def]; dsimp only; rw [found]
     all_goals simpa [FlatProps.setGlobals, FlatProps.elistGlobals, FlatProps.opGlobalBag,
-      FlatProps.unionGlobalBag_empty_right] using ih safe
+      Flapjack.bagUnion_empty_right] using ih safe
   | case6 m t op es found ih =>
     intro safe
     have hs := ih (by simpa [FlatProps.noMat] using safe)
@@ -74,7 +74,7 @@ theorem compileExp_globals (m : List (Option MlString)) (exp : FlatLang.Exp) :
     rw [found]
     rw [hop]
     funext key
-    simp [unionGlobalBag, Nat.add_comm]
+    simp [unionGlobalBag, Nat.add_comm, Flapjack.bagUnion]
   | case7 m t v e ih =>
     intro safe
     simp only [FlatProps.noMat] at safe
@@ -90,7 +90,7 @@ theorem compileExp_globals (m : List (Option MlString)) (exp : FlatLang.Exp) :
     simp only [compileExp, FlatProps.setGlobals, ClosProps.setGlobals, ClosProps.elistGlobals, shiftUnion]
     rw [iha safe.1, ihb safe.2]
     funext key
-    simp [unionGlobalBag, emptyGlobalBag, Nat.add_comm]
+    simp [unionGlobalBag, emptyGlobalBag, Nat.add_comm, Flapjack.bagUnion, Flapjack.emptyBag]
   | case10 m t e ps => simp [FlatProps.noMat]
   | case11 m t e ps v h found ihe ihh =>
     have rowsEq := destPat_eq_some ps v h found
@@ -103,7 +103,7 @@ theorem compileExp_globals (m : List (Option MlString)) (exp : FlatLang.Exp) :
     simp only [FlatProps.setGlobals, FlatProps.rowGlobals, ClosProps.setGlobals, shiftUnion]
     rw [ihe safe.1, ihh safe.2]
     funext key
-    simp [unionGlobalBag, emptyGlobalBag, shiftEmpty]
+    simp [unionGlobalBag, emptyGlobalBag, shiftEmpty, Flapjack.bagUnion, Flapjack.emptyBag]
   | case12 m t e ps found ih =>
     intro safe
     cases ps with

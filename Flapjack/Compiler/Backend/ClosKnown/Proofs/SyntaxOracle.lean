@@ -126,7 +126,7 @@ theorem stateOracleDomain {C A : Type} (c : Config)
       elistGlobals (List.flatten (firstNExps co n)) key := by
   classical
   induction n with
-  | zero => simp [firstNExps, elistGlobals, FlatProps.emptyGlobalBag]
+  | zero => simp [firstNExps, elistGlobals, FlatProps.emptyGlobalBag, Flapjack.emptyBag]
   | succ n ih =>
     intro key
     cases hk : knownListTotal (resetInlineFactor c) (co n).2.1 [] (co n).1.1 with

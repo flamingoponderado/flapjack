@@ -46,11 +46,11 @@ end
 theorem elistGlobals_append (xs ys : List ClosLang.Exp) :
     elistGlobals (xs ++ ys) = unionGlobalBag (elistGlobals xs) (elistGlobals ys) := by
   induction xs with
-  | nil => funext key; simp [elistGlobals, emptyGlobalBag, unionGlobalBag]
+  | nil => funext key; simp [elistGlobals, emptyGlobalBag, unionGlobalBag, Flapjack.emptyBag, Flapjack.bagUnion]
   | cons x xs ih =>
     simp only [List.cons_append, elistGlobals, ih]
     funext key
-    simp [unionGlobalBag, Nat.add_assoc]
+    simp [unionGlobalBag, Flapjack.bagUnion, Nat.add_assoc]
 
 mutual
 /-- No closure body captures a global write. -/

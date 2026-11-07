@@ -165,10 +165,10 @@ theorem knownCorrect0Letrec {C F : Type} (names : List Basis.Pure.MlString.MlStr
     simpa [recs1, vsgcFree, ← funGlobals_eq_elist] using And.intro safeParts.1 envSafe
   have bodyUnique : uniqueSetGlobals [body] s0.compileOracle := by
     simpa [uniqueSetGlobals, elistGlobals, setGlobals, safeParts.1,
-      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag] using unique
+      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] using unique
   have bodyDisjoint : mglobalsDisjoint s0.globals [body] := by
     simpa [mglobalsDisjoint, elistGlobals, setGlobals, safeParts.1,
-      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag] using disjoint
+      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] using disjoint
   have bodySafe : ∀ e ∈ [body], esgcFree e := by simpa using safeParts.2
   have extendedSafe : ∀ v ∈ (recs1 ++ env1) ++ xenv1, vsgcFree v := by
     simpa [List.mem_append, or_imp, forall_and, ← envEq] using And.intro recSafe envSafe

@@ -24,7 +24,7 @@ private theorem bagEmpty_of_bound (out input : GlobalBag)
     out = emptyGlobalBag := by
   funext key
   have h := bound key
-  simp only [empty, emptyGlobalBag] at h ⊢
+  simp only [empty, emptyGlobalBag, Flapjack.emptyBag] at h ⊢
   omega
 
 private theorem compileFuns_bagBounds (cfg : Config)
@@ -45,7 +45,7 @@ private theorem compileFuns_bagBounds (cfg : Config)
         have h2 := ih key
         simp only [he] at h1
         simp only [hfs] at h2
-        simp only [compileFuns, he, hfs, funGlobals, unionGlobalBag]
+        simp only [compileFuns, he, hfs, funGlobals, unionGlobalBag, Flapjack.bagUnion]
         omega
 
 /-- Expression safety is preserved by pattern compilation. -/

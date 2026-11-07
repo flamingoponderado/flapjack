@@ -60,7 +60,7 @@ theorem stateGlobalsApproxKnownOpEvaluate {C F : Type}
   · exact approx key value a ⟨found, old⟩
   · have count := unique n key
     simp only [elistGlobals_append, elistGlobals, setGlobals,
-      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Nat.add_zero] at count
+      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Nat.add_zero, Flapjack.bagUnion, Flapjack.emptyBag] at count
     have outside : key ∉ ({k | elistGlobals xs k ≠ 0} ∪
         {k | elistGlobals (List.flatten (firstNExps s0.compileOracle n)) k ≠ 0}) := by
       intro member

@@ -54,7 +54,7 @@ theorem knownCorrect0Cons {C F : Type} (x y : ClosLang.Exp) (xs : List ClosLang.
     intro i
     have bound := unique 0 i
     simp only [elistGlobals_append, elistGlobals, FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag,
-      Nat.add_zero] at bound ⊢
+      Nat.add_zero, Flapjack.bagUnion, Flapjack.emptyBag] at bound ⊢
     omega
   cases hk : knownListTotal c [x] aenv g0 with
   | mk headEas g1 =>
