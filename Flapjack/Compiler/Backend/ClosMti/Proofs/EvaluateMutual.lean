@@ -146,15 +146,6 @@ theorem evaluate_mutual_within {C F : Type} (limit : Nat) :
 
       exact allWeights (expsWeight targetCode) targetCode rfl sourceCode
 
-/-- Backward expression simulation for the current Lean closure evaluator.
-The evaluator and state relations still require correspondence review against
-HOL, so this is not tagged as the original correctness theorem. -/
-theorem evaluate_related {C F : Type} (sourceCode targetCode : List ClosLang.Exp) :
-    EvaluateRelAt (C := C) (F := F) sourceCode targetCode := by
-  intro targetEnv target sourceEnv targetFinal source targetResult
-  exact (evaluate_mutual_within (C := C) (F := F) source.clock).2 sourceCode targetCode
-    targetEnv target sourceEnv targetFinal source targetResult (by omega)
-
 namespace IntroMultiWitness
 /-- The closure state uses the canonical finite-map representation. -/
 theorem holFmapAsFiniteSupportWitness {C F : Type} :
@@ -162,6 +153,46 @@ theorem holFmapAsFiniteSupportWitness {C F : Type} :
       (∀ state : State C F, State.ofBroad state.toBroad = state) :=
   ClosSem.holFmapAsFiniteSupportWitness
 end IntroMultiWitness
+
+/-- The mutual expression and application simulations for multi-argument
+introduction, with the original target evaluation and relation premises. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "evaluate_intro_multi"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluate_intro_multi {C F : Type} :
+    (∀ (targetCode : List ClosLang.Exp) (targetEnv : List Value) (target : State C F)
+      (sourceEnv : List Value) (targetFinal source : State C F)
+      (targetResult : SemanticPrimitivesHOL.Result (List Value) Value) (sourceCode : List ClosLang.Exp),
+      evaluate targetCode targetEnv target = (targetResult, targetFinal) ∧
+      List.Forall₂ (ValueRel source.maxApp) sourceEnv targetEnv ∧ StateRel source target ∧
+      CodeRel source.maxApp sourceCode targetCode →
+      ∃ sourceResult sourceFinal,
+        evaluate sourceCode sourceEnv source = (sourceResult, sourceFinal) ∧
+        resultRel (List.Forall₂ (ValueRel source.maxApp)) (ValueRel source.maxApp)
+          sourceResult targetResult ∧ StateRel sourceFinal targetFinal) ∧
+    (∀ (location : Option Nat) (targetFunction : Value) (targetArgs : List Value) (target : State C F)
+      (targetResult : SemanticPrimitivesHOL.Result (List Value) Value) (targetFinal : State C F)
+      (sourceFunction : Value) (sourceArgs : List Value) (source : State C F),
+      evaluateApp location targetFunction targetArgs target = (targetResult, targetFinal) ∧
+      location = none ∧ ValueRel source.maxApp sourceFunction targetFunction ∧
+      List.Forall₂ (ValueRel source.maxApp) sourceArgs targetArgs ∧ StateRel source target ∧
+      sourceArgs.length ≤ source.maxApp →
+      ∃ sourceResult sourceFinal,
+        evaluateApps sourceFunction sourceArgs source = (sourceResult, sourceFinal) ∧
+        resultRel (List.Forall₂ (ValueRel source.maxApp)) (ValueRel source.maxApp)
+          sourceResult targetResult ∧ StateRel sourceFinal targetFinal) := by
+  constructor
+  · intro targetCode targetEnv target sourceEnv targetFinal source targetResult sourceCode premises
+    obtain ⟨run, envRel, states, codeRel⟩ := premises
+    exact (evaluate_mutual_within (C := C) (F := F) source.clock).2 sourceCode targetCode
+      targetEnv target sourceEnv targetFinal source targetResult (by omega) run envRel states codeRel
+  · intro location targetFunction targetArgs target targetResult targetFinal sourceFunction sourceArgs source premises
+    obtain ⟨run, locationEq, functions, args, states, bound⟩ := premises
+    subst location
+    have related := (evaluate_mutual_within (C := C) (F := F) source.clock).1
+      source target sourceFunction targetFunction sourceArgs targetArgs (by omega) states functions args bound
+    rw [run] at related
+    exact ⟨(evaluateApps sourceFunction sourceArgs source).1,
+      (evaluateApps sourceFunction sourceArgs source).2, (Prod.eta _).symm, related.1, related.2⟩
 
 /-- Forward correctness of multi-argument introduction. The independent
 unused binder is present in the typed HOL statement. -/
@@ -182,8 +213,9 @@ theorem intro_multi_correct {C F A : Type} [Nonempty A] (sourceCode : List ClosL
   cases targetRun : evaluate (introList source.maxApp sourceCode) targetEnv target with
   | mk targetResult targetFinal =>
     obtain ⟨relatedResult, relatedFinal, relatedRun, resultRel, finalStates⟩ :=
-      evaluate_related sourceCode (introList source.maxApp sourceCode) targetEnv target sourceEnv
-        targetFinal source targetResult targetRun envRel states ⟨unary, rfl⟩
+      (evaluate_intro_multi (C := C) (F := F)).1 (introList source.maxApp sourceCode)
+        targetEnv target sourceEnv targetFinal source targetResult sourceCode
+        ⟨targetRun, envRel, states, unary, rfl⟩
     rw [sourceRun] at relatedRun
     cases relatedRun
     exact ⟨targetResult, targetFinal, rfl, resultRel, finalStates⟩

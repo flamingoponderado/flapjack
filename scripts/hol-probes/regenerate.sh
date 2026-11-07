@@ -9348,7 +9348,7 @@ run_probe l3_step_immediate_comparison_nop_probeScript.sml l3_step_immediate_com
   "$cake_dir/compiler/encoders/riscv/proofs"
 
 run_probe clos_mti_correct_probeScript.sml clos_mti_correct_probe.out \
-  evaluate_intro_multi intro_multi_correct semantics_intro_multi semantics_compile \
+  evaluate_apps_def evaluate_intro_multi intro_multi_correct semantics_intro_multi semantics_compile \
   "$cake_dir/compiler/backend/proofs/clos_mtiProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe clos_to_bvl_chain_probeScript.sml clos_to_bvl_chain_probe.out \

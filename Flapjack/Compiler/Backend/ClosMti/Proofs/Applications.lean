@@ -4,8 +4,7 @@ import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
 import Mathlib.Data.List.Induction
 
-/-! Application-reconstruction lemmas for the current Lean closure evaluator.
-These are untagged until the evaluator and its carriers are reviewed against HOL. -/
+/-! Application-reconstruction lemmas for the closure evaluator. -/
 namespace Flapjack.Compiler.Backend.ClosMti
 open Flapjack.SemanticPrimitivesHOL
 
@@ -42,8 +41,17 @@ theorem unaryApp_success {C F : Type} (trace : BackendCommon.Tra)
   rw [ClosSem.fixClock_evaluate, functionRun]
   rfl
 
-/-- Apply collected values in the same order as nested unary applications.
-This is Lean-side infrastructure until closure evaluator review is complete. -/
+namespace EvaluateAppsWitness
+/-- The closure state uses the canonical finite-map representation. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ state : ClosSem.StateBroad C F, (ClosSem.State.ofBroad state).toBroad = state) ∧
+      (∀ state : ClosSem.State C F, ClosSem.State.ofBroad state.toBroad = state) :=
+  ClosSem.holFmapAsFiniteSupportWitness
+end EvaluateAppsWitness
+
+/-- Apply collected values in the same order as nested unary applications. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "evaluate_apps_def"
+  (fmap_as_finite_support := [refs, code])]
 noncomputable def evaluateApps {C F : Type} (fn : ClosSem.Value) :
     List ClosSem.Value → ClosSem.State C F → ClosSem.EvalResult C F
   | [], state => (.val [fn], state)
