@@ -9698,3 +9698,6 @@ flat list types and its complete conjunctive premise.
 
 `flat_to_clos_relation_probe.out` captures `v_rel_v_to_char_list` with
 its flat value, character-list, and closure value types.
+
+`flat_to_clos_relation_probe.out` captures `imp_cmp_eq_num_cmp` with
+its natural operands, integer coercions, and comparison operator type.

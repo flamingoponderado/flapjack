@@ -4,8 +4,10 @@ import Flapjack.Compiler.Backend.FlatToClos.Proofs.IntegerExpressions
 namespace Flapjack.Compiler.Backend.FlatToClos
 open Flapjack.SemanticPrimitivesHOL Flapjack.AstHOL
 
-theorem numCmp_intCmp (op : Opb) (a b : Nat) :
-    numCmp op a b = intCmp op (a : Int) (b : Int) := by
+/-- Integer comparison of natural numbers agrees with natural comparison. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "imp_cmp_eq_num_cmp"]
+theorem numCmp_intCmp (a b : Nat) (op : Opb) :
+    intCmp op (a : Int) (b : Int) = numCmp op a b := by
   have same : compare a b = compare (a : Int) (b : Int) := by
     cases h : compare a b with
     | lt =>
@@ -20,6 +22,7 @@ theorem numCmp_intCmp (op : Opb) (a b : Nat) :
       symm
       apply Int.compare_eq_gt.mpr
       exact_mod_cast Nat.compare_eq_gt.mp h
+  symm
   simp only [numCmp, intCmp, same]
 
 /-- Character ordering rejects any argument count other than two. -/

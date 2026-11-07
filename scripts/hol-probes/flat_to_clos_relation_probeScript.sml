@@ -123,3 +123,6 @@ val _ = (print "inc_compile_decs_intro_replay="; Lib.with_flag (Globals.show_typ
 
 val _ = if null (hyp v_rel_v_to_char_list) then () else raise Fail "hypotheses: v_rel_v_to_char_list";
 val _ = (print "v_rel_v_to_char_list_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl v_rel_v_to_char_list); print "\n");
+
+val _ = if null (hyp imp_cmp_eq_num_cmp) then () else raise Fail "hypotheses: imp_cmp_eq_num_cmp";
+val _ = (print "imp_cmp_eq_num_cmp_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl imp_cmp_eq_num_cmp); print "\n");

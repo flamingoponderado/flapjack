@@ -472,6 +472,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "imp_cmp_eq_num_cmp",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/ByteComparisons.lean",
+  "lean_name": "numCmp_intCmp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared HOL source and imp_cmp_eq_num_cmp_typed in flat_to_clos_relation_probe.out: free natural operands precede the quantified comparison operator, and integer comparison of their coercions equals natural comparison. Boolean equality expresses HOL iff."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
   "hol_name": "v_rel_v_to_char_list",
   "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/StringConstruction.lean",
   "lean_name": "valueToCharList_related",
