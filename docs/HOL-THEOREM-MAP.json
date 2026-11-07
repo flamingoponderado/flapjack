@@ -1,6 +1,267 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "insert_oracle_correct",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/InsertCorrectBase.lean",
+  "lean_name": "insertOracleCorrect_ExpsNil",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete three-conjunct insert_oracle_correct statement and original induction cases with typed captures in source_eval_oracle_adjust_probe.out:56 and :10. Binders, guards and conclusions match. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "insert_oracle_correct",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/InsertCorrectBase.lean",
+  "lean_name": "insertOracleCorrect_MatchNil",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete three-conjunct insert_oracle_correct statement and original induction cases with typed captures in source_eval_oracle_adjust_probe.out:56 and :10. Binders, guards and conclusions match. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "insert_oracle_correct",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/InsertCorrectBase.lean",
+  "lean_name": "insertOracleCorrect_DecsNil",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete three-conjunct insert_oracle_correct statement and original induction cases with typed captures in source_eval_oracle_adjust_probe.out:56 and :10. Binders, guards and conclusions match. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "insert_oracle_correct",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/InsertCorrectBase.lean",
+  "lean_name": "insertOracleCorrect_Lit",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete three-conjunct insert_oracle_correct statement and original induction cases with typed captures in source_eval_oracle_adjust_probe.out:56 and :10. Binders, guards and conclusions match. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "insert_oracle_correct",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/InsertCorrectBase.lean",
+  "lean_name": "insertOracleCorrect_Fn",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete three-conjunct insert_oracle_correct statement and original induction cases with typed captures in source_eval_oracle_adjust_probe.out:56 and :10. Binders, guards and conclusions match. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "insert_oracle_correct",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/InsertCorrectBase.lean",
+  "lean_name": "insertOracleCorrect_Var",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete three-conjunct insert_oracle_correct statement and original induction cases with typed captures in source_eval_oracle_adjust_probe.out:56 and :10. Binders, guards and conclusions match. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "insert_oracle_correct",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/InsertCorrectBase.lean",
+  "lean_name": "insertOracleCorrect_Dtabbrev",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete three-conjunct insert_oracle_correct statement and original induction cases with typed captures in source_eval_oracle_adjust_probe.out:56 and :10. Binders, guards and conclusions match. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "insert_oracle_correct",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/InsertCorrectBase.lean",
+  "lean_name": "insertOracleCorrect_Dtype",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete three-conjunct insert_oracle_correct statement and original induction cases with typed captures in source_eval_oracle_adjust_probe.out:56 and :10. Binders, guards and conclusions match. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "insert_oracle_correct",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/InsertCorrectBase.lean",
+  "lean_name": "insertOracleCorrect_Dexn",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete three-conjunct insert_oracle_correct statement and original induction cases with typed captures in source_eval_oracle_adjust_probe.out:56 and :10. Binders, guards and conclusions match. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "insert_oracle_correct",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/InsertCorrectBase.lean",
+  "lean_name": "insertOracleCorrect_Dletrec",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete three-conjunct insert_oracle_correct statement and original induction cases with typed captures in source_eval_oracle_adjust_probe.out:56 and :10. Binders, guards and conclusions match. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "insert_oracle_correct",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/InsertCorrectBase.lean",
+  "lean_name": "insertOracleCorrect_Denv",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete three-conjunct insert_oracle_correct statement and original induction cases with typed captures in source_eval_oracle_adjust_probe.out:56 and :10. Binders, guards and conclusions match. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "insert_oracle_correct",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/InsertCorrectBase.lean",
+  "lean_name": "insertOracleCorrect_Tannot",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete three-conjunct insert_oracle_correct statement and original induction cases with typed captures in source_eval_oracle_adjust_probe.out:56 and :10. Binders, guards and conclusions match. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "insert_oracle_correct",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/InsertCorrectBase.lean",
+  "lean_name": "insertOracleCorrect_Lannot",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete three-conjunct insert_oracle_correct statement and original induction cases with typed captures in source_eval_oracle_adjust_probe.out:56 and :10. Binders, guards and conclusions match. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "insert_oracle_correct",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/InsertCorrectBase.lean",
+  "lean_name": "insertOracleCorrect_Raise",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete three-conjunct insert_oracle_correct statement and original induction cases with typed captures in source_eval_oracle_adjust_probe.out:56 and :10. Binders, guards and conclusions match. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "insert_oracle_correct",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/InsertCorrectBase.lean",
+  "lean_name": "insertOracleCorrect_ExpsCons",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete three-conjunct insert_oracle_correct statement and original induction cases with typed captures in source_eval_oracle_adjust_probe.out:56 and :10. Binders, guards and conclusions match. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "insert_oracle_correct",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/InsertCorrectBase.lean",
+  "lean_name": "insertOracleCorrect_DecsCons",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete three-conjunct insert_oracle_correct statement and original induction cases with typed captures in source_eval_oracle_adjust_probe.out:56 and :10. Binders, guards and conclusions match. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "insert_oracle_correct",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/InsertCorrectBase.lean",
+  "lean_name": "insertOracleCorrect_Dmod",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete three-conjunct insert_oracle_correct statement and original induction cases with typed captures in source_eval_oracle_adjust_probe.out:56 and :10. Binders, guards and conclusions match. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "insert_oracle_correct",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/InsertCorrectBase.lean",
+  "lean_name": "insertOracleCorrect_Letrec",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete three-conjunct insert_oracle_correct statement and original induction cases with typed captures in source_eval_oracle_adjust_probe.out:56 and :10. Binders, guards and conclusions match. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "insert_oracle_correct",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/InsertCorrectBase.lean",
+  "lean_name": "insertOracleCorrect_Con",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete three-conjunct insert_oracle_correct statement and original induction cases with typed captures in source_eval_oracle_adjust_probe.out:56 and :10. Binders, guards and conclusions match. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "insert_oracle_correct",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/InsertCorrectBase.lean",
+  "lean_name": "insertOracleCorrect_MatchCons",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete three-conjunct insert_oracle_correct statement and original induction cases with typed captures in source_eval_oracle_adjust_probe.out:56 and :10. Binders, guards and conclusions match. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "insert_oracle_correct",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/InsertCorrectBase.lean",
+  "lean_name": "insertOracleCorrect_Dlet",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete three-conjunct insert_oracle_correct statement and original induction cases with typed captures in source_eval_oracle_adjust_probe.out:56 and :10. Binders, guards and conclusions match. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "insert_oracle_correct",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/InsertCorrectBase.lean",
+  "lean_name": "insertOracleCorrect_Dlocal",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete three-conjunct insert_oracle_correct statement and original induction cases with typed captures in source_eval_oracle_adjust_probe.out:56 and :10. Binders, guards and conclusions match. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "insert_oracle_correct",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/InsertCorrectControl.lean",
+  "lean_name": "insertOracleCorrect_Let",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete three-conjunct insert_oracle_correct statement and original induction cases with typed captures in source_eval_oracle_adjust_probe.out:56 and :10. Binders, guards and conclusions match. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "insert_oracle_correct",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/InsertCorrectControl.lean",
+  "lean_name": "insertOracleCorrect_If",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete three-conjunct insert_oracle_correct statement and original induction cases with typed captures in source_eval_oracle_adjust_probe.out:56 and :10. Binders, guards and conclusions match. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "insert_oracle_correct",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/InsertCorrectControl.lean",
+  "lean_name": "insertOracleCorrect_Log",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete three-conjunct insert_oracle_correct statement and original induction cases with typed captures in source_eval_oracle_adjust_probe.out:56 and :10. Binders, guards and conclusions match. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "insert_oracle_correct",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/InsertCorrectControl.lean",
+  "lean_name": "insertOracleCorrect_Mat",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete three-conjunct insert_oracle_correct statement and original induction cases with typed captures in source_eval_oracle_adjust_probe.out:56 and :10. Binders, guards and conclusions match. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "insert_oracle_correct",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/InsertCorrectControl.lean",
+  "lean_name": "insertOracleCorrect_Handle",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete three-conjunct insert_oracle_correct statement and original induction cases with typed captures in source_eval_oracle_adjust_probe.out:56 and :10. Binders, guards and conclusions match. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "insert_oracle_correct",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/InsertCorrectApp.lean",
+  "lean_name": "insertOracleCorrect_App",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete three-conjunct insert_oracle_correct statement and original induction cases with typed captures in source_eval_oracle_adjust_probe.out:56 and :10. Binders, guards and conclusions match. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "insert_oracle_correct",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/InsertCorrect.lean",
+  "lean_name": "insert_oracle_correct",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete three-conjunct insert_oracle_correct statement and original induction cases with typed captures in source_eval_oracle_adjust_probe.out:56 and :10. Binders, guards and conclusions match. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "evaluate_is_record_forward",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/RecordForwardControl.lean",
   "lean_name": "evaluateIsRecordForward_Dmod",
