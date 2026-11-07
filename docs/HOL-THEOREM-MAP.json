@@ -1,6 +1,15 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "evaluate_Bool",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/NaiveMatch.lean",
+  "lean_name": "evaluate_bool",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_Bool in flat_pattern_install_relation_probe.out: the environment, independent compiler and FFI state types, trace, boolean, unchanged state and singleton Boolean result match. FlatSem evaluation inherits reals_as_rational_cuts."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
   "hol_name": "compile_pat_bindings_simulation",
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/BindingRecursive.lean",
   "lean_name": "compilePatBindings_simulation",
@@ -14373,6 +14382,46 @@
     "lean_name": "oracleAgrees_backward",
     "statement_status": "reviewed_exact",
     "reviewer": "Compared oracle_agrees_backward in source_eval_oracle_adjust_probe.out: agreement at the later state and forward recording from the earlier state are a single premise yielding agreement at the earlier state."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "v_to_nat_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleCallback.lean",
+    "lean_name": "valueToNat",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared value_to_nat in source_eval_oracle_adjust_probe.out: only a nonnegative integer literal yields its natural value; all other source values yield none."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "v_to_env_id_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleCallback.lean",
+    "lean_name": "valueToEnvId",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared value_to_env_id in source_eval_oracle_adjust_probe.out: only an unstamped constructor with exactly two natural-decodable values yields their ordered pair."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "do_eval_record_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleCallback.lean",
+    "lean_name": "doEvalRecord",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared do_eval_record in source_eval_oracle_adjust_probe.out: the six-value pattern, decoded environment and declarations, compiler agreement, configuration check, ordered zero/successor oracle updates and returned tuple match for an arbitrary compiler configuration carrier."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "is_record_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleCallback.lean",
+    "lean_name": "isRecord",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared is_record in source_eval_oracle_adjust_probe.out: exactly an oracle state with the recording callback satisfies the predicate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "is_record_IMP",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleCallback.lean",
+    "lean_name": "isRecord_imp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared is_record_imp in source_eval_oracle_adjust_probe.out: recording implies the state is some oracle state, with no extra hypotheses."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",

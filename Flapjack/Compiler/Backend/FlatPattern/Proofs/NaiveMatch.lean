@@ -11,8 +11,9 @@ open Flapjack.SemanticPrimitivesHOL (storeLookup)
 open Flapjack.SemanticPrimitivesProps (litSameType_refl litSameType_sym)
 
 /-- Evaluating the flat Boolean expression yields the corresponding value. -/
-theorem evaluate_bool {C F : Type} (trace : Tra) (b : Bool)
-    (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F) :
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "evaluate_Bool"]
+theorem evaluate_bool {C F : Type}
+    (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F) (trace : Tra) (b : Bool) :
     FlatSem.evaluate env state [FlatLang.mkBool trace b] = (state, .val [FlatSem.boolValue b]) := by
   cases b <;> simp [FlatSem.evaluate, FlatLang.mkBool, FlatSem.boolValue]
 
@@ -106,7 +107,7 @@ theorem naiveList_nil {C F : Type} (trace : Tra) : @NaiveListCorrect C F trace [
   | nil =>
     simp [FlatSem.pmatchList, matchDecision] at decision
     subst answer
-    simpa [naivePatternMatch] using evaluate_bool trace true env state
+    simpa [naivePatternMatch] using evaluate_bool env state trace true
   | cons _ _ => simp [FlatSem.pmatchList, matchDecision] at decision
 
 /-- Wildcards pass the work-list match and guard directly to the tail. -/
@@ -277,14 +278,14 @@ theorem evaluate_smartIf {C F : Type} (trace : Tra) (guard yes no : FlatLang.Exp
               subst tag
               simpa [FlatLang.mkBool, boolToTag] using
                 (evaluate_if_pure_bool trace (.con guardTrace (some (trueTag, some FlatLang.boolId)) []) yes no true
-                  env state (by simpa [FlatLang.mkBool, boolToTag] using evaluate_bool guardTrace true env state)).symm
+                  env state (by simpa [FlatLang.mkBool, boolToTag] using evaluate_bool env state guardTrace true)).symm
             · split
               · rename_i tagEq tagNe typeEq
                 subst typeId
                 subst tag
                 simpa [FlatLang.mkBool, boolToTag] using
                   (evaluate_if_pure_bool trace (.con guardTrace (some (falseTag, some FlatLang.boolId)) []) yes no false
-                    env state (by simpa [FlatLang.mkBool, boolToTag] using evaluate_bool guardTrace false env state)).symm
+                    env state (by simpa [FlatLang.mkBool, boolToTag] using evaluate_bool env state guardTrace false)).symm
               · rfl
           · rfl
 
@@ -394,7 +395,7 @@ theorem naiveList_con {C F : Type} (trace : Tra)
                 cases result : FlatSem.pmatchList state (rest.map Prod.fst) values bindings <;>
                   simp [result, matchDecision, combineMatchDecisions] at failedDecision
                 all_goals subst answer
-                all_goals simpa [naivePatternMatch, evaluate_smartIf, branch] using evaluate_bool trace false env state
+                all_goals simpa [naivePatternMatch, evaluate_smartIf, branch] using evaluate_bool env state trace false
         · have head : FlatSem.pmatch state (.pcon stamp patterns) (.conv actual fields) bindings = .typeError := by
             simp [FlatSem.pmatch, compatible]
           simp [FlatSem.pmatchList, head, matchDecision] at decision
@@ -444,7 +445,7 @@ theorem naiveList_literal {C F : Type} (trace : Tra) (lit : Lit) (expression : F
             cases result : FlatSem.pmatchList state (rest.map Prod.fst) values bindings <;>
               simp [FlatSem.pmatchList, FlatSem.pmatch, same, sameType, result, matchDecision] at decision
             all_goals subst answer
-            all_goals simpa [naivePatternMatch, evaluate_smartIf, branch] using evaluate_bool trace false env state
+            all_goals simpa [naivePatternMatch, evaluate_smartIf, branch] using evaluate_bool env state trace false
           · simp [FlatSem.pmatchList, FlatSem.pmatch, same, sameType, matchDecision] at decision
 
 /-- Reference patterns replace their input expression with the corresponding

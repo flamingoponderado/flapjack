@@ -394,7 +394,7 @@ theorem decodeGuard_simulation {C F : Type} (trace : BackendCommon.Tra)
   | true_ =>
     simp [PatternSemantics.dtEvalGuard] at tested
     subst answer
-    simpa [decodeGuard] using evaluate_bool trace true env state
+    simpa [decodeGuard] using evaluate_bool env state trace true
   | posTest position test =>
     cases selected : PatternSemantics.appPos (encodeRefs state) position (encodeValue value) with
     | none => simp [PatternSemantics.dtEvalGuard, selected] at tested
@@ -425,7 +425,7 @@ theorem decodeGuard_simulation {C F : Type} (trace : BackendCommon.Tra)
         have guardPure := ihLeft false leftResult
         have branch := evaluate_if_pure_bool trace (decodeGuard trace expression left) (decodeGuard trace expression right)
           (FlatLang.mkBool trace false) false env state guardPure
-        simpa [decodeGuard, evaluate_smartIf, branch] using evaluate_bool trace false env state
+        simpa [decodeGuard, evaluate_smartIf, branch] using evaluate_bool env state trace false
       | true =>
         have rightResult : PatternSemantics.dtEvalGuard (encodeRefs state) (encodeValue value) right = some answer := by
           simpa [PatternSemantics.dtEvalGuard, leftResult] using tested
@@ -451,7 +451,7 @@ theorem decodeGuard_simulation {C F : Type} (trace : BackendCommon.Tra)
         have guardPure := ihLeft true leftResult
         have branch := evaluate_if_pure_bool trace (decodeGuard trace expression left) (FlatLang.mkBool trace true)
           (decodeGuard trace expression right) true env state guardPure
-        simpa [decodeGuard, evaluate_smartIf, branch] using evaluate_bool trace true env state
+        simpa [decodeGuard, evaluate_smartIf, branch] using evaluate_bool env state trace true
 
 /-- Guard simplification preserves every successful abstract guard outcome. -/
 theorem simpGuard_preserves (refs : HolFiniteMapExact Nat PatternSemantics.Term)

@@ -44,3 +44,8 @@ val _ = show_thm "record_forward=" source_evalProofTheory.record_forward_def;
 val _ = show_thm "record_forward_refl=" source_evalProofTheory.record_forward_refl;
 val _ = show_thm "record_forward_trans=" source_evalProofTheory.record_forward_trans;
 val _ = show_thm "oracle_agrees_backward=" source_evalProofTheory.orac_agrees_backward;
+val _ = show_thm "value_to_nat=" source_evalProofTheory.v_to_nat_def;
+val _ = show_thm "value_to_env_id=" source_evalProofTheory.v_to_env_id_def;
+val _ = show_thm "do_eval_record=" source_evalProofTheory.do_eval_record_def;
+val _ = show_thm "is_record=" source_evalProofTheory.is_record_def;
+val _ = show_thm "is_record_imp=" source_evalProofTheory.is_record_IMP;
