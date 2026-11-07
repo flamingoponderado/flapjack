@@ -6,6 +6,16 @@ fun show_thm label th =
   if null (hyp th) then (print label; print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
 fun show_eval label tm = (print label; print_term (rhs (concl (EVAL tm))); print "\n");
+val nsAppend_foldl_prime_replay = Q.prove (
+  `!l ns ns'. nsAppend (FOLDL (\ns (l,cids). nsAppend l ns) ns' l) ns =
+    FOLDL (\ns (l,cids). nsAppend l ns) (nsAppend ns' ns) l`,
+  Induct_on `l` >> rw [] >> PairCases_on `h` >> rw []);
+val _ = show_thm "nsAppend_foldl_prime_replay=" nsAppend_foldl_prime_replay;
+val nsAppend_foldl_replay = Q.prove (
+  `!l ns. FOLDL (\ns (l,cids). nsAppend l ns) ns l =
+    nsAppend (FOLDL (\ns (l,cids). nsAppend l ns) nsEmpty l) ns`,
+  metis_tac [nsAppend_foldl_prime_replay, namespacePropsTheory.nsAppend_nsEmpty]);
+val _ = show_thm "nsAppend_foldl_replay=" nsAppend_foldl_replay;
 val build_tdefs_no_mod_replay = Q.prove (
   `!idx tdefs. nsDomMod (build_tdefs idx tdefs) = {[]}`,
   Induct_on `tdefs` >> rw [semanticPrimitivesTheory.build_tdefs_def] >>

@@ -9,6 +9,28 @@ namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL
 open OracleInvariant
 
+/-- Appending after a namespace fold is equivalent to appending to its initial state. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "nsAppend_foldl'"]
+theorem nsAppend_foldl_prime {M N V C : Type} :
+    ∀ (l : List (Namespace M N V × C)) (ns ns' : Namespace M N V),
+      nsAppend (l.foldl (fun acc pair => nsAppend pair.1 acc) ns') ns =
+        l.foldl (fun acc pair => nsAppend pair.1 acc) (nsAppend ns' ns) := by
+  intro l
+  induction l with
+  | nil => intro ns ns'; rfl
+  | cons pair tail ih =>
+    intro ns ns'
+    simpa only [List.foldl_cons, nsAppend_assoc] using ih ns (nsAppend pair.1 ns')
+
+/-- A namespace fold factors through its result from the empty namespace. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "nsAppend_foldl"]
+theorem nsAppend_foldl {M N V C : Type} :
+    ∀ (l : List (Namespace M N V × C)) (ns : Namespace M N V),
+      l.foldl (fun acc pair => nsAppend pair.1 acc) ns =
+        nsAppend (l.foldl (fun acc pair => nsAppend pair.1 acc) nsEmpty) ns := by
+  intro l ns
+  simpa only [(nsAppend_nsEmpty ns).2] using (nsAppend_foldl_prime l ns nsEmpty).symm
+
 /-- Type definitions introduce no nested module names. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "build_tdefs_no_mod"]
 theorem buildTdefs_no_mod : ∀ (idx : Nat) (tdefs : TypeDef),

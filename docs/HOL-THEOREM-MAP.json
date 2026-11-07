@@ -14452,6 +14452,22 @@
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateDatatype.lean",
+    "lean_name": "nsAppend_foldl_prime",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "nsAppend_foldl'",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared nsAppend_foldl_prime_replay in source_to_flat_init_probe.out: the three namespace types and independent ignored pair payload, quantified binders, left fold and append equation match the original local proof."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateDatatype.lean",
+    "lean_name": "nsAppend_foldl",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "nsAppend_foldl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared nsAppend_foldl_replay in source_to_flat_init_probe.out: the namespace and independent pair payload types, quantified binders, left fold and empty-namespace equation agree with the original local proof."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateDatatype.lean",
     "lean_name": "buildTdefs_no_mod",
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "build_tdefs_no_mod",
