@@ -1,5 +1,14 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "evaluate_prog_with_clock_put_oracle",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/PutOracleClock.lean",
+  "lean_name": "evaluate_prog_with_clock_put_oracle",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete statement and inferred carriers with the typed evaluate_prog_with_clock_put_oracle capture in source_eval_oracle_adjust_probe.out:64. Binders, premises and conclusion match. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
   "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
   "hol_name": "eval_no_eval_simulation",
   "lean_path": "Flapjack/EvaluateProps/NoEvalControl.lean",

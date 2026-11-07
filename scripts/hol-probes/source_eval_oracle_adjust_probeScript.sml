@@ -146,6 +146,7 @@ val local_extract_oracle_suc_st = Q.prove (
 val _ = show_thm "extract_oracle_suc_st_replay=" local_extract_oracle_suc_st;
 val _ = show_thm "get_oracle_props=" source_evalProofTheory.get_oracle_props;
 val _ = show_thm "eval_no_eval_simulation=" evaluatePropsTheory.eval_no_eval_simulation;
+val _ = show_thm "evaluate_prog_with_clock_put_oracle=" source_evalProofTheory.evaluate_prog_with_clock_put_oracle;
 
 
 val spt_mem_to_list_a = prove(
