@@ -6,6 +6,7 @@ val _ = Globals.show_types := true;
 fun show_thm label th =
   if null (hyp th) then (print label; print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
+val _ = show_thm "esgc_decode_dtree=" flat_patternProofTheory.esgc_free_decode_dtree;
 val _ = show_thm "operator_global_flag=" flat_patternProofTheory.op_sets_globals_gbag;
 val _ = show_thm "operator_sets_globals_def=" flat_patternTheory.op_sets_globals_def;
 val singleton_global_bag = prove (

@@ -1,5 +1,29 @@
 [
 {
+  "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+  "hol_name": "MEM_toListA",
+  "lean_path": "Flapjack/Misc/Sptree/ToList.lean",
+  "lean_name": "sptMemToListA",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed statement replay spt_mem_to_list_a_replay in source_eval_oracle_adjust_probe.out: for arbitrary element type, tree, accumulator and value, traversal membership is equivalent to accumulator membership or existence of a lookup returning the value. The local statement is reproved from toListA_append and MEM_toList; the original local proof is not replayed."
+},
+{
+  "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+  "hol_name": "MEM_toList",
+  "lean_path": "Flapjack/Misc/Sptree/ToList.lean",
+  "lean_name": "sptMemToList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared spt_mem_to_list in source_eval_oracle_adjust_probe.out: membership in the sparse-tree traversal is equivalent to an arbitrary natural lookup returning that value, without a well-formedness premise."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "esgc_free_decode_dtree",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalInvariants.lean",
+  "lean_name": "esgcFree_decodeDtree",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared esgc_decode_dtree in flat_pattern_global_flag_probe.out: the original single conjunctive premise contains safety of the value and default and EVERY safety over toList of the complete sparse tree; the conclusion is safety of the decoded tree. Universal membership expresses HOL EVERY."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
   "hol_name": "naive_pattern_matches_correct",
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/NaiveMatch.lean",

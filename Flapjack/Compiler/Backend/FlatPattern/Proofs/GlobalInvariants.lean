@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.NoMat
 import Flapjack.Compiler.Backend.FlatProps.GlobalBagProperties
+import Flapjack.Misc.Sptree.ToList
 import Mathlib.Tactic.SplitIfs
 
 /-! Global-initialization safety of generated pattern decision expressions. -/
@@ -514,19 +515,22 @@ theorem setGlobals_compilePatBindings (t : Tra) (i : Nat)
   intro p k e mem
   exact safe (p, k, e) mem
 
-/-- Decoding a decision tree preserves global-initialization safety when every reachable
-branch and the default are global-initialization-safe. -/
-theorem esgcFree_decodeDtree (trace : Tra) (branches : Spt FlatLang.Exp) (value default : FlatLang.Exp) (tree : DTree)
-    (valueSafe : esgcFree value) (defaultSafe : esgcFree default)
-    (branchesSafe : ∀ index branch, sptLookup index branches = some branch → esgcFree branch) :
+/-- Decoding a decision tree preserves global-initialization safety. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "esgc_free_decode_dtree"]
+theorem esgcFree_decodeDtree (value default : FlatLang.Exp) (branches : Spt FlatLang.Exp)
+    (trace : Tra) (tree : DTree)
+    (premises : esgcFree value ∧ esgcFree default ∧
+      ∀ branch ∈ sptToList branches, esgcFree branch) :
     esgcFree (decodeDtree trace branches value default tree) := by
+  obtain ⟨valueSafe, defaultSafe, branchesSafe⟩ := premises
   induction tree with
   | fail => exact defaultSafe
   | typeFail => simp [decodeDtree, esgcFree]
   | leaf index =>
     cases found : sptLookup index branches with
     | none => simpa [decodeDtree, found] using defaultSafe
-    | some branch => simpa [decodeDtree, found] using branchesSafe index branch found
+    | some branch =>
+      simpa [decodeDtree, found] using branchesSafe branch ((sptMemToList branch branches).2 ⟨index, found⟩)
   | if_ guard yes no ihYes ihNo =>
     simp only [decodeDtree]
     split_ifs
@@ -713,7 +717,11 @@ theorem esgcFree_compilePats (cfg : Config) (naive : Bool) (trace : Tra) (base :
   cases naive with
   | false =>
     simp only [compilePats, Bool.false_eq_true, ↓reduceIte]
-    exact esgcFree_decodeDtree trace _ value default _ valueSafe defaultSafe (esgcFree_branchTree _ branchesSafe)
+    apply esgcFree_decodeDtree value default _ trace _
+    refine ⟨valueSafe, defaultSafe, ?_⟩
+    intro branch member
+    obtain ⟨index, found⟩ := (sptMemToList branch _).1 member
+    exact esgcFree_branchTree _ branchesSafe index branch found
   | true =>
     simp only [compilePats, ↓reduceIte]
     apply esgcFree_naivePatternMatches trace value default _ valueSafe defaultSafe
