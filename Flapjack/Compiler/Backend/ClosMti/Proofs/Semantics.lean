@@ -164,7 +164,7 @@ theorem semantics_intro_multi {C F : Type} (ffi : HolFfiState F) (maxApp : Nat)
   cases sourceRun : evaluate program [] source with
   | mk sourceResult sourceFinal =>
     obtain ⟨targetResult, targetFinal, targetRun, resultsRelated, finalStates⟩ :=
-      introMulti_correct_candidate program [] [] source target sourceFinal sourceResult sourceRun unary .nil states
+      intro_multi_correct program [] source sourceResult sourceFinal [] () target ⟨sourceRun, unary, .nil, states⟩
     change resultRel (List.Forall₂ (ValueRel maxApp)) (ValueRel maxApp)
       sourceResult (evaluate (introList maxApp program) [] target).1 ∧
       sourceFinal.ffi = (evaluate (introList maxApp program) [] target).2.ffi

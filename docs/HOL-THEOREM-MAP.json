@@ -1,6 +1,19 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+  "hol_name": "intro_multi_correct",
+  "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/EvaluateMutual.lean",
+  "lean_name": "intro_multi_correct",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared typed intro_multi_correct in clos_mti_correct_probe.out, including the independent inhabited unused binder, grouped premises, existential result, and final state relation. ClosSem.State uses canonical refs and code finite maps with a same-module roundtrip witness; its evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
   "hol_name": "semantics_intro_multi",
   "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Semantics.lean",
   "lean_name": "semantics_intro_multi",

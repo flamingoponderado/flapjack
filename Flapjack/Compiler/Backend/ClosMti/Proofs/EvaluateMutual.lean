@@ -155,21 +155,30 @@ theorem evaluate_related {C F : Type} (sourceCode targetCode : List ClosLang.Exp
   exact (evaluate_mutual_within (C := C) (F := F) source.clock).2 sourceCode targetCode
     targetEnv target sourceEnv targetFinal source targetResult (by omega)
 
-/-- Forward correctness of multi-argument introduction for the current Lean
-closure evaluator. The source and target carriers and evaluator still need
-HOL correspondence review, so this source-shaped result is not tagged as a
-port of the HOL theorem. -/
-theorem introMulti_correct_candidate {C F : Type} (sourceCode : List ClosLang.Exp)
-    (sourceEnv targetEnv : List Value) (source target sourceFinal : State C F)
+namespace IntroMultiWitness
+/-- The closure state uses the canonical finite-map representation. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ state : StateBroad C F, (State.ofBroad state).toBroad = state) ∧
+      (∀ state : State C F, State.ofBroad state.toBroad = state) :=
+  ClosSem.holFmapAsFiniteSupportWitness
+end IntroMultiWitness
+
+/-- Forward correctness of multi-argument introduction. The independent
+unused binder is present in the typed HOL statement. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "intro_multi_correct"
+  (fmap_as_finite_support := [refs, code])]
+theorem intro_multi_correct {C F A : Type} [Nonempty A] (sourceCode : List ClosLang.Exp)
+    (sourceEnv : List Value) (source : State C F)
     (sourceResult : SemanticPrimitivesHOL.Result (List Value) Value)
-    (sourceRun : evaluate sourceCode sourceEnv source = (sourceResult, sourceFinal))
-    (unary : ∀ expression ∈ sourceCode, ClosProps.noMti expression)
-    (envRel : List.Forall₂ (ValueRel source.maxApp) sourceEnv targetEnv)
-    (states : StateRel source target) :
+    (sourceFinal : State C F) (targetEnv : List Value) (_unused : A) (target : State C F)
+    (premises : evaluate sourceCode sourceEnv source = (sourceResult, sourceFinal) ∧
+      (∀ expression ∈ sourceCode, ClosProps.noMti expression) ∧
+      List.Forall₂ (ValueRel source.maxApp) sourceEnv targetEnv ∧ StateRel source target) :
     ∃ targetResult targetFinal,
       evaluate (introList source.maxApp sourceCode) targetEnv target = (targetResult, targetFinal) ∧
       resultRel (List.Forall₂ (ValueRel source.maxApp)) (ValueRel source.maxApp)
         sourceResult targetResult ∧ StateRel sourceFinal targetFinal := by
+  obtain ⟨sourceRun, unary, envRel, states⟩ := premises
   cases targetRun : evaluate (introList source.maxApp sourceCode) targetEnv target with
   | mk targetResult targetFinal =>
     obtain ⟨relatedResult, relatedFinal, relatedRun, resultRel, finalStates⟩ :=
