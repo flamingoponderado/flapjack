@@ -1,6 +1,18 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+  "hol_name": "semantics_intro_multi",
+  "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Semantics.lean",
+  "lean_name": "semantics_intro_multi",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": [
+    "Flapjack.HolFiniteMapExact.holEmpty"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed semantics_intro_multi in clos_mti_correct_probe.out: the non-failure premise, grouped oracle and unary invariants, and target-to-source semantics equality agree. FEMPTY is the reviewed canonical holEmpty producer; ClosSem.semantics inherits the reals_as_rational_cuts assumption in docs/SOUNDNESS.md item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
   "hol_name": "semantics_compile",
   "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Semantics.lean",
   "lean_name": "semantics_compile",

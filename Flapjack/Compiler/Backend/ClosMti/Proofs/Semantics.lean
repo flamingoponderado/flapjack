@@ -138,18 +138,24 @@ theorem semantics_eq_of_related_observations {C F : Type} (ffi : HolFfiState F) 
   simp only [failureEq]
   rw [terminatingEq, tracesEq]
 
-/-- Multi-argument introduction preserves the current Lean observational
-semantics under the unary oracle and program invariants. This source-shaped
-result is not tagged as the HOL theorem: the evaluator, state carriers, and
-observational semantics still require correspondence review. -/
-theorem semantics_introMulti_candidate {C F : Type} (ffi : HolFfiState F) (maxApp : Nat)
+/-- Multi-argument introduction preserves observable semantics under the
+original non-failure, oracle, application-limit, and unary assumptions. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "semantics_intro_multi"
+  (fmap_as_finite_support_result_observations := [Flapjack.HolFiniteMapExact.holEmpty])]
+theorem semantics_intro_multi {C F : Type} (ffi : HolFfiState F) (maxApp : Nat)
     (oracle : CompileOracle C) (compiler : Compiler C) (program : List ClosLang.Exp)
-    (positive : 1 ≤ maxApp)
-    (safe : ∀ n, (oracle n).2.2 = [] ∧ ∀ e ∈ (oracle n).2.1, ClosProps.noMti e)
-    (unary : ∀ e ∈ program, ClosProps.noMti e) :
-    semantics ffi maxApp HolFiniteMapExact.empty oracle (pureCc (compileInc maxApp) compiler) program =
-      semantics ffi maxApp HolFiniteMapExact.empty (pureCo (compileInc maxApp) ∘ oracle) compiler
-        (introList maxApp program) := by
+    (_notFail : semantics ffi maxApp HolFiniteMapExact.holEmpty oracle
+      (pureCc (compileInc maxApp) compiler) program ≠ .fail)
+    (invariants : (∀ n, (oracle n).2.2 = [] ∧ ∀ e ∈ (oracle n).2.1, ClosProps.noMti e) ∧
+      1 ≤ maxApp ∧ ∀ e ∈ program, ClosProps.noMti e) :
+    semantics ffi maxApp HolFiniteMapExact.holEmpty (pureCo (compileInc maxApp) ∘ oracle) compiler
+        (introList maxApp program) =
+      semantics ffi maxApp HolFiniteMapExact.holEmpty oracle (pureCc (compileInc maxApp) compiler) program := by
+  obtain ⟨safe, positive, unary⟩ := invariants
+  apply Eq.symm
+  change semantics ffi maxApp HolFiniteMapExact.empty oracle (pureCc (compileInc maxApp) compiler) program =
+    semantics ffi maxApp HolFiniteMapExact.empty (pureCo (compileInc maxApp) ∘ oracle) compiler
+      (introList maxApp program)
   apply semantics_eq_of_related_observations
   intro clock
   let source := initialState ffi maxApp HolFiniteMapExact.empty oracle (pureCc (compileInc maxApp) compiler) clock
@@ -181,14 +187,14 @@ theorem semantics_compile {C F : Type} (ffi : HolFfiState F) (maxApp : Nat)
         1 ≤ maxApp ∧ ∀ e ∈ program, ClosProps.noMti e)) :
     semantics ffi maxApp HolFiniteMapExact.holEmpty oracle1 compiler (compile enabled maxApp program) =
       semantics ffi maxApp HolFiniteMapExact.holEmpty oracle compiler1 program := by
-  obtain ⟨_, compilerEq, oracleEq, enabledSafe⟩ := premises
+  obtain ⟨notFail, compilerEq, oracleEq, enabledSafe⟩ := premises
   subst compiler1
   subst oracle1
   cases enabled with
   | false => simp [compile]
   | true =>
     obtain ⟨safe, positive, unary⟩ := enabledSafe rfl
-    simpa [compile, HolFiniteMapExact.holEmpty] using
-      (semantics_introMulti_candidate ffi maxApp oracle compiler program positive safe unary).symm
+    simpa [compile] using
+      semantics_intro_multi ffi maxApp oracle compiler program notFail ⟨safe, positive, unary⟩
 
 end Flapjack.Compiler.Backend.ClosMti

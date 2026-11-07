@@ -592,13 +592,4 @@ theorem introList_containsAppSome (maxApp : Nat) (program : List Exp) :
   | cons head tail ih =>
     simp only [introList_cons, containsAppSome, ← introExp_containsAppSome maxApp head, ih]
 
-/-- A unary program remains eligible for closure numbering after
-multi-argument introduction when the application limit is positive. -/
-theorem introList_numberingSafe (maxApp : Nat) (program : List Exp)
-    (positive : 0 < maxApp) (unary : ∀ e ∈ program, noMti e) :
-    ¬ containsAppSome maxApp (introList maxApp program) := by
-  intro invalid
-  exact (noMtiList_syntactic maxApp positive program unary).2
-    ((introList_containsAppSome maxApp program).mp invalid)
-
 end Flapjack.Compiler.Backend.ClosMti
