@@ -14,3 +14,4 @@ collect_args_no_Labels=∀(m :num) (na :num) (e :closLang$exp) (es' :num) (e' :c
 EVERY_intro_multi=∀(m :num) (xs :closLang$exp list). EVERY (P :closLang$exp -> bool) (intro_multi m xs) ⇔ EVERY (λ(x :closLang$exp). P (HD (intro_multi m [x]))) xs
 HD_intro_multi=[HD (intro_multi (max_app :num) [(e2 :closLang$exp)])] = intro_multi max_app [e2]
 intro_multi_cons=∀(xs :closLang$exp list) (x :closLang$exp). intro_multi (m :num) (x::xs) = HD (intro_multi m [x])::intro_multi m xs
+intro_multi_no_Labels=∀(m :num) (xs :closLang$exp list). EVERY no_Labels xs ⇒ EVERY no_Labels (intro_multi m xs)

@@ -1,6 +1,14 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+  "hol_name": "intro_multi_no_Labels",
+  "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/NoLabels.lean",
+  "lean_name": "intro_multi_noLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed intro_multi_no_Labels in clos_mti_correct_probe.out: both binders, EVERY no_Labels premise, and EVERY no_Labels conclusion on intro_multi agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
   "hol_name": "EVERY_intro_multi",
   "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/TotalView.lean",
   "lean_name": "every_intro_multi",
