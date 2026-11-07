@@ -1,6 +1,15 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "evaluate_decs_clock_record_common_prefix",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleCommonPrefix.lean",
+  "lean_name": "evaluate_decs_clock_record_common_prefix",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete statement and inferred carriers with the typed evaluate_decs_clock_record_common_prefix capture in source_eval_oracle_adjust_probe.out:58. Binders, premises and conclusion match. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "evaluate_record_suffix",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/RecordSuffixLog.lean",
   "lean_name": "evaluateRecordSuffix_Log",
