@@ -184,7 +184,11 @@ def evalPanSemStateExpViaHOLCached (cache : PanSemExpressionContextCache)
         panValueOfHOL
   else evalPanSemStateExp s e
 
-/-- The memory access derived from a state's memory domains. -/
+/-- The memory access for the routed HOL path, derived from a state's memory
+    domains and byte order. The generic fallback `evalPanSemStateExp` derives
+    its access with `panSemWordMemoryAccess`, which agrees with this definition
+    at width 64 (`panSemWordMemoryAccess_64`); the two paths therefore agree on
+    the access, though this is not the only place that derives one. -/
 def PanSemState.memoryAccess (state : PanSemState (RiscV.Word 64) (FfiState σ)) :
     Option (PanValueMemoryAccess (RiscV.Word 64)) :=
   some (panSemBitVec64MemoryAccess state)
@@ -279,9 +283,17 @@ def PanSemRiscV64ProgramInput.toOwner (input : PanSemRiscV64ProgramInput σ) :
     byte count keeps the generic evaluator, preserving its previous behavior.
     The routed branch delegates to `evalPanValueFfiClockProgramWithRoute`, so
     the declaration setup lives in the generic runner instead of being copied
-    here. Like HOL's `decs_stcnames []`, that setup starts struct collection
-    from the input's existing context; the other differences from HOL are
-    listed on `evalPanValueFfiClockProgramEntry`. -/
+    here.
+
+    The struct-context seed is a difference from HOL: `semantics_decls` runs
+    `decs_stcnames []`, which starts from an empty context, while the generic
+    runner collects structs from `input.initial.source.structs` (also noted on
+    `evalPanValueFfiClockProgram`). The access argument is
+    `input.toOwner.memoryAccess`, and the route builder re-pins only the
+    collected structure context: `PanSemState.memoryAccess` depends only on the
+    owner's memory domains and byte order, so the separately passed access
+    matches the route's own `access` field. The remaining differences from HOL are listed
+    on `evalPanValueFfiClockProgramEntry`. -/
 def panSemEvaluateRiscV64ProgramViaHOL
     (context : PanValueFfiContext (RiscV.Word 64))
     (input : PanSemRiscV64ProgramInput σ)
