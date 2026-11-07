@@ -60,3 +60,4 @@ val _ = show_thm "word64_list_concrete=" source_evalProofTheory.v_to_word64_list
 val _ = show_thm "compiler_agrees_concrete=" source_evalProofTheory.compiler_agrees;
 val _ = show_thm "reset_oracle_eqs=" source_evalProofTheory.reset_env_generation_orac_eqs;
 val _ = show_thm "insert_declare_env=" source_evalProofTheory.insert_declare_env;
+val _ = show_thm "insert_do_eval=" source_evalProofTheory.insert_do_eval;

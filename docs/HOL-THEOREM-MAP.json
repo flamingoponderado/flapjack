@@ -14409,6 +14409,14 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "insert_do_eval",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleReset.lean",
+    "lean_name": "insert_doEval",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared insert_do_eval in source_eval_oracle_adjust_probe.out: successful source doEval and recording are the single conjunctive premise, followed by all four HOL conclusions, including the oracle-agreement and extended-well-formedness guarded simulation and the recorded-oracle invariant. The local insert_oracle and ci_comp overloads are expanded to the original identity transform, first-component shift and compiler conversion."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
     "hol_name": "v_to_list_concrete",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/Concrete.lean",
     "lean_name": "valueToList_concrete",

@@ -6,6 +6,91 @@ import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleRecording
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs
 open Flapjack.SemanticPrimitivesHOL
 
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "insert_do_eval"]
+theorem insert_doEval {Config : Type} (values : List Value) (es : Option EvalState)
+    (env : SemEnv Value) (decs : List Flapjack.AstHOL.Dec) (es' : Option EvalState)
+    (ci : CompilerInstance Config) (oracle : EvalOracleFun)
+    (premises : doEval values es = some (env, decs, es') ∧ isRecord ci es) :
+    isRecord ci es' ∧ recordForward es es' ∧
+    (oracleAgrees oracle es' ∧ oracleExtendedWellFormed (mkCompilerFunFromCi ci) oracle →
+      doEval values (insertGenOracle ci id (fun args => args.1.1) oracle es) =
+        some (env, decs, insertGenOracle ci id (fun args => args.1.1) oracle es')) ∧
+    (recordedOracleWellFormed (mkCompilerFunFromCi ci) (oracleState es).oracle →
+      recordedOracleWellFormed (mkCompilerFunFromCi ci) (oracleState es').oracle) := by
+  classical
+  obtain ⟨evaluated, recording⟩ := premises
+  rcases es with _ | ⟨s | s⟩
+  · cases recording
+  · cases recording
+  · simp [isRecord] at recording
+    simp only [doEval, recording] at evaluated
+    cases callback : doEvalRecord ci values s.oracle with
+    | none => simp [callback] at evaluated
+    | some output =>
+      obtain ⟨envId, newOracle, declarations⟩ := output
+      cases lookup : lookupEnv s envId with
+      | none => simp [callback, lookup] at evaluated
+      | some foundEnv =>
+        simp [callback, lookup] at evaluated
+        obtain ⟨rfl, rfl, rfl⟩ := evaluated
+        rcases values with _ | ⟨a, _ | ⟨b, _ | ⟨c, _ | ⟨d, _ | ⟨e, _ | ⟨f, tail⟩⟩⟩⟩⟩⟩ <;>
+          try simp [doEvalRecord] at callback
+        cases tail with
+        | cons _ _ => simp at callback
+        | nil =>
+          cases idDecoded : valueToEnvId a with
+          | none => simp [idDecoded] at callback
+          | some idValue =>
+            cases decDecoded : vFunAbs ci.decsDom ci.decsV c with
+            | none => simp [idDecoded, decDecoded] at callback
+            | some decValue =>
+              by_cases valid : compilerAgrees (mkCompilerFunFromCi ci) (idValue, b, decValue) (d, e, f) ∧
+                  b = (s.oracle 0).2.1
+              · simp [idDecoded, decDecoded, valid] at callback
+                obtain ⟨_, rfl, rfl, rfl⟩ := callback
+                refine ⟨?_, ?_, ?_, ?_⟩
+                · simp [isRecord, addEnvGeneration]
+                · simp only [recordForward, addEnvGeneration]
+                  refine ⟨_, rfl, ?_, ?_⟩
+                  · simp
+                  · intro j hj
+                    simp [show j ≠ 0 by omega,
+                      show j ≠ (s.oracle 0).1.1 + 1 by omega]
+                · intro agreed
+                  simp only [oracleAgrees, addEnvGeneration] at agreed
+                  have event := agreed.1 (s.oracle 0).1.1 (by simp)
+                  simp at event
+                  cases compiled : mkCompilerFunFromCi ci (idValue, b, decValue) with
+                  | none => simp [compilerAgrees, compiled] at valid
+                  | some result =>
+                    obtain ⟨nextState, byteList, wordList⟩ := result
+                    cases byteDecoded : valueToWord8List e with
+                    | none => simp [compilerAgrees, compiled, byteDecoded] at valid
+                    | some decodedBytes =>
+                      cases wordDecoded : valueToWord64List f with
+                      | none => simp [compilerAgrees, compiled, byteDecoded, wordDecoded] at valid
+                      | some decodedWords =>
+                        have previous := valid.2
+                        simp [compilerAgrees, compiled, byteDecoded, wordDecoded] at valid
+                        have extended := agreed.2
+                        unfold oracleExtendedWellFormed at extended
+                        have future := extended (s.oracle 0).1.1 (nextState, byteList, wordList)
+                          (by simpa [event, ← previous] using compiled)
+                        have futureValue : d = (oracle (1 + (s.oracle 0).1.1)).2.1 := by
+                          simpa [valid.1.1, Nat.add_comm] using future
+                        simp only [lookupEnv] at lookup
+                        simp [doEval, insertGenOracle, doEvalOracle, Flapjack.holShiftSeq,
+                          addEnvGeneration, event, ← previous, compiled, byteDecoded, wordDecoded,
+                          valid.1.1, valid.1.2.1, valid.1.2.2.1, futureValue, lookupEnv, lookup,
+                          Nat.add_comm]
+                        funext j
+                        simp [Flapjack.holShiftSeq, Nat.add_assoc]
+                · intro wf
+                  have step := recordedOracleWellFormed_step (mkCompilerFunFromCi ci) s.oracle
+                    (idValue, b, decValue) d e f ⟨wf, valid.1, fun _ => valid.2⟩
+                  simpa [oracleState, addEnvGeneration, valid.2] using step
+              · simp [idDecoded, decDecoded, valid] at callback
+
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "reset_env_generation_orac_eqs"]
 theorem resetEnvGeneration_oracleEqs {Config : Type} (ci : CompilerInstance Config)
     (es₂ es₃ es₁ : Option EvalState) (oracle : EvalOracleFun) :
