@@ -380,7 +380,7 @@ theorem exprSim_equality {C F : Type} (genv : GlobalEnv) (compMap : Environment)
                     (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
                   simp [getOpClass, doApp, doAppNumericCore, doAppBasic, comparison, astOpToFlatOp,
                     FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, sameEq, EvaluateHOL.listResult]
-                  exact ⟨.value (.cons (boolValue_related genv ok b) .nil), nextRel⟩
+                  exact ⟨.value (.cons ((boolValueRel_iff genv b _ ok).mpr rfl) .nil), nextRel⟩
 
 
 /-- Primitive comparison expressions preserve operand evaluation and their
@@ -477,7 +477,7 @@ theorem exprSim_test {C F : Type} (genv : GlobalEnv) (compMap : Environment) (tr
                     (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
                   simp [getOpClass, doApp, comparison, astOpToFlatOp,
                     FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, flatComparison, EvaluateHOL.listResult]
-                  exact ⟨.value (.cons (boolValue_related genv ok b) .nil), nextRel⟩
+                  exact ⟨.value (.cons ((boolValueRel_iff genv b _ ok).mpr rfl) .nil), nextRel⟩
 
 
 /-- Integer arithmetic expressions simulate operand evaluation, arithmetic
@@ -1444,7 +1444,7 @@ theorem exprSim_booleanNot {C F : Type} (genv : GlobalEnv) (compMap : Environmen
                 rw [(EvaluateHOL.fixClockEvaluate sourceState sourceEnv [body] []).1, sourceRun]
                 simp [getOpClass, failed, EvaluateHOL.typeError]
               obtain ⟨b, rfl⟩ := booleanNot_operand sourceNext operand successful
-              have flatEq := (boolValueRel_iff genv ok b flatOperand).mp valueRel
+              have flatEq := (boolValueRel_iff genv b flatOperand ok).mp valueRel
               subst flatOperand
               obtain ⟨sourceApp, flatApp, resultRel⟩ := booleanNot_related genv ok sourceNext flatNext b
               unfold ExprSim

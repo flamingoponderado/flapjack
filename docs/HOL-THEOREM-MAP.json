@@ -1,6 +1,18 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "v_rel_Bool_eqn",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/PrimitiveType.lean",
+  "lean_name": "boolValueRel_iff",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "c",
+    "tys"
+  ],
+  "reviewer": "Compared the quantified variables, guard, and equivalence against the typed boolean_relation_typed capture in scripts/hol-probes/source_to_flat_primitive_type_probe.out:15. GlobalEnv.c and tys use the reviewed canonical finite-map representation; the same-module witness establishes its roundtrip. The HOL and Lean Boolv definitions and v_rel carrier were also compared."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
   "hol_name": "v_rel_cases",
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/ValueRelSourceCases.lean",
   "lean_name": "valueRel_source_cases",

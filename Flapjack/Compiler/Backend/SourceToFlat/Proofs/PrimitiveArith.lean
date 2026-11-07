@@ -257,7 +257,7 @@ theorem booleanNot_related {C F : Type} (genv : GlobalEnv) (ok : genvCOk genv.c)
       some (some (flat, .val (FlatSem.boolValue (!b)))) ∧
     ValueRel genv (SemanticPrimitivesHOL.boolValue (!b)) (FlatSem.boolValue (!b)) := by
   have distinct : Basis.Pure.MlString.ofString "False" ≠ Basis.Pure.MlString.ofString "True" := by decide
-  have related := boolValue_related genv ok (!b)
+  have related := (boolValueRel_iff genv (!b) _ ok).mpr rfl
   cases b <;> simp [doApp, doAppNumericCore, checkType, SemanticPrimitivesHOL.boolValue, boolTypeNum,
     FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue,
     FlatSem.valueToFlat, FlatSem.boolValue, BackendCommon.boolToTag,

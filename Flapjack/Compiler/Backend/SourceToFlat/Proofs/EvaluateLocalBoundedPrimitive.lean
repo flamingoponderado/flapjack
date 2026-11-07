@@ -1978,7 +1978,7 @@ theorem localEnvBounded_booleanNot {C F : Type} [Nonempty C]
           rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [body] []).1, sourceRun]
           simp [getOpClass, failed, EvaluateHOL.typeError]
         obtain ⟨b, rfl⟩ := booleanNot_operand nextSource operand successful
-        have flatEq := (boolValueRel_iff nextGenv nextInvariant.1 b flatOperand).mp valueRel
+        have flatEq := (boolValueRel_iff nextGenv b flatOperand nextInvariant.1).mp valueRel
         subst flatOperand
         obtain ⟨sourceApp, flatApp, _⟩ := booleanNot_related nextGenv nextInvariant.1 nextSource nextFlat b
         refine ⟨nextGenv, exprSim_booleanNot nextGenv compMap trace sourceEnv flatEnv source flat body

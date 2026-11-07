@@ -189,7 +189,7 @@ theorem localEnvBounded_if {C F : Type} [Nonempty C]
           obtain ⟨b, valueEq, _⟩ := SemanticPrimitivesHOL.doIf_success_boolean conditionValue yes no branch selection
           subst conditionValue
           obtain ⟨condGrowth, middleInvariant, middleGeneration, condForward⟩ := condPost
-          have flatBoolean := (boolValueRel_iff middleGenv middleInvariant.1 b _).mp valueRel
+          have flatBoolean := (boolValueRel_iff middleGenv b _ middleInvariant.1).mp valueRel
           subst_vars
           have middleLocal := envRel_growth genv middleGenv condGrowth sourceLocal flatEnv.v localRel
           have middleEnv := globalEnvInv_growth genv middleGenv condGrowth baseMap (fun n => n ∈ flatEnv.v.map Prod.fst) baseEnv envInv
@@ -293,7 +293,7 @@ theorem localEnvBounded_log {C F : Type} [Nonempty C]
           obtain ⟨b, valueEq⟩ := SemanticPrimitivesHOL.doLog_success_boolean op leftValue right selected selection
           subst leftValue
           obtain ⟨leftGrowth, middleInvariant, middleGeneration, leftForward⟩ := leftPost
-          have flatBoolean := (boolValueRel_iff middleGenv middleInvariant.1 b _).mp valueRel
+          have flatBoolean := (boolValueRel_iff middleGenv b _ middleInvariant.1).mp valueRel
           subst_vars
           have sourceOuter : EvaluateHOL.evaluate source sourceEnv [.log op left right] =
               if (op = .andalso ∧ b = true) ∨ (op = .orelse ∧ b = false) then
@@ -346,7 +346,7 @@ theorem localEnvBounded_log {C F : Type} [Nonempty C]
           · refine ⟨middleGenv, ?_, ?_⟩
             · unfold ExprSim
               rw [sourceOuter, flatOuter, if_neg takeRight, if_neg takeRight]
-              exact ⟨.value (.cons (boolValue_related middleGenv middleInvariant.1 b) .nil), leftStates⟩
+              exact ⟨.value (.cons ((boolValueRel_iff middleGenv b _ middleInvariant.1).mpr rfl) .nil), leftStates⟩
             · rw [sourceOuter, flatOuter, if_neg takeRight, if_neg takeRight]
               exact ⟨leftGrowth, middleInvariant, middleGeneration, leftForward⟩
 
