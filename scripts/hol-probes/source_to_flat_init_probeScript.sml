@@ -92,3 +92,4 @@ val find_recfun_local = Q.prove (
   full_simp_tac(srw_ss())[Once find_recfun_def, compile_exp_def]);
 val _ = show_thm "find_recfun_local=" find_recfun_local;
 val _ = show_thm "nsAppend_assoc=" namespacePropsTheory.nsAppend_assoc;
+val _ = show_thm "nsLookup_nsBind=" namespacePropsTheory.nsLookup_nsBind;

@@ -28,6 +28,26 @@ theorem nsAppend_to_nsBindList {M N V : Type} (env : Namespace M N V) :
       cases p
       rfl
 
+/-- Looking up a new binding finds it, and other identifiers are unchanged. -/
+@[hol "cakeml/semantics/proofs/namespacePropsScript.sml" "nsLookup_nsBind"]
+theorem nsLookup_nsBind :
+    (∀ {M N V : Type} [DecidableEq M] [DecidableEq N]
+      (n : N) (v : V) (e : Namespace M N V), nsLookup (nsBind n v e) (.short n) = some v) ∧
+    (∀ {M N V : Type} [DecidableEq M] [DecidableEq N]
+      (n : Ident M N) (n' : N) (v : V) (e : Namespace M N V),
+      n ≠ .short n' → nsLookup (nsBind n' v e) n = nsLookup e n) := by
+  constructor
+  · intro M N V instM instN n v e
+    cases e
+    simp [nsLookup, nsBind]
+  · intro M N V instM instN n n' v e different
+    cases e
+    cases n with
+    | short name =>
+      have ne : name ≠ n' := by simpa using different
+      simp [nsLookup, nsBind, List.lookup, BEq.beq, ne]
+    | long moduleName id => rfl
+
 section
 
 noncomputable local instance (α : Type) : DecidableEq α := Classical.typeDecidableEq α

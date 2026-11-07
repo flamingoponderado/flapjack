@@ -102,11 +102,6 @@ theorem localRecEnv_related (genv : GlobalEnv) (baseMap : Environment)
   exact helper funs
 
 
-private theorem nsLookup_bind_same {α : Type} (env : Namespace ModN VarN α) (name : VarN) (value : α) :
-    nsLookup (nsBind name value env) (.short name) = some value := by
-  cases env
-  simp [nsBind, nsLookup]
-
 /-- A compiled local lookup selects a trace for the first matching local name. -/
 theorem bindLocals_lookup_hit (locals : List (VarN × FlatSem.Value)) (traces : List BackendCommon.Tra)
     (base : Namespace ModN VarN VarName) (name : VarN) (value : FlatSem.Value)
@@ -125,7 +120,7 @@ theorem bindLocals_lookup_hit (locals : List (VarN × FlatSem.Value)) (traces : 
         refine ⟨tr, ?_⟩
         change nsLookup (nsBind name (.localName tr name) (bindLocals traces (rest.map Prod.fst) base))
           (.short name) = _
-        exact nsLookup_bind_same _ name _
+        exact nsLookup_nsBind.1 name _ _
       · have neq : (name == key) = false := by
           change decide (name = key) = false
           simp [same]
@@ -188,7 +183,7 @@ theorem envRel_source_missing (genv : GlobalEnv) (source : Namespace ModN VarN V
   | bind key sourceValue sourceEnv flatEnv flatValue envRel valueRel =>
     by_cases same : name = key
     · subst key
-      rw [nsLookup_bind_same] at missing
+      rw [nsLookup_nsBind.1] at missing
       contradiction
     · have neq : (name == key) = false := by
         change decide (name = key) = false

@@ -11585,6 +11585,14 @@
   },
   {
     "lean_path": "Flapjack/NamespaceProps.lean",
+    "lean_name": "nsLookup_nsBind",
+    "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml",
+    "hol_name": "nsLookup_nsBind",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared nsLookup_nsBind in source_to_flat_init_probe.out: the two conjuncts quantify independent namespace carriers, and state lookup of the bound name and preservation of lookup for any distinct identifier. DecidableEq instances realize HOL equality for namespace lookup; both conjuncts use their own instances and type parameters."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceProps.lean",
     "lean_name": "nsAppend_assoc",
     "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml",
     "hol_name": "nsAppend_assoc",
