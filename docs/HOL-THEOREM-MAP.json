@@ -4,135 +4,135 @@
   "hol_name": "eval_simulation",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvalSimulationLet.lean",
   "lean_name": "evalSimulation_Let",
-  "statement_status": "reviewed_exact",
+  "statement_status": "pending_statement_review",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Let case retains both induction hypotheses, the intermediate result equality and the original optional-binding environment. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+  "reviewer": "Case piece only; the complete mutual eval_simulation theorem is not assembled on this branch. Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Let case retains both induction hypotheses, the intermediate result equality and the original optional-binding environment. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "eval_simulation",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvalSimulationMat.lean",
   "lean_name": "evalSimulation_Mat",
-  "statement_status": "reviewed_exact",
+  "statement_status": "pending_statement_review",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Mat case retains the guarded match induction hypothesis, the intermediate result equality and expression hypothesis in HOL order. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+  "reviewer": "Case piece only; the complete mutual eval_simulation theorem is not assembled on this branch. Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Mat case retains the guarded match induction hypothesis, the intermediate result equality and expression hypothesis in HOL order. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "eval_simulation",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvalSimulationMatchCons.lean",
   "lean_name": "evalSimulation_MatchCons",
-  "statement_status": "reviewed_exact",
+  "statement_status": "pending_statement_review",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the match-row case retains both induction hypotheses and their original distinctness and pattern-match guards. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+  "reviewer": "Case piece only; the complete mutual eval_simulation theorem is not assembled on this branch. Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the match-row case retains both induction hypotheses and their original distinctness and pattern-match guards. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "eval_simulation",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvalSimulationHandle.lean",
   "lean_name": "evalSimulation_Handle",
-  "statement_status": "reviewed_exact",
+  "statement_status": "pending_statement_review",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Handle case retains the guarded match induction hypothesis, both result equations, and the expression induction hypothesis in HOL order. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+  "reviewer": "Case piece only; the complete mutual eval_simulation theorem is not assembled on this branch. Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Handle case retains the guarded match induction hypothesis, both result equations, and the expression induction hypothesis in HOL order. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "eval_simulation",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvalSimulationConstructors.lean",
   "lean_name": "evalSimulation_Con",
-  "statement_status": "reviewed_exact",
+  "statement_status": "pending_statement_review",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Con case retains the constructor-check-guarded induction hypothesis on the reversed arguments and the full expression simulation conclusion. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+  "reviewer": "Case piece only; the complete mutual eval_simulation theorem is not assembled on this branch. Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Con case retains the constructor-check-guarded induction hypothesis on the reversed arguments and the full expression simulation conclusion. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "eval_simulation",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvalSimulationExpressions.lean",
   "lean_name": "evalSimulation_Lit",
-  "statement_status": "reviewed_exact",
+  "statement_status": "pending_statement_review",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Lit case retains the original induction hypotheses and full expression simulation conclusion. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+  "reviewer": "Case piece only; the complete mutual eval_simulation theorem is not assembled on this branch. Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Lit case retains the original induction hypotheses and full expression simulation conclusion. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "eval_simulation",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvalSimulationExpressions.lean",
   "lean_name": "evalSimulation_Raise",
-  "statement_status": "reviewed_exact",
+  "statement_status": "pending_statement_review",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Raise case retains the original induction hypotheses and full expression simulation conclusion. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+  "reviewer": "Case piece only; the complete mutual eval_simulation theorem is not assembled on this branch. Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Raise case retains the original induction hypotheses and full expression simulation conclusion. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "eval_simulation",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvalSimulationExpressions.lean",
   "lean_name": "evalSimulation_Var",
-  "statement_status": "reviewed_exact",
+  "statement_status": "pending_statement_review",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Var case retains the original induction hypotheses and full expression simulation conclusion. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+  "reviewer": "Case piece only; the complete mutual eval_simulation theorem is not assembled on this branch. Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Var case retains the original induction hypotheses and full expression simulation conclusion. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "eval_simulation",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvalSimulationExpressions.lean",
   "lean_name": "evalSimulation_Fn",
-  "statement_status": "reviewed_exact",
+  "statement_status": "pending_statement_review",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Fn case retains the original induction hypotheses and full expression simulation conclusion. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+  "reviewer": "Case piece only; the complete mutual eval_simulation theorem is not assembled on this branch. Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Fn case retains the original induction hypotheses and full expression simulation conclusion. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "eval_simulation",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvalSimulationExpressions.lean",
   "lean_name": "evalSimulation_Tannot",
-  "statement_status": "reviewed_exact",
+  "statement_status": "pending_statement_review",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Tannot case retains the original induction hypotheses and full expression simulation conclusion. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+  "reviewer": "Case piece only; the complete mutual eval_simulation theorem is not assembled on this branch. Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Tannot case retains the original induction hypotheses and full expression simulation conclusion. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "eval_simulation",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvalSimulationExpressions.lean",
   "lean_name": "evalSimulation_Lannot",
-  "statement_status": "reviewed_exact",
+  "statement_status": "pending_statement_review",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Lannot case retains the original induction hypotheses and full expression simulation conclusion. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+  "reviewer": "Case piece only; the complete mutual eval_simulation theorem is not assembled on this branch. Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Lannot case retains the original induction hypotheses and full expression simulation conclusion. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "eval_simulation",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvalSimulationCons.lean",
   "lean_name": "evalSimulation_ExpsCons",
-  "statement_status": "reviewed_exact",
+  "statement_status": "pending_statement_review",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the expression-list cons case retains the two original induction hypotheses as one conjunction, including the tail evaluation's independent result and equality premise, and the full expression simulation conclusion. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+  "reviewer": "Case piece only; the complete mutual eval_simulation theorem is not assembled on this branch. Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the expression-list cons case retains the two original induction hypotheses as one conjunction, including the tail evaluation's independent result and equality premise, and the full expression simulation conclusion. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "eval_simulation",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvalSimulationBase.lean",
   "lean_name": "evalSimulation_ExpsNil",
-  "statement_status": "reviewed_exact",
+  "statement_status": "pending_statement_review",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared typed source_eval_simulation at source_eval_oracle_adjust_probe.out:121 and evaluate_induction: empty expression list, retaining the vacuous independent inhabited es binder. The source premises and all six conclusions retain their original order. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+  "reviewer": "Case piece only; the complete mutual eval_simulation theorem is not assembled on this branch. Compared typed source_eval_simulation at source_eval_oracle_adjust_probe.out:121 and evaluate_induction: empty expression list, retaining the vacuous independent inhabited es binder. The source premises and all six conclusions retain their original order. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "eval_simulation",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvalSimulationBase.lean",
   "lean_name": "evalSimulation_MatchNil",
-  "statement_status": "reviewed_exact",
+  "statement_status": "pending_statement_review",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared typed source_eval_simulation at source_eval_oracle_adjust_probe.out:121 and evaluate_induction: empty match-row list, retaining the oracle-state equation and both value relations. The source premises and all six conclusions retain their original order. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+  "reviewer": "Case piece only; the complete mutual eval_simulation theorem is not assembled on this branch. Compared typed source_eval_simulation at source_eval_oracle_adjust_probe.out:121 and evaluate_induction: empty match-row list, retaining the oracle-state equation and both value relations. The source premises and all six conclusions retain their original order. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "eval_simulation",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvalSimulationBase.lean",
   "lean_name": "evalSimulation_DecsNil",
-  "statement_status": "reviewed_exact",
+  "statement_status": "pending_statement_review",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared typed source_eval_simulation at source_eval_oracle_adjust_probe.out:121 and evaluate_induction: empty declaration list and related empty environments. The source premises and all six conclusions retain their original order. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+  "reviewer": "Case piece only; the complete mutual eval_simulation theorem is not assembled on this branch. Compared typed source_eval_simulation at source_eval_oracle_adjust_probe.out:121 and evaluate_induction: empty declaration list and related empty environments. The source premises and all six conclusions retain their original order. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
 },
 {
   "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",

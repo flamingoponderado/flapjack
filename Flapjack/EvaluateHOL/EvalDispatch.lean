@@ -124,9 +124,9 @@ theorem evaluate_sourceEval_declaration_error {F : Type}
     (declarationRun : EvaluateHOL.evaluateDecs
       (EvaluateHOL.decClock { arguments with evalState := begin }) evalEnv decs = (last, .err error)) :
     EvaluateHOL.evaluate state env [.app .eval exprs] =
-      (match error with
+      ((match error with
        | .abort _ => last
-       | .raise _ => { last with evalState := resetEnvGeneration arguments.evalState last.evalState }, .err error) := by
+       | .raise _ => { last with evalState := resetEnvGeneration arguments.evalState last.evalState }), .err error) := by
   have result := evaluate_eval_success state arguments { arguments with evalState := begin } env evalEnv
     exprs values.reverse decs operandRun (by simp [doEvalRes, decoded])
   cases error <;> simpa [continueEval, finishEval, Nat.ne_of_gt positive, declarationRun] using result

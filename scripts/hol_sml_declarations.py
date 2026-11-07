@@ -11,6 +11,11 @@ and the bounded define_monad_exception_functions factory, and the L3 Import
 import re
 
 _NAME = r"[A-Za-z_][A-Za-z0-9_']*"
+_MODERN_HEADER = re.compile(
+    r"^(?:Definition|Theorem|Triviality|Inductive|CoInductive)\s+"
+    + _NAME + r"(?:\[[^\]\n]*\])?\s*:(?!:)|^Datatype\s*:?\s*$"
+)
+_QED_END = re.compile(r"\bQED\b\s*;?\s*$")
 _TUPLE = re.compile(
     r"^val\s*\(\s*(?P<stem>" + _NAME + r")_rules\s*,\s*"
     r"(?P=stem)_ind\s*,\s*(?P=stem)_cases\s*\)\s*=\s*"
@@ -84,17 +89,16 @@ def _mask_modern_blocks(text: str, masked: str) -> str:
     # Definition must not hide later top-level generator calls. Mask their
     # complete bodies, also excluding apparent bindings in theorem text.
     out = list(masked)
-    modern = re.compile(r'^(?:Definition|Theorem|Triviality|Inductive|CoInductive)\b[^\n]*:|^Datatype\s*:?\s*$')
     in_block = False
     offset = 0
     for line in masked.splitlines(keepends=True):
-        if not in_block and modern.match(line):
+        if not in_block and _MODERN_HEADER.match(line):
             in_block = True
         if in_block:
             for position in range(offset, offset + len(line)):
                 if text[position] != '\n':
                     out[position] = ' '
-            if re.match(r'^(?:End|QED)\b', line) or re.search(r'\bQED\s*$', line):
+            if re.match(r'^(?:End|QED)\b', line) or _QED_END.search(line):
                 in_block = False
         offset += len(line)
     return "".join(out)
@@ -129,13 +133,12 @@ def inductive_block_declarations(text: str) -> list[tuple[tuple[str, ...], int, 
     """
     masked, _ = _headers_and_quotes(text)
     scope_text = list(_mask_modern_blocks(text, masked))
-    modern = re.compile(r"^(?:Definition|Theorem|Triviality|Inductive|CoInductive)\b[^\n]*:|^Datatype\s*:?\s*$")
     inductive = re.compile(r"^(?P<kind>Inductive|CoInductive)\s+(?P<name>" + _NAME + r")(?:\[[^\]\n]*\])?\s*:\s*$")
     candidates = []
     active = None
     offset = 0
     for number, line in enumerate(masked.splitlines(keepends=True), 1):
-        if modern.match(line):
+        if _MODERN_HEADER.match(line):
             # A nested or unterminated block is ambiguous; reject it entirely.
             if active is not None:
                 active = (None, offset, number, active[3])
@@ -147,7 +150,7 @@ def inductive_block_declarations(text: str) -> list[tuple[tuple[str, ...], int, 
                     scope_text[offset:offset + len(line)] = line
         elif active is not None and (
             (active[3] == "End" and re.match(r"^End\b", line)) or
-            (active[3] == "QED" and re.search(r"\bQED\s*$", line))
+            (active[3] == "QED" and _QED_END.search(line))
         ):
             match, start, start_line, _terminator = active
             if match:
