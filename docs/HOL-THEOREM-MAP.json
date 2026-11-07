@@ -1,6 +1,15 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "oracle_semantics_prog",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleSemantics.lean",
+  "lean_name": "oracle_semantics_prog",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete statement and inferred carriers with the typed oracle_semantics_prog capture in source_eval_oracle_adjust_probe.out:65. Binders, premises and conclusion match. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "evaluate_prog_with_clock_put_oracle",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/PutOracleClock.lean",
   "lean_name": "evaluate_prog_with_clock_put_oracle",
