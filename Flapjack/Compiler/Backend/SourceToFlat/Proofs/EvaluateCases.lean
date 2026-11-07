@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalLookup
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StateRel
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalEnvConditions
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
 import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
 import Flapjack.EvaluateHOL.Definition
@@ -18,6 +19,27 @@ theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
     GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env := GlobalEnv.holFmapAsFiniteSupportWitness env
 
 end EnvRelLookupReview
+
+/-- Evaluating a Boolean expression yields its flat Boolean value. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "evaluate_Bool"
+  (fmap_as_finite_support := [c, tys])]
+theorem evaluate_bool {C F : Type} (genv : GlobalEnv) (source : State F)
+    (flat : FlatSem.State C F) (env : FlatSem.Environment FlatSem.Value) (t : Tra) (b : Bool)
+    (_premises : StateRel genv source flat ∧ genvCOk genv.c) :
+    FlatSem.evaluate env flat [FlatLang.mkBool t b] = (flat, .val [FlatSem.boolValue b]) := by
+  cases b <;> simp [FlatSem.evaluate, FlatLang.mkBool, FlatSem.boolValue]
+
+/-- Flat Boolean values distinguish their Boolean arguments. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "Boolv_11"]
+theorem boolValue_eq_iff (b b' : Bool) : FlatSem.boolValue b = FlatSem.boolValue b' ↔ b = b' := by
+  cases b <;> cases b' <;> simp [FlatSem.boolValue, boolToTag, trueTag, falseTag]
+
+/-- An option case yielding a proposition separates into its two constructors. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "opt_case_bool_eq"]
+theorem optionCase_bool_eq {α : Type} (opt : Option α) (nc : Prop) (scc : α → Prop) :
+    (match opt with | none => nc | some x => scc x) ↔
+      (opt = none ∧ nc) ∨ ∃ x, opt = some x ∧ scc x := by
+  cases opt <;> simp
 
 /-- A local lookup in related environments produces a related flat value. -/
 theorem envRel_lookup (genv : GlobalEnv) (source : Namespace ModN VarN SemanticPrimitivesHOL.Value)
