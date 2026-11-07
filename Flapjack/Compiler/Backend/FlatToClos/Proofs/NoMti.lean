@@ -174,15 +174,4 @@ theorem compileInit_noMti (b : Bool) : noMti (ClosInterp.compileInit b) := by
   cases b <;> simp [ClosInterp.compileInit, ClosInterp.interpreterCons_eq,
     ClosInterp.interpreterVar_eq, noMti, noMtiList, interpreter_noMti]
 
-/-- Flapjack helper: the incremental path produces pre-MTI syntax. The HOL
-theorem additionally states two other syntax properties. -/
-theorem incCompileDecs_noMti {α : Type} (ds : List FlatLang.Exp) :
-    ∀ e ∈ (incCompileDecs (α := α) ds).1, noMti e := by
-  intro e member
-  apply ClosInterp.insertInterp_noMti e _ member
-  intro x sourceMember
-  rcases List.mem_append.mp sourceMember with original | unit
-  · exact compileDecs_noMti ds x original
-  · exact compileDecs_noMti [.con .none none []] x unit
-
 end Flapjack.Compiler.Backend.FlatToClos

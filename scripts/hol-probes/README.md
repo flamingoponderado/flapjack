@@ -9667,3 +9667,6 @@ function equation, including its four independent type variables.
 
 The flat-to-closure relation probe replays the local interpreter-initializer
 `no_mti_compile_init` proof with its original Boolean case split.
+
+The flat-to-closure relation probe also replays the full local
+`inc_compile_decs_intro` callback-composition theorem with inferred types.

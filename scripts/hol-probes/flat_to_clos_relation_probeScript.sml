@@ -106,3 +106,17 @@ val no_mti_compile_init_replay = Q.prove (
   `closProps$no_mti (clos_interp$compile_init b)`,
   Cases_on `b` >> fs [] >> EVAL_TAC);
 val _ = (print "no_mti_compile_init_replay="; Lib.with_flag (Globals.show_types,true) print_term (concl no_mti_compile_init_replay); print "\n");
+
+(* Replay the complete local callback-composition theorem. *)
+val inc_compile_decs_intro_replay = Q.prove (
+  `backendProps$pure_co (clos_interp$insert_interp ## I) o
+     backendProps$pure_co flat_to_closProof$inc_compile_decs' o f =
+   backendProps$pure_co flat_to_clos$inc_compile_decs o f /\
+   backendProps$pure_cc flat_to_closProof$inc_compile_decs'
+     (backendProps$pure_cc (clos_interp$insert_interp ## I) cc) =
+   backendProps$pure_cc flat_to_clos$inc_compile_decs cc`,
+  fs [backendPropsTheory.pure_co_def, FUN_EQ_THM, backendPropsTheory.pure_cc_def,
+      flat_to_closTheory.inc_compile_decs_def, FORALL_PROD, inc_compile_decs'_def] >> rw [] >>
+  Cases_on `f x` >> fs [] >>
+  fs [flat_to_closTheory.inc_compile_decs_def, inc_compile_decs'_def]);
+val _ = (print "inc_compile_decs_intro_replay="; Lib.with_flag (Globals.show_types,true) print_term (concl inc_compile_decs_intro_replay); print "\n");

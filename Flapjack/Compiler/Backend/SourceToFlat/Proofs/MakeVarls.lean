@@ -10,16 +10,6 @@ open Flapjack.Compiler.Backend.BackendCommon
 private instance : Nonempty VarN := ⟨Flapjack.Basis.Pure.MlString.ofString ""⟩
 private instance : Nonempty FlatSem.Value := ⟨.conv none []⟩
 
-/-- Initializing the first blank after a prefix replaces exactly that slot. -/
-theorem evaluate_globalVarInit_after_prefix {C F : Type}
-    (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F)
-    (name : VarN) (value : FlatSem.Value) (pre post : List (Option FlatSem.Value))
-    (lookup : env.v.lookup name = some value) (slots : state.globals = pre ++ none :: post) :
-    FlatSem.evaluate env state [.app .none (.globalVarInit pre.length) [.varLocal .none name]] =
-      ({ state with globals := pre ++ some value :: post }, .val [FlatSem.unitValue]) := by
-  simp [FlatSem.evaluate, lookup, FlatSem.fixClock, FlatSem.applyResult,
-    FlatSem.doApp, FlatSem.doAppFlat, slots, List.set_append_right]
-
 /-- The generated initializer writes each looked-up value into its reserved
 slot, preserving the prefix and suffix. The lookup relation is the pointwise
 form of the indexed premise used in the original proof. -/
@@ -38,8 +28,12 @@ theorem evaluate_makeVarls {C F : Type} (env : FlatSem.Environment FlatSem.Value
   | @cons name value names values lookup rest ih =>
     have firstSlots : state.globals = pre ++ none :: (List.replicate names.length none ++ post) := by
       simpa [List.replicate_succ, List.append_assoc] using slots
-    have first := evaluate_globalVarInit_after_prefix env state name value pre
-      (List.replicate names.length none ++ post) lookup firstSlots
+    have first :
+        FlatSem.evaluate env state [.app .none (.globalVarInit pre.length) [.varLocal .none name]] =
+          ({ state with globals := pre ++ some value :: (List.replicate names.length none ++ post) },
+            .val [FlatSem.unitValue]) := by
+      simp [FlatSem.evaluate, lookup, FlatSem.fixClock, FlatSem.applyResult,
+        FlatSem.doApp, FlatSem.doAppFlat, firstSlots, List.set_append_right]
     cases names with
     | nil =>
       cases rest

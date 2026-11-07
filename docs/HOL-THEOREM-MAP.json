@@ -1,6 +1,14 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "inc_compile_decs_intro",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/InstallPipeline.lean",
+  "lean_name": "incCompileDecs_intro",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared inc_compile_decs_intro_replay in flat_to_clos_relation_probe.out, which replays the original local proof: both callback equalities retain their HOL directions and six independent type variables. Prod.map insertInterp id is HOL insert_interp ## I, and both compilation paths use their corresponding independently polymorphic payload types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
   "hol_name": "no_mti_compile_init",
   "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/NoMti.lean",
   "lean_name": "compileInit_noMti",
