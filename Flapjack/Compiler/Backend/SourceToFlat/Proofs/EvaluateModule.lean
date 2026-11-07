@@ -1,3 +1,4 @@
+import Flapjack.NamespaceProps.Lift
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateSequence
 
 /-! Module declaration simulation over the preliminary factored relations. -/
@@ -12,43 +13,10 @@ theorem envDomainEq_lift (moduleName : ModN) (compMap : Environment) (sourceEnv 
     EnvDomainEq (liftEnv moduleName compMap)
       ⟨nsLift moduleName sourceEnv.v, nsLift moduleName sourceEnv.c⟩ := by
   obtain ⟨values, valueModules, constructors, constructorModules⟩ := domain
-  refine ⟨?_, ?_, ?_, ?_⟩
-  · funext id
-    apply propext
-    cases id with
-    | short name => simp [liftEnv, nsDom, nsLift, nsLookup]
-    | long head rest =>
-      by_cases same : head = moduleName
-      · subst head
-        simpa [liftEnv, nsDom, nsLift, nsLookup] using congrFun values rest
-      · simp [liftEnv, nsDom, nsLift, nsLookup, List.lookup, BEq.beq, same]
-  · funext path
-    apply propext
-    cases path with
-    | nil => simp [liftEnv, nsDomMod, nsLookupMod]
-    | cons head rest =>
-      by_cases same : head = moduleName
-      · subst head
-        simpa [liftEnv, nsDomMod, nsLift, nsLookupMod] using congrFun valueModules rest
-      · simp [liftEnv, nsDomMod, nsLift, nsLookupMod, List.lookup, BEq.beq, same]
-  · funext id
-    apply propext
-    cases id with
-    | short name => simp [liftEnv, nsDom, nsLift, nsLookup]
-    | long head rest =>
-      by_cases same : head = moduleName
-      · subst head
-        simpa [liftEnv, nsDom, nsLift, nsLookup] using congrFun constructors rest
-      · simp [liftEnv, nsDom, nsLift, nsLookup, List.lookup, BEq.beq, same]
-  · funext path
-    apply propext
-    cases path with
-    | nil => simp [liftEnv, nsDomMod, nsLookupMod]
-    | cons head rest =>
-      by_cases same : head = moduleName
-      · subst head
-        simpa [liftEnv, nsDomMod, nsLift, nsLookupMod] using congrFun constructorModules rest
-      · simp [liftEnv, nsDomMod, nsLift, nsLookupMod, List.lookup, BEq.beq, same]
+  exact ⟨nsDom_lift_eq moduleName _ _ values,
+    nsDomMod_lift_eq moduleName _ _ valueModules,
+    nsDom_lift_eq moduleName _ _ constructors,
+    nsDomMod_lift_eq moduleName _ _ constructorModules⟩
 
 /-- Lifting related environments into a module preserves the factored
 global-environment invariant. -/

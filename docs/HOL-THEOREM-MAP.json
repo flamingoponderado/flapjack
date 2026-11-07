@@ -1,5 +1,13 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "env_rel_nsLift",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EnvironmentLift.lean",
+  "lean_name": "envRel_nsLift",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed environment_relation_lift in source_eval_oracle_adjust_probe.out: original and target value carriers and the overwritten environment payload types remain independent; both value and constructor fields are lifted under the same module, preserving the original premise and conclusion."
+},
+{
   "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml",
   "hol_name": "nsDom_nsAppend_equal",
   "lean_path": "Flapjack/NamespaceProps/Append.lean",
