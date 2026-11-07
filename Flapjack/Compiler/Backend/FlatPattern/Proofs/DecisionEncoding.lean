@@ -172,6 +172,34 @@ theorem encodePmatchList_simulation {C F : Type} (state : FlatSem.State C F)
 termination_by sizeOf patterns
 end
 
+open Classical in
+/-- Encoding preserves both single and list pattern matches when the source
+result is not a type error. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "encode_pat_match_simulation"
+  (fmap_as_finite_support_result_observations := [encodeRefs])]
+theorem encodePatMatch_simulation {C F : Type} :
+    (∀ (state : FlatSem.State C F) (pattern : FlatLang.Pat)
+      (value : FlatSem.Value) (bindings : List (Flapjack.AstHOL.VarN × FlatSem.Value))
+      (result : Flapjack.SemanticPrimitivesHOL.MatchResult (List (Flapjack.AstHOL.VarN × FlatSem.Value))),
+      FlatSem.pmatch state pattern value bindings = result ∧ result ≠ .typeError →
+      PatternSemantics.pmatch (encodeRefs state) (encodePat pattern) (encodeValue value) =
+        if result = .noMatch then .failure else .success) ∧
+    (∀ (state : FlatSem.State C F) (patterns : List FlatLang.Pat)
+      (values : List FlatSem.Value) (bindings : List (Flapjack.AstHOL.VarN × FlatSem.Value))
+      (result : Flapjack.SemanticPrimitivesHOL.MatchResult (List (Flapjack.AstHOL.VarN × FlatSem.Value))),
+      FlatSem.pmatchList state patterns values bindings = result ∧ result ≠ .typeError →
+      PatternSemantics.pmatchList (encodeRefs state) (patterns.map encodePat) (values.map encodeValue) =
+        if result = .noMatch then .failure else .success) := by
+  constructor
+  · intro state pattern value bindings result ⟨run, safe⟩
+    have sim := encodePmatch_simulation state pattern value bindings (by simpa [run] using safe)
+    rw [run] at sim
+    cases result <;> simp_all [encodeMatchResult]
+  · intro state patterns values bindings result ⟨run, safe⟩
+    have sim := encodePmatchList_simulation state patterns values bindings (by simpa [run] using safe)
+    rw [run] at sim
+    cases result <;> simp_all [encodeMatchResult]
+
 /-- Encoded pattern lists retain the source row ordering and selected index;
 an original type error imposes no result obligation. -/
 theorem encodeRows_simulation {C F E : Type} (state : FlatSem.State C F) (value : FlatSem.Value)

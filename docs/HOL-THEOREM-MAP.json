@@ -472,6 +472,15 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "encode_pat_match_simulation",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/DecisionEncoding.lean",
+  "lean_name": "encodePatMatch_simulation",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": ["encodeRefs"],
+  "reviewer": "Compared encode_pat_match_simulation in flat_pattern_install_relation_probe.out: both conjuncts retain the source result equation, non-error condition, and conditional success/failure conclusion; both conjuncts share the same state type variables, and encodeRefs is the reviewed finite-map producer."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
   "hol_name": "compile_match_pmatch_rows",
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/MatchRows.lean",
   "lean_name": "compileMatch_pmatchRows",
