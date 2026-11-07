@@ -2,6 +2,15 @@
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "eval_simulation",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvalSimulation.lean",
+  "lean_name": "eval_simulation",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed source_eval_simulation capture in source_eval_oracle_adjust_probe.out:121: all three conjuncts retain their quantified carriers, original premises and conclusions, including the independent inhabited unused expression binder. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "eval_simulation",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvalSimulationApp.lean",
   "lean_name": "evalSimulation_App",
   "statement_status": "reviewed_exact",
