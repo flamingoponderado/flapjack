@@ -24,8 +24,8 @@ private theorem esgcFreeList_append (xs ys : List FlatLang.Exp) :
   | nil => simp [esgcFreeList]
   | cons x xs ih => simp [esgcFreeList, ih, and_assoc]
 
-/-- Every emitted declaration expression satisfies the global-write invariant. -/
-theorem compileDecs_esgcList (t : List MlString) (n : Nat) (next : NextIndices)
+/-- Proof engine for the declaration global-write invariants. -/
+private theorem compileDecs_esgcList (t : List MlString) (n : Nat) (next : NextIndices)
     (env : Environment) (envs : EnvironmentGenerationStore) :
     (ds : List Dec) → esgcFreeList (compileDecs t n next env envs ds).2.2.2.2
   | [] => by simp [compileDecs, esgcFreeList]
