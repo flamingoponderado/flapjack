@@ -87,3 +87,9 @@ val _ = show_thm "source_environment_forward_trans=" source_evalProofTheory.es_f
 val _ = show_thm "source_value_relation_forward=" source_evalProofTheory.v_rel_forward;
 val _ = show_thm "store_value_relation_monotonic=" semanticPrimitivesPropsTheory.sv_rel_mono;
 val _ = show_thm "source_forward_rules=" source_evalProofTheory.forward_rules;
+val _ = show_thm "source_stack_forward_definition=" source_evalProofTheory.es_stack_forward_def;
+val _ = show_thm "source_stack_forward_refl=" source_evalProofTheory.es_stack_forward_refl;
+val _ = show_thm "source_stack_forward_trans=" source_evalProofTheory.es_stack_forward_trans;
+val _ = show_thm "source_match_result_relation_definition=" source_evalProofTheory.match_result_rel_def;
+val _ = show_thm "source_store_lookup_relation=" source_evalProofTheory.store_lookup_rel;
+val _ = show_thm "source_state_store_lookup=" source_evalProofTheory.s_rel_store_lookup;

@@ -1,5 +1,41 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml", "hol_name": "es_stack_forward_def",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/StateRelation.lean", "lean_name": "envStackForward",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source_stack_forward_definition in source_eval_oracle_adjust_probe.out: the later generation equals the earlier, and HOL EL is retained as holEl at every index below the earlier generation, including out-of-range cases."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml", "hol_name": "es_stack_forward_refl",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/StateRelation.lean", "lean_name": "envStackForward_refl",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source_stack_forward_refl in source_eval_oracle_adjust_probe.out: the stack-forward relation is reflexive on arbitrary oracle states."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml", "hol_name": "es_stack_forward_trans",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/StateRelation.lean", "lean_name": "envStackForward_trans",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source_stack_forward_trans in source_eval_oracle_adjust_probe.out: the conjunction of the two original stack-forward premises implies their composition."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml", "hol_name": "match_result_rel_def",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/StateRelation.lean", "lean_name": "matchResultRel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source_match_result_relation_definition in source_eval_oracle_adjust_probe.out: independent match payload types and the No_match, Match_type_error and Match branches retain the original equality, Boolean disjunction and existential related payload."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml", "hol_name": "store_lookup_rel",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/StateRelation.lean", "lean_name": "storeLookup_rel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source_store_lookup_relation in source_eval_oracle_adjust_probe.out: related stores over independent value types imply the original option relation between lookups at an arbitrary common index."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml", "hol_name": "s_rel_store_lookup",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/StateRelation.lean", "lean_name": "stateRel_storeLookup",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source_state_store_lookup in source_eval_oracle_adjust_probe.out: the single conjunction retains state relation, j = i and equality with orac_s of the target state; the conclusion retains both original lookups and the related optional store values. Compiler and FFI types are independent."
+},
+{
   "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
   "hol_name": "sv_rel_mono",
   "lean_path": "Flapjack/SemanticPrimitivesProps/StoreRelation.lean",

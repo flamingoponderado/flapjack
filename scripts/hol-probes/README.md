@@ -495,6 +495,8 @@ concrete-environment theorems, plus its seven left-constructor simplifications
 and Boolean-value theorem. The state-relation and environment-store-forward
 captures retain their full original conjuncts, value-preservation theorem,
 four forward rules and the general store-value monotonicity prerequisite.
+The same probe captures stack preservation, match-result relation and related
+store-lookup statements with their original polymorphic payloads.
 
 `source_eval_adjust_local_probe.out` captures inferred types of the original script's local oracle-adjustment lemmas as typed terms. These lemmas are not exported by the HOL theory; the probe additionally replays the original proofs of `declare_env_adjust` and `adjust_oracle_reset`.
 

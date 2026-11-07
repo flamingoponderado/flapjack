@@ -1,7 +1,9 @@
 import Flapjack.Compiler.Backend.SourceEval.Proofs.ValueRelation
 import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleRecording
+import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleExtraction
 import Flapjack.SemanticPrimitivesProps.StoreRelation
 import Flapjack.Misc.ListEl
+import Flapjack.Misc.Option.Rel
 
 /-! State relation for the source evaluator's recording simulation. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs
@@ -94,5 +96,61 @@ theorem forwardRules (before : EvalOracleState) (x y : Value) (after : EvalOracl
     | cons head _ ih =>
       exact .cons (storeValueRel_mono (ValueRel before) (ValueRel after)
         (fun a b relation => valueRel_forward before after a b relation forward) _ _ head) ih
+
+/-- Preserve the generation and the entries before it, including HOL's total
+list-index behavior when an index is outside either environment list. -/
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "es_stack_forward_def"]
+noncomputable def envStackForward (before after : EvalOracleState) : Prop :=
+  after.generation = before.generation ∧
+    ∀ j, j < before.generation →
+      @Flapjack.holEl (List (SemEnv Value)) ⟨[]⟩ j after.envs =
+        @Flapjack.holEl (List (SemEnv Value)) ⟨[]⟩ j before.envs
+
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "es_stack_forward_refl"]
+theorem envStackForward_refl (state : EvalOracleState) : envStackForward state state :=
+  ⟨rfl, fun _ _ => rfl⟩
+
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "es_stack_forward_trans"]
+theorem envStackForward_trans (first second third : EvalOracleState)
+    (premises : envStackForward first second ∧ envStackForward second third) :
+    envStackForward first third := by
+  obtain ⟨⟨gen₁, entries₁⟩, ⟨gen₂, entries₂⟩⟩ := premises
+  refine ⟨gen₂.trans gen₁, ?_⟩
+  intro j bound
+  exact (entries₂ j (by simpa [gen₁] using bound)).trans (entries₁ j bound)
+
+/-- Relate match results, optionally permitting the source type-error case. -/
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "match_result_rel_def"]
+def matchResultRel {α β : Type} (nerr : Bool) (R : α → β → Prop)
+    (left : MatchResult α) (right : MatchResult β) : Prop :=
+  match left with
+  | .noMatch => right = .noMatch
+  | .typeError => nerr = true ∨ right = .typeError
+  | .match x => ∃ y, right = .match y ∧ R x y
+
+/-- Looking up the same index in related stores gives related optional entries. -/
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "store_lookup_rel"]
+theorem storeLookup_rel {α β : Type} (R : α → β → Prop)
+    (refs : Store α) (refs' : Store β) (related : List.Forall₂ (storeValueRel R) refs refs')
+    (i : Nat) : Flapjack.optionRel (storeValueRel R) (storeLookup i refs) (storeLookup i refs') := by
+  cases found : storeLookup i refs with
+  | none =>
+    have absent := storeValueRel_lookup_none related i found
+    simp [absent, Flapjack.optionRel]
+  | some value =>
+    obtain ⟨target, targetFound, entries⟩ := storeValueRel_lookup related i value found
+    simpa [found, targetFound, Flapjack.optionRel] using entries
+
+/-- Related recording states give related store lookups at equal indices. -/
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "s_rel_store_lookup"]
+theorem stateRel_storeLookup {Config F : Type} (ci : CompilerInstance Config)
+    (s t : State F) (j i : Nat) (es : EvalOracleState)
+    (premises : stateRel ci s t ∧ j = i ∧ es = oracleState t.evalState) :
+    Flapjack.optionRel (storeValueRel (ValueRel es)) (storeLookup i s.refs) (storeLookup j t.refs) := by
+  obtain ⟨⟨decState, oracle, refs, target, stores, _⟩, rfl, stateEq⟩ := premises
+  subst t
+  have oracleEq : es = oracle := by simpa [oracleState] using stateEq
+  subst es
+  exact storeLookup_rel (ValueRel oracle) s.refs refs stores j
 
 end Flapjack.Compiler.Backend.SourceEval.Proofs
