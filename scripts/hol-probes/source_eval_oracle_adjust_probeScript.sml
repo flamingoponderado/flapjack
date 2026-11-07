@@ -28,3 +28,7 @@ val adjust_ev_decs = source_evalProofTheory.adjust_oracle_evaluate
   |> Q.SPEC `s with clock := k`
   |> SIMP_RULE (srw_ss ()) [];
 val _ = show_thm "adjust_ev_decs_replay=" adjust_ev_decs;
+val _ = show_thm "result_rel_cases=" source_evalProofTheory.result_rel_IMP_cases;
+val _ = show_thm "oleast_definition=" WhileTheory.OLEAST_def;
+val _ = show_thm "oleast_intro=" WhileTheory.OLEAST_INTRO;
+val _ = show_thm "least_exists_imp=" WhileTheory.LEAST_EXISTS_IMP;

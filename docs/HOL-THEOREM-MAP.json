@@ -13986,6 +13986,30 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "result_rel_IMP_cases",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/ResultCases.lean",
+    "lean_name": "resultRel_imp_cases",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared result_rel_cases in source_eval_oracle_adjust_probe.out: the success and raised-value relations have four independent domain and codomain carriers, the original result relation premise is retained, and the left result is a value, raise or abort with the corresponding existential witness."
+  },
+  {
+    "hol_path": "HOL/src/num/theories/WhileScript.sml",
+    "hol_name": "OLEAST_def",
+    "lean_path": "Flapjack/Misc/OptionLeast.lean",
+    "lean_name": "holOLeast",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared oleast_definition and least_exists_imp in source_eval_oracle_adjust_probe.out: both return none when the natural predicate is empty, otherwise the least satisfying natural. HOL's LEAST is rendered by Nat.find under the existence guard; LEAST_EXISTS_IMP and Nat.find_spec/find_min establish that the two choices are the same unique least witness."
+  },
+  {
+    "hol_path": "HOL/src/num/theories/WhileScript.sml",
+    "hol_name": "OLEAST_INTRO",
+    "lean_path": "Flapjack/Misc/OptionLeast.lean",
+    "lean_name": "holOLeast_intro",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared oleast_intro in source_eval_oracle_adjust_probe.out: the none case and the universally quantified least-witness case form the same conjunctive premise and imply Q of the optional least value."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
     "hol_name": "adjust_oracle_ev_decs",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleInduction.lean",
     "lean_name": "adjust_oracle_ev_decs",
