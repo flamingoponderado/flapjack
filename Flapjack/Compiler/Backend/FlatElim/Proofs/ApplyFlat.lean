@@ -5,8 +5,8 @@ namespace Flapjack.Compiler.Backend.FlatElim
 open Flapjack.SemanticPrimitivesHOL
 
 /-- The flat element operation covers constructor projection and reference
-reads. Both preserve the primitive simulation's original result obligations. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+reads. Both preserve the primitive simulation's original result obligations.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_el {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value) (index : Nat)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
@@ -69,8 +69,8 @@ theorem doApp_some_flatStateRel_el {C F G : Type} (reachable : NumSet)
               simp [FlatSem.doApp, FlatSem.doAppFlat, zero, ← related.2.1, lookup]
         · simp [zero] at run
 
-/-- The flat identity operation preserves the primitive simulation invariants. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+/-- The flat identity operation preserves the primitive simulation invariants.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_id {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
@@ -101,8 +101,8 @@ theorem doApp_some_flatStateRel_id {C F G : Type} (reachable : NumSet)
         (primitiveResult_value_invariants reachable value valueReachable valueSafe).2⟩
       simp [FlatSem.doApp, FlatSem.doAppFlat]
 
-/-- The flat constructor-length test preserves the simulation invariants. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+/-- The flat constructor-length test preserves the simulation invariants.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_lenEq {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value) (length : Nat)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
@@ -132,8 +132,8 @@ theorem doApp_some_flatStateRel_lenEq {C F G : Type} (reachable : NumSet)
           (by simp [FlatSem.boolValue, valueHasEval, valuesHaveEval])
         exact ⟨target, related, by simp [FlatSem.doApp, FlatSem.doAppFlat], resultSafe.1, resultSafe.2⟩
 
-/-- The flat constructor-tag and length test preserves the simulation invariants. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+/-- The flat constructor-tag and length test preserves the simulation invariants.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_tagLenEq {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value) (tag length : Nat)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
@@ -170,8 +170,8 @@ theorem doApp_some_flatStateRel_tagLenEq {C F G : Type} (reachable : NumSet)
           exact ⟨target, related, by simp [FlatSem.doApp, FlatSem.doAppFlat], resultSafe.1, resultSafe.2⟩
 
 /-- A reachable global lookup is preserved by elimination, and the returned
-value satisfies the original primitive-result invariants. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+value satisfies the original primitive-result invariants.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_globalLookup {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value) (index : Nat)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
@@ -219,8 +219,8 @@ theorem doApp_some_flatStateRel_globalLookup {C F G : Type} (reachable : NumSet)
         exact ⟨target, related, by simp [FlatSem.doApp, FlatSem.doAppFlat, targetLookup],
           resultSafe.1, resultSafe.2⟩
 
-/-- Initializing an empty global slot preserves the primitive simulation. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+/-- Initializing an empty global slot preserves the primitive simulation.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_globalInit {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value) (index : Nat)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
@@ -274,8 +274,8 @@ theorem doApp_some_flatStateRel_globalInit {C F G : Type} (reachable : NumSet)
           · exact ⟨related.1, related.2.1, related.2.2.1, newGlobals, related.2.2.2.2⟩
           · simp [FlatSem.doApp, FlatSem.doAppFlat, targetEmpty]
 
-/-- Global-slot allocation preserves the primitive simulation. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+/-- Global-slot allocation preserves the primitive simulation.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_globalAlloc {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value) (count : Nat)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)

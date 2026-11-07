@@ -21,10 +21,9 @@ theorem rowsWeight_member (rows : List (FlatLang.Pat × FlatLang.Exp))
       simp [rowsWeight]
       omega
 
-/-- Full flat evaluation simulation. The evaluator and carriers remain
-pending complete HOL correspondence review. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "evaluate_keep_flat_state_rel_eq_lemma"]
-theorem evaluate_keep_flatStateRel {C F : Type} (expressions : List FlatLang.Exp) :
+/-- Induction motive for the full flat evaluation simulation; this is a
+Flapjack proof helper with no separate HOL theorem. -/
+private theorem evaluationSimulation_all {C F : Type} (expressions : List FlatLang.Exp) :
     evaluationSimulation (C := C) (F := F) expressions := by
   have allRanks : ∀ clock weight : Nat,
       ∀ (env : Environment FlatSem.Value) (state : State C F) (expressions : List FlatLang.Exp),
@@ -149,5 +148,24 @@ theorem evaluate_keep_flatStateRel {C F : Type} (expressions : List FlatLang.Exp
                   · exact evaluate_ordinary_simulation_step env state tra op args ⟨call, eval, force⟩ argsIH
   intro env state
   exact allRanks state.clock (expsWeight expressions) env state expressions rfl rfl
+
+/-- Full flat evaluation simulation. The evaluator and carriers remain
+pending complete HOL correspondence review. -/
+@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "evaluate_keep_flat_state_rel_eq_lemma"]
+theorem evaluate_keep_flatStateRel {C F : Type} (env : Environment FlatSem.Value)
+    (state : State C F) (expressions : List FlatLang.Exp) (next : State C F)
+    (result : Result (List FlatSem.Value) FlatSem.Value) (reachable : NumSet)
+    (target : State C F)
+    (premises : FlatSem.evaluate env state expressions = (next, result) ∧
+      globalsWithin (findGlobalsList destGlobalVarLookup expressions) reachable ∧
+      flatStateRel reachable state target ∧ globalsWithin (findEnvGlobals env) reachable ∧
+      bindingsNoEval env.v ∧ expressionsNoEval expressions ∧
+      result ≠ .err (.abort .typeError)) :
+    ∃ targetNext, FlatSem.evaluate env target expressions = (targetNext, result) ∧
+      flatStateRel reachable next targetNext ∧ globalsWithin (findPrimitiveResultGlobals result) reachable ∧
+      valuesNoEval (Flapjack.Compiler.Backend.FlatProps.resultValues result) := by
+  obtain ⟨run, lookups, related, envClosed, envSafe, exprSafe, notTypeError⟩ := premises
+  exact evaluationSimulation_all expressions env state next result reachable target
+    run lookups related envClosed envSafe exprSafe notTypeError
 
 end Flapjack.Compiler.Backend.FlatElim

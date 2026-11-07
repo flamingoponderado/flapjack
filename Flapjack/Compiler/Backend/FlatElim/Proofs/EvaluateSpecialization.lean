@@ -28,9 +28,9 @@ theorem evaluate_sing_keep_flatStateRel {C F α : Type} (env : FlatSem.Environme
   have envSafe : bindingsNoEval ([] : List (Flapjack.AstHOL.VarN × FlatSem.Value)) := by
     simp [bindingsNoEval]
   obtain ⟨targetNext, evaluated, nextRelated, _, _⟩ :=
-    evaluate_keep_flatStateRel [expression] (emptyEnvironment env) state next result reachable target run
-      (singletonLookups_within expression reachable lookupsClosed) related envClosed envSafe
-      (singletonExpression_noEval expression expressionSafe) notTypeError
+    evaluate_keep_flatStateRel (emptyEnvironment env) state [expression] next result reachable target
+      ⟨run, singletonLookups_within expression reachable lookupsClosed, related, envClosed, envSafe,
+        singletonExpression_noEval expression expressionSafe, notTypeError⟩
   exact ⟨targetNext, evaluated, nextRelated⟩
 
 /-- A kept declaration in a closed singleton program only reads reachable
