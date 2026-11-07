@@ -46,3 +46,5 @@ val _ = show_thm "collect_apps_preserves_set_globals=" clos_mtiProofTheory.colle
 val _ = show_thm "collect_apps_preserves_esgc_free=" clos_mtiProofTheory.collect_apps_preserves_esgc_free;
 val _ = show_thm "intro_multi_preserves_elist_globals=" clos_mtiProofTheory.intro_multi_preserves_elist_globals;
 val _ = show_thm "compile_preserves_elist_globals=" clos_mtiProofTheory.compile_preserves_elist_globals;
+val _ = show_thm "intro_multi_preserves_esgc_free=" clos_mtiProofTheory.intro_multi_preserves_esgc_free;
+val _ = show_thm "compile_preserves_esgc_free=" clos_mtiProofTheory.compile_preserves_esgc_free;

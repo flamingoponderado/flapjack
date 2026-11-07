@@ -22,3 +22,5 @@ collect_apps_preserves_set_globals=∀(max_app :num) (es :closLang$exp list) (e 
 collect_apps_preserves_esgc_free=∀(max_app :num) (es :closLang$exp list) (e :closLang$exp) (es' :closLang$exp list) (e' :closLang$exp). collect_apps max_app es e = (es',e') ∧ EVERY esgc_free es ∧ esgc_free e ⇒ EVERY esgc_free es' ∧ esgc_free e'
 intro_multi_preserves_elist_globals=∀(max_app :num) (es :closLang$exp list). elist_globals (intro_multi max_app es) = elist_globals es
 compile_preserves_elist_globals=∀(do_mti :bool) (es :closLang$exp list). elist_globals (compile do_mti (max_app :num) es) = elist_globals es
+intro_multi_preserves_esgc_free=∀(max_app :num) (es :closLang$exp list). EVERY esgc_free es ⇒ EVERY esgc_free (intro_multi max_app es)
+compile_preserves_esgc_free=∀(do_mti :bool) (es :closLang$exp list). EVERY esgc_free es ⇒ EVERY esgc_free (compile do_mti (max_app :num) es)

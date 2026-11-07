@@ -1,6 +1,22 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+  "hol_name": "intro_multi_preserves_esgc_free",
+  "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/GlobalTraversal.lean",
+  "lean_name": "intro_multi_preserves_esgc_free",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed source in clos_mti_correct_probe.out: binder order, EVERY esgc_free premise, and EVERY esgc_free conclusion on intro_multi agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+  "hol_name": "compile_preserves_esgc_free",
+  "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/GlobalTraversal.lean",
+  "lean_name": "compile_preserves_esgc_free",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed source in clos_mti_correct_probe.out: free maximum, enabled/list binders, and EVERY esgc_free premise and optional-compile conclusion agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
   "hol_name": "intro_multi_preserves_elist_globals",
   "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/GlobalTraversal.lean",
   "lean_name": "intro_multi_preserves_elist_globals",
