@@ -1,4 +1,5 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleSemantics
+import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleAdjustment
+import Flapjack.EvaluateHOL.ClockFull
 
 /-! Oracle adjustment cases for the source evaluator's declarations. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

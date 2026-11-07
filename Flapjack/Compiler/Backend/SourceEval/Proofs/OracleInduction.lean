@@ -1,9 +1,11 @@
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateApp
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateMatch
+import Flapjack.SemanticsHOL
 
 /-! Mutual lexicographic induction for source evaluator oracle adjustment. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.EvaluateHOL Flapjack.NamespaceHOL
+open Flapjack.SemanticsHOL
 
 mutual
 /-- Expression part of the oracle-adjusted evaluator induction. -/
@@ -208,8 +210,21 @@ theorem adjust_oracle_semantics_prog {Config F : Type} (ci : CompilerInstance Co
     (source : Flapjack.SemanticsHOL.semanticsProg state env program outcome) :
     Flapjack.SemanticsHOL.semanticsProg
       { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env program outcome := by
-  apply adjusted_semanticsProg_of_simulation ci f compile ?_ state env program outcome inserted noFail source
-  intro s s' e ds r evaluation isInserted safe
-  exact (evaluateDecsOracleFull ci f compile preserves s e ds s' r evaluation isInserted safe).2
+  have observations : ∀ clock,
+      evaluateProgWithClock { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env clock program =
+        evaluateProgWithClock state env clock program := by
+    intro clock
+    cases run : evaluateDecs { state with clock := clock } env program with
+    | mk next result =>
+      have safe : result ≠ .err (.abort .typeError) := by
+        intro bad
+        apply noFail
+        change ∃ k, (evaluateProgWithClock state env k program).2 = .err (.abort .typeError)
+        refine ⟨clock, ?_⟩
+        simp [evaluateProgWithClock, run, bad]
+      have target := (evaluateDecsOracleFull ci f compile preserves
+        { state with clock := clock } env program next result run inserted safe).2
+      simpa [evaluateProgWithClock, run] using congrArg (fun p => (p.1.ffi, p.2)) target
+  cases outcome <;> simpa only [semanticsProg, observations] using source
 
 end Flapjack.Compiler.Backend.SourceEval.Proofs

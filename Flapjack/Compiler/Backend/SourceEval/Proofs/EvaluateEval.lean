@@ -32,24 +32,6 @@ theorem doEvalRes_adjust_success {Config F β : Type} (ci : CompilerInstance Con
     · right
       simp [doEvalRes, unchanged]
 
-/-- The Eval callback can choose either declarations returned by the oracle or
-their compiled form. If the original evaluation is safe, both choices give the
-same adjusted evaluation. This Flapjack lemma combines the induction
-hypothesis with the declaration compiler-preservation premise. -/
-theorem evaluateDecs_adjusted_compiled {Config F : Type} (ci : CompilerInstance Config)
-    (f compile : List Dec → List Dec) (preserves : DeclarationCompilerPreserves (F := F) compile)
-    (decs : List Dec) (state next : State F) (env : SemEnv Value)
-    (ih : DecsOracleAdjustedAt ci f compile state env decs) (result : Result (SemEnv Value) Value)
-    (run : evaluateDecs state env decs = (next, result))
-    (inserted : isInsertOracle ci f state.evalState) (safe : result ≠ .err (.abort .typeError)) :
-    isInsertOracle ci f next.evalState ∧
-      evaluateDecs { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env decs =
-        ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result) ∧
-      evaluateDecs { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env (compile decs) =
-        ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result) := by
-  obtain ⟨nextInserted, replacement⟩ := ih next result run inserted safe
-  exact ⟨nextInserted, replacement, preserves _ _ env decs result replacement safe⟩
-
 /-- The final environment and error handling of the Eval branch. This is a
 Flapjack factorization of the corresponding evaluator clause, not a separate
 HOL declaration. -/
@@ -143,9 +125,9 @@ theorem continueEval_adjust {Config F : Type} (ci : CompilerInstance Config)
         simpa [continueEval, clock, evaluated, bad, finishEval] using h.symm
       have sourceFinish : finishEval before after env inner = (next, result) := by
         simpa [continueEval, clock, evaluated] using run
-      obtain ⟨afterInserted, original, compiled⟩ :=
-        evaluateDecs_adjusted_compiled ci f compile preserves decs (decClock decoded) after env (ih clock) inner
-          evaluated (by simpa [decClock] using inserted) innerSafe
+      obtain ⟨afterInserted, original⟩ :=
+        ih clock after inner evaluated (by simpa [decClock] using inserted) innerSafe
+      have compiled := preserves _ _ env decs inner original innerSafe
       simp only [decClock] at original compiled
       obtain ⟨nextInserted, finish⟩ := finishEval_adjust ci f compile before after next env inner result sourceFinish afterInserted safe
       refine ⟨nextInserted, ?_, ?_⟩

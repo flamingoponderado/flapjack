@@ -203,12 +203,6 @@ theorem adjustOracle_evaluate_AppForce {Config F : Type} (ci : CompilerInstance 
                     cases pair
                     exact ⟨afterInserted, by simp [adjusted, replacement, opClass, thunkRun, app, clock, decClock, bodyReplacement, updated]⟩
 
-/-- Only the Eval operator belongs to the evaluator's Eval operation class.
-This Flapjack lemma follows from the source operation-class definition. -/
-theorem opClass_eval_eq (op : Op) (h : getOpClass op = .evalOp) : op = .eval := by
-  cases op <;> simp_all [getOpClass]
-  case thunkOp thunk => cases thunk <;> simp_all
-
 /-- The complete application-expression case, assembling all four operation
 classes with the corresponding evaluator induction hypotheses. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
@@ -240,7 +234,9 @@ theorem adjustOracle_evaluate_App {Config F : Type} (ci : CompilerInstance Confi
   | funApp => exact adjustOracle_evaluate_AppFunction ci f compile preserves state next env op args opClass argsIH (functionIH opClass) result source inserted safe
   | force => exact adjustOracle_evaluate_AppForce ci f compile preserves state next env op args opClass argsIH (forceIH opClass) result source inserted safe
   | evalOp =>
-    have eq := opClass_eval_eq op opClass
+    have eq : op = .eval := by
+      cases op <;> simp_all [getOpClass]
+      case thunkOp thunk => cases thunk <;> simp_all
     subst op
     exact adjustOracle_evaluate_Eval ci f compile preserves state next env args argsIH (evalIH rfl) result source inserted safe
 
