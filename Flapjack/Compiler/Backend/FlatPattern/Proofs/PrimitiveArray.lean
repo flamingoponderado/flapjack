@@ -41,7 +41,7 @@ theorem readIndexed_related {C F : Type} (source target : FlatSem.State C F) (un
         subst result
         exact ⟨.err (.raise FlatSem.subscriptExnV), by simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative, absent], subscriptExn_related⟩
     | some value =>
-      obtain ⟨value', found', valueRel⟩ := forall₂_getElem_some related index.toNat value found
+      obtain ⟨value', found', valueRel⟩ := forall₂_lookup related index.toNat value found
       simp [FlatSem.readIndexed, negative, found] at run
       subst result
       exact ⟨.val value', by simp [FlatSem.readIndexed, negative, found'], valueRel⟩

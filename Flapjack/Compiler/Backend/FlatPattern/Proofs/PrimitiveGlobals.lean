@@ -43,7 +43,7 @@ theorem doApp_globalInit_related {C F : Type} (cfg : Config) (source target sour
         cases slot with
         | some _ => simp [FlatSem.doApp, FlatSem.doAppFlat, found] at run
         | none =>
-          obtain ⟨slot', found', slotRel⟩ := forall₂_getElem_some states.2.2.2.1 index none found
+          obtain ⟨slot', found', slotRel⟩ := forall₂_lookup states.2.2.2.1 index none found
           cases slot' with
           | some _ => simp [optionRel] at slotRel
           | none =>
@@ -71,7 +71,7 @@ theorem doApp_globalLookup_related {C F : Type} (cfg : Config) (source target so
       cases slot with
       | none => simp [FlatSem.doApp, FlatSem.doAppFlat, found] at run
       | some value =>
-        obtain ⟨slot', found', slotRel⟩ := forall₂_getElem_some states.2.2.2.1 index (some value) found
+        obtain ⟨slot', found', slotRel⟩ := forall₂_lookup states.2.2.2.1 index (some value) found
         cases slot' with
         | none => simp [optionRel] at slotRel
         | some value' =>
@@ -173,7 +173,7 @@ theorem doApp_el_related {C F : Type} (cfg : Config) (source target sourceFinal 
         | some field =>
           simp [FlatSem.doApp, FlatSem.doAppFlat, found] at run
           rcases run with ⟨rfl, rfl⟩
-          obtain ⟨field', found', fieldRel⟩ := forall₂_getElem_some fieldsRel index field found
+          obtain ⟨field', found', fieldRel⟩ := forall₂_lookup fieldsRel index field found
           exact ⟨target, .val field', by simp [FlatSem.doApp, FlatSem.doAppFlat, found'], states, fieldRel⟩
       | loc flag address =>
         have eq := (valueRel_loc flag address value').1 head

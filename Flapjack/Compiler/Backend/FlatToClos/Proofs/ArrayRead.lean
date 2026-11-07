@@ -18,7 +18,7 @@ theorem arrayRead_related {C F : Type} (source : FlatSem.State C F) (target : Cl
       ClosSem.applyMemory .el [.refPtr flag pointer, .number index] target = some (targetValue, target) ∧
       ValueRel value targetValue := by
   obtain ⟨targetItems, targetFound, related⟩ := lookup_array states found
-  obtain ⟨targetValue, targetElement, valueRel⟩ := valueList_get_related items targetItems index.toNat value related element
+  obtain ⟨targetValue, targetElement, valueRel⟩ := forall₂_lookup related index.toNat value element
   refine ⟨targetValue, ?_, ?_, ?_, valueRel⟩
   · simp [FlatSem.doAppMemory, FlatSem.readIndexed, found, nonnegative, element]
   · simp [FlatSem.doAppMemory, FlatSem.readIndexed, found, nonnegative, element]
@@ -253,7 +253,7 @@ theorem checkedArrayRead_body_related {C F : Type} (source : FlatSem.State C F)
       simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
         FlatSem.readIndexed, FlatSem.boundsFailure, found, negative, element, body, states, EvalResultRel.raise exception]
     | some value =>
-      obtain ⟨targetValue, targetElement, valueRel⟩ := valueList_get_related items targetItems index.toNat value related element
+      obtain ⟨targetValue, targetElement, valueRel⟩ := forall₂_lookup related index.toNat value element
       have body := evaluate_checkedArrayRead_inBounds target trace env pointer flag targetItems index targetValue targetFound negative targetElement
       simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
         FlatSem.readIndexed, found, negative, element, body, states, EvalResultRel.value (.cons valueRel .nil)]

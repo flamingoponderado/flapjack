@@ -64,7 +64,7 @@ theorem checkedVectorRead_body_related {C F : Type} (source : FlatSem.State C F)
       simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData,
         FlatSem.readIndexed, FlatSem.boundsFailure, negative, element, body, states, EvalResultRel.raise exception]
     | some value =>
-      obtain ⟨targetValue, targetElement, valueRel⟩ := valueList_get_related items targetItems index.toNat value related element
+      obtain ⟨targetValue, targetElement, valueRel⟩ := forall₂_lookup related index.toNat value element
       have body := evaluate_checkedVectorRead_inBounds target trace env targetItems index targetValue negative targetElement
       simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData,
         FlatSem.readIndexed, negative, element, body, states, EvalResultRel.value (.cons valueRel .nil)]
@@ -229,7 +229,7 @@ theorem evaluate_uncheckedVectorRead {C F : Type} (env : FlatSem.Environment Fla
                   | none => simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative, element] at resultShape
                   | some value =>
                     obtain ⟨targetValue, targetElement, valueRel⟩ :=
-                      valueList_get_related sourceItems targetItems index.toNat value itemRel element
+                      forall₂_lookup itemRel index.toNat value element
                     simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
                       FlatSem.doAppData, FlatSem.readIndexed, negative, element, ClosSem.doApp,
                       ClosSem.applyMemory, targetElement, states, EvalResultRel.value (.cons valueRel .nil)]

@@ -1,23 +1,11 @@
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.MemoryExpressions
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
 import Mathlib.Data.List.Forall2
+import Flapjack.Misc.ListLookupRel
 
 /-! Constructor and reference reads for the proof-side pass simulation. -/
 namespace Flapjack.Compiler.Backend.FlatToClos
 open Flapjack.SemanticPrimitivesHOL Flapjack.Basis.Pure.MlString
-
-/-- Looking up a source list element in related lists finds a related target
-element at the same index. -/
-theorem valueList_get_related (source : List FlatSem.Value) (target : List ClosSem.Value)
-    (index : Nat) (value : FlatSem.Value) (related : List.Forall₂ ValueRel source target)
-    (found : source[index]? = some value) :
-    ∃ targetValue, target[index]? = some targetValue ∧ ValueRel value targetValue := by
-  obtain ⟨bound, eq⟩ := List.getElem?_eq_some_iff.mp found
-  have targetBound : index < target.length := by have := related.length_eq; omega
-  have valuesRel := related.get bound targetBound
-  change ValueRel source[index] target[index] at valuesRel
-  rw [eq] at valuesRel
-  exact ⟨target[index], List.getElem?_eq_some_iff.mpr ⟨targetBound, rfl⟩, valuesRel⟩
 
 /-- A successful flat field/reference read returns a related closure value
 at the same index, without changing the states. -/
@@ -35,7 +23,7 @@ theorem element_related {C F : Type} (source : FlatSem.State C F) (target : Clos
     | some sourceResult =>
       simp [FlatSem.doAppFlat, found] at run
       subst result
-      obtain ⟨targetResult, targetFound, resultRel⟩ := valueList_get_related _ _ _ _ fields found
+      obtain ⟨targetResult, targetFound, resultRel⟩ := forall₂_lookup fields _ _ found
       refine ⟨targetResult, ?_, resultRel⟩
       simp [ClosSem.applyMemory, targetFound]
   | con fields =>
@@ -45,7 +33,7 @@ theorem element_related {C F : Type} (source : FlatSem.State C F) (target : Clos
     | some sourceResult =>
       simp [FlatSem.doAppFlat, found] at run
       subst result
-      obtain ⟨targetResult, targetFound, resultRel⟩ := valueList_get_related _ _ _ _ fields found
+      obtain ⟨targetResult, targetFound, resultRel⟩ := forall₂_lookup fields _ _ found
       refine ⟨targetResult, ?_, resultRel⟩
       simp [ClosSem.applyMemory, targetFound]
   | loc flag pointer =>
