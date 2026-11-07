@@ -568,8 +568,10 @@ theorem introExp_varsNone (maxApp : Nat) (expression : Exp) :
   exact introMultiFuel_varsNone fuel maxApp expression (introExp maxApp expression) success
 
 /-- The executable traversal preserves the annotation invariant on programs. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "every_Fn_vs_NONE_intro_multi"]
 theorem introList_varsNone (maxApp : Nat) (program : List Exp) :
-    everyFnVarsNone program ↔ everyFnVarsNone (introList maxApp program) := by
+    everyFnVarsNone (introList maxApp program) ↔ everyFnVarsNone program := by
+  apply Iff.symm
   induction program with
   | nil => simp [introList, everyFnVarsNone]
   | cons head tail ih =>
@@ -583,8 +585,8 @@ theorem introExp_containsAppSome (maxApp : Nat) (expression : Exp) :
   exact introMultiFuel_containsAppSome fuel maxApp expression (introExp maxApp expression) success
 
 /-- The executed multi-argument traversal preserves application safety over
-complete programs. The original theorem and all carriers still need source
-review before this result can be classified as an exact HOL port. -/
+complete programs. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "contains_App_SOME_intro_multi"]
 theorem introList_containsAppSome (maxApp : Nat) (program : List Exp) :
     containsAppSome maxApp (introList maxApp program) ↔ containsAppSome maxApp program := by
   induction program with
