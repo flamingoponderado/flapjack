@@ -19,8 +19,8 @@ theorem envRel_nsAppend {α β γ : Type} (rel : Value → α → Prop)
   have secondCopy := second
   obtain ⟨constructors, firstDom, firstMod, _⟩ := first
   obtain ⟨_, secondDom, secondMod, _⟩ := second
-  refine ⟨constructors, nsDom_append_preserved a b c d firstDom secondDom firstMod,
-    nsDomMod_append_preserved a b c d firstMod secondMod, ?_⟩
+  have domains := nsDom_nsAppend_equal a b c d ⟨firstDom, secondDom, firstMod, secondMod⟩
+  refine ⟨constructors, domains.1, domains.2, ?_⟩
   intro id x y found
   obtain ⟨target, targetFound, related⟩ := nsLookup_append_transfer c d a b
     firstDom.symm firstMod.symm id x rel

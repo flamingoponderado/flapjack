@@ -13,10 +13,9 @@ theorem envDomainEq_append (first second : Environment) (sourceFirst sourceSecon
     (premises : EnvDomainEq first sourceFirst ∧ EnvDomainEq second sourceSecond) :
     EnvDomainEq (extendEnv first second) (extendDecEnv sourceFirst sourceSecond) := by
   obtain ⟨⟨v1, vm1, c1, cm1⟩, ⟨v2, vm2, c2, cm2⟩⟩ := premises
-  exact ⟨nsDom_append_preserved _ _ _ _ v1 v2 vm1,
-    nsDomMod_append_preserved _ _ _ _ vm1 vm2,
-    nsDom_append_preserved _ _ _ _ c1 c2 cm1,
-    nsDomMod_append_preserved _ _ _ _ cm1 cm2⟩
+  have values := nsDom_nsAppend_equal first.v second.v sourceFirst.v sourceSecond.v ⟨v1, v2, vm1, vm2⟩
+  have constructors := nsDom_nsAppend_equal first.c second.c sourceFirst.c sourceSecond.c ⟨c1, c2, cm1, cm2⟩
+  exact ⟨values.1, values.2, constructors.1, constructors.2⟩
 
 namespace GlobalEnvAppendPort
 /-- Roundtrip for the global environment's canonical finite maps. -/

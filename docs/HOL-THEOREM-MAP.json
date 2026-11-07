@@ -1,5 +1,13 @@
 [
 {
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml",
+  "hol_name": "nsDom_nsAppend_equal",
+  "lean_path": "Flapjack/NamespaceProps/Append.lean",
+  "lean_name": "nsDom_nsAppend_equal",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed namespace_append_domains in source_eval_oracle_adjust_probe.out: module and name types are shared, the two namespace value types are independent, and all four domain equalities and both append conclusions retain their original order."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "env_rel_nsAppend",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EnvironmentAppend.lean",

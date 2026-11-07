@@ -47,7 +47,7 @@ theorem nsLookupMod_append_cons {M N V : Type} [DecidableEq M]
 
 /-- Flapjack infrastructure for the HOL proofs: corresponding namespaces
 retain corresponding value domains after left-biased append. -/
-theorem nsDom_append_preserved {M N V W : Type} [DecidableEq M] [DecidableEq N]
+private theorem nsDom_append_preserved {M N V W : Type} [DecidableEq M] [DecidableEq N]
     (first second : Namespace M N V) (first' second' : Namespace M N W)
     (firstDomain : nsDom first = nsDom first') (secondDomain : nsDom second = nsDom second')
     (firstModules : nsDomMod first = nsDomMod first') :
@@ -76,7 +76,7 @@ theorem nsDom_append_preserved {M N V W : Type} [DecidableEq M] [DecidableEq N]
 
 /-- Flapjack infrastructure for the HOL proofs: module domains also agree
 after left-biased append. -/
-theorem nsDomMod_append_preserved {M N V W : Type} [DecidableEq M]
+private theorem nsDomMod_append_preserved {M N V W : Type} [DecidableEq M]
     (first second : Namespace M N V) (first' second' : Namespace M N W)
     (firstModules : nsDomMod first = nsDomMod first')
     (secondModules : nsDomMod second = nsDomMod second') :
@@ -98,6 +98,17 @@ theorem nsDomMod_append_preserved {M N V W : Type} [DecidableEq M]
     simp only [nsLookupMod_append_cons]
     cases h1 : nsLookupMod first [moduleName] <;> cases h2 : nsLookupMod first' [moduleName] <;>
       simp_all
+
+/-- Corresponding value and module domains remain equal under namespace append. -/
+@[hol "cakeml/semantics/proofs/namespacePropsScript.sml" "nsDom_nsAppend_equal"]
+theorem nsDom_nsAppend_equal {M N V W : Type} [DecidableEq M] [DecidableEq N]
+    (n₁ n₂ : Namespace M N V) (n₃ n₄ : Namespace M N W)
+    (premises : nsDom n₁ = nsDom n₃ ∧ nsDom n₂ = nsDom n₄ ∧
+      nsDomMod n₁ = nsDomMod n₃ ∧ nsDomMod n₂ = nsDomMod n₄) :
+    nsDom (nsAppend n₁ n₂) = nsDom (nsAppend n₃ n₄) ∧
+    nsDomMod (nsAppend n₁ n₂) = nsDomMod (nsAppend n₃ n₄) := by
+  exact ⟨nsDom_append_preserved n₁ n₂ n₃ n₄ premises.1 premises.2.1 premises.2.2.1,
+    nsDomMod_append_preserved n₁ n₂ n₃ n₄ premises.2.2.1 premises.2.2.2⟩
 
 /-- Flapjack infrastructure for the HOL proofs: pointwise lookup
 correspondence is preserved when leading namespace domains agree. -/
