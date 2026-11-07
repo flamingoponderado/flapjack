@@ -1,6 +1,30 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+  "hol_name": "EVERY_intro_multi",
+  "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/TotalView.lean",
+  "lean_name": "every_intro_multi",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed EVERY_intro_multi in clos_mti_correct_probe.out: the arbitrary predicate, both list quantifiers, singleton HOL head and equivalence direction agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+  "hol_name": "HD_intro_multi",
+  "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/TotalView.lean",
+  "lean_name": "hd_intro_multi",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed HD_intro_multi in clos_mti_correct_probe.out: the singleton HOL head and equality direction agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+  "hol_name": "intro_multi_cons",
+  "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/TotalView.lean",
+  "lean_name": "intro_multi_cons",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed intro_multi_cons in clos_mti_correct_probe.out: the free maximum, quantified list and expression, HOL head and equality direction agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
   "hol_name": "collect_args_no_Labels",
   "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Syntactic.lean",
   "lean_name": "collectArgs_noLabels",

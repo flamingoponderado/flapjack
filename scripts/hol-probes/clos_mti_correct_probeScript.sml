@@ -35,3 +35,6 @@ val _ = show_thm "every_Fn_vs_NONE_collect_apps_replay=" every_Fn_vs_NONE_collec
 val _ = show_thm "every_Fn_vs_NONE_collect_args_replay=" every_Fn_vs_NONE_collect_args_replay;
 val _ = show_thm "collect_apps_no_Labels=" clos_mtiProofTheory.collect_apps_no_Labels;
 val _ = show_thm "collect_args_no_Labels=" clos_mtiProofTheory.collect_args_no_Labels;
+val _ = show_thm "EVERY_intro_multi=" clos_mtiProofTheory.EVERY_intro_multi;
+val _ = show_thm "HD_intro_multi=" clos_mtiProofTheory.HD_intro_multi;
+val _ = show_thm "intro_multi_cons=" clos_mtiProofTheory.intro_multi_cons;

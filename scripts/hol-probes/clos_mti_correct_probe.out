@@ -11,3 +11,6 @@ every_Fn_vs_NONE_collect_apps_replay=∀(max_app :num) (es :closLang$exp list) (
 every_Fn_vs_NONE_collect_args_replay=∀(max_app :num) (es :num) (e :closLang$exp) (x :num) (y :closLang$exp). collect_args max_app es e = (x,y) ⇒ (every_Fn_vs_NONE [y] ⇔ every_Fn_vs_NONE [e])
 collect_apps_no_Labels=∀(m :num) (es :closLang$exp list) (e :closLang$exp) (es' :closLang$exp list) (e' :closLang$exp). collect_apps m es e = (es',e') ∧ EVERY no_Labels es ∧ no_Labels e ⇒ EVERY no_Labels es' ∧ no_Labels e'
 collect_args_no_Labels=∀(m :num) (na :num) (e :closLang$exp) (es' :num) (e' :closLang$exp). collect_args m na e = (es',e') ∧ no_Labels e ⇒ no_Labels e'
+EVERY_intro_multi=∀(m :num) (xs :closLang$exp list). EVERY (P :closLang$exp -> bool) (intro_multi m xs) ⇔ EVERY (λ(x :closLang$exp). P (HD (intro_multi m [x]))) xs
+HD_intro_multi=[HD (intro_multi (max_app :num) [(e2 :closLang$exp)])] = intro_multi max_app [e2]
+intro_multi_cons=∀(xs :closLang$exp list) (x :closLang$exp). intro_multi (m :num) (x::xs) = HD (intro_multi m [x])::intro_multi m xs
