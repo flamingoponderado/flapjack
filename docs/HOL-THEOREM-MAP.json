@@ -14451,8 +14451,16 @@
     "reviewer": "Compared the source local theorem and typed invariant_env_gen_inv_local replay: the original invariant premise uses the same index triple, independent compiler and FFI types, and canonical global-environment maps; the conclusion is the original environment-generation invariant."
   },
   {
-    "lean_name": "fstSnd_eq_case",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/AllocDefsLookup.lean",
+    "lean_name": "aLookup_allocDefs_el",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "ALOOKUP_alloc_defs_EL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared alookup_alloc_defs_el_replay in source_to_flat_init_probe.out with the local source theorem: the three tuple component types are independent, the quantified binders and grouped distinctness and index premises agree, and the existential trace and original reverse-allocation index formula are retained. Nonempty K expresses HOL type inhabitance for EL. The original local HOL proof is replayed."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvalOracleSimulation.lean",
+    "lean_name": "fstSnd_eq_case",
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "FST_SND_EQ_CASE",
     "statement_status": "reviewed_exact",

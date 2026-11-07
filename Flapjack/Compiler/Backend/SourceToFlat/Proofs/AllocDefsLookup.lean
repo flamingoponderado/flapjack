@@ -19,6 +19,55 @@ theorem allocDefs_ignoreCounter {α : Type} (names : List α) (first second base
     simp only [allocDefs]
     exact congrArg (fun tail => (name, .glob omTra base) :: tail) (ih (first + 1) (second + 1) (base + 1))
 
+private theorem allocDefs_lookup_index {K : Type} (names : List K) :
+    ∀ (next base n : Nat) (bound : n < names.length), names.Nodup →
+      holALookup (allocDefs next base names) names[n] = some (.glob omTra (base + n)) := by
+  classical
+  induction names with
+  | nil => intro next base n bound; simp at bound
+  | cons head tail ih =>
+    intro next base n bound distinct
+    obtain ⟨absent, tailDistinct⟩ := List.nodup_cons.mp distinct
+    cases n with
+    | zero => simp [allocDefs, holALookup]
+    | succ n =>
+      have bound' : n < tail.length := by simpa using bound
+      have different : tail[n] ≠ head := by
+        intro same
+        apply absent
+        simpa [same] using List.getElem_mem bound'
+      simpa [allocDefs, holALookup, different, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using
+        ih (next + 1) (base + 1) n bound' tailDistinct
+
+/-- A distinct function's reversed allocation is found at its corresponding global slot. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "ALOOKUP_alloc_defs_EL"]
+theorem aLookup_allocDefs_el {K A B : Type} [Nonempty K] :
+    ∀ (funs : List (K × A × B)) (l n m : Nat),
+      (funs.map fun (x, _, _) => x).Nodup ∧ n < funs.length →
+      ∃ tt, holALookup (allocDefs m l (funs.reverse.map Prod.fst)) (holEl n (funs.map Prod.fst)) =
+        some (.glob tt (l + funs.length - (n + 1))) := by
+  classical
+  intro funs l n m ⟨distinct, bound⟩
+  let names := funs.map Prod.fst
+  let pos := names.length - (n + 1)
+  have len : names.length = funs.length := by simp [names]
+  have posBound : pos < names.reverse.length := by simp [pos, len]; omega
+  have reverseDistinct : names.reverse.Nodup := by
+    rw [List.Nodup, List.pairwise_reverse]
+    exact distinct.imp (fun h => Ne.symm h)
+  have indexEq : names.reverse[pos] = names[n] := by
+    rw [List.getElem_reverse]
+    congr 1
+    dsimp [pos]
+    omega
+  have sourceBound : n < names.length := by simpa [len] using bound
+  have found := allocDefs_lookup_index names.reverse m l pos posBound reverseDistinct
+  rw [indexEq] at found
+  refine ⟨omTra, ?_⟩
+  rw [holEl_eq_getElem n names sourceBound]
+  have arithmetic : l + names.length - (n + 1) = l + pos := by dsimp [pos]; omega
+  simpa only [names, List.map_reverse, ← len, arithmetic] using found
+
 /-- Lookup in reversed bindings identifies the matching allocated global and
 value at the same position, even when names repeat. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "ALOOKUP_alloc_defs"]
