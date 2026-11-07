@@ -1,11 +1,11 @@
 import Flapjack.EvaluateProps.ClockIoCases
 
-/-! Recursive expression cases of the source clock-and-I/O invariant.
-The mutual evaluator theorem is assembled in ClockIoFull; source/carrier review remains open. -/
+/-! Flapjack expression proof helpers for the clock-and-I/O evaluator theorem. -/
 namespace Flapjack.EvaluateProps
 open Flapjack.EvaluateHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL Flapjack.AstHOL
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "is_clock_io_mono_evaluate"]
+/-- Flapjack helper for the assembled clock-and-I/O theorem; its induction
+hypotheses are proof infrastructure rather than literal HOL case clauses. -/
 theorem clockIoEvaluate_let {σ : Type} (st : State σ) (env : SemEnv Value)
     (name : Option VarN) (first body : AstHOL.Exp)
     (ihFirst : isClockIoMono (fun state => evaluate state env [first]) st)
@@ -57,7 +57,8 @@ theorem clockIo_mapResult {σ α β γ δ : Type} (st : State σ)
     simp only [continuation, timeout]
   exact isClockIoMono_bind f continuation st ⟨ih, hcont, htimeout⟩
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "is_clock_io_mono_evaluate"]
+/-- Flapjack helper for the assembled clock-and-I/O theorem; its induction
+hypotheses are proof infrastructure rather than literal HOL case clauses. -/
 theorem clockIoEvaluate_cons {σ : Type} (st : State σ) (env : SemEnv Value)
     (first second : AstHOL.Exp) (rest : List AstHOL.Exp)
     (ihFirst : isClockIoMono (fun state => evaluate state env [first]) st)
@@ -112,7 +113,8 @@ theorem clockIoEvaluate_cons {σ : Type} (st : State σ) (env : SemEnv Value)
   rw [fnEq] at bound
   exact bound
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "is_clock_io_mono_evaluate"]
+/-- Flapjack helper for the assembled clock-and-I/O theorem; its induction
+hypotheses are proof infrastructure rather than literal HOL case clauses. -/
 theorem clockIoEvaluate_con {σ : Type} (st : State σ) (env : SemEnv Value)
     (name : Option (Ident ModN ConN)) (args : List AstHOL.Exp)
     (ih : isClockIoMono (fun state => evaluate state env args.reverse) st) :
@@ -139,7 +141,8 @@ theorem clockIoEvaluate_con {σ : Type} (st : State σ) (env : SemEnv Value)
     exact mapped
   · simpa [evaluate, valid, typeError] using isClockIoMono_err (α := List Value) st (.abort .typeError)
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "is_clock_io_mono_evaluate"]
+/-- Flapjack helper for the assembled clock-and-I/O theorem; its induction
+hypotheses are proof infrastructure rather than literal HOL case clauses. -/
 theorem clockIoEvaluate_if {σ : Type} (st : State σ) (env : SemEnv Value)
     (test yes no : AstHOL.Exp)
     (ihTest : isClockIoMono (fun state => evaluate state env [test]) st)
@@ -182,7 +185,8 @@ theorem clockIoEvaluate_if {σ : Type} (st : State σ) (env : SemEnv Value)
   rw [fnEq] at bound
   exact bound
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "is_clock_io_mono_evaluate"]
+/-- Flapjack helper for the assembled clock-and-I/O theorem; its induction
+hypotheses are proof infrastructure rather than literal HOL case clauses. -/
 theorem clockIoEvaluate_log {σ : Type} (st : State σ) (env : SemEnv Value)
     (op : Lop) (first second : AstHOL.Exp)
     (ihFirst : isClockIoMono (fun state => evaluate state env [first]) st)
@@ -232,7 +236,8 @@ theorem clockIoEvaluate_log {σ : Type} (st : State σ) (env : SemEnv Value)
   rw [fnEq] at bound
   exact bound
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "is_clock_io_mono_evaluate"]
+/-- Flapjack helper for the assembled clock-and-I/O theorem; its induction
+hypotheses are proof infrastructure rather than literal HOL case clauses. -/
 theorem clockIoEvaluate_mat {σ : Type} (st : State σ) (env : SemEnv Value)
     (expr : AstHOL.Exp) (clauses : List (Pat × AstHOL.Exp))
     (ihExpr : isClockIoMono (fun state => evaluate state env [expr]) st)
@@ -283,7 +288,8 @@ theorem clockIoEvaluate_mat {σ : Type} (st : State σ) (env : SemEnv Value)
   rw [fnEq] at bound
   exact bound
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "is_clock_io_mono_evaluate"]
+/-- Flapjack helper for the assembled clock-and-I/O theorem; its induction
+hypotheses are proof infrastructure rather than literal HOL case clauses. -/
 theorem clockIoEvaluate_handle {σ : Type} (st : State σ) (env : SemEnv Value)
     (expr : AstHOL.Exp) (clauses : List (Pat × AstHOL.Exp))
     (ihExpr : isClockIoMono (fun state => evaluate state env [expr]) st)

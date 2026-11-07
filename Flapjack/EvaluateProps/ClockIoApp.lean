@@ -1,7 +1,6 @@
 import Flapjack.EvaluateProps.ClockIoExpr
 
-/-! Prerequisites for the application case of the source clock-and-I/O proof.
-The complete application case is assembled in ClockIoFull; source/carrier review remains open. -/
+/-! Flapjack application proof helpers for the clock-and-I/O evaluator theorem. -/
 namespace Flapjack.EvaluateProps
 open Flapjack.EvaluateHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL Flapjack.AstHOL
 
@@ -329,7 +328,8 @@ theorem clockIo_evalOperation {σ : Type} (st : State σ) (values : List Value)
   rw [fnEq] at result
   exact result
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "is_clock_io_mono_evaluate"]
+/-- Flapjack helper for the assembled clock-and-I/O theorem; its induction
+hypotheses are proof infrastructure rather than literal HOL case clauses. -/
 theorem clockIoEvaluate_app {σ : Type} (st : State σ) (env : SemEnv Value)
     (op : AstHOL.Op) (args : List AstHOL.Exp)
     (ihArgs : isClockIoMono (fun state => evaluate state env args.reverse) st)
@@ -412,7 +412,7 @@ theorem clockIoEvaluate_app {σ : Type} (st : State σ) (env : SemEnv Value)
         | some output =>
           rcases output with ⟨⟨refs, ffi⟩, result⟩
           have length := doApp_refs_length (next.refs, next.ffi) op reversed.reverse ((refs, ffi), result) happ
-          have trace := doApp_ioEventsMono next.refs refs next.ffi ffi op reversed.reverse result happ
+          have trace := doApp_ioEventsMono next.refs next.ffi op reversed.reverse refs ffi result happ
           simp [isClockIoMono, continuation, hc, happ, length, ioEventsMonoHOL]
           constructor
           · exact trace

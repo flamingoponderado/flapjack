@@ -49,8 +49,8 @@ theorem evaluate_addToClockIoEventsMono {σ : Type} :
       (fun state => clockIoMatchFull state env value clauses errorValue) st extra
 
 @[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_decs_add_to_clock_io_events_mono"]
-theorem evaluateDecs_addToClockIoEventsMono {σ : Type} (st : State σ) (env : SemEnv Value)
-    (ds : List Dec) (extra : Nat) :
+theorem evaluateDecs_addToClockIoEventsMono {σ : Type} (extra : Nat) (st : State σ)
+    (env : SemEnv Value) (ds : List Dec) :
     ioEventsMonoHOL (evaluateDecs st env ds).1.ffi (evaluateDecs { st with clock := st.clock + extra } env ds).1.ffi :=
   isClockIoMono_extra_mono (fun state => evaluateDecs state env ds) (fun state => clockIoDecsFull state env ds) st extra
 
@@ -59,7 +59,7 @@ theorem evaluateDecs_ffiMonoClock {σ : Type} (k1 k2 : Nat) (st : State σ) (env
     (h : k1 ≤ k2) :
     ioEventsMonoHOL (evaluateDecs { st with clock := k1 } env ds).1.ffi
       (evaluateDecs { st with clock := k2 } env ds).1.ffi := by
-  have bound := evaluateDecs_addToClockIoEventsMono { st with clock := k1 } env ds (k2 - k1)
+  have bound := evaluateDecs_addToClockIoEventsMono (k2 - k1) { st with clock := k1 } env ds
   have eq : k1 + (k2 - k1) = k2 := by omega
   simpa only [eq] using bound
 

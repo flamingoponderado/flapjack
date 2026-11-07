@@ -514,7 +514,7 @@ theorem evaluateFfi_app {σ : Type} (st : State σ) (env : SemEnv Value)
       | none => simpa only [ha, typeError] using ihArgs
       | some output =>
         rcases output with ⟨⟨refs, ffi⟩, outcome⟩
-        have step := doApp_callFFIRel first.1.refs refs first.1.ffi ffi op values.reverse outcome ha
+        have step := doApp_callFFIRel first.1.refs first.1.ffi op values.reverse refs ffi outcome ha
         simpa only [ha] using ihArgs.trans step
     | evalOp =>
       simp only [fixClockDoEvalRes]
