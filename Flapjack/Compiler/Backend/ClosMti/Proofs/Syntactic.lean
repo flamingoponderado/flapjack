@@ -1,3 +1,4 @@
+import Flapjack.Misc.Option.MapM
 import Flapjack.Compiler.Backend.ClosMti.Proofs.TotalView
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
 import Flapjack.Compiler.Backend.Semantics.ClosProps.NoMtiSyntactic
@@ -206,25 +207,6 @@ theorem containsAppSome_collectApps (maxApp : Nat) (args : List Exp) (expression
   have invariant := collectApps_containsAppSome maxApp args expression
   rw [run] at invariant
   simpa [containsAppSome] using invariant
-
-/-- Flapjack proof infrastructure: successful option traversals relate their
-source and target elements pointwise. -/
-theorem mapM_rel {A B : Type} (f : A → Option B) (r : A → B → Prop)
-    (pointwise : ∀ a b, f a = some b → r a b)
-    (source : List A) (target : List B) (run : source.mapM f = some target) :
-    List.Forall₂ r source target := by
-  induction source generalizing target with
-  | nil => simp at run; subst target; exact .nil
-  | cons first rest ih =>
-    cases head : f first with
-    | none => simp [List.mapM_cons, head] at run
-    | some next =>
-      cases tail : rest.mapM f with
-      | none => simp [List.mapM_cons, head, tail] at run
-      | some nextRest =>
-        have equal : next :: nextRest = target := by simpa [List.mapM_cons, head, tail] using run
-        subst target
-        exact .cons (pointwise first next head) (ih nextRest tail)
 
 /-- A pointwise traversal that preserves application safety also preserves it
 over the complete list. -/
