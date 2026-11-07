@@ -1,6 +1,22 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "Num_11",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/Equality.lean",
+  "lean_name": "numInjective",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source_num_injective in source_eval_oracle_adjust_probe.out: the conjunction that both integers are nonnegative implies equivalence between equality after HOL Num and equality of the original integers; Lean Int.toNat agrees with Num on these inputs."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "do_eq",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/Equality.lean",
+  "lean_name": "doEq_simulation",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source_do_eq_simulation in source_eval_oracle_adjust_probe.out: both independently quantified conjuncts retain the original successful-result equation, both value or list relations, and the same target equality result. The proof covers environment values via the reviewed valueToEnvId_some and original encoded-constructor representation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "pmatch_drule_form",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/PatternMatchSafety.lean",
   "lean_name": "pmatchDrule",

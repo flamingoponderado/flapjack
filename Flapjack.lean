@@ -23,6 +23,7 @@ import Flapjack.Compiler.Backend.SourceEval.Proofs.ValueRelationSimps
 import Flapjack.Compiler.Backend.SourceEval.Proofs.StateRelation
 import Flapjack.Compiler.Backend.SourceEval.Proofs.PatternMatch
 import Flapjack.Compiler.Backend.SourceEval.Proofs.PatternMatchSafety
+import Flapjack.Compiler.Backend.SourceEval.Proofs.Equality
 import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleCallback
 import Flapjack.Compiler.Backend.SourceEval.Proofs.Concrete
 import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleReset

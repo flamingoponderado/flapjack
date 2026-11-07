@@ -107,3 +107,6 @@ val pmatch_drule_form_replay = Q.prove (
   metis_tac [source_evalProofTheory.pmatch, listTheory.LIST_REL_NIL]);
 val _ = show_thm "source_pmatch_drule_replay=" pmatch_drule_form_replay;
 val _ = show_thm "source_can_pmatch_all=" source_evalProofTheory.can_pmatch_all;
+val _ = show_thm "source_num_injective=" source_evalProofTheory.Num_11;
+val _ = show_thm "source_do_eq_simulation=" source_evalProofTheory.do_eq;
+val _ = show_thm "source_do_eq_induction=" semanticPrimitivesTheory.do_eq_ind;
