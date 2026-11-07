@@ -42,11 +42,11 @@ theorem evaluateOracleFull {Config F : Type} (ci : CompilerInstance Config)
         exact adjustOracle_evaluate_Lannot compile ci f preserves state env expr loc
           (evaluateOracleFull ci f compile preserves state env [expr]) next result ⟨run, inserted, safe⟩
       | con name args =>
-        apply adjustOracle_evaluate_Con ci f compile preserves name args state next env ?_ result run inserted safe
+        apply adjustOracle_evaluate_Con compile ci f preserves state env name args ?_ next result ⟨run, inserted, safe⟩
         intro _
         exact evaluateOracleFull ci f compile preserves state env args.reverse
       | letrec funs body =>
-        apply adjustOracle_evaluate_Letrec ci f compile preserves state next env funs body ?_ result run inserted safe
+        apply adjustOracle_evaluate_Letrec compile ci f preserves state env funs body ?_ next result ⟨run, inserted, safe⟩
         intro _
         exact evaluateOracleFull ci f compile preserves state { env with v := buildRecEnv funs env env.v } [body]
       | let_ name bound body =>
@@ -123,7 +123,7 @@ theorem evaluateMatchOracleFull {Config F : Type} (ci : CompilerInstance Config)
     MatchOracleAdjustedAt compile ci f state env value clauses errValue := by
   intro next result ⟨run, inserted, safe⟩
   cases clauses with
-  | nil => exact adjustOracle_evaluate_MatchNil ci f compile preserves state next env value errValue result run inserted safe
+  | nil => exact adjustOracle_evaluate_MatchNil compile ci f preserves state env value errValue next result ⟨run, inserted, safe⟩
   | cons clause rest =>
     cases clause with
     | mk pat expr =>
@@ -172,7 +172,7 @@ theorem evaluateDecsOracleFull {Config F : Type} (ci : CompilerInstance Config)
         exact adjustOracle_evaluate_Dmod compile ci f preserves state env name ds
           (evaluateDecsOracleFull ci f compile preserves state env ds) next result ⟨run, inserted, safe⟩
       | dlet loc pat expr =>
-        apply adjustOracle_evaluate_Dlet ci f compile preserves loc pat expr state next env ?_ result run inserted safe
+        apply adjustOracle_evaluate_Dlet compile ci f preserves state env loc pat expr ?_ next result ⟨run, inserted, safe⟩
         intro _
         exact evaluateOracleFull ci f compile preserves state env [expr]
       | dlocal locals body =>

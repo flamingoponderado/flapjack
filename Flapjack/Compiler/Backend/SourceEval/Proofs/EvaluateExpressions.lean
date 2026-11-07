@@ -32,19 +32,17 @@ theorem adjustOracle_evaluate_Var {Config F : Type} (compile : List Dec → List
 
 /-- Recursive-function expression case of the source evaluator induction. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
-theorem adjustOracle_evaluate_Letrec {Config F : Type} (ci : CompilerInstance Config)
-    (f compile : List Dec → List Dec) (_compilePreserve : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
+theorem adjustOracle_evaluate_Letrec {Config F : Type} (compile : List Dec → List Dec)
+    (ci : CompilerInstance Config) (f : List Dec → List Dec)
+    (_preserves : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
       (res : Result (SemEnv Value) Value),
       evaluateDecs s env ds = (next, res) ∧ res ≠ .err (.abort .typeError) →
         evaluateDecs s env (compile ds) = (next, res))
-    (state next : State F) (env : SemEnv Value) (funs : List (VarN × VarN × AstHOL.Exp)) (body : AstHOL.Exp)
+    (state : State F) (env : SemEnv Value) (funs : List (VarN × VarN × AstHOL.Exp)) (body : AstHOL.Exp)
     (ih : (funs.map (fun (name, _, _) => name)).Nodup →
-      ExpsOracleAdjustedAt compile ci f state { env with v := buildRecEnv funs env env.v } [body])
-    (result : Result (List Value) Value) (source : evaluate state env [.letrec funs body] = (next, result))
-    (inserted : isInsertOracle ci f state.evalState) (safe : result ≠ .err (.abort .typeError)) :
-    isInsertOracle ci f next.evalState ∧
-      evaluate { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env [.letrec funs body] =
-        ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result) := by
+      ExpsOracleAdjustedAt compile ci f state { env with v := buildRecEnv funs env env.v } [body]) :
+    ExpsOracleAdjustedAt compile ci f state env [.letrec funs body] := by
+  intro next result ⟨source, inserted, safe⟩
   classical
   by_cases unique : (funs.map (fun (name, _, _) => name)).Nodup
   · have bodyRun : evaluate state { env with v := buildRecEnv funs env env.v } [body] = (next, result) := by

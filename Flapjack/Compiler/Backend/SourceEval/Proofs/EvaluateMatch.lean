@@ -19,17 +19,15 @@ def MatchOracleAdjustedAt {Config F : Type} (compile : List Dec → List Dec)
 
 /-- Empty pattern-match case of the original evaluator induction. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
-theorem adjustOracle_evaluate_MatchNil {Config F : Type} (ci : CompilerInstance Config)
-    (f compile : List Dec → List Dec) (_compilePreserve : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
+theorem adjustOracle_evaluate_MatchNil {Config F : Type} (compile : List Dec → List Dec)
+    (ci : CompilerInstance Config) (f : List Dec → List Dec)
+    (_preserves : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
       (res : Result (SemEnv Value) Value),
       evaluateDecs s env ds = (next, res) ∧ res ≠ .err (.abort .typeError) →
         evaluateDecs s env (compile ds) = (next, res))
-    (state next : State F) (env : SemEnv Value) (value errValue : Value)
-    (result : Result (List Value) Value) (source : evaluateMatch state env value [] errValue = (next, result))
-    (inserted : isInsertOracle ci f state.evalState) (_safe : result ≠ .err (.abort .typeError)) :
-    isInsertOracle ci f next.evalState ∧
-      evaluateMatch { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env value [] errValue =
-        ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result) := by
+    (state : State F) (env : SemEnv Value) (value errValue : Value) :
+    MatchOracleAdjustedAt compile ci f state env value [] errValue := by
+  intro next result ⟨source, inserted, _⟩
   simp [evaluateMatch] at source
   obtain ⟨rfl, rfl⟩ := source
   exact ⟨inserted, by simp [evaluateMatch]⟩

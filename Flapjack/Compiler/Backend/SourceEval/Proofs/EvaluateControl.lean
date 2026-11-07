@@ -131,19 +131,17 @@ theorem adjustOracle_evaluate_Log {Config F : Type} (ci : CompilerInstance Confi
 
 /-- Constructor-expression case of the original evaluator induction. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
-theorem adjustOracle_evaluate_Con {Config F : Type} (ci : CompilerInstance Config)
-    (f compile : List Dec → List Dec) (_compilePreserve : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
+theorem adjustOracle_evaluate_Con {Config F : Type} (compile : List Dec → List Dec)
+    (ci : CompilerInstance Config) (f : List Dec → List Dec)
+    (_preserves : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
       (res : Result (SemEnv Value) Value),
       evaluateDecs s env ds = (next, res) ∧ res ≠ .err (.abort .typeError) →
         evaluateDecs s env (compile ds) = (next, res))
-    (name : Option (Flapjack.NamespaceHOL.Ident ModN ConN)) (args : List AstHOL.Exp)
-    (state next : State F) (env : SemEnv Value)
-    (argsIH : doConCheck env.c name args.length = true → ExpsOracleAdjustedAt compile ci f state env args.reverse) (result : Result (List Value) Value)
-    (source : evaluate state env [.con name args] = (next, result))
-    (inserted : isInsertOracle ci f state.evalState) (safe : result ≠ .err (.abort .typeError)) :
-    isInsertOracle ci f next.evalState ∧
-      evaluate { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env [.con name args] =
-        ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result) := by
+    (state : State F) (env : SemEnv Value) (name : Option (Flapjack.NamespaceHOL.Ident ModN ConN)) (args : List AstHOL.Exp)
+    (argsIH : doConCheck env.c name args.length = true →
+      ExpsOracleAdjustedAt compile ci f state env args.reverse) :
+    ExpsOracleAdjustedAt compile ci f state env [.con name args] := by
+  intro next result ⟨source, inserted, safe⟩
   by_cases check : doConCheck env.c name args.length = true
   · simp only [evaluate, check] at source ⊢
     cases run : evaluate state env args.reverse with

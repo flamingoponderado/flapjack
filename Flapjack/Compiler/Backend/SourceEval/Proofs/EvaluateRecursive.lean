@@ -155,21 +155,17 @@ theorem adjustOracle_evaluate_DecsCons {Config F : Type} (ci : CompilerInstance 
 
 /-- Value-declaration case of the evaluator induction. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
-theorem adjustOracle_evaluate_Dlet {Config F : Type} (ci : CompilerInstance Config)
-    (f compile : List Dec → List Dec) (_compilePreserve : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
+theorem adjustOracle_evaluate_Dlet {Config F : Type} (compile : List Dec → List Dec)
+    (ci : CompilerInstance Config) (f : List Dec → List Dec)
+    (_preserves : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
       (res : Result (SemEnv Value) Value),
       evaluateDecs s env ds = (next, res) ∧ res ≠ .err (.abort .typeError) →
         evaluateDecs s env (compile ds) = (next, res))
-    (locs : Flapjack.Misc.Location.Locs) (pat : Pat) (expr : AstHOL.Exp)
-    (state next : State F) (env : SemEnv Value)
+    (state : State F) (env : SemEnv Value) (locs : Flapjack.Misc.Location.Locs) (pat : Pat) (expr : AstHOL.Exp)
     (ih : ((patBindings pat).Nodup ∧ everyExp (oneConCheck env.c) expr = true) →
-      ExpsOracleAdjustedAt compile ci f state env [expr]) (result : Result (SemEnv Value) Value)
-    (source : evaluateDecs state env [.dlet locs pat expr] = (next, result))
-    (inserted : isInsertOracle ci f state.evalState)
-    (safe : result ≠ .err (.abort .typeError)) :
-    isInsertOracle ci f next.evalState ∧
-      evaluateDecs { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env [.dlet locs pat expr] =
-        ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result) := by
+      ExpsOracleAdjustedAt compile ci f state env [expr]) :
+    DecsOracleAdjustedAt compile ci f state env [.dlet locs pat expr] := by
+  intro next result ⟨source, inserted, safe⟩
   classical
   by_cases check : (patBindings pat).Nodup ∧ everyExp (oneConCheck env.c) expr = true
   · cases run : evaluate state env [expr] with
