@@ -203,7 +203,8 @@ environment relation rules, induction and cases, state and store relations,
 polymorphic incremental and installation relations, complete compiler
 correctness and observational statements, polymorphic result and exception relations, operator and arithmetic lowering, and expanded byte-copy
 quotations. It also captures the polymorphic HOL
-`findi` definition used by the environment relation. The captured rules support
+`findi` definition and `env_rel_def` lookup equivalence used by the environment
+relation. The captured rules support
 source review; they do not establish cross-language equivalence.
 
 `finite_map_empty_probe.out` captures the polymorphic HOL empty-map definition

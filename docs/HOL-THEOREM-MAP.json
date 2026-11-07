@@ -1,5 +1,13 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "env_rel_def",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/ValueRelInduction.lean",
+  "lean_name": "envRel_hol_cases",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared env_rel_def_typed in flat_to_clos_relation_probe.out: the same environment, optional-name list and closure-value list satisfy the bounded first-name lookup and related-value condition. The bound makes the HOL list selection and Lean holEl agree independently of the out-of-bounds default; the names use the reviewed MlString carrier."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
   "hol_name": "invariant_IMP_s_rel",
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvalOracleSimulation.lean",

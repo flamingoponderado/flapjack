@@ -108,6 +108,7 @@ theorem envLookup_source_shape
     simpa [Flapjack.holEl_eq_getElem _ _ bound] using valid
 
 /-- The environment relation has exactly the source's bounded lookup case. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "env_rel_def"]
 theorem envRel_hol_cases (env : FlatSem.Environment FlatSem.Value)
     (names : List (Option MlString)) (values : List ClosSem.Value) :
     EnvRel env names values ↔ ∀ name value, env.v.lookup name = some value →
