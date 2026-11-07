@@ -22,11 +22,12 @@ theorem evaluateOracleFull {Config F : Type} (ci : CompilerInstance Config)
   | cons first rest =>
     cases rest with
     | cons second tail =>
-      apply adjustOracle_evaluate_ExpsCons ci f compile preserves first second tail state next env ?_ ?_ result run inserted safe
-      · exact evaluateOracleFull ci f compile preserves state env [first]
-      · intro middle values firstRun
-        have bound := evaluateClockFull state middle env [first] (.val values) firstRun
-        exact evaluateOracleFull ci f compile preserves middle env (second :: tail)
+      refine adjustOracle_evaluate_ExpsCons compile ci f preserves state env first second tail
+        ⟨?_, evaluateOracleFull ci f compile preserves state env [first]⟩ next result ⟨run, inserted, safe⟩
+      intro middle outcome values ⟨firstRun, outcomeEq⟩
+      subst outcome
+      have bound := evaluateClockFull state middle env [first] (.val values) firstRun
+      exact evaluateOracleFull ci f compile preserves middle env (second :: tail)
     | nil =>
       cases first with
       | lit lit => exact adjustOracle_evaluate_Lit compile ci f preserves state env lit next result ⟨run, inserted, safe⟩
@@ -156,11 +157,12 @@ theorem evaluateDecsOracleFull {Config F : Type} (ci : CompilerInstance Config)
   | cons first rest =>
     cases rest with
     | cons second tail =>
-      apply adjustOracle_evaluate_DecsCons ci f compile preserves first second tail state next env ?_ ?_ result run inserted safe
-      · exact evaluateDecsOracleFull ci f compile preserves state env [first]
-      · intro middle inner firstRun
-        have clockBound := evaluateDecsClockFull state middle env [first] (.val inner) firstRun
-        exact evaluateDecsOracleFull ci f compile preserves middle (extendDecEnv inner env) (second :: tail)
+      refine adjustOracle_evaluate_DecsCons compile ci f preserves state env first second tail
+        ⟨?_, evaluateDecsOracleFull ci f compile preserves state env [first]⟩ next result ⟨run, inserted, safe⟩
+      intro middle outcome inner ⟨firstRun, outcomeEq⟩
+      subst outcome
+      have clockBound := evaluateDecsClockFull state middle env [first] (.val inner) firstRun
+      exact evaluateDecsOracleFull ci f compile preserves middle (extendDecEnv inner env) (second :: tail)
     | nil =>
       cases first with
       | dtabbrev loc vars name typ => exact adjustOracle_evaluate_Dtabbrev compile ci f preserves state env loc vars name typ next result ⟨run, inserted, safe⟩
@@ -176,11 +178,12 @@ theorem evaluateDecsOracleFull {Config F : Type} (ci : CompilerInstance Config)
         intro _
         exact evaluateOracleFull ci f compile preserves state env [expr]
       | dlocal locals body =>
-        apply adjustOracle_evaluate_Dlocal ci f compile preserves locals body state next env ?_ ?_ result run inserted safe
-        · exact evaluateDecsOracleFull ci f compile preserves state env locals
-        · intro middle inner firstRun
-          have clockBound := evaluateDecsClockFull state middle env locals (.val inner) firstRun
-          exact evaluateDecsOracleFull ci f compile preserves middle (extendDecEnv inner env) body
+        refine adjustOracle_evaluate_Dlocal compile ci f preserves state env locals body
+          ⟨?_, evaluateDecsOracleFull ci f compile preserves state env locals⟩ next result ⟨run, inserted, safe⟩
+        intro middle outcome inner ⟨firstRun, outcomeEq⟩
+        subst outcome
+        have clockBound := evaluateDecsClockFull state middle env locals (.val inner) firstRun
+        exact evaluateDecsOracleFull ci f compile preserves middle (extendDecEnv inner env) body
 termination_by (state.clock, sizeOf decs)
 decreasing_by
   all_goals try subst_vars
