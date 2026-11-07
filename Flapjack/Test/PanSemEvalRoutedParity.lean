@@ -203,6 +203,86 @@ private def programDeclsWithFallbackStruct := programDecls ++ [.name "Ā" [("fie
     (programInput (sourceCodeState false true) 8)
     10 sourcePrimitive sourceFfiHandler 20 programDeclsWithFallbackStruct "main" []) 0x88
 
+/- A struct-using initializer and entry body need the collected structure
+   context in both phases. The `.nStruct`/`.nField` expressions read the named
+   struct through the route's pinned structure context, so a route that
+   received the wrong context fails here. Main also reads the initializer's
+   global `g`, so a broken initializer is observed rather than masked by a
+   fresh struct field. The expected value is cross-checked against the generic
+   runner only; there is no HOL probe for this struct-specific program. -/
+private def programDeclsStructFirst : List (Decl W) :=
+  [.name "S" [("a", .one), ("b", .one)],
+   .decl .one "g" (.nField "a" (.nStruct "S" [("a", .const 1), ("b", .const 2)])),
+   .function
+     { name := "main", inline := false, exported := true, params := []
+       body := .return (.op .add [.var .global "g",
+         .nField "b" (.nStruct "S" [("a", .const 3), ("b", .const 4)])])
+       returnShape := .one }]
+
+/- The struct declaration follows the initializer that uses it. The collected
+   context must be available before initializers, as `decs_stcnames` provides. -/
+private def programDeclsStructLater : List (Decl W) :=
+  [.decl .one "g" (.nField "a" (.nStruct "S" [("a", .const 1), ("b", .const 2)])),
+   .function
+     { name := "main", inline := false, exported := true, params := []
+       body := .return (.op .add [.var .global "g",
+         .nField "b" (.nStruct "S" [("a", .const 3), ("b", .const 4)])])
+       returnShape := .one },
+   .name "S" [("a", .one), ("b", .one)]]
+
+/- Both struct expressions take the HOL route rather than the String fallback. -/
+#guard (match collectPanValueStructs programDeclsStructLater [] with
+  | some structs =>
+      panSemExpressionUsesHOLCached (panSemExpressionContextCache structs)
+        { (sourceCodeState false true) with structs := structs }
+        (.nField "a" (.nStruct "S" [("a", .const 1), ("b", .const 2)]))
+  | none => false)
+#guard (match collectPanValueStructs programDeclsStructLater [] with
+  | some structs =>
+      panSemExpressionUsesHOLCached (panSemExpressionContextCache structs)
+        { (sourceCodeState false true) with structs := structs }
+        (.op .add [.var .global "g",
+          .nField "b" (.nStruct "S" [("a", .const 3), ("b", .const 4)])])
+  | none => false)
+
+#guard observesWord
+  (panSemEvaluateRiscV64ProgramViaHOL sourceFfiContext
+    (programInput (sourceCodeState false true) 8)
+    10 sourcePrimitive sourceFfiHandler 20 programDeclsStructFirst "main" []) 5
+#guard observesWord
+  (evalPanValueFfiClockProgram sourceFfiContext
+    (initialProgram (sourceCodeState false true) 8)
+    10 sourcePrimitive sourceFfiHandler 20 programDeclsStructFirst "main" []
+    (memoryAccess := some (panSemBitVec64MemoryAccess (sourceCodeState false true)))
+    (evaluator := none)) 5
+
+#guard observesWord
+  (panSemEvaluateRiscV64ProgramViaHOL sourceFfiContext
+    (programInput (sourceCodeState false true) 8)
+    10 sourcePrimitive sourceFfiHandler 20 programDeclsStructLater "main" []) 5
+#guard observesWord
+  (evalPanValueFfiClockProgram sourceFfiContext
+    (initialProgram (sourceCodeState false true) 8)
+    10 sourcePrimitive sourceFfiHandler 20 programDeclsStructLater "main" []
+    (memoryAccess := some (panSemBitVec64MemoryAccess (sourceCodeState false true)))
+    (evaluator := none)) 5
+
+/- Without the struct declaration the initializer fails; both runners reject. -/
+private def programDeclsMissingStruct : List (Decl W) :=
+  [.decl .one "g" (.nField "a" (.nStruct "S" [("a", .const 1), ("b", .const 2)])),
+   .function
+     { name := "main", inline := false, exported := true, params := []
+       body := .return (.var .global "g"), returnShape := .one }]
+
+#guard (panSemEvaluateRiscV64ProgramViaHOL sourceFfiContext
+    (programInput (sourceCodeState false true) 8)
+    10 sourcePrimitive sourceFfiHandler 20 programDeclsMissingStruct "main" []).isNone
+#guard (evalPanValueFfiClockProgram sourceFfiContext
+    (initialProgram (sourceCodeState false true) 8)
+    10 sourcePrimitive sourceFfiHandler 20 programDeclsMissingStruct "main" []
+    (memoryAccess := some (panSemBitVec64MemoryAccess (sourceCodeState false true)))
+    (evaluator := none)).isNone
+
 /- This exercises both the declaration initializer and the entry body through
    the state-derived HOL route. The expected bytes come from the HOL probe. -/
 #guard observesWord
