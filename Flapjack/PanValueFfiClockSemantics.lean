@@ -1006,16 +1006,13 @@ def evalPanValueFfiClockProgramCodeCall
     evaluated declaration state.
 
     It is modelled on the `semantics s' start` tail of HOL's `semantics_decls`
-    (`cakeml/pancake/semantics/panSemScript.sml:861`), which runs
-    `decs_stcnames`, then `evaluate_decls`, then `semantics s' start`. It is not
-    an exact port and carries no `@[hol]` tag, for these reasons:
+    (`cakeml/pancake/semantics/panSemScript.sml:861`). It is not an exact port
+    and carries no `@[hol]` tag, for these reasons:
 
     - HOL's `semantics` calls `start` with no arguments (`Call NONE start []`),
       while this adapter takes arbitrary `arguments`.
     - HOL's `semantics` classifies Fail/Terminate/Diverge over every clock,
       while this adapter returns one fuel- and clock-bounded outcome.
-    - HOL's `decs_stcnames` starts from an empty context (`decs_stcnames []`),
-      while the Lean runners collect structs from the input's existing context.
     - This adapter adds the single-value return-shape check. -/
 def evalPanValueFfiClockProgramEntry
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
@@ -1046,9 +1043,10 @@ def evalPanValueFfiClockProgramEntry
     the entry call and its single-value return-shape check agree for the routed
     and generic evaluators. This is Flapjack infrastructure with no single HOL
     declaration. `evalPanValueFfiClockProgram_route_eq` uses it for the generic
-    program runner; the RV64 HOL-routed runner has no route-equality theorem
-    yet, because its route hypothesis would quantify over arbitrary locals,
-    globals and memory and cannot be discharged (open follow-up to #1245). -/
+    program runner. The RV64 HOL-routed runner has no route-equality theorem
+    yet: its guarded route falls back to `evalPanSemStateExp` and reads the
+    owner's memory domains and endianness, so it is not pointwise equal to
+    `evalPanValueExp` without a memory-relation or byte-ranged premise. -/
 theorem evalPanValueFfiClockProgramEntry_route_eq
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
@@ -1087,10 +1085,13 @@ theorem evalPanValueFfiClockProgramEntry_route_eq
     with the selected expression route, then run the entry call and enforce the
     single-value return shape.
 
-    It has no single HOL declaration: HOL's `semantics_decls` performs
-    `decs_stcnames`, `evaluate_decls` and `semantics s' start` in one
-    definition, while this runner splits them into a declaration phase with an
-    explicit expression route and the entry adapter above. -/
+    It has no single HOL declaration: HOL's `semantics_decls` runs
+    `decs_stcnames`, then `evaluate_decls`, then `semantics s' start`; this
+    runner performs the same sequence with the fuel/clock evaluator. The
+    differences from HOL are the ones listed on `evalPanValueFfiClockProgramEntry`,
+    plus the struct-context seed: HOL's `decs_stcnames []` starts from an empty
+    context, while this runner collects structs from the initial source
+    context. -/
 def evalPanValueFfiClockProgram
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
@@ -1108,6 +1109,33 @@ def evalPanValueFfiClockProgram
     Option (PanValueFfiClockResult α σ) := do
   let state ← evalPanValueDeclarations initial.source declarations
     (memoryAccess := memoryAccess) (evaluator := evaluator)
+  evalPanValueFfiClockProgramEntry context primitive handler state
+    (fuel := fuel) (entryFfi := initial.ffi) (clock := clock) entry arguments
+    (memoryAccess := memoryAccess) (memoryHandler := memoryHandler)
+    (evaluator := evaluator)
+
+/-- Evaluate a program with a route builder that receives the collected
+    structure context. `evalPanValueFfiClockProgram` is the constant-builder
+    case. The builder's evaluator is produced once and reused for the
+    declaration and entry phases, so the RV64 HOL-routed runner does not repeat
+    the declaration setup. -/
+def evalPanValueFfiClockProgramWithRoute
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (context : PanValueFfiContext α)
+    (initial : PanValueFfiProgramState α σ)
+    (clock : Nat)
+    (primitive : PanPrimitiveHandler α)
+    (handler : PanValueStatefulFfiHandler α σ)
+    (fuel : Nat) (declarations : List (Decl α))
+    (entry : FunName) (arguments : List (Exp α))
+    (memoryAccess : Option (PanValueMemoryAccess α) := none)
+    (memoryHandler : Option (PanValueMemoryFfiHandler α σ) := none)
+    (route : StructContext → Option (PanExprEvaluator α)) :
+    Option (PanValueFfiClockResult α σ) := do
+  let (state, evaluator) ← evalPanValueDeclarationsWithRoute initial.source declarations
+    memoryAccess route
   evalPanValueFfiClockProgramEntry context primitive handler state
     (fuel := fuel) (entryFfi := initial.ffi) (clock := clock) entry arguments
     (memoryAccess := memoryAccess) (memoryHandler := memoryHandler)
