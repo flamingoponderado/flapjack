@@ -14452,6 +14452,14 @@
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateDatatype.lean",
+    "lean_name": "aLookup_map_keyPreserving",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "ALOOKUP_MAP_3",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared alookup_map_3_typed in source_to_flat_init_probe.out: free variables follow source order, key and input/output value types are independent, and the membership-guarded key preservation and mapped lookup agree."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateDatatype.lean",
     "lean_name": "allocTags_invariant",
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "alloc_tags_invariant",
@@ -127433,7 +127441,7 @@
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
   "lean_name": "aLookup_map_keyPreserving",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared the HOL source and typed alookup_map_3 capture: three independent key, input-value and output-value types, membership-guarded first-component preservation, and the original mapped association lookup are retained; OPTION_MAP is Option.map."
+  "reviewer": "Compared the HOL source and typed alookup_map_3 capture: free variables follow source order; three independent key, input-value and output-value types, membership-guarded first-component preservation, and the original mapped association lookup are retained; OPTION_MAP is Option.map."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",

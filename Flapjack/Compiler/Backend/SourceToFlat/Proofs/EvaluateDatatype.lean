@@ -9,6 +9,13 @@ namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL
 open OracleInvariant
 
+/-- A key-preserving map commutes with association-list lookup. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "ALOOKUP_MAP_3"]
+theorem aLookup_map_keyPreserving {K A B : Type} (xs : List (K × A))
+    (f : K × A → K × B) (key : K) (keys : ∀ x ∈ xs, (f x).1 = x.1) :
+    holALookup (xs.map f) key = (holALookup xs key).map (fun value => (f (key, value)).2) :=
+  holALookup_map_keyPreserving xs f key keys
+
 /-- Appending after a namespace fold is equivalent to appending to its initial state. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "nsAppend_foldl'"]
 theorem nsAppend_foldl_prime {M N V C : Type} :
