@@ -7,17 +7,6 @@ import Mathlib.Data.List.Forall2
 /-! Association-list relations used by the pattern-binding simulation. -/
 namespace Flapjack.Compiler.Backend.FlatPattern
 
-/-- Association-list lookup searches the right list only when the left list
-does not contain the key. -/
-theorem holALookup_append {K V : Type} (left right : List (K × V)) (key : K) :
-    holALookup (left ++ right) key = (holALookup left key).orElse (fun _ => holALookup right key) := by
-  classical
-  induction left with
-  | nil => simp [holALookup]
-  | cons entry rest ih =>
-    obtain ⟨entryKey, value⟩ := entry
-    by_cases same : key = entryKey <;> simp [holALookup, same, ih]
-
 /-- Related association lists have related lookups when matching keys identify
 related values. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "LIST_REL_ALOOKUP_OPTREL"]

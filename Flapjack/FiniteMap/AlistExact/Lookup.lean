@@ -16,6 +16,20 @@ noncomputable def holALookup {K V : Type} (entries : List (K × V)) (key : K) : 
   | [] => none
   | (entryKey, value) :: rest => if key = entryKey then some value else holALookup rest key
 
+/-- Lookup in an appended association list first searches the left side. -/
+@[hol "HOL/src/finite_maps/alistScript.sml" "ALOOKUP_APPEND"]
+theorem holALookup_append {K V : Type} (left right : List (K × V)) (key : K) :
+    holALookup (left ++ right) key =
+      match holALookup left key with
+      | none => holALookup right key
+      | some value => some value := by
+  classical
+  induction left with
+  | nil => simp [holALookup]
+  | cons entry rest ih =>
+    obtain ⟨entryKey, value⟩ := entry
+    by_cases same : key = entryKey <;> simp [holALookup, same, ih]
+
 /-- Core association-list lookup succeeds exactly at a listed key. This
 Flapjack helper connects native lookup with key-domain reasoning used in the
 HOL proofs; it is not a port of a theorem about HOL ALOOKUP. Native lookup

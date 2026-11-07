@@ -1,4 +1,6 @@
 import Flapjack.Compiler.Backend.SourceEval.Proofs
+import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleCallback
+import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleRecording
 import Flapjack.EvaluateHOL.Definition
 import Flapjack.HolArb
 import Flapjack.Misc.OptionLeast
@@ -51,5 +53,33 @@ theorem extractOracle_isSome_succ {F : Type} (s : State F) (env : SemEnv Value)
     rfl
   · simp only [extractOracle, Flapjack.holOLeast, dif_neg later] at success
     contradiction
+
+/-- Extract events from evaluation with the original initial recording state. -/
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "get_oracle_def"]
+noncomputable def getOracle {Config F : Type} (ci : CompilerInstance Config)
+    (state : State F) (env : SemEnv Value) (decs : List Dec) : Nat → Option CompilerArgs :=
+  let recorded : EvalState := .evalOracle ⟨fun _ => ((0, 0), ci.configV ci.initState, []),
+    doEvalRecord ci, [[]], 0⟩
+  extractOracle { state with evalState := some recorded } env decs
+
+/-- Install an oracle into the original initial recording state. -/
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "put_oracle_def"]
+noncomputable def putOracle {Config : Type} (ci : CompilerInstance Config) (oracle : EvalOracleFun) :
+    Option EvalState :=
+  insertGenOracle ci id (fun args => args.1.1) oracle
+    (some (.evalOracle ⟨fun _ => ((0, 0), ci.configV ci.initState, []), doEvalRecord ci, [[]], 0⟩))
+
+/-- The original precondition for replacing an initial evaluator oracle. -/
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "precond_eval_state_def"]
+noncomputable def precondEvalState {Config F : Type} (oracle : EvalOracleFun)
+    (ci : CompilerInstance Config) (state : State F) (env : SemEnv Value) (decs : List Dec) : Prop :=
+  match state.evalState with
+  | none => True
+  | some (.evalDecs eds) =>
+    .evalDecs eds = mkInitEvalState ci ∧
+      oracleExtendedWellFormed (mkCompilerFunFromCi ci) oracle ∧
+      ∀ i r x, getOracle ci state env decs i = some r ∧ mkCompilerFunFromCi ci r = some x →
+        oracle i = r
+  | some (.evalOracle _) => False
 
 end Flapjack.Compiler.Backend.SourceEval.Proofs

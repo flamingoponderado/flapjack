@@ -15044,6 +15044,40 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "get_oracle_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleExtraction.lean",
+    "lean_name": "getOracle",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared typed get_oracle in source_eval_oracle_adjust_probe.out: independent compiler and FFI carriers; the initial recording oracle has a constant zero index, initial encoded configuration, empty declarations, recording callback, one empty environment generation and generation zero. The evaluated extraction inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "put_oracle_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleExtraction.lean",
+    "lean_name": "putOracle",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed put_oracle in source_eval_oracle_adjust_probe.out: insertion uses identity declaration transformation, the first component of the event index as shift, the supplied oracle and the original initial recording state."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "precond_eval_state_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleExtraction.lean",
+    "lean_name": "precondEvalState",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared typed precond_eval_state in source_eval_oracle_adjust_probe.out: NONE is true, EvalOracle false, and EvalDecs requires the original initial state, extended well-formedness and every compiler-defined extracted event to agree with the supplied oracle. The extraction inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+  },
+  {
+    "hol_path": "HOL/src/finite_maps/alistScript.sml",
+    "hol_name": "ALOOKUP_APPEND",
+    "lean_path": "Flapjack/FiniteMap/AlistExact/Lookup.lean",
+    "lean_name": "holALookup_append",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed alist_lookup_append in source_eval_oracle_adjust_probe.out: arbitrary independent key and value types, left and right lists followed by the key, and the original NONE/SOME lookup case."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
     "hol_name": "recorded_orac_wf_defined",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleRecording.lean",
     "lean_name": "recordedOracleWellFormed_defined",

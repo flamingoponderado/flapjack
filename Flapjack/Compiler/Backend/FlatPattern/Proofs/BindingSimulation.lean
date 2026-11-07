@@ -407,7 +407,6 @@ theorem compilePatBindings_con_selected_lookup (trace : BackendCommon.Tra) (i : 
       have : other.1.1 = entry.1.1 := by omega
       simp [this])
   rw [holALookup_append, lookup]
-  rfl
 
 /-- The nested pattern's generated variable evaluates to the projected field
 in any environment agreeing on the generated-name interval. -/
