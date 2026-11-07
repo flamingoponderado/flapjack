@@ -14451,6 +14451,14 @@
     "reviewer": "Compared the source local theorem and typed invariant_env_gen_inv_local replay: the original invariant premise uses the same index triple, independent compiler and FFI types, and canonical global-environment maps; the conclusion is the original environment-generation invariant."
   },
   {
+    "lean_name": "allDisjoint_elem",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/IndexInvariant.lean",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "ALL_DISJOINT_elem",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all_disjoint_elem_typed in source_to_flat_init_probe.out: the arbitrary element type and set list, universally quantified element and index, grouped disjointness, bound and EL membership premise, and EVERY I over MAPi conclusion agree. Sets are membership predicates and List.Forall id renders EVERY I."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/AllocDefsLookup.lean",
     "lean_name": "holEl_append_if",
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",

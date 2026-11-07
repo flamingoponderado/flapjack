@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalSlots
+import Flapjack.Misc.ListEl
 import Mathlib.Data.Set.Basic
 
 /-! Index blocks and allocated indices used by the source-to-flat proof. -/
@@ -63,6 +64,26 @@ theorem idxBlock_union_final (start finish : NextIndices) (ordered : idxPrev sta
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "ALL_DISJOINT_DEF"]
 def allDisjoint {α : Type} (sets : List (Set α)) : Prop :=
   ∀ i j (hi : i < sets.length) (hj : j < sets.length), i ≠ j → sets[i] ∩ sets[j] = ∅
+
+/-- An element of one disjoint set cannot occur at a different list index. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "ALL_DISJOINT_elem"]
+theorem allDisjoint_elem {α : Type} (xs : List (Set α)) :
+    ∀ (x : α) (i : Nat), allDisjoint xs ∧ i < xs.length ∧ x ∈ holEl i xs →
+      List.Forall id (xs.mapIdx fun j y => j = i ∨ x ∉ y) := by
+  intro x i ⟨disjoint, bound, member⟩
+  rw [holEl_eq_getElem i xs bound] at member
+  rw [List.forall_iff_forall_mem, List.forall_mem_iff_getElem]
+  intro j jBound
+  simp only [List.getElem_mapIdx]
+  by_cases same : j = i
+  · exact Or.inl same
+  · refine Or.inr ?_
+    intro other
+    have bound' : j < xs.length := by simpa using jBound
+    have empty := disjoint i j bound bound' (Ne.symm same)
+    have both : x ∈ xs[i] ∩ xs[j] := ⟨member, other⟩
+    rw [empty] at both
+    exact both
 
 /-- Relate global-slot length to the last counter, as in the source oracle
 configuration; no oracle yields only the end-counter bound. -/
