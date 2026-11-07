@@ -998,6 +998,38 @@ def evalPanValueFfiClockProgramCodeCall
     (memoryAccess := memoryAccess) (contracts := contracts)
     (memoryHandler := memoryHandler) (evaluator := evaluator)
 
+/-! The declaration-to-entry tail shared by the generic program runner and the
+    RV64 HOL-routed runner: evaluate the entry call from an already-evaluated
+    declaration state, then enforce `panSem`'s single-value return shape. The
+    state supplies the structure context, code map, globals, memory and return
+    metadata, so the entry call and its shape check always read the same
+    evaluated declaration state. This adapter itself is Flapjack infrastructure
+    with no single HOL declaration. -/
+def evalPanValueFfiClockProgramEntry
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (context : PanValueFfiContext α)
+    (primitive : PanPrimitiveHandler α)
+    (handler : PanValueStatefulFfiHandler α σ)
+    (state : PanValueProgramState α)
+    (ffi : FfiState σ) (clock : Nat)
+    (fuel : Nat) (entry : FunName) (arguments : List (Exp α))
+    (memoryAccess : Option (PanValueMemoryAccess α) := none)
+    (memoryHandler : Option (PanValueMemoryFfiHandler α σ) := none)
+    (evaluator : Option (PanExprEvaluator α) := none) :
+    Option (PanValueFfiClockResult α σ) := do
+  let (outcome, nextClock) ← evalPanValueFfiClockProgramCodeCall context primitive
+    handler state fuel state.globals state.memory ffi clock entry arguments
+    (memoryAccess := memoryAccess) (memoryHandler := memoryHandler) (evaluator := evaluator)
+  match lookupInfo entry state.returnShapes, outcome with
+  | some shape, .control (.returned locals globals memory ffi [value]) =>
+      if panShapeMatches (panValueShape state.structs value) shape then
+        some (.control (.returned locals globals memory ffi [value]), nextClock)
+      else none
+  | some _, .control (.returned _ _ _ _ _) => none
+  | _, outcome => some (outcome, nextClock)
+
 def evalPanValueFfiClockProgram
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
@@ -1015,16 +1047,9 @@ def evalPanValueFfiClockProgram
     Option (PanValueFfiClockResult α σ) := do
   let state ← evalPanValueDeclarations initial.source declarations
     (memoryAccess := memoryAccess) (evaluator := evaluator)
-  let (outcome, nextClock) ← evalPanValueFfiClockProgramCodeCall context primitive
-    handler state fuel state.globals state.memory initial.ffi clock entry arguments
-    (memoryAccess := memoryAccess) (memoryHandler := memoryHandler) (evaluator := evaluator)
-  match lookupInfo entry state.returnShapes, outcome with
-  | some shape, .control (.returned locals globals memory ffi [value]) =>
-      if panShapeMatches (panValueShape state.structs value) shape then
-        some (.control (.returned locals globals memory ffi [value]), nextClock)
-      else none
-  | some _, .control (.returned _ _ _ _ _) => none
-  | _, outcome => some (outcome, nextClock)
+  evalPanValueFfiClockProgramEntry context primitive handler state initial.ffi clock fuel
+    entry arguments (memoryAccess := memoryAccess) (memoryHandler := memoryHandler)
+    (evaluator := evaluator)
 
 /-- A pointwise-correct route preserves the full program result from
     declaration initializers through the clocked entry call. -/
@@ -1047,7 +1072,7 @@ theorem evalPanValueFfiClockProgram_route_eq
   have hdecl := evalPanValueDeclarations_route_eq initial.source.bytesInWord access run
     (fun structs globals memory base top e => h structs (fun _ => none) globals memory base top e)
     initial.source rfl decls
-  simp only [evalPanValueFfiClockProgram, hdecl]
+  simp only [evalPanValueFfiClockProgram, evalPanValueFfiClockProgramEntry, hdecl]
   cases hd : evalPanValueDeclarations initial.source decls access none with
   | none => simp
   | some state =>
