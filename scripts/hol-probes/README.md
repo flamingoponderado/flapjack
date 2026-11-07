@@ -1358,11 +1358,9 @@ scripts/hol-probes/regenerate.sh`. These rows preserve the unspecified
 
 `semantics_props_implements_probe.out` prints the proved HOL
 `semanticsPropsTheory.implements'_trans` conclusion from
-`cakeml/semantics/proofs/semanticsPropsScript.sml:285-295`. The structural
-Lean analogue and behavior-extension regressions are in
-`Flapjack.Test.SemanticsPropsParity`; the HOL `llist` to Lean
-`CakeLazyList` carrier bridge remains unproved, so this evidence does not
-qualify those declarations for exact HOL tags.
+`cakeml/semantics/proofs/semanticsPropsScript.sml:285-295`. The corresponding
+HOL-carrier theorem is `SemanticsPropsHOL.implementsPrimeTransHOL` in
+`Flapjack/SemanticsProps/Implements.lean`.
 
 The probes currently cover the small `loop_to_word` slice used by
 `Flapjack.Test.LoopToWord`, the `panSem$mem_load` boundary used by
@@ -9560,8 +9558,9 @@ replays and captures the original local recursive-function lookup proof;
 `build_rec_env_merge` and `nsAppend_nsEmpty` capture recursive bindings and the
 two-sided namespace identity, including the former's unused polymorphic binder.
 
-`source_to_flat_init_probe.out` also replays the local `FST_PAIR_MAP_I` and
-`ctor_same_type_SND` and `ctor_same_type_refl` proofs with inferred types visible.
+`source_to_flat_init_probe.out` also replays the local `FST_PAIR_MAP_I`,
+`ctor_same_type_SND`, `ctor_same_type_refl`, and `eta2` proofs with inferred
+types visible.
 
 `source_to_flat_init_probe.out` captures the typed original source-to-flat
 initialization definitions and evaluates the initial constructor entries and

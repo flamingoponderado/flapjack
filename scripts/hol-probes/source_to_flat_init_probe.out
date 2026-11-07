@@ -1,3 +1,4 @@
+eta2_replay=∀(f :α -> β -> γ) (x :α). (λ(y :β). f x y) = f x
 ctor_same_type_refl_replay=ctor_same_type (x :(α # β) option) x
 ctor_same_type_snd_replay=ctor_same_type (SOME (x :α # β)) (SOME (y :γ # β)) ⇔ SND x = SND y
 fst_pair_map_i_replay=FST (((I :α -> α) ## (f :γ -> β)) (x :α # γ)) = FST x

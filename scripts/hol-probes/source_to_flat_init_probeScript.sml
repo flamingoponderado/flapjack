@@ -6,6 +6,8 @@ fun show_thm label th =
   if null (hyp th) then (print label; print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
 fun show_eval label tm = (print label; print_term (rhs (concl (EVAL tm))); print "\n");
+val eta2_replay = Q.prove (`!f x. (\y. f x y) = f x`, metis_tac []);
+val _ = show_thm "eta2_replay=" eta2_replay;
 val ctor_same_type_refl_replay = Q.prove (
   `flatSem$ctor_same_type x x`,
   Cases_on `x` >> rw [flatSemTheory.ctor_same_type_def] >>

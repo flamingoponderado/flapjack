@@ -340,6 +340,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "eta2",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/PatternStamps.lean",
+  "lean_name": "eta2",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared eta2_replay in source_to_flat_init_probe.out: universal quantifiers, three independent types, and equality of the eta-expanded and partially applied functions agree. The local HOL proof is replayed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
   "hol_name": "ctor_same_type_refl",
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/PatternStamps.lean",
   "lean_name": "ctorSameType_refl",

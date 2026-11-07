@@ -6,6 +6,12 @@ import Flapjack.Compiler.Backend.Semantics.FlatSem.PatternMatch
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.SemanticPrimitivesHOL
 
+/-- Eta expansion of the second argument leaves a partially applied function unchanged. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "eta2"]
+theorem eta2 {α β γ : Type} : ∀ (f : α → β → γ) (x : α), (fun y => f x y) = f x := by
+  intro f x
+  rfl
+
 /-- Every optional constructor identifier has the same type as itself. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "ctor_same_type_refl"]
 theorem ctorSameType_refl {α β : Type} (x : Option (α × β)) :
