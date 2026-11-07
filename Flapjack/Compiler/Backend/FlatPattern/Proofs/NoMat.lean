@@ -309,19 +309,6 @@ theorem noMat_compilePatRhs (trace : Tra) (base : Nat) (value : FlatLang.Exp)
   exact valueSafe
 
 
-private theorem zip_right_mem {α β : Type} (xs : List α) (ys : List β) (a : α) (b : β)
-    (member : (a, b) ∈ xs.zip ys) : b ∈ ys := by
-  induction xs generalizing ys with
-  | nil => simp at member
-  | cons x xs ih =>
-    cases ys with
-    | nil => simp at member
-    | cons y ys =>
-      simp only [List.zip_cons_cons, List.mem_cons, Prod.mk.injEq] at member
-      rcases member with ⟨_, rfl⟩ | member
-      · simp
-      · exact List.mem_cons_of_mem _ (ih ys member)
-
 /-- Both implementations of branch compilation preserve match-freedom. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "compile_pats_no_Mat"]
 theorem noMat_compilePats (default value : FlatLang.Exp) (rows : List (FlatLang.Pat × FlatLang.Exp))
@@ -353,7 +340,7 @@ theorem noMat_compilePats (default value : FlatLang.Exp) (rows : List (FlatLang.
     rcases member with rfl | rfl | ⟨⟨pattern, branch⟩, row, rfl⟩
     · exact valueSafe
     · exact defaultSafe
-    · exact branchesSafe branch (zip_right_mem _ _ pattern branch row)
+    · exact branchesSafe branch (List.of_mem_zip row).2
 
 
 /-- Compiling an expression eliminates every source match. -/

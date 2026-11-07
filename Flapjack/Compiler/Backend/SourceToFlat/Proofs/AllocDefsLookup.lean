@@ -122,22 +122,12 @@ theorem globalEnvInv_allocDefs (genv : GlobalEnv)
   · intro id arity stamp lookup
     cases id <;> simp [nsEmpty, nsLookup] at lookup
 
-private theorem lookup_mem {α : Type} (entries : List (VarN × α)) (name : VarN) (value : α)
+/-- Native association-list lookup identifies a member. This Flapjack helper
+has no separate HOL declaration. -/
+theorem lookup_mem {K V : Type} [DecidableEq K] (entries : List (K × V)) (name : K) (value : V)
     (lookup : entries.lookup name = some value) : (name, value) ∈ entries := by
-  induction entries with
-  | nil => simp at lookup
-  | cons head tail ih =>
-    rcases head with ⟨key, current⟩
-    by_cases same : name = key
-    · subst key
-      simp at lookup
-      subst current
-      simp
-    · have different : (name == key) = false := by
-        change decide (name = key) = false
-        simp [same]
-      simp only [List.lookup_cons, different] at lookup
-      exact List.mem_cons_of_mem _ (ih lookup)
+  obtain ⟨before, after, rfl, _⟩ := List.lookup_eq_some_iff.mp lookup
+  simp
 
 /-- Distinct names make membership determine lookup; this is list infrastructure
 for the original initializer proof, with no separate HOL declaration. -/

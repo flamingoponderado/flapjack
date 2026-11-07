@@ -804,31 +804,6 @@ theorem doEval_oracle_envGenFuture {C : Type} [Nonempty C]
       rw [compiled] at future
       simpa [envGenFutureRel, nextCfg] using future
 
-/-- Flapjack list infrastructure: expose the six operands used by the Eval proof. -/
-theorem list_length_six {α : Type} (xs : List α) (length : xs.length = 6) :
-    ∃ a b c d e f, xs = [a, b, c, d, e, f] := by
-  cases xs with
-  | nil => simp at length
-  | cons a xs =>
-    cases xs with
-    | nil => simp at length
-    | cons b xs =>
-      cases xs with
-      | nil => simp at length
-      | cons c xs =>
-        cases xs with
-        | nil => simp at length
-        | cons d xs =>
-          cases xs with
-          | nil => simp at length
-          | cons e xs =>
-            cases xs with
-            | nil => simp at length
-            | cons f xs =>
-              cases xs with
-              | nil => exact ⟨a, b, c, d, e, f, rfl⟩
-              | cons _ _ => simp at length
-
 /-- A successful oracle-mode source Eval on related arguments yields a
 successful flat Eval on the last two arguments, with the same source oracle
 entry and corresponding incremental compilation result. The later declaration

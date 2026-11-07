@@ -630,19 +630,6 @@ theorem setGlobals_compilePats (cfg : Config) (naive : Bool) (t : Tra) (n : Nat)
     simp only [compilePats, Bool.false_eq_true, ↓reduceIte]
     rw [result, allEmpty]
 
-private theorem esgcFree_zip_right_mem {α β : Type} (xs : List α) (ys : List β) (a : α) (b : β)
-    (member : (a, b) ∈ xs.zip ys) : b ∈ ys := by
-  induction xs generalizing ys with
-  | nil => simp at member
-  | cons x xs ih =>
-    cases ys with
-    | nil => simp at member
-    | cons y ys =>
-      simp only [List.zip_cons_cons, List.mem_cons, Prod.mk.injEq] at member
-      rcases member with ⟨_, rfl⟩ | member
-      · simp
-      · exact List.mem_cons_of_mem _ (ih ys member)
-
 /-- Both implementations of branch compilation preserve global-initialization safety. -/
 theorem esgcFree_compilePats (cfg : Config) (naive : Bool) (trace : Tra) (base : Nat)
     (value default : FlatLang.Exp) (rows : List (FlatLang.Pat × FlatLang.Exp))
@@ -668,7 +655,7 @@ theorem esgcFree_compilePats (cfg : Config) (naive : Bool) (trace : Tra) (base :
     simp only [compilePats, ↓reduceIte]
     apply esgcFree_naivePatternMatches trace value default _ valueSafe defaultSafe
     intro pattern branch member
-    exact branchesSafe branch (esgcFree_zip_right_mem _ _ pattern branch member)
+    exact branchesSafe branch (List.of_mem_zip member).2
 
 
 

@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.FlatPattern.Proofs.GeneratedNames
 import Flapjack.FiniteMap.AlistExact.LookupAgreement
 import Flapjack.Misc.Option.Rel
 import Batteries.Data.List.Basic
+import Mathlib.Data.List.Forall2
 
 /-! Association-list relations used by the pattern-binding simulation. -/
 namespace Flapjack.Compiler.Backend.FlatPattern
@@ -120,21 +121,6 @@ theorem condTrue {A : Type} (condition : Bool) (yes no : A) (isTrue : condition 
     (if condition then yes else no) = yes := by
   simp [isTrue]
 
-/-- Flapjack helper: list relation under equality is list equality. This is
-used to state HOL's equality specializations without duplicating their proof. -/
-private theorem forall₂_eq_iff {A : Type} (xs ys : List A) :
-    List.Forall₂ Eq xs ys ↔ xs = ys := by
-  constructor
-  · intro related
-    induction related with
-    | nil => rfl
-    | cons same tail ih => cases same; simp [ih]
-  · intro same
-    subst ys
-    induction xs with
-    | nil => exact .nil
-    | cons x xs ih => exact .cons rfl ih
-
 /-- Equal filtered lists remain equal after compatible narrowing. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "FILTER_EQ_MONO"]
 theorem filterEqMono {A : Type} (p1 p2 p3 p4 : A → Bool) (xs ys : List A)
@@ -143,9 +129,9 @@ theorem filterEqMono {A : Type} (p1 p2 p3 p4 : A → Bool) (xs ys : List A)
     (rightNarrow : ∀ y ∈ ys, p4 y = true → p2 y = true)
     (agree : ∀ x ∈ xs, ∀ y ∈ ys, x = y → p3 x = p4 y) :
     xs.filter p3 = ys.filter p4 := by
-  apply (forall₂_eq_iff _ _).mp
-  exact listRelFilterMono Eq p1 p3 p2 p4 xs ys
-    ((forall₂_eq_iff _ _).mpr filtered) leftNarrow rightNarrow agree
+  have related := listRelFilterMono Eq p1 p3 p2 p4 xs ys
+    (by simpa only [List.forall₂_eq_eq_eq] using filtered) leftNarrow rightNarrow agree
+  simpa only [List.forall₂_eq_eq_eq] using related
 
 /-- Filtering a list and then narrowing agrees with narrowing its filtered
 result. -/

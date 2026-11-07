@@ -265,23 +265,6 @@ def initGlobalEnvInv {α : Type} (genv : GlobalEnv) (compMap : Environment) (env
           | some (tyId, ctors) => genv.tys.lookup tyId = some ctors
 end InitialEnv
 
-private theorem constructorLookup_member {α : Type} (entries : List (ConN × α)) (name : ConN) (value : α)
-    (found : entries.lookup name = some value) : (name, value) ∈ entries := by
-  induction entries with
-  | nil => simp at found
-  | cons head tail ih =>
-    obtain ⟨key, current⟩ := head
-    by_cases same : name = key
-    · subst key
-      simp at found
-      subst current
-      simp
-    · have different : (name == key) = false := by
-        change decide (name = key) = false
-        simp [same]
-      simp only [List.lookup_cons, different] at found
-      exact List.mem_cons_of_mem _ (ih found)
-
 /-- The initialization condition supplies the global environment invariant. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "init_global_env_inv_imp"
   (fmap_as_finite_support := [c, tys])]
@@ -302,7 +285,7 @@ theorem initGlobalEnvInv_imp (genv : GlobalEnv) (compMap : Environment) (env : S
       cases id with
       | long module id => simp [nsLookup] at found
       | short name =>
-        have member := constructorLookup_member entries name (arity, stamp) (by simpa [nsLookup] using found)
+        have member := lookup_mem entries name (arity, stamp) (by simpa [nsLookup] using found)
         have item := entriesValid (name, arity, stamp) member
         cases selected : nsLookup compMap.c (.short name) with
         | none => simp [selected] at item

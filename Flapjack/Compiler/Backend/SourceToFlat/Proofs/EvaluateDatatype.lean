@@ -241,23 +241,6 @@ private theorem constructorLookup_exists_iff_key_mem {α : Type} (entries : List
       simp
     · simp [List.lookup_cons, BEq.beq, equal, ih]
 
-private theorem constructorLookup_mem {α : Type} (entries : List (ConN × α)) (name : ConN) (value : α)
-    (lookup : entries.lookup name = some value) : (name, value) ∈ entries := by
-  induction entries with
-  | nil => simp at lookup
-  | cons head tail ih =>
-    rcases head with ⟨key, current⟩
-    by_cases same : name = key
-    · subst key
-      simp at lookup
-      subst current
-      simp
-    · have different : (name == key) = false := by
-        change decide (name = key) = false
-        simp [same]
-      simp only [List.lookup_cons, different] at lookup
-      exact List.mem_cons_of_mem _ (ih lookup)
-
 /-- A named source constructor with a unique name appears in the allocator's
 entry list with its source arity. -/
 theorem allocatedConstructorEntries_find {M A : Type} (constructors : List (ConN × List A))
@@ -879,7 +862,7 @@ theorem globalEnvInv_allocTags (genv : GlobalEnv) (idx stamp : Nat)
     | long moduleName rest => simp [nsLookup, alistToNs] at lookup
     | short name =>
       change (buildConstrs stamp constructors).reverse.lookup name = some (arity, sourceStamp) at lookup
-      have sourceMember := List.mem_reverse.mp (constructorLookup_mem _ name (arity, sourceStamp) lookup)
+      have sourceMember := List.mem_reverse.mp (lookup_mem _ name (arity, sourceStamp) lookup)
       simp only [buildConstrs, List.mem_map] at sourceMember
       obtain ⟨constructor, constructorMember, equality⟩ := sourceMember
       rcases constructor with ⟨constructorName, args⟩
