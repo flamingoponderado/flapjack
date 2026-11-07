@@ -276,14 +276,6 @@ theorem envRel_growth (old new : GlobalEnv) (growth : GlobalGrowth old new)
     | bind name source env flatEnv flat envRel valueRel =>
       exact .bind new name source env tail flat (ih env envRel) (valueRel_growth old new growth source flat valueRel)
 
-/-- Pointwise value relationships survive growth. -/
-theorem valueList_growth (old new : GlobalEnv) (growth : GlobalGrowth old new)
-    (source : List Value) (flat : List FlatSem.Value)
-    (related : List.Forall₂ (ValueRel old) source flat) : List.Forall₂ (ValueRel new) source flat := by
-  induction related with
-  | nil => exact .nil
-  | cons head tail ih => exact .cons (valueRel_growth old new growth _ _ head) ih
-
 /-- Store entries remain related when the global environment is extended. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "sv_rel_weak"
   (fmap_as_finite_support := [c, tys])]
@@ -297,7 +289,7 @@ theorem storeValueRel_weak (old : GlobalEnv) (source : StoreValue Value)
   cases related with
   | refv rel => exact .refv (valueRel_growth old new growth _ _ rel)
   | w8array bytes => exact .w8array bytes
-  | varray rel => exact .varray (valueList_growth old new growth _ _ rel)
+  | varray rel => exact .varray (rel.imp (valueRel_growth old new growth))
   | thunk mode rel => exact .thunk mode (valueRel_growth old new growth _ _ rel)
 
 namespace StoreListWeakPort

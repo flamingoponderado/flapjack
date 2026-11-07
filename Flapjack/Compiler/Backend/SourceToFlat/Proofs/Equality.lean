@@ -20,16 +20,6 @@ theorem constructor_lookup_eq_iff (genv : GlobalEnv) (ok : genvCOk genv.c)
   · rintro ⟨rfl, rfl⟩
     exact Option.some.inj (h1.symm.trans h2)
 
-/-- The map's same-type condition connects the two semantics' type tests.
-This is Flapjack infrastructure over the ported `genvCOk` condition. -/
-theorem constructor_lookup_same_type (genv : GlobalEnv) (ok : genvCOk genv.c)
-    (cn1 cn2 : FlatLang.CtorId × FlatLang.TypeId) (arity1 arity2 : Nat) (s1 s2 : Stamp)
-    (h1 : genv.c.lookup (cn1, arity1) = some s1)
-    (h2 : genv.c.lookup (cn2, arity2) = some s2) :
-    (SemanticPrimitivesHOL.ctorSameType (some s1) (some s2) = true ↔
-      FlatSem.ctorSameType (some cn1) (some cn2)) :=
-  ok.2.2.2.1 cn1 cn2 arity1 arity2 s1 s2 h1 h2
-
 /-- Named-constructor equality follows from the list induction hypothesis and
 the original constructor-map consistency conditions. This is a Flapjack case
 lemma over the factored value relation. -/
@@ -45,7 +35,7 @@ theorem equality_constructor_step (genv : GlobalEnv) (ok : genvCOk genv.c)
   have lenXs := relXs.length_eq
   have lenYs := relYs.length_eq
   have keyEq := constructor_lookup_eq_iff genv ok cn1 cn2 xs.length ys.length s1 s2 lookup1 lookup2
-  have typeEq := constructor_lookup_same_type genv ok cn1 cn2 xs.length ys.length s1 s2 lookup1 lookup2
+  have typeEq := ok.2.2.2.1 cn1 cn2 xs.length ys.length s1 s2 lookup1 lookup2
   have matchEq : (s1 = s2 ∧ xs.length = ys.length) ↔
       (cn1 = cn2 ∧ fxs.length = fys.length) := by
     simp only [← lenXs, ← lenYs]
