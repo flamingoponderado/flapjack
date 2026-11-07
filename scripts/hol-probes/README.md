@@ -9664,6 +9664,8 @@ replays the local `not_abort_IMP_cases`, `build_tdefs_no_mod`,
 `nsAppend_foldl'`, and `nsAppend_foldl` proofs.
 It also captures the typed `alloc_tags_invariant`, `alloc_tags1_imp`, and
 `ALOOKUP_MAP_3` statements for source comparison.
+The typed `pmatch_invariant` capture records the full invariant and pattern
+simulation relation with independent compiler and FFI carriers.
 It captures `INJ_DEF` and `some_f_inj_eq` with inferred types and replays the
 local `FST_SND_EQ_CASE` proof with all four component types visible.
 It also captures `EL_APPEND_IF`, `ALL_DISJOINT_DEF`, and `ALL_DISJOINT_elem` and replays the local

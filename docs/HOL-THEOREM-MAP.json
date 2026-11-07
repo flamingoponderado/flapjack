@@ -1974,6 +1974,15 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "pmatch_invariant",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/PatternRows/Invariant.lean",
+  "lean_name": "pmatch_invariant",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["c", "tys"],
+  "reviewer": "Compared pmatch_invariant_typed in source_to_flat_init_probe.out: the original four grouped invariant, full environment relation, constructor-map equality and value relation premises imply the same source and flat empty-binding match-result relation. Compiler and FFI carriers are independent; HOL inhabitance is explicit. The global-environment c and tys finite maps use the canonical finite-support representation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
   "hol_name": "can_pmatch_all_IMP_pmatch_rows",
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/PatternRows/Invariant.lean",
   "lean_name": "canPmatchAll_implies_pmatchRows",

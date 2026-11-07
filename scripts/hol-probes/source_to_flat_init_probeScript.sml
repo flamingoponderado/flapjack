@@ -6,6 +6,7 @@ fun show_thm label th =
   if null (hyp th) then (print label; print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
 fun show_eval label tm = (print label; print_term (rhs (concl (EVAL tm))); print "\n");
+val _ = show_thm "pmatch_invariant_typed=" source_to_flatProofTheory.pmatch_invariant;
 val alookup_alloc_defs_el_replay = Q.prove (
   `!funs l n m. ALL_DISTINCT (MAP (\(x,y,z). x) funs) /\ n < LENGTH funs ==>
     ?tt. ALOOKUP (source_to_flat$alloc_defs m l (MAP FST (REVERSE funs))) (EL n (MAP FST funs)) =
