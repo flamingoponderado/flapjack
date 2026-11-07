@@ -16,17 +16,15 @@ theorem compile_semantics {F : Type} (state : State F) (env : SemEnv Value)
   SourceLet.compile_semantics state env program outcome noFail source
 
 /-- The source-to-source driver preserves observable semantics when composed
-into an inserted Eval oracle. Source and carrier correspondence remain pending
-review. -/
+into an inserted Eval oracle. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_sourceProofScript.sml" "compile_semantics_oracle"]
 theorem compile_semantics_oracle {Config F : Type}
-    (ci : SourceEval.Proofs.CompilerInstance Config) (f : List Dec → List Dec)
+    (f : List Dec → List Dec) (ci : SourceEval.Proofs.CompilerInstance Config)
     (state : State F) (env : SemEnv Value) (program : List Dec) (outcome : HolBehaviour)
-    (inserted : SourceEval.Proofs.isInsertOracle ci f state.evalState)
-    (noFail : ¬ semanticsProg state env program .fail)
-    (source : semanticsProg state env program outcome) :
+    (premises : SourceEval.Proofs.isInsertOracle ci f state.evalState ∧
+      ¬ semanticsProg state env program .fail ∧ semanticsProg state env program outcome) :
     semanticsProg { state with evalState := SourceEval.Proofs.adjustOracle ci (compile ∘ f) state.evalState }
       env program outcome :=
-  SourceLet.compile_semantics_oracle ci f state env program outcome inserted noFail source
+  SourceLet.compile_semantics_oracle f ci state env program outcome premises
 
 end Flapjack.Compiler.Backend.SourceToSource

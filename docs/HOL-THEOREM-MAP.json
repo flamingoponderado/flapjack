@@ -13998,16 +13998,18 @@
     "hol_name": "compile_semantics_oracle",
     "lean_path": "Flapjack/Compiler/Backend/SourceLet/Proofs/Semantics.lean",
     "lean_name": "compile_semantics_oracle",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original and evaluator induction captured in the source evaluator and source pass HOL probes. Complete source evaluator, pass, AST and imported carrier correspondence remain pending review."
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared compile_semantics_oracle in source_let_proof_probe.out: independent compiler-instance and FFI carriers, the inserted-oracle, non-failure and source-semantics conjunction, and the adjusted oracle composed with compile_decs all match the reviewed source and oracle definitions. Evaluation inherits reals_as_rational_cuts."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_sourceProofScript.sml",
     "hol_name": "compile_semantics_oracle",
     "lean_path": "Flapjack/Compiler/Backend/SourceToSource/Proofs.lean",
     "lean_name": "compile_semantics_oracle",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original and evaluator induction captured in the source evaluator and source pass HOL probes. Complete source evaluator, pass, AST and imported carrier correspondence remain pending review."
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared compile_semantics_oracle in source_to_source_proof_probe.out: independent compiler-instance and FFI carriers, the inserted-oracle, non-failure and source-semantics conjunction, and the adjusted oracle composed with the source-to-source driver match the reviewed source and oracle definitions. Evaluation inherits reals_as_rational_cuts."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",

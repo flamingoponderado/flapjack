@@ -35,18 +35,16 @@ theorem compile_semantics {F : Type} (state : State F) (env : SemEnv Value)
   cases outcome <;> simpa only [semanticsProg, observations] using source
 
 /-- Let-lifting preserves observable semantics when composed into an inserted
-Eval oracle. Source evaluator and carrier correspondence remain pending review. -/
+Eval oracle. -/
 @[hol "cakeml/compiler/backend/proofs/source_letProofScript.sml" "compile_semantics_oracle"]
 theorem compile_semantics_oracle {Config F : Type}
-    (ci : SourceEval.Proofs.CompilerInstance Config) (f : List Dec → List Dec)
+    (f : List Dec → List Dec) (ci : SourceEval.Proofs.CompilerInstance Config)
     (state : State F) (env : SemEnv Value) (program : List Dec) (outcome : HolBehaviour)
-    (inserted : SourceEval.Proofs.isInsertOracle ci f state.evalState)
-    (noFail : ¬ semanticsProg state env program .fail)
-    (source : semanticsProg state env program outcome) :
+    (premises : SourceEval.Proofs.isInsertOracle ci f state.evalState ∧
+      ¬ semanticsProg state env program .fail ∧ semanticsProg state env program outcome) :
     semanticsProg { state with evalState := SourceEval.Proofs.adjustOracle ci (compileDecs ∘ f) state.evalState }
       env program outcome := by
-  apply SourceEval.Proofs.adjust_oracle_semantics_prog compileDecs f ci ?_ state env program outcome
-    ⟨inserted, noFail, source⟩
+  apply SourceEval.Proofs.adjust_oracle_semantics_prog compileDecs f ci ?_ state env program outcome premises
   intro s e ds s' result premises
   exact compile_decs_correct s e ds s' result premises
 
