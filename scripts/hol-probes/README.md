@@ -9672,6 +9672,8 @@ It also captures `EL_APPEND_IF`, `ALL_DISJOINT_DEF`, and `ALL_DISJOINT_elem` and
 `ALOOKUP_alloc_defs_EL` and `EL_add_SOME_SOME` proofs.
 The typed `ALL_DISJOINT_MOVE` and `ALL_DISJOINT_SUBSETS` captures retain their
 original list-update, subset, and list-relation premises.
+The same probe captures `ALL_DISJOINT_CONS` and `idx_types_FORALL` with their
+original conjunct and constructor order.
 The same probe captures `bind_locals_fold_nsBind`, `Boolv_11`, and
 `evaluate_Bool`, and replays the local `opt_case_bool_eq` proof.
 

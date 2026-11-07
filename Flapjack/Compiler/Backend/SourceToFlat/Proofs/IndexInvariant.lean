@@ -75,6 +75,37 @@ theorem allDisjoint_iff_bounded {α : Type} (sets : List (Set α)) :
   · intro disjoint i j ⟨hi, hj, ne⟩
     simpa only [holEl_eq_getElem i sets hi, holEl_eq_getElem j sets hj] using disjoint i j hi hj ne
 
+/-- Pairwise disjointness is an equivalent indexed form of the HOL relation. -/
+private theorem allDisjoint_iff_pairwise {α : Type} (sets : List (Set α)) :
+    allDisjoint sets ↔ sets.Pairwise Disjoint := by
+  rw [allDisjoint_iff_bounded, List.pairwise_iff_getElem]
+  constructor
+  · intro disjoint i j hi hj lt
+    exact Set.disjoint_iff_inter_eq_empty.mpr (disjoint i j hi hj (Nat.ne_of_lt lt))
+  · intro disjoint i j hi hj ne
+    rcases Nat.lt_or_gt_of_ne ne with lt | gt
+    · exact Set.disjoint_iff_inter_eq_empty.mp (disjoint i j hi hj lt)
+    · exact Set.disjoint_iff_inter_eq_empty.mp (disjoint j i hj hi gt).symm
+
+/-- Disjointness of a singleton and of a list with its first two sets combined. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "ALL_DISJOINT_CONS"]
+theorem allDisjoint_cons {α : Type} (x y : Set α) (zs : List (Set α)) :
+    (allDisjoint [x] ↔ True) ∧
+      (allDisjoint (x :: y :: zs) ↔ x ∩ y = ∅ ∧ allDisjoint ((x ∪ y) :: zs)) := by
+  rw [← Set.disjoint_iff_inter_eq_empty]
+  simp [allDisjoint_iff_pairwise, List.pairwise_cons, Set.disjoint_union_left]
+  aesop
+
+/-- A predicate over index kinds holds everywhere exactly when it holds for each constructor. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "idx_types_FORALL"]
+theorem indexKind_forall (P : IndexKind → Prop) :
+    (∀ x, P x) ↔ P .variable ∧ P .type ∧ P .exception := by
+  constructor
+  · intro all; exact ⟨all _, all _, all _⟩
+  · intro cases x
+    obtain ⟨a, b, c⟩ := cases
+    cases x <;> assumption
+
 /-- An element of one disjoint set cannot occur at a different list index. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "ALL_DISJOINT_elem"]
 theorem allDisjoint_elem {α : Type} (xs : List (Set α)) :

@@ -6,6 +6,8 @@ fun show_thm label th =
   if null (hyp th) then (print label; print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
 fun show_eval label tm = (print label; print_term (rhs (concl (EVAL tm))); print "\n");
+val _ = show_thm "all_disjoint_cons_typed=" source_to_flatProofTheory.ALL_DISJOINT_CONS;
+val _ = show_thm "idx_types_forall_typed=" source_to_flatProofTheory.idx_types_FORALL;
 val _ = show_thm "bind_locals_fold_typed=" source_to_flatProofTheory.bind_locals_fold_nsBind;
 val _ = show_thm "bool_value_injective_typed=" source_to_flatProofTheory.Boolv_11;
 val _ = show_thm "evaluate_bool_typed=" source_to_flatProofTheory.evaluate_Bool;

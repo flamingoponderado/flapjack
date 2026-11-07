@@ -14512,6 +14512,22 @@
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/IndexInvariant.lean",
+    "lean_name": "allDisjoint_cons",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "ALL_DISJOINT_CONS",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all_disjoint_cons_typed in source_to_flat_init_probe.out: the shared first set, singleton and two-head conjuncts and union retain their original order and structure; DISJOINT is rendered by its intersection-equals-empty definition."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/IndexInvariant.lean",
+    "lean_name": "indexKind_forall",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "idx_types_FORALL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared idx_types_forall_typed in source_to_flat_init_probe.out: the predicate is quantified over all index kinds exactly when it holds on the variable, type and exception constructors, in HOL order."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/IndexInvariant.lean",
     "lean_name": "allDisjoint_move",
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "ALL_DISJOINT_MOVE",
