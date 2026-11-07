@@ -9670,3 +9670,7 @@ The flat-to-closure relation probe replays the local interpreter-initializer
 
 The flat-to-closure relation probe also replays the full local
 `inc_compile_decs_intro` callback-composition theorem with inferred types.
+
+`flat_pattern_global_flag_probe.out` also captures the polymorphic
+`set_toList_fromList` theorem and the full conjunctive premise of
+`decode_dtree_no_Mat` for source comparison.

@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.DecisionEncoding
 import Flapjack.Compiler.Backend.PatternComp.Proofs.Correctness
+import Flapjack.Misc.Sptree.ToList
 
 /-! The decision-tree path of flat pattern compilation. Its evaluator and
 finite-map carrier remain pending HOL correspondence review. -/
@@ -7,9 +8,9 @@ namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack Flapjack.Compiler.Backend
 
 /-- Inserting sequential branches leaves earlier keys unchanged. -/
-theorem branchFold_lookup_before (branches : List FlatLang.Exp) (start key : Nat)
-    (tree : Spt FlatLang.Exp) (before : key < start) :
-    sptLookup key (branches.foldl (fun (state : Nat × Spt FlatLang.Exp) branch =>
+theorem branchFold_lookup_before {α : Type} (branches : List α) (start key : Nat)
+    (tree : Spt α) (before : key < start) :
+    sptLookup key (branches.foldl (fun (state : Nat × Spt α) branch =>
       (state.1 + 1, sptInsert state.1 branch state.2)) (start, tree)).2 = sptLookup key tree := by
   induction branches generalizing start tree with
   | nil => rfl
@@ -19,9 +20,9 @@ theorem branchFold_lookup_before (branches : List FlatLang.Exp) (start key : Nat
     exact sptLookup_sptInsert_ne start key branch tree (by omega)
 
 /-- A sequential branch-table fold maps every inserted index to its expression. -/
-theorem branchFold_lookup (branches : List FlatLang.Exp) (start : Nat) (tree : Spt FlatLang.Exp)
-    (index : Nat) (branch : FlatLang.Exp) (atIndex : branches[index]? = some branch) :
-    sptLookup (start + index) (branches.foldl (fun (state : Nat × Spt FlatLang.Exp) branch =>
+theorem branchFold_lookup {α : Type} (branches : List α) (start : Nat) (tree : Spt α)
+    (index : Nat) (branch : α) (atIndex : branches[index]? = some branch) :
+    sptLookup (start + index) (branches.foldl (fun (state : Nat × Spt α) branch =>
       (state.1 + 1, sptInsert state.1 branch state.2)) (start, tree)).2 = some branch := by
   induction branches generalizing start tree index with
   | nil => simp at atIndex
@@ -38,6 +39,42 @@ theorem branchFold_lookup (branches : List FlatLang.Exp) (start : Nat) (tree : S
       simp only [List.foldl_cons]
       have found := ih (start + 1) (sptInsert start first tree) index atIndex
       simpa [Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using found
+
+private theorem branchFold_lookup_mem {α : Type} (branches : List α) (start : Nat) (tree : Spt α)
+    (index : Nat) (value : α)
+    (found : sptLookup index (branches.foldl (fun (state : Nat × Spt α) branch =>
+      (state.1 + 1, sptInsert state.1 branch state.2)) (start, tree)).2 = some value) :
+    value ∈ branches ∨ ∃ key, sptLookup key tree = some value := by
+  induction branches generalizing start tree with
+  | nil => exact Or.inr ⟨index, found⟩
+  | cons first rest ih =>
+    simp only [List.foldl_cons] at found
+    rcases ih (start + 1) (sptInsert start first tree) found with mem | ⟨key, lookup⟩
+    · exact Or.inl (List.mem_cons_of_mem _ mem)
+    · by_cases equal : key = start
+      · subst key
+        rw [sptLookup_sptInsert_same] at lookup
+        cases lookup
+        exact Or.inl (by simp)
+      · rw [sptLookup_sptInsert_ne start key first tree equal] at lookup
+        exact Or.inr ⟨key, lookup⟩
+
+/-- The values in a sparse tree built from a list are exactly the list values. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "set_toList_fromList"]
+theorem setToList_fromList {α : Type} (xs : List α) :
+    {x | x ∈ sptToList (sptFromList xs)} = {x | x ∈ xs} := by
+  ext x
+  constructor
+  · intro mem
+    obtain ⟨index, found⟩ := (sptMemToList x _).1 mem
+    have result := branchFold_lookup_mem xs 0 .ln index x found
+    rcases result with mem | ⟨key, found⟩
+    · exact mem
+    · simp [sptLookup] at found
+  · intro mem
+    obtain ⟨index, atIndex⟩ := List.mem_iff_getElem?.1 mem
+    apply (sptMemToList x _).2
+    exact ⟨index, by simpa [sptFromList] using branchFold_lookup xs 0 .ln index x atIndex⟩
 
 /-- Each branch stored by the compiler is found at its original index. -/
 theorem branchTree_lookup (branches : List FlatLang.Exp) (index : Nat) (branch : FlatLang.Exp)

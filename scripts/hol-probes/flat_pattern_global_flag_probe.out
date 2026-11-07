@@ -1,3 +1,5 @@
+set_toList_fromList=set (toList (fromList (xs :α list) :α sptree$num_map) :α list) = set xs
+no_mat_decode_dtree=no_Mat (v_exp :exp) ∧ no_Mat (dflt :exp) ∧ EVERY no_Mat (toList (br_spt :exp sptree$num_map) :exp list) ⇒ no_Mat (decode_dtree (t :tra) br_spt v_exp dflt (dtree :dTree))
 esgc_decode_dtree=esgc_free (v_exp :exp) ∧ esgc_free (dflt :exp) ∧ EVERY (λ(y :exp). esgc_free y) (toList (br_spt :exp sptree$num_map) :exp list) ⇒ esgc_free (decode_dtree (t :tra) br_spt v_exp dflt (dtree :dTree))
 operator_global_flag=op_sets_globals (op :op) ⇔ op_gbag op ≠ ({||} :num -> num)
 operator_sets_globals_def=(op_sets_globals (GlobalVarInit (n :num)) ⇔ T) ∧ (op_sets_globals (Src (v :ast$op)) ⇔ F) ∧ (op_sets_globals (GlobalVarAlloc (v1 :num)) ⇔ F) ∧ (op_sets_globals (GlobalVarLookup (v3 :num)) ⇔ F) ∧ (op_sets_globals (TagLenEq (v4 :num) (v5 :num) :op) ⇔ F) ∧ (op_sets_globals (LenEq (v6 :num)) ⇔ F) ∧ (op_sets_globals (El (v7 :num)) ⇔ F) ∧ (op_sets_globals Id ⇔ F)

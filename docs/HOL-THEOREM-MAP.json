@@ -416,6 +416,22 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "set_toList_fromList",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/CompiledMatch.lean",
+  "lean_name": "setToList_fromList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared set_toList_fromList in flat_pattern_global_flag_probe.out: the element type is arbitrary and the two sets contain exactly the values of the sparse-tree traversal and the original list."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "decode_dtree_no_Mat",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/NoMat.lean",
+  "lean_name": "noMat_decodeDtree",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared no_mat_decode_dtree in flat_pattern_global_flag_probe.out: the conjunctive premise retains no_Mat for the value and default and EVERY over the branch tree values. Membership expresses EVERY, and Bool equality to true expresses no_Mat."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
   "hol_name": "esgc_free_decode_dtree",
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalInvariants.lean",
   "lean_name": "esgcFree_decodeDtree",
