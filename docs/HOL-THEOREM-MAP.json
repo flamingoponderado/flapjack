@@ -1,6 +1,22 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+  "hol_name": "collect_args_no_Labels",
+  "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Syntactic.lean",
+  "lean_name": "collectArgs_noLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original in clos_mti_correct_probe.out: binder order and types, paired collection and no-label premises, and resulting body predicate agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+  "hol_name": "collect_apps_no_Labels",
+  "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Syntactic.lean",
+  "lean_name": "collectApps_noLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original in clos_mti_correct_probe.out: binder order, grouped collection and EVERY/no-label premises, and both resulting predicates agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
   "hol_name": "every_Fn_vs_NONE_collect_apps",
   "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Syntactic.lean",
   "lean_name": "everyFnVarsNone_collectApps",

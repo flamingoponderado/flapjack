@@ -33,3 +33,5 @@ val every_Fn_vs_NONE_collect_args_replay = prove (
   srw_tac[][collect_args_def] >> full_simp_tac(srw_ss())[]);
 val _ = show_thm "every_Fn_vs_NONE_collect_apps_replay=" every_Fn_vs_NONE_collect_apps_replay;
 val _ = show_thm "every_Fn_vs_NONE_collect_args_replay=" every_Fn_vs_NONE_collect_args_replay;
+val _ = show_thm "collect_apps_no_Labels=" clos_mtiProofTheory.collect_apps_no_Labels;
+val _ = show_thm "collect_args_no_Labels=" clos_mtiProofTheory.collect_args_no_Labels;

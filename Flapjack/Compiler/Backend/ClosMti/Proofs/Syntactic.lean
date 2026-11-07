@@ -1,10 +1,74 @@
 import Flapjack.Compiler.Backend.ClosMti.Proofs.TotalView
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
 import Flapjack.Compiler.Backend.Semantics.ClosProps.NoMtiSyntactic
+import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic.LabelsAndArity
 
 /-! Syntactic invariants needed by the pass after multi-argument introduction. -/
 namespace Flapjack.Compiler.Backend.ClosMti
 open ClosLang ClosProps
+
+/-- Collecting function arguments preserves absence of label operations. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "collect_args_no_Labels"]
+theorem collectArgs_noLabels (maxApp count : Nat) (expression : Exp) (arity : Nat) (body : Exp)
+    (premises : collectArgs maxApp count expression = (arity, body) ∧ noLabels expression) :
+    noLabels body := by
+  obtain ⟨run, valid⟩ := premises
+  cases expression with
+  | fn name location vars n inner =>
+    cases location with
+    | some location =>
+      simp only [collectArgs, Prod.mk.injEq] at run
+      obtain ⟨rfl, rfl⟩ := run
+      exact valid
+    | none =>
+      cases vars with
+      | some vars =>
+        simp only [collectArgs, Prod.mk.injEq] at run
+        obtain ⟨rfl, rfl⟩ := run
+        exact valid
+      | none =>
+        simp only [collectArgs] at run
+        split at run
+        · exact collectArgs_noLabels maxApp (count + n) inner arity body ⟨run, by simpa [noLabels] using valid⟩
+        · cases run
+          exact valid
+  | _ => simp only [collectArgs, Prod.mk.injEq] at run; obtain ⟨rfl, rfl⟩ := run; exact valid
+termination_by sizeOf expression
+
+/-- Collecting applications preserves absence of label operations. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "collect_apps_no_Labels"]
+theorem collectApps_noLabels (maxApp : Nat) (args : List Exp) (expression : Exp)
+    (collected : List Exp) (head : Exp)
+    (premises : collectApps maxApp args expression = (collected, head) ∧
+      (∀ e ∈ args, noLabels e) ∧ noLabels expression) :
+    (∀ e ∈ collected, noLabels e) ∧ noLabels head := by
+  obtain ⟨run, argsValid, valid⟩ := premises
+  cases expression with
+  | app trace location inner more =>
+    cases location with
+    | some location =>
+      simp only [collectApps, Prod.mk.injEq] at run
+      obtain ⟨rfl, rfl⟩ := run
+      exact ⟨argsValid, valid⟩
+    | none =>
+      simp only [collectApps] at run
+      split at run
+      · simp only [noLabels] at valid
+        have innerValid : noLabels inner := valid.1
+        have moreValid : ∀ e ∈ more, noLabels e := (noLabelsList_iff more).mp valid.2
+        have allValid : ∀ e ∈ args ++ more, noLabels e := by
+          intro e member
+          rcases List.mem_append.mp member with member | member
+          · exact argsValid e member
+          · exact moreValid e member
+        exact collectApps_noLabels maxApp (args ++ more) inner collected head ⟨run, allValid, innerValid⟩
+      · cases run
+        exact ⟨argsValid, valid⟩
+  | _ =>
+    simp only [collectApps, Prod.mk.injEq] at run
+    obtain ⟨rfl, rfl⟩ := run
+    exact ⟨argsValid, valid⟩
+termination_by sizeOf expression
 
 /-- Flapjack projection form of `every_Fn_vs_NONE_collect_args`, used by the
 recursive traversal proof. -/
