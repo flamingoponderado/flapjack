@@ -169,6 +169,7 @@ val source_abort_imp_intro_replay = Q.prove (
   every_case_tac \\
   simp []);
 val _ = show_thm "source_abort_imp_intro_replay=" source_abort_imp_intro_replay;
+val _ = show_thm "source_eval_simulation=" source_evalProofTheory.eval_simulation;
 val _ = show_thm "source_do_eval_simulation=" source_evalProofTheory.do_eval_sim;
 val _ = show_thm "source_declare_env_simulation=" source_evalProofTheory.declare_env_sim;
 val _ = show_thm "source_pairarg_to_pair_map=" source_evalProofTheory.pairarg_to_pair_map;

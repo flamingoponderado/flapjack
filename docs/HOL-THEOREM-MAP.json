@@ -1,5 +1,32 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "eval_simulation",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvalSimulationBase.lean",
+  "lean_name": "evalSimulation_ExpsNil",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared typed source_eval_simulation at source_eval_oracle_adjust_probe.out:121 and evaluate_induction: empty expression list, retaining the vacuous independent inhabited es binder. The source premises and all six conclusions retain their original order. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "eval_simulation",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvalSimulationBase.lean",
+  "lean_name": "evalSimulation_MatchNil",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared typed source_eval_simulation at source_eval_oracle_adjust_probe.out:121 and evaluate_induction: empty match-row list, retaining the oracle-state equation and both value relations. The source premises and all six conclusions retain their original order. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "eval_simulation",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvalSimulationBase.lean",
+  "lean_name": "evalSimulation_DecsNil",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared typed source_eval_simulation at source_eval_oracle_adjust_probe.out:121 and evaluate_induction: empty declaration list and related empty environments. The source premises and all six conclusions retain their original order. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+},
+{
   "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
   "hol_name": "do_opapp_cases",
   "lean_path": "Flapjack/SemanticPrimitivesProps/OpApp.lean",
