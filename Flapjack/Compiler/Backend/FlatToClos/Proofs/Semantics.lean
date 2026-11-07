@@ -77,8 +77,8 @@ theorem compileProg_clock_observation {C F : Type} (ffi : HolFfiState F)
   cases result <;> exact ⟨by simpa using rel, ffiEq⟩
 
 /-- Non-failing match-free flat programs and their closure compilation have
-the same proof-side observable behavior. This is not tagged as the HOL theorem
-until the underlying evaluators and relations have been reviewed. -/
+the same proof-side observable behavior. This Flapjack proof helper is shared
+by the two tagged semantics theorems and has no separate HOL theorem. -/
 theorem compileProg_semantics_proofSide {C F : Type} (ffi : HolFfiState F)
     (maxApp : Nat) (config : FlatSem.InstallConfig C) (oracle : ClosSem.CompileOracle C)
     (compiler : ClosSem.Compiler C) (decs : List FlatLang.Exp)

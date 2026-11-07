@@ -16,12 +16,13 @@ theorem evaluate_sing_keep_flatStateRel {C F α : Type} (env : FlatSem.Environme
     (state : FlatSem.State C F) (expressions : List FlatLang.Exp) (next : FlatSem.State C F)
     (result : Result (List FlatSem.Value) FlatSem.Value) (expression : FlatLang.Exp)
     (reachable : NumSet) (target : FlatSem.State C F)
-    (run : FlatSem.evaluate (emptyEnvironment env) state expressions = (next, result))
-    (related : flatStateRel reachable state target) (singleton : expressions = [expression])
-    (_kept : keep reachable expression = true) (lookupsClosed : globalsWithin (findLookups expression) reachable)
-    (expressionSafe : hasEval expression = false) (notTypeError : result ≠ .err (.abort .typeError)) :
+    (premises : FlatSem.evaluate (emptyEnvironment env) state expressions = (next, result) ∧
+      flatStateRel reachable state target ∧ expressions = [expression] ∧
+      keep reachable expression = true ∧ globalsWithin (findLookups expression) reachable ∧
+      hasEval expression = false ∧ result ≠ .err (.abort .typeError)) :
     ∃ targetNext, FlatSem.evaluate (emptyEnvironment env) target expressions = (targetNext, result) ∧
       flatStateRel reachable next targetNext := by
+  obtain ⟨run, related, singleton, _, lookupsClosed, expressionSafe, notTypeError⟩ := premises
   subst expressions
   have envClosed : globalsWithin (findEnvGlobals (emptyEnvironment env)) reachable := by
     simp [emptyEnvironment, findEnvGlobals, findValuesGlobals, globalsWithin, sptMem, sptDomain]
@@ -86,12 +87,13 @@ evaluator and carriers remain pending HOL correspondence review. -/
 theorem evaluate_dec_flatStateRel {C F : Type} (state : FlatSem.State C F) (declaration : FlatLang.Exp)
     (next : FlatSem.State C F) (result : Option (ErrorResult FlatSem.Value))
     (reachable : NumSet) (target : FlatSem.State C F)
-    (run : FlatSem.evaluateDec state declaration = (next, result))
-    (closed : decsClosed reachable [declaration]) (related : flatStateRel reachable state target)
-    (kept : keep reachable declaration = true) (safe : hasEvalDec declaration = false)
-    (notTypeError : result ≠ some (.abort .typeError)) :
+    (premises : FlatSem.evaluateDec state declaration = (next, result) ∧
+      decsClosed reachable [declaration] ∧ flatStateRel reachable state target ∧
+      keep reachable declaration = true ∧ hasEvalDec declaration = false ∧
+      result ≠ some (.abort .typeError)) :
     ∃ targetNext, FlatSem.evaluateDec target declaration = (targetNext, result) ∧
       flatStateRel reachable next targetNext := by
+  obtain ⟨run, closed, related, kept, safe, notTypeError⟩ := premises
   cases evaluated : FlatSem.evaluate ⟨[]⟩ state [declaration] with
   | mk bodyState bodyResult =>
     have bodyNotTypeError : bodyResult ≠ .err (.abort .typeError) := by
@@ -102,8 +104,8 @@ theorem evaluate_dec_flatStateRel {C F : Type} (state : FlatSem.State C F) (decl
       exact notTypeError rfl
     obtain ⟨targetNext, targetEval, nextRelated⟩ :=
       evaluate_sing_keep_flatStateRel (⟨[]⟩ : FlatSem.Environment FlatSem.Value) state [declaration] bodyState bodyResult declaration reachable target
-        evaluated related rfl kept (kept_declaration_lookups_closed reachable declaration closed kept)
-        (by simpa [hasEvalDec] using safe) bodyNotTypeError
+        ⟨evaluated, related, rfl, kept, kept_declaration_lookups_closed reachable declaration closed kept,
+          by simpa [hasEvalDec] using safe, bodyNotTypeError⟩
     dsimp [emptyEnvironment] at targetEval
     refine ⟨targetNext, ?_, ?_⟩
     · cases bodyResult with
