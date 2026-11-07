@@ -459,20 +459,4 @@ theorem mkApps_success {C F : Type} (traces : List BackendCommon.Tra)
                     env state afterFirst afterApply value appliedValue first nested
                   simpa [mkApps, evaluateApps, applied] using run
 
-/-- Successful evaluation of a collected source application agrees with
-repeated unary application of its collected values. The collector and
-reconstruction are source-reviewed; evaluator correspondence remains open. -/
-theorem collectApps_success {C F : Type} (expression : ClosLang.Exp) (maxApp : Nat)
-    (arguments : List ClosLang.Exp) (function : ClosLang.Exp) (env : List ClosSem.Value)
-    (state middle next : ClosSem.State C F) (values : List ClosSem.Value) (fn : ClosSem.Value)
-    (collected : collectApps maxApp [] expression = (arguments, function))
-    (safe : ClosProps.noMti expression)
-    (functionRun : ClosSem.evaluate [function] env middle = (.val [fn], next))
-    (argsRun : ClosSem.evaluate arguments env state = (.val values, middle)) :
-    ClosSem.evaluate [expression] env state = evaluateApps fn values next := by
-  obtain ⟨traces, rebuilt, lengths, _⟩ :=
-    collectAppsRebuild expression maxApp [] arguments function collected safe
-  rw [rebuilt]
-  exact mkApps_success traces arguments env state middle next values fn function functionRun argsRun lengths
-
 end Flapjack.Compiler.Backend.ClosMti

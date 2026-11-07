@@ -601,15 +601,4 @@ theorem introList_numberingSafe (maxApp : Nat) (program : List Exp)
   exact (noMtiList_syntactic maxApp positive program unary).2
     ((introList_containsAppSome maxApp program).mp invalid)
 
-/-- The executed optional traversal always returns a numbering-safe program
-when its input satisfies the unary invariant and the application limit is positive. -/
-theorem compileFuel_numberingSafe (fuel : Nat) (enabled : Bool) (maxApp : Nat) (program : List Exp)
-    (positive : 0 < maxApp) (unary : ∀ e ∈ program, noMti e) :
-    ∃ result, compileFuel fuel enabled maxApp program = some result ∧
-      ¬ containsAppSome maxApp result := by
-  cases enabled with
-  | false => exact ⟨program, rfl, (noMtiList_syntactic maxApp positive program unary).2⟩
-  | true => exact ⟨introList maxApp program, compileFuel_introList fuel maxApp program,
-      introList_numberingSafe maxApp program positive unary⟩
-
 end Flapjack.Compiler.Backend.ClosMti

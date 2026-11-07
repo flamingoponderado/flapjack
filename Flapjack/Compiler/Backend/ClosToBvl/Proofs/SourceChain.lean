@@ -11,7 +11,9 @@ namespace Flapjack.Compiler.Backend.ClosToBvl
 open Flapjack Flapjack.Compiler.Backend.ClosSem
 
 /-- The code map provides each zero-argument entry of a closure expression
-chain. This candidate remains untagged pending HOL state-carrier review. -/
+chain, using the canonical finite-map representation for `code`. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "chain_installed_def"
+  (fmap_as_finite_support_parameters := [code])]
 def chainInstalled (start : Nat) (expressions : List ClosLang.Exp)
     (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) : Prop :=
   ∀ i, i < expressions.length →
@@ -19,6 +21,21 @@ def chainInstalled (start : Nat) (expressions : List ClosLang.Exp)
       if i + 1 < expressions.length then
         .let .none [@holEl ClosLang.Exp ⟨.var .none 0⟩ i expressions] (.call .none 0 (start + i + 1) [])
       else @holEl ClosLang.Exp ⟨.var .none 0⟩ i expressions)
+
+private def toBroad (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) := code.lookup
+
+private def ofBroad (lookup : Nat → Option (Nat × ClosLang.Exp))
+    (finite : ∃ keys : List Nat, ∀ key, lookup key ≠ none → key ∈ keys) :
+    HolFiniteMapExact Nat (Nat × ClosLang.Exp) := ⟨lookup, finite⟩
+
+/-- The canonical code-map parameter roundtrips through lookup and support. -/
+theorem holFmapAsFiniteSupportParamWitness_chainInstalled_code
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (key : Nat) :
+    (ofBroad (toBroad code) code.finiteSupport).lookup key = code.lookup key ∧
+    (ofBroad (toBroad code) code.finiteSupport).finiteSupport = code.finiteSupport ∧
+    ofBroad (toBroad code) code.finiteSupport = code := by
+  cases code
+  exact ⟨rfl, rfl, rfl⟩
 
 /-- A source-code extension retains all installed chain entries. -/
 theorem chainInstalled_submap (start : Nat) (expressions : List ClosLang.Exp)
@@ -208,5 +225,59 @@ theorem evaluate_sourceChain {C F : Type} (expressions : List ClosLang.Exp) (sta
                 refine ⟨.let .none [first] (.call .none 0 (start + 1) []), extra + 1, ?_, ?_⟩
                 · simpa using chainParts.1
                 · simpa [resultEq] using chained
+
+namespace Chain
+
+/-- The closure state uses the canonical finite-map representation. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ state : StateBroad C F, (State.ofBroad state).toBroad = state) ∧
+      (∀ state : State C F, State.ofBroad state.toBroad = state) :=
+  Flapjack.Compiler.Backend.ClosSem.holFmapAsFiniteSupportWitness
+
+/-- Flapjack proof infrastructure: a chain result preserves the original
+result classification when payloads are unconstrained. -/
+private theorem sourceChainResult_rel (result : Flapjack.SemanticPrimitivesHOL.Result (List Value) Value) :
+    Flapjack.SemanticPrimitivesProps.resultRel (fun _ _ => True) (fun _ _ => True)
+      (sourceChainResult result) result := by
+  cases result with
+  | val values => simp [sourceChainResult, Flapjack.SemanticPrimitivesProps.resultRel]
+  | err error =>
+    cases error <;> simp [sourceChainResult, Flapjack.SemanticPrimitivesProps.resultRel,
+      Flapjack.SemanticPrimitivesProps.excRel]
+
+/-- An installed chain has one fixed entry expression that simulates the
+nonempty source sequence with the original result relation and FFI equality.
+The independent unused binder is present in the HOL statement. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "chain_installed_thm"
+  (fmap_as_finite_support := [refs, code])]
+theorem chainInstalled_thm {C F A : Type} [Nonempty A] (expressions : List ClosLang.Exp) (start : Nat) :
+    ∃ body, ∀ (state : Flapjack.Compiler.Backend.ClosSem.State C F) (_code : A)
+      (result : Flapjack.SemanticPrimitivesHOL.Result (List Value) Value)
+      (final : Flapjack.Compiler.Backend.ClosSem.State C F),
+      chainInstalled start expressions state.code ∧ evaluate expressions [] state = (result, final) ∧
+        0 < expressions.length →
+      ∃ extra targetResult targetFinal,
+        findCode start ([] : List Value) state.code = some ([], body) ∧
+        evaluate [body] [] { state with clock := state.clock + extra } = (targetResult, targetFinal) ∧
+        Flapjack.SemanticPrimitivesProps.resultRel (fun _ _ => True) (fun _ _ => True) targetResult result ∧
+        final.ffi = targetFinal.ffi := by
+  cases expressions with
+  | nil =>
+    refine ⟨.var .none 0, ?_⟩
+    intro state code result final ⟨_, _, nonempty⟩
+    simp at nonempty
+  | cons first rest =>
+    refine ⟨if rest = [] then first else .let .none [first] (.call .none 0 (start + 1) []), ?_⟩
+    intro state code result final ⟨installed, run, _⟩
+    have expected := ((chainInstalled_cons start first rest state.code).mp installed).1
+    obtain ⟨body, extra, found, evaluation⟩ :=
+      evaluate_sourceChain (first :: rest) start state final result (by simp) installed run
+    have same : body = if rest = [] then first else .let .none [first] (.call .none 0 (start + 1) []) := by
+      have equality := found.symm.trans expected
+      exact congrArg Prod.snd (Option.some.inj equality)
+    subst body
+    exact ⟨extra, sourceChainResult result, final, expected, evaluation, sourceChainResult_rel result, rfl⟩
+
+end Chain
 
 end Flapjack.Compiler.Backend.ClosToBvl

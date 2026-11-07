@@ -100,34 +100,6 @@ theorem codeRel_cons {maxApp : Nat} (x y : ClosLang.Exp) (xs ys : List ClosLang.
       CodeRel maxApp [x] [y] ∧ CodeRel maxApp xs ys := by
   simp [CodeRel, introList, and_assoc, and_left_comm, and_comm]
 
-/-- Related scalar integers retain their payload exactly. -/
-theorem valueRel_target_number {maxApp : Nat} {source : Value} {number : Int}
-    (related : ValueRel maxApp source (.number number)) : source = .number number := by
-  cases related
-  rfl
-
-/-- Related blocks retain the target's tag and relate each field. -/
-theorem valueRel_target_block {maxApp tag : Nat} {source : Value} {fields : List Value}
-    (related : ValueRel maxApp source (.block tag fields)) :
-    ∃ left, source = .block tag left ∧ List.Forall₂ (ValueRel maxApp) left fields := by
-  cases related with
-  | block _ left _ rel => exact ⟨left, rfl, rel⟩
-
-/-- A target closure related by multi-argument introduction comes from a
-chain of unary source closures with related captured values and code. -/
-theorem valueRel_target_closure {maxApp : Nat} {source : Value}
-    {args₂ env₂ : List Value} {arity : Nat} {body₂ : ClosLang.Exp}
-    (related : ValueRel maxApp source (.closure none args₂ env₂ arity body₂)) :
-    ∃ args₁ env₁ names body₁,
-      source = .closure none [] (args₁ ++ env₁) 1 (mkFns names body₁) ∧
-      1 + names.length + args₁.length = arity ∧
-      CodeRel maxApp [body₁] [body₂] ∧
-      List.Forall₂ (ValueRel maxApp) env₁ env₂ ∧
-      List.Forall₂ (ValueRel maxApp) args₁ args₂ := by
-  cases related with
-  | closure args₁ _ env₁ _ _ body₁ _ names arityRel code envRel argsRel =>
-    exact ⟨args₁, env₁, names, body₁, rfl, arityRel, code, envRel, argsRel⟩
-
 /-- The multi-argument value relation meets the generic simple-value
 conditions used by primitive-operation simulations. -/
 @[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "simple_val_rel"]
@@ -167,18 +139,5 @@ theorem functionRel_target_arity_pos {maxApp : Nat} {source target : Nat × Clos
     (related : FunctionRel maxApp source target) : 0 < target.1 := by
   obtain ⟨_, names, _, _, _, _, _, eq⟩ := related
   omega
-
-/-- A list of related target functions cannot contain a zero-arity entry. -/
-theorem functionRel_list_target_arity_pos {maxApp : Nat}
-    {source target : List (Nat × ClosLang.Exp)} (related : List.Forall₂ (FunctionRel maxApp) source target)
-    {arity : Nat} {body : ClosLang.Exp} (member : (arity, body) ∈ target) : 0 < arity := by
-  induction related with
-  | nil => simp at member
-  | @cons a b left right rel tail ih =>
-    simp only [List.mem_cons] at member
-    rcases member with equal | member
-    · subst b
-      exact functionRel_target_arity_pos rel
-    · exact ih member
 
 end Flapjack.Compiler.Backend.ClosMti

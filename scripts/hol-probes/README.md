@@ -9722,3 +9722,9 @@ definitions and theorems, together with the missing `conses_ok`, `parts_thm`,
 and `make_const_thm` declarations. Regenerate with
 `HOL_PROBE_ONLY=clos_constant_probeScript.sml scripts/hol-probes/regenerate.sh`.
 The capture supports source comparison; it does not prove Lean correspondence.
+
+`clos_to_bvl_chain_probe.out` captures typed HOL closure-code chain definitions
+and theorems, including the quantifier order and vacuous type in
+`chain_installed_thm`. Regenerate with
+`HOL_PROBE_ONLY=clos_to_bvl_chain_probeScript.sml scripts/hol-probes/regenerate.sh`.
+The capture supports source comparison; it does not establish Lean correspondence.
