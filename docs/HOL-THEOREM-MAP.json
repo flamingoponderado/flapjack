@@ -14452,6 +14452,15 @@
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateDatatype.lean",
+    "lean_name": "allocTags_invariant",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "alloc_tags_invariant",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["c", "tys"],
+    "reviewer": "Compared alloc_tags_invariant_typed in source_to_flat_init_probe.out: original constructor allocation, invariant, environment, distinctness and index premises and all existential growth, invariant and environment conclusions agree. Compiler and FFI carriers are independent; HOL inhabitance for the invariant is explicit. The canonical global-environment c and tys finite maps and their submap observations use the reviewed finite-support representation."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateDatatype.lean",
     "lean_name": "nsAppend_foldl_prime",
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "nsAppend_foldl'",

@@ -1139,6 +1139,61 @@ theorem GlobalGrowth.allocateTags {C : Type}
     (fun _ tag arity _ => free.2 tag arity)
   exact tableGrowth.trans constructorGrowth
 
+namespace AllocTagsInvariantPort
+/-- Canonical finite-map carrier witness for the global environment. -/
+theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
+    GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env := GlobalEnv.holFmapAsFiniteSupportWitness env
+end AllocTagsInvariantPort
+
+/-- Allocating one datatype's tags preserves the compilation invariant and relates its environment. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "alloc_tags_invariant"
+  (fmap_as_finite_support := [c, tys])]
+theorem allocTags_invariant {C F : Type} [Nonempty C]
+    (idx : NextIndices) (constructors : List (ConN × List AstT))
+    (ns : Namespace ModN ConN (Nat × Option (Nat × List (Nat × Nat)))) (cids : Spt Nat)
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (gen : EnvironmentGenerationStore) (genv : GlobalEnv) (finish : NextIndices)
+    (other : Set (Nat × IndexKind)) (source : State F) (flat : FlatSem.State C F)
+    (compMap : Environment) (env : SemEnv Value)
+    (premises : allocTags idx.tidx constructors = (ns, cids) ∧
+      factoredInvariant interp transform gen genv (idx, finish, other) source flat ∧
+      GlobalEnvInv genv compMap (fun _ => False) env ∧
+      (constructors.map Prod.fst).Nodup ∧ idx.tidx + 1 ≤ finish.tidx) :
+    ∃ nextGenv,
+      finiteSubmap genv.c nextGenv.c ∧ finiteSubmap genv.tys nextGenv.tys ∧ nextGenv.v = genv.v ∧
+      factoredInvariant interp transform gen nextGenv ({ idx with tidx := idx.tidx + 1 }, finish, other)
+        { source with nextTypeStamp := source.nextTypeStamp + 1 } flat ∧
+      (let buildEnv : SemEnv Value :=
+        { c := alistToNs (buildConstrs source.nextTypeStamp constructors).reverse, v := nsEmpty }
+       GlobalEnvInv nextGenv { c := ns, v := nsEmpty } (fun _ => False) buildEnv ∧
+         EnvDomainEq { c := ns, v := nsEmpty } buildEnv) := by
+  obtain ⟨allocated, valid, envInv, names, fits⟩ := premises
+  let nextGenv := installTypeConstructorList idx.tidx source.nextTypeStamp
+    (allocatedConstructorEntries (M := ModN) constructors.reverse)
+    { genv with tys := finiteUpdate genv.tys idx.tidx ((allocTags1 constructors.reverse :
+      Namespace ModN ConN Nat × Spt Nat × List (Nat × Nat)).2.2.reverse) }
+  have growth := GlobalGrowth.allocateTags interp genv source.nextTypeStamp source.nextExnStamp source.evalState
+    idx finish other constructors valid.2.2.2.1 (by omega)
+  have invariant := factoredInvariant_allocateTags interp transform gen genv idx finish other source flat
+    constructors valid fits names
+  have newEnv := globalEnvInv_allocTags genv idx.tidx source.nextTypeStamp constructors names
+  have domain := envDomainEq_allocTags idx.tidx source.nextTypeStamp constructors
+  have nsEq : (allocTags idx.tidx constructors).1 = ns := congrArg Prod.fst allocated
+  have values : ∀ (entries : List (ConN × Nat × Nat)) (g : GlobalEnv),
+      (installTypeConstructorList idx.tidx source.nextTypeStamp entries g).v = g.v := by
+    intro entries
+    induction entries with
+    | nil => intro g; rfl
+    | cons entry rest ih =>
+      rcases entry with ⟨name, tag, arity⟩
+      intro g
+      simpa [installTypeConstructorList] using ih { g with
+        c := finiteUpdate g.c ((tag, some idx.tidx), arity) (.typeStamp name source.nextTypeStamp) }
+  refine ⟨nextGenv, growth.constructors, growth.types, ?_, invariant, ?_, ?_⟩
+  · exact values _ _
+  · simpa only [nsEq] using newEnv
+  · simpa only [nsEq] using domain
+
 /-- The compiler constructor namespace for a sequence of type definitions,
 in the order used by the datatype declaration pass. -/
 def datatypeConstructorNamespace : Nat → TypeDef → Namespace ModN ConN (Nat × Option (Nat × List (Nat × Nat)))

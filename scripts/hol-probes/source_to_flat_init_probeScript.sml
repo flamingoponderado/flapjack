@@ -6,6 +6,9 @@ fun show_thm label th =
   if null (hyp th) then (print label; print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
 fun show_eval label tm = (print label; print_term (rhs (concl (EVAL tm))); print "\n");
+val _ = show_thm "alloc_tags_invariant_typed=" source_to_flatProofTheory.alloc_tags_invariant;
+val _ = show_thm "alookup_map_3_typed=" source_to_flatProofTheory.ALOOKUP_MAP_3;
+val _ = show_thm "alloc_tags1_imp_typed=" source_to_flatProofTheory.alloc_tags1_imp;
 val nsAppend_foldl_prime_replay = Q.prove (
   `!l ns ns'. nsAppend (FOLDL (\ns (l,cids). nsAppend l ns) ns' l) ns =
     FOLDL (\ns (l,cids). nsAppend l ns) (nsAppend ns' ns) l`,

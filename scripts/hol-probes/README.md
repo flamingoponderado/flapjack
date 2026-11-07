@@ -9662,6 +9662,8 @@ simulation, including its unused polymorphic existential witness.
 The same probe captures typed `abort_simps` and `nsLookup_nsBind_If` and
 replays the local `not_abort_IMP_cases`, `build_tdefs_no_mod`,
 `nsAppend_foldl'`, and `nsAppend_foldl` proofs.
+It also captures the typed `alloc_tags_invariant`, `alloc_tags1_imp`, and
+`ALOOKUP_MAP_3` statements for source comparison.
 
 The same probe replays the original local `ALOOKUP_alloc_defs` proof with
 independent inferred key and value types.
