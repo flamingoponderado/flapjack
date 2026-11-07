@@ -28,6 +28,16 @@ theorem stateRel_setClock {Config F : Type} (ci : CompilerInstance Config) (s t 
   obtain ⟨dec, oracle, refs, rfl, stores, remainder⟩ := related
   exact ⟨dec, oracle, refs, rfl, stores, remainder⟩
 
+/-- Oracle agreement determines any event inside the recorded prefix. -/
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "orac_agrees_s_rel_IMP"]
+theorem oracleAgrees_stateRel {Config F : Type} (oracle : EvalOracleFun) (t : State F)
+    (ci : CompilerInstance Config) (s : State F) (i : Nat)
+    (agrees : oracleAgrees oracle t.evalState) (related : stateRel ci s t)
+    (bound : i < ((oracleState t.evalState).oracle 0).1.1) :
+    oracle i = (oracleState t.evalState).oracle (i + 1) := by
+  obtain ⟨dec, recorded, refs, rfl, stores, rest⟩ := related
+  exact agrees i bound
+
 
 private theorem concreteRelatedLists (xs ys : List Value)
     (related : List.Forall₂ (fun x y => concreteValue x = true → y = x) xs ys)

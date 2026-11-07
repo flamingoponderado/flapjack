@@ -81,6 +81,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "orac_agrees_s_rel_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/SimulationPrerequisites.lean",
+  "lean_name": "oracleAgrees_stateRel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the local source theorem at line 2059 and its closed typed proof replay orac_agrees_s_rel_imp_replay in source_eval_adjust_local_probe.out. Oracle agreement, state relation and the index bound remain separate implications; source and target share their FFI carrier, independent of the compiler carrier."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "concrete_v_rel",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/SimulationPrerequisites.lean",
   "lean_name": "concreteValue_rel",

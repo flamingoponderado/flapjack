@@ -19,6 +19,15 @@ val extract_oracle_some_suc_replay = prove (
   rw [] >> simp [UNCURRY] >> res_tac >> simp []);
 val _ = if null (hyp extract_oracle_some_suc_replay) then () else raise Fail "extract_oracle_some_suc hypotheses";
 val _ = show_term "extract_oracle_some_suc_replay=" (concl extract_oracle_some_suc_replay);
+val orac_agrees_s_rel_imp_replay = prove (
+  ``source_evalProof$orac_agrees orac t.eval_state ==>
+    source_evalProof$s_rel ci s t ==>
+    i < FST (FST ((source_evalProof$orac_s t.eval_state).oracle 0)) ==>
+    orac i = (source_evalProof$orac_s t.eval_state).oracle (i + 1)``,
+  rw [source_evalProofTheory.s_rel_def, source_evalProofTheory.orac_agrees_def] >>
+  fs [source_evalProofTheory.orac_s_def]);
+val _ = if null (hyp orac_agrees_s_rel_imp_replay) then () else raise Fail "orac_agrees_s_rel_imp hypotheses";
+val _ = show_term "orac_agrees_s_rel_imp_replay=" (concl orac_agrees_s_rel_imp_replay);
 val _ = show_term "is_insert_decs="
   ``source_evalProof$is_insert_oracle ci f (SOME (semanticPrimitives$EvalDecs eds))``;
 val _ = show_term "declare_env_adjust="
