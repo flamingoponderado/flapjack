@@ -6,6 +6,10 @@ fun show_thm label th =
   if null (hyp th) then (print label; print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
 fun show_eval label tm = (print label; print_term (rhs (concl (EVAL tm))); print "\n");
+val ctor_same_type_snd_replay = Q.prove (
+  `flatSem$ctor_same_type (SOME x) (SOME y) = (SND x = SND y)`,
+  Cases_on `x` \\ Cases_on `y` \\ simp [flatSemTheory.ctor_same_type_def]);
+val _ = show_thm "ctor_same_type_snd_replay=" ctor_same_type_snd_replay;
 val fst_pair_map_i_replay = Q.prove (
   `FST ((I ## f) x) = FST x`, Cases_on `x` \\ simp []);
 val _ = show_thm "fst_pair_map_i_replay=" fst_pair_map_i_replay;

@@ -1,4 +1,4 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateBoundControl
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateBoundConstructor
 import Flapjack.NamespaceProps
 import Flapjack.SemanticPrimitivesProps.RecursiveFunctions
 
@@ -108,7 +108,7 @@ theorem bindLocals_lookup_hit (locals : List (VarN × FlatSem.Value)) (traces : 
         obtain ⟨foundTrace, found⟩ := ih traces len restLookup
         refine ⟨foundTrace, ?_⟩
         change nsLookup (nsBind key (.localName tr key) (bindLocals traces (rest.map Prod.fst) base)) (.short name) = _
-        rw [nsLookup_bind_other _ key (VarName.localName tr key) (.short name) (by simpa using same)]
+        rw [nsLookup_nsBind.2 (.short name) key (VarName.localName tr key) _ (by simpa using same)]
         exact found
 
 /-- Names absent from the local stack retain their original compiler lookup. -/
@@ -133,7 +133,7 @@ theorem bindLocals_lookup_other (locals : List (VarN × FlatSem.Value)) (traces 
         intro n mem
         exact fresh n (by simp [mem])
       change nsLookup (nsBind key (.localName tr key) (bindLocals traces (rest.map Prod.fst) base)) id = _
-      rw [nsLookup_bind_other _ key (VarName.localName tr key) id different]
+      rw [nsLookup_nsBind.2 id key (VarName.localName tr key) _ different]
       exact ih traces len restFresh
 
 /-- A missing flat local lookup is also absent from the related source locals. -/
@@ -150,7 +150,7 @@ theorem envRel_missing (genv : GlobalEnv) (source : Namespace ModN VarN Value)
         change decide (name = key) = false
         simp [same]
       have restMissing : flatEnv.lookup name = none := by simpa [List.lookup_cons, neq] using missing
-      rw [nsLookup_bind_other _ key sourceValue (.short name) (by simpa using same)]
+      rw [nsLookup_nsBind.2 (.short name) key sourceValue _ (by simpa using same)]
       exact envRel_missing genv sourceEnv flatEnv envRel name restMissing
 termination_by flat.length
 
@@ -169,7 +169,7 @@ theorem envRel_source_missing (genv : GlobalEnv) (source : Namespace ModN VarN V
         change decide (name = key) = false
         simp [same]
       have restMissing : nsLookup sourceEnv (.short name) = none := by
-        simpa [nsLookup_bind_other _ key sourceValue (.short name) (by simpa using same)] using missing
+        simpa [nsLookup_nsBind.2 (.short name) key sourceValue _ (by simpa using same)] using missing
       simpa [List.lookup_cons, neq] using envRel_source_missing genv sourceEnv flatEnv envRel name restMissing
 termination_by flat.length
 

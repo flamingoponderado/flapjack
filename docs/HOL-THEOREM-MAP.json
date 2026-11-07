@@ -340,6 +340,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "ctor_same_type_SND",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/PatternStamps.lean",
+  "lean_name": "ctorSameType_some_iff",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared ctor_same_type_snd_replay in source_to_flat_init_probe.out: the pair first-component types are independent and the second-component type is shared; the HOL iff and its local proof replay agree with Lean."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
   "hol_name": "FST_PAIR_MAP_I",
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/PatternStamps.lean",
   "lean_name": "fst_pairMap_id",

@@ -9560,8 +9560,8 @@ replays and captures the original local recursive-function lookup proof;
 `build_rec_env_merge` and `nsAppend_nsEmpty` capture recursive bindings and the
 two-sided namespace identity, including the former's unused polymorphic binder.
 
-`source_to_flat_init_probe.out` also replays the local `FST_PAIR_MAP_I` proof
-with inferred types visible, including independent input and output types.
+`source_to_flat_init_probe.out` also replays the local `FST_PAIR_MAP_I` and
+`ctor_same_type_SND` proofs with their independent inferred types visible.
 
 `source_to_flat_init_probe.out` captures the typed original source-to-flat
 initialization definitions and evaluates the initial constructor entries and

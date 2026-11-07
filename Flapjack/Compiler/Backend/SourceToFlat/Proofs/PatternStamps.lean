@@ -6,6 +6,15 @@ import Flapjack.Compiler.Backend.Semantics.FlatSem.PatternMatch
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.SemanticPrimitivesHOL
 
+/-- Two present constructor identifiers have the same type exactly when their
+type components agree. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "ctor_same_type_SND"]
+theorem ctorSameType_some_iff {α β γ : Type} (x : α × β) (y : γ × β) :
+    FlatSem.ctorSameType (some x) (some y) ↔ x.2 = y.2 := by
+  cases x
+  cases y
+  rfl
+
 /-- Mapping the second component of a pair preserves its first component. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "FST_PAIR_MAP_I"]
 theorem fst_pairMap_id {α β γ : Type} (f : β → γ) (pair : α × β) :
