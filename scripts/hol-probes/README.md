@@ -9712,3 +9712,5 @@ its natural operands, integer coercions, and comparison operator type.
 proof and captures the inferred source and flat list types.
 
 `source_to_flat_compile_globals_probe.out` includes a typed replay of the local `evaluate_foldr_let_err` theorem, including its arbitrary let trace.
+
+`source_to_flat_value_relation_probe.out` includes a typed parse of local `do_opapp`; its local HOL proof is not replayed.

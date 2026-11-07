@@ -1,6 +1,18 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "do_opapp",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateLocalCall.lean",
+  "lean_name": "doOpApp_source",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "c",
+    "tys"
+  ],
+  "reviewer": "Independently compared source lines 1631-1639, complete binders, list relation, single conjunctive premise, ordered existentials and environment/compilation conclusions against the typed do_opapp_local_statement in source_to_flat_value_relation_probe.out:10. This is a typed parse; the local HOL proof depends on unexported local lemmas and was not replayed. GlobalEnv uses reviewed canonical finite maps c and tys and a same-module roundtrip witness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
   "hol_name": "v_rel_Bool_eqn",
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/PrimitiveType.lean",
   "lean_name": "boolValueRel_iff",
@@ -13553,7 +13565,7 @@
       "tys"
     ],
     "hol_name": "env_all_rel",
-    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateLocal.lean",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/ValueRelCases.lean",
     "lean_name": "FactoredEnvAllRel",
     "reviewer": "Compared the typed HOL rule and generated cases: a source local namespace comes from an association list with exactly the given local names, the base environment satisfies the global invariant outside those names, the local environments relate, and the source and flat environments are the specified records. factoredEnvAllRel_source_cases checks record extensionality and the complete existential case. The global environment uses its reviewed canonical c and tys finite maps."
   },
@@ -13884,7 +13896,7 @@
     "reviewer": "Compared the full typed precondition1 capture: compiler payload, FFI state and initial environment value types are independent; all ten source conjuncts and the optional next-configuration case are retained in order. The initial global condition uses its reviewed canonical finite-map carrier, the source oracle THE uses HOL inhabitation, and EVERY is expressed by membership quantification."
   },
   {
-    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateLocal.lean",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/ValueRelCases.lean",
     "lean_name": "factoredEnvAllRel_source_cases",
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "env_all_rel_cases",

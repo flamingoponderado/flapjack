@@ -25,3 +25,17 @@ val local_eqns =
   |> map (SIMP_CONV (srw_ss ()) [Once v_rel_cases])
   |> map GEN_ALL |> LIST_CONJ;
 val _ = show_thm "v_rel_eqns_local=" local_eqns;
+
+(* Parse the original local do_opapp statement; its proof depends on local
+   source-script declarations not exported by source_to_flatProofTheory. *)
+val do_opapp_local_statement =
+  ``!genv vs vs_i1 env e.
+      semanticPrimitives$do_opapp vs = SOME (env, e) /\
+      LIST_REL (source_to_flatProof$v_rel genv) vs vs_i1 ==>
+      ?comp_map env_i1 locals t1 ts.
+        source_to_flatProof$env_all_rel genv comp_map env env_i1 locals /\
+        LENGTH ts = LENGTH locals /\
+        flatSem$do_opapp vs_i1 = SOME
+          (env_i1, source_to_flat$compile_exp t1
+            (comp_map with v := source_to_flatProof$bind_locals ts locals comp_map.v) e)``;
+val _ = (print "do_opapp_local_statement="; print_term do_opapp_local_statement; print "\n");
