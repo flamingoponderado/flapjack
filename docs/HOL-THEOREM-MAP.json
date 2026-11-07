@@ -14393,6 +14393,54 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "v_to_list_concrete",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/Concrete.lean",
+    "lean_name": "valueToList_concrete",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared value_to_list_concrete in source_eval_oracle_adjust_probe.out: successful value-list decoding equates the concrete-value Boolean with the Boolean all of the decoded values."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "maybe_all_list_SOME",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/Concrete.lean",
+    "lean_name": "maybeAllList_some",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared maybe_all_list_some in source_eval_oracle_adjust_probe.out: successful traversal reconstructs the option input list by mapping some over the complete output, for an arbitrary element type."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "maybe_all_list_EVERY",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/Concrete.lean",
+    "lean_name": "maybeAllList_every",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared maybe_all_list_every in source_eval_oracle_adjust_probe.out: a successful traversal implies every input option is nonempty; the universal membership form expresses the original EVERY predicate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "v_to_word8_list_concrete",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/Concrete.lean",
+    "lean_name": "valueToWord8List_concrete",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared word8_list_concrete in source_eval_oracle_adjust_probe.out: successful decoding to a list of 8-bit words implies the source value is concrete."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "v_to_word64_list_concrete",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/Concrete.lean",
+    "lean_name": "valueToWord64List_concrete",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared word64_list_concrete in source_eval_oracle_adjust_probe.out: successful decoding to a list of 64-bit words implies the source value is concrete."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "compiler_agrees",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/Concrete.lean",
+    "lean_name": "compilerAgrees_concrete",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared compiler_agrees_concrete in source_eval_oracle_adjust_probe.out: the complete compiler-agreement premise implies concreteness of previous state, next state, bytes and words in the original order, with fixed 8-bit and 64-bit compiler outputs."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
     "hol_name": "v_to_nat_def",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleCallback.lean",
     "lean_name": "valueToNat",

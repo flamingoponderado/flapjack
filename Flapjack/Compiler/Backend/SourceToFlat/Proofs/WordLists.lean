@@ -14,21 +14,7 @@ end WordListsPort
 /-- Successful collection of options preserves the complete list shape. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "maybe_all_list_SOME"]
 theorem maybeAllList_some {α : Type} : ∀ (xs : List (Option α)) (ys : List α),
-    maybeAllList xs = some ys → xs = ys.map some := by
-  intro xs
-  induction xs with
-  | nil => intro ys h; simp [maybeAllList] at h; subst ys; rfl
-  | cons head tail ih =>
-    intro ys h
-    cases head with
-    | none => simp [maybeAllList] at h
-    | some x =>
-      cases result : maybeAllList tail with
-      | none => simp [maybeAllList, result] at h
-      | some rest =>
-        simp [maybeAllList, result] at h
-        subst ys
-        simp [ih rest result]
+    maybeAllList xs = some ys → xs = ys.map some := maybeAllList_reconstruct
 
 private theorem maybeAllList_shape {α β : Type} (decode : α → Option β) (encode : β → α)
     (recover : ∀ x y, decode x = some y → x = encode y) :

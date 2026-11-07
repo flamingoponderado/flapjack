@@ -38,3 +38,9 @@ is_record_imp=is_record (ci :'cfg compiler_instance) (es :eval_state option) ⇒
 recorded_wf_step=recorded_orac_wf (compiler :(num # num) # v # dec list -> (v # word8 list # word64 list) option) (orac :num -> (num # num) # v # dec list) ∧ compiler_agrees compiler (args :(num # num) # v # dec list) ((st_v2 :v),(bs_v :v),(ws_v :v)) ∧ ((0 :num) < FST (FST (orac (0 :num))) ⇒ FST (SND args) = FST (SND (orac (0 :num)))) ⇒ recorded_orac_wf compiler (λ(j :num). if j = (0 :num) then ((FST (FST (orac (0 :num))) + (1 :num),(0 :num)),st_v2,([] :dec list)) else if j = SUC (FST (FST (orac (0 :num)))) then args else orac j)
 value_to_nat_some=v_to_nat (v :v) = SOME (n :num) ⇒ v = nat_to_v n
 value_to_env_id_some=v_to_env_id (v :v) = SOME (id :num # num) ⇒ v = Conv (NONE :stamp option) [nat_to_v (FST id); nat_to_v (SND id)]
+value_to_list_concrete=∀(x :v) (xs :v list). v_to_list x = SOME xs ⇒ (concrete_v x ⇔ EVERY concrete_v xs)
+maybe_all_list_some=∀(xs :α option list) (ys :α list). maybe_all_list xs = SOME ys ⇒ xs = MAP (SOME :α -> α option) ys
+maybe_all_list_every=maybe_all_list (xs :α option list) = SOME (ys :α list) ⇒ EVERY (λ(x :α option). x ≠ (NONE :α option)) xs
+word8_list_concrete=v_to_word8_list (x :v) = SOME (xs :word8 list) ⇒ concrete_v x
+word64_list_concrete=v_to_word64_list (x :v) = SOME (xs :word64 list) ⇒ concrete_v x
+compiler_agrees_concrete=compiler_agrees (f :(num # num) # v # dec list -> (v # word8 list # word64 list) option) ((id :num # num),(st_v :v),(decs :dec list)) ((st_v2 :v),(bs_v :v),(ws_v :v)) ⇒ concrete_v st_v ∧ concrete_v st_v2 ∧ concrete_v bs_v ∧ concrete_v ws_v
