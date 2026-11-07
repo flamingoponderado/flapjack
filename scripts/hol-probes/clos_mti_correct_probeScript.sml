@@ -40,3 +40,7 @@ val _ = show_thm "HD_intro_multi=" clos_mtiProofTheory.HD_intro_multi;
 val _ = show_thm "intro_multi_cons=" clos_mtiProofTheory.intro_multi_cons;
 val _ = show_thm "intro_multi_no_Labels=" clos_mtiProofTheory.intro_multi_no_Labels;
 val _ = show_thm "intro_multi_obeys_max_app=" clos_mtiProofTheory.intro_multi_obeys_max_app;
+val _ = show_thm "collect_args_preserves_set_globals=" clos_mtiProofTheory.collect_args_preserves_set_globals;
+val _ = show_thm "collect_args_preserves_esgc_free=" clos_mtiProofTheory.collect_args_preserves_esgc_free;
+val _ = show_thm "collect_apps_preserves_set_globals=" clos_mtiProofTheory.collect_apps_preserves_set_globals;
+val _ = show_thm "collect_apps_preserves_esgc_free=" clos_mtiProofTheory.collect_apps_preserves_esgc_free;

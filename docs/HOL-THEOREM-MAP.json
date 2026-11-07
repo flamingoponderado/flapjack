@@ -1,6 +1,38 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+  "hol_name": "collect_args_preserves_set_globals",
+  "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Globals.lean",
+  "lean_name": "collectArgs_preserves_setGlobals",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed source in clos_mti_correct_probe.out: collector binders and equation premise, and the output-to-input global bag equality agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+  "hol_name": "collect_args_preserves_esgc_free",
+  "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Globals.lean",
+  "lean_name": "collectArgs_preserves_esgcFree",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed source in clos_mti_correct_probe.out: collector binders, grouped equation and closure-safety premises, and output predicate agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+  "hol_name": "collect_apps_preserves_set_globals",
+  "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Globals.lean",
+  "lean_name": "collectApps_preserves_setGlobals",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed source in clos_mti_correct_probe.out: collector binders and equation premise, combined list and head bags, and equality direction agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+  "hol_name": "collect_apps_preserves_esgc_free",
+  "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Globals.lean",
+  "lean_name": "collectApps_preserves_esgcFree",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed source in clos_mti_correct_probe.out: collector binders, grouped equation and list/head closure-safety premises, and both output predicates agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
   "hol_name": "intro_multi_obeys_max_app",
   "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Arity.lean",
   "lean_name": "intro_multi_obeys_max_app",

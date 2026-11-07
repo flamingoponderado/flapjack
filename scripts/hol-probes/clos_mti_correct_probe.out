@@ -16,3 +16,7 @@ HD_intro_multi=[HD (intro_multi (max_app :num) [(e2 :closLang$exp)])] = intro_mu
 intro_multi_cons=∀(xs :closLang$exp list) (x :closLang$exp). intro_multi (m :num) (x::xs) = HD (intro_multi m [x])::intro_multi m xs
 intro_multi_no_Labels=∀(m :num) (xs :closLang$exp list). EVERY no_Labels xs ⇒ EVERY no_Labels (intro_multi m xs)
 intro_multi_obeys_max_app=∀(m :num) (xs :closLang$exp list). m ≠ (0 :num) ∧ EVERY no_mti xs ⇒ EVERY (obeys_max_app m) (intro_multi m xs)
+collect_args_preserves_set_globals=∀(max_app :num) (n :num) (e :closLang$exp) (n' :num) (e' :closLang$exp). collect_args max_app n e = (n',e') ⇒ set_globals e' = set_globals e
+collect_args_preserves_esgc_free=∀(max_app :num) (n :num) (e :closLang$exp) (n' :num) (e' :closLang$exp). collect_args max_app n e = (n',e') ∧ esgc_free e ⇒ esgc_free e'
+collect_apps_preserves_set_globals=∀(max_app :num) (es :closLang$exp list) (e :closLang$exp) (es' :closLang$exp list) (e' :closLang$exp). collect_apps max_app es e = (es',e') ⇒ elist_globals es ⊎ set_globals e = elist_globals es' ⊎ set_globals e'
+collect_apps_preserves_esgc_free=∀(max_app :num) (es :closLang$exp list) (e :closLang$exp) (es' :closLang$exp list) (e' :closLang$exp). collect_apps max_app es e = (es',e') ∧ EVERY esgc_free es ∧ esgc_free e ⇒ EVERY esgc_free es' ∧ esgc_free e'
