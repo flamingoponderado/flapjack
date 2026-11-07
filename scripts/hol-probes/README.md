@@ -9676,6 +9676,8 @@ The same probe captures `ALL_DISJOINT_CONS` and `idx_types_FORALL` with their
 original conjunct and constructor order.
 The same probe captures `bind_locals_fold_nsBind`, `Boolv_11`, and
 `evaluate_Bool`, and replays the local `opt_case_bool_eq` proof.
+It also replays the local `env_updated_lem` identity update with its
+polymorphic flat environment type.
 
 The same probe replays the original local `ALOOKUP_alloc_defs` proof with
 independent inferred key and value types.

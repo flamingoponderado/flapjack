@@ -6,6 +6,10 @@ fun show_thm label th =
   if null (hyp th) then (print label; print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
 fun show_eval label tm = (print label; print_term (rhs (concl (EVAL tm))); print "\n");
+val env_updated_lem_replay = Q.prove (
+  `env with v updated_by (\y. y) = (env : 'a flatSem$environment)`,
+  rw [flatSemTheory.environment_component_equality]);
+val _ = show_thm "env_updated_lem_replay=" env_updated_lem_replay;
 val _ = show_thm "all_disjoint_cons_typed=" source_to_flatProofTheory.ALL_DISJOINT_CONS;
 val _ = show_thm "idx_types_forall_typed=" source_to_flatProofTheory.idx_types_FORALL;
 val _ = show_thm "bind_locals_fold_typed=" source_to_flatProofTheory.bind_locals_fold_nsBind;

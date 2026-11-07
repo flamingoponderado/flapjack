@@ -5,6 +5,13 @@ namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL
 open OracleInvariant
 
+/-- Updating a flat environment's value bindings by the identity leaves it unchanged. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "env_updated_lem"]
+theorem flatEnvironment_update_identity {α : Type} (env : FlatSem.Environment α) :
+    { env with v := (fun y => y) env.v } = env := by
+  cases env
+  rfl
+
 /-- Anonymous let sequencing propagates the same error as evaluating the
 expression list, for any trace annotation. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "evaluate_foldr_let_err"]

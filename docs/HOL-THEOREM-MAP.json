@@ -340,6 +340,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "env_updated_lem",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateLocalBoundedArray.lean",
+  "lean_name": "flatEnvironment_update_identity",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared env_updated_lem_replay in source_to_flat_init_probe.out: arbitrary flat environment value type, identity update of its v field, and equality to the original environment agree. The local HOL proof is replayed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
   "hol_name": "evaluate_foldr_let_err",
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateLocalBoundedArray.lean",
   "lean_name": "flatFoldLets_error",

@@ -1,3 +1,4 @@
+env_updated_lem_replay=(env :α environment) with v updated_by (λ(y :(mlstring # α) list). y) = env
 all_disjoint_cons_typed=(ALL_DISJOINT [(x :α -> bool)] ⇔ T) ∧ (ALL_DISJOINT (x::(y :α -> bool)::(zs :(α -> bool) list)) ⇔ DISJOINT x y ∧ ALL_DISJOINT (x ∪ y::zs))
 idx_types_forall_typed=(∀(x :idx_types). (P :idx_types -> bool) x) ⇔ P Idx_Var ∧ P Idx_Type ∧ P Idx_Exn
 bind_locals_fold_typed=nsBind (nm :mlstring) (Local (t :tra) nm) (bind_locals (ts :tra list) (locals :mlstring list) (v_map :(α, mlstring, var_name) namespace)) = bind_locals (t::ts) (nm::locals) v_map
