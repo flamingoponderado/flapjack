@@ -14348,8 +14348,9 @@
     "hol_name": "compile_decs_correct",
     "lean_path": "Flapjack/Compiler/Backend/SourceLet/Proofs/Correct.lean",
     "lean_name": "compile_decs_correct",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in source_let_proof_probe.out. Clocked evaluator, source AST carriers, and the executable pass require correspondence review."
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared compile_declarations in source_let_proof_probe.out: state, environment, declaration list, final state and result occur in HOL order, and the source run and non-type-error conjunction imply the same result for compiled declarations. The reviewed evaluator and carriers match. Evaluation inherits reals_as_rational_cuts."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_letProofScript.sml",
@@ -14399,16 +14400,18 @@
     "hol_name": "evaluate_lift_lets",
     "lean_path": "Flapjack/Compiler/Backend/SourceLet/Proofs/Repeated.lean",
     "lean_name": "evaluate_lift_lets",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in source_let_proof_probe.out. The source run, non-type-error condition and successful lifting are retained; evaluator and carrier correspondence remain pending."
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared lift_all_evaluation in source_let_proof_probe.out: the ordered state and environment binders, four conjunctive source-prefix, declaration-run, non-type-error and lifting premises, and local declaration evaluation conclusion match. The reviewed evaluator and carriers match. Evaluation inherits reals_as_rational_cuts."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_letProofScript.sml",
     "hol_name": "evaluate_lift_let",
     "lean_path": "Flapjack/Compiler/Backend/SourceLet/Proofs/Evaluate.lean",
     "lean_name": "evaluate_lift_let",
-    "statement_status": "pending_statement_review",
-    "reviewer": "The assembled statement retains the original evaluation, non-type-error and successful-lifting hypotheses. Original typed statement captured in source_let_proof_probe.out; evaluator and carrier correspondence remain pending."
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared lift_single_evaluation in source_let_proof_probe.out: state, environment, declaration, final state, result and output declarations occur in HOL order, and the three conjunctive source-run, non-type-error and lifting premises imply the same local evaluation. The reviewed evaluator and carriers match. Evaluation inherits reals_as_rational_cuts."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_letProofScript.sml",

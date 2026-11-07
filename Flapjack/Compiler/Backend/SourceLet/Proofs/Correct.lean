@@ -115,18 +115,17 @@ theorem evaluate_lift_start {F : Type} (d : Dec) (state : State F) (env : SemEnv
   have emptyExtend : extendDecEnv empty env = env := by
     cases env with
     | mk vars constructors => cases vars; cases constructors; rfl
-  apply evaluate_lift_lets [] d state state next env empty result pre final emptyRun
-  · simpa only [emptyExtend] using source
-  · exact safe
-  · exact lifted
+  apply evaluate_lift_lets [] d state env state empty next result pre final
+  exact ⟨emptyRun, by simpa only [emptyExtend] using source, safe, lifted⟩
 
 /-- The original declaration-list evaluation preservation theorem for source
 let-lifting, including the non-type-error hypothesis. -/
 @[hol "cakeml/compiler/backend/proofs/source_letProofScript.sml" "compile_decs_correct"]
-theorem compile_decs_correct {F : Type} (state next : State F) (env : SemEnv Value)
-    (ds : List Dec) (result : Result (SemEnv Value) Value)
-    (source : evaluateDecs state env ds = (next, result)) (safe : result ≠ .err (.abort .typeError)) :
+theorem compile_decs_correct {F : Type} (state : State F) (env : SemEnv Value)
+    (ds : List Dec) (next : State F) (result : Result (SemEnv Value) Value)
+    (premises : evaluateDecs state env ds = (next, result) ∧ result ≠ .err (.abort .typeError)) :
     evaluateDecs state env (compileDecs ds) = (next, result) := by
+  obtain ⟨source, safe⟩ := premises
   have preserve : ∀ ds : List Dec, DecsPreserve (F := F) ds (compileDecs ds) := by
     intro ds
     induction ds using compileDecs.induct with

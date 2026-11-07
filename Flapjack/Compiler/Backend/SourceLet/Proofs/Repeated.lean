@@ -27,14 +27,15 @@ theorem evaluateLiftLets_step {F : Type} (sofar : List Dec) (d d1 d2 : Dec)
     (safe : result ≠ .err (.abort .typeError))
     (lifted : liftLet d = some (d1, d2))
     (rest : liftLets (d1 :: sofar) d2 = some (out, final))
-    (ih : ∀ (state' middle' last' : State F) (env' inner' : SemEnv Value)
+    (ih : ∀ (state' : State F) (env' : SemEnv Value) (middle' : State F) (inner' : SemEnv Value)
+        (last' : State F)
         (result' : Result (SemEnv Value) Value) (out' : List Dec) (final' : Dec),
-      evaluateDecs state' env' (d1 :: sofar).reverse = (middle', .val inner') →
-      evaluateDecs middle' (extendDecEnv inner' env') [d2] = (last', result') →
-      result' ≠ .err (.abort .typeError) → liftLets (d1 :: sofar) d2 = some (out', final') →
+      evaluateDecs state' env' (d1 :: sofar).reverse = (middle', .val inner') ∧
+      evaluateDecs middle' (extendDecEnv inner' env') [d2] = (last', result') ∧
+      result' ≠ .err (.abort .typeError) ∧ liftLets (d1 :: sofar) d2 = some (out', final') →
       evaluateDecs state' env' [.dlocal out' [final']] = (last', result')) :
     evaluateDecs state env [.dlocal out [final]] = (last, result) := by
-  have liftedRun := evaluate_lift_let middle last (extendDecEnv inner env) d d1 d2 result source safe lifted
+  have liftedRun := evaluate_lift_let middle (extendDecEnv inner env) d last result d1 d2 ⟨source, safe, lifted⟩
   rw [evaluateDecs_local] at liftedRun
   cases first : evaluateDecs middle (extendDecEnv inner env) [d1] with
   | mk next firstResult =>
@@ -56,35 +57,33 @@ theorem evaluateLiftLets_step {F : Type} (sofar : List Dec) (d d1 d2 : Dec)
         dsimp only
         rw [first]
         rfl
-      apply ih state next last env (extendDecEnv newEnv inner) result out final nextAccumulated
-      · simpa only [extendDecEnv_assoc] using remaining
-      · exact safe
-      · exact rest
+      apply ih state env next (extendDecEnv newEnv inner) last result out final
+      exact ⟨nextAccumulated, by simpa only [extendDecEnv_assoc] using remaining, safe, rest⟩
 
 /-- Repeated lifting preserves the declaration result after an already
 evaluated prefix, provided the source run does not produce a type error. -/
 @[hol "cakeml/compiler/backend/proofs/source_letProofScript.sml" "evaluate_lift_lets"]
 theorem evaluate_lift_lets {F : Type} (sofar : List Dec) (d : Dec) :
-    ∀ (state middle last : State F) (env inner : SemEnv Value)
+    ∀ (state : State F) (env : SemEnv Value) (middle : State F) (inner : SemEnv Value) (last : State F)
       (result : Result (SemEnv Value) Value) (out : List Dec) (final : Dec),
-      evaluateDecs state env sofar.reverse = (middle, .val inner) →
-      evaluateDecs middle (extendDecEnv inner env) [d] = (last, result) →
-      result ≠ .err (.abort .typeError) → liftLets sofar d = some (out, final) →
+      evaluateDecs state env sofar.reverse = (middle, .val inner) ∧
+      evaluateDecs middle (extendDecEnv inner env) [d] = (last, result) ∧
+      result ≠ .err (.abort .typeError) ∧ liftLets sofar d = some (out, final) →
       evaluateDecs state env [.dlocal out [final]] = (last, result) := by
   induction sofar, d using liftLets.induct with
   | case1 sofar d d1 d2 step ih =>
-    intro state middle last env inner result out final accumulated source safe lifted
+    rintro state env middle inner last result out final ⟨accumulated, source, safe, lifted⟩
     apply evaluateLiftLets_step sofar d d1 d2 state middle last env inner result out final
       accumulated source safe step
     · rw [liftLets.eq_def, step] at lifted
       exact lifted
     · exact ih
   | case2 sofar d noStep empty =>
-    intro state middle last env inner result out final accumulated source safe lifted
+    rintro state env middle inner last result out final ⟨accumulated, source, safe, lifted⟩
     rw [liftLets.eq_def, noStep] at lifted
     simp [empty] at lifted
   | case3 sofar d noStep nonempty =>
-    intro state middle last env inner result out final accumulated source safe lifted
+    rintro state env middle inner last result out final ⟨accumulated, source, safe, lifted⟩
     rw [liftLets.eq_def, noStep] at lifted
     simp only [nonempty] at lifted
     obtain ⟨rfl, rfl⟩ := lifted

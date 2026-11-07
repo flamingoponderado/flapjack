@@ -20,7 +20,7 @@ theorem compileDecs_clock_observations {F : Type} (state : State F) (env : SemEn
       change ∃ k, (evaluateProgWithClock state env k program).2 = .err (.abort .typeError)
       refine ⟨clock, ?_⟩
       simp [evaluateProgWithClock, run, bad]
-    have target := compile_decs_correct { state with clock := clock } next env program result run safe
+    have target := compile_decs_correct { state with clock := clock } env program next result ⟨run, safe⟩
     simp [evaluateProgWithClock, run, target]
 
 /-- The source let-lifting pass preserves all original observations of a
@@ -47,6 +47,6 @@ theorem compile_semantics_oracle {Config F : Type}
       env program outcome := by
   apply SourceEval.Proofs.adjust_oracle_semantics_prog ci f compileDecs ?_ state env program outcome inserted noFail source
   intro s s' e ds result run safe
-  exact compile_decs_correct s s' e ds result run safe
+  exact compile_decs_correct s e ds s' result ⟨run, safe⟩
 
 end Flapjack.Compiler.Backend.SourceLet

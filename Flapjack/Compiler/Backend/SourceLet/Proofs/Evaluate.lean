@@ -164,11 +164,12 @@ theorem evaluateLiftLet_letrec {F : Type} (state : State F) (env : SemEnv Value)
 /-- A successful single let-lifting step preserves the original declaration
 evaluation whenever that evaluation does not produce a type error. -/
 @[hol "cakeml/compiler/backend/proofs/source_letProofScript.sml" "evaluate_lift_let"]
-theorem evaluate_lift_let {F : Type} (state next : State F) (env : SemEnv Value)
-    (d d1 d2 : Dec) (result : Result (SemEnv Value) Value)
-    (source : EvaluateHOL.evaluateDecs state env [d] = (next, result))
-    (safe : result ≠ .err (.abort .typeError)) (lifted : liftLet d = some (d1, d2)) :
+theorem evaluate_lift_let {F : Type} (state : State F) (env : SemEnv Value) (d : Dec)
+    (next : State F) (result : Result (SemEnv Value) Value) (d1 d2 : Dec)
+    (premises : EvaluateHOL.evaluateDecs state env [d] = (next, result) ∧
+      result ≠ .err (.abort .typeError) ∧ liftLet d = some (d1, d2)) :
     EvaluateHOL.evaluateDecs state env [.dlocal [d1] [d2]] = (next, result) := by
+  obtain ⟨source, safe, lifted⟩ := premises
   have safe' : (EvaluateHOL.evaluateDecs state env [d]).2 ≠ .err (.abort .typeError) := by
     rw [source]
     exact safe
