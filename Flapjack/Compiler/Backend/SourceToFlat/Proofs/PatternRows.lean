@@ -57,8 +57,8 @@ theorem pmatch_success_sourceBindings {C F : Type} (genv : GlobalEnv) (compMap c
     simpa [compilePat_bindings] using names
 
 /-- If every source pattern is type-compatible, matching the compiled rows
-cannot fail with a flat pattern type error. This is Flapjack infrastructure
-over the factored relations, not yet a reviewed port of the HOL theorem. -/
+cannot fail with a flat pattern type error. This general Flapjack helper is
+used to prove the HOL-shaped theorem in `PatternRows.Invariant`. -/
 theorem canPmatchAll_rows_noTypeError {C F : Type} (genv : GlobalEnv)
     (compMap compMap2 : Environment) (trace : List VarN)
     (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (sourceState : SemanticPrimitivesHOL.State F)

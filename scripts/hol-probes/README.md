@@ -9658,3 +9658,6 @@ simulation, including its unused polymorphic existential witness.
 
 The same probe replays the original local `ALOOKUP_alloc_defs` proof with
 independent inferred key and value types.
+
+The source-to-flat initialization probe captures the complete typed
+`can_pmatch_all_IMP_pmatch_rows` theorem.

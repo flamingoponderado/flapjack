@@ -21,6 +21,7 @@ import Flapjack.Compiler.Backend.SourceEval.Proofs.Environment
 import Flapjack.Compiler.Backend.SourceEval.Proofs.ValueRelation
 import Flapjack.Compiler.Backend.SourceEval.Proofs.ValueRelationSimps
 import Flapjack.Compiler.Backend.SourceEval.Proofs.PrimitiveType
+import Flapjack.Compiler.Backend.SourceEval.Proofs.PrimitiveTest
 import Flapjack.Compiler.Backend.SourceEval.Proofs.Conversions
 import Flapjack.Compiler.Backend.SourceEval.Proofs.StateRelation
 import Flapjack.Compiler.Backend.SourceEval.Proofs.SimulationPrerequisites
@@ -531,6 +532,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StoreUpdate
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateCases
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateControl
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternRows
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternRows.Invariant
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateMatch
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateApply
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvalApp

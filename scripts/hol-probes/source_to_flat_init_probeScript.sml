@@ -129,3 +129,5 @@ val alookup_alloc_defs_local = Q.prove (
        by (rw [MEM_MAP] >> metis_tac [FST]) >> fs [fst_alloc_defs]) >-
     (first_x_assum drule >> disch_then (qspecl_then [`l`,`tt`] mp_tac) >> rw [EL_APPEND_EQN]));
 val _ = show_thm "alookup_alloc_defs_local=" alookup_alloc_defs_local;
+
+val _ = show_thm "can_pmatch_all_implies_rows=" source_to_flatProofTheory.can_pmatch_all_IMP_pmatch_rows;

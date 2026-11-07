@@ -1,6 +1,18 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "can_pmatch_all_IMP_pmatch_rows",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/PatternRows/Invariant.lean",
+  "lean_name": "canPmatchAll_implies_pmatchRows",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "c",
+    "tys"
+  ],
+  "reviewer": "Compared typed can_pmatch_all_implies_rows in source_to_flat_init_probe.out: preserves the original conjunction of source matchability, full simulation invariant, complete environment relation and related values, with compiled rows using bindLocals and the same non-type-error conclusion. The Bool source matchability is asserted true; independent compiler and FFI carriers are preserved. GlobalEnv c and tys use the reviewed canonical finite-map representation and same-module roundtrip witness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
   "hol_name": "ALOOKUP_alloc_defs",
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/AllocDefsLookup.lean",
   "lean_name": "allocDefs_lookup",
