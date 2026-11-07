@@ -9670,6 +9670,8 @@ It captures `INJ_DEF` and `some_f_inj_eq` with inferred types and replays the
 local `FST_SND_EQ_CASE` proof with all four component types visible.
 It also captures `EL_APPEND_IF`, `ALL_DISJOINT_DEF`, and `ALL_DISJOINT_elem` and replays the local
 `ALOOKUP_alloc_defs_EL` and `EL_add_SOME_SOME` proofs.
+The typed `ALL_DISJOINT_MOVE` and `ALL_DISJOINT_SUBSETS` captures retain their
+original list-update, subset, and list-relation premises.
 
 The same probe replays the original local `ALOOKUP_alloc_defs` proof with
 independent inferred key and value types.

@@ -14468,6 +14468,22 @@
     "reviewer": "Compared all_disjoint_elem_typed in source_to_flat_init_probe.out: the arbitrary element type and set list, universally quantified element and index, grouped disjointness, bound and EL membership premise, and EVERY I over MAPi conclusion agree. Sets are membership predicates and List.Forall id renders EVERY I."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/IndexInvariant.lean",
+    "lean_name": "allDisjoint_move",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "ALL_DISJOINT_MOVE",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all_disjoint_move_typed in source_to_flat_init_probe.out: the original quantified indices, set and lists, grouped premises, inner destination then outer source list updates, EL observations and disjointness conclusion agree, including coincident indices. Sets are membership predicates."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/IndexInvariant.lean",
+    "lean_name": "allDisjoint_subsets",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "ALL_DISJOINT_SUBSETS",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all_disjoint_subsets_typed in source_to_flat_init_probe.out: the quantified lists, grouped disjointness and list-relation premises, subset direction and resulting disjointness agree. Sets are membership predicates."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/AllocDefsLookup.lean",
     "lean_name": "holEl_append_if",
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",

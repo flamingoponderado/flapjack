@@ -95,6 +95,60 @@ theorem allDisjoint_elem {α : Type} (xs : List (Set α)) :
     rw [empty] at both
     exact both
 
+/-- Replacing each set by a subset preserves pairwise disjointness. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "ALL_DISJOINT_SUBSETS"]
+theorem allDisjoint_subsets {α : Type} : ∀ (xs ys : List (Set α)),
+    allDisjoint xs ∧ List.Forall₂ (fun x y => y ⊆ x) xs ys → allDisjoint ys := by
+  intro xs ys ⟨old, related⟩
+  rw [allDisjoint_iff_bounded] at old ⊢
+  intro i j hi hj ne
+  have hi' : i < xs.length := by rw [related.length_eq]; exact hi
+  have hj' : j < xs.length := by rw [related.length_eq]; exact hj
+  have left := related.get hi' hi
+  have right := related.get hj' hj
+  have empty := old i j hi' hj' ne
+  apply Set.eq_empty_iff_forall_notMem.mpr
+  intro x member
+  have previous : x ∈ xs[i] ∩ xs[j] := ⟨left member.1, right member.2⟩
+  rw [empty] at previous
+  exact previous
+
+/-- Moving elements between two positions preserves disjointness, even when they coincide. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "ALL_DISJOINT_MOVE"]
+theorem allDisjoint_move {α : Type} :
+    ∀ (i j : Nat) (moved : Set α) (xs ys : List (Set α)),
+      allDisjoint xs ∧
+      ys = (xs.set j (holEl j xs ∪ moved)).set i (holEl i xs \ moved) ∧
+      moved ⊆ holEl i xs ∧ i < xs.length ∧ j < xs.length → allDisjoint ys := by
+  intro i j moved xs ys ⟨old, eq, subset, ib, jb⟩
+  subst ys
+  intro p q ⟨pb, qb, pq⟩
+  rw [holEl_set _ i p _ (by simpa using ib), holEl_set _ i q _ (by simpa using ib)]
+  simp only [holEl_set xs j p _ jb, holEl_set xs j q _ jb]
+  apply Set.eq_empty_iff_forall_notMem.mpr
+  intro z member
+  have separate : ∀ a b, a < xs.length → b < xs.length → a ≠ b →
+      z ∈ holEl a xs → z ∈ holEl b xs → False := by
+    intro a b ab bb ne za zb
+    have empty := old a b ⟨ab, bb, ne⟩
+    have both : z ∈ holEl a xs ∩ holEl b xs := ⟨za, zb⟩
+    rw [empty] at both
+    exact both
+  have pb' : p < xs.length := by simpa using pb
+  have qb' : q < xs.length := by simpa using qb
+  have pqSeparate := separate p q pb' qb' pq
+  have ipSeparate : i ≠ p → z ∈ holEl i xs → z ∈ holEl p xs → False :=
+    fun ne => separate i p ib pb' ne
+  have iqSeparate : i ≠ q → z ∈ holEl i xs → z ∈ holEl q xs → False :=
+    fun ne => separate i q ib qb' ne
+  have movedIn : z ∈ moved → z ∈ holEl i xs := fun h => subset h
+  clear separate old subset
+  by_cases ip : i = p <;> by_cases iq : i = q <;>
+    by_cases jp : j = p <;> by_cases jq : j = q <;>
+    simp only [ip, iq, jp, jq, if_true, if_false, Set.mem_inter_iff,
+      Set.mem_sdiff, Set.mem_union] at member
+  all_goals aesop (config := { maxRuleApplications := 50 })
+
 /-- Relate global-slot length to the last counter, as in the source oracle
 configuration; no oracle yields only the end-counter bound. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "fin_idx_match_def"]
@@ -162,24 +216,9 @@ theorem genvAllocatedIndices_fillSlot (genv : GlobalEnv) (idx : Nat) (value : Fl
 /-- Shrinking the first of four disjoint sets preserves their disjointness. -/
 theorem allDisjoint_shrinkFirst {α : Type} (block remaining future other allocated : Set α)
     (old : allDisjoint [block, future, other, allocated]) (subset : remaining ⊆ block) :
-    allDisjoint [remaining, future, other, allocated] := by
-  rw [allDisjoint_iff_bounded] at old ⊢
-  have subsetAt (i : Nat) (hi : i < ([remaining, future, other, allocated] : List (Set α)).length) :
-      ([remaining, future, other, allocated] : List (Set α))[i] ⊆
-        ([block, future, other, allocated] : List (Set α))[i]'(by simpa using hi) := by
-    have cases : i = 0 ∨ i = 1 ∨ i = 2 ∨ i = 3 := by simp at hi; omega
-    rcases cases with rfl | rfl | rfl | rfl
-    · exact subset
-    all_goals simp
-  intro i j hi hj ne
-  have oldDisjoint := old i j (by simpa using hi) (by simpa using hj) ne
-  apply Set.eq_empty_iff_forall_notMem.mpr
-  intro x hx
-  have oldMember : x ∈ ([block, future, other, allocated] : List (Set α))[i]'(by simpa using hi) ∩
-      ([block, future, other, allocated] : List (Set α))[j]'(by simpa using hj) :=
-    ⟨subsetAt i hi hx.1, subsetAt j hj hx.2⟩
-  rw [oldDisjoint] at oldMember
-  exact oldMember
+    allDisjoint [remaining, future, other, allocated] :=
+  allDisjoint_subsets _ _ ⟨old, .cons subset (.cons (fun _ h => h)
+    (.cons (fun _ h => h) (.cons (fun _ h => h) .nil)))⟩
 
 /-- Moving a single point from a reserved block into the allocated set
 preserves four-way disjointness when the remaining block excludes it. -/
