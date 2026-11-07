@@ -9,7 +9,7 @@ theorem clockIo_checkedCall {σ : Type} (st : State σ) (env : SemEnv Value) (bo
     (ih : st.clock ≠ 0 → isClockIoMono (fun state => evaluate state env [body]) (decClock st)) :
     isClockIoMono (fun state => if state.clock = 0 then timeoutError state
       else evaluate (decClock state) env [body]) st := by
-  apply isClockIoMono_check (fun state => evaluate (decClock state) env [body]) st
+  apply isClockIoMono_check st (fun state => evaluate (decClock state) env [body])
   intro nonzero
   simpa only [decIncClock] using ih nonzero
 
@@ -65,7 +65,7 @@ theorem clockIo_checked {σ α β : Type} (st : State σ) (f : State σ → Stat
     (ih : st.clock ≠ 0 → isClockIoMono f (decClock st)) :
     isClockIoMono (fun state => if state.clock = 0 then (state, .err (.abort .timeoutError))
       else f (decClock state)) st := by
-  apply isClockIoMono_check (fun state => f (decClock state)) st
+  apply isClockIoMono_check st (fun state => f (decClock state))
   intro nonzero
   simpa only [decIncClock] using ih nonzero
 
@@ -86,13 +86,13 @@ theorem clockIo_thunkResult {σ : Type} (st : State σ) (targets : List Value)
   have hcont : ∀ next result, f st = (next, result) → isClockIoMono (continuation result) next := by
     intro next result _
     cases result with
-    | err error => exact isClockIoMono_err (α := List Value) next error
+    | err error => exact isClockIoMono_err (α := List Value) (s := next) error
     | val values => exact clockIo_updateThunk next targets values
   have htimeout : ∀ next, continuation (.err (.abort .timeoutError)) next =
       (next, .err (.abort .timeoutError)) := by
     intro next
     rfl
-  exact isClockIoMono_bind f continuation st ⟨ih, hcont, htimeout⟩
+  exact isClockIoMono_bind f st continuation ⟨ih, hcont, htimeout⟩
 
 /-- Flapjack helper for the force branch of application. -/
 theorem clockIo_force {σ : Type} (st : State σ) (values : List Value)
@@ -130,14 +130,14 @@ theorem clockIo_force {σ : Type} (st : State σ) (values : List Value)
           | some refs => ({ next.1 with refs }, .val newValues)
   have fixed : isClockIoMono (fun state => choose (accessor st) state) st := by
     cases hd : destThunk values st.refs with
-    | badRef => simpa only [accessor, hd, choose, typeError] using isClockIoMono_err (α := List Value) st (.abort .typeError)
-    | notThunk => simpa only [accessor, hd, choose, typeError] using isClockIoMono_err (α := List Value) st (.abort .typeError)
+    | badRef => simpa only [accessor, hd, choose, typeError] using isClockIoMono_err (α := List Value) (s := st) (.abort .typeError)
+    | notThunk => simpa only [accessor, hd, choose, typeError] using isClockIoMono_err (α := List Value) (s := st) (.abort .typeError)
     | isThunk mode thunk =>
       cases mode with
-      | evaluated => simpa only [accessor, hd, choose] using isClockIoMono_return (β := Value) st [thunk]
+      | evaluated => simpa only [accessor, hd, choose] using isClockIoMono_return (β := Value) (s := st) [thunk]
       | notEvaluated =>
         cases happ : doOpApp [thunk, .conv none []] with
-        | none => simpa only [accessor, hd, choose, happ, typeError] using isClockIoMono_err (α := List Value) st (.abort .typeError)
+        | none => simpa only [accessor, hd, choose, happ, typeError] using isClockIoMono_err (α := List Value) (s := st) (.abort .typeError)
         | some call =>
           rcases call with ⟨callEnv, body⟩
           let f : State σ → State σ × Result (List Value) Value := fun state =>
@@ -193,13 +193,13 @@ theorem clockIo_finishEval {σ : Type} (st : State σ) (prior : Option EvalState
     | val newEnv => exact clockIo_declareEnv next prior evalEnv newEnv
     | err error =>
       cases error with
-      | abort error => exact isClockIoMono_err (α := List Value) next (.abort error)
+      | abort error => exact isClockIoMono_err (α := List Value) (s := next) (.abort error)
       | raise value => exact clockIo_resetRaise next prior value
   have htimeout : ∀ next, continuation (.err (.abort .timeoutError)) next =
       (next, .err (.abort .timeoutError)) := by
     intro next
     rfl
-  exact isClockIoMono_bind f continuation st ⟨ih, hcont, htimeout⟩
+  exact isClockIoMono_bind f st continuation ⟨ih, hcont, htimeout⟩
 
 /-- Flapjack helper for the dynamic Eval operation. -/
 theorem clockIo_evalOperation {σ : Type} (st : State σ) (values : List Value)
@@ -251,7 +251,7 @@ theorem clockIo_evalOperation {σ : Type} (st : State σ) (values : List Value)
       isClockIoMono (continuation result) next := by
     intro next result heval
     cases result with
-    | err error => exact isClockIoMono_err (α := List Value) next error
+    | err error => exact isClockIoMono_err (α := List Value) (s := next) error
     | val info =>
       rcases info with ⟨evalEnv, decs⟩
       let finish : State σ → State σ × Result (List Value) Value := fun state =>
@@ -287,7 +287,7 @@ theorem clockIo_evalOperation {σ : Type} (st : State σ) (values : List Value)
       (next, .err (.abort .timeoutError)) := by
     intro next
     rfl
-  have fixed := isClockIoMono_bind (fun state => doEvalRes (β := Value) values state) continuation st
+  have fixed := isClockIoMono_bind (fun state => doEvalRes (β := Value) values state) st continuation
     ⟨clockIo_doEvalRes st values, hcont, htimeout⟩
   have fixedEq : (fun state => let (next, result) := doEvalRes (β := Value) values state; continuation result next) =
       (fun state => choose st.evalState state) := by
@@ -386,12 +386,12 @@ theorem clockIoEvaluate_app {σ : Type} (st : State σ) (env : SemEnv Value)
       isClockIoMono (continuation result) next := by
     intro next result heval
     cases result with
-    | err error => exact isClockIoMono_err (α := List Value) next error
+    | err error => exact isClockIoMono_err (α := List Value) (s := next) error
     | val reversed =>
       cases hc : getOpClass op with
       | funApp =>
         cases happ : doOpApp reversed.reverse with
-        | none => simpa only [continuation, hc, happ, typeError] using isClockIoMono_err (α := List Value) next (.abort .typeError)
+        | none => simpa only [continuation, hc, happ, typeError] using isClockIoMono_err (α := List Value) (s := next) (.abort .typeError)
         | some call =>
           rcases call with ⟨callEnv, body⟩
           have checked := clockIo_checkedCall next callEnv body (ihFun next reversed callEnv body heval hc happ)
@@ -422,7 +422,7 @@ theorem clockIoEvaluate_app {σ : Type} (st : State σ) (env : SemEnv Value)
       (next, .err (.abort .timeoutError)) := by
     intro next
     rfl
-  have bound := isClockIoMono_bind (fun state => evaluate state env args.reverse) continuation st
+  have bound := isClockIoMono_bind (fun state => evaluate state env args.reverse) st continuation
     ⟨ihArgs, hcont, htimeout⟩
   have fnEq : (fun state => let (next, result) := evaluate state env args.reverse; continuation result next) =
       (fun state => evaluate state env [.app op args]) := by

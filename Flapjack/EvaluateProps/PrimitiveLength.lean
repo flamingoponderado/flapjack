@@ -1,8 +1,7 @@
 import Flapjack.EvaluateProps.DoApp
 import Flapjack.EvaluateProps.ClockIo
 
-/-! Store-length prerequisites for source primitive monotonicity. The full
-source evaluator and its carriers are pending review. -/
+/-! Store-length prerequisites for source primitive monotonicity. -/
 namespace Flapjack.EvaluateProps
 open Flapjack.SemanticPrimitivesHOL Flapjack.AstHOL
 
