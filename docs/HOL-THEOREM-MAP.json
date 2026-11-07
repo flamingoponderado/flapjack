@@ -11585,6 +11585,14 @@
   },
   {
     "lean_path": "Flapjack/NamespaceProps.lean",
+    "lean_name": "nsAppend_nsEmpty",
+    "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml",
+    "hol_name": "nsAppend_nsEmpty",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared nsAppend_nsEmpty in source_to_flat_init_probe.out: one arbitrary namespace over three independent types satisfies both right and left empty-append identities in the same conjunction, without equality instances."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceProps.lean",
     "lean_name": "nsLookup_nsBind",
     "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml",
     "hol_name": "nsLookup_nsBind",
@@ -125896,6 +125904,14 @@
   "lean_name": "holALookup_member",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared the source and typed alookup_member capture: key and value types are independent; a successful ALOOKUP implies membership of the same pair."
+},
+{
+  "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+  "hol_name": "build_rec_env_merge",
+  "lean_path": "Flapjack/SemanticPrimitivesProps/RecursiveFunctions.lean",
+  "lean_name": "buildRecEnv_merge",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared build_rec_env_merge in source_to_flat_init_probe.out: the function list, unused universally quantified value of an independent arbitrary type, closure environment and target namespace occur in HOL order; the mapped recursive closures and namespace append are identical."
 },
 {
   "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",

@@ -119,7 +119,8 @@ theorem doOpApp_recclosure_local (genv : GlobalEnv) (baseMap : Environment) (bas
   have sourceBind : nsAppend (nsBind arg argument recursiveLocal) baseEnv.v =
       nsBind arg argument (buildRecEnv funs sourceEnv sourceEnv.v) := by
     have recBind : buildRecEnv funs sourceEnv sourceEnv.v = nsAppend recursiveLocal baseEnv.v := by
-      simpa [sourceEnv, recursiveLocal] using buildRecEnv_nsAppend funs sourceEnv captured baseEnv.v
+      simp only [sourceEnv, recursiveLocal,
+        Flapjack.SemanticPrimitivesProps.buildRecEnv_merge funs () , ← nsAppend_assoc]
     rw [recBind]
     cases recursiveLocal
     cases baseEnv.v
@@ -190,12 +191,8 @@ theorem topRec_rebuilt_globalInv (genv : GlobalEnv) (baseMap : Environment) (sou
       { sourceEnv with v := buildRecEnv funs sourceEnv sourceEnv.v } := by
   have sourceShape : buildRecEnv funs sourceEnv sourceEnv.v =
       nsAppend (alistToNs ((funs.map Prod.fst).map (fun x => (x, Value.recclosure sourceEnv funs x)))) sourceEnv.v := by
-    have h := buildRecEnv_nsAppend funs sourceEnv nsEmpty sourceEnv.v
-    have emptyAppend : nsAppend (nsEmpty : Namespace ModN VarN Value) sourceEnv.v = sourceEnv.v := by
-      cases sourceEnv.v
-      rfl
-    rw [emptyAppend, dletrec_sourceEnv] at h
-    exact h
+    simpa only [List.map_map, Function.comp_def] using
+      Flapjack.SemanticPrimitivesProps.buildRecEnv_merge funs () sourceEnv sourceEnv.v
   cases globals with
   | intro _ _ _ values constructors =>
     apply GlobalEnvInv.intro

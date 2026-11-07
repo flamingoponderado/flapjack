@@ -3,6 +3,13 @@ import Flapjack.NamespaceHOL
 /-! Properties of the original namespace operations. -/
 namespace Flapjack.NamespaceHOL
 
+/-- The empty namespace is a two-sided identity for append. -/
+@[hol "cakeml/semantics/proofs/namespacePropsScript.sml" "nsAppend_nsEmpty"]
+theorem nsAppend_nsEmpty {M N V : Type} (env : Namespace M N V) :
+    nsAppend env nsEmpty = env ∧ nsAppend nsEmpty env = env := by
+  cases env
+  simp [nsAppend, nsEmpty]
+
 /-- Namespace append is associative. -/
 @[hol "cakeml/semantics/proofs/namespacePropsScript.sml" "nsAppend_assoc"]
 theorem nsAppend_assoc {M N V : Type} (e1 e2 e3 : Namespace M N V) :

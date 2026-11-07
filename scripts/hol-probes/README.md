@@ -9533,7 +9533,9 @@ recursive-function name theorems; `nsAppend_to_nsBindList` captures the
 namespace binding theorem used by the same proofs. `find_recfun_local`
 replays and captures the original local recursive-function lookup proof;
 `nsAppend_assoc` captures polymorphic namespace append associativity, and
-`nsLookup_nsBind` captures both lookup-after-binding properties.
+`nsLookup_nsBind` captures both lookup-after-binding properties;
+`build_rec_env_merge` and `nsAppend_nsEmpty` capture recursive bindings and the
+two-sided namespace identity, including the former's unused polymorphic binder.
 
 `source_to_flat_init_probe.out` captures the typed original source-to-flat
 initialization definitions and evaluates the initial constructor entries and

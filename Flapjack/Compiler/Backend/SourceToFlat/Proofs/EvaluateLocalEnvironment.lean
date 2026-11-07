@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateBoundControl
 import Flapjack.NamespaceProps
+import Flapjack.SemanticPrimitivesProps.RecursiveFunctions
 
 /-! Growing expression simulation for arbitrary related local environments.
 These factored relations remain pending HOL correspondence review. -/
@@ -46,27 +47,6 @@ theorem localEnvBounded_function {C F : Type} [Nonempty C]
   simpa only [EvaluateHOL.evaluate, compileExp, FlatSem.evaluate] using
     And.intro (GlobalGrowth.refl genv) (And.intro invariant
       (And.intro generation (oracForwardRel_refl interp source.evalState)))
-
-/-- Recursive source bindings commute with appending a surrounding namespace. -/
-theorem buildRecEnv_nsAppend (funs : List (VarN × VarN × AstHOL.Exp)) (closureEnv : SemEnv Value)
-    (localEnv globalEnv : Namespace ModN VarN Value) :
-    buildRecEnv funs closureEnv (nsAppend localEnv globalEnv) =
-      nsAppend (buildRecEnv funs closureEnv localEnv) globalEnv := by
-  have aux : ∀ remaining : List (VarN × VarN × AstHOL.Exp),
-      remaining.foldr (fun (name, _, _) rest => nsBind name (.recclosure closureEnv funs name) rest)
-          (nsAppend localEnv globalEnv) =
-        nsAppend (remaining.foldr (fun (name, _, _) rest => nsBind name (.recclosure closureEnv funs name) rest)
-          localEnv) globalEnv := by
-    intro remaining
-    induction remaining with
-    | nil => rfl
-    | cons head tail ih =>
-      obtain ⟨name, arg, body⟩ := head
-      simp only [List.foldr_cons, ih]
-      cases tailEnv : tail.foldr (fun (name, _, _) rest => nsBind name (.recclosure closureEnv funs name) rest) localEnv
-      cases globalEnv
-      rfl
-  exact aux funs
 
 /-- Constructing a local recursive environment preserves the factored
 source-to-flat value relation for every mutually recursive closure. -/

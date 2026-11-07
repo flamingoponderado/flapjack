@@ -1,9 +1,21 @@
 import Flapjack.SemanticPrimitivesHOL
 import Flapjack.FiniteMap.AlistExact.Lookup
+import Flapjack.NamespaceProps
 
 /-! Properties of recursive-function lookup. -/
 namespace Flapjack.SemanticPrimitivesProps
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
+open Flapjack.NamespaceHOL
+
+/-- Building recursive bindings is appending the corresponding closure namespace. -/
+@[hol "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml" "build_rec_env_merge"]
+theorem buildRecEnv_merge {α : Type} (funs : List (VarN × VarN × AstHOL.Exp)) (_unused : α)
+    (env : SemEnv Value) (env' : Namespace ModN VarN Value) :
+    buildRecEnv funs env env' =
+      nsAppend (alistToNs (funs.map fun (f, _, _) => (f, Value.recclosure env funs f))) env' := by
+  rw [nsAppend_to_nsBindList]
+  unfold buildRecEnv nsBindList
+  rw [List.foldr_map]
 
 /-- Recursive-function lookup is association-list lookup. -/
 @[hol "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml" "find_recfun_ALOOKUP"]

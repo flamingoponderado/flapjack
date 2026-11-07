@@ -548,7 +548,7 @@ theorem localEnvBounded_letrec {C F : Type} [Nonempty C]
         exact ⟨n, by rw [names]; simp [mem], eq⟩
       · exact constructors
   have sourceBind : nsAppend sourceLocal' baseEnv.v = buildRecEnv funs sourceEnv sourceEnv.v := by
-    simpa [sourceLocal'] using (buildRecEnv_nsAppend funs sourceEnv sourceLocal baseEnv.v).symm
+    simp only [sourceLocal', sourceEnv, Flapjack.SemanticPrimitivesProps.buildRecEnv_merge funs (), ← nsAppend_assoc]
   have bodySafe : ∀ last, EvaluateHOL.evaluate source { sourceEnv with v := buildRecEnv funs sourceEnv sourceEnv.v }
       [body] ≠ (last, .err (.abort .typeError)) := by
     intro last bad

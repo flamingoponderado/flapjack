@@ -1,6 +1,7 @@
 import Flapjack.FiniteMap.AlistExact.Lookup
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateDlet
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateEmptyDeclarations
+import Flapjack.SemanticPrimitivesProps.RecursiveFunctions
 
 /-! Recursive declaration simulation over the preliminary factored value and
 state relations. These helpers are not yet a port of `compile_correct`. -/
@@ -103,23 +104,6 @@ theorem dletrec_flatEnv (env : Environment) (trace : List VarN)
   rw [FlatSem.buildRecEnv, shape]
   rw [show compiled.map Prod.fst = funs.map Prod.fst from compileFuns_names trace _ funs]
 
-/-- The source recursive environment contains closures in source-name order. -/
-theorem dletrec_sourceEnv (sourceEnv : SemEnv Value) (funs : List (VarN × VarN × AstHOL.Exp)) :
-    SemanticPrimitivesHOL.buildRecEnv funs sourceEnv nsEmpty =
-      alistToNs ((funs.map Prod.fst).map (fun name => (name, Value.recclosure sourceEnv funs name))) := by
-  have shape (xs : List (VarN × VarN × AstHOL.Exp)) :
-      xs.foldr (fun (name, _, _) rest => nsBind name (.recclosure sourceEnv funs name) rest)
-        (nsEmpty : Namespace ModN VarN Value) =
-        alistToNs ((xs.map Prod.fst).map (fun name => (name, Value.recclosure sourceEnv funs name))) := by
-    induction xs with
-    | nil => rfl
-    | cons pair rest ih =>
-      rcases pair with ⟨name, arg, body⟩
-      simp only [List.foldr_cons, List.map_cons]
-      rw [ih]
-      rfl
-  exact shape funs
-
 /-- The compiled recursive group and source recursive environment have the
 same value and module domains. -/
 theorem dletrec_envDomainEq (env : Environment) (sourceEnv : SemEnv Value) (trace : List VarN)
@@ -127,7 +111,8 @@ theorem dletrec_envDomainEq (env : Environment) (sourceEnv : SemEnv Value) (trac
     (location : Flapjack.Misc.Location.Locs) (funs : List (VarN × VarN × AstHOL.Exp)) :
     EnvDomainEq (compileDecs trace n start env gen [.dletrec location funs]).2.2.1
       ⟨SemanticPrimitivesHOL.buildRecEnv funs sourceEnv nsEmpty, nsEmpty⟩ := by
-  simp only [compileDecs, dletrec_sourceEnv]
+  simp only [compileDecs, Flapjack.SemanticPrimitivesProps.buildRecEnv_merge funs (),
+    (nsAppend_nsEmpty _).1, List.map_map, Function.comp_def]
   refine ⟨?_, ?_, ?_, ?_⟩
   · funext id
     apply propext
@@ -240,7 +225,8 @@ theorem evaluateDletrec_factored {C F : Type} [Nonempty C]
     have afterClock := ((stateRel_iff finalGenv sourceState finalState).mp stateResult).2.2.1
     exact evaluateDletrec_flat flatState finalState trace n start env gen location funs distinct bodyRun
       (afterClock.symm.trans beforeClock)
-  · simpa only [compileDecs, dletrec_sourceEnv, ← nameShape, List.map_reverse, emptyEnv,
+  · simpa only [compileDecs, Flapjack.SemanticPrimitivesProps.buildRecEnv_merge funs (),
+      (nsAppend_nsEmpty _).1, List.map_map, Function.comp_def, ← nameShape, List.map_reverse, emptyEnv,
       sourceBindings, allocDefs_ignoreCounter _ (n + 1) 0 start.vidx] using envResult'
   · simpa [compileDecs, names] using finalInv
   · simpa [compileDecs] using generation

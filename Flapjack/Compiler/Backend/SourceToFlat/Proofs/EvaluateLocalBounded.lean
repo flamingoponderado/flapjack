@@ -88,11 +88,8 @@ theorem factoredDecBoundedIH_dlet_expression {C F : Type} [Nonempty C]
     apply notTypeError
     exact congrArg Prod.snd (sourceRun.symm.trans bad)
   have expressionSafe := dlet_expression_safe source sourceEnv location pattern expr safe
-  have emptyAppend : nsAppend nsEmpty sourceEnv.v = sourceEnv.v := by
-    cases sourceEnv.v
-    rfl
   have sourceEq : { sourceEnv with v := nsAppend nsEmpty sourceEnv.v } = sourceEnv := by
-    simp only [emptyAppend]
+    simp only [(nsAppend_nsEmpty sourceEnv.v).2]
   have mapEq : { env with v := bindLocals [] [] env.v } = env := by
     simp [bindLocals, nsBindList]
   have step := expressionIH genv start finish other source flat sourceEnv nsEmpty ⟨[]⟩ []

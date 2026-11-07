@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.SourceLet.Proofs
 import Flapjack.EvaluateHOL.ClockFull
+import Flapjack.SemanticPrimitivesProps.RecursiveFunctions
 
 /-! Evaluation preservation for source let-lifting. -/
 namespace Flapjack.Compiler.Backend.SourceLet
@@ -13,26 +14,6 @@ theorem everyExp_letrec (predicate : AstHOL.Exp → Bool)
       (predicate (.letrec funs body) && everyExp predicate body &&
         funs.all (fun (_, _, expr) => everyExp predicate expr)) := by
   simp [everyExp, everyExpFuns_eq_all, Bool.and_assoc]
-
-private theorem buildRecEnv_empty_append (funs : List (VarN × VarN × AstHOL.Exp))
-    (env : SemEnv Value) :
-    nsAppend (buildRecEnv funs env nsEmpty) env.v = buildRecEnv funs env env.v := by
-  have aux : ∀ remaining : List (VarN × VarN × AstHOL.Exp),
-      nsAppend (remaining.foldr (fun (name, _, _) rest => nsBind name (Value.recclosure env funs name) rest) nsEmpty) env.v =
-        remaining.foldr (fun (name, _, _) rest => nsBind name (Value.recclosure env funs name) rest) env.v := by
-    have bindAppend : ∀ (name : VarN) (value : Value) (left right : Namespace ModN VarN Value),
-        nsAppend (nsBind name value left) right = nsBind name value (nsAppend left right) := by
-      intro name value left right
-      cases left
-      cases right
-      rfl
-    intro remaining
-    induction remaining with
-    | nil => cases env.v; rfl
-    | cons head tail ih =>
-      obtain ⟨name, arg, expr⟩ := head
-      simp only [List.foldr_cons, bindAppend, ih]
-  exact aux funs
 
 /-- Flapjack helper stating evaluation of an anonymous let as equality of the
 two evaluator results. The result-shaped HOL case is proved below. -/
@@ -172,7 +153,7 @@ theorem evaluateLiftLet_letrec {F : Type} (state : State F) (env : SemEnv Value)
   have envEq : extendDecEnv { v := buildRecEnv funs env nsEmpty, c := nsEmpty } env =
       { env with v := buildRecEnv funs env env.v } := by
     unfold extendDecEnv
-    rw [buildRecEnv_empty_append]
+    simp only [Flapjack.SemanticPrimitivesProps.buildRecEnv_merge funs (), (nsAppend_nsEmpty _).1]
     cases env with
     | mk variables constructors =>
       cases constructors

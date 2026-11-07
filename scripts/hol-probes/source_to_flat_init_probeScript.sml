@@ -93,3 +93,5 @@ val find_recfun_local = Q.prove (
 val _ = show_thm "find_recfun_local=" find_recfun_local;
 val _ = show_thm "nsAppend_assoc=" namespacePropsTheory.nsAppend_assoc;
 val _ = show_thm "nsLookup_nsBind=" namespacePropsTheory.nsLookup_nsBind;
+val _ = show_thm "build_rec_env_merge=" semanticPrimitivesPropsTheory.build_rec_env_merge;
+val _ = show_thm "nsAppend_nsEmpty=" namespacePropsTheory.nsAppend_nsEmpty;
