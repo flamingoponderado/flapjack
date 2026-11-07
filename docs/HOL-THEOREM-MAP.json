@@ -1,6 +1,22 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "v_rel_l_simps",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/ValueRelationSimps.lean",
+  "lean_name": "valueRel_leftSimps",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source_value_relation_left_simps in source_eval_oracle_adjust_probe.out: all seven independently quantified conjuncts retain the HOL binder order and exact literal, constructor, location, vector, environment, recursive-closure and closure characterizations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "v_rel_Boolv",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/ValueRelationSimps.lean",
+  "lean_name": "valueRel_bool",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source_value_relation_boolean in source_eval_oracle_adjust_probe.out: the value relation from the original Boolean value holds exactly for that same target value, at arbitrary oracle state."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "v_rel_cases",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/ValueRelation.lean",
   "lean_name": "valueRel_hol_cases",

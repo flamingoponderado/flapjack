@@ -78,3 +78,5 @@ val _ = show_thm "source_value_relation_cases=" source_evalProofTheory.v_rel_cas
 val _ = show_thm "source_value_relation_induction=" source_evalProofTheory.v_rel_ind;
 val _ = show_thm "source_value_relation_concrete=" source_evalProofTheory.v_rel_concrete_v;
 val _ = show_thm "source_environment_relation_concrete=" source_evalProofTheory.env_rel_concrete_v;
+val _ = show_thm "source_value_relation_left_simps=" source_evalProofTheory.v_rel_l_simps;
+val _ = show_thm "source_value_relation_boolean=" source_evalProofTheory.v_rel_Boolv;

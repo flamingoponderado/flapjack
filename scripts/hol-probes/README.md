@@ -491,7 +491,8 @@ The same flat-pattern probe captures the typed position, test, guard and decisio
 The typed environment-relation captures retain the independent target value type
 and the original pointwise monotonicity premise. The source value-relation
 captures include its rules, cases, induction theorem and concrete-value and
-concrete-environment theorems.
+concrete-environment theorems, plus its seven left-constructor simplifications
+and Boolean-value theorem.
 
 `source_eval_adjust_local_probe.out` captures inferred types of the original script's local oracle-adjustment lemmas as typed terms. These lemmas are not exported by the HOL theory; the probe additionally replays the original proofs of `declare_env_adjust` and `adjust_oracle_reset`.
 

@@ -19,6 +19,7 @@ import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleExtraction
 import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleRecording
 import Flapjack.Compiler.Backend.SourceEval.Proofs.Environment
 import Flapjack.Compiler.Backend.SourceEval.Proofs.ValueRelation
+import Flapjack.Compiler.Backend.SourceEval.Proofs.ValueRelationSimps
 import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleCallback
 import Flapjack.Compiler.Backend.SourceEval.Proofs.Concrete
 import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleReset
