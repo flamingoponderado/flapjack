@@ -1,6 +1,150 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "evaluate_is_record_forward",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/RecordForwardBase.lean",
+  "lean_name": "evaluateIsRecordForward_Denv",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the mutual recording-state preservation theorem is not yet assembled. Compared against typed evaluate_record_forward and evaluate_induction captures in source_eval_oracle_adjust_probe.out. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "evaluate_is_record_forward",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/RecordForwardBase.lean",
+  "lean_name": "evaluateIsRecordForward_ExpsNil",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the mutual recording-state preservation theorem is not yet assembled. Compared against typed evaluate_record_forward and evaluate_induction captures in source_eval_oracle_adjust_probe.out. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "evaluate_is_record_forward",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/RecordForwardBase.lean",
+  "lean_name": "evaluateIsRecordForward_ExpsCons",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the mutual recording-state preservation theorem is not yet assembled. Compared against typed evaluate_record_forward and evaluate_induction captures in source_eval_oracle_adjust_probe.out. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "evaluate_is_record_forward",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/RecordForwardBase.lean",
+  "lean_name": "evaluateIsRecordForward_Lit",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the mutual recording-state preservation theorem is not yet assembled. Compared against typed evaluate_record_forward and evaluate_induction captures in source_eval_oracle_adjust_probe.out. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "evaluate_is_record_forward",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/RecordForwardBase.lean",
+  "lean_name": "evaluateIsRecordForward_Var",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the mutual recording-state preservation theorem is not yet assembled. Compared against typed evaluate_record_forward and evaluate_induction captures in source_eval_oracle_adjust_probe.out. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "evaluate_is_record_forward",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/RecordForwardBase.lean",
+  "lean_name": "evaluateIsRecordForward_Fn",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the mutual recording-state preservation theorem is not yet assembled. Compared against typed evaluate_record_forward and evaluate_induction captures in source_eval_oracle_adjust_probe.out. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "evaluate_is_record_forward",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/RecordForwardBase.lean",
+  "lean_name": "evaluateIsRecordForward_Tannot",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the mutual recording-state preservation theorem is not yet assembled. Compared against typed evaluate_record_forward and evaluate_induction captures in source_eval_oracle_adjust_probe.out. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "evaluate_is_record_forward",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/RecordForwardBase.lean",
+  "lean_name": "evaluateIsRecordForward_Lannot",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the mutual recording-state preservation theorem is not yet assembled. Compared against typed evaluate_record_forward and evaluate_induction captures in source_eval_oracle_adjust_probe.out. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "evaluate_is_record_forward",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/RecordForwardBase.lean",
+  "lean_name": "evaluateIsRecordForward_Raise",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the mutual recording-state preservation theorem is not yet assembled. Compared against typed evaluate_record_forward and evaluate_induction captures in source_eval_oracle_adjust_probe.out. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "evaluate_is_record_forward",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/RecordForwardBase.lean",
+  "lean_name": "evaluateIsRecordForward_MatchNil",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the mutual recording-state preservation theorem is not yet assembled. Compared against typed evaluate_record_forward and evaluate_induction captures in source_eval_oracle_adjust_probe.out. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "evaluate_is_record_forward",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/RecordForwardBase.lean",
+  "lean_name": "evaluateIsRecordForward_DecsNil",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the mutual recording-state preservation theorem is not yet assembled. Compared against typed evaluate_record_forward and evaluate_induction captures in source_eval_oracle_adjust_probe.out. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "evaluate_is_record_forward",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/RecordForwardBase.lean",
+  "lean_name": "evaluateIsRecordForward_DecsCons",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the mutual recording-state preservation theorem is not yet assembled. Compared against typed evaluate_record_forward and evaluate_induction captures in source_eval_oracle_adjust_probe.out. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "evaluate_is_record_forward",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/RecordForwardBase.lean",
+  "lean_name": "evaluateIsRecordForward_Dtabbrev",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the mutual recording-state preservation theorem is not yet assembled. Compared against typed evaluate_record_forward and evaluate_induction captures in source_eval_oracle_adjust_probe.out. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "evaluate_is_record_forward",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/RecordForwardBase.lean",
+  "lean_name": "evaluateIsRecordForward_Dtype",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the mutual recording-state preservation theorem is not yet assembled. Compared against typed evaluate_record_forward and evaluate_induction captures in source_eval_oracle_adjust_probe.out. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "evaluate_is_record_forward",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/RecordForwardBase.lean",
+  "lean_name": "evaluateIsRecordForward_Dexn",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the mutual recording-state preservation theorem is not yet assembled. Compared against typed evaluate_record_forward and evaluate_induction captures in source_eval_oracle_adjust_probe.out. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "evaluate_is_record_forward",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/RecordForwardBase.lean",
+  "lean_name": "evaluateIsRecordForward_Dletrec",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the mutual recording-state preservation theorem is not yet assembled. Compared against typed evaluate_record_forward and evaluate_induction captures in source_eval_oracle_adjust_probe.out. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "check_dup_ctors_thm",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvalSimulationStamps.lean",
   "lean_name": "checkDupCtors_thm",
