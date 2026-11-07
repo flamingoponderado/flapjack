@@ -9,6 +9,28 @@ namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL
 open OracleInvariant
 
+/-- Type definitions introduce no nested module names. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "build_tdefs_no_mod"]
+theorem buildTdefs_no_mod : ∀ (idx : Nat) (tdefs : TypeDef),
+    nsDomMod (buildTdefs idx tdefs) = (fun path : List ModN => path = []) := by
+  have flat : ∀ (tdefs : TypeDef) (idx : Nat),
+      ∃ values, buildTdefs idx tdefs = Namespace.bind values [] := by
+    intro tdefs
+    induction tdefs with
+    | nil => intro idx; exact ⟨[], rfl⟩
+    | cons head rest ih =>
+      intro idx
+      obtain ⟨values, h⟩ := ih (idx + 1)
+      rcases head with ⟨vars, name, constructors⟩
+      refine ⟨values ++ (buildConstrs idx constructors).reverse, ?_⟩
+      simp [buildTdefs, h, nsAppend, alistToNs]
+  intro idx tdefs
+  obtain ⟨values, h⟩ := flat tdefs idx
+  rw [h]
+  funext path
+  apply propext
+  cases path <;> simp [nsDomMod, nsLookupMod]
+
 /-- A reserved type index has neither a type entry nor a constructor entry. -/
 theorem idxRangeRel_type_free {C : Type}
     (interp : Option (Value → Option (Config × C))) (genv : GlobalEnv)

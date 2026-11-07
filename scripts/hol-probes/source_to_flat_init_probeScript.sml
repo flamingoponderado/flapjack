@@ -6,6 +6,12 @@ fun show_thm label th =
   if null (hyp th) then (print label; print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
 fun show_eval label tm = (print label; print_term (rhs (concl (EVAL tm))); print "\n");
+val build_tdefs_no_mod_replay = Q.prove (
+  `!idx tdefs. nsDomMod (build_tdefs idx tdefs) = {[]}`,
+  Induct_on `tdefs` >> rw [semanticPrimitivesTheory.build_tdefs_def] >>
+  PairCases_on `h` >> rw [semanticPrimitivesTheory.build_tdefs_def] >>
+  pop_assum (qspec_then `idx+1` mp_tac) >> rw [namespacePropsTheory.nsDomMod_nsAppend_flat]);
+val _ = show_thm "build_tdefs_no_mod_replay=" build_tdefs_no_mod_replay;
 val _ = show_thm "abort_simps_typed=" source_to_flatProofTheory.abort_simps;
 val _ = show_thm "nsLookup_nsBind_If_typed=" source_to_flatProofTheory.nsLookup_nsBind_If;
 val not_abort_imp_cases_replay = Q.prove (

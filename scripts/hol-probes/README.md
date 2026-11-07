@@ -9660,7 +9660,7 @@ simulation, including its unused polymorphic existential witness.
 `global_env_inv_extend` statement; the HOL proof is not replayed.
 
 The same probe captures typed `abort_simps` and `nsLookup_nsBind_If` and
-replays the local `not_abort_IMP_cases` proof.
+replays the local `not_abort_IMP_cases` and `build_tdefs_no_mod` proofs.
 
 The same probe replays the original local `ALOOKUP_alloc_defs` proof with
 independent inferred key and value types.

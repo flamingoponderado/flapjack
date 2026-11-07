@@ -1,3 +1,4 @@
+build_tdefs_no_mod_replay=∀(idx :num) (tdefs :(mlstring list # mlstring # (mlstring # ast_t list) list) list). nsDomMod (build_tdefs idx tdefs) = {([] :mlstring list)}
 abort_simps_typed=(abort (Rerr (Rabort (a :abort) :β error_result) :(α, β) result) ⇔ T) ∧ (abort (Rerr (Rraise (e :δ)) :(γ, δ) result) ⇔ F) ∧ (abort (Rval (v :ε) :(ε, ζ) result) ⇔ F)
 nsLookup_nsBind_If_typed=nsLookup (nsBind (n :γ) (v :α) (e :(β, γ, α) namespace)) (nm :(β, γ) id) = if nm = (Short n :(β, γ) id) then SOME v else nsLookup e nm
 not_abort_imp_cases_replay=(¬abort (r :(α, β) result) ⇒ (P :bool)) ⇒ (∃(a :abort). r = (Rerr (Rabort a :β error_result) :(α, β) result)) ∨ ¬abort r ∧ P

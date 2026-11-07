@@ -14451,6 +14451,14 @@
     "reviewer": "Compared the source local theorem and typed invariant_env_gen_inv_local replay: the original invariant premise uses the same index triple, independent compiler and FFI types, and canonical global-environment maps; the conclusion is the original environment-generation invariant."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateDatatype.lean",
+    "lean_name": "buildTdefs_no_mod",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "build_tdefs_no_mod",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared build_tdefs_no_mod_replay in source_to_flat_init_probe.out: the quantified index and concrete CakeML type definitions retain their types and order; the predicate path = [] represents the singleton set containing the empty module path. The probe replays the original local proof."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/CompileCorrectShape.lean",
     "lean_name": "resultAbort_simps",
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
