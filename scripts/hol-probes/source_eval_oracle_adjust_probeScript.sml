@@ -93,3 +93,6 @@ val _ = show_thm "source_stack_forward_trans=" source_evalProofTheory.es_stack_f
 val _ = show_thm "source_match_result_relation_definition=" source_evalProofTheory.match_result_rel_def;
 val _ = show_thm "source_store_lookup_relation=" source_evalProofTheory.store_lookup_rel;
 val _ = show_thm "source_state_store_lookup=" source_evalProofTheory.s_rel_store_lookup;
+val _ = show_thm "source_pmatch_simulation=" source_evalProofTheory.pmatch;
+val _ = show_thm "source_pmatch_induction=" semanticPrimitivesTheory.pmatch_ind;
+val _ = show_thm "product_relation_definition=" pairTheory.RPROD_DEF;

@@ -1,5 +1,21 @@
 [
 {
+  "hol_path": "HOL/src/coretypes/pairScript.sml",
+  "hol_name": "RPROD_DEF",
+  "lean_path": "Flapjack/Misc/Pair.lean",
+  "lean_name": "holRprod",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared product_relation_definition in source_eval_oracle_adjust_probe.out: two heterogeneous relations over four independent types are applied to corresponding components of two pairs and conjoined."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "pmatch",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/PatternMatch.lean",
+  "lean_name": "sourcePmatch",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source_pmatch_simulation in source_eval_oracle_adjust_probe.out: the complete outer conjunction retains the state relation, oracle-state equality and environment relation; both independently quantified pattern and pattern-list conclusions retain their original store and constructor-environment equalities, related values and product-related bindings. The result uses the original match relation with type errors permitted. The private structural induction covers the same pattern and list cases as source_pmatch_induction."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml", "hol_name": "es_stack_forward_def",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/StateRelation.lean", "lean_name": "envStackForward",
   "statement_status": "reviewed_exact",

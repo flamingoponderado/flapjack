@@ -497,6 +497,8 @@ captures retain their full original conjuncts, value-preservation theorem,
 four forward rules and the general store-value monotonicity prerequisite.
 The same probe captures stack preservation, match-result relation and related
 store-lookup statements with their original polymorphic payloads.
+It captures the full source pattern-match simulation, its mutual induction,
+and the heterogeneous product-relation definition used for bindings.
 
 `source_eval_adjust_local_probe.out` captures inferred types of the original script's local oracle-adjustment lemmas as typed terms. These lemmas are not exported by the HOL theory; the probe additionally replays the original proofs of `declare_env_adjust` and `adjust_oracle_reset`.
 
