@@ -9668,6 +9668,9 @@ The source-to-flat initialization probe captures the complete typed
 The source evaluator probe captures the typed pair-pattern to pair-map
 function equation, including its four independent type variables.
 
+The same probe captures the typed constructor-duplicate characterization used
+in the source evaluator simulation proof.
+
 The flat-to-closure relation probe replays the local interpreter-initializer
 `no_mti_compile_init` proof with its original Boolean case split.
 

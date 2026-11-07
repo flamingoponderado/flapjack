@@ -4,6 +4,11 @@ import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationDeclarations
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs
 open Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesProps Flapjack.EvaluateHOL
 
+/-- Constructor duplication checks exactly whether the constructor names are distinct. -/
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "check_dup_ctors_thm"]
+theorem checkDupCtors_thm (vars : List TvarN) (name : TypeN) (constructors : List (ConN × List AstT)) :
+    checkDupCtors (vars, name, constructors) = decide (constructors.map Prod.fst).Nodup := rfl
+
 /-- Type declarations preserve the source evaluator simulation. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "eval_simulation"]
 theorem evalSimulation_Dtype {Config F : Type} (ci : CompilerInstance Config) (s : State F)

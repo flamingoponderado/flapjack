@@ -1,6 +1,14 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "check_dup_ctors_thm",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvalSimulationStamps.lean",
+  "lean_name": "checkDupCtors_thm",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed source_check_dup_ctors_thm capture in source_eval_oracle_adjust_probe.out:122: constructor name and AST carriers, triple and binder order, and the complete Boolean equality match. The constructor names are HOL mlstrings represented by MlString."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "eval_simulation",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvalSimulation.lean",
   "lean_name": "eval_simulation",
