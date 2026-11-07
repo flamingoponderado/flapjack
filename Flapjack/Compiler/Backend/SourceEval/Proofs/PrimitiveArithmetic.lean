@@ -16,6 +16,19 @@ private theorem checkTypeConcrete (typ : PrimType) (v : Value) (checked : checkT
       cases stamp <;> simp at checked
 
 
+/-- Related lists whose source elements pass a primitive type check are equal.
+HOL uses this fact inside `do_app_sim`; it is not a separate HOL declaration. -/
+theorem checkedOperands_eq (es : EvalOracleState) (typ : PrimType) (xs ys : List Value)
+    (checked : xs.all (checkType typ) = true) (related : List.Forall₂ (ValueRel es) xs ys) :
+    ys = xs := by
+  induction related with
+  | nil => rfl
+  | cons head tail ih =>
+    simp only [List.all_cons, Bool.and_eq_true] at checked
+    have same := concreteValue_rel es _ _ head (checkTypeConcrete typ _ checked.1)
+    simp only [same, ih checked.2]
+
+
 set_option maxHeartbeats 3000000 in
 private theorem arithmeticResult_transport {F : Type} (es : EvalOracleState) (state target : Store Value × HolFfiState F)
     (action : Arith) (typ : PrimType) (xs : List Value) (refs : Store Value)
@@ -46,14 +59,7 @@ theorem arithmeticApp_transport {F : Type} (es : EvalOracleState)
     resultRel (ValueRel es) (ValueRel es) result result := by
   obtain ⟨checked, refEq, ffiEq, targetRun, resultRelated⟩ :=
     arithmeticResult_transport es state target action typ xs refs ffi result run
-  have same : ys = xs := by
-    clear run targetRun
-    induction related with
-    | nil => rfl
-    | cons head tail ih =>
-      simp only [List.all_cons, Bool.and_eq_true] at checked
-      have same := concreteValue_rel es _ _ head (checkTypeConcrete typ _ checked.1)
-      simp only [same, ih checked.2]
+  have same := checkedOperands_eq es typ xs ys checked related
   subst ys
   exact ⟨refEq, ffiEq, targetRun, resultRelated⟩
 
