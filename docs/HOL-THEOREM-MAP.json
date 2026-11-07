@@ -1,5 +1,21 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "env_rel_def",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/Environment.lean",
+  "lean_name": "envRel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared environment_relation_definition in source_eval_oracle_adjust_probe.out: the source environment contains Value while the target value type is independently quantified; constructor environments, value and module domains agree, and every pair of successful lookups satisfies the supplied relation. The namespace operations and SemEnv carrier are reviewed HOL ports."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "env_rel_mono_rel",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/Environment.lean",
+  "lean_name": "envRel_monoRel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared environment_relation_monotonic in source_eval_oracle_adjust_probe.out: arbitrary relations from source values to an independent target type preserve the environment relation under the original pointwise implication."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
   "hol_name": "initial_state'_def",
   "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/StateRelation.lean",

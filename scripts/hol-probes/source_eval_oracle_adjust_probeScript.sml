@@ -71,3 +71,5 @@ val _ = show_thm "spt_mem_to_list_a_replay=" spt_mem_to_list_a;
 val _ = show_thm "spt_mem_to_list=" sptreeTheory.MEM_toList;
 val _ = show_thm "spt_to_list_a_def=" sptreeTheory.toListA_def;
 val _ = show_thm "spt_to_list_def=" sptreeTheory.toList_def;
+val _ = show_thm "environment_relation_definition=" source_evalProofTheory.env_rel_def;
+val _ = show_thm "environment_relation_monotonic=" source_evalProofTheory.env_rel_mono_rel;

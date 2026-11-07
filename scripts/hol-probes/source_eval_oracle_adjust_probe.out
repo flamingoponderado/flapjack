@@ -53,3 +53,5 @@ spt_mem_to_list_a_replay=∀(t :α sptree$num_map) (acc :α list) (x :α). MEM x
 spt_mem_to_list=∀(x :α) (t :α sptree$num_map). MEM x (toList t :α list) ⇔ ∃(k :num). lookup k t = SOME x
 spt_to_list_a_def=(∀(acc :α list). toListA acc (LN :α sptree$num_map) = acc) ∧ (∀(acc :α list) (a :α). toListA acc ⦕ 0 ↦ a ⦖ = a::acc) ∧ (∀(acc :α list) (t1 :α sptree$num_map) (t2 :α sptree$num_map). toListA acc (BN t1 t2) = toListA (toListA acc t2) t1) ∧ ∀(acc :α list) (t1 :α sptree$num_map) (a :α) (t2 :α sptree$num_map). toListA acc (BS t1 a t2) = toListA (a::toListA acc t2) t1
 spt_to_list_def=∀(m :α sptree$num_map). (toList m :α list) = toListA ([] :α list) m
+environment_relation_definition=∀(v_rel :v -> α -> bool) (env :v sem_env) (env' :α sem_env). env_rel v_rel env env' ⇔ env.c = env'.c ∧ nsDom env.v = nsDom env'.v ∧ nsDomMod env.v = nsDomMod env'.v ∧ ∀(nm :(mlstring, mlstring) id) (x :v) (y :α). nsLookup env.v nm = SOME x ∧ nsLookup env'.v nm = SOME y ⇒ v_rel x y
+environment_relation_monotonic=(∀(y :v) (z :α). (R :v -> α -> bool) y z ⇒ (R' :v -> α -> bool) y z) ⇒ env_rel R (env :v sem_env) (env' :α sem_env) ⇒ env_rel R' env env'
