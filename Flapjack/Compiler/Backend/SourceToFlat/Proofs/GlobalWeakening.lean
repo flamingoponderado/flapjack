@@ -242,15 +242,6 @@ theorem GlobalGrowth.append (env : GlobalEnv) (extra : List (Option FlatSem.Valu
     simp [List.getElem?_eq_none (Nat.le_of_not_gt notBound)] at slot
   simpa [List.getElem?_append_left bound] using slot
 
-/-- Filling reserved slots preserves the factored global-growth invariant. -/
-theorem GlobalGrowth.fillNone (env : GlobalEnv) (pre values post : List (Option FlatSem.Value))
-    (slots : env.v = pre ++ (List.replicate values.length none ++ post)) :
-    GlobalGrowth env { env with v := pre ++ (values ++ post) } := by
-  apply GlobalGrowth.ofSubglobals
-  · simpa [slots] using subglobals_fill_none pre values post
-  · exact fun _ _ h => h
-  · exact fun _ _ h => h
-
 /-- Global variable lookup relations survive growth. -/
 theorem globalLookupRel_growth (old new : GlobalEnv) (growth : GlobalGrowth old new)
     (map : Environment) (id : Flapjack.NamespaceHOL.Ident ModN VarN) (source : Value)
@@ -314,6 +305,39 @@ namespace StoreListWeakPort
 theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
     GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env := GlobalEnv.holFmapAsFiniteSupportWitness env
 end StoreListWeakPort
+
+/-- Related values remain related under the original global-extension conditions. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "v_rel_weak"
+  (fmap_as_finite_support := [c, tys])]
+theorem valueRel_weak (old : GlobalEnv) (source : Value) (flat : FlatSem.Value)
+    (new : GlobalEnv)
+    (premises : ValueRel old source flat ∧ finiteSubmap old.c new.c ∧
+      finiteSubmap old.tys new.tys ∧ subglobals old.v new.v) : ValueRel new source flat := by
+  obtain ⟨related, constructors, types, slots⟩ := premises
+  exact valueRel_growth old new (GlobalGrowth.ofSubglobals old new slots constructors types)
+    source flat related
+
+/-- Related environments remain related under global extension. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "env_rel_weak"
+  (fmap_as_finite_support := [c, tys])]
+theorem envRel_weak (old : GlobalEnv) (env : Flapjack.NamespaceHOL.Namespace ModN VarN Value)
+    (locals : List (VarN × FlatSem.Value)) (new : GlobalEnv)
+    (premises : EnvRel old env locals ∧ finiteSubmap old.c new.c ∧
+      finiteSubmap old.tys new.tys ∧ subglobals old.v new.v) : EnvRel new env locals := by
+  obtain ⟨related, constructors, types, slots⟩ := premises
+  exact envRel_growth old new (GlobalGrowth.ofSubglobals old new slots constructors types)
+    env locals related
+
+/-- The global environment invariant is preserved by global extension. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "global_env_inv_weak"
+  (fmap_as_finite_support := [c, tys])]
+theorem globalEnvInv_weak (old : GlobalEnv) (map : Environment) (shadowers : VarN → Prop)
+    (env : SemEnv Value) (new : GlobalEnv)
+    (premises : GlobalEnvInv old map shadowers env ∧ finiteSubmap old.c new.c ∧
+      finiteSubmap old.tys new.tys ∧ subglobals old.v new.v) : GlobalEnvInv new map shadowers env := by
+  obtain ⟨related, constructors, types, slots⟩ := premises
+  exact globalEnvInv_growth old new (GlobalGrowth.ofSubglobals old new slots constructors types)
+    map shadowers env related
 
 /-- Related store lists remain related when the global environment grows. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "LIST_REL_sv_rel_weak"

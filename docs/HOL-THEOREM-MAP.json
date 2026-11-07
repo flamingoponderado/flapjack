@@ -11601,6 +11601,42 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "v_rel_weak",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/GlobalWeakening.lean",
+    "lean_name": "valueRel_weak",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "c",
+      "tys"
+    ],
+    "reviewer": "Compared v_rel_weak_typed in cake_subglobals_probe.out with the original: both quantify the old environment, source and flat values, and new environment; the relation and c submap, tys submap and subglobals conjunction imply the same relation in the new environment. The global environment c and tys fields use the canonical finite-support representation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "env_rel_weak",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/GlobalWeakening.lean",
+    "lean_name": "envRel_weak",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "c",
+      "tys"
+    ],
+    "reviewer": "Compared env_rel_weak_typed in cake_subglobals_probe.out with the original: both quantify the old environment, source namespace and flat local bindings, and new environment; the relation and c submap, tys submap and subglobals conjunction imply the same relation in the new environment. The global environment c and tys fields use the canonical finite-support representation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "global_env_inv_weak",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/GlobalWeakening.lean",
+    "lean_name": "globalEnvInv_weak",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "c",
+      "tys"
+    ],
+    "reviewer": "Compared global_env_inv_weak_typed in cake_subglobals_probe.out with the original: both quantify the old environment, compiler environment, shadower set and semantic environment, and new environment; the relation and c submap, tys submap and subglobals conjunction imply the same relation in the new environment. The global environment c and tys fields use the canonical finite-support representation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "sv_rel_weak",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/GlobalWeakening.lean",
     "lean_name": "storeValueRel_weak",

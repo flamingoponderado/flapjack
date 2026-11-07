@@ -112,8 +112,11 @@ theorem factoredInvariant_fillSlot {C F : Type} [Nonempty C]
     source flat valid fits
   obtain ⟨cOk, tysOk, states, range, invs, orac, globals, reserved, genInv, fin⟩ := valid
   have growth := GlobalGrowth.fillSlot genv start.vidx value (by simpa [globals] using empty)
-  have nextStates := stateRel_after_global_growth genv _ growth source flat states
-    (flat.globals.set start.vidx (some value))
+  have nextStates : StateRel { genv with v := genv.v.set start.vidx (some value) } source
+      { flat with globals := flat.globals.set start.vidx (some value) } := by
+    have weakened := stateRel_growth genv _ growth source flat states
+    cases weakened with
+    | intro nonempty refs clock ffi => exact .intro source _ nonempty refs clock ffi
   have nextRange := idxRangeRel_fillSlot interp genv source.nextTypeStamp source.nextExnStamp
     source.evalState start finish other value range (by simpa [globals] using empty) fits
   have nextReserved : evalRefInv

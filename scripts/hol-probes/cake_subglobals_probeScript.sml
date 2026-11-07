@@ -145,3 +145,10 @@ val sv_rel_weak_replay = prove (
   metis_tac [source_to_flatProofTheory.v_rel_weak, LIST_REL_EL_EQN]);
 val _ = if null (hyp sv_rel_weak_replay) then () else raise Fail "hypotheses: sv_rel_weak_replay";
 val _ = (print "sv_rel_weak_replay="; print_term (concl sv_rel_weak_replay); print "\n");
+
+val _ = if null (hyp source_to_flatProofTheory.v_rel_weak) then () else raise Fail "hypotheses: v_rel_weak";
+val _ = (print "v_rel_weak_typed="; print_term (concl source_to_flatProofTheory.v_rel_weak); print "\n");
+val _ = if null (hyp source_to_flatProofTheory.env_rel_weak) then () else raise Fail "hypotheses: env_rel_weak";
+val _ = (print "env_rel_weak_typed="; print_term (concl source_to_flatProofTheory.env_rel_weak); print "\n");
+val _ = if null (hyp source_to_flatProofTheory.global_env_inv_weak) then () else raise Fail "hypotheses: global_env_inv_weak";
+val _ = (print "global_env_inv_weak_typed="; print_term (concl source_to_flatProofTheory.global_env_inv_weak); print "\n");

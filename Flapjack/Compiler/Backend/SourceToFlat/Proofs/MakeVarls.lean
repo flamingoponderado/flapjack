@@ -119,16 +119,4 @@ theorem evaluate_makeVarls_indexed {C F : Type} (n : Nat) (trace : Tra) (idx : N
     pre post state n trace (by simpa [List.append_assoc] using slots)
   simpa [List.append_assoc, FlatSem.unitValue] using result
 
-/-- Updating the flat global slots and weakening the global relation preserves
-the factored state relation; references, clock, and FFI are unchanged. -/
-theorem stateRel_after_global_growth {C F : Type} (old new : GlobalEnv)
-    (growth : GlobalGrowth old new) (source : SemanticPrimitivesHOL.State F)
-    (state : FlatSem.State C F) (related : StateRel old source state)
-    (newSlots : List (Option FlatSem.Value)) :
-    StateRel new source { state with globals := newSlots } := by
-  have weakened := stateRel_growth old new growth source state related
-  cases weakened with
-  | intro nonempty refs clock ffi =>
-    exact .intro source _ nonempty refs clock ffi
-
 end Flapjack.Compiler.Backend.SourceToFlat
