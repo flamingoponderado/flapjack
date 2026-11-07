@@ -3,6 +3,13 @@ open HolKernel Parse boolLib bossLib preamble;
 val _ = Globals.linewidth := 1000000;
 val _ = Globals.show_types := true;
 fun show_term label tm = (print label; print_term tm; print "\n");
+val s_rel_clock2_replay = prove (
+  ``!k. source_evalProof$s_rel ci s t ==>
+      source_evalProof$s_rel ci (s with clock := k) (t with clock := k)``,
+  rw [source_evalProofTheory.s_rel_def] >>
+  simp [semanticPrimitivesTheory.state_component_equality]);
+val _ = if null (hyp s_rel_clock2_replay) then () else raise Fail "s_rel_clock2 hypotheses";
+val _ = show_term "s_rel_clock2_replay=" (concl s_rel_clock2_replay);
 val _ = show_term "is_insert_decs="
   ``source_evalProof$is_insert_oracle ci f (SOME (semanticPrimitives$EvalDecs eds))``;
 val _ = show_term "declare_env_adjust="

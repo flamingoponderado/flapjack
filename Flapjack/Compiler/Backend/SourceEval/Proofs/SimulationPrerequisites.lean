@@ -20,6 +20,14 @@ theorem stateRel_clock {Config F : Type} (ci : CompilerInstance Config) (s t : S
   refine ⟨rfl, dec, oracle, refs, ?_, stores, source, callback, rest⟩
   rfl
 
+/-- Updating both clocks preserves the source recording-state relation. -/
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "s_rel_clock2"]
+theorem stateRel_setClock {Config F : Type} (ci : CompilerInstance Config) (s t : State F)
+    (k : Nat) (related : stateRel ci s t) :
+    stateRel ci { s with clock := k } { t with clock := k } := by
+  obtain ⟨dec, oracle, refs, rfl, stores, remainder⟩ := related
+  exact ⟨dec, oracle, refs, rfl, stores, remainder⟩
+
 
 private theorem concreteRelatedLists (xs ys : List Value)
     (related : List.Forall₂ (fun x y => concreteValue x = true → y = x) xs ys)
