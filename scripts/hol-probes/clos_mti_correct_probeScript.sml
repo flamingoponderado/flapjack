@@ -12,3 +12,5 @@ val _ = show_thm "semantics_intro_multi=" clos_mtiProofTheory.semantics_intro_mu
 val _ = show_thm "semantics_compile=" clos_mtiProofTheory.semantics_compile;
 val _ = show_thm "contains_App_SOME_intro_multi=" clos_mtiProofTheory.contains_App_SOME_intro_multi;
 val _ = show_thm "every_Fn_vs_NONE_intro_multi=" clos_mtiProofTheory.every_Fn_vs_NONE_intro_multi;
+val _ = show_thm "contains_App_SOME_collect_args=" clos_mtiProofTheory.contains_App_SOME_collect_args;
+val _ = show_thm "contains_App_SOME_collect_apps=" clos_mtiProofTheory.contains_App_SOME_collect_apps;

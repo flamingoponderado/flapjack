@@ -56,8 +56,8 @@ theorem containsAppSome_append (maxApp : Nat) (left right : List Exp) :
   | nil => simp [containsAppSome]
   | cons head tail ih => simp [containsAppSome, ih, or_assoc]
 
-/-- Collecting function arguments does not change application safety. This
-is a Lean-side collector property pending complete HOL correspondence review. -/
+/-- Flapjack projection form of `contains_App_SOME_collect_args`, used by the
+recursive traversal proof. -/
 theorem collectArgs_containsAppSome (maxApp count : Nat) (expression : Exp) :
     containsAppSomeExp maxApp expression ↔
       containsAppSomeExp maxApp (collectArgs maxApp count expression).2 := by
@@ -76,8 +76,8 @@ theorem collectArgs_containsAppSome (maxApp count : Nat) (expression : Exp) :
   | _ => simp [collectArgs]
 termination_by sizeOf expression
 
-/-- The application collector preserves the combined safety condition for its
-accumulator and head, including the configured argument limit. -/
+/-- Flapjack projection form of `contains_App_SOME_collect_apps`, used by the
+recursive traversal proof. -/
 theorem collectApps_containsAppSome (maxApp : Nat) (args : List Exp) (expression : Exp) :
     (maxApp < args.length ∨ containsAppSome maxApp args ∨ containsAppSomeExp maxApp expression) ↔
       (maxApp < (collectApps maxApp args expression).1.length ∨
@@ -102,6 +102,25 @@ theorem collectApps_containsAppSome (maxApp : Nat) (args : List Exp) (expression
       · simp [fits]
   | _ => simp [collectApps]
 termination_by sizeOf expression
+
+/-- Argument collection preserves the singleton application predicate. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "contains_App_SOME_collect_args"]
+theorem containsAppSome_collectArgs (maxApp count : Nat) (expression : Exp)
+    (arity : Nat) (body : Exp) (run : collectArgs maxApp count expression = (arity, body)) :
+    containsAppSome maxApp [expression] ↔ containsAppSome maxApp [body] := by
+  have invariant := collectArgs_containsAppSome maxApp count expression
+  rw [run] at invariant
+  simpa [containsAppSome] using invariant
+
+/-- Application collection preserves the complete application predicate. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "contains_App_SOME_collect_apps"]
+theorem containsAppSome_collectApps (maxApp : Nat) (args : List Exp) (expression : Exp)
+    (collected : List Exp) (head : Exp) (run : collectApps maxApp args expression = (collected, head)) :
+    (maxApp < args.length ∨ containsAppSome maxApp args ∨ containsAppSome maxApp [expression]) ↔
+      (maxApp < collected.length ∨ containsAppSome maxApp collected ∨ containsAppSome maxApp [head]) := by
+  have invariant := collectApps_containsAppSome maxApp args expression
+  rw [run] at invariant
+  simpa [containsAppSome] using invariant
 
 /-- A pointwise traversal that preserves application safety also preserves it
 over the complete list. -/

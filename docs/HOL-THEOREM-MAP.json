@@ -1,6 +1,22 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+  "hol_name": "contains_App_SOME_collect_args",
+  "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Syntactic.lean",
+  "lean_name": "containsAppSome_collectArgs",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed theorem in clos_mti_correct_probe.out: binder order, collection equation premise, and singleton application-predicate equivalence agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+  "hol_name": "contains_App_SOME_collect_apps",
+  "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Syntactic.lean",
+  "lean_name": "containsAppSome_collectApps",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed theorem in clos_mti_correct_probe.out: binder order, collection equation premise, arity bounds, list predicates and singleton predicates agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
   "hol_name": "contains_App_SOME_intro_multi",
   "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Syntactic.lean",
   "lean_name": "introList_containsAppSome",
