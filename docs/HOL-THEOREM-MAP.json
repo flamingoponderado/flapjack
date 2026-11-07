@@ -14377,6 +14377,14 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "record_forward_trans_sym",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleRecording.lean",
+    "lean_name": "recordForward_trans_sym",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared record_forward_trans_sym_replay in source_eval_oracle_adjust_probe.out, reconstructed using the original local REWRITE_RULE: the later forward relation precedes the earlier one in the conjunctive premise, and the conclusion relates the endpoints."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
     "hol_name": "orac_agrees_backward",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleRecording.lean",
     "lean_name": "oracleAgrees_backward",

@@ -62,6 +62,12 @@ theorem recordForward_trans (first second third : Option EvalState)
       intro j hj
       exact (prefix₂ j ⟨hj.1, by omega⟩).trans (prefix₁ j hj)
 
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "record_forward_trans_sym"]
+theorem recordForward_trans_sym (second third first : Option EvalState)
+    (premises : recordForward second third ∧ recordForward first second) :
+    recordForward first third :=
+  recordForward_trans first second third ⟨premises.2, premises.1⟩
+
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "orac_agrees_backward"]
 theorem oracleAgrees_backward (oracle : EvalOracleFun) (second first : Option EvalState)
     (premises : oracleAgrees oracle second ∧ recordForward first second) :

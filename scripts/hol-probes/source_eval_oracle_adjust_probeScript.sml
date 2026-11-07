@@ -61,3 +61,6 @@ val _ = show_thm "compiler_agrees_concrete=" source_evalProofTheory.compiler_agr
 val _ = show_thm "reset_oracle_eqs=" source_evalProofTheory.reset_env_generation_orac_eqs;
 val _ = show_thm "insert_declare_env=" source_evalProofTheory.insert_declare_env;
 val _ = show_thm "insert_do_eval=" source_evalProofTheory.insert_do_eval;
+val record_forward_trans_sym = REWRITE_RULE [Once CONJ_COMM] source_evalProofTheory.record_forward_trans;
+val _ = show_thm "record_forward_trans_sym_replay=" record_forward_trans_sym;
+val _ = show_thm "evaluate_record_forward=" source_evalProofTheory.evaluate_is_record_forward;
