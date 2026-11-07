@@ -1,5 +1,21 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "pmatch_drule_form",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/PatternMatchSafety.lean",
+  "lean_name": "pmatchDrule",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed statement replay source_pmatch_drule_replay in source_eval_oracle_adjust_probe.out: the original match-result equation, state, environment and value premises imply the same relation on the target match. The local statement is reproved from pmatch; the original local proof is not replayed. Compiler and FFI types remain independent."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "can_pmatch_all",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/PatternMatchSafety.lean",
+  "lean_name": "canPmatchAll_rel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source_can_pmatch_all in source_eval_oracle_adjust_probe.out: the original conjunction of source matchability, state relation, environment relation and related values implies target matchability. The reviewed Bool-valued matchability predicate is asserted equal to true; compiler and FFI types are independent."
+},
+{
   "hol_path": "HOL/src/coretypes/pairScript.sml",
   "hol_name": "RPROD_DEF",
   "lean_path": "Flapjack/Misc/Pair.lean",

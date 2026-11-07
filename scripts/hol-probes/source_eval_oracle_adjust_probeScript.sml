@@ -96,3 +96,14 @@ val _ = show_thm "source_state_store_lookup=" source_evalProofTheory.s_rel_store
 val _ = show_thm "source_pmatch_simulation=" source_evalProofTheory.pmatch;
 val _ = show_thm "source_pmatch_induction=" semanticPrimitivesTheory.pmatch_ind;
 val _ = show_thm "product_relation_definition=" pairTheory.RPROD_DEF;
+val pmatch_drule_form_replay = Q.prove (
+  `semanticPrimitives$pmatch env.c s.refs p x [] = res /\
+   source_evalProof$s_rel ci s t /\
+   source_evalProof$env_rel (source_evalProof$v_rel (source_evalProof$orac_s t.eval_state)) env env' /\
+   source_evalProof$v_rel (source_evalProof$orac_s t.eval_state) x y ==>
+   source_evalProof$match_result_rel T
+     (LIST_REL ($= ### source_evalProof$v_rel (source_evalProof$orac_s t.eval_state)))
+     res (semanticPrimitives$pmatch env'.c t.refs p y [])`,
+  metis_tac [source_evalProofTheory.pmatch, listTheory.LIST_REL_NIL]);
+val _ = show_thm "source_pmatch_drule_replay=" pmatch_drule_form_replay;
+val _ = show_thm "source_can_pmatch_all=" source_evalProofTheory.can_pmatch_all;
