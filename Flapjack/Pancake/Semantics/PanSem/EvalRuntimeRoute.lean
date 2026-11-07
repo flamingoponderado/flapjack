@@ -184,6 +184,24 @@ def evalPanSemStateExpViaHOLCached (cache : PanSemExpressionContextCache)
         panValueOfHOL
   else evalPanSemStateExp s e
 
+/-- Build the guarded HOL expression route for one state-owned run. The owner
+    supplies the structure context, word size and memory domains the route
+    reads; the collected structure context is cached once for the whole run.
+    The route closes over the exact owner state it is built from, so callers
+    cannot substitute a callback that silently accepts mismatched settings. -/
+def panSemExpressionRouteRun (owner : PanSemState (RiscV.Word 64) (FfiState σ))
+    (structs : StructContext) : PanExprEvaluator (RiscV.Word 64) :=
+  let cache := panSemExpressionContextCache structs
+  fun _structs locals globals memory base top _bytes _access e =>
+    evalPanSemStateExpViaHOLCached cache
+      { owner with
+        structs := structs
+        locals := locals
+        globals := globals
+        memory := memory
+        baseAddress := base
+        topAddress := top } rfl e
+
 /-- State-owned RV64 code evaluation with the guarded HOL expression route.
     The code-map runner carries the route through calls, branches, and leaves;
     its memory access is derived from the same source state as the route. -/
@@ -193,19 +211,12 @@ def panSemEvaluateRiscV64CodeStateViaHOL
     (handler : PanValueStatefulFfiHandler (RiscV.Word 64) σ)
     (state : PanSemState (RiscV.Word 64) (FfiState σ)) (program : Prog (RiscV.Word 64)) :
     Option (PanValueFfiClockResult (RiscV.Word 64) σ) :=
-  let cache := panSemExpressionContextCache state.structs
+  let run := panSemExpressionRouteRun state state.structs
   evalPanValueFfiClockCodeProg context primitive handler state.structs state.code
     state.exceptionShapes state.baseAddress state.topAddress panSemBitVec64BytesInWord
     (panSemCodeEvaluateFuel state program) state.locals state.globals state.memory state.ffi
     state.clock program (memoryAccess := some (panSemBitVec64MemoryAccess state))
-    (evaluator := some (fun _structs locals globals memory base top _bytes _access e =>
-      evalPanSemStateExpViaHOLCached cache
-        { state with
-          locals := locals
-          globals := globals
-          memory := memory
-          baseAddress := base
-          topAddress := top } rfl e))
+    (evaluator := some run)
 
 /-- State-owned RV64 HOL-routed code evaluation with its observable post-state. -/
 def panSemEvaluateRiscV64CodeStateViaHOLWithPostState
@@ -258,30 +269,14 @@ def panSemEvaluateRiscV64ProgramViaHOL
     Option (PanValueFfiClockResult (RiscV.Word 64) σ) :=
   if input.initial.source.bytesInWord = panSemBitVec64BytesInWord then do
     let structs ← collectPanValueStructs decls input.initial.source.structs
-    let run := (let cache := panSemExpressionContextCache structs;
-      fun _structs locals globals memory base top _bytes _access e =>
-        evalPanSemStateExpViaHOLCached cache
-          { input.toOwner with
-            structs := structs
-            locals := locals
-            globals := globals
-            memory := memory
-            baseAddress := base
-            topAddress := top } rfl e)
+    let run := panSemExpressionRouteRun input.toOwner structs
     let state ← evalPanValueDeclarationsWithStructs structs
       { input.initial.source with structs := structs } decls
       (some (panSemBitVec64MemoryAccess input.toOwner)) (some run)
-    let (outcome, nextClock) ← evalPanValueFfiClockProgramCodeCall context primitive handler
-      state fuel state.globals state.memory input.initial.ffi clock entry arguments
+    evalPanValueFfiClockProgramEntry context primitive handler state input.initial.ffi clock
+      fuel entry arguments
       (memoryAccess := some (panSemBitVec64MemoryAccess input.toOwner))
       (memoryHandler := memoryHandler) (evaluator := some run)
-    match lookupInfo entry state.returnShapes, outcome with
-    | some shape, .control (.returned locals globals memory ffi [value]) =>
-        if panShapeMatches (panValueShape state.structs value) shape then
-          some (.control (.returned locals globals memory ffi [value]), nextClock)
-        else none
-    | some _, .control (.returned _ _ _ _ _) => none
-    | _, outcome => some (outcome, nextClock)
   else
     evalPanValueFfiClockProgram context input.initial clock primitive handler fuel decls entry arguments
       (memoryAccess := some (panSemBitVec64MemoryAccess input.toOwner)) (memoryHandler := memoryHandler)
