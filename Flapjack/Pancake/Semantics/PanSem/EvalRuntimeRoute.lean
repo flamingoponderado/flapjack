@@ -200,10 +200,14 @@ structure PanSemExpressionRoute where
     the route value is built, outside the per-expression lambda. The access is
     `some (panSemBitVec64MemoryAccess owner)`, and
     `panSemExpressionRoute_access_structs` records that re-pinning the structure
-    context leaves it unchanged. The dispatch guard itself is Flapjack
-    infrastructure with no single HOL declaration: HOL's `panSem` has one
-    expression evaluator, while the Lean runner must choose between the
-    HOL-shaped evaluator and the String-compatible fallback. -/
+    context leaves it unchanged. The generic fallback `evalPanSemStateExp`
+    derives its access with `panSemWordMemoryAccess`, which agrees with
+    `panSemBitVec64MemoryAccess` at width 64 (`panSemWordMemoryAccess_64`), so
+    the routed and fallback paths read the same memory domains. The dispatch
+    guard itself is Flapjack infrastructure with no single HOL declaration:
+    HOL's `panSem` has one expression evaluator, while the Lean runner must
+    choose between the HOL-shaped evaluator and the String-compatible
+    fallback. -/
 def panSemExpressionRoute (owner : PanSemState (RiscV.Word 64) (FfiState σ)) :
     PanSemExpressionRoute :=
   let cache := panSemExpressionContextCache owner.structs
