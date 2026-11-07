@@ -19,6 +19,7 @@ import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleExtraction
 import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleRecording
 import Flapjack.Compiler.Backend.SourceEval.Proofs.Environment
 import Flapjack.Compiler.Backend.SourceEval.Proofs.DoAppIndexed
+import Flapjack.Compiler.Backend.SourceEval.Proofs.DoAppSimulation
 import Flapjack.Compiler.Backend.SourceEval.Proofs.DeclareEnvSimulation
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EnvironmentConstructors
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EnvironmentEmpty

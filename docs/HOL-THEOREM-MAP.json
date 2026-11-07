@@ -1,5 +1,14 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "do_app_sim",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/DoAppSimulation.lean",
+  "lean_name": "doApp_sim",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared typed source_do_app_simulation in source_eval_oracle_adjust_probe.out: the source application, state relation, reversed pointwise operand relation, non-type-error premise, all four existential witnesses including the unused independent inhabited ref1, and target application, store and result relations retain the original shape. The FFI and compiler configuration carriers are independent. Primitive evaluation inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
   "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml",
   "hol_name": "nsLookup_nsEmpty",
   "lean_path": "Flapjack/NamespaceProps/EmptyLookup.lean",
