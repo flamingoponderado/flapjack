@@ -138,3 +138,5 @@ val source_list_rel_check_type_replay = Q.prove (
   rw [listTheory.LIST_REL_EL_EQN, listTheory.EVERY_EL] \\
   metis_tac [source_v_rel_check_type_replay]);
 val _ = show_thm "source_list_rel_check_type_replay=" source_list_rel_check_type_replay;
+val _ = show_thm "source_state_relation_clock=" source_evalProofTheory.s_rel_clock;
+val _ = show_thm "source_concrete_value_relation=" source_evalProofTheory.concrete_v_rel;

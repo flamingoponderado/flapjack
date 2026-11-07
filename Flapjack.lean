@@ -23,6 +23,7 @@ import Flapjack.Compiler.Backend.SourceEval.Proofs.ValueRelationSimps
 import Flapjack.Compiler.Backend.SourceEval.Proofs.PrimitiveType
 import Flapjack.Compiler.Backend.SourceEval.Proofs.Conversions
 import Flapjack.Compiler.Backend.SourceEval.Proofs.StateRelation
+import Flapjack.Compiler.Backend.SourceEval.Proofs.SimulationPrerequisites
 import Flapjack.Compiler.Backend.SourceEval.Proofs.PatternMatch
 import Flapjack.Compiler.Backend.SourceEval.Proofs.PatternMatchSafety
 import Flapjack.Compiler.Backend.SourceEval.Proofs.Equality

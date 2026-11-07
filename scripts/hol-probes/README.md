@@ -9643,3 +9643,6 @@ These captures support statement review, not cross-language equivalence.
 
 The same source evaluator probe captures the inferred store relation left cases
 and replays the local value and list primitive-type preservation proofs in HOL.
+
+The same source evaluator probe captures typed clock-relation preservation and
+concrete-value uniqueness for the recording simulation.

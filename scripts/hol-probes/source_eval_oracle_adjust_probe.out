@@ -92,3 +92,5 @@ source_values_to_string_relation=∀(xs :v list) (ys :v list) (s :mlstring). vs_
 source_store_value_relation_left_cases=(∀(v :β store_v) (rv :α) (R :α -> β -> bool). sv_rel R (Refv rv) v ⇔ ∃(v2 :β). v = Refv v2 ∧ R rv v2) ∧ (∀(xs :word8 list) (v :β store_v) (R :α -> β -> bool). sv_rel R (W8array xs :α store_v) v ⇔ v = (W8array xs :β store_v)) ∧ ∀(vs :α list) (v :β store_v) (R :α -> β -> bool). sv_rel R (Varray vs) v ⇔ ∃(vs2 :β list). v = Varray vs2 ∧ LIST_REL R vs vs2
 source_v_rel_check_type_replay=v_rel (x :eval_oracle_state) (v1 :v) (v2 :v) ⇒ (check_type (ty :prim_type) v1 ⇔ check_type ty v2) ∧ dest_Litv v1 = dest_Litv v2
 source_list_rel_check_type_replay=LIST_REL (v_rel (x :eval_oracle_state)) (vs1 :v list) (vs2 :v list) ⇒ (EVERY (check_type (ty :prim_type)) vs1 ⇔ EVERY (check_type ty) vs2)
+source_state_relation_clock=s_rel (ci :'cfg compiler_instance) (s :α semanticPrimitives$state) (t :α semanticPrimitives$state) ⇒ s.clock = t.clock ∧ s_rel ci (dec_clock s) (dec_clock t)
+source_concrete_value_relation=∀(x :v) (y :v). v_rel (es :eval_oracle_state) x y ⇒ concrete_v x ⇒ y = x

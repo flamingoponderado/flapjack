@@ -1,6 +1,22 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "s_rel_clock",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/SimulationPrerequisites.lean",
+  "lean_name": "stateRel_clock",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed source_state_relation_clock in source_eval_oracle_adjust_probe.out: Independent compiler and FFI carriers; the relation yields equal clocks and the relation after both states decrement."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "concrete_v_rel",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/SimulationPrerequisites.lean",
+  "lean_name": "concreteValue_rel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed source_concrete_value_relation in source_eval_oracle_adjust_probe.out: For arbitrary related values, source concreteness implies target equals source; the two original implications and equality orientation are retained."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "sv_rel_l_cases",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/Store.lean",
   "lean_name": "storeValueRel_leftCases",
