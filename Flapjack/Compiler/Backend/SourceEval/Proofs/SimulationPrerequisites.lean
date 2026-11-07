@@ -4,6 +4,13 @@ import Flapjack.EvaluateHOL
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs
 open Flapjack.SemanticPrimitivesHOL Flapjack.EvaluateHOL
 
+/-- Pair-pattern application agrees with the componentwise pair map. -/
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "pairarg_to_pair_map"]
+theorem pairArg_to_pairMap {α β γ δ : Type} (f : α → γ) (g : β → δ) :
+    (fun (p : α × β) => match p with | (x, y) => (f x, g y)) = Prod.map f g := by
+  funext ⟨x, y⟩
+  rfl
+
 /-- Related recording states have equal clocks and remain related after decrement. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "s_rel_clock"]
 theorem stateRel_clock {Config F : Type} (ci : CompilerInstance Config) (s t : State F)

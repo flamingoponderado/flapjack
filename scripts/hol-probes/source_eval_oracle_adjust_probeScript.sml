@@ -142,3 +142,4 @@ val _ = show_thm "source_state_relation_clock=" source_evalProofTheory.s_rel_clo
 val _ = show_thm "source_concrete_value_relation=" source_evalProofTheory.concrete_v_rel;
 val _ = show_thm "extend_declaration_environment_assoc=" semanticPrimitivesPropsTheory.extend_dec_env_assoc;
 val _ = show_thm "source_do_app_simulation=" source_evalProofTheory.do_app_sim;
+val _ = show_thm "source_pairarg_to_pair_map=" source_evalProofTheory.pairarg_to_pair_map;

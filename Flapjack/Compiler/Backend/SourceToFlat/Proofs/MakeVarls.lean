@@ -10,15 +10,6 @@ open Flapjack.Compiler.Backend.BackendCommon
 private instance : Nonempty VarN := ⟨Flapjack.Basis.Pure.MlString.ofString ""⟩
 private instance : Nonempty FlatSem.Value := ⟨.conv none []⟩
 
-/-- A single local binding initializes a previously empty global slot. -/
-theorem evaluate_globalVarInit {C F : Type} (env : FlatSem.Environment FlatSem.Value)
-    (state : FlatSem.State C F) (name : VarN) (value : FlatSem.Value) (idx : Nat)
-    (lookup : env.v.lookup name = some value) (empty : state.globals[idx]? = some none) :
-    FlatSem.evaluate env state [.app .none (.globalVarInit idx) [.varLocal .none name]] =
-      ({ state with globals := state.globals.set idx (some value) }, .val [FlatSem.unitValue]) := by
-  simp [FlatSem.evaluate, lookup, FlatSem.fixClock, FlatSem.applyResult,
-    FlatSem.doApp, FlatSem.doAppFlat, empty]
-
 /-- Initializing the first blank after a prefix replaces exactly that slot. -/
 theorem evaluate_globalVarInit_after_prefix {C F : Type}
     (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F)
@@ -26,11 +17,8 @@ theorem evaluate_globalVarInit_after_prefix {C F : Type}
     (lookup : env.v.lookup name = some value) (slots : state.globals = pre ++ none :: post) :
     FlatSem.evaluate env state [.app .none (.globalVarInit pre.length) [.varLocal .none name]] =
       ({ state with globals := pre ++ some value :: post }, .val [FlatSem.unitValue]) := by
-  have empty : state.globals[pre.length]? = some none := by
-    rw [slots]
-    simp
-  rw [evaluate_globalVarInit env state name value pre.length lookup empty]
-  simp [slots, List.set_append_right]
+  simp [FlatSem.evaluate, lookup, FlatSem.fixClock, FlatSem.applyResult,
+    FlatSem.doApp, FlatSem.doAppFlat, slots, List.set_append_right]
 
 /-- The generated initializer writes each looked-up value into its reserved
 slot, preserving the prefix and suffix. The lookup relation is the pointwise

@@ -100,3 +100,9 @@ val _ = (print "compile_semantics_prime_typed="; Lib.with_flag (Globals.show_typ
 val _ = (print "install_rel_unprimed_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl install_config_rel_def); print "\n");
 val _ = (print "compile_semantics_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl compile_semantics); print "\n");
 val _ = (print "compile_correct_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl compile_correct); print "\n");
+
+(* Replay the local initializer syntax theorem with the original case split. *)
+val no_mti_compile_init_replay = Q.prove (
+  `closProps$no_mti (clos_interp$compile_init b)`,
+  Cases_on `b` >> fs [] >> EVAL_TAC);
+val _ = (print "no_mti_compile_init_replay="; Lib.with_flag (Globals.show_types,true) print_term (concl no_mti_compile_init_replay); print "\n");

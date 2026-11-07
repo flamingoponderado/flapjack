@@ -230,13 +230,6 @@ private theorem zipConstructor_member_arity {N A : Type} (constructors : List (N
       · obtain ⟨args, found, length⟩ := ih restTags arities'.2 name tag arity member
         exact ⟨args, List.mem_cons_of_mem _ found, length⟩
 
-/-- Every allocator entry refers to a source constructor with the same
-name and arity. -/
-theorem allocatedConstructorEntries_source {M N A : Type} (constructors : List (N × List A))
-    (name : N) (tag arity : Nat) (member : (name, tag, arity) ∈ allocatedConstructorEntries (M := M) constructors) :
-    ∃ args, (name, args) ∈ constructors ∧ args.length = arity := by
-  exact zipConstructor_member_arity constructors _ (allocTags1_arities (M := M) constructors) name tag arity member
-
 private theorem constructorLookup_exists_iff_key_mem {α : Type} (entries : List (ConN × α)) (name : ConN) :
     (∃ value, entries.lookup name = some value) ↔ name ∈ entries.map Prod.fst := by
   induction entries with
@@ -279,7 +272,7 @@ theorem allocatedConstructorEntries_find {M A : Type} (constructors : List (ConN
   change entryName' = name at entryName
   subst entryName'
   obtain ⟨args', sourceMember, length⟩ :=
-    allocatedConstructorEntries_source (M := M) constructors name tag arity entryMember
+    zipConstructor_member_arity constructors _ (allocTags1_arities (M := M) constructors) name tag arity entryMember
   have found := lookup_of_mem_nodup constructors name args member distinct
   have found' := lookup_of_mem_nodup constructors name args' sourceMember distinct
   have same : args' = args := Option.some.inj (found'.symm.trans found)

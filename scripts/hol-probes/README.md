@@ -9661,3 +9661,9 @@ independent inferred key and value types.
 
 The source-to-flat initialization probe captures the complete typed
 `can_pmatch_all_IMP_pmatch_rows` theorem.
+
+The source evaluator probe captures the typed pair-pattern to pair-map
+function equation, including its four independent type variables.
+
+The flat-to-closure relation probe replays the local interpreter-initializer
+`no_mti_compile_init` proof with its original Boolean case split.

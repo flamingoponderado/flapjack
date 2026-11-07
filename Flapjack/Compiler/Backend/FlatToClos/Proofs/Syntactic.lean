@@ -41,7 +41,9 @@ theorem compileDecs_syntacticProps (maxApp : Nat) (ds : List FlatLang.Exp) :
 theorem compileProg_syntacticProps (maxApp : Nat) (ds : List FlatLang.Exp) :
     (∀ e ∈ compileProg ds, noMti e) ∧ everyFnVarsNone (compileProg ds) ∧
       (0 < maxApp → ¬ containsAppSome maxApp (compileProg ds)) := by
-  have safe := compileProg_noMti ds
+  have safe : ∀ e ∈ compileProg ds, noMti e := by
+    have compiled := compileDecs_noMti ds
+    simpa [compileProg, ClosInterp.attachInterpreter, compileInit_noMti] using compiled
   have properties := noMtiList_syntactic 1 (by decide) (compileProg ds) safe
   exact ⟨safe, properties.1, fun positive => (noMtiList_syntactic maxApp positive _ safe).2⟩
 
