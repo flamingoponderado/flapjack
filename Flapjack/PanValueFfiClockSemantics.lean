@@ -1005,11 +1005,18 @@ def evalPanValueFfiClockProgramCodeCall
     metadata, so the entry call and its shape check always read the same
     evaluated declaration state.
 
-    It corresponds to the `semantics s' start` tail of HOL's `semantics_decls`
-    (`cakeml/pancake/semantics/panSemScript.sml:861`), which runs `decs_stcnames`,
-    then `evaluate_decls`, then `semantics s' start` as separate steps. This
-    adapter uses the fuel/clock evaluator and adds a return-shape check, so it
-    is not an exact port and carries no `@[hol]` tag. -/
+    It is modelled on the `semantics s' start` tail of HOL's `semantics_decls`
+    (`cakeml/pancake/semantics/panSemScript.sml:861`), which runs
+    `decs_stcnames`, then `evaluate_decls`, then `semantics s' start`. It is not
+    an exact port and carries no `@[hol]` tag, for these reasons:
+
+    - HOL's `semantics` calls `start` with no arguments (`Call NONE start []`),
+      while this adapter takes arbitrary `arguments`.
+    - HOL's `semantics` classifies Fail/Terminate/Diverge over every clock,
+      while this adapter returns one fuel- and clock-bounded outcome.
+    - HOL's `decs_stcnames` starts from an empty context (`decs_stcnames []`),
+      while the Lean runners collect structs from the input's existing context.
+    - This adapter adds the single-value return-shape check. -/
 def evalPanValueFfiClockProgramEntry
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
@@ -1018,14 +1025,14 @@ def evalPanValueFfiClockProgramEntry
     (primitive : PanPrimitiveHandler α)
     (handler : PanValueStatefulFfiHandler α σ)
     (state : PanValueProgramState α)
-    (fuel : Nat) (ffi : FfiState σ) (clock : Nat)
+    (fuel : Nat) (entryFfi : FfiState σ) (clock : Nat)
     (entry : FunName) (arguments : List (Exp α))
     (memoryAccess : Option (PanValueMemoryAccess α) := none)
     (memoryHandler : Option (PanValueMemoryFfiHandler α σ) := none)
     (evaluator : Option (PanExprEvaluator α) := none) :
     Option (PanValueFfiClockResult α σ) := do
   let (outcome, nextClock) ← evalPanValueFfiClockProgramCodeCall context primitive
-    handler state fuel state.globals state.memory ffi clock entry arguments
+    handler state fuel state.globals state.memory entryFfi clock entry arguments
     (memoryAccess := memoryAccess) (memoryHandler := memoryHandler) (evaluator := evaluator)
   match lookupInfo entry state.returnShapes, outcome with
   | some shape, .control (.returned locals globals memory ffi [value]) =>
@@ -1047,7 +1054,7 @@ theorem evalPanValueFfiClockProgramEntry_route_eq
     (context : PanValueFfiContext α) (primitive : PanPrimitiveHandler α)
     (handler : PanValueStatefulFfiHandler α σ)
     (state : PanValueProgramState α)
-    (fuel : Nat) (ffi : FfiState σ) (clock : Nat)
+    (fuel : Nat) (entryFfi : FfiState σ) (clock : Nat)
     (entry : FunName) (arguments : List (Exp α))
     (memoryAccess : Option (PanValueMemoryAccess α))
     (memoryHandler : Option (PanValueMemoryFfiHandler α σ))
@@ -1057,9 +1064,9 @@ theorem evalPanValueFfiClockProgramEntry_route_eq
         state.bytesInWord memoryAccess e =
       evalPanValueExp state.structs locals globals memory state.baseAddress state.topAddress
         state.bytesInWord e memoryAccess) :
-    evalPanValueFfiClockProgramEntry context primitive handler state fuel ffi clock entry arguments
+    evalPanValueFfiClockProgramEntry context primitive handler state fuel entryFfi clock entry arguments
       memoryAccess memoryHandler (some run) =
-    evalPanValueFfiClockProgramEntry context primitive handler state fuel ffi clock entry arguments
+    evalPanValueFfiClockProgramEntry context primitive handler state fuel entryFfi clock entry arguments
       memoryAccess memoryHandler none := by
   simp only [evalPanValueFfiClockProgramEntry, evalPanValueFfiClockProgramCodeCall]
   cases hc : panValueProgramStateCodeMap state with
@@ -1071,9 +1078,17 @@ theorem evalPanValueFfiClockProgramEntry_route_eq
       state.bytesInWord memoryAccess
       (some (PanValueCallContracts.mk state.returnShapes state.exceptions
         state.parameterShapes)) memoryHandler run h fuel).1
-      (fun _ => none) state.globals state.memory ffi clock none entry arguments false
+      (fun _ => none) state.globals state.memory entryFfi clock none entry arguments false
     rw [hrun]
 
+/-- Evaluate a program through the source boundary: evaluate its declarations
+    with the selected expression route, then run the entry call and enforce the
+    single-value return shape.
+
+    It has no single HOL declaration: HOL's `semantics_decls` performs
+    `decs_stcnames`, `evaluate_decls` and `semantics s' start` in one
+    definition, while this runner splits them into a declaration phase with an
+    explicit expression route and the entry adapter above. -/
 def evalPanValueFfiClockProgram
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
