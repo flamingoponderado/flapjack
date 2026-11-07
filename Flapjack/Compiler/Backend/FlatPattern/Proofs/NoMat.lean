@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.CompiledMatch
 import Flapjack.Compiler.Backend.FlatPattern.CompileTotal
 import Flapjack.Compiler.Backend.FlatProps.NoMat
+import Flapjack.Misc.Sptree.ToList
 import Mathlib.Tactic.SplitIfs
 
 /-! Match-freedom facts for generated pattern tests. The compositional helper lemmas are Flapjack proof infrastructure. -/
@@ -48,19 +49,21 @@ theorem noMat_decodeGuard (trace : Tra) (value : FlatLang.Exp) (guard : DGuard)
   | conj a b ihA ihB => exact noMat_smartIf trace _ _ _ ihA ihB (noMat_mkBool trace false)
   | disj a b ihA ihB => exact noMat_smartIf trace _ _ _ ihA (noMat_mkBool trace true) ihB
 
-/-- Decoding a decision tree preserves match-freedom when every reachable
-branch and the default are match-free. -/
+/-- Decoding a decision tree preserves match-freedom of its value, default,
+and all expressions in its branch tree. -/
 theorem noMat_decodeDtree (trace : Tra) (branches : Spt FlatLang.Exp) (value default : FlatLang.Exp) (tree : DTree)
-    (valueSafe : FlatProps.noMat value = true) (defaultSafe : FlatProps.noMat default = true)
-    (branchesSafe : ∀ index branch, sptLookup index branches = some branch → FlatProps.noMat branch = true) :
+    (premises : FlatProps.noMat value = true ∧ FlatProps.noMat default = true ∧
+      ∀ branch ∈ sptToList branches, FlatProps.noMat branch = true) :
     FlatProps.noMat (decodeDtree trace branches value default tree) = true := by
+  obtain ⟨valueSafe, defaultSafe, branchesSafe⟩ := premises
   induction tree with
   | fail => exact defaultSafe
   | typeFail => simp [decodeDtree, FlatProps.noMat]
   | leaf index =>
     cases found : sptLookup index branches with
     | none => simpa [decodeDtree, found] using defaultSafe
-    | some branch => simpa [decodeDtree, found] using branchesSafe index branch found
+    | some branch =>
+      simpa [decodeDtree, found] using branchesSafe branch ((sptMemToList branch branches).2 ⟨index, found⟩)
   | if_ guard yes no ihYes ihNo =>
     simp only [decodeDtree]
     split_ifs
@@ -339,7 +342,11 @@ theorem noMat_compilePats (cfg : Config) (naive : Bool) (trace : Tra) (base : Na
   cases naive with
   | false =>
     simp only [compilePats, Bool.false_eq_true, ↓reduceIte]
-    exact noMat_decodeDtree trace _ value default _ valueSafe defaultSafe (noMat_branchTree _ branchesSafe)
+    apply noMat_decodeDtree trace _ value default _
+    refine ⟨valueSafe, defaultSafe, ?_⟩
+    intro branch member
+    obtain ⟨index, found⟩ := (sptMemToList branch _).1 member
+    exact noMat_branchTree _ branchesSafe index branch found
   | true =>
     simp only [compilePats, ↓reduceIte]
     apply noMat_naivePatternMatches trace value default _ valueSafe defaultSafe
