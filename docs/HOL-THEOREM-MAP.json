@@ -472,6 +472,16 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "do_test_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/PrimitiveTest.lean",
+  "lean_name": "doTest_related",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["c", "tys"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared HOL source and typed do_test_lemma_typed replay in source_to_flat_test_probe.out: the successful source test, constructor invariant and both value relations form one premise in order, with the same Boolean result. The environment uses the reviewed finite-map fields; floating comparison inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
   "hol_name": "v_to_list",
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/ListConversion.lean",
   "lean_name": "valueToList_related",

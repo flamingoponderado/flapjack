@@ -826,8 +826,8 @@ theorem localEnvBounded_test {C F : Type} [Nonempty C]
             rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [right, left] []).1, sourceRun]
             simp [getOpClass, doApp, comparison, EvaluateHOL.typeError]
           | val b =>
-            have flatComparison := doTest_related nextGenv nextInvariant.1 test typ sourceLeft sourceRight
-              flatLeft flatRight b leftRel rightRel comparison
+            have flatComparison := doTest_related test typ sourceLeft sourceRight b nextGenv flatLeft flatRight
+              ⟨comparison, nextInvariant.1, leftRel, rightRel⟩
             refine ⟨nextGenv, exprSim_test nextGenv compMap trace sourceEnv flatEnv source flat left right test typ
               nextInvariant.1 argsSimCopy safe, ?_⟩
             rw [EvaluateHOL.evaluate]

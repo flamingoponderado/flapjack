@@ -1,18 +1,26 @@
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Test
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.Equality
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveType
+
+/-! Primitive comparison preservation for source-to-flat simulation. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
 
-/-- A successful source primitive test yields the same Boolean for related
-flat values. This is infrastructure over the factored relation, whose full
-HOL correspondence remains open. -/
-theorem doTest_related (genv : GlobalEnv) (ok : genvCOk genv.c)
-    (test : Test) (typ : PrimType) (a b : SemanticPrimitivesHOL.Value)
-    (fa fb : FlatSem.Value) (result : Bool)
-    (ha : ValueRel genv a fa) (hb : ValueRel genv b fb)
-    (h : SemanticPrimitivesHOL.doTest test typ a b = .val result) :
+namespace PrimitiveTestPort
+/-- Canonical global finite-map carrier roundtrip. -/
+theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
+    GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env := GlobalEnv.holFmapAsFiniteSupportWitness env
+end PrimitiveTestPort
+
+/-- A successful source primitive test yields the same Boolean for related flat values. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_test_lemma"
+  (fmap_as_finite_support := [c, tys])]
+theorem doTest_related (test : Test) (typ : PrimType) (a b : SemanticPrimitivesHOL.Value)
+    (result : Bool) (genv : GlobalEnv) (fa fb : FlatSem.Value)
+    (premises : SemanticPrimitivesHOL.doTest test typ a b = .val result ∧
+      genvCOk genv.c ∧ ValueRel genv a fa ∧ ValueRel genv b fb) :
     FlatSem.doTest test typ fa fb = .val result := by
+  obtain ⟨h, ok, ha, hb⟩ := premises
   cases test with
   | equal =>
     by_cases checks : SemanticPrimitivesHOL.checkType typ a && SemanticPrimitivesHOL.checkType typ b

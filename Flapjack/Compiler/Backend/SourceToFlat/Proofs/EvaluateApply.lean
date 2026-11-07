@@ -464,7 +464,7 @@ theorem exprSim_test {C F : Type} (genv : GlobalEnv) (compMap : Environment) (tr
                   rw [(EvaluateHOL.fixClockEvaluate sourceState sourceEnv [right, left] []).1, sourceRun]
                   simp [getOpClass, doApp, comparison, EvaluateHOL.typeError]
                 | val b =>
-                  have flatComparison := doTest_related genv ok test typ sourceLeft sourceRight flatLeft flatRight b leftRel rightRel comparison
+                  have flatComparison := doTest_related test typ sourceLeft sourceRight b genv flatLeft flatRight ⟨comparison, ok, leftRel, rightRel⟩
                   unfold ExprSim
                   rw [EvaluateHOL.evaluate]
                   simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
