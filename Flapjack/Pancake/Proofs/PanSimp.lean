@@ -592,7 +592,7 @@ theorem panValueProgramStateRel_evalPanValueDeclarations
     ∃ t', evalPanValueDeclarations t (panSimpDecls declarations) memoryAccess = some t' ∧
       panValueProgramStateRel s' t' := by
   obtain ⟨hstructs, hglobals, hmemory, hret, hparam, hexn, hbase, htop, hbiw, hfuncs⟩ := hrel
-  simp only [evalPanValueDeclarations] at hs ⊢
+  simp only [evalPanValueDeclarations_eq] at hs ⊢
   cases hcollect : collectPanValueStructs declarations s.structs with
   | none => simp [hcollect] at hs
   | some structs =>
@@ -968,7 +968,7 @@ theorem evalPanValueDeclarations_exceptions
     (memoryAccess : Option (PanValueMemoryAccess α))
     (heval : evalPanValueDeclarations state declarations memoryAccess = some state') :
     state'.exceptions = panExceptionEntries declarations ++ state.exceptions := by
-  simp only [evalPanValueDeclarations] at heval
+  simp only [evalPanValueDeclarations_eq] at heval
   cases hcollect : collectPanValueStructs declarations state.structs with
   | none => simp [hcollect] at heval
   | some structs =>
@@ -1095,7 +1095,7 @@ theorem evalPanValueDeclarations_only_exn_decls
     (heval : evalPanValueDeclarations state declarations memoryAccess = some state') :
     state' = { state with
       exceptions := panExceptionEntries declarations ++ state.exceptions } := by
-  simp only [evalPanValueDeclarations] at heval
+  simp only [evalPanValueDeclarations_eq] at heval
   cases hcollect : collectPanValueStructs declarations state.structs with
   | none => simp [hcollect] at heval
   | some structs =>
@@ -1277,7 +1277,7 @@ theorem evalPanValueDeclarations_only_functions
       returnShapes := panReturnShapeEntries declarations ++ state.returnShapes
       parameterShapes :=
         panParameterShapeEntries declarations ++ state.parameterShapes } := by
-  simp only [evalPanValueDeclarations] at heval
+  simp only [evalPanValueDeclarations_eq] at heval
   cases hcollect : collectPanValueStructs declarations state.structs with
   | none => simp [hcollect] at heval
   | some structs =>
@@ -1462,7 +1462,7 @@ theorem evalPanValueDeclarations_exns_wf_sufficiency
     evalPanValueDeclarations state declarations memoryAccess =
       some { state with
         exceptions := panExceptionEntries declarations ++ state.exceptions } := by
-  simp only [evalPanValueDeclarations]
+  simp only [evalPanValueDeclarations_eq]
   have hnames :
       declarations.all (fun declaration => !isName declaration) = true := by
     refine List.all_eq_true.mpr (fun declaration hmem => ?_)

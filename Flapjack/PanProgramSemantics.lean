@@ -138,26 +138,12 @@ def evalPanValueDeclarationsWithStructs
       else none
 termination_by declarations => sizeOf declarations
 
-def evalPanValueDeclarations
-    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
-    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
-    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
-    (state : PanValueProgramState α) :
-    (declarations : List (Decl α)) →
-    (memoryAccess : Option (PanValueMemoryAccess α) := none) →
-    (evaluator : Option (PanExprEvaluator α) := none) →
-      Option (PanValueProgramState α)
-  | declarations, memoryAccess, evaluator => do
-      let structs ← collectPanValueStructs declarations state.structs
-      evalPanValueDeclarationsWithStructs structs
-        { state with structs := structs } declarations
-        (memoryAccess := memoryAccess) (evaluator := evaluator)
-
 /-- Evaluate declarations with a route builder that receives the collected
     structure context, returning both the resulting state and the evaluator the
-    builder produced so the entry phase can reuse it. `evalPanValueDeclarations`
-    is the constant-builder case and performs the same collection and seeding
-    steps. -/
+    builder produced so the entry phase can reuse it. This is the single place
+    that collects the structure context and seeds it into the state;
+    `evalPanValueDeclarations` is the constant-builder case, so a routed runner
+    cannot drift from the generic entry point. -/
 def evalPanValueDeclarationsWithRoute
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
@@ -174,6 +160,47 @@ def evalPanValueDeclarationsWithRoute
         { state with structs := structs } declarations
         (memoryAccess := memoryAccess) (evaluator := evaluator)
       return (state, evaluator)
+
+/-- Evaluate declarations with an optional fixed evaluator. Defined through
+    `evalPanValueDeclarationsWithRoute`, so structure collection and seeding
+    have one source of truth. -/
+def evalPanValueDeclarations
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (state : PanValueProgramState α) :
+    (declarations : List (Decl α)) →
+    (memoryAccess : Option (PanValueMemoryAccess α) := none) →
+    (evaluator : Option (PanExprEvaluator α) := none) →
+      Option (PanValueProgramState α)
+  | declarations, memoryAccess, evaluator =>
+      (evalPanValueDeclarationsWithRoute state declarations memoryAccess
+        (fun _ => evaluator)).map Prod.fst
+
+/-- Unfolded form of `evalPanValueDeclarations`: the constant-builder case of
+    `evalPanValueDeclarationsWithRoute` with the paired evaluator projected
+    away. Kept as the shape the declaration-entry proofs reason about. -/
+theorem evalPanValueDeclarations_eq
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (state : PanValueProgramState α) (declarations : List (Decl α))
+    (memoryAccess : Option (PanValueMemoryAccess α)) (evaluator : Option (PanExprEvaluator α)) :
+    evalPanValueDeclarations state declarations memoryAccess evaluator =
+      (do
+        let structs ← collectPanValueStructs declarations state.structs
+        evalPanValueDeclarationsWithStructs structs
+          { state with structs := structs } declarations
+          (memoryAccess := memoryAccess) (evaluator := evaluator)) := by
+  unfold evalPanValueDeclarations evalPanValueDeclarationsWithRoute
+  cases hstructs : collectPanValueStructs declarations state.structs with
+  | none => simp [hstructs]
+  | some structs =>
+    simp only [hstructs]
+    cases hstate : evalPanValueDeclarationsWithStructs structs
+        { state with structs := structs } declarations memoryAccess evaluator with
+    | none => simp [hstate]
+    | some st => simp [hstate]
 
 /-- A pointwise-correct expression route preserves declaration evaluation
     with a fixed structure context and source word size. -/
@@ -208,7 +235,7 @@ theorem evalPanValueDeclarations_route_eq
     (state : PanValueProgramState α) (hs : state.bytesInWord = bytes) (decls : List (Decl α)) :
     evalPanValueDeclarations state decls access (some run) =
       evalPanValueDeclarations state decls access none := by
-  simp only [evalPanValueDeclarations]
+  simp only [evalPanValueDeclarations_eq]
   cases hstructs : collectPanValueStructs decls state.structs with
   | none => simp
   | some structs =>
@@ -318,7 +345,7 @@ theorem evalPanValueDeclarations_bytesInWord
     (access : Option (PanValueMemoryAccess α)) (route : Option (PanExprEvaluator α))
     (h : evalPanValueDeclarations state decls access route = some result) :
     result.bytesInWord = state.bytesInWord := by
-  simp only [evalPanValueDeclarations] at h
+  simp only [evalPanValueDeclarations_eq] at h
   cases hc : collectPanValueStructs decls state.structs with
   | none => simp [hc] at h
   | some structs =>
@@ -568,7 +595,7 @@ theorem evalPanValueDeclarations_empty
     [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
     (state : PanValueProgramState α) :
     evalPanValueDeclarations state [] = some state := by
-  simp [evalPanValueDeclarations, collectPanValueStructs,
+  simp [evalPanValueDeclarations_eq, collectPanValueStructs,
     evalPanValueDeclarationsWithStructs]
 
 /-! Cake's `evaluate_decls_functions_wf` (`pan_globalsProofScript.sml:2367`):
@@ -646,7 +673,7 @@ theorem evalPanValueDeclarations_functions_wf
       collectPanValueStructs declarations state.structs = some structs ∧
         declaration.params.all (fun parameter => isWfShape structs parameter.2) = true ∧
         isWfShape structs declaration.returnShape = true := by
-  simp only [evalPanValueDeclarations] at heval
+  simp only [evalPanValueDeclarations_eq] at heval
   cases hcollect : collectPanValueStructs declarations state.structs with
   | none => simp [hcollect] at heval
   | some structs =>
@@ -729,7 +756,7 @@ theorem evalPanValueDeclarations_exceptions_wf
     ∃ structs : StructContext,
       collectPanValueStructs declarations state.structs = some structs ∧
         isWfShape structs shape = true := by
-  simp only [evalPanValueDeclarations] at heval
+  simp only [evalPanValueDeclarations_eq] at heval
   cases hcollect : collectPanValueStructs declarations state.structs with
   | none => simp [hcollect] at heval
   | some structs =>

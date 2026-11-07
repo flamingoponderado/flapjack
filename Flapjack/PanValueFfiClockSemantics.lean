@@ -1046,7 +1046,9 @@ def evalPanValueFfiClockProgramEntry
     program runner. The RV64 HOL-routed runner has no route-equality theorem
     yet: its guarded route falls back to `evalPanSemStateExp` and reads the
     owner's memory domains and endianness, so it is not pointwise equal to
-    `evalPanValueExp` without a memory-relation or byte-ranged premise. -/
+    `evalPanValueExp` without a memory-relation or byte-ranged premise. That
+    obligation is tracked in #1245, which this work references rather than
+    closes. -/
 theorem evalPanValueFfiClockProgramEntry_route_eq
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
