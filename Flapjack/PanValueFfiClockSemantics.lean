@@ -1045,8 +1045,10 @@ def evalPanValueFfiClockProgramEntry
 /-- A pointwise-correct route preserves the shared declaration-to-entry tail:
     the entry call and its single-value return-shape check agree for the routed
     and generic evaluators. This is Flapjack infrastructure with no single HOL
-    declaration; it is the shared proof obligation for the generic program
-    runner and the RV64 HOL-routed runner, both of which reuse this tail. -/
+    declaration. `evalPanValueFfiClockProgram_route_eq` uses it for the generic
+    program runner; the RV64 HOL-routed runner has no route-equality theorem
+    yet, because its route hypothesis would quantify over arbitrary locals,
+    globals and memory and cannot be discharged (open follow-up to #1245). -/
 theorem evalPanValueFfiClockProgramEntry_route_eq
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
@@ -1106,8 +1108,9 @@ def evalPanValueFfiClockProgram
     Option (PanValueFfiClockResult α σ) := do
   let state ← evalPanValueDeclarations initial.source declarations
     (memoryAccess := memoryAccess) (evaluator := evaluator)
-  evalPanValueFfiClockProgramEntry context primitive handler state fuel initial.ffi clock
-    entry arguments (memoryAccess := memoryAccess) (memoryHandler := memoryHandler)
+  evalPanValueFfiClockProgramEntry context primitive handler state
+    (fuel := fuel) (entryFfi := initial.ffi) (clock := clock) entry arguments
+    (memoryAccess := memoryAccess) (memoryHandler := memoryHandler)
     (evaluator := evaluator)
 
 /-- A pointwise-correct route preserves the full program result from
@@ -1138,8 +1141,8 @@ theorem evalPanValueFfiClockProgram_route_eq
     simp only [Option.bind_eq_bind, Option.bind_some]
     have hb : state.bytesInWord = initial.source.bytesInWord :=
       evalPanValueDeclarations_bytesInWord initial.source state decls access none hd
-    exact evalPanValueFfiClockProgramEntry_route_eq context primitive handler state fuel initial.ffi clock
-      entry arguments access mh run
+    exact evalPanValueFfiClockProgramEntry_route_eq context primitive handler state
+      (fuel := fuel) (entryFfi := initial.ffi) (clock := clock) entry arguments access mh run
       (fun locals globals memory e => by
         simpa [hb] using h state.structs locals globals memory state.baseAddress state.topAddress e)
 
