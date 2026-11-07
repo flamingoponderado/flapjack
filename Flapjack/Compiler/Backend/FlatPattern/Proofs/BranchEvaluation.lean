@@ -36,7 +36,7 @@ theorem bindingInputs_single_generated {C F : Type} (trace : BackendCommon.Tra) 
       omega
     have eq := aLookupRel_eq_lookup _ _ _ (encNumToName n) related interval
     have found : env2.v.lookup (encNumToName n) = some value := by
-      rw [← holALookup_mlString, eq, envEq]
+      rw [← holALookup_eq_lookup, eq, envEq]
       simp [holALookup]
     simp [pureEvalTo, FlatSem.evaluate, found]
   · exact .nil

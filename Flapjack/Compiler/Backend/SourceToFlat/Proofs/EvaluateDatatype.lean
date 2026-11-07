@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.AllocDefsLookup
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateException
 import Flapjack.NamespaceProps
 
@@ -247,26 +248,6 @@ private theorem constructorLookup_exists_iff_key_mem {α : Type} (entries : List
       simp
     · simp [List.lookup_cons, BEq.beq, equal, ih]
 
-private theorem constructorLookup_of_mem_nodup {α : Type} (entries : List (ConN × α))
-    (name : ConN) (value : α) (member : (name, value) ∈ entries)
-    (distinct : (entries.map Prod.fst).Nodup) : entries.lookup name = some value := by
-  induction entries with
-  | nil => simp at member
-  | cons head tail ih =>
-    rcases head with ⟨key, current⟩
-    simp only [List.map_cons, List.nodup_cons] at distinct
-    rcases List.mem_cons.mp member with same | tailMember
-    · cases same
-      simp
-    · have different : name ≠ key := by
-        intro equal
-        subst key
-        exact distinct.1 (List.mem_map.mpr ⟨(name, value), tailMember, rfl⟩)
-      have compare : (name == key) = false := by
-        change decide (name = key) = false
-        simp [different]
-      simp [List.lookup_cons, compare, ih tailMember distinct.2]
-
 private theorem constructorLookup_mem {α : Type} (entries : List (ConN × α)) (name : ConN) (value : α)
     (lookup : entries.lookup name = some value) : (name, value) ∈ entries := by
   induction entries with
@@ -299,8 +280,8 @@ theorem allocatedConstructorEntries_find {M A : Type} (constructors : List (ConN
   subst entryName'
   obtain ⟨args', sourceMember, length⟩ :=
     allocatedConstructorEntries_source (M := M) constructors name tag arity entryMember
-  have found := constructorLookup_of_mem_nodup constructors name args member distinct
-  have found' := constructorLookup_of_mem_nodup constructors name args' sourceMember distinct
+  have found := lookup_of_mem_nodup constructors name args member distinct
+  have found' := lookup_of_mem_nodup constructors name args' sourceMember distinct
   have same : args' = args := Option.some.inj (found'.symm.trans found)
   subst args'
   subst arity
@@ -917,7 +898,7 @@ theorem globalEnvInv_allocTags (genv : GlobalEnv) (idx stamp : Nat)
       have compilerMember : (constructorName, (tag, some (idx, tags))) ∈
           entries.map (fun (name, tag, _) => (name, (tag, some (idx, tags)))) :=
         List.mem_map.mpr ⟨(constructorName, tag, args.length), entryMember, rfl⟩
-      have compilerLookup := constructorLookup_of_mem_nodup _ constructorName (tag, some (idx, tags)) compilerMember compilerNames
+      have compilerLookup := lookup_of_mem_nodup _ constructorName (tag, some (idx, tags)) compilerMember compilerNames
       refine ⟨tag, some (idx, tags), ?_, ?_, ?_⟩
       · rw [allocTags_namespace_entries]
         exact compilerLookup

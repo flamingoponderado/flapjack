@@ -130,7 +130,7 @@ theorem bindingInputs_fresh_nested {C F : Type} (trace : BackendCommon.Tra) (low
         omega
       have equalLookup := aLookupRel_eq_lookup _ _ _ generated related inside
       have found : env2.v.lookup generated = some freshValue := by
-        rw [← holALookup_mlString, equalLookup]
+        rw [← holALookup_eq_lookup, equalLookup]
         simp [holALookup, generated]
       simp [pureEvalTo, FlatSem.evaluate, generated] at found ⊢
       simp [found]
@@ -440,7 +440,7 @@ theorem compilePatBindings_con_selected_pure {C F : Type} (trace : BackendCommon
   have known := compilePatBindings_con_selected_lookup trace i patterns body rest env fields entry member
   have equalLookup := aLookupRel_eq_lookup _ _ _ entry.1.2 related interval
   have found : env2.v.lookup entry.1.2 = some ((fields[entry.1.1]?).getD FlatSem.unitValue) := by
-    rw [← holALookup_mlString, equalLookup]
+    rw [← holALookup_eq_lookup, equalLookup]
     exact known
   simp [FlatSem.evaluate, found]
 

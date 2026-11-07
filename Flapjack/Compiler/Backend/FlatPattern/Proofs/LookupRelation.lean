@@ -22,12 +22,6 @@ theorem holALookup_eq_lookup {K V : Type} [BEq K] [LawfulBEq K] (entries : List 
         cases h : key == entryKey <;> simp_all [beq_iff_eq]
       simp [holALookup, List.lookup_cons, same, beqFalse, ih]
 
-/-- The HOL-shaped lookup agrees with flat evaluation's lookup on mlstring
-identifiers. -/
-theorem holALookup_mlString {V : Type} (entries : List (Flapjack.Basis.Pure.MlString.MlString × V))
-    (key : Flapjack.Basis.Pure.MlString.MlString) : holALookup entries key = entries.lookup key := by
-  exact holALookup_eq_lookup entries key
-
 /-- Association-list lookup searches the right list only when the left list
 does not contain the key. -/
 theorem holALookup_append {K V : Type} (left right : List (K × V)) (key : K) :

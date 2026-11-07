@@ -22,7 +22,7 @@ theorem compile_var_simulation {C F : Type} (cfg stateCfg : Config) (clock : Nat
   intro sourceEnv targetEnv source target sourceFinal sourceResult n _ sourceEval envs states bound safe
   have nameBound : decNameToNum name < n := by simpa [compileExp] using bound
   have lookupRel := envRel_lookup n sourceEnv targetEnv name envs nameBound
-  rw [holALookup_mlString, holALookup_mlString] at lookupRel
+  rw [holALookup_eq_lookup, holALookup_eq_lookup] at lookupRel
   cases sourceLookup : sourceEnv.v.lookup name with
   | none =>
     simp [FlatSem.evaluate, sourceLookup] at sourceEval
