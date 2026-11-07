@@ -468,16 +468,4 @@ theorem closureTotal_reachable (tree : Spt NumSet) (roots : NumSet) :
     | tail path edge ih =>
       exact closureFuel_closed tree _ roots _ computed _ _ ih edge
 
-/-- Elimination executes the source-shaped closure before filtering. -/
-theorem removeFlatProgTotal_eq (code : List FlatLang.Exp) :
-    removeFlatProgTotal code =
-      if code.any hasEvalDec then code else
-        let (roots, tree) := analyseCode code
-        removeUnreachable (closure roots tree) code := by
-  simp only [removeFlatProgTotal]
-  split
-  · rfl
-  · cases analyseCode code with
-    | mk roots tree => simp [closureTotal_eq_closure]
-
 end Flapjack.Compiler.Backend.FlatElim
