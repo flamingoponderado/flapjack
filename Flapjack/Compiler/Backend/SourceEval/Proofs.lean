@@ -33,6 +33,17 @@ noncomputable def mkInitEvalState {Config : Type} (ci : CompilerInstance Config)
   .evalDecs ⟨mkCompilerFunFromCi ci, ci.configV ci.initState, (0, 0, 1),
     vFunAbs ci.decsDom ci.decsV⟩
 
+/-- Recorded compiler transitions agree with the next stored configurations. -/
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "recorded_orac_wf_def"]
+def recordedOracleWellFormed {α : Type} (compiler : CompilerArgs → Option (Value × α))
+    (oracle : EvalOracleFun) : Prop :=
+  (0 < (oracle 0).1.1 →
+    ∃ result, compiler (oracle (oracle 0).1.1) = some result ∧
+      (oracle 0).2.1 = result.1) ∧
+  (∀ j, j < (oracle 0).1.1 ∧ 0 < j →
+    ∃ result, compiler (oracle j) = some result ∧
+      (oracle (j + 1)).2.1 = result.1)
+
 /-- The source Eval oracle checks the supplied byte and word lists against the
 compiler output and advances the oracle when the next compiler state agrees.
 HOL's inner pattern shadows the fourth input value, so the first four values

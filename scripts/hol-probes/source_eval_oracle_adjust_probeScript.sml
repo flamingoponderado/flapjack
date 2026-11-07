@@ -32,3 +32,9 @@ val _ = show_thm "result_rel_cases=" source_evalProofTheory.result_rel_IMP_cases
 val _ = show_thm "oleast_definition=" WhileTheory.OLEAST_def;
 val _ = show_thm "oleast_intro=" WhileTheory.OLEAST_INTRO;
 val _ = show_thm "least_exists_imp=" WhileTheory.LEAST_EXISTS_IMP;
+val _ = show_thm "recorded_oracle_wf=" source_evalProofTheory.recorded_orac_wf_def;
+val _ = show_thm "oracle_state_projection=" source_evalProofTheory.orac_s_def;
+val oracle_arb_application = rhs (concl (List.nth (CONJUNCTS source_evalProofTheory.orac_s_def, 1)));
+val _ = show_type "oracle_arb_type=" (rator oracle_arb_application);
+val _ = show_type "oracle_arb_argument_type=" (rand oracle_arb_application);
+val _ = show_thm "extract_oracle=" source_evalProofTheory.extract_oracle_def;

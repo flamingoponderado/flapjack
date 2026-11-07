@@ -14294,6 +14294,31 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "recorded_orac_wf_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs.lean",
+    "lean_name": "recordedOracleWellFormed",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared recorded_oracle_wf in source_eval_oracle_adjust_probe.out: the compiler output has an arbitrary independent payload type, and both the final-entry and positive-index transition implications preserve their original indices, bounds, existential results and configuration equalities."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "orac_s_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleExtraction.lean",
+    "lean_name": "oracleState",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared oracle_state_projection, oracle_arb_type and oracle_arb_argument_type in source_eval_oracle_adjust_probe.out: the oracle case returns its state, while both other cases apply the shared HOL ARB function at string-to-oracle-state type to the original byte-valued string literal."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "extract_oracle_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleExtraction.lean",
+    "lean_name": "extractOracle",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared extract_oracle in source_eval_oracle_adjust_probe.out: the least-clock predicate quantifies the entire resulting state and result, compares n with the recorded count, and returns the event at n + 1 after evaluation at that least clock. The evaluator inherits reals_as_rational_cuts."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
     "hol_name": "v_rel_abs",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs.lean",
     "lean_name": "vFunAbs",
