@@ -1,6 +1,14 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "ALOOKUP_alloc_defs",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/AllocDefsLookup.lean",
+  "lean_name": "allocDefs_lookup",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the original local HOL proof replay alookup_alloc_defs_local in source_to_flat_init_probe.out: arbitrary independent key and value types, reversed lookup premise, both existential witnesses, mapped-key length bound and original EL conclusion all agree. holALookup uses propositional equality and holEl is exact; the proven bound makes the EL result in range."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
   "hol_name": "global_env_inv_extend",
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/AllocDefsLookup.lean",
   "lean_name": "globalEnvInv_allocDefs_reverse",

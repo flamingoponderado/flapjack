@@ -108,3 +108,24 @@ val global_env_inv_extend_typed = ``!pat_env genv pat_env' tt g1 g2.
         (REVERSE (MAP FST pat_env')))|>
     {} <|v := namespace$alist_to_ns pat_env; c := namespace$nsEmpty|>``;
 val _ = (print "global_env_inv_extend_typed="; print_term global_env_inv_extend_typed; print "\n");
+
+(* Replay the original local allocation-lookup theorem. *)
+open alistTheory listTheory source_to_flatTheory;
+val alookup_alloc_defs_local = Q.prove (
+  `!env x v l tt.
+    ALOOKUP (REVERSE env) x = SOME v ==>
+    ?n t. ALOOKUP (alloc_defs tt l (MAP FST (REVERSE env))) x = SOME (Glob t (l + n)) /\
+      n < LENGTH (MAP FST env) /\
+      EL n (REVERSE (MAP SOME (MAP SND env))) = SOME v`,
+  Induct_on `env` >>
+  rw [ALOOKUP_APPEND, alloc_defs_append] >>
+  every_case_tac >> fs [alloc_defs_def] >-
+    (PairCases_on `h` >> fs [EL_APPEND_EQN]) >-
+    (PairCases_on `h` >> fs [] >> first_x_assum drule >>
+     disch_then (qspecl_then [`l`,`tt`] mp_tac) >> rw []) >-
+    (PairCases_on `h` >> fs [] >> rw [] >> fs [ALOOKUP_NONE, MAP_REVERSE] >>
+     drule ALOOKUP_MEM >> rw [] >>
+     `MEM h0 (MAP FST (alloc_defs tt l (REVERSE (MAP FST env))))`
+       by (rw [MEM_MAP] >> metis_tac [FST]) >> fs [fst_alloc_defs]) >-
+    (first_x_assum drule >> disch_then (qspecl_then [`l`,`tt`] mp_tac) >> rw [EL_APPEND_EQN]));
+val _ = show_thm "alookup_alloc_defs_local=" alookup_alloc_defs_local;

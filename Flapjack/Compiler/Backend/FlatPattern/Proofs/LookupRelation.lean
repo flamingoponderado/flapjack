@@ -1,26 +1,10 @@
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.GeneratedNames
-import Flapjack.FiniteMap.AlistExact.Lookup
+import Flapjack.FiniteMap.AlistExact.LookupAgreement
 import Flapjack.Misc.Option.Rel
 import Batteries.Data.List.Basic
 
 /-! Association-list relations used by the pattern-binding simulation. -/
 namespace Flapjack.Compiler.Backend.FlatPattern
-
-/-- Propositional lookup agrees with the evaluator's list lookup whenever the
-key's Boolean equality is lawful. -/
-theorem holALookup_eq_lookup {K V : Type} [BEq K] [LawfulBEq K] (entries : List (K × V)) (key : K) :
-    holALookup entries key = entries.lookup key := by
-  classical
-  induction entries with
-  | nil => rfl
-  | cons entry rest ih =>
-    obtain ⟨entryKey, value⟩ := entry
-    by_cases same : key = entryKey
-    · subst entryKey
-      simp [holALookup]
-    · have beqFalse : (key == entryKey) = false := by
-        cases h : key == entryKey <;> simp_all [beq_iff_eq]
-      simp [holALookup, List.lookup_cons, same, beqFalse, ih]
 
 /-- Association-list lookup searches the right list only when the left list
 does not contain the key. -/
