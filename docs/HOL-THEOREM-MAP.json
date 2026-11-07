@@ -1,5 +1,13 @@
 [
 {
+  "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+  "hol_name": "extend_dec_env_assoc",
+  "lean_path": "Flapjack/SemanticPrimitivesProps/Environment.lean",
+  "lean_name": "extendDecEnv_assoc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed extend_declaration_environment_assoc in source_eval_oracle_adjust_probe.out: the three environments all have source value carrier, with the same quantifier order and association orientation for the reviewed extendDecEnv definition."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "s_rel_clock",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/SimulationPrerequisites.lean",

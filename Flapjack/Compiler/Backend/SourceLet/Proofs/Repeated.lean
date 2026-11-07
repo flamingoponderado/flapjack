@@ -3,7 +3,7 @@ import Flapjack.EvaluateProps.Declarations
 
 /-! Repeated source let-lifting and declaration evaluation. -/
 namespace Flapjack.Compiler.Backend.SourceLet
-open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.EvaluateHOL Flapjack.EvaluateProps
+open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesProps Flapjack.EvaluateHOL Flapjack.EvaluateProps
 
 /-- An error in a prefix also determines evaluation of a local declaration
 whose private declarations extend that prefix. This is Flapjack proof

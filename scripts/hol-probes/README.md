@@ -9646,3 +9646,6 @@ and replays the local value and list primitive-type preservation proofs in HOL.
 
 The same source evaluator probe captures typed clock-relation preservation and
 concrete-value uniqueness for the recording simulation.
+
+The source evaluator probe also captures the typed associativity theorem for
+declaration-environment extension from semanticPrimitivesProps.

@@ -94,3 +94,4 @@ source_v_rel_check_type_replay=v_rel (x :eval_oracle_state) (v1 :v) (v2 :v) ⇒ 
 source_list_rel_check_type_replay=LIST_REL (v_rel (x :eval_oracle_state)) (vs1 :v list) (vs2 :v list) ⇒ (EVERY (check_type (ty :prim_type)) vs1 ⇔ EVERY (check_type ty) vs2)
 source_state_relation_clock=s_rel (ci :'cfg compiler_instance) (s :α semanticPrimitives$state) (t :α semanticPrimitives$state) ⇒ s.clock = t.clock ∧ s_rel ci (dec_clock s) (dec_clock t)
 source_concrete_value_relation=∀(x :v) (y :v). v_rel (es :eval_oracle_state) x y ⇒ concrete_v x ⇒ y = x
+extend_declaration_environment_assoc=∀(env1 :v sem_env) (env2 :v sem_env) (env3 :v sem_env). ((env1 +++ ((env2 +++ env3) :v sem_env)) :v sem_env) = ((((env1 +++ env2) :v sem_env) +++ env3) :v sem_env)

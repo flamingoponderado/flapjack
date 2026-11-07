@@ -1,8 +1,9 @@
+import Flapjack.SemanticPrimitivesProps.Environment
 import Flapjack.EvaluateHOL.ClockFull
 
 /-! Composition of the original clocked declaration evaluator. -/
 namespace Flapjack.EvaluateProps
-open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL Flapjack.EvaluateHOL
+open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesProps Flapjack.NamespaceHOL Flapjack.EvaluateHOL
 
 private theorem extendEmpty (env : SemEnv Value) : extendDecEnv ⟨nsEmpty, nsEmpty⟩ env = env := by
   cases env with
@@ -23,19 +24,6 @@ private theorem combineEmptyLeft (result : Result (SemEnv Value) Value) :
       cases values
       cases constructors
       simp [combineDecResult, nsAppend, nsEmpty]
-
-/-- Environment extension associates in the same order as namespace append.
-This helper has no separate HOL declaration. -/
-theorem extendDecEnv_assoc (inner middle outer : SemEnv Value) :
-    extendDecEnv inner (extendDecEnv middle outer) = extendDecEnv (extendDecEnv inner middle) outer := by
-  cases inner with
-  | mk iv ic =>
-    cases middle with
-    | mk mv mc =>
-      cases outer with
-      | mk ov oc =>
-        cases iv; cases ic; cases mv; cases mc; cases ov; cases oc
-        simp [extendDecEnv, nsAppend, List.append_assoc]
 
 private theorem combineAssoc (first second : SemEnv Value) (result : Result (SemEnv Value) Value) :
     combineDecResult first (combineDecResult second result) =
