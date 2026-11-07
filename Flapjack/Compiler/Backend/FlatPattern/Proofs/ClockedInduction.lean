@@ -165,24 +165,24 @@ theorem compileExps_evaluate {C F : Type} (stateCfg : Config) :
       (r1 : SemanticPrimitivesHOL.Result (List FlatSem.Value) FlatSem.Value)
       (i : Nat) (sg : Bool) (ys : List FlatLang.Exp) (n : Nat)
       (env2 : FlatSem.Environment FlatSem.Value) (s2 : FlatSem.State C F) (cfg : Config),
-      FlatSem.evaluate env1 s1 xs = (t1, r1) → compileExps cfg xs = (i, sg, ys) →
-      EnvRel n env1 env2 → StateRel stateCfg s1 s2 → i < n → r1 ≠ .err (.abort .typeError) →
+      FlatSem.evaluate env1 s1 xs = (t1, r1) ∧ compileExps cfg xs = (i, sg, ys) ∧
+      EnvRel n env1 env2 ∧ StateRel stateCfg s1 s2 ∧ i < n ∧ r1 ≠ .err (.abort .typeError) →
       ∃ t2 r2, SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel r1 r2 ∧
         StateRel stateCfg t1 t2 ∧ FlatSem.evaluate env2 s2 ys = (t2, r2)) ∧
     (∀ (s1 : FlatSem.State C F) (decs : List FlatLang.Exp) (s2 t1 : FlatSem.State C F)
       (cfg : Config) (decs' : List FlatLang.Exp) (res : Option (SemanticPrimitivesHOL.ErrorResult FlatSem.Value)),
-      FlatSem.evaluateDecs s1 decs = (t1, res) → decs' = decs.map (compileDec cfg) →
-      StateRel stateCfg s1 s2 → res ≠ some (.abort .typeError) →
+      FlatSem.evaluateDecs s1 decs = (t1, res) ∧ decs' = decs.map (compileDec cfg) ∧
+      StateRel stateCfg s1 s2 ∧ res ≠ some (.abort .typeError) →
       ∃ t2 res', FlatSem.evaluateDecs s2 decs' = (t2, res') ∧ optionRel (SemanticPrimitivesProps.excRel ValueRel) res res' ∧ StateRel stateCfg t1 t2) := by
   constructor
-  · intro env1 s1 xs t1 r1 i sg ys n env2 s2 cfg run compiled envs states bound safe
+  · intro env1 s1 xs t1 r1 i sg ys n env2 s2 cfg ⟨run, compiled, envs, states, bound, safe⟩
     have compiledBound : (compileExps cfg xs).1 < n := by simpa [compiled] using bound
     obtain ⟨t2, r2, targetRun, finalStates, results⟩ :=
       compileExps_simulation_upTo cfg stateCfg s1.clock xs
         (fun e _ => expressionSimulationUpTo_all s1.clock cfg stateCfg e)
         env1 env2 s1 s2 t1 r1 n (Nat.le_refl _) run envs states compiledBound safe
     exact ⟨t2, r2, results, finalStates, by simpa [compiled] using targetRun⟩
-  · intro s1 decs s2 t1 cfg decs' res run compiled states safe
+  · intro s1 decs s2 t1 cfg decs' res ⟨run, compiled, states, safe⟩
     subst decs'
     obtain ⟨t2, res', targetRun, finalStates, outcomes⟩ :=
       evaluateDecs_simulation_upTo cfg stateCfg s1.clock decs
