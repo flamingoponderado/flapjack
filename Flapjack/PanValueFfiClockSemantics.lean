@@ -1005,10 +1005,11 @@ def evalPanValueFfiClockProgramCodeCall
     metadata, so the entry call and its shape check always read the same
     evaluated declaration state.
 
-    It has no single HOL declaration: HOL's `panSem` evaluates declarations and
-    the entry call in one `evaluate_decls` step, while the Lean runners keep the
-    already-evaluated declaration state separate so both runners can share this
-    entry step. This adapter is therefore Flapjack infrastructure. -/
+    It corresponds to the `semantics s' start` tail of HOL's `semantics_decls`
+    (`cakeml/pancake/semantics/panSemScript.sml:861`), which runs `decs_stcnames`,
+    then `evaluate_decls`, then `semantics s' start` as separate steps. This
+    adapter uses the fuel/clock evaluator and adds a return-shape check, so it
+    is not an exact port and carries no `@[hol]` tag. -/
 def evalPanValueFfiClockProgramEntry
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
@@ -1033,6 +1034,45 @@ def evalPanValueFfiClockProgramEntry
       else none
   | some _, .control (.returned _ _ _ _ _) => none
   | _, outcome => some (outcome, nextClock)
+
+/-- A pointwise-correct route preserves the shared declaration-to-entry tail:
+    the entry call and its single-value return-shape check agree for the routed
+    and generic evaluators. This is Flapjack infrastructure with no single HOL
+    declaration; it is the shared proof obligation for the generic program
+    runner and the RV64 HOL-routed runner, both of which reuse this tail. -/
+theorem evalPanValueFfiClockProgramEntry_route_eq
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (context : PanValueFfiContext α) (primitive : PanPrimitiveHandler α)
+    (handler : PanValueStatefulFfiHandler α σ)
+    (state : PanValueProgramState α)
+    (fuel : Nat) (ffi : FfiState σ) (clock : Nat)
+    (entry : FunName) (arguments : List (Exp α))
+    (memoryAccess : Option (PanValueMemoryAccess α))
+    (memoryHandler : Option (PanValueMemoryFfiHandler α σ))
+    (run : PanExprEvaluator α)
+    (h : ∀ locals globals memory e,
+      run state.structs locals globals memory state.baseAddress state.topAddress
+        state.bytesInWord memoryAccess e =
+      evalPanValueExp state.structs locals globals memory state.baseAddress state.topAddress
+        state.bytesInWord e memoryAccess) :
+    evalPanValueFfiClockProgramEntry context primitive handler state fuel ffi clock entry arguments
+      memoryAccess memoryHandler (some run) =
+    evalPanValueFfiClockProgramEntry context primitive handler state fuel ffi clock entry arguments
+      memoryAccess memoryHandler none := by
+  simp only [evalPanValueFfiClockProgramEntry, evalPanValueFfiClockProgramCodeCall]
+  cases hc : panValueProgramStateCodeMap state with
+  | none => simp
+  | some code =>
+    simp only [Option.bind_eq_bind, Option.bind_some]
+    have hrun := (evalPanValueFfiClockCode_route_eq context primitive handler state.structs code
+      (fun exception => lookupInfo exception state.exceptions) state.baseAddress state.topAddress
+      state.bytesInWord memoryAccess
+      (some (PanValueCallContracts.mk state.returnShapes state.exceptions
+        state.parameterShapes)) memoryHandler run h fuel).1
+      (fun _ => none) state.globals state.memory ffi clock none entry arguments false
+    rw [hrun]
 
 def evalPanValueFfiClockProgram
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
@@ -1076,26 +1116,17 @@ theorem evalPanValueFfiClockProgram_route_eq
   have hdecl := evalPanValueDeclarations_route_eq initial.source.bytesInWord access run
     (fun structs globals memory base top e => h structs (fun _ => none) globals memory base top e)
     initial.source rfl decls
-  simp only [evalPanValueFfiClockProgram, evalPanValueFfiClockProgramEntry, hdecl]
+  simp only [evalPanValueFfiClockProgram, hdecl]
   cases hd : evalPanValueDeclarations initial.source decls access none with
   | none => simp
   | some state =>
     simp only [Option.bind_eq_bind, Option.bind_some]
     have hb : state.bytesInWord = initial.source.bytesInWord :=
       evalPanValueDeclarations_bytesInWord initial.source state decls access none hd
-    simp only [evalPanValueFfiClockProgramCodeCall]
-    cases hc : panValueProgramStateCodeMap state with
-    | none => simp
-    | some code =>
-      simp only [Option.bind_eq_bind, Option.bind_some]
-      have hrun := (evalPanValueFfiClockCode_route_eq context primitive handler state.structs code
-        (fun exception => lookupInfo exception state.exceptions) state.baseAddress state.topAddress
-        state.bytesInWord access (some (PanValueCallContracts.mk state.returnShapes state.exceptions
-          state.parameterShapes)) mh run
-        (fun locals globals memory e => by
-          simpa [hb] using (h state.structs locals globals memory state.baseAddress state.topAddress e)) fuel).1
-        (fun _ => none) state.globals state.memory initial.ffi clock none entry arguments false
-      rw [hrun]
+    exact evalPanValueFfiClockProgramEntry_route_eq context primitive handler state fuel initial.ffi clock
+      entry arguments access mh run
+      (fun locals globals memory e => by
+        simpa [hb] using h state.structs locals globals memory state.baseAddress state.topAddress e)
 
 /-! A callee that falls through (`panSem`'s `NONE`) is a call failure: Cake's
     `evaluate (Call ...)` maps `(NONE,st) => (SOME Error,st)`, preserving the
