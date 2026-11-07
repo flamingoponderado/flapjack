@@ -80,6 +80,8 @@ val _ = show_thm "environment_relation_monotonic=" source_evalProofTheory.env_re
 val _ = show_thm "environment_relation_lookup=" source_evalProofTheory.env_rel_nsLookup_v;
 val _ = show_thm "environment_relation_bind=" source_evalProofTheory.env_rel_add_nsBind;
 val _ = show_thm "environment_relation_bind_list=" source_evalProofTheory.env_rel_add_nsBindList;
+val _ = show_thm "environment_relation_append=" source_evalProofTheory.env_rel_nsAppend;
+val _ = show_thm "environment_relation_extend_dec=" source_evalProofTheory.env_rel_extend_dec_env;
 val _ = show_thm "source_value_relation_rules=" source_evalProofTheory.v_rel_rules;
 val _ = show_thm "source_value_relation_cases=" source_evalProofTheory.v_rel_cases;
 val _ = show_thm "source_value_relation_induction=" source_evalProofTheory.v_rel_ind;
