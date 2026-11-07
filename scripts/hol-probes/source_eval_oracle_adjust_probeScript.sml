@@ -15,3 +15,10 @@ val _ = show_thm "adjust_insert=" source_evalProofTheory.adjust_oracle_insert_ge
 val _ = show_thm "adjust_evaluate=" source_evalProofTheory.adjust_oracle_evaluate;
 val _ = show_thm "adjust_semantics=" source_evalProofTheory.adjust_oracle_semantics_prog;
 val _ = show_thm "evaluate_induction=" evaluateTheory.full_evaluate_ind;
+fun show_type label tm = (print label; print_type (type_of tm); print "\n");
+val _ = show_type "ci_compiler_type=" ``\ci. ci.compiler_fun``;
+val _ = show_type "ci_config_value_type=" ``\ci. ci.config_v``;
+val _ = show_type "ci_config_domain_type=" ``\ci. ci.config_dom``;
+val _ = show_type "ci_decs_value_type=" ``\ci. ci.decs_v``;
+val _ = show_type "ci_decs_domain_type=" ``\ci. ci.decs_dom``;
+val _ = show_type "ci_initial_type=" ``\ci. ci.init_state``;

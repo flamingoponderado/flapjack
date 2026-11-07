@@ -184,32 +184,62 @@ decreasing_by
   all_goals try omega
 end
 
-/-- The three original evaluator simulations under oracle adjustment. Source
-AST, evaluator and carrier correspondence remain pending review. -/
+/-- The three original evaluator simulations under oracle adjustment. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
-theorem adjust_oracle_evaluate {Config F : Type} (ci : CompilerInstance Config)
-    (f compile : List Dec → List Dec) (preserves : DeclarationCompilerPreserves (F := F) compile) :
-    (∀ (state : State F) (env : SemEnv Value) (exprs : List AstHOL.Exp),
-      ExpsOracleAdjustedAt ci f compile state env exprs) ∧
-    (∀ (state : State F) (env : SemEnv Value) (value : Value) (clauses : List (Pat × AstHOL.Exp)) (errValue : Value),
-      MatchOracleAdjustedAt ci f compile state env value clauses errValue) ∧
-    (∀ (state : State F) (env : SemEnv Value) (decs : List Dec),
-      DecsOracleAdjustedAt ci f compile state env decs) := by
-  exact ⟨evaluateOracleFull ci f compile preserves, evaluateMatchOracleFull ci f compile preserves,
-    evaluateDecsOracleFull ci f compile preserves⟩
+theorem adjust_oracle_evaluate {Config F : Type} (compile : List Dec → List Dec)
+    (ci : CompilerInstance Config) (f : List Dec → List Dec)
+    (preserves : ∀ (state : State F) (env : SemEnv Value) (decs : List Dec)
+      (next : State F) (result : Result (SemEnv Value) Value),
+      evaluateDecs state env decs = (next, result) ∧ result ≠ .err (.abort .typeError) →
+      evaluateDecs state env (compile decs) = (next, result)) :
+    (∀ (state : State F) (env : SemEnv Value) (exprs : List AstHOL.Exp)
+      (next : State F) (result : Result (List Value) Value),
+      evaluate state env exprs = (next, result) ∧ isInsertOracle ci f state.evalState ∧
+        result ≠ .err (.abort .typeError) →
+      isInsertOracle ci f next.evalState ∧
+        evaluate { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env exprs =
+          ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result)) ∧
+    (∀ (state : State F) (env : SemEnv Value) (value : Value) (clauses : List (Pat × AstHOL.Exp))
+      (errValue : Value) (next : State F) (result : Result (List Value) Value),
+      evaluateMatch state env value clauses errValue = (next, result) ∧
+        isInsertOracle ci f state.evalState ∧ result ≠ .err (.abort .typeError) →
+      isInsertOracle ci f next.evalState ∧
+        evaluateMatch { state with evalState := adjustOracle ci (compile ∘ f) state.evalState }
+          env value clauses errValue = ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result)) ∧
+    (∀ (state : State F) (env : SemEnv Value) (decs : List Dec)
+      (next : State F) (result : Result (SemEnv Value) Value),
+      evaluateDecs state env decs = (next, result) ∧ isInsertOracle ci f state.evalState ∧
+        result ≠ .err (.abort .typeError) →
+      isInsertOracle ci f next.evalState ∧
+        evaluateDecs { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env decs =
+          ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result)) := by
+  have internal : DeclarationCompilerPreserves (F := F) compile := by
+    intro state next env decs result run safe
+    exact preserves state env decs next result ⟨run, safe⟩
+  refine ⟨?_, ?_, ?_⟩
+  · intro state env exprs next result ⟨run, inserted, safe⟩
+    exact evaluateOracleFull ci f compile internal state env exprs next result run inserted safe
+  · intro state env value clauses errValue next result ⟨run, inserted, safe⟩
+    exact evaluateMatchOracleFull ci f compile internal state env value clauses errValue next result run inserted safe
+  · intro state env decs next result ⟨run, inserted, safe⟩
+    exact evaluateDecsOracleFull ci f compile internal state env decs next result run inserted safe
 
 /-- Oracle adjustment preserves program observations under the original
-declaration-compiler preservation and non-failure hypotheses. Source and
-carrier correspondence remain pending review. -/
+declaration-compiler preservation and non-failure hypotheses. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_semantics_prog"]
-theorem adjust_oracle_semantics_prog {Config F : Type} (ci : CompilerInstance Config)
-    (f compile : List Dec → List Dec) (preserves : DeclarationCompilerPreserves (F := F) compile)
+theorem adjust_oracle_semantics_prog {Config F : Type} (compile f : List Dec → List Dec)
+    (ci : CompilerInstance Config)
+    (preserves : ∀ (state : State F) (env : SemEnv Value) (decs : List Dec)
+      (next : State F) (result : Result (SemEnv Value) Value),
+      evaluateDecs state env decs = (next, result) ∧ result ≠ .err (.abort .typeError) →
+      evaluateDecs state env (compile decs) = (next, result))
     (state : State F) (env : SemEnv Value) (program : List Dec) (outcome : HolBehaviour)
-    (inserted : isInsertOracle ci f state.evalState)
-    (noFail : ¬ Flapjack.SemanticsHOL.semanticsProg state env program .fail)
-    (source : Flapjack.SemanticsHOL.semanticsProg state env program outcome) :
+    (premises : isInsertOracle ci f state.evalState ∧
+      ¬ Flapjack.SemanticsHOL.semanticsProg state env program .fail ∧
+      Flapjack.SemanticsHOL.semanticsProg state env program outcome) :
     Flapjack.SemanticsHOL.semanticsProg
       { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env program outcome := by
+  obtain ⟨inserted, noFail, source⟩ := premises
   have observations : ∀ clock,
       evaluateProgWithClock { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env clock program =
         evaluateProgWithClock state env clock program := by
@@ -222,8 +252,8 @@ theorem adjust_oracle_semantics_prog {Config F : Type} (ci : CompilerInstance Co
         change ∃ k, (evaluateProgWithClock state env k program).2 = .err (.abort .typeError)
         refine ⟨clock, ?_⟩
         simp [evaluateProgWithClock, run, bad]
-      have target := (evaluateDecsOracleFull ci f compile preserves
-        { state with clock := clock } env program next result run inserted safe).2
+      have target := ((adjust_oracle_evaluate compile ci f preserves).2.2
+        { state with clock := clock } env program next result ⟨run, inserted, safe⟩).2
       simpa [evaluateProgWithClock, run] using congrArg (fun p => (p.1.ffi, p.2)) target
   cases outcome <;> simpa only [semanticsProg, observations] using source
 

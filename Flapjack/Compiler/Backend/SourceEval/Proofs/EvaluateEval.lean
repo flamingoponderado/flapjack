@@ -217,11 +217,9 @@ theorem evaluate_eval_decode_failure {F : Type} (state middle : State F) (env : 
   rw [(fixClockEvaluate state env args.reverse []).1, argsRun]
   simp [getOpClass, doEvalRes, decodeFailure, fixClock]
 
-/-- Dynamic Eval application case of the original evaluator induction. The
-declaration induction hypothesis applies only to the decoded declarations at
-the actual decremented-clock state, when decoding succeeds and the clock is
-nonzero. -/
-@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
+/-- Flapjack proof infrastructure for the dynamic Eval branch of HOL's
+application induction case, using the decoded declarations at the actual
+decremented-clock state. -/
 theorem adjustOracle_evaluate_Eval {Config F : Type} (ci : CompilerInstance Config)
     (f compile : List Dec → List Dec) (preserves : DeclarationCompilerPreserves (F := F) compile)
     (state next : State F) (env : SemEnv Value) (args : List AstHOL.Exp)

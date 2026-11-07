@@ -13980,16 +13980,18 @@
     "hol_name": "adjust_oracle_evaluate",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleInduction.lean",
     "lean_name": "adjust_oracle_evaluate",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original and evaluator induction captured in the source evaluator and source pass HOL probes. Complete source evaluator, pass, AST and imported carrier correspondence remain pending review."
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared adjust_evaluate and evaluate_induction in source_eval_oracle_adjust_probe.out: the complete compiler-preservation premise, three ordered evaluation conjuncts, insertion invariants, non-type-error conditions and adjusted-state conclusions match. Config and FFI types remain independent; reviewed oracle and evaluator carriers are used. Evaluation inherits reals_as_rational_cuts."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
     "hol_name": "adjust_oracle_semantics_prog",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleInduction.lean",
     "lean_name": "adjust_oracle_semantics_prog",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original and evaluator induction captured in the source evaluator and source pass HOL probes. Complete source evaluator, pass, AST and imported carrier correspondence remain pending review."
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared adjust_semantics in source_eval_oracle_adjust_probe.out: independent compiler and FFI carriers, full compiler-preservation premise, insertion, non-failure and source-semantics conjunction, and adjusted-state semantics conclusion match. Evaluation inherits reals_as_rational_cuts."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_letProofScript.sml",
@@ -14131,41 +14133,9 @@
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
     "hol_name": "adjust_oracle_evaluate",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateApp.lean",
-    "lean_name": "adjustOracle_evaluate_AppSimple",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Application induction case; typed HOL evaluator induction and theorem captured in source_eval_oracle_adjust_probe.out. Fixed-state and clock-bounded induction hypotheses follow the captured application case; evaluator and carrier correspondence remain pending, and the complete theorem is not assembled."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
-    "hol_name": "adjust_oracle_evaluate",
-    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateApp.lean",
-    "lean_name": "adjustOracle_evaluate_AppFunction",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Application induction case; typed HOL evaluator induction and theorem captured in source_eval_oracle_adjust_probe.out. Fixed-state and clock-bounded induction hypotheses follow the captured application case; evaluator and carrier correspondence remain pending, and the complete theorem is not assembled."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
-    "hol_name": "adjust_oracle_evaluate",
-    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateApp.lean",
-    "lean_name": "adjustOracle_evaluate_AppForce",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Application induction case; typed HOL evaluator induction and theorem captured in source_eval_oracle_adjust_probe.out. Fixed-state and clock-bounded induction hypotheses follow the captured application case; evaluator and carrier correspondence remain pending, and the complete theorem is not assembled."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
-    "hol_name": "adjust_oracle_evaluate",
-    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateApp.lean",
     "lean_name": "adjustOracle_evaluate_App",
     "statement_status": "pending_statement_review",
-    "reviewer": "Application induction case; typed HOL evaluator induction and theorem captured in source_eval_oracle_adjust_probe.out. Fixed-state and clock-bounded induction hypotheses follow the captured application case; evaluator and carrier correspondence remain pending, and the complete theorem is not assembled."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
-    "hol_name": "adjust_oracle_evaluate",
-    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateEval.lean",
-    "lean_name": "adjustOracle_evaluate_Eval",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Dynamic Eval application induction case; typed original captured in source_eval_oracle_adjust_probe.out. Evaluator, source AST and carrier correspondence and the clock-bounded induction-hypothesis shape require review; the Lean assembly exists in OracleInduction.lean and remains pending correspondence review."
+    "reviewer": "Application induction case; typed HOL evaluator induction and theorem captured in source_eval_oracle_adjust_probe.out. Fixed-state and clock-bounded induction hypotheses follow the captured application case; evaluator and carrier correspondence remain pending. The full theorem is assembled in OracleInduction.lean."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -14284,24 +14254,24 @@
     "hol_name": "compiler_instance",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs.lean",
     "lean_name": "CompilerInstance",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed definitions and theorem captured in source_eval_oracle_adjust_probe.out; compiler instance datatype, source AST and value carriers, and choice correspondence require review."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the original record declaration and ci_*_type captures in source_eval_oracle_adjust_probe.out: compiler function, encoders, domains and initial state have the same order and carriers, including fixed 8-bit and 64-bit words; HOL sets are predicates."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
     "hol_name": "v_rel_abs",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs.lean",
     "lean_name": "vFunAbs",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed definitions and theorem captured in source_eval_oracle_adjust_probe.out; compiler instance datatype, source AST and value carriers, and choice correspondence require review."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared v_rel_abs in source_eval_oracle_adjust_probe.out: independent domain and encoding carriers, equality, domain membership and HOL some choice match holOptionSome."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
     "hol_name": "mk_compiler_fun_from_ci_def",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs.lean",
     "lean_name": "mkCompilerFunFromCi",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed definitions and theorem captured in source_eval_oracle_adjust_probe.out; compiler instance datatype, source AST and value carriers, and choice correspondence require review."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared compiler_fun in source_eval_oracle_adjust_probe.out: the config decode, compiler invocation, tuple components and encoded next configuration match the HOL OPTION_BIND chain."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -14316,24 +14286,24 @@
     "hol_name": "insert_gen_oracle_def",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs.lean",
     "lean_name": "insertGenOracle",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed definitions and theorem captured in source_eval_oracle_adjust_probe.out; compiler instance datatype, source AST and value carriers, and choice correspondence require review."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared insert in source_eval_oracle_adjust_probe.out: NONE and EvalDecs are unchanged; EvalOracle replaces the callback and shifts the supplied oracle using the current oracle zero entry."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
     "hol_name": "adjust_oracle_def",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs.lean",
     "lean_name": "adjustOracle",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed definitions and theorem captured in source_eval_oracle_adjust_probe.out; compiler instance datatype, source AST and value carriers, and choice correspondence require review."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared adjust in source_eval_oracle_adjust_probe.out: NONE and EvalDecs are unchanged; EvalOracle replaces only custom_do_eval with the callback for the supplied transform."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
     "hol_name": "is_insert_oracle_def",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs.lean",
     "lean_name": "isInsertOracle",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed definitions and theorem captured in source_eval_oracle_adjust_probe.out; compiler instance datatype, source AST and value carriers, and choice correspondence require review."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared is_insert in source_eval_oracle_adjust_probe.out: an existential original state, shift function and oracle yield precisely the current state under insertGenOracle."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",

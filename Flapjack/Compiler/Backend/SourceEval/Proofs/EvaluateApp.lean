@@ -4,9 +4,8 @@ import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateEval
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.EvaluateHOL
 
-/-- The ordinary primitive-operation subcase of the original application
-induction case. The other operation classes are separate evaluator cases. -/
-@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
+/-- Flapjack proof infrastructure for the ordinary primitive-operation branch
+of HOL's application induction case; HOL has no separate Simple case. -/
 theorem adjustOracle_evaluate_AppSimple {Config F : Type} (ci : CompilerInstance Config)
     (f compile : List Dec → List Dec) (_preserves : DeclarationCompilerPreserves (F := F) compile)
     (state next : State F) (env : SemEnv Value) (op : Op) (args : List AstHOL.Exp) (opClass : getOpClass op = .simple)
@@ -51,10 +50,8 @@ theorem adjustOracle_evaluate_AppSimple {Config F : Type} (ci : CompilerInstance
         refine ⟨middleInserted, ?_⟩
         simp [adjusted, replacement, opClass, app]
 
-/-- Function-application subcase of the original evaluator induction. The
-body induction hypothesis is required only for an actual call with a nonzero
-clock, at its decremented-clock input. -/
-@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
+/-- Flapjack proof infrastructure for the function-application branch of HOL's
+application induction case, using the decremented-clock body hypothesis. -/
 theorem adjustOracle_evaluate_AppFunction {Config F : Type} (ci : CompilerInstance Config)
     (f compile : List Dec → List Dec) (_preserves : DeclarationCompilerPreserves (F := F) compile)
     (state next : State F) (env : SemEnv Value) (op : Op) (args : List AstHOL.Exp)
@@ -106,10 +103,8 @@ theorem adjustOracle_evaluate_AppFunction {Config F : Type} (ci : CompilerInstan
             bodyIH middle values callEnv body argsRun app clock next result bodyRun (by simpa [decClock] using middleInserted) safe
           exact ⟨nextInserted, by simpa [adjusted, replacement, opClass, app, clock, decClock] using bodyReplacement⟩
 
-/-- Thunk-forcing subcase of the original application induction. Its body
-induction hypothesis is needed only for an actual unevaluated thunk call at a
-nonzero clock. -/
-@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
+/-- Flapjack proof infrastructure for the thunk-forcing branch of HOL's
+application induction case, using the decremented-clock body hypothesis. -/
 theorem adjustOracle_evaluate_AppForce {Config F : Type} (ci : CompilerInstance Config)
     (f compile : List Dec → List Dec) (_preserves : DeclarationCompilerPreserves (F := F) compile)
     (state next : State F) (env : SemEnv Value) (op : Op) (args : List AstHOL.Exp)

@@ -45,8 +45,9 @@ theorem compile_semantics_oracle {Config F : Type}
     (source : semanticsProg state env program outcome) :
     semanticsProg { state with evalState := SourceEval.Proofs.adjustOracle ci (compileDecs ∘ f) state.evalState }
       env program outcome := by
-  apply SourceEval.Proofs.adjust_oracle_semantics_prog ci f compileDecs ?_ state env program outcome inserted noFail source
-  intro s s' e ds result run safe
-  exact compile_decs_correct s e ds s' result ⟨run, safe⟩
+  apply SourceEval.Proofs.adjust_oracle_semantics_prog compileDecs f ci ?_ state env program outcome
+    ⟨inserted, noFail, source⟩
+  intro s e ds s' result premises
+  exact compile_decs_correct s e ds s' result premises
 
 end Flapjack.Compiler.Backend.SourceLet
