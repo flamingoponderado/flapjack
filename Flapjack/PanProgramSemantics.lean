@@ -139,27 +139,30 @@ def evalPanValueDeclarationsWithStructs
 termination_by declarations => sizeOf declarations
 
 /-- Evaluate declarations with a route builder that receives the collected
-    structure context, returning both the resulting state and the evaluator the
-    builder produced so the entry phase can reuse it. This is the single place
-    that collects the structure context and seeds it into the state;
-    `evalPanValueDeclarations` is the constant-builder case, so a routed runner
-    cannot drift from the generic entry point. -/
+    structure context. This is the single place that collects the structure
+    context and seeds it into the state; `evalPanValueDeclarations` is defined
+    through it, so a routed runner cannot drift from the generic entry point.
+
+    It also returns the evaluator the builder produced, so the caller reuses it
+    for the entry phase instead of calling the builder again, which would
+    recompute the structure-context cache. It has no single HOL declaration:
+    HOL's `decs_stcnames` and `evaluate_decls` fix one expression evaluator, so
+    selecting one from the collected structure context is Flapjack-only
+    plumbing. -/
 def evalPanValueDeclarationsWithRoute
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
     [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
-    (state : PanValueProgramState α) :
-    (declarations : List (Decl α)) →
-    (memoryAccess : Option (PanValueMemoryAccess α) := none) →
-    (route : StructContext → Option (PanExprEvaluator α)) →
-      Option (PanValueProgramState α × Option (PanExprEvaluator α))
-  | declarations, memoryAccess, route => do
-      let structs ← collectPanValueStructs declarations state.structs
-      let evaluator := route structs
-      let state ← evalPanValueDeclarationsWithStructs structs
-        { state with structs := structs } declarations
-        (memoryAccess := memoryAccess) (evaluator := evaluator)
-      return (state, evaluator)
+    (state : PanValueProgramState α) (declarations : List (Decl α))
+    (memoryAccess : Option (PanValueMemoryAccess α) := none)
+    (route : StructContext → Option (PanExprEvaluator α)) :
+    Option (PanValueProgramState α × Option (PanExprEvaluator α)) := do
+  let structs ← collectPanValueStructs declarations state.structs
+  let evaluator := route structs
+  let state ← evalPanValueDeclarationsWithStructs structs
+    { state with structs := structs } declarations
+    (memoryAccess := memoryAccess) (evaluator := evaluator)
+  return (state, evaluator)
 
 /-- Evaluate declarations with an optional fixed evaluator. Defined through
     `evalPanValueDeclarationsWithRoute`, so structure collection and seeding
@@ -168,14 +171,12 @@ def evalPanValueDeclarations
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
     [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
-    (state : PanValueProgramState α) :
-    (declarations : List (Decl α)) →
-    (memoryAccess : Option (PanValueMemoryAccess α) := none) →
-    (evaluator : Option (PanExprEvaluator α) := none) →
-      Option (PanValueProgramState α)
-  | declarations, memoryAccess, evaluator =>
-      (evalPanValueDeclarationsWithRoute state declarations memoryAccess
-        (fun _ => evaluator)).map Prod.fst
+    (state : PanValueProgramState α) (declarations : List (Decl α))
+    (memoryAccess : Option (PanValueMemoryAccess α) := none)
+    (evaluator : Option (PanExprEvaluator α) := none) :
+    Option (PanValueProgramState α) :=
+  (evalPanValueDeclarationsWithRoute state declarations memoryAccess
+    (fun _ => evaluator)).map Prod.fst
 
 /-- Unfolded form of `evalPanValueDeclarations`: the constant-builder case of
     `evalPanValueDeclarationsWithRoute` with the paired evaluator projected
@@ -194,9 +195,8 @@ theorem evalPanValueDeclarations_eq
           (memoryAccess := memoryAccess) (evaluator := evaluator)) := by
   unfold evalPanValueDeclarations evalPanValueDeclarationsWithRoute
   cases hstructs : collectPanValueStructs declarations state.structs with
-  | none => simp [hstructs]
+  | none => simp
   | some structs =>
-    simp only [hstructs]
     cases hstate : evalPanValueDeclarationsWithStructs structs
         { state with structs := structs } declarations memoryAccess evaluator with
     | none => simp [hstate]
