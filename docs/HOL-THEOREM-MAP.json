@@ -1,6 +1,14 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "do_eval_sim",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/DoEvalSimulation.lean",
+  "lean_name": "doEval_sim",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed source_do_eval_simulation in source_eval_oracle_adjust_probe.out:117: independent compiler configuration and shared FFI state carriers, all three premises, both existential witnesses, shared declarations, and all conclusions including the universally quantified reset, state and stack preservation match."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "do_app_sim",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/DoAppSimulation.lean",
   "lean_name": "doApp_sim",
