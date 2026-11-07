@@ -1,6 +1,14 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "declare_env_sim",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/DeclareEnvSimulation.lean",
+  "lean_name": "declareEnv_sim",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed source_declare_env_simulation in source_eval_oracle_adjust_probe.out: independent compiler and FFI types, the declaration, state and environment premises, both existential witnesses, and all five ordered forward, declaration, value, state and stack conclusions match."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "env_rel_imp_c",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EnvironmentConstructors.lean",
   "lean_name": "envRel_imp_c",
