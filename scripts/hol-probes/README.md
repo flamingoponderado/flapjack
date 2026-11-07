@@ -493,7 +493,8 @@ and the original pointwise monotonicity premise. The source value-relation
 captures include its rules, cases, induction theorem and concrete-value and
 concrete-environment theorems, plus its seven left-constructor simplifications
 and Boolean-value theorem. The state-relation and environment-store-forward
-captures retain their full original conjuncts and value-preservation theorem.
+captures retain their full original conjuncts, value-preservation theorem,
+four forward rules and the general store-value monotonicity prerequisite.
 
 `source_eval_adjust_local_probe.out` captures inferred types of the original script's local oracle-adjustment lemmas as typed terms. These lemmas are not exported by the HOL theory; the probe additionally replays the original proofs of `declare_env_adjust` and `adjust_oracle_reset`.
 

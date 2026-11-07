@@ -85,3 +85,5 @@ val _ = show_thm "source_environment_forward_definition=" source_evalProofTheory
 val _ = show_thm "source_environment_forward_refl=" source_evalProofTheory.es_forward_refl;
 val _ = show_thm "source_environment_forward_trans=" source_evalProofTheory.es_forward_trans;
 val _ = show_thm "source_value_relation_forward=" source_evalProofTheory.v_rel_forward;
+val _ = show_thm "store_value_relation_monotonic=" semanticPrimitivesPropsTheory.sv_rel_mono;
+val _ = show_thm "source_forward_rules=" source_evalProofTheory.forward_rules;

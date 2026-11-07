@@ -67,3 +67,5 @@ source_environment_forward_definition=∀(es :eval_oracle_state) (es' :eval_orac
 source_environment_forward_refl=es_forward (es :eval_oracle_state) es
 source_environment_forward_trans=es_forward (es :eval_oracle_state) (es' :eval_oracle_state) ∧ es_forward es' (es'' :eval_oracle_state) ⇒ es_forward es es''
 source_value_relation_forward=∀(x :v) (y :v). v_rel (es :eval_oracle_state) x y ⇒ es_forward es (es' :eval_oracle_state) ⇒ v_rel es' x y
+store_value_relation_monotonic=(∀(x :α) (y :β). (P :α -> β -> bool) x y ⇒ (Q :α -> β -> bool) x y) ⇒ sv_rel P (x :α store_v) (y :β store_v) ⇒ sv_rel Q x y
+source_forward_rules=(v_rel (es :eval_oracle_state) (x :v) (y :v) ∧ es_forward es (es' :eval_oracle_state) ⇒ v_rel es' x y) ∧ (LIST_REL (v_rel es) (xs :v list) (ys :v list) ∧ es_forward es es' ⇒ LIST_REL (v_rel es') xs ys) ∧ (env_rel (v_rel es) (env :v sem_env) (env' :v sem_env) ∧ es_forward es es' ⇒ env_rel (v_rel es') env env') ∧ ∀(xs :v store_v list) (ys :v store_v list). LIST_REL (sv_rel (v_rel es)) xs ys ∧ es_forward es es' ⇒ LIST_REL (sv_rel (v_rel es')) xs ys

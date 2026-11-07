@@ -65,4 +65,34 @@ theorem valueRel_forward (before after : EvalOracleState) :
   · exact ValueRel.lit
   · exact ValueRel.loc
 
+/-- Forward environment stores preserve values, value lists, environments and
+stores under their respective relations. -/
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "forward_rules"]
+theorem forwardRules (before : EvalOracleState) (x y : Value) (after : EvalOracleState)
+    (xs ys : List Value) (env env' : SemEnv Value) :
+    (ValueRel before x y ∧ envStoreForward before after → ValueRel after x y) ∧
+    (List.Forall₂ (ValueRel before) xs ys ∧ envStoreForward before after →
+      List.Forall₂ (ValueRel after) xs ys) ∧
+    (envRel (ValueRel before) env env' ∧ envStoreForward before after →
+      envRel (ValueRel after) env env') ∧
+    (∀ storeXs storeYs, List.Forall₂ (storeValueRel (ValueRel before)) storeXs storeYs ∧
+      envStoreForward before after → List.Forall₂ (storeValueRel (ValueRel after)) storeXs storeYs) := by
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · rintro ⟨related, forward⟩
+    exact valueRel_forward before after x y related forward
+  · rintro ⟨related, forward⟩
+    induction related with
+    | nil => exact .nil
+    | cons head _ ih => exact .cons (valueRel_forward before after _ _ head forward) ih
+  · rintro ⟨related, forward⟩
+    exact envRel_monoRel (ValueRel before) (ValueRel after)
+      (fun a b relation => valueRel_forward before after a b relation forward) env env' related
+  · intro storeXs storeYs
+    rintro ⟨related, forward⟩
+    induction related with
+    | nil => exact .nil
+    | cons head _ ih =>
+      exact .cons (storeValueRel_mono (ValueRel before) (ValueRel after)
+        (fun a b relation => valueRel_forward before after a b relation forward) _ _ head) ih
+
 end Flapjack.Compiler.Backend.SourceEval.Proofs

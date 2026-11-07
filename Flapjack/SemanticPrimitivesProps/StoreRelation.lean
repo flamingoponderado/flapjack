@@ -14,6 +14,17 @@ def storeValueRel {A B : Type} (relation : A → B → Prop) : StoreValue A → 
   | .thunk mode left, .thunk mode' right => mode = mode' ∧ relation left right
   | _, _ => False
 
+/-- Pointwise implication lifts through the complete store-value relation. -/
+@[hol "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml" "sv_rel_mono"]
+theorem storeValueRel_mono {A B : Type} (P Q : A → B → Prop)
+    (monotone : ∀ x y, P x y → Q x y) (x : StoreValue A) (y : StoreValue B)
+    (related : storeValueRel P x y) : storeValueRel Q x y := by
+  cases x <;> cases y <;> simp_all [storeValueRel]
+  case varray.varray _ _ =>
+    induction related with
+    | nil => exact .nil
+    | cons head _ ih => exact .cons (monotone _ _ head) ih
+
 /-- A related store entry can be found at the same index on the target side.
 HOL proves this lookup fact inline when needed. -/
 theorem storeValueRel_lookup {A B : Type} {R : A → B → Prop} {left : List (StoreValue A)}
