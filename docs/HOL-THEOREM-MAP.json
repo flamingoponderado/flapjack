@@ -2,6 +2,60 @@
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "eval_simulation",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvalSimulationExpressions.lean",
+  "lean_name": "evalSimulation_Lit",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Lit case retains the original induction hypotheses and full expression simulation conclusion. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "eval_simulation",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvalSimulationExpressions.lean",
+  "lean_name": "evalSimulation_Raise",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Raise case retains the original induction hypotheses and full expression simulation conclusion. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "eval_simulation",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvalSimulationExpressions.lean",
+  "lean_name": "evalSimulation_Var",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Var case retains the original induction hypotheses and full expression simulation conclusion. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "eval_simulation",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvalSimulationExpressions.lean",
+  "lean_name": "evalSimulation_Fn",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Fn case retains the original induction hypotheses and full expression simulation conclusion. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "eval_simulation",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvalSimulationExpressions.lean",
+  "lean_name": "evalSimulation_Tannot",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Tannot case retains the original induction hypotheses and full expression simulation conclusion. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "eval_simulation",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvalSimulationExpressions.lean",
+  "lean_name": "evalSimulation_Lannot",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Lannot case retains the original induction hypotheses and full expression simulation conclusion. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "eval_simulation",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvalSimulationCons.lean",
   "lean_name": "evalSimulation_ExpsCons",
   "statement_status": "reviewed_exact",
