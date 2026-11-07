@@ -28,6 +28,14 @@ val orac_agrees_s_rel_imp_replay = prove (
   fs [source_evalProofTheory.orac_s_def]);
 val _ = if null (hyp orac_agrees_s_rel_imp_replay) then () else raise Fail "orac_agrees_s_rel_imp hypotheses";
 val _ = show_term "orac_agrees_s_rel_imp_replay=" (concl orac_agrees_s_rel_imp_replay);
+val recorded_orac_wf_defined_replay = prove (
+  ``source_evalProof$recorded_orac_wf compiler orac /\
+    i <= FST (FST (orac 0)) /\ 0 < i ==> compiler (orac i) <> NONE``,
+  rw [source_evalProofTheory.recorded_orac_wf_def] >>
+  Cases_on `i = FST (FST (orac 0))` >> fs [] >>
+  first_x_assum (qspec_then `i` mp_tac) >> simp [PULL_EXISTS]);
+val _ = if null (hyp recorded_orac_wf_defined_replay) then () else raise Fail "recorded_orac_wf_defined hypotheses";
+val _ = show_term "recorded_orac_wf_defined_replay=" (concl recorded_orac_wf_defined_replay);
 val _ = show_term "is_insert_decs="
   ``source_evalProof$is_insert_oracle ci f (SOME (semanticPrimitives$EvalDecs eds))``;
 val _ = show_term "declare_env_adjust="

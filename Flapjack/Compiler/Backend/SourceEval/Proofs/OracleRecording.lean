@@ -5,6 +5,20 @@ import Lean.Elab.Tactic.Omega
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs
 open Flapjack.SemanticPrimitivesHOL
 
+/-- Every positive recorded event within the prefix has a compiler result. -/
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "recorded_orac_wf_defined"]
+theorem recordedOracleWellFormed_defined {α : Type}
+    (compiler : CompilerArgs → Option (Value × α)) (oracle : EvalOracleFun) (i : Nat)
+    (premises : recordedOracleWellFormed compiler oracle ∧ i ≤ (oracle 0).1.1 ∧ 0 < i) :
+    compiler (oracle i) ≠ none := by
+  obtain ⟨⟨last, earlier⟩, upper, positive⟩ := premises
+  by_cases equal : i = (oracle 0).1.1
+  · obtain ⟨result, found, _⟩ := last (by omega)
+    rw [equal, found]
+    simp
+  · obtain ⟨result, found, _⟩ := earlier i ⟨by omega, positive⟩
+    simp [found]
+
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "orac_agrees_def"]
 def oracleAgrees (oracle : EvalOracleFun) (state : Option EvalState) : Prop :=
   match state with

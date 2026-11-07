@@ -15044,6 +15044,14 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "recorded_orac_wf_defined",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleRecording.lean",
+    "lean_name": "recordedOracleWellFormed_defined",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the local source theorem at line 1930 with its closed typed proof replay recorded_orac_wf_defined_replay in source_eval_adjust_local_probe.out. The compiler result's second component remains an independent type; the well-formedness, inclusive bound and positive index conjuncts imply that the compiler result is not NONE."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
     "hol_name": "extract_oracle_SOME_SUC",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleExtraction.lean",
     "lean_name": "extractOracle_isSome_succ",
