@@ -6,6 +6,13 @@ fun show_thm label th =
   if null (hyp th) then (print label; print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
 fun show_eval label tm = (print label; print_term (rhs (concl (EVAL tm))); print "\n");
+val lookup_build_rec_env_lem_replay = Q.prove (
+  `!x cl_env funs' funs.
+    ALOOKUP (MAP (\(fn,n,e). (fn,semanticPrimitives$Recclosure cl_env funs' fn)) funs) x = SOME v ==>
+    v = semanticPrimitives$Recclosure cl_env funs' x`,
+  Induct_on `funs` >> srw_tac[][] >> PairCases_on `h` >>
+  full_simp_tac(srw_ss())[] >> every_case_tac >> full_simp_tac(srw_ss())[]);
+val _ = show_thm "lookup_build_rec_env_lem_replay=" lookup_build_rec_env_lem_replay;
 val sem_env_eq_lemma_replay = Q.prove (
   `!(env:'a sem_env) x. (env with v := x) = <| v := x; c := env.c |>`,
   rw [] >> rw [semanticPrimitivesTheory.sem_env_component_equality]);

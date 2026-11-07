@@ -154,6 +154,22 @@ theorem lookup_recursive_bindings (sourceEnv : SemEnv Value)
       simp
     · simp [List.lookup_cons, BEq.beq, eq, ih]
 
+/-- A successful lookup in recursively generated bindings returns the closure
+for the requested name, independently of the other tuple components. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "lookup_build_rec_env_lem"]
+theorem lookup_build_rec_env {α β : Type} {v : Value} :
+    ∀ (x : VarN) (clEnv : SemEnv Value) (funs' : List (VarN × VarN × AstHOL.Exp))
+      (funs : List (VarN × α × β)),
+      (funs.map (fun (name, _, _) => (name, Value.recclosure clEnv funs' name))).lookup x = some v →
+      v = Value.recclosure clEnv funs' x := by
+  intro x clEnv funs' funs found
+  have mapped : funs.map (fun (name, _, _) => (name, Value.recclosure clEnv funs' name)) =
+      (funs.map Prod.fst).map (fun name => (name, Value.recclosure clEnv funs' name)) := by
+    simp only [List.map_map]
+    rfl
+  rw [mapped, lookup_recursive_bindings] at found
+  split at found <;> simp_all
+
 /-- Every global slot in a top-level recursive group contains a closure
 related to the corresponding source recursive closure. -/
 theorem topRec_group_slot_related (genv : GlobalEnv) (baseMap : Environment) (sourceEnv : SemEnv Value)

@@ -340,6 +340,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "lookup_build_rec_env_lem",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateLocalCall.lean",
+  "lean_name": "lookup_build_rec_env",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared lookup_build_rec_env_lem_replay in source_to_flat_init_probe.out: the requested name, captured environment, closure functions, successful association lookup and result agree; unused tuple components have independent polymorphic types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
   "hol_name": "sem_env_eq_lemma",
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EnvironmentDomain.lean",
   "lean_name": "semEnv_update_values",

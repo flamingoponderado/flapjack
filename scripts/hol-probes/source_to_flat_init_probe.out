@@ -1,3 +1,4 @@
+lookup_build_rec_env_lem_replay=∀(x :mlstring) (cl_env :semanticPrimitives$v sem_env) (funs' :(mlstring # mlstring # ast$exp) list) (funs :(mlstring # α # β) list). ALOOKUP (MAP (λ((fn :mlstring),(n :α),(e :β)). (fn,(Recclosure cl_env funs' fn :semanticPrimitives$v))) funs) x = SOME (v :semanticPrimitives$v) ⇒ v = (Recclosure cl_env funs' x :semanticPrimitives$v)
 sem_env_eq_lemma_replay=∀(env :α sem_env) (x :(mlstring, mlstring, β) namespace). env with v := x = <|v := x; c := env.c|>
 eta2_replay=∀(f :α -> β -> γ) (x :α). (λ(y :β). f x y) = f x
 ctor_same_type_refl_replay=ctor_same_type (x :(α # β) option) x
