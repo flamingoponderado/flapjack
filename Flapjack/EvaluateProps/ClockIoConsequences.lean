@@ -98,4 +98,73 @@ theorem evaluateDecs_clockDeterm {σ : Type} (st : State σ) (env : SemEnv Value
     exact ⟨ffiEq, resultEq⟩
   repeat' first | split | simp_all
 
+/-- Evaluation of an empty expression list returns the unchanged state. -/
+@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_nil"]
+theorem evaluateNil {σ : Type} (state : State σ) (env : SemEnv Value) :
+    evaluate state env [] = (state, .val []) := by
+  simp [evaluate]
+
+/-- Evaluation cannot decrease the next type stamp. -/
+@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_next_type_stamp_mono"]
+theorem evaluateNextTypeStampMono {σ : Type} (state : State σ) (env : SemEnv Value)
+    (expressions : List AstHOL.Exp) (next : State σ) (result : Result (List Value) Value)
+    (value : Value) (clauses : List (Pat × AstHOL.Exp)) (errorValue : Value)
+    (matchResult : Result (List Value) Value) (decs : List Dec) (decResult : Result (SemEnv Value) Value) :
+    (evaluate state env expressions = (next, result) → state.nextTypeStamp ≤ next.nextTypeStamp) ∧
+    (evaluateMatch state env value clauses errorValue = (next, matchResult) → state.nextTypeStamp ≤ next.nextTypeStamp) ∧
+    (evaluateDecs state env decs = (next, decResult) → state.nextTypeStamp ≤ next.nextTypeStamp) := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro run
+    have inv := (isClockIoMono_evaluate (σ := σ)).1 state env expressions
+    simp only [isClockIoMono, run] at inv
+    exact inv.2.2.1
+  · intro run
+    have inv := (isClockIoMono_evaluate (σ := σ)).2.1 state env value clauses errorValue
+    simp only [isClockIoMono, run] at inv
+    exact inv.2.2.1
+  · intro run
+    have inv := (isClockIoMono_evaluate (σ := σ)).2.2 state env decs
+    simp only [isClockIoMono, run] at inv
+    exact inv.2.2.1
+
+/-- Evaluation cannot decrease the next exception stamp. -/
+@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_next_exn_stamp_mono"]
+theorem evaluateNextExnStampMono {σ : Type} (state : State σ) (env : SemEnv Value)
+    (expressions : List AstHOL.Exp) (next : State σ) (result : Result (List Value) Value)
+    (value : Value) (clauses : List (Pat × AstHOL.Exp)) (errorValue : Value)
+    (matchResult : Result (List Value) Value) (decs : List Dec) (decResult : Result (SemEnv Value) Value) :
+    (evaluate state env expressions = (next, result) → state.nextExnStamp ≤ next.nextExnStamp) ∧
+    (evaluateMatch state env value clauses errorValue = (next, matchResult) → state.nextExnStamp ≤ next.nextExnStamp) ∧
+    (evaluateDecs state env decs = (next, decResult) → state.nextExnStamp ≤ next.nextExnStamp) := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro run
+    have inv := (isClockIoMono_evaluate (σ := σ)).1 state env expressions
+    simp only [isClockIoMono, run] at inv
+    exact inv.2.2.2.1
+  · intro run
+    have inv := (isClockIoMono_evaluate (σ := σ)).2.1 state env value clauses errorValue
+    simp only [isClockIoMono, run] at inv
+    exact inv.2.2.2.1
+  · intro run
+    have inv := (isClockIoMono_evaluate (σ := σ)).2.2 state env decs
+    simp only [isClockIoMono, run] at inv
+    exact inv.2.2.2.1
+
+/-- Expression and match evaluation cannot shorten the reference store. -/
+@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_refs_length_mono"]
+theorem evaluateRefsLengthMono {σ : Type} :
+    (∀ (state : State σ) env expressions next result,
+      evaluate state env expressions = (next, result) → state.refs.length ≤ next.refs.length) ∧
+    (∀ (state : State σ) env value clauses errorValue next result,
+      evaluateMatch state env value clauses errorValue = (next, result) → state.refs.length ≤ next.refs.length) := by
+  constructor
+  · intro state env expressions next result run
+    have inv := (isClockIoMono_evaluate (σ := σ)).1 state env expressions
+    simp only [isClockIoMono, run] at inv
+    exact inv.2.2.2.2.1
+  · intro state env value clauses errorValue next result run
+    have inv := (isClockIoMono_evaluate (σ := σ)).2.1 state env value clauses errorValue
+    simp only [isClockIoMono, run] at inv
+    exact inv.2.2.2.2.1
+
 end Flapjack.EvaluateProps

@@ -9714,3 +9714,5 @@ proof and captures the inferred source and flat list types.
 `source_to_flat_compile_globals_probe.out` includes a typed replay of the local `evaluate_foldr_let_err` theorem, including its arbitrary let trace.
 
 `source_to_flat_value_relation_probe.out` includes a typed parse of local `do_opapp`; its local HOL proof is not replayed.
+
+`cake_evaluate_ffi_props_probe.out` captures the typed empty-evaluation, stamp-monotonicity, and reference-length statements.
