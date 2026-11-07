@@ -71,6 +71,7 @@ val _ = show_thm "evaluate_record_forward=" source_evalProofTheory.evaluate_is_r
 val _ = show_thm "insert_oracle_correct=" source_evalProofTheory.insert_oracle_correct;
 val _ = show_thm "evaluate_record_suffix=" source_evalProofTheory.evaluate_record_suffix;
 val _ = show_thm "evaluate_decs_clock_record_common_prefix=" source_evalProofTheory.evaluate_decs_clock_record_common_prefix;
+val _ = show_thm "extract_oracle_agrees=" source_evalProofTheory.extract_oracle_agrees;
 val spt_mem_to_list_a = prove(
   ``!t acc x. MEM x (sptree$toListA acc t) <=> MEM x acc \/ ?k. sptree$lookup k t = SOME x``,
   simp [sptreeTheory.toListA_append, GSYM sptreeTheory.toList_def, sptreeTheory.MEM_toList] >> metis_tac []);
