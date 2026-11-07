@@ -14328,6 +14328,54 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "orac_agrees_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleRecording.lean",
+    "lean_name": "oracleAgrees",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared oracle_agrees in source_eval_oracle_adjust_probe.out: the oracle-state case compares all recorded events at the original shifted indices and both other state cases are false."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "orac_extended_wf_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleRecording.lean",
+    "lean_name": "oracleExtendedWellFormed",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared oracle_extended_wf in source_eval_oracle_adjust_probe.out: all three oracle component carriers and the compiler-result payload are independent, and the successor configuration equality has the original guard."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "record_forward_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleRecording.lean",
+    "lean_name": "recordForward",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared record_forward in source_eval_oracle_adjust_probe.out: an oracle state advances to an oracle state with nondecreasing count and the same positive recorded prefix; all non-oracle cases match."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "record_forward_refl",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleRecording.lean",
+    "lean_name": "recordForward_refl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared record_forward_refl in source_eval_oracle_adjust_probe.out: every optional Eval state is related to itself."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "record_forward_trans",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleRecording.lean",
+    "lean_name": "recordForward_trans",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared record_forward_trans in source_eval_oracle_adjust_probe.out: both ordered forward relations form one conjunctive premise for the forward relation between the endpoints."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "orac_agrees_backward",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleRecording.lean",
+    "lean_name": "oracleAgrees_backward",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared oracle_agrees_backward in source_eval_oracle_adjust_probe.out: agreement at the later state and forward recording from the earlier state are a single premise yielding agreement at the earlier state."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
     "hol_name": "v_rel_abs",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs.lean",
     "lean_name": "vFunAbs",

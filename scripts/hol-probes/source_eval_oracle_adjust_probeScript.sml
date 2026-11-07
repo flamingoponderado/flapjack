@@ -38,3 +38,9 @@ val oracle_arb_application = rhs (concl (List.nth (CONJUNCTS source_evalProofThe
 val _ = show_type "oracle_arb_type=" (rator oracle_arb_application);
 val _ = show_type "oracle_arb_argument_type=" (rand oracle_arb_application);
 val _ = show_thm "extract_oracle=" source_evalProofTheory.extract_oracle_def;
+val _ = show_thm "oracle_agrees=" source_evalProofTheory.orac_agrees_def;
+val _ = show_thm "oracle_extended_wf=" source_evalProofTheory.orac_extended_wf_def;
+val _ = show_thm "record_forward=" source_evalProofTheory.record_forward_def;
+val _ = show_thm "record_forward_refl=" source_evalProofTheory.record_forward_refl;
+val _ = show_thm "record_forward_trans=" source_evalProofTheory.record_forward_trans;
+val _ = show_thm "oracle_agrees_backward=" source_evalProofTheory.orac_agrees_backward;

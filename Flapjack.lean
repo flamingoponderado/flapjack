@@ -16,6 +16,7 @@ import Flapjack.SemanticPrimitivesHOL.Eval
 import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleAdjustment
 import Flapjack.Compiler.Backend.SourceEval.Proofs.ResultCases
 import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleExtraction
+import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleRecording
 import Flapjack.Misc.OptionLeast
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateDeclarations
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateRecursive
