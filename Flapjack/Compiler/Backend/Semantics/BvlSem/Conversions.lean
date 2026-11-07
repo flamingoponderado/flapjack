@@ -1,5 +1,5 @@
 import Flapjack.Compiler.Backend.Semantics.BvlSem.ApplyMemory
-import Flapjack.Misc.Option
+import Flapjack.Misc.Option.Characterization
 import Flapjack.HolRef
 
 /-! Deterministic list decoders used by BVL installation. -/
@@ -54,20 +54,6 @@ theorem valueToBytes_eq_some (value : Value) (bytes : List (BitVec 8)) :
 theorem valueToWords_eq_some (value : Value) (words : List (BitVec 64)) :
     valueToWords value = some words ↔ valueToList value = some (words.map Value.word64) := by
   simp [valueToWords, Option.bind_eq_some_iff, wordValues_eq_some]
-
-/-- A deterministic option characterized by a predicate equals HOL's guarded
-choice of a witness of that predicate. -/
-theorem option_eq_holChoice {α : Type} (decoded : Option α) (P : α → Prop)
-    (characterization : ∀ x, decoded = some x ↔ P x) : decoded = Flapjack.holOptionSome P := by
-  cases choice : Flapjack.holOptionSome P with
-  | none =>
-    cases result : decoded with
-    | none => rfl
-    | some value =>
-      have valid := (characterization value).mp result
-      exact False.elim (Flapjack.holOptionSome_none choice value valid)
-  | some value =>
-    exact (characterization value).mpr (Flapjack.holOptionSome_some choice)
 
 /-- The executable byte decoder equals the original HOL choice expression. -/
 theorem valueToBytes_eq_holChoice (value : Value) :

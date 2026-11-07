@@ -63,12 +63,12 @@ theorem valueToWords_eq_some (value : Value) (words : List (BitVec 64)) :
 theorem valueToBytes_eq_holChoice (value : Value) :
     valueToBytes value = Flapjack.holOptionSome
       (fun bytes : List (BitVec 8) => valueToList value = some (bytes.map (fun b => .number b.toNat))) := by
-  exact BvlSem.option_eq_holChoice _ _ (valueToBytes_eq_some value)
+  exact Flapjack.option_eq_holChoice _ _ (valueToBytes_eq_some value)
 
 /-- The executable word decoder equals the guarded HOL choice. -/
 theorem valueToWords_eq_holChoice (value : Value) :
     valueToWords value = Flapjack.holOptionSome
       (fun words : List (BitVec 64) => valueToList value = some (words.map Value.word64)) := by
-  exact BvlSem.option_eq_holChoice _ _ (valueToWords_eq_some value)
+  exact Flapjack.option_eq_holChoice _ _ (valueToWords_eq_some value)
 
 end Flapjack.Compiler.Backend.DataSem
