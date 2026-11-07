@@ -1,6 +1,30 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "v_rel_cases",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/ValueRelSourceCases.lean",
+  "lean_name": "valueRel_source_cases",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "c",
+    "tys"
+  ],
+  "reviewer": "Compared the complete generated HOL relation principle and inferred carriers with source_to_flat_value_relation_probe.out:6. Guarded optional lookups agree with HOL EL on the explicitly bounded indices. GlobalEnv.c and GlobalEnv.tys use the reviewed canonical finite-map representation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "v_rel_ind",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/ValueRelInduction.lean",
+  "lean_name": "valueRel_ind",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "c",
+    "tys"
+  ],
+  "reviewer": "Compared the complete generated HOL relation principle and inferred carriers with source_to_flat_value_relation_probe.out:5. Guarded optional lookups agree with HOL EL on the explicitly bounded indices. GlobalEnv.c and GlobalEnv.tys use the reviewed canonical finite-map representation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
   "hol_name": "evaluate_foldr_let_err",
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateLocalBoundedArray.lean",
   "lean_name": "flatFoldLets_error",
