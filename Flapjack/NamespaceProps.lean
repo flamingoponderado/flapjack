@@ -3,6 +3,15 @@ import Flapjack.NamespaceHOL
 /-! Properties of the original namespace operations. -/
 namespace Flapjack.NamespaceHOL
 
+/-- Namespace append is associative. -/
+@[hol "cakeml/semantics/proofs/namespacePropsScript.sml" "nsAppend_assoc"]
+theorem nsAppend_assoc {M N V : Type} (e1 e2 e3 : Namespace M N V) :
+    nsAppend e1 (nsAppend e2 e3) = nsAppend (nsAppend e1 e2) e3 := by
+  cases e1
+  cases e2
+  cases e3
+  simp [nsAppend, List.append_assoc]
+
 /-- Appending an association-list namespace is the same as binding that list. -/
 @[hol "cakeml/semantics/proofs/namespacePropsScript.sml" "nsAppend_to_nsBindList"]
 theorem nsAppend_to_nsBindList {M N V : Type} (env : Namespace M N V) :

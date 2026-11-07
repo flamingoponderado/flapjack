@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateBoundControl
+import Flapjack.NamespaceProps
 
 /-! Growing expression simulation for arbitrary related local environments.
 These factored relations remain pending HOL correspondence review. -/
@@ -66,14 +67,6 @@ theorem buildRecEnv_nsAppend (funs : List (VarN × VarN × AstHOL.Exp)) (closure
       cases globalEnv
       rfl
   exact aux funs
-
-/-- Namespace concatenation is associative. -/
-theorem local_nsAppend_assoc (a b c : Namespace ModN VarN Value) :
-    nsAppend (nsAppend a b) c = nsAppend a (nsAppend b c) := by
-  cases a
-  cases b
-  cases c
-  simp [nsAppend, List.append_assoc]
 
 /-- Constructing a local recursive environment preserves the factored
 source-to-flat value relation for every mutually recursive closure. -/

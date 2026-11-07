@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateException
+import Flapjack.NamespaceProps
 
 /-! Prerequisites for the datatype-declaration case of the preliminary
 factored source-to-flat simulation. These helpers do not claim the upstream
@@ -1143,11 +1144,6 @@ def datatypeConstructorNamespace : Nat → TypeDef → Namespace ModN ConN (Nat 
   | idx, (_, _, constructors) :: rest =>
     nsAppend (datatypeConstructorNamespace (idx + 1) rest) (allocTags idx constructors).1
 
-private theorem namespaceAppend_assoc {M N A : Type} (first second third : Namespace M N A) :
-    nsAppend (nsAppend first second) third = nsAppend first (nsAppend second third) := by
-  cases first; cases second; cases third
-  simp [nsAppend, List.append_assoc]
-
 /-- The recursive namespace above is exactly the compiler's indexed fold,
 including its ordering of shadowed constructors. -/
 theorem datatypeConstructorNamespace_fold (types : TypeDef) (idx offset : Nat)
@@ -1162,7 +1158,7 @@ theorem datatypeConstructorNamespace_fold (types : TypeDef) (idx offset : Nat)
     rcases td with ⟨parameters, typeName, constructors⟩
     simp only [List.zipIdx_cons, List.map_cons, List.foldl_cons, datatypeConstructorNamespace]
     rw [ih]
-    rw [namespaceAppend_assoc]
+    rw [← nsAppend_assoc]
     simp only [Nat.add_assoc]
 
 /-- The compiler's datatype case returns this recursively described

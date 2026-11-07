@@ -41,3 +41,4 @@ declare_env_store_env_id=declare_env (st :'ffi semanticPrimitives$state).eval_st
 compile_funs_dom2=MAP (FST :mlstring # mlstring # exp -> mlstring) (compile_funs (t :mlstring list) (env :source_to_flat$environment) (funs :(mlstring # mlstring # ast$exp) list)) = MAP (FST :mlstring # mlstring # ast$exp -> mlstring) funs
 nsAppend_to_nsBindList=∀(l :(α # β) list). nsAppend (alist_to_ns l :(γ, α, β) namespace) (e :(γ, α, β) namespace) = nsBindList l e
 find_recfun_local=∀(x :mlstring) (funs :(mlstring # mlstring # ast$exp) list) (e :ast$exp) (comp_map :source_to_flat$environment) (y :mlstring) (t :mlstring list). find_recfun x funs = SOME (y,e) ⇒ find_recfun x (compile_funs t comp_map funs) = SOME (y,(compile_exp (x::t) (comp_map with v := nsBind y (Local None y) comp_map.v) e :exp))
+nsAppend_assoc=∀(e1 :(α, β, γ) namespace) (e2 :(α, β, γ) namespace) (e3 :(α, β, γ) namespace). nsAppend e1 (nsAppend e2 e3) = nsAppend (nsAppend e1 e2) e3

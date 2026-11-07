@@ -11585,6 +11585,14 @@
   },
   {
     "lean_path": "Flapjack/NamespaceProps.lean",
+    "lean_name": "nsAppend_assoc",
+    "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml",
+    "hol_name": "nsAppend_assoc",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed nsAppend_assoc capture in source_to_flat_init_probe.out: three namespaces share independent arbitrary module-name, identifier and value types; the two associations of append appear in the same order and no premises or equality instances are added."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceProps.lean",
     "lean_name": "nsAppend_to_nsBindList",
     "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml",
     "hol_name": "nsAppend_to_nsBindList",
