@@ -49,18 +49,18 @@ private theorem forall₂_mono_members {A B : Type} {R R' : A → B → Prop}
 /-- Strengthening a relation on the values actually present in the two
 environments preserves the direct-call environment relation. -/
 @[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "env_rel_mono"]
-theorem envRel_mono {A B : Type} {R R' : A → B → Prop} {env1 : List A} {env2 : List B}
+theorem envRel_mono {A B : Type} {env1 : List A} {env2 : List B} {R R' : A → B → Prop}
     {offset : Nat} {fns : List (Nat × Exp)}
-    (change : ∀ x ∈ env1, ∀ y ∈ env2, R x y → R' x y)
+    (change : ∀ x y, x ∈ env1 ∧ y ∈ env2 ∧ R x y → R' x y)
     (related : envRel R env1 env2 offset fns) : envRel R' env1 env2 offset fns := by
   unfold envRel at related ⊢
   by_cases same : env1.length = env2.length
   · simp only [same, ↓reduceIte] at related ⊢
-    exact forall₂_mono_members related change
+    exact forall₂_mono_members related (fun x hx y hy rel => change x y ⟨hx, hy, rel⟩)
   · simp only [same, ↓reduceIte] at related ⊢
     intro x used
     obtain ⟨left, right, rel⟩ := related x used
-    exact ⟨left, right, change _ (List.getElem_mem left) _ (List.getElem_mem right) rel⟩
+    exact ⟨left, right, change _ _ ⟨List.getElem_mem left, List.getElem_mem right, rel⟩⟩
 
 /-- Relations that agree on the values actually present induce the same
 direct-call environment relation. -/
@@ -71,11 +71,11 @@ theorem envRel_congr {A B : Type} {R R' : A → B → Prop} {env1 : List A} {env
     envRel R env1 env2 offset fns ↔ envRel R' env1 env2 offset fns := by
   constructor
   · apply envRel_mono
-    intro x hx y hy
-    exact (same x hx y hy).mp
+    intro x y ⟨hx, hy, rel⟩
+    exact (same x hx y hy).mp rel
   · apply envRel_mono
-    intro x hx y hy
-    exact (same x hx y hy).mpr
+    intro x y ⟨hx, hy, rel⟩
+    exact (same x hx y hy).mpr rel
 
 /-- A used variable that is present in the source environment has a related
 value at the same index in the target environment, even when the two

@@ -16,7 +16,7 @@ theorem envRelFuel_mono {fuel : Nat} {g g' : State} {allowed allowed' : Set Nat}
     EnvRelFuel fuel g' allowed' code' sourceEnv targetEnv offset fns := by
   apply (envRelFuel_iff _ _ _ _ _ _ _ _).mpr
   apply envRel_mono _ ((envRelFuel_iff _ _ _ _ _ _ _ _).mp related)
-  intro _ _ _ _ values
+  intro _ _ ⟨_, _, values⟩
   exact valueRelFuel_mono values stateGrowth allowedGrowth codeGrowth
 
 /-- Source-driven simulation for one expression, using the fuel-aware value

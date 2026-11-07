@@ -124317,7 +124317,7 @@
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/Environment.lean",
   "lean_name": "envRel_mono",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared typed source statement: the curried membership and relation implication is equivalent to the HOL conjunction premise, with independent element types and the same environments and closure bodies. Typed source captured in clos_call_env_rel_probe.out; Lean checks the proof, not cross-language equivalence."
+  "reviewer": "Compared typed source statement: free variables follow source order and the membership and relation premise retains HOL's conjunction, with independent element types and the same environments and closure bodies. Typed source captured in clos_call_env_rel_probe.out; Lean checks the proof, not cross-language equivalence."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml",
@@ -127312,7 +127312,7 @@
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/ValueRelationCases.lean",
   "lean_name": "envRel_mono",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared the HOL source and typed environment_relation_mono capture: the same bounded value environments, decreasing numeric bound and resulting environment relation are retained; the conjunctive premise is curried."
+  "reviewer": "Compared the HOL source and typed environment_relation_mono capture: the free variables occur in source order, and the original grouped premise and resulting environment relation agree."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
@@ -127336,7 +127336,7 @@
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/RecursiveClosures.lean",
   "lean_name": "doOpApp_simulation",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared the HOL source and typed do_opapp capture: the original source application and pointwise value-relation premises imply the same five existential witnesses, compiler equation, bounded environment relation and target application; the conjunctive premise is curried."
+  "reviewer": "Compared the HOL source and typed do_opapp capture: free variables occur in source order, the source application and value-relation premises are grouped, and the original witnesses and conclusions agree."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
@@ -127344,7 +127344,7 @@
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/RecursiveClosures.lean",
   "lean_name": "doOpApp_simulation_reverse",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared the HOL source and typed do_opapp_reverse capture: the source and target argument lists are reversed only for application, the pointwise value relation is on the original lists, and all original existential witnesses and conclusions are retained."
+  "reviewer": "Compared the HOL source and typed do_opapp_reverse capture: free variables and grouped premises retain their source order, argument lists are reversed only for application, and all original witnesses and conclusions agree."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
@@ -127432,7 +127432,7 @@
   "lean_path": "Flapjack/Compiler/Backend/FlatProps/SimpleRelations.lean",
   "lean_name": "simpleValueRel_isClosure",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared the HOL source and typed simple_value_relation_closure capture: the original simple-relation and value-relation hypotheses imply the same closure-status equivalence; the conjunctive premise is curried."
+  "reviewer": "Compared the HOL source and typed simple_value_relation_closure capture: the grouped simple-relation and value-relation premise implies the original closure-status equivalence."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
