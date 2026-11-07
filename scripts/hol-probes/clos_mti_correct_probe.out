@@ -7,3 +7,5 @@ contains_App_SOME_intro_multi=∀(max_app :num) (es :closLang$exp list). contain
 every_Fn_vs_NONE_intro_multi=∀(max_app :num) (es :closLang$exp list). every_Fn_vs_NONE (intro_multi max_app es) ⇔ every_Fn_vs_NONE es
 contains_App_SOME_collect_args=∀(m :num) (x :num) (y :closLang$exp) (a :num) (b :closLang$exp). collect_args m x y = (a,b) ⇒ (contains_App_SOME m [y] ⇔ contains_App_SOME m [b])
 contains_App_SOME_collect_apps=∀(max_app :num) (x :closLang$exp list) (y :closLang$exp) (a :closLang$exp list) (b :closLang$exp). collect_apps max_app x y = (a,b) ⇒ (max_app < LENGTH x ∨ contains_App_SOME max_app x ∨ contains_App_SOME max_app [y] ⇔ max_app < LENGTH a ∨ contains_App_SOME max_app a ∨ contains_App_SOME max_app [b])
+every_Fn_vs_NONE_collect_apps_replay=∀(max_app :num) (es :closLang$exp list) (e :closLang$exp) (x :closLang$exp list) (y :closLang$exp). collect_apps max_app es e = (x,y) ⇒ (every_Fn_vs_NONE x ∧ every_Fn_vs_NONE [y] ⇔ every_Fn_vs_NONE es ∧ every_Fn_vs_NONE [e])
+every_Fn_vs_NONE_collect_args_replay=∀(max_app :num) (es :num) (e :closLang$exp) (x :num) (y :closLang$exp). collect_args max_app es e = (x,y) ⇒ (every_Fn_vs_NONE [y] ⇔ every_Fn_vs_NONE [e])

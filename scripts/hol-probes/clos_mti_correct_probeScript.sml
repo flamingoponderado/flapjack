@@ -14,3 +14,22 @@ val _ = show_thm "contains_App_SOME_intro_multi=" clos_mtiProofTheory.contains_A
 val _ = show_thm "every_Fn_vs_NONE_intro_multi=" clos_mtiProofTheory.every_Fn_vs_NONE_intro_multi;
 val _ = show_thm "contains_App_SOME_collect_args=" clos_mtiProofTheory.contains_App_SOME_collect_args;
 val _ = show_thm "contains_App_SOME_collect_apps=" clos_mtiProofTheory.contains_App_SOME_collect_apps;
+(* These local theorems are not exported: replay their original statements
+   and proofs with typed printing enabled. *)
+load "preamble";
+open preamble clos_mtiTheory closPropsTheory;
+val every_Fn_vs_NONE_collect_apps_replay = prove (
+  ``∀max_app es e x y. collect_apps max_app es e = (x,y) ⇒
+    (every_Fn_vs_NONE x ∧ every_Fn_vs_NONE [y] ⇔
+     every_Fn_vs_NONE es ∧ every_Fn_vs_NONE [e])``,
+  ho_match_mp_tac collect_apps_ind >>
+  srw_tac[][collect_apps_def] >> full_simp_tac(srw_ss())[] >>
+  ONCE_REWRITE_TAC[every_Fn_vs_NONE_EVERY] >>
+  srw_tac[][] >> metis_tac[]);
+val every_Fn_vs_NONE_collect_args_replay = prove (
+  ``∀max_app es e x y. collect_args max_app es e = (x,y) ⇒
+    (every_Fn_vs_NONE [y] ⇔ every_Fn_vs_NONE [e])``,
+  ho_match_mp_tac collect_args_ind >>
+  srw_tac[][collect_args_def] >> full_simp_tac(srw_ss())[]);
+val _ = show_thm "every_Fn_vs_NONE_collect_apps_replay=" every_Fn_vs_NONE_collect_apps_replay;
+val _ = show_thm "every_Fn_vs_NONE_collect_args_replay=" every_Fn_vs_NONE_collect_args_replay;

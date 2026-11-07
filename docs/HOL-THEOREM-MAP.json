@@ -1,6 +1,22 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+  "hol_name": "every_Fn_vs_NONE_collect_apps",
+  "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Syntactic.lean",
+  "lean_name": "everyFnVarsNone_collectApps",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed replay of the original local theorem and proof in clos_mti_correct_probe.out: binder types and order, collection equation, and annotation equivalence agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+  "hol_name": "every_Fn_vs_NONE_collect_args",
+  "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Syntactic.lean",
+  "lean_name": "everyFnVarsNone_collectArgs",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed replay of the original local theorem and proof in clos_mti_correct_probe.out: binder types and order, collection equation, and singleton annotation equivalence agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
   "hol_name": "contains_App_SOME_collect_args",
   "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Syntactic.lean",
   "lean_name": "containsAppSome_collectArgs",

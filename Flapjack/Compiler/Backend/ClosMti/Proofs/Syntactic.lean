@@ -6,7 +6,8 @@ import Flapjack.Compiler.Backend.Semantics.ClosProps.NoMtiSyntactic
 namespace Flapjack.Compiler.Backend.ClosMti
 open ClosLang ClosProps
 
-/-- Argument collection preserves the absence of captured-variable annotations. -/
+/-- Flapjack projection form of `every_Fn_vs_NONE_collect_args`, used by the
+recursive traversal proof. -/
 theorem collectArgs_varsNone (maxApp count : Nat) (expression : Exp) :
     fnVarsNoneExp expression ↔ fnVarsNoneExp (collectArgs maxApp count expression).2 := by
   cases expression with
@@ -24,7 +25,8 @@ theorem collectArgs_varsNone (maxApp count : Nat) (expression : Exp) :
   | _ => simp [collectArgs]
 termination_by sizeOf expression
 
-/-- Application collection preserves the property over the head and arguments. -/
+/-- Flapjack projection form of `every_Fn_vs_NONE_collect_apps`, used by the
+recursive traversal proof. -/
 theorem collectApps_varsNone (maxApp : Nat) (args : List Exp) (expression : Exp) :
     (everyFnVarsNone args ∧ fnVarsNoneExp expression) ↔
       (everyFnVarsNone (collectApps maxApp args expression).1 ∧
@@ -47,6 +49,25 @@ theorem collectApps_varsNone (maxApp : Nat) (args : List Exp) (expression : Exp)
       · simp
   | _ => simp [collectApps]
 termination_by sizeOf expression
+
+/-- Argument collection preserves the singleton annotation predicate. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "every_Fn_vs_NONE_collect_args"]
+theorem everyFnVarsNone_collectArgs (maxApp count : Nat) (expression : Exp)
+    (arity : Nat) (body : Exp) (run : collectArgs maxApp count expression = (arity, body)) :
+    everyFnVarsNone [body] ↔ everyFnVarsNone [expression] := by
+  have invariant := collectArgs_varsNone maxApp count expression
+  rw [run] at invariant
+  simpa [everyFnVarsNone] using invariant.symm
+
+/-- Application collection preserves the annotation predicate on both parts. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "every_Fn_vs_NONE_collect_apps"]
+theorem everyFnVarsNone_collectApps (maxApp : Nat) (args : List Exp) (expression : Exp)
+    (collected : List Exp) (head : Exp) (run : collectApps maxApp args expression = (collected, head)) :
+    (everyFnVarsNone collected ∧ everyFnVarsNone [head]) ↔
+      (everyFnVarsNone args ∧ everyFnVarsNone [expression]) := by
+  have invariant := collectApps_varsNone maxApp args expression
+  rw [run] at invariant
+  simpa [everyFnVarsNone] using invariant.symm
 
 /-- The application-safety predicate distributes over appended lists. -/
 theorem containsAppSome_append (maxApp : Nat) (left right : List Exp) :

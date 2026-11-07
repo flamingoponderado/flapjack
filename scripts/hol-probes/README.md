@@ -9730,6 +9730,7 @@ and theorems, including the quantifier order and vacuous type in
 The capture supports source comparison; it does not establish Lean correspondence.
 
 `clos_mti_correct_probe.out` captures the typed original multi-argument
-evaluation and semantics correctness theorems. Regenerate with
+evaluation and semantics correctness theorems, plus typed replays of the
+original local annotation-collection statements and proofs. Regenerate with
 `HOL_PROBE_ONLY=clos_mti_correct_probeScript.sml scripts/hol-probes/regenerate.sh`.
 The capture supports source comparison; it does not establish Lean correspondence.
