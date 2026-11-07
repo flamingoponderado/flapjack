@@ -9548,6 +9548,8 @@ It also captures the complete initial-allocation invariant theorem and its
 independent compiler, FFI, and environment payload types, and replays the
 local initial-stamp freshness, invariant generation, and declaration-result
 abort lemmas with inferred types.
+The invariant-to-state-relation capture retains the arbitrary index triple and
+the independent compiler and FFI payload types.
 It also records all three conjuncts of `compile_correct` with inferred types,
 including the independent success types in the declaration error relation.
 It supports source review and finite regression checks; it is not

@@ -1,5 +1,14 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "invariant_IMP_s_rel",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvalOracleSimulation.lean",
+  "lean_name": "invariantImpStateRel",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["c", "tys"],
+  "reviewer": "Compared invariant_imp_state_rel in source_to_flat_init_probe.out: the complete invariant premise implies the source/flat state relation with the same global environment, independent compiler and FFI carriers and arbitrary index triple. The global-environment finite maps use the reviewed canonical representation; explicit compiler inhabitance supplies HOL's THE."
+},
+{
   "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
   "hol_name": "MEM_toListA",
   "lean_path": "Flapjack/Misc/Sptree/ToList.lean",

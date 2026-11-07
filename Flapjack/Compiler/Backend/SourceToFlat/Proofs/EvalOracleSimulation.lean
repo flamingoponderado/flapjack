@@ -31,6 +31,17 @@ noncomputable def factoredInvariant {C F : Type} [Nonempty C]
   evalRefInv (flat.globals.take 1) (flat.refs.take 1) ∧ envGenInv gen ∧
   finIdxMatch flat.globals.length idxs.2.1 (srcOracNextCfg interp source.evalState)
 
+/-- The simulation invariant entails the relation between the two states. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "invariant_IMP_s_rel"
+  (fmap_as_finite_support := [c, tys])]
+theorem invariantImpStateRel {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (gen : EnvironmentGenerationStore) (genv : GlobalEnv)
+    (idxs : NextIndices × NextIndices × Set (Nat × IndexKind))
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (valid : factoredInvariant interp transform gen genv idxs source flat) :
+    StateRel genv source flat := valid.2.2.1
+
 /-- The full invariant entails the environment-generation invariant. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "invariant_env_gen_inv"
   (fmap_as_finite_support := [c, tys])]
@@ -72,7 +83,8 @@ theorem invariantDecClock {C F : Type} [Nonempty C]
     (valid : factoredInvariant interp transform gen genv idxs source flat) :
     source.clock = flat.clock ∧
       factoredInvariant interp transform gen genv idxs (EvaluateHOL.decClock source) (FlatSem.decClock flat) := by
-  have same := (stateRel_iff genv source flat).mp valid.2.2.1 |>.2.2.1
+  have same := (stateRel_iff genv source flat).mp
+    (invariantImpStateRel interp transform gen genv idxs source flat valid) |>.2.2.1
   refine ⟨same, ?_⟩
   simpa [EvaluateHOL.decClock, FlatSem.decClock, same] using
     invariantChangeClock interp transform gen genv idxs source flat (flat.clock - 1) valid

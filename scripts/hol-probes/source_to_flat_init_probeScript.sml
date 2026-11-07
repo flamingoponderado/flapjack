@@ -51,6 +51,7 @@ val _ = show_eval "incremental_nonzero_next=" ``
     (c'.next.vidx, c'.envs.next, code)``;
 val _ = show_eval "incremental_empty=" ``SND (source_to_flat$inc_compile (0n,0n) source_to_flat$empty_config [])``;
 val _ = show_thm "invariant_begin_alloc_blanks=" source_to_flatProofTheory.invariant_begin_alloc_blanks;
+val _ = show_thm "invariant_imp_state_rel=" source_to_flatProofTheory.invariant_IMP_s_rel;
 (* Replay the original local theorem, which is not exported by its theory. *)
 val precondition_stamp_helper_local = Q.prove (
   `EVERY (\(_, stamp). case stamp of TypeStamp cn t => t < type_stamp
