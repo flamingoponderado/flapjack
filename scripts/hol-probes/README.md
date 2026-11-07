@@ -9666,7 +9666,7 @@ It also captures the typed `alloc_tags_invariant`, `alloc_tags1_imp`, and
 `ALOOKUP_MAP_3` statements for source comparison.
 It captures `INJ_DEF` and `some_f_inj_eq` with inferred types and replays the
 local `FST_SND_EQ_CASE` proof with all four component types visible.
-It also captures `EL_APPEND_IF` and `ALL_DISJOINT_elem` and replays the local
+It also captures `EL_APPEND_IF`, `ALL_DISJOINT_DEF`, and `ALL_DISJOINT_elem` and replays the local
 `ALOOKUP_alloc_defs_EL` and `EL_add_SOME_SOME` proofs.
 
 The same probe replays the original local `ALOOKUP_alloc_defs` proof with

@@ -18656,7 +18656,7 @@
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/IndexInvariant.lean",
     "lean_name": "allDisjoint",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared the typed idx_disjoint probe: both quantify arbitrary sets of a single element type and bounded distinct list indices and require their intersection to equal the empty set. Lean indexed access is used only under those bounds."
+    "reviewer": "Compared all_disjoint_definition_typed in source_to_flat_init_probe.out: arbitrary sets of a single element type, quantified indices, grouped bound and distinctness premise, and HOL EL intersection with the empty set are retained."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",

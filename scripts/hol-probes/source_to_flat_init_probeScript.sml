@@ -33,6 +33,7 @@ val el_add_some_some_replay = Q.prove (
 val _ = show_thm "el_add_some_some_replay=" el_add_some_some_replay;
 val _ = show_thm "el_append_if_typed=" source_to_flatProofTheory.EL_APPEND_IF;
 val _ = show_thm "all_disjoint_elem_typed=" source_to_flatProofTheory.ALL_DISJOINT_elem;
+val _ = show_thm "all_disjoint_definition_typed=" source_to_flatProofTheory.ALL_DISJOINT_DEF;
 val fst_snd_eq_case_replay = Q.prove (
   `FST = (\ (a, b). a) /\ SND = (\ (a, b). b)`,
   simp [FUN_EQ_THM, FORALL_PROD]);

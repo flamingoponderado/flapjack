@@ -60,10 +60,20 @@ theorem idxBlock_union_final (start finish : NextIndices) (ordered : idxPrev sta
     change (start.eidx ≤ i ∧ i < finish.eidx) ∨ finish.eidx ≤ i ↔ start.eidx ≤ i
     omega
 
-/-- Pairwise disjointness of a list of sets, with the original bounded indices. -/
+/-- Pairwise disjointness of a list of sets, with the original grouped bounds. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "ALL_DISJOINT_DEF"]
 def allDisjoint {α : Type} (sets : List (Set α)) : Prop :=
-  ∀ i j (hi : i < sets.length) (hj : j < sets.length), i ≠ j → sets[i] ∩ sets[j] = ∅
+  ∀ i j, i < sets.length ∧ j < sets.length ∧ i ≠ j → holEl i sets ∩ holEl j sets = ∅
+
+/-- Bounded-index form used by Lean proofs; the HOL declaration is `allDisjoint`. -/
+theorem allDisjoint_iff_bounded {α : Type} (sets : List (Set α)) :
+    allDisjoint sets ↔
+      ∀ i j (hi : i < sets.length) (hj : j < sets.length), i ≠ j → sets[i] ∩ sets[j] = ∅ := by
+  constructor
+  · intro disjoint i j hi hj ne
+    simpa only [holEl_eq_getElem i sets hi, holEl_eq_getElem j sets hj] using disjoint i j ⟨hi, hj, ne⟩
+  · intro disjoint i j ⟨hi, hj, ne⟩
+    simpa only [holEl_eq_getElem i sets hi, holEl_eq_getElem j sets hj] using disjoint i j hi hj ne
 
 /-- An element of one disjoint set cannot occur at a different list index. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "ALL_DISJOINT_elem"]
@@ -80,7 +90,7 @@ theorem allDisjoint_elem {α : Type} (xs : List (Set α)) :
   · refine Or.inr ?_
     intro other
     have bound' : j < xs.length := by simpa using jBound
-    have empty := disjoint i j bound bound' (Ne.symm same)
+    have empty := (allDisjoint_iff_bounded xs).mp disjoint i j bound bound' (Ne.symm same)
     have both : x ∈ xs[i] ∩ xs[j] := ⟨member, other⟩
     rw [empty] at both
     exact both
@@ -153,6 +163,7 @@ theorem genvAllocatedIndices_fillSlot (genv : GlobalEnv) (idx : Nat) (value : Fl
 theorem allDisjoint_shrinkFirst {α : Type} (block remaining future other allocated : Set α)
     (old : allDisjoint [block, future, other, allocated]) (subset : remaining ⊆ block) :
     allDisjoint [remaining, future, other, allocated] := by
+  rw [allDisjoint_iff_bounded] at old ⊢
   have subsetAt (i : Nat) (hi : i < ([remaining, future, other, allocated] : List (Set α)).length) :
       ([remaining, future, other, allocated] : List (Set α))[i] ⊆
         ([block, future, other, allocated] : List (Set α))[i]'(by simpa using hi) := by
@@ -176,6 +187,7 @@ theorem allDisjoint_consume {α : Type} (block remaining future other allocated 
     (old : allDisjoint [block, future, other, allocated])
     (subset : remaining ⊆ block) (inBlock : point ∈ block) (notRemaining : point ∉ remaining) :
     allDisjoint [remaining, future, other, allocated ∪ {point}] := by
+  rw [allDisjoint_iff_bounded] at old ⊢
   have pair (i j : Nat) (hi : i < 4) (hj : j < 4) (ne : i ≠ j) :
       ∀ x, x ∈ ([block, future, other, allocated] : List (Set α))[i] →
         x ∈ ([block, future, other, allocated] : List (Set α))[j] → False := by
@@ -241,6 +253,7 @@ theorem allDisjoint_restore {α : Type} (current future oldBlock other allocated
     (valid : allDisjoint [current, future, oldBlock ∪ other, allocated])
     (oldSeparate : ∀ x, x ∈ oldBlock → x ∈ other → False) :
     allDisjoint [oldBlock, future, other, allocated] := by
+  rw [allDisjoint_iff_bounded] at valid ⊢
   have pair (i j : Nat) (hi : i < 4) (hj : j < 4) (ne : i ≠ j) :
       ∀ x, x ∈ ([current, future, oldBlock ∪ other, allocated] : List (Set α))[i] →
         x ∈ ([current, future, oldBlock ∪ other, allocated] : List (Set α))[j] → False := by
@@ -294,6 +307,7 @@ theorem allDisjoint_four_advance {α : Type} (oldBlock oldFuture other allocated
     (blockSubset : newBlock ⊆ oldFuture) (futureSubset : newFuture ⊆ oldFuture)
     (separate : ∀ x, x ∈ newBlock → x ∈ newFuture → False) :
     allDisjoint [newBlock, newFuture, oldBlock ∪ other, allocated] := by
+  rw [allDisjoint_iff_bounded] at old ⊢
   have pair (i j : Nat) (hi : i < 4) (hj : j < 4) (ne : i ≠ j) :
       ∀ x, x ∈ ([oldBlock, oldFuture, other, allocated] : List (Set α))[i] →
         x ∈ ([oldBlock, oldFuture, other, allocated] : List (Set α))[j] → False := by
@@ -378,6 +392,7 @@ theorem currentBlock_disjoint_allocated (genv : GlobalEnv) (start finish final :
     (other : Set (Nat × IndexKind))
     (disjoint : allDisjoint [idxBlock start finish, idxFinalBlock final, other, genvAllocatedIndices genv]) :
     ∀ key, key ∈ idxBlock start finish → key ∈ genvAllocatedIndices genv → False := by
+  rw [allDisjoint_iff_bounded] at disjoint
   intro key reserved allocated
   have h := disjoint 0 3 (by simp) (by simp) (by decide)
   have member : key ∈ idxBlock start finish ∩ genvAllocatedIndices genv := ⟨reserved, allocated⟩
