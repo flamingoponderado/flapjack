@@ -1,3 +1,4 @@
+env_rel_imp_c_replay=env_rel (x :v -> α -> bool) (env :v sem_env) (env' :α sem_env) ⇒ env'.c = env.c
 s_rel_clock2_replay=∀(k :num). s_rel (ci :α compiler_instance) (s :β semanticPrimitives$state) (t :β semanticPrimitives$state) ⇒ s_rel ci (s with clock := k) (t with clock := k)
 extract_oracle_some_suc_replay=IS_SOME (extract_oracle (s :α semanticPrimitives$state) (env :v sem_env) (decs :dec list) (SUC (i :num))) ⇒ IS_SOME (extract_oracle s env decs i)
 orac_agrees_s_rel_imp_replay=orac_agrees (orac :num -> (num # num) # v # dec list) (t :α semanticPrimitives$state).eval_state ⇒ s_rel (ci :β compiler_instance) (s :α semanticPrimitives$state) t ⇒ (i :num) < FST (FST ((orac_s t.eval_state).oracle (0 :num) :(num # num) # v # dec list)) ⇒ orac i = ((orac_s t.eval_state).oracle (i + (1 :num)) :(num # num) # v # dec list)

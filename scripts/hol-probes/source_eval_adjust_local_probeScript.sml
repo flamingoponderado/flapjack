@@ -3,6 +3,11 @@ open HolKernel Parse boolLib bossLib preamble;
 val _ = Globals.linewidth := 1000000;
 val _ = Globals.show_types := true;
 fun show_term label tm = (print label; print_term tm; print "\n");
+val env_rel_imp_c_replay = prove (
+  ``source_evalProof$env_rel x env env' ==> env'.c = env.c``,
+  fs [source_evalProofTheory.env_rel_def]);
+val _ = if null (hyp env_rel_imp_c_replay) then () else raise Fail "env_rel_imp_c hypotheses";
+val _ = show_term "env_rel_imp_c_replay=" (concl env_rel_imp_c_replay);
 val s_rel_clock2_replay = prove (
   ``!k. source_evalProof$s_rel ci s t ==>
       source_evalProof$s_rel ci (s with clock := k) (t with clock := k)``,

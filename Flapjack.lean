@@ -18,6 +18,7 @@ import Flapjack.Compiler.Backend.SourceEval.Proofs.ResultCases
 import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleExtraction
 import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleRecording
 import Flapjack.Compiler.Backend.SourceEval.Proofs.Environment
+import Flapjack.Compiler.Backend.SourceEval.Proofs.EnvironmentConstructors
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EnvironmentEmpty
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EnvironmentLift
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EnvironmentAppend

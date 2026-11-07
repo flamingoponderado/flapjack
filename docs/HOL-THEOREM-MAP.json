@@ -1,6 +1,14 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "env_rel_imp_c",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EnvironmentConstructors.lean",
+  "lean_name": "envRel_imp_c",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared env_rel_imp_c_replay in source_eval_adjust_local_probe.out, which replays the original local HOL proof: related source and independently typed target environments imply the target constructor namespace equals the source's, in that orientation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "env_rel_nsEmpty",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EnvironmentEmpty.lean",
   "lean_name": "envRel_nsEmpty",
