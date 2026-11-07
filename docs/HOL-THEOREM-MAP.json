@@ -472,6 +472,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "compile_match_pmatch_rows",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/MatchRows.lean",
+  "lean_name": "compileMatch_pmatchRows",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_match_pmatch_rows in flat_pattern_install_relation_probe.out: all five conjuncts, the source result case split, both index bounds, source EL, binding relation and target match with compiled EL are retained. Both state type parameters remain independent."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
   "hol_name": "compile_match_EL",
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/MatchRows.lean",
   "lean_name": "compileMatch_index",
