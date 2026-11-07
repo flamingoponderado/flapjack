@@ -1,6 +1,14 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+  "hol_name": "intro_multi_obeys_max_app",
+  "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Arity.lean",
+  "lean_name": "intro_multi_obeys_max_app",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed intro_multi_obeys_max_app in clos_mti_correct_probe.out: nonzero maximum and EVERY no_mti are grouped premises, and the EVERY obeys_max_app conclusion applies to intro_multi."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
   "hol_name": "intro_multi_no_Labels",
   "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/NoLabels.lean",
   "lean_name": "intro_multi_noLabels",

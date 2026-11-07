@@ -39,3 +39,4 @@ val _ = show_thm "EVERY_intro_multi=" clos_mtiProofTheory.EVERY_intro_multi;
 val _ = show_thm "HD_intro_multi=" clos_mtiProofTheory.HD_intro_multi;
 val _ = show_thm "intro_multi_cons=" clos_mtiProofTheory.intro_multi_cons;
 val _ = show_thm "intro_multi_no_Labels=" clos_mtiProofTheory.intro_multi_no_Labels;
+val _ = show_thm "intro_multi_obeys_max_app=" clos_mtiProofTheory.intro_multi_obeys_max_app;
