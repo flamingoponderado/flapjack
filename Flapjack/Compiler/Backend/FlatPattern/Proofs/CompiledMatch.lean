@@ -66,8 +66,8 @@ theorem evaluate_compilePats_decision {C F : Type} (cfg : Config) (trace : Backe
     have compiled := PatternComp.comp_correct (encodeRefs state) (encodeValue value) encoded (by rw [abstractMatch]; simp)
     have treeEval : PatternSemantics.dtEval (encodeRefs state) (encodeValue value) (PatternComp.comp encoded) =
         some .failure := compiled.trans abstractMatch
-    have decoded := decodeDtree_simulation trace (branchTree branches) expression default state env value
-      (PatternComp.comp encoded) .failure treeEval pure
+    have decoded := decodeDtree_simulation state value (PatternComp.comp encoded) .failure env expression trace
+      (branchTree branches) default ⟨treeEval, pure⟩
     simpa [compilePats, encoded, branches, source] using decoded
   | «match» selected =>
     rcases selected with ⟨bindings, pattern, body⟩
@@ -80,8 +80,8 @@ theorem evaluate_compilePats_decision {C F : Type} (cfg : Config) (trace : Backe
     have branchAt : branches[index]? = some (compilePatRhs trace n expression (pattern, body)) := by
       simp [branches, List.getElem?_map, rowAt]
     have lookup := branchTree_lookup branches index (compilePatRhs trace n expression (pattern, body)) branchAt
-    have decoded := decodeDtree_simulation trace (branchTree branches) expression default state env value
-      (PatternComp.comp encoded) (.success index) treeEval pure
+    have decoded := decodeDtree_simulation state value (PatternComp.comp encoded) (.success index) env expression trace
+      (branchTree branches) default ⟨treeEval, pure⟩
     simpa [compilePats, encoded, branches, source, lookup] using decoded
 
 /-- Both pattern-compilation paths evaluate the branch chosen by FlatLang's

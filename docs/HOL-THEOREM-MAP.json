@@ -1,6 +1,62 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "encode_val_def",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/DecisionEncoding/Encoding.lean",
+  "lean_name": "encodeValue",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared encode_val in flat_pattern_install_relation_probe.out: literals, constructor tags and recursively encoded fields, locations and other value constructors match. The HOL option case is rendered by Option.map Prod.fst, and the auxiliary encodeValues traversal equals map encodeValue by encodeValues_eq_map."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "encode_refs_def",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/DecisionEncoding/Encoding.lean",
+  "lean_name": "encodeRefs",
+  "statement_status": "reviewed_fmap_as_finite_support_result",
+  "fmap_as_finite_support_result": true,
+  "reviewer": "Source comparison: Compared encode_refs in flat_pattern_install_relation_probe.out: the finite map has exactly the in-bounds reference-valued store entries and maps each index to the encoded reference value. The lookup witness compares its canonical finite-support carrier with a HOL-shaped FUN_FMAP domain and value function, including the arbitrary fallback."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "decode_test_simulation",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/DecisionEncoding.lean",
+  "lean_name": "decodeTest_simulation",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared decode_test_simulation in flat_pattern_install_relation_probe.out: the independent encoded value and its equality to the source value encoding are retained in the three-conjunct premise, with pureEvalTo in the original premise and conclusion. FlatSem evaluation inherits reals_as_rational_cuts."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "decode_pos_simulation",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/DecisionEncoding.lean",
+  "lean_name": "decodePos_simulation",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": ["encodeRefs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared decode_pos_simulation in flat_pattern_install_relation_probe.out: the original quantified position, expression and value, conjunctive premise and existential encoded-result and pure-evaluation conclusion match. The imported reviewed encodeRefs represents the computed HOL finite map, and FlatSem evaluation inherits reals_as_rational_cuts."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "decode_guard_simulation",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/DecisionEncoding.lean",
+  "lean_name": "decodeGuard_simulation",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": ["encodeRefs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared decode_guard_simulation in flat_pattern_install_relation_probe.out: the universally quantified boolean, original conjunctive premise and pure decoded-guard evaluation match. The imported reviewed encodeRefs represents the computed HOL finite map, and FlatSem evaluation inherits reals_as_rational_cuts."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "decode_dtree_simulation",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/DecisionEncoding.lean",
+  "lean_name": "decodeDtree_simulation",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": ["encodeRefs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared decode_dtree_simulation in flat_pattern_install_relation_probe.out: the original conjunctive premise and evaluation of the success lookup or default branch match, including the explicit inner option match. The imported reviewed encodeRefs represents the computed HOL finite map, and FlatSem evaluation inherits reals_as_rational_cuts."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
   "hol_name": "evaluate_Bool",
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/NaiveMatch.lean",
   "lean_name": "evaluate_bool",
