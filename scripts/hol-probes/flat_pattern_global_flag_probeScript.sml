@@ -129,3 +129,7 @@ val _ = show_thm "decode_test_definition=" flat_patternTheory.decode_test_def;
 val _ = show_thm "simp_guard_definition=" flat_patternTheory.simp_guard_def;
 val _ = show_thm "decode_guard_definition=" flat_patternTheory.decode_guard_def;
 val _ = show_thm "decode_dtree_definition=" flat_patternTheory.decode_dtree_def;
+val _ = show_thm "encode_pat_definition=" flat_patternTheory.encode_pat_def;
+val _ = show_thm "naive_match_definition=" flat_patternTheory.naive_pattern_match_def;
+val _ = show_thm "naive_matches_definition=" flat_patternTheory.naive_pattern_matches_def;
+val _ = show_thm "max_dec_name_definition=" flat_patternTheory.max_dec_name_def;

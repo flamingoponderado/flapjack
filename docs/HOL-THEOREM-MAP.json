@@ -45,18 +45,18 @@
   "hol_name": "naive_pattern_matches_correct",
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/NaiveMatch.lean",
   "lean_name": "naivePatternMatches_correct",
-  "statement_status": "pending_statement_review",
+  "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared naive_pattern_matches_correct in flat_pattern_install_relation_probe.out: the universally quantified generated expression and match result remain independent, with both defining equations and the pure-evaluation and non-type-error premises in the original conjunction; each result case returns the original evaluation. Evaluation inherits reals_as_rational_cuts. Pending review of the naive_pattern_match and naive_pattern_matches definition carriers."
+  "reviewer": "Compared naive_pattern_matches_correct in flat_pattern_install_relation_probe.out: the universally quantified generated expression and match result remain independent, with both defining equations and the pure-evaluation and non-type-error premises in the original conjunction; each result case returns the original evaluation. Evaluation inherits reals_as_rational_cuts."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
   "hol_name": "evaluate_compile_pat_rhs",
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/BranchEvaluation.lean",
   "lean_name": "evaluate_compilePatRhs",
-  "statement_status": "pending_statement_review",
+  "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared evaluate_compile_pat_rhs in flat_pattern_install_relation_probe.out: all seven conjunctive premises, the updated environment function, independent input environment carrier and existential related result environment match. The single-field environment is reconstructed after the type-changing update; evaluation inherits reals_as_rational_cuts. Pending review of the max_dec_name_def carrier."
+  "reviewer": "Compared evaluate_compile_pat_rhs in flat_pattern_install_relation_probe.out: all seven conjunctive premises, the updated environment function, independent input environment carrier and existential related result environment match. The single-field environment is reconstructed after the type-changing update; evaluation inherits reals_as_rational_cuts."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
@@ -11629,20 +11629,12 @@
     "reviewer": "Compared all typed polymorphic option clauses: NONE imposes no restriction and two SOME lists use the generic source membership filter."
   },
   {
-    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Encode.lean",
-    "lean_name": "encodePat_pcon_source",
-    "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
-    "hol_name": "encode_pat_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Compared the typed constructor conjunct: arbitrary optional constructor/type-group tag and child-pattern list, the three source tag cases retain the constructor and constructor-list but drop the type-group id, and children use MAP encode_pat. The checked helper connects this to the executed recursive list traversal. Pending review of the encode_pat_def carrier and any referenced FlatPattern definitions."
-  },
-  {
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Patterns.lean",
     "lean_name": "compilePats_source",
     "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
     "hol_name": "compile_pats_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Compared the complete typed wrapper: all seven source inputs, original branch map, naive ZIP branch, zero-based MAPi decision rows, pattern_comp call, and fromList branch tree passed to decode_dtree. The theorem uses the executed compiler; source correspondence of the constituent passes remains a separate obligation. Pending review of the encode_pat_def carrier and any referenced FlatPattern definitions."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete typed wrapper: all seven source inputs, original branch map, naive ZIP branch, zero-based MAPi decision rows, pattern_comp call, and fromList branch tree passed to decode_dtree. The theorem uses the executed compiler; source correspondence of the constituent passes remains a separate obligation."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/CompileOrder.lean",
@@ -13640,8 +13632,8 @@
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml", "hol_name": "set_globals_naive_pattern_matches",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalInvariants.lean", "lean_name": "setGlobals_naivePatternMatches",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Compared source lines 2033-2080 and inferred types captured in flat_pattern_global_flag_probe.out. Global bags have HOL num -> num carrier. The empty scrutinee-bag premise and the bag bound on the naive branch chain match. HOL subbag on num -> num multiplicities is expressed pointwise by forall key. Pending review of the naive_pattern_match and naive_pattern_matches definition carriers."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 2033-2080 and inferred types captured in flat_pattern_global_flag_probe.out. Global bags have HOL num -> num carrier. The empty scrutinee-bag premise and the bag bound on the naive branch chain match. HOL subbag on num -> num multiplicities is expressed pointwise by forall key."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml", "hol_name": "set_globals_compile_pats",
@@ -13676,8 +13668,8 @@
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml", "hol_name": "set_globals_naive_pattern_match",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalInvariants.lean", "lean_name": "setGlobals_naivePatternMatch",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Compared source lines 1952-2023 and inferred types in flat_pattern_global_flag_probe.out. Global bags have the HOL num -> num carrier, and traces, expression, pattern and decision carriers match the tagged syntax. EVERY is represented by membership quantification over pattern-expression pairs, with an empty bag required of each second component. Pending review of the naive_pattern_match and naive_pattern_matches definition carriers."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 1952-2023 and inferred types in flat_pattern_global_flag_probe.out. Global bags have the HOL num -> num carrier, and traces, expression, pattern and decision carriers match the tagged syntax. EVERY is represented by membership quantification over pattern-expression pairs, with an empty bag required of each second component."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
@@ -13714,14 +13706,14 @@
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml", "hol_name": "esgc_free_naive_pattern_match",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalInvariants.lean", "lean_name": "esgcFree_naivePatternMatch_hol",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Compared source lines 2163-2231 and inferred types in flat_pattern_global_flag_probe.out. Trace, flat expressions, patterns, decision-test and guard carriers match the corresponding definitions. EVERY over the mapped second components is rendered as membership quantification. Pending review of the FlatProps esgc_free_def carrier and any referenced FlatPattern definitions."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 2163-2231 and inferred types in flat_pattern_global_flag_probe.out. Trace, flat expressions, patterns, decision-test and guard carriers match the corresponding definitions. EVERY over the mapped second components is rendered as membership quantification."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml", "hol_name": "esgc_free_naive_pattern_matches",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalInvariants.lean", "lean_name": "esgcFree_naivePatternMatches_hol",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Compared source lines 2163-2231 and inferred types in flat_pattern_global_flag_probe.out. Trace, flat expressions, patterns, decision-test and guard carriers match the corresponding definitions. The source premise is EVERY on the input, default, and mapped branch expressions; membership quantification expresses the same condition. Pending review of the FlatProps esgc_free_def carrier and any referenced FlatPattern definitions."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 2163-2231 and inferred types in flat_pattern_global_flag_probe.out. Trace, flat expressions, patterns, decision-test and guard carriers match the corresponding definitions. The source premise is EVERY on the input, default, and mapped branch expressions; membership quantification expresses the same condition."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml", "hol_name": "make_varls_esgc_free",
@@ -111284,8 +111276,8 @@
     "lean_name": "maxDecName",
     "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
     "hol_name": "max_dec_name_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source definition transcribed; typed HOL capture and full statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared max_dec_name_definition in flat_pattern_global_flag_probe.out: both list clauses and the maximum over the reviewed decNameToNum agree for arbitrary MlString names."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Names.lean",
@@ -111396,8 +111388,8 @@
     "lean_name": "encodePat",
     "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
     "hol_name": "encode_pat_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared encode_pat_definition in flat_pattern_global_flag_probe.out and the reviewed flat/pattern syntax carriers: every pattern case agrees; encodePats_eq_map proves the recursive list traversal, and Option.map retains exactly the constructor tag and optional constructor list."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Helpers.lean",
@@ -113202,16 +113194,16 @@
     "lean_name": "naivePatternMatch",
     "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
     "hol_name": "naive_pattern_match_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed and termination kernel-checked; typed HOL capture and full statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared naive_match_definition in flat_pattern_global_flag_probe.out: every worklist and pattern clause agrees, including both constructor-tag cases, zero-based MAPi child projections, and the reference projection. List.mapIdx is the same indexed traversal; smartIf and mkBool are reviewed source operations."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/NaiveTotal.lean",
     "lean_name": "naivePatternMatches",
     "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
     "hol_name": "naive_pattern_matches_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed and termination kernel-checked; typed HOL capture and full statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared naive_matches_definition in flat_pattern_global_flag_probe.out: the empty case returns the default, and each branch uses the single-pattern test and recursively ordered remainder with smartIf."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/CompileTotal.lean",
