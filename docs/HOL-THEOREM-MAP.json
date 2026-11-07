@@ -13986,6 +13986,15 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "adjust_oracle_ev_decs",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleInduction.lean",
+    "lean_name": "adjust_oracle_ev_decs",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared adjust_ev_decs_replay in source_eval_oracle_adjust_probe.out, obtained by the original local SPEC/SIMP construction: the full compiler-preservation premise, clock-specialized declaration evaluation, oracle-insertion and non-type-error premises, resulting oracle invariant and adjusted evaluation match. Evaluation inherits reals_as_rational_cuts."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
     "hol_name": "adjust_oracle_semantics_prog",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleInduction.lean",
     "lean_name": "adjust_oracle_semantics_prog",
@@ -14280,8 +14289,8 @@
     "hol_name": "mk_init_eval_state_def",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs.lean",
     "lean_name": "mkInitEvalState",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed definitions and theorem captured in source_eval_oracle_adjust_probe.out; compiler instance datatype, source AST and value carriers, and choice correspondence require review."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared init_eval in source_eval_oracle_adjust_probe.out: the EvalDecs carrier contains the reviewed compiler conversion, initial encoded configuration, (0, 0, 1) environment counter and declaration decoder. The positional Lean fields match the reviewed EvalDecsState field order; compiler instance and choice carriers are reviewed. This noncomputable proof-side definition is not yet used by an executable path."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",

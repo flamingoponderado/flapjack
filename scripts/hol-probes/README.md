@@ -482,7 +482,7 @@ the complete carrier correspondence remains under review.
 
 `source_to_source_proof_probe.out` captures the source-to-source pass definition and its inferred function type, plus the original semantics and oracle-adjustment theorems.
 
-`source_eval_oracle_adjust_probe.out` captures the source evaluator's compiler-instance field types, conversion and oracle-adjustment definitions, the adjustment/insertion identity, the evaluator and program-semantics adjustment theorems, and the mutual evaluator induction theorem with inferred types.
+`source_eval_oracle_adjust_probe.out` captures the source evaluator's compiler-instance field types, conversion and oracle-adjustment definitions, the adjustment/insertion identity, the evaluator and program-semantics adjustment theorems, and the mutual evaluator induction theorem with inferred types. It also replays the original construction of the local clock-specialized declaration theorem.
 
 `source_eval_adjust_local_probe.out` captures inferred types of the original script's local oracle-adjustment lemmas as typed terms. These local lemmas are not exported by the HOL theory; this capture does not replay their proofs.
 

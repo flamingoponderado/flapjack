@@ -1,5 +1,5 @@
-load "source_evalProofTheory";
-open HolKernel Parse boolLib bossLib;
+load "preamble"; load "source_evalProofTheory";
+open HolKernel Parse boolLib bossLib preamble;
 val _ = Globals.linewidth := 1000000;
 val _ = Globals.show_types := true;
 fun show_thm label th =
@@ -22,3 +22,9 @@ val _ = show_type "ci_config_domain_type=" ``\ci. ci.config_dom``;
 val _ = show_type "ci_decs_value_type=" ``\ci. ci.decs_v``;
 val _ = show_type "ci_decs_domain_type=" ``\ci. ci.decs_dom``;
 val _ = show_type "ci_initial_type=" ``\ci. ci.init_state``;
+val adjust_ev_decs = source_evalProofTheory.adjust_oracle_evaluate
+  |> UNDISCH |> CONJUNCTS |> List.last |> DISCH_ALL
+  |> SIMP_RULE bool_ss [PULL_FORALL]
+  |> Q.SPEC `s with clock := k`
+  |> SIMP_RULE (srw_ss ()) [];
+val _ = show_thm "adjust_ev_decs_replay=" adjust_ev_decs;

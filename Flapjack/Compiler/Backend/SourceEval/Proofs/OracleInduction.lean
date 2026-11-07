@@ -224,6 +224,26 @@ theorem adjust_oracle_evaluate {Config F : Type} (compile : List Dec → List De
   · intro state env decs next result ⟨run, inserted, safe⟩
     exact evaluateDecsOracleFull ci f compile internal state env decs next result run inserted safe
 
+/-- HOL's local specialization of the declaration component at a chosen clock. -/
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_ev_decs"]
+theorem adjust_oracle_ev_decs {Config F : Type} (compile : List Dec → List Dec)
+    (state : State F) (clock : Nat) (ci : CompilerInstance Config) (f : List Dec → List Dec) :
+    ∀ (env : SemEnv Value) (decs : List Dec) (next : State F)
+      (result : Result (SemEnv Value) Value),
+      (∀ (s : State F) (e : SemEnv Value) (ds : List Dec) (s' : State F)
+        (res : Result (SemEnv Value) Value),
+        evaluateDecs s e ds = (s', res) ∧ res ≠ .err (.abort .typeError) →
+        evaluateDecs s e (compile ds) = (s', res)) →
+      evaluateDecs { state with clock := clock } env decs = (next, result) ∧
+        isInsertOracle ci f state.evalState ∧ result ≠ .err (.abort .typeError) →
+      isInsertOracle ci f next.evalState ∧
+        evaluateDecs { { state with clock := clock } with
+          evalState := adjustOracle ci (compile ∘ f) state.evalState } env decs =
+          ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result) := by
+  intro env decs next result preserves ⟨run, inserted, safe⟩
+  exact (adjust_oracle_evaluate compile ci f preserves).2.2
+    { state with clock := clock } env decs next result ⟨run, inserted, safe⟩
+
 /-- Oracle adjustment preserves program observations under the original
 declaration-compiler preservation and non-failure hypotheses. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_semantics_prog"]
@@ -252,8 +272,8 @@ theorem adjust_oracle_semantics_prog {Config F : Type} (compile f : List Dec →
         change ∃ k, (evaluateProgWithClock state env k program).2 = .err (.abort .typeError)
         refine ⟨clock, ?_⟩
         simp [evaluateProgWithClock, run, bad]
-      have target := ((adjust_oracle_evaluate compile ci f preserves).2.2
-        { state with clock := clock } env program next result ⟨run, inserted, safe⟩).2
+      have target := (adjust_oracle_ev_decs compile state clock ci f env program next result
+        preserves ⟨run, inserted, safe⟩).2
       simpa [evaluateProgWithClock, run] using congrArg (fun p => (p.1.ffi, p.2)) target
   cases outcome <;> simpa only [semanticsProg, observations] using source
 
