@@ -1,5 +1,181 @@
 # Pancake parity-testing workflow
 
+For a pinned CakeML oracle, build from a clean checkout of the `cakeml`
+submodule revision in `/var/tmp/flapjack-cakeml-oracle`, using a built HOL
+checkout at the `HOL` submodule revision. Run
+`HOL4=/path/to/built/HOL scripts/build-pinned-cake.sh`; the script checks both
+source revisions and the resulting executable's embedded version. Set
+`CAKEML_BUILD_DIR` to choose another persistent build directory. The reference
+submodules in this repository remain read-only.
+
+The fixed source corpus includes programs combining array mutation with
+escaping closures and exception handlers, overlapping byte-array copies, and
+64-bit word operations. Run the complete corpus against the pinned compiler
+with `python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --corpus`.
+This compares complete compiler output, diagnostics, and exit status; it is
+not a general equivalence proof.
+
+At `86a71e469b`, a further 40 generated nested programs and 60 structured
+programs with varied options matched the pinned compiler's complete output,
+diagnostics, and exit status:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --rich --seed 11050731 --count 40 --timeout 90
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-options --seed 11051109 --count 60 --timeout 90
+```
+
+After merging `main` at `d5f6c5326f`, the rebuilt `cake` matched all 143 fixed
+corpus cases, including array updates holding tree nodes, closures, and
+aliased nested arrays. A further 40 generated programs with varied backend
+options also matched:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --corpus --timeout 90
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-options --seed 116834111 --count 40 --timeout 90
+```
+
+After merging `main` at `efc992d38`, the executable also matched 40 generated
+nested programs, 50 structured programs with backend options, and 100
+display mutations:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --rich --seed 116833701 --count 40 --timeout 90
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-options --seed 116833702 --count 50 --timeout 90
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --display-mutations --seed 116833703 --count 100 --timeout 90
+```
+
+On 2026-11-04, 40 generated nested-closure programs and 80 structured
+programs with varied backend options matched the pinned executable's complete
+output. All 38 structured templates also matched, including escaping mutual
+recursion, higher-order calls, exceptions, and recursive datatypes:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --rich --seed 11049187 --count 40 --timeout 90
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-options --seed 11049190 --count 80 --timeout 90
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-all --seed 11049189 --timeout 90
+```
+
+On 2026-11-03, the pinned bootstrap completed with one HOL build job. Its
+build-produced executable passed `scripts/check-cake-help.py --pinned-reference` and
+`scripts/check-cake-pancake-parity.py --reference`, including the latter's 38
+ASCII lexical diagnostics. These are finite regression checks, not a proof of
+compiler equivalence.
+
+The same executable passed all 236 cases of
+`scripts/check-cake-cli-parity.py --check-pinned-reference`, comparing each
+case's complete stdout, stderr, and exit status directly with Flapjack. It
+also passed all 170 cases of `scripts/check-cake-pinned-parity.py` with
+`--check-reference` and the same direct comparison.
+
+On 2026-11-04, further pinned-oracle comparisons matched complete stdout,
+stderr, and exit status for 40 generated programs, 500 byte mutations, and
+120 configuration mutations:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --rich --seed 11052731 --count 40 --timeout 90
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --byte-mutations --seed 11053011 --count 500 --timeout 60
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --config-mutations --seed 11053012 --count 120 --timeout 90
+```
+
+Two additional 300-case samples exercised display output and mutated
+S-expression input; both matched the pinned compiler's complete output,
+diagnostics, and exit status:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --display-mutations --seed 11060811 --count 300 --timeout 60
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --sexp-mutations --seed 11060812 --count 300 --timeout 60
+```
+
+A further structured-options run compared 80 generated programs and varied
+backend flags with the pinned executable; complete output, diagnostics, and
+exit status all matched:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-options --seed 11061817 --count 80 --timeout 90
+```
+
+Two further runs against that executable matched complete output, diagnostics,
+and exit status for 350 nested-source mutations and 45 structured programs
+with varied backend options:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /path/to/pinned/cake --deep-mutations --seed 8732401 --count 350 --timeout 60
+python3 scripts/fuzz-cake-source-parity.py --reference /path/to/pinned/cake --structured-options --seed 8732402 --count 45 --timeout 120
+```
+
+An additional run against the same bootstrap matched complete output and exit
+status for 300 S-expression mutations and 300 Unicode-source mutations:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /path/to/pinned/cake --sexp-mutations --seed 7304219 --count 300 --timeout 60
+python3 scripts/fuzz-cake-source-parity.py --reference /path/to/pinned/cake --unicode-mutations --seed 7304220 --count 300 --timeout 60
+```
+
+At frontend branch commit `622d24353`, the rebuilt `cake` executable matched
+complete output, diagnostics, and exit status for 200 nested-source mutations,
+700 arbitrary-byte mutations, and 80 structured programs with varied backend
+options:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --deep-mutations --seed 18802301 --count 200 --timeout 60
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --byte-mutations --seed 19949151 --count 700 --timeout 60
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-options --seed 18317309 --count 80 --timeout 90
+```
+
+At frontend branch commit `f5e8c421d`, the `cake` executable also matched
+the pinned original's complete stdout, stderr and exit status for 160 nested
+source mutations, 60 accepted structured programs with varied backend options,
+and 60 generated programs using the standard prelude:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --deep-mutations --seed 19301103 --count 160 --timeout 60
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-options --seed 19301104 --count 60 --timeout 120
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --rich --seed 19301105 --count 60 --timeout 90
+```
+
+These generated cases are finite evidence for those inputs, not a general
+output-equivalence proof.
+
+On 2026-11-03, another run of the local `cake` executable against the pinned
+original matched complete stdout, stderr, and exit status for 200 nested-source
+mutations and 40 generated programs using the standard prelude:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --deep-mutations --seed 19402421 --count 200 --timeout 60
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --rich --seed 19402422 --count 40 --timeout 90
+```
+
+On 2026-11-04, a further 60 structured programs with varied backend options
+matched the pinned original's complete stdout, stderr, and exit status:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-options --seed 19411104 --count 60 --timeout 120
+```
+
+Another run on 2026-11-04 matched the pinned original's complete stdout,
+stderr, and exit status for 80 generated prelude programs, 80 structured
+programs with varied backend options, and 120 nested-source mutations:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --rich --seed 11040817 --count 80 --timeout 90
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-options --seed 11040818 --count 80 --timeout 120
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --deep-mutations --seed 11040819 --count 120 --timeout 60
+```
+
+On 2026-11-04, the existing `cake` executable also matched the pinned
+original's complete stdout, stderr, and exit status for 160 configuration
+mutations, 180 nested-source mutations, and 40 generated programs with the
+standard prelude:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --config-mutations --seed 11040981 --count 160 --timeout 90
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --deep-mutations --seed 11040982 --count 180 --timeout 90
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --rich --seed 11040983 --count 40 --timeout 90
+```
+
+These comparisons cover the generated inputs only; they do not establish
+general output equivalence.
+
 Flapjack is a Lean port of the CakeML Pancake compiler. A regression test is
 useful for porting only when it corresponds to behavior of the original
 Pancake implementation. This applies to source-to-RISC-V tests and to tests
@@ -212,33 +388,20 @@ intent before being checked in. This is the repository's small, reproducible
 analogue of C-Reduce; it does not invoke arbitrary source transformations
 that might accidentally change the language category being tested.
 
-After shrinking, limit the Flapjack dump to one source-level function when the
-section name is already known:
-
-```sh
-python3 scripts/parity-debug.py CASE.pnk --out /tmp/debug --minimize \
-    --function _mpt_delete_node_body
-```
-
-The function filter applies to the Lean dump; the Cake/HOL dump remains the
-complete probe output so that the surrounding pass context is not lost.
-
-The same command also captures intermediate values from both implementations.
+The same command also captures CakeML's intermediate values.
 With `--minimize`, it shrinks the source before producing the final assembly
-or intermediate-stage dumps; the original input is retained as `case.pnk`, and
+or intermediate-stage dump; the original input is retained as `case.pnk`, and
 the witness used for the dumps is recorded as `comparison_source` in
 `comparison.json`.
-`flapjack-stages.txt` comes from `lake exe flapjack-debug`, while
 `cake-stages.txt` comes from the original HOL definitions through
 [`scripts/hol-probes/pancake-stage-probeScript.sml`](../scripts/hol-probes/pancake-stage-probeScript.sml).
-When `--minimize` is supplied, both stage dumps are run on the resulting
+When `--minimize` is supplied, the stage dump is run on the resulting
 `case.min.pnk`, not the original large input; `comparison.json` records that
 stage source explicitly.
 The stage sequence is the original `pan_simp`, `pan_structs`, `pan_globals`,
-`pan_to_crep`, `crep_to_loop`, and `loop_to_word` boundary. Compare matching
-stage records first; the first divergence identifies the pass that should be
-ported or repaired. The HOL stage capture requires a built HOL4/CakeML tree,
-but final artifacts and the Lean dump remain available without it.
+`pan_to_crep`, `crep_to_loop`, and `loop_to_word` boundary. The HOL stage
+capture requires a built HOL4/CakeML tree, but final artifacts remain
+available without it.
 
 For allocator discrepancies, set `PANCAKE_ALLOCATOR_PROBE=1` when running the
 HOL probe. Set `PANCAKE_ALLOCATOR_LABEL=66` (or another numeric Word label)
@@ -248,15 +411,6 @@ For any intermediate-stage investigation, also set `PANCAKE_STAGE_LABEL=258`
 (the numeric function label of interest). This filters the original
 `crep_to_loop` result before `loop_to_word`, avoiding multi-gigabyte dumps for
 large guests; it can be combined with the allocator probe.
-
-For a relocation or stored-length discrepancy after `loop_to_word`, use
-`flapjack-debug --lab-label LABEL CASE.pnk`. It prints only the selected
-source-shaped Lab section at the `initial`, `encoded`, `relabelled`, and
-`final` linker stages, including each line's stored length and byte position.
-The label is the numeric section name shown by the Lean stage dump; this
-compact view avoids rendering the complete linked program. Compare it with
-the CakeML `enc_sec_list`/`enc_secs_again` probe before changing relocation or
-padding code.
 
 For a larger campaign, preserve the complete finding directory produced by
 `parity-difffuzz.py --out ... --minimize` and then run `parity-debug.py` on its
@@ -275,27 +429,6 @@ This workflow concerns implementation parity and regression evidence. The
 validity and implications of theorems, including the still-parameterized
 top-level compiler-correctness boundary, are documented separately in
 [`SOUNDNESS.md`](SOUNDNESS.md).
-
-### Loop-to-Word route selection
-
-Output parity alone does not prove that the exact HOL route was selected. Run
-this finite route audit on the original-accepted extracted corpus and the pinned
-guest source:
-
-```sh
-python3 scripts/check-loop-to-word-routes.py --guest /path/to/guest.pp.pnk \
-  --out /tmp/loop-to-word-routes
-```
-
-Build `flapjack-debug` first. Its `--loop-to-word-routes` mode uses the same
-Crep-to-Loop runtime-image boundary and label base as the artifact compiler,
-then checks the actual `loopToWordCompFuncViaHOL` and
-`loopToWordCompParametersViaHOL` guards for every function. A failed guard
-prints its function label and fails the command. The runner records source
-hashes and per-program results in `results.json`, verifies the pinned guest
-source hash, and filters corpus programs using the original Cake compiler's
-acceptance. This evidence covers those concrete programs; universal
-parser/pipeline encodability remains a separate proof obligation.
 
 ## Pinned stateless guest builds
 
@@ -383,3 +516,731 @@ original Install/FFI register conventions. All 840 positive Boolean observations
 are true and all 120 negative guards are false. This is regression evidence,
 not a replay of the complete original proof or cross-language equivalence.
 Recursive/Call register-bound assembly remains separate unfinished work.
+
+On 2026-11-03, fresh-seed comparisons also matched 60 generated nested
+programs (`--rich --seed 364831 --count 60`) and 250 configuration mutations
+(`--config-mutations --seed 364832 --count 250`), including complete stdout,
+stderr, and exit status. These are finite comparisons against
+`/var/tmp/flapjack-pinned-cake`, not general equivalence proofs.
+
+On 2026-11-03, 70 fresh generated structured programs with varied backend
+options matched `/var/tmp/flapjack-pinned-cake` in complete stdout, stderr, and
+exit status (`--structured-options --seed 930218 --count 70 --timeout 60`).
+This finite comparison does not establish parity for arbitrary programs.
+
+On 2026-11-02, additional fresh-seed comparisons against
+`/var/tmp/flapjack-pinned-cake` matched 200 structured source programs and 40
+nested-expression source programs at complete output, as well as 200 Unicode
+source mutations and 500 mutated S-expression inputs (including diagnostics and
+exit status). These are finite tests, not a general parity guarantee:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured --seed 1075209 --count 200
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --rich --seed 903327 --count 40
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --unicode-mutations --seed 998143 --count 200
+python3 scripts/fuzz-cake-sexp-input.py --reference /var/tmp/flapjack-pinned-cake --seed 904188 --count 500
+```
+
+Seed `214381` also matched 80 compilations with varied backend options. The
+source corpus includes complete-output comparisons for array mutation,
+recursive datatypes, exception handling, higher-order calls, and Word64
+operations; rerun the corpus with `--corpus`:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --backend-options --seed 214381 --count 80 --timeout 60
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --corpus --timeout 60
+```
+
+The CakeML command has an exploratory complete-output regression suite:
+`lake build cake` followed by `python3 scripts/check-cake-cli-parity.py`.
+It checks the entire stdout and stderr (byte count and SHA-256), and exit
+status, for examples including the standard basis, FFI, arrays,
+Word64, recursion, datatypes and compilation without the prelude. The recorded
+reference binary identifies itself as CakeML
+`e8eca63affd1653105ca4b9cc2f5ca87a01cd0af` and HOL
+`a390cbabd3a4521bab4ee20281e3e42933a8a3ae`; it is **not** the pinned CakeML
+revision `857f0d98da8f8a3580f34423338e697809308ede`. The reference check
+verifies that the backend, parser, inferencer, basis, semantics, translator and
+CV translator directories are unchanged between those CakeML revisions. The
+compiler driver diff adds Pancake feature handling; its normal CakeML path is
+unchanged. These facts make the comparisons useful evidence, but the historical
+binary is not a pinned oracle and the hashes are not a cross-language proof.
+
+For an additional deterministic sample of generated integer, conditional,
+local-binding and closure programs, run
+`python3 scripts/fuzz-cake-source-parity.py --reference /path/to/pinned/cake`.
+The script verifies the reference compiler's embedded CakeML and HOL
+revisions, then compares complete output bytes, diagnostics and status. Its
+`--seed` and `--count` options select reproducible samples; a rejection or
+timeout fails the run. Generated-program runs with seed `49127` (25 cases),
+seed `96317` (100 cases), seed `84513` (60 cases), and seed `139047` (40 cases)
+matched the pinned compiler. This is sampled evidence, not full-language parity.
+Use `--structured` to generate accepted programs combining datatypes, pattern
+matches, nested closures, exceptions, polymorphism, and modules without the
+prelude. Seed `857196` matched the pinned compiler on 100 complete outputs:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured --seed 857196 --count 100
+```
+
+Use `--structured-all` to exercise every structured template once with the
+same generated constants. The templates include polymorphic datatypes, nested
+constructor patterns, mutually recursive captured functions, qualified
+exceptions, and local shadowing. The original 26 templates matched the pinned
+compiler with seed `78124`:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-all --seed 78124
+```
+
+The expanded 34-template set also covers accumulator-based tree traversal,
+polymorphic composition, recursive partitioning, exception payload patterns,
+module shadowing, list patterns, and mutually recursive captured functions.
+All 34 matched complete output and status with seed `5151926`:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-all --seed 5151926 --timeout 90
+```
+
+At frontend commit `a5a36e7b7`, 200 configuration mutations and 100 structured
+programs with varied backend options also matched full output, diagnostics,
+and exit status against the pinned compiler (seeds `6211837` and `31415927`).
+The 32 benchmark and bootstrap-source cases in
+`check-cake-benchmark-parity.py --check-reference` matched as well. These
+samples do not establish general parity. After expanding the templates, 60
+further structured-option cases matched with seed `9151926`.
+
+Use `--structured-options` to combine those programs with varied optimizer,
+allocator, garbage collector, and backend settings. Seed `71443` matched 70
+complete outputs:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-options --seed 71443 --count 70 --timeout 60
+```
+
+Use `--rich` for recursively generated integer programs that combine tuple
+patterns, nested local functions, higher-order closures, and shadowed bindings.
+These programs use the standard prelude, so the run checks complete assembly
+for accepted programs rather than only diagnostics for unbound arithmetic names.
+Seed `7438291` matched 40 complete outputs from the pinned compiler:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --rich --seed 7438291 --count 40
+```
+
+Further runs against the pinned compiler matched 60 rich programs with seed
+`4198271` and 70 structured programs with varied backend options using seed
+`4839217`. Both runs compare complete output bytes, diagnostics, and status:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --rich --seed 4198271 --count 60 --timeout 60
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-options --seed 4839217 --count 70 --timeout 60
+```
+
+An additional rich run with seed `522901` matched 40 complete outputs, and a
+deep-mutation run with seed `832661` matched output, diagnostics, and exit
+status for 1,000 accepted and rejected inputs. A second deep-mutation run with
+seed `931275` matched 500 inputs. Rich seed `7346295` matched 100 further
+complete outputs. These remain sampled evidence.
+
+`scripts/fuzz-cake-frontend.py --composed-config-cases 50 --compile-seed 7723019`
+also generates standard-basis programs that combine closures, mutable state,
+datatypes, and exception handlers with varied backend options. It compares the
+complete output, diagnostics, and exit status with a pinned compiler supplied
+via `--reference`. The 50 cases for that seed matched; the option adds cases to
+the script's other selected checks.
+
+An additional composed-options run with compile seed `593137` matched 40
+complete outputs, including programs that combine closures, mutation, and
+datatypes. These observations are bounded parity evidence, not a proof for
+all programs or compiler options.
+
+Use `--backend-options` to compile a closure-capturing program without the
+prelude while varying combinations of closure, BVL, allocation, GC, and stack
+options. It reports the exact options with any failure:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --backend-options --seed 33194 --count 80
+```
+
+Seed `287601` also matched 80 backend-option cases against the pinned compiler;
+seeds `93171`, `8740163`, `381762` and `73150` each matched 100. Rich-program seed
+`627118` matched 40 complete outputs. Deep-mutation seed `90311` matched 500
+cases, and byte-mutation seed `782123` matched 700 cases, including diagnostics
+and exit status.
+
+Use `--config-mutations` to compare successful and rejected combinations of
+numeric, Boolean, allocator and GC options, including repeated options and
+invalid values. It checks complete output, diagnostics and exit status with
+the prelude excluded:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --config-mutations --seed 482906 --count 200
+```
+
+This samples configuration handling; it does not establish parity for all
+combinations or programs. Seed `482906` matched 200 cases, including 15 with
+repeated option names. A separate structured-source run (seed `931816`, 60
+cases) and arbitrary-byte mutation run (seed `936331`, 500 cases) also matched
+the pinned compiler.
+
+Use `--display-mutations` to compare `--types`, `--print_sexp`, their
+combination, and S-expression output with type inference disabled. The input
+generator mutates nested declarations, Unicode and arbitrary bytes, and compares
+successful output and rejection diagnostics, including exit status. Seed `811091` matched 500
+cases against the pinned compiler; seed `6439001` matched 1,000:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --display-mutations --seed 811091 --count 500
+```
+
+Use `--sexp-mutations` to exercise the bootstrap input path. It first asks the
+pinned compiler to print S-expressions for several source programs, then
+replaces individual atoms, including constructor names and numeric fields.
+It compares complete output and exit status in type, S-expression display,
+and inference-disabled compilation modes; both accepted and rejected inputs
+are covered. Seed `67129643` matched 300 cases, including accepted and rejected
+inputs in all three modes:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --sexp-mutations --seed 67129643 --count 300
+```
+
+Seeds `875663` and `12057389` each matched 500 additional cases, with accepted
+and rejected inputs in each of the three modes.
+
+Add `--mutations` to apply reproducible single-character edits to small
+declarations with the prelude excluded. This mode compares successful output
+and rejection diagnostics alike, including complete stderr and exit status;
+timeouts still fail the run. For example:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --mutations --seed 2377 --count 180
+```
+
+Use `--deep-mutations` in place of `--mutations` to apply up to three edits to
+nested declarations, pattern matches, exceptions, strings and comments. It
+also compares the full output for any mutated program that compiles. A run with
+seed `35791` and a second run with seed `46821` each matched 200 cases against
+the pinned compiler. Seeds `76241` and `97631` each matched another 120 cases;
+seed `651291` matched 600 cases. Seeds `803471`, `723987`, and `419023`
+matched another 200, 300, and 1,000 cases respectively. Seed `729081` matched
+200 cases; seed `1973104` matched 200 more. Single-edit mutation
+seed `945701` matched 400 cases.
+Deep-mutation seed `49730019` matched 400 further cases, and seed `782349`
+matched 1,200 cases.
+
+Use `--unicode-mutations` to mutate source containing multibyte characters,
+comments, strings and diagnostic locations. Seed `325579` matched 400 cases
+against the pinned compiler, comparing complete output, diagnostics and exit
+status for both accepted and rejected programs:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --unicode-mutations --seed 325579 --count 400
+```
+
+For source byte handling, `--byte-mutations` includes malformed UTF-8, NUL
+and other control bytes in and around literals, comments and declarations.
+Seed `7611927` matched the pinned compiler on 1,000 cases:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --byte-mutations --seed 7611927 --count 1000
+```
+
+The same checker has a fixed language-feature corpus covering literals,
+patterns, datatypes, exceptions, local bindings, closures, structures and
+large integers, as well as unbound-name diagnostics with the prelude excluded.
+It also compiles several programs with the standard prelude enabled, including
+recursive programs, byte-word conversion, exceptions and UTF-8 source:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --corpus
+```
+
+It checks each case's expected acceptance or rejection and compares complete
+output and status. The accepted cases include polymorphic datatypes, nested
+closures, type annotations, tuple patterns, qualified names and exception
+handlers. Additional cases cover shadowing, nested structures, polymorphic
+functions, datatype constructors inside structures and exception patterns,
+higher-order closures, aliased nested arrays, overlapping byte-array copies,
+mutual recursion, Unicode strings, hexadecimal literals, character escapes
+and rejected syntax; these
+exercise compilation as well as parsing and inference. It is a
+finite regression sample, not evidence for all programs using those forms.
+The basis-enabled cases also retain observable calls through string concatenation,
+list mapping and reversal, integer formatting, and vector construction and indexing.
+The corpus also compares full type-error diagnostics for duplicate pattern
+variables, recursive unification, constructor arguments, tuple patterns,
+qualified function application, and an error following UTF-8 source text.
+
+To recheck the recorded historical outputs when that exact binary is available,
+run `python3 scripts/check-cake-cli-parity.py --check-reference /path/to/cake`.
+Pass `--check-pinned-reference /path/to/pinned/cake` to additionally compare
+the pinned compiler's complete stdout and stderr byte for byte and its exit
+status with Flapjack's output, after checking the capture hashes.
+`--record-reference /path/to/cake` checks the same provenance before replacing
+the recorded hashes. A pinned executable comparison is still required for the
+final parity claim. The suite also covers selected parser and type errors, including
+value restrictions and constructor-arity diagnostics; other
+diagnostic paths remain incomplete. Its `--reg_alg` cases compare complete
+assembly for allocator modes 0 through 4, including first-option precedence.
+The linear-scan mode is substantially slower in the Lean executable. To compare
+and time the complete output for an allocator setting of 4 or higher against a
+pinned compiler, run:
+
+```sh
+python3 scripts/check-cake-linear-scan-parity.py --reference /var/tmp/flapjack-pinned-cake
+```
+
+The script accepts `--alg` and
+`--input` for other settings and source programs. A sampled `--reg_alg=5` run
+on `val x = 1;` took about 11 seconds in Flapjack and 0.44 seconds in the
+pinned compiler; both emitted the same 521,616 bytes. Previous list-backed runs
+took about 69–101 seconds. The array-backed implementation in
+`LinearScan/ProductionState.lean`, `ProductionIntervals.lean`,
+`ProductionSorting.lean`, `ProductionSteps.lean`, and `ProductionTopLevel.lean`
+has a kernel-checked equality to the list-backed allocator, including errors.
+Compiled word-to-word callers use this implementation through that equality;
+the logical allocator definition remains list-backed. A full-prelude linear-scan
+case is also recorded in the pinned CLI suite. Separate
+`--gc` cases compare no GC, simple GC, generational lists, duplicate options,
+and malformed options.
+The suite also checks ignored unrecognized arguments, including the short `-h`
+argument, in both type-reporting and complete RISC-V assembly output.
+Programs with observable calls also cover string implode and substring, byte-to-integer conversion, array length, integer division, and recursive Fibonacci.
+Type-reporting cases cover the other three supported target names and first-target precedence; invalid-target-only errors are compared byte for byte. RISC-V remains the supported compilation target.
+Additional basis-enabled examples retain observable calls through nested
+closures, datatype matches, type aliases, byte escapes, hexadecimal literals,
+and multi-argument functions; each is compared over the full assembly output.
+`scripts/check-cake-help.py` separately compares the complete `--help` output
+and its flag precedence with the pinned driver source. Interactive modes remain
+unsupported; their precedence over help is preserved by reporting that limit.
+Both compilers accept `--version` with the same flag precedence. The pinned
+compiler prints its own build date and Poly/ML provenance; Flapjack instead
+reports its Lean version and pinned CakeML and HOL reference revisions. Version
+text is therefore build-specific and is not compared byte for byte.
+The feature-query checks cover every feature in the pinned NEWS file, including
+disabled entries, duplicate flags, and precedence over configuration errors.
+
+The `cake --pancake --target=riscv` route uses the native Pancake compiler.
+`python3 scripts/check-cake-pancake-parity.py --reference /var/tmp/flapjack-pinned-cake`
+compares complete output for successful programs, selected allocator and
+backend options, returning entry points and exported functions. It also compares
+selected location-bearing static errors and warnings, and ASCII lexical errors,
+including `--no_warn`, with the pinned compiler. Pancake grammar-error
+diagnostics, non-ASCII lexical-error rendering, exploration, and perf callgraph
+mode remain unsupported in this route; the driver reports those limits
+explicitly. Other static diagnostic cases still need parity coverage.
+
+`python3 scripts/check-cake-pinned-parity.py` checks additional successful,
+basis-enabled programs against complete-output captures from the pinned
+compiler, using output lengths and SHA-256 hashes. Pass
+`--check-reference /var/tmp/flapjack-pinned-cake` to also run the pinned
+executable and compare stdout and stderr directly byte for byte, together with
+the exit status. Pass `--case NAME` (repeatable) to rerun selected captured
+cases; recording reference data always requires the complete corpus. The cases
+exercise observable array and byte-array updates,
+strings, closures, exceptions, lists, vectors, integers and words, plus polymorphic trees,
+local and module declarations, recursive list matches, and tuple patterns. It
+also checks complete no-prelude RISC-V output for mutual recursion, a curried
+conditional, recursive datatypes with mixed constructor arities, and overlapping
+tuple patterns. The suite also checks recursive list and tree constructors with
+TMC enabled, the list case with TMC disabled, and combinations with splitting
+disabled, a zero inline threshold, and three tag bits. These successful cases
+are compared with the pinned executable.
+An additional generated run with `--compile-seed 1937` compared complete
+stdout, stderr, and exit status for eight arithmetic programs, eight diverse
+programs, four extended programs, and three backend-option combinations; all
+matched the pinned executable. This finite run does not establish general
+output parity.
+The suite covers list reversal and folding, an array update at the first slot,
+character extraction, datatype payload matches, substring output, and a local
+function that captures its enclosing argument. It
+also covers short-circuit Boolean control, partial application, constructor
+matching on triples, escaped byte lookup, captured let bindings, large signed
+products, and datatype matches through a module. It
+also covers mutable references, captured reference updates, nested exception
+handlers, datatypes with several constructor arities, array tabulation,
+word shifts, local tail recursion, division exception handling, and list mapping. It
+also covers Fibonacci recursion, a fold with arithmetic, string-valued pattern
+branches, a reused captured function, nullary exception handling, two payload
+constructors, an array update after tabulation, and a curried closure. It
+also compares complete assembly for a caught out-of-bounds array access and
+word shifts through the top bit of a 64-bit word. Nested list and tuple
+patterns, signed division and remainder, and addition of a large integer
+through a function are also checked with observable outputs. Further cases
+cover a character roundtrip at 255, concatenated lists, paired signed division
+and remainder, byte-word bitwise operations, overlapping byte-array copying,
+tuple-bearing exception handlers, and division of a negative large integer. It
+also checks a string-bearing datatype branch, recursive list construction and
+folding, a 255-byte array update, vector concatenation, a curried closure that
+captures a tuple-derived value, and nested recursive list matches. It
+also checks recursive array filling, independently captured closures,
+sequential calls that mutate the same reference, and a transitive module
+dependency, each using complete assembly output. It
+also checks that
+`--types` takes precedence over `--print_sexp` and `--explore` in either flag
+order, including parse and type failures.
+It also checks `--print_sexp` output for declarations, modules, byte escapes,
+the full prelude, S-expression input, and parse and type errors. The `--explore`
+cases verify parse and type errors before backend exploration and compare the
+complete output of successful RISC-V explorations through lab filtering, with
+and without the standard prelude and with closure optimizations disabled.
+The separate `scripts/check-cake-*-explore.py` checks compare each stage group
+against the pinned executable. Use
+`--check-reference /path/to/pinned/cake` to rerun the original alongside
+Flapjack, or `--record-reference /path/to/pinned/cake` to regenerate captures;
+both commands verify the reported CakeML and HOL revisions. These finite
+comparisons are regression evidence, not a proof of output parity.
+
+The pinned CLI corpus also covers byte-word overflow followed by a shift,
+recursive exception handling with reference updates, a nested module closure
+with shared mutable state, and the diagnostic for using a constructor as a
+function argument. Each case compares the complete output and exit status.
+A generated run with seeds 629 and 3083 additionally matched 1,100 parser and
+type-checking cases, 28 complete RISC-V programs, and four composed programs
+with varied backend options.
+
+For deterministic generated inputs, run
+`python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake`
+after building `cake`. The script verifies the pinned compiler provenance and
+compares exit status and complete stdout and stderr for generated parser and
+type-checking inputs, generated S-expression output, nested expression and
+lexical edge cases, random token sequences in both output modes, arbitrary byte input in expressions, strings and comments,
+decimal string and character escapes for all 256 bytes, and successful programs
+compiled to RISC-V, including generated datatype,
+closure, exception, reference, module, recursion, and mutable array examples,
+including byte-array access, tabulation and recursive array traversal, word
+shifts, local tail recursion, division exception handling, list mapping, nested closures,
+short-circuit mutation, recursive list folds, vector tabulation, and nested exception
+handlers. It also compares generated type and datatype declarations, pattern contexts with exception
+handlers and constructor scopes, type annotations across value, function,
+local, expression and datatype contexts with the standard basis enabled, and successful compilation with
+combinations of backend options, including allocator 3 and explicitly sized
+generational garbage collection. Nine fixed integration programs exercise mutable
+arrays, large integer factorial, list append, exceptions, string concatenation,
+floating point, mutual recursion, and vectors. It also compares a matrix of malformed and
+valid flag values and generated combinations, including duplicate flags and
+configuration-error precedence. Case counts can be changed with
+`--type-cases`, `--sexp-cases`, `--structured-cases`, `--lex-cases`,
+`--byte-cases`, `--raw-byte-cases`, `--declaration-cases`, `--handler-cases`, `--annotation-cases`, `--compile-cases`,
+`--compile-config-cases` (generated basis programs with varied optimization flags), `--rich-cases`, `--extended-cases`, `--integration-cases`, `--explore-cases`, `--token-cases`, `--config-cases`, and `--config-error-cases` (zero skips the
+option matrix). `--type-seed`, `--edge-seed`, and
+`--compile-seed` select reproducible random inputs. These samples do not prove
+general parity. A focused `--compile-config-cases 12 --compile-seed 477991`
+run also matched the pinned compiler. With compile seed `851673`, 20 rich,
+20 extended, and 20 composed programs also matched complete output. A fresh
+run with compile seed `9110371` matched another 20 programs in each of those
+three groups. Set
+`--raw-byte-cases=1536` to compare each byte in all
+three contexts under both output modes; larger counts add random byte strings.
+Set `--annotation-cases=320` to exhaust the annotation matrix; its order is
+shuffled deterministically from `--edge-seed`, and its entries include both
+successful programs and diagnostic errors.
+
+The optional `--composed-cases` generator uses its own random stream to exercise
+higher-order tree folds, function composition, captured mutable lists,
+exception-driven recursion and module-qualified constructors. It defaults to
+zero and does not change earlier generators' seeded outputs. The following run
+compared 15 programs, including every template, against the pinned compiler's
+complete RISC-V output, stderr and status:
+
+```sh
+python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake \
+  --compile-seed 587412 --composed-cases 15 --type-cases 0 --sexp-cases 0 \
+  --structured-cases 0 --lex-cases 0 --token-cases 0 --raw-byte-cases 0 \
+  --declaration-cases 0 --handler-cases 0 --annotation-cases 0 --cross-context-cases 0 \
+  --byte-cases 0 --config-error-cases 0 --compile-cases 0 --compile-config-cases 0 \
+  --rich-cases 0 --config-cases 0 --integration-cases 0
+```
+
+The optional `--extended-cases` generator exercises captured mutable references,
+accumulating and nested list recursion, datatype branches, exception handlers,
+and dependent modules. It uses a separate random stream, so existing seeds keep
+their previous generated cases. On 2026-10-30, all 18 cases in the following
+run matched complete pinned RISC-V output, stderr and exit status:
+
+```sh
+python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake \
+  --compile-seed 601924 --extended-cases 18 --type-cases 0 --sexp-cases 0 \
+  --structured-cases 0 --lex-cases 0 --token-cases 0 --raw-byte-cases 0 \
+  --declaration-cases 0 --handler-cases 0 --annotation-cases 0 --byte-cases 0 \
+  --config-error-cases 0 --compile-cases 0 --rich-cases 0 --config-cases 0 \
+  --integration-cases 0
+```
+
+On 2026-10-30, a further 28 complete-output comparisons matched the pinned
+compiler (12 generated programs, 12 diverse programs and four backend option
+combinations):
+
+```sh
+python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake \
+  --compile-seed 862135 --edge-seed 33421 --type-cases 0 --sexp-cases 0 \
+  --structured-cases 0 --lex-cases 0 --token-cases 0 --raw-byte-cases 0 \
+  --declaration-cases 0 --handler-cases 0 --annotation-cases 0 --byte-cases 0 \
+  --config-error-cases 0 --compile-cases 12 --rich-cases 12 --config-cases 4
+```
+
+Another 2026-10-30 run compared complete RISC-V assembly and stderr for 20
+generated programs, 20 diverse programs and six backend option combinations;
+all matched the pinned executable. Reproduce it with:
+
+```sh
+python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake \
+  --compile-seed 794123 --edge-seed 231241 --type-cases 0 --sexp-cases 0 \
+  --structured-cases 0 --lex-cases 0 --token-cases 0 --raw-byte-cases 0 \
+  --declaration-cases 0 --handler-cases 0 --annotation-cases 0 --byte-cases 0 \
+  --config-error-cases 0 --compile-cases 20 --rich-cases 20 --config-cases 6
+```
+
+The optional `--explore-cases` generator compares complete explorer reports
+for the same diverse program templates, using a separate RNG seeded by
+`--compile-seed`. It defaults to zero because basis-enabled reports can exceed
+35 MB each. A 12-case run on 2026-10-30 matched the pinned compiler;
+it can be reproduced with:
+
+```sh
+python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake \
+  --compile-seed 932459 --explore-cases 12 --type-cases 0 --sexp-cases 0 \
+  --structured-cases 0 --lex-cases 0 --token-cases 0 --raw-byte-cases 0 \
+  --declaration-cases 0 --handler-cases 0 --annotation-cases 0 --byte-cases 0 \
+  --config-error-cases 0 --compile-cases 0 --rich-cases 0 --config-cases 0
+```
+
+A separate 2026-10-30 sample matched 1,850 generated parser, type, S-expression,
+lexical, arbitrary-byte, declaration and pattern-handler cases against the pinned
+compiler. It is reproducible with:
+
+```sh
+python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake \
+  --type-seed 398241 --edge-seed 731095 --compile-seed 623817 \
+  --type-cases 300 --sexp-cases 100 --structured-cases 300 --lex-cases 150 \
+  --token-cases 200 --raw-byte-cases 200 --declaration-cases 300 --handler-cases 300 \
+  --byte-cases 0 --annotation-cases 0 --config-error-cases 0 --compile-cases 0 \
+  --rich-cases 0 --config-cases 0
+```
+
+A subsequent run with type seed `832617` and edge seed `912673` matched
+2,900 additional generated parser, type, S-expression, lexical, random-token,
+declaration, and pattern-handler cases, comparing full output and status.
+
+On 2026-10-30, all 320 annotation cases matched the pinned compiler. The
+following command reproduces that matrix independently of the other generators:
+
+```sh
+python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake \
+  --edge-seed 164337 --annotation-cases 320 --type-cases 0 --sexp-cases 0 \
+  --structured-cases 0 --lex-cases 0 --token-cases 0 --raw-byte-cases 0 \
+  --declaration-cases 0 --handler-cases 0 --byte-cases 0 --config-error-cases 0 \
+  --compile-cases 0 --rich-cases 0 --config-cases 0
+```
+
+On 2026-10-29, a separate run matched 1,200 generated pattern and exception
+handler cases against the pinned compiler. Reproduce that sample with:
+
+```sh
+python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake \
+  --edge-seed 527641 --handler-cases 1200 --type-cases 0 --sexp-cases 0 \
+  --byte-cases 0 --structured-cases 0 --lex-cases 0 --token-cases 0 \
+  --raw-byte-cases 0 --declaration-cases 0 --config-error-cases 0 \
+  --compile-cases 0 --rich-cases 0 --config-cases 0
+```
+
+An additional reproducible run on 2026-10-29 matched the pinned compiler for
+400 type, 200 S-expression, 500 nested, 250 lexical, 300 token, 500 raw-byte,
+and 400 declaration cases. A separate run matched complete RISC-V output for
+35 generated programs, 35 diverse programs, and 15 backend-option cases:
+
+```sh
+python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake \
+  --type-seed 31987 --edge-seed 810212 --type-cases 400 --sexp-cases 200 \
+  --byte-cases 0 --structured-cases 500 --lex-cases 250 --token-cases 300 \
+  --raw-byte-cases 500 --declaration-cases 400 --config-error-cases 0 \
+  --compile-cases 0 --rich-cases 0 --config-cases 0
+python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake \
+  --compile-seed 710032 --edge-seed 915312 --type-cases 0 --sexp-cases 0 \
+  --byte-cases 0 --structured-cases 0 --lex-cases 0 --token-cases 0 \
+  --raw-byte-cases 0 --declaration-cases 0 --config-error-cases 0 \
+  --compile-cases 35 --rich-cases 35 --config-cases 15
+```
+
+A separate run on 2026-10-29 matched 150 type, 80 S-expression, 150 nested,
+100 lexical, 100 token, 100 raw-byte, 100 declaration, and 100 pattern and
+handler cases, together with 515 option-validation cases. It also matched
+complete RISC-V output for 25 generated programs, 25 diverse programs, and 10
+backend-option cases. Reproduce it with:
+
+```sh
+python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake \
+  --type-seed 613221 --edge-seed 982734 --compile-seed 314559 \
+  --type-cases 150 --sexp-cases 80 --structured-cases 150 --lex-cases 100 \
+  --token-cases 100 --raw-byte-cases 100 --declaration-cases 100 \
+  --handler-cases 100 --byte-cases 0 --config-error-cases 40 \
+  --compile-cases 25 --rich-cases 25 --config-cases 10
+```
+
+A fresh-seed run on 2026-10-31 matched the pinned compiler for 41 complete
+RISC-V program outputs, six backend-option combinations, four complete explorer
+reports, and the generated frontend and option-validation cases listed below.
+This is finite regression evidence, not a general output-equivalence proof.
+
+On 2026-11-04, three fresh-seed comparisons matched the pinned compiler:
+38 complete RISC-V outputs, 265 parser/type-checking cases, 30 S-expression
+outputs, and 650 additional frontend, diagnostic, and arbitrary-byte cases.
+The complete-output sample includes 12 extended stateful, recursive, and
+module programs and 10 composed higher-order, mutable-state, and datatype
+programs. These are sampled comparisons, not a proof of output equivalence.
+
+```sh
+python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake \
+  --type-cases 15 --compile-cases 3 --compile-config-cases 0 --rich-cases 3 \
+  --integration-cases 0 --declaration-cases 0 --handler-cases 0 --annotation-cases 0 \
+  --config-cases 0 --config-error-cases 0 --sexp-cases 0 --byte-cases 0 \
+  --structured-cases 0 --lex-cases 0 --token-cases 0 --raw-byte-cases 0 \
+  --type-seed 47091 --compile-seed 78901
+python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake \
+  --type-cases 0 --compile-cases 0 --compile-config-cases 0 --rich-cases 0 \
+  --extended-cases 12 --composed-cases 10 --integration-cases 0 --declaration-cases 0 \
+  --handler-cases 0 --annotation-cases 0 --config-cases 0 --config-error-cases 0 \
+  --sexp-cases 0 --byte-cases 0 --structured-cases 0 --lex-cases 0 --token-cases 0 \
+  --raw-byte-cases 0 --compile-seed 912367 --timeout 90
+python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake \
+  --type-cases 250 --compile-cases 5 --compile-config-cases 0 --rich-cases 5 \
+  --integration-cases 0 --declaration-cases 100 --handler-cases 100 --annotation-cases 100 \
+  --config-cases 0 --config-error-cases 0 --sexp-cases 30 --byte-cases 0 \
+  --structured-cases 100 --lex-cases 100 --token-cases 100 --raw-byte-cases 50 \
+  --type-seed 749321 --edge-seed 328471 --compile-seed 684033 --timeout 60
+```
+
+A further 2026-11-04 frontend run matched 5,120 generated cases, including
+500 arbitrary-byte inputs, 500 cross-context cases, and 320 type-annotation
+cases. It did not compile any RISC-V programs:
+
+```sh
+python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake \
+  --type-cases 1000 --compile-cases 0 --compile-config-cases 0 --rich-cases 0 \
+  --integration-cases 0 --declaration-cases 500 --handler-cases 500 --annotation-cases 320 \
+  --cross-context-cases 500 --config-cases 0 --config-error-cases 0 --sexp-cases 300 \
+  --byte-cases 0 --structured-cases 500 --lex-cases 500 --token-cases 500 \
+  --raw-byte-cases 500 --type-seed 976341 --edge-seed 782204 --timeout 60
+```
+
+On 2026-11-01, compile seed `394793` matched the pinned compiler for 30
+stateful or module-dependent programs and 40 composed higher-order programs.
+Edge seed `933455` matched 675 option-validation cases. The integration corpus
+also covers nested mutable arrays, shared reference closures, recursive tree
+mapping, exception rethrows, byte-array updates, and vectors of strings.
+
+```sh
+python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake \
+  --type-seed 51739 --edge-seed 804193 --compile-seed 701923 \
+  --type-cases 80 --compile-cases 12 --explore-cases 4 --rich-cases 12 \
+  --extended-cases 8 --integration-cases 9 --declaration-cases 80 \
+  --handler-cases 80 --annotation-cases 80 --config-cases 6 \
+  --config-error-cases 10 --sexp-cases 40 --byte-cases 30 \
+  --structured-cases 80 --lex-cases 80 --token-cases 80 --raw-byte-cases 80
+```
+
+Additional seeds on 2026-10-31 matched 97 complete RISC-V outputs against
+the pinned compiler, including programs compiled with varied optimization and
+backend options. A separate frontend seed matched 900 nested, lexical, token,
+declaration, and handler cases. The following commands reproduce those runs;
+the first command also checks its default frontend and option-validation cases.
+
+```sh
+python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake \
+  --type-cases 30 --compile-cases 3 --structured-cases 40 \
+  --edge-seed 19861 --type-seed 19273 --compile-seed 18711 --timeout 35
+python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake \
+  --type-cases 0 --compile-cases 0 --compile-config-cases 0 --rich-cases 0 \
+  --integration-cases 0 --declaration-cases 150 --handler-cases 150 \
+  --annotation-cases 0 --config-cases 0 --config-error-cases 0 --sexp-cases 0 \
+  --byte-cases 0 --structured-cases 300 --lex-cases 150 --token-cases 150 \
+  --raw-byte-cases 0 --edge-seed 249821 --timeout 35
+python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake \
+  --type-cases 0 --compile-cases 12 --compile-config-cases 10 --rich-cases 20 \
+  --integration-cases 0 --declaration-cases 0 --handler-cases 0 \
+  --annotation-cases 0 --config-cases 5 --config-error-cases 0 --sexp-cases 0 \
+  --byte-cases 0 --structured-cases 0 --lex-cases 0 --token-cases 0 \
+  --raw-byte-cases 0 --compile-seed 550103 --timeout 45
+```
+
+Another run matched 60 complete outputs for stateful, recursive, exception,
+and module programs with `--extended-cases 60 --compile-seed 83443` (all other
+case counts zero). After adding polymorphic datatype, nested-module,
+higher-order, handler, and mutable-state combinations, seed `74129` matched
+another 60 complete outputs (`--extended-cases 60`, other case counts zero).
+All seven new program shapes appeared in that run. The `--cross-context-cases` generator combines patterns,
+type annotations, constructors and exception handlers; 2,000 cases matched
+the pinned compiler's complete type-mode output and exit status using:
+
+```sh
+python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake \
+  --type-cases 0 --compile-cases 0 --compile-config-cases 0 --rich-cases 0 \
+  --extended-cases 0 --integration-cases 0 --declaration-cases 0 --handler-cases 0 \
+  --annotation-cases 0 --cross-context-cases 2000 --config-cases 0 \
+  --config-error-cases 0 --sexp-cases 0 --byte-cases 0 --structured-cases 0 \
+  --lex-cases 0 --token-cases 0 --raw-byte-cases 0 --edge-seed 992414 --timeout 20
+```
+
+`python3 scripts/check-cake-benchmark-parity.py` compares the complete RISC-V
+output for 28 benchmark programs, three bootstrap hello programs, and the
+S-expression bootstrap code extractor from the pinned CakeML submodule with
+captured original-compiler output. It checks the source revision and source hashes before
+using the captures. Pass `--check-reference /var/tmp/flapjack-pinned-cake` to
+also rerun the pinned compiler, or `--record-reference` with that executable
+to regenerate the captures. The benchmark comparisons are finite regression
+evidence, not a proof of output parity.
+
+`python3 scripts/check-cake-sexp-parity.py` compares `--sexp=true` type and
+complete RISC-V output against pinned-compiler captures. The original compiler
+exports each source program as an S-expression, then compiles that input;
+malformed inputs are also checked. Pass `--check-reference /path/to/pinned/cake`
+to rerun both original export and compilation, or `--record-reference` to
+regenerate the captures. The suite also checks type-error diagnostics and
+the original unsupported-`Denv` diagnostic, including nested declarations,
+float-pattern and empty-match diagnostics, error precedence, and type, assembly,
+and S-expression output modes. It checks large inputs with 20,000 declarations
+and a 100,000-byte name. With type inference disabled, complete-output cases
+also exercise direct,
+sequential, module, and local `Denv` declarations, `Envid`, `Eval`, FFI,
+fixed allocation, unsafe byte operations, and thunk primitives. These AST
+fixtures compare compiler output; they do not establish successful execution
+of the supplied primitive arguments. To compare a
+complete exported compiler AST, add `--bootstrap-sexp /path/to/compiler.sexpr`
+alongside `--check-reference`; this compares type-reporting output with type
+inference disabled, using the bootstrap's heap and stack settings. The direct
+S-expression parser is total; its equivalence with the HOL PEG and whole
+AST-decoder correspondence have not been proved.
+
+`python3 scripts/fuzz-cake-sexp-input.py --reference /path/to/pinned/cake`
+compares exit status, stdout and stderr for mutated S-expression AST inputs,
+including malformed delimiters and arbitrary byte values. The seed and count
+can be changed to explore additional cases. Add `--primitive-arities` to
+compare complete compiled output for 45 bootstrap primitives at arities zero
+through three with type inference disabled. This also exercises malformed
+primitive applications without claiming they are well typed.
+
+An additional unverified bootstrap provides an original compiler built from
+the pinned translated CakeML compiler AST. Given the pinned CakeML and HOL
+checkouts, an already-built `compiler64ProgTheory`, and the historical bootstrap
+binary described above, build it outside the reference checkouts with:
+
+```sh
+python3 scripts/build-cake-pinned-oracle.py --cakeml /path/to/pinned/cakeml \
+  --hol /path/to/pinned/HOL --output-dir /var/tmp/flapjack-cake-oracle
+python3 scripts/check-cake-cli-parity.py \
+  --check-pinned-reference /var/tmp/flapjack-cake-oracle/cake
+python3 scripts/check-cake-help.py \
+  --pinned-reference /var/tmp/flapjack-cake-oracle/cake
+```
+
+The build uses the pinned theory's `compiler64_prog_def` and the same AST
+export and historical-compiler flags as CakeML's unverified S-expression
+bootstrap. It checks both source revisions and the generated compiler's
+reported revisions. A previously exported AST may be supplied with
+`--reuse-sexpr`; its provenance then has to be checked separately. The
+bootstrap depends on the historical compiler and is not a verified pinned
+compiler build or a proof of cross-language equivalence. The CLI checker
+checks the historical capture lengths and SHA-256 hashes and directly compares
+stdout, stderr, and exit status between the pinned bootstrap and Lean executable.

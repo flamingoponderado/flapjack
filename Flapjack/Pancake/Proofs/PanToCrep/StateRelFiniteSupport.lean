@@ -317,38 +317,6 @@ theorem panToCrepLocalsRelFiniteExact_setVarWord {width : Nat} [NeZero width]
     rw [hmap]
     exact hmm
 
-/-- The exact finite-support state relation is insensitive to the source
-    locals: it mentions only memory, the address domains, structs, the globals
-    lookup, the clock, endianness, the FFI state and the base/top addresses. -/
-theorem panToCrepStateRelFiniteExact_setLocals {width : Nat} {σ : Type} [NeZero width]
-    (source : PanSemStateFiniteExact width σ) (target : CrepSemHOLState width σ)
-    (locals : HolFiniteMapExact MlS (ValueHOL width))
-    (h : panToCrepStateRelFiniteExact source target) :
-    panToCrepStateRelFiniteExact { source with locals := locals } target := by
-  simpa only [panToCrepStateRelFiniteExact] using h
-
-/-- Updating both the source and the target FFI state with the same
-    `HolFfiState` preserves the exact finite-support state relation. This is the
-    `.ret`-branch bookkeeping of the shared-memory loads/stores. -/
-theorem panToCrepStateRelFiniteExact_ffi {width : Nat} {σ : Type} [NeZero width]
-    (source : PanSemStateFiniteExact width σ) (target : CrepSemHOLState width σ)
-    (ffi : HolFfiState σ)
-    (h : panToCrepStateRelFiniteExact source target) :
-    panToCrepStateRelFiniteExact { source with ffi := ffi } { target with ffi := ffi } := by
-  obtain ⟨hmem, hmema, hshmema, hstructs, hglob, hclock, hbe, _hffi, hbase, htop⟩ := h
-  exact ⟨hmem, hmema, hshmema, hstructs, hglob, hclock, hbe, rfl, hbase, htop⟩
-
-/-- Combined form used by the shared-memory shared-variable write: update the
-    source locals and both FFI states, leave the target locals to the caller. -/
-theorem panToCrepStateRelFiniteExact_setLocals_ffi {width : Nat} {σ : Type}
-    [NeZero width] (source : PanSemStateFiniteExact width σ)
-    (target : CrepSemHOLState width σ) (locals : HolFiniteMapExact MlS (ValueHOL width))
-    (ffi : HolFfiState σ) (h : panToCrepStateRelFiniteExact source target) :
-    panToCrepStateRelFiniteExact { source with locals := locals, ffi := ffi }
-      { target with ffi := ffi } := by
-  obtain ⟨hmem, hmema, hshmema, hstructs, hglob, hclock, hbe, _hffi, hbase, htop⟩ := h
-  exact ⟨hmem, hmema, hshmema, hstructs, hglob, hclock, hbe, rfl, hbase, htop⟩
-
 /-- Flapjack-specific bridge used by the `pc_compile_correct` `ShMemLoad`
     case: the exact Pan and Crep shared-memory load returns keep the Pan/Crep
     state and locals relations. Untagged relation support with no standalone
@@ -439,70 +407,6 @@ theorem shMemLoadHOLFiniteExact_ret_corresponds {width : Nat} [NeZero width] {σ
           simp only [] at htarget
           exact finish newFfi newBytes (Prod.mk.inj hsource).2.symm (Prod.mk.inj htarget).2.symm
     · rw [ite_eq_right hdom] at hsource; simp at hsource
-
-/-- The exact Pan and Crep shared-memory load helpers agree on every
-    observable control outcome under the `state_rel` projection.  A final FFI
-    event and an address/domain error are shared by both helpers.  On an FFI
-    return, the state and `locals_rel` updates are related by
-    `shMemLoadHOLFiniteExact_ret_corresponds`, including the decoded word and
-    the context-selected destination slot. This assembles the control and
-    successful-return pieces used by the `pc_compile_correct` ShMemLoad case;
-    it is Flapjack-specific proof infrastructure, not a separate HOL theorem. -/
-theorem shMemLoadHOLFiniteExact_outcome_corresponds {width : Nat} [NeZero width] {σ : Type}
-    (source : PanSemStateFiniteExact width σ) [hsrc : DecidablePred source.shMemaddrs]
-    (target : CrepSemHOLState width σ) [htgt : DecidablePred target.shMemaddrs]
-    (ctxt : PanToCrepContextExact width) (destination : Nat) (name : MlS)
-    (address : RiscV.Word width) (nb : Nat)
-    (hstate : panToCrepStateRelFiniteExact source target)
-    (hlocals : panToCrepLocalsRelFiniteExact ctxt source.locals target.locals)
-    (hvar : ctxt.vars.lookup name = some (ShapeHOL.one, [destination])) :
-    (∃ event : HolFinalEvent,
-      (shMemLoadHOLFiniteExact source .local name address nb).1 = some (.finalFfi event) ∧
-      (crepShMemLoadExactHOL destination address nb target).1 = some (.finalFfi event)) ∨
-    ((shMemLoadHOLFiniteExact source .local name address nb).1 = some .error ∧
-      (crepShMemLoadExactHOL destination address nb target).1 = some .error ∧
-      panToCrepStateRelFiniteExact source target ∧
-      panToCrepLocalsRelFiniteExact ctxt source.locals target.locals) ∨
-    ((shMemLoadHOLFiniteExact source .local name address nb).1 = none ∧
-      (crepShMemLoadExactHOL destination address nb target).1 = none ∧
-      panToCrepStateRelFiniteExact
-        (shMemLoadHOLFiniteExact source .local name address nb).2
-        (crepShMemLoadExactHOL destination address nb target).2 ∧
-      panToCrepLocalsRelFiniteExact ctxt
-        (shMemLoadHOLFiniteExact source .local name address nb).2.locals
-        (crepShMemLoadExactHOL destination address nb target).2.locals) := by
-  have hffi : source.toExact.ffi = target.ffi := hstate.2.2.2.2.2.2.2.1
-  have hdom : ∀ a, source.toExact.shMemaddrs a = target.shMemaddrs a := by
-    intro a
-    exact congrFun hstate.2.2.1 a
-  have hprojection := shMemLoadHOLFiniteExact_toExact source .local name address nb
-  have hprojectionResult :
-      (shMemLoadHOLFiniteExact source .local name address nb).1 =
-        (shMemLoadHOLExact source.toExact .local name address nb).1 :=
-    congrArg Prod.fst hprojection
-  have hcontrol := shMemLoadHOLExact_control_corresponds source.toExact target
-    .local name destination address nb hffi hdom
-  rw [← hprojectionResult] at hcontrol
-  rcases hcontrol with ⟨event, hsourceResult, htargetResult⟩ |
-      ⟨hsourceResult, htargetResult⟩ | ⟨hsourceResult, htargetResult⟩
-  · exact Or.inl ⟨event, hsourceResult, htargetResult⟩
-  · exact Or.inr (Or.inl ⟨hsourceResult, htargetResult, hstate, hlocals⟩)
-  · let sourcePost := (shMemLoadHOLFiniteExact source .local name address nb).2
-    let targetPost := (crepShMemLoadExactHOL destination address nb target).2
-    have hsource : shMemLoadHOLFiniteExact source .local name address nb =
-        (none, sourcePost) := by
-      dsimp [sourcePost]
-      cases hout : shMemLoadHOLFiniteExact source .local name address nb with
-      | mk result state => simp_all
-    have htarget : crepShMemLoadExactHOL destination address nb target =
-        (none, targetPost) := by
-      dsimp [targetPost]
-      cases hout : crepShMemLoadExactHOL destination address nb target with
-      | mk result state => simp_all
-    obtain ⟨hpostState, hpostLocals⟩ :=
-      shMemLoadHOLFiniteExact_ret_corresponds source target ctxt destination name
-        address nb hstate hlocals hvar hsource htarget
-    exact Or.inr (Or.inr ⟨hsourceResult, htargetResult, hpostState, hpostLocals⟩)
 
 /-- Exact port of HOL `excp_rel_def`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:16-23`). Both maps are
@@ -1086,64 +990,6 @@ theorem panToCrepFiniteEvaluateShapeInvariantRetInst2 {width : Nat} {σ : Type}
         simpa [Flapjack.panSemResultHOLWf] using hresultWf
       simpa [hsourceStructs] using hvalue
   | _ => trivial
-
-/-- Flapjack-specific Return-clause composition: exact Pan-to-Crep relations
-    supply the evaluator's initial map hypotheses, and the finite evaluator's
-    Return clause proves the HOL-shaped empty-context payload conclusion. This
-    remains untagged because its evaluator premise is a finite-context clause,
-    not HOL's complete `evaluate` relation. -/
-theorem panToCrepFiniteReturnPayloadShape {width : Nat} {σ : Type}
-    [NeZero width] (source : PanSemStateFiniteExact width σ)
-    (target : CrepSemHOLState width σ)
-    (targetLocals : HolFiniteMapExact Nat (HolWordLab width))
-    (relationContext : PanToCrepContextExact width)
-    (evaluationContext : PanSemStateFiniteExact.FiniteEvalContext width σ)
-    (expression : ExpHOL width) (value : ValueHOL width)
-    (output : PanSemStateFiniteExact.FiniteEvalContext width σ)
-    (hcontext : evaluationContext.state = source)
-    (hstate : panToCrepStateRelFiniteExact source target)
-    (hlocals : panToCrepLocalsRelFiniteExact relationContext source.locals targetLocals)
-    (heval : PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext
-      (.return expression) evaluationContext = some (some (.returned value), output)) :
-    isWfShapeExactHOL ([] : StructContextExact) (shapeOfHOLExact value) = true := by
-  have hinitial := panToCrepExactInitialShapeInvariant
-    source target targetLocals relationContext hstate hlocals
-  have hpayload := PanSemStateFiniteExact.evalPanSemFiniteReturnPayloadWf
-    evaluationContext (by simpa [hcontext] using hinitial.1)
-    (by simpa [hcontext] using hinitial.2) expression value output heval
-  rw [hcontext] at hpayload
-  have hstructs := panToCrepStateRelFiniteExact_structs source target hstate
-  have hvalue : isWfShapeValueHOLExact [] value = true := by
-    simpa [hstructs] using hpayload
-  exact isWfShapeValueHOLExact_shapeOfHOLExact [] value hvalue
-
-/-- Flapjack-specific Raise-clause composition with the exact Pan-to-Crep
-    relations. The premise is the finite-context Raise clause, so this helper
-    is proof support and not a tagged port of the complete HOL theorem. -/
-theorem panToCrepFiniteRaisePayloadShape {width : Nat} {σ : Type}
-    [NeZero width] (source : PanSemStateFiniteExact width σ)
-    (target : CrepSemHOLState width σ)
-    (targetLocals : HolFiniteMapExact Nat (HolWordLab width))
-    (relationContext : PanToCrepContextExact width)
-    (evaluationContext : PanSemStateFiniteExact.FiniteEvalContext width σ)
-    (exception : MlS) (expression : ExpHOL width) (value : ValueHOL width)
-    (output : PanSemStateFiniteExact.FiniteEvalContext width σ)
-    (hcontext : evaluationContext.state = source)
-    (hstate : panToCrepStateRelFiniteExact source target)
-    (hlocals : panToCrepLocalsRelFiniteExact relationContext source.locals targetLocals)
-    (heval : PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext
-      (.raise exception expression) evaluationContext = some (some (.exception exception value), output)) :
-    isWfShapeExactHOL ([] : StructContextExact) (shapeOfHOLExact value) = true := by
-  have hinitial := panToCrepExactInitialShapeInvariant
-    source target targetLocals relationContext hstate hlocals
-  have hpayload := PanSemStateFiniteExact.evalPanSemFiniteRaisePayloadWf
-    evaluationContext (by simpa [hcontext] using hinitial.1)
-    (by simpa [hcontext] using hinitial.2) exception expression value output heval
-  rw [hcontext] at hpayload
-  have hstructs := panToCrepStateRelFiniteExact_structs source target hstate
-  have hvalue : isWfShapeValueHOLExact [] value = true := by
-    simpa [hstructs] using hpayload
-  exact isWfShapeValueHOLExact_shapeOfHOLExact [] value hvalue
 
 /-- Exact port of HOL `tlc_def`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:2317-2319`):

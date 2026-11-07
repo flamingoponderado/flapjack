@@ -1,5 +1,5 @@
 import Flapjack.Pancake.Semantics.PanSemStateEval
-import Flapjack.Test.PanValueFfiSemantics
+import Flapjack.Test.PanValueFfiCore
 
 /-!
 Direct regression for the exact source `PanSemExactState` `Call` error
@@ -347,6 +347,12 @@ private def badReturnParamCode : PanSemCodeMap Word64 :=
   [("badret_param", ([("x", .one)], .return (.const (BitVec.ofNat 64 7)),
     .comb [.one, .one]))]
 
+/-- A scoped declaration restores the callee's parameter after its body
+    returns, so the subsequent return-shape error must keep that binding. -/
+private def badReturnRestoredLocalCode : PanSemCodeMap Word64 :=
+  [("badret_restored", ([("x", .one)],
+    .dec "x" .one (.const 9) (.return (.const 7)), .comb [.one, .one]))]
+
 private def goodReturnCode : PanSemCodeMap Word64 :=
   [("goodret", ([], .return (.const (BitVec.ofNat 64 7)), .one))]
 
@@ -380,6 +386,15 @@ private def callBadReturnShapeParamGuard : Bool :=
   isBadReturnShapeError 4
     (codeEvaluate (badReturnShapeState badReturnParamCode)
       (.call none "badret_param" [.const (BitVec.ofNat 64 4)]))
+
+private def callBadReturnRestoredLocalGuard : Bool :=
+  match codeEvaluate (badReturnShapeState badReturnRestoredLocalCode)
+      (.call none "badret_restored" [.const (BitVec.ofNat 64 4)]) with
+  | some (.control (.error locals _ _ _), clock) =>
+      clock == 4 && isWordValue 4 (locals "x") && (locals "caller").isNone
+  | _ => false
+
+#guard callBadReturnRestoredLocalGuard
 
 private def decCallBadReturnShapeGuard : Bool :=
   isBadReturnShapeError 4
@@ -506,9 +521,9 @@ theorem callInvalidReturnShape_eq :
           invalidReturnCode]
       omega)
     (by simp [badReturnShapeState, invalidReturnCode, evalPanValueFfiClockCodeProg,
-      evalPanValueFfiClockLeaf, evalPanValueFfiProgSteps, panValueReturnResult,
-      evalPanValueExpCounted, evalPanValueExp, panValuePayloadWithinLimit,
-      panValuePayloadSizeFuel, panValueExpStepCost, decPanClock,
+      evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, panValueReturnResult,
+      evalPanValueExpWith, evalPanValueExp, panValuePayloadWithinLimit,
+      panValuePayloadSizeFuel, decPanClock,
       panSemCodeEvaluateFuel, panSemProgFuel, panSemCodeBodyFuel,
       panSemExpListFuel, panSemExpFuel, panSemCallInfoFuel])
     (by simp [badReturnShapeState, invalidReturnCode, panValueShape, panShapeMatches])

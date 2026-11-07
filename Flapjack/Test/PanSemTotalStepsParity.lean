@@ -1,5 +1,5 @@
 import Flapjack.Pancake.Semantics.PanSem.TotalSteps
-import Flapjack.Test.PanValueFfiSemantics
+import Flapjack.Test.PanValueFfiCore
 
 /-!
 # Parity for the total statement-clause assembly steps

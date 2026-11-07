@@ -49,31 +49,6 @@ theorem combined_second' {width : Nat} [NeZero width] {σ : Type}
     (evalCrepSemHOLProgExact state program).1
     (evalCrepSemHOLProgExact state program).2 extra (by rfl) hnt
 
-set_option linter.unusedVariables false in
-/-- The named-`match` spelling of the `While` loop-control dispatch (with the
-equation binder) is propositionally equal to its plain-`match` spelling, so the
-goal can be rewritten to a form where `cases` on the body result reduces it. -/
-theorem whileMatch_ffi {width : Nat} [NeZero width] {σ : Type}
-    (e : CrepExpHOL width) (c : CrepProgHOL width)
-    (r : Option (CrepResultHOLExact width)) (st : CrepSemHOLState width σ) :
-    (match hfixed : (r, st) with
-     | (none, loopState) => evalCrepSemHOLProgExact loopState (.while e c)
-     | (some (.continue 0), loopState) => evalCrepSemHOLProgExact loopState (.while e c)
-     | (some (.break 0), loopState) => (none, loopState)
-     | (result, loopState) => (exitLoopCrepResult result, loopState)).snd.ffi.ioEvents =
-    (match (r, st) with
-     | (none, loopState) => evalCrepSemHOLProgExact loopState (.while e c)
-     | (some (.continue 0), loopState) => evalCrepSemHOLProgExact loopState (.while e c)
-     | (some (.break 0), loopState) => (none, loopState)
-     | (result, loopState) => (exitLoopCrepResult result, loopState)).snd.ffi.ioEvents := by
-  cases r with
-  | none => rfl
-  | some val =>
-      cases val with
-      | «continue» k => cases k <;> rfl
-      | «break» k => cases k <;> rfl
-      | _ => rfl
-
 /-- The `Call` callee-result dispatch cannot discard an earlier event prefix: the
 exception-handler branch uses the handler run, and every other branch keeps (or
 empties the locals of) the body result state.  This is the unstamped analogue of
@@ -135,7 +110,6 @@ theorem callStep_prefix {width : Nat} [NeZero width] {σ : Type}
                   { sh with locals := s.locals } p
               · rw [ite_eq_right heq]; exact List.prefix_refl _
       | _ => exact List.prefix_refl _
-
 
 set_option maxHeartbeats 4000000 in
 theorem evalCrepSemHOLProgExact_addClock_mono_aux {width : Nat} [NeZero width] {σ : Type}

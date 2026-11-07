@@ -87,7 +87,7 @@ private def view (r : Option (WordSemResult 64) × WordSemStateFiniteExact 64 Un
 local macro "ev_simp" : tactic => `(tactic| (
   simp (config := { ground := true, decide := true }) only [evaluate]
   repeat (simp only [wordSemSTOP]; simp (config := { ground := true, decide := true }) only [evaluate])
-  first | done | decide +kernel | cbv))
+  first | done | decide +kernel))
 
 /-- The `Loop` and `MustTerminate` recipe: unfold `evaluate` with the helper
     definitions its guards need, without ground evaluation (which would try
@@ -113,11 +113,11 @@ theorem seqTick :
 theorem tickZero :
     view (evaluate (.tick) ({ s0 with clock := 0 })) = (.timeOut, [], 0) := by
   ev_simp
-/-- `ite_true=(NONE,[(3,Loc 5 0); (1,Word 1w); (9,Word 1w); (8,Word 16w); (2,Word 7w)],3)` -/
+/-- `if_true=(NONE,[(3,Loc 5 0); (1,Word 1w); (9,Word 1w); (8,Word 16w); (2,Word 7w)],3)` -/
 theorem ifTrue :
     view (evaluate (.ite .equal 2 (.imm 7) (.assign 1 (.const 1)) (.assign 1 (.const 0))) (s0)) = (.none, [(3, .loc 5 0), (1, .word 1), (9, .word 1), (8, .word 16), (2, .word 7)], 3) := by
   ev_simp
-/-- `ite_false=(NONE,[(3,Loc 5 0); (1,Word 0w); (9,Word 1w); (8,Word 16w); (2,Word 7w)],3)` -/
+/-- `if_false=(NONE,[(3,Loc 5 0); (1,Word 0w); (9,Word 1w); (8,Word 16w); (2,Word 7w)],3)` -/
 theorem ifFalse :
     view (evaluate (.ite .less 2 (.imm 7) (.assign 1 (.const 1)) (.assign 1 (.const 0))) (s0)) = (.none, [(3, .loc 5 0), (1, .word 0), (9, .word 1), (8, .word 16), (2, .word 7)], 3) := by
   ev_simp
@@ -332,7 +332,7 @@ theorem installOk :
       (.none, [(1, .loc 42 0)], 2, [], 8, [],
         [(5, (1, WordLangProgHOL.return 0 [0])), (42, (42, WordLangProgHOL.skip)),
          (6, (2, WordLangProgHOL.return 0 [2]))], none, .ln, 3) := by
-  ev_simp
+  cbv
 
 /-! `call_handler_exception=(NONE,[(3,Word 7w); (5,Word 99w); (2,Word 7w)],2)`
 is captured in the HOL probe (`scripts/hol-probes/word_sem_evaluate_probe.out`) but

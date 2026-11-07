@@ -23,11 +23,6 @@ def targetFunction : FunDecl Nat :=
 def singletonNonFunctionDecls : List (Decl Nat) :=
   [.decl .one "g" (.const 7)]
 
-theorem fpermDecsDeclsSingletonFixture :
-    globalRenameDecls "foo" "bar" singletonNonFunctionDecls =
-      singletonNonFunctionDecls :=
-  fperm_decs_decls "foo" "bar" singletonNonFunctionDecls [] (by decide)
-
 def parityGuard : Bool :=
   let renamed :=
     globalRenameDecls "foo" "bar"

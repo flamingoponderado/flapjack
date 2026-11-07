@@ -1,4 +1,8 @@
-import Flapjack.PanBst
+module
+
+public import Flapjack.PanBst
+
+@[expose] public section
 
 /-!
 # Pancake `set_var` on `bstate`

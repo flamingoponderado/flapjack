@@ -144,13 +144,6 @@ theorem crepNestedDecCallTimeout {width : Nat} [NeZero width] {σ : Type}
   rw [evalCrepSemHOLProgExact_seq_holShape, hcall] at hnd
   exact ⟨_, hnd, rfl⟩
 
-private theorem mapM_congr_mem' {α β : Type} (f g : α → Option β) :
-    ∀ (xs : List α), (∀ x, x ∈ xs → f x = g x) → xs.mapM f = xs.mapM g
-  | [], _ => rfl
-  | x :: xs, h => by
-      simp only [List.mapM_cons, h x (by simp),
-        mapM_congr_mem' f g xs (fun y hy => h y (by simp [hy]))]
-
 theorem decCallCtxt_lookup_ne {width : Nat} [NeZero width] (ctxt : PanToCrepContextExact width)
     (rt : MlS) (shape : ShapeHOL) (k : MlS) (hk : k ≠ rt) :
     (decCallCtxt ctxt rt shape).vars.lookup k = ctxt.vars.lookup k := by
@@ -196,7 +189,7 @@ theorem decCallLocalsRestore {width : Nat} [NeZero width]
     obtain ⟨slots, words, hv, hmm, hfl, hwf⟩ := hlocals.2.2 k w hk
     refine ⟨slots, words, hv, ?_, hfl, hwf⟩
     rw [← hmm]
-    apply mapM_congr_mem'
+    apply mapM_congr_mem
     intro x hx
     rw [hfold x (hlocals.2.1.2 k _ slots hv x hx)]
     exact hsame _ slots x hv hx
@@ -205,7 +198,7 @@ theorem decCallLocalsRestore {width : Nat} [NeZero width]
     rw [decCallCtxt_lookup_ne ctxt rt shape k hkrt] at hv
     refine ⟨slots, words, hv, ?_, hfl, hwf⟩
     rw [← hmm]
-    apply mapM_congr_mem'
+    apply mapM_congr_mem
     intro x hx
     exact hfold x (hlocals.2.1.2 k _ slots hv x hx)
 

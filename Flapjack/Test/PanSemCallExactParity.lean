@@ -7,7 +7,7 @@
   `call_clause_clock_zero`).
 -/
 import Flapjack.Pancake.Semantics.PanSem.CallExact
-import Flapjack.Test.PanValueFfiSemantics
+import Flapjack.Test.PanValueFfiCore
 
 namespace Flapjack.Test.PanSemCallExactParity
 

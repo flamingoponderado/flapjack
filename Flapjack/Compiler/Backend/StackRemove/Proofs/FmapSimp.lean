@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+
+@[expose] public section
 
 /-! Finite-map update reordering of `stack_removeProofScript.sml` (3041-3046),
 used for the initializer's register updates. HOL `|+` on `num` keys is

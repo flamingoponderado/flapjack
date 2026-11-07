@@ -120,15 +120,6 @@ theorem emptyUpdateListLookup {α β : Type} [BEq α] [LawfulBEq α]
   rw [HolFiniteMapExact.lookup_updateList, fupdateListLookup, lookupReverseOfNodup l k hnd]
   cases List.lookup k l <;> rfl
 
-private theorem updateListCons' {α β : Type} [BEq α] [LawfulBEq α]
-    (map : HolFiniteMapExact α β) (entry : α × β)
-    (entries : List (α × β)) :
-    (map.update entry).updateList entries = map.updateList (entry :: entries) := by
-  apply HolFiniteMapExact.ext
-  funext key
-  simp only [HolFiniteMapExact.lookup_updateList, FUPDATE_LIST_cons]
-  rfl
-
 /-- Flapjack evaluator infrastructure: a successful run of exception
 declarations only extends the exception map. -/
 theorem evalExnsForm {width : Nat} {σ : Type} [NeZero width] :
@@ -151,7 +142,7 @@ theorem evalExnsForm {width : Nat} {σ : Type} [NeZero width] :
           simp only [evaluateDeclsHOLFinite] at h
           split at h
           · rw [ih _ result htail h]
-            simp only [exceptionsHOL, updateListCons']
+            simp only [exceptionsHOL, updateList_cons]
           · cases h
       | function f => simp [isExnDeclHOL] at hall
       | decl sh n e => simp [isExnDeclHOL] at hall
@@ -179,7 +170,7 @@ theorem evalFunsForm {width : Nat} {σ : Type} [NeZero width] :
           simp only [evaluateDeclsHOLFinite] at h
           split at h
           · rw [ih _ result htail h]
-            simp only [functionsHOL, updateListCons']
+            simp only [functionsHOL, updateList_cons]
           · cases h
       | exnDecl name shape => simp [isFunctionHOL] at hall
       | decl sh n e => simp [isFunctionHOL] at hall

@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.PanSimp.StateRel
+module
+
+public import Flapjack.Pancake.Proofs.PanSimp.StateRel
+
+@[expose] public section
 
 namespace Flapjack.PanSimp
 

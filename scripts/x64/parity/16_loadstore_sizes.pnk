@@ -1,0 +1,11 @@
+var 1 gaddr = 4096;
+fun 1 main() {
+  var 1 addr = 4096;
+  st addr, 305419896;
+  st32 gaddr + 8, 123456789;
+  st8 addr + 18, 171;
+  var 1 a = lds 1 addr;
+  var 1 b = ld32 gaddr + 8;
+  var 1 c = ld8 addr + 18;
+  return a + b + c;
+}

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackLang
-import Flapjack.HolRef
+module
+
+public import Flapjack.Compiler.Backend.StackLang
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! Literal stack_remove store_init_def. Its twelve updates have distinct
 monomorphic store-name keys; pattern matching is their extensional function

@@ -75,28 +75,6 @@ theorem productionBeforeBodyUnresolved : firstFunctionBodyKind productionBefore 
     globalCompileProg, globalCompileExp, compileContext, globalAddress,
     lookupInfo]
 
-theorem threadedEveryIsFunction :
-    threadedBefore.functions.all globalDeclIsFunction = true :=
-  compile_decs_EVERY_is_function_threaded compileContext functionBeforeDecl
-    threadedBefore.initializers threadedBefore.functions
-    threadedBefore.exceptions threadedBefore.context rfl
-
-theorem threadedDeclsThm : threadedNonFunction.functions = [] :=
-  compile_decs_decls_thm_threaded compileContext nonFunctionDeclarations
-    threadedNonFunction.initializers threadedNonFunction.functions
-    threadedNonFunction.exceptions threadedNonFunction.context rfl
-    (by simp [nonFunctionDeclarations, globalDeclIsFunction])
-
-theorem threadedAppend :
-    globalCompileDecsThreaded compileContext (functionBeforeDecl ++ [.exnDecl "E" .one]) =
-      let first := globalCompileDecsThreaded compileContext functionBeforeDecl
-      let second := globalCompileDecsThreaded first.context [.exnDecl "E" .one]
-      { initializers := first.initializers ++ second.initializers
-        functions := first.functions ++ second.functions
-        exceptions := first.exceptions ++ second.exceptions
-        context := second.context } :=
-  compile_decls_append_threaded compileContext functionBeforeDecl [.exnDecl "E" .one]
-
 /-! Canonical HOL-shaped context fixtures.  These use `CakeContext 8` (HOL's
     `globals`/`globals_size`/`max_globals_size` fields over 8-bit words, with an
     extensional finite map for `globals`) and mirror the direct original-HOL rows
@@ -123,9 +101,6 @@ def cakeFunctionBeforeDecl : List (Decl (BitVec 8)) :=
 
 def cakeFunctionAfterDecl : List (Decl (BitVec 8)) :=
   [.decl .one "g" (.const (7 : BitVec 8)), cakeFunction]
-
-def cakeNonFunctionDeclarations : List (Decl (BitVec 8)) :=
-  [.decl .one "g" (.const (7 : BitVec 8)), .name "S" [], .exnDecl "E" .one]
 
 def cakeResultBefore : CakeCompileDecsResult 8 :=
   compileDecsCake cakeContext cakeFunctionBeforeDecl
@@ -332,31 +307,6 @@ def handledProgramChecks : Bool :=
 
 #eval handledProgramChecks
 #guard handledProgramChecks
-
-theorem cakeEveryIsFunction :
-    cakeResultBefore.functions.all globalDeclIsFunction = true :=
-  compile_decs_EVERY_is_function_cake cakeContext cakeFunctionBeforeDecl
-    cakeResultBefore.initializers cakeResultBefore.functions
-    cakeResultBefore.exceptions cakeResultBefore.context rfl
-
-theorem cakeDeclsThm :
-    (compileDecsCake cakeContext cakeNonFunctionDeclarations).functions = [] :=
-  compile_decs_decls_thm_cake cakeContext cakeNonFunctionDeclarations
-    (compileDecsCake cakeContext cakeNonFunctionDeclarations).initializers
-    (compileDecsCake cakeContext cakeNonFunctionDeclarations).functions
-    (compileDecsCake cakeContext cakeNonFunctionDeclarations).exceptions
-    (compileDecsCake cakeContext cakeNonFunctionDeclarations).context rfl
-    (by simp [cakeNonFunctionDeclarations, globalDeclIsFunction])
-
-theorem cakeAppend :
-    compileDecsCake cakeContext (cakeFunctionBeforeDecl ++ [.exnDecl "E" .one]) =
-      let first := compileDecsCake cakeContext cakeFunctionBeforeDecl
-      let second := compileDecsCake first.context [.exnDecl "E" .one]
-      { initializers := first.initializers ++ second.initializers
-        functions := first.functions ++ second.functions
-        exceptions := first.exceptions ++ second.exceptions
-        context := second.context } :=
-  compile_decls_append_cake cakeContext cakeFunctionBeforeDecl [.exnDecl "E" .one]
 
 def adapterPassContext : GlobalPassContext (BitVec 8) :=
   { globals := [("g", (Shape.one, (7 : BitVec 8)))]

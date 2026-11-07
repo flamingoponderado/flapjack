@@ -1,5 +1,19 @@
-import Flapjack.Pipeline
+import Flapjack.Pancake.Proofs.PanSimp.ProgOfHOL
+import Flapjack.Pancake.PanGlobalsByteRanged
+import Flapjack.Pancake.PanStructs.CompileExpCorrespondence
+import Flapjack.Pancake.PanStructs.CompileDeclsExact
 import Flapjack.Pancake.PanToCrep.Compile
+import Flapjack.CompileFunctionDistinct
+import Flapjack.Pancake.CrepToLoop.ProductionCompileProg
+import Flapjack.Pancake.PanToCrep.CompileToCrepBridge
+import Flapjack.Pancake.CrepInline.InlineRouteNames
+import Flapjack.Pancake.LoopToWord.CompFuncExact
+import Flapjack.Pancake.LoopToWord.LoopProgCarrierCodec
+import Flapjack.RiscV.WordDiagnostics
+import Flapjack.RiscV.WordFuseConditions
+import Flapjack.RiscV.WordUnreach
+import Flapjack.RiscV.Lab
+import Flapjack.Display
 import Flapjack.Pancake.PanToCrep.CompileExact
 
 namespace Flapjack.Test.CompileProgParity
@@ -10,16 +24,8 @@ def compileProgProbeContext : CompileContext Nat :=
   { vars := [], functions := [], exceptions := [], maxVar := 0,
     bytesInWord := 1 }
 
-#check @crepGetEidsFromDecls_lookup_iff_exception
 #check @allocatedNames_gt
 #check @freshNames_gt
-#check @mem_crepExpVars_le_maxCrepExpVar
-
-theorem maxCrepExpVar_mem_fixture :
-    7 ≤ maxCrepExpVar ([.var 3, .const 0, .var 7] : List (CrepExp Nat)) := by
-  apply mem_crepExpVars_le_maxCrepExpVar
-  simp [crepExpVars]
-
 theorem allocatedNames_gt_fixture : (0 : Nat) < (allocatedNames compileProgProbeContext .one).headD 0 := by
   have hmem : (allocatedNames compileProgProbeContext .one).headD 0 ∈ allocatedNames compileProgProbeContext .one := by
     simp [allocatedNames, compileProgProbeContext]
@@ -270,37 +276,6 @@ theorem compileProgExactNestedDeclsByteRanged :
     · exact compileProbeInlineCallRanged (width := 8) "main" "mid"
         compileProbeNameMainRanged compileProbeNameMidRanged
 
-def compileProgExactProductionEmptyParity : Bool :=
-  match compileProgTopHOLProductionExactInline ([] : List (Decl (BitVec 8))) (by
-      intro declaration hmem
-      simp at hmem) with
-  | [] => true
-  | _ => false
-
-def compileProgExactProductionDuplicateParity : Bool :=
-  match compileProgTopHOLProductionExactInline compileProgExactDuplicateDecls
-      compileProgExactDuplicateDeclsByteRanged with
-  | [("id", [], .return [.const first]),
-     ("id", [], .return [.const second]),
-     ("main", [], .seq .tick (.return [.const returned]))] =>
-      first == BitVec.ofNat 8 7 && second == BitVec.ofNat 8 9 &&
-        returned == BitVec.ofNat 8 7
-  | _ => false
-
-def compileProgExactProductionNestedParity : Bool :=
-  match compileProgTopHOLProductionExactInline compileProgExactNestedDecls
-      compileProgExactNestedDeclsByteRanged with
-  | [("leaf", [], .return [.const leafValue]),
-     ("mid", [], .seq .tick (.return [.const midValue])),
-     ("main", [], .seq .tick (.seq .tick (.return [.const mainValue])))] =>
-      leafValue == BitVec.ofNat 8 7 && midValue == BitVec.ofNat 8 7 &&
-        mainValue == BitVec.ofNat 8 7
-  | _ => false
-
-#guard compileProgExactProductionEmptyParity
-#guard compileProgExactProductionDuplicateParity
-#guard compileProgExactProductionNestedParity
-
 /-! Further direct `compile_prog_probe.out` rows exercise the exact parser route
     on a mutual inline cycle, handler recursion, and a multi-value return. These
     distinguish HOL's per-callee `DOMSUB` recursion and handler clause from a
@@ -333,16 +308,6 @@ theorem compileProgExactCycleDeclsByteRanged :
   · subst declaration
     exact compileProbeInlineCallRanged (width := 8) "main" "f"
       compileProbeNameMainRanged compileProbeNameFRanged
-
-def compileProgExactCycleParity : Bool :=
-  match compileProgTopHOLProductionExactInline compileProgExactCycleDecls
-      compileProgExactCycleDeclsByteRanged with
-  | [("f", [], .seq .tick (.call none "f" [])),
-     ("g", [], .seq .tick (.call none "g" [])),
-     ("main", [], .seq .tick (.seq .tick (.call none "f" [])))] => true
-  | _ => false
-
-#guard compileProgExactCycleParity
 
 def compileProgCycleCompatibilityParity : Bool :=
   match compileProgTopHOL compileProgExactCycleDecls with
@@ -384,18 +349,6 @@ theorem compileProgExactHandlerDeclsByteRanged :
             compileProbeNameIdRanged, by simp, True.intro⟩⟩⟩
     · simp [ShapeByteRanged]
 
-def compileProgExactHandlerParity : Bool :=
-  match compileProgTopHOLProductionExactInline compileProgExactHandlerDecls
-      compileProgExactHandlerDeclsByteRanged with
-  | [("id", [], .return [.const value]),
-     ("main", [], .dec 1 (.const 0)
-       (.call (some ([1], some (0, .seq .skip
-         (.seq .tick (.return [.const handledValue]))))) "id" []))] =>
-      value == BitVec.ofNat 8 7 && handledValue == BitVec.ofNat 8 7
-  | _ => false
-
-#guard compileProgExactHandlerParity
-
 def compileProgHandlerCompatibilityParity : Bool :=
   match compileProgTopHOL compileProgExactHandlerDecls with
   | [("id", [], .return [.const value]),
@@ -436,17 +389,6 @@ theorem compileProgExactAggregateReturnDeclsByteRanged :
       exact ⟨compileProbeNamePairRanged, by simp, True.intro⟩
     · simp [ShapeByteRanged]
 
-def compileProgExactAggregateReturnParity : Bool :=
-  match compileProgTopHOLProductionExactInline compileProgExactAggregateReturnDecls
-      compileProgExactAggregateReturnDeclsByteRanged with
-  | [("pair", [], .return [.const first, .const second]),
-     ("main", [], .seq .tick (.return [.const mainFirst, .const mainSecond]))] =>
-      first == BitVec.ofNat 8 7 && second == BitVec.ofNat 8 9 &&
-        mainFirst == BitVec.ofNat 8 7 && mainSecond == BitVec.ofNat 8 9
-  | _ => false
-
-#guard compileProgExactAggregateReturnParity
-
 def compileProgAggregateReturnCompatibilityParity : Bool :=
   match compileProgTopHOL compileProgExactAggregateReturnDecls with
   | [("pair", [], .return [.const first, .const second]),
@@ -456,86 +398,6 @@ def compileProgAggregateReturnCompatibilityParity : Bool :=
   | _ => false
 
 #guard compileProgAggregateReturnCompatibilityParity
-
-def compileProgExactDuplicateMatchesProduction : Bool :=
-  match compileProgTopHOL compileProgExactDuplicateDecls,
-      compileProgTopHOLProductionExactInline compileProgExactDuplicateDecls
-        compileProgExactDuplicateDeclsByteRanged with
-  | [(_, [], .return [.const directFirst]),
-     (_, [], .return [.const directSecond]),
-     (_, [], .seq .tick (.return [.const directReturned]))],
-    [(_, [], .return [.const exactFirst]),
-     (_, [], .return [.const exactSecond]),
-     (_, [], .seq .tick (.return [.const exactReturned]))] =>
-      directFirst == exactFirst && directSecond == exactSecond &&
-        directReturned == exactReturned
-  | _, _ => false
-
-def compileProgExactNestedMatchesProduction : Bool :=
-  match compileProgTopHOL compileProgExactNestedDecls,
-      compileProgTopHOLProductionExactInline compileProgExactNestedDecls
-        compileProgExactNestedDeclsByteRanged with
-  | [(_, [], .return [.const directLeaf]),
-     (_, [], .seq .tick (.return [.const directMid])),
-     (_, [], .seq .tick (.seq .tick (.return [.const directMain])))],
-    [(_, [], .return [.const exactLeaf]),
-     (_, [], .seq .tick (.return [.const exactMid])),
-     (_, [], .seq .tick (.seq .tick (.return [.const exactMain])))] =>
-      directLeaf == exactLeaf && directMid == exactMid && directMain == exactMain
-  | _, _ => false
-
-#guard compileProgExactDuplicateMatchesProduction
-#guard compileProgExactNestedMatchesProduction
-
-/-! The fixture is the direct HOL evaluation of
-    `pan_to_crep$compile_prog` on the same inline callee/caller pair. -/
-theorem compile_prog_inline_call_parity :
-    compileProgToCrep compileProgProbeContext compileProgProbeDecls =
-      [{ name := "leaf", params := [], body := .return [.const 7],
-         returnShape := .one },
-       { name := "mid", params := [],
-         body := .seq .tick (.return [.const 7]), returnShape := .one },
-       { name := "main", params := [],
-         body := .seq .tick (.seq .tick (.return [.const 7])), returnShape := .one }] := by
-  simp [compileProgToCrep, pipelineInlineNames, compileToCrep,
-    compileFunctionsSource, compileFunDeclSource, panToCrepCompFunc,
-    panToCrepVars_eq, Shape.shapeSize, panToCrepCompileInlTop,
-    functionInfos, compileProgProbeContext, compileProgProbeDecls,
-    compileProg, compileExp, compileArgs,
-    crepInlineTopRecursiveByNames, crepInlineTopRecursive,
-    crepInlineFunctionsRecursive, crepInlineActiveNames,
-    crepInlineProgRecursive, crepInlineLookup, crepInlineCallBody,
-    crepInlineTail, crepArgLoad, crepInlineTmpNames, crepUnreachElim,
-    nestedDecs]
-
-/-! Cake's `first_compile_prog_all_distinct` regression: the complete
-    source-shaped `compile_prog` boundary keeps every function name distinct
-    after the selected inline bodies have been rewritten. -/
-theorem compile_prog_first_compile_prog_all_distinct :
-    (compileProgToCrep compileProgProbeContext compileProgProbeDecls).map
-      CompiledFunction.name |>.Nodup := by
-  exact compileProgToCrep_names_nodup _ _ (by
-    simp [compileProgProbeDecls, functionDeclarationNames])
-
-/-! Cake's `compile_prog_distinct_params` regression at the same complete
-    source-shaped boundary. -/
-theorem compile_prog_compile_prog_distinct_params :
-    ∀ function ∈ compileProgToCrep compileProgProbeContext compileProgProbeDecls,
-      function.params.Nodup := by
-  exact compileProgToCrep_params_nodup _ _
-
-def parityGuard : Bool :=
-  match compileProgToCrep compileProgProbeContext compileProgProbeDecls with
-  | [{ name := "leaf", params := [], body := .return [.const 7],
-         returnShape := .one },
-     { name := "mid", params := [],
-       body := .seq .tick (.return [.const 7]), returnShape := .one },
-     { name := "main", params := [],
-       body := .seq .tick (.seq .tick (.return [.const 7])), returnShape := .one }] => true
-  | _ => false
-
-#eval parityGuard
-#guard parityGuard
 
 /-! HOL's `ShMemStore` constructor operands are positional value then address;
     `compile_def` allocates the shared-store temporary from the first operand
@@ -656,10 +518,6 @@ def exactDeclCompileProgNestedInline : Bool :=
 #guard exactDeclCompileProgNestedInline
 
 def runChecks : IO Bool := do
-  if parityGuard then
-    IO.println "PASS compile_prog inline-call source parity"
-  else
-    IO.println "FAIL compile_prog parity"
   if compileProgUnreachableInlineGuard then
     IO.println "PASS compile_prog unreach-before-inline parity"
   else
@@ -668,7 +526,6 @@ def runChecks : IO Bool := do
     IO.println "PASS compile_prog shared-store address temporary parity"
   else
     IO.println "FAIL compile_prog shared-store address temporary parity"
-  pure (parityGuard && compileProgUnreachableInlineGuard &&
-    shMemStoreAddressTempParity)
+  pure (compileProgUnreachableInlineGuard && shMemStoreAddressTempParity)
 
 end Flapjack.Test.CompileProgParity

@@ -1,24 +1,40 @@
 """Render the L3 Import Construct/Record declarations of an L3 model script as Lean.
 
-Usage: scripts/l3_types_to_lean.py MODEL_SCRIPT HOL_PATH
+Usage: scripts/l3_types_to_lean.py MODEL_SCRIPT HOL_PATH [DECL ...] [--beq-only NAME,...]
 
 Prints, in source order, one tagged Lean `inductive` per `Construct` type and one tagged
 `structure` per `Record`, with the type renderings documented in
-`Flapjack/RiscV/L3/Types.lean`. `scripts/tests/test_hol_l3_types_to_lean.py` checks that the
-committed RISC-V carriers are exactly this output. This is a mechanical transcription aid;
-it does not establish HOL-to-Lean equivalence.
+`Flapjack/RiscV/L3/Types.lean`. With trailing DECL arguments, only the named declarations
+are emitted (used for the ARM8 state carriers, which are a subset of the model's types).
+`--beq-only` lists the declarations that derive `BEq` instead of `DecidableEq`, because Lean
+cannot derive `DecidableEq` for their deeply nested payloads. It is an error to name a
+declaration that has a function-typed field or constructor payload: the generator derives only
+`Inhabited` for those, so `BEq` cannot be derived and the flag would have no effect. The
+committed ARM8 carriers are reproduced by
+
+    scripts/l3_types_to_lean.py HOL/examples/l3-machine-code/arm8/model/arm8Script.sml \
+        HOL/examples/l3-machine-code/arm8/model/arm8Script.sml ProcState ... arm8_state \
+        --beq-only LoadStore,Data,instruction
+
+`scripts/tests/test_hol_l3_types_to_lean.py` checks that the committed RISC-V carriers are
+exactly the full output, that the ARM8 carriers are exactly the filtered output, and that the
+CLI reproduces both. This is a mechanical transcription aid; it does not establish
+HOL-to-Lean equivalence.
 """
+from __future__ import annotations
+
 import re, sys, runpy
 from pathlib import Path
 
 
-def render(text: str, HOLPATH: str) -> str:
+def render(text: str, HOLPATH: str, only: list[str] | None = None,
+           beq_only: tuple[str, ...] = ()) -> str:
     decls = runpy.run_path(str(Path(__file__).with_name('hol_sml_declarations.py')))['l3_type_declarations'](text)
     lines = text.splitlines(keepends=True)
     KW = {'done','at','by','fun','have','show','from','let','in','if','then','else','do','match','with','end',
           'open','where','deriving','structure','inductive','instance','def','theorem','for','unless','return','try','catch','finally','mut','break','continue','Type','Prop','Sort','true','false','true','not','and','or','namespace','section','variable','universe','import','export','private','protected','partial','noncomputable','macro','syntax','notation','infix','set_option','attribute','local','scoped','calc','suffices','obtain','this','fun','λ','Option','List','Nat','Bool','String'}
     def ident(n):
-        return '«'+n+'»' if (n in KW or "'" in n) else n
+        return '«'+n+'»' if (n in KW or not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", n)) else n
     class P:
         def __init__(s,t): s.t=t; s.i=0
         def ws(s):
@@ -79,22 +95,67 @@ def render(text: str, HOLPATH: str) -> str:
                 out.append(('Construct',n,cons,start))
                 if p.peek(','): p.eat(',')
     def hasfun(t): return '→' in t
+    script = Path(HOLPATH).name
     res=[]
+    seen=set()
+    emitted_names=set()
     for kind,n,items,start in out:
+        seen.add(n)
+        if only is not None and n not in only:
+            continue
+        emitted_names.add(n)
         tag='@[hol "%s" "%s" %d]'%(HOLPATH,n,start) if False else '@[hol "%s" "%s"]'%(HOLPATH,n)
         if kind=='Record':
             fun=any(hasfun(t) for _,t in items)
-            res.append('/-- HOL L3 record `%s` (`riscvScript.sml:%d`). -/\n%s\nstructure %s where\n'%(n,start,tag,ident(n)))
+            if fun and n in beq_only:
+                raise ValueError('--beq-only declaration `%s` has a function-typed field and cannot derive BEq'%n)
+            res.append('/-- HOL L3 record `%s` (`%s:%d`). -/\n%s\nstructure %s where\n'%(n,script,start,tag,ident(n)))
             for f,t in items: res.append('  %s : %s\n'%(ident(f),t))
-            res.append('  deriving Inhabited\n\n' if fun else '  deriving DecidableEq, Repr, Inhabited\n\n')
+            res.append('  deriving Inhabited\n\n' if fun else
+                       ('  deriving BEq, Repr, Inhabited\n\n' if n in beq_only else
+                        '  deriving DecidableEq, Repr, Inhabited\n\n'))
         else:
             fun=any(hasfun(t) for _,a in items for t in a)
-            res.append('/-- HOL L3 datatype `%s` (`riscvScript.sml:%d`). -/\n%s\ninductive %s where\n'%(n,start,tag,ident(n)))
+            if fun and n in beq_only:
+                raise ValueError('--beq-only declaration `%s` has a function-typed constructor payload and cannot derive BEq'%n)
+            res.append('/-- HOL L3 datatype `%s` (`%s:%d`). -/\n%s\ninductive %s where\n'%(n,script,start,tag,ident(n)))
             for c,args in items:
                 res.append('  | %s%s\n'%(ident(c),''.join(' (a%d : %s)'%(k,t) for k,t in enumerate(args))))
-            res.append('  deriving Inhabited\n\n' if fun else '  deriving DecidableEq, Repr, Inhabited\n\n')
+            res.append('  deriving Inhabited\n\n' if fun else
+                       ('  deriving BEq, Repr, Inhabited\n\n' if n in beq_only else
+                        '  deriving DecidableEq, Repr, Inhabited\n\n'))
+    unknown=[n for n in (only or ()) if n not in seen]
+    if unknown:
+        raise ValueError('unknown declaration(s): ' + ', '.join(unknown))
+    unknown=[n for n in beq_only if n not in emitted_names]
+    if unknown:
+        raise ValueError('unknown --beq-only declaration(s): ' + ', '.join(unknown))
     return ''.join(res)
 
 
 if __name__ == "__main__":
-    print(render(Path(sys.argv[1]).read_text(), sys.argv[2]))
+    args = sys.argv[1:]
+    beq_only: tuple[str, ...] = ()
+    positional: list[str] = []
+    i = 0
+    while i < len(args):
+        a = args[i]
+        if a == '--beq-only':
+            if i + 1 >= len(args):
+                raise SystemExit('--beq-only needs a comma-separated NAME list')
+            beq_only = tuple(n for n in args[i + 1].split(',') if n)
+            i += 2
+        elif a.startswith('--beq-only='):
+            beq_only = tuple(n for n in a.split('=', 1)[1].split(',') if n)
+            i += 1
+        else:
+            positional.append(a)
+            i += 1
+    if len(positional) < 2:
+        raise SystemExit('usage: l3_types_to_lean.py MODEL_SCRIPT HOL_PATH [DECL ...] '
+                         '[--beq-only NAME,...]')
+    try:
+        print(render(Path(positional[0]).read_text(), positional[1],
+                     positional[2:] or None, beq_only))
+    except ValueError as exc:
+        raise SystemExit(str(exc)) from None

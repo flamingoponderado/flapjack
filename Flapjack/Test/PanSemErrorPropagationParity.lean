@@ -1,5 +1,5 @@
 import Flapjack.Pancake.Semantics.PanSem
-import Flapjack.Test.PanValueFfiSemantics
+import Flapjack.Test.PanValueFfiCore
 
 /-!
 # Parity for nested propagation of the Pancake semantic `Error` result
@@ -45,7 +45,7 @@ def decMismatch : Prog Word64 :=
 
 def errorEvaluate (clock : Nat) (program : Prog Word64) :
     Option (PanValueFfiClockResult Word64 Unit × PanSemState Word64 (FfiState Unit)) :=
-  panSemEvaluateCodeStateWithPostState statefulTestContext statefulTestPrimitive
+  panSemEvaluateCodeStateWithPostState (memoryAccess := none) statefulTestContext statefulTestPrimitive
     statefulTestHandler (BitVec.ofNat 64 8) (errorState clock) program
 
 /-- True when evaluation yields exactly an explicit `Error` control result at
@@ -85,7 +85,7 @@ def callState (clock : Nat) : PanSemState Word64 (FfiState Unit) :=
 
 def callEvaluate (clock : Nat) :
     Option (PanValueFfiClockResult Word64 Unit × PanSemState Word64 (FfiState Unit)) :=
-  panSemEvaluateCodeStateWithPostState statefulTestContext statefulTestPrimitive
+  panSemEvaluateCodeStateWithPostState (memoryAccess := none) statefulTestContext statefulTestPrimitive
     statefulTestHandler (BitVec.ofNat 64 8) (callState clock) (.call none "f" [])
 
 def callErrorGuard : Bool :=

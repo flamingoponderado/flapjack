@@ -1,0 +1,2 @@
+compile_semantics=¬semantics_prog (s :α semanticPrimitives$state) (env :v sem_env) (prog :dec list) Fail ∧ semantics_prog s env prog (outcome :behaviour) ⇒ semantics_prog s env (compile prog) outcome
+compile_semantics_oracle=∀(f :dec list -> dec list). is_insert_oracle (ci :α compiler_instance) f (s :β semanticPrimitives$state).eval_state ∧ ¬semantics_prog s (env :v sem_env) (prog :dec list) Fail ∧ semantics_prog s env prog (outcome :behaviour) ⇒ semantics_prog (s with eval_state updated_by adjust_oracle ci (compile ∘ f)) env prog outcome

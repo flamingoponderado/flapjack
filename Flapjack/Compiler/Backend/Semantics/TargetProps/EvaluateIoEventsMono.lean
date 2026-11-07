@@ -1,3 +1,4 @@
+import Mathlib.Basic.Logic.Basic
 import Mathlib.Tactic.SplitIfs
 import Mathlib.Tactic.CasesM
 import Flapjack.Compiler.Backend.Semantics.TargetSem.Evaluate
@@ -26,16 +27,7 @@ theorem evaluateTargetIoEventsMono {width : Nat} [NeZero width]
          exact (callFFIHOL_return_ioEvents_prefix ffi _ _ _ nf nb hcall).trans (ih _ _ _))
       | cases_type Compiler.Encoders.Asm.HolAddr
       | (rw [ite_and] at hout)
-      | (split at hout <;> (try simp_all only))
-      -- Core `split` cannot reduce some nested propositional guards in rc4.
-      -- Split only the outer condition, keeping recursive evaluator calls folded.
-      | (run_tac Lean.Elab.Tactic.withMainContext do
-          let h ← Lean.Elab.Tactic.getFVarId (Lean.mkIdent `hout)
-          let ty ← Lean.Meta.inferType (Lean.mkFVar h)
-          let lhs := ty.getAppArgs[1]!
-          unless lhs.isAppOf ``ite do throwError "not an outer conditional"
-          let condition ← Lean.Elab.Term.exprToSyntax lhs.getAppArgs[1]!
-          Lean.Elab.Tactic.evalTactic (← `(tactic|
-            by_cases hcondition : $condition <;> simp only [hcondition, ↓reduceIte] at *))))
+      | (split at hout <;> (try simp_all only)))
+
 
 end Flapjack

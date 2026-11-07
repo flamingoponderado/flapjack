@@ -1,4 +1,8 @@
-import Flapjack.PanValues
+module
+
+public import Flapjack.PanValues
+
+@[expose] public section
 
 /-!
 The source ExtCall evaluator first computes an argument list and then applies

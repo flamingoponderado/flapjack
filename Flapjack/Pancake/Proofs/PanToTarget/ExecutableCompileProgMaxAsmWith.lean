@@ -17,7 +17,6 @@ open Flapjack Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend
 open Flapjack.Pancake.PanLang
 set_option autoImplicit false
 
-
 /-- With `ra = regAlloc` the allocator-parametric callable compiler is
 `compileProgMaxAsmExecutable` (whole-function kernel equality; Flapjack infrastructure). -/
 theorem compileProgMaxAsmWith_eq (ra : WordToWord.RegAllocFn)
@@ -26,23 +25,12 @@ theorem compileProgMaxAsmWith_eq (ra : WordToWord.RegAllocFn)
   subst same
   rfl
 
-/-- With `ra = regAlloc` the allocator-parametric callable compiler is `compile_prog_max` at
-every machine configuration with that assembler configuration (Flapjack infrastructure). -/
-theorem compileProgMaxAsmWith_eq_compileProgMax (ra : WordToWord.RegAllocFn)
-    (same : ra = Flapjack.RegAlloc.regAlloc) {width : Nat} [NeZero width]
-    {State Projection : Type} (config : Backend.Config)
-    (machine : MachineConfig width State Projection) (program : List (DeclHOL width)) :
-    compileProgMaxAsmWith ra config machine.target.config program =
-      compileProgMax config machine program := by
-  rw [compileProgMaxAsmWith_eq ra same, compileProgMaxAsmExecutable_eq]
-
 /-- The executable allocator `regAllocExecutable` is `reg_alloc` as a function (from its
 unconditional pointwise kernel equality; Flapjack infrastructure). -/
 theorem regAllocExecutable_fun_eq :
     (Flapjack.RegAlloc.regAllocExecutable : WordToWord.RegAllocFn) = Flapjack.RegAlloc.regAlloc := by
   funext algorithm costs limit moves tree forced stackOnly
   exact Flapjack.RegAlloc.regAllocExecutable_eq algorithm costs limit moves tree forced stackOnly
-
 
 /-- The fast callable compiler is `compileProgMaxAsmExecutable`: the whole result, including
 bytes, bitmaps, updated configuration and stack bound, with no premise (Flapjack
@@ -53,15 +41,6 @@ theorem compileProgMaxAsmFast_eq {width : Nat} [NeZero width] :
   exact congrFun (congrFun (congrFun
     (compileProgMaxAsmWith_eq _ regAllocExecutable_fun_eq (width := width)) config) asmConf)
     program
-
-/-- The fast callable compiler is `compile_prog_max` at every machine configuration with
-that assembler configuration (Flapjack infrastructure). -/
-theorem compileProgMaxAsmFast_eq_compileProgMax {width : Nat} [NeZero width]
-    {State Projection : Type} (config : Backend.Config)
-    (machine : MachineConfig width State Projection) (program : List (DeclHOL width)) :
-    compileProgMaxAsmFast config machine.target.config program =
-      compileProgMax config machine program := by
-  rw [compileProgMaxAsmFast_eq, compileProgMaxAsmExecutable_eq]
 
 /-- Unconditional artifact equality. The left side never evaluates the bound;
 the right side is a logical projection of the full compiler (Flapjack infrastructure). -/

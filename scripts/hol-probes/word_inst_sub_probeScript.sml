@@ -6,11 +6,9 @@
   empty/unary fallbacks, so `convert_sub` sees every `Sub` arity.  For a list
   of length 0 or 1 `convert_sub ls = Op Sub ls`, i.e. the node shape survives;
   the empty/unary fallbacks (`op_consts`/`pull_exp x`) must therefore not fire
-  for `Sub`.  The Lean counterpart `wordInstPullExp` in
-  Flapjack/RiscV/WordInstSelect.lean must reproduce these rows.
+  for `Sub`.
 
-  The probe evaluates the original definitions directly; the checked-in .out is
-  consumed by Flapjack/Test/WordInstNormalizeParity.lean.
+  The probe evaluates the original definitions directly.
 *)
 load "bossLib";
 load "preamble";

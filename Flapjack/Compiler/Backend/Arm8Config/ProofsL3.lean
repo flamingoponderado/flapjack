@@ -1,0 +1,87 @@
+import Flapjack.Compiler.Backend.Arm8Config.BackendConfig
+import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Complete
+import Flapjack.Compiler.Backend.BackendProof.MachineInit
+import Flapjack.Compiler.Backend.LabToTarget.InitializationContracts
+import Mathlib.Tactic.IntervalCases
+
+/-!
+# ARMv8 machine-configuration facts over the L3 carriers
+
+Counterpart of `cakeml/compiler/backend/arm8/proofs/arm8_configProofScript.sml`
+at the L3 ARMv8 target: `is_arm8_machine_config` and
+`is_arm8_machine_config mc ⇒ mc_conf_ok mc` over HOL's `arm8_state`/`arm8_proj`
+carriers.  The encoder-correctness obligation is discharged by
+`arm8EncoderCorrectL3` in `L3/CorrectnessEncoding/Complete.lean`.
+
+This file is a near-duplicate of `Arm8Config.Proofs` for the closed model: the
+two differ only in the target record, the configuration and the
+`arm8_state`/`Arm8State` carriers.  Keep the two proofs in step.
+-/
+
+namespace Flapjack.Compiler.Backend.Arm8Config
+
+open Flapjack Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Encoders.AsmProps
+open Flapjack.Compiler.Encoders.Arm8.L3
+open Flapjack.Compiler.Encoders.Arm8.L3.Target
+open Flapjack.Compiler.Backend.BackendProof
+
+/-- HOL `is_arm8_machine_config_def` (`arm8_configProofScript.sml:11-18`):
+`mc.target = arm8_target`, the four heap registers are 1/0/3/2 and the
+callee-saved registers are `[19; 20; ...; 28]`, over the L3 `arm8_state`
+carrier and the L3 `arm8_proj` projection. -/
+@[hol "cakeml/compiler/backend/arm8/proofs/arm8_configProofScript.sml"
+  "is_arm8_machine_config_def"]
+def isArm8MachineConfigL3
+    (mc : MachineConfig 64 arm8_state Arm8L3Projection) : Prop :=
+  mc.target = arm8TargetL3 ∧
+  mc.lenReg = 1 ∧
+  mc.ptrReg = 0 ∧
+  mc.len2Reg = 3 ∧
+  mc.ptr2Reg = 2 ∧
+  mc.calleeSavedRegs = [19, 20, 21, 22, 23, 24, 25, 26, 27, 28]
+
+/-- HOL `arm8_machine_config_ok` (`arm8_configProofScript.sml:61-72`):
+`is_arm8_machine_config mc ⇒ mc_conf_ok mc` at the L3 ARMv8 target: the
+encoder-correctness component is `arm8EncoderCorrectL3`, the encoding
+invariant `arm8ConfigL3_encOk`, and the register guards are decided. -/
+@[hol "cakeml/compiler/backend/arm8/proofs/arm8_configProofScript.sml"
+  "arm8_machine_config_ok"]
+theorem arm8MachineConfigOkL3
+    (mc : MachineConfig 64 arm8_state Arm8L3Projection)
+    (h : isArm8MachineConfigL3 mc) :
+    LabToTarget.mcConfOk mc := by
+  rcases h with ⟨htarget, hlen, hptr, hlen2, hptr2, _⟩
+  unfold LabToTarget.mcConfOk
+  rw [htarget] at ⊢
+  refine ⟨Or.inr rfl, arm8EncoderCorrectL3, ?_, ?_, ?_, ?_, ?_, arm8ConfigL3_encOk⟩
+  all_goals
+    simp only [arm8TargetL3_config, hlen, hptr, hlen2, hptr2, arm8ConfigL3]
+    decide
+
+/-- HOL `arm8_init_ok` (`arm8_configProofScript.sml:75-78`):
+`is_arm8_machine_config mc ⇒ mc_init_ok arm8_config arm8_backend_config mc`. -/
+@[hol "cakeml/compiler/backend/arm8/proofs/arm8_configProofScript.sml" "arm8_init_ok"]
+theorem arm8InitOkL3 (mc : MachineConfig 64 arm8_state Arm8L3Projection) :
+    isArm8MachineConfigL3 mc →
+      mcInitOk arm8ConfigL3 arm8BackendConfig mc := by
+  rintro ⟨htarget, hlen, hptr, hlen2, hptr2, hcallee⟩
+  have hnames : arm8BackendConfig.stackConf.regNames = arm8Names := rfl
+  have hbe : arm8BackendConfig.dataConf.be = false := rfl
+  have hfind : StackNames.findNameSpt arm8Names = arm8NameMap :=
+    funext arm8Names_lookup_eq
+  simp only [mcInitOk, htarget, arm8TargetL3_config, hlen, hptr, hlen2, hptr2, hcallee,
+    hnames, hfind, hbe, arm8NameMap, arm8ConfigL3]
+  and_intros
+  all_goals decide
+
+/-- `mc_init_ok` reads only `stackConf.regNames` and `dataConf.be`, which
+`pancake_backend_conf` preserves, so the Pancake form of `arm8InitOkL3`
+follows without changing the statement (Flapjack-specific; no HOL original). -/
+theorem arm8InitOkL3_pancake (mc : MachineConfig 64 arm8_state Arm8L3Projection) :
+    isArm8MachineConfigL3 mc →
+      mcInitOk arm8ConfigL3 pancakeArm8BackendConfig mc := by
+  intro h
+  unfold mcInitOk at *
+  exact arm8InitOkL3 mc h
+
+end Flapjack.Compiler.Backend.Arm8Config

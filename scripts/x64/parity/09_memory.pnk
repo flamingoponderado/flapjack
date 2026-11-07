@@ -1,0 +1,17 @@
+fun 1 main() {
+  var 1 addr = 65536;
+  st addr, 305419896;
+  st8 addr + 1, 7;
+  var 1 a = lds 1 addr;
+  var 1 b = ld8 addr + 1;
+  var 1 p = addr - 8;
+  var 1 q = addr + 300;
+  var 1 r = addr - 300;
+  st p, a + b;
+  st q, a + b;
+  st r, 42;
+  var 1 x = lds 1 p;
+  var 1 y = lds 1 q;
+  var 1 z = lds 1 r;
+  return x + y + z;
+}

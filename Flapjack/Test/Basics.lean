@@ -2,23 +2,35 @@ import Flapjack.Pancake.PanLang
 import Flapjack.Pancake.PanSimp
 import Flapjack.Pancake.PanStructs
 import Flapjack.Pancake.PanGlobals
-import Flapjack.Pipeline
+import Flapjack.Pancake.Proofs.PanSimp.ProgOfHOL
+import Flapjack.Pancake.PanGlobalsByteRanged
+import Flapjack.Pancake.PanStructs.CompileExpCorrespondence
+import Flapjack.Pancake.PanStructs.CompileDeclsExact
+import Flapjack.Pancake.PanToCrep.Compile
+import Flapjack.CompileFunctionDistinct
+import Flapjack.Pancake.CrepToLoop
+import Flapjack.Pancake.LoopLive
+import Flapjack.Pancake.LoopLang
+import Flapjack.Pancake.CrepToLoop.ProductionCompileProg
+import Flapjack.Pancake.PanToCrep.CompileToCrepBridge
+import Flapjack.Pancake.CrepInline.InlineRouteNames
+import Flapjack.Pancake.LoopToWord.CompFuncExact
+import Flapjack.Pancake.LoopToWord.LoopProgCarrierCodec
+import Flapjack.Word
+import Flapjack.RiscV.WordDiagnostics
+import Flapjack.RiscV.WordFuseConditions
+import Flapjack.RiscV.WordUnreach
+import Flapjack.RiscV.Backend
+import Flapjack.RiscV.Calls
+import Flapjack.RiscV.Lab
+import Flapjack.Display
 import Flapjack.Pancake.PanStatic
 import Flapjack.Pancake.PanToCrep
-import Flapjack.Pancake.PanToCrep.Compile
 import Flapjack.Semantics
 import Flapjack.PanValues
 import Flapjack.PanMemory
 import Flapjack.RiscV.Model
-import Flapjack.Pancake.LoopLang
-import Flapjack.Pancake.CrepToLoop
-import Flapjack.Pancake.LoopLive
 import Flapjack.LoopSemantics
-import Flapjack.Word
-import Flapjack.RiscV.Backend
-import Flapjack.RiscV.Calls
-import Flapjack.RiscV.Link
-import Flapjack.WordSemantics
 
 namespace Flapjack
 
@@ -29,14 +41,6 @@ example : RiscV.Architecture.width .rv32i = 32 := by
 
 example : RiscV.accessAligned .read (0 : RiscV.Word 32) 4 = none := by
   decide
-
-example : RiscV.writeRegister (RiscV.zeroState 32) 0 (7 : RiscV.Word 32) =
-    RiscV.zeroState 32 := by
-  simp [RiscV.writeRegister]
-
-example (state : RiscV.State 32) (source : Fin 32) (immediate : RiscV.Word 32) :
-    (RiscV.execute state (.addi 0 source immediate)).pc = state.pc + 4 := by
-  simp [RiscV.execute, RiscV.nextPc, RiscV.writeRegister]
 
 def sampleShape : Shape := .comb [.one, .comb [.one, .one]]
 

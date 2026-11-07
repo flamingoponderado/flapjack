@@ -10,7 +10,7 @@
   (`RStruct [ValWord 3w; ValWord 0w]`).
 -/
 import Flapjack.Pancake.Semantics.PanSem
-import Flapjack.Test.PanValueFfiSemantics
+import Flapjack.Test.PanValueFfiCore
 
 namespace Flapjack.Test.PanSemPrimitiveParity
 
@@ -50,7 +50,7 @@ def primState (clock : Nat) : PanSemState Word64 (FfiState Unit) :=
 
 def primEvaluate (clock fuel : Nat) (program : Prog Word64) :
     Option (PanValueFfiClockResult Word64 Unit) :=
-  panSemEvaluateCodeStateWithFuel statefulTestContext addCarryPrimitive
+  panSemEvaluateCodeStateWithFuel (memoryAccess := none) statefulTestContext addCarryPrimitive
     statefulTestHandler (BitVec.ofNat 64 8) (fuel + 1) (primState clock) program
 
 def primUpdatedLocals : VarName → Option (PanValue Word64) :=

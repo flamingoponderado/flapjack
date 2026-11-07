@@ -1,5 +1,9 @@
-import Flapjack.Misc.Numposrep
-import Flapjack.Basis.Pure.MlString
+module
+
+public import Flapjack.Misc.Numposrep
+public import Flapjack.Basis.Pure.MlString
+
+@[expose] public section
 
 /-! Counterpart of pinned HOL ASCIInumbersScript character formatting. -/
 namespace Flapjack

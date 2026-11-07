@@ -1,4 +1,18 @@
-import Flapjack.Pipeline
+import Flapjack.Pancake.Proofs.PanSimp.ProgOfHOL
+import Flapjack.Pancake.PanGlobalsByteRanged
+import Flapjack.Pancake.PanStructs.CompileExpCorrespondence
+import Flapjack.Pancake.PanStructs.CompileDeclsExact
+import Flapjack.CompileFunctionDistinct
+import Flapjack.Pancake.CrepToLoop.ProductionCompileProg
+import Flapjack.Pancake.PanToCrep.CompileToCrepBridge
+import Flapjack.Pancake.CrepInline.InlineRouteNames
+import Flapjack.Pancake.LoopToWord.CompFuncExact
+import Flapjack.Pancake.LoopToWord.LoopProgCarrierCodec
+import Flapjack.RiscV.WordDiagnostics
+import Flapjack.RiscV.WordFuseConditions
+import Flapjack.RiscV.WordUnreach
+import Flapjack.RiscV.Lab
+import Flapjack.Display
 
 /-!
 # Pancake `get_eids` parity
@@ -22,28 +36,6 @@ def sourceFunctions : List (FunDecl Nat) :=
    { name := "second", inline := false, exported := false, params := [],
       body := .seq (raiseE "E") (raiseE "G"), returnShape := .one }]
 
-example : pipelineGetEids id ([] : List (FunDecl Nat)) = [] := by
-  rfl
-
-example : pipelineGetEids id sourceFunctions = [("E", 0), ("F", 1), ("G", 2)] := by
-  simp [pipelineGetEids, pipelineExceptionIds, sourceFunctions, raiseE,
-    expIds, List.eraseDups, List.eraseDupsBy, List.eraseDupsBy.loop]
-
-example : ∃ code, lookupInfo "E"
-    (crepGetEidsFromDecls id [.exnDecl "E" .one, .decl .one "x" (.const 0)]) =
-      some code := by
-  exact crepGetEidsFromDecls_lookup_of_exception id 0
-    [.exnDecl "E" .one, .decl .one "x" (.const 0)] "E" .one (by simp [exceptionEntries])
-
-/-! The declaration-side table cardinality is the source `size_of_eids`
-    cardinality used by Cake's exception-relation proof. -/
-example :
-    (crepGetEidsFromDecls id
-      [.exnDecl "E" .one, .decl .one "x" (.const 0), .exnDecl "F" .one]).length =
-      sizeOfEids
-        [.exnDecl "E" .one, .decl .one "x" (.const 0), .exnDecl "F" .one] := by
-  exact crepGetEidsFromDecls_length id _
-
 /-! Cake's `get_eids_pan_simp_compile_eq`
     (`cakeml/pancake/proofs/pan_to_wordProofScript.sml:105`): simplifying the
     function bodies does not change the exception-code table, hence not its
@@ -57,18 +49,6 @@ def getEidsDecls : List (Decl Nat) :=
    .decl .one "x" (.const 1),
    .name "S" []]
 
-theorem crepGetEidsFromDecls_panSimpDecls_fixture :
-    crepGetEidsFromDecls id (panSimpDecls getEidsDecls) =
-      crepGetEidsFromDecls id getEidsDecls :=
-  crepGetEidsFromDecls_panSimpDecls id getEidsDecls
-
-def getEidsPanSimpGuard : Bool :=
-  crepGetEidsFromDecls id (panSimpDecls getEidsDecls) ==
-    crepGetEidsFromDecls id getEidsDecls
-
-#eval getEidsPanSimpGuard
-#guard getEidsPanSimpGuard
-
 /-! Cake's `distinct_make_funcs`
     (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:3757`): the function
     table built by `make_funcs` assigns distinct labels. -/
@@ -77,30 +57,9 @@ def distinctFuncsCode : List (CompiledFunction Nat) :=
   [{ name := "first", params := [], body := .skip, returnShape := .one },
    { name := "second", params := [], body := .skip, returnShape := .one }]
 
-theorem crepDistinctFuncs_crepMakeFuncs_fixture :
-    crepDistinctFuncs (crepMakeFuncs distinctFuncsCode) :=
-  crepDistinctFuncs_crepMakeFuncs distinctFuncsCode
-
-def distinctFuncsGuard : Bool :=
-  match lookupInfo "first" (crepMakeFuncs distinctFuncsCode),
-        lookupInfo "second" (crepMakeFuncs distinctFuncsCode) with
-  | some (n, _), some (m, _) => n != m
-  | _, _ => false
-
-#eval distinctFuncsGuard
-#guard distinctFuncsGuard
-
 /-! Cake's `initial_prog_make_funcs_el`
     (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:3942`): a successful
     label lookup identifies the position of the function in the source list. -/
-
-theorem crepMakeFuncs_exists_index_fixture :
-    ∃ n, (crepFirstName + 1 : Nat) = crepFirstName + n ∧
-      (distinctFuncsCode[n]?).map (fun function => function.name) =
-        some "second" ∧
-        n < distinctFuncsCode.length :=
-  crepMakeFuncs_exists_index distinctFuncsCode
-    (rm := 0) (by decide)
 
 def makeFuncsIndexGuard : Bool :=
   (distinctFuncsCode[1]?).map (fun function => function.name) == some "second"

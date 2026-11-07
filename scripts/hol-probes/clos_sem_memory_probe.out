@@ -1,0 +1,8 @@
+concat_choice_typed=∀(lv :v) (s :(γ, 'ffi) state). (do_app (MemOp ConcatByteVec) [lv] s :(v # (γ, 'ffi) state, v) result) = case some(wss :word8 list list). v_to_list lv = SOME (MAP ByteVector wss) of (NONE :word8 list list option) => (Rerr (Rabort Rtype_error :v error_result) :(v # (γ, 'ffi) state, v) result) | SOME wss => (Rval (ByteVector (FLAT wss),s) :(v # (γ, 'ffi) state, v) result)
+from_list_choice_typed=∀(lv :v) (s :(γ, 'ffi) state). (do_app (MemOp FromListByte) [lv] s :(v # (γ, 'ffi) state, v) result) = case some(ns :num list). v_to_list lv = SOME (MAP (Number ∘ $&) ns) ∧ EVERY (λ(n :num). n < (256 :num)) ns of (NONE :num list option) => (Rerr (Rabort Rtype_error :v error_result) :(v # (γ, 'ffi) state, v) result) | SOME ns => (Rval (ByteVector (MAP (n2w :num -> word8) ns),s) :(v # (γ, 'ffi) state, v) result)
+array_element=SOME (Number 9)
+negative_index=NONE
+byte_update=case if ∃w. 7 = &w2n w then Rval (Block 0 [],<|refs := FEMPTY⟨0 ↦ ByteArray [1w; 7w; 3w]; 0 ↦ ByteArray [1w; 2w; 3w]⟩|>) else Rerr (Rabort Rtype_error) of Rval (v6,s) => FLOOKUP s.refs 0 | Rerr v3 => NONE
+overlap_copy=SOME (ByteArray [1w; 1w; 2w; 3w])
+loose_end=SOME (Block 1 [])
+strict_end=SOME (Block 0 [])

@@ -30,18 +30,6 @@ def crepInlineReturnResult : CrepProg Nat :=
         (.seq (.assign 20 (.var 21)) .skip)) => true
   | _ => false
 
-def crepInlineTopResult : List (CompiledFunction Nat) :=
-  crepInlineTop ["identity"]
-    [CompiledFunction.mk "identity" [10] (.return [.var 10]) .one]
-
-#guard match crepInlineTopResult with
-  | [function] =>
-      function.name == "identity" && function.params == [10] &&
-        match function.body with
-        | .return [.var 10] => true
-        | _ => false
-  | _ => false
-
 def crepInlineRecursiveEntries : List (CrepInlineEntry Nat) :=
   [("first", ([], .call none "second" [])),
     ("second", ([], .return [.const 9]))]

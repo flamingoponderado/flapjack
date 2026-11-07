@@ -1,0 +1,4 @@
+compile_exps_length=LENGTH (compile_exps t m es) = LENGTH es
+
+compile_exps_length_typed=LENGTH (compile_exps (t :mlstring list) (m :environment) (es :ast$exp list) :exp list) = LENGTH es
+

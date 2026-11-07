@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+
+@[expose] public section
 
 namespace Flapjack.PanGlobalsShapeValueEval
 open Flapjack.Pancake.PanLang

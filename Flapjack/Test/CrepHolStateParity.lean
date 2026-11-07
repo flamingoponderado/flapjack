@@ -38,18 +38,18 @@ def parityGuard : Bool :=
 
 example : parityGuard = true := by rfl
 
-/-- The source evaluator sees identical observable states across HOL `mapc`.
-The direct HOL evidence is in `crep_state_mapc_probe.out`. -/
+/-- The BitVec evaluator projection is unchanged by a code-only `mapc`. -/
 example {width : Nat} [NeZero width] {ffiState : Type}
     (f : MlString × (List Nat × CrepProgHOL width) →
       List Nat × CrepProgHOL width)
-    (state : CrepSemHOLState width ffiState)
-    (expression : CrepExp (Fin width → Bool)) :
-    evalCrepHolFiniteWordSourceExp (instFinHolFiniteDimension (width := width))
-        (state.mapc f).toExpressionEvaluatorState expression =
-      evalCrepHolFiniteWordSourceExp (instFinHolFiniteDimension (width := width))
-        state.toExpressionEvaluatorState expression :=
-  evalCrepHolFiniteWordSourceExp_mapc_projection f state expression
+    (state : CrepSemHOLState width ffiState) :
+    (state.mapc f).toBitVecEvaluatorState = state.toBitVecEvaluatorState :=
+  CrepSemHOLState.toBitVecEvaluatorState_mapc f state
+
+-- `crep_state_mapc_probe.out`: HOL's key-aware FMAP_MAP2 lookup.
+example : (((HolFiniteMapExact.empty : HolFiniteMapExact Nat Nat).update (3, 7)).map2
+    (fun entry => entry.2 + 1)).lookup 3 = some 8 := by
+  simp [HolFiniteMapExact.update, HolFiniteMapExact.map2, FUPDATE]
 
 /-! ## Finite-support map operation rows
 

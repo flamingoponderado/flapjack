@@ -64,6 +64,23 @@ def observeNStructShapeMismatch : Bool :=
 def observeMissingStruct : Bool :=
   (panEval context (.nStruct "Pair" [])).isNone
 
+/-- HOL `ALOOKUP` picks the first duplicate field, and requires the named
+    structure to exist even when the stored value already contains the field. -/
+def namedFieldContext : PanEvalContext Nat :=
+  { structContext with
+    locals := fun name => if name == "v" then
+      some (.nStruct "Pair" [("left", .word 3), ("left", .word 4)]) else none }
+
+def observeNFieldFirstDuplicate : Bool :=
+  isWord 3 (panEval namedFieldContext (.nField "left" (.var .local "v")))
+
+def observeNFieldMissingField : Bool :=
+  (panEval namedFieldContext (.nField "missing" (.var .local "v"))).isNone
+
+def observeNFieldMissingStruct : Bool :=
+  (panEval { namedFieldContext with structs := [] }
+    (.nField "left" (.var .local "v"))).isNone
+
 /-- The exact `word_lab` port and production `PanWordLab` are isomorphic. -/
 theorem wordLabBridge (value : BitVec 64) :
     (HolWordLab.word value).toPanWordLab.toHolWordLab = HolWordLab.word value :=
@@ -91,6 +108,9 @@ def observeValueBridge : Bool :=
 #guard observeNStructNameMismatch
 #guard observeNStructShapeMismatch
 #guard observeMissingStruct
+#guard observeNFieldFirstDuplicate
+#guard observeNFieldMissingField
+#guard observeNFieldMissingStruct
 #guard observeWordLabBridge
 #guard observeValueBridge
 
@@ -123,6 +143,12 @@ def runChecks : IO Bool := do
     else IO.println "FAIL eval NStruct shape mismatch"
   if observeMissingStruct then IO.println "PASS eval NStruct missing struct"
     else IO.println "FAIL eval NStruct missing struct"
+  if observeNFieldFirstDuplicate then IO.println "PASS eval NField first duplicate"
+    else IO.println "FAIL eval NField first duplicate"
+  if observeNFieldMissingField then IO.println "PASS eval NField missing field"
+    else IO.println "FAIL eval NField missing field"
+  if observeNFieldMissingStruct then IO.println "PASS eval NField missing struct"
+    else IO.println "FAIL eval NField missing struct"
   if observeWordLabBridge then IO.println "PASS eval word_lab bridge"
     else IO.println "FAIL eval word_lab bridge"
   if observeValueBridge then IO.println "PASS eval v bridge"
@@ -131,7 +157,8 @@ def runChecks : IO Bool := do
     else IO.println "FAIL eval shape_of alignment"
   pure (observeConst && observeLocal && observeGlobal && observeField && observeMissing &&
     observeNStruct && observeNStructNameMismatch && observeNStructShapeMismatch &&
-    observeMissingStruct && observeWordLabBridge && observeValueBridge &&
+    observeMissingStruct && observeNFieldFirstDuplicate && observeNFieldMissingField &&
+    observeNFieldMissingStruct && observeWordLabBridge && observeValueBridge &&
     observeShapeAlignment)
 
 end Flapjack.Test.PanEvalParity

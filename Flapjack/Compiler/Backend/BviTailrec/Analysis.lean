@@ -1,0 +1,376 @@
+import Flapjack.Compiler.Backend.BviTailrec
+
+/-! Type and operator analysis used by BVI tail-recursion elimination.
+The source-shaped term tests are total; their bounded executable versions
+return `none` when traversal fuel is exhausted. -/
+namespace Flapjack.Compiler.Backend.BviTailrec
+open Bvi
+
+/-- The source pass's type abstraction for values. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "v_ty"]
+inductive ValueType where
+  | int | list | any
+  deriving DecidableEq, BEq
+
+/-- The source pass's associative accumulator operations. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "assoc_op"]
+inductive AssocOp where
+  | plus | times | append | noop
+  deriving DecidableEq, BEq
+
+/-- Type required by the accumulator operation. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "op_type_def"]
+def opType : AssocOp → ValueType
+  | .plus | .times => .int
+  | .append => .list
+  | .noop => .any
+
+/-- Classify operations as source accumulator operators. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "from_op_def"]
+def fromOp : ClosLang.Op → AssocOp
+  | .intOp .add => .plus
+  | .intOp .mult => .times
+  | .blockOp .listAppend => .append
+  | _ => .noop
+
+/-- Convert a source accumulator operator into its BVI operation. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "to_op_def"]
+def toOp : AssocOp → ClosLang.Op
+  | .plus => .intOp .add
+  | .times => .intOp .mult
+  | .append => .blockOp .listAppend
+  | .noop => .intOp .mod
+
+private def small (i : Int) : Bool := -268435457 ≤ i && i ≤ 268435457
+/-- Recognize source small-integer constants. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "is_const_def"]
+def isConst : ClosLang.Op → Bool
+  | .intOp (.const i) => small i
+  | _ => false
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "is_arith_def"]
+def isArith : ClosLang.Op → Bool
+  | .intOp .add | .intOp .sub | .intOp .mult => true
+  | _ => false
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "is_rel_def"]
+def isRel : ClosLang.Op → Bool
+  | .intOp .less | .intOp .lessEq | .intOp .greater | .intOp .greaterEq => true
+  | _ => false
+/-- Operand type required by each source primitive. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "arg_ty_def"]
+def argType : ClosLang.Op → ValueType
+  | .intOp (.const i) => if small i then .int else .any
+  | .intOp .add | .intOp .sub | .intOp .mult | .intOp .div | .intOp .mod
+  | .intOp .less | .intOp .lessEq | .intOp .greater | .intOp .greaterEq => .int
+  | .blockOp .listAppend => .list
+  | _ => .any
+/-- Keep a specific type only when both branches agree on it. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "decide_ty_def"]
+def decideType : ValueType → ValueType → ValueType
+  | .int, .int => .int
+  | .list, .list => .list
+  | _, _ => .any
+/-- Refine an unknown variable type in the current context. -/
+def update (ty : ValueType) (e : Exp) (ctx : List ValueType) : List ValueType :=
+  match e with
+  | .var n => if ctx[n]? == some .any then ctx.set n ty else ctx
+  | _ => ctx
+/-- Refine the variables used by two operands in source order. -/
+def updateContext (ty : ValueType) (ctx : List ValueType) (x y : Exp) : List ValueType :=
+  update ty y (update ty x ctx)
+
+mutual
+  /-- Source integer-term test. Matching a two-element operand list is the
+  source `get_bin_args` check; optional lookup implements its bounds test. -/
+  @[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "term_ok_int_def"]
+  def termInt (ctx : List ValueType) : Exp → Bool
+    | .var n => ctx[n]? == some .int
+    | .op op [x, y] => isArith op && termInt ctx x && termInt ctx y
+    | .op op [] => isConst op
+    | _ => false
+  termination_by e => sizeOf e
+
+  /-- Source arbitrary/list-term test, with the same operand ordering and
+  short-circuit cases as the original test. -/
+  @[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "term_ok_any_def"]
+  def termAny (ctx : List ValueType) (list : Bool) : Exp → Bool
+    | .var n => if list then ctx[n]? == some .list else n < ctx.length
+    | .op op [x, y] =>
+      match op with
+      | .blockOp .listAppend => termAny ctx true x && termAny ctx true y
+      | .blockOp (.cons 0) => termAny ctx true x && termAny ctx false y
+      | _ => !list && (isArith op || isRel op) && termInt ctx x && termInt ctx y
+    | .op (.blockOp (.cons 0)) [] => list
+    | .op op [] => !list && isConst op
+    | _ => false
+  termination_by e => sizeOf e
+end
+
+/-- Dispatch to the source term test for the requested type. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "term_ok_def"]
+def term (ctx : List ValueType) (ty : ValueType) (e : Exp) : Bool :=
+  match ty with
+  | .int => termInt ctx e
+  | .list => termAny ctx true e
+  | .any => termAny ctx false e
+
+/-- Recognize the BVI operation represented by an accumulator operator. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "op_eq_def"]
+def opEq : AssocOp → Exp → Bool
+  | .plus, .op (.intOp .add) _ => true
+  | .times, .op (.intOp .mult) _ => true
+  | .append, .op (.blockOp .listAppend) _ => true
+  | _, _ => false
+
+/-- Extract precisely two operands from a BVI operation. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "get_bin_args_def"]
+def getBinArgs : Exp → Option (Exp × Exp)
+  | .op _ [x, y] => some (x, y)
+  | _ => none
+
+/-- Extract two operands only when the operation matches the accumulator. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "opbinargs_def"]
+def opBinArgs (assoc : AssocOp) (e : Exp) : Option (Exp × Exp) :=
+  if opEq assoc e then getBinArgs e else none
+
+/-- Construct the BVI expression for an accumulator operation. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "apply_op_def"]
+def applyOp (assoc : AssocOp) (x y : Exp) : Exp := .op (toOp assoc) [x, y]
+
+/-- Move a recursive left operand to the right for commutative operators. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "try_swap_def"]
+def trySwap (loc : Nat) (assoc : AssocOp) (e : Exp) : Exp :=
+  if assoc == .append then e else
+    match opBinArgs assoc e with
+    | none => e
+    | some (x, y) => if isRec loc x then applyOp assoc y x else e
+
+/-- Original candidate-operation check, before bounded traversal. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "check_op_def"]
+def checkOp (ctx : List ValueType) (assoc : AssocOp) (loc : Nat) (e : Exp) : Option Exp :=
+  match opBinArgs assoc (trySwap loc assoc e) with
+  | none => none
+  | some (x, y) => if isRec loc y && term ctx (opType assoc) x then some (applyOp assoc x y) else none
+
+mutual
+  /-- Source termination test for integer terms. -/
+  def termIntFuel : Nat → List ValueType → Exp → Option Bool
+    | 0, _, _ => none
+    | fuel + 1, ctx, e => do
+      match e with
+      | .var n => pure (ctx[n]? == some .int)
+      | .op op [x, y] =>
+          if !isArith op then pure false
+          else if !(← termIntFuel fuel ctx x) then pure false else termIntFuel fuel ctx y
+      | .op op [] => pure (isConst op)
+      | _ => pure false
+
+  /-- Source termination test for arbitrary and list terms. -/
+  def termAnyFuel : Nat → List ValueType → Bool → Exp → Option Bool
+    | 0, _, _, _ => none
+    | fuel + 1, ctx, list, e => do
+      match e with
+      | .var n => pure (if list then ctx[n]? == some .list else n < ctx.length)
+      | .op op [x, y] =>
+          match op with
+          | .blockOp .listAppend =>
+              if !(← termAnyFuel fuel ctx true x) then pure false else termAnyFuel fuel ctx true y
+          | .blockOp (.cons 0) =>
+              if !(← termAnyFuel fuel ctx true x) then pure false else termAnyFuel fuel ctx false y
+          | _ =>
+              if !list && (isArith op || isRel op) then
+                if !(← termIntFuel fuel ctx x) then pure false else termIntFuel fuel ctx y
+              else pure false
+      | .op (.blockOp (.cons 0)) [] => pure list
+      | .op op [] => pure (!list && isConst op)
+      | _ => pure false
+end
+
+def termFuel (fuel : Nat) (ctx : List ValueType) (ty : ValueType) (e : Exp) : Option Bool :=
+  match ty with
+  | .int => termIntFuel fuel ctx e
+  | .list => termAnyFuel fuel ctx true e
+  | .any => termAnyFuel fuel ctx false e
+
+/-- Preserve a successful type test, retrying exhausted traversal with a
+structural bound. -/
+def termBounded (fuel : Nat) (ctx : List ValueType) (ty : ValueType) (e : Exp) : Option Bool :=
+  match termFuel fuel ctx ty e with
+  | some result => some result
+  | none => termFuel (max fuel (expBudget e + 1)) ctx ty e
+
+/-- Fuel-bounded check of a candidate operation; this is infrastructure for
+the total source operation, which remains to be ported and reviewed. -/
+def checkOpFuel (fuel : Nat) (ctx : List ValueType) (assoc : AssocOp) (loc : Nat)
+    (xs : List Exp) : Option (Option Exp) := do
+  match xs with
+  | [left, right] =>
+      let (left, right) := if assoc != .append && isRec loc left then (right, left) else (left, right)
+      if !isRec loc right then return none
+      if ← termBounded fuel ctx (opType assoc) left then return some (.op (toOp assoc) [left, right])
+      pure none
+  | _ => pure none
+
+private abbrev Scan := List ValueType × ValueType × Bool × Option AssocOp
+
+mutual
+  /-- Total source-shaped scan of a single expression. -/
+  @[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "scan_expr_sing_def"]
+  def scanSing (ctx : List ValueType) (loc : Nat) : Exp → Scan
+    | .var n | .force _ n => (ctx, ctx[n]?.getD .any, false, none)
+    | .ifThenElse cond yes no =>
+      let (ci, _, _, _) := scanSing ctx loc cond
+      let (ct, tt, _, ot) := scanSing ci loc yes
+      let (ce, te, _, oe) := scanSing ci loc no
+      let op := ot.orElse fun _ => oe
+      let ty := match op with | none => decideType tt te | some o => decideType tt (decideType te (opType o))
+      ((ct.zip ce).map fun (x, y) => decideType x y, ty, oe.isSome, op)
+    | .let xs body =>
+      let scans := scanList ctx loc xs
+      let types := scans.map fun (_, ty, _, _) => ty
+      let last := match scans.getLast? with | some (cs, _, _, _) => cs | none => ctx
+      let (out, ty, _, op) := scanSing (types ++ last) loc body
+      (out.drop scans.length, ty, false, op)
+    | .tick body => scanSing ctx loc body
+    | .op op xs =>
+      let assoc := fromOp op
+      if assoc == .noop then
+        if argType op == .int then
+          match xs with
+          | [x, y] => if isConst op then (ctx, .any, false, none)
+              else (updateContext .int ctx x y, .any, false, none)
+          | _ => if isConst op then (ctx, .int, false, none) else (ctx, .any, false, none)
+        else match op, xs with
+          | .blockOp (.cons 0), [] => (ctx, .list, false, none)
+          | _, _ => (ctx, .any, false, none)
+      else
+        let ty := opType assoc
+        if (checkOp ctx assoc loc (.op op xs)).isSome then
+          (ctx, ty, false, some assoc)
+        else if term ctx ty (.op op xs) then
+          match xs with
+          | [x, y] => (updateContext ty ctx x y, ty, false, none)
+          | _ => (ctx, .any, false, none)
+        else (ctx, .any, false, none)
+    | _ => (ctx, .any, false, none)
+  termination_by e => sizeOf e
+
+  /-- Total source-shaped scan of a list, threading the inferred context. -/
+  @[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "scan_expr_sing_def"]
+  def scanList (ctx : List ValueType) (loc : Nat) : List Exp → List Scan
+    | [] => []
+    | x :: xs =>
+      let result := scanSing ctx loc x
+      result :: scanList result.1 loc xs
+  termination_by xs => sizeOf xs
+end
+
+/-- List-based source scan with the non-recursive singleton cases delegated to
+`scanSing`. The default for an empty singleton result is unreachable; the
+source uses `HD` in those positions. -/
+def scanExpr (ctx : List ValueType) (loc : Nat) : List Exp → List Scan
+  | [] => []
+  | x :: y :: xs =>
+    let head := (scanExpr ctx loc [x]).headD (ctx, .any, false, none)
+    head :: scanExpr head.1 loc (y :: xs)
+  | [.ifThenElse cond yes no] =>
+    let (ci, _, _, _) := (scanExpr ctx loc [cond]).headD (ctx, .any, false, none)
+    let (ct, tt, _, ot) := (scanExpr ci loc [yes]).headD (ci, .any, false, none)
+    let (ce, te, _, oe) := (scanExpr ci loc [no]).headD (ci, .any, false, none)
+    let op := ot.orElse fun _ => oe
+    let ty := match op with | none => decideType tt te | some o => decideType tt (decideType te (opType o))
+    [((ct.zip ce).map fun (x, y) => decideType x y, ty, oe.isSome, op)]
+  | [.let xs body] =>
+    let scans := scanExpr ctx loc xs
+    let types := scans.map fun (_, ty, _, _) => ty
+    let last := match scans.getLast? with | some (cs, _, _, _) => cs | none => ctx
+    let (out, ty, _, op) := (scanExpr (types ++ last) loc [body]).headD (types ++ last, .any, false, none)
+    [(out.drop scans.length, ty, false, op)]
+  | [.tick body] => scanExpr ctx loc [body]
+  | [e] => [scanSing ctx loc e]
+termination_by es => sizeOf es
+decreasing_by
+  all_goals simp_wf
+  all_goals first | omega | (cases y <;> simp_wf <;> omega)
+
+mutual
+  /-- Analyze one expression in the source evaluation order. -/
+  def scanFuel : Nat → List ValueType → Nat → Exp → Option Scan
+    | 0, _, _, _ => none
+    | fuel + 1, ctx, loc, e => do
+      match e with
+      | .var n | .force _ n => pure (ctx, ctx[n]?.getD .any, false, none)
+      | .ifThenElse cond yes no =>
+          let (ci, _, _, _) ← scanFuel fuel ctx loc cond
+          let (ct, tt, _, ot) ← scanFuel fuel ci loc yes
+          let (ce, te, _, oe) ← scanFuel fuel ci loc no
+          let op := ot.orElse fun _ => oe
+          let ty := match op with | none => decideType tt te | some o => decideType tt (decideType te (opType o))
+          pure ((ct.zip ce).map fun (x, y) => decideType x y, ty, oe.isSome, op)
+      | .let xs body =>
+          let scans ← scanListFuel fuel ctx loc xs
+          let types := scans.map fun (_, ty, _, _) => ty
+          let last := match scans.getLast? with | some (cs, _, _, _) => cs | none => ctx
+          let (out, ty, _, op) ← scanFuel fuel (types ++ last) loc body
+          pure (out.drop scans.length, ty, false, op)
+      | .tick x => scanFuel fuel ctx loc x
+      | .op op xs =>
+          let assoc := fromOp op
+          if assoc == .noop then
+            if argType op == .int then
+              (match xs with
+              | [x, y] => if isConst op then pure (ctx, .any, false, none)
+                  else pure (updateContext .int ctx x y, .any, false, none)
+              | _ => if isConst op then pure (ctx, .int, false, none) else pure (ctx, .any, false, none))
+            else match op, xs with
+              | .blockOp (.cons 0), [] => pure (ctx, .list, false, none)
+              | _, _ => pure (ctx, .any, false, none)
+          else
+            let ty := opType assoc
+            if (← checkOpFuel fuel ctx assoc loc xs).isSome then
+              pure (ctx, ty, false, some assoc)
+            else if ← termBounded fuel ctx ty (.op op xs) then
+              match xs with
+              | [x, y] => pure (updateContext ty ctx x y, ty, false, none)
+              | _ => pure (ctx, .any, false, none)
+            else pure (ctx, .any, false, none)
+      | _ => pure (ctx, .any, false, none)
+
+  /-- Analyze a list, threading the context in evaluation order. -/
+  def scanListFuel : Nat → List ValueType → Nat → List Exp → Option (List Scan)
+    | _, _, _, [] => some []
+    | 0, _, _, _ :: _ => none
+    | fuel + 1, ctx, loc, x :: xs => do
+      let result@(next, _, _, _) ← scanFuel fuel ctx loc x
+      pure (result :: (← scanListFuel fuel next loc xs))
+end
+
+/-- Retry an exhausted scan with a structural bound. -/
+def scanBounded (fuel : Nat) (ctx : List ValueType) (loc : Nat) (e : Exp) : Option Scan :=
+  match scanFuel fuel ctx loc e with
+  | some result => some result
+  | none => scanFuel (max fuel (expBudget e + 1)) ctx loc e
+
+/-- Retry an exhausted operand scan with a structural list bound. -/
+def scanListBounded (fuel : Nat) (ctx : List ValueType) (loc : Nat) (xs : List Exp) : Option (List Scan) :=
+  match scanListFuel fuel ctx loc xs with
+  | some result => some result
+  | none => scanListFuel (max fuel (listBudget xs + 1)) ctx loc xs
+
+/-- Decide whether the original type analysis selected an accumulator
+operation. The checked rewrite is implemented in `Rewrite`. -/
+def checkExpFuel (fuel loc arity : Nat) (e : Exp) : Option (Option AssocOp) := do
+  if !(← hasRecBounded fuel loc e) then return none
+  let (_, ty, _, op) ← scanBounded fuel (List.replicate arity .any) loc e
+  match op with
+  | some o => pure (if ty == opType o then some o else none)
+  | none => pure none
+
+/-- Return unchanged code only when analysis proves no function is rewritten. -/
+def compileNoRewriteFuel (fuel : Nat) (enabled : Bool) (next : Nat)
+    (code : List (Nat × Nat × Exp)) : Option (Nat × List (Nat × Nat × Exp)) := do
+  if !enabled then return (next, code)
+  for (loc, arity, body) in code do
+    if (← checkExpFuel fuel loc arity body).isSome then failure
+  pure (next, code)
+
+end Flapjack.Compiler.Backend.BviTailrec

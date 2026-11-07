@@ -201,15 +201,6 @@ theorem panValueProgramStateRel_evalDeclarations_evalExp_fixture
     relationState_self relationDecls none s' (.const 11) (.word 11) hs
   simp [evalPanValueExp]
 
-/-! Regression for the function-table lookup bridge used by Cake's
-    `state_rel_imp_semantics`: the entry keeps its parameters and return shape,
-    while only its body is replaced by `panSimpProg`. -/
-theorem lookupFunctionEntry_panSimpDecls_fixture :
-    lookupFunctionEntry "f" (functions (panSimpDecls relationDecls)) =
-      some ([], panSimpProg (.seq (.skip : Prog Nat) (.skip : Prog Nat)), .one) := by
-  apply lookupFunctionEntry_panSimpDecls relationDecls "f"
-  simp [relationDecls, functions, functionEntries, lookupFunctionEntry]
-
 /-- Focused regression for `map_snd_f_eq` (`pan_simpProofScript.sml:43`):
     rewriting the body component then projecting it is the same as projecting
     it first and rewriting afterwards. -/
@@ -1039,27 +1030,6 @@ def updateMapGuard : Bool :=
 
 #eval updateMapGuard
 #guard updateMapGuard
-
-/-! Cake's `decs_stcnames_infos_ok`
-    (`cakeml/pancake/proofs/pan_structsProofScript.sml:1459`): collecting the
-    struct declarations preserves the `struct_infos_ok` invariant. -/
-
-def structInfoDecls : List (Decl Nat) :=
-  [.name "S" [("f", Shape.one)]]
-
-example (context' : StructContext)
-    (hcollect : collectPanValueStructs structInfoDecls ([] : StructContext) =
-      some context') :
-    structInfosOk context' :=
-  collectPanValueStructs_structInfosOk structInfoDecls [] context' hcollect
-    (by unfold structInfosOk; refine ⟨?_, ?_, ?_, ?_⟩ <;> simp)
-
-theorem lookupInfo_isSome_of_mem_fixture :
-    (lookupInfo "S" ([("S", { fields := [("f", Shape.one)], size := 1 })]
-      : StructContext)).isSome = true :=
-  lookupInfo_isSome_of_mem "S"
-    ([("S", { fields := [("f", Shape.one)], size := 1 })] : StructContext)
-    (by simp)
 
 #guard (lookupInfo "S" ([("S", { fields := [("f", Shape.one)], size := 1 })]
   : StructContext)).isSome

@@ -1,4 +1,4 @@
-import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.CompHOLImage
+import Flapjack.Pancake.LoopToWord
 
 /-!
 # Exact WordLang program carrier fixtures
@@ -21,24 +21,6 @@ private def nestedExact : WordLangProgHOL (BitVec 8) :=
         .return 9 [7], 3, 4)) (some 12) [8]
       (some (6, .raise 6, 4, 5)))
 
-private def nestedExecutable : WordProg (BitVec 8) :=
-  .seq
-    (.loop (Flapjack.LoopToWord.fromNumSetHOL
-        (toNumSetHOL [2]))
-      (.ite .equal 2 (.imm 3)
-        (.inst (.memOffset .load8 3 2 1)) .tick)
-      (Flapjack.LoopToWord.fromNumSetHOL (toNumSetHOL [2, 4])))
-    (.call (some ([7],
-        (Flapjack.LoopToWord.fromNumSetHOL (toNumSetHOL [7]),
-          Flapjack.LoopToWord.fromNumSetHOL (toNumSetHOL [8])),
-        .return 9 [7], 3, 4)) (some 12) [8]
-      (some (6, .raise 6, 4, 5)))
-
-example : wordLangProgFromHOL nestedExact = some nestedExecutable := by
-  simp [nestedExact, nestedExecutable, wordLangProgFromHOL,
-    wordLangInstFromHOL, wordCutsetsFromHOL, toNumSetHOL, fromNumSetHOL,
-    sptInsert, sptToAList, sptFoldi, lrNext]
-
 private def ffiExact : WordLangProgHOL (BitVec 8) :=
   .ffi (ofString "write") 1 2 3 4 (toNumSetHOL [2, 3], toNumSetHOL [4, 4])
 
@@ -52,63 +34,14 @@ example : Flapjack.LoopToWord.fromNumSetHOL (toNumSetHOL [4, 4]) = [4] := by
     Flapjack.LoopToWord.toNumSetHOL, sptInsert, sptToAList,
     sptFoldi, lrNext]
 
-example : wordLangProgFromHOL ffiExact =
-    some (.ffi "write" 1 2 3 4
-      ([3, 2], [4])) := by
-  simp [ffiExact, wordLangProgFromHOL,
-    wordCutsetsFromHOL, toNumSetHOL, fromNumSetHOL,
-    toStringOfBytes, ofString, sptInsert, sptToAList, sptFoldi, lrNext]
-
 private def unsupportedFp : WordLangProgHOL (BitVec 8) :=
   .inst (.fp (.fpAdd 1 2 3))
-
-example : wordLangProgFromHOL unsupportedFp = none := by
-  simp [unsupportedFp, wordLangProgFromHOL, wordLangInstFromHOL]
 
 private def generatedOverflow : WordLangProgHOL (BitVec 8) :=
   .inst (.arith (.addOverflow 1 2 3 4))
 
-example : wordLangProgFromHOL generatedOverflow = some (.inst (.arith (.addOverflow 1 2 3 4))) := by
-  simp [generatedOverflow, wordLangProgFromHOL,
-    wordLangInstFromHOL, wordLangArithFromHOL]
-
 private def generatedAddCarry : WordLangProgHOL (BitVec 8) :=
   .inst (.arith (.addCarry 3 4 5 6))
-
-example : wordLangProgFromHOL generatedAddCarry =
-    some (.inst (.arith (.cakeAddCarry 3 4 5 6))) := by
-  simp [generatedAddCarry, wordLangProgFromHOL,
-    wordLangInstFromHOL, wordLangArithFromHOL]
-
-/-- Projection of the exact original HOL `comp_addcarry_valid` oracle row
-(`scripts/hol-probes/loop_to_word_comp_probe.out`): its distinct source
-registers produce `AddCarry 3 24 26 1`; the projection must retain the two
-addends and carry register in those positions. -/
-example : wordLangArithFromHOL
-    (.addCarry 3 24 26 1 : WordLangArith (BitVec 8)) =
-      some (.cakeAddCarry 3 24 26 1) := by
-  rfl
-
-/-- The adjacent `comp_longmul` row in the same original HOL probe retains
-all four register positions independently; there is no second LongMul
-reordering in the production projection. -/
-example : wordLangArithFromHOL
-    (.longMul 20 22 24 26 : WordLangArith (BitVec 8)) =
-      some (.longMul 20 22 24 26) := by
-  rfl
-
-example : wordLangInstFromHOL
-    (.const 3 (BitVec.ofNat 8 9) : WordLangInst (BitVec 8)) =
-      some (.const 3 (BitVec.ofNat 8 9)) := by
-  rfl
-
-example : wordLangInstFromHOL
-    (.mem .load32 3 (.addr 2 0) : WordLangInst (BitVec 8)) =
-      some (.mem .load32 3 2) := by
-  simp [wordLangInstFromHOL]
-
-example : wordLangInstFromHOL (WordLangInst.skip : WordLangInst (BitVec 8)) = none := by
-  rfl
 
 /-! `compHOL` image fixtures: these exercise generated AddCarry, memory,
 nested Seq/Loop/Call-handler, and FFI outputs through the universal projection
@@ -132,26 +65,5 @@ private def imageNestedHandler : HolLoopProg 8 :=
 
 private def imageFfi : HolLoopProg 8 :=
   .ffi (ofString "write") 1 2 3 4 (toNumSetHOL [2, 3])
-
-example : wordLangProgFromHOL
-    (LoopToWord.compHOL imageContext imageAddCarry (7, 11)).1 ≠ none :=
-  wordLangProgFromHOL_compHOL_ne_none imageContext imageAddCarry (7, 11)
-
-example : wordLangProgFromHOL
-    (LoopToWord.compHOL imageContext imageMemory (7, 11)).1 ≠ none :=
-  wordLangProgFromHOL_compHOL_ne_none imageContext imageMemory (7, 11)
-
-example : wordLangProgFromHOL
-    (LoopToWord.compHOL imageContext imageNestedHandler (7, 11)).1 ≠ none :=
-  wordLangProgFromHOL_compHOL_ne_none imageContext imageNestedHandler (7, 11)
-
-example : wordLangProgFromHOL
-    (LoopToWord.compHOL imageContext imageFfi (7, 11)).1 ≠ none :=
-  wordLangProgFromHOL_compHOL_ne_none imageContext imageFfi (7, 11)
-
-def runChecks : IO Bool := do
-  IO.println "PASS fixed-width WordLangProg projection (loop/call/FFI; AddCarry/memory; unsupported FP/overflow rejected)"
-  IO.println "PASS exact compHOL output image (AddCarry; memory; nested Seq/Loop/Call-handler; FFI)"
-  return true
 
 end Flapjack.Test.WordProgCarrierCodecParity

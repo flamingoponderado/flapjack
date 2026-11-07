@@ -1,7 +1,9 @@
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.ShMem
 import Flapjack.Pancake.Semantics.PanSem.EvaluateClock
+import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Support
 
 namespace Flapjack
+open Flapjack.PanGlobalsFreshLocalSupport
 
 open Flapjack.Pancake.PanLang
 open PanSemStateFiniteExact
@@ -63,13 +65,6 @@ private theorem updateEq_eq_update {width : Nat} [NeZero width]
   funext key
   simp only [HolFiniteMapExact.lookup_updateEq, HolFiniteMapExact.lookup_update,
     FUPDATE_HOL_eq_FUPDATE]
-
-/-- Flapjack-only support: `setVarHOLFinite` in the HOL-equality update form. -/
-private theorem setVarEq {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateFiniteExact width σ) (name : MlS) (value : ValueHOL width) :
-    setVarHOLFinite name value state =
-      {state with locals := state.locals.updateEq (name, value)} := by
-  simp only [setVarHOLFinite, updateEq_eq_update]
 
 /-- Flapjack-only support: a later update shadows an earlier one at the same
     key. -/

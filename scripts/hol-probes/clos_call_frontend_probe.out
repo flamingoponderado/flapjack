@@ -1,0 +1,5 @@
+free=(Fn «f» (SOME 4) (SOME [2]) 1 (Let None [Var None 3] (Var None 0)),Shift 1 (Union (Var 3) (Shift 1 (Var 0))))
+closed=(Fn «f» (SOME 4) NONE 1 (Call None 0 5 [Var None 0]),[(4,())],[(5,1,Var None 0)])
+open=(Fn «f» (SOME 4) NONE 1 (Var None 2),[],[])
+apps=(Call None 2 5 [Var None 1; Var None 2],Let None [Var None 1; Var None 2; Tick None (Var None 0)] (Call None 2 5 [Var None 0; Var None 1]))
+letrec=(Letrec [«f»; «g»] (SOME 10) NONE [(1,Call None 0 11 [Var None 0]); (1,Call None 0 13 [Var None 0])] (Var None 0),[(12,()); (10,())],[(13,1,Var None 0); (11,1,Var None 0)])

@@ -87,6 +87,15 @@ def current_index() -> None:
     )
 
 
+def source_path(argument: str) -> str:
+    """Normalize an indexed CakeML script path without leaving its root."""
+    source = argument.removeprefix("cakeml/")
+    path = Path(source)
+    if path.is_absolute() or ".." in path.parts or not source.endswith(".sml"):
+        raise ValueError("--file must name a script under cakeml/")
+    return path.as_posix()
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--file", required=True, help="HOL script path under cakeml/")
@@ -97,9 +106,10 @@ def main() -> int:
     args = parser.parse_args()
     if args.limit < 1:
         parser.error("--limit must be positive")
-    source = args.file.removeprefix("cakeml/")
-    if not source.startswith("pancake/") or not source.endswith(".sml") or ".." in Path(source).parts:
-        parser.error("--file must name a script under cakeml/pancake/")
+    try:
+        source = source_path(args.file)
+    except ValueError as error:
+        parser.error(str(error))
     try:
         current_index()
         mapping = subprocess.run(

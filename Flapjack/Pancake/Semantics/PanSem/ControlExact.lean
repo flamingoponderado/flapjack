@@ -26,7 +26,7 @@ The clause steps take explicit `evaluate` callbacks (and `recurseWhile` for the
 `evaluate_def` conjunction, once assembled, would be the exact HOL statement. The
 direct original-HOL rows are recorded in
 `scripts/hol-probes/pan_sem_e2e_probe.out` (rows `seq_two_assigns`,
-`seq_first_errors`, `ite_true`, `ite_false`, `if_error`, `while_cond_zero`,
+`seq_first_errors`, `if_true`, `if_false`, `if_error`, `while_cond_zero`,
 `while_timeout`, `while_break`, `while_continue_then_zero`,
 `while_error_condition`, `break_clause`, `continue_clause`, `annot_clause`) and
 replayed by `Flapjack/Test/PanSemControlExactParity.lean`.
@@ -119,68 +119,5 @@ def annotStepHOLExact {width : Nat} {σ : Type} [NeZero width]
 @[simp] theorem annotStepHOLExact_eq {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateExact width σ) (tag text : MlS) :
     annotStepHOLExact state tag text = (none, state) := rfl
-
-theorem ifStepHOLExact_word {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateExact width σ) (condition : ExpHOL width)
-    (thenBranch elseBranch : ProgHOL width)
-    (evalExpression : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width))
-    (evaluate : ProgHOL width → PanSemStateExact width σ →
-      Option (PanSemResultExact width) × PanSemStateExact width σ)
-    (word : RiscV.Word width)
-    (h : evalExpression state condition = some (.val (.word word))) :
-    ifStepHOLExact state condition thenBranch elseBranch evalExpression evaluate =
-      evaluate (if word ≠ 0 then thenBranch else elseBranch) state := by
-  simp only [ifStepHOLExact, h]
-
-theorem ifStepHOLExact_error {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateExact width σ) (condition : ExpHOL width)
-    (thenBranch elseBranch : ProgHOL width)
-    (evalExpression : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width))
-    (evaluate : ProgHOL width → PanSemStateExact width σ →
-      Option (PanSemResultExact width) × PanSemStateExact width σ)
-    (h : evalExpression state condition = none) :
-    ifStepHOLExact state condition thenBranch elseBranch evalExpression evaluate =
-      (some .error, state) := by
-  simp only [ifStepHOLExact, h]
-
-theorem whileStepHOLExact_error {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateExact width σ) (condition : ExpHOL width) (body : ProgHOL width)
-    (evalExpression : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width))
-    (evaluate : ProgHOL width → PanSemStateExact width σ →
-      Option (PanSemResultExact width) × PanSemStateExact width σ)
-    (recurseWhile : PanSemStateExact width σ →
-      Option (PanSemResultExact width) × PanSemStateExact width σ)
-    (h : evalExpression state condition = none) :
-    whileStepHOLExact state condition body evalExpression evaluate recurseWhile =
-      (some .error, state) := by
-  simp only [whileStepHOLExact, h]
-
-theorem whileStepHOLExact_zero {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateExact width σ) (condition : ExpHOL width) (body : ProgHOL width)
-    (evalExpression : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width))
-    (evaluate : ProgHOL width → PanSemStateExact width σ →
-      Option (PanSemResultExact width) × PanSemStateExact width σ)
-    (recurseWhile : PanSemStateExact width σ →
-      Option (PanSemResultExact width) × PanSemStateExact width σ)
-    (word : RiscV.Word width)
-    (h : evalExpression state condition = some (.val (.word word))) (hzero : word = 0) :
-    whileStepHOLExact state condition body evalExpression evaluate recurseWhile =
-      (none, state) := by
-  simp [whileStepHOLExact, h, hzero]
-
-theorem whileStepHOLExact_timeout {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateExact width σ) (condition : ExpHOL width) (body : ProgHOL width)
-    (evalExpression : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width))
-    (evaluate : ProgHOL width → PanSemStateExact width σ →
-      Option (PanSemResultExact width) × PanSemStateExact width σ)
-    (recurseWhile : PanSemStateExact width σ →
-      Option (PanSemResultExact width) × PanSemStateExact width σ)
-    (word : RiscV.Word width)
-    (h : evalExpression state condition = some (.val (.word word))) (hne : word ≠ 0)
-    (hclock : state.clock = 0) :
-    whileStepHOLExact state condition body evalExpression evaluate recurseWhile =
-      (some .timeOut, emptyLocalsHOLExact state) := by
-  simp only [whileStepHOLExact, h]
-  rw [ite_eq_left hne, ite_eq_left hclock]
 
 end Flapjack

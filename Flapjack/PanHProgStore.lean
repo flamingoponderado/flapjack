@@ -1,4 +1,4 @@
-import Flapjack.PanValueFfiSemantics
+import Flapjack.PanValueFfiCore
 import Flapjack.PanItreeFfi
 
 /-!

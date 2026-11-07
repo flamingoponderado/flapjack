@@ -123,25 +123,6 @@ example :
   intro expression hmem
   exact memCompFieldHOLExact_or_zero 2 [.one] [.const 4] expression hmem
 
-example :
-    (compileField (α := BitVec 8) 1
-        [Flapjack.Shape.one, Flapjack.Shape.comb [Flapjack.Shape.one, Flapjack.Shape.one]]
-        [.const 1, .const 2, .const 3]).1.map crepExpToHOL
-      = (compFieldHOL 1
-          (List.map Flapjack.Pancake.PanLang.shapeToHOL
-            [Flapjack.Shape.one, Flapjack.Shape.comb [Flapjack.Shape.one, Flapjack.Shape.one]])
-          (List.map crepExpToHOL [.const 1, .const 2, .const 3])).1 :=
-  (compileField_map_codecs 1
-    [Flapjack.Shape.one, Flapjack.Shape.comb [Flapjack.Shape.one, Flapjack.Shape.one]]
-    [.const 1, .const 2, .const 3]).1
-
-example :
-    ∀ expression ∈
-      (compileField 2 [.one] [.const 4]).1,
-      expression ∈ ([.const 4] : List (CrepExp Nat)) ∨ expression = .const 0 := by
-  intro expression hmem
-  exact compileField_mem_or_zero 2 [.one] [.const 4] expression hmem
-
 def runChecks : IO Bool := do
   if parityGuard then
     IO.println "PASS comp_field first/second/fallback"

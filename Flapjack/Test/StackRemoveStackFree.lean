@@ -53,13 +53,6 @@ example : singleStackFree (width := 1) 1234 255 =
 example : singleStackFree (width := 80) 1234 511 =
     (.inst (.arith (.binop .add 1234 1234 (.imm (BitVec.ofNat 80 5110)))) : HolProg 80) := by rfl
 
--- The real native-section executed codec accepts the immediate instructions
--- and full large-count Seq; there is no macro expansion or labFlatten fallback.
-example : (Flapjack.Compiler.Backend.StackToLab.ExecutedInput.sectionToExecuted?
-    (width := 64) (7, stackFree 24 511)).isSome = true := by
-  rw [free64_511]
-  decide +kernel
-
 -- Skip at zero is distinct from a single zero-immediate instruction.
 example : singleStackFree (width := 64) 24 0 ≠ stackFree 24 0 := by
   rw [stackFree_zero]

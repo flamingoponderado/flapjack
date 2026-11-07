@@ -70,17 +70,6 @@ abbrev CrepAddClock {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ) (ck : Nat) :
     (CrepAddClock state ck).topAddr = state.topAddr := rfl
 
-theorem fixClockCrepSemHOL_addClock {width : Nat} [NeZero width] {σ : Type} {β : Type}
-    (old : CrepSemHOLState width σ) (step : β × CrepSemHOLState width σ) (ck : Nat) :
-    fixClockCrepSemHOL (CrepAddClock old ck) (step.1, CrepAddClock step.2 ck) =
-      (step.1, CrepAddClock (fixClockCrepSemHOL old step).2 ck) := by
-  obtain ⟨res, st⟩ := step
-  simp only [fixClockCrepSemHOL, CrepAddClock]
-  congr 1
-  by_cases h : old.clock < st.clock
-  · simp [h, Nat.add_lt_add_iff_right]
-  · simp [h, Nat.add_lt_add_iff_right]
-
 theorem decClockCrepSemHOL_addClock {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ) (ck : Nat) (h : state.clock ≠ 0) :
     decClockCrepSemHOL (CrepAddClock state ck) =
@@ -243,11 +232,6 @@ theorem evalCrepSemHOLExps_addClock {width : Nat} [NeZero width] {σ : Type}
   | cons expression expressions ih =>
       simp only [List.mapM_cons]
       rw [evalCrepSemHOLExp_addClock, ih]
-
-theorem crepStampExactDomains_addClock {width : Nat} [NeZero width] {σ : Type}
-    (base : CrepSemHOLState width σ) (state : CrepSemHOLState width σ) (ck : Nat) :
-    crepStampExactDomains (CrepAddClock base ck) (CrepAddClock state ck) =
-      CrepAddClock (crepStampExactDomains base state) ck := rfl
 
 theorem CrepAddClock_setLocals {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ) (locals : HolFiniteMapExact Nat (HolWordLab width))

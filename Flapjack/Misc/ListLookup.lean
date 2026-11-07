@@ -1,5 +1,9 @@
-import Flapjack.HolRef
-import Init.Data.List.Nat.TakeDrop
+module
+
+public import Flapjack.HolRef
+public import Init.Data.List.Nat.TakeDrop
+
+@[expose] public section
 
 namespace Flapjack.Misc
 

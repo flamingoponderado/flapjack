@@ -1,3 +1,7 @@
+module
+
+@[expose] public section
+
 /-!
 A lexer for the Pancake language.
 

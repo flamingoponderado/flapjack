@@ -118,13 +118,6 @@ def funDeclToHOL {width : Nat} [NeZero width] (d : FunDeclOf width) : FunDeclHOL
     body := progToHOL d.body
     returnShape := shapeToHOL d.returnShape }
 
-@[simp] theorem funDeclToHOL_funDeclOfHOL {width : Nat} [NeZero width]
-    (d : FunDeclHOL width) : funDeclToHOL (funDeclOfHOL d) = d := by
-  obtain ⟨name, inline, exported, params, body, returnShape⟩ := d
-  simp [funDeclToHOL, funDeclOfHOL, listParamToHOL_paramOfHOL,
-    Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes, progToHOL_progOfHOL,
-    shapeToHOL_shapeOfHOL]
-
 /-- HOL `decl` to the production carrier. -/
 def declOfHOL {width : Nat} [NeZero width] : DeclHOL width → Flapjack.Decl (BitVec width)
   | .function d => .function (funDeclOfHOL d)
@@ -138,12 +131,6 @@ def declToHOL {width : Nat} [NeZero width] : Flapjack.Decl (BitVec width) → De
   | .decl shape name value => .decl (shapeToHOL shape) (ofString name) (expToHOL value)
   | .exnDecl exceptionName shape => .exnDecl (ofString exceptionName) (shapeToHOL shape)
   | .name struct fields => .name (ofString struct) (fields.map paramToHOL)
-
-@[simp] theorem declToHOL_declOfHOL {width : Nat} [NeZero width]
-    (d : DeclHOL width) : declToHOL (declOfHOL d) = d := by
-  cases d <;>
-    simp [declToHOL, declOfHOL, funDeclToHOL_funDeclOfHOL, listParamToHOL_paramOfHOL,
-      expToHOL_expOfHOL, shapeToHOL_shapeOfHOL, Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes]
 
 /-- HOL `struct_info` to the production-shaped carrier. -/
 def structInfoOfHOL (d : StructInfoHOLExact) : Flapjack.StructInfoHOL :=
@@ -309,25 +296,14 @@ returning `(eid, shape)` for each `ExnDecl` and dropping
 uses `ShapeHOL`, so this is an exact word-indexed port (the production
 `exceptionEntries` uses Lean `String` and monomorphic `Shape`).
 
-Executable-path disposition (bead `flapjack-4ac.1.44.1`): all three
-`flapjack-compile` source modes (`CompileMain.lean:92-129`) call one of the
-checked source-byte/image/runtime-image entrypoints in
-`RiscV/PipelineDiagnostics.lean`. Each parser-backed entrypoint proves
-`DeclByteRanged` for its declarations and passes that evidence to
-`compileFlapjackEntryCake` (`Pipeline.lean:634-671`). Its proof-bearing branch
-calls `compileProgTopHOLWithMetadataOfExact`, which calls
-`compileProgTopHOLProductionExact` (`PanToCrep/CompileProg.lean:152-186,
-5190-5200`). That executed helper constructs the exception map with
-`panToCrepGetEidsFromDeclsOfExactHOL`, whose body calls this tagged
-`exceptionsHOL` (`PanToCrep/Compile.lean:1207-1218`). The byte-range premise is
-what makes the `DeclHOL` codec total for names and shapes on this route; the
-helper's equality theorem proves it preserves the prior exception map.
-
-`pipelineCrepeContext` / `pipelineCrepeCompileContext` in `Pipeline.lean`
-still use `crepGetEidsFromDecls`, but a whole-tree caller search finds no use
-outside their own definitions and associated local results; they are not on the
-`flapjack-compile` source call graph. Keep this distinction explicit: the
-CLI's parser-proven compile-to-Crep route executes `exceptionsHOL`, while the
+`compileProgTopHOLWithMetadataOfExact` calls
+`compileProgTopHOLProductionExact` (`PanToCrep/CompileProg.lean`), which
+constructs the exception map with `panToCrepGetEidsFromDeclsOfExactHOL`, whose
+body calls this tagged `exceptionsHOL` (`PanToCrep/Compile.lean`). The
+byte-range premise is what makes the `DeclHOL` codec total for names and shapes
+on this route; the helper's equality theorem proves it preserves the prior
+exception map. Keep this distinction explicit: that route executes
+`exceptionsHOL`, while the
 general compatibility context helpers remain String-backed. -/
 @[hol "cakeml/pancake/panLangScript.sml" "exceptions_def"]
 def exceptionsHOL {width : Nat} [NeZero width] :
@@ -523,7 +499,6 @@ def StructContextByteRanged (c : Flapjack.StructContextHOL) : Prop :=
       Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes name hname,
       structInfoOfHOL_structInfoToHOL info hinfo, ih ht]
 
-
 /-- HOL `ALOOKUP` over the exact MlString-keyed structure context
 (`panLangScript.sml:164-171` uses `ALOOKUP ctxt name`): first name match. -/
 def structContextLookupHOL {α : Type} (name : MlS) :
@@ -688,16 +663,9 @@ end
         isWfFldsExactHOL rest info.fields && isWfCtxtExactHOL rest) := by
   simp only [isWfCtxtExactHOL]
 
-
 /-- Extraction: a byte-ranged function declaration has a byte-ranged name. -/
 theorem declByteRanged_function_name {width : Nat} {fd : Flapjack.FunDecl (BitVec width)}
     (h : DeclByteRanged (Flapjack.Decl.function fd)) :
-    NameRanged fd.name :=
-  h.1
-
-/-- Extraction: a byte-ranged function declaration has a byte-ranged name. -/
-theorem funDeclByteRanged_name {width : Nat} {fd : Flapjack.FunDecl (BitVec width)}
-    (h : FunDeclByteRanged fd) :
     NameRanged fd.name :=
   h.1
 

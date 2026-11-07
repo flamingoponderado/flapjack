@@ -1,4 +1,8 @@
-import Flapjack.Pancake.PanToCrep.Compile
+module
+
+public import Flapjack.Pancake.PanToCrep.Compile
+
+@[expose] public section
 
 /-! Context invariants ported from Pancake's `pan_commonPropsScript.sml`.
 The executable evaluator boundary lives under the HOL-mirrored

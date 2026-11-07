@@ -1,0 +1,3 @@
+identity=(M_success (inf_env (Bind [(«id»,1,Infer_Tapp [Infer_Tvar_db 0; Infer_Tvar_db 0] 4)] []) (Bind [] []) (Bind [] [])),infer_st 2 FEMPTY⟨1 ↦ Infer_Tapp [Infer_Tuvar 0; Infer_Tuvar 0] 4⟩ 15)
+datatype=(M_success (inf_env (Bind [] []) (Bind [(«B»,[],[],15); («A»,[],[],15)] []) (Bind [(«t»,[],Tapp [] 15)] [])),infer_st 0 FEMPTY 16)
+initial=(SOME ([],Tapp [] 5),SOME ([«'a»],Tapp [Tvar «'a»] 6),SOME ([«'a»],[Tvar «'a»; Tapp [Tvar «'a»] 6],6),15)

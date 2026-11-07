@@ -1,4 +1,8 @@
-import Flapjack.Pancake.LoopLang
+module
+
+public import Flapjack.Pancake.LoopLang
+
+@[expose] public section
 
 /-!
 Exact `loopLang$assigned_vars` and `nested_seq` definitions. This submodule is

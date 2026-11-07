@@ -97,20 +97,4 @@ theorem panSetByteHOL_panGetByteHOL {width : Nat}
   apply BitVec.eq_of_toNat_eq
   rw [panSetByteHOL_panGetByteHOL_toNat address value bigEndian hwidth]
 
-/-- Width-32 instantiation of the byte roundtrip. -/
-theorem panSetByteHOL_panGetByteHOL_32 (address value : RiscV.Word 32)
-    (bigEndian : Bool) :
-    panSetByteHOL address
-        (BitVec.ofNat 32 (panGetByteHOL address value bigEndian).toNat) value bigEndian =
-      value :=
-  panSetByteHOL_panGetByteHOL address value bigEndian (by decide)
-
-/-- Width-64 instantiation of the byte roundtrip. -/
-theorem panSetByteHOL_panGetByteHOL_64 (address value : RiscV.Word 64)
-    (bigEndian : Bool) :
-    panSetByteHOL address
-        (BitVec.ofNat 64 (panGetByteHOL address value bigEndian).toNat) value bigEndian =
-      value :=
-  panSetByteHOL_panGetByteHOL address value bigEndian (by decide)
-
 end Flapjack

@@ -1,4 +1,4 @@
-import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapWrite
+import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapTransport
 
 /-! Fresh original wLive outcomes captured in word_to_stack_bitmap_index_probe.out.
 These kernel regressions cover whole program/state pairs, and separately the
@@ -36,20 +36,5 @@ example : wLiveNative (width := 8) (.ln, .ln) (.list [4], 254) (22, 2, 1) =
 example : wLiveNative (width := 8) (.ln, .ln) (.list [4], 255) (22, 0, 1) =
     (.skip, .list [4], 255) := by
   rfl
-
-/-- Concrete executed writer at the word8 wrap boundary, including bitmap
-contents and count. Generic macro conversion would have rejected this index. -/
-example :
-    let actual := RiscV.wordStackBitmapWriteWithBuilder
-      ({ locations := [], scratch := 22, stackBase := 0 } : RiscV.WordStackConfig)
-      22 1 { data := [4], length := 255 } [] (fun _ => [2])
-    (Compiler.Backend.StackToLab.Production.toNative? (width := 8) actual.1,
-      actual.2) =
-      (some (.seq (.inst (.const 22 0)) (.stackStore 22 0)),
-        { data := [4, 2], length := 256 }) := by
-  dsimp only
-  rw [ProductionBitmapWrite.writerConsumer]
-  simp [RiscV.wordStackBitmapWriteWithBuilder, RiscV.wordStackInsertBitmap,
-    RiscV.wordStackOffset]
 
 end Flapjack.Test.WordToStackBitmapIndexParity

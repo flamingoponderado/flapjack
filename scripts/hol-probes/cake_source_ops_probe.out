@@ -1,0 +1,10 @@
+eq_type=:v -> v -> eq_result
+apply_type=:v list -> (v sem_env # exp) option
+literal_equal=Eq_val T
+literal_type=Eq_type_error
+eq_short_circuit=Eq_val F
+ref_type=Eq_type_error
+different_constructor=Eq_val F
+function_equal=Eq_val T
+application=SOME (Litv (IntLit (4 :int)))
+duplicate=(NONE :(v sem_env # exp) option)

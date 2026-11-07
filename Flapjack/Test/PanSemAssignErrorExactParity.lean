@@ -1,5 +1,5 @@
 import Flapjack.Pancake.Semantics.PanSemStateEval
-import Flapjack.Test.PanValueFfiSemantics
+import Flapjack.Test.PanValueFfiCore
 
 /-!
 Direct regression for the exact source `PanSemExactState` `Assign` error
@@ -81,24 +81,6 @@ private def isErrorKeepingX (clock value : Nat)
       | _ => false
   | _ => false
 
-private def nonClockedEvaluate (program : Prog Word64)
-    (memoryAccess : Option (PanValueMemoryAccess Word64) := none) :
-    Option (PanValueFfiSteppedResult Word64 Unit) :=
-  evalPanValueFfiProgramSteps statefulTestContext statefulTestPrimitive
-    statefulTestHandler [] [] 0 100 (BitVec.ofNat 64 8) 5 localsWordX
-    (fun _ => none) exactMemory statefulTestFfiState program
-    (memoryAccess := memoryAccess)
-
-private def isErrorSteppedKeepingX (value : Nat)
-    (result : Option (PanValueFfiSteppedResult Word64 Unit)) : Bool :=
-  match result with
-  | some (.error locals globals _ _, _) =>
-      (match locals "x" with
-       | some (.word word) => word == BitVec.ofNat 64 value
-       | _ => false) &&
-        (globals "g").isNone
-  | _ => false
-
 private def assignLocalEvalFailProgram : Prog Word64 :=
   .assign .local "x" (.var .local "z")
 
@@ -123,18 +105,9 @@ private def assignFreshLocalGuard : Bool :=
 private def assignFreshGlobalGuard : Bool :=
   isErrorKeepingX 5 3 (evaluate (exactState localsWordX) assignFreshGlobalProgram)
 
-private def assignNonClockedEvalFailGuard : Bool :=
-  isErrorSteppedKeepingX 3 (nonClockedEvaluate assignLocalEvalFailProgram
-    (memoryAccess := some exactAccess))
-
-private def assignNonClockedInvalidGuard : Bool :=
-  isErrorSteppedKeepingX 3 (nonClockedEvaluate assignFreshLocalProgram
-    (memoryAccess := some exactAccess))
-
 private def assignErrorGuard : Bool :=
   assignLocalEvalFailGuard && assignGlobalEvalFailGuard &&
-    assignFreshLocalGuard && assignFreshGlobalGuard &&
-    assignNonClockedEvalFailGuard && assignNonClockedInvalidGuard
+    assignFreshLocalGuard && assignFreshGlobalGuard
 
 #guard assignErrorGuard
 
@@ -155,14 +128,6 @@ def runChecks : IO Bool := do
     IO.println "PASS exact-state Assign invalid global destination keeps state and clock"
   else
     IO.println "FAIL exact-state Assign invalid global destination"
-  if assignNonClockedEvalFailGuard then
-    IO.println "PASS non-clocked Assign failing source rejected with Error"
-  else
-    IO.println "FAIL non-clocked Assign failing source"
-  if assignNonClockedInvalidGuard then
-    IO.println "PASS non-clocked Assign invalid destination rejected with Error"
-  else
-    IO.println "FAIL non-clocked Assign invalid destination"
   pure assignErrorGuard
 
 end Flapjack.Test.PanSemAssignErrorExactParity

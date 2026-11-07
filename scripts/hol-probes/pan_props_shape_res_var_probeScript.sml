@@ -31,3 +31,21 @@ val _ = print_eval "rv_diff"
 val _ = print_eval "rv_some"
   ``(FLOOKUP (res_var ^locals ("x", FLOOKUP ^locals "x")) "x" =
      FLOOKUP ^locals "x")``
+
+(* Capture the exported HOL theorem with its inferred word-label carrier. *)
+val _ = (print "shape_of_val_typed=";
+  Lib.with_flag (Globals.show_types, true) print_term (concl panPropsTheory.shape_of_val);
+  print "\n");
+val _ = print ("shape_of_val_hypotheses=" ^
+  Int.toString (length (hyp panPropsTheory.shape_of_val)) ^ "\n");
+
+val _ = (print "word_constructor_typed=";
+  Lib.with_flag (Globals.show_types, true) print_type (type_of ``panSem$Word``);
+  print "\n");
+val _ = (print "value_constructors_typed=";
+  List.app (fn tm => (Lib.with_flag (Globals.show_types, true) print_type (type_of tm); print ";"))
+    [``panSem$Val``, ``panSem$RStruct``, ``panSem$NStruct``];
+  print "\n");
+val _ = (print "shape_of_def_typed=";
+  Lib.with_flag (Globals.show_types, true) print_term (concl panSemTheory.shape_of_def);
+  print "\n");

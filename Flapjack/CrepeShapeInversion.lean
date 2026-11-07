@@ -1,4 +1,8 @@
-import Flapjack.PanValues
+module
+
+public import Flapjack.PanValues
+
+@[expose] public section
 
 /-!
 Shape inversion for flattened word records.  A Crep shape that matches the

@@ -105,34 +105,6 @@ theorem crepExactEvalExpClassical_eq {width : Nat} [NeZero width] {σ : Type}
   exact crepExactEvalExp_eq_eval state
     (fun a => Classical.propDecidable (state.memaddrs a)) expression
 
-/-- The lookup function of the finite-support `HolFiniteMapExact` callee locals
-installed by the `Call` clause is definitionally the raw `FiniteMap` computed by
-the reviewed exact `lookupCodeHOL`. -/
-theorem updateList_empty_lookup_eq_FUPDATE_LIST {width : Nat} [NeZero width]
-    (parameters : List Nat) (args : List (HolWordLab width)) :
-    (HolFiniteMapExact.empty.updateList (parameters.zip args)).lookup =
-      FUPDATE_LIST (FEMPTY : FiniteMap Nat (HolWordLab width)) (parameters.zip args) :=
-  rfl
-
-/-- Forward direction of the reviewed exact `lookupCodeHOL`
-(`CrepSem/LookupCode.lean:46`) over the exact code map: a successful HOL-shaped
-code lookup of duplicate-free formals of the right arity returns exactly the raw
-local map underlying the finite-support callee locals
-`HolFiniteMapExact.empty.updateList (parameters.zip args)`.  This is the
-conversion used to phrase the `Call` clause through `lookupCodeHOL`. -/
-theorem lookupCodeHOL_eq_some_of_code_lookup {width : Nat} [NeZero width]
-    (code : CrepCodeMapExact width) (fname : MlString)
-    (args : List (HolWordLab width)) (len : Nat) (parameters : List Nat)
-    (body : CrepProgHOL width)
-    (hcode : code fname = some (parameters, body))
-    (hlen : parameters.length = args.length) (hnodup : parameters.Nodup) :
-    lookupCodeHOL code fname args len =
-      some (body, (HolFiniteMapExact.empty.updateList (parameters.zip args)).lookup) := by
-  unfold lookupCodeHOL FLOOKUP
-  simp only [hcode]
-  rw [ite_eq_left ⟨hlen, hnodup⟩]
-  rfl
-
 /-- The zipped callee-local map built by the reviewed exact code lookup has
 finite support.  This is the support obligation needed to repackage the raw
 `CrepLocalsExact` result of `lookupCodeHOL` as a `HolFiniteMapExact`. -/

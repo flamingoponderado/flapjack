@@ -1,5 +1,9 @@
-import Flapjack.Pancake.PanToCrep.Compile
-import Flapjack.Pancake.Semantics.PanCommonProps
+module
+
+public import Flapjack.Pancake.PanToCrep.Compile
+public import Flapjack.Pancake.Semantics.PanCommonProps
+
+@[expose] public section
 
 namespace Flapjack
 

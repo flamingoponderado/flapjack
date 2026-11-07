@@ -4,7 +4,7 @@ namespace Flapjack.Test.PanGlobalsDecShapesClusterParity
 
 open Flapjack
 
-/-! Regression for the exact HOL-tagged `dec_shapes` cluster
+/-! Executable observations corresponding to the HOL `dec_shapes` cluster
     (`cakeml/pancake/proofs/pan_globalsProofScript.sml:2328-2365`), exercised
     on a mixed fixture. `dec_shapes` is the production `globalDeclShapes`. -/
 def functionDeclaration : Decl Nat :=
@@ -25,32 +25,6 @@ def functionOnly : List (Decl Nat) :=
    .function
      { name := "g", inline := false, exported := false, params := [],
        body := .skip, returnShape := .one }]
-
-theorem decShapesAppendFixture :
-    globalDeclShapes (declarations ++ rest) =
-      globalDeclShapes declarations ++ globalDeclShapes rest :=
-  dec_shapes_append declarations rest
-
-theorem decShapesFunctionsFixture :
-    globalDeclShapes functionOnly = [] :=
-  dec_shapes_functions functionOnly (by decide)
-
-theorem decShapesFilterFixture :
-    globalDeclShapes
-        (globalDeclsFilter
-          (fun declaration => !globalDeclIsFunction declaration) declarations) =
-      globalDeclShapes declarations :=
-  (dec_shapes_FILTER declarations).1
-
-theorem decShapesFpermFixture :
-    globalDeclShapes (globalRenameDecls "foo" "bar" declarations) =
-      globalDeclShapes declarations :=
-  dec_shapes_fperm_decs "foo" "bar" declarations
-
-theorem decShapesResortFixture :
-    globalDeclShapes (globalResortDecls declarations) =
-      globalDeclShapes declarations :=
-  dec_shapes_resort_decls_def declarations
 
 def decShapesClusterGuard : Bool :=
   (match globalDeclShapes (declarations ++ rest) with

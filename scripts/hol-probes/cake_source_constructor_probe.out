@@ -1,0 +1,8 @@
+find_type=:mlstring -> (mlstring # α # β) list -> (α # β) option
+build_env_type=:(mlstring # mlstring # exp) list -> v sem_env -> (mlstring, mlstring, v) namespace -> (mlstring, mlstring, v) namespace
+same_type=T
+same_ctor=F
+exn_type=T
+check=T
+wrong_arity=F
+build=SOME (Conv (SOME (TypeStamp «A» (7 :num))) ([] :v list))

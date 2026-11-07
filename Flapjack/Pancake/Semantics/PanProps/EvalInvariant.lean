@@ -1128,15 +1128,6 @@ def evalHOL {width : Nat} {σ : Type} [NeZero width]
     ExpHOL width → Option (ValueHOL width) :=
   @evalHOLExact width σ _ state.toExact h
 
-/-- The finite-map empty-locals evaluation is the broad exact evaluation over
-    the canonical `emptyLocalsHOLExact` state; this is the state-translation
-    bridge used by the tagged port below. -/
-theorem evalHOL_emptyLocalsForStructsSimps {width : Nat} {σ : Type} [NeZero width]
-    (state : PanPropsEvalStateFiniteExact width σ) [h : DecidablePred state.memaddrs]
-    (expression : ExpHOL width) :
-    (emptyLocalsForStructsSimps state).evalHOL expression =
-      @evalHOLExact width σ _ (emptyLocalsHOLExact state.toExact) h expression := rfl
-
 /-- Exact finite-support port of HOL `panProps$eval_upd_clock_eq`
     (`cakeml/pancake/semantics/panPropsScript.sml:644-652`):
     `!t e ck. eval (t with clock := ck) e = eval t e`. The quantifier order
@@ -3279,7 +3270,6 @@ end PanPropsCanonicalCarrierWitness
 
 end Flapjack
 
-
 namespace Flapjack
 
 open Flapjack.Pancake.PanLang (MlS ShapeHOL ExpHOL ProgHOL)
@@ -3589,7 +3579,6 @@ private theorem evalListHOLFinite_eq_mapM {width : Nat} {σ : Type}
   rw [PanSemStateFiniteExact.evalListHOLFinite_eq_toExact]
   exact evalListHOLExact_eq_mapM state.toExact expressions
 
-
 /-! ## Binder-aligned Call induction hypotheses
 
 These Flapjack-specific abbreviations spell the two recursive predicates from
@@ -3685,7 +3674,6 @@ private abbrev evaluateInvariantsCallHandlerIH {width : Nat} {σ : Type}
       (PanPropsEvalStateFiniteExact.ofPanSemFinite
         (PanSemStateFiniteExact.setVarHOLFinite evar exn
           { st with locals := state.toPanSemFinite.locals })) p
-
 
 /- Proof-support for the recursive result branches of HOL `Call`. It carries
     the callee body invariant through errors, timeouts, FFI completion, normal
@@ -4099,8 +4087,6 @@ private theorem evaluateInvariantsCallBodyResultBranchesHOLFinite
     exact hfinish handlerRun.2 (by simpa [handlerRun] using congrArg Prod.snd hhandlerEval)
       hhandlerFields
 
-
-
 /-! # The `Call` case of HOL `evaluate_invariants`
 
 This is the exact `Call` conjunct printed by the checked `evaluate_ind` probe
@@ -4254,7 +4240,6 @@ theorem evaluateInvariantsSkipCaseHOLFinite {width : Nat} {σ : Type} [NeZero wi
 
 end Flapjack
 
-
 /-! # The `Break` case of HOL `evaluate_invariants`
 
 HOL evaluates `Break` to `(SOME Break, state)`. This induction leaf keeps the
@@ -4291,7 +4276,6 @@ theorem evaluateInvariantsBreakCaseHOLFinite {width : Nat} {σ : Type} [NeZero w
 
 end Flapjack
 
-
 /-! # The `Continue` case of HOL `evaluate_invariants`
 
 HOL's `Continue` equation preserves the state and this genuine induction leaf
@@ -4325,7 +4309,6 @@ theorem evaluateInvariantsContinueCaseHOLFinite {width : Nat} {σ : Type} [NeZer
   simp
 
 end Flapjack
-
 
 /-! # The `Annot` case of HOL `evaluate_invariants`
 
@@ -4363,7 +4346,6 @@ theorem evaluateInvariantsAnnotCaseHOLFinite {width : Nat} {σ : Type} [NeZero w
   simp
 
 end Flapjack
-
 
 /-! # The `Tick` case of HOL `evaluate_invariants`
 
@@ -4407,7 +4389,6 @@ theorem evaluateInvariantsTickCaseHOLFinite {width : Nat} {σ : Type} [NeZero wi
     simp [PanPropsEvalStateFiniteExact.toPanSemFinite]
 
 end Flapjack
-
 
 /-! # The `Return` case of HOL `evaluate_invariants`
 
@@ -4464,7 +4445,6 @@ theorem evaluateInvariantsReturnCaseHOLFinite {width : Nat} {σ : Type} [NeZero 
         simp
 
 end Flapjack
-
 
 /-! # The `Assign` induction case of HOL `evaluate_invariants`
 
@@ -4525,7 +4505,6 @@ theorem evaluateInvariantsAssignCaseHOLFinite {width : Nat} {σ : Type} [NeZero 
         simp
 
 end Flapjack
-
 
 /-! # The `Primitive` induction case of HOL `evaluate_invariants`
 
@@ -4593,7 +4572,6 @@ theorem evaluateInvariantsPrimitiveCaseHOLFinite {width : Nat} {σ : Type} [NeZe
             simp
 
 end Flapjack
-
 
 /-! # The `ExtCall` case of HOL `evaluate_invariants`
 
@@ -4737,7 +4715,6 @@ theorem evaluateInvariantsExtCallCaseHOLFinite {width : Nat} {σ : Type} [NeZero
 
 end Flapjack
 
-
 /-! # The `Raise` induction case of HOL `evaluate_invariants`
 
 HOL `Raise` either returns Error with the input state or clears only locals
@@ -4814,7 +4791,6 @@ theorem evaluateInvariantsRaiseCaseHOLFinite {width : Nat} {σ : Type} [NeZero w
             simp
 
 end Flapjack
-
 
 /-! # The `Store` induction case of HOL `evaluate_invariants`
 
@@ -4934,7 +4910,6 @@ theorem evaluateInvariantsStoreCaseHOLFinite {width : Nat} {σ : Type} [NeZero w
           exact hpreserved state.memory hpost.symm
 
 end Flapjack
-
 
 /-! # The `Store32` induction case of HOL `evaluate_invariants`
 
@@ -5058,7 +5033,6 @@ theorem evaluateInvariantsStore32CaseHOLFinite {width : Nat} {σ : Type} [NeZero
 
 end Flapjack
 
-
 /-! # The `StoreByte` induction case of HOL `evaluate_invariants`
 
 The byte-store clause has the same state footprint as `Store32`; HOL converts
@@ -5180,7 +5154,6 @@ theorem evaluateInvariantsStoreByteCaseHOLFinite {width : Nat} {σ : Type} [NeZe
           exact hpreserved state.memory hpost.symm
 
 end Flapjack
-
 
 /-! # The `If` induction case of HOL `evaluate_invariants`
 
@@ -5322,7 +5295,6 @@ theorem evaluateInvariantsIfCaseHOLFinite {width : Nat} {σ : Type} [NeZero widt
           exact hpreserved hpost.symm
 
 end Flapjack
-
 
 /-! # The `Dec` induction case of HOL `evaluate_invariants`
 
@@ -5479,7 +5451,6 @@ theorem evaluateInvariantsDecCaseHOLFinite {width : Nat} {σ : Type} [NeZero wid
         simp
 
 end Flapjack
-
 
 /-! # The `Seq` induction case of HOL `evaluate_invariants`
 
@@ -5827,7 +5798,6 @@ theorem evaluateInvariantsWhileCaseHOLFinite {width : Nat} {σ : Type} [NeZero w
     exact hsame _ rfl
 
 end Flapjack
-
 
 /-!
 # The `Dec` induction case of HOL `evaluate_clock_sub`
@@ -7378,7 +7348,6 @@ theorem evaluateClockSubIfCaseHOLFinite {width : Nat} {σ : Type} [NeZero width]
           subst hst
           rfl
 
-
 /-! # The `Skip` induction case of HOL `evaluate_clock_sub`
 
 This leaf case keeps the theorem's original high-run equation and non-timeout
@@ -8158,7 +8127,6 @@ theorem evaluateClockSubRaiseCaseHOLFinite {width : Nat} {σ : Type} [NeZero wid
               exact PanPropsEvalStateFiniteExact.ofPanSemFinite_toPanSemFinite lowState
 end Flapjack
 
-
 /-! # The `ShMemLoad` induction case of HOL `evaluate_invariants`
 
 HOL `ShMemLoad` (`sh_mem_load_def`) returns Error with the input state, or
@@ -8259,7 +8227,6 @@ theorem evaluateInvariantsShMemLoadCaseHOLFinite {width : Nat} {σ : Type} [NeZe
 
 end Flapjack
 
-
 /-! # The `ShMemStore` induction case of HOL `evaluate_invariants`
 
 HOL `ShMemStore` (`sh_mem_store_def`) returns Error with the input state, or
@@ -8359,7 +8326,6 @@ theorem evaluateInvariantsShMemStoreCaseHOLFinite {width : Nat} {σ : Type} [NeZ
   simpa [PanPropsEvalStateFiniteExact.toPanSemFinite] using hfields
 
 end Flapjack
-
 
 /-! # The `DecCall` case of HOL `evaluate_invariants`
 
@@ -8588,7 +8554,6 @@ theorem evaluateInvariantsDecCallCaseHOLFinite {width : Nat} {σ : Type}
 
 end Flapjack
 
-
 /-! # Assembled HOL `evaluate_invariants`
 
 `panPropsScript.sml:1150` proves `evaluate_invariants` by `recInduct
@@ -8720,7 +8685,6 @@ private theorem evaluateInvariantsIndP_all {width : Nat} {σ : Type} [NeZero wid
           some args := by
         rw [evalListHOLFinite_eq_mapM]; exact hmap
       exact ihB args v2 prog v7 newlocals return_sh ⟨hargs, by simpa using hlk, h2, h7, hck⟩
-
 
 /-- Exact port of HOL `panProps$evaluate_invariants` (`panPropsScript.sml:1150-1158`):
     `∀p t res st. evaluate (p,t) = (res,st) ⇒ st.memaddrs = t.memaddrs ∧

@@ -1,5 +1,9 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.WordLang
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.WordLang
+
+@[expose] public section
 
 /-! Primitive word operations of the faithful assembly semantics.
 Counterpart of `cakeml/compiler/encoders/asm/asmSemScript.sml`.

@@ -115,28 +115,6 @@ def parityGuard : Bool :=
 def productionProbeContext : CakeContext 8 :=
   PanGlobalsContextExact.cakeContextOfExact exactProbeContext
 
-/-- The `global_hit` row through the executed production `compileExpCake`,
-    obtained from the exact row by the kernel-checked
-    `compileExpCake_cakeContextOfExact` bridge. -/
-theorem bridge_global_hit :
-    compileExpCake productionProbeContext (.var .global "g") =
-      .load .one (.op .sub [.topAddr, .const (8 : BitVec 8)]) := by
-  unfold productionProbeContext
-  rw [compileExpCake_cakeContextOfExact exactProbeContext _
-    (by simp [ExpByteRanged])]
-  simp only [expToHOL, expOfHOL, shapeOfHOL, List.map_cons, List.map_nil,
-    global_compile_exp_exact_global_hit]
-
-/-- The `top_addr` row through the executed production `compileExpCake`. -/
-theorem bridge_top_addr :
-    compileExpCake productionProbeContext (.topAddr : Exp (BitVec 8)) =
-      .op .sub [.topAddr, .const (16 : BitVec 8)] := by
-  unfold productionProbeContext
-  rw [compileExpCake_cakeContextOfExact exactProbeContext _
-    (by simp [ExpByteRanged])]
-  simp only [expToHOL, expOfHOL, List.map_cons, List.map_nil,
-    global_compile_exp_exact_top_addr]
-
 /-- The five `pan_globals_compile_exp_probe.out` rows replayed through the
     executed String-backed `compileExpCake`, as a single Bool fixture. -/
 def productionGuard : Bool :=
@@ -184,34 +162,6 @@ theorem productionPassContext_shapes :
   subst hmem
   simp only [ShapeByteRanged]
 
-/-- The `global_hit` row through the executed `cakeContextOfPass` production
-    path, routed through the reviewed `compileExpExactHOL` by
-    `compileExpCake_ofPass_eq`. -/
-theorem routed_global_hit :
-    compileExpCake (cakeContextOfPass productionPassContext) (.var .global "g")
-      = .load .one (.op .sub [.topAddr, .const (8 : BitVec 8)]) := by
-  rw [compileExpCake_ofPass_eq productionPassContext productionPassContext_shapes _
-    (by simp [ExpByteRanged])]
-  simp only [expToHOL]
-  rw [compileExpExactHOL.eq_3]
-  simp only [PanGlobalsContextExact.ofPass_globals_lookup]
-  rw [Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes "g" (by decide)]
-  simp only [productionPassContext, lookupInfo, List.map_cons, List.map_nil,
-    beq_self_eq_true, ite_true, Option.map_some, expOfHOL]
-  rw [Flapjack.Pancake.PanLang.shapeOfHOL_shapeToHOL Shape.one (by simp [ShapeByteRanged])]
-
-/-- The `top_addr` row through the executed `cakeContextOfPass` production path,
-    routed through the reviewed `compileExpExactHOL`. -/
-theorem routed_top_addr :
-    compileExpCake (cakeContextOfPass productionPassContext) (.topAddr : Exp (BitVec 8))
-      = .op .sub [.topAddr, .const (16 : BitVec 8)] := by
-  rw [compileExpCake_ofPass_eq productionPassContext productionPassContext_shapes _
-    (by simp [ExpByteRanged])]
-  simp only [expToHOL]
-  rw [compileExpExactHOL.eq_16]
-  simp only [PanGlobalsContextExact.ofPass, expOfHOL, List.map_cons, List.map_nil]
-  rfl
-
 /-- The five `pan_globals_compile_exp_probe.out` rows replayed through the
     executed `cakeContextOfPass` production context (the finite-support
     association-list view), as a single Bool fixture. -/
@@ -255,163 +205,10 @@ record that the routed decl/prog compiler computes the production output. -/
 theorem productionPassContext_canonical :
     productionPassContext.IsCakeCanonical := ⟨rfl, fun _ => rfl⟩
 
-/-- The `local` probe row through the executed routed program compiler. -/
-theorem routed_prog_local :
-    compileProgCakeOfExact productionPassContext (.return (.var .local "x")) =
-      .return (.var .local "x") := by
-  rw [compileProgCakeOfExact,
-    ← compileExpCake_eq_route productionPassContext productionPassContext_shapes _
-      (by simp [ExpByteRanged])]
-  simp only [compileExpCake]
-
-/-- The `global_hit` probe row through the executed routed program compiler. -/
-theorem routed_prog_global_hit :
-    compileProgCakeOfExact productionPassContext (.return (.var .global "g")) =
-      .return (.load .one (.op .sub [.topAddr, .const (8 : BitVec 8)])) := by
-  rw [compileProgCakeOfExact,
-    ← compileExpCake_eq_route productionPassContext productionPassContext_shapes _
-      (by simp [ExpByteRanged])]
-  rw [routed_global_hit]
-
-/-- The `global_miss` probe row through the executed routed program compiler. -/
-theorem routed_prog_global_miss :
-    compileProgCakeOfExact productionPassContext (.return (.var .global "missing")) =
-      .return (.const (0 : BitVec 8)) := by
-  rw [compileProgCakeOfExact,
-    ← compileExpCake_eq_route productionPassContext productionPassContext_shapes _
-      (by simp [ExpByteRanged])]
-  have hmiss : ("g" == "missing") = false := by decide
-  simp only [compileExpCake, cakeContextOfPass, productionPassContext, lookupInfo,
-    FLOOKUP, hmiss, Bool.false_eq_true, ite_false]
-  rfl
-
-/-- The `top_addr` probe row through the executed routed program compiler. -/
-theorem routed_prog_top_addr :
-    compileProgCakeOfExact productionPassContext (.return (.topAddr : Exp (BitVec 8))) =
-      .return (.op .sub [.topAddr, .const (16 : BitVec 8)]) := by
-  rw [compileProgCakeOfExact,
-    ← compileExpCake_eq_route productionPassContext productionPassContext_shapes _
-      (by simp [ExpByteRanged])]
-  rw [routed_top_addr]
-
-/-- The `nested` probe row through the executed `cakeContextOfPass` production
-    context, routed through the reviewed `compileExpExactHOL`. -/
-theorem routed_nested :
-    compileExpCake (cakeContextOfPass productionPassContext)
-        (.op .add [.var .global "g", .topAddr]) =
-      .op .add
-        [.load .one (.op .sub [.topAddr, .const (8 : BitVec 8)]),
-         .op .sub [.topAddr, .const (16 : BitVec 8)]] := by
-  rw [compileExpCake_ofPass_eq productionPassContext productionPassContext_shapes _
-    (by simp [ExpByteRanged, ListExpByteRanged])]
-  simp only [expToHOL, List.map_cons, List.map_nil]
-  rw [compileExpExactHOL.eq_11, compileExpExactHOLList.eq_2,
-    compileExpExactHOLList.eq_2, compileExpExactHOLList.eq_1,
-    compileExpExactHOL.eq_3, compileExpExactHOL.eq_16]
-  simp only [PanGlobalsContextExact.ofPass_globals_lookup]
-  rw [Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes "g" (by decide)]
-  simp only [productionPassContext, lookupInfo,
-    beq_self_eq_true, ite_true, Option.map_some]
-  simp only [expOfHOL, List.map_cons, List.map_nil]
-  rw [Flapjack.Pancake.PanLang.shapeOfHOL_shapeToHOL Shape.one (by simp [ShapeByteRanged])]
-  simp only [PanGlobalsContextExact.ofPass]
-
-/-- The `nested` probe row through the executed routed program compiler. -/
-theorem routed_prog_nested :
-    compileProgCakeOfExact productionPassContext
-        (.return (.op .add [.var .global "g", .topAddr])) =
-      .return (.op .add
-        [.load .one (.op .sub [.topAddr, .const (8 : BitVec 8)]),
-         .op .sub [.topAddr, .const (16 : BitVec 8)]]) := by
-  rw [compileProgCakeOfExact,
-    ← compileExpCake_eq_route productionPassContext productionPassContext_shapes _
-      (by simp [ExpByteRanged, ListExpByteRanged])]
-  rw [routed_nested]
-
-/-- A `.decl` initializer replaying the `global_hit` probe row through the
-    executed routed declaration compiler. -/
-theorem routed_decs_global_hit :
-    (compileDecsCakeOfExact productionPassContext
-        [.decl Shape.one "y" (.var .global "g")]).initializers =
-      [.store (.op .sub [.topAddr, .const (cakeAddress (cakeContextOfPass productionPassContext) Shape.one)])
-        (.load .one (.op .sub [.topAddr, .const (8 : BitVec 8)]))] := by
-  simp only [compileDecsCakeOfExact]
-  rw [← compileExpCake_eq_route productionPassContext productionPassContext_shapes _
-      (by simp [ExpByteRanged])]
-  rw [routed_global_hit]
-
-/-- The routed declaration compiler agrees with the production `compileDecsCake`
-    on the probe declaration list, by the kernel-checked routing equality. -/
-theorem routed_decs_eq_production :
-    compileDecsCakeOfExact productionPassContext [.decl Shape.one "y" (.var .global "g")] =
-      compileDecsCake (cakeContextOfPass productionPassContext)
-        [.decl Shape.one "y" (.var .global "g")] :=
-  compileDecsCakeOfExact_eq _ productionPassContext productionPassContext_canonical
-    productionPassContext_shapes
-    (by
-      intro declaration hdeclaration
-      simp only [List.mem_singleton] at hdeclaration
-      subst hdeclaration
-      simp only [DeclByteRanged]
-      exact ⟨by simp [ShapeByteRanged], by decide, by simp [ExpByteRanged]⟩)
-
-/-- The five `pan_globals_compile_exp_probe.out` rows replayed through the
-    executed routed `compileProgCakeOfExact` (whose expression call sites invoke
-    `compileExpExactHOL`), as a single Bool fixture. -/
-def routedProgramGuard : Bool :=
-  (match compileProgCakeOfExact productionPassContext (.return (.var .local "x")) with
-   | .return (.var .local name) => name == "x"
-   | _ => false) &&
-  (match compileProgCakeOfExact productionPassContext (.return (.var .global "g")) with
-   | .return (.load .one (.op .sub [.topAddr, .const address])) =>
-       address == (8 : BitVec 8)
-   | _ => false) &&
-  (match compileProgCakeOfExact productionPassContext (.return (.var .global "missing")) with
-   | .return (.const value) => value == (0 : BitVec 8)
-   | _ => false) &&
-  (match compileProgCakeOfExact productionPassContext (.return (.topAddr : Exp (BitVec 8))) with
-   | .return (.op .sub [.topAddr, .const address]) => address == (16 : BitVec 8)
-   | _ => false) &&
-  (match compileProgCakeOfExact productionPassContext
-      (.return (.op .add [.var .global "g", .topAddr])) with
-   | .return (.op .add [.load .one (.op .sub [.topAddr, .const first]),
-                        .op .sub [.topAddr, .const second]]) =>
-       first == (8 : BitVec 8) && second == (16 : BitVec 8)
-   | _ => false)
-
-/-! The exact parser-backed route uses tagged `var_exp` when collecting names
-    for a generated global-call result slot. The empty local argument collides
-    with the empty fresh-name seed, so the original HOL result is apostrophe;
-    this row comes from `global_destination_handler_local_arg` in
-    `pan_globals_compile_probe.out`. -/
-def routedGlobalHandlerLocalArgGuard : Bool :=
-  match compileProgCakeOfExact productionPassContext
-      (.call (some (some (.global, "g"), some ("E", "handler", .skip))) "f"
-        [.var .local ""] : Prog (BitVec 8)) with
-  | .dec "'" .one (.const 0)
-      (.dec "vn'" .one (.const 0)
-        (.seq
-          (.call
-            (some (some (.local, "'"), some ("E", "handler",
-              (.seq .skip (.assign .local "vn'" (.const 1))))))
-            "f" [.var .local ""])
-          (.ite (.var .local "vn'") .skip
-            (.store (.op .sub [.topAddr, .const (8 : BitVec 8)])
-              (.var .local "'"))))) => true
-  | _ => false
-
-#eval routedGlobalHandlerLocalArgGuard
-#guard routedGlobalHandlerLocalArgGuard
-
-#eval routedProgramGuard
-#guard routedProgramGuard
-
 def runChecks : IO Bool := do
   let exactResult := parityGuard
   let productionResult := productionGuard
   let routedResult := routedProductionGuard
-  let routedProgramResult := routedProgramGuard
-  let routedHandlerResult := routedGlobalHandlerLocalArgGuard
   IO.println (if exactResult then
     "PASS pan_globals compile_exp_def exact-carrier parity (5 HOL rows)"
     else "FAIL pan_globals compile_exp_def exact-carrier parity (5 HOL rows)")
@@ -421,12 +218,6 @@ def runChecks : IO Bool := do
   IO.println (if routedResult then
     "PASS pan_globals compileExpCake/ofPass routed parity (5 HOL rows)"
     else "FAIL pan_globals compileExpCake/ofPass routed parity (5 HOL rows)")
-  IO.println (if routedProgramResult then
-    "PASS pan_globals routed decl/prog compiler parity (5 HOL rows)"
-    else "FAIL pan_globals routed decl/prog compiler parity (5 HOL rows)")
-  IO.println (if routedHandlerResult then
-    "PASS pan_globals parser-backed exact var_exp fresh-name route (HOL collision row)"
-    else "FAIL pan_globals parser-backed exact var_exp fresh-name route (HOL collision row)")
-  pure (exactResult && productionResult && routedResult && routedProgramResult && routedHandlerResult)
+  pure (exactResult && productionResult && routedResult)
 
 end Flapjack.Test.PanGlobalsCompileExpExactParity

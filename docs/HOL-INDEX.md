@@ -33,9 +33,10 @@ The index is a local build artifact and is absent from a fresh checkout.  If
 the recorded commit does not match `git -C cakeml rev-parse HEAD`, regenerate
 before relying on line ranges or dependency results.
 
-To find candidates in any Pancake HOL script, run
-`python3 scripts/next-hol-port.py --file cakeml/pancake/FILE.sml`, replacing
-`FILE.sml` with its path below `cakeml/pancake/`. Add `--goal HOL_NAME` to
+To find candidates in an indexed CakeML HOL script, run for example
+`python3 scripts/next-hol-port.py --file cakeml/compiler/backend/proofs/source_to_flatProofScript.sml`.
+Pancake scripts can also be selected using their path under `cakeml/pancake/`.
+Add `--goal HOL_NAME` to
 show only earlier declarations or `--kind Theorem` for theorem candidates.
 The command refreshes a stale index and excludes declarations with `@[hol]`
 tags. Source order and tag presence are navigation aids, not a dependency

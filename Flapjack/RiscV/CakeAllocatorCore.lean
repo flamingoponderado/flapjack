@@ -59,24 +59,6 @@ Evens are physical (hardware) registers, `4n+1` are allocatable registers and
 /-- A WordLang variable is a physical (hardware) register when it is even. -/
 def isPhyVar (n : Nat) : Bool := n % 2 == 0
 
-/-- A WordLang variable is an allocatable register when `n % 4 = 1`. -/
-def isAllocVar (n : Nat) : Bool := n % 4 == 1
-
-/-- A WordLang variable is a stack variable when `n % 4 = 3`. -/
-def isStackVar (n : Nat) : Bool := n % 4 == 3
-
-/-- The three conventions partition the WordLang variable space
-(HOL `convention_partitions`, `reg_allocScript.sml:1142-1156`). -/
-theorem convention_partitions (n : Nat) :
-    (isStackVar n = true ↔ isPhyVar n = false ∧ isAllocVar n = false) ∧
-    (isPhyVar n = true ↔ isStackVar n = false ∧ isAllocVar n = false) ∧
-    (isAllocVar n = true ↔ isPhyVar n = false ∧ isStackVar n = false) := by
-  have hlt : n % 4 < 4 := Nat.mod_lt n (by decide)
-  have hcases : n % 4 = 0 ∨ n % 4 = 1 ∨ n % 4 = 2 ∨ n % 4 = 3 := by omega
-  have h2eq : n % 2 = n % 4 % 2 := (Nat.mod_mod_of_dvd n (by decide : 2 ∣ 4)).symm
-  rcases hcases with h | h | h | h <;>
-    simp [isStackVar, isAllocVar, isPhyVar, h, h2eq]
-
 /-! ## Membership-list sets
 
 The HOL development uses `sptree$num_set` (a set of `num`).  Because the
@@ -126,16 +108,6 @@ merge_stack_only (x,y) (ts,fs) =
   else (delete y ts, fs)
 ``` -/
 
-/-- Propagate the stack-only decision along a single move (`x <- y`). -/
-def mergeStackOnly (x y : Nat) (ts fs : List Nat) : List Nat × List Nat :=
-  if ts.contains x then
-    ((if isAllocVar y then insertSet y ts else ts),
-     (if isPhyVar y then fs else insertSet x fs))
-  else if isStackVar x then
-    ((if isAllocVar y then insertSet y ts else ts), fs)
-  else
-    (deleteSet y ts, fs)
-
 /-- Merge the stack-only sets of two branches
 (`merge_stack_sets`, `word_allocScript.sml:1727-1732`). -/
 def mergeStackSets (ts _fs tsL fsL tsR fsR : List Nat) : List Nat × List Nat :=
@@ -172,20 +144,10 @@ pairs that share an encoding register.  `AddCarry r1 r2 r3 r4` forces
 `(r1, r3)` and `(r1, r4)`; `AddOverflow`/`SubOverflow` force `(r1, r3)`; and
 `LongMul r1 r2 r3 r4` forces `(r1, r3)` and `(r1, r4)`. -/
 
-/-- The RISC-V forced pairs contributed by `AddCarry r1 _ r3 r4`. -/
-def getForcedAddCarry (r1 r3 r4 : Nat) : List (Nat × Nat) :=
-  (if r1 = r3 then [] else [(r1, r3)]) ++
-    (if r1 = r4 then [] else [(r1, r4)])
-
 /-- The RISC-V forced pair contributed by `AddOverflow r1 _ r3 _` or
 `SubOverflow r1 _ r3 _`. -/
 def getForcedOverflow (r1 r3 : Nat) : List (Nat × Nat) :=
   if r1 = r3 then [] else [(r1, r3)]
-
-/-- The RISC-V forced pairs contributed by `LongMul r1 _ r3 r4`. -/
-def getForcedLongMul (r1 r3 r4 : Nat) : List (Nat × Nat) :=
-  (if r1 = r3 then [] else [(r1, r3)]) ++
-    (if r1 = r4 then [] else [(r1, r4)])
 
 /-! ## Temporary numbering
 
@@ -210,10 +172,6 @@ def spDefault (colour : List (Nat × Nat)) (n : Nat) : Nat :=
   match colour.find? (fun entry => entry.1 == n) with
   | some entry => entry.2
   | none => if isPhyVar n then n / 2 else 0
-
-/-- Concrete register number for a variable name under a colouring. -/
-def totalColour (colour : List (Nat × Nat)) (n : Nat) : Nat :=
-  2 * spDefault colour n
 
 /-! ## Word-to-Stack frame occupancy
 
@@ -260,32 +218,5 @@ def stackArgCount : Sum Nat Nat → Nat → Nat → Nat
 def stackFree (destination : Sum Nat Nat) (argumentCount : Nat)
     (k f _f' : Nat) : Nat :=
   f - stackArgCount destination argumentCount k
-
-/-- Exact source `bits_to_word`, before the bitmap terminator bit is added. -/
-def bitsToWord : List Bool → Nat
-  | [] => 0
-  | bit :: bits =>
-      bitsToWord bits * 2 + if bit then 1 else 0
-
-def frameBitmapWordsAux (chunkSize : Nat) :
-    Nat → List Bool → List Nat
-  | 0, _ => []
-  | fuel + 1, bits =>
-      if chunkSize = 0 || bits.length ≤ chunkSize then
-        [bitsToWord bits]
-      else
-        bitsToWord (bits.take chunkSize ++ [true]) ::
-          frameBitmapWordsAux chunkSize fuel (bits.drop chunkSize)
-
-def frameBitmapWords (chunkSize : Nat) (bits : List Bool) : List Nat :=
-  frameBitmapWordsAux chunkSize (bits.length + 1) bits
-
-/-- Source `write_bitmap` for the list representation of a live num-set.
-    Membership is the observable part of `toAList`; the list is used only as
-    an executable stand-in for the finite set in the HOL definition. -/
-def writeBitmap (live : List Nat) (k f' wordBits : Nat) : List Nat :=
-  let names := live.map (fun r => (f' - 1) - (r / 2 - k))
-  let bits := (List.range f').map (fun slot => names.contains slot)
-  frameBitmapWords (wordBits - 1) (bits ++ [true])
 
 end Flapjack.RiscV.CakeAlloc

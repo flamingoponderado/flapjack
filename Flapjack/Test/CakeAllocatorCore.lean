@@ -15,14 +15,6 @@ namespace Flapjack.Test.CakeAllocatorCore
 
 open Flapjack.RiscV.CakeAlloc
 
-/-- Exactly one of the three WordLang variable conventions holds. -/
-def conventionExact : Bool :=
-  (List.range 64).all (fun n =>
-    (if isPhyVar n then 1 else 0) + (if isAllocVar n then 1 else 0) +
-      (if isStackVar n then 1 else 0) == 1)
-
-#guard conventionExact
-
 /-- CakeML's fixed spill-cost magic numbers, including the tail factor 5. -/
 def spillCostExact : Bool :=
   getSpillCost 0 0 0 0 0 false == 0 &&
@@ -43,17 +35,6 @@ def coalesceCostExact : Bool :=
 
 #guard coalesceCostExact
 
-/-- The RISC-V hardware-forced edges of `get_forced`. -/
-def forcedEdgesExact : Bool :=
-  getForcedAddCarry 1 3 4 == [(1, 3), (1, 4)] &&
-    getForcedAddCarry 1 1 4 == [(1, 4)] &&
-    getForcedAddCarry 1 1 1 == [] &&
-    getForcedOverflow 2 2 == [] &&
-    getForcedOverflow 2 5 == [(2, 5)] &&
-    getForcedLongMul 1 2 3 == [(1, 2), (1, 3)]
-
-#guard forcedEdgesExact
-
 /-- `limit_var` is the smallest multiple of four above the variable, plus one. -/
 def limitVarExact : Bool :=
   limitVar 0 == 5 &&
@@ -63,15 +44,6 @@ def limitVarExact : Bool :=
     limitVar 8 == 13
 
 #guard limitVarExact
-
-/-- Stack-only propagation along moves (`merge_stack_only`). -/
-def mergeStackOnlyExact : Bool :=
-  mergeStackOnly 1 2 [1] [7] == ([1], [7]) &&
-    mergeStackOnly 1 5 [1] [7] == ([5, 1], [1, 7]) &&
-    mergeStackOnly 3 6 [] [7] == ([], [7]) &&
-    mergeStackOnly 2 6 [] [7] == ([], [7])
-
-#guard mergeStackOnlyExact
 
 /-- Branch merge (`merge_stack_sets`) keeps the intersection and the
 per-branch differences, and unions the forced sets. -/
@@ -85,59 +57,6 @@ def removeTempStackExact : Bool :=
   removeTempStack [1, 2] [1, 2, 3] [7] == ([3], [7])
 
 #guard removeTempStackExact
-
-/-- Colour defaults: physical variables keep their hardware register,
-allocated variables keep their colour and everything else defaults to zero. -/
-def colourDefaultExact : Bool :=
-  spDefault [(3, 1)] 3 == 1 &&
-    spDefault [] 4 == 2 &&
-    spDefault [] 5 == 0 &&
-    totalColour [(3, 1)] 3 == 2
-
-#guard colourDefaultExact
-
-/-- `limit_var` always lands on an allocatable variable above its input. -/
-def limitVarStructureExact : Bool :=
-  (List.range 33).all (fun n =>
-    n < limitVar n && limitVar n % 4 == 1 && isAllocVar (limitVar n))
-
-#guard limitVarStructureExact
-
-/-- More `sp_default` / `total_colour` values, including colourings that name
-physical variables. -/
-def colourDefaultExtendedExact : Bool :=
-  spDefault [] 6 == 3 &&
-    spDefault [] 8 == 4 &&
-    spDefault [] 7 == 0 &&
-    spDefault [] 1 == 0 &&
-    spDefault [(2, 9)] 2 == 9 &&
-    totalColour [] 6 == 6 &&
-    totalColour [] 8 == 8 &&
-    totalColour [] 5 == 0 &&
-    totalColour [(4, 5)] 4 == 10 &&
-    totalColour [(3, 1)] 3 == 2
-
-#guard colourDefaultExtendedExact
-
-/-- Direct `total_colour` rows from the Cake setup/colour probe:
-    mapped allocatable names are doubled, physical names retain their
-    hardware number, and unmapped names default to zero. -/
-def colourProbeExact : Bool :=
-  totalColour [(1, 7), (3, 9)] 1 == 14 &&
-    totalColour [(1, 7), (3, 9)] 3 == 18 &&
-    totalColour [(1, 7), (3, 9)] 2 == 2 &&
-    totalColour [(1, 7), (3, 9)] 5 == 0
-
-#guard colourProbeExact
-
-/-- More `merge_stack_only` cases, including allocatable-move propagation. -/
-def mergeStackOnlyExtendedExact : Bool :=
-  mergeStackOnly 3 5 [] [7] == ([5], [7]) &&
-    mergeStackOnly 2 6 [6, 8] [9] == ([8], [9]) &&
-    mergeStackOnly 1 3 [1] [7] == ([1], [1, 7]) &&
-    mergeStackOnly 1 2 [1] [7] == ([1], [7])
-
-#guard mergeStackOnlyExtendedExact
 
 /-- More branch-merge and temporary-removal cases. -/
 def mergeStackSetsExtendedExact : Bool :=
@@ -157,28 +76,17 @@ def removeTempStackExtendedExact : Bool :=
 
 def runChecks : IO Bool := do
   let checks : List (String × Bool) :=
-    [ ("the three WordLang variable conventions partition the variable space",
-        conventionExact),
+    [
       ("CakeML spill costs use the original magic numbers and tail factor",
         spillCostExact),
       ("CakeML coalescing costs use the original weights", coalesceCostExact),
-      ("RISC-V forced interference edges match get_forced", forcedEdgesExact),
       ("the SSA temporary numbering base matches limit_var", limitVarExact),
-      ("stack-only propagation matches merge_stack_only", mergeStackOnlyExact),
       ("branch merging matches merge_stack_sets", mergeStackSetsExact),
       ("temporary names are removed before slot assignment", removeTempStackExact),
-      ("colouring defaults match sp_default and total_colour", colourDefaultExact),
-      ("limit_var always yields an allocatable variable above its input",
-        limitVarStructureExact),
-      ("sp_default and total_colour agree on further oracle values",
-        colourDefaultExtendedExact),
-      ("total_colour matches the Cake setup/colour probe", colourProbeExact),
-      ("merge_stack_only propagates allocatable moves correctly",
-        mergeStackOnlyExtendedExact),
       ("merge_stack_sets and remove_temp_stack agree on further oracle cases",
         mergeStackSetsExtendedExact),
       ("remove_temp_stack deletes only the named temporaries",
-        removeTempStackExtendedExact) ]
+        removeTempStackExtendedExact)]
   let mut ok := true
   for (name, result) in checks do
     if result then

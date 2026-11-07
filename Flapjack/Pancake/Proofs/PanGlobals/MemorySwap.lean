@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.PanSemStateEval
+module
+
+public import Flapjack.Pancake.Semantics.PanSemStateEval
+
+@[expose] public section
 
 namespace Flapjack.PanGlobalsMemorySwap
 open Flapjack

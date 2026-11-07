@@ -1,9 +1,13 @@
-import Flapjack.HolRef
-import Mathlib.Data.Set.Lattice.Bounded
-import Mathlib.Data.Set.Lattice.Disjoint
-import Mathlib.Data.Set.Lattice.Image
-import Mathlib.Data.Set.Lattice.Indexed
-import Mathlib.Data.Set.Lattice.Order
+module
+
+public import Flapjack.HolRef
+public import Mathlib.Data.Set.Lattice.Bounded
+public import Mathlib.Data.Set.Lattice.Disjoint
+public import Mathlib.Data.Set.Lattice.Image
+public import Mathlib.Data.Set.Lattice.Indexed
+public import Mathlib.Data.Set.Lattice.Order
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.BackendProps
 

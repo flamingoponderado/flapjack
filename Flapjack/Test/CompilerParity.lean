@@ -1,6 +1,16 @@
+import Flapjack.Test.DataToWordWordEqualityParity
+import Flapjack.Test.CopyingGcParity
+import Flapjack.Test.MemcpyParity
+import Flapjack.Test.ForwardHeaderParity
+import Flapjack.Test.DataToWordValueEqualityParity
+import Flapjack.Test.DataToWordWordMemoryEqualityParity
+import Flapjack.Test.DataToWordMultiwordCompareParity
+import Flapjack.Test.CakeProgramSemanticsParity
+import Flapjack.Test.BackendConfigDecidableEq
 import Flapjack.Test.RiscVBackendConfigExecutable
 import Flapjack.Test.Mips32Encoding
 import Flapjack.Test.Arm8Parity
+import Flapjack.Test.X64Parity
 import Flapjack.Test.Arm8Encoding
 import Flapjack.Test.Mips32Run
 import Flapjack.Test.WordToStackStoreConstsCaller
@@ -17,9 +27,7 @@ import Flapjack.Test.L3FPMemoryParity
 import Flapjack.Test.L3ControlFetchParity
 import Flapjack.Test.L3FPBitsParity
 import Flapjack.Test.L3DivideParity
-import Flapjack.Test.RiscVModelDivParity
 import Flapjack.Test.GcSharedRefsParity
-import Flapjack.Test.RiscVNativeInstructionParity
 import Flapjack.Test.L3MultiplyParity
 import Flapjack.Test.L3WordArithmeticParity
 import Flapjack.Test.L3ImmediateShiftParity
@@ -228,7 +236,6 @@ import Flapjack.Test.TargetFindNextInterferenceParity
 import Flapjack.Test.StackRemoveStoreInit
 import Flapjack.Test.WordOverflowProduction
 import Flapjack.Test.StackRemoveStoreListCode
-import Flapjack.Test.RiscVOverflowTargetParity
 import Flapjack.Test.LabToTargetByteLengthsParity
 import Flapjack.Test.LabPropsLabelSetsParity
 import Flapjack.Test.LabToTargetWordLocationParity
@@ -265,11 +272,9 @@ import Flapjack.Test.StackRemoveStackAddress
 import Flapjack.Test.StackRemoveStackFree
 import Flapjack.Test.SSAReconcileGetVars
 import Flapjack.Test.RiscVBranchPolarity
-import Flapjack.Test.LabImplicitSectionZero
 import Flapjack.Test.TargetSemMachineSemParity
 import Flapjack.Test.TargetSemEvaluateParity
 import Flapjack.Test.WordAllocLiveExpressionParity
-import Flapjack.Test.WordCompileExpExactParity
 import Flapjack.Test.StackSemLoopControlParity
 import Flapjack.Test.StackSemJumpLowerParity
 import Flapjack.Test.PanGlobalsFpermCodeParity
@@ -283,7 +288,6 @@ import Flapjack.Test.ByteWordToBytesAuxParity
 import Flapjack.Test.StackPropsInstructionConstantsParity
 import Flapjack.Test.LabToTargetPaddingLengthParity
 import Flapjack.Test.StackToLabExecutedInput
-import Flapjack.Test.ProductionMacros
 import Flapjack.Test.StackWordBoundary
 import Flapjack.Test.LabToTargetMapLemmasParity
 import Flapjack.Test.SSAForceRenameGeneric
@@ -296,6 +300,87 @@ import Flapjack.Test.LabToTargetRemoveLabelsParity
 import Flapjack.Test.LabToTargetShmemInfoParity
 import Flapjack.Test.LabToTargetCompileParity
 import Flapjack.Test.SourceToFlatPrimConfigParity
+import Flapjack.Test.SourceToFlatCompileProg
+import Flapjack.Test.FlatElim
+import Flapjack.Test.ClosSemIntParity
+import Flapjack.Test.ClosSemCallParity
+import Flapjack.Test.ClosSemWordParity
+import Flapjack.Test.ClosSemThunkParity
+import Flapjack.Test.ClosSemBasicParity
+import Flapjack.Test.ClosSemMemoryParity
+import Flapjack.Test.ClosSemEvaluateParity
+import Flapjack.Test.FlatElimValueGlobals
+import Flapjack.Test.CakeMLControlFlowParity
+import Flapjack.Test.CakeMLRiscVPartial
+import Flapjack.Test.CakeMLNamesParity
+import Flapjack.Test.ClosMtiParity
+import Flapjack.Test.BvlInlineParity
+import Flapjack.Test.BvlHandleParity
+import Flapjack.Test.BvlConstParity
+import Flapjack.Test.BviTailrecParity
+import Flapjack.Test.BviTmcParity
+import Flapjack.Test.ClosCallParity
+import Flapjack.Test.ClosCallEnvironmentParity
+import Flapjack.Test.ClosKnownHelpersParity
+import Flapjack.Test.ClosKnownParity
+import Flapjack.Test.ClosOpParity
+import Flapjack.Test.WordBignumCompileExpParity
+import Flapjack.Test.WordBignumHelpersParity
+import Flapjack.Test.WordBignumCompileParity
+import Flapjack.Test.WordBignumGenerateParity
+import Flapjack.Test.CakeLexerParity
+import Flapjack.Test.CakePegChecksParity
+import Flapjack.Test.CakePegActionsParity
+import Flapjack.Test.CakePegGrammarParity
+import Flapjack.Test.CakePtreeTypeParity
+import Flapjack.Test.CakeTypeEnvironmentParity
+import Flapjack.Test.CakeTypeDisplayParity
+import Flapjack.Test.ContextFreeTreeParity
+import Flapjack.Test.CakeCfgGrammarParity
+import Flapjack.Test.CakePtreePatternParity
+import Flapjack.Test.CakePtreeExprParity
+import Flapjack.Test.CakeSourceFrontendParity
+import Flapjack.Test.CakeSubglobalsParity
+import Flapjack.Test.CakeSourceRiscVPartial
+import Flapjack.Test.CakeInferenceParity
+import Flapjack.Test.CakeInferCoreParity
+import Flapjack.Test.CakeInferDeclParity
+import Flapjack.Test.CakeDiagnosticParity
+import Flapjack.Test.CakeBasisParity
+import Flapjack.Test.CakeSourceStoreParity
+import Flapjack.Test.CakeSourceEvaluatorParity
+import Flapjack.Test.CakeSourceConstructorParity
+import Flapjack.Test.CakeSourcePatternParity
+import Flapjack.Test.CakeSourceOpsParity
+import Flapjack.Test.CakeFlatSemOpsParity
+import Flapjack.Test.CakeFlatSemConversionsParity
+import Flapjack.Test.CakeFlatSemPrimitiveParity
+import Flapjack.Test.CakeFlatSemTestParity
+import Flapjack.Test.CakeFlatSemPatternParity
+import Flapjack.Test.CakeFlatSemEvalParity
+import Flapjack.Test.CakeFlatSemThunkParity
+import Flapjack.Test.CakeStoreUpdateParity
+import Flapjack.Test.CakeFlatSemApplyParity
+import Flapjack.Test.CakeFlatSemMemoryParity
+import Flapjack.Test.CakeFlatSemApplyCompleteParity
+import Flapjack.Test.CakeFlatSemEvaluateParity
+import Flapjack.Test.CakeFlatSemEvaluateExactParity
+import Flapjack.Test.CakeGlobalEnvConditionsParity
+import Flapjack.Test.CakeSourceConversionsParity
+import Flapjack.Test.CakeSourceThunkParity
+import Flapjack.Test.CakeSourceEvaluateClock
+import Flapjack.Test.CakeSourceEvalStateParity
+import Flapjack.Test.CakeSourceConcreteParity
+import Flapjack.Test.CakeSourceEvalParity
+import Flapjack.Test.CakeSourceControlParity
+import Flapjack.Test.CakeSourceArrayParity
+import Flapjack.Test.CakeSourcePrimitiveParity
+import Flapjack.Test.CakeSourceCompareParity
+import Flapjack.Test.CakeSourceTestParity
+import Flapjack.Test.CakeBuildLoweringParity
+import Flapjack.Test.CakeIoLoweringParity
+import Flapjack.Test.CakeExportParity
+import Flapjack.Test.BviInlineParity
 import Flapjack.Test.MiscLookupAnyFindIndexParity
 import Flapjack.Test.StackPropsClockSupportParity
 import Flapjack.Test.StackToLabExecutedCodecParity
@@ -306,7 +391,6 @@ import Flapjack.Test.ProductionScheduler
 import Flapjack.Test.ProductionMoves
 import Flapjack.Test.RegAllocProductionFixedTags
 import Flapjack.Test.RegAllocProductionColourLookup
-import Flapjack.Test.WordCseProductionScalarKeys
 import Flapjack.Test.WordCseProductionJoinParity
 import Flapjack.Test.WordCseProductionFactAuxParity
 import Flapjack.Test.WordCseProductionMemoryParity
@@ -625,6 +709,8 @@ import Flapjack.Test.WordConvsPostAllocExactParity
 import Flapjack.Test.WordConvsPreAllocExactParity
 import Flapjack.Test.WordRemoveMustTerminateParity
 import Flapjack.Test.DataToWordConfigParity
+import Flapjack.Test.DataToWordCompilerParity
+import Flapjack.Test.DataToWordMemoryRepresentation
 import Flapjack.Test.WordGcFunctionsParity
 import Flapjack.Test.StackAllocGcCodeParity
 import Flapjack.Test.StackAllocGetBitsParity
@@ -796,11 +882,7 @@ import Flapjack.Test.LoopIsLoadParity
 import Flapjack.Test.LoopCallParity
 import Flapjack.Test.LoopEvalParity
 import Flapjack.Test.LoopObservationalSemanticsParity
-import Flapjack.Test.LoopSemEvaluateParity
-import Flapjack.Test.LoopLiveEffectFreeParity
 import Flapjack.Test.LoopLiveDomainListDeleteParity
-import Flapjack.Test.LoopPrimopParity
-import Flapjack.Test.LoopShMemParity
 import Flapjack.Test.LoopFfiParity
 import Flapjack.Test.LoopMemExactParity
 import Flapjack.Test.PanItreeFfiParity
@@ -812,7 +894,6 @@ import Flapjack.Test.PanHProgParity
 import Flapjack.Test.PanHProgLoadParity
 import Flapjack.Test.PanHProgReturnParity
 import Flapjack.Test.PanHProgRaiseParity
-import Flapjack.Test.PanValueFfiClockLe
 import Flapjack.Test.PanValueEvaluatorStability
 import Flapjack.Test.PanToCrepMaxListParity
 import Flapjack.Test.PanToCrepRelationsParity
@@ -868,7 +949,6 @@ import Flapjack.Test.CrepSemStateExactParity
 import Flapjack.Test.CrepSemNonFailStartLookupParity
 import Flapjack.Test.CrepFuelCutoffParity
 import Flapjack.Test.PanToCrepGlobalsLookupParity
-import Flapjack.Test.PanToCrepCallExceptionParity
 import Flapjack.Test.PanToCrepCallExceptionHandlerParity
 import Flapjack.Test.CrepeAssignRetParity
 import Flapjack.Test.CrepeVarCexpParity
@@ -892,14 +972,12 @@ import Flapjack.Test.CrepRuntimeFfiTargetParity
 import Flapjack.Test.CrepRuntimeExtCallStateRelParity
 import Flapjack.Test.CrepEveryExpParity
 import Flapjack.Test.CrepAssignedVarsParity
-import Flapjack.Test.MkCtxtImpLocalsRelParity
 import Flapjack.Test.FmEmptyZipAlistParity
 import Flapjack.Test.FupdateListAppendCommutesParity
 import Flapjack.Test.PanSimpParity
 import Flapjack.Test.PanProgramSimpParity
 import Flapjack.Test.PanValueWfParity
 import Flapjack.Test.CrepeCompileExpVariablesParity
-import Flapjack.Test.PanSimpOthersParity
 import Flapjack.Test.CrepProgIfParity
 import Flapjack.Test.CompileCrepOpParity
 import Flapjack.Test.CrepCompileExpParity
@@ -997,10 +1075,6 @@ import Flapjack.Test.StackSemShMemOpParity
 import Flapjack.Test.StackSemFfiParity
 import Flapjack.Test.StackSemInstallParity
 import Flapjack.Test.StackSemMeasureParity
-import Flapjack.Test.StackProductionCodecParity
-import Flapjack.Test.StackWordPayloadParity
-import Flapjack.Test.StackMacroLeavesParity
-import Flapjack.Test.LoopStoreNarrowParity
 import Flapjack.Test.WordToStackLiveBitmapParity
 import Flapjack.Test.StackSemControlCasesParity
 import Flapjack.Test.PanGlobalsFpermShMemLoadParity
@@ -1105,14 +1179,10 @@ import Flapjack.Test.PanSourceEntryParity
 import Flapjack.Test.PanNativeWordPrefixParity
 import Flapjack.Test.PanNativeFrontendPrefixParity
 import Flapjack.Test.PanTargetEntryParity
-import Flapjack.Test.CrepToLoopNativeDeclarationsParity
 import Flapjack.Test.LoopCallEnvParity
-import Flapjack.Test.InstructionTransfer
 import Flapjack.Test.ArtifactFormat
-import Flapjack.Test.RiscVMemOpParity
 import Flapjack.Test.RiscVArtifactParity
 import Flapjack.Test.RiscVWordExtract6Parity
-import Flapjack.Test.RiscVEncodeLengthParity
 import Flapjack.Test.WordColourLivenessParity
 import Flapjack.Test.RiscVRegisterMapParity
 import Flapjack.Test.CakeAllocatorCore
@@ -1140,8 +1210,6 @@ import Flapjack.Test.CakeSsaSharedParity
 import Flapjack.Test.CakeSsaMemoryParity
 import Flapjack.Test.CakeSsaLeafParity
 import Flapjack.Test.CakeDeadCodeStateParity
-import Flapjack.Test.CakeReturnSoundness
-import Flapjack.Test.CakeCompileSingleCorrectness
 import Flapjack.Test.CakeSpillCostParity
 import Flapjack.Test.CakeFrameVectorParity
 import Flapjack.Test.WordFuseConditions
@@ -1186,7 +1254,6 @@ import Flapjack.Test.PanSemEvaluateDeclsFiniteParity
 import Flapjack.Test.PanToCrepMakeVmapParity
 import Flapjack.Test.PanLangGeneratedSizeParity
 import Flapjack.Test.CrepLangGeneratedSizeParity
-import Flapjack.Test.PanSimpProgBridgeParity
 import Flapjack.Test.RegAllocStateForeachParity
 import Flapjack.Test.SSARenameLookupParity
 import Flapjack.Test.SSAMergeMovesParity
@@ -1209,355 +1276,16 @@ import Flapjack.Test.WordInstSelectExactParity
 import Flapjack.Test.WordInstPullExpExecutableParity
 import Flapjack.Test.WordInstSelectorExecutableParity
 
-
-
-
-
-
-
 /-!
 # Pancake/RISC-V compiler parity tests
 
 These are executable tests, so they run with `lake test` in addition to the
-compile-time `#guard` regressions.  The two byte vectors below were obtained
-from CakeML's `cake --pancake --target=riscv` on the corresponding minimal
-Pancake programs.  Cake's generated entry body is followed by the shared
-runtime; we pin the generated words here and test the complete Lean linked
-image separately.
-
-The full source-to-runtime-image comparison is intentionally not weakened to
-an existence check: the source test currently records that the Lean entry
-point can produce an artifact, while the golden vectors and linked image make
-the exact-output obligations explicit for the next parity increments.
+compile-time `#guard` regressions.
 -/
 
 namespace Flapjack.Test.CompilerParity
 
 open Flapjack Flapjack.RiscV
-
-def cakeReturnWords (value : Nat) : List (BitVec 8) :=
-  [ BitVec.ofNat 8 0x13, BitVec.ofNat 8 0x65,
-    BitVec.ofNat 8 (value * 0x10), BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x67, BitVec.ofNat 8 0x80,
-    BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x00 ]
-
-/-! Cake's byte-load-with-offset instruction is an RV `lb` (funct3 4), not
-    the funct3 0 encoding.  This pins the field exposed by the
-    source-to-RISC-V differential fuzzer. -/
-def cakeLoadByteOffsetWords : List (BitVec 8) :=
-  RiscV.encodeInstructionBytes
-    (.loadByteOffset 10 5 (BitVec.ofNat 64 8))
-
-def cakeLoadByteOffsetEncodingParity : Bool :=
-  cakeLoadByteOffsetWords ==
-    [ BitVec.ofNat 8 0x03, BitVec.ofNat 8 0xC5,
-      BitVec.ofNat 8 0x82, BitVec.ofNat 8 0x00 ]
-
-#guard cakeLoadByteOffsetEncodingParity
-
-def leanReturnWords (value : Nat) : List (BitVec 8) :=
-  RiscV.encodeInstructions
-    [.ori 10 0 (BitVec.ofNat 64 value), .jalr 0 1 0]
-
-/-! The exact Lean source-entry bytes are pinned separately from the
-    Cake-derived section-shape golden in SourceGlobalParity. -/
-/-! These Lean source-entry byte vectors are exact regression pins for the
-    checked source entry point (`compileSourceBytes`).  They are refreshed when
-    the source pipeline changes its Cake-compatible ABI or instruction
-    filtering, most recently after the Cake base+offset memory addressing mode
-    (`Addr base offset`) was fused at the Lab boundary.  The Cake-derived
-    section goldens remain separately pinned in
-    `Flapjack/Test/SourceGlobalParity.lean`; the residual byte-level gap to the
-    original Cake artifact is tracked by `flapjack-pxn.8.5.10.4` (register/ABI
-    parity). -/
-
-def rotateArtifactGolden : List (BitVec 8) :=
-  [
-    BitVec.ofNat 8 0x83, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x85, BitVec.ofNat 8 0xFC, BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0x30, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x9E, BitVec.ofNat 8 0xFE, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0x33, BitVec.ofNat 8 0xEA, BitVec.ofNat 8 0x5A, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0x33, BitVec.ofNat 8 0x0A, BitVec.ofNat 8 0xDA, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0x83, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x0A, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0x23, BitVec.ofNat 8 0x34, BitVec.ofNat 8 0xD5, BitVec.ofNat 8 0xFD, BitVec.ofNat 8 0x83, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x8A, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x13, BitVec.ofNat 8 0x0A, BitVec.ofNat 8 0x8A, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0x67, BitVec.ofNat 8 0x80, BitVec.ofNat 8 0x0E, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x40, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x61, BitVec.ofNat 8 0x50, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x6D, BitVec.ofNat 8 0x10, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x04,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x8F, BitVec.ofNat 8 0xBF, BitVec.ofNat 8 0x41, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x9F, BitVec.ofNat 8 0xF1, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0xDE, BitVec.ofNat 8 0xB1, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0xEE, BitVec.ofNat 8 0xFE, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0xEF, BitVec.ofNat 8 0xDE, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0x33, BitVec.ofNat 8 0xE2, BitVec.ofNat 8 0x31, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x33, BitVec.ofNat 8 0x02, BitVec.ofNat 8 0xF2, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x60, BitVec.ofNat 8 0x42, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x67, BitVec.ofNat 8 0x80, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x00
-  ]
-
-def rotateArtifactMatchesGolden : Bool :=
-  match Flapjack.Test.SourceGlobalParity.compileSourceBytes
-      Flapjack.Test.SourceGlobalParity.rotateSource with
-  | some bytes => bytes == rotateArtifactGolden
-  | none => false
-
-/-! Exact source-entry golden for the existing global initializer fixture. -/
-def globalArtifactGolden : List (BitVec 8) :=
-  [
-    BitVec.ofNat 8 0x83, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x85, BitVec.ofNat 8 0xFC, BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0x30, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x9E, BitVec.ofNat 8 0xFE, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0x33, BitVec.ofNat 8 0xEA, BitVec.ofNat 8 0x5A, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0x33, BitVec.ofNat 8 0x0A, BitVec.ofNat 8 0xDA, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0x83, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x0A, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0x23, BitVec.ofNat 8 0x34, BitVec.ofNat 8 0xD5, BitVec.ofNat 8 0xFD, BitVec.ofNat 8 0x83, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x8A, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x13, BitVec.ofNat 8 0x0A, BitVec.ofNat 8 0x8A, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0x67, BitVec.ofNat 8 0x80, BitVec.ofNat 8 0x0E, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0x80, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x83, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x85, BitVec.ofNat 8 0xFE,
-    BitVec.ofNat 8 0x13, BitVec.ofNat 8 0x6E, BitVec.ofNat 8 0x10, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x9E, BitVec.ofNat 8 0xCE, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x61, BitVec.ofNat 8 0xC6, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x81, BitVec.ofNat 8 0xD1, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x81, BitVec.ofNat 8 0xF1, BitVec.ofNat 8 0x41, BitVec.ofNat 8 0x13, BitVec.ofNat 8 0x62, BitVec.ofNat 8 0x70, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x62, BitVec.ofNat 8 0x42, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x23, BitVec.ofNat 8 0xB0, BitVec.ofNat 8 0x51, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x40, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0x80, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x03, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x85, BitVec.ofNat 8 0xFE, BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x6D, BitVec.ofNat 8 0x10, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x33, BitVec.ofNat 8 0x1E, BitVec.ofNat 8 0xBE, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x6E, BitVec.ofNat 8 0xC6, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x8E, BitVec.ofNat 8 0xCE, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x8E, BitVec.ofNat 8 0xFE, BitVec.ofNat 8 0x41,
-    BitVec.ofNat 8 0x83, BitVec.ofNat 8 0xB1, BitVec.ofNat 8 0x0E, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0xE0, BitVec.ofNat 8 0x31, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x67, BitVec.ofNat 8 0x80, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x00
-  ]
-
-def globalArtifactMatchesGolden : Bool :=
-  match Flapjack.Test.SourceGlobalParity.compileSourceBytes
-      Flapjack.Test.SourceGlobalParity.globalSource with
-  | some bytes => bytes == globalArtifactGolden
-  | none => false
-/-! Exact source-entry golden for the existing two-global binary fixture. -/
-def multiGlobalArtifactGolden : List (BitVec 8) :=
-  [
-    BitVec.ofNat 8 0x83, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x85, BitVec.ofNat 8 0xFC, BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0x30, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x9E, BitVec.ofNat 8 0xFE, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0x33, BitVec.ofNat 8 0xEA, BitVec.ofNat 8 0x5A, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0x33, BitVec.ofNat 8 0x0A, BitVec.ofNat 8 0xDA, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0x83, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x0A, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0x23, BitVec.ofNat 8 0x34, BitVec.ofNat 8 0xD5, BitVec.ofNat 8 0xFD, BitVec.ofNat 8 0x83, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x8A, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x13, BitVec.ofNat 8 0x0A, BitVec.ofNat 8 0x8A, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0x67, BitVec.ofNat 8 0x80, BitVec.ofNat 8 0x0E, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0x80, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x83, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x85, BitVec.ofNat 8 0xFE,
-    BitVec.ofNat 8 0x13, BitVec.ofNat 8 0x6E, BitVec.ofNat 8 0x10, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x9E, BitVec.ofNat 8 0xCE, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x61, BitVec.ofNat 8 0xC6, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x81, BitVec.ofNat 8 0xD1, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x81, BitVec.ofNat 8 0xF1, BitVec.ofNat 8 0x41, BitVec.ofNat 8 0x13, BitVec.ofNat 8 0x62, BitVec.ofNat 8 0x10, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x62, BitVec.ofNat 8 0x42, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x23, BitVec.ofNat 8 0xB0, BitVec.ofNat 8 0x51, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0x83, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x85, BitVec.ofNat 8 0xFE,
-    BitVec.ofNat 8 0x13, BitVec.ofNat 8 0x6E, BitVec.ofNat 8 0x10, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x9E, BitVec.ofNat 8 0xCE, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x61, BitVec.ofNat 8 0xC6, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x81, BitVec.ofNat 8 0xD1, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x81, BitVec.ofNat 8 0xF1, BitVec.ofNat 8 0x41, BitVec.ofNat 8 0x13, BitVec.ofNat 8 0x62, BitVec.ofNat 8 0x20, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x62, BitVec.ofNat 8 0x42, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x23, BitVec.ofNat 8 0xB0, BitVec.ofNat 8 0x51, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x40, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x6E, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0x03, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x85, BitVec.ofNat 8 0xFE, BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x6D, BitVec.ofNat 8 0x10, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x33, BitVec.ofNat 8 0x1E, BitVec.ofNat 8 0xBE, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0xC6, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x8F, BitVec.ofNat 8 0xCF, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x8F, BitVec.ofNat 8 0xDF, BitVec.ofNat 8 0x41,
-    BitVec.ofNat 8 0x83, BitVec.ofNat 8 0xBF, BitVec.ofNat 8 0x0F, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x6E, BitVec.ofNat 8 0x80, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x03, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x85, BitVec.ofNat 8 0xFE, BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x6D, BitVec.ofNat 8 0x10, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x33, BitVec.ofNat 8 0x1E, BitVec.ofNat 8 0xBE, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x61, BitVec.ofNat 8 0xC6, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x81, BitVec.ofNat 8 0xC1, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x81, BitVec.ofNat 8 0xD1, BitVec.ofNat 8 0x41,
-    BitVec.ofNat 8 0x83, BitVec.ofNat 8 0xB1, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x81, BitVec.ofNat 8 0xF1, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0xE0, BitVec.ofNat 8 0x31, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x67, BitVec.ofNat 8 0x80, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x00
-  ]
-
-def multiGlobalArtifactMatchesGolden : Bool :=
-  match Flapjack.Test.SourceGlobalParity.compileSourceBytes
-      Flapjack.Test.SourceGlobalParity.multiGlobalSource with
-  | some bytes => bytes == multiGlobalArtifactGolden
-  | none => false
-/-! Exact source-entry golden for the existing n-ary global fixture. -/
-def naryGlobalArtifactGolden : List (BitVec 8) :=
-  [
-    BitVec.ofNat 8 0x83, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x85, BitVec.ofNat 8 0xFC, BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0x30, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x9E, BitVec.ofNat 8 0xFE, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0x33, BitVec.ofNat 8 0xEA, BitVec.ofNat 8 0x5A, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0x33, BitVec.ofNat 8 0x0A, BitVec.ofNat 8 0xDA, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0x83, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x0A, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0x23, BitVec.ofNat 8 0x34, BitVec.ofNat 8 0xD5, BitVec.ofNat 8 0xFD, BitVec.ofNat 8 0x83, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x8A, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x13, BitVec.ofNat 8 0x0A, BitVec.ofNat 8 0x8A, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0x67, BitVec.ofNat 8 0x80, BitVec.ofNat 8 0x0E, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0x80, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x83, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x85, BitVec.ofNat 8 0xFE,
-    BitVec.ofNat 8 0x13, BitVec.ofNat 8 0x6E, BitVec.ofNat 8 0x10, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x9E, BitVec.ofNat 8 0xCE, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x61, BitVec.ofNat 8 0xC6, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x81, BitVec.ofNat 8 0xD1, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x81, BitVec.ofNat 8 0xF1, BitVec.ofNat 8 0x41, BitVec.ofNat 8 0x13, BitVec.ofNat 8 0x62, BitVec.ofNat 8 0x10, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x62, BitVec.ofNat 8 0x42, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x23, BitVec.ofNat 8 0xB0, BitVec.ofNat 8 0x51, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0x83, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x85, BitVec.ofNat 8 0xFE,
-    BitVec.ofNat 8 0x13, BitVec.ofNat 8 0x6E, BitVec.ofNat 8 0x10, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x9E, BitVec.ofNat 8 0xCE, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x61, BitVec.ofNat 8 0xC6, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x81, BitVec.ofNat 8 0xD1, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x81, BitVec.ofNat 8 0xF1, BitVec.ofNat 8 0x41, BitVec.ofNat 8 0x13, BitVec.ofNat 8 0x62, BitVec.ofNat 8 0x20, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x62, BitVec.ofNat 8 0x42, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x23, BitVec.ofNat 8 0xB0, BitVec.ofNat 8 0x51, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0x80, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0x83, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x85, BitVec.ofNat 8 0xFE,
-    BitVec.ofNat 8 0x13, BitVec.ofNat 8 0x6E, BitVec.ofNat 8 0x10, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x9E, BitVec.ofNat 8 0xCE, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x61, BitVec.ofNat 8 0xC6, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x81, BitVec.ofNat 8 0xD1, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x81, BitVec.ofNat 8 0xF1, BitVec.ofNat 8 0x41, BitVec.ofNat 8 0x13, BitVec.ofNat 8 0x62, BitVec.ofNat 8 0x30, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x62, BitVec.ofNat 8 0x42, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x23, BitVec.ofNat 8 0xB0, BitVec.ofNat 8 0x51, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x40, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0x80, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x83, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x85, BitVec.ofNat 8 0xFE, BitVec.ofNat 8 0x13, BitVec.ofNat 8 0x6E, BitVec.ofNat 8 0x10, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x9E, BitVec.ofNat 8 0xCE, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x61, BitVec.ofNat 8 0xC6, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x81, BitVec.ofNat 8 0xD1, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x81, BitVec.ofNat 8 0xF1, BitVec.ofNat 8 0x41,
-    BitVec.ofNat 8 0x83, BitVec.ofNat 8 0xB1, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x6E, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0x03, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x85, BitVec.ofNat 8 0xFE, BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x6D, BitVec.ofNat 8 0x10, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x33, BitVec.ofNat 8 0x1E, BitVec.ofNat 8 0xBE, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0xC6, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x8F, BitVec.ofNat 8 0xCF, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x8F, BitVec.ofNat 8 0xDF, BitVec.ofNat 8 0x41,
-    BitVec.ofNat 8 0x83, BitVec.ofNat 8 0xBF, BitVec.ofNat 8 0x0F, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x81, BitVec.ofNat 8 0xF1, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x6E, BitVec.ofNat 8 0x80, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0x03, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x85, BitVec.ofNat 8 0xFE,
-    BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x6D, BitVec.ofNat 8 0x10, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x33, BitVec.ofNat 8 0x1E, BitVec.ofNat 8 0xBE, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0xC6, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x8F, BitVec.ofNat 8 0xCF, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x8F, BitVec.ofNat 8 0xDF, BitVec.ofNat 8 0x41, BitVec.ofNat 8 0x83, BitVec.ofNat 8 0xBF, BitVec.ofNat 8 0x0F, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x81, BitVec.ofNat 8 0xF1, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0xE0, BitVec.ofNat 8 0x31, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x67, BitVec.ofNat 8 0x80, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x00
-  ]
-
-def naryGlobalArtifactMatchesGolden : Bool :=
-  match Flapjack.Test.SourceGlobalParity.compileSourceBytes
-      Flapjack.Test.SourceGlobalParity.naryGlobalSource with
-  | some bytes => bytes == naryGlobalArtifactGolden
-  | none => false
-/-! Exact source-entry golden for the existing global multiplication fixture. -/
-def longMulGlobalArtifactGolden : List (BitVec 8) :=
-  [
-    BitVec.ofNat 8 0x83, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x85, BitVec.ofNat 8 0xFC, BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0x30, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x9E, BitVec.ofNat 8 0xFE, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0x33, BitVec.ofNat 8 0xEA, BitVec.ofNat 8 0x5A, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0x33, BitVec.ofNat 8 0x0A, BitVec.ofNat 8 0xDA, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0x83, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x0A, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0x23, BitVec.ofNat 8 0x34, BitVec.ofNat 8 0xD5, BitVec.ofNat 8 0xFD, BitVec.ofNat 8 0x83, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x8A, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x13, BitVec.ofNat 8 0x0A, BitVec.ofNat 8 0x8A, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0x67, BitVec.ofNat 8 0x80, BitVec.ofNat 8 0x0E, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0x80, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x83, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x85, BitVec.ofNat 8 0xFE,
-    BitVec.ofNat 8 0x13, BitVec.ofNat 8 0x6E, BitVec.ofNat 8 0x10, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x9E, BitVec.ofNat 8 0xCE, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x61, BitVec.ofNat 8 0xC6, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x81, BitVec.ofNat 8 0xD1, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x81, BitVec.ofNat 8 0xF1, BitVec.ofNat 8 0x41, BitVec.ofNat 8 0x13, BitVec.ofNat 8 0x62, BitVec.ofNat 8 0x30, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x62, BitVec.ofNat 8 0x42, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x23, BitVec.ofNat 8 0xB0, BitVec.ofNat 8 0x51, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0x83, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x85, BitVec.ofNat 8 0xFE,
-    BitVec.ofNat 8 0x13, BitVec.ofNat 8 0x6E, BitVec.ofNat 8 0x10, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x9E, BitVec.ofNat 8 0xCE, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x61, BitVec.ofNat 8 0xC6, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x81, BitVec.ofNat 8 0xD1, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x81, BitVec.ofNat 8 0xF1, BitVec.ofNat 8 0x41, BitVec.ofNat 8 0x13, BitVec.ofNat 8 0x62, BitVec.ofNat 8 0x40, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x62, BitVec.ofNat 8 0x42, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x23, BitVec.ofNat 8 0xB0, BitVec.ofNat 8 0x51, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x40, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0x80, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x03, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x85, BitVec.ofNat 8 0xFE, BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x6D, BitVec.ofNat 8 0x10, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x33, BitVec.ofNat 8 0x1E, BitVec.ofNat 8 0xBE, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x6E, BitVec.ofNat 8 0xC6, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x8E, BitVec.ofNat 8 0xCE, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x8E, BitVec.ofNat 8 0xFE, BitVec.ofNat 8 0x41,
-    BitVec.ofNat 8 0x83, BitVec.ofNat 8 0xB1, BitVec.ofNat 8 0x0E, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0x03, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x85, BitVec.ofNat 8 0xFE, BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x6D, BitVec.ofNat 8 0x10, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x33, BitVec.ofNat 8 0x1E, BitVec.ofNat 8 0xBE, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x6E, BitVec.ofNat 8 0xC6, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x8E, BitVec.ofNat 8 0xCE, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x8E, BitVec.ofNat 8 0xFE, BitVec.ofNat 8 0x41,
-    BitVec.ofNat 8 0x03, BitVec.ofNat 8 0xB2, BitVec.ofNat 8 0x0E, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0xB2, BitVec.ofNat 8 0x41, BitVec.ofNat 8 0x02,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x82, BitVec.ofNat 8 0x41, BitVec.ofNat 8 0x02, BitVec.ofNat 8 0x33, BitVec.ofNat 8 0xE3, BitVec.ofNat 8 0x52, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x60, BitVec.ofNat 8 0x63, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x67, BitVec.ofNat 8 0x80, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x00
-  ]
-
-def longMulGlobalArtifactMatchesGolden : Bool :=
-  match Flapjack.Test.SourceGlobalParity.compileSourceBytes
-      Flapjack.Test.SourceGlobalParity.longMulGlobalSource with
-  | some bytes => bytes == longMulGlobalArtifactGolden
-  | none => false
-def namedStructArtifactGolden : List (BitVec 8) :=
-  [
-    BitVec.ofNat 8 0x83, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x85, BitVec.ofNat 8 0xFC, BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0x30, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x9E, BitVec.ofNat 8 0xFE, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0x33, BitVec.ofNat 8 0xEA, BitVec.ofNat 8 0x5A, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0x33, BitVec.ofNat 8 0x0A, BitVec.ofNat 8 0xDA, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0x83, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x0A, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0x23, BitVec.ofNat 8 0x34, BitVec.ofNat 8 0xD5, BitVec.ofNat 8 0xFD, BitVec.ofNat 8 0x83, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x8A, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x13, BitVec.ofNat 8 0x0A, BitVec.ofNat 8 0x8A, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0x67, BitVec.ofNat 8 0x80, BitVec.ofNat 8 0x0E, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x40, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x61, BitVec.ofNat 8 0x30, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x13, BitVec.ofNat 8 0x62, BitVec.ofNat 8 0x40, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0xE0, BitVec.ofNat 8 0x31, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x61, BitVec.ofNat 8 0x42, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x40, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x02, BitVec.ofNat 8 0x31, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0xE0, BitVec.ofNat 8 0x52, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x67, BitVec.ofNat 8 0x80, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x00
-  ]
-
-def namedStructArtifactMatchesGolden : Bool :=
-  match Flapjack.Test.SourceGlobalParity.compileSourceBytes
-      Flapjack.Test.SourceGlobalParity.namedStructSource with
-  | some bytes => bytes == namedStructArtifactGolden
-  | none => false
-/-! Exact source-entry golden for the existing shared-memory fixture. -/
-def sharedMemoryArtifactGolden : List (BitVec 8) :=
-  [
-    BitVec.ofNat 8 0x83, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x85, BitVec.ofNat 8 0xFC, BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0x30, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x9E, BitVec.ofNat 8 0xFE, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0x33, BitVec.ofNat 8 0xEA, BitVec.ofNat 8 0x5A, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0x33, BitVec.ofNat 8 0x0A, BitVec.ofNat 8 0xDA, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0x83, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x0A, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0x23, BitVec.ofNat 8 0x34, BitVec.ofNat 8 0xD5, BitVec.ofNat 8 0xFD, BitVec.ofNat 8 0x83, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x8A, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x13, BitVec.ofNat 8 0x0A, BitVec.ofNat 8 0x8A, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0x67, BitVec.ofNat 8 0x80, BitVec.ofNat 8 0x0E, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x40, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x40, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x61, BitVec.ofNat 8 0xC0, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x6E, BitVec.ofNat 8 0x80, BitVec.ofNat 8 0x3E,
-    BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x8E, BitVec.ofNat 8 0xCE, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x83, BitVec.ofNat 8 0xC1, BitVec.ofNat 8 0x0E, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x33, BitVec.ofNat 8 0xE2, BitVec.ofNat 8 0x31, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x60, BitVec.ofNat 8 0x42, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x67, BitVec.ofNat 8 0x80, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x00
-  ]
-
-def sharedMemoryArtifactMatchesGolden : Bool :=
-  match Flapjack.Test.SourceGlobalParity.compileSourceBytes
-      Flapjack.Test.SourceGlobalParity.sharedMemorySource with
-  | some bytes => bytes == sharedMemoryArtifactGolden
-  | none => false
-/-! Source-entry regression for the existing shadowing fixture.
-
-The authoritative Cake comparison is the exact corpus manifest, which compares
-every section's base and bytes. -/
-def shadowingArtifactGolden : List (BitVec 8) :=
-  [
-    BitVec.ofNat 8 0x83, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x85, BitVec.ofNat 8 0xFC, BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0x30, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x9E, BitVec.ofNat 8 0xFE, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0x33, BitVec.ofNat 8 0xEA, BitVec.ofNat 8 0x5A, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0x33, BitVec.ofNat 8 0x0A, BitVec.ofNat 8 0xDA, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0x83, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x0A, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0x23, BitVec.ofNat 8 0x34, BitVec.ofNat 8 0xD5, BitVec.ofNat 8 0xFD, BitVec.ofNat 8 0x83, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x8A, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x13, BitVec.ofNat 8 0x0A, BitVec.ofNat 8 0x8A, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0x67, BitVec.ofNat 8 0x80, BitVec.ofNat 8 0x0E, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0x80, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x83, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x85, BitVec.ofNat 8 0xFE,
-    BitVec.ofNat 8 0x13, BitVec.ofNat 8 0x6E, BitVec.ofNat 8 0x10, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x9E, BitVec.ofNat 8 0xCE, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x61, BitVec.ofNat 8 0xC6, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x81, BitVec.ofNat 8 0xD1, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x81, BitVec.ofNat 8 0xF1, BitVec.ofNat 8 0x41, BitVec.ofNat 8 0x13, BitVec.ofNat 8 0x62, BitVec.ofNat 8 0x10, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x62, BitVec.ofNat 8 0x42, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x23, BitVec.ofNat 8 0xB0, BitVec.ofNat 8 0x51, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x40, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x61, BitVec.ofNat 8 0x90, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0xE0, BitVec.ofNat 8 0x31, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x67, BitVec.ofNat 8 0x80, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x13, BitVec.ofNat 8 0x0A, BitVec.ofNat 8 0x8A, BitVec.ofNat 8 0xFE,
-    BitVec.ofNat 8 0xE3, BitVec.ofNat 8 0x7E, BitVec.ofNat 8 0x5A, BitVec.ofNat 8 0xFF, BitVec.ofNat 8 0x13, BitVec.ofNat 8 0x65, BitVec.ofNat 8 0x20, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0xF0, BitVec.ofNat 8 0x1F, BitVec.ofNat 8 0xF8, BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0x10, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x23, BitVec.ofNat 8 0x30, BitVec.ofNat 8 0xFA, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x0F, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x0D,
-    BitVec.ofNat 8 0x23, BitVec.ofNat 8 0x34, BitVec.ofNat 8 0xFA, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0x83, BitVec.ofNat 8 0x3F, BitVec.ofNat 8 0x85, BitVec.ofNat 8 0xFC,
-    BitVec.ofNat 8 0x23, BitVec.ofNat 8 0x38, BitVec.ofNat 8 0xFA, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0x4A, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x8F, BitVec.ofNat 8 0x5F, BitVec.ofNat 8 0x41, BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x6E, BitVec.ofNat 8 0x30, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0xDF, BitVec.ofNat 8 0xDF, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0x23, BitVec.ofNat 8 0x34, BitVec.ofNat 8 0xF5, BitVec.ofNat 8 0xFD,
-    BitVec.ofNat 8 0x13, BitVec.ofNat 8 0x0A, BitVec.ofNat 8 0x8A, BitVec.ofNat 8 0xFF, BitVec.ofNat 8 0xE3, BitVec.ofNat 8 0x70, BitVec.ofNat 8 0x5A, BitVec.ofNat 8 0xFD,
-    BitVec.ofNat 8 0x13, BitVec.ofNat 8 0x65, BitVec.ofNat 8 0x20, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0xF0, BitVec.ofNat 8 0x5F, BitVec.ofNat 8 0xF4,
-    BitVec.ofNat 8 0x83, BitVec.ofNat 8 0x3F, BitVec.ofNat 8 0x8A, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0x23, BitVec.ofNat 8 0x30, BitVec.ofNat 8 0xFA, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x0C, BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0xF0, BitVec.ofNat 8 0xDF, BitVec.ofNat 8 0xF9,
-    BitVec.ofNat 8 0x83, BitVec.ofNat 8 0x3F, BitVec.ofNat 8 0x0A, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0x23, BitVec.ofNat 8 0x34, BitVec.ofNat 8 0xF5, BitVec.ofNat 8 0xFD,
-    BitVec.ofNat 8 0x13, BitVec.ofNat 8 0x0A, BitVec.ofNat 8 0x8A, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x80, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0xF0, BitVec.ofNat 8 0x1F, BitVec.ofNat 8 0xF3, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x62, BitVec.ofNat 8 0x42, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0xE0, BitVec.ofNat 8 0x52, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x67, BitVec.ofNat 8 0x80, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x00
-  ]
-def shadowingArtifactMatchesGolden : Bool :=
-  match Flapjack.Test.SourceGlobalParity.compileSourceBytes
-      Flapjack.Test.SourceGlobalParity.shadowingSource with
-  | some bytes => bytes == shadowingArtifactGolden
-  | none => false
-
-/-! Exact source-entry golden for the existing global shared-load fixture. -/
-def globalSharedLoadArtifactGolden : List (BitVec 8) :=
-  [
-    BitVec.ofNat 8 0x83, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x85, BitVec.ofNat 8 0xFC, BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0x30, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x9E, BitVec.ofNat 8 0xFE, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0x33, BitVec.ofNat 8 0xEA, BitVec.ofNat 8 0x5A, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0x33, BitVec.ofNat 8 0x0A, BitVec.ofNat 8 0xDA, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0x83, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x0A, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0x23, BitVec.ofNat 8 0x34, BitVec.ofNat 8 0xD5, BitVec.ofNat 8 0xFD, BitVec.ofNat 8 0x83, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x8A, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x13, BitVec.ofNat 8 0x0A, BitVec.ofNat 8 0x8A, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0x67, BitVec.ofNat 8 0x80, BitVec.ofNat 8 0x0E, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0x80, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x83, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x85, BitVec.ofNat 8 0xFE,
-    BitVec.ofNat 8 0x13, BitVec.ofNat 8 0x6E, BitVec.ofNat 8 0x10, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x9E, BitVec.ofNat 8 0xCE, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x61, BitVec.ofNat 8 0xC6, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x81, BitVec.ofNat 8 0xD1, BitVec.ofNat 8 0x01,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x81, BitVec.ofNat 8 0xF1, BitVec.ofNat 8 0x41, BitVec.ofNat 8 0x13, BitVec.ofNat 8 0x62, BitVec.ofNat 8 0x10, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x62, BitVec.ofNat 8 0x42, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x23, BitVec.ofNat 8 0xB0, BitVec.ofNat 8 0x51, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x40, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x40, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x61, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x13, BitVec.ofNat 8 0x62, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x03, BitVec.ofNat 8 0xB2, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x6F, BitVec.ofNat 8 0x80, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x83, BitVec.ofNat 8 0x3E, BitVec.ofNat 8 0x85, BitVec.ofNat 8 0xFE, BitVec.ofNat 8 0x13, BitVec.ofNat 8 0x6E, BitVec.ofNat 8 0x10, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x9E, BitVec.ofNat 8 0xCE, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x62, BitVec.ofNat 8 0xC6, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x82, BitVec.ofNat 8 0xD2, BitVec.ofNat 8 0x01, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x82, BitVec.ofNat 8 0xF2, BitVec.ofNat 8 0x41,
-    BitVec.ofNat 8 0x33, BitVec.ofNat 8 0x63, BitVec.ofNat 8 0x42, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0x63, BitVec.ofNat 8 0x63, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0x23, BitVec.ofNat 8 0xB0, BitVec.ofNat 8 0x72, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x93, BitVec.ofNat 8 0x61, BitVec.ofNat 8 0x10, BitVec.ofNat 8 0x00,
-    BitVec.ofNat 8 0xB3, BitVec.ofNat 8 0xE0, BitVec.ofNat 8 0x31, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x67, BitVec.ofNat 8 0x80, BitVec.ofNat 8 0x00, BitVec.ofNat 8 0x00
-  ]
-
-def globalSharedLoadArtifactMatchesGolden : Bool :=
-  match Flapjack.Test.SourceGlobalParity.compileSourceBytes
-      Flapjack.Test.SourceGlobalParity.globalSharedLoadSource with
-  | some bytes => bytes == globalSharedLoadArtifactGolden
-  | none => false
-
-
-
-
-
-
-
-
-def minimalSourceArtifact : Bool :=
-  match compileFlapjackRiscVSourceBytesChecked (width := 64) .rv64i
-      (BitVec.ofNat 64 8) (BitVec.ofInt 64) [] checkedPipelineRemoveConfig
-      "main" "fun 1 main() { return 7; }" with
-  | .ok artifact => artifact.bytes.length > 0
-  | .error _ => false
 
 def checkEq [BEq α] [Repr α]
     (name : String) (actual expected : α) : IO Bool := do
@@ -1594,19 +1322,10 @@ def main : IO Unit := do
     Flapjack.Test.SourceToFlatPrimConfigParity.runChecks,
     Flapjack.Test.MiscLookupAnyFindIndexParity.runChecks,
 
-    checkEq "Cake return 0 generated words"
-      (leanReturnWords 0) (cakeReturnWords 0),
-    checkEq "Cake return 7 generated words"
-      (leanReturnWords 7) (cakeReturnWords 7),
-    checkBool "Lean source entry produces an artifact" minimalSourceArtifact,
-    checkBool "Pancake computed local-store address compiles" nestedLocalStoreBytesAccepted,
     checkBool "Pancake RISC-V artifact envelope markers" ArtifactFormat.pancakeEnvelopeMatches,
     checkBool "Pancake RISC-V artifact prologue" ArtifactFormat.pancakePrologueMatches,
     Flapjack.Test.StackPropsLabelSafetyParity.runChecks,
     Flapjack.Test.WordConvsEveryVarInstMonoParity.runChecks,
-    Flapjack.Test.SourceGlobalParity.runChecks,
-    checkBool "shadowing global source remains accepted"
-      Flapjack.Test.SourceGlobalParity.shadowingBytesAccepted,
     Flapjack.Test.LoopSetGlobalsParity.runChecks,
     Flapjack.Test.LoopSetVarsParity.runChecks,
     Flapjack.Test.LoopSetVarParity.runChecks,
@@ -1622,12 +1341,6 @@ def main : IO Unit := do
     Flapjack.Test.LoopToWordLocalsRelIntroParity.runChecks,
     Flapjack.Test.LoopToWordTakeWordToBytesParity.runChecks,
     Flapjack.Test.LoopToWordAccVarsAccParity.runChecks,
-    Flapjack.Test.LoopToWordExpCarrierCodecParity.runChecks,
-    Flapjack.Test.WordExpCarrierCodecParity.runChecks,
-    Flapjack.Test.WordContextCodecParity.runChecks,
-    Flapjack.Test.WordCompileExpExactParity.runChecks,
-    Flapjack.Test.LoopProgCarrierCodecParity.runChecks,
-    Flapjack.Test.WordProgCarrierCodecParity.runChecks,
     Flapjack.Test.LoopDecClockParity.runChecks,
     Flapjack.Test.LoopFixClockParity.runChecks,
     Flapjack.Test.LoopPropsSurvivesParity.runChecks,
@@ -1640,20 +1353,17 @@ def main : IO Unit := do
     Flapjack.Test.LoopMemoryStateParity.runChecks,
     Flapjack.Test.LoopStateResultParity.runChecks,
     Flapjack.Test.LoopLocalsTouchedParity.runChecks,
-    Flapjack.Test.LoopAssignedVarsParity.runChecks,
     Flapjack.Test.LoopAccVarsParity.runChecks,
     Flapjack.Test.LoopNestedSeqParity.runChecks,
     Flapjack.Test.PanNestedSeqParity.runChecks,
     Flapjack.Test.PanExpIdsParity.runChecks,
     Flapjack.Test.PanWithShapeParity.runChecks,
     Flapjack.Test.CrepInlineGenlistParity.runChecks,
-    Flapjack.Test.CrepInlineFmapParity.runChecks,
     Flapjack.Test.CrepInlineStructuralHOLParity.runChecks,
     Flapjack.Test.CrepInlineTransformEocParity.runChecks,
     Flapjack.Test.CrepInlineTransformBranchParity.runChecks,
     Flapjack.Test.CrepInlineNontailParity.runChecks,
     Flapjack.Test.CrepInlineHasReturnParity.runChecks,
-    Flapjack.Test.CrepInlineRelParity.runChecks,
     Flapjack.Test.CrepInlineRelationsExactParity.runChecks,
     Flapjack.Test.CrepSemTotalEvaluateHOLParity.runChecks,
     Flapjack.Test.CrepSemEvaluateDefArmsParity.runChecks,
@@ -1698,14 +1408,9 @@ def main : IO Unit := do
     Flapjack.Test.PanLangWfShapeParity.runChecks,
     Flapjack.Test.PanShapeValParity.runChecks,
     Flapjack.Test.LoopIsLoadParity.runChecks,
-    Flapjack.Test.LoopCallParity.runChecks,
     Flapjack.Test.LoopEvalParity.runChecks,
     Flapjack.Test.LoopObservationalSemanticsParity.runChecks,
-    Flapjack.Test.LoopSemEvaluateParity.runChecks,
-    Flapjack.Test.LoopLiveEffectFreeParity.runChecks,
     Flapjack.Test.LoopLiveDomainListDeleteParity.runChecks,
-    Flapjack.Test.LoopPrimopParity.runChecks,
-    Flapjack.Test.LoopShMemParity.runChecks,
     Flapjack.Test.LoopFfiParity.runChecks,
     Flapjack.Test.LoopMemExactParity.runChecks,
     Flapjack.Test.PanItreeFfiParity.runChecks,
@@ -1734,14 +1439,8 @@ def main : IO Unit := do
     Flapjack.Test.PanHHandleDecCallRetParity.runChecks,
     Flapjack.Test.PanHProgDecCallParity.runChecks,
     Flapjack.Test.PanHProgCallParity.runChecks,
-    Flapjack.Test.CrepeLoadShapeParity.runChecks,
-    Flapjack.Test.CrepToLoopCutsetParity.runChecks,
-    Flapjack.Test.CrepToLoopParity.runChecks,
-    Flapjack.Test.CrepToLoopDecLive.runChecks,
     Flapjack.Test.CrepToLoopOcompileHOLParity.runChecks,
     Flapjack.Test.CrepToLoopCodeRelParity.runChecks,
-    Flapjack.Test.CakeRegAlloc.runChecks,
-    Flapjack.Test.CakeWordAllocParity.runChecks,
     Flapjack.WordAlloc.runChecks,
     Flapjack.Test.CrepeNestedSeqParity.runChecks,
     Flapjack.Test.CrepeStoresParity.runChecks,
@@ -1761,15 +1460,12 @@ def main : IO Unit := do
     Flapjack.Test.RetHdlParity.runChecks,
     Flapjack.Test.WrapRtParity.runChecks,
     Flapjack.Test.CompileDefParity.runChecks,
-    Flapjack.Test.CompileToCrepeParity.runChecks,
     Flapjack.Test.CompileProgParity.runChecks,
-    Flapjack.Test.DupExnEidsParity.runChecks,
     Flapjack.Test.CrepRuntimeTargetParity.runChecks,
     Flapjack.Test.CrepRuntimeFfiTargetParity.runChecks,
     Flapjack.Test.CrepRuntimeExtCallStateRelParity.runChecks,
     Flapjack.Test.CrepEveryExpParity.runChecks,
     Flapjack.Test.CrepAssignedVarsParity.runChecks,
-    Flapjack.Test.MkCtxtImpLocalsRelParity.runChecks,
     Flapjack.Test.FmEmptyZipAlistParity.runChecks,
     Flapjack.Test.FupdateListAppendCommutesParity.runChecks,
     Flapjack.Test.PanToCrepRelationsParity.runChecks,
@@ -1873,10 +1569,6 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.StackSemFfiParity.runChecks,
     Flapjack.Test.StackSemInstallParity.runChecks,
     Flapjack.Test.StackSemMeasureParity.runChecks,
-    Flapjack.Test.StackProductionCodecParity.runChecks,
-    Flapjack.Test.StackWordPayloadParity.runChecks,
-    Flapjack.Test.StackMacroLeavesParity.runChecks,
-    Flapjack.Test.LoopStoreNarrowParity.runChecks,
     Flapjack.Test.WordToStackLiveBitmapParity.runChecks,
     Flapjack.Test.StackSemCopyWordsParity.runChecks,
     Flapjack.Test.StackSemStoreConstSemParity.runChecks,
@@ -1915,10 +1607,8 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.WordToStackStackSizeParity.runChecks,
     Flapjack.Test.LabPropsLineOkPreParity.runChecks,
     Flapjack.Test.LabPropsSecEndsLabelParity.runChecks,
-    Flapjack.Test.CakeAllocatorBitsBridgeParity.runChecks,
     Flapjack.Test.StackNamesParity.runChecks,
     Flapjack.Test.StackRemoveInitParity.runChecks,
-    Flapjack.Test.InitializedProduction.runChecks,
     Flapjack.Test.WordLocWParity.runChecks,
     Flapjack.Test.StackRemoveHelpersParity.runChecks,
     Flapjack.Test.LoopSemStateParity.runChecks,
@@ -1931,6 +1621,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.Mips32Encoding.runChecks,
     Flapjack.Test.Mips32Run.runChecks,
     Flapjack.Test.Arm8Parity.runChecks,
+    Flapjack.Test.X64Parity.runChecks,
     Flapjack.Test.RiscvConfigParity.runChecks,
     Flapjack.Test.MiscAppListParity.runChecks,
     Flapjack.Test.StackToLabFlattenOpsParity.runChecks,
@@ -1960,50 +1651,24 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.CrepArithExactParity.runChecks,
     Flapjack.Test.CrepToLoopCompileProgParity.runChecks,
     Flapjack.Test.CrepToLoopOriginalNamesProductionParity.runChecks,
-    Flapjack.Test.PanSourceEntryParity.runChecks,
-    Flapjack.Test.PanNativeWordPrefixParity.runChecks,
-    Flapjack.Test.PanNativeFrontendPrefixParity.runChecks,
-    Flapjack.Test.PanTargetEntryParity.runChecks,
-    Flapjack.Test.CrepToLoopNativeDeclarationsParity.runChecks,
     Flapjack.Test.LoopCallEnvParity.runChecks,
     Flapjack.Test.CakeStackReseatParity.runChecks,
-    Flapjack.Test.RiscVMemOpParity.runChecks,
     Flapjack.Test.RiscVArtifactParity.runChecks,
     Flapjack.Test.RiscVWordExtract6Parity.runChecks,
-    Flapjack.Test.RiscVEncodeLengthParity.runChecks,
     Flapjack.Test.WordColourLivenessParity.runChecks,
     Flapjack.Test.RiscVRegisterMapParity.runChecks,
     Flapjack.Test.CakeAllocatorCore.runChecks,
     Flapjack.Test.CakeFramePolicy.runChecks,
-    Flapjack.Test.CakeFrameContainment.runChecks,
     Flapjack.Test.WordStackCallParity.runChecks,
-    Flapjack.Test.RiscVMemOpParity.runChecks,
-    Flapjack.Test.WordInstNormalizeParity.runChecks,
     Flapjack.Test.WordInstPullExpExecutableParity.runChecks,
-    Flapjack.Test.WordInstSelectorExecutableParity.runChecks,
     Flapjack.Test.WordToWordExecutableParity.runChecks,
     Flapjack.Test.CompileProgMaxExecutableParity.runChecks,
-    Flapjack.Test.CakeForcedParity.runChecks,
     Flapjack.Test.CakeMkBijParity.runChecks,
-    Flapjack.Test.CakeSsaSetupParity.runChecks,
     Flapjack.Test.CakeSsaTempParity.runChecks,
-    Flapjack.Test.CakeSsaBoundaryParity.runChecks,
-    Flapjack.Test.CakeSsaControlParity.runChecks,
-    Flapjack.Test.CakeSsaCallParity.runChecks,
-    Flapjack.Test.CakeSsaInstParity.runChecks,
-    Flapjack.Test.CakeSsaSharedParity.runChecks,
-    Flapjack.Test.CakeSsaMemoryParity.runChecks,
-    Flapjack.Test.CakeSsaLeafParity.runChecks,
-    Flapjack.Test.CakeDeadCodeStateParity.runChecks,
-    Flapjack.Test.CakeReturnSoundness.runChecks,
-    Flapjack.Test.CakeApplyColourParity.runChecks,
     Flapjack.Test.CakeSpillCostParity.runChecks,
     Flapjack.Test.CakeFrameVectorParity.runChecks,
-    Flapjack.Test.WordFuseConditions.runChecks,
     Flapjack.Test.RiscVAbiParity.runChecks,
     Flapjack.Test.RiscVAbiAdapterParity.runChecks,
-    Flapjack.Test.LoopToWordBoundaryParity.runChecks,
-    Flapjack.Test.SptreeOrderParity.runChecks,
     Flapjack.Test.LoopSemStateExactHelpersParity.runChecks,
     Flapjack.Test.LoopSemEvalExactParity.runChecks,
     Flapjack.Test.LoopSemShMemExactParity.runChecks,
@@ -2049,7 +1714,6 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.PanToCrepMakeVmapParity.runChecks,
     Flapjack.Test.PanLangGeneratedSizeParity.runChecks,
     Flapjack.Test.CrepLangGeneratedSizeParity.runChecks,
-    Flapjack.Test.PanSimpProgBridgeParity.runChecks,
     Flapjack.Test.CrepSemTotalExtCallParity.runChecks,
     Flapjack.Test.WordToStackBitmapAppendParity.runChecks,
     Flapjack.Test.WordToStackMapFstParity.runChecks,
@@ -2062,25 +1726,14 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.SptreeWfDefinitionParity.runChecks,
     Flapjack.Test.WordToStackWordExtractionParity.run,
     Flapjack.Test.StackRemoveWriteBytearrayParity.run,
-    Flapjack.Test.WordDiagnosticLeaves.run,
     Flapjack.Test.WordToStackBitmapFrameUpdatesParity.run,
     Flapjack.Test.WordToStackIndexListParity.runChecks,
     Flapjack.Test.WordToStackAbsStackLengthsParity.runChecks,
     Flapjack.Test.WordToStackAbsStackPrefixParity.runChecks,
     Flapjack.Test.WordToStackAbsStackParity.runChecks,
     Flapjack.Test.WordToStackFramesParity.runChecks,
-    Flapjack.Test.ProductionScheduler.runChecks,
-    Flapjack.Test.ProductionMoves.runChecks,
     Flapjack.Test.RegAllocProductionFixedTags.runChecks,
     Flapjack.Test.RegAllocProductionColourLookup.runChecks,
-    Flapjack.Test.WordCseProductionScalarKeys.runChecks,
-    Flapjack.Test.WordCseProductionJoinParity.runChecks,
-    Flapjack.Test.WordCseProductionFactAuxParity.runChecks,
-    Flapjack.Test.WordCseProductionMemoryParity.runChecks,
-    Flapjack.Test.WordCseProductionArithmeticParity.runChecks,
-    Flapjack.Test.WordCseProductionHeapLocParity.runChecks,
-    Flapjack.Test.WordCseProductionAssignParity.runChecks,
-    Flapjack.Test.WordCseProductionProgramParity.runChecks,
     Flapjack.Test.BalancedMapCore.runChecks,
     Flapjack.Test.BalancedMapRotations.runChecks,
     Flapjack.Test.BalancedMapInsert.runChecks,
@@ -2177,7 +1830,8 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.StackEvaluateMonoParity.runChecks,
     Flapjack.Test.BytesInMemoryDomainParity.runChecks,
     Flapjack.Test.CrepSemIoEventsMonoParity.runChecks,
-    Flapjack.Test.PanToWordGoodCodeParity.runChecks
+    Flapjack.Test.PanToWordGoodCodeParity.runChecks,
+    Flapjack.Test.BackendConfigDecidableEq.runChecks
     ].mapM id
   unless results.all id do
     IO.Process.exit 1

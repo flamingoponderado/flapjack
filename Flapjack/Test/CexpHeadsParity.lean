@@ -39,14 +39,13 @@ def parityGuard : Bool :=
 theorem cexpHeads_eq_cexpHeadsSimp_fixture :
     cexpHeads ([[.const 1, .const 2], [.var 3, .var 4]] : List (List (CrepExp Nat))) =
       cexpHeadsSimp [[.const 1, .const 2], [.var 3, .var 4]] :=
-  cexpHeads_eq_cexpHeadsSimp [[.const 1, .const 2], [.var 3, .var 4]]
+  by simp [cexpHeads, cexpHeadsSimp]
 
 theorem cexpHeads_eq_cexpHeadsSimp_empty_fixture :
     cexpHeads ([[], [.const 5]] : List (List (CrepExp Nat))) =
       cexpHeadsSimp [[], [.const 5]] :=
-  cexpHeads_eq_cexpHeadsSimp [[], [.const 5]]
+  by simp [cexpHeads, cexpHeadsSimp]
 
-#check @cexpHeads_eq_cexpHeadsSimp
 
 def runChecks : IO Bool := do
   if parityGuard then

@@ -90,93 +90,6 @@ theorem collectPanValueStructs_of_functions (context : StructContext)
   have hfunction := List.all_eq_true.mp hall declaration hmem
   cases declaration <;> simp_all [globalDeclIsFunction, isName]
 
-theorem lookupInfo_isSome_of_mem [BEq String] [LawfulBEq String] (name : String)
-    (context : InfoMap β) (hmem : name ∈ context.map Prod.fst) :
-    (lookupInfo name context).isSome = true := by
-  induction context with
-  | nil => simp at hmem
-  | cons entry context ih =>
-      obtain ⟨candidate, info⟩ := entry
-      simp only [List.map_cons, List.mem_cons] at hmem
-      rcases hmem with heq | hmem
-      · subst heq
-        simp [lookupInfo]
-      · simp only [lookupInfo]
-        by_cases hc : (candidate == name) = true
-        · simp [hc]
-        · simp [hc]
-          exact ih hmem
-
-theorem lookupInfo_eq_some_of_mem_of_nodup [BEq String] [LawfulBEq String]
-    (name : String) (context : InfoMap β) (value : β)
-    (hmem : (name, value) ∈ context)
-    (hnodup : context.map Prod.fst |>.Nodup) :
-    lookupInfo name context = some value := by
-  induction context with
-  | nil => simp at hmem
-  | cons entry context ih =>
-      obtain ⟨candidate, candidateValue⟩ := entry
-      simp only [List.map_cons, List.nodup_cons, List.mem_cons] at hmem hnodup
-      rcases hmem with hhead | htail
-      · cases hhead
-        simp [lookupInfo]
-      · have hne : candidate ≠ name := by
-          intro heq
-          subst candidate
-          apply hnodup.1
-          exact List.mem_map.mpr ⟨(name, value), htail, rfl⟩
-        have hlookup := ih htail hnodup.2
-        simp [lookupInfo, hne, hlookup]
-
-theorem collectPanValueStructs_structInfosOk {α : Type} (declarations : List (Decl α)) :
-    ∀ (context context' : StructContext),
-      collectPanValueStructs declarations context = some context' →
-        structInfosOk context → structInfosOk context' := by
-  induction declarations with
-  | nil =>
-      intro context context' hcollect hok
-      simp only [collectPanValueStructs] at hcollect
-      have : context' = context := (Option.some.injEq _ _).mp hcollect.symm
-      subst this
-      exact hok
-  | cons declaration declarations ih =>
-      intro context context' hcollect hok
-      cases declaration with
-      | name name fields =>
-          simp only [collectPanValueStructs_cons] at hcollect
-          by_cases hsome : (lookupInfo name context).isSome = true
-          · simp [hsome] at hcollect
-          · have hsomeFalse : (lookupInfo name context).isSome = false := by
-              simpa using hsome
-            by_cases hnodup : (fields.map (fun field => field.1)).Nodup
-            · by_cases hall : fields.all (fun field => isWfShape context field.2) = true
-              · simp only [hsomeFalse, hnodup, hall] at hcollect
-                have hfresh : name ∉ context.map Prod.fst := by
-                  intro hmem
-                  have hbin := lookupInfo_isSome_of_mem name context hmem
-                  rw [hsomeFalse] at hbin
-                  simp at hbin
-                have hwf : ∀ shape ∈ fields.map Prod.snd,
-                    isWfShape context shape = true := by
-                  intro shape hmem
-                  obtain ⟨field, hfield, rfl⟩ := List.mem_map.mp hmem
-                  exact List.all_eq_true.mp hall field hfield
-                exact ih ((name, panValueDeclStructInfo context fields) :: context)
-                  context' hcollect
-                  (structInfosOk_cons context name (panValueDeclStructInfo context fields)
-                    hok hnodup hfresh hwf rfl)
-              · simp [hsomeFalse, hnodup, hall] at hcollect
-            · simp [hsomeFalse, hnodup] at hcollect
-      | decl shape name value =>
-          simp only [collectPanValueStructs_cons] at hcollect
-          exact ih context context' hcollect hok
-      | exnDecl exception shape =>
-          simp only [collectPanValueStructs_cons] at hcollect
-          exact ih context context' hcollect hok
-      | function declaration =>
-          simp only [collectPanValueStructs_cons] at hcollect
-          exact ih context context' hcollect hok
-
 /-- Cake's `decs_stcnames_lemma`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:4966`): a list of
     declarations that are each either a function or an exception declaration
@@ -693,30 +606,6 @@ theorem panValueProgramStateRel_evalPanValueDeclarations
         memoryAccess s' hs
       exact ⟨rfl, hglobals, hmemory, hret, hparam, hexn, hbase, htop, hbiw, hfuncs⟩
 
-/-! A concrete declaration/evaluator bridge for the Cake
-    `state_rel_imp_semantics_decls_to_crep` induction.  The declaration
-    evaluator is run on both related states, and a source callee lookup is
-    transported through the resulting state relation.  This is stronger than
-    carrying the relation as a premise: it produces the target evaluator
-    result and the exact `pan_simp` body that the compiled call sees. -/
-theorem panValueProgramStateRel_evalDeclarations_lookupPanFunction
-    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
-    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
-    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
-    (s t : PanValueProgramState α) (hrel : panValueProgramStateRel s t)
-    (declarations : List (Decl α)) (memoryAccess : Option (PanValueMemoryAccess α))
-    (s' : PanValueProgramState α)
-    (hs : evalPanValueDeclarations s declarations memoryAccess = some s')
-    (name : FunName) {parameters : List VarName} {body : Prog α}
-    (hlookup : lookupPanFunction name s'.functions = some (parameters, body)) :
-    ∃ t', evalPanValueDeclarations t (panSimpDecls declarations) memoryAccess = some t' ∧
-      lookupPanFunction name t'.functions =
-        some (parameters, panSimpProg body) := by
-  obtain ⟨t', ht, hrel'⟩ := panValueProgramStateRel_evalPanValueDeclarations
-    s t hrel declarations memoryAccess s' hs
-  refine ⟨t', ht, ?_⟩
-  exact panValueProgramStateRel_lookupPanFunction s' t' hrel' name hlookup
-
 /-! The declaration-state adequacy package used by the Cake
     `state_rel_imp_semantics_decls_to_crep` induction.  Besides transporting a
     callee lookup, retain the whole post-declaration state relation and its
@@ -774,38 +663,6 @@ theorem panValueProgramStateRel_evalDeclarations_returnShape_adequacy
     hfunctions⟩
   have htargetLookup : lookupInfo name t'.returnShapes = some shape := by
     rw [← hreturnShapes]
-    exact hlookup
-  exact ⟨t', ht,
-    ⟨hstructs, hglobals, hmemory, hreturnShapes, hparameterShapes, hexceptions',
-      hbaseAddress, htopAddress, hbytesInWord, hfunctions⟩,
-    htargetLookup, by exact hexceptions'⟩
-
-/-! The parameter-shape projection needed by the argument side of Cake's
-    `state_rel_imp_semantics_decls_to_crep` call step.  Declaration evaluation
-    preserves the complete state relation, so the target parameter table can
-    be used directly by the subsequent evaluator relation rather than being
-    carried as an unproved premise. -/
-theorem panValueProgramStateRel_evalDeclarations_parameterShape_adequacy
-    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
-    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
-    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
-    (s t : PanValueProgramState α) (hrel : panValueProgramStateRel s t)
-    (declarations : List (Decl α)) (memoryAccess : Option (PanValueMemoryAccess α))
-    (s' : PanValueProgramState α)
-    (hs : evalPanValueDeclarations s declarations memoryAccess = some s')
-    (name : FunName) (parameters : List (VarName × Shape))
-    (hlookup : lookupInfo name s'.parameterShapes = some parameters) :
-    ∃ t', evalPanValueDeclarations t (panSimpDecls declarations) memoryAccess = some t' ∧
-      panValueProgramStateRel s' t' ∧
-      lookupInfo name t'.parameterShapes = some parameters ∧
-      s'.exceptions = t'.exceptions := by
-  obtain ⟨t', ht, hrel'⟩ := panValueProgramStateRel_evalPanValueDeclarations
-    s t hrel declarations memoryAccess s' hs
-  rcases hrel' with ⟨hstructs, hglobals, hmemory, hreturnShapes,
-    hparameterShapes, hexceptions', hbaseAddress, htopAddress, hbytesInWord,
-    hfunctions⟩
-  have htargetLookup : lookupInfo name t'.parameterShapes = some parameters := by
-    rw [← hparameterShapes]
     exact hlookup
   exact ⟨t', ht,
     ⟨hstructs, hglobals, hmemory, hreturnShapes, hparameterShapes, hexceptions',
@@ -1179,177 +1036,6 @@ theorem evalPanValueDeclarations_exception_state_evidence
   exact ⟨structs, hcollect,
     evalPanValueDeclarations_exceptions state state' declarations memoryAccess heval,
     hwf⟩
-
-/-! A declared exception remains present in the table installed by successful
-    declaration evaluation.  This is the lookup-success half of the generic
-    raised evaluator bridge; the actual target exception code remains a
-    separate compiler-context premise. -/
-theorem panExceptionEntries_mem_of_exnDecl_mem
-    (declarations : List (Decl α)) {exception : ExceptionId} {shape : Shape}
-    (hmem : (.exnDecl exception shape : Decl α) ∈ declarations) :
-    (exception, shape) ∈ panExceptionEntries declarations := by
-  induction declarations with
-  | nil => simp at hmem
-  | cons declaration declarations ih =>
-      cases declaration with
-      | name name fields =>
-          simp only [panExceptionEntries_cons] at ⊢
-          exact ih (by simpa using hmem)
-      | decl declShape name value =>
-          simp only [panExceptionEntries_cons] at ⊢
-          exact ih (by simpa using hmem)
-      | function declaration =>
-          simp only [panExceptionEntries_cons] at ⊢
-          exact ih (by simpa using hmem)
-      | exnDecl declaredException declaredShape =>
-          simp only [panExceptionEntries_cons]
-          simp only [List.mem_cons] at hmem
-          rcases hmem with hhead | hmem
-          · injection hhead with hException hShape
-            subst exception
-            subst shape
-            exact List.mem_append_right _ (by simp)
-          · exact List.mem_append_left _ (ih hmem)
-
-theorem evalPanValueDeclarations_exception_lookup_isSome
-    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
-    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
-    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
-    [LawfulBEq String]
-    (state state' : PanValueProgramState α) (declarations : List (Decl α))
-    (memoryAccess : Option (PanValueMemoryAccess α))
-    {exception : ExceptionId} {shape : Shape}
-    (hmem : (.exnDecl exception shape : Decl α) ∈ declarations)
-    (heval : evalPanValueDeclarations state declarations memoryAccess = some state') :
-    (lookupInfo exception state'.exceptions).isSome = true := by
-  have hentries : (exception, shape) ∈ panExceptionEntries declarations :=
-    panExceptionEntries_mem_of_exnDecl_mem declarations hmem
-  have htable := evalPanValueDeclarations_exceptions state state' declarations
-    memoryAccess heval
-  rw [htable]
-  have hname : exception ∈ (panExceptionEntries declarations).map Prod.fst :=
-    List.mem_map.mpr ⟨(exception, shape), hentries, rfl⟩
-  have hname' : exception ∈
-      (panExceptionEntries declarations ++ state.exceptions).map Prod.fst := by
-    simp only [List.map_append]
-    exact List.mem_append_left _ hname
-  exact lookupInfo_isSome_of_mem exception
-    (panExceptionEntries declarations ++ state.exceptions) hname'
-
-theorem evalPanValueDeclarations_exception_shape_lookup
-    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
-    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
-    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
-    [LawfulBEq String]
-    (state state' : PanValueProgramState α) (declarations : List (Decl α))
-    (memoryAccess : Option (PanValueMemoryAccess α))
-    {exception : ExceptionId} {shape : Shape}
-    (hmem : (.exnDecl exception shape : Decl α) ∈ declarations)
-    (hnodup : (state'.exceptions.map Prod.fst).Nodup)
-    (heval : evalPanValueDeclarations state declarations memoryAccess = some state') :
-    lookupInfo exception state'.exceptions = some shape := by
-  have hentries : (exception, shape) ∈ panExceptionEntries declarations :=
-    panExceptionEntries_mem_of_exnDecl_mem declarations hmem
-  have htable := evalPanValueDeclarations_exceptions state state' declarations
-    memoryAccess heval
-  have hnodup' :
-      ((panExceptionEntries declarations ++ state.exceptions).map Prod.fst).Nodup := by
-    rw [← htable]
-    exact hnodup
-  rw [htable]
-  exact lookupInfo_eq_some_of_mem_of_nodup exception
-    (panExceptionEntries declarations ++ state.exceptions) shape
-    (List.mem_append_left _ hentries) hnodup'
-
-/-! Package the source-side raised call with the declaration-derived exception
-    context.  This is the evaluator evidence needed before a generic raised
-    payload can be related to the compiled exception code: the successful
-    program result, collected struct context, exact exception-table equation,
-    and well-formed declared payload shape are all retained. -/
-theorem evalPanValueProgram_of_declarations_and_raised_call_with_exception_evidence
-    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
-    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
-    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
-    (initial : PanValueProgramState α)
-    (primitive : PanPrimitiveHandler α) (ffi : PanValueFfiHandler α)
-    (fuel : Nat) (declarations : List (Decl α)) (entry : FunName)
-    (arguments : List (Exp α))
-    (memoryAccess : Option (PanValueMemoryAccess α))
-    (memoryHandler : Option (PanValueAcceleratorFfiHandler α))
-    (state : PanValueProgramState α)
-    (locals globals : VarName → Option (PanValue α))
-    (memory : α → Option (PanValue α)) (exception : ExceptionId)
-    (value : PanValue α) (shape : Shape)
-    (hmem : (.exnDecl exception shape : Decl α) ∈ declarations)
-    (hdeclarations : evalPanValueDeclarations initial declarations
-      (memoryAccess := memoryAccess) = some state)
-    (hcall : evalPanValueCallWithPrimitiveCallsAndFfi primitive ffi
-      state.structs state.functions state.baseAddress state.topAddress
-      state.bytesInWord fuel (fun _ => none) state.globals state.memory none
-      entry arguments (memoryAccess := memoryAccess)
-      (contracts := some (PanValueCallContracts.mk state.returnShapes
-        state.exceptions state.parameterShapes))
-      (memoryHandler := memoryHandler) =
-      some (.raised locals globals memory exception value)) :
-    evalPanValueProgram initial primitive ffi fuel declarations entry arguments
-      (memoryAccess := memoryAccess) (memoryHandler := memoryHandler) =
-      some (.raised locals globals memory exception value) ∧
-    ∃ structs : StructContext,
-      collectPanValueStructs declarations initial.structs = some structs ∧
-        state.exceptions = panExceptionEntries declarations ++ initial.exceptions ∧
-        isWfShape structs shape = true := by
-  refine ⟨(evalPanValueProgram_of_declarations_and_raised_call_with_exception_state
-    initial primitive ffi fuel declarations entry arguments memoryAccess
-    memoryHandler state locals globals memory exception value hdeclarations hcall).1,
-    ?_⟩
-  exact evalPanValueDeclarations_exception_state_evidence initial state
-    declarations memoryAccess hmem hdeclarations
-
-/-! Combine the successful raised-program witness with the declaration-derived
-    exception lookup.  This is the source-side evidence needed by the generic
-    clocked result bridge; the target exception code remains an explicit
-    relation premise at that boundary. -/
-theorem evalPanValueProgram_of_declarations_and_raised_call_with_exception_lookup_evidence
-    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
-    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
-    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
-    (initial : PanValueProgramState α)
-    (primitive : PanPrimitiveHandler α) (ffi : PanValueFfiHandler α)
-    (fuel : Nat) (declarations : List (Decl α)) (entry : FunName)
-    (arguments : List (Exp α))
-    (memoryAccess : Option (PanValueMemoryAccess α))
-    (memoryHandler : Option (PanValueAcceleratorFfiHandler α))
-    (state : PanValueProgramState α)
-    (locals globals : VarName → Option (PanValue α))
-    (memory : α → Option (PanValue α)) (exception : ExceptionId)
-    (value : PanValue α) (shape : Shape)
-    (hmem : (.exnDecl exception shape : Decl α) ∈ declarations)
-    (hdeclarations : evalPanValueDeclarations initial declarations
-      (memoryAccess := memoryAccess) = some state)
-    (hcall : evalPanValueCallWithPrimitiveCallsAndFfi primitive ffi
-      state.structs state.functions state.baseAddress state.topAddress
-      state.bytesInWord fuel (fun _ => none) state.globals state.memory none
-      entry arguments (memoryAccess := memoryAccess)
-      (contracts := some (PanValueCallContracts.mk state.returnShapes
-        state.exceptions state.parameterShapes))
-      (memoryHandler := memoryHandler) =
-      some (.raised locals globals memory exception value)) :
-    evalPanValueProgram initial primitive ffi fuel declarations entry arguments
-      (memoryAccess := memoryAccess) (memoryHandler := memoryHandler) =
-      some (.raised locals globals memory exception value) ∧
-    ∃ structs : StructContext,
-      collectPanValueStructs declarations initial.structs = some structs ∧
-        state.exceptions = panExceptionEntries declarations ++ initial.exceptions ∧
-        isWfShape structs shape = true ∧
-        (lookupInfo exception state.exceptions).isSome = true := by
-  have hprogram :=
-    evalPanValueProgram_of_declarations_and_raised_call_with_exception_evidence
-      initial primitive ffi fuel declarations entry arguments memoryAccess memoryHandler
-      state locals globals memory exception value shape hmem hdeclarations hcall
-  have hlookup := evalPanValueDeclarations_exception_lookup_isSome
-    initial state declarations memoryAccess hmem hdeclarations
-  rcases hprogram with ⟨hprogram, structs, hcollect, hexceptions, hwf⟩
-  exact ⟨hprogram, structs, hcollect, hexceptions, hwf, hlookup⟩
 
 /-! Cake's `evaluate_decls_only_exn_decls`
     (`cakeml/pancake/semantics/panPropsScript.sml:1436`): when every
@@ -1991,7 +1677,7 @@ theorem evalPanValueDeclarationsWithStructs_one_fun_last
       | name name fields => simp [isDecl, isExnDecl] at hhead
       | decl shape name expression =>
           rw [evalPanValueDeclarationsWithStructs_function_decl_commute]
-          simp only [evalPanValueDeclarationsWithStructs]
+          simp only [evalPanValueDeclarationsWithStructs, evalPanValueExpWith_none]
           cases hval : evalPanValueExp structs (fun _ => none) state.globals
               state.memory state.baseAddress state.topAddress state.bytesInWord
               expression (memoryAccess := memoryAccess) with
@@ -2054,7 +1740,7 @@ theorem evalPanValueDeclarationsWithStructs_exnDecl_decl_commute
       by_cases hmatch : panShapeMatches (panValueShape structs value) declShape = true <;>
         by_cases hexists : (lookupInfo exception state.exceptions).isSome = true <;>
         by_cases hshape : isWfShape structs shape = true <;>
-        simp [hmatch, hexists, hshape]
+        simp [hexists, hshape]
 
 /-- Bubbling a declaration that commutes with every element of `rest` to the
     end of that list. -/
@@ -2293,53 +1979,6 @@ theorem evalPanValueDeclarationsWithStructs_resortDecls
             simp [isDecl, isExnDecl, globalDeclIsFunction] at hdecl
   simpa using h declarations.reverse (by simpa using hall)
 
-/-- Cake's `resort_decls_evaluate_IMP`
-    (`cakeml/pancake/proofs/pan_globalsProofScript.sml:1943`). -/
-theorem evalPanValueDeclarationsWithStructs_resortDecls_imp
-    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
-    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
-    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
-    (structs : StructContext) (state state' : PanValueProgramState α)
-    (declarations : List (Decl α))
-    (memoryAccess : Option (PanValueMemoryAccess α))
-    (hall : declarations.all (fun declaration =>
-      isDecl declaration || isExnDecl declaration ||
-        globalDeclIsFunction declaration) = true)
-    (heval : evalPanValueDeclarationsWithStructs structs state
-        (globalResortDecls declarations) memoryAccess = some state') :
-    evalPanValueDeclarationsWithStructs structs state declarations memoryAccess =
-      some state' := by
-  rw [evalPanValueDeclarationsWithStructs_resortDecls structs state declarations
-    memoryAccess hall] at heval
-  exact heval
-
-/-! ## Flapjack-only `pan_simp` helper slice
-
-The syntactic preservation lemmas below are the HOL declarations from
-`cakeml/pancake/proofs/pan_simpProofScript.sml` that the `compile_correct`
-proof uses, but they are stated over the production String-keyed
-`Prog`/`Decl` transformations (`expIds`, `retToTail`, `seqAssoc`,
-`panSimpDecls`, `panSimpProg`) in `Flapjack/Pancake/PanSimp.lean`, while the
-HOL originals use the exact `mlstring`-keyed panLang syntax.  The `@[hol]`
-tags were therefore withdrawn (bead flapjack-4ac.8) and the exact ports are
-tracked by flapjack-4ac.8 (blocked by the exact-transformation prerequisite
-flapjack-4ac.8.1). -/
-
-theorem expIdsRetToTailEq (program : Prog α) :
-    expIds (retToTail program) = expIds program :=
-  expIds_retToTail program
-
-theorem expIdsSeqAssocEq (pre program : Prog α) :
-    expIds (seqAssoc pre program) = expIds pre ++ expIds program :=
-  expIds_seqAssoc pre program
-
-theorem expIdsCompileEq (program : Prog α) :
-    expIds (panSimpProg program) = expIds program :=
-  expIds_panSimpProg program
-
-theorem sizeOfEidsPanSimpDeclsEq (declarations : List (Decl α)) :
-    sizeOfEids (panSimpDecls declarations) = sizeOfEids declarations := by
-  rw [panSimpDecls_eq_map, sizeOfEids_map_panSimpDecl]
 
 /-- Exact HOL `pan_simpProof$map_snd_f_eq` (`pan_simpProofScript.sml:42-50`):
     `!p f g. MAP (g ∘ SND ∘ SND ∘ (λ(name,params,body). (name,params,f body))) p
@@ -2356,16 +1995,6 @@ theorem mapSndFEq {α β γ δ ε : Type} (entries : List (α × β × γ))
   rw [List.map_map]
   congr 1
 
-theorem functionsCompileProg (declarations : List (Decl α)) :
-    functions (panSimpDecls declarations) =
-      (functions declarations).map (fun entry =>
-        (entry.1, entry.2.1, panSimpProg entry.2.2.1, entry.2.2.2)) :=
-  functions_panSimpDecls declarations
-
-theorem firstCompileProgAllDistinctPanSimp (declarations : List (Decl α))
-    (hnames : ((functions declarations).map (fun entry => entry.1)).Nodup) :
-    ((functions (panSimpDecls declarations)).map (fun entry => entry.1)).Nodup :=
-  functions_panSimpDecls_names_nodup declarations hnames
 
 open Flapjack.Pancake.PanLang
 

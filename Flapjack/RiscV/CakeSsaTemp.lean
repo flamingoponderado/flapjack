@@ -13,10 +13,4 @@ namespace Flapjack.RiscV.CakeRegAlloc
 
 open Flapjack
 
-/-- The `Seq mov prog'` prologue of `full_ssa_cc_trans n prog`: the fresh
-temporary names come from `setup_ssa` starting at `limit_var (max_var prog)`. -/
-def cakeFullSsaCcTransMove {α : Type u} (parameterCount limit : Nat)
-    (program : WordProg α) : WordProg α :=
-  (cakeSetupSsa parameterCount limit program).1
-
 end Flapjack.RiscV.CakeRegAlloc

@@ -1,6 +1,5 @@
 import Flapjack.Pancake.LoopToWord.Proofs.NoFP
-import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.CompHOLImage
-import Flapjack.Compiler.Backend.WordAlloc.ProductionNormalizedMemoryGuard
+import Flapjack.Compiler.Backend.WordAlloc.ProductionMemoryGuard
 
 namespace Flapjack.LoopToWord
 open WordAlloc
@@ -31,35 +30,5 @@ theorem compFuncAllocatorMemoryImage {width : Nat} [NeZero width]
     nativeMemorySupported (loopToWordCompFuncHOL name parameters source) = true := by
   unfold loopToWordCompFuncHOL
   exact compHOLAllocatorMemoryImage _ source _
-
-/-- Actual decoder support follows from the universal exact compiler image;
-the decoder equation binds the output, rather than assuming output support. -/
-theorem compFuncDecodedAllocatorMemoryImage {width : Nat} [NeZero width]
-    (name : Nat) (parameters : List Nat) (source : HolLoopProg width)
-    (output : WordProg (BitVec width))
-    (decoded : wordLangProgFromHOL (loopToWordCompFuncHOL name parameters source) = some output) :
-    RiscV.allocatorMemorySupported output = true := by
-  rw [decodedMemoryGuard _ output decoded]
-  exact compFuncAllocatorMemoryImage name parameters source
-
-/-- Every exact function source produces a decodable, re-encodable actual
-program in the allocator memory domain. All availability and support facts
-are derived from the source, not supplied as target-result assumptions.
-Flapjack carrier infrastructure with no HOL original. -/
-theorem compFuncAllocatorMemoryDomain {width : Nat} [NeZero width]
-    (name : Nat) (parameters : List Nat) (source : HolLoopProg width) :
-    ∃ output : WordProg (BitVec width),
-      wordLangProgFromHOL (loopToWordCompFuncHOL name parameters source) = some output ∧
-      RiscV.allocatorMemorySupported output = true ∧
-      (wordLangProgToHOL output).isSome = true := by
-  have available : wordLangProgFromHOL (loopToWordCompFuncHOL name parameters source) ≠ none := by
-    unfold loopToWordCompFuncHOL
-    exact wordLangProgFromHOL_compHOL_ne_none _ source _
-  cases decoded : wordLangProgFromHOL (loopToWordCompFuncHOL name parameters source) with
-  | none => exact False.elim (available decoded)
-  | some output =>
-      refine ⟨output, rfl, compFuncDecodedAllocatorMemoryImage name parameters source output decoded, ?_⟩
-      have encoded := wordLangProgToHOL_of_fromHOL _ output decoded
-      simp [encoded]
 
 end Flapjack.LoopToWord

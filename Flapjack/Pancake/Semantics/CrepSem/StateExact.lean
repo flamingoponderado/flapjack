@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
+module
+
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+
+@[expose] public section
 
 /-!
 # Exact HOL `crepSem$state` helpers over the finite-support carrier

@@ -132,13 +132,6 @@ theorem memLoadsConvertHelper {width : Nat} [NeZero width] (madd : BitVec width 
       rfl
     · cases h
 
-/-- `compile_shape_n` on a shape list is `MAP (compile_shape_n sctxt n)`.
-Flapjack infrastructure; no HOL original. -/
-theorem compileShapesNHOL_eq_map {α : Type} (sctxt : List (MlS × List (α × ShapeHOL))) (n : Nat) :
-    ∀ shs : List ShapeHOL, compileShapesNHOL sctxt n shs = shs.map (compileShapeNHOL sctxt n)
-  | [] => by rw [compileShapesNHOL]; rfl
-  | sh :: shs => by rw [compileShapesNHOL, compileShapesNHOL_eq_map sctxt n shs]; rfl
-
 /-- `mem_load (Named nm)` reads the fields of the first matching struct in the
 context suffix after it. Flapjack infrastructure; no HOL original. -/
 theorem memLoadNamedAfindi {width : Nat} [NeZero width] (madd : BitVec width → Prop)

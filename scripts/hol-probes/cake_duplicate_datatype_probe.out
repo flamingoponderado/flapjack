@@ -1,0 +1,2 @@
+first=SOME «A»
+constructor=(M_failure (SOME (Locs (POSN 0 0) (POSN 0 19)),«Duplicate constructor A in the definition of type t»),<|next_uvar := 0; subst := FEMPTY; next_id := 15|>)

@@ -2,7 +2,7 @@ module
 
 public import Flapjack.Pancake.Semantics.PanSemStateEval
 public import Flapjack.Pancake.Semantics.PanSem.Primop
-public import Flapjack.Pancake.Semantics.PanSem.TotalEvalExpBridge
+public import Flapjack.Pancake.Semantics.PanSem.EvalRuntimeRoute
 public import Flapjack.Pancake.Semantics.PanSem.ValueHOL
 
 @[expose] public section
@@ -17,49 +17,38 @@ That handler is a String/PanValue analogue rather than a direct HOL definition;
 the exact definition is `panPrimopHOLExact` and no HOL tag is claimed for the
 runner. `TotalEvalExpBridge` records the production/exact handler relation and
 its byte-rangedness proof.
+
+These are source-semantics execution entry points. `flapjack-compile` translates
+a source program; it does not run the source evaluator while compiling it.
+Consequently these entries do not assert that the compiler executable calls
+`panSem` evaluation or that the compiled target program uses this evaluator.
 -/
 
 namespace Flapjack
 
 /-- State-based production source evaluation with its concrete AddCarry
-    primitive handler fixed to `panPrimopHOL`. -/
-def panSemEvaluateRiscV64CodeStateWithProductionPrimop [NeZero 64]
-    [BEq (RiscV.Word 64)] [OfNat (RiscV.Word 64) 0]
-    [OfNat (RiscV.Word 64) 1] [OfNat (RiscV.Word 64) 2]
-    [OfNat (RiscV.Word 64) 3] [Add (RiscV.Word 64)]
-    [Mul (RiscV.Word 64)] [Sub (RiscV.Word 64)]
-    [AndOp (RiscV.Word 64)] [OrOp (RiscV.Word 64)]
-    [HXor (RiscV.Word 64) (RiscV.Word 64) (RiscV.Word 64)]
-    [ShiftLeft (RiscV.Word 64)] [ShiftRight (RiscV.Word 64)]
-    [LT (RiscV.Word 64)]
-    [DecidableRel (fun left right : RiscV.Word 64 => left < right)]
-    [PanCmp (RiscV.Word 64)]
+    primitive handler fixed to `panPrimopHOL`. Expressions execute through the
+    guarded HOL route with the canonical RV64 word operations. -/
+def panSemEvaluateRiscV64CodeStateWithProductionPrimop
     (context : PanValueFfiContext (RiscV.Word 64))
     (handler : PanValueStatefulFfiHandler (RiscV.Word 64) σ)
     (state : PanSemState (RiscV.Word 64) (FfiState σ))
     (program : Prog (RiscV.Word 64)) :
     Option (PanValueFfiClockResult (RiscV.Word 64) σ) :=
-  panSemEvaluateRiscV64CodeState context panPrimopHOL handler state program
+  panSemEvaluateRiscV64CodeStateViaHOL context panPrimopHOL handler state program
 
-/-- The concrete runner is the generic source-state evaluator with exactly the
-    fixed production handler; its original parameterized interface is retained
-    for explicit-handler proofs. -/
-theorem panSemEvaluateRiscV64CodeStateWithProductionPrimop_eq
-    [NeZero 64] [BEq (RiscV.Word 64)]
-    [OfNat (RiscV.Word 64) 0] [OfNat (RiscV.Word 64) 1]
-    [OfNat (RiscV.Word 64) 2] [OfNat (RiscV.Word 64) 3]
-    [Add (RiscV.Word 64)] [Mul (RiscV.Word 64)]
-    [Sub (RiscV.Word 64)] [AndOp (RiscV.Word 64)]
-    [OrOp (RiscV.Word 64)] [HXor (RiscV.Word 64) (RiscV.Word 64) (RiscV.Word 64)]
-    [ShiftLeft (RiscV.Word 64)] [ShiftRight (RiscV.Word 64)]
-    [LT (RiscV.Word 64)]
-    [DecidableRel (fun left right : RiscV.Word 64 => left < right)]
-    [PanCmp (RiscV.Word 64)]
+/-- Declaration-to-entry RV64 source execution with the production primitive
+    handler and the guarded HOL expression route. The input owns the source
+    memory domains and byte order for both declarations and the body. -/
+def panSemEvaluateRiscV64ProgramWithProductionPrimop
     (context : PanValueFfiContext (RiscV.Word 64))
-    (handler : PanValueStatefulFfiHandler (RiscV.Word 64) σ)
-    (state : PanSemState (RiscV.Word 64) (FfiState σ))
-    (program : Prog (RiscV.Word 64)) :
-    panSemEvaluateRiscV64CodeStateWithProductionPrimop context handler state program =
-      panSemEvaluateRiscV64CodeState context panPrimopHOL handler state program := rfl
+    (input : PanSemRiscV64ProgramInput σ)
+    (clock : Nat) (handler : PanValueStatefulFfiHandler (RiscV.Word 64) σ)
+    (fuel : Nat) (decls : List (Decl (RiscV.Word 64)))
+    (entry : FunName) (arguments : List (Exp (RiscV.Word 64)))
+    (memoryHandler : Option (PanValueMemoryFfiHandler (RiscV.Word 64) σ) := none) :
+    Option (PanValueFfiClockResult (RiscV.Word 64) σ) :=
+  panSemEvaluateRiscV64ProgramViaHOL context input clock panPrimopHOL handler
+    fuel decls entry arguments (memoryHandler := memoryHandler)
 
 end Flapjack

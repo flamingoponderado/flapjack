@@ -1,0 +1,18 @@
+nat_to_value_definition=∀(n :num). nat_to_v n = Litv (IntLit ((&n) :int))
+lookup_definition=∀(s :eval_oracle_state) (i :num) (j :num). lookup_env s (i,j) = case LLOOKUP s.envs i of (NONE :v sem_env list option) => (NONE :v sem_env option) | SOME gen_envs => LLOOKUP gen_envs j
+add_decs_definition=∀(s :eval_decs_state). add_decs_generation s = case s.env_id_counter of (cur_gen,next_id,next_gen) => s with env_id_counter := (next_gen,(0 :num),next_gen + (1 :num))
+add_env_definition=∀(s :eval_oracle_state). add_env_generation s = s with <|generation := LENGTH s.envs; envs := s.envs ++ [([] :v sem_env list)]|>
+declare_definition=∀(es :eval_state option) (env :v sem_env). declare_env es env = case es of (NONE :eval_state option) => (NONE :(v # eval_state option) option) | SOME (EvalDecs s) => (case s.env_id_counter of (cur_gen,next_id,next_gen) => SOME (Env env (cur_gen,next_id),SOME (EvalDecs (s with env_id_counter := (cur_gen,next_id + (1 :num),next_gen))))) | SOME (EvalOracle s') => case LLOOKUP s'.envs s'.generation of (NONE :v sem_env list option) => (NONE :(v # eval_state option) option) | SOME gen_envs => SOME (Conv (NONE :stamp option) [nat_to_v s'.generation; nat_to_v (LENGTH gen_envs)],SOME (EvalOracle (s' with envs := s'.envs❲s'.generation ↦ gen_envs ++ [env]❳)))
+reset_definition=∀(prior_es :eval_state option) (es :eval_state option). reset_env_generation prior_es es = case (prior_es,es) of (v7,(NONE :eval_state option)) => es | ((NONE :eval_state option),SOME v12) => es | (SOME (EvalDecs prior_s'),SOME (EvalDecs s')) => (case (prior_s'.env_id_counter,s'.env_id_counter) of ((cur_gen,next_id,v5),v6,v8,next_gen) => SOME (EvalDecs (s' with env_id_counter := (cur_gen,next_id,next_gen)))) | (SOME (EvalOracle v22),SOME (EvalDecs s')) => es | (SOME (EvalDecs v25),SOME (EvalOracle s)) => es | (SOME (EvalOracle prior_s),SOME (EvalOracle s)) => SOME (EvalOracle (s with generation := prior_s.generation))
+declare_type=:eval_state option -> v sem_env -> (v # eval_state option) option
+reset_type=:eval_state option -> eval_state option -> eval_state option
+decs=((9 :num),(0 :num),(10 :num))
+oracle=((2 :num),(3 :num))
+lookup=T
+invalid_lookup=F
+invalid_inner_lookup=F
+declared_decs=SOME (((2 :num),(3 :num)),(2 :num),(4 :num),(9 :num))
+declared_oracle=SOME ((0 :int),(1 :int),(2 :num))
+invalid_decl=F
+reset=SOME ((2 :num),(3 :num),(11 :num))
+reset_mixed=SOME (7 :num)

@@ -168,19 +168,6 @@ def findLabExact (context : CrepToLoopContextExact) (function : MlString) : Nat 
   | some (label, _) => label
   | none => 0
 
-/-- Function-label lookup is preserved for production names in HOL's byte
-range. No claim is made for arbitrary Lean `String` names, because
-`MlString.ofString` truncates code points outside that range. -/
-theorem findLabExact_productionLoopContextToExact
-    (context : LoopContext α) (name : FunName)
-    (hname : CrepNameRanged name) :
-    findLabExact (productionLoopContextToExact context) (ofString name) =
-      (match lookupInfo name context.functions with
-       | some (label, _) => label
-       | none => 0) := by
-  simp only [findLabExact, productionLoopContextToExact]
-  rw [toStringOfBytes_ofString_of_bytes name hname]
-
 /-- Exact HOL `compile_crepop_def`, including the ARMv7 two-result case. -/
 @[hol "cakeml/pancake/crep_to_loopScript.sml" "compile_crepop_def"
   (words_as_type_indexed_bitvec)]
@@ -450,14 +437,13 @@ decreasing_by
         CrepProgHOL.ite.sizeOf_spec, CrepProgHOL.while.sizeOf_spec,
         CrepProgHOL.call.sizeOf_spec]; omega)
 
-
 /-! ## Exact `comp_func_def` over the exact context carrier -/
 
 /-- HOL `make_vmap` (`crep_to_loopScript.sml:230-233`) on the canonical
 finite-support carrier: `FEMPTY |++ ZIP (params, GENLIST I (LENGTH params))`, so
 a later duplicate parameter shadows an earlier one. Untagged helper for the
-exact `comp_func_def` port; the tagged production rendering `makeVmapHOL` stays
-function-backed. -/
+exact `comp_func_def` port; the production lookup rendering `makeVmapHOL` is
+function-backed and untagged. -/
 def makeVmapExact (params : List Nat) : HolFiniteMapExact Nat Nat :=
   HolFiniteMapExact.updateListEq HolFiniteMapExact.empty
     (params.zip (List.range params.length))

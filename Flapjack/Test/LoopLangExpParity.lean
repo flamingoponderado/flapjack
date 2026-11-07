@@ -1,4 +1,4 @@
-import Flapjack.Test.PanValueFfiSemantics
+import Flapjack.Test.PanValueFfiCore
 
 /-!
 Regression checks for the faithful width-indexed `loopLang$exp` carrier

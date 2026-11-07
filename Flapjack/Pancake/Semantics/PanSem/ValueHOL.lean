@@ -50,7 +50,8 @@ abbrev MlStringHOL := Flapjack.Basis.Pure.MlString.MlString
     derives only `Repr`. The `[NeZero width]` binder matches HOL's positive
     `dimindex`, and its payload `HolWordLab` is the exact positive-width port
     of HOL `word_lab`. -/
-@[hol "cakeml/pancake/semantics/panSemScript.sml" "v"]
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "v"
+  (words_as_type_indexed_bitvec)]
 inductive ValueHOL (width : Nat) [NeZero width] where
   | val (value : HolWordLab width)
   | rStruct (fields : List (ValueHOL width))
@@ -95,15 +96,12 @@ def panPrimopHOLExact {width : Nat} [NeZero width] :
       some (.rStruct [.val (.word result), .val (.word overflow)])
   | _, _ => none
 
-/-- Exact port of HOL `shape_of_def`
-    (`cakeml/pancake/semantics/panSemScript.sml:80-84`):
-    `shape_of (ValWord _) = One`, `shape_of (RStruct vs) = Comb (MAP shape_of vs)`,
-    `shape_of (NStruct nm _) = Named nm`.
-
-    The `NStruct` name is a `stcname = mlstring`, so it maps to the exact
-    `ShapeHOL.named (MlS)` constructor; `Val` is ignored, so the `HolWordLab`
-    payload (tag-withheld generic carrier) does not affect the result. -/
-@[hol "cakeml/pancake/semantics/panSemScript.sml" "shape_of_def"]
+/-- HOL-shaped `shape_of_def` over `ValueHOL`: the typed original clauses are
+    captured in `pan_props_shape_res_var_probe.out`. The word-dimension
+    qualifier cannot currently be attached because `ValueHOL` contains the
+    reviewed BitVec carrier indirectly through `HolWordLab`; its checker does
+    not resolve nested owners. This definition remains untagged until that
+    representation is supported. -/
 def shapeOfHOLExact {width : Nat} [NeZero width] :
     ValueHOL width → Flapjack.Pancake.PanLang.ShapeHOL
   | .val _ => .one

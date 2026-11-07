@@ -497,30 +497,37 @@ theorem panSemStateRel_toExact {width : Nat} [NeZero width] {σ : Type}
   · simp only [panSemStateToExact]
   · simp only [panSemStateToExact]
 
-/-- Reverse state codec: view the exact carrier as a production state.  The
-    finite-support premise on the exact `code` map is the representation
-    obligation that lets the function carrier be turned back into the
-    production association list; `memaddrs`/`sharedMemaddrs` are decided. -/
-noncomputable def panSemStateOfExact {width : Nat} [NeZero width] {σ : Type}
+/-- Reverse state codec with an explicit code-key list and FFI carrier. The
+    list can be supplied computationally; its coverage is needed only when
+    proving lookup correspondence. -/
+@[reducible] def panSemStateOfExactWithKeys {width : Nat} [NeZero width] {σ τ : Type}
     (exact : PanSemStateExact width σ)
     [DecidablePred exact.memaddrs] [DecidablePred exact.shMemaddrs]
-    (codeSupport : ∃ keys : List MlS, ∀ key, exact.code key ≠ none → key ∈ keys) :
-    PanSemState (RiscV.Word width) (HolFfiState σ) where
+    (ffi : τ) (keys : List MlS) : PanSemState (RiscV.Word width) τ where
   locals := fun name => Option.map panValueOfHOL (exact.locals (ofString name))
   globals := fun name => Option.map panValueOfHOL (exact.globals (ofString name))
   structs := panStructContextOfHOL exact.structs
   code := mlFunctionToInfoMap
     (fun key => Option.map panLangEntryOfHOL (exact.code key))
-    (Classical.choose codeSupport)
+    keys
   exceptionShapes := fun name => Option.map shapeOfHOL (exact.eshapes (ofString name))
   memory := fun address => some (.word (holWordLabBits (exact.memory address)))
   memaddrs := fun address => decide (exact.memaddrs address)
   sharedMemaddrs := fun address => decide (exact.shMemaddrs address)
   clock := exact.clock
   be := exact.be
-  ffi := exact.ffi
+  ffi := ffi
   baseAddress := exact.baseAddr
   topAddress := exact.topAddr
+
+/-- Reverse state codec with a finite-support proof. It uses the shared
+    explicit-key codec with a classically chosen covering list. -/
+noncomputable def panSemStateOfExact {width : Nat} [NeZero width] {σ : Type}
+    (exact : PanSemStateExact width σ)
+    [DecidablePred exact.memaddrs] [DecidablePred exact.shMemaddrs]
+    (codeSupport : ∃ keys : List MlS, ∀ key, exact.code key ≠ none → key ∈ keys) :
+    PanSemState (RiscV.Word width) (HolFfiState σ) :=
+  panSemStateOfExactWithKeys exact exact.ffi (Classical.choose codeSupport)
 
 theorem panSemStateMemoryRel_ofExact {width : Nat} [NeZero width] {σ : Type}
     (exact : PanSemStateExact width σ)

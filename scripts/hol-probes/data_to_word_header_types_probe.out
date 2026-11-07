@@ -1,0 +1,4 @@
+make_header_type=:config -> α word -> num -> α word
+make_header_definition=∀(conf :config) (tag :α word) (len :num). make_header conf tag len = (let (l :num) = dimindex (:α) − conf.len_size in (n2w len :α word) ≪ l ‖ tag ≪ (2 :num) ‖ (3w :α word))
+encode_header_type=:config -> num -> num -> α word option
+encode_header_definition=∀(conf :config) (tag :num) (len :num). (encode_header conf tag len :α word option) = if tag < (2 :num) ** (dimindex (:α) − conf.len_size − (2 :num)) ∧ tag < dimword (:α) DIV (16 :num) ∧ len < (2 :num) ** (dimindex (:α) − (4 :num)) ∧ len < (2 :num) ** conf.len_size then SOME (make_header conf (n2w tag :α word) len) else (NONE :α word option)

@@ -68,4 +68,20 @@ val _ = print_eval "eval_missing_struct"
   ``eval (^s with structs := [])
       (panLang$NStruct (strlit "Pair") []) = NONE``;
 
+val namedLocal = ``FEMPTY |+ (strlit "v", NStruct (strlit "Pair")
+  [(strlit "left", ValWord (3w:8 word)); (strlit "left", ValWord 4w)])``;
+
+val _ = print_eval "eval_nfield_first_duplicate"
+  ``eval (^s with <| structs := ^pairStructs; locals := ^namedLocal |>)
+      (panLang$NField (strlit "left") (panLang$Var panLang$Local (strlit "v"))) =
+      SOME (ValWord (3w:8 word))``;
+
+val _ = print_eval "eval_nfield_missing_field"
+  ``eval (^s with <| structs := ^pairStructs; locals := ^namedLocal |>)
+      (panLang$NField (strlit "missing") (panLang$Var panLang$Local (strlit "v"))) = NONE``;
+
+val _ = print_eval "eval_nfield_missing_struct"
+  ``eval (^s with <| structs := []; locals := ^namedLocal |>)
+      (panLang$NField (strlit "left") (panLang$Var panLang$Local (strlit "v"))) = NONE``;
+
 val _ = print_eval "eval_probe_done" ``0``;

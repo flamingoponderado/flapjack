@@ -1,0 +1,11 @@
+load "clos_callTheory"; load "clos_callProofTheory";
+open HolKernel Parse boolLib bossLib;
+val _ = Globals.linewidth := 1000000;
+val _ = set_trace "Unicode" 0;
+val _ = (print "variables_type="; print_type (type_of ``clos_call$GENLIST_Var``); print "\n");
+val _ = (print "variables_def="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callTheory.GENLIST_Var_def); print "\n");
+val _ = (print "calls_list_type="; print_type (type_of ``clos_call$calls_list``); print "\n");
+val _ = (print "calls_list_def="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callTheory.calls_list_def); print "\n");
+val _ = (print "calls_list_mapi="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.calls_list_MAPi); print "\n");
+val cases = EVAL ``(clos_call$GENLIST_Var None 7 3, clos_call$calls_list None 4 10 [(2,T);(0,F);(1,T)])``;
+val _ = (print "cases="; print_term (rhs (concl cases)); print "\n");

@@ -1,4 +1,8 @@
-import Flapjack.Misc.ListSubset
+module
+
+public import Flapjack.Misc.ListSubset
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack.Misc

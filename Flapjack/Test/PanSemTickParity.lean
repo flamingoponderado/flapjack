@@ -1,5 +1,5 @@
 import Flapjack.Pancake.Semantics.PanSem
-import Flapjack.Test.PanValueFfiSemantics
+import Flapjack.Test.PanValueFfiCore
 
 /-!
 # Parity for the Pancake `Tick` equation
@@ -42,7 +42,7 @@ def tickState (clock : Nat) : PanSemState Word64 (FfiState Unit) :=
     topAddress := BitVec.ofNat 64 100 }
 
 def tickEvaluate (clock : Nat) : TickResult :=
-  panSemEvaluateCodeStateWithPostState statefulTestContext statefulTestPrimitive
+  panSemEvaluateCodeStateWithPostState (memoryAccess := none) statefulTestContext statefulTestPrimitive
     statefulTestHandler (BitVec.ofNat 64 8) (tickState clock) (.tick : Prog Word64)
 
 def tickZeroPost : PanSemState Word64 (FfiState Unit) :=

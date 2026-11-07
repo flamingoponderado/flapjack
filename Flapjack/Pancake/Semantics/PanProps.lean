@@ -159,8 +159,9 @@ HOL tag on an event-prefix result. The faithful theorem remains tracked by
 result-option/state shape, but its implementation delegates through the
 unrestricted function-backed evaluator; the direct finite evaluator still has
 an outer assembly marker, and its clause/evaluator correspondence is not
-complete (`flapjack-qj5`). The existing `PanValueFfiClockShift` proves only
-clock arithmetic and selected structural-fuel evaluator cases over different
+complete (`flapjack-qj5`). The Flapjack-only `PanValueFfiClockShift` (moved
+to stepped-flapjack, which owns the clocked structural-fuel evaluator theory)
+proves only clock arithmetic and selected structural-fuel evaluator cases over different
 program, state, and value carriers; it does not supply the whole-program
 clock-shift argument or the timeout split in HOL's theorem. Do not tag either
 surface as this theorem. The exact finite evaluator prerequisite is tracked by
@@ -579,20 +580,13 @@ mutual
       lemma only identifies lookup for lawful instances and does not establish
       that the production representation is the same HOL interface. Lean
       `StructInfo` also has an additional `shapedFields` cache absent from HOL.
-      The separate Prop-valued convenience predicate in CompileCorrect is
-      further from the HOL Bool statement.
-
       Executable-path disposition (bead `flapjack-4ac.4.4.1`): this value-level
-      predicate has no call site on the executable compiler path. The RISC-V
-      entrypoints (`compileFlapjackRiscVSourceRuntimeImageChecked` and siblings
-      in `Flapjack/RiscV/PipelineDiagnostics.lean`) run `staticCheck`
-      (`Flapjack/Pancake/PanStatic.lean:1794`), which checks declared shapes
-      (`isWfShape`/`checkShape`/`shapedBased...`), not runtime value validity.
-      `panIsWfShapeValueBool` occurs only as a proof-side precondition
-      (`panStructEveryValueShapeWfBool`,
-      `Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean:614`) over
-      locals/globals, and the kernel-checked `panIsWfShapeValueHOL_toHOL`
-      already connects it to the HOL-shaped `panIsWfShapeValueHOL`. The
+      predicate has no call site on the executable compiler path. The
+      compiler's static checking (`Flapjack/Pancake/PanStatic.lean`) checks
+      declared shapes (`isWfShape`/`checkShape`/`shapedBased...`), not runtime
+      value validity.
+      The kernel-checked `panIsWfShapeValueHOL_toHOL` connects this
+      predicate to the HOL-shaped `panIsWfShapeValueHOL`. The
       remaining gap to the exact `isWfShapeValueHOLExact` is the carrier
       (`String`/`StructContextHOL` vs `MlStringHOL`/`StructContextExact`),
       tracked by bead `flapjack-pxn.18.3.5.8`.
@@ -1164,7 +1158,6 @@ theorem memLoadHOLExact_isWfShapeValueHOLExact {width : Nat} [NeZero width] :
     exact memLoadHOLExact_isWfShapeValueHOLExact_loads domain memory shapes address context values h
   · intro fields address domain _ memory context values h
     exact memLoadHOLExact_isWfShapeValueHOLExact_flds domain memory fields address context values h
-
 
 /-! The function-backed exact evaluator is intermediate proof support for HOL
     `eval_is_wf_shape_v`. It is intentionally untagged because
@@ -1776,23 +1769,7 @@ mutual
           panIsWfShapeValuesHOL_mapSnd_toHOL context fields]
 end
 
-/-- HOL `fdoms_eq_flookup_some_none` (`panPropsScript.sml:276`): if two finite
-    maps have the same domain, every defined lookup in the first is also defined
-    in the second. -/
-@[hol "cakeml/pancake/semantics/panPropsScript.sml" "fdoms_eq_flookup_some_none"]
-theorem fdoms_eq_flookup_some_none {α : Type} {β : Type} (fm fm' : FiniteMap α β) (n : α)
-    (v : β) (_vPrime : β) (hdom : FDOM fm = FDOM fm') (hv : FLOOKUP fm n = some v) :
-    ∃ v', FLOOKUP fm' n = some v' := by
-  have hmem : FDOM fm' n := by
-    rw [← hdom]
-    change fm n ≠ none
-    change fm n = some v at hv
-    rw [hv]
-    exact Option.some_ne_none v
-  change fm' n ≠ none at hmem
-  cases h' : fm' n with
-  | none => rw [h'] at hmem; exact absurd rfl hmem
-  | some v' => exact ⟨v', by change fm' n = some v'; rw [h']⟩
+/-! HOL `fdoms_eq_flookup_some_none` remains to be ported over finite maps. -/
 
 /-- HOL `OPT_MMAP_MEM_IMP` (`panPropsScript.sml:115`): if `OPT_MMAP f xs` succeeds
     with `ys`, every element of `ys` is the image under `f` of an element of `xs`.
@@ -1979,92 +1956,25 @@ theorem listRelFlattenWithShapeFlookup (shapes : List Shape) (names : List Nat)
     FEMPTY (Shape.shapeSize (.comb (shapes.take n)) + n') hdistinct hnames hbound).trans
     (congrArg some hflatElem)
 
-/-- Exact port of HOL `all_distinct_alist_no_overlap`
-    (`cakeml/pancake/semantics/panPropsScript.sml:476`): a duplicate-free slot
-    list laid out by `withShape` makes the zipped finite map overlap-free.
-    HOL `alist_to_fmap (ZIP (vs, ZIP (sh, with_shape sh ns)))` is Lean's
-    right-folded `alistToFmap`, including when `vs` contains duplicates. -/
-@[hol "cakeml/pancake/semantics/panPropsScript.sml" "all_distinct_alist_no_overlap"]
-theorem allDistinctAlistNoOverlap {α : Type} [BEq α] [LawfulBEq α]
-    (sh : List Shape) (ns : List Nat) (vs : List α)
-    (hdistinct : ns.Nodup) (hlen1 : ns.length = Shape.shapeSize (.comb sh))
-    (hlen2 : vs.length = sh.length) :
-    noOverlap (alistToFmap (vs.zip (sh.zip (withShape sh ns)))) := by
-  constructor
-  · intro x a xs hlk
-    obtain ⟨e, hmem, hke, hve⟩ :=
-      flookupAlistToFmap_mem (vs.zip (sh.zip (withShape sh ns))) x (a, xs) hlk
-    have he : e = (x, (a, xs)) := Prod.ext hke hve
-    subst he
-    obtain ⟨n, hn, _hj, _hfst, hsnd⟩ :=
-      mem_zip_getElem vs (sh.zip (withShape sh ns)) (x, (a, xs)) hmem
-    have hnsh : n < sh.length := by rw [← hlen2]; exact hn
-    have hz := hsnd
-    rw [List.getElem_zip] at hz
-    have hshapeget :
-        (withShape sh ns)[n]'(by rw [withShape_length]; exact hnsh) = xs :=
-      congrArg Prod.snd hz
-    exact hshapeget ▸ all_distinct_withShape sh ns n hdistinct hnsh hlen1
-  · intro x y a b xs ys hx hy hinter
-    rcases hinter with ⟨z, hzxs, hzys⟩
-    obtain ⟨e, hme, hke, hve⟩ :=
-      flookupAlistToFmap_mem (vs.zip (sh.zip (withShape sh ns))) x (a, xs) hx
-    obtain ⟨f, hmf, hkf, hvf⟩ :=
-      flookupAlistToFmap_mem (vs.zip (sh.zip (withShape sh ns))) y (b, ys) hy
-    have he : e = (x, (a, xs)) := Prod.ext hke hve
-    subst he
-    have hf : f = (y, (b, ys)) := Prod.ext hkf hvf
-    subst hf
-    by_cases hxy : x = y
-    · exact hxy
-    · have hdisj :=
-        listDisjoint_of_mem_zip_withShape vs sh ns (x, (a, xs)) (y, (b, ys))
-          hlen2 (by rw [withShape_length]) hdistinct hlen1 hme hmf hxy
-      exact (hdisj z hzxs hzys).elim
 
-
-/-- Exact port of HOL `all_distinct_alist_ctxt_max`
-    (`cakeml/pancake/semantics/panPropsScript.sml:517`): every slot recorded in
-    the compiled context is bounded by `MAX_LIST ns`. -/
-@[hol "cakeml/pancake/semantics/panPropsScript.sml" "all_distinct_alist_ctxt_max"]
-theorem allDistinctAlistCtxtMax {α : Type} [BEq α] [LawfulBEq α]
-    (sh : List Shape) (ns : List Nat) (vs : List α)
-    (_hdistinct : ns.Nodup) (hlen1 : ns.length = Shape.shapeSize (.comb sh))
-    (hlen2 : vs.length = sh.length) :
-    ctxtMax (maxList ns) (alistToFmap (vs.zip (sh.zip (withShape sh ns)))) := by
-  refine ⟨Nat.zero_le _, ?_⟩
-  intro v a xs hlk x hx
-  obtain ⟨e, hmem, hke, hve⟩ :=
-    flookupAlistToFmap_mem (vs.zip (sh.zip (withShape sh ns))) v (a, xs) hlk
-  have he : e = (v, (a, xs)) := Prod.ext hke hve
-  subst he
-  obtain ⟨n, hn, _hj, _hfst, hsnd⟩ :=
-    mem_zip_getElem vs (sh.zip (withShape sh ns)) (v, (a, xs)) hmem
-  have hnsh : n < sh.length := by rw [← hlen2]; exact hn
-  have hz := hsnd
-  rw [List.getElem_zip] at hz
-  have hshapeget :
-      (withShape sh ns)[n]'(by rw [withShape_length]; exact hnsh) = xs :=
-    congrArg Prod.snd hz
-  have hxmem : x ∈ ns := by
-    rw [← hshapeget] at hx
-    exact mem_of_withShape_mem sh ns n x (by rw [withShape_length]; exact hnsh) hlen1 hx
-  exact maxList_ge_of_mem ns x hxmem
+/-! HOL `all_distinct_alist_no_overlap` and `all_distinct_alist_ctxt_max`
+    remain to be ported with faithful finite-map and shape carriers. -/
 
 /-! ## Exact `res_var` / `shape_of` lemmas over the exact carriers
 
 `panPropsScript.sml` states four small properties of HOL `shape_of`
 (`panPropsScript.sml:14`) and `res_var` (`panPropsScript.sml:220-240`) over the
 exact `panSem` carriers.  The exact Lean counterparts are `shapeOfHOLExact`
-(`PanSem/ValueHOL.lean`, tagged `shape_of_def`) and `resVarHOLExact`
+(`PanSem/ValueHOL.lean`, untagged pending nested-word qualifier support) and `resVarHOLExact`
 (`PanSem/LocalUpdatesExact.lean`, tagged `res_var_def`), so these lemmas are
 ported over those definitions rather than the production generic carriers used
-by the `panValueShape`/`panValueResVar` bridges. -/
+by `panValueShape` and `restorePanValueLocal`. -/
 
 /-- Exact port of HOL `panProps$shape_of_val` (`panPropsScript.sml:14`):
     `shape_of (Val x) = One`.  The `Val` payload is ignored, so the
     `HolWordLab` carrier does not affect the result. -/
-@[hol "cakeml/pancake/semantics/panPropsScript.sml" "shape_of_val"]
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "shape_of_val"
+  (words_as_type_indexed_bitvec)]
 theorem shapeOfHOLExact_val {width : Nat} [NeZero width] (value : HolWordLab width) :
     shapeOfHOLExact (.val value : ValueHOL width) =
       Flapjack.Pancake.PanLang.ShapeHOL.one := by
@@ -2082,10 +1992,6 @@ def v2wordSpecifiedHOL {width : Nat} [NeZero width] :
   | .val (.word word) => some word
   | .rStruct _ => none
   | .nStruct _ _ => none
-
-/-- The exact word case constrained by HOL `v2word_def`. -/
-theorem v2wordSpecifiedHOL_word {width : Nat} [NeZero width] (word : BitVec width) :
-    v2wordSpecifiedHOL (.val (.word word) : ValueHOL width) = some word := rfl
 
 /-- Function-backed rendering of HOL `panProps$FLOOKUP_pan_res_var_thm`
     (`panPropsScript.sml:236`). Untagged because HOL's `lc` is a finite map,
@@ -2148,7 +2054,6 @@ def isWfShapeNilHOL (shape : ShapeHOL) : Bool :=
 /-! The exact general `is_wf_shape_v_nil_step1` port already exists in this module
     as `isWfShapeValueHOLExact_nil_step1` (see above); no specialized duplicate is kept. -/
 
-
 /- Untagged support: context-free well-formed shapes have the same
     with-context size as their plain `size_of_shape` size, for every context. -/
 mutual
@@ -2188,7 +2093,7 @@ theorem sizeOfShapeWithContextHOL_eq (shape : ShapeHOL) (context : StructContext
 `panPropsScript.sml:171` states that a value whose `shape_of` is well-formed under
 the empty struct context has `LENGTH (flatten v) = size_of_shape (shape_of v)`.
 The exact Lean counterparts are `flattenHOL` (tagged `flatten_def`),
-`shapeOfHOLExact` (tagged `shape_of_def`), and `sizeOfShapeHOL` (tagged
+`shapeOfHOLExact` (untagged pending nested-word qualifier support), and `sizeOfShapeHOL` (tagged
 `size_of_shape_def`) over `ValueHOL`, with the context-less well-formedness
 rendered as `isWfShapeExactHOL [] shape = true` (HOL `is_wf_shape_nil` is the
 overload `is_wf_shape []`). -/
@@ -2344,7 +2249,6 @@ theorem functionsHOL_eq_FILTER {width : Nat} [NeZero width]
       | decl sh name body => simp [functionsHOL, isFunctionHOL, ih]
       | exnDecl eid sh => simp [functionsHOL, isFunctionHOL, ih]
       | name nm flds => simp [functionsHOL, isFunctionHOL, ih]
-
 
 /-- Flapjack-specific infrastructure: under the empty structure context, a
     successful exact `memLoadHOLExact` has `flattenHOL`-length equal to the

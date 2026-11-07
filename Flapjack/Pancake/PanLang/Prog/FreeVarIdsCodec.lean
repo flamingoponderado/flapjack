@@ -84,16 +84,4 @@ private theorem map_filter_ne_of_injective {α β : Type} [DecidableEq α]
       List.flatMap]
   all_goals cases ‹VarKind› <;> simp_all
 
-/-- On the parser-supported byte-ranged subset, the exact HOL
-    `free_var_ids_def` result encoded from production syntax decodes to the
-    production `freeVarIds` list.  The premise is required only for the
-    `progOfHOL (progToHOL program)` round trip; the general exact-carrier
-    projection above is premise-free.  This is Flapjack-specific codec
-    infrastructure, not a separate HOL theorem. -/
-theorem freeVarIdsHOL_progToHOL_byteRanged {width : Nat} [NeZero width]
-    (program : Prog (BitVec width)) (hprogram : ProgByteRanged program) :
-    (freeVarIdsHOL (progToHOL program)).map toStringOfBytes =
-      Flapjack.freeVarIds program := by
-  rw [freeVarIdsHOL_map_toStringOfBytes, progOfHOL_progToHOL program hprogram]
-
 end Flapjack.Pancake.PanLang

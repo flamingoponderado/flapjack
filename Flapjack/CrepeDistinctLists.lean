@@ -1,4 +1,8 @@
-import Flapjack.Pancake.CrepLang
+module
+
+public import Flapjack.Pancake.CrepLang
+
+@[expose] public section
 
 /-!
 The compiler's `distinctLists` guard is exactly the non-interference property

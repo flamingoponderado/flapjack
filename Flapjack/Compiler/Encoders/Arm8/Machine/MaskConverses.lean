@@ -1,5 +1,9 @@
-import Mathlib.Data.BitVec
-import Mathlib.Tactic
+module
+
+public import Mathlib.Data.BitVec
+public import Mathlib.Tactic
+
+@[expose] public section
 
 /-!
 # Converse mask facts for the ARM8 immediate encodings

@@ -1,5 +1,5 @@
 import Flapjack.Pancake.Semantics.PanSem
-import Flapjack.Test.PanValueFfiSemantics
+import Flapjack.Test.PanValueFfiCore
 
 /-!
 # Parity for the Pancake `Dec` equation
@@ -42,7 +42,7 @@ def decState (clock : Nat) : PanSemState Word64 (FfiState Unit) :=
 
 def decEvaluate (clock fuel : Nat) (program : Prog Word64) :
     Option (PanValueFfiClockResult Word64 Unit) :=
-  panSemEvaluateCodeStateWithFuel statefulTestContext statefulTestPrimitive
+  panSemEvaluateCodeStateWithFuel (memoryAccess := none) statefulTestContext statefulTestPrimitive
     statefulTestHandler (BitVec.ofNat 64 8) (fuel + 1) (decState clock) program
 
 def decBodyLocals : VarName → Option (PanValue Word64) :=
@@ -67,8 +67,8 @@ theorem dec_ok_eq :
   unfold decEvaluate decOkOutcome
   rw [panSemEvaluateCodeStateWithFuel_dec]
   simp [panSemEvaluateCodeStateWithFuel, evalPanValueFfiClockCodeProg,
-    evalPanValueFfiClockLeaf, evalPanValueFfiProgSteps, panValueAssignLocalResult,
-    evalPanValueExpCounted,
+    evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, panValueAssignLocalResult,
+    evalPanValueExpWith,
     decState, evalPanValueExp, panValueAssignmentValid, panValueShape,
     panShapeMatches, updatePanValueMap, panValueFfiClockRestoreLocal,
     restorePanValueFfiLocal, decBodyLocals, decRestoredLocals]

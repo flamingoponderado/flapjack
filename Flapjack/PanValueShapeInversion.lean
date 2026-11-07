@@ -1,4 +1,8 @@
-import Flapjack.PanValues
+module
+
+public import Flapjack.PanValues
+
+@[expose] public section
 
 /-!
 Inversion lemmas for flat word-record shapes.  A successful shape match with a

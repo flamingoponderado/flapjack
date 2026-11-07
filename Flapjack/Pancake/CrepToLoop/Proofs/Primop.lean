@@ -34,9 +34,7 @@ namespace Flapjack
     `pop` is the shared `panLang$primop`, so the Lean port uses `PrimOp`.  The
     target is the exact `word_loc`-valued `loop_primop` port
     `LoopSemStateFiniteExact.loopPrimop`, because `wlabWlocHOL` maps
-    `HolWordLab` (`word_lab`) to `WordLocW` (`word_loc`); `loopPrimopHOL` is the
-    separate Flapjack `LoopValue`-valued rendering and does not have the exact
-    HOL `word_loc` codomain. -/
+    `HolWordLab` (`word_lab`) to `WordLocW` (`word_loc`). -/
 @[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "crep_primop_loop_primop"
   (words_as_type_indexed_bitvec)]
 theorem crepPrimopLoopPrimopHOL {width : Nat} [NeZero width]

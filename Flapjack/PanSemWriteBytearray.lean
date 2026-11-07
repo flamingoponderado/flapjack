@@ -1,6 +1,6 @@
 module
 
-public import Flapjack.PanValueFfiSemantics
+public import Flapjack.PanValueFfiCore
 
 @[expose] public section
 

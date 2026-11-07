@@ -143,6 +143,15 @@ val _ = print_eval "nstruct_name_mismatch"
   ``eval ^with_pair (panLang$NStruct (strlit "Pair") [(strlit "g", panLang$Const 7w)])``;
 val _ = print_eval "nstruct_missing_struct"
   ``eval ^little (panLang$NStruct (strlit "Pair") [(strlit "f", panLang$Const 7w)])``;
+val _ = print_eval "nstruct_load_byte_little"
+  ``eval ^with_pair (panLang$NStruct (strlit "Pair")
+      [(strlit "f", panLang$LoadByte (panLang$Const 0w))])``;
+val _ = print_eval "nstruct_load_byte_big"
+  ``eval (^with_pair with be := T) (panLang$NStruct (strlit "Pair")
+      [(strlit "f", panLang$LoadByte (panLang$Const 0w))])``;
+val _ = print_eval "nstruct_load_byte_outside_domain"
+  ``eval (^with_pair with memaddrs := {}) (panLang$NStruct (strlit "Pair")
+      [(strlit "f", panLang$LoadByte (panLang$Const 0w))])``;
 
 (* RStruct/RField rows: structure construction and index projection. *)
 val _ = print_eval "rstruct_pair"

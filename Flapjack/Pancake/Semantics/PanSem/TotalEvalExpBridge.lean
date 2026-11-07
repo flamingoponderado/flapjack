@@ -54,9 +54,8 @@ premises are therefore relevant:
   structure context are byte-ranged, so a stored record's field-name lookups and
   a context shape comparison agree with their `mlstring` images.
 
-The **expression** half is discharged from the executed compiler path: the
-parser-backed entrypoints (`Pipeline.lean:634-671`) thread `DeclByteRanged` for
-their declarations, a function body carries `ProgByteRanged`
+The **expression** half is discharged from the parser's byte-range evidence:
+parsed declarations are `DeclByteRanged`, a function body carries `ProgByteRanged`
 (`FunDeclByteRanged`), and `expsOf_byteRanged`
 (`Flapjack/Pancake/PanLang/Prog.lean`) proves that every expression occurring
 directly in a `ProgByteRanged` program is `ExpByteRanged` (a loaded shape is
@@ -2734,10 +2733,8 @@ theorem evalPanSemStateExp_byteRanged {σ : Type}
 The all-16 agreement `evalPanValueExp_agree` (`:2494`) and its state wrapper
 `evalPanSemStateExp_agree` (`:2671`) take the encoded expression's identifier
 bytes as an explicit `ExpByteRanged` premise.  That premise is **not** an extra
-assumption beyond the executed compiler path: the parser-backed entrypoints
-(`Pipeline.lean:634-671`, e.g. `compileFlapjackEntryCake`'s
-`some (.isTrue targetByteRanged)` branch) thread `DeclByteRanged` for their
-declarations, and `expsOf_byteRanged`
+assumption beyond what the parser provides: parsed declarations are
+`DeclByteRanged`, and `expsOf_byteRanged`
 (`Flapjack/Pancake/PanLang/Prog.lean`) proves the program-level predicate
 `ProgByteRanged` already implies `ExpByteRanged` for every expression occurring
 directly in the program (`Flapjack.expsOf`).  The wrappers below therefore
@@ -3768,7 +3765,6 @@ theorem panSemTotalEvaluate_store32_agree {σ : Type}
               (BitVec.ofNat 32 w.toNat) <;>
             intro hb <;> first | exact hb.elim | exact ⟨trivial, hrel⟩ | exact ⟨trivial, hb⟩
 
-
 /-- Production/exact agreement for the `ShMemLoad` constructor.  The address is
     evaluated on both sides; a non-word address, a missing or non-word
     destination binding, or a shared-memory domain miss returns `Error` with the
@@ -3959,7 +3955,6 @@ theorem panSemTotalEvaluate_shMemStore_agree {σ : Type}
           exact ⟨trivial, hrel⟩
 
 /-! ## Rangedness preservation and the `PanSemStateRelExec`/rangedness boundary
-
 
 `PanSemStateRelExecRanged` (`:94`) is the byte-range premise of the all-16
 expression agreement.  This section records which production state updates
@@ -4251,9 +4246,6 @@ infrastructure; no `@[hol]` tag is attached. -/
 def BytesByteRanged (bytes : List UInt8) : Prop :=
   ∀ b ∈ bytes, b.toNat < 256
 
-theorem bytesByteRanged (bytes : List UInt8) : BytesByteRanged bytes :=
-  fun b _ => b.toNat_lt
-
 /-- Explicit runtime FFI value-range predicate.  The production FFI returns only
     byte payloads (`List UInt8`, always `< 256`) plus one identifier-carrying
     event name; the host-state component is abstract (`σ`) and carries no
@@ -4262,26 +4254,6 @@ theorem bytesByteRanged (bytes : List UInt8) : BytesByteRanged bytes :=
 def FfiResultByteRanged {σ : Type} : FfiResult σ → Prop
   | .returned _ bytes => BytesByteRanged bytes
   | .final event => FfiNameByteRanged event.name
-
-/-- A returned FFI result is always byte-ranged: its payload is `UInt8`. -/
-theorem ffiResultByteRanged_returned {σ : Type} (state : FfiState σ) (bytes : List UInt8) :
-    FfiResultByteRanged (.returned state bytes) :=
-  bytesByteRanged bytes
-
-/-- A final FFI result is byte-ranged exactly when its event name is. -/
-theorem ffiResultByteRanged_final_iff (σ : Type) (event : FfiFinalEvent) :
-    FfiResultByteRanged (σ := σ) (.final event) ↔ FfiNameByteRanged event.name :=
-  Iff.rfl
-
-/-- The FFI's observable payload is byte-ranged on the successful-return path
-    regardless of the call name; only the `.final` event name carries an
-    identifier whose range is not automatic. -/
-theorem ffiResultByteRanged_of_callFfi_returned {σ : Type} (state : FfiState σ)
-    (name : FfiName) (configuration bytes : List UInt8) (nextFfi : FfiState σ)
-    (nextBytes : List UInt8)
-    (_h : callFfi state name configuration bytes = .returned nextFfi nextBytes) :
-    FfiResultByteRanged (.returned nextFfi nextBytes) :=
-  bytesByteRanged nextBytes
 
 /-- `panEmptyLocals` preserves `PanSemStateRelExecRanged`: only the local map is
     replaced, by the everywhere-`none` map. -/
@@ -4909,42 +4881,6 @@ theorem panSemExceptionShapesRanged_of_ALookupEq [DecidableEq String]
       · simp only [panPropsALookupEq, decide_eq_false_iff_not.mpr hc] at hlookup
         exact ih (fun e he => hranged e (by simp [he])) hlookup
 
-/-- Variant of `panSemExceptionShapesRanged_of_ALookupEq` for an association list whose
-    values are transformed by a `ShapeByteRanged`-preserving `convert` (the
-    `structCompileShape` shape of the `pan_structs` pass). -/
-theorem panSemExceptionShapesRanged_of_ALookupEq_map [DecidableEq String]
-    (state : PanSemState (RiscV.Word 64) (FfiState σ))
-    (entries : List (String × Shape)) (convert : Shape → Shape)
-    (hconvert : ∀ shape, ShapeByteRanged shape → ShapeByteRanged (convert shape))
-    (hranged : ∀ entry ∈ entries, ShapeByteRanged entry.2) :
-    PanSemExceptionShapesRanged
-      { state with exceptionShapes := fun name =>
-          panPropsALookupEq name (entries.map fun p => (p.1, convert p.2)) } := by
-  apply panSemExceptionShapesRanged_of_ALookupEq state
-    (entries.map fun p => (p.1, convert p.2))
-  intro entry hentry
-  rcases List.mem_map.mp hentry with ⟨original, horiginal, rfl⟩
-  exact hconvert original.2 (hranged original horiginal)
-
-/-- `PanSemExceptionShapesRanged` is preserved by the `pan_structs` pass, which maps
-    each stored shape through `structCompileShape context`: the existing
-    `structCompileShape_byteRanged` carries byte-rangedness across the rewrite. -/
-theorem PanSemExceptionShapesRanged.map_structCompileShape
-    {state : PanSemState (RiscV.Word 64) (FfiState σ)}
-    (h : PanSemExceptionShapesRanged state) (context : StructContext)
-    (hc : CtxBR context) :
-    PanSemExceptionShapesRanged
-      { state with exceptionShapes := fun name =>
-          Option.map (structCompileShape context) (state.exceptionShapes name) } := by
-  intro exceptionId shape hlookup
-  cases hstate : state.exceptionShapes exceptionId with
-  | none => simp only [hstate, Option.map_none] at hlookup; exact absurd hlookup (by simp)
-  | some stored =>
-      simp only [hstate, Option.map_some] at hlookup
-      rw [Option.some.injEq] at hlookup
-      rw [← hlookup]
-      exact structCompileShape_byteRanged context stored hc (h exceptionId stored hstate)
-
 /-- The compiled initial exception map (a total `panPropsALookupEq` lookup of
     `exceptionEntries declarations`) satisfies `PanSemExceptionShapesRanged`
     whenever `declarations` is `DeclByteRanged`. -/
@@ -5393,7 +5329,6 @@ theorem panSemTotalEvaluate_code {σ : Type}
         rw [panSemTotalEvaluate]
         exact panSemTotalShMemStoreClause_code state size address value
   exact hmain (state, prog)
-
 
 end CodeFrame
 

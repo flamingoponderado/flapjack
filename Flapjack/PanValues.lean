@@ -670,9 +670,8 @@ theorem panValueIsWf_isWfShape_panValueShape (structs : StructContext)
 
 /-- Flapjack's context-parameterized scalar-shape fact. Its extra
     `StructContext` argument means it is not itself the exact HOL
-    `shape_of_alt` statement; the context-free `panSemShapeOf` port and exact
-    proof counterpart live in `Pancake/Semantics/PanSem.lean` and
-    `Pancake/Proofs/PanToCrep.lean`. -/
+    `shape_of_alt` statement. The matching shape fact on the HOL value and
+    word-label carriers is `shapeOfHOLExact_val` in `PanProps.lean`. -/
 theorem panValueShape_word (structs : StructContext) (value : α) :
     panValueShape structs (.word value) = .one := by
   simp [panValueShape]
@@ -1469,8 +1468,12 @@ NOT a statement-exact port of HOL `panSemScript.sml:209 eval_def`
   `memoryAccess` parameter, and `PanValue` stores the raw word in `.word` rather
   than HOL's `Val (Word w)`.
 
-The faithful HOL-shaped expression evaluator, including the state projection and
-the memory-codec clauses, is tracked by bead `flapjack-pxn.18.3.6.9`. -/
+For RV64, `evalPanSemStateExp` supplies state-derived memory access, and
+`evalPanSemStateExp_agree` in `PanSem/TotalEvalExpBridge.lean` proves agreement
+with the finite-support HOL-shaped evaluator through the value and expression
+codecs. That theorem requires related states, byte-ranged runtime names and a
+byte-ranged expression. It does not apply to this function's `none` default or
+establish those invariants for arbitrary initial states and FFI handlers. -/
 def evalPanValueExp [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
     [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
@@ -2782,140 +2785,15 @@ abbrev PanPrimitiveHandler (α : Type u) :=
   PrimOp → List (PanValue α) → Option (PanValue α)
 
 /-! Bare-metal accelerator calls may update both the local environment and
-    source memory.  This is separate from the stateful CakeML FFI handler in
-    `PanValueFfiSemantics`, whose state transition models byte-array FFI. -/
+    source memory.  This is separate from the stateful CakeML FFI handler
+    `PanValueStatefulFfiHandler` in `PanValueFfiCore`, whose state transition
+    models byte-array FFI. -/
 abbrev PanValueAcceleratorFfiHandler (α : Type u) :=
   FunName → α → α → α → α →
     (VarName → Option (PanValue α)) →
     (α → Option (PanValue α)) →
     Option ((VarName → Option (PanValue α)) ×
       (α → Option (PanValue α)))
-
-/-! Exact executable counterpart of Pancake's `res_var_def`: restore a
-    local binding after a scoped declaration, deleting it when the saved value
-    is `NONE` and updating it otherwise. -/
-def panValueResVar [BEq String]
-    (locals : VarName → Option (PanValue α)) (name : VarName)
-    (oldValue : Option (PanValue α)) : VarName → Option (PanValue α) :=
-  fun current => if current == name then oldValue else locals current
-
-/-- Counterpart of Cake's `flookup_res_var_some_eq_lookup`
-    (`cakeml/pancake/semantics/panPropsScript.sml:220`): looking up the restored
-    name returns the saved value. -/
-theorem panValueResVar_lookup_same [BEq String] [LawfulBEq String]
-    (locals locals' : VarName → Option (PanValue α)) (name : VarName)
-    {value : PanValue α}
-    (h : panValueResVar locals name (locals' name) name = some value) :
-    locals' name = some value := by
-  simpa [panValueResVar] using h
-
-/-- Counterpart of Cake's `flookup_res_var_diff_eq_org`
-    (`cakeml/pancake/semantics/panPropsScript.sml:228`): a different name keeps
-    the original binding. -/
-theorem panValueResVar_lookup_diff [BEq String] [LawfulBEq String]
-    (locals : VarName → Option (PanValue α)) (name other : VarName)
-    (oldValue : Option (PanValue α)) (hne : other ≠ name) :
-    panValueResVar locals name oldValue other = locals other := by
-  simp [panValueResVar, beq_iff_eq, hne]
-
-/-- Counterpart of Cake's `FLOOKUP_pan_res_var_thm`
-    (`cakeml/pancake/semantics/panPropsScript.sml:236`): the restored lookup is
-    the saved value at the restored name and the original binding elsewhere. -/
-theorem panValueResVar_eq_ite [BEq String] [LawfulBEq String]
-    (locals : VarName → Option (PanValue α)) (name : VarName)
-    (oldValue : Option (PanValue α)) (other : VarName) :
-    panValueResVar locals name oldValue other =
-      if other == name then oldValue else locals other := rfl
-
-/-- Flapjack-specific function-map analogue of Cake's `res_var_commutes'`.
-    The exact HOL finite-map theorem is tagged in `Proofs/PanToCrep.lean`. -/
-theorem panValueResVar_comm [BEq String] [LawfulBEq String]
-    (locals : VarName → Option (PanValue α)) (h n : VarName)
-    (v v' : Option (PanValue α)) (hne : n ≠ h) :
-    panValueResVar (panValueResVar locals h v) n v' =
-      panValueResVar (panValueResVar locals n v') h v := by
-  funext name
-  simp only [panValueResVar]
-  by_cases hh : (name == h) = true <;>
-    by_cases hn : (name == n) = true <;>
-    simp_all [beq_iff_eq]
-
-/-- Counterpart of Cake's `res_var_commutes_strong`
-    (`cakeml/pancake/proofs/crep_inlineProofScript.sml:699`): restoring two
-    locals commutes even when the two names coincide, because each side reads
-    the original binding of the other name from `locals'`. -/
-theorem panValueResVar_comm_strong [BEq String] [LawfulBEq String]
-    (locals locals' : VarName → Option (PanValue α)) (h n : VarName) :
-    panValueResVar (panValueResVar locals h (locals' h)) n (locals' n) =
-      panValueResVar (panValueResVar locals n (locals' n)) h (locals' h) := by
-  funext x
-  by_cases hx : (x == n) = true <;> by_cases hh : (x == h) = true <;>
-    simp_all [panValueResVar, beq_iff_eq]
-
-/-- Cake's `FOLDL res_var lc1 (ZIP (vs, MAP (FLOOKUP lc2) vs))`
-    (`cakeml/pancake/proofs/crep_inlineProofScript.sml`), used to restore a list
-    of locals. -/
-def panValueResVarFold [BEq String]
-    (locals locals' : VarName → Option (PanValue α)) (names : List VarName) :
-    VarName → Option (PanValue α) :=
-  (names.zip (names.map locals')).foldl
-    (fun (current : VarName → Option (PanValue α))
-      (entry : VarName × Option (PanValue α)) =>
-      panValueResVar current entry.1 entry.2) locals
-
-theorem panValueResVarFold_cons [BEq String]
-    (locals locals' : VarName → Option (PanValue α)) (name : VarName)
-    (names : List VarName) :
-    panValueResVarFold locals locals' (name :: names) =
-      panValueResVarFold (panValueResVar locals name (locals' name)) locals' names := by
-  simp [panValueResVarFold]
-
-theorem panValueResVarFold_comm [BEq String] [LawfulBEq String]
-    (locals locals' : VarName → Option (PanValue α)) (h : VarName) :
-    ∀ names,
-      panValueResVar (panValueResVarFold locals locals' names) h (locals' h) =
-        panValueResVarFold (panValueResVar locals h (locals' h)) locals' names := by
-  intro names
-  induction names generalizing locals with
-  | nil => simp [panValueResVarFold]
-  | cons name names ih =>
-      simp only [panValueResVarFold, List.zip_cons_cons, List.map_cons,
-        List.foldl_cons] at ih ⊢
-      rw [ih (panValueResVar locals name (locals' name))]
-      rw [← panValueResVar_comm_strong locals locals' h name]
-
-theorem panValueResVarFold_not_mem [BEq String] [LawfulBEq String]
-    (locals locals' : VarName → Option (PanValue α)) (names : List VarName) (x : VarName)
-    (hmem : x ∉ names) :
-    panValueResVarFold locals locals' names x = locals x := by
-  induction names generalizing locals with
-  | nil => simp [panValueResVarFold]
-  | cons name names ih =>
-      rw [panValueResVarFold_cons]
-      simp only [List.mem_cons, not_or] at hmem
-      have hstep : panValueResVar locals name (locals' name) x = locals x := by
-        rw [panValueResVar_eq_ite]
-        simp [beq_iff_eq, hmem.1]
-      rw [ih (panValueResVar locals name (locals' name)) hmem.2, hstep]
-
-theorem panValueResVarFold_mem [BEq String] [LawfulBEq String]
-    (locals locals' : VarName → Option (PanValue α)) (names : List VarName) {x : VarName}
-    (hmem : x ∈ names) :
-    panValueResVarFold locals locals' names x = locals' x := by
-  induction names generalizing locals with
-  | nil => simp at hmem
-  | cons name names ih =>
-      rw [panValueResVarFold_cons]
-      simp only [List.mem_cons] at hmem
-      by_cases hmemRest : x ∈ names
-      · exact ih _ hmemRest
-      · rcases hmem with heq | hmem
-        · rw [panValueResVarFold_not_mem _ locals' names x hmemRest]
-          rw [panValueResVar_eq_ite]
-          rw [ite_eq_left (by rw [beq_iff_eq]; exact heq)]
-          rw [heq]
-        · exact absurd hmem hmemRest
-
 
 def restorePanValueLocal [BEq String]
     (locals : VarName → Option (PanValue α)) (name : VarName)

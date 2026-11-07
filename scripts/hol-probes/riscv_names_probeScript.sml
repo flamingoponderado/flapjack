@@ -8,10 +8,8 @@
           args (10-13)"
     cakeml/compiler/backend/riscv/riscv_configScript.sml: riscv_stack_conf (53)
 
-  The source-facing Flapjack adapter `wordRiscVAbiSourceRegister`
-  (Flapjack/RiscV/PipelineDiagnostics.lean) is supposed to encode exactly this
-  map on the abstract register index of an even Word name.  The probe pins the
-  Cake values so the parity test is oracle-backed rather than transcribed.
+  The probe pins the Cake values so the parity test of
+  `Flapjack.RiscV.riscvRegisterName` is oracle-backed rather than transcribed.
 *)
 load "bossLib";
 load "preamble";

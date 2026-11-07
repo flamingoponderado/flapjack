@@ -1,4 +1,8 @@
-import Flapjack.LoopSemantics
+module
+
+public import Flapjack.LoopSemantics
+
+@[expose] public section
 
 /-!
 # Pancake Loop memory store

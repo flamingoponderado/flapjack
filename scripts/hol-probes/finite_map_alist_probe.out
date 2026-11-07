@@ -1,0 +1,3 @@
+alist_to_fmap_typed=∀(s :(α # β) list). alist_to_fmap s = FOLDR (λ((k :α),(v :β)) (f :α |-> β). f⟨k ↦ v⟩) (FEMPTY :α |-> β) s
+alist_to_fmap_clauses_typed=alist_to_fmap ([] :(α # β) list) = (FEMPTY :α |-> β) ∧ alist_to_fmap (((k :γ),(v :δ))::(t :(γ # δ) list)) = (alist_to_fmap t)⟨k ↦ v⟩
+alookup_typed=(∀(q :β). ALOOKUP ([] :(β # α) list) q = (NONE :α option)) ∧ ∀(y :α) (x :β) (t :(β # α) list) (q :β). ALOOKUP ((x,y)::t) q = if x = q then SOME y else ALOOKUP t q

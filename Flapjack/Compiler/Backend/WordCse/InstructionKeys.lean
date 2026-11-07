@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Encoders.Asm
+module
+
+public import Flapjack.Compiler.Encoders.Asm
+
+@[expose] public section
 
 /-! Literal instruction-key group from word_cseScript. Native instruction
 carriers retain all overflow and FP cases. HOL words use positive-width

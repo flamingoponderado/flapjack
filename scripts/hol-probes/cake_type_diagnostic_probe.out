@@ -1,0 +1,8 @@
+function=«int -> int»
+nested=«(int -> bool) list»
+tuple=«bool * int»
+variable=«_1»
+named=«t»
+qualified=«M.t»
+hidden=«15 list»
+bad_function=«<bad function type>»

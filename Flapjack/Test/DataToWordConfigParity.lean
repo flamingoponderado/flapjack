@@ -1,9 +1,27 @@
 import Flapjack.Compiler.Backend.DataToWord.Config
+import Flapjack.Compiler.Backend.DataToWord.Header
+import Flapjack.Compiler.Backend.DataToWord.Locations
+import Flapjack.Compiler.Backend.DataToWord.WordOp
+import Flapjack.Compiler.Backend.DataToWord.Control
+import Flapjack.Compiler.Backend.DataToWord.Stubs
+import Flapjack.Test.CakeMLFlatOracle
+import Flapjack.Test.ByteCopyWordOracle
+import Flapjack.Test.FromListWordOracle
+import Flapjack.Test.AppendWordOracle
+import Flapjack.Test.InstallXorWordOracle
+import Flapjack.Test.CompareEqualWordOracle
+import Flapjack.Test.LongDivWordOracle
+import Flapjack.Test.AnyArithWordOracle
+import Flapjack.Test.RefByte64WordOracle
+import Flapjack.Test.RefByte32WordOracle
+import Flapjack.Test.FixedStubsWordOracle
+import Flapjack.Test.MtiOpsWordOracle
+import Flapjack.Test.TmcOpsWordOracle
 
 /-!
 # `data_to_word` configuration helpers: original-oracle rows
 
-Kernel replay of the six rows of `scripts/hol-probes/data_to_word_config_probe.out`.
+Kernel replay of `scripts/hol-probes/data_to_word_config_probe.out`.
 -/
 
 namespace Flapjack.Test.DataToWordConfigParity
@@ -14,6 +32,80 @@ private def conf : Config :=
   { tagBits := 1, lenBits := 2, padBits := 3, lenSize := 16, hasDiv := false,
     hasLongdiv := false, hasFpOps := false, hasFpTern := false, be := false,
     callEmptyFfi := false, gcKind := .simple }
+
+-- Three original `real_addr` observations exercise every branch.
+#guard match realAddr (width := 64) { conf with tagBits := 0, lenBits := 0, padBits := 1 } 4 with
+  | .op .add [.lookup .currHeap, .op .sub [.var 4, .const w]] => w.toNat == 1
+  | _ => false
+#guard match realAddr (width := 64) conf 4 with
+  | .op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const w)] => w.toNat == 5
+  | _ => false
+#guard match realAddr (width := 64) { conf with padBits := 0 } 4 with
+  | .op .add [.lookup .currHeap, .shift .lsl (.shift .lsr (.var 4) (.const l)) (.const k)] =>
+    l.toNat == 5 && k.toNat == 3
+  | _ => false
+
+-- Original ShiftVar and GiveUp observations at the RISC-V width.
+#guard match shiftVar (width := 64) .lsl 4 0 with | .var 4 => true | _ => false
+#guard match shiftVar (width := 64) .asr 4 65 with
+  | .shift .asr (.var 4) (.const n) => n.toNat == 63 | _ => false
+#guard match shiftVar (width := 64) .lsl 4 64 with | .const n => n.toNat == 0 | _ => false
+#guard match shiftVar (width := 64) .ror 4 128 with | .var 4 => true | _ => false
+#guard match shiftVar (width := 64) .ror 4 67 with
+  | .shift .ror (.var 4) (.const n) => n.toNat == 3 | _ => false
+#guard match giveUp (width := 64) with
+  | .seq (.assign 1 (.const n)) (.alloc 1 (.ls (), .ln)) => n.toNat == 2 ^ 64 - 1
+  | _ => false
+
+-- Consecutive-store, comparison and optional FFI oracle rows.
+#guard match storeEach (width := 64) 2 [4, 6] 8 with
+  | .seq (.store (.op .add [.var 2, .const a]) 4)
+      (.seq (.store (.op .add [.var 2, .const b]) 6) .skip) => a.toNat == 8 && b.toNat == 16
+  | _ => false
+#guard match memEqList (width := 64) 8 [3, 7] with
+  | .seq (.assign 5 (.load (.op .add [.var 3, .const a])))
+      (.ite .equal 5 (.imm x)
+        (.seq (.assign 5 (.load (.op .add [.var 3, .const b])))
+          (.ite .equal 5 (.imm y) (.assign 1 (.const t)) .skip)) .skip) =>
+    a.toNat == 8 && b.toNat == 16 && x.toNat == 3 && y.toNat == 7 && t.toNat == 18
+  | _ => false
+#guard match silentFfi (width := 64) conf 3 (.ln, .ln) with | .skip => true | _ => false
+#guard match silentFfi (width := 64) { conf with callEmptyFfi := true } 3 (.ln, .ln) with
+  | .seq (.assign 3 (.const z))
+      (.seq (.assign 7 (.op .sub [.lookup .nextFree, .lookup .currHeap]))
+        (.seq (.assign 9 (.lookup .heapLength)) (.ffi name 7 3 9 3 (.ln, .ln)))) =>
+    z.toNat == 0 && name == Flapjack.Basis.Pure.MlString.ofString ""
+  | _ => false
+
+-- The original compiler's catch-all assignment emits Skip at the same label.
+#guard ([ (.intOp .greater, [1, 2]), (.intOp .greaterEq, [1, 2]), (.globOp .allocGlobal, []),
+    (.memOp .concatByteVec, [1]), (.memOp .fromListByte, [1]) ] :
+      List (Flapjack.Compiler.Backend.ClosLang.Op × List Nat)).all fun (op, args) =>
+  match compileControl? (width := 64) conf 4 7 (.assign 3 op args none) with
+  | some (.skip, 7) => true
+  | _ => false
+
+#guard match (do
+    let (p0, n0) ← compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp (.tagEq 30)) [1] none)
+    let (p1, n1) ← compileControl? (width := 64) conf 5 2 (.assign 3 (.intOp .mult) [1, 2] none)
+    let (p2, n2) ← compileControl? (width := 64) conf 5 2 (.assign 3 (.intOp .div) [1, 2] none)
+    let (p3, n3) ← compileControl? (width := 64) { conf with hasDiv := true } 5 2 (.assign 3 (.intOp .div) [1, 2] none)
+    let (p4, n4) ← compileControl? (width := 64) { conf with hasLongdiv := true } 5 2 (.assign 3 (.intOp .div) [1, 2] none)
+    let (p5, n5) ← compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp (.consExtend 1)) [1, 2, 3, 4, 5] none)
+    pure [(0, 0, p0, n0), (1, 0, p1, n1), (2, 0, p2, n2),
+      (3, 0, p3, n3), (4, 0, p4, n4), (5, 0, p5, n5)]) with
+  | some entries => Flapjack.Test.MtiOpsWordOracle.matchesCaptured entries
+  | none => false
+
+#guard match (do
+    let (p0, n0) ← compileControl? (width := 64) conf 5 2 (.assign 3 (.memOp (.mutCons 0 0)) [1, 2] none)
+    let (p1, n1) ← compileControl? (width := 64) conf 5 2 (.assign 3 (.memOp (.mutCons 2 1)) [] none)
+    let (p2, n2) ← compileControl? (width := 64) { conf with gcKind := .generational [8] } 5 2 (.assign 3 (.memOp (.mutCons 0 0)) [1, 2] none)
+    let (p3, n3) ← compileControl? (width := 64) conf 5 2 (.assign 3 (.memOp .finaliseCons) [1] none)
+    let (p4, n4) ← compileControl? (width := 64) conf 5 2 (.assign 3 (.memOp .updateCons) [1, 2, 3] none)
+    pure [(0, 0, p0, n0), (1, 0, p1, n1), (2, 0, p2, n2), (3, 0, p3, n3), (4, 0, p4, n4)]) with
+  | some entries => Flapjack.Test.TmcOpsWordOracle.matchesCaptured entries
+  | none => false
 
 -- shift_length=8
 example : shiftLength conf = 8 := rfl
@@ -27,6 +119,525 @@ example : (getGenSize [10, 20] : BitVec 64) = 80 := by decide
 example : (getGenSize [2305843009213693952] : BitVec 64) = 0xFFFFFFFFFFFFFFF8 := by decide
 -- gen_size_three_32=12w
 example : (getGenSize [3] : BitVec 32) = 12 := by decide
+
+private def headerConfig : Config := { conf with lenSize := 4 }
+#guard match encodeHeader (width := 64) headerConfig 3 5 with
+  | some w => w.toNat == 5764607523034234895
+  | none => false
+#guard (encodeHeader (width := 64) headerConfig 3 16).isNone
+#guard match encodeHeader (width := 32) headerConfig 3 5 with
+  | some w => w.toNat == 1342177295
+  | none => false
+#guard Flapjack.Test.CakeMLFlatOracle.data_to_word_header
+
+#guard [fromListLocation, fromList1Location, refByteLocation, refArrayLocation, replicateLocation, anyArithLocation, addLocation, subLocation, mulLocation, divLocation, modLocation, compare1Location, compareLocation, equal1Location, equalLocation, longDiv1Location, longDivLocation, memCopyLocation, byteCopyLocation, byteCopyAddLocation, byteCopySubLocation, byteCopyNewLocation, installLocation, installCodeLocation, installDataLocation, dummyLocation, appendLocation, appendMainLoopLocation, appendLenLoopLocation, xorLoopLocation, unusedLocation, stringCmpLoopLocation, bignumLocation] == (List.range 33).map (fun n => n + 7)
+#guard Flapjack.Test.CakeMLFlatOracle.data_to_word_locations
+#guard decide ([lookupWordOp .andw, lookupWordOp .orw, lookupWordOp .xor, lookupWordOp .add, lookupWordOp .sub] =
+  [.bitwise .and, .bitwise .or, .bitwise .xor, .carried .add, .carried .sub])
+#guard Flapjack.Test.CakeMLFlatOracle.data_to_word_word_ops
+#guard match compileControl? (width := 64) conf 5 2 (.return [0, 3]) with
+  | some (.return 0 [2, 8], 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.call none (some 9) [0, 3] none) with
+  | some (.call none (some 9) [0, 2, 8] none, 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 0 (.intOp .add) [] none) with
+  | some (.skip, 2) => true
+  | _ => false
+#guard Flapjack.Test.CakeMLFlatOracle.data_to_word_control
+#guard match compileControl? (width := 64) conf 5 2 (.makeSpace 2 .ln) with
+  | some (.seq (.assign 1 (.op .sub [.lookup .triggerGC, .lookup .nextFree]))
+      (.ite .lower 1 (.imm 16)
+        (.seq .skip (.seq (.assign 1 (.const 16)) (.seq (.alloc 1 (.ls (), .ln)) .skip))) .skip), 2) => true
+  | _ => false
+#guard Flapjack.Test.CakeMLFlatOracle.data_to_word_space
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.intOp (.const (-3))) [] none) with
+  | some (.assign 8 (.const w), 2) => w == (-12 : BitVec 64)
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.globOp .globalsPtr) [] none) with
+  | some (.assign 8 (.lookup .globals), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.label 12) [] none) with
+  | some (.locValue 8 12, 2) => true
+  | _ => false
+#guard Flapjack.Test.CakeMLFlatOracle.data_to_word_assign
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.globOp (.global 3)) [] none) with
+  | some (.assign 8 (.load (.op .add [.lookup .globReal, .const 32])), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.globOp (.setGlobal 3)) [1] none) with
+  | some (.seq (.store (.op .add [.lookup .globReal, .const 32]) 4) (.assign 8 (.const 2)), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.globOp (.setGlobal 3)) [] none) with
+  | some (.skip, 2) => true
+  | _ => false
+#guard Flapjack.Test.CakeMLFlatOracle.data_to_word_globals
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp (.elemAt 2)) [1] none) with
+  | some (.assign 8 (.load (.op .add [.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)], .const 24])), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.memOp .el) [1, 2] none) with
+  | some (.assign 8 (.load (.op .add [.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)],
+      .op .add [.const 8, .shift .lsl (.var 6) (.const 1)]])), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp .boolNot) [1] none) with
+  | some (.assign 8 (.op .xor [.var 4, .const 16]), 2) => true
+  | _ => false
+#guard match compileControl? (width := 32) conf 5 2 (.assign 3 (.memOp .el) [1, 2] none) with
+  | some (.assign 8 (.load (.op .add [.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 6)],
+      .op .add [.const 4, .var 6]])), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.globOp .setGlobalsPtr) [1] none) with
+  | some (.seq (.set .globals (.var 4)) (.seq (.set .globReal
+      (.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)])) (.assign 8 (.const 2))), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.globOp .setGlobalsPtr) [] none) with
+  | some (.skip, 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.memOp .update) [1, 2, 3] none) with
+  | some (.seq (.store (.op .add [.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)],
+      .op .add [.const 8, .shift .lsl (.var 6) (.const 1)]]) 8) (.assign 8 (.const 2)), 2) => true
+  | _ => false
+#guard match compileControl? (width := 32) conf 5 2 (.assign 3 (.memOp .updateCons) [1, 2, 3] none) with
+  | some (.seq (.store (.op .add [.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 6)],
+      .op .add [.const 4, .var 6]]) 8) (.assign 8 (.const 2)), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.memOp .update) [1] none) with
+  | some (.skip, 2) => true
+  | _ => false
+#guard Flapjack.Test.CakeMLFlatOracle.data_to_word_loads
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.memOp .ref) [1] none) with
+  | some (.seq (.set .triggerGC (.op .sub [.lookup .triggerGC, .const 16]))
+      (.seq (.assign 1 (.op .sub [.lookup .endOfHeap, .const 16]))
+       (.seq (.set .endOfHeap (.var 1))
+        (.seq (.assign 3 (.const 281474976710667))
+         (.seq (.seq (.store (.op .add [.var 1, .const 0]) 3)
+          (.seq (.store (.op .add [.var 1, .const 8]) 4) .skip))
+          (.assign 8 (.op .or [.shift .lsl (.op .sub [.var 1, .lookup .currHeap]) (.const 5), .const 1])))))), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) { conf with lenSize := 0 } 5 2 (.assign 3 (.memOp .ref) [1] none) with
+  | some (.seq (.assign 1 (.const w)) (.alloc 1 (.ls (), .ln)), 2) => w == (-1 : BitVec 64)
+  | _ => false
+#guard Flapjack.Test.CakeMLFlatOracle.data_to_word_ref
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.intOp .add) [1, 2] none) with
+  | some (.seq (.inst (.arith (.addOverflow 1 4 6 3)))
+      (.seq (.assign 3 (.op .or [.var 3, .var 4, .var 6]))
+       (.seq (.ite .test 3 (.imm 1) .skip
+        (.mustTerminate (.call (some ([1], (.ls (), .ln), .skip, 5, 2)) (some 13) [4, 6] none)))
+        (.move 2 [(8, 1)]))), 3) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.intOp .sub) [1, 2] none) with
+  | some (.seq (.inst (.arith (.subOverflow 1 4 6 3)))
+      (.seq (.assign 3 (.op .or [.var 3, .var 4, .var 6]))
+       (.seq (.ite .test 3 (.imm 1) .skip
+        (.mustTerminate (.call (some ([1], (.ls (), .ln), .skip, 5, 2)) (some 14) [4, 6] none)))
+        (.move 2 [(8, 1)]))), 3) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.intOp .less) [1, 2] none) with
+  | some (.seq (.assign 1 (.var 4)) (.seq (.assign 3 (.var 6))
+      (.seq (.assign 5 (.op .or [.var 1, .var 3]))
+       (.seq (.ite .test 5 (.imm 1) .skip
+        (.seq (.mustTerminate (.call (some ([1], (.ls (), .ln), .skip, 5, 2)) (some 19) [1, 3] none)) (.assign 3 (.const 1))))
+        (.ite .less 1 (.reg 3) (.assign 8 (.const 18)) (.assign 8 (.const 2)))))), 3) => true
+  | _ => false
+#guard Flapjack.Test.CakeMLFlatOracle.data_to_word_int
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp .equal) [1, 2] none) with
+  | some (.seq (.assign 1 (.var 4)) (.seq (.assign 3 (.var 6))
+      (.seq (.assign 5 (.op .and [.var 1, .var 3]))
+       (.seq (.ite .test 5 (.imm 1) .skip (.ite .equal 1 (.reg 3) .skip
+        (.seq (.mustTerminate (.call (some ([1], (.ls (), .ln), .skip, 5, 2)) (some 21) [1, 3] none))
+         (.assign 3 (.const 1)))))
+        (.ite .equal 1 (.reg 3) (.assign 8 (.const 18)) (.assign 8 (.const 2)))))), 3) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp .equal) [1] none) with
+  | some (.skip, 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.memOp .refArray) [1, 2] none) with
+  | some (.seq (.ite .test 4 (.imm 1) .skip (.seq (.assign 1 (.const fail)) (.alloc 1 (.ls (), .ln))))
+      (.seq (.move 0 [(1, 4)])
+       (.seq (.seq (.assign 1 (.shift .lsr (.var 1) (.const 2)))
+        (.seq (.ite .lower 1 (.imm 65536)
+         (.assign 1 (.shift .lsl (.op .add [.var 1, .const 1]) (.const 3))) (.assign 1 (.const tooLarge)))
+         (.seq (.assign 3 (.op .sub [.lookup .triggerGC, .lookup .nextFree]))
+          (.ite .lower 3 (.reg 1) (.seq .skip (.seq (.alloc 1 cut) .skip)) .skip))))
+        (.mustTerminate (.call (some ([8], (.ls (), .ln), .skip, 5, 2)) (some 10) [4, 6] none)))), 3) =>
+      fail == (-1 : BitVec 64) && tooLarge == (-1 : BitVec 64) &&
+        decide (cut = adjustSets (Flapjack.sptListInsert [1, 2] .ln))
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.memOp .refArray) [1] none) with
+  | some (.skip, 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) { conf with callEmptyFfi := true } 5 2
+    (.assign 3 (.memOp .refArray) [1, 2] none) with
+  | some (.seq _ (.seq _ (.seq (.seq _ (.seq _ (.seq _ (.ite .lower 3 (.reg 1)
+      (.seq (.seq (.assign 3 (.const 0)) (.seq (.assign 7 _) (.seq (.assign 9 _) (.ffi _ 7 3 9 3 before))))
+        (.seq (.alloc 1 cut)
+          (.seq (.assign 3 (.const 0)) (.seq (.assign 7 _) (.seq (.assign 9 _) (.ffi _ 7 3 9 3 after)))))) .skip)))) _)), 3) =>
+      decide (cut = adjustSets (Flapjack.sptListInsert [1, 2] .ln)) &&
+      decide (before = (cut.1, Flapjack.sptInsert 1 () cut.2)) && decide (after = cut)
+  | _ => false
+#guard Flapjack.Test.CakeMLFlatOracle.data_to_word_ref_array
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.memOp .length) [1] none) with
+  | some (.assign 8 (.shift .lsl (.shift .lsr (.load (.op .add [.lookup .currHeap,
+      .shift .lsr (.var 4) (.const 5)])) (.const 48)) (.const 2)), 2) => true
+  | _ => false
+#guard match compileControl? (width := 32) conf 5 2 (.assign 3 (.memOp .lengthByte) [1] none) with
+  | some (.assign 8 (.shift .lsl (.op .sub [.shift .lsr (.load (.op .add [.lookup .currHeap,
+      .shift .lsr (.var 4) (.const 6)])) (.const 14), .const 4]) (.const 2)), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp .lengthBlock) [1] none) with
+  | some (.ite .test 4 (.imm 1) (.assign 8 (.const 0)) (.assign 8 (.shift .lsl (.shift .lsr
+      (.load (.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)])) (.const 48)) (.const 2))), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp (.tagLenEq 0 0)) [1] none) with
+  | some (.ite .equal 4 (.imm 2) (.assign 8 (.const 18)) (.assign 8 (.const 2)), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp (.tagLenEq 0 1)) [1] none) with
+  | some (.seq (.assign 1 (.op .and [.var 4, .const 15]))
+      (.ite .equal 1 (.imm 3) (.assign 8 (.const 18)) (.assign 8 (.const 2))), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp (.tagLenEq 1 1)) [1] none) with
+  | some (.seq (.assign 1 (.const 0)) (.seq (.ite .test 4 (.imm 1) .skip
+      (.assign 1 (.load (.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)]))))
+      (.ite .equal 1 (.imm 281474976710675) (.assign 8 (.const 18)) (.assign 8 (.const 2)))), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) { conf with lenSize := 0 } 5 2
+    (.assign 3 (.blockOp (.tagLenEq 1 1)) [1] none) with
+  | some (.assign 8 (.const 2), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp (.tagLenEq 0 1)) [] none) with
+  | some (.skip, 2) => true
+  | _ => false
+#guard Flapjack.Test.CakeMLFlatOracle.data_to_word_lengths
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.memOp .derefByte) [1, 2] none) with
+  | some (.seq (.assign 1 (.op .add [.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)],
+      .op .add [.const 8, .shift .lsr (.var 6) (.const 2)]]))
+      (.seq (.inst (.mem .load8 3 (.addr 1 0))) (.assign 8 (.shift .lsl (.var 3) (.const 2)))), 2) => true
+  | _ => false
+#guard match compileControl? (width := 32) conf 5 2 (.assign 3 (.memOp .updateByte) [1, 2, 3] none) with
+  | some (.seq (.assign 1 (.op .add [.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 6)],
+      .op .add [.const 4, .shift .lsr (.var 6) (.const 2)]]))
+      (.seq (.assign 3 (.shift .lsr (.var 8) (.const 2)))
+        (.seq (.inst (.mem .store8 3 (.addr 1 0))) (.assign 8 (.const 2)))), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.memOp .derefByte) [1] none) with
+  | some (.skip, 2) => true
+  | _ => false
+#guard match compileControl? (width := 32) conf 5 2 (.assign 3 (.memOp .updateByte) [1, 2] none) with
+  | some (.skip, 2) => true
+  | _ => false
+#guard Flapjack.Test.CakeMLFlatOracle.data_to_word_byte_memory
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp (.equalConst (.int (-3)))) [1] none) with
+  | some (.ite .equal 4 (.imm n) (.assign 8 (.const 18)) (.assign 8 (.const 2)), 2) => n == (-12 : BitVec 64)
+  | _ => false
+-- Exact programs captured by cake_word_array_probe for boxed constants.
+#guard match compileControl? (width := 64) conf 5 2
+    (.assign 3 (.blockOp (.equalConst (.int 2305843009213693952))) [1] none) with
+  | some (.ite .test 4 (.imm 1) (.assign 8 (.const 2))
+      (.seq (.assign 1 (.const 2)) (.seq (.assign 3 (.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)]))
+        (.seq (.seq (.assign 5 (.load (.op .add [.var 3, .const 0])))
+          (.ite .equal 5 (.imm 0x100000000000f)
+            (.seq (.assign 5 (.load (.op .add [.var 3, .const 8])))
+              (.ite .equal 5 (.imm 0x2000000000000000) (.assign 1 (.const 18)) .skip)) .skip))
+          (.assign 8 (.var 1))))), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2
+    (.assign 3 (.blockOp (.equalConst (.int (-2305843009213693953)))) [1] none) with
+  | some (.ite .test 4 (.imm 1) (.assign 8 (.const 2))
+      (.seq (.assign 1 (.const 2)) (.seq (.assign 3 (.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)]))
+        (.seq (.seq (.assign 5 (.load (.op .add [.var 3, .const 0])))
+          (.ite .equal 5 (.imm 0x100000000001f)
+            (.seq (.assign 5 (.load (.op .add [.var 3, .const 8])))
+              (.ite .equal 5 (.imm 0x2000000000000001) (.assign 1 (.const 18)) .skip)) .skip))
+          (.assign 8 (.var 1))))), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2
+    (.assign 3 (.blockOp (.equalConst (.w64 123456789))) [1] none) with
+  | some (.seq (.assign 1 (.const 2))
+      (.seq (.assign 3 (.op .add [.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)], .const 8]))
+        (.seq (.seq (.assign 5 (.load (.op .add [.var 3, .const 0])))
+          (.ite .equal 5 (.imm 123456789) (.assign 1 (.const 18)) .skip)) (.assign 8 (.var 1)))), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2
+    (.assign 3 (.blockOp (.equalConst (.str (Flapjack.Basis.Pure.MlString.ofString "abc")))) [1] none) with
+  | some (.seq (.assign 1 (.const 2))
+      (.seq (.assign 3 (.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)]))
+        (.seq (.seq (.assign 5 (.load (.op .add [.var 3, .const 0])))
+          (.ite .equal 5 (.imm 0x1600000000007)
+            (.seq (.assign 5 (.load (.op .add [.var 3, .const 8])))
+              (.ite .equal 5 (.imm 0x636261) (.assign 1 (.const 18)) .skip)) .skip))
+          (.assign 8 (.var 1)))), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2
+    (.assign 3 (.blockOp (.equalConst (.con 4 [1]))) [1] none) with
+  | some (.skip, 2) => true
+  | _ => false
+#guard (compileControl? (width := 8) conf 5 2 (.assign 3 (.blockOp (.equalConst (.int 32))) [1] none)).isNone
+-- Installation checks and call captured from the original data-to-word pass.
+private def matchesInstallFailure {width : Nat} [NeZero width] (p : Flapjack.WordLangProgHOL (BitVec width)) : Bool :=
+  match p with
+  | .seq (.assign 1 (.const n)) (.alloc 1 (.ls (), .ln)) => n == -1
+  | _ => false
+
+private def matchesInstall64 (shift : BitVec 64)
+    (names : Flapjack.NumSet) : Bool :=
+  match compileControl? (width := 64) conf 5 2 (.assign 3 .install [1, 2, 3, 4] (some names)) with
+  | some (.seq (.ite .test 8 (.imm 1) .skip failure1)
+      (.seq (.ite .test 10 (.imm 1) .skip failure2)
+        (.seq (.assign 1 (.lookup .bitmapBuffer))
+          (.seq (.assign 3 (.op .sub [.lookup .bitmapBufferEnd, .var 1]))
+            (.seq (.assign 5 (.shift .lsr (.var 10) (.const 2)))
+              (.seq (.assign 3 (.shift .lsr (.var 3) (.const actualShift)))
+                (.seq (.ite .lower 3 (.reg 5) failure3 .skip)
+                  (.seq (.assign 1 (.lookup .codeBuffer))
+                    (.seq (.assign 3 (.op .sub [.lookup .codeBufferEnd, .var 1]))
+                      (.seq (.assign 5 (.shift .lsr (.var 8) (.const 2)))
+                        (.seq (.ite .lower 3 (.reg 5) failure4 .skip)
+                          (.mustTerminate (.call (some ([8], live, .skip, 5, 2)) (some 30) [4, 6, 1] none)))))))))))), 3) =>
+      actualShift == shift && matchesInstallFailure failure1 && matchesInstallFailure failure2 &&
+        matchesInstallFailure failure3 && matchesInstallFailure failure4 && live == adjustSets names
+  | _ => false
+#guard matchesInstall64 3 (.ls ())
+private def matchesInstall32 (shift : BitVec 32)
+    (names : Flapjack.NumSet) : Bool :=
+  match compileControl? (width := 32) conf 5 2 (.assign 3 .install [1, 2, 3, 4] (some names)) with
+  | some (.seq (.ite .test 8 (.imm 1) .skip failure1)
+      (.seq (.ite .test 10 (.imm 1) .skip failure2)
+        (.seq (.assign 1 (.lookup .bitmapBuffer))
+          (.seq (.assign 3 (.op .sub [.lookup .bitmapBufferEnd, .var 1]))
+            (.seq (.assign 5 (.shift .lsr (.var 10) (.const 2)))
+              (.seq (.assign 3 (.shift .lsr (.var 3) (.const actualShift)))
+                (.seq (.ite .lower 3 (.reg 5) failure3 .skip)
+                  (.seq (.assign 1 (.lookup .codeBuffer))
+                    (.seq (.assign 3 (.op .sub [.lookup .codeBufferEnd, .var 1]))
+                      (.seq (.assign 5 (.shift .lsr (.var 8) (.const 2)))
+                        (.seq (.ite .lower 3 (.reg 5) failure4 .skip)
+                          (.mustTerminate (.call (some ([8], live, .skip, 5, 2)) (some 30) [4, 6, 1] none)))))))))))), 3) =>
+      actualShift == shift && matchesInstallFailure failure1 && matchesInstallFailure failure2 &&
+        matchesInstallFailure failure3 && matchesInstallFailure failure4 && live == adjustSets names
+  | _ => false
+#guard matchesInstall32 2 .ln
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 .install [1, 2, 3] none) with
+  | some (.skip, 2) => true
+  | _ => false
+-- Exact Word64/Word8 conversion programs captured from the original pass.
+#guard match compileControl? (width := 32) conf 5 2 (.assign 3 (.wordOp (.wordFromWord true)) [1] none) with
+  | some (.seq (.assign 1 (.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 6)]))
+      (.seq (.assign 1 (.load (.op .add [.var 1, .const 8])))
+        (.seq (.assign 1 (.op .and [.var 1, .const 255])) (.assign 8 (.shift .lsl (.var 1) (.const 2))))), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.wordOp (.wordFromWord true)) [1] none) with
+  | some (.seq (.assign 1 (.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)]))
+      (.seq (.assign 1 (.load (.op .add [.var 1, .const 8])))
+        (.seq (.assign 1 (.op .and [.var 1, .const 255])) (.assign 8 (.shift .lsl (.var 1) (.const 2))))), 2) => true
+  | _ => false
+#guard match compileControl? (width := 32) conf 5 2 (.assign 3 (.wordOp (.wordFromWord false)) [1] none) with
+  | some (.seq (.assign 5 (.shift .lsr (.var 4) (.const 2)))
+      (.seq (.assign 3 (.const 0)) (.seq (.assign 1 (.lookup .nextFree))
+        (.seq (.store (.op .add [.var 1, .const 4]) 3) (.seq (.store (.op .add [.var 1, .const 8]) 5)
+          (.seq (.assign 3 (.const 0x2000f)) (.seq (.store (.var 1) 3)
+            (.seq (.set .nextFree (.op .add [.var 1, .const 12]))
+              (.assign 8 (.op .or [.shift .lsl (.op .sub [.var 1, .lookup .currHeap]) (.const 6), .const 1]))))))))), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.wordOp (.wordFromWord false)) [1] none) with
+  | some (.seq (.assign 3 (.shift .lsr (.var 4) (.const 2))) (.seq (.assign 1 (.lookup .nextFree))
+      (.seq (.store (.op .add [.var 1, .const 8]) 3) (.seq (.assign 3 (.const 0x100000000000f))
+        (.seq (.store (.var 1) 3) (.seq (.set .nextFree (.op .add [.var 1, .const 16]))
+          (.assign 8 (.op .or [.shift .lsl (.op .sub [.var 1, .lookup .currHeap]) (.const 5), .const 1]))))))), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) { conf with lenSize := 0 } 5 2
+    (.assign 3 (.wordOp (.wordFromWord false)) [1] none) with
+  | some (.seq (.assign 1 (.const n)) (.alloc 1 _), 2) => n == (-1 : BitVec 64)
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.wordOp (.wordFromWord false)) [] none) with
+  | some (.skip, 2) => true
+  | _ => false
+-- Thunk allocation and force programs captured from the pinned HOL pass.
+private def thunkAllocMatches (mode : Flapjack.AstHOL.ThunkMode) (header : BitVec 64) : Bool :=
+  match compileControl? (width := 64) conf 5 2 (.assign 3 (.thunkOp (.allocThunk mode)) [1] none) with
+  | some (.seq (.set .triggerGC (.op .sub [.lookup .triggerGC, .const 16]))
+      (.seq (.assign 1 (.op .sub [.lookup .endOfHeap, .const 16]))
+        (.seq (.set .endOfHeap (.var 1))
+          (.seq (.assign 3 (.const actual))
+            (.seq (.seq (.store (.op .add [.var 1, .const 0]) 3)
+              (.seq (.store (.op .add [.var 1, .const 8]) 4) .skip))
+              (.assign 8 (.op .or [.shift .lsl (.op .sub [.var 1, .lookup .currHeap]) (.const 5), .const 1])))))), 2) => actual == header
+  | _ => false
+#guard thunkAllocMatches .evaluated 0x100000000003b
+#guard thunkAllocMatches .notEvaluated 0x100000000001b
+#guard match compileControl? (width := 64) conf 5 2 (.force none 42 1) with
+  | some (.ite .test 4 (.imm 1) (.return 0 [4])
+      (.seq (.assign 1 (.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)]))
+        (.seq (.assign 3 (.op .and [.load (.var 1), .const 60]))
+          (.ite .equal 3 (.imm 56)
+            (.seq (.assign 1 (.load (.op .add [.var 1, .const 8]))) (.return 0 [1]))
+            (.ite .notEqual 3 (.imm 24) (.return 0 [4])
+              (.seq (.assign 5 (.load (.op .add [.var 1, .const 8])))
+                (.call none (some 42) [0, 4, 5] none)))))), 3) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.force (some (3, .ls ())) 42 1) with
+  | some (.ite .test 4 (.imm 1) (.assign 8 (.var 4))
+      (.seq (.assign 1 (.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)]))
+        (.seq (.assign 3 (.op .and [.load (.var 1), .const 60]))
+          (.ite .equal 3 (.imm 56) (.assign 8 (.load (.op .add [.var 1, .const 8])))
+            (.ite .notEqual 3 (.imm 24) (.assign 8 (.var 4))
+              (.seq (.assign 5 (.load (.op .add [.var 1, .const 8])))
+                (.call (some ([8], live, .skip, 5, 2)) (some 42) [4, 5] none)))))), 3) =>
+      live == adjustSets (Flapjack.sptInsert 0 () .ln)
+  | _ => false
+#guard match compileControl? (width := 64) { conf with lenSize := 0 } 5 2 (.force none 42 1) with
+  | some (.seq (.assign 1 (.const n)) (.alloc 1 _), 2) => n == (-1 : BitVec 64)
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.thunkOp (.allocThunk .evaluated)) [] none) with
+  | some (.skip, 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.memOp (.copyByte true)) [1, 2, 3] none) with
+  | some (.mustTerminate (.call (some ([8], (.ls (), .ln), .skip, 5, 2)) (some 28) [4, 6, 8] none), 3) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.memOp (.copyByte false)) [1, 2, 3, 4, 5] none) with
+  | some (.mustTerminate (.call (some ([8], (.ls (), .ln), .skip, 5, 2)) (some 25) [4, 6, 8, 10, 12] none), 3) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.memOp (.copyByte false)) [1, 2] none) with
+  | some (.skip, 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.thunkOp (.updateThunk .notEvaluated)) [1, 2] none) with
+  | some (.seq (.store (.op .add [.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)], .const 8]) 6)
+      (.assign 8 (.const 2)), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) { conf with lenSize := 0 } 5 2
+    (.assign 3 (.thunkOp (.updateThunk .evaluated)) [1, 2] none) with
+  | some (.seq (.assign 1 (.const w)) (.alloc 1 (.ls (), .ln)), 2) => w == (-1 : BitVec 64)
+  | _ => false
+#guard match compileControl? (width := 8) conf 5 2 (.assign 3 (.blockOp (.cons 1)) [1] none) with
+  | some (.seq (.assign 1 (.const w)) (.alloc 1 (.ls (), .ln)), 2) => w == (-1 : BitVec 8)
+  | _ => false
+#guard Flapjack.Test.CakeMLFlatOracle.data_to_word_runtime_ops
+#guard match compileStub? (width := 64) memCopyLocation with
+  | some (5, .ite .test 2 (.reg 2) (.return 0 [8])
+      (.seq (.assign 1 (.load (.var 4))) (.seq (.assign 2 (.op .sub [.var 2, .const 4]))
+       (.seq (.assign 4 (.op .add [.var 4, .const 8])) (.seq (.store (.var 6) 1)
+        (.seq (.assign 6 (.op .add [.var 6, .const 8])) (.call none (some 24) [0, 2, 4, 6, 8] none))))))) => true
+  | _ => false
+#guard match compileStub? (width := 32) stringCmpLoopLocation with
+  | some (6, .ite .equal 6 (.imm 4) (.return 0 [8, 10])
+      (.seq (.inst (.mem .load8 1 (.addr 2 0))) (.seq (.inst (.mem .load8 3 (.addr 4 0)))
+       (.seq (.ite .notEqual 1 (.reg 3) (.return 0 [1, 3]) .skip)
+        (.seq (.assign 2 (.op .add [.var 2, .const 1])) (.seq (.assign 4 (.op .add [.var 4, .const 1]))
+         (.seq (.assign 6 (.op .sub [.var 6, .const 1])) (.call none (some 38) [0, 2, 4, 6, 8, 10] none)))))))) => true
+  | _ => false
+#guard match compileStub? (width := 64) byteCopyNewLocation with
+  | some (4, .skip) => true
+  | _ => false
+#guard match compileStub? (width := 32) replicateLocation with
+  | some (5, .ite .equal 6 (.imm 0) (.return 0 [8])
+      (.seq (.assign 2 (.op .add [.var 2, .const 4])) (.seq (.store (.var 2) 4)
+       (.seq (.assign 6 (.op .sub [.var 6, .const 4])) (.call none (some 11) [0, 2, 4, 6, 8] none))))) => true
+  | _ => false
+#guard [addLocation, subLocation, mulLocation, divLocation, modLocation].map (fun loc =>
+    match compileStub? (width := 64) loc with
+    | some (3, .seq (.assign 6 (.const op)) (.call none (some 12) [0, 2, 4, 6] none)) => some op.toNat
+    | _ => none) == [some 0, some 4, some 16, some 20, some 24]
+#guard match compileConfiguredStub? (width := 64) conf refArrayLocation with
+  | some (3, .seq (.assign 1 (.shift .lsl (.op .add [.shift .lsr (.var 2) (.const 2), .const 1]) (.const 3)))
+      (.seq (.set .triggerGC (.op .sub [.lookup .triggerGC, .var 1]))
+       (.seq (.assign 1 (.op .sub [.lookup .endOfHeap, .var 1])) (.seq (.set .endOfHeap (.var 1))
+        (.seq (.assign 3 (.op .or [.shift .lsl (.op .sub [.var 1, .lookup .currHeap]) (.const 5), .const 1]))
+         (.seq (.assign 5 (.op .or [.shift .lsl (.var 2) (.const 46), .const 11]))
+          (.seq (.store (.var 1) 5) (.call none (some 11) [0, 1, 4, 2, 3] none)))))))) => true
+  | _ => false
+#guard match compileConfiguredStub? (width := 64) conf fromList1Location with
+  | some (6, .seq (.store (.var 2) 10) (.seq (.assign 2 (.op .add [.var 2, .const 8]))
+      (.ite .equal 6 (.imm 0) (.seq (.set .nextFree (.var 2)) (.return 0 [8]))
+       (.seq (.assign 4 (.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)]))
+        (.seq (.assign 10 (.load (.op .add [.var 4, .const 8])))
+         (.seq (.assign 4 (.load (.op .add [.var 4, .const 16])))
+          (.seq (.assign 6 (.op .sub [.var 6, .const 4])) (.call none (some 8) [0, 2, 4, 6, 8, 10] none)))))))) => true
+  | _ => false
+#guard match compileConfiguredStub? (width := 64) conf byteCopyLocation with
+  | some (6, .seq (.assign 4 (.shift .lsr (.var 4) (.const 2)))
+      (.seq (.assign 6 (.shift .lsr (.var 6) (.const 2))) (.seq (.assign 10 (.shift .lsr (.var 10) (.const 2)))
+       (.seq (.assign 1 (.const 2))
+        (.seq (.assign 2 (.op .add [.op .add [.lookup .currHeap, .shift .lsr (.var 2) (.const 5)], .const 8, .var 4]))
+         (.seq (.assign 8 (.op .add [.op .add [.lookup .currHeap, .shift .lsr (.var 8) (.const 5)], .const 8, .var 10]))
+          (.ite .lower 4 (.reg 10)
+           (.seq (.assign 3 (.op .sub [.var 6, .const 1])) (.seq (.assign 2 (.op .add [.var 2, .var 3]))
+            (.seq (.assign 8 (.op .add [.var 8, .var 3])) (.call none (some 27) [0, 6, 2, 8, 1] none))))
+           (.call none (some 26) [0, 6, 2, 8, 1] none)))))))) => true
+  | _ => false
+#guard (compileStub? (width := 64) refArrayLocation).isNone
+#guard match [byteCopyAddLocation, byteCopySubLocation].mapM (fun loc => do
+    let (arity, body) ← compileStub? (width := 64) loc
+    pure (loc, arity, body, 0)) with
+  | some stubs => Flapjack.Test.ByteCopyWordOracle.matchesCaptured stubs
+  | none => false
+#guard match compileConfiguredStub? (width := 64) conf fromListLocation with
+  | some (arity, body) => Flapjack.Test.FromListWordOracle.matchesCaptured [(fromListLocation, arity, body, 0)]
+  | none => false
+#guard match [appendLocation, appendMainLoopLocation, appendLenLoopLocation].mapM (fun loc => do
+    let (arity, body) ← compileConfiguredStub? (width := 64) conf loc
+    pure (loc, arity, body, 0)) with
+  | some stubs => Flapjack.Test.AppendWordOracle.matchesCaptured stubs
+  | none => false
+#guard match [installLocation, installCodeLocation, installDataLocation, xorLoopLocation].mapM (fun loc => do
+    let (arity, body) ← compileConfiguredStub? (width := 64) conf loc
+    pure (loc, arity, body, 0)) with
+  | some stubs => Flapjack.Test.InstallXorWordOracle.matchesCaptured stubs
+  | none => false
+#guard match [compare1Location, compareLocation, equal1Location, equalLocation].mapM (fun loc => do
+    let (arity, body) ← compileConfiguredStub? (width := 64) conf loc
+    pure (loc, arity, body, 0)) with
+  | some stubs => Flapjack.Test.CompareEqualWordOracle.matchesCaptured stubs
+  | none => false
+#guard match [(conf, longDiv1Location), (conf, longDivLocation),
+    ({ conf with hasLongdiv := true }, longDiv1Location), ({ conf with hasLongdiv := true }, longDivLocation)].mapM
+    (fun (config, loc) => do
+      let (arity, body) ← compileConfiguredStub? (width := 64) config loc
+      pure (loc, arity, body, 0)) with
+  | some stubs => Flapjack.Test.LongDivWordOracle.matchesCaptured stubs
+  | none => false
+#guard match compileConfiguredStub? (width := 64) conf anyArithLocation with
+  | some (arity, body) => Flapjack.Test.AnyArithWordOracle.matchesCaptured [(anyArithLocation, arity, body, 0)]
+  | none => false
+#guard match compileConfiguredStub? (width := 64) conf refByteLocation with
+  | some (arity, body) => Flapjack.Test.RefByte64WordOracle.matchesCaptured [(refByteLocation, arity, body, 0)]
+  | none => false
+#guard match compileConfiguredStub? (width := 32) conf refByteLocation with
+  | some (arity, body) => Flapjack.Test.RefByte32WordOracle.matchesCaptured [(refByteLocation, arity, body, 0)]
+  | none => false
+#guard match fixedStubs? (width := 64) conf with
+  | some stubs => Flapjack.Test.FixedStubsWordOracle.matchesCaptured
+      (stubs.map fun (loc, arity, body) => (loc, arity, body, 0))
+  | none => false
+#guard Flapjack.Test.CakeMLFlatOracle.data_to_word_stubs
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp (.boolTest (.compare .gt))) [1, 2] none) with
+  | some (.ite .equal 4 (.reg 6) (.assign 8 (.const 18)) (.assign 8 (.const 2)), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.wordOp (.wordTest .w64 (.compare .leq))) [1, 2] none) with
+  | some (.ite .notLower 6 (.reg 4) (.assign 8 (.const 18)) (.assign 8 (.const 2)), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.wordOp (.wordTest .w64 (.compare .gt))) [1, 2] none) with
+  | some (.skip, 2) => true
+  | _ => false
+#guard match compileControl? (width := 8) conf 5 2 (.assign 3 (.blockOp (.cons 15)) [] none) with
+  | some (.assign 8 (.const 242), 2) => true
+  | _ => false
+#guard match compileControl? (width := 8) conf 5 2 (.assign 3 (.blockOp (.cons 16)) [] none) with
+  | some (.seq (.assign 1 (.const 255)) (.alloc 1 (.ls (), .ln)), 2) => true
+  | _ => false
+#guard Flapjack.Test.CakeMLFlatOracle.data_to_word_comparisons
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.wordOp (.wordOpw .w8 .xor)) [1, 2] none) with
+  | some (.assign 8 (.op .xor [.var 4, .var 6]), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.wordOp (.wordOpw .w8 .add)) [1, 2] none) with
+  | some (.assign 8 (.shift .lsr (.shift .lsl (.op .add [.var 4, .var 6]) (.const 54)) (.const 54)), 2) => true
+  | _ => false
+#guard Flapjack.Test.CakeMLFlatOracle.data_to_word_byte_ops
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.wordOp (.wordShift .w8 .lsl 10)) [1] none) with
+  | some (.assign 8 (.shift .lsr (.shift .lsl (.var 4) (.const 62)) (.const 54)), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.wordOp (.wordShift .w8 .ror 0)) [1] none) with
+  | some (.assign 8 (.op .or [.shift .lsl (.shift .lsr (.var 4) (.const 2)) (.const 2),
+      .shift .lsr (.shift .lsl (.var 4) (.const 62)) (.const 54)]), 2) => true
+  | _ => false
+#guard Flapjack.Test.CakeMLFlatOracle.data_to_word_byte_shifts
 
 def runChecks : IO Bool := do
   IO.println "PASS data_to_word shift_length/small_shift_length/get_gen_size match six original HOL rows"

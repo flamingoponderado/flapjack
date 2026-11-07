@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Semantics.PanProps
-import Flapjack.Pancake.Semantics.PanSem.DecCallExact
+module
+
+public import Flapjack.Pancake.Semantics.PanProps
+public import Flapjack.Pancake.Semantics.PanSem.DecCallExact
+
+@[expose] public section
 
 /-!
 # `list_rel_length_shape_of_flatten` over the exact value carrier
@@ -8,7 +12,7 @@ Exact ports of HOL `panProps$list_rel_length_shape_of_flatten_better[local]` and
 `list_rel_length_shape_of_flatten` (`cakeml/pancake/semantics/panPropsScript.sml:244-262`).
 HOL `LIST_REL` is the exact `ListRel`, `EVERY is_wf_shape_v_nil` is membership
 over `isWfShapeValueHOLExact []`, and `size_of_shape`/`shape_of`/`flatten` are
-the tagged `sizeOfShapeHOL`/`shapeOfHOLExact`/`flattenHOL` over `ValueHOL`.
+the `sizeOfShapeHOL`/`shapeOfHOLExact`/`flattenHOL` functions over `ValueHOL`.
 HOL's `'a word` is the positive-width word carrier of `ValueHOL width`
 (`words_as_type_indexed_bitvec`).
 -/

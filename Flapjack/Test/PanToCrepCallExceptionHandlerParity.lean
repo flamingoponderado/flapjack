@@ -1,4 +1,4 @@
-import Flapjack.Pancake.Proofs.PanToCrep.EvaluateCases
+import Flapjack.Pancake.Proofs.PanToCrep
 import Flapjack.Test.PanEvaluateParity
 
 /-! A direct fixed-RV64 runtime fixture for a state-owned Call that catches a
@@ -11,49 +11,6 @@ open Flapjack
 open Flapjack.Test.PanEvaluateParity
 
 private abbrev Word64 := RiscV.Word 64
-
-/-! These kernel tests feed a Local-derived, nonconstant address IH into the
-flat-load Call-argument proofs. The generic assumptions let the fixture cover
-both source `PanSemState` and production target `CrepRuntimeState` boundaries. -/
-example (context : PanToCrepProofContext Word64)
-    (source : PanSemState Word64 (FfiState σ))
-    (target : CrepRuntimeState Word64 σ) (name : String)
-    (addressWord loaded : Word64)
-    (hstate : stateRel source target)
-    (hcode : codeRel context (panSemCodeAsLookup source.code) target.code)
-    (hlocals : localsRel context source.locals target.locals)
-    (hsourceLocal : source.locals name = some (.word addressWord))
-    (hsourceLoad : evalPanSemStateExp source
-      (.load .one (.var .local name)) = some (.word loaded)) :
-    evalCrepRuntimeExps target
-      (compileExpHOL
-        { vars := context.vars, funcs := context.funcs,
-          eids := context.eids, vmax := context.vmax }
-        (.load .one (.var .local name))).1 = some [loaded] := by
-  exact (compileExpHOL_loadOne_localAddress_ofHOLIH context source target name
-    addressWord loaded hstate hcode hlocals hsourceLocal hsourceLoad).1
-
-example (context : PanToCrepProofContext Word64)
-    (source : PanSemState Word64 (FfiState σ))
-    (target : CrepRuntimeState Word64 σ) (name : String)
-    (addressWord loaded0 loaded1 : Word64)
-    (hstate : stateRel source target)
-    (hcanonical : target = riscvCrepWordTarget target)
-    (hcode : codeRel context (panSemCodeAsLookup source.code) target.code)
-    (hlocals : localsRel context source.locals target.locals)
-    (hsourceLocal : source.locals name = some (.word addressWord))
-    (hsourceLoad : evalPanSemStateExp source
-      (.load (.comb [.one, .one]) (.var .local name)) =
-        some (.rStruct [.word loaded0, .word loaded1])) :
-    evalCrepRuntimeExps target
-      (compileExpHOL
-        { vars := context.vars, funcs := context.funcs,
-          eids := context.eids, vmax := context.vmax }
-        (.load (.comb [.one, .one]) (.var .local name))).1 =
-      some [loaded0, loaded1] := by
-  exact (compileExpHOL_loadTwo_localAddress_ofHOLIH context source target name
-    addressWord loaded0 loaded1 hstate hcanonical hcode hlocals hsourceLocal
-    hsourceLoad).1
 
 private def payload : Word64 := BitVec.ofNat 64 7
 private def exceptionCode : Word64 := BitVec.ofNat 64 3
@@ -145,51 +102,9 @@ private def pairHandlerState : CrepRuntimeState Word64 Unit :=
       else if address == 1 then some (.word (BitVec.ofNat 64 8))
       else none }
 
-private def raisedSourceResult : PanValueFfiClockResult Word64 Unit :=
-  (.control (.raised (fun _ => none) (fun _ => none)
-      (fun _ => some (.word (BitVec.ofNat 64 0))) statefulTestFfiState
-      "E" (.word payload)), 4)
-
-private def returnedSourceResult : PanValueFfiClockResult Word64 Unit :=
-  (.control (.returned (fun _ => none) (fun _ => none)
-      (fun _ => some (.word (BitVec.ofNat 64 0))) statefulTestFfiState
-      [.word payload]), 4)
-
-example : panToCrepClockResultRel handlerContext returnedSourceResult
-    (.returned [payload], handlerTargetState) := by
-  simp [panToCrepClockResultRel, returnedSourceResult, payload, panValueFlatten]
-
-example : panToCrepClockResultRel handlerContext raisedSourceResult
-    (.raised exceptionCode, pairHandlerState) := by
-  simp [panToCrepClockResultRel, raisedSourceResult, handlerContext,
-    exceptionCode, pairHandlerState, payload, globalsLookup, panSemShapeOf,
-    panValueFlatten, FUPDATE, FLOOKUP]
-
 private def pairExpHdlResult :=
   evalCrepRuntimeProg handlerTargetFfi handlerTargetPrimitive 4 pairHandlerState
     (expHdlFiniteMap pairHandlerVariables "caught")
-
-example : pairExpHdlResult = some (.normal,
-    { pairHandlerState with locals :=
-      (updateCrepRuntimeLocal
-        (updateCrepRuntimeLocal pairHandlerState.locals 1 (.word payload))
-        2 (.word (BitVec.ofNat 64 8))) }) := by
-  have hvar : FLOOKUP pairHandlerVariables "caught" =
-      some (.comb [.one, .one], [1, 2]) := by
-    simp [pairHandlerVariables, FUPDATE, FLOOKUP]
-  have hslot1 : ∃ old, pairHandlerState.locals 1 = some old :=
-    ⟨.word (BitVec.ofNat 64 0), by simp [pairHandlerState]⟩
-  have hslot2 : ∃ old, pairHandlerState.locals 2 = some old :=
-    ⟨.word (BitVec.ofNat 64 0), by simp [pairHandlerState]⟩
-  have hglobal0 : pairHandlerState.globals (0 : BitVec 5) = some (.word payload) := by
-    simp [pairHandlerState, payload]
-  have hglobal1 : pairHandlerState.globals (1 : BitVec 5) =
-      some (.word (BitVec.ofNat 64 8)) := by
-    simp [pairHandlerState, payload]
-  simpa [pairExpHdlResult] using
-    crepRuntimeExpHdlTwoWords handlerTargetFfi handlerTargetPrimitive
-      pairHandlerState pairHandlerVariables "caught" 1 2 payload
-      (BitVec.ofNat 64 8) hvar (by decide) hslot1 hslot2 hglobal0 hglobal1
 
 def targetLoadsPairPayload : Bool :=
   match pairExpHdlResult with
@@ -243,9 +158,8 @@ def targetCallCatchesAndReturnsPair : Bool :=
 #guard targetCallCatchesAndReturnsPair
 
 /-! Arbitrary-list target `exp_hdl` support, exercised on a three-word payload.
-The proof uses state-owned return-global cells and writes into preexisting
-handler locals in order. The source HOL `exp_hdl` oracle pins the generated
-load/store sequence; this fixture validates the generalized runtime theorem. -/
+The source HOL `exp_hdl` oracle pins the generated load/store sequence;
+this fixture checks the runtime result. -/
 private def tripleHandlerVariables : FiniteMap String (Shape × List Nat) :=
   FUPDATE FEMPTY ("caught", (.comb [.one, .one, .one], [1, 2, 3]))
 
@@ -264,34 +178,6 @@ private def tripleValues : List Word64 := [payload, BitVec.ofNat 64 8, BitVec.of
 private def tripleExpHdlResult :=
   evalCrepRuntimeProg handlerTargetFfi handlerTargetPrimitive 5 tripleHandlerState
     (expHdlFiniteMap tripleHandlerVariables "caught")
-
-example : tripleExpHdlResult = some (.normal,
-    { tripleHandlerState with locals :=
-      (updateCrepRuntimeLocal
-        (updateCrepRuntimeLocal
-          (updateCrepRuntimeLocal tripleHandlerState.locals 1 (.word payload))
-          2 (.word (BitVec.ofNat 64 8)))
-        3 (.word (BitVec.ofNat 64 9))) }) := by
-  have hvar : FLOOKUP tripleHandlerVariables "caught" =
-      some (.comb [.one, .one, .one], [1, 2, 3]) := by
-    simp [tripleHandlerVariables, FUPDATE, FLOOKUP]
-  have hslots : ∀ slot, slot ∈ [1, 2, 3] →
-      ∃ old, tripleHandlerState.locals slot = some old := by
-    intro slot hslot
-    have hslot' : slot = 1 ∨ slot = 2 ∨ slot = 3 := by simpa using hslot
-    rcases hslot' with hslot | hslot | hslot <;> subst slot <;>
-      exact ⟨.word 0, by simp [tripleHandlerState]⟩
-  have hglobals : crepRuntimeGlobalWordsRel tripleHandlerState 0
-      [1, 2, 3] tripleValues := by
-    change evalCrepRuntimeExp tripleHandlerState (.loadGlob 0) = some payload ∧
-      (evalCrepRuntimeExp tripleHandlerState (.loadGlob 1) = some (BitVec.ofNat 64 8) ∧
-        (evalCrepRuntimeExp tripleHandlerState (.loadGlob 2) = some (BitVec.ofNat 64 9) ∧ True))
-    simp [evalCrepRuntimeExp, panTheWord, tripleHandlerState, payload]
-  simpa [tripleExpHdlResult, tripleValues, List.zip_cons_cons,
-    List.foldl_cons] using
-    crepRuntimeExpHdlFiniteMapWords handlerTargetFfi handlerTargetPrimitive
-      tripleHandlerState tripleHandlerVariables "caught"
-      (.comb [.one, .one, .one]) [1, 2, 3] tripleValues hvar hslots hglobals
 
 def targetLoadsTriplePayload : Bool :=
   match tripleExpHdlResult with

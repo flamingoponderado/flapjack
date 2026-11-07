@@ -1,5 +1,9 @@
-import Flapjack.Pancake.PanLang.Shape
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
+module
+
+public import Flapjack.Pancake.PanLang.Shape
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+
+@[expose] public section
 
 /-!
 The exact finite-map port of `pan_to_crep$make_vmap`.

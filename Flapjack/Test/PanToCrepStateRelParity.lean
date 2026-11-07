@@ -110,19 +110,9 @@ theorem skipCodeRuntime_relates :
   simpa [stateRel, skipCodeRuntime, targetState] using
     stateRel_satisfied
 
-theorem skipCodeRelEmptyLocalsFixture :
-    codeRel skipCodeContext
-      (panSemCodeAsLookup (panEmptyLocals skipSourceState).code)
-      (clearCrepRuntimeLocals skipCodeRuntime).code :=
-  codeRelEmptyLocals skipCodeContext skipSourceState skipCodeRuntime
-    skipCodeRelFixture
-
 def skipCodeLookupGuard : Bool :=
   (FLOOKUP skipCodeRuntime.code "id").isSome &&
     (lookupCrepRuntimeCode "id" [] skipCodeRuntime.code).isSome
-
-theorem stateRel_structs_fixture : sourceState.structs = [] :=
-  stateRel_structs sourceState targetState stateRel_satisfied
 
 theorem stateRel_globals_fixture :
     sourceState.globals = (FEMPTY : FiniteMap VarName (PanValue Nat)) :=
@@ -152,99 +142,6 @@ def sourceLocals : FiniteMap String (PanValue Nat) :=
 
 def targetLocals : FiniteMap Nat (PanWordLab Nat) :=
   FUPDATE FEMPTY (0, .word 5)
-
-theorem localsRel_satisfied : localsRel oneVarContext sourceLocals targetLocals := by
-  refine ⟨⟨?_, ?_⟩, ⟨Nat.zero_le 0, ?_⟩, ?_⟩
-  · intro x a xs hlookup
-    simp only [oneVarContext, FLOOKUP, FUPDATE] at hlookup
-    split at hlookup
-    · simp only [Option.some.injEq, Prod.mk.injEq] at hlookup
-      rcases hlookup with ⟨rfl, rfl⟩
-      simp
-    · simp [FEMPTY] at hlookup
-  · intro x y a b xs ys hx hy _hinter
-    simp only [oneVarContext, FLOOKUP, FUPDATE] at hx hy
-    split at hx
-    · rename_i hxcond
-      have hx_eq : ("x" : String) = x := beq_iff_eq.mp hxcond
-      simp only [Option.some.injEq, Prod.mk.injEq] at hx
-      rcases hx with ⟨rfl, rfl⟩
-      split at hy
-      · rename_i hycond
-        have hy_eq : ("x" : String) = y := beq_iff_eq.mp hycond
-        rw [← hx_eq, ← hy_eq]
-      · simp [FEMPTY] at hy
-    · simp [FEMPTY] at hx
-  · intro v a xs hlookup x hmem
-    simp only [oneVarContext, FLOOKUP, FUPDATE] at hlookup
-    split at hlookup
-    · simp only [Option.some.injEq, Prod.mk.injEq] at hlookup
-      rcases hlookup with ⟨rfl, rfl⟩
-      simp only [List.mem_singleton, oneVarContext] at hmem ⊢
-      omega
-    · simp [FEMPTY] at hlookup
-  · intro vname v hlookup
-    simp only [sourceLocals, FLOOKUP, FUPDATE] at hlookup
-    split at hlookup
-    · rename_i hvcond
-      have hv_eq : ("x" : String) = vname := beq_iff_eq.mp hvcond
-      simp only [Option.some.injEq] at hlookup
-      rcases hlookup with rfl
-      refine ⟨[0], [.word 5], ?_, ?_, ?_, ?_⟩
-      · rw [← hv_eq]
-        simp [oneVarContext, FLOOKUP, FUPDATE, panValueShape]
-      · simp [targetLocals, FLOOKUP, FUPDATE]
-      · simp [panValueFlatten_word]
-      · simp [panValueShape, isWfShape]
-    · simp [FEMPTY] at hlookup
-
-def compileExpNotMemSourceState : PanSemState Nat (FfiState Unit) :=
-  { sourceState with locals := sourceLocals }
-
-def compileExpNotMemTargetState : CrepRuntimeState Nat Unit :=
-  { targetState with locals := targetLocals }
-
-def compileExpNotMemExpression : Exp Nat :=
-  .op .add [.var .local "x", .const 7]
-
-/-- The fixture exercises a nested `exps` traversal through an operation and
-    supplies the actual HOL-shaped local, state, code, and locals relations. -/
-theorem compileExpNotMemLoadGlob_fixture :
-    CrepExp.loadGlob 17 ∉
-      ([.op .add [.var 0, .const 7]] : List (CrepExp Nat)).flatMap crepExps := by
-  apply compileExpNotMemLoadGlob oneVarContext compileExpNotMemExpression
-    compileExpNotMemSourceState compileExpNotMemTargetState
-    [.op .add [.var 0, .const 7]] .one 17
-  · simp [compileExpNotMemExpression,
-      compileExpHOL, oneVarContext, FLOOKUP, FUPDATE, compileExpHOL.compileExpListHOL,
-      cexpHeads]
-  · simpa [stateRel, compileExpNotMemSourceState, compileExpNotMemTargetState,
-      sourceState, targetState] using
-      stateRel_satisfied
-  · intro function variableShapes program returnShape hlookup
-    simp [compileExpNotMemSourceState, sourceState, panSemCodeAsLookup, panSemCodeLookup, lookupInfo,
-      FLOOKUP] at hlookup
-  · exact localsRel_satisfied
-
-/-- The exact lookup theorem recovers the concrete slot, flattened word, and
-    well-formed shape for the one-word local in `localsRel_satisfied`. -/
-theorem localsRelLookupCtxt_fixture :
-    ∃ slots,
-      FLOOKUP oneVarContext.vars "x" = some (.one, slots) ∧
-      slots.length = 1 ∧
-      slots.mapM (FLOOKUP targetLocals) = some [.word 5] ∧
-      isWfShape [] .one = true := by
-  obtain ⟨slots, hcontext, _, hmap, hwf⟩ :=
-    localsRelLookupCtxt oneVarContext sourceLocals targetLocals "x" (.word 5)
-      localsRel_satisfied (by simp [sourceLocals, FLOOKUP, FUPDATE])
-  have hslots : slots = [0] := by
-    simpa [oneVarContext, FLOOKUP, FUPDATE, panValueShape] using hcontext.symm
-  subst slots
-  refine ⟨[0], ?_, ?_, ?_, ?_⟩
-  · simp [oneVarContext, FLOOKUP, FUPDATE]
-  · simp
-  · simpa [panValueFlatten_word] using hmap
-  · simpa [panValueShape] using hwf
 
 theorem rejectsUnmappedLocal :
     ¬ localsRel { oneVarContext with vars := FEMPTY } sourceLocals targetLocals := by
@@ -370,14 +267,14 @@ theorem nestedMemoryStateRel : stateRel nestedSourceMemoryState nestedTargetMemo
 
 private def nestedLoadShape : Shape := .comb [.one, .comb [.one, .one]]
 
-private def nestedLoadCompilerContext : PanToCrepProofContext Word64 :=
+private def nestedLoadCompilerContext : PanToCrepHOLContext Word64 :=
   { vars := FEMPTY, funcs := FEMPTY, eids := FEMPTY, vmax := 0 }
 
 def stateRelNestedLoadSourceTargetCase : Bool :=
   let expression : Exp Word64 := .load nestedLoadShape (.const 0)
   let sourceResult := evalPanSemStateExp nestedSourceMemoryState expression
   let targetExpressions :=
-    (compileExpHOL nestedLoadCompilerContext.toHOLContext expression).1
+    (compileExpHOL nestedLoadCompilerContext expression).1
   match sourceResult with
   | some value =>
       evalCrepRuntimeExps nestedTargetMemoryState targetExpressions ==

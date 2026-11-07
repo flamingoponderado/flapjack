@@ -144,21 +144,6 @@ def compileExpHOLW {width : Nat} [NeZero width]
     Exp (BitVec width) → List (CrepExp (BitVec width)) × Shape :=
   compileExpHOL context
 
-/-- Kernel-checked definitional-equality bridge for `flapjack-pxn.18.3.1.3.2`:
-    at the RISC-V word carrier, the generic expression compiler `compileExpHOL`
-    is definitionally equal to the width-indexed `compileExpHOLW` specialization.
-    Neither String-context definition is tagged as HOL `compile_exp_def`.
-    This is a BRIDGE ONLY, not textual routing: the shipped
-    `compileProgRiscV`/`compileProgHOL` path still calls the generic
-    `compileExpHOL`, so the executed compiler does not textually call that
-    specialization and the AGENTS.md production-path rule is NOT met here. A
-    textual width specialization of the enclosing `compileProg` chain would
-    duplicate the large `compileProgHOL` equation/codeRel proof surface and is
-    tracked by `flapjack-pxn.18.3.5.3.1.2`. -/
-theorem compileExpHOLW_eq_compileExpHOL {width : Nat} [NeZero width]
-    (context : PanToCrepHOLContext (BitVec width)) (expression : Exp (BitVec width)) :
-    compileExpHOLW context expression = compileExpHOL context expression := rfl
-
 def compileArgsHOL [BEq α] [OfNat α 0] [Add α] [CrepBytesInWord α]
     (context : PanToCrepHOLContext α) (expressions : List (Exp α)) : List (CrepExp α) :=
   match expressions with
@@ -181,12 +166,6 @@ def functionReturnNamesHOL (context : PanToCrepHOLContext α) (function : FunNam
 def callDestinationNamesHOL (context : PanToCrepHOLContext α) (_kind : VarKind)
     (name : VarName) : Option (List Nat) :=
   (wrapRt (FLOOKUP context.vars name)).map Prod.snd
-
-def firstCompiledExpHOL [BEq α] [OfNat α 0] [Add α] [CrepBytesInWord α]
-    (context : PanToCrepHOLContext α) (expression : Exp α) : Option (CrepExp α) :=
-  match compileExpHOL context expression with
-  | (compiled :: _, .one) => some compiled
-  | _ => none
 
 def firstCompiledExpAnyShapeHOL [BEq α] [OfNat α 0] [Add α] [CrepBytesInWord α]
     (context : PanToCrepHOLContext α) (expression : Exp α) : Option (CrepExp α) :=
@@ -232,35 +211,6 @@ theorem not_mem_freshNamesHOL (context : PanToCrepHOLContext α) (count start : 
   have := freshNamesHOL_gt context count start hstart hmem
   omega
 
-/-- HOL-context counterpart of `mem_crepExpVars_le_maxCrepExpVar`: every
-    variable of a compiled expression list is bounded by `maxCrepExpVarHOL`,
-    the `foldl max 0` used for Cake's `ExtCall`/`ShMemStore` temporaries. -/
-theorem mem_crepExpVars_le_maxCrepExpVarHOL
-    (expressions : List (CrepExp α)) {name : Nat}
-    (hmem : name ∈ expressions.flatMap crepExpVars) :
-    name ≤ maxCrepExpVarHOL expressions := by
-  have hacc : ∀ (xs : List Nat) (acc : Nat), acc ≤ xs.foldl max acc := by
-    intro xs
-    induction xs with
-    | nil => intro acc; exact Nat.le_refl acc
-    | cons x xs ih =>
-        intro acc
-        simp only [List.foldl_cons]
-        exact Nat.le_trans (Nat.le_max_left _ _) (ih (max acc x))
-  have hbound : ∀ (xs : List Nat) (acc : Nat), name ∈ xs →
-      name ≤ xs.foldl max acc := by
-    intro xs
-    induction xs with
-    | nil => simp
-    | cons x xs ih =>
-        intro acc h
-        simp only [List.mem_cons] at h
-        simp only [List.foldl_cons]
-        rcases h with rfl | h
-        · exact Nat.le_trans (Nat.le_max_right _ _) (hacc xs (max acc name))
-        · exact ih (max acc x) h
-  exact hbound (expressions.flatMap crepExpVars) 0 hmem
-
 theorem allocatedNamesHOL_length (context : PanToCrepHOLContext α) (shape : Shape) :
     (allocatedNamesHOL context shape).length = Shape.shapeSize shape := by
   simp [allocatedNamesHOL]
@@ -268,14 +218,6 @@ theorem allocatedNamesHOL_length (context : PanToCrepHOLContext α) (shape : Sha
 theorem freshNamesHOL_length (context : PanToCrepHOLContext α) (count start : Nat) :
     (freshNamesHOL context count start).length = count := by
   simp [freshNamesHOL]
-
-theorem not_mem_functionReturnNamesHOL (context : PanToCrepHOLContext α)
-    (function : FunName) {x : Nat} (hx : x ≤ context.vmax) :
-    x ∉ functionReturnNamesHOL context function := by
-  unfold functionReturnNamesHOL
-  split
-  · exact not_mem_allocatedNamesHOL context _ hx
-  · simp
 
 /-- A call-destination slot list is exactly the slot list recorded for the
     destination variable in the finite-map context (the `wrap_rt` normalization
@@ -352,15 +294,12 @@ def storeMemOpHOL : OpSize → WordMemOp
   | .op32 => .store32
   | .op16 => .store16
 
-/-! Generic finite-map implementation used to share the compile equations
-    with non-word fixtures. This helper takes the target word's byte stride as
-    an instance parameter, so the HOL reference belongs to the RISC-V
-    specialization below rather than this generic adapter.  Its expression
-    compilation runs the generic `compileExpHOL`; the kernel-checked bridge
-    `compileExpHOLW_eq_compileExpHOL` shows this is definitionally equal to the
-    width-indexed `compileExpHOLW` at the RISC-V carrier, but the path is
-    NOT textually routed to that specialization (see
-    `flapjack-pxn.18.3.5.3.1.2`). -/
+/-!
+Generic finite-map implementation used to share the compile equations with
+non-word fixtures. This helper takes the target word's byte stride as an
+instance parameter, so the HOL reference belongs to the RISC-V
+specialization below rather than this generic adapter.
+-/
 def compileProgHOL [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
     [CrepBytesInWord α] (context : PanToCrepHOLContext α)
     (program : Prog α) : CrepProg α :=
@@ -515,44 +454,6 @@ def compileProgHOL [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
   | .annot _ _ => .skip
 termination_by structural program
 
-/-! ### Structural support fragment for `compile_def`
-
-The source-reviewed exact recursive compiler is in `CompileExact.lean` under
-`flapjack-pxn.18.3.5.8.13`. This separate inductive fragment retains the
-independent HOL equations for `Skip`, `Seq`, `Break`, `Continue`, `Tick`, and `Annot`
-(`pan_to_crepScript.sml:139, 207-220, 306-307`). Its support predicate makes
-the covered sublanguage explicit; unsupported constructors have no output in
-this helper, rather than inheriting an invented `Skip` fallback. This is
-Flapjack-only proof infrastructure, not the full HOL `compile` definition, so
-it is deliberately untagged. -/
-
-inductive CompileProgStructuralFragmentHOL {width : Nat} [NeZero width] :
-    Flapjack.Pancake.PanLang.ProgHOL width → Type where
-  | skip : CompileProgStructuralFragmentHOL .skip
-  | seq {first second : Flapjack.Pancake.PanLang.ProgHOL width}
-      (firstSupported : CompileProgStructuralFragmentHOL first)
-      (secondSupported : CompileProgStructuralFragmentHOL second) :
-      CompileProgStructuralFragmentHOL (.seq first second)
-  | break : CompileProgStructuralFragmentHOL .break
-  | continue : CompileProgStructuralFragmentHOL .continue
-  | tick : CompileProgStructuralFragmentHOL .tick
-  | annot (tag text : Flapjack.Pancake.PanLang.MlS) :
-      CompileProgStructuralFragmentHOL (.annot tag text)
-
-def compileProgStructuralFragmentHOL {width : Nat} [NeZero width]
-    {program : Flapjack.Pancake.PanLang.ProgHOL width}
-    (supported : CompileProgStructuralFragmentHOL program) :
-    Flapjack.CrepProgHOL width :=
-  match supported with
-  | .skip => .skip
-  | .seq firstSupported secondSupported =>
-      .seq (compileProgStructuralFragmentHOL firstSupported)
-        (compileProgStructuralFragmentHOL secondSupported)
-  | .break => .break 0
-  | .continue => .continue 0
-  | .tick => .tick
-  | .annot _ _ => .skip
-
 /-! FLAPJACK-SPECIFIC (not an exact HOL port). Source-reviewed decision
     (`flapjack-dlc.18`): the `@[hol]` tag stays withdrawn as a documented
     carrier mismatch. HOL `compile_def`
@@ -597,42 +498,11 @@ theorem freshNames_gt (context : CompileContext α) (count start : Nat) (hstart 
   obtain ⟨offset, _hoffset, rfl⟩ := List.mem_map.mp hmem
   omega
 
-theorem not_mem_allocatedNames (context : CompileContext α) (shape : Shape) {x : Nat}
-    (hx : x ≤ context.maxVar) : x ∉ allocatedNames context shape := by
-  intro hmem
-  have := allocatedNames_gt context shape hmem
-  omega
-
-theorem not_mem_freshNames (context : CompileContext α) (count start : Nat)
-    (hstart : 0 < start) {x : Nat} (hx : x ≤ context.maxVar) :
-    x ∉ freshNames context count start := by
-  intro hmem
-  have := freshNames_gt context count start hstart hmem
-  omega
-
 /-- `x` occurs in no slot list stored in the variable context.  This is the
     second hypothesis of Cake's `not_mem_context_assigned_mem_gt`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:1252`). -/
 def panValueSlotBound [BEq String] (x : Nat) (vars : InfoMap (Shape × List Nat)) : Prop :=
   ∀ name shape slots, lookupInfo name vars = some (shape, slots) → x ∉ slots
-
-/-- Extending the variable context with an entry whose slots avoid `x` preserves
-    the `panValueSlotBound` invariant. -/
-theorem panValueSlotBound_cons_of [BEq String] (x : Nat) (name : String)
-    (shape : Shape) (slots : List Nat) (vars : InfoMap (Shape × List Nat))
-    (h : panValueSlotBound x vars) (hslots : x ∉ slots) :
-    panValueSlotBound x ((name, (shape, slots)) :: vars) := by
-  intro name' shape' slots' hlookup
-  cases hb : (name == name') with
-  | false =>
-      simp only [lookupInfo, hb] at hlookup
-      exact h name' shape' slots' hlookup
-  | true =>
-      simp only [lookupInfo, hb] at hlookup
-      have hpair : (shape, slots) = (shape', slots') := by simpa using hlookup
-      have hslotsEq : slots = slots' := congrArg Prod.snd hpair
-      rw [← hslotsEq]
-      exact hslots
 
 /-! Cake's ExtCall lowering chooses its temporary base from the largest
     variable occurring in all four compiled expressions, rather than from the
@@ -642,39 +512,6 @@ theorem panValueSlotBound_cons_of [BEq String] (x : Nat) (name : String)
     register allocation. -/
 def maxCrepExpVar (expressions : List (CrepExp α)) : Nat :=
   (expressions.flatMap crepExpVars).foldl max 0
-
-/-! Every variable occurring in the compiled expression list is bounded by
-    the `FOLDR MAX 0 (FLAT (MAP var_cexp ...))` value used by Cake's
-    `compile` for `ExtCall` and `ShMemStore` temporaries
-    (`pan_to_crepScript.sml:291-305`).  This is the freshness bridge needed
-    by the assigned-memory proof: adding a positive offset produces a slot
-    strictly above every expression variable. -/
-theorem mem_crepExpVars_le_maxCrepExpVar
-    (expressions : List (CrepExp α)) {name : Nat}
-    (hmem : name ∈ expressions.flatMap crepExpVars) :
-    name ≤ maxCrepExpVar expressions := by
-  have hacc : ∀ (xs : List Nat) (acc : Nat),
-      acc ≤ xs.foldl max acc := by
-    intro xs
-    induction xs with
-    | nil => intro acc; exact Nat.le_refl acc
-    | cons x xs ih =>
-        intro acc
-        simp only [List.foldl_cons]
-        exact Nat.le_trans (Nat.le_max_left _ _) (ih (max acc x))
-  have hbound : ∀ (xs : List Nat) (acc : Nat), name ∈ xs →
-      name ≤ xs.foldl max acc := by
-    intro xs
-    induction xs with
-    | nil => simp
-    | cons x xs ih =>
-        intro acc h
-        simp only [List.mem_cons] at h
-        simp only [List.foldl_cons]
-        rcases h with rfl | h
-        · exact Nat.le_trans (Nat.le_max_right _ _) (hacc xs (max acc name))
-        · exact ih (max acc x) h
-  exact hbound (expressions.flatMap crepExpVars) 0 hmem
 
 def functionReturnNames (context : CompileContext α) (function : FunName) : List Nat :=
   match lookupInfo function context.functions with
@@ -702,14 +539,6 @@ def firstCompiledExpAnyShape [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
   match compileExp context expression with
   | (compiled :: _, _) => some compiled
   | _ => none
-
-theorem firstCompiledExpAnyShape_of_firstCompiledExp [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
-    {context : CompileContext α} {expression : Exp α} {compiled : CrepExp α}
-    (h : firstCompiledExp context expression = some compiled) :
-    firstCompiledExpAnyShape context expression = some compiled := by
-  unfold firstCompiledExp at h
-  unfold firstCompiledExpAnyShape
-  split at h <;> split <;> simp_all
 
 structure CompiledFunction (α : Type u) where
   name : FunName
@@ -1150,14 +979,6 @@ def compFuncHOL
   compileProgRiscV
     (panToCrepMkCtxtHOL vmap compilerFunctions vmax exceptionCodes) body
 
-/-- `panToCrepCompFuncRiscV` (the record-context adapter) is `compFuncHOL` at
-    the context's function and exception maps. -/
-theorem panToCrepCompFuncRiscV_eq_compFuncHOL
-    (context : PanToCrepHOLContext (BitVec width))
-    (params : List (VarName × Shape)) (body : Prog (BitVec width)) :
-    panToCrepCompFuncRiscV context params body =
-      compFuncHOL context.funcs context.eids params body := rfl
-
 /-! HOL `get_eids_from_decls_def` (`cakeml/pancake/pan_to_crepScript.sml:356-364`):
 
 ```
@@ -1204,21 +1025,6 @@ def panToCrepGetEidsFromDeclsHOL
   FUPDATE_LIST FEMPTY
     (names.zip ((List.range names.length).map (BitVec.ofNat width))).reverse
 
-/-! The parser-backed production route has the stronger `DeclByteRanged`
-    premise needed to encode every source name as an HOL `MlString`. This
-    adapter runs the reviewed `exceptionsHOL` definition to choose names, then
-    decodes those names only at the existing production map boundary. -/
-def panToCrepGetEidsFromDeclsOfExactHOL {width : Nat} [NeZero width]
-    (declarations : List (Decl (BitVec width)))
-    (_hdecls : ∀ declaration ∈ declarations,
-      Flapjack.Pancake.PanLang.DeclByteRanged declaration) :
-    FiniteMap ExceptionId (BitVec width) :=
-  let names := ((Flapjack.Pancake.PanLang.exceptionsHOL
-      (declarations.map Flapjack.Pancake.PanLang.declToHOL)).map
-        (fun entry => (Flapjack.Pancake.PanLang.paramOfHOL entry).1))
-  FUPDATE_LIST FEMPTY
-    (names.zip ((List.range names.length).map (BitVec.ofNat width))).reverse
-
 private theorem declOfHOL_map_declToHOL_eq {width : Nat} [NeZero width]
     (declarations : List (Decl (BitVec width)))
     (hdecls : ∀ declaration ∈ declarations,
@@ -1257,15 +1063,6 @@ private theorem exceptionsHOL_names_of_exact_eq {width : Nat} [NeZero width]
           rw [hexact]
     _ = (exceptionEntries declarations).map Prod.fst := by
           rw [declOfHOL_map_declToHOL_eq declarations hdecls]
-
-theorem panToCrepGetEidsFromDeclsOfExactHOL_eq {width : Nat} [NeZero width]
-    (declarations : List (Decl (BitVec width)))
-    (hdecls : ∀ declaration ∈ declarations,
-      Flapjack.Pancake.PanLang.DeclByteRanged declaration) :
-    panToCrepGetEidsFromDeclsOfExactHOL declarations hdecls =
-      panToCrepGetEidsFromDeclsHOL declarations := by
-  unfold panToCrepGetEidsFromDeclsOfExactHOL panToCrepGetEidsFromDeclsHOL
-  rw [exceptionsHOL_names_of_exact_eq declarations hdecls]
 
 /-! HOL `compile_to_crep_def` (`cakeml/pancake/pan_to_crepScript.sml:383-391`):
 
@@ -1317,344 +1114,5 @@ def compileToCrepHOL
   functions.map fun (name, parameters, body, _returnShape) =>
     (name, panToCrepVars parameters,
       compFuncHOL functionMap exceptionMap parameters body)
-
-/-! Executable metadata adapter after the `compile_to_crep`-shaped result.
-Cake's following Crep passes operate on triples; Flapjack retains the source
-return shape in `CompiledFunction` for its existing downstream interfaces. -/
-def compileToCrepHOLWithMetadata
-    (declarations : List (Decl (BitVec width))) :
-    List (CompiledFunction (BitVec width)) :=
-  (functionEntries declarations).zipWith
-    (fun (_, _, _, returnShape) (name, parameters, body) =>
-      { name, params := parameters, body, returnShape })
-    (compileToCrepHOL declarations)
-
-theorem compileProg_skip [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
-    (context : CompileContext α) : compileProg context .skip = .skip := by
-  simp [compileProg]
-
-theorem compileProg_seq [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
-    (context : CompileContext α) (first second : Prog α) :
-    compileProg context (.seq first second) =
-      .seq (compileProg context first) (compileProg context second) := by
-  simp [compileProg]
-
-theorem compileProg_return [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
-    (context : CompileContext α) (value : Exp α) :
-    compileProg context (.return value) =
-      let compiled := compileExp context value
-      if Shape.shapeSize compiled.2 = 0 then .return [] else .return compiled.1 := by
-  simp [compileProg]
-
-theorem compileProg_extCall_of_compiled [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
-    (context : CompileContext α) (function : FunName)
-    (configuration configurationLength array arrayLength : Exp α)
-    (configuration' configurationLength' array' arrayLength' : CrepExp α)
-    (hconfiguration : firstCompiledExp context configuration = some configuration')
-    (hconfigurationLength :
-      firstCompiledExp context configurationLength = some configurationLength')
-    (harray : firstCompiledExp context array = some array')
-    (harrayLength : firstCompiledExp context arrayLength = some arrayLength') :
-    compileProg context
-        (.extCall function configuration configurationLength array arrayLength) =
-      nestedDecs [maxCrepExpVar [configuration', configurationLength', array', arrayLength'] + 1,
-        maxCrepExpVar [configuration', configurationLength', array', arrayLength'] + 2,
-        maxCrepExpVar [configuration', configurationLength', array', arrayLength'] + 3,
-        maxCrepExpVar [configuration', configurationLength', array', arrayLength'] + 4]
-        [configuration', configurationLength', array', arrayLength']
-        (.extCall function
-          (maxCrepExpVar [configuration', configurationLength', array', arrayLength'] + 1)
-          (maxCrepExpVar [configuration', configurationLength', array', arrayLength'] + 2)
-          (maxCrepExpVar [configuration', configurationLength', array', arrayLength'] + 3)
-          (maxCrepExpVar [configuration', configurationLength', array', arrayLength'] + 4)) := by
-  simp [compileProg, hconfiguration, hconfigurationLength, harray, harrayLength,
-    nestedDecs]
-
-theorem compileProg_call_handler_of_compiled [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
-    (context : CompileContext α) (function : FunName)
-    (arguments : List (Exp α)) (returnShape : Shape)
-    (exception handlerVar : VarName) (exceptionCode : α)
-    (handlerProgram : Prog α) (handlerNames : List Nat)
-    (compiledArguments : List (CrepExp α))
-    (hfunction : lookupInfo function context.functions =
-      some ([], returnShape))
-    (hexception : lookupInfo exception context.exceptions = some exceptionCode)
-    (hhandler : ∃ shape,
-      lookupInfo handlerVar context.vars = some (shape, handlerNames))
-    (harguments : compileArgs context arguments = compiledArguments) :
-    compileProg context
-        (.call (some (none, some (exception, handlerVar, handlerProgram)))
-          function arguments) =
-      nestedDecs (allocatedNames context returnShape)
-        ((allocatedNames context returnShape).map (fun _ => (.const 0 : CrepExp α)))
-        (.call (some (allocatedNames context returnShape,
-          some (exceptionCode,
-            .seq (expHdlFiniteMap (infoMapToFiniteMap context.vars) handlerVar)
-              (compileProg context handlerProgram))))
-          function compiledArguments) := by
-  rcases hhandler with ⟨shape, hhandler⟩
-  simp [compileProg, hfunction, hexception, harguments,
-    functionReturnNames, allocatedNames, infoMapToFiniteMap, expHdlFiniteMap]
-
-/-! The `Call_Ret_Exception` branch of Cake's `pc_compile_correct` splits on
-    whether the handler's exception identifier is present in the context's
-    exception map.  When it is absent, `compileProg` cannot compile the
-    handler and drops it, so the emitted call carries no handler metadata.
-    The three equations below expose that degraded shape for the standalone
-    and destination-carrying calls; they are the explicit compile-side
-    premise for the "exception id in handler not found in context" sub-case. -/
-
-theorem compileProg_call_handler_missing_of_compiled [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
-    (context : CompileContext α) (function : FunName)
-    (arguments : List (Exp α)) (returnShape : Shape)
-    (exception handlerVar : VarName)
-    (handlerProgram : Prog α)
-    (compiledArguments : List (CrepExp α))
-    (hfunction : lookupInfo function context.functions =
-      some ([], returnShape))
-    (hexception : lookupInfo exception context.exceptions = none)
-    (harguments : compileArgs context arguments = compiledArguments) :
-    compileProg context
-        (.call (some (none, some (exception, handlerVar, handlerProgram)))
-          function arguments) =
-      nestedDecs (allocatedNames context returnShape)
-        ((allocatedNames context returnShape).map (fun _ => (.const 0 : CrepExp α)))
-        (.call (some (allocatedNames context returnShape, none))
-          function compiledArguments) := by
-  simp [compileProg, hfunction, hexception, harguments,
-    functionReturnNames, allocatedNames]
-
-theorem compileProg_call_handler_missing_destination_degraded_of_compiled
-    [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
-    (context : CompileContext α) (function : FunName)
-    (arguments : List (Exp α)) (kind : VarKind) (name : VarName)
-    (exception handlerVar : VarName)
-    (handlerProgram : Prog α)
-    (compiledArguments : List (CrepExp α))
-    (hexception : lookupInfo exception context.exceptions = none)
-    (hnames : callDestinationNames context kind name = none)
-    (harguments : compileArgs context arguments = compiledArguments) :
-    compileProg context
-        (.call (some (some (kind, name),
-          some (exception, handlerVar, handlerProgram))) function arguments) =
-      .call none function compiledArguments := by
-  simp [compileProg, hexception, hnames, harguments]
-
-theorem compileProg_call_handler_missing_destination_of_compiled
-    [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
-    (context : CompileContext α) (function : FunName)
-    (arguments : List (Exp α)) (kind : VarKind) (name : VarName)
-    (names : List Nat)
-    (exception handlerVar : VarName)
-    (handlerProgram : Prog α)
-    (compiledArguments : List (CrepExp α))
-    (hexception : lookupInfo exception context.exceptions = none)
-    (hnames : callDestinationNames context kind name = some names)
-    (harguments : compileArgs context arguments = compiledArguments) :
-    compileProg context
-        (.call (some (some (kind, name),
-          some (exception, handlerVar, handlerProgram))) function arguments) =
-      .call (some (names, none)) function compiledArguments := by
-  simp [compileProg, hexception, hnames, harguments]
-
-/-! The `Call_Ret` branch of Cake's `pc_compile_correct` is the
-    assignment-producing call with no handler.  `compileProg` keeps the
-    flattened destination slots when `wrap_rt` preserves the variable's
-    shape and otherwise degrades the call to a tail call
-    (`pan_to_crepScript.sml:247-260`).  The two equations below expose those
-    emitted shapes as explicit compile-side premises. -/
-
-theorem compileProg_call_destination_of_compiled
-    [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
-    (context : CompileContext α) (function : FunName)
-    (arguments : List (Exp α)) (kind : VarKind) (name : VarName)
-    (names : List Nat)
-    (compiledArguments : List (CrepExp α))
-    (hnames : callDestinationNames context kind name = some names)
-    (harguments : compileArgs context arguments = compiledArguments) :
-    compileProg context
-        (.call (some (some (kind, name), none)) function arguments) =
-      .call (some (names, none)) function compiledArguments := by
-  simp [compileProg, hnames, harguments]
-
-theorem compileProg_call_destination_degraded_of_compiled
-    [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
-    (context : CompileContext α) (function : FunName)
-    (arguments : List (Exp α)) (kind : VarKind) (name : VarName)
-    (compiledArguments : List (CrepExp α))
-    (hnames : callDestinationNames context kind name = none)
-    (harguments : compileArgs context arguments = compiledArguments) :
-    compileProg context
-        (.call (some (some (kind, name), none)) function arguments) =
-      .call none function compiledArguments := by
-  simp [compileProg, hnames, harguments]
-
-theorem compileProg_break [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
-    (context : CompileContext α) : compileProg context .break = .break 0 := by
-  simp [compileProg]
-
-theorem compileProg_continue [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
-    (context : CompileContext α) : compileProg context .continue = .continue 0 := by
-  simp [compileProg]
-
-theorem compileProg_tick [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
-    (context : CompileContext α) : compileProg context .tick = .tick := by
-  simp [compileProg]
-
-theorem compileProg_annot [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
-    (context : CompileContext α) (tag text : String) :
-    compileProg context (.annot tag text) = .skip := by
-  simp [compileProg]
-
-theorem compileProg_assign_global [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
-    (context : CompileContext α) (name : VarName) (value : Exp α) :
-    compileProg context (.assign .global name value) = .skip := by
-  simp [compileProg]
-
-theorem compileProg_ite_of_compiled [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
-    (context : CompileContext α) (condition : Exp α)
-    (thenBranch elseBranch : Prog α) (condition' : CrepExp α)
-    (rest : List (CrepExp α)) (shape : Shape)
-    (hcondition : compileExp context condition = (condition' :: rest, shape)) :
-    compileProg context (.ite condition thenBranch elseBranch) =
-      .ite condition' (compileProg context thenBranch) (compileProg context elseBranch) := by
-  simp [compileProg, hcondition]
-
-theorem compileProg_while_of_compiled [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
-    (context : CompileContext α) (condition : Exp α) (body : Prog α)
-    (condition' : CrepExp α) (rest : List (CrepExp α)) (shape : Shape)
-    (hcondition : compileExp context condition = (condition' :: rest, shape)) :
-    compileProg context (.while condition body) = .while condition' (compileProg context body) := by
-  simp [compileProg, hcondition]
-
-theorem compileProg_store32_of_compiled [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
-    (context : CompileContext α) (address value : Exp α)
-    (address' value' : CrepExp α) (addressRest valueRest : List (CrepExp α))
-    (addressShape valueShape : Shape)
-    (haddress : compileExp context address = (address' :: addressRest, addressShape))
-    (hvalue : compileExp context value = (value' :: valueRest, valueShape)) :
-    compileProg context (.store32 address value) = .store32 address' value' := by
-  simp [compileProg, haddress, hvalue]
-
-theorem compileProg_storeByte_of_compiled [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
-    (context : CompileContext α) (address value : Exp α)
-    (address' value' : CrepExp α) (addressRest valueRest : List (CrepExp α))
-    (addressShape valueShape : Shape)
-    (haddress : compileExp context address = (address' :: addressRest, addressShape))
-    (hvalue : compileExp context value = (value' :: valueRest, valueShape)) :
-    compileProg context (.storeByte address value) = .storeByte address' value' := by
-  simp [compileProg, haddress, hvalue]
-
-/-! The remaining `compileProg` decomposition equations expose the emitted
-    Crepe shape for the constructors that the assigned-memory bound proof
-    (`not_mem_context_assigned_mem_gt`, `pan_to_crepProofScript.sml:1252`)
-    must analyse: declarations, declaration-calls, stores, raises,
-    primitives, local assignments, and the two shared-memory leaves.  Each
-    carries the explicit `compileExp`/`lookupInfo` premise that determines
-    the constructor's branch. -/
-
-theorem compileProg_dec_of_compiled [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
-    (context : CompileContext α) (name : VarName) (shape : Shape) (value : Exp α)
-    (body : Prog α) (expressions : List (CrepExp α)) (valueShape : Shape)
-    (hvalue : compileExp context value = (expressions, valueShape)) :
-    compileProg context (.dec name shape value body) =
-      if (allocatedNames context valueShape).length = expressions.length then
-        nestedDecs (allocatedNames context valueShape) expressions
-          (compileProg { context with
-            vars := (name, (valueShape, allocatedNames context valueShape)) :: context.vars,
-            maxVar := context.maxVar + Shape.shapeSize valueShape } body)
-      else .skip := by
-  simp only [compileProg, hvalue]
-
-theorem compileProg_decCall [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
-    (context : CompileContext α) (name : VarName) (shape : Shape) (function : FunName)
-    (arguments : List (Exp α)) (body : Prog α) :
-    compileProg context (.decCall name shape function arguments body) =
-      nestedDecs (allocatedNames context shape)
-        ((allocatedNames context shape).map (fun _ => (.const 0 : CrepExp α)))
-        (.seq (.call (some (allocatedNames context shape, none)) function
-            (compileArgs context arguments))
-          (compileProg { context with
-            vars := (name, (shape, allocatedNames context shape)) :: context.vars,
-            maxVar := context.maxVar + Shape.shapeSize shape } body)) := by
-  simp only [compileProg]
-
-theorem compileProg_store_of_compiled [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
-    (context : CompileContext α) (address value : Exp α)
-    (address' : CrepExp α) (addressRest : List (CrepExp α)) (addressShape : Shape)
-    (values : List (CrepExp α)) (shape : Shape)
-    (haddress : compileExp context address = (address' :: addressRest, addressShape))
-    (hvalue : compileExp context value = (values, shape)) :
-    compileProg context (.store address value) =
-      if values.length = Shape.shapeSize shape then
-        nestedDecs ((context.maxVar + 1) :: freshNames context values.length 2)
-          (address' :: values)
-          (crepNestedSeq
-            (stores (.var (context.maxVar + 1))
-              ((freshNames context values.length 2).map .var) 0 context.bytesInWord))
-      else .skip := by
-  simp only [compileProg, haddress, hvalue]
-
-theorem compileProg_raise_of_compiled [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
-    (context : CompileContext α) (exception : ExceptionId) (value : Exp α) (code : α)
-    (expressions : List (CrepExp α)) (shape : Shape)
-    (hexception : lookupInfo exception context.exceptions = some code)
-    (hvalue : compileExp context value = (expressions, shape)) :
-    compileProg context (.raise exception value) =
-      if expressions.length = Shape.shapeSize shape then
-        .seq (nestedDecs (freshNames context expressions.length 1) expressions
-            (crepNestedSeq (storeGlobals 0
-              ((freshNames context expressions.length 1).map .var))))
-          (.raise code)
-      else .skip := by
-  simp only [compileProg, hexception, hvalue]
-
-theorem compileProg_primitive_of_compiled [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
-    (context : CompileContext α) (name : VarName) (operator : PrimOp)
-    (arguments : List (Exp α)) (shape : Shape) (names : List Nat)
-    (compiledArguments : List (CrepExp α))
-    (hlookup : lookupInfo name context.vars = some (shape, names))
-    (harguments : compileArgs context arguments = compiledArguments) :
-    compileProg context (.primitive name operator arguments) =
-      nestedDecs (freshNames context compiledArguments.length 1) compiledArguments
-        (.primitive names operator (freshNames context compiledArguments.length 1)) := by
-  simp only [compileProg, hlookup, harguments]
-
-theorem compileProg_assign_local_of_compiled [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
-    (context : CompileContext α) (name : VarName) (value : Exp α)
-    (shape valueShape : Shape) (names : List Nat) (expressions : List (CrepExp α))
-    (hlookup : lookupInfo name context.vars = some (shape, names))
-    (hvalue : compileExp context value = (expressions, valueShape)) :
-    compileProg context (.assign .local name value) =
-      if names.length = expressions.length then
-        (if distinctLists names (expressions.flatMap crepExpVars) then
-          crepNestedSeq
-            (names.zipWith (fun name expression => .assign name expression) expressions)
-        else
-          nestedDecs (freshNames context names.length 1) expressions
-            (crepNestedSeq
-              (names.zipWith (fun name temporary => .assign name (.var temporary))
-                (freshNames context names.length 1))))
-      else .skip := by
-  simp only [compileProg, hlookup, hvalue]
-
-theorem compileProg_shMemLoad_local_of_compiled [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
-    (context : CompileContext α) (size : OpSize) (name : VarName) (address : Exp α)
-    (shape : Shape) (destination : Nat) (destinationRest : List Nat) (address' : CrepExp α)
-    (hlookup : lookupInfo name context.vars = some (shape, destination :: destinationRest))
-    (haddress : firstCompiledExpAnyShape context address = some address') :
-    compileProg context (.shMemLoad size .local name address) =
-      .shMem (loadMemOpHOL size) destination address' := by
-  simp only [compileProg, hlookup, haddress]
-
-theorem compileProg_shMemStore_of_compiled [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
-    (context : CompileContext α) (size : OpSize) (address value : Exp α)
-    (address' value' : CrepExp α)
-    (haddress : firstCompiledExpAnyShape context address = some address')
-    (hvalue : firstCompiledExpAnyShape context value = some value') :
-    compileProg context (.shMemStore size address value) =
-      nestedDecs [maxCrepExpVar [address'] + 1] [value']
-        (.shMem (storeMemOpHOL size) (maxCrepExpVar [address'] + 1) address') := by
-  simp only [compileProg, haddress, hvalue]
 
 end Flapjack

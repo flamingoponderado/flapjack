@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
-import Flapjack.Pancake.Semantics.PanSemStateEval
+module
+
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+public import Flapjack.Pancake.Semantics.PanSemStateEval
+
+@[expose] public section
 
 /-!
 Source-model evaluator for the underspecified HOL `LOG2 0` case.
@@ -60,26 +64,6 @@ noncomputable def panMemLoad32HOLLog2Zero {width : Nat} [NeZero width]
           else none
     else none
 
-theorem panMemLoadByteHOLLog2Zero_eq_panMemLoadByteHOL {width : Nat}
-    [NeZero width] (hwidth : 8 ≤ width) (log2Zero : Nat)
-    (memory : RiscV.Word width → HolWordLab width)
-    (domain : RiscV.Word width → Prop) [DecidablePred domain]
-    (bigEndian : Bool) (address : RiscV.Word width) :
-    panMemLoadByteHOLLog2Zero log2Zero memory domain bigEndian address =
-      panMemLoadByteHOL memory domain bigEndian address := by
-  simp [panMemLoadByteHOLLog2Zero, panMemLoadByteHOL,
-    panByteAlignHOLLog2Zero_eq_panByteAlignHOL hwidth log2Zero address]
-
-theorem panMemLoad32HOLLog2Zero_eq_panMemLoad32HOL {width : Nat}
-    [NeZero width] (hwidth : 8 ≤ width) (log2Zero : Nat)
-    (memory : RiscV.Word width → HolWordLab width)
-    (domain : RiscV.Word width → Prop) [DecidablePred domain]
-    (bigEndian : Bool) (address : RiscV.Word width) :
-    panMemLoad32HOLLog2Zero log2Zero memory domain bigEndian address =
-      panMemLoad32HOL memory domain bigEndian address := by
-  simp [panMemLoad32HOLLog2Zero, panMemLoad32HOL,
-    panByteAlignHOLLog2Zero_eq_panByteAlignHOL hwidth log2Zero address]
-
 /-- Recursive `eval_def` model with one shared completion for every byte
 alignment reached while evaluating the expression.  The full Option result
 and memory-domain behavior are retained. -/
@@ -132,79 +116,6 @@ noncomputable def evalCrepSemHOLExpLog2Zero {width : Nat} [NeZero width]
             (wordShiftHOL operator left right.toNat).map HolWordLab.word
     | .baseAddr => some (.word state.baseAddr)
     | .topAddr => some (.word state.topAddr)
-
-theorem evalCrepSemHOLExpLog2Zero_loadByte {width : Nat} [NeZero width]
-    {ffiState : Type} (log2Zero : Nat)
-    (state : CrepSemHOLState width ffiState) (address : CrepExpHOL width) :
-    evalCrepSemHOLExpLog2Zero log2Zero state (.loadByte address) = (do
-      let address ← evalCrepSemHOLExpLog2Zero log2Zero state address
-      match address with
-      | .word word =>
-          (panMemLoadByteHOLLog2Zero log2Zero state.memory state.memaddrs
-            state.be word).map (fun value => .word (BitVec.ofNat width value.toNat))) := by
-  classical
-  simp only [evalCrepSemHOLExpLog2Zero]
-
-theorem evalCrepSemHOLExpLog2Zero_load32 {width : Nat} [NeZero width]
-    {ffiState : Type} (log2Zero : Nat)
-    (state : CrepSemHOLState width ffiState) (address : CrepExpHOL width) :
-    evalCrepSemHOLExpLog2Zero log2Zero state (.load32 address) = (do
-      let address ← evalCrepSemHOLExpLog2Zero log2Zero state address
-      match address with
-      | .word word =>
-          (panMemLoad32HOLLog2Zero log2Zero state.memory state.memaddrs
-            state.be word).map (fun value => .word (BitVec.ofNat width value.toNat))) := by
-  classical
-  simp only [evalCrepSemHOLExpLog2Zero]
-
-theorem evalCrepSemHOLExpLog2Zero_eq_evalCrepSemHOLExp
-    {width : Nat} [NeZero width] (hwidth : 8 ≤ width) {ffiState : Type}
-    (log2Zero : Nat) (state : CrepSemHOLState width ffiState)
-    (expression : CrepExpHOL width) :
-    evalCrepSemHOLExpLog2Zero log2Zero state expression =
-      evalCrepSemHOLExp state expression := by
-  classical
-  induction expression using evalCrepSemHOLExpLog2Zero.induct with
-  | case1 value => simp [evalCrepSemHOLExpLog2Zero, evalCrepSemHOLExp]
-  | case2 name => simp [evalCrepSemHOLExpLog2Zero, evalCrepSemHOLExp]
-  | case3 address ih => simp [evalCrepSemHOLExpLog2Zero, evalCrepSemHOLExp, ih]
-  | case4 address ih =>
-      simp [evalCrepSemHOLExpLog2Zero, evalCrepSemHOLExp, ih,
-        panMemLoad32HOLLog2Zero_eq_panMemLoad32HOL hwidth log2Zero]
-  | case5 address ih =>
-      simp [evalCrepSemHOLExpLog2Zero, evalCrepSemHOLExp, ih,
-        panMemLoadByteHOLLog2Zero_eq_panMemLoadByteHOL hwidth log2Zero]
-  | case6 address => simp [evalCrepSemHOLExpLog2Zero, evalCrepSemHOLExp]
-  | case7 operator expressions ih =>
-      simp only [evalCrepSemHOLExpLog2Zero, evalCrepSemHOLExp]
-      have hmap : expressions.mapM (evalCrepSemHOLExpLog2Zero log2Zero state) =
-          expressions.mapM (evalCrepSemHOLExp state) := by
-        induction expressions with
-        | nil => simp
-        | cons x xs ihxs =>
-            have htail : xs.mapM (evalCrepSemHOLExpLog2Zero log2Zero state) =
-                xs.mapM (evalCrepSemHOLExp state) :=
-              ihxs (fun y hy => ih y (by simp [hy]))
-            simp only [List.mapM_cons, ih x (by simp), htail]
-      rw [hmap]
-  | case8 operator expressions ih =>
-      simp only [evalCrepSemHOLExpLog2Zero, evalCrepSemHOLExp]
-      have hmap : expressions.mapM (evalCrepSemHOLExpLog2Zero log2Zero state) =
-          expressions.mapM (evalCrepSemHOLExp state) := by
-        induction expressions with
-        | nil => simp
-        | cons x xs ihxs =>
-            have htail : xs.mapM (evalCrepSemHOLExpLog2Zero log2Zero state) =
-                xs.mapM (evalCrepSemHOLExp state) :=
-              ihxs (fun y hy => ih y (by simp [hy]))
-            simp only [List.mapM_cons, ih x (by simp), htail]
-      rw [hmap]
-  | case9 operator left right ihl ihr =>
-      simp [evalCrepSemHOLExpLog2Zero, evalCrepSemHOLExp, ihl, ihr]
-  | case10 operator left right ihl ihr =>
-      simp [evalCrepSemHOLExpLog2Zero, evalCrepSemHOLExp, ihl, ihr]
-  | case11 => simp [evalCrepSemHOLExpLog2Zero, evalCrepSemHOLExp]
-  | case12 => simp [evalCrepSemHOLExpLog2Zero, evalCrepSemHOLExp]
 
 end Flapjack
 

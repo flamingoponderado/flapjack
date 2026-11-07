@@ -28,48 +28,9 @@ theorem compileTopFunctionLookup_eq_lookup {width : Nat} [NeZero width] (start :
       · have : (start == name) = false := by simpa using h
         simp [compileTopFunctionLookup, List.lookup, h, this, ih]
 
-/-- The top compiler's first-match selection commutes with decoding exact
-declarations and names. Only the arguments, body and return shape are selected
-by HOL `compile_top`; inline/export flags are intentionally outside this
-projection. This is Flapjack cross-carrier infrastructure with no independent
-HOL declaration, and does not yet establish the complete top compiler route. -/
-theorem compileTopFunctionLookup_decode {width : Nat} [NeZero width]
-    (declarations : List (DeclHOL width)) (start : MlS) :
-    (compileTopFunctionLookup start (functionsHOL declarations)).map
-        (fun entry => (entry.1.map paramOfHOL, progOfHOL entry.2.1,
-          shapeOfHOL entry.2.2)) =
-      (globalFindFunction (Flapjack.Basis.Pure.MlString.toStringOfBytes start)
-        (declarations.map declOfHOL)).map
-          (fun entry => (entry.params, entry.body, entry.returnShape)) := by
-  induction declarations with
-  | nil => simp [functionsHOL, compileTopFunctionLookup, globalFindFunction]
-  | cons declaration declarations ih =>
-      cases declaration with
-      | function entry =>
-          by_cases h : start = entry.name
-          · subst start
-            simp [functionsHOL, compileTopFunctionLookup, globalFindFunction,
-              declOfHOL, funDeclOfHOL]
-          · have hdecoded :
-                Flapjack.Basis.Pure.MlString.toStringOfBytes entry.name ≠
-                  Flapjack.Basis.Pure.MlString.toStringOfBytes start := by
-              intro heq
-              exact h (toStringOfBytes_injective heq).symm
-            simpa [functionsHOL, compileTopFunctionLookup, globalFindFunction,
-              declOfHOL, funDeclOfHOL, h, hdecoded] using ih
-      | decl shape name value =>
-          simpa [functionsHOL, globalFindFunction, declOfHOL] using ih
-      | exnDecl name shape =>
-          simpa [functionsHOL, globalFindFunction, declOfHOL] using ih
-      | name name shape =>
-          simpa [functionsHOL, globalFindFunction, declOfHOL] using ih
-
 /-- Literal exact-carrier top compiler. The internally created finite map is
 the reviewed empty canonical map consumed by compileDecsExactHOL; the public
-input/output contain no finite-map field. The parser-path production route
-`globalCompileTopCakeRouted` (`Flapjack.Pancake.PanGlobalsByteRanged`) executes
-this definition and decodes its output; `compileTopExactHOL_decode` proves that
-equal to the compatibility `globalCompileTopCake`. -/
+input/output contain no finite-map field. -/
 @[hol "cakeml/pancake/pan_globalsScript.sml" "compile_top_def"
   (words_as_type_indexed_bitvec)]
 def compileTopExactHOL {width : Nat} [NeZero width]

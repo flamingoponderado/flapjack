@@ -1,0 +1,2 @@
+variable=Result_fo (Success [] [Nd (mkNT nV,Locs (POSN 0 1) (POSN 0 4)) [Lf (TK (AlphaT «abc»),Locs (POSN 0 1) (POSN 0 4))]] NONE)
+empty=Result_fo (Success [] [Nd (mkNT nTopLevelDecs,Locs UNKNOWNpt UNKNOWNpt) []] (SOME (Locs EOFpt EOFpt,"Failed to see expected token; saw EOF instead")))

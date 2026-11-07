@@ -1,0 +1,452 @@
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StoreUpdate
+import Flapjack.Misc.RichList
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveType
+import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyMemory
+import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyData
+import Flapjack.SemanticPrimitivesHOL.ApplyNumeric
+
+/-! Reference and array simulation over the factored source-to-flat relations.
+The complete primitive-application theorem remains open. -/
+namespace Flapjack.Compiler.Backend.SourceToFlat
+open Flapjack.SemanticPrimitivesHOL
+
+/-- Reference allocation produces related locations and states, preserving the
+reserved flat store entry. This is Flapjack infrastructure over the factored
+relations and the partial primitive dispatchers. -/
+theorem opref_related {C F : Type} (genv : GlobalEnv)
+    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
+    (statesRel : StateRel genv sourceState flatState) (source : SemanticPrimitivesHOL.Value)
+    (flat : FlatSem.Value) (valueRel : ValueRel genv source flat) :
+    let sourceAlloc := storeAlloc (.refv source) sourceState.refs
+    let flatAlloc := storeAlloc (.refv flat) flatState.refs
+    doAppBasic (sourceState.refs, sourceState.ffi) .opref [source] =
+      some (some ((sourceAlloc.1, sourceState.ffi), .val (.loc true sourceAlloc.2))) ∧
+    FlatSem.doAppMemory flatState .opref [flat] =
+      some (some ({ flatState with refs := flatAlloc.1 }, .val (.loc true flatAlloc.2))) ∧
+    ValueRel genv (.loc true sourceAlloc.2) (.loc true flatAlloc.2) ∧
+    StateRel genv { sourceState with refs := sourceAlloc.1 } { flatState with refs := flatAlloc.1 } ∧
+    flatAlloc.1.take 1 = flatState.refs.take 1 := by
+  have ⟨nextRel, offset, reserved⟩ := stateRel_storeAlloc genv sourceState flatState statesRel
+    (.refv source) (.refv flat) (.refv valueRel)
+  dsimp only
+  refine ⟨rfl, rfl, ?_, nextRel, reserved⟩
+  rw [offset]
+  exact .location genv _ true
+
+/-- Successful reference assignment is simulated at the one-slot-shifted
+flat address. This is Flapjack infrastructure over the factored relations and
+the partial primitive dispatchers. -/
+theorem opassign_related {C F : Type} (genv : GlobalEnv)
+    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
+    (statesRel : StateRel genv sourceState flatState) (flag : Bool) (n : Nat)
+    (source : SemanticPrimitivesHOL.Value) (flat : FlatSem.Value) (valueRel : ValueRel genv source flat)
+    (sourceRefs : Store SemanticPrimitivesHOL.Value)
+    (assigned : storeAssign n (.refv source) sourceState.refs = some sourceRefs) :
+    ∃ flatRefs,
+      doAppBasic (sourceState.refs, sourceState.ffi) .opassign [.loc flag n, source] =
+        some (some ((sourceRefs, sourceState.ffi), .val (.conv none []))) ∧
+      FlatSem.doAppMemory flatState .opassign [.loc flag (n + 1), flat] =
+        some (some ({ flatState with refs := flatRefs }, .val FlatSem.unitValue)) ∧
+      ValueRel genv (.conv none []) FlatSem.unitValue ∧
+      StateRel genv { sourceState with refs := sourceRefs } { flatState with refs := flatRefs } ∧
+      flatRefs.take 1 = flatState.refs.take 1 := by
+  obtain ⟨flatRefs, flatAssigned, reserved, nextRel⟩ :=
+    stateRel_storeAssign genv sourceState flatState statesRel n (.refv source) (.refv flat)
+      (.refv valueRel) sourceRefs assigned
+  refine ⟨flatRefs, ?_, ?_, ?_, nextRel, reserved⟩
+  · simp [doAppBasic, assigned]
+  · simp [FlatSem.doAppMemory, flatAssigned]
+  · exact .tuple genv [] [] (.nil genv)
+
+/-- Nonnegative array allocation preserves the value relation, the one-slot
+address offset, the state relation, and the reserved flat entry. This is
+Flapjack infrastructure over the factored relations and partial dispatchers. -/
+theorem aalloc_related {C F : Type} (genv : GlobalEnv)
+    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
+    (statesRel : StateRel genv sourceState flatState) (size : Int) (nonnegative : 0 ≤ size)
+    (source : SemanticPrimitivesHOL.Value) (flat : FlatSem.Value) (valueRel : ValueRel genv source flat) :
+    let sourceAlloc := storeAlloc (.varray (List.replicate size.toNat source)) sourceState.refs
+    let flatAlloc := storeAlloc (.varray (List.replicate size.toNat flat)) flatState.refs
+    doAppBasic (sourceState.refs, sourceState.ffi) .aalloc [.litv (.intLit size), source] =
+      some (some ((sourceAlloc.1, sourceState.ffi), .val (.loc true sourceAlloc.2))) ∧
+    FlatSem.doAppMemory flatState .aalloc [.litv (.intLit size), flat] =
+      some (some ({ flatState with refs := flatAlloc.1 }, .val (.loc true flatAlloc.2))) ∧
+    ValueRel genv (.loc true sourceAlloc.2) (.loc true flatAlloc.2) ∧
+    StateRel genv { sourceState with refs := sourceAlloc.1 } { flatState with refs := flatAlloc.1 } ∧
+    flatAlloc.1.take 1 = flatState.refs.take 1 := by
+  have ⟨nextRel, offset, reserved⟩ := stateRel_storeAlloc genv sourceState flatState statesRel
+    (.varray (List.replicate size.toNat source)) (.varray (List.replicate size.toNat flat))
+    (.varray ((forall₂_replicate_iff _ size.toNat source flat).mpr (fun _ => valueRel)))
+  dsimp only
+  have notNegative : ¬size < 0 := Int.not_lt.mpr nonnegative
+  refine ⟨?_, ?_, ?_, nextRel, reserved⟩
+  · simp [doAppBasic, notNegative]
+  · simp [FlatSem.doAppMemory, notNegative]
+  · rw [offset]
+    exact .location genv _ true
+
+/-- Byte-array allocation simulates the source allocation and preserves the
+reserved flat store entry. This uses the factored, unreviewed relations. -/
+theorem aw8alloc_related {C F : Type} (genv : GlobalEnv)
+    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
+    (statesRel : StateRel genv sourceState flatState) (size : Int) (nonnegative : 0 ≤ size)
+    (value : BitVec 8) :
+    let sourceAlloc := storeAlloc (.w8array (List.replicate size.toNat value)) sourceState.refs
+    let flatAlloc := storeAlloc (.w8array (List.replicate size.toNat value)) flatState.refs
+    doAppBasic (sourceState.refs, sourceState.ffi) .aw8alloc [.litv (.intLit size), .litv (.word8 value)] =
+      some (some ((sourceAlloc.1, sourceState.ffi), .val (.loc true sourceAlloc.2))) ∧
+    FlatSem.doAppMemory flatState .aw8alloc [.litv (.intLit size), .litv (.word8 value)] =
+      some (some ({ flatState with refs := flatAlloc.1 }, .val (.loc true flatAlloc.2))) ∧
+    ValueRel genv (.loc true sourceAlloc.2) (.loc true flatAlloc.2) ∧
+    StateRel genv { sourceState with refs := sourceAlloc.1 } { flatState with refs := flatAlloc.1 } ∧
+    flatAlloc.1.take 1 = flatState.refs.take 1 := by
+  have ⟨nextRel, offset, reserved⟩ := stateRel_storeAlloc genv sourceState flatState statesRel
+    (.w8array (List.replicate size.toNat value)) (.w8array (List.replicate size.toNat value))
+    (.w8array (List.replicate size.toNat value))
+  dsimp only
+  have notNegative : ¬size < 0 := Int.not_lt.mpr nonnegative
+  refine ⟨?_, ?_, ?_, nextRel, reserved⟩
+  · simp [doAppBasic, notNegative]
+  · simp [FlatSem.doAppMemory, notNegative]
+  · rw [offset]
+    exact .location genv _ true
+
+/-- Fixed array allocation preserves related elements and states. This is
+Flapjack infrastructure over the partial primitive dispatchers. -/
+theorem aallocFixed_related {C F : Type} (genv : GlobalEnv)
+    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
+    (statesRel : StateRel genv sourceState flatState)
+    (source : List SemanticPrimitivesHOL.Value) (flat : List FlatSem.Value)
+    (valuesRel : List.Forall₂ (ValueRel genv) source flat) :
+    let sourceAlloc := storeAlloc (.varray source) sourceState.refs
+    let flatAlloc := storeAlloc (.varray flat) flatState.refs
+    doAppBasic (sourceState.refs, sourceState.ffi) .aallocFixed source =
+      some (some ((sourceAlloc.1, sourceState.ffi), .val (.loc true sourceAlloc.2))) ∧
+    FlatSem.doAppMemory flatState .aallocFixed flat =
+      some (some ({ flatState with refs := flatAlloc.1 }, .val (.loc true flatAlloc.2))) ∧
+    ValueRel genv (.loc true sourceAlloc.2) (.loc true flatAlloc.2) ∧
+    StateRel genv { sourceState with refs := sourceAlloc.1 } { flatState with refs := flatAlloc.1 } ∧
+    flatAlloc.1.take 1 = flatState.refs.take 1 := by
+  have ⟨nextRel, offset, reserved⟩ := stateRel_storeAlloc genv sourceState flatState statesRel
+    (.varray source) (.varray flat) (.varray valuesRel)
+  dsimp only
+  refine ⟨rfl, rfl, ?_, nextRel, reserved⟩
+  rw [offset]
+  exact .location genv _ true
+
+/-- Byte-array length returns the same literal from related states. This is
+Flapjack infrastructure over the partial primitive dispatchers. -/
+theorem aw8length_related {C F : Type} (genv : GlobalEnv)
+    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
+    (statesRel : StateRel genv sourceState flatState) (flag : Bool) (n : Nat)
+    (bytes : List (BitVec 8)) (lookup : storeLookup n sourceState.refs = some (.w8array bytes)) :
+    doAppBasic (sourceState.refs, sourceState.ffi) .aw8length [.loc flag n] =
+      some (some ((sourceState.refs, sourceState.ffi), .val (.litv (.intLit bytes.length)))) ∧
+    FlatSem.doAppMemory flatState .aw8length [.loc flag (n + 1)] =
+      some (some (flatState, .val (.litv (.intLit bytes.length)))) ∧
+    ValueRel genv (.litv (.intLit bytes.length)) (.litv (.intLit bytes.length)) := by
+  have flatLookup := stateRel_byteArray_lookup genv sourceState flatState statesRel n bytes lookup
+  exact ⟨by simp [doAppBasic, lookup], by simp [FlatSem.doAppMemory, flatLookup],
+    .literal genv _⟩
+
+/-- Array length agrees between related source and flat stores. -/
+theorem alength_related {C F : Type} (genv : GlobalEnv)
+    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
+    (statesRel : StateRel genv sourceState flatState) (flag : Bool) (n : Nat)
+    (values : List SemanticPrimitivesHOL.Value) (lookup : storeLookup n sourceState.refs = some (.varray values)) :
+    doAppBasic (sourceState.refs, sourceState.ffi) .alength [.loc flag n] =
+      some (some ((sourceState.refs, sourceState.ffi), .val (.litv (.intLit values.length)))) ∧
+    FlatSem.doAppMemory flatState .alength [.loc flag (n + 1)] =
+      some (some (flatState, .val (.litv (.intLit values.length)))) ∧
+    ValueRel genv (.litv (.intLit values.length)) (.litv (.intLit values.length)) := by
+  obtain ⟨flatValues, flatLookup, valuesRel⟩ := stateRel_array_lookup genv sourceState flatState statesRel n values lookup
+  have length := List.Forall₂.length_eq valuesRel
+  exact ⟨by simp [doAppBasic, lookup], by simp [FlatSem.doAppMemory, flatLookup, ← length],
+    .literal genv _⟩
+
+/-- Array reads preserve related values in the factored source and flat stores. -/
+theorem asub_related {C F : Type} (genv : GlobalEnv)
+    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
+    (statesRel : StateRel genv sourceState flatState) (flag : Bool) (n : Nat)
+    (values : List SemanticPrimitivesHOL.Value) (lookup : storeLookup n sourceState.refs = some (.varray values))
+    (index : Int) (nonnegative : 0 ≤ index) (value : SemanticPrimitivesHOL.Value)
+    (element : values[index.toNat]? = some value) (unsafeOp : Bool) :
+    let op := if unsafeOp then Flapjack.AstHOL.Op.asubUnsafe else .asub
+    ∃ flatValue,
+      doAppBasic (sourceState.refs, sourceState.ffi) op [.loc flag n, .litv (.intLit index)] =
+        some (some ((sourceState.refs, sourceState.ffi), .val value)) ∧
+      FlatSem.doAppMemory flatState op [.loc flag (n + 1), .litv (.intLit index)] =
+        some (some (flatState, .val flatValue)) ∧ ValueRel genv value flatValue := by
+  obtain ⟨flatValues, flatLookup, valuesRel⟩ := stateRel_array_lookup genv sourceState flatState statesRel n values lookup
+  obtain ⟨flatValue, flatElement, valueRel⟩ := forall₂_lookup valuesRel index.toNat value element
+  have notNegative : ¬index < 0 := Int.not_lt.mpr nonnegative
+  refine ⟨flatValue, ?_, ?_, valueRel⟩
+  · cases unsafeOp <;> simp [doAppBasic, SemanticPrimitivesHOL.readIndexed, lookup, notNegative, element]
+  · cases unsafeOp <;> simp [FlatSem.doAppMemory, FlatSem.readIndexed, flatLookup, notNegative, flatElement]
+
+/-- Invalid array reads raise related exceptions when checked and fail when unchecked. -/
+theorem asub_outOfBounds {C F : Type} (genv : GlobalEnv)
+    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
+    (statesRel : StateRel genv sourceState flatState) (ok : genvCOk genv.c) (flag : Bool) (n : Nat)
+    (values : List SemanticPrimitivesHOL.Value) (lookup : storeLookup n sourceState.refs = some (.varray values))
+    (index : Int) (outOfBounds : index < 0 ∨ values[index.toNat]? = none) (unsafeOp : Bool) :
+    let op := if unsafeOp then Flapjack.AstHOL.Op.asubUnsafe else .asub
+    doAppBasic (sourceState.refs, sourceState.ffi) op [.loc flag n, .litv (.intLit index)] =
+      some (if unsafeOp then none else some ((sourceState.refs, sourceState.ffi), .err (.raise subExnV))) ∧
+    FlatSem.doAppMemory flatState op [.loc flag (n + 1), .litv (.intLit index)] =
+      some (if unsafeOp then none else some (flatState, .err (.raise FlatSem.subscriptExnV))) ∧
+    ValueRel genv subExnV FlatSem.subscriptExnV := by
+  obtain ⟨flatValues, flatLookup, valuesRel⟩ := stateRel_array_lookup genv sourceState flatState statesRel n values lookup
+  have length := List.Forall₂.length_eq valuesRel
+  have exceptionRel := (exceptionValues_related genv ok).2.2.2
+  rcases outOfBounds with negative | absent
+  · cases unsafeOp <;> simp [doAppBasic, FlatSem.doAppMemory, SemanticPrimitivesHOL.readIndexed,
+      FlatSem.readIndexed, SemanticPrimitivesHOL.boundsFailure, FlatSem.boundsFailure, *]
+  · have flatAbsent : flatValues[index.toNat]? = none := by
+      apply List.getElem?_eq_none_iff.mpr
+      rw [← length]
+      exact List.getElem?_eq_none_iff.mp absent
+    cases unsafeOp <;> simp [doAppBasic, FlatSem.doAppMemory, SemanticPrimitivesHOL.readIndexed,
+      FlatSem.readIndexed, SemanticPrimitivesHOL.boundsFailure, FlatSem.boundsFailure, *]
+
+/-- A valid byte-array subscript returns the same byte in the source and flat
+states. This covers both checked and unchecked source operations. -/
+theorem aw8sub_related {C F : Type} (genv : GlobalEnv)
+    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
+    (statesRel : StateRel genv sourceState flatState) (flag : Bool) (n : Nat)
+    (bytes : List (BitVec 8)) (lookup : storeLookup n sourceState.refs = some (.w8array bytes))
+    (index : Int) (nonnegative : 0 ≤ index) (byte : BitVec 8)
+    (element : bytes[index.toNat]? = some byte) (unsafeOp : Bool) :
+    let op := if unsafeOp then Flapjack.AstHOL.Op.aw8subUnsafe else .aw8sub
+    doAppBasic (sourceState.refs, sourceState.ffi) op [.loc flag n, .litv (.intLit index)] =
+      some (some ((sourceState.refs, sourceState.ffi), .val (.litv (.word8 byte)))) ∧
+    FlatSem.doAppMemory flatState op [.loc flag (n + 1), .litv (.intLit index)] =
+      some (some (flatState, .val (.litv (.word8 byte)))) ∧
+    ValueRel genv (.litv (.word8 byte)) (.litv (.word8 byte)) := by
+  have flatLookup := stateRel_byteArray_lookup genv sourceState flatState statesRel n bytes lookup
+  have notNegative : ¬index < 0 := Int.not_lt.mpr nonnegative
+  cases unsafeOp <;>
+    simp [doAppBasic, FlatSem.doAppMemory, SemanticPrimitivesHOL.readIndexed,
+      FlatSem.readIndexed, lookup, flatLookup, notNegative, element, ValueRel.literal genv (.word8 byte)]
+
+/-- For an invalid byte-array subscript, both dispatchers raise related
+subscript exceptions in checked mode and fail in unchecked mode. -/
+theorem aw8sub_outOfBounds {C F : Type} (genv : GlobalEnv)
+    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
+    (statesRel : StateRel genv sourceState flatState) (ok : genvCOk genv.c) (flag : Bool) (n : Nat)
+    (bytes : List (BitVec 8)) (lookup : storeLookup n sourceState.refs = some (.w8array bytes))
+    (index : Int) (outOfBounds : index < 0 ∨ bytes[index.toNat]? = none) (unsafeOp : Bool) :
+    let op := if unsafeOp then Flapjack.AstHOL.Op.aw8subUnsafe else .aw8sub
+    doAppBasic (sourceState.refs, sourceState.ffi) op [.loc flag n, .litv (.intLit index)] =
+      some (if unsafeOp then none else some ((sourceState.refs, sourceState.ffi), .err (.raise subExnV))) ∧
+    FlatSem.doAppMemory flatState op [.loc flag (n + 1), .litv (.intLit index)] =
+      some (if unsafeOp then none else some (flatState, .err (.raise FlatSem.subscriptExnV))) ∧
+    ValueRel genv subExnV FlatSem.subscriptExnV := by
+  have flatLookup := stateRel_byteArray_lookup genv sourceState flatState statesRel n bytes lookup
+  have exceptionRel := (exceptionValues_related genv ok).2.2.2
+  rcases outOfBounds with negative | absent <;> cases unsafeOp <;>
+    simp [doAppBasic, FlatSem.doAppMemory, SemanticPrimitivesHOL.readIndexed, FlatSem.readIndexed,
+      SemanticPrimitivesHOL.boundsFailure, FlatSem.boundsFailure, *]
+
+/-- A valid byte-array update is simulated at the shifted flat address,
+preserving related states and the reserved flat store entry. This covers both
+checked and unchecked operations over the factored state relation. -/
+theorem aw8update_related {C F : Type} (genv : GlobalEnv)
+    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
+    (statesRel : StateRel genv sourceState flatState) (flag : Bool) (n : Nat)
+    (bytes : List (BitVec 8)) (lookup : storeLookup n sourceState.refs = some (.w8array bytes))
+    (index : Int) (nonnegative : 0 ≤ index) (inBounds : index.toNat < bytes.length)
+    (byte : BitVec 8) (unsafeOp : Bool) :
+    let op := if unsafeOp then Flapjack.AstHOL.Op.aw8updateUnsafe else .aw8update
+    let sourceRefs := sourceState.refs.set n (.w8array (bytes.set index.toNat byte))
+    ∃ flatRefs,
+      doAppBasic (sourceState.refs, sourceState.ffi) op
+        [.loc flag n, .litv (.intLit index), .litv (.word8 byte)] =
+          some (some ((sourceRefs, sourceState.ffi), .val (.conv none []))) ∧
+      FlatSem.doAppMemory flatState op
+        [.loc flag (n + 1), .litv (.intLit index), .litv (.word8 byte)] =
+          some (some ({ flatState with refs := flatRefs }, .val FlatSem.unitValue)) ∧
+      ValueRel genv (.conv none []) FlatSem.unitValue ∧
+      StateRel genv { sourceState with refs := sourceRefs } { flatState with refs := flatRefs } ∧
+      flatRefs.take 1 = flatState.refs.take 1 := by
+  have flatLookup := stateRel_byteArray_lookup genv sourceState flatState statesRel n bytes lookup
+  have assigned : storeAssign n (.w8array (bytes.set index.toNat byte)) sourceState.refs =
+      some (sourceState.refs.set n (.w8array (bytes.set index.toNat byte))) := by
+    have lookup' : sourceState.refs[n]? = some (.w8array bytes) := lookup
+    simp [storeAssign, lookup', storeValueSameType]
+  obtain ⟨flatRefs, flatAssigned, reserved, nextRel⟩ := stateRel_storeAssign genv sourceState flatState statesRel n
+    (.w8array (bytes.set index.toNat byte)) (.w8array (bytes.set index.toNat byte))
+    (.w8array (bytes.set index.toNat byte)) _ assigned
+  have notNegative : ¬index < 0 := Int.not_lt.mpr nonnegative
+  have notTooLarge : ¬bytes.length ≤ index.toNat := Nat.not_le.mpr inBounds
+  refine ⟨flatRefs, ?_, ?_, .tuple genv [] [] (.nil genv), nextRel, reserved⟩
+  · cases unsafeOp <;> simp [doAppBasic, SemanticPrimitivesHOL.updateIndexed, lookup,
+      notNegative, notTooLarge, assigned]
+  · cases unsafeOp <;> simp [FlatSem.doAppMemory, FlatSem.updateIndexed, flatLookup,
+      notNegative, notTooLarge, flatAssigned]
+
+/-- Invalid byte-array updates leave the states unchanged and produce related
+exceptions in checked mode or failure in unchecked mode. -/
+theorem aw8update_outOfBounds {C F : Type} (genv : GlobalEnv)
+    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
+    (statesRel : StateRel genv sourceState flatState) (ok : genvCOk genv.c) (flag : Bool) (n : Nat)
+    (bytes : List (BitVec 8)) (lookup : storeLookup n sourceState.refs = some (.w8array bytes))
+    (index : Int) (outOfBounds : index < 0 ∨ bytes.length ≤ index.toNat)
+    (byte : BitVec 8) (unsafeOp : Bool) :
+    let op := if unsafeOp then Flapjack.AstHOL.Op.aw8updateUnsafe else .aw8update
+    doAppBasic (sourceState.refs, sourceState.ffi) op
+      [.loc flag n, .litv (.intLit index), .litv (.word8 byte)] =
+        some (if unsafeOp then none else some ((sourceState.refs, sourceState.ffi), .err (.raise subExnV))) ∧
+    FlatSem.doAppMemory flatState op
+      [.loc flag (n + 1), .litv (.intLit index), .litv (.word8 byte)] =
+        some (if unsafeOp then none else some (flatState, .err (.raise FlatSem.subscriptExnV))) ∧
+    ValueRel genv subExnV FlatSem.subscriptExnV := by
+  have flatLookup := stateRel_byteArray_lookup genv sourceState flatState statesRel n bytes lookup
+  have exceptionRel := (exceptionValues_related genv ok).2.2.2
+  rcases outOfBounds with negative | tooLarge <;> cases unsafeOp <;>
+    simp [doAppBasic, FlatSem.doAppMemory, SemanticPrimitivesHOL.updateIndexed, FlatSem.updateIndexed,
+      SemanticPrimitivesHOL.boundsFailure, FlatSem.boundsFailure, *]
+
+/-- A valid value-array update preserves related elements, states and the
+reserved flat store entry in checked and unchecked modes. -/
+theorem aupdate_related {C F : Type} (genv : GlobalEnv)
+    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
+    (statesRel : StateRel genv sourceState flatState) (flag : Bool) (n : Nat)
+    (values : List SemanticPrimitivesHOL.Value)
+    (lookup : storeLookup n sourceState.refs = some (.varray values))
+    (index : Int) (nonnegative : 0 ≤ index) (inBounds : index.toNat < values.length)
+    (value : SemanticPrimitivesHOL.Value) (flatValue : FlatSem.Value)
+    (valueRel : ValueRel genv value flatValue) (unsafeOp : Bool) :
+    let op := if unsafeOp then Flapjack.AstHOL.Op.aupdateUnsafe else .aupdate
+    let sourceRefs := sourceState.refs.set n (.varray (values.set index.toNat value))
+    ∃ flatRefs,
+      doAppBasic (sourceState.refs, sourceState.ffi) op
+        [.loc flag n, .litv (.intLit index), value] =
+          some (some ((sourceRefs, sourceState.ffi), .val (.conv none []))) ∧
+      FlatSem.doAppMemory flatState op
+        [.loc flag (n + 1), .litv (.intLit index), flatValue] =
+          some (some ({ flatState with refs := flatRefs }, .val FlatSem.unitValue)) ∧
+      ValueRel genv (.conv none []) FlatSem.unitValue ∧
+      StateRel genv { sourceState with refs := sourceRefs } { flatState with refs := flatRefs } ∧
+      flatRefs.take 1 = flatState.refs.take 1 := by
+  obtain ⟨flatValues, flatLookup, valuesRel⟩ :=
+    stateRel_array_lookup genv sourceState flatState statesRel n values lookup
+  have assigned : storeAssign n (.varray (values.set index.toNat value)) sourceState.refs =
+      some (sourceState.refs.set n (.varray (values.set index.toNat value))) := by
+    have lookup' : sourceState.refs[n]? = some (.varray values) := lookup
+    simp [storeAssign, lookup', storeValueSameType]
+  obtain ⟨flatRefs, flatAssigned, reserved, nextRel⟩ := stateRel_storeAssign genv sourceState flatState statesRel n
+    (.varray (values.set index.toNat value)) (.varray (flatValues.set index.toNat flatValue))
+    (.varray (Flapjack.forall₂_set _ _ _ value flatValue index.toNat ⟨valueRel, valuesRel⟩)) _ assigned
+  have notNegative : ¬index < 0 := Int.not_lt.mpr nonnegative
+  have notTooLarge : ¬values.length ≤ index.toNat := Nat.not_le.mpr inBounds
+  have flatNotTooLarge : ¬flatValues.length ≤ index.toNat := by
+    simpa [← valuesRel.length_eq] using notTooLarge
+  refine ⟨flatRefs, ?_, ?_, .tuple genv [] [] (.nil genv), nextRel, reserved⟩
+  · cases unsafeOp <;> simp [doAppBasic, SemanticPrimitivesHOL.updateIndexed, lookup,
+      notNegative, notTooLarge, assigned]
+  · cases unsafeOp <;> simp [FlatSem.doAppMemory, FlatSem.updateIndexed, flatLookup,
+      notNegative, flatNotTooLarge, flatAssigned]
+
+/-- Invalid value-array updates leave the states unchanged and produce related
+exceptions in checked mode or failure in unchecked mode. -/
+theorem aupdate_outOfBounds {C F : Type} (genv : GlobalEnv)
+    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
+    (statesRel : StateRel genv sourceState flatState) (ok : genvCOk genv.c) (flag : Bool) (n : Nat)
+    (values : List SemanticPrimitivesHOL.Value)
+    (lookup : storeLookup n sourceState.refs = some (.varray values))
+    (index : Int) (outOfBounds : index < 0 ∨ values.length ≤ index.toNat)
+    (value : SemanticPrimitivesHOL.Value) (flatValue : FlatSem.Value) (unsafeOp : Bool) :
+    let op := if unsafeOp then Flapjack.AstHOL.Op.aupdateUnsafe else .aupdate
+    doAppBasic (sourceState.refs, sourceState.ffi) op [.loc flag n, .litv (.intLit index), value] =
+      some (if unsafeOp then none else some ((sourceState.refs, sourceState.ffi), .err (.raise subExnV))) ∧
+    FlatSem.doAppMemory flatState op [.loc flag (n + 1), .litv (.intLit index), flatValue] =
+      some (if unsafeOp then none else some (flatState, .err (.raise FlatSem.subscriptExnV))) ∧
+    ValueRel genv subExnV FlatSem.subscriptExnV := by
+  obtain ⟨flatValues, flatLookup, valuesRel⟩ :=
+    stateRel_array_lookup genv sourceState flatState statesRel n values lookup
+  have exceptionRel := (exceptionValues_related genv ok).2.2.2
+  rcases outOfBounds with negative | tooLarge
+  · cases unsafeOp <;>
+      simp [doAppBasic, FlatSem.doAppMemory, SemanticPrimitivesHOL.updateIndexed, FlatSem.updateIndexed,
+        SemanticPrimitivesHOL.boundsFailure, FlatSem.boundsFailure, *]
+  · have flatTooLarge : flatValues.length ≤ index.toNat := by simpa [← valuesRel.length_eq] using tooLarge
+    cases unsafeOp <;>
+      simp [doAppBasic, FlatSem.doAppMemory, SemanticPrimitivesHOL.updateIndexed, FlatSem.updateIndexed,
+        SemanticPrimitivesHOL.boundsFailure, FlatSem.boundsFailure, *]
+
+/-- A non-type-error external call has a string configuration and a byte-array
+location. The corresponding flat location is one store slot later. -/
+theorem ffi_operands {F : Type} (source : SemanticPrimitivesHOL.State F)
+    (name : Basis.Pure.MlString.MlString) (configuration pointer : SemanticPrimitivesHOL.Value)
+    (successful : doApp (source.refs, source.ffi) (.ffi name) [configuration, pointer] ≠ none) :
+    ∃ text flag address bytes, configuration = .litv (.strLit text) ∧ pointer = .loc flag address ∧
+      storeLookup address source.refs = some (.w8array bytes) := by
+  cases configuration <;> cases pointer <;> simp [doApp, doAppNumericCore, doAppBasic] at successful
+  case litv.loc lit flag address =>
+    cases lit <;> simp at successful
+    case strLit text =>
+      cases lookup : storeLookup address source.refs with
+      | none => simp [lookup] at successful
+      | some cell =>
+        cases cell with
+        | w8array bytes => exact ⟨text, flag, address, bytes, rfl, rfl, lookup⟩
+        | refv value => simp [lookup] at successful
+        | varray values => simp [lookup] at successful
+        | thunk mode value => simp [lookup] at successful
+
+/-- A returning external call updates corresponding byte arrays and keeps the
+same FFI state on both sides. This is infrastructure over the factored,
+unreviewed source-to-flat relations. -/
+theorem ffi_return_related {C F : Type} (genv : GlobalEnv)
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (statesRel : StateRel genv source flat) (name : Basis.Pure.MlString.MlString)
+    (configuration : Basis.Pure.MlString.MlString) (flag : Bool) (address : Nat)
+    (bytes output : List (BitVec 8)) (nextFfi : HolFfiState F)
+    (lookup : storeLookup address source.refs = some (.w8array bytes))
+    (returned : callFFIHOL source.ffi (.extCall name) configuration.explode bytes = .ret nextFfi output) :
+    ∃ sourceRefs flatRefs,
+      doAppBasic (source.refs, source.ffi) (.ffi name) [.litv (.strLit configuration), .loc flag address] =
+        some (some ((sourceRefs, nextFfi), .val (.conv none []))) ∧
+      FlatSem.doAppData flat (.ffi name) [.litv (.strLit configuration), .loc flag (address + 1)] =
+        some (some ({ flat with refs := flatRefs, ffi := nextFfi }, .val FlatSem.unitValue)) ∧
+      StateRel genv { source with refs := sourceRefs, ffi := nextFfi }
+        { flat with refs := flatRefs, ffi := nextFfi } ∧
+      flatRefs.take 1 = flat.refs.take 1 := by
+  have assigned : storeAssign address (.w8array output) source.refs =
+      some (source.refs.set address (.w8array output)) := by
+    have indexed : source.refs[address]? = some (.w8array bytes) := lookup
+    simp [storeAssign, indexed, storeValueSameType]
+  obtain ⟨flatRefs, flatAssigned, reserved, nextRel⟩ :=
+    stateRel_storeAssign genv source flat statesRel address (.w8array output) (.w8array output)
+      (.w8array output) _ assigned
+  have flatLookup := stateRel_byteArray_lookup genv source flat statesRel address bytes lookup
+  have ffiEq := (stateRel_iff genv source flat).mp statesRel |>.2.2.2
+  have finalRel : StateRel genv { source with refs := source.refs.set address (.w8array output), ffi := nextFfi }
+      { flat with refs := flatRefs, ffi := nextFfi } := by
+    cases nextRel with
+    | intro nonempty refs clock _ => exact .intro _ _ nonempty refs clock rfl
+  refine ⟨_, flatRefs, ?_, ?_, finalRel, reserved⟩
+  · simp [doAppBasic, lookup, returned, assigned]
+  · simp [FlatSem.doAppData, flatLookup, ← ffiEq, returned, flatAssigned]
+
+/-- A terminal external call produces the same final event without changing
+stored data. This relies only on the factored state relation. -/
+theorem ffi_final_related {C F : Type} (genv : GlobalEnv)
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (statesRel : StateRel genv source flat) (name : Basis.Pure.MlString.MlString)
+    (configuration : Basis.Pure.MlString.MlString) (flag : Bool) (address : Nat)
+    (bytes : List (BitVec 8)) (event : HolFinalEvent)
+    (lookup : storeLookup address source.refs = some (.w8array bytes))
+    (finished : callFFIHOL source.ffi (.extCall name) configuration.explode bytes = .final event) :
+    doAppBasic (source.refs, source.ffi) (.ffi name) [.litv (.strLit configuration), .loc flag address] =
+      some (some ((source.refs, source.ffi), .err (.abort (.ffiError event)))) ∧
+    FlatSem.doAppData flat (.ffi name) [.litv (.strLit configuration), .loc flag (address + 1)] =
+      some (some (flat, .err (.abort (.ffiError event)))) := by
+  have flatLookup := stateRel_byteArray_lookup genv source flat statesRel address bytes lookup
+  have ffiEq := (stateRel_iff genv source flat).mp statesRel |>.2.2.2
+  constructor
+  · simp [doAppBasic, lookup, finished]
+  · simp [FlatSem.doAppData, flatLookup, ← ffiEq, finished]
+
+end Flapjack.Compiler.Backend.SourceToFlat

@@ -62,13 +62,4 @@ private theorem foldMaximum (values : List Nat) (initial : Nat) :
   | cons head tail ih =>
       simp only [List.foldl_cons, maxList, ih, Nat.max_assoc]
 
-/-- The full production cutset-pair maximum equals the native maximum of its
-existing Spt codec. No success, desired-maximum, uniqueness, bounds or tree
-well-formedness premise is assumed. This is Flapjack carrier correspondence;
-the complete Word-to-Stack frame and executed route remain separate. -/
-theorem wordCutsetsCakeMaxVar_eq_cutsetsMaxHOL (sets : List Nat × List Nat) :
-    wordCutsetsCakeMaxVar sets = cutsetsMaxHOL (wordCutsetsToHOL sets) := by
-  simp only [wordCutsetsCakeMaxVar, cutsetsMaxHOL, wordCutsetsToHOL,
-    maxList_toNumSetHOL, foldMaximum, Nat.zero_max]
-
 end Flapjack

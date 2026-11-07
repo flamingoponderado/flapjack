@@ -276,7 +276,7 @@ private theorem numSetKeys_mem (key : Nat) (tree : NumSet) :
       simp [numSetKeys, List.mem_append, List.mem_map, sptMem_bs,
         ihLeft, ihRight, eq_comm]
 
-private theorem nodupMapInjective {α β : Type} (f : α → β)
+theorem nodupMapInjective {α β : Type} (f : α → β)
     (hf : Function.Injective f) : ∀ xs : List α, xs.Nodup → (xs.map f).Nodup
   | [], _ => by simp
   | head :: tail, h => by

@@ -1,6 +1,10 @@
-import Flapjack.LoopGetVarImm
-import Flapjack.FiniteMap.Basic
-import Flapjack.Pancake.WordLang
+module
+
+public import Flapjack.LoopGetVarImm
+public import Flapjack.FiniteMap.Basic
+public import Flapjack.Pancake.WordLang
+
+@[expose] public section
 
 /-!
 # Exact HOL `loopSem$state` carrier
@@ -36,8 +40,7 @@ source shapes are tracked separately (see the `mlstring`/program-carrier and
 `ffi_state` beads).  Only once those sub-carriers are exact may the `state`
 datatype itself carry an `@[hol ... "state"]` tag.  The point of this module is
 to give `loopSem`-level statements (such as `get_var_imm_def`) a full-state
-argument whose map/memory/domain/address fields are already source-shaped, plus
-a checked bridge to the production `LoopMachineState`.
+argument whose map/memory/domain/address fields are already source-shaped.
 -/
 
 namespace Flapjack
@@ -64,43 +67,6 @@ structure LoopSemState (width : Nat) [NeZero width] (F : Type) where
   ffi : FfiState F
   baseAddr : BitVec width
   topAddr : BitVec width
-
-/-- Observational bridge from the exact `LoopSemState` to the production
-    `LoopMachineState`.  The word-location payloads are compared through
-    `loopValueOfWordLocW`; the total `memory` is option-valued on the
-    production side (always present); the address sets are Bool predicates on
-    both sides; the code table is related by the production association list
-    enumerating entries of the exact finite map (`num_map` has no enumeration
-    order, so the source map may contain further entries). -/
-def LoopMachineStateRel {width : Nat} [NeZero width] {F : Type}
-    (s : LoopSemState width F) (m : LoopMachineState (BitVec width) F) : Prop :=
-  (∀ name, m.locals name = (s.locals name).map loopValueOfWordLocW) ∧
-  (∀ global, m.globals global = (s.globals global).map loopValueOfWordLocW) ∧
-  (∀ address, m.memory address = some (loopValueOfWordLocW (s.memory address))) ∧
-  m.mdomain = s.mdomain ∧
-  m.shMdomain = s.shMdomain ∧
-  m.clock = s.clock ∧
-  m.be = s.be ∧
-  m.ffi = s.ffi ∧
-  m.baseAddr = s.baseAddr ∧
-  m.topAddr = s.topAddr ∧
-  (∀ entry, entry ∈ m.code → s.code entry.1 = some (entry.2.1, entry.2.2))
-
-/-- Register reads through `get_var_imm` on the production state agree with the
-    exact carrier's local lookup under the bridge. -/
-theorem getVarImm_reg_eq_of_loopMachineStateRel {width : Nat} [NeZero width]
-    {F : Type} {s : LoopSemState width F} {m : LoopMachineState (BitVec width) F}
-    (h : LoopMachineStateRel s m) (name : Nat) :
-    getVarImm m (.reg name) = (s.locals name).map loopValueOfWordLocW := by
-  rw [getVarImm_reg]
-  exact h.1 name
-
-/-- Immediate reads are unchanged by the bridge. -/
-theorem getVarImm_imm_eq_of_loopMachineStateRel {width : Nat} [NeZero width]
-    {F : Type} {s : LoopSemState width F} {m : LoopMachineState (BitVec width) F}
-    (_h : LoopMachineStateRel s m) (value : BitVec width) :
-    getVarImm m (.imm value) = some (.word value) :=
-  getVarImm_imm m value
 
 /-! ## Carrier-level `get_var_imm` / `get_vars`
 
@@ -166,16 +132,6 @@ theorem getVars_clock {width : Nat} [NeZero width] {F : Type}
   | cons name names ih =>
       simp only [getVars]
       rw [ih]
-
-/-- The exact carrier's `get_var_imm` maps to the production `get_var_imm`
-    through `loopValueOfWordLocW` under the state bridge. -/
-theorem getVarImm_map_eq_of_loopMachineStateRel {width : Nat} [NeZero width]
-    {F : Type} {s : LoopSemState width F} {m : LoopMachineState (BitVec width) F}
-    (h : LoopMachineStateRel s m) (operand : RegImm (BitVec width)) :
-    (getVarImm operand s).map loopValueOfWordLocW = Flapjack.getVarImm m operand := by
-  cases operand with
-  | reg name => simp only [getVarImm_reg, Flapjack.getVarImm_reg, h.1 name]
-  | imm value => rfl
 
 end LoopSemState
 

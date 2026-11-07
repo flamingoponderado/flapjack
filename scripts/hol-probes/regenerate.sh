@@ -40,8 +40,176 @@ probe_needs_refresh() {
   local probe="$2"
   local source="$3"
   [[ ! -f "$output" || "$probe" -nt "$output" || "$source" -nt "$output" ]] ||
+    [[ "$(basename "$probe")" == pattern_exh_steps_probeScript.sml &&
+       ( "$cake_dir/compiler/backend/pattern_matching/pattern_commonScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/pattern_matching/pattern_semanticsScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/pattern_matching/pattern_compScript.sml" -nt "$output" ) ]] ||
+    [[ "$(basename "$probe")" == clos_call_env_rel_probeScript.sml &&
+       ( "$cake_dir/compiler/backend/proofs/clos_callProofScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/closLangScript.sml" -nt "$output" ) ]] ||
+    [[ "$(basename "$probe")" == clos_call_free_correct_probeScript.sml &&
+       ( "$cake_dir/compiler/backend/clos_callScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/semantics/closPropsScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/db_varsScript.sml" -nt "$output" ) ]] ||
+    [[ "$(basename "$probe")" == clos_call_wfg_probeScript.sml &&
+       ( "$cake_dir/compiler/backend/semantics/closPropsScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/closLangScript.sml" -nt "$output" ) ]] ||
+    [[ "$(basename "$probe")" == clos_call_stub_probeScript.sml &&
+       "$cake_dir/compiler/backend/proofs/clos_callProofScript.sml" -nt "$output" ]] ||
+    [[ "$(basename "$probe")" == data_sem_stack_probeScript.sml &&
+       "$cake_dir/compiler/backend/data_to_wordScript.sml" -nt "$output" ]] ||
+    [[ "$(basename "$probe")" == source_to_flat_opassign_probeScript.sml &&
+       "$cake_dir/semantics/semanticPrimitivesScript.sml" -nt "$output" ]] ||
+    [[ "$(basename "$probe")" == source_to_flat_opderef_probeScript.sml &&
+       "$cake_dir/semantics/semanticPrimitivesScript.sml" -nt "$output" ]] ||
+    [[ "$(basename "$probe")" == source_to_flat_opref_probeScript.sml &&
+       "$cake_dir/semantics/semanticPrimitivesScript.sml" -nt "$output" ]] ||
+    [[ "$(basename "$probe")" == source_to_flat_function_handle_probeScript.sml &&
+       ( "$cake_dir/semantics/evaluateScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/semantics/flatSemScript.sml" -nt "$output" ) ]] ||
+    [[ "$(basename "$probe")" == cake_sexp_parser_probeScript.sml &&
+       ( "$hol_dir/examples/formal-languages/context-free/simpleSexpScript.sml" -nt "$output" ||
+         "$hol_dir/examples/formal-languages/context-free/simpleSexpParseScript.sml" -nt "$output" ||
+         "$hol_dir/src/string/stringScript.sml" -nt "$output" ) ]] ||
+    [[ "$(basename "$probe")" == cake_subglobals_probeScript.sml &&
+       "$cake_dir/compiler/backend/proofs/source_evalProofScript.sml" -nt "$output" ]] ||
+    [[ "$(basename "$probe")" == cake_basis_bvi_probeScript.sml &&
+       "$cake_dir/basis/basisProgScript.sml" -nt "$output" ]] ||
+    [[ "$(basename "$probe")" == cake_parse_error_probeScript.sml &&
+       "$cake_dir/semantics/lexer_funScript.sml" -nt "$output" ]] ||
+    [[ "$(basename "$probe")" == cake_source_eval_probeScript.sml &&
+       "$cake_dir/semantics/evaluateScript.sml" -nt "$output" ]] ||
+    [[ "$(basename "$probe")" == cakeml_frontend_flat_probeScript.sml &&
+       ( "$cake_dir/compiler/backend/flat_patternScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/source_to_flatScript.sml" -nt "$output" ) ]] ||
+    [[ "$(basename "$probe")" == cakeml_frontend_flat_probeScript.sml &&
+       ( "$cake_dir/compiler/backend/flat_to_closScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/clos_interpScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/closLangScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/source_letScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/source_to_sourceScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/clos_to_bvlScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/bvl_jumpScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/db_varsScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/clos_annotateScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/clos_mtiScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/clos_numberScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/bvl_to_bviScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/bvi_letScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/dataLangScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/data_spaceScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/data_simpScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/data_liveScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/data_to_wordScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/bvi_to_dataScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/pattern_matching/pattern_compScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/pattern_matching/pattern_exhScript.sml" -nt "$output" ) ]] ||
+    [[ ( "$(basename "$probe")" == cake_basis_bvi_probeScript.sml ||
+         "$(basename "$probe")" == empty_cake_bvi_probeScript.sml ||
+         "$(basename "$probe")" == reference_cake_bvi_probeScript.sml ||
+         "$(basename "$probe")" == match_cake_bvi_probeScript.sml ||
+         "$(basename "$probe")" == mti_cake_bvi_probeScript.sml ||
+         "$(basename "$probe")" == inline_cake_bvi_probeScript.sml ||
+         "$(basename "$probe")" == bvl_inline_cake_bvi_probeScript.sml ||
+         "$(basename "$probe")" == bvl_handle_cake_bvi_probeScript.sml ||
+         "$(basename "$probe")" == bvl_optimized_cake_bvi_probeScript.sml ||
+         "$(basename "$probe")" == bvi_tailrec_frontend_probeScript.sml ||
+         "$(basename "$probe")" == default_frontend_config_probeScript.sml ||
+         "$(basename "$probe")" == clos_known_frontend_probeScript.sml ||
+         "$(basename "$probe")" == empty_cake_data_probeScript.sml ||
+         "$(basename "$probe")" == reference_cake_data_probeScript.sml ||
+         "$(basename "$probe")" == match_cake_data_probeScript.sml ||
+         "$(basename "$probe")" == empty_cake_word_probeScript.sml ||
+         "$(basename "$probe")" == reference_cake_word_probeScript.sml ||
+         "$(basename "$probe")" == match_cake_word_probeScript.sml ||
+         "$(basename "$probe")" == full_cake_word_probeScript.sml ||
+         "$(basename "$probe")" == full_inline_cake_word_probeScript.sml ||
+         "$(basename "$probe")" == full_mti_inline_cake_word_probeScript.sml ||
+         "$(basename "$probe")" == full_bvl_optimized_cake_word_probeScript.sml ||
+         "$(basename "$probe")" == full_clos_call_cake_word_probeScript.sml ||
+         "$(basename "$probe")" == full_clos_known_cake_word_probeScript.sml ||
+         "$(basename "$probe")" == full_default_frontend_word_probeScript.sml ) &&
+       ( "$cake_dir/compiler/backend/source_to_sourceScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/source_to_flatScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/flat_elimScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/flat_patternScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/flat_to_closScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/clos_to_bvlScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/clos_annotateScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/clos_numberScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/clos_mtiScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/clos_knownScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/clos_fvsScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/clos_opScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/clos_ticksScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/clos_letopScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/clos_callScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/closLangScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/db_varsScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/bvl_jumpScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/backend_commonScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/bvi_letScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/bvi_inlineScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/bvl_inlineScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/bvl_handleScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/bvl_constScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/bvi_tailrecScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/bvi_tmcScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/bvi_to_dataScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/data_liveScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/data_simpScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/data_spaceScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/pattern_matching/pattern_compScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/pattern_matching/pattern_exhScript.sml" -nt "$output" ) ]] ||
     [[ "$(basename "$probe")" == l3_riscv_int_to_fp_probeScript.sml &&
-       "$probe_dir/binary_ieee_directed_certificates.sml" -nt "$output" ]]
+       "$probe_dir/binary_ieee_directed_certificates.sml" -nt "$output" ]] ||
+    [[ "$(basename "$probe")" == tmc_program_word_probeScript.sml &&
+       ( "$cake_dir/compiler/backend/bvi_tmcScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/bvi_inlineScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/bvi_to_dataScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/data_liveScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/data_spaceScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/data_simpScript.sml" -nt "$output" ) ]] ||
+    [[ "$(basename "$probe")" == clos_call_frontend_probeScript.sml &&
+       ( "$cake_dir/compiler/backend/closLangScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/db_varsScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/backend_commonScript.sml" -nt "$output" ) ]] ||
+    [[ "$(basename "$probe")" == clos_known_helpers_probeScript.sml &&
+       ( "$cake_dir/compiler/backend/clos_fvsScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/clos_ticksScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/clos_letopScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/closLangScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/db_varsScript.sml" -nt "$output" ) ]] ||
+    [[ "$(basename "$probe")" == clos_op_frontend_probeScript.sml &&
+       ( "$cake_dir/compiler/backend/closLangScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/backend_commonScript.sml" -nt "$output" ) ]] ||
+    [[ ( "$(basename "$probe")" == cake_lexer_probeScript.sml ||
+         "$(basename "$probe")" == cake_lexer_chunks_probeScript.sml ) &&
+       ( "$cake_dir/semantics/lexer_funScript.sml" -nt "$output" ||
+         "$cake_dir/semantics/tokensScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/parsing/lexer_implScript.sml" -nt "$output" ) ]] ||
+    [[ "$(basename "$probe")" == cake_peg_checks_probeScript.sml &&
+       ( "$cake_dir/semantics/gramScript.sml" -nt "$output" ||
+         "$cake_dir/semantics/tokensScript.sml" -nt "$output" ||
+         "$cake_dir/semantics/tokenUtilsScript.sml" -nt "$output" ) ]] ||
+    [[ "$(basename "$probe")" == cake_peg_actions_probeScript.sml &&
+       ( "$cake_dir/semantics/gramScript.sml" -nt "$output" ||
+         "$cake_dir/semantics/tokensScript.sml" -nt "$output" ||
+         "$hol_dir/examples/formal-languages/context-free/grammarScript.sml" -nt "$output" ||
+         "$hol_dir/examples/formal-languages/context-free/locationScript.sml" -nt "$output" ) ]] ||
+    [[ ( "$(basename "$probe")" == bignum_word_probeScript.sml ||
+         "$(basename "$probe")" == bignum_mini_probeScript.sml ||
+         "$(basename "$probe")" == full_cake_word_probeScript.sml ||
+         "$(basename "$probe")" == full_inline_cake_word_probeScript.sml ||
+         "$(basename "$probe")" == full_mti_inline_cake_word_probeScript.sml ||
+         "$(basename "$probe")" == full_bvl_optimized_cake_word_probeScript.sml ||
+         "$(basename "$probe")" == full_clos_call_cake_word_probeScript.sml ||
+         "$(basename "$probe")" == full_clos_known_cake_word_probeScript.sml ||
+         "$(basename "$probe")" == full_default_frontend_word_probeScript.sml ) &&
+       ( "$hol_dir/examples/machine-code/multiword/mc_multiwordScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/data_to_wordScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/word_bignumScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/encoders/asm/asmScript.sml" -nt "$output" ) ]]
 }
 
 run_probe() {
@@ -106,6 +274,680 @@ run_probe() {
     fi
   done
 }
+
+run_probe flat_to_clos_helpers_probeScript.sml flat_to_clos_helpers_probe.out \
+  dest_pat_typed compile_lit_typed arg1_typed arg2_typed join_strings_typed dest_nop_typed dest_constant_typed dest_constants_typed smart_cons_typed dest_pat_numeric smart_cons_fold \
+  "$cake_dir/compiler/backend/flat_to_closScript.sml" "$cake_dir/compiler/backend"
+
+run_probe backend_fp_config_probeScript.sml backend_fp_config_probe.out \
+  ensure_fp_config_typed riscv_fp_config armv7_three_fp_config armv7_two_fp_config riscv_three_fp_config \
+  "$cake_dir/compiler/backend/backendScript.sml" "$cake_dir/compiler/backend/riscv"
+
+run_probe source_to_flat_envrel_probeScript.sml source_to_flat_envrel_probe.out \
+  env_rel_list_typed env_rel_dom_typed env_rel_lookup_typed env_rel_append_typed env_rel_one_typed env_rel_bind_one_typed \
+  "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe source_to_flat_invariant_clock_probeScript.sml source_to_flat_invariant_clock_probe.out \
+  change_clock_typed dec_clock_typed \
+  "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe source_to_flat_invariant_helpers_probeScript.sml source_to_flat_invariant_helpers_probe.out \
+  globals_typed constructors_typed shrink_typed shrink_gen_typed eval_ref_typed \
+  "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe source_to_flat_compile_correct_probeScript.sml source_to_flat_compile_correct_probe.out \
+  abort_typed compile_correct_typed \
+  "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe flat_props_evaluate_match_probeScript.sml flat_props_evaluate_match_probe.out \
+  evaluate_match_typed \
+  "$cake_dir/compiler/backend/semantics/flatPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe clos_interp_review_probeScript.sml clos_interp_review_probe.out \
+  has_install_typed interp_el_typed interp_rev_typed interpreter_body_typed interpreter_typed compile_init_typed attach_interpreter_typed compile_prog_typed can_interpret_op_typed can_interpret_typed check_size_op_typed check_size_typed nontrivial_size_typed to_constant_op_typed to_constant_typed opt_interp_typed opt_interp1_typed insert_interp1_typed insert_interp_typed inc_compile_decs_typed \
+  "$cake_dir/compiler/backend/clos_interpScript.sml" "$cake_dir/compiler/backend"
+
+run_probe clos_interp_semantics_probeScript.sml clos_interp_semantics_probe.out \
+  attach_semantics_typed \
+  "$cake_dir/compiler/backend/proofs/clos_interpProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe finite_map_empty_probeScript.sml finite_map_empty_probe.out \
+  fempty_typed flookup_empty_typed \
+  "$hol_dir/src/finite_maps/finite_mapScript.sml" "$hol_dir/src/finite_maps"
+
+run_probe flat_to_clos_relation_probeScript.sml flat_to_clos_relation_probe.out \
+  findi_typed compile_typed compile_decs_typed compile_op_typed compile_arith_typed copy_str_typed copy_aw8_typed \
+  rules_typed induction_typed cases_typed state_rel_typed store_rel_typed inc_compile_typed install_rel_typed exc_rel_typed result_rel_typed clos_semantics_typed compile_semantics_prime_typed install_rel_unprimed_typed compile_semantics_typed compile_correct_typed \
+  "$cake_dir/compiler/backend/proofs/flat_to_closProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe clos_sem_call_helpers_probeScript.sml clos_sem_call_helpers_probe.out \
+  find_code_typed check_loc_typed partial_type full_type dest_closure_typed lookup_vars_typed clos_env_typed build_recc_typed dest_closure_length_typed \
+  "$cake_dir/compiler/backend/semantics/closSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe source_to_flat_mapi_probeScript.sml source_to_flat_mapi_probe.out \
+  mapi_map_typed filter_mapi_typed \
+  "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe clos_to_bvl_incremental_probeScript.sml clos_to_bvl_incremental_probe.out \
+  incremental_aux incremental_empty incremental_closure incremental_mti_aux incremental_mti_empty incremental_call_closure incremental_call_mti incremental_known_globals incremental_known_default \
+  "$cake_dir/compiler/backend/clos_to_bvlScript.sml" "$cake_dir/compiler/backend"
+
+run_probe clos_to_bvl_recursive_types_probeScript.sml clos_to_bvl_recursive_types_probe.out \
+  recc_lets_type build_recc_lets_type recc_lets_example build_recc_lets_example compile_exp_sing_def compile_exp_sing_type compile_exp_list_type compile_prog_def compile_prog_type compile_exps_def compile_exps_type compile_exp_sing_eq \
+  "$cake_dir/compiler/backend/clos_to_bvlScript.sml" "$cake_dir/compiler/backend"
+
+run_probe bvl_inline_state_rel_probeScript.sml bvl_inline_state_rel_probe.out \
+  state_rel evaluate_remove_ticks remove_ticks_cc remove_ticks_co evaluate_compile_prog mk_tick mk_tick_zero mk_tick_three exp_rel_rules subspt_exp_rel exp_rel_swap exp_rel_refl tick_inline tick_inline_sing_def tick_inline_sing exp_rel_tick_inline is_small_aux is_small_sing_def is_small_sing is_small is_rec is_rec_sing_def is_rec_sing must_inline tick_inline_all tick_compile_prog tick_inline_all_names tick_compile_prog_res_range in_cc in_state_rel evaluate_inline evaluate_mk_tick evaluate_mono evaluate_expand_env in_co MAP_FST_tick_inline_all do_app_Rval_swap do_app_Rerr_swap must_inline_yes must_inline_rec must_inline_zero tick_inline_generic_cache tick_inline_uncached var_list dest_op let_op let_op_one_def let_op_one let_op_sing_def HD_let_op LENGTH_let_op do_app_lemma_typed_goal tick_compile_prog_IMP_exp_rel_typed_goal tick_compile_prog_IMP_exp_rel_replay in_do_app_lemma_typed_goal in_do_app_lemma_replay evaluate_initial_state_replay in_evaluate_Call_replay var_list_IMP_evaluate_general_replay var_list_IMP_evaluate_zero_replay do_app_lemma_replay \
+  "$cake_dir/compiler/backend/proofs/bvl_inlineProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe bvl_remove_ticks_probeScript.sml bvl_remove_ticks_probe.out \
+  remove_ticks_sing remove_ticks remove_ticks_equivalence nested branches \
+  "$cake_dir/compiler/backend/bvl_inlineScript.sml" "$cake_dir/compiler/backend"
+
+run_probe clos_known_syntax_probeScript.sml clos_known_syntax_probe.out \
+  syntax_ok_typed known_unchanged_globals_typed semantics_known_typed do_install_IMP_shift_seq_typed evaluate_app_IMP_shift_seq_typed known_preserves_pure_typed known_exp_rel_typed known_exp_rel_dec_typed known_exp_rel_update_typed known_f_rel_typed known_f_rel_update_typed known_v_rel_typed known_v_rel_app_typed known_v_rel_app_none_typed known_v_rel_subspt_typed known_v_rel_list_subspt_typed known_v_rel_update_typed known_v_rel_block_typed known_v_rel_bool_typed known_v_rel_unit_typed known_ref_rel_rules_typed known_ref_rel_subspt_typed known_ref_rel_update_typed known_loptrel_typed known_next_g_typed known_compile_inc_typed known_state_rel_typed known_state_rel_subspt_typed known_state_rel_update_typed known_state_rel_get_global_typed known_state_oracle_safety_typed known_state_oracle_safety_shift_typed known_oracle_subspt_typed known_oracle_subspt_add_typed known_oracle_subspt_alt_typed known_oracle_subspt_shift_typed known_oracle_subspt_evaluate_typed known_op_subspt_typed known_subspt_typed known_subspt_composition_typed known_subspt_op_composition_typed known_correct0_statement_typed simple_val_rel_do_app_rev_typed simple_val_rel_do_app_typed known_do_app_lemma_statement_typed known_v_rel_bytes_statement_typed known_v_rel_words_statement_typed known_state_oracle_disjoint_typed known_state_oracle_disjoint_evaluate_typed known_co_fn_none_typed known_co_fn_none_shift_typed known_state_rel_co_globals_typed known_state_rel_first_n_typed known_state_rel_unique_typed known_compile_inc_update_replay_typed known_evaluate_app_exact_typed bag_all_distinct_typed option_val_approx_spt_typed option_upd_val_spt_typed contains_closures_typed get_size_aux_typed get_size_typed get_size_sc_aux_typed get_size_sc_typed clos_approx_typed get_size_sc_aux_correct_typed get_size_sc_some_typed free_typed closed_typed decide_inline_typed decide_inline_positive_typed fv_max_def_typed fv_max_smart_typed fv_max_cons_typed fv_max_append_typed fv_max_less_typed fv_max_rw_typed fv_max_ticks_typed evaluate_mk_ticks_typed val_approx_val_rules_typed val_approx_merge_left_typed val_approx_merge_typed known_merge_comm_typed state_globals_approx_typed state_globals_clock_typed state_globals_dec_clock_typed state_globals_refs_typed state_globals_ffi_typed state_globals_code_typed state_globals_oracle_typed known_op_correct_approx_typed val_approx_sgc_free_typed val_approx_sgc_free_merge_typed globals_approx_sgc_free_typed known_op_preserves_esgc_free_typed elist_globals_empty_typed clos_gen_noinline_safe_typed decide_inline_imp_clos_typed decide_inline_imp_clos_fv_max_typed decide_inline_imp_clos_lopt_typed known_def_typed known_length_typed known_length_eq_typed known_sing_typed known_sing_eq_typed mapped_globals_typed mglobals_extend_typed mglobals_extend_refl_typed mglobals_extend_trans_typed mglobals_extend_subset_typed state_globals_approx_subspt_typed known_op_changed_globals_typed known_op_changed_globals_cases_typed known_op_changed_globals_alt_set_typed do_app_ssgc_typed vsgc_free_typed rsgc_free_typed ssgc_free_typed vsgc_free_unit_typed vsgc_free_bool_typed ssgc_free_clock_typed ssgc_free_dec_clock_typed rel_update_thunk_statement_typed dest_closure_none_loc_typed \
+  "$cake_dir/compiler/backend/proofs/clos_knownProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe clos_fvs_correctness_probeScript.sml clos_fvs_correctness_probe.out \
+  remove_sing_typed remove_sing_eq_typed remove_length_typed compile_typed compile_inc_typed code_rel_typed function_rel_typed value_rel_typed ref_rel_typed state_rel_typed evaluate_remove_typed semantics_compile_typed remove_vars_none_typed remove_fv_max_typed remove_set_globals_typed remove_elist_globals_typed remove_esgc_free_typed \
+  "$cake_dir/compiler/backend/proofs/clos_fvsProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe clos_ticks_source_probeScript.sml clos_ticks_source_probe.out \
+  remove_sing_typed remove_sing_eq_typed compile_inc_typed code_rel_typed function_rel_typed value_rel_typed ref_rel_typed state_rel_typed code_rel_length_typed state_rel_max_app_typed state_rel_clock_typed mk_ticks_typed remove_mk_ticks_typed evaluate_mk_ticks_typed evaluate_remove_ticks_typed remove_var_ticks_typed remove_raise_ticks_typed remove_handle_ticks_typed remove_let_ticks_typed remove_if_ticks_typed remove_fn_ticks_typed remove_letrec_ticks_typed remove_call_ticks_typed remove_tick_typed remove_app_ticks_typed dest_closure_shape_typed remove_op_ticks_typed simple_val_rel_typed simple_state_rel_typed do_app_lemma_typed bytes_statement_typed words_statement_typed do_install_lemma_typed remove_ticks_correct_typed semantics_remove_ticks_typed rel_update_thunk_statement_typed rel_update_thunk_replay_typed state_rel_dec_clock_typed \
+  "$cake_dir/compiler/backend/proofs/clos_ticksProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe clos_letop_source_probeScript.sml clos_letop_source_probe.out \
+  var_list_typed dest_op_typed let_op_sing_typed let_op_sing_eq_typed compile_inc_typed var_list_length_typed var_list_evaluate_replay_typed var_list_evaluate_zero_replay_typed code_rel_typed code_rel_length_typed code_rel_cons_typed function_rel_typed value_rel_typed ref_rel_typed fmap_rel_typed state_rel_typed evaluate_let_op_typed state_rel_dec_clock_replay_typed simple_state_rel_replay_typed do_app_lemma_replay_typed value_bytes_replay_typed value_words_replay_typed do_install_lemma_replay_typed rel_update_thunk_replay_typed dest_closure_shape_typed dest_closure_full_typed let_op_correct_typed semantics_let_op_typed known_compile_typed known_static_conf_typed known_compile_inc_typed \
+  "$cake_dir/compiler/backend/clos_letopScript.sml" "$cake_dir/compiler/backend"
+
+run_probe db_vars_definitions_probeScript.sml db_vars_definitions_probe.out \
+  mk_union_typed list_union_typed db_to_set_acc_typed db_to_set_typed vars_to_list_typed vars_from_list_typed vars_flatten_typed has_var_typed \
+  "$cake_dir/compiler/backend/db_varsScript.sml" "$cake_dir/compiler/backend"
+
+run_probe finite_map_alist_probeScript.sml finite_map_alist_probe.out \
+  alist_to_fmap_typed alist_to_fmap_clauses_typed alookup_typed \
+  "$hol_dir/src/finite_maps/alistScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe clos_annotate_semantics_probeScript.sml clos_annotate_semantics_probe.out \
+  const_zero_typed no_overlap_typed alt_free_sing_typed get_var_typed shifted_env_typed shift_sing_typed annotate_sing_typed annotate_list_typed annotate_sing_eq_typed compile_def_typed compile_eq_typed compile_inc_def_typed compile_inc_eq_typed semantics_annotate_typed \
+  "$cake_dir/compiler/backend/proofs/clos_annotateProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe clos_number_correctness_probeScript.sml clos_number_correctness_probe.out \
+  renumber_def_typed compile_inc_def_typed make_even_def_typed ignore_table_def_typed v_rel_rules_typed ref_rel_def_typed fmap_rel_def_typed state_rel_typed renumber_correct_typed semantics_number_typed \
+  "$cake_dir/compiler/backend/proofs/clos_numberProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe clos_to_bvl_state_relation_probeScript.sml clos_to_bvl_state_relation_probe.out \
+  state_rel_typed state_rel_clock_typed state_rel_refs_lookup_typed cl_rel_rules_typed v_rel_rules_typed env_rel_typed add_args_typed get_num_args_typed code_installed_typed closure_code_installed_typed code_installed_subspt_typed init_code_rel_typed compile_prog_semantics_typed compile_exps_correct_typed known_op_const_typed \
+  "$cake_dir/compiler/backend/proofs/clos_to_bvlProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe bvl_sem_values_probeScript.sml bvl_sem_values_probe.out \
+  value_array_type byte_array_type thunk_type mut_block_type number_type word_type block_type code_ptr_type ref_ptr_type bool_value unit_value value_to_list list_to_value is_closure int_app add_args get_num_args int_app_type negative_div negative_mod negative_divisor_div negative_divisor_mod zero_div list_roundtrip bad_list do_eq do_eq_type do_eq_list_type eq_bytes eq_bytes_vs_ref eq_closures eq_codeptr eq_shortcircuit state_globals_type state_refs_type state_clock_type state_compile_type state_oracle_type state_code_type state_ffi_type dec_clock initial_state find_code find_code_type direct_call indirect_call indirect_bad_arity indirect_bad_pointer indirect_empty dest_thunk dest_thunk_type bad_thunk_update is_thunk_type thunk_good thunk_bad_flag thunk_missing thunk_nonref fix_clock fix_clock_type word_app word_app_type word8_add word8_invalid word64_to_byte word64_from_negative do_part do_build do_build_const do_part_type do_build_type build_empty build_nested build_string_value build_string_ref build_collision_value build_collision_ref do_app do_app_const bvl_do_app_err bvl_do_app_with_code bvl_do_app_with_code_err_not_install bvl_do_app_change_clock bvl_do_app_change_clock_err bvl_do_app_io_events_mono bvl_inc_clock bvl_evaluate_add_clock bvl_evaluate_io_events_mono bvl_evaluate_add_to_clock_io_events_mono bvl_find_code_every do_app_type copy_array copy_array_type xor_bytes xor_bytes_type str_cmp str_cmp_type mlstring_compare_aux mlstring_compare mlstring_fast_lt mlstring_fast_le mlstring_fast_gt mlstring_fast_ge copy_array_inplace copy_array_bounds xor_bytes_prefix xor_bytes_short str_cmp_fast str_cmp_lex v_to_bytes v_to_words v_to_bytes_type v_to_words_type do_install do_install_type install_bad_arity install_words install_bytes app_global app_global_dynamic app_set_overwrite app_cons_extend app_array_elem app_build app_int app_byte_length app_byte_deref app_byte_update app_byte_bounds app_ffi_bad_buffers app_thunk_update app_thunk_bad_flag evaluate_type evaluate_final evaluate_clock fix_clock_evaluate bvl_evaluate_length bvl_evaluate_imp_length bvl_evaluate_sing bvl_evaluate_cons bvl_evaluate_append bvl_evaluate_snoc eval_var eval_let eval_handle eval_op_reverse eval_tick_timeout eval_call eval_call_clock eval_force_evaluated \
+  "$cake_dir/compiler/backend/proofs/clos_to_bvlProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe source_to_flat_opassign_probeScript.sml source_to_flat_opassign_probe.out \
+  source_assign_typed flat_assign_typed source_bad_typed flat_bad_typed \
+  "$cake_dir/compiler/backend/semantics/flatSemScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe source_to_flat_opderef_probeScript.sml source_to_flat_opderef_probe.out \
+  source_deref_typed flat_deref_typed source_bad_typed flat_bad_typed \
+  "$cake_dir/compiler/backend/semantics/flatSemScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe source_to_flat_opref_probeScript.sml source_to_flat_opref_probe.out \
+  source_opref_typed flat_opref_typed \
+  "$cake_dir/compiler/backend/semantics/flatSemScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe source_to_flat_pattern_rows_probeScript.sml source_to_flat_pattern_rows_probe.out \
+  pattern_bindings_typed all_rows_typed \
+  "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe source_to_flat_function_handle_probeScript.sml source_to_flat_function_handle_probe.out \
+  function_compile_typed empty_match_typed flat_rows_typed \
+  "$cake_dir/compiler/backend/source_to_flatScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe source_to_flat_constructor_probeScript.sml source_to_flat_constructor_probe.out \
+  constructor_compile_typed constructor_check_typed constructor_build_typed \
+  "$cake_dir/compiler/backend/source_to_flatScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe source_to_flat_let_probeScript.sml source_to_flat_let_probe.out \
+  named_compile_typed anonymous_compile_typed optional_bind_typed \
+  "$cake_dir/compiler/backend/source_to_flatScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe source_to_flat_log_probeScript.sml source_to_flat_log_probe.out \
+  do_log_typed log_boolean log_non_boolean \
+  "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe cake_from_sexp_probeScript.sml cake_from_sexp_probe.out \
+  control decode_encode_control_typed encode_decode_control_typed sexpid_typed sexptype_typed sexppat_typed sexpexp_typed sexptype_def_typed sexptype_def_type sexpdec_typed sexp_constructors_typed decode_control_typed encode_control_typed SEXSTR_typed SEXSTR_11_typed SEXSTR_distinct_typed encode_control_remove_typed SEXSTR_remove_typed odestSEXSTR_typed sexplist_typed sexppair_typed sexpopt_typed sexplit_typed sexplocpt_typed sexplocn_typed sexparith_typed decode_prim_type_typed decode_test_typed sexplog_typed sexpop_typed listsexp_typed optsexp_typed idsexp_typed listsexp_11_typed optsexp_11_typed odestSEXSTR_SEXSTR_typed sexpid_odestSEXSTR_idsexp_typed sexplist_listsexp_rwt_typed sexpopt_optsexp_typed idsexp_11_typed typesexp_typed sexptype_typesexp_typed typesexp_11_typed litsexp_typed sexplit_litsexp_typed litsexp_11_typed patsexp_typed sexppat_patsexp_typed patsexp_11_typed locnsexp_typed locssexp_typed logsexp_typed sexplocpt_locnsexp_typed sexplocn_locnsexp_typed sexplog_logsexp_typed locnsexp_11_typed locssexp_11_typed logsexp_11_typed arithsexp_typed prim_typesexp_typed testsexp_typed arithsexp_sexparith_typed sexpprim_type_testsexp_typed sexptest_testsexp_typed arithsexp_11_typed prim_typesexp_11_typed testsexp_11_typed opsexp_typed sexpop_opsexp_typed opsexp_11_typed expsexp_typed sexpexp_expsexp_typed expsexp_11_typed type_defsexp_typed decsexp_typed sexptype_def_type_defsexp_typed sexpdec_decsexp_typed type_defsexp_11_typed decsexp_11_typed odestSEXSTR_SOME_typed sexplist_SOME_typed sexppair_SOME_typed sexpopt_SOME_typed idsexp_sexpid_odestSEXSTR_typed idsexp_sexpid_odestSEXSTR_prime_typed typesexp_sexptype_typed litsexp_sexplit_typed patsexp_sexppat0_typed patsexp_sexppat_typed sexparith_arithsexp_typed decode_prim_type_prim_typesexp_typed decode_test_testsexp_typed logsexp_sexplog_typed locnsexp_sexplocpt0_typed locnsexp_sexplocpt_typed locnsexp_sexplocn_typed opsexp_sexpop_typed expsexp_sexpexp_typed type_defsexp_sexptype_def_typed decsexp_sexpdec_typed lists option identifier literals locations types patterns expressions declarations operators \
+  "$cake_dir/compiler/parsing/fromSexpScript.sml" "$cake_dir/compiler/parsing"
+
+run_probe cake_sexp_parser_probeScript.sml cake_sexp_parser_probe.out \
+  atoms lists failures edges bytes print \
+  "$hol_dir/examples/formal-languages/context-free/simpleSexpPEGScript.sml" "$cake_dir/compiler/parsing"
+
+run_probe cake_source_evaluate_length_probeScript.sml cake_source_evaluate_length_probe.out \
+  evaluate_length_typed evaluate_sing_typed \
+  "$cake_dir/semantics/proofs/evaluatePropsScript.sml" "$cake_dir/semantics/proofs"
+
+run_probe cake_flat_sem_evaluate_probeScript.sml cake_flat_sem_evaluate_probe.out \
+  evaluate_type evaluate_dec_type evaluate_decs_type evaluate_rebound_typed semantics_type semantics_typed semantics_empty semantics_nonunit eval_lit eval_missing eval_lookup_shadow eval_let_shadow eval_if_bad eval_list_raise eval_handle_no_match eval_letrec_duplicate eval_app_bad eval_match_duplicate eval_call eval_timeout eval_raise_handle eval_reference_order eval_match_failure eval_force eval_decs_unit eval_decs_nonunit \
+  "$cake_dir/compiler/backend/semantics/flatSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe cake_flat_sem_apply_probeScript.sml cake_flat_sem_apply_probe.out \
+  do_app_typed fallback_opapp fallback_eval fallback_opderef fallback_aalloc_empty fallback_envid global_alloc global_init global_reinit global_lookup global_missing tag_match tag_mismatch tuple_length field_index ref_field ref_bad_index identity ref_alloc ref_assign byte_safe_oob byte_unsafe_oob array_negative array_update array_wrong_store data_strlen data_strsub_negative data_vector_sub data_vector_unsafe data_copy data_copy_oob data_thunk_alloc numeric_shift numeric_int_div_negative numeric_int_div_zero numeric_int_mod_negative numeric_int_div_negative_divisor numeric_int_mod_negative_divisor numeric_int_arity numeric_word8_wrap numeric_word64_xor numeric_word8_bad_op numeric_word8_bad_width numeric_bool_not_true numeric_bool_not_false numeric_bool_bad_tag numeric_bool_bad_op numeric_float_neg numeric_float_abs numeric_float_fma_order numeric_float_bad_type numeric_float_bad_arity numeric_char_unsupported numeric_string_unsupported convert_int_char_255 convert_int_char_256 convert_int_char_negative convert_int_word8_negative convert_word64_int convert_float_word convert_wrong_operand convert_bad_target numeric_shift64_rotate numeric_shift_wrong_width numeric_equality_true numeric_equality_bad_type numeric_equality_bad_arity numeric_test_compare numeric_test_bad_type data_copy_overlap data_copy_string_to_bytes data_copy_bytes_to_string data_copy_negative_dest data_copy_wrong_store data_xor_bytes data_xor_short data_implode data_explode data_strcat_bad data_vector_from_list data_vector_length data_append data_config_gc data_thunk_update data_thunk_bad_location data_ffi_empty data_ffi_bad_store \
+  "$cake_dir/compiler/backend/semantics/flatSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe clos_sem_int_probeScript.sml clos_sem_int_probe.out \
+  int_app_typed div_negative_left div_negative_right mod_negative_left mod_negative_right div_both_negative mod_both_negative div_exact_negative mod_exact_negative divide_zero mod_zero small_upper small_invalid small_negative small_above \
+  "$cake_dir/compiler/backend/semantics/closSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe clos_sem_call_probeScript.sml clos_sem_call_probe.out \
+  dest_closure_typed dest_closure_length_typed partial overapplication direct_mismatch recursive_direct recursive_out_of_range \
+  "$cake_dir/compiler/backend/semantics/closSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe clos_sem_word_probeScript.sml clos_sem_word_probe.out \
+  word_app_typed byte_add_wrap byte_negative byte_too_large byte_asr word_from_negative word_to_byte byte_compare byte_alt_compare word_add word_shift word_xor word_wrong_arity \
+  "$cake_dir/compiler/backend/semantics/closSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe clos_sem_install_probeScript.sml clos_sem_install_probe.out \
+  bytes_typed words_typed install_typed clock_typed clock_bound_typed wrong_arity one_arg \
+  "$cake_dir/compiler/backend/semantics/closSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe clos_sem_thunk_probeScript.sml clos_sem_thunk_probe.out \
+  dest_typed store_typed update_typed bad_typed missing ref_flag unevaluated array update repeat_update nested_update bad_evaluated_thunk bad_unevaluated_thunk bad_evaluated_number \
+  "$cake_dir/compiler/backend/semantics/closSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe clos_sem_basic_probeScript.sml clos_sem_basic_probe.out \
+  apply_typed make_const_typed get_global_typed unit_typed taglen length bool_test bool_test_equal bool_test_invalid bool_not_false bool_not_invalid extend extend_invalid constant constant_bytes global_present global_empty global_out_of_bounds build_fallback_typed \
+  "$cake_dir/compiler/backend/semantics/closSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe clos_sem_memory_probeScript.sml clos_sem_memory_probe.out \
+  concat_choice_typed from_list_choice_typed array_element negative_index byte_update overlap_copy loose_end strict_end \
+  "$cake_dir/compiler/backend/semantics/closSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe clos_sem_evaluate_probeScript.sml clos_sem_evaluate_probe.out \
+  ref_value_array_type ref_byte_array_type ref_thunk_type value_number_type value_word64_type value_block_type value_byte_vector_type value_ref_ptr_type value_closure_type value_recclosure_type \
+  state_globals_type state_refs_type state_ffi_type state_clock_type state_compile_type \
+  state_oracle_type state_code_type state_max_app_type dec_clock_typed fix_clock_typed initial_state_typed app_unit_typed \
+  evaluate_typed evaluate_clock_typed fix_clock_evaluate_typed variable missing conditional conditional_invalid empty_application raise_handle zero_tick call_closure dest_bad_ref_type dest_not_thunk_type dest_is_thunk_type dest_thunk_typed store_thunk_typed update_thunk_typed value_to_list_typed list_to_value_typed bool_value_typed closure_equality_typed value_to_bytes_typed value_to_words_typed do_install_typed do_install_type \
+  "$cake_dir/compiler/backend/semantics/closSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe cake_flat_sem_thunk_probeScript.sml cake_flat_sem_thunk_probe.out \
+  thunk_type thunk_dest thunk_update thunk_bad valid_thunk ref_flag bad_index ordinary_ref nonlocation update_value update_nested \
+  "$cake_dir/compiler/backend/semantics/flatSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe cake_flat_sem_eval_probeScript.sml cake_flat_sem_eval_probe.out \
+  dec_clock_typed fix_clock_typed bytes_typed words_typed do_eval_typed app_unit_typed evaluate_clock_typed fix_clock_evaluate_typed fix_clock_imp_typed zero_clock decrement fix_clamps empty_eval bytes_valid words_valid eval_success \
+  "$cake_dir/compiler/backend/semantics/flatSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe source_to_flat_pmatch_statement_probeScript.sml source_to_flat_pmatch_statement_probe.out \
+  pmatch_statement_typed \
+  "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe source_to_flat_state_pattern_probeScript.sml source_to_flat_state_pattern_probe.out \
+  store_rel_rules state_rel_rules state_rel_cases result_rel_rules result_rel_cases env_all_rel_rules env_all_rel_cases match_result_def match_result_imp store_same_type store_assign store_alloc allocate_ref assign_ref assign_wrong_type assign_missing \
+  "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe source_to_flat_global_env_probeScript.sml source_to_flat_global_env_probe.out \
+  globals_type constructors_type types_type has_bools has_lists has_exns genv_c_ok genv_c_tys_ok genv_lookup_nil genv_lookup_cons same_type_fst_same_ctor pmatch_stamps_ok bind_tag chr_tag div_tag subscript_tag nil_tag cons_tag empty_bools empty_lists empty_exns empty_types \
+  "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe source_to_flat_value_relation_probeScript.sml source_to_flat_value_relation_probe.out \
+  value_rel_type env_rel_type global_inv_type value_rel_rules value_rel_induction value_rel_cases env_rel_LIST_REL v_rel_eqns_local \
+  "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe source_to_flat_store_relation_probeScript.sml source_to_flat_store_relation_probe.out \
+  store_relation_rules store_relation_cases state_relation_rule state_relation_cases \
+  "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe source_let_proof_probeScript.sml source_let_proof_probe.out \
+  lift_prefix lift_modules_locals lift_single_evaluation lift_all_evaluation compile_declarations compile_semantics compile_semantics_oracle \
+  "$cake_dir/compiler/backend/proofs/source_letProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe source_to_source_proof_probeScript.sml source_to_source_proof_probe.out \
+  compile_semantics compile_semantics_oracle \
+  "$cake_dir/compiler/backend/proofs/source_to_sourceProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe source_eval_oracle_adjust_probeScript.sml source_eval_oracle_adjust_probe.out \
+  v_rel_abs compiler_fun init_eval insert adjust is_insert adjust_insert adjust_evaluate adjust_semantics evaluate_induction \
+  "$cake_dir/compiler/backend/proofs/source_evalProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe pattern_exh_steps_probeScript.sml pattern_exh_steps_probe.out \
+  exh_steps exh_steps_examples pand pmatch_result_type pmatch_result_cases pmatch_result_distinct pand_simps pand_type pand_success pand_assoc exh_rows_eq exh_mats_append exh_all_thm exh_steps_list_append exh_all exh_all_examples term_constructor_type litv_constructor_type term_cases term_distinct is_sibling pmatch pmatch_any pmatch_list_nil pmatch_list_cons pmatch_comp_length pmatch_exh_length pmatch_list_append length_anys pmatch_list_anys mem_ctor_nub mem_ctor_keep mem_tag_ctors mem_spec_mats mem_add_head mem_mk_prods mem_mk_refs mem_mk_conses mem_mk_rows length_expand_list expand_thm dest_val dest_val_eq_some length_dest_val ctors_of_thm col_ctors_thm spec_row_thm spec_mat_mem default_row_thm default_mat_mem exh_matrix_thm match_def match_no_ptypefailure match_exists match_result_type match_result_cases match_result_distinct or_rows_ok or_rows_hit exh_rows_thm pat_weight mat_weight mat_len mats_weight mats_len pats_weight_append pats_weight_anys mat_weight_append mat_len_append mat_weight_spec_row mat_weight_spec_mat mat_weight_spec_row_less mat_weight_spec_mat_less mat_weight_default_mat mat_len_default_mat mats_weight_spec_mats mat_len_default_mat_less comp_is_any_pmatch comp_take_until_any comp_match_append comp_case_none_local comp_case_none_export comp_is_const_row comp_not_is_const_row comp_every_take_until_any comp_filter_not_none comp_move_const_up comp_match_insert_any comp_walk_def comp_walk_list_def comp_app_pos_pos comp_walk_thm comp_walk_append sem_app_pos_def sem_dt_test_def sem_dt_eval_guard_def sem_dt_eval_def comp_is_true_thm comp_guard_mk_conj comp_guard_correct comp_mk_if_thm comp_pat_to_code_thm comp_comp_thm \
+  "$cake_dir/compiler/backend/pattern_matching/pattern_exhScript.sml" "$cake_dir/compiler/backend/pattern_matching"
+
+run_probe flat_pattern_install_relation_probeScript.sml flat_pattern_install_relation_probe.out \
+  pattern_cons_type pattern_lit_type pattern_pos_type pattern_test_type pattern_if_type exh_tag_ctor_type exh_ctor_arity exh_anys exh_add_head exh_mk_prods exh_mk_refs exh_mk_conses exh_expand exh_mk_rows exh_or_rows exh_tag_ctors exh_ctor_nub exh_ctors_of exh_ctor_keep exh_ctor_inter exh_col_ctors exh_spec_row exh_spec_mat exh_spec_mats exh_default_row exh_default_mat exh_matrix exh_rows pure_cc pure_co snd_pure_co fst_pure_co pure_co_comp pure_co_id pure_cc_id install_relation compile_exp_con_clause compile_exp_app_clause compile_exp_letrec_clause encode_pat_pcon_clause compile_pats compile_exp_all compile_dec flat_evaluate_nil flat_evaluate_dec flat_evaluate_decs_nil flat_evaluate_decs_cons comp_is_const_row comp_is_any comp_is_or_row comp_take_until_any comp_move_const_up comp_insert_any comp_is_true comp_mk_disj comp_mk_conj comp_mk_if comp_get_pos comp_pat_to_guard comp_pats_to_code comp_definition decs_semantics basic_values value_contents store_relation value_relation_rules value_relation_induction value_relation_cases value_rule_basic value_rule_closure value_rule_recclosure value_rule_env state_relation state_relation_clock initial_states match_relation match_relation_simp match_relation_cases max_add_less less_max_add max_add_le environment_relation_mono environment_relation_lookup list_relation_replicate list_relation_update alookup_map_3 lookup_map_same do_opapp do_opapp_reverse pmatch_simulation flat_is_closure simple_value_relation_def simple_value_relation_rewrite simple_value_relation_simps simple_value_relation_closure simple_state_relation_def simple_equality_induction simple_equality simple_store_assignment simple_store_allocation simple_store_lookup simple_list_to_value simple_values_to_string elist_globals_append basic_nonclosure simple_value_relation simple_state_relation simple_do_app do_app_simulation compile_match_pmatch_rows compile_match_EL pmatch_list_length pmatch_list_append compile_pat_bindings_simulation evaluate_compile_pat_rhs evaluate_Bool evaluate_SmartIf naive_pattern_match_correct naive_pattern_matches_correct evaluate_compile_pats pattern_match pattern_match_rows pattern_dt_test pattern_app_pos pattern_eval_guard pattern_eval_tree encode_val encode_refs decode_pos_simulation decode_test_simulation decode_guard_simulation simp_guard_thm decode_dtree_simulation encode_pat_match_simulation pmatch_rows_encode pattern_is_any_match pattern_match_append pattern_match_take_until_any pattern_match_insert_any pattern_comp_correct pattern_filter_safe pattern_const_row pattern_move_const_up pattern_non_const_row pattern_take_until_any_prefix pattern_walk pattern_walk_append pattern_walk_position pattern_match_list_length pattern_guard_correct pattern_code_correct pattern_walk_list pattern_exh_dest_val pattern_exh_rows_sound flat_selected_pattern_match flat_compile_exps_evaluate flat_evaluate_length flat_value_to_bytes_relation flat_value_to_words_relation flat_do_eval_simulation \
+  "$cake_dir/compiler/backend/proofs/flat_patternProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe source_eval_adjust_local_probeScript.sml source_eval_adjust_local_probe.out \
+  is_insert_decs declare_env_adjust adjust_oracle_reset is_insert_related is_insert_reset declare_env_is_insert do_eval_adjust \
+  "$cake_dir/compiler/backend/proofs/source_evalProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe source_evaluate_decs_probeScript.sml source_evaluate_decs_probe.out \
+  evaluate_decs_cons evaluate_decs_append \
+  "$cake_dir/semantics/proofs/evaluatePropsScript.sml" "$cake_dir/semantics/proofs"
+
+run_probe source_to_flat_init_probeScript.sml source_to_flat_init_probe.out \
+  eval_state_ok type_entries constructor_entries initial_env initial_next initial_global_inv initial_global_imp precondition1 precondition1_change_clock precondition source_compile_semantics source_compile_correct source_compile_prog source_glob_alloc source_alloc_env_ref source_lookup_env_id source_store_env_id source_inc_compile_prog spt_from_list initial_env_ok initial_types_ok keep_global_allocation elimination_keep incremental_nonempty flat_initial_state flat_semantics compile_flat compile incremental_compile evaluated_entries evaluated_next program_nonzero_next incremental_nonzero_next incremental_empty \
+  "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe flat_pattern_global_flag_probeScript.sml flat_pattern_global_flag_probe.out \
+  operator_global_flag operator_sets_globals_def singleton_global_bag expression_global_flag tuple_global_flag global_bag_list_empty sum_string_ords sum_string_ords_def dec_name_to_num_def dec_name_to_num_explode dot_ord enc_num_to_name_aux_def enc_num_to_name_def generated_name_aux generated_name_roundtrip generated_name_injective list_rel_alookup_optrel list_rel_alookup list_rel_filter_mono cond_false cond_true filter_eq_mono filter_eq_mono_trans filter_eq_alookup_eq alookup_filter_eq enumerate_def mem_enumerate_el all_distinct_enumerate pure_eval_to_def append_length_eq pmatch_list_append_match alookup_def alookup_reversed_eq optrel_def optrel_clauses lookup_relation lookup_relation_empty lookup_relation_cons_false lookup_relation_append_false lookup_relation_reflexive lookup_relation_cons lookup_relation_mono lookup_relation_mono_rel lookup_relation_append lookup_relation_equal lookup_relation_fst environment_set_noop sptree_lookup sptree_insert sptree_domain_lookup sptree_even_mod2 sptree_domain sptree_domain_is_some sptree_lookup_distributed binding_fold_evaluation every_mapi_simple compile_pat_bindings_def compile_pat_rhs_def compile_pat_bindings_simulation value_relation_left_cases esgc_decode_pos esgc_decode_test esgc_decode_guard esgc_bindings esgc_naive_match esgc_naive_matches esgc_compile_pats globals_decode_pos globals_decode_test globals_decode_guard globals_bindings globals_naive_match globals_naive_matches globals_compile_pats compile_global_bounds compile_decs_global_bounds compile_exp_esgc compile_decs_esgc no_mat_definition no_mat_decs_definition compile_exp_no_mat compile_decs_no_mat \
+  "$cake_dir/compiler/backend/proofs/flat_patternProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe flat_elim_closure_probeScript.sml flat_elim_closure_probe.out \
+  closure_definition is_hidden_definition total_pat_definition is_pure_definition has_eval_definition dest_init_definition dest_lookup_definition find_loc_definition find_lookups_definition tree_union_definition analyse_exp_definition analysis_union_definition analyse_code_definition remove_unreachable_definition has_eval_dec_definition remove_flat_prog_definition analysis_union_nat analysis_union_bool remove_unreachable_nat remove_unreachable_bool remove_unreachable_nat_live remove_unreachable_bool_live nested_find_loc nested_find_lookups nested_has_eval nested_is_hidden nested_is_pure fold_domain adjacent reachable closure_reachable tree_union_lookup tree_union_symmetric adjacent_union reachable_union noncanonical_subset noncanonical_closure \
+  "$hol_dir/examples/algorithms/spt_closureScript.sml" "$cake_dir/compiler/backend"
+
+run_probe flat_elim_value_globals_probeScript.sml flat_elim_value_globals_probe.out \
+  value_globals refs_globals env_globals result_globals primitive_result_globals value_has_eval globals_relation globals_transitivity declarations_closed closed_tail closed_head state_relation state_transitivity state_pmatch state_pmatch_rows selected_row_lookups value_to_list_globals list_to_value_globals list_append_globals list_to_value_eval value_to_list_eval evaluation_length evaluation_singleton evaluation_simulation primitive_simulation result_values refs_update_reachable pmatch_reachable pmatch_no_eval closure_lookup tuple_lookup closure_eval \
+  "$cake_dir/compiler/backend/proofs/flat_elimProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe source_to_flat_env_domain_probeScript.sml source_to_flat_env_domain_probe.out \
+  env_domain_type env_domain_definition env_domain_append \
+  "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe cake_flat_sem_pattern_probeScript.sml cake_flat_sem_pattern_probe.out \
+  stamp_rules_typed stamp_cases_typed pmatch_typed rows_typed wildcard literal_same literal_mismatch literal_wrong_type tuple_length different_constructor wrong_constructor_type list_error_precedence \
+  "$cake_dir/compiler/backend/semantics/flatSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe source_to_flat_test_probeScript.sml source_to_flat_test_probe.out \
+  do_test_lemma_typed \
+  "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe cake_flat_sem_test_probeScript.sml cake_flat_sem_test_probe.out \
+  do_test_typed int_equal wrong_int word64_compare int_compare char_compare string_compare string_alt_compare \
+  "$cake_dir/compiler/backend/semantics/flatSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe source_to_flat_primitive_type_probeScript.sml source_to_flat_primitive_type_probe.out \
+  check_type_typed dest_litv_typed v_to_flat_typed flat_to_v_typed v_rel_check_type_typed check_type_to_flat_typed check_type_from_flat_typed check_type_from_flat_list_typed bind_exn_typed chr_exn_typed div_exn_typed subscript_exn_typed do_if_typed do_if_either_or_typed boolean_relation_typed values_rel_typed true_bool false_bool wrong_bool int_type wrong_int word8_type word64_type literal_projection nonliteral_projection to_flat_true to_flat_other from_flat_false from_flat_other if_true if_false if_non_bool \
+  "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe source_to_flat_list_conversion_probeScript.sml source_to_flat_list_conversion_probe.out \
+  v_to_char_list_typed v_to_list_typed \
+  "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe cake_flat_sem_conversions_probeScript.sml cake_flat_sem_conversions_probe.out \
+  v_to_list list_to_v v_to_char_list vs_to_string empty_list integer_list bad_type bad_tail chars bad_char strings bad_string \
+  "$cake_dir/compiler/backend/semantics/flatSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe cakeml_frontend_flat_probeScript.sml cakeml_frontend_flat_probe.out \
+  name_roundtrips name_bytes name_unreserved pure_init hidden_init impure_lookup_init hidden_lookup_init keep_empty keep_reachable eliminate_pure_length eval_bypass_length guard_double_not guard_false_conj pattern_encoding empty_program_globals empty_program_output word8_literal smart_constructor int_division copy_string array_update word8_conversion compile_let compile_constructor compile_nop closure_empty_program closure_install_detect closure_init_false incremental_empty interpreter_arity pattern_any_tree pattern_constructor_guard pattern_nub pattern_specialize pattern_compile_empty pattern_compile_any pattern_exhaustive pattern_bind_variable pattern_compile_branch pattern_naive_branch pattern_constructor_branch empty_source_to_clos reference_source_to_clos source_let_lifting lifted_source_to_clos match_source_to_clos match_bind_source_to_clos bvl_shared_constant bvl_stub_layout bvl_chain_empty bvl_code_sort bvl_build_aux bvl_source_names closure_numbering closure_number_incremental bvl_closure_call bvl_partial_application bvl_extract_name bvl_name_alist bvl_recursive_closures bvl_compile_closure bvl_compile_program bvl_to_bvi_analysis bvl_to_bvi_operations bvi_let_optimization bvl_to_bvi_marker bvl_to_bvi_incremental clos_to_bvi_program data_lang_syntax data_space_requirements bvi_to_data_assign bvi_to_data_expression data_simplification data_liveness data_optimisation bvi_to_data_complete_example clos_to_data_program data_to_word_variables data_to_word_header data_to_word_locations data_to_word_word_ops data_to_word_control clos_to_word_control data_to_word_space data_to_word_assign clos_to_bvi_constant bvi_to_data_constant data_to_word_globals data_to_word_loads data_to_word_ref data_to_word_int data_to_word_ref_array data_to_word_lengths data_to_word_byte_memory data_to_word_runtime_ops data_to_word_stubs bvl_output_names data_stub_names source_output_names closure_mti bvi_inline_wrapper data_to_word_comparisons data_to_word_byte_ops data_to_word_byte_shifts bvl_to_bvi_stubs bvl_to_bvi_whole_program bvl_to_bvi_stub_bodies bvl_closure_stubs bvl_prepared_program bvl_force_thunk db_vars_order closure_free_variables closure_annotation closure_no_options_program closure_no_options_function empty_cake_to_bvi \
+  "$cake_dir/compiler/backend/flat_elimScript.sml" "$cake_dir/compiler/backend"
+
+run_probe data_to_word_header_types_probeScript.sml data_to_word_header_types_probe.out \
+  make_header_type make_header_definition encode_header_type encode_header_definition \
+  "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
+run_probe empty_cake_word_probeScript.sml empty_cake_word_probe.out \
+  entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
+run_probe reference_cake_word_probeScript.sml reference_cake_word_probe.out \
+  entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
+run_probe match_cake_word_probeScript.sml match_cake_word_probe.out \
+  entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
+run_probe byte_copy_word_probeScript.sml byte_copy_word_probe.out \
+  entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
+run_probe from_list_word_probeScript.sml from_list_word_probe.out \
+  entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
+run_probe append_word_probeScript.sml append_word_probe.out \
+  entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
+run_probe install_xor_word_probeScript.sml install_xor_word_probe.out \
+  entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
+run_probe compare_equal_word_probeScript.sml compare_equal_word_probe.out \
+  entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
+run_probe longdiv_word_probeScript.sml longdiv_word_probe.out \
+  entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
+run_probe any_arith_word_probeScript.sml any_arith_word_probe.out \
+  entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
+run_probe ref_byte_64_word_probeScript.sml ref_byte_64_word_probe.out \
+  entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
+run_probe ref_byte_32_word_probeScript.sml ref_byte_32_word_probe.out \
+  entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
+run_probe fixed_stubs_word_probeScript.sml fixed_stubs_word_probe.out \
+  entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
+run_probe bignum_compile_exp_probeScript.sml bignum_compile_exp_probe.out \
+  compile_exp_type binary unary lookup shift "$cake_dir/compiler/backend/word_bignumScript.sml" "$cake_dir/compiler/backend"
+run_probe bignum_helpers_probeScript.sml bignum_helpers_probe.out \
+  address_type temp_in1_type temp_in2_type temp_out_type div_location_type seq_temp_type seq_temp_imm_type seq_temp_imm_not_type load_regs_type save_regs_type seq_index_type div_code_type seq_temp imm_not_reg imm_not_word load_regs save_regs seq_index_32 seq_index_64 div_code "$cake_dir/compiler/backend/word_bignumScript.sml" "$cake_dir/compiler/backend"
+run_probe bignum_compile_probeScript.sml bignum_compile_probe.out \
+  compile_type has_compiled_type skip continue assign recurse loop_new loop_reused loop_seq load store sub divide delete loop_body swap if_reg if_imm add multiply "$cake_dir/compiler/backend/word_bignumScript.sml" "$cake_dir/compiler/backend"
+run_probe bignum_mini_probeScript.sml bignum_mini_probe.out \
+  mini_type generic mini "$cake_dir/compiler/backend/word_bignumScript.sml" "$cake_dir/compiler/backend"
+run_probe bignum_mini_types_probeScript.sml bignum_mini_types_probe.out \
+  skip assign delete seq load store if swap add sub mul div loop continue rec loop_body "$cake_dir/compiler/backend/word_bignumScript.sml" "$cake_dir/compiler/backend"
+run_probe flat_to_clos_globals_probeScript.sml flat_to_clos_globals_probe.out \
+  op_globals set_globals esgc_free elist_globals_empty smartcons_globals smartcons_esgc bag_image_definition compile_globals compile_decs_globals compile_eq_globals compile_esgc compile_decs_esgc compile_prog_esgc insert_interp_globals insert_interp_esgc inc_compile_esgc inc_compile_globals compile_prog_globals no_mti_def no_mti_smartcons insert_interp_no_mti contains_app_def every_fn_vars_def compile_syntactic compile_decs_syntactic compile_prog_syntactic inc_compile_syntactic \
+  "$cake_dir/compiler/backend/proofs/flat_to_closProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe backend_oracle_monotonic_probeScript.sml backend_oracle_monotonic_probe.out \
+  state_co oracle_monotonic is_state_oracle monotonic_with_invariant state_cc FST_state_co SND_state_co state_cc_success state_cc_failure \
+  "$cake_dir/compiler/backend/semantics/backendPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe source_to_flat_compile_globals_probeScript.sml source_to_flat_compile_globals_probe.out \
+  op_theorem compile_theorem make_varls_theorem compile_decs_theorem compile_prog_theorem inc_compile_prog_theorem compile_flat_esgc compile_full_esgc inc_compile_full_esgc compile_no_mat inc_compile_no_mat num_bindings compile_decs_num_bindings set_globals_make_varls compile_decs_elist_globals compile_flat_sub_bag compile_globals_distinct inc_compile_globals_distinct monotonic_globals_oracle "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe bignum_word_probeScript.sml bignum_word_probe.out \
+  entry "$cake_dir/compiler/backend/word_bignumScript.sml" "$cake_dir/compiler/backend"
+
+run_probe full_cake_word_probeScript.sml full_cake_word_probe.out \
+  entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
+run_probe full_inline_cake_word_probeScript.sml full_inline_cake_word_probe.out \
+  entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
+run_probe full_mti_inline_cake_word_probeScript.sml full_mti_inline_cake_word_probe.out \
+  entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
+run_probe full_bvl_optimized_cake_word_probeScript.sml full_bvl_optimized_cake_word_probe.out \
+  entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
+run_probe full_clos_call_cake_word_probeScript.sml full_clos_call_cake_word_probe.out \
+  entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
+run_probe full_clos_known_cake_word_probeScript.sml full_clos_known_cake_word_probe.out \
+  entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
+run_probe full_default_frontend_word_probeScript.sml full_default_frontend_word_probe.out \
+  entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
+run_probe mti_ops_word_probeScript.sml mti_ops_word_probe.out \
+  entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
+run_probe tmc_ops_word_probeScript.sml tmc_ops_word_probe.out \
+  entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
+run_probe data_to_word_fragment_comp_probeScript.sml data_to_word_fragment_comp_probe.out \
+  comp_type fragment "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
+run_probe clos_call_code_list_probeScript.sml clos_call_code_list_probe.out \
+  code_list_type fst_type snd_type map_fst_type suffix_type example "$cake_dir/compiler/backend/clos_callScript.sml" "$cake_dir/compiler/backend"
+
+run_probe clos_call_wfg_probeScript.sml clos_call_wfg_probe.out \
+  subg_type subg_def subg_refl subg_trans calls_subg code_locs_type code_locs_def recclosure_wf_def code_includes_type code_includes_def wfg_type wfg_prime_type wfg_def wfg_prime_def wfg_prime_code_type calls_wfg_type subg_cases location_cases recclosure_cases code_includes_cases "$cake_dir/compiler/backend/proofs/clos_callProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe clos_call_env_rel_probeScript.sml clos_call_env_rel_probe.out \
+  fv_type fv1_type fv_def fv1_def ref_rel_type ref_rel_def env_rel_type env_rel_def env_rel_mono env_rel_cong fv_cases fv_negative env_cases ref_cases "$cake_dir/compiler/backend/semantics/closPropsScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe clos_call_free_correct_probeScript.sml clos_call_free_correct_probe.out \
+  free_thm closed_fn_fv closed_cases group_cases "$cake_dir/compiler/backend/proofs/clos_callProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe clos_call_stub_probeScript.sml clos_call_stub_probe.out \
+  variables_type variables_def calls_list_type calls_list_def calls_list_mapi cases "$cake_dir/compiler/backend/clos_callScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe tmc_program_word_probeScript.sml tmc_program_word_probe.out \
+  entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
+run_probe bvl_inline_frontend_probeScript.sml bvl_inline_frontend_probe.out \
+  inline size letop "$cake_dir/compiler/backend/bvl_inlineScript.sml" "$cake_dir/compiler/backend"
+
+run_probe bvl_handle_frontend_probeScript.sml bvl_handle_frontend_probe.out \
+  simplify compiled cut seq can_raise dest_handle_Raise dest_handle_Let dest_handle_If handle_adj_vars handle_size handle_simp handle_size_non_zero_replay "$cake_dir/compiler/backend/bvl_handleScript.sml" "$cake_dir/compiler/backend"
+
+run_probe bvl_const_frontend_probeScript.sml bvl_const_frontend_probe.out \
+  divs ops compile algebra dest_simple case_op_const SmartOp_flip SmartOp2 SmartOp1 SmartOp extract extract_list delete_var compile_sing compile_eq compile_exp compile_exp_eq "$cake_dir/compiler/backend/bvl_constScript.sml" "$cake_dir/compiler/backend"
+
+run_probe bvl_const_rel_probeScript.sml bvl_const_rel_probe.out \
+  value_rel env_rel env_rel_length env_rel_LLOOKUP_NONE_replay env_rel_LOOKUP_SOME_replay evaluate_delete_var_Rerr_SING evaluate_delete_var_Rerr_replay evaluate_delete_var_Rval_replay dest_simple_eq_replay case_op_const_eq_replay SmartOp2_thm_replay SmartOp_flip_thm_replay SmartOp1_thm evaluate_env_rel "$cake_dir/compiler/backend/proofs/bvl_constProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe bvl_to_bvi_compile_probeScript.sml bvl_to_bvi_compile_probe.out \
+  smart_append_def compile_aux_def compile_exps_sing_def compile_exps_sing compile_aux_example compile_tree_example compile_single_def compile_single_eq compile_list_def compile_inc_def compile_inc_example compile_inc_all_cache compile_inc_all_default \
+  "$cake_dir/compiler/backend/bvl_to_bviScript.sml" "$cake_dir/compiler/backend"
+
+run_probe bvi_let_compile_probeScript.sml bvi_let_compile_probe.out \
+  compile_sing_def compile_sing compile_exp_def compile_exp_eq compile_tail compile_vars compile_empty \
+  "$cake_dir/compiler/backend/bvi_letScript.sml" "$cake_dir/compiler/backend"
+
+run_probe bvi_let_proof_probeScript.sml bvi_let_proof_probe.out \
+  v_rel env_rel env_rel_length env_rel_MAP evaluate_env_rel compile_thm evaluate_compile_exp \
+  "$cake_dir/compiler/backend/proofs/bvi_letProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe bvl_to_bvi_value_rel_probeScript.sml bvl_to_bvi_value_rel_probe.out \
+  adjust_bv_def adjust_bv_Unit adjust_bv_Boolv adjust_nested aux_code_installed aux_code_installed_APPEND_replay aux_code_installed_subspt isVar_def bVarBound_def bEval_bVarBound_replay EVERY_isVar_evaluate_Rval_MEM evaluate_Var_list let_ok_def handle_ok_def handle_ok_CONS handle_ok_EVERY handle_good handle_bad names_ok_def state_rel_def state_rel_FLOOKUP_byteArray state_rel_FLOOKUP_valueArray state_rel_FLOOKUP_MutBlock state_rel_FLOOKUP_Thunk bv_ok_def bv_ok_Unit state_ok_def bvi_inc_clock_def bvi_inc_clock_ZERO bvi_dec_clock_inv_clock1 bv_ok_SUBSET_IMP_replay list_to_v_ok list_to_v_ok_APPEND do_app_refs_SUBSET evaluate_refs_SUBSET evaluate_IMP_bv_ok_replay find_code_bv_ok do_build_ok do_app_ok evaluate_ok compile_exps_correct bv_ok_IMP_adjust_bv_eq_replay "$cake_dir/compiler/backend/proofs/bvl_to_bviProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe bvi_sem_state_probeScript.sml bvi_sem_state_probe.out \
+  evaluate_code_mono evaluate_global_mono inc_clock_ADD dec_clock_inv_clock do_app_change_clock do_app_change_clock_err evaluate_inv_clock exn_type ret_type result_type state_refs_type state_clock_type state_global_type state_compile_type state_oracle_type state_code_type state_ffi_type dec_clock fix_clock initial_state bvl_to_bvi bad_ref_type not_thunk_type is_thunk_type dest_thunk finalise_cons finalise_nonref finalise_missing finalise_cycle finalise_one small_enough_int do_app_aux aux_const_boundary aux_const_large aux_bad_update_fallback do_install do_install_type install_bad_arity bvi_to_bvl do_app do_app_type do_app_const evaluate_clock fix_clock_evaluate evaluate_type eval_var eval_return eval_tick_timeout eval_call_bad_handler eval_force_evaluated eval_let_call_return "$cake_dir/compiler/backend/semantics/bviSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe data_sem_semantics_probeScript.sml data_sem_semantics_probe.out \
+  evaluate_safe evaluate_peak semantics safe_for_space compute_limits limits_example safe_skip peak_skip missing_entry "$cake_dir/compiler/backend/semantics/dataSemScript.sml" "$cake_dir/compiler/backend"
+
+run_probe data_sem_evaluate_probeScript.sml data_sem_evaluate_probe.out \
+  evaluate eval_skip eval_tick_timeout eval_move_missing eval_return_empty eval_seq_timeout eval_call_missing eval_force_evaluated eval_tail_call_result eval_call_handler_result "$cake_dir/compiler/backend/semantics/dataSemScript.sml" "$cake_dir/compiler/backend"
+
+run_probe bvi_to_data_state_probeScript.sml bvi_to_data_state_probe.out \
+  compile_sing compile_exp_eq compile_part compile_prog code_rel state_rel missing_var tail_var tail_letcall "$cake_dir/compiler/backend/proofs/bvi_to_dataProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe data_sem_conversion_proof_probeScript.sml data_sem_conversion_proof_probe.out \
+  v_to_bytes_eq v_to_words_eq "$cake_dir/compiler/backend/proofs/bvi_to_dataProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe data_sem_install_probeScript.sml data_sem_install_probe.out \
+  v_to_bytes v_to_words do_install do_app install_bad_arity greater_rejected outer_install_bad_arity bytes_nil words_nil "$cake_dir/compiler/backend/semantics/dataSemScript.sml" "$cake_dir/compiler/backend"
+
+run_probe data_sem_apply_probeScript.sml data_sem_apply_probe.out \
+  do_app_aux nullary_cons nonempty_cons invalid_list_length integer_add unsupported_copy "$cake_dir/compiler/backend/semantics/dataSemScript.sml" "$cake_dir/compiler/backend"
+
+run_probe data_sem_limits_probeScript.sml data_sem_limits_probe.out \
+  lim_safe_part lim_safe ref_array_inside ref_array_boundary ref_array_negative ref_array_malformed nullary_tag_boundary "$cake_dir/compiler/backend/semantics/dataSemScript.sml" "$cake_dir/compiler/backend"
+
+run_probe data_sem_stack_probeScript.sml data_sem_stack_probe.out \
+  any_arith_call_tree stack_consumed do_stack "$cake_dir/compiler/backend/semantics/dataSemScript.sml" "$cake_dir/compiler/backend"
+
+run_probe bvi_tailrec_frontend_probeScript.sml bvi_tailrec_frontend_probe.out \
+  decisions cases tmc analysis rewrites program "$cake_dir/compiler/backend/bvi_tailrecScript.sml" "$cake_dir/compiler/backend"
+
+run_probe bvi_tmc_frontend_probeScript.sml bvi_tmc_frontend_probe.out \
+  examples program "$cake_dir/compiler/backend/bvi_tmcScript.sml" "$cake_dir/compiler/backend"
+
+run_probe clos_call_frontend_probeScript.sml clos_call_frontend_probe.out \
+  free closed open apps letrec "$cake_dir/compiler/backend/clos_callScript.sml" "$cake_dir/compiler/backend"
+
+run_probe clos_known_helpers_probeScript.sml clos_known_helpers_probe.out \
+  fvs ticks letop decisions inline known_inline known_letrec_globals known_impure_inline known_impure_tree "$cake_dir/compiler/backend/clos_knownScript.sml" "$cake_dir/compiler/backend"
+
+run_probe clos_known_frontend_probeScript.sml clos_known_frontend_probe.out \
+  merge knownop compiled "$cake_dir/compiler/backend/clos_knownScript.sml" "$cake_dir/compiler/backend"
+
+run_probe default_frontend_config_probeScript.sml default_frontend_config_probe.out \
+  state "$cake_dir/compiler/backend/bvl_to_bviScript.sml" "$cake_dir/compiler/backend"
+
+run_probe clos_op_frontend_probeScript.sml clos_op_frontend_probe.out \
+  ops signed lift eq_tree conj smart_stages "$cake_dir/compiler/backend/clos_opScript.sml" "$cake_dir/compiler/backend"
+
+run_probe clos_op_definitions_probeScript.sml clos_op_definitions_probe.out \
+  dest_const_typed dest_constant_typed dest_cons_typed dest_elem_at_typed dest_tag_eq_typed dest_len_eq_typed dest_tag_len_eq_typed dest_op_typed dest_op_nil_typed dest_op_consts_typed make_bool_typed make_int_typed int_op_typed cons_op_typed is_var_typed eq_direct_nil_typed eq_direct_const_typed eq_direct_constant_typed eq_direct_typed dont_lift_typed lift_exps_typed eq_pure_list_typed conj_list_typed eq_pure_typed eq_any_typed eq_op_typed smart_prime_typed smart_typed \
+  "$cake_dir/compiler/backend/clos_opScript.sml" "$cake_dir/compiler/backend"
+
+run_probe clos_op_lift_proof_probeScript.sml clos_op_lift_proof_probe.out \
+  dont_lift_thm_typed dont_lift_pure_typed lift_acc_typed lift_n_typed lift_length_typed simple_exp_rules_typed simple_exp_pure_typed simple_exp_pure_every_typed lift_simple_exp_typed eq_direct_simple_exp_typed simple_exp_eq_pure_list_typed red_rel_rules_typed red_rel_nil_typed red_rel_conj_typed red_rel_every_typed simple_exp_red_rel_typed red_rel_eq_pure_typed red_rel_cons_zero_typed red_rel_exists_append_typed red_rel_append_typed red_rel_cons_typed red_rel_cons_one_typed lift_red_rel_typed eq_direct_red_rel_typed red_rel_refl_typed smart_red_rel_typed red_rel_pure_typed red_rel_globals_typed red_rel_esgc_typed smart_simp_typed smart_const_typed smart_cons_typed smart_install_typed smart_code_locs_typed list_to_bag_alt_typed lift_exps_fv_typed fv_conj_list_typed fv_eq_pure_typed eq_op_fv_typed smart_fv_typed fn_some_def_typed labels_def_typed max_app_def_typed smart_fn_some_typed smart_fn_none_typed smart_labels_typed smart_max_app_typed dont_lift_rval_typed evaluate_dont_lift_typed evaluate_imp_length_typed evaluate_sing_typed evaluate_cons_typed evaluate_append_typed evaluate_snoc_typed lift_exps_thm_typed lift_exps_let_typed evaluate_el_typed simple_cons_el_typed evaluate_conj_false_typed evaluate_conj_true_typed evaluate_conj_append_false_typed evaluate_conj_append_true_typed eq_direct_thm_typed eq_pure_thm_typed clos_do_eq_sym_typed clos_do_eq_list_rel_typed smart_op_thm_typed \
+  "$cake_dir/compiler/backend/proofs/clos_opProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe cake_lexer_probeScript.sml cake_lexer_probe.out \
+  basic comments strings errors edge "$cake_dir/semantics/lexer_funScript.sml" "$cake_dir/semantics"
+
+run_probe cake_lexer_chunks_probeScript.sml cake_lexer_chunks_probe.out \
+  chunks "$cake_dir/compiler/parsing/lexer_implScript.sml" "$cake_dir/compiler/parsing"
+
+run_probe cake_peg_checks_probeScript.sml cake_peg_checks_probe.out \
+  symbols alpha tokens "$cake_dir/compiler/parsing/pegexec_cml_foScript.sml" "$cake_dir/compiler/parsing"
+
+run_probe cake_nonterminals_probeScript.sml cake_nonterminals_probe.out \
+  constructors "$cake_dir/semantics/gramScript.sml" "$cake_dir/semantics"
+
+run_probe cake_peg_actions_probeScript.sml cake_peg_actions_probe.out \
+  unary infix actions "$cake_dir/compiler/parsing/pegexec_cml_foScript.sml" "$cake_dir/compiler/parsing"
+
+run_probe cake_peg_grammar_probeScript.sml cake_peg_grammar_probe.out \
+  variable empty "$cake_dir/compiler/parsing/pegexec_cml_foScript.sml" "$cake_dir/compiler/parsing"
+
+run_probe cake_ptree_type_probeScript.sml cake_ptree_type_probe.out \
+  type abbrev "$cake_dir/semantics/cmlPtreeConversionScript.sml" "$cake_dir/compiler/parsing"
+
+run_probe cake_ptree_pattern_probeScript.sml cake_ptree_pattern_probe.out \
+  list typed literal "$cake_dir/semantics/cmlPtreeConversionScript.sml" "$cake_dir/compiler/parsing"
+
+run_probe cake_ptree_expr_probeScript.sml cake_ptree_expr_probe.out \
+  function let case "$cake_dir/semantics/cmlPtreeConversionScript.sml" "$cake_dir/compiler/parsing"
+
+run_probe cake_source_frontend_probeScript.sml cake_source_frontend_probe.out \
+  empty value datatype structure expression "$cake_dir/semantics/cmlPtreeConversionScript.sml" "$cake_dir/compiler/parsing"
+
+run_probe cake_source_every_exp_probeScript.sml cake_source_every_exp_probe.out \
+  type nested clauses funs all_good "$cake_dir/semantics/astScript.sml" "$cake_dir/semantics"
+
+run_probe cake_source_apply_probeScript.sml cake_source_apply_probe.out \
+  do_app_definition do_arith_definition do_conversion_definition opref_equation fixed_equation config_equation do_app_type ref_alloc ref_assign ref_invalid ref_wrong_type list_append shift8 eq_mismatch byte_alloc byte_negative byte_read byte_safe_oob byte_unsafe_oob byte_update array_fixed array_update array_negative vector_unsafe substring substring_oob byte_copy_overlap string_copy_byte byte_xor byte_xor_short string_sub_negative env_id ffi_empty thunk_alloc ffi_return ffi_final int_div_pos int_div_neg int_mod_neg int_div_zero int_to_w8 int_to_char_bad word_add bool_not arith_bad_type "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
+
+run_probe cake_source_store_probeScript.sml cake_source_store_probe.out \
+  type_stamp_type exn_stamp_type sem_env_v_type sem_env_c_type litv_type conv_type loc_type vector_type env_type store_ref_type store_bytes_type store_array_type store_thunk_type decs_compiler_state_type decs_env_counter_type decs_decode_type oracle_source_type oracle_envs_type oracle_generation_type eval_decs_type eval_oracle_type state_clock_type state_refs_type state_type_stamp_type state_exn_stamp_type abort_type_error_type abort_timeout_type abort_ffi_type error_raise_type error_abort_type result_value_type result_error_type match_none_type match_error_type match_success_type closure_type recclosure_type store_assign_type compiler_type oracle_type state_ffi_type state_eval_type store_same_type_def empty_store_def store_lookup_def store_alloc_def store_assign_def ref_same thunk_update thunk_final allocation lookup update invalid wrong_type "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
+
+run_probe cake_source_constructor_probeScript.sml cake_source_constructor_probe.out \
+  find_type build_env_type same_type same_ctor exn_type check wrong_arity build "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
+
+run_probe cake_source_pmatch_probeScript.sml cake_source_pmatch_probe.out \
+  pmatch_type variable no_match wrong_arity later_type_error reference invalid_ref safe_no_match unsafe_match "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
+
+run_probe cake_source_ops_probeScript.sml cake_source_ops_probe.out \
+  eq_type apply_type literal_equal literal_type eq_short_circuit ref_type different_constructor function_equal application duplicate "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
+
+run_probe cake_source_conversions_probeScript.sml cake_source_conversions_probe.out \
+  option_type_num_definition id_type_num_definition list_to_value_definition value_to_chars_definition values_to_string_definition maybe_to_value_definition value_to_id_definition list_roundtrip_all id_type chars_type word64_type list_roundtrip malformed chars strings identifier word8 bad_word8 "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
+
+run_probe cake_source_thunk_probeScript.sml cake_source_thunk_probe.out \
+  dest_definition update_definition bad_update_definition thunk_op_definition do_opapp_definition is_thunk_type thunk_op_type dest_type good bad ordinary update nested operation xor_tail xor_short "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
+
+run_probe cake_program_semantics_probeScript.sml cake_program_semantics_probe.out \
+  evaluate_type semantics_type evaluate_definition semantics_definition empty_terminates empty_iff empty_result "$cake_dir/semantics/semanticsScript.sml" "$cake_dir/semantics"
+
+run_probe cake_source_evaluator_probeScript.sml cake_source_evaluator_probe.out \
+  source_evaluate_definition con_check_definition one_con_check_definition build_conv_definition lit_same_type_definition same_type_definition same_ctor_definition ctor_same_type_definition bool_type_num_definition bool_value_definition source_pmatch_definition can_pmatch_all_definition build_rec_env_definition find_recfun_definition do_log_definition do_if_definition build_constrs_definition build_tdefs_definition check_dup_ctors_definition combine_dec_result_definition extend_dec_env_definition expression_cons_equation declaration_cons_equation build_constrs_nat build_constrs_bool evaluate_type match_type decs_type literal raise type_error call_zero call_one match_bind match_empty declaration "$cake_dir/semantics/evaluateScript.sml" "$cake_dir/semantics"
+
+run_probe cake_source_evaluate_clock_probeScript.sml cake_source_evaluate_clock_probe.out \
+  dec_definition fix_type list_type clock_lemma eval_clock_lemma full_evaluate_ind evaluate_ind fix_clock_evaluate evaluate_clock raise_clock fixed zero failure "$cake_dir/semantics/evaluateScript.sml" "$cake_dir/semantics"
+
+run_probe cake_source_eval_state_probeScript.sml cake_source_eval_state_probe.out \
+  nat_to_value_definition lookup_definition add_decs_definition add_env_definition declare_definition reset_definition declare_type reset_type decs oracle lookup invalid_lookup invalid_inner_lookup declared_decs declared_oracle invalid_decl reset reset_mixed "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
+
+run_probe cake_source_concrete_probeScript.sml cake_source_concrete_probe.out \
+  type literal location tree closure nested_closure environment "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
+
+run_probe cake_source_eval_probeScript.sml cake_source_eval_probe.out \
+  compiler_agrees_definition do_eval_definition do_eval_res_definition list_type_num_definition value_to_list_definition maybe_all_list_definition value_to_word8_definition value_to_word64_definition value_to_word8_list_definition value_to_word64_list_definition concrete_value_definition agrees_type eval_type result_type missing oracle decs mismatch abort "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
+
+run_probe cake_source_control_probeScript.sml cake_source_control_probe.out \
+  if_type combine_type if_true if_false if_invalid and_true and_false constructors duplicates failure "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
+
+run_probe cake_source_array_probeScript.sml cake_source_array_probe.out \
+  copy_type words_to_chars_type chars_to_words_type words_to_chars_def chars_to_words_def slice dest negative_offset negative_length src_short dest_short dest_negative endpoint bytes "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
+
+run_probe cake_source_primitive_probeScript.sml cake_source_primitive_probe.out \
+  check_type shift8_type shift64_type bool_ok bool_bad word_ok word_bad lsl8 lsr8 asr8 ror8 asr64 ror64 "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
+
+run_probe cake_source_compare_probeScript.sml cake_source_compare_probe.out \
+  num_type int_type str_type natural integer lex fast same_length byte "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
+
+run_probe cake_source_test_probeScript.sml cake_source_test_probe.out \
+  do_eq_definition check_type_definition dest_lit_definition num_cmp_definition int_cmp_definition shift8_definition shift64_definition do_test_definition eq_val_type type int_eq mismatch word64 int_compare str_normal str_fast "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
+
+run_probe cake_parse_error_probeScript.sml cake_parse_error_probe.out \
+  missing after_decl multiline "$cake_dir/compiler/parsing/pegexec_cml_foScript.sml" "$cake_dir/compiler/parsing"
+
+run_probe cake_inference_probeScript.sml cake_inference_probe.out \
+  subst generalise unify occurs "$cake_dir/compiler/inference/inferScript.sml" "$cake_dir/compiler/inference"
+
+run_probe cake_infer_core_probeScript.sml cake_infer_core_probe.out \
+  function pattern application recursive annotation "$cake_dir/compiler/inference/inferScript.sml" "$cake_dir/compiler/inference"
+
+run_probe cake_infer_decl_probeScript.sml cake_infer_decl_probe.out \
+  identity datatype initial "$cake_dir/compiler/inference/inferScript.sml" "$cake_dir/compiler/inference"
+
+run_probe cake_basis_probeScript.sml cake_basis_probe.out \
+  basis length "$cake_dir/basis/basisProgScript.sml" "$cake_dir/basis"
+
+run_probe cake_basis_bvi_probeScript.sml cake_basis_bvi_probe.out \
+  code "$cake_dir/compiler/backend/backendScript.sml" "$cake_dir/cv_translator"
+
+run_probe cake_build_lowering_probeScript.sml cake_build_lowering_probe.out \
+  parts64 parts32be build64 fromlist64 refbyte64 "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
+run_probe cake_type_display_probeScript.sml cake_type_display_probe.out \
+  get_tyname type_ident var_name parentheses type_render type_render_final alist_nub ns_nub ns_alist types_output type_function type_tuple type_unknown \
+  "$cake_dir/compiler/inference/infer_tScript.sml" "$cake_dir/compiler/inference"
+
+run_probe cake_cfg_grammar_probeScript.sml cake_cfg_grammar_probe.out \
+  cml_grammar cml_start empty_top decl_top "$cake_dir/semantics/gramScript.sml" "$cake_dir/semantics"
+
+run_probe context_free_tree_probeScript.sml context_free_tree_probe.out \
+  merge_locs merge_list is_tok dest_tok ptree_loc ptree_list_loc ptree_head ptree_fringe real_fringe valid_locs valid_ptree complete_ptree valid_lptree merge_example fringe_example valid_example missing_rule \
+  "$hol_dir/examples/formal-languages/context-free/grammarScript.sml" "$hol_dir/examples/formal-languages/context-free"
+
+run_probe cake_type_env_probeScript.sml cake_type_env_probe.out \
+  freevars freevars_ast db_inc db_subst bind_tvar opt_bind tve_lookup extend lookup_local lookup num_tvs bind_list inc_example subst_example lookup_example type_subst check_type_names type_name_subst type_p_rules type_name_example type_name_missing type_name_duplicates type_of supported_test supported_arith supported_conversion type_op type_e_rules arith_good arith_bad_arity empty_array unsafe_op value_def check_ctor build_ctor add_tvs scheme tenv_lift primitive_nums type_d_rules value_tuple value_apply ctor_distinct ctor_duplicate prim_tenv prim_type_ids can_type_prog semantics_def prim_list_lookup prim_cons_lookup \
+  "$cake_dir/semantics/typeSystemScript.sml" "$cake_dir/semantics"
+
+run_probe cake_riscv_export_probeScript.sml cake_riscv_export_probe.out \
+  assembly assembly_ret end "$cake_dir/compiler/backend/riscv/export_riscvScript.sml" "$cake_dir/compiler/backend/riscv"
+
+run_probe cake_io_lowering_probeScript.sml cake_io_lowering_probe.out \
+  lesseq mod bounds ffi list_append list_append_arity xor_byte config_gc config_gc_ffi len_zero len_small len_header len_overflow "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
+run_probe cake_subglobals_probeScript.sml cake_subglobals_probe.out \
+  subglobals_type subglobals_definition inc_compile_env_submap compile_decs_generation compile_decs_env_gen_inv compile_decs_idx_prev inc_compile_idx_prev pmatch_rows_drop_4_replay drop_4_via_el_replay eval_ref_inv orac_config_envs_subspt orac_config_envs_subspt_trans orac_config_envs_subspt_refl eval_state_call_rel eval_state_call_rel_refl eval_state_call_rel_trans orac_forward_rel orac_forward_rel_refl orac_forward_rel_trans submap_fresh submap_update subglobals_none subglobals_add_none idx_kind_type idx_prev idx_prev_refl idx_prev_trans idx_block idx_final_block idx_block_union_final init_global_env_inv idx_allocated idx_disjoint idx_finish orac_next_inner orac_next idx_range idx_range_shrink idx_blank orac_step orac_first_step env_gen_inv env_store_inv env_gen_rel env_gen_future orac_env_inv orac_gen_inv orac_invs full_invariant orac_weak orac_lookup do_eval_oracle orac_rel_inner orac_rel orac_rel_some inc_compile_nonempty word8_rel word64_rel source_to_flat_do_eval refl_replay trans_replay append_replay empty fill_empty append shorter overwrite remove "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe cake_word_array_probeScript.sml cake_word_array_probe.out \
+  word64 array shift64 shift64_large shift64_asr_large boundsblock wordfrom wordto stringcmp stringcmp_fast fp_cmp_no_hardware fp_bop_no_hardware fp_uop_no_hardware fp_top_no_hardware fp_top_no_ternary equal_large_int equal_negative_int equal_word64 equal_string equal_constructor alloc_thunk_evaluated alloc_thunk_pending force_thunk_tail force_thunk_return force_thunk_bad_header word_from_word_narrow_32 word_from_word_widen_32 word_from_word_narrow_64 word_from_word_widen_64 install_64 install_32 install_bad_arity "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
+run_probe cake_undefined_diagnostic_probeScript.sml cake_undefined_diagnostic_probe.out \
+  infer constructor type_constructor "$cake_dir/compiler/inference/inferScript.sml" "$cake_dir/compiler/inference"
+
+run_probe cake_type_diagnostic_probeScript.sml cake_type_diagnostic_probe.out \
+  function nested tuple variable named qualified hidden bad_function "$cake_dir/compiler/inference/infer_tScript.sml" "$cake_dir/compiler/inference"
+
+run_probe cake_duplicate_datatype_probeScript.sml cake_duplicate_datatype_probe.out \
+  first constructor "$cake_dir/compiler/inference/inferScript.sml" "$cake_dir/compiler/inference"
+
+run_probe bvl_inline_cake_bvi_probeScript.sml bvl_inline_cake_bvi_probe.out \
+  code "$cake_dir/compiler/backend/bvl_inlineScript.sml" "$cake_dir/compiler/backend"
+
+run_probe bvl_handle_cake_bvi_probeScript.sml bvl_handle_cake_bvi_probe.out \
+  code "$cake_dir/compiler/backend/bvl_handleScript.sml" "$cake_dir/compiler/backend"
+
+run_probe bvl_optimized_cake_bvi_probeScript.sml bvl_optimized_cake_bvi_probe.out \
+  code "$cake_dir/compiler/backend/bvl_inlineScript.sml" "$cake_dir/compiler/backend"
+
+run_probe empty_cake_bvi_probeScript.sml empty_cake_bvi_probe.out \
+  code "$cake_dir/compiler/backend/bvl_to_bviScript.sml" "$cake_dir/compiler/backend"
+
+run_probe reference_cake_bvi_probeScript.sml reference_cake_bvi_probe.out \
+  code "$cake_dir/compiler/backend/bvl_to_bviScript.sml" "$cake_dir/compiler/backend"
+
+run_probe match_cake_bvi_probeScript.sml match_cake_bvi_probe.out \
+  code "$cake_dir/compiler/backend/bvl_to_bviScript.sml" "$cake_dir/compiler/backend"
+
+run_probe mti_cake_bvi_probeScript.sml mti_cake_bvi_probe.out \
+  code "$cake_dir/compiler/backend/bvl_to_bviScript.sml" "$cake_dir/compiler/backend"
+
+run_probe inline_cake_bvi_probeScript.sml inline_cake_bvi_probe.out \
+  code "$cake_dir/compiler/backend/bvi_inlineScript.sml" "$cake_dir/compiler/backend"
+
+run_probe empty_cake_data_probeScript.sml empty_cake_data_probe.out \
+  code "$cake_dir/compiler/backend/bvl_to_bviScript.sml" "$cake_dir/compiler/backend"
+
+run_probe reference_cake_data_probeScript.sml reference_cake_data_probe.out \
+  code "$cake_dir/compiler/backend/bvl_to_bviScript.sml" "$cake_dir/compiler/backend"
+
+run_probe match_cake_data_probeScript.sml match_cake_data_probe.out \
+  code "$cake_dir/compiler/backend/bvl_to_bviScript.sml" "$cake_dir/compiler/backend"
 
 run_probe l3_step_register_comparison_probeScript.sml l3_step_register_comparison_probe.out \
   slt_hypotheses slt_statement slt_gen slt_hypothesis_count sltu_hypotheses sltu_statement sltu_gen sltu_hypothesis_count slt_nop_hypotheses slt_nop_statement slt_nop_gen slt_nop_hypothesis_count sltu_nop_hypotheses sltu_nop_statement sltu_nop_gen sltu_nop_hypothesis_count \
@@ -502,7 +1344,7 @@ run_probe pan_structs_compile_exp_correct_probeScript.sml pan_structs_compile_ex
   "$cake_dir/pancake/proofs"
 
 run_probe semantics_props_implements_probeScript.sml semantics_props_implements_probe.out \
-  implements_prime_trans \
+  implements_prime_trans prog_events_determ prog_io_events_chain semantics_prog_total semantics_prog_deterministic \
   "$cake_dir/semantics/proofs/semanticsPropsScript.sml" \
   "$cake_dir/semantics/proofs"
 run_probe pan_structs_mem_load_conversion_probeScript.sml pan_structs_mem_load_conversion_probe.out \
@@ -625,7 +1467,7 @@ run_probe pan_mem_load_probeScript.sml pan_mem_load_probe.out \
   one_hit recursive_mem_loads_two_words recursive_comb_two_words \
   recursive_named_two_fields "$cake_dir/pancake/semantics/panSemScript.sml"
 run_probe pan_sem_state_eval_probeScript.sml pan_sem_state_eval_probe.out \
-  word_load_hit eval_nested_load_shape pan_sem_state_eval_done \
+  word_load_hit eval_nested_load_shape nstruct_load_byte_little nstruct_load_byte_big nstruct_load_byte_outside_domain pan_sem_state_eval_done \
   "$cake_dir/pancake/semantics/panSemScript.sml"
 run_probe pan_sem_mem_domain_probeScript.sml pan_sem_mem_domain_probe.out \
   domain_load_hit domain_load_miss_present domain_store_then_load_hit \
@@ -1427,7 +2269,7 @@ run_probe pan_sh_mem_store_probeScript.sml pan_sh_mem_store_probe.out \
   zero_width_domain_error nonzero_width_domain_error \
   "$cake_dir/pancake/semantics/panSemScript.sml"
 run_probe pan_eval_probeScript.sml pan_eval_probe.out \
-  eval_const eval_probe_done \
+  eval_const eval_nfield_first_duplicate eval_nfield_missing_field eval_nfield_missing_struct eval_probe_done \
   "$cake_dir/pancake/semantics/pan_itreeSemScript.sml"
 run_probe pan_mrec_probeScript.sml pan_mrec_probe.out \
   mrec_ret mrec_external \
@@ -2631,7 +3473,7 @@ run_probe pan_sem_decs_stcnames_probeScript.sml pan_sem_decs_stcnames_probe.out 
 # shape_of on the Val (word_lab) constructor and the res_var finite-map
 # update/delete semantics (panPropsScript.sml:14, :220, :228, :236).
 run_probe pan_props_shape_res_var_probeScript.sml pan_props_shape_res_var_probe.out \
-  spv_one rv_some \
+  spv_one rv_some shape_of_val_typed shape_of_val_hypotheses word_constructor_typed value_constructors_typed shape_of_def_typed \
   "$cake_dir/pancake/semantics/panPropsScript.sml" \
   "$cake_dir/pancake/semantics"
 
@@ -3378,7 +4220,7 @@ run_probe word_remove_must_terminate_probeScript.sml word_remove_must_terminate_
 # `data_to_word` pointer-layout helpers: `shift_length`, `small_shift_length`
 # and `get_gen_size` (empty, in range, overflowing) at 64 and 32 bits.
 run_probe data_to_word_config_probeScript.sml data_to_word_config_probe.out \
-  shift_length gen_size_three_32 \
+  shift_length gen_size_three_32 assign_greater_fallback assign_greater_eq_fallback assign_alloc_global_fallback assign_concat_byte_vec_fallback assign_from_list_byte_fallback real_addr_def_typed real_addr_sub_64 real_addr_right_64 real_addr_both_64 shift_var_def_typed give_up_def_typed shift_zero_64 shift_large_asr_64 shift_large_lsl_64 shift_rotate_multiple_64 shift_rotate_wrap_64 give_up_64 list_seq_def_typed store_each_def_typed mem_eq_list_def_typed silent_ffi_def_typed store_each_64 mem_eq_list_64 silent_ffi_off_64 silent_ffi_on_64 fp_cmp_inst_typed fp_bop_inst_typed fp_uop_inst_typed fp_top_inst_typed \
   "$cake_dir/compiler/backend/data_to_wordScript.sml" \
   "$cake_dir/compiler/backend"
 
@@ -3435,7 +4277,7 @@ run_probe word_gc_functions_has_fp_ops_probeScript.sml word_gc_functions_has_fp_
   "$cake_dir/compiler/backend/proofs/word_gcFunctionsScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe word_gc_functions_probeScript.sml word_gc_functions_probe.out \
-  gc_ptr_to_addr gc_is_gc_word_const_odd \
+  gc_ptr_to_addr gc_is_gc_word_const_odd gc_memcpy_independent_widths gc_forward_header_width1 gc_thunk_header_shift_width1 \
   gc_refs_to_addresses_empty gc_refs_to_addresses_basic gc_refs_to_addresses_skip \
   "$cake_dir/compiler/backend/proofs/word_gcFunctionsScript.sml" \
   "$cake_dir/compiler/backend/proofs"
@@ -7495,6 +8337,10 @@ run_probe source_to_flat_helpers_probeScript.sml source_to_flat_helpers_probe.ou
   compile_var_def_typed compile_pat_def_typed pat_tups_def_typed astOp_to_flatOp_def_typed type_group_id_type_def_typed str_sep_def_typed join_all_names_aux_def_typed join_all_names_def_typed om_tra_def_typed alloc_defs_def_typed make_varls_def_typed empty_env_def_typed extend_env_def_typed lift_env_def_typed lookup_inc_def_typed alloc_tags1_def_typed alloc_tags_def_typed env_id_tuple_def_typed simple_dlet_def_typed concat_def_typed \
   "$cake_dir/compiler/backend/source_to_flatScript.sml" "$cake_dir/compiler/backend"
 
+run_probe source_to_bvi_incremental_probeScript.sml source_to_bvi_incremental_probe.out \
+  source_incremental_empty source_incremental_let source_incremental_dependent source_incremental_data source_incremental_word \
+  "$cake_dir/compiler/backend/backendScript.sml" "$cake_dir/compiler/backend"
+
 run_probe source_to_flat_compile_probeScript.sml source_to_flat_compile_probe.out \
   compile_exp_def_typed compile_decs_def_typed empty_config_def_typed prim_src_config_eq \
   "$cake_dir/compiler/backend/source_to_flatScript.sml" "$cake_dir/compiler/backend"
@@ -7511,9 +8357,44 @@ run_probe backend_read_limits_probeScript.sml backend_read_limits_probe.out \
   read_limits_def_typed \
   "$cake_dir/compiler/backend/proofs/backendProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
-run_probe data_to_word_option_le_probeScript.sml data_to_word_option_le_probe.out \
-  option_le_SOME_typed \
+run_probe data_to_word_memory_repr_probeScript.sml data_to_word_memory_repr_probe.out \
+  gen_gc_data_refs_split_statement_typed block_rep_typed block_nil_typed thunk_block_typed lower_bits_typed get_addr_typed word_addr_typed lower_bits_word8 lower_bits_wide word_addr_loc lower_bits_word8_result lower_bits_wide_result make_byte_header_typed thunk_tag_to_bits_typed word_payload_typed word_payload_T_IMP_typed el_length_typed word_el_typed word_heap_typed heap_length_typed heap_length_APPEND_typed heap_lookup_MEM_typed heap_lookup_SPLIT_typed heap_lookup_LESS_typed word_heap_APPEND_typed word_list_APPEND_typed all_ts_head_eq_typed blocks_unique_el_typed memory_rel_El_any_typed memory_rel_Block_MEM_typed memory_rel_pointer_eq_typed memory_rel_ptr_eq_typed memory_rel_simple_eq_typed word_header_def_typed fix_clock_def_typed fix_clock_IMP_replay_typed word_is_clos_def_typed word_eq_def_rebound_typed word_eq_LESS_EQ_typed word_eq_add_clock_typed word_eq_max_clock_typed word_eq_min_max_clock_typed fix_clock_word_eq_replay_typed eq_assum_def_typed eq_explode_APPEND_replay_typed eq_assum_APPEND_replay_typed eq_explode_def_typed memory_rel_Block_explode_typed word_eq_original_first_typed word_eq_list_original_replay_typed word_eq_equal64 word_eq_immediate64 word_eq_list_empty64 word_eq_list_one64 word_eq_list_clock_zero64 word_eq_list_more_clock64 heap_expand_typed gen_starts_in_store_typed gen_starts_in_store_IMP_typed glob_real_inv_typed heap_in_memory_store_typed heap_lookup_typed heap_split_typed is_data_element_typed is_some_data_element_typed is_forward_pointer_typed roots_ok_typed heap_ok_typed data_up_to_typed unused_space_inv_typed is_mut_tag_typed is_ref_typed gen_start_ok_typed gen_state_ok_typed gc_kind_inv_typed ref_block_typed word64_rep_typed word64_rep_data_typed get_refs_typed ref_edge_typed reachable_refs_typed v_all_ts_typed find_ref_typed all_ts_typed be_ok_typed v_all_vs_typed all_vs_typed MEM_v_all_vs_typed MEM_stack_all_vs_typed v_all_vs_append_typed MEM_v_all_vs_FST_typed MEM_v_all_vs_SUBSET_typed blocks_unique_stack_permute_typed blocks_unique_duplicate_typed blocks_unique_move_typed blocks_unique_Number_typed abs_ml_inv_Num_typed IMP_memory_rel_Number_typed memory_rel_Number_IMP_typed memory_rel_any_Number_IMP_typed Smallnum_i2w_typed num_less_thm_typed memory_rel_Number_LESS_typed memory_rel_Number_EQ_typed memory_rel_Number_LESS_EQ_typed memory_rel_Number_word_msb_typed ref_eq_thm_typed memory_rel_RefPtr_EQ_IMP_typed memory_rel_RefPtr_EQ_typed memory_rel_RefPtr_IMP_lemma_typed word_ml_inv_SP_LIMIT_typed get_addr_0_typed get_real_addr_def_typed get_real_offset_def_typed get_real_simple_addr_def_typed get_real_offset_thm_typed get_lowerbits_LSL_shift_length_typed get_real_addr_get_addr_typed word_addr_eq_Loc_typed blocks_unique_CodePtr_typed memory_rel_CodePtr_typed memory_rel_Block_IMP_typed memory_rel_Block_Block_small_eq_replay_typed do_eq_list_F_IMP_MEM_replay_typed memory_rel_tag_limit_typed memory_rel_test_nil_eq_typed memory_rel_test_none_eq_typed encode_header_EQ_typed word_cmp_res_def_typed word_cmp_loop_def_typed word_cmp_loop_refl_typed memory_rel_Add_typed memory_rel_Sub_typed memory_rel_And_typed memory_rel_Or_typed memory_rel_Xor_typed cons_thm_EMPTY_typed word_ml_inv_Unit_typed memory_rel_Unit_typed memory_rel_Boolv_T_typed memory_rel_Boolv_F_typed memory_rel_Boolv_typed reachable_refs_stack_subset_typed v_all_vs_ts_MEM_typed v_all_vs_ts_typed v_all_vs_MEM2_typed v_all_vs_ts_list_typed MEM_in_all_ts_typed blocks_unique_typed all_ones_typed maxout_bits_typed ptr_bits_typed small_int_typed smallnum_typed i2mw_typed bignum_rep_typed ref_ptr_annot_typed v_inv_ck_rules_typed v_inv_eq_typed v_inv_RefPtr_T_typed v_inv_tf_restrict_lemma_typed v_inv_tf_restrict_typed n2mw_typed mw2n_def_typed mw2i_def_typed mw2n_n2mw_typed mw2i_i2mw_typed bytes_to_word_typed write_bytes_typed bytes_rep_typed write_bytes_le write_bytes_be write_bytes_64 bc_ref_inv_typed bc_stack_ref_inv_typed abs_ml_inv_typed word_ml_inv_typed memory_rel_typed memory_rel_less_space_typed memory_rel_zero_space_typed memory_rel_Number_IMP_Word_typed memory_rel_Number_IMP_Word_2_typed abs_ml_inv_stack_permute_typed pop_thm_typed duplicate_thm_typed duplicate1_thm_typed move_thm_typed split1_thm_typed split2_thm_typed split3_thm_typed word_ml_inv_rearrange_typed memory_rel_rearrange_typed memory_rel_tl_typed memory_rel_tail_typed memory_rel_drop_typed memory_rel_swap_typed v_inv_ck_mono_typed v_inv_def_typed \
+  "$cake_dir/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe copying_gc_probeScript.sml copying_gc_probe.out \
+  gc_forward_ptr_typed gc_forward_ptr_thm_typed gc_move_typed gc_move_list_typed gc_move_loop_typed full_gc_typed gc_move_list_repeat full_gc_data full_gc_pointer gc_forward_ptr_ok_typed gc_move_ok_typed gc_move_list_ok_typed gc_move_loop_ok_typed gc_move_list_IMP_LENGTH_typed full_gc_IMP_LENGTH_typed gc_move_IMP_isDataElement_typed gc_move_list_IMP_isDataElement_typed gc_move_loop_IMP_isDataElement_typed full_gc_IMP_isDataElement_typed \
+  "$cake_dir/compiler/backend/gc/copying_gcScript.sml" "$cake_dir/compiler/backend/gc"
+
+run_probe data_to_word_gc_stack_probeScript.sml data_to_word_gc_stack_probe.out \
+  stack_rel_typed gen_gc_is_final_typed gen_gc_thm_typed reset_gens_typed partial_heap_restrict_typed partial_heap_gen_ok_typed partial_to_gen_address_typed partial_to_gen_conf_typed partial_to_gen_element_typed partial_to_gen_list_typed partial_to_gen_list_length_typed partial_to_gen_heap_typed partial_to_gen_state_typed partial_to_gen_roots_typed partial_refs_to_roots_typed partial_element_is_ref_typed partial_gen_inv_typed partial_has_old_ptr_typed partial_all_old_ptrs_typed partial_sim_inv_typed partial_move_simulation_statement_typed partial_move_list_simulation_statement_typed partial_ref_list_simulation_statement_typed the_global_typed contains_loc_typed limits_inv_typed join_env_typed flat_typed flat_append_typed \
+  lookup_adjust_var_adjust_set_typed adjust_var_IN_adjust_set_typed loc_merge_typed length_loc_merge_typed dec_stack_loc_merge_enc_stack_typed stack_rel_dec_stack_IMP_stack_rel_typed FILTER_enc_stack_lemma_typed loc_ok_typed word_gc_move_roots_IMP_FILTER_typed word_gen_gc_move_roots_IMP_FILTER_typed word_gen_gc_partial_move_roots_IMP_FILTER_typed loc_merge_FILTER_isWord_typed word_gc_fun_loc_merge_typed word_gc_fun_IMP_typed word_gc_fun_EL_lemma_typed word_gc_fun_IMP_FILTER_typed loc_ok_word_addr_typed word_gc_move_thm_typed word_gc_move_first_star_argument word_gc_move_result_first_star_argument get_addr_and_1_not_0_typed ptr_to_addr_get_addr_typed NOT_is_fwd_ptr_typed memcpy_thm_typed memcpy_def_typed memcpy_first_star_argument \
+  "$cake_dir/compiler/backend/proofs/data_to_word_gcProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe data_to_word_fp64_probeScript.sml data_to_word_fp64_probe.out entry \
+  "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+run_probe data_to_word_fp32_probeScript.sml data_to_word_fp32_probe.out entry \
+  "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
+run_probe data_to_word_space_control_probeScript.sml data_to_word_space_control_probe.out \
+  do_space_code_const_typed cut_state_opt_ffi_typed MEM_join_env_cut_env_typed \
   "$cake_dir/compiler/backend/proofs/data_to_wordProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe data_to_word_option_le_probeScript.sml data_to_word_option_le_probe.out \
+  option_le_SOME_typed get_limits_def_typed \
+  "$cake_dir/compiler/backend/proofs/data_to_wordProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe data_resource_mono_probeScript.sml data_resource_mono_probe.out \
+  do_app_io_events_mono_typed do_app_safe_for_space_mono_typed do_app_stack_max_typed \
+  evaluate_io_events_mono_typed evaluate_safe_for_space_mono_typed evaluate_option_le_stack_max_typed \
+  "$cake_dir/compiler/backend/semantics/dataPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe clos_mti_collect_args_probeScript.sml clos_mti_collect_args_probe.out \
+  mk_fns_def_typed collect_args_def_typed collect_args_imp_typed collect_args_ok_imp_typed collect_apps_def_typed collect_apps_acc_typed collect_apps_cons_lemma_typed collect_apps_cons_typed mk_apps_def_typed collect_apps_rebuild_typed collect_apps_no_mti_typed intro_multi_def_typed intro_multi_length_typed intro_multi_sing_typed code_rel_typed code_rel_length_typed function_rel_typed value_rel_rules_typed value_rel_opt_typed ref_rel_rules_typed compile_typed compile_inc_typed conditional_compile_inc_typed snd_compile_inc_typed fmap_rel_typed state_rel_typed is_closure_typed simple_value_relation_typed mti_simple_value_relation_typed simple_state_relation_typed mti_simple_state_relation_typed vr_list_to_value_typed vr_list_none_typed simple_value_append_typed list_to_value_inj_typed simple_value_list_typed value_equality_relation_typed simple_value_to_bytes_typed simple_word_left_typed simple_value_to_words_typed \
+  "$cake_dir/compiler/backend/proofs/clos_mtiProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe clos_mti_install_probeScript.sml clos_mti_install_probe.out \
+  do_install_replay_typed state_rel_opt_rel_refs_replay_typed rel_update_thunk_replay_typed \
+  "$cake_dir/compiler/backend/proofs/clos_mtiProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe pan_to_word_crep_inst_ok_probeScript.sml pan_to_word_crep_inst_ok_probe.out \
   crep_every_exp_def_typed every_inst_ok_less_crep_to_loop_compile_exp_typed every_prog_loop_inst_ok_nested_seq_typed every_inst_ok_less_crep_to_loop_compile_typed every_inst_ok_less_comp_func_typed \
@@ -7806,7 +8687,7 @@ run_probe backend_common_operators_probeScript.sml backend_common_operators_prob
   "$cake_dir/compiler/backend/backend_commonScript.sml" "$cake_dir/compiler/backend"
 
 run_probe clos_lang_syntax_probeScript.sml clos_lang_syntax_probe.out \
-  const_case_def const_nchotomy const_part_case_def const_part_nchotomy int_op_case_def int_op_nchotomy word_op_case_def word_op_nchotomy block_op_case_def block_op_nchotomy glob_op_case_def glob_op_nchotomy mem_op_case_def mem_op_nchotomy op_case_def op_nchotomy exp_case_def exp_nchotomy \
+  const_case_def const_nchotomy const_part_case_def const_part_nchotomy int_op_case_def int_op_nchotomy word_op_case_def word_op_nchotomy block_op_case_def block_op_nchotomy glob_op_case_def glob_op_nchotomy mem_op_case_def mem_op_nchotomy op_case_def op_nchotomy exp_case_def exp_nchotomy pure_op_typed pure_typed \
   "$cake_dir/compiler/backend/closLangScript.sml" "$cake_dir/compiler/backend"
 
 run_probe clos_known_config_probeScript.sml clos_known_config_probe.out \
@@ -8457,3 +9338,10 @@ run_probe l3_step_immediate_comparison_nop_probeScript.sml l3_step_immediate_com
   slti_nop_statement slti_nop_types slti_nop_source_hypotheses slti_nop_proved sltiu_nop_statement sltiu_nop_types sltiu_nop_source_hypotheses sltiu_nop_proved \
   "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe prim_sem_env_probeScript.sml prim_sem_env_probe.out \
+  add_type prim_type "$cake_dir/semantics/primTypesScript.sml" "$cake_dir/semantics"
+
+run_probe cake_evaluate_ffi_props_probeScript.sml cake_evaluate_ffi_props_probe.out \
+  clock_mono_evaluate_decs evaluate_add_clock evaluate_match_add_clock evaluate_decs_add_clock evaluate_add_clock_io evaluate_decs_add_clock_io evaluate_decs_ffi_clock evaluate_decs_clock_determ clock_mono_evaluate clock_mono_acc clock_mono_if clock_mono_option clock_mono_match clock_mono_match_pair do_app_refs_length clock_mono_do_app clock_mono_bind clock_mono_check clock_mono_type clock_mono_def clock_mono_return clock_mono_err clock_mono_cong clock_mono_extra clock_mono_extra_mono adj_clock dec_inc_clock evaluate_call_ffi_imp evaluate_decs_call_ffi_imp evaluate_io_mono evaluate_io_mono_imp evaluate_call_ffi do_app_io_mono do_app_call_ffi call_length mono_definition mono_refl mono_trans mono_antisym call_consts rtc_consts rtc_mono \
+  "$cake_dir/semantics/proofs/evaluatePropsScript.sml" "$cake_dir/semantics/proofs"

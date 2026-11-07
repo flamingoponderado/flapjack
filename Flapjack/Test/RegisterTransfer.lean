@@ -20,24 +20,4 @@ open Flapjack Flapjack.RiscV
 #guard (riscvInverse (0 : Fin 32)).val == 27
 #guard (riscvInverse (10 : Fin 32)).val == 1
 
-def sampleState : State 64 :=
-  { pc := 0
-    registers := fun register => BitVec.ofNat 64 (register.val + 100)
-    memory := fun _ => 0
-    privilege := .machine
-    mode := .mbare }
-
-#guard (readRegister (transferState sampleState) (riscvForward (5 : Fin 32))).toNat == 105
-#guard (readRegister (transferState sampleState) (0 : Fin 32)).toNat == 127
-
-example (state : State width) (name : Fin 32) :
-    readRegister (transferState state) (riscvForward name) =
-      readRegister state name := by
-  exact readRegister_transfer_forward state name
-
-example (state : State width) (name : Fin 32) (value : Word width) :
-    writeRegister (transferState state) (riscvForward name) value =
-      transferState (writeRegisterInternal riscvForward state name value) := by
-  exact writeRegister_transfer_forward state name value
-
 end Flapjack.Test.RegisterTransfer

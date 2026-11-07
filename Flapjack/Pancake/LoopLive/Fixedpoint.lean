@@ -1,4 +1,8 @@
-import Flapjack.Pancake.LoopLive
+module
+
+public import Flapjack.Pancake.LoopLive
+
+@[expose] public section
 
 /-!
 # loop_live `fixedpoint_thm`

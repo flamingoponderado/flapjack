@@ -23,27 +23,13 @@ namespace Flapjack
 
 universe u
 
-/-- Faithful port of Cake `crepProps$cexp_heads_simp_def`
-    (`cakeml/pancake/semantics/crepPropsScript.sml:11`). HOL rejects the
-    argument when any inner list is empty, then maps total `HD` over the lists.
-    The Lean default `.var 0` gives `headD` a total empty-list value; the guard
-    makes that value unreachable in the result.
-
-    FLAPJACK-SPECIFIC (not an exact HOL port): generic over `CrepExp α`, while
-    HOL `crepLang$exp` is indexed by the word length. The exact width-indexed
-    tag is on `cexpHeadsSimpW` below. -/
+/-- Flapjack-specific head collector for Crep expressions. HOL's
+    `cexp_heads_simp_def` is element-polymorphic, so its faithful port remains
+    open. The empty-list guard makes the `headD` default unreachable. -/
 def cexpHeadsSimp : List (List (CrepExp α)) → Option (List (CrepExp α))
   | expressions =>
       if expressions.any List.isEmpty then none
       else some (expressions.map (fun expression => expression.headD (.var 0)))
-
-/-- Exact width-indexed counterpart of HOL `cexp_heads_simp_def` over
-    `CrepExp (BitVec width)`. -/
-@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "cexp_heads_simp_def"]
-def cexpHeadsSimpW {width : Nat} [NeZero width]
-    (expressions : List (List (CrepExp (BitVec width)))) :
-    Option (List (CrepExp (BitVec width))) :=
-  cexpHeadsSimp expressions
 
 mutual
 /-- Faithful port of Cake `crepProps$every_exp` from
@@ -97,30 +83,6 @@ theorem map_var_crepExpVars_eq {α : Type} (names : List Nat) :
   induction names with
   | nil => rfl
   | cons name names ih => simp [crepExpVars_var, ih]
-
-/-- Flapjack-specific infrastructure: the length result for the pipeline's
-    general-stride `loadShape`.  This is not a HOL port, because it quantifies an
-    explicit stride; the exact HOL counterpart is `length_loadShape_eq_shape`. -/
-theorem loadShape_length [BEq α] [OfNat α 0] [Add α]
-    (address stride : α) (count : Nat) (value : CrepExp α) :
-    (loadShape address stride count value).length = count := by
-  induction count generalizing address with
-  | zero => rfl
-  | succ count ih => simp [loadShape, ih]
-
-/-- Faithful port of Cake `crepProps$length_load_shape_eq_shape`
-    (`cakeml/pancake/semantics/crepPropsScript.sml:30`), stated over the fixed
-    `byte$bytes_in_word` stride.  The `CrepBytesInWord` instance supplies the
-    fixed byte width, so the explicit quantified variables are HOL's `n a e`. -/
--- FLAPJACK-SPECIFIC (not an exact HOL port): generic over the word element type.
--- HOL's exact expression-carrier theorem is `length_loadShapeHOLW` in
--- this module below; this production helper remains useful for generic code.
-theorem length_loadShape_eq_shape [BEq α] [OfNat α 0] [Add α] [CrepBytesInWord α]
-    (count : Nat) (address : α) (value : CrepExp α) :
-    (loadShapeBytes address count value).length = count := by
-  induction count generalizing address with
-  | zero => rfl
-  | succ count ih => simp [loadShapeBytes, ih]
 
 /-! Faithful port of Cake `crepProps$length_load_globals_eq_read_size`
     (`cakeml/pancake/semantics/crepPropsScript.sml:467`). -/
@@ -176,31 +138,6 @@ theorem loadGlobals_crepExpVars_empty {α : Type u}
   induction count generalizing address with
   | zero => simp [loadGlobals]
   | succ count ih => simp [loadGlobals, ih, crepExpVars]
-
-/-! Flapjack analogue of Cake
-    `crepProps$assigned_free_vars_store_globals_empty`
-    (`cakeml/pancake/semantics/crepPropsScript.sml:458`). Its width-specialized
-    counterpart below still uses String-backed function names in `CrepProg`,
-    unlike HOL's `mlstring` identifiers, so neither declaration is tagged. -/
-theorem crepAssignedFreeVars_nestedSeq_storeGlobals {α : Type u}
-    (address : BitVec 5) (values : List (CrepExp α)) :
-    crepAssignedFreeVars (crepNestedSeq (storeGlobals (α := α) address values)) = [] := by
-  induction values generalizing address with
-  | nil => simp [storeGlobals, crepNestedSeq, crepAssignedFreeVars]
-  | cons value values ih =>
-      simp [storeGlobals, crepNestedSeq, crepAssignedFreeVars, ih]
-
-/-! Flapjack analogue of Cake `crepProps$assigned_vars_store_globals_empty`
-    (`cakeml/pancake/semantics/crepPropsScript.sml:449`). Its width-specialized
-    counterpart below still uses String-backed function names in `CrepProg`,
-    unlike HOL's `mlstring` identifiers, so neither declaration is tagged. -/
-theorem crepAssignedVars_nestedSeq_storeGlobals {α : Type u}
-    (address : BitVec 5) (values : List (CrepExp α)) :
-    crepAssignedVars (crepNestedSeq (storeGlobals (α := α) address values)) = [] := by
-  induction values generalizing address with
-  | nil => simp [storeGlobals, crepNestedSeq, crepAssignedVars]
-  | cons value values ih =>
-      simp [storeGlobals, crepNestedSeq, crepAssignedVars, ih]
 
 /-- Flapjack analogue of Cake
     `crepProps$assigned_free_vars_IMP_assigned_vars`
@@ -277,59 +214,6 @@ theorem crepAssignedFreeVars_imp_crepAssignedVars_via_HOL {width : Nat} [NeZero 
   have hmem := crepAssignedFreeVarsHOL_imp_crepAssignedVarsHOL (crepProgToHOL program) name hhol
   simpa [crepProgToHOL_crepAssignedVars] using hmem
 
-/-- Flapjack analogue of Cake `crepProps$nested_seq_assigned_vars_eq`
-    (`cakeml/pancake/semantics/crepPropsScript.sml:411`): the assignments
-    generated by `nested_seq (MAP2 Assign ns vs)` assign exactly `ns`.
-
-    This and its width-specialized `...W` wrapper remain untagged: both use the
-    production `CrepProg` carrier, whose `Call`/`ExtCall` names are Lean
-    `String`, while HOL `prog` uses `mlstring`. The exact `CrepProgHOL` carrier
-    exists, but `assigned_vars` and this theorem have not yet been ported over
-    it. The direct HOL rows in `crep_assigned_vars_probe.out` check concrete
-    observations only; they do not bridge the carrier mismatch. -/
-theorem crepAssignedVars_nestedSeq_assign_zipWith (names : List Nat)
-    (values : List (CrepExp α)) (h : names.length = values.length) :
-    crepAssignedVars
-        (crepNestedSeq
-          (names.zipWith (fun name value => CrepProg.assign name value) values)) =
-      names := by
-  induction names generalizing values with
-  | nil =>
-      cases values with
-      | nil => simp [crepNestedSeq, crepAssignedVars]
-      | cons value values => simp at h
-  | cons name names ih =>
-      cases values with
-      | nil => simp at h
-      | cons value values =>
-          simp only [List.zipWith_cons_cons, List.length_cons] at h ⊢
-          simp [crepNestedSeq, crepAssignedVars, ih values (by omega)]
-
-/-- Flapjack analogue of Cake
-    `crepProps$nested_seq_assigned_free_vars_eq`
-    (`cakeml/pancake/semantics/crepPropsScript.sml:420`): the assignments
-    generated by `nested_seq (MAP2 Assign ns vs)` assign exactly `ns`. Its
-    width-specialized counterpart below still uses String-backed function names
-    in `CrepProg`, unlike HOL's `mlstring` identifiers, so neither declaration
-    is tagged. -/
-theorem crepAssignedFreeVars_nestedSeq_assign_zipWith {α : Type u} (names : List Nat)
-    (values : List (CrepExp α)) (h : names.length = values.length) :
-    crepAssignedFreeVars
-        (crepNestedSeq
-          (names.zipWith (fun name value => CrepProg.assign name value) values)) =
-      names := by
-  induction names generalizing values with
-  | nil =>
-      cases values with
-      | nil => simp [crepNestedSeq, crepAssignedFreeVars]
-      | cons value values => simp at h
-  | cons name names ih =>
-      cases values with
-      | nil => simp at h
-      | cons value values =>
-          simp only [List.zipWith_cons_cons, List.length_cons] at h ⊢
-          simp [crepNestedSeq, crepAssignedFreeVars, ih values (by omega)]
-
 /-- Variable-form of `nested_seq_assigned_free_vars_eq`: assigning each name
     from a temporary variable still assigns exactly the names. This is the form
     emitted by the non-`distinctLists` branch of `compileProgHOL`. -/
@@ -365,48 +249,12 @@ theorem flookup_setCrepRuntimeGlobals_locals {α σ : Type}
 
 /-- Generic-`α` analogue of `crepProps$FLOOKUP_set_globals`, deliberately
     untagged because HOL's state code map is keyed by `mlstring` and stores
-    `mlstring`-bearing programs, while Flapjack uses `String`. The width-indexed
-    analogue is `flookup_setCrepHolGlobals_localsW` below.
+    `mlstring`-bearing programs, while Flapjack uses `String`.
     `FLOOKUP (set_globals gv w s).locals n = FLOOKUP s.locals n`
     (crepPropsScript.sml:297). -/
 theorem flookup_setCrepHolGlobals_locals {α σ : Type}
     (gv : BitVec 5) (w : PanWordLab α) (s : CrepHolState α σ) (n : Nat) :
     FLOOKUP (setCrepHolGlobals gv w s).locals n = FLOOKUP s.locals n :=
-  rfl
-
-/-- Flapjack width-specialized analogue of Cake `crepProps$FLOOKUP_set_globals`
-    (`cakeml/pancake/semantics/crepPropsScript.sml:297-301`), kept untagged with
-    status `documented_mismatch` under audit bead `flapjack-dlc.101`.
-    The HOL equation `FLOOKUP (set_globals gv w s).locals n = FLOOKUP s.locals n`
-    holds pointwise here (`rfl`), because `setCrepHolGlobalsW` updates only the
-    `globals` component, exactly as HOL's `set_globals_def` does
-    (crepSemScript.sml:61-63). The mismatch is the quantified whole-state carrier:
-    `CrepHolState (BitVec width)` stores `locals`/`globals`/`code` as unrestricted
-    `Nat -> Option`, `BitVec 5 -> Option` and `FunName -> Option` functions that
-    admit infinite support, a strict superset of HOL's finite maps, and `code` is
-    keyed by `FunName = String` rather than `funname = mlstring`
-    (crepSemScript.sml:19-32). Because the quantifier ranges over a whole state,
-    `names_as_string` cannot qualify the identifier and no `NameRanged` byte
-    witness applies. The underlying update boundary is pinned directly by the
-    `set_globals_direct=(SOME (Word 22w),SOME (Word 7w),NONE)` row of
-    `scripts/hol-probes/crep_store_global_probe.out` (writing global `4w` leaves
-    local lookups `3` and `9` unchanged) and sampled by
-    `Flapjack/Test/CrepGlobalShapeParity.lean:110-116`. Restoring the tag depends
-    on the exact finite-support Crep carrier tracked by
-    `flapjack-pxn.18.3.7.1.3.1.1.3.1`. -/
-theorem flookup_setCrepHolGlobals_localsW {width : Nat} [NeZero width] {σ : Type}
-    (gv : BitVec 5) (w : PanWordLab (BitVec width))
-    (s : CrepHolState (BitVec width) σ) (n : Nat) :
-    FLOOKUP (setCrepHolGlobalsW gv w s).locals n = FLOOKUP s.locals n :=
-  rfl
-
-/-- Kernel-checked bridge: the width-indexed `FLOOKUP_set_globals` analogue
-    agrees with the generic production statement at `BitVec width`. -/
-theorem flookup_setCrepHolGlobals_localsW_eq_generic {width : Nat} [NeZero width] {σ : Type}
-    (gv : BitVec 5) (w : PanWordLab (BitVec width))
-    (s : CrepHolState (BitVec width) σ) (n : Nat) :
-    FLOOKUP (setCrepHolGlobalsW gv w s).locals n =
-      FLOOKUP (setCrepHolGlobals gv w s).locals n :=
   rfl
 
 /-! Membership equations for `crepAssignedFreeVars`, exposing Cake's
@@ -473,85 +321,6 @@ theorem flookup_res_var_distinct_zip_eq [BEq α] [LawfulBEq α]
     (hlen : xs.length = ys.length) (hx : x ∉ xs) :
     FLOOKUP ((xs.zip ys).foldl resVar fm) x = FLOOKUP fm x :=
   FLOOKUP_foldl_resVar_zip_not_mem xs ys fm x hlen hx
-
-/-- HOL-equality (`=`) form of CakeML's `flookup_res_var_distinct_zip_eq`
-    (`crepPropsScript.sml:777`) over the raw function carrier.  FLAPJACK-SPECIFIC
-    (not an exact HOL port): `DecidableEq` removes the Boolean-`BEq` side
-    condition, but `FiniteMap α β := α → Option β` admits infinite-support
-    inhabitants whereas HOL `α |-> β` is finite-support, so the statement still
-    ranges over functions HOL cannot represent.  Kept untagged; identical raw
-    function endpoints are also an unsound surrogate for HOL `FUPDATE`/`res_var`.
-    Faithful finite-support port tracked by bead
-    `flapjack-pxn.18.3.7.1.3.1.1.3.1` (over `HolFiniteMapExact`). -/
-theorem flookup_res_var_distinct_zip_eq_hol {α : Type} {β : Type} [DecidableEq α]
-    (xs : List α) (ys : List (Option β)) (fm : FiniteMap α β) (x : α)
-    (hlen : xs.length = ys.length) (hx : x ∉ xs) :
-    FLOOKUP ((xs.zip ys).foldl resVarHOL fm) x = FLOOKUP fm x :=
-  FLOOKUP_foldl_resVarHOL_zip_not_mem xs ys fm x hlen hx
-
-/-- Flapjack analogue of Cake `crepProps$dec_clock_simp`
-    (`cakeml/pancake/semantics/crepPropsScript.sml:267-278`), kept untagged with
-    status `documented_mismatch` under audit bead `flapjack-dlc.105`.
-    The clause set matches HOL's ten field equations exactly: locals, globals,
-    code, memory, memaddrs, sh_memaddrs, be, ffi, base_addr and top_addr are all
-    preserved by the clock decrement (`decCrepHolClockW`, itself the analogue of
-    `dec_clock_def`). The mismatch is the quantified whole-state carrier:
-    `CrepHolState (BitVec width)` stores `locals`/`globals` as unrestricted
-    `Nat → Option` / `BitVec 5 → Option` functions and `code` as
-    `FunName → Option`, where HOL's `crepSem$state` uses finite maps and
-    `funname = mlstring` (crepSemScript.sml:19-32). A whole-state result also
-    cannot be authorized by `names_as_string`, and no `NameRanged` byte witness
-    applies. Direct HOL rows `dec_clock_clock` / `dec_clock_globals` /
-    `dec_clock_be` / `dec_clock_top` are in
-    `scripts/hol-probes/crep_dec_clock_simp_probe.out`, and the clause shapes are
-    sampled by `Flapjack/Test/CrepGlobalShapeParity.lean:601-605`. No exact
-    finite-support carrier exists yet; restoring the tag depends on
-    `flapjack-pxn.18.3.7.1.3.1.1.3.1`. -/
-theorem decCrepHolClock_simp {width : Nat} [NeZero width] {σ : Type} (s : CrepHolState (BitVec width) σ) :
-    (decCrepHolClockW s).locals = s.locals ∧
-      (decCrepHolClockW s).globals = s.globals ∧
-      (decCrepHolClockW s).code = s.code ∧
-      (decCrepHolClockW s).memory = s.memory ∧
-      (decCrepHolClockW s).memaddrs = s.memaddrs ∧
-      (decCrepHolClockW s).shMemaddrs = s.shMemaddrs ∧
-      (decCrepHolClockW s).bigEndian = s.bigEndian ∧
-      (decCrepHolClockW s).ffi = s.ffi ∧
-      (decCrepHolClockW s).baseAddress = s.baseAddress ∧
-      (decCrepHolClockW s).topAddress = s.topAddress := by
-  simp [decCrepHolClockW]
-
-/-- Flapjack analogue of Cake `crepProps$empty_locals_simp`
-    (`cakeml/pancake/semantics/crepPropsScript.sml:282-294`), kept untagged with
-    status `documented_mismatch` under audit bead `flapjack-dlc.106`.
-    The clause set matches HOL's ten field equations exactly: globals, code,
-    memory, memaddrs, sh_memaddrs, clock, be, ffi, base_addr and top_addr are all
-    preserved when `locals` is cleared (`emptyCrepHolLocalsW`, itself the
-    analogue of `empty_locals_def`). The mismatch is again the quantified
-    whole-state carrier: `CrepHolState (BitVec width)` stores `locals`/`globals`
-    as unrestricted `Nat → Option` / `BitVec 5 → Option` functions and `code` as
-    `FunName → Option`, where HOL's `crepSem$state` uses finite maps and
-    `funname = mlstring` (crepSemScript.sml:19-32). A whole-state result also
-    cannot be authorized by `names_as_string`, and no `NameRanged` byte witness
-    applies. Direct HOL rows `empty_locals_locals` / `empty_locals_clock` /
-    `empty_locals_memory` are in
-    `scripts/hol-probes/crep_dec_clock_simp_probe.out`, with
-    `empty_locals_none` / `empty_locals_fields_preserved` in
-    `scripts/hol-probes/crep_local_updates_probe.out`; the clause shapes are
-    sampled by `Flapjack/Test/CrepGlobalShapeParity.lean:608-612`. No exact
-    finite-support carrier exists yet; restoring the tag depends on
-    `flapjack-pxn.18.3.7.1.3.1.1.3.1`. -/
-theorem emptyCrepHolLocals_simp {width : Nat} [NeZero width] {σ : Type} (s : CrepHolState (BitVec width) σ) :
-    (emptyCrepHolLocalsW s).globals = s.globals ∧
-      (emptyCrepHolLocalsW s).code = s.code ∧
-      (emptyCrepHolLocalsW s).memory = s.memory ∧
-      (emptyCrepHolLocalsW s).memaddrs = s.memaddrs ∧
-      (emptyCrepHolLocalsW s).shMemaddrs = s.shMemaddrs ∧
-      (emptyCrepHolLocalsW s).clock = s.clock ∧
-      (emptyCrepHolLocalsW s).bigEndian = s.bigEndian ∧
-      (emptyCrepHolLocalsW s).ffi = s.ffi ∧
-      (emptyCrepHolLocalsW s).baseAddress = s.baseAddress ∧
-      (emptyCrepHolLocalsW s).topAddress = s.topAddress := by
-  simp [emptyCrepHolLocalsW]
 
 /-! ## Width-indexed crepProps counterparts
 
@@ -639,11 +408,6 @@ theorem eval_loadShapeBytesHOLW_getElem {width : Nat} [NeZero width] {σ : Type}
           rw [ih (address := address + BitVec.ofNat width (width / 8)) (n := n) hn']
           rw [loadShape_stride_step]
 
-theorem length_loadShape_eq_shapeW {width : Nat} [NeZero width]
-    (count : Nat) (address : BitVec width) (value : CrepExp (BitVec width)) :
-    (loadShapeBytesW address count value).length = count := by
-  simpa [loadShapeBytesW] using length_loadShape_eq_shape count address value
-
 @[hol "cakeml/pancake/semantics/crepPropsScript.sml" "length_load_globals_eq_read_size"]
 theorem loadGlobals_lengthW {width : Nat} [NeZero width]
     (address : BitVec 5) (count : Nat) :
@@ -663,114 +427,6 @@ theorem loadGlobals_crepExpVars_emptyW {width : Nat} [NeZero width]
     (address : BitVec 5) (count : Nat) :
     (loadGlobalsW (width := width) address count).flatMap crepExpVarsW = [] :=
   loadGlobals_crepExpVars_empty address count
-
-/-- Flapjack width-specialized analogue of Cake
-    `crepProps$assigned_free_vars_store_globals_empty`
-    (`cakeml/pancake/semantics/crepPropsScript.sml:458-465`), kept untagged with
-    status `documented_mismatch` under audit bead `flapjack-dlc.103`.
-    HOL proves `!es ad. assigned_free_vars (nested_seq (store_globals ad es)) = []`;
-    the Lean equation over `crepNestedSeqW`/`storeGlobalsW` matches it
-    pointwise, since `storeGlobals` builds only `StoreGlob` programs, whose
-    `assigned_free_vars` clause is empty (crepLangScript.sml:149-162). The
-    mismatch is the imported programme carrier: HOL's `crepLang$prog` embeds
-    `funname = mlstring` in `Call`/`ExtCall`, while Lean's `CrepProg` embeds
-    `FunName = String`; because the quantifier ranges over a `CrepProg`, its
-    function names can differ from HOL's and no `mlstring` identifier exists for
-    `names_as_string`, nor a `NameRanged` byte witness. The `store_globals` list
-    shape is pinned by `empty`/`one`/`two` rows of
-    `scripts/hol-probes/crep_store_globals_probe.out` and sampled by
-    `Flapjack/Test/CrepAssignedVarsParity.lean:84-86,108-111`. Restoring the tag
-    depends on the exact mlstring-carrier port `flapjack-pxn.18.3.5.8.8`. -/
-theorem crepAssignedFreeVars_nestedSeq_storeGlobalsW {width : Nat} [NeZero width]
-    (address : BitVec 5) (values : List (CrepExp (BitVec width))) :
-    crepAssignedFreeVarsW (crepNestedSeqW (storeGlobalsW address values)) = [] :=
-  crepAssignedFreeVars_nestedSeq_storeGlobals address values
-
-/-- Flapjack width-specialized analogue of Cake
-    `crepProps$assigned_vars_store_globals_empty`
-    (`cakeml/pancake/semantics/crepPropsScript.sml:449-456`), kept untagged with
-    status `documented_mismatch` under audit bead `flapjack-dlc.104`.
-    HOL proves `!es ad. assigned_vars (nested_seq (store_globals ad es)) = []`;
-    the Lean equation over `crepNestedSeqW`/`storeGlobalsW` matches it pointwise,
-    since `storeGlobals` builds only `StoreGlob` programs, whose `assigned_vars`
-    clause is empty. The mismatch is the imported programme carrier: HOL's
-    `crepLang$prog` embeds `funname = mlstring` in `Call`/`ExtCall`, while Lean's
-    `CrepProg` embeds `FunName = String`, so the quantified programmes need not
-    agree and no `mlstring` identifier or `NameRanged` byte witness is available.
-    The `store_globals` list shape is pinned by
-    `scripts/hol-probes/crep_store_globals_probe.out` and sampled by
-    `Flapjack/Test/CrepAssignedVarsParity.lean:88-90,111`. Restoring the tag
-    depends on the exact mlstring-carrier port `flapjack-pxn.18.3.5.8.8`. -/
-theorem crepAssignedVars_nestedSeq_storeGlobalsW {width : Nat} [NeZero width]
-    (address : BitVec 5) (values : List (CrepExp (BitVec width))) :
-    crepAssignedVarsW (crepNestedSeqW (storeGlobalsW address values)) = [] :=
-  crepAssignedVars_nestedSeq_storeGlobals address values
-
-/-- Flapjack width-specialized analogue of Cake
-    `crepProps$assigned_free_vars_IMP_assigned_vars`
-    (`cakeml/pancake/semantics/crepPropsScript.sml:373-378`), kept untagged with
-    status `documented_mismatch` under audit bead `flapjack-dlc.102`.
-    HOL proves `!prog x. MEM x (assigned_free_vars prog) ==> MEM x (assigned_vars prog)`;
-    the Lean implication over `crepAssignedFreeVarsW`/`crepAssignedVarsW` matches
-    it pointwise. The mismatch is the imported programme carrier: HOL's
-    `crepLang$prog` embeds `funname = mlstring` in `Call`/`ExtCall`, while Lean's
-    `CrepProg` embeds `FunName = String`, so the quantified `prog` ranges over a
-    carrier whose function names can differ from HOL's. The quantifiers are a
-    whole `CrepProg` and a `varname = num` name, so no `mlstring` identifier
-    exists for `names_as_string`, and no `NameRanged` byte witness applies.
-    Direct HOL rows `imp_mem=T` and `imp_mem_absent=T` are in
-    `scripts/hol-probes/crep_assigned_vars_probe.out` (probe header cites
-    crepPropsScript.sml:373) and sampled by
-    `Flapjack/Test/CrepAssignedVarsParity.lean:50-62`. Restoring the tag depends
-    on the exact mlstring-carrier port `flapjack-pxn.18.3.5.8.8`. -/
-theorem mem_crepAssignedFreeVars_imp_mem_crepAssignedVarsW {width : Nat} [NeZero width]
-    (program : CrepProg (BitVec width)) (name : Nat)
-    (h : name ∈ crepAssignedFreeVarsW program) : name ∈ crepAssignedVarsW program :=
-  mem_crepAssignedFreeVars_imp_mem_crepAssignedVars program name h
-
-/-- Width-specialized analogue of Cake
-    `crepProps$nested_seq_assigned_vars_eq`
-    (`cakeml/pancake/semantics/crepPropsScript.sml:410-415`). It has the same
-    list-length premise and assigned-variable equation, but stays untagged
-    because it uses production `CrepProg (BitVec width)`: `Call`/`ExtCall`
-    names are `String`, whereas HOL `prog` uses `mlstring`. The exact
-    `CrepProgHOL` carrier exists, but `assigned_vars` and this theorem are not
-    yet ported over it. Existing HOL oracle rows validate concrete results,
-    not a carrier bridge. -/
-theorem crepAssignedVars_nestedSeq_assign_zipWithW {width : Nat} [NeZero width]
-    (names : List Nat) (values : List (CrepExp (BitVec width)))
-    (h : names.length = values.length) :
-    crepAssignedVarsW
-        (crepNestedSeqW
-          (names.zipWith (fun name value => CrepProg.assign name value) values)) =
-      names :=
-  crepAssignedVars_nestedSeq_assign_zipWith names values h
-
-/-- Flapjack analogue of Cake `crepProps$nested_seq_assigned_free_vars_eq`
-    (`cakeml/pancake/semantics/crepPropsScript.sml:420-427`), kept untagged with
-    status `documented_mismatch` under audit bead `flapjack-dlc.107`.
-    The equation `assigned_free_vars (nested_seq (MAP2 Assign ns vs)) = ns` under
-    `LENGTH ns = LENGTH vs` matches the Lean `zipWith`/`crepNestedSeqW` form
-    pointwise. The mismatch is the imported program carrier: HOL's
-    `crepLang$prog` embeds `funname = mlstring` in its `Call`/`ExtCall`
-    constructors, while Lean's `CrepProg` embeds `FunName = String`. Because the
-    quantified carrier is a whole `CrepProg` its `Call`/`ExtCall` names can differ
-    from HOL's, and the quantifiers here (`names : List Nat` are `varname = num`
-    keys, the result is `List Nat`) expose no `mlstring` identifier that
-    `names_as_string` could qualify. Direct HOL row `nested_afv=[1; 2]` is in
-    `scripts/hol-probes/crep_assigned_vars_probe.out` (probe header cites
-    crepPropsScript.sml:420), and the equation is sampled by
-    `Flapjack/Test/CrepAssignedVarsParity.lean:103-107`. No exact
-    mlstring-carrier programme exists yet; restoring the tag depends on
-    `flapjack-pxn.18.3.5.8.8`. -/
-theorem crepAssignedFreeVars_nestedSeq_assign_zipWithW {width : Nat} [NeZero width]
-    (names : List Nat) (values : List (CrepExp (BitVec width)))
-    (h : names.length = values.length) :
-    crepAssignedFreeVarsW
-        (crepNestedSeqW
-          (names.zipWith (fun name value => CrepProg.assign name value) values)) =
-      names :=
-  crepAssignedFreeVars_nestedSeq_assign_zipWith names values h
 
 /-- Exact port of Cake `crepProps$nested_seq_assigned_vars_eq`
     (`cakeml/pancake/semantics/crepPropsScript.sml:410-415`) over the exact
@@ -1140,7 +796,6 @@ theorem crepShMemStoreHOL_flookup_locals {width : Nat} [NeZero width] {σ : Type
   all_goals
     rfl
 
-
 /-- Exact port of HOL `eval_upd_clock_eq` (`crepPropsScript.sml:858-872`):
 the exact `crepSem$eval` expression evaluator never reads the state `clock`
 field, so replacing it is invisible. Quantifier order follows HOL's `t, e, ck`. -/
@@ -1386,7 +1041,6 @@ theorem crepPropsEvaluateIoEventsMono {width : Nat} [NeZero width] {σ : Type}
   rw [heval] at h
   exact h
 
-
 private theorem holFiniteMapExact_ext_resVar {α β : Type} {left right : HolFiniteMapExact α β}
     (h : ∀ k, left.lookup k = right.lookup k) : left = right := by
   obtain ⟨l, pl⟩ := left
@@ -1488,21 +1142,11 @@ private abbrev crepUnassignedFreeVarsMotive {width : Nat} [NeZero width] {σ : T
     n ∉ crepAssignedFreeVarsHOL x.1 →
     t.locals.lookup n = x.2.locals.lookup n
 
-private theorem fupdListHOLZipNotMemU {α β : Type} [DecidableEq α] (k : α) :
-    ∀ (xs : List α) (ys : List β) (f : FiniteMap α β), k ∉ xs →
-      FUPDATE_LIST_HOL f (xs.zip ys) k = f k
-  | [], _, f, _ => by simp [FUPDATE_LIST_HOL]
-  | _ :: _, [], f, _ => by simp [FUPDATE_LIST_HOL]
-  | x :: xs, y :: ys, f, hk => by
-      simp only [List.mem_cons, not_or] at hk
-      rw [List.zip_cons_cons, FUPDATE_LIST_HOL_cons, fupdListHOLZipNotMemU k xs ys _ hk.2]
-      simp [FUPDATE_HOL, hk.1]
-
 private theorem lookup_updateListEq_not_mem {α β : Type} [DecidableEq α]
     (m : HolFiniteMapExact α β) (xs : List α) (ys : List β) (k : α) (hk : k ∉ xs) :
     (m.updateListEq (xs.zip ys)).lookup k = m.lookup k := by
   simp only [HolFiniteMapExact.lookup_updateListEq]
-  exact fupdListHOLZipNotMemU k xs ys m.lookup hk
+  exact fupdateListHOL_zip_not_mem k xs ys m.lookup hk
 
 private theorem lookup_updateEq_ne {α β : Type} [DecidableEq α]
     (m : HolFiniteMapExact α β) (x : α) (v : β) (k : α) (hk : k ≠ x) :
@@ -1539,7 +1183,7 @@ private theorem shMemStore_locals {width : Nat} [NeZero width] {σ : Type}
         | (simp at hres; done)
   · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
 
-private theorem lookupCodeFinite_eq_HOLFinite {width : Nat} [NeZero width]
+theorem lookupCodeFinite_eq_HOLFinite {width : Nat} [NeZero width]
     (c : HolFiniteMapExact Flapjack.Basis.Pure.MlString.MlString (List Nat × CrepProgHOL width))
     (f : Flapjack.Basis.Pure.MlString.MlString) (args : List (HolWordLab width)) (len : Nat) :
     lookupCodeFiniteHOL c f args len = lookupCodeHOLFinite c.lookup f args len := by
@@ -1967,7 +1611,7 @@ theorem evaluateSeqStoreGlobalsResHOL {width : Nat} [NeZero width] {σ : Type} :
               CrepSemHOLState width σ).locals.lookup h = some v := by
             simp only [List.zip_cons_cons, HolFiniteMapExact.lookup_updateListEq,
               FUPDATE_LIST_HOL_cons]
-            rw [fupdListHOLZipNotMemU h vars vs _ hnd.1]
+            rw [fupdateListHOL_zip_not_mem h vars vs _ hnd.1]
             simp [FUPDATE_HOL]
           rw [show crepExactEvalExp
               ({ t with locals := t.locals.updateListEq ((h :: vars).zip (v :: vs)) } :
@@ -2178,7 +1822,6 @@ theorem evaluateSeqStoresMemStateRelHOL {width : Nat} [NeZero width] {σ : Type}
     { s with locals := s.locals.updateListEq ((ad, .word addr) :: es.zip vs) } addr m res t
     hls hl hm h
   exact ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
-
 
 /-- Flapjack-specific proof motive for the evaluator-induction proof of
     `evaluateCodeInvariantHOL`; HOL has no separate declaration for this

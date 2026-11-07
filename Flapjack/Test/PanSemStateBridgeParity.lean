@@ -1,6 +1,7 @@
 import Flapjack.Pancake.Semantics.PanSem.StateBridge
 import Flapjack.Pancake.Semantics.PanSem.TotalEvalBridge
 import Flapjack.Pancake.Semantics.PanSem.TotalEvalExpBridge
+import Flapjack.Pancake.Semantics.PanSem.EvalRuntimeRoute
 import Flapjack.Pancake.Semantics.PanSemStateEval
 
 /-!
@@ -327,6 +328,256 @@ def bridgeExecExactState : PanSemStateFiniteExact 64 Unit :=
     ffi := bridgeHolFfi
     baseAddr := 0
     topAddr := 100 }
+
+/- The constructed executable state supplies the representation and range
+   premises itself; an out-of-domain load has the original HOL failure. -/
+section DecodedState
+local instance : DecidablePred bridgeExecExactState.memaddrs := fun _ => isFalse id
+local instance : DecidablePred bridgeExecExactState.shMemaddrs := fun _ => isFalse id
+
+private theorem bridgeExecMemoryRel :
+    PanSemMemoryRel bridgeExecProdState.memaddrs bridgeExecProdState.memory
+      (panSemMemoryExactOf bridgeExecProdState.memory) := by
+  intro address h
+  simp [bridgeExecProdState] at h
+
+private theorem bridgeExecFiniteSupport :
+    (panSemStateToExact (panSemExecStateWithHolFfi bridgeExecProdState bridgeHolFfi)
+      (panSemMemoryExactOf bridgeExecProdState.memory) bridgeExecMemoryRel).FiniteSupport := by
+  refine ⟨⟨[], ?_⟩, ⟨[], ?_⟩, ⟨[], ?_⟩, ⟨[], ?_⟩⟩ <;>
+    simp [panSemStateToExact, panSemExecStateWithHolFfi, bridgeExecProdState, panSemCodeLookup,
+      lookupInfo]
+
+private theorem bridgeExecRanged : PanSemStateRelExecRanged bridgeExecProdState := by
+  simp [PanSemStateRelExecRanged, bridgeExecProdState, StructContextByteRanged, StructContext.toHOL]
+
+example :
+    Option.map panValueToHOL (evalPanSemStateExp bridgeExecProdState (.const 7)) =
+      (panSemFiniteViewOfExec bridgeExecProdState bridgeHolFfi bridgeExecMemoryRel
+        bridgeExecFiniteSupport).evalHOLFinite (expToHOL (.const 7)) :=
+  evalPanSemStateExp_finiteView_agree bridgeExecProdState bridgeHolFfi bridgeFfiStateRel
+    bridgeExecMemoryRel bridgeExecFiniteSupport bridgeExecRanged (.const 7) trivial
+
+private def bridgeExecWordState : PanSemState (RiscV.Word 64) (FfiState Unit) :=
+  { bridgeExecProdState with
+    memory := fun address => if address == 0 then some (.word 0x1122334455667788) else none
+    memaddrs := fun address => address == 0 }
+
+private theorem bridgeExecWordMemoryRel :
+    PanSemMemoryRel bridgeExecWordState.memaddrs bridgeExecWordState.memory
+      (panSemMemoryExactOf bridgeExecWordState.memory) := by
+  apply panSemMemoryRel_of_partial
+  intro address h
+  have haddr : address = 0 := by simpa [bridgeExecWordState] using h
+  subst address
+  exact ⟨0x1122334455667788, by simp [bridgeExecWordState]⟩
+
+private theorem bridgeExecWordFiniteSupport :
+    (panSemStateToExact (panSemExecStateWithHolFfi bridgeExecWordState bridgeHolFfi)
+      (panSemMemoryExactOf bridgeExecWordState.memory) bridgeExecWordMemoryRel).FiniteSupport := by
+  refine ⟨⟨[], ?_⟩, ⟨[], ?_⟩, ⟨[], ?_⟩, ⟨[], ?_⟩⟩ <;>
+    simp [panSemStateToExact, panSemExecStateWithHolFfi, bridgeExecWordState,
+      bridgeExecProdState, panSemCodeLookup, lookupInfo]
+
+private theorem bridgeExecWordRanged : PanSemStateRelExecRanged bridgeExecWordState := by
+  simpa [PanSemStateRelExecRanged, bridgeExecWordState] using bridgeExecRanged
+
+#guard (match evalPanSemStateExp bridgeExecWordState (.loadByte (.const 0)) with
+  | some (.word value) => value == (0x88 : W)
+  | _ => false)
+
+example :
+    Option.map panValueToHOL (evalPanSemStateExp bridgeExecWordState (.loadByte (.const 0))) =
+      (panSemFiniteViewOfExec bridgeExecWordState bridgeHolFfi bridgeExecWordMemoryRel
+        bridgeExecWordFiniteSupport).evalHOLFinite (expToHOL (.loadByte (.const 0))) :=
+  evalPanSemStateExp_finiteView_agree bridgeExecWordState bridgeHolFfi bridgeFfiStateRel
+    bridgeExecWordMemoryRel bridgeExecWordFiniteSupport bridgeExecWordRanged
+    (.loadByte (.const 0)) trivial
+
+/- The expression view does not require exception-shape support. This state
+   deliberately gives every exception name a shape. -/
+private def bridgeExecUnboundedShapes :=
+  { bridgeExecWordState with exceptionShapes := fun _ => some .one }
+
+private theorem bridgeExecUnboundedLocals : ∃ keys : List MlS, ∀ key,
+    bridgeExecUnboundedShapes.locals (Flapjack.Basis.Pure.MlString.toStringOfBytes key) ≠ none →
+      key ∈ keys := by
+  refine ⟨[], ?_⟩
+  simp [bridgeExecUnboundedShapes, bridgeExecWordState, bridgeExecProdState]
+
+private theorem bridgeExecUnboundedGlobals : ∃ keys : List MlS, ∀ key,
+    bridgeExecUnboundedShapes.globals (Flapjack.Basis.Pure.MlString.toStringOfBytes key) ≠ none →
+      key ∈ keys := by
+  refine ⟨[], ?_⟩
+  simp [bridgeExecUnboundedShapes, bridgeExecWordState, bridgeExecProdState]
+
+/- Run through the HOL-backed executable adapter, not only its agreement
+   theorem: the word's first little-endian byte is the original HOL row 136. -/
+#guard (match evalPanSemStateExpViaHOL bridgeExecUnboundedShapes bridgeExecWordMemoryRel
+    bridgeExecUnboundedLocals bridgeExecUnboundedGlobals (.loadByte (.const 0)) with
+  | some (.word value) => value == (0x88 : W)
+  | _ => false)
+#guard (evalPanSemStateExpViaHOL bridgeExecUnboundedShapes bridgeExecWordMemoryRel
+  bridgeExecUnboundedLocals bridgeExecUnboundedGlobals (.var .local "missing")).isNone
+#guard (match evalPanSemStateExpViaHOL bridgeExecUnboundedShapes bridgeExecWordMemoryRel
+    bridgeExecUnboundedLocals bridgeExecUnboundedGlobals
+    (.op .add [.const 1, .const 2, .const 3]) with
+  | some (.word value) => value == (6 : W)
+  | _ => false)
+
+/- The proof-free adapter handles function-backed maps with infinite support:
+   it needs only the finite set of keys present in this expression. -/
+private def bridgeExecInfiniteMaps :=
+  { bridgeExecWordState with
+    locals := fun _ => some (.word 5)
+    globals := fun _ => some (.word 7) }
+
+#guard (match evalPanSemStateExpViaHOLRuntime bridgeExecInfiniteMaps
+    (.op .add [.var .local "x", .var .global "g", .loadByte (.const 0)]) with
+  | some (.word value) => value == (148 : W)
+  | _ => false)
+#guard (evalPanSemStateExpViaHOLRuntime bridgeExecInfiniteMaps
+  (.loadByte (.const 8))).isNone
+
+/- A non-word cell inside the source domain violates the representation
+   premise. The adapter totalizes it, so the caller must not treat this state
+   as covered by the agreement theorem. -/
+private def bridgeExecInvalidMemory :=
+  { bridgeExecWordState with memory := fun _ => none }
+
+#guard (evalPanSemStateExp bridgeExecInvalidMemory (.loadByte (.const 0))).isNone
+#guard (match evalPanSemStateExpViaHOLRuntime bridgeExecInvalidMemory (.loadByte (.const 0)) with
+  | some (.word value) => value == (0 : W)
+  | _ => false)
+
+/- The word-domain route preserves failure for missing and non-word cells. -/
+#guard (evalPanSemStateExpViaHOLWordDomain bridgeExecInvalidMemory (.loadByte (.const 0))).isNone
+#guard (evalPanSemStateExpViaHOLWordDomain
+  { bridgeExecWordState with memory := fun _ => some (.rStruct []) }
+  (.load .one (.const 0))).isNone
+#guard (match evalPanSemStateExpViaHOLWordDomain bridgeExecInfiniteMaps
+    (.op .add [.var .local "x", .var .global "g", .loadByte (.const 0)]) with
+  | some (.word value) => value == (148 : W)
+  | _ => false)
+
+private def cachedGuard (s : PanSemState W (FfiState Unit)) (e : Exp W) : Bool :=
+  panSemExpressionUsesHOLCached (panSemExpressionContextCache s.structs) s e
+
+/- Assert the route decision itself: matching results alone would not show
+   whether evaluation used HOL or the compatibility fallback. -/
+#guard cachedGuard bridgeExecInfiniteMaps
+  (.op .add [.var .local "x", .var .global "g", .loadByte (.const 0)])
+#guard !(cachedGuard bridgeExecInfiniteMaps (.var .local "Ā"))
+#guard !(cachedGuard
+  { bridgeExecInfiniteMaps with
+    locals := fun _ => some (.nStruct "Ā" []) }
+  (.var .local "x"))
+#guard !(cachedGuard
+  { bridgeExecInfiniteMaps with
+    structs := [("Ā", { fields := [], size := 0 })] }
+  (.const 1))
+
+/- Guarded execution uses the HOL route for byte names, including malformed
+   memory, and falls back for names outside HOL mlstring's byte range. -/
+#guard (match evalPanSemStateExpViaHOLGuarded bridgeExecInfiniteMaps
+    (.op .add [.var .local "x", .var .global "g", .loadByte (.const 0)]) with
+  | some (.word value) => value == (148 : W)
+  | _ => false)
+#guard (evalPanSemStateExpViaHOLGuarded bridgeExecInvalidMemory (.loadByte (.const 0))).isNone
+#guard (match evalPanSemStateExpViaHOLGuarded bridgeExecInfiniteMaps (.var .local "Ā") with
+  | some (.word value) => value == (5 : W)
+  | _ => false)
+#guard (letI := panSemExpRangedDec (.var .local "Ā" : Exp W)
+  !decide (ExpByteRanged (.var .local "Ā" : Exp W)))
+#guard (letI := panSemExpRangedDec (.var .local "x" : Exp W)
+  decide (ExpByteRanged (.var .local "x" : Exp W)))
+
+private theorem bridgeExecInfiniteMapsRanged : PanSemStateRelExecRanged bridgeExecInfiniteMaps := by
+  simp [PanSemStateRelExecRanged, bridgeExecInfiniteMaps, PanValueByteRanged,
+    bridgeExecWordState, bridgeExecProdState, StructContextByteRanged, StructContext.toHOL]
+
+example :
+    evalPanSemStateExpViaHOLRuntime bridgeExecInfiniteMaps (.var .global "g") =
+      evalPanSemStateExp bridgeExecInfiniteMaps (.var .global "g") :=
+  evalPanSemStateExpViaHOLRuntime_eq bridgeExecInfiniteMaps bridgeExecWordMemoryRel
+    bridgeExecInfiniteMapsRanged (.var .global "g") (by simp [ExpByteRanged])
+
+/- The list adapter evaluates every argument through HOL, and a missing
+   argument fails the complete list instead of retaining a partial result. -/
+#guard (match evalPanSemStateExpsViaHOL bridgeExecUnboundedShapes bridgeExecWordMemoryRel
+    bridgeExecUnboundedLocals bridgeExecUnboundedGlobals
+    [.const 3, .loadByte (.const 0)] with
+  | some [.word first, .word second] => first == (3 : W) && second == (0x88 : W)
+  | _ => false)
+#guard (evalPanSemStateExpsViaHOL bridgeExecUnboundedShapes bridgeExecWordMemoryRel
+  bridgeExecUnboundedLocals bridgeExecUnboundedGlobals
+  [.const 3, .var .local "missing"]).isNone
+
+example :
+    evalPanSemStateExpViaHOL bridgeExecUnboundedShapes bridgeExecWordMemoryRel
+      bridgeExecUnboundedLocals bridgeExecUnboundedGlobals (.loadByte (.const 0)) =
+      evalPanSemStateExp bridgeExecUnboundedShapes (.loadByte (.const 0)) :=
+  evalPanSemStateExpViaHOL_eq bridgeExecUnboundedShapes bridgeExecWordMemoryRel
+    bridgeExecUnboundedLocals bridgeExecUnboundedGlobals bridgeExecWordRanged
+    (.loadByte (.const 0)) trivial
+
+example :
+    Option.map panValueToHOL
+      (evalPanSemStateExp bridgeExecUnboundedShapes (.loadByte (.const 0))) =
+      @PanSemStateFiniteExact.evalHOLFinite 64 Unit _
+        (panSemFiniteViewOfExec (panSemExpressionShadow bridgeExecUnboundedShapes) bridgeHolFfi
+          bridgeExecWordMemoryRel
+          (panSemExpressionShadow_finite bridgeExecUnboundedShapes bridgeHolFfi
+            bridgeExecWordMemoryRel bridgeExecUnboundedLocals bridgeExecUnboundedGlobals))
+        (fun address => inferInstanceAs (Decidable (bridgeExecUnboundedShapes.memaddrs address = true)))
+        (expToHOL (.loadByte (.const 0))) :=
+  evalPanSemStateExp_expressionView_agree bridgeExecUnboundedShapes bridgeHolFfi bridgeFfiStateRel
+    bridgeExecWordMemoryRel bridgeExecUnboundedLocals bridgeExecUnboundedGlobals
+    bridgeExecWordRanged (.loadByte (.const 0)) trivial
+
+example :
+    Option.map panValueToHOL
+      (evalPanSemStateExp bridgeExecUnboundedShapes (.loadByte (.const 0))) =
+      @PanSemStateFiniteExact.evalHOLFinite 64 Unit _
+        (panSemExpressionView bridgeExecUnboundedShapes bridgeExecWordMemoryRel
+          bridgeExecUnboundedLocals bridgeExecUnboundedGlobals)
+        (fun address => inferInstanceAs (Decidable (bridgeExecUnboundedShapes.memaddrs address = true)))
+        (expToHOL (.loadByte (.const 0))) :=
+  evalPanSemStateExp_isolatedView_agree bridgeExecUnboundedShapes bridgeExecWordMemoryRel
+    bridgeExecUnboundedLocals bridgeExecUnboundedGlobals bridgeExecWordRanged
+    (.loadByte (.const 0)) trivial
+
+/- This codec runs with explicit code keys; unlike the choice-backed codec it
+   can be evaluated by the runtime. -/
+#guard (match evalPanSemStateExp (panSemExecStateOfHOLWithKeys bridgeExecExactState bridgeProdFfi [])
+    (expOfHOL (.const 7)) with
+  | some (.word value) => value == (7 : W)
+  | _ => false)
+#guard (evalPanSemStateExp (panSemExecStateOfHOLWithKeys bridgeExecExactState bridgeProdFfi [])
+  (expOfHOL (.loadByte (.const 0)))).isNone
+
+example :
+    Option.map panValueToHOL
+      (evalPanSemStateExp (panSemExecStateOfHOLWithKeys bridgeExecExactState bridgeProdFfi [])
+        (expOfHOL (.const 7))) = some (.val (.word 7)) := by
+  rw [evalPanSemStateExp_decodeWithKeys_agree bridgeExecExactState bridgeProdFfi bridgeFfiStateRel
+    [] (by intro key h; exact False.elim (h rfl))]
+  rfl
+
+example :
+    Option.map panValueToHOL
+      (evalPanSemStateExp (panSemExecStateOfHOL bridgeExecExactState bridgeProdFfi)
+        (expOfHOL (.const 7))) = some (.val (.word 7)) := by
+  rw [evalPanSemStateExp_decode_agree bridgeExecExactState bridgeProdFfi bridgeFfiStateRel]
+  rfl
+
+example :
+    Option.map panValueToHOL
+      (evalPanSemStateExp (panSemExecStateOfHOL bridgeExecExactState bridgeProdFfi)
+        (expOfHOL (.loadByte (.const 0)))) = none := by
+  rw [evalPanSemStateExp_decode_agree bridgeExecExactState bridgeProdFfi bridgeFfiStateRel]
+  rfl
+end DecodedState
 
 /-- The concrete fixture satisfies the executed-carrier state relation. -/
 theorem bridgeStateRelExec :

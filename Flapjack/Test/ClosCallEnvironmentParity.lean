@@ -1,0 +1,713 @@
+import Flapjack.Compiler.Backend.ClosCall.Proofs.Environment
+import Flapjack.Compiler.Backend.ClosCall.Proofs.StateExtension
+import Flapjack.Compiler.Backend.ClosCall.Proofs.RecClosure
+import Flapjack.Compiler.Backend.ClosCall.Proofs.CodeIncludes
+import Flapjack.Compiler.Backend.ClosCall.Proofs.RecClosureRelation
+import Flapjack.Compiler.Backend.ClosCall.Proofs.ValueRelation
+import Flapjack.Compiler.Backend.ClosCall.Proofs.PrimitiveEquality
+import Flapjack.Compiler.Backend.Semantics.ClosProps.RefRelations
+import Flapjack.Compiler.Backend.ClosCall.Proofs.DirectCallLookup
+import Flapjack.Compiler.Backend.ClosCall.Proofs.DirectCallClock
+
+/-! Replay binder and environment cases captured from CakeML/HOL. -/
+namespace Flapjack.Test.ClosCallEnvironmentParity
+open Flapjack.Compiler.Backend ClosCall ClosLang ClosProps
+open Flapjack.Basis.Pure.MlString
+
+private def posCases : List ClosLang.Exp :=
+  [.let .none [.var .none 2] (.var .none 2),
+   .fn (ofString "f") none none 2 (.var .none 2),
+   .letrec [ofString "f", ofString "g"] (some 10) none
+     [(1, .var .none 3), (0, .var .none 1)] (.var .none 0),
+   .handle .none (.var .none 2) (.var .none 1)]
+
+private def negCases : List ClosLang.Exp :=
+  [.let .none [.var .none 2] (.var .none 1),
+   .fn (ofString "f") none none 2 (.var .none 1),
+   .letrec [ofString "f", ofString "g"] (some 10) none
+     [(1, .var .none 1), (0, .var .none 1)] (.var .none 0),
+   .handle .none (.var .none 2) (.var .none 0)]
+
+example : freeVars 1 [posCases[0]] ∧ freeVars 0 [posCases[1]] ∧
+    freeVars 0 [posCases[2]] ∧ freeVars 0 [posCases[3]] := by
+  simp [posCases, freeVars, freeVarExp, freeVarFuns]
+
+example : ¬freeVars 1 [negCases[0]] ∧ ¬freeVars 0 [negCases[1]] ∧
+    ¬freeVars 0 [negCases[2]] ∧ ¬freeVars 0 [negCases[3]] := by
+  simp [negCases, freeVars, freeVarExp, freeVarFuns]
+
+example : envRel (· = ·) ([1, 2] : List Nat) [1] 0 [(0, .var .none 0)] := by
+  simp [envRel, freeVar, freeVars, freeVarExp]
+
+example : ¬envRel (· = ·) ([1, 2] : List Nat) [1] 0 [(0, .var .none 1)] := by
+  simp [envRel, freeVar, freeVars, freeVarExp]
+
+example : ¬envRel (· = ·) ([1, 2] : List Nat) [1, 3] 0 [] := by
+  simp [envRel, List.forall₂_cons_left_iff]
+
+example : envRel (· = ·) ([1, 2] : List Nat) [1, 2] 0 [] := by
+  simp [envRel]
+
+-- `clos_call_wfg_probe.out`: adding distinct code preserves old lookup,
+-- while duplicate or replaced bindings do not constitute an extension.
+example : stateExtends ((.ln, [(1, 2)]) : Flapjack.Spt Unit × List (Nat × Nat))
+    (.ln, [(2, 3), (1, 2)]) := by
+  refine ⟨?_, ?_, by simp⟩
+  · intro key member
+    exact ⟨member, rfl⟩
+  · intro key value lookup
+    by_cases equal : key = 1
+    · subst key
+      simpa [logicalAssocLookup, List.find?] using lookup
+    · simp [logicalAssocLookup, List.find?, equal] at lookup
+
+example : ¬stateExtends ((.ln, [(1, 2)]) : Flapjack.Spt Unit × List (Nat × Nat))
+    (.ln, [(1, 3), (1, 2)]) := by
+  simp [stateExtends]
+
+example : ¬stateExtends ((.ln, [(1, 2)]) : Flapjack.Spt Unit × List (Nat × Nat))
+    (.ln, [(1, 3)]) := by
+  intro extension
+  have lookup := extension.2.1 1 2
+  simp [logicalAssocLookup, List.find?] at lookup
+
+-- `clos_call_wfg_probe.out`: nested locations precede the group's range,
+-- followed by the enclosing body; missing locations use the source default.
+example : codeLocations [.letrec [ofString "f", ofString "g"] (some 10) none
+    [(1, .fn (ofString "h") (some 6) none 1 (.var .none 0)), (0, .var .none 0)]
+    (.fn (ofString "k") (some 20) none 1 (.var .none 0))] = [6, 10, 12, 20] := by
+  rfl
+
+example : codeLocations [.fn (ofString "f") none none 1 (.var .none 0)] = [0] := by
+  rfl
+
+example : recClosureWellFormed 10 ([((true : Bool), .var .none 0)] : List (Bool × ClosLang.Exp)) := by
+  simp [recClosureWellFormed, everyFnLocationSome, fnLocationSomeExp, everyFnVarsNone,
+    fnVarsNoneExp, codeLocations, codeLocationsExp]
+
+example : ¬recClosureWellFormed 10
+    ([((true : Bool), .fn (ofString "f") (some 10) none 1 (.var .none 0))] : List (Bool × ClosLang.Exp)) := by
+  simp [recClosureWellFormed, everyFnLocationSome, fnLocationSomeExp, everyFnVarsNone,
+    fnVarsNoneExp, codeLocations, codeLocationsExp]
+
+private def singletonCode : Flapjack.HolFiniteMapExact Nat Nat :=
+  Flapjack.HolFiniteMapExact.empty.update (1, 2)
+
+-- `clos_call_wfg_probe.out`: lookup uses the first binding of a duplicate key.
+example : codeIncludes [(1, 2)] singletonCode := by
+  intro key value lookup
+  by_cases eq : key = 1
+  · subst key
+    simpa [logicalAssocLookup, List.find?, singletonCode, Flapjack.HolFiniteMapExact.update,
+      Flapjack.FUPDATE] using lookup
+  · simp [logicalAssocLookup, List.find?, eq] at lookup
+
+example : ¬codeIncludes [(1, 3)] singletonCode := by
+  intro included
+  have lookup := included 1 3
+  simp [logicalAssocLookup, List.find?, singletonCode, Flapjack.HolFiniteMapExact.update,
+    Flapjack.FUPDATE] at lookup
+
+example : codeIncludes [(1, 2), (1, 3)] singletonCode := by
+  intro key value lookup
+  by_cases eq : key = 1
+  · subst key
+    simpa [logicalAssocLookup, List.find?, singletonCode, Flapjack.HolFiniteMapExact.update,
+      Flapjack.FUPDATE] using lookup
+  · simp [logicalAssocLookup, List.find?, eq] at lookup
+
+-- The fuel-aware recursive-closure relation is inhabited for the empty group.
+example (fuel loc : Nat) :
+    recClosureRelFuel fuel (.ln, []) ∅ Flapjack.HolFiniteMapExact.empty loc [] [] := by
+  refine ⟨(.ln, []), ?_, ?_, ?_, ?_, [], (.ln, []), ?_, Or.inl ?_⟩
+  · simp [recClosureWellFormed, everyFnLocationSome, everyFnVarsNone, codeLocations]
+  · constructor
+    · ext label
+      simp only [Set.mem_ofPred_eq, List.map_nil, List.not_mem_nil, false_iff]
+      rintro ⟨key, member, _⟩
+      change Flapjack.sptDomain (.ln : Flapjack.NumSet) key at member
+      simp [Flapjack.sptDomain, Flapjack.sptLookup] at member
+    · simp
+  · simp [codeLocations]
+  · simp
+  · cases fuel <;> rfl
+  · refine ⟨?_, ⟨.none, 0, rfl⟩, ?_, ?_, ?_⟩
+    · exact List.Forall₂.nil
+    · apply stateExtends_refl
+      simp [codeList]
+    · simp [groupLocationsCovered, codeLocations]
+    · simp [codeIncludes, codeList, logicalAssocLookup_nil]
+
+private def closedGroup : List (Nat × ClosLang.Exp) := [(1, .var .none 0)]
+private def closedGroupInitial : State := (.ln, [])
+private def closedGroupAfter : State := insertEach 10 1 closedGroupInitial
+private def closedGroupResult : State := codeList 10 closedGroup closedGroupAfter
+private def closedGroupCode : Flapjack.HolFiniteMapExact Nat (Nat × ClosLang.Exp) :=
+  Flapjack.HolFiniteMapExact.empty.update (11, (1, .var .none 0))
+
+-- A generated entry takes precedence over an older entry with the same label.
+example : logicalAssocLookup 11
+    (codeList 10 [(1, .var .none 0)] (.ln, [(11, 2, .var .none 9)])).2 =
+    some (1, .var .none 0) := by
+  exact codeList_lookup 10 [(1, .var .none 0)] (.ln, [(11, 2, .var .none 9)]) 0 1 (.var .none 0) rfl
+
+-- Distinct locations for a two-function group imply the group invariant.
+example (names : List Flapjack.Basis.Pure.MlString.MlString) :
+    recClosureWellFormed 10 [(1, .var .none 0), (2, .var .none 1)] := by
+  have invariants := letrec_source_invariants names 10
+    [(1, .var .none 0), (2, .var .none 1)] (.var .none 2) closedGroupInitial
+  apply (invariants ?_ ?_ ?_ ?_).1
+  · simp [everyFnLocationSome, fnLocationSomeExp, fnLocationSomeFuns]
+  · simp [everyFnVarsNone, fnVarsNoneExp, fnVarsNoneFuns]
+  · simp [codeLocations, codeLocationsExp, codeLocationsFuns, List.range_succ]
+  · simp [LabelsFresh, closedGroupInitial]
+
+-- A real closed group is related to its generated direct-call stub and code.
+private theorem closedGroupRelation : recClosureRelFuel 5 closedGroupResult ∅ closedGroupCode 10 closedGroup
+    [(1, .call .none 0 11 [.var .none 0])] := by
+  have result := callsFuel_letrec_closed_final 5 [] 10 closedGroup (.var .none 0) (.var .none 0)
+    closedGroupInitial closedGroupAfter closedGroupResult closedGroupResult [.var .none 0] ∅ closedGroupCode
+  apply result ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ |>.2
+  · rfl
+  · simp [groupClosed, closedGroup, freeVarExp]
+  · rfl
+  · constructor
+    · ext label
+      simp only [closedGroupInitial, Set.mem_ofPred_eq, List.map_nil, List.not_mem_nil, false_iff]
+      rintro ⟨key, member, _⟩
+      change Flapjack.sptDomain (.ln : Flapjack.NumSet) key at member
+      simp [Flapjack.sptDomain, Flapjack.sptLookup] at member
+    · simp [closedGroupInitial]
+  · simp [closedGroup, everyFnLocationSome, fnLocationSomeExp, fnLocationSomeFuns]
+  · simp [closedGroup, everyFnVarsNone, fnVarsNoneExp, fnVarsNoneFuns]
+  · simp [closedGroup, codeLocations, codeLocationsExp, codeLocationsFuns]
+  · simp [LabelsFresh, closedGroupInitial]
+  · apply stateExtends_refl
+    simp [closedGroupResult, closedGroup, closedGroupAfter, closedGroupInitial, codeList, insertEach]
+  · simp [closedGroup, codeLocations, codeLocationsExp, codeLocationsFuns, closedGroupResult, codeList,
+      closedGroupAfter, closedGroupInitial, insertEach,
+      Flapjack.sptDomain, Flapjack.sptLookup, Flapjack.sptInsert]
+  · intro key value lookup
+    by_cases equal : key = 11
+    · subst key
+      simpa [closedGroupResult, closedGroup, closedGroupAfter, codeList, logicalAssocLookup, List.find?,
+        closedGroupCode, Flapjack.HolFiniteMapExact.update, Flapjack.FUPDATE] using lookup
+    · simp [closedGroupResult, closedGroup, closedGroupAfter, closedGroupInitial, codeList, insertEach,
+        logicalAssocLookup, List.find?, equal] at lookup
+
+-- The closure relation identifies both the generated stub and its code.
+example : ∃ trace convertedBody,
+    ([(1, .call .none 0 11 [.var .none 0])] : List (Nat × ClosLang.Exp))[0]? =
+      some (1, .call trace 0 11 (ClosCall.variables trace 1)) ∧
+    closedGroupCode.lookup 11 = some (1, convertedBody) := by
+  exact recClosureRelFuel_known_stub 5 closedGroupResult ∅ closedGroupCode 10 closedGroup
+    [(1, .call .none 0 11 [.var .none 0])] 0 1 (.var .none 0) closedGroupRelation rfl (by simp)
+
+-- The direct-call evaluator resolves that stub at the declared arity.
+example : ∃ trace convertedBody,
+    ([(1, .call .none 0 11 [.var .none 0])] : List (Nat × ClosLang.Exp))[0]? =
+      some (1, .call trace 0 11 (ClosCall.variables trace 1)) ∧
+    ClosSem.findCode 11 [ClosSem.Value.number 7] closedGroupCode = some ([.number 7], convertedBody) := by
+  exact recClosureRelFuel_known_findCode 5 closedGroupResult ∅ closedGroupCode 10 closedGroup
+    [(1, .call .none 0 11 [.var .none 0])] 0 1 (.var .none 0) [.number 7] rfl
+    closedGroupRelation rfl (by simp)
+
+-- A known-location application selects the stub and its installed body.
+example : ∃ trace env convertedBody,
+    ClosSem.destClosure 2 (some 10)
+      (.closure (some 10) [] [] 1 (.call .none 0 11 [.var .none 0])) [.number 7] =
+        some (.fullApp (.call trace 0 11 (ClosCall.variables trace 1)) env []) ∧
+    ClosSem.findCode 11 [ClosSem.Value.number 7] closedGroupCode = some ([.number 7], convertedBody) := by
+  have values : ValueRelFuel 5 closedGroupResult ∅ closedGroupCode
+      (.closure (some 10) [] [] 1 (.var .none 0))
+      (.closure (some 10) [] [] 1 (.call .none 0 11 [.var .none 0])) :=
+    .closure closedGroupRelation .nil (.equalLength rfl .nil)
+  have args : List.Forall₂ (ValueRelFuel 5 closedGroupResult ∅ closedGroupCode)
+      [.number 7] [.number 7] := .cons (.number 7) .nil
+  obtain ⟨trace, env, convertedBody, _, _, _, _, _, _, targetRun, _, found, _⟩ :=
+    destClosure_known_direct 5 closedGroupResult ∅ closedGroupCode 2 10
+      (.closure (some 10) [] [] 1 (.var .none 0))
+      (.closure (some 10) [] [] 1 (.call .none 0 11 [.var .none 0]))
+      [.number 7] [.number 7] (.var .none 0) [.number 7] []
+      (by simp [ClosSem.destClosure, ClosSem.checkLoc]) values args (by simp)
+  exact ⟨trace, env, convertedBody, targetRun, found⟩
+
+-- A group with a captured variable follows the open-closure alternative.
+private theorem openGroupRelation : recClosureRelFuel 5 (.ln, []) {10} Flapjack.HolFiniteMapExact.empty 10
+    [(1, .var .none 1)] [(1, .var .none 1)] := by
+  have result := callsFuel_letrec_open_final 4 [] 10 [(1, .var .none 1)] (.var .none 0) (.var .none 0)
+    (.ln, []) (insertEach 10 1 (.ln, [])) (.ln, []) (.ln, []) (.ln, [])
+    [.var .none 1] [.var .none 1] {10} Flapjack.HolFiniteMapExact.empty
+  apply result ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ |>.2
+  · rfl
+  · simp [groupClosed, freeVarExp]
+  · rfl
+  · rfl
+  · constructor
+    · ext label
+      simp only [Set.mem_ofPred_eq, List.map_nil, List.not_mem_nil, false_iff]
+      rintro ⟨key, member, _⟩
+      change Flapjack.sptDomain (.ln : Flapjack.NumSet) key at member
+      simp [Flapjack.sptDomain, Flapjack.sptLookup] at member
+    · simp
+  · simp [everyFnLocationSome, fnLocationSomeExp, fnLocationSomeFuns]
+  · simp [everyFnVarsNone, fnVarsNoneExp, fnVarsNoneFuns]
+  · simp [codeLocations, codeLocationsExp, codeLocationsFuns]
+  · simp [LabelsFresh]
+  · apply stateExtends_refl
+    simp
+  · simp [codeLocations, codeLocationsExp, codeLocationsFuns]
+  · simp [codeIncludes, logicalAssocLookup_nil]
+
+private theorem openTwoArgRelation : recClosureRelFuel 5 (.ln, []) {10} Flapjack.HolFiniteMapExact.empty 10
+    [(2, .var .none 2)] [(2, .var .none 2)] := by
+  have result := callsFuel_letrec_open_final 4 [] 10 [(2, .var .none 2)] (.var .none 0) (.var .none 0)
+    (.ln, []) (insertEach 10 1 (.ln, [])) (.ln, []) (.ln, []) (.ln, [])
+    [.var .none 2] [.var .none 2] {10} Flapjack.HolFiniteMapExact.empty
+  apply result ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ |>.2
+  · rfl
+  · simp [groupClosed, freeVarExp]
+  · rfl
+  · rfl
+  · constructor
+    · ext label
+      simp only [Set.mem_ofPred_eq, List.map_nil, List.not_mem_nil, false_iff]
+      rintro ⟨key, member, _⟩
+      change Flapjack.sptDomain (.ln : Flapjack.NumSet) key at member
+      simp [Flapjack.sptDomain, Flapjack.sptLookup] at member
+    · simp
+  · simp [everyFnLocationSome, fnLocationSomeExp, fnLocationSomeFuns]
+  · simp [everyFnVarsNone, fnVarsNoneExp, fnVarsNoneFuns]
+  · simp [codeLocations, codeLocationsExp, codeLocationsFuns]
+  · simp [LabelsFresh]
+  · apply stateExtends_refl
+    simp
+  · simp [codeLocations, codeLocationsExp, codeLocationsFuns]
+  · simp [codeIncludes, logicalAssocLookup_nil]
+
+-- Full recursive application relates consumed arguments, recursive slots,
+-- captured values, and the arguments left for over-application.
+example : ∃ body env rest,
+    ClosSem.destClosure 3 none (.recclosure (some 10) [] [.number 42] [(2, .var .none 2)] 0)
+      [.number 3, .number 7, .number 9] = some (.fullApp body env rest) ∧
+    EnvRelFuel 5 (.ln, []) {10} Flapjack.HolFiniteMapExact.empty
+      [.number 7, .number 9, .recclosure (some 10) [] [.number 42] [(2, .var .none 2)] 0, .number 42]
+      env 0 [(0, body)] ∧
+    List.Forall₂ (ValueRelFuel 5 (.ln, []) {10} Flapjack.HolFiniteMapExact.empty) [.number 3] rest := by
+  have sourceRun : ClosSem.destClosure 3 none
+      (.recclosure (some 10) [] [.number 42] [(2, .var .none 2)] 0) [.number 3, .number 7, .number 9] =
+    some (.fullApp (.var .none 2)
+      [.number 7, .number 9, .recclosure (some 10) [] [.number 42] [(2, .var .none 2)] 0, .number 42]
+      [.number 3]) := rfl
+  have functions : ValueRelFuel 5 (.ln, []) {10} Flapjack.HolFiniteMapExact.empty
+      (.recclosure (some 10) [] [.number 42] [(2, .var .none 2)] 0)
+      (.recclosure (some 10) [] [.number 42] [(2, .var .none 2)] 0) :=
+    .recclosure openTwoArgRelation .nil (.equalLength rfl (.cons (.number 42) .nil))
+  have args : List.Forall₂ (ValueRelFuel 5 (.ln, []) {10} Flapjack.HolFiniteMapExact.empty)
+      [.number 3, .number 7, .number 9] [.number 3, .number 7, .number 9] :=
+    .cons (.number 3) (.cons (.number 7) (.cons (.number 9) .nil))
+  obtain ⟨body, env, rest, _, _, _, _, _, targetRun, bodyEnv, restRel, _⟩ :=
+    destClosure_full_fuel 5 (.ln, []) {10} Flapjack.HolFiniteMapExact.empty 3 none
+      _ _ _ _ _ _ _ sourceRun functions args
+  exact ⟨body, env, rest, targetRun, bodyEnv, restRel⟩
+
+-- A full application reaches its related body, under the selected-body
+-- induction hypothesis, and preserves the evaluator's clocked state.
+example {C F : Type} (source : ClosSem.State (Flapjack.NumSet × C) F) (target : ClosSem.State C F)
+    (states : StateRelFuel 5 closedGroupResult ∅ source target)
+    (targetCode : target.code = closedGroupCode) (maxApp : source.maxApp = 2) (clock : 1 ≤ source.clock)
+    (bodyIH : ∀ (targetBody : ClosLang.Exp) (loc : Nat) (sourceFns targetFns : List (Nat × ClosLang.Exp))
+        (index arity : Nat),
+      recClosureRelFuel 5 closedGroupResult ∅ target.code loc sourceFns targetFns →
+      sourceFns[index]? = some (arity, .var .none 0) → targetFns[index]? = some (arity, targetBody) →
+      ExprSimFuel (C := C) (F := F) 5 closedGroupResult ∅ (.var .none 0) targetBody) :
+    ∃ result final,
+      ClosSem.evaluateApp none (.closure (some 10) [] [] 1 (.call .none 0 11 [.var .none 0]))
+        [.number 7] target = (result, final) ∧
+      Flapjack.SemanticPrimitivesProps.resultRel
+        (List.Forall₂ (ValueRelFuel 5 closedGroupResult ∅ final.code))
+        (ValueRelFuel 5 closedGroupResult ∅ final.code) (.val [.number 7]) result ∧
+      StateRelFuel 5 closedGroupResult ∅ (ClosSem.decClock 1 source) final ∧
+      (∀ key value, target.code.lookup key = some value → final.code.lookup key = some value) := by
+  apply evaluateApp_full_fuel 5 closedGroupResult ∅ none
+    (.closure (some 10) [] [] 1 (.var .none 0))
+    (.closure (some 10) [] [] 1 (.call .none 0 11 [.var .none 0]))
+    [.number 7] [.number 7] (.var .none 0) [.number 7] [] source target
+    (.val [.number 7]) (ClosSem.decClock 1 source)
+  · simp
+  · simp [ClosSem.destClosure, ClosSem.checkLoc, maxApp]
+  · have closure : ClosSem.destClosure source.maxApp none (.closure (some 10) [] [] 1 (.var .none 0))
+        [.number 7] = some (.fullApp (.var .none 0) [.number 7] []) := by
+      simp [ClosSem.destClosure, ClosSem.checkLoc, maxApp]
+    rw [ClosSem.evaluateApp, closure]
+    simp only [List.length_cons, List.length_nil, Nat.sub_zero]
+    rw [ite_eq_right (Nat.not_lt.mpr clock), ClosSem.fixClock_evaluate]
+    simp [ClosSem.evaluate, ClosSem.evaluateApp]
+  · simp
+  · rw [targetCode]
+    exact .closure closedGroupRelation .nil (.equalLength rfl .nil)
+  · exact .cons (.number 7) .nil
+  · exact states
+  · simp [closedGroupResult, closedGroup, closedGroupAfter, closedGroupInitial, codeList, insertEach]
+  · exact bodyIH
+  · intro sourceValue targetValue targetRest _
+    cases targetRest with
+    | nil => exact appSimFuel_nil 5 closedGroupResult ∅ none sourceValue targetValue
+    | cons head tail =>
+      intro _ _ _ _ _ _ _ related _
+      cases related
+
+-- A one-argument partial application preserves a captured recursive closure.
+example : ∃ targetPartial,
+    ClosSem.destClosure 2 none (.recclosure (some 10) [] [.number 42] [(2, .var .none 2)] 0)
+      [.number 7] = some (.partialApp targetPartial) ∧
+    ValueRelFuel 5 (.ln, []) {10} Flapjack.HolFiniteMapExact.empty
+      (.recclosure (some 10) [.number 7] [.number 42] [(2, .var .none 2)] 0) targetPartial := by
+  apply destClosure_partial_fuel 5 (.ln, []) {10} Flapjack.HolFiniteMapExact.empty 2 none
+    (.recclosure (some 10) [] [.number 42] [(2, .var .none 2)] 0)
+    (.recclosure (some 10) [] [.number 42] [(2, .var .none 2)] 0)
+    (.recclosure (some 10) [.number 7] [.number 42] [(2, .var .none 2)] 0)
+    [.number 7] [.number 7]
+  · rfl
+  · exact .recclosure openTwoArgRelation .nil (.equalLength rfl (.cons (.number 42) .nil))
+  · exact .cons (.number 7) .nil
+
+-- The evaluator consumes one clock tick for that partial application.
+example {C F : Type} (source : ClosSem.State (Flapjack.NumSet × C) F) (target : ClosSem.State C F)
+    (states : StateRelFuel 5 (.ln, []) {10} source target)
+    (targetCode : target.code = Flapjack.HolFiniteMapExact.empty)
+    (maxApp : source.maxApp = 2) (clock : 1 ≤ source.clock) :
+    ∃ result final,
+      ClosSem.evaluateApp none (.recclosure (some 10) [] [.number 42] [(2, .var .none 2)] 0)
+        [.number 7] target = (result, final) ∧
+      Flapjack.SemanticPrimitivesProps.resultRel
+        (List.Forall₂ (ValueRelFuel 5 (.ln, []) {10} final.code))
+        (ValueRelFuel 5 (.ln, []) {10} final.code)
+        (.val [.recclosure (some 10) [.number 7] [.number 42] [(2, .var .none 2)] 0]) result ∧
+      StateRelFuel 5 (.ln, []) {10} (ClosSem.decClock 1 source) final ∧
+      (∀ key value, target.code.lookup key = some value → final.code.lookup key = some value) := by
+  apply evaluateApp_partial_fuel 5 (.ln, []) {10} none
+    (.recclosure (some 10) [] [.number 42] [(2, .var .none 2)] 0)
+    (.recclosure (some 10) [] [.number 42] [(2, .var .none 2)] 0)
+    (.recclosure (some 10) [.number 7] [.number 42] [(2, .var .none 2)] 0)
+    [.number 7] [.number 7] source target
+    (.val [.recclosure (some 10) [.number 7] [.number 42] [(2, .var .none 2)] 0]) (ClosSem.decClock 1 source)
+  · simp
+  · simp [ClosSem.destClosure, ClosSem.checkLoc, maxApp]
+  · have closure : ClosSem.destClosure source.maxApp none
+        (.recclosure (some 10) [] [.number 42] [(2, .var .none 2)] 0) [.number 7] =
+        some (.partialApp (.recclosure (some 10) [.number 7] [.number 42] [(2, .var .none 2)] 0)) := by
+      simp [ClosSem.destClosure, ClosSem.checkLoc, maxApp]
+    rw [ClosSem.evaluateApp, closure]
+    simp [Nat.not_lt.mpr clock]
+  · rw [targetCode]
+    exact .recclosure openTwoArgRelation .nil (.equalLength rfl (.cons (.number 42) .nil))
+  · exact .cons (.number 7) .nil
+  · exact states
+
+example : ValueRelFuel 5 closedGroupResult ∅ closedGroupCode
+    (.closure (some 10) [] [] 1 (.var .none 0))
+    (.closure (some 10) [] [] 1 (.call .none 0 11 [.var .none 0])) := by
+  exact .closure closedGroupRelation .nil (.equalLength rfl .nil)
+
+-- Empty application returns a related extracted closure unchanged.
+example : AppSimFuel (C := Unit) (F := Unit) 5 closedGroupResult ∅ none
+    (.closure (some 10) [] [] 1 (.var .none 0))
+    (.closure (some 10) [] [] 1 (.call .none 0 11 [.var .none 0])) [] [] :=
+  appSimFuel_nil 5 closedGroupResult ∅ none _ _
+
+-- An over-applied extracted closure keeps its remaining argument related.
+example : ∃ body env rest,
+    ClosSem.destClosure 2 none
+      (.closure (some 10) [] [] 1 (.call .none 0 11 [.var .none 0])) [.number 3, .number 7] =
+        some (.fullApp body env rest) ∧
+    EnvRelFuel 5 closedGroupResult ∅ closedGroupCode [.number 7] env 0 [(0, body)] ∧
+    List.Forall₂ (ValueRelFuel 5 closedGroupResult ∅ closedGroupCode) [.number 3] rest := by
+  have sourceRun : ClosSem.destClosure 2 none (.closure (some 10) [] [] 1 (.var .none 0))
+      [.number 3, .number 7] = some (.fullApp (.var .none 0) [.number 7] [.number 3]) := rfl
+  have functions : ValueRelFuel 5 closedGroupResult ∅ closedGroupCode
+      (.closure (some 10) [] [] 1 (.var .none 0))
+      (.closure (some 10) [] [] 1 (.call .none 0 11 [.var .none 0])) :=
+    .closure closedGroupRelation .nil (.equalLength rfl .nil)
+  have args : List.Forall₂ (ValueRelFuel 5 closedGroupResult ∅ closedGroupCode)
+      [.number 3, .number 7] [.number 3, .number 7] := .cons (.number 3) (.cons (.number 7) .nil)
+  obtain ⟨body, env, rest, _, _, _, _, _, targetRun, bodyEnv, restRel, _⟩ :=
+    destClosure_full_fuel 5 closedGroupResult ∅ closedGroupCode 2 none _ _ _ _ _ _ _ sourceRun functions args
+  exact ⟨body, env, rest, targetRun, bodyEnv, restRel⟩
+
+-- A recursive group binds related recursive closures before its body runs.
+example {C F : Type} (names : List Flapjack.Basis.Pure.MlString.MlString)
+    (source : ClosSem.State (Flapjack.NumSet × C) F) (target : ClosSem.State C F)
+    (states : StateRelFuel 5 closedGroupResult ∅ source target)
+    (targetCode : target.code = closedGroupCode) (arityOk : 1 ≤ source.maxApp) :
+    ∃ result final,
+      ClosSem.evaluate [.letrec names (some 10) none
+        [(1, .call .none 0 11 [.var .none 0])] (.var .none 0)] [] target = (result, final) ∧
+      Flapjack.SemanticPrimitivesProps.resultRel
+        (List.Forall₂ (ValueRelFuel 5 closedGroupResult ∅ final.code))
+        (ValueRelFuel 5 closedGroupResult ∅ final.code)
+        (.val [.recclosure (some 10) [] [] closedGroup 0]) result ∧
+      StateRelFuel 5 closedGroupResult ∅ source final ∧
+      (∀ key value, target.code.lookup key = some value → final.code.lookup key = some value) := by
+  apply callsFuel_letrec_evaluate 5 names 10 closedGroup (.var .none 0)
+    (.letrec names (some 10) none [(1, .call .none 0 11 [.var .none 0])] (.var .none 0))
+    closedGroupInitial closedGroupResult closedGroupResult ∅ [] [] source target
+    (.val [.recclosure (some 10) [] [] closedGroup 0]) source
+  · simp [ClosSem.evaluate, closedGroup, arityOk]
+  · simp
+  · rfl
+  · intro targetBody middle run
+    simp [callsFuel] at run
+    obtain ⟨rfl, _⟩ := run
+    exact exprSimFuel_var 5 closedGroupResult ∅ .none 0
+  · constructor
+    · ext label
+      simp only [closedGroupInitial, Set.mem_ofPred_eq, List.map_nil, List.not_mem_nil, false_iff]
+      rintro ⟨key, member, _⟩
+      change Flapjack.sptDomain (.ln : Flapjack.NumSet) key at member
+      simp [Flapjack.sptDomain, Flapjack.sptLookup] at member
+    · simp [closedGroupInitial]
+  · simp [closedGroup, everyFnLocationSome, fnLocationSomeExp, fnLocationSomeFuns]
+  · simp [closedGroup, everyFnVarsNone, fnVarsNoneExp, fnVarsNoneFuns]
+  · simp [closedGroup, codeLocations, codeLocationsExp, codeLocationsFuns]
+  · simp [LabelsFresh, closedGroupInitial]
+  · apply stateExtends_refl
+    simp [closedGroupResult, closedGroup, closedGroupAfter, closedGroupInitial, codeList, insertEach]
+  · simp [closedGroup, codeLocations, codeLocationsExp, codeLocationsFuns, closedGroupResult, codeList,
+      closedGroupAfter, closedGroupInitial, insertEach, Flapjack.sptDomain, Flapjack.sptLookup, Flapjack.sptInsert]
+  · rw [targetCode]
+    intro key value lookup
+    by_cases equal : key = 11
+    · subst key
+      simpa [closedGroupResult, closedGroup, closedGroupAfter, codeList, logicalAssocLookup, List.find?,
+        closedGroupCode, Flapjack.HolFiniteMapExact.update, Flapjack.FUPDATE] using lookup
+    · simp [closedGroupResult, closedGroup, closedGroupAfter, closedGroupInitial, codeList, insertEach,
+        logicalAssocLookup, List.find?, equal] at lookup
+  · exact .equalLength rfl .nil
+  · exact states
+
+-- Creating a closed function produces the extracted direct-call closure.
+example {C F : Type} (name : Flapjack.Basis.Pure.MlString.MlString)
+    (source : ClosSem.State (Flapjack.NumSet × C) F) (target : ClosSem.State C F)
+    (states : StateRelFuel 5 closedGroupResult ∅ source target)
+    (targetCode : target.code = closedGroupCode) (arityOk : 1 ≤ source.maxApp) :
+    ∃ result final,
+      ClosSem.evaluate [.fn name (some 10) none 1 (.call .none 0 11 [.var .none 0])] [] target = (result, final) ∧
+      Flapjack.SemanticPrimitivesProps.resultRel
+        (List.Forall₂ (ValueRelFuel 5 closedGroupResult ∅ final.code))
+        (ValueRelFuel 5 closedGroupResult ∅ final.code)
+        (.val [.closure (some 10) [] [] 1 (.var .none 0)]) result ∧
+      StateRelFuel 5 closedGroupResult ∅ source final ∧
+      (∀ key value, target.code.lookup key = some value → final.code.lookup key = some value) := by
+  apply evaluate_fn_fuel 5 closedGroupResult ∅ name 10 1 (.var .none 0)
+    (.call .none 0 11 [.var .none 0]) [] [] source target
+    (.val [.closure (some 10) [] [] 1 (.var .none 0)]) source
+  · simp [ClosSem.evaluate, arityOk]
+  · simp
+  · exact .equalLength rfl .nil
+  · exact states
+  · simpa [targetCode, closedGroup] using closedGroupRelation
+
+-- The function relation is derived from the pass run, without supplying it
+-- as an assumption to the evaluation simulation.
+example {C F : Type} (name : Flapjack.Basis.Pure.MlString.MlString)
+    (source : ClosSem.State (Flapjack.NumSet × C) F) (target : ClosSem.State C F)
+    (states : StateRelFuel 5 closedGroupResult ∅ source target)
+    (targetCode : target.code = closedGroupCode) (arityOk : 1 ≤ source.maxApp) :
+    ∃ result final,
+      ClosSem.evaluate [.fn name (some 10) none 1 (.call .none 0 11 [.var .none 0])] [] target = (result, final) ∧
+      Flapjack.SemanticPrimitivesProps.resultRel
+        (List.Forall₂ (ValueRelFuel 5 closedGroupResult ∅ final.code))
+        (ValueRelFuel 5 closedGroupResult ∅ final.code)
+        (.val [.closure (some 10) [] [] 1 (.var .none 0)]) result ∧
+      StateRelFuel 5 closedGroupResult ∅ source final ∧
+      (∀ key value, target.code.lookup key = some value → final.code.lookup key = some value) := by
+  apply callsFuel_fn_evaluate 4 name 10 1 (.var .none 0)
+    (.fn name (some 10) none 1 (.call .none 0 11 [.var .none 0]))
+    closedGroupInitial closedGroupResult closedGroupResult ∅ [] [] source target
+    (.val [.closure (some 10) [] [] 1 (.var .none 0)]) source
+  · simp [ClosSem.evaluate, arityOk]
+  · simp
+  · rfl
+  · constructor
+    · ext label
+      simp only [closedGroupInitial, Set.mem_ofPred_eq, List.map_nil, List.not_mem_nil, false_iff]
+      rintro ⟨key, member, _⟩
+      change Flapjack.sptDomain (.ln : Flapjack.NumSet) key at member
+      simp [Flapjack.sptDomain, Flapjack.sptLookup] at member
+    · simp [closedGroupInitial]
+  · simp [everyFnLocationSome, fnLocationSomeExp]
+  · simp [everyFnVarsNone, fnVarsNoneExp]
+  · simp [codeLocations, codeLocationsExp]
+  · simp [LabelsFresh, closedGroupInitial]
+  · apply stateExtends_refl
+    simp [closedGroupResult, closedGroup, closedGroupAfter, closedGroupInitial, codeList, insertEach]
+  · simp [codeLocations, codeLocationsExp, closedGroupResult, closedGroup, codeList,
+      closedGroupAfter, closedGroupInitial, insertEach, Flapjack.sptDomain, Flapjack.sptLookup, Flapjack.sptInsert]
+  · rw [targetCode]
+    intro key value lookup
+    by_cases equal : key = 11
+    · subst key
+      simpa [closedGroupResult, closedGroup, closedGroupAfter, codeList, logicalAssocLookup, List.find?,
+        closedGroupCode, Flapjack.HolFiniteMapExact.update, Flapjack.FUPDATE] using lookup
+    · simp [closedGroupResult, closedGroup, closedGroupAfter, closedGroupInitial, codeList, insertEach,
+        logicalAssocLookup, List.find?, equal] at lookup
+  · exact .equalLength rfl .nil
+  · exact states
+
+-- Extending code preserves a captured direct-call closure in an environment.
+example : EnvRelFuel 5 closedGroupResult ∅
+    (closedGroupCode.update (12, (1, .var .none 0)))
+    [.closure (some 10) [] [] 1 (.var .none 0)]
+    [.closure (some 10) [] [] 1 (.call .none 0 11 [.var .none 0])]
+    0 [(0, .var .none 0)] := by
+  apply envRelFuel_mono (code := closedGroupCode)
+  · exact .equalLength rfl (.cons (.closure closedGroupRelation .nil (.equalLength rfl .nil)) .nil)
+  · apply stateExtends_refl
+    simp [closedGroupResult, closedGroup, closedGroupAfter, closedGroupInitial, codeList, insertEach]
+  · exact Set.Subset.rfl
+  · intro key value lookup
+    by_cases same : key = 12
+    · subst key
+      simp [closedGroupCode, Flapjack.HolFiniteMapExact.update, Flapjack.FUPDATE] at lookup
+    · simpa [Flapjack.HolFiniteMapExact.update, Flapjack.FUPDATE, Ne.symm same] using lookup
+
+example : ValueRelFuel 5 (.ln, []) {10} Flapjack.HolFiniteMapExact.empty
+    (.closure (some 10) [] [.number 42] 1 (.var .none 1))
+    (.closure (some 10) [] [.number 42] 1 (.var .none 1)) := by
+  exact .closure openGroupRelation .nil (.equalLength rfl (.cons (.number 42) .nil))
+
+-- `clos_call_env_rel_probe.out`: reference relations preserve heterogeneous
+-- element relations and reject different thunk modes or constructors.
+example : refRel (fun (n : Nat) (b : Bool) => (n = 1) ↔ b = true)
+    (.valueArray [1, 0]) (.valueArray [true, false]) := by
+  simp [refRel]
+
+example : ¬refRel (fun (n : Nat) (b : Bool) => (n = 1) ↔ b = true)
+    (.thunk .evaluated 1) (.thunk .notEvaluated true) := by
+  simp [refRel]
+
+example : ¬refRel (fun (n : Nat) (b : Bool) => (n = 1) ↔ b = true)
+    (.valueArray [1]) (.byteArray [1]) := by
+  simp [refRel]
+
+-- Related closures remain indistinguishable to the executable equality op.
+example : Flapjack.Compiler.Backend.ClosSem.doEq
+      (.closure (some 10) [] [] 1 (.var .none 0)) (.number 4) =
+    Flapjack.Compiler.Backend.ClosSem.doEq
+      (.closure (some 10) [] [] 1 (.call .none 0 11 [.var .none 0])) (.number 4) := by
+  apply valueRelFuel_doEq 5 closedGroupResult ∅ closedGroupCode
+  · exact .closure closedGroupRelation .nil (.equalLength rfl .nil)
+  · exact .number 4
+
+-- A used variable is simulated even when the source environment is longer.
+example {C F : Type} (source : ClosSem.State (Flapjack.NumSet × C) F) (target : ClosSem.State C F)
+    (states : StateRelFuel 5 (.ln, []) ∅ source target) :
+    ∃ result final,
+      ClosSem.evaluate [.var .none 0] [.number 7] target = (result, final) ∧
+      Flapjack.SemanticPrimitivesProps.resultRel
+        (List.Forall₂ (ValueRelFuel 5 (.ln, []) ∅ target.code))
+        (ValueRelFuel 5 (.ln, []) ∅ target.code) (.val [.number 7]) result ∧
+      StateRelFuel 5 (.ln, []) ∅ source final := by
+  have envs : EnvRelFuel 5 (.ln, []) ∅ target.code [.number 7, .number 8] [.number 7]
+      0 [(0, .var .none 0)] := by
+    apply (envRelFuel_iff _ _ _ _ _ _ _ _).mpr
+    simp [envRel, freeVar, freeVars, freeVarExp, ValueRelFuel.number]
+  apply evaluate_var_fuel 5 (.ln, []) ∅ .none 0 [.number 7, .number 8] [.number 7]
+    source target (.val [.number 7]) source
+  · simp [ClosSem.evaluate]
+  · simp
+  · exact envs
+  · exact states
+
+-- The structural induction composes a tick with its variable body.
+example {C F : Type} :
+    ExprSimFuel (C := C) (F := F) 5 (.ln, []) ∅
+      (.tick .none (.var .none 0)) (.tick .none (.var .none 0)) := by
+  exact exprSimFuel_tick 5 (.ln, []) ∅ .none _ _ (exprSimFuel_var 5 (.ln, []) ∅ .none 0)
+
+-- Raising a ticked variable composes the three simulations.
+example {C F : Type} :
+    ExprSimFuel (C := C) (F := F) 5 (.ln, []) ∅
+      (.raise .none (.tick .none (.var .none 0)))
+      (.raise .none (.tick .none (.var .none 0))) := by
+  exact exprSimFuel_raise 5 (.ln, []) ∅ .none _ _
+    (exprSimFuel_tick 5 (.ln, []) ∅ .none _ _ (exprSimFuel_var 5 (.ln, []) ∅ .none 0))
+
+-- Condition and branch environments can use different variables.
+example {C F : Type} :
+    ExprSimFuel (C := C) (F := F) 5 (.ln, []) ∅
+      (.ifThenElse .none (.var .none 0) (.var .none 1) (.raise .none (.var .none 2)))
+      (.ifThenElse .none (.var .none 0) (.var .none 1) (.raise .none (.var .none 2))) := by
+  apply exprSimFuel_if 5 (.ln, []) ∅ .none <;> try simp
+  · exact exprSimFuel_var 5 (.ln, []) ∅ .none 0
+  · exact exprSimFuel_var 5 (.ln, []) ∅ .none 1
+  · exact exprSimFuel_raise 5 (.ln, []) ∅ .none _ _ (exprSimFuel_var 5 (.ln, []) ∅ .none 2)
+
+-- An exception handler binds the payload before evaluating its body.
+example {C F : Type} :
+    ExprSimFuel (C := C) (F := F) 5 (.ln, []) ∅
+      (.handle .none (.raise .none (.var .none 0)) (.var .none 1))
+      (.handle .none (.raise .none (.var .none 0)) (.var .none 1)) := by
+  apply exprSimFuel_handle 5 (.ln, []) ∅ .none <;> try simp
+  · exact exprSimFuel_raise 5 (.ln, []) ∅ .none _ _ (exprSimFuel_var 5 (.ln, []) ∅ .none 0)
+  · exact exprSimFuel_var 5 (.ln, []) ∅ .none 1
+
+-- Sequences may use different environment slots and propagate exceptions.
+example {C F : Type} :
+    ExprsSimFuel (C := C) (F := F) 5 (.ln, []) ∅
+      [.var .none 0, .raise .none (.var .none 1)]
+      [.var .none 0, .raise .none (.var .none 1)] := by
+  apply exprsSimFuel_of_forall₂ 5 (.ln, []) ∅ (by simp)
+  exact .cons (exprSimFuel_var 5 (.ln, []) ∅ .none 0)
+    (.cons (exprSimFuel_raise 5 (.ln, []) ∅ .none _ _ (exprSimFuel_var 5 (.ln, []) ∅ .none 1)) .nil)
+
+-- The body can refer past two newly bound values into the outer environment.
+example {C F : Type} :
+    ExprSimFuel (C := C) (F := F) 5 (.ln, []) ∅
+      (.let .none [.var .none 0, .var .none 1] (.var .none 2))
+      (.let .none [.var .none 0, .var .none 1] (.var .none 2)) := by
+  apply exprSimFuel_let 5 (.ln, []) ∅ .none <;> try simp
+  · apply exprsSimFuel_of_forall₂ 5 (.ln, []) ∅ (by simp)
+    exact .cons (exprSimFuel_var 5 (.ln, []) ∅ .none 0)
+      (.cons (exprSimFuel_var 5 (.ln, []) ∅ .none 1) .nil)
+  · exact exprSimFuel_var 5 (.ln, []) ∅ .none 2
+
+-- A location-free application traverses its arguments and function and
+-- composes their simulations with the application evaluator.
+example {C F : Type}
+    (bodyIH : ∀ (code : Flapjack.HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+        (sourceBody targetBody : ClosLang.Exp) (location : Nat) (sourceFns targetFns : List (Nat × ClosLang.Exp))
+        (index arity : Nat),
+      recClosureRelFuel 5 (.ln, []) ∅ code location sourceFns targetFns →
+      sourceFns[index]? = some (arity, sourceBody) → targetFns[index]? = some (arity, targetBody) →
+      ExprSimFuel (C := C) (F := F) 5 (.ln, []) ∅ sourceBody targetBody) :
+    ∃ targetFn targetArgs,
+      ClosLang.Exp.app .none none (.var .none 0) [.var .none 1] = .app .none none targetFn targetArgs ∧
+      ExprSimFuel (C := C) (F := F) 5 (.ln, []) ∅
+        (.app .none none (.var .none 0) [.var .none 1]) (.app .none none targetFn targetArgs) := by
+  apply callsFuel_app_none_sim 5 (.ln, []) ∅ .none (.var .none 0) [.var .none 1]
+    (.ln, []) (.ln, []) (.app .none none (.var .none 0) [.var .none 1])
+  · rfl
+  · simp
+  · intro targetArgs middle run
+    simp [callsListFuel, callsFuel] at run
+    obtain ⟨rfl, rfl⟩ := run
+    apply exprsSimFuel_of_forall₂ 5 (.ln, []) ∅ (by simp)
+    exact .cons (exprSimFuel_var 5 (.ln, []) ∅ .none 1) .nil
+  · intro targetFn middle run
+    simp [callsFuel] at run
+    obtain ⟨rfl, _⟩ := run
+    exact exprSimFuel_var 5 (.ln, []) ∅ .none 0
+  · exact bodyIH
+
+-- A stub consumes its extra tick and passes only its declared argument prefix.
+example {C F : Type} (state : ClosSem.State C F)
+    (code : state.code.lookup 11 = some (1, .var .none 0)) :
+    ClosSem.evaluate [.call .none 0 11 (ClosCall.variables .none 1)]
+      [.number 7, .number 9] { state with clock := state.clock + 1 } =
+      (.val [.number 7], state) := by
+  rw [evaluate_generated_stub .none 11 1 (.var .none 0) _ state (by simp) code]
+  simp [ClosSem.evaluate]
+
+end Flapjack.Test.ClosCallEnvironmentParity

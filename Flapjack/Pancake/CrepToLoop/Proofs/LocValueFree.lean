@@ -809,55 +809,6 @@ private theorem optimiseHOL_preserves_locValueFree {width : Nat} [NeZero width]
   apply compHOL_preserves_locValueFree
   exact loopCallCompHOL_preserves_locValueFree program .ln hfree
 
-/-- Every body row emitted by the exact, parser-oriented `compileProgHOLExact`
-entry point contains no recursive `locValue`. This is Flapjack-only path
-infrastructure, not an additional HOL result. The proof covers all constructors
-of `compileHOLExact`, including nested call handlers, then the exact `optimiseHOL`
-composition; the list theorem covers the `MAP2`/truncate boundary. The canonical
-projection to executable `LoopProg` is structural and leaves the forbidden
-constructor explicit, so the free-output fact is established before projection
-and does not rely on projection to erase it. `holLoopProgToExecutable_preserves_locValueFree`
-and the production adapter's `rebaseHOLFunctionLabels_preserves_locValueFree`
-cover the projection and label-rebase boundaries used by `Pipeline.lean`. -/
-theorem compileProgHOLExact_bodiesLocValueFree {width : Nat} [NeZero width]
-    (target : Flapjack.Compiler.Encoders.Asm.AsmArchitecture)
-    (program : List
-      (Flapjack.Basis.Pure.MlString.MlString × List Nat × CrepProgHOL width)) :
-    holLoopProgListLocValueFree
-      ((compileProgHOLExact target program).map (fun entry => entry.2.2)) := by
-  let functionNames := (List.range program.length).map (fun n => n + firstLoopName)
-  let compileFunction :=
-    compFuncHOLExact (width := width) target
-      (crepToLoopMakeFuncsExactExecutable program)
-  have hRows : holLoopProgListLocValueFree
-      (List.zipWith
-        (fun _ entry =>
-          optimiseHOL (compileFunction entry.2.1 (crepSimpProgHOL entry.2.2)))
-        functionNames program) := by
-    apply holLoopProgListLocValueFree_zipWith
-    intro _ entry
-    apply optimiseHOL_preserves_locValueFree
-    exact compileHOLExact_locValueFree
-      (mkCtxtExact target (makeVmapExact entry.2.1)
-        (crepToLoopMakeFuncsExactExecutable program) (entry.2.1.length - 1))
-      (listToNumSetHOLExact (List.range entry.2.1.length))
-      (crepSimpProgHOL entry.2.2)
-  simpa [compileProgHOLExact, functionNames, compileFunction,
-    compFuncHOLExact, List.map_zipWith] using hRows
-
-/-- Membership-oriented form of `compileProgHOLExact_bodiesLocValueFree` for
-callers inspecting one exact compiler row. -/
-theorem compileProgHOLExact_rowLocValueFree {width : Nat} [NeZero width]
-    (target : Flapjack.Compiler.Encoders.Asm.AsmArchitecture)
-    (program : List
-      (Flapjack.Basis.Pure.MlString.MlString × List Nat × CrepProgHOL width))
-    (entry : Nat × List Nat × HolLoopProg width)
-    (hentry : entry ∈ compileProgHOLExact target program) :
-    holLoopProgLocValueFree entry.2.2 := by
-  have hmem : entry.2.2 ∈ (compileProgHOLExact target program).map (fun row => row.2.2) :=
-    List.mem_map.mpr ⟨entry, hentry, rfl⟩
-  exact compileProgHOLExact_bodiesLocValueFree target program _ hmem
-
 /-- The executable Loop carrier has no nested `locValue` constructor. -/
 def loopProgLocValueFree {width : Nat} : LoopProg (BitVec width) → Prop
   | .locValue _ _ => False
@@ -876,46 +827,5 @@ decreasing_by
   all_goals first
     | decreasing_trivial
     | (simp_all only [LoopProg.call.sizeOf_spec]; omega)
-
-/-- Structural exact-to-executable projection preserves recursive absence of
-`locValue`. In particular, the projection does not make a generated
-`locValue` disappear; the compiler proof establishes the constructor absent
-before this boundary is crossed. -/
-theorem holLoopProgToExecutable_preserves_locValueFree {width : Nat} [NeZero width]
-    (projectLive : NumSet → List Nat) (program : HolLoopProg width)
-    (hfree : holLoopProgLocValueFree program) :
-    loopProgLocValueFree (holLoopProgToExecutable projectLive program) := by
-  let mProg : HolLoopProg width → Prop := fun p =>
-    holLoopProgLocValueFree p →
-      loopProgLocValueFree (holLoopProgToExecutable projectLive p)
-  let mPair : HolLoopProg width × NumSet → Prop := fun p => mProg p.1
-  let mTriple : HolLoopProg width × HolLoopProg width × NumSet → Prop :=
-    fun p => mProg p.1 ∧ mProg p.2.1
-  let mQuad : Nat × HolLoopProg width × HolLoopProg width × NumSet → Prop :=
-    fun p => mTriple p.2
-  let mHandler : Option (Nat × HolLoopProg width × HolLoopProg width × NumSet) → Prop
-    | none => True
-    | some entry => mQuad entry
-  have hgeneral : mProg program := by
-    refine HolLoopProg.rec
-        (motive_1 := mProg) (motive_2 := mHandler) (motive_3 := mQuad)
-        (motive_4 := mTriple) (motive_5 := mPair)
-        ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_
-        ?_ ?_ ?_ ?_ ?_ ?_ ?_ program <;>
-      simp_all [mProg, mPair, mTriple, mQuad, mHandler,
-        holLoopProgLocValueFree, loopProgLocValueFree, holLoopProgToExecutable]
-    case refine_23 =>
-      intro returns target arguments handler hHandler hfree
-      cases handler with
-      | none => simp [loopProgLocValueFree, holLoopProgToExecutable]
-      | some entry =>
-          rcases entry with ⟨exception, first, second, live⟩
-          rcases hHandler with ⟨ihFirst, ihSecond⟩
-          simp only [holLoopProgLocValueFree] at hfree
-          rcases hfree with ⟨hFirst, hSecond⟩
-          have hFirst' := ihFirst hFirst
-          have hSecond' := ihSecond hSecond
-          simp [loopProgLocValueFree, holLoopProgToExecutable, hFirst', hSecond']
-  exact hgeneral hfree
 
 end Flapjack

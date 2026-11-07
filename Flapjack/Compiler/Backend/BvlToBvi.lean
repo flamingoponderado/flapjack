@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BackendCommon
-import Flapjack.HolRef
+module
+
+public import Flapjack.Compiler.Backend.BackendCommon
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! Counterpart of `cakeml/compiler/backend/bvl_to_bviScript.sml` for the
 stub-location constants. The distinct native BVL/BVI expression carriers are

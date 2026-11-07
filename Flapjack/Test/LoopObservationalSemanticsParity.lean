@@ -20,6 +20,10 @@ namespace Flapjack.Test.LoopObservationalSemanticsParity
 
 open Flapjack
 
+/-- One clock's observation from the entry-call evaluator: the type of
+`LoopSemanticsHooks.evaluate`'s result. -/
+abbrev LoopMachineStep := Option (LoopMachineResult Nat) × LoopMachineState Nat LoopWordLoc
+
 def lprefixLubProbeCommand : String := "scripts/hol-probes/regenerate.sh"
 
 #guard lprefixLubProbeCommand == "scripts/hol-probes/regenerate.sh"

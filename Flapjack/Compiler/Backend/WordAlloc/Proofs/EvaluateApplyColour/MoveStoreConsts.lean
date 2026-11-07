@@ -122,7 +122,7 @@ theorem sptLookup_sptAlistInsert_get? {α : Type} :
               · exact absurd h hnx
               · exact h
             rw [sptLookup_sptInsert_ne x n v _ hnx, ih vs t n hnd' hlen' hnxs, List.idxOf_cons]
-            simp only [beq_eq_false_iff_ne.mpr (Ne.symm hnx), Bool.false_eq_true, ite_false,
+            simp only [beq_eq_false_iff_ne.mpr (Ne.symm hnx), Bool.false_eq_true, ↓reduceIte,
               List.getElem?_cons_succ]
 
 /-- The first-occurrence index of a mapped element is the first-occurrence

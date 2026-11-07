@@ -1,0 +1,373 @@
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateControl
+import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyNumeric
+
+/-! Integer and word primitive simulation over preliminary factored relations. -/
+namespace Flapjack.Compiler.Backend.SourceToFlat
+open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
+
+/-- A successful integer primitive application has exactly two integer
+literal operands. This inversion is infrastructure for expression simulation. -/
+theorem integerArith_operands {F : Type} (source : SemanticPrimitivesHOL.State F)
+    (action : Arith) (values : List SemanticPrimitivesHOL.Value)
+    (successful : doApp (source.refs, source.ffi) (.arith action .intT) values ≠ none) :
+    ∃ left right, values = [.litv (.intLit left), .litv (.intLit right)] := by
+  simp only [doApp, doAppNumericCore] at successful
+  cases values with
+  | nil => simp at successful
+  | cons first rest =>
+    cases rest with
+    | nil => simp at successful
+    | cons second rest =>
+      cases rest with
+      | cons third rest => simp at successful
+      | nil =>
+        cases first <;> try simp at successful
+        case litv lit =>
+          cases lit <;> try simp at successful
+          case intLit left =>
+            cases second <;> try simp at successful
+            case litv lit =>
+              cases lit <;> try simp at successful
+              case intLit right => exact ⟨left, right, rfl⟩
+
+/-- A successful Word8 primitive application has exactly two word
+literal operands. This inversion is infrastructure for expression simulation. -/
+theorem word8Arith_operands {F : Type} (source : SemanticPrimitivesHOL.State F)
+    (action : Arith) (values : List SemanticPrimitivesHOL.Value)
+    (successful : doApp (source.refs, source.ffi) (.arith action (.wordT .w8)) values ≠ none) :
+    ∃ left right, values = [.litv (.word8 left), .litv (.word8 right)] := by
+  simp only [doApp, doAppNumericCore] at successful
+  cases values with
+  | nil => simp at successful
+  | cons first rest =>
+    cases rest with
+    | nil => simp at successful
+    | cons second rest =>
+      cases rest with
+      | cons third rest => simp at successful
+      | nil =>
+        cases first <;> try simp at successful
+        case litv lit =>
+          cases lit <;> try simp at successful
+          case word8 left =>
+            cases second <;> try simp at successful
+            case litv lit =>
+              cases lit <;> try simp at successful
+              case word8 right => exact ⟨left, right, rfl⟩
+
+/-- A successful Word64 primitive application has exactly two word
+literal operands. This inversion is infrastructure for expression simulation. -/
+theorem word64Arith_operands {F : Type} (source : SemanticPrimitivesHOL.State F)
+    (action : Arith) (values : List SemanticPrimitivesHOL.Value)
+    (successful : doApp (source.refs, source.ffi) (.arith action (.wordT .w64)) values ≠ none) :
+    ∃ left right, values = [.litv (.word64 left), .litv (.word64 right)] := by
+  simp only [doApp, doAppNumericCore] at successful
+  cases values with
+  | nil => simp at successful
+  | cons first rest =>
+    cases rest with
+    | nil => simp at successful
+    | cons second rest =>
+      cases rest with
+      | cons third rest => simp at successful
+      | nil =>
+        cases first <;> try simp at successful
+        case litv lit =>
+          cases lit <;> try simp at successful
+          case word64 left =>
+            cases second <;> try simp at successful
+            case litv lit =>
+              cases lit <;> try simp at successful
+              case word64 right => exact ⟨left, right, rfl⟩
+
+/-- Integer arithmetic on literal operands preserves successful values and the
+Div exception, without changing either store or FFI state. This is Flapjack
+infrastructure over the factored value relation, not a reviewed HOL theorem. -/
+theorem integerArith_related {C F : Type} (genv : GlobalEnv) (ok : genvCOk genv.c)
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (action : Arith) (left right : Int) :
+    match doApp (source.refs, source.ffi) (.arith action .intT)
+        [.litv (.intLit left), .litv (.intLit right)],
+      FlatSem.doAppNumeric flat (.arith action .intT)
+        [.litv (.intLit left), .litv (.intLit right)] with
+    | none, some none => True
+    | some ((refs, ffi), sourceResult), some (some (flatNext, flatResult)) =>
+        refs = source.refs ∧ ffi = source.ffi ∧ flatNext = flat ∧
+          ResultRel ValueRel genv sourceResult flatResult
+    | _, _ => False := by
+  by_cases zero : right = 0 <;> cases action <;>
+    simp [doApp, doAppNumericCore, FlatSem.doAppNumeric,
+      FlatSem.applyNumericProjection, FlatSem.flatToValue, FlatSem.valueToFlat, zero]
+  all_goals first | exact ResultRel.value (.literal genv _) | exact ResultRel.raise (exceptionValues_related genv ok).1
+
+/-- Word8 arithmetic preserves literal results and rejects the same unsupported
+operations, without changing either state. This is Flapjack infrastructure
+using the preliminary value relation. -/
+theorem word8Arith_related {C F : Type} (genv : GlobalEnv)
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (action : Arith) (left right : BitVec 8) :
+    match doApp (source.refs, source.ffi) (.arith action (.wordT .w8))
+        [.litv (.word8 left), .litv (.word8 right)],
+      FlatSem.doAppNumeric flat (.arith action (.wordT .w8))
+        [.litv (.word8 left), .litv (.word8 right)] with
+    | none, some none => True
+    | some ((refs, ffi), sourceResult), some (some (flatNext, flatResult)) =>
+        refs = source.refs ∧ ffi = source.ffi ∧ flatNext = flat ∧
+          ResultRel ValueRel genv sourceResult flatResult
+    | _, _ => False := by
+  cases action <;> simp [doApp, doAppNumericCore, FlatSem.doAppNumeric,
+    FlatSem.applyNumericProjection, FlatSem.flatToValue, FlatSem.valueToFlat]
+  all_goals simp [SemanticPrimitivesHOL.wordArith]
+  all_goals exact ResultRel.value (.literal genv _)
+
+/-- Word64 arithmetic preserves literal results and rejects the same unsupported
+operations, without changing either state. This is Flapjack infrastructure
+using the preliminary value relation. -/
+theorem word64Arith_related {C F : Type} (genv : GlobalEnv)
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (action : Arith) (left right : BitVec 64) :
+    match doApp (source.refs, source.ffi) (.arith action (.wordT .w64))
+        [.litv (.word64 left), .litv (.word64 right)],
+      FlatSem.doAppNumeric flat (.arith action (.wordT .w64))
+        [.litv (.word64 left), .litv (.word64 right)] with
+    | none, some none => True
+    | some ((refs, ffi), sourceResult), some (some (flatNext, flatResult)) =>
+        refs = source.refs ∧ ffi = source.ffi ∧ flatNext = flat ∧
+          ResultRel ValueRel genv sourceResult flatResult
+    | _, _ => False := by
+  cases action <;> simp [doApp, doAppNumericCore, FlatSem.doAppNumeric,
+    FlatSem.applyNumericProjection, FlatSem.flatToValue, FlatSem.valueToFlat]
+  all_goals simp [SemanticPrimitivesHOL.wordArith]
+  all_goals exact ResultRel.value (.literal genv _)
+
+
+/-- Successful Word8 shifts have a single word operand. -/
+theorem word8Shift_operand {F : Type} (source : SemanticPrimitivesHOL.State F)
+    (shift : Shift) (amount : Nat) (operand : SemanticPrimitivesHOL.Value)
+    (successful : doApp (source.refs, source.ffi) (.shift .w8 shift amount) [operand] ≠ none) :
+    ∃ word, operand = .litv (.word8 word) := by
+  simp only [doApp, doAppNumericCore, doAppBasic] at successful
+  cases operand <;> simp at successful
+  case litv lit =>
+    cases lit <;> simp at successful
+    case word8 word => exact ⟨word, rfl⟩
+
+/-- The two primitive dispatchers agree on a Word8 shift and preserve both
+states. This is infrastructure over the preliminary factored relation. -/
+theorem word8Shift_related {C F : Type} (genv : GlobalEnv)
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (shift : Shift) (amount : Nat) (word : BitVec 8) :
+    doApp (source.refs, source.ffi) (.shift .w8 shift amount) [.litv (.word8 word)] =
+      some ((source.refs, source.ffi), .val (.litv (.word8 (shift8Lookup shift word amount)))) ∧
+    FlatSem.doAppNumeric flat (.shift .w8 shift amount) [.litv (.word8 word)] =
+      some (some (flat, .val (.litv (.word8 (shift8Lookup shift word amount))))) ∧
+    ValueRel genv (.litv (.word8 (shift8Lookup shift word amount)))
+      (.litv (.word8 (shift8Lookup shift word amount))) := by
+  refine ⟨?_, ?_, .literal genv _⟩
+  · simp [doApp, doAppNumericCore, doAppBasic]
+  · simp [FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue,
+      doApp, doAppNumericCore, doAppBasic, FlatSem.valueToFlat]
+
+/-- Successful Word64 shifts have a single word operand. -/
+theorem word64Shift_operand {F : Type} (source : SemanticPrimitivesHOL.State F)
+    (shift : Shift) (amount : Nat) (operand : SemanticPrimitivesHOL.Value)
+    (successful : doApp (source.refs, source.ffi) (.shift .w64 shift amount) [operand] ≠ none) :
+    ∃ word, operand = .litv (.word64 word) := by
+  simp only [doApp, doAppNumericCore, doAppBasic] at successful
+  cases operand <;> simp at successful
+  case litv lit =>
+    cases lit <;> simp at successful
+    case word64 word => exact ⟨word, rfl⟩
+
+/-- The two primitive dispatchers agree on a Word64 shift and preserve both
+states. This is infrastructure over the preliminary factored relation. -/
+theorem word64Shift_related {C F : Type} (genv : GlobalEnv)
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (shift : Shift) (amount : Nat) (word : BitVec 64) :
+    doApp (source.refs, source.ffi) (.shift .w64 shift amount) [.litv (.word64 word)] =
+      some ((source.refs, source.ffi), .val (.litv (.word64 (shift64Lookup shift word amount)))) ∧
+    FlatSem.doAppNumeric flat (.shift .w64 shift amount) [.litv (.word64 word)] =
+      some (some (flat, .val (.litv (.word64 (shift64Lookup shift word amount))))) ∧
+    ValueRel genv (.litv (.word64 (shift64Lookup shift word amount)))
+      (.litv (.word64 (shift64Lookup shift word amount))) := by
+  refine ⟨?_, ?_, .literal genv _⟩
+  · simp [doApp, doAppNumericCore, doAppBasic]
+  · simp [FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue,
+      doApp, doAppNumericCore, doAppBasic, FlatSem.valueToFlat]
+
+/-- Successful primitive conversions consume a literal operand. -/
+theorem conversion_operand {F : Type} (source : SemanticPrimitivesHOL.State F)
+    (fromType toType : PrimType) (operand : SemanticPrimitivesHOL.Value)
+    (successful : doApp (source.refs, source.ffi) (.fromTo fromType toType) [operand] ≠ none) :
+    ∃ lit, operand = .litv lit := by
+  cases operand with
+  | litv lit => exact ⟨lit, rfl⟩
+  | _ =>
+    cases fromType <;> cases toType <;> (try cases ‹WordSize›) <;> (try cases ‹WordSize›) <;>
+      simp [doApp, doAppNumericCore] at successful
+
+/-- Source and flat conversions agree on literals, including `Chr` failures.
+This is infrastructure over the preliminary factored relation. -/
+theorem conversion_related {C F : Type} (genv : GlobalEnv) (ok : genvCOk genv.c)
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (fromType toType : PrimType) (lit : Lit) :
+    match doApp (source.refs, source.ffi) (.fromTo fromType toType) [.litv lit],
+      FlatSem.doAppNumeric flat (.fromTo fromType toType) [.litv lit] with
+    | none, some none => True
+    | some ((refs, ffi), sourceResult), some (some (flatNext, flatResult)) =>
+        refs = source.refs ∧ ffi = source.ffi ∧ flatNext = flat ∧
+          ResultRel ValueRel genv sourceResult flatResult
+    | _, _ => False := by
+  cases fromType <;> cases toType <;> (try cases ‹WordSize›) <;> (try cases ‹WordSize›) <;> cases lit
+  case intT.charT.intLit n =>
+    by_cases bad : n < 0 ∨ n > 255 <;>
+      simp [doApp, doAppNumericCore, FlatSem.doAppNumeric,
+        FlatSem.applyNumericProjection, FlatSem.flatToValue, FlatSem.valueToFlat, bad]
+    · exact ResultRel.raise (exceptionValues_related genv ok).2.1
+    · exact ResultRel.value (.literal genv _)
+  all_goals simp [doApp, doAppNumericCore, FlatSem.doAppNumeric,
+    FlatSem.applyNumericProjection, FlatSem.flatToValue, FlatSem.valueToFlat]
+  all_goals exact ResultRel.value (.literal genv _)
+
+/-- A successful Boolean negation has a Boolean operand. This is a helper for
+the preliminary source-to-flat simulation. -/
+theorem booleanNot_operand {F : Type} (source : SemanticPrimitivesHOL.State F)
+    (operand : SemanticPrimitivesHOL.Value)
+    (successful : doApp (source.refs, source.ffi) (.arith .not .boolT) [operand] ≠ none) :
+    ∃ b, operand = SemanticPrimitivesHOL.boolValue b := by
+  cases operand <;> try simp [doApp, doAppNumericCore] at successful
+  case conv stamp values =>
+    cases stamp <;> try simp at successful
+    case some stamp =>
+      cases stamp <;> try simp at successful
+      case typeStamp name num =>
+        cases num <;> cases values <;> simp [checkType] at successful
+        case zero.nil =>
+          by_cases h : name = Basis.Pure.MlString.ofString "True"
+          · exact ⟨true, by simp [SemanticPrimitivesHOL.boolValue, boolTypeNum, h]⟩
+          · exact ⟨false, by simp [SemanticPrimitivesHOL.boolValue, boolTypeNum, successful h]⟩
+
+/-- Source and flat Boolean negation agree on related Boolean values. This is
+infrastructure over the preliminary factored value relation. -/
+theorem booleanNot_related {C F : Type} (genv : GlobalEnv) (ok : genvCOk genv.c)
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F) (b : Bool) :
+    doApp (source.refs, source.ffi) (.arith .not .boolT) [SemanticPrimitivesHOL.boolValue b] =
+      some ((source.refs, source.ffi), .val (SemanticPrimitivesHOL.boolValue (!b))) ∧
+    FlatSem.doAppNumeric flat (.arith .not .boolT) [FlatSem.boolValue b] =
+      some (some (flat, .val (FlatSem.boolValue (!b)))) ∧
+    ValueRel genv (SemanticPrimitivesHOL.boolValue (!b)) (FlatSem.boolValue (!b)) := by
+  have distinct : Basis.Pure.MlString.ofString "False" ≠ Basis.Pure.MlString.ofString "True" := by decide
+  have related := boolValue_related genv ok (!b)
+  cases b <;> simp [doApp, doAppNumericCore, checkType, SemanticPrimitivesHOL.boolValue, boolTypeNum,
+    FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue,
+    FlatSem.valueToFlat, FlatSem.boolValue, BackendCommon.boolToTag,
+    BackendCommon.trueTag, BackendCommon.falseTag, FlatLang.boolId, distinct] at related ⊢
+  all_goals exact related
+
+/-- A successful unary floating-point operation has a floating-point literal
+operand. This is infrastructure for the factored expression simulation. -/
+theorem floatUnary_operand {F : Type} (source : SemanticPrimitivesHOL.State F)
+    (action : Arith) (operand : SemanticPrimitivesHOL.Value)
+    (successful : doApp (source.refs, source.ffi) (.arith action .float64T) [operand] ≠ none) :
+    ∃ bits, operand = .litv (.float64 bits) := by
+  cases operand with
+  | litv lit =>
+    cases lit with
+    | float64 bits => exact ⟨bits, rfl⟩
+    | _ => cases action <;> simp [doApp, floatArith] at successful
+  | _ => cases action <;> simp [doApp, floatArith] at successful
+
+/-- Unary floating-point operations agree on literal operands. Their floating
+point functions retain the assumptions of the source evaluator. -/
+theorem floatUnary_related {C F : Type} (genv : GlobalEnv)
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (action : Arith) (bits : BitVec 64) :
+    match doApp (source.refs, source.ffi) (.arith action .float64T) [.litv (.float64 bits)],
+      FlatSem.doAppNumeric flat (.arith action .float64T) [.litv (.float64 bits)] with
+    | none, some none => True
+    | some ((refs, ffi), sourceResult), some (some (flatNext, flatResult)) =>
+        refs = source.refs ∧ ffi = source.ffi ∧ flatNext = flat ∧
+          ResultRel ValueRel genv sourceResult flatResult
+    | _, _ => False := by
+  cases action <;> simp [doApp, floatArith, FlatSem.doAppNumeric, FlatSem.applyNumericProjection,
+    FlatSem.flatToValue, FlatSem.valueToFlat]
+  all_goals exact ResultRel.value (.literal genv _)
+
+
+/-- A successful binary floating-point application has two float literals. -/
+theorem floatBinary_operands {F : Type} (source : SemanticPrimitivesHOL.State F)
+    (action : Arith) (first second : SemanticPrimitivesHOL.Value)
+    (successful : doApp (source.refs, source.ffi) (.arith action .float64T) [first, second] ≠ none) :
+    ∃ left right, [first, second] = [.litv (.float64 left), .litv (.float64 right)] := by
+  cases first with
+  | litv firstLit =>
+    cases firstLit with
+    | float64 left =>
+      cases second with
+      | litv secondLit =>
+        cases secondLit with
+        | float64 right => exact ⟨left, right, rfl⟩
+        | _ => cases action <;> simp [doApp, floatArith] at successful
+      | _ => cases action <;> simp [doApp, floatArith] at successful
+    | _ => cases action <;> simp [doApp, floatArith] at successful
+  | _ => cases action <;> simp [doApp, floatArith] at successful
+
+/-- Binary floating-point primitives preserve the factored value relation. -/
+theorem floatBinary_related {C F : Type} (genv : GlobalEnv)
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (action : Arith) (left right : BitVec 64) :
+    match doApp (source.refs, source.ffi) (.arith action .float64T)
+        [.litv (.float64 left), .litv (.float64 right)],
+      FlatSem.doAppNumeric flat (.arith action .float64T)
+        [.litv (.float64 left), .litv (.float64 right)] with
+    | none, some none => True
+    | some ((refs, ffi), sourceResult), some (some (flatNext, flatResult)) =>
+        refs = source.refs ∧ ffi = source.ffi ∧ flatNext = flat ∧
+          ResultRel ValueRel genv sourceResult flatResult
+    | _, _ => False := by
+  cases action <;> simp [doApp, floatArith, FlatSem.doAppNumeric,
+    FlatSem.applyNumericProjection, FlatSem.flatToValue, FlatSem.valueToFlat]
+  all_goals exact ResultRel.value (.literal genv _)
+
+/-- Successful fused multiply-add has three floating-point operands. -/
+theorem floatFma_operands {F : Type} (source : SemanticPrimitivesHOL.State F)
+    (first second third : SemanticPrimitivesHOL.Value)
+    (successful : doApp (source.refs, source.ffi) (.arith .fma .float64T) [first, second, third] ≠ none) :
+    ∃ a b c, first = .litv (.float64 a) ∧ second = .litv (.float64 b) ∧ third = .litv (.float64 c) := by
+  cases first with
+  | litv firstLit =>
+    cases firstLit with
+    | float64 a =>
+      cases second with
+      | litv secondLit =>
+        cases secondLit with
+        | float64 b =>
+          cases third with
+          | litv thirdLit =>
+            cases thirdLit with
+            | float64 c => exact ⟨a, b, c, rfl, rfl, rfl⟩
+            | _ => simp [doApp, floatArith] at successful
+          | _ => simp [doApp, floatArith] at successful
+        | _ => simp [doApp, floatArith] at successful
+      | _ => simp [doApp, floatArith] at successful
+    | _ => simp [doApp, floatArith] at successful
+  | _ => simp [doApp, floatArith] at successful
+
+/-- Fused multiply-add preserves literal values in the factored relation. -/
+theorem floatFma_related {C F : Type} (genv : GlobalEnv)
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (a b c : BitVec 64) :
+    match doApp (source.refs, source.ffi) (.arith .fma .float64T)
+        [.litv (.float64 a), .litv (.float64 b), .litv (.float64 c)],
+      FlatSem.doAppNumeric flat (.arith .fma .float64T)
+        [.litv (.float64 a), .litv (.float64 b), .litv (.float64 c)] with
+    | none, some none => True
+    | some ((refs, ffi), sourceResult), some (some (flatNext, flatResult)) =>
+        refs = source.refs ∧ ffi = source.ffi ∧ flatNext = flat ∧
+          ResultRel ValueRel genv sourceResult flatResult
+    | _, _ => False := by
+  simp [doApp, floatArith, FlatSem.doAppNumeric, FlatSem.applyNumericProjection,
+    FlatSem.flatToValue, FlatSem.valueToFlat]
+  exact ResultRel.value (.literal genv _)
+
+end Flapjack.Compiler.Backend.SourceToFlat

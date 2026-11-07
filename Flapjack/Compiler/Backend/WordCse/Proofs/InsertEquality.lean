@@ -1,4 +1,8 @@
-import Flapjack.Misc.Sptree
+module
+
+public import Flapjack.Misc.Sptree
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordCse
 open Flapjack

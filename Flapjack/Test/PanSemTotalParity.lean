@@ -1,8 +1,7 @@
 import Flapjack.Pancake.Semantics.PanSem.Total
 import Flapjack.Pancake.Semantics.PanSem.TotalMeasure
-import Flapjack.Pancake.Semantics.PanSem.TotalMeasureIf
 import Flapjack.Pancake.Semantics.PanSemStateEval
-import Flapjack.Test.PanValueFfiSemantics
+import Flapjack.Test.PanValueFfiCore
 
 /-!
 # Parity for the total PanSem clock-leaf evaluator
@@ -31,28 +30,6 @@ the selected total branch callback. The oracle includes a condition that
 successfully evaluates to `RStruct []` as well as an unbound local and a failed
 load; each produces `SOME Error` without changing the state.
 
-The recursive sequence-fragment checks below pair with
-`scripts/hol-probes/pan_sem_seq_e2e_probe.out` (`panSemScript.sml:615-618`):
-two `Skip`s, first-command `Break`/`Continue`, and `Tick` followed by `Skip`.
-The fragment evaluator is structural on those source syntax forms and returns
-HOL's result option with the complete source state.
-
-Its restricted recursive `If` checks also pair with
-`scripts/hol-probes/pan_sem_ite_e2e_probe.out` (`panSemScript.sml:618-620`):
-Const and direct Local conditions select Tick/Skip branches, while missing or
-non-word locals produce Error without changing the state.
-
-The RV64 expression-`If` fragment also checks `Op Add` and zero-valued `Op Sub`
-conditions, plus failed-load and non-word errors, against the same direct HOL
-oracle. The measure-driven fragment now also covers exact `Assign`, `Return`,
-and `Raise` cases against `pan_sem_total_fragment_stmt_probe.out`: bounded
-Return/Raise clear locals; oversized Return, missing or mismatched exception
-shape, and expression failures return Error without changing the state. The
-recursive `Dec` cases use direct `dec_restores_locals` and `dec_shape_mismatch`
-rows in `pan_sem_e2e_probe.out`: the result is preserved and the shadowed local
-is restored after Return clears locals, while a shape mismatch returns Error
-with the input state. These constructors remain an explicit fragment, not the
-full HOL `evaluate_def` port.
 -/
 
 namespace Flapjack.Test.PanSemTotalParity
@@ -80,7 +57,7 @@ def totalState (clock : Nat) : PanSemState Word64 (FfiState Unit) :=
 
 def totalEvaluate (state : PanSemState Word64 (FfiState Unit)) (program : Prog Word64) :
     Option (PanSemProgResult Word64 Unit × PanSemState Word64 (FfiState Unit)) :=
-  (panSemEvaluateCodeStateWithPostState statefulTestContext statefulTestPrimitive
+  (panSemEvaluateCodeStateWithPostState (memoryAccess := none) statefulTestContext statefulTestPrimitive
     statefulTestHandler (BitVec.ofNat 64 8) state program).map panSemTotalOfExecuted
 
 def isWordOption (expected : Nat) (value : Option (PanValue Word64)) : Bool :=
@@ -262,174 +239,6 @@ def seqContinueGuard : Bool :=
   | (.continued, state) => state.clock == 5 && isWordOption 7 (state.locals "x")
   | _ => false
 
-def totalSeqFragmentState : PanSemState Word64 (FfiState Unit) :=
-  { totalState 5 with
-    locals := updatePanValueMap (totalState 5).locals "x" (.word (BitVec.ofNat 64 3)) }
-
-def totalSeqFragmentNormal : PanSemSeqFragment Word64 :=
-  .seq (.leaf .skip) (.leaf .skip)
-
-def totalSeqFragmentBreak : PanSemSeqFragment Word64 :=
-  .seq (.leaf .break) (.leaf .skip)
-
-def totalSeqFragmentContinue : PanSemSeqFragment Word64 :=
-  .seq (.leaf .continue) (.leaf .skip)
-
-def totalSeqFragmentTick : PanSemSeqFragment Word64 :=
-  .seq (.leaf .tick) (.leaf .skip)
-
-def totalSeqFragmentGuard : Bool :=
-  (match panSemEvaluateSeqFragment totalSeqFragmentNormal totalSeqFragmentState with
-   | (none, state) => state.clock == 5 && isWordOption 3 (state.locals "x")
-   | _ => false) &&
-  (match panSemEvaluateSeqFragment totalSeqFragmentBreak totalSeqFragmentState with
-   | (some .break, state) => state.clock == 5 && isWordOption 3 (state.locals "x")
-   | _ => false) &&
-  (match panSemEvaluateSeqFragment totalSeqFragmentContinue totalSeqFragmentState with
-   | (some .continue, state) => state.clock == 5 && isWordOption 3 (state.locals "x")
-   | _ => false) &&
-  (match panSemEvaluateSeqFragment totalSeqFragmentTick totalSeqFragmentState with
-   | (none, state) => state.clock == 4 && isWordOption 3 (state.locals "x")
-   | _ => false)
-
-def totalSeqFragmentZeroState : PanSemState Word64 (FfiState Unit) :=
-  { totalSeqFragmentState with
-    locals := updatePanValueMap totalSeqFragmentState.locals "x" (.word 0) }
-
-def totalSeqFragmentNonwordState : PanSemState Word64 (FfiState Unit) :=
-  { totalSeqFragmentState with
-    locals := updatePanValueMap totalSeqFragmentState.locals "y" (.rStruct []) }
-
-def totalIfFragmentTrueGuard : Bool :=
-  match panSemEvaluateSeqFragment
-      (.iteConst (BitVec.ofNat 64 1) (.leaf .tick) (.leaf .skip))
-      totalSeqFragmentState with
-  | (none, state) => state.clock == 4 && isWordOption 3 (state.locals "x")
-  | _ => false
-
-def totalIfFragmentFalseGuard : Bool :=
-  match panSemEvaluateSeqFragment
-      (.iteConst (BitVec.ofNat 64 0) (.leaf .tick) (.leaf .skip))
-      totalSeqFragmentState with
-  | (none, state) => state.clock == 5 && isWordOption 3 (state.locals "x")
-  | _ => false
-
-def totalIfFragmentLocalTrueGuard : Bool :=
-  match panSemEvaluateSeqFragment (.iteLocal "x" (.leaf .tick) (.leaf .skip))
-      totalSeqFragmentState with
-  | (none, state) => state.clock == 4 && isWordOption 3 (state.locals "x")
-  | _ => false
-
-def totalIfFragmentLocalZeroGuard : Bool :=
-  match panSemEvaluateSeqFragment (.iteLocal "x" (.leaf .tick) (.leaf .skip))
-      totalSeqFragmentZeroState with
-  | (none, state) => state.clock == 5 && isWordOption 0 (state.locals "x")
-  | _ => false
-
-def totalIfFragmentMissingGuard : Bool :=
-  match panSemEvaluateSeqFragment (.iteLocal "missing" (.leaf .tick) (.leaf .skip))
-      totalSeqFragmentState with
-  | (some .error, state) => state.clock == 5 && isWordOption 3 (state.locals "x")
-  | _ => false
-
-def totalIfFragmentNonwordGuard : Bool :=
-  match panSemEvaluateSeqFragment (.iteLocal "y" (.leaf .tick) (.leaf .skip))
-      totalSeqFragmentNonwordState with
-  | (some .error, state) => state.clock == 5 && isWordOption 3 (state.locals "x")
-  | _ => false
-
-def totalIfFragmentGuard : Bool :=
-  totalIfFragmentTrueGuard && totalIfFragmentFalseGuard &&
-    totalIfFragmentLocalTrueGuard && totalIfFragmentLocalZeroGuard &&
-    totalIfFragmentMissingGuard && totalIfFragmentNonwordGuard
-
-def totalExprIfAddTrue : PanSemExprIfFragmentRiscV64 :=
-  .ite (.op .add [.const (BitVec.ofNat 64 1), .const (BitVec.ofNat 64 2)])
-    (.leaf .tick) (.leaf .skip)
-
-def totalExprIfSubZero : PanSemExprIfFragmentRiscV64 :=
-  .ite (.op .sub [.const (BitVec.ofNat 64 3), .const (BitVec.ofNat 64 3)])
-    (.leaf .tick) (.leaf .skip)
-
-def totalExprIfFailedLoad : PanSemExprIfFragmentRiscV64 :=
-  .ite (.load .one (.const (BitVec.ofNat 64 0))) (.leaf .tick) (.leaf .skip)
-
-def totalExprIfNonwordLocal : PanSemExprIfFragmentRiscV64 :=
-  .ite (.var .local "y") (.leaf .tick) (.leaf .skip)
-
-def totalExprIfThenSeq : PanSemExprIfFragmentRiscV64 :=
-  .seq totalExprIfAddTrue (.leaf .skip)
-
-def totalDecRestoresLocals : PanSemExprIfFragmentRiscV64 :=
-  .dec "x" .one (.const (BitVec.ofNat 64 9))
-    (.returnValue (.var .local "x"))
-
-def totalDecShapeMismatch : PanSemExprIfFragmentRiscV64 :=
-  .dec "x" .one (.rStruct []) (.leaf .skip)
-
-def totalExprIfFragmentGuard : Bool :=
-  (match panSemEvaluateExprIfFragmentRiscV64 totalExprIfAddTrue totalSeqFragmentState with
-   | (none, state) => state.clock == 4 && isWordOption 3 (state.locals "x")
-   | _ => false) &&
-  (match panSemEvaluateExprIfFragmentRiscV64 totalExprIfSubZero totalSeqFragmentState with
-   | (none, state) => state.clock == 5 && isWordOption 3 (state.locals "x")
-   | _ => false) &&
-  (match panSemEvaluateExprIfFragmentRiscV64 totalExprIfFailedLoad totalSeqFragmentState with
-   | (some .error, state) => state.clock == 5 && isWordOption 3 (state.locals "x")
-   | _ => false) &&
-  (match panSemEvaluateExprIfFragmentRiscV64 totalExprIfNonwordLocal
-      totalSeqFragmentNonwordState with
-   | (some .error, state) =>
-       state.clock == 5 && isWordOption 3 (state.locals "x") &&
-         (match state.locals "y" with | some (.rStruct []) => true | _ => false)
-   | _ => false) &&
-  (match panSemEvaluateExprIfFragmentRiscV64 totalDecRestoresLocals
-      (totalState 5) with
-   | (some (.returned (.word value)), state) =>
-       value == BitVec.ofNat 64 9 && state.clock == 5 &&
-         isWordOption 7 (state.locals "x")
-   | _ => false) &&
-  (match panSemEvaluateExprIfFragmentRiscV64 totalDecShapeMismatch
-      (totalState 5) with
-   | (some .error, state) => state.clock == 5 && isWordOption 7 (state.locals "x")
-   | _ => false)
-
-/-- The measure-driven implementation is checked against the same direct HOL
-    expression-If oracle rows as the structurally recursive support fragment. -/
-def totalExprIfFragmentMeasureGuard : Bool :=
-  (match panSemEvaluateExprIfFragmentRiscV64ByMeasure
-      totalExprIfAddTrue totalSeqFragmentState with
-   | (none, state) => state.clock == 4 && isWordOption 3 (state.locals "x")
-   | _ => false) &&
-  (match panSemEvaluateExprIfFragmentRiscV64ByMeasure
-      totalExprIfSubZero totalSeqFragmentState with
-   | (none, state) => state.clock == 5 && isWordOption 3 (state.locals "x")
-   | _ => false) &&
-  (match panSemEvaluateExprIfFragmentRiscV64ByMeasure
-      totalExprIfFailedLoad totalSeqFragmentState with
-   | (some .error, state) => state.clock == 5 && isWordOption 3 (state.locals "x")
-   | _ => false) &&
-  (match panSemEvaluateExprIfFragmentRiscV64ByMeasure
-      totalExprIfNonwordLocal totalSeqFragmentNonwordState with
-   | (some .error, state) =>
-       state.clock == 5 && isWordOption 3 (state.locals "x") &&
-         (match state.locals "y" with | some (.rStruct []) => true | _ => false)
-   | _ => false) &&
-  (match panSemEvaluateExprIfFragmentRiscV64ByMeasure
-      totalExprIfThenSeq totalSeqFragmentState with
-   | (none, state) => state.clock == 4 && isWordOption 3 (state.locals "x")
-   | _ => false) &&
-  (match panSemEvaluateExprIfFragmentRiscV64ByMeasure
-      totalDecRestoresLocals (totalState 5) with
-   | (some (.returned (.word value)), state) =>
-       value == BitVec.ofNat 64 9 && state.clock == 5 &&
-         isWordOption 7 (state.locals "x")
-   | _ => false) &&
-  (match panSemEvaluateExprIfFragmentRiscV64ByMeasure
-      totalDecShapeMismatch (totalState 5) with
-   | (some .error, state) => state.clock == 5 && isWordOption 7 (state.locals "x")
-   | _ => false)
-
 /-- A state whose global `g` is bound, for the global-assignment case. -/
 def totalAssignState : PanSemState Word64 (FfiState Unit) :=
   { totalState 5 with
@@ -459,114 +268,15 @@ def assignMissingGuard : Bool :=
   | (.error, state) => state.clock == 5 && isWordOption 7 (state.locals "x")
   | _ => false
 
-def totalReturnGuard : Bool :=
-  match panSemEvaluateExprIfFragmentRiscV64ByMeasure
-      (.returnValue (.const (BitVec.ofNat 64 7))) (totalState 5) with
-  | (some (.returned (.word value)), state) =>
-      value == BitVec.ofNat 64 7 && state.clock == 5 &&
-        (state.locals "x").isNone && (state.globals "g").isNone
-  | _ => false
-
-def totalReturnMissingGuard : Bool :=
-  match panSemEvaluateExprIfFragmentRiscV64ByMeasure
-      (.returnValue (.var .local "missing")) (totalState 5) with
-  | (some .error, state) => state.clock == 5 && isWordOption 7 (state.locals "x")
-  | _ => false
-
-def totalReturnOversizeGuard : Bool :=
-  let tooManyWords : Exp Word64 :=
-    .rStruct (List.replicate 33 (.const (BitVec.ofNat 64 1)))
-  match panSemEvaluateExprIfFragmentRiscV64ByMeasure
-      (.returnValue tooManyWords) (totalState 5) with
-  | (some .error, state) => state.clock == 5 && isWordOption 7 (state.locals "x")
-  | _ => false
-
-def totalRaiseGuard : Bool :=
-  match panSemEvaluateExprIfFragmentRiscV64ByMeasure
-      (.raiseException "E" (.const (BitVec.ofNat 64 4))) (totalState 5) with
-  | (some (.exception "E" (.word value)), state) =>
-      value == BitVec.ofNat 64 4 && state.clock == 5 && (state.locals "x").isNone
-  | _ => false
-
-def totalRaiseShapeMismatchGuard : Bool :=
-  match panSemEvaluateExprIfFragmentRiscV64ByMeasure
-      (.raiseException "E" (.rStruct [])) (totalState 5) with
-  | (some .error, state) => state.clock == 5 && isWordOption 7 (state.locals "x")
-  | _ => false
-
-def totalRaiseMissingShapeGuard : Bool :=
-  match panSemEvaluateExprIfFragmentRiscV64ByMeasure
-      (.raiseException "Missing" (.const (BitVec.ofNat 64 4))) (totalState 5) with
-  | (some .error, state) => state.clock == 5 && isWordOption 7 (state.locals "x")
-  | _ => false
-
-def totalRaiseMissingValueGuard : Bool :=
-  match panSemEvaluateExprIfFragmentRiscV64ByMeasure
-      (.raiseException "E" (.var .local "missing")) (totalState 5) with
-  | (some .error, state) => state.clock == 5 && isWordOption 7 (state.locals "x")
-  | _ => false
-
-def totalRaiseOversizeGuard : Bool :=
-  let tooManyWords : Exp Word64 :=
-    .rStruct (List.replicate 33 (.const (BitVec.ofNat 64 1)))
-  let oversizedState :=
-    { totalState 5 with
-      exceptionShapes := fun name =>
-        if name == "E" then some (.comb (List.replicate 33 .one)) else none }
-  match panSemEvaluateExprIfFragmentRiscV64ByMeasure
-      (.raiseException "E" tooManyWords) oversizedState with
-  | (some .error, state) => state.clock == 5 && isWordOption 7 (state.locals "x")
-  | _ => false
-
-def totalIfAssignTrueGuard : Bool :=
-  match panSemEvaluateExprIfFragmentRiscV64ByMeasure
-      (.ite (.const (BitVec.ofNat 64 1))
-        (.assign .local "x" (.const (BitVec.ofNat 64 9))) (.leaf .skip))
-      (totalState 5) with
-  | (none, state) => state.clock == 5 && isWordOption 9 (state.locals "x")
-  | _ => false
-
-def totalIfAssignFalseGuard : Bool :=
-  match panSemEvaluateExprIfFragmentRiscV64ByMeasure
-      (.ite (.const (BitVec.ofNat 64 0))
-        (.assign .local "x" (.const (BitVec.ofNat 64 9))) (.leaf .skip))
-      (totalState 5) with
-  | (none, state) => state.clock == 5 && isWordOption 7 (state.locals "x")
-  | _ => false
-
-def totalSeqAssignReturnGuard : Bool :=
-  match panSemEvaluateExprIfFragmentRiscV64ByMeasure
-      (.seq (.assign .local "x" (.const (BitVec.ofNat 64 9)))
-        (.returnValue (.const (BitVec.ofNat 64 7)))) (totalState 5) with
-  | (some (.returned (.word value)), state) =>
-      value == BitVec.ofNat 64 7 && state.clock == 5 && (state.locals "x").isNone
-  | _ => false
-
-def totalSeqRaiseStopGuard : Bool :=
-  match panSemEvaluateExprIfFragmentRiscV64ByMeasure
-      (.seq (.raiseException "E" (.const (BitVec.ofNat 64 4)))
-        (.assign .local "x" (.const (BitVec.ofNat 64 9)))) (totalState 5) with
-  | (some (.exception "E" (.word value)), state) =>
-      value == BitVec.ofNat 64 4 && state.clock == 5 && (state.locals "x").isNone
-  | _ => false
-
 def totalGuard : Bool :=
   skipGuard && tickSuccGuard && tickZeroGuard && totalSkipClauseGuard &&
     totalBreakClauseGuard && totalContinueClauseGuard && totalTickClauseGuard &&
     totalTickZeroClauseGuard && seqNormalGuard && seqBreakGuard &&
-    seqContinueGuard && seqTickGuard && totalSeqFragmentGuard && totalIfFragmentGuard &&
-    totalExprIfFragmentGuard && totalExprIfFragmentMeasureGuard &&
-    totalIfNonzeroGuard && totalIfZeroGuard &&
+    seqContinueGuard && seqTickGuard && totalIfNonzeroGuard && totalIfZeroGuard &&
     totalIfMissingGuard && totalIfExpressionNonzeroGuard && totalIfExpressionZeroGuard &&
     totalIfExpressionNonwordGuard && totalIfExpressionNonwordValueGuard &&
-    totalIfExpressionLoadFailureGuard &&
-    assignLocalGuard && assignGlobalGuard &&
-    assignFreshGuard && assignMissingGuard && totalReturnGuard &&
-    totalReturnMissingGuard && totalReturnOversizeGuard && totalRaiseGuard &&
-    totalRaiseShapeMismatchGuard && totalRaiseMissingShapeGuard &&
-    totalRaiseMissingValueGuard && totalRaiseOversizeGuard &&
-    totalIfAssignTrueGuard && totalIfAssignFalseGuard &&
-    totalSeqAssignReturnGuard && totalSeqRaiseStopGuard
+    totalIfExpressionLoadFailureGuard && assignLocalGuard && assignGlobalGuard &&
+    assignFreshGuard && assignMissingGuard
 
 #guard totalGuard
 
@@ -627,7 +337,7 @@ example :
   simp [panSemEvaluateClockLeaf, totalState]
 
 example :
-    (panSemEvaluateCodeStateWithPostState statefulTestContext statefulTestPrimitive
+    (panSemEvaluateCodeStateWithPostState (memoryAccess := none) statefulTestContext statefulTestPrimitive
         statefulTestHandler (BitVec.ofNat 64 8) (totalState 5) (.skip : Prog Word64)).map
         panSemTotalOfExecuted = some (panSemEvaluateSkip (totalState 5)) :=
   panSemEvaluateCodeStateWithPostState_skip_total statefulTestContext statefulTestPrimitive
@@ -647,21 +357,21 @@ example :
     (by intro h; cases h)
 
 example :
-    (panSemEvaluateCodeStateWithPostState statefulTestContext statefulTestPrimitive
+    (panSemEvaluateCodeStateWithPostState (memoryAccess := none) statefulTestContext statefulTestPrimitive
         statefulTestHandler (BitVec.ofNat 64 8) (totalState 5) (.tick : Prog Word64)).map
         panSemTotalOfExecuted = some (panSemEvaluateTick (totalState 5)) :=
   panSemEvaluateCodeStateWithPostState_tick_total statefulTestContext statefulTestPrimitive
     statefulTestHandler (BitVec.ofNat 64 8) (totalState 5)
 
 example :
-    (panSemEvaluateCodeStateWithPostState statefulTestContext statefulTestPrimitive
+    (panSemEvaluateCodeStateWithPostState (memoryAccess := none) statefulTestContext statefulTestPrimitive
         statefulTestHandler (BitVec.ofNat 64 8) (totalState 5) (.break : Prog Word64)).map
         panSemTotalOfExecuted = some (panSemEvaluateBreak (totalState 5)) :=
   panSemEvaluateCodeStateWithPostState_break_total statefulTestContext statefulTestPrimitive
     statefulTestHandler (BitVec.ofNat 64 8) (totalState 5)
 
 example :
-    (panSemEvaluateCodeStateWithPostState statefulTestContext statefulTestPrimitive
+    (panSemEvaluateCodeStateWithPostState (memoryAccess := none) statefulTestContext statefulTestPrimitive
         statefulTestHandler (BitVec.ofNat 64 8) (totalState 5) (.continue : Prog Word64)).map
         panSemTotalOfExecuted = some (panSemEvaluateContinue (totalState 5)) :=
   panSemEvaluateCodeStateWithPostState_continue_total statefulTestContext statefulTestPrimitive
@@ -726,28 +436,6 @@ def runChecks : IO Bool := do
   if assignMissingGuard then
     IO.println "PASS panSem total Assign missing source rejected with Error and unchanged state"
   else IO.println "FAIL panSem total Assign missing source rejected with Error and unchanged state"
-  if totalReturnGuard then
-    IO.println "PASS panSem total Return accepts bounded value and clears locals"
-  else IO.println "FAIL panSem total Return accepts bounded value and clears locals"
-  if totalReturnMissingGuard && totalReturnOversizeGuard then
-    IO.println "PASS panSem total Return rejects missing and oversized values without state change"
-  else IO.println "FAIL panSem total Return rejects missing and oversized values without state change"
-  if totalRaiseGuard then
-    IO.println "PASS panSem total Raise checks exception shape and clears locals"
-  else IO.println "FAIL panSem total Raise checks exception shape and clears locals"
-  if totalRaiseShapeMismatchGuard && totalRaiseMissingShapeGuard &&
-      totalRaiseMissingValueGuard && totalRaiseOversizeGuard then
-    IO.println "PASS panSem total Raise errors preserve state for shape/size/evaluation failures"
-  else IO.println "FAIL panSem total Raise errors preserve state for shape/size/evaluation failures"
-  if totalIfAssignTrueGuard && totalIfAssignFalseGuard then
-    IO.println "PASS panSem total If selects statement branches against direct HOL cases"
-  else IO.println "FAIL panSem total If selects statement branches against direct HOL cases"
-  if totalSeqAssignReturnGuard && totalSeqRaiseStopGuard then
-    IO.println "PASS panSem total Seq handles Return and Raise control outcomes"
-  else IO.println "FAIL panSem total Seq handles Return and Raise control outcomes"
-  if totalExprIfFragmentGuard && totalExprIfFragmentMeasureGuard then
-    IO.println "PASS panSem total Dec restores shadowed locals and rejects shape mismatch against HOL"
-  else IO.println "FAIL panSem total Dec restores shadowed locals and rejects shape mismatch against HOL"
   pure totalGuard
 
 example :

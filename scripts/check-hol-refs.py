@@ -322,6 +322,9 @@ FMAP_AS_FINITE_SUPPORT_RE = re.compile(
 FMAP_AS_FINITE_SUPPORT_FUNCTION_RE = re.compile(
     r'\(\s*fmap_as_finite_support_function\s*:=\s*\[([^]]*)\]\s*\)'
 )
+FMAP_AS_FINITE_SUPPORT_TUPLE_RE = re.compile(
+    r'\(\s*fmap_as_finite_support_tuple\s*:=\s*\[([^]]*)\]\s*\)'
+)
 FMAP_AS_FINITE_SUPPORT_HETEROGENEOUS_FUNCTION_RE = re.compile(
     r'\(\s*fmap_as_finite_support_heterogeneous_function\s*:=\s*\[([^]]*)\]\s*\)'
 )
@@ -419,7 +422,7 @@ NAT_WIDTH_BINDER_RE = re.compile(
     r"[\{\(]\s*([A-Za-z_][A-Za-z0-9_']*)\s*:\s*Nat\s*[\}\)]"
 )
 RELATION_FIELD_RE = re.compile(
-    r'^\s*([A-Za-z_][A-Za-z0-9_\']*)\s*\.\s*([A-Za-z_][A-Za-z0-9_\']*)\s*$'
+    r'^\s*([A-Za-z_][A-Za-z0-9_\']*(?:\.[A-Za-z_][A-Za-z0-9_\']*)*)\s*\.\s*([A-Za-z_][A-Za-z0-9_\']*)\s*$'
 )
 DECL_RE = re.compile(
     r"^\s*(?:@\[[^\]]*\]\s*)?(?:private\s+|protected\s+|noncomputable\s+|partial\s+|unsafe\s+)*"
@@ -558,7 +561,8 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                         include_reals_as_rational_cuts: bool = False,
                         include_fmap_as_finite_support_equality: bool = False,
                         include_result_observations: bool = False,
-                        include_word_dimensions_widths: bool = False):
+                        include_word_dimensions_widths: bool = False,
+                        include_fmap_tuple: bool = False):
     """Yield HOL attributes, including attributes split across Lean lines."""
     comment_depth = 0
     start: int | None = None
@@ -650,6 +654,13 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                     if len(matches) > 1:
                         dimensions += ("",)  # Repeated qualifiers fail closed.
                     site += (dimensions,)
+                if include_fmap_tuple:
+                    matches = list(FMAP_AS_FINITE_SUPPORT_TUPLE_RE.finditer(attribute))
+                    positions = tuple(field.strip() for match in matches
+                                      for field in match.group(1).split(","))
+                    if len(matches) > 1:
+                        positions += ("",)
+                    site += (positions,)
                 yield site
         start = None
         chunks = []
@@ -1283,6 +1294,28 @@ def fmap_as_finite_support_errors(
             named.extend((name, types) for name, _source, _names, types in named_imported)
             if len(named) == 1:
                 owning, owner_types = named[0]
+            elif len(named) > 1:
+                # Several imported modules can declare a carrier with the same
+                # leaf name (for example BvlSem.State and ClosSem.State).
+                # Resolve only an explicit full source namespace; do not guess
+                # from module paths or accept a locally shadowing carrier.
+                qualified = []
+                for name, source, _names, types in named_imported:
+                    if name in local_candidates:
+                        continue
+                    owner_names = _qualified_word_owner_names(source, name, str(ROOT))
+                    # The field parser is keyed by leaf name, so two same-named
+                    # carriers in one file cannot be disambiguated safely.
+                    if len(owner_names) != 1:
+                        continue
+                    full = next(iter(owner_names))
+                    if "." in full and re.search(
+                        rf"(?<![A-Za-z0-9_'.]){re.escape(full)}(?![A-Za-z0-9_'.])",
+                        declaration_text,
+                    ):
+                        qualified.append((name, types, source, full))
+                if len(qualified) == 1:
+                    owning, owner_types = qualified[0][:2]
         elif len(local_candidates) == 1:
             owning = local_candidates[0]
             owner_types = local_types.get(owning, {})
@@ -1382,6 +1415,15 @@ def has_fmap_relation_witness(lines: list[str], carrier: str) -> bool:
     return _fmap_relation_witness_in("\n".join(lines), carrier)
 
 
+def relation_carrier_occurs(text: str, carrier: str) -> bool:
+    """A qualified carrier must appear as that complete Lean identifier."""
+    if "." not in carrier:
+        return identifier_token_occurs(text, carrier)
+    return re.search(
+        rf"(?<![A-Za-z0-9_'.]){re.escape(carrier)}(?![A-Za-z0-9_'.])", text
+    ) is not None
+
+
 @lru_cache(maxsize=None)
 def _fmap_relation_witness_in(text: str, carrier: str) -> bool:
     """Cached body of `has_fmap_relation_witness` for one module and carrier."""
@@ -1389,7 +1431,7 @@ def _fmap_relation_witness_in(text: str, carrier: str) -> bool:
     pattern = re.compile(
         rf"^\s*(?:@\[[\s\S]*?\]\s*)?(?:private\s+|protected\s+)?"
         rf"(?:theorem|lemma)\s+"
-        rf"holFmapAsFiniteSupportRelationWitness_{re.escape(carrier)}\b"
+        rf"holFmapAsFiniteSupportRelationWitness_{re.escape(carrier)}(?![A-Za-z0-9_'.])"
         rf"(?P<statement>[\s\S]*?):=",
         re.M,
     )
@@ -1397,7 +1439,7 @@ def _fmap_relation_witness_in(text: str, carrier: str) -> bool:
         if _active_ambient_witness_commands(source, match.start()):
             continue
         statement = match.group("statement")
-        if not identifier_token_occurs(statement, carrier):
+        if not relation_carrier_occurs(statement, carrier):
             continue
         if "=" not in statement and "\u2194" not in statement:
             continue
@@ -1466,19 +1508,58 @@ def fmap_as_finite_support_relation_errors(
                 "approved HolFiniteMapExact carrier; a raw function-backed map is "
                 "ineligible"
             )
+    def resolve_carrier(carrier: str, field: str) -> dict[str, str] | None:
+        leaf = carrier.rsplit(".", 1)[-1]
+        candidates: list[dict[str, str]] = []
+        if "." not in carrier:
+            # Existing unqualified qualifiers can be disambiguated by an
+            # explicit qualified carrier in the declaration.  If it names
+            # two such carriers, a bare leaf cannot select either one.
+            explicit = set(re.findall(
+                rf"(?<![A-Za-z0-9_'.])(?:[A-Za-z_][A-Za-z0-9_']*\.)+{re.escape(leaf)}(?![A-Za-z0-9_'])",
+                declaration_text,
+            ))
+            if len(explicit) > 1:
+                return None
+            if leaf in local_types and not explicit:
+                return local_types[leaf]
+            if explicit:
+                wanted = next(iter(explicit))
+                for source, _names, types in imported.get(leaf, []):
+                    names = _qualified_word_owner_names(source, leaf, str(ROOT))
+                    if len(names) == 1 and any(
+                        name == wanted or name.endswith("." + wanted) for name in names
+                    ):
+                        candidates.append(types)
+                if len(candidates) == 1:
+                    return candidates[0]
+                return None
+            # Retain legacy unqualified resolution for declarations using
+            # opened namespaces; new ambiguous relations must qualify.
+            for _source, _names, types in imported.get(leaf, []):
+                if field in types:
+                    return types
+            return None
+        # Resolve qualified names against the declaration's actual Lean
+        # namespace, never the filename.  A local shadow is ambiguous.
+        if leaf not in local_types:
+            for source, _names, types in imported.get(leaf, []):
+                names = _qualified_word_owner_names(source, leaf, str(ROOT))
+                if len(names) != 1 or not any(
+                    name == carrier or name.endswith("." + carrier)
+                    for name in names
+                ):
+                    continue
+                candidates.append(types)
+        if len(candidates) == 1:
+            return candidates[0]
+        return None
+
     for carrier, field in field_entries:
         if carrier not in own_types:
-            if carrier in local_types:
-                own_types[carrier] = local_types[carrier]
-            else:
-                for name, declarations in imported.items():
-                    if name != carrier:
-                        continue
-                    for _source, _names, types in declarations:
-                        if field in types:
-                            own_types[carrier] = types
-                            break
-                    break
+            resolved = resolve_carrier(carrier, field)
+            if resolved is not None:
+                own_types[carrier] = resolved
         types = own_types.get(carrier)
         if types is None:
             errors.append(
@@ -1486,7 +1567,7 @@ def fmap_as_finite_support_relation_errors(
                 f"structure declared in {module} or its imports"
             )
             continue
-        if declaration_text and not identifier_token_occurs(declaration_text, carrier):
+        if declaration_text and not relation_carrier_occurs(declaration_text, carrier):
             errors.append(
                 f"fmap_as_finite_support_relation carrier `{carrier}` is not "
                 "named in the tagged declaration; the relation must be stated "
@@ -2022,6 +2103,124 @@ def _is_top_level_hol_finite_map_type(type_text: str) -> bool:
     return len(_split_type_top_level(
         text, ("→", "->", "×", "+", "∧", "∨", "=", "↔")
     )) == 1
+
+
+def fmap_value_context_tuple_errors(
+    lines: list[str], declaration: str, positions: tuple[str, ...],
+    hol_reference: tuple[str, str],
+) -> list[str]:
+    """Check the proposed narrow tuple-map representation for v_inv_ck.
+
+    This validation helper is not yet connected to attribute parsing. It
+    accepts only the reviewed four-component ValueContext and its canonical
+    conversions, with both finite maps represented at positions 2 and 3.
+    The checked roundtrips establish Lean representation facts; a source
+    comparison is still required for any future tagged declaration.
+    """
+    errors: list[str] = []
+    if hol_reference != (
+        "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml", "v_inv_ck"
+    ):
+        errors.append("tuple-map qualifier is restricted to the original v_inv_ck relation")
+    if positions != ("component_2", "component_3"):
+        errors.append("tuple-map qualifier requires exactly component_2 and component_3")
+
+    source = strip_lean_comments("\n".join(lines))
+    if re.search(r"(?m)^[ \t]*(?:variable|variables|include|omit)\b", source):
+        errors.append("tuple-map qualifier requires self-contained binders without ambient variables")
+    if re.search(
+        r"(?m)^[ \t]*(?:private\s+|protected\s+)?"
+        r"(?:abbrev|def|structure|inductive|class)\s+"
+        r"(?:HeapAddress|WordLocW|HolFiniteMapExact|HeapTag|Spt|Config)\b", source,
+    ):
+        errors.append("tuple-map qualifier rejects local declarations shadowing imported carriers")
+    heaps = list(re.finditer(r"(?m)^[ \t]*abbrev\s+ValueHeap\b", source))
+    heap_pattern = (r"\s*abbrev\s+ValueHeap\s*\(width\s*:\s*Nat\)\s*\[NeZero\s+width\]\s*:=\s*"
+                    r"List\s*\(HeapElement\s*\(WordLocW\s+width\)\s*"
+                    r"\(HeapTag\s*×\s*List\s*\(WordLocW\s+width\)\)\)\s*(?=abbrev\s+ValueContext\b)")
+    if len(heaps) != 1 or not re.match(heap_pattern, source[heaps[0].start():]):
+        errors.append("tuple-map qualifier requires the reviewed width-indexed ValueHeap alias")
+    declarations = list(re.finditer(r"(?m)^\s*abbrev\s+ValueContext\b", source))
+    if len(declarations) != 1:
+        errors.append("tuple-map qualifier requires one local ValueContext alias")
+    else:
+        tail = source[declarations[0].start():]
+        alias = re.match(
+            r"\s*abbrev\s+ValueContext\s*\(width\s*:\s*Nat\)\s*"
+            r"\[NeZero\s+width\]\s*:=\s*([^\n]+)", tail,
+        )
+        expected = ["HeapAddress (WordLocW width)", "HolFiniteMapExact Nat Nat",
+                    "HolFiniteMapExact Nat Nat", "ValueHeap width"]
+        parts = _tuple_type_components(alias.group(1)) if alias else None
+        if (parts is None or [" ".join(part.split()) for part in parts] != expected or
+                not re.match(r"\s*abbrev\s+ValueContextLookups\b", tail[alias.end():])):
+            errors.append("tuple-map ValueContext must have exactly the reviewed four components")
+
+    raw_aliases = list(re.finditer(r"(?m)^[ \t]*abbrev\s+ValueContextLookups\b", source))
+    if len(raw_aliases) != 1:
+        errors.append("tuple-map qualifier requires one local ValueContextLookups alias")
+    else:
+        raw = re.match(
+            r"\s*abbrev\s+ValueContextLookups\s*\(width\s*:\s*Nat\)\s*"
+            r"\[NeZero\s+width\]\s*:=\s*([^\n]+)", source[raw_aliases[0].start():],
+        )
+        expected_raw = ["HeapAddress (WordLocW width)", "(Nat → Option Nat)",
+                        "(Nat → Option Nat)", "ValueHeap width"]
+        raw_parts = _tuple_type_components(raw.group(1)) if raw else None
+        raw_tail = source[raw_aliases[0].start():]
+        if (raw_parts is None or [" ".join(part.split()) for part in raw_parts] != expected_raw or
+                not re.match(r"\s*def\s+valueContextToLookups\b", raw_tail[raw.end():])):
+            errors.append("tuple-map lookup context must preserve both raw lookup slots")
+
+    sig = " ".join(strip_lean_comments(declaration).split())
+    if not re.search(
+        r"\binductive ClockValueInv\s*\{width\s*:\s*Nat\}\s*"
+        r"\[NeZero width\]\s*:\s*Nat\s*→\s*Config\s*→\s*"
+        r"Flapjack\.Compiler\.Backend\.DataSem\.Value\s*→\s*"
+        r"Spt \(BvlSem\.Ref Flapjack\.Compiler\.Backend\.DataSem\.Value\)\s*→\s*"
+        r"ValueContext width\s*→\s*Prop\s*where\b", sig,
+    ):
+        errors.append("tuple-map qualifier requires the reviewed ClockValueInv signature")
+
+    # Require these exact local signatures and conversion bodies, rather than
+    # accepting mentions elsewhere in the module or a vacuous self-equality.
+    def statement(kind: str, name: str) -> str:
+        matches = list(re.finditer(rf"(?m)^[ \t]*{kind}\s+{name}\b", source))
+        if len(matches) != 1:
+            return ""
+        tail = source[matches[0].start():]
+        next_decl = re.search(r"(?m)^[ \t]*(?:abbrev|def|theorem|inductive|mutual|end)\b", tail[1:])
+        if next_decl:
+            tail = tail[:next_decl.start() + 1]
+        return " ".join(tail.split())
+
+    support = "∃ keys : List Nat, ∀ key, context.2.1 key ≠ none → key ∈ keys"
+    support2 = "∃ keys : List Nat, ∀ key, context.2.2.1 key ≠ none → key ∈ keys"
+    expected = {
+        ("def", "valueContextToLookups"):
+            "def valueContextToLookups {width : Nat} [NeZero width] (context : ValueContext width) : "
+            "ValueContextLookups width := (context.1, context.2.1.lookup, context.2.2.1.lookup, context.2.2.2)",
+        ("def", "valueContextOfLookups"):
+            "def valueContextOfLookups {width : Nat} [NeZero width] (context : ValueContextLookups width) "
+            f"(firstFinite : {support}) (secondFinite : {support2}) : ValueContext width := "
+            "(context.1, ⟨context.2.1, firstFinite⟩, ⟨context.2.2.1, secondFinite⟩, context.2.2.2)",
+    }
+    witness_headers = {
+        "holFmapAsFiniteSupportTupleWitness":
+            "theorem holFmapAsFiniteSupportTupleWitness {width : Nat} [NeZero width] "
+            "(context : ValueContext width) : valueContextOfLookups (valueContextToLookups context) "
+            "context.2.1.finiteSupport context.2.2.1.finiteSupport = context",
+        "valueContextToLookups_ofLookups":
+            "theorem valueContextToLookups_ofLookups {width : Nat} [NeZero width] "
+            "(context : ValueContextLookups width) "
+            f"(firstFinite : {support}) (secondFinite : {support2}) : "
+            "valueContextToLookups (valueContextOfLookups context firstFinite secondFinite) = context",
+    }
+    if (any(statement(kind, name) != text for (kind, name), text in expected.items()) or
+            any(statement("theorem", name).partition(":=")[0].strip() != text
+                for name, text in witness_headers.items())):
+        errors.append("tuple-map qualifier requires both canonical conversion bodies and roundtrip witnesses")
+    return errors
 
 
 def _target_is_postfix_option_mapped(text: str, decl_name: str) -> bool:
@@ -4502,7 +4701,9 @@ def hol_declaration_lines(
         # header line itself and still ends with ``End``.
         datatype_header = re.compile(r"^Datatype\s*:?\s*$")
         datatype_inline = re.compile(r"^Datatype\s*:\s*([A-Za-z0-9_']+)\s*=")
-        datatype_name = re.compile(r"^\s*([A-Za-z0-9_']+)\s*=")
+        # Some scripts put a short SML comment before the type name on the
+        # same line, e.g. flatSem's `(* 'v *) environment = ...`.
+        datatype_name = re.compile(r"^\s*(?:\(\*[^()\n]*\*\)\s*)*([A-Za-z0-9_']+)\s*=")
         datatype_bare_name = re.compile(r"^\s*([A-Za-z0-9_']+)\s*$")
         datatype_equals = re.compile(r"^\s*=")
         datatype_end = re.compile(r"^End\b")
@@ -4651,7 +4852,7 @@ def main(argv: list[str]) -> int:
              fmap_relation, fmap_equalities, words_bitvec,
              fmap_parameters, fmap_existentials, dimension_width,
              fmap_function_positions, fmap_heterogeneous_function_positions, reals_cuts,
-             fmap_equality, result_observations, dimension_widths) in hol_attribute_sites(
+             fmap_equality, result_observations, dimension_widths, fmap_tuple) in hol_attribute_sites(
                 lines, include_fmap_existentials=True,
                 include_word_dimension_width=True,
                 include_fmap_function=True,
@@ -4660,8 +4861,22 @@ def main(argv: list[str]) -> int:
                 include_fmap_as_finite_support_equality=True,
                 include_result_observations=True,
                 include_word_dimensions_widths=True,
+                include_fmap_tuple=True,
              ):
             where = f"{rel}:{number}"
+            if fmap_tuple:
+                if rel != "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/ValueInv.lean":
+                    errors.append(f"{where}: tuple maps require the reviewed value-invariant module")
+                if find_lean_decl(lines, number - 1) != "ClockValueInv":
+                    errors.append(f"{where}: tuple maps require the ClockValueInv declaration")
+                if (not words_bitvec or list_fields or names_fields or boundary_fields or
+                        fmap_fields or fmap_result or fmap_relation or fmap_equalities or
+                        fmap_parameters or fmap_existentials or dimension_width or dimension_widths or
+                        fmap_function_positions or fmap_heterogeneous_function_positions or reals_cuts or
+                        fmap_equality or result_observations):
+                    errors.append(f"{where}: tuple maps may only combine with words_as_type_indexed_bitvec")
+                errors.extend(f"{where}: {error}" for error in fmap_value_context_tuple_errors(
+                    lines, tagged_declaration_source(lines, number), fmap_tuple, (hol_path, hol_name)))
             if result_observations:
                 if (list_fields or names_fields or fmap_fields or fmap_result or fmap_relation or
                     fmap_equalities or words_bitvec or fmap_parameters or fmap_existentials or
@@ -4791,10 +5006,23 @@ def main(argv: list[str]) -> int:
                     )
                 )
             if words_bitvec:
+                # The narrow tuple gate above checks the entire original
+                # ClockValueInv signature and the ValueContext/ValueHeap alias
+                # bodies. Resolve its actual width-indexed WordLocW component
+                # through the usual imported-owner check; the alias itself is
+                # not a structure or inductive owner.
+                word_declaration = tagged_declaration_source(lines, number)
+                if fmap_tuple:
+                    word_declaration = (
+                        "inductive ClockValueInv {width : Nat} [NeZero width] : "
+                        "Nat → Config → Flapjack.Compiler.Backend.DataSem.Value → "
+                        "Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value) → "
+                        "WordLocW width → Prop where"
+                    )
                 errors.extend(
                     f"{where}: {error}"
                     for error in words_as_type_indexed_bitvec_errors(
-                        tagged_declaration_source(lines, number),
+                        word_declaration,
                         lean_decl,
                         module=module,
                         root=str(ROOT),

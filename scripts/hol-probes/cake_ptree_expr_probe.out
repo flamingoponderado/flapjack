@@ -1,0 +1,3 @@
+function=SOME (Lannot (Fun «x» (Lannot (Var (Short «x»)) (Locs (POSN 0 8) (POSN 0 9)))) (Locs (POSN 0 0) (POSN 0 9)))
+let=SOME (Lannot (Let (SOME «x») (Lannot (Lit (IntLit 1)) (Locs (POSN 0 12) (POSN 0 13))) (Lannot (App Opapp [App Opapp [Var (Short «+»); Lannot (Var (Short «x»)) (Locs (POSN 0 17) (POSN 0 18))]; Lannot (Lit (IntLit 2)) (Locs (POSN 0 21) (POSN 0 22))]) (Locs (POSN 0 17) (POSN 0 22)))) (Locs (POSN 0 0) (POSN 0 26)))
+case=SOME (Lannot (Mat (Lannot (Var (Short «x»)) (Locs (POSN 0 5) (POSN 0 6))) [(Pvar «y»,Lannot (Var (Short «y»)) (Locs (POSN 0 15) (POSN 0 16)))]) (Locs (POSN 0 0) UNKNOWNpt))

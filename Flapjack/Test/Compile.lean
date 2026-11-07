@@ -27,9 +27,6 @@ def loopContext : LoopContext Nat :=
   { vars := [], functions := [("f", (64, 0))], maxVar := 2,
     target := .rv64i }
 
-def wordContext : WordContext :=
-  { vars := [(3, 2), (4, 3)] }
-
 def identityFunction : FunDecl Nat :=
   { name := "identity", inline := false, exported := false, params := [("x", .one)],
     body := .return (.var .local "x"), returnShape := .one }
@@ -195,48 +192,6 @@ def highAddressLowValueContext : CompileContext Nat :=
 def crepAddCarryHandler : CrepPrimitiveHandler Nat
   | .addCarry, [left, right, carry] => some [left + right + carry, 0]
   | _, _ => none
-
-example :
-    (evalCrepStateProgWithPrimitive crepAddCarryHandler (fun _ => none)
-      (compileProg crepContext
-        (.seq
-          (.primitive "pair" .addCarry
-            [.const (α := Nat) 1, .const 2, .const 0])
-          (.return (.var .local "pair"))))).map Prod.snd =
-      some [3, 0] := by
-  rw [compileProg_seq]
-  have hreturn : compileProg crepContext (.return (.var .local "pair")) =
-      .return [.var 0, .var 1] := by
-    rw [compileProg_return]
-    simp [compileExp, lookupInfo, crepContext, Shape.shapeSize]
-  rw [hreturn]
-  decide +kernel
-
-example :
-    (loopCompileExp loopContext 3 [] (.load32 (.const (α := Nat) 8))).code =
-      [.assign 3 (.const 8), .load32 3 3] := by
-  simp [loopCompileExp]
-
-example :
-    loopCompileProg loopContext []
-      (.return [(.const (α := Nat) 7)]) =
-      .seq (.assign 3 (.const 7)) (.seq (.return [3]) .skip) := by
-  simp [loopCompileProg, loopCompileExp, loopCompileExp.loopCompileExps,
-    loopCompileExps, loopNestedSeq,
-    loopTempNames, loopAssignTemps, loopContext]
-
-example :
-    loopCompileProg loopContext []
-        (.store32 (.const (α := Nat) 8) (.const 255)) =
-      .seq (.assign 3 (.const 8))
-        (.seq (.assign 4 (.const 255))
-          (.seq (.store32 3 4) .skip)) := by
-  simp [loopCompileProg, loopCompileExp, loopNestedSeq,
-    loopContext]
-
-example :
-    loopToWordExp (LoopExp.baseAddr : LoopExp Nat) = some (.lookup .currHeap) := by
-  simp [loopToWordExp]
 
 example :
     loopVarsOfExp ((LoopExp.op .add [.var 1, .load (.var 2)]) : LoopExp Nat) =

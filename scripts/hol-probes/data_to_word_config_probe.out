@@ -4,3 +4,32 @@ gen_size_nil_64=0xFFFFFFFFFFFFFFF8w
 gen_size_ten_64=80w
 gen_size_overflow_64=0xFFFFFFFFFFFFFFF8w
 gen_size_three_32=12w
+assign_greater_fallback=(Skip,7)
+assign_greater_eq_fallback=(Skip,7)
+assign_alloc_global_fallback=(Skip,7)
+assign_concat_byte_vec_fallback=(Skip,7)
+assign_from_list_byte_fallback=(Skip,7)
+real_addr_def_typed=∀(conf :config) (r :num). (real_addr conf r :α exp) = (let (k :num) = shift (:α); (l :num) = shift_length conf in if k = l ∧ conf.len_bits = (0 :num) ∧ conf.tag_bits = (0 :num) then (Op Add [(Lookup CurrHeap :α exp); (Op Sub [(Var r :α exp); (Const (1w :α word) :α exp)] :α exp)] :α exp) else if k ≤ conf.pad_bits + (1 :num) then (Op Add [(Lookup CurrHeap :α exp); ShiftN Lsr (Var r :α exp) (l − k)] :α exp) else (Op Add [(Lookup CurrHeap :α exp); ShiftN Lsl (ShiftN Lsr (Var r :α exp) l) k] :α exp))
+real_addr_sub_64=Op Add [Lookup CurrHeap; Op Sub [Var 4; Const 1w]]
+real_addr_right_64=Op Add [Lookup CurrHeap; ShiftN Lsr (Var 4) 5]
+real_addr_both_64=Op Add [Lookup CurrHeap; ShiftN Lsl (ShiftN Lsr (Var 4) 5) 3]
+shift_var_def_typed=∀(sh :ast$shift) (v :num) (n :num). (ShiftVar sh v n :α exp) = if sh = Ror then (let (m :num) = if n < dimindex (:α) then n else n MOD dimindex (:α) in if m = (0 :num) then (Var v :α exp) else ShiftN sh (Var v :α exp) m) else if n = (0 :num) then (Var v :α exp) else if dimindex (:α) ≤ n then if sh = Asr then ShiftN sh (Var v :α exp) (dimindex (:α) − (1 :num)) else (Const (0w :α word) :α exp) else ShiftN sh (Var v :α exp) n
+give_up_def_typed=(GiveUp :α prog) = Seq (Assign (1 :num) (Const (-(1w :α word)) :α exp) :α prog) (Alloc (1 :num) (adjust_sets (LN :sptree$num_set)) :α prog)
+shift_zero_64=Var 4
+shift_large_asr_64=ShiftN Asr (Var 4) 63
+shift_large_lsl_64=Const 0w
+shift_rotate_multiple_64=Var 4
+shift_rotate_wrap_64=ShiftN Ror (Var 4) 3
+give_up_64=Seq (Assign 1 (Const 0xFFFFFFFFFFFFFFFFw)) (Alloc 1 (⦕ 0 ⦖,LN))
+list_seq_def_typed=list_Seq ([] :α prog list) = (Skip :α prog) ∧ (∀(x :α prog). list_Seq [x] = x) ∧ ∀(y :α prog) (xs :α prog list) (x :α prog). list_Seq (x::y::xs) = Seq x (list_Seq (y::xs))
+store_each_def_typed=(∀(v :num) (offset :α word). StoreEach v ([] :num list) offset = (Skip :α prog)) ∧ ∀(v :num) (x :num) (xs :num list) (offset :α word). StoreEach v (x::xs) offset = Seq (Store (Op Add [(Var v :α exp); (Const offset :α exp)] :α exp) x :α prog) (StoreEach v xs (offset + (bytes_in_word :α word)))
+mem_eq_list_def_typed=(∀(a :α word). MemEqList a ([] :α word list) = (Assign (1 :num) TRUE_CONST :α prog)) ∧ ∀(a :α word) (w :α word) (ws :α word list). MemEqList a (w::ws) = Seq (Assign (5 :num) (Load (Op Add [(Var (3 :num) :α exp); (Const a :α exp)] :α exp) :α exp) :α prog) (If Equal (5 :num) (Imm w) (MemEqList (a + (bytes_in_word :α word)) ws) (Skip :α prog) :α prog)
+silent_ffi_def_typed=∀(c :config) (n :num) (names :sptree$num_set # sptree$num_set). (SilentFFI c n names :α prog) = if c.call_empty_ffi then list_Seq [(Assign n (Const (0w :α word) :α exp) :α prog); (Assign (7 :num) (Op Sub [(Lookup NextFree :α exp); (Lookup CurrHeap :α exp)] :α exp) :α prog); (Assign (9 :num) (Lookup HeapLength :α exp) :α prog); (FFI «» (7 :num) n (9 :num) n names :α prog)] else (Skip :α prog)
+store_each_64=Seq (Store (Op Add [Var 2; Const 8w]) 4) (Seq (Store (Op Add [Var 2; Const 16w]) 6) Skip)
+mem_eq_list_64=Seq (Assign 5 (Load (Op Add [Var 3; Const 8w]))) (If Equal 5 (Imm 3w) (Seq (Assign 5 (Load (Op Add [Var 3; Const 16w]))) (If Equal 5 (Imm 7w) (Assign 1 TRUE_CONST) Skip)) Skip)
+silent_ffi_off_64=Skip
+silent_ffi_on_64=Seq (Assign 3 (Const 0w)) (Seq (Assign 7 (Op Sub [Lookup NextFree; Lookup CurrHeap])) (Seq (Assign 9 (Lookup HeapLength)) (FFI «» 7 3 9 3 (LN,LN))))
+fp_cmp_inst_typed=fp_cmp_inst FP_Less = FPLess (3 :num) (0 :num) (1 :num) ∧ fp_cmp_inst FP_LessEqual = FPLessEqual (3 :num) (0 :num) (1 :num) ∧ fp_cmp_inst FP_Greater = FPLess (3 :num) (1 :num) (0 :num) ∧ fp_cmp_inst FP_GreaterEqual = FPLessEqual (3 :num) (1 :num) (0 :num) ∧ fp_cmp_inst FP_Equal = FPEqual (3 :num) (0 :num) (1 :num)
+fp_bop_inst_typed=fp_bop_inst FP_Add = FPAdd (0 :num) (0 :num) (1 :num) ∧ fp_bop_inst FP_Sub = FPSub (0 :num) (0 :num) (1 :num) ∧ fp_bop_inst FP_Mul = FPMul (0 :num) (0 :num) (1 :num) ∧ fp_bop_inst FP_Div = FPDiv (0 :num) (0 :num) (1 :num)
+fp_uop_inst_typed=fp_uop_inst FP_Neg = FPNeg (1 :num) (0 :num) ∧ fp_uop_inst FP_Abs = FPAbs (1 :num) (0 :num) ∧ fp_uop_inst FP_Sqrt = FPSqrt (1 :num) (0 :num)
+fp_top_inst_typed=fp_top_inst FP_Fma = FPFma (0 :num) (1 :num) (2 :num)

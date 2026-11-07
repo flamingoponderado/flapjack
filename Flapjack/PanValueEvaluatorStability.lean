@@ -15,6 +15,50 @@ namespace Flapjack
     mention that binding.
 -/
 
+/-- Expression evaluation depends on local and global lookups only at names
+    occurring in the expression. This infrastructure has no HOL declaration:
+    it supports constructing a finite expression view of function-backed maps. -/
+theorem evalPanValueExp_lookup_congr
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (structs : StructContext)
+    (locals locals' globals globals' : VarName → Option (PanValue α))
+    (memory : α → Option (PanValue α)) (baseAddress topAddress bytesInWord : α)
+    (expression : Exp α) (access : Option (PanValueMemoryAccess α))
+    (hloc : ∀ name ∈ expLocalVars expression, locals name = locals' name)
+    (hglob : ∀ name ∈ expGlobalVars expression, globals name = globals' name) :
+    evalPanValueExp structs locals globals memory baseAddress topAddress bytesInWord expression access =
+      evalPanValueExp structs locals' globals' memory baseAddress topAddress bytesInWord expression access := by
+  have hmain : ∀ expression access,
+      (∀ name ∈ expLocalVars expression, locals name = locals' name) →
+      (∀ name ∈ expGlobalVars expression, globals name = globals' name) →
+      evalPanValueExp structs locals globals memory baseAddress topAddress bytesInWord expression access =
+        evalPanValueExp structs locals' globals' memory baseAddress topAddress bytesInWord expression access := by
+    apply evalPanValueExp.induct
+      (motive1 := fun es access =>
+        (∀ name ∈ expLocalVars.expLocalVarsList es, locals name = locals' name) →
+        (∀ name ∈ expGlobalVars.expGlobalVarsList es, globals name = globals' name) →
+        evalPanValueExp.evalPanValueExps structs locals globals memory baseAddress topAddress bytesInWord es access =
+          evalPanValueExp.evalPanValueExps structs locals' globals' memory baseAddress topAddress bytesInWord es access)
+      (motive2 := fun e access =>
+        (∀ name ∈ expLocalVars e, locals name = locals' name) →
+        (∀ name ∈ expGlobalVars e, globals name = globals' name) →
+        evalPanValueExp structs locals globals memory baseAddress topAddress bytesInWord e access =
+          evalPanValueExp structs locals' globals' memory baseAddress topAddress bytesInWord e access)
+      (motive3 := fun fs access =>
+        (∀ name ∈ expLocalVars.expLocalVarsFieldList fs, locals name = locals' name) →
+        (∀ name ∈ expGlobalVars.expGlobalVarsFieldList fs, globals name = globals' name) →
+        evalPanValueExp.evalPanValueFields structs locals globals memory baseAddress topAddress bytesInWord fs access =
+          evalPanValueExp.evalPanValueFields structs locals' globals' memory baseAddress topAddress bytesInWord fs access)
+    all_goals
+      intros
+      simp_all [evalPanValueExp, evalPanValueExp.evalPanValueExps,
+        evalPanValueExp.evalPanValueFields, expLocalVars, expLocalVars.expLocalVarsList,
+        expLocalVars.expLocalVarsFieldList, expGlobalVars, expGlobalVars.expGlobalVarsList,
+        expGlobalVars.expGlobalVarsFieldList, List.mem_append]
+  exact hmain expression access hloc hglob
+
 theorem evalPanValueExp_update_local_not_mem
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
@@ -78,42 +122,6 @@ theorem evalPanValueExp_update_local_not_mem
     all_goals
       try simp only [eq_comm]
   exact hmain expression memoryAccess hname
-
-theorem evalPanValueExps_update_local_not_mem
-    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
-    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
-    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
-    [BEq String] [LawfulBEq String]
-    (structs : StructContext)
-    (locals globals : VarName → Option (PanValue α))
-    (memory : α → Option (PanValue α))
-    (baseAddress topAddress bytesInWord : α)
-    (expressions : List (Exp α))
-    (memoryAccess : Option (PanValueMemoryAccess α))
-    (name : VarName) (replacement : PanValue α)
-    (hname : ∀ expression ∈ expressions,
-      name ∉ expLocalVars expression) :
-    evalPanValueExps structs (updatePanValueMap locals name replacement) globals
-      memory baseAddress topAddress bytesInWord expressions memoryAccess =
-    evalPanValueExps structs locals globals memory baseAddress topAddress
-      bytesInWord expressions memoryAccess := by
-  induction expressions with
-  | nil => simp [evalPanValueExps, evalPanValueExp.evalPanValueExps]
-  | cons expression expressions ih =>
-      have hexpression := evalPanValueExp_update_local_not_mem structs locals
-        globals memory baseAddress topAddress bytesInWord expression memoryAccess
-        name replacement (hname expression (by simp))
-      have hexpressions := ih (fun expression' hmem =>
-        hname expression' (by simp [hmem]))
-      have hexpressions' :
-          evalPanValueExp.evalPanValueExps structs
-              (updatePanValueMap locals name replacement) globals memory
-              baseAddress topAddress bytesInWord expressions memoryAccess =
-            evalPanValueExp.evalPanValueExps structs locals globals memory
-              baseAddress topAddress bytesInWord expressions memoryAccess := by
-        simpa only [evalPanValueExps] using hexpressions
-      simp [evalPanValueExps, evalPanValueExp.evalPanValueExps,
-        hexpression, hexpressions']
 
 /-! Cake's `FUPDATE_LIST` applies a sequence of local bindings.  Keeping the
     operation explicit gives the Lean port the same reusable interface as

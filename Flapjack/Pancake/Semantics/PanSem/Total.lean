@@ -20,9 +20,11 @@ and `evaluate : prog # state -> result option # state` (lines 556-736) returns
 the result paired with the final state, with HOL's `NONE` for a normal
 completion.
 
-The executed production evaluator `panSemEvaluateCodeStateWithPostState`
-returns an `Option` of a structured control result whose outcome embeds the
-state components, so its statements cannot carry an exact HOL `evaluate` tag.
+The generic code-map evaluator `panSemEvaluateCodeStateWithPostState` requires
+an explicit memory-access choice and returns an `Option` of a structured
+control result whose outcome embeds the state components. Its statements
+therefore cannot carry an exact HOL `evaluate` tag. The RV64 state-owned
+post-state entry derives access from the state.
 This module starts the genuinely HOL-shaped total interface:
 
 * `PanSemProgResult` is an existing helper carrier whose `normal` constructor
@@ -297,23 +299,6 @@ theorem panSemTotalIfStep_zero [DecidableEq α] [OfNat α 0]
       elseBranch state := by
   simp [panSemTotalIfStep]
 
-theorem panSemTotalIfStep_error [DecidableEq α] [OfNat α 0]
-    (state : PanSemState α (FfiState σ))
-    (evaluatedCondition : Option (PanValue α))
-    (hbad : ∀ value, evaluatedCondition ≠ some (.word value))
-    (thenBranch elseBranch :
-      PanSemState α (FfiState σ) →
-        Option (PanSemHOLResult α) × PanSemState α (FfiState σ)) :
-    panSemTotalIfStep state evaluatedCondition thenBranch elseBranch =
-      (some .error, state) := by
-  cases evaluatedCondition with
-  | none => rfl
-  | some value =>
-      cases value with
-      | word word => exact (hbad word rfl).elim
-      | rStruct values => rfl
-      | nStruct name fields => rfl
-
 /-- RISC-V 64-bit source-state `If` clause. Unlike
     `panSemTotalIfStep`, this definition evaluates the condition expression
     itself with `evalPanSemStateExp`, deriving locals, globals, structs,
@@ -344,34 +329,6 @@ def panSemEvaluateIfClauseRiscV64 [NeZero 64]
   panSemTotalIfStep state (evalPanSemStateExp state condition)
     (evaluateProgram thenBranch) (evaluateProgram elseBranch)
 
-theorem panSemEvaluateIfClauseRiscV64_word
-    (evaluateProgram : Prog (RiscV.Word 64) →
-      PanSemState (RiscV.Word 64) (FfiState σ) →
-        Option (PanSemHOLResult (RiscV.Word 64)) ×
-          PanSemState (RiscV.Word 64) (FfiState σ))
-    (state : PanSemState (RiscV.Word 64) (FfiState σ))
-    (condition : Exp (RiscV.Word 64))
-    (thenBranch elseBranch : Prog (RiscV.Word 64))
-    (value : RiscV.Word 64)
-    (heval : evalPanSemStateExp state condition = some (.word value)) :
-    panSemEvaluateIfClauseRiscV64 evaluateProgram state condition thenBranch elseBranch =
-      (if value = 0 then evaluateProgram elseBranch state
-       else evaluateProgram thenBranch state) := by
-  simp [panSemEvaluateIfClauseRiscV64, panSemTotalIfStep, heval]
-
-theorem panSemEvaluateIfClauseRiscV64_eval_error
-    (evaluateProgram : Prog (RiscV.Word 64) →
-      PanSemState (RiscV.Word 64) (FfiState σ) →
-        Option (PanSemHOLResult (RiscV.Word 64)) ×
-          PanSemState (RiscV.Word 64) (FfiState σ))
-    (state : PanSemState (RiscV.Word 64) (FfiState σ))
-    (condition : Exp (RiscV.Word 64))
-    (thenBranch elseBranch : Prog (RiscV.Word 64))
-    (heval : evalPanSemStateExp state condition = none) :
-    panSemEvaluateIfClauseRiscV64 evaluateProgram state condition thenBranch elseBranch =
-      (some .error, state) := by
-  simp [panSemEvaluateIfClauseRiscV64, panSemTotalIfStep, heval]
-
 theorem panSemEvaluateIfClauseRiscV64_eval_nonword
     (evaluateProgram : Prog (RiscV.Word 64) →
       PanSemState (RiscV.Word 64) (FfiState σ) →
@@ -395,10 +352,11 @@ theorem panSemEvaluateCodeStateWithPostState_skip_total
     (context : PanValueFfiContext α)
     (primitive : PanPrimitiveHandler α)
     (handler : PanValueStatefulFfiHandler α σ)
-    (bytesInWord : α) (state : PanSemState α (FfiState σ)) :
+    (bytesInWord : α) (state : PanSemState α (FfiState σ))
+    (memoryAccess : Option (PanValueMemoryAccess α) := none) :
     (panSemEvaluateCodeStateWithPostState context primitive handler bytesInWord state
-        (.skip : Prog α)).map panSemTotalOfExecuted = some (panSemEvaluateSkip state) := by
-  rw [panSemEvaluateCodeStateWithPostState_skip]
+        (.skip : Prog α) (memoryAccess := memoryAccess)).map panSemTotalOfExecuted = some (panSemEvaluateSkip state) := by
+  rw [panSemEvaluateCodeStateWithPostState_skip (memoryAccess := memoryAccess)]
   rfl
 
 /-- The executed source evaluator's `Tick` projection is exactly the total
@@ -410,10 +368,11 @@ theorem panSemEvaluateCodeStateWithPostState_tick_total
     (context : PanValueFfiContext α)
     (primitive : PanPrimitiveHandler α)
     (handler : PanValueStatefulFfiHandler α σ)
-    (bytesInWord : α) (state : PanSemState α (FfiState σ)) :
+    (bytesInWord : α) (state : PanSemState α (FfiState σ))
+    (memoryAccess : Option (PanValueMemoryAccess α) := none) :
     (panSemEvaluateCodeStateWithPostState context primitive handler bytesInWord state
-        (.tick : Prog α)).map panSemTotalOfExecuted = some (panSemEvaluateTick state) := by
-  rw [panSemEvaluateCodeStateWithPostState_tick]
+        (.tick : Prog α) (memoryAccess := memoryAccess)).map panSemTotalOfExecuted = some (panSemEvaluateTick state) := by
+  rw [panSemEvaluateCodeStateWithPostState_tick (memoryAccess := memoryAccess)]
   by_cases hclock : state.clock = 0 <;>
     simp [panSemTotalOfExecuted, panSemEvaluateTick, panSemProgResultOfClockResult, hclock]
 
@@ -426,13 +385,14 @@ theorem panSemEvaluateCodeStateWithPostState_break_total
     (context : PanValueFfiContext α)
     (primitive : PanPrimitiveHandler α)
     (handler : PanValueStatefulFfiHandler α σ)
-    (bytesInWord : α) (state : PanSemState α (FfiState σ)) :
+    (bytesInWord : α) (state : PanSemState α (FfiState σ))
+    (memoryAccess : Option (PanValueMemoryAccess α) := none) :
     (panSemEvaluateCodeStateWithPostState context primitive handler bytesInWord state
-        (.break : Prog α)).map panSemTotalOfExecuted = some (panSemEvaluateBreak state) := by
+        (.break : Prog α) (memoryAccess := memoryAccess)).map panSemTotalOfExecuted = some (panSemEvaluateBreak state) := by
   simp [panSemEvaluateCodeStateWithPostState, panSemEvaluateCodeState,
     panSemEvaluateCodeStateWithFuel, panSemCodeEvaluateFuel, panSemCodeStateAfter,
     panSemTotalOfExecuted, panSemEvaluateBreak, panSemProgResultOfClockResult,
-    evalPanValueFfiClockCodeProg, evalPanValueFfiClockLeaf, evalPanValueFfiProgSteps]
+    evalPanValueFfiClockCodeProg, evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]
 
 /-- The executed source evaluator's `Continue` projection is the total
     HOL-shaped `Continue` clause. -/
@@ -443,14 +403,15 @@ theorem panSemEvaluateCodeStateWithPostState_continue_total
     (context : PanValueFfiContext α)
     (primitive : PanPrimitiveHandler α)
     (handler : PanValueStatefulFfiHandler α σ)
-    (bytesInWord : α) (state : PanSemState α (FfiState σ)) :
+    (bytesInWord : α) (state : PanSemState α (FfiState σ))
+    (memoryAccess : Option (PanValueMemoryAccess α) := none) :
     (panSemEvaluateCodeStateWithPostState context primitive handler bytesInWord state
-        (.continue : Prog α)).map panSemTotalOfExecuted =
+        (.continue : Prog α) (memoryAccess := memoryAccess)).map panSemTotalOfExecuted =
       some (panSemEvaluateContinue state) := by
   simp [panSemEvaluateCodeStateWithPostState, panSemEvaluateCodeState,
     panSemEvaluateCodeStateWithFuel, panSemCodeEvaluateFuel, panSemCodeStateAfter,
     panSemTotalOfExecuted, panSemEvaluateContinue, panSemProgResultOfClockResult,
-    evalPanValueFfiClockCodeProg, evalPanValueFfiClockLeaf, evalPanValueFfiProgSteps]
+    evalPanValueFfiClockCodeProg, evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]
 
 /-- HOL `fix_clock` (`cakeml/pancake/semantics/panSemScript.sml:446-449`): clamp
     a returned state's clock to the entry clock. -/
@@ -462,190 +423,6 @@ def panSemFixClock (entryClock : Nat) (state : PanSemState α (FfiState σ)) :
     (entryClock : Nat) (state : PanSemState α (FfiState σ)) :
     (panSemFixClock entryClock state).clock ≤ entryClock := by
   exact Nat.min_le_left _ _
-
-/-! A small source-program fragment gives the clock leaves, `Seq`, and `If`
-    with `Const` or `Var Local` conditions a real recursive evaluator over the
-    complete production state.  This is a total interpreter for the declared
-    fragment only; it does not stand in for the full HOL `evaluate_def`, whose
-    remaining expression-bearing and recursive constructors still need their
-    faithful evaluator and clock/termination proofs. -/
-
-/-- Source programs in the restricted fragment covered by the total
-    clock-leaf/sequence/local-conditional evaluator. `toProg` embeds the
-    fragment in the production syntax without changing its constructors. -/
-inductive PanSemSeqFragment (α : Type u) where
-  | leaf (leaf : PanSemClockLeaf)
-  | seq (first second : PanSemSeqFragment α)
-  | iteConst (condition : α)
-      (thenBranch elseBranch : PanSemSeqFragment α)
-  | iteLocal (condition : VarName)
-      (thenBranch elseBranch : PanSemSeqFragment α)
-
-/-- Embed a sequence/clock-leaf fragment into the production Pancake syntax. -/
-def PanSemSeqFragment.toProg : PanSemSeqFragment α → Prog α
-  | PanSemSeqFragment.leaf clockCtor => PanSemClockLeaf.toProg clockCtor
-  | PanSemSeqFragment.seq prog1 prog2 => .seq prog1.toProg prog2.toProg
-  | PanSemSeqFragment.iteConst condition thenBranch elseBranch =>
-      .ite (.const condition) thenBranch.toProg elseBranch.toProg
-  | PanSemSeqFragment.iteLocal condition thenBranch elseBranch =>
-      .ite (.var .local condition) thenBranch.toProg elseBranch.toProg
-
-/-- Total recursive HOL-result evaluator for the sequence/clock-leaf/local-If
-    fragment.
-    Its result is HOL's `result option × state`; the `Option` is the semantic
-    result option from `evaluate_def`, not evaluator failure or fuel exhaustion.
-    The recursive calls are on the source subprograms, and `Seq` clamps the
-    first post-state clock before evaluating its second subprogram. For `If`,
-    the condition subgrammar covers `Const` and direct `Var Local`; a missing or
-    non-word local returns HOL's `Error` result with the complete state
-    unchanged. This restricted interpreter is untagged and does not claim the
-    whole-program `evaluate_def` port. -/
-def panSemEvaluateSeqFragment [DecidableEq α] [OfNat α 0]
-    (program : PanSemSeqFragment α)
-    (state : PanSemState α (FfiState σ)) :
-    Option (PanSemHOLResult α) × PanSemState α (FfiState σ) :=
-  match program with
-  | .leaf leaf => panSemEvaluateClockLeaf leaf state
-  | .seq first second =>
-      let (result, firstState) := panSemEvaluateSeqFragment first state
-      let fixedState := panSemFixClock state.clock firstState
-      match result with
-      | none => panSemEvaluateSeqFragment second fixedState
-      | some result => (some result, fixedState)
-  | .iteConst condition thenBranch elseBranch =>
-      if condition = 0 then
-        panSemEvaluateSeqFragment elseBranch state
-      else
-        panSemEvaluateSeqFragment thenBranch state
-  | .iteLocal condition thenBranch elseBranch =>
-      match state.locals condition with
-      | some (.word value) =>
-          if value = 0 then
-            panSemEvaluateSeqFragment elseBranch state
-          else
-            panSemEvaluateSeqFragment thenBranch state
-      | _ => (some .error, state)
-
-/-! A second restricted fragment makes the `If` condition an arbitrary source
-    expression and evaluates it from the full RISC-V 64-bit `PanSemState`.
-    Branch recursion remains structural. The fragment also includes the exact
-    `Dec`, `Assign`, `Return`, and `Raise` clause shapes, but omits other `Prog`
-    constructors and is not the full `evaluate_def` over `Prog`. -/
-
-/-- RISC-V 64-bit source-program fragment with unrestricted `Exp` conditions
-    on its recursive `If` constructor. This is a support fragment rather than
-    an exact port of HOL `prog`: it omits the other statement constructors and
-    is specialized to the production RV64 word representation. -/
-inductive PanSemExprIfFragmentRiscV64 where
-  | leaf (leaf : PanSemClockLeaf)
-  | seq (first second : PanSemExprIfFragmentRiscV64)
-  | ite (condition : Exp (RiscV.Word 64))
-      (thenBranch elseBranch : PanSemExprIfFragmentRiscV64)
-  | dec (name : VarName) (shape : Shape) (value : Exp (RiscV.Word 64))
-      (body : PanSemExprIfFragmentRiscV64)
-  | assign (kind : VarKind) (name : VarName) (value : Exp (RiscV.Word 64))
-  | returnValue (value : Exp (RiscV.Word 64))
-  | raiseException (exception : ExceptionId) (value : Exp (RiscV.Word 64))
-  deriving Repr
-
-/-- Embed the restricted expression/control fragment into production Pancake
-    syntax without changing its represented constructors. -/
-def PanSemExprIfFragmentRiscV64.toProg :
-    PanSemExprIfFragmentRiscV64 → Prog (RiscV.Word 64)
-  | PanSemExprIfFragmentRiscV64.leaf clockCtor => PanSemClockLeaf.toProg clockCtor
-  | PanSemExprIfFragmentRiscV64.seq first second => .seq first.toProg second.toProg
-  | PanSemExprIfFragmentRiscV64.ite condition thenBranch elseBranch =>
-      .ite condition thenBranch.toProg elseBranch.toProg
-  | PanSemExprIfFragmentRiscV64.dec name shape value body =>
-      .dec name shape value body.toProg
-  | PanSemExprIfFragmentRiscV64.assign kind name value => .assign kind name value
-  | PanSemExprIfFragmentRiscV64.returnValue value => .return value
-  | PanSemExprIfFragmentRiscV64.raiseException exception value => .raise exception value
-
-/-- Total recursive RV64 evaluator for clock leaves, `Seq`, `If`, `Dec`,
-    `Assign`, `Return`, and `Raise`. It evaluates every expression through
-    `evalPanSemStateExp` using the complete state; `If` recursively evaluates
-    its chosen branch in that state, `Dec` restores its shadowed local after
-    recursively evaluating the body, and `Seq` applies HOL `fix_clock` before
-    continuing. The evaluator has no branch callback or evaluator-fuel
-    `Option`; remaining `Prog` constructors and HOL-polymorphic words remain
-    outside this explicit fragment, so it stays untagged and does not claim the
-    full `evaluate_def` port. -/
-def panSemEvaluateExprIfFragmentRiscV64 [NeZero 64]
-    [BEq (RiscV.Word 64)] [DecidableEq (RiscV.Word 64)]
-    [OfNat (RiscV.Word 64) 0] [OfNat (RiscV.Word 64) 1]
-    [OfNat (RiscV.Word 64) 2] [OfNat (RiscV.Word 64) 3]
-    [Add (RiscV.Word 64)] [Mul (RiscV.Word 64)] [Sub (RiscV.Word 64)]
-    [AndOp (RiscV.Word 64)] [OrOp (RiscV.Word 64)]
-    [HXor (RiscV.Word 64) (RiscV.Word 64) (RiscV.Word 64)]
-    [ShiftLeft (RiscV.Word 64)] [ShiftRight (RiscV.Word 64)]
-    [LT (RiscV.Word 64)]
-    [DecidableRel (fun left right : RiscV.Word 64 => left < right)]
-    [PanCmp (RiscV.Word 64)]
-    (program : PanSemExprIfFragmentRiscV64)
-    (state : PanSemState (RiscV.Word 64) (FfiState σ)) :
-    Option (PanSemHOLResult (RiscV.Word 64)) ×
-      PanSemState (RiscV.Word 64) (FfiState σ) :=
-  match program with
-  | PanSemExprIfFragmentRiscV64.leaf clockCtor =>
-      panSemEvaluateClockLeaf clockCtor state
-  | PanSemExprIfFragmentRiscV64.seq first second =>
-      let (result, firstState) := panSemEvaluateExprIfFragmentRiscV64 first state
-      let fixedState := panSemFixClock state.clock firstState
-      match result with
-      | none => panSemEvaluateExprIfFragmentRiscV64 second fixedState
-      | some result => (some result, fixedState)
-  | PanSemExprIfFragmentRiscV64.ite condition thenBranch elseBranch =>
-      match evalPanSemStateExp state condition with
-      | some (.word value) =>
-          if value = 0 then
-            panSemEvaluateExprIfFragmentRiscV64 elseBranch state
-          else
-            panSemEvaluateExprIfFragmentRiscV64 thenBranch state
-      | _ => (some .error, state)
-  | PanSemExprIfFragmentRiscV64.dec name shape expression body =>
-      match evalPanSemStateExp state expression with
-      | some value =>
-          if panShapeMatches shape (panSemShapeOf value) then
-            let (result, bodyState) := panSemEvaluateExprIfFragmentRiscV64 body
-              ({ state with locals := updatePanValueMap state.locals name value })
-            (result, { bodyState with
-              locals := resVar bodyState.locals (name, state.locals name) })
-          else (some .error, state)
-      | none => (some .error, state)
-  | PanSemExprIfFragmentRiscV64.assign kind name expression =>
-      match evalPanSemStateExp state expression with
-      | none => (some .error, state)
-      | some value =>
-          if panValueAssignmentValid state.structs state.locals state.globals
-              kind name value then
-            match kind with
-            | .local =>
-                (none, { state with locals := updatePanValueMap state.locals name value })
-            | .global =>
-                (none, { state with globals := updatePanValueMap state.globals name value })
-          else
-            (some .error, state)
-  | PanSemExprIfFragmentRiscV64.returnValue expression =>
-      match evalPanSemStateExp state expression with
-      | some value =>
-          if sizeOfShWithCtxt state.structs.toHOL (panSemShapeOf value) ≤ 32 then
-            (some (.returned value), panEmptyLocals state)
-          else
-            (some .error, state)
-      | none => (some .error, state)
-  | PanSemExprIfFragmentRiscV64.raiseException exception expression =>
-      match evalPanSemStateExp state expression with
-      | some value =>
-          match state.exceptionShapes exception with
-          | some shape =>
-              if panShapeMatches shape (panSemShapeOf value) &&
-                  sizeOfShWithCtxt state.structs.toHOL (panSemShapeOf value) ≤ 32 then
-                (some (.exception exception value), panEmptyLocals state)
-              else
-                (some .error, state)
-          | none => (some .error, state)
-      | none => (some .error, state)
 
 /-! ## Compositional `Seq` step
 
@@ -725,20 +502,6 @@ theorem panSemTotalAssignStep_normal_local
     (h : panValueAssignmentValid state.structs state.locals state.globals .local name evaluated = true) :
     panSemTotalAssignStep state .local name (some evaluated) =
       (.normal, { state with locals := updatePanValueMap state.locals name evaluated }) := by
-  simp [panSemTotalAssignStep, h]
-
-theorem panSemTotalAssignStep_normal_global
-    [BEq α] (state : PanSemState α (FfiState σ)) (name : VarName) (evaluated : PanValue α)
-    (h : panValueAssignmentValid state.structs state.locals state.globals .global name evaluated = true) :
-    panSemTotalAssignStep state .global name (some evaluated) =
-      (.normal, { state with globals := updatePanValueMap state.globals name evaluated }) := by
-  simp [panSemTotalAssignStep, h]
-
-theorem panSemTotalAssignStep_invalid
-    [BEq α] (state : PanSemState α (FfiState σ)) (kind : VarKind) (name : VarName)
-    (evaluated : PanValue α)
-    (h : panValueAssignmentValid state.structs state.locals state.globals kind name evaluated = false) :
-    panSemTotalAssignStep state kind name (some evaluated) = (.error, state) := by
   simp [panSemTotalAssignStep, h]
 
 end Flapjack
