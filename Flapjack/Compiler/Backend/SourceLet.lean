@@ -27,13 +27,24 @@ def liftLet : Dec → Option (Dec × Dec)
 /-- Lift all successive outer `Let` and `Letrec` expressions in order. -/
 @[hol "cakeml/compiler/backend/source_letScript.sml" "lift_lets_def"]
 def liftLets (sofar : List Dec) (d : Dec) : Option (List Dec × Dec) :=
-  match d with
-  | .dlet l p (.let_ none x y) => liftLets (.dlet l .pany x :: sofar) (.dlet l p y)
-  | .dlet l p (.let_ (some v) x y) => liftLets (.dlet l (.pvar v) x :: sofar) (.dlet l p y)
-  | .dlet l p (.letrec fs x) => liftLets (.dletrec l fs :: sofar) (.dlet l p x)
-  | _ => if sofar.isEmpty then none else some (sofar.reverse, d)
+  match _h : liftLet d with
+  | some (d1, d2) => liftLets (d1 :: sofar) d2
+  | none => if sofar.isEmpty then none else some (sofar.reverse, d)
 termination_by sizeOf d
-decreasing_by all_goals simp_wf <;> omega
+decreasing_by
+  cases d with
+  | dlet loc pat expr =>
+    cases expr with
+    | let_ name first body =>
+      cases name <;> simp only [liftLet, Option.some.injEq, Prod.mk.injEq] at _h <;>
+        obtain ⟨_, rfl⟩ := _h <;> simp_wf <;> omega
+    | letrec funs body =>
+      simp only [liftLet, Option.some.injEq, Prod.mk.injEq] at _h
+      obtain ⟨_, rfl⟩ := _h
+      simp_wf
+      omega
+    | _ => simp [liftLet] at _h
+  | _ => simp [liftLet] at _h
 
 /-- Apply source let-lifting to declarations and recursively to modules and
 local declarations when the declaration itself was not lifted. -/

@@ -14388,8 +14388,9 @@
     "hol_name": "evaluate_lift_start",
     "lean_path": "Flapjack/Compiler/Backend/SourceLet/Proofs/Correct.lean",
     "lean_name": "evaluate_lift_start",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed replay of the original SPEC and SIMP_RULE construction is captured as lift_start in source_let_proof_probe.out. Evaluator and carrier correspondence remain pending review."
+    "inherits_reals_as_rational_cuts": true,
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed lift_start replay with the source SPEC/SIMP construction: declaration, state, environment, result and lifted declarations occur in order; the three conjunctive premises and evaluation conclusion match, using reviewed evaluator and AST carriers. Evaluation inherits the reals_as_rational_cuts assumption."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_letProofScript.sml",
@@ -14412,16 +14413,16 @@
     "hol_name": "lift_lets_is_prefix",
     "lean_path": "Flapjack/Compiler/Backend/SourceLet/Proofs.lean",
     "lean_name": "liftLets_isPrefix",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in source_let_proof_probe.out. Review of the underlying let-lifting definition and AST carriers remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed lift_prefix with HOL: successful lifting implies the reversed accumulated declarations are a prefix of the first output; binder order and reviewed AST and list carriers match."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_letProofScript.sml",
     "hol_name": "lift_lets_mod_local",
     "lean_path": "Flapjack/Compiler/Backend/SourceLet/Proofs.lean",
     "lean_name": "liftLets_mod_local",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Local HOL theorem replayed with inferred types in source_let_proof_probe.out. Review of the underlying let-lifting definition and AST carriers remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed lift_modules_locals replay with the local HOL theorem: the two independently quantified conjuncts state that an empty accumulator cannot lift local or module declarations; reviewed AST carriers match."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
@@ -111665,40 +111666,40 @@
     "lean_name": "destLet",
     "hol_path": "cakeml/compiler/backend/source_letScript.sml",
     "hol_name": "dest_Let_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed dest_let_definition with all HOL constructor clauses and reviewed AstHOL carriers: Let returns its option name and two expressions; every other expression returns none."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/SourceLet.lean",
     "lean_name": "destLetrec",
     "hol_path": "cakeml/compiler/backend/source_letScript.sml",
     "hol_name": "dest_Letrec_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed dest_letrec_definition with all HOL constructor clauses and reviewed AstHOL carriers: Letrec returns its function list and body; every other expression returns none."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/SourceLet.lean",
     "lean_name": "liftLet",
     "hol_path": "cakeml/compiler/backend/source_letScript.sml",
     "hol_name": "lift_let_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed lift_let_definition with the source and reviewed AstHOL carriers: direct pattern matches implement the HOL dest_Let and dest_Letrec case analysis, preserving anonymous and named lets, recursive lets, locations and patterns; all other declarations return none."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/SourceLet.lean",
     "lean_name": "liftLets",
     "hol_path": "cakeml/compiler/backend/source_letScript.sml",
     "hol_name": "lift_lets_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed lift_lets_definition with the source and reviewed AstHOL carriers: it calls liftLet, recurses with the first declaration prepended and the second as input, and returns none for an empty accumulator or the reversed accumulator and final declaration otherwise; isEmpty implements the source list case."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/SourceLet.lean",
     "lean_name": "compileDecs",
     "hol_path": "cakeml/compiler/backend/source_letScript.sml",
     "hol_name": "compile_decs_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed compile_decs_definition with the source and reviewed AstHOL carriers: successful lifting builds Dlocal, while unsuccessful lifting recursively compiles Dmod and Dlocal and leaves every other declaration unchanged; list order is preserved."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/SourceToSource.lean",

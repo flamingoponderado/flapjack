@@ -1349,7 +1349,7 @@
     {"bytes": 1803, "out": "source_eval_adjust_local_probe.out", "rows": 7, "sha256": "bf8aa0fb0c57462ae2b7189655a1c32b04943aa8caa1f27cc437c3a0c8c2bb5a"},
     {"bytes": 12813, "out": "source_eval_oracle_adjust_probe.out", "rows": 10, "sha256": "51858e2eedb76326a8d44c1e2d83df17504cee07af045c603f9710f2eb954229"},
     {"bytes": 744, "out": "source_evaluate_decs_probe.out", "rows": 2, "sha256": "ee79ab142228f24e28fe610b646f9018f1dfc17ea3eba80908859bf1e3e6d1cd"},
-    {"bytes": 2529, "out": "source_let_proof_probe.out", "rows": 8, "sha256": "07b7ba40905e6518394b99a54eeca7e117adbed28c836fdae9b9804e76d20cd7"},
+    {"bytes": 7432, "out": "source_let_proof_probe.out", "rows": 13, "sha256": "edc13452b8fd671c02721b50c5041031c71507058e8ae7ceca41cec02a93509a"},
     {"bytes": 2871, "out": "source_to_bvi_incremental_probe.out", "rows": 5, "sha256": "7120c45defa2f349e6a643d8d795c5e9c2c0599d2af033a0587024749cc2ed8f"},
     {"bytes": 968, "out": "source_to_flat_bind_locals_probe.out", "rows": 3, "sha256": "c9b2b276f9bc6c7dc296d6e9c224af5e291ce3e8f69c8bae3513d0b1793021c2"},
     {"bytes": 7806, "out": "source_to_flat_compile_correct_probe.out", "rows": 4, "sha256": "aacca924ffba927f0c681fcab4468fdaa5798a20c7e8ddbf7e00667d2bed348b"},

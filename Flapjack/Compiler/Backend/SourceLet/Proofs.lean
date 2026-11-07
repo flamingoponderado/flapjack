@@ -10,19 +10,18 @@ declarations as a prefix, in source order. -/
 theorem liftLets_isPrefix (sofar : List Dec) (d : Dec) (first : List Dec) (last : Dec)
     (lifted : liftLets sofar d = some (first, last)) : sofar.reverse <+: first := by
   induction sofar, d using liftLets.induct generalizing first last with
-  | case1 sofar l p x y ih =>
-    apply (List.prefix_append sofar.reverse [.dlet l .pany x]).trans
-    simpa only [List.reverse_cons] using ih first last (by simpa only [liftLets] using lifted)
-  | case2 sofar l p v x y ih =>
-    apply (List.prefix_append sofar.reverse [.dlet l (.pvar v) x]).trans
-    simpa only [List.reverse_cons] using ih first last (by simpa only [liftLets] using lifted)
-  | case3 sofar l p fs x ih =>
-    apply (List.prefix_append sofar.reverse [.dletrec l fs]).trans
-    simpa only [List.reverse_cons] using ih first last (by simpa only [liftLets] using lifted)
-  | case4 sofar d empty h1 h2 h3 =>
-    cases d <;> simp_all [liftLets]
-  | case5 sofar d nonempty h1 h2 h3 =>
-    cases d <;> simp_all [liftLets]
+  | case1 sofar d d1 d2 step ih =>
+    apply (List.prefix_append sofar.reverse [d1]).trans
+    rw [liftLets.eq_def, step] at lifted
+    simpa only [List.reverse_cons] using ih first last lifted
+  | case2 sofar d step empty =>
+    rw [liftLets.eq_def, step] at lifted
+    simp [empty] at lifted
+  | case3 sofar d step nonempty =>
+    rw [liftLets.eq_def, step] at lifted
+    simp only [nonempty] at lifted
+    obtain ⟨rfl, _⟩ := lifted
+    exact ⟨[], by simp⟩
 
 /-- Module and local declarations are traversed recursively by the pass;
 they cannot themselves start a sequence of lifted lets. -/
@@ -30,6 +29,6 @@ they cannot themselves start a sequence of lifted lets. -/
 theorem liftLets_mod_local :
     (∀ ds1 ds2, liftLets [] (.dlocal ds1 ds2) = none) ∧
       (∀ mn ds, liftLets [] (.dmod mn ds) = none) := by
-  constructor <;> intro <;> intro <;> simp [liftLets]
+  constructor <;> intro <;> intro <;> simp [liftLets.eq_def, liftLet]
 
 end Flapjack.Compiler.Backend.SourceLet

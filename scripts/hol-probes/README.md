@@ -478,7 +478,7 @@ the complete carrier correspondence remains under review.
 
 `source_to_flat_store_relation_probe.out` captures the original typed store and state relation rules, including independently typed compiler and FFI parameters. Lean's store-case and state-shape equivalences expose the same four store constructors and reserved flat-store slot, conditional on its preliminary value relation; they do not establish that relation's HOL correspondence.
 
-`source_let_proof_probe.out` captures the inferred types of the original source let-lifting prefix, evaluation, semantics and oracle-adjustment theorems and replays the local module/local lemma and the original specialization that constructs `evaluate_lift_start`. Lean kernel-checks declaration evaluation, observable semantics preservation, and the oracle-adjustment statement pending source, evaluator, and carrier review.
+`source_let_proof_probe.out` captures the inferred types and clauses of the original source let-lifting definitions, prefix, evaluation, semantics and oracle-adjustment theorems, and replays the local module/local lemma and the original specialization that constructs `evaluate_lift_start`. Lean kernel-checks declaration evaluation, observable semantics preservation, and the oracle-adjustment statement pending source, evaluator, and carrier review.
 
 `source_to_source_proof_probe.out` captures the original source-to-source semantics and oracle-adjustment theorems with inferred types. Lean checks both statements pending correspondence review.
 

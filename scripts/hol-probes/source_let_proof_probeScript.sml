@@ -19,3 +19,8 @@ val _ = show_thm "compile_semantics_oracle=" source_letProofTheory.compile_seman
 val lift_start = Q.SPEC `[]` source_letProofTheory.evaluate_lift_lets
   |> SIMP_RULE (srw_ss()) [Once semanticPrimitivesTheory.extend_dec_env_def];
 val _ = show_thm "lift_start=" lift_start;
+val _ = show_thm "dest_let_definition=" source_letTheory.dest_Let_def;
+val _ = show_thm "dest_letrec_definition=" source_letTheory.dest_Letrec_def;
+val _ = show_thm "lift_let_definition=" source_letTheory.lift_let_def;
+val _ = show_thm "lift_lets_definition=" source_letTheory.lift_lets_def;
+val _ = show_thm "compile_decs_definition=" source_letTheory.compile_decs_def;

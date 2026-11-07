@@ -5,34 +5,6 @@ import Flapjack.EvaluateProps.Declarations
 namespace Flapjack.Compiler.Backend.SourceLet
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.EvaluateHOL Flapjack.EvaluateProps
 
-/-- The direct recursive implementation has the same one-step view used in
-the original definition. This is Flapjack proof infrastructure. -/
-theorem liftLets_step_view (sofar : List Dec) (d : Dec) :
-    liftLets sofar d = match liftLet d with
-      | none => if sofar.isEmpty then none else some (sofar.reverse, d)
-      | some (d1, d2) => liftLets (d1 :: sofar) d2 := by
-  cases d with
-  | dlet loc pat expr =>
-    cases expr with
-    | let_ name first body => cases name <;> simp [liftLets, liftLet]
-    | _ => simp [liftLets, liftLet]
-  | _ => simp [liftLets, liftLet]
-
-private theorem liftLet_none_of_no_cases (d : Dec)
-    (h1 : ∀ l p x y, d ≠ .dlet l p (.let_ none x y))
-    (h2 : ∀ l p v x y, d ≠ .dlet l p (.let_ (some v) x y))
-    (h3 : ∀ l p fs x, d ≠ .dlet l p (.letrec fs x)) : liftLet d = none := by
-  cases d with
-  | dlet loc pat expr =>
-    cases expr with
-    | let_ name first body =>
-      cases name with
-      | none => exact (h1 loc pat first body rfl).elim
-      | some name => exact (h2 loc pat name first body rfl).elim
-    | letrec funs body => exact (h3 loc pat funs body rfl).elim
-    | _ => rfl
-  | _ => rfl
-
 /-- An error in a prefix also determines evaluation of a local declaration
 whose private declarations extend that prefix. This is Flapjack proof
 infrastructure with no separate HOL declaration. -/
@@ -100,35 +72,21 @@ theorem evaluate_lift_lets {F : Type} (sofar : List Dec) (d : Dec) :
       result ≠ .err (.abort .typeError) → liftLets sofar d = some (out, final) →
       evaluateDecs state env [.dlocal out [final]] = (last, result) := by
   induction sofar, d using liftLets.induct with
-  | case1 sofar loc pat first body ih =>
+  | case1 sofar d d1 d2 step ih =>
     intro state middle last env inner result out final accumulated source safe lifted
-    apply evaluateLiftLets_step sofar (.dlet loc pat (.let_ none first body))
-      (.dlet loc .pany first) (.dlet loc pat body) state middle last env inner result out final
-      accumulated source safe (by rfl)
-    · simpa only [liftLets] using lifted
+    apply evaluateLiftLets_step sofar d d1 d2 state middle last env inner result out final
+      accumulated source safe step
+    · rw [liftLets.eq_def, step] at lifted
+      exact lifted
     · exact ih
-  | case2 sofar loc pat name first body ih =>
+  | case2 sofar d noStep empty =>
     intro state middle last env inner result out final accumulated source safe lifted
-    apply evaluateLiftLets_step sofar (.dlet loc pat (.let_ (some name) first body))
-      (.dlet loc (.pvar name) first) (.dlet loc pat body) state middle last env inner result out final
-      accumulated source safe (by rfl)
-    · simpa only [liftLets] using lifted
-    · exact ih
-  | case3 sofar loc pat funs body ih =>
+    rw [liftLets.eq_def, noStep] at lifted
+    simp [empty] at lifted
+  | case3 sofar d noStep nonempty =>
     intro state middle last env inner result out final accumulated source safe lifted
-    apply evaluateLiftLets_step sofar (.dlet loc pat (.letrec funs body))
-      (.dletrec loc funs) (.dlet loc pat body) state middle last env inner result out final
-      accumulated source safe (by rfl)
-    · simpa only [liftLets] using lifted
-    · exact ih
-  | case4 sofar d empty h1 h2 h3 =>
-    intro state middle last env inner result out final accumulated source safe lifted
-    have noStep := liftLet_none_of_no_cases d h1 h2 h3
-    simp [liftLets_step_view, noStep, empty] at lifted
-  | case5 sofar d nonempty h1 h2 h3 =>
-    intro state middle last env inner result out final accumulated source safe lifted
-    have noStep := liftLet_none_of_no_cases d h1 h2 h3
-    simp only [liftLets_step_view, noStep, nonempty] at lifted
+    rw [liftLets.eq_def, noStep] at lifted
+    simp only [nonempty] at lifted
     obtain ⟨rfl, rfl⟩ := lifted
     rw [evaluateDecs_local, accumulated]
     simpa using source

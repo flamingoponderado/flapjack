@@ -320,8 +320,15 @@ example : Flapjack.Compiler.Backend.SourceToSource.compile
       (.let_ (some (ofString "y")) (.lit (.intLit 1)) (.var (.short (ofString "y"))))] =
     [.dlocal [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "y")) (.lit (.intLit 1))]
       [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "x")) (.var (.short (ofString "y")))]] := by
-  simp [Flapjack.Compiler.Backend.SourceToSource.compile, Flapjack.Compiler.Backend.SourceLet.compileDecs,
-    Flapjack.Compiler.Backend.SourceLet.liftLets]
+  rw [Flapjack.Compiler.Backend.SourceToSource.compile,
+    Flapjack.Compiler.Backend.SourceLet.compileDecs.eq_def]
+  dsimp only
+  rw [Flapjack.Compiler.Backend.SourceLet.liftLets.eq_def]
+  simp only [Flapjack.Compiler.Backend.SourceLet.liftLet]
+  rw [Flapjack.Compiler.Backend.SourceLet.liftLets.eq_def]
+  simp only [Flapjack.Compiler.Backend.SourceLet.liftLet, List.isEmpty_cons, Bool.false_eq_true,
+    ↓reduceIte, List.reverse_cons, List.reverse_nil, List.nil_append,
+    Flapjack.Compiler.Backend.SourceLet.compileDecs.eq_1]
 #guard source_let_lifting
 #guard referenceOutput (Flapjack.Compiler.Backend.SourceToFlat.compileCakeToClosFuel 100
     Flapjack.Compiler.Backend.SourceToFlat.emptyConfig
