@@ -94,10 +94,10 @@ theorem knownCorrectApproxLetrec {C F : Type} (c : Config) (names : List Basis.P
     | some n => exact closGenNoInlineSafe n 0 fns
   have bodyUnique : uniqueSetGlobals [body] s0.compileOracle := by
     simpa [uniqueSetGlobals, elistGlobals, setGlobals, safeParts.1,
-      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag] using unique
+      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] using unique
   have bodyDisjoint : mglobalsDisjoint s0.globals [body] := by
     simpa [mglobalsDisjoint, elistGlobals, setGlobals, safeParts.1,
-      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag] using disjoint
+      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] using disjoint
   have bodySafe : ∀ e ∈ [body], esgcFree e := by simpa using safeParts.2
   cases hk : knownListTotal c [body] (clos ++ aenv) g0 with
   | mk bodyEas bodyG =>

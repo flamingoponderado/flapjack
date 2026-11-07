@@ -10,14 +10,14 @@ theorem unionGlobalBag_eq_empty (left right : GlobalBag) :
   · intro empty
     constructor <;> funext key
     · have h := congrFun empty key
-      simp only [unionGlobalBag, emptyGlobalBag] at h ⊢
+      simp only [unionGlobalBag, emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] at h ⊢
       omega
     · have h := congrFun empty key
-      simp only [unionGlobalBag, emptyGlobalBag] at h ⊢
+      simp only [unionGlobalBag, emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] at h ⊢
       omega
   · rintro ⟨rfl, rfl⟩
     funext key
-    simp [unionGlobalBag, emptyGlobalBag]
+    simp [unionGlobalBag, emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
 
 /-- An expression list has an empty global bag exactly when every member's
 global bag is empty. The expression carriers remain pending HOL review. -/

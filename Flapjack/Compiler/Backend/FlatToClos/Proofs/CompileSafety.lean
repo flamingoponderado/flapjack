@@ -149,7 +149,7 @@ private theorem interpreterNoWrites :
     ClosInterp.interpreterCons_eq, ClosInterp.interpreterApp_eq,
     ClosInterp.interpreterCall_eq, ClosInterp.interpreterCallList_eq,
     ClosInterp.interpreterIsCase_eq, ClosProps.setGlobals, ClosProps.elistGlobals,
-    ClosProps.funGlobals, ClosProps.opGlobalBag, unionGlobalBag, emptyGlobalBag]
+    ClosProps.funGlobals, ClosProps.opGlobalBag, unionGlobalBag, emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
 
 private theorem compileInit_safe (b : Bool) : ClosProps.esgcFree (ClosInterp.compileInit b) := by
   cases b <;> simp [ClosInterp.compileInit, ClosInterp.interpreterCons_eq,
@@ -161,7 +161,7 @@ private theorem compileInit_globals (b : Bool) :
   cases b <;> funext key <;>
     simp [ClosInterp.compileInit, ClosInterp.interpreterCons_eq, ClosInterp.interpreterVar_eq,
       ClosProps.setGlobals, ClosProps.elistGlobals, ClosProps.opGlobalBag,
-      interpreterNoWrites, unionGlobalBag, emptyGlobalBag]
+      interpreterNoWrites, unionGlobalBag, emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
 
 /-- Attaching the interpreter initializes global slot zero once and preserves
 the shifted writes of the compiled declarations. -/
@@ -210,6 +210,6 @@ theorem incCompileDecs_setGlobals {α : Type} (ds : List FlatLang.Exp)
   simp only [incCompileDecs, ClosInterp.elistGlobals_insertInterp, ClosProps.elistGlobals_append,
     compileDecs_setGlobals ds noMat, unitGlobals]
   funext key
-  simp [unionGlobalBag, emptyGlobalBag]
+  simp [unionGlobalBag, emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
 
 end Flapjack.Compiler.Backend.FlatToClos

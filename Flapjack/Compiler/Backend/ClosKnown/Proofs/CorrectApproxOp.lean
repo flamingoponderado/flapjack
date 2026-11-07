@@ -34,7 +34,7 @@ theorem ordinaryOpApprox {C F : Type} (c : Config) (trace : BackendCommon.Tra)
     intro n i
     have bound := unique n i
     simp only [elistGlobals_append, elistGlobals, setGlobals, FlatProps.unionGlobalBag,
-      FlatProps.emptyGlobalBag, Nat.add_zero] at bound ⊢
+      FlatProps.emptyGlobalBag, Nat.add_zero, Flapjack.bagUnion, Flapjack.emptyBag] at bound ⊢
     omega
   have ⟨argsDisjoint, opDisjoint⟩ :=
     (mglobalsDisjointRw s0.globals (.var .none 0) (.var .none 0) (.var .none 0) (.var .none 0)

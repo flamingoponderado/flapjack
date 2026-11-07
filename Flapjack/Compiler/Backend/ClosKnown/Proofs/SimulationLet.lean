@@ -40,7 +40,7 @@ theorem knownCorrect0Let {C F : Type} (trace : BackendCommon.Tra) (xs : List Clo
     intro n i
     have bound := unique n i
     simp only [elistGlobals_append, elistGlobals, setGlobals,
-      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Nat.add_zero] at bound ⊢
+      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Nat.add_zero, Flapjack.bagUnion, Flapjack.emptyBag] at bound ⊢
     omega
   have ⟨bindUnique, bodyUnique, swappedUnique⟩ := CorrectApprox.Cons.uniqueParts xs [body] s0.compileOracle uniqueBoth
   have ⟨bindDisjoint, bodyDisjoint⟩ :=

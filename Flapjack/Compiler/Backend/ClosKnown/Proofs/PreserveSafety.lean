@@ -137,7 +137,7 @@ theorem knownPreservesSafetyRaise (c : Config) (trace : BackendCommon.Tra) (body
     simp [knownSourceHead] at run
     rcases run with ⟨rfl, rfl⟩
     refine ⟨?_, ?_, ?_, result.2.2.2⟩
-    · simpa [elistGlobals, setGlobals, FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag] using result.1
+    · simpa [elistGlobals, setGlobals, FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] using result.1
     · simpa [esgcFree] using result.2.1
     · simp [valApproxSgcFree]
 
@@ -165,7 +165,7 @@ theorem knownPreservesSafetyTick (c : Config) (trace : BackendCommon.Tra) (body 
     simp [knownSourceHead] at run
     rcases run with ⟨rfl, rfl⟩
     simpa [elistGlobals, setGlobals, esgcFree, FlatProps.unionGlobalBag,
-      FlatProps.emptyGlobalBag, valApproxSgcFree] using result
+      FlatProps.emptyGlobalBag, valApproxSgcFree, Flapjack.bagUnion, Flapjack.emptyBag] using result
 
 /-- Conditional induction case for optimizer global safety, with the original
 result-dependent hypotheses for each successive branch. -/
@@ -218,7 +218,7 @@ theorem knownPreservesSafetyIf (c : Config) (trace : BackendCommon.Tra)
           have b1 := r1.1 i
           have b2 := r2.1 i
           have b3 := r3.1 i
-          simp [elistGlobals, setGlobals, FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag] at b1 b2 b3 ⊢
+          simp [elistGlobals, setGlobals, FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] at b1 b2 b3 ⊢
           omega
         · have sx : esgcFree x' := by simpa using r1.2.1
           have sy : esgcFree y' := by simpa using r2.2.1
@@ -269,7 +269,7 @@ theorem knownPreservesSafetyLet (c : Config) (trace : BackendCommon.Tra)
       · intro i
         have b1 := r1.1 i
         have b2 := r2.1 i
-        simp [elistGlobals, setGlobals, FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag] at b2 ⊢
+        simp [elistGlobals, setGlobals, FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] at b2 ⊢
         omega
       · have exprSafe : esgcFree bodyExpr := by simpa using r2.2.1
         simp only [List.map_cons, List.map_nil, List.mem_singleton, forall_eq, esgcFree, esgcFreeList_iff]
@@ -320,7 +320,7 @@ theorem knownPreservesSafetyHandle (c : Config) (trace : BackendCommon.Tra)
       · intro i
         have b1 := r1.1 i
         have b2 := r2.1 i
-        simp [elistGlobals, setGlobals, FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag] at b1 b2 ⊢
+        simp [elistGlobals, setGlobals, FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] at b1 b2 ⊢
         omega
       · have s1 : esgcFree e1 := by simpa using r1.2.1
         have s2 : esgcFree e2 := by simpa using r2.2.1
@@ -351,7 +351,7 @@ theorem knownPreservesSafetyCall (c : Config) (trace : BackendCommon.Tra) (ticks
     simp at run
     rcases run with ⟨rfl, rfl⟩
     refine ⟨?_, ?_, ?_, result.2.2.2⟩
-    · simpa [elistGlobals, setGlobals, FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag] using result.1
+    · simpa [elistGlobals, setGlobals, FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] using result.1
     · simp only [List.map_cons, List.map_nil, List.mem_singleton, forall_eq, esgcFree, esgcFreeList_iff]
       exact result.2.1
     · simp [valApproxSgcFree]
@@ -415,9 +415,9 @@ theorem knownPreservesSafetyOp (c : Config) (trace : BackendCommon.Tra) (op : Cl
         have bound := result.1 i
         have outEq := congrFun outSafe.1 i
         simp only [List.map_cons, List.map_nil, elistGlobals,
-          FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Nat.add_zero]
+          FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Nat.add_zero, Flapjack.bagUnion, Flapjack.emptyBag]
         rw [outEq]
-        simp only [setGlobals, FlatProps.unionGlobalBag]
+        simp only [setGlobals, FlatProps.unionGlobalBag, Flapjack.bagUnion]
         omega
       · have argsSafe : esgcFree (.op trace op (ea.map Prod.fst)) := by
           simpa [esgcFree, esgcFreeList_iff] using result.2.1
@@ -459,10 +459,10 @@ theorem knownPreservesSafetyFn (c : Config) (name : Basis.Pure.MlString.MlString
     have transformedEmpty : setGlobals bodyExpr = FlatProps.emptyGlobalBag := by
       funext i
       have bound := result.1 i
-      simp [elistGlobals, FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag] at bound
+      simp [elistGlobals, FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] at bound
       have original := congrFun emptyBody i
-      simp [FlatProps.emptyGlobalBag] at original
-      simp only [FlatProps.emptyGlobalBag]
+      simp [FlatProps.emptyGlobalBag, Flapjack.emptyBag] at original
+      simp only [FlatProps.emptyGlobalBag, Flapjack.emptyBag]
       omega
     rw [knownListTotal_fn, hk] at run
     simp [knownSourceHead] at run
@@ -470,7 +470,7 @@ theorem knownPreservesSafetyFn (c : Config) (name : Basis.Pure.MlString.MlString
     refine ⟨?_, ?_, ?_, result.2.2.2⟩
     · intro i
       have bound := result.1 i
-      simpa [elistGlobals, setGlobals, FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag] using bound
+      simpa [elistGlobals, setGlobals, FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] using bound
     · simpa [esgcFree] using transformedEmpty
     · cases loc with
       | none => simp [valApproxSgcFree]
@@ -544,10 +544,10 @@ theorem knownPreservesSafetyLetrec (c : Config) (names : List Basis.Pure.MlStrin
       have transformedEmpty : setGlobals e' = FlatProps.emptyGlobalBag := by
         funext i
         have bound := result.1 i
-        simp [elistGlobals, FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag] at bound
+        simp [elistGlobals, FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] at bound
         have zero := congrFun originalEmpty i
-        simp [FlatProps.emptyGlobalBag] at zero
-        simp only [FlatProps.emptyGlobalBag]
+        simp [FlatProps.emptyGlobalBag, Flapjack.emptyBag] at zero
+        simp only [FlatProps.emptyGlobalBag, Flapjack.emptyBag]
         omega
       change (n, (knownSourceHead (knownListTotal c [e] (List.replicate n ValApprox.other ++ clos ++ aenv) g0).1).1) = entry at entryEq
       simp [knownSourceHead] at entryEq
@@ -574,7 +574,7 @@ theorem knownPreservesSafetyLetrec (c : Config) (names : List Basis.Pure.MlStrin
     · intro i
       have b := result.1 i
       simp [elistGlobals, setGlobals, FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag,
-        newFnsEmpty, initialSafe.1] at b ⊢
+        newFnsEmpty, initialSafe.1, Flapjack.bagUnion, Flapjack.emptyBag] at b ⊢
       exact b
     · have bodyOutSafe : esgcFree bodyExpr := by simpa using result.2.1
       simpa [esgcFree, newFnsEmpty] using bodyOutSafe
@@ -628,7 +628,7 @@ theorem knownPreservesSafetyApp (c : Config) (trace : BackendCommon.Tra) (loc : 
         · intro i
           have b1 := rArgs.1 i
           have b2 := rFun.1 i
-          simp [elistGlobals, setGlobals, FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag] at b2 ⊢
+          simp [elistGlobals, setGlobals, FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] at b2 ⊢
           omega
         · simp only [List.map_cons, List.map_nil, List.mem_singleton, forall_eq, esgcFree, esgcFreeList_iff]
           exact ⟨e1Safe, argsSafe⟩
@@ -640,7 +640,7 @@ theorem knownPreservesSafetyApp (c : Config) (trace : BackendCommon.Tra) (loc : 
         · intro i
           have b1 := rArgs.1 i
           have b2 := rFun.1 i
-          simp [elistGlobals, setGlobals, FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag] at b2 ⊢
+          simp [elistGlobals, setGlobals, FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] at b2 ⊢
           omega
         · simp only [List.map_cons, List.map_nil, List.mem_singleton, forall_eq, esgcFree, esgcFreeList_iff]
           exact ⟨e1Safe, argsSafe⟩
@@ -663,10 +663,10 @@ theorem knownPreservesSafetyApp (c : Config) (trace : BackendCommon.Tra) (loc : 
           have outEmpty : setGlobals inlineExpr = FlatProps.emptyGlobalBag := by
             funext i
             have bound := rBody.1 i
-            simp [elistGlobals, FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag] at bound
+            simp [elistGlobals, FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] at bound
             have original := congrFun bodyEmpty i
-            simp [FlatProps.emptyGlobalBag] at original
-            simp only [FlatProps.emptyGlobalBag]
+            simp [FlatProps.emptyGlobalBag, Flapjack.emptyBag] at original
+            simp only [FlatProps.emptyGlobalBag, Flapjack.emptyBag]
             omega
           have inlineExprSafe : esgcFree inlineExpr := by simpa using rBody.2.1
           simp only [decision] at run
@@ -679,7 +679,7 @@ theorem knownPreservesSafetyApp (c : Config) (trace : BackendCommon.Tra) (loc : 
             have b2 := rFun.1 i
             cases pureX : ClosLang.pure x <;>
               simp [elistGlobals, setGlobals, FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag,
-                elistGlobals_append, ticksSetGlobals, outEmpty] at b2 ⊢ <;> omega
+                elistGlobals_append, ticksSetGlobals, outEmpty, Flapjack.bagUnion, Flapjack.emptyBag] at b2 ⊢ <;> omega
           · have tickSafe := (ticksEsgcFree trace 1 xs.length inlineExpr).mpr inlineExprSafe
             simp only [List.map_cons, List.map_nil, List.mem_singleton, forall_eq, esgcFree, esgcFreeList_iff]
             constructor

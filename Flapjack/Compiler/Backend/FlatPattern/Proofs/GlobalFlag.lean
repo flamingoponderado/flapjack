@@ -14,7 +14,7 @@ theorem opSetsGlobals_gbag (op : FlatLang.Op) :
   case globalVarInit index =>
     intro same
     have atIndex := congrFun same index
-    simp [emptyGlobalBag] at atIndex
+    simp [emptyGlobalBag, Flapjack.emptyBag] at atIndex
 
 /-- A union has a nonempty bag exactly when one input is nonempty. -/
 theorem unionGlobalBag_ne_empty (left right : GlobalBag) :

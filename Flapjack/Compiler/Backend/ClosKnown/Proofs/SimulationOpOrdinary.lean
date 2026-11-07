@@ -84,10 +84,10 @@ theorem knownCorrect0OpNoWrites {C F : Type} (trace : BackendCommon.Tra) (op : C
     sub0, sub1, mono, free, envRel, unique, stateOracle, envEq, noType⟩ := h
   have argsUnique : uniqueSetGlobals xs s0.compileOracle := by
     simpa [uniqueSetGlobals, elistGlobals_append, elistGlobals, setGlobals, noWrites,
-      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag] using unique
+      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] using unique
   have argsDisjoint : mglobalsDisjoint s0.globals xs := by
     simpa [mglobalsDisjoint, elistGlobals, setGlobals, noWrites,
-      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag] using disjoint
+      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] using disjoint
   have argsSafe : ∀ e ∈ xs, esgcFree e := by
     have safeOp := exprSafe (.op trace op xs) (by simp)
     simpa [esgcFree, esgcFreeList_iff] using safeOp
@@ -155,7 +155,7 @@ theorem knownCorrect0OpLabel {C F : Type} (trace : BackendCommon.Tra) (label : N
   · simp
   · simp
   · intro index; simp
-  · intro k; simp [opGlobalBag, FlatProps.emptyGlobalBag]
+  · intro k; simp [opGlobalBag, FlatProps.emptyGlobalBag, Flapjack.emptyBag]
   · exact ih
 
 /-- Ffi operation case of the original optimizer simulation. -/
@@ -168,7 +168,7 @@ theorem knownCorrect0OpFfi {C F : Type} (trace : BackendCommon.Tra) (name : Flap
   · simp
   · simp
   · intro index; simp
-  · intro k; simp [opGlobalBag, FlatProps.emptyGlobalBag]
+  · intro k; simp [opGlobalBag, FlatProps.emptyGlobalBag, Flapjack.emptyBag]
   · exact ih
 
 /-- Int operation case of the original optimizer simulation. -/
@@ -181,7 +181,7 @@ theorem knownCorrect0OpInt {C F : Type} (trace : BackendCommon.Tra) (operation :
   · simp
   · simp
   · intro index; simp
-  · intro k; simp [opGlobalBag, FlatProps.emptyGlobalBag]
+  · intro k; simp [opGlobalBag, FlatProps.emptyGlobalBag, Flapjack.emptyBag]
   · exact ih
 
 /-- Word operation case of the original optimizer simulation. -/
@@ -194,7 +194,7 @@ theorem knownCorrect0OpWord {C F : Type} (trace : BackendCommon.Tra) (operation 
   · simp
   · simp
   · intro index; simp
-  · intro k; simp [opGlobalBag, FlatProps.emptyGlobalBag]
+  · intro k; simp [opGlobalBag, FlatProps.emptyGlobalBag, Flapjack.emptyBag]
   · exact ih
 
 /-- Block operation case of the original optimizer simulation. -/
@@ -207,7 +207,7 @@ theorem knownCorrect0OpBlock {C F : Type} (trace : BackendCommon.Tra) (operation
   · simp
   · simp
   · intro index; simp
-  · intro k; simp [opGlobalBag, FlatProps.emptyGlobalBag]
+  · intro k; simp [opGlobalBag, FlatProps.emptyGlobalBag, Flapjack.emptyBag]
   · exact ih
 
 /-- Memory operation case of the original optimizer simulation. -/
@@ -220,7 +220,7 @@ theorem knownCorrect0OpMemory {C F : Type} (trace : BackendCommon.Tra) (operatio
   · simp
   · simp
   · intro index; simp
-  · intro k; simp [opGlobalBag, FlatProps.emptyGlobalBag]
+  · intro k; simp [opGlobalBag, FlatProps.emptyGlobalBag, Flapjack.emptyBag]
   · exact ih
 
 /-- AllocThunk operation case of the original optimizer simulation. -/
@@ -233,7 +233,7 @@ theorem knownCorrect0OpAllocThunk {C F : Type} (trace : BackendCommon.Tra) (mode
   · simp
   · simp
   · intro index; simp
-  · intro k; simp [opGlobalBag, FlatProps.emptyGlobalBag]
+  · intro k; simp [opGlobalBag, FlatProps.emptyGlobalBag, Flapjack.emptyBag]
   · exact ih
 
 /-- UpdateThunk operation case of the original optimizer simulation. -/
@@ -246,7 +246,7 @@ theorem knownCorrect0OpUpdateThunk {C F : Type} (trace : BackendCommon.Tra) (mod
   · simp
   · simp
   · intro index; simp
-  · intro k; simp [opGlobalBag, FlatProps.emptyGlobalBag]
+  · intro k; simp [opGlobalBag, FlatProps.emptyGlobalBag, Flapjack.emptyBag]
   · exact ih
 
 /-- AllocGlobal operation case of the original optimizer simulation. -/
@@ -259,7 +259,7 @@ theorem knownCorrect0OpAllocGlobal {C F : Type} (trace : BackendCommon.Tra)
   · simp
   · simp
   · intro index; simp
-  · intro k; simp [opGlobalBag, FlatProps.emptyGlobalBag]
+  · intro k; simp [opGlobalBag, FlatProps.emptyGlobalBag, Flapjack.emptyBag]
   · exact ih
 
 /-- GlobalsPtr operation case of the original optimizer simulation. -/
@@ -272,7 +272,7 @@ theorem knownCorrect0OpGlobalsPtr {C F : Type} (trace : BackendCommon.Tra)
   · simp
   · simp
   · intro index; simp
-  · intro k; simp [opGlobalBag, FlatProps.emptyGlobalBag]
+  · intro k; simp [opGlobalBag, FlatProps.emptyGlobalBag, Flapjack.emptyBag]
   · exact ih
 
 /-- SetGlobalsPtr operation case of the original optimizer simulation. -/
@@ -285,7 +285,7 @@ theorem knownCorrect0OpSetGlobalsPtr {C F : Type} (trace : BackendCommon.Tra)
   · simp
   · simp
   · intro index; simp
-  · intro k; simp [opGlobalBag, FlatProps.emptyGlobalBag]
+  · intro k; simp [opGlobalBag, FlatProps.emptyGlobalBag, Flapjack.emptyBag]
   · exact ih
 
 end Flapjack.Compiler.Backend.ClosKnown.Simulation.Ordinary

@@ -90,7 +90,7 @@ theorem knownCorrectApproxFn {C F : Type} (c : Config) (name : Basis.Pure.MlStri
     simpa [esgcFree] using h
   have emptyBody : elistGlobals [body] = FlatProps.emptyGlobalBag := by
     funext i
-    simp [elistGlobals, FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, bodyEmpty]
+    simp [elistGlobals, FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, bodyEmpty, Flapjack.bagUnion, Flapjack.emptyBag]
   cases hk : knownListTotal c [body] (List.replicate arity .other ++ aenv) g0 with
   | mk bodyEas bodyG =>
     obtain ⟨bodyExpr, bodyApprox, bodyEq⟩ :=

@@ -2201,12 +2201,18 @@ class FmapResultObservationInventoryTest(unittest.TestCase):
         tags[key] = tags[key][:-1] + ((),)
         self.assertTrue(MAP["validate_inventory"]([record], set(), tags, set()))
 
-    def test_pending_review_retains_the_matching_qualifier(self):
+    def test_pending_review_cannot_claim_the_observation_qualifier(self):
         record, tags = self.fixture()
         record["statement_status"] = "pending_statement_review"
-        self.assertEqual([], MAP["validate_inventory"]([record], set(), tags, set()))
-        record["fmap_as_finite_support_result_observations"] = ["other"]
-        self.assertTrue(MAP["validate_inventory"]([record], set(), tags, set()))
+        errors = MAP["validate_inventory"]([record], set(), tags, set())
+        self.assertTrue(any("result observations require matching reviewed" in e for e in errors), errors)
+
+    def test_matching_producers_reject_wrong_reviewed_status(self):
+        record, tags = self.fixture()
+        record["statement_status"] = "reviewed_exact"
+        errors = MAP["validate_inventory"]([record], set(), tags, set())
+        self.assertTrue(any("result observations require matching reviewed" in e for e in errors), errors)
+        self.assertFalse(any("producers do not match" in e for e in errors), errors)
 
 
 class FmapResultObservationCombinationTest(unittest.TestCase):

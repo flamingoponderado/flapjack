@@ -56,13 +56,13 @@ theorem fullApplicationBodySimulation {C F : Type} (c : Config)
     ⟨found, fnSafe, argsSafe first (by simp), fun v hv => argsSafe v (by simp [hv])⟩
   have bodyEmpty : elistGlobals [body] = FlatProps.emptyGlobalBag := by
     funext key
-    simp [elistGlobals, safety.1, FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag]
+    simp [elistGlobals, safety.1, FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
   have bodySafe : ∀ e ∈ [body], esgcFree e := by simpa using setGlobalsEmptyEsgcFree body safety.1
   have bodyUnique : uniqueSetGlobals [body] source.compileOracle := by
     simpa [uniqueSetGlobals, elistGlobals_append, elistGlobals, safety.1, FlatProps.unionGlobalBag,
-      FlatProps.emptyGlobalBag] using unique
+      FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] using unique
   have bodyDisjoint : mglobalsDisjoint source.globals [body] := by
-    simp [mglobalsDisjoint, bodyEmpty, FlatProps.emptyGlobalBag]
+    simp [mglobalsDisjoint, bodyEmpty, FlatProps.emptyGlobalBag, Flapjack.emptyBag]
   obtain ⟨g0, g1, bodyApprox, factor, sub, approxSafe, globalSafe, known⟩ := bodyRel
   have unchanged := knownUnchangedGlobals { c with inlineFactor := factor } [body] approxEnv
     g0 [(targetBody, bodyApprox)] g1 ⟨known, bodyEmpty⟩
@@ -141,14 +141,14 @@ theorem fullBodyContinuationSimulation {C F : Type} (c : Config)
     ⟨found, fnSafe, argsSafe first (by simp), fun v hv => argsSafe v (by simp [hv])⟩
   have bodyEmpty : elistGlobals [body] = FlatProps.emptyGlobalBag := by
     funext key
-    simp [elistGlobals, closureSafety.1, FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag]
+    simp [elistGlobals, closureSafety.1, FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
   have bodySafe : ∀ e ∈ [body], esgcFree e := by
     simpa using setGlobalsEmptyEsgcFree body closureSafety.1
   have bodyUnique : uniqueSetGlobals [body] start.compileOracle := by
     simpa [start, decClock, uniqueSetGlobals, elistGlobals_append, elistGlobals, closureSafety.1,
-      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag] using unique
+      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] using unique
   have bodyDisjoint : mglobalsDisjoint start.globals [body] := by
-    simp [start, decClock, mglobalsDisjoint, bodyEmpty, FlatProps.emptyGlobalBag]
+    simp [start, decClock, mglobalsDisjoint, bodyEmpty, FlatProps.emptyGlobalBag, Flapjack.emptyBag]
   have startSafe : ssgcFree start := (ssgcFreeDecClock cost source).2 stateSafe
   have startDisjoint : stateOracleMglobalsDisjoint start := by
     simpa [start, decClock, stateOracleMglobalsDisjoint] using disjoint

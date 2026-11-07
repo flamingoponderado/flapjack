@@ -255,13 +255,13 @@ private theorem setGlobals_smartIf (t : Tra) (c x y : FlatLang.Exp)
     (hc : setGlobals c = emptyGlobalBag) (hx : setGlobals x = emptyGlobalBag)
     (hy : setGlobals y = emptyGlobalBag) :
     setGlobals (smartIf t c x y) = emptyGlobalBag := by
-  cases c <;> simp_all [smartIf, setGlobals, FlatProps.unionGlobalBag_empty_right]
+  cases c <;> simp_all [smartIf, setGlobals, Flapjack.bagUnion_empty_right]
   case con t tag args =>
-    cases tag <;> cases args <;> try simp_all [setGlobals, FlatProps.unionGlobalBag_empty_right]
+    cases tag <;> cases args <;> try simp_all [setGlobals, Flapjack.bagUnion_empty_right]
     case some.nil pair =>
       obtain ⟨tag, typ⟩ := pair
-      cases typ <;> try simp_all [setGlobals, FlatProps.unionGlobalBag_empty_right]
-      all_goals split_ifs <;> simp_all [setGlobals, FlatProps.unionGlobalBag_empty_right]
+      cases typ <;> try simp_all [setGlobals, Flapjack.bagUnion_empty_right]
+      all_goals split_ifs <;> simp_all [setGlobals, Flapjack.bagUnion_empty_right]
 
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "set_globals_decode_pos"]
 theorem setGlobals_decodePos (t : Tra) (p : Position) (exp : FlatLang.Exp)
@@ -270,12 +270,12 @@ theorem setGlobals_decodePos (t : Tra) (p : Position) (exp : FlatLang.Exp)
   | emptyPos => exact safe
   | pos index rest ih =>
     apply ih
-    simp [setGlobals, elistGlobals, opGlobalBag, safe, FlatProps.unionGlobalBag_empty_right]
+    simp [setGlobals, elistGlobals, opGlobalBag, safe, Flapjack.bagUnion_empty_right]
 
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "set_globals_decode_test"]
 theorem setGlobals_decodeTest (exp : FlatLang.Exp) (t : Tra) (d : DTest)
     (safe : setGlobals exp = emptyGlobalBag) : setGlobals (decodeTest t d exp) = emptyGlobalBag := by
-  cases d <;> simp [decodeTest, setGlobals, elistGlobals, opGlobalBag, safe, FlatProps.unionGlobalBag_empty_right]
+  cases d <;> simp [decodeTest, setGlobals, elistGlobals, opGlobalBag, safe, Flapjack.bagUnion_empty_right]
 
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "set_globals_decode_guard"]
 theorem setGlobals_decodeGuard (exp : FlatLang.Exp) (t : Tra) (gd : DGuard)
@@ -283,7 +283,7 @@ theorem setGlobals_decodeGuard (exp : FlatLang.Exp) (t : Tra) (gd : DGuard)
   induction gd with
   | true_ => exact setGlobals_mkBool t true
   | posTest pos test => exact setGlobals_decodeTest _ t test (setGlobals_decodePos t pos exp safe)
-  | not gd ih => simp [decodeGuard, setGlobals, elistGlobals, opGlobalBag, ih, setGlobals_mkBool, FlatProps.unionGlobalBag_empty_right]
+  | not gd ih => simp [decodeGuard, setGlobals, elistGlobals, opGlobalBag, ih, setGlobals_mkBool, Flapjack.bagUnion_empty_right]
   | conj a b ihA ihB => exact setGlobals_smartIf t _ _ _ ihA ihB (setGlobals_mkBool t false)
   | disj a b ihA ihB => exact setGlobals_smartIf t _ _ _ ihA (setGlobals_mkBool t true) ihB
 
@@ -295,7 +295,7 @@ theorem setGlobals_children (trace : Tra) (value : FlatLang.Exp) (patterns : Lis
   intro pattern expression member
   obtain ⟨i, _, eq⟩ := List.mem_mapIdx.mp member
   obtain ⟨_, rfl⟩ := Prod.mk.inj eq
-  simpa [setGlobals, elistGlobals, opGlobalBag, FlatProps.unionGlobalBag_empty_left, FlatProps.unionGlobalBag_empty_right] using safe
+  simpa [setGlobals, elistGlobals, opGlobalBag, Flapjack.bagUnion_empty_left, Flapjack.bagUnion_empty_right] using safe
 
 /-- Naive matching generates a global-initialization-safe guard when each worklist value is
 global-initialization-safe. -/
@@ -316,7 +316,7 @@ theorem setGlobals_naivePatternMatch_aux (trace : Tra) (todo : List (FlatLang.Pa
       exact safe pattern expression (by simp [member])
     simp only [naivePatternMatch]
     apply setGlobals_smartIf
-    · simp [setGlobals, elistGlobals, opGlobalBag, valueSafe, FlatProps.unionGlobalBag_empty_right]
+    · simp [setGlobals, elistGlobals, opGlobalBag, valueSafe, Flapjack.bagUnion_empty_right]
     · exact ih restSafe
     · exact setGlobals_mkBool trace false
   | case5 value rest patterns ih =>
@@ -331,7 +331,7 @@ theorem setGlobals_naivePatternMatch_aux (trace : Tra) (todo : List (FlatLang.Pa
     have valueSafe := safe (.pcon (some (tag, typ)) patterns) value (by simp)
     simp only [naivePatternMatch]
     apply setGlobals_smartIf
-    · simp [setGlobals, elistGlobals, opGlobalBag, valueSafe, FlatProps.unionGlobalBag_empty_right]
+    · simp [setGlobals, elistGlobals, opGlobalBag, valueSafe, Flapjack.bagUnion_empty_right]
     · apply ih
       intro pattern expression member
       rcases List.mem_append.mp member with member | member
@@ -353,7 +353,7 @@ theorem setGlobals_naivePatternMatch_aux (trace : Tra) (todo : List (FlatLang.Pa
     intro pattern' expression member
     simp only [List.mem_cons, Prod.mk.injEq] at member
     rcases member with ⟨_, rfl⟩ | member
-    · simpa [setGlobals, elistGlobals, opGlobalBag, FlatProps.unionGlobalBag_empty_left, FlatProps.unionGlobalBag_empty_right] using valueSafe
+    · simpa [setGlobals, elistGlobals, opGlobalBag, Flapjack.bagUnion_empty_left, Flapjack.bagUnion_empty_right] using valueSafe
     · exact safe pattern' expression (by simp [member])
 
 
@@ -370,13 +370,13 @@ theorem setGlobals_naivePatternMatch (t : Tra) (xs : List (FlatLang.Pat × FlatL
 theorem setGlobals_smartIf_le (t : Tra) (c x y : FlatLang.Exp) (key : Nat) :
     setGlobals (smartIf t c x y) key ≤
       setGlobals c key + setGlobals x key + setGlobals y key := by
-  cases c <;> simp [smartIf, setGlobals, unionGlobalBag]
+  cases c <;> simp [smartIf, setGlobals, unionGlobalBag, Flapjack.bagUnion]
   case con t tag args =>
-    cases tag <;> cases args <;> simp [setGlobals, elistGlobals, emptyGlobalBag, unionGlobalBag]
+    cases tag <;> cases args <;> simp [setGlobals, elistGlobals, emptyGlobalBag, unionGlobalBag, Flapjack.emptyBag, Flapjack.bagUnion]
     case some.nil pair =>
       obtain ⟨tag, typ⟩ := pair
-      cases typ <;> simp [setGlobals, elistGlobals, emptyGlobalBag, unionGlobalBag]
-      all_goals split_ifs <;> simp [setGlobals, elistGlobals, emptyGlobalBag, unionGlobalBag]
+      cases typ <;> simp [setGlobals, elistGlobals, emptyGlobalBag, unionGlobalBag, Flapjack.emptyBag, Flapjack.bagUnion]
+      all_goals split_ifs <;> simp [setGlobals, elistGlobals, emptyGlobalBag, unionGlobalBag, Flapjack.emptyBag, Flapjack.bagUnion]
 
 /-- The generated naive branch chain cannot add global writes. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "set_globals_naive_pattern_matches"]
@@ -387,7 +387,7 @@ theorem setGlobals_naivePatternMatches (t : Tra) (x : FlatLang.Exp)
       elistGlobals (dflt :: ps.map Prod.snd) key := by
   intro key
   induction ps with
-  | nil => simp [naivePatternMatches, elistGlobals, unionGlobalBag, emptyGlobalBag]
+  | nil => simp [naivePatternMatches, elistGlobals, unionGlobalBag, emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
   | cons row rest ih =>
     obtain ⟨p, body⟩ := row
     have guardSafe : setGlobals (naivePatternMatch t [(p, x)]) = emptyGlobalBag := by
@@ -396,8 +396,8 @@ theorem setGlobals_naivePatternMatches (t : Tra) (x : FlatLang.Exp)
     have bound := setGlobals_smartIf_le t (naivePatternMatch t [(p, x)]) body
       (naivePatternMatches t x rest dflt) key
     simp only [naivePatternMatches]
-    simp only [guardSafe, emptyGlobalBag, Nat.zero_add] at bound
-    simp only [List.map_cons, elistGlobals, unionGlobalBag] at ih ⊢
+    simp only [guardSafe, emptyGlobalBag, Flapjack.emptyBag, Nat.zero_add] at bound
+    simp only [List.map_cons, elistGlobals, unionGlobalBag, Flapjack.bagUnion] at ih ⊢
     omega
 
 private theorem setGlobals_patternEntries (trace : Tra) (base start : Nat) (patterns : List FlatLang.Pat) :
@@ -422,7 +422,7 @@ private theorem setGlobals_projectionFold (trace : Tra) (value body : FlatLang.E
   | nil => rfl
   | cons entry rest ih =>
     obtain ⟨⟨index, name⟩, work⟩ := entry
-    simp [setGlobals, elistGlobals, opGlobalBag, valueSafe, ih, FlatProps.unionGlobalBag_empty_left, FlatProps.unionGlobalBag_empty_right]
+    simp [setGlobals, elistGlobals, opGlobalBag, valueSafe, ih, Flapjack.bagUnion_empty_left, Flapjack.bagUnion_empty_right]
 
 /-- Pattern binding preserves the global bag when worklist values have empty bags. -/
 theorem setGlobals_compilePatBindings_aux (trace : Tra) (base : Nat)
@@ -455,7 +455,7 @@ theorem setGlobals_compilePatBindings_aux (trace : Tra) (base : Nat)
       exact safe p k e (by simp [member])
     have next := ih restSafe
     rw [compiled] at next
-    simp [compilePatBindings, compiled, setGlobals, valueSafe, next, FlatProps.unionGlobalBag_empty_left]
+    simp [compilePatBindings, compiled, setGlobals, valueSafe, next, Flapjack.bagUnion_empty_left]
   | case5 i key expression rest stamp patterns entries used continuation compiled ih =>
     dsimp only [entries] at compiled
     intro safe
@@ -487,7 +487,7 @@ theorem setGlobals_compilePatBindings_aux (trace : Tra) (base : Nat)
       · exact safe p k e (by simp [member])
     have next := ih allSafe
     rw [compiled] at next
-    simp [compilePatBindings, compiled, setGlobals, valueSafe, next, FlatProps.unionGlobalBag_empty_left]
+    simp [compilePatBindings, compiled, setGlobals, valueSafe, next, Flapjack.bagUnion_empty_left]
   | case7 i key expression rest pattern generated used continuation compiled ih =>
     dsimp only [generated] at compiled
     intro safe
@@ -503,7 +503,7 @@ theorem setGlobals_compilePatBindings_aux (trace : Tra) (base : Nat)
     have next := ih allSafe
     rw [compiled] at next
     simp [compilePatBindings, compiled, setGlobals, elistGlobals, opGlobalBag, valueSafe, next,
-      FlatProps.unionGlobalBag_empty_left, FlatProps.unionGlobalBag_empty_right]
+      Flapjack.bagUnion_empty_left, Flapjack.bagUnion_empty_right]
 
 /-- Pattern binding leaves the continuation's global bag unchanged. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "set_globals_compile_pat_bindings"]
