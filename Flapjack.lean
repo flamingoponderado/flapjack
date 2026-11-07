@@ -3147,7 +3147,7 @@ import Flapjack.EvaluateProps.ClockIoCases
 import Flapjack.EvaluateProps.ClockIoExpr
 import Flapjack.EvaluateProps.ClockIoApp
 import Flapjack.EvaluateProps.ClockIoFull
-import Flapjack.EvaluateProps.NoEvalBase
+import Flapjack.EvaluateProps.NoEval
 import Flapjack.EvaluateProps.ClockIoConsequences
 import Flapjack.Compiler.Inference.InferT.Display
 import Flapjack.Compiler.Inference.Infer.TypesOutput
