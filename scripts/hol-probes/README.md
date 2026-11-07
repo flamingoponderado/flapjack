@@ -9677,3 +9677,6 @@ The flat-to-closure relation probe also replays the full local
 
 `flat_pattern_global_flag_probe.out` captures `set_globals_decode_dtree_empty`
 with its complete conjunction and inferred global-bag and sparse-tree types.
+
+`flat_pattern_global_flag_probe.out` captures `compile_pats_no_Mat` with
+its complete default, value, and mapped row-body premise.

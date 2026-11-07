@@ -296,16 +296,18 @@ private theorem zip_right_mem {α β : Type} (xs : List α) (ys : List β) (a : 
       · exact List.mem_cons_of_mem _ (ih ys member)
 
 /-- Both implementations of branch compilation preserve match-freedom. -/
-theorem noMat_compilePats (cfg : Config) (naive : Bool) (trace : Tra) (base : Nat)
-    (value default : FlatLang.Exp) (rows : List (FlatLang.Pat × FlatLang.Exp))
-    (valueSafe : FlatProps.noMat value = true) (defaultSafe : FlatProps.noMat default = true)
-    (rowsSafe : ∀ pattern body, (pattern, body) ∈ rows → FlatProps.noMat body = true) :
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "compile_pats_no_Mat"]
+theorem noMat_compilePats (default value : FlatLang.Exp) (rows : List (FlatLang.Pat × FlatLang.Exp))
+    (cfg : Config) (naive : Bool) (trace : Tra) (base : Nat)
+    (premises : FlatProps.noMat default = true ∧ FlatProps.noMat value = true ∧
+      ∀ body ∈ rows.map Prod.snd, FlatProps.noMat body = true) :
     FlatProps.noMat (compilePats cfg naive trace base value default rows) = true := by
+  obtain ⟨defaultSafe, valueSafe, rowsSafe⟩ := premises
   have branchesSafe : ∀ branch, branch ∈ rows.map (compilePatRhs trace base value) →
       FlatProps.noMat branch = true := by
     intro branch member
     obtain ⟨⟨pattern, body⟩, row, rfl⟩ := List.mem_map.mp member
-    exact noMat_compilePatRhs trace base value pattern body valueSafe (rowsSafe pattern body row)
+    exact noMat_compilePatRhs trace base value pattern body valueSafe (rowsSafe body (List.mem_map.mpr ⟨(pattern, body), row, rfl⟩))
   cases naive with
   | false =>
     simp only [compilePats, Bool.false_eq_true, ↓reduceIte]
@@ -333,16 +335,25 @@ theorem noMat_compileExp (cfg : Config) (exp : FlatLang.Exp) :
   | case1 => simp [compileExp, FlatProps.noMat]
   | case2 t x i sg y eq ih => simpa [compileExp, eq, FlatProps.noMat] using ih
   | case3 t x ps i sg y eq j sgp ps2 eqp ih ihp =>
-    have branch := noMat_compilePats cfg sgp t (max i j + 2) (.varLocal t (encNumToName (max i j + 2))) (.raise t (.varLocal t (encNumToName (max i j + 2)))) ps2
-      (by simp [FlatProps.noMat]) (by simp [FlatProps.noMat]) (by simpa [eqp] using ihp)
+    have branch := noMat_compilePats (.raise t (.varLocal t (encNumToName (max i j + 2))))
+      (.varLocal t (encNumToName (max i j + 2))) ps2 cfg sgp t (max i j + 2)
+      ⟨by simp [FlatProps.noMat], by simp [FlatProps.noMat], by
+        intro body member
+        obtain ⟨⟨pattern, expression⟩, row, rfl⟩ := List.mem_map.mp member
+        apply ihp pattern expression
+        simpa [eqp] using row⟩
     simpa [compileExp, eq, eqp, FlatProps.noMat] using And.intro ih branch
   | case4 t tag xs i sg ys eq ih => simpa [compileExp, eq, FlatProps.noMat] using ih
   | case5 t v x i sg y eq ih => simpa [compileExp, eq, FlatProps.noMat] using ih
   | case6 t op xs i sg ys eq ih => simpa [compileExp, eq, FlatProps.noMat] using ih
   | case7 t x ps i sg y eq j sgp ps2 eqp ih ihp =>
-    have branch := noMat_compilePats cfg sgp t (max i j + 2) (.varLocal t (encNumToName (max i j + 2)))
-      (.raise t (.con t (some (0, none)) [])) ps2
-      (by simp [FlatProps.noMat]) (by simp [FlatProps.noMat, FlatProps.noMatList]) (by simpa [eqp] using ihp)
+    have branch := noMat_compilePats (.raise t (.con t (some (0, none)) []))
+      (.varLocal t (encNumToName (max i j + 2))) ps2 cfg sgp t (max i j + 2)
+      ⟨by simp [FlatProps.noMat, FlatProps.noMatList], by simp [FlatProps.noMat], by
+        intro body member
+        obtain ⟨⟨pattern, expression⟩, row, rfl⟩ := List.mem_map.mp member
+        apply ihp pattern expression
+        simpa [eqp] using row⟩
     simpa [compileExp, eq, eqp, FlatProps.noMat] using And.intro ih branch
   | case8 t vo x1 x2 i sg y eq j sg2 y2 eq2 ih1 ih2 =>
     simpa [compileExp, eq, eq2, FlatProps.noMat] using And.intro ih1 ih2
