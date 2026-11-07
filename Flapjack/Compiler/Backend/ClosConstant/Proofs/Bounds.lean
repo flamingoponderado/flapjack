@@ -103,25 +103,6 @@ theorem partsList_bounds (constants : List Const) (index : Nat) (aux : List (Con
             · exact restLt item member
 end
 
-/-- Flattening preserves the number of elements in a constant list. -/
-theorem partsList_length (constants : List Const) (index : Nat) (aux : List (ConstPart × Nat)) :
-    (partsList constants index aux).2.1.length = constants.length := by
-  induction constants generalizing index aux with
-  | nil => rfl
-  | cons constant rest ih =>
-    cases first : parts constant index aux with
-    | mk next pair =>
-      cases pair with
-      | mk found nextAux =>
-        cases second : partsList rest next nextAux with
-        | mk last pair =>
-          cases pair with
-          | mk foundRest finalAux =>
-            have length := ih next nextAux
-            rw [second] at length
-            simp only [partsList, first, second, List.length_cons]
-            exact congrArg Nat.succ length
-
 /-- Constructor parts may refer only to earlier built parts. -/
 def dependenciesBelow (aux : List (ConstPart × Nat)) : Prop :=
   ∀ tag children index, (.con tag children, index) ∈ aux → ∀ child ∈ children, child < index
