@@ -1,6 +1,22 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "env_rel_add_nsBind",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EnvironmentBind.lean",
+  "lean_name": "envRel_add_nsBind",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed environment_relation_bind in source_eval_oracle_adjust_probe.out: source and target binding values have independent carriers, and the two overwritten input environment payload types remain independently polymorphic; the original premises and bound environments match."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "env_rel_add_nsBindList",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EnvironmentBind.lean",
+  "lean_name": "envRel_add_nsBindList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed environment_relation_bind_list in source_eval_oracle_adjust_probe.out: source and target binding values and the two overwritten input environment payload types retain their independent carriers; the pointwise relation is HOL equality on names and the original value relation, with both environment updates in order."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "env_rel_nsLookup_v",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EnvironmentLookup.lean",
   "lean_name": "envRel_nsLookup_v",
