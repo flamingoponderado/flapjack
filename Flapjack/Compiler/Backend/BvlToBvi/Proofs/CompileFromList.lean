@@ -39,7 +39,7 @@ theorem evaluate_listLength_call {C F : Type} (value : Value) (values : List Val
   have clocks : BviSem.decClock 1 start = BviProps.incClock clock state := by
     simp [start, BviSem.decClock, BviProps.incClock]
   simp only [BvlSem.findCode, code, listLengthCode, List.length_cons, List.length_nil, ite_true,
-    Nat.zero_add, Nat.lt_one_iff, nonzero, if_false, BviSem.fixClock_evaluate]
+    Nat.zero_add, Nat.lt_one_iff, nonzero, ite_false, BviSem.fixClock_evaluate]
   have stubRun := stub
   simp [listLengthCode] at stubRun
   simp [clocks, stubRun]

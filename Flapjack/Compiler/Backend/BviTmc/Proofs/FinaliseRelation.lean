@@ -50,7 +50,7 @@ theorem evaluate_finalise_cons (v2 : Value) (targetRefs : HolFiniteMapExact Nat 
         have outside : ptr ∉ mapRange fNext := fun h => invalid (Or.inr (Or.inl h))
         have absent : ptr ∉ oldRefs.domain := fun h => invalid (Or.inr (Or.inr h))
         rw [mutableBlockRel.eq_def] at blocks
-        simp only [invalid, if_false] at blocks
+        simp only [invalid, ite_false] at blocks
         cases found : targetRefs.lookup ptr with
         | none => rw [found] at blocks; contradiction
         | some cell =>

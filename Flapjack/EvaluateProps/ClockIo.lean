@@ -101,7 +101,7 @@ theorem isClockIoMono_check {σ α β : Type} (f : State σ → State σ × Resu
     (h : s.clock ≠ 0 → isClockIoMono (fun st => f (adjClock 1 0 st)) (EvaluateHOL.decClock s)) :
     isClockIoMono (fun st => if st.clock = 0 then (st, Result.err (α := α) (.abort .timeoutError)) else f st) s := by
   by_cases hs : s.clock = 0
-  · simp only [isClockIoMono, hs, if_true]
+  · simp only [isClockIoMono, hs, ite_true]
     refine ⟨ioEventsMonoHOL_refl _, Nat.le_refl _, Nat.le_refl _, Nat.le_refl _, Nat.le_refl _, ?_⟩
     intro clock
     cases clock with
@@ -118,7 +118,7 @@ theorem isClockIoMono_check {σ α β : Type} (f : State σ → State σ × Resu
     | mk next result =>
       simp only [heval] at inv
       rcases inv with ⟨trace, bound, types, exns, refs, comparisons⟩
-      simp only [isClockIoMono, hs, if_false, heval]
+      simp only [isClockIoMono, hs, ite_false, heval]
       refine ⟨trace, ?_, types, exns, refs, ?_⟩
       · simp only [EvaluateHOL.decClock] at bound
         omega
@@ -139,7 +139,7 @@ theorem isClockIoMono_check {σ α β : Type} (f : State σ → State σ × Resu
           cases hevalOther : f { s with clock := Nat.succ k } with
           | mk other otherResult =>
             simp only [hevalOther] at comparison
-            simp only [Nat.succ_ne_zero, if_false]
+            simp only [Nat.succ_ne_zero, ite_false]
             have clockEq : k - ((EvaluateHOL.decClock s).clock - next.clock) =
                 Nat.succ k - (s.clock - next.clock) := by
               simp only [EvaluateHOL.decClock] at bound ⊢

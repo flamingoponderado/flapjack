@@ -96,8 +96,8 @@ theorem compileCorrectIf {width : Nat} {σ : Type} [NeZero width]
         have hbranch : PanSemStateFiniteExact.evaluateHOLFiniteState source
             (if word ≠ 0 then thenBranch else elseBranch) = (res, post) := by
           by_cases hz : word = 0
-          · simpa only [if_pos hz, if_neg (not_not_intro hz)] using heval
-          · simpa only [if_neg hz, if_pos hz] using heval
+          · simpa only [ite_eq_left hz, ite_eq_right (not_not_intro hz)] using heval
+          · simpa only [ite_eq_right hz, ite_eq_left hz] using heval
         have hb := ih (.val (.word word)) (.word word) word ⟨hv, rfl, rfl⟩ post context res
           ⟨hbranch, hstructs, hlocal, hglobal, hwlocal, hwglobal, hinfo, hlocals, hglobals, herror⟩
         have hexp := CompileExpCorrectExact.compileExpCorrectExact source context condition (.val (.word word))
@@ -108,8 +108,8 @@ theorem compileCorrectIf {width : Nat} {σ : Type} [NeZero width]
         simp only [PanSemStateFiniteExact.evalHOLFinite] at htarget
         simp only [compileProgExact, PanSemStateFiniteExact.evaluateHOLFiniteState_ite, htarget, convertV]
         by_cases hz : word = 0
-        · simpa only [if_pos hz, if_neg (not_not_intro hz)] using hb.1
-        · simpa only [if_neg hz, if_pos hz] using hb.1
+        · simpa only [ite_eq_left hz, ite_eq_right (not_not_intro hz)] using hb.1
+        · simpa only [ite_eq_right hz, ite_eq_left hz] using hb.1
 /-- Genuine Seq case with the first-program IH and the source-NONE-guarded
 second-program IH at the actual intermediate state. All original premises and
 conclusions are retained. -/

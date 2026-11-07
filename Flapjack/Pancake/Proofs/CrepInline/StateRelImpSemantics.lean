@@ -168,7 +168,7 @@ theorem noError_of_notFail {σ : Type} (s : CrepSemHOLState width σ) (start : F
   apply h
   unfold crepSemantics
   simp only [crepEntryProgram]
-  refine if_pos ?_
+  refine ite_eq_left ?_
   exact ⟨k, by rw [he]; trivial⟩
 
 theorem ite_fail_congr (C C' : Prop) [Decidable C] [Decidable C'] (a b : HolBehaviour)
@@ -176,8 +176,8 @@ theorem ite_fail_congr (C C' : Prop) [Decidable C] [Decidable C'] (a b : HolBeha
     (if C then HolBehaviour.fail else a) = (if C' then HolBehaviour.fail else b) := by
   subst hab
   by_cases h : C
-  · rw [if_pos h, if_pos (hC.mp h)]
-  · rw [if_neg h, if_neg (fun h' => h (hC.mpr h'))]
+  · rw [ite_eq_left h, ite_eq_left (hC.mp h)]
+  · rw [ite_eq_right h, ite_eq_right (fun h' => h (hC.mpr h'))]
 
 theorem sem_tail_congr {P Q : HolBehaviour → Prop} {x y : HolLList HolIoEvent}
     (hPQ : P = Q) (hxy : x = y) :

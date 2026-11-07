@@ -500,7 +500,7 @@ theorem checkColSuccess {α : Type} :
       ((sptMemMapFstToAList live b.1).mp (List.mem_map_of_mem hb)) heq
   unfold checkCol
   dsimp only
-  rw [if_pos hnd]
+  rw [ite_eq_left hnd]
   exact ⟨_, rfl⟩
 
 /-- Exact HOL `check_clash_tree_output` (`linear_scanProofScript.sml:345-392`). -/

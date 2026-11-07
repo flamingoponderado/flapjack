@@ -152,7 +152,7 @@ example : getHeu 5 (.inst (.const 1 1) : WordLangProgHOL (BitVec 1)) (.ln,(sptIn
     ((sptInsert 1 (1,0,0,0,0) .ln),(sptInsert 9 () .ln)) := by decide +kernel
 -- hp_width128=T
 example : getHeu 5 (.get 18446744073709551616 .nextFree : WordLangProgHOL (BitVec 128)) (.ln,(sptInsert 9 () .ln)) =
-    ((sptInsert 18446744073709551616 (0,0,1,0,0) .ln),(sptInsert 9 () .ln)) := by decide +kernel
+    ((sptInsert 18446744073709551616 (0,0,1,0,0) .ln),(sptInsert 9 () .ln)) := by cbv
 -- hp_large_counter=T
 example : getHeu 5 (.get 7 .nextFree : WordLangProgHOL (BitVec 64)) ((sptInsert 7 (2,3,18446744073709551616,7,11) .ln),(sptInsert 9 () .ln)) =
     ((sptInsert 7 (2,3,18446744073709551617,7,11) .ln),(sptInsert 9 () .ln)) := by decide +kernel

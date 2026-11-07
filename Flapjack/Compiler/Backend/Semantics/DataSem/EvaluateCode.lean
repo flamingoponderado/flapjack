@@ -92,7 +92,7 @@ theorem evaluate_seq_code_step {C F : Type} (first second : DataLang.Prog) (stat
   have firstClamped : (fixClock state (evaluate first state)).2.code = state.code := by
     simpa [fixClock] using firstCode
   have clockBound : (fixClock state (evaluate first state)).2.clock ≤ state.clock := by
-    simp [fixClock, Nat.min_le_left]
+    simp [fixClock]
   rw [evaluate]
   generalize run : fixClock state (evaluate first state) = pair at *
   obtain ⟨result, mid⟩ := pair

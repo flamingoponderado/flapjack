@@ -17,7 +17,7 @@ theorem updateEnvList_base_at {α β : Type} [DecidableEq α]
       intro fresh
       by_cases same : key = destination
       · simp [updateEnv, same]
-      · simp only [updateEnv, if_neg same]
+      · simp only [updateEnv, ite_eq_right same]
         exact base (by simp [same, fresh])
 
 /-- Exact environment-change rule: retain the untouched-key conditional and

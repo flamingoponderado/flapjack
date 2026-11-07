@@ -62,12 +62,12 @@ theorem evaluateFperm_Assign {width : Nat} {σ : Type} [NeZero width]
         simp only [hv] at heval ⊢
         rw [hvalid]
         by_cases hs : isValidValueHOLFinite state kind name value = true
-        · simp only [hs, if_true] at heval ⊢
+        · simp only [hs, ite_true] at heval ⊢
           rw [hset]
           simpa only [Prod.fst, Prod.snd] using congrArg
             (fun (run : Option (PanSemResultExact width) × PanSemStateFiniteExact width σ) =>
               (run.1, { run.2 with code := fpermCodeHOL f g run.2.code })) heval
-        · simp only [if_neg hs] at heval ⊢
+        · simp only [ite_eq_right hs] at heval ⊢
           simpa only [Prod.fst, Prod.snd] using congrArg
             (fun (run : Option (PanSemResultExact width) × PanSemStateFiniteExact width σ) =>
               (run.1, { run.2 with code := fpermCodeHOL f g run.2.code })) heval

@@ -292,7 +292,7 @@ theorem wordToStackCompCodeLabels {width : Nat} [NeZero width]
     have liveEmpty := wLiveCodeLabels live input frame liveProg afterLive liveEq
     have owned : h1 = owner := by simpa using good.2.1
     simp only [facts.1, liveEmpty, stackHandlerArgsNative, stackArgsLabels, copyLabels,
-      copyHandlers, pushLabels, popLabels, popHandlers, owned, if_true,
+      copyHandlers, pushLabels, popLabels, popHandlers, owned, ite_true,
       Set.mem_empty_iff_false, false_implies, forall_const, true_and, Set.mem_singleton_iff]
     refine ⟨?_, ⟨⟨?_, ?_⟩, ?_⟩⟩
     · intro label member

@@ -289,9 +289,9 @@ theorem checkColInjCompose (f g : Nat → Nat) (s : NumSet) (hinj : ∀ a b, g a
   unfold checkCol
   dsimp only
   by_cases hp : ((sptToAList s).map (fun e => f e.1)).Pairwise (· ≠ ·)
-  · rw [if_pos hp]
+  · rw [ite_eq_left hp]
     dsimp only
-    refine ⟨_, by rw [if_pos (hpw.mpr hp)], ?_⟩
+    refine ⟨_, by rw [ite_eq_left (hpw.mpr hp)], ?_⟩
     funext y
     apply propext
     rw [sptDomain_fromAListUnit, hmap]
@@ -301,9 +301,9 @@ theorem checkColInjCompose (f g : Nat → Nat) (s : NumSet) (hinj : ∀ a b, g a
       exact ⟨x, (sptDomain_fromAListUnit _ x).mpr (List.mem_map.mpr hx), rfl⟩
     · rintro ⟨x, hx, rfl⟩
       exact ⟨x, List.mem_map.mp ((sptDomain_fromAListUnit _ x).mp hx), rfl⟩
-  · rw [if_neg hp]
+  · rw [ite_eq_right hp]
     dsimp only
-    rw [if_neg (fun h => hp (hpw.mp h))]
+    rw [ite_eq_right (fun h => hp (hpw.mp h))]
 
 /-- Exact HOL `check_clash_tree_INJ` (`reg_allocProofScript.sml:3152-3205`):
 composing the colouring with an injective `g`, and starting from the `g`-image

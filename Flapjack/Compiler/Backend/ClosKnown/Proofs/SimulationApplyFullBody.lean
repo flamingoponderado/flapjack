@@ -231,7 +231,7 @@ theorem fullApplicationBodyCase {C F : Type} (loc1 : Option Nat) (sourceFn : Val
           refine ⟨.err targetError, targetMiddle, ?_, related, finalState, finalGlobals, finalOracle, finalDisjoint⟩
           rw [evaluateApp, targetFound]
           dsimp only
-          rw [if_neg targetEnough, fixClock_evaluate, targetBodyRun]
+          rw [ite_eq_right targetEnough, fixClock_evaluate, targetBodyRun]
       | val values =>
         have singleton := evaluate_singleton_value body env
           (decClock ((first :: rest).length - remaining.length) s0) middle values bodyRun
@@ -265,7 +265,7 @@ theorem fullApplicationBodyCase {C F : Type} (loc1 : Option Nat) (sourceFn : Val
               refine ⟨targetResult, targetLast, ?_, resultRelated, finalState, finalGlobals, finalOracle, finalDisjoint⟩
               rw [evaluateApp, targetFound]
               dsimp only
-              rw [if_neg targetEnough, fixClock_evaluate, targetBodyRun]
+              rw [ite_eq_right targetEnough, fixClock_evaluate, targetBodyRun]
               exact continuation
             · obtain ⟨sourceEmpty, targetEmpty⟩ := annotation same
               subst remaining
@@ -275,7 +275,7 @@ theorem fullApplicationBodyCase {C F : Type} (loc1 : Option Nat) (sourceFn : Val
               refine ⟨.val [targetValue], targetMiddle, ?_, .cons valueRel .nil, midState, midGlobals, midOracle, midDisjoint⟩
               rw [evaluateApp, targetFound]
               dsimp only
-              rw [if_neg targetEnough, fixClock_evaluate, targetBodyRun]
+              rw [ite_eq_right targetEnough, fixClock_evaluate, targetBodyRun]
               simp [evaluateApp]
 
 /-- The closure state uses canonical finite-map fields. -/

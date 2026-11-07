@@ -77,8 +77,8 @@ theorem evaluateRemoveDead_Move {width : Nat} [NeZero width] {C F : Type} (pri :
   rw [evaluate] at hev
   by_cases hnd : (moves.map Prod.fst).Nodup
   case neg =>
-    rw [if_neg hnd] at hev; simp only [Prod.mk.injEq] at hev; exact absurd hev.1.symm herr
-  rw [if_pos hnd] at hev
+    rw [ite_eq_right hnd] at hev; simp only [Prod.mk.injEq] at hev; exact absurd hev.1.symm herr
+  rw [ite_eq_left hnd] at hev
   cases hgv : WordSemStateFiniteExact.getVars (moves.map Prod.snd) st with
   | none => rw [hgv] at hev; simp only [Prod.mk.injEq] at hev; exact absurd hev.1.symm herr
   | some vs =>
@@ -136,7 +136,7 @@ theorem evaluateRemoveDead_Move {width : Nat} [NeZero width] {C F : Type} (pri :
         ⟨fun x hx => (sptDomain_numsetIns _ _ _).mpr (Or.inr hx), hl, hgvF⟩
     refine ⟨LoopSemStateFiniteExact.sptAlistInsert (mv.map Prod.fst)
         ((mv.map Prod.snd).map fun x => holThe (sptLookup x st.locals)) t, tstore, ?_, ?_, hs⟩
-    · rw [evaluate, if_pos hndF, hgvT]; rfl
+    · rw [evaluate, ite_eq_left hndF, hgvT]; rfl
     · intro k v ⟨hk, hv⟩
       simp only [WordSemStateFiniteExact.setVars] at hv
       simp only [id]

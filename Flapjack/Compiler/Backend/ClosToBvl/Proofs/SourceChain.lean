@@ -87,7 +87,7 @@ theorem chainInstalled_chainExps (start : Nat) (expressions : List ClosLang.Exp)
       · intro i bound
         have found := ih (start + 1) i bound
         have different : start + 1 + i ≠ start := by omega
-        simp only [chainExps, findCode, initialSourceCode_cons_lookup, if_neg different]
+        simp only [chainExps, findCode, initialSourceCode_cons_lookup, ite_eq_right different]
         exact found
 
 /-- The chain's first zero-argument entry exists even for an empty batch. -/

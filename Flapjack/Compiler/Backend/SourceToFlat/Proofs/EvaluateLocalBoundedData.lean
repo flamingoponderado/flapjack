@@ -1240,7 +1240,7 @@ theorem localEnvBounded_vsub {C F : Type} [Nonempty C]
           have flatIndex := (valueRel_literal_iff nextGenv (.intLit index) flatValue).mp valueRel
           subst flatValue
           have primitive := vsub_complete_related nextGenv nextSource nextFlat nextInvariant.1 values flatValues relatedValues index false
-          simp only [Bool.false_eq_true, if_false] at primitive
+          simp only [Bool.false_eq_true, ite_false] at primitive
           cases sourceApp : doApp (nextSource.refs, nextSource.ffi) .vsub
               [.vectorv values, .litv (.intLit index)] with
           | none => exact (successful sourceApp).elim
@@ -1396,7 +1396,7 @@ theorem localEnvBounded_vsubUnsafe {C F : Type} [Nonempty C]
           have flatIndex := (valueRel_literal_iff nextGenv (.intLit index) flatValue).mp valueRel
           subst flatValue
           have primitive := vsub_complete_related nextGenv nextSource nextFlat nextInvariant.1 values flatValues relatedValues index true
-          simp only [if_true] at primitive
+          simp only [ite_true] at primitive
           cases sourceApp : doApp (nextSource.refs, nextSource.ffi) .vsubUnsafe
               [.vectorv values, .litv (.intLit index)] with
           | none => exact (successful sourceApp).elim

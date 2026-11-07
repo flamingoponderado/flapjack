@@ -58,7 +58,7 @@ theorem evaluateFreshLocal_Primitive {width : Nat} {σ : Type} [NeZero width]
           .local target assigned = isValidValueHOLFinite state .local target assigned := by
     intro assigned
     simp only [isValidValueHOLFinite, lookupKvarHOLFinite,
-      HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, if_neg (Ne.symm hf.1)]
+      HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, ite_eq_right (Ne.symm hf.1)]
   have hu : ∀ assigned : ValueHOL width,
       setVarHOLFinite target assigned
           {state with locals := state.locals.updateEq (name, value)} =

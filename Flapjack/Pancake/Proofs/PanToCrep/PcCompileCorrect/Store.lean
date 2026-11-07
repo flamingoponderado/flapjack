@@ -121,7 +121,7 @@ theorem pcCompileCorrectAt_store {width : Nat} {σ : Type} [NeZero width]
   have hcomp : compileProgExactHOLW ctxt (.store dst src) =
       nestedDecsHOL (ad :: temps) (ca :: es) body := by
     simp only [compileProgExactHOLW, compileStoreExactHOLW, hcd, hc]
-    rw [if_neg (by rw [← hlen]; simp)]
+    rw [ite_eq_right (by rw [← hlen]; simp)]
   have hnd := evalNestedDecsSeqResVarEqHOL (ca :: es) (ad :: temps) t
     (HolWordLab.word addr :: flattenHOL value) body
     ⟨hmap, by simp [temps, hlen], hdist, hallnodup⟩

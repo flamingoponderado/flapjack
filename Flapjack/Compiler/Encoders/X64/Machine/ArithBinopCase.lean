@@ -46,7 +46,7 @@ theorem binopRI_ok (op : BinOp) (r1 r2 : Nat) (i : BitVec 64)
   simp only [asmOkExact, asmInstOkExact, asmArithOkExact, asmRegImmOkExact, x64Config,
     Bool.and_eq_true, Bool.or_eq_true, Bool.not_true, Bool.false_or] at h
   simp at h
-  exact ⟨h.1.1.1, h.1.1.2, h.1.2, h.2⟩
+  exact ⟨h.1.1.1, h.1.1.2, h.1.2, by simpa using h.2⟩
 
 /-- The value of a source `binop`. -/
 def binopVal (op : BinOp) (a b : BitVec 64) : BitVec 64 :=
@@ -131,11 +131,11 @@ theorem x64Enc_binopRI (bop : BinOp) (r1 r2 : Nat) (i : BitVec 64)
       encodeInsn (x64BinopRIImmInsn bop r1 i) := by
     simp only [x64Ast, x64Inst, x64BinopRIImmInsn, hdst]
     by_cases hc : bop = .xor && i = -1
-    · simp only [if_pos hc]; simp
-    · simp only [if_neg hc]; simp
+    · simp only [ite_eq_left hc]; simp
+    · simp only [ite_eq_right hc]; simp
   have hne : encodeInsn (x64BinopRIImmInsn bop r1 i) ≠ [] := by
     by_cases hc : bop = .xor && i = -1
-    · rw [x64BinopRIImmInsn, if_pos hc]
+    · rw [x64BinopRIImmInsn, ite_eq_left hc]
       exact monop_not_ne r1 hr1
     · have hb : ¬(((Sum.inl bop : Sum BinOp Cmp) ==
           (Sum.inl BinOp.xor : Sum BinOp Cmp)) = true ∧ i = -1) := by
@@ -144,7 +144,7 @@ theorem x64Enc_binopRI (bop : BinOp) (r1 r2 : Nat) (i : BitVec 64)
       obtain ⟨hlo, hhi⟩ := himm.resolve_left hb
       rw [x64Min32_toInt] at hlo
       rw [x64Max32_toInt] at hhi
-      rw [x64BinopRIImmInsn, if_neg hc]
+      rw [x64BinopRIImmInsn, ite_eq_right hc]
       exact binopRI_z64_ne bop r1 i hr1 hlo (by omega)
   exact x64Enc_of_flatMap _ _ hflat hne
 
@@ -187,15 +187,15 @@ theorem x64Enc_binopRR (op : BinOp) (r1 r2 r3 : Nat)
       encodeInsn (x64BinopRRInsn op r1 r2 r3) := by
     simp only [x64Ast, x64Inst, x64BinopRRInsn, hdst, hsrc]
     by_cases hc : op = .or && r2 = r3
-    · simp only [if_pos hc]; simp
-    · simp only [if_neg hc]; simp
+    · simp only [ite_eq_left hc]; simp
+    · simp only [ite_eq_right hc]; simp
   have hne : encodeInsn (x64BinopRRInsn op r1 r2 r3) ≠ [] := by
     by_cases hc : op = .or && r2 = r3
-    · rw [x64BinopRRInsn, if_pos hc]
+    · rw [x64BinopRRInsn, ite_eq_left hc]
       exact movRR_z64_ne r1 r3 h1 h3
     · have hop : (x64Bop op).code < 8 := by
         cases op <;> simp [x64Bop, ZBinopName.code]
-      rw [x64BinopRRInsn, if_neg hc]
+      rw [x64BinopRRInsn, ite_eq_right hc]
       exact binopRR_z64_ne (x64Bop op) r1 r3 hop
   exact x64Enc_of_flatMap _ _ hflat hne
 
@@ -226,7 +226,7 @@ theorem x64Next_binopRI (ms : X64State) (bop : BinOp)
       pc := ms.pc + BitVec.ofNat 64
         (encodeInsn (.binopRI (x64Bop bop) .z64 r i)).length } := by
   rw [hlen]
-  simp only [x64Next, hfailed, Bool.false_eq_true, if_false, hdec]
+  simp only [x64Next, hfailed, Bool.false_eq_true, ite_false, hdec]
   rw [execInsn_binopRI]
   simp only [writeRegSized, writeReg]
 
@@ -239,7 +239,7 @@ theorem x64Next_monop_not (ms : X64State) (d : BitVec 64 → Prop) (r : Nat) (hr
   have hdec : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) =
       some (.monop .znot .z64 r, (encodeInsn (.monop .znot .z64 r)).length) :=
     decode_bytesInMemory _ ms.pc ms.mem d _ _ hbm (decode_monop_z64 .znot r hr) (by omega)
-  simp only [x64Next, hfailed, Bool.false_eq_true, if_false, hdec]
+  simp only [x64Next, hfailed, Bool.false_eq_true, ite_false, hdec]
   rw [execInsn_monop_not]
   simp only [writeRegSized, writeReg]
 
@@ -255,7 +255,7 @@ theorem x64Next_binopRR_mov (ms : X64State) (d : BitVec 64 → Prop) (r1 r3 : Na
       some (.movRR .z64 r1 r3, 3) :=
     decode_bytesInMemory _ ms.pc ms.mem d _ _ hbm (decode_movRR_z64 r1 r3 hr1 hr3)
       (by rw [hlen])
-  simp only [x64Next, hfailed, Bool.false_eq_true, if_false, hdec, execInsn, writeRegSized,
+  simp only [x64Next, hfailed, Bool.false_eq_true, ite_false, hdec, execInsn, writeRegSized,
     writeReg]
 
 /-- The closed model executes a register-register arithmetic instruction by
@@ -342,7 +342,7 @@ theorem case_binopRI (bop : BinOp) (r1 r2 : Nat) (i : BitVec 64) (s1 s2 : AsmSta
     have hbx : bop = .xor := hc.1
     have hi1 : i = -1 := hc.2
     have hinsn : x64BinopRIImmInsn bop r1 i = .monop .znot .z64 r1 := by
-      rw [x64BinopRIImmInsn, if_pos hc_raw]
+      rw [x64BinopRIImmInsn, ite_eq_left hc_raw]
     have hs2pc' : s2.pc = s1.pc + BitVec.ofNat 64
         (encodeInsn (.monop .znot .z64 r1)).length := by
       rw [hs2pc, hinsn]
@@ -369,8 +369,8 @@ theorem case_binopRI (bop : BinOp) (r1 r2 : Nat) (i : BitVec 64) (s1 s2 : AsmSta
         show readReg (writeReg ms r1 (~~~(readReg ms r1))) x = s2.regs x
         rw [readReg_writeReg ms r1 _ x hr1 hx.1, hs2regs x]
         by_cases hxr : x = r1
-        · rw [if_pos hxr, if_pos hxr, hval, st.reg r1 hreg1]
-        · rw [if_neg hxr, if_neg hxr]
+        · rw [ite_eq_left hxr, ite_eq_left hxr, hval, st.reg r1 hreg1]
+        · rw [ite_eq_right hxr, ite_eq_right hxr]
           exact st.reg x hx
       · intro x hx
         show readXmm ms x = s2.fpRegs x
@@ -397,7 +397,7 @@ theorem case_binopRI (bop : BinOp) (r1 r2 : Nat) (i : BitVec 64) (s1 s2 : AsmSta
     have hlo : -(2 ^ 31 : Int) ≤ i.toInt := by rw [x64Min32_toInt] at hlo0; exact hlo0
     have hhi : i.toInt < 2 ^ 31 := by rw [x64Max32_toInt] at hhi0; omega
     have hinsn : x64BinopRIImmInsn bop r1 i = .binopRI (x64Bop bop) .z64 r1 i := by
-      rw [x64BinopRIImmInsn, if_neg hc]
+      rw [x64BinopRIImmInsn, ite_eq_right hc]
     have hval : binopVal bop (s1.regs r1) i =
         binopValue (x64Bop bop) (readReg ms r1) i := by
       rw [binopValue_x64Bop, st.reg r1 hreg1]
@@ -431,8 +431,8 @@ theorem case_binopRI (bop : BinOp) (r1 r2 : Nat) (i : BitVec 64) (s1 s2 : AsmSta
             (binopValue (x64Bop bop) (readReg ms r1) i)) x = s2.regs x
         rw [readReg_writeReg ms r1 _ x hr1 hx.1, hs2regs x]
         by_cases hxr : x = r1
-        · rw [if_pos hxr, if_pos hxr, ← hval]
-        · rw [if_neg hxr, if_neg hxr]
+        · rw [ite_eq_left hxr, ite_eq_left hxr, ← hval]
+        · rw [ite_eq_right hxr, ite_eq_right hxr]
           exact st.reg x hx
       · intro x hx
         show readXmm ms x = s2.fpRegs x
@@ -496,7 +496,7 @@ theorem x64Next_binopRR (ms : X64State) (d : BitVec 64 → Prop) (bop : BinOp)
         (encodeInsn (.binopRR (x64Bop bop) .z64 r1 r3)).length) :=
     decode_bytesInMemory _ ms.pc ms.mem d _ _ hbm
       (decode_binopRR_z64 (x64Bop bop) r1 r3 hr1 hr3 hop) (by omega)
-  simp only [x64Next, hfailed, Bool.false_eq_true, if_false, hdec]
+  simp only [x64Next, hfailed, Bool.false_eq_true, ite_false, hdec]
   rw [execInsn_binopRR]
   simp only [writeRegSized, writeReg]
 
@@ -596,9 +596,9 @@ theorem case_binopRR (bop : BinOp) (r1 r2 r3 : Nat) (s1 s2 : AsmState 64) (ms : 
         show readReg (writeReg ms r1 (readReg ms r3)) x = s2.regs x
         rw [readReg_writeReg ms r1 _ x hr1 hx.1, hs2regs x]
         by_cases hxr : x = r1
-        · rw [if_pos hxr, if_pos hxr, hval]
+        · rw [ite_eq_left hxr, ite_eq_left hxr, hval]
           exact st.reg r3 hreg3
-        · simp only [hxr, if_false]
+        · simp only [hxr, ite_false]
           exact st.reg x hx
       · intro x hx
         show readXmm ms x = s2.fpRegs x
@@ -651,11 +651,11 @@ theorem case_binopRR (bop : BinOp) (r1 r2 r3 : Nat) (s1 s2 : AsmState 64) (ms : 
             (binopValue (x64Bop bop) (readReg ms r1) (readReg ms r3))) x = s2.regs x
         rw [readReg_writeReg ms r1 _ x hr1 hx.1, hs2regs x]
         by_cases hxr : x = r1
-        · rw [if_pos hxr, if_pos hxr, binopValue_x64Bop]
+        · rw [ite_eq_left hxr, ite_eq_left hxr, binopValue_x64Bop]
           have h1 : readReg ms r1 = s1.regs r2 := by
             rw [hr12]; exact st.reg r2 hreg2
           rw [h1, st.reg r3 hreg3]
-        · simp only [hxr, if_false]
+        · simp only [hxr, ite_false]
           exact st.reg x hx
       · intro x hx
         show readXmm ms x = s2.fpRegs x

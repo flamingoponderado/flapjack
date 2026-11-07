@@ -96,8 +96,8 @@ theorem compCall {width : Nat} [NeZero width] {C F : Type}
     simp [Nat.mod_eq_of_lt twoLt] at this
   · unfold compCorrectResult at resultRel
     by_cases same : res.map compileResult = res1
-    · rw [if_pos same]
-      rw [if_neg (not_not.mpr same)] at resultRel
+    · rw [ite_eq_left same]
+      rw [ite_eq_right (not_not.mpr same)] at resultRel
       have ffiClock : ∀ {f frame lens' extra} {s' : WordSemStateFiniteExact width (Nat × C) F},
           stateRel ac k f frame s' t1 lens' extra → s'.ffi = t1.ffi ∧ s'.clock = t1.clock :=
         fun rel => ⟨rel.2.2.2.1.symm, rel.1⟩
@@ -111,8 +111,8 @@ theorem compCall {width : Nat} [NeZero width] {C F : Type}
         | «break» _ => exact ffiClock resultRel
         | «continue» _ => exact ffiClock resultRel
         | _ => exact resultRel
-    · rw [if_neg same]
-      rw [if_pos same] at resultRel
+    · rw [ite_eq_right same]
+      rw [ite_eq_left same] at resultRel
       exact resultRel
 
 end Flapjack.WordToStackProofs.CompCall

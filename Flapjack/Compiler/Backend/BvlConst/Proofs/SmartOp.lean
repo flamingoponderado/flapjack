@@ -300,7 +300,7 @@ theorem smartOp2_div_correct {C F : Type} (x y : Bvl.Exp) (env : List Value)
       · simpa [smartOp2, simple, zero] using run
       · simp [evaluateTuple, evaluate, fixClock, doApp, applyNumeric, doIntApp, zero] at run
         rcases run with ⟨rfl, rfl⟩
-        simp only [smartOp2, simple, beq_iff_eq, if_neg zero]
+        simp only [smartOp2, simple, beq_iff_eq, ite_eq_right zero]
         change evaluateTuple ([.op (.intOp (.const (b.fdiv a))) []], env, state) = _
         exact evaluate_intConst (b.fdiv a) env state
 
@@ -327,7 +327,7 @@ theorem smartOp2_mod_correct {C F : Type} (x y : Bvl.Exp) (env : List Value)
       · simpa [smartOp2, simple, zero] using run
       · simp [evaluateTuple, evaluate, fixClock, doApp, applyNumeric, doIntApp, zero] at run
         rcases run with ⟨rfl, rfl⟩
-        simp only [smartOp2, simple, beq_iff_eq, if_neg zero]
+        simp only [smartOp2, simple, beq_iff_eq, ite_eq_right zero]
         change evaluateTuple ([.op (.intOp (.const (b.fmod a))) []], env, state) = _
         exact evaluate_intConst (b.fmod a) env state
 

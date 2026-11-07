@@ -40,7 +40,7 @@ theorem extractColorStExMapLem {α : Type} :
   intro ls s h
   refine stExMap_pure s ls (fun p hp => ?_)
   obtain ⟨k, v⟩ := p
-  simp only [Translator.Monadic.MonadBase.bind, nodeTagSubEqn, if_pos (h _ hp), ret]
+  simp only [Translator.Monadic.MonadBase.bind, nodeTagSubEqn, ite_eq_left (h _ hp), ret]
 
 /-- `ALOOKUP` of a value-mapped association list (Flapjack infrastructure). -/
 private theorem alookup_map {α β : Type} (h : α → β) (n : Nat) :
@@ -51,7 +51,7 @@ private theorem alookup_map {α β : Type} (h : α → β) (n : Nat) :
       simp only [List.map_cons, sptAListLookup]
       by_cases hk : n = k
       · simp [hk]
-      · simp only [if_neg hk]
+      · simp only [ite_eq_right hk]
         exact alookup_map h n l
 
 /-- Exact HOL `extract_color_succeeds` (`reg_allocProofScript.sml:2048-2066`); `s` and `ta`
@@ -69,7 +69,7 @@ theorem extractColorSucceeds (s : State) (ta : Spt Nat) :
   rw [stExMap_pure (g := fun p => (p.1, extractTag (holEl p.2 s.node_tag))) s _
     (fun p hp => by
       obtain ⟨k, v⟩ := p
-      simp only [Translator.Monadic.MonadBase.bind, nodeTagSubEqn, if_pos (hbl _ hp), ret])]
+      simp only [Translator.Monadic.MonadBase.bind, nodeTagSubEqn, ite_eq_left (hbl _ hp), ret])]
   simp only [Prod.mk.injEq, Exc.success.injEq, and_true]
   refine (sptEqThm _ _ ⟨sptWfFromAList _, by rw [sptWfMap]; exact hw⟩).mpr (fun n => ?_)
   rw [sptLookup_sptFromAList, alookup_map (fun v => extractTag (holEl v s.node_tag)) n,

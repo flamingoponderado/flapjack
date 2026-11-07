@@ -119,7 +119,7 @@ theorem stExFilterGoodStack :
       intro hb
       have hx := hb x List.mem_cons_self
       have ih' := ih (fun r hr => hb r (List.mem_cons_of_mem _ hr))
-      simp only [stExFilterGood, Translator.Monadic.MonadBase.bind, colorsSubEqn, if_pos hx, ret,
+      simp only [stExFilterGood, Translator.Monadic.MonadBase.bind, colorsSubEqn, ite_eq_left hx, ret,
         List.filter_cons]
       split
       · simp only [Translator.Monadic.MonadBase.bind, ih', ret]
@@ -275,7 +275,7 @@ theorem listToSortedRegsCorrect :
         ih (n + 1) s1 (by simp [s1]; simp at hb; omega)
       have hs1 : s1.sorted_regs.length = sth.sorted_regs.length := by simp [s1]
       refine ⟨sthout, ?_, by rw [hlen, hs1], by rw [hst], ?_, ?_⟩
-      · simp only [listToSortedRegs, ignoreBind, updateSortedRegsEqn, if_pos hn]
+      · simp only [listToSortedRegs, ignoreBind, updateSortedRegsEqn, ite_eq_left hn]
         exact hrun
       · have := congrArg (List.take n) htake
         rw [List.take_take, List.take_take, Nat.min_eq_left (by omega)] at this
@@ -287,7 +287,7 @@ theorem listToSortedRegsCorrect :
           rw [holEl_take _ _ _ (by omega), holEl_take _ _ _ (by omega)] at h1
           rw [h1]
           show holEl n (sth.sorted_regs.set n x) = x
-          rw [holEl_set _ _ _ _ hn, if_pos rfl]
+          rw [holEl_set _ _ _ _ hn, ite_eq_left rfl]
         have hlen' : n < sthout.sorted_regs.length := by rw [hlen, hs1]; exact hn
         rw [List.drop_eq_getElem_cons hlen', List.length_cons, List.take_succ_cons]
         rw [← holEl_eq_getElem _ _ hlen', hcell]
@@ -306,13 +306,13 @@ theorem sortedRegsToListCorrect :
   | ind k ih =>
   rw [sortedRegsToList]
   by_cases hln : last ≤ n
-  · rw [dif_pos hln]
+  · rw [dite_eq_left hln]
     have : k = 0 := by omega
     subst this
     simp [ret]
-  · rw [dif_neg hln]
+  · rw [dite_eq_right hln]
     have hn : n < sth.sorted_regs.length := by omega
-    simp only [Translator.Monadic.MonadBase.bind, sortedRegsSubEqn, if_pos hn,
+    simp only [Translator.Monadic.MonadBase.bind, sortedRegsSubEqn, ite_eq_left hn,
       ih (last - (n + 1)) (by omega) (n + 1) rfl, ret]
     rw [List.drop_eq_getElem_cons hn, show k = (last - (n + 1)) + 1 by omega,
       List.take_succ_cons, holEl_eq_getElem _ _ hn]
@@ -339,7 +339,7 @@ theorem listToSortedMovesCorrect :
         ih (n + 1) s1 (by simp [s1]; simp at hb; omega)
       have hs1 : s1.sorted_moves.length = sth.sorted_moves.length := by simp [s1]
       refine ⟨sthout, ?_, by rw [hlen, hs1], by rw [hst], ?_, ?_⟩
-      · simp only [listToSortedMoves, ignoreBind, updateSortedMovesEqn, if_pos hn]
+      · simp only [listToSortedMoves, ignoreBind, updateSortedMovesEqn, ite_eq_left hn]
         exact hrun
       · have := congrArg (List.take n) htake
         rw [List.take_take, List.take_take, Nat.min_eq_left (by omega)] at this
@@ -351,7 +351,7 @@ theorem listToSortedMovesCorrect :
           rw [holEl_take _ _ _ (by omega), holEl_take _ _ _ (by omega)] at h1
           rw [h1]
           show holEl n (sth.sorted_moves.set n x) = x
-          rw [holEl_set _ _ _ _ hn, if_pos rfl]
+          rw [holEl_set _ _ _ _ hn, ite_eq_left rfl]
         have hlen' : n < sthout.sorted_moves.length := by rw [hlen, hs1]; exact hn
         rw [List.drop_eq_getElem_cons hlen', List.length_cons, List.take_succ_cons]
         rw [← holEl_eq_getElem _ _ hlen', hcell]
@@ -369,13 +369,13 @@ theorem sortedMovesToListCorrect :
   | ind k ih =>
   rw [sortedMovesToList]
   by_cases hln : last ≤ n
-  · rw [dif_pos hln]
+  · rw [dite_eq_left hln]
     have : k = 0 := by omega
     subst this
     simp [ret]
-  · rw [dif_neg hln]
+  · rw [dite_eq_right hln]
     have hn : n < sth.sorted_moves.length := by omega
-    simp only [Translator.Monadic.MonadBase.bind, sortedMovesSubEqn, if_pos hn,
+    simp only [Translator.Monadic.MonadBase.bind, sortedMovesSubEqn, ite_eq_left hn,
       ih (last - (n + 1)) (by omega) (n + 1) rfl, ret]
     rw [List.drop_eq_getElem_cons hn, show k = (last - (n + 1)) + 1 by omega,
       List.take_succ_cons, holEl_eq_getElem _ _ hn]

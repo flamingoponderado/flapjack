@@ -35,6 +35,6 @@ theorem memStoresAddrsIsSomeHOL {width : Nat} [NeZero width]
       obtain ⟨updated, hupdated⟩ := ih (address + panBytesInWord width)
         (fun current => if current = address then value else memory current) htail
       exact ⟨updated, by
-        simpa only [panMemStoresHOL, panMemStoreHOL, if_pos hhead] using hupdated⟩
+        simpa only [panMemStoresHOL, panMemStoreHOL, ite_eq_left hhead] using hupdated⟩
 
 end Flapjack.PanGlobalsInitGlobalsMemory

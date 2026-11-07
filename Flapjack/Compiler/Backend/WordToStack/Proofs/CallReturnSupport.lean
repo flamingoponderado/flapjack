@@ -43,7 +43,7 @@ local instance {width : Nat} [NeZero width] : Nonempty (WordSemStackFrame width)
 theorem llookupTake {α : Type} (n f : Nat) (xs : List α) :
     n < f → (xs.take f)[n]? = xs[n]? := by
   intro h
-  rw [List.getElem?_take, if_pos h]
+  rw [List.getElem?_take, ite_eq_left h]
 
 /-- Exact HOL `state_rel_IMP_LENGTH` (`word_to_stackProofScript.sml:5260-5268`). -/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "state_rel_IMP_LENGTH"

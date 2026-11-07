@@ -100,7 +100,7 @@ theorem writeMemWord_mem_eq {width : Nat} [NeZero width] {valueWidth : Nat} [NeZ
       rw [updMem_mem]
       by_cases hxb : x = b
       · subst hxb; exact absurd hb hx
-      · rw [if_neg hxb]
+      · rw [ite_eq_right hxb]
         have ih1 := ih (if s.be then b - 1 else b + 1) (a >>> (8 : Nat)) s (by rw [hr]; simpa using hf) hx
         rw [hr] at ih1
         exact ih1

@@ -45,10 +45,10 @@ private theorem perm_swap {α : Type} (l : List α) (i1 i2 : Nat) (h1 : i1 < l.l
     rw [List.getElem_set_ne e]
   rw [hget] at hB
   by_cases c1 : l[i1] = a <;> by_cases c2 : l[i2] = a
-  · simp only [if_pos c1, if_pos c2] at hA hB; omega
-  · simp only [if_pos c1, if_neg c2] at hA hB; omega
-  · simp only [if_neg c1, if_pos c2] at hA hB; omega
-  · simp only [if_neg c1, if_neg c2] at hA hB; omega
+  · simp only [ite_eq_left c1, ite_eq_left c2] at hA hB; omega
+  · simp only [ite_eq_left c1, ite_eq_right c2] at hA hB; omega
+  · simp only [ite_eq_right c1, ite_eq_left c2] at hA hB; omega
+  · simp only [ite_eq_right c1, ite_eq_right c2] at hA hB; omega
 
 /-- A permutation that leaves every cell from `r` on unchanged permutes every
 prefix of length at least `r`. -/
@@ -86,7 +86,7 @@ theorem swapRegsEq :
   intro sth i1 i2 ⟨h1, h2⟩
   refine ⟨_, ?_, rfl⟩
   simp only [swapRegs, Translator.Monadic.MonadBase.bind, ignoreBind, sortedRegsSubEqn,
-    if_pos h1, if_pos h2, updateSortedRegsEqn, List.length_set]
+    ite_eq_left h1, ite_eq_left h2, updateSortedRegsEqn, List.length_set]
 
 /-- Exact HOL `if_thm` (`linear_scanProofScript.sml:3831-3835`); the HOL
 condition `b : bool` is a `Bool`. -/
@@ -242,14 +242,14 @@ private theorem partitionRegsAux (rpiv : Nat) (begrpiv : Int) :
   intro l r sth hk hb hl hr
   rw [partitionRegs]
   by_cases hrl : r ≤ l
-  · rw [dif_pos hrl]
+  · rw [dite_eq_left hrl]
     refine ⟨l, sth, rfl, rfl, List.Perm.refl _, fun _ _ => rfl, fun h => ⟨Nat.le_refl _, h⟩,
       fun ind h => by omega, fun ind h => by omega⟩
-  rw [dif_neg hrl]
+  rw [dite_eq_right hrl]
   have hlen : l < sth.sorted_regs.length := by omega
   have hreg := hb l ⟨Nat.le_refl _, by omega⟩
-  simp only [Translator.Monadic.MonadBase.bind, sortedRegsSubEqn, if_pos hlen, intBegSubEqn,
-    if_pos hreg]
+  simp only [Translator.Monadic.MonadBase.bind, sortedRegsSubEqn, ite_eq_left hlen, intBegSubEqn,
+    ite_eq_left hreg]
   split
   · next hc =>
     obtain ⟨mid, sthout, hrun, hst, hp, hag, hmid, hleft, hright⟩ :=
@@ -289,12 +289,12 @@ private theorem partitionRegsAux (rpiv : Nat) (begrpiv : Int) :
         have := perm_swap sth.sorted_regs l (r - 1) hlen (by omega)
         rwa [← holEl_eq_getElem _ _ hlen, ← holEl_eq_getElem _ _ (by omega)] at this
       exact hperm.trans hp
-    · rw [hag ind (by omega), hsw, if_neg (by omega), if_neg (by omega)]
+    · rw [hag ind (by omega), hsw, ite_eq_right (by omega), ite_eq_right (by omega)]
     · have := hmid (by omega); omega
     · have := hleft ind h; rwa [hbeg] at this
     · by_cases e : ind = r - 1
       · subst e
-        rw [hag _ (Or.inr (Nat.le_refl _)), hsw, if_pos rfl]
+        rw [hag _ (Or.inr (Nat.le_refl _)), hsw, ite_eq_left rfl]
         simp only [holLex] at hc ⊢
         omega
       · have := hright ind ⟨h1, by omega⟩; rwa [hbeg] at this
@@ -347,11 +347,11 @@ private theorem sortRegsAux :
   intro l r sth hk hb hl hr
   rw [sortRegs]
   by_cases hrl : r ≤ l + 1
-  · rw [dif_pos hrl]
+  · rw [dite_eq_left hrl]
     refine ⟨sth, rfl, rfl, List.Perm.refl _, fun _ _ => rfl, fun i1 i2 ⟨h1, h2, h3⟩ => ?_⟩
     have e : i1 = i2 := by omega
     rw [e]; exact intbegLess_refl _ _
-  rw [dif_neg hrl]
+  rw [dite_eq_right hrl]
   have hlen : l < sth.sorted_regs.length := by omega
   have hpb := hb l ⟨Nat.le_refl _, by omega⟩
   -- partition the cells after the pivot
@@ -393,15 +393,15 @@ private theorem sortRegsAux :
   let piv := holEl l sth.sorted_regs
   have hlo2 : ∀ j, l ≤ j ∧ j < mid - 1 → intbegLess sth.int_beg (holEl j s2.sorted_regs) piv := by
     intro j ⟨h1, h2⟩
-    rw [hsw, if_neg (by omega)]
+    rw [hsw, ite_eq_right (by omega)]
     split
     · exact hleft1 _ ⟨by omega, by omega⟩
     · exact hleft1 j ⟨by omega, by omega⟩
   have hpiv2 : holEl (mid - 1) s2.sorted_regs = piv := by
-    rw [hsw, if_pos rfl, hpiv1]
+    rw [hsw, ite_eq_left rfl, hpiv1]
   have hhi2 : ∀ j, mid ≤ j ∧ j < r → intbegLess sth.int_beg piv (holEl j s2.sorted_regs) := by
     intro j ⟨h1, h2⟩
-    rw [hsw, if_neg (by omega), if_neg (by omega)]
+    rw [hsw, ite_eq_right (by omega), ite_eq_right (by omega)]
     exact hright1 j ⟨h1, h2⟩
   -- sort the lower part
   obtain ⟨s3, hrun3, hst3, hp3, hag3, hsort3⟩ :=
@@ -427,10 +427,10 @@ private theorem sortRegsAux :
   have htr := intbegLessTransitive sth.int_beg
   refine ⟨s4, ?_, by rw [hst4, hst3, hs2eq, hst1], hp1.trans (hp2.trans (hp3.trans hp4)),
     fun ind h => ?_, fun i1 i2 ⟨h1, h2, h3⟩ => ?_⟩
-  · simp only [Translator.Monadic.MonadBase.bind, sortedRegsSubEqn, if_pos hlen, intBegSubEqn,
-      if_pos hpb, hrun1]
-    simp only [ignoreBind, hs2, dif_neg (show ¬ (mid ≤ l ∨ r < mid) by omega), hrun3, hrun4]
-  · rw [hag4 ind (by omega), hag3 ind (by omega), hsw, if_neg (by omega), if_neg (by omega),
+  · simp only [Translator.Monadic.MonadBase.bind, sortedRegsSubEqn, ite_eq_left hlen, intBegSubEqn,
+      ite_eq_left hpb, hrun1]
+    simp only [ignoreBind, hs2, dite_eq_right (show ¬ (mid ≤ l ∨ r < mid) by omega), hrun3, hrun4]
+  · rw [hag4 ind (by omega), hag3 ind (by omega), hsw, ite_eq_right (by omega), ite_eq_right (by omega),
       hag1 ind (by omega)]
   · rw [hbeg2] at hsort3
     rw [hbeg3] at hsort4
@@ -496,7 +496,7 @@ theorem swapMovesEq :
   intro sth i1 i2 ⟨h1, h2⟩
   refine ⟨_, ?_, rfl⟩
   simp only [swapMoves, Translator.Monadic.MonadBase.bind, ignoreBind, sortedMovesSubEqn,
-    if_pos h1, if_pos h2, updateSortedMovesEqn, List.length_set]
+    ite_eq_left h1, ite_eq_left h2, updateSortedMovesEqn, List.length_set]
 
 /-- `swap_moves` permutes the moves and fixes every other cell. -/
 private theorem swapMoves_perm (sth : LinearScanHiddenState) (i1 i2 : Nat)
@@ -512,7 +512,7 @@ private theorem swapMoves_perm (sth : LinearScanHiddenState) (i1 i2 : Nat)
     rwa [← holEl_eq_getElem _ _ h1, ← holEl_eq_getElem _ _ h2] at this
   · rw [hseq]
     show holEl j ((sth.sorted_moves.set i1 _).set i2 _) = _
-    rw [holEl_swap _ _ _ _ h1 h2, if_neg (Ne.symm e2), if_neg (Ne.symm e1)]
+    rw [holEl_swap _ _ _ _ h1 h2, ite_eq_right (Ne.symm e2), ite_eq_right (Ne.symm e1)]
 
 /-- Exact HOL `swap_moves_correct` (`linear_scanProofScript.sml:4250-4262`). -/
 @[hol "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml"
@@ -547,11 +547,11 @@ private theorem partitionMovesAux (ppiv : Nat) :
   intro l r sth hk hl hr
   rw [partitionMoves]
   by_cases hrl : r ≤ l
-  · rw [dif_pos hrl]
+  · rw [dite_eq_left hrl]
     exact ⟨l, sth, rfl, fun h => ⟨Nat.le_refl _, h⟩, rfl, List.Perm.refl _, fun _ _ => rfl⟩
-  rw [dif_neg hrl]
+  rw [dite_eq_right hrl]
   have hlen : l < sth.sorted_moves.length := by omega
-  simp only [Translator.Monadic.MonadBase.bind, sortedMovesSubEqn, if_pos hlen]
+  simp only [Translator.Monadic.MonadBase.bind, sortedMovesSubEqn, ite_eq_left hlen]
   split
   · obtain ⟨mid, sthout, hrun, hmid, hst, hp, hag⟩ :=
       ih (r - (l + 1)) (by omega) (l + 1) r sth rfl (by omega) hr
@@ -599,9 +599,9 @@ private theorem sortMovesAux :
   intro l r sth hk hl hr
   rw [sortMoves]
   by_cases hrl : r ≤ l + 1
-  · rw [dif_pos hrl]
+  · rw [dite_eq_left hrl]
     exact ⟨sth, rfl, rfl, List.Perm.refl _, fun _ _ => rfl⟩
-  rw [dif_neg hrl]
+  rw [dite_eq_right hrl]
   have hlen : l < sth.sorted_moves.length := by omega
   obtain ⟨mid, s1, hrun1, hmid1, hst1, hp1, hag1⟩ :=
     partitionMovesAux (holEl l sth.sorted_moves).1 (r - (l + 1)) (l + 1) r sth rfl (by omega) hr
@@ -617,8 +617,8 @@ private theorem sortMovesAux :
   obtain ⟨s4, hrun4, hst4, hp4, hag4⟩ := ih (r - mid) (by omega) mid r s3 rfl (by omega) (by omega)
   refine ⟨s4, ?_, by rw [hst4, hst3, hst2, hst1], hp1.trans (hp2.trans (hp3.trans hp4)),
     fun ind h => ?_⟩
-  · simp only [Translator.Monadic.MonadBase.bind, sortedMovesSubEqn, if_pos hlen, hrun1]
-    simp only [ignoreBind, hs2, dif_neg (show ¬ (mid ≤ l ∨ r < mid) by omega), hrun3, hrun4]
+  · simp only [Translator.Monadic.MonadBase.bind, sortedMovesSubEqn, ite_eq_left hlen, hrun1]
+    simp only [ignoreBind, hs2, dite_eq_right (show ¬ (mid ≤ l ∨ r < mid) by omega), hrun3, hrun4]
   · rw [hag4 ind (by omega), hag3 ind (by omega), hag2 ind (by omega) (by omega),
       hag1 ind (by omega)]
 

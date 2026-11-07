@@ -86,11 +86,11 @@ theorem evaluateCodeUpd_Tick {width : Nat} {σ : Type} [NeZero width]
   classical
   · rw [evaluateHOLFiniteState_tick] at heval ⊢
     by_cases hc : state.clock = 0
-    · simp only [if_pos hc, emptyLocalsHOLFinite] at heval ⊢
+    · simp only [ite_eq_left hc, emptyLocalsHOLFinite] at heval ⊢
       simpa only [Prod.fst, Prod.snd] using congrArg
         (fun (run : Option (PanSemResultExact width) × PanSemStateFiniteExact width σ) =>
           (run.1, { run.2 with code := c })) heval
-    · simp only [if_neg hc, decClockHOLFinite] at heval ⊢
+    · simp only [ite_eq_right hc, decClockHOLFinite] at heval ⊢
       simpa only [Prod.fst, Prod.snd] using congrArg
         (fun (run : Option (PanSemResultExact width) × PanSemStateFiniteExact width σ) =>
           (run.1, { run.2 with code := c })) heval
@@ -138,12 +138,12 @@ theorem evaluateCodeUpd_Assign {width : Nat} {σ : Type} [NeZero width]
         simp only [hv] at heval ⊢
         rw [hvalid]
         by_cases hs : isValidValueHOLFinite state kind name value = true
-        · simp only [hs, if_true] at heval ⊢
+        · simp only [hs, ite_true] at heval ⊢
           rw [hset]
           simpa only [Prod.fst, Prod.snd] using congrArg
             (fun (run : Option (PanSemResultExact width) × PanSemStateFiniteExact width σ) =>
               (run.1, { run.2 with code := c })) heval
-        · simp only [if_neg hs] at heval ⊢
+        · simp only [ite_eq_right hs] at heval ⊢
           simpa only [Prod.fst, Prod.snd] using congrArg
             (fun (run : Option (PanSemResultExact width) × PanSemStateFiniteExact width σ) =>
               (run.1, { run.2 with code := c })) heval
@@ -208,12 +208,12 @@ theorem evaluateCodeUpd_Primitive {width : Nat} {σ : Type} [NeZero width]
             simp only [hp] at heval ⊢
             rw [hvalid]
             by_cases hs : isValidValueHOLFinite state .local name value = true
-            · simp only [hs, if_true] at heval ⊢
+            · simp only [hs, ite_true] at heval ⊢
               rw [hset]
               simpa only [Prod.fst, Prod.snd] using congrArg
                 (fun (run : Option (PanSemResultExact width) × PanSemStateFiniteExact width σ) =>
                   (run.1, { run.2 with code := c })) heval
-            · simp only [if_neg hs] at heval ⊢
+            · simp only [ite_eq_right hs] at heval ⊢
               simpa only [Prod.fst, Prod.snd] using congrArg
                 (fun (run : Option (PanSemResultExact width) × PanSemStateFiniteExact width σ) =>
                   (run.1, { run.2 with code := c })) heval
@@ -453,26 +453,26 @@ theorem shMemLoadHOLFiniteExact_codeUpd {width : Nat} {σ : Type} [NeZero width]
         (panWordToBytesHOL address false) with
     | final event =>
       by_cases hnb : nb = 0
-      · simp only [hnb, if_true]
+      · simp only [hnb, ite_true]
         by_cases haddr : shMemaddrs address
-        · simp only [haddr, if_true]
-        · simp only [haddr, if_false]
-      · simp only [hnb, if_false]
+        · simp only [haddr, ite_true]
+        · simp only [haddr, ite_false]
+      · simp only [hnb, ite_false]
         by_cases haddr : shMemaddrs (panByteAlignHOL address)
-        · simp only [haddr, if_true]
-        · simp only [haddr, if_false]
+        · simp only [haddr, ite_true]
+        · simp only [haddr, ite_false]
     | ret newFfi newBytes =>
       by_cases hnb : nb = 0
-      · simp only [hnb, if_true]
+      · simp only [hnb, ite_true]
         by_cases haddr : shMemaddrs address
-        · simp only [haddr, if_true]
+        · simp only [haddr, ite_true]
           cases kind <;> rfl
-        · simp only [haddr, if_false]
-      · simp only [hnb, if_false]
+        · simp only [haddr, ite_false]
+      · simp only [hnb, ite_false]
         by_cases haddr : shMemaddrs (panByteAlignHOL address)
-        · simp only [haddr, if_true]
+        · simp only [haddr, ite_true]
           cases kind <;> rfl
-        · simp only [haddr, if_false]
+        · simp only [haddr, ite_false]
 
 set_option backward.isDefEq.respectTransparency false in
 /-- `ShMemLoad` evaluation, including the shared-memory FFI outcomes, commutes
@@ -610,29 +610,29 @@ theorem evaluateCodeUpd_ShMemStore {width : Nat} {σ : Type} [NeZero width]
                           simp only [ha, hv] at heval ⊢
                           unfold shMemStoreHOLExact at heval ⊢
                           by_cases hn : nbOpHOL operator = 0
-                          · simp only [hn, if_true] at heval ⊢
+                          · simp only [hn, ite_true] at heval ⊢
                             by_cases hd : state.shMemaddrs addr
-                            · simp only [hd, if_true] at heval ⊢
+                            · simp only [hd, ite_true] at heval ⊢
                               obtain ⟨outcome, hf⟩ : ∃ outcome, callFFIHOL state.ffi
                                   (.sharedMem .mappedWrite) [BitVec.ofNat 8 0]
                                   (panWordToBytesHOL bytes false ++ panWordToBytesHOL addr false) =
                                     outcome := ⟨_, rfl⟩
                               cases outcome <;> simp only [hf] at heval ⊢ <;>
                                 cases heval <;> cases state <;> rfl
-                            · simp only [hd, if_false] at heval ⊢
+                            · simp only [hd, ite_false] at heval ⊢
                               cases heval
                               cases state
                               rfl
-                          · simp only [hn, if_false] at heval ⊢
+                          · simp only [hn, ite_false] at heval ⊢
                             by_cases hd : state.shMemaddrs (panByteAlignHOL addr)
-                            · simp only [hd, if_true] at heval ⊢
+                            · simp only [hd, ite_true] at heval ⊢
                               obtain ⟨outcome, hf⟩ : ∃ outcome, callFFIHOL state.ffi
                                   (.sharedMem .mappedWrite) [BitVec.ofNat 8 (nbOpHOL operator)]
                                   ((panWordToBytesHOL bytes false).take (nbOpHOL operator) ++
                                     panWordToBytesHOL addr false) = outcome := ⟨_, rfl⟩
                               cases outcome <;> simp only [hf] at heval ⊢ <;>
                                 cases heval <;> cases state <;> rfl
-                            · simp only [hd, if_false] at heval ⊢
+                            · simp only [hd, ite_false] at heval ⊢
                               cases heval
                               cases state
                               rfl
@@ -669,11 +669,11 @@ theorem evaluateCodeUpd_Return {width : Nat} {σ : Type} [NeZero width]
             (run.1, { run.2 with code := c })) heval
     | some value =>
         by_cases hs : sizeOfShapeWithContextHOL state.structs (shapeOfHOLExact value) ≤ 32
-        · simp only [hv, if_pos hs] at heval ⊢
+        · simp only [hv, ite_eq_left hs] at heval ⊢
           simpa only [Prod.fst, Prod.snd, emptyLocalsHOLFinite] using congrArg
             (fun (run : Option (PanSemResultExact width) × PanSemStateFiniteExact width σ) =>
               (run.1, { run.2 with code := c })) heval
-        · simp only [hv, if_neg hs] at heval ⊢
+        · simp only [hv, ite_eq_right hs] at heval ⊢
           simpa only [Prod.fst, Prod.snd] using congrArg
             (fun (run : Option (PanSemResultExact width) × PanSemStateFiniteExact width σ) =>
               (run.1, { run.2 with code := c })) heval
@@ -718,11 +718,11 @@ theorem evaluateCodeUpd_Raise {width : Nat} {σ : Type} [NeZero width]
         | some value =>
             by_cases hc : shapeOfHOLExact value = shape ∧
               sizeOfShapeWithContextHOL state.structs (shapeOfHOLExact value) ≤ 32
-            · simp only [hshape, hv, if_pos hc] at heval ⊢
+            · simp only [hshape, hv, ite_eq_left hc] at heval ⊢
               simpa only [Prod.fst, Prod.snd, emptyLocalsHOLFinite] using congrArg
                 (fun (run : Option (PanSemResultExact width) × PanSemStateFiniteExact width σ) =>
                   (run.1, { run.2 with code := c })) heval
-            · simp only [hshape, hv, if_neg hc] at heval ⊢
+            · simp only [hshape, hv, ite_eq_right hc] at heval ⊢
               simpa only [Prod.fst, Prod.snd] using congrArg
                 (fun (run : Option (PanSemResultExact width) × PanSemStateFiniteExact width σ) =>
                   (run.1, { run.2 with code := c })) heval

@@ -92,7 +92,7 @@ theorem arm8Mem_nop (ms : arm8_state)
   constructor
   · rw [CheckAlignment_aligned ms ms.PC 4 AccType.AccType_IFETCH false hal]
     rw [BigEndian_false ms hel he0]
-    simp only [Bool.false_eq_true, if_false, BitVec.ofNat_eq_ofNat] at *
+    simp only [Bool.false_eq_true, ite_false, BitVec.ofNat_eq_ofNat] at *
     rw [h0, h1, h2, h3]
     decide
   · exact CheckAlignment_aligned ms ms.PC 4 AccType.AccType_IFETCH false hal

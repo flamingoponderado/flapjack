@@ -14,6 +14,6 @@ theorem avoidSignalAddressException (b : Bool) (t : (ExceptionType × (BitVec 64
     (u s : riscv_state) :
     (¬ b) → ((if b then signalAddressException t u else s) = s) := by
   intro hb
-  rw [if_neg hb]
+  rw [ite_eq_right hb]
 
 end Flapjack.RiscV.L3.Step

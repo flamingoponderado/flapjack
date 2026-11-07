@@ -114,7 +114,7 @@ theorem evaluateFperm_Call {width : Nat} {σ : Type} [NeZero width]
           rw [FpermCallEntry.arguments f g state expressions]
           simp only [ha]
           rw [FpermCallEntry.lookup f g state.code name values, hl]
-          simp only [Option.map_some, hz, if_false]
+          simp only [Option.map_some, hz, ite_false]
           rw [FpermCallEntry.entry f g state callee, ht, hbody]
           simp only [validCode]
           cases bodyRes with
@@ -128,7 +128,7 @@ theorem evaluateFperm_Call {width : Nat} {σ : Type} [NeZero width]
             | finalFfi outcome => rfl
             | returned value =>
               by_cases hs : shapeEqHOL (shapeOfHOLExact value) shape = true
-              · simp only [hs, if_true]
+              · simp only [hs, ite_true]
                 cases info with
                 | none => rfl
                 | some pair =>
@@ -139,10 +139,10 @@ theorem evaluateFperm_Call {width : Nat} {σ : Type} [NeZero width]
                     obtain ⟨kind, evar⟩ := pair
                     dsimp only
                     by_cases hv : isValidValueHOLExact state.toExact kind evar value = true
-                    · simp only [hv, if_true]
+                    · simp only [hv, ite_true]
                       cases kind <;> rfl
-                    · simp only [hv, Bool.false_eq_true, if_false]
-              · simp only [hs, Bool.false_eq_true, if_false]
+                    · simp only [hv, Bool.false_eq_true, ite_false]
+              · simp only [hs, Bool.false_eq_true, ite_false]
             | exception eid value =>
               cases info with
               | none => rfl
@@ -154,7 +154,7 @@ theorem evaluateFperm_Call {width : Nat} {σ : Type} [NeZero width]
                   obtain ⟨handlerId, evar, handler⟩ := triple
                   by_cases hid : eid = handlerId
                   · subst handlerId
-                    simp only [if_true]
+                    simp only [ite_true]
                     cases he : state.eshapes.lookup eid with
                     | none => rfl
                     | some handlerShape =>
@@ -169,9 +169,9 @@ theorem evaluateFperm_Call {width : Nat} {σ : Type} [NeZero width]
                         have hp := ihHandler values body callee shape bodyPost destination eid evar
                           handler value handlerShape ⟨ha, hl, hz, hbody, rfl, he, (shapeEqHOL_eq_true _ _).mp hshape, hvalid⟩
                           handlerRes handlerPost hhandler
-                        simpa only [hv, if_true, setVarHOLFinite, hhandler] using hp
-                      · simp only [hv, Bool.false_eq_true, if_false]
-                  · simp only [hid, if_false]
+                        simpa only [hv, ite_true, setVarHOLFinite, hhandler] using hp
+                      · simp only [hv, Bool.false_eq_true, ite_false]
+                  · simp only [hid, ite_false]
                     rfl
   simpa only [heval] using hfull
 

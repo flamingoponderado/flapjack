@@ -48,9 +48,9 @@ theorem evaluateWRegWrite1Seq {width : Nat} [NeZero width] {C F : Type}
       (let (loads,physical) := wReg1 register (k,f,frame)
        StackSemEvaluate.evaluate (.seq (kont physical) (wStackStoreNative loads .skip),target)) := by
   by_cases physical : register/2 < k
-  · simp only [wRegWrite1Native,wReg1,physical,if_true,wStackStoreNative]
+  · simp only [wRegWrite1Native,wReg1,physical,ite_true,wStackStoreNative]
     exact (evaluateSeqSkip _ _).symm
-  · simp only [wRegWrite1Native,wReg1,physical,if_false,wStackStoreNative]
+  · simp only [wRegWrite1Native,wReg1,physical,ite_false,wStackStoreNative]
     rw [StackSemEvaluate.evaluate_seq,StackSemEvaluateClock.fixClockEvaluate]
     rw [StackSemEvaluate.evaluate_seq,StackSemEvaluateClock.fixClockEvaluate]
     rcases run : StackSemEvaluate.evaluate (kont k,target) with ⟨result,post⟩
@@ -86,13 +86,13 @@ theorem evaluateWStackStoreWReg1 {width : Nat} [NeZero width] {C F : Type}
       post.stack.length=stackLength ∧ post.stackSpace=stackSpace := by
   have registerEq : 2*(register/2)=register := by omega
   by_cases inReg : register/2 < k
-  · simp only [wReg1,inReg,if_true,Prod.mk.injEq] at compiled
+  · simp only [wReg1,inReg,ite_true,Prod.mk.injEq] at compiled
     obtain ⟨rfl,rfl⟩ := compiled
     refine ⟨StackSemStateOps.setVar (register/2) value target,?_,?_,lengthEq,spaceEq⟩
     · exact StackSemEvaluate.evaluate_skip _
     · have updated := StateRelRegisterUpdate.stateRelSetVar (register/2) value related inReg
       simpa only [registerEq] using updated
-  · simp only [wReg1,inReg,if_false,Prod.mk.injEq] at compiled
+  · simp only [wReg1,inReg,ite_false,Prod.mk.injEq] at compiled
     obtain ⟨rfl,rfl⟩ := compiled
     have halfBound : register/2 < frame+k := by omega
     have shape : if frame=0 then f=0 else f=frame+1 :=

@@ -43,7 +43,7 @@ example (mc : MachineConfig 8 Nat Nat) (ffi : HolFfiState Nat) :
   simp [findNextInterference, normal, fixture, applyOracleHOL]
   have he := normalEncoded mc 7
   simp [normal, fixture] at he
-  simp only [he, if_true]
+  simp only [he, ite_true]
 example (mc : MachineConfig 8 Nat Nat) :
     findNextInterference (mmio mc .mappedRead 0) terminal 1 7 = none := by
   simp [findNextInterference, mmio, fixture, Misc.findIndex, holEl, holHd,
@@ -108,6 +108,6 @@ example (mc : MachineConfig 8 Nat Nat) (ffi : HolFfiState Nat) :
   simp [findNextInterference, normalCache, fixture, applyOracleHOL]
   have he := normalCacheEncoded mc
   simp [normalCache, fixture] at he
-  simp only [he, if_true]
+  simp only [he, ite_true]
 
 end Flapjack.Test.TargetFindNextInterferenceParity

@@ -14,24 +14,24 @@ theorem sptLookup_sptInsert {α : Type} :
     by_cases h0 : k2 = 0
     · subst h0
       cases t
-      · rw [sptInsert.eq_1, if_pos rfl]; by_cases hk : k = 0 <;> simp [sptLookup, hk]
-      · rw [sptInsert.eq_2, if_pos rfl]; by_cases hk : k = 0 <;> simp [sptLookup, hk]
-      · rw [sptInsert.eq_3, if_pos rfl]; by_cases hk : k = 0 <;> simp [sptLookup, hk]
-      · rw [sptInsert.eq_4, if_pos rfl]; by_cases hk : k = 0 <;> simp [sptLookup, hk]
+      · rw [sptInsert.eq_1, ite_eq_left rfl]; by_cases hk : k = 0 <;> simp [sptLookup, hk]
+      · rw [sptInsert.eq_2, ite_eq_left rfl]; by_cases hk : k = 0 <;> simp [sptLookup, hk]
+      · rw [sptInsert.eq_3, ite_eq_left rfl]; by_cases hk : k = 0 <;> simp [sptLookup, hk]
+      · rw [sptInsert.eq_4, ite_eq_left rfl]; by_cases hk : k = 0 <;> simp [sptLookup, hk]
     · have hdec : (k2 - 1) / 2 < k2 := by omega
       have ihk := fun k => ih _ hdec k v
       by_cases he : k2 % 2 = 0
       · cases t
         all_goals first
-          | rw [sptInsert.eq_1, if_neg h0, if_pos he]
-          | rw [sptInsert.eq_2, if_neg h0, if_pos he]
-          | rw [sptInsert.eq_3, if_neg h0, if_pos he]
-          | rw [sptInsert.eq_4, if_neg h0, if_pos he]
+          | rw [sptInsert.eq_1, ite_eq_right h0, ite_eq_left he]
+          | rw [sptInsert.eq_2, ite_eq_right h0, ite_eq_left he]
+          | rw [sptInsert.eq_3, ite_eq_right h0, ite_eq_left he]
+          | rw [sptInsert.eq_4, ite_eq_right h0, ite_eq_left he]
         all_goals
           by_cases hk : k = 0
           · subst hk; simp [sptLookup, Ne.symm h0]
           · by_cases hke : k % 2 = 0
-            · simp only [sptLookup, if_neg hk, if_pos hke, ihk]
+            · simp only [sptLookup, ite_eq_right hk, ite_eq_left hke, ihk]
               by_cases hkk : k = k2
               · subst hkk; simp
               · have : (k - 1) / 2 ≠ (k2 - 1) / 2 := by omega
@@ -40,17 +40,17 @@ theorem sptLookup_sptInsert {α : Type} :
               simp [sptLookup, hk, hke, hkk]
       · cases t
         all_goals first
-          | rw [sptInsert.eq_1, if_neg h0, if_neg he]
-          | rw [sptInsert.eq_2, if_neg h0, if_neg he]
-          | rw [sptInsert.eq_3, if_neg h0, if_neg he]
-          | rw [sptInsert.eq_4, if_neg h0, if_neg he]
+          | rw [sptInsert.eq_1, ite_eq_right h0, ite_eq_right he]
+          | rw [sptInsert.eq_2, ite_eq_right h0, ite_eq_right he]
+          | rw [sptInsert.eq_3, ite_eq_right h0, ite_eq_right he]
+          | rw [sptInsert.eq_4, ite_eq_right h0, ite_eq_right he]
         all_goals
           by_cases hk : k = 0
           · subst hk; simp [sptLookup, Ne.symm h0]
           · by_cases hke : k % 2 = 0
             · have hkk : k ≠ k2 := by omega
               simp [sptLookup, hk, hke, hkk]
-            · simp only [sptLookup, if_neg hk, if_neg hke, ihk]
+            · simp only [sptLookup, ite_eq_right hk, ite_eq_right hke, ihk]
               by_cases hkk : k = k2
               · subst hkk; simp
               · have : (k - 1) / 2 ≠ (k2 - 1) / 2 := by omega
@@ -119,7 +119,7 @@ theorem sptLookup_sptAlistInsert_not_mem (n : Nat) :
   | _ :: _, [], _, _ => rfl
   | m :: ns, v :: vs, l, hn => by
       simp only [sptAlistInsert]
-      rw [sptLookup_sptInsert, if_neg (show ¬ n = m from fun h => hn (h ▸ List.mem_cons_self)),
+      rw [sptLookup_sptInsert, ite_eq_right (show ¬ n = m from fun h => hn (h ▸ List.mem_cons_self)),
         sptLookup_sptAlistInsert_not_mem n ns vs l (fun h => hn (List.mem_cons_of_mem _ h))]
 
 /-- Exact HOL `get_vars_local_update_some_eq` (`loopPropsScript.sml:278-281`):
@@ -139,12 +139,12 @@ theorem get_vars_local_update_some_eq :
       have ih := get_vars_local_update_some_eq ns vs st (List.nodup_cons.mp hd).2
         (by simpa using hl)
       simp only [getVars, sptAlistInsert]
-      rw [sptLookup_sptInsert, if_pos rfl]
+      rw [sptLookup_sptInsert, ite_eq_left rfl]
       simp only [Option.bind_some]
       rw [getVars_congr ns _ { st with locals := sptAlistInsert ns vs st.locals }
         (fun m hm => by
           simp only
-          rw [sptLookup_sptInsert, if_neg (show ¬ m = n from fun h => hn (h ▸ hm))]), ih]
+          rw [sptLookup_sptInsert, ite_eq_right (show ¬ m = n from fun h => hn (h ▸ hm))]), ih]
       rfl
 
 /-- Exact HOL `locals_touched_eq_eval_eq` (`loopPropsScript.sml:174-179`):

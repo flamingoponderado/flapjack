@@ -425,12 +425,12 @@ theorem flattenApp_seq (tail : Bool) (first second : Prog Inst Cmp RegImm Binop 
                   have hny : ny = nyf := congrArg (fun p => p.2.2) h2
                   rw [hnr1, hnr2, hny]
                   by_cases ht : tail = true
-                  · simp only [if_pos ht, appListFlatten, appListAppend, appendAux]
+                  · simp only [ite_eq_left ht, appListFlatten, appListAppend, appendAux]
                     congr 1
                     rw [appendAux_thm]
                     simp only [appListAppend] at hxs hys ⊢
                     rw [hxs, hys, List.append_assoc]
-                  · simp only [if_neg ht, appListFlatten, appListAppend, appendAux]
+                  · simp only [ite_eq_right ht, appListFlatten, appListAppend, appendAux]
                     congr 1
                     rw [appendAux_thm]
                     simp only [appListAppend] at hxs hys ⊢
@@ -571,22 +571,22 @@ theorem flattenApp_ite (tail : Bool) (condition : Cmp) (register : Nat) (right :
                   have hny : ny = nyf := congrArg (fun p => p.2.2) h2
                   rw [hnx, hnr1, hnr2, hny]
                   by_cases hc1 : (stackIsSkip thenBranch && stackIsSkip elseBranch) = true
-                  · simp only [if_pos hc1, appListFlatten, appListAppend, appendAux, List.nil_append]
+                  · simp only [ite_eq_left hc1, appListFlatten, appListAppend, appendAux, List.nil_append]
                   · by_cases hc2 : stackIsSkip thenBranch = true
-                    · simp only [if_neg hc1, if_pos hc2, appListFlatten, appListAppend, appendAux]
+                    · simp only [ite_eq_right hc1, ite_eq_left hc2, appListFlatten, appListAppend, appendAux]
                       simp only [appListAppend] at hys
                       rw [appendAux_thm]
                       rw [hys]
                       simp only [List.append_assoc, List.append_nil]
                     · by_cases hc3 : stackIsSkip elseBranch = true
-                      · simp only [if_neg hc1, if_neg hc2, if_pos hc3, appListFlatten,
+                      · simp only [ite_eq_right hc1, ite_eq_right hc2, ite_eq_left hc3, appListFlatten,
                           appListAppend, appendAux]
                         simp only [appListAppend] at hxs
                         rw [appendAux_thm]
                         rw [hxs]
                         simp only [List.append_assoc, List.append_nil]
                       · by_cases hc4 : nrf = true
-                        · simp only [if_neg hc1, if_neg hc2, if_neg hc3, if_pos hc4,
+                        · simp only [ite_eq_right hc1, ite_eq_right hc2, ite_eq_right hc3, ite_eq_left hc4,
                             appListFlatten, appListAppend, appendAux]
                           simp only [appListAppend] at hxs hys
                           rw [appendAux_thm]
@@ -595,7 +595,7 @@ theorem flattenApp_ite (tail : Bool) (condition : Cmp) (register : Nat) (right :
                           rw [hys]
                           simp only [List.append_assoc, List.append_nil]
                         · by_cases hc5 : nrg = true
-                          · simp only [if_neg hc1, if_neg hc2, if_neg hc3, if_neg hc4, if_pos hc5,
+                          · simp only [ite_eq_right hc1, ite_eq_right hc2, ite_eq_right hc3, ite_eq_right hc4, ite_eq_left hc5,
                               appListFlatten, appListAppend, appendAux]
                             simp only [appListAppend] at hxs hys
                             rw [appendAux_thm]
@@ -603,7 +603,7 @@ theorem flattenApp_ite (tail : Bool) (condition : Cmp) (register : Nat) (right :
                             rw [appendAux_thm]
                             rw [hxs]
                             simp only [List.append_assoc, List.append_nil]
-                          · simp only [if_neg hc1, if_neg hc2, if_neg hc3, if_neg hc4, if_neg hc5,
+                          · simp only [ite_eq_right hc1, ite_eq_right hc2, ite_eq_right hc3, ite_eq_right hc4, ite_eq_right hc5,
                               appListFlatten, appListAppend, appendAux]
                             simp only [appListAppend] at hxs hys
                             rw [appendAux_thm]

@@ -577,10 +577,10 @@ theorem compileEachSource_namespaceRel (next : Nat) (code : List (Nat × Nat × 
   · intro name ⟨member, above⟩
     have targetMem := (sptFromAList_mem_iff _ name).mp member
     by_cases inWorker : inWorkerNamespace name
-    · simp only [show name % Flapjack.bvlToBviNamespaces = 2 from inWorker, if_true]
+    · simp only [show name % Flapjack.bvlToBviNamespaces = 2 from inWorker, ite_true]
       intro sourceMem
       exact original name ((sptFromAList_mem_iff _ name).mp sourceMem) above inWorker
-    · simp only [show ¬name % Flapjack.bvlToBviNamespaces = 2 from inWorker, if_false]
+    · simp only [show ¬name % Flapjack.bvlToBviNamespaces = 2 from inWorker, ite_false]
       apply (sptFromAList_mem_iff _ name).mpr
       rcases compileEachSource_mem code next name targetMem with old | ⟨_, _, k, eq⟩
       · exact old
@@ -604,17 +604,17 @@ theorem namespaceRel_union {α : Type} (x y t s : Spt α)
   · intro n ⟨targetMem, bound⟩
     rw [sptMem_sptUnion] at targetMem
     by_cases worker : inWorkerNamespace n
-    · simp only [show n % Flapjack.bvlToBviNamespaces = 2 from worker, if_true, sptMem_sptUnion, not_or]
+    · simp only [show n % Flapjack.bvlToBviNamespaces = 2 from worker, ite_true, sptMem_sptUnion, not_or]
       exact ⟨fun h => leftNoWorker n ⟨h, bound⟩ worker,
         fun h => rightNoWorker n ⟨h, bound⟩ worker⟩
-    · simp only [show ¬n % Flapjack.bvlToBviNamespaces = 2 from worker, if_false, sptMem_sptUnion]
+    · simp only [show ¬n % Flapjack.bvlToBviNamespaces = 2 from worker, ite_false, sptMem_sptUnion]
       rcases targetMem with mem | mem
       · left
         have found := leftAbove n ⟨mem, bound⟩
-        simpa only [show ¬n % Flapjack.bvlToBviNamespaces = 2 from worker, if_false] using found
+        simpa only [show ¬n % Flapjack.bvlToBviNamespaces = 2 from worker, ite_false] using found
       · right
         have found := rightAbove n ⟨mem, bound⟩
-        simpa only [show ¬n % Flapjack.bvlToBviNamespaces = 2 from worker, if_false] using found
+        simpa only [show ¬n % Flapjack.bvlToBviNamespaces = 2 from worker, ite_false] using found
   · intro n ⟨sourceMem, bound⟩
     rw [sptMem_sptUnion] at sourceMem
     rcases sourceMem with mem | mem
@@ -687,7 +687,7 @@ theorem compileEachSource_install_disjoint (next : Nat) (code : List (Nat × Nat
       · have present := namespaces.1 n ⟨existing, above⟩
         have sourcePresent : sptMem n source := by
           have notResidue : ¬n % Flapjack.bvlToBviNamespaces = 2 := inWorker
-          simpa only [notResidue, if_false] using present
+          simpa only [notResidue, ite_false] using present
         exact sourceAbsent n old sourcePresent
   · have inWorker := generated n k eq
     have oldBound := workerBound n ⟨existing, inWorker⟩

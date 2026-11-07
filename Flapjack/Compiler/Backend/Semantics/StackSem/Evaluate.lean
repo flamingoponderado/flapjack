@@ -93,12 +93,12 @@ theorem evaluateHOL_seq {width : Nat} [NeZero width] {C F : Type}
     (a b : HolProg width) (s : StackSemStateFiniteExact width C F) :
     evaluateHOL (.seq a b) s = StackSemControlCases.evaluateSeq evaluateHOL a b s := by
   rw [evaluateHOL]
-  simp only [StackSemControlCases.evaluateSeq, dif_pos (seq_first_measure_lt a b s)]
+  simp only [StackSemControlCases.evaluateSeq, dite_eq_left (seq_first_measure_lt a b s)]
   have h2 := seq_second_measure_lt a b s (evaluateHOL a s)
   rcases hfx : StackSemControl.fixClock s (evaluateHOL a s) with ⟨res, s1⟩
   rw [hfx] at h2
   cases res with
-  | none => simp only [dif_pos h2]
+  | none => simp only [dite_eq_left h2]
   | some r => rfl
 
 theorem evaluateHOL_ite {width : Nat} [NeZero width] {C F : Type}
@@ -107,14 +107,14 @@ theorem evaluateHOL_ite {width : Nat} [NeZero width] {C F : Type}
     evaluateHOL (.ite cmp r ri a b) s =
       StackSemControlCases.evaluateIf evaluateHOL cmp r ri a b s := by
   rw [evaluateHOL]
-  simp only [StackSemControlCases.evaluateIf, dif_pos (if_first_measure_lt cmp r ri a b s),
-    dif_pos (if_second_measure_lt cmp r ri a b s)]
+  simp only [StackSemControlCases.evaluateIf, dite_eq_left (if_first_measure_lt cmp r ri a b s),
+    dite_eq_left (if_second_measure_lt cmp r ri a b s)]
 
 theorem evaluateHOL_loop {width : Nat} [NeZero width] {C F : Type}
     (body : HolProg width) (s : StackSemStateFiniteExact width C F) :
     evaluateHOL (.loop body) s = StackSemControlCases.evaluateLoop evaluateHOL body s := by
   rw [evaluateHOL]
-  simp only [StackSemControlCases.evaluateLoop, dif_pos (loop_body_measure_lt body s)]
+  simp only [StackSemControlCases.evaluateLoop, dite_eq_left (loop_body_measure_lt body s)]
   have h2 := fun hne => loop_reentry_measure_lt body s (evaluateHOL body s) hne
   rcases hfx : StackSemControl.fixClock s (evaluateHOL body s) with ⟨res, s1⟩
   rw [hfx] at h2
@@ -122,7 +122,7 @@ theorem evaluateHOL_loop {width : Nat} [NeZero width] {C F : Type}
   by_cases hc : StackSemControl.contLoop res
   · by_cases h0 : s1.clock = 0
     · simp [hc, h0]
-    · simp [hc, h0, dif_pos (h2 h0)]
+    · simp [hc, h0, dite_eq_left (h2 h0)]
   · simp [hc]
 
 theorem evaluateHOL_jumpLower {width : Nat} [NeZero width] {C F : Type}
@@ -137,7 +137,7 @@ theorem evaluateHOL_jumpLower {width : Nat} [NeZero width] {C F : Type}
       · rename_i prog _
         by_cases h0 : s.clock = 0
         · simp [h0]
-        · simp [h0, dif_pos (callee_measure_lt prog (.jumpLower r1 r2 dest) s h0)]
+        · simp [h0, dite_eq_left (callee_measure_lt prog (.jumpLower r1 r2 dest) s h0)]
     · rfl
   · rfl
 
@@ -152,7 +152,7 @@ theorem evaluateHOL_rawCall {width : Nat} [NeZero width] {C F : Type}
     · rename_i body _
       by_cases h0 : s.clock = 0
       · simp [h0]
-      · simp [h0, dif_pos (callee_measure_lt body (.rawCall dest) s h0)]
+      · simp [h0, dite_eq_left (callee_measure_lt body (.rawCall dest) s h0)]
     · rfl
 
 theorem evaluateHOL_call {width : Nat} [NeZero width] {C F : Type}
@@ -171,7 +171,7 @@ theorem evaluateHOL_call {width : Nat} [NeZero width] {C F : Type}
         · rfl
         · by_cases h0 : s.clock = 0
           · simp [h0]
-          · simp [h0, dif_pos (callee_measure_lt prog (.call none dest none) s h0)]
+          · simp [h0, dite_eq_left (callee_measure_lt prog (.call none dest none) s h0)]
   | some rr =>
       obtain ⟨retH, link, l1, l2⟩ := rr
       dsimp only
@@ -180,7 +180,7 @@ theorem evaluateHOL_call {width : Nat} [NeZero width] {C F : Type}
       · rename_i prog _
         by_cases h0 : s.clock = 0
         · simp [h0]
-        · simp only [h0, if_false]
+        · simp only [h0, ite_false]
           have hs' : (setVar link (.loc l1 l2) s).clock ≠ 0 := by simpa [setVar] using h0
           have hpar : stackSemMeasure (.call (some (retH, link, l1, l2)) dest handler)
               (setVar link (.loc l1 l2) s) =
@@ -189,7 +189,7 @@ theorem evaluateHOL_call {width : Nat} [NeZero width] {C F : Type}
           have hcallee := callee_measure_lt prog (.call (some (retH, link, l1, l2)) dest handler)
             (setVar link (.loc l1 l2) s) hs'
           rw [hpar] at hcallee
-          rw [dif_pos hcallee]
+          rw [dite_eq_left hcallee]
           have hk := fun cont => call_continuation_measure_lt cont
             (.call (some (retH, link, l1, l2)) dest handler) s link l1 l2
             (evaluateHOL prog (decClock (setVar link (.loc l1 l2) s))) h0
@@ -201,7 +201,7 @@ theorem evaluateHOL_call {width : Nat} [NeZero width] {C F : Type}
           rcases res with _ | ⟨x⟩ | ⟨x⟩ | _ | _ | _ | _ | _ | _
           all_goals first
             | rfl
-            | simp [dif_pos (hk _)]
+            | simp [dite_eq_left (hk _)]
 
 /-! Unfolding equations of the non-recursive clauses: each is the clause's fragment. -/
 

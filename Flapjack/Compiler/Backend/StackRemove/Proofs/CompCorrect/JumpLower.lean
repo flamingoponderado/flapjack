@@ -78,7 +78,7 @@ theorem compCorrectJumpLower {width : Nat} [NeZero width] {C F : Type}
           have targetFirst : target.regs.lookup first = some (.word left) := readFirst.symm.trans hFirst
           have targetSecond : target.regs.lookup second = some (.word right) := readSecond.symm.trans hSecond
           by_cases lower : wordCmpHOL .lower left right = true
-          · simp only [lower, if_true, StackSemControl.findCode] at sourceRun
+          · simp only [lower, ite_true, StackSemControl.findCode] at sourceRun
             cases lookup : sptLookup label source.code with
             | none =>
               simp only [lookup] at sourceRun
@@ -87,21 +87,21 @@ theorem compCorrectJumpLower {width : Nat} [NeZero width] {C F : Type}
               simp only [lookup] at sourceRun
               obtain ⟨targetLookup, bodyBound⟩ := FindCode.codeLookup jump bounds pointer label source target program relation lookup
               by_cases zero : source.clock = 0
-              · simp only [zero, if_true] at sourceRun
+              · simp only [zero, ite_true] at sourceRun
                 rcases Prod.mk.inj sourceRun with ⟨resultEq, postEq⟩
                 subst result
                 subst postSource
                 refine ⟨0, emptyEnv target, ?_, ?_⟩
                 · simpa only [comp, Nat.zero_add] using
                     (evaluate_jumpLower first second label target).trans (by
-                      simp only [getVar, targetFirst, targetSecond, lower, if_true,
+                      simp only [getVar, targetFirst, targetSecond, lower, ite_true,
                         StackSemControl.findCode, targetLookup, clocks, zero])
                 · exact (RelationLaws.stateRelConst jump bounds pointer source target relation).2.2.2.2.1
-              · simp only [zero, if_false] at sourceRun
+              · simp only [zero, ite_false] at sourceRun
                 rcases bodyRun : evaluate (program, decClock source) with ⟨bodyResult, middle⟩
                 rw [bodyRun] at sourceRun
                 by_cases bad : StackSemControl.badFunReturn bodyResult = true
-                · simp only [bad, if_true] at sourceRun
+                · simp only [bad, ite_true] at sourceRun
                   exact False.elim (notError (Prod.mk.inj sourceRun).1.symm)
                 · simp [bad] at sourceRun
                   rcases sourceRun with ⟨resultEq, postEq⟩
@@ -125,7 +125,7 @@ theorem compCorrectJumpLower {width : Nat} [NeZero width] {C F : Type}
                   simp only [comp]
                   rw [evaluate_jumpLower]
                   simp only [getVar, targetFirst, targetSecond, StackSemControl.findCode,
-                    targetLookup, lower, if_true, nonzero, if_false]
+                    targetLookup, lower, ite_true, nonzero, ite_false]
                   rw [clockEq, targetRun]
                   simp [bad]
           · simp [lower] at sourceRun

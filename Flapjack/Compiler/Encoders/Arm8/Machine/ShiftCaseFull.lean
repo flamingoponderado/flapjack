@@ -61,7 +61,7 @@ theorem highestSetBit_lsl (n : Nat) (hn : n < 64) : highestSetBit (64 ||| n) = 6
   have hne : 64 ||| n ≠ 0 := by
     have h := Nat.left_le_or (n := 64) (m := n)
     omega
-  rw [highestSetBit, if_neg hne]
+  rw [highestSetBit, ite_eq_right hne]
   have hlog : Nat.log2 (64 ||| n) = 6 := by
     rw [Nat.log2_eq_iff (k := 6) hne]
     constructor
@@ -99,7 +99,7 @@ theorem decodeBitMasks_lsl (n : Nat) (hn : n < 64) :
       rw [hk, show (2 : Nat) ^ 6 = 64 by norm_num,
         show 63 - n + 64 - (64 - n) = 63 by omega]
   rw [decodeBitMasks, hnum, hlen]
-  rw [if_neg (by decide : ¬ ((6 : Int) < 1)), if_neg (by simp : ¬ ((false && _) = true)),
+  rw [ite_eq_right (by decide : ¬ ((6 : Int) < 1)), ite_eq_right (by simp : ¬ ((false && _) = true)),
     show (6 : Int).toNat = 6 by decide]
   simp only [ones]
   rw [Nat.mod_mod, hS, hR, hone, show 63 - n + 1 = 64 - n by omega,

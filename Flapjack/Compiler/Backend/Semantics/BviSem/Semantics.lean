@@ -86,7 +86,7 @@ theorem semantics_eq_of_terminatingObservation {C F : Type} (ffi : HolFfiState F
     semantics ffi code oracle compiler start = behavior := by
   classical
   unfold semantics
-  simp only [noFatal, if_false]
+  simp only [noFatal, ite_false]
   rw [HolLList.holOptionSome_eq_some observed
     (fun other otherObserved => terminatingObservation_unique ffi code oracle compiler start
       other behavior otherObserved observed)]
@@ -103,7 +103,7 @@ theorem semantics_diverges_of_no_observation {C F : Type} (ffi : HolFfiState F)
     ∃ trace, semantics ffi code oracle compiler start = .diverge trace := by
   classical
   unfold semantics
-  simp only [noFatal, if_false]
+  simp only [noFatal, ite_false]
   have selected : holOptionSome (terminatingObservation ffi code oracle compiler start) = none := by
     unfold holOptionSome
     simp [not_exists.mpr noObservation]
@@ -120,7 +120,7 @@ theorem semantics_ne_fail_of_noFatalError {C F : Type} (ffi : HolFfiState F)
     semantics ffi code oracle compiler start ≠ .fail := by
   classical
   unfold semantics
-  simp only [noFatal, if_false]
+  simp only [noFatal, ite_false]
   cases selected : holOptionSome (terminatingObservation ffi code oracle compiler start) with
   | none => simp
   | some behavior =>

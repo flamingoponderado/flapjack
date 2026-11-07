@@ -156,13 +156,13 @@ theorem regOk_of_asmL3 {r : Nat} (h : asmRegOkExact r arm8ConfigL3 = true) :
 /-- The result half of `AddWithCarry` for a non-inverted operand. -/
 theorem arm8AddWithCarry_add (x y : BitVec 64) :
     (AddWithCarry (TN := 64) (x, (y, false))).1 = x + y := by
-  simp only [AddWithCarry, Bool.false_eq_true, if_false, Nat.add_zero]
+  simp only [AddWithCarry, Bool.false_eq_true, ite_false, Nat.add_zero]
   rw [BitVec.add_def]
 
 /-- The result half of `AddWithCarry` for an inverted operand with carry in. -/
 theorem arm8AddWithCarry_sub (x y : BitVec 64) :
     (AddWithCarry (TN := 64) (x, (~~~y, true))).1 = x - y := by
-  simp only [AddWithCarry, if_true]
+  simp only [AddWithCarry, ite_true]
   rw [BitVec.ofNat_add, ← BitVec.add_def, BitVec.add_assoc, BitVec.sub_eq_add_neg,
     ← BitVec.neg_eq_not_add]
 
@@ -199,7 +199,7 @@ theorem arm8WriteX_of_valid (s : arm8_state) (v : BitVec 64) {n : Nat}
     cases hb : (BitVec.ofNat 5 n == 31#5)
     · rfl
     · exact absurd (by simpa using hb) hne
-  simp only [«write'X», BitVec.setWidth_eq, hcond, if_true]
+  simp only [«write'X», BitVec.setWidth_eq, hcond, ite_true]
 
 /-- `holUpdate` at its application form for any carrier (Flapjack
 infrastructure: the memory-specialised `holUpdate_apply` does not cover the
@@ -209,11 +209,11 @@ theorem holUpdate_apply_general {α β : Type} [DecidableEq α] (a : α) (b : β
 
 theorem holUpdate_same {α β : Type} [DecidableEq α] (a : α) (b : β) (f : α → β) :
     holUpdate a b f a = b := by
-  rw [holUpdate_apply_general, if_pos rfl]
+  rw [holUpdate_apply_general, ite_eq_left rfl]
 
 theorem holUpdate_ne {α β : Type} [DecidableEq α] {a c : α} (h : ¬ a = c) (b : β)
     (f : α → β) : holUpdate a b f c = f c := by
-  rw [holUpdate_apply_general, if_neg h]
+  rw [holUpdate_apply_general, ite_eq_right h]
 
 /-- The four bytes `arm8Encode` lays down for an instruction that encodes to
 `w` (Flapjack infrastructure). -/
@@ -487,7 +487,7 @@ theorem arm8_encoder_correct_const_movZ (r : Nat) (v : BitVec 64) (imm16 : BitVe
     (by rw [arm8Enc, arm8Ast_const_movZ r v imm16 hw hbm]; simp)
     (arm8Encode_moveWide _ _ _ _) (arm8Decode_moveWide .z hw imm16 _) ?_ ?_
   · intro _
-    rw [arm8Run_moveWide_z, if_neg hrd, arm8EncMovImm_value v imm16 hw hbm]
+    rw [arm8Run_moveWide_z, ite_eq_right hrd, arm8EncMovImm_value v imm16 hw hbm]
   · intro _ p
     refine ⟨?_, fun x => ?_, ?_, fun j => ?_⟩ <;> simp [asmUpd, instUpd, updPc, updReg]
 
@@ -512,7 +512,7 @@ theorem arm8_encoder_correct_const_movN (r : Nat) (v : BitVec 64) (imm16 : BitVe
     (by rw [arm8Enc, arm8Ast_const_movN r v imm16 hw h0 hbm]; simp)
     (arm8Encode_moveWide _ _ _ _) (arm8Decode_moveWide .n hw imm16 _) ?_ ?_
   · intro _
-    rw [arm8Run_moveWide_n, if_neg hrd, arm8EncMovImm_value_not v imm16 hw hbm]
+    rw [arm8Run_moveWide_n, ite_eq_right hrd, arm8EncMovImm_value_not v imm16 hw hbm]
   · intro _ p
     refine ⟨?_, fun x => ?_, ?_, fun j => ?_⟩ <;> simp [asmUpd, instUpd, updPc, updReg]
 
@@ -548,7 +548,7 @@ theorem arm8_encoder_correct_const_orr (r : Nat) (v : BitVec 64) (N : BitVec 1)
       hbm (by rfl)) ?_ ?_
   · intro _
     rw [arm8Run_logicalImmediate_orr]
-    simp only [hbfalse, Bool.false_eq_true, if_false]
+    simp only [hbfalse, Bool.false_eq_true, ite_false]
   · intro _ p
     refine ⟨?_, fun x => ?_, ?_, fun j => ?_⟩ <;> simp [asmUpd, instUpd, updPc, updReg]
 
@@ -634,7 +634,7 @@ theorem arm8Next_movK (ms : arm8_state) (hw : BitVec 2) (imm16 : BitVec 16) (rd 
     arm8Decode_moveWide .k hw imm16 rd
   refine arm8Next_eq ms _ _ _ hdec ?_ rfl hexc0 h0 h1 h2 h3 hal he0 hel
   rw [arm8Run_moveWide_k]
-  rw [if_neg hrd]
+  rw [ite_eq_right hrd]
   rfl
 
 /-! ## Memory-free instructions and the run machinery -/
@@ -918,13 +918,13 @@ theorem arm8ConstT4_reg (ms : arm8_state) (v : BitVec 64) (r : Nat)
   have hbeq : (BitVec.ofNat 5 r == BitVec.ofNat 5 31) = false := by
     rw [beq_eq_false_iff_ne]; exact hrd
   rw [arm8ConstT4_reg_step]
-  simp only [X, hbeq, Bool.false_eq_true, if_false, BitVec.setWidth_eq]
+  simp only [X, hbeq, Bool.false_eq_true, ite_false, BitVec.setWidth_eq]
   rw [arm8ConstT3_reg]
-  simp only [X, hbeq, Bool.false_eq_true, if_false, BitVec.setWidth_eq]
+  simp only [X, hbeq, Bool.false_eq_true, ite_false, BitVec.setWidth_eq]
   rw [arm8ConstT2_reg]
-  simp only [X, hbeq, Bool.false_eq_true, if_false, BitVec.setWidth_eq]
+  simp only [X, hbeq, Bool.false_eq_true, ite_false, BitVec.setWidth_eq]
   rw [arm8ConstT1_reg]
-  simp only [X, hbeq, Bool.false_eq_true, if_false, BitVec.setWidth_eq]
+  simp only [X, hbeq, Bool.false_eq_true, ite_false, BitVec.setWidth_eq]
   rw [arm8MoveWideK_chain (ms.REG (BitVec.ofNat 5 r)) v]
 
 /-- The four-instruction chain advances the PC by sixteen. -/
@@ -979,24 +979,24 @@ theorem arm8ConstT4_reg_ne (ms : arm8_state) (v : BitVec 64) (r j : Nat)
     show Flapjack.RiscV.L3.holUpdate (BitVec.ofNat 5 r) _ (arm8ConstT3 ms v r).REG
       (BitVec.ofNat 5 j) = _
     simp only [Flapjack.RiscV.L3.holUpdate]
-    exact if_neg hne
+    exact ite_eq_right hne
   have h3 : (arm8ConstT3 ms v r).REG (BitVec.ofNat 5 j) =
       (arm8ConstT2 ms v r).REG (BitVec.ofNat 5 j) := by
     show Flapjack.RiscV.L3.holUpdate (BitVec.ofNat 5 r) _ (arm8ConstT2 ms v r).REG
       (BitVec.ofNat 5 j) = _
     simp only [Flapjack.RiscV.L3.holUpdate]
-    exact if_neg hne
+    exact ite_eq_right hne
   have h2 : (arm8ConstT2 ms v r).REG (BitVec.ofNat 5 j) =
       (arm8ConstT1 ms v r).REG (BitVec.ofNat 5 j) := by
     show Flapjack.RiscV.L3.holUpdate (BitVec.ofNat 5 r) _ (arm8ConstT1 ms v r).REG
       (BitVec.ofNat 5 j) = _
     simp only [Flapjack.RiscV.L3.holUpdate]
-    exact if_neg hne
+    exact ite_eq_right hne
   have h1 : (arm8ConstT1 ms v r).REG (BitVec.ofNat 5 j) =
       ms.REG (BitVec.ofNat 5 j) := by
     show Flapjack.RiscV.L3.holUpdate (BitVec.ofNat 5 r) _ ms.REG (BitVec.ofNat 5 j) = _
     simp only [Flapjack.RiscV.L3.holUpdate]
-    exact if_neg hne
+    exact ite_eq_right hne
   rw [h4, h3, h2, h1]
 
 /-- A `MoveWide .k` step leaves memory untouched (state-equation form). -/
@@ -1256,9 +1256,9 @@ theorem arm8_encoder_correct_const_movK (r : Nat) (v : BitVec 64)
         (arm8ConstT4 ms v r).REG (BitVec.ofNat 5 j) = s2.regs j
       intro j hj
       by_cases hjr : j = r
-      · rw [hjr, ht4reg, hs2regs r, if_pos rfl]
+      · rw [hjr, ht4reg, hs2regs r, ite_eq_left rfl]
       · rw [arm8ConstT4_reg_ne ms v r j (by omega) (by simpa [arm8ConfigL3] using hj.1) hjr,
-          hs2regs j, if_neg hjr]
+          hs2regs j, ite_eq_right hjr]
         exact hreg j hj
     · intro j hj
       simp [arm8ConfigL3] at hj

@@ -289,7 +289,7 @@ theorem completeCallFromPrelude {width : Nat} [NeZero width] {C F : Type}
   rw [outputClock] at shifted
   rw [Compiler.Backend.StackRemove.CopyLoopProof.sequenceAssoc] at shifted
   simp only [compNative, destinationCompile, savedCompile, returnCompile,
-    Bool.false_eq_true, if_false, Prod.mk.injEq] at compilation
+    Bool.false_eq_true, ite_false, Prod.mk.injEq] at compilation
   obtain ⟨rfl, _⟩ := compilation
   rw [Compiler.Backend.StackRemove.CopyLoopProof.sequenceAssoc,
     Compiler.Backend.StackRemove.CopyLoopProof.sequenceAssoc]
@@ -581,7 +581,7 @@ theorem simulateSuccessfulCall {width : Nat} [NeZero width] {C F : Type}
       exact ⟨event, by simpa only [ffi, Option.map_some, compileResult] using matching.symm⟩
   · have mismatch := bodyConclusion
     unfold compCorrectResult at mismatch
-    rw [if_pos matching] at mismatch
+    rw [ite_eq_left matching] at mismatch
     exact finishTerminal (Or.inr (Or.inl ⟨.word 2, mismatch.1⟩))
 
 /-- Genuine canonical source codec re-export for the relation qualifier. -/
@@ -636,7 +636,7 @@ theorem compCorrectCallReturningNone {width : Nat} [NeZero width] {C F : Type}
     ⟨returnCode, returnBitmaps, returnIndex⟩
   have shape := compilation
   simp only [compNative, destinationCompile, savedCompile, returnCompile,
-    Bool.false_eq_true, if_false, Prod.mk.injEq] at shape
+    Bool.false_eq_true, ite_false, Prod.mk.injEq] at shape
   obtain ⟨bitmapsEq, indexEq⟩ := shape.2
   subst finalBitmaps
   subst finalIndex

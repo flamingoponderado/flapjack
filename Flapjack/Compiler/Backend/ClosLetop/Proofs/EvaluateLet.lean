@@ -92,14 +92,14 @@ theorem evaluate_let_op_let {C F : Type} (trace : BackendCommon.Tra)
         cases transformed : compileSing body with
         | op opTrace op args =>
           by_cases valid : varList 0 args (compileList bindings) = true
-          · simp only [destOp, valid, if_true]
+          · simp only [destOp, valid, ite_true]
             have reduction := Proofs.evaluateLetOpReduction (compileList bindings) args trace opTrace op
               envTarget target valid
             rw [← reduction, evaluate, fixClock_evaluate, targetRun]
             simpa [transformed] using targetBodyRun
           · have bad : varList 0 args (compileList bindings) = false := by
               cases h : varList 0 args (compileList bindings) <;> simp_all
-            simp only [destOp, bad, Bool.false_eq_true, if_false]
+            simp only [destOp, bad, Bool.false_eq_true, ite_false]
             rw [evaluate, fixClock_evaluate, targetRun]
             simpa [transformed] using targetBodyRun
         | _ =>

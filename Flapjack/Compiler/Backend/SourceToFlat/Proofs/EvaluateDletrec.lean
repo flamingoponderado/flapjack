@@ -226,7 +226,7 @@ theorem evaluateDletrec_flat {C F : Type} (flat final : FlatSem.State C F)
     (clock : final.clock = flat.clock) :
     FlatSem.evaluateDecs flat (compileDecs trace n start env gen [.dletrec location funs]).2.2.2.2 =
       (final, none) := by
-  simp only [compileDecs, FlatSem.evaluateDecs, FlatSem.evaluate, compileFuns_names, distinct, if_true]
+  simp only [compileDecs, FlatSem.evaluateDecs, FlatSem.evaluate, compileFuns_names, distinct, ite_true]
   rw [run]
   cases final
   simp_all [FlatSem.fixClock, FlatSem.unitValue]

@@ -52,7 +52,7 @@ theorem aLookupIndexList {α : Type} (ls : List α) (n k : Nat)
       have hz : xs.length + 1 + k - (k + xs.length + 1) = 0 := by omega
       simp [indexList, sptAListLookup, hz]
     · have hn : n < xs.length + k := by simp only [List.length_cons] at h; omega
-      simp only [indexList, sptAListLookup, if_neg he, List.length_cons]
+      simp only [indexList, sptAListLookup, ite_eq_right he, List.length_cons]
       rw [ih n hn]
       have heq : xs.length + 1 + k - (n+1) = xs.length + k - (n+1) + 1 := by omega
       rw [heq]

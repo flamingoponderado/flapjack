@@ -46,7 +46,7 @@ example : ¬envRel (· = ·) ([1, 2] : List Nat) [1, 3] 0 [] := by
   simp [envRel, List.forall₂_cons_left_iff]
 
 example : envRel (· = ·) ([1, 2] : List Nat) [1, 2] 0 [] := by
-  simp [envRel, List.forall₂_cons_left_iff]
+  simp [envRel]
 
 -- `clos_call_wfg_probe.out`: adding distinct code preserves old lookup,
 -- while duplicate or replaced bindings do not constitute an extension.
@@ -88,7 +88,7 @@ example : recClosureWellFormed 10 ([((true : Bool), .var .none 0)] : List (Bool 
 example : ¬recClosureWellFormed 10
     ([((true : Bool), .fn (ofString "f") (some 10) none 1 (.var .none 0))] : List (Bool × ClosLang.Exp)) := by
   simp [recClosureWellFormed, everyFnLocationSome, fnLocationSomeExp, everyFnVarsNone,
-    fnVarsNoneExp, codeLocations, codeLocationsExp, Set.disjoint_left]
+    fnVarsNoneExp, codeLocations, codeLocationsExp]
 
 private def singletonCode : Flapjack.HolFiniteMapExact Nat Nat :=
   Flapjack.HolFiniteMapExact.empty.update (1, 2)
@@ -340,8 +340,8 @@ example {C F : Type} (source : ClosSem.State (Flapjack.NumSet × C) F) (target :
         [.number 7] = some (.fullApp (.var .none 0) [.number 7] []) := by
       simp [ClosSem.destClosure, ClosSem.checkLoc, maxApp]
     rw [ClosSem.evaluateApp, closure]
-    simp only [List.length_cons, List.length_nil, Nat.add_zero, Nat.sub_zero]
-    rw [if_neg (Nat.not_lt.mpr clock), ClosSem.fixClock_evaluate]
+    simp only [List.length_cons, List.length_nil, Nat.sub_zero]
+    rw [ite_eq_right (Nat.not_lt.mpr clock), ClosSem.fixClock_evaluate]
     simp [ClosSem.evaluate, ClosSem.evaluateApp]
   · simp
   · rw [targetCode]

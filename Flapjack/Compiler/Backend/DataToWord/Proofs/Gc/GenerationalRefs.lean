@@ -270,7 +270,7 @@ theorem refScan_wordStep {width : Nat} [NeZero width] (conf : Config)
   have notLast := refScan_addresses_ne state _ tail p xs.length pending invariant bytesBound good
   have nonzero : k ≠ 0 := by simp [pending] at countBound; omega
   dsimp only
-  rw [wordGenGcMoveRefs, if_neg notLast, if_neg nonzero]
+  rw [wordGenGcMoveRefs, ite_eq_right notLast, ite_eq_right nonzero]
   simp only [read, present, wordSemIsWordLoc, wordSemTheWord, Bool.true_and, decoded]
 
 /-- Run the established major-collector root-list simulation on the first

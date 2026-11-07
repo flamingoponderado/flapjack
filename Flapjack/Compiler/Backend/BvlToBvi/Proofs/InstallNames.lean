@@ -71,7 +71,7 @@ theorem namesOk_install {C : Type} (source : Spt (Nat × Bvl.Exp)) (target : Spt
         name < bvlNumStubs + bvlToBviNamespaces * (oracle 1).1.1 else
         name % bvlToBviNamespaces = 0 ∧
           sptMem ((name - bvlNumStubs) / bvlToBviNamespaces) (sptUnion source (sptFromAList (oracle 0).2)))
-      simp only [modulo, Nat.zero_ne_one, if_false, quotient]
+      simp only [modulo, Nat.zero_ne_one, ite_false, quotient]
       exact ⟨trivial, (sptMem_sptUnion _ _ _).mpr (Or.inr (sptMem_fromAList_of_key _ _ sourceMember))⟩
     · have stubMod := bvlNumStubMod
       simp only [bvlToBviNamespaces] at stubMod

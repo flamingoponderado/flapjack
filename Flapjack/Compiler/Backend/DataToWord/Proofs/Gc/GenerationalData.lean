@@ -229,7 +229,7 @@ theorem dataScan_wordStep {width : Nat} [NeZero width] (conf : Config) (k : Nat)
     omega
   refine ⟨header, words, encoded, wordLen, bound, info, ?_⟩
   dsimp only
-  rw [wordGenGcMoveData, if_neg different, if_neg (Nat.ne_of_gt positive)]
+  rw [wordGenGcMoveData, ite_eq_right different, ite_eq_right (Nat.ne_of_gt positive)]
   simp only [present, read, wordSemIsWordLoc, wordSemTheWord, Bool.true_and, decoded]
 
 /-- A raw data object has no roots to move, so a successful abstract scan

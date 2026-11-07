@@ -174,7 +174,7 @@ theorem listNextVarRenameMovePreserveWeak {width : Nat} [NeZero width] {C F : Ty
   have zipLength : outputs.length = (names.map (optionLookup ssa)).length := by
     simpa only [List.length_map] using lengths
   rw [List.map_fst_zip (Nat.le_of_eq zipLength), List.map_snd_zip (Nat.le_of_eq zipLength.symm)]
-  simp only [arithmetic.1, if_true, read]
+  simp only [arithmetic.1, ite_true, read]
   refine ⟨True.intro, ?_, ?_⟩
   · change ssaLocalsRel nextOut ssaOut source.locals
       (LoopSemStateFiniteExact.sptAlistInsert outputs values target.locals)
@@ -221,7 +221,7 @@ theorem listNextVarRenameMovePreserve {width : Nat} [NeZero width] {C F : Type}
     ⟨h.1, present, h.2.2.1, h.2.2.2.1, h.2.2.2.2⟩
   simp only [listNextVarRenameMove, renamed, WordSemStateFiniteExact.evaluate,
     List.map_fst_zip (Nat.le_of_eq lengths),
-    List.map_snd_zip (Nat.le_of_eq lengths.symm), arithmetic.1, if_true, read] at weak ⊢
+    List.map_snd_zip (Nat.le_of_eq lengths.symm), arithmetic.1, ite_true, read] at weak ⊢
   refine ⟨weak.1, weak.2.1, weak.2.2, ?_, ?_⟩
   · intro nonphysical register physical
     change sptLookup register (LoopSemStateFiniteExact.sptAlistInsert outputs values target.locals) = sptLookup register target.locals

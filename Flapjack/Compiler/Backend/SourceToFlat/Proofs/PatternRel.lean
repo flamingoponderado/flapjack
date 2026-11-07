@@ -96,7 +96,7 @@ theorem pmatch_literal_related {C F : Type} (genv : GlobalEnv) (compMap : Enviro
     have hflat := (valueRel_literal_iff genv actual flat).mp valueRel
     subst flat
     by_cases same : lit = actual
-    · simp only [SemanticPrimitivesHOL.pmatch, FlatSem.pmatch, compilePat, same, if_true, MatchResultRel]
+    · simp only [SemanticPrimitivesHOL.pmatch, FlatSem.pmatch, compilePat, same, ite_true, MatchResultRel]
       exact ⟨bound, rfl, envRel⟩
     · by_cases sameType : litSameType lit actual = true <;>
         simp [SemanticPrimitivesHOL.pmatch, FlatSem.pmatch, compilePat, same, sameType, MatchResultRel]

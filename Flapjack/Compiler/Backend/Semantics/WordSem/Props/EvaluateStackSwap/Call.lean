@@ -214,8 +214,8 @@ theorem evaluateStackSwap_Call {width : Nat} [NeZero width] {C F : Type}
   | some xv =>
   dsimp only
   by_cases hbad : wordSemBadDestArgs dest args = true
-  · rw [if_pos hbad]; trivial
-  rw [if_neg hbad]
+  · rw [ite_eq_left hbad]; trivial
+  rw [ite_eq_right hbad]
   cases hfc : wordSemFindCode dest (wordSemAddRetLoc ret xv) s.code s.stackSize with
   | none => trivial
   | some fc =>
@@ -228,16 +228,16 @@ theorem evaluateStackSwap_Call {width : Nat} [NeZero width] {C F : Type}
     | none =>
     dsimp only
     by_cases hz : s.clock = 0
-    · rw [if_pos hz]
+    · rw [ite_eq_left hz]
       refine ⟨rfl, rfl, fun xs hxs => ?_⟩
       show evaluate _ _ = _
       rw [ht, getVars_withStack, hgv]
       dsimp only
-      rw [if_neg hbad, hfc]
+      rw [ite_eq_right hbad, hfc]
       dsimp only
-      rw [if_pos hz]
+      rw [ite_eq_left hz]
       rfl
-    · rw [if_neg hz]
+    · rw [ite_eq_right hz]
       have ih := (stackSwapPost_iff _ _).mp
         (ihD xv _ args1 _ prog ss ⟨hgv, hbad, hfc, rfl, rfl, rfl, rfl, hz⟩)
       rcases he : evaluate prog (WordSemStateFiniteExact.callEnv args1 ss (decClock s)) with
@@ -248,9 +248,9 @@ theorem evaluateStackSwap_Call {width : Nat} [NeZero width] {C F : Type}
       show evaluate _ _ = _
       rw [ht, getVars_withStack, hgv]
       dsimp only
-      rw [if_neg hbad, hfc]
+      rw [ite_eq_right hbad, hfc]
       dsimp only
-      rw [if_neg hz]
+      rw [ite_eq_right hz]
       have hT : WordSemStateFiniteExact.callEnv args1 ss (decClock { s with stack := xs }) =
           { WordSemStateFiniteExact.callEnv args1 ss (decClock s) with stack := xs } :=
         callEnv_withStack _ _ (decClock s) xs hxs
@@ -259,28 +259,28 @@ theorem evaluateStackSwap_Call {width : Nat} [NeZero width] {C F : Type}
   obtain ⟨n, names, retHandler, l1, l2⟩ := rv
   dsimp only
   by_cases hg : sptDomainEmpty names.1 ∨ ¬ n.Nodup
-  · rw [if_pos hg]; trivial
-  rw [if_neg hg]
+  · rw [ite_eq_left hg]; trivial
+  rw [ite_eq_right hg]
   cases hce : wordSemCutEnvs names s.locals with
   | none => trivial
   | some envs =>
   dsimp only
   by_cases hz : s.clock = 0
-  · rw [if_pos hz]
+  · rw [ite_eq_left hz]
     refine ⟨rfl, rfl, fun xs hxs => ?_⟩
     show evaluate _ _ = _
     rw [ht, getVars_withStack, hgv]
     dsimp only
-    rw [if_neg hbad, hfc]
+    rw [ite_eq_right hbad, hfc]
     dsimp only
-    rw [if_neg hg, hce]
+    rw [ite_eq_right hg, hce]
     dsimp only
-    rw [if_pos hz]
+    rw [ite_eq_left hz]
     obtain ⟨fr, hfr, hpe⟩ := pushEnv_withStack envs handler s xs hxs
     have hv' : sValEq (pushEnv envs handler s).stack (fr :: xs) := by
       rw [hfr]; exact ⟨hxs, of_eq_true (sFrameValEqRefl fr)⟩
     rw [hpe, callEnv_withStack _ _ _ _ hv']
-  rw [if_neg hz]
+  rw [ite_eq_right hz]
   have ihP := (stackSwapPost_iff _ _).mp (ihC xv _ args1 _ prog ss _ n _ names _ retHandler _ l1 l2
     envs ⟨hgv, hbad, hfc, rfl, rfl, rfl, rfl, rfl, rfl, rfl, hg, hce, hz⟩)
   obtain ⟨fr, hfr, -⟩ := pushEnv_withStack envs handler (decClock s) s.stack
@@ -320,11 +320,11 @@ theorem evaluateStackSwap_Call {width : Nat} [NeZero width] {C F : Type}
       show evaluate _ _ = _
       rw [ht, getVars_withStack, hgv]
       dsimp only
-      rw [if_neg hbad, hfc]
+      rw [ite_eq_right hbad, hfc]
       dsimp only
-      rw [if_neg hg, hce]
+      rw [ite_eq_right hg, hce]
       dsimp only
-      rw [if_neg hz, hPx xs hxs]
+      rw [ite_eq_right hz, hPx xs hxs]
       have hq := hx _ (hvP xs hxs)
       dsimp only at hq
       rw [hq]
@@ -335,11 +335,11 @@ theorem evaluateStackSwap_Call {width : Nat} [NeZero width] {C F : Type}
       show evaluate _ _ = _
       rw [ht, getVars_withStack, hgv]
       dsimp only
-      rw [if_neg hbad, hfc]
+      rw [ite_eq_right hbad, hfc]
       dsimp only
-      rw [if_neg hg, hce]
+      rw [ite_eq_right hg, hce]
       dsimp only
-      rw [if_neg hz, hPx xs hxs]
+      rw [ite_eq_right hz, hPx xs hxs]
       have hq := hx _ (hvP xs hxs)
       dsimp only at hq
       rw [hq]
@@ -350,11 +350,11 @@ theorem evaluateStackSwap_Call {width : Nat} [NeZero width] {C F : Type}
       show evaluate _ _ = _
       rw [ht, getVars_withStack, hgv]
       dsimp only
-      rw [if_neg hbad, hfc]
+      rw [ite_eq_right hbad, hfc]
       dsimp only
-      rw [if_neg hg, hce]
+      rw [ite_eq_right hg, hce]
       dsimp only
-      rw [if_neg hz, hPx xs hxs]
+      rw [ite_eq_right hz, hPx xs hxs]
       have hq := hx _ (hvP xs hxs)
       dsimp only at hq
       rw [hq]
@@ -363,15 +363,15 @@ theorem evaluateStackSwap_Call {width : Nat} [NeZero width] {C F : Type}
     obtain ⟨hk, hh, hx⟩ := ihP
     dsimp only
     by_cases hg2 : x ≠ .loc l1 l2 ∨ ys.length ≠ n.length
-    · rw [if_pos hg2]; trivial
-    rw [if_neg hg2]
+    · rw [ite_eq_left hg2]; trivial
+    rw [ite_eq_right hg2]
     cases hpop : popEnv s2 with
     | none => trivial
     | some s1 =>
     dsimp only
     by_cases hd : sptDomainEqUnion s1.locals envs.1 envs.2
-    case neg => rw [if_neg hd]; trivial
-    rw [if_pos hd]
+    case neg => rw [ite_eq_right hd]; trivial
+    rw [ite_eq_left hd]
     have ihR := (stackSwapPost_iff _ _).mp (ihA xv _ args1 _ prog ss _ n _ names _ retHandler _
       l1 l2 envs _ s2 _ x ys s1 ⟨hgv, hbad, hfc, rfl, rfl, rfl, rfl, rfl, rfl, rfl, hg, hce, hz,
         he, rfl, rfl, hg2, hpop, hd⟩)
@@ -412,16 +412,16 @@ theorem evaluateStackSwap_Call {width : Nat} [NeZero width] {C F : Type}
     show evaluate _ _ = _
     rw [ht, getVars_withStack, hgv]
     dsimp only
-    rw [if_neg hbad, hfc]
+    rw [ite_eq_right hbad, hfc]
     dsimp only
-    rw [if_neg hg, hce]
+    rw [ite_eq_right hg, hce]
     dsimp only
-    rw [if_neg hz, hPx xs hxs]
+    rw [ite_eq_right hz, hPx xs hxs]
     rw [hst0]
     dsimp only
-    rw [if_neg hg2, popEnv_withStack s2 _ ls zs hs2st, hpop]
+    rw [ite_eq_right hg2, popEnv_withStack s2 _ ls zs hs2st, hpop]
     dsimp only [Option.map]
-    rw [if_pos hd]
+    rw [ite_eq_left hd]
     rfl
   | exception x y =>
     obtain ⟨hlt, e0, e, nn, ls, m, lss, hl, hm, hloc, hks, hhn, hx⟩ := ihP
@@ -457,21 +457,21 @@ theorem evaluateStackSwap_Call {width : Nat} [NeZero width] {C F : Type}
       show evaluate _ _ = _
       rw [ht, getVars_withStack, hgv]
       dsimp only
-      rw [if_neg hbad, hfc]
+      rw [ite_eq_right hbad, hfc]
       dsimp only
-      rw [if_neg hg, hce]
+      rw [ite_eq_right hg, hce]
       dsimp only
-      rw [if_neg hz, hPx xs hxs]
+      rw [ite_eq_right hz, hPx xs hxs]
       rw [heq]
     | some hv =>
       obtain ⟨n', hprog, l1', l2'⟩ := hv
       dsimp only
       by_cases hx' : x ≠ .loc l1' l2'
-      · rw [if_pos hx']; trivial
-      rw [if_neg hx']
+      · rw [ite_eq_left hx']; trivial
+      rw [ite_eq_right hx']
       by_cases hd : sptDomainEqUnion s2.locals envs.1 envs.2
-      case neg => rw [if_neg hd]; trivial
-      rw [if_pos hd]
+      case neg => rw [ite_eq_right hd]; trivial
+      rw [ite_eq_left hd]
       have hxl : x = .loc l1' l2' := by simpa using hx'
       have ihH := (stackSwapPost_iff _ _).mp (ihB xv _ args1 _ prog ss _ n _ names _ retHandler _
         l1 l2 envs _ s2 _ x y _ n' _ hprog _ l1' l2' ⟨hgv, hbad, hfc, rfl, rfl, rfl, rfl, rfl, rfl,
@@ -507,14 +507,14 @@ theorem evaluateStackSwap_Call {width : Nat} [NeZero width] {C F : Type}
       show evaluate _ _ = _
       rw [ht, getVars_withStack, hgv]
       dsimp only
-      rw [if_neg hbad, hfc]
+      rw [ite_eq_right hbad, hfc]
       dsimp only
-      rw [if_neg hg, hce]
+      rw [ite_eq_right hg, hce]
       dsimp only
-      rw [if_neg hz, hPx xs hxs]
+      rw [ite_eq_right hz, hPx xs hxs]
       rw [heq]
       dsimp only
-      rw [if_neg hx', if_pos hd, ← hhn]
+      rw [ite_eq_right hx', ite_eq_left hd, ← hhn]
       rfl
 
 end WordSemStackEq

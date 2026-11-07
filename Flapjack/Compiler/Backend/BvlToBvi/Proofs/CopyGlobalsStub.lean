@@ -128,7 +128,7 @@ theorem evaluate_copyGlobals_succ {C F : Type} (src dst index : Nat) (srcFlag ds
   have updatedCode : sptLookup copyGlobalsLocation updated.code = some copyGlobalsCode := by simpa [updated] using code
   have nonzero : updated.clock ≠ 0 := by simpa [updated] using clock
   simp only [BvlSem.findCode, updatedCode, copyGlobalsCode, List.length_cons, List.length_nil, ite_true,
-    Nat.zero_add, Nat.lt_one_iff, nonzero, if_false, BviSem.fixClock_evaluate]
+    Nat.zero_add, Nat.lt_one_iff, nonzero, ite_false, BviSem.fixClock_evaluate]
   have recRun := recursive
   simp [copyGlobalsCode] at recRun
   simp [updated, recRun]

@@ -408,11 +408,11 @@ theorem convArgList_byteRanged {width : Nat} (ofInt : Int → BitVec width) (fue
   | succ g =>
       simp only [hfuel, convArgList.eq_2] at h
       by_cases hnt : tree.tokcheck .notT = true
-      · rw [if_pos hnt] at h
+      · rw [ite_eq_left hnt] at h
         simp at h
         subst h
         simp at he
-      · rw [if_neg hnt] at h
+      · rw [ite_eq_right hnt] at h
         cases hargs : tree.argsNT .argList with
         | none => simp [hargs] at h
         | some children =>
@@ -585,10 +585,10 @@ theorem convBinaryExps_byteRanged {width : Nat} (ofInt : Int → BitVec width) (
             cases acc with
             | op bop args =>
               by_cases hc : ¬bop = op' ∨ isSubOp (.op bop args) = true
-              · simp only [if_pos hc] at h
+              · simp only [ite_eq_left hc] at h
                 exact ih rest.length hlt rest rfl hr (Exp.op op' [Exp.op bop args, operand'])
                   (expByteRanged_op_pair hacc hopnd) e h
-              · simp only [if_neg hc] at h
+              · simp only [ite_eq_right hc] at h
                 have hargs : ListExpByteRanged args := by simpa [ExpByteRanged] using hacc
                 exact ih rest.length hlt rest rfl hr (Exp.op bop (args ++ [operand']))
                   (by
@@ -663,19 +663,19 @@ theorem convExp_byteRanged {width : Nat} (ofInt : Int → BitVec width) :
           · simp at h
           · simp_all
           · by_cases hb : (ParseTree.lf token locs).tokcheck (Token.keywordT Keyword.baseK) = true
-            · simp only [hb, if_true] at h; injection h with h; subst h; simp [ExpByteRanged]
+            · simp only [hb, ite_true] at h; injection h with h; subst h; simp [ExpByteRanged]
             · simp only [hb] at h
               by_cases hto : (ParseTree.lf token locs).tokcheck (Token.keywordT Keyword.topK) = true
-              · simp only [hto, if_true] at h; injection h with h; subst h; simp [ExpByteRanged]
+              · simp only [hto, ite_true] at h; injection h with h; subst h; simp [ExpByteRanged]
               · simp only [hto] at h
                 by_cases hbi : (ParseTree.lf token locs).tokcheck (Token.keywordT Keyword.biwK) = true
-                · simp only [hbi, if_true] at h; injection h with h; subst h; simp [ExpByteRanged]
+                · simp only [hbi, ite_true] at h; injection h with h; subst h; simp [ExpByteRanged]
                 · simp only [hbi] at h
                   by_cases htr : (ParseTree.lf token locs).tokcheck (Token.keywordT Keyword.trueK) = true
-                  · simp only [htr, if_true] at h; injection h with h; subst h; simp [ExpByteRanged]
+                  · simp only [htr, ite_true] at h; injection h with h; subst h; simp [ExpByteRanged]
                   · simp only [htr] at h
                     by_cases hfa : (ParseTree.lf token locs).tokcheck (Token.keywordT Keyword.falseK) = true
-                    · simp only [hfa, if_true] at h; injection h with h; subst h; simp [ExpByteRanged]
+                    · simp only [hfa, ite_true] at h; injection h with h; subst h; simp [ExpByteRanged]
                     · simp only [hfa] at h
                       cases hc : convConst ofInt (ParseTree.lf token locs) with
                       | none =>
@@ -1097,15 +1097,15 @@ theorem convRet_byteRanged : ∀ (tree : ParseTree), ParseTreeByteRanged tree �
   intro tree ht r h vk name hr
   unfold convRet at h
   by_cases h1 : tree.tokcheck (.keywordT .retK) = true
-  · rw [if_pos h1] at h
+  · rw [ite_eq_left h1] at h
     injection h with h; subst h
     simp at hr
-  · rw [if_neg h1] at h
+  · rw [ite_eq_right h1] at h
     by_cases h2 : tree.tokcheck .notT = true
-    · rw [if_pos h2] at h
+    · rw [ite_eq_left h2] at h
       injection h with h; subst h
       simp at hr
-    · rw [if_neg h2] at h
+    · rw [ite_eq_right h2] at h
       cases hargs : tree.argsNT .ret with
       | none => simp [hargs] at h
       | some children =>
@@ -1134,17 +1134,17 @@ theorem convNonRecStmt_byteRanged {width : Nat} (ofInt : Int → BitVec width) (
   | lf token locs =>
     simp only [convNonRecStmt] at h
     by_cases h1 : (ParseTree.lf token locs).tokcheck (.keywordT .skipK) = true
-    · rw [if_pos h1] at h; simp only [Option.some.injEq] at h; subst h; exact trivial
-    · rw [if_neg h1] at h
+    · rw [ite_eq_left h1] at h; simp only [Option.some.injEq] at h; subst h; exact trivial
+    · rw [ite_eq_right h1] at h
       by_cases h2 : (ParseTree.lf token locs).tokcheck (.keywordT .brK) = true
-      · rw [if_pos h2] at h; simp only [Option.some.injEq] at h; subst h; exact trivial
-      · rw [if_neg h2] at h
+      · rw [ite_eq_left h2] at h; simp only [Option.some.injEq] at h; subst h; exact trivial
+      · rw [ite_eq_right h2] at h
         by_cases h3 : (ParseTree.lf token locs).tokcheck (.keywordT .contK) = true
-        · rw [if_pos h3] at h; simp only [Option.some.injEq] at h; subst h; exact trivial
-        · rw [if_neg h3] at h
+        · rw [ite_eq_left h3] at h; simp only [Option.some.injEq] at h; subst h; exact trivial
+        · rw [ite_eq_right h3] at h
           by_cases h4 : (ParseTree.lf token locs).tokcheck (.keywordT .ticK) = true
-          · rw [if_pos h4] at h; simp only [Option.some.injEq] at h; subst h; exact trivial
-          · rw [if_neg h4] at h
+          · rw [ite_eq_left h4] at h; simp only [Option.some.injEq] at h; subst h; exact trivial
+          · rw [ite_eq_right h4] at h
             cases token with
             | annotCommentT text =>
               simp [destAnnotTok, ParseTree.destTok] at h
@@ -1562,7 +1562,7 @@ theorem addLocsAnnot_byteRanged {width : Nat} (locations : Bool) (tree : ParseTr
     ProgByteRanged (addLocsAnnot locations tree program) := by
   unfold addLocsAnnot
   by_cases h : locations = true
-  · simp only [h, if_true]
+  · simp only [h, ite_true]
     show ProgByteRanged (Flapjack.Prog.seq (Flapjack.Prog.annot locationTag (locsComment tree.locs)) program)
     exact ⟨⟨locationTag_byteRanged, locsComment_byteRanged tree.locs⟩, hp⟩
   · simp only [h]

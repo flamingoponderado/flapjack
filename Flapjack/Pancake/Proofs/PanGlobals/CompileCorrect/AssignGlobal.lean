@@ -59,7 +59,7 @@ private theorem globalWriteRelation {width : Nat} {σ : Type} [NeZero width]
   rw [HolFiniteMapExact.lookup_update_pointwise] at hkey
   by_cases heq : key = name
   · subst key
-    simp only [if_true, Option.some.injEq] at hkey
+    simp only [ite_true, Option.some.injEq] at hkey
     subst stored
     obtain ⟨oldAddress, hc0, hwf, _, hseparate, haligned⟩ := hglobals name oldValue hlookup
     have ha : oldAddress = address := by
@@ -69,7 +69,7 @@ private theorem globalWriteRelation {width : Nat} {σ : Type} [NeZero width]
     refine ⟨address, hc, ?_, hload, ?_, haligned⟩
     · simpa only [hshape] using hwf
     · simpa only [setGlobalHOLFinite, hshape] using hseparate
-  · simp only [if_neg heq] at hkey
+  · simp only [ite_eq_right heq] at hkey
     obtain ⟨otherAddress, hc', hwf', _, hseparate', haligned'⟩ := hglobals key stored hkey
     obtain ⟨otherAddress', hc'', hload'⟩ := hother key stored heq hkey
     have ha : otherAddress' = otherAddress := by

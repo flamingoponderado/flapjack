@@ -79,7 +79,7 @@ theorem evaluateDeclsFperm {width : Nat} {σ : Type} [NeZero width]
         simp only [evalHOLFinite, toExact, emptyLocalsHOLFinite] at hv
         simp only [hv] at heval ⊢
         by_cases hs : shapeEqHOL shape (shapeOfHOLExact value) = true
-        · simp only [hs, if_true] at heval ⊢
+        · simp only [hs, ite_true] at heval ⊢
           exact ih (setGlobalHOLFinite name value state) post heval
         · simp [hs] at heval
     | function declaration =>
@@ -88,7 +88,7 @@ theorem evaluateDeclsFperm {width : Nat} {σ : Type} [NeZero width]
       by_cases hc : (declaration.params.all
           (fun parameter => isWfShapeExactHOL state.structs parameter.2) &&
           isWfShapeExactHOL state.structs declaration.returnShape) = true
-      · simp only [hc, if_true] at heval ⊢
+      · simp only [hc, ite_true] at heval ⊢
         have hh := ih { state with code := state.code.update (declaration.name,
             (declaration.params, declaration.body, declaration.returnShape)) } post heval
         simpa only [FpermDeclsSupport.functionUpdate] using hh
@@ -97,7 +97,7 @@ theorem evaluateDeclsFperm {width : Nat} {σ : Type} [NeZero width]
       simp only [evaluateDeclsHOLFinite] at heval
       simp only [fpermDecsHOL, evaluateDeclsHOLFinite]
       by_cases hc : ((state.eshapes.lookup name).isNone && isWfShapeExactHOL state.structs shape) = true
-      · simp only [hc, if_true] at heval ⊢
+      · simp only [hc, ite_true] at heval ⊢
         exact ih { state with eshapes := state.eshapes.update (name, shape) } post heval
       · simp [hc] at heval
 

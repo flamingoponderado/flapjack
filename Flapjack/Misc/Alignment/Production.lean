@@ -18,8 +18,8 @@ theorem holByteAlign_eq_log2Zero {width : Nat} [NeZero width] (w : BitVec width)
   unfold holByteAlign panByteAlignHOLLog2Zero
   rw [holAlign_eq_div]
   by_cases hb : width / 8 = 0
-  · simp only [hb, if_true]
-  · simp only [hb, if_false, holLOG2_eq_log2 (Nat.pos_of_ne_zero hb)]
+  · simp only [hb, ite_true]
+  · simp only [hb, ite_false, holLOG2_eq_log2 (Nat.pos_of_ne_zero hb)]
 
 theorem holByteAlign_eq_panByteAlignHOL {width : Nat} [NeZero width] (hwidth : 8 ≤ width)
     (w : BitVec width) : holByteAlign w = panByteAlignHOL w := by

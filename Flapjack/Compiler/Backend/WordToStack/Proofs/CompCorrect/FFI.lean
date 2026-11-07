@@ -139,7 +139,7 @@ theorem compCorrectFFI {width : Nat} [NeZero width] {C F : Type}
     simp only [hcall, Prod.mk.injEq] at execution ⊢ <;> obtain ⟨rfl, rfl⟩ := execution
   · refine ⟨_, _, ⟨rfl, rfl⟩, ?_⟩
     unfold compCorrectResult
-    simp only [Option.map_none, ne_eq, not_true_eq_false, if_false]
+    simp only [Option.map_none, ne_eq, not_true_eq_false, ite_false]
     have henv : env = sptUnion (sptInter source.locals names.2) (sptInter source.locals names.1) := by
       unfold wordSemCutEnv at hce
       rcases hcs : wordSemCutEnvs names source.locals with _ | ⟨e1, e2⟩
@@ -168,11 +168,11 @@ theorem compCorrectFFI {width : Nat} [NeZero width] {C F : Type}
       have hev : m % 2 = 0 ∧ 2 * k ≤ m := hd.elim (hc1 m) (hc2 m)
       obtain ⟨he, hif⟩ := rloc m v hl
       refine ⟨he, ?_⟩
-      rw [if_neg (by omega)] at hif ⊢
+      rw [ite_eq_right (by omega)] at hif ⊢
       exact hif
   · refine ⟨_, _, ⟨rfl, rfl⟩, ?_⟩
     unfold compCorrectResult
-    simp only [Option.map_some, compileResult, ne_eq, not_true_eq_false, if_false]
+    simp only [Option.map_some, compileResult, ne_eq, not_true_eq_false, ite_false]
     exact ⟨r4.symm, r1⟩
 
 end Flapjack.WordToStackProofs.CompCorrect.FFI

@@ -89,16 +89,16 @@ theorem stExListMinCostSuccess (scost : Spt Nat) :
               rcases List.mem_cons.mp hw with rfl | hw
               · exact hk
               · exact hacc w hw, hx⟩
-          exact ⟨a, b, by simp only [stExListMinCost, if_pos hx, Translator.Monadic.MonadBase.bind,
-            degreesSubEqn, if_pos hxd, ret, if_pos hc, hr], ha, hb⟩
+          exact ⟨a, b, by simp only [stExListMinCost, ite_eq_left hx, Translator.Monadic.MonadBase.bind,
+            degreesSubEqn, ite_eq_left hxd, ret, ite_eq_left hc, hr], ha, hb⟩
         · obtain ⟨a, b, hr, ha, hb⟩ := ih s k v (x :: acc) ⟨hg, fun w hw => by
               rcases List.mem_cons.mp hw with rfl | hw
               · exact hx
               · exact hacc w hw, hk⟩
-          exact ⟨a, b, by simp only [stExListMinCost, if_pos hx, Translator.Monadic.MonadBase.bind,
-            degreesSubEqn, if_pos hxd, ret, if_neg hc, hr], ha, hb⟩
+          exact ⟨a, b, by simp only [stExListMinCost, ite_eq_left hx, Translator.Monadic.MonadBase.bind,
+            degreesSubEqn, ite_eq_left hxd, ret, ite_eq_right hc, hr], ha, hb⟩
       · obtain ⟨a, b, hr, ha, hb⟩ := ih s k v acc ⟨hg, hacc, hk⟩
-        exact ⟨a, b, by simp only [stExListMinCost, if_neg hx, hr], ha, hb⟩
+        exact ⟨a, b, by simp only [stExListMinCost, ite_eq_right hx, hr], ha, hb⟩
 
 /-- Exact HOL `st_ex_list_MAX_deg_success` (`reg_allocProofScript.sml:2774-2788`). -/
 @[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml"
@@ -120,16 +120,16 @@ theorem stExListMaxDegSuccess :
               rcases List.mem_cons.mp hw with rfl | hw
               · exact hk
               · exact hacc w hw, hx⟩
-          exact ⟨a, b, by simp only [stExListMaxDeg, if_pos hx, Translator.Monadic.MonadBase.bind,
-            degreesSubEqn, if_pos hxd, if_pos hc, hr], ha, hb⟩
+          exact ⟨a, b, by simp only [stExListMaxDeg, ite_eq_left hx, Translator.Monadic.MonadBase.bind,
+            degreesSubEqn, ite_eq_left hxd, ite_eq_left hc, hr], ha, hb⟩
         · obtain ⟨a, b, hr, ha, hb⟩ := ih s k v (x :: acc) ⟨hg, fun w hw => by
               rcases List.mem_cons.mp hw with rfl | hw
               · exact hx
               · exact hacc w hw, hk⟩
-          exact ⟨a, b, by simp only [stExListMaxDeg, if_pos hx, Translator.Monadic.MonadBase.bind,
-            degreesSubEqn, if_pos hxd, if_neg hc, hr], ha, hb⟩
+          exact ⟨a, b, by simp only [stExListMaxDeg, ite_eq_left hx, Translator.Monadic.MonadBase.bind,
+            degreesSubEqn, ite_eq_left hxd, ite_eq_right hc, hr], ha, hb⟩
       · obtain ⟨a, b, hr, ha, hb⟩ := ih s k v acc ⟨hg, hacc, hk⟩
-        exact ⟨a, b, by simp only [stExListMaxDeg, if_neg hx, hr], ha, hb⟩
+        exact ⟨a, b, by simp only [stExListMaxDeg, ite_eq_right hx, hr], ha, hb⟩
 
 /-- Exact HOL `do_spill_success` (`reg_allocProofScript.sml:2790-2837`); `scost` and `k` are
 free in HOL. -/
@@ -160,7 +160,7 @@ theorem doSpillSuccess (scost : Option (Spt Nat)) (k : Nat) :
             obtain ⟨s', hr, hrest⟩ := H y ys hy hys
             refine ⟨s', true, ?_, hrest⟩
             simp only [doSpill, Translator.Monadic.MonadBase.bind, getSpillWl, getDim, hf,
-              degreesSubEqn, if_pos hxd, hc]
+              degreesSubEqn, ite_eq_left hxd, hc]
             exact hr
         | some sc =>
             obtain ⟨y, ys, hc, hy, hys⟩ :=
@@ -170,7 +170,7 @@ theorem doSpillSuccess (scost : Option (Spt Nat)) (k : Nat) :
             obtain ⟨s', hr, hrest⟩ := H y ys hy hys
             refine ⟨s', true, ?_, hrest⟩
             simp only [doSpill, Translator.Monadic.MonadBase.bind, getSpillWl, getDim, hf,
-              degreesSubEqn, if_pos hxd, hc]
+              degreesSubEqn, ite_eq_left hxd, hc]
             exact hr
       intro y ys hy hys
       obtain ⟨s1, s2, h1, h2, hg2, ha2, hd2, ht2, _, _⟩ := dec_push_ok y s hg hy

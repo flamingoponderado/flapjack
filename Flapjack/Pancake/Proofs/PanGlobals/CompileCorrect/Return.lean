@@ -49,7 +49,7 @@ theorem compileCorrect_Return {width : Nat} {σ : Type} [NeZero width]
   | some value =>
     simp only [he] at hev
     by_cases hsize : sizeOfShapeWithContextHOL s.structs (shapeOfHOLExact value) ≤ 32
-    · simp only [if_pos hsize] at hev
+    · simp only [ite_eq_left hsize] at hev
       obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
       have het := PanGlobalsCompileExpCorrect.compileExpCorrectHOL s expression value ctxt t ⟨hrel, he⟩
       change @evalHOLExact width σ _ t.toExact
@@ -58,9 +58,9 @@ theorem compileCorrect_Return {width : Nat} {σ : Type} [NeZero width]
       have hsizeT : sizeOfShapeWithContextHOL t.structs (shapeOfHOLExact value) ≤ 32 := by
         simpa only [hss, hts] using hsize
       refine ⟨t.emptyLocalsHOLFinite, ?_, ?_⟩
-      · simp only [compileProgExactHOL, evaluateHOLFiniteState_return, het, if_pos hsizeT]
+      · simp only [compileProgExactHOL, evaluateHOLFiniteState_return, het, ite_eq_left hsizeT]
       · exact (PanGlobalsStateRelationLocals.stateRelEmptyLocalsHOL ctxt s t _).1 hrel
-    · simp only [if_neg hsize] at hev
+    · simp only [ite_eq_right hsize] at hev
       exact False.elim (hne (Prod.mk.inj hev).1.symm)
 
 end Flapjack.PanGlobalsCompileCorrectReturn

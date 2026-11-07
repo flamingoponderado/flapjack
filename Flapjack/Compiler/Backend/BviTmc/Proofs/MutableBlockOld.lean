@@ -42,7 +42,7 @@ theorem mutableBlockRel_old_subset (f : HolFiniteMapExact Nat Nat)
           · exact invalid (Or.inr (Or.inl h))
           · exact invalid (Or.inr (Or.inr (subset h)))
         rw [mutableBlockRel.eq_def] at related ⊢
-        simp only [invalid, valid, if_false] at related ⊢
+        simp only [invalid, valid, ite_false] at related ⊢
         cases found : refs.lookup ptr with
         | none => rw [found] at related; contradiction
         | some cell =>

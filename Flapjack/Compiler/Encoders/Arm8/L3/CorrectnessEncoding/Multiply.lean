@@ -91,7 +91,7 @@ theorem arm8MultiplyHigh_high (a b : BitVec 64) :
   rw [Nat.mod_eq_of_lt hlt, Nat.shiftRight_eq_div_pow]
   rw [Nat.mod_eq_of_lt (by omega)]
   have hN' : (a.toNat * b.toNat) / 2 ^ 64 < 2 ^ 128 := by omega
-  rw [BitVec.setWidth, dif_neg (by norm_num : ¬ 128 ≤ 64), BitVec.toNat_ofNat,
+  rw [BitVec.setWidth, dite_eq_right (by norm_num : ¬ 128 ≤ 64), BitVec.toNat_ofNat,
     Nat.mod_eq_of_lt hN']
 
 /-- The word emitted for `MultiplyAddSub@64`: HOL's `e_data` term
@@ -156,7 +156,7 @@ theorem arm8Next_multiplyHigh (ms : arm8_state) (rm rn : BitVec 5) (n : Nat)
     arm8Decode_multiplyHigh rm rn _
   refine arm8Next_eq ms _ _ _ hdec ?_ rfl hexc0 h0 h1 h2 h3 hal he0 hel
   rw [arm8Run_multiplyHigh, arm8WriteX_of_valid _ _ h31 hn]
-  simp only [ExtendWord, Bool.false_eq_true, if_false]
+  simp only [ExtendWord, Bool.false_eq_true, ite_false]
   rfl
 
 /-- One `arm8Next` step on the `MultiplyAddSub@64` word writes `Ra + Rn * Rm`

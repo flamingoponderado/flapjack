@@ -51,7 +51,7 @@ private theorem memStoresSimulation {width : Nat} {σ : Type} [NeZero width]
       intro address source target memory hrel hm
       simp only [panMemStoresHOL, panMemStoreHOL] at hm
       by_cases hd : source.memaddrs address
-      · simp only [if_pos hd] at hm
+      · simp only [ite_eq_left hd] at hm
         have ht : target.memaddrs address := hrel.2.2.2.2.2.2.2.2.2.2.1 address hd
         have hu := PanGlobalsMemoryUpdate.stateRelMemoryUpdateHOL context source target
           address word ⟨hrel, hd⟩
@@ -60,9 +60,9 @@ private theorem memStoresSimulation {width : Nat} {σ : Type} [NeZero width]
           {target with memory := fun x => if x = address then word else target.memory x}
           memory hu hm
         refine ⟨targetMemory, ?_, ?_⟩
-        · simpa only [panMemStoresHOL, panMemStoreHOL, if_pos ht] using htm
+        · simpa only [panMemStoresHOL, panMemStoreHOL, ite_eq_left ht] using htm
         · exact hrelm
-      · simp [if_neg hd] at hm
+      · simp [ite_eq_right hd] at hm
 
 /-- Genuine Store case of HOL compile_correct, with its original source
 evaluation/nonerror premises and existential target run. -/

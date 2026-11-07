@@ -87,7 +87,7 @@ theorem evaluateSingleStackAlloc {width : Nat} [NeZero width] {C F : Type}
   have codeLookup : sptLookup stackErrLab target.code = some (haltInst (BitVec.ofNat width 2)) := relation.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
   have baseNe : pointer + 1 ≠ pointer := by omega
   by_cases overflow : source.stackSpace < count
-  · rw [if_pos overflow] at output
+  · rw [ite_eq_left overflow] at output
     rcases Prod.mk.inj output with ⟨resultEq, stateEq⟩
     subst result
     subst postSource
@@ -119,7 +119,7 @@ theorem evaluateSingleStackAlloc {width : Nat} [NeZero width] {C F : Type}
           StackSemControl.findCode, codeLookup, haltInst,
           StackSemEvaluate.evaluate_halt, StackSemStateOps.decClock, StackSemControl.badFunReturn]
       · simpa [overflow, StackSemStateOps.emptyEnv] using relation.2.2.2.2.2.2.2.2.2.1
-  · rw [if_neg overflow] at output
+  · rw [ite_eq_right overflow] at output
     rcases Prod.mk.inj output with ⟨resultEq, stateEq⟩
     subst result
     subst postSource
@@ -131,7 +131,7 @@ theorem evaluateSingleStackAlloc {width : Nat} [NeZero width] {C F : Type}
         StackSemControl.fixClock, StackSemStateOps.setVar, HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL,
         StackSemEvaluate.evaluate_ite, StackSemEvaluate.evaluate_jumpLower, StackSemEvaluate.evaluate_skip,
         StackSemStateOps.getVar, StackSemStateOps.getVarImm, Compiler.Encoders.Asm.HolRegImm.toWordRegImm, wordSemWordCmp, baseLookup, guard, overflow]
-    · rw [if_neg overflow]
+    · rw [ite_eq_right overflow]
       simpa only [pointerLookup] using stateRelAllocStep jump bounds pointer count source target relation (Nat.le_of_not_gt overflow)
 /-- Source-local execution factoring for a successful native allocation chunk at any clock.
 No standalone HOL declaration; guard facts are derived from the full relation. -/
@@ -188,7 +188,7 @@ theorem runAlloc {width : Nat} [NeZero width] {C F : Type}
         source target expectedSource (if source.stackSpace < count then some (.halt (.word 2)) else none)
         ⟨relation, by dsimp [expectedSource]; split <;> rfl, zero, small⟩
       refine ⟨clock, postTarget, ?_, ?_⟩
-      · rw [stackAlloc, if_neg zero, if_pos small]
+      · rw [stackAlloc, ite_eq_right zero, ite_eq_left small]
         simpa only [Nat.add_comm] using run
       · by_cases overflow : source.stackSpace < count
         · simpa [overflow, expectedSource, StackSemStateOps.emptyEnv] using post
@@ -197,13 +197,13 @@ theorem runAlloc {width : Nat} [NeZero width] {C F : Type}
     · have overflow : source.stackSpace < count := by omega
       obtain ⟨clock, postTarget, run, post⟩ := evaluateSingleStackAlloc jump bounds pointer maxStackAlloc
         source target (StackSemStateOps.emptyEnv source) (some (.halt (.word 2)))
-        ⟨relation, by rw [if_pos firstOverflow], by decide, Nat.le_refl _⟩
+        ⟨relation, by rw [ite_eq_left firstOverflow], by decide, Nat.le_refl _⟩
       have firstRun : StackSemEvaluate.evaluate (singleStackAlloc jump pointer maxStackAlloc,
           {target with clock := clock + target.clock}) = (some (.halt (.word 2)),postTarget) := by
         simpa only [Nat.add_comm] using run
       refine ⟨clock, (StackSemControl.fixClock {target with clock := clock + target.clock}
         ((some (.halt (.word 2)) : Option (StackSemResult width)), postTarget)).2, ?_, ?_⟩
-      · rw [stackAlloc, if_neg zero, if_neg small, StackSemEvaluate.evaluate_seq, firstRun]
+      · rw [stackAlloc, ite_eq_right zero, ite_eq_right small, StackSemEvaluate.evaluate_seq, firstRun]
         simp [StackSemControl.fixClock, overflow]
       · simpa [overflow, firstOverflow, StackSemControl.fixClock, StackSemStateOps.emptyEnv] using post
     · have available : maxStackAlloc ≤ source.stackSpace := Nat.le_of_not_gt firstOverflow
@@ -218,7 +218,7 @@ theorem runAlloc {width : Nat} [NeZero width] {C F : Type}
         dsimp [nextSource]; omega
       have subtractionEq : (source.stackSpace - maxStackAlloc) - (count - maxStackAlloc) = source.stackSpace - count := by omega
       refine ⟨clock, postTarget, ?_, ?_⟩
-      · rw [stackAlloc, if_neg zero, if_neg small, StackSemEvaluate.evaluate_seq]
+      · rw [stackAlloc, ite_eq_right zero, ite_eq_right small, StackSemEvaluate.evaluate_seq]
         have firstRun := runSingleAvailable jump bounds pointer maxStackAlloc (clock + target.clock)
           source target relation available (Nat.le_refl _)
         have presented : StackSemEvaluate.evaluate (singleStackAlloc jump pointer maxStackAlloc,
@@ -253,16 +253,16 @@ theorem evaluateStackAlloc {width : Nat} [NeZero width] {C F : Type}
   classical
   rcases hypothesis with ⟨sourceRun, _notError, relation⟩
   rw [StackSemEvaluate.evaluate_stackAlloc] at sourceRun
-  simp only [relation.1, Bool.not_true, Bool.false_eq_true, if_false] at sourceRun
+  simp only [relation.1, Bool.not_true, Bool.false_eq_true, ite_false] at sourceRun
   obtain ⟨clock, postTarget, targetRun, post⟩ := runAlloc count jump bounds pointer source target relation
   by_cases overflow : source.stackSpace < count
-  · rw [if_pos overflow] at sourceRun targetRun post
+  · rw [ite_eq_left overflow] at sourceRun targetRun post
     rcases Prod.mk.inj sourceRun with ⟨resultEq, stateEq⟩
     subst result
     subst postSource
     refine ⟨clock, postTarget, targetRun, ?_⟩
     simpa [StackSemStateOps.emptyEnv] using post
-  · rw [if_neg overflow] at sourceRun targetRun post
+  · rw [ite_eq_right overflow] at sourceRun targetRun post
     rcases Prod.mk.inj sourceRun with ⟨resultEq, stateEq⟩
     subst result
     subst postSource

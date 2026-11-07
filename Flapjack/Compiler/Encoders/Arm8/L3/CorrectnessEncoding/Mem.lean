@@ -70,7 +70,7 @@ theorem arm8ELoadStoreImm12_load (offset : BitVec 64) (rn rt : BitVec 5)
       (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> 3))) <<< 3) = true := by
     rw [beq_iff_eq]; exact hoff
   simp only [e_load_store, e_LoadStoreImmediate, hs, h3, hload, hnrm, hpref, hstore,
-    Bool.false_eq_true, if_false, hnf, if_true, Bool.true_and, Bool.and_true]
+    Bool.false_eq_true, ite_false, hnf, ite_true, Bool.true_and, Bool.and_true]
   split_ifs with hg
   all_goals first | rfl | exact absurd hguard hg
 
@@ -95,7 +95,7 @@ theorem arm8ELoadStoreImm12_store (offset : BitVec 64) (rn rt : BitVec 5)
       (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> 3))) <<< 3) = true := by
     rw [beq_iff_eq]; exact hoff
   simp only [e_load_store, e_LoadStoreImmediate, hs, h3, hnrm, hpref, hstore,
-    Bool.false_eq_true, if_false, hnf, if_true, Bool.true_and, Bool.and_true]
+    Bool.false_eq_true, ite_false, hnf, ite_true, Bool.true_and, Bool.and_true]
   split_ifs with hg
   all_goals first | rfl | exact absurd hguard hg
 
@@ -122,7 +122,7 @@ theorem arm8ELoadStoreImm9_load (offset : BitVec 64) (unsigned_offset : Bool)
     rw [beq_iff_eq]; exact hsx
   have hnf : ((!false : Bool) = true) := rfl
   simp only [e_load_store, e_LoadStoreImmediate, hs, h3, hload, hnrm, hunpriv, hpref,
-    hstore, Bool.false_eq_true, if_false, hnf, if_true, Bool.and_true,
+    hstore, Bool.false_eq_true, ite_false, hnf, ite_true, Bool.and_true,
     holV2w_one_false]
   split_ifs with hg
   all_goals first
@@ -157,7 +157,7 @@ theorem arm8ELoadStoreImm9_store (offset : BitVec 64) (unsigned_offset : Bool)
     rw [beq_iff_eq]; exact hsx
   have hnf : ((!false : Bool) = true) := rfl
   simp only [e_load_store, e_LoadStoreImmediate, hs, h3, hnrm, hunpriv, hpref, hstore,
-    Bool.false_eq_true, if_false, hnf, if_true, Bool.and_true, holV2w_one_false]
+    Bool.false_eq_true, ite_false, hnf, ite_true, Bool.and_true, holV2w_one_false]
   split_ifs with hg
   all_goals first
     | rfl
@@ -303,7 +303,7 @@ theorem arm8Mem_eight (ms : arm8_state) (address : BitVec 64)
   constructor
   · rw [CheckAlignment_aligned ms address 8 AccType.AccType_NORMAL false hal]
     rw [BigEndian_false ms hel he0]
-    simp only [Bool.false_eq_true, if_false]
+    simp only [Bool.false_eq_true, ite_false]
     rw [h0, h1, h2, h3, h4, h5, h6, h7]
   · exact CheckAlignment_aligned ms address 8 AccType.AccType_NORMAL false hal
 
@@ -383,7 +383,7 @@ theorem arm8Run_loadStoreImmediate_load (ms : arm8_state) (offset : BitVec 64)
   have hne : ¬(base = BitVec.ofNat 5 31) := by
     intro h; rw [h] at hbase; simp at hbase
   simp only [Run, «dfn'LoadStoreImmediate», LoadStoreSingle, ExtendWord, hbase,
-    if_false, Bool.false_and, Bool.false_eq_true]
+    ite_false, Bool.false_and, Bool.false_eq_true]
 
 /-- `Run` of the `LoadStoreImmediate@64` store with no writeback: the machine
 writes `X dest` into the eight bytes at `X base + offset`.  `unsigned` is the
@@ -399,7 +399,7 @@ theorem arm8Run_loadStoreImmediate_store (ms : arm8_state) (offset : BitVec 64)
   have hne : ¬(base = BitVec.ofNat 5 31) := by
     intro h; rw [h] at hbase; simp at hbase
   simp only [Run, «dfn'LoadStoreImmediate», LoadStoreSingle, hbase,
-    if_false, Bool.false_and, Bool.false_eq_true]
+    ite_false, Bool.false_and, Bool.false_eq_true]
 
 /-- `Run` of the `LoadStoreImmediate@32` load with no writeback: the machine
 reads the four bytes at `X base + offset`, zero-extends them to 32 bits, and
@@ -417,7 +417,7 @@ theorem arm8Run_loadStoreImmediate_load32 (ms : arm8_state) (offset : BitVec 64)
   have hne : ¬(base = BitVec.ofNat 5 31) := by
     intro h; rw [h] at hbase; simp at hbase
   simp only [Run, «dfn'LoadStoreImmediate», LoadStoreSingle, ExtendWord, hbase,
-    if_false, if_true, Bool.false_and, Bool.false_eq_true, Nat.reduceDiv]
+    ite_false, ite_true, Bool.false_and, Bool.false_eq_true, Nat.reduceDiv]
 
 /-- `Run` of the `LoadStoreImmediate@32` store with no writeback: the machine
 writes the low 32 bits of `X dest` into the four bytes at `X base + offset`
@@ -433,7 +433,7 @@ theorem arm8Run_loadStoreImmediate_store32 (ms : arm8_state) (offset : BitVec 64
   have hne : ¬(base = BitVec.ofNat 5 31) := by
     intro h; rw [h] at hbase; simp at hbase
   simp only [Run, «dfn'LoadStoreImmediate», LoadStoreSingle, hbase,
-    if_false, Bool.false_and, Bool.false_eq_true, Nat.reduceDiv]
+    ite_false, Bool.false_and, Bool.false_eq_true, Nat.reduceDiv]
 
 
 /-- `arm8_ast` lowers a load whose offset is its own signed nine-bit form to one
@@ -634,7 +634,7 @@ theorem arm8Mem_four (ms : arm8_state) (address : BitVec 64)
   constructor
   · rw [CheckAlignment_aligned ms address 4 AccType.AccType_NORMAL false hal]
     rw [BigEndian_false ms hel he0]
-    simp only [Bool.false_eq_true, if_false]
+    simp only [Bool.false_eq_true, ite_false]
     rw [h0, h1, h2, h3]
   · exact CheckAlignment_aligned ms address 4 AccType.AccType_NORMAL false hal
 
@@ -704,7 +704,7 @@ theorem arm8MemStore_aligned (op : HolMemop) (r base : Nat) (off : BitVec 64)
   have hfail : s2.failed = false := boolOfNotTrue hok
   rw [← hupd] at hfail
   simp only [asmUpd, instUpd, hspec, memStore, addrHOL, updPc, assertState,
-    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, if_false] at hfail
+    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, ite_false] at hfail
   obtain ⟨hal, -⟩ := (Bool.or_eq_false_iff).1 hfail
   have h3 : holLOG2 8 = 3 := holLOG_UNIQUE 2 8 3 ⟨by decide, by decide⟩
   rw [h3] at hal
@@ -721,7 +721,7 @@ theorem arm8MemStore_domain (op : HolMemop) (r base : Nat) (off : BitVec 64)
   have hfail : s2.failed = false := boolOfNotTrue hok
   rw [← hupd] at hfail
   simp only [asmUpd, instUpd, hspec, memStore, addrHOL, updPc, assertState,
-    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, if_false] at hfail
+    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, ite_false] at hfail
   obtain ⟨-, hf⟩ := (Bool.or_eq_false_iff).1 hfail
   exact writeMemWord_domain (s1.regs base + off) 8 (s1.regs r) s1 hbe (not_of_eq_false hf)
 
@@ -737,7 +737,7 @@ theorem arm8MemLoad_aligned (op : HolMemop) (r base : Nat) (off : BitVec 64)
   have hfail : s2.failed = false := boolOfNotTrue hok
   rw [← hupd] at hfail
   simp only [asmUpd, instUpd, hspec, memLoad, addrHOL, updPc, updReg, assertState,
-    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, if_false] at hfail
+    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, ite_false] at hfail
   obtain ⟨hal, -⟩ := (Bool.or_eq_false_iff).1 hfail
   have h3 : holLOG2 8 = 3 := holLOG_UNIQUE 2 8 3 ⟨by decide, by decide⟩
   rw [h3] at hal
@@ -886,7 +886,7 @@ theorem holField_eight_length (value : BitVec 64) (i : Nat) (hi : i < 8) :
   have h8 : 8 * i + 7 + 1 - 8 * i = 8 := by omega
   have hge : ¬ (64 - 8 * i < 8) := by omega
   have hmin : min (64 - 8 * i) 64 = 64 - 8 * i := Nat.min_eq_left (by omega)
-  simp only [holField, holShiftr, h8, holFixwidth, holW2v_length, hmin, hge, if_false,
+  simp only [holField, holShiftr, h8, holFixwidth, holW2v_length, hmin, hge, ite_false,
     List.length_take, List.length_drop]
   omega
 
@@ -899,14 +899,14 @@ theorem holField_eight_getElem? (value : BitVec 64) (i j : Nat) (hi : i < 8) (hj
   have hge : ¬ (64 - 8 * i < 8) := by omega
   have hmin : min (64 - 8 * i) 64 = 64 - 8 * i := Nat.min_eq_left (by omega)
   simp only [holField, holShiftr, h8, holFixwidth, holW2v_length, List.length_take, hmin, hge,
-    if_false]
+    ite_false]
   rw [List.getElem?_drop]
   rw [show 64 - 8 * i - 8 + (7 - j) = 63 - 8 * i - j by omega]
   rw [List.getElem?_take_of_lt (by omega : 63 - 8 * i - j < 64 - 8 * i)]
   rw [holW2v_getElem?]
   have hlt : 63 - 8 * i - j < 64 := by omega
   have hidx : 63 - (63 - 8 * i - j) = 8 * i + j := by omega
-  simp only [hlt, if_true, hidx]
+  simp only [hlt, ite_true, hidx]
 
 /-- The byte `write'Mem` stores at `address + i` is the byte `writeMemN` stores
 there (Flapjack infrastructure). -/
@@ -981,7 +981,7 @@ theorem holField_four_length (value : BitVec 32) (i : Nat) (hi : i < 4) :
   have h8 : 8 * i + 7 + 1 - 8 * i = 8 := by omega
   have hge : ¬ (32 - 8 * i < 8) := by omega
   have hmin : min (32 - 8 * i) 32 = 32 - 8 * i := Nat.min_eq_left (by omega)
-  simp only [holField, holShiftr, h8, holFixwidth, holW2v_length32, hmin, hge, if_false,
+  simp only [holField, holShiftr, h8, holFixwidth, holW2v_length32, hmin, hge, ite_false,
     List.length_take, List.length_drop]
   omega
 
@@ -992,14 +992,14 @@ theorem holField_four_getElem? (value : BitVec 32) (i j : Nat) (hi : i < 4) (hj 
   have hge : ¬ (32 - 8 * i < 8) := by omega
   have hmin : min (32 - 8 * i) 32 = 32 - 8 * i := Nat.min_eq_left (by omega)
   simp only [holField, holShiftr, h8, holFixwidth, holW2v_length32, List.length_take, hmin, hge,
-    if_false]
+    ite_false]
   rw [List.getElem?_drop]
   rw [show 32 - 8 * i - 8 + (7 - j) = 31 - 8 * i - j by omega]
   rw [List.getElem?_take_of_lt (by omega : 31 - 8 * i - j < 32 - 8 * i)]
   rw [holW2v_getElem?_32]
   have hlt : 31 - 8 * i - j < 32 := by omega
   have hidx : 31 - (31 - 8 * i - j) = 8 * i + j := by omega
-  simp only [hlt, if_true, hidx]
+  simp only [hlt, ite_true, hidx]
 
 /-- The byte `write'Mem` stores at `address + i` for a 32-bit value
 (Flapjack infrastructure; the four-byte analogue of `arm8HolByte`). -/
@@ -1106,7 +1106,7 @@ theorem arm8MemStore_aligned_four (op : HolMemop) (r base : Nat) (off : BitVec 6
   have hfail : s2.failed = false := boolOfNotTrue hok
   rw [← hupd] at hfail
   simp only [asmUpd, instUpd, hspec, memStore, addrHOL, updPc, assertState,
-    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, if_false] at hfail
+    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, ite_false] at hfail
   obtain ⟨hal, -⟩ := (Bool.or_eq_false_iff).1 hfail
   have h2 : holLOG2 4 = 2 := holLOG_UNIQUE 2 4 2 ⟨by decide, by decide⟩
   rw [h2] at hal
@@ -1121,7 +1121,7 @@ theorem arm8MemStore_domain_four (op : HolMemop) (r base : Nat) (off : BitVec 64
   have hfail : s2.failed = false := boolOfNotTrue hok
   rw [← hupd] at hfail
   simp only [asmUpd, instUpd, hspec, memStore, addrHOL, updPc, assertState,
-    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, if_false] at hfail
+    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, ite_false] at hfail
   obtain ⟨-, hf⟩ := (Bool.or_eq_false_iff).1 hfail
   exact writeMemWord_domain (s1.regs base + off) 4 (s1.regs r) s1 hbe (not_of_eq_false hf)
 
@@ -1134,7 +1134,7 @@ theorem arm8MemLoad_aligned_four (op : HolMemop) (r base : Nat) (off : BitVec 64
   have hfail : s2.failed = false := boolOfNotTrue hok
   rw [← hupd] at hfail
   simp only [asmUpd, instUpd, hspec, memLoad, addrHOL, updPc, updReg, assertState,
-    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, if_false] at hfail
+    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, ite_false] at hfail
   obtain ⟨hal, -⟩ := (Bool.or_eq_false_iff).1 hfail
   have h2 : holLOG2 4 = 2 := holLOG_UNIQUE 2 4 2 ⟨by decide, by decide⟩
   rw [h2] at hal
@@ -1195,7 +1195,7 @@ theorem arm8WriteX32_of_valid (s : arm8_state) (v : BitVec 32) {n : Nat}
     cases hb : (BitVec.ofNat 5 n == 31#5)
     · rfl
     · exact absurd (by simpa using hb) hne
-  simp only [«write'X», hcond, if_true]
+  simp only [«write'X», hcond, ite_true]
 
 /-! ## The 32-bit `LoadStoreImmediate@32` layer
 
@@ -1223,7 +1223,7 @@ theorem arm8ELoadStoreImm12_load32 (offset : BitVec 64) (rn rt : BitVec 5)
       (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> 2))) <<< 2) = true := by
     rw [beq_iff_eq]; exact hoff
   simp only [e_load_store, e_LoadStoreImmediate, hs, h2, hload, hnrm, hpref, hstore,
-    Bool.false_eq_true, if_false, hnf, if_true, Bool.true_and, Bool.and_true]
+    Bool.false_eq_true, ite_false, hnf, ite_true, Bool.true_and, Bool.and_true]
   split_ifs with hg
   all_goals first | rfl | exact absurd hguard hg
 
@@ -1265,7 +1265,7 @@ theorem arm8ELoadStoreImm12_store32 (offset : BitVec 64) (rn rt : BitVec 5)
       (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> 2))) <<< 2) = true := by
     rw [beq_iff_eq]; exact hoff
   simp only [e_load_store, e_LoadStoreImmediate, hs, h2, hnrm, hpref, hstore,
-    Bool.false_eq_true, if_false, hnf, if_true, Bool.true_and, Bool.and_true]
+    Bool.false_eq_true, ite_false, hnf, ite_true, Bool.true_and, Bool.and_true]
   split_ifs with hg
   all_goals first | rfl | exact absurd hguard hg
 
@@ -1310,7 +1310,7 @@ theorem arm8ELoadStoreImm9_load32 (offset : BitVec 64) (unsigned_offset : Bool)
     rw [beq_iff_eq]; exact hsx
   have hnf : ((!false : Bool) = true) := rfl
   simp only [e_load_store, e_LoadStoreImmediate, hs, h2, hload, hnrm, hunpriv, hpref,
-    hstore, Bool.false_eq_true, if_false, hnf, if_true, Bool.and_true,
+    hstore, Bool.false_eq_true, ite_false, hnf, ite_true, Bool.and_true,
     holV2w_one_false]
   split_ifs with hg
   all_goals first
@@ -1365,7 +1365,7 @@ theorem arm8ELoadStoreImm9_store32 (offset : BitVec 64) (unsigned_offset : Bool)
     rw [beq_iff_eq]; exact hsx
   have hnf : ((!false : Bool) = true) := rfl
   simp only [e_load_store, e_LoadStoreImmediate, hs, h2, hstore, hnrm, hpref,
-    Bool.false_eq_true, if_false, hnf, if_true, Bool.and_true]
+    Bool.false_eq_true, ite_false, hnf, ite_true, Bool.and_true]
   split_ifs with hg
   all_goals first
     | rfl
@@ -1457,7 +1457,7 @@ theorem arm8Mem_one (ms : arm8_state) (address : BitVec 64)
   constructor
   · rw [CheckAlignment_aligned ms address 1 AccType.AccType_NORMAL false hal]
     rw [BigEndian_false ms hel he0]
-    simp only [Bool.false_eq_true, if_false]
+    simp only [Bool.false_eq_true, ite_false]
     exact arm8HolByte8 _
   · exact CheckAlignment_aligned ms address 1 AccType.AccType_NORMAL false hal
 
@@ -1481,8 +1481,8 @@ theorem arm8WriteMem_one (ms : arm8_state) (address : BitVec 64) (value : BitVec
   simp [holFor, CheckAlignment_aligned ms address 1 acctype true hal,
     BigEndian_false ms hel he0, arm8HolByte8, holUpdate_apply]
   by_cases h : x = address
-  · rw [if_pos h.symm, if_pos h]
-  · rw [if_neg (fun hh => h hh.symm), if_neg h]
+  · rw [ite_eq_left h.symm, ite_eq_left h]
+  · rw [ite_eq_right (fun hh => h hh.symm), ite_eq_right h]
 
 
 /-- A one-byte machine write ignores the `setWidth 8`-then-`setWidth 64` round
@@ -1512,7 +1512,7 @@ theorem arm8MemStore_aligned_one (op : HolMemop) (r base : Nat) (off : BitVec 64
   have hfail : s2.failed = false := boolOfNotTrue hok
   rw [← hupd] at hfail
   simp only [asmUpd, instUpd, hspec, memStore, addrHOL, updPc, assertState,
-    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, if_false] at hfail
+    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, ite_false] at hfail
   obtain ⟨hal, -⟩ := (Bool.or_eq_false_iff).1 hfail
   have h0 : holLOG2 1 = 0 := holLOG_UNIQUE 2 1 0 ⟨by decide, by decide⟩
   rw [h0] at hal
@@ -1527,7 +1527,7 @@ theorem arm8MemStore_domain_one (op : HolMemop) (r base : Nat) (off : BitVec 64)
   have hfail : s2.failed = false := boolOfNotTrue hok
   rw [← hupd] at hfail
   simp only [asmUpd, instUpd, hspec, memStore, addrHOL, updPc, assertState,
-    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, if_false] at hfail
+    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, ite_false] at hfail
   obtain ⟨-, hf⟩ := (Bool.or_eq_false_iff).1 hfail
   exact writeMemWord_domain (s1.regs base + off) 1 (s1.regs r) s1 hbe (not_of_eq_false hf)
 
@@ -1540,7 +1540,7 @@ theorem arm8MemLoad_aligned_one (op : HolMemop) (r base : Nat) (off : BitVec 64)
   have hfail : s2.failed = false := boolOfNotTrue hok
   rw [← hupd] at hfail
   simp only [asmUpd, instUpd, hspec, memLoad, addrHOL, updPc, updReg, assertState,
-    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, if_false] at hfail
+    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, ite_false] at hfail
   obtain ⟨hal, -⟩ := (Bool.or_eq_false_iff).1 hfail
   have h0 : holLOG2 1 = 0 := holLOG_UNIQUE 2 1 0 ⟨by decide, by decide⟩
   rw [h0] at hal
@@ -1578,7 +1578,7 @@ theorem arm8ELoadStoreImm9_load8 (offset : BitVec 64) (unsigned_offset : Bool)
     rw [beq_iff_eq]; exact hsx
   have hnf : ((!false : Bool) = true) := rfl
   simp only [e_load_store, e_LoadStoreImmediate, hs, h2, hload, hnrm, hunpriv, hpref,
-    hstore, Bool.false_eq_true, if_false, hnf, if_true, Bool.and_true,
+    hstore, Bool.false_eq_true, ite_false, hnf, ite_true, Bool.and_true,
     holV2w_one_false, arm8ShiftRight_zero]
   split_ifs with hg
   all_goals first
@@ -1633,7 +1633,7 @@ theorem arm8ELoadStoreImm9_store8 (offset : BitVec 64) (unsigned_offset : Bool)
     rw [beq_iff_eq]; exact hsx
   have hnf : ((!false : Bool) = true) := rfl
   simp only [e_load_store, e_LoadStoreImmediate, hs, h2, hstore, hnrm, hpref,
-    Bool.false_eq_true, if_false, hnf, if_true, Bool.and_true,
+    Bool.false_eq_true, ite_false, hnf, ite_true, Bool.and_true,
     arm8ShiftRight_zero]
   split_ifs with hg
   all_goals first
@@ -1688,7 +1688,7 @@ theorem arm8ELoadStoreImm12_load8 (offset : BitVec 64) (rn rt : BitVec 5)
       (BitVec.setWidth 64 (holWordExtract 12 11 0 offset)) <<< 0) = true := by
     rw [beq_iff_eq]; exact hoff
   simp only [e_load_store, e_LoadStoreImmediate, hs, h2, hload, hnrm, hpref, hstore,
-    Bool.false_eq_true, if_false, hnf, if_true, Bool.and_true,
+    Bool.false_eq_true, ite_false, hnf, ite_true, Bool.and_true,
     arm8ShiftRight_zero]
   split_ifs with hg
   all_goals first | rfl | exact absurd hguard hg
@@ -1731,7 +1731,7 @@ theorem arm8ELoadStoreImm12_store8 (offset : BitVec 64) (rn rt : BitVec 5)
       (BitVec.setWidth 64 (holWordExtract 12 11 0 offset)) <<< 0) = true := by
     rw [beq_iff_eq]; exact hoff
   simp only [e_load_store, e_LoadStoreImmediate, hs, h2, hnrm, hpref, hstore,
-    Bool.false_eq_true, if_false, hnf, if_true, Bool.and_true,
+    Bool.false_eq_true, ite_false, hnf, ite_true, Bool.and_true,
     arm8ShiftRight_zero]
   split_ifs with hg
   all_goals first | rfl | exact absurd hguard hg
@@ -1792,7 +1792,7 @@ theorem arm8Run_loadStoreImmediate_load8 (ms : arm8_state) (offset : BitVec 64)
   have hne : ¬(base = BitVec.ofNat 5 31) := by
     intro h; rw [h] at hbase; simp at hbase
   simp only [Run, «dfn'LoadStoreImmediate», LoadStoreSingle, ExtendWord, hbase,
-    if_false, if_true, Bool.false_and, Bool.false_eq_true, Nat.reduceDiv]
+    ite_false, ite_true, Bool.false_and, Bool.false_eq_true, Nat.reduceDiv]
 
 theorem arm8Run_loadStoreImmediate_store8 (ms : arm8_state) (offset : BitVec 64)
     (unsigned : Bool) (base dest : BitVec 5)
@@ -1805,7 +1805,7 @@ theorem arm8Run_loadStoreImmediate_store8 (ms : arm8_state) (offset : BitVec 64)
   have hne : ¬(base = BitVec.ofNat 5 31) := by
     intro h; rw [h] at hbase; simp at hbase
   simp only [Run, «dfn'LoadStoreImmediate», LoadStoreSingle, hbase,
-    if_false, Bool.false_and, Bool.false_eq_true, Nat.reduceDiv]
+    ite_false, Bool.false_and, Bool.false_eq_true, Nat.reduceDiv]
 
 theorem arm8X8_of_valid (ms : arm8_state) {n : Nat} (hn : n ≠ 31) (hlt : n < 32) :
     X (TN := 8) (BitVec.ofNat 5 n) ms = BitVec.setWidth 8 (ms.REG (BitVec.ofNat 5 n)) := by
@@ -1844,7 +1844,7 @@ theorem holField_two_length (value : BitVec 16) (i : Nat) (hi : i < 2) :
   have h8 : 8 * i + 7 + 1 - 8 * i = 8 := by omega
   have hge : ¬ (16 - 8 * i < 8) := by omega
   have hmin : min (16 - 8 * i) 16 = 16 - 8 * i := Nat.min_eq_left (by omega)
-  simp only [holField, holShiftr, h8, holFixwidth, holW2v_length16, hmin, hge, if_false,
+  simp only [holField, holShiftr, h8, holFixwidth, holW2v_length16, hmin, hge, ite_false,
     List.length_take, List.length_drop]
   omega
 
@@ -1855,14 +1855,14 @@ theorem holField_two_getElem? (value : BitVec 16) (i j : Nat) (hi : i < 2) (hj :
   have hge : ¬ (16 - 8 * i < 8) := by omega
   have hmin : min (16 - 8 * i) 16 = 16 - 8 * i := Nat.min_eq_left (by omega)
   simp only [holField, holShiftr, h8, holFixwidth, holW2v_length16, List.length_take, hmin, hge,
-    if_false]
+    ite_false]
   rw [List.getElem?_drop]
   rw [show 16 - 8 * i - 8 + (7 - j) = 15 - 8 * i - j by omega]
   rw [List.getElem?_take_of_lt (by omega : 15 - 8 * i - j < 16 - 8 * i)]
   rw [holW2v_getElem?_16]
   have hlt : 15 - 8 * i - j < 16 := by omega
   have hidx : 15 - (15 - 8 * i - j) = 8 * i + j := by omega
-  simp only [hlt, if_true, hidx]
+  simp only [hlt, ite_true, hidx]
 
 theorem arm8HolByte16 (value : BitVec 16) (i : Nat) (hi : i < 2) :
     holV2w 8 (holField (8 * i + 7) (8 * i) (holW2v value)) =
@@ -1953,7 +1953,7 @@ theorem arm8MemStore_aligned_two (op : HolMemop) (r base : Nat) (off : BitVec 64
   have hfail : s2.failed = false := boolOfNotTrue hok
   rw [← hupd] at hfail
   simp only [asmUpd, instUpd, hspec, memStore, addrHOL, updPc, assertState,
-    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, if_false] at hfail
+    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, ite_false] at hfail
   obtain ⟨hal, -⟩ := (Bool.or_eq_false_iff).1 hfail
   have h1 : holLOG2 2 = 1 := holLOG_UNIQUE 2 2 1 ⟨by decide, by decide⟩
   rw [h1] at hal
@@ -1968,7 +1968,7 @@ theorem arm8MemStore_domain_two (op : HolMemop) (r base : Nat) (off : BitVec 64)
   have hfail : s2.failed = false := boolOfNotTrue hok
   rw [← hupd] at hfail
   simp only [asmUpd, instUpd, hspec, memStore, addrHOL, updPc, assertState,
-    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, if_false] at hfail
+    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, ite_false] at hfail
   obtain ⟨-, hf⟩ := (Bool.or_eq_false_iff).1 hfail
   exact writeMemWord_domain (s1.regs base + off) 2 (s1.regs r) s1 hbe (not_of_eq_false hf)
 
@@ -1981,7 +1981,7 @@ theorem arm8MemLoad_aligned_two (op : HolMemop) (r base : Nat) (off : BitVec 64)
   have hfail : s2.failed = false := boolOfNotTrue hok
   rw [← hupd] at hfail
   simp only [asmUpd, instUpd, hspec, memLoad, addrHOL, updPc, updReg, assertState,
-    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, if_false] at hfail
+    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, ite_false] at hfail
   obtain ⟨hal, -⟩ := (Bool.or_eq_false_iff).1 hfail
   have h1 : holLOG2 2 = 1 := holLOG_UNIQUE 2 2 1 ⟨by decide, by decide⟩
   rw [h1] at hal
@@ -2009,7 +2009,7 @@ theorem arm8Mem_two (ms : arm8_state) (address : BitVec 64)
   constructor
   · rw [CheckAlignment_aligned ms address 2 AccType.AccType_NORMAL false hal]
     rw [BigEndian_false ms hel he0]
-    simp only [Bool.false_eq_true, if_false]
+    simp only [Bool.false_eq_true, ite_false]
     rw [h0, h1]
   · exact CheckAlignment_aligned ms address 2 AccType.AccType_NORMAL false hal
 
@@ -2075,7 +2075,7 @@ theorem arm8ELoadStoreImm9_load16 (offset : BitVec 64) (unsigned_offset : Bool)
     rw [beq_iff_eq]; exact hsx
   have hnf : ((!false : Bool) = true) := rfl
   simp only [e_load_store, e_LoadStoreImmediate, hs, h2, hload, hnrm, hunpriv, hpref,
-    hstore, Bool.false_eq_true, if_false, hnf, if_true, Bool.and_true,
+    hstore, Bool.false_eq_true, ite_false, hnf, ite_true, Bool.and_true,
     holV2w_one_false]
   split_ifs with hg
   all_goals first
@@ -2130,7 +2130,7 @@ theorem arm8ELoadStoreImm9_store16 (offset : BitVec 64) (unsigned_offset : Bool)
     rw [beq_iff_eq]; exact hsx
   have hnf : ((!false : Bool) = true) := rfl
   simp only [e_load_store, e_LoadStoreImmediate, hs, h2, hstore, hnrm, hpref,
-    Bool.false_eq_true, if_false, hnf, if_true, Bool.and_true]
+    Bool.false_eq_true, ite_false, hnf, ite_true, Bool.and_true]
   split_ifs with hg
   all_goals first
     | rfl
@@ -2184,7 +2184,7 @@ theorem arm8ELoadStoreImm12_load16 (offset : BitVec 64) (rn rt : BitVec 5)
       (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> 1))) <<< 1) = true := by
     rw [beq_iff_eq]; exact hoff
   simp only [e_load_store, e_LoadStoreImmediate, hs, h2, hload, hnrm, hpref, hstore,
-    Bool.false_eq_true, if_false, hnf, if_true, Bool.and_true]
+    Bool.false_eq_true, ite_false, hnf, ite_true, Bool.and_true]
   split_ifs with hg
   all_goals first | rfl | exact absurd hguard hg
 
@@ -2226,7 +2226,7 @@ theorem arm8ELoadStoreImm12_store16 (offset : BitVec 64) (rn rt : BitVec 5)
       (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> 1))) <<< 1) = true := by
     rw [beq_iff_eq]; exact hoff
   simp only [e_load_store, e_LoadStoreImmediate, hs, h2, hnrm, hpref, hstore,
-    Bool.false_eq_true, if_false, hnf, if_true, Bool.and_true]
+    Bool.false_eq_true, ite_false, hnf, ite_true, Bool.and_true]
   split_ifs with hg
   all_goals first | rfl | exact absurd hguard hg
 
@@ -2294,7 +2294,7 @@ theorem arm8Run_loadStoreImmediate_load16 (ms : arm8_state) (offset : BitVec 64)
   have hne : ¬(base = BitVec.ofNat 5 31) := by
     intro h; rw [h] at hbase; simp at hbase
   simp only [Run, «dfn'LoadStoreImmediate», LoadStoreSingle, ExtendWord, hbase,
-    if_false, if_true, Bool.false_and, Bool.false_eq_true, Nat.reduceDiv]
+    ite_false, ite_true, Bool.false_and, Bool.false_eq_true, Nat.reduceDiv]
 
 theorem arm8Run_loadStoreImmediate_store16 (ms : arm8_state) (offset : BitVec 64)
     (unsigned : Bool) (base dest : BitVec 5)
@@ -2307,7 +2307,7 @@ theorem arm8Run_loadStoreImmediate_store16 (ms : arm8_state) (offset : BitVec 64
   have hne : ¬(base = BitVec.ofNat 5 31) := by
     intro h; rw [h] at hbase; simp at hbase
   simp only [Run, «dfn'LoadStoreImmediate», LoadStoreSingle, hbase,
-    if_false, Bool.false_and, Bool.false_eq_true, Nat.reduceDiv]
+    ite_false, Bool.false_and, Bool.false_eq_true, Nat.reduceDiv]
 
 theorem arm8X16_of_valid (ms : arm8_state) {n : Nat} (hn : n ≠ 31) (hlt : n < 32) :
     X (TN := 16) (BitVec.ofNat 5 n) ms = BitVec.setWidth 16 (ms.REG (BitVec.ofNat 5 n)) := by
@@ -2369,7 +2369,7 @@ theorem arm8Ast_load_far (dest base : Nat) (off : BitVec 64)
           (if !off.msb then (0xFF : BitVec 64) else -(0x100 : BitVec 64)),
           26, BitVec.ofNat 5 dest))] := by
   simp only [arm8Ast, arm8LoadStoreAst]
-  rw [if_pos (arm8FarCond off hnsx hfar)]
+  rw [ite_eq_left (arm8FarCond off hnsx hfar)]
   simp [Bool.not_not]
 
 theorem arm8Ast_store_far (dest base : Nat) (off : BitVec 64)
@@ -2387,7 +2387,7 @@ theorem arm8Ast_store_far (dest base : Nat) (off : BitVec 64)
           (if !off.msb then (0xFF : BitVec 64) else -(0x100 : BitVec 64)),
           26, BitVec.ofNat 5 dest))] := by
   simp only [arm8Ast, arm8LoadStoreAst]
-  rw [if_pos (arm8FarCond off hnsx hfar)]
+  rw [ite_eq_left (arm8FarCond off hnsx hfar)]
   simp [Bool.not_not]
 
 /-- The far branch condition of the three `arm8_load_store_ast` variants: they
@@ -2432,7 +2432,7 @@ theorem arm8Ast_load_far32 (dest base : Nat) (off : BitVec 64)
           (if !off.msb then (0xFF : BitVec 64) else -(0x100 : BitVec 64)),
           26, BitVec.ofNat 5 dest))] := by
   simp only [arm8Ast, arm8LoadStoreAst32]
-  rw [if_pos (arm8FarCondOf off 2 hnsx hfar)]
+  rw [ite_eq_left (arm8FarCondOf off 2 hnsx hfar)]
   simp [Bool.not_not]
 
 /-- `arm8_load_store_ast32`'s two-instruction branch for `.mem .store32`. -/
@@ -2451,7 +2451,7 @@ theorem arm8Ast_store_far32 (dest base : Nat) (off : BitVec 64)
           (if !off.msb then (0xFF : BitVec 64) else -(0x100 : BitVec 64)),
           26, BitVec.ofNat 5 dest))] := by
   simp only [arm8Ast, arm8LoadStoreAst32]
-  rw [if_pos (arm8FarCondOf off 2 hnsx hfar)]
+  rw [ite_eq_left (arm8FarCondOf off 2 hnsx hfar)]
   simp [Bool.not_not]
 
 /-- `arm8_load_store_ast16`'s two-instruction branch for `.mem .load16`. -/
@@ -2470,7 +2470,7 @@ theorem arm8Ast_load_far16 (dest base : Nat) (off : BitVec 64)
           (if !off.msb then (0xFF : BitVec 64) else -(0x100 : BitVec 64)),
           26, BitVec.ofNat 5 dest))] := by
   simp only [arm8Ast, arm8LoadStoreAst16]
-  rw [if_pos (arm8FarCondOf off 1 hnsx hfar)]
+  rw [ite_eq_left (arm8FarCondOf off 1 hnsx hfar)]
   simp [Bool.not_not]
 
 /-- `arm8_load_store_ast16`'s two-instruction branch for `.mem .store16`. -/
@@ -2489,7 +2489,7 @@ theorem arm8Ast_store_far16 (dest base : Nat) (off : BitVec 64)
           (if !off.msb then (0xFF : BitVec 64) else -(0x100 : BitVec 64)),
           26, BitVec.ofNat 5 dest))] := by
   simp only [arm8Ast, arm8LoadStoreAst16]
-  rw [if_pos (arm8FarCondOf off 1 hnsx hfar)]
+  rw [ite_eq_left (arm8FarCondOf off 1 hnsx hfar)]
   simp [Bool.not_not]
 
 /-- The four-byte `Mem` pair at an address whose bytes agree with the source
@@ -2622,7 +2622,7 @@ theorem arm8FarImm_encodable_of_bounds (off : BitVec 64)
   by_cases hmsb : off.msb
   · have hcond := BitVec.toInt_eq_msb_cond off
     rw [hmsb] at hcond
-    simp only [if_true] at hcond
+    simp only [ite_true] at hcond
     have hnat : (off.toNat : Int) = off.toInt + 2 ^ 64 := by omega
     have hle : off.toInt ≤ -257 := by omega
     have hneg : (-off).toNat = (-off.toInt).toNat := by
@@ -2636,7 +2636,7 @@ theorem arm8FarImm_encodable_of_bounds (off : BitVec 64)
     have hsmall : (-off - (0x100 : BitVec 64)).toNat < 4096 := by
       rw [hbNat]
       omega
-    simp only [hmsb, Bool.not_true, Bool.false_eq_true, if_false]
+    simp only [hmsb, Bool.not_true, Bool.false_eq_true, ite_false]
     exact arm8AndNot_eq_zero_of_toNat_lt _ hsmall
   · have hmsbf : off.msb = false := by
       cases hb : off.msb
@@ -2644,7 +2644,7 @@ theorem arm8FarImm_encodable_of_bounds (off : BitVec 64)
       · exact absurd hb hmsb
     have hcond := BitVec.toInt_eq_msb_cond off
     rw [hmsbf] at hcond
-    simp only [Bool.false_eq_true, if_false] at hcond
+    simp only [Bool.false_eq_true, ite_false] at hcond
     have hge : (256 : Int) ≤ off.toInt := by omega
     have hnat : off.toNat = off.toInt.toNat := by omega
     have hbNat : (off - (0xFF : BitVec 64)).toNat = off.toNat - 255 := by
@@ -2655,7 +2655,7 @@ theorem arm8FarImm_encodable_of_bounds (off : BitVec 64)
     have hsmall : (off - (0xFF : BitVec 64)).toNat < 4096 := by
       rw [hbNat]
       omega
-    simp only [hmsbf, Bool.not_false, if_true]
+    simp only [hmsbf, Bool.not_false, ite_true]
     exact arm8AndNot_eq_zero_of_toNat_lt _ hsmall
 
 /-- The configured `addr_offset_ok` window supplies the far-immediate bounds. -/
@@ -2924,8 +2924,8 @@ theorem arm8MemCaseTwo (op : HolMemop) (dest base : Nat) (off : BitVec 64)
   · exact hregFd _ (ht1reg dest hdlt hdav)
   · intro k
     by_cases hk : k = dest
-    · rw [if_pos hk, hk]
-    · rw [if_neg hk, hs2regs k hk]
+    · rw [ite_eq_left hk, hk]
+    · rw [ite_eq_right hk, hs2regs k hk]
 
 /-- The shared tail of every one-instruction `Mem` lowering of
 `encoder_correct arm8TargetL3` (Flapjack infrastructure, the one-instruction
@@ -3017,8 +3017,8 @@ theorem arm8MemCaseOne (op : HolMemop) (dest base : Nat) (off : BitVec 64)
     rw [(alignedAddSub 2 ms.PC 4 h4).1, halign]
   · intro k
     by_cases hk : k = dest
-    · rw [if_pos hk, hk]
-    · rw [if_neg hk, hs2regs k hk]
+    · rw [ite_eq_left hk, hk]
+    · rw [ite_eq_right hk, hs2regs k hk]
 
 /-- The register side conditions of a `Mem` instruction accepted by
 `asm_ok` (Flapjack infrastructure; any `memop`). -/
@@ -3088,7 +3088,7 @@ theorem arm8MemLoadPost (op : HolMemop) (dest base : Nat) (off : BitVec 64)
   · intro k
     simp only [asmUpd, instUpd, hspec, memLoad, addrHOL, updPc, updReg, assertState,
       readMemWord_regs, Flapjack.Compiler.Encoders.AsmSem.readReg, hbe,
-      Bool.false_eq_true, if_false]
+      Bool.false_eq_true, ite_false]
 
 /-- The source state after an `n`-byte store (Flapjack infrastructure). -/
 theorem arm8MemStorePost (op : HolMemop) (dest base : Nat) (off : BitVec 64)
@@ -3108,7 +3108,7 @@ theorem arm8MemStorePost (op : HolMemop) (dest base : Nat) (off : BitVec 64)
       writeMemWord_regs]
   · intro x
     simp only [asmUpd, instUpd, hspec, memStore, addrHOL, updPc, assertState,
-      Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, if_false]
+      Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, ite_false]
 
 /-- A `2 ^ size`-byte `writeMemN` leaves every other address alone
 (Flapjack infrastructure). -/
@@ -3180,12 +3180,12 @@ theorem arm8MemLoadCaseOne (op : HolMemop) (dest base : Nat) (off : BitVec 64)
   · intro R k hk hkd
     exact holUpdate_ne (fun hh => hkd ((arm8Reg_eq hdest.1 hk).mp hh).symm) _ _
   · intro R _
-    rw [holUpdate_same, hs2regs dest, if_pos rfl]
+    rw [holUpdate_same, hs2regs dest, ite_eq_left rfl]
   · intro m hm a ha
     rw [hs2mem a]
     exact hm a ha
   · intro k hk
-    rw [hs2regs k, if_neg hk]
+    rw [hs2regs k, ite_eq_right hk]
 
 /-- The two-instruction (far-offset) `Mem` load of `2 ^ size` bytes (Flapjack
 infrastructure): `arm8MemCaseTwo` with the load's register and memory
@@ -3237,12 +3237,12 @@ theorem arm8MemLoadCaseTwo (op : HolMemop) (dest base : Nat) (off : BitVec 64)
   · intro R k hk hkd
     exact holUpdate_ne (fun hh => hkd ((arm8Reg_eq hdest.1 hk).mp hh).symm) _ _
   · intro R _
-    rw [holUpdate_same, hs2regs dest, if_pos rfl]
+    rw [holUpdate_same, hs2regs dest, ite_eq_left rfl]
   · intro m hm a ha
     rw [hs2mem a]
     exact hm a ha
   · intro k hk
-    rw [hs2regs k, if_neg hk]
+    rw [hs2regs k, ite_eq_right hk]
 
 /-- The one-instruction `Mem` store of `2 ^ size` bytes (Flapjack
 infrastructure): `arm8MemCaseOne` with the store's register and memory
@@ -4339,7 +4339,7 @@ theorem arm8_encoder_correct_mem_load_far (dest base : Nat) (off : BitVec 64)
   have hlow := arm8FarImm_encodable off hok hnsx
   by_cases hmsb : off.msb
   · exact arm8_encoder_correct_mem_load_far_neg dest base off s1 s2 ms h hnsx hmsb (by
-      simp only [hmsb, Bool.not_true, Bool.false_eq_true, if_false] at hlow
+      simp only [hmsb, Bool.not_true, Bool.false_eq_true, ite_false] at hlow
       exact hlow)
   · have hmsbf : off.msb = false := by
       cases hb : off.msb
@@ -4349,7 +4349,7 @@ theorem arm8_encoder_correct_mem_load_far (dest base : Nat) (off : BitVec 64)
     · rw [htrue] at hmsbf
       exact absurd hmsbf (by decide)
     · exact arm8_encoder_correct_mem_load_far_pos dest base off s1 s2 ms h hnsx hmsbf hscaled (by
-        simp only [hmsbf, Bool.not_false, if_true] at hlow
+        simp only [hmsbf, Bool.not_false, ite_true] at hlow
         exact hlow)
 
 /-- The far-offset branch of the `.mem .store` constructor: the offset is neither
@@ -4368,7 +4368,7 @@ theorem arm8_encoder_correct_mem_store_far (dest base : Nat) (off : BitVec 64)
   have hlow := arm8FarImm_encodable off hok hnsx
   by_cases hmsb : off.msb
   · exact arm8_encoder_correct_mem_store_far_neg dest base off s1 s2 ms h hnsx hmsb (by
-      simp only [hmsb, Bool.not_true, Bool.false_eq_true, if_false] at hlow
+      simp only [hmsb, Bool.not_true, Bool.false_eq_true, ite_false] at hlow
       exact hlow)
   · have hmsbf : off.msb = false := by
       cases hb : off.msb
@@ -4378,7 +4378,7 @@ theorem arm8_encoder_correct_mem_store_far (dest base : Nat) (off : BitVec 64)
     · rw [htrue] at hmsbf
       exact absurd hmsbf (by decide)
     · exact arm8_encoder_correct_mem_store_far_pos dest base off s1 s2 ms h hnsx hmsbf hscaled (by
-        simp only [hmsbf, Bool.not_false, if_true] at hlow
+        simp only [hmsbf, Bool.not_false, ite_true] at hlow
         exact hlow)
 
 /-- The negative-offset `imm9` load branch: a negative offset makes the

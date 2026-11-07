@@ -111,7 +111,7 @@ theorem evaluateApp_full_fuel {C F : Type} (fuel : Nat) (g : State) (allowed : S
         let sourceStart := decClock cost source
         let targetStart := decClock cost target
         have startStates : StateRelFuel fuel g allowed sourceStart targetStart := stateRelFuel_decClock states cost
-        simp only [if_neg timeout, fixClock_evaluate] at sourceRun
+        simp only [ite_eq_right timeout, fixClock_evaluate] at sourceRun
         cases bodyRun : evaluate [sourceBody] sourceBodyEnv sourceStart with
         | mk bodyResult bodyFinal =>
           have bodyNotType : bodyResult ≠ .err (.abort .typeError) := by
@@ -137,7 +137,7 @@ theorem evaluateApp_full_fuel {C F : Type} (fuel : Nat) (g : State) (allowed : S
               rw [evaluateApp, targetClosure']
               simp only [List.length_cons, targetCostEq]
               have targetEnough' : ¬ target.clock < cost := by omega
-              rw [if_neg targetEnough', fixClock_evaluate, targetBodyRun']
+              rw [ite_eq_right targetEnough', fixClock_evaluate, targetBodyRun']
           | val sourceValues =>
             obtain ⟨sourceValue, rfl⟩ := evaluate_singleton_value sourceBody sourceBodyEnv sourceStart bodyFinal sourceValues bodyRun
             cases targetBodyResult with
@@ -157,7 +157,7 @@ theorem evaluateApp_full_fuel {C F : Type} (fuel : Nat) (g : State) (allowed : S
               · rw [evaluateApp, targetClosure']
                 simp only [List.length_cons, targetCostEq]
                 have targetEnough' : ¬ target.clock < cost := by omega
-                rw [if_neg targetEnough', fixClock_evaluate, targetBodyRun']
+                rw [ite_eq_right targetEnough', fixClock_evaluate, targetBodyRun']
                 exact targetRun
               · intro key value lookup
                 exact growth key value (bodyGrowth key value lookup)

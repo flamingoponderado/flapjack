@@ -82,9 +82,9 @@ private theorem shMemStore_compileState {rw : Nat} [NeZero rw] (clk : Nat)
       ((shMemStore (rw := rw) a w s).1, compileState clk c (shMemStore (rw := rw) a w s).2) := by
   unfold shMemStore
   by_cases h : s.shMdomain a = true
-  · simp only [cs_shMdomain, cs_ffi, h, if_true]
+  · simp only [cs_shMdomain, cs_ffi, h, ite_true]
     cases callFFIHOL s.ffi (.sharedMem .mappedWrite) [0] (panWordToBytesHOL w false ++ panWordToBytesHOL a false) <;> rfl
-  · simp only [cs_shMdomain, h, Bool.false_eq_true, if_false]
+  · simp only [cs_shMdomain, h, Bool.false_eq_true, ite_false]
 
 private theorem shMemStoreByte_compileState {rw : Nat} [NeZero rw] (clk : Nat)
     (c : WordCompileFn width C) (s : WordSemStateFiniteExact width C F) (a w : BitVec width) :
@@ -92,9 +92,9 @@ private theorem shMemStoreByte_compileState {rw : Nat} [NeZero rw] (clk : Nat)
       ((shMemStoreByte (rw := rw) a w s).1, compileState clk c (shMemStoreByte (rw := rw) a w s).2) := by
   unfold shMemStoreByte
   by_cases h : s.shMdomain (riscvByteAlignHOL a) = true
-  · simp only [cs_shMdomain, cs_ffi, h, if_true]
+  · simp only [cs_shMdomain, cs_ffi, h, ite_true]
     cases callFFIHOL s.ffi (.sharedMem .mappedWrite) [1] ([getByteHOL8 0 w false] ++ panWordToBytesHOL a false) <;> rfl
-  · simp only [cs_shMdomain, h, Bool.false_eq_true, if_false]
+  · simp only [cs_shMdomain, h, Bool.false_eq_true, ite_false]
 
 private theorem shMemStore16_compileState {rw : Nat} [NeZero rw] (clk : Nat)
     (c : WordCompileFn width C) (s : WordSemStateFiniteExact width C F) (a w : BitVec width) :
@@ -102,9 +102,9 @@ private theorem shMemStore16_compileState {rw : Nat} [NeZero rw] (clk : Nat)
       ((shMemStore16 (rw := rw) a w s).1, compileState clk c (shMemStore16 (rw := rw) a w s).2) := by
   unfold shMemStore16
   by_cases h : s.shMdomain (riscvByteAlignHOL a) = true
-  · simp only [cs_shMdomain, cs_ffi, h, if_true]
+  · simp only [cs_shMdomain, cs_ffi, h, ite_true]
     cases callFFIHOL s.ffi (.sharedMem .mappedWrite) [2] ((panWordToBytesHOL w false).take 2 ++ panWordToBytesHOL a false) <;> rfl
-  · simp only [cs_shMdomain, h, Bool.false_eq_true, if_false]
+  · simp only [cs_shMdomain, h, Bool.false_eq_true, ite_false]
 
 private theorem shMemStore32_compileState {rw : Nat} [NeZero rw] (clk : Nat)
     (c : WordCompileFn width C) (s : WordSemStateFiniteExact width C F) (a w : BitVec width) :
@@ -112,9 +112,9 @@ private theorem shMemStore32_compileState {rw : Nat} [NeZero rw] (clk : Nat)
       ((shMemStore32 (rw := rw) a w s).1, compileState clk c (shMemStore32 (rw := rw) a w s).2) := by
   unfold shMemStore32
   by_cases h : s.shMdomain (riscvByteAlignHOL a) = true
-  · simp only [cs_shMdomain, cs_ffi, h, if_true]
+  · simp only [cs_shMdomain, cs_ffi, h, ite_true]
     cases callFFIHOL s.ffi (.sharedMem .mappedWrite) [4] ((panWordToBytesHOL w false).take 4 ++ panWordToBytesHOL a false) <;> rfl
-  · simp only [cs_shMdomain, h, Bool.false_eq_true, if_false]
+  · simp only [cs_shMdomain, h, Bool.false_eq_true, ite_false]
 
 set_option linter.unusedSimpArgs false in
 private theorem shareInst_compileState (clk : Nat) (c : WordCompileFn width C)
@@ -197,11 +197,11 @@ theorem evaluate_install_compileState (clk : Nat) (c : WordCompileFn width C)
     simp only [List.map] at hR hcode ⊢
     simp only [holShiftSeq] at hR ⊢
     by_cases hC : bytes = bytes' ∧ data = data' ∧ (oracle (0 + 1)).1 = cfg'
-    · simp only [hC, and_self, if_true] at hR ⊢
+    · simp only [hC, and_self, ite_true] at hR ⊢
       cases hR
       simp only [hcode]
       rfl
-    · simp only [hC, if_false] at hR ⊢
+    · simp only [hC, ite_false] at hR ⊢
       cases hR; rfl
 
 end Frame
@@ -240,19 +240,19 @@ theorem word_remove_correct_aux (c : WordCompileFn width C) :
       rw [show removeMustTerminate (WordLangProgHOL.tick : WordLangProgHOL (BitVec width)) =
         .tick from rfl, ht]
       by_cases hz : s.clock = 0
-      · simp only [hz, if_true, Prod.mk.injEq] at h
+      · simp only [hz, ite_true, Prod.mk.injEq] at h
         obtain ⟨rfl, rfl⟩ := h
-        rw [if_pos (by simp [compileState, hz]), flushState_compileState]
-      · simp only [hz, if_false, Prod.mk.injEq] at h
+        rw [ite_eq_left (by simp [compileState, hz]), flushState_compileState]
+      · simp only [hz, ite_false, Prod.mk.injEq] at h
         obtain ⟨rfl, rfl⟩ := h
-        rw [if_neg (by simp [compileState, hz]), compileState_decClock 0 c s hz]
+        rw [ite_eq_right (by simp [compileState, hz]), compileState_decClock 0 c s hz]
   | .mustTerminate q, s, r, s', h, hne, hc => by
       have ht := (evaluate_def_rebound (width := width) (C := C) (F := F)).2.2.2.2.2.2.2.2.2.2.2.1
       rw [ht] at h
       by_cases hd : s.termdep = 0
-      · simp only [hd, if_true, Prod.mk.injEq] at h
+      · simp only [hd, ite_true, Prod.mk.injEq] at h
         exact absurd h.1.symm hne
-      simp only [hd, if_false] at h
+      simp only [hd, ite_false] at h
       rcases hq : evaluate q { s with
           clock := wordSemMustTerminateLimit width
           termdep := s.termdep - 1 } with ⟨r1, s1⟩
@@ -345,30 +345,30 @@ theorem word_remove_correct_aux (c : WordCompileFn width C) :
       have hc1 := evaluate_clock body x r1 s1 hb
       have hcomp := (evaluate_consts body x r1 s1 hb).2.2.2.2.1
       by_cases hcont : wordSemContLoop r1 = true
-      · simp only [hcont, if_true] at h
+      · simp only [hcont, ite_true] at h
         have hr1 : r1 ≠ some .error ∧ r1 ≠ some .timeOut := by
           constructor <;> rintro rfl <;> simp [wordSemContLoop] at hcont
         obtain ⟨k1, hk1⟩ := word_remove_correct_aux c body x r1 s1 hb hr1.1 hxc
         by_cases hz : s1.clock = 0
-        · simp only [hz, if_true, Prod.mk.injEq] at h
+        · simp only [hz, ite_true, Prod.mk.injEq] at h
           obtain ⟨rfl, rfl⟩ := h
           refine ⟨k1, ?_⟩
           rw [ht, cutState_compileState, hcs]
           simp only [Option.map_some]
           rw [hk1]
-          simp only [hcont, if_true]
-          rw [if_pos (by simp [compileState, hz]), flushState_compileState]
-        · simp only [hz, if_false] at h
+          simp only [hcont, ite_true]
+          rw [ite_eq_left (by simp [compileState, hz]), flushState_compileState]
+        · simp only [hz, ite_false] at h
           obtain ⟨k2, hk2⟩ := word_remove_correct_aux c (.loop names body exitNames)
             (decClock s1) r s' h hne (by show s1.compile = _; rw [← hcomp]; exact hxc)
           refine ⟨k1 + k2, ?_⟩
           rw [ht, cutState_compileState, hcs]
           simp only [Option.map_some]
           rw [evaluate_add_clock_compileState _ _ _ _ _ _ ⟨hk1, hr1.2⟩ k2]
-          simp only [hcont, if_true]
-          rw [if_neg (by simp only [compileState]; omega), ← compileState_decClock k2 c s1 hz]
+          simp only [hcont, ite_true]
+          rw [ite_eq_right (by simp only [compileState]; omega), ← compileState_decClock k2 c s1 hz]
           exact hk2
-      · simp only [hcont, Bool.false_eq_true, if_false] at h
+      · simp only [hcont, Bool.false_eq_true, ite_false] at h
         have hr1 : r1 ≠ some .error := by
           rintro rfl
           simp only [wordSemExitLoop, Prod.mk.injEq] at h
@@ -378,7 +378,7 @@ theorem word_remove_correct_aux (c : WordCompileFn width C) :
         rw [ht, cutState_compileState, hcs]
         simp only [Option.map_some]
         rw [hk1]
-        simp only [hcont, Bool.false_eq_true, if_false]
+        simp only [hcont, Bool.false_eq_true, ite_false]
         rcases r1 with _ | ⟨_, _⟩ | ⟨_, _⟩ | (_ | k) | k | _ | _ | _ | _ <;>
           simp only [Prod.mk.injEq] at h <;>
           first
@@ -397,9 +397,9 @@ theorem word_remove_correct_aux (c : WordCompileFn width C) :
         exact absurd h.1.symm hne
       simp only [hg] at h
       by_cases hbad : wordSemBadDestArgs dest args = true
-      · simp only [hbad, if_true, Prod.mk.injEq] at h
+      · simp only [hbad, ite_true, Prod.mk.injEq] at h
         exact absurd h.1.symm hne
-      simp only [hbad, Bool.false_eq_true, if_false] at h
+      simp only [hbad, Bool.false_eq_true, ite_false] at h
       rcases hf : wordSemFindCode dest (wordSemAddRetLoc (none : Option (List Nat × WordLangCutsetsHOL × WordLangProgHOL (BitVec width) × Nat × Nat)) xs) s.code s.stackSize with
         _ | ⟨args1, prog, ss⟩
       · simp only [hf, Prod.mk.injEq] at h
@@ -414,31 +414,31 @@ theorem word_remove_correct_aux (c : WordCompileFn width C) :
         rw [show removeMustTerminate (WordLangProgHOL.call none dest args none) =
           (.call none dest args none : WordLangProgHOL (BitVec width)) from rfl]
         by_cases hz : s.clock = 0
-        · simp only [hz, if_true, Prod.mk.injEq] at h
+        · simp only [hz, ite_true, Prod.mk.injEq] at h
           obtain ⟨rfl, rfl⟩ := h
           refine ⟨0, ?_⟩
           rw [ht, getVars_compileState, hg]
-          simp only [hbad, Bool.false_eq_true, if_false, cs_code, cs_stackSize, findCode_map_I, hf,
+          simp only [hbad, Bool.false_eq_true, ite_false, cs_code, cs_stackSize, findCode_map_I, hf,
             Option.map_some]
-          rw [if_pos (by simp [compileState, hz]), flushState_compileState]
-        · simp only [hz, if_false] at h
+          rw [ite_eq_left (by simp [compileState, hz]), flushState_compileState]
+        · simp only [hz, ite_false] at h
           rcases hcv : evaluate prog (WordSemStateFiniteExact.callEnv args1 ss (decClock s)) with
             ⟨rc, sc⟩
           rw [hcv] at h
           have hc1 := evaluate_clock prog _ rc sc hcv
           by_cases hb : wordSemBadFunReturn rc = true
-          · simp only [hb, if_true, Prod.mk.injEq] at h
+          · simp only [hb, ite_true, Prod.mk.injEq] at h
             exact absurd h.1.symm hne
-          simp only [hb, Bool.false_eq_true, if_false, Prod.mk.injEq] at h
+          simp only [hb, Bool.false_eq_true, ite_false, Prod.mk.injEq] at h
           obtain ⟨rfl, rfl⟩ := h
           obtain ⟨k, hk⟩ := word_remove_correct_aux c prog _ _ sc hcv hne hc
           refine ⟨k, ?_⟩
           rw [ht, getVars_compileState, hg]
-          simp only [hbad, Bool.false_eq_true, if_false, cs_code, cs_stackSize, findCode_map_I, hf,
+          simp only [hbad, Bool.false_eq_true, ite_false, cs_code, cs_stackSize, findCode_map_I, hf,
             Option.map_some]
-          rw [if_neg (by simp only [compileState]; omega), ← compileState_decClock k c s hz,
+          rw [ite_eq_right (by simp only [compileState]; omega), ← compileState_decClock k c s hz,
             callEnv_compileState, hk]
-          simp only [hb, Bool.false_eq_true, if_false]
+          simp only [hb, Bool.false_eq_true, ite_false]
   | .call (some (n, names, retHandler, l1, l2)) dest args handler, s, r, s', h, hne, hc => by
       have ht := (evaluate_def_rebound (width := width) (C := C) (F := F)).2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2
       rw [ht] at h
@@ -455,9 +455,9 @@ theorem word_remove_correct_aux (c : WordCompileFn width C) :
         exact absurd h.1.symm hne
       simp only [hg] at h
       by_cases hbad : wordSemBadDestArgs dest args = true
-      · simp only [hbad, if_true, Prod.mk.injEq] at h
+      · simp only [hbad, ite_true, Prod.mk.injEq] at h
         exact absurd h.1.symm hne
-      simp only [hbad, Bool.false_eq_true, if_false] at h
+      simp only [hbad, Bool.false_eq_true, ite_false] at h
       rcases hf : wordSemFindCode dest (wordSemAddRetLoc (some (n, names, retHandler, l1, l2)) xs)
           s.code s.stackSize with _ | ⟨args1, prog, ss⟩
       · simp only [hf, Prod.mk.injEq] at h
@@ -465,9 +465,9 @@ theorem word_remove_correct_aux (c : WordCompileFn width C) :
       simp only [hf] at h
       simp only [wordSemAddRetLoc] at hf
       by_cases hdc : sptDomainEmpty names.fst ∨ ¬ n.Nodup
-      · simp only [hdc, if_true, Prod.mk.injEq] at h
+      · simp only [hdc, ite_true, Prod.mk.injEq] at h
         exact absurd h.1.symm hne
-      simp only [hdc, if_false] at h
+      simp only [hdc, ite_false] at h
       rcases hce : wordSemCutEnvs names s.locals with _ | envs
       · simp only [hce, Prod.mk.injEq] at h
         exact absurd h.1.symm hne
@@ -480,15 +480,15 @@ theorem word_remove_correct_aux (c : WordCompileFn width C) :
         | none => rfl
         | some hv => obtain ⟨_, _, _, _⟩ := hv; rfl
       by_cases hz : s.clock = 0
-      · simp only [hz, if_true, Prod.mk.injEq] at h
+      · simp only [hz, ite_true, Prod.mk.injEq] at h
         obtain ⟨rfl, rfl⟩ := h
         refine ⟨0, ?_⟩
         rw [ht, getVars_compileState, hg]
-        simp only [hbad, Bool.false_eq_true, if_false, cs_code, cs_stackSize, findCode_map_I,
+        simp only [hbad, Bool.false_eq_true, ite_false, cs_code, cs_stackSize, findCode_map_I,
           wordSemAddRetLoc, hf, Option.map_some, hdc, cs_locals, hce]
-        rw [if_pos (by simp [compileState, hz]), hpm, pushEnv_compileState, callEnv_compileState]
+        rw [ite_eq_left (by simp [compileState, hz]), hpm, pushEnv_compileState, callEnv_compileState]
         simp only [compileState, flushState, hz]
-      simp only [hz, if_false] at h
+      simp only [hz, ite_false] at h
       rcases hcv : evaluate prog
           (WordSemStateFiniteExact.callEnv args1 ss (pushEnv envs handler (decClock s))) with
         ⟨rc, s2⟩
@@ -508,9 +508,9 @@ theorem word_remove_correct_aux (c : WordCompileFn width C) :
       rcases rc with _ | ⟨x, ys⟩ | ⟨x, y⟩ | k | k | _ | _ | _ | _
       rotate_left
       · by_cases hx : x ≠ WordLocW.loc l1 l2 ∨ ys.length ≠ n.length
-        · simp only [hx, if_true, Prod.mk.injEq] at h
+        · simp only [hx, ite_true, Prod.mk.injEq] at h
           exact absurd h.1.symm hne
-        simp only [hx, if_false] at h
+        simp only [hx, ite_false] at h
         rcases hp : popEnv s2 with _ | s1
         · simp only [hp, Prod.mk.injEq] at h
           exact absurd h.1.symm hne
@@ -521,20 +521,20 @@ theorem word_remove_correct_aux (c : WordCompileFn width C) :
           unfold popEnv at hp
           split at hp <;> cases hp <;> rfl
         by_cases hdom : sptDomainEqUnion s1.locals envs.fst envs.snd
-        · simp only [hdom, if_true] at h
+        · simp only [hdom, ite_true] at h
           obtain ⟨k1, hk1⟩ := word_remove_correct_aux c prog _ _ s2 hcv (by simp) hTc
           obtain ⟨k2, hk2⟩ := word_remove_correct_aux c retHandler (setVars n ys s1) r s' h hne
             (by show s1.compile = _; rw [hs1c, ← hcomp]; exact hTc)
           refine ⟨k1 + k2, ?_⟩
           rw [ht, getVars_compileState, hg]
-          simp only [hbad, Bool.false_eq_true, if_false, cs_code, cs_stackSize, findCode_map_I,
+          simp only [hbad, Bool.false_eq_true, ite_false, cs_code, cs_stackSize, findCode_map_I,
             wordSemAddRetLoc, hf, Option.map_some, hdc, cs_locals, hce]
-          rw [if_neg (by simp only [compileState]; omega), htgt,
+          rw [ite_eq_right (by simp only [compileState]; omega), htgt,
             evaluate_add_clock_compileState _ _ _ _ _ _ ⟨hk1, by simp⟩ k2]
-          simp only [hx, if_false, popEnv_compileState, hp, Option.map_some, cs_locals, hdom,
-            if_true, setVars_compileState]
+          simp only [hx, ite_false, popEnv_compileState, hp, Option.map_some, cs_locals, hdom,
+            ite_true, setVars_compileState]
           exact hk2
-        · simp only [hdom, if_false, Prod.mk.injEq] at h
+        · simp only [hdom, ite_false, Prod.mk.injEq] at h
           exact absurd h.1.symm hne
       · cases handler with
         | none =>
@@ -543,20 +543,20 @@ theorem word_remove_correct_aux (c : WordCompileFn width C) :
           obtain ⟨k1, hk1⟩ := word_remove_correct_aux c prog _ _ _ hcv hne hTc
           refine ⟨k1, ?_⟩
           rw [ht, getVars_compileState, hg]
-          simp only [hbad, Bool.false_eq_true, if_false, cs_code, cs_stackSize, findCode_map_I,
+          simp only [hbad, Bool.false_eq_true, ite_false, cs_code, cs_stackSize, findCode_map_I,
             wordSemAddRetLoc, hf, Option.map_some, hdc, cs_locals, hce]
-          rw [if_neg (by simp only [compileState]; omega), htgt, hk1]
+          rw [ite_eq_right (by simp only [compileState]; omega), htgt, hk1]
           rfl
         | some hv =>
           obtain ⟨n', hprog, l1', l2'⟩ := hv
           simp only at h
           by_cases hx : x ≠ WordLocW.loc l1' l2'
-          · rw [if_pos hx] at h
+          · rw [ite_eq_left hx] at h
             simp only [Prod.mk.injEq] at h
             exact absurd h.1.symm hne
-          rw [if_neg hx] at h
+          rw [ite_eq_right hx] at h
           by_cases hdom : sptDomainEqUnion s2.locals envs.fst envs.snd
-          · simp only [hdom, if_true] at h
+          · simp only [hdom, ite_true] at h
             obtain ⟨k1, hk1⟩ := word_remove_correct_aux c prog _ _ s2 hcv (by simp) hTc
             obtain ⟨k2, hk2⟩ := word_remove_correct_aux c hprog (setVar n' y s2) r s' h hne
               (by show s2.compile = _; rw [← hcomp]; exact hTc)
@@ -564,15 +564,15 @@ theorem word_remove_correct_aux (c : WordCompileFn width C) :
             have htgt' := htgt (k1 + k2)
             simp only [Option.map_some] at htgt'
             rw [ht, getVars_compileState, hg]
-            simp only [hbad, Bool.false_eq_true, if_false, cs_code, cs_stackSize, findCode_map_I,
+            simp only [hbad, Bool.false_eq_true, ite_false, cs_code, cs_stackSize, findCode_map_I,
               wordSemAddRetLoc, hf, Option.map_some, hdc, cs_locals, hce]
-            rw [if_neg (by simp only [compileState]; omega), htgt',
+            rw [ite_eq_right (by simp only [compileState]; omega), htgt',
               evaluate_add_clock_compileState _ _ _ _ _ _ ⟨hk1, by simp⟩ k2]
             simp only [Option.map_some]
-            rw [if_neg hx]
-            simp only [cs_locals, hdom, if_true, setVar_compileState]
+            rw [ite_eq_right hx]
+            simp only [cs_locals, hdom, ite_true, setVar_compileState]
             exact hk2
-          · simp only [hdom, if_false, Prod.mk.injEq] at h
+          · simp only [hdom, ite_false, Prod.mk.injEq] at h
             exact absurd h.1.symm hne
       all_goals
         simp only [Prod.mk.injEq] at h
@@ -582,9 +582,9 @@ theorem word_remove_correct_aux (c : WordCompileFn width C) :
              obtain ⟨k1, hk1⟩ := word_remove_correct_aux c prog _ _ _ hcv hne hTc
              refine ⟨k1, ?_⟩
              rw [ht, getVars_compileState, hg]
-             simp only [hbad, Bool.false_eq_true, if_false, cs_code, cs_stackSize, findCode_map_I,
+             simp only [hbad, Bool.false_eq_true, ite_false, cs_code, cs_stackSize, findCode_map_I,
                wordSemAddRetLoc, hf, Option.map_some, hdc, cs_locals, hce]
-             rw [if_neg (by simp only [compileState]; omega), htgt, hk1])
+             rw [ite_eq_right (by simp only [compileState]; omega), htgt, hk1])
   | .install ptr len dptr dlen names, s, r, s', h, _, hc =>
       ⟨0, by rw [show removeMustTerminate (WordLangProgHOL.install ptr len dptr dlen names) =
           .install ptr len dptr dlen names from rfl, evaluate_install_compileState 0 c s hc, h]⟩

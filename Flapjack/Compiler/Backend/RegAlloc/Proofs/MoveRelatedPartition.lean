@@ -43,7 +43,7 @@ theorem stExPartitionMoveRelatedSub :
       | true =>
           obtain ⟨ts, fs, heq, hts, hfs⟩ := ih (h :: lss) lss' s hrest
           refine ⟨ts, fs, ?_, ?_, ?_⟩
-          · simp only [stExPartition, Translator.Monadic.MonadBase.bind, hsub, hflag, if_true]
+          · simp only [stExPartition, Translator.Monadic.MonadBase.bind, hsub, hflag, ite_true]
             exact heq
           · intro x hx
             rcases hts x hx with hx | hx
@@ -58,7 +58,7 @@ theorem stExPartitionMoveRelatedSub :
       | false =>
           obtain ⟨ts, fs, heq, hts, hfs⟩ := ih lss (h :: lss') s hrest
           refine ⟨ts, fs, ?_, ?_, ?_⟩
-          · simp only [stExPartition, Translator.Monadic.MonadBase.bind, hsub, hflag, Bool.false_eq_true, if_false]
+          · simp only [stExPartition, Translator.Monadic.MonadBase.bind, hsub, hflag, Bool.false_eq_true, ite_false]
             exact heq
           · intro x hx
             rcases hts x hx with hx | hx

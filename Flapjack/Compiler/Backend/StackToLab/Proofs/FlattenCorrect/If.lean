@@ -37,13 +37,13 @@ theorem jumpCmpStep {t : Flapjack.Compiler.Backend.LabSem.State width C F} {cmp 
         | some p => evaluate { t with pc := p, clock := c }
       else evaluate { t with pc := t.pc + 1, clock := c } := by
   rw [evaluate]
-  simp only [Nat.add_one_ne_zero, if_false, asmFetch, fetch]
+  simp only [Nat.add_one_ne_zero, ite_false, asmFetch, fetch]
   rw [show regImm ri { t with clock := c + 1 } = regImm ri t from
     LabProps.regImmWithClock ri t (c + 1)]
   simp only [hcmp]
   cases b
   · simp [incPc, decClock]
-  · simp only [if_true, getPcValue]
+  · simp only [ite_true, getPcValue]
     cases locToPc n L t.code <;> simp [updPc, decClock]
 
 /-- A fetched unconditional jump. -/
@@ -159,7 +159,7 @@ theorem flattenCorrectIf (s1 : StackSemStateFiniteExact width C F) (cmp : HolCmp
     cases b
     · -- condition false: run the else-branch after the fall-through
       have step := fun c => (jumpCmpStep (b := false) c fetch0 hcmp)
-      simp only [Bool.false_eq_true, if_false] at step
+      simp only [Bool.false_eq_true, ite_false] at step
       refine flattenConclCompose (runToPc step) rfl rfl rfl rfl rfl (List.prefix_refl _) ?_
         (ih c2 s1 lt2 false res s2 n l1 cs bs { t1 with pc := t1.pc + 1 }
           ⟨evb, nerr, rel, ca.2, by rw [h2]; exact instYs, labs⟩)
@@ -167,12 +167,12 @@ theorem flattenCorrectIf (s1 : StackSemStateFiniteExact width C F) (cmp : HolCmp
       simp [List.filter_append, isLabelHOL]
       omega
     · -- condition true: jump over the else-branch
-      simp only [if_true] at evb
+      simp only [ite_true] at evb
       rw [isSkipEq k2, StackSemEvaluate.evaluate_skip] at evb
       simp only [Prod.mk.injEq] at evb
       obtain ⟨rfl, rfl⟩ := evb
       have step := fun c => (jumpCmpStep (b := true) c fetch0 hcmp)
-      simp only [if_true, locL] at step
+      simp only [ite_true, locL] at step
       refine ⟨1, { t1 with pc := t1.pc + 1 + ((appListAppend ys).filter
           (fun x => !isLabelHOL x)).length }, runToPc step, rfl, rfl, rfl, rfl, rfl,
         List.prefix_refl _, ?_, rel⟩
@@ -190,12 +190,12 @@ theorem flattenCorrectIf (s1 : StackSemStateFiniteExact width C F) (cmp : HolCmp
     obtain ⟨locL, -⟩ := labelAt instLab
     cases b
     · -- condition false: the negated test jumps over the then-branch
-      simp only [Bool.false_eq_true, if_false] at evb
+      simp only [Bool.false_eq_true, ite_false] at evb
       rw [isSkipEq k3, StackSemEvaluate.evaluate_skip] at evb
       simp only [Prod.mk.injEq] at evb
       obtain ⟨rfl, rfl⟩ := evb
       have step := fun c => (jumpCmpStep (b := true) c fetch0 hneg)
-      simp only [if_true, locL] at step
+      simp only [ite_true, locL] at step
       refine ⟨1, { t1 with pc := t1.pc + 1 + ((appListAppend xs).filter
           (fun x => !isLabelHOL x)).length }, runToPc step, rfl, rfl, rfl, rfl, rfl,
         List.prefix_refl _, ?_, rel⟩
@@ -204,7 +204,7 @@ theorem flattenCorrectIf (s1 : StackSemStateFiniteExact width C F) (cmp : HolCmp
       omega
     · -- condition true: fall through into the then-branch
       have step := fun c => (jumpCmpStep (b := false) c fetch0 hneg)
-      simp only [Bool.false_eq_true, if_false] at step
+      simp only [Bool.false_eq_true, ite_false] at step
       refine flattenConclCompose (runToPc step) rfl rfl rfl rfl rfl (List.prefix_refl _) ?_
         (ih c1 s1 lt1 false res s2 n l cs bs { t1 with pc := t1.pc + 1 }
           ⟨evb, nerr, rel, ca.1, by rw [h1]; exact instXs, labs⟩)
@@ -223,7 +223,7 @@ theorem flattenCorrectIf (s1 : StackSemStateFiniteExact width C F) (cmp : HolCmp
     cases b
     · -- condition false: jump to the else-branch
       have step := fun c => (jumpCmpStep (b := true) c fetch0 hneg)
-      simp only [if_true, locL] at step
+      simp only [ite_true, locL] at step
       refine flattenConclCompose (runToPc step) rfl rfl rfl rfl rfl (List.prefix_refl _) ?_
         (ih c2 s1 lt2 false res s2 n l1 cs bs _
           ⟨evb, nerr, rel, ca.2, by rw [h2]; exact instYs, labs⟩)
@@ -232,11 +232,11 @@ theorem flattenCorrectIf (s1 : StackSemStateFiniteExact width C F) (cmp : HolCmp
       omega
     · -- condition true: the then-branch produces a result
       have some_ := FlattenHelpers.noRetCorrect false c1 n l cs bs (by rw [h1]; exact k4) s1
-      simp only [if_true] at evb
+      simp only [ite_true] at evb
       rw [evb] at some_
       obtain ⟨x, rfl⟩ := Option.isSome_iff_exists.mp some_
       have step := fun c => (jumpCmpStep (b := false) c fetch0 hneg)
-      simp only [Bool.false_eq_true, if_false] at step
+      simp only [Bool.false_eq_true, ite_false] at step
       exact flattenConclComposeSome (runToPc step) rfl rfl rfl rfl rfl (List.prefix_refl _)
         (ih c1 s1 lt1 false (some x) s2 n l cs bs { t1 with pc := t1.pc + 1 }
           ⟨evb, nerr, rel, ca.1, by rw [h1]; exact instXs, labs⟩)
@@ -252,17 +252,17 @@ theorem flattenCorrectIf (s1 : StackSemStateFiniteExact width C F) (cmp : HolCmp
     cases b
     · -- condition false: the else-branch produces a result
       have some_ := FlattenHelpers.noRetCorrect false c2 n l1 cs bs (by rw [h2]; exact k5) s1
-      simp only [Bool.false_eq_true, if_false] at evb
+      simp only [Bool.false_eq_true, ite_false] at evb
       rw [evb] at some_
       obtain ⟨x, rfl⟩ := Option.isSome_iff_exists.mp some_
       have step := fun c => (jumpCmpStep (b := false) c fetch0 hcmp)
-      simp only [Bool.false_eq_true, if_false] at step
+      simp only [Bool.false_eq_true, ite_false] at step
       exact flattenConclComposeSome (runToPc step) rfl rfl rfl rfl rfl (List.prefix_refl _)
         (ih c2 s1 lt2 false (some x) s2 n l1 cs bs { t1 with pc := t1.pc + 1 }
           ⟨evb, nerr, rel, ca.2, by rw [h2]; exact instYs, labs⟩)
     · -- condition true: jump to the then-branch
       have step := fun c => (jumpCmpStep (b := true) c fetch0 hcmp)
-      simp only [if_true, locL] at step
+      simp only [ite_true, locL] at step
       refine flattenConclCompose (runToPc step) rfl rfl rfl rfl rfl (List.prefix_refl _) ?_
         (ih c1 s1 lt1 false res s2 n l cs bs _
           ⟨evb, nerr, rel, ca.1, by rw [h1]; exact instXs, labs⟩)
@@ -289,9 +289,9 @@ theorem flattenCorrectIf (s1 : StackSemStateFiniteExact width C F) (cmp : HolCmp
       rw [hflat]; simp [List.filter_append, isLabelHOL]; omega
     cases b
     · -- condition false: the else-branch, then the join jump
-      simp only [Bool.false_eq_true, if_false] at evb
+      simp only [Bool.false_eq_true, ite_false] at evb
       have step := fun c => (jumpCmpStep (b := false) c fetch0 hcmp)
-      simp only [Bool.false_eq_true, if_false] at step
+      simp only [Bool.false_eq_true, ite_false] at step
       have c2h := ih c2 s1 lt2 false res s2 n l1 cs bs { t1 with pc := t1.pc + 1 }
         ⟨evb, nerr, rel, ca.2, by rw [h2]; exact instYs, labs⟩
       cases res with
@@ -315,9 +315,9 @@ theorem flattenCorrectIf (s1 : StackSemStateFiniteExact width C F) (cmp : HolCmp
             jumpStep (t3.clock + ck1) fetchJ3 locL23]
         · simp only [total]; omega
     · -- condition true: jump to the then-branch
-      simp only [if_true] at evb
+      simp only [ite_true] at evb
       have step := fun c => (jumpCmpStep (b := true) c fetch0 hcmp)
-      simp only [if_true, locL] at step
+      simp only [ite_true, locL] at step
       refine flattenConclCompose (runToPc step) rfl rfl rfl rfl rfl (List.prefix_refl _) ?_
         (ih c1 s1 lt1 false res s2 n l cs bs _
           ⟨evb, nerr, rel, ca.1, by rw [h1]; exact instXs, labs⟩)

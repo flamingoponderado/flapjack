@@ -95,7 +95,7 @@ theorem evaluate_value_locals {C F : Type} (program : DataLang.Prog) (state next
               | some env =>
                 by_cases zero : state.clock = 0
                 · simp [evaluate, read, inspect, found, cut, zero] at run
-                · simp only [evaluate, read, inspect, found, cut, if_neg zero] at run
+                · simp only [evaluate, read, inspect, found, cut, ite_eq_right zero] at run
                   repeat' (split at run <;> try simp_all)
   | call ret dest names handler =>
     cases read : getVars names state.locals with

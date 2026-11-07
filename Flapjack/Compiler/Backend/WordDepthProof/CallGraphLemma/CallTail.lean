@@ -74,12 +74,12 @@ theorem depthPost_call_tail {width : Nat} [NeZero width] {C F : Type}
   have hbad : ¬ wordSemBadDestArgs (some d) args = true := by simp [wordSemBadDestArgs]
   rcases hf : wordSemFindCode (some d) (wordSemAddRetLoc (none : Option (List Nat × WordLangCutsetsHOL × WordLangProgHOL (BitVec width) × Nat × Nat)) xs) s.code s.stackSize with
     _ | ⟨args1, prog, ss⟩
-  · exact absurd (by rw [ht]; simp only [hg, hbad, Bool.false_eq_true, if_false, hf]) herr
+  · exact absurd (by rw [ht]; simp only [hg, hbad, Bool.false_eq_true, ite_false, hf]) herr
   obtain ⟨⟨a, hcd⟩, hss, hargs⟩ := findCode_some_dest hf
   subst hss
   rcases handler with _ | hh
   swap
-  · exact absurd (by rw [ht]; simp only [hg, hbad, Bool.false_eq_true, if_false, hf]) herr
+  · exact absurd (by rw [ht]; simp only [hg, hbad, Bool.false_eq_true, ite_false, hf]) herr
   by_cases hz : s.clock = 0
   · -- `TimeOut` after flushing: no stack change
     have hev : evaluate (.call none (some d) args none) s = (some .timeOut, flushState true s) := by
@@ -95,7 +95,7 @@ theorem depthPost_call_tail {width : Nat} [NeZero width] {C F : Type}
     by_contra hb
     simp only [Bool.not_eq_false] at hb
     simp [hb] at herr
-  simp only [hgood, Bool.false_eq_true, if_false] at herr ⊢
+  simp only [hgood, Bool.false_eq_true, ite_false] at herr ⊢
   have hloc_vac : ¬ (r = none ∨ (∃ k, r = some (.break k)) ∨ ∃ k, r = some (.continue k)) := by
     rintro (rfl | ⟨k, rfl⟩ | ⟨k, rfl⟩) <;> simp [wordSemBadFunReturn] at hgood
   have hIH := htail xs (args1, prog, sptLookup d s.stackSize) args1
@@ -113,7 +113,7 @@ theorem depthPost_call_tail {width : Nat} [NeZero width] {C F : Type}
   by_cases hdn : d ∈ ns
   · -- `Leaf` graph; the callee is one of the graphs in `max_depth_graphs`
     have hleaf : callGraph funs n ns (sptSize funs2) (.call none (some d) args none) = .leaf := by
-      rw [callGraph, if_pos ⟨hdn, rfl⟩]
+      rw [callGraph, ite_eq_left ⟨hdn, rfl⟩]
     rw [hleaf]
     obtain ⟨y, hy⟩ := Option.isSome_iff_exists.mp (hdom d hdn)
     have hyc := subspt_lookup_some hcode hy
@@ -141,7 +141,7 @@ theorem depthPost_call_tail {width : Nat} [NeZero width] {C F : Type}
     cases hyc
     have hlen : ns.length < sptSize funs2 :=
       length_less_size d ns funs2 (a, prog) ⟨hdn, hdom, hnd, hy⟩
-    rw [callGraph_call_tail hdn hfl, if_pos hlen, maxDepth_mkBranch]
+    rw [callGraph_call_tail hdn hfl, ite_eq_left hlen, maxDepth_mkBranch]
     simp only [maxDepth]
     have hdom' : ∀ x, x ∈ d :: ns → (sptLookup x funs2).isSome = true := by
       intro x hx

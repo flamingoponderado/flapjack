@@ -33,7 +33,7 @@ private theorem fupdateList_eq_lookupCodeFold {width : Nat} [NeZero width]
         by_cases h : current = entry.1
         · subst current
           have heq : (entry.1 == entry.1) = true := beq_iff_eq.mpr rfl
-          rw [if_pos rfl, if_pos heq]
+          rw [ite_eq_left rfl, ite_eq_left heq]
         · have h' : entry.1 ≠ current := fun heq => h heq.symm
           have hbeq : (entry.1 == current) = false := by
             cases heq : (entry.1 == current) with
@@ -42,7 +42,7 @@ private theorem fupdateList_eq_lookupCodeFold {width : Nat} [NeZero width]
           have hnot : ¬ ((entry.1 == current) = true) := by
             rw [hbeq]
             decide
-          simp only [if_neg h, if_neg hnot]
+          simp only [ite_eq_right h, ite_eq_right hnot]
       rw [hUpdate]
       exact ih _
 
@@ -69,7 +69,7 @@ private theorem lookupCodeHOLFinite_projection_eq {width : Nat} {σ : Type}
             (fun pair => shapeEqHOL pair.1.2 (shapeOfHOLExact pair.2))) = true
       · simp [hvalid, HolFiniteMapExact.updateList,
           HolFiniteMapExact.empty, fupdateList_eq_lookupCodeFold]
-      · simp only [if_neg hvalid, Option.map_none]
+      · simp only [ite_eq_right hvalid, Option.map_none]
 
 /-- Successful recursive `lookup_code` installs only values whose shapes were
     checked against the current well-formed locals/globals. This is the

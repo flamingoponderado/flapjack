@@ -27,7 +27,7 @@ private theorem wordGenList_step {width : Nat} [NeZero width] (conf : Config)
        let (a2, i2, pa2, ib2, pb2, m2, c2) :=
          wordGenGcMoveList conf (a + wordSemBytesInWord, l - 1, i1, pa1, ib1, pb1, old, gcUpdate a w1 m1, dm)
        (a2, i2, pa2, ib2, pb2, m2, dm a && (c1 && c2))) := by
-  rw [wordGenGcMoveList, if_neg hne]
+  rw [wordGenGcMoveList, ite_eq_right hne]
 
 /-- The copied data, free words and reference objects occupy consecutive
 heap regions. Address and stored-word widths are independent, as in HOL. -/

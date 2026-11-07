@@ -1,6 +1,10 @@
 import Flapjack.Compiler.Backend.WordToStack.NativePrograms
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCodeLabels
-import Mathlib.Data.Set.Lattice
+import Mathlib.Data.Set.Lattice.Bounded
+import Mathlib.Data.Set.Lattice.Disjoint
+import Mathlib.Data.Set.Lattice.Image
+import Mathlib.Data.Set.Lattice.Indexed
+import Mathlib.Data.Set.Lattice.Order
 
 namespace Flapjack.Compiler.Backend.WordToStack.Native
 open Flapjack Flapjack.Compiler.Backend.StackLang
@@ -17,11 +21,11 @@ private theorem compileProgLabelBound {width : Nat} [NeZero width]
       insert (raiseStubLocation,0) (insert (storeConstsStubLocation,0)
         ((fun label => (label,0)) '' getCodeLabelsHOL program ∪
           stackGetHandlerLabels owner (compileProgNative conf perf program arguments registers bs).1)) := by
-  let variables := max ((maxVarHOL program / 2 + 1) - registers) (arguments - registers)
-  let frame := if variables = 0 then 0 else variables + 1
-  have bound := wordToStackCompCodeLabels conf perf program bs (registers,frame,variables)
+  let variableCount := max ((maxVarHOL program / 2 + 1) - registers) (arguments - registers)
+  let frame := if variableCount = 0 then 0 else variableCount + 1
+  have bound := wordToStackCompCodeLabels conf perf program bs (registers,frame,variableCount)
     owner good noPerf
-  simpa only [compileProgNative, variables, frame, getCodeLabels,
+  simpa only [compileProgNative, variableCount, frame, getCodeLabels,
     stackGetHandlerLabels, Set.empty_union] using bound
 
 /-- Flapjack-specific list-to-set notation for the row induction; no named

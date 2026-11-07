@@ -48,7 +48,7 @@ theorem wRegWrite1Thm1 {width : Nat} [NeZero width] {C F : Type}
       post.stackSpace = target.stackSpace := by
   have half : 2*m/2 = m := by omega
   by_cases physical : m < k
-  · simp only [wRegWrite1Native,half,if_pos physical]
+  · simp only [wRegWrite1Native,half,ite_eq_left physical]
     exact ⟨StackSemStateOps.setVar m value target,run m (by omega),
       StateRelRegisterUpdate.stateRelSetVar m value related physical,rfl,rfl⟩
   · have shape : if frame=0 then f=0 else f=frame+1 :=
@@ -62,7 +62,7 @@ theorem wRegWrite1Thm1 {width : Nat} [NeZero width] {C F : Type}
     let post := {StackSemStateOps.setVar k value target with
       stack := target.stack.set (target.stackSpace+(f-1-(m-k))) value}
     refine ⟨post,?_,?_,by simp [post],rfl⟩
-    · simp only [wRegWrite1Native,half,if_neg physical,StackSemEvaluate.evaluate_seq,
+    · simp only [wRegWrite1Native,half,ite_eq_right physical,StackSemEvaluate.evaluate_seq,
         run k (Nat.le_refl k)]
       simp [StackSemControl.fixClock,StackSemStateOps.setVar,
         StackSemEvaluate.evaluate_stackStore,useStack,slotBound,

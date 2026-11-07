@@ -401,8 +401,8 @@ theorem getIntervalsCtEq :
       rw [memEq, hln] at hr
       simp at hr
     constructor
-    · intro r; rw [lookupNumsetListAddIfLt, if_neg (hno r)]
-    · intro r; rw [lookupNumsetListAddIfGt, if_neg (hno r)]
+    · intro r; rw [lookupNumsetListAddIfLt, ite_eq_right (hno r)]
+    · intro r; rw [lookupNumsetListAddIfGt, ite_eq_right (hno r)]
   · rw [show getIntervals (.seq (.writes ((sptToAList (getLiveBackward (getLiveTree ct) .ln)).map
           Prod.fst)) (getLiveTree ct)) 0 .ln .ln =
         (match getIntervals (getLiveTree ct) 0 .ln .ln with
@@ -414,12 +414,12 @@ theorem getIntervalsCtEq :
     · intro r
       rw [lookupNumsetListAddIfLt, lookupNumsetListAddIfLt]
       by_cases hm : r ∈ (sptToAList live).map Prod.fst
-      · rw [if_pos hm, if_pos ((memEq r).mp hm)]
-      · rw [if_neg hm, if_neg (fun h => hm ((memEq r).mpr h))]
+      · rw [ite_eq_left hm, ite_eq_left ((memEq r).mp hm)]
+      · rw [ite_eq_right hm, ite_eq_right (fun h => hm ((memEq r).mpr h))]
     · intro r
       rw [lookupNumsetListAddIfGt, lookupNumsetListAddIfGt]
       by_cases hm : r ∈ (sptToAList live).map Prod.fst
-      · rw [if_pos hm, if_pos ((memEq r).mp hm)]
-      · rw [if_neg hm, if_neg (fun h => hm ((memEq r).mpr h))]
+      · rw [ite_eq_left hm, ite_eq_left ((memEq r).mp hm)]
+      · rw [ite_eq_right hm, ite_eq_right (fun h => hm ((memEq r).mpr h))]
 
 end Flapjack.LinearScan

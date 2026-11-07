@@ -101,8 +101,8 @@ private theorem wordSemIsWrapper_aux {width : Nat} [NeZero width] {C F : Type}
       | some .error => True
       | none => True
       | _ => False)
-  · rw [if_pos hf, if_pos ((exists_congr hk).1 hf)]
-  · rw [if_neg hf, if_neg (fun h => hf ((exists_congr hk).2 h))]
+  · rw [ite_eq_left hf, ite_eq_left ((exists_congr hk).1 hf)]
+  · rw [ite_eq_right hf, ite_eq_right (fun h => hf ((exists_congr hk).2 h))]
     have hP : (fun res => ∃ k t r outcome,
         E k = (r, t) ∧
         (match r with

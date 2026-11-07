@@ -186,20 +186,20 @@ theorem arm8_encoder_correct_longMul (destinationLeft destinationRight sourceLef
       unfold T2 T1
       simp only [Flapjack.RiscV.L3.holUpdate]
       by_cases h1 : k = destinationRight
-      · rw [if_pos (by rw [h1]), if_pos h1]
-      · rw [if_neg h1]
+      · rw [ite_eq_left (by rw [h1]), ite_eq_left h1]
+      · rw [ite_eq_right h1]
         by_cases h2 : k = destinationLeft
         · have hne : (BitVec.ofNat 5 destinationRight) ≠ (BitVec.ofNat 5 k) := by
             intro hh
             exact h1 ((arm8Reg_eq hk32 hdr_lt).1 hh.symm)
-          rw [if_neg hne, if_pos (by rw [h2]), if_pos h2]
+          rw [ite_eq_right hne, ite_eq_left (by rw [h2]), ite_eq_left h2]
         · have hne1 : (BitVec.ofNat 5 destinationRight) ≠ (BitVec.ofNat 5 k) := by
             intro hh
             exact h1 ((arm8Reg_eq hk32 hdr_lt).1 hh.symm)
           have hne2 : (BitVec.ofNat 5 destinationLeft) ≠ (BitVec.ofNat 5 k) := by
             intro hh
             exact h2 ((arm8Reg_eq hk32 hdl_lt).1 hh.symm)
-          rw [if_neg hne1, if_neg hne2, if_neg h2]
+          rw [ite_eq_right hne1, ite_eq_right hne2, ite_eq_right h2]
           exact hreg k hk
     · intro k hk
       simp [arm8ConfigL3] at hk

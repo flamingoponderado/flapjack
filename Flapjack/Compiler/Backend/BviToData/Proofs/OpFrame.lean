@@ -71,7 +71,7 @@ theorem evaluate_iAssign_lookup_of_shape {C F : Type} (op : ClosLang.Op) (dest :
         else sptLookup key state.locals) ∧ DataSem.SameControl state next := by
   classical
   by_cases names : DataLang.opRequiresNames op
-  · simp only [shape, names, if_true] at run
+  · simp only [shape, names, ite_true] at run
     obtain ⟨prepared, value, cut, locals, control⟩ :=
       DataSem.evaluate_assign_locals op dest operands
         (some (namesOfList (operands ++ live ++ corr))) state next primitiveFrame run
@@ -81,7 +81,7 @@ theorem evaluate_iAssign_lookup_of_shape {C F : Type} (op : ClosLang.Op) (dest :
       rw [locals, sptLookup_sptInsert_ne dest key value prepared.locals different]
       simpa using cutStateOpt_names_lookup true (operands ++ live ++ corr) state prepared key cut
   · by_cases space : DataSpace.opSpaceReq op operands.length = 0
-    · simp only [shape, names, space, if_true] at run
+    · simp only [shape, names, space, ite_true] at run
       obtain ⟨prepared, value, cut, locals, control⟩ :=
         DataSem.evaluate_assign_locals op dest operands none state next primitiveFrame run
       simp [DataSem.cutStateOpt] at cut
@@ -90,7 +90,7 @@ theorem evaluate_iAssign_lookup_of_shape {C F : Type} (op : ClosLang.Op) (dest :
       · simp [locals, sptLookup_sptInsert_same]
       · intro key different
         simpa [locals] using sptLookup_sptInsert_ne dest key value state.locals different
-    · simp only [shape, names, if_false, space] at run
+    · simp only [shape, names, ite_false, space] at run
       obtain ⟨mid, firstRun, secondRun⟩ :=
         DataSem.evaluate_seq_inv_control
           (.makeSpace (DataSpace.opSpaceReq op operands.length) (namesOfList (operands ++ live ++ corr)))
@@ -493,7 +493,7 @@ theorem evaluate_iAssign_word_outcome {C F : Type} (op : ClosLang.WordOp)
     rw [lookupOther key different]
     cases cutEnabled with
     | false => rfl
-    | true => simp only [if_true, if_pos member]
+    | true => simp only [ite_true, ite_eq_left member]
   have rootsPresent := roots_present target operands live corr env args vars livePresent read
   have varsNew : DataProps.varCorr env corr (sptMap dataToBviValue targetNext.locals) := by
     apply varCorr_of_lookup_eq dataToBviValue target.locals targetNext.locals corr env vars
@@ -569,7 +569,7 @@ theorem evaluate_iAssign_block_outcome {C F : Type} (op : ClosLang.BlockOp)
     rw [lookupOther key different]
     cases cutEnabled with
     | false => rfl
-    | true => simp only [if_true, if_pos member]
+    | true => simp only [ite_true, ite_eq_left member]
   have rootsPresent := roots_present target operands live corr env args vars livePresent read
   have varsNew : DataProps.varCorr env corr (sptMap dataToBviValue targetNext.locals) := by
     apply varCorr_of_lookup_eq dataToBviValue target.locals targetNext.locals corr env vars
@@ -646,7 +646,7 @@ theorem evaluate_iAssign_thunk_outcome {C F : Type} (op : AstHOL.ThunkOp)
     rw [lookupOther key different]
     cases cutEnabled with
     | false => rfl
-    | true => simp only [if_true, if_pos member]
+    | true => simp only [ite_true, ite_eq_left member]
   have rootsPresent := roots_present target operands live corr env args vars livePresent read
   have varsNew : DataProps.varCorr env corr (sptMap dataToBviValue targetNext.locals) := by
     apply varCorr_of_lookup_eq dataToBviValue target.locals targetNext.locals corr env vars
@@ -724,7 +724,7 @@ theorem evaluate_iAssign_mem_outcome_of_frame {C F : Type} (op : ClosLang.MemOp)
     rw [lookupOther key different]
     cases cutEnabled with
     | false => rfl
-    | true => simp only [if_true, if_pos member]
+    | true => simp only [ite_true, ite_eq_left member]
   have rootsPresent := roots_present target operands live corr env args vars livePresent read
   have varsNew : DataProps.varCorr env corr (sptMap dataToBviValue targetNext.locals) := by
     apply varCorr_of_lookup_eq dataToBviValue target.locals targetNext.locals corr env vars
@@ -797,7 +797,7 @@ theorem evaluate_iAssign_ffi_outcome {C F : Type} (name : Basis.Pure.MlString.Ml
   have keeps : ∀ key ∈ operands ++ live ++ corr, key ≠ dest →
       sptLookup key targetNext.locals = sptLookup key target.locals := by
     intro key member different
-    rw [lookupOther key different, if_pos member]
+    rw [lookupOther key different, ite_eq_left member]
   have rootsPresent := roots_present target operands live corr env args vars livePresent read
   have varsNew : DataProps.varCorr env corr (sptMap dataToBviValue targetNext.locals) := by
     apply varCorr_of_lookup_eq dataToBviValue target.locals targetNext.locals corr env vars

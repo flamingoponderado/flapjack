@@ -197,7 +197,7 @@ theorem heapLookup_toGenHeap {α β γ : Type} (conf : Config γ)
     omega
   have lookup : heapLookup ptr heap = heapLookup (ptr - conf.genStart) current := by
     rw [← whole, List.append_assoc, GenGc.heapLookup_append, oldLen,
-      if_neg (Nat.not_lt.mpr lower), GenGc.heapLookup_append, if_pos inside]
+      ite_eq_right (Nat.not_lt.mpr lower), GenGc.heapLookup_append, ite_eq_left inside]
   simp [toGenHeap, heapRestrict, segment, heapLookup_toGenHeapList, lookup]
 
 /-- Replacing a current-generation data object by a forwarding pointer
@@ -220,7 +220,7 @@ theorem toGenHeap_forward {α β γ : Type} (conf : Config γ)
     omega
   have currentFound : heapLookup (ptr - conf.genStart) current = some (.dataElement roots len payload) := by
     rw [← whole, List.append_assoc, GenGc.heapLookup_append, oldLen,
-      if_neg (Nat.not_lt.mpr lower), GenGc.heapLookup_append, if_pos inside] at found
+      ite_eq_right (Nat.not_lt.mpr lower), GenGc.heapLookup_append, ite_eq_left inside] at found
     exact found
   obtain ⟨before, after, currentEq, indexEq⟩ := heapLookup_split current (ptr - conf.genStart) _ currentFound
   have ptrEq : ptr = heapLength (old ++ before) := by
@@ -270,7 +270,7 @@ theorem genInv_forward {α β : Type} (conf : Config β)
     omega
   have currentFound : heapLookup (ptr - conf.genStart) current = some (.dataElement roots len payload) := by
     rw [← whole, List.append_assoc, GenGc.heapLookup_append, oldLen,
-      if_neg (Nat.not_lt.mpr lower), GenGc.heapLookup_append, if_pos inside] at found
+      ite_eq_right (Nat.not_lt.mpr lower), GenGc.heapLookup_append, ite_eq_left inside] at found
     exact found
   obtain ⟨before, after, currentEq, indexEq⟩ := heapLookup_split current (ptr - conf.genStart) _ currentFound
   let current1 := before ++ .forwardPointer target value len :: after
@@ -283,7 +283,7 @@ theorem genInv_forward {α β : Type} (conf : Config β)
   obtain ⟨other, sourceForward, _, finalSegment⟩ :=
     toGenHeap_forward conf heap old current refs ptr target value roots len payload true segment lower upper (by
       rw [← whole, List.append_assoc, GenGc.heapLookup_append, oldLen,
-        if_neg (Nat.not_lt.mpr lower), GenGc.heapLookup_append, if_pos inside]
+        ite_eq_right (Nat.not_lt.mpr lower), GenGc.heapLookup_append, ite_eq_left inside]
       exact currentFound)
   have sameHeap : old ++ current1 ++ refs = old ++ other ++ refs := by
     exact Prod.mk.inj (forwardEq.symm.trans sourceForward) |>.1
@@ -438,7 +438,7 @@ theorem gcMove_fresh_translation {α β : Type} (conf : Config β)
       rw [heapLength_append, oldLen] at endLen
       omega
     rw [← whole, List.append_assoc, GenGc.heapLookup_append, oldLen,
-      if_neg (Nat.not_lt.mpr lower), GenGc.heapLookup_append, if_pos bound] at found
+      ite_eq_right (Nat.not_lt.mpr lower), GenGc.heapLookup_append, ite_eq_left bound] at found
     exact found
   have nonref : conf.isRef payload = false := by
     have member := heapLookup_mem current (ptr - conf.genStart) _ currentFound
@@ -1575,7 +1575,7 @@ theorem rootsOk_simulation {α β : Type} (conf : Config β) (roots : List (Heap
       omega
     have lookup : heapLookup ptr heap = heapLookup (ptr - conf.genStart) current := by
       rw [← whole, List.append_assoc, GenGc.heapLookup_append, oldLen,
-        if_neg (Nat.not_lt.mpr lower), GenGc.heapLookup_append, if_pos inside]
+        ite_eq_right (Nat.not_lt.mpr lower), GenGc.heapLookup_append, ite_eq_left inside]
     apply (isSomeDataElement_toGenHeapList conf current (ptr - conf.genStart)).mpr
     simpa [lookup] using found
   intro ptr value member
@@ -1973,8 +1973,8 @@ theorem heapLookup_old {α β : Type} (conf : Config β)
   obtain ⟨_, _, old, current, refs, segment, _⟩ := invariant
   have oldEq := (partialGc_regions conf roots roots1 heap old current refs state segment run).1
   obtain ⟨whole, oldLen, _, _⟩ := heapSegment_imp heap conf.genStart conf.refsStart old current refs segment
-  rw [← whole, List.append_assoc, GenGc.heapLookup_append, oldLen, if_pos before] at found
-  rw [oldEq, GenGc.heapLookup_append, oldLen, if_pos before]
+  rw [← whole, List.append_assoc, GenGc.heapLookup_append, oldLen, ite_eq_left before] at found
+  rw [oldEq, GenGc.heapLookup_append, oldLen, ite_eq_left before]
   exact found
 
 /-- Lookup of a reference-region object after partial collection preserves its
@@ -1992,11 +1992,11 @@ theorem heapLookup_refs {α β : Type} (conf : Config β)
   obtain ⟨_, _, old, current, refs, segment, _⟩ := invariant
   have refsSimilar := (partialGc_regions conf roots roots1 heap old current refs state segment run).2
   obtain ⟨whole, _, endLen, _⟩ := heapSegment_imp heap conf.genStart conf.refsStart old current refs segment
-  rw [← whole, GenGc.heapLookup_append, endLen, if_neg (Nat.not_lt.mpr after)] at found
+  rw [← whole, GenGc.heapLookup_append, endLen, ite_eq_right (Nat.not_lt.mpr after)] at found
   obtain ⟨children1, refFound⟩ :=
     heapLookup_similarShape conf refs state.r1 (ptr - conf.refsStart) children len data refsSimilar found
   refine ⟨children1, ?_⟩
-  rw [GenGc.heapLookup_append, prefixSize, if_neg (Nat.not_lt.mpr after)]
+  rw [GenGc.heapLookup_append, prefixSize, ite_eq_right (Nat.not_lt.mpr after)]
   exact refFound
 
 /-- Flapjack proof infrastructure: after a successful partial scan, the
@@ -2336,7 +2336,7 @@ theorem heapLookup_forwardedData {α β γ : Type} (conf : Config γ)
   obtain ⟨mapped, _⟩ := translatedRoots_forwarding conf sourceHeap f children original
     originalValid originalDomain rootsEq sameLength
   have inBounds := heapLookup_less (copied ++ heapExpand free) ptr _ sourceFound
-  rw [GenGc.heapLookup_append, if_pos inBounds]
+  rw [GenGc.heapLookup_append, ite_eq_left inBounds]
   simpa [mapped] using sourceFound
 
 /-- Flapjack proof infrastructure: the reconstructed partial-collector heap
@@ -2446,9 +2446,9 @@ theorem translatedCopiedData_inOutput {α β γ : Type} (conf : Config γ)
   have bound := heapLookup_less (copied ++ heapExpand free) ptr _ sourceFound
   refine ⟨children, len, payload, ?_⟩
   rw [List.append_assoc, List.append_assoc, GenGc.heapLookup_append, oldLength]
-  simp only [Nat.not_lt.mpr (by omega : conf.genStart ≤ conf.genStart + ptr), if_false, Nat.add_sub_cancel_left]
+  simp only [Nat.not_lt.mpr (by omega : conf.genStart ≤ conf.genStart + ptr), ite_false, Nat.add_sub_cancel_left]
   rw [← List.append_assoc copied (heapExpand free) refs]
-  rw [GenGc.heapLookup_append, if_pos bound]
+  rw [GenGc.heapLookup_append, ite_eq_left bound]
   exact sourceFound
 
 /-- Flapjack proof infrastructure: copied objects have valid child pointers
@@ -2615,9 +2615,9 @@ theorem majorMap_sourceData {α β γ : Type} (conf : Config γ)
   have bound := heapLookup_less current i _ found
   refine ⟨children, len, payload, ?_⟩
   rw [← whole, List.append_assoc, GenGc.heapLookup_append, oldLen]
-  simp only [Nat.not_lt.mpr (by omega : conf.genStart ≤ i + conf.genStart), if_false,
+  simp only [Nat.not_lt.mpr (by omega : conf.genStart ≤ i + conf.genStart), ite_false,
     Nat.add_sub_cancel_right]
-  rw [GenGc.heapLookup_append, if_pos bound]
+  rw [GenGc.heapLookup_append, ite_eq_left bound]
   exact found
 
 /-- Flapjack proof infrastructure: every defined combined-map source is a
@@ -2837,7 +2837,7 @@ theorem partialGc_currentObjectRelated {α β : Type} (conf : Config β)
   refine ⟨?_, newForwardMap_childrenDefined conf heap children f childrenValid childrenDomain⟩
   rw [mapping, List.append_assoc, List.append_assoc, GenGc.heapLookup_append, oldEq, oldLen]
   simp only [Nat.not_lt.mpr (by omega : conf.genStart ≤ conf.genStart + holFapply f (ptr - conf.genStart)),
-    if_false, Nat.add_sub_cancel_left]
+    ite_false, Nat.add_sub_cancel_left]
   simpa [List.append_assoc] using target
 
 /-- Flapjack proof infrastructure: an address map that fixes every pointer
@@ -2873,7 +2873,7 @@ theorem partialGc_oldObjectRelated {α β : Type} (conf : Config β)
   obtain ⟨_, _, old, current, refs, segment, _, _, _, _, _, oldPointers⟩ := originalCopy
   obtain ⟨whole, oldLen, _, _⟩ := heapSegment_imp heap conf.genStart conf.refsStart old current refs segment
   have foundOld : heapLookup ptr old = some (.dataElement children len data) := by
-    rw [← whole, List.append_assoc, GenGc.heapLookup_append, oldLen, if_pos before] at found
+    rw [← whole, List.append_assoc, GenGc.heapLookup_append, oldLen, ite_eq_left before] at found
     exact found
   have object := heapLookup_mem old ptr _ foundOld
   have each : ∀ p value, .pointer p value ∈ children →
@@ -2915,7 +2915,7 @@ theorem partialGc_refObjectRelated {α β : Type} (conf : Config β)
     ∀ p value, .pointer p value ∈ children → (newForwardMap f conf heap).lookup p ≠ none := by
   obtain ⟨whole, _, endLen, _⟩ := heapSegment_imp heap conf.genStart conf.refsStart old current refs segment
   have refFound : heapLookup (ptr - conf.refsStart) refs = some (.dataElement children len data) := by
-    rw [← whole, GenGc.heapLookup_append, endLen, if_neg (Nat.not_lt.mpr after)] at found
+    rw [← whole, GenGc.heapLookup_append, endLen, ite_eq_right (Nat.not_lt.mpr after)] at found
     exact found
   have refsSimilar := (partialGc_regions conf roots roots1 heap old current refs state segment run).2
   obtain ⟨children1, targetFound, mappedChildren⟩ :=
@@ -2942,7 +2942,7 @@ theorem partialGc_refObjectRelated {α β : Type} (conf : Config β)
   have rootMap := newForwardMap_old f conf heap ptr ⟨⟨children, len, data, found⟩, Or.inr after⟩
   have boundary := partialGc_outputPrefixLength conf roots roots1 heap state run original invariant empty
   refine ⟨?_, childrenDefined⟩
-  rw [holFapply_of_lookup rootMap, GenGc.heapLookup_append, boundary, if_neg (Nat.not_lt.mpr after), ← childrenEq]
+  rw [holFapply_of_lookup rootMap, GenGc.heapLookup_append, boundary, ite_eq_right (Nat.not_lt.mpr after), ← childrenEq]
   exact targetFound
 
 /-- Flapjack proof infrastructure: the major collector's heap relation and

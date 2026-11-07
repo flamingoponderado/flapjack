@@ -98,20 +98,20 @@ private theorem sptSize_sptDelete_lt {α : Type} (t : Spt α) (k : Nat) (v : α)
   | bn l r ihl ihr =>
       by_cases hk : k = 0
       · simp [sptLookup, hk] at h
-      · simp only [sptLookup, hk, if_false] at h
+      · simp only [sptLookup, hk, ite_false] at h
         by_cases he : k % 2 = 0
-        · simp only [he, if_true] at h
+        · simp only [he, ite_true] at h
           rw [sptDelete]
-          simp only [hk, if_false, he, if_true]
+          simp only [hk, ite_false, he, ite_true]
           calc
             sptSize (sptMkBN (sptDelete ((k - 1) / 2) l) r)
                 ≤ sptSize (sptDelete ((k - 1) / 2) l) + sptSize r :=
                   sptSize_sptMkBN_le _ _
             _ < sptSize l + sptSize r := by
                   have := ihl ((k - 1) / 2) v h; omega
-        · simp only [he, if_false] at h
+        · simp only [he, ite_false] at h
           rw [sptDelete]
-          simp only [hk, if_false, he, if_false]
+          simp only [hk, ite_false, he, ite_false]
           calc
             sptSize (sptMkBN l (sptDelete ((k - 1) / 2) r))
                 ≤ sptSize l + sptSize (sptDelete ((k - 1) / 2) r) :=
@@ -121,24 +121,24 @@ private theorem sptSize_sptDelete_lt {α : Type} (t : Spt α) (k : Nat) (v : α)
   | bs l x r ihl ihr =>
       by_cases hk : k = 0
       · subst hk
-        simp only [sptLookup, if_true] at h
+        simp only [sptLookup, ite_true] at h
         rw [sptDelete]
-        simp only [if_true]
+        simp only [ite_true]
         simp [sptSize]
-      · simp only [sptLookup, hk, if_false] at h
+      · simp only [sptLookup, hk, ite_false] at h
         by_cases he : k % 2 = 0
-        · simp only [he, if_true] at h
+        · simp only [he, ite_true] at h
           rw [sptDelete]
-          simp only [hk, if_false, he, if_true]
+          simp only [hk, ite_false, he, ite_true]
           calc
             sptSize (sptMkBS (sptDelete ((k - 1) / 2) l) x r)
                 ≤ sptSize (sptDelete ((k - 1) / 2) l) + sptSize r + 1 :=
                   sptSize_sptMkBS_le _ _ _
             _ < sptSize l + sptSize r + 1 := by
                   have := ihl ((k - 1) / 2) v h; omega
-        · simp only [he, if_false] at h
+        · simp only [he, ite_false] at h
           rw [sptDelete]
-          simp only [hk, if_false, he, if_false]
+          simp only [hk, ite_false, he, ite_false]
           calc
             sptSize (sptMkBS l x (sptDelete ((k - 1) / 2) r))
                 ≤ sptSize l + sptSize (sptDelete ((k - 1) / 2) r) + 1 :=

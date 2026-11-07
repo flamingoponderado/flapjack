@@ -26,7 +26,7 @@ theorem compileCorrect_timeOut {width : Nat} [NeZero width] {S Q F : Type}
     (s1 : LabSem.State width Config F) (hc : s1.clock = 0) :
     CompileCorrectFor S Q s1 := by
   rintro res mc s2 code2 labs t1 ms1 p ⟨-, hev, -, -, -⟩
-  rw [evaluate, if_pos hc] at hev
+  rw [evaluate, ite_eq_left hc] at hev
   obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
   exact ⟨0, ms1, by rw [hc]; rfl⟩
 

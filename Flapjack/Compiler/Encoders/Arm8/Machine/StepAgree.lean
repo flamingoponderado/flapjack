@@ -116,7 +116,7 @@ theorem byteChain_of_ne {x : BitVec 8} {l : List (BitVec 64 × BitVec 8)} {a : B
       obtain ⟨e, b⟩ := p
       have hne : a ≠ e := h e b (by simp)
       have ht : ∀ e' b', (e', b') ∈ t → a ≠ e' := fun e' b' hm => h e' b' (by simp [hm])
-      simp only [byteChain, if_neg hne]
+      simp only [byteChain, ite_eq_right hne]
       exact ih ht
 
 /-- Number of bytes `writeMemN size` stores: `size` bytes below 5 and eight bytes
@@ -134,7 +134,7 @@ theorem writtenBytes_two_pow_le (size : Nat) : writtenBytes (2 ^ size) ≤ 2 ^ s
       simpa using hp
     have h0 : (2 : Nat) ^ size ≠ 0 := by omega
     have h4' : ¬ (2 : Nat) ^ size ≤ 4 := by omega
-    simp only [writtenBytes, if_neg h0, if_neg h4']
+    simp only [writtenBytes, ite_eq_right h0, ite_eq_right h4']
     omega
 
 /-- The `(address, byte)` pairs `writeMemN` stores, in write order.  The `i = 0`
@@ -167,8 +167,8 @@ theorem ne_chainAddr {address a : BitVec 64} {i : Nat} (h0 : a ≠ address)
     (hi : a ≠ address + BitVec.ofNat 64 i) :
     a ≠ (if i = 0 then address else address + BitVec.ofNat 64 i) := by
   by_cases hz : i = 0
-  · simpa only [hz, if_true] using h0
-  · simpa only [hz, if_false] using hi
+  · simpa only [hz, ite_true] using h0
+  · simpa only [hz, ite_false] using hi
 
 /-- The memory after `writeMemN` is the byte chain of the stored pairs. -/
 theorem writeMemN_mem (s : Arm8State) (size : Nat) (address v : BitVec 64) (a : BitVec 64) :
@@ -189,7 +189,7 @@ theorem writeMemN_mem (s : Arm8State) (size : Nat) (address v : BitVec 64) (a : 
           · subst h4
             rfl
           · rw [writeMemN.eq_6 s size address v h0 h1 h2 h3 h4]
-            simp only [writeChain, writtenBytes, if_neg h0, if_neg (by omega : ¬ size ≤ 4)]
+            simp only [writeChain, writtenBytes, ite_eq_right h0, ite_eq_right (by omega : ¬ size ≤ 4)]
             rfl
 
 /-! ## Congruence for the byte-wise memory accessors -/
@@ -227,7 +227,7 @@ theorem readMemN_congr {s t : Arm8State} {d : BitVec 64 → Prop}
             have e3 : s.mem (address + 3) = t.mem (address + 3) := hb 3 (by decide)
             simp only [readMemN, e0, e1, e2, e3]
           · have hw : writtenBytes size = 8 := by
-              simp only [writtenBytes, if_neg h0, if_neg (by omega : ¬ size ≤ 4)]
+              simp only [writtenBytes, ite_eq_right h0, ite_eq_right (by omega : ¬ size ≤ 4)]
             have e0 : s.mem address = t.mem address := by
               simpa using hb 0 (by omega)
             have e1 : s.mem (address + 1) = t.mem (address + 1) := hb 1 (by omega)

@@ -179,7 +179,7 @@ theorem simulationFor_force_evaluated {C F : Type} (label index : Nat)
             exact lookup_cut_namesOfList roots target.locals key
           have keeps : ∀ key ∈ roots, key ≠ n → sptLookup key targetNext.locals = sptLookup key target.locals := by
             intro key member different
-            rw [lookupOther key different, if_pos member]
+            rw [lookupOther key different, ite_eq_left member]
           have varsNew : DataProps.varCorr env corr (sptMap dataToBviValue targetNext.locals) := by
             apply varCorr_of_lookup_eq dataToBviValue target.locals targetNext.locals corr env vars
             intro key member
@@ -532,7 +532,7 @@ theorem simulationFor_force_nontail_value {C F : Type} (label index : Nat)
     exact lookup_cut_namesOfList roots target.locals key
   have keeps : ∀ key ∈ roots, key ≠ n → sptLookup key targetNext.locals = sptLookup key target.locals := by
     intro key member different
-    rw [lookupOther key different, if_pos member]
+    rw [lookupOther key different, ite_eq_left member]
   have varsNew : DataProps.varCorr env corr (sptMap dataToBviValue targetNext.locals) := by
     apply varCorr_of_lookup_eq dataToBviValue target.locals targetNext.locals corr env vars
     intro key member

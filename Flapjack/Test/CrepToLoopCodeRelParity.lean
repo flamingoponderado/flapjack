@@ -75,26 +75,26 @@ theorem codeRelPositive : crepToLoopCodeRelExact ctxt sCode tCode := by
     by_cases hxf : x = ofString "f"
     · by_cases hyf : y = ofString "f"
       · rw [hxf, hyf]
-      · rw [if_neg hyf] at hy
+      · rw [ite_eq_right hyf] at hy
         simp at hy
-    · rw [if_neg hxf] at hx
+    · rw [ite_eq_right hxf] at hx
       simp at hx
   · intro f ns prog h
     rw [sCodeLookup f] at h
     by_cases hf : f = ofString "f"
     · subst hf
-      rw [if_pos rfl] at h
+      rw [ite_eq_left rfl] at h
       have h' : ([1, 2], (.skip : CrepProgHOL 8)) = (ns, prog) := Option.some.inj h
       obtain ⟨hns, hprog⟩ := Prod.mk.inj h'
       subst hns
       subst hprog
       refine ⟨42, 2, ?_, ?_, ?_⟩
-      · rw [funcsLookup (ofString "f"), if_pos rfl]
+      · rw [funcsLookup (ofString "f"), ite_eq_left rfl]
       · rfl
       · rw [show sptLookup 42 tCode = some ([0, 1], compiledSkip) from by
             simp [tCode, sptLookup_sptInsert]]
         rfl
-    · rw [if_neg hf] at h
+    · rw [ite_eq_right hf] at h
       simp at h
 
 /-- Directly instantiate the exact HOL `code_rel_intro` port on the positive
@@ -111,7 +111,7 @@ theorem codeRelMissingFuncs :
   obtain ⟨_, hsecond⟩ := hrel
   obtain ⟨loc, len, hlookup, _⟩ :=
     hsecond (ofString "f") [1, 2] (.skip : CrepProgHOL 8) (by
-      rw [sCodeLookup (ofString "f"), if_pos rfl])
+      rw [sCodeLookup (ofString "f"), ite_eq_left rfl])
   simp at hlookup
 
 /-- A function map at the probe key whose recorded arity (3) disagrees with the
@@ -132,8 +132,8 @@ theorem codeRelLenMismatch :
   obtain ⟨_, hsecond⟩ := hrel
   obtain ⟨loc, len, hlookup, hlen, _⟩ :=
     hsecond (ofString "f") [1, 2] (.skip : CrepProgHOL 8) (by
-      rw [sCodeLookup (ofString "f"), if_pos rfl])
-  rw [funcs3Lookup (ofString "f"), if_pos rfl] at hlookup
+      rw [sCodeLookup (ofString "f"), ite_eq_left rfl])
+  rw [funcs3Lookup (ofString "f"), ite_eq_left rfl] at hlookup
   have h' : (42, 3) = (loc, len) := Option.some.inj hlookup
   obtain ⟨hloc, hlen'⟩ := Prod.mk.inj h'
   subst hloc

@@ -171,7 +171,7 @@ theorem compileProg_semantics {C F : Type} (ffi : HolFfiState F)
       | _ => False) then HolBehaviour.fail else _) =
     (if (∃ clock error, (sourceRun clock).1 = .err error ∧
       error ≠ .abort .timeoutError ∧ ∀ event, error ≠ .abort (.ffiError event)) then HolBehaviour.fail else _)
-  simp only [targetNoFatal, sourceNoFatal, if_false]
+  simp only [targetNoFatal, sourceNoFatal, ite_false]
   rw [observations, traces]
   rfl
 

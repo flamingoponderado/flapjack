@@ -49,18 +49,18 @@ theorem goal_jumpLower (s : StackSemStateFiniteExact width C F) (r1 r2 dest : Na
       have hf : StackSemControl.findCode (.inl dest) regs
           (sptFromAList (compile c (sptToAList s.code))) = some (comp m1 n1 prog).1 := hcl
       by_cases h0 : s.clock = 0
-      · rw [if_pos h0] at h
+      · rw [ite_eq_left h0] at h
         simp only [Prod.mk.injEq] at h
         obtain ⟨rfl, rfl⟩ := h
         refine ⟨0, HolFiniteMapExact.empty, ?_, submap_empty _, hpre.buf, fun _ => ?_⟩
         · rw [evaluate_jumpLower, gx, gy]
-          simp only [hlt, if_true]
+          simp only [hlt, ite_true]
           rw [hf]
-          simp only [tgt_zero, h0, if_true]
+          simp only [tgt_zero, h0, ite_true]
           rfl
         · simp only [StackBound, emptyEnv, List.length_nil, Nat.zero_mul]
           exact Nat.two_pow_pos width
-      · rw [if_neg h0] at h
+      · rw [ite_eq_right h0] at h
         rcases h1 : evaluate (prog, decClock s) with ⟨res, s2⟩
         rw [h1] at h
         dsimp only at h
@@ -73,15 +73,15 @@ theorem goal_jumpLower (s : StackSemStateFiniteExact width C F) (r1 r2 dest : Na
             hpre.decClock
         refine ⟨ck, regs1, ?_, ?_⟩
         · rw [evaluate_jumpLower, gx, gy]
-          simp only [hlt, if_true]
+          simp only [hlt, ite_true]
           rw [hf]
           dsimp only
-          rw [if_neg (by show s.clock + ck ≠ 0; omega), decClock_tgt anything cr c s regs ck h0, he]
+          rw [ite_eq_right (by show s.clock + ck ≠ 0; omega), decClock_tgt anything cr c s regs ck h0, he]
           dsimp only
           split at h
           · simp only [Prod.mk.injEq] at h
             exact absurd h.1.symm hr
-          · rw [if_neg ‹_›]
+          · rw [ite_eq_right ‹_›]
             simp only [Prod.mk.injEq] at h
             obtain ⟨rfl, rfl⟩ := h
             rfl
@@ -96,7 +96,7 @@ theorem goal_jumpLower (s : StackSemStateFiniteExact width C F) (r1 r2 dest : Na
       refine ⟨0, regs, ?_, hpre.regs, hpre.buf, fun _ => hpre.stack⟩
       rw [evaluate_jumpLower, gx, gy]
       dsimp only
-      rw [if_neg ‹_›]
+      rw [ite_eq_right ‹_›]
       rfl
   · simp only [Prod.mk.injEq] at h
     exact absurd h.1.symm hr
@@ -122,16 +122,16 @@ theorem goal_rawCall (s : StackSemStateFiniteExact width C F) (dest : Nat)
       have hcl' : ∀ ck, sptLookup dest (Tgt anything cr c s ck regs).code =
           some (.seq (comp m1 n1 a).1 (comp m1 (comp m1 n1 a).2 b).1) := fun _ => hcl
       by_cases h0 : s.clock = 0
-      · rw [if_pos h0] at h
+      · rw [ite_eq_left h0] at h
         simp only [Prod.mk.injEq] at h
         obtain ⟨rfl, rfl⟩ := h
         refine ⟨0, HolFiniteMapExact.empty, ?_, submap_empty _, hpre.buf, fun _ => ?_⟩
         · rw [evaluate_rawCall, hcl']
-          simp only [StackSemControl.destSeq, tgt_zero, h0, if_true]
+          simp only [StackSemControl.destSeq, tgt_zero, h0, ite_true]
           rfl
         · simp only [StackBound, emptyEnv, List.length_nil, Nat.zero_mul]
           exact Nat.two_pow_pos width
-      · rw [if_neg h0] at h
+      · rw [ite_eq_right h0] at h
         rcases h1 : evaluate (b, decClock s) with ⟨res, s2⟩
         rw [h1] at h
         dsimp only at h
@@ -145,12 +145,12 @@ theorem goal_rawCall (s : StackSemStateFiniteExact width C F) (dest : Nat)
         refine ⟨ck, regs1, ?_, ?_⟩
         · rw [evaluate_rawCall, hcl']
           simp only [StackSemControl.destSeq]
-          rw [if_neg (by show s.clock + ck ≠ 0; omega), decClock_tgt anything cr c s regs ck h0, he]
+          rw [ite_eq_right (by show s.clock + ck ≠ 0; omega), decClock_tgt anything cr c s regs ck h0, he]
           dsimp only
           split at h
           · simp only [Prod.mk.injEq] at h
             exact absurd h.1.symm hr
-          · rw [if_neg ‹_›]
+          · rw [ite_eq_right ‹_›]
             simp only [Prod.mk.injEq] at h
             obtain ⟨rfl, rfl⟩ := h
             rfl
@@ -218,7 +218,7 @@ theorem goal_call_none (s : StackSemStateFiniteExact width C F) (dest : Sum Nat 
   · simp only [Prod.mk.injEq] at h
     exact absurd h.1.symm hr
   by_cases h0 : s.clock = 0
-  · rw [if_pos h0] at h
+  · rw [ite_eq_left h0] at h
     simp only [Prod.mk.injEq] at h
     obtain ⟨rfl, rfl⟩ := h
     refine ⟨0, HolFiniteMapExact.empty, ?_, submap_empty _, hpre.buf, fun _ => ?_⟩
@@ -226,11 +226,11 @@ theorem goal_call_none (s : StackSemStateFiniteExact width C F) (dest : Sum Nat 
       dsimp only
       rw [hf]
       dsimp only
-      simp only [tgt_zero, h0, if_true]
+      simp only [tgt_zero, h0, ite_true]
       rfl
     · simp only [StackBound, emptyEnv, List.length_nil, Nat.zero_mul]
       exact Nat.two_pow_pos width
-  · rw [if_neg h0, StackSemEvaluateClock.fixClockEvaluate] at h
+  · rw [ite_eq_right h0, StackSemEvaluateClock.fixClockEvaluate] at h
     rcases h1 : evaluate (prog, decClock s) with ⟨res, s2⟩
     rw [h1] at h
     dsimp only at h
@@ -246,13 +246,13 @@ theorem goal_call_none (s : StackSemStateFiniteExact width C F) (dest : Sum Nat 
       dsimp only
       rw [hf]
       dsimp only
-      rw [if_neg (by show s.clock + ck ≠ 0; omega), StackSemEvaluateClock.fixClockEvaluate,
+      rw [ite_eq_right (by show s.clock + ck ≠ 0; omega), StackSemEvaluateClock.fixClockEvaluate,
         decClock_tgt anything cr c s regs ck h0, he]
       dsimp only
       split at h
       · simp only [Prod.mk.injEq] at h
         exact absurd h.1.symm hr
-      · rw [if_neg ‹_›]
+      · rw [ite_eq_right ‹_›]
         simp only [Prod.mk.injEq] at h
         obtain ⟨rfl, rfl⟩ := h
         rfl
@@ -286,7 +286,7 @@ theorem goal_call_some (s : StackSemStateFiniteExact width C F) (retH : HolProg 
       (sptFromAList (compile c (sptToAList s.code))) = some (comp m1 n1 prog).1 := by
     rw [hfeq]; exact hcl
   by_cases h0 : s.clock = 0
-  · rw [if_pos h0] at h
+  · rw [ite_eq_left h0] at h
     simp only [Prod.mk.injEq] at h
     obtain ⟨rfl, rfl⟩ := h
     refine ⟨0, HolFiniteMapExact.empty, ?_, submap_empty _, hpre.buf, fun _ => ?_⟩
@@ -294,11 +294,11 @@ theorem goal_call_some (s : StackSemStateFiniteExact width C F) (retH : HolProg 
       dsimp only
       rw [hf]
       dsimp only
-      simp only [tgt_zero, h0, if_true]
+      simp only [tgt_zero, h0, ite_true]
       rfl
     · simp only [StackBound, emptyEnv, List.length_nil, Nat.zero_mul]
       exact Nat.two_pow_pos width
-  rw [if_neg h0, StackSemEvaluateClock.fixClockEvaluate] at h
+  rw [ite_eq_right h0, StackSemEvaluateClock.fixClockEvaluate] at h
   have h0' : (StackSemStateOps.setVar link (.loc l1 l2) s).clock ≠ 0 := h0
   rcases h1 : evaluate (prog, decClock (StackSemStateOps.setVar link (.loc l1 l2) s)) with ⟨res, s2⟩
   rw [h1] at h
@@ -353,7 +353,7 @@ theorem goal_call_some (s : StackSemStateFiniteExact width C F) (retH : HolProg 
     dsimp only
     rw [hf]
     dsimp only
-    rw [if_neg (by show s.clock + (ck1 + ck2) ≠ 0; omega), StackSemEvaluateClock.fixClockEvaluate,
+    rw [ite_eq_right (by show s.clock + (ck1 + ck2) ≠ 0; omega), StackSemEvaluateClock.fixClockEvaluate,
       hsite, hcallee ck2 hck]
     rfl
   have hpre2 : ∀ x, res = some (.result x) ∨ res = some (.exception x) →
@@ -365,15 +365,15 @@ theorem goal_call_some (s : StackSemStateFiniteExact width C F) (retH : HolProg 
   · -- Result
     dsimp only at h
     by_cases hx : x = .loc l1 l2
-    · rw [if_neg (not_not.2 hx)] at h
+    · rw [ite_eq_right (not_not.2 hx)] at h
       obtain ⟨ck2, regs2, he2, hpost2⟩ :=
         ih retH s2 (hcont retH) r t m n c regs1 h hr haR (hpre2 x (Or.inl rfl))
       refine ⟨ck1 + ck2, regs2, ?_, hpost2⟩
       rw [htgt ck2 (Or.inr (by simp))]
       dsimp only
-      rw [if_neg (not_not.2 hx)]
+      rw [ite_eq_right (not_not.2 hx)]
       exact he2
-    · rw [if_pos hx] at h
+    · rw [ite_eq_left hx] at h
       simp only [Prod.mk.injEq] at h
       exact absurd h.1.symm hr
   · -- Exception
@@ -389,15 +389,15 @@ theorem goal_call_some (s : StackSemStateFiniteExact width C F) (retH : HolProg 
     · replace haH : StackProps.allocArg hp := haH
       dsimp only at h
       by_cases hx : x = .loc k1 k2
-      · rw [if_neg (not_not.2 hx)] at h
+      · rw [ite_eq_right (not_not.2 hx)] at h
         obtain ⟨ck2, regs2, he2, hpost2⟩ :=
           ih hp s2 (hcont hp) r t (comp n m retH).2 n c regs1 h hr haH (hpre2 x (Or.inr rfl))
         refine ⟨ck1 + ck2, regs2, ?_, hpost2⟩
         rw [htgt ck2 (Or.inr (by simp))]
         dsimp only [compHandler]
-        rw [if_neg (not_not.2 hx)]
+        rw [ite_eq_right (not_not.2 hx)]
         exact he2
-      · rw [if_pos hx] at h
+      · rw [ite_eq_left hx] at h
         simp only [Prod.mk.injEq] at h
         exact absurd h.1.symm hr
   · simp only [Prod.mk.injEq] at h

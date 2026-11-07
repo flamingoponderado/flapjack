@@ -223,14 +223,14 @@ theorem evaluate_call_addClock_ioEvents_step {C F : Type} (trace : BackendCommon
             rw [found] at sourceRun
             dsimp only at sourceRun
             by_cases short : last.clock < ticks + 1
-            · rw [if_pos short] at sourceRun
+            · rw [ite_eq_left short] at sourceRun
               simp at sourceRun
               rcases sourceRun with ⟨_, rfl⟩
               have argsPrefix : last.ffi.ioEvents <+:
                   (evaluate args env { state with clock := state.clock + extra }).2.ffi.ioEvents := by simpa [argsRun] using argsIH
               exact argsPrefix.trans (evaluate_call_args_ioEvents_prefix trace ticks location args env
                 { state with clock := state.clock + extra })
-            · rw [if_neg short] at sourceRun
+            · rw [ite_eq_right short] at sourceRun
               have smaller : (decClock (ticks + 1) last).clock < state.clock := by simp [decClock]; omega
               have compare := bodyIH body bodyEnv (decClock (ticks + 1) last) smaller
               rw [sourceRun] at compare
@@ -243,7 +243,7 @@ theorem evaluate_call_addClock_ioEvents_step {C F : Type} (trace : BackendCommon
               dsimp only
               rw [found]
               dsimp only
-              rw [if_neg (by omega), shifted]
+              rw [ite_eq_right (by omega), shifted]
               exact compare
     · have equal := evaluate_addClock_ioEvents_of_notTimeout [.call trace ticks location args] env state final result extra run timeout
       simp only [run] at equal

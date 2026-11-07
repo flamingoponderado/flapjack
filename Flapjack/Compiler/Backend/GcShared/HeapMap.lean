@@ -97,7 +97,7 @@ theorem mem_imp_heapLookup {α β : Type} (xs : List (HeapElement α β)) (x : H
       refine ⟨j + elLength head, ?_⟩
       have nonzero : j + elLength head ≠ 0 := by omega
       have notInside : ¬ j + elLength head < elLength head := by omega
-      simp only [heapLookup, nonzero, if_false, notInside, Nat.add_sub_cancel]
+      simp only [heapLookup, nonzero, ite_false, notInside, Nat.add_sub_cancel]
       exact found
 
 end Flapjack.Compiler.Backend

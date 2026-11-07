@@ -54,7 +54,7 @@ theorem hasSpace_eraseHandler {width : Nat} [NeZero width] {C F : Type}
     (h : s.store = store.eraseEq .handler) (w : WordLocW width) :
     hasSpace w s = StackSemAllocation.hasSpace w store := by
   simp only [hasSpace, StackSemAllocation.hasSpace, getStore, h, HolFiniteMapExact.eraseEq,
-    FDOMSUB_HOL, reduceCtorEq, if_false]
+    FDOMSUB_HOL, reduceCtorEq, ite_false]
   generalize store.lookup .nextFree = a
   generalize store.lookup .triggerGC = b
   rcases w with w | ⟨_, _⟩ <;> rcases a with _ | (a | ⟨_, _⟩) <;>
@@ -68,7 +68,7 @@ theorem cutEnvs_eq {β : Type} {names : WordLangCutsetsHOL} {env : Spt β}
   unfold wordSemCutEnvs wordSemCutNames at h
   by_cases h1 : LoopSemStateFiniteExact.sptSubsetLive names.1 env <;>
     by_cases h2 : LoopSemStateFiniteExact.sptSubsetLive names.2 env <;>
-    simp only [h1, h2, if_true, if_false, Option.some.injEq, reduceCtorEq] at h
+    simp only [h1, h2, ite_true, ite_false, Option.some.injEq, reduceCtorEq] at h
   subst h
   exact ⟨rfl, rfl⟩
 
@@ -155,8 +155,8 @@ theorem allocImpAlloc {width : Nat} [NeZero width] {C F : Type}
       -, -, -, -, -, -, r35, -, -, -, -⟩ := hrel'
     have hff : f = f' + 1 := by
       by_cases h0 : f' = 0
-      · rw [if_pos h0] at r35; omega
-      · rw [if_neg h0] at r35; exact r35
+      · rw [ite_eq_left h0] at r35; omega
+      · rw [ite_eq_right h0] at r35; exact r35
     simp only [Nat.add_zero, List.drop_zero] at g38
     rw [hs2stack] at g38 g37
     obtain ⟨gsorted, astack, gabs, gH, gaux⟩ := g38
@@ -237,7 +237,7 @@ theorem allocImpAlloc {width : Nat} [NeZero width] {C F : Type}
           rw [sptLookup_sptFromAList_sptToAList] at hn
           obtain ⟨heven, hk⟩ := hfst n (hcut1 n v hn)
           refine ⟨heven, ?_⟩
-          rw [if_neg (by omega)]
+          rw [ite_eq_right (by omega)]
           have hl0 : (sptToAList envs.1).lookup n = some v := by
             rw [GcSimulation.lookup_eq_sptAListLookup, ← sptLookup_sptFromAList,
               sptLookup_sptFromAList_sptToAList]
@@ -266,7 +266,7 @@ theorem allocImpAlloc {width : Nat} [NeZero width] {C F : Type}
           rw [wordSemEnvToList_mem_iff, sptToAList_mem_iff_lookup] at hmem0
           obtain ⟨heven, hk⟩ := hsnd n0 (hcut2 n0 v0 hmem0)
           refine ⟨heven, ?_⟩
-          rw [if_neg (by omega)]
+          rw [ite_eq_right (by omega)]
           have hsel : (adjustNames n0, v') ∈ l.map (fun p => (adjustNames p.1, p.2)) :=
             List.mem_map.mpr ⟨_, hmem, rfl⟩
           have hidx := Compiler.Backend.WordToStack.filterBitmapMem bits _ _ _ gB hsel
@@ -305,12 +305,12 @@ theorem allocImpAlloc {width : Nat} [NeZero width] {C F : Type}
     obtain ⟨rfl, rfl⟩ := halloc
     refine ⟨StackSemStateOps.emptyEnv t2, some (.halt (.word 1)),
       by simp only [StackSemAllocation.alloc, ht2gc, hw, hb], ?_⟩
-    simp only [reduceCtorEq, if_false, true_and]
+    simp only [reduceCtorEq, ite_false, true_and]
     exact ⟨hclock, hffi.symm⟩
   · simp only [hb, Prod.mk.injEq] at halloc
     obtain ⟨rfl, rfl⟩ := halloc
     refine ⟨t2, none, by simp only [StackSemAllocation.alloc, ht2gc, hw, hb], ?_⟩
-    simp only [if_true, true_and]
+    simp only [ite_true, true_and]
     exact ⟨hclaim, by rw [ht2len]; rfl, by rw [ht2sp]; rfl⟩
 
 /-- Exact HOL `word_gc_empty_frame` (`word_to_stackProofScript.sml:2320-2332`):
@@ -327,7 +327,7 @@ theorem wordGcEmptyFrame {width : Nat} [NeZero width] {C F : Type}
   rcases hf : s.gcFun (wordSemEncStack s.stack, s.memory, s.mdomain, s.store) with _ | ⟨wl, m, st⟩
   · simp [hf] at hgc
   simp only [hf] at hgc ⊢
-  simp only [wordSemDecStack, List.length_nil, Nat.not_lt_zero, if_false, List.drop_zero] at hgc
+  simp only [wordSemDecStack, List.length_nil, Nat.not_lt_zero, ite_false, List.drop_zero] at hgc
   rcases hd : wordSemDecStack wl s.stack with _ | st'
   · simp [hd] at hgc
   simp only [hd, Option.some.injEq] at hgc
@@ -549,12 +549,12 @@ theorem allocImpAlloc2 {width : Nat} [NeZero width] {C F : Type}
     obtain ⟨rfl, rfl⟩ := halloc
     refine ⟨StackSemStateOps.emptyEnv t2, some (.halt (.word 1)),
       by simp only [StackSemAllocation.alloc, ht2gc, hw, hb], ?_⟩
-    simp only [reduceCtorEq, if_false, true_and]
+    simp only [reduceCtorEq, ite_false, true_and]
     exact ⟨hclock, hffi.symm⟩
   · simp only [hb, Prod.mk.injEq] at halloc
     obtain ⟨rfl, rfl⟩ := halloc
     refine ⟨t2, none, by simp only [StackSemAllocation.alloc, ht2gc, hw, hb], ?_⟩
-    simp only [if_true, true_and]
+    simp only [ite_true, true_and]
     exact ⟨hy, by rw [ht2len]; rfl, by rw [ht2sp]; rfl⟩
 
 end Flapjack.WordToStackProofs.AllocStateRel

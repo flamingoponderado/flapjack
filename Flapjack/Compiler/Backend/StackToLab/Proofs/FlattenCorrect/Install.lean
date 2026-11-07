@@ -24,7 +24,7 @@ theorem sptAListLookup_eq_holAlookup {α : Type} (key : Nat) :
     simp only [sptAListLookup, holAlookup]
     by_cases h : key = k
     · subst h; simp
-    · rw [if_neg h, if_neg (Ne.symm h)]
+    · rw [ite_eq_right h, ite_eq_right (Ne.symm h)]
       exact sptAListLookup_eq_holAlookup key rest
 
 theorem secLabelOkOfLabels {n : Nat} :
@@ -46,7 +46,7 @@ theorem holAlookupIsSome_iff {α : Type} (entries : List (Nat × α)) (key : Nat
     obtain ⟨k, v⟩ := e
     by_cases h : k = key
     · subst h; simp [holAlookup]
-    · simp only [holAlookup, h, if_false, ih, List.map_cons, List.mem_cons]
+    · simp only [holAlookup, h, ite_false, ih, List.map_cons, List.mem_cons]
       constructor
       · exact Or.inr
       · rintro (e | e)
@@ -153,16 +153,16 @@ theorem stateRelInstall {s : StackSemStateFiniteExact width C F}
   · intro r v hv
     simp only [HolFiniteMapExact.updateEq, FUPDATE_HOL, StackSemStateOps.restrictIn] at hv ⊢
     by_cases e1 : r = t.ptrReg
-    · rw [if_pos e1] at hv ⊢
+    · rw [ite_eq_left e1] at hv ⊢
       cases hv; rfl
-    rw [if_neg e1] at hv ⊢
+    rw [ite_eq_right e1] at hv ⊢
     by_cases e3 : s.ffiSaveRegs r = true
-    · rw [if_pos e3] at hv
+    · rw [ite_eq_left e3] at hv
       have hcc := h19 r 0 e3
       have hne : r ≠ t.linkReg := by rintro rfl; exact h17 e3
-      simp only [hcc, getRegValue, hne, if_false]
+      simp only [hcc, getRegValue, hne, ite_false]
       exact h1 r v hv
-    · rw [if_neg e3] at hv; simp at hv
+    · rw [ite_eq_right e3] at hv; simp at hv
   · intro r v hv
     simp [HolFiniteMapExact.empty] at hv
   · funext m
@@ -193,10 +193,10 @@ theorem installStep {t : Flapjack.Compiler.Backend.LabSem.State width C F} {w1 w
       compileOracle := holShiftSeq 1 t.compileOracle
       clock := c } := by
   rw [evaluate]
-  simp only [Nat.add_one_ne_zero, if_false, asmFetch, fetch, hp, hl, hk, hfl, hpc, ho, hc]
+  simp only [Nat.add_one_ne_zero, ite_false, asmFetch, fetch, hp, hl, hk, hfl, hpc, ho, hc]
   subst hprog
   simp only
-  rw [if_pos ⟨rfl, by simpa [holShiftSeq] using hcfg⟩]
+  rw [ite_eq_left ⟨rfl, by simpa [holShiftSeq] using hcfg⟩]
   rfl
 
 /-- `Install` case. -/
@@ -225,7 +225,7 @@ theorem flattenCorrectInstall (s1 : StackSemStateFiniteExact width C F)
     simp only [hx, hy, hz, hw] at ev <;> try exact (err ev).elim
   rcases ho : s1.compileOracle 0 with ⟨cfg, progs, bm⟩
   have hprogs : (s1.compileOracle 0).2.1 = progs := by rw [ho]
-  simp only [ho, hus, Bool.false_eq_true, if_false] at ev
+  simp only [ho, hus, Bool.false_eq_true, ite_false] at ev
   rcases hfl : wordSemBufferFlush s1.codeBuffer w1 w2 with _ | ⟨bytes, cb⟩
   · simp only [hfl] at ev; exact (err ev).elim
   simp only [hfl] at ev

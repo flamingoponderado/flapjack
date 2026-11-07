@@ -69,7 +69,7 @@ theorem crepToLoopSemanticsWrapper_ne_fail_of_no_error
     crepToLoopSemanticsWrapper f ≠ .fail := by
   classical
   unfold crepToLoopSemanticsWrapper
-  rw [if_neg hnoErr]
+  rw [ite_eq_right hnoErr]
   intro h
   cases hsome : holOptionSome (fun res => ∃ k r ev,
       f k = (.CompleteResult r, ev) ∧ res = HolBehaviour.terminate r ev) with
@@ -107,7 +107,7 @@ private theorem holAlookup_of_mem_of_nodup {α β : Type} [DecidableEq α]
           apply hnotin
           rw [he]
           exact List.mem_map.mpr ⟨(key, value), htailmem, rfl⟩
-        simp only [holAlookup, if_neg hne]
+        simp only [holAlookup, ite_eq_right hne]
         exact ih htail htailmem
 
 /-- Flapjack bridge for the code-map representation: on a duplicate-free
@@ -174,7 +174,7 @@ theorem crepSemantics_ne_fail_imp_holAlookup {width : Nat} [NeZero width] {σ : 
       (.RunError, v) := by
     intro h
     unfold crepToLoopSemanticsWrapper at hfail'
-    rw [if_pos h] at hfail'
+    rw [ite_eq_left h] at hfail'
     exact hfail' rfl
   have h1 : crepSemRunResClass
         (evalCrepSemHOLProgExact { s with clock := 1 } (.call none start [])).1 ≠

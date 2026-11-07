@@ -194,7 +194,7 @@ theorem x64Next_comisd (ms : X64State) (d : BitVec 64 → Prop) (dst src : Nat)
       some (.sse (.comisd dst src), 4 + (if 8 ≤ dst ∨ 8 ≤ src then 1 else 0)) :=
     decode_bytesInMemory _ ms.pc ms.mem d _ _ hbm (decode_comisd dst src hd hs) (by rw [hlen])
   rw [hlen]
-  simp only [x64Next, hfailed, Bool.false_eq_true, if_false, hdec, execInsn, execSSE,
+  simp only [x64Next, hfailed, Bool.false_eq_true, ite_false, hdec, execInsn, execSSE,
     x64ComisdFlags, xmmUnordered]
 
 /-- One `x64Next` step over the parity branch. -/
@@ -208,7 +208,7 @@ theorem x64Next_jcc_zP4 (ms : X64State) (d : BitVec 64 → Prop)
   have hdec : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) =
       some (.jcc .zP 4, 2) :=
     decode_bytesInMemory _ ms.pc ms.mem d _ _ hbm decode_jcc_zP4 (by decide)
-  simp only [x64Next, hfailed, Bool.false_eq_true, if_false, hdec, execInsn]
+  simp only [x64Next, hfailed, Bool.false_eq_true, ite_false, hdec, execInsn]
 
 /-- One `x64Next` step over a `setcc` writes the condition's `0`/`1` byte. -/
 theorem x64Next_setcc_fp (ms : X64State) (d : BitVec 64 → Prop) (cond : ZCond) (n : Nat)
@@ -223,7 +223,7 @@ theorem x64Next_setcc_fp (ms : X64State) (d : BitVec 64 → Prop) (cond : ZCond)
     have hd := decode_setcc cond n hn hc
     rw [hlen] at hd
     exact decode_bytesInMemory _ ms.pc ms.mem d _ _ hbm hd (by rw [hlen])
-  simp only [x64Next, hfailed, Bool.false_eq_true, if_false, hdec, execInsn]
+  simp only [x64Next, hfailed, Bool.false_eq_true, ite_false, hdec, execInsn]
 
 /-- A `setcc` over a cleared register writes the condition's `0`/`1` word. -/
 theorem readReg_setcc (ms : X64State) (n x : Nat) (b : Bool) (hn : n < 16) (hx : x < 16)
@@ -233,10 +233,10 @@ theorem readReg_setcc (ms : X64State) (n x : Nat) (b : Bool) (hn : n < 16) (hx :
   rw [writeRegSized, readReg_writeReg _ n _ x hn hx]
   by_cases hxn : x = n
   · subst hxn
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     simp [hzero]
     cases b <;> decide
-  · simp only [hxn, if_false]
+  · simp only [hxn, ite_false]
 
 /-- A `pc` inside the encoding is in the code-coverage set. -/
 theorem mem_allPcs_zero {n off : Nat} (a : BitVec 64) (h : off < n) :
@@ -442,7 +442,7 @@ theorem fpCmpCase (op : HolFp) (cond : ZCond) (n d1 d2 : Nat)
         rw [hms2pc, hms1pc, hlenM, hms2mem, hms1mem]
         exact hb2
       rw [x64Next_jcc_zP4 ms2 s1.memDomain hbm hf2, hflP]
-      simp only [if_true]
+      simp only [ite_true]
       exact hms3.symm
     have hms3pc : ms3.pc = ms2.pc + BitVec.ofNat 64 2 + 4 := by simp [hms3]
     have hms3mem : ms3.mem = ms.mem := by simp [hms3, hms2mem, hms1mem]
@@ -496,7 +496,7 @@ theorem fpCmpCase (op : HolFp) (cond : ZCond) (n d1 d2 : Nat)
         · subst hxn
           rw [hread3n, htest]
           simp
-        · rw [hread3 x hx16, hread2 x hx16, if_neg hxn, hread1 x hx16 hxav]
+        · rw [hread3 x hx16, hread2 x hx16, ite_eq_right hxn, hread1 x hx16 hxav]
           simp [hxn]
       · intro x hx
         have hx8 : x < 8 := by simpa [x64Target_config, x64Config] using hx
@@ -635,7 +635,7 @@ theorem fpCmpCase (op : HolFp) (cond : ZCond) (n d1 d2 : Nat)
         by_cases hxn : x = n
         · subst hxn
           simp
-        · rw [hread3 x hx16, hread2 x hx16, if_neg hxn, hread1 x hx16 hxav]
+        · rw [hread3 x hx16, hread2 x hx16, ite_eq_right hxn, hread1 x hx16 hxav]
           simp [hxn]
       · intro x hx
         have hx8 : x < 8 := by simpa [x64Target_config, x64Config] using hx
@@ -865,7 +865,7 @@ theorem writeXmm_low32 (s : X64State) (r : Nat) (hr : r < 8) (v : BitVec 32) :
         (96 : Nat)).setWidth 64 =
       BitVec.setWidth 64 v := by
   simp only [writeXmm, Nat.mod_eq_of_lt hr]
-  rw [if_true]
+  rw [ite_true]
   apply BitVec.eq_of_getLsbD_eq
   intro i hi
   have hm : (BitVec.ofNat 128 (2 ^ 128 - 2 ^ 64)) =
@@ -954,7 +954,7 @@ theorem case_fpMov (d1 d2 : Nat) (s1 s2 : AsmState 64) (ms : X64State)
     simpa [hlt] using h
   have hnext : x64Next ms = { writeXmm ms (d1 % 8) (readXmm ms (d2 % 8)) with
       pc := ms.pc + BitVec.ofNat 64 4 } := by
-    simp only [x64Next, st.failed, Bool.false_eq_true, if_false, hdec, execInsn, execSSE]
+    simp only [x64Next, st.failed, Bool.false_eq_true, ite_false, hdec, execInsn, execSSE]
   have hq : targetStateRel x64Target s2 (x64Next^[0 + 1] ms) := by
     show targetStateRel x64Target s2 (x64Next ms)
     rw [hnext]
@@ -977,7 +977,7 @@ theorem case_fpMov (d1 d2 : Nat) (s1 s2 : AsmState 64) (ms : X64State)
       show readXmm (writeXmm ms (d1 % 8) (readXmm ms (d2 % 8))) x = s2.fpRegs x
       by_cases hx1 : x = d1
       · rw [hx1, hd1', readXmm_writeXmm_self, hs2fp d1]
-        simp only [if_true]
+        simp only [ite_true]
         rw [hd2']
         exact st.fp d2 hd2
       · have hne : x % 8 ≠ d1 % 8 := by
@@ -985,7 +985,7 @@ theorem case_fpMov (d1 d2 : Nat) (s1 s2 : AsmState 64) (ms : X64State)
           exact hx1
         rw [hd1']
         rw [readXmm_writeXmm_other ms d1 x _ hne, hs2fp x]
-        simp only [if_neg hx1]
+        simp only [ite_eq_right hx1]
         exact st.fp x hx8lt
   have hcode : allPcs (x64Target.config.encode (.inst (.fp (.fpMov d1 d2)))).length
       s1.pc 0 ⊆ s1.memDomain :=
@@ -1030,7 +1030,7 @@ theorem fpWriteCase (op : HolFp) (insn : X64SSE) (d1 dst : Nat) (L : Nat) (W V :
     rw [← st.pc] at h'
     exact h'
   have hnext : x64Next ms = { writeXmm ms dst W with pc := ms.pc + BitVec.ofNat 64 L } := by
-    simp only [x64Next, st.failed, Bool.false_eq_true, if_false, hdec, execInsn, hexec]
+    simp only [x64Next, st.failed, Bool.false_eq_true, ite_false, hdec, execInsn, hexec]
   have hq : targetStateRel x64Target s2 (x64Next^[0 + 1] ms) := by
     show targetStateRel x64Target s2 (x64Next ms)
     rw [hnext]
@@ -1062,7 +1062,7 @@ theorem fpWriteCase (op : HolFp) (insn : X64SSE) (d1 dst : Nat) (L : Nat) (W V :
           rw [Nat.mod_eq_of_lt hx8, hdst1, Nat.mod_eq_of_lt hd1]
           exact hx1
         rw [readXmm_writeXmm_other ms dst x W hne, hs2fp x]
-        simp only [if_neg hx1]
+        simp only [ite_eq_right hx1]
         exact st.fp x hx8
   have hcode : allPcs (x64Target.config.encode (.inst (.fp op))).length s1.pc 0 ⊆
       s1.memDomain :=
@@ -1474,7 +1474,7 @@ theorem case_fpMovFromReg (d r1 r2 : Nat) (s1 s2 : AsmState 64) (ms : X64State)
   have hs2fp : ∀ x, s2.fpRegs x = if x = d then (s1.regs r1).setWidth 64 else s1.fpRegs x := by
     intro x
     rw [← st.upd]
-    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg, if_true,
+    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg, ite_true,
       Flapjack.Compiler.Encoders.AsmSem.readReg]
   have henc : x64Target.config.encode (.inst (.fp (.fpMovFromReg d r1 r2))) =
       encodeInsn (.sse (.movDQ true true (d % 8) (.zr r1))) := by
@@ -1527,17 +1527,17 @@ theorem case_fpMovToReg (r1 r2 d : Nat) (s1 s2 : AsmState 64) (ms : X64State)
     simp only [asmUpd, instUpd, updPc]
   have hs2mem : ∀ a, s2.mem a = s1.mem a := by
     rw [← st.upd]; intro a
-    simp only [asmUpd, instUpd, updPc, fpUpd, updReg, if_true]
+    simp only [asmUpd, instUpd, updPc, fpUpd, updReg, ite_true]
   have hs2dom : s2.memDomain = s1.memDomain := by
     rw [← st.upd]
-    simp only [asmUpd, instUpd, updPc, fpUpd, updReg, if_true]
+    simp only [asmUpd, instUpd, updPc, fpUpd, updReg, ite_true]
   have hs2fp : ∀ x, s2.fpRegs x = s1.fpRegs x := by
     rw [← st.upd]; intro x
-    simp only [asmUpd, instUpd, updPc, fpUpd, updReg, if_true]
+    simp only [asmUpd, instUpd, updPc, fpUpd, updReg, ite_true]
   have hs2regs : ∀ x, s2.regs x = if x = r1 then (s1.fpRegs d).setWidth 64 else s1.regs x := by
     intro x
     rw [← st.upd]
-    simp only [asmUpd, instUpd, updPc, fpUpd, updReg, if_true,
+    simp only [asmUpd, instUpd, updPc, fpUpd, updReg, ite_true,
       Flapjack.Compiler.Encoders.AsmSem.readFpReg]
   have henc : x64Target.config.encode (.inst (.fp (.fpMovToReg r1 r2 d))) =
       encodeInsn (.sse (.movDQ false true (d % 8) (.zr r1))) := by
@@ -1561,8 +1561,8 @@ theorem case_fpMovToReg (r1 r2 d : Nat) (s1 s2 : AsmState 64) (ms : X64State)
     exact decode_bytesInMemory _ ms.pc ms.mem s1.memDomain _ _ hbm hd0 (by rw [hlen])
   have hnext : x64Next ms = { writeReg ms r1 (readXmm ms (d % 8)) with
       pc := ms.pc + BitVec.ofNat 64 5 } := by
-    simp only [x64Next, st.failed, Bool.false_eq_true, if_false, hdec, execInsn, execSSE,
-      writeRegSized, if_true]
+    simp only [x64Next, st.failed, Bool.false_eq_true, ite_false, hdec, execInsn, execSSE,
+      writeRegSized, ite_true]
   have hq : targetStateRel x64Target s2 (x64Next^[0 + 1] ms) := by
     show targetStateRel x64Target s2 (x64Next ms)
     rw [hnext]
@@ -1579,11 +1579,11 @@ theorem case_fpMovToReg (r1 r2 d : Nat) (s1 s2 : AsmState 64) (ms : X64State)
       show readReg (writeReg ms r1 (readXmm ms (d % 8))) x = s2.regs x
       rw [readReg_writeReg ms r1 _ x hr1 hx16, hs2regs x]
       by_cases hx1 : x = r1
-      · rw [if_pos hx1, if_pos hx1]
+      · rw [ite_eq_left hx1, ite_eq_left hx1]
         rw [hd']
         rw [st.fp d hd]
         simp
-      · rw [if_neg hx1, if_neg hx1]
+      · rw [ite_eq_right hx1, ite_eq_right hx1]
         exact st.reg x hx
     · intro x hx
       have hx8 : x < 8 := by simpa [x64Target_config, x64Config] using hx
@@ -1633,19 +1633,19 @@ theorem case_fpFromInt (d1 d2 : Nat) (s1 s2 : AsmState 64) (ms : X64State)
     simp only [asmUpd, instUpd, updPc]
   have hs2mem : ∀ a, s2.mem a = s1.mem a := by
     rw [← st.upd]; intro a
-    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg, if_true]
+    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg, ite_true]
   have hs2dom : s2.memDomain = s1.memDomain := by
     rw [← st.upd]
-    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg, if_true]
+    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg, ite_true]
   have hs2regs : ∀ x, s2.regs x = s1.regs x := by
     rw [← st.upd]; intro x
-    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg, if_true]
+    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg, ite_true]
   have hs2fp : ∀ x, s2.fpRegs x = if x = d1 then
       holIntToFp64 .roundTiesToEven (holWordExtract 31 0 (s1.fpRegs d2) 32).toInt
       else s1.fpRegs x := by
     intro x
     rw [← st.upd]
-    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg, if_true,
+    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg, ite_true,
       Flapjack.Compiler.Encoders.AsmSem.readFpReg]
   have henc : x64Target.config.encode (.inst (.fp (.fpFromInt d1 d2))) =
       encodeInsn (.sse (.cvtdq2pd (d1 % 8) (d2 % 8))) := by
@@ -1754,18 +1754,18 @@ theorem case_fpToInt (d1 d2 : Nat) (s1 s2 : AsmState 64) (ms : X64State)
           simp only [asmUpd, instUpd, updPc]
         have hs2mem : ∀ a, s2.mem a = s1.mem a := by
           rw [← st.upd]; intro a
-          simp only [asmUpd, instUpd, updPc, fpUpd, hint, if_true, updFpReg, assertState]
+          simp only [asmUpd, instUpd, updPc, fpUpd, hint, ite_true, updFpReg, assertState]
         have hs2dom : s2.memDomain = s1.memDomain := by
           rw [← st.upd]
-          simp only [asmUpd, instUpd, updPc, fpUpd, hint, if_true, updFpReg, assertState]
+          simp only [asmUpd, instUpd, updPc, fpUpd, hint, ite_true, updFpReg, assertState]
         have hs2regs : ∀ x, s2.regs x = s1.regs x := by
           rw [← st.upd]; intro x
-          simp only [asmUpd, instUpd, updPc, fpUpd, hint, if_true, updFpReg, assertState]
+          simp only [asmUpd, instUpd, updPc, fpUpd, hint, ite_true, updFpReg, assertState]
         have hs2fp : ∀ x, s2.fpRegs x = if x = d1 then
             BitVec.setWidth 64 (BitVec.ofInt 32 integer) else s1.fpRegs x := by
           intro x
           rw [← st.upd]
-          simp only [asmUpd, instUpd, updPc, fpUpd, hint, if_true, updFpReg, assertState]
+          simp only [asmUpd, instUpd, updPc, fpUpd, hint, ite_true, updFpReg, assertState]
         -- the target run
         have hbmAll : bytesInMemoryHOL ms.pc
             (encodeInsn (.sse (.cvtpd2dq false (d1 % 8) (d2 % 8))) ++
@@ -1813,15 +1813,15 @@ theorem case_fpToInt (d1 d2 : Nat) (s1 s2 : AsmState 64) (ms : X64State)
               else ms2.xmm r,
             pc := ms2.pc + BitVec.ofNat 64 5 } with hms3
         have hstep0 : x64Next ms = ms1 := by
-          simp only [hms1, x64Next, st.failed, Bool.false_eq_true, if_false, hdec0, execInsn,
+          simp only [hms1, x64Next, st.failed, Bool.false_eq_true, ite_false, hdec0, execInsn,
             execSSE, hintT, hchk, ne_self_iff_false]
         have hstep1 : x64Next ms1 = ms2 := by
           simp only [hms1, hms2, x64Next, writeXmm_failed, st.failed, Bool.false_eq_true,
-            if_false, writeXmm_mem, hdec1, execInsn, execSSE, Nat.mod_mod, toNat_twelve]
+            ite_false, writeXmm_mem, hdec1, execInsn, execSSE, Nat.mod_mod, toNat_twelve]
           rfl
         have hstep2 : x64Next ms2 = ms3 := by
           simp only [hms1, hms2, hms3, x64Next, writeXmm_failed, st.failed, Bool.false_eq_true,
-            if_false, writeXmm_mem, hdec2, execInsn, execSSE, Nat.mod_mod, toNat_twelve]
+            ite_false, writeXmm_mem, hdec2, execInsn, execSSE, Nat.mod_mod, toNat_twelve]
           rfl
         have hms1pc : ms1.pc = ms.pc + BitVec.ofNat 64 4 := by simp only [hms1]
         have hms2pc : ms2.pc = ms1.pc + BitVec.ofNat 64 5 := by simp only [hms2]
@@ -1888,7 +1888,7 @@ theorem case_fpToInt (d1 d2 : Nat) (s1 s2 : AsmState 64) (ms : X64State)
                 rw [show ms1.xmm (x % 8) = ms.xmm (x % 8) from by
                   simp [hms1, writeXmm, hne]]
                 rw [readXmm]]
-              simp only [if_neg hx1]
+              simp only [ite_eq_right hx1]
               exact st.fp x hx8
         have hcode : allPcs (x64Target.config.encode (.inst (.fp (.fpToInt d1 d2)))).length
             s1.pc 0 ⊆ s1.memDomain :=
@@ -1965,7 +1965,7 @@ theorem case_fpToInt (d1 d2 : Nat) (s1 s2 : AsmState 64) (ms : X64State)
           simp [hchk']
         have hf : s2.failed = true := by
           rw [← st.upd]
-          simp only [asmUpd, instUpd, updPc, fpUpd, hint, if_true, assertState, updFpReg, hdec]
+          simp only [asmUpd, instUpd, updPc, fpUpd, hint, ite_true, assertState, updFpReg, hdec]
           simp
         have hnotfailed := st.ok
         rw [hf] at hnotfailed
@@ -1986,7 +1986,7 @@ theorem logicPD_apply (s : X64State) (lop : SSELogic) (dst src : Nat) :
 theorem execSSE_pcmpeqq_self (s : X64State) (dst : Nat) :
     execSSE (.pcmpeqq dst dst) s =
       { s with xmm := fun r => if r = dst % 8 then BitVec.ofNat 128 (2 ^ 128 - 1) else s.xmm r } := by
-  simp only [execSSE, readXmm, beq_self_eq_true, if_true]
+  simp only [execSSE, readXmm, beq_self_eq_true, ite_true]
 
 theorem execSSE_psrlqImm (s : X64State) (dst : Nat) (imm : BitVec 8) :
     execSSE (.psrlqImm dst imm) s =
@@ -2124,7 +2124,7 @@ theorem fpMaskCase (op : HolFp) (d1 d2 : Nat) (lop : SSELogic) (shift : X64SSE)
     rw [hms1pc, hms1mem]
     exact hdec1
   have hstep0 : x64Next ms = ms1 := by
-    simp only [hms1, x64Next, st.failed, Bool.false_eq_true, if_false, hdec0, execInsn,
+    simp only [hms1, x64Next, st.failed, Bool.false_eq_true, ite_false, hdec0, execInsn,
       execSSE_pcmpeqq_self, Nat.mod_mod]
   set ms2 : X64State :=
     { ms1 with
@@ -2141,14 +2141,14 @@ theorem fpMaskCase (op : HolFp) (d1 d2 : Nat) (lop : SSELogic) (shift : X64SSE)
     have hsc : execSSE shift ms1 =
         { ms1 with xmm := fun r => if r = d1 % 8 then M128 else ms1.xmm r } :=
       execSSE_shift_const shift sh M128 (d1 % 8) ms1 hshift hms1xmm hsh
-    simp only [hms2, x64Next, hf1, Bool.false_eq_true, if_false, hdec1', execInsn]
+    simp only [hms2, x64Next, hf1, Bool.false_eq_true, ite_false, hdec1', execInsn]
     rw [hsc, hms1]
     simp only [st.failed]
   set ms3 : X64State :=
     { writeXmm ms2 (d1 % 8) (maskApply lop (readXmm ms2 (d1 % 8)) (readXmm ms2 (d2 % 8))) with
       pc := ms2.pc + BitVec.ofNat 64 4 } with hms3
   have hstep2 : x64Next ms2 = ms3 := by
-    simp only [hms3, hms2, hf1, x64Next, Bool.false_eq_true, if_false, hdec2',
+    simp only [hms3, hms2, hf1, x64Next, Bool.false_eq_true, ite_false, hdec2',
       execInsn, logicPD_apply]
   have hms3pc : ms3.pc = ms2.pc + BitVec.ofNat 64 4 := by simp only [hms3]
   have hms3mem : ms3.mem = ms2.mem := by simp only [hms3, writeXmm_mem]
@@ -2195,10 +2195,10 @@ theorem fpMaskCase (op : HolFp) (d1 d2 : Nat) (lop : SSELogic) (shift : X64SSE)
             readXmm_writeXmm_self ms2 (d1 % 8)
               (maskApply lop (readXmm ms2 (d1 % 8)) (readXmm ms2 (d2 % 8)))
         have h2a : readXmm ms2 (d1 % 8) = M := by
-          simp only [readXmm, hms2, Nat.mod_mod, if_true]
+          simp only [readXmm, hms2, Nat.mod_mod, ite_true]
           rw [hM]
         have h2b : readXmm ms2 (d2 % 8) = s1.fpRegs d2 := by
-          simp only [readXmm, hms2, Nat.mod_mod, if_neg hne', hms1]
+          simp only [readXmm, hms2, Nat.mod_mod, ite_eq_right hne', hms1]
           exact hb
         rw [h3, h2a, h2b, ← hV]
         simp
@@ -2207,11 +2207,11 @@ theorem fpMaskCase (op : HolFp) (d1 d2 : Nat) (lop : SSELogic) (shift : X64SSE)
           rw [hx8', hd1']; exact hx1
         rw [hs2fp x]
         have hx3 : readXmm ms3 x = readXmm ms2 x := by
-          simp only [readXmm, hms3, writeXmm_xmm, Nat.mod_mod, if_neg hne8]
+          simp only [readXmm, hms3, writeXmm_xmm, Nat.mod_mod, ite_eq_right hne8]
         have hx2 : readXmm ms2 x = readXmm ms x := by
-          simp only [readXmm, hms2, if_neg hne8, hms1]
+          simp only [readXmm, hms2, ite_eq_right hne8, hms1]
         rw [hx3, hx2]
-        simp only [if_neg hx1]
+        simp only [ite_eq_right hx1]
         exact st.fp x hx8
   have hcode : allPcs (x64Target.config.encode (.inst (.fp op))).length s1.pc 0 ⊆
       s1.memDomain :=

@@ -42,7 +42,7 @@ theorem isSomeDataOrForward_replace {α β : Type} (ha hb : List (HeapElement α
   rw [GenGc.heapLookup_append ptr ha, GenGc.heapLookup_append ptr ha]
   by_cases below : ptr < heapLength ha
   · simp [below]
-  · simp only [below, if_false]
+  · simp only [below, ite_false]
     by_cases zero : ptr - heapLength ha = 0
     · simp [heapLookup, zero, isSomeDataOrForward, isSomeDataElement, isSomeForwardPointer]
     · by_cases inside : ptr - heapLength ha < len + 1
@@ -124,7 +124,7 @@ theorem heapSimilar_data_imp_dataOrForward {α β : Type} (heap0 heap1 : List (H
       · subst old; rfl
     by_cases zero : ptr = 0
     · subst ptr
-      simp only [heapLookup, if_true, isSomeDataElement, Option.some.injEq] at present
+      simp only [heapLookup, ite_true, isSomeDataElement, Option.some.injEq] at present
       obtain ⟨xs, len, data, oldEq⟩ := present
       subst old
       cases now with
@@ -136,9 +136,9 @@ theorem heapSimilar_data_imp_dataOrForward {α β : Type} (heap0 heap1 : List (H
     · by_cases inside : ptr < elLength old
       · simp [heapLookup, zero, inside, isSomeDataElement] at present
       · have next : isSomeDataElement (heapLookup (ptr - elLength old) oldTail) := by
-          simpa only [heapLookup, zero, inside, if_false] using present
+          simpa only [heapLookup, zero, inside, ite_false] using present
         have notInside : ¬ ptr < elLength now := by simpa [← lengthEq] using inside
-        simpa only [heapLookup, zero, notInside, inside, if_false, ← lengthEq] using ih _ next
+        simpa only [heapLookup, zero, notInside, inside, ite_false, ← lengthEq] using ih _ next
 
 /-- A data element in the current heap occurs at the same boundary in the
 original heap. -/

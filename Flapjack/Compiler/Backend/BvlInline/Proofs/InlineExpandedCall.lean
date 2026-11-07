@@ -95,7 +95,7 @@ theorem evaluateInline_inlineCall {C F : Type} (limit ticks name : Nat)
             rw [evaluateTuple, evaluate, fixClock_evaluate, targetArgs]
             change evaluateTuple ([Bvl.mkTick (ticks + 1) body'], values ++ env, targetMiddle) = _
             rw [evaluateMkTick]
-            simp only [targetEnough, if_false]
+            simp only [targetEnough, ite_false]
             exact expanded.trans targetBody
         · simp [findCode, codeFound', arityMatch] at run
           exact False.elim (notTypeError run.1.symm)

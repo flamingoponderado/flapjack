@@ -106,7 +106,7 @@ theorem wordGenGcMoveListCode_loop {width : Nat} [NeZero width] {C F : Type} {co
         simp [Nat.mod_eq_of_lt hlt] at this
       have hpred : BitVec.ofNat width (n + 1) - 1 = BitVec.ofNat width n := by
         rw [BitVec.ofNat_add]; exact BitVec.add_sub_cancel _ _
-      rw [wordGenGcMoveList, if_neg hne, hpred] at hm
+      rw [wordGenGcMoveList, ite_eq_right hne, hpred] at hm
       simp only at hm
       generalize hmv : wordGenGcMove conf (s.memory a, i, pa, ib, pb, old, s.memory, s.mdomain) =
         R1 at hm
@@ -195,7 +195,7 @@ theorem wordGenGcMoveListCode_loop {width : Nat} [NeZero width] {C F : Type} {co
       have hmin : min (s.clock + (ck + ck' + 1)) (t.clock + (ck' + 1)) = t.clock + (ck' + 1) := by
         omega
       have hck : t.clock + (ck' + 1) ≠ 0 := by omega
-      simp only [fixClock, contLoop, hmin, if_true, hck, if_false, decClock,
+      simp only [fixClock, contLoop, hmin, ite_true, hck, ite_false, decClock,
         ← wordGenGcMoveListCode_eq]
       refine (congrArg (fun st => evaluate (wordGenGcMoveListCode conf, st)) ?_).trans
         (hr.trans ?_)

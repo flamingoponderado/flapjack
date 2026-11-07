@@ -77,7 +77,7 @@ theorem parallelLookup {β : Type} (moves : List (Nat × Nat))
     by_cases same : key=dst
     · subst key
       simp [updateEnv,keyLookup,holAlookup]
-    · simp only [updateEnv,Option.some.injEq,if_neg same]
+    · simp only [updateEnv,Option.some.injEq,ite_eq_right same]
       rw [ih parts.2]
       simp [keyLookup,holAlookup,Ne.symm same]
 

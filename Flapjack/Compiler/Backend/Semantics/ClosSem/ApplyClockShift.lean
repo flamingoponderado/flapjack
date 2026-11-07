@@ -172,11 +172,11 @@ theorem doInstall_error_addClock {C F : Type} (values : List Value) (state next 
                         (Flapjack.holShiftSeq 1 state.compileOracle 0).1 = nextConfig ∧ expressions ≠ []
                     · by_cases zero : state.clock = 0
                       · simp [doInstall, bytesRun, wordsRun, oracleRun, codeValid.2, compileRun, outputValid, zero] at run
-                        rw [if_pos codeValid.1] at run
+                        rw [ite_eq_left codeValid.1] at run
                         cases run
                         exact (notTimeout rfl).elim
                       · simp [doInstall, bytesRun, wordsRun, oracleRun, codeValid.2, compileRun, outputValid, zero] at run
-                        rw [if_pos codeValid.1] at run
+                        rw [ite_eq_left codeValid.1] at run
                         cases run
                     · simp [doInstall, bytesRun, wordsRun, oracleRun, codeValid.2, compileRun, outputValid] at run
                       rcases run with ⟨rfl, rfl⟩

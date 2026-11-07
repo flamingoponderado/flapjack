@@ -157,7 +157,7 @@ theorem evaluateRemoveDeadLoopHelper {width : Nat} [NeZero width] {C F : Type} :
     dsimp only at hev
     have herr' : res' ≠ some .error := by
       rintro rfl
-      simp only [wordSemContLoop, Bool.false_eq_true, if_false, wordSemExitLoop,
+      simp only [wordSemContLoop, Bool.false_eq_true, ite_false, wordSemExitLoop,
         Prod.mk.injEq] at hev
       exact herr hev.1.symm
     obtain ⟨t'', tstore'', hbT, hpost⟩ :=
@@ -193,13 +193,13 @@ theorem evaluateRemoveDeadLoopHelper {width : Nat} [NeZero width] {C F : Type} :
       obtain ⟨hl1, hs1⟩ := hpost
       have hst : s1.store = tstore'' := (liveStoreRelNil _ _).mp hs1
       subst hst
-      simp only [wordSemContLoop, if_true] at hev ⊢
+      simp only [wordSemContLoop, ite_true] at hev ⊢
       by_cases hz : s1.clock = 0
-      · simp only [hz, if_true, Prod.mk.injEq] at hev ⊢
+      · simp only [hz, ite_true, Prod.mk.injEq] at hev ⊢
         obtain ⟨rfl, rfl⟩ := hev
         exact ⟨(flushState true s1).locals, (flushState true s1).store,
           ⟨rfl, by simp [flushState, hz]⟩, rfl, rfl⟩
-      · simp only [hz, if_false] at hev ⊢
+      · simp only [hz, ite_false] at hev ⊢
         exact recur hl1 hz hev
     | some r =>
       cases r with
@@ -210,17 +210,17 @@ theorem evaluateRemoveDeadLoopHelper {width : Nat} [NeZero width] {C F : Type} :
         cases k with
         | zero =>
           simp only [sptOel] at hl1
-          simp only [wordSemContLoop, decide_true, if_true] at hev ⊢
+          simp only [wordSemContLoop, decide_true, ite_true] at hev ⊢
           by_cases hz : s1.clock = 0
-          · simp only [hz, if_true, Prod.mk.injEq] at hev ⊢
+          · simp only [hz, ite_true, Prod.mk.injEq] at hev ⊢
             obtain ⟨rfl, rfl⟩ := hev
             exact ⟨(flushState true s1).locals, (flushState true s1).store,
               ⟨rfl, by simp [flushState, hz]⟩, rfl, rfl⟩
-          · simp only [hz, if_false] at hev ⊢
+          · simp only [hz, ite_false] at hev ⊢
             exact recur hl1 hz hev
         | succ k =>
           simp only [wordSemContLoop, Nat.add_one_ne_zero, decide_false, Bool.false_eq_true,
-            if_false, wordSemExitLoop, Nat.add_sub_cancel, Prod.mk.injEq] at hev ⊢
+            ite_false, wordSemExitLoop, Nat.add_sub_cancel, Prod.mk.injEq] at hev ⊢
           obtain ⟨rfl, rfl⟩ := hev
           refine ⟨t'', s1.store, ⟨rfl, rfl⟩, rfl, ?_⟩
           simpa [sptOel] using hl1
@@ -230,7 +230,7 @@ theorem evaluateRemoveDeadLoopHelper {width : Nat} [NeZero width] {C F : Type} :
         cases k with
         | zero =>
           simp only [sptOel] at hl1
-          simp only [wordSemContLoop, Bool.false_eq_true, if_false] at hev ⊢
+          simp only [wordSemContLoop, Bool.false_eq_true, ite_false] at hev ⊢
           cases hexit : cutState (exitNames, .ln) s1 with
           | none =>
             rw [hexit] at hev
@@ -251,7 +251,7 @@ theorem evaluateRemoveDeadLoopHelper {width : Nat} [NeZero width] {C F : Type} :
             rw [hcutE]
             exact ⟨s2.locals, s2.store, rfl, strongLocalsRelIdRefl _ _, liveStoreRelRefl _ _⟩
         | succ k =>
-          simp only [wordSemContLoop, Bool.false_eq_true, if_false, wordSemExitLoop,
+          simp only [wordSemContLoop, Bool.false_eq_true, ite_false, wordSemExitLoop,
             Nat.add_sub_cancel, Prod.mk.injEq] at hev ⊢
           obtain ⟨rfl, rfl⟩ := hev
           refine ⟨t'', s1.store, ⟨rfl, rfl⟩, rfl, ?_⟩
@@ -259,7 +259,7 @@ theorem evaluateRemoveDeadLoopHelper {width : Nat} [NeZero width] {C F : Type} :
       | result a b | exception a b | timeOut | notEnoughSpace | finalFfi e =>
         obtain ⟨hlo, hst⟩ := hpost
         subst hlo hst
-        simp only [wordSemContLoop, Bool.false_eq_true, if_false, wordSemExitLoop,
+        simp only [wordSemContLoop, Bool.false_eq_true, ite_false, wordSemExitLoop,
           Prod.mk.injEq] at hev ⊢
         obtain ⟨rfl, rfl⟩ := hev
         exact ⟨s1.locals, s1.store, ⟨rfl, rfl⟩, rfl, rfl⟩

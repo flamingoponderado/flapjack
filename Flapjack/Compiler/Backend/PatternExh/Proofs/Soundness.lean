@@ -400,7 +400,7 @@ theorem mem_ctorKeep {α : Type} (left right : List α) (constructor : α) :
   | nil => simp [ctorKeepHOL]
   | cons first rest ih =>
     by_cases member : first ∈ right
-    · simp only [ctorKeepHOL, if_pos member, List.mem_cons, ih]
+    · simp only [ctorKeepHOL, ite_eq_left member, List.mem_cons, ih]
       constructor
       · intro h
         rcases h with equal | both
@@ -410,7 +410,7 @@ theorem mem_ctorKeep {α : Type} (left right : List α) (constructor : α) :
         rcases h with equal | inRest
         · exact Or.inl equal
         · exact Or.inr ⟨inRest, inRight⟩
-    · simp only [ctorKeepHOL, if_neg member, List.mem_cons, ih]
+    · simp only [ctorKeepHOL, ite_eq_right member, List.mem_cons, ih]
       constructor
       · intro ⟨inRest, inRight⟩
         exact ⟨Or.inr inRest, inRight⟩

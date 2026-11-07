@@ -129,9 +129,9 @@ theorem returnPlacements {width : Nat} [NeZero width] {C F : Type}
   have index : 2 * (i + 1) / 2 = i + 1 := by omega
   rw [index] at placement
   by_cases physical : i + 1 < k
-  · rw [if_pos physical] at placement ⊢
+  · rw [ite_eq_left physical] at placement ⊢
     exact placement.2
-  · rw [if_neg physical] at placement ⊢
+  · rw [ite_eq_right physical] at placement ⊢
     obtain ⟨_, slot, _⟩ := placement
     rw [Nat.add_zero, List.getElem?_take, List.getElem?_drop] at slot
     split at slot
@@ -228,7 +228,7 @@ theorem compCorrectReturn {width : Nat} [NeZero width] {C F : Type}
           rw [CallHelpers.evaluateSeqStackFree free (.ret output) loaded
             ⟨useStack, by omega⟩]
           rw [StackSemEvaluate.evaluate_seq, StackSemEvaluate.evaluate_stackFree,
-            if_neg (by simp [useStack]), if_neg (by omega)]
+            ite_eq_right (by simp [useStack]), ite_eq_right (by omega)]
           simp only [StackSemControl.fixClock, Nat.min_self]
           rw [StackSemEvaluate.evaluate_ret]
           simp only [StackSemStateOps.getVar] at outputValue ⊢

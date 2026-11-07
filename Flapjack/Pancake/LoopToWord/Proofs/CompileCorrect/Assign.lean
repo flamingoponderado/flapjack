@@ -125,7 +125,7 @@ theorem compileCorrect_LocValue {width : Nat} [NeZero width] {C F : Type}
     refine ⟨WordSemStateFiniteExact.setVar (LoopToWord.findVarHOL ctxt r) (.loc l1 0) t, none,
       ?_, ?_, ?_⟩
     · simp only [LoopToWord.compHOL]
-      rw [WordSemStateFiniteExact.evaluate, if_pos hcodeMem]
+      rw [WordSemStateFiniteExact.evaluate, ite_eq_left hcodeMem]
     · simpa [WordSemStateFiniteExact.setVar, LoopSemStateFiniteExact.setVar] using hffi
     · refine ⟨⟨len, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩, rfl, ?_, ?_, rfl, rfl⟩
       all_goals first
@@ -185,8 +185,8 @@ theorem compileCorrect_SetGlobal {width : Nat} [NeZero width] {C F : Type}
         by_cases hn : n = dst
         · subst hn; simp_all
         · have hne : dst ≠ n := Ne.symm hn
-          simp only [beq_iff_eq, hne, if_false] at hv
-          rw [if_neg (by simp [hn])]
+          simp only [beq_iff_eq, hne, ite_false] at hv
+          rw [ite_eq_right (by simp [hn])]
           exact hglob n v hv
   · simp only [Prod.mk.injEq] at hEval
     exact absurd hEval.1.symm hNE

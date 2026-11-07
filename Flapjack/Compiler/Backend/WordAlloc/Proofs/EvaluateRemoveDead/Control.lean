@@ -121,8 +121,8 @@ theorem evaluateRemoveDead_MustTerminate {width : Nat} [NeZero width] {C F : Typ
   obtain ⟨rfl, rfl, rfl⟩ := hrd
   rw [hmt] at hev
   by_cases hz : st.termdep = 0
-  · simp only [hz, if_true, Prod.mk.injEq] at hev; exact absurd hev.1.symm herr
-  · simp only [hz, if_false] at hev
+  · simp only [hz, ite_true, Prod.mk.injEq] at hev; exact absurd hev.1.symm herr
+  · simp only [hz, ite_false] at hev
     generalize hst' :
       ({ st with clock := wordSemMustTerminateLimit width, termdep := st.termdep - 1 } :
         WordSemStateFiniteExact width C F) = st' at hev
@@ -145,7 +145,7 @@ theorem evaluateRemoveDead_MustTerminate {width : Nat} [NeZero width] {C F : Typ
     refine ⟨t', ts', ?_, (removeDeadPost_clock _ _ _ _ _ _ _ _ _).mpr hpost⟩
     rw [hmt]
     have hz' : ¬ ({ st with locals := t, store := tstore } : WordSemStateFiniteExact width C F).termdep = 0 := hz
-    simp only [hz', if_false]
+    simp only [hz', ite_false]
     have hT' : evaluate p'
         ({ ({ st with locals := t, store := tstore } : WordSemStateFiniteExact width C F) with
           clock := wordSemMustTerminateLimit width, termdep := st.termdep - 1 } :

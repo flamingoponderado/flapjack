@@ -37,19 +37,19 @@ theorem findFfiNames_append {width : Nat} [NeZero width] (l1 l2 : List (Section 
     · have : HolFfiName.extCall s ∈ findFfiNames l2 ++
           (findFfiNames (⟨k, xs⟩ :: rest)).filter
             (fun n => !decide (n ∈ findFfiNames l2)) := List.mem_append_left _ h2
-      rw [if_pos this]
+      rw [ite_eq_left this]
       split <;> simp [List.filter_append, h2]
     · by_cases h1 : HolFfiName.extCall s ∈ findFfiNames (⟨k, xs⟩ :: rest)
       · have : HolFfiName.extCall s ∈ findFfiNames l2 ++
             (findFfiNames (⟨k, xs⟩ :: rest)).filter
               (fun n => !decide (n ∈ findFfiNames l2)) :=
           List.mem_append_right _ (List.mem_filter.2 ⟨h1, by simp [h2]⟩)
-        rw [if_pos this, if_pos h1]
+        rw [ite_eq_left this, ite_eq_left h1]
       · have : HolFfiName.extCall s ∉ findFfiNames l2 ++
             (findFfiNames (⟨k, xs⟩ :: rest)).filter
               (fun n => !decide (n ∈ findFfiNames l2)) := by
           simp [h1, h2]
-        rw [if_neg this, if_neg h1]
+        rw [ite_eq_right this, ite_eq_right h1]
         simp [List.filter_append, h2]
   | case4 k x xs rest hx ih =>
     have hstep : findFfiNames (⟨k, x :: xs⟩ :: (rest ++ l2)) =

@@ -253,23 +253,23 @@ theorem evaluate_letrec_addClock_ioEvents_step {C F : Type} (names : List Flapja
     | none =>
       rw [evaluate.eq_def, evaluate.eq_def]
       dsimp only
-      rw [if_pos good, if_pos good]
+      rw [ite_eq_left good, ite_eq_left good]
       exact bodyIH _
     | some selected =>
       cases captured : lookupVars selected env with
       | none =>
         rw [evaluate.eq_def, evaluate.eq_def]
         dsimp only
-        rw [if_pos good, if_pos good, captured]
+        rw [ite_eq_left good, ite_eq_left good, captured]
         simp
       | some values =>
         rw [evaluate.eq_def, evaluate.eq_def]
         dsimp only
-        rw [if_pos good, if_pos good, captured]
+        rw [ite_eq_left good, ite_eq_left good, captured]
         exact bodyIH _
   · rw [evaluate.eq_def, evaluate.eq_def]
     dsimp only
-    rw [if_neg good, if_neg good]
+    rw [ite_eq_right good, ite_eq_right good]
     simp
 
 end Flapjack.Compiler.Backend.ClosSem

@@ -66,16 +66,16 @@ theorem word_gc_fun_thm_generational {width : Nat} [NeZero width] {conf : Config
   intro hk
   simp only [wordGcFun, hk]
   by_cases ha : wordGcFunAssum conf s
-  · simp only [ha, not_true_eq_false, if_false]
+  · simp only [ha, not_true_eq_false, ite_false]
     by_cases hp : wordGenGcCanDoPartial genSizes s
-    · simp only [hp, if_true, wordGenGcPartialFull, wordGenGcPartial]
+    · simp only [hp, ite_true, wordGenGcPartialFull, wordGenGcPartial]
       have hc : wordSemTheWord (holFapply s .currHeap) +
           (wordSemTheWord (holFapply s .endOfHeap) -
             wordSemTheWord (holFapply s .currHeap)) =
           wordSemTheWord (holFapply s .endOfHeap) := by
         rw [BitVec.add_comm, BitVec.sub_add_cancel]
       simp [hc, Bool.and_assoc]
-    · simp only [hp, if_false, wordGenGc, wordGenGcMoveRoots_cons]
+    · simp only [hp, ite_false, wordGenGc, wordGenGcMoveRoots_cons]
       rcases wordGenGcMove conf (holFapply s .globals, 0,
         wordSemTheWord (holFapply s .otherHeap),
         wordSemTheWord (holFapply s .heapLength) >>> wordShiftAmount width,
@@ -190,7 +190,7 @@ theorem gc_noAssum {width : Nat} [NeZero width] {C F : Type} {conf : Config}
   simp only [StackSemAllocation.gc]
   split
   · rfl
-  · simp only [hgc, word_gc_fun_thm_generational hk, ha, not_false_eq_true, if_true]
+  · simp only [hgc, word_gc_fun_thm_generational hk, ha, not_false_eq_true, ite_true]
     split <;> rfl
 
 open Classical in
@@ -203,7 +203,7 @@ theorem gc_full {width : Nat} [NeZero width] {C F : Type} {conf : Config}
     (ha : wordGcFunAssum conf s.store)
     (hp : ¬wordGenGcCanDoPartial genSizes s.store) :
     StackSemAllocation.gc s = gcExpanded conf genSizes s := by
-  simp only [StackSemAllocation.gc, gcExpanded, hlt, if_false, hgc,
+  simp only [StackSemAllocation.gc, gcExpanded, hlt, ite_false, hgc,
     word_gc_fun_thm_generational hk, ha, not_true_eq_false, hp, wordGenGcMoveRootsBitmaps]
   rcases wordGenGcMove conf (holFapply s.store .globals, 0,
     wordSemTheWord (holFapply s.store .otherHeap),
@@ -239,8 +239,8 @@ theorem gc_partial {width : Nat} [NeZero width] {C F : Type} {conf : Config}
     (ha : wordGcFunAssum conf s.store)
     (hp : wordGenGcCanDoPartial genSizes s.store) :
     StackSemAllocation.gc s = gcExpanded conf genSizes s := by
-  simp only [StackSemAllocation.gc, gcExpanded, hlt, if_false, hgc,
-    word_gc_fun_thm_generational hk, ha, not_true_eq_false, hp, if_true,
+  simp only [StackSemAllocation.gc, gcExpanded, hlt, ite_false, hgc,
+    word_gc_fun_thm_generational hk, ha, not_true_eq_false, hp, ite_true,
     wordGenGcPartialMoveRoots_cons, wordGenGcPartialMoveRootsBitmaps]
   rcases wordGenGcPartialMove conf
     (holFapply s.store .globals,
@@ -368,12 +368,12 @@ theorem gc_thm_generational {width : Nat} [NeZero width] {C F : Type} {conf : Co
   rintro ⟨hgc, hk⟩
   change StackSemAllocation.gc s = gcExpanded conf genSizes s
   by_cases hlt : s.stack.length < s.stackSpace
-  · simp only [StackSemAllocation.gc, gcExpanded, hlt, if_true]
+  · simp only [StackSemAllocation.gc, gcExpanded, hlt, ite_true]
   by_cases ha : wordGcFunAssum conf s.store
   · by_cases hp : wordGenGcCanDoPartial genSizes s.store
     · exact gc_partial hgc hk hlt ha hp
     · exact gc_full hgc hk hlt ha hp
   · rw [gc_noAssum hgc hk ha]
-    simp only [gcExpanded, hlt, if_false, ha, not_false_eq_true, if_true]
+    simp only [gcExpanded, hlt, ite_false, ha, not_false_eq_true, ite_true]
 
 end Flapjack.Compiler.Backend.StackAlloc.Generational

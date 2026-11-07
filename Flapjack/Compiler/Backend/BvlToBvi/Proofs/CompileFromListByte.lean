@@ -87,7 +87,7 @@ theorem evaluate_fromListByteBody {C F : Type} (value : Value) (bytes : List (Bi
   have clocks : BviSem.decClock 1 allocatedMiddle = BviProps.incClock writerClock allocated := by
     simp [allocatedMiddle, BviProps.incClock, BviSem.decClock, extra]
   simp only [BvlSem.findCode, code, fromListByteCode, List.length_cons, List.length_nil, ite_true,
-    Nat.zero_add, Nat.lt_one_iff, nonzero, if_false, BviSem.fixClock_evaluate]
+    Nat.zero_add, Nat.lt_one_iff, nonzero, ite_false, BviSem.fixClock_evaluate]
   have finalRun := writerResult
   simp [fromListByteCode] at finalRun
   simp [clocks, finalRun, ptr]

@@ -89,12 +89,12 @@ theorem wordGenGcPartialMoveBitmapsCode_run {width : Nat} [NeZero width] {C F : 
   simp only at hm
   have hc2 : c2 = true := by
     by_cases hmsb : y.msb = true
-    · simp only [hmsb, not_true_eq_false, if_false] at hm
+    · simp only [hmsb, not_true_eq_false, ite_false] at hm
       split at hm
       · simp at hm
       · simp only [Option.some.injEq, Prod.mk.injEq, Bool.and_eq_true] at hm
         exact hm.2.2.2.2.2.1
-    · simp only [hmsb, Bool.false_eq_true, not_false_eq_true, if_true, Option.some.injEq,
+    · simp only [hmsb, Bool.false_eq_true, not_false_eq_true, ite_true, Option.some.injEq,
         Prod.mk.injEq] at hm
       exact hm.2.2.2.2.2
   subst hc2
@@ -153,7 +153,7 @@ theorem wordGenGcPartialMoveBitmapsCode_run {width : Nat} [NeZero width] {C F : 
     simpa [bne] using this
   have htc : t.clock = s.clock := rfl
   by_cases hmsb : y.msb = true
-  · simp only [hmsb, not_true_eq_false, if_false] at hm
+  · simp only [hmsb, not_true_eq_false, ite_false] at hm
     generalize hrec : wordGenGcPartialMoveBitmaps conf (.word (w + 1), ws, s.bitmaps, i2, pa2,
       curr, m2, s.mdomain, gs, rs) = R3 at hm
     rcases R3 with _ | ⟨hd3, st3, i3, pa3, m3, c3⟩
@@ -205,7 +205,7 @@ theorem wordGenGcPartialMoveBitmapsCode_run {width : Nat} [NeZero width] {C F : 
     have hmin : min (s.clock + (ckB + (ck' + 1))) (t.clock + (ck' + 1)) = t.clock + (ck' + 1) := by
       omega
     have hck : t.clock + (ck' + 1) ≠ 0 := by omega
-    simp only [fixClock, contLoop, hmin, if_true, hck, if_false, decClock,
+    simp only [fixClock, contLoop, hmin, ite_true, hck, ite_false, decClock,
       ← wordGenGcPartialMoveBitmapsCode_eq]
     refine (congrArg (fun st => evaluate (wordGenGcPartialMoveBitmapsCode conf, st)) ?_).trans
       (hr.trans ?_)
@@ -238,7 +238,7 @@ theorem wordGenGcPartialMoveBitmapsCode_run {width : Nat} [NeZero width] {C F : 
         · subst k9; simp
         simp [k0, k1, k2, k3, k4, k5, k6, k7, k8, k9]
       · simp
-  · simp only [hmsb, Bool.false_eq_true, not_false_eq_true, if_true, Option.some.injEq,
+  · simp only [hmsb, Bool.false_eq_true, not_false_eq_true, ite_true, Option.some.injEq,
       Prod.mk.injEq] at hm
     obtain ⟨rfl, rfl, rfl, rfl, rfl, -⟩ := hm
     have hz0 : y >>> (width - 1) = 0 := by
@@ -251,7 +251,7 @@ theorem wordGenGcPartialMoveBitmapsCode_run {width : Nat} [NeZero width] {C F : 
     rw [hbody 1]
     have hmin : min (s.clock + (ckB + 1)) (t.clock + 1) = t.clock + 1 := by omega
     have hck : t.clock + 1 ≠ 0 := by omega
-    simp only [fixClock, contLoop, hmin, if_true, hck, if_false, decClock]
+    simp only [fixClock, contLoop, hmin, ite_true, hck, ite_false, decClock]
     have h00 : (AndOp.and (0#width) (0#width) != (0#width)) = false := by
       change (0#width &&& 0#width != 0#width) = false
       simp

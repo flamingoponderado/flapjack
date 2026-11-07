@@ -262,7 +262,7 @@ theorem evaluate_letrec_noInstall_step {C F : Type} (names : List Flapjack.AstHO
     | none =>
       rw [ClosSem.evaluate.eq_def] at run
       dsimp only at run
-      rw [if_pos good] at run
+      rw [ite_eq_left good] at run
       apply bodyIH _ ?_ run
       apply (valuesNoInstall_append _ _).2
       exact ⟨recursiveClosure_bundle_noInstall location env functions envOk functionsOk, envOk⟩
@@ -271,14 +271,14 @@ theorem evaluate_letrec_noInstall_step {C F : Type} (names : List Flapjack.AstHO
       | none =>
         rw [ClosSem.evaluate.eq_def] at run
         dsimp only at run
-        rw [if_pos good, captured] at run
+        rw [ite_eq_left good, captured] at run
         simp at run
         rcases run with ⟨rfl, rfl⟩
         exact ⟨trivial, stateOk⟩
       | some values =>
         rw [ClosSem.evaluate.eq_def] at run
         dsimp only at run
-        rw [if_pos good, captured] at run
+        rw [ite_eq_left good, captured] at run
         dsimp only at run
         have capturedOk := lookupVars_noInstall selected env values envOk captured
         apply bodyIH _ ?_ run
@@ -286,7 +286,7 @@ theorem evaluate_letrec_noInstall_step {C F : Type} (names : List Flapjack.AstHO
         exact ⟨recursiveClosure_bundle_noInstall location values functions capturedOk functionsOk, envOk⟩
   · rw [ClosSem.evaluate.eq_def] at run
     dsimp only at run
-    rw [if_neg good] at run
+    rw [ite_eq_right good] at run
     simp at run
     rcases run with ⟨rfl, rfl⟩
     exact ⟨trivial, stateOk⟩

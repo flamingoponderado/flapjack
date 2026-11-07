@@ -117,11 +117,11 @@ theorem evaluate_call_ret_eq (s : WordSemStateFiniteExact width C F)
     ).2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2
   rw [ht, hgv]
   dsimp only
-  rw [if_neg hbad, hfc]
+  rw [ite_eq_right hbad, hfc]
   dsimp only
-  rw [if_neg hg, hce]
+  rw [ite_eq_right hg, hce]
   dsimp only
-  rw [if_neg hz]
+  rw [ite_eq_right hz]
   rfl
 
 /-- The source oracle of a returning call: `perm 0` orders the pushed frame,
@@ -296,11 +296,11 @@ theorem evaluate_call_ret_timeout (s : WordSemStateFiniteExact width C F)
     ).2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2
   rw [ht, hgv]
   dsimp only
-  rw [if_neg hbad, hfc]
+  rw [ite_eq_right hbad, hfc]
   dsimp only
-  rw [if_neg hg, hce]
+  rw [ite_eq_right hg, hce]
   dsimp only
-  rw [if_pos hz]
+  rw [ite_eq_left hz]
 
 /-- The coloured exception handler of a call. -/
 def colourHandler (f : Nat → Nat)
@@ -347,7 +347,7 @@ theorem callRetTail_result_err (x : WordLocW width) (ys : List (WordLocW width))
     callRetTail n rh l1 l2 envs handler (some (.result x ys), t) = (some .error, t) := by
   classical
   show (if x ≠ .loc l1 l2 ∨ ys.length ≠ n.length then _ else _) = _
-  rw [if_pos hg]
+  rw [ite_eq_left hg]
 
 /-- Result with no frame to pop is an error (Flapjack infrastructure). -/
 theorem callRetTail_result_popNone (x : WordLocW width) (ys : List (WordLocW width))
@@ -356,7 +356,7 @@ theorem callRetTail_result_popNone (x : WordLocW width) (ys : List (WordLocW wid
     callRetTail n rh l1 l2 envs handler (some (.result x ys), t) = (some .error, t) := by
   classical
   show (if x ≠ .loc l1 l2 ∨ ys.length ≠ n.length then _ else _) = _
-  rw [if_neg hg]
+  rw [ite_eq_right hg]
   show (match popEnv t with | none => _ | some s1 => _) = _
   rw [hp]
 
@@ -370,7 +370,7 @@ theorem callRetTail_result_pop (x : WordLocW width) (ys : List (WordLocW width))
       else (some .error, s1) := by
   classical
   show (if x ≠ .loc l1 l2 ∨ ys.length ≠ n.length then _ else _) = _
-  rw [if_neg hg]
+  rw [ite_eq_right hg]
   show (match popEnv t with | none => _ | some s1 => _) = _
   rw [hp]
 
@@ -472,7 +472,7 @@ theorem evaluateApplyColour_Call {width : Nat} [NeZero width] {C F : Type}
     intro he
     rw [ht, hgv] at he
     dsimp only at he
-    rw [if_pos hbad] at he
+    rw [ite_eq_left hbad] at he
     exact absurd rfl he
   have hcode : cst.code = st.code := wsrCode hs
   have hss : cst.stackSize = st.stackSize := by unfold wordStateEqRel at hs; exact hs.2.2.2.2.2.2.1
@@ -485,7 +485,7 @@ theorem evaluateApplyColour_Call {width : Nat} [NeZero width] {C F : Type}
       intro he
       rw [ht, hgv] at he
       dsimp only at he
-      rw [if_neg hbad] at he
+      rw [ite_eq_right hbad] at he
       split at he <;> exact absurd rfl he
     | none =>
     cases hfc : wordSemFindCode dest (wordSemAddRetLoc (none : Option (List Nat × WordLangCutsetsHOL × WordLangProgHOL (BitVec width) × Nat × Nat)) xv) st.code st.stackSize with
@@ -494,7 +494,7 @@ theorem evaluateApplyColour_Call {width : Nat} [NeZero width] {C F : Type}
       intro he
       rw [ht, hgv] at he
       dsimp only at he
-      rw [if_neg hbad, hfc] at he
+      rw [ite_eq_right hbad, hfc] at he
       exact absurd rfl he
     | some fc =>
     obtain ⟨args1, prog, ss⟩ := fc
@@ -524,11 +524,11 @@ theorem evaluateApplyColour_Call {width : Nat} [NeZero width] {C F : Type}
       intro r hr0 hb
       rw [ht, getVars_withPermute, hgv] at hr0
       dsimp only at hr0
-      rw [if_neg hbad, hfc] at hr0
+      rw [ite_eq_right hbad, hfc] at hr0
       dsimp only at hr0
       by_cases hz : st.clock = 0
-      · rw [if_pos hz] at hr0; subst hr0; simp [wordSemBadFunReturn] at hb
-      · rw [if_neg hz] at hr0
+      · rw [ite_eq_left hz] at hr0; subst hr0; simp [wordSemBadFunReturn] at hb
+      · rw [ite_eq_right hz] at hr0
         split at hr0
         · exact hr0.symm
         · rename_i hnb; rw [← hr0] at hb; exact absurd hb hnb
@@ -578,7 +578,7 @@ theorem evaluateApplyColour_Call {width : Nat} [NeZero width] {C F : Type}
     intro he
     rw [ht, hgv] at he
     dsimp only at he
-    rw [if_neg hbad, hfc] at he
+    rw [ite_eq_right hbad, hfc] at he
     exact absurd rfl he
   | some fc =>
   obtain ⟨args1, prog, ss⟩ := fc
@@ -587,9 +587,9 @@ theorem evaluateApplyColour_Call {width : Nat} [NeZero width] {C F : Type}
     intro he
     rw [ht, hgv] at he
     dsimp only at he
-    rw [if_neg hbad, hfc] at he
+    rw [ite_eq_right hbad, hfc] at he
     dsimp only at he
-    rw [if_pos hg] at he
+    rw [ite_eq_left hg] at he
     exact absurd rfl he
   have hgC : ¬ (sptDomainEmpty (applyNummapsKey f (n1, n2)).1 ∨ ¬ (n.map f).Nodup) := by
     intro h
@@ -613,9 +613,9 @@ theorem evaluateApplyColour_Call {width : Nat} [NeZero width] {C F : Type}
     intro he
     rw [ht, hgv] at he
     dsimp only at he
-    rw [if_neg hbad, hfc] at he
+    rw [ite_eq_right hbad, hfc] at he
     dsimp only at he
-    rw [if_neg hg] at he
+    rw [ite_eq_right hg] at he
     rw [hce] at he
     exact absurd rfl he
   | some xs =>
@@ -793,7 +793,7 @@ theorem evaluateApplyColour_Call {width : Nat} [NeZero width] {C F : Type}
           refine ⟨st1.permute, fun hne => absurd ?_ hne⟩
           rw [callRetTail_result_pop n rh l1 l2 (x1, x2) handler x ys
             _ { s1 with permute := st1.permute } hg2
-            (by rw [popEnv_withPermute, hpop]; rfl), if_neg hd]
+            (by rw [popEnv_withPermute, hpop]; rfl), ite_eq_right hd]
         have hdC : sptDomainEqUnion cy.locals y1 y2 := by
           intro k
           have := congrFun hdomC k
@@ -855,12 +855,12 @@ theorem evaluateApplyColour_Call {width : Nat} [NeZero width] {C F : Type}
             evaluate rh { WordSemStateFiniteExact.setVars n ys s1 with permute := pq } := by
           rw [callRetTail_result_pop _ _ _ _ _ _ _ _ _ { s1 with permute := pq } hg2
             (by rw [popEnv_withPermute, hpop]; rfl)]
-          exact if_pos hd
+          exact ite_eq_left hd
         have hcol : callRetTail (n.map f) (applyColour f rh) l1 l2 (y1, y2)
             (colourHandler f handler) (evaluate prog Cc) =
             evaluate (applyColour f rh) (WordSemStateFiniteExact.setVars (n.map f) ys cy) := by
           rw [hc, callRetTail_result_pop _ _ _ _ _ _ _ _ _ cy hg2' hpopC]
-          exact if_pos hdC
+          exact ite_eq_left hdC
         rw [hsrc] at hne ⊢
         rw [hcol]
         rcases hE1 : evaluate rh { WordSemStateFiniteExact.setVars n ys s1 with permute := pq } with
@@ -871,7 +871,7 @@ theorem evaluateApplyColour_Call {width : Nat} [NeZero width] {C F : Type}
         rw [hE1] at hpq hne
         rw [hE2] at hpq
         dsimp only at hpq hne ⊢
-        rw [if_neg hne] at hpq
+        rw [ite_eq_right hne] at hpq
         exact hpq
     | exception x y =>
         obtain ⟨hlt, e0, e, nn, ls, m, lss, hl, hm, ⟨hfe, hloc⟩, hks, hhn, hxS⟩ := hSS
@@ -947,11 +947,11 @@ theorem evaluateApplyColour_Call {width : Nat} [NeZero width] {C F : Type}
             (sValAndKeyEq _ _ ⟨hvstt, sKeyEqTrans _ _ _ ⟨hks, by rw [← hstk]; exact hkstt⟩⟩).symm
           by_cases hxg : x ≠ .loc l1' l2'
           · refine ⟨st1.permute, fun hne => absurd ?_ hne⟩
-            rw [callRetTail_exc_some, if_pos hxg]
+            rw [callRetTail_exc_some, ite_eq_left hxg]
           by_cases hd : sptDomainEqUnion st1.locals x1 x2
           case neg =>
             refine ⟨st1.permute, fun hne => absurd ?_ hne⟩
-            rw [callRetTail_exc_some, if_neg hxg, if_neg hd]
+            rw [callRetTail_exc_some, ite_eq_right hxg, ite_eq_right hd]
           have hkl : lss'.map Prod.fst = (lss.map Prod.fst).map f := by
             rw [← hf', ← hmapK, hfe]
           have hdomL : ∀ a, a ∈ lss.map Prod.fst → sptDomain n2 a := by
@@ -1005,8 +1005,8 @@ theorem evaluateApplyColour_Call {width : Nat} [NeZero width] {C F : Type}
           have hsrc : callRetTail n rh l1 l2 (x1, x2) (some (v, hp, l1', l2'))
               (some (.exception x y), { st1 with permute := pq }) =
               evaluate hp { WordSemStateFiniteExact.setVar v y st1 with permute := pq } := by
-            rw [callRetTail_exc_some, if_neg hxg]
-            exact if_pos hd
+            rw [callRetTail_exc_some, ite_eq_right hxg]
+            exact ite_eq_left hd
           have hcol : callRetTail (n.map f) (applyColour f rh) l1 l2 (y1, y2)
               (colourHandler f (some (v, hp, l1', l2'))) (evaluate prog Cc) =
               evaluate (applyColour f hp) (WordSemStateFiniteExact.setVar (f v) y
@@ -1014,8 +1014,8 @@ theorem evaluateApplyColour_Call {width : Nat} [NeZero width] {C F : Type}
             rw [hc]
             show callRetTail (n.map f) (applyColour f rh) l1 l2 (y1, y2)
               (some (f v, applyColour f hp, l1', l2')) _ = _
-            rw [callRetTail_exc_some, if_neg hxg]
-            exact if_pos hdC
+            rw [callRetTail_exc_some, ite_eq_right hxg]
+            exact ite_eq_left hdC
           rw [hsrc] at hne ⊢
           rw [hcol]
           rcases hE1 : evaluate hp
@@ -1027,7 +1027,7 @@ theorem evaluateApplyColour_Call {width : Nat} [NeZero width] {C F : Type}
           rw [hE1] at hpq hne
           rw [hE2] at hpq
           dsimp only at hpq hne ⊢
-          rw [if_neg hne] at hpq
+          rw [ite_eq_right hne] at hpq
           exact hpq
   obtain ⟨perm'', hQ⟩ := permuteSwapLemma4 prog S0 Q
     ⟨fun st' _ hne => absurd rfl hne, hmain⟩

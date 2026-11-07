@@ -49,9 +49,9 @@ theorem compCorrectStackLoad {width : Nat} [NeZero width] {C F : Type}
   rcases hypothesis with ⟨sourceRun, notError, relation, lower⟩
   change register < pointer at lower
   rw [StackSemEvaluate.evaluate_stackLoad] at sourceRun
-  simp only [relation.1, Bool.not_true, Bool.false_eq_true, if_false] at sourceRun
+  simp only [relation.1, Bool.not_true, Bool.false_eq_true, ite_false] at sourceRun
   by_cases bound : source.stackSpace + count < source.stack.length
-  · rw [dif_pos bound] at sourceRun
+  · rw [dite_eq_left bound] at sourceRun
     rcases Prod.mk.inj sourceRun with ⟨resultEq, stateEq⟩
     subst result
     subst postSource
@@ -101,7 +101,7 @@ theorem compCorrectStackLoad {width : Nat} [NeZero width] {C F : Type}
         rfl
     · simpa only [relation.1] using StateUpdates.stateRelSetVar jump bounds pointer register
         source.stack[source.stackSpace + count] source target ⟨relation, lower⟩
-  · rw [dif_neg bound] at sourceRun
+  · rw [dite_eq_right bound] at sourceRun
     exact (notError (Prod.mk.inj sourceRun).1.symm).elim
 /-- Flapjack primitive-store execution factoring. The full constructor derives
 the original register value, pointer lookup and memory-domain facts rather
@@ -141,11 +141,11 @@ theorem compCorrectStackStore {width : Nat} [NeZero width] {C F : Type}
   rcases hypothesis with ⟨sourceRun, notError, relation, lower⟩
   change register < pointer at lower
   rw [StackSemEvaluate.evaluate_stackStore] at sourceRun
-  simp only [relation.1, Bool.not_true, Bool.false_eq_true, if_false] at sourceRun
+  simp only [relation.1, Bool.not_true, Bool.false_eq_true, ite_false] at sourceRun
   by_cases outsideBounds : source.stack.length ≤ source.stackSpace + count
-  · rw [if_pos outsideBounds] at sourceRun
+  · rw [ite_eq_left outsideBounds] at sourceRun
     exact (notError (Prod.mk.inj sourceRun).1.symm).elim
-  · rw [if_neg outsideBounds] at sourceRun
+  · rw [ite_eq_right outsideBounds] at sourceRun
     cases sourceLookup : StackSemStateOps.getVar register source with
     | none =>
       rw [sourceLookup] at sourceRun

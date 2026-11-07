@@ -36,24 +36,24 @@ theorem parseRM_congr_upto (r r' : Nat → BitVec 8) (off : Nat) (rexB : Bool) (
   dsimp only at hp
   unfold parseRM
   by_cases h3 : (r off).toNat / 64 = 3
-  · rw [if_pos h3] at hp
-    rw [if_pos (by rw [← h0]; exact h3)]
+  · rw [ite_eq_left h3] at hp
+    rw [ite_eq_left (by rw [← h0]; exact h3)]
     rw [h0] at hp
     exact hp
   · by_cases hr4 : (r off).toNat % 8 = 4
     · have hlen2 : 2 ≤ p.len := by
         have hp' := hp
-        rw [if_neg h3, if_pos hr4] at hp'
+        rw [ite_eq_right h3, ite_eq_left hr4] at hp'
         split_ifs at hp' <;> cases hp' <;> simp
       have h1 : r (off + 1) = r' (off + 1) := hoff 1 (by omega)
-      rw [if_neg h3, if_pos hr4] at hp
-      rw [if_neg (by rw [← h0]; exact h3), if_pos (by rw [← h0]; exact hr4)]
+      rw [ite_eq_right h3, ite_eq_left hr4] at hp
+      rw [ite_eq_right (by rw [← h0]; exact h3), ite_eq_left (by rw [← h0]; exact hr4)]
       by_cases hi4 : (r (off + 1)).toNat / 8 % 8 = 4
-      · rw [if_neg (by simp [hi4])] at hp
-        rw [if_neg (by rw [← h1]; simp [hi4])]
+      · rw [ite_eq_right (by simp [hi4])] at hp
+        rw [ite_eq_right (by rw [← h1]; simp [hi4])]
         by_cases hA : (r off).toNat / 64 = 0 ∧ (r (off + 1)).toNat % 8 = 5
-        · rw [if_pos (by simp only [Bool.and_eq_true, decide_eq_true_eq]; omega)] at hp
-          rw [if_pos (by rw [← h0, ← h1]; simp only [Bool.and_eq_true, decide_eq_true_eq]; omega)]
+        · rw [ite_eq_left (by simp only [Bool.and_eq_true, decide_eq_true_eq]; omega)] at hp
+          rw [ite_eq_left (by rw [← h0, ← h1]; simp only [Bool.and_eq_true, decide_eq_true_eq]; omega)]
           have hlen : p.len = 6 := by
             have h := hp; simp only [Option.some.injEq] at h
             exact congrArg ParsedRM.len h.symm
@@ -61,18 +61,18 @@ theorem parseRM_congr_upto (r r' : Nat → BitVec 8) (off : Nat) (rexB : Bool) (
             imm32_congr r r' (off + 2) (fun i hi => h i (by omega))
           rw [h0, h1, himm] at hp
           exact hp
-        · rw [if_neg (by simp only [Bool.and_eq_true, decide_eq_true_eq]; omega)] at hp
-          rw [if_neg (by rw [← h0, ← h1]; simp only [Bool.and_eq_true, decide_eq_true_eq]; omega)]
+        · rw [ite_eq_right (by simp only [Bool.and_eq_true, decide_eq_true_eq]; omega)] at hp
+          rw [ite_eq_right (by rw [← h0, ← h1]; simp only [Bool.and_eq_true, decide_eq_true_eq]; omega)]
           by_cases hB : (r off).toNat / 64 = 0
-          · rw [if_pos hB] at hp
-            rw [if_pos (by rw [← h0]; exact hB)]
+          · rw [ite_eq_left hB] at hp
+            rw [ite_eq_left (by rw [← h0]; exact hB)]
             rw [h0, h1] at hp
             exact hp
-          · rw [if_neg hB] at hp
-            rw [if_neg (by rw [← h0]; exact hB)]
+          · rw [ite_eq_right hB] at hp
+            rw [ite_eq_right (by rw [← h0]; exact hB)]
             by_cases hC : (r off).toNat / 64 = 1
-            · rw [if_pos hC] at hp
-              rw [if_pos (by rw [← h0]; exact hC)]
+            · rw [ite_eq_left hC] at hp
+              rw [ite_eq_left (by rw [← h0]; exact hC)]
               have hlen : p.len = 3 := by
                 have h := hp; simp only [Option.some.injEq] at h
                 exact congrArg ParsedRM.len h.symm
@@ -80,8 +80,8 @@ theorem parseRM_congr_upto (r r' : Nat → BitVec 8) (off : Nat) (rexB : Bool) (
                 imm8_congr r r' (off + 2) (fun i hi => h i (by omega))
               rw [h0, h1, himm] at hp
               exact hp
-            · rw [if_neg hC] at hp
-              rw [if_neg (by rw [← h0]; exact hC)]
+            · rw [ite_eq_right hC] at hp
+              rw [ite_eq_right (by rw [← h0]; exact hC)]
               have hlen : p.len = 6 := by
                 have h := hp; simp only [Option.some.injEq] at h
                 exact congrArg ParsedRM.len h.symm
@@ -89,13 +89,13 @@ theorem parseRM_congr_upto (r r' : Nat → BitVec 8) (off : Nat) (rexB : Bool) (
                 imm32_congr r r' (off + 2) (fun i hi => h i (by omega))
               rw [h0, h1, himm] at hp
               exact hp
-      · rw [if_pos hi4] at hp
+      · rw [ite_eq_left hi4] at hp
         simp at hp
-    · rw [if_neg h3, if_neg hr4] at hp
-      rw [if_neg (by rw [← h0]; exact h3), if_neg (by rw [← h0]; exact hr4)]
+    · rw [ite_eq_right h3, ite_eq_right hr4] at hp
+      rw [ite_eq_right (by rw [← h0]; exact h3), ite_eq_right (by rw [← h0]; exact hr4)]
       by_cases hR : (r off).toNat / 64 = 0 ∧ (r off).toNat % 8 = 5
-      · rw [if_pos (by simp only [Bool.and_eq_true, decide_eq_true_eq]; omega)] at hp
-        rw [if_pos (by rw [← h0]; simp only [Bool.and_eq_true, decide_eq_true_eq]; omega)]
+      · rw [ite_eq_left (by simp only [Bool.and_eq_true, decide_eq_true_eq]; omega)] at hp
+        rw [ite_eq_left (by rw [← h0]; simp only [Bool.and_eq_true, decide_eq_true_eq]; omega)]
         have hlen : p.len = 5 := by
           have h := hp; simp only [Option.some.injEq] at h
           exact congrArg ParsedRM.len h.symm
@@ -103,18 +103,18 @@ theorem parseRM_congr_upto (r r' : Nat → BitVec 8) (off : Nat) (rexB : Bool) (
           imm32_congr r r' (off + 1) (fun i hi => h i (by omega))
         rw [h0, himm] at hp
         exact hp
-      · rw [if_neg (by simp only [Bool.and_eq_true, decide_eq_true_eq]; omega)] at hp
-        rw [if_neg (by rw [← h0]; simp only [Bool.and_eq_true, decide_eq_true_eq]; omega)]
+      · rw [ite_eq_right (by simp only [Bool.and_eq_true, decide_eq_true_eq]; omega)] at hp
+        rw [ite_eq_right (by rw [← h0]; simp only [Bool.and_eq_true, decide_eq_true_eq]; omega)]
         by_cases hB : (r off).toNat / 64 = 0
-        · rw [if_pos hB] at hp
-          rw [if_pos (by rw [← h0]; exact hB)]
+        · rw [ite_eq_left hB] at hp
+          rw [ite_eq_left (by rw [← h0]; exact hB)]
           rw [h0] at hp
           exact hp
-        · rw [if_neg hB] at hp
-          rw [if_neg (by rw [← h0]; exact hB)]
+        · rw [ite_eq_right hB] at hp
+          rw [ite_eq_right (by rw [← h0]; exact hB)]
           by_cases hC : (r off).toNat / 64 = 1
-          · rw [if_pos hC] at hp
-            rw [if_pos (by rw [← h0]; exact hC)]
+          · rw [ite_eq_left hC] at hp
+            rw [ite_eq_left (by rw [← h0]; exact hC)]
             have hlen : p.len = 2 := by
               have h := hp; simp only [Option.some.injEq] at h
               exact congrArg ParsedRM.len h.symm
@@ -122,8 +122,8 @@ theorem parseRM_congr_upto (r r' : Nat → BitVec 8) (off : Nat) (rexB : Bool) (
               imm8_congr r r' (off + 1) (fun i hi => h i (by omega))
             rw [h0, himm] at hp
             exact hp
-          · rw [if_neg hC] at hp
-            rw [if_neg (by rw [← h0]; exact hC)]
+          · rw [ite_eq_right hC] at hp
+            rw [ite_eq_right (by rw [← h0]; exact hC)]
             have hlen : p.len = 5 := by
               have h := hp; simp only [Option.some.injEq] at h
               exact congrArg ParsedRM.len h.symm
@@ -146,9 +146,9 @@ theorem decodeSSE_congr_upto (r r' : Nat → BitVec 8) (off : Nat) (mandatory : 
   unfold decodeSSE at hd
   dsimp only at hd
   by_cases hm66 : mandatory = 0x66
-  · rw [if_pos hm66] at hd
+  · rw [ite_eq_left hm66] at hd
     by_cases hop2f : (r off).toNat = 0x2F
-    · rw [if_pos hop2f] at hd
+    · rw [ite_eq_left hop2f] at hd
       cases hp : parseRM r (off + 1) rexB with
       | none => simp [hp] at hd
       | some p =>
@@ -160,14 +160,14 @@ theorem decodeSSE_congr_upto (r r' : Nat → BitVec 8) (off : Nat) (mandatory : 
         have hpm : parseRM r' (off + 1) rexB = some p :=
           parseRM_congr_upto r r' (off + 1) rexB p hp (fun j hj => h j (by omega))
         unfold decodeSSE
-        rw [if_pos hm66, if_pos hop', hpm]
+        rw [ite_eq_left hm66, ite_eq_left hop', hpm]
         dsimp only
         rw [← hi, hlen]
-    · rw [if_neg hop2f] at hd
+    · rw [ite_eq_right hop2f] at hd
       by_cases hop38 : (r off).toNat = 0x38
-      · rw [if_pos hop38] at hd
+      · rw [ite_eq_left hop38] at hd
         by_cases hb1 : (r (off + 1)).toNat = 0x29
-        · rw [if_pos hb1] at hd
+        · rw [ite_eq_left hb1] at hd
           cases hp : parseRM r (off + 2) rexB with
           | none => simp [hp] at hd
           | some p =>
@@ -181,24 +181,24 @@ theorem decodeSSE_congr_upto (r r' : Nat → BitVec 8) (off : Nat) (mandatory : 
             have hpm : parseRM r' (off + 2) rexB = some p :=
               parseRM_congr_upto r r' (off + 2) rexB p hp (fun j hj => h j (by omega))
             unfold decodeSSE
-            rw [if_pos hm66, if_neg (by rw [← h0]; exact hop2f), if_pos hop']
-            rw [if_pos hb1', hpm]
+            rw [ite_eq_left hm66, ite_eq_right (by rw [← h0]; exact hop2f), ite_eq_left hop']
+            rw [ite_eq_left hb1', hpm]
             dsimp only
             rw [← hi, hlen]
-        · rw [if_neg hb1] at hd
+        · rw [ite_eq_right hb1] at hd
           simp at hd
-      · rw [if_neg hop38] at hd
+      · rw [ite_eq_right hop38] at hd
         by_cases hop73 : (r off).toNat = 0x73
-        · rw [if_pos hop73] at hd
+        · rw [ite_eq_left hop73] at hd
           cases hp : parseRM r (off + 1) rexB with
           | none => simp [hp] at hd
           | some p =>
             rw [hp] at hd
             dsimp only at hd
             by_cases hmod : p.modBits = 3
-            · rw [if_pos hmod] at hd
+            · rw [ite_eq_left hmod] at hd
               by_cases hr2 : p.regBits = 2
-              · rw [if_pos hr2] at hd
+              · rw [ite_eq_left hr2] at hd
                 simp only [Option.some.injEq, Prod.mk.injEq] at hd
                 obtain ⟨hi, hlen⟩ := hd
                 have hlen' : len = off + 2 + p.len := by rw [← hlen, hbase]
@@ -208,15 +208,15 @@ theorem decodeSSE_congr_upto (r r' : Nat → BitVec 8) (off : Nat) (mandatory : 
                 have himm : r (off + 1 + p.len) = r' (off + 1 + p.len) := h _ (by omega)
                 have hop' : (r' off).toNat = 0x73 := by rw [← h0]; exact hop73
                 unfold decodeSSE
-                rw [if_pos hm66, if_neg (by rw [← h0]; exact hop2f),
-                  if_neg (by rw [← h0]; exact hop38), if_pos hop', hpm]
+                rw [ite_eq_left hm66, ite_eq_right (by rw [← h0]; exact hop2f),
+                  ite_eq_right (by rw [← h0]; exact hop38), ite_eq_left hop', hpm]
                 dsimp only
-                rw [hmod, if_pos hr2]
+                rw [hmod, ite_eq_left hr2]
                 simp only [reduceIte]
                 rw [← himm, ← hi, hlen]
-              · rw [if_neg hr2] at hd
+              · rw [ite_eq_right hr2] at hd
                 by_cases hr6 : p.regBits = 6
-                · rw [if_pos hr6] at hd
+                · rw [ite_eq_left hr6] at hd
                   simp only [Option.some.injEq, Prod.mk.injEq] at hd
                   obtain ⟨hi, hlen⟩ := hd
                   have hlen' : len = off + 2 + p.len := by rw [← hlen, hbase]
@@ -226,15 +226,15 @@ theorem decodeSSE_congr_upto (r r' : Nat → BitVec 8) (off : Nat) (mandatory : 
                   have himm : r (off + 1 + p.len) = r' (off + 1 + p.len) := h _ (by omega)
                   have hop' : (r' off).toNat = 0x73 := by rw [← h0]; exact hop73
                   unfold decodeSSE
-                  rw [if_pos hm66, if_neg (by rw [← h0]; exact hop2f),
-                    if_neg (by rw [← h0]; exact hop38), if_pos hop', hpm]
+                  rw [ite_eq_left hm66, ite_eq_right (by rw [← h0]; exact hop2f),
+                    ite_eq_right (by rw [← h0]; exact hop38), ite_eq_left hop', hpm]
                   dsimp only
-                  rw [hmod, if_neg hr2, if_pos hr6]
+                  rw [hmod, ite_eq_right hr2, ite_eq_left hr6]
                   simp only [reduceIte]
                   rw [← himm, ← hi, hlen]
-                · rw [if_neg hr6] at hd
+                · rw [ite_eq_right hr6] at hd
                   by_cases hr3 : p.regBits = 3
-                  · rw [if_pos hr3] at hd
+                  · rw [ite_eq_left hr3] at hd
                     simp only [Option.some.injEq, Prod.mk.injEq] at hd
                     obtain ⟨hi, hlen⟩ := hd
                     have hlen' : len = off + 2 + p.len := by rw [← hlen, hbase]
@@ -244,15 +244,15 @@ theorem decodeSSE_congr_upto (r r' : Nat → BitVec 8) (off : Nat) (mandatory : 
                     have himm : r (off + 1 + p.len) = r' (off + 1 + p.len) := h _ (by omega)
                     have hop' : (r' off).toNat = 0x73 := by rw [← h0]; exact hop73
                     unfold decodeSSE
-                    rw [if_pos hm66, if_neg (by rw [← h0]; exact hop2f),
-                      if_neg (by rw [← h0]; exact hop38), if_pos hop', hpm]
+                    rw [ite_eq_left hm66, ite_eq_right (by rw [← h0]; exact hop2f),
+                      ite_eq_right (by rw [← h0]; exact hop38), ite_eq_left hop', hpm]
                     dsimp only
-                    rw [hmod, if_neg hr2, if_neg hr6, if_pos hr3]
+                    rw [hmod, ite_eq_right hr2, ite_eq_right hr6, ite_eq_left hr3]
                     simp only [reduceIte]
                     rw [← himm, ← hi, hlen]
-                  · rw [if_neg hr3] at hd
+                  · rw [ite_eq_right hr3] at hd
                     by_cases hr7 : p.regBits = 7
-                    · rw [if_pos hr7] at hd
+                    · rw [ite_eq_left hr7] at hd
                       simp only [Option.some.injEq, Prod.mk.injEq] at hd
                       obtain ⟨hi, hlen⟩ := hd
                       have hlen' : len = off + 2 + p.len := by rw [← hlen, hbase]
@@ -262,19 +262,19 @@ theorem decodeSSE_congr_upto (r r' : Nat → BitVec 8) (off : Nat) (mandatory : 
                       have himm : r (off + 1 + p.len) = r' (off + 1 + p.len) := h _ (by omega)
                       have hop' : (r' off).toNat = 0x73 := by rw [← h0]; exact hop73
                       unfold decodeSSE
-                      rw [if_pos hm66, if_neg (by rw [← h0]; exact hop2f),
-                        if_neg (by rw [← h0]; exact hop38), if_pos hop', hpm]
+                      rw [ite_eq_left hm66, ite_eq_right (by rw [← h0]; exact hop2f),
+                        ite_eq_right (by rw [← h0]; exact hop38), ite_eq_left hop', hpm]
                       dsimp only
-                      rw [hmod, if_neg hr2, if_neg hr6, if_neg hr3, if_pos hr7]
+                      rw [hmod, ite_eq_right hr2, ite_eq_right hr6, ite_eq_right hr3, ite_eq_left hr7]
                       simp only [reduceIte]
                       rw [← himm, ← hi, hlen]
-                    · rw [if_neg hr7] at hd
+                    · rw [ite_eq_right hr7] at hd
                       simp at hd
-            · rw [if_neg hmod] at hd
+            · rw [ite_eq_right hmod] at hd
               simp at hd
-        · rw [if_neg hop73] at hd
+        · rw [ite_eq_right hop73] at hd
           by_cases hop54 : 0x54 ≤ (r off).toNat ∧ (r off).toNat ≤ 0x57
-          · rw [if_pos (by simp only [Bool.and_eq_true, decide_eq_true_eq]; omega)] at hd
+          · rw [ite_eq_left (by simp only [Bool.and_eq_true, decide_eq_true_eq]; omega)] at hd
             cases hp : parseRM r (off + 1) rexB with
             | none => simp [hp] at hd
             | some p =>
@@ -295,15 +295,15 @@ theorem decodeSSE_congr_upto (r r' : Nat → BitVec 8) (off : Nat) (mandatory : 
                 have hpm : parseRM r' (off + 1) rexB = some p :=
                   parseRM_congr_upto r r' (off + 1) rexB p hp (fun j hj => h j (by omega))
                 unfold decodeSSE
-                rw [if_pos hm66, if_neg (by rw [← h0]; exact hop2f),
-                  if_neg (by rw [← h0]; exact hop38), if_neg (by rw [← h0]; exact hop73)]
-                rw [if_pos (by simp only [Bool.and_eq_true, decide_eq_true_eq]; exact hop54')]
+                rw [ite_eq_left hm66, ite_eq_right (by rw [← h0]; exact hop2f),
+                  ite_eq_right (by rw [← h0]; exact hop38), ite_eq_right (by rw [← h0]; exact hop73)]
+                rw [ite_eq_left (by simp only [Bool.and_eq_true, decide_eq_true_eq]; exact hop54')]
                 rw [hpm]
                 dsimp only
                 rw [hl', ← hi, hlen]
-          · rw [if_neg (by simp only [Bool.and_eq_true, decide_eq_true_eq]; omega)] at hd
+          · rw [ite_eq_right (by simp only [Bool.and_eq_true, decide_eq_true_eq]; omega)] at hd
             by_cases hop6e : (r off).toNat = 0x6E
-            · rw [if_pos hop6e] at hd
+            · rw [ite_eq_left hop6e] at hd
               cases hp : parseRM r (off + 1) rexB with
               | none => simp [hp] at hd
               | some p =>
@@ -315,15 +315,15 @@ theorem decodeSSE_congr_upto (r r' : Nat → BitVec 8) (off : Nat) (mandatory : 
                 have hpm : parseRM r' (off + 1) rexB = some p :=
                   parseRM_congr_upto r r' (off + 1) rexB p hp (fun j hj => h j (by omega))
                 unfold decodeSSE
-                rw [if_pos hm66, if_neg (by rw [← h0]; exact hop2f),
-                  if_neg (by rw [← h0]; exact hop38), if_neg (by rw [← h0]; exact hop73)]
-                rw [if_neg (by simp only [Bool.and_eq_true, decide_eq_true_eq]; omega)]
-                rw [if_pos hop', hpm]
+                rw [ite_eq_left hm66, ite_eq_right (by rw [← h0]; exact hop2f),
+                  ite_eq_right (by rw [← h0]; exact hop38), ite_eq_right (by rw [← h0]; exact hop73)]
+                rw [ite_eq_right (by simp only [Bool.and_eq_true, decide_eq_true_eq]; omega)]
+                rw [ite_eq_left hop', hpm]
                 dsimp only
                 rw [← hi, hlen]
-            · rw [if_neg hop6e] at hd
+            · rw [ite_eq_right hop6e] at hd
               by_cases hop7e : (r off).toNat = 0x7E
-              · rw [if_pos hop7e] at hd
+              · rw [ite_eq_left hop7e] at hd
                 cases hp : parseRM r (off + 1) rexB with
                 | none => simp [hp] at hd
                 | some p =>
@@ -335,15 +335,15 @@ theorem decodeSSE_congr_upto (r r' : Nat → BitVec 8) (off : Nat) (mandatory : 
                   have hpm : parseRM r' (off + 1) rexB = some p :=
                     parseRM_congr_upto r r' (off + 1) rexB p hp (fun j hj => h j (by omega))
                   unfold decodeSSE
-                  rw [if_pos hm66, if_neg (by rw [← h0]; exact hop2f),
-                    if_neg (by rw [← h0]; exact hop38), if_neg (by rw [← h0]; exact hop73)]
-                  rw [if_neg (by simp only [Bool.and_eq_true, decide_eq_true_eq]; omega)]
-                  rw [if_neg (by rw [← h0]; exact hop6e), if_pos hop', hpm]
+                  rw [ite_eq_left hm66, ite_eq_right (by rw [← h0]; exact hop2f),
+                    ite_eq_right (by rw [← h0]; exact hop38), ite_eq_right (by rw [← h0]; exact hop73)]
+                  rw [ite_eq_right (by simp only [Bool.and_eq_true, decide_eq_true_eq]; omega)]
+                  rw [ite_eq_right (by rw [← h0]; exact hop6e), ite_eq_left hop', hpm]
                   dsimp only
                   rw [← hi, hlen]
-              · rw [if_neg hop7e] at hd
+              · rw [ite_eq_right hop7e] at hd
                 by_cases hope6 : (r off).toNat = 0xE6
-                · rw [if_pos hope6] at hd
+                · rw [ite_eq_left hope6] at hd
                   cases hp : parseRM r (off + 1) rexB with
                   | none => simp [hp] at hd
                   | some p =>
@@ -355,20 +355,20 @@ theorem decodeSSE_congr_upto (r r' : Nat → BitVec 8) (off : Nat) (mandatory : 
                     have hpm : parseRM r' (off + 1) rexB = some p :=
                       parseRM_congr_upto r r' (off + 1) rexB p hp (fun j hj => h j (by omega))
                     unfold decodeSSE
-                    rw [if_pos hm66, if_neg (by rw [← h0]; exact hop2f),
-                      if_neg (by rw [← h0]; exact hop38), if_neg (by rw [← h0]; exact hop73)]
-                    rw [if_neg (by simp only [Bool.and_eq_true, decide_eq_true_eq]; omega)]
-                    rw [if_neg (by rw [← h0]; exact hop6e), if_neg (by rw [← h0]; exact hop7e)]
-                    rw [if_pos hop', hpm]
+                    rw [ite_eq_left hm66, ite_eq_right (by rw [← h0]; exact hop2f),
+                      ite_eq_right (by rw [← h0]; exact hop38), ite_eq_right (by rw [← h0]; exact hop73)]
+                    rw [ite_eq_right (by simp only [Bool.and_eq_true, decide_eq_true_eq]; omega)]
+                    rw [ite_eq_right (by rw [← h0]; exact hop6e), ite_eq_right (by rw [← h0]; exact hop7e)]
+                    rw [ite_eq_left hop', hpm]
                     dsimp only
                     rw [← hi, hlen]
-                · rw [if_neg hope6] at hd
+                · rw [ite_eq_right hope6] at hd
                   simp at hd
-  · rw [if_neg hm66] at hd
+  · rw [ite_eq_right hm66] at hd
     by_cases hmf2 : mandatory = 0xF2
-    · rw [if_pos hmf2] at hd
+    · rw [ite_eq_left hmf2] at hd
       by_cases hop10 : (r off).toNat = 0x10
-      · rw [if_pos hop10] at hd
+      · rw [ite_eq_left hop10] at hd
         cases hp : parseRM r (off + 1) rexB with
         | none => simp [hp] at hd
         | some p =>
@@ -380,12 +380,12 @@ theorem decodeSSE_congr_upto (r r' : Nat → BitVec 8) (off : Nat) (mandatory : 
           have hpm : parseRM r' (off + 1) rexB = some p :=
             parseRM_congr_upto r r' (off + 1) rexB p hp (fun j hj => h j (by omega))
           unfold decodeSSE
-          rw [if_neg hm66, if_pos hmf2, if_pos hop', hpm]
+          rw [ite_eq_right hm66, ite_eq_left hmf2, ite_eq_left hop', hpm]
           dsimp only
           rw [← hi, hlen]
-      · rw [if_neg hop10] at hd
+      · rw [ite_eq_right hop10] at hd
         by_cases hop51 : (r off).toNat = 0x51
-        · rw [if_pos hop51] at hd
+        · rw [ite_eq_left hop51] at hd
           cases hp : parseRM r (off + 1) rexB with
           | none => simp [hp] at hd
           | some p =>
@@ -397,12 +397,12 @@ theorem decodeSSE_congr_upto (r r' : Nat → BitVec 8) (off : Nat) (mandatory : 
             have hpm : parseRM r' (off + 1) rexB = some p :=
               parseRM_congr_upto r r' (off + 1) rexB p hp (fun j hj => h j (by omega))
             unfold decodeSSE
-            rw [if_neg hm66, if_pos hmf2, if_neg (by rw [← h0]; exact hop10), if_pos hop', hpm]
+            rw [ite_eq_right hm66, ite_eq_left hmf2, ite_eq_right (by rw [← h0]; exact hop10), ite_eq_left hop', hpm]
             dsimp only
             rw [← hi, hlen]
-        · rw [if_neg hop51] at hd
+        · rw [ite_eq_right hop51] at hd
           by_cases hop58 : 0x58 ≤ (r off).toNat ∧ (r off).toNat ≤ 0x5F
-          · rw [if_pos (by simp only [Bool.and_eq_true, decide_eq_true_eq]; omega)] at hd
+          · rw [ite_eq_left (by simp only [Bool.and_eq_true, decide_eq_true_eq]; omega)] at hd
             cases hp : parseRM r (off + 1) rexB with
             | none => simp [hp] at hd
             | some p =>
@@ -423,15 +423,15 @@ theorem decodeSSE_congr_upto (r r' : Nat → BitVec 8) (off : Nat) (mandatory : 
                 have hpm : parseRM r' (off + 1) rexB = some p :=
                   parseRM_congr_upto r r' (off + 1) rexB p hp (fun j hj => h j (by omega))
                 unfold decodeSSE
-                rw [if_neg hm66, if_pos hmf2, if_neg (by rw [← h0]; exact hop10),
-                  if_neg (by rw [← h0]; exact hop51)]
-                rw [if_pos (by simp only [Bool.and_eq_true, decide_eq_true_eq]; exact hop58')]
+                rw [ite_eq_right hm66, ite_eq_left hmf2, ite_eq_right (by rw [← h0]; exact hop10),
+                  ite_eq_right (by rw [← h0]; exact hop51)]
+                rw [ite_eq_left (by simp only [Bool.and_eq_true, decide_eq_true_eq]; exact hop58')]
                 rw [hpm]
                 dsimp only
                 rw [hb', ← hi, hlen]
-          · rw [if_neg (by simp only [Bool.and_eq_true, decide_eq_true_eq]; omega)] at hd
+          · rw [ite_eq_right (by simp only [Bool.and_eq_true, decide_eq_true_eq]; omega)] at hd
             by_cases hope6 : (r off).toNat = 0xE6
-            · rw [if_pos hope6] at hd
+            · rw [ite_eq_left hope6] at hd
               cases hp : parseRM r (off + 1) rexB with
               | none => simp [hp] at hd
               | some p =>
@@ -443,19 +443,19 @@ theorem decodeSSE_congr_upto (r r' : Nat → BitVec 8) (off : Nat) (mandatory : 
                 have hpm : parseRM r' (off + 1) rexB = some p :=
                   parseRM_congr_upto r r' (off + 1) rexB p hp (fun j hj => h j (by omega))
                 unfold decodeSSE
-                rw [if_neg hm66, if_pos hmf2, if_neg (by rw [← h0]; exact hop10),
-                  if_neg (by rw [← h0]; exact hop51)]
-                rw [if_neg (by simp only [Bool.and_eq_true, decide_eq_true_eq]; omega)]
-                rw [if_pos hop', hpm]
+                rw [ite_eq_right hm66, ite_eq_left hmf2, ite_eq_right (by rw [← h0]; exact hop10),
+                  ite_eq_right (by rw [← h0]; exact hop51)]
+                rw [ite_eq_right (by simp only [Bool.and_eq_true, decide_eq_true_eq]; omega)]
+                rw [ite_eq_left hop', hpm]
                 dsimp only
                 rw [← hi, hlen]
-            · rw [if_neg hope6] at hd
+            · rw [ite_eq_right hope6] at hd
               simp at hd
-    · rw [if_neg hmf2] at hd
+    · rw [ite_eq_right hmf2] at hd
       by_cases hmf3 : mandatory = 0xF3
-      · rw [if_pos hmf3] at hd
+      · rw [ite_eq_left hmf3] at hd
         by_cases hope6 : (r off).toNat = 0xE6
-        · rw [if_pos hope6] at hd
+        · rw [ite_eq_left hope6] at hd
           cases hp : parseRM r (off + 1) rexB with
           | none => simp [hp] at hd
           | some p =>
@@ -467,12 +467,12 @@ theorem decodeSSE_congr_upto (r r' : Nat → BitVec 8) (off : Nat) (mandatory : 
             have hpm : parseRM r' (off + 1) rexB = some p :=
               parseRM_congr_upto r r' (off + 1) rexB p hp (fun j hj => h j (by omega))
             unfold decodeSSE
-            rw [if_neg hm66, if_neg hmf2, if_pos hmf3, if_pos hop', hpm]
+            rw [ite_eq_right hm66, ite_eq_right hmf2, ite_eq_left hmf3, ite_eq_left hop', hpm]
             dsimp only
             rw [← hi, hlen]
-        · rw [if_neg hope6] at hd
+        · rw [ite_eq_right hope6] at hd
           simp at hd
-      · rw [if_neg hmf3] at hd
+      · rw [ite_eq_right hmf3] at hd
         simp at hd
 
 

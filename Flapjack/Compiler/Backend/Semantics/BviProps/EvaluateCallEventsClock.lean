@@ -114,7 +114,7 @@ theorem evaluate_directCall_addClock_ioEvents_step {C F : Type} (ticks : Nat) (l
     · subst result
       have sourceRun := run
       rw [evaluate, fixClock_evaluate] at sourceRun
-      simp only [Option.isSome_none, Bool.and_false, Bool.false_eq_true, if_false] at sourceRun
+      simp only [Option.isSome_none, Bool.and_false, Bool.false_eq_true, ite_false] at sourceRun
       cases argsRun : evaluate args env state with
       | mk argResult last =>
         have bound : last.clock ≤ state.clock := by
@@ -139,14 +139,14 @@ theorem evaluate_directCall_addClock_ioEvents_step {C F : Type} (ticks : Nat) (l
             rw [found] at sourceRun
             dsimp only at sourceRun
             by_cases short : last.clock < ticks + 1
-            · rw [if_pos short] at sourceRun
+            · rw [ite_eq_left short] at sourceRun
               simp at sourceRun
               rcases sourceRun with ⟨_, rfl⟩
               have argsPrefix : last.ffi.ioEvents <+:
                   (evaluate args env { state with clock := state.clock + extra }).2.ffi.ioEvents := by simpa [argsRun] using argsIH
               exact argsPrefix.trans (evaluate_call_args_ioEvents_prefix ticks location args none env
                 { state with clock := state.clock + extra } (by simp))
-            · rw [if_neg short] at sourceRun
+            · rw [ite_eq_right short] at sourceRun
               have smaller : (decClock (ticks + 1) last).clock < state.clock := by simp [decClock]; omega
               have compare := bodyIH body bodyEnv (decClock (ticks + 1) last) smaller
               rw [fixClock_evaluate] at sourceRun
@@ -171,10 +171,10 @@ theorem evaluate_directCall_addClock_ioEvents_step {C F : Type} (ticks : Nat) (l
                     congr 1
                     omega
                   rw [evaluate, fixClock_evaluate, shiftedArgs]
-                  simp only [Option.isSome_none, Bool.and_false, Bool.false_eq_true, if_false]
+                  simp only [Option.isSome_none, Bool.and_false, Bool.false_eq_true, ite_false]
                   rw [found]
                   dsimp only
-                  rw [if_neg (by omega), shifted, fixClock_evaluate]
+                  rw [ite_eq_right (by omega), shifted, fixClock_evaluate]
                   cases targetRun : evaluate [body] bodyEnv { decClock (ticks + 1) last with
                       clock := (decClock (ticks + 1) last).clock + extra } with
                   | mk targetResult targetNext =>
@@ -232,7 +232,7 @@ theorem evaluate_letCall_addClock_ioEvents_step {C F : Type}
             rw [found] at sourceRun
             dsimp only at sourceRun
             by_cases short : last.clock < ticks + 1
-            · rw [if_pos short] at sourceRun
+            · rw [ite_eq_left short] at sourceRun
               simp at sourceRun
               rcases sourceRun with ⟨_, rfl⟩
               have argsPrefix : last.ffi.ioEvents <+:
@@ -240,7 +240,7 @@ theorem evaluate_letCall_addClock_ioEvents_step {C F : Type}
                 simpa [argsRun] using argsIH
               exact argsPrefix.trans (evaluate_letCall_args_ioEvents_prefix rets ticks dest args body env
                 { state with clock := state.clock + extra })
-            · rw [if_neg short, fixClock_evaluate] at sourceRun
+            · rw [ite_eq_right short, fixClock_evaluate] at sourceRun
               have smaller : (decClock (ticks + 1) last).clock < state.clock := by simp [decClock]; omega
               have shifted : decClock (ticks + 1) { last with clock := last.clock + extra } =
                   { decClock (ticks + 1) last with clock := (decClock (ticks + 1) last).clock + extra } := by
@@ -270,7 +270,7 @@ theorem evaluate_letCall_addClock_ioEvents_step {C F : Type}
                       dsimp only
                       rw [found]
                       dsimp only
-                      rw [if_neg (by omega), shifted, fixClock_evaluate]
+                      rw [ite_eq_right (by omega), shifted, fixClock_evaluate]
                       cases targetRun : evaluate [callee] calleeEnv { decClock (ticks + 1) last with
                           clock := (decClock (ticks + 1) last).clock + extra } with
                       | mk targetResult targetNext =>
@@ -284,7 +284,7 @@ theorem evaluate_letCall_addClock_ioEvents_step {C F : Type}
                     | ret values =>
                       simp only [calleeRun] at sourceRun
                       by_cases arity : values.length = rets
-                      · simp only [arity, if_true] at sourceRun
+                      · simp only [arity, ite_true] at sourceRun
                         have shiftedCallee := evaluate_addClock [callee] calleeEnv
                           (decClock (ticks + 1) last) called (.err (.raise (.ret values))) extra calleeRun (by simp)
                         have compare := bodyIH (values ++ env) called calledClock
@@ -293,7 +293,7 @@ theorem evaluate_letCall_addClock_ioEvents_step {C F : Type}
                         dsimp only
                         rw [found]
                         dsimp only
-                        rw [if_neg (by omega), shifted, fixClock_evaluate, shiftedCallee]
+                        rw [ite_eq_right (by omega), shifted, fixClock_evaluate, shiftedCallee]
                         simpa [arity] using compare
                       · simp [arity] at sourceRun
     · have equal := evaluate_addClock_ioEvents_of_notTimeout [.letCall rets ticks dest args body]
@@ -348,7 +348,7 @@ theorem evaluate_handledCall_addClock_ioEvents_step {C F : Type}
             rw [found] at sourceRun
             dsimp only at sourceRun
             by_cases short : last.clock < ticks + 1
-            · rw [if_pos short] at sourceRun
+            · rw [ite_eq_left short] at sourceRun
               simp at sourceRun
               rcases sourceRun with ⟨_, rfl⟩
               have argsPrefix : last.ffi.ioEvents <+:
@@ -356,7 +356,7 @@ theorem evaluate_handledCall_addClock_ioEvents_step {C F : Type}
                 simpa [argsRun] using argsIH
               exact argsPrefix.trans (evaluate_call_args_ioEvents_prefix ticks (some dest) args (some body) env
                 { state with clock := state.clock + extra } (by simp))
-            · rw [if_neg short, fixClock_evaluate] at sourceRun
+            · rw [ite_eq_right short, fixClock_evaluate] at sourceRun
               have smaller : (decClock (ticks + 1) last).clock < state.clock := by simp [decClock]; omega
               have shifted : decClock (ticks + 1) { last with clock := last.clock + extra } =
                   { decClock (ticks + 1) last with clock := (decClock (ticks + 1) last).clock + extra } := by
@@ -387,7 +387,7 @@ theorem evaluate_handledCall_addClock_ioEvents_step {C F : Type}
                       rw [found]
                       dsimp only
                       have enough : ¬last.clock + extra < ticks + 1 := by omega
-                      simp only [if_neg enough, shifted]
+                      simp only [ite_eq_right enough, shifted]
                       rw [fixClock_evaluate]
                       cases targetRun : evaluate [callee] calleeEnv { decClock (ticks + 1) last with
                           clock := (decClock (ticks + 1) last).clock + extra } with
@@ -437,7 +437,7 @@ theorem evaluate_handledCall_addClock_ioEvents_step {C F : Type}
                               rw [found]
                               dsimp only
                               have enough : ¬last.clock + extra < ticks + 1 := by omega
-                              simp only [if_neg enough, shifted]
+                              simp only [ite_eq_right enough, shifted]
                               rw [fixClock_evaluate, shiftedCallee]
                               cases targetRun : evaluate [body] (value :: env) { called with
                                   clock := called.clock + extra } with

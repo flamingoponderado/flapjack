@@ -216,7 +216,7 @@ theorem evaluate_letrec_step {C F : Type} (names : List Flapjack.Basis.Pure.MlSt
     change evaluate [.letrec names location (some (compact.map (getVar m l index))) nextFunctions
       (shiftSing (altFreeSing body).1 m (l + functions.length) index)] nextEnv target = _
     change lookupVars (compact.map (getVar m l index)) nextEnv = some captured at captureRun
-    simp only [evaluate, targetValid, if_true, captureRun]
+    simp only [evaluate, targetValid, ite_true, captureRun]
     simpa [altFree_singleton, shiftList, nextFront, nextLength] using targetRun
   · simp [evaluate, valid] at run
     exact False.elim (noType run.1.symm)
@@ -441,7 +441,7 @@ theorem evaluate_let_step {C F : Type} (trace : BackendCommon.Tra)
           target result sourceNext m (l + bindings.length) index bodyRun noType bodyLength bodyVars
           safeParts.2 code oracle states
       refine ⟨targetResult, targetNext, ?_, resultRel, nextRel⟩
-      rw [altFree_let, if_pos optimized]
+      rw [altFree_let, ite_eq_left optimized]
       simp only [altFree_singleton, Flapjack.holHd, shiftList, shiftSing, List.length_replicate] at targetRun ⊢
       rw [evaluate, fixClock_evaluate, evaluate_shift_replicate_const0]
       exact targetRun
@@ -464,7 +464,7 @@ theorem evaluate_let_step {C F : Type} (trace : BackendCommon.Tra)
         | val values => cases error <;> simp [ResultRel] at resultRel
         | err targetError =>
           refine ⟨.err targetError, targetMiddle, ?_, resultRel, middleRel⟩
-          rw [altFree_let, if_neg optimized]
+          rw [altFree_let, ite_eq_right optimized]
           simp only [altFree_singleton, Flapjack.holHd, shiftList, shiftSing]
           rw [evaluate, fixClock_evaluate, targetRun]
       | val values =>
@@ -499,7 +499,7 @@ theorem evaluate_let_step {C F : Type} (trace : BackendCommon.Tra)
               m (l + bindings.length) index bodyRun noType bodyLength bodyVars safeParts.2
               middleSafety.1 middleSafety.2 middleRel
           refine ⟨targetBodyResult, targetNext, ?_, bodyRel, nextRel⟩
-          rw [altFree_let, if_neg optimized]
+          rw [altFree_let, ite_eq_right optimized]
           simp only [altFree_singleton, Flapjack.holHd, shiftList, shiftSing] at targetBodyRun ⊢
           rw [evaluate, fixClock_evaluate, targetRun]
           simpa [altFree, altFreeList_length] using targetBodyRun

@@ -239,7 +239,7 @@ theorem arm8Decode_branchRegister (rn : BitVec 5) :
       .Branch (.BranchRegister (rn, .BranchType_JMP)) := by
   simp only [Decode, boolify32, arm8JumpRegWord_bit0, arm8JumpRegWord_bit1, arm8JumpRegWord_bit2, arm8JumpRegWord_bit3, arm8JumpRegWord_bit4, arm8JumpRegWord_bit10, arm8JumpRegWord_bit11, arm8JumpRegWord_bit12, arm8JumpRegWord_bit13, arm8JumpRegWord_bit14, arm8JumpRegWord_bit15, arm8JumpRegWord_bit16, arm8JumpRegWord_bit17, arm8JumpRegWord_bit18, arm8JumpRegWord_bit19, arm8JumpRegWord_bit20, arm8JumpRegWord_bit21, arm8JumpRegWord_bit22, arm8JumpRegWord_bit23, arm8JumpRegWord_bit24, arm8JumpRegWord_bit25, arm8JumpRegWord_bit26, arm8JumpRegWord_bit27, arm8JumpRegWord_bit28, arm8JumpRegWord_bit29, arm8JumpRegWord_bit30, arm8JumpRegWord_bit31, arm8JumpRegWord_holV2w,
     Bool.not_true, Bool.not_false, Bool.true_and, Bool.false_and, Bool.and_true,
-    Bool.and_false, Bool.false_eq_true, if_true, if_false]
+    Bool.and_false, Bool.false_eq_true, ite_true, ite_false]
 
 /-- `JumpReg` lowers to the single `BranchRegister` instruction with branch
 type `JMP`. -/
@@ -414,7 +414,7 @@ theorem arm8_encoder_correct_jumpReg (register : Nat) (s1 s2 : AsmState 64)
     exact hr_31 ((arm8Reg_eq hr_lt (by norm_num)).mp hh')
   have hX : X (TN := 64) (BitVec.ofNat 5 register) ms = s1.regs register := by
     simp only [X]
-    rw [if_neg (by simpa using hne)]
+    rw [ite_eq_right (by simpa using hne)]
     simp
     exact hreg register ⟨by simpa [arm8ConfigL3] using hr_lt, by simpa [arm8ConfigL3] using hr_av⟩
   have hokPost : arm8Ok { ms with

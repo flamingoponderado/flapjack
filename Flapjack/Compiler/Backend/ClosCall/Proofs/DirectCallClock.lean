@@ -265,7 +265,7 @@ theorem evaluate_rewritten_call_eq_stub {C F : Type}
       evaluate [.call stubTrace 0 label (ClosCall.variables stubTrace values.length)] stubEnv
         { decClock values.length afterArgs with clock := (decClock values.length afterArgs).clock + 1 } := by
   rw [evaluate_rewritten_call trace label args env values state afterArgs body argsRun code]
-  rw [if_neg (Nat.not_lt.mpr enough)]
+  rw [ite_eq_right (Nat.not_lt.mpr enough)]
   rw [evaluate_generated_stub stubTrace label values.length body stubEnv _ bound]
   · rw [prefixEq]
   · simpa [decClock] using code

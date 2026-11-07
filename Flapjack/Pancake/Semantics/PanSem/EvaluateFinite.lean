@@ -282,7 +282,7 @@ theorem evalPanSemRecursiveCallFiniteContext_ite_then {width : Nat} {σ : Type} 
   dsimp only
   rw [hcond]
   dsimp only
-  rw [if_pos hne]
+  rw [ite_eq_left hne]
 
 /-- HOL `evaluate_def` `If` clause, zero branch: a word-valued false condition
     selects the else-branch. -/
@@ -299,7 +299,7 @@ theorem evalPanSemRecursiveCallFiniteContext_ite_else {width : Nat} {σ : Type} 
   dsimp only
   rw [hcond]
   dsimp only
-  rw [if_neg (by rw [hz]; decide)]
+  rw [ite_eq_right (by rw [hz]; decide)]
 
 /-- HOL `evaluate_def` `Dec` clause: an initializer that fails to evaluate yields
     the error result at the unchanged context. -/
@@ -329,7 +329,7 @@ theorem evalPanSemRecursiveCallFiniteContext_dec_shape_false {width : Nat} {σ :
   dsimp only
   rw [hinit]
   dsimp only
-  rw [if_neg (by rw [hshape]; decide)]
+  rw [ite_eq_right (by rw [hshape]; decide)]
 
 /-- HOL `evaluate_def` `Dec` clause: once the initializer matches the shape, the
     recursive body result is restored by `res_var` on the local binding. -/
@@ -353,7 +353,7 @@ theorem evalPanSemRecursiveCallFiniteContext_dec_body_some {width : Nat} {σ : T
   dsimp only
   rw [hinit]
   dsimp only
-  rw [if_pos hshape]
+  rw [ite_eq_left hshape]
   rw [hbody]
 
 /-- HOL `evaluate_def` `While` clause: a zero-valued condition exits the loop with
@@ -371,7 +371,7 @@ theorem evalPanSemRecursiveCallFiniteContext_while_word_zero {width : Nat} {σ :
   dsimp only
   rw [hcond]
   dsimp only
-  rw [if_neg hzero]
+  rw [ite_eq_right hzero]
 
 /-- HOL `evaluate_def` `While` clause: on an exhausted clock the loop returns
     `TimeOut` with emptied locals. -/
@@ -389,8 +389,8 @@ theorem evalPanSemRecursiveCallFiniteContext_while_clock_zero {width : Nat} {σ 
   dsimp only
   rw [hcond]
   dsimp only
-  rw [if_pos hw]
-  rw [if_pos hclock]
+  rw [ite_eq_left hw]
+  rw [ite_eq_left hclock]
 
 /-- HOL `evaluate_def` `While` clause: a `Continue` (or `NONE`) body result
     re-enters the loop at the clock-fixed continuation state. -/
@@ -412,8 +412,8 @@ theorem evalPanSemRecursiveCallFiniteContext_while_body_continue {width : Nat} {
   dsimp only
   rw [hcond]
   dsimp only
-  rw [if_pos hw]
-  rw [if_neg hclock]
+  rw [ite_eq_left hw]
+  rw [ite_eq_right hclock]
   rw [hbody]
 
 /-- HOL `evaluate_def` `While` clause: a `Break` body result exits the loop with
@@ -435,8 +435,8 @@ theorem evalPanSemRecursiveCallFiniteContext_while_body_break {width : Nat} {σ 
   dsimp only
   rw [hcond]
   dsimp only
-  rw [if_pos hw]
-  rw [if_neg hclock]
+  rw [ite_eq_left hw]
+  rw [ite_eq_right hclock]
   rw [hbody]
 
 /-- HOL `evaluate_def` `Call` clause short circuit: an argument list that fails
@@ -525,7 +525,7 @@ theorem evalPanSemRecursiveCallFiniteContext_call_clock_zero {width : Nat} {σ :
   dsimp only
   rw [lookupCodeCanonicalHOL, hlookup]
   dsimp only
-  rw [if_pos hclock]
+  rw [ite_eq_left hclock]
 
 /-- HOL `evaluate_def` `DecCall` clause clock-exhaustion branch: when the caller's
     clock is exhausted the call returns `TimeOut` with empty locals. -/
@@ -550,7 +550,7 @@ theorem evalPanSemRecursiveCallFiniteContext_decCall_clock_zero {width : Nat} {�
   dsimp only
   rw [lookupCodeCanonicalHOL, hlookup]
   dsimp only
-  rw [if_pos hclock]
+  rw [ite_eq_left hclock]
 
 /-- Source-reviewed HOL `Call` return side condition
     (`panSemScript.sml:657-693`): after successful argument evaluation and code
@@ -609,11 +609,11 @@ theorem evalPanSemRecursiveCallFiniteContext_call_return_shape_mismatch
   rw [evalPanSemRecursiveCallFiniteContext.eq_5]
   simp only [hargs]
   rw [lookupCodeCanonicalHOL, hlookup]
-  simp only [if_neg hclock, hbody]
+  simp only [ite_eq_right hclock, hbody]
   have hshapeNe : ¬ shapeEqHOL (shapeOfHOLExact value) returnShape = true := by
     rw [hshape]
     simp
-  rw [if_neg hshapeNe]
+  rw [ite_eq_right hshapeNe]
 
 /-- HOL `evaluate_def` Call body `NONE` branch (`panSemScript.sml:668`): a callee
     that falls through with no result maps to `Error` at the clock-fixed callee
@@ -638,7 +638,7 @@ theorem evalPanSemRecursiveCallFiniteContext_call_body_none
         callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
           none bodyContext) := by
   rw [evalPanSemRecursiveCallFiniteContext.eq_5]
-  simp only [hargs, hlookup, if_neg hclock, hbody]
+  simp only [hargs, hlookup, ite_eq_right hclock, hbody]
 
 /-- HOL `evaluate_def` Call body `Break` branch (`panSemScript.sml:669`): a callee
     that breaks maps to `Error` at the clock-fixed callee state. Untagged clause
@@ -663,7 +663,7 @@ theorem evalPanSemRecursiveCallFiniteContext_call_body_break
         callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
           (some .break) bodyContext) := by
   rw [evalPanSemRecursiveCallFiniteContext.eq_5]
-  simp only [hargs, hlookup, if_neg hclock, hbody]
+  simp only [hargs, hlookup, ite_eq_right hclock, hbody]
 
 /-- HOL `evaluate_def` Call body `Continue` branch (`panSemScript.sml:670`): a
     callee that continues maps to `Error` at the clock-fixed callee state.
@@ -688,7 +688,7 @@ theorem evalPanSemRecursiveCallFiniteContext_call_body_continue
         callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
           (some .continue) bodyContext) := by
   rw [evalPanSemRecursiveCallFiniteContext.eq_5]
-  simp only [hargs, hlookup, if_neg hclock, hbody]
+  simp only [hargs, hlookup, ite_eq_right hclock, hbody]
 
 /-- HOL `evaluate_def` Call matched-exception branch
     (`panSemScript.sml:682-688`): after the body yields an exception whose id
@@ -727,7 +727,7 @@ theorem evalPanSemRecursiveCallFiniteContext_call_matched_exception_handler
   rw [evalPanSemRecursiveCallFiniteContext.eq_5]
   simp only [hargs]
   rw [lookupCodeCanonicalHOL, hlookup]
-  simp only [if_neg hclock]
+  simp only [ite_eq_right hclock]
   rw [hbody]
   simp [hshape, hshapeEq, hvalid]
 
@@ -755,7 +755,7 @@ theorem evalPanSemRecursiveCallFiniteContext_call_return_none
           (callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
             (some (.returned value)) bodyContext)) := by
   rw [evalPanSemRecursiveCallFiniteContext.eq_5]
-  simp only [hargs, hlookup, if_neg hclock, hbody]
+  simp only [hargs, hlookup, ite_eq_right hclock, hbody]
   simp [hshape]
 
 /-- HOL `evaluate_def` Call returned-value branch with `caltyp = SOME (NONE, _)`
@@ -784,7 +784,7 @@ theorem evalPanSemRecursiveCallFiniteContext_call_return_caller_locals
           (callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
             (some (.returned value)) bodyContext)) := by
   rw [evalPanSemRecursiveCallFiniteContext.eq_5]
-  simp only [hargs, hlookup, if_neg hclock, hbody]
+  simp only [hargs, hlookup, ite_eq_right hclock, hbody]
   simp [hshape]
 
 /-- HOL `evaluate_def` Call returned-value branch with a wrapped result and a
@@ -815,7 +815,7 @@ theorem evalPanSemRecursiveCallFiniteContext_call_return_set_kvar
           (callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
             (some (.returned value)) bodyContext) kind name value) := by
   rw [evalPanSemRecursiveCallFiniteContext.eq_5]
-  simp only [hargs, hlookup, if_neg hclock, hbody]
+  simp only [hargs, hlookup, ite_eq_right hclock, hbody]
   simp [hshape, hvalid]
 
 /-- HOL `evaluate_def` Call returned-value branch with a wrapped result whose
@@ -845,7 +845,7 @@ theorem evalPanSemRecursiveCallFiniteContext_call_return_kvar_invalid
         callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
           (some (.returned value)) bodyContext) := by
   rw [evalPanSemRecursiveCallFiniteContext.eq_5]
-  simp only [hargs, hlookup, if_neg hclock, hbody]
+  simp only [hargs, hlookup, ite_eq_right hclock, hbody]
   simp [hshape, hinvalid]
 /-- HOL `evaluate_def` Call unhandled-exception branch with `caltyp = NONE`
     (`panSemScript.sml:683-684`): the exception propagates at empty locals.
@@ -871,7 +871,7 @@ theorem evalPanSemRecursiveCallFiniteContext_call_exception_unhandled
           (callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
             (some (.exception exceptionId value)) bodyContext)) := by
   rw [evalPanSemRecursiveCallFiniteContext.eq_5]
-  simp only [hargs, hlookup, if_neg hclock, hbody]
+  simp only [hargs, hlookup, ite_eq_right hclock, hbody]
 
 /-- HOL `evaluate_def` Call unhandled-exception branch with
     `caltyp = SOME (_, NONE)` (`panSemScript.sml:685-686`): the exception
@@ -899,7 +899,7 @@ theorem evalPanSemRecursiveCallFiniteContext_call_exception_no_handler
           (callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
             (some (.exception exceptionId value)) bodyContext)) := by
   rw [evalPanSemRecursiveCallFiniteContext.eq_5]
-  simp only [hargs, hlookup, if_neg hclock, hbody]
+  simp only [hargs, hlookup, ite_eq_right hclock, hbody]
 
 /-- HOL `evaluate_def` Call exception branch with a non-matching handler
     (`panSemScript.sml:689-690`): the exception propagates at empty locals.
@@ -930,8 +930,8 @@ theorem evalPanSemRecursiveCallFiniteContext_call_exception_mismatch
           (callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
             (some (.exception exceptionId value)) bodyContext)) := by
   rw [evalPanSemRecursiveCallFiniteContext.eq_5]
-  simp only [hargs, hlookup, if_neg hclock, hbody]
-  simp only [if_neg hne]
+  simp only [hargs, hlookup, ite_eq_right hclock, hbody]
+  simp only [ite_eq_right hne]
 
 /-- HOL `evaluate_def` Call exception branch whose matching handler has no
     declared shape (`panSemScript.sml:690-691`): `Error` at the clock-fixed
@@ -962,7 +962,7 @@ theorem evalPanSemRecursiveCallFiniteContext_call_exception_missing_shape
         callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
           (some (.exception exceptionId value)) bodyContext) := by
   rw [evalPanSemRecursiveCallFiniteContext.eq_5]
-  simp only [hargs, hlookup, if_neg hclock, hbody]
+  simp only [hargs, hlookup, ite_eq_right hclock, hbody]
   subst heq
   simp [hshapeNone]
 
@@ -997,7 +997,7 @@ theorem evalPanSemRecursiveCallFiniteContext_call_exception_invalid
         callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
           (some (.exception exceptionId value)) bodyContext) := by
   rw [evalPanSemRecursiveCallFiniteContext.eq_5]
-  simp only [hargs, hlookup, if_neg hclock, hbody]
+  simp only [hargs, hlookup, ite_eq_right hclock, hbody]
   subst heq
   simp [hshapeSome, hinvalid]
 /-- Source-reviewed HOL `DecCall` return-shape side conditions
@@ -1034,16 +1034,16 @@ theorem evalPanSemRecursiveCallFiniteContext_decCall_return_shape_mismatch
   rw [evalPanSemRecursiveCallFiniteContext.eq_6]
   simp only [hargs]
   rw [lookupCodeCanonicalHOL, hlookup]
-  simp only [if_neg hclock, hbody]
+  simp only [ite_eq_right hclock, hbody]
   rcases hshape with hdecl | hreturn
   · have hshapeNe : ¬ (shapeEqHOL (shapeOfHOLExact value) shape &&
         shapeEqHOL (shapeOfHOLExact value) returnShape) = true := by
       simp [hdecl]
-    rw [if_neg hshapeNe]
+    rw [ite_eq_right hshapeNe]
   · have hshapeNe : ¬ (shapeEqHOL (shapeOfHOLExact value) shape &&
         shapeEqHOL (shapeOfHOLExact value) returnShape) = true := by
       simp [hreturn]
-    rw [if_neg hshapeNe]
+    rw [ite_eq_right hshapeNe]
 
 /-- FLAPJACK-SPECIFIC context normalizer (no standalone HOL declaration): a
     generated recursive-call context is interchangeable with the named
@@ -1155,8 +1155,8 @@ theorem evalPanSemRecursiveCallFiniteContext_decCall_return_continuation
   rw [evalPanSemRecursiveCallFiniteContext.eq_6]
   simp only [hargs]
   rw [lookupCodeCanonicalHOL, hlookup]
-  simp only [if_neg hclock, hbodyGenerated]
-  rw [if_pos (by simp [hshape])]
+  simp only [ite_eq_right hclock, hbodyGenerated]
+  rw [ite_eq_left (by simp [hshape])]
   rw [hcontinuation]
 
 /-- Projection equivalence on `Skip`: mapping the finite evaluator's result
@@ -1332,9 +1332,9 @@ theorem evalPanSemRecursiveCallFiniteContext_tick_projection {width : Nat} {σ :
     evalPanSemRecursiveCallContextHOLExact.eq_def]
   dsimp only
   by_cases hclock : context.state.clock = 0
-  · rw [if_pos hclock, if_pos hclock]
+  · rw [ite_eq_left hclock, ite_eq_left hclock]
     rfl
-  · rw [if_neg hclock, if_neg hclock]
+  · rw [ite_eq_right hclock, ite_eq_right hclock]
     rfl
 
 /-- Projection equivalence on `Return` (see `..._skip_projection`). -/
@@ -1359,9 +1359,9 @@ theorem evalPanSemRecursiveCallFiniteContext_return_projection {width : Nat} {σ
       simp only []
       by_cases hsize : Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL context.state.structs
           (shapeOfHOLExact returned) ≤ 32
-      · rw [if_pos hsize, if_pos hsize]
+      · rw [ite_eq_left hsize, ite_eq_left hsize]
         rfl
-      · rw [if_neg hsize, if_neg hsize]
+      · rw [ite_eq_right hsize, ite_eq_right hsize]
         rfl
 
 /-- Projection equivalence on `Raise` (see `..._skip_projection`). -/
@@ -1390,14 +1390,14 @@ theorem evalPanSemRecursiveCallFiniteContext_raise_projection {width : Nat} {σ 
       | some shape =>
           simp only []
           by_cases heq : shapeEqHOL (shapeOfHOLExact raised) shape
-          · rw [if_pos heq, if_pos heq]
+          · rw [ite_eq_left heq, ite_eq_left heq]
             by_cases hsize : Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL context.state.structs
                 (shapeOfHOLExact raised) ≤ 32
-            · rw [if_pos hsize, if_pos hsize]
+            · rw [ite_eq_left hsize, ite_eq_left hsize]
               rfl
-            · rw [if_neg hsize, if_neg hsize]
+            · rw [ite_eq_right hsize, ite_eq_right hsize]
               rfl
-          · rw [if_neg heq, if_neg heq]
+          · rw [ite_eq_right heq, ite_eq_right heq]
             rfl
 
 /-- Projection equivalence on `ShMemLoad` (see `..._skip_projection`). -/
@@ -1516,7 +1516,7 @@ theorem evalPanSemRecursiveCallFiniteContext_dec_projection {width : Nat} {σ : 
   | some value =>
       simp only []
       by_cases hshape : shapeEqHOL shape (shapeOfHOLExact value) = true
-      · rw [if_pos hshape, if_pos hshape]
+      · rw [ite_eq_left hshape, ite_eq_left hshape]
         generalize hbc : context.withState (setVarHOLFinite name value context.state) rfl rfl = bc
         generalize hbcb : context.toExact.withState
             (setVarHOLExact name value context.toExact.state) rfl rfl = bbc
@@ -1536,7 +1536,7 @@ theorem evalPanSemRecursiveCallFiniteContext_dec_projection {width : Nat} {σ : 
             apply PanSemExactEvalContext.ext
             simp only [FiniteEvalContext.toExact, PanSemExactEvalContext.withState_state,
               FiniteEvalContext.withState_state, toExact_resVarEq_locals]
-      · rw [if_neg hshape, if_neg hshape]; rfl
+      · rw [ite_eq_right hshape, ite_eq_right hshape]; rfl
 
 /-- The `If` clause recurses on the same context, so its projection follows
     directly from the two branch IHs.  Flapjack-specific. -/
@@ -1568,9 +1568,9 @@ theorem evalPanSemRecursiveCallFiniteContext_ite_projection {width : Nat} {σ : 
           | word value =>
               simp only []
               by_cases hz : (value != 0) = true
-              · rw [if_pos hz, if_pos hz]
+              · rw [ite_eq_left hz, ite_eq_left hz]
                 exact (ihThen (evalPanSemRecursiveCallFiniteContext thenBranch context) rfl).symm
-              · rw [if_neg hz, if_neg hz]
+              · rw [ite_eq_right hz, ite_eq_right hz]
                 exact (ihElse (evalPanSemRecursiveCallFiniteContext elseBranch context) rfl).symm
       | rStruct fields => rfl
       | nStruct name fields => rfl
@@ -1606,10 +1606,10 @@ theorem evalPanSemRecursiveCallFiniteContext_while_projection {width : Nat} {σ 
           | word word =>
               simp only []
               by_cases hw : word ≠ 0
-              · rw [if_pos hw, if_pos hw]
+              · rw [ite_eq_left hw, ite_eq_left hw]
                 by_cases hclock : context.state.clock = 0
                 · have hclock' : context.toExact.state.clock = 0 := hclock
-                  rw [if_pos hclock, if_pos hclock']
+                  rw [ite_eq_left hclock, ite_eq_left hclock']
                   simp only [Option.map_some, Option.some.injEq]
                   have hb : (context.withState (emptyLocalsHOLFinite context.state) rfl rfl).toExact =
                       context.toExact.withState (emptyLocalsHOLExact context.toExact.state) rfl rfl := by
@@ -1619,7 +1619,7 @@ theorem evalPanSemRecursiveCallFiniteContext_while_projection {width : Nat} {σ 
                     rw [toExact_emptyLocalsHOLFinite]
                   rw [hb]
                 · have hclock' : ¬(context.toExact.state.clock = 0) := hclock
-                  rw [if_neg hclock, if_neg hclock']
+                  rw [ite_eq_right hclock, ite_eq_right hclock']
                   generalize hent : context.withState (decClockHOLFinite context.state) rfl rfl = ent
                   generalize hentb : context.toExact.withState
                       (decClockHOLExact context.toExact.state) rfl rfl = entb
@@ -1643,7 +1643,7 @@ theorem evalPanSemRecursiveCallFiniteContext_while_projection {width : Nat} {σ 
                           | «continue» => rw [← ihSelf _ _ rfl]; congr 1
                           | «break» => congr 1
                           | _ => congr 1
-              · rw [if_neg hw, if_neg hw]; rfl
+              · rw [ite_eq_right hw, ite_eq_right hw]; rfl
       | rStruct fields => rfl
       | nStruct name fields => rfl
 
@@ -1698,7 +1698,7 @@ theorem evalPanSemRecursiveCallFiniteContext_call_projection {width : Nat} {σ :
         simp only []
         by_cases hclock : context.state.clock = 0
         · have hclock' : context.toExact.state.clock = 0 := hclock
-          rw [if_pos hclock, if_pos hclock']
+          rw [ite_eq_left hclock, ite_eq_left hclock']
           simp only [Option.map_some, Option.some.injEq]
           have hb : (FiniteEvalContext.emptyLocalsContextHOLFinite context).toExact =
               context.toExact.withState (emptyLocalsHOLExact context.state.toExact) rfl rfl := by
@@ -1706,7 +1706,7 @@ theorem evalPanSemRecursiveCallFiniteContext_call_projection {width : Nat} {σ :
           rw [hb]
           rfl
         · have hclock' : ¬(context.toExact.state.clock = 0) := hclock
-          rw [if_neg hclock, if_neg hclock']
+          rw [ite_eq_right hclock, ite_eq_right hclock']
           generalize hent : callEntryContextHOLFinite context callee = ent
           generalize hentb : context.toExact.withState
             (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
@@ -1733,7 +1733,7 @@ theorem evalPanSemRecursiveCallFiniteContext_call_projection {width : Nat} {σ :
                 | returned value =>
                   simp only []
                   by_cases hshape : shapeEqHOL (shapeOfHOLExact value) returnShape = true
-                  · simp only [if_pos hshape]
+                  · simp only [ite_eq_left hshape]
                     cases info with
                     | none => callProjectionCloser
                     | some istr =>
@@ -1745,15 +1745,15 @@ theorem evalPanSemRecursiveCallFiniteContext_call_projection {width : Nat} {σ :
                         simp only []
                         by_cases hvalid : isValidValueHOLExact context.state.toExact kind name value = true
                         · have hvalid' : isValidValueHOLExact context.toExact.state kind name value = true := hvalid
-                          rw [if_pos hvalid, if_pos hvalid']
+                          rw [ite_eq_left hvalid, ite_eq_left hvalid']
                           simp only [Option.map_some, Option.some.injEq, Prod.mk.injEq]
                           refine ⟨trivial, ?_⟩
                           apply PanSemExactEvalContext.ext
                           rw [toExact_callSetKvarContextHOLFinite]
                           rfl
                         · have hvalid' : ¬(isValidValueHOLExact context.toExact.state kind name value = true) := hvalid
-                          simp only [if_neg hvalid, if_neg hvalid']; callProjectionCloser
-                  · simp only [if_neg hshape]; callProjectionCloser
+                          simp only [ite_eq_right hvalid, ite_eq_right hvalid']; callProjectionCloser
+                  · simp only [ite_eq_right hshape]; callProjectionCloser
                 | exception eid value =>
                   simp only []
                   cases info with
@@ -1766,7 +1766,7 @@ theorem evalPanSemRecursiveCallFiniteContext_call_projection {width : Nat} {σ :
                       obtain ⟨handlerId, handlerVar, handlerProgram⟩ := hkn
                       simp only []
                       by_cases heq : eid = handlerId
-                      · simp only [if_pos heq]
+                      · simp only [ite_eq_left heq]
                         rw [show context.toExact.state.eshapes = context.state.eshapes.lookup from rfl]
                         cases hshapes : context.state.eshapes.lookup eid with
                         | none => simp only []; callProjectionCloser
@@ -1776,7 +1776,7 @@ theorem evalPanSemRecursiveCallFiniteContext_call_projection {width : Nat} {σ :
                             isValidValueHOLExact context.state.toExact VarKind.local handlerVar value) = true
                           · have hcond' : (shapeEqHOL (shapeOfHOLExact value) shape &&
                               isValidValueHOLExact context.toExact.state VarKind.local handlerVar value) = true := hcond
-                            simp only [if_pos hcond, if_pos hcond']
+                            simp only [ite_eq_left hcond, ite_eq_left hcond']
                             rw [← ihHandler handlerProgram _ _ rfl]
                             congr 1
                             apply PanSemExactEvalContext.ext
@@ -1793,8 +1793,8 @@ theorem evalPanSemRecursiveCallFiniteContext_call_projection {width : Nat} {σ :
                             rw [toExact_fixClockHOLFinite, toExact_callEntryStateHOLFinite]
                           · have hcond' : ¬((shapeEqHOL (shapeOfHOLExact value) shape &&
                               isValidValueHOLExact context.toExact.state VarKind.local handlerVar value) = true) := hcond
-                            simp only [if_neg hcond, if_neg hcond']; callProjectionCloser
-                      · simp only [if_neg heq]; callProjectionCloser
+                            simp only [ite_eq_right hcond, ite_eq_right hcond']; callProjectionCloser
+                      · simp only [ite_eq_right heq]; callProjectionCloser
                 | finalFfi e => callProjectionCloser
 
 set_option maxHeartbeats 1000000 in
@@ -1837,11 +1837,11 @@ theorem evalPanSemRecursiveCallFiniteContext_decCall_projection {width : Nat} {�
         simp only []
         by_cases hclock : context.state.clock = 0
         · have hclock' : context.toExact.state.clock = 0 := hclock
-          rw [if_pos hclock, if_pos hclock']
+          rw [ite_eq_left hclock, ite_eq_left hclock']
           simp only [Option.map_some, Option.some.injEq]
           rw [FiniteEvalContext.toExact_emptyLocalsContextHOLFinite]
         · have hclock' : ¬(context.toExact.state.clock = 0) := hclock
-          rw [if_neg hclock, if_neg hclock']
+          rw [ite_eq_right hclock, ite_eq_right hclock']
           generalize hent : context.withState
             (callEntryStateHOLFinite context.state callee) rfl rfl = ent
           generalize hentb : context.toExact.withState
@@ -1872,7 +1872,7 @@ theorem evalPanSemRecursiveCallFiniteContext_decCall_projection {width : Nat} {�
                   simp only []
                   by_cases hshape : (shapeEqHOL (shapeOfHOLExact value) shape &&
                       shapeEqHOL (shapeOfHOLExact value) returnShape) = true
-                  · simp only [if_pos hshape]
+                  · simp only [ite_eq_left hshape]
                     rw [← toExact_callContinuationContextHOLFinite context
                       (callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
                         (some (PanSemResultExact.returned value)) bodyContext)
@@ -1910,7 +1910,7 @@ theorem evalPanSemRecursiveCallFiniteContext_decCall_projection {width : Nat} {�
                               (resultName, context.toExact.state.locals resultName) }
                         rw [toExact_resVarEq_locals]
                         congr 1
-                  · simp only [if_neg hshape]; callProjectionCloser
+                  · simp only [ite_eq_right hshape]; callProjectionCloser
                 | exception eid value => callProjectionCloser
                 | finalFfi e => callProjectionCloser
 
@@ -1958,7 +1958,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         rw [evalHOLExact_toExact_eq context initializer]
         exact x1
       simp only [hx1]
-      simp only [h, if_true]
+      simp only [h, ite_true]
       generalize hbcb : context.toExact.withState (setVarHOLExact name value context.toExact.state) rfl rfl = bbc
       have hbbc : bbc = bodyContext.toExact := by
         rw [← hbcb]
@@ -1977,7 +1977,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         rw [evalHOLExact_toExact_eq context initializer]
         exact x1
       simp only [hx1]
-      simp only [h, if_true]
+      simp only [h, ite_true]
       generalize hbcb : context.toExact.withState (setVarHOLExact name value context.toExact.state) rfl rfl = bbc
       have hbbc : bbc = bodyContext.toExact := by
         rw [← hbcb]
@@ -2002,7 +2002,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         rw [evalHOLExact_toExact_eq context initializer]
         exact x
       simp only [hx]
-      rw [if_neg h]
+      rw [ite_eq_right h]
       rfl
   | case5 =>
       rename_i inst context first second x ih1
@@ -2028,7 +2028,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         rw [evalHOLExact_toExact_eq context condition]
         exact x
       simp only [hc]
-      simp only [h, if_true]
+      simp only [h, ite_true]
       exact ih1
   | case9 =>
       rename_i inst context state condition thenBranch elseBranch value x h ih1
@@ -2037,7 +2037,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         rw [evalHOLExact_toExact_eq context condition]
         exact x
       simp only [hc]
-      rw [if_neg h]
+      rw [ite_eq_right h]
       exact ih1
   | case10 =>
       rename_i inst context state condition thenBranch elseBranch x
@@ -2060,9 +2060,9 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         rw [evalHOLExact_toExact_eq context condition]
         exact x
       simp only [hc]
-      rw [if_pos h1]
+      rw [ite_eq_left h1]
       have h' : context.toExact.state.clock = 0 := h
-      rw [if_pos h']
+      rw [ite_eq_left h']
       simp only [Option.map_some, Option.some.injEq, Prod.mk.injEq]
       refine ⟨trivial, ?_⟩
       apply PanSemExactEvalContext.ext
@@ -2075,9 +2075,9 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         rw [evalHOLExact_toExact_eq context condition]
         exact x1
       simp only [hc]
-      rw [if_pos h1]
+      rw [ite_eq_left h1]
       have hclock' : ¬(context.toExact.state.clock = 0) := hclock
-      rw [if_neg hclock']
+      rw [ite_eq_right hclock']
       generalize hentb : context.toExact.withState (decClockHOLExact context.toExact.state) rfl rfl = entb
       have hentb_eq : entb = entryContext.toExact := by
         rw [← hentb]
@@ -2094,9 +2094,9 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         rw [evalHOLExact_toExact_eq context condition]
         exact x1
       simp only [hc]
-      rw [if_pos h1]
+      rw [ite_eq_left h1]
       have hclock' : ¬(context.toExact.state.clock = 0) := hclock
-      rw [if_neg hclock']
+      rw [ite_eq_right hclock']
       generalize hentb : context.toExact.withState (decClockHOLExact context.toExact.state) rfl rfl = entb
       have hentb_eq : entb = entryContext.toExact := by
         rw [← hentb]
@@ -2114,9 +2114,9 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         rw [evalHOLExact_toExact_eq context condition]
         exact x1
       simp only [hc]
-      rw [if_pos h1]
+      rw [ite_eq_left h1]
       have hclock' : ¬(context.toExact.state.clock = 0) := hclock
-      rw [if_neg hclock']
+      rw [ite_eq_right hclock']
       generalize hentb : context.toExact.withState (decClockHOLExact context.toExact.state) rfl rfl = entb
       have hentb_eq : entb = entryContext.toExact := by
         rw [← hentb]
@@ -2134,9 +2134,9 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         rw [evalHOLExact_toExact_eq context condition]
         exact x1
       simp only [hc]
-      rw [if_pos h1]
+      rw [ite_eq_left h1]
       have hclock' : ¬(context.toExact.state.clock = 0) := hclock
-      rw [if_neg hclock']
+      rw [ite_eq_right hclock']
       generalize hentb : context.toExact.withState (decClockHOLExact context.toExact.state) rfl rfl = entb
       have hentb_eq : entb = entryContext.toExact := by
         rw [← hentb]
@@ -2154,9 +2154,9 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         rw [evalHOLExact_toExact_eq context condition]
         exact x4
       simp only [hc]
-      rw [if_pos h1]
+      rw [ite_eq_left h1]
       have hclock' : ¬(context.toExact.state.clock = 0) := hclock
-      rw [if_neg hclock']
+      rw [ite_eq_right hclock']
       generalize hentb : context.toExact.withState (decClockHOLExact context.toExact.state) rfl rfl = entb
       have hentb_eq : entb = entryContext.toExact := by
         rw [← hentb]
@@ -2174,7 +2174,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         rw [evalHOLExact_toExact_eq context condition]
         exact x
       simp only [hc]
-      rw [if_neg h]
+      rw [ite_eq_right h]
       simp only [Option.map_some]
   | case18 =>
       rename_i inst context state condition body x
@@ -2215,7 +2215,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x
       simp only [hargs, hl]
       have hclock' : context.toExact.state.clock = 0 := h
-      rw [if_pos hclock']
+      rw [ite_eq_left hclock']
       simp only [Option.map_some, Option.some.injEq, Prod.mk.injEq]
       refine ⟨trivial, ?_⟩
       apply PanSemExactEvalContext.ext
@@ -2231,7 +2231,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x1
       simp only [hargs, hl]
       have hclock' : ¬(context.toExact.state.clock = 0) := h
-      rw [if_neg hclock']
+      rw [ite_eq_right hclock']
       generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
       have hentb_eq : entb = entryContext.toExact := by
         rw [← hentb]
@@ -2253,7 +2253,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x1
       simp only [hargs, hl]
       have hclock' : ¬(context.toExact.state.clock = 0) := h
-      rw [if_neg hclock']
+      rw [ite_eq_right hclock']
       generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
       have hentry : callEntryContextHOLFinite context callee = entryContext := rfl
       have hentb_eq : entb = entryContext.toExact := by
@@ -2273,7 +2273,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x1
       simp only [hargs, hl]
       have hclock' : ¬(context.toExact.state.clock = 0) := h
-      rw [if_neg hclock']
+      rw [ite_eq_right hclock']
       generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
       have hentry : callEntryContextHOLFinite context callee = entryContext := rfl
       have hentb_eq : entb = entryContext.toExact := by
@@ -2293,7 +2293,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x1
       simp only [hargs, hl]
       have hclock' : ¬(context.toExact.state.clock = 0) := h
-      rw [if_neg hclock']
+      rw [ite_eq_right hclock']
       generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
       have hentb_eq : entb = entryContext.toExact := by
         rw [← hentb]
@@ -2314,7 +2314,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x1
       simp only [hargs, hl]
       have hclock' : ¬(context.toExact.state.clock = 0) := hClock
-      rw [if_neg hclock']
+      rw [ite_eq_right hclock']
       generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
       have hentb_eq : entb = entryContext.toExact := by
         rw [← hentb]
@@ -2324,7 +2324,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         rfl
       rw [hentb_eq, ← ih1, x]
       simp only [Option.map_some]
-      rw [if_pos hshape]
+      rw [ite_eq_left hshape]
       simp only [Option.some.injEq, Prod.mk.injEq]
       refine ⟨trivial, ?_⟩
       apply PanSemExactEvalContext.ext
@@ -2341,7 +2341,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x1
       simp only [hargs, hl]
       have hclock' : ¬(context.toExact.state.clock = 0) := hClock
-      rw [if_neg hclock']
+      rw [ite_eq_right hclock']
       generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
       have hentb_eq : entb = entryContext.toExact := by
         rw [← hentb]
@@ -2351,7 +2351,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         rfl
       rw [hentb_eq, ← ih1, x]
       simp only [Option.map_some]
-      rw [if_pos hshape]
+      rw [ite_eq_left hshape]
       simp only [Option.some.injEq, Prod.mk.injEq]
       refine ⟨trivial, ?_⟩
       apply PanSemExactEvalContext.ext
@@ -2368,7 +2368,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x1
       simp only [hargs, hl]
       have hclock' : ¬(context.toExact.state.clock = 0) := hClock
-      rw [if_neg hclock']
+      rw [ite_eq_right hclock']
       generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
       have hentb_eq : entb = entryContext.toExact := by
         rw [← hentb]
@@ -2378,8 +2378,8 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         rfl
       rw [hentb_eq, ← ih1, x]
       simp only [Option.map_some]
-      rw [if_pos hshape]
-      rw [if_pos (show isValidValueHOLExact context.toExact.state kind name value = true from hvalid)]
+      rw [ite_eq_left hshape]
+      rw [ite_eq_left (show isValidValueHOLExact context.toExact.state kind name value = true from hvalid)]
       simp only [Option.some.injEq, Prod.mk.injEq]
       refine ⟨trivial, ?_⟩
       apply PanSemExactEvalContext.ext
@@ -2397,7 +2397,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x1
       simp only [hargs, hl]
       have hclock' : ¬(context.toExact.state.clock = 0) := hClock
-      rw [if_neg hclock']
+      rw [ite_eq_right hclock']
       generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
       have hentb_eq : entb = entryContext.toExact := by
         rw [← hentb]
@@ -2407,8 +2407,8 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         rfl
       rw [hentb_eq, ← ih1, x]
       simp only [Option.map_some]
-      rw [if_pos hshape]
-      rw [if_neg (show ¬(isValidValueHOLExact context.toExact.state kind name value = true) from hvalid)]
+      rw [ite_eq_left hshape]
+      rw [ite_eq_right (show ¬(isValidValueHOLExact context.toExact.state kind name value = true) from hvalid)]
       simp only [Option.some.injEq, Prod.mk.injEq]
       refine ⟨trivial, ?_⟩
       have hfix := callFixedContextHOLFinite_toExact context callee postContext
@@ -2424,7 +2424,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x1
       simp only [hargs, hl]
       have hclock' : ¬(context.toExact.state.clock = 0) := hClock
-      rw [if_neg hclock']
+      rw [ite_eq_right hclock']
       generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
       have hentb_eq : entb = entryContext.toExact := by
         rw [← hentb]
@@ -2434,7 +2434,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         rfl
       rw [hentb_eq, ← ih1, x]
       simp only [Option.map_some]
-      rw [if_neg hshape]
+      rw [ite_eq_right hshape]
       simp only [Option.some.injEq, Prod.mk.injEq]
       refine ⟨trivial, ?_⟩
       have hfix := callFixedContextHOLFinite_toExact context callee postContext
@@ -2450,7 +2450,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x1
       simp only [hargs, hl]
       have hclock' : ¬(context.toExact.state.clock = 0) := hClock
-      rw [if_neg hclock']
+      rw [ite_eq_right hclock']
       generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
       have hentb_eq : entb = entryContext.toExact := by
         rw [← hentb]
@@ -2476,7 +2476,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x1
       simp only [hargs, hl]
       have hclock' : ¬(context.toExact.state.clock = 0) := hClock
-      rw [if_neg hclock']
+      rw [ite_eq_right hclock']
       generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
       have hentb_eq : entb = entryContext.toExact := by
         rw [← hentb]
@@ -2502,7 +2502,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x2
       simp only [hargs, hl]
       have hclock' : ¬(context.toExact.state.clock = 0) := hClock
-      rw [if_neg hclock']
+      rw [ite_eq_right hclock']
       generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
       have hentb_eq : entb = entryContext.toExact := by
         rw [← hentb]
@@ -2512,11 +2512,11 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         rfl
       rw [hentb_eq, ← ih2, x]
       simp only [Option.map_some]
-      simp only [if_true]
+      simp only [ite_true]
       rw [show context.toExact.state.eshapes = context.state.eshapes.lookup from rfl]
       rw [x1]
       simp only []
-      rw [if_pos (show (shapeEqHOL (shapeOfHOLExact value) shape && isValidValueHOLExact context.toExact.state VarKind.local handlerVar value) = true from hcond)]
+      rw [ite_eq_left (show (shapeEqHOL (shapeOfHOLExact value) shape && isValidValueHOLExact context.toExact.state VarKind.local handlerVar value) = true from hcond)]
       have hfix := callFixedContextHOLFinite_toExact context callee postContext
         (some (PanSemResultExact.exception handlerId value))
       have hctx : (Flapjack.callFixedContextHOLExact (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup)
@@ -2540,7 +2540,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x2
       simp only [hargs, hl]
       have hclock' : ¬(context.toExact.state.clock = 0) := hClock
-      rw [if_neg hclock']
+      rw [ite_eq_right hclock']
       generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
       have hentb_eq : entb = entryContext.toExact := by
         rw [← hentb]
@@ -2550,11 +2550,11 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         rfl
       rw [hentb_eq, ← ih1, x]
       simp only [Option.map_some]
-      simp only [if_true]
+      simp only [ite_true]
       rw [show context.toExact.state.eshapes = context.state.eshapes.lookup from rfl]
       rw [x1]
       simp only []
-      rw [if_neg (show ¬(shapeEqHOL (shapeOfHOLExact value) shape && isValidValueHOLExact context.toExact.state VarKind.local handlerVar value) = true from hcond)]
+      rw [ite_eq_right (show ¬(shapeEqHOL (shapeOfHOLExact value) shape && isValidValueHOLExact context.toExact.state VarKind.local handlerVar value) = true from hcond)]
       simp only [Option.some.injEq, Prod.mk.injEq]
       refine ⟨trivial, ?_⟩
       have hfix := callFixedContextHOLFinite_toExact context callee postContext
@@ -2570,7 +2570,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x2
       simp only [hargs, hl]
       have hclock' : ¬(context.toExact.state.clock = 0) := hClock
-      rw [if_neg hclock']
+      rw [ite_eq_right hclock']
       generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
       have hentb_eq : entb = entryContext.toExact := by
         rw [← hentb]
@@ -2580,7 +2580,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         rfl
       rw [hentb_eq, ← ih1, x]
       simp only [Option.map_some]
-      simp only [if_true]
+      simp only [ite_true]
       rw [show context.toExact.state.eshapes = context.state.eshapes.lookup from rfl]
       rw [x1]
       simp only [Option.some.injEq, Prod.mk.injEq]
@@ -2598,7 +2598,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x1
       simp only [hargs, hl]
       have hclock' : ¬(context.toExact.state.clock = 0) := hClock
-      rw [if_neg hclock']
+      rw [ite_eq_right hclock']
       generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
       have hentb_eq : entb = entryContext.toExact := by
         rw [← hentb]
@@ -2608,7 +2608,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         rfl
       rw [hentb_eq, ← ih1, x]
       simp only [Option.map_some]
-      rw [if_neg hne]
+      rw [ite_eq_right hne]
       simp only [Option.some.injEq, Prod.mk.injEq]
       refine ⟨trivial, ?_⟩
       apply PanSemExactEvalContext.ext
@@ -2625,7 +2625,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x5
       simp only [hargs, hl]
       have hclock' : ¬(context.toExact.state.clock = 0) := hClock
-      rw [if_neg hclock']
+      rw [ite_eq_right hclock']
       generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
       have hentb_eq : entb = entryContext.toExact := by
         rw [← hentb]
@@ -2666,7 +2666,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x
       simp only [hargs, hl]
       have hclock' : context.toExact.state.clock = 0 := h
-      rw [if_pos hclock']
+      rw [ite_eq_left hclock']
       simp only [Option.map_some, Option.some.injEq, Prod.mk.injEq]
       refine ⟨trivial, ?_⟩
       apply PanSemExactEvalContext.ext
@@ -2682,7 +2682,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x1
       simp only [hargs, hl]
       have hclock' : ¬(context.toExact.state.clock = 0) := hClock
-      rw [if_neg hclock']
+      rw [ite_eq_right hclock']
       generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
       have hentb_eq : entb = entryContext.toExact := by
         rw [← hentb]
@@ -2702,7 +2702,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x1
       simp only [hargs, hl]
       have hclock' : ¬(context.toExact.state.clock = 0) := hClock
-      rw [if_neg hclock']
+      rw [ite_eq_right hclock']
       generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
       have hentb_eq : entb = entryContext.toExact := by
         rw [← hentb]
@@ -2726,7 +2726,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x1
       simp only [hargs, hl]
       have hclock' : ¬(context.toExact.state.clock = 0) := hClock
-      rw [if_neg hclock']
+      rw [ite_eq_right hclock']
       generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
       have hentb_eq : entb = entryContext.toExact := by
         rw [← hentb]
@@ -2750,7 +2750,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x1
       simp only [hargs, hl]
       have hclock' : ¬(context.toExact.state.clock = 0) := hClock
-      rw [if_neg hclock']
+      rw [ite_eq_right hclock']
       generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
       have hentb_eq : entb = entryContext.toExact := by
         rw [← hentb]
@@ -2774,7 +2774,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x2
       simp only [hargs, hl]
       have hclock' : ¬(context.toExact.state.clock = 0) := hClock
-      rw [if_neg hclock']
+      rw [ite_eq_right hclock']
       generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
       have hentb_eq : entb = entryContext.toExact := by
         rw [← hentb]
@@ -2784,7 +2784,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         rfl
       rw [hentb_eq, ← ih2, x1]
       simp only [Option.map_some]
-      rw [if_pos hshape]
+      rw [ite_eq_left hshape]
       rw [← toExact_callContinuationContextHOLFinite context fixedContext
         (Flapjack.callFixedContextHOLExact (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup)
           (some (PanSemResultExact.returned value)) postContext.toExact)
@@ -2802,7 +2802,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x2
       simp only [hargs, hl]
       have hclock' : ¬(context.toExact.state.clock = 0) := hClock
-      rw [if_neg hclock']
+      rw [ite_eq_right hclock']
       generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
       have hentb_eq : entb = entryContext.toExact := by
         rw [← hentb]
@@ -2812,7 +2812,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         rfl
       rw [hentb_eq, ← ih2, x1]
       simp only [Option.map_some]
-      rw [if_pos hshape]
+      rw [ite_eq_left hshape]
       rw [← toExact_callContinuationContextHOLFinite context fixedContext
         (Flapjack.callFixedContextHOLExact (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup)
           (some (PanSemResultExact.returned value)) postContext1.toExact)
@@ -2842,7 +2842,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x1
       simp only [hargs, hl]
       have hclock' : ¬(context.toExact.state.clock = 0) := hClock
-      rw [if_neg hclock']
+      rw [ite_eq_right hclock']
       generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
       have hentb_eq : entb = entryContext.toExact := by
         rw [← hentb]
@@ -2852,7 +2852,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         rfl
       rw [hentb_eq, ← ih1, x]
       simp only [Option.map_some]
-      rw [if_neg hshape]
+      rw [ite_eq_right hshape]
       simp only [Option.some.injEq, Prod.mk.injEq]
       refine ⟨trivial, ?_⟩
       have hfix := callFixedContextHOLFinite_toExact context callee postContext (some (PanSemResultExact.returned value))
@@ -2867,7 +2867,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
         lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x4
       simp only [hargs, hl]
       have hclock' : ¬(context.toExact.state.clock = 0) := hClock
-      rw [if_neg hclock']
+      rw [ite_eq_right hclock']
       generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
       have hentb_eq : entb = entryContext.toExact := by
         rw [← hentb]
@@ -2908,7 +2908,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
       rw [evalPanSemRecursiveCallContextHOLExact.eq_def]
       simp only []
       have h' : context.toExact.state.clock = 0 := h
-      rw [if_pos h']
+      rw [ite_eq_left h']
       simp only [Option.map_some, Option.some.injEq, Prod.mk.injEq]
       refine ⟨trivial, ?_⟩
       apply PanSemExactEvalContext.ext
@@ -2919,7 +2919,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
       rw [evalPanSemRecursiveCallContextHOLExact.eq_def]
       simp only []
       have h' : ¬(context.toExact.state.clock = 0) := h
-      rw [if_neg h']
+      rw [ite_eq_right h']
       simp only [Option.map_some, Option.some.injEq, Prod.mk.injEq]
       refine ⟨trivial, ?_⟩
       apply PanSemExactEvalContext.ext
@@ -2944,7 +2944,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
       simp only [hx]
       have h' : Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL context.toExact.state.structs
           (shapeOfHOLExact value) ≤ 32 := h
-      rw [if_pos h']
+      rw [ite_eq_left h']
       simp only [Option.map_some, Option.some.injEq, Prod.mk.injEq]
       refine ⟨trivial, ?_⟩
       apply PanSemExactEvalContext.ext
@@ -2960,7 +2960,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
       simp only [hx]
       have h' : ¬(Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL context.toExact.state.structs
           (shapeOfHOLExact value) ≤ 32) := h
-      rw [if_neg h']
+      rw [ite_eq_right h']
       simp only [Option.map_some]
   | case58 =>
       rename_i inst context state exception value x
@@ -2993,7 +2993,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
       simp only []
       have h' : Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL context.toExact.state.structs
           (shapeOfHOLExact value) ≤ 32 := h
-      rw [if_pos h1, if_pos h']
+      rw [ite_eq_left h1, ite_eq_left h']
       simp only [Option.map_some, Option.some.injEq, Prod.mk.injEq]
       refine ⟨trivial, ?_⟩
       apply PanSemExactEvalContext.ext
@@ -3011,7 +3011,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
       simp only []
       have h' : ¬(Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL context.toExact.state.structs
           (shapeOfHOLExact value) ≤ 32) := h
-      rw [if_pos h1, if_neg h']
+      rw [ite_eq_left h1, ite_eq_right h']
       simp only [Option.map_some]
   | case62 =>
       rename_i inst context state exception value1 value x1 shape x h
@@ -3023,7 +3023,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
       simp only [hx]
       rw [show context.toExact.state.eshapes = context.state.eshapes.lookup from rfl, x]
       simp only []
-      rw [if_neg h]
+      rw [ite_eq_right h]
       simp only [Option.map_some]
   | case63 =>
       rename_i inst context state size kind name address evalExpression output

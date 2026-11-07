@@ -244,7 +244,7 @@ theorem runLoopRecursive {width : Nat} [NeZero width] {C F : Type}
     congr 1
     omega
   rw [StackSemEvaluate.evaluate_loop,StackSemEvaluateClock.fixClockEvaluate,boosted]
-  simp only [continues,if_true,clockNonzero,if_false]
+  simp only [continues,ite_true,clockNonzero,ite_false]
   rw [decrement]
   exact recursiveRun
 /-- Flapjack recursive-entry metadata transport from the actual body witness.
@@ -354,7 +354,7 @@ theorem sourceTailResources {width : Nat} [NeZero width] {C F : Type}
   simp only [] at loopRun
   rw [WordSemStateFiniteExact.fix_clock_evaluate,bodyRun] at loopRun
   by_cases continues : wordSemContLoop bodyResult = true
-  · simp only [continues,if_true] at loopRun
+  · simp only [continues,ite_true] at loopRun
     by_cases zero : bodyPost.clock = 0
     · simp only [zero] at loopRun
       obtain ⟨rfl,rfl⟩ := loopRun

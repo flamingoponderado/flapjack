@@ -89,8 +89,8 @@ private theorem eocMotive {width : Nat} [NeZero width] {σ : Type} :
   | ite c a b =>
       refine transformEocCorrect_If c a b s (fun _ w _ _ => ?_)
       by_cases hw : w ≠ 0
-      · rw [if_pos hw]; exact same _ _ rfl (by simp only [CrepProgHOL.ite.sizeOf_spec]; omega)
-      · rw [if_neg hw]; exact same _ _ rfl (by simp only [CrepProgHOL.ite.sizeOf_spec]; omega)
+      · rw [ite_eq_left hw]; exact same _ _ rfl (by simp only [CrepProgHOL.ite.sizeOf_spec]; omega)
+      · rw [ite_eq_right hw]; exact same _ _ rfl (by simp only [CrepProgHOL.ite.sizeOf_spec]; omega)
   | seq a b =>
       refine transformEocCorrect_Seq a b s (fun res s1 hs1 _ => ?_)
         (same _ _ rfl (by simp only [CrepProgHOL.seq.sizeOf_spec]; omega))

@@ -82,7 +82,7 @@ theorem wordGcFun_locMerge {width : Nat} [NeZero width] (conf : Config)
     have allValid : ((.word g : WordLocW width) :: roots).all locOk = true := by simp [locOk, valid]
     cases kind : conf.gcKind with
     | none =>
-      simp only [wordGcFun, kind, if_pos assum, Option.some.injEq, Prod.mk.injEq] at run ⊢
+      simp only [wordGcFun, kind, ite_eq_left assum, Option.some.injEq, Prod.mk.injEq] at run ⊢
       obtain ⟨rfl, rfl, rfl⟩ := run
       simp [locMerge_filter_isWord]
     | simple =>

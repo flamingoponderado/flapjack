@@ -77,7 +77,7 @@ theorem loopBodyNonError {width : Nat} [NeZero width] {C F : Type}
   intro error
   change bodyResult = some .error at error
   subst bodyResult
-  simp only [contLoop, StackSemControl.exitLoop, Bool.false_eq_true, if_false, Prod.mk.injEq] at execution
+  simp only [contLoop, StackSemControl.exitLoop, Bool.false_eq_true, ite_false, Prod.mk.injEq] at execution
   exact nonerror execution.1.symm
 
 /-- Actual recursive source state has a strictly smaller clock. -/
@@ -122,7 +122,7 @@ theorem compCorrectLoopExit {width : Nat} [NeZero width] {C F : Type}
     bodyIH info target post result ⟨execution, nonerror, relation⟩
   refine ⟨clock, targetState, stackSpace, postRelation, ?_, ?_⟩
   · rw [comp, evaluateLoopUnclamped, targetExecution]
-    simp only [exit, Bool.false_eq_true, if_false]
+    simp only [exit, Bool.false_eq_true, ite_false]
   · intro exitGuard
     exact guard (exitLoopGuard result exitGuard)
 
@@ -158,8 +158,8 @@ theorem compCorrectLoopTimeout {width : Nat} [NeZero width] {C F : Type}
   refine ⟨clock, emptyEnv targetState, (emptyEnv targetState).stackSpace,
     stateRel_emptyEnv info post targetState postRelation, ?_, ?_⟩
   · rw [comp, evaluateLoopUnclamped, targetExecution]
-    simp only [continuing, if_true]
-    rw [if_pos targetZero]
+    simp only [continuing, ite_true]
+    rw [ite_eq_left targetZero]
   · intro impossible
     exact False.elim (impossible.1 rfl)
 
@@ -221,8 +221,8 @@ theorem compCorrectLoopReentry {width : Nat} [NeZero width] {C F : Type}
     omega
   refine ⟨clock + recursiveClock, targetPost, finalSpace, postRelation, ?_, guard⟩
   rw [comp, evaluateLoopUnclamped, extendedBody]
-  simp only [continuing, if_true]
-  rw [if_neg (show targetBody.clock + recursiveClock ≠ 0 by omega), reentryEq]
+  simp only [continuing, ite_true]
+  rw [ite_eq_right (show targetBody.clock + recursiveClock ≠ 0 by omega), reentryEq]
   exact targetExecution
 
 /-- Genuine recursive Loop case. The original three premises are retained;
@@ -255,18 +255,18 @@ theorem compCorrectLoop {width : Nat} [NeZero width] {C F : Type}
   rw [bodyExecution] at execution bodyNonerror
   change bodyResult ≠ some .error at bodyNonerror
   by_cases continuing : contLoop bodyResult = true
-  · simp only [continuing, if_true] at execution
+  · simp only [continuing, ite_true] at execution
     by_cases zero : bodyPost.clock = 0
-    · rw [if_pos zero] at execution
+    · rw [ite_eq_left zero] at execution
       obtain ⟨rfl, rfl⟩ := Prod.mk.inj execution
       exact compCorrectLoopTimeout body info source target bodyPost bodyResult bodyIH
         bodyExecution bodyNonerror relation continuing zero
-    · rw [if_neg zero] at execution
+    · rw [ite_eq_right zero] at execution
       exact compCorrectLoopReentry body info source target bodyPost post bodyResult result
         bodyIH reentryIH bodyExecution bodyNonerror relation continuing zero execution nonerror
   · have exit : contLoop bodyResult = false := by
       cases h : contLoop bodyResult <;> simp_all
-    simp only [exit, Bool.false_eq_true, if_false] at execution
+    simp only [exit, Bool.false_eq_true, ite_false] at execution
     obtain ⟨rfl, rfl⟩ := Prod.mk.inj execution
     exact compCorrectLoopExit body info source target bodyPost bodyResult bodyIH
       bodyExecution bodyNonerror relation exit

@@ -201,14 +201,14 @@ theorem evaluateCopyRetSeq {width : Nat} [NeZero width] {C F β γ : Type}
     StackSemEvaluate.evaluate (copyRetNative perf b kf vs k0, t) =
       StackSemEvaluate.evaluate (.seq (copyRetNative perf b kf vs .skip) k0, t) := by
   by_cases hn : Compiler.Backend.WordToStack.numStackRet kf.1 vs = 0
-  · simp only [copyRetNative, hn, if_true]
+  · simp only [copyRetNative, hn, ite_true]
     rw [seq_skip_left]
-  · simp only [copyRetNative, hn, if_false]
+  · simp only [copyRetNative, hn, ite_false]
     rw [← Compiler.Backend.StackRemove.CopyLoopProof.sequenceAssoc]
     apply seq_congr_right
     intro s
     unfold seqStackFreeNative
-    rw [if_neg hn, if_neg hn, ← Compiler.Backend.StackRemove.CopyLoopProof.sequenceAssoc]
+    rw [ite_eq_right hn, ite_eq_right hn, ← Compiler.Backend.StackRemove.CopyLoopProof.sequenceAssoc]
     apply seq_congr_right
     intro s'
     rw [seq_skip_left]
@@ -256,12 +256,12 @@ theorem evaluateStackMove {width : Nat} [NeZero width] {C F : Type} (k : Nat) :
       rw [StackSemEvaluate.evaluate_seq, StackSemEvaluateClock.fixClockEvaluate, hev1]
       simp only
       rw [StackSemEvaluate.evaluate_seq, StackSemEvaluateClock.fixClockEvaluate,
-        StackSemEvaluate.evaluate_stackLoad, if_neg (by simp [huse]), dif_pos hb1]
+        StackSemEvaluate.evaluate_stackLoad, ite_eq_right (by simp [huse]), dite_eq_left hb1]
       simp only
-      rw [StackSemEvaluate.evaluate_stackStore, if_neg (by simp [StackSemStateOps.setVar, huse]),
-        if_neg (by simp [StackSemStateOps.setVar]; omega)]
+      rw [StackSemEvaluate.evaluate_stackStore, ite_eq_right (by simp [StackSemStateOps.setVar, huse]),
+        ite_eq_right (by simp [StackSemStateOps.setVar]; omega)]
       simp only [StackSemStateOps.getVar, StackSemStateOps.setVar, HolFiniteMapExact.updateEq,
-        FUPDATE_HOL, if_true]
+        FUPDATE_HOL, ite_true]
       set v := S1[t.stackSpace + (tar + offset)] with hvdef
       refine ⟨_, rfl, S1.set (t.stackSpace + tar) v, R1.updateEq (k, v), rfl, ?_, ?_, rfl, ?_, ?_⟩
       · intro i hi
@@ -271,7 +271,7 @@ theorem evaluateStackMove {width : Nat} [NeZero width] {C F : Type} (k : Nat) :
       · simp [hlen1]
       · show (S1.set (t.stackSpace + tar) v).drop (t.stackSpace + tar + (n + 1)) =
           t.stack.drop (t.stackSpace + tar + (n + 1))
-        rw [List.drop_set, if_pos (by omega), show t.stackSpace + tar + (n + 1) =
+        rw [List.drop_set, ite_eq_left (by omega), show t.stackSpace + tar + (n + 1) =
           t.stackSpace + (tar + 1) + n by omega]
         exact hdrop1
       · intro x hx
@@ -280,9 +280,9 @@ theorem evaluateStackMove {width : Nat} [NeZero width] {C F : Type} (k : Nat) :
         rw [holEl_eq_getElem _ _ (by simp; omega), holEl_eq_getElem _ _ (by simp; omega),
           List.getElem_drop, List.getElem_drop, List.getElem_set]
         rcases x with _ | x
-        · rw [if_pos (by omega), hv]
+        · rw [ite_eq_left (by omega), hv]
           simp only [show t.stackSpace + tar + (0 + offset) = t.stackSpace + (tar + offset) by omega]
-        · rw [if_neg (by omega)]
+        · rw [ite_eq_right (by omega)]
           have h := hel1 x (by omega)
           rw [holEl_eq_getElem _ _ (by simp; omega), holEl_eq_getElem _ _ (by simp; omega),
             List.getElem_drop, List.getElem_drop] at h
@@ -327,13 +327,13 @@ theorem evaluateCopyRetAux {width : Nat} [NeZero width] {C F : Type} :
       set v := t.stack[t.stackSpace + n] with hvdef
       simp only [copyRetAuxNative, listSeq]
       rw [StackSemEvaluate.evaluate_seq, StackSemEvaluateClock.fixClockEvaluate,
-        StackSemEvaluate.evaluate_stackLoad, if_neg (by simp [huse]), dif_pos hb1]
+        StackSemEvaluate.evaluate_stackLoad, ite_eq_right (by simp [huse]), dite_eq_left hb1]
       simp only
       rw [StackSemEvaluate.evaluate_seq, StackSemEvaluateClock.fixClockEvaluate,
-        StackSemEvaluate.evaluate_stackStore, if_neg (by simp [StackSemStateOps.setVar, huse]),
-        if_neg (by simp [StackSemStateOps.setVar]; omega)]
+        StackSemEvaluate.evaluate_stackStore, ite_eq_right (by simp [StackSemStateOps.setVar, huse]),
+        ite_eq_right (by simp [StackSemStateOps.setVar]; omega)]
       simp only [StackSemStateOps.getVar, StackSemStateOps.setVar, HolFiniteMapExact.updateEq,
-        FUPDATE_HOL, if_true]
+        FUPDATE_HOL, ite_true]
       set t2 : StackSemStateFiniteExact width C F :=
         {t with regs := t.regs.updateEq (k, v), stack := t.stack.set (t.stackSpace + (n + f)) v}
         with ht2
@@ -364,7 +364,7 @@ theorem evaluateCopyRetAux {width : Nat} [NeZero width] {C F : Type} :
           holEl_drop _ _ _ (by simp [t2]; omega)] at h
         rw [holEl_drop _ _ _ (by rw [hlen3]; simp [t2]; omega), holEl_drop _ _ _ (by omega)]
         simp only [t2, List.getElem_set] at h
-        rw [if_neg (by omega)] at h
+        rw [ite_eq_right (by omega)] at h
         simp only [show n + 1 + t.stackSpace + m = n + t.stackSpace + (m + 1) by omega]
         exact h
       · intro x hx
@@ -387,6 +387,6 @@ theorem evaluateCopyRetAux {width : Nat} [NeZero width] {C F : Type} :
             holEl_drop _ _ _ (by simp [t2]; omega)] at h
           rw [h]
           simp only [t2, List.getElem_set]
-          rw [if_neg (by omega)]
+          rw [ite_eq_right (by omega)]
 
 end Flapjack.WordToStackProofs.CallReturnEval

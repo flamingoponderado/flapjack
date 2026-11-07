@@ -96,26 +96,26 @@ theorem compCorrectRawCall {width : Nat} [NeZero width] {C F : Type}
       rawCallEntry info source target relation dest first body lookup
     have clockEq := LoopCase.stateRel_clock info source target relation
     by_cases zero : source.clock = 0
-    · simp only [zero, if_true, Prod.mk.injEq] at execution
+    · simp only [zero, ite_true, Prod.mk.injEq] at execution
       obtain ⟨rfl, rfl⟩ := execution
       refine ⟨0, emptyEnv target, (emptyEnv target).stackSpace,
         LoopCase.stateRel_emptyEnv info source target relation, ?_, ?_⟩
       · simp only [Nat.add_zero, StackSemEvaluate.evaluate_rawCall, targetLookup,
           destSeq]
         have tz : target.clock = 0 := clockEq.trans zero
-        simp only [tz, if_true]
+        simp only [tz, ite_true]
         have update : { target with clock := 0 } = target := by
           rw [← tz]
         rw [update]
       · simp
-    · simp only [zero, if_false] at execution
+    · simp only [zero, ite_false] at execution
       rcases bodyExecution : StackSemEvaluate.evaluate (body, decClock source) with
         ⟨bodyResult, bodyPost⟩
       rw [bodyExecution] at execution
       by_cases bad : badFunReturn bodyResult = true
-      · simp only [bad, if_true, Prod.mk.injEq] at execution
+      · simp only [bad, ite_true, Prod.mk.injEq] at execution
         exact False.elim (nonerror execution.1.symm)
-      · simp only [bad, Bool.false_eq_true, if_false, Prod.mk.injEq] at execution
+      · simp only [bad, Bool.false_eq_true, ite_false, Prod.mk.injEq] at execution
         obtain ⟨rfl, rfl⟩ := execution
         obtain ⟨clock, targetState, stackSpace, postRelation, targetExecution, guard⟩ :=
           calleeIH first body lookup zero entryInfo (decClock target) bodyPost bodyResult
@@ -132,8 +132,8 @@ theorem compCorrectRawCall {width : Nat} [NeZero width] {C F : Type}
         have targetNonzero : target.clock ≠ 0 := by omega
         have addedNonzero : target.clock + clock ≠ 0 := by omega
         simp only [StackSemEvaluate.evaluate_rawCall, targetLookup, destSeq,
-          addedNonzero, if_false,
+          addedNonzero, ite_false,
           StackProps.EvaluateAddClock.decClock_addClock target clock targetNonzero,
-          targetExecution, bad, Bool.false_eq_true, if_false]
+          targetExecution, bad, Bool.false_eq_true, ite_false]
 
 end Flapjack.Compiler.Backend.StackRawCall.RawCallCase

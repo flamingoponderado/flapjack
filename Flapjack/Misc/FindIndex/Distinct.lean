@@ -18,7 +18,7 @@ theorem findIndex_allDistinct_elEq {α : Type} [DecidableEq α] [Nonempty α]
     intro hn target offset index
     obtain ⟨hnot,ht⟩ := List.nodup_cons.mp hn
     by_cases he : head = target
-    · rw [findIndex,if_pos he]
+    · rw [findIndex,ite_eq_left he]
       constructor
       · intro h
         refine ⟨0,by simpa using (Option.some.inj h).symm,by simp,?_⟩
@@ -34,7 +34,7 @@ theorem findIndex_allDistinct_elEq {α : Type} [DecidableEq α] [Nonempty α]
           have hv : head = holEl j tail := by
             simpa only [holEl,List.tail_cons,←he] using hval
           exact False.elim (hnot (hv ▸ hm))
-    · rw [findIndex,if_neg he,ih ht target (offset+1) index]
+    · rw [findIndex,ite_eq_right he,ih ht target (offset+1) index]
       constructor
       · rintro ⟨j,hidx,hbound,hval⟩
         refine ⟨j+1,by omega,by simpa using hbound,?_⟩

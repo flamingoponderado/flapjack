@@ -92,7 +92,7 @@ theorem decode_shift_word (sh : BitVec 2) (rm rn rd : BitVec 5) :
     simp only [shiftWord]
     simp
     interval_cases i <;> simp
-  simp only [h1, h2, h3, h4, h5, h6, h7, h8, hK, Bool.false_eq_true, if_true, if_false]
+  simp only [h1, h2, h3, h4, h5, h6, h7, h8, hK, Bool.false_eq_true, ite_true, ite_false]
   have f1 : part (shiftWord sh rm rn rd) 10 2 = sh.toNat := by
     apply part_eq_of_setWidth
     apply BitVec.eq_of_getLsbD_eq
@@ -250,7 +250,7 @@ theorem decode_division_word (o1 : BitVec 1) (rm rn rd : BitVec 5) :
     simp only [divisionWord]
     simp
     interval_cases i <;> simp
-  simp only [h1, h2, h3, h4, h5, h6, h7, h8, h9, hK, Bool.false_eq_true, if_true, if_false]
+  simp only [h1, h2, h3, h4, h5, h6, h7, h8, h9, hK, Bool.false_eq_true, ite_true, ite_false]
   have f1 : part (divisionWord o1 rm rn rd) 10 1 = o1.toNat := by
     apply part_eq_of_setWidth
     apply BitVec.eq_of_getLsbD_eq
@@ -416,7 +416,7 @@ theorem decode_multiplyHigh_word (u : BitVec 1) (rm rn rd : BitVec 5) :
     simp only [multiplyHighWord]
     simp
     interval_cases i <;> simp
-  simp only [h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, hK, Bool.false_eq_true, if_true, if_false]
+  simp only [h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, hK, Bool.false_eq_true, ite_true, ite_false]
   have f1 : part (multiplyHighWord u rm rn rd) 23 1 = u.toNat := by
     apply part_eq_of_setWidth
     apply BitVec.eq_of_getLsbD_eq
@@ -588,7 +588,7 @@ theorem decode_multiplyAddSub_word (o0 : BitVec 1) (rm ra rn rd : BitVec 5) :
     simp only [multiplyAddSubWord]
     simp
     interval_cases i <;> simp
-  simp only [h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, hK, Bool.false_eq_true, if_true, if_false]
+  simp only [h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, hK, Bool.false_eq_true, ite_true, ite_false]
   have f1 : part (multiplyAddSubWord o0 rm ra rn rd) 15 1 = o0.toNat := by
     apply part_eq_of_setWidth
     apply BitVec.eq_of_getLsbD_eq
@@ -737,7 +737,7 @@ theorem decode_addSubShiftedRegister_word (sub : BitVec 1) (sf : BitVec 1) (sh :
     simp only [addSubShiftedRegisterWord]
     simp
     interval_cases i <;> simp
-  simp only [h1, h2, h3, h4, h5, hK, Bool.false_eq_true, if_true, if_false]
+  simp only [h1, h2, h3, h4, h5, hK, Bool.false_eq_true, ite_true, ite_false]
   have f1 : part (addSubShiftedRegisterWord sub sf sh rm imm6 rn rd) 30 1 = sub.toNat := by
     apply part_eq_of_setWidth
     apply BitVec.eq_of_getLsbD_eq
@@ -962,7 +962,7 @@ theorem decode_addSubCarry_word (sub : BitVec 1) (sf : BitVec 1) (rm rn rd : Bit
     simp only [addSubCarryWord]
     simp
     interval_cases i <;> simp
-  simp only [h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, hK, Bool.false_eq_true, if_true, if_false]
+  simp only [h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, hK, Bool.false_eq_true, ite_true, ite_false]
   have f1 : part (addSubCarryWord sub sf rm rn rd) 30 1 = sub.toNat := by
     apply part_eq_of_setWidth
     apply BitVec.eq_of_getLsbD_eq
@@ -1158,7 +1158,7 @@ theorem decode_conditionalSelect_word (op : BitVec 1) (rm : BitVec 5) (cd : BitV
     simp only [conditionalSelectWord]
     simp
     interval_cases i <;> simp
-  simp only [h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, hK, Bool.false_eq_true, if_true, if_false]
+  simp only [h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, hK, Bool.false_eq_true, ite_true, ite_false]
   have f1 : part (conditionalSelectWord op rm cd o2 rn rd) 30 1 = op.toNat := by
     apply part_eq_of_setWidth
     apply BitVec.eq_of_getLsbD_eq
@@ -1362,7 +1362,7 @@ theorem decode_conditionalCompareImmediate_word (opc : BitVec 1) (imm : BitVec 5
     simp only [conditionalCompareImmediateWord]
     simp
     interval_cases i <;> simp
-  simp only [h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, hK, Bool.false_eq_true, if_true, if_false]
+  simp only [h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, hK, Bool.false_eq_true, ite_true, ite_false]
   have f1 : part (conditionalCompareImmediateWord opc imm cd rn nzcv) 30 1 = opc.toNat := by
     apply part_eq_of_setWidth
     apply BitVec.eq_of_getLsbD_eq
@@ -1653,7 +1653,7 @@ theorem decode_branchRegister_word (opc : BitVec 2) (rn : BitVec 5)
     simp only [branchRegisterWord]
     simp
     interval_cases i <;> simp
-  simp only [h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15, h16, h17, h18, h19, hK, Bool.false_eq_true, if_true, if_false]
+  simp only [h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15, h16, h17, h18, h19, hK, Bool.false_eq_true, ite_true, ite_false]
   have f1 : part (branchRegisterWord opc rn) 21 2 = opc.toNat := by
     apply part_eq_of_setWidth
     apply BitVec.eq_of_getLsbD_eq

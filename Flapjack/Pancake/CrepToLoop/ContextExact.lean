@@ -77,7 +77,7 @@ private theorem lookupNatInfo_support_of_ne_none {name : Nat}
       by_cases heq : candidate == name
       · have hname : candidate = name := beq_iff_eq.mp heq
         simp [hname]
-      · simp only [if_neg heq] at hlookup
+      · simp only [ite_eq_right heq] at hlookup
         have hmem := ih hlookup
         simp [hmem]
 
@@ -93,7 +93,7 @@ private theorem lookupInfo_support_of_ne_none {κ β : Type} [BEq κ]
       by_cases heq : candidate == name
       · have hname : candidate = name := beq_iff_eq.mp heq
         simp [hname]
-      · simp only [if_neg heq] at hlookup
+      · simp only [ite_eq_right heq] at hlookup
         have hmem := ih hlookup
         simp [hmem]
 

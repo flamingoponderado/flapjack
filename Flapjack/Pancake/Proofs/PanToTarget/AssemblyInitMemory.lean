@@ -97,14 +97,14 @@ theorem panToTargetWordInitStore {k : Nat} {ac : AsmConfigExact width}
   refine ⟨w2, g2, ?_, ?_⟩
   · simp only [WordToStack.Native.Initialization.makeInit, HolFiniteMapExact.lookup_eraseEq,
       hs, StackAlloc.makeInit]
-    simp only [FDOMSUB_HOL, reduceCtorEq, if_false]
+    simp only [FDOMSUB_HOL, reduceCtorEq, ite_false]
     rw [hx]
     simp [InitReduce.initReduce, HolFiniteMapExact.lookup_updateListEq, storeList, storeInit,
       FUPDATE_LIST_HOL, FUPDATE_HOL, StackSemRegisterTransfers.storeOfSyntax,
       holFapply_of_lookup tsp2]
   · simp only [WordToStack.Native.Initialization.makeInit, HolFiniteMapExact.lookup_eraseEq,
       hs, StackAlloc.makeInit]
-    simp only [FDOMSUB_HOL, reduceCtorEq, if_false]
+    simp only [FDOMSUB_HOL, reduceCtorEq, ite_false]
     exact hshl.1
 
 open Classical in

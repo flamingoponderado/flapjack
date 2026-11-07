@@ -64,7 +64,7 @@ private theorem conditionalIncrement_production (node amount : Nat)
         degreeBound, holEl_eq_getElem node native.degrees degreeBound, degrees]
     refine ⟨{native with degrees := degrees}, by simpa [fixed] using run,
       good_degrees good (List.length_set), rfl, ?_⟩
-    simpa only [fixed, Bool.not_false, Bool.false_eq_true, if_false, if_true,
+    simpa only [fixed, Bool.not_false, Bool.false_eq_true, ite_false, ite_true,
       cakeIncDeg, related.degree_read node degreeBound, Option.getD_some, degrees] using
       related.degree_write node (native.degrees[node] + amount) degreeBound
 

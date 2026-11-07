@@ -78,7 +78,7 @@ theorem flookup_fupdateList_reverse_of_mem
       have hparts := List.nodup_cons.mp hnodup
       rcases List.mem_cons.mp hmem with hhead | htail
       · cases hhead
-        simp only [beq_self_eq_true, if_true]
+        simp only [beq_self_eq_true, ite_true]
       · have hneq : entry.1 ≠ key := by
           intro heq
           apply hparts.1
@@ -88,7 +88,7 @@ theorem flookup_fupdateList_reverse_of_mem
           cases hvalue : (entry.1 == key) with
           | false => rfl
           | true => exact False.elim (hneq (beq_iff_eq.mp hvalue))
-        simp only [hbeq, Bool.false_eq_true, if_false]
+        simp only [hbeq, Bool.false_eq_true, ite_false]
         exact flookup_fupdateList_reverse_of_mem entries key value hparts.2 htail
 
 theorem flookup_fupdateList_reverse_mem'

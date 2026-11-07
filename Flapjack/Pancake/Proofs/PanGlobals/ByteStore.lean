@@ -90,7 +90,7 @@ theorem stateRelMemStoreByte {width : Nat} {σ : Type} [NeZero width]
   | word cell =>
       by_cases hd : source.memaddrs (panByteAlignHOL address)
       · have htargetCell := hmem _ hd
-        simp only [panMemStoreByteWord8HOL, hm, if_pos hd, Option.some.injEq] at hstore
+        simp only [panMemStoreByteWord8HOL, hm, ite_eq_left hd, Option.some.injEq] at hstore
         subst memory
         refine ⟨(fun a => if a = panByteAlignHOL address then
           .word (panSetByteHOL address (BitVec.ofNat width byte.toNat) cell source.be)

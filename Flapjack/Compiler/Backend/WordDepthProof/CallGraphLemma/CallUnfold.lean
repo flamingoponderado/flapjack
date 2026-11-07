@@ -54,6 +54,6 @@ theorem evaluate_call_tail {width : Nat} [NeZero width] {C F : Type}
       else evaluate prog (WordSemStateFiniteExact.callEnv args1 ss (decClock s))) := by
   have ht := (evaluate_def_rebound (width := width) (C := C) (F := F)).2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2
   rw [ht]
-  simp only [hg, hbad, Bool.false_eq_true, if_false, hf, hz]
+  simp only [hg, hbad, Bool.false_eq_true, ite_false, hf, hz]
 
 end Flapjack.Compiler.Backend.WordDepthProof

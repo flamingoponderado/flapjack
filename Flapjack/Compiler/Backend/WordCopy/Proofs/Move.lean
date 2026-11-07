@@ -58,7 +58,7 @@ theorem copyPropMoveModelAux {width : Nat} [NeZero width] {C F : Type} {cs : Cop
     · simp [sptLookupInsert]
     · by_cases hxt : x = t
       · subst hxt; simp [sptLookupInsert]
-      · rw [sptLookupInsert, if_neg hxt, d1 x s hcls, hs]
+      · rw [sptLookupInsert, ite_eq_right hxt, d1 x s hcls, hs]
   have hN : ∀ x, lookupEq (setEq (removeEq cs t) t s) x ≠ t →
       x ≠ t ∧ lookupEq (setEq (removeEq cs t) t s) x = lookupEq (removeEq cs t) x := by
     intro x hx
@@ -70,14 +70,14 @@ theorem copyPropMoveModelAux {width : Nat} [NeZero width] {C F : Type} {cs : Cop
     · obtain ⟨hxt, hx⟩ := hN x hr
       obtain ⟨hyt, hy⟩ := hN y (hxy ▸ hr)
       show sptLookup x (sptInsert t sval st.locals) = sptLookup y (sptInsert t sval st.locals)
-      rw [sptLookupInsert, if_neg hxt, sptLookupInsert, if_neg hyt]
+      rw [sptLookupInsert, ite_eq_right hxt, sptLookupInsert, ite_eq_right hyt]
       exact d1 x y (hx ▸ hy ▸ hxy)
   · obtain ⟨e1, e2⟩ := lookupStoreEqSetEqD hinv0 ht hxy
     show st.store.lookup x = sptLookup y (sptInsert t sval st.locals)
     by_cases hr : lookupEq (setEq (removeEq cs t) t s) y = t
     · rw [hT y hr, d2 x s (e1 hr), hs]
     · obtain ⟨hyt, hy⟩ := hN y hr
-      rw [sptLookupInsert, if_neg hyt]
+      rw [sptLookupInsert, ite_eq_right hyt]
       exact d2 x y (hy ▸ e2 hr)
 
 /-- Exact HOL `set_eq_remove_eq_models` (`word_copyProofScript.sml:528-540`). -/
@@ -91,7 +91,7 @@ theorem setEqRemoveEqModels {width : Nat} [NeZero width] {C F : Type} {cs : Copy
   rintro ⟨hinv, hm, hs⟩
   by_cases hb : bothAllocVars (t, s)
   · exact copyPropMoveModelAux ⟨hinv, hm, hb, hs⟩
-  · rw [setEq_eq, if_neg (show ¬(isAllocVar t = true ∧ isAllocVar s = true) from hb)]
+  · rw [setEq_eq, ite_eq_right (show ¬(isAllocVar t = true ∧ isAllocVar s = true) from hb)]
     exact removeEqModelInsert hinv hm
 
 /-- Exact HOL `lookup_eq_idempotent` (`word_copyProofScript.sml:542-550`). -/
@@ -278,7 +278,7 @@ theorem lookupAlistInsertSame {α : Type} {s : Nat} {tt : List Nat} {values : Li
       | cons v vs =>
           simp only [List.mem_cons, not_or] at h
           simp only [LoopSemStateFiniteExact.sptAlistInsert]
-          rw [sptLookupInsert, if_neg h.1]
+          rw [sptLookupInsert, ite_eq_right h.1]
           exact ih h.2
 
 /-- `copy_prop_move` preserves `CPstate_inv` (Flapjack infrastructure, the projection form

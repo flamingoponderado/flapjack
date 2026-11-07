@@ -100,7 +100,7 @@ private theorem compExpPreservesEvalAux {width : Nat} [NeZero width] {C F : Type
         exact Nat.mod_eq_of_lt (Nat.one_lt_two_pow (by omega))
       have hs : wordShiftHOL Shift.lsl len 1 =
           some (len <<< (1 : Nat)) := by
-        simp only [wordShiftHOL]; rw [if_neg (by omega)]
+        simp only [wordShiftHOL]; rw [ite_eq_right (by omega)]
       rw [h1, hs]
       simp only [theWords, Option.map_some, wordOpHOL, wordOp, List.foldr_cons, List.foldr_nil,
         htop, Option.some.injEq, WordLocW.word.injEq]

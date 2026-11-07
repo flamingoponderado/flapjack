@@ -42,7 +42,7 @@ noncomputable def mapKeysWitness {α β γ : Type} (f : α → γ) (m : HolFinit
         by_cases h : ∃ x, m.lookup x ≠ none ∧ k = f x
         · obtain ⟨x, hx, rfl⟩ := h
           exact List.mem_map.mpr ⟨x, hkeys x hx, rfl⟩
-        · simp only [h, dif_neg, not_false_eq_true] at hk
+        · simp only [h, dite_eq_right, not_false_eq_true] at hk
           exact absurd rfl hk }
 
 theorem mapKeysExists {α β γ : Type} :
@@ -51,12 +51,12 @@ theorem mapKeysExists {α β γ : Type} :
   refine ⟨mapKeysWitness, fun f m => ⟨fun k => ?_, fun hinj x hx => ?_⟩⟩
   · simp only [mapKeysWitness]
     by_cases h : ∃ x, m.lookup x ≠ none ∧ k = f x
-    · simp only [h, dif_pos, ne_eq, iff_true]
+    · simp only [h, dite_eq_left, ne_eq, iff_true]
       exact (Classical.choose_spec h).1
-    · simp only [h, dif_neg, not_false_eq_true, ne_eq, not_true_eq_false]
+    · simp only [h, dite_eq_right, not_false_eq_true, ne_eq, not_true_eq_false]
   · simp only [mapKeysWitness]
     have h : ∃ y, m.lookup y ≠ none ∧ f x = f y := ⟨x, hx, rfl⟩
-    rw [dif_pos h]
+    rw [dite_eq_left h]
     obtain ⟨hy, hfy⟩ := Classical.choose_spec h
     rw [hinj _ _ hy hx hfy.symm]
 
@@ -99,10 +99,10 @@ theorem mapKeys_updateEq {α β γ : Type} [DecidableEq α] [DecidableEq γ] {f 
     simp only [updateEq, FUPDATE_HOL]
     by_cases hxk : x = k
     · subst hxk; simp
-    · rw [if_neg hxk, if_neg (fun h => hxk (hf h)), lookup_mapKeys_of_injective hf]
+    · rw [ite_eq_right hxk, ite_eq_right (fun h => hxk (hf h)), lookup_mapKeys_of_injective hf]
   · have hj' : ∀ x, j ≠ f x := fun x h => hj ⟨x, h⟩
     rw [lookup_mapKeys_of_not_range _ hj']
     simp only [updateEq, FUPDATE_HOL]
-    rw [if_neg (hj' k), lookup_mapKeys_of_not_range _ hj']
+    rw [ite_eq_right (hj' k), lookup_mapKeys_of_not_range _ hj']
 
 end Flapjack.HolFiniteMapExact

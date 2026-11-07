@@ -97,22 +97,22 @@ theorem simpProgCorrectWhileCase {width : Nat} [NeZero width] {σ : Type} :
   rw [hexpT]
   simp only at he ⊢
   by_cases hw0 : ¬ w ≠ 0
-  · rw [if_neg hw0] at he
-    rw [if_neg hw0]
+  · rw [ite_eq_right hw0] at he
+    rw [ite_eq_right hw0]
     simp only [Prod.mk.injEq] at he
     obtain ⟨rfl, rfl⟩ := he
     rfl
   have hw : w ≠ 0 := Classical.not_not.mp hw0
-  rw [if_pos hw] at he
-  rw [if_pos hw]
+  rw [ite_eq_left hw] at he
+  rw [ite_eq_left hw]
   by_cases hc : state.clock = 0
-  · rw [if_pos hc] at he
-    rw [if_pos (show (crepSimpMapcsHOL state).clock = 0 from hc)]
+  · rw [ite_eq_left hc] at he
+    rw [ite_eq_left (show (crepSimpMapcsHOL state).clock = 0 from hc)]
     simp only [Prod.mk.injEq] at he
     obtain ⟨rfl, rfl⟩ := he
     rfl
-  rw [if_neg hc] at he
-  rw [if_neg (show ¬ (crepSimpMapcsHOL state).clock = 0 from hc)]
+  rw [ite_eq_right hc] at he
+  rw [ite_eq_right (show ¬ (crepSimpMapcsHOL state).clock = 0 from hc)]
   rcases hbody : evalCrepSemHOLProgExact (decClockCrepSemHOL state) c with ⟨res, s1⟩
   rw [hbody] at he
   simp only at he ⊢

@@ -43,74 +43,74 @@ theorem arm8BranchCondWord_imm_bit (imm19 : BitVec 19) (cd : BitVec 4) (k : Nat)
     (h1 : 5 ≤ k) (h2 : k < 24) :
     (arm8BranchCondWord imm19 cd).getLsbD k = imm19.getLsbD (k - 5) := by
   rw [arm8BranchCondWord_getLsbD imm19 cd k (by omega)]
-  rw [if_neg (by omega : ¬ (k < 4)), if_neg (by omega : ¬ (k = 4)), if_pos h2]
+  rw [ite_eq_right (by omega : ¬ (k < 4)), ite_eq_right (by omega : ¬ (k = 4)), ite_eq_left h2]
 
 /-- A `cd` bit of the conditional-branch word. -/
 theorem arm8BranchCondWord_cd_bit (imm19 : BitVec 19) (cd : BitVec 4) (k : Nat)
     (hk : k < 4) :
     (arm8BranchCondWord imm19 cd).getLsbD k = cd.getLsbD k := by
   rw [arm8BranchCondWord_getLsbD imm19 cd k (by omega)]
-  rw [if_pos hk]
+  rw [ite_eq_left hk]
 
 theorem arm8BranchCondWord_bit4 (imm19 : BitVec 19) (cd : BitVec 4) :
     (arm8BranchCondWord imm19 cd).getLsbD 4 = false := by
   rw [arm8BranchCondWord_getLsbD imm19 cd 4 (by omega)]
-  rw [if_neg (by decide : ¬ (4 < 4)), if_pos (by decide : 4 = 4)]
+  rw [ite_eq_right (by decide : ¬ (4 < 4)), ite_eq_left (by decide : 4 = 4)]
 
 theorem arm8BranchCondWord_bit24 (imm19 : BitVec 19) (cd : BitVec 4) :
     (arm8BranchCondWord imm19 cd).getLsbD 24 = false := by
   rw [arm8BranchCondWord_getLsbD imm19 cd 24 (by omega)]
-  rw [if_neg (by decide : ¬ (24 < 4)), if_neg (by decide : ¬ (24 = 4)),
-    if_neg (by decide : ¬ (24 < 24))]
+  rw [ite_eq_right (by decide : ¬ (24 < 4)), ite_eq_right (by decide : ¬ (24 = 4)),
+    ite_eq_right (by decide : ¬ (24 < 24))]
   decide
 
 theorem arm8BranchCondWord_bit25 (imm19 : BitVec 19) (cd : BitVec 4) :
     (arm8BranchCondWord imm19 cd).getLsbD 25 = false := by
   rw [arm8BranchCondWord_getLsbD imm19 cd 25 (by omega)]
-  rw [if_neg (by decide : ¬ (25 < 4)), if_neg (by decide : ¬ (25 = 4)),
-    if_neg (by decide : ¬ (25 < 24))]
+  rw [ite_eq_right (by decide : ¬ (25 < 4)), ite_eq_right (by decide : ¬ (25 = 4)),
+    ite_eq_right (by decide : ¬ (25 < 24))]
   decide
 
 theorem arm8BranchCondWord_bit26 (imm19 : BitVec 19) (cd : BitVec 4) :
     (arm8BranchCondWord imm19 cd).getLsbD 26 = true := by
   rw [arm8BranchCondWord_getLsbD imm19 cd 26 (by omega)]
-  rw [if_neg (by decide : ¬ (26 < 4)), if_neg (by decide : ¬ (26 = 4)),
-    if_neg (by decide : ¬ (26 < 24))]
+  rw [ite_eq_right (by decide : ¬ (26 < 4)), ite_eq_right (by decide : ¬ (26 = 4)),
+    ite_eq_right (by decide : ¬ (26 < 24))]
   decide
 
 theorem arm8BranchCondWord_bit27 (imm19 : BitVec 19) (cd : BitVec 4) :
     (arm8BranchCondWord imm19 cd).getLsbD 27 = false := by
   rw [arm8BranchCondWord_getLsbD imm19 cd 27 (by omega)]
-  rw [if_neg (by decide : ¬ (27 < 4)), if_neg (by decide : ¬ (27 = 4)),
-    if_neg (by decide : ¬ (27 < 24))]
+  rw [ite_eq_right (by decide : ¬ (27 < 4)), ite_eq_right (by decide : ¬ (27 = 4)),
+    ite_eq_right (by decide : ¬ (27 < 24))]
   decide
 
 theorem arm8BranchCondWord_bit28 (imm19 : BitVec 19) (cd : BitVec 4) :
     (arm8BranchCondWord imm19 cd).getLsbD 28 = true := by
   rw [arm8BranchCondWord_getLsbD imm19 cd 28 (by omega)]
-  rw [if_neg (by decide : ¬ (28 < 4)), if_neg (by decide : ¬ (28 = 4)),
-    if_neg (by decide : ¬ (28 < 24))]
+  rw [ite_eq_right (by decide : ¬ (28 < 4)), ite_eq_right (by decide : ¬ (28 = 4)),
+    ite_eq_right (by decide : ¬ (28 < 24))]
   decide
 
 theorem arm8BranchCondWord_bit29 (imm19 : BitVec 19) (cd : BitVec 4) :
     (arm8BranchCondWord imm19 cd).getLsbD 29 = false := by
   rw [arm8BranchCondWord_getLsbD imm19 cd 29 (by omega)]
-  rw [if_neg (by decide : ¬ (29 < 4)), if_neg (by decide : ¬ (29 = 4)),
-    if_neg (by decide : ¬ (29 < 24))]
+  rw [ite_eq_right (by decide : ¬ (29 < 4)), ite_eq_right (by decide : ¬ (29 = 4)),
+    ite_eq_right (by decide : ¬ (29 < 24))]
   decide
 
 theorem arm8BranchCondWord_bit30 (imm19 : BitVec 19) (cd : BitVec 4) :
     (arm8BranchCondWord imm19 cd).getLsbD 30 = true := by
   rw [arm8BranchCondWord_getLsbD imm19 cd 30 (by omega)]
-  rw [if_neg (by decide : ¬ (30 < 4)), if_neg (by decide : ¬ (30 = 4)),
-    if_neg (by decide : ¬ (30 < 24))]
+  rw [ite_eq_right (by decide : ¬ (30 < 4)), ite_eq_right (by decide : ¬ (30 = 4)),
+    ite_eq_right (by decide : ¬ (30 < 24))]
   decide
 
 theorem arm8BranchCondWord_bit31 (imm19 : BitVec 19) (cd : BitVec 4) :
     (arm8BranchCondWord imm19 cd).getLsbD 31 = false := by
   rw [arm8BranchCondWord_getLsbD imm19 cd 31 (by omega)]
-  rw [if_neg (by decide : ¬ (31 < 4)), if_neg (by decide : ¬ (31 = 4)),
-    if_neg (by decide : ¬ (31 < 24))]
+  rw [ite_eq_right (by decide : ¬ (31 < 4)), ite_eq_right (by decide : ¬ (31 = 4)),
+    ite_eq_right (by decide : ¬ (31 < 24))]
   decide
 
 /-- The `imm19` field reassembles from bits 23--5. -/
@@ -240,7 +240,7 @@ theorem arm8Decode_branchConditional (imm19 : BitVec 19) (cd : BitVec 4) :
     arm8BranchCondWord_bit26, arm8BranchCondWord_bit25, arm8BranchCondWord_bit24,
     arm8BranchCondWord_bit4, holV2w_one_false,
     Bool.not_true, Bool.not_false, Bool.true_and, Bool.false_and, Bool.and_true,
-    Bool.and_false, Bool.false_eq_true, if_true, if_false]
+    Bool.and_false, Bool.false_eq_true, ite_true, ite_false]
   rw [arm8BranchCondWord_imm_bit imm19 cd 23 (by decide) (by decide),
       arm8BranchCondWord_imm_bit imm19 cd 22 (by decide) (by decide),
       arm8BranchCondWord_imm_bit imm19 cd 21 (by decide) (by decide),
@@ -339,7 +339,7 @@ theorem arm8Next_branchConditional (ms : arm8_state) (l : BitVec 64) (cd : BitVe
       exact hc
     have hrunA : Run i { ms with branch_hint := none } =
         { ms with branch_hint := some .BranchType_JMP, PC := ms.PC + l } := by
-      rw [hrun, if_pos hc2]
+      rw [hrun, ite_eq_left hc2]
     have hnextA : Next ms =
         { ms with branch_hint := some .BranchType_JMP, PC := ms.PC + l } := by
       simp only [Next]
@@ -362,7 +362,7 @@ theorem arm8Next_branchConditional (ms : arm8_state) (l : BitVec 64) (cd : BitVe
       exact hc'
     have hrunB : Run i { ms with branch_hint := none } =
         { ms with branch_hint := none } := by
-      rw [hrun, if_neg (by rw [hc2]; simp)]
+      rw [hrun, ite_eq_right (by rw [hc2]; simp)]
     have hnextB : Next ms = { ms with branch_hint := none, PC := ms.PC + 4 } := by
       simp only [Next]
       rw [hfetch]

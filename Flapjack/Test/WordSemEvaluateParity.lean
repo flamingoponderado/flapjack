@@ -210,9 +210,9 @@ theorem callRet :
       some (.bn (.ls (.word 7)) .ln, .bn .ln (.bn .ln (.ls (.loc 5 0)))) := by decide +kernel
   simp only [evaluate]
   rw [h1]; dsimp only
-  rw [if_neg (by decide), h3]; dsimp only
-  rw [if_neg (by decide +kernel), h4]; dsimp only
-  rw [dif_neg (by decide)]
+  rw [ite_eq_right (by decide), h3]; dsimp only
+  rw [ite_eq_right (by decide +kernel), h4]; dsimp only
+  rw [dite_eq_right (by decide)]
   rw [evaluate.eq_def]; dsimp only
   decide +kernel
 /-- `call_ret_empty_names=(SOME Error,[(3,Loc 5 0); (9,Word 1w); (8,Word 16w); (2,Word 7w)],3)` -/
@@ -332,7 +332,7 @@ theorem installOk :
       (.none, [(1, .loc 42 0)], 2, [], 8, [],
         [(5, (1, WordLangProgHOL.return 0 [0])), (42, (42, WordLangProgHOL.skip)),
          (6, (2, WordLangProgHOL.return 0 [2]))], none, .ln, 3) := by
-  ev_simp
+  cbv
 
 /-! `call_handler_exception=(NONE,[(3,Word 7w); (5,Word 99w); (2,Word 7w)],2)`
 is captured in the HOL probe (`scripts/hol-probes/word_sem_evaluate_probe.out`) but

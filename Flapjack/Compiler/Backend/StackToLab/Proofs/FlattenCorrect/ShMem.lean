@@ -91,7 +91,7 @@ theorem evaluateShareMemStep {t : Flapjack.Compiler.Backend.LabSem.State width C
           ioRegs := holShiftSeq 1 t'.ioRegs
           ioFpRegs := holShiftSeq 1 t'.ioFpRegs } := by
   rw [evaluate]
-  simp only [hclk, if_false, asmFetch, fetch]
+  simp only [hclk, ite_false, asmFetch, fetch]
   split
   · rename_i h; rw [hsh] at h; cases h
   · rename_i outcome next h; rw [hsh] at h; cases h; rfl
@@ -148,7 +148,7 @@ theorem shMemLoadSim {s1 : StackSemStateFiniteExact width C F}
     intro c
     simp only [shareMemLoad]
     rw [show addrValue (.addr a w) { t1 with clock := c } = some addr from haddr]
-    simp only [hdom, if_true]
+    simp only [hdom, ite_true]
     cases callFFIHOL t1.ffi (.sharedMem .mappedRead) [BitVec.ofNat 8 k]
       (sharedMemoryWordBytes addr) <;> rfl
   rw [panWordToBytes_eq_shared,
@@ -227,7 +227,7 @@ theorem shMemStoreSim {s1 : StackSemStateFiniteExact width C F}
       = .word v from hv]
     simp only
     rw [show addrValue (.addr a w) { t1 with clock := c } = some addr from haddr]
-    simp only [hdom, if_true, ← hpay]
+    simp only [hdom, ite_true, ← hpay]
     cases callFFIHOL t1.ffi (.sharedMem .mappedWrite) [BitVec.ofNat 8 k] payload <;> rfl
   rw [show (StackSemStateOps.decClock s1).ffi = t1.ffi from ffiEq.symm] at ev
   split at ev

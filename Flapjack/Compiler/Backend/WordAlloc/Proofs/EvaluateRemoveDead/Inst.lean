@@ -330,7 +330,7 @@ theorem instCongrArith {width : Nat} [NeZero width] {C F : Type}
         simp only [Option.some.injEq] at hi; subst hi
         refine instCongrPostOne _ s t ts r1 _ rfl ?_
         simp only [inst, getVarsTransfer s t ts [r3, r2] _ hr hgv]
-        rw [if_pos hq]
+        rw [ite_eq_left hq]
       · cases hi
     · cases hi
   | addCarry r1 r2 r3 r4 =>
@@ -376,7 +376,7 @@ theorem instCongrArith {width : Nat} [NeZero width] {C F : Type}
         simp only [Option.some.injEq] at hi; subst hi
         refine instCongrPostTwo _ s t ts r2 r1 _ _ (fun k => by simp [instWrites, or_comm]) ?_
         simp only [inst, getVarsTransfer s t ts [r3, r4, r5] _ hr hgv]
-        rw [if_pos hq]
+        rw [ite_eq_left hq]
       · cases hi
     · cases hi
 
@@ -393,7 +393,7 @@ theorem memStoreTransfer {width : Nat} [NeZero width] {C F : Type}
     simp only [Option.some.injEq] at h
     subst h
     refine ⟨rfl, rfl, ?_⟩
-    rw [if_pos (show ({ s with locals := t, store := ts } : WordSemStateFiniteExact width C F).mdomain a
+    rw [ite_eq_left (show ({ s with locals := t, store := ts } : WordSemStateFiniteExact width C F).mdomain a
       from hd)]
   · cases h
 
@@ -534,23 +534,23 @@ theorem instCongrFp {width : Nat} [NeZero width] {C F : Type} (op : WordLangFp)
           WordSemStateFiniteExact width C F) = some v := hr
     simp only [inst] at hi
     by_cases h64 : width = 64
-    · rw [if_pos h64] at hi
+    · rw [ite_eq_left h64] at hi
       split at hi
       · rename_i w1 h1
         simp only [Option.some.injEq] at hi; subst hi
         refine instCongrPostZero _ s _ t ts rfl rfl rfl ?_
         have h1' := gv r1 _ (by simp [instReads, h64]) h1
-        simp only [inst, if_pos h64, h1']
+        simp only [inst, ite_eq_left h64, h1']
         rfl
       · cases hi
-    · rw [if_neg h64] at hi
+    · rw [ite_eq_right h64] at hi
       split at hi
       · rename_i w1 w2 h1 h2
         simp only [Option.some.injEq] at hi; subst hi
         refine instCongrPostZero _ s _ t ts rfl rfl rfl ?_
         have h1' := gv r1 _ (by simp [instReads, h64]) h1
         have h2' := gv r2 _ (by simp [instReads, h64]) h2
-        simp only [inst, if_neg h64, h1', h2']
+        simp only [inst, ite_eq_right h64, h1', h2']
         rfl
       · cases hi
   all_goals simp only [inst] at hi

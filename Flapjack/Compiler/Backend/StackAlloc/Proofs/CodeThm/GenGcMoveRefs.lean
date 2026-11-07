@@ -101,7 +101,7 @@ theorem wordGenGcMoveRefsCode_run {width : Nat} [NeZero width] {C F : Type} {con
   rw [wordGenGcMoveRefs] at hm
   by_cases hp : ha = re
   · subst hp
-    simp only [if_true, Prod.mk.injEq] at hm
+    simp only [ite_true, Prod.mk.injEq] at hm
     obtain ⟨rfl, rfl, rfl, rfl, rfl, rfl, -⟩ := hm
     obtain ⟨t0, hrt0⟩ := Option.isSome_iff_exists.1 ht0
     obtain ⟨t1, hrt1⟩ := Option.isSome_iff_exists.1 ht1
@@ -140,7 +140,7 @@ theorem wordGenGcMoveRefsCode_run {width : Nat} [NeZero width] {C F : Type} {con
     simp [k0, k1, k2, k3, k4, k5, k6, k7, k8]
   have hk : k ≠ 0 := by
     intro hk; subst hk; simp [hp] at hm
-  simp only [hp, hk, if_false] at hm
+  simp only [hp, hk, ite_false] at hm
   have hpb : (!(re == ha)) = true := by simpa using Ne.symm hp
   generalize hl : wordGenGcMoveList conf (ha + wordSemBytesInWord,
     decodeLength conf (wordSemTheWord (s.memory ha)), i, pa, ib, pb, old, s.memory,
@@ -215,7 +215,7 @@ theorem wordGenGcMoveRefsCode_run {width : Nat} [NeZero width] {C F : Type} {con
   have hmin : min (s.clock + (ck + ck' + 1)) (s7.clock + (ck' + 1)) = s7.clock + (ck' + 1) := by
     omega
   have hck : s7.clock + (ck' + 1) ≠ 0 := by omega
-  simp only [fixClock, contLoop, hmin, if_true, hck, if_false, decClock,
+  simp only [fixClock, contLoop, hmin, ite_true, hck, ite_false, decClock,
     ← wordGenGcMoveRefsCode_eq]
   refine (congrArg (fun st => evaluate (wordGenGcMoveRefsCode conf, st)) ?_).trans (hr.trans ?_)
   · congr 1

@@ -191,12 +191,12 @@ theorem crepInline_unreachElim_exps {width : Nat} [NeZero width] :
   | case4 => intro e h; simp [unreachElimHOLExact, crepExpsOfHOL] at h
   | case5 first second second' secondExit hu hsome ih =>
       intro e h
-      simp only [unreachElimHOLExact, hu, hsome, if_true] at h
+      simp only [unreachElimHOLExact, hu, hsome, ite_true] at h
       simp only [crepExpsOfHOL, List.mem_append]
       exact Or.inl (ih e (by rw [hu]; exact h))
   | case6 first second first' firstExit hu hnone second' secondExit hu2 ih1 ih2 =>
       intro e h
-      simp only [unreachElimHOLExact, hu, hnone, hu2, if_false, Bool.false_eq_true] at h
+      simp only [unreachElimHOLExact, hu, hnone, hu2, ite_false, Bool.false_eq_true] at h
       simp only [crepExpsOfHOL, List.mem_append] at h ⊢
       rcases h with h | h
       · exact Or.inl (ih1 e (by rw [hu]; exact h))
@@ -340,17 +340,17 @@ theorem crepInline_instInlineCore_exps {width : Nat} [NeZero width]
             (ih (submap_erase_left inl _ name hsub) e h)
   | case3 inl keys spec rets name args hd =>
       intro _ e h
-      rw [inlineProgHOLCoreExact_call_returns, if_pos hd] at h
+      rw [inlineProgHOLCoreExact_call_returns, ite_eq_left hd] at h
       exact Or.inl h
   | case4 inl keys spec rets name args hd hl =>
       intro _ e h
-      rw [inlineProgHOLCoreExact_call_returns, if_neg hd] at h
+      rw [inlineProgHOLCoreExact_call_returns, ite_eq_right hd] at h
       split at h
       · exact Or.inl h
       · rename_i heq; rw [hl] at heq; cases heq
   | case5 inl keys spec rets name args hd argNames body hl ih =>
       intro hsub e h
-      rw [inlineProgHOLCoreExact_call_returns, if_neg hd] at h
+      rw [inlineProgHOLCoreExact_call_returns, ite_eq_right hd] at h
       split at h
       · rename_i heq; rw [hl] at heq; cases heq
       · rename_i an b heq

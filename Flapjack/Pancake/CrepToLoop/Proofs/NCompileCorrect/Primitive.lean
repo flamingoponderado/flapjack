@@ -109,7 +109,7 @@ private theorem holAlookup_zip_getElem {α β : Type} [DecidableEq α]
               exact (List.nodup_cons.mp distinct).1
                 (heq.symm ▸ List.getElem_mem hindex)
             simp only [List.getElem_cons_succ, List.zip_cons_cons, holAlookup,
-              if_neg hne]
+              ite_eq_right hne]
             exact ih values (List.nodup_cons.mp distinct).2
               (by simpa using lengths) index hindex
 
@@ -192,7 +192,7 @@ theorem crepToLoop_ncompile_correct_primitive {width : Nat} [NeZero width]
                   (result, sourceFinal) := by
             have hEvalReduced := hEval
             simp only [hArgs, hPrim] at hEvalReduced
-            rw [if_pos hSourceGuard] at hEvalReduced
+            rw [ite_eq_left hSourceGuard] at hEvalReduced
             exact hEvalReduced
           have hResult : result = none := (congrArg Prod.fst hSourceEval).symm
           have hSourceFinal : sourceFinal = { source with
@@ -267,7 +267,7 @@ theorem crepToLoop_ncompile_correct_primitive {width : Nat} [NeZero width]
             have hTargetLength : loopNames.length =
                 (List.map wlabWlocHOL results).length := by
               simpa using hNamesLength.trans hSourceGuard.1
-            simp only [if_pos hTargetLength, setVars]
+            simp only [ite_eq_left hTargetLength, setVars]
             rfl
           · simpa [crepToLoopStateRelExact, hSourceFinal] using hState
           · simpa [hSourceFinal] using hMem

@@ -67,7 +67,7 @@ theorem fullSsaCcTransCorrect {width : Nat} [NeZero width] {C F : Type}
   dsimp only at post ⊢
   by_cases error : (WordSemStateFiniteExact.evaluate prog {state with permute := permutation}).1 = some .error
   · simp [error]
-  · rw [if_neg error] at post ⊢
+  · rw [ite_eq_right error] at post ⊢
     refine ⟨post.1,post.2.1,?_⟩
     cases resultEq : (WordSemStateFiniteExact.evaluate prog {state with permute := permutation}).1 with
     | none => trivial

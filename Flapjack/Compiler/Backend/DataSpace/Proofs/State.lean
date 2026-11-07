@@ -89,8 +89,8 @@ theorem cutEnv_of_subspt {α : Type} (names : NumSet) (source target result : Sp
     fun key member => (included key (present key member)).1
   have interEq := inter_eq_of_subspt source target names included present
   unfold DataSem.cutEnv at cut ⊢
-  rw [if_pos present] at cut
-  rw [if_pos targetPresent, ← interEq]
+  rw [ite_eq_left present] at cut
+  rw [ite_eq_left targetPresent, ← interEq]
   exact cut
 
 /-- Writing the same binding to extended environments preserves extension. -/

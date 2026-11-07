@@ -1,4 +1,4 @@
-import Mathlib.Logic.Basic
+import Mathlib.Basic.Logic.Basic
 import Mathlib.Tactic.SplitIfs
 import Mathlib.Tactic.CasesM
 import Flapjack.Compiler.Backend.Semantics.TargetSem.Evaluate
@@ -26,8 +26,8 @@ theorem evaluateTargetIoEventsMono {width : Nat} [NeZero width]
          rw [← hout]
          exact (callFFIHOL_return_ioEvents_prefix ffi _ _ _ nf nb hcall).trans (ih _ _ _))
       | cases_type Compiler.Encoders.Asm.HolAddr
-      | (simp only [ite_and] at hout)
-      | split at hout <;> (try simp_all only [↓reduceIte]))
+      | (rw [ite_and] at hout)
+      | (split at hout <;> (try simp_all only)))
 
 
 end Flapjack

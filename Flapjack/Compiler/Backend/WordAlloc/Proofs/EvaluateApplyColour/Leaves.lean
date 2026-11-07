@@ -113,7 +113,7 @@ theorem wsrJumpExc {width : Nat} [NeZero width] {C F : Type}
   rw [hstack, hh]
   split at hj
   · rename_i hlt
-    rw [if_pos hlt]
+    rw [ite_eq_left hlt]
     split at hj
     · rename_i m e0 e n l1' l2' xs heq
       simp only [Option.some.injEq, Prod.mk.injEq] at hj
@@ -134,7 +134,7 @@ theorem wsrMemStore {width : Nat} [NeZero width] {C F : Type}
   rw [hmd, hmem]
   split at hm
   · rename_i hd
-    rw [if_pos hd]
+    rw [ite_eq_left hd]
     simp only [Option.some.injEq] at hm
     subst hm
     refine ⟨_, rfl, ?_, rfl, rfl⟩
@@ -193,9 +193,9 @@ theorem evaluateApplyColour_Tick {width : Nat} [NeZero width] {C F : Type} :
   have hclk := wsrClock hs
   rw [evaluate, evaluate]
   by_cases hz : st.clock = 0
-  · rw [if_pos hz, if_pos (hclk.trans hz)]
+  · rw [ite_eq_left hz, ite_eq_left (hclk.trans hz)]
     exact ⟨rfl, wsrFlush true hs, rfl⟩
-  · rw [if_neg hz, if_neg (fun h => hz (hclk ▸ h))]
+  · rw [ite_eq_right hz, ite_eq_right (fun h => hz (hclk ▸ h))]
     exact ⟨rfl, wsrDecClock hs, by simpa [getLive, applyColourLocals, decClock] using hr⟩
 
 /-- HOL `evaluate_apply_colour`, `Break` case. -/
@@ -329,9 +329,9 @@ theorem evaluateApplyColour_Set {width : Nat} [NeZero width] {C F : Type} (v : W
   rw [evaluate] at he ⊢
   rw [evaluate]
   by_cases hv : v = .handler ∨ v = .bitmapBase
-  · rw [if_pos hv] at he; exact absurd rfl he
-  rw [if_neg hv] at he ⊢
-  rw [if_neg hv]
+  · rw [ite_eq_left hv] at he; exact absurd rfl he
+  rw [ite_eq_right hv] at he ⊢
+  rw [ite_eq_right hv]
   cases hw : wordExp st exp with
   | none => rw [hw] at he; exact absurd rfl he
   | some w =>
@@ -360,12 +360,12 @@ theorem evaluateApplyColour_LocValue {width : Nat} [NeZero width] {C F : Type} (
   rw [evaluate]
   have hc : sptMem l1 cst.code ↔ sptMem l1 st.code := by rw [wsrCode hs]
   by_cases hm : sptMem l1 st.code
-  · rw [if_pos hm, if_pos (hc.mpr hm)]
+  · rw [ite_eq_left hm, ite_eq_left (hc.mpr hm)]
     refine ⟨rfl, wsrLocals _ _ hs, ?_⟩
     simp only [applyColourLocals, setVar]
     refine strongLocalsRelInsert f r _ _ _ _ ⟨injInsertOfIset hok.2, ?_⟩
     exact slrMono hr (fun k hk => (sptDomain_del _ _ k).mpr ⟨hk.2, hk.1⟩)
-  · rw [if_neg hm] at he; exact absurd rfl he
+  · rw [ite_eq_right hm] at he; exact absurd rfl he
 
 /-- HOL `evaluate_apply_colour`, `Raise` case. -/
 @[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour"

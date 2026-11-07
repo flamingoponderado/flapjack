@@ -101,7 +101,7 @@ theorem pcCompileCorrectAt_raise {width : Nat} {σ : Type} [NeZero width]
           (crepNestedSeqHOL (storeGlobalsHOL (0 : BitVec 5) (temps.map CrepExpHOL.var))))
         (.raise n) := by
     simp only [compileProgExactHOLW, compileRaiseExactHOLW, hn, hc]
-    rw [if_neg (by rw [← hlen]; simp)]
+    rw [ite_eq_right (by rw [← hlen]; simp)]
   have hnd := evalNestedDecsSeqResVarEqHOL es temps t (flattenHOL value)
     (crepNestedSeqHOL (storeGlobalsHOL (0 : BitVec 5) (temps.map CrepExpHOL.var)))
     ⟨hev, htlen, hdist, hnodup⟩
@@ -113,7 +113,7 @@ theorem pcCompileCorrectAt_raise {width : Nat} {σ : Type} [NeZero width]
       (some (.exception n), CrepSemHOLState.emptyLocals { t with globals := G }) := by
     rw [hcomp, evalCrepSemHOLProgExact_seq_holShape, hnd]
     dsimp only
-    rw [if_pos rfl, evalCrepSemHOLProgExact_raise]
+    rw [ite_eq_left rfl, evalCrepSemHOLProgExact_raise]
   refine ⟨_, _, htgt, ?_, hcode, hexcp, ?_⟩
   · simpa [panToCrepStateRelFiniteExact, PanSemStateFiniteExact.emptyLocalsHOLFinite,
       CrepSemHOLState.emptyLocals] using hstate

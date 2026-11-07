@@ -1636,7 +1636,7 @@ theorem panValueFfiSharedLoad_stateRel_final
        simp only [opSizeToCrepLoadOp, crepRuntimeMemWidth,
          riscv64CrepRuntimeTarget_ffi, riscv64CrepRuntimeTarget_ffiContext,
          riscv64SharedMemCallFfiHandler_sharedMem, crepSharedMemOperator,
-         crepRuntimeSharedMem, clearCrepRuntimeLocals, hvalid, if_true,
+         crepRuntimeSharedMem, clearCrepRuntimeLocals, hvalid, ite_true,
          hcallBase])
   · simpa only [stateRel, clearCrepRuntimeLocals] using hstate
 
@@ -1699,7 +1699,7 @@ theorem panValueFfiSharedStore_stateRel_final
        simp only [opSizeToCrepStoreOp, riscv64CrepRuntimeTarget_ffi,
          riscv64CrepRuntimeTarget_ffiContext,
          riscv64SharedMemCallFfiHandler_sharedMem, crepSharedMemOperator,
-         crepRuntimeSharedMem, hname, Option.map_some, panTheWord, hvalid, if_true]
+         crepRuntimeSharedMem, hname, Option.map_some, panTheWord, hvalid, ite_true]
        erw [hcallGoal])
   · simpa only [stateRel] using hstate
 

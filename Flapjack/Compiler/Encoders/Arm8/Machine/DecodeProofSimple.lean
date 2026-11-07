@@ -81,7 +81,7 @@ theorem decode_extract_word (rm : BitVec 5) (imms : BitVec 6) (rn : BitVec 5) (r
     simp only [extractWord]
     simp
     interval_cases i <;> simp
-  simp only [h1, h2, h3, h4, h5, h6, h7, hK, Bool.false_eq_true, if_true, if_false]
+  simp only [h1, h2, h3, h4, h5, h6, h7, hK, Bool.false_eq_true, ite_true, ite_false]
   have f1 : part (extractWord rm imms rn rd) 10 6 = imms.toNat := by
     apply part_eq_of_setWidth
     apply BitVec.eq_of_getLsbD_eq

@@ -618,7 +618,7 @@ theorem evaluateAppAdjOracCons {C D F U : Type} (_unused : U) (cc : Compiler D) 
       by_cases timeout : s.clock < (arg :: args).length
       · rw [evaluateApp, closure] at run
         dsimp only at run
-        rw [if_pos timeout] at run
+        rw [ite_eq_left timeout] at run
         obtain ⟨rfl, rfl⟩ := run
         have nextRel : adjOracRel cc f { s with clock := 0 } { t with clock := 0 } := by
           rcases rel with ⟨compatible, rfl⟩
@@ -626,11 +626,11 @@ theorem evaluateAppAdjOracCons {C D F U : Type} (_unused : U) (cc : Compiler D) 
         refine ⟨{ t with clock := 0 }, ?_, nextRel⟩
         rw [evaluateApp, maxEq, closure]
         dsimp only
-        rw [clockEq, if_pos timeout]
+        rw [clockEq, ite_eq_left timeout]
         rfl
       · rw [evaluateApp, closure] at run
         dsimp only at run
-        rw [if_neg timeout] at run
+        rw [ite_eq_right timeout] at run
         obtain ⟨rfl, rfl⟩ := run
         have nextRel : adjOracRel cc f (decClock (arg :: args).length s) (decClock (arg :: args).length t) := by
           rcases rel with ⟨compatible, rfl⟩
@@ -638,12 +638,12 @@ theorem evaluateAppAdjOracCons {C D F U : Type} (_unused : U) (cc : Compiler D) 
         refine ⟨decClock (arg :: args).length t, ?_, nextRel⟩
         rw [evaluateApp, maxEq, closure]
         dsimp only
-        rw [clockEq, if_neg timeout]
+        rw [clockEq, ite_eq_right timeout]
     | fullApp body env rest =>
       by_cases timeout : s.clock < (arg :: args).length - rest.length
       · rw [evaluateApp, closure] at run
         dsimp only at run
-        rw [if_pos timeout] at run
+        rw [ite_eq_left timeout] at run
         obtain ⟨rfl, rfl⟩ := run
         have nextRel : adjOracRel cc f { s with clock := 0 } { t with clock := 0 } := by
           rcases rel with ⟨compatible, rfl⟩
@@ -651,7 +651,7 @@ theorem evaluateAppAdjOracCons {C D F U : Type} (_unused : U) (cc : Compiler D) 
         refine ⟨{ t with clock := 0 }, ?_, nextRel⟩
         rw [evaluateApp, maxEq, closure]
         dsimp only
-        rw [clockEq, if_pos timeout]
+        rw [clockEq, ite_eq_left timeout]
         rfl
       · have reduced : adjOracRel cc f (decClock ((arg :: args).length - rest.length) s)
             (decClock ((arg :: args).length - rest.length) t) := by
@@ -660,10 +660,10 @@ theorem evaluateAppAdjOracCons {C D F U : Type} (_unused : U) (cc : Compiler D) 
         have enough : (arg :: args).length - rest.length ≤ s.clock := by omega
         rw [evaluateApp, closure] at run
         dsimp only at run
-        rw [if_neg timeout, fixClock_evaluate] at run
+        rw [ite_eq_right timeout, fixClock_evaluate] at run
         rw [evaluateApp, maxEq, closure]
         dsimp only
-        rw [clockEq, if_neg timeout, fixClock_evaluate]
+        rw [clockEq, ite_eq_right timeout, fixClock_evaluate]
         cases bodyRun : evaluate [body] env (decClock ((arg :: args).length - rest.length) s) with
         | mk bodyResult middle =>
           rw [bodyRun] at run

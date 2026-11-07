@@ -9,9 +9,9 @@ theorem pmovDsteps {α : Type} [DecidableEq α] (state : State α) :
     DSteps state (pmov state) := by
   induction state using pmov.induct with
   | case1 state finished =>
-      rw [pmov.eq_def, dif_pos finished]
+      rw [pmov.eq_def, dite_eq_left finished]
   | case2 state unfinished ih =>
-      rw [pmov.eq_def, dif_neg unfinished]
+      rw [pmov.eq_def, dite_eq_right unfinished]
       apply Relation.ReflTransGen.trans (Relation.ReflTransGen.single (fstepDstep state ?_)) ih
       intro emitted equal
       exact unfinished (equal ▸ ⟨rfl, rfl⟩)

@@ -165,7 +165,7 @@ theorem memLoad32ConstMemory {width : Nat} [NeZero width] (m m' : BitVec width �
   by_cases hd : dm (riscvByteAlignHOL ad) = true
   · rw [h _ hd]
   · rw [Bool.not_eq_true] at hd
-    by_cases ha : riscvAlignedHOL 2 ad = true <;> simp only [ha, hd, if_true, if_false,
+    by_cases ha : riscvAlignedHOL 2 ad = true <;> simp only [ha, hd, ite_true, ite_false,
       Bool.false_eq_true] <;>
       (cases m (riscvByteAlignHOL ad) <;> cases m' (riscvByteAlignHOL ad) <;> rfl)
 
@@ -184,7 +184,7 @@ theorem memStore32ConstMemory {width : Nat} [NeZero width] (m m' : BitVec width 
   · unfold memStore32Exact
     rw [h _ hd]
     by_cases ha : riscvAlignedHOL 2 ad = true
-    · simp only [ha, if_true, hd]
+    · simp only [ha, ite_true, hd]
       cases m' (riscvByteAlignHOL ad) with
       | word v =>
         refine ⟨by simp, ?_⟩
@@ -195,12 +195,12 @@ theorem memStore32ConstMemory {width : Nat} [NeZero width] (m m' : BitVec width 
         · rfl
         · exact h a ha'
       | loc _ _ => exact ⟨Iff.rfl, rfl⟩
-    · simp only [ha, Bool.false_eq_true, if_false]
+    · simp only [ha, Bool.false_eq_true, ite_false]
       exact ⟨trivial, trivial⟩
   · rw [Bool.not_eq_true] at hd
     have none32 : memStore32Exact m dm be ad hw = none ∧ memStore32Exact m' dm be ad hw = none := by
       unfold memStore32Exact
-      by_cases ha : riscvAlignedHOL 2 ad = true <;> simp only [ha, hd, if_true, if_false,
+      by_cases ha : riscvAlignedHOL 2 ad = true <;> simp only [ha, hd, ite_true, ite_false,
         Bool.false_eq_true] <;>
         (constructor <;> (first | (cases m (riscvByteAlignHOL ad) <;> simp) |
           (cases m' (riscvByteAlignHOL ad) <;> simp) | rfl))
@@ -261,7 +261,7 @@ theorem memLoadByteAuxConstMemory {width : Nat} [NeZero width] (m m' : BitVec wi
   by_cases hd : dm (riscvByteAlignHOL w) = true
   · rw [h _ hd]
   · rw [Bool.not_eq_true] at hd
-    simp only [hd, Bool.false_eq_true, if_false]
+    simp only [hd, Bool.false_eq_true, ite_false]
     cases m (riscvByteAlignHOL w) <;> cases m' (riscvByteAlignHOL w) <;> rfl
 
 /-- Full original mem_store_byte_aux_const_memory (447-461): failure
@@ -280,7 +280,7 @@ theorem memStoreByteAuxConstMemory {width : Nat} [NeZero width] (m m' : BitVec w
     rw [h _ hd]
     cases m' (riscvByteAlignHOL w) with
     | word v =>
-      simp only [hd, if_true]
+      simp only [hd, ite_true]
       refine ⟨by simp, ?_⟩
       rw [fun2Set_eq_iff]
       intro a ha
@@ -392,7 +392,7 @@ private theorem storeCommutes {width : Nat} [NeZero width] {C F : Type} {rw : Na
         | .final outcome => (some (.finalFfi outcome), WordSemStateFiniteExact.flushState true { s with memory := m })
         | .ret newFfi _ => (none, { { s with memory := m } with ffi := newFfi })
       else (some .error, { s with memory := m })) m := by
-  cases guard <;> simp only [Bool.false_eq_true, if_false, if_true]
+  cases guard <;> simp only [Bool.false_eq_true, ite_false, ite_true]
   · exact ⟨rfl, rfl, rfl⟩
   · cases ffiResult <;> exact ⟨rfl, rfl, rfl⟩
 
@@ -549,9 +549,9 @@ private theorem instAgree {width : Nat} [NeZero width] {C F : Type} (i : WordLan
       · rename_i a w _ _
         unfold WordSemStateFiniteExact.memStore
         by_cases hd : s.mdomain a = true
-        · simp only [hd, if_true]
+        · simp only [hd, ite_true]
           exact Or.inr ⟨_, _, rfl, rfl, fun2SetUpdateEq_dec s.memory m _ a w h⟩
-        · simp only [hd, Bool.false_eq_true, if_false]
+        · simp only [hd, Bool.false_eq_true, ite_false]
           exact Or.inl ⟨rfl, rfl⟩
       · exact Or.inl ⟨rfl, rfl⟩
     case store8 =>

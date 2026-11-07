@@ -34,15 +34,15 @@ theorem locals_rel_setVar (ctxt : CrepToLoopContextExact) (l : NumSet)
   simp only [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL] at hval
   by_cases hv : vn = name
   · subst hv
-    simp only [if_true, Option.some.injEq] at hval
+    simp only [ite_true, Option.some.injEq] at hval
     subst hval
     refine ⟨mn, hn, hmn, ?_⟩
-    rw [sptLookup_sptInsert, if_pos rfl]
-  · rw [if_neg hv] at hval
+    rw [sptLookup_sptInsert, ite_eq_left rfl]
+  · rw [ite_eq_right hv] at hval
     obtain ⟨n, hn1, hn2, hn3⟩ := h.2.2.2 vn val hval
     have hne : n ≠ mn := fun e => hv (h.1 vn name n mn hn1 hn e)
     refine ⟨n, hn1, hn2, ?_⟩
-    rw [sptLookup_sptInsert, if_neg hne]
+    rw [sptLookup_sptInsert, ite_eq_right hne]
     exact hn3
 
 
@@ -70,11 +70,11 @@ theorem shMemLoad_corresponds (v1 : CrepSemHOLState width σ) [DecidablePred v1.
   unfold LoopSemStateFiniteExact.shMemLoad
   rw [riscvByteAlignHOL_eq_panByteAlignHOL, panWordToBytesHOL_eq_map_crepClockWordToBytes addr,
     ← hs5]
-  by_cases hnb : nb = 0 <;> simp only [hnb, if_true, if_false] at he ⊢ <;>
+  by_cases hnb : nb = 0 <;> simp only [hnb, ite_true, ite_false] at he ⊢ <;>
   · split at he
     · rename_i hd
       rw [hs2] at hd
-      rw [if_pos hd]
+      rw [ite_eq_left hd]
       split at he
       · rename_i e hcall
         rw [hcall]
@@ -129,11 +129,11 @@ theorem shMemStore_corresponds (v1 : CrepSemHOLState width σ) [DecidablePred v1
   rw [riscvByteAlignHOL_eq_panByteAlignHOL, panWordToBytesHOL_eq_map_crepClockWordToBytes addr,
     panWordToBytesHOL_eq_map_crepClockWordToBytes value, ← List.map_take, ← List.map_append,
     ← List.map_append, ← hs5]
-  by_cases hnb : nb = 0 <;> simp only [hnb, if_true, if_false] at he ⊢ <;>
+  by_cases hnb : nb = 0 <;> simp only [hnb, ite_true, ite_false] at he ⊢ <;>
   · split at he
     · rename_i hd
       rw [hs2] at hd
-      rw [if_pos hd]
+      rw [ite_eq_left hd]
       split at he
       · rename_i e hcall
         rw [hcall]

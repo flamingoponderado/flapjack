@@ -57,7 +57,7 @@ theorem sourceRunNonError {width : Nat} [NeZero width] {C F : Type}
     refine ⟨clock, ?_⟩
     simp only [run, isError]
     simp
-  exact notFail (by simp only [semantics, bad, if_true])
+  exact notFail (by simp only [semantics, bad, ite_true])
 
 /-- Native entry simulation derived from exactly the original observational
 premises. Non-Error follows from source semantics rather than a new assumption.
@@ -187,7 +187,7 @@ theorem sourceNoBadEntry {width : Nat} [NeZero width] {C F : Type}
   apply notFail
   have guard := bad
   unfold badEntry badResult at guard
-  simp only [semantics, guard, if_true]
+  simp only [semantics, guard, ite_true]
 
 /-- Every target fail witness would be a same-clock source fail witness,
 by actual non-timeout run agreement. No target safety is assumed. -/
@@ -286,7 +286,7 @@ theorem compileSemantics {width : Nat} [NeZero width] {C F : Type}
     match holOptionSome (terminationWitness start source) with
     | some result => result
     | none => .diverge (HolLList.buildLprefixLub (clockEventFamily (.call none (.inl start) none) source)))
-  rw [if_neg targetSafe, if_neg sourceSafe, predicates]
+  rw [ite_eq_right targetSafe, ite_eq_right sourceSafe, predicates]
   cases holOptionSome (terminationWitness start source) with
   | some result => rfl
   | none =>

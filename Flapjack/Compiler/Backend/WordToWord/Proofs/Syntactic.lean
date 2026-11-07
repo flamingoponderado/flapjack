@@ -204,7 +204,7 @@ theorem sptAListLookup_of_mem_nodup {α : Type} :
     · have hne : key ≠ other := by
         rintro rfl
         exact hnd.1 ⟨(key, value), h, rfl⟩
-      rw [if_neg hne]
+      rw [ite_eq_right hne]
       exact sptAListLookup_of_mem_nodup entries key value hnd.2 h
 
 /-- HOL `no_mt_code_full_compile_single` (`word_to_wordProofScript.sml:2125-2140`); HOL's
@@ -255,10 +255,10 @@ theorem sptAListLookup_map_fullCompileSingle {width : Nat} [NeZero width] (t : B
     · subst hnm
       simp only [↓reduceIte, Option.some.injEq] at h
       cases h
-      exact ⟨o, by simp only [sptAListLookup, hname, if_true]⟩
-    · rw [if_neg hnm] at h
+      exact ⟨o, by simp only [sptAListLookup, hname, ite_true]⟩
+    · rw [ite_eq_right hnm] at h
       obtain ⟨col, hcol⟩ := sptAListLookup_map_fullCompileSingle t k a c code os hl n p1 p2 h
-      exact ⟨col, by simp only [sptAListLookup, hname]; rw [if_neg hnm]; exact hcol⟩
+      exact ⟨col, by simp only [sptAListLookup, hname]; rw [ite_eq_right hnm]; exact hcol⟩
 
 /-- HOL `code_rel_ext_word_to_word` (`word_to_wordProofScript.sml:2155-2183`); HOL's free
     `c2` is the leading binder. -/

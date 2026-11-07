@@ -128,7 +128,7 @@ theorem word_gen_gc_move_code_thm {width : Nat} [NeZero width] {C F : Type} {con
         evaluate_skip]
   | word v =>
       by_cases hv : 1 &&& v = 0
-      · simp only [wordGenGcMove, hv, if_true, Prod.mk.injEq] at hmove
+      · simp only [wordGenGcMove, hv, ite_true, Prod.mk.injEq] at hmove
         obtain ⟨rfl, rfl, rfl, rfl, rfl, rfl, -⟩ := hmove
         refine ⟨0, r0, r1, r2, r6, t0, t1, ?_⟩
         rw [gcMove_skip_regs s r0 r1 r2 r6 _ _ _ hr0 hr1 hr2 h3' h4' h5' hr6,
@@ -161,9 +161,9 @@ theorem word_gen_gc_move_code_thm {width : Nat} [NeZero width] {C F : Type} {con
         have h2m : 2 % 2 ^ width = 2 := Nat.mod_eq_of_lt (by omega)
         have hcur : s.store.lookup (StackSemRegisterTransfers.storeOfSyntax .currHeap) =
             some (.word old) := hcurr
-        simp only [wordGenGcMove, hv, if_false] at hmove
+        simp only [wordGenGcMove, hv, ite_false] at hmove
         by_cases hfwd : wordSemIsFwdPtr (s.memory (ptrToAddr conf old v)) = true
-        · simp only [hfwd, if_true, Prod.mk.injEq] at hmove
+        · simp only [hfwd, ite_true, Prod.mk.injEq] at hmove
           obtain ⟨rfl, rfl, rfl, rfl, rfl, rfl, hdm⟩ := hmove
           simp only [Bool.and_eq_true] at hdm
           obtain ⟨hdm, -⟩ := hdm
@@ -203,9 +203,9 @@ theorem word_gen_gc_move_code_thm {width : Nat} [NeZero width] {C F : Type} {con
           simp [k0, k1, k2, k3, k4, k5, k6]
         · have hfwd' : wordSemIsFwdPtr (s.memory (ptrToAddr conf old v)) = false := by
             simpa using hfwd
-          simp only [hfwd', Bool.false_eq_true, if_false] at hmove
+          simp only [hfwd', Bool.false_eq_true, ite_false] at hmove
           by_cases href : isRefHeader (wordSemTheWord (s.memory (ptrToAddr conf old v))) = true
-          · simp only [href, if_true] at hmove
+          · simp only [href, ite_true] at hmove
             have hc := congrArg (fun t => t.2.2.2.2.2.2) hmove
             simp only [Bool.and_eq_true] at hc
             obtain ⟨⟨⟨hdm, hisw⟩, -⟩, -, hc1⟩ := hc
@@ -285,7 +285,7 @@ theorem word_gen_gc_move_code_thm {width : Nat} [NeZero width] {C F : Type} {con
                 HolFiniteMapExact.lookup_updateEq]
             · funext key
               simp [gcUpdate, eq_comm]
-          · simp only [href, Bool.false_eq_true, if_false] at hmove
+          · simp only [href, Bool.false_eq_true, ite_false] at hmove
             have hc := congrArg (fun t => t.2.2.2.2.2.2) hmove
             simp only [Bool.and_eq_true] at hc
             obtain ⟨⟨⟨hdm, hisw⟩, -⟩, -, hc1⟩ := hc

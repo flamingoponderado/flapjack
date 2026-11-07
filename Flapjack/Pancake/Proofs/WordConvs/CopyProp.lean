@@ -357,7 +357,7 @@ theorem notAllocInv_setEq {cs : CopyState} (x y : Nat) (h : NotAllocInv cs) :
   · rename_i hxy
     have hx : v ≠ x := fun e => hv (e ▸ hxy.1)
     have hy : v ≠ y := fun e => hv (e ▸ hxy.2)
-    split <;> simp only [sptLookupInsert, if_neg hx, if_neg hy] <;> exact h v hv
+    split <;> simp only [sptLookupInsert, ite_eq_right hx, ite_eq_right hy] <;> exact h v hv
   · exact h v hv
 
 theorem notAllocInv_setStoreEq {cs : CopyState} (name : WordStoreHOL) (y : Nat) (h : NotAllocInv cs) :
@@ -368,7 +368,7 @@ theorem notAllocInv_setStoreEq {cs : CopyState} (name : WordStoreHOL) (y : Nat) 
   · rename_i hy
     have hy' : v ≠ y := fun e => hv (e ▸ hy)
     split
-    · simp only [sptLookupInsert, if_neg hy']; exact h v hv
+    · simp only [sptLookupInsert, ite_eq_right hy']; exact h v hv
     · exact h v hv
   · exact notAllocInv_emptyEq v hv
 

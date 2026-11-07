@@ -117,7 +117,7 @@ theorem compileCorrect_Loop {width : Nat} [NeZero width] {C F : Type}
           · cases hcs
         by_cases hz : s.clock = 0
         · simp [hcl, hz] at hcr
-        · simp only [hcl, hz, if_false, Prod.mk.injEq, true_and] at hcr
+        · simp only [hcl, hz, ite_false, Prod.mk.injEq, true_and] at hcr
           exact ⟨_, rfl, hz, hcr.symm⟩
     obtain ⟨cs, hcs, hz, rfl⟩ := hc2
     have hsub : LoopSemStateFiniteExact.sptSubsetLive liveIn s.locals ∧
@@ -159,13 +159,13 @@ theorem compileCorrect_Loop {width : Nat} [NeZero width] {C F : Type}
       refine ⟨t1', res1', ?_, hf', resultCase_congr ctxt retv t1 t res s1 res1' t1'
         (hstk.trans rfl) (hhd.trans rfl) hrc'⟩
       simp only [LoopToWord.compHOL] at he'
-      simp only [wordSemContLoop, if_true]
+      simp only [wordSemContLoop, ite_true]
       by_cases hz1 : t1.clock = 0
-      · rw [hseq, htick, if_pos hz1] at he'
-        simp only [hz1, if_true]
+      · rw [hseq, htick, ite_eq_left hz1] at he'
+        simp only [hz1, ite_true]
         exact he'
       · rw [WordSemStateFiniteExact.evaluate_tick_loop_tick_unfold t1 _ _ _ hz1] at he'
-        simp only [hz1, if_false, wordSemSTOP]
+        simp only [hz1, ite_false, wordSemSTOP]
         exact he'
     · -- body Continue 0: re-enter the loop
       rename_i sb heq
@@ -180,13 +180,13 @@ theorem compileCorrect_Loop {width : Nat} [NeZero width] {C F : Type}
       refine ⟨t1', res1', ?_, hf', resultCase_congr ctxt retv t1 t res s1 res1' t1'
         (hstk.trans rfl) (hhd.trans rfl) hrc'⟩
       simp only [LoopToWord.compHOL] at he'
-      simp only [wordSemContLoop, decide_true, if_true]
+      simp only [wordSemContLoop, decide_true, ite_true]
       by_cases hz1 : t1.clock = 0
-      · rw [hseq, htick, if_pos hz1] at he'
-        simp only [hz1, if_true]
+      · rw [hseq, htick, ite_eq_left hz1] at he'
+        simp only [hz1, ite_true]
         exact he'
       · rw [WordSemStateFiniteExact.evaluate_tick_loop_tick_unfold t1 _ _ _ hz1] at he'
-        simp only [hz1, if_false, wordSemSTOP]
+        simp only [hz1, ite_false, wordSemSTOP]
         exact he'
     · -- body Break 0: leave the loop through the exit cut
       rename_i sb heq
@@ -216,16 +216,16 @@ theorem compileCorrect_Loop {width : Nat} [NeZero width] {C F : Type}
           sb.locals t1.locals retv ⟨hlt, hsub2, h0t⟩
         have h0e2 := (LoopToWord.wordSemCutEnvMkNewCutsetIMPHOL ctxt liveOut t1.locals env2
           hce2).trans h0t
-        simp only [wordSemContLoop, Bool.false_eq_true, if_false]
+        simp only [wordSemContLoop, Bool.false_eq_true, ite_false]
         simp only [hce2]
         by_cases hz2 : sb.clock = 0
-        · simp only [hz2, if_true, Prod.mk.injEq] at hEval
+        · simp only [hz2, ite_true, Prod.mk.injEq] at hEval
           obtain ⟨rfl, rfl⟩ := hEval
-          simp only [f4, hz2, if_true]
+          simp only [f4, hz2, ite_true]
           exact ⟨_, _, rfl, by simp [WordSemStateFiniteExact.flushState, f6], rfl⟩
-        · simp only [hz2, if_false, Prod.mk.injEq] at hEval
+        · simp only [hz2, ite_false, Prod.mk.injEq] at hEval
           obtain ⟨rfl, rfl⟩ := hEval
-          simp only [f4, hz2, if_false]
+          simp only [f4, hz2, ite_false]
           refine ⟨_, _, rfl, f6, ⟨len2, f1, f2, f3, ?_, f5, f6, f7, f8, f9, f10, f11⟩, rfl,
             h0e2, hlr2, hstk, hhd⟩
           simp [LoopSemStateFiniteExact.decClock]
@@ -292,10 +292,10 @@ theorem compileCorrect_Loop {width : Nat} [NeZero width] {C F : Type}
       · cases hcs'
         simp only [hcs] at hEval
         by_cases hz : s.clock = 0
-        · simp only [hz, if_true, Prod.mk.injEq] at hEval
+        · simp only [hz, ite_true, Prod.mk.injEq] at hEval
           obtain ⟨rfl, rfl⟩ := hEval
           simp only [LoopToWord.compHOL]
-          rw [hseq, htick, if_pos (by rw [hclock]; exact hz)]
+          rw [hseq, htick, ite_eq_left (by rw [hclock]; exact hz)]
           exact ⟨_, _, rfl, by simp [WordSemStateFiniteExact.flushState, hffi], rfl⟩
         · exfalso
           refine hnone (LoopSemStateFiniteExact.decClock

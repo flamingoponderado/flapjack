@@ -20,7 +20,7 @@ theorem wordSemListRearrange_mem_iff {α : Type} (mover : Nat → Nat)
     value ∈ wordSemListRearrange mover xs ↔ value ∈ xs := by
   unfold wordSemListRearrange
   by_cases hbij : wordSemBijCount mover xs.length
-  · simp only [dif_pos hbij, List.mem_map]
+  · simp only [dite_eq_left hbij, List.mem_map]
     constructor
     · rintro ⟨⟨index, hindex⟩, _hmem, hvalue⟩
       have hbound : index < xs.length := List.mem_range.mp hindex

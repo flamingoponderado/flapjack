@@ -13,11 +13,11 @@ theorem findIndexLessLength {α : Type} [DecidableEq α]
   | nil => simp [findIndex]
   | cons head tail ih =>
       by_cases equal : head = target
-      · simp only [findIndex, if_pos equal, Option.some.injEq]
+      · simp only [findIndex, ite_eq_left equal, Option.some.injEq]
         intro found
         simp only [List.length_cons]
         omega
-      · simp only [findIndex, if_neg equal]
+      · simp only [findIndex, ite_eq_right equal]
         intro found
         have bounds := ih (offset + 1) found
         simp only [List.length_cons]

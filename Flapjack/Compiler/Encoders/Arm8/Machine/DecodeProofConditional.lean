@@ -138,7 +138,7 @@ theorem decode_addSubImmediate_word (sub sf : BitVec 1) (imm12 : BitVec 12)
     simp only [addSubImmediateWord]
     simp
     interval_cases i <;> simp
-  simp only [h1, h2, hK, Bool.false_eq_true, if_true, if_false]
+  simp only [h1, h2, hK, Bool.false_eq_true, ite_true, ite_false]
   have hsh : part (addSubImmediateWord sub sf imm12 rn rd) 22 1 = 0 := by
     have hz : ((addSubImmediateWord sub sf imm12 rn rd) >>> 22).setWidth 1 = 0 := by
       apply BitVec.eq_of_getLsbD_eq
@@ -214,7 +214,7 @@ theorem encodeInsn_addSubImmediate (sub setFlags : Bool) (imm : W) (rn rd : Nat)
         (12, imm.toNat % 4096), (5, rn), (5, rd)]).setWidth 64) := by
   have hmask : imm &&& ~~~(0xFFF : W) = 0 := and_not_fff_eq_zero imm himm
   unfold encodeInsn
-  simp only [encodeInsn32, if_pos hmask]
+  simp only [encodeInsn32, ite_eq_left hmask]
   rfl
 
 /-- The 64-bit carrier form of the decoder inverts the encoder's carrier form. -/
@@ -303,7 +303,7 @@ theorem decode_addSubImmediateShifted_word (sub sf : BitVec 1) (imm12 : BitVec 1
     simp only [addSubImmediateShiftedWord]
     simp
     interval_cases i <;> simp
-  simp only [h1, h2, hK, Bool.false_eq_true, if_true, if_false]
+  simp only [h1, h2, hK, Bool.false_eq_true, ite_true, ite_false]
   have hsh : part (addSubImmediateShiftedWord sub sf imm12 rn rd) 22 1 = 1 := by
     have hz : ((addSubImmediateShiftedWord sub sf imm12 rn rd) >>> 22).setWidth 1 = 1 := by
       apply BitVec.eq_of_getLsbD_eq
@@ -399,7 +399,7 @@ theorem encodeInsn_addSubImmediateShifted (sub setFlags : Bool) (m rn rd : Nat)
     rw [Nat.mul_div_cancel _ (by norm_num : 0 < 2 ^ 12)]
     exact Nat.mod_eq_of_lt hm
   unfold encodeInsn
-  simp only [encodeInsn32, if_neg hguard1, if_pos hguard2, hfield]
+  simp only [encodeInsn32, ite_eq_right hguard1, ite_eq_left hguard2, hfield]
   rfl
 
 /-- The 64-bit carrier form of the decoder inverts the encoder's carrier form
@@ -555,7 +555,7 @@ theorem decode_logicalShiftedRegister_word (op : LogicalOp) (sf : Bool) (opc : B
     simp only [logicalShiftedRegisterWord]
     simp
     interval_cases i <;> simp
-  simp only [h1, h2, h3, h4, hK, Bool.false_eq_true, if_true, if_false]
+  simp only [h1, h2, h3, h4, hK, Bool.false_eq_true, ite_true, ite_false]
   have f29 : part (logicalShiftedRegisterWord opc sh inv rm imm rn rd) 29 2
       = opc.toNat := by
     apply part_eq_of_setWidth
@@ -649,7 +649,7 @@ theorem encodeInsn_logicalShiftedRegister (op : LogicalOp) (invert setFlags : Bo
       some ((fields [(1, 1), (2, opc), (5, 0b01010), (2, shiftTypeBits shift),
         (1, bit invert), (5, rm), (6, imm), (5, rn), (5, rd)]).setWidth 64) := by
   unfold encodeInsn
-  simp only [encodeInsn32, hopc, if_pos himm]
+  simp only [encodeInsn32, hopc, ite_eq_left himm]
   rfl
 
 /-- The 64-bit carrier form of the decoder inverts the encoder's carrier form for
@@ -770,7 +770,7 @@ theorem decode_logicalImmediate_word (op : LogicalOp) (sf : Bool) (opc : BitVec 
     simp only [logicalImmediateWord]
     simp
     interval_cases i <;> simp
-  simp only [h1, h2, h3, hK, Bool.false_eq_true, if_true, if_false]
+  simp only [h1, h2, h3, hK, Bool.false_eq_true, ite_true, ite_false]
   have f29 : part (logicalImmediateWord opc nB immrB immsB rn rd) 29 2 = opc.toNat := by
     apply part_eq_of_setWidth
     apply BitVec.eq_of_getLsbD_eq
@@ -998,7 +998,7 @@ theorem decode_bitfieldMove_word (inzero extend : Bool) (opc : BitVec 2)
     simp only [bitfieldMoveWord]
     simp
     interval_cases i <;> simp
-  simp only [h1, h2, h3, h4, h5, h6, hK, Bool.false_eq_true, if_true, if_false]
+  simp only [h1, h2, h3, h4, h5, h6, hK, Bool.false_eq_true, ite_true, ite_false]
   have f29 : part (bitfieldMoveWord opc immr6 imms rn rd) 29 2 = opc.toNat := by
     apply part_eq_of_setWidth
     apply BitVec.eq_of_getLsbD_eq

@@ -65,7 +65,7 @@ theorem stateRelImpSemanticsHOL {width : Nat} {σ : Type} [NeZero width]
     apply hnonfail
     unfold semantics
     dsimp only
-    rw [if_pos]
+    rw [ite_eq_left]
     exact ⟨clock,by rw [herror]; trivial⟩
   have compiledEntry : compileProgExactHOL context (.call none start [] : ProgHOL width) =
       .call none start [] := by simp [compileProgExactHOL,compileExpExactHOLList]

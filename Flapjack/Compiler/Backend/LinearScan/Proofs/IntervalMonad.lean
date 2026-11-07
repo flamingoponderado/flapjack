@@ -141,7 +141,7 @@ theorem getIntervalsBegLessEnd :
       · intro r hr
         rw [lookupNumsetListAddIfLt, lookupNumsetListAddIfGt]
         by_cases hm : r ∈ l
-        · rw [if_pos hm, if_pos hm]
+        · rw [ite_eq_left hm, ite_eq_left hm]
           cases hb : sptLookup r beg_in with
           | none =>
               cases he : sptLookup r end_in with
@@ -154,7 +154,7 @@ theorem getIntervalsBegLessEnd :
               | some ve =>
                   by_cases hc : n_in ≤ vb <;> by_cases hc' : ve ≤ n_in <;>
                     simp [miscThe, hc, hc'] <;> omega
-        · rw [if_neg hm, if_neg hm]
+        · rw [ite_eq_right hm, ite_eq_right hm]
           rw [domainNumsetListAddIfLt] at hr
           exact hle r (hr.resolve_left hm)
       · intro x hx
@@ -170,7 +170,7 @@ theorem getIntervalsBegLessEnd :
         have h1 := hle r hr
         rw [lookupNumsetListAddIfGt]
         by_cases hm : r ∈ l
-        · rw [if_pos hm]
+        · rw [ite_eq_left hm]
           have hd := hsub r hr
           unfold sptDomain at hd
           cases he : sptLookup r end_in with
@@ -178,7 +178,7 @@ theorem getIntervalsBegLessEnd :
           | some ve =>
               rw [he] at h1
               by_cases hc : ve ≤ n_in <;> simp [miscThe, hc] at h1 ⊢ <;> omega
-        · rw [if_neg hm]; exact h1
+        · rw [ite_eq_right hm]; exact h1
       · intro x hx
         rw [domainNumsetListAddIfGt]
         exact Or.inr (hsub x hx)
@@ -205,13 +205,13 @@ private theorem sptreeEqListStep (s : Spt Int) (l : List Int) (r : Nat) (v : Int
   rw [holEl_set l r i v hr]
   by_cases hri : r = i
   · subst hri
-    rw [if_pos rfl, sptLookup_sptInsert_same]
+    rw [ite_eq_left rfl, sptLookup_sptInsert_same]
     constructor
     · constructor
       · intro h0; omega
       · intro h0; cases h0
     · exact ⟨fun _ => rfl, fun _ => hv⟩
-  · rw [if_neg hri, sptLookup_sptInsert_ne r i v s (Ne.symm hri)]
+  · rw [ite_eq_right hri, sptLookup_sptInsert_ne r i v s (Ne.symm hri)]
     exact h i hi
 
 private theorem sptreeEqListLookup (s : Spt Int) (l : List Int) (r : Nat) (hr : r < l.length)
@@ -243,12 +243,12 @@ theorem numsetListAddIfLtMonadCorrect :
           Translator.Monadic.MonadBase.ignoreBind (updateIntBeg r v) k sth = k sth' := by
         intro k
         unfold Translator.Monadic.MonadBase.ignoreBind
-        rw [updateIntBegEqn, if_pos hr]
+        rw [updateIntBegEqn, ite_eq_left hr]
       have hsub : ∀ (k : Int → LsM Unit),
           Translator.Monadic.MonadBase.bind (intBegSub r) k sth = k (holEl r sth.int_beg) sth := by
         intro k
         unfold Translator.Monadic.MonadBase.bind
-        rw [intBegSubEqn, if_pos hr]
+        rw [intBegSubEqn, ite_eq_left hr]
       have hstep' : sptreeEqList (sptInsert r v int_beg) sth'.int_beg :=
         sptreeEqListStep int_beg sth.int_beg r v hv hr h
       have hlen' : sth'.int_beg.length = sth.int_beg.length := by simp [sth']
@@ -258,7 +258,7 @@ theorem numsetListAddIfLtMonadCorrect :
         refine ⟨so, ?_, ?_, ?_, ?_⟩
         · show numsetListAddIfLtMonad (r :: rs) v sth = _
           simp only [numsetListAddIfLtMonad]
-          rw [hsub]; simp only [if_pos h0]; rw [hupd]; exact hrun
+          rw [hsub]; simp only [ite_eq_left h0]; rw [hupd]; exact hrun
         · simp only [numsetListAddIfLt, numsetListAddIf, hpos h0] at heq ⊢; exact heq
         · rw [hso]
         · rw [hlen, hlen']
@@ -269,17 +269,17 @@ theorem numsetListAddIfLtMonadCorrect :
             ⟨hv, hstep', fun x hx => by rw [hlen']; exact hrs x hx⟩
           refine ⟨so, ?_, ?_, ?_, ?_⟩
           · simp only [numsetListAddIfLtMonad]
-            rw [hsub]; simp only [if_neg h0, if_pos hvb]; rw [hupd]; exact hrun
-          · simp only [numsetListAddIfLt, numsetListAddIf, hlk, decide_eq_true hvb, if_true] at heq ⊢
+            rw [hsub]; simp only [ite_eq_right h0, ite_eq_left hvb]; rw [hupd]; exact hrun
+          · simp only [numsetListAddIfLt, numsetListAddIf, hlk, decide_eq_true hvb, ite_true] at heq ⊢
             exact heq
           · rw [hso]
           · rw [hlen, hlen']
         · obtain ⟨so, hrun, heq, hso, hlen⟩ := ih int_beg sth v ⟨hv, h, hrs⟩
           refine ⟨so, ?_, ?_, hso, hlen⟩
           · simp only [numsetListAddIfLtMonad]
-            rw [hsub]; simp only [if_neg h0, if_neg hvb]; exact hrun
+            rw [hsub]; simp only [ite_eq_right h0, ite_eq_right hvb]; exact hrun
           · simp only [numsetListAddIfLt, numsetListAddIf, hlk, decide_eq_false hvb,
-              Bool.false_eq_true, if_false] at heq ⊢
+              Bool.false_eq_true, ite_false] at heq ⊢
             exact heq
 
 /-- HOL `numset_list_add_if_gt_monad_correct` (`linear_scanProofScript.sml:5234-5253`).
@@ -306,12 +306,12 @@ theorem numsetListAddIfGtMonadCorrect :
           Translator.Monadic.MonadBase.ignoreBind (updateIntEnd r v) k sth = k sth' := by
         intro k
         unfold Translator.Monadic.MonadBase.ignoreBind
-        rw [updateIntEndEqn, if_pos hr]
+        rw [updateIntEndEqn, ite_eq_left hr]
       have hsub : ∀ (k : Int → LsM Unit),
           Translator.Monadic.MonadBase.bind (intEndSub r) k sth = k (holEl r sth.int_end) sth := by
         intro k
         unfold Translator.Monadic.MonadBase.bind
-        rw [intEndSubEqn, if_pos hr]
+        rw [intEndSubEqn, ite_eq_left hr]
       have hstep' : sptreeEqList (sptInsert r v int_end) sth'.int_end :=
         sptreeEqListStep int_end sth.int_end r v hv hr h
       have hlen' : sth'.int_end.length = sth.int_end.length := by simp [sth']
@@ -320,7 +320,7 @@ theorem numsetListAddIfGtMonadCorrect :
           ⟨hv, hstep', fun x hx => by rw [hlen']; exact hrs x hx⟩
         refine ⟨so, ?_, ?_, ?_, ?_⟩
         · simp only [numsetListAddIfGtMonad]
-          rw [hsub]; simp only [if_pos h0]; rw [hupd]; exact hrun
+          rw [hsub]; simp only [ite_eq_left h0]; rw [hupd]; exact hrun
         · simp only [numsetListAddIfGt, numsetListAddIf, hpos h0] at heq ⊢; exact heq
         · rw [hso]
         · rw [hlen, hlen']
@@ -331,17 +331,17 @@ theorem numsetListAddIfGtMonadCorrect :
             ⟨hv, hstep', fun x hx => by rw [hlen']; exact hrs x hx⟩
           refine ⟨so, ?_, ?_, ?_, ?_⟩
           · simp only [numsetListAddIfGtMonad]
-            rw [hsub]; simp only [if_neg h0, if_pos hvb]; rw [hupd]; exact hrun
-          · simp only [numsetListAddIfGt, numsetListAddIf, hlk, decide_eq_true hvb, if_true] at heq ⊢
+            rw [hsub]; simp only [ite_eq_right h0, ite_eq_left hvb]; rw [hupd]; exact hrun
+          · simp only [numsetListAddIfGt, numsetListAddIf, hlk, decide_eq_true hvb, ite_true] at heq ⊢
             exact heq
           · rw [hso]
           · rw [hlen, hlen']
         · obtain ⟨so, hrun, heq, hso, hlen⟩ := ih int_end sth v ⟨hv, h, hrs⟩
           refine ⟨so, ?_, ?_, hso, hlen⟩
           · simp only [numsetListAddIfGtMonad]
-            rw [hsub]; simp only [if_neg h0, if_neg hvb]; exact hrun
+            rw [hsub]; simp only [ite_eq_right h0, ite_eq_right hvb]; exact hrun
           · simp only [numsetListAddIfGt, numsetListAddIf, hlk, decide_eq_false hvb,
-              Bool.false_eq_true, if_false] at heq ⊢
+              Bool.false_eq_true, ite_false] at heq ⊢
             exact heq
 
 private theorem bindOk {α β : Type} {m : LsM α} {k : α → LsM β} {s s1 : LinearScanHiddenState}

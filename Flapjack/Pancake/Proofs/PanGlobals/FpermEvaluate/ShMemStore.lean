@@ -75,29 +75,29 @@ theorem evaluateFperm_ShMemStore {width : Nat} {σ : Type} [NeZero width]
                           simp only [ha, hv] at heval ⊢
                           unfold shMemStoreHOLExact at heval ⊢
                           by_cases hn : nbOpHOL operator = 0
-                          · simp only [hn, if_true] at heval ⊢
+                          · simp only [hn, ite_true] at heval ⊢
                             by_cases hd : state.shMemaddrs addr
-                            · simp only [hd, if_true] at heval ⊢
+                            · simp only [hd, ite_true] at heval ⊢
                               obtain ⟨outcome, hf⟩ : ∃ outcome, callFFIHOL state.ffi
                                   (.sharedMem .mappedWrite) [BitVec.ofNat 8 0]
                                   (panWordToBytesHOL bytes false ++ panWordToBytesHOL addr false) =
                                     outcome := ⟨_, rfl⟩
                               cases outcome <;> simp only [hf] at heval ⊢ <;>
                                 cases heval <;> cases state <;> rfl
-                            · simp only [hd, if_false] at heval ⊢
+                            · simp only [hd, ite_false] at heval ⊢
                               cases heval
                               cases state
                               rfl
-                          · simp only [hn, if_false] at heval ⊢
+                          · simp only [hn, ite_false] at heval ⊢
                             by_cases hd : state.shMemaddrs (panByteAlignHOL addr)
-                            · simp only [hd, if_true] at heval ⊢
+                            · simp only [hd, ite_true] at heval ⊢
                               obtain ⟨outcome, hf⟩ : ∃ outcome, callFFIHOL state.ffi
                                   (.sharedMem .mappedWrite) [BitVec.ofNat 8 (nbOpHOL operator)]
                                   ((panWordToBytesHOL bytes false).take (nbOpHOL operator) ++
                                     panWordToBytesHOL addr false) = outcome := ⟨_, rfl⟩
                               cases outcome <;> simp only [hf] at heval ⊢ <;>
                                 cases heval <;> cases state <;> rfl
-                            · simp only [hd, if_false] at heval ⊢
+                            · simp only [hd, ite_false] at heval ⊢
                               cases heval
                               cases state
                               rfl

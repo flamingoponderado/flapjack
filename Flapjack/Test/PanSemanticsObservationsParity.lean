@@ -87,7 +87,7 @@ theorem forbidden_returns_fail {width : Nat} {σ : Type} [NeZero width]
     (hforbidden : panExactHasForbiddenRun context start) :
     panSemanticsExactTotal context start = .fail := by
   unfold panSemanticsExactTotal panSemanticsExact panSemanticsExactWithLub
-  simp only [dif_pos hforbidden]
+  simp only [dite_eq_left hforbidden]
 
 /-- A successful `Return`/`FinalFFI` witness with no forbidden run terminates
 with the chosen outcome and the clock-indexed event list columns. -/
@@ -98,7 +98,7 @@ theorem successful_returns_terminate {width : Nat} {σ : Type} [NeZero width]
     panSemanticsExactTotal context start =
       panExactChooseTermination context start hsuccessful := by
   unfold panSemanticsExactTotal panSemanticsExact panSemanticsExactWithLub
-  simp only [dif_neg hforbidden, dif_pos hsuccessful]
+  simp only [dite_eq_right hforbidden, dite_eq_left hsuccessful]
 
 /-- With neither a forbidden nor a successful run the semantics diverges over
 the evaluator-derived LUB of the clock-indexed event family. -/
@@ -111,7 +111,7 @@ theorem no_run_diverges {width : Nat} {σ : Type} [NeZero width]
         (buildPanLprefixLub _
           (panEvaluateClock_ioEvents_lprefixChain context start)) := by
   unfold panSemanticsExactTotal panSemanticsExact panSemanticsExactWithLub
-  simp only [dif_neg hforbidden, dif_neg hsuccessful]
+  simp only [dite_eq_right hforbidden, dite_eq_right hsuccessful]
 
 def runChecks : IO Bool := do
   IO.println "PASS panSem semantics clock-indexed observation classification"

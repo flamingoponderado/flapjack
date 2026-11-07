@@ -47,7 +47,7 @@ example :
     have hd : decodeLength conf (0 : BitVec 64) = 0 := by rfl
     have ha : (100 : BitVec 64) + wordSemBytesInWord = 108 := by rfl
     rw [wordGenGcMoveRefs]
-    simp only [h, if_false, Nat.one_ne_zero, wordSemTheWord, wordSemIsWordLoc, hd, ha]
+    simp only [h, ite_false, Nat.one_ne_zero, wordSemTheWord, wordSemIsWordLoc, hd, ha]
     rw [genListZero]
     rw [wordGenGcMoveRefs]
     simp
@@ -66,13 +66,13 @@ example :
     have hd : decodeLength conf (0x1000000000000 : BitVec 64) = 1 := by rfl
     have ha : (100 : BitVec 64) + wordSemBytesInWord = 108 := by rfl
     rw [wordGenGcMoveRefs]
-    simp only [h, if_false, Nat.one_ne_zero, if_true, wordSemTheWord, wordSemIsWordLoc, hd, ha]
+    simp only [h, ite_false, Nat.one_ne_zero, ite_true, wordSemTheWord, wordSemIsWordLoc, hd, ha]
     have hn : (108 : BitVec 64) ≠ 100 := by decide
     have hz : (1 : BitVec 64) - 1 = 0 := by decide
     have hb : (108 : BitVec 64) + wordSemBytesInWord = 116 := by rfl
     rw [wordGenGcMoveList]
-    simp only [show (1 : BitVec 64) ≠ 0 from by decide, if_false, hn, wordGenGcMove]
-    simp only [show (1 : BitVec 64) &&& 4 = 0 from by decide, if_true, hz, hb]
+    simp only [show (1 : BitVec 64) ≠ 0 from by decide, ite_false, hn, wordGenGcMove]
+    simp only [show (1 : BitVec 64) &&& 4 = 0 from by decide, ite_true, hz, hb]
     rw [genListZero]
     rw [wordGenGcMoveRefs]
     simp
@@ -92,7 +92,7 @@ example :
     have hd : decodeLength conf (0 : BitVec 64) = 0 := by rfl
     have ha : (100 : BitVec 64) + wordSemBytesInWord = 108 := by rfl
     rw [wordGenGcMoveRefs]
-    simp only [h, if_false, Nat.one_ne_zero, wordSemTheWord, wordSemIsWordLoc, hd, ha]
+    simp only [h, ite_false, Nat.one_ne_zero, wordSemTheWord, wordSemIsWordLoc, hd, ha]
     rw [genListZero]
     rw [wordGenGcMoveRefs]
     simp

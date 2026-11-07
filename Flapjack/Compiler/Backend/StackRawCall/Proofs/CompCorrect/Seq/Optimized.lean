@@ -141,11 +141,11 @@ theorem simulateOptimizedSeq {width : Nat} [NeZero width] {C F : Type}
   have clockSelf : {target with clock := target.clock + 0} = target := by cases target; simp
   rw [evaluateSeqUnclamped, StackSemEvaluate.evaluate_stackFree] at execution
   by_cases enabled : source.useStack = true
-  · simp only [enabled, Bool.not_true, Bool.false_eq_true, if_false] at execution
+  · simp only [enabled, Bool.not_true, Bool.false_eq_true, ite_false] at execution
     by_cases badBounds : source.stack.length < source.stackSpace + released
-    · simp only [badBounds, if_true, Prod.mk.injEq] at execution
+    · simp only [badBounds, ite_true, Prod.mk.injEq] at execution
       exact False.elim (nonerror execution.1.symm)
-    · simp only [badBounds, if_false] at execution
+    · simp only [badBounds, ite_false] at execution
       have firstRun : StackSemEvaluate.evaluate (.stackFree released, source) =
           (none, {source with stackSpace := source.stackSpace + released}) := by
         simp [StackSemEvaluate.evaluate_stackFree, enabled, badBounds]
@@ -167,7 +167,7 @@ theorem simulateOptimizedSeq {width : Nat} [NeZero width] {C F : Type}
       rw [evaluateCallAlloc dest allocated body
         {source with stackSpace := source.stackSpace + released} sourceEntry] at execution
       by_cases zero : source.clock = 0
-      · simp only [zero, if_true, Prod.mk.injEq] at execution
+      · simp only [zero, ite_true, Prod.mk.injEq] at execution
         obtain ⟨rfl, rfl⟩ := execution
         let targetPost := emptyEnv {target with stackSpace := source.stackSpace + released}
         refine ⟨0, targetPost,
@@ -180,10 +180,10 @@ theorem simulateOptimizedSeq {width : Nat} [NeZero width] {C F : Type}
           simpa only [targetPost, emptyEnv] using
             zeroOptimization released allocated dest (comp entryInfo body) target targetEntry
               targetEnabled targetBounds (targetClock.trans zero)
-      · simp only [zero, if_false,
-          if_neg (show ¬ (!source.useStack) = true by simp [enabled])] at execution
+      · simp only [zero, ite_false,
+          ite_eq_right (show ¬ (!source.useStack) = true by simp [enabled])] at execution
         by_cases failure : source.stackSpace + released < allocated
-        · simp only [failure, if_true, Prod.mk.injEq] at execution
+        · simp only [failure, ite_true, Prod.mk.injEq] at execution
           obtain ⟨rfl, rfl⟩ := execution
           let targetPost := emptyEnv (decClock {target with
             stackSpace := source.stackSpace + released})
@@ -221,7 +221,7 @@ theorem simulateOptimizedSeq {width : Nat} [NeZero width] {C F : Type}
           rw [transport]
           exact targetRun
   · have disabled : source.useStack = false := by cases source.useStack <;> simp_all
-    simp only [disabled, Bool.not_false, if_true, Prod.mk.injEq] at execution
+    simp only [disabled, Bool.not_false, ite_true, Prod.mk.injEq] at execution
     exact False.elim (nonerror execution.1.symm)
 
 end Flapjack.Compiler.Backend.StackRawCall.SeqCase

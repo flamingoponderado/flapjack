@@ -42,26 +42,26 @@ theorem shMemLoadHOLFiniteExact_permCode {width : Nat} {σ : Type} [NeZero width
         (panWordToBytesHOL address false) with
     | final event =>
       by_cases hnb : nb = 0
-      · simp only [hnb, if_true]
+      · simp only [hnb, ite_true]
         by_cases haddr : shMemaddrs address
-        · simp only [haddr, if_true]
-        · simp only [haddr, if_false]
-      · simp only [hnb, if_false]
+        · simp only [haddr, ite_true]
+        · simp only [haddr, ite_false]
+      · simp only [hnb, ite_false]
         by_cases haddr : shMemaddrs (panByteAlignHOL address)
-        · simp only [haddr, if_true]
-        · simp only [haddr, if_false]
+        · simp only [haddr, ite_true]
+        · simp only [haddr, ite_false]
     | ret newFfi newBytes =>
       by_cases hnb : nb = 0
-      · simp only [hnb, if_true]
+      · simp only [hnb, ite_true]
         by_cases haddr : shMemaddrs address
-        · simp only [haddr, if_true]
+        · simp only [haddr, ite_true]
           cases kind <;> rfl
-        · simp only [haddr, if_false]
-      · simp only [hnb, if_false]
+        · simp only [haddr, ite_false]
+      · simp only [hnb, ite_false]
         by_cases haddr : shMemaddrs (panByteAlignHOL address)
-        · simp only [haddr, if_true]
+        · simp only [haddr, ite_true]
           cases kind <;> rfl
-        · simp only [haddr, if_false]
+        · simp only [haddr, ite_false]
 
 set_option backward.isDefEq.respectTransparency false in
 /-- Original evaluate_fperm ShMemLoad case. The sole original source-run premise

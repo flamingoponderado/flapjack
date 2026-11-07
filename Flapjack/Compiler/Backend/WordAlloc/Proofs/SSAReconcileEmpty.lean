@@ -70,7 +70,6 @@ theorem evaluateSSAReconcileEmpty {width : Nat} [NeZero width] {C F β : Type}
       exfalso
       apply notEmpty
       convert empty using 1
-      congr 2
   · simp [Flapjack.WordAlloc.wordStateEqRel]
   · intro n value hn
     obtain ⟨domain, lookup, _⟩ := related.2 n value hn.2

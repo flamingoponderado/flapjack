@@ -105,7 +105,7 @@ private theorem mulAddNaNInputFloat :
     nanClass (holFloatMulAddRte64 (holFp64ToFloat one) (holFp64ToFloat one)
       (holFp64ToFloat qnan)) = (true, false) := by
   unfold holFloatMulAddRte64
-  simp only [holFloatIsNan, qnanValue, Bool.or_true, if_true]
+  simp only [holFloatIsNan, qnanValue, Bool.or_true, ite_true]
   exact someQnanClass _
 
 private theorem addInvalidInfinitiesFloat :

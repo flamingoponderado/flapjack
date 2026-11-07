@@ -175,7 +175,7 @@ theorem stateRel_install {width : Nat} [NeZero width] {S Q F : Type}
   have hlenP := allEncOk_lengthProgToBytes code2 () _ _ _ _ c47
   have hpv : ∀ x, x ≤ (code2.map (fun sec => lenNoLab sec.lines)).sum →
       posVal x 0 (code2 ++ secList) = posVal x 0 code2 := by
-    intro x hx; rw [posVal_append code2 x 0 secList hlz, if_pos hx]
+    intro x hx; rw [posVal_append code2 x 0 secList hlz, ite_eq_left hx]
   have hbnd : ∀ a b x, locToPc a b s1.code = some x →
       x ≤ (code2.map (fun sec => lenNoLab sec.lines)).sum := by
     intro a b x hx; rw [← hlenEq]; exact locToPc_bound _ a b x ⟨hsl1, hx⟩
@@ -254,7 +254,7 @@ theorem stateRel_install {width : Nat} [NeZero width] {S Q F : Type}
     dsimp only
     by_cases hr : r = s1.ptrReg
     · subst hr
-      rw [if_pos rfl, if_pos rfl]
+      rw [ite_eq_left rfl, ite_eq_left rfl]
       have hk0 : locToPc k 0 (⟨k, lines⟩ :: rest) = some 0 := by rw [locToPc.eq_def]; simp
       simp only [wordLocVal, hloc1 k 0 0 hk0, posVal_zero _ _ _ _ _ hEnc]
       rw [wordLocVal_word_target (c30 _) hptr, ← hstartpos, c34]

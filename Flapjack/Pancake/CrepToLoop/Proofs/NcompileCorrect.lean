@@ -116,7 +116,7 @@ theorem crepToLoop_ncompile_correct_if {width : Nat} [NeZero width] {σ : Type} 
       have hle := h1l.2.1 vn n' hn1'
       refine ⟨n', hn1', hn2, ?_⟩
       simp only [LoopSemStateFiniteExact.setVar, sptLookup_sptInsert]
-      rw [if_neg (by omega)]
+      rw [ite_eq_right (by omega)]
       exact hn3'
   obtain ⟨ck', res1, t1, h2, h2s, h2m, h2g, h2c, h2r, h2l⟩ :=
     ih w hev res s1 (LoopSemStateFiniteExact.setVar tmp (.word w) st) ctxt l
@@ -144,14 +144,14 @@ theorem crepToLoop_ncompile_correct_if {width : Nat} [NeZero width] {σ : Type} 
       rw [LoopSemStateFiniteExact.eval_upd_clock_eq]; simpa [wlabWlocExact] using h1v
     simp only [loopNestedSeqHOL, LoopSemStateFiniteExact.evaluate_seq]
     simp only [LoopSemStateFiniteExact.evaluate, hle]
-    simp only [LoopSemStateFiniteExact.setVar, sptLookup_sptInsert, if_true,
+    simp only [LoopSemStateFiniteExact.setVar, sptLookup_sptInsert, ite_true,
       LoopSemStateFiniteExact.getVarImm, Compiler.Encoders.Asm.wordCmpHOL]
     by_cases hw : w = 0
-    · simp only [hw, beq_self_eq_true, Bool.not_true, Bool.false_eq_true, if_false,
+    · simp only [hw, beq_self_eq_true, Bool.not_true, Bool.false_eq_true, ite_false,
         ne_eq, not_true_eq_false]
       split <;> rename_i h <;> exact h.symm
     · have hb : (w == 0) = false := by simpa using hw
-      simp only [hb, Bool.not_false, if_true, ne_eq, hw, not_false_eq_true]
+      simp only [hb, Bool.not_false, ite_true, ne_eq, hw, not_false_eq_true]
       split <;> rename_i h <;> exact h.symm
   have h1k : ∀ k, LoopSemStateFiniteExact.evaluate (loopNestedSeqHOL np)
       { t with clock := t.clock + (ck + k) } = (none, { st with clock := st.clock + k }) := by
@@ -186,13 +186,13 @@ theorem crepToLoop_ncompile_correct_if {width : Nat} [NeZero width] {σ : Type} 
     · refine ⟨h2l'.1, h2l'.2.1, fun k hk => ?_, fun vn val hval => ?_⟩
       · have hk' : (sptLookup k l).isSome := hk
         show (sptLookup k (sptInter t1.locals l)).isSome
-        rw [sptLookup_sptInter, if_pos hk']
+        rw [sptLookup_sptInter, ite_eq_left hk']
         exact hsub k hk
       · obtain ⟨n, hn1, hn2, hn3⟩ := h2l'.2.2.2 vn val hval
         have hnl : (sptLookup n l).isSome := hn2
         refine ⟨n, hn1, hn2, ?_⟩
         show sptLookup n (sptInter t1.locals l) = _
-        rw [sptLookup_sptInter, if_pos hnl]
+        rw [sptLookup_sptInter, ite_eq_left hnl]
         exact hn3
   | some r =>
     obtain ⟨x, hx⟩ : ∃ x, res1 = some x := by
@@ -351,11 +351,11 @@ private theorem panMemLoadByteWord8HOL_eq_memLoadByteAuxExact {width : Nat} [NeZ
     · have hmv := hm _ hd
       rw [hv] at hmv
       have htd : tdom (panByteAlignHOL a) = true := by subst hdom; exact hd
-      rw [if_pos hd, ← hmv]
+      rw [ite_eq_left hd, ← hmv]
       simp [wlabWlocExact, htd, panGetByteWord8HOL_eq_getByteHOL8, hv]
     · have htd : tdom (panByteAlignHOL a) = false := by
         subst hdom; simpa using hd
-      rw [if_neg hd]
+      rw [ite_eq_right hd]
       cases htm : tmem (panByteAlignHOL a) <;> simp [htd]
 
 
@@ -446,13 +446,13 @@ theorem crepToLoop_ncompile_correct_extCall {width : Nat} [NeZero width] {σ : T
     refine ⟨hl.1, hl.2.1, fun k hk => ?_, fun vn val hval => ?_⟩
     · have hk' : (sptLookup k l).isSome := hk
       show (sptLookup k (sptInter t.locals l)).isSome
-      rw [sptLookup_sptInter, if_pos hk']
+      rw [sptLookup_sptInter, ite_eq_left hk']
       exact hsub k hk
     · obtain ⟨n, hn1, hn2, hn3⟩ := hl.2.2.2 vn val hval
       have hnl : (sptLookup n l).isSome := hn2
       refine ⟨n, hn1, hn2, ?_⟩
       show sptLookup n (sptInter t.locals l) = _
-      rw [sptLookup_sptInter, if_pos hnl]
+      rw [sptLookup_sptInter, ite_eq_left hnl]
       exact hn3
   cases hr1 : readBytearrayWordHOL wc wcl.toNat (memLoadByteAuxExact t.memory t.mdomain t.be) with
   | none => simp [hr1] at he; exact absurd he.1.symm hne
@@ -544,13 +544,13 @@ theorem crepToLoop_ncompile_correct_storeGlob {width : Nat} [NeZero width] {σ :
     simp only [LoopSemStateFiniteExact.setGlobals, HolFiniteMapExact.lookup_update, FUPDATE]
     by_cases had : ad = dst
     · subst had
-      simp only [if_true] at hv
-      simp only [beq_self_eq_true, if_true, Option.some.injEq]
+      simp only [ite_true] at hv
+      simp only [beq_self_eq_true, ite_true, Option.some.injEq]
       rw [Option.some.inj hv]
-    · rw [if_neg had] at hv
+    · rw [ite_eq_right had] at hv
       have hne' : (dst == ad) = false := beq_eq_false_iff_ne.mpr (fun h => had h.symm)
       rw [hne']
-      simp only [Bool.false_eq_true, if_false]
+      simp only [Bool.false_eq_true, ite_false]
       exact h1g ad v hv
 /-- `ncompile_correct`, case `Assign n e` (`crep_to_loopProofScript.sml:110-134`
     statement; `Resume ncompile_correct[Assign]` at 2241-2277). `evaluate_ind`

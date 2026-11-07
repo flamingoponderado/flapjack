@@ -32,23 +32,23 @@ theorem sptLookupFilterV {α : Type} :
       simp only [sptFilterV, sptLookupMkBN]
       by_cases hk : k = 0
       · simp [sptLookup, hk]
-      · simp only [sptLookup, hk, if_false]
+      · simp only [sptLookup, hk, ite_false]
         split
         · exact ihl _
         · exact ihr _
   | bs l x r ihl ihr =>
       by_cases hf : f x = true
-      · simp only [sptFilterV, hf, if_true, sptLookupMkBS]
+      · simp only [sptFilterV, hf, ite_true, sptLookupMkBS]
         by_cases hk : k = 0
         · simp [sptLookup, hk, hf]
-        · simp only [sptLookup, hk, if_false]
+        · simp only [sptLookup, hk, ite_false]
           split
           · exact ihl _
           · exact ihr _
-      · simp only [sptFilterV, hf, Bool.false_eq_true, if_false, sptLookupMkBN]
+      · simp only [sptFilterV, hf, Bool.false_eq_true, ite_false, sptLookupMkBN]
         by_cases hk : k = 0
         · simp [sptLookup, hk, hf]
-        · simp only [sptLookup, hk, if_false]
+        · simp only [sptLookup, hk, ite_false]
           split
           · exact ihl _
           · exact ihr _

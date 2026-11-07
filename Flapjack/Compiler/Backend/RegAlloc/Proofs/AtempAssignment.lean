@@ -33,7 +33,7 @@ private theorem removeColours_state :
   | [], _ :: _, s => ⟨_, rfl⟩
   | x :: xs, k :: ks, s => by
       by_cases hx : x < s.node_tag.length
-      · simp only [removeColours, Translator.Monadic.MonadBase.bind, nodeTagSubEqn, if_pos hx]
+      · simp only [removeColours, Translator.Monadic.MonadBase.bind, nodeTagSubEqn, ite_eq_left hx]
         cases holEl x s.node_tag with
         | Fixed c =>
             obtain ⟨r, hr⟩ := removeColours_state xs ((k :: ks).filter fun y => y ≠ c) s
@@ -48,7 +48,7 @@ private theorem removeColours_state :
             simp only [hr]
             cases r <;> exact ⟨_, rfl⟩
       · exact ⟨.failure .Subscript, by simp only [removeColours,
-          Translator.Monadic.MonadBase.bind, nodeTagSubEqn, if_neg hx]⟩
+          Translator.Monadic.MonadBase.bind, nodeTagSubEqn, ite_eq_right hx]⟩
 
 /-- Exact HOL `remove_colours_frame` (`reg_allocProofScript.sml:295-306`). -/
 @[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml" "remove_colours_frame"]
@@ -88,7 +88,7 @@ theorem removeColoursSuccess :
       subst hs
       by_cases hx : x < s.node_tag.length
       · simp only [removeColours, Translator.Monadic.MonadBase.bind, nodeTagSubEqn,
-          if_pos hx] at h
+          ite_eq_left hx] at h
         generalize ht : holEl x s.node_tag = t at h
         cases t with
         | Fixed c =>
@@ -140,7 +140,7 @@ theorem removeColoursSuccess :
                   · rw [ht]; trivial
                   · exact absurd hn hnx
       · simp only [removeColours, Translator.Monadic.MonadBase.bind, nodeTagSubEqn,
-          if_neg hx, Prod.mk.injEq, reduceCtorEq, false_and] at h
+          ite_eq_right hx, Prod.mk.injEq, reduceCtorEq, false_and] at h
 
 /-- `EL` of a `LUPDATE` without a range premise (Flapjack infrastructure). -/
 private theorem holEl_set' {α : Type} [Nonempty α] (l : List α) (i j : Nat) (v : α) :
@@ -148,8 +148,8 @@ private theorem holEl_set' {α : Type} [Nonempty α] (l : List α) (i j : Nat) (
   by_cases hi : i < l.length
   · rw [holEl_set _ _ _ _ hi]
     by_cases hij : i = j
-    · rw [if_pos hij, if_pos ⟨hij, hi⟩]
-    · rw [if_neg hij, if_neg (fun h => hij h.1)]
+    · rw [ite_eq_left hij, ite_eq_left ⟨hij, hi⟩]
+    · rw [ite_eq_right hij, ite_eq_right (fun h => hij h.1)]
   · rw [List.set_eq_of_length_le (by omega)]
     simp [hi]
 
@@ -163,11 +163,11 @@ theorem noClashLupdateStemp (adjls : List (List Nat)) (tags : List Tag) (n : Nat
   have hxy := h x y he
   rw [holEl_set', holEl_set']
   by_cases hx : n = x ∧ n < tags.length
-  · rw [if_pos hx]; split <;> trivial
-  · rw [if_neg hx]
+  · rw [ite_eq_left hx]; split <;> trivial
+  · rw [ite_eq_right hx]
     by_cases hy : n = y ∧ n < tags.length
-    · rw [if_pos hy]; split <;> trivial
-    · rw [if_neg hy]; exact hxy
+    · rw [ite_eq_left hy]; split <;> trivial
+    · rw [ite_eq_right hy]; exact hxy
 
 /-- Exact HOL `no_clash_LUPDATE_Fixed` (`reg_allocProofScript.sml:354-387`); `adjls`, `tags`,
 `n` and `x` are free in HOL. -/
@@ -187,12 +187,12 @@ theorem noClashLupdateFixed (adjls : List (List Nat)) (tags : List Tag) (n x : N
   rw [holEl_set', holEl_set']
   by_cases ha : n = a ∧ n < tags.length
   · obtain ⟨rfl, hnl⟩ := ha
-    rw [if_pos ⟨rfl, hnl⟩]
+    rw [ite_eq_left ⟨rfl, hnl⟩]
     by_cases hb' : n = b ∧ n < tags.length
     · obtain ⟨rfl, -⟩ := hb'
-      rw [if_pos ⟨rfl, hnl⟩]
+      rw [ite_eq_left ⟨rfl, hnl⟩]
       exact fun _ => rfl
-    · rw [if_neg hb']
+    · rw [ite_eq_right hb']
       have hbm : b ∈ holEl n adjls := he.2.2
       have hne := hnb b ⟨hbm, hinb b hbm⟩
       split
@@ -201,10 +201,10 @@ theorem noClashLupdateFixed (adjls : List (List Nat)) (tags : List Tag) (n x : N
           intro hcd
           exact absurd (hcd ▸ h2) hne
       · trivial
-  · rw [if_neg ha]
+  · rw [ite_eq_right ha]
     by_cases hb' : n = b ∧ n < tags.length
     · obtain ⟨rfl, hnl⟩ := hb'
-      rw [if_pos ⟨rfl, hnl⟩]
+      rw [ite_eq_left ⟨rfl, hnl⟩]
       have hea := hu a n he
       have ham : a ∈ holEl n adjls := hea.2.2
       have hne := hnb a ⟨ham, hinb a ham⟩
@@ -214,7 +214,7 @@ theorem noClashLupdateFixed (adjls : List (List Nat)) (tags : List Tag) (n x : N
           intro hcd
           exact absurd (hcd ▸ h1) hne
       · trivial
-    · rw [if_neg hb']
+    · rw [ite_eq_right hb']
       exact hab
 
 /-- Exact HOL `remove_colours_succeeds` (`reg_allocProofScript.sml:389-400`). HOL binds `s`
@@ -231,7 +231,7 @@ theorem removeColoursSucceeds {α : Type} :
   | x :: xs, k :: ks, u, s, hb => by
       have hx := hb x List.mem_cons_self
       have hxs : ∀ v ∈ xs, v < s.node_tag.length := fun v hv => hb v (List.mem_cons_of_mem _ hv)
-      simp only [removeColours, Translator.Monadic.MonadBase.bind, nodeTagSubEqn, if_pos hx]
+      simp only [removeColours, Translator.Monadic.MonadBase.bind, nodeTagSubEqn, ite_eq_left hx]
       cases holEl x s.node_tag with
       | Fixed c =>
           obtain ⟨r, hr⟩ := removeColoursSucceeds xs ((k :: ks).filter fun y => y ≠ c) u s hxs
@@ -266,8 +266,8 @@ theorem assignAtempTagCorrect (s : State)
     exact ⟨g1, (List.length_set ..).trans g2, g3, g4, g5, g6, g7, g8, g9, g10, g11, g12, g13,
       g14⟩
   have hother : ∀ t : Tag, ∀ m, n ≠ m → holEl m (s.node_tag.set n t) = holEl m s.node_tag :=
-    fun t m hnm => by rw [holEl_set _ _ _ _ hnl, if_neg hnm]
-  simp only [assignAtempTag, Translator.Monadic.MonadBase.bind, nodeTagSubEqn, if_pos hnl]
+    fun t m hnm => by rw [holEl_set _ _ _ _ hnl, ite_eq_right hnm]
+  simp only [assignAtempTag, Translator.Monadic.MonadBase.bind, nodeTagSubEqn, ite_eq_left hnl]
   generalize ht : holEl n s.node_tag = t
   have hkeep : t ≠ .Atemp → ∃ s', (ret () : M State Unit StateException) s =
       (.success (), s') ∧
@@ -275,25 +275,25 @@ theorem assignAtempTagCorrect (s : State)
         else holEl m s'.node_tag = holEl m s.node_tag) ∧
       noClash s'.adj_ls s'.node_tag ∧ goodRaState s' ∧
       s' = { s with node_tag := s'.node_tag } := fun hne =>
-    ⟨s, rfl, fun m => by rw [if_neg (fun h => hne h.2)], hnc, hg, rfl⟩
+    ⟨s, rfl, fun m => by rw [ite_eq_right (fun h => hne h.2)], hnc, hg, rfl⟩
   cases t with
   | Fixed c => exact hkeep (by simp)
   | Stemp => exact hkeep (by simp)
   | Atemp =>
-      simp only [Translator.Monadic.MonadBase.bind, adjLsSubEqn, if_pos hal]
+      simp only [Translator.Monadic.MonadBase.bind, adjLsSubEqn, ite_eq_left hal]
       obtain ⟨ls, hrc⟩ := removeColoursSucceeds (holEl n s.adj_ls) ks () s hadj
       obtain ⟨hsub, hfix⟩ := removeColoursSuccess _ _ s ls s hrc
       simp only [hrc]
       cases ls with
       | nil =>
-          refine ⟨_, by simp only [updateNodeTagEqn, if_pos hnl], fun m => ?_,
+          refine ⟨_, by simp only [updateNodeTagEqn, ite_eq_left hnl], fun m => ?_,
             noClashLupdateStemp _ _ n hnc, hgset _, rfl⟩
           by_cases hnm : n = m
-          · rw [if_pos (by simp [hnm])]
+          · rw [ite_eq_left (by simp [hnm])]
             show holEl n (s.node_tag.set n .Stemp) ≠ .Atemp
-            rw [holEl_set _ _ _ _ hnl, if_pos rfl]
+            rw [holEl_set _ _ _ _ hnl, ite_eq_left rfl]
             simp
-          · rw [if_neg (fun h => hnm h.1)]
+          · rw [ite_eq_right (fun h => hnm h.1)]
             exact hother _ m hnm
       | cons c cs =>
           obtain ⟨res, hres, hmem⟩ := hpref n (c :: cs) s hg
@@ -305,13 +305,13 @@ theorem assignAtempTagCorrect (s : State)
               noClash s'.adj_ls s'.node_tag ∧ goodRaState s' ∧
               s' = { s with node_tag := s'.node_tag } := fun col hcol => by
             refine ⟨{ s with node_tag := s.node_tag.set n (.Fixed col) },
-              by simp only [updateNodeTagEqn, if_pos hnl], fun m => ?_, ?_, hgset _, rfl⟩
+              by simp only [updateNodeTagEqn, ite_eq_left hnl], fun m => ?_, ?_, hgset _, rfl⟩
             · by_cases hnm : n = m
-              · rw [if_pos (by simp [hnm])]
+              · rw [ite_eq_left (by simp [hnm])]
                 show holEl n (s.node_tag.set n (.Fixed col)) ≠ .Atemp
-                rw [holEl_set _ _ _ _ hnl, if_pos rfl]
+                rw [holEl_set _ _ _ _ hnl, ite_eq_left rfl]
                 simp
-              · rw [if_neg (fun h => hnm h.1)]
+              · rw [ite_eq_right (fun h => hnm h.1)]
                 exact hother _ m hnm
             · refine noClashLupdateFixed _ _ n col ⟨hg.2.2.2.2.2.2.2.2.2.2.2.2.2,
                 fun ls hls v hv => ?_, hal, fun m ⟨hm, hml⟩ hfx => ?_, hnc⟩
@@ -339,7 +339,7 @@ theorem assignAtempsForeachLem :
   induction ls with
   | nil =>
       intro s ks prefs ⟨hg, hnc, _, _⟩
-      exact ⟨s, rfl, hnc, hg, rfl, fun m => by rw [if_neg (fun h => by cases h.1)]⟩
+      exact ⟨s, rfl, hnc, hg, rfl, fun m => by rw [ite_eq_right (fun h => by cases h.1)]⟩
   | cons h t ih =>
       intro s ks prefs ⟨hg, hnc, hpref, hb⟩
       obtain ⟨s1, h1, hm1, hnc1, hg1, hs1⟩ :=
@@ -361,26 +361,26 @@ theorem assignAtempsForeachLem :
       change (if m ∈ h :: t ∧ holEl m s.node_tag = .Atemp then holEl m T2 ≠ .Atemp
         else holEl m T2 = holEl m s.node_tag)
       by_cases hc : m ∈ h :: t ∧ holEl m s.node_tag = .Atemp
-      · rw [if_pos hc]
+      · rw [ite_eq_left hc]
         by_cases hhm : h = m
         · subst hhm
-          rw [if_pos ⟨rfl, hc.2⟩] at e1
-          rw [if_neg (fun h' => e1 h'.2)] at e2
+          rw [ite_eq_left ⟨rfl, hc.2⟩] at e1
+          rw [ite_eq_right (fun h' => e1 h'.2)] at e2
           rw [e2]; exact e1
-        · rw [if_neg (fun h' => hhm h'.1)] at e1
+        · rw [ite_eq_right (fun h' => hhm h'.1)] at e1
           have hmt : m ∈ t := by
             rcases List.mem_cons.mp hc.1 with h' | h'
             · exact absurd h'.symm hhm
             · exact h'
-          rw [if_pos ⟨hmt, e1.trans hc.2⟩] at e2
+          rw [ite_eq_left ⟨hmt, e1.trans hc.2⟩] at e2
           exact e2
-      · rw [if_neg hc]
+      · rw [ite_eq_right hc]
         have hn1 : ¬ (h = m ∧ holEl h s.node_tag = .Atemp) := fun ⟨hhm, ha⟩ =>
           hc ⟨hhm ▸ List.mem_cons_self, hhm ▸ ha⟩
-        rw [if_neg hn1] at e1
+        rw [ite_eq_right hn1] at e1
         have hn2 : ¬ (m ∈ t ∧ holEl m T1 = .Atemp) := fun ⟨hmt, ha⟩ =>
           hc ⟨List.mem_cons_of_mem _ hmt, e1 ▸ ha⟩
-        rw [if_neg hn2] at e2
+        rw [ite_eq_right hn2] at e2
         exact e2.trans e1
 
 /-- Exact HOL `assign_Atemps_correct` (`reg_allocProofScript.sml:490-535`). -/
@@ -416,9 +416,9 @@ theorem assignAtempsCorrect :
       else holEl i T2 = holEl i T1) at e2
     rw [← holEl_eq_getElem _ _ hi]
     by_cases ha : holEl i T1 = .Atemp
-    · rw [if_pos ⟨List.mem_range.mpr hid, ha⟩] at e2
+    · rw [ite_eq_left ⟨List.mem_range.mpr hid, ha⟩] at e2
       exact e2
-    · rw [if_neg (fun h => ha h.2)] at e2
+    · rw [ite_eq_right (fun h => ha h.2)] at e2
       rw [e2]; exact ha
   · have e1 := hm1 m
     have e2 := hm2 m
@@ -426,8 +426,8 @@ theorem assignAtempsCorrect :
       holEl m T1 ≠ .Atemp else holEl m T1 = holEl m s.node_tag) at e1
     change (if m ∈ List.range s.dim ∧ holEl m T1 = .Atemp then holEl m T2 ≠ .Atemp
       else holEl m T2 = holEl m T1) at e2
-    rw [if_neg (fun h => hma h.2)] at e1
-    rw [if_neg (fun h => hma (e1 ▸ h.2))] at e2
+    rw [ite_eq_right (fun h => hma h.2)] at e1
+    rw [ite_eq_right (fun h => hma (e1 ▸ h.2))] at e2
     exact e2.trans e1
 
 /-- Exact HOL `first_match_col_correct` (`reg_allocProofScript.sml:721-733`). -/
@@ -446,17 +446,17 @@ theorem firstMatchColCorrect :
   | cons y ys ih =>
       intro ks s
       by_cases hy : y < s.node_tag.length
-      · simp only [firstMatchCol, Translator.Monadic.MonadBase.bind, nodeTagSubEqn, if_pos hy]
+      · simp only [firstMatchCol, Translator.Monadic.MonadBase.bind, nodeTagSubEqn, ite_eq_left hy]
         cases holEl y s.node_tag with
         | Fixed m =>
             by_cases hm : m ∈ ks
-            · exact ⟨.success (some m), by simp only [if_pos hm, ret], hm⟩
-            · simp only [if_neg hm]
+            · exact ⟨.success (some m), by simp only [ite_eq_left hm, ret], hm⟩
+            · simp only [ite_eq_right hm]
               exact ih ks s
         | Atemp => exact ih ks s
         | Stemp => exact ih ks s
       · exact ⟨.failure .Subscript, by simp only [firstMatchCol, Translator.Monadic.MonadBase.bind,
-          nodeTagSubEqn, if_neg hy], rfl⟩
+          nodeTagSubEqn, ite_eq_right hy], rfl⟩
 
 /-- Exact HOL `coalesce_root_success` (`reg_allocProofScript.sml:735-751`). -/
 @[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml"
@@ -475,16 +475,16 @@ theorem coalesceRootSuccess :
   have htl : holEl n s.coalesced < s.node_tag.length := by rw [hg.2.1]; exact hnt
   obtain ⟨bx, hbx⟩ : ∃ b, isFixed (holEl n s.coalesced) s = (.success b, s) := by
     refine ⟨match holEl (holEl n s.coalesced) s.node_tag with | .Fixed _ => true | _ => false, ?_⟩
-    simp only [isFixed, Translator.Monadic.MonadBase.bind, nodeTagSubEqn, if_pos htl, ret]
+    simp only [isFixed, Translator.Monadic.MonadBase.bind, nodeTagSubEqn, ite_eq_left htl, ret]
     rfl
   rw [coalesceRoot]
-  simp only [Translator.Monadic.MonadBase.bind, coalescedSubEqn, if_pos hcl, hbx]
+  simp only [Translator.Monadic.MonadBase.bind, coalescedSubEqn, ite_eq_left hcl, hbx]
   by_cases hb : bx = true
-  · exact ⟨holEl n s.coalesced, by simp only [if_pos hb, ret]⟩
-  · rw [if_neg hb]
+  · exact ⟨holEl n s.coalesced, by simp only [ite_eq_left hb, ret]⟩
+  · rw [ite_eq_right hb]
     by_cases hle : n ≤ holEl n s.coalesced
-    · exact ⟨n, by simp only [dif_pos hle, ret]⟩
-    · rw [dif_neg hle]
+    · exact ⟨n, by simp only [dite_eq_left hle, ret]⟩
+    · rw [dite_eq_right hle]
       exact ih _ (by omega) s ⟨hg, hnt⟩
 
 /-- Exact HOL `good_pref_biased_pref` (`reg_allocProofScript.sml:753-766`). -/
@@ -510,7 +510,7 @@ theorem goodPrefBiasedPref : ∀ (t : Spt (List Nat)), goodPref (biasedPref t) :
       | failure e =>
           cases hp
           exact ⟨none, rfl, trivial⟩
-    simp only [biasedPref, Translator.Monadic.MonadBase.bind, getDim, if_pos hn, hv]
+    simp only [biasedPref, Translator.Monadic.MonadBase.bind, getDim, ite_eq_left hn, hv]
     cases sptLookup n t with
     | none =>
         obtain ⟨res, h1, h2⟩ := key []
@@ -524,7 +524,7 @@ theorem goodPrefBiasedPref : ∀ (t : Spt (List Nat)), goodPref (biasedPref t) :
         cases res
         · trivial
         · exact h2
-  · exact ⟨none, by simp only [biasedPref, Translator.Monadic.MonadBase.bind, getDim, if_neg hn,
+  · exact ⟨none, by simp only [biasedPref, Translator.Monadic.MonadBase.bind, getDim, ite_eq_right hn,
       ret], trivial⟩
 
 end Flapjack.RegAlloc

@@ -85,7 +85,7 @@ theorem find_code_thm {width : Nat} [NeZero width]
     split at hfind
     · simp at hfind
     · rename_i hne
-      rw [dif_neg hne]
+      rw [dite_eq_right hne]
       split at hfind
       · rename_i loc hlast
         cases hp : sptLookup loc st.code with
@@ -101,7 +101,7 @@ theorem find_code_thm {width : Nat} [NeZero width]
             · have : (wordSemAddRetLoc o' x).dropLast.length = arity := by
                 rw [List.length_dropLast]; omega
               rw [this]; rfl
-            · simp only [hl, compileSingle_arity, hlen, if_true]
+            · simp only [hl, compileSingle_arity, hlen, ite_true]
           · simp at hfind
       · simp at hfind
 

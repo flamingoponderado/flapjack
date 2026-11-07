@@ -34,7 +34,7 @@ theorem decDeg_production_monadic (node : Nat) {native : State} {production : Ca
     have actual : cakeDecDegMonadic node production = .success ()
         {production with degrees := production.degrees.set node (native.degrees[node] - 1)} := by
       unfold cakeDecDegMonadic
-      rw [if_pos productionBound, slot]
+      rw [ite_eq_left productionBound, slot]
     have source : decDeg node native = (.success (),
         {native with degrees := native.degrees.set node (native.degrees[node] - 1)}) := by
       simp [decDeg, Translator.Monadic.MonadBase.bind, degreesSubEqn, updateDegreesEqn,

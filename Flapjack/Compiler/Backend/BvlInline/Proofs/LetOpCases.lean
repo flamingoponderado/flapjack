@@ -191,11 +191,11 @@ theorem letOp_let_evaluate {C F : Type} (bindings : List Bvl.Exp) (body : Bvl.Ex
       evaluate [.let (letOp bindings) (letOpOne body)] env state := by
   simp only [letOp, letOpList, letOpOne]
   cases transformed : letOpOne body with
-  | op op variables =>
+  | op op variableExps =>
     simp only [destOp]
-    by_cases valid : varListHOL 0 variables (letOpList bindings) = true
+    by_cases valid : varListHOL 0 variableExps (letOpList bindings) = true
     · simp only [valid, ↓reduceIte]
-      exact (evaluateLetOpReduction (letOpList bindings) variables op env state valid).symm
+      exact (evaluateLetOpReduction (letOpList bindings) variableExps op env state valid).symm
     · simp [valid]
   | _ => simp [destOp]
 

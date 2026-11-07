@@ -23,7 +23,7 @@ theorem fetchSingle {pc : Nat} {x : LabLineHOL width}
     {code : LabProgHOL width} (nl : isLabelHOL x = false)
     (h : codeInstalled pc [x] code) : asmFetchAux pc code = some x := by
   rw [codeInstalled_cons] at h
-  simp only [nl, Bool.false_eq_true, if_false] at h
+  simp only [nl, Bool.false_eq_true, ite_false] at h
   exact h.1
 
 theorem relClock {s : StackSemStateFiniteExact width C F}
@@ -50,7 +50,7 @@ theorem flattenCorrectHalt (s1 : StackSemStateFiniteExact width C F) (v : Nat) :
       rw [← ca]; exact InstCorrect.regOfLookup rel hw
     refine ⟨1, { t1 with clock := t1.clock + 1 }, ?_, ?_⟩
     · rw [evaluate]
-      simp only [Nat.add_one_ne_zero, if_false, asmFetch, fetch, hreg]
+      simp only [Nat.add_one_ne_zero, ite_false, asmFetch, fetch, hreg]
       cases w with
       | word value =>
         by_cases hv : value = 0#width
@@ -78,7 +78,7 @@ theorem flattenCorrectInst (s1 : StackSemStateFiniteExact width C F) (i : HolIns
     have nf := InstCorrect.notFailed rel2
     refine ⟨1, incPc (asmInst i t1), fun ck1 => ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, rel2⟩
     · rw [evaluate]
-      simp only [show t1.clock + 1 + ck1 ≠ 0 by omega, if_false, asmFetch, fetch,
+      simp only [show t1.clock + 1 + ck1 ≠ 0 by omega, ite_false, asmFetch, fetch,
         LabProps.asmInstWithClock, nf, Bool.false_eq_true]
       congr 1
       simp only [incPc, decClock, cclock, cpc]
@@ -111,7 +111,7 @@ theorem flattenCorrectTick (s1 : StackSemStateFiniteExact width C F) :
     obtain ⟨rfl, rfl⟩ := ev
     refine ⟨1, incPc t1, fun ck1 => ?_, rfl, rfl, rfl, rfl, rfl, List.prefix_refl _, ?_, ?_⟩
     · rw [evaluate]
-      simp only [show t1.clock + 1 + ck1 ≠ 0 by omega, if_false, asmFetch, fetch, asmInst, nf,
+      simp only [show t1.clock + 1 + ck1 ≠ 0 by omega, ite_false, asmFetch, fetch, asmInst, nf,
         Bool.false_eq_true]
       congr 1
       simp only [incPc, decClock]
@@ -123,7 +123,7 @@ theorem flattenCorrectTick (s1 : StackSemStateFiniteExact width C F) :
     refine ⟨0, incPc (decClock t1), fun ck1 => ?_, rfl, rfl, rfl, rfl, rfl, List.prefix_refl _,
       ?_, StateRel.stateRelDecClock rel⟩
     · rw [evaluate]
-      simp only [show t1.clock + 0 + ck1 ≠ 0 by omega, if_false, asmFetch, fetch, asmInst, nf,
+      simp only [show t1.clock + 0 + ck1 ≠ 0 by omega, ite_false, asmFetch, fetch, asmInst, nf,
         Bool.false_eq_true]
       congr 1
       simp only [incPc, decClock]
@@ -153,7 +153,7 @@ theorem jumpRegLoc {s : StackSemStateFiniteExact width C F}
     refine ⟨1, updPc pc t1, fun ck1 => ?_, rfl, rfl, rfl, rfl, rfl, List.prefix_refl _,
       codeLookupLocToPc rel, fun w hw => ?_⟩
     · rw [evaluate]
-      simp only [show t1.clock + 1 + ck1 ≠ 0 by omega, if_false, asmFetch, fetch, hreg, hpc]
+      simp only [show t1.clock + 1 + ck1 ≠ 0 by omega, ite_false, asmFetch, fetch, hreg, hpc]
       congr 1
       simp only [updPc, decClock]
       congr 1
@@ -210,7 +210,7 @@ theorem flattenCorrectBreak (s1 : StackSemStateFiniteExact width C F) (k : Nat) 
   refine ⟨1, updPc pc t1, fun ck1 => ?_, rfl, rfl, rfl, rfl, rfl, List.prefix_refl _,
     codeLookupLocToPc rel, fun w hw => ?_⟩
   · rw [evaluate]
-    simp only [show t1.clock + 1 + ck1 ≠ 0 by omega, if_false, asmFetch, fetch, getPcValue, hpc]
+    simp only [show t1.clock + 1 + ck1 ≠ 0 by omega, ite_false, asmFetch, fetch, getPcValue, hpc]
     congr 1
     simp only [updPc, decClock]
     congr 1
@@ -234,7 +234,7 @@ theorem flattenCorrectLocValue (s1 : StackSemStateFiniteExact width C F) (reg l1
     refine ⟨1, incPc (updReg reg (.loc l1 l2) t1), fun ck1 => ?_, rfl, rfl, rfl, rfl, rfl,
       List.prefix_refl _, ?_, StateRel.setVarUpdReg rel⟩
     · rw [evaluate]
-      simp only [show t1.clock + 1 + ck1 ≠ 0 by omega, if_false, asmFetch, fetch, getPcValue,
+      simp only [show t1.clock + 1 + ck1 ≠ 0 by omega, ite_false, asmFetch, fetch, getPcValue,
         hpc, reduceCtorEq]
       congr 1
       simp only [incPc, decClock, updReg, labToLoc]
@@ -270,7 +270,7 @@ theorem flattenCorrectCodeBufferWrite (s1 : StackSemStateFiniteExact width C F) 
       refine ⟨1, incPc { t1 with codeBuffer := cb }, fun ck1 => ?_, rfl, rfl, rfl, rfl, rfl,
         List.prefix_refl _, ?_, stateRelWithCodeBuffer rel cb⟩
       · rw [evaluate]
-        simp only [show t1.clock + 1 + ck1 ≠ 0 by omega, if_false, asmFetch, fetch,
+        simp only [show t1.clock + 1 + ck1 ≠ 0 by omega, ite_false, asmFetch, fetch,
           InstCorrect.regOfLookup rel h1, InstCorrect.regOfLookup rel h2, ← cbEq, hcb]
         congr 1
         simp only [incPc, decClock]

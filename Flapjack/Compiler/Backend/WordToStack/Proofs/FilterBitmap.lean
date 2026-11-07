@@ -25,7 +25,7 @@ theorem filterBitmapEqSomeNil {α : Type} (xs : List Bool) (ys zs : List α)
     (hlen : xs.length = ys.length)
     (hz : zs = ((ys.zip xs).filter (fun p => p.2)).map Prod.fst) :
     filterBitmap xs ys = some (zs, []) := by
-  rw [filterBitmapFormula, if_pos (by omega), ← hz]
+  rw [filterBitmapFormula, ite_eq_left (by omega), ← hz]
   simp [hlen]
 
 /-- Full original selected-list length bound. -/

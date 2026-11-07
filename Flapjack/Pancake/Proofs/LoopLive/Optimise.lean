@@ -137,7 +137,7 @@ private theorem markAll_evaluate_eq {width : Nat} [NeZero width] {F : Type} :
             by_cases hnd' : ¬ ns.Nodup
             · simp [hnd']
             have hnd : ns.Nodup := Classical.not_not.mp hnd'
-            simp only [hnd, not_true_eq_false, if_false]
+            simp only [hnd, not_true_eq_false, ite_false]
             rcases hc : cutRes live (none, s) with ⟨r0, s1⟩
             cases r0 with
             | some _ => rfl
@@ -202,7 +202,7 @@ theorem comp_correct {width : Nat} [NeZero width] {F : Type} :
     | true =>
       have hk' : sptMem k s.locals := by
         simpa [sptMem, sptDomain, sptLookup_sptInter, hl] using hk
-      exact ⟨hk', by rw [sptLookup_sptInter, if_pos hl]⟩
+      exact ⟨hk', by rw [sptLookup_sptInter, ite_eq_left hl]⟩
   obtain ⟨nl, hn, hp⟩ := loopLive_compile_correct prog s res s1 [] s.locals p' l1' .ln
     ⟨he, hne, hs, hsub⟩
   have hnl : nl = s1.locals := by

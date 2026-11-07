@@ -100,7 +100,7 @@ theorem getSizeSc_eq (limit : Nat) (e : Exp) :
     some (limit + 1 - (limit + 1 - getSizeHOL e))) = _
   by_cases bound : getSizeHOL e ≤ limit
   · have positive : limit + 1 - getSizeHOL e ≠ 0 := by omega
-    simp only [if_neg positive, if_pos bound, Option.some.injEq]
+    simp only [ite_eq_right positive, ite_eq_left bound, Option.some.injEq]
     omega
   · have zero : limit + 1 - getSizeHOL e = 0 := by omega
     simp [zero, bound]

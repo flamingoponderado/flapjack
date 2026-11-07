@@ -70,7 +70,7 @@ theorem evaluateCallReturnHandlerResult {width : Nat} [NeZero width] {C F : Type
     evaluate (.call (some (body, link, l1, l2)) dest (some (handler, hl1, hl2)), source) =
       evaluate (body, middle) := by
   rw [evaluateCallReturnHandlerUnclamped]
-  simp only [lookup, nonzero, if_false, run, ne_eq, not_true_eq_false]
+  simp only [lookup, nonzero, ite_false, run, ne_eq, not_true_eq_false]
 
 /-- Source-local actual successful-exception branch equation, used for both
 source and compiled target. This has no separate HOL declaration. -/
@@ -84,7 +84,7 @@ theorem evaluateCallReturnHandlerException {width : Nat} [NeZero width] {C F : T
     evaluate (.call (some (body, link, l1, l2)) dest (some (handler, hl1, hl2)), source) =
       evaluate (handler, middle) := by
   rw [evaluateCallReturnHandlerUnclamped]
-  simp only [lookup, nonzero, if_false, run, ne_eq, not_true_eq_false]
+  simp only [lookup, nonzero, ite_false, run, ne_eq, not_true_eq_false]
 
 /-- Canonical owning-state roundtrip; Flapjack representation infrastructure. -/
 theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
@@ -181,7 +181,7 @@ theorem compCorrectCallReturnHandler {width : Nat} [NeZero width] {C F : Type}
       simp only [StackProps.regBound] at bound
       exact bound.2.2.2
     by_cases zero : source.clock = 0
-    · simp only [zero, if_true] at sourceRun
+    · simp only [zero, ite_true] at sourceRun
       rcases Prod.mk.inj sourceRun with ⟨resultEq, postEq⟩
       subst result
       subst postSource
@@ -189,9 +189,9 @@ theorem compCorrectCallReturnHandler {width : Nat} [NeZero width] {C F : Type}
       · simpa only [comp, Nat.zero_add] using
           (evaluateCallReturnHandlerUnclamped (comp jump bounds pointer body)
             (comp jump bounds pointer handler) link l1 l2 hl1 hl2 dest target).trans (by
-            simp only [targetLookup, clocks, zero, if_true])
+            simp only [targetLookup, clocks, zero, ite_true])
       · exact (RelationLaws.stateRelConst jump bounds pointer source target relation).2.2.2.2.1
-    · simp only [zero, if_false] at sourceRun
+    · simp only [zero, ite_false] at sourceRun
       have targetNonzero : target.clock ≠ 0 := by omega
       have entry := entryRelation jump bounds pointer link l1 l2 source target relation linkBound
       rcases bodyRun : evaluate (program, decClock (setVar link (.loc l1 l2) source)) with
@@ -246,7 +246,7 @@ theorem compCorrectCallReturnHandler {width : Nat} [NeZero width] {C F : Type}
           have nonzero : clock + target.clock ≠ 0 := by omega
           simp only [comp]
           rw [evaluateCallReturnHandlerUnclamped]
-          simp only [targetLookup, nonzero, if_false]
+          simp only [targetLookup, nonzero, ite_false]
           rw [entryClock target link l1 l2 clock targetNonzero, targetRun]
         | timeOut =>
           rcases Prod.mk.inj sourceRun with ⟨resultEq, postEq⟩
@@ -260,7 +260,7 @@ theorem compCorrectCallReturnHandler {width : Nat} [NeZero width] {C F : Type}
           have nonzero : clock + target.clock ≠ 0 := by omega
           simp only [comp]
           rw [evaluateCallReturnHandlerUnclamped]
-          simp only [targetLookup, nonzero, if_false]
+          simp only [targetLookup, nonzero, ite_false]
           rw [entryClock target link l1 l2 clock targetNonzero, targetRun]
         | finalFFI event =>
           rcases Prod.mk.inj sourceRun with ⟨resultEq, postEq⟩
@@ -274,7 +274,7 @@ theorem compCorrectCallReturnHandler {width : Nat} [NeZero width] {C F : Type}
           have nonzero : clock + target.clock ≠ 0 := by omega
           simp only [comp]
           rw [evaluateCallReturnHandlerUnclamped]
-          simp only [targetLookup, nonzero, if_false]
+          simp only [targetLookup, nonzero, ite_false]
           rw [entryClock target link l1 l2 clock targetNonzero, targetRun]
         | exception value =>
           change (if value ≠ .loc hl1 hl2 then (some .error, middle)

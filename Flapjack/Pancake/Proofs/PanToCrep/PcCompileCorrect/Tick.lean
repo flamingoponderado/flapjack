@@ -28,13 +28,13 @@ theorem pcCompileCorrectAt_tick {width : Nat} {σ : Type} [NeZero width]
   simp only [compileProgExactHOLW]
   rw [evalCrepSemHOLProgExact_tick]
   by_cases hc : source.clock = 0
-  · rw [if_pos hc] at hrun
+  · rw [ite_eq_left hc] at hrun
     obtain ⟨rfl, rfl⟩ := Prod.mk.inj hrun
-    rw [if_pos (hclk ▸ hc)]
+    rw [ite_eq_left (hclk ▸ hc)]
     exact ⟨_, _, rfl, panToCrepStateRelFiniteExact_emptyLocals source t hstate, hcode, hexcp, rfl⟩
-  · rw [if_neg hc] at hrun
+  · rw [ite_eq_right hc] at hrun
     obtain ⟨rfl, rfl⟩ := Prod.mk.inj hrun
-    rw [if_neg (hclk ▸ hc)]
+    rw [ite_eq_right (hclk ▸ hc)]
     refine ⟨_, _, rfl, ?_, hcode, hexcp, rfl, hlocals⟩
     simpa [panToCrepStateRelFiniteExact, PanSemStateFiniteExact.decClockHOLFinite,
       decClockCrepSemHOL, hclk] using hstate

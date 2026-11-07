@@ -105,11 +105,11 @@ private theorem simulateReconciledBranch {width : Nat} [NeZero width] {C F : Typ
           dsimp only at simulation
           rw [sourceEval] at simulation
           have noError : (some result : Option (WordSemResult width)) ≠ some .error := by simpa using error
-          simp only [if_neg noError, compiled, targetEval] at simulation
+          simp only [ite_eq_right noError, compiled, targetEval] at simulation
           have eq : targetResult = some result := simulation.1.symm
           subst targetResult
           dsimp only
-          simp only [if_neg noError, evaluateSeqNative, targetEval]
+          simp only [ite_eq_right noError, evaluateSeqNative, targetEval]
           cases result <;> try (simpa only using simulation)
           all_goals
             rename_i n

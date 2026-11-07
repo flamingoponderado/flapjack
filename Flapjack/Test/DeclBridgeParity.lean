@@ -241,11 +241,11 @@ private theorem recursiveLoadMemoryCodec :
       simp [recursiveLoadMemory, recursiveLoadExactState]
     · change (if address = 0 then some (PanValue.word (BitVec.ofNat 64 0x11))
           else if address = 8 then some (PanValue.word (BitVec.ofNat 64 0x22)) else none) = _
-      rw [if_neg h0, if_neg h8]
+      rw [ite_eq_right h0, ite_eq_right h8]
       have hdomain : ¬ recursiveLoadExactState.memaddrs address := by
         change ¬ (address = 0 ∨ address = 8)
         exact not_or.mpr ⟨h0, h8⟩
-      rw [if_neg hdomain]
+      rw [ite_eq_right hdomain]
 
 private theorem recursiveLoadDomain (address : BitVec 64) :
     recursiveLoadProductionState.memaddrs address =

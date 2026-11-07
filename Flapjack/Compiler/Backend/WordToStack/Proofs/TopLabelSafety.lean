@@ -36,7 +36,7 @@ theorem wordToStackGoodCodeLabels {width : Nat} [NeZero width]
       (storeConstsStubLocation,storeConstsStubNative registers) :: bodies = program := by
     have h := congrArg (fun x => x.2.2.2) compiled
     dsimp only [compileNative] at h
-    simp only [Bool.false_eq_true, if_false] at h
+    simp only [Bool.false_eq_true, ite_false] at h
     rw [hi] at h
     exact h
   subst program
@@ -105,7 +105,7 @@ theorem wordToStackGoodHandlerLabels {width : Nat} [NeZero width]
       (storeConstsStubLocation,storeConstsStubNative registers) :: bodies = program := by
     have h := congrArg (fun x => x.2.2.2) compiled
     dsimp only [compileNative] at h
-    simp only [Bool.false_eq_true, if_false] at h
+    simp only [Bool.false_eq_true, ite_false] at h
     rw [hi] at h
     exact h
   subst program

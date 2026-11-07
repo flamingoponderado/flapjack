@@ -190,10 +190,10 @@ theorem removeEqModelUnsetVar {width : Nat} [NeZero width] {C F : Type} {cs : Co
         rintro c vrep hc rfl; have := h4 c vrep hc; rw [ht] at this; cases this
       refine ⟨fun v c vrep hv hc => ?_, fun s c vrep hsc hc => ?_⟩
       · have hvt : v ≠ t := by rintro rfl; rw [ht] at hv; cases hv
-        simp only [WordSemStateFiniteExact.unsetVar, sptLookup_sptDelete, if_neg hvt,
-          if_neg (hne c vrep hc)]
+        simp only [WordSemStateFiniteExact.unsetVar, sptLookup_sptDelete, ite_eq_right hvt,
+          ite_eq_right (hne c vrep hc)]
         exact m1 v c vrep hv hc
-      · simp only [WordSemStateFiniteExact.unsetVar, sptLookup_sptDelete, if_neg (hne c vrep hc)]
+      · simp only [WordSemStateFiniteExact.unsetVar, sptLookup_sptDelete, ite_eq_right (hne c vrep hc)]
         exact m2 s c vrep hsc hc
 
 /-- Exact HOL `CPstate_modelsD_copy_prop_share` (`word_copyProofScript.sml:983-991`). -/
@@ -239,7 +239,7 @@ theorem lookupRemoveEq {n : Nat} {cs : CopyState} : sptLookup n (removeEq cs n).
 theorem lookupEqSetStoreEq {cs : CopyState} {x y : Nat} {s : WordStoreHOL} :
     cpStateInv cs ∧ isAllocVar x = true → lookupEq (setStoreEq cs s x) y = lookupEq cs y := by
   rintro ⟨⟨h1, _, _, _⟩, hx⟩
-  rw [setStoreEq_eq, if_pos hx]
+  rw [setStoreEq_eq, ite_eq_left hx]
   cases hcl : liveClass cs x with
   | some c => rfl
   | none =>
@@ -258,17 +258,17 @@ theorem lookupEqSetStoreEq {cs : CopyState} {x y : Nat} {s : WordStoreHOL} :
       dsimp only
       by_cases hyx : y = x
       · subst hyx
-        rw [sptLookupInsert, if_pos rfl]
+        rw [sptLookupInsert, ite_eq_left rfl]
         dsimp only
-        rw [sptLookupInsert, if_pos rfl]
+        rw [sptLookupInsert, ite_eq_left rfl]
         exact hxe.symm
-      · rw [sptLookupInsert, if_neg hyx]
+      · rw [sptLookupInsert, ite_eq_right hyx]
         cases hl : sptLookup y cs.toEq with
         | none => rfl
         | some c =>
             have := h1 y c hl
             dsimp only
-            rw [sptLookupInsert, if_neg (by omega)]
+            rw [sptLookupInsert, ite_eq_right (by omega)]
 
 /-- `List.lookup` of a consed entry at another key (Flapjack infrastructure). -/
 theorem listLookupConsNe {α β : Type} [DecidableEq α] {a b : α} {v : β} {l : List (α × β)}
@@ -281,7 +281,7 @@ theorem lookupStoreEqSetStoreEq1 {cs : CopyState} {x y : Nat} {s : WordStoreHOL}
     cpStateInv cs ∧ isAllocVar x = true ∧ lookupStoreEq (setStoreEq cs s x) s = some y →
       lookupEq cs x = lookupEq cs y := by
   rintro ⟨⟨_, _, _, h4⟩, hx, h⟩
-  rw [setStoreEq_eq, if_pos hx] at h
+  rw [setStoreEq_eq, ite_eq_left hx] at h
   cases hcl : liveClass cs x with
   | none =>
       rw [hcl] at h
@@ -303,7 +303,7 @@ theorem lookupStoreEqSetStoreEq2 {cs : CopyState} {x y : Nat} {s t : WordStoreHO
     cpStateInv cs ∧ isAllocVar x = true ∧ s ≠ t ∧ lookupStoreEq (setStoreEq cs s x) t = some y →
       lookupStoreEq cs t = some y := by
   rintro ⟨⟨_, _, h3, _⟩, hx, hst, h⟩
-  rw [setStoreEq_eq, if_pos hx] at h
+  rw [setStoreEq_eq, ite_eq_left hx] at h
   cases hcl : liveClass cs x with
   | none =>
       rw [hcl] at h
@@ -347,7 +347,7 @@ theorem setStoreEqModelSetStore {width : Nat} [NeZero width] {C F : Type} {cs : 
       · rename_i hxs
         rw [hl] at hxy
         exact d2 x y (lookupStoreEqSetStoreEq2 ⟨hinv, hx, Ne.symm hxs, hl y ▸ hxy⟩)
-  · rw [setStoreEq_eq, if_neg hx]; exact emptyEqModel
+  · rw [setStoreEq_eq, ite_eq_right hx]; exact emptyEqModel
 
 /-- Exact HOL `lookup_eq_remove_t_same` (`word_copyProofScript.sml:1071-1075`). -/
 @[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "lookup_eq_remove_t_same"]
@@ -360,7 +360,7 @@ theorem lookupStoreEqSetStoreEqSame {cs : CopyState} {x : Nat} {s : WordStoreHOL
     sptLookup x cs.toEq = none ∧ isAllocVar x = true →
       lookupStoreEq (setStoreEq cs s x) s = some x := by
   rintro ⟨hx, ha⟩
-  rw [setStoreEq_eq, if_pos ha]
+  rw [setStoreEq_eq, ite_eq_left ha]
   have : liveClass cs x = none := by simp [liveClass, hx]
   rw [this]
   simp [lookupStoreEq, List.lookup, sptLookupInsert]
@@ -390,9 +390,9 @@ theorem setStoreEqModelSetVar {width : Nat} [NeZero width] {C F : Type} {cs : Co
         have hyn : y = n := lookupEqRemoveEqT ⟨hinv, (Option.some.inj hxy).symm⟩
         subst hyn
         show st.store.lookup x = sptLookup y (sptInsert y w st.locals)
-        rw [sptLookupInsert, if_pos rfl]; exact hw
+        rw [sptLookupInsert, ite_eq_left rfl]; exact hw
       · exact d2 x y (lookupStoreEqSetStoreEq2 ⟨hinv0, hx, Ne.symm hxs, (hl y).symm ▸ hxy⟩)
-  · rw [setStoreEq_eq, if_neg hx]; exact emptyEqModel
+  · rw [setStoreEq_eq, ite_eq_right hx]; exact emptyEqModel
 
 /-- Exact HOL `evaluate_Loop_body_cong_err` (`word_copyProofScript.sml:1129-1156`). -/
 @[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "evaluate_Loop_body_cong_err"

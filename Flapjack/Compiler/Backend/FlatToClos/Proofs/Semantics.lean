@@ -175,7 +175,7 @@ theorem compileProg_semantics_proofSide {C F : Type} (ffi : HolFfiState F)
   have cNo : ¬ ∃ clock, (clos clock).1 = .err (.abort .typeError) := fun ⟨k, h⟩ => closSafe k h
   change (if ∃ clock, (clos clock).1 = .err (.abort .typeError) then _ else _) =
     (if ∃ clock, (flat clock).2 = some (.abort .typeError) then _ else _)
-  simp only [fNo, cNo, if_false]
+  simp only [fNo, cNo, ite_false]
   dsimp only [flat, clos] at tracesEq
   rw [termEq, tracesEq]
   rfl

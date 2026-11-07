@@ -35,12 +35,12 @@ theorem mergeComm (a b : ValApprox) : mergeHOL a b = mergeHOL b a := by
         simp only [Bool.and_eq_true, beq_iff_eq]
         by_cases h : loc = loc' ∧ arity = arity'
         · have rev : loc' = loc ∧ arity' = arity := ⟨h.1.symm, h.2.symm⟩
-          rw [if_pos h, if_pos rev]
+          rw [ite_eq_left h, ite_eq_left rev]
           rcases h with ⟨rfl, rfl⟩
           rfl
         · have rev : ¬(loc' = loc ∧ arity' = arity) := by
             intro r; exact h ⟨r.1.symm, r.2.symm⟩
-          rw [if_neg h, if_neg rev]
+          rw [ite_eq_right h, ite_eq_right rev]
       case clos.clos loc arity body size loc' arity' body' size' =>
         rw [← beqSym loc loc', ← beqSym arity arity', ← beqSym body body', ← beqSym size size']
         split
@@ -60,12 +60,12 @@ theorem mergeComm (a b : ValApprox) : mergeHOL a b = mergeHOL b a := by
         by_cases h : i = j
         · subst j; rfl
         · have rev : j ≠ i := Ne.symm h
-          rw [if_neg h, if_neg rev]
+          rw [ite_eq_right h, ite_eq_right rev]
       case tuple.tuple tag xs tag' ys =>
         simp only [Bool.and_eq_true, beq_iff_eq]
         by_cases h : xs.length = ys.length ∧ tag = tag'
         · have rev : ys.length = xs.length ∧ tag' = tag := ⟨h.1.symm, h.2.symm⟩
-          rw [if_pos h, if_pos rev]
+          rw [ite_eq_left h, ite_eq_left rev]
           have tagEq := h.2
           subst tag'
           congr 1
@@ -79,7 +79,7 @@ theorem mergeComm (a b : ValApprox) : mergeHOL a b = mergeHOL b a := by
         · have rev : ¬(ys.length = xs.length ∧ tag' = tag) := by
             intro h'
             exact h ⟨h'.1.symm, h'.2.symm⟩
-          rw [if_neg h, if_neg rev]
+          rw [ite_eq_right h, ite_eq_right rev]
   exact all (sizeOf a + 1) a b (by omega)
 
 end Flapjack.Compiler.Backend.ClosKnownProps

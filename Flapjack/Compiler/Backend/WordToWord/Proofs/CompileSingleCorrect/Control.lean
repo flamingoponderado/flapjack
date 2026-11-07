@@ -61,7 +61,7 @@ theorem evaluate_mustTerminate_run {width : Nat} [NeZero width] {C F : Type}
       if res = some .timeOut then (some .error, s)
       else (res, { s1 with clock := s.clock, termdep := s.termdep }) := by
   have ht := (evaluate_def_rebound (width := width) (C := C) (F := F)).2.2.2.2.2.2.2.2.2.2.2.1
-  rw [ht, if_neg h0]
+  rw [ht, ite_eq_right h0]
   simp only [hA]
   split <;> simp_all
 
@@ -97,11 +97,11 @@ theorem compile_single_correct_MustTerminate {width : Nat} [NeZero width] {C F :
   rw [e1, e2]
   by_cases herr : res = some .error
   · subst herr; simp
-  rw [if_neg herr] at H
+  rw [ite_eq_right herr] at H
   obtain ⟨rfl, hc, hd, hs2⟩ := H
   by_cases hto : res1 = some .timeOut
   · simp [hto]
-  simp only [hto, herr, if_false]
+  simp only [hto, herr, ite_false]
   exact ⟨trivial, hc, hd, by rw [hs2]⟩
 
 open Classical in
@@ -201,7 +201,7 @@ theorem compile_single_correct_Seq {width : Nat} [NeZero width] {C F : Type}
   · refine ⟨perm1, ?_⟩
     rw [evaluate_seq_run c1 c2 _ res rst hA]
     simp [herr]
-  rw [if_neg herr] at H1
+  rw [ite_eq_right herr] at H1
   rcases hB : evaluate c1 { st with code := l, compileOracle := coracle, compile := cc } with ⟨res1, rst1⟩
   rw [hB] at H1
   dsimp only at H1
@@ -210,7 +210,7 @@ theorem compile_single_correct_Seq {width : Nat} [NeZero width] {C F : Type}
   | some x =>
     refine ⟨perm1, ?_⟩
     rw [evaluate_seq_run c1 c2 _ _ rst hA, evaluate_seq_run c1 c2 _ _ rst1 hB]
-    simp only [reduceCtorEq, if_false, herr]
+    simp only [reduceCtorEq, ite_false, herr]
     exact ⟨trivial, hc1, hd1, hs1⟩
   | none =>
     have hcl := evaluate_clock c1 _ _ _ hA
@@ -233,7 +233,7 @@ theorem compile_single_correct_Seq {width : Nat} [NeZero width] {C F : Type}
     refine ⟨perm3, ?_⟩
     rw [evaluate_seq_run c1 c2 { st with permute := perm3 } none { rst with permute := perm2 } hP,
       evaluate_seq_run c1 c2 _ none rst1 hB]
-    simp only [if_true]
+    simp only [ite_true]
     have hr : ({ rst with code := rst1.code, compileOracle := rst1.compileOracle, compile := cc } :
         WordSemStateFiniteExact width C F) = rst1 := by rw [hs1]
     rw [← hr]
@@ -260,13 +260,13 @@ theorem evaluate_loop_run {width : Nat} [NeZero width] {C F : Type}
   rw [ht]
   simp only [hcut, hA, wordSemSTOP]
   by_cases hc : wordSemContLoop res = true
-  · simp only [hc, if_true]
-  · simp only [hc, Bool.false_eq_true, if_false]
+  · simp only [hc, ite_true]
+  · simp only [hc, Bool.false_eq_true, ite_false]
     by_cases hb : res = some (.break 0)
     · subst hb
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       rcases cutState (exitNames, .ln) s1 <;> rfl
-    · rw [if_neg hb]
+    · rw [ite_eq_right hb]
       cases res with
       | none => rfl
       | some r =>
@@ -317,7 +317,7 @@ theorem compile_single_correct_Loop {width : Nat} [NeZero width] {C F : Type}
     rw [evaluate_loop_run names exitNames body _ _ (cutP perm') res rst hA]
     subst herr
     simp [wordSemContLoop, wordSemExitLoop]
-  rw [if_neg herr] at H
+  rw [ite_eq_right herr] at H
   rcases hB : evaluate body { stt with code := l, compileOracle := coracle, compile := cc } with
     ⟨res1, rst1⟩
   rw [hB] at H
@@ -331,8 +331,8 @@ theorem compile_single_correct_Loop {width : Nat} [NeZero width] {C F : Type}
     · refine ⟨perm', ?_⟩
       rw [evaluate_loop_run names exitNames body _ _ (cutP perm') res1 rst hA,
         evaluate_loop_run names exitNames body _ _ cutT res1 rst1 hB]
-      simp only [hcont, if_true, hz, hclk1]
-      rw [if_neg (show some WordSemResult.timeOut ≠ some WordSemResult.error by simp)]
+      simp only [hcont, ite_true, hz, hclk1]
+      rw [ite_eq_right (show some WordSemResult.timeOut ≠ some WordSemResult.error by simp)]
       refine ⟨trivial, ?_, ?_, ?_⟩
       · exact hc1
       · exact hd1
@@ -360,7 +360,7 @@ theorem compile_single_correct_Loop {width : Nat} [NeZero width] {C F : Type}
     refine ⟨perm3, ?_⟩
     rw [evaluate_loop_run names exitNames body _ _ (cutP perm3) res1 _ hP,
       evaluate_loop_run names exitNames body _ _ cutT res1 rst1 hB]
-    simp only [hcont, if_true, hz, hclk1, if_false]
+    simp only [hcont, ite_true, hz, hclk1, ite_false]
     have hr : ({ decClock rst with
         code := rst1.code
         compileOracle := rst1.compileOracle
@@ -371,19 +371,19 @@ theorem compile_single_correct_Loop {width : Nat} [NeZero width] {C F : Type}
   · refine ⟨perm', ?_⟩
     rw [evaluate_loop_run names exitNames body _ _ (cutP perm') res1 rst hA,
       evaluate_loop_run names exitNames body _ _ cutT res1 rst1 hB]
-    simp only [hcont, Bool.false_eq_true, if_false]
+    simp only [hcont, Bool.false_eq_true, ite_false]
     have hcx : cutState (exitNames, .ln) rst1 =
         (cutState (exitNames, .ln) rst).map (fun s' => { rst1 with locals := s'.locals }) :=
       cutState_locals _ rst rst1 (by rw [hs1])
     by_cases hb : res1 = some (.break 0)
-    · simp only [hb, if_true]
+    · simp only [hb, ite_true]
       rw [hcx]
       rcases hx : cutState (exitNames, .ln) rst with _ | s2
       · simp
       · obtain ⟨lx, rfl⟩ := cutStateConst _ _ _ hx
-        simp only [Option.map_some, if_false, reduceCtorEq]
+        simp only [Option.map_some, ite_false, reduceCtorEq]
         exact ⟨trivial, hc1, hd1, by rw [hs1]⟩
-    · simp only [hb, if_false]
+    · simp only [hb, ite_false]
       split
       · trivial
       · exact ⟨trivial, hc1, hd1, hs1⟩

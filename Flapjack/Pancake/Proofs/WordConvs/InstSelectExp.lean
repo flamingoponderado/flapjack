@@ -82,7 +82,7 @@ theorem instSelectExp_fullInstOkLess {width : Nat} [NeZero width]
             HolInst.ofWordLangInst, HolArith.ofWordLangArith, HolRegImm.ofWordRegImm,
             instOkLessExact]
         | split
-        | constructor
+        | constructor!
     all_goals
       first
       | (apply ih

@@ -40,7 +40,7 @@ theorem stateRel_allocGlobal {C F : Type} (relocate : Nat → Nat)
   have same : actual = newPtr := by simpa using Option.some.inj actualGlobal.symm
   subst actual
   refine ⟨newSeparate, oldSize + extra, ?_, ?_⟩
-  · simp only [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, if_true, Option.some.injEq, BvlSem.Ref.valueArray.injEq]
+  · simp only [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, ite_true, Option.some.injEq, BvlSem.Ref.valueArray.injEq]
     have padding : oldSize - (source.globals.length + 1) + extra =
         count + ((oldSize + extra) - (source.globals.length + count + 1)) := by
       have fieldsLen : fields.length = oldSize - 1 := by simp [fieldsEq]; omega

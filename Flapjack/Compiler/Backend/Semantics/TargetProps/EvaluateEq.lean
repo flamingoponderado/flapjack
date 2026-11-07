@@ -44,7 +44,7 @@ private theorem assertsAfterFirst {S Q : Type} (n : Nat) (next : S → S)
     · simpa [patched, hk] using henv k ms
   have ha := h patched hp
   have ht : asserts n (fun k ms => patched k (next ms)) (first (next s)) P R := by
-    simpa only [asserts, patched, if_pos rfl] using ha.2
+    simpa only [asserts, patched, ite_eq_left rfl] using ha.2
   apply asserts_weaken n (fun k ms => patched k (next ms))
     (fun k ms => env k (next ms)) (first (next s)) P P R _ ht
   intro k hk
@@ -128,7 +128,7 @@ theorem evaluateEqEvaluate_base {width : Nat} [NeZero width]
   intro k
   constructor
   · simp only [evaluateTargetHOL]
-    rw [if_pos hn, if_pos he]
+    rw [ite_eq_left hn, ite_eq_left he]
     split
     · rfl
     · rename_i hbad
@@ -137,7 +137,7 @@ theorem evaluateEqEvaluate_base {width : Nat} [NeZero width]
           c.target.stateOk ms2 = true ∧ _ from ⟨hok, hoknext, hok2, hf⟩)))
   · constructor
     · simp only [findNextInterference]
-      rw [if_pos hn, if_pos he]
+      rw [ite_eq_left hn, ite_eq_left he]
       split
       · rfl
       · rename_i hbad
@@ -252,7 +252,7 @@ theorem evaluateEqEvaluate_all {width : Nat} [NeZero width]
     rw [hs] at hr
     refine ⟨?_, ?_, hr.2.2⟩
     · simp only [evaluateTargetHOL]
-      rw [if_pos hn, if_pos he]
+      rw [ite_eq_left hn, ite_eq_left he]
       split
       · exact hr.1
       · rename_i hbad
@@ -260,7 +260,7 @@ theorem evaluateEqEvaluate_all {width : Nat} [NeZero width]
           (show c.target.stateOk ms1 = true ∧ c.target.stateOk (c.target.next ms1) = true ∧
             c.target.stateOk ms = true ∧ _ from ⟨hok, hoknext, hp'.1, hf⟩)))
     · simp only [findNextInterference]
-      rw [if_pos hn, if_pos he]
+      rw [ite_eq_left hn, ite_eq_left he]
       split
       · exact hr.2.1
       · rename_i hbad

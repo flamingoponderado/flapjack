@@ -143,7 +143,7 @@ theorem evaluateStackSwap_Loop {width : Nat} [NeZero width] {C F : Type}
   rw [hb] at ihB
   dsimp only
   by_cases hcl : wordSemContLoop res = true
-  · rw [if_pos hcl]
+  · rw [ite_eq_left hcl]
     have hres : res = none ∨ res = some (.continue 0) := by
       rcases res with _ | r
       · exact Or.inl rfl
@@ -165,25 +165,25 @@ theorem evaluateStackSwap_Loop {width : Nat} [NeZero width] {C F : Type}
       dsimp only [Option.map]
       rw [he]
       dsimp only
-      rw [if_pos hcl]
+      rw [ite_eq_left hcl]
     by_cases hz : s1.clock = 0
-    · rw [if_pos hz]
+    · rw [ite_eq_left hz]
       refine ⟨rfl, rfl, fun xs hxs => ?_⟩
       obtain ⟨st, he, -, -⟩ := hEq xs hxs
       show evaluate _ _ = _
-      rw [he, if_pos hz]
+      rw [he, ite_eq_left hz]
       rfl
-    · rw [if_neg hz]
+    · rw [ite_eq_right hz]
       have ihL' := (stackSwapPost_iff _ _).mp (ihL x res s1 ⟨hc, hb.symm, hcl, hz⟩)
       refine stackSwapRel_seqTail s (decClock s1) _ _ _ ihL' (hxs ▸ hk) (hh.trans hxh)
         (fun xs hxs => ?_)
       obtain ⟨st, he, hvs, hks⟩ := hEq xs hxs
       refine ⟨st, ?_, hvs, hks⟩
       show evaluate _ _ = evaluate _ _
-      rw [he, if_neg hz]
+      rw [he, ite_eq_right hz]
       rfl
   · have hcl' : wordSemContLoop res = false := by simpa using hcl
-    rw [if_neg hcl]
+    rw [ite_eq_right hcl]
     split
     · -- `Break 0`: leave through the exit cut
       obtain ⟨hk, hh, hxx⟩ : sKeyEq x.stack s1.stack ∧ s1.handler = x.handler ∧
@@ -203,7 +203,7 @@ theorem evaluateStackSwap_Loop {width : Nat} [NeZero width] {C F : Type}
         dsimp only [Option.map]
         rw [he]
         dsimp only
-        rw [if_neg hcl, cutState_withStack, hce]
+        rw [ite_eq_right hcl, cutState_withStack, hce]
         rfl
     · rename_i hnb
       refine stackSwapRel_exitLoop s x res s1 _ _ ihB hxs hxh hcl' (fun xs t he => ?_)
@@ -212,7 +212,7 @@ theorem evaluateStackSwap_Loop {width : Nat} [NeZero width] {C F : Type}
       dsimp only [Option.map]
       rw [he]
       dsimp only
-      rw [if_neg hcl]
+      rw [ite_eq_right hcl]
       split
       · exact absurd rfl hnb
       · rfl

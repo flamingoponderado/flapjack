@@ -43,7 +43,7 @@ theorem pcCompileCorrectAt_seq {width : Nat} {σ : Type} [NeZero width]
     obtain ⟨rfl, hl⟩ := hrr
     rw [hrun1]
     dsimp only
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     exact ih2 none s' h1 rfl res s1 t1 ctxt hrun hres hs hc he hl hlocs.2
   · obtain ⟨rfl, rfl⟩ := Prod.mk.inj hrun
     obtain ⟨res1, t1, hrun1, hs, hc, he, hrr⟩ :=
@@ -60,7 +60,7 @@ theorem pcCompileCorrectAt_seq {width : Nat} {σ : Type} [NeZero width]
       | _ => simp [pcCompileCorrectResultRel] at hrr
     rw [hrun1]
     dsimp only
-    rw [if_neg hne]
+    rw [ite_eq_right hne]
     exact ⟨res1, t1, rfl, hs, hc, he, hrr⟩
 
 namespace PcCompileCorrectSeqWitnesses

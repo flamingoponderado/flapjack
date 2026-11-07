@@ -62,7 +62,7 @@ theorem lookupInfo_toHOL [BEq String] (name : String) (context : StructContext) 
             ((structName, { fields := info.fields, size := info.size }) : StructName × StructInfoHOL)
               :: StructContext.toHOL entries from rfl]
         simp only [lookupInfo]
-        simp only [if_neg h]
+        simp only [ite_eq_right h]
         exact ih
 
 /-- The `isSome` corollary of `lookupInfo_toHOL`: the HOL `ALOOKUP sctxt nm <>
@@ -663,11 +663,11 @@ def getMemopMessage (isLocal isLoad isUntrusted : Bool)
 
 /-! Source-shaped port of CakeML's `get_oparg_msg_def`
     (`cakeml/pancake/panStaticScript.sml:517-527`). -/
-def getOpargMessage (isExact : Bool) (expected given location operation : String)
+def getOpargMessage (isExact : Bool) (expected «given» location operation : String)
     (scope : Scope) : String :=
   location ++ "operation " ++ operation ++
     (if isExact then " only accepts " else " requires at least ") ++
-    expected ++ " operands, " ++ given ++ " provided in " ++
+    expected ++ " operands, " ++ «given» ++ " provided in " ++
     staticScopeDescription scope ++ "\n"
 
 /-! Cake's memory-operation diagnostics distinguish local addresses, which

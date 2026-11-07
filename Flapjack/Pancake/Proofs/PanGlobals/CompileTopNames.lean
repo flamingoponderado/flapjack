@@ -43,12 +43,12 @@ theorem allDistinctCompileTopHOL {width : Nat} [NeZero width] :
       have hfresh := PanGlobalsDeclListExact.new_main_name_correctHOL code
       unfold fpermName at hfn
       by_cases h1 : start = n
-      · rw [if_pos h1] at hfn
+      · rw [ite_eq_left h1] at hfn
         exact hfresh (hfn ▸ (h1 ▸ hn))
-      · rw [if_neg h1] at hfn
+      · rw [ite_eq_right h1] at hfn
         by_cases h2 : newMainNameHOL code = n
         · exact hfresh (h2 ▸ hn)
-        · rw [if_neg h2] at hfn
+        · rw [ite_eq_right h2] at hfn
           exact h1 hfn.symm
     · exact PanGlobalsDeclListExact.ALL_DISTINCT_fperm_decsHOL _ _ _
         (by rw [PanGlobalsDeclListExact.resort_decls_preserve_functionsHOL]; exact hnd)

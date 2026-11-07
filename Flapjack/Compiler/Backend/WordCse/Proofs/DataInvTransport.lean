@@ -168,7 +168,7 @@ theorem data_inv_unset_var {width : Nat} [NeZero width] {C : Type} {F : Type}
   have ne : ∀ x, sptDomain data.toCanonical x → x ≠ n := by
     rintro x hx rfl; simp [sptDomain, h] at hx
   have gv : ∀ x, x ≠ n → getVar x (unsetVar n s) = getVar x s := fun x hx => by
-    simp only [getVar, unsetVar, sptLookup_sptDelete, hx, if_false]
+    simp only [getVar, unsetVar, sptLookup_sptDelete, hx, ite_false]
   have nreads : ∀ (a : HolArith width), inNamesSet a data.toCanonical → n ∉ arithReads a :=
     fun a hn hm => ne n (by simp [sptDomain, hn n hm]) rfl
   constructor

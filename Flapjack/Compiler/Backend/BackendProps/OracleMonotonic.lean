@@ -1,5 +1,9 @@
 import Flapjack.Compiler.Backend.BackendProps.StateCompiler
-import Mathlib.Data.Set.Lattice
+import Mathlib.Data.Set.Lattice.Bounded
+import Mathlib.Data.Set.Lattice.Disjoint
+import Mathlib.Data.Set.Lattice.Image
+import Mathlib.Data.Set.Lattice.Indexed
+import Mathlib.Data.Set.Lattice.Order
 
 /-! Stateful compiler-oracle ordering properties. -/
 namespace Flapjack.Compiler.Backend.BackendProps

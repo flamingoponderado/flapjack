@@ -12,7 +12,7 @@ theorem mSub_success_getElem {α ε : Type} (e : ε) :
   | [], _, h => absurd h (by simp)
   | _ :: _, 0, _ => by simp [mSub]
   | _ :: tail, n + 1, h => by
-      simp only [mSub, Nat.add_one_ne_zero, if_false, Nat.add_sub_cancel]
+      simp only [mSub, Nat.add_one_ne_zero, ite_false, Nat.add_sub_cancel]
       exact mSub_success_getElem e tail n (by simpa using h)
 
 end Flapjack.RegAlloc

@@ -47,7 +47,7 @@ theorem readMemWord_fst (a : BitVec 64) (n : Nat) (s : AsmState 64) (hbe : s.be 
   | zero => simp [readMemWord, readBytes]
   | succ n ih =>
       rw [readMemWord_succ, hbe]
-      simp only [Bool.false_eq_true, if_false]
+      simp only [Bool.false_eq_true, ite_false]
       generalize hr : readMemWord (resultWidth := 64) (a + 1) n s = r
       obtain ⟨w, s1⟩ := r
       have hmem := readMemWord_mem_eq_direct (resultWidth := 64) (a + 1) n s
@@ -112,7 +112,7 @@ theorem readMemWord_domain (a : BitVec 64) (n : Nat) (s : AsmState 64) (hbe : s.
       intro k hk
       classical
       rw [readMemWord_succ] at h
-      simp only [hbe, Bool.false_eq_true, if_false] at h
+      simp only [hbe, Bool.false_eq_true, ite_false] at h
       set s1 : AsmState 64 := (readMemWord (resultWidth := 64) (a + 1) n s).2 with hs1
       simp only [assertState, Bool.or_eq_false_iff] at h
       obtain ⟨hdom, hf⟩ := h
@@ -168,7 +168,7 @@ theorem writeMemWord_domain (a : BitVec 64) (n : Nat) (v : BitVec 64) (s : AsmSt
       rw [writeMemWord_succ] at h
       have hif : (if s.be then a - 1 else a + 1) = a + 1 := by
         rw [hbe]
-        rw [if_neg (by decide : ¬((false : Bool) = true))]
+        rw [ite_eq_right (by decide : ¬((false : Bool) = true))]
       rw [hif] at h
       set s1 : AsmState 64 :=
         writeMemWord (valueWidth := 64) (a + 1) n (v >>> (8 : Nat)) s with hs1
@@ -303,7 +303,7 @@ theorem writeMemWord_mem_two (s : AsmState 64) (t : X64State) (a v x : BitVec 64
     (hbe : s.be = false) (hm : s.mem x = t.mem x) :
     (writeMemWord (valueWidth := 64) a 2 v s).mem x = (writeMemN t 2 a v).mem x := by
   simp only [writeMemWord, writeMemN, updMem_mem, assertState_mem]
-  simp only [hbe, Bool.false_eq_true, if_false]
+  simp only [hbe, Bool.false_eq_true, ite_false]
   simp [hm]
 
 /-- A four-byte source store is the machine's four-byte write. -/
@@ -311,7 +311,7 @@ theorem writeMemWord_mem_four (s : AsmState 64) (t : X64State) (a v x : BitVec 6
     (hbe : s.be = false) (hm : s.mem x = t.mem x) :
     (writeMemWord (valueWidth := 64) a 4 v s).mem x = (writeMemN t 4 a v).mem x := by
   simp only [writeMemWord, writeMemN, updMem_mem, assertState_mem]
-  simp only [hbe, Bool.false_eq_true, if_false]
+  simp only [hbe, Bool.false_eq_true, ite_false]
   rw [show a + 1 + 1 + 1 = a + 3 by bv_omega, show a + 1 + 1 = a + 2 by bv_omega]
   rw [byteShift v 1, byteShift v 0]
   simp [hm]
@@ -321,7 +321,7 @@ theorem writeMemWord_mem_eight (s : AsmState 64) (t : X64State) (a v x : BitVec 
     (hbe : s.be = false) (hm : s.mem x = t.mem x) :
     (writeMemWord (valueWidth := 64) a 8 v s).mem x = (writeMemN t 8 a v).mem x := by
   simp only [writeMemWord, writeMemN, updMem_mem, assertState_mem]
-  simp only [hbe, Bool.false_eq_true, if_false]
+  simp only [hbe, Bool.false_eq_true, ite_false]
   rw [show a + 1 + 1 + 1 + 1 + 1 + 1 + 1 = a + 7 by bv_omega,
     show a + 1 + 1 + 1 + 1 + 1 + 1 = a + 6 by bv_omega,
     show a + 1 + 1 + 1 + 1 + 1 = a + 5 by bv_omega,
@@ -591,7 +591,7 @@ theorem x64Next_memRM (ms : X64State) (_dm : BitVec 64 → Prop) (sz : ZSize) (d
         (readMemN ms (sizeBytes sz) (readReg ms base + disp)) ms with
       pc := ms.pc + BitVec.ofNat 64 (encodeInsn (.movRM sz dst base disp)).length } := by
   rw [hlen]
-  simp only [x64Next, hfailed, Bool.false_eq_true, if_false, hdec, execInsn_movRM]
+  simp only [x64Next, hfailed, Bool.false_eq_true, ite_false, hdec, execInsn_movRM]
 
 theorem x64Next_memMR (ms : X64State) (_dm : BitVec 64 → Prop) (sz : ZSize) (src base : Nat)
     (disp : BitVec 64) (len : Nat)
@@ -602,7 +602,7 @@ theorem x64Next_memMR (ms : X64State) (_dm : BitVec 64 → Prop) (sz : ZSize) (s
     x64Next ms = { writeMemN ms (sizeBytes sz) (readReg ms base + disp) (readReg ms src) with
       pc := ms.pc + BitVec.ofNat 64 (encodeInsn (.movMR sz src base disp)).length } := by
   rw [hlen]
-  simp only [x64Next, hfailed, Bool.false_eq_true, if_false, hdec, execInsn_movMR]
+  simp only [x64Next, hfailed, Bool.false_eq_true, ite_false, hdec, execInsn_movMR]
 
 theorem x64Next_memZXRM (ms : X64State) (_dm : BitVec 64 → Prop) (sz1 sz2 : ZSize)
     (dst base : Nat) (disp : BitVec 64) (len : Nat)
@@ -614,7 +614,7 @@ theorem x64Next_memZXRM (ms : X64State) (_dm : BitVec 64 → Prop) (sz1 sz2 : ZS
         (readMemN ms (sizeBytes sz1) (readReg ms base + disp)) with
       pc := ms.pc + BitVec.ofNat 64 (encodeInsn (.movzxRM sz1 sz2 dst base disp)).length } := by
   rw [hlen]
-  simp only [x64Next, hfailed, Bool.false_eq_true, if_false, hdec, execInsn_movzxRM]
+  simp only [x64Next, hfailed, Bool.false_eq_true, ite_false, hdec, execInsn_movzxRM]
 
 /-- A 32-bit register write is the identity on a value below `2^32`. -/
 theorem writeRegSized_z32_eq (ms : X64State) (r : Nat) (V : BitVec 64)
@@ -686,7 +686,7 @@ theorem memLoadDomain (op : HolMemop) (r base : Nat) (off : BitVec 64) (s1 s2 : 
       exact hok
     rw [← hupd] at h
     simp only [asmUpd, instUpd, updPc, hspec, memLoad, addrHOL, updReg, assertState,
-      Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, if_false] at h
+      Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, ite_false] at h
     obtain ⟨-, hf⟩ := (Bool.or_eq_false_iff).1 h
     exact hf
   exact readMemWord_domain (s1.regs base + off) (2 ^ sz) s1 hbe hfail
@@ -704,7 +704,7 @@ theorem memStoreDomain (op : HolMemop) (r base : Nat) (off : BitVec 64) (s1 s2 :
       exact hok
     rw [← hupd] at h
     simp only [asmUpd, instUpd, updPc, hspec, memStore, addrHOL,
-      Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, if_false] at h
+      Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, ite_false] at h
     obtain ⟨-, hf⟩ := (Bool.or_eq_false_iff).1 h
     exact hf
   exact writeMemWord_domain (s1.regs base + off) (2 ^ sz) (s1.regs r) s1 hbe
@@ -784,7 +784,7 @@ theorem case_memLoadSpine (op : HolMemop) (r base : Nat) (off : BitVec 64)
   have hs2fp : ∀ x, s2.fpRegs x = s1.fpRegs x := by
     rw [← st.upd]; intro x
     simp only [asmUpd, instUpd, updPc, hspec, memLoad, addrHOL, updReg, assertState,
-      readMemWord_fpRegs, st.be, Bool.false_eq_true, if_false]
+      readMemWord_fpRegs, st.be, Bool.false_eq_true, ite_false]
   have hs2regs : ∀ x, s2.regs x =
       (if x = r then (readMemWord (resultWidth := 64) (s1.regs base + off) (2 ^ sz) s1).1
        else s1.regs x) := by
@@ -792,7 +792,7 @@ theorem case_memLoadSpine (op : HolMemop) (r base : Nat) (off : BitVec 64)
     rw [← st.upd]
     simp only [asmUpd, instUpd, updPc, hspec, memLoad, addrHOL, updReg, assertState,
       readMemWord_regs, Flapjack.Compiler.Encoders.AsmSem.readReg, st.be, Bool.false_eq_true,
-      if_false]
+      ite_false]
   have haddr : readReg ms base + off = s1.regs base + off := by
     rw [st.reg base hregb]
   have hvalue : (readMemWord (resultWidth := 64) (s1.regs base + off) (2 ^ sz) s1).1 =
@@ -819,9 +819,9 @@ theorem case_memLoadSpine (op : HolMemop) (r base : Nat) (off : BitVec 64)
       show readReg (writeReg ms r (readMemN ms (2 ^ sz) (readReg ms base + off))) x = s2.regs x
       rw [readReg_writeReg ms r _ x hr hx16]
       by_cases hxr : x = r
-      · rw [if_pos hxr, hs2regs x, if_pos hxr]
+      · rw [ite_eq_left hxr, hs2regs x, ite_eq_left hxr]
         exact hvalue.symm
-      · rw [if_neg hxr, hs2regs x, if_neg hxr]
+      · rw [ite_eq_right hxr, hs2regs x, ite_eq_right hxr]
         exact st.reg x hx
     · intro x hx
       show readXmm ms x = s2.fpRegs x
@@ -885,7 +885,7 @@ theorem case_memStoreSpine (op : HolMemop) (r base : Nat) (off : BitVec 64)
     intro a
     rw [← st.upd]
     simp only [asmUpd, instUpd, updPc, hspec, memStore, addrHOL, assertState_mem,
-      Flapjack.Compiler.Encoders.AsmSem.readReg, st.be, Bool.false_eq_true, if_false]
+      Flapjack.Compiler.Encoders.AsmSem.readReg, st.be, Bool.false_eq_true, ite_false]
   have hs2dom : s2.memDomain = s1.memDomain := by
     rw [← st.upd]
     simp only [asmUpd, instUpd, updPc, hspec, memStore, addrHOL, assertState,
@@ -893,13 +893,13 @@ theorem case_memStoreSpine (op : HolMemop) (r base : Nat) (off : BitVec 64)
   have hs2fp : ∀ x, s2.fpRegs x = s1.fpRegs x := by
     rw [← st.upd]; intro x
     simp only [asmUpd, instUpd, updPc, hspec, memStore, addrHOL, assertState,
-      writeMemWord_fpRegs, st.be, Bool.false_eq_true, if_false]
+      writeMemWord_fpRegs, st.be, Bool.false_eq_true, ite_false]
   have hs2regs : ∀ x, s2.regs x = s1.regs x := by
     intro x
     rw [← st.upd]
     simp only [asmUpd, instUpd, updPc, hspec, memStore, addrHOL, assertState,
       writeMemWord_regs, Flapjack.Compiler.Encoders.AsmSem.readReg, st.be, Bool.false_eq_true,
-      if_false]
+      ite_false]
   have hbm : bytesInMemoryHOL ms.pc (encodeInsn insn) ms.mem s1.memDomain := by
     have h' := st.bytesTarget
     rw [henc] at h'

@@ -209,7 +209,7 @@ theorem knownCorrect0Letrec {C F : Type} (names : List Basis.Pure.MlString.MlStr
       have maxEq : s0.maxApp = t0.maxApp := state.2.2.2.2.2.2.1
       have targetValid : (newFns.all (fun (arity, _) => arity ≤ t0.maxApp && arity != 0)) = true := by
         simpa [newFns, List.all_map, ← maxEq] using valid
-      simp only [List.map_cons, List.map_nil, evaluate, targetValid, if_true]
+      simp only [List.map_cons, List.map_nil, evaluate, targetValid, ite_true]
       simpa [recs2, newFns, List.append_assoc] using targetRun
     · simp [evaluate, valid] at run
       rcases run with ⟨rfl, rfl⟩

@@ -36,7 +36,7 @@ theorem compCorrectLocValue {width : Nat} [NeZero width] {C F : Type}
   rcases hypothesis with ⟨sourceRun, notError, relation, bound⟩
   rw [StackSemEvaluate.evaluate_locValue] at sourceRun
   by_cases checked : StackSem.locCheckExact source.code (first, second)
-  · rw [if_pos checked] at sourceRun
+  · rw [ite_eq_left checked] at sourceRun
     rcases Prod.mk.inj sourceRun with ⟨resultEq, stateEq⟩
     subst result
     subst postSource
@@ -49,6 +49,6 @@ theorem compCorrectLocValue {width : Nat} [NeZero width] {C F : Type}
     · simp [comp, StackSemEvaluate.evaluate_locValue, targetChecked]
     · exact StateUpdates.stateRelSetVar jump bounds pointer register (.loc first second)
         source target ⟨relation, registerBound⟩
-  · rw [if_neg checked] at sourceRun
+  · rw [ite_eq_right checked] at sourceRun
     exact (notError (Prod.mk.inj sourceRun).1.symm).elim
 end Flapjack.Compiler.Backend.StackRemove.CompCorrect.Locations

@@ -49,6 +49,6 @@ theorem flag_value (a b : BitVec 64) :
       Bool.true_and] using (overflow_sign a b).symm
   rw [shift_msb]
   by_cases h : ((a ^^^ b) &&& (~~~(b ^^^ (a-b)))).msb = true
-  · simp only [h, ↓reduceIte, if_pos (sign.mp h)]
-  · simp only [if_neg h, if_neg (fun k => h (sign.mpr k))]
+  · simp only [h, ↓reduceIte, ite_eq_left (sign.mp h)]
+  · simp only [ite_eq_right h, ite_eq_right (fun k => h (sign.mpr k))]
 end Flapjack.RiscV.TargetProof.SubOverflow

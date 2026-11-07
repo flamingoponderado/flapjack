@@ -49,7 +49,7 @@ theorem mmioPcsMinIndex_eq_some {names : List HolFfiName} {index : Nat}
     (h : mmioIndexBoundary names index) : mmioPcsMinIndex names = some index := by
   classical
   have existsBoundary : ∃ i, mmioIndexBoundary names i := ⟨index, h⟩
-  simp only [mmioPcsMinIndex, dif_pos existsBoundary]
+  simp only [mmioPcsMinIndex, dite_eq_left existsBoundary]
   exact congrArg some (mmioIndexBoundary_unique (Classical.choose_spec existsBoundary) h)
 
 /-- Flapjack infrastructure: failure means the entire source predicate has
@@ -57,6 +57,6 @@ no witness, including lists with an external call after shared memory. -/
 theorem mmioPcsMinIndex_eq_none {names : List HolFfiName}
     (h : ¬ ∃ index, mmioIndexBoundary names index) : mmioPcsMinIndex names = none := by
   classical
-  simp only [mmioPcsMinIndex, dif_neg h]
+  simp only [mmioPcsMinIndex, dite_eq_right h]
 
 end Flapjack

@@ -133,7 +133,7 @@ theorem bmod_ofInt_toNat_neg (upper : Int) (hlo : -(2^19) ≤ upper) (hneg : upp
     omega
   rw [hper]
   have hc : (((2^20 : Nat) : Int) + 1) / 2 = 524288 := by decide
-  rw [if_pos (by rw [hc]; omega :
+  rw [ite_eq_left (by rw [hc]; omega :
     (((2^20 : Nat) : Int) + 1) / 2 ≤ upper + ((2^20 : Nat) : Int))]
   omega
 

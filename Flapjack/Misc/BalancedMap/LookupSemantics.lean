@@ -35,7 +35,7 @@ theorem lookupThm {κ ν : Type} (cmp : κ → κ → Ordering)
         have hgt := (hgood.2.2.1 root key).mpr hc
         cases hlt.symm.trans hgt
       simp only [lookup, hc, toFmap, HolFiniteMapExact.lookup_updateEq,
-        FUPDATE_HOL, hs, if_false, HolFiniteMapExact.lookup_union]
+        FUPDATE_HOL, hs, ite_false, HolFiniteMapExact.lookup_union]
       rw [← hl, absent]
       cases lookup cmp key left <;> rfl
     | gt =>
@@ -49,7 +49,7 @@ theorem lookupThm {κ ν : Type} (cmp : κ → κ → Ordering)
         have hlt := (hgood.2.2.1 key root).mp hc
         cases hgt.symm.trans hlt
       simp only [lookup, hc, toFmap, HolFiniteMapExact.lookup_updateEq,
-        FUPDATE_HOL, hs, if_false, HolFiniteMapExact.lookup_union, absent]
+        FUPDATE_HOL, hs, ite_false, HolFiniteMapExact.lookup_union, absent]
       exact hr
 
 end Flapjack.Misc.BalancedMap

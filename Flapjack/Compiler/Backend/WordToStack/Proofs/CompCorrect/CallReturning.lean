@@ -90,9 +90,9 @@ theorem sourceGuardsOfNotError {width : Nat} [NeZero width] {C F : Type}
     exact absurd execution.1.symm notError
   simp only [hget] at execution
   by_cases hbad : wordSemBadDestArgs dest args = true
-  · simp only [hbad, if_true, Prod.mk.injEq] at execution
+  · simp only [hbad, ite_true, Prod.mk.injEq] at execution
     exact absurd execution.1.symm notError
-  simp only [hbad, Bool.false_eq_true, if_false] at execution
+  simp only [hbad, Bool.false_eq_true, ite_false] at execution
   rcases hfind : wordSemFindCode dest
       (wordSemAddRetLoc (some (values, names, retCode, l1, l2)) xs)
       source.code source.stackSize with _ | ⟨args1, prog, ss⟩
@@ -100,9 +100,9 @@ theorem sourceGuardsOfNotError {width : Nat} [NeZero width] {C F : Type}
     exact absurd execution.1.symm notError
   simp only [hfind] at execution
   by_cases invalid : sptDomainEmpty names.1 ∨ ¬ values.Nodup
-  · simp only [invalid, if_true, Prod.mk.injEq] at execution
+  · simp only [invalid, ite_true, Prod.mk.injEq] at execution
     exact absurd execution.1.symm notError
-  simp only [invalid, if_false] at execution
+  simp only [invalid, ite_false] at execution
   rcases hcut : wordSemCutEnvs names source.locals with _ | envs
   · simp only [hcut, Prod.mk.injEq] at execution
     exact absurd execution.1.symm notError
@@ -233,7 +233,7 @@ theorem evaluateSavedFrame {width : Nat} [NeZero width] {C F : Type}
     have relation := related
     unfold stateRel at relation
     aesop (config := { enableSimp := false })
-  rw [if_neg (by omega)] at shape
+  rw [ite_eq_right (by omega)] at shape
   have fPositive : 1 ≤ f := by omega
   obtain ⟨_, _, _, firstNames, secondNames⟩ :=
     returningConventions k values names retCode l1 l2 dest args conventions
@@ -351,7 +351,7 @@ theorem stackArgumentCount {width : Nat} [NeZero width] {C F : Type}
       rintro rfl
       simp [wordSemBadDestArgs] at bad
     have nonzero : ¬ args.length = 0 := by simpa using nonempty
-    simp only [callDestNative, dif_neg nonzero, Prod.mk.injEq] at compiled
+    simp only [callDestNative, dite_eq_right nonzero, Prod.mk.injEq] at compiled
     obtain ⟨_, rfl⟩ := compiled
     rw [indirect rfl]
     simp only [Compiler.Backend.WordToStack.stackArgCount, wordSemAddRetLoc,
@@ -391,7 +391,7 @@ theorem stackArgumentFrameBound {width : Nat} [NeZero width] {C F : Type}
   have shape : if frame = 0 then f = 0 else f = frame + 1 := by
     unfold stateRel at related
     aesop (config := { enableSimp := false })
-  rw [if_neg (by omega)] at shape
+  rw [ite_eq_right (by omega)] at shape
   have argsEq := (returningConventions k values names retCode l1 l2 dest args conventions).2.1
   have argBound : args.length ≤ frame + k := by
     rcases Nat.eq_zero_or_pos args.length with empty | nonempty
@@ -443,7 +443,7 @@ theorem evaluateStackArguments {width : Nat} [NeZero width] {C F : Type}
   refine ⟨moved, stack, regs, ?_, state, registers, length, movedSpace, ?_, ?_⟩
   · rw [stackArgsNative, CallReturnEval.evaluateStackMoveSeq,
       StackSemEvaluate.evaluate_seq, StackSemEvaluateClock.fixClockEvaluate,
-      StackSemEvaluate.evaluate_stackAlloc, if_neg (by simp [useStack]), if_neg (by simpa only using Nat.not_lt.mpr space)]
+      StackSemEvaluate.evaluate_stackAlloc, ite_eq_right (by simp [useStack]), ite_eq_right (by simpa only using Nat.not_lt.mpr space)]
     simp only
     exact run
   · simpa only [allocated, Nat.add_zero, Nat.sub_add_cancel space] using tail
@@ -463,7 +463,7 @@ theorem evaluateStackArgumentsInsufficient {width : Nat} [NeZero width] {C F : T
       (some (.halt (.word (BitVec.ofNat width 2))), StackSemStateOps.emptyEnv target) := by
   rw [stackArgsNative, CallReturnEval.evaluateStackMoveSeq,
     StackSemEvaluate.evaluate_seq, StackSemEvaluateClock.fixClockEvaluate,
-    StackSemEvaluate.evaluate_stackAlloc, if_neg (by simp [useStack]), if_pos space]
+    StackSemEvaluate.evaluate_stackAlloc, ite_eq_right (by simp [useStack]), ite_eq_left space]
 
 /-- Flapjack factoring of the callee locals conjunct in the original
 no-handler branch (8500–8574). The return Loc occupies key zero; other locals
@@ -524,23 +524,23 @@ theorem calleeLocals {width : Nat} [NeZero width] {C F : Type}
   · subst key
     have valueLoc : value = .loc l1 l2 := by
       simpa [fromList2Lookup] using fullLookup.symm
-    rw [if_pos (by omega), valueLoc]
+    rw [ite_eq_left (by omega), valueLoc]
     simp [FUPDATE_HOL]
   have sourceLookup := getVarsFromList2EqCons args source xs key l1 l2 value
     (by rwa [← argsEq]) fullLookup zero
   obtain ⟨_, callerLocal⟩ := locals key value sourceLookup
   by_cases inRegister : key / 2 < k
-  · rw [if_pos inRegister] at callerLocal ⊢
+  · rw [ite_eq_left inRegister] at callerLocal ⊢
     have preserved := registers (key / 2) (by omega)
     simp only [StackSemStateOps.getVar] at preserved
     simp only [HolFiniteMapExact.updateEq, FUPDATE_HOL]
-    rw [if_neg (by omega), preserved]
+    rw [ite_eq_right (by omega), preserved]
     exact callerLocal
-  · rw [if_neg inRegister] at callerLocal ⊢
+  · rw [ite_eq_right inRegister] at callerLocal ⊢
     obtain ⟨callerSlot, callerIndex⟩ := callerLocal
-    rw [if_neg (by omega)] at callerShape
+    rw [ite_eq_right (by omega)] at callerShape
     have calleePositive : 0 < calleeFrame := by omega
-    rw [if_neg (by omega)] at calleeShape
+    rw [ite_eq_right (by omega)] at calleeShape
     have countSpace : args1.length - k ≤ saved.stackSpace := by omega
     have copyIndex : args1.length - k - 1 - (key / 2 - k) < args1.length - k := by omega
     have copied := slots _ copyIndex
@@ -552,9 +552,9 @@ theorem calleeLocals {width : Nat} [NeZero width] {C F : Type}
     have movedAbsolute : saved.stackSpace - calleeSize +
         (calleeSize - 1 - (key / 2 - k)) < moved.stack.length := by omega
     refine ⟨?_, by omega⟩
-    rw [List.getElem?_take, if_pos (by omega), List.getElem?_drop,
+    rw [List.getElem?_take, ite_eq_left (by omega), List.getElem?_drop,
       List.getElem?_eq_getElem movedAbsolute]
-    rw [Nat.add_zero, List.getElem?_take, if_pos (by omega), List.getElem?_drop,
+    rw [Nat.add_zero, List.getElem?_take, ite_eq_left (by omega), List.getElem?_drop,
       List.getElem?_eq_getElem callerAbsolute] at callerSlot
     rw [holEl_eq_getElem _ _ (by simp; omega), holEl_eq_getElem _ _ (by simp; omega),
       List.getElem_drop, List.getElem_drop] at copied
@@ -780,8 +780,8 @@ theorem enterCallee {width : Nat} [NeZero width] {C F : Type}
     stack := stack, regs := regs.updateEq (0, .loc l1 l2)}
   refine ⟨_, entry, moveRun, ?_, ?_⟩
   · rw [StackSemEvaluate.evaluate_stackAlloc,
-      if_neg (by simp [StackSemStateOps.setVar, StackSemStateOps.decClock, useStack]),
-      if_neg (by
+      ite_eq_right (by simp [StackSemStateOps.setVar, StackSemStateOps.decClock, useStack]),
+      ite_eq_right (by
         change ¬ saved.stackSpace - (args1.length - k) < calleeSize - (args1.length - k)
         omega)]
     simp only [StackSemStateOps.setVar, StackSemStateOps.decClock]
@@ -817,12 +817,12 @@ theorem destinationRegisterBound {width : Nat} [NeZero width]
     cases impossible
   | none =>
     by_cases empty : args.length = 0
-    · simp only [callDestNative, dif_pos empty, Prod.mk.injEq] at compiled
+    · simp only [callDestNative, dite_eq_left empty, Prod.mk.injEq] at compiled
       obtain ⟨_, rfl⟩ := compiled
       intro register impossible
       cases impossible
     have nonempty : args ≠ [] := by simpa using empty
-    simp only [callDestNative, dif_neg empty, Prod.mk.injEq] at compiled
+    simp only [callDestNative, dite_eq_right empty, Prod.mk.injEq] at compiled
     obtain ⟨_, rfl⟩ := compiled
     have member : args.getLast nonempty ∈ args := List.getLast_mem nonempty
     have mappedMember := Eq.mp (congrArg (fun items => args.getLast nonempty ∈ items) argsEq) member
@@ -857,7 +857,7 @@ theorem findCodePreserved {width : Nat} [NeZero width] {α : Type}
   | inr register =>
     obtain ⟨notZero, notScratch⟩ := avoids register rfl
     simp only [StackSemControl.findCode]
-    rw [HolFiniteMapExact.lookup_eraseEq, FDOMSUB_HOL, if_neg notZero, registers register notScratch]
+    rw [HolFiniteMapExact.lookup_eraseEq, FDOMSUB_HOL, ite_eq_right notZero, registers register notScratch]
     simp only [StackSemControl.findCode] at found
     cases lookupEq : oldRegs.lookup register with
     | none => simp [lookupEq] at found
@@ -995,8 +995,8 @@ theorem calleeNotError {width : Nat} [NeZero width] {C F : Type}
   rw [error] at bodyRun
   obtain ⟨get, bad, find, valid, cut⟩ := guards
   rw [WordSemStateFiniteExact.evaluate] at execution
-  simp only [get, bad, Bool.false_eq_true, if_false, find, valid, cut] at execution
-  rw [dif_neg nonzero, WordSemStateFiniteExact.fix_clock_evaluate, bodyRun] at execution
+  simp only [get, bad, Bool.false_eq_true, ite_false, find, valid, cut] at execution
+  rw [dite_eq_right nonzero, WordSemStateFiniteExact.fix_clock_evaluate, bodyRun] at execution
   simp only [Prod.mk.injEq] at execution
   exact absurd execution.1.symm notError
 
@@ -1069,12 +1069,12 @@ theorem sourceCallOverflow {width : Nat} [NeZero width] {C F : Type}
     pushedRelation calleeLocalsSize insufficient
   obtain ⟨get, bad, find, valid, cut⟩ := guards
   rw [WordSemStateFiniteExact.evaluate] at execution
-  simp only [get, bad, Bool.false_eq_true, if_false, find, valid, cut] at execution
+  simp only [get, bad, Bool.false_eq_true, ite_false, find, valid, cut] at execution
   by_cases clock : source.clock = 0
-  · rw [dif_pos clock] at execution
+  · rw [dite_eq_left clock] at execution
     obtain ⟨rfl, rfl⟩ := Prod.mk.inj execution
     exact overflow
-  rw [dif_neg clock, WordSemStateFiniteExact.fix_clock_evaluate] at execution
+  rw [dite_eq_right clock, WordSemStateFiniteExact.fix_clock_evaluate] at execution
   rcases bodyRun : WordSemStateFiniteExact.evaluate prog
       (WordSemStateFiniteExact.callEnv args1 ss
         (WordSemStateFiniteExact.pushEnv envs none (WordSemStateFiniteExact.decClock source))) with
@@ -1091,10 +1091,10 @@ theorem sourceCallOverflow {width : Nat} [NeZero width] {C F : Type}
   case result location returned =>
     simp only at execution
     by_cases invalid : location ≠ .loc l1 l2 ∨ returned.length ≠ values.length
-    · rw [if_pos invalid] at execution
+    · rw [ite_eq_left invalid] at execution
       obtain ⟨rfl, rfl⟩ := Prod.mk.inj execution
       exact bodyOverflow
-    rw [if_neg invalid] at execution
+    rw [ite_eq_right invalid] at execution
     rcases pop : WordSemStateFiniteExact.popEnv bodyPost with _ | popped
     · rw [pop] at execution
       obtain ⟨rfl, rfl⟩ := Prod.mk.inj execution
@@ -1110,10 +1110,10 @@ theorem sourceCallOverflow {width : Nat} [NeZero width] {C F : Type}
       rw [poppedLimit, poppedMaximum]
       exact bodyOverflow
     by_cases domain : sptDomainEqUnion popped.locals envs.1 envs.2
-    · rw [if_pos domain] at execution
+    · rw [ite_eq_left domain] at execution
       exact WordSemStateFiniteExact.evaluate_stack_limit_stack_max retCode _ result sourcePost
         ⟨execution, poppedOverflow⟩
-    · rw [if_neg domain] at execution
+    · rw [ite_eq_right domain] at execution
       obtain ⟨rfl, rfl⟩ := Prod.mk.inj execution
       exact poppedOverflow
 
@@ -1160,7 +1160,7 @@ theorem allocationFailureResult {width : Nat} [NeZero width] {C F : Type}
       intro same
       exact CallHelpers.compileResultNot2 value dimension (Option.some.inj same)
   unfold compCorrectResult
-  rw [if_pos mismatch]
+  rw [ite_eq_left mismatch]
   refine ⟨rfl, ?_, ?_⟩
   · change saved.ffi.ioEvents.IsPrefix sourcePost.ffi.ioEvents
     rw [ffi]
@@ -1253,7 +1253,7 @@ theorem compiledStackArgumentsFailure {width : Nat} [NeZero width] {C F : Type}
     destinationRun] at savedRun
   simp only at savedRun
   simp only [compNative, destinationCompile, savedCompile, returnCompile,
-    Bool.false_eq_true, if_false, Prod.mk.injEq] at compilation
+    Bool.false_eq_true, ite_false, Prod.mk.injEq] at compilation
   obtain ⟨rfl, _⟩ := compilation
   refine ⟨StackSemStateOps.emptyEnv saved, ?_, ?_⟩
   · rw [StackSemEvaluate.evaluate_seq, StackSemEvaluateClock.fixClockEvaluate,
@@ -1283,7 +1283,7 @@ theorem compiledCalleeAllocationFailure {width : Nat} [NeZero width] {C F : Type
   obtain ⟨rfl, size, _⟩ := compiled
   rw [← size] at insufficient
   rw [StackSemEvaluate.evaluate_seq, StackSemEvaluateClock.fixClockEvaluate,
-    StackSemEvaluate.evaluate_stackAlloc, if_neg (by simp [useStack]), if_pos insufficient]
+    StackSemEvaluate.evaluate_stackAlloc, ite_eq_right (by simp [useStack]), ite_eq_left insufficient]
 
 /-- Flapjack factoring of the original second allocation-failure branch.
 After the actual destination/save/argument prelude, the compiled Call enters
@@ -1384,7 +1384,7 @@ theorem compiledCalleeFrameFailure {width : Nat} [NeZero width] {C F : Type}
     simp only
     rw [found]
     simp only
-    rw [if_neg (by change saved.clock ≠ 0; rwa [savedClock]),
+    rw [ite_eq_right (by change saved.clock ≠ 0; rwa [savedClock]),
       StackSemEvaluateClock.fixClockEvaluate, calleeRun]
   have branchResult := allocationFailureResult ac k f frame calleeSize values names retCode
     l1 l2 dest args source sourcePost saved lens result xs args1 prog ss envs
@@ -1392,7 +1392,7 @@ theorem compiledCalleeFrameFailure {width : Nat} [NeZero width] {C F : Type}
       Compiler.Backend.WordToStack.stackArgCount destination (args.length + 1) k)
     guards savedRelation pushedRelation calleeLocalsSize (by rwa [savedSpace]) execution
   simp only [compNative, destinationCompile, savedCompile, returnCompile,
-    Bool.false_eq_true, if_false, Prod.mk.injEq] at compilation
+    Bool.false_eq_true, ite_false, Prod.mk.injEq] at compilation
   obtain ⟨rfl, _⟩ := compilation
   refine ⟨StackSemStateOps.emptyEnv entry, ?_, ?_⟩
   · rw [StackSemEvaluate.evaluate_seq, StackSemEvaluateClock.fixClockEvaluate, destinationRun]
@@ -1525,7 +1525,7 @@ theorem simulateCalleeBody {width : Nat} [NeZero width] {C F : Type}
     · cases (Prod.mk.inj success).1
     · cases (Prod.mk.inj success).1
     obtain ⟨_, rfl⟩ := Prod.mk.inj success
-    rw [StackSemEvaluate.evaluate_stackAlloc, if_neg disabled, if_neg insufficient]
+    rw [StackSemEvaluate.evaluate_stackAlloc, ite_eq_right disabled, ite_eq_right insufficient]
     rfl
   have calleeRun : StackSemEvaluate.evaluate
       (.seq (.stackAlloc (calleeSize - (args1.length - k))) body,
@@ -1611,9 +1611,9 @@ theorem compiledCallTimeout {width : Nat} [NeZero width] {C F : Type}
     simp only
     rw [found]
     simp only
-    rw [if_pos (show moved.clock = 0 from savedClock)]
+    rw [ite_eq_left (show moved.clock = 0 from savedClock)]
   simp only [compNative, destinationCompile, savedCompile, returnCompile,
-    Bool.false_eq_true, if_false, Prod.mk.injEq] at compilation
+    Bool.false_eq_true, ite_false, Prod.mk.injEq] at compilation
   obtain ⟨rfl, _⟩ := compilation
   refine ⟨StackSemStateOps.emptyEnv moved, ?_, ?_⟩
   · rw [StackSemEvaluate.evaluate_seq, StackSemEvaluateClock.fixClockEvaluate, destinationRun]
@@ -1627,8 +1627,8 @@ theorem compiledCallTimeout {width : Nat} [NeZero width] {C F : Type}
     exact callRun
   · obtain ⟨get, bad, find, valid, cut⟩ := guards
     rw [WordSemStateFiniteExact.evaluate] at execution
-    simp only [get, bad, Bool.false_eq_true, if_false, find, valid, cut] at execution
-    rw [dif_pos zero] at execution
+    simp only [get, bad, Bool.false_eq_true, ite_false, find, valid, cut] at execution
+    rw [dite_eq_left zero] at execution
     obtain ⟨rfl, rfl⟩ := Prod.mk.inj execution
     simp only [compCorrectResult, Option.map_some, compileResult, ne_eq,
       not_true_eq_false, ↓reduceIte]
@@ -1793,15 +1793,15 @@ theorem sourceReturningContinuation {width : Nat} [NeZero width] {C F : Type}
   have originalGuards := guards
   obtain ⟨get, bad, find, valid, cut⟩ := originalGuards
   rw [WordSemStateFiniteExact.evaluate] at execution
-  simp only [get, bad, Bool.false_eq_true, if_false, find, valid, cut] at execution
-  rw [dif_neg nonzero, WordSemStateFiniteExact.fix_clock_evaluate, bodyRun] at execution
+  simp only [get, bad, Bool.false_eq_true, ite_false, find, valid, cut] at execution
+  rw [dite_eq_right nonzero, WordSemStateFiniteExact.fix_clock_evaluate, bodyRun] at execution
   simp only at execution
   by_cases invalid : location ≠ .loc l1 l2 ∨ returned.length ≠ values.length
-  · rw [if_pos invalid] at execution
+  · rw [ite_eq_left invalid] at execution
     exact False.elim (notError (Prod.mk.inj execution).1.symm)
-  rw [if_neg invalid, popRun] at execution
+  rw [ite_eq_right invalid, popRun] at execution
   simp only at execution
-  rw [if_pos domain] at execution
+  rw [ite_eq_left domain] at execution
   refine ⟨gc, tail, popped, frame, gcKeys, tailKeys, handler, rfl, popRun, domain,
     invalid, execution, ?_⟩
   exact ih.1 xs args1 prog ss envs location returned bodyPost popped
@@ -1851,16 +1851,16 @@ theorem evaluateReturnCopyFree {width : Nat} [NeZero width] {C F : Type}
       dsimp [restored]
       rw [zero, Nat.add_zero]
       exact unchanged
-    rw [copyRetNative, if_pos zero, StackSemEvaluate.evaluate_skip, restoredEq]
-  · rw [copyRetNative, if_neg zero]
-    simp only [Bool.false_eq_true, if_false]
+    rw [copyRetNative, ite_eq_left zero, StackSemEvaluate.evaluate_skip, restoredEq]
+  · rw [copyRetNative, ite_eq_right zero]
+    simp only [Bool.false_eq_true, ite_false]
     rw [StackSemEvaluate.evaluate_seq, StackSemEvaluateClock.fixClockEvaluate, copyRun]
     simp only
     rw [CallHelpers.evaluateSeqStackFree count .skip {target with stack := stack, regs := regs}
       ⟨useStack, by change target.stackSpace ≤ stack.length; rw [length]; omega⟩,
       StackSemEvaluate.evaluate_seq, StackSemEvaluateClock.fixClockEvaluate,
-      StackSemEvaluate.evaluate_stackFree, if_neg (by simp [useStack]),
-      if_neg (by change ¬ stack.length < target.stackSpace + count; rw [length]; omega)]
+      StackSemEvaluate.evaluate_stackFree, ite_eq_right (by simp [useStack]),
+      ite_eq_right (by change ¬ stack.length < target.stackSpace + count; rw [length]; omega)]
     simp only
     rw [StackSemEvaluate.evaluate_skip]
 
@@ -2331,11 +2331,11 @@ theorem returnedCallerLookupIndex {width : Nat} [NeZero width]
       simp only [holAlookup]
       by_cases same : name = key
       · subst name
-        simp only [if_true, Option.some.injEq]
+        simp only [ite_true, Option.some.injEq]
         intro equality
         subst item
         exact List.mem_cons_self
-      · rw [if_neg same]
+      · rw [ite_eq_right same]
         exact fun found => List.mem_cons_of_mem _ (ih found)
   obtain ⟨index, indexBound, pair⟩ := List.mem_iff_getElem.mp (membership _ lookup)
   have namesBound : index < values.length := by
@@ -2560,12 +2560,12 @@ theorem copyReturnPlacesReturnedLocals {width : Nat} [NeZero width] {C F : Type}
   refine ⟨by omega, ?_⟩
   rw [keyHalf]
   by_cases register : index + 1 < k
-  · rw [if_pos register] at placement ⊢
+  · rw [ite_eq_left register] at placement ⊢
     rw [shape]
     simp only
     rw [registers (index + 1) (by omega)]
     simpa only [valueEq] using placement
-  · rw [if_neg register] at placement ⊢
+  · rw [ite_eq_right register] at placement ⊢
     refine ⟨?_, by omega⟩
     have countEq : count = returned.length + 1 - k := by
       dsimp [count, Compiler.Backend.WordToStack.numStackRet]
@@ -2662,7 +2662,7 @@ theorem copyReturnRestoresCallerLocals {width : Nat} [NeZero width] {C F : Type}
       obtain ⟨lower, upper, slot⟩ := preserved key value lookup even positive
         (absent values returned key lengthEq.symm found)
       refine ⟨even, ?_⟩
-      rw [if_neg (by omega)]
+      rw [ite_eq_right (by omega)]
       exact ⟨slot, upper⟩
 
 /-- Assemble the full NONE caller state relation after actual return copying.
@@ -2877,7 +2877,7 @@ theorem restoreCallerFromBodyReturn {width : Nat} [NeZero width] {C F : Type}
     unfold stateRel at h
     aesop (config := { enableSimp := false })
   have callerSizeEq : callerSize = frame + 1 := by
-    rw [if_neg (by omega)] at callerShape
+    rw [ite_eq_right (by omega)] at callerShape
     exact callerShape
   have lengthEq := (not_or.mp valid).2
   have countEq : returned.length - (k - 1) =
@@ -3049,7 +3049,7 @@ theorem continuationCompilationFacts {width : Nat} [NeZero width] {C F : Type}
   · intro loc member
     apply labels loc
     simp only [compNative, destinationCompile, savedCompile, returnCompile,
-      Bool.false_eq_true, if_false, Prod.mk.injEq] at compilation
+      Bool.false_eq_true, ite_false, Prod.mk.injEq] at compilation
     obtain ⟨rfl, _⟩ := compilation
     simp only [StackSem.getLabelsExact]
     apply Or.inr
@@ -3081,9 +3081,9 @@ theorem returnCopyClockFree {width : Nat} [NeZero width] {C F : Type}
       · simp [enabled, outside]
     · simp [enabled]
   by_cases zero : Compiler.Backend.WordToStack.numStackRet k values = 0
-  · simpa only [copyRetNative, zero, if_true] using
+  · simpa only [copyRetNative, zero, ite_true] using
       (CallReturnEval.clockFree_skip (width := width) (C := C) (F := F))
-  · simp only [copyRetNative, if_false, seqStackFreeNative, zero]
+  · simp only [copyRetNative, ite_false, seqStackFreeNative, zero]
     exact CallReturnEval.clockFree_seq _ _
       (by intro state clock
           exact CallReturnEval.evaluateCopyRetAuxClock k f
@@ -3468,8 +3468,8 @@ theorem sourceCallBodyPost {width : Nat} [NeZero width] {C F : Type}
         miscThe (sourcePost.stackLimit + 1) sourcePost.stackMax > sourcePost.stackLimit) := by
   obtain ⟨get, bad, find, valid, cut⟩ := guards
   rw [WordSemStateFiniteExact.evaluate] at execution
-  simp only [get, bad, Bool.false_eq_true, if_false, find, valid, cut] at execution
-  rw [dif_neg nonzero, WordSemStateFiniteExact.fix_clock_evaluate, bodyRun] at execution
+  simp only [get, bad, Bool.false_eq_true, ite_false, find, valid, cut] at execution
+  rw [dite_eq_right nonzero, WordSemStateFiniteExact.fix_clock_evaluate, bodyRun] at execution
   cases bodyResult with
   | none =>
       obtain ⟨rfl, rfl⟩ := Prod.mk.inj execution
@@ -3481,10 +3481,10 @@ theorem sourceCallBodyPost {width : Nat} [NeZero width] {C F : Type}
     case result location returned =>
       simp only at execution
       by_cases invalid : location ≠ .loc l1 l2 ∨ returned.length ≠ values.length
-      · rw [if_pos invalid] at execution
+      · rw [ite_eq_left invalid] at execution
         obtain ⟨rfl, rfl⟩ := Prod.mk.inj execution
         exact ⟨List.prefix_refl _, fun overflow => overflow⟩
-      rw [if_neg invalid] at execution
+      rw [ite_eq_right invalid] at execution
       cases pop : WordSemStateFiniteExact.popEnv bodyPost with
       | none =>
           rw [pop] at execution
@@ -3501,7 +3501,7 @@ theorem sourceCallBodyPost {width : Nat} [NeZero width] {C F : Type}
         have poppedMaximum : popped.stackMax = bodyPost.stackMax := by
           aesop (config := { enableSimp := false })
         by_cases domain : sptDomainEqUnion popped.locals envs.1 envs.2
-        · rw [if_pos domain] at execution
+        · rw [ite_eq_left domain] at execution
           constructor
           · have events := WordSemStateFiniteExact.evaluate_io_events_mono retCode
               (WordSemStateFiniteExact.setVars values returned popped) result sourcePost execution
@@ -3513,7 +3513,7 @@ theorem sourceCallBodyPost {width : Nat} [NeZero width] {C F : Type}
             refine ⟨execution, ?_⟩
             change miscThe (popped.stackLimit + 1) popped.stackMax > popped.stackLimit
             rwa [poppedLimit, poppedMaximum]
-        · rw [if_neg domain] at execution
+        · rw [ite_eq_right domain] at execution
           obtain ⟨rfl, rfl⟩ := Prod.mk.inj execution
           rw [poppedFfi, poppedLimit, poppedMaximum]
           exact ⟨List.prefix_refl _, fun overflow => overflow⟩
@@ -3551,7 +3551,7 @@ theorem bodyMismatchResult {width : Nat} [NeZero width] {C F : Type}
     compCorrectResult ac k callerSize callerFrame source sourcePost targetPost
       result targetResult lens := by
   unfold compCorrectResult at bodyConclusion
-  rw [if_pos bodyMismatch] at bodyConclusion
+  rw [ite_eq_left bodyMismatch] at bodyConclusion
   obtain ⟨halt, events, overflow⟩ := bodyConclusion
   obtain ⟨traceLift, resourceLift⟩ := sourceCallBodyPost values names retCode l1 l2 dest args
     source sourcePost bodyPost result bodyResult xs args1 prog ss envs guards nonzero execution bodyRun
@@ -3570,7 +3570,7 @@ theorem bodyMismatchResult {width : Nat} [NeZero width] {C F : Type}
       intro same
       exact CallHelpers.compileResultNot2 value dimension (Option.some.inj same)
   unfold compCorrectResult
-  rw [if_pos mismatch]
+  rw [ite_eq_left mismatch]
   refine ⟨halt, events.trans traceLift, ?_⟩
   cases maximum : sourcePost.stackMax <;>
     simpa only [maximum, miscThe, Option.getD_some, Option.getD_none] using finalOverflow
@@ -3600,8 +3600,8 @@ theorem sourceCallTerminal {width : Nat} [NeZero width] {C F : Type}
     result = bodyResult ∧ sourcePost = bodyPost := by
   obtain ⟨get, bad, find, valid, cut⟩ := guards
   rw [WordSemStateFiniteExact.evaluate] at execution
-  simp only [get, bad, Bool.false_eq_true, if_false, find, valid, cut] at execution
-  rw [dif_neg nonzero, WordSemStateFiniteExact.fix_clock_evaluate, bodyRun] at execution
+  simp only [get, bad, Bool.false_eq_true, ite_false, find, valid, cut] at execution
+  rw [dite_eq_right nonzero, WordSemStateFiniteExact.fix_clock_evaluate, bodyRun] at execution
   rcases terminal with rfl | rfl | ⟨event, rfl⟩ <;>
     exact ⟨(Prod.mk.inj execution).1.symm, (Prod.mk.inj execution).2.symm⟩
 
@@ -3700,8 +3700,8 @@ theorem sourceCallException {width : Nat} [NeZero width] {C F : Type}
     result = some (.exception location value) ∧ sourcePost = bodyPost := by
   obtain ⟨get, bad, find, valid, cut⟩ := guards
   rw [WordSemStateFiniteExact.evaluate] at execution
-  simp only [get, bad, Bool.false_eq_true, if_false, find, valid, cut] at execution
-  rw [dif_neg nonzero, WordSemStateFiniteExact.fix_clock_evaluate, bodyRun] at execution
+  simp only [get, bad, Bool.false_eq_true, ite_false, find, valid, cut] at execution
+  rw [dite_eq_right nonzero, WordSemStateFiniteExact.fix_clock_evaluate, bodyRun] at execution
   exact ⟨(Prod.mk.inj execution).1.symm, (Prod.mk.inj execution).2.symm⟩
 
 /-- Full original NONE exception result contract from the matching callee IH.
@@ -3786,8 +3786,8 @@ theorem calleeOutcomeCases {width : Nat} [NeZero width] {C F : Type}
     ∃ event, bodyResult = some (.finalFfi event) := by
   obtain ⟨get, bad, find, valid, cut⟩ := guards
   rw [WordSemStateFiniteExact.evaluate] at execution
-  simp only [get, bad, Bool.false_eq_true, if_false, find, valid, cut] at execution
-  rw [dif_neg nonzero, WordSemStateFiniteExact.fix_clock_evaluate, bodyRun] at execution
+  simp only [get, bad, Bool.false_eq_true, ite_false, find, valid, cut] at execution
+  rw [dite_eq_right nonzero, WordSemStateFiniteExact.fix_clock_evaluate, bodyRun] at execution
   cases bodyResult with
   | none => exact False.elim (notError (Prod.mk.inj execution).1.symm)
   | some value =>
@@ -3948,17 +3948,17 @@ theorem destinationFindAtSourceLocation {width : Nat} [NeZero width] {C F : Type
           simpa only [wordSemAddRetLoc, List.getLast_cons xsNonempty] using lastLocation
     have localPlacement := StateRelGetVar.stateRel_locals related _ _ lastVar
     have argsLength : ¬ args.length = 0 := by simpa using argsNonempty
-    simp only [callDestNative, dif_neg argsLength, Prod.mk.injEq] at compiled
+    simp only [callDestNative, dite_eq_right argsLength, Prod.mk.injEq] at compiled
     obtain ⟨rfl, rfl⟩ := compiled
     by_cases register : args.getLast argsNonempty / 2 < k
-    · rw [if_pos register] at localPlacement
+    · rw [ite_eq_left register] at localPlacement
       have read : Compiler.Backend.WordToStackRegFormat.wReg2 (args.getLast argsNonempty) (k, f, frame) =
           ([], args.getLast argsNonempty / 2) := by simp [Compiler.Backend.WordToStackRegFormat.wReg2, register]
       simp only [read, wStackLoadNative] at execution ⊢
       rw [StackSemEvaluate.evaluate_skip] at execution
       obtain ⟨_, rfl⟩ := Prod.mk.inj execution
       simp only [StackSemControl.findCode, localPlacement.2, lastLocation]
-    · rw [if_neg register] at localPlacement
+    · rw [ite_eq_right register] at localPlacement
       obtain ⟨_, slot, _⟩ := localPlacement
       have read : Compiler.Backend.WordToStackRegFormat.wReg2 (args.getLast argsNonempty) (k, f, frame) =
           ([(k + 1, f - 1 - (args.getLast argsNonempty / 2 - k))], k + 1) := by
@@ -3977,12 +3977,12 @@ theorem destinationFindAtSourceLocation {width : Nat} [NeZero width] {C F : Type
       have value : initial.stack[initial.stackSpace + index] = xs.getLast xsNonempty :=
         (List.getElem?_eq_some_iff.mp slot).2
       rw [StackSemEvaluate.evaluate_seq, StackSemEvaluate.evaluate_stackLoad,
-        if_neg (by simp [useStack]), dif_pos bound] at execution
+        ite_eq_right (by simp [useStack]), dite_eq_left bound] at execution
       simp only [StackSemControl.fixClock, StackSemStateOps.setVar, Nat.min_self] at execution
       rw [StackSemEvaluate.evaluate_skip] at execution
       obtain ⟨_, rfl⟩ := Prod.mk.inj execution
       simp only [StackSemControl.findCode, HolFiniteMapExact.updateEq, FUPDATE_HOL,
-        if_true, value, lastLocation]
+        ite_true, value, lastLocation]
 
 /-- Complete actual destination/save/argument setup with the original body
 IH context tied to the dispatched callee. Source key selection, compilation
@@ -4232,7 +4232,7 @@ theorem simulateCalleeBodyAt {width : Nat} [NeZero width] {C F : Type}
     · cases (Prod.mk.inj success).1
     · cases (Prod.mk.inj success).1
     obtain ⟨_, rfl⟩ := Prod.mk.inj success
-    rw [StackSemEvaluate.evaluate_stackAlloc, if_neg disabled, if_neg insufficient]
+    rw [StackSemEvaluate.evaluate_stackAlloc, ite_eq_right disabled, ite_eq_right insufficient]
     rfl
   have calleeRun : StackSemEvaluate.evaluate
       (.seq (.stackAlloc (calleeSize - (args1.length - k))) body,

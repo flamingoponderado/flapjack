@@ -148,13 +148,13 @@ theorem lookupNumsetListAddIf :
       | some v' =>
           cases hP : P v v' with
           | true =>
-              simp only [numsetListAddIf, hl, hP, if_true]
+              simp only [numsetListAddIf, hl, hP, ite_true]
               rw [ih, hins]
               by_cases hr : r = h
               · subst hr; simp [hl, hP]
               · simp [hr]
           | false =>
-              simp only [numsetListAddIf, hl, hP, Bool.false_eq_true, if_false]
+              simp only [numsetListAddIf, hl, hP, Bool.false_eq_true, ite_false]
               rw [ih]
               by_cases hr : r = h
               · subst hr; simp [hl, hP]
@@ -208,7 +208,7 @@ theorem domainNumsetListAddIf :
   unfold sptDomain
   rw [lookupNumsetListAddIf]
   by_cases hx : x ∈ l
-  · simp only [hx, if_true, true_or, iff_true]
+  · simp only [hx, ite_true, true_or, iff_true]
     split <;> (try split) <;> simp
   · simp [hx]
 
@@ -332,7 +332,7 @@ theorem getIntervalsIntendAugment :
       simp only [getIntervals, Prod.mk.injEq] at h
       rw [h.2.2, lookupNumsetListAddIfGt, hv]
       by_cases hm : r ∈ l
-      · rw [if_pos hm]
+      · rw [ite_eq_left hm]
         by_cases hc : v ≤ n_in
         · exact ⟨n_in, by simp [hc], hc⟩
         · exact ⟨v, by simp [hc], Int.le_refl v⟩
@@ -449,7 +449,7 @@ theorem getIntervalsLiveLessEnd :
       rw [RegAlloc.domainNumsetListDelete] at hr
       obtain ⟨v, hv, hle⟩ := hlive r hr.1
       refine ⟨v, ?_, by omega⟩
-      rw [lookupNumsetListAddIfGt, if_neg hr.2, hv]
+      rw [lookupNumsetListAddIfGt, ite_eq_right hr.2, hv]
   | reads l =>
       intro n_in beg_in end_in live_in n_out beg_out end_out ⟨h, hlive⟩
       simp only [getIntervals, Prod.mk.injEq] at h
@@ -458,13 +458,13 @@ theorem getIntervalsLiveLessEnd :
       rw [domainNumsetListInsert] at hr
       rw [lookupNumsetListAddIfGt]
       by_cases hl : r ∈ l
-      · rw [if_pos hl]
+      · rw [ite_eq_left hl]
         split
         · split
           · exact ⟨_, rfl, by omega⟩
           · exact ⟨_, rfl, by omega⟩
         · exact ⟨_, rfl, by omega⟩
-      · rw [if_neg hl]
+      · rw [ite_eq_right hl]
         obtain ⟨v, hv, hle⟩ := hlive r (hr.resolve_left hl)
         exact ⟨v, hv, by omega⟩
   | branch lt1 lt2 ih1 ih2 | seq lt1 lt2 ih1 ih2 =>
@@ -1176,12 +1176,12 @@ theorem getIntervalsCheckStartliveProp :
       simp only [getIntervals, Prod.mk.injEq] at h
       obtain ⟨rfl, rfl, rfl⟩ := h
       refine ⟨?_, ?_⟩
-      · rw [lookupNumsetListAddIfLt, if_pos hr]
+      · rw [lookupNumsetListAddIfLt, ite_eq_left hr]
         cases hl : sptLookup r beg_in with
         | some vr =>
             by_cases hc : n_in ≤ vr <;> simp [hc] <;> omega
         | none => simp
-      · rw [lookupNumsetListAddIfGt, if_pos hr]
+      · rw [lookupNumsetListAddIfGt, ite_eq_left hr]
         cases hl : sptLookup r end_in with
         | some vr =>
             by_cases hc : vr ≤ n_in
@@ -1230,7 +1230,7 @@ theorem getIntervalsWithliveBegLessLive :
         cases hl : sptLookup r beg_in with
         | none => rfl
         | some _ => rw [hl] at this; simp at this
-      rw [lookupNumsetListAddIfLt, if_neg hr.2, hn]
+      rw [lookupNumsetListAddIfLt, ite_eq_right hr.2, hn]
       simp
   | reads l =>
       intro n_in beg_in end_in live_in n_out beg_out end_out ⟨h, _, hd⟩
@@ -1240,8 +1240,8 @@ theorem getIntervalsWithliveBegLessLive :
       rw [domainNumsetListInsert] at hr
       rw [lookupNumsetListDelete]
       by_cases hm : r ∈ l
-      · rw [if_pos hm]; simp
-      · rw [if_neg hm]
+      · rw [ite_eq_left hm]; simp
+      · rw [ite_eq_right hm]
         have := hd r (hr.resolve_left hm)
         unfold sptDomain at this
         cases hl : sptLookup r beg_in with
@@ -1309,7 +1309,7 @@ theorem getIntervalsWithliveBegLessLive :
           cases hl : sptLookup r U with
           | none => rw [hl] at hm; simp at hm
           | some _ => simp
-        rw [if_neg hU]
+        rw [ite_eq_right hU]
         simp only [sizeOfLiveTree]
         omega
   | seq lt1 lt2 ih1 ih2 =>
@@ -1348,7 +1348,7 @@ theorem getIntervalsWithliveBegEqGetIntervalsBegWhenSome :
       rw [h1.2.1, lookupNumsetListAddIfLt] at l1
       rw [h2.2.1, lookupNumsetListAddIfLt] at l2
       by_cases hm : r ∈ l
-      · rw [if_pos hm] at l1 l2
+      · rw [ite_eq_left hm] at l1 l2
         have a1 : v1 = n := by
           cases hl : sptLookup r beg with
           | some vr =>
@@ -1362,7 +1362,7 @@ theorem getIntervalsWithliveBegEqGetIntervalsBegWhenSome :
               rw [hl] at l2; simp [show n ≤ vr from this] at l2; omega
           | none => rw [hl] at l2; simp at l2; omega
         rw [a1, a2]
-      · rw [if_neg hm] at l1 l2
+      · rw [ite_eq_right hm] at l1 l2
         exact he r v1 v2 ⟨l1, l2⟩
   | reads l =>
       intro n beg beg' end_ n1 beg1 end1 n2 beg2 end2 live ⟨h1, h2, _, _, he⟩ r v1 v2 ⟨l1, l2⟩

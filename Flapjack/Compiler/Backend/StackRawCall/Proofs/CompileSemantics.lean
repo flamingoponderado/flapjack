@@ -103,7 +103,7 @@ theorem compileSemantics {width : Nat} [NeZero width] {C F : Type}
     apply nonFail
     rw [semantics_eq_aux]
     unfold semanticsAux
-    exact if_pos ⟨clock, bad⟩
+    exact ite_eq_left ⟨clock, bad⟩
   rw [semantics_eq_aux, semantics_eq_aux]
   apply semanticsAux_shift
   · exact good

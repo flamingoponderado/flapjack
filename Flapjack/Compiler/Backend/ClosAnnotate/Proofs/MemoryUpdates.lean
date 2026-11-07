@@ -40,16 +40,16 @@ theorem updateArray_related {C F : Type} (source target : State C F) (states : S
           have sameLength := fieldsRel.length_eq
           by_cases invalid : index < 0 ∨ index.toNat ≥ fields.length
           · refine ⟨.err (.abort .typeError), ?_, ?_⟩
-            · simp only [doApp, applyMemory, right, ← sameLength, if_pos invalid]
-            · simp only [doApp, applyMemory, left, if_pos invalid, AppResultRel, ResultRel]
+            · simp only [doApp, applyMemory, right, ← sameLength, ite_eq_left invalid]
+            · simp only [doApp, applyMemory, left, ite_eq_left invalid, AppResultRel, ResultRel]
           · have updated := Flapjack.forall₂_set _ fields nextFields value nextValue index.toNat ⟨valuesRel, fieldsRel⟩
             have nextStates := stateRel_updateRefFfi source target states ptr
               (.valueArray (fields.set index.toNat value)) (.valueArray (nextFields.set index.toNat nextValue))
               updated source.ffi
             refine ⟨.val (unitValue,
               { target with refs := target.refs.updateEq (ptr, .valueArray (nextFields.set index.toNat nextValue)) }), ?_, ?_⟩
-            · simp only [doApp, applyMemory, right, ← sameLength, if_neg invalid]
-            · simp only [doApp, applyMemory, left, if_neg invalid, AppResultRel]
+            · simp only [doApp, applyMemory, right, ← sameLength, ite_eq_right invalid]
+            · simp only [doApp, applyMemory, left, ite_eq_right invalid, AppResultRel]
               refine ⟨.block _ [] [] .nil, ?_⟩
               simpa [states.2.1] using nextStates
 
@@ -113,8 +113,8 @@ theorem updateByte_related {C F : Type} (source target : State C F) (states : St
           subst nextBytes
           by_cases invalid : index < 0 ∨ index.toNat ≥ bytes.length
           · refine ⟨.err (.abort .typeError), ?_, ?_⟩
-            · simp only [doApp, applyMemory, right, if_pos invalid]
-            · simp only [doApp, applyMemory, left, if_pos invalid, AppResultRel, ResultRel]
+            · simp only [doApp, applyMemory, right, ite_eq_left invalid]
+            · simp only [doApp, applyMemory, left, ite_eq_left invalid, AppResultRel, ResultRel]
           · cases decoded : intToByte byte with
             | none =>
               exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory, right, invalid, decoded], by
@@ -125,7 +125,7 @@ theorem updateByte_related {C F : Type} (source target : State C F) (states : St
               refine ⟨.val (unitValue,
                 { target with refs := target.refs.updateEq (ptr, .byteArray (bytes.set index.toNat b)) }), ?_, ?_⟩
               · simp [doApp, applyMemory, right, invalid, decoded]
-              · simp only [doApp, applyMemory, left, if_neg invalid, decoded, AppResultRel]
+              · simp only [doApp, applyMemory, left, ite_eq_right invalid, decoded, AppResultRel]
                 refine ⟨.block _ [] [] .nil, ?_⟩
                 simpa [states.2.1] using nextStates
 

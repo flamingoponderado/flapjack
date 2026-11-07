@@ -167,17 +167,17 @@ theorem ssaCcTransCorrectMove {width : Nat} [NeZero width] {C F : Type}
           (none, targetAfter) := by
         simp only [WordSemStateFiniteExact.evaluate,
           List.map_fst_zip (Nat.le_of_eq zipLengths),
-          List.map_snd_zip (Nat.le_of_eq zipLengths.symm), shape.1, if_true, targetReads]
+          List.map_snd_zip (Nat.le_of_eq zipLengths.symm), shape.1, ite_true, targetReads]
         rfl
       have sourceRun : WordSemStateFiniteExact.evaluate (.move priority moves) permuted =
           (none, sourceAfter) := by
         simp only [WordSemStateFiniteExact.evaluate]
         change (if names.Nodup then _ else _) = _
-        rw [if_pos distinct, read]
+        rw [ite_eq_left distinct, read]
       have sourceExpanded := sourceRun
       dsimp only [permuted] at sourceExpanded
       dsimp only
-      simp only [sourceRun, sourceExpanded, reduceCtorEq, if_false]
+      simp only [sourceRun, sourceExpanded, reduceCtorEq, ite_false]
       simp only [ssaCcTrans, show listNextVarRename (moves.map Prod.fst) ssa next =
         (outputs, mapOut, counter) from renamed]
       change none = (WordSemStateFiniteExact.evaluate

@@ -72,7 +72,7 @@ theorem checked_valueToFlat_related (genv : GlobalEnv) (ok : genvCOk genv.c)
             simp at checked
             rcases checked with h | h
             · subst name
-              simp only [FlatSem.valueToFlat, beq_self_eq_true, if_true]
+              simp only [FlatSem.valueToFlat, beq_self_eq_true, ite_true]
               apply ValueRel.constructor
               · exact .nil genv
               · simpa [FlatSem.boolValue, boolToTag, boolTypeNum] using ok.1.1

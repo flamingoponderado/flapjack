@@ -44,15 +44,15 @@ theorem callNoneInlCases {width : Nat} [NeZero width] {C F : Type} {start : Nat}
     simpa [StackSemControl.findCode] using hfind
   refine ⟨prog, hlook, ?_⟩
   by_cases h0 : s1.clock = 0
-  · rw [if_pos h0] at ev; simp only [Prod.mk.injEq] at ev
+  · rw [ite_eq_left h0] at ev; simp only [Prod.mk.injEq] at ev
     exact .inl ⟨h0, ev.1.symm, ev.2.symm⟩
-  rw [if_neg h0, StackSemEvaluateClock.fixClockEvaluate] at ev
+  rw [ite_eq_right h0, StackSemEvaluateClock.fixClockEvaluate] at ev
   rcases e2 : StackSemEvaluate.evaluate (prog, StackSemStateOps.decClock s1) with ⟨r, s'⟩
   rw [e2] at ev
   simp only at ev
   by_cases hbad : StackSemControl.badFunReturn r = true
-  · rw [if_pos hbad] at ev; simp only [Prod.mk.injEq] at ev; exact (nerr ev.1.symm).elim
-  rw [if_neg hbad] at ev
+  · rw [ite_eq_left hbad] at ev; simp only [Prod.mk.injEq] at ev; exact (nerr ev.1.symm).elim
+  rw [ite_eq_right hbad] at ev
   simp only [Prod.mk.injEq] at ev
   obtain ⟨rfl, rfl⟩ := ev
   obtain ⟨x, rfl⟩ := notBadFunReturnImpSome _ hbad
@@ -94,7 +94,7 @@ theorem flattenCallCorrect {width : Nat} [NeZero width] {C F : Type} {start : Na
   · -- clock zero: both sides time out at once
     refine ⟨0, .timeOut, { t1 with clock := t1.clock - 1 + 0 }, ?_, by simp, by simp, by simp,
       ?_, by simp, fun _ => rfl⟩
-    · rw [evaluate, if_pos (by simp; omega)]
+    · rw [evaluate, ite_eq_left (by simp; omega)]
     · simp [StackSemStateOps.emptyEnv, relFfi rel]
   obtain ⟨caP, pc', instP, entry⟩ := relCode rel hlook
   rw [hpc] at entry
@@ -132,7 +132,7 @@ theorem flattenCallCorrect {width : Nat} [NeZero width] {C F : Type} {start : Na
     cases entry2
     obtain ⟨ck', t3, h3⟩ := flattenPropAll prog2 s2 true (some (.halt (.word 0))) t n
       (StackAlloc.nextLabHOL prog2 2) [] [] t2 ⟨e3, by simp, rel2, caP2, instP2, by simp [hw']⟩
-    simp only [haltView, haltWordView, if_true] at h3
+    simp only [haltView, haltWordView, ite_true] at h3
     refine ⟨ck + ck', .halt .success, t3, ?_, by simp, by simp, fun _ _ => rfl, ?_, by simp,
       by simp⟩
     · have r1 := run ck'
@@ -166,7 +166,7 @@ theorem flattenCallCorrect {width : Nat} [NeZero width] {C F : Type} {start : Na
       hffi, by simp, fun _ => rfl⟩
     have r0 := run 0
     simp only [Nat.add_zero] at r0 ⊢
-    rw [r0, evaluate, if_pos (by simp [hclk])]
+    rw [r0, evaluate, ite_eq_left (by simp [hclk])]
   · -- `FinalFFI f`
     simp only [haltView] at h
     exact ⟨ck, _, t2, h.1, fun f' hf' => by simp only [Option.some.injEq,

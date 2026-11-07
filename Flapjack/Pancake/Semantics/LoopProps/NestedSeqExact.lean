@@ -25,10 +25,10 @@ theorem sptInsert_root_even {α : Type} {k : Nat} (h : k ≠ 0) (he : k % 2 = 0)
       | .bn l r => .bn (sptInsert ((k - 1) / 2) v l) r
       | .bs l e r => .bs (sptInsert ((k - 1) / 2) v l) e r := by
   cases t
-  · rw [sptInsert.eq_1, if_neg h, if_pos he]
-  · rw [sptInsert.eq_2, if_neg h, if_pos he]
-  · rw [sptInsert.eq_3, if_neg h, if_pos he]
-  · rw [sptInsert.eq_4, if_neg h, if_pos he]
+  · rw [sptInsert.eq_1, ite_eq_right h, ite_eq_left he]
+  · rw [sptInsert.eq_2, ite_eq_right h, ite_eq_left he]
+  · rw [sptInsert.eq_3, ite_eq_right h, ite_eq_left he]
+  · rw [sptInsert.eq_4, ite_eq_right h, ite_eq_left he]
 
 theorem sptInsert_root_odd {α : Type} {k : Nat} (h : k ≠ 0) (he : ¬ k % 2 = 0) (v : α) (t : Spt α) :
     sptInsert k v t = match t with
@@ -37,10 +37,10 @@ theorem sptInsert_root_odd {α : Type} {k : Nat} (h : k ≠ 0) (he : ¬ k % 2 = 
       | .bn l r => .bn l (sptInsert ((k - 1) / 2) v r)
       | .bs l e r => .bs l e (sptInsert ((k - 1) / 2) v r) := by
   cases t
-  · rw [sptInsert.eq_1, if_neg h, if_neg he]
-  · rw [sptInsert.eq_2, if_neg h, if_neg he]
-  · rw [sptInsert.eq_3, if_neg h, if_neg he]
-  · rw [sptInsert.eq_4, if_neg h, if_neg he]
+  · rw [sptInsert.eq_1, ite_eq_right h, ite_eq_right he]
+  · rw [sptInsert.eq_2, ite_eq_right h, ite_eq_right he]
+  · rw [sptInsert.eq_3, ite_eq_right h, ite_eq_right he]
+  · rw [sptInsert.eq_4, ite_eq_right h, ite_eq_right he]
 
 /-- `sptInsert` on distinct keys commutes structurally (HOL `sptree` tries are
     order-independent; cf. HOL `insert_swap`).  Local proof support, no tag. -/
@@ -231,7 +231,7 @@ theorem loop_eval_nested_assign_distinct_eq :
           apply locals_touched_eq_eval_eq
           refine ⟨rfl, rfl, rfl, rfl, rfl, fun m hm => ?_⟩
           simp only [setVar]
-          rw [sptLookup_sptInsert, if_neg (show ¬ m = n from fun h => hnt e' he' (h ▸ hm))]
+          rw [sptLookup_sptInsert, ite_eq_right (show ¬ m = n from fun h => hnt e' he' (h ▸ hm))]
         have hdist2 : distinctListsHol ns (es.map holLoopLocalsTouched).flatten = true := by
           rw [distinctListsHol_eq_true_iff_listDisjoint]
           intro x hx hy

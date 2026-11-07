@@ -56,7 +56,7 @@ theorem dfnLDRaw (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     by_cases hr1 : rs1 = 0 <;> simp_all [GPR, gpr]
   rw [hv, translateAddr_bare _ _ _ s hVM]
   simp only [«write'GPR», «write'gpr»]
-  rw [if_pos (by simpa [beq_iff_eq] using hrd)]
+  rw [ite_eq_left (by simpa [beq_iff_eq] using hrd)]
 
 /-- Untagged raw-result convenience equation; the source-expanded port is below. -/
 theorem dfnLWRaw (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
@@ -76,7 +76,7 @@ theorem dfnLWRaw (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     by_cases hr1 : rs1 = 0 <;> simp_all [GPR, gpr]
   rw [hv, translateAddr_bare _ _ _ s hVM]
   simp only [«write'GPR», «write'gpr»]
-  rw [if_pos (by simpa [beq_iff_eq] using hrd)]
+  rw [ite_eq_left (by simpa [beq_iff_eq] using hrd)]
 
 /-- Untagged raw-result convenience equation; the source-expanded port is below. -/
 theorem dfnLHRaw (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
@@ -96,7 +96,7 @@ theorem dfnLHRaw (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     by_cases hr1 : rs1 = 0 <;> simp_all [GPR, gpr]
   rw [hv, translateAddr_bare _ _ _ s hVM]
   simp only [«write'GPR», «write'gpr»]
-  rw [if_pos (by simpa [beq_iff_eq] using hrd)]
+  rw [ite_eq_left (by simpa [beq_iff_eq] using hrd)]
 
 /-- Untagged raw-result convenience equation; the source-expanded port is below. -/
 theorem dfnLBRaw (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
@@ -114,7 +114,7 @@ theorem dfnLBRaw (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     by_cases hr1 : rs1 = 0 <;> simp_all [GPR, gpr]
   rw [hv, translateAddr_bare _ _ _ s hVM]
   simp only [«write'GPR», «write'gpr»]
-  rw [if_pos (by simpa [beq_iff_eq] using hrd)]
+  rw [ite_eq_left (by simpa [beq_iff_eq] using hrd)]
 
 /-- Untagged raw-result convenience equation; the source-expanded port is below. -/
 theorem dfnLWURaw (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
@@ -138,7 +138,7 @@ theorem dfnLWURaw (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     by_cases hr1 : rs1 = 0 <;> simp_all [GPR, gpr]
   rw [hv, translateAddr_bare _ _ _ s hVM]
   simp only [«write'GPR», «write'gpr»]
-  rw [if_pos (by simpa [beq_iff_eq] using hrd)]
+  rw [ite_eq_left (by simpa [beq_iff_eq] using hrd)]
 
 /-- Untagged raw-result convenience equation; the source-expanded port is below. -/
 theorem dfnLHURaw (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
@@ -158,7 +158,7 @@ theorem dfnLHURaw (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     by_cases hr1 : rs1 = 0 <;> simp_all [GPR, gpr]
   rw [hv, translateAddr_bare _ _ _ s hVM]
   simp only [«write'GPR», «write'gpr»]
-  rw [if_pos (by simpa [beq_iff_eq] using hrd)]
+  rw [ite_eq_left (by simpa [beq_iff_eq] using hrd)]
 
 @[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "LD_NOP"]
 theorem dfnLDNop (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
@@ -234,7 +234,7 @@ theorem dfnLBURaw (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     by_cases hr1 : rs1 = 0 <;> simp_all [GPR, gpr]
   rw [hv, translateAddr_bare _ _ _ s hVM]
   simp only [«write'GPR», «write'gpr»]
-  rw [if_pos (by simpa [beq_iff_eq] using hrd)]
+  rw [ite_eq_left (by simpa [beq_iff_eq] using hrd)]
 
 @[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "LBU_NOP"]
 theorem dfnLBUNop (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
@@ -258,8 +258,8 @@ theorem dfnLD (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
   simp only [BitVec.extractLsb'_eq_self] at bytes
   rw [bytes]
   try { by_cases zero : rs1 = 0
-        · simp only [if_pos zero]
-        · simp only [if_neg zero] }
+        · simp only [ite_eq_left zero]
+        · simp only [ite_eq_right zero] }
 
 @[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "LW"]
 theorem dfnLW (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
@@ -276,8 +276,8 @@ theorem dfnLW (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
   rw [extract]
   rw [bytes]
   try { by_cases zero : rs1 = 0
-        · simp only [if_pos zero]
-        · simp only [if_neg zero] }
+        · simp only [ite_eq_left zero]
+        · simp only [ite_eq_right zero] }
 
 @[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "LH"]
 theorem dfnLH (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
@@ -294,8 +294,8 @@ theorem dfnLH (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
   rw [extract]
   rw [bytes]
   try { by_cases zero : rs1 = 0
-        · simp only [if_pos zero]
-        · simp only [if_neg zero] }
+        · simp only [ite_eq_left zero]
+        · simp only [ite_eq_right zero] }
 
 @[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "LB"]
 theorem dfnLB (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
@@ -312,8 +312,8 @@ theorem dfnLB (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
   rw [extract]
   rw [bytes]
   try { by_cases zero : rs1 = 0
-        · simp only [if_pos zero]
-        · simp only [if_neg zero] }
+        · simp only [ite_eq_left zero]
+        · simp only [ite_eq_right zero] }
 
 @[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "LWU"]
 theorem dfnLWU (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
@@ -332,8 +332,8 @@ theorem dfnLWU (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
   rw [extract]
   rw [bytes]
   try { by_cases zero : rs1 = 0
-        · simp only [if_pos zero]
-        · simp only [if_neg zero] }
+        · simp only [ite_eq_left zero]
+        · simp only [ite_eq_right zero] }
 
 @[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "LHU"]
 theorem dfnLHU (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
@@ -350,8 +350,8 @@ theorem dfnLHU (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
   rw [extract]
   rw [bytes]
   try { by_cases zero : rs1 = 0
-        · simp only [if_pos zero]
-        · simp only [if_neg zero] }
+        · simp only [ite_eq_left zero]
+        · simp only [ite_eq_right zero] }
 
 @[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "LBU"]
 theorem dfnLBU (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
@@ -368,7 +368,7 @@ theorem dfnLBU (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
   rw [extract]
   rw [bytes]
   try { by_cases zero : rs1 = 0
-        · simp only [if_pos zero]
-        · simp only [if_neg zero] }
+        · simp only [ite_eq_left zero]
+        · simp only [ite_eq_right zero] }
 
 end Flapjack.RiscV.L3.Step

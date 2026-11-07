@@ -59,7 +59,7 @@ theorem stateRelImpSemanticsCore {width : Nat} {σ : Type} [NeZero width]
     apply hnonfail
     unfold semantics
     dsimp only
-    rw [if_pos]
+    rw [ite_eq_left]
     exact ⟨clock, by rw [herror]; trivial⟩
   have observations (clock : Nat) :
       (evaluateHOLFiniteState { t with clock := clock } (.call none start [])).1 =
@@ -138,9 +138,9 @@ theorem evaluateDeclsCodeRel {width : Nat} {σ : Type} [NeZero width] :
       | some value =>
           simp only [he] at hev ⊢
           by_cases hs : shapeEqHOL shape (shapeOfHOLExact value) = true
-          · simp only [hs, if_true] at hev ⊢
+          · simp only [hs, ite_true] at hev ⊢
             exact evaluateDeclsCodeRel decls (setGlobalHOLFinite name value s) h c s' hc hev
-          · simp only [hs, Bool.false_eq_true, if_false] at hev
+          · simp only [hs, Bool.false_eq_true, ite_false] at hev
             exact absurd hev (by simp)
   | .function declaration :: decls, s, h, c, s', hc, hev => by
       simp only [evaluateDeclsHOLFinite] at hev
@@ -148,8 +148,8 @@ theorem evaluateDeclsCodeRel {width : Nat} {σ : Type} [NeZero width] :
       by_cases hwf : (declaration.params.all
             (fun parameter => isWfShapeExactHOL s.structs parameter.2) &&
           isWfShapeExactHOL s.structs declaration.returnShape) = true
-      · rw [if_pos hwf] at hev
-        rw [if_pos hwf]
+      · rw [ite_eq_left hwf] at hev
+        rw [ite_eq_left hwf]
         have hc' : CodeRel (s.code.update (declaration.name,
               (declaration.params, declaration.body, declaration.returnShape)))
             (c.update (declaration.name,
@@ -159,31 +159,31 @@ theorem evaluateDeclsCodeRel {width : Nat} {σ : Type} [NeZero width] :
           · simp only [HolFiniteMapExact.lookup_update, FUPDATE] at hf ⊢
             by_cases hn : declaration.name = f
             · simp [hn] at hf
-            · simp only [beq_iff_eq, hn, if_false] at hf ⊢
+            · simp only [beq_iff_eq, hn, ite_false] at hf ⊢
               exact hc.1 f hf
           · simp only [HolFiniteMapExact.lookup_update, FUPDATE] at hf ⊢
             by_cases hn : declaration.name = f
-            · simp only [hn, beq_self_eq_true, if_true, Option.some.injEq,
+            · simp only [hn, beq_self_eq_true, ite_true, Option.some.injEq,
                 Prod.mk.injEq] at hf ⊢
               obtain ⟨rfl, rfl, rfl⟩ := hf
               exact ⟨rfl, rfl, rfl⟩
-            · simp only [beq_iff_eq, hn, if_false] at hf ⊢
+            · simp only [beq_iff_eq, hn, ite_false] at hf ⊢
               exact hc.2 f vshs prog rshape hf
         exact evaluateDeclsCodeRel decls
           { s with code := s.code.update (declaration.name,
             (declaration.params, declaration.body, declaration.returnShape)) } h _ s' hc' hev
-      · rw [if_neg hwf] at hev
+      · rw [ite_eq_right hwf] at hev
         exact absurd hev (by simp)
   | .exnDecl exceptionName shape :: decls, s, h, c, s', hc, hev => by
       simp only [evaluateDeclsHOLFinite] at hev
       simp only [panSimpDeclsHOL, evaluateDeclsHOLFinite]
       by_cases hok : ((s.eshapes.lookup exceptionName).isNone &&
           isWfShapeExactHOL s.structs shape) = true
-      · rw [if_pos hok] at hev
-        rw [if_pos hok]
+      · rw [ite_eq_left hok] at hev
+        rw [ite_eq_left hok]
         exact evaluateDeclsCodeRel decls
           { s with eshapes := s.eshapes.update (exceptionName, shape) } h c s' hc hev
-      · rw [if_neg hok] at hev
+      · rw [ite_eq_right hok] at hev
         exact absurd hev (by simp)
 
 /-- Original pan_simp `state_rel_imp_evaluate_decls`. The memory-domain

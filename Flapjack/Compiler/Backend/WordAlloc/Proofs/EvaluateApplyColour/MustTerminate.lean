@@ -42,14 +42,14 @@ theorem evaluateApplyColour_MustTerminate {width : Nat} [NeZero width] {C F : Ty
     dsimp only at hp
     refine ⟨perm, ?_⟩
     rw [evaluate]
-    simp only [dif_neg hz]
+    simp only [dite_eq_right hz]
     have hein : evaluate body
         { { st with permute := perm } with clock := wordSemMustTerminateLimit width, termdep := st.termdep - 1 } = (res, rs) := he
     rw [hein]
     by_cases herr : res = some .error
     · subst res
       simp
-    · rw [if_neg herr] at hp
+    · rw [ite_eq_right herr] at hp
       rcases hec : evaluate (applyColour f body) cs with ⟨resc, rcs⟩
       rw [hec] at hp
       dsimp only at hp
@@ -59,7 +59,7 @@ theorem evaluateApplyColour_MustTerminate {width : Nat} [NeZero width] {C F : Ty
       | none =>
           simp only [applyColour]
           rw [evaluate]
-          simp only [hdep, dif_neg hz]
+          simp only [hdep, dite_eq_right hz]
           rw [show evaluate (applyColour f body)
             { cst with clock := wordSemMustTerminateLimit width, termdep := st.termdep - 1 }
               = (none, rcs) by simpa only [cs, hdep] using hec]
@@ -71,7 +71,7 @@ theorem evaluateApplyColour_MustTerminate {width : Nat} [NeZero width] {C F : Ty
           | _ =>
               simp only [applyColour]
               rw [evaluate]
-              simp only [hdep, dif_neg hz]
+              simp only [hdep, dite_eq_right hz]
               rw [show evaluate (applyColour f body)
                 { cst with clock := wordSemMustTerminateLimit width, termdep := st.termdep - 1 }
                   = (_, rcs) by simpa only [cs, hdep] using hec]

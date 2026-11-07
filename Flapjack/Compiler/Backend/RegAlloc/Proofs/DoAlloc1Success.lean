@@ -87,14 +87,14 @@ private theorem isFixedK_ok {s : State} (hg : goodRaState s) (k : Nat) {x : Nat}
     (hx : x < s.dim) : ∃ b, isFixedK k x s = (.success b, s) := by
   have hl : x < s.node_tag.length := by rw [hg.2.1]; exact hx
   refine ⟨match holEl x s.node_tag with | .Fixed n => decide (n < k) | _ => false, ?_⟩
-  simp only [isFixedK, Translator.Monadic.MonadBase.bind, nodeTagSubEqn, if_pos hl, ret]
+  simp only [isFixedK, Translator.Monadic.MonadBase.bind, nodeTagSubEqn, ite_eq_left hl, ret]
   rfl
 
 private theorem isAtemp_ok {s : State} (hg : goodRaState s) {x : Nat} (hx : x < s.dim) :
     ∃ b, isAtemp x s = (.success b, s) := by
   have hl : x < s.node_tag.length := by rw [hg.2.1]; exact hx
   exact ⟨decide (holEl x s.node_tag = .Atemp), by
-    simp only [isAtemp, Translator.Monadic.MonadBase.bind, nodeTagSubEqn, if_pos hl, ret]⟩
+    simp only [isAtemp, Translator.Monadic.MonadBase.bind, nodeTagSubEqn, ite_eq_left hl, ret]⟩
 
 /-- Exact HOL `full_consistency_ok_success` (`reg_allocProofScript.sml:2879-2891`); `k` is
 free in HOL. -/
@@ -107,24 +107,24 @@ theorem fullConsistencyOkSuccess (k : Nat) :
   intro x y s hg
   unfold fullConsistencyOk
   by_cases hxy : x = y
-  · exact ⟨false, by rw [if_pos hxy]; rfl, fun h => by cases h⟩
-  rw [if_neg hxy]
+  · exact ⟨false, by rw [ite_eq_left hxy]; rfl, fun h => by cases h⟩
+  rw [ite_eq_right hxy]
   by_cases hb : x ≥ s.dim ∨ y ≥ s.dim
-  · exact ⟨false, by simp only [Translator.Monadic.MonadBase.bind, getDim, if_pos hb, ret],
+  · exact ⟨false, by simp only [Translator.Monadic.MonadBase.bind, getDim, ite_eq_left hb, ret],
       fun h => by cases h⟩
   have hx : x < s.dim := by omega
   have hy : y < s.dim := by omega
   have hyl : y < s.adj_ls.length := by rw [hg.1]; exact hy
   by_cases hm : sortedMem x (holEl y s.adj_ls) = true
-  · exact ⟨false, by simp only [Translator.Monadic.MonadBase.bind, getDim, if_neg hb, adjLsSubEqn,
-      if_pos hyl, if_pos hm, ret], fun h => by cases h⟩
+  · exact ⟨false, by simp only [Translator.Monadic.MonadBase.bind, getDim, ite_eq_right hb, adjLsSubEqn,
+      ite_eq_left hyl, ite_eq_left hm, ret], fun h => by cases h⟩
   obtain ⟨bx, hbx⟩ := isFixedK_ok hg k hx
   obtain ⟨by_, hby⟩ := isFixedK_ok hg k hy
   obtain ⟨ax, hax⟩ := isAtemp_ok hg hx
   obtain ⟨ay, hay⟩ := isAtemp_ok hg hy
   exact ⟨(bx || ax) && (by_ || ay) && !(bx && by_), by
-    simp only [Translator.Monadic.MonadBase.bind, getDim, if_neg hb, adjLsSubEqn, if_pos hyl,
-      if_neg hm, hbx, hby, hax, hay, ret], fun _ => ⟨hx, hy⟩⟩
+    simp only [Translator.Monadic.MonadBase.bind, getDim, ite_eq_right hb, adjLsSubEqn, ite_eq_left hyl,
+      ite_eq_right hm, hbx, hby, hax, hay, ret], fun _ => ⟨hx, hy⟩⟩
 
 /-- Exact HOL `st_ex_FILTER_full_consistency_ok` (`reg_allocProofScript.sml:2893-2916`); `k`
 is free in HOL. -/
@@ -146,7 +146,7 @@ theorem stExFilterFullConsistencyOk {α : Type} (k : Nat) :
       | true =>
           obtain ⟨ts, hts, hmem⟩ := ih (m :: acc) s hg
           refine ⟨ts, ?_, fun m' hm' => ?_⟩
-          · simp only [stExFilter, Translator.Monadic.MonadBase.bind, hrun, if_true]
+          · simp only [stExFilter, Translator.Monadic.MonadBase.bind, hrun, ite_true]
             exact hts
           rcases hmem m' hm' with h | h
           · exact Or.inl h
@@ -176,7 +176,7 @@ private theorem filter_isAtemp (s : State) (hg : goodRaState s) :
             · exact hv
             · exact hacc w hw)
           refine ⟨ts, ?_, htb⟩
-          simp only [stExFilter, Translator.Monadic.MonadBase.bind, hrun, if_true]
+          simp only [stExFilter, Translator.Monadic.MonadBase.bind, hrun, ite_true]
           exact hts
       | false =>
           obtain ⟨ts, hts, htb⟩ := filter_isAtemp s hg vs acc hvs hacc
@@ -208,7 +208,7 @@ private theorem foreach_init_degrees (k : Nat) :
         (fun v hv => hb v (List.mem_cons_of_mem _ hv))
       refine ⟨d, ?_, hdl.trans (List.length_set ..)⟩
       simp only [stExForeach, ignoreBind, Translator.Monadic.MonadBase.bind, adjLsSubEqn,
-        if_pos hil, hf, updateDegreesEqn, if_pos hid]
+        ite_eq_left hil, hf, updateDegreesEqn, ite_eq_left hid]
       exact hd
 
 private theorem good_coalesced' {s : State} {c : List Nat} (h : goodRaState s)
@@ -234,7 +234,7 @@ private theorem foreach_upd_coalesce :
       obtain ⟨coal, hc, hgc⟩ := foreach_upd_coalesce is _ hg'
         (fun v hv => hb v (List.mem_cons_of_mem _ hv))
       refine ⟨coal, ?_, hgc⟩
-      simp only [stExForeach, ignoreBind, doUpdCoalesce, updateCoalescedEqn, if_pos hic]
+      simp only [stExForeach, ignoreBind, doUpdCoalesce, updateCoalescedEqn, ite_eq_left hic]
       exact hc
 
 /-- Exact HOL `do_alloc1_success` (`reg_allocProofScript.sml:2918-3022`); `s`, `moves`,

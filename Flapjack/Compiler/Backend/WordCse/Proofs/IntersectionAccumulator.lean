@@ -38,12 +38,12 @@ theorem bmInterEqAccThm {α : Type} [DecidableEq α] (m2 m1 acc : Map (List Nat)
           else (toFmap listCmp acc).lookup ks := by
       by_cases hk : lookup listCmp k m2 = some v
       · have ins := insertThm listCmp k v acc ⟨goodCmpListCmp, hacc⟩
-        simp only [hk, if_true, and_true]
+        simp only [hk, ite_true, and_true]
         refine ⟨ins.1, fun ks => ?_⟩
         rw [ins.2]
         simp only [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL]
-      · rw [if_neg hk]
-        exact ⟨hacc, fun ks => by rw [if_neg (fun h => hk h.2)]⟩
+      · rw [ite_eq_right hk]
+        exact ⟨hacc, fun ks => by rw [ite_eq_right (fun h => hk h.2)]⟩
     obtain ⟨vr, er⟩ := ihr _ hr hacc1.1
     obtain ⟨vl, el⟩ := ihl _ hl vr
     refine ⟨vl, fun ks => ?_⟩
@@ -61,8 +61,8 @@ theorem bmInterEqAccThm {α : Type} [DecidableEq α] (m2 m1 acc : Map (List Nat)
       have hrn : (toFmap listCmp r).lookup (keySet listCmp k) = none := by
         by_contra hne
         exact clauses.2.2.1 goodCmpListCmp hne
-      simp only [hln, hrn, if_true, true_and, hm2]
-    · simp only [hks, if_false, false_and]
+      simp only [hln, hrn, ite_true, true_and, hm2]
+    · simp only [hks, ite_false, false_and]
       cases hlk : (toFmap listCmp l).lookup ks with
       | none => simp only []
       | some w =>
@@ -91,11 +91,11 @@ theorem lookupBmInterEq {α : Type} [DecidableEq α] (m1 m2 : Map (List Nat) α)
   | none => simp [h0]
   | some w =>
     by_cases h2 : (toFmap listCmp m2).lookup (keySet listCmp k) = some w
-    · simp only [h2, if_true, Option.some.injEq]
+    · simp only [h2, ite_true, Option.some.injEq]
       constructor
       · rintro rfl; exact ⟨rfl, rfl⟩
       · rintro ⟨rfl, -⟩; rfl
-    · simp only [h2, if_false, h0, reduceCtorEq, false_iff, not_and, Option.some.injEq]
+    · simp only [h2, ite_false, h0, reduceCtorEq, false_iff, not_and, Option.some.injEq]
       rintro rfl; exact h2
 
 end Flapjack.Compiler.Backend.WordCse

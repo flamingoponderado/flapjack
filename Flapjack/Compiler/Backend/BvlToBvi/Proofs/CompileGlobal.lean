@@ -98,7 +98,7 @@ theorem stateRel_setGlobal {C F : Type} (relocate : Nat → Nat)
   have same : other = ptr := by rw [globalPtr] at otherPtr; exact Option.some.inj otherPtr.symm
   subst other
   refine ⟨separate, size, ?_, by simpa using sizeBound⟩
-  simp only [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, if_true, Option.some.injEq, BvlSem.Ref.valueArray.injEq]
+  simp only [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, ite_true, Option.some.injEq, BvlSem.Ref.valueArray.injEq]
   simp [fields, List.map_set]
   apply List.set_append_left
   simpa using bound

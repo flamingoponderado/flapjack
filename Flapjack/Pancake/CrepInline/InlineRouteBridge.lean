@@ -45,10 +45,10 @@ theorem inlineProgHOLCoreExact_lookup_none {width : Nat} [NeZero width]
       supportKeys₂ support₂ h
     exact absurd (hl.symm.trans (h name)) (by simp)
   · intro inlineable supportKeys support_spec returnNames name arguments hd supportKeys₂ support₂ h
-    simp only [inlineProgHOLCoreExact, hd, if_true]
+    simp only [inlineProgHOLCoreExact, hd, ite_true]
   · intro inlineable supportKeys support_spec returnNames name arguments hd hl supportKeys₂ support₂ h
     simp only [inlineProgHOLCoreExact]
-    simp only [if_neg hd]
+    simp only [ite_eq_right hd]
     rw [hl]
   · intro inlineable supportKeys support_spec returnNames name arguments hd argumentNames body hl ih
       supportKeys₂ support₂ h
@@ -267,7 +267,7 @@ theorem filter_names_toStringOfBytes {l1 : List FunName} {l2 : List CrepInlineMa
       simp only [List.map_cons, List.filter_cons]
       rw [hcond]
       by_cases hc : inl_fname.contains m
-      · simp only [hc, if_true]
+      · simp only [hc, ite_true]
         exact congrArg (toStringOfBytes m :: ·) (ih hsub)
       · simp only [hc]
         exact ih hsub
@@ -408,7 +408,7 @@ private theorem erase_range {width : Nat} [NeZero width]
   by_cases hk : (name == k) = true
   · rw [hk] at h; simp at h
   · rw [Bool.not_eq_true] at hk
-    rw [hk] at h; simp only [Bool.false_eq_true, if_false, FLOOKUP] at h
+    rw [hk] at h; simp only [Bool.false_eq_true, ite_false, FLOOKUP] at h
     exact hrange k v (by simpa using h)
 
 /-- `FUPDATE_LIST` can only return a value that is either in the entries or in the
@@ -425,9 +425,9 @@ theorem flookup_fupdateList_exists {α β : Type} [BEq α] [LawfulBEq α]
       · exact Or.inl ⟨t, by simp [ht], h1, h2⟩
       · rw [FLOOKUP_update] at hrest
         by_cases hb : (entry.1 == k) = true
-        · rw [if_pos hb] at hrest
+        · rw [ite_eq_left hb] at hrest
           exact Or.inl ⟨entry, by simp, beq_iff_eq.mp hb, Option.some.inj hrest⟩
-        · rw [if_neg hb] at hrest
+        · rw [ite_eq_right hb] at hrest
           exact Or.inr hrest
 
 /-- Any successful lookup in an exact alist map is witnessed by one of the entries.

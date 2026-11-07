@@ -89,7 +89,7 @@ theorem partialHeapLookup_middle {α β : Type} (heap old current refs : List (H
     heapLookup (ptr - start) current = some element := by
   obtain ⟨heapEq, oldLen, endLen, _⟩ := heapSegment_imp heap start finish old current refs segment
   rw [← heapEq, List.append_assoc, GenGc.heapLookup_append, oldLen,
-    if_neg (Nat.not_lt.mpr lower), GenGc.heapLookup_append] at found
+    ite_eq_right (Nat.not_lt.mpr lower), GenGc.heapLookup_append] at found
   have inside : ptr - start < heapLength current := by
     rw [heapLength_append, oldLen] at endLen
     omega
@@ -210,7 +210,7 @@ theorem wordGenGcPartialMove_outside {width : Nat} [NeZero width] (conf : Config
     exact outside.elim (fun h => Or.inl (less.1.mpr h)) (fun h => Or.inr (more.2.mpr h))
   have low' : getAddr conf ptr value &&& (1 : BitVec width) ≠ 0 := by
     simpa [BitVec.and_comm] using low
-  simp only [wordAddr, wordGenGcPartialMove, low', if_false, outsideWord, if_true, Prod.mk.injEq] at wordRun
+  simp only [wordAddr, wordGenGcPartialMove, low', ite_false, outsideWord, ite_true, Prod.mk.injEq] at wordRun
   obtain ⟨rfl, rfl, rfl, rfl, rfl⟩ := wordRun
   refine ⟨xs, current, ?_, rfl, rfl, segment, rfl, rfl, length.symm, ?_, ?_⟩
   · simpa [h2Empty, wordHeap, partialStarEmptyRight] using separated
@@ -310,9 +310,9 @@ theorem wordGenGcPartialMove_forward {width : Nat} [NeZero width] (conf : Config
   have addr' : ptrToAddr conf curr (getAddr conf ptr value) =
       curr + wordSemBytesInWord * BitVec.ofNat width ptr := by
     simpa only [BitVec.mul_comm] using address
-  simp only [wordAddr, wordGenGcPartialMove, low', if_false, inWord] at wordRun
+  simp only [wordAddr, wordGenGcPartialMove, low', ite_false, inWord] at wordRun
   simp only [addr', read.1, read.2,
-    partialShiftedForward_isForward, if_true, wordSemTheWord, Prod.mk.injEq] at wordRun
+    partialShiftedForward_isForward, ite_true, wordSemTheWord, Prod.mk.injEq] at wordRun
   obtain ⟨rfl, rfl, rfl, rfl, rfl⟩ := wordRun
   refine ⟨xs, current, ?_, ?_, rfl, segment, rfl, rfl, length.symm, ?_, ?_⟩
   · simpa [h2Empty, wordHeap, partialStarEmptyRight] using separated
@@ -437,7 +437,7 @@ theorem wordGenGcPartialMove_copy {width : Nat} [NeZero width] (conf : Config)
     simpa only [src, BitVec.mul_comm] using ptrToAddr_getAddr conf curr ptr value ptrBound
   have notForward : wordSemIsFwdPtr (.word header) = false :=
     wordPayload_not_fwdPtr conf addresses len tag payload header words true encoded
-  simp only [wordAddr, wordGenGcPartialMove, low, if_false, inWord] at wordRun
+  simp only [wordAddr, wordGenGcPartialMove, low, ite_false, inWord] at wordRun
   simp only [address, read.1, read.2, notForward, Bool.false_eq_true, ↓reduceIte,
     wordSemTheWord, wordSemIsWordLoc, Bool.true_and, decoded] at wordRun
   generalize copyRun : memcpy (BitVec.ofNat width words.length + 1) src pa memory domain = copyResult at wordRun
@@ -456,7 +456,7 @@ theorem wordGenGcPartialMove_copy {width : Nat} [NeZero width] (conf : Config)
       (.word (updateAddr conf (BitVec.ofNat width state.a) (getAddr conf (ptr - genConf.genStart) value)),
         BitVec.ofNat width state.a + BitVec.ofNat width words.length + 1,
         copyEnd, gcUpdate src (.word (BitVec.ofNat width state.a <<< (2 : Nat))) copyMemory, copyOk) := by
-    simp only [wordAddr, wordGcMove, if_neg relLow, relAddr, read.1, read.2, notForward,
+    simp only [wordAddr, wordGcMove, ite_eq_right relLow, relAddr, read.1, read.2, notForward,
       Bool.false_eq_true, ↓reduceIte, wordSemTheWord, wordSemIsWordLoc, Bool.true_and, decoded, copyRun]
   have forwardCurrent (ok : Bool) : gcForwardPtr (ptr - genConf.genStart) current state.a value ok =
       (before ++ .forwardPointer state.a value len :: after, ok) := by

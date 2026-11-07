@@ -122,7 +122,7 @@ theorem getForcedInClashTreeAcc {width : Nat} [NeZero width] (c : AsmConfigExact
       all_goals first
         | omega
         | (have h64 : width ≠ 64 := by omega
-           simp only [h64, if_false, inClashTree, List.mem_cons, List.mem_nil_iff, or_false]
+           simp only [h64, ite_false, inClashTree, List.mem_cons, List.mem_nil_iff, or_false]
            omega)
 
 /-- HOL `get_forced_in_get_clash_tree` (`word_allocProofScript.sml:3337-3375`):

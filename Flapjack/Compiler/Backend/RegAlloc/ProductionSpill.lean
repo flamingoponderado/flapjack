@@ -124,7 +124,7 @@ theorem doSpill_production (entries : Option (NatInfoMap Nat)) (limit : Nat)
     refine ⟨result, ?_, ?_⟩
     · rw [actual]
       simp only [doSpill, Translator.Monadic.MonadBase.bind, getSpillWl, getDim, spills,
-        degreesSubEqn, if_pos degreeBound, holEl_eq_getElem node native.degrees degreeBound]
+        degreesSubEqn, ite_eq_left degreeBound, holEl_eq_getElem node native.degrees degreeBound]
       cases entries <;> simp only [Option.map_none, Option.map_some] at selectorRun ⊢
       all_goals rw [selectorRun]; exact continuationRun
     · simpa only [actual] using finalRel

@@ -36,7 +36,7 @@ theorem fullReadBitmapAppend {bitmapWidth : Nat} {width : Nat}
   | word word =>
       by_cases hz : word = 0
       · simp [fullReadBitmap, hz] at h
-      · simp only [fullReadBitmap, if_neg hz] at h ⊢
+      · simp only [fullReadBitmap, ite_eq_right hz] at h ⊢
         have hb : (word - 1).toNat ≤ bitmaps.length := by
           by_cases hb : (word - 1).toNat ≤ bitmaps.length
           · exact hb

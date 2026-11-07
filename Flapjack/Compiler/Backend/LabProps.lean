@@ -419,9 +419,9 @@ theorem flatten_seq_lines_all {Asm Memop Addr Cmp RegImm MlString Word : Type}
           have ih1' : xs.all P = true := by simpa [h1] using ih1 next
           have ih2' : ys.all P = true := by simpa [h2] using ih2 nx
           by_cases ht : tail
-          · simp only [ht, if_true, List.all_append, List.all_cons, List.all_nil, ih1', ih2', hlabel]
+          · simp only [ht, ite_true, List.all_append, List.all_cons, List.all_nil, ih1', ih2', hlabel]
             decide
-          · simp only [ht, Bool.false_eq_true, if_false, List.all_append, ih1', ih2']
+          · simp only [ht, Bool.false_eq_true, ite_false, List.all_append, ih1', ih2']
             decide
 
 theorem flatten_loop_lines_all {Asm Memop Addr Cmp RegImm MlString Word : Type}
@@ -475,27 +475,27 @@ theorem flatten_ite_lines_all (config : Flapjack.Compiler.Encoders.Asm.AsmConfig
           have ihT : xs.all (lineOkPreConfig config) = true := by simpa only [h1] using ihThen next
           have ihE : ys.all (lineOkPreConfig config) = true := by simpa only [h2] using ihElse nx
           by_cases hc1 : (StackToLab.stackIsSkip thenBranch && StackToLab.stackIsSkip elseBranch) = true
-          · simp only [if_pos hc1]
+          · simp only [ite_eq_left hc1]
             rfl
           · by_cases hc2 : StackToLab.stackIsSkip thenBranch = true
-            · simp only [if_neg hc1, if_pos hc2, List.all_append, List.all_cons, List.all_nil,
+            · simp only [ite_eq_right hc1, ite_eq_left hc2, List.all_append, List.all_cons, List.all_nil,
                 ihE, lineOkPreConfig_labAsm, lineOkPreConfig_label]
               rfl
             · by_cases hc3 : StackToLab.stackIsSkip elseBranch = true
-              · simp only [if_neg hc1, if_neg hc2, if_pos hc3, List.all_append, List.all_cons,
+              · simp only [ite_eq_right hc1, ite_eq_right hc2, ite_eq_left hc3, List.all_append, List.all_cons,
                   List.all_nil, ihT, lineOkPreConfig_labAsm, lineOkPreConfig_label]
                 rfl
               · by_cases hc4 : nr1 = true
-                · simp only [if_neg hc1, if_neg hc2, if_neg hc3, if_pos hc4, List.all_append,
+                · simp only [ite_eq_right hc1, ite_eq_right hc2, ite_eq_right hc3, ite_eq_left hc4, List.all_append,
                     List.all_cons, List.all_nil, ihT, ihE, lineOkPreConfig_labAsm,
                     lineOkPreConfig_label]
                   rfl
                 · by_cases hc5 : nr2 = true
-                  · simp only [if_neg hc1, if_neg hc2, if_neg hc3, if_neg hc4, if_pos hc5,
+                  · simp only [ite_eq_right hc1, ite_eq_right hc2, ite_eq_right hc3, ite_eq_right hc4, ite_eq_left hc5,
                       List.all_append, List.all_cons, List.all_nil, ihT, ihE,
                       lineOkPreConfig_labAsm, lineOkPreConfig_label]
                     rfl
-                  · simp only [if_neg hc1, if_neg hc2, if_neg hc3, if_neg hc4, if_neg hc5,
+                  · simp only [ite_eq_right hc1, ite_eq_right hc2, ite_eq_right hc3, ite_eq_right hc4, ite_eq_right hc5,
                       List.all_append, List.all_cons, List.all_nil, ihT, ihE,
                       lineOkPreConfig_labAsm, lineOkPreConfig_label]
                     rfl

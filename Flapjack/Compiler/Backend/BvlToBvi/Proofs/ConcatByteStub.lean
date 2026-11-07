@@ -106,7 +106,7 @@ theorem evaluate_concatByte_cons {C F : Type} (src dst n : Nat) (flag dstFlag : 
   have updatedCode : sptLookup concatByteLocation updated.code = some concatByteCode := by simpa [updated] using code
   have nonzero : updated.clock ≠ 0 := by simpa [updated] using clock
   simp only [BvlSem.findCode, updatedCode, concatByteCode, List.length_cons, List.length_nil, ite_true,
-    Nat.zero_add, Nat.lt_one_iff, nonzero, if_false, BviSem.fixClock_evaluate]
+    Nat.zero_add, Nat.lt_one_iff, nonzero, ite_false, BviSem.fixClock_evaluate]
   have recRun := recursive
   simp [concatByteCode] at recRun
   simp [updated, recRun]

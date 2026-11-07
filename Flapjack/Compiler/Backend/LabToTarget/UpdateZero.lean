@@ -36,7 +36,7 @@ theorem linesUpdLabLen_encd0LabelZero {width : Nat} [NeZero width]
     have ht : ∀ line ∈ xs, lineEncd0 c.encode line := fun l hm => hls l (by simp [hm])
     cases x with
     | label k1 k2 len =>
-      simp only [linesUpdLabLen,if_pos hp,Nat.add_zero]
+      simp only [linesUpdLabLen,ite_eq_left hp,Nat.add_zero]
       exact ih pos (.label k1 k2 0 :: aux) ht hp (by simpa [labelZero] using ha)
     | asm a bs len =>
       have he : len % 2 = 0 := by

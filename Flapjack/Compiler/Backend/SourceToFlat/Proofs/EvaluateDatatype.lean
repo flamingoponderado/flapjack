@@ -1276,7 +1276,7 @@ theorem factoredDecIH_dtype {C F : Type} [Nonempty C]
       rw [sourceRun] at bad
       exact False.elim (notTypeError (Prod.mk.inj bad).2)
   have sourceEq := sourceRun
-  simp only [EvaluateHOL.evaluateDecs, checked, if_true, Prod.mk.injEq] at sourceEq
+  simp only [EvaluateHOL.evaluateDecs, checked, ite_true, Prod.mk.injEq] at sourceEq
   obtain ⟨stateEq, resultEq⟩ := sourceEq
   subst sourceLast
   subst result

@@ -71,7 +71,7 @@ private theorem passStepAux (st0 : LinearScanState) (sth : LinearScanHiddenState
     exact ⟨r, rfl, hfm r hr⟩
   cases usePhy with
   | true =>
-    simp only [if_true]
+    simp only [ite_true]
     refine linearRegAllocStepAuxInvariants st0 sth l preferred _ forced reg force mincol
       ⟨hnl, hg0, hreg, ?_, ?_, ?_, hbe⟩
     · intro reg2 h
@@ -86,7 +86,7 @@ private theorem passStepAux (st0 : LinearScanState) (sth : LinearScanHiddenState
         exact ⟨r, h1, h2⟩
       · exact hffsub c hc
   | false =>
-    simp only [Bool.false_eq_true, if_false]
+    simp only [Bool.false_eq_true, ite_false]
     exact linearRegAllocStepAuxInvariants st0 sth l preferred _ forced reg force mincol
       ⟨hnl, hg0, hreg, hff, fun h => absurd (hphy ▸ h) (by simp), hffsub, hbe⟩
 
@@ -137,9 +137,9 @@ theorem linearRegAllocStepPass1Invariants :
     exact ⟨stout, sthout, hrun, hgood, hl, hb, he, hcol, by rw [hmax, hmax0],
       by rw [← hmax0]; exact hle⟩
   simp only [linearRegAllocStepPass1, Translator.Monadic.MonadBase.bind, intBegSubEqn,
-    if_pos hrb, intEndSubEqn, if_pos hre, ← hrun0]
+    ite_eq_left hrb, intEndSubEqn, ite_eq_left hre, ← hrun0]
   by_cases hstack : isStackVar reg = true
-  · rw [if_pos hstack]
+  · rw [ite_eq_left hstack]
     have hnphy : isPhyVar reg = false := by
       simp only [isStackVar, isPhyVar, decide_eq_true_eq] at hstack ⊢
       exact decide_eq_false (by omega)
@@ -153,12 +153,12 @@ theorem linearRegAllocStepPass1Invariants :
     rw [hmax] at hle ⊢
     rw [← hcol r e]
     exact hps r ⟨hrl, hp, hle⟩
-  · rw [if_neg hstack]
+  · rw [ite_eq_right hstack]
     simp only [Translator.Monadic.MonadBase.bind, stExMapColorsSub _ sth hfb]
     by_cases hp : isPhyVar reg = true
-    · rw [if_pos hp]
+    · rw [ite_eq_left hp]
       by_cases hlt : reg < 2 * st0.colormax
-      · rw [if_pos hlt]
+      · rw [ite_eq_left hlt]
         obtain ⟨stout, sthout, hrun, hgood, hl, hb, he, hc1, hc2, hmax⟩ :=
           passStepAux st0 sth l [] forced_adj forced reg true mincol true hnl hg0 hreg hfl hfm
             hbe hp
@@ -169,7 +169,7 @@ theorem linearRegAllocStepPass1Invariants :
         rw [hmax, hmax0] at hle ⊢
         rw [hc2 r ⟨hrl, hrp⟩]
         exact hps r ⟨hrl, hrp, hle⟩
-      · rw [if_neg hlt]
+      · rw [ite_eq_right hlt]
         obtain ⟨stout, sthout, hrun, hgood, hl, hb, he, hcol, hmax, hle⟩ := spillCase
         refine ⟨stout, sthout, hrun, hgood, hl, hb, he,
           fun r hr => (hcol r fun e => hr (e ▸ List.mem_cons_self)).symm,
@@ -182,7 +182,7 @@ theorem linearRegAllocStepPass1Invariants :
           rw [hmax] at hle'
           rw [← hcol r e]
           exact hps r ⟨hrl, hrp, hle'⟩
-    · rw [if_neg hp]
+    · rw [ite_eq_right hp]
       simp only [Translator.Monadic.MonadBase.bind, stExMapColorsSub _ sth hmb]
       obtain ⟨stout, sthout, hrun, hgood, hl, hb, he, hc1, hc2, hmax⟩ :=
         passStepAux st0 sth l _ forced_adj forced reg false mincol false hnl hg0 hreg hfl hfm
@@ -227,15 +227,15 @@ theorem linearRegAllocStepPass2Invariants :
   have hrb : reg < sth.int_beg.length := by rw [g.lenBeg]; exact hreg
   have hre : reg < sth.int_end.length := by rw [g.lenEnd]; exact hreg
   simp only [linearRegAllocStepPass2, Translator.Monadic.MonadBase.bind, intBegSubEqn,
-    if_pos hrb, intEndSubEqn, if_pos hre, ← hrun0, stExMapColorsSub _ sth hfb,
+    ite_eq_left hrb, intEndSubEqn, ite_eq_left hre, ← hrun0, stExMapColorsSub _ sth hfb,
     stExMapColorsSub _ sth hmb, ret]
   by_cases hp : isPhyVar reg = true
-  · rw [if_pos hp]
+  · rw [ite_eq_left hp]
     obtain ⟨stout, sthout, hrun, hgood, hl, hb, he, hc1, hc2, hmax⟩ :=
       passStepAux st0 sth l [] forced_adj forced reg false mincol true hnl hg0 hreg hfl hfm
         hbe hp
     exact ⟨stout, sthout, hrun, hgood, hl, hb, he, hc1, hc2, by rw [hmax, hmax0]⟩
-  · rw [if_neg hp]
+  · rw [ite_eq_right hp]
     obtain ⟨stout, sthout, hrun, hgood, hl, hb, he, hc1, hc2, hmax⟩ :=
       passStepAux st0 sth l _ forced_adj forced reg false mincol false hnl hg0 hreg hfl hfm
         hbe (by simpa using hp)

@@ -4,6 +4,7 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.State
 import Flapjack.Compiler.Backend.DataToWord.Variables
 import Flapjack.Misc.Option
 import Mathlib.Data.List.Induction
+import Mathlib.Data.List.Forall2
 
 /-! Stack-frame relations used by data-to-word garbage-collector correctness. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

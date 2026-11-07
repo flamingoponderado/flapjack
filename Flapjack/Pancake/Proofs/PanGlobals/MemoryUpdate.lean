@@ -52,7 +52,7 @@ mutual
         simp only [shapeOfHOLExact] at h hout ⊢
         rw [memLoadHOLExact] at h ⊢
         have hne : addr' ≠ addr'' := fun heq => hout (Or.inl heq.symm)
-        simp only [if_neg hne]
+        simp only [ite_eq_right hne]
         exact h
     | .rStruct fields, addr'', memory, stcs, v, addr', h, hout, hwf => by
         simp only [shapeOfHOLExact, sizeOfShapeHOL_comb] at h hout hwf ⊢

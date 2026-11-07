@@ -77,7 +77,7 @@ theorem bitLength_spec {width : Nat} [NeZero width] :
     rw [bitLength_eq]
     by_cases hw : w = 0
     · subst hw; simp at h; subst h; simp
-    · simp only [hw, if_false]
+    · simp only [hw, ite_false]
       have hpos : 0 < w.toNat := by
         apply Nat.pos_of_ne_zero; intro hz; exact hw (BitVec.eq_of_toNat_eq (by simpa using hz))
       have hsh : (w >>> (1 : Nat)).toNat = w.toNat / 2 := by
@@ -169,7 +169,7 @@ theorem getBits_intro {width : Nat} [NeZero width] {h : BitVec width} :
 theorem bitLength_minus_1 {width : Nat} [NeZero width] {w : BitVec width} :
     w ≠ 0 → bitLength w - 1 = bitLength (w >>> (1 : Nat)) := by
   intro h
-  rw [bitLength_eq w, if_neg h]
+  rw [bitLength_eq w, ite_eq_right h]
   omega
 
 /-- Exact HOL `bit_length_eq_1` (`stack_allocProofScript.sml:232-244`). -/
@@ -378,7 +378,7 @@ theorem good_dimindex_byte_aligned_eq {width : Nat} [NeZero width] {w : BitVec w
       rw [holLOG2_eq_log2 (by decide)]
       exact Nat.log2_two_pow (n := 2)
     simp only [holByteAligned, holAligned, holAlign_eq_div, decide_eq_true_eq,
-      he, if_true, BitVec.toNat_eq, BitVec.toNat_and]
+      he, ite_true, BitVec.toNat_eq, BitVec.toNat_and]
     have := w.isLt
     have hm : w.toNat &&& 3 = w.toNat % 4 := by
       simpa using Nat.and_two_pow_sub_one_eq_mod w.toNat 2

@@ -74,7 +74,7 @@ theorem evaluateApplyColour_InstDiv {width : Nat} [NeZero width] {C F : Type}
       split at hinst
       · rename_i hq
         cases hinst
-        simp only [if_pos hq]
+        simp only [ite_eq_left hq]
         refine ⟨trivial, wsrLocals _ _ hs, ?_⟩
         simp only [applyColourLocals, setVar]
         refine strongLocalsRelInsert f dst _ _ _ _ ⟨injInsertOfIset hok.2, ?_⟩
@@ -309,7 +309,7 @@ theorem evaluateApplyColour_InstLongDiv {width : Nat} [NeZero width] {C F : Type
       split at hinst
       · rename_i hguard
         cases hinst
-        simp only [if_pos hguard]
+        simp only [ite_eq_left hguard]
         refine ⟨trivial, wsrLocals _ _ hs, ?_⟩
         simp only [applyColourLocals, setVar]
         apply twoWritesLocals f b a (sptDomain live)

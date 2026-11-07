@@ -40,7 +40,7 @@ theorem declareEnv_oracle_callRel (state : EvalOracleState) (env : SemEnv Value)
       rfl, rfl, ?_, ?_⟩
     · simp
     · intro i earlier
-      rw [Flapjack.holEl_set _ _ _ _ bound, if_neg (by omega)]
+      rw [Flapjack.holEl_set _ _ _ _ bound, ite_eq_right (by omega)]
 
 /-- Declaring an environment does not advance the source compiler oracle and
 therefore preserves both parts of the forward relation. -/

@@ -122,7 +122,7 @@ theorem memcpyCode_loop {width : Nat} [NeZero width] {C F : Type} :
       simp only [hcmp]
       rw [hbody]
       have hck : s.clock + (n + 1) ≠ 0 := by omega
-      simp only [fixClock, contLoop, Nat.min_self, if_true, hck, if_false, decClock,
+      simp only [fixClock, contLoop, Nat.min_self, ite_true, hck, ite_false, decClock,
         ← memcpyCode_eq]
       have hmem : (fun key => if key = b then s.memory a else s.memory key) =
           WordGcFunctions.gcUpdate b (s.memory a) s.memory := by

@@ -163,26 +163,26 @@ theorem callTail
   have hcond : ns.length = vs.length ∧ ns.Nodup := by
     by_cases hc : ns.length = vs.length ∧ ns.Nodup
     · exact hc
-    · rw [if_neg hc] at hlk'
+    · rw [ite_eq_right hc] at hlk'
       cases hlk'
-  rw [if_pos hcond] at hlk'
+  rw [ite_eq_left hcond] at hlk'
   simp only [Option.some.injEq, Prod.mk.injEq] at hlk'
   obtain ⟨rfl, rfl⟩ := hlk'
   have hnd : ¬ crepReturnInfoNodupError
       (none : Option (List Nat × Option (BitVec width × CrepProgHOL width))) := by
     simp [crepReturnInfoNodupError]
-  rw [if_neg hnd] at hev
+  rw [ite_eq_right hnd] at hev
   have hclk : s.clock = t.clock := hsr.2.2.2.2.1
   simp only [inlineTailHOLExact]
   rw [evalCrepSemHOLProgExact_seq_fixClockFree, evalCrepSemHOLProgExact_tick]
   by_cases hz : s.clock = 0
-  · rw [if_pos hz] at hev
-    rw [if_pos (hclk ▸ hz)]
+  · rw [ite_eq_left hz] at hev
+    rw [ite_eq_left (hclk ▸ hz)]
     simp only [Prod.mk.injEq] at hev
     obtain ⟨rfl, rfl⟩ := hev
     refine ⟨t.emptyLocals, rfl, hsr, codeInl_of_code_eq rfl rfl hci, trivial⟩
-  rw [if_neg hz] at hev
-  rw [if_neg (fun h => hz (hclk ▸ h))]
+  rw [ite_eq_right hz] at hev
+  rw [ite_eq_right (fun h => hz (hclk ▸ h))]
   dsimp only
   have ihB := ihBody vs (body, HolFiniteMapExact.empty.updateList (ns.zip vs)) body
     (HolFiniteMapExact.empty.updateList (ns.zip vs))

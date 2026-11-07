@@ -79,7 +79,7 @@ theorem jumpCmp_flags_c (x y : BitVec 64) :
   rw [hc]
   show decide ((addWithCarry x (~~~y) true).1.toNat ≠
     x.toNat + (~~~y).toNat + (if true = true then 1 else 0)) = _
-  simp only [if_true]
+  simp only [ite_true]
   rw [decide_eq_decide]
   rw [show (addWithCarry x (~~~y) true).1.toNat =
     (x.toNat + (~~~y).toNat + 1) % 2 ^ 64 from rfl]
@@ -189,7 +189,7 @@ theorem jumpCmp_flags_slt (x y : BitVec 64) :
     show decide ((addWithCarry x (~~~y) true).1.toInt ≠
       x.toInt + (~~~y).toInt + (if true = true then 1 else 0)) = _
     rw [jumpCmp_toInt_not, hr]
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     rw [show x.toInt + (-1 - y.toInt) + 1 = x.toInt - y.toInt from by omega]
   rw [hn, hv, BitVec.slt_eq_decide, hB]
   have hx1 := BitVec.toInt_lt (x := x)
@@ -452,7 +452,7 @@ theorem conditionHolds_addSub_imm (s : Arm8State) (cmp : Cmp) (r : Nat) (w : Bit
 theorem execInsn_branchConditional_taken (s : Arm8State) (imm : W) (cond : Nat)
     (h : conditionHolds s cond = true) :
     execInsn s (.branchConditional imm cond) = { s with pc := s.pc - 4 + imm } := by
-  simp only [execInsn, h, if_true]
+  simp only [execInsn, h, ite_true]
 
 /-- An untaken `branchConditional` leaves the state (and the advanced PC) alone. -/
 theorem execInsn_branchConditional_untaken (s : Arm8State) (imm : W) (cond : Nat)
@@ -569,7 +569,7 @@ theorem jumpCmpCase (cmp : Cmp) (r : Nat) (ri : HolRegImm 64) (a : BitVec 64)
     rw [(alignedAddSub 2 ms.pc a haa).1, st.aligned]
   by_cases hwc : wordCmpHOL cmp (AsmSem.readReg r s1) (regImm ri s1) = true
   · -- taken: the branch jumps to `s1.pc + a`
-    rw [if_pos hwc] at hs2'
+    rw [ite_eq_left hwc] at hs2'
     have hs2pc : s2.pc = s1.pc + a := by rw [← hs2']; rfl
     have hs2mem : ∀ x, s2.mem x = s1.mem x := by rw [← hs2']; intro x; rfl
     have hs2dom : s2.memDomain = s1.memDomain := by rw [← hs2']; rfl
@@ -619,7 +619,7 @@ theorem jumpCmpCase (cmp : Cmp) (r : Nat) (ri : HolRegImm 64) (a : BitVec 64)
       rw [arm8Target_config, arm8Config_encode, hlen]
       exact hpcm
   · -- untaken: the branch falls through to `s1.pc + 8`
-    rw [if_neg hwc] at hs2'
+    rw [ite_eq_right hwc] at hs2'
     have hs2pc : s2.pc = s1.pc + 8 := by rw [← hs2']; rfl
     have hs2mem : ∀ x, s2.mem x = s1.mem x := by rw [← hs2']; intro x; rfl
     have hs2dom : s2.memDomain = s1.memDomain := by rw [← hs2']; rfl
@@ -764,14 +764,14 @@ theorem case_jumpCmp_reg (cmp : Cmp) (r : Nat) (u : Nat) (a : BitVec 64)
   rw [bytesInMemory_cons, bytesInMemory_one] at hb
   obtain ⟨hb1, hb2⟩ := hb
   have hr : readReg ms r = s1.regs r := by
-    simp only [readReg, if_neg hne31]
+    simp only [readReg, ite_eq_right hne31]
     exact st.reg r ⟨hlt, hav⟩
   have hu : readReg ms u = s1.regs u := by
-    simp only [readReg, if_neg hneu31]
+    simp only [readReg, ite_eq_right hneu31]
     exact st.reg u ⟨hltu, havu⟩
   by_cases hT : isTest cmp = true
   · -- `test`/`notTest`: `AND` of the two registers
-    rw [if_pos hT] at hb1
+    rw [ite_eq_left hT] at hb1
     have hsafe0 : StepSafe s1.memDomain ms :=
       stepSafe_of_encode ms s1.memDomain _ _ hb1
         (encodeInsn_logicalShiftedRegister .and false true .lsl 0 u r 31 3 (by decide)
@@ -799,7 +799,7 @@ theorem case_jumpCmp_reg (cmp : Cmp) (r : Nat) (u : Nat) (a : BitVec 64)
       ht1failed ht1al hcond hsafe0 hb2
   · -- a non-`test` comparison: `SUB` of the two registers
     have hNT : isTest cmp = false := boolOfNotTrue hT
-    rw [if_neg hT] at hb1
+    rw [ite_eq_right hT] at hb1
     have hsafe0 : StepSafe s1.memDomain ms :=
       stepSafe_of_encode ms s1.memDomain _ _ hb1
         (encodeInsn_addSubShiftedRegister true true .lsl u 0 r 31)
@@ -852,11 +852,11 @@ theorem case_jumpCmp_imm (cmp : Cmp) (r : Nat) (w : BitVec 64) (a : BitVec 64)
   rw [bytesInMemory_cons, bytesInMemory_one] at hb
   obtain ⟨hb1, hb2⟩ := hb
   have hr : readReg ms r = s1.regs r := by
-    simp only [readReg, if_neg hne31]
+    simp only [readReg, ite_eq_right hne31]
     exact st.reg r ⟨hlt, hav⟩
   by_cases hT : isTest cmp = true
   · -- `test`/`notTest`: `AND` with an encodable bitmask
-    rw [if_pos hT] at hb1
+    rw [ite_eq_left hT] at hb1
     have hisSome : (encodeBitMask w).isSome = true := validImmediate_test hT hv
     obtain ⟨⟨n, imms, immr⟩, hbm⟩ := Option.isSome_iff_exists.mp hisSome
     have hsafe0 : StepSafe s1.memDomain ms :=
@@ -885,7 +885,7 @@ theorem case_jumpCmp_imm (cmp : Cmp) (r : Nat) (w : BitVec 64) (a : BitVec 64)
       ht1failed ht1al hcond hsafe0 hb2
   · -- a non-`test` comparison: `SUB` with a twelve-bit immediate
     have hNT : isTest cmp = false := boolOfNotTrue hT
-    rw [if_neg hT] at hb1
+    rw [ite_eq_right hT] at hb1
     have hdisj := validImmediate_notTest hNT hv
     by_cases hlow : w &&& ~~~(0xFFF : BitVec 64) = 0
     · -- the unshifted form

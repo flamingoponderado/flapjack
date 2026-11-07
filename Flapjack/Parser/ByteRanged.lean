@@ -161,11 +161,11 @@ theorem lookupTable_mem {α : Type} {t : List (String × α)} {s : String} {v : 
       obtain ⟨key, value⟩ := head
       simp only [lookupTable] at h
       by_cases hc : s == key
-      · rw [if_pos hc] at h
+      · rw [ite_eq_left hc] at h
         have hs : s = key := by simpa using hc
         have hv : value = v := by simpa using h
         subst hs; subst hv; simp
-      · rw [if_neg hc] at h
+      · rw [ite_eq_right hc] at h
         exact List.mem_cons_of_mem _ (ih h)
 
 /-- Every token in the symbolic table carries no identifier name. -/
@@ -189,11 +189,11 @@ theorem getKeyword_nameByteRanged (s : String) (h : StringByteRanged s) :
   · rename_i k heq
     exact trivial
   · by_cases hz : s == ""
-    · rw [if_pos hz]; exact trivial
-    · rw [if_neg hz]
+    · rw [ite_eq_left hz]; exact trivial
+    · rw [ite_eq_right hz]
       by_cases hf : (2 ≤ s.length && s.front == '@') = true
-      · rw [if_pos hf]; exact drop_one_stringByteRanged h
-      · rw [if_neg hf]; exact h
+      · rw [ite_eq_left hf]; exact drop_one_stringByteRanged h
+      · rw [ite_eq_right hf]; exact h
 
 /-- Byte-rangedness is preserved by atom-to-token conversion. -/
 theorem tokenOfAtom_nameByteRanged {a : Atom} (h : AtomNameByteRanged a) :
@@ -232,33 +232,33 @@ theorem nextAtom_byteRanged : ∀ fuel input loc, CharsByteRanged input →
         fun p acc => readWhile_rest_charsByteRanged cs acc hcs
       simp only [nextAtom] at h
       by_cases h1 : (c == '\n') = true
-      · rw [if_pos h1] at h; exact ih cs (nextLine loc) hcs a locs rest h
-      · rw [if_neg h1] at h
+      · rw [ite_eq_left h1] at h; exact ih cs (nextLine loc) hcs a locs rest h
+      · rw [ite_eq_right h1] at h
         by_cases h2 : isSpaceAscii c = true
-        · rw [if_pos h2] at h; exact ih cs (nextLoc 1 loc) hcs a locs rest h
-        · rw [if_neg h2] at h
+        · rw [ite_eq_left h2] at h; exact ih cs (nextLoc 1 loc) hcs a locs rest h
+        · rw [ite_eq_right h2] at h
           by_cases h3 : isDigitAscii c = true
-          · rw [if_pos h3] at h
+          · rw [ite_eq_left h3] at h
             simp only [Option.some.injEq, Prod.mk.injEq] at h
             obtain ⟨rfl, -, rfl⟩ := h
             exact ⟨trivial, hrst isDigitAscii [c]⟩
-          · rw [if_neg h3] at h
+          · rw [ite_eq_right h3] at h
             by_cases h4 : (c == '-' && (Option.map isDigitAscii cs.head?).getD false) = true
-            · rw [if_pos h4] at h
+            · rw [ite_eq_left h4] at h
               simp only [Option.some.injEq, Prod.mk.injEq] at h
               obtain ⟨rfl, -, rfl⟩ := h
               exact ⟨trivial, hrst isDigitAscii []⟩
-            · rw [if_neg h4] at h
+            · rw [ite_eq_right h4] at h
               by_cases h5 : (c == '/' && cs.head? == some '/') = true
-              · rw [if_pos h5] at h
+              · rw [ite_eq_left h5] at h
                 split at h
                 · simp only [Option.some.injEq, Prod.mk.injEq] at h
                   obtain ⟨rfl, -, rfl⟩ := h
                   exact ⟨trivial, by simp [CharsByteRanged]⟩
                 · exact ih (cs.drop _) _ (charsByteRanged_drop hcs _) a locs rest h
-              · rw [if_neg h5] at h
+              · rw [ite_eq_right h5] at h
                 by_cases h6 : (c == '/' && cs.head? == some '@') = true
-                · rw [if_pos h6] at h
+                · rw [ite_eq_left h6] at h
                   split at h
                   · simp only [Option.some.injEq, Prod.mk.injEq] at h
                     obtain ⟨rfl, -, rfl⟩ := h
@@ -267,34 +267,34 @@ theorem nextAtom_byteRanged : ∀ fuel input loc, CharsByteRanged input →
                     obtain ⟨rfl, -, rfl⟩ := h
                     exact ⟨stringByteRanged_ofList (charsByteRanged_take (charsByteRanged_tail' hcs) _),
                       charsByteRanged_drop hcs _⟩
-                · rw [if_neg h6] at h
+                · rw [ite_eq_right h6] at h
                   by_cases h7 : (c == '/' && cs.head? == some '*') = true
-                  · rw [if_pos h7] at h
+                  · rw [ite_eq_left h7] at h
                     split at h
                     · simp only [Option.some.injEq, Prod.mk.injEq] at h
                       obtain ⟨rfl, -, rfl⟩ := h
                       exact ⟨trivial, by simp [CharsByteRanged]⟩
                     · exact ih (cs.drop _) _ (charsByteRanged_drop hcs _) a locs rest h
-                  · rw [if_neg h7] at h
+                  · rw [ite_eq_right h7] at h
                     by_cases h8 : isAtomSingleton c = true
-                    · rw [if_pos h8] at h
+                    · rw [ite_eq_left h8] at h
                       simp only [Option.some.injEq, Prod.mk.injEq] at h
                       obtain ⟨rfl, -, rfl⟩ := h
                       exact ⟨trivial, hcs⟩
-                    · rw [if_neg h8] at h
+                    · rw [ite_eq_right h8] at h
                       by_cases h9 : isAtomBeginGroup c = true
-                      · rw [if_pos h9] at h
+                      · rw [ite_eq_left h9] at h
                         simp only [Option.some.injEq, Prod.mk.injEq] at h
                         obtain ⟨rfl, -, rfl⟩ := h
                         exact ⟨trivial, hrst isAtomInGroup [c]⟩
-                      · rw [if_neg h9] at h
+                      · rw [ite_eq_right h9] at h
                         by_cases h10 : (isAlphaAscii c || c == '@' || c == '_') = true
-                        · rw [if_pos h10] at h
+                        · rw [ite_eq_left h10] at h
                           simp only [Option.some.injEq, Prod.mk.injEq] at h
                           obtain ⟨rfl, -, rfl⟩ := h
                           exact ⟨readWhile_charsByteRanged' cs [c] hcs (charsByteRanged_singleton hc),
                             hrst isAlphaNumOrWild [c]⟩
-                        · rw [if_neg h10] at h
+                        · rw [ite_eq_right h10] at h
                           simp only [Option.some.injEq, Prod.mk.injEq] at h
                           obtain ⟨rfl, -, rfl⟩ := h
                           exact ⟨trivial, hcs⟩

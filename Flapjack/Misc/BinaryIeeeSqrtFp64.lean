@@ -167,17 +167,17 @@ theorem fp64NearestSqrt_cases :
   generalize (lo + hi) / 2 = m at *
   unfold holSqrtLe holSqrtGe
   by_cases c1 : R < m * m
-  · rw [if_pos c1]
+  · rw [ite_eq_left c1]
     left; exact ⟨rfl, ⟨by grind, by grind⟩, fun h => by exfalso; grind⟩
-  · rw [if_neg c1]
+  · rw [ite_eq_right c1]
     by_cases c2 : m * m < R
-    · rw [if_pos c2]
+    · rw [ite_eq_left c2]
       right; exact ⟨rfl, Or.inr (by grind), fun h => by exfalso; grind⟩
-    · rw [if_neg c2]
+    · rw [ite_eq_right c2]
       by_cases hp : p % 2 = 0
-      · rw [if_pos hp]
+      · rw [ite_eq_left hp]
         left; exact ⟨rfl, ⟨by grind, by grind⟩, fun _ => hp⟩
-      · rw [if_neg hp]
+      · rw [ite_eq_right hp]
         right; exact ⟨rfl, Or.inr (by grind), fun _ => by omega⟩
 
 private theorem fp64N_cast_nonneg (q : Nat) : (0 : Rat) ≤ ((fp64N q : Nat) : Rat) := by
@@ -460,7 +460,7 @@ theorem fp64_rte_sqrt_core {r : Rat} (hr : 0 ≤ r)
     rw [fp64OfPat_lsb, hRd]
   have hle : ∀ b : HolFloat 52 11, holSqrtDistLe r (holFloatToReal a) (holFloatToReal b) := by
     intro b
-    rw [hscale, if_neg hsa, hpa]
+    rw [hscale, ite_eq_right hsa, hpa]
     split
     · exact fp64NearestSqrt_le_neg hR _
     · exact fp64NearestSqrt_le_pos hR _
@@ -473,10 +473,10 @@ theorem fp64_rte_sqrt_core {r : Rat} (hr : 0 ≤ r)
         (fp64NearestSqrt R % 2 = 0 ∧ fp64Pat c % 2 = 1)) := by
     intro c ⟨_, hc⟩
     have h1 := hc a hafin
-    rw [hscale, if_neg hsa, hpa] at h1
+    rw [hscale, ite_eq_right hsa, hpa] at h1
     constructor
-    · intro hs; rw [if_pos hs] at h1; exact fp64NearestSqrt_eq_neg hR _ h1
-    · intro hs; rw [if_neg hs] at h1; exact fp64NearestSqrt_eq_pos hR _ h1
+    · intro hs; rw [ite_eq_left hs] at h1; exact fp64NearestSqrt_eq_neg hR _ h1
+    · intro hs; rw [ite_eq_right hs] at h1; exact fp64NearestSqrt_eq_pos hR _ h1
   have hPa : fp64RtePredSqrt r a := by
     refine ⟨hclosest, fun b ⟨hb, hbe⟩ => ?_⟩
     rw [hlsba]
@@ -545,15 +545,15 @@ theorem holFloatRoundSqrt_rte_fp64 (toneg : Bool) {r : Rat} (hr : 0 ≤ r) :
   unfold holFloatRoundSqrt holRoundSqrt holFp64SqrtRoundRte
   simp only
   by_cases h1 : holSqrtLe r (-holFloatThreshold 52 11)
-  · rw [if_pos h1, if_pos h1]
+  · rw [ite_eq_left h1, ite_eq_left h1]
     have : holFloatIsZero (holFloatMinusInfinity 52 11) = false := by decide +kernel
     rw [this]; rfl
-  rw [if_neg h1, if_neg h1]
+  rw [ite_eq_right h1, ite_eq_right h1]
   by_cases h2 : holSqrtGe r (holFloatThreshold 52 11)
-  · rw [if_pos h2, if_pos h2]
+  · rw [ite_eq_left h2, ite_eq_left h2]
     have : holFloatIsZero (holFloatPlusInfinity 52 11) = false := by decide +kernel
     rw [this]; rfl
-  rw [if_neg h2, if_neg h2]
+  rw [ite_eq_right h2, ite_eq_right h2]
   obtain ⟨hPa, hall⟩ := fp64_rte_sqrt_core hr h2
   generalize fp64OfPat false (fp64NearestSqrt (r * (2 ^ 1074 * 2 ^ 1074))) = a at hPa hall
   have hc : fp64RtePredSqrt r (holClosestSuchSqrt (fun a => a.significand.getLsbD 0 = false)
@@ -583,7 +583,7 @@ theorem fp64_value_nonneg {x : HolFloat 52 11} {r : Rat} (hs : x.sign = 0)
     · simpa using hv
   rw [← hr, holFloatToReal_fp64]
   have h1 : ¬ x.sign = 1 := by rw [hs]; decide
-  rw [if_neg h1]
+  rw [ite_eq_right h1]
   have hD := fp64_D_pos
   have hN := fp64N_cast_nonneg (fp64Pat x)
   generalize (2 : Rat) ^ 1074 = D at *
@@ -596,7 +596,7 @@ theorem holFloatSqrt_rte64 (x : HolFloat 52 11) :
     (holFloatSqrt .roundTiesToEven x).2 = holFloatSqrtRte64 x := by
   unfold holFloatSqrt holFloatSqrtRte64
   by_cases hs : x.sign = 0
-  · rw [if_pos hs, if_pos hs]
+  · rw [ite_eq_left hs, ite_eq_left hs]
     cases hv : holFloatValue x with
     | nan => rfl
     | infinity => rfl
@@ -604,7 +604,7 @@ theorem holFloatSqrt_rte64 (x : HolFloat 52 11) :
       simp only
       show (holFloatRoundSqrt .roundTiesToEven false r : HolFloat 52 11) = _
       exact holFloatRoundSqrt_rte_fp64 false (fp64_value_nonneg hs hv)
-  · rw [if_neg hs, if_neg hs]
+  · rw [ite_eq_right hs, ite_eq_right hs]
     split <;> rfl
 
 /-- `fp64_sqrt roundTiesToEven` through the computable rounding. -/

@@ -114,8 +114,8 @@ theorem inlineMotive {width : Nat} [NeZero width] {σ : Type} :
           sizeOf (if w ≠ 0 then a else b) < sizeOf (CrepProgHOL.ite c a b) := by
         intro w
         by_cases hw : w ≠ 0
-        · rw [if_pos hw]; simp only [CrepProgHOL.ite.sizeOf_spec]; omega
-        · rw [if_neg hw]; simp only [CrepProgHOL.ite.sizeOf_spec]; omega
+        · rw [ite_eq_left hw]; simp only [CrepProgHOL.ite.sizeOf_spec]; omega
+        · rw [ite_eq_right hw]; simp only [CrepProgHOL.ite.sizeOf_spec]; omega
       rcases r with _ | ⟨_ | _ | _ | _ | _ | _ | _⟩ <;>
         apply inlineProgCorrectIfCaseExact <;>
         first | assumption | exact fun _ w _ _ => same _ _ rfl (hsz w)

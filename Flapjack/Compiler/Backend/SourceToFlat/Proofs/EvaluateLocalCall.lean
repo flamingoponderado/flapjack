@@ -479,7 +479,7 @@ theorem localCallResult_related {C F : Type} [Nonempty C]
   by_cases zero : source.clock = 0
   · have flatZero : flat.clock = 0 := clocks ▸ zero
     refine ⟨genv, ?_, ?_⟩
-    · simp only [sourceCallResult, srcApp, zero, if_true, EvaluateHOL.timeoutError,
+    · simp only [sourceCallResult, srcApp, zero, ite_true, EvaluateHOL.timeoutError,
         flatCallResult, dstApp, flatZero]
       exact ⟨.abort .timeoutError, invariant.2.2.1⟩
     · simp [sourceCallResult, srcApp, zero, EvaluateHOL.timeoutError]
@@ -498,7 +498,7 @@ theorem localCallResult_related {C F : Type} [Nonempty C]
       generation bodySafe
     refine ⟨nextGenv, ?_, ?_⟩
     · simpa [sourceCallResult, srcApp, zero, flatCallResult, dstApp, flatNonzero, ExprSim] using bodySim
-    · simp only [sourceCallResult, srcApp, zero, if_false, flatCallResult, dstApp, flatNonzero]
+    · simp only [sourceCallResult, srcApp, zero, ite_false, flatCallResult, dstApp, flatNonzero]
       cases result : (EvaluateHOL.evaluate (EvaluateHOL.decClock source)
           { baseEnv with v := nsAppend sourceLocal baseEnv.v } [body]).2 with
       | err error =>

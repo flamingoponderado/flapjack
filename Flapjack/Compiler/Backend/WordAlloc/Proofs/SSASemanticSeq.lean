@@ -95,12 +95,12 @@ theorem ssaCcTransCorrectSeq {width : Nat} [NeZero width] {C F : Type}
           dsimp only at firstSim
           rw [sourceEval] at firstSim
           have noError : (some result : Option (WordSemResult width)) ≠ some .error := by simpa using error
-          simp only [if_neg noError, firstCompiled, targetEval] at firstSim
+          simp only [ite_eq_right noError, firstCompiled, targetEval] at firstSim
           have eq : targetResult = some result := firstSim.1.symm
           subst targetResult
           dsimp only
           rw [evaluateSeqNative, sourceEval]
-          simp only [if_neg noError, compiled, evaluateSeqNative, targetEval]
+          simp only [ite_eq_right noError, compiled, evaluateSeqNative, targetEval]
           cases result <;> simpa only using firstSim
     | none =>
       cases targetEval : WordSemStateFiniteExact.evaluate firstOut target with

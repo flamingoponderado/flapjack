@@ -52,7 +52,7 @@ theorem sptAListLookup_eq_keyLookup {α : Type} (k : Nat) :
       by_cases h : k = a
       · subst h; simp [sptAListLookup, holAlookup]
       · have h' : ¬ a = k := fun e => h e.symm
-        simp only [sptAListLookup, holAlookup, if_neg h, if_neg h', ih]
+        simp only [sptAListLookup, holAlookup, ite_eq_right h, ite_eq_right h', ih]
 
 /-- Field preservation of `pop_env` (Flapjack infrastructure). -/
 theorem popEnvFields {width : Nat} [NeZero width] {C F : Type}
@@ -99,7 +99,7 @@ private theorem alistLookupZipSome {α : Type} :
       simp only [List.zip_cons_cons, sptAListLookup]
       by_cases h : k = a
       · simp [h]
-      · simp only [h, if_false]
+      · simp only [h, ite_false]
         exact alistLookupZipSome keys vs k (by simpa [h] using hk) (by simpa using hl)
 
 /-- Local list-pair reassembly infrastructure used by this proof;

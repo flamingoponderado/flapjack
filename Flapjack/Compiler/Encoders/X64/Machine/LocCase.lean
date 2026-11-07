@@ -66,7 +66,7 @@ theorem x64Next_loc (ms : X64State) (d : BitVec 64 → Prop) (r : Nat) (off : Bi
       some (.lea .z64 r (off - 7), 7) :=
     decode_bytesInMemory _ ms.pc ms.mem d _ 7 hbm
       (decode_lea r hd (off - 7) hsub.1 hsub.2) (by omega)
-  simp only [x64Next, hfailed, Bool.false_eq_true, if_false, hdec, execInsn,
+  simp only [x64Next, hfailed, Bool.false_eq_true, ite_false, hdec, execInsn,
     writeRegSized, writeReg]
 
 /-! ## The `loc` case -/
@@ -152,7 +152,7 @@ theorem case_loc (r : Nat) (off : BitVec 64) (s1 s2 : AsmState 64) (ms : X64Stat
           simp only [num2Zreg]
           rw [Nat.mod_eq_of_lt hi16, Nat.mod_eq_of_lt hd]
           exact hir
-        simp only [readReg, writeReg, if_neg hne, if_neg hir]
+        simp only [readReg, writeReg, ite_eq_right hne, ite_eq_right hir]
         exact st.reg i hi
     · intro x hx
       show readXmm ms x = s2.fpRegs x

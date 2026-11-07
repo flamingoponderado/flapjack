@@ -110,11 +110,11 @@ theorem balanceLBalL {κ ν : Type} (key : κ) (value : ν) (left right : Map κ
           have hnlarge : ¬ (n ≤ 1) := by omega
           have hnheavy : n > 0 := by omega
           simp only [balanceL, balL, rotateR, size, Nat.add_zero, Nat.mul_zero]
-          simp only [hnlarge, hnheavy, if_false, if_true]
+          simp only [hnlarge, hnheavy, ite_false, ite_true]
           have hm0 : m0 = 1 + size second0 + size third0 :=
             (binFacts cmp m0 pivot0 pivotValue0 second0 third0 hf.2.2.2).1
           by_cases hratio : m0 < ratio * m
-          · simp only [hratio, if_pos, singleRDef]
+          · simp only [hratio, ite_eq_left, singleRDef]
             simp [bin, size, hn, Nat.add_comm, Nat.add_left_comm]
           · simp only [hratio, doubleRDef]
             simp [bin, size, hn, hm0, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm]
@@ -144,10 +144,10 @@ theorem balanceLBalL {κ ν : Type} (key : κ) (value : ν) (left right : Map κ
               (binFacts cmp m0 pivot0 pivotValue0 second0 third0 hf.2.2.2).1
             by_cases hratio : m0 < ratio * m
             · simp only [balanceL, balL, rotateR, size]
-              simp only [hlarge, hheavy, hratio, if_false, if_true, singleRDef]
+              simp only [hlarge, hheavy, hratio, ite_false, ite_true, singleRDef]
               simp [bin, size, hn, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm]
             · simp only [balanceL, balL, rotateR, size]
-              simp only [hlarge, hheavy, hratio, if_false, if_true, doubleRDef]
+              simp only [hlarge, hheavy, hratio, ite_false, ite_true, doubleRDef]
               simp [bin, size, hn, hm0, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm]
       · cases first <;> cases middle <;>
           simp [balanceL, balL, size, hlarge, hheavy,

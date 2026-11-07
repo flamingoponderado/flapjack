@@ -72,7 +72,7 @@ theorem noClashColouringSatisfactory (adjls : List (List Nat)) (node_tag : List 
   obtain ⟨b, hb⟩ := hfix y hyt
   have hncxy := hnc x y ⟨hx, hy, hm⟩
   rw [ha, hb] at hncxy
-  simp only [if_pos hxt, if_pos hyt, ha, hb, extractTag] at heq
+  simp only [ite_eq_left hxt, ite_eq_left hyt, ha, hb, extractTag] at heq
   exact hncxy heq
 
 end Flapjack.RegAlloc

@@ -145,7 +145,7 @@ theorem compileIncCallsFuel_succeeds (fuel : Nat) (config : Config) (program : C
     dsimp only [annotated] at checked
     refine ⟨({ config with nextLoc := numbered.1, callState := (callState.1, []) },
       compileInc config.maxApp annotated), ?_⟩
-    simp only [compileIncCallsFuel?, call, Bool.not_true, Bool.false_eq_true, if_false, noKnown]
+    simp only [compileIncCallsFuel?, call, Bool.not_true, Bool.false_eq_true, ite_false, noKnown]
     rw [hp]
     dsimp only [bind, Bind.bind, Option.bind]
     unfold ClosCall.compileIncFuel?

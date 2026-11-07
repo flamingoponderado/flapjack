@@ -166,11 +166,11 @@ theorem compileCorrect_Tick {width : Nat} {σ : Type} [NeZero width]
   rw [evaluateHOLFiniteState_tick] at hev
   rw [hcompile, evaluateHOLFiniteState_tick, ← hclock]
   by_cases hz : s.clock = 0
-  · rw [if_pos hz] at hev ⊢
+  · rw [ite_eq_left hz] at hev ⊢
     obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
     refine ⟨_, rfl, ?_⟩
     exact ⟨hrel.1, fun h => absurd h (by simp [goodResHOL]), hrel.2.2⟩
-  · rw [if_neg hz] at hev ⊢
+  · rw [ite_eq_right hz] at hev ⊢
     obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
     exact ⟨_, rfl, Flapjack.PanGlobalsStateRelationClock.stateRelDecClockHOL ctxt s t true hrel⟩
 

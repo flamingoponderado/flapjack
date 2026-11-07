@@ -161,7 +161,7 @@ theorem evaluateRemoveDead_StoreConsts {width : Nat} [NeZero width] {C F : Type}
           (sptInsert offset (.word off) (sptDelete t1 (sptDelete t2 t))), tstore, ?_, ?_, hs⟩
       · rw [evaluate]
         simp only [ha', ho']
-        rw [if_neg hc]
+        rw [ite_eq_right hc]
         rfl
       · intro k v ⟨hk, hv⟩
         simp only [setVar, unsetVar] at hv
@@ -177,7 +177,7 @@ theorem evaluateRemoveDead_StoreConsts {width : Nat} [NeZero width] {C F : Type}
             · simp [h1] at hv
             · by_cases h2 : k = t2
               · simp [h2] at hv
-              · simp only [h1, h2, if_false] at hv ⊢
+              · simp only [h1, h2, ite_false] at hv ⊢
                 exact hl k v ⟨hdom k (Or.inr (Or.inr ⟨h1, h2, hk⟩)), hv⟩
   · simp only [Prod.mk.injEq] at hev; exact absurd hev.1.symm herr
 
@@ -296,7 +296,7 @@ theorem evaluateRemoveDead_Install {width : Nat} [NeZero width] {C F : Type}
         · rename_i bytes' data' cfg' k _ _ _
           split at hev
           · rename_i hcond
-            rw [if_pos hcond]
+            rw [ite_eq_left hcond]
             simp only [Prod.mk.injEq] at hev
             obtain ⟨rfl, rfl⟩ := hev
             exact ⟨_, tstore, rfl, strongLocalsRelIdRefl _ _, hs⟩
@@ -422,7 +422,7 @@ theorem evaluateRemoveDead_ShareInst {width : Nat} [NeZero width] {C F : Type} (
     cases op
     all_goals simp only [removeDead, getLive, Prod.mk.injEq] at hrd
     all_goals obtain ⟨rfl, rfl, rfl⟩ := hrd
-    all_goals simp only [reduceCtorEq, or_self, or_false, false_or, if_true, if_false] at hl
+    all_goals simp only [reduceCtorEq, or_self, or_false, false_or, ite_true, ite_false] at hl
     all_goals have hw' := strongLocalsRelIWordExp t _ nlive tstore st exp _ ⟨hw, hl, hs, hnl⟩
     all_goals rw [evaluate, hw']
     all_goals simp only
@@ -439,7 +439,7 @@ theorem evaluateRemoveDead_ShareInst {width : Nat} [NeZero width] {C F : Type} (
           simp only [shMemStore, shMemStoreByte, shMemStore16, shMemStore32] at hev ⊢
           split at hev
           · rename_i hd
-            rw [if_pos hd]
+            rw [ite_eq_left hd]
             split at hev
             all_goals simp only [Prod.mk.injEq] at hev
             all_goals obtain ⟨rfl, rfl⟩ := hev

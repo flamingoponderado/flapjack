@@ -28,7 +28,7 @@ theorem antisymListCmp (x y : List Nat) : listCmp x y = .gt ↔ listCmp y x = .l
       by_cases h : a = b
       · subst b; simp [listCmp, ih]
       · have hba : b ≠ a := Ne.symm h
-        simp only [listCmp, h, hba, if_false]
+        simp only [listCmp, h, hba, ite_false]
         split <;> split <;> simp_all <;> omega
 
 /-- Full original strict transitivity with exactly the two comparison premises. -/

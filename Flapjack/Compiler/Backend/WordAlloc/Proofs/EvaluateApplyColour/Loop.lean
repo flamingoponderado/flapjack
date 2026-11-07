@@ -51,7 +51,7 @@ theorem evaluateApplyColourLoopCore {width : Nat} [NeZero width] {C F : Type}
       by_cases herr : res = some .error
       · refine ⟨p, ?_⟩
         simp [ht, hcutp, hb, herr, wordSemContLoop, wordSemExitLoop]
-      · rw [if_neg herr] at hp
+      · rw [ite_eq_right herr] at hp
         rcases hcb : evaluate (applyColour f body) centry with ⟨cres, cout⟩
         rw [hcb] at hp
         dsimp only at hp
@@ -73,7 +73,7 @@ theorem evaluateApplyColourLoopCore {width : Nat} [NeZero width] {C F : Type}
           by_cases hz : out.clock = 0
           · refine ⟨p, ?_⟩
             have hcz : cout.clock = 0 := hclock.trans hz
-            simp only [ht, hcutp, hb, applyColour, hccut', hcb, hcont, if_true, hz, hcz]
+            simp only [ht, hcutp, hb, applyColour, hccut', hcb, hcont, ite_true, hz, hcz]
             simp_all [wordStateEqRel, applyColourLocals, flushState]
           · have hlt : (decClock out).clock < n := by
               have hbound := loopBodyRecursiveClockLt (names, .ln) body
@@ -92,13 +92,13 @@ theorem evaluateApplyColourLoopCore {width : Nat} [NeZero width] {C F : Type}
             have hsrc : evaluate (.loop names body exitNames) { st with permute := p0 } =
                 evaluate (.loop names body exitNames) { decClock out with permute := q } := by
               rw [ht, hcut0']
-              simp only [hb0', hcont, if_true, hz, if_false, wordSemSTOP, hcomm]
+              simp only [hb0', hcont, ite_true, hz, ite_false, wordSemSTOP, hcomm]
             have htgt : evaluate (applyColour f (.loop names body exitNames)) cst =
                 evaluate (applyColour f (.loop names body exitNames)) (decClock cout) := by
               change evaluate (.loop (applyNummapKey f names) (applyColour f body)
                 (applyNummapKey f exitNames)) cst = _
               rw [ht, hccut']
-              simp only [hcb, hcont, if_true, hcz, if_false, wordSemSTOP, applyColour]
+              simp only [hcb, hcont, ite_true, hcz, ite_false, wordSemSTOP, applyColour]
             rw [hsrc, htgt]
             exact hq
         · cases res with
@@ -111,7 +111,7 @@ theorem evaluateApplyColourLoopCore {width : Nat} [NeZero width] {C F : Type}
                 cases hexit : cutState (exitNames, .ln) out with
                 | none =>
                     refine ⟨p, ?_⟩
-                    simp only [ht, hcutp, hb, wordSemContLoop, Bool.false_eq_true, if_false, hexit]
+                    simp only [ht, hcutp, hb, wordSemContLoop, Bool.false_eq_true, ite_false, hexit]
                     trivial
                 | some final =>
                     obtain ⟨cfinal, hcexit, hsfinal, hdom, hlocal, _⟩ :=
@@ -124,14 +124,14 @@ theorem evaluateApplyColourLoopCore {width : Nat} [NeZero width] {C F : Type}
                       simpa only [applyNummapsKey, hrenameLn] using hcexit
                     refine ⟨p, ?_⟩
                     simp only [ht, hcutp, hb, applyColour, hccut', hcb, wordSemContLoop,
-                      Bool.false_eq_true, if_false, hexit, hcexit']
+                      Bool.false_eq_true, ite_false, hexit, hcexit']
                     refine ⟨trivial, hsfinal, ?_⟩
                     exact strongLocalsRelExtendAux f _ (sptDomain live) _ _
                       ⟨fun key hk => by rwa [hdom] at hk, hlocal⟩
               | succ k =>
                 refine ⟨p, ?_⟩
                 simp only [ht, hcutp, hb, applyColour, hccut', hcb, wordSemContLoop,
-                  Bool.false_eq_true, if_false, wordSemExitLoop, Nat.add_sub_cancel]
+                  Bool.false_eq_true, ite_false, wordSemExitLoop, Nat.add_sub_cancel]
                 simpa [applyColourLocals, sptOel_eq_getElem?] using And.intro hsout hlout
             | «continue» k =>
               have hk : k ≠ 0 := by simpa [wordSemContLoop] using hcont
@@ -146,7 +146,7 @@ theorem evaluateApplyColourLoopCore {width : Nat} [NeZero width] {C F : Type}
             | result a b | exception a b | timeOut | notEnoughSpace | finalFfi =>
                 refine ⟨p, ?_⟩
                 simp only [ht, hcutp, hb, applyColour, hccut', hcb, wordSemContLoop,
-                  Bool.false_eq_true, if_false, wordSemExitLoop]
+                  Bool.false_eq_true, ite_false, wordSemExitLoop]
                 simpa [applyColourLocals] using And.intro hsout hlout
 
 /-- Local spelling of the Loop helper's literal error disjunction. It shares

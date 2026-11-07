@@ -123,24 +123,24 @@ theorem evaluateApp_partial {C F : Type} (function nextFunction first : Value)
         simpa [← clockEq, ← lengthEq] using insufficient
       rw [evaluateApp, found] at run
       dsimp only at run
-      rw [if_pos insufficient] at run
+      rw [ite_eq_left insufficient] at run
       cases run
       refine ⟨.err (.abort .timeoutError), { target with clock := 0 }, ?_, rfl, ?_⟩
       · rw [evaluateApp, targetFound]
         dsimp only
-        rw [if_pos targetInsufficient]
+        rw [ite_eq_left targetInsufficient]
         rfl
       · exact stateRel_withClock 0 stateRel
     · have targetEnough : ¬ target.clock < (nextFirst :: nextRest).length := by
         simpa [← clockEq, ← lengthEq] using insufficient
       rw [evaluateApp, found] at run
       dsimp only at run
-      rw [if_neg insufficient] at run
+      rw [ite_eq_right insufficient] at run
       cases run
       refine ⟨.val [nextPartial], decClock (nextFirst :: nextRest).length target, ?_, ?_, ?_⟩
       · rw [evaluateApp, targetFound]
         dsimp only
-        rw [if_neg targetEnough]
+        rw [ite_eq_right targetEnough]
       · exact .cons partialRel .nil
       · simpa [decClock, ← clockEq, ← lengthEq] using
           stateRel_withClock (source.clock - (first :: rest).length) stateRel
@@ -188,12 +188,12 @@ theorem evaluateApp_full_timeout {C F : Type} (function nextFunction first : Val
       simpa [← clockEq, ← lengthEq, ← remainingEq] using insufficient
     rw [evaluateApp, found] at run
     dsimp only at run
-    rw [if_pos insufficient] at run
+    rw [ite_eq_left insufficient] at run
     cases run
     refine ⟨.err (.abort .timeoutError), { target with clock := 0 }, ?_, rfl, stateRel_withClock 0 stateRel⟩
     rw [evaluateApp, targetFound]
     dsimp only
-    rw [if_pos targetInsufficient]
+    rw [ite_eq_left targetInsufficient]
     rfl
 
 /-- A full application with enough clock composes the numbered body simulation
@@ -243,7 +243,7 @@ theorem evaluateApp_full {C F : Type} (function nextFunction first : Value)
     have bodySafe' : ¬ ClosProps.containsAppSome (decClock cost source).maxApp [body] := bodySafe
     rw [evaluateApp, found] at run
     dsimp only at run
-    rw [if_neg enough, fixClock_evaluate] at run
+    rw [ite_eq_right enough, fixClock_evaluate] at run
     cases bodyRun : evaluate [body] bodyEnv (decClock cost source) with
     | mk bodyResult last =>
       have bodyNoType : bodyResult ≠ .err (.abort .typeError) := by
@@ -265,7 +265,7 @@ theorem evaluateApp_full {C F : Type} (function nextFunction first : Value)
           refine ⟨.err targetError, targetLast, ?_, bodyRel, lastRel⟩
           rw [evaluateApp, targetFound]
           dsimp only
-          rw [if_neg targetEnough, targetCost, fixClock_evaluate]
+          rw [ite_eq_right targetEnough, targetCost, fixClock_evaluate]
           simp only [renumberList] at targetBodyRun
           rw [targetBodyRun]
       | val values =>
@@ -302,7 +302,7 @@ theorem evaluateApp_full {C F : Type} (function nextFunction first : Value)
                 refine ⟨targetResult, targetNext, ?_, ?_, nextRel⟩
                 · rw [evaluateApp, targetFound]
                   dsimp only
-                  rw [if_neg targetEnough, targetCost, fixClock_evaluate]
+                  rw [ite_eq_right targetEnough, targetCost, fixClock_evaluate]
                   simp only [renumberList] at targetBodyRun
                   rw [targetBodyRun]
                   exact targetAppRun
@@ -1675,10 +1675,10 @@ theorem primitiveSimulation_block_consExtend {C F : Type} (tag : Nat) :
                   by_cases invalid : lower < 0 ∨ len < 0 ∨ Int.ofNat fields.length < lower + len ∨
                       total = 0 ∨ total ≠ Int.ofNat initial.length + len
                   · simp only [doApp, applyBlock, ← fieldsLength, ← initialLength]
-                    rw [if_pos invalid, if_pos invalid]
+                    rw [ite_eq_left invalid, ite_eq_left invalid]
                     exact ⟨_, rfl, rfl⟩
                   · simp only [doApp, applyBlock, ← fieldsLength, ← initialLength]
-                    rw [if_neg invalid, if_neg invalid]
+                    rw [ite_eq_right invalid, ite_eq_right invalid]
                     exact ⟨_, _, rfl, resultRel, stateRel⟩
                 | word64 _ | block _ _ _ _ | byteVector _ | refPtr _ _ | closure | recclosure =>
                   simp [doApp, applyBlock, ResultRel]

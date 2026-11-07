@@ -103,7 +103,7 @@ theorem eImm32_some {imm : BitVec 64}
     (h1 : -(2^31 : Int) ≤ imm.toInt) (h2 : imm.toInt < 2^31) :
     ∃ l, eImm32 imm = some l := by
   unfold eImm32
-  rw [if_pos]
+  rw [ite_eq_left]
   · exact ⟨_, rfl⟩
   · omega
 
@@ -165,7 +165,7 @@ theorem encodeInsn_jcc_long (cond : ZCond) (imm : BitVec 64)
     (h1 : -(2^31 : Int) ≤ imm.toInt) (h2 : imm.toInt < 2^31) :
     (encodeInsn (.jcc cond imm)).length = 6 := by
   simp only [encodeInsn]
-  rw [if_neg ha, if_neg hp]
+  rw [ite_eq_right ha, ite_eq_right hp]
   obtain ⟨l, hl⟩ := eImm32_some h1 h2
   rw [hl]
   simp [eImm32_length hl]

@@ -404,7 +404,7 @@ theorem evaluatePost_ordinary_exact_call {C F : Type}
     rfl
   subst targetBody2
   have enoughTarget : ¬start.clock < arity := by simp [start]; omega
-  simp only [if_neg enoughTarget] at callRun
+  simp only [ite_eq_right enoughTarget] at callRun
   have clockEq : s.clock + clock - arity = s.clock - arity + clock := by omega
   have finalRun : BvlSem.evaluate [mkClCall (.var targetArgs.length) ((List.range targetArgs.length).map Bvl.Exp.var)]
       (targetArgs ++ [targetClosure] ++ rest) start = (targetResult, tFinal) := by
@@ -518,7 +518,7 @@ theorem evaluateApp_ordinary_exact_timeout {C F : Type}
     clRel_ordinary_exact_call start s.maxApp ptr arity _ sourceEnv fields targetArgs rest sourceBody targetClosure
       shiftedRelated targetLength envRelated.length_eq.symm
   have targetTimeout : start.clock < arity := by simpa [start] using timeout
-  simp only [if_pos targetTimeout] at targetRun
+  simp only [ite_eq_left targetTimeout] at targetRun
   refine ⟨sourceTimeout, 0, .err (.abort .timeoutError), { t with clock := 0 }, f, ?_, ?_, ?_, ?_, ?_, ?_, rfl⟩
   · simpa [start] using targetRun
   · simp [resultRel, excRel]
@@ -823,7 +823,7 @@ theorem evaluatePost_singletonRec_exact_call {C F : Type}
     rfl
   subst targetBody2
   have enoughTarget : ¬start.clock < arity := by simp [start]; omega
-  simp only [if_neg enoughTarget] at callRun
+  simp only [ite_eq_right enoughTarget] at callRun
   have clockEq : s.clock + clock - arity = s.clock - arity + clock := by omega
   have finalRun : BvlSem.evaluate [mkClCall (.var targetArgs.length) ((List.range targetArgs.length).map Bvl.Exp.var)]
       (targetArgs ++ [targetClosure] ++ rest) start = (targetResult, tFinal) := by
@@ -937,7 +937,7 @@ theorem evaluateApp_singletonRec_exact_timeout {C F : Type}
     clRel_singletonRec_exact_call start s.maxApp ptr arity _ sourceEnv fields targetArgs rest sourceBody targetClosure
       shiftedRelated targetLength envRelated.length_eq.symm
   have targetTimeout : start.clock < arity := by simpa [start] using timeout
-  simp only [if_pos targetTimeout] at targetRun
+  simp only [ite_eq_left targetTimeout] at targetRun
   refine ⟨sourceTimeout, 0, .err (.abort .timeoutError), { t with clock := 0 }, f, ?_, ?_, ?_, ?_, ?_, ?_, rfl⟩
   · simpa [start] using targetRun
   · simp [resultRel, excRel]
@@ -1207,7 +1207,7 @@ theorem evaluate_partialApp_global_pointer {C F : Type} (s : BvlSem.State C F)
   rw [indexEq]
   have nonnegative : ¬ ((previous + total * (total - 1) / 2 : Nat) : Int) < 0 := by
     exact Int.not_lt.mpr (Int.natCast_nonneg _)
-  simp only [if_neg nonnegative, Int.toNat_natCast, slot, Option.bind]
+  simp only [ite_eq_right nonnegative, Int.toNat_natCast, slot, Option.bind]
 
 /-- The generated stub's arity lookup and table access jointly select the
 installed partial-application entry pointer. -/
@@ -1632,7 +1632,7 @@ theorem evaluateApp_ordinary_partial_simulation {C F : Type}
     · simpa [timeout] using sourceRun
     · refine ⟨0, .err (.abort .timeoutError), { t with clock := 0 }, f, ?_, ?_, ?_, ?_, ?_, annotations, rfl⟩
       · have targetTimeout : start.clock < n + 1 := by dsimp [start]; omega
-        rw [if_pos targetTimeout] at targetRun
+        rw [ite_eq_left targetTimeout] at targetRun
         rw [targetEq]
         simpa only [start, Nat.add_zero] using targetRun
       · simp [resultRel, excRel]
@@ -1649,7 +1649,7 @@ theorem evaluateApp_ordinary_partial_simulation {C F : Type}
           .number (Int.ofNat (arity - 1 - args.length)) :: targetClosure :: targetArgs)
       refine ⟨0, .val [partialClosure], next, f, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
       · have targetEnough : ¬ start.clock < n + 1 := by dsimp [start]; omega
-        rw [if_neg targetEnough] at targetRun
+        rw [ite_eq_right targetEnough] at targetRun
         rw [targetEq]
         dsimp only [partialClosure, next]
         rw [targetEq]
@@ -1912,7 +1912,7 @@ theorem doApp_extendPartial {C F : Type} (s : BvlSem.State C F)
       (savedCount : Int) + 1 + 1 + 1 < 3 + (savedCount : Int) ∨
       (savedCount : Int) + ((n : Int) + 4) = 0 ∨
       ¬ (savedCount : Int) + ((n : Int) + 4) = (n : Int) + 1 + 1 + 1 + 1 + (savedCount : Int)) := by omega
-  simp only [if_neg valid]
+  simp only [ite_eq_right valid]
   simp [← savedLength]
 
 /-- The existing-partial body constructs the extended closure with the new
@@ -2137,7 +2137,7 @@ theorem evaluateApp_ordinary_partial_again_simulation {C F : Type}
     · simpa [timeout] using sourceRun
     · refine ⟨0, .err (.abort .timeoutError), { t with clock := 0 }, f, ?_, ?_, ?_, ?_, ?_, annotations, rfl⟩
       · have targetTimeout : start.clock < n + 1 := by dsimp [start]; omega
-        rw [if_pos targetTimeout] at targetRun
+        rw [ite_eq_left targetTimeout] at targetRun
         simpa only [start, remaining, Nat.add_zero] using targetRun
       · simp [resultRel, excRel]
       · exact (stateRel_clock f s t 0).2.mpr ((stateRel_clock f s t 0).1.mpr states)
@@ -2152,7 +2152,7 @@ theorem evaluateApp_ordinary_partial_again_simulation {C F : Type}
           .number (Int.ofNat (arity - 1 - (newArgs ++ oldArgs).length)) :: targetOriginal :: (newTargets ++ oldTargets))
       refine ⟨0, .val [combined], next, f, ?_, ?_, ?_, ?_, ?_, annotations, ?_⟩
       · have targetEnough : ¬ start.clock < n + 1 := by dsimp [start]; omega
-        rw [if_neg targetEnough, totalEq, indexEq, remainingEq, tickEq] at targetRun
+        rw [ite_eq_right targetEnough, totalEq, indexEq, remainingEq, tickEq] at targetRun
         simpa only [start, remaining, next, combined, Nat.add_zero] using targetRun
       · apply List.Forall₂.cons
         · change vRel s.maxApp f t.refs t.code (.closure (some ptr) (newArgs ++ oldArgs) captured arity body) combined
@@ -2555,7 +2555,7 @@ theorem evaluatePost_ordinary_partial_exact {C F : Type}
     rfl
   subst targetBody2
   have enoughTarget : ¬ start.clock < newTargets.length + 1 := by dsimp [start]; omega
-  simp only [if_neg enoughTarget] at callRun
+  simp only [ite_eq_right enoughTarget] at callRun
   have clockEq : s.clock + (clock + 1) - (newTargets.length + 1) = s.clock - newArgs.length + clock := by omega
   have finalRun : BvlSem.evaluate [mkClCall (.var newTargets.length) ((List.range newTargets.length).map Bvl.Exp.var)]
       (newTargets ++ [.block 31 (.codePtr (partialAppFnLocation s.maxApp (arity - 1) (oldTargets.length - 1)) ::
@@ -2576,7 +2576,7 @@ theorem evaluateApp_ordinary_partial_exact_body {C F : Type} (s sFinal : ClosSem
       (result, sFinal)) :
     ClosSem.evaluateApp none (.closure (some ptr) oldArgs captured arity body) newArgs s = (result, sFinal) := by
   rw [evaluateApp_ordinary_partial_exact s ptr arity captured oldArgs newArgs body nonempty oldBound bound length]
-  rw [if_neg (Nat.not_lt.mpr enough), ClosSem.fixClock_evaluate, bodyRun]
+  rw [ite_eq_right (Nat.not_lt.mpr enough), ClosSem.fixClock_evaluate, bodyRun]
   cases result with
   | err error => rfl
   | val values => cases values with
@@ -2661,7 +2661,7 @@ theorem evaluateApp_ordinary_partial_exact_timeout {C F : Type}
     (partialAppFnLocation s.maxApp (arity - 1) (oldTargets.length - 1)) (original :: oldTargets)
     (generatePartialAppClosureFn (arity - 1) (oldTargets.length - 1)) targetNonempty stubLookup
   have targetTimeout : start.clock < newTargets.length := by dsimp [start]; omega
-  simp only [if_pos targetTimeout] at targetRun
+  simp only [ite_eq_left targetTimeout] at targetRun
   refine ⟨sourceTimeout, 0, .err (.abort .timeoutError), { t with clock := 0 }, f, ?_, ?_, ?_, ?_, ?_, annotations, rfl⟩
   · simpa [start] using targetRun
   · simp [resultRel, excRel]
@@ -2867,7 +2867,7 @@ theorem evaluatePost_singletonRec_partial_exact {C F : Type}
     rfl
   subst targetBody2
   have enoughTarget : ¬ start.clock < newTargets.length + 1 := by dsimp [start]; omega
-  simp only [if_neg enoughTarget] at callRun
+  simp only [ite_eq_right enoughTarget] at callRun
   have clockEq : s.clock + (clock + 1) - (newTargets.length + 1) = s.clock - newArgs.length + clock := by omega
   have finalRun : BvlSem.evaluate [mkClCall (.var newTargets.length) ((List.range newTargets.length).map Bvl.Exp.var)]
       (newTargets ++ [.block 31 (.codePtr (partialAppFnLocation s.maxApp (arity - 1) (oldTargets.length - 1)) ::
@@ -2888,7 +2888,7 @@ theorem evaluateApp_singletonRec_partial_exact_body {C F : Type} (s sFinal : Clo
       (result, sFinal)) :
     ClosSem.evaluateApp none (.recclosure (some ptr) oldArgs captured [(arity, body)] 0) newArgs s = (result, sFinal) := by
   rw [evaluateApp_singletonRec_partial_exact s ptr arity captured oldArgs newArgs body nonempty oldBound bound length]
-  rw [if_neg (Nat.not_lt.mpr enough), ClosSem.fixClock_evaluate, bodyRun]
+  rw [ite_eq_right (Nat.not_lt.mpr enough), ClosSem.fixClock_evaluate, bodyRun]
   cases result with
   | err error => rfl
   | val values => cases values with
@@ -2977,7 +2977,7 @@ theorem evaluateApp_singletonRec_partial_exact_timeout {C F : Type}
     (partialAppFnLocation s.maxApp (arity - 1) (oldTargets.length - 1)) (original :: oldTargets)
     (generatePartialAppClosureFn (arity - 1) (oldTargets.length - 1)) targetNonempty stubLookup
   have targetTimeout : start.clock < newTargets.length := by dsimp [start]; omega
-  simp only [if_pos targetTimeout] at targetRun
+  simp only [ite_eq_left targetTimeout] at targetRun
   refine ⟨sourceTimeout, 0, .err (.abort .timeoutError), { t with clock := 0 }, f, ?_, ?_, ?_, ?_, ?_, annotations, rfl⟩
   · simpa [start] using targetRun
   · simp [resultRel, excRel]
@@ -3126,7 +3126,7 @@ theorem evaluateApp_recclosure_partial_again_simulation {C F : Type}
     · simpa [timeout] using sourceRun
     · refine ⟨0, .err (.abort .timeoutError), { t with clock := 0 }, f, ?_, ?_, ?_, ?_, ?_, annotations, rfl⟩
       · have targetTimeout : start.clock < n + 1 := by dsimp [start]; omega
-        rw [if_pos targetTimeout] at targetRun
+        rw [ite_eq_left targetTimeout] at targetRun
         simpa only [start, remaining, Nat.add_zero] using targetRun
       · simp [resultRel, excRel]
       · exact (stateRel_clock f s t 0).2.mpr ((stateRel_clock f s t 0).1.mpr states)
@@ -3141,7 +3141,7 @@ theorem evaluateApp_recclosure_partial_again_simulation {C F : Type}
           .number (Int.ofNat (arity - 1 - (newArgs ++ oldArgs).length)) :: targetOriginal :: (newTargets ++ oldTargets))
       refine ⟨0, .val [combined], next, f, ?_, ?_, ?_, ?_, ?_, annotations, ?_⟩
       · have targetEnough : ¬ start.clock < n + 1 := by dsimp [start]; omega
-        rw [if_neg targetEnough, totalEq, indexEq, remainingEq, tickEq] at targetRun
+        rw [ite_eq_right targetEnough, totalEq, indexEq, remainingEq, tickEq] at targetRun
         simpa only [start, remaining, next, combined, Nat.add_zero] using targetRun
       · apply List.Forall₂.cons
         · change vRel s.maxApp f t.refs t.code (.recclosure (some ptr) (newArgs ++ oldArgs) captured functions index) combined
@@ -3352,7 +3352,7 @@ theorem evaluateApp_recclosure_partial_simulation {C F : Type}
     · simpa [timeout] using sourceRun
     · refine ⟨0, .err (.abort .timeoutError), { t with clock := 0 }, f, ?_, ?_, ?_, ?_, ?_, annotations, rfl⟩
       · have targetTimeout : start.clock < n + 1 := by dsimp [start]; omega
-        rw [if_pos targetTimeout] at targetRun
+        rw [ite_eq_left targetTimeout] at targetRun
         rw [targetEq]
         simpa only [start, Nat.add_zero] using targetRun
       · simp [resultRel, excRel]
@@ -3369,7 +3369,7 @@ theorem evaluateApp_recclosure_partial_simulation {C F : Type}
           .number (Int.ofNat (arity - 1 - args.length)) :: targetClosure :: targetArgs)
       refine ⟨0, .val [partialClosure], next, f, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
       · have targetEnough : ¬ start.clock < n + 1 := by dsimp [start]; omega
-        rw [if_neg targetEnough] at targetRun
+        rw [ite_eq_right targetEnough] at targetRun
         rw [targetEq]
         dsimp only [partialClosure, next]
         rw [targetEq]
@@ -3754,7 +3754,7 @@ theorem evaluatePost_mutualRec_exact_call {C F : Type}
   have callRun := evaluate_mkClCall_direct_env start targetArgs rest 30 address [.refPtr true shared]
     ((codeForReccCase (captured.length + functions.length) arity targetBody).2) nonempty lookupStart
   have enoughTarget : ¬ start.clock < targetArgs.length := by dsimp [start]; omega
-  simp only [if_neg enoughTarget] at callRun
+  simp only [ite_eq_right enoughTarget] at callRun
   have storedStart : (BvlSem.decClock targetArgs.length start).refs.lookup shared = some (.valueArray (targets ++ fields)) := by
     simpa [start, BvlSem.decClock] using stored
   have sharedLength : (targets ++ fields).length = captured.length + functions.length := by
@@ -3829,7 +3829,7 @@ theorem evaluateApp_recclosure_exact_body {C F : Type} (s sFinal : ClosSem.State
   rw [evaluateApp_recclosure_exact s ptr arity index captured [] args functions body found nonempty (by simp; omega)
     bound (by simpa using length)]
   simp only [List.append_nil, length]
-  rw [if_neg (Nat.not_lt.mpr enough), ClosSem.fixClock_evaluate, bodyRun]
+  rw [ite_eq_right (Nat.not_lt.mpr enough), ClosSem.fixClock_evaluate, bodyRun]
   cases result with
   | err error => rfl
   | val values => cases values with
@@ -3902,7 +3902,7 @@ theorem evaluateApp_mutualRec_exact_timeout {C F : Type}
     clRel_mutualRec_exact_call start s.maxApp ptr index arity _ captured fields targetArgs rest functions body target
       shifted many found envRel'.length_eq.symm targetLength
   have targetTimeout : start.clock < arity := by simpa [start] using timeout
-  simp only [if_pos targetTimeout] at targetRun
+  simp only [ite_eq_left targetTimeout] at targetRun
   refine ⟨sourceTimeout, 0, .err (.abort .timeoutError), { t with clock := 0 }, f, ?_, ?_, ?_, ?_, ?_, annotations, rfl⟩
   · simpa [start] using targetRun
   · simp [resultRel, excRel]
@@ -4064,7 +4064,7 @@ theorem evaluatePost_mutualRec_partial_exact {C F : Type}
     (partialAppFnLocation s.maxApp (arity - 1) (oldTargets.length - 1)) address
     [.number (Int.ofNat (arity - 1)), .refPtr true shared] _ targetNewNonempty newCount savedCount shiftedStub shiftedOriginal
   have enoughTarget : ¬ start.clock < newTargets.length + 1 := by dsimp [start]; omega
-  simp only [if_neg enoughTarget] at callRun
+  simp only [ite_eq_right enoughTarget] at callRun
   have storedStart : (BvlSem.decClock (newTargets.length + 1) start).refs.lookup shared = some (.valueArray (targets ++ fields)) := by
     simpa [start, BvlSem.decClock] using stored
   have sharedLength : (targets ++ fields).length = captured.length + functions.length := by
@@ -4097,7 +4097,7 @@ theorem evaluateApp_recclosure_partial_exact_body {C F : Type} (s sFinal : ClosS
       (result, sFinal)) :
     ClosSem.evaluateApp none (.recclosure (some ptr) oldArgs captured functions index) newArgs s = (result, sFinal) := by
   rw [evaluateApp_recclosure_exact s ptr arity index captured oldArgs newArgs functions body found nonempty oldBound bound length]
-  rw [if_neg (Nat.not_lt.mpr enough), ClosSem.fixClock_evaluate, bodyRun]
+  rw [ite_eq_right (Nat.not_lt.mpr enough), ClosSem.fixClock_evaluate, bodyRun]
   cases result with
   | err error => rfl
   | val values => cases values with
@@ -4185,7 +4185,7 @@ theorem evaluateApp_mutualRec_partial_exact_timeout {C F : Type}
     (partialAppFnLocation s.maxApp (arity - 1) (oldTargets.length - 1)) (original :: oldTargets)
     (generatePartialAppClosureFn (arity - 1) (oldTargets.length - 1)) targetNonempty stubLookup
   have targetTimeout : start.clock < newTargets.length := by dsimp [start]; omega
-  simp only [if_pos targetTimeout] at targetRun
+  simp only [ite_eq_left targetTimeout] at targetRun
   refine ⟨sourceTimeout, 0, .err (.abort .timeoutError), { t with clock := 0 }, f, ?_, ?_, ?_, ?_, ?_, annotations, rfl⟩
   · simpa [start] using targetRun
   · simp [resultRel, excRel]
@@ -4680,7 +4680,7 @@ theorem evaluateApp_ordinary_over_timeout {C F : Type}
   have targetRun := evaluate_mkClCall_over_step start s.maxApp n (arity - 1) 30 (ptr + numStubs s.maxApp)
     targetArgs fields rest _ length over' totalBound genericLookup lookup
   have targetTimeout : start.clock < arity - 1 + 2 := by dsimp [start]; omega
-  simp only [if_pos targetTimeout] at targetRun
+  simp only [ite_eq_left targetTimeout] at targetRun
   refine ⟨sourceTimeout, 0, .err (.abort .timeoutError), { t with clock := 0 }, f, ?_, ?_, ?_, ?_, ?_, annotations, rfl⟩
   · rw [targetEq]
     simpa [start] using targetRun
@@ -4736,7 +4736,7 @@ theorem evaluateApp_ordinary_partial_over_timeout {C F : Type}
     (partialAppFnLocation s.maxApp (arity - 1) (oldTargets.length - 1)) targetArgs (original :: oldTargets) rest
     (generatePartialAppClosureFn (arity - 1) (oldTargets.length - 1)) length over' totalBound genericLookup stubLookup
   have targetTimeout : start.clock < total + 2 := by dsimp [start, total]; omega
-  simp only [if_pos targetTimeout] at targetRun
+  simp only [ite_eq_left targetTimeout] at targetRun
   refine ⟨sourceTimeout, 0, .err (.abort .timeoutError), { t with clock := 0 }, f, ?_, ?_, ?_, ?_, ?_, annotations, rfl⟩
   · rw [targetEq]
     simpa [start, total] using targetRun
@@ -4804,7 +4804,7 @@ theorem evaluateApp_recclosure_over_timeout {C F : Type}
   have targetRun := evaluate_mkClCall_over_step start s.maxApp n (arity - 1) 30 address
     targetArgs payload rest _ length over' totalBound genericLookup lookup
   have targetTimeout : start.clock < arity - 1 + 2 := by dsimp [start]; omega
-  simp only [if_pos targetTimeout] at targetRun
+  simp only [ite_eq_left targetTimeout] at targetRun
   refine ⟨sourceTimeout, 0, .err (.abort .timeoutError), { t with clock := 0 }, f, ?_, ?_, ?_, ?_, ?_, annotations, rfl⟩
   · rw [targetEq]
     simpa [start] using targetRun
@@ -4858,7 +4858,7 @@ theorem evaluateApp_recclosure_partial_over_timeout {C F : Type}
     (partialAppFnLocation s.maxApp (arity - 1) (oldTargets.length - 1)) targetArgs (original :: oldTargets) rest
     (generatePartialAppClosureFn (arity - 1) (oldTargets.length - 1)) length over' totalBound genericLookup stubLookup
   have targetTimeout : start.clock < total + 2 := by dsimp [start, total]; omega
-  simp only [if_pos targetTimeout] at targetRun
+  simp only [ite_eq_left targetTimeout] at targetRun
   refine ⟨sourceTimeout, 0, .err (.abort .timeoutError), { t with clock := 0 }, f, ?_, ?_, ?_, ?_, ?_, annotations, rfl⟩
   · rw [targetEq]
     simpa [start, total] using targetRun
@@ -5138,7 +5138,17 @@ theorem evaluate_overApp_continue_canonical {C F : Type} (s : BvlSem.State C F)
   · intro u
     simp [BvlSem.evaluate]
   · intro u
-    simp [BvlSem.evaluate]
+    simp only [BvlSem.evaluate]
+    have hle : n - total ≤ args.length := by omega
+    have hlen : (List.take (n - total) args).length = n - total := by
+      simp [List.length_take, Nat.min_eq_left hle]
+    have hget : (List.take (n - total) args ++ [value] ++ extra)[(List.take (n - total) args).length]? =
+        some value := by
+      rw [hlen]
+      rw [List.getElem?_append_left (by simp [List.length_take, Nat.min_eq_left hle])]
+      rw [List.getElem?_append_right (by simp [hlen])]
+      simp [hlen]
+    rw [hget]
   · intro u
     exact evaluate_overApp_remainingArgs u n total args rest value first second length (by omega)
   · intro u
@@ -6449,7 +6459,7 @@ theorem evaluatePost_ordinary_exact_call_below {C F : Type}
     rfl
   subst targetBody2
   have enoughTarget : ¬start.clock < arity := by simp [start]; omega
-  simp only [if_neg enoughTarget] at callRun
+  simp only [ite_eq_right enoughTarget] at callRun
   have clockEq : s.clock + clock - arity = s.clock - arity + clock := by omega
   have finalRun : BvlSem.evaluate [mkClCall (.var targetArgs.length) ((List.range targetArgs.length).map Bvl.Exp.var)]
       (targetArgs ++ [targetClosure] ++ rest) start = (targetResult, tFinal) := by
@@ -6572,7 +6582,7 @@ theorem evaluatePost_ordinary_partial_exact_below {C F : Type}
     rfl
   subst targetBody2
   have enoughTarget : ¬ start.clock < newTargets.length + 1 := by dsimp [start]; omega
-  simp only [if_neg enoughTarget] at callRun
+  simp only [ite_eq_right enoughTarget] at callRun
   have clockEq : s.clock + (clock + 1) - (newTargets.length + 1) = s.clock - newArgs.length + clock := by omega
   have finalRun : BvlSem.evaluate [mkClCall (.var newTargets.length) ((List.range newTargets.length).map Bvl.Exp.var)]
       (newTargets ++ [.block 31 (.codePtr (partialAppFnLocation s.maxApp (arity - 1) (oldTargets.length - 1)) ::
@@ -7262,7 +7272,7 @@ theorem evaluatePost_singletonRec_exact_call_below {C F : Type}
     rfl
   subst targetBody2
   have enoughTarget : ¬start.clock < arity := by simp [start]; omega
-  simp only [if_neg enoughTarget] at callRun
+  simp only [ite_eq_right enoughTarget] at callRun
   have clockEq : s.clock + clock - arity = s.clock - arity + clock := by omega
   have finalRun : BvlSem.evaluate [mkClCall (.var targetArgs.length) ((List.range targetArgs.length).map Bvl.Exp.var)]
       (targetArgs ++ [targetClosure] ++ rest) start = (targetResult, tFinal) := by
@@ -7354,7 +7364,7 @@ theorem evaluatePost_singletonRec_partial_exact_below {C F : Type}
     rfl
   subst targetBody2
   have enoughTarget : ¬ start.clock < newTargets.length + 1 := by dsimp [start]; omega
-  simp only [if_neg enoughTarget] at callRun
+  simp only [ite_eq_right enoughTarget] at callRun
   have clockEq : s.clock + (clock + 1) - (newTargets.length + 1) = s.clock - newArgs.length + clock := by omega
   have finalRun : BvlSem.evaluate [mkClCall (.var newTargets.length) ((List.range newTargets.length).map Bvl.Exp.var)]
       (newTargets ++ [.block 31 (.codePtr (partialAppFnLocation s.maxApp (arity - 1) (oldTargets.length - 1)) ::
@@ -7418,7 +7428,7 @@ theorem evaluatePost_mutualRec_exact_call_below {C F : Type}
   have callRun := evaluate_mkClCall_direct_env start targetArgs rest 30 address [.refPtr true shared]
     ((codeForReccCase (captured.length + functions.length) arity targetBody).2) nonempty lookupStart
   have enoughTarget : ¬ start.clock < targetArgs.length := by dsimp [start]; omega
-  simp only [if_neg enoughTarget] at callRun
+  simp only [ite_eq_right enoughTarget] at callRun
   have storedStart : (BvlSem.decClock targetArgs.length start).refs.lookup shared = some (.valueArray (targets ++ fields)) := by
     simpa [start, BvlSem.decClock] using stored
   have sharedLength : (targets ++ fields).length = captured.length + functions.length := by
@@ -7517,7 +7527,7 @@ theorem evaluatePost_mutualRec_partial_exact_below {C F : Type}
     (partialAppFnLocation s.maxApp (arity - 1) (oldTargets.length - 1)) address
     [.number (Int.ofNat (arity - 1)), .refPtr true shared] _ targetNewNonempty newCount savedCount shiftedStub shiftedOriginal
   have enoughTarget : ¬ start.clock < newTargets.length + 1 := by dsimp [start]; omega
-  simp only [if_neg enoughTarget] at callRun
+  simp only [ite_eq_right enoughTarget] at callRun
   have storedStart : (BvlSem.decClock (newTargets.length + 1) start).refs.lookup shared = some (.valueArray (targets ++ fields)) := by
     simpa [start, BvlSem.decClock] using stored
   have sharedLength : (targets ++ fields).length = captured.length + functions.length := by

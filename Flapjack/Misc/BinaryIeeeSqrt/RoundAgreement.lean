@@ -200,34 +200,34 @@ theorem holRoundSqrt_eq_real {t : Nat} {w : Nat} [NeZero t] [NeZero w] (mode : H
       by_cases h1 : holSqrtLe r (-(holFloatThreshold t w))
       · have h1' : realSqrtOfRat r ≤ ((-(holFloatThreshold t w) : Rat) : ℝ) :=
           (holSqrtLe_real_iff).mp h1
-        rw [if_pos h1, if_pos h1']
+        rw [ite_eq_left h1, ite_eq_left h1']
       · have h1' : ¬ realSqrtOfRat r ≤ ((-(holFloatThreshold t w) : Rat) : ℝ) :=
           fun hh => h1 ((holSqrtLe_real_iff).mpr hh)
-        rw [if_neg h1, if_neg h1']
+        rw [ite_eq_right h1, ite_eq_right h1']
         by_cases h2 : holSqrtGe r (holFloatThreshold t w)
         · have h2' : ((holFloatThreshold t w : Rat) : ℝ) ≤ realSqrtOfRat r :=
             (holSqrtGe_real_iff hr).mp h2
-          rw [if_pos h2, if_pos h2']
+          rw [ite_eq_left h2, ite_eq_left h2']
         · have h2' : ¬ ((holFloatThreshold t w : Rat) : ℝ) ≤ realSqrtOfRat r :=
             fun hh => h2 ((holSqrtGe_real_iff hr).mpr hh)
-          rw [if_neg h2, if_neg h2']
+          rw [ite_eq_right h2, ite_eq_right h2']
           exact holClosestSuchSqrt_real_eq _ _ hr
   | roundTowardZero =>
       simp only [holRoundSqrt, holRoundSqrtReal]
       by_cases h1 : holSqrtLt r (-(holFloatLargest t w))
       · have h1' : realSqrtOfRat r < ((-(holFloatLargest t w) : Rat) : ℝ) :=
           (holSqrtLt_real_iff hr).mp h1
-        rw [if_pos h1, if_pos h1']
+        rw [ite_eq_left h1, ite_eq_left h1']
       · have h1' : ¬ realSqrtOfRat r < ((-(holFloatLargest t w) : Rat) : ℝ) :=
           fun hh => h1 ((holSqrtLt_real_iff hr).mpr hh)
-        rw [if_neg h1, if_neg h1']
+        rw [ite_eq_right h1, ite_eq_right h1']
         by_cases h2 : holSqrtGt r (holFloatLargest t w)
         · have h2' : ((holFloatLargest t w : Rat) : ℝ) < realSqrtOfRat r :=
             (holSqrtGt_real_iff).mp h2
-          rw [if_pos h2, if_pos h2']
+          rw [ite_eq_left h2, ite_eq_left h2']
         · have h2' : ¬ ((holFloatLargest t w : Rat) : ℝ) < realSqrtOfRat r :=
             fun hh => h2 ((holSqrtGt_real_iff).mpr hh)
-          rw [if_neg h2, if_neg h2']
+          rw [ite_eq_right h2, ite_eq_right h2']
           have hs : (fun a : HolFloat t w =>
                 holFloatIsFinite a = true ∧ holSqrtGe r (holRatAbs (holFloatToReal a)))
               = (fun a : HolFloat t w =>
@@ -246,17 +246,17 @@ theorem holRoundSqrt_eq_real {t : Nat} {w : Nat} [NeZero t] [NeZero w] (mode : H
       by_cases h1 : holSqrtLt r (-(holFloatLargest t w))
       · have h1' : realSqrtOfRat r < ((-(holFloatLargest t w) : Rat) : ℝ) :=
           (holSqrtLt_real_iff hr).mp h1
-        rw [if_pos h1, if_pos h1']
+        rw [ite_eq_left h1, ite_eq_left h1']
       · have h1' : ¬ realSqrtOfRat r < ((-(holFloatLargest t w) : Rat) : ℝ) :=
           fun hh => h1 ((holSqrtLt_real_iff hr).mpr hh)
-        rw [if_neg h1, if_neg h1']
+        rw [ite_eq_right h1, ite_eq_right h1']
         by_cases h2 : holSqrtGt r (holFloatLargest t w)
         · have h2' : ((holFloatLargest t w : Rat) : ℝ) < realSqrtOfRat r :=
             (holSqrtGt_real_iff).mp h2
-          rw [if_pos h2, if_pos h2']
+          rw [ite_eq_left h2, ite_eq_left h2']
         · have h2' : ¬ ((holFloatLargest t w : Rat) : ℝ) < realSqrtOfRat r :=
             fun hh => h2 ((holSqrtGt_real_iff).mpr hh)
-          rw [if_neg h2, if_neg h2']
+          rw [ite_eq_right h2, ite_eq_right h2']
           have hs : (fun a : HolFloat t w =>
                 holFloatIsFinite a = true ∧ holSqrtLe r (holFloatToReal a))
               = (fun a : HolFloat t w =>
@@ -275,17 +275,17 @@ theorem holRoundSqrt_eq_real {t : Nat} {w : Nat} [NeZero t] [NeZero w] (mode : H
       by_cases h1 : holSqrtLt r (-(holFloatLargest t w))
       · have h1' : realSqrtOfRat r < ((-(holFloatLargest t w) : Rat) : ℝ) :=
           (holSqrtLt_real_iff hr).mp h1
-        rw [if_pos h1, if_pos h1']
+        rw [ite_eq_left h1, ite_eq_left h1']
       · have h1' : ¬ realSqrtOfRat r < ((-(holFloatLargest t w) : Rat) : ℝ) :=
           fun hh => h1 ((holSqrtLt_real_iff hr).mpr hh)
-        rw [if_neg h1, if_neg h1']
+        rw [ite_eq_right h1, ite_eq_right h1']
         by_cases h2 : holSqrtGt r (holFloatLargest t w)
         · have h2' : ((holFloatLargest t w : Rat) : ℝ) < realSqrtOfRat r :=
             (holSqrtGt_real_iff).mp h2
-          rw [if_pos h2, if_pos h2']
+          rw [ite_eq_left h2, ite_eq_left h2']
         · have h2' : ¬ ((holFloatLargest t w : Rat) : ℝ) < realSqrtOfRat r :=
             fun hh => h2 ((holSqrtGt_real_iff).mpr hh)
-          rw [if_neg h2, if_neg h2']
+          rw [ite_eq_right h2, ite_eq_right h2']
           have hs : (fun a : HolFloat t w =>
                 holFloatIsFinite a = true ∧ holSqrtGe r (holFloatToReal a))
               = (fun a : HolFloat t w =>
@@ -338,7 +338,7 @@ theorem holFloatSqrt_agreement {t : Nat} {w : Nat} [NeZero t] [NeZero w] (mode :
     holFloatSqrt mode x = holFloatSqrtReal mode x := by
   unfold holFloatSqrt holFloatSqrtReal
   by_cases hs : x.sign = 0
-  · rw [if_pos hs, if_pos hs]
+  · rw [ite_eq_left hs, ite_eq_left hs]
     cases hv : holFloatValue x with
     | nan => rfl
     | infinity => rfl
@@ -350,7 +350,7 @@ theorem holFloatSqrt_agreement {t : Nat} {w : Nat} [NeZero t] [NeZero w] (mode :
         · simpa using hv
       exact holFloatRoundWithFlagsSqrt_agreement mode false
         (hxr ▸ holFloatToReal_nonneg_of_sign_zero hs)
-  · rw [if_neg hs, if_neg hs]
+  · rw [ite_eq_right hs, ite_eq_right hs]
 
 /-- `fp64_sqrt mode` agrees between the cut and real renderings, for every
     rounding mode. -/

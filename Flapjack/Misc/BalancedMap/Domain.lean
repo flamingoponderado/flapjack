@@ -19,7 +19,7 @@ theorem toFmapKeySet {κ ι ν : Type} (cmp : κ → ι → Ordering)
     by_cases hroot : keys = keySet cmp key
     · exact ⟨key, hroot⟩
     · simp only [toFmap, HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL,
-        hroot, if_false, HolFiniteMapExact.lookup_union] at h
+        hroot, ite_false, HolFiniteMapExact.lookup_union] at h
       cases hleft : (toFmap cmp left).lookup keys with
       | none => exact ihright (by simpa [hleft] using h)
       | some value => exact ihleft (by simp [hleft])

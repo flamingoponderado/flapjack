@@ -100,7 +100,7 @@ theorem stExFirst_production (limit : Nat) (moves unavailable : List (Nat × (Na
           production ((priority, (u, v)) :: rest) unavailable =
           cakeStExFirst cakeConsistencyOk (fun state x y => cakeBgOk limit x y state) actualSecond.2 rest unavailable := by
         rw [cakeStExFirst]
-        simp only [consistent, Bool.not_false, if_true]
+        simp only [consistent, Bool.not_false, ite_true]
         rfl
       refine ⟨result, ?_, resultGood, resultDim.trans (secondDim.trans firstDim), ?_⟩
       · rw [actual, stExFirst]
@@ -126,7 +126,7 @@ theorem stExFirst_production (limit : Nat) (moves unavailable : List (Nat × (Na
             cakeStExFirst cakeConsistencyOk (fun state x y => cakeBgOk limit x y state)
               actualSecond.2 rest ((priority, canonical) :: unavailable) := by
           rw [cakeStExFirst]
-          simp only [consistent, Bool.not_true, Bool.false_eq_true, if_false]
+          simp only [consistent, Bool.not_true, Bool.false_eq_true, ite_false]
           change (match cakeBgOk limit canonical.1 canonical.2 actualSecond.2 with | none => _ | some _ => _) = _
           rw [choice]
         refine ⟨result, ?_, resultGood, resultDim.trans (secondDim.trans firstDim), ?_⟩
@@ -140,7 +140,7 @@ theorem stExFirst_production (limit : Nat) (moves unavailable : List (Nat × (Na
             production ((priority, (u, v)) :: rest) unavailable =
             (some (canonical, payload, rest), unavailable, actualSecond.2) := by
           rw [cakeStExFirst]
-          simp only [consistent, Bool.not_true, Bool.false_eq_true, if_false]
+          simp only [consistent, Bool.not_true, Bool.false_eq_true, ite_false]
           change (match cakeBgOk limit canonical.1 canonical.2 actualSecond.2 with | none => _ | some _ => _) = _
           rw [choice]
         refine ⟨second, ?_, secondGood, secondDim.trans firstDim, ?_⟩

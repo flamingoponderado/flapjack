@@ -37,7 +37,7 @@ private theorem uniqueChoice_eq_some {α : Type} (P : α → Prop)
     (by classical exact if h : ∃ x, P x then some (Classical.choose h) else none) = some value ↔ P value := by
   classical
   by_cases existsValue : ∃ x, P x
-  · simp only [existsValue, dif_pos, Option.some.injEq]
+  · simp only [existsValue, dite_eq_left, Option.some.injEq]
     constructor
     · intro same
       rw [← same]

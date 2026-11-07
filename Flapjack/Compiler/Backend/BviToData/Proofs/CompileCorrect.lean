@@ -102,7 +102,7 @@ private theorem jumpExc_setVar_ne_none {C F : Type} (state : DataSem.State C F)
     DataSem.jumpExc (DataSem.setVar name value state) ≠ none ↔ DataSem.jumpExc state ≠ none := by
   simp only [DataSem.jumpExc, DataSem.setVar]
   by_cases h : state.handler < state.stack.length
-  · simp only [h, if_true]
+  · simp only [h, ite_true]
   · simp [h]
 
 /-- A continuing compilation preserves each live local and supplies every
@@ -569,7 +569,7 @@ private theorem jumpExc_decClock {C F : Type} (state : DataSem.State C F) :
     DataSem.jumpExc (DataSem.decClock state) = (DataSem.jumpExc state).map DataSem.decClock := by
   simp only [DataSem.jumpExc, DataSem.decClock]
   by_cases h : state.handler < state.stack.length
-  · simp only [h, if_true]
+  · simp only [h, ite_true]
     split <;> simp [DataSem.decClock]
   · simp [h]
 

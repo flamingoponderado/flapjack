@@ -65,20 +65,20 @@ theorem compCorrectCallTail {width : Nat} [NeZero width] {C F : Type}
           simp only [StackProps.regBound] at bound
           cases dest <;> exact bound.1, lookup⟩
       by_cases zero : source.clock = 0
-      · simp only [zero, if_true] at sourceRun
+      · simp only [zero, ite_true] at sourceRun
         rcases Prod.mk.inj sourceRun with ⟨resultEq, postEq⟩
         subst result
         subst postSource
         refine ⟨0, emptyEnv target, ?_, ?_⟩
         · simpa only [comp, Nat.zero_add] using
             (evaluate_call none dest none target).trans (by
-              simp only [targetLookup, clocks, zero, if_true])
+              simp only [targetLookup, clocks, zero, ite_true])
         · exact (RelationLaws.stateRelConst jump bounds pointer source target relation).2.2.2.2.1
-      · simp only [zero, if_false, StackSemEvaluateClock.fixClockEvaluate] at sourceRun
+      · simp only [zero, ite_false, StackSemEvaluateClock.fixClockEvaluate] at sourceRun
         rcases bodyRun : evaluate (program, decClock source) with ⟨bodyResult, middle⟩
         rw [bodyRun] at sourceRun
         by_cases bad : StackSemControl.badFunReturn bodyResult = true
-        · simp only [bad, if_true] at sourceRun
+        · simp only [bad, ite_true] at sourceRun
           exact False.elim (notError (Prod.mk.inj sourceRun).1.symm)
         · simp [bad] at sourceRun
           rcases sourceRun with ⟨resultEq, postEq⟩
@@ -100,7 +100,7 @@ theorem compCorrectCallTail {width : Nat} [NeZero width] {C F : Type}
             omega
           simp only [comp]
           rw [evaluate_call]
-          simp only [targetLookup, nonzero, if_false, StackSemEvaluateClock.fixClockEvaluate]
+          simp only [targetLookup, nonzero, ite_false, StackSemEvaluateClock.fixClockEvaluate]
           rw [clockEq, targetRun]
           simp [bad]
 end Flapjack.Compiler.Backend.StackRemove.CompCorrect.CallTail

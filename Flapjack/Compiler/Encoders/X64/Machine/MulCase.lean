@@ -97,7 +97,7 @@ theorem x64Next_mul (ms : X64State) (d : BitVec 64 → Prop) (src : Nat) (hs : s
   have hdec : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) =
       some (.mul .z64 src, (encodeInsn (.mul .z64 src)).length) :=
     decode_bytesInMemory _ ms.pc ms.mem d _ _ hbm (decode_mul_z64 src hs) (by omega)
-  simp only [x64Next, hfailed, Bool.false_eq_true, if_false, hdec, execInsn]
+  simp only [x64Next, hfailed, Bool.false_eq_true, ite_false, hdec, execInsn]
 
 /-- The `longMul` constructor of `encoder_correct x64Target`: one `x64Next`
 step writes the product's low half to `rax` and its high half to `rdx`. -/
@@ -192,7 +192,7 @@ theorem case_longMul (r1 r2 r3 r4 : Nat) (s1 s2 : AsmState 64) (ms : X64State)
       · by_cases hx2 : x = 2
         · subst hx2
           simp [hx0]
-        · simp only [hx0, hx2, if_false]
+        · simp only [hx0, hx2, ite_false]
           simpa [readReg, num2Zreg, hmod] using st.reg x hx
     · intro x hx
       show readXmm ms x = s2.fpRegs x

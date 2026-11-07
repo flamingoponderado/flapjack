@@ -71,7 +71,7 @@ theorem rhs_lift {width : Nat} [NeZero width] {t : Bool} {p q : HolProg width}
     (hcx : complexGetCodeLabels q ⊆ complexGetCodeLabels p) :
     rhs false q n cs' bs' out' ⊆ rhs t p n cs bs out := by
   intro x hx
-  simp only [rhs, Bool.false_eq_true, false_and, if_false, Set.mem_insert_iff, Set.mem_union,
+  simp only [rhs, Bool.false_eq_true, false_and, ite_false, Set.mem_insert_iff, Set.mem_union,
     Set.mem_ofPred_eq, Set.mem_image, Set.mem_sUnion, List.mem_map] at hx
   rcases hx with rfl | rfl | ((⟨l, hl, rfl⟩ | ⟨n2, ⟨_, ⟨ln, hln, rfl⟩, hn2⟩, rfl⟩) | hc)
   · simp [rhs]
@@ -532,12 +532,12 @@ theorem progToSectionLabels {width : Nat} [NeZero width] {n : Nat} {p : HolProg 
     · exact .inl (.inl rfl)
     · by_cases hs : ∃ p1 p2, p = .seq p1 p2
       · obtain ⟨a, b, rfl⟩ := hs
-        rw [if_pos (show True ∧ ∃ p1 p2 : HolProg width,
+        rw [ite_eq_left (show True ∧ ∃ p1 p2 : HolProg width,
           (StackLang.Prog.seq a b : HolProg width) = .seq p1 p2 from ⟨trivial, a, b, rfl⟩)]
         refine .inl (.inr ⟨1, ⟨.label n 1 0, ?_, by simp [lineGetCodeLabels]⟩, rfl⟩)
         rw [flattenHOL]
         simp
-      · simp only [true_and, hs, if_false]
+      · simp only [true_and, hs, ite_false]
         exact .inl (.inl rfl)
     · exact .inl (.inr ⟨n2, ⟨ln', by simp [hl'], hn2⟩, rfl⟩)
     · exact .inr h

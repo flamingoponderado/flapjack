@@ -63,9 +63,9 @@ theorem evaluateCodeBitmapsCallTail {width : Nat} [NeZero width] {C F : Type}
         have clamped : CodeBitmaps source
             {out with clock := min (StackSemStateOps.decClock source).clock out.clock} := fields
         by_cases bad : StackSemControl.badFunReturn res = true
-        · simp only [bad, if_true, Prod.mk.injEq] at execution
+        · simp only [bad, ite_true, Prod.mk.injEq] at execution
           exact execution.2 ▸ clamped
-        · simp only [bad, Bool.false_eq_true, if_false, Prod.mk.injEq] at execution
+        · simp only [bad, Bool.false_eq_true, ite_false, Prod.mk.injEq] at execution
           exact execution.2 ▸ clamped
 
 end Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps

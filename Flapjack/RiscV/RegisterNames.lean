@@ -156,7 +156,7 @@ theorem labRegisterOfNat_eq_registerOfNat_map_forward (name : Nat) :
   by_cases h : name < 32
   · rw [labRegisterOfNat_of_lt_32 h]
     simp only [registerOfNat]
-    rw [dif_pos h]
+    rw [dite_eq_left h]
     rfl
   · have hge : 32 ≤ name := Nat.le_of_not_lt h
     unfold labRegisterOfNat

@@ -232,7 +232,7 @@ theorem decodeBitMasks_lsr (n : Nat) (hn : n < 64) :
     rw [show (63 : Nat) = 2 ^ 6 - 1 by norm_num, Nat.and_two_pow_sub_one_eq_mod,
       Nat.mod_eq_of_lt hn, Nat.mod_eq_of_lt (by omega : n < 2 ^ 6)]
   rw [decodeBitMasks, h1, h2]
-  rw [if_neg (by decide : ¬ ((6 : Int) < 1)), if_neg (by decide : ¬ ((false && _) = true)),
+  rw [ite_eq_right (by decide : ¬ ((6 : Int) < 1)), ite_eq_right (by decide : ¬ ((false && _) = true)),
     show (6 : Int).toNat = 6 by decide, show (63 : Nat) % 64 = 63 by decide,
     show ones 6 = 63 by decide, hR]
   dsimp only
@@ -290,8 +290,7 @@ theorem ror64_and_ones (v : BitVec 64) (n : Nat) (hn : n < 64) :
     Nat.testBit_two_pow_sub_one, ones, hi, decide_true, Bool.true_and]
   by_cases hin : i < 64 - n
   · have htr : n + i < 64 := by omega
-    have htr' : i - (64 - n) < 64 := by omega
-    simp [hin, htr, htr', BitVec.getLsbD_ushiftRight]
+    simp [hin, htr, BitVec.getLsbD_ushiftRight]
   · have hge : n + i ≥ 64 := by omega
     simp [hin, BitVec.getLsbD_ushiftRight, getLsbD_of_ge hge v]
 
@@ -309,18 +308,18 @@ theorem or_sshiftRight (v : BitVec 64) (n : Nat) (hn : n < 64) :
   · have htr : n + i < 64 := by omega
     have hm := ones_testBit_true hin
     by_cases hs : v.getLsbD 63
-    · rw [if_pos hs, BitVec.getLsbD_not, BitVec.getLsbD_ofNat]
+    · rw [ite_eq_left hs, BitVec.getLsbD_not, BitVec.getLsbD_ofNat]
       simp [hi, hi64, htr, hm]
-    · rw [if_neg hs]
+    · rw [ite_eq_right hs]
       simp [hi, hi64, htr]
   · have htr : ¬ (n + i < 64) := by omega
     have hge : 64 ≤ n + i := by omega
     have hm := ones_testBit_false hin
     by_cases hs : v.getLsbD 63
-    · rw [if_pos hs, hs, BitVec.getLsbD_not, BitVec.getLsbD_ofNat]
+    · rw [ite_eq_left hs, hs, BitVec.getLsbD_not, BitVec.getLsbD_ofNat]
       simp [hi, hi64, htr, getLsbD_of_ge hge v]
       exact hm
-    · rw [if_neg hs]
+    · rw [ite_eq_right hs]
       have hf : v.getLsbD 63 = false := by simpa using hs
       simpa [hi, hi64, htr, getLsbD_of_ge hge v] using hf
 
@@ -328,14 +327,14 @@ theorem or_sshiftRight (v : BitVec 64) (n : Nat) (hn : n < 64) :
 theorem asr_signfill_true (v : BitVec 64) (n : Nat) (hn : n < 64) (hs : v.getLsbD 63) :
     ~~~(BitVec.ofNat 64 (ones (64 - n))) ||| (v >>> n) = v.sshiftRight n := by
   have h := or_sshiftRight v n hn
-  rw [if_pos hs] at h
+  rw [ite_eq_left hs] at h
   exact h
 
 /-- Sign filling with the sign bit clear: nothing to fill. -/
 theorem asr_signfill_false (v : BitVec 64) (n : Nat) (hn : n < 64) (hs : ¬ v.getLsbD 63) :
     (0 : BitVec 64) ||| (v >>> n) = v.sshiftRight n := by
   have h := or_sshiftRight v n hn
-  rw [if_neg hs] at h
+  rw [ite_eq_right hs] at h
   exact h
 
 /-- The value the lowered `LSR` bitfield move computes. -/
@@ -371,7 +370,7 @@ theorem execInsn_extractRegister (s : Arm8State) (n t r : Nat) :
   congr 1
   by_cases h : n % 64 = 0
   · simp [h, ror64, BitVec.rotateRight_def]
-  · simp only [h, if_false]
+  · simp only [h, ite_false]
     rw [ror64, BitVec.rotateRight_def, BitVec.or_comm]
     simp
 

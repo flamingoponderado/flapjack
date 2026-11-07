@@ -57,18 +57,18 @@ theorem isNotCoalescedSucceeds (s : State) (n : Nat) :
   intro ⟨hg, hn⟩
   have hc : n < s.coalesced.length := by rw [(good_dim_lt hg).2.2.1]; exact hn
   exact ⟨decide (n = holEl n s.coalesced), by
-    simp only [isNotCoalesced, Translator.Monadic.MonadBase.bind, coalescedSubEqn, if_pos hc, ret]⟩
+    simp only [isNotCoalesced, Translator.Monadic.MonadBase.bind, coalescedSubEqn, ite_eq_left hc, ret]⟩
 
 private theorem splitDegree_succeeds (s : State) (k v : Nat) (hg : goodRaState s) :
     ∃ c, splitDegree s.dim k v s = (.success c, s) := by
   unfold splitDegree
   by_cases hv : v < s.dim
-  · rw [if_pos hv]
+  · rw [ite_eq_left hv]
     have hd : v < s.degrees.length := by rw [(good_dim_lt hg).2.1]; exact hv
     obtain ⟨b, hb⟩ := isNotCoalescedSucceeds s v ⟨hg, hv⟩
     exact ⟨decide (holEl v s.degrees < k) && b, by
-      simp only [Translator.Monadic.MonadBase.bind, degreesSubEqn, if_pos hd, hb, ret]⟩
-  · rw [if_neg hv]; exact ⟨true, rfl⟩
+      simp only [Translator.Monadic.MonadBase.bind, degreesSubEqn, ite_eq_left hd, hb, ret]⟩
+  · rw [ite_eq_right hv]; exact ⟨true, rfl⟩
 
 /-- Exact HOL `st_ex_PARTITION_split_degree` (`reg_allocProofScript.sml:2085-2116`). -/
 @[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml"
@@ -89,7 +89,7 @@ theorem stExPartitionSplitDegree :
       cases c with
       | true =>
           obtain ⟨ts, fs, heq, hts, hfs⟩ := ih (h :: lss) lss' s hg
-          refine ⟨ts, fs, by simp only [stExPartition, Translator.Monadic.MonadBase.bind, hc, if_true]; exact heq, ?_, ?_⟩
+          refine ⟨ts, fs, by simp only [stExPartition, Translator.Monadic.MonadBase.bind, hc, ite_true]; exact heq, ?_, ?_⟩
           · intro x hx
             rcases hts x hx with hx | hx
             · rcases List.mem_cons.mp hx with rfl | hx
@@ -130,7 +130,7 @@ theorem decDegSuccess :
         rw [(good_dim_lt hg).2.1]; exact hb h List.mem_cons_self
       let s1 : State := { s with degrees := s.degrees.set h (holEl h s.degrees - 1) }
       have hs1 : decDeg h s = (.success (), s1) := by
-        simp only [decDeg, Translator.Monadic.MonadBase.bind, degreesSubEqn, if_pos hh, updateDegreesEqn]; rfl
+        simp only [decDeg, Translator.Monadic.MonadBase.bind, degreesSubEqn, ite_eq_left hh, updateDegreesEqn]; rfl
       obtain ⟨d, hrun, hl⟩ := ih s1 ⟨fun v hv => hb v (List.mem_cons_of_mem _ hv),
         good_degrees hg List.length_set⟩
       refine ⟨d, ?_, by rw [hl]; exact List.length_set⟩
@@ -153,14 +153,14 @@ theorem decDegreeSuccess :
       · have ha : h < s.adj_ls.length := by rw [(good_dim_lt hg).1]; exact hh
         obtain ⟨d1, hrun1, hl1⟩ := decDegSuccess (holEl h s.adj_ls) s ⟨good_adj hg hh, hg⟩
         have hs1 : decDegree h s = (.success (), { s with degrees := d1 }) := by
-          simp only [decDegree, Translator.Monadic.MonadBase.bind, getDim, if_pos hh, adjLsSubEqn, if_pos ha]
+          simp only [decDegree, Translator.Monadic.MonadBase.bind, getDim, ite_eq_left hh, adjLsSubEqn, ite_eq_left ha]
           exact hrun1
         obtain ⟨d, hrun, hl⟩ := ih { s with degrees := d1 } (good_degrees hg hl1)
         refine ⟨d, ?_, by rw [hl]; exact hl1⟩
         simp only [stExForeach, ignoreBind, hs1]
         exact hrun
       · have hs1 : decDegree h s = (.success (), s) := by
-          simp only [decDegree, Translator.Monadic.MonadBase.bind, getDim, if_neg hh, ret]
+          simp only [decDegree, Translator.Monadic.MonadBase.bind, getDim, ite_eq_right hh, ret]
         obtain ⟨d, hrun, hl⟩ := ih s hg
         refine ⟨d, ?_, hl⟩
         simp only [stExForeach, ignoreBind, hs1]
@@ -317,7 +317,7 @@ theorem pushStackSuccess :
         stack := h :: s.stack }
       have hs1 : pushStack h s = (.success (), s1) := by
         simp only [pushStack, Translator.Monadic.MonadBase.bind, getStack, ignoreBind,
-          updateDegreesEqn, if_pos hd, updateMoveRelatedEqn, if_pos hm,
+          updateDegreesEqn, ite_eq_left hd, updateMoveRelatedEqn, ite_eq_left hm,
           setStack]
         rfl
       obtain ⟨d, mr, st, hrun, hdl, hml⟩ :=
@@ -339,7 +339,7 @@ theorem doSimplifySuccess (k : Nat) :
   intro s hg
   by_cases he : s.simp_wl = []
   · exact ⟨s, false, by simp only [doSimplify, Translator.Monadic.MonadBase.bind, getSimpWl,
-      if_pos he, ret], hg, isSubgraphRefl _, rfl, rfl⟩
+      ite_eq_left he, ret], hg, isSubgraphRefl _, rfl, rfl⟩
   obtain ⟨d, hrun1, hl1⟩ := decDegreeSuccess s.simp_wl s hg
   have hg1 := good_degrees hg hl1
   obtain ⟨d2, mr, st, hrun2, hl2, hm2⟩ :=
@@ -354,7 +354,7 @@ theorem doSimplifySuccess (k : Nat) :
     exact absurd hv List.not_mem_nil
   obtain ⟨s', _, hrun3, hg', hsub, hdim, htag⟩ := unspillSuccess (α := Unit) k s2 hg3
   refine ⟨s', true, ?_, hg', hsub, hdim, htag⟩
-  simp only [doSimplify, Translator.Monadic.MonadBase.bind, getSimpWl, if_neg he, ignoreBind,
+  simp only [doSimplify, Translator.Monadic.MonadBase.bind, getSimpWl, ite_eq_right he, ignoreBind,
     hrun1, hrun2, setSimpWl]
   have h3' : unspill k { s with degrees := d2, move_related := mr, stack := st, simp_wl := [] } =
       (.success (), s') := hrun3

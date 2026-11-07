@@ -112,7 +112,7 @@ theorem evaluate_listLength_cons {C F : Type} (head : Value) (tail : List Value)
   change BviSem.evaluate [.call 0 (some listLengthLocation) [readTail, increment] none] env state = _
   rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun]
   simp only [BvlSem.findCode, lookup, listLengthCode, List.length_cons, List.length_nil, ite_true]
-  simp only [Nat.zero_add, Nat.lt_one_iff, clock, if_false, BviSem.fixClock_evaluate]
+  simp only [Nat.zero_add, Nat.lt_one_iff, clock, ite_false, BviSem.fixClock_evaluate]
   have recRun := recursive
   simp [listLengthCode] at recRun
   simp [recRun]

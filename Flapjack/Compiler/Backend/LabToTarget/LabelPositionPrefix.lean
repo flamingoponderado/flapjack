@@ -18,7 +18,7 @@ theorem labLenPosOk_evenPrefixZero {width : Nat} [NeZero width] (pos : Nat)
     rintro ⟨he,hpos⟩
     cases line with
     | label k1 k2 len =>
-      simp only [labLenPosOk,lineLabLenPosOk,he,if_pos,lineLen] at hpos
+      simp only [labLenPosOk,lineLabLenPosOk,he,ite_eq_left,lineLen] at hpos
       rcases hpos with ⟨hlen,ht⟩
       subst len
       simp only [Nat.add_zero] at ht

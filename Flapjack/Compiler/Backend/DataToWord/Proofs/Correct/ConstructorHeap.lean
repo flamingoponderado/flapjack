@@ -303,7 +303,7 @@ theorem memoryRel_allocateBlock {width : Nat} [NeZero width] (conf : Config)
   obtain ⟨pre, post, heapEq, indexEq⟩ := heapLookup_split heap a _ found
   have freeEq : (heapExpand (sp + sp1) : ValueHeap width) = [.unused (sp + sp1 - 1)] := by
     unfold heapExpand
-    rw [if_neg positive]
+    rw [ite_eq_right positive]
   have shape : heap = pre ++ heapExpand (sp + sp1) ++ post := by
     simpa only [freeEq, List.append_assoc, List.singleton_append] using heapEq
   subst heap

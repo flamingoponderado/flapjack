@@ -245,7 +245,7 @@ theorem compileIncSource_available {C α β : Type}
       change (if entry.1 % bvlToBviNamespaces = 1 then
         entry.1 < bvlNumStubs + bvlToBviNamespaces * (oracle 0).1.1 else
         entry.1 % bvlToBviNamespaces = 0 ∧ sptMem ((entry.1 - bvlNumStubs) / bvlToBviNamespaces) source) at fromNames
-      simp only [modulo, Nat.zero_ne_one, if_false, quotient] at fromNames
+      simp only [modulo, Nat.zero_ne_one, ite_false, quotient] at fromNames
       obtain ⟨cell, found⟩ := (sptMem_iff_lookup _ _).mp fromNames.2
       have notFound := sourceAvailable sourceEntry entryMember
       rw [keyEq] at notFound

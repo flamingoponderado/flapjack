@@ -45,7 +45,7 @@ theorem binopReg_congr_upto (opcode off : Nat) (r r' : Nat → BitVec 8) (hi : N
     rw [hp] at hd
     dsimp only at hd
     by_cases hmod : p.modBits = 3
-    · rw [if_pos hmod] at hd
+    · rw [ite_eq_left hmod] at hd
       simp only [Option.some.injEq, Prod.mk.injEq] at hd
       obtain ⟨hi', hlen⟩ := hd
       have hlen' : len = off + p.len := hlen.symm
@@ -55,9 +55,9 @@ theorem binopReg_congr_upto (opcode off : Nat) (r r' : Nat → BitVec 8) (hi : N
       dsimp only
       rw [hpm]
       try simp only []
-      rw [if_pos hmod]
+      rw [ite_eq_left hmod]
       rw [← hi', hlen']
-    · rw [if_neg hmod] at hd
+    · rw [ite_eq_right hmod] at hd
       simp at hd
 
 /-- `decodeRex` reads only the bytes below the length it reports. -/
@@ -169,7 +169,7 @@ theorem decodeRex_congr_upto (r r' : Nat → BitVec 8) (rexW rexR rexB : Bool)
       rw [hp] at hd
       dsimp only at hd
       by_cases hmod : p.modBits = 3
-      · rw [if_pos hmod] at hd
+      · rw [ite_eq_left hmod] at hd
         simp only [Option.some.injEq, Prod.mk.injEq] at hd
         obtain ⟨hi, hlen⟩ := hd
         have hlen' : len = 2 + p.len := hlen.symm
@@ -180,9 +180,9 @@ theorem decodeRex_congr_upto (r r' : Nat → BitVec 8) (rexW rexR rexB : Bool)
         try simp only []
         rw [hpm]
         try simp only []
-        rw [if_pos hmod]
+        rw [ite_eq_left hmod]
         rw [← hi, hlen']
-      · rw [if_neg hmod] at hd
+      · rw [ite_eq_right hmod] at hd
         cases hb2 : baseOfRM p.rm with
         | none => simp [hb2] at hd
         | some bd =>
@@ -197,7 +197,7 @@ theorem decodeRex_congr_upto (r r' : Nat → BitVec 8) (rexW rexR rexB : Bool)
           try simp only []
           rw [hpm]
           try simp only []
-          rw [if_neg hmod]
+          rw [ite_eq_right hmod]
           rw [hb2]
           rw [← hi, hlen']
 
@@ -209,7 +209,7 @@ theorem decodeRex_congr_upto (r r' : Nat → BitVec 8) (rexW rexR rexB : Bool)
       rw [hp] at hd
       dsimp only at hd
       by_cases hmod : p.modBits = 3
-      · rw [if_pos hmod] at hd
+      · rw [ite_eq_left hmod] at hd
         simp only [Option.some.injEq, Prod.mk.injEq] at hd
         obtain ⟨hi, hlen⟩ := hd
         have hlen' : len = 2 + p.len := hlen.symm
@@ -220,9 +220,9 @@ theorem decodeRex_congr_upto (r r' : Nat → BitVec 8) (rexW rexR rexB : Bool)
         try simp only []
         rw [hpm]
         try simp only []
-        rw [if_pos hmod]
+        rw [ite_eq_left hmod]
         rw [← hi, hlen']
-      · rw [if_neg hmod] at hd
+      · rw [ite_eq_right hmod] at hd
         cases hb2 : baseOfRM p.rm with
         | none => simp [hb2] at hd
         | some bd =>
@@ -237,7 +237,7 @@ theorem decodeRex_congr_upto (r r' : Nat → BitVec 8) (rexW rexR rexB : Bool)
           try simp only []
           rw [hpm]
           try simp only []
-          rw [if_neg hmod]
+          rw [ite_eq_right hmod]
           rw [hb2]
           rw [← hi, hlen']
 
@@ -249,9 +249,9 @@ theorem decodeRex_congr_upto (r r' : Nat → BitVec 8) (rexW rexR rexB : Bool)
       rw [hp] at hd
       dsimp only at hd
       by_cases hmod : p.modBits = 3
-      · rw [if_pos hmod] at hd
+      · rw [ite_eq_left hmod] at hd
         simp at hd
-      · rw [if_neg hmod] at hd
+      · rw [ite_eq_right hmod] at hd
         cases hb2 : baseOfRM p.rm with
         | none => simp [hb2] at hd
         | some bd =>
@@ -266,7 +266,7 @@ theorem decodeRex_congr_upto (r r' : Nat → BitVec 8) (rexW rexR rexB : Bool)
           try simp only []
           rw [hpm]
           try simp only []
-          rw [if_neg hmod]
+          rw [ite_eq_right hmod]
           rw [hb2]
           rw [← hi, hlen']
 
@@ -355,7 +355,7 @@ theorem decodeRex_congr_upto (r r' : Nat → BitVec 8) (rexW rexR rexB : Bool)
         rw [he] at hd
         dsimp only at hd
         by_cases hmod : p.modBits = 3
-        · rw [if_pos hmod] at hd
+        · rw [ite_eq_left hmod] at hd
           simp only [Option.some.injEq, Prod.mk.injEq] at hd
           obtain ⟨hi, hlen⟩ := hd
           have hlen' : len = 3 + p.len := hlen.symm
@@ -370,9 +370,9 @@ theorem decodeRex_congr_upto (r r' : Nat → BitVec 8) (rexW rexR rexB : Bool)
           try simp only []
           rw [he]
           try simp only []
-          rw [if_pos hmod]
+          rw [ite_eq_left hmod]
           rw [← himm, ← hi, hlen']
-        · rw [if_neg hmod] at hd
+        · rw [ite_eq_right hmod] at hd
           simp at hd
 
   · rename_i hb
@@ -388,7 +388,7 @@ theorem decodeRex_congr_upto (r r' : Nat → BitVec 8) (rexW rexR rexB : Bool)
         rw [he] at hd
         dsimp only at hd
         by_cases hmod : p.modBits = 3
-        · rw [if_pos hmod] at hd
+        · rw [ite_eq_left hmod] at hd
           simp only [Option.some.injEq, Prod.mk.injEq] at hd
           obtain ⟨hi, hlen⟩ := hd
           have hlen' : len = 6 + p.len := hlen.symm
@@ -403,9 +403,9 @@ theorem decodeRex_congr_upto (r r' : Nat → BitVec 8) (rexW rexR rexB : Bool)
           try simp only []
           rw [he]
           try simp only []
-          rw [if_pos hmod]
+          rw [ite_eq_left hmod]
           rw [← himm, ← hi, hlen']
-        · rw [if_neg hmod] at hd
+        · rw [ite_eq_right hmod] at hd
           simp at hd
 
   · rename_i hb
@@ -421,7 +421,7 @@ theorem decodeRex_congr_upto (r r' : Nat → BitVec 8) (rexW rexR rexB : Bool)
         rw [he] at hd
         dsimp only at hd
         by_cases hmod : p.modBits = 3
-        · rw [if_pos hmod] at hd
+        · rw [ite_eq_left hmod] at hd
           simp only [Option.some.injEq, Prod.mk.injEq] at hd
           obtain ⟨hi, hlen⟩ := hd
           have hlen' : len = 3 + p.len := hlen.symm
@@ -436,9 +436,9 @@ theorem decodeRex_congr_upto (r r' : Nat → BitVec 8) (rexW rexR rexB : Bool)
           try simp only []
           rw [he]
           try simp only []
-          rw [if_pos hmod]
+          rw [ite_eq_left hmod]
           rw [← himm, ← hi, hlen']
-        · rw [if_neg hmod] at hd
+        · rw [ite_eq_right hmod] at hd
           simp at hd
 
   · rename_i hb
@@ -454,7 +454,7 @@ theorem decodeRex_congr_upto (r r' : Nat → BitVec 8) (rexW rexR rexB : Bool)
         rw [he] at hd
         dsimp only at hd
         by_cases hmod : p.modBits = 3
-        · rw [if_pos hmod] at hd
+        · rw [ite_eq_left hmod] at hd
           simp only [Option.some.injEq, Prod.mk.injEq] at hd
           obtain ⟨hi, hlen⟩ := hd
           have hlen' : len = 2 + p.len := hlen.symm
@@ -467,9 +467,9 @@ theorem decodeRex_congr_upto (r r' : Nat → BitVec 8) (rexW rexR rexB : Bool)
           try simp only []
           rw [he]
           try simp only []
-          rw [if_pos hmod]
+          rw [ite_eq_left hmod]
           rw [← hi, hlen']
-        · rw [if_neg hmod] at hd
+        · rw [ite_eq_right hmod] at hd
           simp at hd
 
   · rename_i hb
@@ -485,7 +485,7 @@ theorem decodeRex_congr_upto (r r' : Nat → BitVec 8) (rexW rexR rexB : Bool)
         rw [he] at hd
         dsimp only at hd
         by_cases hmod : p.modBits = 3
-        · rw [if_pos hmod] at hd
+        · rw [ite_eq_left hmod] at hd
           simp only [Option.some.injEq, Prod.mk.injEq] at hd
           obtain ⟨hi, hlen⟩ := hd
           have hlen' : len = 2 + p.len := hlen.symm
@@ -498,9 +498,9 @@ theorem decodeRex_congr_upto (r r' : Nat → BitVec 8) (rexW rexR rexB : Bool)
           try simp only []
           rw [he]
           try simp only []
-          rw [if_pos hmod]
+          rw [ite_eq_left hmod]
           rw [← hi, hlen']
-        · rw [if_neg hmod] at hd
+        · rw [ite_eq_right hmod] at hd
           simp at hd
 
   · rename_i hb
@@ -511,10 +511,10 @@ theorem decodeRex_congr_upto (r r' : Nat → BitVec 8) (rexW rexR rexB : Bool)
       rw [hp] at hd
       dsimp only at hd
       by_cases hmod : p.modBits = 3
-      · rw [if_pos hmod] at hd
+      · rw [ite_eq_left hmod] at hd
         try dsimp only at hd
         by_cases hr : p.regBits = 0
-        · rw [if_pos hr] at hd
+        · rw [ite_eq_left hr] at hd
           simp only [Option.some.injEq, Prod.mk.injEq] at hd
           obtain ⟨hi, hlen⟩ := hd
           have hlen' : len = 6 + p.len := hlen.symm
@@ -527,10 +527,10 @@ theorem decodeRex_congr_upto (r r' : Nat → BitVec 8) (rexW rexR rexB : Bool)
           try simp only []
           rw [hpm]
           try simp only []
-          rw [if_pos hmod]
-          rw [if_pos hr]
+          rw [ite_eq_left hmod]
+          rw [ite_eq_left hr]
           rw [← himm, ← hi, hlen']
-        · rw [if_neg hr] at hd
+        · rw [ite_eq_right hr] at hd
           try dsimp only at hd
           cases hg : group3OfExt p.regBits p.rm.regOf with
           | none => simp [hg] at hd
@@ -546,11 +546,11 @@ theorem decodeRex_congr_upto (r r' : Nat → BitVec 8) (rexW rexR rexB : Bool)
             try simp only []
             rw [hpm]
             try simp only []
-            rw [if_pos hmod]
-            rw [if_neg hr]
+            rw [ite_eq_left hmod]
+            rw [ite_eq_right hr]
             rw [hg]
             rw [← hi, hlen']
-      · rw [if_neg hmod] at hd
+      · rw [ite_eq_right hmod] at hd
         simp at hd
 
   · rename_i hb
@@ -561,7 +561,7 @@ theorem decodeRex_congr_upto (r r' : Nat → BitVec 8) (rexW rexR rexB : Bool)
       rw [hp] at hd
       dsimp only at hd
       by_cases hmod : p.modBits = 3
-      · rw [if_pos hmod] at hd
+      · rw [ite_eq_left hmod] at hd
         try dsimp only at hd
         cases hg : group5OfExt p.regBits p.rm.regOf with
         | none => simp [hg] at hd
@@ -577,11 +577,11 @@ theorem decodeRex_congr_upto (r r' : Nat → BitVec 8) (rexW rexR rexB : Bool)
           try simp only []
           rw [hpm]
           try simp only []
-          rw [if_pos hmod]
+          rw [ite_eq_left hmod]
           rw [hg]
           try simp only []
           rw [← hi, hlen']
-      · rw [if_neg hmod] at hd
+      · rw [ite_eq_right hmod] at hd
         simp at hd
 
   · rename_i hb
@@ -632,19 +632,19 @@ theorem decodeRex_congr_upto (r r' : Nat → BitVec 8) (rexW rexR rexB : Bool)
     by_cases hw : rexW
     · unfold movImm at hd
       dsimp only at hd
-      rw [if_pos hw] at hd
+      rw [ite_eq_left hw] at hd
       simp only [Option.some.injEq, Prod.mk.injEq] at hd
       obtain ⟨hi, hlen⟩ := hd
       have hl64 : le64 r 2 = le64 r' 2 := le64_congr r r' 2 (fun j hj => h j (by omega))
-      rw [if_pos hw]
+      rw [ite_eq_left hw]
       rw [← hl64, ← hi, hlen]
     · unfold movImm at hd
       dsimp only at hd
-      rw [if_neg hw] at hd
+      rw [ite_eq_right hw] at hd
       simp only [Option.some.injEq, Prod.mk.injEq] at hd
       obtain ⟨hi, hlen⟩ := hd
       have hi32 : imm32 r 2 = imm32 r' 2 := imm32_congr r r' 2 (fun j hj => h j (by omega))
-      rw [if_neg hw]
+      rw [ite_eq_right hw]
       rw [← hi32, ← hi, hlen]
 
   · rename_i hb
@@ -657,19 +657,19 @@ theorem decodeRex_congr_upto (r r' : Nat → BitVec 8) (rexW rexR rexB : Bool)
     by_cases hw : rexW
     · unfold movImm at hd
       dsimp only at hd
-      rw [if_pos hw] at hd
+      rw [ite_eq_left hw] at hd
       simp only [Option.some.injEq, Prod.mk.injEq] at hd
       obtain ⟨hi, hlen⟩ := hd
       have hl64 : le64 r 2 = le64 r' 2 := le64_congr r r' 2 (fun j hj => h j (by omega))
-      rw [if_pos hw]
+      rw [ite_eq_left hw]
       rw [← hl64, ← hi, hlen]
     · unfold movImm at hd
       dsimp only at hd
-      rw [if_neg hw] at hd
+      rw [ite_eq_right hw] at hd
       simp only [Option.some.injEq, Prod.mk.injEq] at hd
       obtain ⟨hi, hlen⟩ := hd
       have hi32 : imm32 r 2 = imm32 r' 2 := imm32_congr r r' 2 (fun j hj => h j (by omega))
-      rw [if_neg hw]
+      rw [ite_eq_right hw]
       rw [← hi32, ← hi, hlen]
 
   · rename_i hb
@@ -682,19 +682,19 @@ theorem decodeRex_congr_upto (r r' : Nat → BitVec 8) (rexW rexR rexB : Bool)
     by_cases hw : rexW
     · unfold movImm at hd
       dsimp only at hd
-      rw [if_pos hw] at hd
+      rw [ite_eq_left hw] at hd
       simp only [Option.some.injEq, Prod.mk.injEq] at hd
       obtain ⟨hi, hlen⟩ := hd
       have hl64 : le64 r 2 = le64 r' 2 := le64_congr r r' 2 (fun j hj => h j (by omega))
-      rw [if_pos hw]
+      rw [ite_eq_left hw]
       rw [← hl64, ← hi, hlen]
     · unfold movImm at hd
       dsimp only at hd
-      rw [if_neg hw] at hd
+      rw [ite_eq_right hw] at hd
       simp only [Option.some.injEq, Prod.mk.injEq] at hd
       obtain ⟨hi, hlen⟩ := hd
       have hi32 : imm32 r 2 = imm32 r' 2 := imm32_congr r r' 2 (fun j hj => h j (by omega))
-      rw [if_neg hw]
+      rw [ite_eq_right hw]
       rw [← hi32, ← hi, hlen]
 
   · rename_i hb
@@ -707,19 +707,19 @@ theorem decodeRex_congr_upto (r r' : Nat → BitVec 8) (rexW rexR rexB : Bool)
     by_cases hw : rexW
     · unfold movImm at hd
       dsimp only at hd
-      rw [if_pos hw] at hd
+      rw [ite_eq_left hw] at hd
       simp only [Option.some.injEq, Prod.mk.injEq] at hd
       obtain ⟨hi, hlen⟩ := hd
       have hl64 : le64 r 2 = le64 r' 2 := le64_congr r r' 2 (fun j hj => h j (by omega))
-      rw [if_pos hw]
+      rw [ite_eq_left hw]
       rw [← hl64, ← hi, hlen]
     · unfold movImm at hd
       dsimp only at hd
-      rw [if_neg hw] at hd
+      rw [ite_eq_right hw] at hd
       simp only [Option.some.injEq, Prod.mk.injEq] at hd
       obtain ⟨hi, hlen⟩ := hd
       have hi32 : imm32 r 2 = imm32 r' 2 := imm32_congr r r' 2 (fun j hj => h j (by omega))
-      rw [if_neg hw]
+      rw [ite_eq_right hw]
       rw [← hi32, ← hi, hlen]
 
   · rename_i hb
@@ -732,19 +732,19 @@ theorem decodeRex_congr_upto (r r' : Nat → BitVec 8) (rexW rexR rexB : Bool)
     by_cases hw : rexW
     · unfold movImm at hd
       dsimp only at hd
-      rw [if_pos hw] at hd
+      rw [ite_eq_left hw] at hd
       simp only [Option.some.injEq, Prod.mk.injEq] at hd
       obtain ⟨hi, hlen⟩ := hd
       have hl64 : le64 r 2 = le64 r' 2 := le64_congr r r' 2 (fun j hj => h j (by omega))
-      rw [if_pos hw]
+      rw [ite_eq_left hw]
       rw [← hl64, ← hi, hlen]
     · unfold movImm at hd
       dsimp only at hd
-      rw [if_neg hw] at hd
+      rw [ite_eq_right hw] at hd
       simp only [Option.some.injEq, Prod.mk.injEq] at hd
       obtain ⟨hi, hlen⟩ := hd
       have hi32 : imm32 r 2 = imm32 r' 2 := imm32_congr r r' 2 (fun j hj => h j (by omega))
-      rw [if_neg hw]
+      rw [ite_eq_right hw]
       rw [← hi32, ← hi, hlen]
 
   · rename_i hb
@@ -757,19 +757,19 @@ theorem decodeRex_congr_upto (r r' : Nat → BitVec 8) (rexW rexR rexB : Bool)
     by_cases hw : rexW
     · unfold movImm at hd
       dsimp only at hd
-      rw [if_pos hw] at hd
+      rw [ite_eq_left hw] at hd
       simp only [Option.some.injEq, Prod.mk.injEq] at hd
       obtain ⟨hi, hlen⟩ := hd
       have hl64 : le64 r 2 = le64 r' 2 := le64_congr r r' 2 (fun j hj => h j (by omega))
-      rw [if_pos hw]
+      rw [ite_eq_left hw]
       rw [← hl64, ← hi, hlen]
     · unfold movImm at hd
       dsimp only at hd
-      rw [if_neg hw] at hd
+      rw [ite_eq_right hw] at hd
       simp only [Option.some.injEq, Prod.mk.injEq] at hd
       obtain ⟨hi, hlen⟩ := hd
       have hi32 : imm32 r 2 = imm32 r' 2 := imm32_congr r r' 2 (fun j hj => h j (by omega))
-      rw [if_neg hw]
+      rw [ite_eq_right hw]
       rw [← hi32, ← hi, hlen]
 
   · rename_i hb
@@ -782,19 +782,19 @@ theorem decodeRex_congr_upto (r r' : Nat → BitVec 8) (rexW rexR rexB : Bool)
     by_cases hw : rexW
     · unfold movImm at hd
       dsimp only at hd
-      rw [if_pos hw] at hd
+      rw [ite_eq_left hw] at hd
       simp only [Option.some.injEq, Prod.mk.injEq] at hd
       obtain ⟨hi, hlen⟩ := hd
       have hl64 : le64 r 2 = le64 r' 2 := le64_congr r r' 2 (fun j hj => h j (by omega))
-      rw [if_pos hw]
+      rw [ite_eq_left hw]
       rw [← hl64, ← hi, hlen]
     · unfold movImm at hd
       dsimp only at hd
-      rw [if_neg hw] at hd
+      rw [ite_eq_right hw] at hd
       simp only [Option.some.injEq, Prod.mk.injEq] at hd
       obtain ⟨hi, hlen⟩ := hd
       have hi32 : imm32 r 2 = imm32 r' 2 := imm32_congr r r' 2 (fun j hj => h j (by omega))
-      rw [if_neg hw]
+      rw [ite_eq_right hw]
       rw [← hi32, ← hi, hlen]
 
   · rename_i hb
@@ -807,19 +807,19 @@ theorem decodeRex_congr_upto (r r' : Nat → BitVec 8) (rexW rexR rexB : Bool)
     by_cases hw : rexW
     · unfold movImm at hd
       dsimp only at hd
-      rw [if_pos hw] at hd
+      rw [ite_eq_left hw] at hd
       simp only [Option.some.injEq, Prod.mk.injEq] at hd
       obtain ⟨hi, hlen⟩ := hd
       have hl64 : le64 r 2 = le64 r' 2 := le64_congr r r' 2 (fun j hj => h j (by omega))
-      rw [if_pos hw]
+      rw [ite_eq_left hw]
       rw [← hl64, ← hi, hlen]
     · unfold movImm at hd
       dsimp only at hd
-      rw [if_neg hw] at hd
+      rw [ite_eq_right hw] at hd
       simp only [Option.some.injEq, Prod.mk.injEq] at hd
       obtain ⟨hi, hlen⟩ := hd
       have hi32 : imm32 r 2 = imm32 r' 2 := imm32_congr r r' 2 (fun j hj => h j (by omega))
-      rw [if_neg hw]
+      rw [ite_eq_right hw]
       rw [← hi32, ← hi, hlen]
   · rename_i hb
     try dsimp only at hd
@@ -836,7 +836,7 @@ theorem decodeRex_congr_upto (r r' : Nat → BitVec 8) (rexW rexR rexB : Bool)
         rw [show (r' 1).toNat = 0x0F from by rw [← h1]; exact hb]
         try simp only []
         rw [show (r' 2).toNat = (r 2).toNat from by rw [← h2]]
-        rw [if_pos hA]
+        rw [ite_eq_left hA]
         rw [hC]
         try simp only []
         rw [← himm, ← hi, hlen]
@@ -864,14 +864,14 @@ theorem decodeRex_congr_upto (r r' : Nat → BitVec 8) (rexW rexR rexB : Bool)
               rw [show (r' 1).toNat = 0x0F from by rw [← h1]; exact hb]
               try simp only []
               rw [show (r' 2).toNat = (r 2).toNat from by rw [← h2]]
-              rw [if_neg hA]
-              rw [if_pos hB]
+              rw [ite_eq_right hA]
+              rw [ite_eq_left hB]
               try simp only []
               rw [hpm]
               try simp only []
               rw [hC]
               try simp only []
-              rw [if_pos hmod]
+              rw [ite_eq_left hmod]
               rw [← hi, hlen']
             · simp at hd
           · simp at hd
@@ -898,9 +898,9 @@ theorem decodeRex_congr_upto (r r' : Nat → BitVec 8) (rexW rexR rexB : Bool)
               rw [show (r' 1).toNat = 0x0F from by rw [← h1]; exact hb]
               try simp only []
               rw [show (r' 2).toNat = (r 2).toNat from by rw [← h2]]
-              rw [if_neg hA]
-              rw [if_neg hB]
-              rw [if_pos hC]
+              rw [ite_eq_right hA]
+              rw [ite_eq_right hB]
+              rw [ite_eq_left hC]
               rw [hpm]
               try simp only []
               rw [hb2]
@@ -928,10 +928,10 @@ theorem decodeRex_congr_upto (r r' : Nat → BitVec 8) (rexW rexR rexB : Bool)
                 rw [show (r' 1).toNat = 0x0F from by rw [← h1]; exact hb]
                 try simp only []
                 rw [show (r' 2).toNat = (r 2).toNat from by rw [← h2]]
-                rw [if_neg hA]
-                rw [if_neg hB]
-                rw [if_neg hC]
-                rw [if_pos hD]
+                rw [ite_eq_right hA]
+                rw [ite_eq_right hB]
+                rw [ite_eq_right hC]
+                rw [ite_eq_left hD]
                 rw [hpm]
                 try simp only []
                 rw [hb2]
@@ -982,7 +982,7 @@ theorem decodeNoRex_congr_upto (r r' : Nat → BitVec 8) (i : X64Insn) (len : Na
       rw [hp] at hd
       dsimp only at hd
       by_cases hmod : p.modBits = 3
-      · rw [if_pos hmod] at hd
+      · rw [ite_eq_left hmod] at hd
         simp only [Option.some.injEq, Prod.mk.injEq] at hd
         obtain ⟨hi, hlen⟩ := hd
         have hlen' : len = 1 + p.len := hlen.symm
@@ -993,9 +993,9 @@ theorem decodeNoRex_congr_upto (r r' : Nat → BitVec 8) (i : X64Insn) (len : Na
         try simp only []
         rw [hpm]
         try simp only []
-        rw [if_pos hmod]
+        rw [ite_eq_left hmod]
         rw [← hi, hlen']
-      · rw [if_neg hmod] at hd
+      · rw [ite_eq_right hmod] at hd
         cases hb2 : baseOfRM p.rm with
         | none => simp [hb2] at hd
         | some bd =>
@@ -1010,7 +1010,7 @@ theorem decodeNoRex_congr_upto (r r' : Nat → BitVec 8) (i : X64Insn) (len : Na
           try simp only []
           rw [hpm]
           try simp only []
-          rw [if_neg hmod]
+          rw [ite_eq_right hmod]
           rw [hb2]
           rw [← hi, hlen']
 
@@ -1022,7 +1022,7 @@ theorem decodeNoRex_congr_upto (r r' : Nat → BitVec 8) (i : X64Insn) (len : Na
       rw [hp] at hd
       dsimp only at hd
       by_cases hmod : p.modBits = 3
-      · rw [if_pos hmod] at hd
+      · rw [ite_eq_left hmod] at hd
         simp only [Option.some.injEq, Prod.mk.injEq] at hd
         obtain ⟨hi, hlen⟩ := hd
         have hlen' : len = 1 + p.len := hlen.symm
@@ -1033,9 +1033,9 @@ theorem decodeNoRex_congr_upto (r r' : Nat → BitVec 8) (i : X64Insn) (len : Na
         try simp only []
         rw [hpm]
         try simp only []
-        rw [if_pos hmod]
+        rw [ite_eq_left hmod]
         rw [← hi, hlen']
-      · rw [if_neg hmod] at hd
+      · rw [ite_eq_right hmod] at hd
         cases hb2 : baseOfRM p.rm with
         | none => simp [hb2] at hd
         | some bd =>
@@ -1050,7 +1050,7 @@ theorem decodeNoRex_congr_upto (r r' : Nat → BitVec 8) (i : X64Insn) (len : Na
           try simp only []
           rw [hpm]
           try simp only []
-          rw [if_neg hmod]
+          rw [ite_eq_right hmod]
           rw [hb2]
           rw [← hi, hlen']
 
@@ -1062,9 +1062,9 @@ theorem decodeNoRex_congr_upto (r r' : Nat → BitVec 8) (i : X64Insn) (len : Na
       rw [hp] at hd
       dsimp only at hd
       by_cases hmod : p.modBits = 3
-      · rw [if_pos hmod] at hd
+      · rw [ite_eq_left hmod] at hd
         simp at hd
-      · rw [if_neg hmod] at hd
+      · rw [ite_eq_right hmod] at hd
         cases hb2 : baseOfRM p.rm with
         | none => simp [hb2] at hd
         | some bd =>
@@ -1079,7 +1079,7 @@ theorem decodeNoRex_congr_upto (r r' : Nat → BitVec 8) (i : X64Insn) (len : Na
           try simp only []
           rw [hpm]
           try simp only []
-          rw [if_neg hmod]
+          rw [ite_eq_right hmod]
           rw [hb2]
           rw [← hi, hlen']
 
@@ -1390,7 +1390,7 @@ theorem decodeNoRex_congr_upto (r r' : Nat → BitVec 8) (i : X64Insn) (len : Na
       rw [hp] at hd
       dsimp only at hd
       by_cases hmod : p.modBits = 3
-      · rw [if_pos hmod] at hd
+      · rw [ite_eq_left hmod] at hd
         try simp only [] at hd
         cases hg : group5OfExt p.regBits p.rm.regOf with
         | none => simp [hg] at hd
@@ -1406,10 +1406,10 @@ theorem decodeNoRex_congr_upto (r r' : Nat → BitVec 8) (i : X64Insn) (len : Na
           try simp only []
           rw [hpm]
           try simp only []
-          rw [if_pos hmod]
+          rw [ite_eq_left hmod]
           rw [hg]
           rw [← hi, hlen']
-      · rw [if_neg hmod] at hd
+      · rw [ite_eq_right hmod] at hd
         simp at hd
 
   · rename_i hb
@@ -1429,7 +1429,7 @@ theorem decodeNoRex_congr_upto (r r' : Nat → BitVec 8) (i : X64Insn) (len : Na
         try simp only []
         rw [show (r' 1).toNat = (r 1).toNat from by rw [← h1]]
         try simp only []
-        rw [if_pos hA]
+        rw [ite_eq_left hA]
         rw [hC]
         rw [← himm, ← hi, hlen]
       · simp at hd
@@ -1457,13 +1457,13 @@ theorem decodeNoRex_congr_upto (r r' : Nat → BitVec 8) (i : X64Insn) (len : Na
               try simp only []
               rw [show (r' 1).toNat = (r 1).toNat from by rw [← h1]]
               try simp only []
-              rw [if_neg hA]
-              rw [if_pos hB]
+              rw [ite_eq_right hA]
+              rw [ite_eq_left hB]
               rw [hpm]
               try simp only []
               rw [hC]
               try simp only []
-              rw [if_pos hmod]
+              rw [ite_eq_left hmod]
               rw [← hi, hlen']
             · simp at hd
           · simp at hd
@@ -1491,9 +1491,9 @@ theorem decodeNoRex_congr_upto (r r' : Nat → BitVec 8) (i : X64Insn) (len : Na
               try simp only []
               rw [show (r' 1).toNat = (r 1).toNat from by rw [← h1]]
               try simp only []
-              rw [if_neg hA]
-              rw [if_neg hB]
-              rw [if_pos hC]
+              rw [ite_eq_right hA]
+              rw [ite_eq_right hB]
+              rw [ite_eq_left hC]
               rw [hpm]
               try simp only []
               rw [hb2]
@@ -1522,10 +1522,10 @@ theorem decodeNoRex_congr_upto (r r' : Nat → BitVec 8) (i : X64Insn) (len : Na
                 try simp only []
                 rw [show (r' 1).toNat = (r 1).toNat from by rw [← h1]]
                 try simp only []
-                rw [if_neg hA]
-                rw [if_neg hB]
-                rw [if_neg hC]
-                rw [if_pos hD]
+                rw [ite_eq_right hA]
+                rw [ite_eq_right hB]
+                rw [ite_eq_right hC]
+                rw [ite_eq_left hD]
                 rw [hpm]
                 try simp only []
                 rw [hb2]
@@ -1546,9 +1546,9 @@ theorem decodeNoRex_congr_upto (r r' : Nat → BitVec 8) (i : X64Insn) (len : Na
         try simp only []
         rw [show (r' 1).toNat = (r 1).toNat from by rw [← h1]]
         try simp only []
-        rw [if_pos hrex]
+        rw [ite_eq_left hrex]
         rw [show (r' 2).toNat = (r 2).toNat from by rw [← h2]]
-        rw [if_pos hop]
+        rw [ite_eq_left hop]
         exact decodeSSE_congr_upto r r' 3 0x66 true _ _ _ i len (Or.inr ⟨rfl, rfl⟩) hd h
       · rename_i hop
         split at hd
@@ -1560,7 +1560,7 @@ theorem decodeNoRex_congr_upto (r r' : Nat → BitVec 8) (i : X64Insn) (len : Na
             rw [hp] at hd
             try simp only [] at hd
             by_cases hmod : p.modBits = 3
-            · rw [if_pos hmod] at hd
+            · rw [ite_eq_left hmod] at hd
               simp only [Option.some.injEq, Prod.mk.injEq] at hd
               obtain ⟨hi, hlen⟩ := hd
               have hlen' : len = 3 + p.len := hlen.symm
@@ -1573,15 +1573,15 @@ theorem decodeNoRex_congr_upto (r r' : Nat → BitVec 8) (i : X64Insn) (len : Na
               try simp only []
               rw [show (r' 1).toNat = (r 1).toNat from by rw [← h1]]
               try simp only []
-              rw [if_pos hrex]
+              rw [ite_eq_left hrex]
               rw [show (r' 2).toNat = (r 2).toNat from by rw [← h2]]
-              rw [if_neg hop]
-              rw [if_pos hop89]
+              rw [ite_eq_right hop]
+              rw [ite_eq_left hop89]
               rw [hpm]
               try simp only []
-              rw [if_pos hmod]
+              rw [ite_eq_left hmod]
               rw [← hi, hlen']
-            · rw [if_neg hmod] at hd
+            · rw [ite_eq_right hmod] at hd
               cases hb2 : baseOfRM p.rm with
               | none => simp [hb2] at hd
               | some bd =>
@@ -1598,13 +1598,13 @@ theorem decodeNoRex_congr_upto (r r' : Nat → BitVec 8) (i : X64Insn) (len : Na
                 try simp only []
                 rw [show (r' 1).toNat = (r 1).toNat from by rw [← h1]]
                 try simp only []
-                rw [if_pos hrex]
+                rw [ite_eq_left hrex]
                 rw [show (r' 2).toNat = (r 2).toNat from by rw [← h2]]
-                rw [if_neg hop]
-                rw [if_pos hop89]
+                rw [ite_eq_right hop]
+                rw [ite_eq_left hop89]
                 rw [hpm]
                 try simp only []
-                rw [if_neg hmod]
+                rw [ite_eq_right hmod]
                 rw [hb2]
                 rw [← hi, hlen']
         · rename_i hop89
@@ -1617,9 +1617,9 @@ theorem decodeNoRex_congr_upto (r r' : Nat → BitVec 8) (i : X64Insn) (len : Na
               rw [hp] at hd
               try simp only [] at hd
               by_cases hmod : p.modBits = 3
-              · rw [if_pos hmod] at hd
+              · rw [ite_eq_left hmod] at hd
                 simp at hd
-              · rw [if_neg hmod] at hd
+              · rw [ite_eq_right hmod] at hd
                 cases hb2 : baseOfRM p.rm with
                 | none => simp [hb2] at hd
                 | some bd =>
@@ -1636,14 +1636,14 @@ theorem decodeNoRex_congr_upto (r r' : Nat → BitVec 8) (i : X64Insn) (len : Na
                   try simp only []
                   rw [show (r' 1).toNat = (r 1).toNat from by rw [← h1]]
                   try simp only []
-                  rw [if_pos hrex]
+                  rw [ite_eq_left hrex]
                   rw [show (r' 2).toNat = (r 2).toNat from by rw [← h2]]
-                  rw [if_neg hop]
-                  rw [if_neg hop89]
-                  rw [if_pos hop8b]
+                  rw [ite_eq_right hop]
+                  rw [ite_eq_right hop89]
+                  rw [ite_eq_left hop8b]
                   rw [hpm]
                   try simp only []
-                  rw [if_neg hmod]
+                  rw [ite_eq_right hmod]
                   rw [hb2]
                   rw [← hi, hlen']
           · simp at hd
@@ -1657,8 +1657,8 @@ theorem decodeNoRex_congr_upto (r r' : Nat → BitVec 8) (i : X64Insn) (len : Na
         try simp only []
         rw [show (r' 1).toNat = (r 1).toNat from by rw [← h1]]
         try simp only []
-        rw [if_neg hrex]
-        rw [if_pos hb1]
+        rw [ite_eq_right hrex]
+        rw [ite_eq_left hb1]
         exact decodeSSE_congr_upto r r' 2 0x66 false false false false i len (Or.inl ⟨rfl, rfl⟩) hd h
       · rename_i hb1
         split at hd
@@ -1670,7 +1670,7 @@ theorem decodeNoRex_congr_upto (r r' : Nat → BitVec 8) (i : X64Insn) (len : Na
             rw [hp] at hd
             try simp only [] at hd
             by_cases hmod : p.modBits = 3
-            · rw [if_pos hmod] at hd
+            · rw [ite_eq_left hmod] at hd
               simp only [Option.some.injEq, Prod.mk.injEq] at hd
               obtain ⟨hi, hlen⟩ := hd
               have hlen' : len = 2 + p.len := hlen.symm
@@ -1682,14 +1682,14 @@ theorem decodeNoRex_congr_upto (r r' : Nat → BitVec 8) (i : X64Insn) (len : Na
               try simp only []
               rw [show (r' 1).toNat = (r 1).toNat from by rw [← h1]]
               try simp only []
-              rw [if_neg hrex]
-              rw [if_neg hb1]
-              rw [if_pos hb89]
+              rw [ite_eq_right hrex]
+              rw [ite_eq_right hb1]
+              rw [ite_eq_left hb89]
               rw [hpm]
               try simp only []
-              rw [if_pos hmod]
+              rw [ite_eq_left hmod]
               rw [← hi, hlen']
-            · rw [if_neg hmod] at hd
+            · rw [ite_eq_right hmod] at hd
               cases hb2 : baseOfRM p.rm with
               | none => simp [hb2] at hd
               | some bd =>
@@ -1705,12 +1705,12 @@ theorem decodeNoRex_congr_upto (r r' : Nat → BitVec 8) (i : X64Insn) (len : Na
                 try simp only []
                 rw [show (r' 1).toNat = (r 1).toNat from by rw [← h1]]
                 try simp only []
-                rw [if_neg hrex]
-                rw [if_neg hb1]
-                rw [if_pos hb89]
+                rw [ite_eq_right hrex]
+                rw [ite_eq_right hb1]
+                rw [ite_eq_left hb89]
                 rw [hpm]
                 try simp only []
-                rw [if_neg hmod]
+                rw [ite_eq_right hmod]
                 rw [hb2]
                 rw [← hi, hlen']
         · rename_i hb89
@@ -1723,9 +1723,9 @@ theorem decodeNoRex_congr_upto (r r' : Nat → BitVec 8) (i : X64Insn) (len : Na
               rw [hp] at hd
               try simp only [] at hd
               by_cases hmod : p.modBits = 3
-              · rw [if_pos hmod] at hd
+              · rw [ite_eq_left hmod] at hd
                 simp at hd
-              · rw [if_neg hmod] at hd
+              · rw [ite_eq_right hmod] at hd
                 cases hb2 : baseOfRM p.rm with
                 | none => simp [hb2] at hd
                 | some bd =>
@@ -1741,13 +1741,13 @@ theorem decodeNoRex_congr_upto (r r' : Nat → BitVec 8) (i : X64Insn) (len : Na
                   try simp only []
                   rw [show (r' 1).toNat = (r 1).toNat from by rw [← h1]]
                   try simp only []
-                  rw [if_neg hrex]
-                  rw [if_neg hb1]
-                  rw [if_neg hb89]
-                  rw [if_pos hb8b]
+                  rw [ite_eq_right hrex]
+                  rw [ite_eq_right hb1]
+                  rw [ite_eq_right hb89]
+                  rw [ite_eq_left hb8b]
                   rw [hpm]
                   try simp only []
-                  rw [if_neg hmod]
+                  rw [ite_eq_right hmod]
                   rw [hb2]
                   rw [← hi, hlen']
           · simp at hd
@@ -1766,9 +1766,9 @@ theorem decodeNoRex_congr_upto (r r' : Nat → BitVec 8) (i : X64Insn) (len : Na
         try simp only []
         rw [show (r' 1).toNat = (r 1).toNat from by rw [← h1]]
         try simp only []
-        rw [if_pos hrex]
+        rw [ite_eq_left hrex]
         rw [show (r' 2).toNat = (r 2).toNat from by rw [← h2]]
-        rw [if_pos hop]
+        rw [ite_eq_left hop]
         exact decodeSSE_congr_upto r r' 3 0xF2 true _ _ _ i len (Or.inr ⟨rfl, rfl⟩) hd h
       · simp at hd
     · rename_i hrex
@@ -1781,8 +1781,8 @@ theorem decodeNoRex_congr_upto (r r' : Nat → BitVec 8) (i : X64Insn) (len : Na
         try simp only []
         rw [show (r' 1).toNat = (r 1).toNat from by rw [← h1]]
         try simp only []
-        rw [if_neg hrex]
-        rw [if_pos hb1]
+        rw [ite_eq_right hrex]
+        rw [ite_eq_left hb1]
         exact decodeSSE_congr_upto r r' 2 0xF2 false false false false i len (Or.inl ⟨rfl, rfl⟩) hd h
       · simp at hd
 
@@ -1800,9 +1800,9 @@ theorem decodeNoRex_congr_upto (r r' : Nat → BitVec 8) (i : X64Insn) (len : Na
         try simp only []
         rw [show (r' 1).toNat = (r 1).toNat from by rw [← h1]]
         try simp only []
-        rw [if_pos hrex]
+        rw [ite_eq_left hrex]
         rw [show (r' 2).toNat = (r 2).toNat from by rw [← h2]]
-        rw [if_pos hop]
+        rw [ite_eq_left hop]
         exact decodeSSE_congr_upto r r' 3 0xF3 true _ _ _ i len (Or.inr ⟨rfl, rfl⟩) hd h
       · simp at hd
     · rename_i hrex
@@ -1815,8 +1815,8 @@ theorem decodeNoRex_congr_upto (r r' : Nat → BitVec 8) (i : X64Insn) (len : Na
         try simp only []
         rw [show (r' 1).toNat = (r 1).toNat from by rw [← h1]]
         try simp only []
-        rw [if_neg hrex]
-        rw [if_pos hb1]
+        rw [ite_eq_right hrex]
+        rw [ite_eq_left hb1]
         exact decodeSSE_congr_upto r r' 2 0xF3 false false false false i len (Or.inl ⟨rfl, rfl⟩) hd h
       · simp at hd
 
@@ -1828,7 +1828,7 @@ theorem decodeNoRex_congr_upto (r r' : Nat → BitVec 8) (i : X64Insn) (len : Na
       have h1 : r 0 = r' 0 := h 0 (by omega)
       rw [show (r' 0).toNat = (r 0).toNat from by rw [← h1]]
       try simp only []
-      rw [if_pos hrex]
+      rw [ite_eq_left hrex]
       exact decodeRex_congr_upto r r' _ _ _ i len hd h
     · simp at hd
 

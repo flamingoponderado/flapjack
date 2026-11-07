@@ -151,9 +151,9 @@ theorem sourceGuardsOfNotErrorWithHandler {width : Nat} [NeZero width] {C F : Ty
     exact absurd execution.1.symm notError
   simp only [hget] at execution
   by_cases hbad : wordSemBadDestArgs dest args = true
-  · simp only [hbad, if_true, Prod.mk.injEq] at execution
+  · simp only [hbad, ite_true, Prod.mk.injEq] at execution
     exact absurd execution.1.symm notError
-  simp only [hbad, Bool.false_eq_true, if_false] at execution
+  simp only [hbad, Bool.false_eq_true, ite_false] at execution
   rcases hfind : wordSemFindCode dest
       (wordSemAddRetLoc (some (values, names, retCode, l1, l2)) xs)
       source.code source.stackSize with _ | ⟨args1, prog, ss⟩
@@ -161,9 +161,9 @@ theorem sourceGuardsOfNotErrorWithHandler {width : Nat} [NeZero width] {C F : Ty
     exact absurd execution.1.symm notError
   simp only [hfind] at execution
   by_cases invalid : sptDomainEmpty names.1 ∨ ¬ values.Nodup
-  · simp only [invalid, if_true, Prod.mk.injEq] at execution
+  · simp only [invalid, ite_true, Prod.mk.injEq] at execution
     exact absurd execution.1.symm notError
-  simp only [invalid, if_false] at execution
+  simp only [invalid, ite_false] at execution
   rcases hcut : wordSemCutEnvs names source.locals with _ | envs
   · simp only [hcut, Prod.mk.injEq] at execution
     exact absurd execution.1.symm notError
@@ -402,7 +402,7 @@ theorem evaluateHandlerHeaderNoRoom {width : Nat} [NeZero width] {C F : Type}
   · rw [StackSemEvaluate.evaluate_seq, StackSemEvaluateClock.fixClockEvaluate, savedRun]
     simp only [pushHandlerF, StackSemEvaluate.evaluate_seq,
       StackSemEvaluate.evaluate_stackAlloc,
-      savedEnabled, Bool.not_true, Bool.false_eq_true, if_false, short, if_true, StackSemControl.fixClock, StackSemStateOps.emptyEnv, Nat.min_self]
+      savedEnabled, Bool.not_true, Bool.false_eq_true, ite_false, short, ite_true, StackSemControl.fixClock, StackSemStateOps.emptyEnv, Nat.min_self]
   · simpa only [StackSemStateOps.emptyEnv] using savedFfi
 
 /-- Source stack-limit overflow corresponding to insufficient room for
@@ -515,23 +515,23 @@ theorem handlerCalleeLocals {width : Nat} [NeZero width] {C F : Type}
   · subst key
     have valueLoc : value = .loc l1 l2 := by
       simpa [fromList2Lookup] using fullLookup.symm
-    rw [if_pos (by omega), valueLoc]
+    rw [ite_eq_left (by omega), valueLoc]
     simp [FUPDATE_HOL]
   have sourceLookup := getVarsFromList2EqCons args source xs key l1 l2 value
     (by rwa [← argsEq]) fullLookup zero
   obtain ⟨_, callerLocal⟩ := locals key value sourceLookup
   by_cases inRegister : key / 2 < k
-  · rw [if_pos inRegister] at callerLocal ⊢
+  · rw [ite_eq_left inRegister] at callerLocal ⊢
     have preserved := registers (key / 2) (by omega)
     simp only [StackSemStateOps.getVar] at preserved
     simp only [HolFiniteMapExact.updateEq, FUPDATE_HOL]
-    rw [if_neg (by omega), preserved]
+    rw [ite_eq_right (by omega), preserved]
     exact callerLocal
-  · rw [if_neg inRegister] at callerLocal ⊢
+  · rw [ite_eq_right inRegister] at callerLocal ⊢
     obtain ⟨callerSlot, callerIndex⟩ := callerLocal
-    rw [if_neg (by omega)] at callerShape
+    rw [ite_eq_right (by omega)] at callerShape
     have calleePositive : 0 < calleeFrame := by omega
-    rw [if_neg (by omega)] at calleeShape
+    rw [ite_eq_right (by omega)] at calleeShape
     have countSpace : args1.length - k ≤ headerSpace := by omega
     have copyIndex : args1.length - k - 1 - (key / 2 - k) < args1.length - k := by omega
     have copied := slots _ copyIndex
@@ -543,9 +543,9 @@ theorem handlerCalleeLocals {width : Nat} [NeZero width] {C F : Type}
     have movedAbsolute : headerSpace - calleeSize +
         (calleeSize - 1 - (key / 2 - k)) < moved.stack.length := by omega
     refine ⟨?_, by omega⟩
-    rw [List.getElem?_take, if_pos (by omega), List.getElem?_drop,
+    rw [List.getElem?_take, ite_eq_left (by omega), List.getElem?_drop,
       List.getElem?_eq_getElem movedAbsolute]
-    rw [Nat.add_zero, List.getElem?_take, if_pos (by omega), List.getElem?_drop,
+    rw [Nat.add_zero, List.getElem?_take, ite_eq_left (by omega), List.getElem?_drop,
       List.getElem?_eq_getElem callerAbsolute] at callerSlot
     rw [holEl_eq_getElem _ _ (by simp; omega), holEl_eq_getElem _ _ (by simp; omega),
       List.getElem_drop, List.getElem_drop] at copied
@@ -818,9 +818,9 @@ theorem enterHandlerCallee {width : Nat} [NeZero width] {C F : Type}
     stack := stack, regs := regs.updateEq (0,.loc l1 l2)}
   refine ⟨_,entry,moveRun,?_,?_⟩
   · rw [StackSemEvaluate.evaluate_stackAlloc,
-      if_neg (by simp [StackSemStateOps.setVar, StackSemStateOps.decClock,
+      ite_eq_right (by simp [StackSemStateOps.setVar, StackSemStateOps.decClock,
         pushedHandlerState, useStack]),
-      if_neg (by
+      ite_eq_right (by
         change ¬ header.stackSpace-(args1.length-k) < calleeSize-(args1.length-k)
         omega)]
     simp only [StackSemStateOps.setVar, StackSemStateOps.decClock]
@@ -870,8 +870,8 @@ theorem handlerCalleeNotError {width : Nat} [NeZero width] {C F : Type}
   rw [error] at bodyRun
   obtain ⟨get, bad, find, valid, cut⟩ := guards
   rw [WordSemStateFiniteExact.evaluate] at execution
-  simp only [get, bad, Bool.false_eq_true, if_false, find, valid, cut] at execution
-  rw [dif_neg nonzero, WordSemStateFiniteExact.fix_clock_evaluate, bodyRun] at execution
+  simp only [get, bad, Bool.false_eq_true, ite_false, find, valid, cut] at execution
+  rw [dite_eq_right nonzero, WordSemStateFiniteExact.fix_clock_evaluate, bodyRun] at execution
   simp only [Prod.mk.injEq] at execution
   exact absurd execution.1.symm notError
 
@@ -1082,12 +1082,12 @@ theorem handlerSourceCallOverflow {width : Nat} [NeZero width] {C F : Type}
     pushedRelation calleeLocalsSize insufficient
   obtain ⟨get, bad, find, valid, cut⟩ := guards
   rw [WordSemStateFiniteExact.evaluate] at execution
-  simp only [get, bad, Bool.false_eq_true, if_false, find, valid, cut] at execution
+  simp only [get, bad, Bool.false_eq_true, ite_false, find, valid, cut] at execution
   by_cases clock : source.clock = 0
-  · rw [dif_pos clock] at execution
+  · rw [dite_eq_left clock] at execution
     obtain ⟨rfl, rfl⟩ := Prod.mk.inj execution
     exact overflow
-  rw [dif_neg clock, WordSemStateFiniteExact.fix_clock_evaluate] at execution
+  rw [dite_eq_right clock, WordSemStateFiniteExact.fix_clock_evaluate] at execution
   rcases bodyRun : WordSemStateFiniteExact.evaluate prog
       (WordSemStateFiniteExact.callEnv args1 ss
         (WordSemStateFiniteExact.pushEnv envs (some (handlerVar,handlerCode,h1,h2)) (WordSemStateFiniteExact.decClock source))) with
@@ -1104,10 +1104,10 @@ theorem handlerSourceCallOverflow {width : Nat} [NeZero width] {C F : Type}
   case result location returned =>
     simp only at execution
     by_cases invalid : location ≠ .loc l1 l2 ∨ returned.length ≠ values.length
-    · rw [if_pos invalid] at execution
+    · rw [ite_eq_left invalid] at execution
       obtain ⟨rfl, rfl⟩ := Prod.mk.inj execution
       exact bodyOverflow
-    rw [if_neg invalid] at execution
+    rw [ite_eq_right invalid] at execution
     rcases pop : WordSemStateFiniteExact.popEnv bodyPost with _ | popped
     · rw [pop] at execution
       obtain ⟨rfl, rfl⟩ := Prod.mk.inj execution
@@ -1123,24 +1123,24 @@ theorem handlerSourceCallOverflow {width : Nat} [NeZero width] {C F : Type}
       rw [poppedLimit, poppedMaximum]
       exact bodyOverflow
     by_cases domain : sptDomainEqUnion popped.locals envs.1 envs.2
-    · rw [if_pos domain] at execution
+    · rw [ite_eq_left domain] at execution
       exact WordSemStateFiniteExact.evaluate_stack_limit_stack_max retCode _ result sourcePost
         ⟨execution, poppedOverflow⟩
-    · rw [if_neg domain] at execution
+    · rw [ite_eq_right domain] at execution
       obtain ⟨rfl, rfl⟩ := Prod.mk.inj execution
       exact poppedOverflow
   case exception location value =>
     simp only at execution
     by_cases invalid : location ≠ .loc h1 h2
-    · rw [if_pos invalid] at execution
+    · rw [ite_eq_left invalid] at execution
       obtain ⟨rfl,rfl⟩ := Prod.mk.inj execution
       exact bodyOverflow
-    rw [if_neg invalid] at execution
+    rw [ite_eq_right invalid] at execution
     by_cases domain : sptDomainEqUnion bodyPost.locals envs.1 envs.2
-    · rw [if_pos domain] at execution
+    · rw [ite_eq_left domain] at execution
       exact WordSemStateFiniteExact.evaluate_stack_limit_stack_max handlerCode _ result sourcePost
         ⟨execution,bodyOverflow⟩
-    · rw [if_neg domain] at execution
+    · rw [ite_eq_right domain] at execution
       obtain ⟨rfl,rfl⟩ := Prod.mk.inj execution
       exact bodyOverflow
 
@@ -1188,7 +1188,7 @@ theorem handlerAllocationFailureResult {width : Nat} [NeZero width] {C F : Type}
       intro same
       exact CallHelpers.compileResultNot2 value dimension (Option.some.inj same)
   unfold compCorrectResult
-  rw [if_pos mismatch]
+  rw [ite_eq_left mismatch]
   refine ⟨rfl, ?_, ?_⟩
   · change saved.ffi.ioEvents.IsPrefix sourcePost.ffi.ioEvents
     have ffiEq : saved.ffi = source.ffi := by simpa only [WordSemStateFiniteExact.pushEnv] using ffi
@@ -1395,7 +1395,7 @@ theorem simulateHandlerCalleeBody {width : Nat} [NeZero width] {C F : Type}
     · cases (Prod.mk.inj success).1
     · cases (Prod.mk.inj success).1
     obtain ⟨_,rfl⟩ := Prod.mk.inj success
-    rw [StackSemEvaluate.evaluate_stackAlloc,if_neg disabled,if_neg insufficient]
+    rw [StackSemEvaluate.evaluate_stackAlloc,ite_eq_right disabled,ite_eq_right insufficient]
     rfl
   have calleeExecution : StackSemEvaluate.evaluate
       (calleeCode,{StackSemStateOps.setVar 0 (.loc l1 l2) (StackSemStateOps.decClock moved)
@@ -1664,8 +1664,8 @@ theorem evaluateHandlerReturnRestore {width : Nat} [NeZero width] {C F β γ : T
     {copied with stackSpace := copied.stackSpace + count}
   have freeRun : StackSemEvaluate.evaluate (.stackFree count, copied) = (none, freed) := by
     simp only [StackSemEvaluate.evaluate_stackFree, copiedEnabled, Bool.not_true,
-      Bool.false_eq_true, if_false]
-    rw [if_neg (by omega)]
+      Bool.false_eq_true, ite_false]
+    rw [ite_eq_right (by omega)]
     simp only [freed, copiedEnabled]
   have freedRoom : freed.stackSpace + 3 ≤ freed.stack.length := by
     dsimp [freed]; omega
@@ -1850,15 +1850,15 @@ theorem sourceHandlerReturningContinuation {width : Nat} [NeZero width] {C F : T
   have originalGuards := guards
   obtain ⟨get, bad, find, valid, cut⟩ := originalGuards
   rw [WordSemStateFiniteExact.evaluate] at execution
-  simp only [get, bad, Bool.false_eq_true, if_false, find, valid, cut] at execution
-  rw [dif_neg nonzero, WordSemStateFiniteExact.fix_clock_evaluate, bodyRun] at execution
+  simp only [get, bad, Bool.false_eq_true, ite_false, find, valid, cut] at execution
+  rw [dite_eq_right nonzero, WordSemStateFiniteExact.fix_clock_evaluate, bodyRun] at execution
   simp only at execution
   by_cases invalid : location ≠ .loc l1 l2 ∨ returned.length ≠ values.length
-  · rw [if_pos invalid] at execution
+  · rw [ite_eq_left invalid] at execution
     exact False.elim (notError (Prod.mk.inj execution).1.symm)
-  rw [if_neg invalid, popRun] at execution
+  rw [ite_eq_right invalid, popRun] at execution
   simp only at execution
-  rw [if_pos domain] at execution
+  rw [ite_eq_left domain] at execution
   refine ⟨gc, tail, popped, frame, gcKeys, tailKeys, handler, rfl, popRun, domain,
     invalid, execution, ?_⟩
   exact ih.1 xs args1 prog ss envs location returned bodyPost popped
@@ -1899,18 +1899,18 @@ theorem sourceHandlerExceptionContinuation {width : Nat} [NeZero width] {C F : T
   have originalGuards := guards
   obtain ⟨get,bad,find,valid,cut⟩ := originalGuards
   rw [WordSemStateFiniteExact.evaluate] at execution
-  simp only [get,bad,Bool.false_eq_true,if_false,find,valid,cut] at execution
-  rw [dif_neg nonzero,WordSemStateFiniteExact.fix_clock_evaluate,bodyRun] at execution
+  simp only [get,bad,Bool.false_eq_true,ite_false,find,valid,cut] at execution
+  rw [dite_eq_right nonzero,WordSemStateFiniteExact.fix_clock_evaluate,bodyRun] at execution
   simp only at execution
   by_cases invalid : location ≠ .loc h1 h2
-  · rw [if_pos invalid] at execution
+  · rw [ite_eq_left invalid] at execution
     exact False.elim (notError (Prod.mk.inj execution).1.symm)
-  rw [if_neg invalid] at execution
+  rw [ite_eq_right invalid] at execution
   by_cases domain : sptDomainEqUnion bodyPost.locals envs.1 envs.2
-  · rw [if_pos domain] at execution
+  · rw [ite_eq_left domain] at execution
     exact ⟨invalid,domain,execution,ih.2.1 xs args1 prog ss envs location value bodyPost
       ⟨guards,nonzero,bodyRun,invalid,domain⟩⟩
-  · rw [if_neg domain] at execution
+  · rw [ite_eq_right domain] at execution
     exact False.elim (notError (Prod.mk.inj execution).1.symm)
 
 /-- Connect actual return-copy/free/PopHandler execution to the saved tail
@@ -1982,7 +1982,7 @@ theorem restoreHandlerCallerTail {width : Nat} [NeZero width] {C F β γ : Type}
       restored.stack.length restored.bitmaps lens
     rw [dropEq]
     simpa only [restored,poppedHandlerState,state,HolFiniteMapExact.lookup_updateEq,
-      FUPDATE_HOL,if_true,length] using oldTail
+      FUPDATE_HOL,ite_true,length] using oldTail
   · simpa only [state] using poppedStoreErase
       {copied with stackSpace := copied.stackSpace + count} register
       (holEl 2 (target.stack.drop (target.stackSpace + count)))
@@ -2006,7 +2006,7 @@ theorem evaluateHandlerCopyRetNative {width : Nat} [NeZero width] {C F α γ : T
         (.seq (.stackFree (Compiler.Backend.WordToStack.numStackRet register values))
           continuation),target) := by
   by_cases zero : Compiler.Backend.WordToStack.numStackRet register values = 0
-  · simp only [copyRetNative,zero,if_true,copyRetAuxNative]
+  · simp only [copyRetNative,zero,ite_true,copyRetAuxNative]
     rw [StackSemEvaluate.evaluate_seq,StackSemEvaluateClock.fixClockEvaluate,
       StackSemEvaluate.evaluate_skip]
     simp only
@@ -2014,8 +2014,8 @@ theorem evaluateHandlerCopyRetNative {width : Nat} [NeZero width] {C F α γ : T
       StackSemEvaluate.evaluate_stackFree]
     simp [enabled,Nat.not_lt.mpr bound]
     simp only [← enabled]
-  · simp only [copyRetNative,zero,if_false,seqStackFreeNative,
-      Compiler.Backend.WordToStack.handlerSlots,Bool.false_eq_true,if_true]
+  · simp only [copyRetNative,zero,ite_false,seqStackFreeNative,
+      Compiler.Backend.WordToStack.handlerSlots,Bool.false_eq_true,ite_true]
 
 /-- Original source conventions/maximum and the callee saved-frame relation
 suffice to execute the literal native copy_ret/PopHandler wrapper and recover
@@ -2080,7 +2080,7 @@ theorem restoreHandlerCallerTailNative {width : Nat} [NeZero width] {C F : Type}
         dsimp [count] at zero
         omega
       have exactFrame : frame = localsFrame + 1 := by
-        simpa only [if_neg nonzero] using frameShape
+        simpa only [ite_eq_right nonzero] using frameShape
       rw [exactFrame]
   refine ⟨copied,?_,tail,store,space,clock,ffi⟩
   rw [evaluateHandlerCopyRetNative target k frame localsFrame values
@@ -2204,9 +2204,9 @@ theorem compiledHandlerCallTimeout {width : Nat} [NeZero width] {C F : Type}
     simp only
     rw [found]
     simp only
-    rw [if_pos (show moved.clock = 0 from movedZero)]
+    rw [ite_eq_left (show moved.clock = 0 from movedZero)]
   simp only [compNative, destinationCompile, savedCompile, returnCompile,handlerCompile,
-    Bool.false_eq_true, if_false, Prod.mk.injEq] at compilation
+    Bool.false_eq_true, ite_false, Prod.mk.injEq] at compilation
   obtain ⟨rfl, _⟩ := compilation
   refine ⟨StackSemStateOps.emptyEnv moved, ?_, ?_⟩
   · rw [StackSemEvaluate.evaluate_seq, StackSemEvaluateClock.fixClockEvaluate, destinationRun]
@@ -2222,8 +2222,8 @@ theorem compiledHandlerCallTimeout {width : Nat} [NeZero width] {C F : Type}
     exact callRun
   · obtain ⟨get, bad, find, valid, cut⟩ := guards
     rw [WordSemStateFiniteExact.evaluate] at execution
-    simp only [get, bad, Bool.false_eq_true, if_false, find, valid, cut] at execution
-    rw [dif_pos zero] at execution
+    simp only [get, bad, Bool.false_eq_true, ite_false, find, valid, cut] at execution
+    rw [dite_eq_left zero] at execution
     obtain ⟨rfl, rfl⟩ := Prod.mk.inj execution
     simp only [compCorrectResult, Option.map_some, compileResult, ne_eq,
       not_true_eq_false, ↓reduceIte]
@@ -2448,7 +2448,7 @@ theorem copyHandlerCallerNonGcSlot {width : Nat} [NeZero width] {C F : Type}
   have indexBound : index < frameSize := by dsimp [index]; omega
   have payloadSlot : payload[index]? = some value := by
     change (payload.take frameSize)[index]? = some value at slot
-    simpa only [List.getElem?_take,if_pos indexBound] using slot
+    simpa only [List.getElem?_take,ite_eq_left indexBound] using slot
   have originalSlot : target.stack[target.stackSpace + count + 4 + index]? = some value := by
     have observation := congrArg (fun xs => xs[4+index]?) decoded
     simp only [show 4+index = index+4 by omega,List.getElem?_drop,List.getElem?_cons_succ] at observation
@@ -2749,13 +2749,13 @@ theorem copyHandlerReturnPreservesReturnedLocals {width : Nat} [NeZero width] {C
   refine ⟨by omega,?_⟩
   have original := placement index indexBound
   by_cases inRegister : index+1 < k
-  · rw [if_pos (by omega)]
-    rw [if_pos inRegister,valueEl] at original
+  · rw [ite_eq_left (by omega)]
+    rw [ite_eq_left inRegister,valueEl] at original
     simp only [restored,poppedHandlerState,copied,HolFiniteMapExact.lookup_updateEq,FUPDATE_HOL]
-    rw [if_neg (by omega),half,registers (index+1) (by omega)]
+    rw [ite_eq_right (by omega),half,registers (index+1) (by omega)]
     exact original
-  · rw [if_neg (by omega)]
-    rw [if_neg inRegister,valueEl] at original
+  · rw [ite_eq_right (by omega)]
+    rw [ite_eq_right inRegister,valueEl] at original
     have indexFits : returnedValues.length-(index+1) < count := by
       dsimp [count,Compiler.Backend.WordToStack.numStackRet]
       omega
@@ -2894,7 +2894,7 @@ private theorem handlerReturnLookupMissing {α : Type} (values : List Nat)
       simp only [List.zip_cons_cons,holAlookup] at missing
       by_cases same : name = key
       · simp [same] at missing
-      · rw [if_neg same] at missing
+      · rw [ite_eq_right same] at missing
         intro member
         rcases List.mem_cons.mp member with equal | tailMember
         · exact same equal.symm
@@ -2970,7 +2970,7 @@ theorem copyHandlerReturnRestoresCallerLocals {width : Nat} [NeZero width] {C F 
       have kBound : 4 < k := prior.2.2.2.2.2.2.2.2.2.1
       obtain ⟨_,upper,slot⟩ := savedLocals key value lookup physical (by omega) absent
       refine ⟨physical,?_⟩
-      rw [if_neg (by omega)]
+      rw [ite_eq_right (by omega)]
       exact ⟨slot,upper⟩
 
 /-- The actual nonempty source cut guard, stack-name convention and original
@@ -3063,7 +3063,7 @@ theorem restoreHandlerCallerStateRel {width : Nat} [NeZero width] {C F : Type}
     l1 l2 h1 h2 handlerVar dest args nonempty conventions maximum
   have frameShape : if payload = 0 then frame = 0 else frame = payload+1 := prior.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
   have nonzero : payload ≠ 0 := by omega
-  have frameEq : frame = payload+1 := by simpa only [if_neg nonzero] using frameShape
+  have frameEq : frame = payload+1 := by simpa only [ite_eq_right nonzero] using frameShape
   have canonical : values = (List.range values.length).map (fun index => 2*(index+1)) := by
     simp only [postAllocConventionsHOL,everyVarHOL,everyStackVarHOL,
       callArgConventionHOL,Bool.and_eq_true,beq_iff_eq] at conventions
@@ -3127,7 +3127,7 @@ theorem restoreHandlerCallerStateRel {width : Nat} [NeZero width] {C F : Type}
   · simpa only [frameEq,restored,poppedHandlerState,copied] using callerBound
   · simpa only [frameEq,restored,poppedHandlerState,copied] using callerSize
   · simpa only [frameEq,restored,poppedHandlerState,copied,
-      HolFiniteMapExact.lookup_updateEq,FUPDATE_HOL,if_true,Nat.add_assoc] using callerTail
+      HolFiniteMapExact.lookup_updateEq,FUPDATE_HOL,ite_true,Nat.add_assoc] using callerTail
   · simpa only [frameEq,restored,poppedHandlerState,copied,Nat.add_sub_cancel] using localValues
 
 /-- Connect the actual source callee Return and its original matching IH
@@ -3232,10 +3232,10 @@ theorem handlerRestoreContinuationSequence {width : Nat} [NeZero width] {C F α 
         (.seq (copyRetNative false true (k,frame,payload) values
           (popHandlerNative false (k,frame,payload) .skip)) continuation,target) := by
   by_cases zero : Compiler.Backend.WordToStack.numStackRet k values = 0
-  · simp only [copyRetNative,zero,if_true]
+  · simp only [copyRetNative,zero,ite_true]
     exact handlerPopContinuationSequence k frame payload continuation target
-  · simp only [copyRetNative,zero,if_false,seqStackFreeNative,
-      Compiler.Backend.WordToStack.handlerSlots,Bool.false_eq_true,if_true]
+  · simp only [copyRetNative,zero,ite_false,seqStackFreeNative,
+      Compiler.Backend.WordToStack.handlerSlots,Bool.false_eq_true,ite_true]
     rw [← Compiler.Backend.StackRemove.CopyLoopProof.sequenceAssoc]
     apply CallReturnEval.seq_congr_right
     intro afterCopy
@@ -3392,7 +3392,7 @@ theorem handlerReturningCompilationContext {width : Nat} [NeZero width] {C F : T
     exact handlerPrefix.trans bitmapPrefix
   · intro loc member
     simp only [compNative,destinationCompile,savedCompile,returnCompile,handlerCompile,
-      Bool.false_eq_true,if_false,Prod.mk.injEq] at wholeCompile
+      Bool.false_eq_true,ite_false,Prod.mk.injEq] at wholeCompile
     obtain ⟨rfl,_⟩ := wholeCompile
     apply labels loc
     simp only [getLabelsCopyRet,popHandlerF,StackSem.getLabelsExact,false_or]
@@ -3445,7 +3445,7 @@ theorem returningCallDispatchClock {width : Nat} [NeZero width] {C F : Type}
     | (result,post) => (result,post) := by
   rw [StackSemEvaluate.evaluate_call]
   simp only [found]
-  rw [if_neg (show target.clock+extra ≠ 0 by omega),
+  rw [ite_eq_right (show target.clock+extra ≠ 0 by omega),
     StackSemEvaluateClock.fixClockEvaluate,returningCallEntryClock target link l1 l2 extra nonzero]
   rfl
 
@@ -3514,7 +3514,7 @@ theorem handlerBodyReturnResourceResult {width : Nat} [NeZero width] {C F : Type
       intro equal
       exact CallHelpers.compileResultNot2 value dimension (Option.some.inj equal)
   unfold compCorrectResult
-  rw [if_pos mismatch]
+  rw [ite_eq_left mismatch]
   refine ⟨rfl,?_,?_⟩
   · have sourceEvents : bodyPost.ffi.ioEvents.IsPrefix sourcePost.ffi.ioEvents := by
       simpa only [WordSemStateFiniteExact.setVars,poppedEq] using events
@@ -3584,7 +3584,7 @@ theorem handlerBodyExceptionResourceResult {width : Nat} [NeZero width] {C F : T
       intro equal
       exact CallHelpers.compileResultNot2 value dimension (Option.some.inj equal)
   unfold compCorrectResult
-  rw [if_pos mismatch]
+  rw [ite_eq_left mismatch]
   refine ⟨rfl,?_,?_⟩
   · have sourceEvents : bodyPost.ffi.ioEvents.IsPrefix sourcePost.ffi.ioEvents := by
       simpa only [WordSemStateFiniteExact.setVar] using events
@@ -3676,7 +3676,7 @@ theorem restoreExceptionalHandlerCallerStateRel {width : Nat} [NeZero width] {C 
   have frameShape : if payload = 0 then frame = 0 else frame = payload+1 :=
     prior.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
   have payloadNonzero : payload ≠ 0 := by omega
-  have frameEq : frame = payload+1 := by simpa only [if_neg payloadNonzero] using frameShape
+  have frameEq : frame = payload+1 := by simpa only [ite_eq_right payloadNonzero] using frameShape
   have handlerEq : handlerVar = 2 := by
     simp only [postAllocConventionsHOL,everyVarHOL,everyStackVarHOL,
       callArgConventionHOL,Bool.and_eq_true,beq_iff_eq] at conventions
@@ -3727,14 +3727,14 @@ theorem restoreExceptionalHandlerCallerStateRel {width : Nat} [NeZero width] {C 
       subst item
       simp only [handlerEq]
       refine ⟨by decide,?_⟩
-      rw [if_pos (by omega)]
+      rw [ite_eq_left (by omega)]
       exact returned
     · rw [sptLookup_sptInsert_ne _ _ _ _ same] at found
       have slot := CallReturning.poppedCallerSlot k bodyPost.handler bodyPost.localsSize
         nonGc gc bodyPost.stack (target.store.lookup .handler) (target.stack.drop target.stackSpace)
         target.stack.length target.bitmaps payload lens relation key item (by rwa [← locals])
       refine ⟨physical key item found,?_⟩
-      rw [if_neg (by omega)]
+      rw [ite_eq_right (by omega)]
       simpa only [frameEq,Nat.add_sub_cancel,Nat.add_zero] using ⟨slot.2.2,slot.2.1⟩
 
 /-- Consume the actual source exception and full original matching body IH
@@ -3915,8 +3915,8 @@ theorem handlerSourceCallBodyPost {width : Nat} [NeZero width] {C F : Type}
         miscThe (sourcePost.stackLimit + 1) sourcePost.stackMax > sourcePost.stackLimit) := by
   obtain ⟨get, bad, find, valid, cut⟩ := guards
   rw [WordSemStateFiniteExact.evaluate] at execution
-  simp only [get, bad, Bool.false_eq_true, if_false, find, valid, cut] at execution
-  rw [dif_neg nonzero, WordSemStateFiniteExact.fix_clock_evaluate, bodyRun] at execution
+  simp only [get, bad, Bool.false_eq_true, ite_false, find, valid, cut] at execution
+  rw [dite_eq_right nonzero, WordSemStateFiniteExact.fix_clock_evaluate, bodyRun] at execution
   cases bodyResult with
   | none =>
       obtain ⟨rfl, rfl⟩ := Prod.mk.inj execution
@@ -3928,10 +3928,10 @@ theorem handlerSourceCallBodyPost {width : Nat} [NeZero width] {C F : Type}
     case result location returned =>
       simp only at execution
       by_cases invalid : location ≠ .loc l1 l2 ∨ returned.length ≠ values.length
-      · rw [if_pos invalid] at execution
+      · rw [ite_eq_left invalid] at execution
         obtain ⟨rfl, rfl⟩ := Prod.mk.inj execution
         exact ⟨List.prefix_refl _, fun overflow => overflow⟩
-      rw [if_neg invalid] at execution
+      rw [ite_eq_right invalid] at execution
       cases pop : WordSemStateFiniteExact.popEnv bodyPost with
       | none =>
           rw [pop] at execution
@@ -3948,7 +3948,7 @@ theorem handlerSourceCallBodyPost {width : Nat} [NeZero width] {C F : Type}
         have poppedMaximum : popped.stackMax = bodyPost.stackMax := by
           aesop (config := { enableSimp := false })
         by_cases domain : sptDomainEqUnion popped.locals envs.1 envs.2
-        · rw [if_pos domain] at execution
+        · rw [ite_eq_left domain] at execution
           constructor
           · have events := WordSemStateFiniteExact.evaluate_io_events_mono retCode
               (WordSemStateFiniteExact.setVars values returned popped) result sourcePost execution
@@ -3960,7 +3960,7 @@ theorem handlerSourceCallBodyPost {width : Nat} [NeZero width] {C F : Type}
             refine ⟨execution, ?_⟩
             change miscThe (popped.stackLimit + 1) popped.stackMax > popped.stackLimit
             rwa [poppedLimit, poppedMaximum]
-        · rw [if_neg domain] at execution
+        · rw [ite_eq_right domain] at execution
           obtain ⟨rfl, rfl⟩ := Prod.mk.inj execution
           rw [poppedFfi, poppedLimit, poppedMaximum]
           exact ⟨List.prefix_refl _, fun overflow => overflow⟩
@@ -3968,12 +3968,12 @@ theorem handlerSourceCallBodyPost {width : Nat} [NeZero width] {C F : Type}
     case exception location value =>
       simp only at execution
       by_cases invalid : location ≠ .loc h1 h2
-      · rw [if_pos invalid] at execution
+      · rw [ite_eq_left invalid] at execution
         obtain ⟨rfl,rfl⟩ := Prod.mk.inj execution
         exact ⟨List.prefix_refl _,fun overflow => overflow⟩
-      rw [if_neg invalid] at execution
+      rw [ite_eq_right invalid] at execution
       by_cases domain : sptDomainEqUnion bodyPost.locals envs.1 envs.2
-      · rw [if_pos domain] at execution
+      · rw [ite_eq_left domain] at execution
         constructor
         · exact WordSemStateFiniteExact.evaluate_io_events_mono handlerCode
             (WordSemStateFiniteExact.setVar handlerVar value bodyPost) result sourcePost execution
@@ -3981,7 +3981,7 @@ theorem handlerSourceCallBodyPost {width : Nat} [NeZero width] {C F : Type}
           exact WordSemStateFiniteExact.evaluate_stack_limit_stack_max handlerCode
             (WordSemStateFiniteExact.setVar handlerVar value bodyPost) result sourcePost
             ⟨execution,overflow⟩
-      · rw [if_neg domain] at execution
+      · rw [ite_eq_right domain] at execution
         obtain ⟨rfl,rfl⟩ := Prod.mk.inj execution
         exact ⟨List.prefix_refl _,fun overflow => overflow⟩
 
@@ -4018,7 +4018,7 @@ theorem handlerBodyMismatchResult {width : Nat} [NeZero width] {C F : Type}
     compCorrectResult ac k callerSize callerFrame source sourcePost targetPost
       result targetResult lens := by
   unfold compCorrectResult at bodyConclusion
-  rw [if_pos bodyMismatch] at bodyConclusion
+  rw [ite_eq_left bodyMismatch] at bodyConclusion
   obtain ⟨halt, events, overflow⟩ := bodyConclusion
   obtain ⟨traceLift, resourceLift⟩ := handlerSourceCallBodyPost values names retCode handlerCode l1 l2 handlerVar h1 h2 dest args
     source sourcePost bodyPost result bodyResult xs args1 prog ss envs guards nonzero execution bodyRun
@@ -4037,7 +4037,7 @@ theorem handlerBodyMismatchResult {width : Nat} [NeZero width] {C F : Type}
       intro same
       exact CallHelpers.compileResultNot2 value dimension (Option.some.inj same)
   unfold compCorrectResult
-  rw [if_pos mismatch]
+  rw [ite_eq_left mismatch]
   refine ⟨halt, events.trans traceLift, ?_⟩
   cases maximum : sourcePost.stackMax <;>
     simpa only [maximum, miscThe, Option.getD_some, Option.getD_none] using finalOverflow
@@ -4067,8 +4067,8 @@ theorem handlerSourceCallTerminal {width : Nat} [NeZero width] {C F : Type}
     result = bodyResult ∧ sourcePost = bodyPost := by
   obtain ⟨get, bad, find, valid, cut⟩ := guards
   rw [WordSemStateFiniteExact.evaluate] at execution
-  simp only [get, bad, Bool.false_eq_true, if_false, find, valid, cut] at execution
-  rw [dif_neg nonzero, WordSemStateFiniteExact.fix_clock_evaluate, bodyRun] at execution
+  simp only [get, bad, Bool.false_eq_true, ite_false, find, valid, cut] at execution
+  rw [dite_eq_right nonzero, WordSemStateFiniteExact.fix_clock_evaluate, bodyRun] at execution
   rcases terminal with rfl | rfl | ⟨event, rfl⟩ <;>
     exact ⟨(Prod.mk.inj execution).1.symm, (Prod.mk.inj execution).2.symm⟩
 

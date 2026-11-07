@@ -43,9 +43,9 @@ theorem pmatch_append_bindings {C F : Type} (state : FlatSem.State C F) (pattern
     case conv actual values =>
       by_cases ok : PmatchStampsOk stamp actual patterns.length values.length
       · by_cases same : stamp.map Prod.fst = actual.map Prod.fst ∧ patterns.length = values.length
-        · simpa only [if_pos ok, if_pos same, appendMatchBindings] using
+        · simpa only [ite_eq_left ok, ite_eq_left same, appendMatchBindings] using
             pmatchList_append_bindings state patterns values pre suffix
-        · simp only [if_pos ok, if_neg same]
+        · simp only [ite_eq_left ok, ite_eq_right same]
       · simp [ok]
 termination_by sizeOf pattern
 

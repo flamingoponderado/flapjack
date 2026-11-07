@@ -45,9 +45,9 @@ theorem parsemMapInj {α γ β : Type} [DecidableEq α] [DecidableEq γ]
           intro equal
           have same := injective x (by simp [hx]) destination (by simp) equal
           exact parts.1 (same ▸ hx)
-        simp only [updateEnv, if_neg neq]
+        simp only [updateEnv, ite_eq_right neq]
         have xd : x ≠ destination := by intro equal; exact neq (congrArg f equal)
-        simp only [if_neg xd]
+        simp only [ite_eq_right xd]
         exact ih parts.2 tailInj hx
 
 end Flapjack.Compiler.Backend.Parmove

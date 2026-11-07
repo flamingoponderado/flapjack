@@ -88,7 +88,7 @@ theorem compile_word_to_word_thm {width : Nat} [NeZero width] {C F : Type}
       | (res, rst) => if res = some .error then True else _)
     rw [hA]
     simp [herr]
-  rw [if_neg herr] at H
+  rw [ite_eq_right herr] at H
   rcases hB : evaluate prog { st with code := l, compileOracle := O', compile := cc' } with ⟨res1, rst1⟩
   rw [hB] at H
   dsimp only at H
@@ -114,7 +114,7 @@ theorem compile_word_to_word_thm {width : Nat} [NeZero width] {C F : Type}
     | (res, rst) => if res = some .error then True else _)
   rw [hA]
   dsimp only
-  rw [if_neg herr, hst, show (WordLangProgHOL.call none (some start) [0] none : WordLangProgHOL (BitVec width)) =
+  rw [ite_eq_right herr, hst, show (WordLangProgHOL.call none (some start) [0] none : WordLangProgHOL (BitVec width)) =
     removeMustTerminate prog from rfl, hW]
   refine ⟨rfl, ?_, ?_, ?_⟩ <;> rw [hs1] <;> rfl
 

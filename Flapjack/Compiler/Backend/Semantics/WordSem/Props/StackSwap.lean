@@ -287,7 +287,7 @@ theorem sValEqDecStack {width : Nat} [NeZero width] :
           split at hd
           · cases hd
           · rename_i hl
-            rw [if_neg hl]
+            rw [ite_eq_right hl]
             cases hd1 : wordSemDecStack (q.drop l.length) rest with
             | none => rw [hd1] at hd; cases hd
             | some sx =>

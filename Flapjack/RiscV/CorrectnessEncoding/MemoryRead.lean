@@ -132,7 +132,7 @@ theorem source_read_native_value (p : BitVec 64) (s : AsmState 64)
     decide_true, Bool.true_and, Nat.zero_add]
   by_cases selected : j < (2 : Nat) ^ k.val * 8
   · have byteBound : j / 8 < (2 : Nat) ^ k.val := by omega
-    rw [if_pos selected, bytes _ byteBound]
+    rw [ite_eq_left selected, bytes _ byteBound]
     rw [native_raw_read_bit p t ((2 : Nat) ^ k.val) j
       (memory_aligned_access_within p k aligned) selected]
     simp [selected]

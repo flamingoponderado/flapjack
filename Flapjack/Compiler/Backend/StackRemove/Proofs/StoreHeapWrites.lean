@@ -71,7 +71,7 @@ theorem storeUpdateSlots {width : Nat} [NeZero width]
         have names := congrArg StackSemRegisterTransfers.storeToSyntax equal
         simp only [StackSemRegisterTransfers.storeToSyntax_storeOfSyntax] at names
         rw [← slotEq] at names
-        exact (List.getElem_inj (h₀ := queryBound) (h₁ := bound) storeListNodup).mp names
+        exact (List.Nodup.getElem_inj (hi := queryBound) (hj := bound) storeListNodup).mp names
       · intro equal
         subst query
         rw [slotEq]

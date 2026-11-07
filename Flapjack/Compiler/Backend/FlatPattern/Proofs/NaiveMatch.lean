@@ -223,7 +223,7 @@ theorem pmatchList_con_expanded_decision {C F : Type} (state : FlatSem.State C F
   have notBad : ¬ ¬ FlatSem.PmatchStampsOk stamp actual patterns.length fields.length := fun h => h compatible
   have head : FlatSem.pmatch state (.pcon stamp patterns) (.conv actual fields) bindings =
       FlatSem.pmatchList state patterns fields bindings := by
-    simp only [FlatSem.pmatch, if_neg notBad, if_pos same]
+    simp only [FlatSem.pmatch, ite_eq_right notBad, ite_eq_left same]
   have combined := pmatchList_append_decision state patterns rest fields values bindings same.2
   cases first : FlatSem.pmatchList state patterns fields bindings with
   | typeError =>
@@ -253,7 +253,7 @@ theorem pmatchList_con_failed_decision {C F : Type} (state : FlatSem.State C F)
       combineMatchDecisions (some false) (matchDecision (FlatSem.pmatchList state rest values bindings)) := by
   have notBad : ¬ ¬ FlatSem.PmatchStampsOk stamp actual patterns.length fields.length := fun h => h compatible
   have head : FlatSem.pmatch state (.pcon stamp patterns) (.conv actual fields) bindings = .noMatch := by
-    simp only [FlatSem.pmatch, if_neg notBad, if_neg different]
+    simp only [FlatSem.pmatch, ite_eq_right notBad, ite_eq_right different]
   cases tail : FlatSem.pmatchList state rest values bindings <;>
     simp [FlatSem.pmatchList, head, tail, matchDecision, combineMatchDecisions]
 

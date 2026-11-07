@@ -182,7 +182,7 @@ theorem wordToStackStackAsmName {width : Nat} [NeZero width]
               | none =>
                   have h := returnGuards conf false values live p l1 l2 dest args frame guards
                   have hp := wordToStackStackAsmName conf false p (wLiveNative live bs frame).2 frame h.1 h.2.1 h.2.2.1 h.2.2.2.1 h.2.2.2.2.1 h.2.2.2.2.2.1 h.2.2.2.2.2.2
-                  simp only [compNative, Bool.false_eq_true, if_false, stackAsmName]
+                  simp only [compNative, Bool.false_eq_true, ite_false, stackAsmName]
                   repeat' apply And.intro
                   all_goals first
                     | exact hd.1
@@ -197,7 +197,7 @@ theorem wordToStackStackAsmName {width : Nat} [NeZero width]
                       have h := handlerGuards conf false values live p q l1 l2 handleValue h1 h2 dest args frame guards
                       have hp := wordToStackStackAsmName conf false p (wLiveNative live bs frame).2 frame h.1.1 h.1.2.1 h.1.2.2.1 h.1.2.2.2.1 h.1.2.2.2.2.1 h.1.2.2.2.2.2.1 h.1.2.2.2.2.2.2
                       have hq := wordToStackStackAsmName conf false q (compNative conf false p (wLiveNative live bs frame).2 frame).2 frame h.2.1 h.2.2.1 h.2.2.2.1 h.2.2.2.2.1 h.2.2.2.2.2.1 h.2.2.2.2.2.2.1 h.2.2.2.2.2.2.2
-                      simp only [compNative, Bool.false_eq_true, if_false, stackAsmName]
+                      simp only [compNative, Bool.false_eq_true, ite_false, stackAsmName]
                       repeat' apply And.intro
                       all_goals first
                         | exact hd.1

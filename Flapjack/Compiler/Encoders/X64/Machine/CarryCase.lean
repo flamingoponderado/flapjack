@@ -158,7 +158,7 @@ theorem x64Next_binopRR_zadd (ms : X64State) (dm : BitVec 64 → Prop) (dst src 
       some (.binopRR .zadd .z64 dst src, (encodeInsn (.binopRR .zadd .z64 dst src)).length) :=
     decode_bytesInMemory _ ms.pc ms.mem dm _ _ hbm
       (decode_binopRR_z64 .zadd dst src hdst hsrc (by decide)) (by omega)
-  simp only [x64Next, hfailed, Bool.false_eq_true, if_false, hdec, execInsn_binopRR_zadd,
+  simp only [x64Next, hfailed, Bool.false_eq_true, ite_false, hdec, execInsn_binopRR_zadd,
     writeRegSized, writeReg]
 
 /-- One `x64Next` step over a `mov r32, 0`. -/
@@ -181,7 +181,7 @@ theorem x64Next_setcc (ms : X64State) (dm : BitVec 64 → Prop) (cond : ZCond) (
   have hdec : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) =
       some (.setcc cond true dst, (encodeInsn (.setcc cond true dst)).length) :=
     decode_bytesInMemory _ ms.pc ms.mem dm _ _ hbm (decode_setcc cond dst hd hc) (by omega)
-  simp only [x64Next, hfailed, Bool.false_eq_true, if_false, hdec, execInsn]
+  simp only [x64Next, hfailed, Bool.false_eq_true, ite_false, hdec, execInsn]
 
 /-! ## Register effects of the source semantics -/
 
@@ -196,9 +196,9 @@ theorem arithUpd_addOverflow_regs (s : AsmState 64) (d rc sl sr : Nat) :
   intro j
   simp only [arithUpd, updReg, Flapjack.Compiler.Encoders.AsmSem.readReg]
   by_cases h4 : j = sr
-  · simp only [if_pos h4]
+  · simp only [ite_eq_left h4]
     simp
-  · simp only [if_neg h4]
+  · simp only [ite_eq_right h4]
 
 /-! ## The `addOverflow` lowering -/
 
@@ -277,7 +277,7 @@ theorem readReg_writeRegSized_z8_other (s : X64State) (r x : Nat) (v : BitVec 64
     readReg (writeRegSized (.z8 true) r v s) x = readReg s x := by
   simp only [readReg, writeRegSized, num2Zreg, Nat.mod_eq_of_lt hr, Nat.mod_eq_of_lt hx,
     writeReg]
-  rw [if_neg hne]
+  rw [ite_eq_right hne]
 
 /-- The `addOverflow` constructor of `encoder_correct x64Target`: the
 `add`/`mov`/`seto` sequence writes the sum and its signed-overflow flag. -/
@@ -513,20 +513,20 @@ theorem case_addOverflow (d rc sl sr : Nat) (s1 s2 : AsmState 64) (ms : X64State
             (if evalCond .zO (ovfAddT2 ms d sl sr).flags then 1 else 0) hsr hx16 hxsr
         rw [hother]
         show readReg (writeReg (ovfAddT1 ms d sl) sr 0) x = s2.regs x
-        rw [readReg_writeReg (ovfAddT1 ms d sl) sr 0 x hsr hx16, if_neg hxsr]
+        rw [readReg_writeReg (ovfAddT1 ms d sl) sr 0 x hsr hx16, ite_eq_right hxsr]
         by_cases hxd : x = d
         · have hdsr : d ≠ sr := by rw [← hxd]; exact hxsr
           rw [hxd]
           show readReg (writeReg ms d (readReg ms d + readReg ms sl)) d = s2.regs d
           rw [readReg_writeReg ms d (readReg ms d + readReg ms sl) d hd hd]
           rw [hs2regs d]
-          simp only [if_neg hdsr]
+          simp only [ite_eq_right hdsr]
           rw [hdread, hslread]
           simp
         · show readReg (writeReg ms d (readReg ms d + readReg ms sl)) x = s2.regs x
-          rw [readReg_writeReg ms d (readReg ms d + readReg ms sl) x hd hx16, if_neg hxd]
+          rw [readReg_writeReg ms d (readReg ms d + readReg ms sl) x hd hx16, ite_eq_right hxd]
           rw [hs2regs x]
-          simp only [if_neg hxsr, if_neg hxd]
+          simp only [ite_eq_right hxsr, ite_eq_right hxd]
           exact st.reg x hx
     · intro x hx
       show readXmm (ovfAddT3 ms d sl sr) x = s2.fpRegs x
@@ -577,7 +577,7 @@ theorem x64Next_binopRR_zsub (ms : X64State) (dm : BitVec 64 → Prop) (dst src 
       some (.binopRR .zsub .z64 dst src, (encodeInsn (.binopRR .zsub .z64 dst src)).length) :=
     decode_bytesInMemory _ ms.pc ms.mem dm _ _ hbm
       (decode_binopRR_z64 .zsub dst src hdst hsrc (by decide)) (by omega)
-  simp only [x64Next, hfailed, Bool.false_eq_true, if_false, hdec, execInsn_binopRR_zsub,
+  simp only [x64Next, hfailed, Bool.false_eq_true, ite_false, hdec, execInsn_binopRR_zsub,
     writeRegSized, writeReg]
 
 theorem arithUpd_subOverflow_regs (s : AsmState 64) (d rc sl sr : Nat) :
@@ -589,9 +589,9 @@ theorem arithUpd_subOverflow_regs (s : AsmState 64) (d rc sl sr : Nat) :
   intro j
   simp only [arithUpd, updReg, Flapjack.Compiler.Encoders.AsmSem.readReg]
   by_cases h4 : j = sr
-  · simp only [if_pos h4]
+  · simp only [ite_eq_left h4]
     simp
-  · simp only [if_neg h4]
+  · simp only [ite_eq_right h4]
 
 /-! ## The `subOverflow` lowering -/
 
@@ -885,20 +885,20 @@ theorem case_subOverflow (d rc sl sr : Nat) (s1 s2 : AsmState 64) (ms : X64State
             (if evalCond .zO (ovfSubT2 ms d sl sr).flags then 1 else 0) hsr hx16 hxsr
         rw [hother]
         show readReg (writeReg (ovfSubT1 ms d sl) sr 0) x = s2.regs x
-        rw [readReg_writeReg (ovfSubT1 ms d sl) sr 0 x hsr hx16, if_neg hxsr]
+        rw [readReg_writeReg (ovfSubT1 ms d sl) sr 0 x hsr hx16, ite_eq_right hxsr]
         by_cases hxd : x = d
         · have hdsr : d ≠ sr := by rw [← hxd]; exact hxsr
           rw [hxd]
           show readReg (writeReg ms d (readReg ms d - readReg ms sl)) d = s2.regs d
           rw [readReg_writeReg ms d (readReg ms d - readReg ms sl) d hd hd]
           rw [hs2regs d]
-          simp only [if_neg hdsr]
+          simp only [ite_eq_right hdsr]
           rw [hdread, hslread]
           simp
         · show readReg (writeReg ms d (readReg ms d - readReg ms sl)) x = s2.regs x
-          rw [readReg_writeReg ms d (readReg ms d - readReg ms sl) x hd hx16, if_neg hxd]
+          rw [readReg_writeReg ms d (readReg ms d - readReg ms sl) x hd hx16, ite_eq_right hxd]
           rw [hs2regs x]
-          simp only [if_neg hxsr, if_neg hxd]
+          simp only [ite_eq_right hxsr, ite_eq_right hxd]
           exact st.reg x hx
     · intro x hx
       show readXmm (ovfSubT3 ms d sl sr) x = s2.fpRegs x
@@ -950,7 +950,7 @@ theorem x64Next_binopRI_zcmp (ms : X64State) (_dm : BitVec 64 → Prop) (dst : N
       flags := subFlags (readReg ms dst) imm,
       pc := ms.pc + BitVec.ofNat 64 (encodeInsn (.binopRI .zcmp .z64 dst imm)).length } := by
   rw [hlen]
-  simp only [x64Next, hfailed, Bool.false_eq_true, if_false, hdec,
+  simp only [x64Next, hfailed, Bool.false_eq_true, ite_false, hdec,
     execInsn_binopRI_zcmp]
 
 /-- The closed model executes `cmc` by flipping the carry flag. -/
@@ -968,7 +968,7 @@ theorem x64Next_cmc (ms : X64State) (dm : BitVec 64 → Prop)
   have hdec : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) = some (.cmc, 1) :=
     decode_bytesInMemory _ ms.pc ms.mem dm _ _ hbm decode_cmc (by rw [hlen])
   rw [hlen]
-  simp only [x64Next, hfailed, Bool.false_eq_true, if_false, hdec, execInsn_cmc]
+  simp only [x64Next, hfailed, Bool.false_eq_true, ite_false, hdec, execInsn_cmc]
 
 /-- The closed model executes `adc`, adding the incoming carry flag. -/
 theorem execInsn_binopRR_zadc (dst src : Nat) (len : Nat) (s : X64State) :
@@ -990,7 +990,7 @@ theorem x64Next_binopRR_zadc (ms : X64State) (dm : BitVec 64 → Prop) (dst src 
       some (.binopRR .zadc .z64 dst src, (encodeInsn (.binopRR .zadc .z64 dst src)).length) :=
     decode_bytesInMemory _ ms.pc ms.mem dm _ _ hbm
       (decode_binopRR_z64 .zadc dst src hdst hsrc (by decide)) (by omega)
-  simp only [x64Next, hfailed, Bool.false_eq_true, if_false, hdec, execInsn_binopRR_zadc]
+  simp only [x64Next, hfailed, Bool.false_eq_true, ite_false, hdec, execInsn_binopRR_zadc]
 
 /-! ### The source semantics of `addCarry` -/
 
@@ -1008,9 +1008,9 @@ theorem arithUpd_addCarry_regs (s : AsmState 64) (r1 r2 r3 r4 : Nat) :
   intro j
   simp only [arithUpd, updReg, Flapjack.Compiler.Encoders.AsmSem.readReg]
   by_cases h4 : j = r4
-  · simp only [if_pos h4]
+  · simp only [ite_eq_left h4]
     rfl
-  · simp only [if_neg h4]
+  · simp only [ite_eq_right h4]
     rfl
 
 /-! ### BitVec and flag bridging facts -/
@@ -1399,7 +1399,7 @@ theorem case_addCarry (r1 r2 r3 r4 : Nat) (s1 s2 : AsmState 64) (ms : X64State)
           readReg (writeReg (carryT2 ms r4) r1
             (readReg (carryT2 ms r4) r1 + readReg (carryT2 ms r4) r3 +
               BitVec.ofNat 64 (if (carryT2 ms r4).flags.cf then 1 else 0))) r1 from rfl]
-      rw [readReg_writeReg (carryT2 ms r4) r1 _ r1 hr1 hr1, if_pos rfl]
+      rw [readReg_writeReg (carryT2 ms r4) r1 _ r1 hr1 hr1, ite_eq_left rfl]
       rw [hreadT2 r1, hreadT2 r3]
       rw [show (carryT2 ms r4).flags.cf = !(subFlags (readReg ms r4) 1).cf from rfl]
       rw [hdread2, hr3read, hc, hr4read]
@@ -1463,21 +1463,21 @@ theorem case_addCarry (r1 r2 r3 r4 : Nat) (s1 s2 : AsmState 64) (ms : X64State)
             (if evalCond .zB (carryT4 ms r1 r3 r4).flags then 1 else 0) hr4 hx16 hx4
         rw [hother]
         show readReg (writeReg (carryT3 ms r1 r3 r4) r4 0) x = s2.regs x
-        rw [readReg_writeReg (carryT3 ms r1 r3 r4) r4 0 x hr4 hx16, if_neg hx4]
+        rw [readReg_writeReg (carryT3 ms r1 r3 r4) r4 0 x hr4 hx16, ite_eq_right hx4]
         by_cases hx1 : x = r1
         · have hr14 : ¬ r1 = r4 := by rw [← hx1]; exact hx4
           rw [hx1, hadcval, hs2regs r1]
-          simp only [if_neg hr14]
+          simp only [ite_eq_right hr14]
           rfl
         · have h3 : readReg (carryT3 ms r1 r3 r4) x = readReg ms x := by
             rw [show readReg (carryT3 ms r1 r3 r4) x =
                 readReg (writeReg (carryT2 ms r4) r1
                   (readReg (carryT2 ms r4) r1 + readReg (carryT2 ms r4) r3 +
                     BitVec.ofNat 64 (if (carryT2 ms r4).flags.cf then 1 else 0))) x from rfl]
-            rw [readReg_writeReg (carryT2 ms r4) r1 _ x hr1 hx16, if_neg hx1]
+            rw [readReg_writeReg (carryT2 ms r4) r1 _ x hr1 hx16, ite_eq_right hx1]
             exact hreadT2 x
           rw [h3, hs2regs x]
-          simp only [if_neg hx4, if_neg hx1]
+          simp only [ite_eq_right hx4, ite_eq_right hx1]
           exact st.reg x hx
     · intro x hx
       show readXmm (carryT5 ms r1 r3 r4) x = s2.fpRegs x

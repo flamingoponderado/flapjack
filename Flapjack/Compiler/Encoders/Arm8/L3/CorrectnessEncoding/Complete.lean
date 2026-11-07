@@ -70,7 +70,7 @@ private theorem arm8ByteScaledForm (off : BitVec 64) (hmsb : off.msb = false)
     off = (BitVec.setWidth 64 (holWordExtract 12 11 0 off)) <<< 0 := by
   have hcond := BitVec.toInt_eq_msb_cond off
   rw [hmsb] at hcond
-  simp only [Bool.false_eq_true, if_false] at hcond
+  simp only [Bool.false_eq_true, ite_false] at hcond
   have hsmall : off.toNat < 4096 := by omega
   rw [← arm8ScaledFormZero off]
   apply BitVec.eq_of_toNat_eq

@@ -76,21 +76,21 @@ theorem holV2w_extract_ror (v : BitVec 64) (k : Nat) (hk : k < 64) :
   rw [htake]
   simp only [decide_eq_true hi', Bool.true_and, holShiftr, hlen128]
   have hj : 128 - k - 1 - i < 128 - k := by omega
-  rw [List.getD_eq_getElem?_getD, List.getElem?_take, if_pos hj, List.getElem?_append]
+  rw [List.getD_eq_getElem?_getD, List.getElem?_take, ite_eq_left hj, List.getElem?_append]
   rw [Nat.mod_eq_of_lt hk]
   by_cases hin : i < 64 - k
-  · rw [decide_eq_true hin]
+  · rw [ite_eq_left hin]
     have hj2 : ¬ 128 - k - 1 - i < (holW2v v).length := by rw [hlen]; omega
     have hidx : 128 - k - 1 - i - (holW2v v).length = 63 - k - i := by rw [hlen]; omega
     have hlt : 63 - k - i < 64 := by omega
-    simp only [hj2, if_false, hidx, decide_eq_true hi, Bool.true_and, cond_true]
+    simp only [hj2, ite_false, hidx, decide_eq_true hi, Bool.true_and]
     rw [← List.getD_eq_getElem?_getD, holW2v_getD v hlt]
     congr 1
     omega
-  · rw [decide_eq_false hin]
+  · rw [ite_eq_right hin]
     have hj2 : 128 - k - 1 - i < (holW2v v).length := by rw [hlen]; omega
     have hlt : 128 - k - 1 - i < 64 := by omega
-    simp only [hj2, if_true, decide_eq_true hi, Bool.true_and, cond_false]
+    simp only [hj2, ite_true, decide_eq_true hi, Bool.true_and]
     rw [← List.getD_eq_getElem?_getD, holW2v_getD v hlt]
     congr 1
     omega

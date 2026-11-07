@@ -21,7 +21,7 @@ out-of-range `set` is the identity). -/
 private theorem holEl_set_any {γ : Type} [Nonempty γ] (l : List γ) (i j : Nat) (v : γ)
     (hij : i ≠ j) : holEl j (l.set i v) = holEl j l := by
   by_cases hi : i < l.length
-  · rw [holEl_set l i j v hi, if_neg hij]
+  · rw [holEl_set l i j v hi, ite_eq_right hij]
   · rw [List.set_eq_of_length_le (by omega)]
 
 /-- Exact HOL `update_color_active_colors_same`
@@ -51,8 +51,8 @@ theorem forcedUpdateStackColorLemma :
       holEl r1 (colors.set r1 stacknum) = holEl r2 (colors.set r1 stacknum) → r1 = r2 := by
   intro colors stacknum l r2 r1 ⟨hl, hr2, hr1, heq⟩
   refine Classical.byContradiction fun hne => ?_
-  rw [holEl_set colors r1 r1 stacknum hr1, if_pos rfl,
-    holEl_set colors r1 r2 stacknum hr1, if_neg hne] at heq
+  rw [holEl_set colors r1 r1 stacknum hr1, ite_eq_left rfl,
+    holEl_set colors r1 r2 stacknum hr1, ite_eq_right hne] at heq
   have := hl r2 hr2
   omega
 
@@ -171,7 +171,7 @@ theorem spillRegisterFilterInvariantsHidden :
   have g := goodLinearScanState_iff.mp hg
   let c' := sth.colors.set reg st.stacknum
   have hcreg : holEl reg c' = st.stacknum := by
-    simp only [c']; rw [holEl_set _ _ _ _ hreg, if_pos rfl]
+    simp only [c']; rw [holEl_set _ _ _ _ hreg, ite_eq_left rfl]
   have hcne : ∀ r, r ≠ reg → holEl r c' = holEl r sth.colors := fun r h =>
     holEl_set_any sth.colors reg r _ (Ne.symm h)
   have hcl : ∀ r, r ∈ reg :: l → r ≠ reg →
@@ -201,7 +201,7 @@ theorem spillRegisterFilterInvariantsHidden :
     goodLinearScanState_iff.mpr ?good, List.length_set,
     fun r h => (hcne r h).symm, rfl, rfl, rfl, by rw [hcreg]; exact g.maxStack⟩
   case run =>
-    simp only [spillRegister, ignoreBind, updateColorsEqn, if_pos hreg, ret]; rfl
+    simp only [spillRegister, ignoreBind, updateColorsEqn, ite_eq_left hreg, ret]; rfl
   case good =>
   exact {
     lenBeg := by rw [List.length_set]; exact g.lenBeg

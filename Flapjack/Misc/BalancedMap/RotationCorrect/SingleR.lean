@@ -95,7 +95,7 @@ theorem singleRThm {κ ν : Type} (key : κ) (value : ν) (right : Map κ ν)
         simp [bin, toFmap, HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL,
           HolFiniteMapExact.lookup_union, hneq, hnone]
       · simp only [bin, toFmap, HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL,
-          hroot, hkey, if_false, HolFiniteMapExact.lookup_union]
+          hroot, hkey, ite_false, HolFiniteMapExact.lookup_union]
         cases (toFmap cmp first).lookup keys <;> rfl
 
 end

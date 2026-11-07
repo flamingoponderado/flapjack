@@ -340,7 +340,7 @@ theorem completeHandlerCallFromPrelude {width : Nat} [NeZero width] {C F : Type}
   rw [Compiler.Backend.StackRemove.CopyLoopProof.sequenceAssoc,
     Compiler.Backend.StackRemove.CopyLoopProof.sequenceAssoc] at shifted
   simp only [compNative,destinationCompile,savedCompile,returnCompile,handlerCompile,
-    Bool.false_eq_true,if_false,Prod.mk.injEq] at compilation
+    Bool.false_eq_true,ite_false,Prod.mk.injEq] at compilation
   obtain ⟨rfl,_⟩ := compilation
   rw [Compiler.Backend.StackRemove.CopyLoopProof.sequenceAssoc,
     Compiler.Backend.StackRemove.CopyLoopProof.sequenceAssoc,
@@ -509,7 +509,7 @@ theorem handlerExceptionCompilationContext {width : Nat} [NeZero width] {C F : T
   · rwa [gap]
   · intro loc member
     simp only [compNative,destinationCompile,savedCompile,returnCompile,handlerCompile,
-      Bool.false_eq_true,if_false,Prod.mk.injEq] at wholeCompile
+      Bool.false_eq_true,ite_false,Prod.mk.injEq] at wholeCompile
     obtain ⟨rfl,_⟩ := wholeCompile
     apply labels loc
     simp only [StackSem.getLabelsExact]
@@ -791,8 +791,8 @@ theorem handlerCalleeOutcomeCases {width : Nat} [NeZero width] {C F : Type}
     ∃ event, bodyResult = some (.finalFfi event) := by
   obtain ⟨get, bad, find, valid, cut⟩ := guards
   rw [WordSemStateFiniteExact.evaluate] at execution
-  simp only [get, bad, Bool.false_eq_true, if_false, find, valid, cut] at execution
-  rw [dif_neg nonzero, WordSemStateFiniteExact.fix_clock_evaluate, bodyRun] at execution
+  simp only [get, bad, Bool.false_eq_true, ite_false, find, valid, cut] at execution
+  rw [dite_eq_right nonzero, WordSemStateFiniteExact.fix_clock_evaluate, bodyRun] at execution
   cases bodyResult with
   | none => exact False.elim (notError (Prod.mk.inj execution).1.symm)
   | some value =>
@@ -879,7 +879,7 @@ theorem simulateSuccessfulHandlerCall {width : Nat} [NeZero width] {C F : Type}
     apply labels (h1,h2)
     have shape := compilation
     simp only [compNative,destinationCompile,savedCompile,returnCompile,handlerCompile,
-      Bool.false_eq_true,if_false,Prod.mk.injEq] at shape
+      Bool.false_eq_true,ite_false,Prod.mk.injEq] at shape
     obtain ⟨rfl,_⟩ := shape
     simp only [StackSem.getLabelsExact,or_true,true_or]
   obtain ⟨destinationTarget,saved,header,moved,entry,calleeTarget,calleeCode,body,
@@ -967,7 +967,7 @@ theorem simulateSuccessfulHandlerCall {width : Nat} [NeZero width] {C F : Type}
       exact ⟨event,by simpa only [ffi,Option.map_some,compileResult] using matching.symm⟩
   · have mismatch := bodyConclusion
     unfold compCorrectResult at mismatch
-    rw [if_pos matching] at mismatch
+    rw [ite_eq_left matching] at mismatch
     exact finishTerminal (Or.inr (Or.inl ⟨.word 2,mismatch.1⟩))
 
 /-- Transport actual source callee-entry overflow through every real SOME
@@ -995,12 +995,12 @@ theorem handlerSourceCallEntryOverflow {width : Nat} [NeZero width] {C F : Type}
     miscThe (sourcePost.stackLimit + 1) sourcePost.stackMax > sourcePost.stackLimit := by
   obtain ⟨get, bad, find, valid, cut⟩ := guards
   rw [WordSemStateFiniteExact.evaluate] at execution
-  simp only [get, bad, Bool.false_eq_true, if_false, find, valid, cut] at execution
+  simp only [get, bad, Bool.false_eq_true, ite_false, find, valid, cut] at execution
   by_cases clock : source.clock = 0
-  · rw [dif_pos clock] at execution
+  · rw [dite_eq_left clock] at execution
     obtain ⟨rfl, rfl⟩ := Prod.mk.inj execution
     exact overflow
-  rw [dif_neg clock, WordSemStateFiniteExact.fix_clock_evaluate] at execution
+  rw [dite_eq_right clock, WordSemStateFiniteExact.fix_clock_evaluate] at execution
   rcases bodyRun : WordSemStateFiniteExact.evaluate prog
       (WordSemStateFiniteExact.callEnv args1 ss
         (WordSemStateFiniteExact.pushEnv envs (some (handlerVar,handlerCode,h1,h2)) (WordSemStateFiniteExact.decClock source))) with
@@ -1017,10 +1017,10 @@ theorem handlerSourceCallEntryOverflow {width : Nat} [NeZero width] {C F : Type}
   case result location returned =>
     simp only at execution
     by_cases invalid : location ≠ .loc l1 l2 ∨ returned.length ≠ values.length
-    · rw [if_pos invalid] at execution
+    · rw [ite_eq_left invalid] at execution
       obtain ⟨rfl, rfl⟩ := Prod.mk.inj execution
       exact bodyOverflow
-    rw [if_neg invalid] at execution
+    rw [ite_eq_right invalid] at execution
     rcases pop : WordSemStateFiniteExact.popEnv bodyPost with _ | popped
     · rw [pop] at execution
       obtain ⟨rfl, rfl⟩ := Prod.mk.inj execution
@@ -1036,24 +1036,24 @@ theorem handlerSourceCallEntryOverflow {width : Nat} [NeZero width] {C F : Type}
       rw [poppedLimit, poppedMaximum]
       exact bodyOverflow
     by_cases domain : sptDomainEqUnion popped.locals envs.1 envs.2
-    · rw [if_pos domain] at execution
+    · rw [ite_eq_left domain] at execution
       exact WordSemStateFiniteExact.evaluate_stack_limit_stack_max retCode _ result sourcePost
         ⟨execution, poppedOverflow⟩
-    · rw [if_neg domain] at execution
+    · rw [ite_eq_right domain] at execution
       obtain ⟨rfl, rfl⟩ := Prod.mk.inj execution
       exact poppedOverflow
   case exception location value =>
     simp only at execution
     by_cases invalid : location ≠ .loc h1 h2
-    · rw [if_pos invalid] at execution
+    · rw [ite_eq_left invalid] at execution
       obtain ⟨rfl,rfl⟩ := Prod.mk.inj execution
       exact bodyOverflow
-    rw [if_neg invalid] at execution
+    rw [ite_eq_right invalid] at execution
     by_cases domain : sptDomainEqUnion bodyPost.locals envs.1 envs.2
-    · rw [if_pos domain] at execution
+    · rw [ite_eq_left domain] at execution
       exact WordSemStateFiniteExact.evaluate_stack_limit_stack_max handlerCode _ result sourcePost
         ⟨execution,bodyOverflow⟩
-    · rw [if_neg domain] at execution
+    · rw [ite_eq_right domain] at execution
       obtain ⟨rfl,rfl⟩ := Prod.mk.inj execution
       exact bodyOverflow
 
@@ -1121,7 +1121,7 @@ theorem compiledHandlerHeaderFailure {width : Nat} [NeZero width] {C F : Type}
       (some (.halt (.word 2)),targetPost) := by
     have shape := compilation
     simp only [compNative,destinationCompile,savedCompile,returnCompile,handlerCompile,
-      Bool.false_eq_true,if_false,Prod.mk.injEq] at shape
+      Bool.false_eq_true,ite_false,Prod.mk.injEq] at shape
     obtain ⟨rfl,_⟩ := shape
     rw [Compiler.Backend.StackRemove.CopyLoopProof.sequenceAssoc,
       Compiler.Backend.StackRemove.CopyLoopProof.sequenceAssoc,
@@ -1161,7 +1161,7 @@ theorem compiledHandlerHeaderFailure {width : Nat} [NeZero width] {C F : Type}
       exact CallHelpers.compileResultNot2 value dimension (Option.some.inj equal)
   refine ⟨targetPost,compiledRun,?_⟩
   unfold compCorrectResult
-  rw [if_pos mismatch]
+  rw [ite_eq_left mismatch]
   refine ⟨rfl,?_,?_⟩
   · rw [ffi]
     exact events
@@ -1185,7 +1185,7 @@ theorem handlerArgumentsAllocationFailure {width : Nat} [NeZero width] {C F : Ty
   rw [StackSemEvaluate.evaluate_seq,StackSemEvaluateClock.fixClockEvaluate,
     CallReturnEval.evaluateStackMoveSeq,StackSemEvaluate.evaluate_seq,
     StackSemEvaluateClock.fixClockEvaluate,StackSemEvaluate.evaluate_stackAlloc]
-  simp only [useStack,Bool.not_true,Bool.false_eq_true,if_false,insufficient,if_true]
+  simp only [useStack,Bool.not_true,Bool.false_eq_true,ite_false,insufficient,ite_true]
   rfl
 
 /-- Argument allocation failure paired with the FULL original caller contract.
@@ -1301,7 +1301,7 @@ theorem compiledHandlerArgumentsFailure {width : Nat} [NeZero width] {C F : Type
     apply labels (h1,h2)
     have shape := compilation
     simp only [compNative,destinationCompile,savedCompile,returnCompile,handlerCompile,
-      Bool.false_eq_true,if_false,Prod.mk.injEq] at shape
+      Bool.false_eq_true,ite_false,Prod.mk.injEq] at shape
     obtain ⟨rfl,_⟩ := shape
     simp only [StackSem.getLabelsExact,or_true,true_or]
   obtain ⟨header,headerRun,headerRelation,headerSpace,_⟩ := evaluateHandlerHeader ac k f frame
@@ -1330,7 +1330,7 @@ theorem compiledHandlerArgumentsFailure {width : Nat} [NeZero width] {C F : Type
   refine ⟨StackSemStateOps.emptyEnv header,?_,contract⟩
   have shape := compilation
   simp only [compNative,destinationCompile,savedCompile,returnCompile,handlerCompile,
-    Bool.false_eq_true,if_false,Prod.mk.injEq] at shape
+    Bool.false_eq_true,ite_false,Prod.mk.injEq] at shape
   obtain ⟨rfl,_⟩ := shape
   rw [Compiler.Backend.StackRemove.CopyLoopProof.sequenceAssoc,
     Compiler.Backend.StackRemove.CopyLoopProof.sequenceAssoc,
@@ -1405,7 +1405,7 @@ theorem compiledHandlerCalleeAllocationFailure {width : Nat} [NeZero width] {C F
     apply labels (h1,h2)
     have shape := compilation
     simp only [compNative,destinationCompile,savedCompile,returnCompile,handlerCompile,
-      Bool.false_eq_true,if_false,Prod.mk.injEq] at shape
+      Bool.false_eq_true,ite_false,Prod.mk.injEq] at shape
     obtain ⟨rfl,_⟩ := shape
     simp only [StackSem.getLabelsExact,or_true,true_or]
   obtain ⟨destinationTarget,saved,header,moved,calleeCode,calleeSize,calleeBs,calleePostBs,
@@ -1422,8 +1422,8 @@ theorem compiledHandlerCalleeAllocationFailure {width : Nat} [NeZero width] {C F
       else max (maxVarHOL prog / 2 + 1-k) (args1.length-k)+1 := by
     rw [← frameDef]
     by_cases zero : calleeFrame = 0
-    · simpa only [zero,if_true] using frameShape
-    · simpa only [zero,if_false] using frameShape
+    · simpa only [zero,ite_true] using frameShape
+    · simpa only [zero,ite_false] using frameShape
   have count := CallReturning.stackArgumentCount values names retCode l1 l2 dest args source xs args1
     prog ss envs k f frame destinationCode destination guards destinationCompile
   have savedUseStack : saved.useStack = true := savedRelation.2.2.2.2.1
@@ -1466,7 +1466,7 @@ theorem compiledHandlerCalleeAllocationFailure {width : Nat} [NeZero width] {C F
       else (none,{entry with stackSpace := moved.stackSpace-(calleeSize-(args1.length-k))})) with
         | (none,state) => StackSemEvaluate.evaluate (body,state)
         | (res,state) => (res,state)) = _
-    simp only [movedUseStack,Bool.not_true,Bool.false_eq_true,if_false,allocInsufficient,if_true]
+    simp only [movedUseStack,Bool.not_true,Bool.false_eq_true,ite_false,allocInsufficient,ite_true]
     rfl
   have callRun : StackSemEvaluate.evaluate
       (.call (some (.seq .skip (copyRetNative false true (k,f,frame) values
@@ -1477,7 +1477,7 @@ theorem compiledHandlerCalleeAllocationFailure {width : Nat} [NeZero width] {C F
     simp only
     rw [found]
     simp only
-    rw [if_neg movedNonzero,StackSemEvaluateClock.fixClockEvaluate]
+    rw [ite_eq_right movedNonzero,StackSemEvaluateClock.fixClockEvaluate]
     rw [show StackSemStateOps.decClock (StackSemStateOps.setVar 0 (.loc l1 l2) moved) = entry from rfl,calleeRun]
   have overflow := handlerSourceCallOverflow ac k frame calleeSize values names retCode l1 l2 dest args
     handlerVar h1 h2 handlerCode source sourcePost header lens result xs args1 prog ss envs guards
@@ -1496,7 +1496,7 @@ theorem compiledHandlerCalleeAllocationFailure {width : Nat} [NeZero width] {C F
   refine ⟨StackSemStateOps.emptyEnv entry,?_,?_⟩
   · have shape := compilation
     simp only [compNative,destinationCompile,savedCompile,returnCompile,handlerCompile,
-      Bool.false_eq_true,if_false,Prod.mk.injEq] at shape
+      Bool.false_eq_true,ite_false,Prod.mk.injEq] at shape
     obtain ⟨rfl,_⟩ := shape
     rw [StackSemEvaluate.evaluate_seq,StackSemEvaluateClock.fixClockEvaluate,destinationRun]
     simp only
@@ -1509,7 +1509,7 @@ theorem compiledHandlerCalleeAllocationFailure {width : Nat} [NeZero width] {C F
     rw [StackSemEvaluate.evaluate_seq,StackSemEvaluateClock.fixClockEvaluate,StackSemEvaluate.evaluate_skip]
     exact callRun
   · unfold compCorrectResult
-    rw [if_pos mismatch]
+    rw [ite_eq_left mismatch]
     refine ⟨rfl,?_,?_⟩
     · change moved.ffi.ioEvents.IsPrefix sourcePost.ffi.ioEvents
       rwa [movedFfi]
@@ -1579,7 +1579,7 @@ theorem simulateHandlerCallWithGuards {width : Nat} [NeZero width] {C F : Type}
           apply labels (h1,h2)
           have shape := compilation
           simp only [compNative,destinationCompile,savedCompile,returnCompile,handlerCompile,
-            Bool.false_eq_true,if_false,Prod.mk.injEq] at shape
+            Bool.false_eq_true,ite_false,Prod.mk.injEq] at shape
           obtain ⟨rfl,_⟩ := shape
           simp only [StackSem.getLabelsExact,or_true,true_or]
         obtain ⟨targetPost,run,contract⟩ := compiledHandlerCallTimeout ac k frame payload values names
@@ -1659,7 +1659,7 @@ theorem returningHandlerCase {width : Nat} [NeZero width] {C F : Type}
     ⟨handlerTarget,handlerBs,handlerIndex⟩
   have shape := compilation
   simp only [compNative,destinationCompile,savedCompile,returnCompile,handlerCompile,
-    Bool.false_eq_true,if_false,Prod.mk.injEq] at shape
+    Bool.false_eq_true,ite_false,Prod.mk.injEq] at shape
   obtain ⟨_,rfl,rfl⟩ := shape
   exact simulateHandlerCallWithGuards ac k f frame values names retCode l1 l2 dest args
     handlerVar h1 h2 handlerCode source sourcePost result target lens xs args1 prog ss envs bs

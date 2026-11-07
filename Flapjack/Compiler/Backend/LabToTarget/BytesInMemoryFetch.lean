@@ -93,9 +93,9 @@ theorem progToBytes_lemma {width : Nat} [NeZero width] {S Q : Type}
         rw [hlen, Nat.add_zero] at h2 h3 h5
         refine ⟨bs, j, bs2, ?_, ?_, ?_, h4, ?_⟩
         · simp only [progToBytes, hb, List.nil_append]; exact h1
-        · rw [posVal, if_pos hl, hlen, Nat.add_zero]; exact h2
-        · rw [posVal, if_pos hl, hlen, Nat.add_zero]; exact h3
-        · rw [posVal, if_pos hl, hlen, Nat.add_zero]; exact h5
+        · rw [posVal, ite_eq_left hl, hlen, Nat.add_zero]; exact h2
+        · rw [posVal, ite_eq_left hl, hlen, Nat.add_zero]; exact h3
+        · rw [posVal, ite_eq_left hl, hlen, Nat.add_zero]; exact h5
       · have hx : ¬ isLabelHOL x = true := hlab ▸ hl
         cases pc with
         | zero =>
@@ -108,7 +108,7 @@ theorem progToBytes_lemma {width : Nat} [NeZero width] {S Q : Type}
           · simp [progToBytes]
           · simp [posVal, hl]
           · rw [hlen] at hz
-            simp only [posVal, if_neg hl, Nat.add_one_sub_one, hlen]
+            simp only [posVal, ite_eq_right hl, Nat.add_one_sub_one, hlen]
             simp [hz]
           · simpa [posVal, hl] using hy
         | succ n =>
@@ -119,13 +119,13 @@ theorem progToBytes_lemma {width : Nat} [NeZero width] {S Q : Type}
             ihl n (pos + lineLength y) xs hxs htail hf'
           refine ⟨lineBytes y ++ bs, j, bs2, ?_, ?_, ?_, h4, ?_⟩
           · simp only [progToBytes, h1, List.append_assoc]
-          · simp only [posVal, if_neg hl, Nat.add_one_ne_zero, ↓reduceIte,
+          · simp only [posVal, ite_eq_right hl, Nat.add_one_ne_zero, ↓reduceIte,
               Nat.add_one_sub_one, List.length_append]
             omega
-          · simp only [posVal, if_neg hl, Nat.add_one_ne_zero, ↓reduceIte,
+          · simp only [posVal, ite_eq_right hl, Nat.add_one_ne_zero, ↓reduceIte,
               Nat.add_one_sub_one, List.length_append]
             omega
-          · simpa only [posVal, if_neg hl, Nat.add_one_ne_zero, ↓reduceIte,
+          · simpa only [posVal, ite_eq_right hl, Nat.add_one_ne_zero, ↓reduceIte,
               Nat.add_one_sub_one] using h5
 
 @[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "IMP_bytes_in_memory"

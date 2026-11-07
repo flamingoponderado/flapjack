@@ -270,7 +270,7 @@ theorem evaluate_call_codeExtension {C F : Type} (trace : BackendCommon.Tra) (ti
         rw [found] at run
         dsimp only at run
         by_cases timeout : middle.clock < ticks + 1
-        · rw [if_pos timeout] at run
+        · rw [ite_eq_left timeout] at run
           cases run
           refine ⟨{ targetMiddle with clock := 0 }, ?_, codeExtension_withClock middle targetMiddle 0 middleRel⟩
           rw [evaluate, fixClock_evaluate, targetRun]
@@ -278,7 +278,7 @@ theorem evaluate_call_codeExtension {C F : Type} (trace : BackendCommon.Tra) (ti
           rw [targetFound]
           dsimp only
           simp [clockEq, timeout]
-        · rw [if_neg timeout] at run
+        · rw [ite_eq_right timeout] at run
           have smaller : (decClock (ticks + 1) middle).clock < source.clock := by simp [decClock]; omega
           obtain ⟨targetNext, targetBody, nextRel⟩ :=
             bodyIH body (decClock (ticks + 1) middle) smaller bodyEnv (decClock (ticks + 1) targetMiddle)
@@ -329,32 +329,32 @@ theorem evaluateApp_codeExtension {C F : Type} (location : Option Nat) (function
       | partialApp value =>
         dsimp only at run
         by_cases timeout : source.clock < (first :: rest).length
-        · rw [if_pos timeout] at run
+        · rw [ite_eq_left timeout] at run
           cases run
           refine ⟨{ target with clock := 0 }, ?_, codeExtension_withClock source target 0 states⟩
           rw [evaluateApp, targetFound]
           dsimp only
-          rw [if_pos (by simpa [clockEq] using timeout)]
+          rw [ite_eq_left (by simpa [clockEq] using timeout)]
           rfl
-        · rw [if_neg timeout] at run
+        · rw [ite_eq_right timeout] at run
           cases run
           refine ⟨decClock (first :: rest).length target, ?_, codeExtension_decClock source target _ states⟩
           rw [evaluateApp, targetFound]
           dsimp only
-          rw [if_neg (by simpa [clockEq] using timeout)]
+          rw [ite_eq_right (by simpa [clockEq] using timeout)]
       | fullApp body env remaining =>
         dsimp only at run
         let cost := (first :: rest).length - remaining.length
         have positive : 0 < cost := Nat.sub_pos_of_lt (destClosure_full_remaining_lt _ _ _ _ _ _ _ found)
         by_cases timeout : source.clock < cost
-        · rw [if_pos timeout] at run
+        · rw [ite_eq_left timeout] at run
           cases run
           refine ⟨{ target with clock := 0 }, ?_, codeExtension_withClock source target 0 states⟩
           rw [evaluateApp, targetFound]
           dsimp only
-          rw [if_pos (by simpa [clockEq, cost] using timeout)]
+          rw [ite_eq_left (by simpa [clockEq, cost] using timeout)]
           rfl
-        · rw [if_neg timeout, fixClock_evaluate] at run
+        · rw [ite_eq_right timeout, fixClock_evaluate] at run
           have smaller : (decClock cost source).clock < source.clock := by simp [decClock]; omega
           cases bodyRun : evaluate [body] env (decClock cost source) with
           | mk bodyResult middle =>
@@ -374,7 +374,7 @@ theorem evaluateApp_codeExtension {C F : Type} (location : Option Nat) (function
               refine ⟨targetMiddle, ?_, middleRel⟩
               rw [evaluateApp, targetFound]
               dsimp only
-              rw [if_neg (by simpa [clockEq, cost] using timeout), fixClock_evaluate, targetBody]
+              rw [ite_eq_right (by simpa [clockEq, cost] using timeout), fixClock_evaluate, targetBody]
             | val values =>
               have size := (evaluate_length (C := C) (F := F)).1 [body] env (decClock cost source) middle values bodyRun
               cases values with
@@ -392,7 +392,7 @@ theorem evaluateApp_codeExtension {C F : Type} (location : Option Nat) (function
                   refine ⟨targetNext, ?_, nextRel⟩
                   rw [evaluateApp, targetFound]
                   dsimp only
-                  rw [if_neg (by simpa [clockEq, cost] using timeout), fixClock_evaluate, targetBody]
+                  rw [ite_eq_right (by simpa [clockEq, cost] using timeout), fixClock_evaluate, targetBody]
                   exact targetApp
 
 /-- Application expressions evaluate their arguments and function identically

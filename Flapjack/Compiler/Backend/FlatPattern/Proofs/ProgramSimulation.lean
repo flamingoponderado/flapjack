@@ -154,7 +154,7 @@ theorem compileDecs_semantics_of_safe {C F : Type} (cfg cfg2 : Config) (ffi : Ho
       some (.abort .typeError) := fun ⟨clock, error⟩ => safe clock error
   have targetNoError : ¬ ∃ clock, (FlatSem.evaluateDecs (FlatSem.initialState ffi clock targetConfig)
       (source.map (compileDec cfg2))).2 = some (.abort .typeError) := fun ⟨clock, error⟩ => targetSafe clock error
-  simp only [sourceNoError, targetNoError, if_false]
+  simp only [sourceNoError, targetNoError, ite_false]
   rw [terminatingEq, tracesEq]
 
 /-- A non-failing source program and related installation configurations

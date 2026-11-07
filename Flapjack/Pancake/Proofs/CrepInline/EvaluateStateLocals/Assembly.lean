@@ -90,8 +90,8 @@ private theorem strongMotive {width : Nat} [NeZero width] {σ : Type} :
       refine fun r s' t h he hl hr => evaluateStateLocalsRelStrongIfExact c a b s
         (fun _ w _ _ => ?_) r s' t h he hl hr
       by_cases hw : w ≠ 0
-      · rw [if_pos hw]; exact same _ _ rfl (by simp only [CrepProgHOL.ite.sizeOf_spec]; omega)
-      · rw [if_neg hw]; exact same _ _ rfl (by simp only [CrepProgHOL.ite.sizeOf_spec]; omega)
+      · rw [ite_eq_left hw]; exact same _ _ rfl (by simp only [CrepProgHOL.ite.sizeOf_spec]; omega)
+      · rw [ite_eq_right hw]; exact same _ _ rfl (by simp only [CrepProgHOL.ite.sizeOf_spec]; omega)
   | «while» e c =>
       have hlt : ∀ res s1, s.clock ≠ 0 →
           (res, s1) = evalCrepSemHOLProgExact (decClockCrepSemHOL s) c → s1.clock < s.clock := by

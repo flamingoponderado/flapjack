@@ -65,18 +65,18 @@ theorem alloc_correct_lemma_None {width : Nat} [NeZero width] {C F : Type} {conf
   rw [StackSemAllocation.alloc] at hA
   simp only [StackSemAllocation.gc, setStore] at hA
   by_cases hsp : s.stack.length < s.stackSpace
-  · simp only [hsp, if_true, Prod.mk.injEq] at hA
+  · simp only [hsp, ite_true, Prod.mk.injEq] at hA
     exact absurd hA.1.symm hr
-  simp only [hsp, if_false] at hA
+  simp only [hsp, ite_false] at hA
   rcases he : StackSem.encStack s.bitmaps (s.stack.drop s.stackSpace) with _ | roots
   · simp only [he, Prod.mk.injEq] at hA
     exact absurd hA.1.symm hr
   simp only [he, hgc, wordGcFun, hk] at hA
   by_cases hc : wordGcFunAssum conf (s.store.updateEq (.allocSize, .word w))
   swap
-  · simp only [hc, if_false, Prod.mk.injEq] at hA
+  · simp only [hc, ite_false, Prod.mk.injEq] at hA
     exact absurd hA.1.symm hr
-  simp only [hc, if_true] at hA
+  simp only [hc, ite_true] at hA
   rcases hd : StackSem.decStack s.bitmaps roots (s.stack.drop s.stackSpace) with _ | x2
   · simp only [hd, Prod.mk.injEq] at hA
     exact absurd hA.1.symm hr

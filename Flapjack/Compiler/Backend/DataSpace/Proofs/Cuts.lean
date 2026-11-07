@@ -39,7 +39,7 @@ theorem cutEnv_twice {α : Type} (first second : NumSet) (source middle result :
     · simp at firstCut
   let target := sptMkWf (sptInter source (sptInter first second))
   have targetCut : cutEnv (sptInter first second) source = some target := by
-    simp only [cutEnv, if_pos present]
+    simp only [cutEnv, ite_eq_left present]
     rfl
   have resultWf : sptWf result = true := by
     unfold cutEnv at secondCut
@@ -88,7 +88,7 @@ theorem cutEnv_before_move {α : Type} (source target : Spt α) (names : NumSet)
       exact (included key sourceMember).1
   let before := sptMkWf (sptInter target preNames)
   have beforeCut : cutEnv preNames target = some before := by
-    simp only [cutEnv, if_pos prePresent]
+    simp only [cutEnv, ite_eq_left prePresent]
     rfl
   have beforeRead : sptLookup src before = some value := by
     rw [DataLive.cutEnv_lookup preNames target before beforeCut src]
@@ -172,7 +172,7 @@ theorem cutEnv_before_assign {α : Type} (source target : Spt α) (names : NumSe
       exact (included key sourceMember).1
   let before := sptMkWf (sptInter target preNames)
   have beforeCut : cutEnv preNames target = some before := by
-    simp only [cutEnv, if_pos prePresent]
+    simp only [cutEnv, ite_eq_left prePresent]
     rfl
   have beforeRead : DataSem.getVars arguments before = some values :=
     getVars_after_cut arguments target before preNames values targetRead beforeCut

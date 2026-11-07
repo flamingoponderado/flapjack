@@ -33,9 +33,9 @@ theorem evaluateWStackLoadClock {width : Nat} [NeZero width] {C F : Type}
     simp only [wStackLoadNative, StackSemEvaluate.evaluate_seq,
       StackSemEvaluate.evaluate_stackLoad]
     by_cases enabled : target.useStack = true
-    · simp only [enabled, Bool.not_true, Bool.false_eq_true, if_false]
+    · simp only [enabled, Bool.not_true, Bool.false_eq_true, ite_false]
       by_cases bound : target.stackSpace + slot < target.stack.length
-      · simp only [bound, dif_pos, StackSemControl.fixClock, StackSemStateOps.setVar, Nat.min_self]
+      · simp only [bound, dite_eq_left, StackSemControl.fixClock, StackSemStateOps.setVar, Nat.min_self]
         simpa [StackSemStateOps.setVar, StackSemControl.fixClock, enabled] using
           ih (StackSemStateOps.setVar register target.stack[target.stackSpace + slot] target)
       · simp [bound, StackSemControl.fixClock, StackSemStateOps.emptyEnv, enabled]

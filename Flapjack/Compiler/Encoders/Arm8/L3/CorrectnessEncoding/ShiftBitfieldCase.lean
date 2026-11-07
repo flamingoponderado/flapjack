@@ -39,7 +39,7 @@ theorem arm8_encoder_correct_shift_lsr_imm (destination source : Nat) (value : B
   have hlt : value.toNat < 64 := hregok.2.2
   have hmasks := decodeBitMasks_lsr value.toNat hlt
   have hsw : BitVec.setWidth 6 value = BitVec.ofNat 6 value.toNat := by
-    rw [BitVec.setWidth, dif_neg (by omega : ¬ 64 ≤ 6)]
+    rw [BitVec.setWidth, dite_eq_right (by omega : ¬ 64 ≤ 6)]
   have hast : arm8Ast (.inst (.arith (.shift .lsr destination source (.imm value)))) =
       [.Data (.«BitfieldMove@64» (1, true, false,
         Replicate (TN := 64) (holRotate (holPadLeft false 64 (Ones 64)) value.toNat),
@@ -107,7 +107,7 @@ theorem arm8_encoder_correct_shift_asr_imm (destination source : Nat) (value : B
   have hlt : value.toNat < 64 := hregok.2.2
   have hmasks := decodeBitMasks_lsr value.toNat hlt
   have hsw : BitVec.setWidth 6 value = BitVec.ofNat 6 value.toNat := by
-    rw [BitVec.setWidth, dif_neg (by omega : ¬ 64 ≤ 6)]
+    rw [BitVec.setWidth, dite_eq_right (by omega : ¬ 64 ≤ 6)]
   have hast : arm8Ast (.inst (.arith (.shift .asr destination source (.imm value)))) =
       [.Data (.«BitfieldMove@64» (1, true, true,
         Replicate (TN := 64) (holRotate (holPadLeft false 64 (Ones 64)) value.toNat),

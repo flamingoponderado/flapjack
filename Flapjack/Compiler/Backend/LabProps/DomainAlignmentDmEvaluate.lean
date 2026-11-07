@@ -92,7 +92,7 @@ theorem evaluateAlignDM {width : Nat} [NeZero width] {C F : Type} :
   all_goals repeat' first | rfl | split | simp_all
   all_goals try (split_ifs <;> simp_all)
   all_goals try (set_option backward.dsimp.instances true in dsimp only [alignDm])
-  all_goals try rw [if_neg (by tauto)]
+  all_goals try rw [ite_eq_right (by tauto)]
 
 /-- Flapjack-only projection form of the full source evaluation equation. -/
 private theorem evaluatePair {width : Nat} [NeZero width] {C F : Type}
@@ -119,9 +119,9 @@ private theorem semanticsProjection {width : Nat} [NeZero width] {C F : Type}
     simp only [evaluateClock hw]
   by_cases hfail : ∃ clock, (evaluate {s with clock := clock}).1 = .error
   · unfold semantics
-    rw [if_pos (herr.mpr hfail), if_pos hfail]
+    rw [ite_eq_left (herr.mpr hfail), ite_eq_left hfail]
   · unfold semantics
-    rw [if_neg (fun h => hfail (herr.mp h)), if_neg hfail]
+    rw [ite_eq_right (fun h => hfail (herr.mp h)), ite_eq_right hfail]
     simp only [evaluateClock hw]
     simp [alignDm, Prod.ext_iff, and_assoc]
 

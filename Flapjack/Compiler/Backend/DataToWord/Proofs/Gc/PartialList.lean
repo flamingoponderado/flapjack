@@ -105,7 +105,7 @@ theorem wordGenGcPartialMoveList_thm {width : Nat} [NeZero width] (conf : Config
         exact Or.inr (Or.inl (by rw [oneEq]))
       exact (SetSep.fun2SetThm memory _ _ _).mp graph
     simp only [List.length_cons] at wordRun
-    rw [wordGenGcPartialMoveList, if_neg nonzero, minus, read.1] at wordRun
+    rw [wordGenGcPartialMoveList, ite_eq_right nonzero, minus, read.1] at wordRun
     generalize wordHead : wordGenGcPartialMove conf (wordAddr conf root, BitVec.ofNat width state.a, pa,
       curr, memory, domain, wordSemBytesInWord * BitVec.ofNat width genConf.genStart,
       wordSemBytesInWord * BitVec.ofNat width genConf.refsStart) = wordHeadResult at wordRun

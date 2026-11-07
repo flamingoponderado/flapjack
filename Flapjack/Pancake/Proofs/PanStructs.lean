@@ -151,16 +151,16 @@ theorem dropWhile_map_helper {α β : Type} (P : α → Bool) (Q : β → Bool)
       have hx : P x = Q (f x) := hPQ x (by simp)
       rw [List.dropWhile_cons] at h
       by_cases hP : P x = true
-      · rw [if_pos hP] at h
+      · rw [ite_eq_left hP] at h
         have hQ : Q (f x) = true := by rw [← hx]; exact hP
         rw [List.map_cons, List.dropWhile_cons, hQ]
-        simp only [if_true]
+        simp only [ite_true]
         exact ih ys h (fun y hy => hPQ y (by simp [hy]))
-      · rw [if_neg hP] at h
+      · rw [ite_eq_right hP] at h
         have hPfalse : P x = false := by simpa using hP
         have hQ : Q (f x) = false := by rw [← hx]; exact hPfalse
         rw [← h, List.map_cons, List.dropWhile_cons, hQ]
-        simp only [Bool.false_eq_true, if_false]
+        simp only [Bool.false_eq_true, ite_false]
 
 /-- Cake's `opt_mmap_eq_some_el`
     (`cakeml/pancake/proofs/pan_structsProofScript.sml:19`). The `getElem?`
@@ -339,7 +339,7 @@ theorem afindi_dropWhile [DecidableEq α] (key : α) (entries : List (α × β))
       by_cases hb : key = candidate
       · simp [afindi_cons, hb]
       · have hdec : decide (key ≠ candidate) = true := by simp [hb]
-        simp only [List.dropWhile_cons, afindi_cons, hdec, if_neg hb]
+        simp only [List.dropWhile_cons, afindi_cons, hdec, ite_eq_right hb]
         rw [ih]
         cases afindi key rest with
         | none => simp
@@ -362,7 +362,7 @@ theorem afindi_lookup [DecidableEq α] (key : α) (entries : List (α × β)) :
       · simp [afindi_cons, hbeq]
       · have hbeq' : (key == candidate) = false := by
           simp [BEq.beq, hbeq]
-        simp only [List.lookup_cons, hbeq', afindi_cons, if_neg hbeq]
+        simp only [List.lookup_cons, hbeq', afindi_cons, ite_eq_right hbeq]
         rw [ih]
         cases afindi key rest with
         | none => simp
@@ -395,9 +395,9 @@ theorem afindi_eq_of_map_fst_eq [DecidableEq α] (key : α) :
           subst hcy
           by_cases hbc : key = cx
           · rw [afindi_cons key (cx, vx) xs, afindi_cons key (cx, vy) ys,
-              if_pos hbc, if_pos hbc]
+              ite_eq_left hbc, ite_eq_left hbc]
           · rw [afindi_cons key (cx, vx) xs, afindi_cons key (cx, vy) ys,
-              if_neg hbc, if_neg hbc, ih ys htail]
+              ite_eq_right hbc, ite_eq_right hbc, ih ys htail]
 
 /-- HOL `map_fst_eq_alookup` (`pan_structsProofScript.sml:278`) has key type
     `α`, xs value type `β`, and ys value type `γ`; the source syntax leaves all

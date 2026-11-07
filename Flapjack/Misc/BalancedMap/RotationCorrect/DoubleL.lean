@@ -158,7 +158,7 @@ theorem doubleLThm {κ ν : Type} (key : κ) (value : ν) (left : Map κ ν)
             simp [bin, toFmap, HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL,
               HolFiniteMapExact.lookup_union, hkeyPivot]
           · simp only [bin, toFmap, HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL,
-              hpivot, hroot, hkey, if_false, HolFiniteMapExact.lookup_union]
+              hpivot, hroot, hkey, ite_false, HolFiniteMapExact.lookup_union]
             cases (toFmap cmp left).lookup keys <;>
               cases (toFmap cmp second).lookup keys <;>
               cases (toFmap cmp third).lookup keys <;> rfl

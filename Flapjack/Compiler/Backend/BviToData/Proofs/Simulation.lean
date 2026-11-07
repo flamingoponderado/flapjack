@@ -82,7 +82,7 @@ theorem simulationFor_all {C F : Type} (expressions : List Bvi.Exp)
                 rw [run] at bound
                 change smid.clock ≤ state.clock at bound
                 apply exprIH [if choice then yes else no] env smid (by omega)
-                cases choice <;> simp only [Bool.false_eq_true, if_false, if_true, BviSem.expsWeight, BviSem.expWeight] at measure ⊢ <;> omega
+                cases choice <;> simp only [Bool.false_eq_true, ite_false, ite_true, BviSem.expsWeight, BviSem.expWeight] at measure ⊢ <;> omega
             | tick body =>
               apply simulationFor_tick body env state
               intro positive

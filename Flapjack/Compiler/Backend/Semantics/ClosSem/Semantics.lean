@@ -53,7 +53,7 @@ theorem semantics_ne_fail_iff {C F : Type} (ffi : HolFfiState F) (maxApp : Nat)
   unfold semantics
   by_cases failure : ∃ clock, (evaluate program [] (initialState ffi maxApp code oracle compiler clock)).1 = .err (.abort .typeError)
   · simp [failure]
-  · simp only [failure, if_false]
+  · simp only [failure, ite_false]
     constructor
     · intro _ clock h
       exact failure ⟨clock, h⟩

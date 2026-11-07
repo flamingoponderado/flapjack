@@ -88,7 +88,7 @@ theorem findLastStealableSuccess {α : Type} :
       cases o with
       | some p => exact ⟨_, rfl⟩
       | none =>
-          simp only [Translator.Monadic.MonadBase.bind, colorsSubEqn, if_pos hx]
+          simp only [Translator.Monadic.MonadBase.bind, colorsSubEqn, ite_eq_left hx]
           split <;> exact ⟨_, rfl⟩
 
 /-- Exact HOL `find_last_stealable_output` (`linear_scanProofScript.sml:3100-3130`). -/
@@ -121,7 +121,7 @@ theorem findLastStealableOutput {α : Type} :
           | none =>
               simp only [Translator.Monadic.MonadBase.bind, colorsSubEqn] at h
               by_cases hx : x.2 < s'.colors.length
-              · rw [if_pos hx] at h
+              · rw [ite_eq_left hx] at h
                 simp only at h
                 split at h
                 · next hc =>
@@ -130,7 +130,7 @@ theorem findLastStealableOutput {α : Type} :
                   exact ⟨hc.1, hc.2, [], xs, rfl, rfl⟩
                 · simp only [ret, Prod.mk.injEq, Exc.success.injEq] at h
                   cases h.1
-              · rw [if_neg hx] at h
+              · rw [ite_eq_right hx] at h
                 cases h
 
 /-- Exact HOL `good_linear_scan_state_active_length_colors`
@@ -187,9 +187,9 @@ theorem colorRegisterInvariants :
   let c' := sth.colors.set reg col
   let aNew := addActiveInterval (holEl reg sth.int_end, reg) st.active
   have hcreg : holEl reg c' = col := by
-    simp only [c']; rw [holEl_set _ _ _ _ hreg, if_pos rfl]
+    simp only [c']; rw [holEl_set _ _ _ _ hreg, ite_eq_left rfl]
   have hcne : ∀ r, r ≠ reg → holEl r c' = holEl r sth.colors := fun r h => by
-    simp only [c']; rw [holEl_set _ _ _ _ hreg, if_neg (Ne.symm h)]
+    simp only [c']; rw [holEl_set _ _ _ _ hreg, ite_eq_right (Ne.symm h)]
   have hnact : ∀ x, x ∈ st.active → x.2 ≠ reg := fun x hx e =>
     hnl (e ▸ g.activeMem x hx)
   obtain ⟨hsortA, l1, l2, hact, hA⟩ :=
@@ -229,7 +229,7 @@ theorem colorRegisterInvariants :
     rfl, rfl, fun r h => (hcne r h).symm, rfl⟩
   case run =>
     rw [colorRegisterEq]
-    simp only [ignoreBind, updateColorsEqn, if_pos hreg, ret]
+    simp only [ignoreBind, updateColorsEqn, ite_eq_left hreg, ret]
     rfl
   case good =>
   exact {
@@ -477,7 +477,7 @@ theorem findSpillInvariants :
         rw [hact, hrest, List.filter_append, List.filter_cons, filterMemActive sr l1 hn1,
           filterMemActive sr l2 hn2]
         simp
-      simp only [Translator.Monadic.MonadBase.bind, colorsSubEqn, if_pos hsr]
+      simp only [Translator.Monadic.MonadBase.bind, colorsSubEqn, ite_eq_left hsr]
       -- spill the stolen register
       obtain ⟨st1, sth1, hrun1, hgood1, hlen1, hcol1, hmax1, hb1, he1, _⟩ :=
         spillRegisterFilterInvariants st sth l _ forced sr mincol
@@ -490,7 +490,7 @@ theorem findSpillInvariants :
       obtain ⟨hst1pool, hst1act, hst1phy, hst1num⟩ :
           st1.colorpool = st.colorpool ∧ st1.active = rest ∧ st1.phyregs = st.phyregs ∧
             st1.colornum = st.colornum := by
-        simp only [spillRegister, ignoreBind, updateColorsEqn, if_pos hsr, ret,
+        simp only [spillRegister, ignoreBind, updateColorsEqn, ite_eq_left hsr, ret,
           Prod.mk.injEq, Exc.success.injEq] at hrun1
         obtain ⟨rfl, rfl⟩ := hrun1
         exact ⟨rfl, rfl, rfl, rfl⟩
@@ -650,7 +650,7 @@ theorem stExMapColorsSub :
   | cons x xs ih =>
       intro hb
       have hx := hb x List.mem_cons_self
-      simp only [stExMap, Translator.Monadic.MonadBase.bind, colorsSubEqn, if_pos hx,
+      simp only [stExMap, Translator.Monadic.MonadBase.bind, colorsSubEqn, ite_eq_left hx,
         ih (fun r hr => hb r (List.mem_cons_of_mem _ hr)), ret, List.map_cons]
 
 end Flapjack.LinearScan

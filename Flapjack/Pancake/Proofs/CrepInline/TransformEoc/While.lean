@@ -72,12 +72,12 @@ private theorem whileGoal {width : Nat} [NeZero width] {σ : Type}
     have hclass : crepExactEvalExpClassical s e = some (.word w) := by
       simpa only [crepExactEvalExpClassical_eq, crepExactEvalExp_eq_eval] using hexp
     by_cases hw : w ≠ 0
-    · rw [if_pos hw] at hev ⊢
+    · rw [ite_eq_left hw] at hev ⊢
       by_cases hc : s.clock = 0
-      · rw [if_pos hc] at hev ⊢
+      · rw [ite_eq_left hc] at hev ⊢
         obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
         exact ⟨_, _, rfl, ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩, rfl⟩
-      · rw [if_neg hc] at hev ⊢
+      · rw [ite_eq_right hc] at hev ⊢
         rcases hb : evalCrepSemHOLProgExact (decClockCrepSemHOL s) c' with ⟨r0, s1⟩
         rw [hb] at hev
         dsimp only at hev
@@ -146,7 +146,7 @@ private theorem whileGoal {width : Nat} [NeZero width] {σ : Type}
           simp only [exitLoopCrepResult] at hev ⊢
           obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
           exact ⟨_, _, rfl, hrela, rfl⟩
-    · rw [if_neg hw] at hev ⊢
+    · rw [ite_eq_right hw] at hev ⊢
       obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
       exact ⟨_, _, rfl, hstate, rfl, rfl⟩
   · obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev

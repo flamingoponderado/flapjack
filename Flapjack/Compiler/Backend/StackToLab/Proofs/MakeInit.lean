@@ -151,7 +151,7 @@ theorem haltAssumLemma {width : Nat} [NeZero width] {C F : Type} {f : Spt Nat} {
   obtain ⟨-, hl⟩ := hsub 1 ((sptMem_iff_lookup _ _).2 ⟨_, h1⟩)
   rw [h1] at hl
   rw [StackSemEvaluate.evaluate_call]
-  simp only [StackSemControl.findCode, hl, if_neg h0, StackSemEvaluateClock.fixClockEvaluate]
+  simp only [StackSemControl.findCode, hl, ite_eq_right h0, StackSemEvaluateClock.fixClockEvaluate]
   simp only [StackRemove.haltInst, StackNames.progCompHOL, StackSemEvaluate.evaluate_seq,
     StackSemEvaluate.evaluate_inst, StackNames.instFindNameHOL]
   simp [StackSemInst.instHOL, StackSemIntegerInstructions.instInteger,

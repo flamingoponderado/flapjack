@@ -174,7 +174,7 @@ theorem wmwMem_step {width : Nat} [NeZero width] {vw : Nat} (be : Bool)
         have := congrArg BitVec.toNat h'
         rw [BitVec.toNat_ofNat, Nat.mod_eq_of_lt hlt] at this
         simp at this
-      rw [if_neg hne, ← stepAddr_succ, ih _ _ k (by omega) (by omega)]
+      rw [ite_eq_right hne, ← stepAddr_succ, ih _ _ k (by omega) (by omega)]
       apply BitVec.eq_of_getLsbD_eq
       intro i hi
       simp only [BitVec.getLsbD_setWidth, BitVec.getLsbD_ushiftRight,
@@ -190,7 +190,7 @@ theorem wmwMem_other {width : Nat} [NeZero width] {vw : Nat} (be : Bool)
   | zero => rfl
   | succ n ih =>
     simp only [wmwMem]
-    rw [if_neg (by simpa [stepAddr_zero] using hx 0 (by omega))]
+    rw [ite_eq_right (by simpa [stepAddr_zero] using hx 0 (by omega))]
     apply ih
     intro k hk
     rw [stepAddr_succ]
@@ -512,12 +512,12 @@ theorem instSim_store {width : Nat} [NeZero width] {C F : Type} {p : BitVec widt
         rw [hxa] at hx'
         have hlt : x.toNat % (width / 8) < width / 8 :=
           Nat.mod_lt _ (by rcases h.good with h' | h' <;> rw [h'] <;> decide)
-        rw [wordLocValByte, hxa, if_pos rfl]
+        rw [wordLocValByte, hxa, ite_eq_left rfl]
         obtain ⟨w, hw⟩ : ∃ w, wordLocVal p labs (s1.regs r) = some w := ⟨_, h.regs r⟩
         rw [h.regs r]
         conv_rhs => rw [← hx']
         rw [wmwMem_word h.good t1.be t1.mem A _ hal _ hlt, hx', h.be]
-      · rw [wordLocValByte, if_neg hxa, hother x hxa]
+      · rw [wordLocValByte, ite_eq_right hxa, hother x hxa]
         exact (h.mem x hx).2.2
 
 theorem holLOG2_one : holLOG2 1 = 0 := by
@@ -622,7 +622,7 @@ theorem instSim_store8 {width : Nat} [NeZero width] {C F : Type} {p : BitVec wid
           · have : x ≠ (wb + off) := fun e => hx (e ▸ hsd)
             simp [this]
           · by_cases hxa : holByteAlign x = holByteAlign (wb + off)
-            · rw [wordLocValByte, hxa, if_pos rfl]
+            · rw [wordLocValByte, hxa, ite_eq_left rfl]
               simp only [wordLocVal]
               by_cases hx : x = (wb + off)
               · subst hx
@@ -632,7 +632,7 @@ theorem instSim_store8 {width : Nat} [NeZero width] {C F : Type} {p : BitVec wid
                 rw [← hxa] at hv hdom
                 rw [(h.byte x v hv hdom).2.2]
             · have hxne : x ≠ (wb + off) := fun e => hxa (e ▸ rfl)
-              rw [wordLocValByte, if_neg hxa]
+              rw [wordLocValByte, ite_eq_right hxa]
               simp only [hxne, ↓reduceIte]
               exact (h.mem x hx).2.2
         · simp [hv, hdom, LabSem.assertState] at hf
@@ -800,21 +800,21 @@ theorem getByte_store32 {width : Nat} [NeZero width] (hw : goodDimindex width)
     fun y z b u hne hal => getByte_setByte_diff y z b u be ⟨hw, hne, hal⟩
   by_cases h3 : x = A + 3
   · subst h3
-    rw [getByte_setByte _ _ _ _ h8, if_neg d03.symm, if_neg d13.symm, if_neg d23.symm,
-      if_pos rfl]
+    rw [getByte_setByte _ _ _ _ h8, ite_eq_right d03.symm, ite_eq_right d13.symm, ite_eq_right d23.symm,
+      ite_eq_left rfl]
   rw [diff _ _ _ _ h3 (by rw [hx, a3])]
   by_cases h2 : x = A + 2
   · subst h2
-    rw [getByte_setByte _ _ _ _ h8, if_neg d02.symm, if_neg d12.symm, if_pos rfl]
+    rw [getByte_setByte _ _ _ _ h8, ite_eq_right d02.symm, ite_eq_right d12.symm, ite_eq_left rfl]
   rw [diff _ _ _ _ h2 (by rw [hx, a2])]
   by_cases h1 : x = A + 1
   · subst h1
-    rw [getByte_setByte _ _ _ _ h8, if_neg d01.symm, if_pos rfl]
+    rw [getByte_setByte _ _ _ _ h8, ite_eq_right d01.symm, ite_eq_left rfl]
   rw [diff _ _ _ _ h1 (by rw [hx, a1])]
   by_cases h0 : x = A
   · subst h0
-    rw [getByte_setByte _ _ _ _ h8, if_pos rfl]
-  rw [diff _ _ _ _ h0 hx, if_neg h0, if_neg h1, if_neg h2, if_neg h3]
+    rw [getByte_setByte _ _ _ _ h8, ite_eq_left rfl]
+  rw [diff _ _ _ _ h0 hx, ite_eq_right h0, ite_eq_right h1, ite_eq_right h2, ite_eq_right h3]
 
 /-- The `m`-th byte of the low 32 bits of a register, as the 32-bit store
 extracts it. -/
@@ -928,7 +928,7 @@ theorem instSim_store32 {width : Nat} [NeZero width] {C F : Type} {p : BitVec wi
               intro m hm heq
               exact hx (heq ▸ (hbytes m hm).2)
             · by_cases hxa : holByteAlign x = holByteAlign (wb + off)
-              · rw [wordLocValByte, hxa, if_pos rfl]
+              · rw [wordLocValByte, hxa, ite_eq_left rfl]
                 simp only [wordLocVal]
                 rw [getByte_store32 h.good _ v ha2 _ _ _ _ s1.be x hxa]
                 have w0 := hwin 0 (by decide)
@@ -938,15 +938,15 @@ theorem instSim_store32 {width : Nat} [NeZero width] {C F : Type} {p : BitVec wi
                 rw [l1] at w1
                 rw [l2] at w2
                 by_cases e0 : x = wb + off
-                · rw [if_pos e0, e0, w0]; rfl
+                · rw [ite_eq_left e0, e0, w0]; rfl
                 by_cases e1 : x = wb + off + 1
-                · rw [if_neg e0, if_pos e1, e1, w1]; rfl
+                · rw [ite_eq_right e0, ite_eq_left e1, e1, w1]; rfl
                 by_cases e2 : x = wb + off + 2
-                · rw [if_neg e0, if_neg e1, if_pos e2, e2, w2]; rfl
+                · rw [ite_eq_right e0, ite_eq_right e1, ite_eq_left e2, e2, w2]; rfl
                 by_cases e3 : x = wb + off + 3
-                · rw [if_neg e0, if_neg e1, if_neg e2, if_pos e3, e3]
+                · rw [ite_eq_right e0, ite_eq_right e1, ite_eq_right e2, ite_eq_left e3, e3]
                   exact (congrArg some (hwin 3 (by decide))).symm
-                rw [if_neg e0, if_neg e1, if_neg e2, if_neg e3]
+                rw [ite_eq_right e0, ite_eq_right e1, ite_eq_right e2, ite_eq_right e3]
                 rw [hwout x (by
                   intro m hm heq
                   rcases (show m = 0 ∨ m = 1 ∨ m = 2 ∨ m = 3 by omega) with
@@ -957,7 +957,7 @@ theorem instSim_store32 {width : Nat} [NeZero width] {C F : Type} {p : BitVec wi
                   · exact e3 heq)]
                 rw [← hxa] at hv hdom
                 rw [(h.byte x v hv hdom).2.2]
-              · rw [wordLocValByte, if_neg hxa]
+              · rw [wordLocValByte, ite_eq_right hxa]
                 simp only
                 rw [hwout x (by
                   intro m hm heq

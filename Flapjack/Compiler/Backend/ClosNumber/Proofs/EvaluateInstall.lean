@@ -113,7 +113,7 @@ theorem evaluate_installed_program {C F : Type} (number : Nat) (expressions : Li
       · simpa [numbered] using targetPrefix
       · dsimp only
         let _ : Nonempty Value := ⟨unitValue⟩
-        rw [holLast_cons, if_neg nextNonempty]
+        rw [holLast_cons, ite_eq_right nextNonempty]
         exact holLast_related source.maxApp resultRel valuesNonempty
 
 /-- Simulate the complete installation continuation using an induction

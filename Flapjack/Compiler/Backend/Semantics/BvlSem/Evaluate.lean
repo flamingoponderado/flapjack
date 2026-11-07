@@ -104,10 +104,6 @@ termination_by (state.clock, expsWeight expressions)
 decreasing_by
   all_goals try simp only [Prod.lex_def, expsWeight, expWeight, fixClock, decClock]
   all_goals try (have := expWeight_pos second)
-  all_goals try
-    have clockBound : next.2.clock ≤ state.clock := by
-      dsimp only [next, fixClock]
-      exact Nat.min_le_left _ _
   all_goals try dsimp only [next] at *
   all_goals try simp_all [fixClock]
   all_goals try omega

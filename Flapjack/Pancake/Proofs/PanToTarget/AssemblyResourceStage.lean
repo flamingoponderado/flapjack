@@ -120,12 +120,12 @@ theorem extendPrime_flag_mono (a b : Bool) (hba : b = true → a = true)
     SemanticsPropsHOL.extendWithResourceLimitPrimeHOL b X r := by
   unfold SemanticsPropsHOL.extendWithResourceLimitPrimeHOL at h ⊢
   cases b with
-  | true => simp only [hba rfl, if_true] at h; simpa using h
+  | true => simp only [hba rfl, ite_true] at h; simpa using h
   | false =>
-    simp only [Bool.false_eq_true, if_false]
+    simp only [Bool.false_eq_true, ite_false]
     cases a with
     | true =>
-      simp only [if_true] at h
+      simp only [ite_true] at h
       exact Or.inl h
     | false => simpa using h
 
@@ -140,7 +140,7 @@ theorem wordNoErrorOfSemanticsNotFail {width : Nat} [NeZero width] {C F : Type}
   intro k res t' h hres
   apply hsem
   unfold WordSemStateFiniteExact.semantics
-  rw [if_pos ⟨k, by simp only [h, hres]⟩]
+  rw [ite_eq_left ⟨k, by simp only [h, hres]⟩]
 
 /-- Stage G with its compiler and semantic premises discharged as in HOL (lines
 1716-1736 and 2285-2312): `no_install`/`no_alloc` of the compiled word code come from

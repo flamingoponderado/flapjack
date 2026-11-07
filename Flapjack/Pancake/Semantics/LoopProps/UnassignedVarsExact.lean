@@ -37,15 +37,15 @@ theorem sptLookup_sptInter {α β : Type} :
         by_cases hk : k = 0
         · simp [sptLookup, hk]
         · by_cases he : k % 2 = 0
-          · simp only [sptLookup, hk, he, if_false, if_true, sptLookup_sptInter l l']
-          · simp only [sptLookup, hk, he, if_false, sptLookup_sptInter r r']
+          · simp only [sptLookup, hk, he, ite_false, ite_true, sptLookup_sptInter l l']
+          · simp only [sptLookup, hk, he, ite_false, sptLookup_sptInter r r']
       | bs l' _ r' =>
         simp only [sptInter, sptLookup_sptMkBN]
         by_cases hk : k = 0
         · simp [sptLookup, hk]
         · by_cases he : k % 2 = 0
-          · simp only [sptLookup, hk, he, if_false, if_true, sptLookup_sptInter l l']
-          · simp only [sptLookup, hk, he, if_false, sptLookup_sptInter r r']
+          · simp only [sptLookup, hk, he, ite_false, ite_true, sptLookup_sptInter l l']
+          · simp only [sptLookup, hk, he, ite_false, sptLookup_sptInter r r']
   | .bs l v r, t2, k => by
       cases t2 with
       | ln => simp [sptInter]
@@ -55,15 +55,15 @@ theorem sptLookup_sptInter {α β : Type} :
         by_cases hk : k = 0
         · simp [sptLookup, hk]
         · by_cases he : k % 2 = 0
-          · simp only [sptLookup, hk, he, if_false, if_true, sptLookup_sptInter l l']
-          · simp only [sptLookup, hk, he, if_false, sptLookup_sptInter r r']
+          · simp only [sptLookup, hk, he, ite_false, ite_true, sptLookup_sptInter l l']
+          · simp only [sptLookup, hk, he, ite_false, sptLookup_sptInter r r']
       | bs l' _ r' =>
         simp only [sptInter, sptLookup_sptMkBS]
         by_cases hk : k = 0
         · simp [sptLookup, hk]
         · by_cases he : k % 2 = 0
-          · simp only [sptLookup, hk, he, if_false, if_true, sptLookup_sptInter l l']
-          · simp only [sptLookup, hk, he, if_false, sptLookup_sptInter r r']
+          · simp only [sptLookup, hk, he, ite_false, ite_true, sptLookup_sptInter l l']
+          · simp only [sptLookup, hk, he, ite_false, sptLookup_sptInter r r']
 
 namespace LoopPropsUnassignedFiniteSupport
 
@@ -94,7 +94,7 @@ theorem cutState_lookup {live : NumSet} {s s' : LoopSemStateFiniteExact width F}
     sptLookup n s'.locals = sptLookup n s.locals := by
   unfold cutState at h
   split at h
-  · cases h; simp only; rw [sptLookup_sptInter, if_pos hn]
+  · cases h; simp only; rw [sptLookup_sptInter, ite_eq_left hn]
   · cases h
 
 theorem cutRes_lookup {live : NumSet} {r r' : Option (LoopResultExact width)}
@@ -147,7 +147,7 @@ theorem exitLoop_good {r : Option (LoopResultExact width)}
 theorem sptLookup_setVar_ne {m n : Nat} (hmn : n ≠ m) (w : WordLocW width)
     (s : LoopSemStateFiniteExact width F) :
     sptLookup n (setVar m w s).locals = sptLookup n s.locals := by
-  simp only [setVar]; rw [sptLookup_sptInsert, if_neg hmn]
+  simp only [setVar]; rw [sptLookup_sptInsert, ite_eq_right hmn]
 
 theorem memStore_locals {a : BitVec width} {w : WordLocW width}
     {s st : LoopSemStateFiniteExact width F} (h : memStore a w s = some st) :

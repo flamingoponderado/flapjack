@@ -76,12 +76,12 @@ private theorem tailGoal {width : Nat} [NeZero width] {σ : Type}
       | none => simp only [hcode] at hev; obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev; exact absurd rfl hne
       | some pn =>
           obtain ⟨prog, newlocals⟩ := pn
-          simp only [hcode, if_neg hnd', if_neg hnd0] at hev ⊢
+          simp only [hcode, ite_eq_right hnd', ite_eq_right hnd0] at hev ⊢
           by_cases hc : s.clock = 0
-          · simp only [hc, if_true] at hev ⊢
+          · simp only [hc, ite_true] at hev ⊢
             obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
             exact ⟨_, _, rfl, stateRel_refl _, rfl⟩
-          · simp only [hc, if_false] at hev ⊢
+          · simp only [hc, ite_false] at hev ⊢
             rcases hb : evalCrepSemHOLProgExact { decClockCrepSemHOL s with locals := newlocals } prog
               with ⟨r0, st⟩
             simp only [hb] at hev ⊢
@@ -93,7 +93,7 @@ private theorem tailGoal {width : Nat} [NeZero width] {σ : Type}
               exact ⟨_, _, rfl, ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩, rfl⟩
             · obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
               have hl := hlen vs rfl
-              simp only [show ¬ (vs.length ≠ rts.length) from fun h => h hl.symm, if_false, hz]
+              simp only [show ¬ (vs.length ≠ rts.length) from fun h => h hl.symm, ite_false, hz]
               exact ⟨_, _, rfl, ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩, rfl,
                 mapM_updateListEq_zip s.locals rts vs hnd hl⟩
             · obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
@@ -161,19 +161,19 @@ private theorem handlerGoal {width : Nat} [NeZero width] {σ : Type}
                 (some (names, some (eid, transformEocHOLExact rts h')) :
                   Option (List Nat × Option (BitVec width × CrepProgHOL width))) := by
               simpa [crepReturnInfoNodupError] using hn
-            simp only [hn, if_true] at hev
+            simp only [hn, ite_true] at hev
             obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
             exact absurd rfl hne
           · have hn' : ¬ crepReturnInfoNodupError
                 (some (names, some (eid, transformEocHOLExact rts h')) :
                   Option (List Nat × Option (BitVec width × CrepProgHOL width))) := by
               simpa [crepReturnInfoNodupError] using hn
-            simp only [hn, hn', if_false] at hev ⊢
+            simp only [hn, hn', ite_false] at hev ⊢
             by_cases hc : s.clock = 0
-            · simp only [hc, if_true] at hev ⊢
+            · simp only [hc, ite_true] at hev ⊢
               obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
               exact ⟨_, _, rfl, stateRel_refl _, rfl⟩
-            · simp only [hc, if_false] at hev ⊢
+            · simp only [hc, ite_false] at hev ⊢
               rcases hb : evalCrepSemHOLProgExact { decClockCrepSemHOL s with locals := newlocals } prog
                 with ⟨r0, st⟩
               simp only [hb] at hev ⊢
@@ -184,9 +184,9 @@ private theorem handlerGoal {width : Nat} [NeZero width] {σ : Type}
               · obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
                 exact ⟨_, _, rfl, stateRel_refl _, rfl⟩
               · by_cases hl : vs.length ≠ names.length
-                · rw [if_pos hl] at hev
+                · rw [ite_eq_left hl] at hev
                   obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev; exact absurd rfl hne
-                · rw [if_neg hl] at hev ⊢
+                · rw [ite_eq_right hl] at hev ⊢
                   cases hm : names.mapM s.locals.lookup with
                   | none =>
                       simp only [hm] at hev
@@ -197,10 +197,10 @@ private theorem handlerGoal {width : Nat} [NeZero width] {σ : Type}
                       exact ⟨_, _, rfl, stateRel_refl _, rfl, rfl⟩
               · by_cases he : ex = eid
                 · subst he
-                  simp only [if_true] at hev ⊢
+                  simp only [ite_true] at hev ⊢
                   exact ih vals prog newlocals names ex h' st hargs hcode hn hc hb rfl r s' xh rts
                     ⟨hev, huh, hnbh, hlen, hfh, hz, hnd, hne⟩
-                · simp only [he, if_false] at hev ⊢
+                · simp only [he, ite_false] at hev ⊢
                   obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
                   exact ⟨_, _, rfl, stateRel_refl _, rfl⟩
               · obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev

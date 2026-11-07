@@ -65,14 +65,14 @@ theorem evaluateLocalsSameFdomWhileExact {width : Nat} [NeZero width] {σ : Type
   split at heval
   · rename_i w hexp
     by_cases hw : w ≠ 0
-    · rw [if_pos hw] at heval
+    · rw [ite_eq_left hw] at heval
       by_cases hc : s.clock = 0
-      · rw [if_pos hc] at heval
+      · rw [ite_eq_left hc] at heval
         obtain ⟨hr, ht⟩ := Prod.ext_iff.mp heval
         simp only at hr ht
         subst r
         exact False.elim hresult
-      · rw [if_neg hc] at heval
+      · rw [ite_eq_right hc] at heval
         have hclass : crepExactEvalExpClassical s e = some (.word w) := by
           simpa only [crepExactEvalExpClassical_eq, crepExactEvalExp_eq_eval] using hexp
         have hbody := ih.bodyCase (.word w) w hclass rfl hw hc
@@ -113,7 +113,7 @@ theorem evaluateLocalsSameFdomWhileExact {width : Nat} [NeZero width] {σ : Type
               simp only at hr ht
               subst s'
               exact hdom True.intro
-    · rw [if_neg hw] at heval
+    · rw [ite_eq_right hw] at heval
       have ht := congrArg Prod.snd heval
       simp only at ht
       subst s'

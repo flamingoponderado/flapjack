@@ -158,10 +158,10 @@ theorem swap_const (s : WordSemStateFiniteExact width C F) (m : BitVec width →
     · rename_i a w _ _
       unfold memStore
       by_cases hd : s.mdomain a = true
-      · simp only [hd, if_true]
+      · simp only [hd, ite_true]
         refine ⟨fun x => if x = a then w else m x, rfl, ?_⟩
         exact (fun2Set_eq_iff _ _ _).mp (fun2SetUpdateEq_dec s.memory m _ a w h)
-      · simp only [hd, Bool.false_eq_true, if_false]
+      · simp only [hd, Bool.false_eq_true, ite_false]
         exact swap_map _ _ m hm
     · exact swap_map _ _ m hm
   case ffi index ptr1 len1 ptr2 len2 names =>
@@ -261,9 +261,9 @@ theorem swap_evaluate :
       simp only [noAllocSubprogsHOL, noInstallSubprogsHOL, notCreatedSubprogsWithMemOp,
         Bool.true_and] at hna hni
       by_cases hz : s.termdep = 0
-      · rw [if_pos hz, if_pos hz]
+      · rw [ite_eq_left hz, ite_eq_left hz]
         exact swap_map _ _ m hm
-      · rw [if_neg hz, if_neg hz]
+      · rw [ite_eq_right hz, ite_eq_right hz]
         have ih := swap_evaluate q { s with
             clock := wordSemMustTerminateLimit width
             termdep := s.termdep - 1 } m hna hni hac hic hm
@@ -334,19 +334,19 @@ theorem swap_evaluate :
       have code1 : s.code = s1.code :=
         noInstallEvaluateConstCode c { s with locals := l } rb s1 ⟨hb, hni', hic⟩
       by_cases hcont : wordSemContLoop rb = true
-      · rw [if_pos hcont, if_pos hcont]
+      · rw [ite_eq_left hcont, ite_eq_left hcont]
         by_cases hz : s1.clock = 0
-        · rw [if_pos hz]
+        · rw [ite_eq_left hz]
           split
           · exact ⟨m1, rfl, mem1⟩
           · rename_i hz'; exact absurd hz hz'
-        · rw [if_neg hz]
+        · rw [ite_eq_right hz]
           split
           · rename_i hz'; exact absurd hz' hz
           simp only [wordSemSTOP]
           exact swap_evaluate (.loop names c exitNames) (decClock s1) m1 hna hni
             (code1 ▸ hac) (code1 ▸ hic) mem1
-      · rw [if_neg hcont, if_neg hcont]
+      · rw [ite_eq_right hcont, ite_eq_right hcont]
         split
         · rw [cutStateWithMemConst (exitNames, .ln) s1 m1]
           rcases hce : cutState (exitNames, .ln) s1 with _ | s2
@@ -363,9 +363,9 @@ theorem swap_evaluate :
       · exact swap_map _ _ m hm
       simp only
       by_cases hbad : wordSemBadDestArgs dest args = true
-      · rw [if_pos hbad, if_pos hbad]
+      · rw [ite_eq_left hbad, ite_eq_left hbad]
         exact swap_map _ _ m hm
-      rw [if_neg hbad, if_neg hbad]
+      rw [ite_eq_right hbad, ite_eq_right hbad]
       try dsimp only
       rcases hf : wordSemFindCode dest (wordSemAddRetLoc ret xs) s.code s.stackSize with
         _ | ⟨args1, prog, ss⟩
@@ -380,9 +380,9 @@ theorem swap_evaluate :
         | none =>
           simp only
           by_cases hz : s.clock = 0
-          · rw [if_pos hz, if_pos hz]
+          · rw [ite_eq_left hz, ite_eq_left hz]
             exact swap_map _ _ m hm
-          rw [if_neg hz, if_neg hz]
+          rw [ite_eq_right hz, ite_eq_right hz]
           have e : WordSemStateFiniteExact.callEnv args1 ss (WordSemStateFiniteExact.decClock { s with memory := m }) =
               { WordSemStateFiniteExact.callEnv args1 ss (WordSemStateFiniteExact.decClock s) with memory := m } := rfl
           rw [e]
@@ -398,9 +398,9 @@ theorem swap_evaluate :
         obtain ⟨n, names, retHandler, l1, l2⟩ := rv
         simp only
         by_cases hdc : sptDomainEmpty names.fst ∨ ¬ n.Nodup
-        · rw [if_pos hdc, if_pos hdc]
+        · rw [ite_eq_left hdc, ite_eq_left hdc]
           exact swap_map _ _ m hm
-        rw [if_neg hdc, if_neg hdc]
+        rw [ite_eq_right hdc, ite_eq_right hdc]
         rcases hce : wordSemCutEnvs names s.locals with _ | envs
         · exact swap_map _ _ m hm
         simp only
@@ -408,9 +408,9 @@ theorem swap_evaluate :
             WordSemStateFiniteExact.pushEnv envs handler { t with memory := m } = { WordSemStateFiniteExact.pushEnv envs handler t with memory := m } :=
           fun t => pushEnvMemUpd m envs handler t
         by_cases hz : s.clock = 0
-        · rw [if_pos hz, if_pos hz, epush s]
+        · rw [ite_eq_left hz, ite_eq_left hz, epush s]
           exact swap_map _ _ m hm
-        rw [if_neg hz, if_neg hz]
+        rw [ite_eq_right hz, ite_eq_right hz]
         have e : WordSemStateFiniteExact.callEnv args1 ss (WordSemStateFiniteExact.pushEnv envs handler (WordSemStateFiniteExact.decClock { s with memory := m })) =
             { WordSemStateFiniteExact.callEnv args1 ss (WordSemStateFiniteExact.pushEnv envs handler (WordSemStateFiniteExact.decClock s)) with memory := m } := by
           rw [show WordSemStateFiniteExact.decClock { s with memory := m } = { WordSemStateFiniteExact.decClock s with memory := m } from rfl,
@@ -445,9 +445,9 @@ theorem swap_evaluate :
         all_goals try dsimp only
         · exact ⟨m2, rfl, mem2⟩
         · by_cases hx : x ≠ WordLocW.loc l1 l2 ∨ ys.length ≠ n.length
-          · rw [if_pos hx, if_pos hx]
+          · rw [ite_eq_left hx, ite_eq_left hx]
             exact ⟨m2, rfl, mem2⟩
-          rw [if_neg hx, if_neg hx]
+          rw [ite_eq_right hx, ite_eq_right hx]
           rw [popEnvMem s2 m2]
           rcases hp : WordSemStateFiniteExact.popEnv s2 with _ | s1
           · exact ⟨m2, rfl, mem2⟩
@@ -474,9 +474,9 @@ theorem swap_evaluate :
             obtain ⟨n', hprog', l1', l2'⟩ := hv
             simp only
             by_cases hx : x ≠ WordLocW.loc l1' l2'
-            · rw [if_pos hx, if_pos hx]
+            · rw [ite_eq_left hx, ite_eq_left hx]
               exact ⟨m2, rfl, mem2⟩
-            rw [if_neg hx, if_neg hx]
+            rw [ite_eq_right hx, ite_eq_right hx]
             by_cases hdu : sptDomainEqUnion s2.locals envs.1 envs.2
             · simp only [hdu, ↓reduceIte]
               · have e2 : WordSemStateFiniteExact.setVar n' y { s2 with memory := m2 } = { WordSemStateFiniteExact.setVar n' y s2 with memory := m2 } := rfl

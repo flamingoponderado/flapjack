@@ -98,7 +98,7 @@ theorem wordGenGcPartialMoveRefListCode_run {width : Nat} [NeZero width] {C F : 
   rw [wordGenGcPartialMoveRefList] at hm
   by_cases hp : pb = re
   · subst hp
-    simp only [if_true, Prod.mk.injEq] at hm
+    simp only [ite_true, Prod.mk.injEq] at hm
     obtain ⟨rfl, rfl, rfl, -⟩ := hm
     obtain ⟨r0, hr0⟩ := Option.isSome_iff_exists.1 h0
     obtain ⟨r1, hr1⟩ := Option.isSome_iff_exists.1 h1
@@ -137,7 +137,7 @@ theorem wordGenGcPartialMoveRefListCode_run {width : Nat} [NeZero width] {C F : 
     simp [k0, k1, k2, k3, k4, k5, k6, k7, k8, k9]
   have hk : k ≠ 0 := by
     intro hk; subst hk; simp [hp] at hm
-  simp only [hp, hk, if_false] at hm
+  simp only [hp, hk, ite_false] at hm
   subst hc
   generalize hl : wordGenGcPartialMoveList conf (pb + wordSemBytesInWord,
     decodeLength conf (wordSemTheWord (s.memory pb)), i, pa, old, s.memory, s.mdomain, gs,
@@ -199,7 +199,7 @@ theorem wordGenGcPartialMoveRefListCode_run {width : Nat} [NeZero width] {C F : 
   have hmin : min (s.clock + (ck + ck' + 1)) (s5.clock + (ck' + 1)) = s5.clock + (ck' + 1) := by
     omega
   have hck : s5.clock + (ck' + 1) ≠ 0 := by omega
-  simp only [fixClock, contLoop, hmin, if_true, hck, if_false, decClock,
+  simp only [fixClock, contLoop, hmin, ite_true, hck, ite_false, decClock,
     ← wordGenGcPartialMoveRefListCode_eq]
   refine (congrArg (fun st => evaluate (wordGenGcPartialMoveRefListCode conf, st)) ?_).trans
     (hr.trans ?_)

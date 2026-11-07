@@ -33,7 +33,7 @@ private theorem tailArguments {width : Nat} [NeZero width] {C F : Type}
     (none,WordSemStateFiniteExact.setVars registers values target) ∧ _
   constructor
   · simp only [WordSemStateFiniteExact.evaluate,List.map_fst_zip (Nat.le_of_eq same),
-      List.map_snd_zip (Nat.le_of_eq same.symm),distinct,if_true]
+      List.map_snd_zip (Nat.le_of_eq same.symm),distinct,ite_true]
     rw [show WordSemStateFiniteExact.getVars renamed target = some values from renamedRead]
   · exact getVarsSetVarsEq registers values target ⟨distinct,valuesLength⟩
 
@@ -152,7 +152,7 @@ theorem ssaCcTransCorrectCallTail {width : Nat} [NeZero width] {C F : Type}
           rw [fixed]
         simp only [compiled,seqRun]
         simp only [WordSemStateFiniteExact.evaluate,read,reread,good,guard,
-          Bool.false_eq_true,if_false,wordSemAddRetLoc,codeEq,sizeEq,found,clockEq,calleeState]
+          Bool.false_eq_true,ite_false,wordSemAddRetLoc,codeEq,sizeEq,found,clockEq,calleeState]
         by_cases zero : permuted.clock = 0
         · simp only [zero]
           simp [WordSemStateFiniteExact.flushState,Flapjack.WordAlloc.wordStateEqRel]

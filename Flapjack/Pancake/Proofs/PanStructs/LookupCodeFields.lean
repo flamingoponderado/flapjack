@@ -148,7 +148,7 @@ theorem lookupCodeFields {width : Nat} {σ : Type} [NeZero width]
       next hgood => exact ⟨parameters,sourceBody,sourceReturn,rfl,hgood⟩
       next => simp at hraw
   rcases hentry with ⟨parameters,sourceBody,sourceReturn,hcode,hgood⟩
-  simp only [lookupCodeHOLExact,hcode,if_pos hgood,Option.some.injEq,Prod.mk.injEq] at hraw
+  simp only [lookupCodeHOLExact,hcode,ite_eq_left hgood,Option.some.injEq,Prod.mk.injEq] at hraw
   have hcallee : FUPDATE_LIST FEMPTY ((parameters.map Prod.fst).zip arguments) = calleeLocals.lookup := by
     have hx := hraw.2.1
     change FUPDATE_LIST_HOL FEMPTY ((parameters.map Prod.fst).zip arguments) = calleeLocals.lookup at hx
@@ -241,7 +241,7 @@ theorem lookupCodeFields {width : Nat} {σ : Type} [NeZero width]
           compileShapeExact context.structs returnShape) := by
       rw [lookupCodeHOLExact,htargetCode]
       dsimp only
-      rw [if_pos htargetGood]
+      rw [ite_eq_left htargetGood]
       change some (compileProgExact {context with locals := parameters} sourceBody,
         FUPDATE_LIST_HOL FEMPTY ((compiledParameters.map Prod.fst).zip (arguments.map convertV)),
         compileShapeExact context.structs sourceReturn) = _

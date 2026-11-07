@@ -50,7 +50,7 @@ theorem goal_alloc (s : StackSemStateFiniteExact width C F) (k : Nat) :
   have hk : k = 1 := ha
   subst hk
   rw [evaluate_alloc] at h
-  simp only [hpre.useAlloc, Bool.not_true, Bool.false_eq_true, if_false] at h
+  simp only [hpre.useAlloc, Bool.not_true, Bool.false_eq_true, ite_false] at h
   split at h
   · rename_i w hw
     have hac := StackPropsAllocationConstants.allocConst w s t r h
@@ -94,7 +94,7 @@ theorem storeConstSem_res (c : DataToWord.Config) (s t : StackSemStateFiniteExac
   · simp only [Prod.mk.injEq] at h
     exact absurd h.1.symm hr
   rename_i hnd
-  rw [if_neg hnd]
+  rw [ite_eq_right hnd]
   have hnd' := hnd
   simp only [not_not, List.nodup_cons, List.mem_cons, List.not_mem_nil,
     or_false, not_or] at hnd'
@@ -121,7 +121,7 @@ theorem storeConstSem_res (c : DataToWord.Config) (s t : StackSemStateFiniteExac
         split_ifs at hkv ⊢ <;> first | exact hkv | exact hk k v ‹_› hkv
       · simp only [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL]
         obtain ⟨⟨h01, h02, h03, h0t1, h0t2⟩, -, -, -, -⟩ := hnd'
-        rw [if_neg h0t1, if_neg h0t2, if_neg (by decide), if_neg (by decide)]
+        rw [ite_eq_right h0t1, ite_eq_right h0t2, ite_eq_right (by decide), ite_eq_right (by decide)]
       · exact ⟨rfl, rfl, rfl, rfl⟩
   · simp only [Prod.mk.injEq] at h
     exact absurd h.1.symm hr
@@ -135,7 +135,7 @@ theorem goal_storeConsts (s : StackSemStateFiniteExact width C F) (t1 t2 : Nat)
   · simp only [Prod.mk.injEq] at h
     exact absurd h.1.symm hr
   rename_i hS
-  rw [if_neg (by simp [hpre.useAlloc])] at h
+  rw [ite_eq_right (by simp [hpre.useAlloc])] at h
   split at h
   · simp only [Prod.mk.injEq] at h
     exact absurd h.1.symm hr
@@ -153,8 +153,8 @@ theorem goal_storeConsts (s : StackSemStateFiniteExact width C F) (t1 t2 : Nat)
       refine ⟨0, R1, ?_, hsub, hbuf ▸ hpre.buf, fun _ => by unfold StackBound; rw [hst]; exact hpre.stack⟩
       show evaluate (.storeConsts t1 t2 none, Res anything cr c s regs) = _
       rw [evaluate_storeConsts]
-      simp only [not_true_eq_false, if_false, Option.isSome_none, Bool.false_eq_true, and_false]
-      simp only [checkStoreConstsOpt, not_true_eq_false, if_false]
+      simp only [not_true_eq_false, ite_false, Option.isSome_none, Bool.false_eq_true, and_false]
+      simp only [checkStoreConstsOpt, not_true_eq_false, ite_false]
       exact he
   | some loc =>
       have hlk : sptLookup loc s.code = some (.seq (.storeConsts t1 t2 none) (.ret 0)) :=
@@ -167,7 +167,7 @@ theorem goal_storeConsts (s : StackSemStateFiniteExact width C F) (t1 t2 : Nat)
         split at hk
         · simp at hk
         · rename_i hk0
-          simp only [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, if_neg hk0]
+          simp only [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, ite_eq_right hk0]
           exact hpre.regs _ _ hk
       obtain ⟨R1, he, hsub, h0, rfl, hclk, hst, hbuf⟩ :=
         storeConstSem_res anything cr c s t (regs.updateEq (0, .loc n m)) hR' hpre.useAlloc t1 t2 r
@@ -178,11 +178,11 @@ theorem goal_storeConsts (s : StackSemStateFiniteExact width C F) (t1 t2 : Nat)
       simp only [StackSemControl.findCode]
       rw [hcl]
       simp only [comp]
-      rw [if_neg (by simp)]
+      rw [ite_eq_right (by simp)]
       have hds : decClock (setVar 0 (.loc n m) (Tgt anything cr c s 1 regs)) =
           Res anything cr c s (regs.updateEq (0, .loc n m)) := rfl
       rw [hds, evaluate_seq, evaluate_storeConsts]
-      simp only [not_true_eq_false, if_false, Option.isSome_none, Bool.false_eq_true, and_false,
+      simp only [not_true_eq_false, ite_false, Option.isSome_none, Bool.false_eq_true, and_false,
         checkStoreConstsOpt]
       rw [he]
       simp only [StackSemControl.fixClock, hclk, Nat.min_self]
@@ -192,7 +192,7 @@ theorem goal_storeConsts (s : StackSemStateFiniteExact width C F) (t1 t2 : Nat)
         rw [h0]
         simp [FUPDATE_HOL]
       rw [hg0]
-      simp only [ne_eq, not_true_eq_false, if_false, evaluate_skip]
+      simp only [ne_eq, not_true_eq_false, ite_false, evaluate_skip]
       simp [hclk]
 
 end Flapjack.Compiler.Backend.StackAlloc.CompCorrect

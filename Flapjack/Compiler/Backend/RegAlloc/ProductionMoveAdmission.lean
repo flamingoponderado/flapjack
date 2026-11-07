@@ -16,7 +16,7 @@ theorem fullConsistencyOk_production (limit left right : Nat) {native : State}
   · simp [fullConsistencyOk, equal, ret, cakeFullConsistencyOk]
   · have different : (left != right) = true := bne_iff_ne.mpr equal
     by_cases outside : left ≥ native.dim ∨ right ≥ native.dim
-    · simp only [fullConsistencyOk, if_neg equal, Translator.Monadic.MonadBase.bind, getDim, ret, if_pos outside]
+    · simp only [fullConsistencyOk, ite_eq_right equal, Translator.Monadic.MonadBase.bind, getDim, ret, ite_eq_left outside]
       rcases outside with leftOutside | rightOutside
       · simp [cakeFullConsistencyOk, related.dimension, Nat.not_lt.mpr leftOutside]
       · simp [cakeFullConsistencyOk, related.dimension, Nat.not_lt.mpr rightOutside]
@@ -29,8 +29,8 @@ theorem fullConsistencyOk_production (limit left right : Nat) {native : State}
       have rightTag := related.tag_read right rightTagBound
       have adjacency := cakeAdjMem_production left right related good rightBound
       rw [holEl_eq_getElem right native.adj_ls adjacencyBound] at adjacency
-      simp only [fullConsistencyOk, if_neg equal, Translator.Monadic.MonadBase.bind, getDim,
-        if_neg outside, adjLsSubEqn, if_pos adjacencyBound,
+      simp only [fullConsistencyOk, ite_eq_right equal, Translator.Monadic.MonadBase.bind, getDim,
+        ite_eq_right outside, adjLsSubEqn, ite_eq_left adjacencyBound,
         holEl_eq_getElem right native.adj_ls adjacencyBound]
       rw [← adjacency]
       cases query : cakeAdjMem production left right
@@ -58,7 +58,7 @@ theorem fullConsistencyFilter_production (limit : Nat) (moves : List (Nat × (Na
       simp only [stExFilter, Translator.Monadic.MonadBase.bind,
         fullConsistencyOk_production limit move.2.1 move.2.2 related good]
       cases selected : cakeFullConsistencyOk production limit move.2.1 move.2.2 <;>
-        simp only [Bool.false_eq_true, if_false, if_true, List.filter_cons,
+        simp only [Bool.false_eq_true, ite_false, ite_true, List.filter_cons,
           selected, List.reverse_cons, List.append_assoc, List.singleton_append]
       all_goals exact ih _
 

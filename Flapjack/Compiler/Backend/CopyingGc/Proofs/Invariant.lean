@@ -718,7 +718,7 @@ theorem gcInv_moveLoop {α β : Type} (h1 h2 heap heap0 : List (HeapElement α �
       gcInv_moveLoop (h1 ++ [.dataElement (addrMap (heapMap1 heap1) ys) len data]) (tail ++ added)
         heap1 heap0 a1 n1 limit ok1 roots0 shifted
     refine ⟨h13, a3, n3, heap3, c3, ?_, ?_, resultInv⟩
-    · simp only [gcMoveLoop, if_neg guard, moved, List.cons_append, List.drop, List.head?]
+    · simp only [gcMoveLoop, ite_eq_right guard, moved, List.cons_append, List.drop, List.head?]
       simpa using scan
     · intro i j old
       exact submap2 i j (submap1 i j old)

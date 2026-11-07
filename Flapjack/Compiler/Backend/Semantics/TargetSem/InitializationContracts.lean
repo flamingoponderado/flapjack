@@ -6,7 +6,11 @@ import Flapjack.Compiler.Backend.Semantics.TargetSem.InterferenceContracts
 import Flapjack.Misc.BytesInMem
 import Flapjack.Byte
 import Flapjack.Compiler.Encoders.AsmProps.Interference
-import Mathlib.Data.Set.Lattice
+import Mathlib.Data.Set.Lattice.Bounded
+import Mathlib.Data.Set.Lattice.Disjoint
+import Mathlib.Data.Set.Lattice.Image
+import Mathlib.Data.Set.Lattice.Indexed
+import Mathlib.Data.Set.Lattice.Order
 
 namespace Flapjack
 open Flapjack.Compiler.Backend.LabToTarget Flapjack.Misc

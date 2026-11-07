@@ -176,7 +176,7 @@ theorem eqPureThmConstructorMismatch {C F : Type} (tx ty : BackendCommon.Tra)
     · exact fun h => hl h.2
   have bFalse : b = false := by
     have eq := h.2.2.2
-    rw [doEq, if_neg mismatch] at eq
+    rw [doEq, ite_eq_right mismatch] at eq
     cases eq
     rfl
   subst b
@@ -222,7 +222,7 @@ theorem eqPureThmConstructorMatch {C F : Type} (tx ty : BackendCommon.Tra)
     simpa [lenX, lenY] using lengthEq
   have listEq : doEqList valuesX.reverse valuesY.reverse = .val b := by
     have eq := h.2.2.2
-    rw [doEq, if_pos ⟨tagEq, valuesLength⟩] at eq
+    rw [doEq, ite_eq_left ⟨tagEq, valuesLength⟩] at eq
     exact eq
   have simpleX : ∀ x ∈ xs, SimpleExp x := by cases h.2.1 with | cons _ _ _ children => exact children
   have simpleY : ∀ y ∈ ys, SimpleExp y := by cases h.2.2.1 with | cons _ _ _ children => exact children
@@ -279,7 +279,7 @@ theorem eqPureThmOneConstructorMismatch {C F : Type} (tx : BackendCommon.Tra)
     · exact fun h => hl h.2
   have bFalse : b = false := by
     have eq := h.2.2.2
-    rw [doEq, if_neg mismatch] at eq
+    rw [doEq, ite_eq_right mismatch] at eq
     cases eq
     rfl
   subst b
@@ -358,7 +358,7 @@ theorem eqPureThmOneConstructorMatch {C F : Type} (tx : BackendCommon.Tra)
   have valuesLength : valuesX.reverse.length = fieldsY.length := by simpa [lenX] using lengthEq
   have listEq : doEqList valuesX.reverse fieldsY = .val b := by
     have eq := h.2.2.2
-    rw [doEq, if_pos ⟨tagEq, valuesLength⟩] at eq
+    rw [doEq, ite_eq_left ⟨tagEq, valuesLength⟩] at eq
     exact eq
   have simpleX : ∀ x ∈ xs, SimpleExp x := by cases h.2.1 with | cons _ _ _ children => exact children
   have relX := pureEvalList xs valuesX env s simpleX argsX

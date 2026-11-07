@@ -31,7 +31,7 @@ theorem sumStringOrds_indexEquation (i : Nat) (str : MlString) :
         (str.explode[i]'h).toNat - 35 + sumStringOrds (i + 1) str
       else 0 := by
   by_cases h : i < str.explode.length
-  · simp only [dif_pos h, sumStringOrds]
+  · simp only [dite_eq_left h, sumStringOrds]
     rw [List.drop_eq_getElem_cons h]
     rfl
   · simp [h, sumStringOrds, List.drop_eq_nil_of_le (Nat.le_of_not_gt h)]

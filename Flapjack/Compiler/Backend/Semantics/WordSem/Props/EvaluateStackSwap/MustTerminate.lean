@@ -36,7 +36,7 @@ theorem evaluate_mustTerminate_eq (p : WordLangProgHOL (BitVec width))
     evaluate (.mustTerminate p) s =
       mtPost s (evaluate p { s with clock := wordSemMustTerminateLimit width,
                                     termdep := s.termdep - 1 }) := by
-  rw [evaluate, dif_neg hz]
+  rw [evaluate, dite_eq_right hz]
   generalize evaluate p _ = r
   rcases r with ⟨res, s1⟩
   rcases res with _ | r
@@ -122,7 +122,7 @@ theorem evaluateStackSwap_MustTerminate {width : Nat} [NeZero width] {C F : Type
   intro s ih
   rw [stackSwapPost_iff]
   by_cases hz : s.termdep = 0
-  · rw [evaluate, dif_pos hz]
+  · rw [evaluate, dite_eq_left hz]
     trivial
   · have hr := (stackSwapPost_iff _ _).mp (ih hz)
     rw [evaluate_mustTerminate_eq p s hz]

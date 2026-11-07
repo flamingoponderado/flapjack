@@ -171,7 +171,7 @@ theorem evaluate_eval_success {F : Type} (state middle decoded : State F) (env e
   dsimp only
   by_cases clock : decoded.clock = 0
   · simp [clock, continueEval]
-  · simp only [clock, if_false, (fixClockEvaluate (decClock decoded) evalEnv [] decs).2]
+  · simp only [clock, ite_false, (fixClockEvaluate (decClock decoded) evalEnv [] decs).2]
     cases run : evaluateDecs (decClock decoded) evalEnv decs with
     | mk after inner =>
       cases inner with

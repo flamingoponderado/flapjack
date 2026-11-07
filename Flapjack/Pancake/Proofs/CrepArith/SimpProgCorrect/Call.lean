@@ -140,18 +140,18 @@ theorem simpProgCorrectCallCase {width : Nat} [NeZero width] {σ : Type} :
       crepReturnInfoNodupError caltyp := by
     rcases caltyp with _ | ⟨returns, _ | ⟨handler, body⟩⟩ <;> rfl
   by_cases hnd : crepReturnInfoNodupError caltyp
-  · rw [if_pos hnd] at he
+  · rw [ite_eq_left hnd] at he
     exact (herr he).elim
-  rw [if_neg hnd] at he
-  rw [if_neg (fun h => hnd (hnodupIff.mp h))]
+  rw [ite_eq_right hnd] at he
+  rw [ite_eq_right (fun h => hnd (hnodupIff.mp h))]
   by_cases hc : state.clock = 0
-  · rw [if_pos hc] at he
-    rw [if_pos (show (crepSimpMapcsHOL state).clock = 0 from hc)]
+  · rw [ite_eq_left hc] at he
+    rw [ite_eq_left (show (crepSimpMapcsHOL state).clock = 0 from hc)]
     simp only [Prod.mk.injEq] at he
     obtain ⟨rfl, rfl⟩ := he
     rfl
-  rw [if_neg hc] at he
-  rw [if_neg (show ¬ (crepSimpMapcsHOL state).clock = 0 from hc)]
+  rw [ite_eq_right hc] at he
+  rw [ite_eq_right (show ¬ (crepSimpMapcsHOL state).clock = 0 from hc)]
   rcases hcall : evalCrepSemHOLProgExact
       { decClockCrepSemHOL state with locals := newlocals } prog with ⟨r0, st⟩
   rw [hcall] at he
@@ -191,10 +191,10 @@ theorem simpProgCorrectCallCase {width : Nat} [NeZero width] {σ : Type} :
         rw [hsr]
         simp only at he ⊢
         by_cases hlen : retvs.length ≠ rts.length
-        · rw [if_pos hlen] at he
+        · rw [ite_eq_left hlen] at he
           exact (herr he).elim
-        rw [if_neg hlen] at he
-        rw [if_neg hlen]
+        rw [ite_eq_right hlen] at he
+        rw [ite_eq_right hlen]
         cases hloc : rts.mapM state.locals.lookup with
         | none =>
             rw [hloc] at he
@@ -216,12 +216,12 @@ theorem simpProgCorrectCallCase {width : Nat} [NeZero width] {σ : Type} :
       · simp only [simpCallReturnInfo] at he ⊢
         by_cases heid : eid = eid'
         · subst heid
-          rw [if_pos rfl] at he
-          rw [if_pos rfl]
+          rw [ite_eq_left rfl] at he
+          rw [ite_eq_left rfl]
           exact ihh args prog newlocals st eid rts p
             ⟨hargs, hlc, hnd, hc, hcall, rfl⟩ result finalState he hne
-        · rw [if_neg heid] at he
-          rw [if_neg heid]
+        · rw [ite_eq_right heid] at he
+          rw [ite_eq_right heid]
           simp only [Prod.mk.injEq] at he
           obtain ⟨rfl, rfl⟩ := he
           rfl

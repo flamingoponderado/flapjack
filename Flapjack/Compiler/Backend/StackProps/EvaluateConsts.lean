@@ -234,8 +234,8 @@ theorem consts_measure {width : Nat} [NeZero width] {C F : Type} :
               ih _ (callee_measure_lt prog _ s h0) prog _ rfl r1 t1 h1
             simp only [fixClock] at h
             by_cases hb : StackSemControl.badFunReturn r1 = true
-            · simp only [hb, if_true] at h; exact leaf _ _ h hc
-            · simp only [hb, Bool.false_eq_true, if_false] at h; exact leaf _ _ h hc
+            · simp only [hb, ite_true] at h; exact leaf _ _ h hc
+            · simp only [hb, Bool.false_eq_true, ite_false] at h; exact leaf _ _ h hc
     | some rr =>
       obtain ⟨retH, link, l1, l2⟩ := rr
       dsimp only at h
@@ -260,16 +260,16 @@ theorem consts_measure {width : Nat} [NeZero width] {C F : Type} :
           rcases r1 with _ | ⟨x⟩ | ⟨x⟩ | _ | _ | _ | _ | _ | _
           all_goals try (exact leaf _ _ h hc)
           · by_cases hx : x = .loc l1 l2
-            · simp only [hx, ne_eq, not_true_eq_false, if_false] at h
+            · simp only [hx, ne_eq, not_true_eq_false, ite_false] at h
               exact Consts.trans hc (ih _ (hlt retH) retH _ rfl r s' h)
-            · simp only [hx, ne_eq, not_false_eq_true, if_true] at h
+            · simp only [hx, ne_eq, not_false_eq_true, ite_true] at h
               exact leaf _ _ h hc
           · rcases handler with _ | ⟨hp, hl1, hl2⟩
             · exact leaf _ _ h hc
             · by_cases hx : x = .loc hl1 hl2
-              · simp only [hx, ne_eq, not_true_eq_false, if_false] at h
+              · simp only [hx, ne_eq, not_true_eq_false, ite_false] at h
                 exact Consts.trans hc (ih _ (hlt hp) hp _ rfl r s' h)
-              · simp only [hx, ne_eq, not_false_eq_true, if_true] at h
+              · simp only [hx, ne_eq, not_false_eq_true, ite_true] at h
                 exact leaf _ _ h hc
 
 end EvaluateConsts

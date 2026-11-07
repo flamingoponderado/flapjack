@@ -88,7 +88,7 @@ theorem inlineProgHOLExact_call_nonInlined (inlBag : InlMap width)
       simp [heq] at h
   · simp only [inlineProgHOLCoreExact, inlineCaltyp]
     by_cases hd : crepAllDistinct rts = true
-    · simp only [hd, Bool.not_true, Bool.false_eq_true, if_false]
+    · simp only [hd, Bool.not_true, Bool.false_eq_true, ite_false]
       split
       · rfl
       · rename_i _ heq
@@ -194,9 +194,9 @@ theorem callNonInlined
   have hcond : params.length = vs.length ∧ params.Nodup := by
     by_cases hc : params.length = vs.length ∧ params.Nodup
     · exact hc
-    · rw [if_neg hc] at hlk'
+    · rw [ite_eq_right hc] at hlk'
       cases hlk'
-  rw [if_pos hcond] at hlk'
+  rw [ite_eq_left hcond] at hlk'
   simp only [Option.some.injEq, Prod.mk.injEq] at hlk'
   obtain ⟨rfl, rfl⟩ := hlk'
   obtain ⟨bag', hbag', hct⟩ := hci fname params body hcs
@@ -207,20 +207,20 @@ theorem callNonInlined
     simp [hcond]
   simp only [hlkT]
   by_cases hnd : crepReturnInfoNodupError caltyp
-  · rw [if_pos hnd] at hev
+  · rw [ite_eq_left hnd] at hev
     simp only [Prod.mk.injEq] at hev
     exact absurd hev.1.symm hne
-  rw [if_neg hnd] at hev
-  rw [if_neg (fun h => hnd ((nodupError_inlineCaltyp inlBag caltyp).mp h))]
+  rw [ite_eq_right hnd] at hev
+  rw [ite_eq_right (fun h => hnd ((nodupError_inlineCaltyp inlBag caltyp).mp h))]
   have hclk : s.clock = t.clock := hsr.2.2.2.2.1
   by_cases hz : s.clock = 0
-  · rw [if_pos hz] at hev
-    rw [if_pos (hclk ▸ hz)]
+  · rw [ite_eq_left hz] at hev
+    rw [ite_eq_left (hclk ▸ hz)]
     simp only [Prod.mk.injEq] at hev
     obtain ⟨rfl, rfl⟩ := hev
     exact ⟨t.emptyLocals, rfl, hsr, codeInl_of_code_eq rfl rfl hci, trivial⟩
-  rw [if_neg hz] at hev
-  rw [if_neg (fun h => hz (hclk ▸ h))]
+  rw [ite_eq_right hz] at hev
+  rw [ite_eq_right (fun h => hz (hclk ▸ h))]
   have ihB := ihBody vs (body, HolFiniteMapExact.empty.updateList (params.zip vs)) body
     (HolFiniteMapExact.empty.updateList (params.zip vs))
     (by rw [show crepExactEvalExpClassical s = evalCrepSemHOLExp s from
@@ -271,11 +271,11 @@ theorem callNonInlined
       rw [hic]
       simp only at hev ⊢
       by_cases hlen : retvs.length ≠ rts.length
-      · rw [if_pos hlen] at hev
+      · rw [ite_eq_left hlen] at hev
         simp only [Prod.mk.injEq] at hev
         exact absurd hev.1.symm hne
-      rw [if_neg hlen] at hev
-      rw [if_neg hlen, hloc]
+      rw [ite_eq_right hlen] at hev
+      rw [ite_eq_right hlen, hloc]
       rcases hm : rts.mapM s.locals.lookup with _ | vals
       · simp only [hm, Prod.mk.injEq] at hev
         exact absurd hev.1.symm hne
@@ -291,8 +291,8 @@ theorem callNonInlined
       exact ⟨st'.emptyLocals, rfl, hsr1, codeInl_of_code_eq rfl rfl hci1, trivial⟩
     · simp only [inlineCaltyp] at hev ⊢
       by_cases heq : eid = eid'
-      · rw [if_pos heq] at hev
-        rw [if_pos heq]
+      · rw [ite_eq_left heq] at hev
+        rw [ite_eq_left heq]
         have ihH := ihExc vs (body, HolFiniteMapExact.empty.updateList (params.zip vs)) body
           (HolFiniteMapExact.empty.updateList (params.zip vs)) _ (some (.exception eid)) st
           (.exception eid) eid (rts, some (eid', p)) rts (some (eid', p)) (eid', p) eid' p
@@ -306,8 +306,8 @@ theorem callNonInlined
           (by show HolFiniteMapExact.submap inlFs st.code; rw [hcodeSt]; exact hsub)
           hbag hsr1 hls (codeInl_of_code_eq rfl rfl hci1)
         exact ⟨t'', hT, hsr2, hci2, hpost2⟩
-      · rw [if_neg heq] at hev
-        rw [if_neg heq]
+      · rw [ite_eq_right heq] at hev
+        rw [ite_eq_right heq]
         simp only [Prod.mk.injEq] at hev
         obtain ⟨rfl, rfl⟩ := hev
         exact ⟨st'.emptyLocals, rfl, hsr1, codeInl_of_code_eq rfl rfl hci1, trivial⟩

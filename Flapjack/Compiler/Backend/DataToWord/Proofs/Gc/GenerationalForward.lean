@@ -90,7 +90,7 @@ theorem wordGenGcMove_forward {width : Nat} [NeZero width] (conf : Config)
   obtain ⟨rfl, rfl⟩ := abstractRun
   have low' : (1 : BitVec width) &&& getAddr conf ptr value ≠ 0 := by
     simpa [BitVec.and_comm] using low
-  simp only [wordAddr, wordGenGcMove, if_neg low', addr, read.1, read.2,
+  simp only [wordAddr, wordGenGcMove, ite_eq_right low', addr, read.1, read.2,
     shiftedForward_isForward, ↓reduceIte, wordSemTheWord, wordSemIsWordLoc,
     Bool.true_and, Prod.mk.injEq] at wordRun
   obtain ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩ := wordRun

@@ -261,7 +261,7 @@ theorem evaluate_sourceEval_success {F : Type}
   rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate state env exprs.reverse []).1, operandRun]
   simp only [List.reverse_reverse, getOpClass]
   rw [EvaluateHOL.fixClockDoEvalRes]
-  simp only [EvaluateHOL.doEvalRes, decoded, nonzero, if_false]
+  simp only [EvaluateHOL.doEvalRes, decoded, nonzero, ite_false]
   rw [(EvaluateHOL.fixClockEvaluate (EvaluateHOL.decClock { arguments with evalState := begin })
     evalEnv [] decs).2, declarationRun]
   simp [declared]
@@ -300,7 +300,7 @@ theorem evaluate_sourceEval_declaration_error {F : Type}
   rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate state env exprs.reverse []).1, operandRun]
   simp only [List.reverse_reverse, getOpClass]
   rw [EvaluateHOL.fixClockDoEvalRes]
-  simp only [EvaluateHOL.doEvalRes, decoded, nonzero, if_false]
+  simp only [EvaluateHOL.doEvalRes, decoded, nonzero, ite_false]
   rw [(EvaluateHOL.fixClockEvaluate (EvaluateHOL.decClock { arguments with evalState := begin })
     evalEnv [] decs).2]
   cases error <;> simp_all only
@@ -1056,7 +1056,7 @@ theorem localEnvBounded_eval {C F : Type} [Nonempty C]
               rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv exprs.reverse []).1, sourceRun]
               simp only [getOpClass]
               rw [EvaluateHOL.fixClockDoEvalRes]
-              simp only [EvaluateHOL.doEvalRes, decoded, nextZero, if_false]
+              simp only [EvaluateHOL.doEvalRes, decoded, nextZero, ite_false]
               rw [(EvaluateHOL.fixClockEvaluate (EvaluateHOL.decClock { nextSource with evalState := begin }) evalEnv [] decs).2, declarationRun]
               simp [declared, EvaluateHOL.typeError]
             | some pair =>

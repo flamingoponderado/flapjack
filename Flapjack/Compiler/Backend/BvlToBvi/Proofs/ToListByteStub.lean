@@ -90,7 +90,7 @@ theorem evaluate_toListByte_step {C F : Type} (byte : BitVec 8) (index ptr : Nat
   change BviSem.evaluate [.call 0 (some toListByteLocation) [cons, .var 1, .var 4] none] input3 state = _
   rw [BviSem.evaluate, BviSem.fixClock_evaluate, callArgs]
   simp only [BvlSem.findCode, code, toListByteCode, List.length_cons, List.length_nil, ite_true,
-    Nat.zero_add, Nat.lt_one_iff, clock, if_false, BviSem.fixClock_evaluate]
+    Nat.zero_add, Nat.lt_one_iff, clock, ite_false, BviSem.fixClock_evaluate]
   have recRun := recursive
   simp [toListByteCode] at recRun
   simp [recRun]

@@ -103,13 +103,13 @@ theorem handlerTail {width : Nat} [NeZero width] {C F : Type} (ctxt : Spt Nat)
         obtain ⟨len, e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, e11⟩ := hst
         simp only [htick]
         by_cases hz : s2.clock = 0
-        · simp only [hz, if_true, Prod.mk.injEq] at hloop
+        · simp only [hz, ite_true, Prod.mk.injEq] at hloop
           obtain ⟨rfl, rfl⟩ := hloop
-          rw [if_pos (by rw [e4]; exact hz)]
+          rw [ite_eq_left (by rw [e4]; exact hz)]
           exact ⟨_, _, rfl, by simp [WordSemStateFiniteExact.flushState, e6], rfl⟩
-        · simp only [hz, if_false, Prod.mk.injEq] at hloop
+        · simp only [hz, ite_false, Prod.mk.injEq] at hloop
           obtain ⟨rfl, rfl⟩ := hloop
-          rw [if_neg (by rw [e4]; exact hz)]
+          rw [ite_eq_right (by rw [e4]; exact hz)]
           refine ⟨_, _, rfl, e6, ⟨len, e1, e2, e3, ?_, e5, e6, e7, e8, e9, e10, e11⟩, rfl,
             h0, localsRel_inter ctxt _ _ _ hl, hstk'.trans hstk, hhd'.trans hhd⟩
           simp [WordSemStateFiniteExact.decClock, LoopSemStateFiniteExact.decClock, e4]

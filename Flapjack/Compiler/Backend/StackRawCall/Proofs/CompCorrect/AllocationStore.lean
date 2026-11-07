@@ -112,28 +112,28 @@ theorem evaluateStoreConsts_stateRel {width : Nat} [NeZero width] {C F : Type}
       StackSemEvaluate.evaluate (.storeConsts first second stub, target) = (result, targetPost) := by
   have useStore : ¬ (¬ source.useStore) := by
     intro h
-    rw [StackSemEvaluate.evaluate_storeConsts, if_pos h] at execution
+    rw [StackSemEvaluate.evaluate_storeConsts, ite_eq_left h] at execution
     exact nonerror (Prod.mk.inj execution).1.symm
   have useAlloc : ¬ (¬ source.useAlloc ∧ stub.isSome) := by
     intro h
-    rw [StackSemEvaluate.evaluate_storeConsts, if_neg useStore, if_pos h] at execution
+    rw [StackSemEvaluate.evaluate_storeConsts, ite_eq_right useStore, ite_eq_left h] at execution
     exact nonerror (Prod.mk.inj execution).1.symm
   have checked : StackSemStoreConstsGuard.checkStoreConstsOpt first second stub source.code = true := by
     by_contra h
-    rw [StackSemEvaluate.evaluate_storeConsts, if_neg useStore, if_neg useAlloc, if_pos h] at execution
+    rw [StackSemEvaluate.evaluate_storeConsts, ite_eq_right useStore, ite_eq_right useAlloc, ite_eq_left h] at execution
     exact nonerror (Prod.mk.inj execution).1.symm
   have targetChecked := checkStoreConstsOpt_target first second stub info source target relation checked
   have sourceBody : StackSemStoreConsts.storeConstSem (resultWidth := width) first second source = (result, post) := by
-    simpa only [StackSemEvaluate.evaluate_storeConsts, if_neg useStore, if_neg useAlloc,
-      checked, Bool.true_eq, not_true_eq_false, if_false] using execution
+    simpa only [StackSemEvaluate.evaluate_storeConsts, ite_eq_right useStore, ite_eq_right useAlloc,
+      checked, Bool.true_eq, not_true_eq_false, ite_false] using execution
   obtain ⟨targetPost, postRelation, targetBody⟩ := postRelationOfTransport
     (StackSemStoreConsts.storeConstSem (resultWidth := width) first second)
     source target post info result (storeConstSem_codeUpdate first second source) sourceBody relation
   refine ⟨targetPost, postRelation, ?_⟩
   obtain ⟨code, _, targetEq, _, _⟩ := relation
   subst target
-  simpa only [StackSemEvaluate.evaluate_storeConsts, if_neg useStore, if_neg useAlloc,
-    targetChecked, Bool.true_eq, not_true_eq_false, if_false] using targetBody
+  simpa only [StackSemEvaluate.evaluate_storeConsts, ite_eq_right useStore, ite_eq_right useAlloc,
+    targetChecked, Bool.true_eq, not_true_eq_false, ite_false] using targetBody
 
 /-- Canonical roundtrip of the actual imported evaluator state; representation
 infrastructure, without a duplicate carrier or an assumed relation. -/

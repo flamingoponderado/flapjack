@@ -26,10 +26,10 @@ theorem heapLookup_append {α β : Type} (offset : Nat) (first second : List (He
             offset - elLength head < (tail.map elLength).sum := by omega
         by_cases below : offset - elLength head < (tail.map elLength).sum
         · have under : offset < elLength head + (tail.map elLength).sum := relation.mpr below
-          simp only [heapLookup, zero, if_false, inside, under, if_true, ih, heapLength, below]
+          simp only [heapLookup, zero, ite_false, inside, under, ite_true, ih, heapLength, below]
         · have under : ¬offset < elLength head + (tail.map elLength).sum := by
             intro h; exact below (relation.mp h)
-          simp only [heapLookup, zero, if_false, inside, under, ih, heapLength, below, Nat.sub_sub]
+          simp only [heapLookup, zero, ite_false, inside, under, ih, heapLength, below, Nat.sub_sub]
 
 /-- Every successful lookup is at an element starting address. -/
 @[hol "cakeml/compiler/backend/gc/gen_gcScript.sml" "heap_lookup_IMP_heap_addresses"]

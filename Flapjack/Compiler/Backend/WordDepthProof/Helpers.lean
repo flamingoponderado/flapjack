@@ -59,25 +59,25 @@ theorem maxDepth_mkBranch (s : Spt Nat) :
   unfold mkBranch
   by_cases h12 : t1 = t2
   · subst h12; simp [maxDepth, optionMap2_max_idempot]
-  rw [if_neg h12]
+  rw [ite_eq_right h12]
   by_cases h1 : t1 = .leaf
   · subst h1
-    rw [if_pos rfl, maxDepth, maxDepth]
+    rw [ite_eq_left rfl, maxDepth, maxDepth]
     exact (optionMap2_max_zero_left _).symm
-  rw [if_neg h1]
+  rw [ite_eq_right h1]
   by_cases h2 : t2 = .leaf
   · subst h2
-    rw [if_pos rfl, maxDepth, maxDepth]
+    rw [ite_eq_left rfl, maxDepth, maxDepth]
     exact (optionMap2_some_0 _).2.symm
-  rw [if_neg h2]
+  rw [ite_eq_right h2]
   by_cases h1u : t1 = .unknown
   · subst h1u; simp [maxDepth, optionMap₂]
-  rw [if_neg h1u]
+  rw [ite_eq_right h1u]
   by_cases h2u : t2 = .unknown
   · subst h2u
-    rw [if_pos rfl, maxDepth, maxDepth]
+    rw [ite_eq_left rfl, maxDepth, maxDepth]
     exact (optionMap2_none_right max _).symm
-  rw [if_neg h2u]
+  rw [ite_eq_right h2u]
 
 /-- `max` is monotone in both arguments under `option_le` (Flapjack infrastructure). -/
 theorem optionLe_max_mono {a a' b b' : Option Nat} (ha : optionLe a a') (hb : optionLe b b') :
@@ -136,7 +136,7 @@ theorem callGraph_call_lookup_none {width : Nat} [NeZero width]
     {args : List Nat} {handler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat)}
     {d : Nat} (hc : ¬(d ∈ ns ∧ ret = none)) (hl : sptLookup d funs = none) :
     callGraph funs n ns total (.call ret (some d) args handler) = .unknown := by
-  rw [callGraph, if_neg hc]
+  rw [callGraph, ite_eq_right hc]
   split <;> simp_all
 
 /-- The tail-call (`ret = NONE`) clause of `call_graph` for a present callee
@@ -149,7 +149,7 @@ theorem callGraph_call_tail {width : Nat} [NeZero width]
     callGraph funs n ns total (.call none (some d) args handler) =
       if ns.length < total then mkBranch (.call d .leaf) (callGraph funs d (d :: ns) total body)
       else .leaf := by
-  rw [callGraph, if_neg (by simpa using hc)]
+  rw [callGraph, ite_eq_right (by simpa using hc)]
   split <;> simp_all
 
 /-- The returning (`ret = SOME`) clause of `call_graph` for a present callee
@@ -170,7 +170,7 @@ theorem callGraph_call_ret {width : Nat} [NeZero width]
           .branch (.call n (.const 3 (.call d .leaf)))
             (mkBranch (.call n (.const 3 (callGraph (sptDelete d funs) d [d] total body)))
               (mkBranch (callGraph funs n ns total p) (callGraph funs n ns total retProg))) := by
-  rw [callGraph, if_neg (by simp)]
+  rw [callGraph, ite_eq_right (by simp)]
   cases handler <;> split <;> simp_all
 
 /-- Full original `option_le_max_depth_graph`:
@@ -197,7 +197,7 @@ theorem optionLe_maxDepth_graph {width : Nat} [NeZero width] (ss : Spt Nat) :
   | case3 => intro ns2 _; simp [callGraph, maxDepth, optionLe]
   | case4 funs n ns total ret _ handler d hd =>
       intro ns2 _
-      rw [callGraph, if_pos hd]
+      rw [callGraph, ite_eq_left hd]
       exact optionLe_some_zero _
   | case5 funs n ns total ret _ handler d hd hl =>
       intro ns2 hs
@@ -208,8 +208,8 @@ theorem optionLe_maxDepth_graph {width : Nat} [NeZero width] (ss : Spt Nat) :
       intro ns2 hs
       have hdn : d ∉ ns := fun h => hd ⟨h, rfl⟩
       have hd2n : d ∉ ns2 := fun h => hdn (hs.1 d h)
-      rw [callGraph_call_tail hdn hl, callGraph_call_tail hd2n hl, if_pos hlt,
-        if_pos (Nat.lt_of_le_of_lt hs.2 hlt)]
+      rw [callGraph_call_tail hdn hl, callGraph_call_tail hd2n hl, ite_eq_left hlt,
+        ite_eq_left (Nat.lt_of_le_of_lt hs.2 hlt)]
       simp only [maxDepth_mkBranch, maxDepth]
       apply optionLe_max_mono (optionLe_refl _)
       apply ih (d :: ns2)
@@ -219,7 +219,7 @@ theorem optionLe_maxDepth_graph {width : Nat} [NeZero width] (ss : Spt Nat) :
       · exact List.mem_cons_of_mem _ (hs.1 x hx)
   | case7 funs n ns total _ handler d fst body hl hlt hd =>
       intro ns2 _
-      rw [callGraph_call_tail (fun h => hd ⟨h, rfl⟩) hl, if_neg hlt]
+      rw [callGraph_call_tail (fun h => hd ⟨h, rfl⟩) hl, ite_eq_right hlt]
       exact optionLe_some_zero _
   | case8 funs n ns total _ d fst body hl r1 r2 retProg r3 r4 nf hd ihb ihr =>
       intro ns2 hs

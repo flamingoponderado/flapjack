@@ -11,7 +11,7 @@ private def failedStart (s : Flapjack.Compiler.Backend.LabSem.State 64 Nat Nat) 
 example (s : Flapjack.Compiler.Backend.LabSem.State 64 Nat Nat) :
     semantics (failedStart s) = .fail := by
   unfold semantics
-  rw [if_pos]
+  rw [ite_eq_left]
   exact ⟨1, by simp [failedStart, evaluate, asmFetch, asmFetchAux]⟩
 
 private def haltStart (s : Flapjack.Compiler.Backend.LabSem.State 64 Nat Nat)
@@ -44,7 +44,7 @@ private theorem haltSemantics (s : Flapjack.Compiler.Backend.LabSem.State 64 Nat
     simp only [haltEval]
     rintro ⟨k, h⟩
     split at h <;> cases h
-  rw [if_neg hn]
+  rw [ite_eq_right hn]
   have hc : holOptionSome (fun result => ∃ k next outcome,
       evaluate { haltStart s value with clock := k } = (.halt outcome, next) ∧
       result = HolBehaviour.terminate outcome next.ffi.ioEvents) =
@@ -94,7 +94,7 @@ example (s : Flapjack.Compiler.Backend.LabSem.State 64 Nat Nat) :
     simp only [loopEval]
     rintro ⟨k, h⟩
     cases h
-  rw [if_neg hn]
+  rw [ite_eq_right hn]
   have hc : holOptionSome (fun result => ∃ k next outcome,
       evaluate { loopStart s with clock := k } = (.halt outcome, next) ∧
       result = HolBehaviour.terminate outcome next.ffi.ioEvents) = none := by

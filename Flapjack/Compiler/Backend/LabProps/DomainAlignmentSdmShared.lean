@@ -26,13 +26,13 @@ private theorem sharedGuard {width : Nat} [NeZero width] (hw : goodDimindex widt
     (if size = 0 then x.toNat % (width / 8) == 0 && domain x
       else domain (riscvByteAlignHOL x)) := by
   by_cases hn : size = 0
-  · simp only [hn, if_true]
+  · simp only [hn, ite_true]
     by_cases hx : x.toNat % (width / 8) = 0
     · have ha : holByteAligned x = true := (holAligned_word_iff hw x).2 hx
       simp [hx, ha]
     · have hb : (x.toNat % (width / 8) == 0) = false := by simpa using hx
       simp only [hb, Bool.false_and]
-  · simp only [hn, if_false]
+  · simp only [hn, ite_false]
     have hm : (holByteAlign x).toNat % (width / 8) = 0 := by
       rw [holByteAlign_toNat hw]
       exact Nat.mul_mod_left _ _

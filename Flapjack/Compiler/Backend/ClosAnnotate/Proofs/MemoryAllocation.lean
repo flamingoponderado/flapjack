@@ -73,7 +73,7 @@ theorem primitiveSimulation_refArray {C F : Type} :
             refine ⟨.val (.refPtr true index,
               { target with refs := target.refs.updateEq (index, .valueArray (List.replicate count.toNat nextValue)) }), ?_, ?_⟩
             · simp [doApp, applyMemory, negative, fresh, index]
-            · simp only [doApp, applyMemory, if_neg negative, AppResultRel]
+            · simp only [doApp, applyMemory, ite_eq_right negative, AppResultRel]
               refine ⟨.refPtr true index, ?_⟩
               simpa [index, states.2.1] using nextStates
         | _ =>
@@ -119,7 +119,7 @@ theorem primitiveSimulation_refByte {C F : Type} (flag : Bool) :
                   refine ⟨.val (.refPtr true index,
                     { target with refs := target.refs.updateEq (index, .byteArray bytes) }), ?_, ?_⟩
                   · simp [doApp, applyMemory, negative, decoded, fresh, index, bytes]
-                  · simp only [doApp, applyMemory, if_neg negative, decoded, AppResultRel]
+                  · simp only [doApp, applyMemory, ite_eq_right negative, decoded, AppResultRel]
                     refine ⟨.refPtr true index, ?_⟩
                     simpa [index, bytes, states.2.1] using nextStates
             | _ =>

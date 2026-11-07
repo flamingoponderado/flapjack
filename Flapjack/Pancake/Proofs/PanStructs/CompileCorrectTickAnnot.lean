@@ -88,7 +88,7 @@ theorem compileCorrectTick {width : Nat} {σ : Type} [NeZero width]
   rcases h with ⟨heval, _, hlocal, hglobal, _, _, _, hlocals, hglobals, _⟩
   rw [PanSemStateFiniteExact.evaluateHOLFiniteState_tick] at heval
   by_cases hc : source.clock = 0
-  · simp only [hc, if_true, Prod.mk.injEq] at heval
+  · simp only [hc, ite_true, Prod.mk.injEq] at heval
     rcases heval with ⟨hr, hp⟩
     subst res
     subst post
@@ -102,7 +102,7 @@ theorem compileCorrectTick {width : Nat} {σ : Type} [NeZero width]
     · simp [isContResHOL]
     · simp [resVsHOL]
     · simp [resVsHOL]
-  · simp only [hc, if_false, Prod.mk.injEq] at heval
+  · simp only [hc, ite_false, Prod.mk.injEq] at heval
     rcases heval with ⟨hr, hp⟩
     subst res
     subst post

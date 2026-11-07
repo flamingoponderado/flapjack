@@ -244,7 +244,7 @@ theorem evaluate_iAssign_install_outcome {C F : Type}
   have keeps : ∀ key ∈ operands ++ live ++ corr, key ≠ dest →
       sptLookup key targetNext.locals = sptLookup key target.locals := by
     intro key member different
-    rw [lookupOther key different, if_pos member]
+    rw [lookupOther key different, ite_eq_left member]
   have varsNew : DataProps.varCorr env corr (sptMap dataToBviValue targetNext.locals) := by
     apply varCorr_of_lookup_eq dataToBviValue target.locals targetNext.locals corr env vars
     intro key member
@@ -286,7 +286,7 @@ theorem evaluate_iAssign_install_outcome {C F : Type}
     exact lookup
   · intro available
     by_cases h : target.handler < target.stack.length
-    · simp only [DataSem.jumpExc, stack, handler, if_pos h] at available ⊢
+    · simp only [DataSem.jumpExc, stack, handler, ite_eq_left h] at available ⊢
       cases frame : target.stack.drop (target.stack.length - (target.handler + 1)) with
       | nil => simp [frame] at available
       | cons head rest => cases head <;> simp_all

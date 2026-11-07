@@ -49,7 +49,7 @@ theorem step_sem_save {α β : Type} [DecidableEq α]
   rw [savedSource]
   by_cases same : register = d
   · simp [updateEnv, same]
-  · simp only [updateEnv, if_neg same]
+  · simp only [updateEnv, ite_eq_right same]
     apply parsem_change_env remaining base saved register
     constructor
     · intro _fresh

@@ -38,12 +38,12 @@ theorem selectRegAllocCorrect :
   by_cases h : 4 ≤ alg
   · obtain ⟨col, livein, flivein, hrun, hcc, hdom, hsup, hfor⟩ :=
       LinearScan.linearScanRegAllocCorrect k heu_moves tree forced hforced
-    exact ⟨col, livein, flivein, by rw [selectRegAlloc, if_pos h]; exact hrun, hcc, hdom, hsup,
+    exact ⟨col, livein, flivein, by rw [selectRegAlloc, ite_eq_left h]; exact hrun, hcc, hdom, hsup,
       hfor⟩
   · obtain ⟨col, livein, flivein, hrun, hcc, hdom, hsup, hfor⟩ :=
       regAllocCorrect (if alg ≤ 1 then .Simple else .IRC) spillcosts k heu_moves tree forced fs
         hforced
-    exact ⟨col, livein, flivein, by rw [selectRegAlloc, if_neg h]; exact hrun, hcc, hdom, hsup,
+    exact ⟨col, livein, flivein, by rw [selectRegAlloc, ite_eq_right h]; exact hrun, hcc, hdom, hsup,
       hfor⟩
 
 end Flapjack.WordAlloc

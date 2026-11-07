@@ -197,7 +197,7 @@ theorem memStore_rel {width : Nat} [NeZero width] {C F : Type}
   · rename_i hd
     simp only [Option.some.injEq] at h
     subst h
-    rw [if_pos (by rw [hr.mdomain]; exact hd), ← hr.memory, hr.withMemory]
+    rw [ite_eq_left (by rw [hr.mdomain]; exact hd), ← hr.memory, hr.withMemory]
     exact ⟨by simp [hr.memory], rfl⟩
   · simp at h
 
@@ -250,7 +250,7 @@ theorem instInteger_rel {width : Nat} [NeZero width] {C F : Type}
             rw [getVars_rel hr hv]
             split at h
             · rename_i hq
-              simp only [if_pos hq, Option.some.injEq] at h ⊢
+              simp only [ite_eq_left hq, Option.some.injEq] at h ⊢
               subst h
               exact ⟨_, hr.setVar1 _ _, submap_fupdate_both hr.regs⟩
             · simp at h
@@ -271,7 +271,7 @@ theorem instInteger_rel {width : Nat} [NeZero width] {C F : Type}
             rw [getVars_rel hr hv]
             split at h
             · rename_i hq
-              simp only [if_pos hq, Option.some.injEq] at h ⊢
+              simp only [ite_eq_left hq, Option.some.injEq] at h ⊢
               subst h
               exact ⟨_, hr.setVar2 _ _ _ _, submap_fupdate_both (submap_fupdate_both hr.regs)⟩
             · simp at h

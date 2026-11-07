@@ -147,13 +147,13 @@ theorem impInitStoreOk {width : Nat} [NeZero width] {C F : Type} {maxHeap : Nat}
       rw [StackRemove.Proofs.WordListMemory.wordListExistsAdd, ← h26]
       exact h32
     refine ⟨len, cur, by omega, ?_⟩
-    simp only [HolFiniteMapExact.eraseEq, FDOMSUB_HOL, reduceCtorEq, if_false]
+    simp only [HolFiniteMapExact.eraseEq, FDOMSUB_HOL, reduceCtorEq, ite_false]
     refine ⟨h10, h11, h13, h1, by rw [h5, h4], h2, by rw [h4, h26]; rfl, ?_,
       by rw [h7, BitVec.mul_comm]; rfl, h14, h15, h16, h17, h19, h20, hmem, h27⟩
     rw [h3]
     rcases c1.gcKind <;> simp [StackToLab.isGenGc, h26] <;> rfl
   · refine ⟨0, 0, Nat.zero_le _, ?_⟩
-    simp only [HolFiniteMapExact.eraseEq, FDOMSUB_HOL, reduceCtorEq, if_false,
+    simp only [HolFiniteMapExact.eraseEq, FDOMSUB_HOL, reduceCtorEq, ite_false,
       HolFiniteMapExact.lookup_updateListEq]
     refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, trivial, trivial, ?_, ?_⟩
     all_goals try (simp [FUPDATE_LIST_HOL, FUPDATE_HOL, StackRemove.storeList,

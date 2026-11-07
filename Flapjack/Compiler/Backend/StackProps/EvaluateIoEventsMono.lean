@@ -160,16 +160,16 @@ private theorem eventsMeasure {width : Nat} [NeZero width] {C F : Type} :
     dsimp only at h
     have eventsPrefix := ih _ (loop_body_measure_lt body s) body s rfl bodyResult middle bodyRun
     by_cases continues : contLoop bodyResult = true
-    · rw [if_pos continues] at h
+    · rw [ite_eq_left continues] at h
       by_cases zero : middle.clock = 0
-      · rw [if_pos zero] at h
+      · rw [ite_eq_left zero] at h
         exact (Prod.mk.inj h).2 ▸ eventsPrefix
-      · rw [if_neg zero] at h
+      · rw [ite_eq_right zero] at h
         have smaller := loop_reentry_measure_lt body s (evaluate (body,s))
           (by rw [StackSemEvaluateClock.fixClockEvaluate, bodyRun]; exact zero)
         rw [StackSemEvaluateClock.fixClockEvaluate, bodyRun] at smaller
         exact eventsPrefix.trans (ih _ smaller (.loop body) (decClock middle) rfl r s' h)
-    · rw [if_neg continues] at h
+    · rw [ite_eq_right continues] at h
       exact (Prod.mk.inj h).2 ▸ eventsPrefix
   case jumpLower r1 r2 dest =>
     rw [evaluate_jumpLower] at h
@@ -236,8 +236,8 @@ private theorem eventsMeasure {width : Nat} [NeZero width] {C F : Type} :
             have hc : s.ffi.ioEvents <+: t1.ffi.ioEvents :=
               ih _ (callee_measure_lt prog _ s (by assumption)) prog _ rfl r1 t1 h1
             by_cases hb : StackSemControl.badFunReturn r1 = true
-            · simp only [hb, if_true] at h; exact leaf _ _ h hc
-            · simp only [hb, Bool.false_eq_true, if_false] at h; exact leaf _ _ h hc
+            · simp only [hb, ite_true] at h; exact leaf _ _ h hc
+            · simp only [hb, Bool.false_eq_true, ite_false] at h; exact leaf _ _ h hc
     | some rr =>
       obtain ⟨retH, link, l1, l2⟩ := rr
       dsimp only at h
@@ -260,16 +260,16 @@ private theorem eventsMeasure {width : Nat} [NeZero width] {C F : Type} :
           rcases r1 with _ | ⟨x⟩ | ⟨x⟩ | _ | _ | _ | _ | _ | _
           all_goals try (exact leaf _ _ h hc)
           · by_cases hx : x = .loc l1 l2
-            · simp only [hx, ne_eq, not_true_eq_false, if_false] at h
+            · simp only [hx, ne_eq, not_true_eq_false, ite_false] at h
               exact hc.trans (ih _ (hlt retH) retH _ rfl r s' h)
-            · simp only [hx, ne_eq, not_false_eq_true, if_true] at h
+            · simp only [hx, ne_eq, not_false_eq_true, ite_true] at h
               exact leaf _ _ h hc
           · rcases handler with _ | ⟨hp, hl1, hl2⟩
             · exact leaf _ _ h hc
             · by_cases hx : x = .loc hl1 hl2
-              · simp only [hx, ne_eq, not_true_eq_false, if_false] at h
+              · simp only [hx, ne_eq, not_true_eq_false, ite_false] at h
                 exact hc.trans (ih _ (hlt hp) hp _ rfl r s' h)
-              · simp only [hx, ne_eq, not_false_eq_true, if_true] at h
+              · simp only [hx, ne_eq, not_false_eq_true, ite_true] at h
                 exact leaf _ _ h hc
 
 /-- Canonical codec for the actual imported native evaluator state. -/

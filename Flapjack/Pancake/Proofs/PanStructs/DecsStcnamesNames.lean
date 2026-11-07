@@ -20,7 +20,7 @@ theorem structContextLookupHOL_none_not_mem (name : MlS) :
       simp only [structContextLookupHOL] at h
       by_cases hc : name = candidate
       · simp [hc] at h
-      · simp only [hc, if_false] at h
+      · simp only [hc, ite_false] at h
         have := structContextLookupHOL_none_not_mem name rest h
         simp only [List.map_cons, List.mem_cons, not_or]
         exact ⟨hc, this⟩

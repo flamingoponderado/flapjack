@@ -73,7 +73,7 @@ theorem wordGenGcPartialMoveRootsBitmapsCode_run {width : Nat} [NeZero width] {C
   have hpow : width < 2 ^ width := Nat.lt_two_pow_self
   by_cases h0w : hd = .word 0
   · subst h0w
-    simp only [if_true, Prod.mk.injEq, decide_eq_true_eq] at hm
+    simp only [ite_true, Prod.mk.injEq, decide_eq_true_eq] at hm
     obtain ⟨rfl, rfl, rfl, rfl, rfl⟩ := hm
     obtain ⟨r0, hr0⟩ := Option.isSome_iff_exists.1 h0
     obtain ⟨r1, hr1⟩ := Option.isSome_iff_exists.1 h1
@@ -115,7 +115,7 @@ theorem wordGenGcPartialMoveRootsBitmapsCode_run {width : Nat} [NeZero width] {C
     by_cases k9 : k = 9
     · subst k9; simp [h9]
     simp [k0, k1, k2, k3, k4, k5, k6, k7, k8, k9]
-  simp only [h0w, if_false] at hm
+  simp only [h0w, ite_false] at hm
   generalize hbm : wordGenGcPartialMoveBitmaps conf (hd, ws, s.bitmaps, i, pa, curr, s.memory,
     s.mdomain, gs, rs) = R at hm
   rcases R with _ | ⟨new, st, i2, pa2, m2, c2⟩
@@ -245,7 +245,7 @@ theorem wordGenGcPartialMoveRootsBitmapsCode_run {width : Nat} [NeZero width] {C
   have hmin : min (s.clock + (ckB + ck' + 1)) (s3.clock + (ck' + 1)) = s3.clock + (ck' + 1) := by
     omega
   have hck : s3.clock + (ck' + 1) ≠ 0 := by omega
-  simp only [fixClock, setVar, contLoop, hmin, if_true, hck, if_false, decClock,
+  simp only [fixClock, setVar, contLoop, hmin, ite_true, hck, ite_false, decClock,
     ← wordGenGcPartialMoveRootsBitmapsCode_eq]
   refine (congrArg (fun st => evaluate (wordGenGcPartialMoveRootsBitmapsCode conf, st)) ?_).trans
     (hr.trans ?_)

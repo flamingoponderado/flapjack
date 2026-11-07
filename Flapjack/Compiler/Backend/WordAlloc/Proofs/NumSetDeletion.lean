@@ -53,12 +53,12 @@ theorem numsetListInsertEqUnion :
   have hn := congrFun hd n
   unfold sptDomain at hn
   by_cases hm : n ∈ ls
-  · rw [if_pos hm]
+  · rw [ite_eq_left hm]
     have hs : (sptLookup n t').isSome = true := by rw [hn]; exact hm
     cases h : sptLookup n t' with
     | none => rw [h] at hs; cases hs
     | some u => rfl
-  · rw [if_neg hm]
+  · rw [ite_eq_right hm]
     have hs : (sptLookup n t').isSome = false := by
       cases h : (sptLookup n t').isSome
       · rfl

@@ -96,9 +96,9 @@ theorem card_updateEq [DecidableEq α] (map : HolFiniteMapExact α β)
       if map.lookup key ≠ none then map.card else 1 + map.card := by
   classical
   by_cases h : map.lookup key = none
-  · rw [if_neg (not_not_intro h), card_updateEq_fresh map key value h]
+  · rw [ite_eq_right (not_not_intro h), card_updateEq_fresh map key value h]
     omega
-  · rw [if_pos h, card_updateEq_existing map key value h]
+  · rw [ite_eq_left h, card_updateEq_existing map key value h]
 
 /-- Raw lookup codec for the standard canonical finite-map parameter witness;
 Flapjack infrastructure, not a separate HOL declaration. -/

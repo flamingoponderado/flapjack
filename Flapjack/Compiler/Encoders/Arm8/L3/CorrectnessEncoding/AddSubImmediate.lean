@@ -51,7 +51,7 @@ theorem arm8Encode_addSubImmediate_low (op : Bool) (imm : BitVec 64) (rn rd : Bi
   rw [show Encode (.Data (.«AddSubImmediate@64» (1, op, false, imm, rn, rd))) =
       e_data (.«AddSubImmediate@64» (1, op, false, imm, rn, rd)) from rfl,
     arm8EData_addSubImmediate, hc]
-  rw [if_pos rfl]
+  rw [ite_eq_left rfl]
 
 
 /-- `Encode` of an immediate whose twelve bits are shifted by twelve. -/
@@ -64,8 +64,8 @@ theorem arm8Encode_addSubImmediate_high (op : Bool) (imm : BitVec 64) (rn rd : B
     rw [beq_iff_eq]; exact hhigh
   rw [show Encode (.Data (.«AddSubImmediate@64» (1, op, false, imm, rn, rd))) =
       e_data (.«AddSubImmediate@64» (1, op, false, imm, rn, rd)) from rfl,
-    arm8EData_addSubImmediate, hc2, if_neg hne]
-  rw [if_pos rfl]
+    arm8EData_addSubImmediate, hc2, ite_eq_right hne]
+  rw [ite_eq_left rfl]
 
 
 /-- Twelve-bit roundtrip through the `getElem` bit list used by `Decode`. -/
@@ -172,7 +172,7 @@ theorem arm8Run_addSubImmediate (op : Bool) (imm : BitVec 64) (rn rd : BitVec 5)
     cases h : (rd == (31 : BitVec 5))
     · rfl
     · exact absurd (by simpa using h) hrd
-  simp only [Run, «dfn'AddSubImmediate», SetTheFlags, Bool.false_eq_true, if_false]
+  simp only [Run, «dfn'AddSubImmediate», SetTheFlags, Bool.false_eq_true, ite_false]
   cases op
   · simp_all [arm8AddWithCarry_add]
   · simp_all [arm8AddWithCarry_sub]
@@ -297,7 +297,7 @@ theorem arm8Encode_addSubImmediateS_low (op : Bool) (imm : BitVec 64) (rn rd : B
   rw [show Encode (.Data (.«AddSubImmediate@64» (1, op, true, imm, rn, rd))) =
       e_data (.«AddSubImmediate@64» (1, op, true, imm, rn, rd)) from rfl,
     arm8EData_addSubImmediateS, hc]
-  rw [if_pos rfl]
+  rw [ite_eq_left rfl]
 
 /-- `Encode` of a set-flags immediate whose twelve bits are shifted by twelve. -/
 theorem arm8Encode_addSubImmediateS_high (op : Bool) (imm : BitVec 64) (rn rd : BitVec 5)
@@ -309,8 +309,8 @@ theorem arm8Encode_addSubImmediateS_high (op : Bool) (imm : BitVec 64) (rn rd : 
     rw [beq_iff_eq]; exact hhigh
   rw [show Encode (.Data (.«AddSubImmediate@64» (1, op, true, imm, rn, rd))) =
       e_data (.«AddSubImmediate@64» (1, op, true, imm, rn, rd)) from rfl,
-    arm8EData_addSubImmediateS, hc2, if_neg hne]
-  rw [if_pos rfl]
+    arm8EData_addSubImmediateS, hc2, ite_eq_right hne]
+  rw [ite_eq_left rfl]
 
 /-- The rendered `Decode` inverts the set-flags low-immediate word. -/
 theorem arm8Decode_addSubImmediateS_low (op : Bool) (imm : BitVec 64) (rn rd : BitVec 5)

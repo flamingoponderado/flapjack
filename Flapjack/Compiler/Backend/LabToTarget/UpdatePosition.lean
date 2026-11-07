@@ -81,7 +81,7 @@ theorem linesUpdLabLen_evenLength {width : Nat} [NeZero width]
   by_cases hn : lines = []
   · subst lines
     simpa [linesUpdLabLen, List.map_reverse] using h.2
-  · simp only [if_neg hn] at h
+  · simp only [ite_eq_right hn] at h
     have hf := finalPositionEven lines pos acc hn h.1
     have hc := updateConservation lines pos acc
     have hp := h.2

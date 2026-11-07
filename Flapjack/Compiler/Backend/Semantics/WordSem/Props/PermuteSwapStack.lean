@@ -74,7 +74,7 @@ theorem permListRearrange {α : Type} :
     intro a
     have := memListRearrange xs a f
     unfold wordSemListRearrange at this
-    rw [dif_pos h] at this
+    rw [dite_eq_left h] at this
     exact this.symm
   · exact List.Perm.refl _
 
@@ -91,7 +91,7 @@ theorem sptAListLookup_of_mem {α : Type} :
       · have hne : x ≠ k := by
           intro hx
           exact hnd.1 ⟨(x, y), hm, hx⟩
-        simp only [hne, if_false]
+        simp only [hne, ite_false]
         exact sptAListLookup_of_mem xs x y hnd.2 hm
 
 /-- Exact HOL `ALL_DISTINCT_MEM_IMP_ALOOKUP_SOME` (`wordPropsScript.sml:72-81`). -/
@@ -119,7 +119,7 @@ theorem sptAListLookup_none_of_not_mem {α : Type} :
   | [], _, _ => rfl
   | (k, v) :: xs, x, h => by
       simp only [List.map_cons, List.mem_cons, not_or] at h
-      simp only [sptAListLookup, h.1, if_false]
+      simp only [sptAListLookup, h.1, ite_false]
       exact sptAListLookup_none_of_not_mem xs x h.2
 
 /-- Distinct-key permutations have the same `ALOOKUP`. -/
@@ -303,7 +303,7 @@ theorem jumpExc_swap (s : WordSemStateFiniteExact width C F) (k : Nat → Nat �
   unfold jumpExc
   simp only [hlen]
   by_cases hh : s.handler < s.stack.length
-  · simp only [hh, if_true]
+  · simp only [hh, ite_true]
     have hl := listRelLastN permStack xs s.stack (s.handler + 1) ⟨by omega, hxs⟩
     generalize wordSemLastN (s.handler + 1) xs = ys at hl
     generalize wordSemLastN (s.handler + 1) s.stack = zs at hl
@@ -323,7 +323,7 @@ theorem jumpExc_swap (s : WordSemStateFiniteExact width C F) (k : Nat → Nat �
         simp only [Option.some.injEq, Prod.mk.injEq] at h
         obtain ⟨rfl, rfl, rfl⟩ := h
         exact ⟨as, by rw [he], hrest⟩
-  · simp only [hh, if_false]
+  · simp only [hh, ite_false]
     exact ⟨fun _ => by simp, fun _ _ _ h => (by simp at h)⟩
 
 theorem popEnv_swap (s : WordSemStateFiniteExact width C F) (k : Nat → Nat → Nat)
@@ -508,9 +508,9 @@ theorem swap_aux :
       simp only [noAllocSubprogsHOL, noInstallSubprogsHOL, notCreatedSubprogsWithMemOp,
         Bool.true_and] at hna hni
       by_cases hz : s.termdep = 0
-      · simp only [hz, dite_true, if_true]
+      · simp only [hz, dite_true, ite_true]
         exact ⟨k, xs, rfl, hxs⟩
-      · simp only [hz, dite_false, if_false]
+      · simp only [hz, dite_false, ite_false]
         obtain ⟨k1, xs1, he, hrel⟩ := swap_aux q { s with
             clock := wordSemMustTerminateLimit width
             termdep := s.termdep - 1 } k xs hxs hna hni hca hci
@@ -577,18 +577,18 @@ theorem swap_aux :
       have hcl := evaluate_clock c _ rb s1 hb
       simp only
       by_cases hcont : wordSemContLoop rb = true
-      · simp only [hcont, if_true]
+      · simp only [hcont, ite_true]
         by_cases hz : s1.clock = 0
         · have hz' : ({ s1 with permute := k1, stack := xs1 } :
               WordSemStateFiniteExact width C F).clock = 0 := hz
-          simp only [hz, hz', dite_true, if_true]
+          simp only [hz, hz', dite_true, ite_true]
           exact ⟨k1, [], by simp [flushState, hz], .nil⟩
         · have hz' : ¬ ({ s1 with permute := k1, stack := xs1 } :
               WordSemStateFiniteExact width C F).clock = 0 := hz
-          simp only [hz, hz', dite_false, if_false, wordSemSTOP]
+          simp only [hz, hz', dite_false, ite_false, wordSemSTOP]
           exact swap_aux (.loop names c exitNames) (decClock s1) k1 xs1 hrel hna hni
             (hcode ▸ hca) (hcode ▸ hci)
-      · simp only [hcont, Bool.false_eq_true, if_false]
+      · simp only [hcont, Bool.false_eq_true, ite_false]
         split
         · rw [cutState_swap]
           rcases hce : cutState (exitNames, .ln) s1 with _ | s2
@@ -618,8 +618,8 @@ theorem swap_aux :
       · exact ⟨k, xs, rfl, hxs⟩
       simp only
       by_cases hbad : wordSemBadDestArgs dest args = true
-      · simp only [hbad, if_true]; exact ⟨k, xs, rfl, hxs⟩
-      simp only [hbad, Bool.false_eq_true, if_false]
+      · simp only [hbad, ite_true]; exact ⟨k, xs, rfl, hxs⟩
+      simp only [hbad, Bool.false_eq_true, ite_false]
       rcases hf : wordSemFindCode dest (wordSemAddRetLoc ret xs0) s.code s.stackSize with
         _ | ⟨args1, prog, ss⟩
       · exact ⟨k, xs, rfl, hxs⟩
@@ -637,11 +637,11 @@ theorem swap_aux :
           by_cases hz : s.clock = 0
           · have hz' : ({ s with permute := k, stack := xs } :
                 WordSemStateFiniteExact width C F).clock = 0 := hz
-            rw [if_pos hz', if_pos hz]
+            rw [ite_eq_left hz', ite_eq_left hz]
             exact ⟨k, [], rfl, .nil⟩
           have hz' : ¬ ({ s with permute := k, stack := xs } :
               WordSemStateFiniteExact width C F).clock = 0 := hz
-          simp only [hz, hz', dite_false, if_false]
+          simp only [hz, hz', dite_false, ite_false]
           rw [hdec, callEnv_swap (decClock s) k xs hxs]
           obtain ⟨k2, xs2, he, hrel⟩ := swap_aux prog (callEnv args1 ss (decClock s)) k xs hxs
             hpa hpi hca hci
@@ -656,8 +656,8 @@ theorem swap_aux :
         obtain ⟨n, names, retHandler, l1, l2⟩ := rv
         simp only
         by_cases hdc : sptDomainEmpty names.fst ∨ ¬ n.Nodup
-        · simp only [hdc, if_true]; exact ⟨k, xs, rfl, hxs⟩
-        simp only [hdc, if_false]
+        · simp only [hdc, ite_true]; exact ⟨k, xs, rfl, hxs⟩
+        simp only [hdc, ite_false]
         have hl : ({ s with permute := k, stack := xs } :
             WordSemStateFiniteExact width C F).locals = s.locals := rfl
         rw [hl]
@@ -668,7 +668,7 @@ theorem swap_aux :
         by_cases hz : s.clock = 0
         · have hz' : ({ s with permute := k, stack := xs } :
               WordSemStateFiniteExact width C F).clock = 0 := hz
-          rw [if_pos hz', if_pos hz]
+          rw [ite_eq_left hz', ite_eq_left hz]
           obtain ⟨k0, xs0', hpe0, hrel0⟩ := pushEnv_swap s k xs hxs envs handler
           have hsm : (callEnv args1 ss (pushEnv envs handler
               ({ s with permute := k, stack := xs } : WordSemStateFiniteExact width C F))).stackMax =
@@ -678,7 +678,7 @@ theorem swap_aux :
           exact ⟨k, [], rfl, .nil⟩
         have hz' : ¬ ({ s with permute := k, stack := xs } :
             WordSemStateFiniteExact width C F).clock = 0 := hz
-        simp only [hz, hz', dite_false, if_false]
+        simp only [hz, hz', dite_false, ite_false]
         rw [hdec, hpe, callEnv_swap _ k1 xs1 hrel1]
         have hcpre : (callEnv args1 ss (pushEnv envs handler (decClock s))).code = s.code :=
           code_pushEnv envs handler _
@@ -695,8 +695,8 @@ theorem swap_aux :
         rcases rc with _ | ⟨x, ys⟩ | ⟨x, y⟩ | kk | kk | _ | _ | _ | _
         · exact ⟨k2, xs2, rfl, hrel2⟩
         · by_cases hx : x ≠ WordLocW.loc l1 l2 ∨ ys.length ≠ n.length
-          · simp only [hx, if_true]; exact ⟨k2, xs2, rfl, hrel2⟩
-          simp only [hx, if_false]
+          · simp only [hx, ite_true]; exact ⟨k2, xs2, rfl, hrel2⟩
+          simp only [hx, ite_false]
           have hp := popEnv_swap s2 k2 xs2 hrel2
           rcases hpop : popEnv s2 with _ | s1
           · rw [hp.1 hpop]; exact ⟨k2, xs2, rfl, hrel2⟩

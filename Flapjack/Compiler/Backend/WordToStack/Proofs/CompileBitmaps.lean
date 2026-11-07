@@ -24,7 +24,7 @@ theorem compileWordToStackBitmaps {width : Nat} [NeZero width]
      | [] => False
      | head :: _ => (4 : BitVec width) = head) ∧
     c2.bitmapsLength = bitmaps.length := by
-  simp only [compileNative, Bool.false_eq_true, if_false] at run
+  simp only [compileNative, Bool.false_eq_true, ite_false] at run
   rcases compiled : compileWordToStackNative c false (c.regCount - (5 + c.avoidRegs.length)) p
       (.list [4], 1) with ⟨bodies, frames, output, nextIndex⟩
   rw [compiled] at run

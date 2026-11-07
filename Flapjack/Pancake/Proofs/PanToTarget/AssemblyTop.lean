@@ -63,7 +63,7 @@ theorem panToTargetCompileSemanticsStatement_proof {width : Nat} [NeZero width] 
     halloc hcode hglobals hlocals heids heshapes hfail
   have hlabne := extendPrime_singleton_ne_fail _ _ _ hres hfail
   have hb' := hA4 (fun h => hlabne h.symm) b hb
-  simp only [extendWithResourceLimitPrimeHOL, if_true] at hb'
+  simp only [extendWithResourceLimitPrimeHOL, ite_true] at hb'
   rw [hb']
   exact hres
 

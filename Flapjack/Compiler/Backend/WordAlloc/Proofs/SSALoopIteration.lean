@@ -109,7 +109,7 @@ private theorem targetEntryCutExists {α : Type} (ssa : Spt Nat) (names : Spt Un
     simp at member
   exact ⟨sptUnion (sptInter target .ln)
     (sptInter target (Flapjack.WordAlloc.applyNummapKey (optionLookup ssa) names)),
-    by simp only [wordSemCutEnv,wordSemCutEnvs,wordSemCutNames,renamedSubset,emptySubset,if_pos]; rfl⟩
+    by simp only [wordSemCutEnv,wordSemCutEnvs,wordSemCutNames,renamedSubset,emptySubset,ite_eq_left]; rfl⟩
 
 /-- Original source entry-cut failure branch; permutation changes no locals. -/
 private theorem sourceEntryCutError {width : Nat} [NeZero width] {C F : Type}
@@ -162,9 +162,9 @@ private theorem evaluateBodyFinal {width : Nat} [NeZero width] {C F : Type}
   classical
   by_cases skip : moves = .skip
   · subst moves
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     cases result <;> simp only [run,WordSemStateFiniteExact.evaluate_def_rebound]
-  · rw [if_neg skip]
+  · rw [ite_eq_right skip]
     simp only [WordSemStateFiniteExact.evaluate_def_rebound]
     rw [run]
     cases result <;> rfl
@@ -270,7 +270,7 @@ private theorem loopTerminalRun {width : Nat} [NeZero width] {C F : Type}
     WordSemStateFiniteExact.evaluate (.loop names body exits) initial =
       (wordSemExitLoop result,after) := by
   rw [loopAfterBody initial before after names exits body result cut run]
-  simp only [terminal,Bool.false_eq_true,if_false]
+  simp only [terminal,Bool.false_eq_true,ite_false]
 
 /-- Private factoring of the existing SSA simulation's result-sensitive locals
 conclusion, with no separately claimed HOL original or altered semantics. -/
@@ -382,7 +382,7 @@ private theorem sourceRecursiveCutError {width : Nat} [NeZero width] {C F : Type
     WordSemStateFiniteExact.evaluate (.loop names body exits) initial =
       (some .error,WordSemStateFiniteExact.decClock after) := by
   rw [loopAfterBody initial before after names exits body result cut run]
-  simp only [continuing,if_true,nonzero,if_false,wordSemSTOP]
+  simp only [continuing,ite_true,nonzero,ite_false,wordSemSTOP]
   have failed : WordSemStateFiniteExact.cutState (names,.ln)
       (WordSemStateFiniteExact.decClock after) = none := by
     change (match wordSemCutEnv (names,.ln) after.locals with
@@ -419,7 +419,7 @@ private theorem stitchRecursiveRun {width : Nat} [NeZero width] {C F : Type}
     rw [cut]
   refine ⟨permutation,?_⟩
   rw [loopAfterBody _ _ _ names exits body bodyResult stateCut swappedRun]
-  simp only [continuing,if_true,nonzero,if_false,wordSemSTOP]
+  simp only [continuing,ite_true,nonzero,ite_false,wordSemSTOP]
   exact recursiveRun
 
 /-- Extract the original body-IH existential into actual compiled-body runs.
@@ -445,7 +445,7 @@ private theorem bodySimulationRun {width : Nat} [NeZero width] {C F : Type}
   by_cases error : (WordSemStateFiniteExact.evaluate body {source with permute := permutation}).1 = some .error
   · exact Or.inl error
   · right
-    simp only [error,if_false,produced] at related
+    simp only [error,ite_false,produced] at related
     refine ⟨related.1,related.2.1,?_⟩
     generalize resultEq : (WordSemStateFiniteExact.evaluate body {source with permute := permutation}).1 = result at related ⊢
     cases result with
@@ -655,7 +655,7 @@ private theorem loopBreakZeroRun {width : Nat} [NeZero width] {C F : Type}
     WordSemStateFiniteExact.evaluate (.loop names body exits) initial =
       match (generalizing := false) exitState with | none => (some .error,after) | some exited => (none,exited) := by
   rw [loopAfterBody initial before after names exits body (some (.break 0)) cut run]
-  simp only [wordSemContLoop,Bool.false_eq_true,if_false,exitCut]
+  simp only [wordSemContLoop,Bool.false_eq_true,ite_false,exitCut]
 
 /-- Full derived Break-zero simulation assembly, including a failed source exit
 cut and successful source/target cuts. The original body-IH exit relation and
@@ -764,12 +764,12 @@ private theorem loopRecursiveCase {width : Nat} [NeZero width] {C F : Type}
         (.loop (Flapjack.WordAlloc.applyNummapKey (optionLookup ctx.refreshed) ctx.names)
           (loopBody ctx) (Flapjack.WordAlloc.applyNummapKey (optionLookup ctx.refreshed) ctx.exits))
         target = (some .timeOut,WordSemStateFiniteExact.flushState true targetAfter) := by
-      simpa only [continuing,zero,if_true] using targetLoop
+      simpa only [continuing,zero,ite_true] using targetLoop
     obtain ⟨resultEqual,stateEqual⟩ := Prod.mk.inj (targetActual.symm.trans loopRun)
     subst targetResult targetFinal
     have sourceActual : WordSemStateFiniteExact.evaluate (.loop ctx.names ctx.body ctx.exits)
         {source with permute := permutation} = (some .timeOut,WordSemStateFiniteExact.flushState true sourceAfter) := by
-      simpa only [continuing,sourceZero,if_true] using sourceLoop
+      simpa only [continuing,sourceZero,ite_true] using sourceLoop
     have finalRelations := frameTimeoutFlush sourceAfter targetAfter frame
     exact postOfRun ctx source _ _ _ _ permutation sourceActual (Or.inr ⟨rfl,finalRelations.1,finalRelations.2⟩)
   · have sourceNonzero : sourceAfter.clock ≠ 0 := fun equal => zero (clock.trans equal)
@@ -799,7 +799,7 @@ private theorem loopRecursiveCase {width : Nat} [NeZero width] {C F : Type}
               (.loop (Flapjack.WordAlloc.applyNummapKey (optionLookup ctx.refreshed) ctx.names)
                 (loopBody ctx) (Flapjack.WordAlloc.applyNummapKey (optionLookup ctx.refreshed) ctx.exits))
               (WordSemStateFiniteExact.decClock targetAfter) := by
-          simpa only [continuing,if_true,zero,if_false,wordSemSTOP] using targetLoop
+          simpa only [continuing,ite_true,zero,ite_false,wordSemSTOP] using targetLoop
         exact actual.symm.trans loopRun
       obtain ⟨recursivePermutation,post⟩ := ih (WordSemStateFiniteExact.decClock sourceAfter)
         (WordSemStateFiniteExact.decClock targetAfter) strict

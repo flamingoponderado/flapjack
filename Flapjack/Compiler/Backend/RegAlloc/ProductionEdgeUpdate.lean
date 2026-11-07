@@ -15,7 +15,7 @@ private theorem insertMembership (node member : Nat) (acc remaining : List Nat) 
       simp [sortedInsert]
     · by_cases greater : node > head
       · simp [sortedInsert, equal, greater]
-      · simp only [sortedInsert, equal, greater, if_false, ih, List.mem_cons]
+      · simp only [sortedInsert, equal, greater, ite_false, ih, List.mem_cons]
         simp only [or_assoc, or_left_comm, or_comm]
 
 /-- Actual adjacency insertion has the same membership as set insertion even
@@ -91,7 +91,7 @@ theorem insertEdge_production (x y : Nat) {native : State} {production : CakeRaS
   let rows := (native.adj_ls.set x rowX).set y rowY
   refine ⟨{native with adj_ls := rows}, ?_, ?_, ?_⟩
   · simp only [insertEdge, Translator.Monadic.MonadBase.bind, adjLsSubEqn,
-      if_pos xBound, if_pos yBound, Translator.Monadic.MonadBase.ignoreBind,
+      ite_eq_left xBound, ite_eq_left yBound, Translator.Monadic.MonadBase.ignoreBind,
       updateAdjLsEqn, List.length_set, holEl_eq_getElem x native.adj_ls xBound,
       holEl_eq_getElem y native.adj_ls yBound]
     rfl

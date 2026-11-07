@@ -130,7 +130,7 @@ theorem evaluate_fromListByte_cons {C F : Type} (byte : BitVec 8) (tail : List V
   have updatedCode : sptLookup fromListByteLocation updated.code = some fromListByteCode := by simpa [updated] using code
   have nonzero : updated.clock ≠ 0 := by simpa [updated] using clock
   simp only [BvlSem.findCode, updatedCode, fromListByteCode, List.length_cons, List.length_nil, ite_true]
-  simp only [Nat.zero_add, Nat.lt_one_iff, nonzero, if_false, BviSem.fixClock_evaluate]
+  simp only [Nat.zero_add, Nat.lt_one_iff, nonzero, ite_false, BviSem.fixClock_evaluate]
   have recRun := recursive
   simp [fromListByteCode] at recRun
   simp [updated, recRun]

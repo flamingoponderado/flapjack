@@ -84,7 +84,7 @@ theorem compCorrectStackGetSize {width : Nat} [NeZero width] {C F : Type}
   rcases hypothesis with ⟨sourceRun, notError, relation, lower⟩
   change register < pointer at lower
   rw [StackSemEvaluate.evaluate_stackGetSize] at sourceRun
-  simp only [relation.1, Bool.not_true, Bool.false_eq_true, if_false] at sourceRun
+  simp only [relation.1, Bool.not_true, Bool.false_eq_true, ite_false] at sourceRun
   have resultEq := (Prod.mk.inj sourceRun).1.symm
   have sourceEq := (Prod.mk.inj sourceRun).2.symm
   subst result
@@ -194,7 +194,7 @@ theorem compCorrectStackSetSize {width : Nat} [NeZero width] {C F : Type}
   rcases hypothesis with ⟨sourceRun, notError, relation, lower⟩
   change register < pointer at lower
   rw [StackSemEvaluate.evaluate_stackSetSize] at sourceRun
-  simp only [relation.1, Bool.not_true, Bool.false_eq_true, if_false] at sourceRun
+  simp only [relation.1, Bool.not_true, Bool.false_eq_true, ite_false] at sourceRun
 
   cases lookup : StackSemStateOps.getVar register source with
   | none =>
@@ -209,9 +209,9 @@ theorem compCorrectStackSetSize {width : Nat} [NeZero width] {C F : Type}
       rw [lookup] at sourceRun
       simp only [] at sourceRun
       by_cases outsideBounds : source.stack.length ≤ word.toNat
-      · rw [if_pos outsideBounds] at sourceRun
+      · rw [ite_eq_left outsideBounds] at sourceRun
         exact (notError (Prod.mk.inj sourceRun).1.symm).elim
-      · rw [if_neg outsideBounds] at sourceRun
+      · rw [ite_eq_right outsideBounds] at sourceRun
         have resultEq := (Prod.mk.inj sourceRun).1.symm
         have sourceEq := (Prod.mk.inj sourceRun).2.symm
         subst result

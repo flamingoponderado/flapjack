@@ -50,7 +50,7 @@ theorem initGlobalsCons {width : Nat} {σ : Type} [NeZero width]
   | some value =>
     simp only [hv] at heval
     by_cases hs : shapeEqHOL shape (shapeOfHOLExact value) = true
-    · rw [if_pos hs] at heval
+    · rw [ite_eq_left hs] at heval
       have hshape : shapeOfHOLExact value = shape := ((shapeEqHOL_eq_true _ _).mp hs).symm
       let tailSize := ((decShapesHOL decls).map sizeOfShapeHOL).sum
       let offset := ctxt.globalsSize + panBytesInWord width * BitVec.ofNat width (sizeOfShapeHOL shape)
@@ -109,7 +109,7 @@ theorem initGlobalsCons {width : Nat} {σ : Type} [NeZero width]
         rw [hstore]
       rw [nestedSeqHOL, evaluateHOLFiniteState_seq, hhead]
       simpa [fixClockHOLFinite] using hrun
-    · rw [if_neg hs] at heval
+    · rw [ite_eq_right hs] at heval
       cases heval
 
 /-- Declaration-list induction over the original initializer goal. -/

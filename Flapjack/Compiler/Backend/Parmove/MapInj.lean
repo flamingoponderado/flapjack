@@ -76,8 +76,8 @@ theorem pmov_MAP_INJ {α β : Type} [DecidableEq α] [DecidableEq β] {f : Optio
       have hi' := steps_inj_on_state _ _ ⟨hi, hsteps⟩
       have hun' : ¬ ((mapState f (pd, ac, em)).1 = [] ∧ (mapState f (pd, ac, em)).2.1 = []) := by
         simpa [mapState] using unfinished
-      rw [pmov.eq_def, dif_neg hun', fstepMapInj f _ hi, ih ⟨hw', hi'⟩, pmov.eq_def (pd, ac, em),
-        dif_neg unfinished]
+      rw [pmov.eq_def, dite_eq_right hun', fstepMapInj f _ hi, ih ⟨hw', hi'⟩, pmov.eq_def (pd, ac, em),
+        dite_eq_right unfinished]
 
 /-- Exact HOL `parmove_MAP_INJ` (`parmoveScript.sml:1294-1333`). HOL's free `f`
 and `ls` are implicit; `f ## f` is `Prod.map f f` and `OPTION_MAP` is

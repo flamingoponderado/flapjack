@@ -5,6 +5,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Depth.BlockPo
 import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
 import Flapjack.Misc.Sorting
 import Flapjack.Misc.ListEl
+import Mathlib.Data.List.Basic
 
 /-! Ancestor-chain consequences of the data-to-word memory relation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

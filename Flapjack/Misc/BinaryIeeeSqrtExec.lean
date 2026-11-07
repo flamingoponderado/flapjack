@@ -31,15 +31,15 @@ theorem holFloatSqrtRte64_refines_exec (x : HolFloat 52 11) :
     holFloatRefines (holFloatSqrtRte64 x) (execFloatSqrtRte64 x) := by
   unfold holFloatSqrtRte64 execFloatSqrtRte64
   by_cases hs : x.sign = 0
-  · rw [if_pos hs, if_pos hs]
+  · rw [ite_eq_left hs, ite_eq_left hs]
     cases holFloatValue x with
     | nan => exact holFloatSomeQnan_refines_defaultQuietNanFloat _
     | infinity => exact Or.inl rfl
     | float r => exact Or.inl rfl
-  · rw [if_neg hs, if_neg hs]
+  · rw [ite_eq_right hs, ite_eq_right hs]
     by_cases hz : x = holFloatMinusZero 52 11
-    · rw [if_pos hz, if_pos hz]; exact Or.inl rfl
-    · rw [if_neg hz, if_neg hz]; exact holFloatSomeQnan_refines_defaultQuietNanFloat _
+    · rw [ite_eq_left hz, ite_eq_left hz]; exact Or.inl rfl
+    · rw [ite_eq_right hz, ite_eq_right hz]; exact holFloatSomeQnan_refines_defaultQuietNanFloat _
 
 /-- Executable binary64 square root at WordSem's roundTiesToEven mode.
 WordSem observes only the output word, not IEEE flags. -/

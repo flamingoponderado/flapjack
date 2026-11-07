@@ -75,7 +75,7 @@ theorem namesOk_initial {C : Type} (start n counter : Nat)
       simp only [bvlToBviNamespaces] at stubMod
       have modulo : name % bvlToBviNamespaces = 0 := by rw [nameEq]; simp only [bvlToBviNamespaces]; omega
       have quotient : (name - bvlNumStubs) / bvlToBviNamespaces = sourceName := by rw [nameEq]; simp [bvlToBviNamespaces]
-      simp only [modulo, Nat.zero_ne_one, if_false, quotient]
+      simp only [modulo, Nat.zero_ne_one, ite_false, quotient]
       exact ⟨trivial, sptMem_fromAList_of_key programs sourceName sourceMember⟩
     · have stubMod := bvlNumStubMod
       simp only [bvlToBviNamespaces] at stubMod

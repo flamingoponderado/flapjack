@@ -76,7 +76,7 @@ theorem semantics_nil {C F : Type} (evalConfig : InstallConfig C) (ffi : HolFfiS
   unfold semantics
   have safe : ¬ ∃ clock, (evaluateDecs (initialState ffi clock evalConfig) []).2 = some (.abort .typeError) := by
     simp [evaluateDecs]
-  simp only [safe, if_false, chosen]
+  simp only [safe, ite_false, chosen]
 
 /-- A non-unit literal declaration is a type error and makes the observation
 fail. This is Flapjack proof infrastructure, not a separate HOL declaration. -/
@@ -89,7 +89,7 @@ theorem semantics_nonunit_literal {C F : Type} (evalConfig : InstallConfig C) (f
       [.lit trace (.intLit i)]).2 = some (.abort .typeError) := by
     refine ⟨0, ?_⟩
     simp [evaluateDecs, evaluate, fixClock]
-  simp only [failure, if_true]
+  simp only [failure, ite_true]
 
 /-- If no clock produces a type error, flat observational semantics does not
 return failure. This is a consequence of the factored semantics definition. -/
@@ -100,7 +100,7 @@ theorem semantics_ne_fail {C F : Type} (evalConfig : InstallConfig C)
   classical
   unfold semantics
   simp only [show ¬ ∃ clock, (evaluateDecs (initialState ffi clock evalConfig) program).2 =
-    some (.abort .typeError) from fun ⟨clock, error⟩ => safe clock error, if_false]
+    some (.abort .typeError) from fun ⟨clock, error⟩ => safe clock error, ite_false]
   split
   · rename_i behavior chosen
     obtain ⟨_, _, _, _, _, _, shape⟩ := holOptionSome_some chosen

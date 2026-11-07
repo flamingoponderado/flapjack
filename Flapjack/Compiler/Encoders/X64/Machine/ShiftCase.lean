@@ -69,7 +69,7 @@ theorem x64Enc_shiftImm (sh : Shift) (r1 r2 : Nat) (i : BitVec 64)
     · have hs : -128 ≤ i.toInt ∧ i.toInt ≤ 127 := by
         have ht : i.toInt = (i.toNat : Int) := by
           rw [BitVec.toInt_eq_toNat_cond]
-          rw [if_pos (by omega : 2 * i.toNat < 2 ^ 64)]
+          rw [ite_eq_left (by omega : 2 * i.toNat < 2 ^ 64)]
         constructor <;> omega
       rw [encodeInsn_binopRI_C1 (x64Sh sh) r1 hr1 i (x64Sh_hop sh) h1 hs]
       simp [binopRIC1Bytes]
@@ -94,7 +94,7 @@ theorem x64Next_shiftImm (ms : X64State) (sh : Shift) (r : Nat) (i : BitVec 64) 
       pc := ms.pc + BitVec.ofNat 64
         (encodeInsn (.binopRI (x64Sh sh) .z64 r i)).length } := by
   rw [hlen]
-  simp only [x64Next, hfailed, Bool.false_eq_true, if_false, hdec]
+  simp only [x64Next, hfailed, Bool.false_eq_true, ite_false, hdec]
   rw [execInsn_binopRI_shift]
   simp only [writeRegSized, writeReg]
 
@@ -175,8 +175,8 @@ theorem case_shiftImm (sh : Shift) (r1 r2 : Nat) (i : BitVec 64) (s1 s2 : AsmSta
       show readReg (writeReg ms r1 (wordShift sh (readReg ms r1) i.toNat)) x = s2.regs x
       rw [readReg_writeReg ms r1 _ x hr1 hx.1, hs2regs x]
       by_cases hxr : x = r1
-      · rw [if_pos hxr, if_pos hxr, st.reg r1 hreg1]
-      · rw [if_neg hxr, if_neg hxr]
+      · rw [ite_eq_left hxr, ite_eq_left hxr, st.reg r1 hreg1]
+      · rw [ite_eq_right hxr, ite_eq_right hxr]
         exact st.reg x hx
     · intro x hx
       show readXmm ms x = s2.fpRegs x
@@ -208,7 +208,7 @@ theorem case_shiftImm (sh : Shift) (r1 r2 : Nat) (i : BitVec 64) (s1 s2 : AsmSta
   · have hs : -128 ≤ i.toInt ∧ i.toInt ≤ 127 := by
       have ht : i.toInt = (i.toNat : Int) := by
         rw [BitVec.toInt_eq_toNat_cond]
-        rw [if_pos (by omega : 2 * i.toNat < 2 ^ 64)]
+        rw [ite_eq_left (by omega : 2 * i.toNat < 2 ^ 64)]
       constructor <;> omega
     have hlen : (encodeInsn (.binopRI (x64Sh sh) .z64 r1 i)).length = 4 := by
       rw [encodeInsn_binopRI_C1 (x64Sh sh) r1 hr1 i (x64Sh_hop sh) h1 hs]
@@ -260,7 +260,7 @@ theorem x64Next_shiftReg (ms : X64State) (d : BitVec 64 → Prop) (sh : Shift) (
         (encodeInsn (.binopRR (x64Sh sh) .z64 r 1)).length) :=
     decode_bytesInMemory _ ms.pc ms.mem d _ _ hbm
       (decode_binopRR_shift (x64Sh sh) r hr (x64Sh_hop sh)) (by omega)
-  simp only [x64Next, hfailed, Bool.false_eq_true, if_false, hdec]
+  simp only [x64Next, hfailed, Bool.false_eq_true, ite_false, hdec]
   rw [execInsn_binopRR_shift]
   simp only [writeRegSized, writeReg]
 
@@ -371,11 +371,11 @@ theorem case_shiftReg (sh : Shift) (r1 r2 r3 : Nat) (s1 s2 : AsmState 64) (ms : 
           (wordShift sh (readReg ms r1) (readReg ms 1).toNat)) x = s2.regs x
       rw [readReg_writeReg ms r1 _ x hr1 hx.1, hs2regs' x]
       by_cases hxr : x = r1
-      · rw [if_pos hxr, if_pos hxr, st.reg r1 hreg1]
+      · rw [ite_eq_left hxr, ite_eq_left hxr, st.reg r1 hreg1]
         have hone : readReg ms 1 = s1.regs 1 :=
           st.reg 1 (by decide)
         rw [hone]
-      · rw [if_neg hxr, if_neg hxr]
+      · rw [ite_eq_right hxr, ite_eq_right hxr]
         exact st.reg x hx
     · intro x hx
       show readXmm ms x = s2.fpRegs x

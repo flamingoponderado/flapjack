@@ -45,7 +45,7 @@ theorem compCorrectLocValue {width : Nat} [NeZero width] {C F : Type}
   · simp [present] at execution
     obtain ⟨rfl,rfl⟩ := execution
     contradiction
-  · simp only [present,if_true,Prod.mk.injEq] at execution
+  · simp only [present,ite_true,Prod.mk.injEq] at execution
     obtain ⟨rfl,rfl⟩ := execution
     have even : register % 2 = 0 := by
       simpa [postAllocConventionsHOL,everyVarHOL,everyStackVarHOL,

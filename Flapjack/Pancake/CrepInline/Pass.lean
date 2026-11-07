@@ -222,7 +222,7 @@ theorem lookup_filter_bne {α : Type u} {β : Type v} [BEq α] [LawfulBEq α]
       obtain ⟨hk, hnd_t⟩ := List.nodup_cons.mp hnd
       rw [List.filter_cons]
       by_cases hkn : (k != name) = true
-      · rw [if_pos hkn, List.lookup_cons, List.lookup_cons, ih hnd_t]
+      · rw [ite_eq_left hkn, List.lookup_cons, List.lookup_cons, ih hnd_t]
         have hkne : k ≠ name := by simpa [bne_iff_ne] using hkn
         cases hkey : key == k with
         | true =>
@@ -231,13 +231,13 @@ theorem lookup_filter_bne {α : Type u} {β : Type v} [BEq α] [LawfulBEq α]
               rw [beq_eq_false_iff_ne]; exact fun h => hkne (hk_eq ▸ h)
             simp [hnm]
         | false => simp
-      · rw [if_neg hkn, List.lookup_cons, ih hnd_t]
+      · rw [ite_eq_right hkn, List.lookup_cons, ih hnd_t]
         have hke : k = name := Classical.byContradiction (by
           intro h
           exact hkn (by rw [bne_iff_ne]; exact h))
         by_cases hkey : key == name
-        · rw [if_pos hkey, if_pos hkey]
-        · rw [if_neg hkey, if_neg hkey]
+        · rw [ite_eq_left hkey, ite_eq_left hkey]
+        · rw [ite_eq_right hkey, ite_eq_right hkey]
           have hkeq : (key == k) = false := by
             rw [beq_eq_false_iff_ne]
             intro h

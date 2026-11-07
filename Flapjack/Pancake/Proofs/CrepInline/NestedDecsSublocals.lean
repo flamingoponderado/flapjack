@@ -88,7 +88,7 @@ theorem nestedDecsEvaluateSublocalsStrongExact {width : Nat} [NeZero width] {σ 
   simp only [crepHolFdiff] at hk
   by_cases htk : crepHolFdom t.lookup k = true
   · simp [htk] at hk
-  · simp only [htk, Bool.false_eq_true, if_false] at hk
+  · simp only [htk, Bool.false_eq_true, ite_false] at hk
     rw [ht']
     by_cases hkv : k ∈ vs
     · rw [flookup_res_var_is_mem_zip_eq_exact vs k u.locals s.locals hkv]; exact hk
@@ -102,7 +102,7 @@ theorem nestedDecsEvaluateSublocalsStrongExact {width : Nat} [NeZero width] {σ 
         simpa using htk
       simp only [crepHolFdiff] at hx
       rw [hd0, ← hdom, hd0] at hx
-      simp only [Bool.false_eq_true, if_false] at hx
+      simp only [Bool.false_eq_true, ite_false] at hx
       rw [← hx, hlk _ _ hkv]
       exact hk
 

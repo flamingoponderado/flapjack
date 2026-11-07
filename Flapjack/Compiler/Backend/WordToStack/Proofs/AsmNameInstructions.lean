@@ -59,7 +59,7 @@ theorem floatingName {width : Nat} [NeZero width] (conf : AsmConfigExact width)
     stackAsmName conf (wInstNative (.fp instruction) frame) := by
   cases instruction
   all_goals by_cases hw : width = 64
-  all_goals simp only [wInstNative, hw, if_true, if_false, loadName,
+  all_goals simp only [wInstNative, hw, ite_true, ite_false, loadName,
     writeNameEquation, write2NameEquation, wReg1, wReg2]
   all_goals try split_ifs
   all_goals simp_all [stackAsmName, instName, fpName, regName, everyVarInstHOL, isPhyVar,

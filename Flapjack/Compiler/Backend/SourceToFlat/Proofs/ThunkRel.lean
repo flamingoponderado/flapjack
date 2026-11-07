@@ -63,7 +63,7 @@ theorem badThunkUpdate_related {C F : Type} (genv : GlobalEnv)
   cases mode with
   | notEvaluated => rfl
   | evaluated =>
-    simp only [SemanticPrimitivesHOL.badThunkUpdate, FlatSem.badThunkUpdate, if_true]
+    simp only [SemanticPrimitivesHOL.badThunkUpdate, FlatSem.badThunkUpdate, ite_true]
     generalize hs : SemanticPrimitivesHOL.destThunk [source] sourceState.refs = sourceResult at related ⊢
     generalize hf : FlatSem.destThunk [flat] flatState.refs = flatResult at related ⊢
     cases related <;> rfl

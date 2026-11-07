@@ -47,9 +47,9 @@ theorem tmask_lsr_getLsbD (n i : Nat) (hn : n < 64) (hi : i < 64) :
     rw [hn64]
     rw [List.getD_eq_getElem?_getD, List.getElem?_append, List.length_replicate]
     by_cases h : 63 - i < n
-    · rw [if_pos h]
+    · rw [ite_eq_left h]
       simp [h]
-    · rw [if_neg h]
+    · rw [ite_eq_right h]
       have h2 : 63 - i - n < 64 - n := by omega
       rw [List.getElem?_replicate]
       simp [h2]
@@ -117,10 +117,9 @@ theorem asr_mask (x : BitVec 64) (n : Nat) (hn : n < 64) :
   by_cases h : i < 64 - n
   · have hni : n + i < 64 := by omega
     simp [h, hi, hni]
-  · have hge : 64 ≤ n + i := by omega
-    have hni : ¬ n + i < 64 := by omega
+  · have hni : ¬ n + i < 64 := by omega
     have h64 : ¬ 64 ≤ i := by omega
-    simp [h, hge, hni, h64, hi]
+    simp [h, hni, h64, hi]
 
 /-- The `Lsl` wmask: bits `n` through 63 set. -/
 def arm8LslMask (n : Nat) : BitVec 64 :=
@@ -154,10 +153,10 @@ theorem arm8LslMask_getLsbD (n i : Nat) (hn : n < 64) (hi : i < 64) :
     decide_true, Bool.true_and]
   rw [List.getD_eq_getElem?_getD, List.getElem?_append, List.length_replicate]
   by_cases h : 63 - i < 64 - n
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     simp [h]
     omega
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     have h2 : 63 - i - (64 - n) < n := by omega
     rw [List.getElem?_replicate]
     simp [h2]

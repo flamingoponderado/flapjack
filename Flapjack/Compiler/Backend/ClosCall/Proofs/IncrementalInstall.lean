@@ -4566,7 +4566,7 @@ theorem evaluateApp_full_growing {C F : Type} (passFuel relationFuel : Nat)
           simpa [sourceStart, targetStart, decClock] using stateWellFormedFuel_clock stateWf _
         have startReady : IncrementalInstallReady g sourceStart targetStart :=
           incrementalInstallReady_decClock g source target cost ready
-        simp only [if_neg timeout, fixClock_evaluate] at run
+        simp only [ite_eq_right timeout, fixClock_evaluate] at run
         cases bodyRun : evaluate [sourceBody] sourceBodyEnv sourceStart with
         | mk bodyResult bodyFinal =>
           have bodySafe : bodyResult ≠ .err (.abort .typeError) := by
@@ -4600,7 +4600,7 @@ theorem evaluateApp_full_growing {C F : Type} (passFuel relationFuel : Nat)
               rw [evaluateApp, targetClosure']
               simp only [List.length_cons, targetCostEq]
               have targetEnough : ¬ target.clock < cost := by omega
-              rw [if_neg targetEnough, fixClock_evaluate, targetBodyRun']
+              rw [ite_eq_right targetEnough, fixClock_evaluate, targetBodyRun']
           | val sourceValues =>
             obtain ⟨sourceValue, rfl⟩ := evaluate_singleton_value sourceBody sourceBodyEnv sourceStart bodyFinal sourceValues bodyRun
             cases targetBodyResult with
@@ -4629,7 +4629,7 @@ theorem evaluateApp_full_growing {C F : Type} (passFuel relationFuel : Nat)
               · rw [evaluateApp, targetClosure']
                 simp only [List.length_cons, targetCostEq]
                 have targetEnough : ¬ target.clock < cost := by omega
-                rw [if_neg targetEnough, fixClock_evaluate, targetBodyRun']
+                rw [ite_eq_right targetEnough, fixClock_evaluate, targetBodyRun']
                 exact targetRun
               · intro key entry found
                 exact appGrowth key entry (bodyGrowth key entry found)
@@ -13146,7 +13146,7 @@ theorem evaluateApp_full_growing_clockBelow {C F : Type} (passFuel relationFuel 
           simpa [sourceStart, targetStart, decClock] using stateWellFormedFuel_clock stateWf _
         have startReady : IncrementalInstallReady g sourceStart targetStart :=
           incrementalInstallReady_decClock g source target cost ready
-        simp only [if_neg timeout, fixClock_evaluate] at run
+        simp only [ite_eq_right timeout, fixClock_evaluate] at run
         cases bodyRun : evaluate [sourceBody] sourceBodyEnv sourceStart with
         | mk bodyResult bodyFinal =>
           have bodySafe : bodyResult ≠ .err (.abort .typeError) := by
@@ -13180,7 +13180,7 @@ theorem evaluateApp_full_growing_clockBelow {C F : Type} (passFuel relationFuel 
               rw [evaluateApp, targetClosure']
               simp only [List.length_cons, targetCostEq]
               have targetEnough : ¬ target.clock < cost := by omega
-              rw [if_neg targetEnough, fixClock_evaluate, targetBodyRun']
+              rw [ite_eq_right targetEnough, fixClock_evaluate, targetBodyRun']
           | val sourceValues =>
             obtain ⟨sourceValue, rfl⟩ := evaluate_singleton_value sourceBody sourceBodyEnv sourceStart bodyFinal sourceValues bodyRun
             cases targetBodyResult with
@@ -13213,7 +13213,7 @@ theorem evaluateApp_full_growing_clockBelow {C F : Type} (passFuel relationFuel 
               · rw [evaluateApp, targetClosure']
                 simp only [List.length_cons, targetCostEq]
                 have targetEnough : ¬ target.clock < cost := by omega
-                rw [if_neg targetEnough, fixClock_evaluate, targetBodyRun']
+                rw [ite_eq_right targetEnough, fixClock_evaluate, targetBodyRun']
                 exact targetRun
               · intro key entry found
                 exact appGrowth key entry (bodyGrowth key entry found)
@@ -13317,7 +13317,7 @@ theorem evaluateApp_full_growing_clockBelow_withClock {C F : Type} (passFuel rel
           simpa [sourceStart, targetStart, decClock] using stateWellFormedFuel_clock stateWf _
         have startReady : IncrementalInstallReady g sourceStart targetStart :=
           incrementalInstallReady_decClock g source target cost ready
-        simp only [if_neg timeout, fixClock_evaluate] at run
+        simp only [ite_eq_right timeout, fixClock_evaluate] at run
         cases bodyRun : evaluate [sourceBody] sourceBodyEnv sourceStart with
         | mk bodyResult bodyFinal =>
           have bodySafe : bodyResult ≠ .err (.abort .typeError) := by
@@ -13355,7 +13355,7 @@ theorem evaluateApp_full_growing_clockBelow_withClock {C F : Type} (passFuel rel
               rw [evaluateApp, targetClosure']
               simp only [List.length_cons, targetCostEq]
               have targetEnough : ¬ target.clock + bodyExtra < cost := by omega
-              rw [if_neg targetEnough, fixClock_evaluate, targetBodyRun']
+              rw [ite_eq_right targetEnough, fixClock_evaluate, targetBodyRun']
           | val sourceValues =>
             obtain ⟨sourceValue, rfl⟩ := evaluate_singleton_value sourceBody sourceBodyEnv sourceStart bodyFinal sourceValues bodyRun
             cases targetBodyResult with
@@ -13398,7 +13398,7 @@ theorem evaluateApp_full_growing_clockBelow_withClock {C F : Type} (passFuel rel
                 rw [evaluateApp, targetClosure']
                 simp only [List.length_cons, targetCostEq]
                 have targetEnough : ¬ target.clock + (bodyExtra + appExtra) < cost := by omega
-                rw [if_neg targetEnough, fixClock_evaluate, shiftedBody']
+                rw [ite_eq_right targetEnough, fixClock_evaluate, shiftedBody']
                 exact targetRun
               · intro key entry found
                 exact appGrowth key entry (bodyGrowth key entry found)
@@ -13505,7 +13505,7 @@ theorem evaluateApp_full_growing_clockBelow_withOpenClock {C F : Type} (passFuel
           simpa [sourceStart, targetStart, decClock] using stateWellFormedFuel_clock stateWf _
         have startReady : IncrementalInstallReady g sourceStart targetStart :=
           incrementalInstallReady_decClock g source target cost ready
-        simp only [if_neg timeout, fixClock_evaluate] at run
+        simp only [ite_eq_right timeout, fixClock_evaluate] at run
         cases bodyRun : evaluate [sourceBody] sourceBodyEnv sourceStart with
         | mk bodyResult bodyFinal =>
           have bodySafe : bodyResult ≠ .err (.abort .typeError) := by
@@ -13546,7 +13546,7 @@ theorem evaluateApp_full_growing_clockBelow_withOpenClock {C F : Type} (passFuel
               rw [evaluateApp, targetClosure']
               simp only [List.length_cons, targetCostEq]
               have targetEnough : ¬ target.clock + bodyExtra < cost := by omega
-              rw [if_neg targetEnough, fixClock_evaluate, targetBodyRun']
+              rw [ite_eq_right targetEnough, fixClock_evaluate, targetBodyRun']
           | val sourceValues =>
             obtain ⟨sourceValue, rfl⟩ := evaluate_singleton_value sourceBody sourceBodyEnv sourceStart bodyFinal sourceValues bodyRun
             cases targetBodyResult with
@@ -13591,7 +13591,7 @@ theorem evaluateApp_full_growing_clockBelow_withOpenClock {C F : Type} (passFuel
                 rw [evaluateApp, targetClosure']
                 simp only [List.length_cons, targetCostEq]
                 have targetEnough : ¬ target.clock + (bodyExtra + appExtra) < cost := by omega
-                rw [if_neg targetEnough, fixClock_evaluate, shiftedBody']
+                rw [ite_eq_right targetEnough, fixClock_evaluate, shiftedBody']
                 exact targetRun
               · intro key entry found
                 exact appGrowth key entry (bodyGrowth key entry found)
@@ -13689,7 +13689,7 @@ theorem evaluateApp_full_withOpenClockAndResultWf {C F : Type} (passFuel relatio
           simpa [sourceStart, targetStart, decClock] using stateWellFormedFuel_clock stateWf _
         have startReady : IncrementalInstallReady g sourceStart targetStart :=
           incrementalInstallReady_decClock g source target cost ready
-        simp only [if_neg timeout, fixClock_evaluate] at run
+        simp only [ite_eq_right timeout, fixClock_evaluate] at run
         cases bodyRun : evaluate [sourceBody] sourceBodyEnv sourceStart with
         | mk bodyResult bodyFinal =>
           have bodySafe : bodyResult ≠ .err (.abort .typeError) := by
@@ -13727,7 +13727,7 @@ theorem evaluateApp_full_withOpenClockAndResultWf {C F : Type} (passFuel relatio
               rw [evaluateApp, targetClosure']
               simp only [List.length_cons, targetCostEq]
               have targetEnough : ¬ target.clock + bodyExtra < cost := by omega
-              rw [if_neg targetEnough, fixClock_evaluate, targetBodyRun']
+              rw [ite_eq_right targetEnough, fixClock_evaluate, targetBodyRun']
           | val sourceValues =>
             obtain ⟨sourceValue, rfl⟩ := evaluate_singleton_value sourceBody sourceBodyEnv sourceStart bodyFinal sourceValues bodyRun
             cases targetBodyResult with
@@ -13770,7 +13770,7 @@ theorem evaluateApp_full_withOpenClockAndResultWf {C F : Type} (passFuel relatio
                 rw [evaluateApp, targetClosure']
                 simp only [List.length_cons, targetCostEq]
                 have targetEnough : ¬ target.clock + (bodyExtra + appExtra) < cost := by omega
-                rw [if_neg targetEnough, fixClock_evaluate, shiftedBody']
+                rw [ite_eq_right targetEnough, fixClock_evaluate, shiftedBody']
                 exact targetRun
               · intro key entry found
                 exact appGrowth key entry (bodyGrowth key entry found)
@@ -24705,7 +24705,7 @@ theorem evaluateApp_full_withOpenClockAndOrigin {C F : Type} (passFuel relationF
           simpa [sourceStart, targetStart, decClock] using stateWellFormedFuel_clock stateWf _
         have startReady : IncrementalInstallReady g sourceStart targetStart :=
           incrementalInstallReady_decClock g source target cost ready
-        simp only [if_neg timeout, fixClock_evaluate] at run
+        simp only [ite_eq_right timeout, fixClock_evaluate] at run
         cases bodyRun : evaluate [sourceBody] sourceBodyEnv sourceStart with
         | mk bodyResult bodyFinal =>
           have bodySafe : bodyResult ≠ .err (.abort .typeError) := by
@@ -24743,7 +24743,7 @@ theorem evaluateApp_full_withOpenClockAndOrigin {C F : Type} (passFuel relationF
               rw [evaluateApp, targetClosure']
               simp only [List.length_cons, targetCostEq]
               have targetEnough : ¬ target.clock + bodyExtra < cost := by omega
-              rw [if_neg targetEnough, fixClock_evaluate, targetBodyRun']
+              rw [ite_eq_right targetEnough, fixClock_evaluate, targetBodyRun']
           | val sourceValues =>
             obtain ⟨sourceValue, rfl⟩ := evaluate_singleton_value sourceBody sourceBodyEnv sourceStart bodyFinal sourceValues bodyRun
             cases targetBodyResult with
@@ -24788,7 +24788,7 @@ theorem evaluateApp_full_withOpenClockAndOrigin {C F : Type} (passFuel relationF
                 rw [evaluateApp, targetClosure']
                 simp only [List.length_cons, targetCostEq]
                 have targetEnough : ¬ target.clock + (bodyExtra + appExtra) < cost := by omega
-                rw [if_neg targetEnough, fixClock_evaluate, shiftedBody']
+                rw [ite_eq_right targetEnough, fixClock_evaluate, shiftedBody']
                 exact targetRun
               · intro key entry found
                 exact appGrowth key entry (bodyGrowth key entry found)

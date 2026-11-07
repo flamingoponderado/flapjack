@@ -152,7 +152,7 @@ theorem semantics_number {C F : Type} (ffi : HolFfiState F) (maxApp number : Nat
         fun ⟨clock, error⟩ => sourceSafe clock error,
     show ¬ ∃ clock, (evaluate (renumberList number program).2 []
       (initialState ffi maxApp HolFiniteMapExact.empty (stateCo (ignoreTable compileInc) oracle) compiler clock)).1 =
-        .err (.abort .typeError) from fun ⟨clock, error⟩ => targetSafe clock error, if_false]
+        .err (.abort .typeError) from fun ⟨clock, error⟩ => targetSafe clock error, ite_false]
   rw [← terminatingEq, ← tracesEq]
 
 /-- Closure numbering preserves whole-program observations for a safe,

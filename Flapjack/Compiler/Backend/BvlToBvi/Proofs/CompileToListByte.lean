@@ -45,7 +45,7 @@ theorem evaluate_toListByteBody {C F : Type} (bytes : List (BitVec 8))
   change BviSem.evaluate [.call 0 (some toListByteLocation) [empty, lengthExp, .var 0] none] input start = _
   rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun]
   simp only [BvlSem.findCode, startCode, toListByteCode, List.length_cons, List.length_nil, ite_true,
-    Nat.zero_add, Nat.lt_one_iff, nonzero, if_false, BviSem.fixClock_evaluate]
+    Nat.zero_add, Nat.lt_one_iff, nonzero, ite_false, BviSem.fixClock_evaluate]
   simp [toListByteCode] at stubRun
   simp [clocks, stubRun]
 

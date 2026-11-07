@@ -61,7 +61,7 @@ theorem copyVarsMemAcc {α : Type} [Nonempty α] (s t : Spt α) :
       by_cases hnk : n = k
       · subst hnk
         have hf : ¬ n ∈ acc.filter (fun x => decide (n ≠ x)) := by simp
-        simp only [anub, if_pos hn, if_neg hf, copyVars, sptInsert_insert_shadow]
+        simp only [anub, ite_eq_left hn, ite_eq_right hf, copyVars, sptInsert_insert_shadow]
         have e : (n :: acc.filter fun x => decide (n ≠ x)).filter (fun x => decide (n ≠ x)) =
             acc.filter fun x => decide (n ≠ x) := by
           simp [List.filter_filter]
@@ -73,11 +73,11 @@ theorem copyVarsMemAcc {α : Type} [Nonempty α] (s t : Spt α) :
       · by_cases hk : k ∈ acc
         · have hkf : k ∈ acc.filter (fun x => decide (n ≠ x)) := by
             simp [List.mem_filter, hk, hnk]
-          simp only [anub, if_pos hk, if_pos hkf]
+          simp only [anub, ite_eq_left hk, ite_eq_left hkf]
           exact copyVarsMemAcc s t xs acc n w hn
         · have hkf : ¬ k ∈ acc.filter (fun x => decide (n ≠ x)) := by
             simp [List.mem_filter, hk]
-          simp only [anub, if_neg hk, if_neg hkf, copyVars]
+          simp only [anub, ite_eq_right hk, ite_eq_right hkf, copyVars]
           rw [sptInsert_swap n k _ _ _ hnk, sptInsert_swap n k _ _ _ hnk]
           congr 1
           rw [copyVarsMemAcc s t xs (k :: acc) n w (List.mem_cons_of_mem _ hn)]
@@ -96,10 +96,10 @@ theorem copyVarsAnub {α : Type} [Nonempty α] (xs : List (Nat × Nat)) :
   | cons p xs ih =>
       obtain ⟨k, v⟩ := p
       funext s t
-      simp only [anub, List.not_mem_nil, if_false, copyVars]
+      simp only [anub, List.not_mem_nil, ite_false, copyVars]
       rw [copyVarsMemAcc s t xs [k] k _ List.mem_cons_self]
       simp only [List.filter_cons, ne_eq, not_true_eq_false, decide_false, Bool.false_eq_true,
-        if_false, List.filter_nil]
+        ite_false, List.filter_nil]
       rw [ih]
 
 /-- Exact HOL `lookup_copy_vars_ignore` (`word_unreachProofScript.sml:108-116`). -/
@@ -111,8 +111,8 @@ theorem lookupCopyVarsIgnore {α : Type} [Nonempty α] :
   | (l, r) :: l1, h1, x, y, h => by
       simp only [sptAListLookup] at h
       by_cases hl : h1 = l
-      · rw [if_pos hl] at h; cases h
-      · rw [if_neg hl] at h
+      · rw [ite_eq_left hl] at h; cases h
+      · rw [ite_eq_right hl] at h
         simp only [copyVars]
         rw [sptLookup_sptInsert_ne _ _ _ _ hl]
         exact lookupCopyVarsIgnore l1 h1 x y h
@@ -129,11 +129,11 @@ theorem lookupCopyVars {α : Type} [Nonempty α] :
       simp only [copyVars] at hz
       by_cases hl : h1 = l
       · subst hl
-        rw [if_pos rfl] at h
+        rw [ite_eq_left rfl] at h
         cases h
         rw [sptLookup_sptInsert_same] at hz
         exact Option.some.inj hz
-      · rw [if_neg hl] at h
+      · rw [ite_eq_right hl] at h
         rw [sptLookup_sptInsert_ne _ _ _ _ hl] at hz
         exact lookupCopyVars l1 h1 y s t z ⟨h, hz⟩
 
@@ -148,8 +148,8 @@ theorem impEveryMapSndAnub {α β : Type} [DecidableEq α] :
       have hxs : ∀ x ∈ xs.map Prod.snd, p x := fun x hx => h x (by simp at hx ⊢; exact Or.inr hx)
       unfold anub
       by_cases hk : k ∈ acc
-      · rw [if_pos hk]; exact impEveryMapSndAnub xs acc p hxs
-      · rw [if_neg hk]
+      · rw [ite_eq_left hk]; exact impEveryMapSndAnub xs acc p hxs
+      · rw [ite_eq_right hk]
         intro x hx
         simp only [List.map_cons, List.mem_cons] at hx
         rcases hx with rfl | hx
@@ -321,8 +321,8 @@ private theorem alookup_mem : ∀ (l : List (Nat × Nat)) (k v : Nat),
   | (a, b) :: l, k, v, h => by
       simp only [sptAListLookup] at h
       by_cases hk : k = a
-      · rw [if_pos hk] at h; cases h; simp
-      · rw [if_neg hk] at h
+      · rw [ite_eq_left hk] at h; cases h; simp
+      · rw [ite_eq_right hk] at h
         exact List.mem_cons_of_mem _ (alookup_mem l k v h)
 
 private theorem copyVars_step {V : Type} [Nonempty V] (src : Spt V) (l1 : List (Nat × Nat)) :
@@ -358,8 +358,8 @@ theorem mergeMovesSkip {width : Nat} [NeZero width] {C F : Type}
   intro l1 l2 s res s1 ⟨h, hne⟩
   rw [evSeq, evaluateMove] at h
   by_cases hd1 : (l1.map Prod.fst).Nodup
-  case neg => rw [if_neg hd1] at h; simp only [Prod.mk.injEq] at h; exact absurd h.1.symm hne
-  rw [if_pos hd1] at h
+  case neg => rw [ite_eq_right hd1] at h; simp only [Prod.mk.injEq] at h; exact absurd h.1.symm hne
+  rw [ite_eq_left hd1] at h
   cases hg1 : WordSemStateFiniteExact.getVars (l1.map Prod.snd) s with
   | none => rw [hg1] at h; simp only [Prod.mk.injEq] at h; exact absurd h.1.symm hne
   | some x1 =>
@@ -367,8 +367,8 @@ theorem mergeMovesSkip {width : Nat} [NeZero width] {C F : Type}
   simp only at h
   rw [evaluateMove] at h
   by_cases hd2 : (l2.map Prod.fst).Nodup
-  case neg => rw [if_neg hd2] at h; simp only [Prod.mk.injEq] at h; exact absurd h.1.symm hne
-  rw [if_pos hd2] at h
+  case neg => rw [ite_eq_right hd2] at h; simp only [Prod.mk.injEq] at h; exact absurd h.1.symm hne
+  rw [ite_eq_left hd2] at h
   cases hg2 : WordSemStateFiniteExact.getVars (l2.map Prod.snd)
       { s with locals := copyVars l1 s.locals s.locals } with
   | none => rw [hg2] at h; simp only [Prod.mk.injEq] at h; exact absurd h.1.symm hne
@@ -394,7 +394,7 @@ theorem mergeMovesSkip {width : Nat} [NeZero width] {C F : Type}
       | some v => exact hs1 v (alookup_mem l1 b v hl)
     · exact hs1 x hx
   obtain ⟨ws, hws⟩ := (getVarsIsSomeLookup _ s).mpr hsm
-  rw [evaluateMove, if_pos (allDistinctMergeMoves l1 l2), hws]
+  rw [evaluateMove, ite_eq_left (allDistinctMergeMoves l1 l2), hws]
   simp only [Prod.mk.injEq, true_and]
   rw [mergeMoves_eq, copyVarsAnub, copyVarsAppend,
     copyVars_step s.locals l1 l2 _ (fun y hy => hs2 y hy)]
@@ -486,11 +486,11 @@ theorem evaluateSimpSeq {width : Nat} [NeZero width] {C F : Type}
   intro ⟨h, hne⟩
   unfold simpSeq
   by_cases h2 : p2 = .skip
-  · rw [if_pos h2]
+  · rw [ite_eq_left h2]
     subst h2
     rw [evaluateSeqSkip] at h
     exact h
-  rw [if_neg h2]
+  rw [ite_eq_right h2]
   cases p1 with
   | skip => rw [evaluateSkipSeq] at h; exact h
   | raise n => rw [seq_of_isSome _ _ _ (evRaise s n)] at h; exact h
@@ -505,14 +505,14 @@ theorem evaluateSimpSeq {width : Nat} [NeZero width] {C F : Type}
           obtain ⟨n2, l2, rest⟩ := t
           simp only
           rcases destSeqMove_some p2 n2 l2 rest hd with ⟨rfl, rfl⟩ | rfl
-          · rw [if_pos rfl]
+          · rw [ite_eq_left rfl]
             exact mergeMovesSkip n1 n2 _ l1 l2 s res s1 ⟨h, hne⟩
           · by_cases hr : rest = .skip
-            · rw [if_pos hr]
+            · rw [ite_eq_left hr]
               subst hr
               rw [evaluateSeqAssoc, evaluateSeqSkip] at h
               exact mergeMovesSkip n1 n2 _ l1 l2 s res s1 ⟨h, hne⟩
-            · rw [if_neg hr]
+            · rw [ite_eq_right hr]
               exact mergeMovesThm n1 n2 _ rest l1 l2 s res s1 ⟨h, hne⟩
   | _ => exact h
 
@@ -568,17 +568,17 @@ theorem evaluateLoopBodyEq {width : Nat} [NeZero width] {C F : Type}
   rw [hbody s' r t ⟨he, hrne⟩]
   simp only at h ⊢
   by_cases hcont : wordSemContLoop r = true
-  · rw [if_pos hcont] at h ⊢
+  · rw [ite_eq_left hcont] at h ⊢
     by_cases ht0 : t.clock = 0
-    · rw [if_pos ht0] at h ⊢; exact h
-    · rw [if_neg ht0] at h ⊢
+    · rw [ite_eq_left ht0] at h ⊢; exact h
+    · rw [ite_eq_right ht0] at h ⊢
       have hcl : (decClock t).clock < c := by
         have h1 := (evaluate_clock p1 s' r t he).1
         have h2 := (cutState_clock_termdep (names, .ln) s s' hcs).1
         simp only [decClock]
         omega
       exact ih _ hcl (decClock t) rfl res s1 ⟨h, hne⟩
-  · rw [if_neg hcont] at h ⊢
+  · rw [ite_eq_right hcont] at h ⊢
     exact h
 
 /-- `p'` reproduces every non-`Error` run of `p` (Flapjack infrastructure). -/
@@ -629,8 +629,8 @@ private theorem mtCongr (q q' : WordLangProgHOL (BitVec width)) (hq : Agrees C F
   have hm := (evaluate_def_rebound (width := width) (C := C) (F := F)).2.2.2.2.2.2.2.2.2.2.2.1
   rw [hm] at h ⊢
   by_cases h0 : s.termdep = 0
-  · rw [if_pos h0] at h ⊢; exact h
-  rw [if_neg h0] at h ⊢
+  · rw [ite_eq_left h0] at h ⊢; exact h
+  rw [ite_eq_right h0] at h ⊢
   rcases he : evaluate q { s with clock := wordSemMustTerminateLimit width,
                                   termdep := s.termdep - 1 } with ⟨r0, t0⟩
   rw [he] at h
@@ -652,8 +652,8 @@ private theorem callNoneIsSome (dest : Option Nat) (args : List Nat)
   | some xs =>
   simp only
   by_cases hb : wordSemBadDestArgs dest args = true
-  · rw [if_pos hb]; rfl
-  rw [if_neg hb]
+  · rw [ite_eq_left hb]; rfl
+  rw [ite_eq_right hb]
   cases hf : wordSemFindCode dest (wordSemAddRetLoc (none : Option (List Nat × WordLangCutsetsHOL × WordLangProgHOL (BitVec width) × Nat × Nat)) xs) s.code s.stackSize with
   | none => rfl
   | some f =>
@@ -664,13 +664,13 @@ private theorem callNoneIsSome (dest : Option Nat) (args : List Nat)
   | none =>
   simp only
   by_cases h0 : s.clock = 0
-  · rw [if_pos h0]; rfl
-  rw [if_neg h0]
+  · rw [ite_eq_left h0]; rfl
+  rw [ite_eq_right h0]
   rcases evaluate prog (WordSemStateFiniteExact.callEnv args1 ss (decClock s)) with ⟨r, t⟩
   simp only
   by_cases hbad : wordSemBadFunReturn r = true
-  · rw [if_pos hbad]; rfl
-  · rw [if_neg hbad]
+  · rw [ite_eq_left hbad]; rfl
+  · rw [ite_eq_right hbad]
     cases r with
     | none => simp [wordSemBadFunReturn] at hbad
     | some _ => rfl
@@ -737,8 +737,8 @@ private theorem callSomeCongr (x1 : List Nat) (x2 : WordLangCutsetsHOL) (x3 x4 :
       · exact id
       · simp only
         by_cases hx : x ≠ .loc y2 y3
-        · rw [if_pos hx, if_pos hx]; exact id
-        rw [if_neg hx, if_neg hx]
+        · rw [ite_eq_left hx, ite_eq_left hx]; exact id
+        rw [ite_eq_right hx, ite_eq_right hx]
         by_cases hu : sptDomainEqUnion t0.locals envs.1 envs.2
         · simp only [hu, ↓reduceIte]; exact fun h => h2 _ r t ⟨h, hne⟩
         · simp only [hu, ↓reduceIte]; exact id

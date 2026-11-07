@@ -42,14 +42,14 @@ theorem stExFilterIsNotCoalesced :
         refine ⟨ts, ?_, hts⟩
         have hsub' : isNotCoalesced x s = (.success true, s) := by
           rw [hsub, decide_eq_true hc]
-        simp only [stExFilter, Translator.Monadic.MonadBase.bind, hsub', if_true]
+        simp only [stExFilter, Translator.Monadic.MonadBase.bind, hsub', ite_true]
         exact heq
       · obtain ⟨ts, heq, hts⟩ := ih acc s ⟨hxs, h.2⟩
         refine ⟨ts, ?_, hts⟩
         have hsub' : isNotCoalesced x s = (.success false, s) := by
           rw [hsub, decide_eq_false hc]
         simp only [stExFilter, Translator.Monadic.MonadBase.bind, hsub', Bool.false_eq_true,
-          if_false]
+          ite_false]
         exact heq
 
 end Flapjack.RegAlloc

@@ -76,17 +76,17 @@ theorem compileCorrect_While {width : Nat} {σ : Type} [NeZero width]
         · simp only [hw,ne_eq,not_true_eq_false,↓reduceIte] at hev ⊢
           obtain ⟨rfl,rfl⟩ := Prod.mk.inj hev
           exact ⟨target,rfl,hrel⟩
-        · simp only [if_pos hw] at hev ⊢
+        · simp only [ite_eq_left hw] at hev ⊢
           have hc := hrel.2.2.2.2.2.1
           by_cases hz : source.clock = 0
           · have htz : target.clock = 0 := hc ▸ hz
-            simp only [if_pos hz] at hev
+            simp only [ite_eq_left hz] at hev
             obtain ⟨rfl,rfl⟩ := Prod.mk.inj hev
-            exact ⟨emptyLocalsHOLFinite target,by simp only [if_pos htz],
+            exact ⟨emptyLocalsHOLFinite target,by simp only [ite_eq_left htz],
               (PanGlobalsStateRelationLocals.stateRelEmptyLocalsHOL context source target false).1 hrel⟩
           · have htz : target.clock ≠ 0 := hc ▸ hz
-            simp only [if_neg hz] at hev
-            simp only [if_neg htz]
+            simp only [ite_eq_right hz] at hev
+            simp only [ite_eq_right htz]
             rcases hb : evaluateHOLFiniteState (decClockHOLFinite source) body with ⟨br,bs⟩
             simp only [hb] at hev
             have hbody := ihBody word ⟨he,hw,hz⟩

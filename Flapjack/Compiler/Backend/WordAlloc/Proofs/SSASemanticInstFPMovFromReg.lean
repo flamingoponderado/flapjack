@@ -82,7 +82,7 @@ theorem ssaCcTransCorrectInstFPMovFromReg {width : Nat} [NeZero width] {C F : Ty
             by_cases mappedSame : optionLookup ssa left = optionLookup ssa right
             · have rightBound : right < next := by
                 have occurrences := h.2.2.2.1
-                simp only [everyVarHOL, everyVarInstHOL, size, if_false, Bool.and_eq_true] at occurrences
+                simp only [everyVarHOL, everyVarInstHOL, size, ite_false, Bool.and_eq_true] at occurrences
                 exact of_decide_eq_true occurrences.2
               have originalRead : sptLookup right source.locals = some (.word rightWord) := readRight
               have domain := (h.2.1.2 right (.word rightWord) originalRead).1
@@ -119,17 +119,17 @@ theorem ssaCcTransCorrectInstFPMovFromReg {width : Nat} [NeZero width] {C F : Ty
                   (none, WordSemStateFiniteExact.setFpVar fp ((rightWord ++ leftWord).setWidth 64) moved) := by
                 rw [evaluateSeqFPMove, moveRun]
                 simp only [WordSemStateFiniteExact.evaluate, WordSemStateFiniteExact.inst,
-                  size, if_false, movedLeft, movedRight]
+                  size, ite_false, movedLeft, movedRight]
               have sourceRun : WordSemStateFiniteExact.evaluate
                   (.inst (.fp (.fpMovFromReg fp left right)))
                   {source with permute := target.permute} =
                   (none, WordSemStateFiniteExact.setFpVar fp ((rightWord ++ leftWord).setWidth 64) permuted) := by
                 change WordSemStateFiniteExact.evaluate (.inst (.fp (.fpMovFromReg fp left right))) permuted = _
                 simp only [WordSemStateFiniteExact.evaluate, WordSemStateFiniteExact.inst,
-                  size, if_false, readLeft, readRight]
+                  size, ite_false, readLeft, readRight]
               dsimp only
               simp only [sourceRun]
-              simp only [ssaCcTrans, ssaCcTransInst, size, if_false, mappedSame, if_true,
+              simp only [ssaCcTrans, ssaCcTransInst, size, ite_false, mappedSame, ite_true,
                 nextVarRename]
               have targetRunSame := targetRun
               simp only [mappedSame] at targetRunSame

@@ -109,7 +109,7 @@ theorem partialRefScan_wordStep {width : Nat} [NeZero width] (conf : Config) (fu
     simpa using eq.symm
   have fuelNonzero : fuel ≠ 0 := by omega
   dsimp only
-  rw [wordGenGcPartialMoveRefList, if_neg different, if_neg fuelNonzero]
+  rw [wordGenGcPartialMoveRefList, ite_eq_right different, ite_eq_right fuelNonzero]
   simp only [read, present, wordSemIsWordLoc, wordSemTheWord, Bool.true_and, decoded]
 
 /-- Move the first remembered reference's roots while retaining its header

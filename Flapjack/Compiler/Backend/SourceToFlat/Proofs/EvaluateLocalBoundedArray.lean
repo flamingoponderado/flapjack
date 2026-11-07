@@ -763,7 +763,7 @@ theorem localEnvBounded_aw8sub {C F : Type} [Nonempty C]
           subst flatValue
           have primitive := aw8sub_complete_related nextGenv nextSource nextFlat states nextInvariant.1
             flag address bytes lookup index false
-          simp only [Bool.false_eq_true, if_false] at primitive
+          simp only [Bool.false_eq_true, ite_false] at primitive
           cases sourceApp : doApp (nextSource.refs, nextSource.ffi) .aw8sub
               [.loc flag address, .litv (.intLit index)] with
           | none => exact (successful sourceApp).elim
@@ -922,7 +922,7 @@ theorem localEnvBounded_aw8subUnsafe {C F : Type} [Nonempty C]
           subst flatValue
           have primitive := aw8sub_complete_related nextGenv nextSource nextFlat states nextInvariant.1
             flag address bytes lookup index true
-          simp only [if_true] at primitive
+          simp only [ite_true] at primitive
           cases sourceApp : doApp (nextSource.refs, nextSource.ffi) .aw8subUnsafe
               [.loc flag address, .litv (.intLit index)] with
           | none => exact (successful sourceApp).elim
@@ -1081,7 +1081,7 @@ theorem localEnvBounded_asub {C F : Type} [Nonempty C]
           subst flatValue
           have primitive := asub_complete_related nextGenv nextSource nextFlat states nextInvariant.1
             flag address bytes lookup index false
-          simp only [Bool.false_eq_true, if_false] at primitive
+          simp only [Bool.false_eq_true, ite_false] at primitive
           cases sourceApp : doApp (nextSource.refs, nextSource.ffi) .asub
               [.loc flag address, .litv (.intLit index)] with
           | none => exact (successful sourceApp).elim
@@ -1240,7 +1240,7 @@ theorem localEnvBounded_asubUnsafe {C F : Type} [Nonempty C]
           subst flatValue
           have primitive := asub_complete_related nextGenv nextSource nextFlat states nextInvariant.1
             flag address bytes lookup index true
-          simp only [if_true] at primitive
+          simp only [ite_true] at primitive
           cases sourceApp : doApp (nextSource.refs, nextSource.ffi) .asubUnsafe
               [.loc flag address, .litv (.intLit index)] with
           | none => exact (successful sourceApp).elim
@@ -1405,7 +1405,7 @@ theorem localEnvBounded_aupdate {C F : Type} [Nonempty C]
             subst flatIndex
             have primitive := aupdate_complete_related nextGenv nextSource nextFlat states nextInvariant.1
               flag address values lookup index sourceValue flatValue valueRel false
-            simp only [Bool.false_eq_true, if_false] at primitive
+            simp only [Bool.false_eq_true, ite_false] at primitive
             cases sourceApp : doApp (nextSource.refs, nextSource.ffi) .aupdate
                 [.loc flag address, .litv (.intLit index), sourceValue] with
             | none => exact (successful sourceApp).elim
@@ -1576,7 +1576,7 @@ theorem localEnvBounded_aupdateUnsafe {C F : Type} [Nonempty C]
             subst flatIndex
             have primitive := aupdate_complete_related nextGenv nextSource nextFlat states nextInvariant.1
               flag address values lookup index sourceValue flatValue valueRel true
-            simp only [if_true] at primitive
+            simp only [ite_true] at primitive
             cases sourceApp : doApp (nextSource.refs, nextSource.ffi) .aupdateUnsafe
                 [.loc flag address, .litv (.intLit index), sourceValue] with
             | none => exact (successful sourceApp).elim
@@ -1749,7 +1749,7 @@ theorem localEnvBounded_aw8update {C F : Type} [Nonempty C]
             subst flatValue
             have primitive := aw8update_complete_related nextGenv nextSource nextFlat states nextInvariant.1
               flag address values lookup index byte false
-            simp only [Bool.false_eq_true, if_false] at primitive
+            simp only [Bool.false_eq_true, ite_false] at primitive
             cases sourceApp : doApp (nextSource.refs, nextSource.ffi) .aw8update
                 [.loc flag address, .litv (.intLit index), .litv (.word8 byte)] with
             | none => exact (successful sourceApp).elim
@@ -1922,7 +1922,7 @@ theorem localEnvBounded_aw8updateUnsafe {C F : Type} [Nonempty C]
             subst flatValue
             have primitive := aw8update_complete_related nextGenv nextSource nextFlat states nextInvariant.1
               flag address values lookup index byte true
-            simp only [if_true] at primitive
+            simp only [ite_true] at primitive
             cases sourceApp : doApp (nextSource.refs, nextSource.ffi) .aw8updateUnsafe
                 [.loc flag address, .litv (.intLit index), .litv (.word8 byte)] with
             | none => exact (successful sourceApp).elim

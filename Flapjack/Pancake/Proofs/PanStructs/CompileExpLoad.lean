@@ -79,7 +79,7 @@ theorem compileExpCorrectLoad {width : Nat} {σ : Type} [NeZero width]
         rw [htarget]
         simp only [convertStateExact]
         rw [hstructs]
-        simp only [compileShapeNoName, if_true]
+        simp only [compileShapeNoName, ite_true]
         exact hconv
     · simp at hr
   · simp at hr

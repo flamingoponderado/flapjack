@@ -27,7 +27,7 @@ private theorem loadUnchanged {width : Nat} {σ : Type} [NeZero width]
   classical
   by_cases hn : nb = 0
   · by_cases ha : state.shMemaddrs address
-    · simp only [shMemLoadHOLFiniteExact, if_pos hn, if_pos ha] at heval
+    · simp only [shMemLoadHOLFiniteExact, ite_eq_left hn, ite_eq_left ha] at heval
       cases hh : callFFIHOL state.ffi (.sharedMem .mappedRead) [BitVec.ofNat 8 nb]
           (panWordToBytesHOL address false) <;> simp only [hh] at heval
       case final event =>
@@ -39,10 +39,10 @@ private theorem loadUnchanged {width : Nat} {σ : Type} [NeZero width]
           setVarHOLFinite, setGlobalHOLFinite, HolFiniteMapExact.update, FUPDATE]
         intro he
         exact False.elim (hne he.symm)
-    · simp only [shMemLoadHOLFiniteExact, if_pos hn, if_neg ha] at heval
+    · simp only [shMemLoadHOLFiniteExact, ite_eq_left hn, ite_eq_right ha] at heval
       exact False.elim (herror (Prod.mk.inj heval).1.symm)
   · by_cases ha : state.shMemaddrs (panByteAlignHOL address)
-    · simp only [shMemLoadHOLFiniteExact, if_neg hn, if_pos ha] at heval
+    · simp only [shMemLoadHOLFiniteExact, ite_eq_right hn, ite_eq_left ha] at heval
       cases hh : callFFIHOL state.ffi (.sharedMem .mappedRead) [BitVec.ofNat 8 nb]
           (panWordToBytesHOL address false) <;> simp only [hh] at heval
       case final event =>
@@ -54,7 +54,7 @@ private theorem loadUnchanged {width : Nat} {σ : Type} [NeZero width]
           setVarHOLFinite, setGlobalHOLFinite, HolFiniteMapExact.update, FUPDATE]
         intro he
         exact False.elim (hne he.symm)
-    · simp only [shMemLoadHOLFiniteExact, if_neg hn, if_neg ha] at heval
+    · simp only [shMemLoadHOLFiniteExact, ite_eq_right hn, ite_eq_right ha] at heval
       exact False.elim (herror (Prod.mk.inj heval).1.symm)
 
 /-- Genuine ShMemLoad case of evaluate_unchanged_local1105-1136.

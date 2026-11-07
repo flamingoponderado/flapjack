@@ -19,7 +19,7 @@ theorem cutEnv_namesOfList {α : Type} (names : List Nat) (env : Spt α)
     DataSem.cutEnv (namesOfList names) env = some (sptMkWf (sptInter env (namesOfList names))) := by
   classical
   unfold DataSem.cutEnv
-  apply if_pos
+  apply ite_eq_left
   intro key member
   have existsValue : ∃ value, sptLookup key env = some value := by
     cases found : sptLookup key env with
@@ -124,7 +124,7 @@ theorem varCorr_cut_namesOfList {α β : Type} (f : α → β) (kept : List Nat)
   | @cons name value names values lookup rest ih =>
     constructor
     · simp only [DataSem.getVar, sptLookup_sptMap, lookup_cut_namesOfList]
-      rw [if_pos (included name (by simp))]
+      rw [ite_eq_left (included name (by simp))]
       simpa [DataSem.getVar, sptLookup_sptMap] using lookup
     · exact ih (fun key member => included key (by simp [member]))
 
@@ -163,7 +163,7 @@ theorem getVars_cut_exact {α : Type} (kept : List Nat) (env : Spt α)
   | nil => simpa [DataSem.getVars] using read
   | cons name names ih =>
     have member : name ∈ kept := included name (by simp)
-    simp only [DataSem.getVars, DataSem.getVar, lookup_cut_namesOfList, if_pos member] at read ⊢
+    simp only [DataSem.getVars, DataSem.getVar, lookup_cut_namesOfList, ite_eq_left member] at read ⊢
     cases found : sptLookup name env with
     | none => simp [found] at read
     | some value =>

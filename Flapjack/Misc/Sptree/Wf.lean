@@ -37,7 +37,7 @@ theorem sptWfClauses {α : Type} :
 theorem sptInsertNotEmpty {α : Type} (key : Nat) (value : α) (tree : Spt α) :
     sptIsEmpty (sptInsert key value tree) = false := by
   cases tree <;> rw [sptInsert] <;> by_cases hz : key = 0 <;>
-    by_cases hp : key % 2 = 0 <;> simp only [hz, hp, if_true, if_false, sptIsEmpty]
+    by_cases hp : key % 2 = 0 <;> simp only [hz, hp, ite_true, ite_false, sptIsEmpty]
 
 /-- Literal source insertion preserves well-formedness for every payload type. -/
 @[hol "hol4/src/finite_maps/sptreeScript.sml" "wf_insert"]
@@ -186,22 +186,22 @@ variable {α : Type}
 /-- Key `2j+2` selects the left subtree (Flapjack infrastructure). -/
 theorem sptLookup_left_bn (j : Nat) (l r : Spt α) :
     sptLookup (2 * j + 2) (.bn l r) = sptLookup j l := by
-  rw [sptLookup, if_neg (by omega), if_pos (by omega)]
+  rw [sptLookup, ite_eq_right (by omega), ite_eq_left (by omega)]
   congr 1; omega
 
 theorem sptLookup_right_bn (j : Nat) (l r : Spt α) :
     sptLookup (2 * j + 1) (.bn l r) = sptLookup j r := by
-  rw [sptLookup, if_neg (by omega), if_neg (by omega)]
+  rw [sptLookup, ite_eq_right (by omega), ite_eq_right (by omega)]
   congr 1; omega
 
 theorem sptLookup_left_bs (j : Nat) (l : Spt α) (a : α) (r : Spt α) :
     sptLookup (2 * j + 2) (.bs l a r) = sptLookup j l := by
-  rw [sptLookup, if_neg (by omega), if_pos (by omega)]
+  rw [sptLookup, ite_eq_right (by omega), ite_eq_left (by omega)]
   congr 1; omega
 
 theorem sptLookup_right_bs (j : Nat) (l : Spt α) (a : α) (r : Spt α) :
     sptLookup (2 * j + 1) (.bs l a r) = sptLookup j r := by
-  rw [sptLookup, if_neg (by omega), if_neg (by omega)]
+  rw [sptLookup, ite_eq_right (by omega), ite_eq_right (by omega)]
   congr 1; omega
 
 /-- A well-formed nonempty tree has a key (Flapjack infrastructure). -/
@@ -256,12 +256,12 @@ theorem sptEqThm {α : Type} :
           cases hl : sptIsEmpty l
           · obtain ⟨k, v, hk⟩ := sptWf_exists_key l h2.1.1 hl
             have := h (2 * k + 2)
-            rw [sptLookup_left_bs, hk, sptLookup, if_neg (by omega)] at this
+            rw [sptLookup_left_bs, hk, sptLookup, ite_eq_right (by omega)] at this
             cases this
           · cases hr : sptIsEmpty r
             · obtain ⟨k, v, hk⟩ := sptWf_exists_key r h2.1.2 hr
               have := h (2 * k + 1)
-              rw [sptLookup_right_bs, hk, sptLookup, if_neg (by omega)] at this
+              rw [sptLookup_right_bs, hk, sptLookup, ite_eq_right (by omega)] at this
               cases this
             · rw [hl, hr] at h2; simp at h2
   | bn l r ihl ihr =>
@@ -360,14 +360,14 @@ theorem sptLookupDifference {α β : Type} :
           rw [sptLookupMkBN]
           by_cases hk : k = 0
           · simp [sptLookup, hk]
-          · simp only [sptLookup, hk, if_false]
+          · simp only [sptLookup, hk, ite_false]
             split <;> first | exact ihl _ _ | exact ihr _ _
       | bs l' b r' =>
           simp only [sptDifference]
           rw [sptLookupMkBN]
           by_cases hk : k = 0
           · simp [sptLookup, hk]
-          · simp only [sptLookup, hk, if_false]
+          · simp only [sptLookup, hk, ite_false]
             split <;> first | exact ihl _ _ | exact ihr _ _
   | bs l a r ihl ihr =>
       intro m2 k
@@ -381,14 +381,14 @@ theorem sptLookupDifference {α β : Type} :
           rw [sptLookupMkBS]
           by_cases hk : k = 0
           · simp [sptLookup, hk]
-          · simp only [sptLookup, hk, if_false]
+          · simp only [sptLookup, hk, ite_false]
             split <;> first | exact ihl _ _ | exact ihr _ _
       | bs l' b r' =>
           simp only [sptDifference]
           rw [sptLookupMkBN]
           by_cases hk : k = 0
           · simp [sptLookup, hk]
-          · simp only [sptLookup, hk, if_false]
+          · simp only [sptLookup, hk, ite_false]
             split <;> first | exact ihl _ _ | exact ihr _ _
 
 /-- Exact HOL `wf_difference` (`HOL/src/finite_maps/sptreeScript.sml:1925-1930`). -/

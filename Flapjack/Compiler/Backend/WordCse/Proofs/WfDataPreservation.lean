@@ -495,7 +495,7 @@ theorem wfData_merge {width : Nat} [NeZero width] (d1 d2 : Knowledge)
     | some w =>
       by_cases h2 : sptLookup k d2.toCanonical = some w
       · simp [h2]
-      · simp only [h2, if_false, reduceCtorEq, false_iff, not_and, Option.some.injEq]
+      · simp only [h2, ite_false, reduceCtorEq, false_iff, not_and, Option.some.injEq]
         rintro rfl; exact h2
   have bm := fun (m1 m2 : Misc.BalancedMap.Map (List Nat) Nat) (i1 : Misc.BalancedMap.invariant listCmp m1)
       (i2 : Misc.BalancedMap.invariant listCmp m2) k v =>
@@ -833,7 +833,7 @@ theorem canonicalRegs'_registered {width : Nat} [NeZero width] (data : Knowledge
       (registerRead data (canonicalRegs' r data a)).toCanonical = some (canonicalRegs' r data a) := by
   rw [lookup_register_read]
   rcases canonicalRegs'_self_or_fresh_wf data r a ⟨h, hr⟩ with hs | hn
-  · rw [if_neg (fun hc => by rw [hs] at hc; exact absurd hc.2.2 (by simp))]; exact hs
+  · rw [ite_eq_right (fun hc => by rw [hs] at hc; exact absurd hc.2.2 (by simp))]; exact hs
   · have hodd : canonicalRegs' r data a % 2 ≠ 0 := by
       unfold canonicalRegs' canonicalRegs at hn ⊢
       dsimp only at hn ⊢
@@ -844,9 +844,9 @@ theorem canonicalRegs'_registered {width : Nat} [NeZero width] (data : Knowledge
         | none => simp only [Option.getD_none]; omega
         | some c =>
           simp only [hl, Option.getD_some] at hn hne ⊢
-          rw [if_neg hne] at hn
+          rw [ite_eq_right hne] at hn
           exact absurd (h.1 a c hl).1 (by rw [hn]; simp)
-    rw [if_pos ⟨rfl, hodd, hn⟩]
+    rw [ite_eq_left ⟨rfl, hodd, hn⟩]
 
 set_option linter.unusedSimpArgs false in
 /-- The instruction clauses of `word_cse` keep `wf_data` (the `Inst` case of
@@ -905,7 +905,7 @@ theorem wfData_wordCseInst {width : Nat} [NeZero width] (data : Knowledge)
           have hne : a' ≠ r := canonicalRegs'_ne d1 r a har
           have w2 := wfData_register_read d1 a' w1
           have r2 : sptLookup r (registerRead d1 a').toCanonical = none := by
-            rw [lookup_register_read, if_neg (fun hc => hne hc.1.symm), r1]
+            rw [lookup_register_read, ite_eq_right (fun hc => hne hc.1.symm), r1]
           have self2 : sptLookup a' (registerRead d1 a').toCanonical = some a' :=
             canonicalRegs'_registered d1 r a w1 r1 (by omega)
           refine wf_add_to_load_aux _ _ _ _ _ _ ⟨w2, r2, rfl, fun hev2 => ?_⟩
@@ -994,7 +994,7 @@ theorem word_cse_wf_data {width : Nat} [NeZero width] :
         have hne : a' ≠ r1 := canonicalRegs'_ne d1 r1 r2 hne2
         have w2 := wfData_register_read d1 a' w1
         have r2n : sptLookup r1 (registerRead d1 a').toCanonical = none := by
-          rw [lookup_register_read, if_neg (fun hc => hne hc.1.symm), r1n]
+          rw [lookup_register_read, ite_eq_right (fun hc => hne hc.1.symm), r1n]
         have self2 : sptLookup a' (registerRead d1 a').toCanonical = some a' :=
           canonicalRegs'_registered d1 r1 r2 w1 r1n (by omega)
         refine wf_add_to_data_aux _ _ _ _ _ _ ⟨w2, r2n, rfl, fun hev2 => ?_⟩

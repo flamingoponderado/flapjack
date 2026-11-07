@@ -108,12 +108,12 @@ private theorem loop_code {width : Nat} [NeZero width] {C F : Type}
           dsimp only
           rw [hstep] at hfirst
           by_cases hcont : wordSemContLoop result = true
-          · simp only [if_pos hcont]
+          · simp only [ite_eq_left hcont]
             by_cases hz : next.clock = 0
             · simpa only [hz, ↓reduceDIte, flushState] using hfirst
             · simp only [hz, ↓reduceDIte]
               exact subTrans hfirst (hrecur v result next hcut hstep hcont hz)
-          · simp only [if_neg hcont]
+          · simp only [ite_eq_right hcont]
             repeat' split
             all_goals first
               | exact hfirst
@@ -149,7 +149,7 @@ private theorem returningCall_code {width : Nat} [NeZero width] {C F : Type}
       (evaluate (.call (some (n, names, retHandler, l1, l2)) dest args handler) s).2.code := by
   have ht := (evaluate_def_rebound (width := width) (C := C) (F := F)).2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2
   rw [ht]
-  simp only [hg, hbad, Bool.false_eq_true, if_false, hf, hnames, henvs, hz]
+  simp only [hg, hbad, Bool.false_eq_true, ite_false, hf, hnames, henvs, hz]
   have hstart : (callEnv args1 ss (pushEnv envs handler (decClock s))).code = s.code := by
     change (pushEnv envs handler (decClock s)).code = s.code
     rw [pushEnv_code]
@@ -200,7 +200,7 @@ private theorem tailCall_code {width : Nat} [NeZero width] {C F : Type}
     sptSubspt s.code (evaluate (.call none dest args none) s).2.code := by
   have ht := (evaluate_def_rebound (width := width) (C := C) (F := F)).2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2
   rw [ht]
-  simp only [hg, hbad, Bool.false_eq_true, if_false, hf, hz]
+  simp only [hg, hbad, Bool.false_eq_true, ite_false, hf, hz]
   rcases hcv : evaluate prog (callEnv args1 ss (decClock s)) with ⟨result, next⟩
   rw [hcv] at hcallee
   split <;> exact hcallee

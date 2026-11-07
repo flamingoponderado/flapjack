@@ -277,7 +277,7 @@ private theorem cutNamesI {β γ : Type} (names : Spt γ) (sloc tloc x : Spt β)
     intro k hk
     obtain ⟨v, hv⟩ := (sptMem_iff_lookup k sloc).mp (hsub k hk)
     exact (sptMem_iff_lookup k tloc).mpr ⟨v, hr k v ⟨hk, hv⟩⟩
-  simp only [wordSemCutNames, htsub, if_true, Option.some.injEq]
+  simp only [wordSemCutNames, htsub, ite_true, Option.some.injEq]
   rw [sptEqThm _ _ ⟨sptWfInter _ _, sptWfInter _ _⟩]
   intro k
   rw [sptLookup_sptInterCases, sptLookup_sptInterCases]

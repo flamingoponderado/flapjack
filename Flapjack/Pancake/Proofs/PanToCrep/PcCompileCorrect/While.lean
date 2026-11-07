@@ -78,17 +78,17 @@ theorem pcCompileCorrectAt_while {width : Nat} {σ : Type} [NeZero width]
   have hclk : source.clock = t.clock := hstate.2.2.2.2.2.1
   by_cases hw : w ≠ 0
   case neg =>
-    rw [if_neg hw] at hrun ⊢
+    rw [ite_eq_right hw] at hrun ⊢
     obtain ⟨rfl, rfl⟩ := Prod.mk.inj hrun
     exact ⟨_, _, rfl, hstate, hcode, hexcp, rfl, hlocals⟩
-  rw [if_pos hw] at hrun ⊢
+  rw [ite_eq_left hw] at hrun ⊢
   by_cases hck : source.clock = 0
-  · rw [if_pos hck] at hrun
-    rw [if_pos (hclk ▸ hck)]
+  · rw [ite_eq_left hck] at hrun
+    rw [ite_eq_left (hclk ▸ hck)]
     obtain ⟨rfl, rfl⟩ := Prod.mk.inj hrun
     exact ⟨_, _, rfl, panToCrepStateRelFiniteExact_emptyLocals source t hstate, hcode, hexcp, rfl⟩
-  rw [if_neg hck] at hrun
-  rw [if_neg (hclk ▸ hck)]
+  rw [ite_eq_right hck] at hrun
+  rw [ite_eq_right (hclk ▸ hck)]
   rcases hb : (PanSemStateFiniteExact.decClockHOLFinite source).evaluateHOLFiniteState c with
     ⟨r1, s'⟩
   rw [hb] at hrun

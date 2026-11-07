@@ -80,7 +80,7 @@ private theorem callReturnPost {width : Nat} [NeZero width] {σ : Type}
       intro hm'
       obtain ⟨e, he, rfl⟩ := List.mem_map.1 hm'
       exact hj (hkeys e he)
-    simp only [hj, Bool.false_eq_true, if_false]
+    simp only [hj, Bool.false_eq_true, ite_false]
     exact (FLOOKUP_FUPDATE_LIST_HOL_not_mem _ _ j hjn).symm
 
 /-- Local support: the `Call` case of the motive. -/
@@ -104,14 +104,14 @@ theorem callStrongGoal {width : Nat} [NeZero width] {σ : Type}
           obtain ⟨prog, newlocals⟩ := pn
           simp only [hcode] at hev ⊢
           by_cases hn : crepReturnInfoNodupError info
-          · simp only [hn, if_true] at hev
+          · simp only [hn, ite_true] at hev
             obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev; exact absurd rfl hne
-          · simp only [hn, if_false] at hev ⊢
+          · simp only [hn, ite_false] at hev ⊢
             by_cases hc : s.clock = 0
-            · rw [if_pos hc] at hev ⊢
+            · rw [ite_eq_left hc] at hev ⊢
               obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
               exact ⟨_, rfl, ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩, trivial⟩
-            · rw [if_neg hc] at hev ⊢
+            · rw [ite_eq_right hc] at hev ⊢
               have hsame : ({ decClockCrepSemHOL ({ s with locals := tl } : CrepSemHOLState width σ)
                   with locals := newlocals } : CrepSemHOLState width σ) =
                   { decClockCrepSemHOL s with locals := newlocals } := rfl
@@ -145,9 +145,9 @@ theorem callStrongGoal {width : Nat} [NeZero width] {σ : Type}
                 · exact emp _ trivial hev
                 · dsimp only at hev ⊢
                   by_cases hl : vs.length ≠ rts.length
-                  · rw [if_pos hl] at hev
+                  · rw [ite_eq_left hl] at hev
                     obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev; exact absurd rfl hne
-                  · rw [if_neg hl] at hev ⊢
+                  · rw [ite_eq_right hl] at hev ⊢
                     cases hm : rts.mapM s.locals.lookup with
                     | none =>
                         simp only [hm] at hev
@@ -166,11 +166,11 @@ theorem callStrongGoal {width : Nat} [NeZero width] {σ : Type}
                 · dsimp only at hev ⊢
                   by_cases he : ex = eid
                   · subst he
-                    simp only [if_true] at hev ⊢
+                    simp only [ite_true] at hev ⊢
                     exact ih vals prog newlocals rts ex h st hargs hcode hn hc hb rfl r s'
                       { st with locals := tl } hev hne hloc
                       ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
-                  · simp only [he, if_false] at hev ⊢
+                  · simp only [he, ite_false] at hev ⊢
                     exact emp _ trivial hev
               · exact emp _ trivial hev
 

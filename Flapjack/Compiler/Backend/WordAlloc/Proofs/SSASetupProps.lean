@@ -117,7 +117,7 @@ theorem setupSSAProps {width : Nat} [NeZero width] {C F : Type}
   simp only [setupSSA, renamed, WordSemStateFiniteExact.evaluate]
   rw [List.map_fst_zip (Nat.le_of_eq lengths),
     List.map_snd_zip (Nat.le_of_eq lengths.symm)]
-  simp only [arithmetic.1, if_true, read]
+  simp only [arithmetic.1, ite_true, read]
   refine ⟨True.intro, ?_, properties.2.2.2, ?_, properties.2.1 h.1, properties.1⟩
   · simp [WordSemStateFiniteExact.setVars, Flapjack.WordAlloc.wordStateEqRel]
   · change ssaLocalsRel nextOut ssaOut state.locals

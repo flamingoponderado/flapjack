@@ -1,6 +1,10 @@
 import Flapjack.Misc.BalancedMap.Semantics
 import Flapjack.FiniteMap.Comparison
-import Mathlib.Data.Set.Lattice
+import Mathlib.Data.Set.Lattice.Bounded
+import Mathlib.Data.Set.Lattice.Disjoint
+import Mathlib.Data.Set.Lattice.Image
+import Mathlib.Data.Set.Lattice.Indexed
+import Mathlib.Data.Set.Lattice.Order
 
 namespace Flapjack.Misc.BalancedMap
 open FiniteMap.Comparison

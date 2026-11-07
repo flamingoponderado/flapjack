@@ -208,14 +208,14 @@ theorem fitsSigned21_of_range (v : W)
   rw [decide_eq_true_eq]
   unfold sextValue
   by_cases hcase : 2 * v.toNat < 2 ^ 64
-  · have htoInt : v.toInt = (v.toNat : Int) := by rw [hcond, if_pos hcase]
+  · have htoInt : v.toInt = (v.toNat : Int) := by rw [hcond, ite_eq_left hcase]
     have hxlt : v.toNat < 2 ^ 19 := by
       have h : (v.toNat : Int) ≤ (2 : Int) ^ 19 - 1 := by rw [← htoInt]; exact hrange.2
       norm_num at h
       omega
     have hmod : v.toNat % 2 ^ 21 = v.toNat := Nat.mod_eq_of_lt (by omega)
-    rw [hmod, if_pos (by omega), htoInt]
-  · have htoInt : v.toInt = (v.toNat : Int) - (2 : Int) ^ 64 := by rw [hcond, if_neg hcase]
+    rw [hmod, ite_eq_left (by omega), htoInt]
+  · have htoInt : v.toInt = (v.toNat : Int) - (2 : Int) ^ 64 := by rw [hcond, ite_eq_right hcase]
     have hxge : 2 ^ 64 - 2 ^ 19 ≤ v.toNat := by
       have h : (v.toNat : Int) ≥ (2 : Int) ^ 64 - (2 : Int) ^ 19 := by
         have := hrange.1; rw [htoInt] at this; omega
@@ -233,7 +233,7 @@ theorem fitsSigned21_of_range (v : W)
         = (2 : Int) ^ 21 - ((2 ^ 64 - v.toNat : Nat) : Int) := by
       rw [Nat.cast_sub (by omega : 2 ^ 64 - v.toNat ≤ 2 ^ 21)]
       norm_num
-    rw [hmod, if_neg hneg, htoInt, hc21, hcD]
+    rw [hmod, ite_eq_right hneg, htoInt, hc21, hcD]
     norm_num
 
 /-- The lowering's twenty-bit guard implies the encoder's twenty-one-bit
@@ -371,7 +371,7 @@ theorem decode_branchImmediate_word (call : BitVec 1) (imm26 : BitVec 26) :
     simp
     interval_cases i <;> simp
   simp only [h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15, h16, h17,
-    hK, Bool.false_eq_true, if_true, if_false]
+    hK, Bool.false_eq_true, ite_true, ite_false]
   have f0 : part (branchImmediateWord call imm26) 0 26 = imm26.toNat := by
     apply part_eq_of_setWidth
     apply BitVec.eq_of_getLsbD_eq
@@ -411,7 +411,7 @@ theorem encodeInsn_branchImmediate (imm : W) (call : Bool)
   rw [show encodeInsn32 (.branchImmediate imm call)
       = some (fields [(1, bit call), (5, 5), (26, (imm >>> 2).toNat % 2 ^ 26)]) by
     simp only [encodeInsn32, hfits, hmod]
-    rw [if_pos]
+    rw [ite_eq_left]
     rfl]
   rfl
 
@@ -583,7 +583,7 @@ theorem decode_branchConditional_word (imm19 : BitVec 19) (cond : BitVec 4) :
     simp
     interval_cases i <;> simp
   simp only [h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15, h16, h17, h18,
-    hK, Bool.false_eq_true, if_true, if_false]
+    hK, Bool.false_eq_true, ite_true, ite_false]
   have f5 : part (branchConditionalWord imm19 cond) 5 19 = imm19.toNat := by
     apply part_eq_of_setWidth
     apply BitVec.eq_of_getLsbD_eq
@@ -624,7 +624,7 @@ theorem encodeInsn_branchConditional (imm : W) (cond : Nat)
   rw [show encodeInsn32 (.branchConditional imm cond)
       = some (fields [(8, 84), (19, (imm >>> 2).toNat % 2 ^ 19), (1, 0), (4, cond)]) by
     simp only [encodeInsn32, hfits, hmod]
-    rw [if_pos]
+    rw [ite_eq_left]
     rfl]
   rfl
 
@@ -811,7 +811,7 @@ theorem decode_addressFalse_word (imm2 : BitVec 2) (imm19 : BitVec 19) (rd : Bit
     simp
     interval_cases i <;> simp
   simp only [h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15, h16, h17, h18,
-    h19, h20, hK, Bool.false_eq_true, if_true, if_false]
+    h19, h20, hK, Bool.false_eq_true, ite_true, ite_false]
   have f5 : part (addressFalseWord imm2 imm19 rd) 5 19 = imm19.toNat := by
     apply part_eq_of_setWidth
     apply BitVec.eq_of_getLsbD_eq
@@ -864,7 +864,7 @@ theorem encodeInsn_addressFalse (imm : W) (rd : Nat) (hfits : fitsSigned 21 imm 
       = some (fields [(1, 0), (2, imm.toNat % 4), (5, 16),
           (19, (imm >>> 2).toNat % 2 ^ 19), (5, rd)]) by
     simp only [encodeInsn32]
-    rw [if_neg (by simp), if_pos hfits]]
+    rw [ite_eq_right (by simp), ite_eq_left hfits]]
   rfl
 
 /-- The 64-bit carrier form of the decoder inverts the encoder's carrier form. -/
@@ -1032,7 +1032,7 @@ theorem decode_loadStoreImmediateUnsigned_word (size : BitVec 2) (opc : BitVec 2
     simp only [loadStoreUnsignedWord]
     interval_cases i <;> simp
   simp only [h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15, hK,
-    Bool.false_eq_true, if_true, if_false]
+    Bool.false_eq_true, ite_true, ite_false]
   have f22 : part (loadStoreUnsignedWord size opc imm12 rn rt) 22 2 = opc.toNat := by
     apply part_eq_of_setWidth
     apply BitVec.eq_of_getLsbD_eq
@@ -1110,7 +1110,7 @@ theorem encodeInsn_loadStoreImmediateUnsigned (size : Nat) (regsizeWord : Bool)
           (12, (offset >>> size).toNat % 4096), (5, rn), (5, rt)]) by
     simp only [encodeInsn32, loadStoreOpc]
     cases memop <;>
-      (rw [if_pos (by simp only [Bool.true_and]; exact decide_eq_true hshape)]
+      (rw [ite_eq_left (by simp only [Bool.true_and]; exact decide_eq_true hshape)]
        try simp)]
   rfl
 
@@ -1293,7 +1293,7 @@ theorem decode_loadStoreImmediateSigned_word (size : BitVec 2) (opc : BitVec 2)
     simp only [loadStoreSignedWord]
     interval_cases i <;> simp
   simp only [h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15, h16, hK,
-    Bool.false_eq_true, if_true, if_false]
+    Bool.false_eq_true, ite_true, ite_false]
   have f22 : part (loadStoreSignedWord size opc imm9 rn rt) 22 2 = opc.toNat := by
     apply part_eq_of_setWidth
     apply BitVec.eq_of_getLsbD_eq
@@ -1368,7 +1368,7 @@ theorem encodeInsn_loadStoreImmediateSigned (size : Nat) (regsizeWord : Bool)
           (9, offset.toNat % 512), (1, 0), (1, 0), (5, rn), (5, rt)]) by
     simp only [encodeInsn32, loadStoreOpc]
     cases memop <;>
-      (rw [if_neg (by simp), if_pos hfits]
+      (rw [ite_eq_right (by simp), ite_eq_left hfits]
        try simp)]
   rfl
 

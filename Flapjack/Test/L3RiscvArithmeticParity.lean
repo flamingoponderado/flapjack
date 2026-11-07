@@ -479,7 +479,7 @@ example : «dfn'FDIV_S» (3,1,2,0) (state 0x80000000 0x0 0) =
     (holFloatDiv .roundTiesToEven (holFp32ToFloat 0x80000000) (holFp32ToFloat 0)).2) (state 0x80000000 0x0 0) = _
   have hx : holFloatValue (holFp32ToFloat 0x80000000) = .float 0 := by decide +kernel
   have hy : holFloatValue (holFp32ToFloat 0) = .float 0 := by decide +kernel
-  simp only [holFloatDiv, hx, hy, if_true]
+  simp only [holFloatDiv, hx, hy, ite_true]
 
 
 -- Original complete symbolic state equation fdiv_s_negative_zero_zero_rtz
@@ -490,7 +490,7 @@ example : «dfn'FDIV_S» (3,1,2,1) (state 0x80000000 0x0 0) =
     (holFloatDiv .roundTowardZero (holFp32ToFloat 0x80000000) (holFp32ToFloat 0)).2) (state 0x80000000 0x0 0) = _
   have hx : holFloatValue (holFp32ToFloat 0x80000000) = .float 0 := by decide +kernel
   have hy : holFloatValue (holFp32ToFloat 0) = .float 0 := by decide +kernel
-  simp only [holFloatDiv, hx, hy, if_true]
+  simp only [holFloatDiv, hx, hy, ite_true]
 
 
 -- Original complete symbolic state equation fdiv_s_negative_zero_zero_down
@@ -501,7 +501,7 @@ example : «dfn'FDIV_S» (3,1,2,2) (state 0x80000000 0x0 0) =
     (holFloatDiv .roundTowardNegative (holFp32ToFloat 0x80000000) (holFp32ToFloat 0)).2) (state 0x80000000 0x0 0) = _
   have hx : holFloatValue (holFp32ToFloat 0x80000000) = .float 0 := by decide +kernel
   have hy : holFloatValue (holFp32ToFloat 0) = .float 0 := by decide +kernel
-  simp only [holFloatDiv, hx, hy, if_true]
+  simp only [holFloatDiv, hx, hy, ite_true]
 
 
 -- Original complete symbolic state equation fdiv_s_negative_zero_zero_up
@@ -512,7 +512,7 @@ example : «dfn'FDIV_S» (3,1,2,3) (state 0x80000000 0x0 0) =
     (holFloatDiv .roundTowardPositive (holFp32ToFloat 0x80000000) (holFp32ToFloat 0)).2) (state 0x80000000 0x0 0) = _
   have hx : holFloatValue (holFp32ToFloat 0x80000000) = .float 0 := by decide +kernel
   have hy : holFloatValue (holFp32ToFloat 0) = .float 0 := by decide +kernel
-  simp only [holFloatDiv, hx, hy, if_true]
+  simp only [holFloatDiv, hx, hy, ite_true]
 
 
 -- Original fdiv_s_one_zero_rte
@@ -985,7 +985,7 @@ example : «dfn'FDIV_D» (3,1,2,0) (state 0x8000000000000000 0x0 0) =
     (holFloatDiv .roundTiesToEven (holFp64ToFloat 0x8000000000000000) (holFp64ToFloat 0)).2) (state 0x8000000000000000 0x0 0) = _
   have hx : holFloatValue (holFp64ToFloat 0x8000000000000000) = .float 0 := by decide +kernel
   have hy : holFloatValue (holFp64ToFloat 0) = .float 0 := by decide +kernel
-  simp only [holFloatDiv, hx, hy, if_true]
+  simp only [holFloatDiv, hx, hy, ite_true]
 
 
 -- Original complete symbolic state equation fdiv_d_negative_zero_zero_rtz
@@ -996,7 +996,7 @@ example : «dfn'FDIV_D» (3,1,2,1) (state 0x8000000000000000 0x0 0) =
     (holFloatDiv .roundTowardZero (holFp64ToFloat 0x8000000000000000) (holFp64ToFloat 0)).2) (state 0x8000000000000000 0x0 0) = _
   have hx : holFloatValue (holFp64ToFloat 0x8000000000000000) = .float 0 := by decide +kernel
   have hy : holFloatValue (holFp64ToFloat 0) = .float 0 := by decide +kernel
-  simp only [holFloatDiv, hx, hy, if_true]
+  simp only [holFloatDiv, hx, hy, ite_true]
 
 
 -- Original complete symbolic state equation fdiv_d_negative_zero_zero_down
@@ -1007,7 +1007,7 @@ example : «dfn'FDIV_D» (3,1,2,2) (state 0x8000000000000000 0x0 0) =
     (holFloatDiv .roundTowardNegative (holFp64ToFloat 0x8000000000000000) (holFp64ToFloat 0)).2) (state 0x8000000000000000 0x0 0) = _
   have hx : holFloatValue (holFp64ToFloat 0x8000000000000000) = .float 0 := by decide +kernel
   have hy : holFloatValue (holFp64ToFloat 0) = .float 0 := by decide +kernel
-  simp only [holFloatDiv, hx, hy, if_true]
+  simp only [holFloatDiv, hx, hy, ite_true]
 
 
 -- Original complete symbolic state equation fdiv_d_negative_zero_zero_up
@@ -1018,7 +1018,7 @@ example : «dfn'FDIV_D» (3,1,2,3) (state 0x8000000000000000 0x0 0) =
     (holFloatDiv .roundTowardPositive (holFp64ToFloat 0x8000000000000000) (holFp64ToFloat 0)).2) (state 0x8000000000000000 0x0 0) = _
   have hx : holFloatValue (holFp64ToFloat 0x8000000000000000) = .float 0 := by decide +kernel
   have hy : holFloatValue (holFp64ToFloat 0) = .float 0 := by decide +kernel
-  simp only [holFloatDiv, hx, hy, if_true]
+  simp only [holFloatDiv, hx, hy, ite_true]
 
 
 -- Original fdiv_d_one_zero_rte

@@ -23,11 +23,11 @@ private theorem restrictedEqOfSubmapFdom {β : Type}
     crepHolFdiff left mask = crepHolFdiff right mask := by
   funext key
   by_cases hm : mask key = true
-  · simp only [crepHolFdiff, hm, if_true]
-  · simp only [crepHolFdiff, if_neg hm]
+  · simp only [crepHolFdiff, hm, ite_true]
+  · simp only [crepHolFdiff, ite_eq_right hm]
     cases hl : left key with
     | some value =>
-        exact (hsub key value (by simp only [crepHolFdiff, if_neg hm, hl])).symm
+        exact (hsub key value (by simp only [crepHolFdiff, ite_eq_right hm, hl])).symm
     | none =>
         have hd := congrFun hdom key
         cases hr : right key with

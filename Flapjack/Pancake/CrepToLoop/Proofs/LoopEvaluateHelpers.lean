@@ -210,8 +210,8 @@ theorem findCode_none_append_loc (args1 : List (WordLocW width)) (loc : Nat)
       obtain ⟨params, exp⟩ := pe
       simp only
       by_cases hl : (a :: rest).length = params.length
-      · rw [if_pos hl, if_pos (by omega)]
-      · rw [if_neg hl, if_neg (by omega)]
+      · rw [ite_eq_left hl, ite_eq_left (by omega)]
+      · rw [ite_eq_right hl, ite_eq_right (by omega)]
 
 /-- Exact HOL `find_code_collapse_cases` (`crep_to_loopProofScript.sml:3264-3272`,
     `[local]`); its free variables `dest loc args1 st` are universally quantified

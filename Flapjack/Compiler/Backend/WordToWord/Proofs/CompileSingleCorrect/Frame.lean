@@ -47,9 +47,9 @@ theorem jumpExc_tgt (l : Spt (Nat × WordLangProgHOL (BitVec width)))
   have hh : (tgtState l o cc s).handler = s.handler := rfl
   have hs : (tgtState l o cc s).stack = s.stack := rfl
   by_cases h : s.handler < s.stack.length
-  · simp only [hh, hs, h, if_true]
+  · simp only [hh, hs, h, ite_true]
     split <;> rfl
-  · simp only [hh, hs, h, if_false, Option.map_none]
+  · simp only [hh, hs, h, ite_false, Option.map_none]
 
 set_option linter.unusedSimpArgs false in
 /-- A leaf statement runs the same on the replaced-code state, provided the two

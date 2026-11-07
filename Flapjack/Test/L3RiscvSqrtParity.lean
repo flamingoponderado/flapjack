@@ -34,7 +34,7 @@ example : «dfn'FSQRT_S» (3,1,0) (state 0x40800000 0x42 0) =
     (holFloatSqrt .roundTiesToEven (holFp32ToFloat 0x40800000)).2) (state 0x40800000 0x42 0) = _
   have hs : (holFp32ToFloat 0x40800000).sign = 0 := by decide +kernel
   have hv : holFloatValue (holFp32ToFloat 0x40800000) = .float (holFloatToReal (holFp32ToFloat 0x40800000)) := by decide +kernel
-  simp only [holFloatSqrt, if_pos hs, hv]
+  simp only [holFloatSqrt, ite_eq_left hs, hv]
 
 -- Original fsqrt_s_four_rtz
 example : «dfn'FSQRT_S» (3,1,1) (state 0x40800000 0x42 0) =
@@ -43,7 +43,7 @@ example : «dfn'FSQRT_S» (3,1,1) (state 0x40800000 0x42 0) =
     (holFloatSqrt .roundTowardZero (holFp32ToFloat 0x40800000)).2) (state 0x40800000 0x42 0) = _
   have hs : (holFp32ToFloat 0x40800000).sign = 0 := by decide +kernel
   have hv : holFloatValue (holFp32ToFloat 0x40800000) = .float (holFloatToReal (holFp32ToFloat 0x40800000)) := by decide +kernel
-  simp only [holFloatSqrt, if_pos hs, hv]
+  simp only [holFloatSqrt, ite_eq_left hs, hv]
 
 -- Original fsqrt_s_four_down
 example : «dfn'FSQRT_S» (3,1,2) (state 0x40800000 0x42 0) =
@@ -52,7 +52,7 @@ example : «dfn'FSQRT_S» (3,1,2) (state 0x40800000 0x42 0) =
     (holFloatSqrt .roundTowardNegative (holFp32ToFloat 0x40800000)).2) (state 0x40800000 0x42 0) = _
   have hs : (holFp32ToFloat 0x40800000).sign = 0 := by decide +kernel
   have hv : holFloatValue (holFp32ToFloat 0x40800000) = .float (holFloatToReal (holFp32ToFloat 0x40800000)) := by decide +kernel
-  simp only [holFloatSqrt, if_pos hs, hv]
+  simp only [holFloatSqrt, ite_eq_left hs, hv]
 
 -- Original fsqrt_s_four_up
 example : «dfn'FSQRT_S» (3,1,3) (state 0x40800000 0x42 0) =
@@ -61,7 +61,7 @@ example : «dfn'FSQRT_S» (3,1,3) (state 0x40800000 0x42 0) =
     (holFloatSqrt .roundTowardPositive (holFp32ToFloat 0x40800000)).2) (state 0x40800000 0x42 0) = _
   have hs : (holFp32ToFloat 0x40800000).sign = 0 := by decide +kernel
   have hv : holFloatValue (holFp32ToFloat 0x40800000) = .float (holFloatToReal (holFp32ToFloat 0x40800000)) := by decide +kernel
-  simp only [holFloatSqrt, if_pos hs, hv]
+  simp only [holFloatSqrt, ite_eq_left hs, hv]
 
 -- Original fsqrt_s_four_dynamic_up
 example : «dfn'FSQRT_S» (3,1,7) (state 0x40800000 0x42 3) =
@@ -70,7 +70,7 @@ example : «dfn'FSQRT_S» (3,1,7) (state 0x40800000 0x42 3) =
     (holFloatSqrt .roundTowardPositive (holFp32ToFloat 0x40800000)).2) (state 0x40800000 0x42 3) = _
   have hs : (holFp32ToFloat 0x40800000).sign = 0 := by decide +kernel
   have hv : holFloatValue (holFp32ToFloat 0x40800000) = .float (holFloatToReal (holFp32ToFloat 0x40800000)) := by decide +kernel
-  simp only [holFloatSqrt, if_pos hs, hv]
+  simp only [holFloatSqrt, ite_eq_left hs, hv]
 
 -- Original fsqrt_s_negative_one_rte
 example : «dfn'FSQRT_S» (3,1,0) (state 0xbf800000 0x42 0) =
@@ -79,7 +79,7 @@ example : «dfn'FSQRT_S» (3,1,0) (state 0xbf800000 0x42 0) =
     (holFloatSqrt .roundTiesToEven (holFp32ToFloat 0xbf800000)).2) (state 0xbf800000 0x42 0) = _
   have hs : (holFp32ToFloat 0xbf800000).sign ≠ 0 := by decide +kernel
   have hz : (holFp32ToFloat 0xbf800000) ≠ holFloatMinusZero _ _ := by decide +kernel
-  simp only [holFloatSqrt, if_neg hs, if_neg hz]
+  simp only [holFloatSqrt, ite_eq_right hs, ite_eq_right hz]
 
 -- Original fsqrt_s_negative_one_rtz
 example : «dfn'FSQRT_S» (3,1,1) (state 0xbf800000 0x42 0) =
@@ -88,7 +88,7 @@ example : «dfn'FSQRT_S» (3,1,1) (state 0xbf800000 0x42 0) =
     (holFloatSqrt .roundTowardZero (holFp32ToFloat 0xbf800000)).2) (state 0xbf800000 0x42 0) = _
   have hs : (holFp32ToFloat 0xbf800000).sign ≠ 0 := by decide +kernel
   have hz : (holFp32ToFloat 0xbf800000) ≠ holFloatMinusZero _ _ := by decide +kernel
-  simp only [holFloatSqrt, if_neg hs, if_neg hz]
+  simp only [holFloatSqrt, ite_eq_right hs, ite_eq_right hz]
 
 -- Original fsqrt_s_negative_one_down
 example : «dfn'FSQRT_S» (3,1,2) (state 0xbf800000 0x42 0) =
@@ -97,7 +97,7 @@ example : «dfn'FSQRT_S» (3,1,2) (state 0xbf800000 0x42 0) =
     (holFloatSqrt .roundTowardNegative (holFp32ToFloat 0xbf800000)).2) (state 0xbf800000 0x42 0) = _
   have hs : (holFp32ToFloat 0xbf800000).sign ≠ 0 := by decide +kernel
   have hz : (holFp32ToFloat 0xbf800000) ≠ holFloatMinusZero _ _ := by decide +kernel
-  simp only [holFloatSqrt, if_neg hs, if_neg hz]
+  simp only [holFloatSqrt, ite_eq_right hs, ite_eq_right hz]
 
 -- Original fsqrt_s_negative_one_up
 example : «dfn'FSQRT_S» (3,1,3) (state 0xbf800000 0x42 0) =
@@ -106,7 +106,7 @@ example : «dfn'FSQRT_S» (3,1,3) (state 0xbf800000 0x42 0) =
     (holFloatSqrt .roundTowardPositive (holFp32ToFloat 0xbf800000)).2) (state 0xbf800000 0x42 0) = _
   have hs : (holFp32ToFloat 0xbf800000).sign ≠ 0 := by decide +kernel
   have hz : (holFp32ToFloat 0xbf800000) ≠ holFloatMinusZero _ _ := by decide +kernel
-  simp only [holFloatSqrt, if_neg hs, if_neg hz]
+  simp only [holFloatSqrt, ite_eq_right hs, ite_eq_right hz]
 
 -- Original fsqrt_s_negative_one_dynamic_up
 example : «dfn'FSQRT_S» (3,1,7) (state 0xbf800000 0x42 3) =
@@ -115,7 +115,7 @@ example : «dfn'FSQRT_S» (3,1,7) (state 0xbf800000 0x42 3) =
     (holFloatSqrt .roundTowardPositive (holFp32ToFloat 0xbf800000)).2) (state 0xbf800000 0x42 3) = _
   have hs : (holFp32ToFloat 0xbf800000).sign ≠ 0 := by decide +kernel
   have hz : (holFp32ToFloat 0xbf800000) ≠ holFloatMinusZero _ _ := by decide +kernel
-  simp only [holFloatSqrt, if_neg hs, if_neg hz]
+  simp only [holFloatSqrt, ite_eq_right hs, ite_eq_right hz]
 
 -- Original fsqrt_d_four_rte
 example : «dfn'FSQRT_D» (3,1,0) (state 0x4010000000000000 0x42 0) =
@@ -124,7 +124,7 @@ example : «dfn'FSQRT_D» (3,1,0) (state 0x4010000000000000 0x42 0) =
     (holFloatSqrt .roundTiesToEven (holFp64ToFloat 0x4010000000000000)).2) (state 0x4010000000000000 0x42 0) = _
   have hs : (holFp64ToFloat 0x4010000000000000).sign = 0 := by decide +kernel
   have hv : holFloatValue (holFp64ToFloat 0x4010000000000000) = .float (holFloatToReal (holFp64ToFloat 0x4010000000000000)) := by decide +kernel
-  simp only [holFloatSqrt, if_pos hs, hv]
+  simp only [holFloatSqrt, ite_eq_left hs, hv]
 
 -- Original fsqrt_d_four_rtz
 example : «dfn'FSQRT_D» (3,1,1) (state 0x4010000000000000 0x42 0) =
@@ -133,7 +133,7 @@ example : «dfn'FSQRT_D» (3,1,1) (state 0x4010000000000000 0x42 0) =
     (holFloatSqrt .roundTowardZero (holFp64ToFloat 0x4010000000000000)).2) (state 0x4010000000000000 0x42 0) = _
   have hs : (holFp64ToFloat 0x4010000000000000).sign = 0 := by decide +kernel
   have hv : holFloatValue (holFp64ToFloat 0x4010000000000000) = .float (holFloatToReal (holFp64ToFloat 0x4010000000000000)) := by decide +kernel
-  simp only [holFloatSqrt, if_pos hs, hv]
+  simp only [holFloatSqrt, ite_eq_left hs, hv]
 
 -- Original fsqrt_d_four_down
 example : «dfn'FSQRT_D» (3,1,2) (state 0x4010000000000000 0x42 0) =
@@ -142,7 +142,7 @@ example : «dfn'FSQRT_D» (3,1,2) (state 0x4010000000000000 0x42 0) =
     (holFloatSqrt .roundTowardNegative (holFp64ToFloat 0x4010000000000000)).2) (state 0x4010000000000000 0x42 0) = _
   have hs : (holFp64ToFloat 0x4010000000000000).sign = 0 := by decide +kernel
   have hv : holFloatValue (holFp64ToFloat 0x4010000000000000) = .float (holFloatToReal (holFp64ToFloat 0x4010000000000000)) := by decide +kernel
-  simp only [holFloatSqrt, if_pos hs, hv]
+  simp only [holFloatSqrt, ite_eq_left hs, hv]
 
 -- Original fsqrt_d_four_up
 example : «dfn'FSQRT_D» (3,1,3) (state 0x4010000000000000 0x42 0) =
@@ -151,7 +151,7 @@ example : «dfn'FSQRT_D» (3,1,3) (state 0x4010000000000000 0x42 0) =
     (holFloatSqrt .roundTowardPositive (holFp64ToFloat 0x4010000000000000)).2) (state 0x4010000000000000 0x42 0) = _
   have hs : (holFp64ToFloat 0x4010000000000000).sign = 0 := by decide +kernel
   have hv : holFloatValue (holFp64ToFloat 0x4010000000000000) = .float (holFloatToReal (holFp64ToFloat 0x4010000000000000)) := by decide +kernel
-  simp only [holFloatSqrt, if_pos hs, hv]
+  simp only [holFloatSqrt, ite_eq_left hs, hv]
 
 -- Original fsqrt_d_four_dynamic_up
 example : «dfn'FSQRT_D» (3,1,7) (state 0x4010000000000000 0x42 3) =
@@ -160,7 +160,7 @@ example : «dfn'FSQRT_D» (3,1,7) (state 0x4010000000000000 0x42 3) =
     (holFloatSqrt .roundTowardPositive (holFp64ToFloat 0x4010000000000000)).2) (state 0x4010000000000000 0x42 3) = _
   have hs : (holFp64ToFloat 0x4010000000000000).sign = 0 := by decide +kernel
   have hv : holFloatValue (holFp64ToFloat 0x4010000000000000) = .float (holFloatToReal (holFp64ToFloat 0x4010000000000000)) := by decide +kernel
-  simp only [holFloatSqrt, if_pos hs, hv]
+  simp only [holFloatSqrt, ite_eq_left hs, hv]
 
 -- Original fsqrt_d_negative_one_rte
 example : «dfn'FSQRT_D» (3,1,0) (state 0xbff0000000000000 0x42 0) =
@@ -169,7 +169,7 @@ example : «dfn'FSQRT_D» (3,1,0) (state 0xbff0000000000000 0x42 0) =
     (holFloatSqrt .roundTiesToEven (holFp64ToFloat 0xbff0000000000000)).2) (state 0xbff0000000000000 0x42 0) = _
   have hs : (holFp64ToFloat 0xbff0000000000000).sign ≠ 0 := by decide +kernel
   have hz : (holFp64ToFloat 0xbff0000000000000) ≠ holFloatMinusZero _ _ := by decide +kernel
-  simp only [holFloatSqrt, if_neg hs, if_neg hz]
+  simp only [holFloatSqrt, ite_eq_right hs, ite_eq_right hz]
 
 -- Original fsqrt_d_negative_one_rtz
 example : «dfn'FSQRT_D» (3,1,1) (state 0xbff0000000000000 0x42 0) =
@@ -178,7 +178,7 @@ example : «dfn'FSQRT_D» (3,1,1) (state 0xbff0000000000000 0x42 0) =
     (holFloatSqrt .roundTowardZero (holFp64ToFloat 0xbff0000000000000)).2) (state 0xbff0000000000000 0x42 0) = _
   have hs : (holFp64ToFloat 0xbff0000000000000).sign ≠ 0 := by decide +kernel
   have hz : (holFp64ToFloat 0xbff0000000000000) ≠ holFloatMinusZero _ _ := by decide +kernel
-  simp only [holFloatSqrt, if_neg hs, if_neg hz]
+  simp only [holFloatSqrt, ite_eq_right hs, ite_eq_right hz]
 
 -- Original fsqrt_d_negative_one_down
 example : «dfn'FSQRT_D» (3,1,2) (state 0xbff0000000000000 0x42 0) =
@@ -187,7 +187,7 @@ example : «dfn'FSQRT_D» (3,1,2) (state 0xbff0000000000000 0x42 0) =
     (holFloatSqrt .roundTowardNegative (holFp64ToFloat 0xbff0000000000000)).2) (state 0xbff0000000000000 0x42 0) = _
   have hs : (holFp64ToFloat 0xbff0000000000000).sign ≠ 0 := by decide +kernel
   have hz : (holFp64ToFloat 0xbff0000000000000) ≠ holFloatMinusZero _ _ := by decide +kernel
-  simp only [holFloatSqrt, if_neg hs, if_neg hz]
+  simp only [holFloatSqrt, ite_eq_right hs, ite_eq_right hz]
 
 -- Original fsqrt_d_negative_one_up
 example : «dfn'FSQRT_D» (3,1,3) (state 0xbff0000000000000 0x42 0) =
@@ -196,7 +196,7 @@ example : «dfn'FSQRT_D» (3,1,3) (state 0xbff0000000000000 0x42 0) =
     (holFloatSqrt .roundTowardPositive (holFp64ToFloat 0xbff0000000000000)).2) (state 0xbff0000000000000 0x42 0) = _
   have hs : (holFp64ToFloat 0xbff0000000000000).sign ≠ 0 := by decide +kernel
   have hz : (holFp64ToFloat 0xbff0000000000000) ≠ holFloatMinusZero _ _ := by decide +kernel
-  simp only [holFloatSqrt, if_neg hs, if_neg hz]
+  simp only [holFloatSqrt, ite_eq_right hs, ite_eq_right hz]
 
 -- Original fsqrt_d_negative_one_dynamic_up
 example : «dfn'FSQRT_D» (3,1,7) (state 0xbff0000000000000 0x42 3) =
@@ -205,7 +205,7 @@ example : «dfn'FSQRT_D» (3,1,7) (state 0xbff0000000000000 0x42 3) =
     (holFloatSqrt .roundTowardPositive (holFp64ToFloat 0xbff0000000000000)).2) (state 0xbff0000000000000 0x42 3) = _
   have hs : (holFp64ToFloat 0xbff0000000000000).sign ≠ 0 := by decide +kernel
   have hz : (holFp64ToFloat 0xbff0000000000000) ≠ holFloatMinusZero _ _ := by decide +kernel
-  simp only [holFloatSqrt, if_neg hs, if_neg hz]
+  simp only [holFloatSqrt, ite_eq_right hs, ite_eq_right hz]
 
 
 -- Original fsqrt_s_four_invalid_static

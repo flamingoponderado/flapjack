@@ -27,13 +27,13 @@ theorem holPartsHaveProp {α : Type} :
       rintro A B l1 l2 ⟨he, h1, h2⟩
       simp only [holPart] at he
       by_cases hp : P h = true
-      · rw [if_pos hp] at he
+      · rw [ite_eq_left hp] at he
         refine ih A B (h :: l1) l2 ⟨he, ?_, h2⟩
         intro x hx
         rcases List.mem_cons.mp hx with rfl | hx
         · exact hp
         · exact h1 x hx
-      · rw [if_neg hp] at he
+      · rw [ite_eq_right hp] at he
         refine ih A B l1 (h :: l2) ⟨he, h1, ?_⟩
         intro x hx
         rcases List.mem_cons.mp hx with rfl | hx

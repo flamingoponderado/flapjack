@@ -67,19 +67,19 @@ theorem evaluateRemoveDead_CallNone {width : Nat} [NeZero width] {C F : Type}
     split at hev
     · simp only [Prod.mk.injEq] at hev; exact absurd hev.1.symm herr
     · rename_i hbad
-      rw [if_neg hbad]
+      rw [ite_eq_right hbad]
       split at hev
       · simp only [Prod.mk.injEq] at hev; exact absurd hev.1.symm herr
       · rename_i args1 prog ss hfc
         split at hev
         · split at hev
           · rename_i hc
-            rw [dif_pos hc]
+            rw [dite_eq_left hc]
             simp only [Prod.mk.injEq] at hev
             obtain ⟨rfl, rfl⟩ := hev
             exact ⟨_, _, rfl, removeDeadPostRefl _ _ _ _ _⟩
           · rename_i hc
-            rw [dif_neg hc]
+            rw [dite_eq_right hc]
             refine ⟨rst.locals, rst.store, ?_, removeDeadPostRefl _ _ _ _ _⟩
             exact hev
         · simp only [Prod.mk.injEq] at hev; exact absurd hev.1.symm herr
@@ -163,7 +163,7 @@ theorem evaluateRemoveDead_CallSome {width : Nat} [NeZero width] {C F : Type}
     split at hev
     · simp only [Prod.mk.injEq] at hev; exact absurd hev.1.symm herr
     rename_i hbad
-    rw [if_neg hbad]
+    rw [ite_eq_right hbad]
     have har : wordSemAddRetLoc (some (n, names, retH', l1, l2)) xs =
         wordSemAddRetLoc (some (n, names, retH, l1, l2)) xs := rfl
     rw [har]
@@ -173,7 +173,7 @@ theorem evaluateRemoveDead_CallSome {width : Nat} [NeZero width] {C F : Type}
     split at hev
     · simp only [Prod.mk.injEq] at hev; exact absurd hev.1.symm herr
     rename_i hnd
-    rw [if_neg hnd]
+    rw [ite_eq_right hnd]
     split at hev
     · simp only [Prod.mk.injEq] at hev; exact absurd hev.1.symm herr
     rename_i envs hce
@@ -184,24 +184,24 @@ theorem evaluateRemoveDead_CallSome {width : Nat} [NeZero width] {C F : Type}
     simp only
     split at hev
     · rename_i hc
-      rw [dif_pos hc]
+      rw [dite_eq_left hc]
       simp only [Prod.mk.injEq] at hev
       obtain ⟨rfl, rfl⟩ := hev
       exact ⟨_, _, rfl, removeDeadPostRefl _ _ _ _ _⟩
     rename_i hc
-    rw [dif_neg hc]
+    rw [dite_eq_right hc]
     split at hev
     · rename_i x ys s2 hcall
       split at hev
       · simp only [Prod.mk.injEq] at hev; exact absurd hev.1.symm herr
       rename_i hxy
-      rw [if_neg hxy]
+      rw [ite_eq_right hxy]
       split at hev
       · simp only [Prod.mk.injEq] at hev; exact absurd hev.1.symm herr
       rename_i s1 hpop
       split at hev
       · rename_i hdom
-        rw [if_pos hdom]
+        rw [ite_eq_left hdom]
         exact ihRet live nlive lt retH' lr nr (setVars n ys s1) (setVars n ys s1).locals
           (setVars n ys s1).store res rst
           ⟨strongLocalsRelIdRefl _ _, liveStoreRelRefl _ _, hev, hfRet, hrr, herr⟩
@@ -218,7 +218,7 @@ theorem evaluateRemoveDead_CallSome {width : Nat} [NeZero width] {C F : Type}
     split at hev
     · simp only [Prod.mk.injEq] at hev; exact absurd hev.1.symm herr
     rename_i hbad
-    rw [if_neg hbad]
+    rw [ite_eq_right hbad]
     have har : wordSemAddRetLoc (some (n, names, retH', l1, l2)) xs =
         wordSemAddRetLoc (some (n, names, retH, l1, l2)) xs := rfl
     rw [har]
@@ -228,7 +228,7 @@ theorem evaluateRemoveDead_CallSome {width : Nat} [NeZero width] {C F : Type}
     split at hev
     · simp only [Prod.mk.injEq] at hev; exact absurd hev.1.symm herr
     rename_i hnd
-    rw [if_neg hnd]
+    rw [ite_eq_right hnd]
     split at hev
     · simp only [Prod.mk.injEq] at hev; exact absurd hev.1.symm herr
     rename_i envs hce
@@ -240,24 +240,24 @@ theorem evaluateRemoveDead_CallSome {width : Nat} [NeZero width] {C F : Type}
     simp only [pushEnvRemoveDead]
     split at hev
     · rename_i hc
-      rw [dif_pos hc]
+      rw [dite_eq_left hc]
       simp only [Prod.mk.injEq] at hev
       obtain ⟨rfl, rfl⟩ := hev
       exact ⟨_, _, rfl, removeDeadPostRefl _ _ _ _ _⟩
     rename_i hc
-    rw [dif_neg hc]
+    rw [dite_eq_right hc]
     split at hev
     · rename_i x ys s2 hcall
       split at hev
       · simp only [Prod.mk.injEq] at hev; exact absurd hev.1.symm herr
       rename_i hxy
-      rw [if_neg hxy]
+      rw [ite_eq_right hxy]
       split at hev
       · simp only [Prod.mk.injEq] at hev; exact absurd hev.1.symm herr
       rename_i s1 hpop
       split at hev
       · rename_i hdom
-        rw [if_pos hdom]
+        rw [ite_eq_left hdom]
         exact ihRet live nlive lt retH' lr nr (setVars n ys s1) (setVars n ys s1).locals
           (setVars n ys s1).store res rst
           ⟨strongLocalsRelIdRefl _ _, liveStoreRelRefl _ _, hev, hfRet, hrr, herr⟩
@@ -266,10 +266,10 @@ theorem evaluateRemoveDead_CallSome {width : Nat} [NeZero width] {C F : Type}
       split at hev
       · simp only [Prod.mk.injEq] at hev; exact absurd hev.1.symm herr
       rename_i hxy
-      rw [if_neg hxy]
+      rw [ite_eq_right hxy]
       split at hev
       · rename_i hdom
-        rw [if_pos hdom]
+        rw [ite_eq_left hdom]
         rcases hrh : removeDead hp live nlive lt with ⟨hp', lh, nh⟩
         exact ihH hn hp a b rfl live nlive lt hp' lh nh (setVar hn y s2) (setVar hn y s2).locals
           (setVar hn y s2).store res rst

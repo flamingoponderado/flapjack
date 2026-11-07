@@ -66,7 +66,7 @@ theorem listRelALookupOptRel {K A B : Type} (relation : K × A → K × B → Pr
     · by_cases hy : key = ky
       · have pair := matching (kx, vx) (ky, vy) head (by simp) (by simp) (Or.inr hy)
         exact (hx (hy.trans pair.1.symm)).elim
-      · simp only [holALookup, hx, hy, if_false]
+      · simp only [holALookup, hx, hy, ite_false]
         exact ih tailMatching
 
 /-- Related association lists have equal lookups when matching keys identify

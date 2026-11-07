@@ -296,13 +296,13 @@ private theorem memLoadHOLExactTransferMutual {width : Nat} [NeZero width]
       memLoadsHOLExact shapes address domain1 memory1 context = some values →
         memLoadsHOLExact shapes address domain2 memory2 context = some values)
   · intro address context hdom value hload
-    rw [memLoadHOLExact.eq_1, if_pos hdom] at hload
+    rw [memLoadHOLExact.eq_1, ite_eq_left hdom] at hload
     simp only [Option.some.injEq] at hload
     subst value
     rcases htransfer address hdom with ⟨hdom2, hmemory⟩
     simp [memLoadHOLExact, hdom2, hmemory]
   · intro address context hndom value hload
-    rw [memLoadHOLExact.eq_1, if_neg hndom] at hload
+    rw [memLoadHOLExact.eq_1, ite_eq_right hndom] at hload
     simp at hload
   · intro address context shapes values hloads ih3 value hload
     rw [memLoadHOLExact.eq_2, hloads] at hload
@@ -316,16 +316,16 @@ private theorem memLoadHOLExactTransferMutual {width : Nat} [NeZero width]
     rw [memLoadHOLExact.eq_3] at hload
     simp at hload
   · intro address candidate info rest fields hflds ih2 value hload
-    rw [memLoadHOLExact.eq_4, if_pos rfl, hflds] at hload
+    rw [memLoadHOLExact.eq_4, ite_eq_left rfl, hflds] at hload
     simp only [Option.some.injEq] at hload
     subst value
-    rw [memLoadHOLExact.eq_4, if_pos rfl, ih2 fields hflds]
+    rw [memLoadHOLExact.eq_4, ite_eq_left rfl, ih2 fields hflds]
   · intro address candidate info rest hflds ih2 value hload
-    rw [memLoadHOLExact.eq_4, if_pos rfl, hflds] at hload
+    rw [memLoadHOLExact.eq_4, ite_eq_left rfl, hflds] at hload
     simp at hload
   · intro address name candidate info rest hne ih1 value hload
-    rw [memLoadHOLExact.eq_4, if_neg hne] at hload
-    rw [memLoadHOLExact.eq_4, if_neg hne]
+    rw [memLoadHOLExact.eq_4, ite_eq_right hne] at hload
+    rw [memLoadHOLExact.eq_4, ite_eq_right hne]
     exact ih1 value hload
   · intro address context values hload
     rw [memLoadFldsHOLExact.eq_1] at hload
@@ -531,11 +531,11 @@ theorem dropWhileEqConsImp {α : Type} (P : α → Bool) (xs : List α)
   | cons x rest ih =>
       cases hP : P x with
       | false =>
-          simp only [List.dropWhile_cons, hP, Bool.false_eq_true, if_false] at h
+          simp only [List.dropWhile_cons, hP, Bool.false_eq_true, ite_false] at h
           cases h
           exact ⟨0, by simp, by simp, hP, by simp⟩
       | true =>
-          simp only [List.dropWhile_cons, hP, if_true] at h
+          simp only [List.dropWhile_cons, hP, ite_true] at h
           obtain ⟨n, hn, hget, hpy, hdrop⟩ := ih y ys h
           refine ⟨n + 1, by simpa using hn, ?_, hpy, ?_⟩
           · simpa [List.getElem?_cons_succ] using hget
@@ -751,13 +751,13 @@ private theorem lookupFieldHOL_isWfShapeValuesHOLExact {width : Nat} [NeZero wid
       rcases pair with ⟨fieldName, fieldValue⟩
       simp only [List.map_cons, isWfShapeValuesHOLExact, Bool.and_eq_true] at hfields
       by_cases hname : fieldName = name
-      · simp only [lookupFieldHOL, if_pos hname] at hlookup
+      · simp only [lookupFieldHOL, ite_eq_left hname] at hlookup
         cases hlookup
         exact hfields.1
       · have htail : isWfShapeValuesHOLExact context (rest.map Prod.snd) = true :=
           hfields.2
         have hlookup' : lookupFieldHOL name rest = some value := by
-          simpa only [lookupFieldHOL, if_neg hname] using hlookup
+          simpa only [lookupFieldHOL, ite_eq_right hname] using hlookup
         exact ih htail hlookup'
 
 /-! **Open HOL evaluator invariants** (`evaluate_invariants`,
@@ -997,12 +997,12 @@ private theorem memLoadHOLExact_isWfShapeValueHOLExact_shape {width : Nat} [NeZe
         memLoadsHOLExact shapes address domain memory context = some values →
           isWfShapeValuesHOLExact context values = true)
     · intro address context hdom value h
-      rw [memLoadHOLExact.eq_1, if_pos hdom] at h
+      rw [memLoadHOLExact.eq_1, ite_eq_left hdom] at h
       simp only [Option.some.injEq] at h
       subst value
       simp only [isWfShapeValueHOLExact.eq_1]
     · intro address context hndom value h
-      rw [memLoadHOLExact.eq_1, if_neg hndom] at h
+      rw [memLoadHOLExact.eq_1, ite_eq_right hndom] at h
       simp at h
     · intro address context shapes values hloads ih3 value h
       rw [memLoadHOLExact.eq_2, hloads] at h
@@ -1016,7 +1016,7 @@ private theorem memLoadHOLExact_isWfShapeValueHOLExact_shape {width : Nat} [NeZe
       rw [memLoadHOLExact.eq_3] at h
       simp at h
     · intro address candidate info rest fields hflds ih2 value h
-      rw [memLoadHOLExact.eq_4, if_pos rfl, hflds] at h
+      rw [memLoadHOLExact.eq_4, ite_eq_left rfl, hflds] at h
       simp only [Option.some.injEq] at h
       subst value
       simp only [isWfShapeValueHOLExact.eq_3, Bool.and_eq_true]
@@ -1024,10 +1024,10 @@ private theorem memLoadHOLExact_isWfShapeValueHOLExact_shape {width : Nat} [NeZe
         isWfShapeValuesHOLExact_drop 1 ((candidate, info) :: rest) (fields.map Prod.snd)
           (ih2 fields hflds)⟩
     · intro address candidate info rest hflds ih2 value h
-      rw [memLoadHOLExact.eq_4, if_pos rfl, hflds] at h
+      rw [memLoadHOLExact.eq_4, ite_eq_left rfl, hflds] at h
       simp at h
     · intro address name candidate info rest hne ih1 value h
-      rw [memLoadHOLExact.eq_4, if_neg hne] at h
+      rw [memLoadHOLExact.eq_4, ite_eq_right hne] at h
       exact isWfShapeValueHOLExact_drop 1 ((candidate, info) :: rest) value (ih1 value h)
     · intro address context values h
       rw [memLoadFldsHOLExact.eq_1] at h
@@ -1209,8 +1209,8 @@ theorem evalHOLExact_isWfShapeValueHOLExact {width : Nat} {σ : Type}
     exact getElemOption_mem values index value hGet
   case case9 name fields info hLookup hNames fieldValues hFields hShapes ih =>
     intro value hEval
-    simp only [evalHOLExact, hLookup, if_pos hNames, hFields,
-      if_pos hShapes, Option.some.injEq] at hEval
+    simp only [evalHOLExact, hLookup, ite_eq_left hNames, hFields,
+      ite_eq_left hShapes, Option.some.injEq] at hEval
     cases hEval
     have hValueMem : ∀ value, value ∈ fieldValues.map Prod.snd →
         isWfShapeValueHOLExact state.structs value = true := by
@@ -1252,7 +1252,7 @@ theorem evalHOLExact_isWfShapeValueHOLExact {width : Nat} {σ : Type}
     intro value hEval
     have hLoad : memLoadHOLExact shape word state.memaddrs state.memory state.structs =
         some value := by
-      simpa only [evalHOLExact, if_pos hShape, hAddress] using hEval
+      simpa only [evalHOLExact, ite_eq_left hShape, hAddress] using hEval
     exact memLoadHOLExact_isWfShapeValueHOLExact.1 shape word state.memaddrs
       state.memory state.structs value hLoad
   case case23 operator arguments values hList hNotWords ih =>
@@ -1299,12 +1299,12 @@ private theorem memLoadHOLExact_shape_eq_shape {width : Nat} [NeZero width]
         memLoadsHOLExact shapes address domain memory context = some values →
           values.map shapeOfHOLExact = shapes)
     · intro address context hdom value h
-      rw [memLoadHOLExact.eq_1, if_pos hdom] at h
+      rw [memLoadHOLExact.eq_1, ite_eq_left hdom] at h
       simp only [Option.some.injEq] at h
       subst value
       simp [shapeOfHOLExact]
     · intro address context hndom value h
-      rw [memLoadHOLExact.eq_1, if_neg hndom] at h
+      rw [memLoadHOLExact.eq_1, ite_eq_right hndom] at h
       simp at h
     · intro address context shapes values hloads ih3 value h
       rw [memLoadHOLExact.eq_2, hloads] at h
@@ -1318,15 +1318,15 @@ private theorem memLoadHOLExact_shape_eq_shape {width : Nat} [NeZero width]
       rw [memLoadHOLExact.eq_3] at h
       simp at h
     · intro address candidate info rest fields hflds ih2 value h
-      rw [memLoadHOLExact.eq_4, if_pos rfl, hflds] at h
+      rw [memLoadHOLExact.eq_4, ite_eq_left rfl, hflds] at h
       simp only [Option.some.injEq] at h
       subst value
       simp [shapeOfHOLExact]
     · intro address candidate info rest hflds ih2 value h
-      rw [memLoadHOLExact.eq_4, if_pos rfl, hflds] at h
+      rw [memLoadHOLExact.eq_4, ite_eq_left rfl, hflds] at h
       simp at h
     · intro address name candidate info rest hne ih1 value h
-      rw [memLoadHOLExact.eq_4, if_neg hne] at h
+      rw [memLoadHOLExact.eq_4, ite_eq_right hne] at h
       exact ih1 value h
     · intro address context values h
       rw [memLoadFldsHOLExact.eq_1] at h
@@ -1865,12 +1865,12 @@ theorem getElem?_flatten_take_sum {α : Type} {l : List (List α)} {n n' : Nat}
       | zero =>
           simp only [List.take_zero, List.map_nil, List.sum_nil, Nat.zero_add,
             List.flatten_cons, List.getElem_cons_zero] at hn' ⊢
-          rw [List.getElem?_append, if_pos hn']
+          rw [List.getElem?_append, ite_eq_left hn']
       | succ k =>
           rw [List.take_cons (Nat.succ_pos k), Nat.succ_sub_one]
           simp only [List.map_cons, List.sum_cons, List.flatten_cons,
             List.getElem_cons_succ] at hn' ⊢
-          rw [List.getElem?_append, if_neg (by omega)]
+          rw [List.getElem?_append, ite_eq_right (by omega)]
           simp only [Nat.add_assoc, Nat.add_sub_cancel_left]
           exact ih (n := k) (by simpa using hn) (by simpa using hn')
 
@@ -1911,7 +1911,7 @@ theorem listRelFlattenWithShapeFlookup (shapes : List Shape) (names : List Nat)
       have hin : i < n := Nat.lt_of_lt_of_le hi (List.length_take_le n arguments)
       have hians : i < arguments.length := by omega
       have hish : i < shapes.length := by omega
-      rw [List.getElem?_take, if_pos hin, List.getElem?_take, if_pos hin,
+      rw [List.getElem?_take, ite_eq_left hin, List.getElem?_take, ite_eq_left hin,
         List.getElem?_eq_some_iff.mpr ⟨hish, rfl⟩,
         List.getElem?_eq_some_iff.mpr ⟨hians, rfl⟩]
       simp only [Option.map_some]
@@ -2280,12 +2280,12 @@ theorem memLoadHOLExact_length_flatten_context {width : Nat} [NeZero width]
         (values.map flattenHOL).flatten.length =
           Flapjack.Pancake.PanLang.sizeOfShapesWithContextHOL context shapes)
   · intro address context hdom _hwf value hload
-    rw [memLoadHOLExact.eq_1, if_pos hdom] at hload
+    rw [memLoadHOLExact.eq_1, ite_eq_left hdom] at hload
     simp only [Option.some.injEq] at hload
     subst hload
     simp [flattenHOL, Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL]
   · intro address context hndom _hwf value hload
-    rw [memLoadHOLExact.eq_1, if_neg hndom] at hload
+    rw [memLoadHOLExact.eq_1, ite_eq_right hndom] at hload
     simp at hload
   · intro address context shapes values hloads ih3 hwf value hload
     rw [memLoadHOLExact.eq_2, hloads] at hload
@@ -2303,22 +2303,22 @@ theorem memLoadHOLExact_length_flatten_context {width : Nat} [NeZero width]
     rw [memLoadHOLExact.eq_3] at hload
     simp at hload
   · intro address candidate info rest fields hflds ih2 hwf value hload
-    rw [memLoadHOLExact.eq_4, if_pos rfl, hflds] at hload
+    rw [memLoadHOLExact.eq_4, ite_eq_left rfl, hflds] at hload
     simp only [Option.some.injEq] at hload
     subst hload
     simp only [Flapjack.Pancake.PanLang.isWfShapeExactHOL] at hwf
     simp at hwf
   · intro address candidate info rest hflds ih2 hwf value hload
-    rw [memLoadHOLExact.eq_4, if_pos rfl, hflds] at hload
+    rw [memLoadHOLExact.eq_4, ite_eq_left rfl, hflds] at hload
     simp at hload
   · intro address name candidate info rest hne ih1 hwf value hload
-    rw [memLoadHOLExact.eq_4, if_neg hne] at hload
+    rw [memLoadHOLExact.eq_4, ite_eq_right hne] at hload
     have hsize : Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL
         ((candidate, info) :: rest) (.named name) =
         Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL rest (.named name) := by
       simp only [Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL,
         Flapjack.Pancake.PanLang.structContextLookupHOL_cons,
-        if_neg (fun h : name = candidate => hne h.symm)]
+        ite_eq_right (fun h : name = candidate => hne h.symm)]
     rw [hsize]
     exact ih1 hwf value hload
   · intros; trivial

@@ -218,24 +218,24 @@ theorem evaluateApp_partial {C F : Type} (requested : Option Nat) (function next
         simpa [← clockEq, ← lengthEq] using insufficient
       rw [evaluateApp, found] at run
       dsimp only at run
-      rw [if_pos insufficient] at run
+      rw [ite_eq_left insufficient] at run
       cases run
       refine ⟨.err (.abort .timeoutError), { target with clock := 0 }, ?_, rfl, ?_⟩
       · rw [evaluateApp, targetFound]
         dsimp only
-        rw [if_pos targetInsufficient]
+        rw [ite_eq_left targetInsufficient]
         rfl
       · exact stateRel_withClock states 0
     · have targetEnough : ¬ target.clock < (nextFirst :: nextRest).length := by
         simpa [← clockEq, ← lengthEq] using insufficient
       rw [evaluateApp, found] at run
       dsimp only at run
-      rw [if_neg insufficient] at run
+      rw [ite_eq_right insufficient] at run
       cases run
       refine ⟨.val [nextPartial], decClock (nextFirst :: nextRest).length target, ?_, ?_, ?_⟩
       · rw [evaluateApp, targetFound]
         dsimp only
-        rw [if_neg targetEnough]
+        rw [ite_eq_right targetEnough]
       · exact .cons partialRel .nil
       · simpa [decClock, ← clockEq, ← lengthEq] using
           stateRel_withClock states (source.clock - (first :: rest).length)
@@ -316,12 +316,12 @@ theorem evaluateApp_full {C F : Type} (requested : Option Nat) (function nextFun
         exact insufficient
       rw [evaluateApp, found] at run
       dsimp only at run
-      rw [if_pos insufficient] at run
+      rw [ite_eq_left insufficient] at run
       cases run
       refine ⟨.err (.abort .timeoutError), { target with clock := 0 }, ?_, rfl, stateRel_withClock states 0⟩
       rw [evaluateApp, targetFound]
       dsimp only
-      rw [if_pos targetInsufficient]
+      rw [ite_eq_left targetInsufficient]
       rfl
     · have bodyClockLess : (decClock cost source).clock < source.clock := by
         simp [decClock]
@@ -335,7 +335,7 @@ theorem evaluateApp_full {C F : Type} (requested : Option Nat) (function nextFun
       have startOracle : OracleSafe (decClock cost source) := by simpa [OracleSafe, decClock] using oracle
       rw [evaluateApp, found] at run
       dsimp only at run
-      rw [if_neg insufficient, fixClock_evaluate] at run
+      rw [ite_eq_right insufficient, fixClock_evaluate] at run
       cases bodyRun : evaluate [body] bodyEnv (decClock cost source) with
       | mk bodyResult last =>
         have bodyNoType : bodyResult ≠ .err (.abort .typeError) := by
@@ -358,7 +358,7 @@ theorem evaluateApp_full {C F : Type} (requested : Option Nat) (function nextFun
             refine ⟨.err targetError, targetLast, ?_, bodyRel, lastRel⟩
             rw [evaluateApp, targetFound]
             dsimp only
-            rw [if_neg targetEnough, targetCost, fixClock_evaluate, targetBodyRun]
+            rw [ite_eq_right targetEnough, targetCost, fixClock_evaluate, targetBodyRun]
         | val values =>
           have size := (evaluate_length (C := C) (F := F)).1 [body] bodyEnv
             (decClock cost source) last values bodyRun
@@ -390,7 +390,7 @@ theorem evaluateApp_full {C F : Type} (requested : Option Nat) (function nextFun
                   refine ⟨targetResult, targetNext, ?_, resultRel, nextRel⟩
                   rw [evaluateApp, targetFound]
                   dsimp only
-                  rw [if_neg targetEnough, targetCost, fixClock_evaluate, targetBodyRun]
+                  rw [ite_eq_right targetEnough, targetCost, fixClock_evaluate, targetBodyRun]
                   exact targetAppRun
 
 /-- One application induction step, using body and recursive application

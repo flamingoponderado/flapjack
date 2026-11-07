@@ -58,7 +58,7 @@ theorem valueToList_related (genv : GlobalEnv) (ok : genvCOk genv.c)
     exact ⟨[], by simp [FlatSem.valueToList], .nil⟩
   | case2 stamp ne => simp [SemanticPrimitivesHOL.valueToList, ne] at decoded
   | case3 head tail ih =>
-    simp only [SemanticPrimitivesHOL.valueToList, if_true] at decoded
+    simp only [SemanticPrimitivesHOL.valueToList, ite_true] at decoded
     obtain ⟨flats, ctor, hfields, rfl, flatCtor, rfl, lookup⟩ :=
       (valueRel_conv_iff genv _ _ flat).mp rel
     have hc := (genvLookupCons genv.c (flatCtor, 2) ok).mp lookup
@@ -99,7 +99,7 @@ theorem valueToCharList_related (genv : GlobalEnv) (ok : genvCOk genv.c)
     simp [FlatSem.valueToCharList]
   | case2 stamp ne => simp [SemanticPrimitivesHOL.valueToCharList, ne] at decoded
   | case3 head tail ih =>
-    simp only [SemanticPrimitivesHOL.valueToCharList, if_true] at decoded
+    simp only [SemanticPrimitivesHOL.valueToCharList, ite_true] at decoded
     obtain ⟨flats, ctor, hfields, rfl, flatCtor, rfl, lookup⟩ :=
       (valueRel_conv_iff genv _ _ flat).mp rel
     have hc := (genvLookupCons genv.c (flatCtor, 2) ok).mp lookup

@@ -42,9 +42,9 @@ theorem holIndexDimension_literal (α : Type) [Nonempty α] : holIndexDimension 
   classical
   by_cases h : Finite α
   · have : Finite α := h
-    rw [if_pos h, holIndexDimension_finite]
+    rw [ite_eq_left h, holIndexDimension_finite]
   · have : Infinite α := not_finite_iff_infinite.mp h
-    rw [if_neg h, holIndexDimension_infinite]
+    rw [ite_eq_right h, holIndexDimension_infinite]
 /-- Flapjack infrastructure: every positive Lean width is realized by a nonempty
 index type; this is not a replacement of arbitrary index types by Fin. -/
 theorem holIndexDimension_realizes_width (width : Nat) [NeZero width] : holIndexDimension (Fin width) = width := by

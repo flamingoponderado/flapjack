@@ -84,7 +84,7 @@ theorem posVal_append {width : Nat} [NeZero width]
         · exact hn
         · have hex := secPosVal_tooBig i pos lines (by omega)
           simp [hr] at hex
-      simp only [hr, if_pos hi]
+      simp only [hr, ite_eq_left hi]
       rw [posVal_decompose]
       simp [hr]
     | none =>
@@ -92,11 +92,11 @@ theorem posVal_append {width : Nat} [NeZero width]
       rw [ih]
       by_cases hi : i ≤ lenNoLab lines + (c1.map (fun sec => lenNoLab sec.lines)).sum
       · have hrem : i - lenNoLab lines ≤ (c1.map (fun sec => lenNoLab sec.lines)).sum := by omega
-        simp only [if_pos hi, if_pos hrem]
+        simp only [ite_eq_left hi, ite_eq_left hrem]
         rw [posVal_decompose i pos (⟨k, lines⟩ :: c1)]
         simp [hr]
       · have hrem : ¬ i - lenNoLab lines ≤ (c1.map (fun sec => lenNoLab sec.lines)).sum := by omega
-        simp only [if_neg hi, if_neg hrem]
+        simp only [ite_eq_right hi, ite_eq_right hrem]
         simp [Nat.sub_sub, Nat.add_assoc]
 
 end Flapjack.Compiler.Backend.LabToTarget

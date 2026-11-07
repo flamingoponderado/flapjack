@@ -382,7 +382,7 @@ private theorem ffiSuccessfulBranch {width : Nat} [NeZero width] {C F : Type}
         readPtr1,readLen1,readPtr2,readLen2,cut,readBytes1,readBytes2,called,sourceAfter,memory]
     dsimp only
     rw [sourceRun,compiledRun]
-    simp only [reduceCtorEq,if_false,ssaCcTrans,produced,returned]
+    simp only [reduceCtorEq,ite_false,ssaCcTrans,produced,returned]
     exact ⟨True.intro,finishedFrame,finishedLocals⟩
 
 namespace SemanticFFIWitnesses

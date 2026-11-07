@@ -128,7 +128,7 @@ theorem get_var_set_vars_ignore {width : Nat} [NeZero width] {C : Type} {F : Typ
     rcases l with _ | ⟨y, ys⟩
     · rfl
     · simp only [getVar_setVars_eq, LoopSemStateFiniteExact.sptAlistInsert]
-      rw [sptLookup_sptInsert_eq, if_neg h.1]
+      rw [sptLookup_sptInsert_eq, ite_eq_right h.1]
       exact ih ys m h.2
 
 section InstCs
@@ -155,7 +155,7 @@ theorem csOk_setVar2_delete' {cs : Spt (BitVec width)} {s : WordSemStateFiniteEx
   split at hv
   · cases hv
   rename_i h1 h2
-  rw [if_neg h2, if_neg h1]
+  rw [ite_eq_right h2, ite_eq_right h1]
   exact h v w hv
 
 theorem csOk_fpUpdate {cs : Spt (BitVec width)} {s : WordSemStateFiniteExact width C F}
@@ -282,8 +282,8 @@ theorem cf_assign (v : Nat) (e : WordLangExpHOL (BitVec width)) (cs : Spt (BitVe
       rw [get_var_set_var_thm]
       rw [sptLookup_sptInsert_eq] at hu
       split at hu
-      · simp only [Option.some.injEq] at hu; subst hu; rw [if_pos ‹_›]
-      · rw [if_neg ‹_›]; exact hcs u w hu
+      · simp only [Option.some.injEq] at hu; subst hu; rw [ite_eq_left ‹_›]
+      · rw [ite_eq_right ‹_›]; exact hcs u w hu
   all_goals
     refine ⟨first _ hc, ?_⟩
     rw [evaluate_assign_eq]
@@ -376,7 +376,7 @@ theorem cf_storeConsts (a b c d : Nat) (ws : List (Bool × BitVec width)) (cs : 
       split at hu; · cases hu
       rename_i h1 h2 h3 h4
       simp only [getVar, setVar, unsetVar, sptLookup_sptInsert_eq, sptLookup_sptDelete,
-        if_neg h1, if_neg h2, if_neg h3, if_neg h4]
+        ite_eq_right h1, ite_eq_right h2, ite_eq_right h3, ite_eq_right h4]
       exact hcs u w hu
   · simp
 
@@ -451,7 +451,7 @@ theorem cf_install (r1 r2 r3 r4 : Nat) (names : WordLangCutsetsHOL)
             have hv' := lookup_filter_v_SOME_imp _ v w _ hv
             have := csOk_inter_cut (t := { s with locals := env }) hcs names env henv rfl v w hv'
             show sptLookup v (sptInsert r1 _ env) = _
-            rw [sptLookup_sptInsert_eq, if_neg hne]
+            rw [sptLookup_sptInsert_eq, ite_eq_right hne]
             exact this
           · simp
         · simp
@@ -527,7 +527,7 @@ theorem evaluate_call_none_ne_none (dest : Option Nat) (args : List Nat)
   simp only
   by_cases hbad : wordSemBadDestArgs dest args = true
   · simp [hbad]
-  simp only [hbad, Bool.false_eq_true, if_false]
+  simp only [hbad, Bool.false_eq_true, ite_false]
   rcases wordSemFindCode dest (wordSemAddRetLoc (none : Option (List Nat × WordLangCutsetsHOL × WordLangProgHOL (BitVec width) × Nat × Nat)) xs) s.code s.stackSize with
     _ | ⟨args1, prog, ss⟩
   · simp
@@ -537,8 +537,8 @@ theorem evaluate_call_none_ne_none (dest : Option Nat) (args : List Nat)
   | none =>
     simp only
     by_cases hz : s.clock = 0
-    · rw [if_pos hz]; simp
-    rw [if_neg hz]
+    · rw [ite_eq_left hz]; simp
+    rw [ite_eq_right hz]
     rcases evaluate prog (callEnv args1 ss (decClock s)) with ⟨r, s1⟩
     simp only
     split
@@ -569,7 +569,7 @@ theorem cf_aux :
       · rw [ht]
         by_cases hz : s.termdep = 0
         · simp [hz]
-        · simp only [hz, dite_false, if_false]
+        · simp only [hz, dite_false, ite_false]
           have ih2 := ih.2
           rcases hev : evaluate q { s with
               clock := wordSemMustTerminateLimit width
@@ -620,8 +620,8 @@ theorem cf_aux :
           simp only [wordSemWordCmp]
           split <;> simp_all
         split
-        · exact ⟨by rw [hev, if_pos ‹_›]; exact ih1.1, by rw [hev, if_pos ‹_›]; exact ih1.2⟩
-        · exact ⟨by rw [hev, if_neg ‹_›]; exact ih2.1, by rw [hev, if_neg ‹_›]; exact ih2.2⟩
+        · exact ⟨by rw [hev, ite_eq_left ‹_›]; exact ih1.1, by rw [hev, ite_eq_left ‹_›]; exact ih1.2⟩
+        · exact ⟨by rw [hev, ite_eq_right ‹_›]; exact ih2.1, by rw [hev, ite_eq_right ‹_›]; exact ih2.2⟩
       all_goals
         rcases h1 : constFpLoop p1 cs with ⟨p1', cs1⟩
         rcases h2 : constFpLoop p2 cs with ⟨p2', cs2⟩
@@ -667,27 +667,27 @@ theorem cf_aux :
           simp only
           by_cases hbad : wordSemBadDestArgs dest args = true
           · simp [hbad]
-          simp only [hbad, Bool.false_eq_true, if_false]
+          simp only [hbad, Bool.false_eq_true, ite_false]
           rcases hf : wordSemFindCode dest (.loc l1 l2 :: xs) s.code s.stackSize with
             _ | ⟨args1, prog, ss⟩
           · simp
           simp only
           by_cases hdc : sptDomainEmpty names.fst ∨ ¬ n.Nodup
           · simp [hdc]
-          simp only [hdc, if_false]
+          simp only [hdc, ite_false]
           rcases hce : wordSemCutEnvs names s.locals with _ | envs
           · simp
           simp only
           by_cases hz : s.clock = 0
-          · rw [if_pos hz, if_pos hz]; simp
-          rw [if_neg hz, if_neg hz]
+          · rw [ite_eq_left hz, ite_eq_left hz]; simp
+          rw [ite_eq_right hz, ite_eq_right hz]
           rcases hcv : evaluate prog (callEnv args1 ss (pushEnv envs none (decClock s))) with
             ⟨rc, s2⟩
           rcases rc with _ | ⟨x, ys⟩ | ⟨x, y⟩ | kk | kk | _ | _ | _ | _
           · simp
           · by_cases hx : x ≠ WordLocW.loc l1 l2 ∨ ys.length ≠ n.length
             · simp [hx]
-            simp only [hx, if_false]
+            simp only [hx, ite_false]
             rcases hp : popEnv s2 with _ | s1
             · simp
             simp only

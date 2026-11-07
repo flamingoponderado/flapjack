@@ -69,7 +69,7 @@ theorem crepToLoopLocalsRelExact_inter_helper {width : Nat} [NeZero width]
     intro n hn
     have hn' : (sptLookup n l).isSome := hn
     have hnx : n ∉ xs := fun hm => by rw [hxs n hm] at hn'; simp at hn'
-    rw [sptLookup_sptInter, if_pos hn']
+    rw [sptLookup_sptInter, ite_eq_left hn']
     exact LoopSemStateFiniteExact.sptLookup_sptAlistInsert_not_mem n xs ys locs2 hnx
   obtain ⟨hd, hm, hdom, hv⟩ := h
   refine ⟨hd, hm, fun n hn => ?_, fun vname value hl => ?_⟩

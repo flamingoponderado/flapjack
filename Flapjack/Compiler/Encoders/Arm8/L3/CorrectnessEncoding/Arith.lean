@@ -72,7 +72,7 @@ theorem arm8Run_addSubShiftedRegister (op : Bool) (rm : BitVec 5) (amount : BitV
       let r := AddWithCarry (X rn st, p.1, p.2)
       write'X (r.1, rd) (SetTheFlags (false, r.2) st) := by
   cases op <;>
-    simp only [Run, «dfn'AddSubShiftedRegister», Bool.false_eq_true, if_true, if_false]
+    simp only [Run, «dfn'AddSubShiftedRegister», Bool.false_eq_true, ite_true, ite_false]
 
 
 /-! ## The `binop` register `add`/`sub` constructors -/
@@ -120,10 +120,10 @@ theorem arm8_encoder_correct_binop_addsub_reg (op : Bool) (bop : HolBinop)
   · intro hreg
     rw [arm8Run_addSubShiftedRegister]
     cases op
-    · simp only [SetTheFlags, Bool.false_eq_true, if_false, ShiftReg, ShiftValue]
+    · simp only [SetTheFlags, Bool.false_eq_true, ite_false, ShiftReg, ShiftValue]
       rw [arm8WriteX_of_valid _ _ hd31 hdlt, arm8X_of_valid _ hs31 hslt, arm8X_of_valid _ hr31 hrlt]
       simp [arm8AddWithCarry_add, holUpdate, v]
-    · simp only [SetTheFlags, Bool.false_eq_true, if_false, ShiftReg, ShiftValue]
+    · simp only [SetTheFlags, Bool.false_eq_true, ite_false, ShiftReg, ShiftValue]
       rw [arm8WriteX_of_valid _ _ hd31 hdlt, arm8X_of_valid _ hs31 hslt, arm8X_of_valid _ hr31 hrlt]
       simp [arm8AddWithCarry_sub, holUpdate, v]
   · intro hreg p

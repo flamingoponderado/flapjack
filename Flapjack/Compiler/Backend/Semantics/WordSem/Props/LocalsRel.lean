@@ -284,7 +284,7 @@ theorem localsRel_cutNames {width : Nat} [NeZero width] {γ : Type} (temp : Nat)
       obtain ⟨u, hu⟩ := (sptMem_iff_lookup k names).mp hk
       simp [sptDomain, hu]
     exact (sptMem_iff_lookup k loc').mpr ⟨v, (hr k (hn k hkd)) ▸ hv⟩
-  simp only [wordSemCutNames, htsub, if_true, Option.some.injEq]
+  simp only [wordSemCutNames, htsub, ite_true, Option.some.injEq]
   rw [sptEqThm _ _ ⟨sptWfInter _ _, sptWfInter _ _⟩]
   intro k
   rw [sptLookup_sptInterCases, sptLookup_sptInterCases]
@@ -482,14 +482,14 @@ theorem lr_tick (temp : Nat) (st : WordSemStateFiniteExact width C F) : LrGoal t
   rw [evaluate] at he ⊢
   by_cases hz : st.clock = 0
   · have hz' : ({ st with locals := loc } : WordSemStateFiniteExact width C F).clock = 0 := hz
-    rw [if_pos hz']
-    rw [if_pos hz] at he
+    rw [ite_eq_left hz']
+    rw [ite_eq_left hz] at he
     simp only [Prod.mk.injEq] at he
     obtain ⟨rfl, rfl⟩ := he
     exact ⟨(flushState true st).locals, by rw [flushState_withLocals], rfl⟩
   · have hz' : ¬ ({ st with locals := loc } : WordSemStateFiniteExact width C F).clock = 0 := hz
-    rw [if_neg hz']
-    rw [if_neg hz] at he
+    rw [ite_eq_right hz']
+    rw [ite_eq_right hz] at he
     simp only [Prod.mk.injEq] at he
     obtain ⟨rfl, rfl⟩ := he
     exact ⟨loc, rfl, hl⟩
@@ -529,8 +529,8 @@ theorem lr_set (temp : Nat) (v : WordStoreHOL) (e : WordLangExpHOL (BitVec width
   rw [evaluate] at he ⊢
   rw [locals_rel_word_exp_simp temp loc st e ⟨hv, hl⟩]
   by_cases hb : v = .handler ∨ v = .bitmapBase
-  · simp only [hb, if_true, Prod.mk.injEq] at he; exact absurd he.1.symm herr
-  · simp only [hb, if_false] at he ⊢
+  · simp only [hb, ite_true, Prod.mk.injEq] at he; exact absurd he.1.symm herr
+  · simp only [hb, ite_false] at he ⊢
     cases hw : wordExp st e with
     | none => rw [hw] at he; simp only [Prod.mk.injEq] at he; exact absurd he.1.symm herr
     | some w =>
@@ -582,12 +582,12 @@ theorem lr_locValue (temp r l1 : Nat) (st : WordSemStateFiniteExact width C F) :
   rw [evaluate] at he ⊢
   by_cases hc : sptMem l1 st.code
   · have hc' : sptMem l1 ({ st with locals := loc } : WordSemStateFiniteExact width C F).code := hc
-    rw [if_pos hc] at he
-    rw [if_pos hc']
+    rw [ite_eq_left hc] at he
+    rw [ite_eq_left hc']
     simp only [Prod.mk.injEq] at he ⊢
     obtain ⟨rfl, rfl⟩ := he
     exact ⟨sptInsert r (.loc l1 0) loc, ⟨rfl, rfl⟩, locals_rel_set_var temp _ r _ _ hl⟩
-  · rw [if_neg hc] at he
+  · rw [ite_eq_right hc] at he
     simp only [Prod.mk.injEq] at he
     exact absurd he.1.symm herr
 
@@ -597,7 +597,7 @@ theorem lr_move (temp pri : Nat) (moves : List (Nat × Nat))
   simp only [everyVarHOL, Bool.and_eq_true, List.all_eq_true, decide_eq_true_eq] at hv
   rw [evaluate] at he ⊢
   by_cases hd : (moves.map Prod.fst).Nodup
-  · rw [if_pos hd] at he ⊢
+  · rw [ite_eq_left hd] at he ⊢
     rw [locals_rel_get_vars_simp _ temp st loc ⟨hv.2, hl⟩]
     cases hg : getVars (moves.map Prod.snd) st with
     | none => rw [hg] at he; simp only [Prod.mk.injEq] at he; exact absurd he.1.symm herr
@@ -607,7 +607,7 @@ theorem lr_move (temp pri : Nat) (moves : List (Nat × Nat))
         obtain ⟨rfl, rfl⟩ := he
         exact ⟨LoopSemStateFiniteExact.sptAlistInsert (moves.map Prod.fst) vs loc, ⟨rfl, rfl⟩,
           locals_rel_alist_insert temp _ vs _ _ ⟨hl, hv.1⟩⟩
-  · rw [if_neg hd] at he
+  · rw [ite_eq_right hd] at he
     simp only [Prod.mk.injEq] at he; exact absurd he.1.symm herr
 
 theorem lr_raise (temp n : Nat) (st : WordSemStateFiniteExact width C F) :
@@ -699,9 +699,9 @@ theorem lr_storeConsts (temp t1 t2 addr offset : Nat) (words : List (Bool × Bit
       wordSemConstAddresses a words st.mdomain := rfl
   rw [hd]
   by_cases hc : ¬ wordSemConstAddresses a words st.mdomain = true
-  · rw [if_pos hc] at he
+  · rw [ite_eq_left hc] at he
     simp only [Prod.mk.injEq] at he; exact absurd he.1.symm herr
-  · rw [if_neg hc] at he ⊢
+  · rw [ite_eq_right hc] at he ⊢
     simp only [Prod.mk.injEq] at he ⊢
     obtain ⟨rfl, rfl⟩ := he
     refine ⟨_, ⟨rfl, rfl⟩, ?_⟩
@@ -789,7 +789,7 @@ theorem lr_install (temp ptr len dptr dlen : Nat) (names : WordLangCutsetsHOL)
       repeat' split at he
       all_goals first
         | (simp only [Prod.mk.injEq] at he; exact absurd he.1.symm herr)
-        | (rw [← he]; simp only [*, and_self, if_true])
+        | (rw [← he]; simp only [*, and_self, ite_true])
 
 theorem lr_ffi (temp : Nat) (idx : Basis.Pure.MlString.MlString) (ptr1 len1 ptr2 len2 : Nat)
     (names : WordLangCutsetsHOL) (st : WordSemStateFiniteExact width C F) :
@@ -831,12 +831,12 @@ theorem lr_shareInst (temp : Nat) (op : WordMemOp) (v : Nat) (exp : WordLangExpH
   all_goals first
     | (simp only [Prod.mk.injEq] at he; exact absurd he.1.symm herr)
     | (obtain ⟨rfl, rfl⟩ := Prod.mk.inj he
-       exact ⟨_, by simp only [*, flushState_withLocals, if_true], rfl⟩)
+       exact ⟨_, by simp only [*, flushState_withLocals, ite_true], rfl⟩)
     | (obtain ⟨rfl, rfl⟩ := Prod.mk.inj he
-       exact ⟨loc, by simp only [*, if_true], hl⟩)
+       exact ⟨loc, by simp only [*, ite_true], hl⟩)
     | (obtain ⟨rfl, rfl⟩ := Prod.mk.inj he
        refine ⟨_, ?_, locals_rel_set_var temp _ _ _ _ hl⟩
-       simp only [*, setVar, if_true])
+       simp only [*, setVar, ite_true])
 
 theorem lr_loop (temp : Nat) (names : WordLangNumSetHOL) (c : WordLangProgHOL (BitVec width))
     (exitNames : WordLangNumSetHOL) (st : WordSemStateFiniteExact width C F) :
@@ -892,8 +892,8 @@ theorem lr_call (temp : Nat)
       rw [hg] at he
       simp only at he ⊢
       by_cases hbad : wordSemBadDestArgs dest args = true
-      · simp only [hbad, if_true, Prod.mk.injEq] at he; exact absurd he.1.symm herr
-      simp only [hbad, Bool.false_eq_true, if_false] at he ⊢
+      · simp only [hbad, ite_true, Prod.mk.injEq] at he; exact absurd he.1.symm herr
+      simp only [hbad, Bool.false_eq_true, ite_false] at he ⊢
       cases hf : wordSemFindCode dest (wordSemAddRetLoc ret xs) st.code st.stackSize with
       | none => rw [hf] at he; simp only [Prod.mk.injEq] at he; exact absurd he.1.symm herr
       | some fc =>
@@ -908,17 +908,17 @@ theorem lr_call (temp : Nat)
                   simp only
                   by_cases hz : st.clock = 0
                   · have hz' : ({ st with locals := loc } : WordSemStateFiniteExact width C F).clock = 0 := hz
-                    rw [if_pos hz', if_pos hz, flushState_withLocals]
+                    rw [ite_eq_left hz', ite_eq_left hz, flushState_withLocals]
                   · have hz' : ¬ ({ st with locals := loc } : WordSemStateFiniteExact width C F).clock = 0 := hz
-                    rw [if_neg hz', if_neg hz]
+                    rw [ite_eq_right hz', ite_eq_right hz]
                     rfl
           | some rv =>
               obtain ⟨n, names, retHandler, l1, l2⟩ := rv
               have hnm := hnames n names retHandler l1 l2 rfl
               simp only at he ⊢
               by_cases hdc : sptDomainEmpty names.fst ∨ ¬ n.Nodup
-              · simp only [hdc, if_true, Prod.mk.injEq] at he; exact absurd he.1.symm herr
-              simp only [hdc, if_false] at he ⊢
+              · simp only [hdc, ite_true, Prod.mk.injEq] at he; exact absurd he.1.symm herr
+              simp only [hdc, ite_false] at he ⊢
               cases hce : wordSemCutEnvs names st.locals with
               | none => rw [hce] at he; simp only [Prod.mk.injEq] at he; exact absurd he.1.symm herr
               | some envs =>
@@ -935,10 +935,10 @@ theorem lr_call (temp : Nat)
                   rw [e1, e2]
                   by_cases hz : st.clock = 0
                   · have hz' : ({ st with locals := loc } : WordSemStateFiniteExact width C F).clock = 0 := hz
-                    rw [if_pos hz', if_pos hz]
+                    rw [ite_eq_left hz', ite_eq_left hz]
                     rfl
                   · have hz' : ¬ ({ st with locals := loc } : WordSemStateFiniteExact width C F).clock = 0 := hz
-                    rw [if_neg hz', if_neg hz]
+                    rw [ite_eq_right hz', ite_eq_right hz]
 
 /-- `locals_rel_evaluate_thm` by recursion on `evaluate`'s measure (HOL:
     `completeInduct_on prog_size`). -/
@@ -951,11 +951,11 @@ theorem lr_aux (temp : Nat) :
       simp only [everyVarHOL] at hv
       rw [ht] at he ⊢
       by_cases hz : st.termdep = 0
-      · rw [if_pos hz] at he
+      · rw [ite_eq_left hz] at he
         simp only [Prod.mk.injEq] at he; exact absurd he.1.symm herr
       · have hz' : ¬ ({ st with locals := loc } : WordSemStateFiniteExact width C F).termdep = 0 := hz
-        rw [if_neg hz] at he
-        rw [if_neg hz']
+        rw [ite_eq_right hz] at he
+        rw [ite_eq_right hz']
         rcases hq : evaluate q { st with
             clock := wordSemMustTerminateLimit width
             termdep := st.termdep - 1 } with ⟨r, s1⟩

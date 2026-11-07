@@ -121,7 +121,7 @@ theorem flookup_resVar_fixture :
     FLOOKUP (resVar resVarBase (4, some 40)) 4 = some 40
       ∧ FLOOKUP (resVar resVarBase (4, some 40)) 3 = some 30 := by
   constructor
-  · rw [FLOOKUP_resVar]; simp only [beq_iff_eq, if_true]
+  · rw [FLOOKUP_resVar]; simp only [beq_iff_eq, ite_true]
   · rw [FLOOKUP_resVar_diff_eq _ _ _ 40 (by decide)]
     simp [resVarBase, FLOOKUP, FUPDATE_LIST, FUPDATE]
 

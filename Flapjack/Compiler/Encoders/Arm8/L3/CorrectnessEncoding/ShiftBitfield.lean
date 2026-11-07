@@ -62,7 +62,7 @@ theorem arm8EData_bitfieldMove (inzero extend : Bool) (opc : BitVec 2)
   simp only [e_data, arm8BitfieldWord, e_sf, arm8BitfieldOpc] at hopc ⊢
   rw [hopc]
   simp only [holV2w_one_true, hmasks, himmr, himms, BitVec.toNat_ofNat, Nat.mod_eq_of_lt,
-    beq_self_eq_true, Bool.and_self, if_true]
+    beq_self_eq_true, Bool.and_self, ite_true]
 
 /-- `Encode` of `BitfieldMove@64` is the bitfield word. -/
 theorem arm8Encode_bitfieldMove (inzero extend : Bool) (opc : BitVec 2)

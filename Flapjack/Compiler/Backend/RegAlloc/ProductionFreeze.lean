@@ -47,7 +47,7 @@ theorem doFreeze_production (limit : Nat) {native : State} {production : CakeRaS
     have moveBound : node < native.move_related.length := by rwa [good.2.2.2.2.1]
     have pushRun : pushStack node {native with degrees := degrees} = (.success (), pushed) := by
       simp only [pushStack, Translator.Monadic.MonadBase.bind, getStack, ignoreBind,
-        updateDegreesEqn, if_pos degreeBound, updateMoveRelatedEqn, if_pos moveBound, setStack]
+        updateDegreesEqn, ite_eq_left degreeBound, updateMoveRelatedEqn, ite_eq_left moveBound, setStack]
       rfl
     have pushRelated := pushStack_production node degreeRelated goodDegrees bound
     rw [pushRun] at pushRelated

@@ -657,7 +657,7 @@ theorem cakeDecDegStep_matchesHolLupdate (state : CakeRaState)
   · unfold cakeDecDegStep
     unfold cakeDecDegMonadic
     rw [hstate]
-    simp only [if_pos hi']
+    simp only [ite_eq_left hi']
     rw [hslot]
   · exact CakeNodeMap.set_representsHOLNodeList m values
       ⟨houtside, hsize, hget⟩ i (values[i] - 1) hi
@@ -683,7 +683,7 @@ theorem cakeDecDegMonadic_matchesHolLupdate (state : CakeRaState)
   constructor
   · unfold cakeDecDegMonadic
     rw [hstate]
-    simp only [if_pos hi']
+    simp only [ite_eq_left hi']
     rw [hslot]
   · exact CakeNodeMap.set_representsHOLNodeList m values
       ⟨houtside, hsize, hget⟩ i (values[i] - 1) hi
@@ -1643,8 +1643,6 @@ def sourceMovePhysicalFallbackGuard : Bool :=
       (Flapjack.RiscV.CakeRegAlloc.cakeAllocatorIndexLookup index)
       (7, (2, 9)) == (7, (0, 1))
 
-termination_by program => sizeOf program
-decreasing_by all_goals decreasing_trivial
 
 /- Cake's mk_bij_aux enumerates a Set through the Patricia-tree toAList,
    whose order is not ascending.  This fixture is the checked HOL order

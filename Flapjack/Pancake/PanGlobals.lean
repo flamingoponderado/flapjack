@@ -131,7 +131,7 @@ theorem globalFreshNameAux_not_mem_or_all_mem [BEq String] [LawfulBEq String]
       rw [globalFreshNameAux]
       by_cases hcontains :
           names.contains (name ++ globalApostrophes candidate) = true
-      · rw [if_pos hcontains]
+      · rw [ite_eq_left hcontains]
         rcases ih (candidate + 1) with hnotmem | hall
         · exact Or.inl hnotmem
         · refine Or.inr (fun k hk => ?_)
@@ -143,7 +143,7 @@ theorem globalFreshNameAux_not_mem_or_all_mem [BEq String] [LawfulBEq String]
               have hstep : candidate + (j + 1) = candidate + 1 + j := by omega
               rw [hstep]
               exact hall j hj
-      · rw [if_neg hcontains]
+      · rw [ite_eq_right hcontains]
         exact Or.inl (fun hmem =>
           hcontains (List.contains_iff_mem.mpr hmem))
 
@@ -724,8 +724,8 @@ theorem globalDeclsFilter_all (predicate : Decl α → Bool)
   | cons declaration declarations ih =>
       simp only [globalDeclsFilter]
       by_cases hpred : predicate declaration = true
-      · rw [if_pos hpred]; simp [hpred, ih]
-      · rw [if_neg hpred]; exact ih
+      · rw [ite_eq_left hpred]; simp [hpred, ih]
+      · rw [ite_eq_right hpred]; exact ih
 
 def globalDeclIsName : Decl α → Bool
   | .name _ _ => true
@@ -1145,9 +1145,9 @@ theorem holMlStringWitness_globalFreshNameAux [BEq String] (name : String)
   | succ fuel ih =>
       rw [globalFreshNameAux]
       by_cases hc : names.contains (name ++ globalApostrophes candidate) = true
-      · rw [if_pos hc]
+      · rw [ite_eq_left hc]
         exact ih (candidate + 1)
-      · rw [if_neg hc]
+      · rw [ite_eq_right hc]
         exact nameRanged_append h (globalApostrophes_nameRanged candidate)
 
 /-- Witness: production `globalFreshName` preserves byte-rangedness of the input
@@ -1300,9 +1300,9 @@ theorem exceptionEntries_globalDeclsFilter_of_true
   | cons declaration declarations ih =>
       simp only [globalDeclsFilter]
       by_cases hpred : predicate declaration = true
-      · rw [if_pos hpred]
+      · rw [ite_eq_left hpred]
         cases declaration <;> simp_all [exceptionEntries_cons]
-      · rw [if_neg hpred]
+      · rw [ite_eq_right hpred]
         cases declaration <;> simp_all [exceptionEntries_cons]
 
 theorem exceptionEntries_globalDeclsFilter_of_false
@@ -1315,9 +1315,9 @@ theorem exceptionEntries_globalDeclsFilter_of_false
   | cons declaration declarations ih =>
       simp only [globalDeclsFilter]
       by_cases hpred : predicate declaration = true
-      · rw [if_pos hpred]
+      · rw [ite_eq_left hpred]
         cases declaration <;> simp_all [exceptionEntries_cons]
-      · rw [if_neg hpred]
+      · rw [ite_eq_right hpred]
         cases declaration <;> simp_all
 
 theorem exceptionEntries_filter_function (declarations : List (Decl α)) :
@@ -1374,12 +1374,12 @@ theorem functions_globalDeclsFilter_nil_of_predicate
   | cons declaration declarations ih =>
       simp only [globalDeclsFilter]
       by_cases hpred : predicate declaration = true
-      · rw [if_pos hpred]
+      · rw [ite_eq_left hpred]
         have hnotfun := hpredicate declaration hpred
         cases declaration <;> simp [globalDeclIsFunction] at hnotfun
         all_goals simp [functions, functionEntries]
         all_goals exact ih
-      · rw [if_neg hpred]
+      · rw [ite_eq_right hpred]
         exact ih
 
 theorem functions_globalDeclsFilter_not_function (declarations : List (Decl α)) :
@@ -1432,9 +1432,9 @@ theorem functions_globalDeclsFilter_isFunction (declarations : List (Decl α)) :
   | cons declaration declarations ih =>
       simp only [globalDeclsFilter]
       by_cases hpred : globalDeclIsFunction declaration = true
-      · rw [if_pos hpred]
+      · rw [ite_eq_left hpred]
         cases declaration <;> simp_all [globalDeclIsFunction, functions, functionEntries]
-      · rw [if_neg hpred]
+      · rw [ite_eq_right hpred]
         cases declaration <;> simp_all [globalDeclIsFunction, functions, functionEntries]
 
 theorem functions_append (declarations rest : List (Decl α)) :
@@ -1494,14 +1494,14 @@ theorem globalRenameDecls_filter_function [BEq String]
   | cons declaration declarations ih =>
       simp only [globalDeclsFilter]
       by_cases hpred : globalDeclIsFunction declaration = true
-      · rw [if_pos hpred]
+      · rw [ite_eq_left hpred]
         cases declaration with
         | function declaration =>
             simp [globalRenameDecls, globalDeclsFilter, globalDeclIsFunction, ih]
         | decl shape name value => simp [globalDeclIsFunction] at hpred
         | exnDecl exception shape => simp [globalDeclIsFunction] at hpred
         | name struct fields => simp [globalDeclIsFunction] at hpred
-      · rw [if_neg hpred]
+      · rw [ite_eq_right hpred]
         cases declaration <;>
           simp_all [globalRenameDecls, globalDeclsFilter, globalDeclIsFunction]
 
@@ -1843,9 +1843,9 @@ theorem globalDeclsFilter_isDecl_all_not_function [BEq String] [Add α] [Mul α]
   | cons declaration declarations ih =>
       simp only [globalDeclsFilter]
       by_cases hpred : isDecl declaration = true
-      · rw [if_pos hpred]
+      · rw [ite_eq_left hpred]
         cases declaration <;> simp_all [isDecl, globalDeclIsFunction]
-      · rw [if_neg hpred]
+      · rw [ite_eq_right hpred]
         exact ih
 
 /-- HOL-shaped context for `pan_globals$compile_decs_def`
@@ -2545,13 +2545,13 @@ theorem globalCollect_filter_isDecl [Add α] [Mul α]
   | cons declaration declarations ih =>
       simp only [globalDeclsFilter]
       by_cases hpred : isDecl declaration = true
-      · rw [if_pos hpred]
+      · rw [ite_eq_left hpred]
         cases declaration with
         | decl shape name value => simp only [globalCollect, ih]
         | function function => simp [isDecl] at hpred
         | exnDecl exception shape => simp [isDecl] at hpred
         | name struct fields => simp [isDecl] at hpred
-      · rw [if_neg hpred]
+      · rw [ite_eq_right hpred]
         cases declaration with
         | decl shape name value => simp [isDecl] at hpred
         | function function =>
@@ -2573,13 +2573,13 @@ theorem globalCompileInitializers_filter_isDecl [BEq String] [Add α] [Mul α]
   | cons declaration declarations ih =>
       simp only [globalDeclsFilter]
       by_cases hpred : isDecl declaration = true
-      · rw [if_pos hpred]
+      · rw [ite_eq_left hpred]
         cases declaration with
         | decl shape name value => simp only [globalCompileInitializers, ih]
         | function function => simp [isDecl] at hpred
         | exnDecl exception shape => simp [isDecl] at hpred
         | name struct fields => simp [isDecl] at hpred
-      · rw [if_neg hpred]
+      · rw [ite_eq_right hpred]
         cases declaration with
         | decl shape name value => simp [isDecl] at hpred
         | function function =>
@@ -2600,13 +2600,13 @@ theorem globalCompileDecls_filter_isDecl [BEq String] [Add α] [Mul α]
   | cons declaration declarations ih =>
       simp only [globalDeclsFilter]
       by_cases hpred : isDecl declaration = true
-      · rw [if_pos hpred]
+      · rw [ite_eq_left hpred]
         cases declaration with
         | decl shape name value => simp [globalCompileDecls, ih]
         | function function => simp [isDecl] at hpred
         | exnDecl exception shape => simp [isDecl] at hpred
         | name struct fields => simp [isDecl] at hpred
-      · rw [if_neg hpred]
+      · rw [ite_eq_right hpred]
         exact ih
 
 theorem globalCompileDecs_filter_isDecl [BEq String] [Add α] [Mul α]
@@ -2888,11 +2888,11 @@ theorem toStringOfBytes_freshNameMlS (name : MlS) (names : List MlS) :
   fun_induction freshNameMlS name names with
   | case1 name hmem ih =>
       rw [freshNameHOL.eq_1,
-        if_pos ((toStringOfBytes_mem_map_iff name names).mpr hmem)]
+        ite_eq_left ((toStringOfBytes_mem_map_iff name names).mpr hmem)]
       rw [ih, toStringOfBytes_mlstrAppend, toStringOfBytes_ofString_quote]
   | case2 name hnot =>
       rw [freshNameHOL.eq_1,
-        if_neg (fun hmem' => hnot ((toStringOfBytes_mem_map_iff name names).mp hmem'))]
+        ite_eq_right (fun hmem' => hnot ((toStringOfBytes_mem_map_iff name names).mp hmem'))]
 
 end ResortShapeExactBridge
 

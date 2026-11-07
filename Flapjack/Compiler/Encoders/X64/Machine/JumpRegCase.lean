@@ -65,7 +65,7 @@ theorem x64Next_jumpReg (ms : X64State) (d : BitVec 64 → Prop) (r : Nat) (hr :
       some (.jmp r, (encodeInsn (.jmp r)).length) :=
     decode_bytesInMemory (encodeInsn (.jmp r)) ms.pc ms.mem d (.jmp r)
       (encodeInsn (.jmp r)).length hbm (decode_jmp r hr) (by omega)
-  simp only [x64Next, hfailed, Bool.false_eq_true, if_false, hdec, execInsn]
+  simp only [x64Next, hfailed, Bool.false_eq_true, ite_false, hdec, execInsn]
 
 /-! ## The `jumpReg` case -/
 

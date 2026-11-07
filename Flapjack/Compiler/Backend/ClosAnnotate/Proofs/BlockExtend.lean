@@ -37,11 +37,11 @@ theorem primitiveSimulation_consExtend {C F : Type} (tag : Nat) :
                   by_cases invalid : lower < 0 ∨ len < 0 ∨ Int.ofNat fields.length < lower + len ∨
                       total = 0 ∨ total ≠ Int.ofNat initial.length + len
                   · refine ⟨.err (.abort .typeError), ?_, ?_⟩
-                    · simp only [doApp, applyBlock, ← fieldsLength, ← initialLength, if_pos invalid]
-                    · simp only [doApp, applyBlock, if_pos invalid, AppResultRel, ResultRel]
+                    · simp only [doApp, applyBlock, ← fieldsLength, ← initialLength, ite_eq_left invalid]
+                    · simp only [doApp, applyBlock, ite_eq_left invalid, AppResultRel, ResultRel]
                   · refine ⟨.val (.block tag (nextInitial ++ (nextFields.drop lower.toNat).take len.toNat), target), ?_, ?_⟩
-                    · simp only [doApp, applyBlock, ← fieldsLength, ← initialLength, if_neg invalid]
-                    · simp only [doApp, applyBlock, if_neg invalid, AppResultRel]
+                    · simp only [doApp, applyBlock, ← fieldsLength, ← initialLength, ite_eq_right invalid]
+                    · simp only [doApp, applyBlock, ite_eq_right invalid, AppResultRel]
                       exact ⟨resultRel, stateRel⟩
                 | _ =>
                   exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel]⟩

@@ -94,7 +94,7 @@ theorem semantics_return : semantics s0 5 = .terminate .success [] := by
 theorem semantics_missing_arg : semantics { s0 with locals := .ln } 5 = .fail := by
   unfold semantics
   simp only
-  rw [if_pos]
+  rw [ite_eq_left]
   refine ⟨0, ?_⟩
   rw [evaluate]
   simp [WordSemStateFiniteExact.getVars, WordSemStateFiniteExact.getVar, sptLookup]
@@ -105,7 +105,7 @@ theorem semantics_bad_return :
     semantics { s0 with locals := sptFromAList [(0, .loc 2 0)] } 5 = .fail := by
   unfold semantics
   simp only
-  rw [if_pos]
+  rw [ite_eq_left]
   refine ⟨1, ?_⟩
   rw [evaluate]
   simp [WordSemStateFiniteExact.getVars, WordSemStateFiniteExact.getVar, wordSemBadDestArgs,

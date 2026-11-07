@@ -97,7 +97,7 @@ theorem gcMoveLoop_imp_isDataElement {α β γ : Type}
       cases h <;> simp [gcMoveLoop, overflow]
     | case3 scanned pending a n heap ok limit xs len payload roots copied a1 n1 heap1 ok1 bound move ok2 ih =>
       intro scannedData pendingData
-      simp only [gcMoveLoop, if_neg bound, move]
+      simp only [gcMoveLoop, ite_eq_right bound, move]
       intro successful
       have copiedEq : (gcMoveList (xs, .dataElement xs len payload :: pending, a, n, heap, ok, limit)).2.1 = copied := by
         rw [move]

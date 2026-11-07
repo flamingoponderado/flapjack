@@ -23,7 +23,7 @@ theorem readBitmapWordList {width : Nat} [NeZero width] (bits : List Bool)
         simp only [List.length_append, List.length_cons, List.length_nil]
         constructor <;> omega
       simp only [List.length_append, List.length_cons, List.length_nil]
-      rw [if_pos (Or.inl hshort)]
+      rw [ite_eq_left (Or.inl hshort)]
       simp only [List.cons_append, List.nil_append, Flapjack.StackSem.readBitmap, hm,
         Bool.false_eq_true, ↓reduceIte]
       rw [bitLengthBitsToWord bits hlen]
@@ -41,7 +41,7 @@ theorem readBitmapWordList {width : Nat} [NeZero width] (bits : List Bool)
           BitmapBitStructureSupport.bitmapBitLookup _ _ (by omega), ← htake]
         simp
       simp only [List.length_append, List.length_cons, List.length_nil]
-      rw [if_neg (by omega), hta, hda]
+      rw [ite_eq_right (by omega), hta, hda]
       simp only [List.cons_append, Flapjack.StackSem.readBitmap, hm, ↓reduceIte]
       have hdrop : (bits.drop (width - 1)).length < n := by
         simp only [List.length_drop]

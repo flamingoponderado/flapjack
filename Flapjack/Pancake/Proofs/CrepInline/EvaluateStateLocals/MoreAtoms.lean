@@ -53,7 +53,7 @@ private theorem post_locals_set {width : Nat} [NeZero width] {σ : Type}
   simp only [crepHolFdiff, crepHolFdom, HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL]
   by_cases hjk : j = k
   · subst hjk; simp [hk]
-  · simp only [hjk, if_false]
+  · simp only [hjk, ite_false]
     rfl
 
 /-- Local support: target expression evaluation on the relocated state. -/
@@ -262,7 +262,7 @@ theorem submap_updateList {β : Type} :
       simp only [FUPDATE_HOL] at hk ⊢
       by_cases hke : k = e.1
       · simp_all
-      · simp only [hke, if_false] at hk ⊢; exact h k v hk
+      · simp only [hke, ite_false] at hk ⊢; exact h k v hk
 
 /-- Local support: updating existing keys keeps the domain. -/
 theorem dom_updateList {β : Type} :
@@ -280,7 +280,7 @@ theorem dom_updateList {β : Type} :
       · simp only [FUPDATE_HOL]
         by_cases hke : e'.1 = e.1
         · simp [hke]
-        · simp only [hke, if_false]; exact h e' (List.mem_cons_of_mem _ he')
+        · simp only [hke, ite_false]; exact h e' (List.mem_cons_of_mem _ he')
 
 /-- Local support: `Primitive`. -/
 private theorem primitiveStrongGoal {width : Nat} [NeZero width] {σ : Type}
@@ -301,7 +301,7 @@ private theorem primitiveStrongGoal {width : Nat} [NeZero width] {σ : Type}
           simp only [hp] at hev ⊢
           by_cases hc : names.length = results.length ∧
               (∀ v ∈ names, (s.locals.lookup v).isSome) ∧ names.Nodup
-          · rw [if_pos hc] at hev
+          · rw [ite_eq_left hc] at hev
             have hct : names.length = results.length ∧
                 (∀ v ∈ names, (tl.lookup v).isSome) ∧ names.Nodup := by
               refine ⟨hc.1, fun v hv => ?_, hc.2.2⟩
@@ -309,7 +309,7 @@ private theorem primitiveStrongGoal {width : Nat} [NeZero width] {σ : Type}
               cases hsv : s.locals.lookup v with
               | none => rw [hsv] at this; exact absurd this (by simp)
               | some x => rw [hloc v x hsv]; rfl
-            rw [if_pos hct]
+            rw [ite_eq_left hct]
             obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
             refine ⟨_, rfl, ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩, ?_⟩
             have hkeys : ∀ e ∈ names.zip results, (s.locals.lookup e.1).isSome :=
@@ -325,9 +325,9 @@ private theorem primitiveStrongGoal {width : Nat} [NeZero width] {σ : Type}
                 intro hm
                 obtain ⟨e, he, rfl⟩ := List.mem_map.1 hm
                 exact hj (hkeys e he)
-              simp only [hj, Bool.false_eq_true, if_false]
+              simp only [hj, Bool.false_eq_true, ite_false]
               exact (FLOOKUP_FUPDATE_LIST_HOL_not_mem _ _ j hjn).symm
-          · rw [if_neg hc] at hev
+          · rw [ite_eq_right hc] at hev
             obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev; exact absurd rfl hne
 
 /-- Local support: `ExtCall`. -/
@@ -396,27 +396,27 @@ private theorem shLoad_rel {width : Nat} [NeZero width] {σ : Type}
   unfold crepShMemLoadExactHOL at h ⊢
   dsimp only at h ⊢
   by_cases hnb : nb = 0
-  · simp only [hnb, if_true] at h ⊢
+  · simp only [hnb, ite_true] at h ⊢
     by_cases hsh : s.shMemaddrs addr
-    · simp only [hsh, if_true] at h ⊢
+    · simp only [hsh, ite_true] at h ⊢
       split at h
       · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h
         exact ⟨_, rfl, ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩, trivial⟩
       · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h
         exact ⟨_, rfl, ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩,
           post_locals_set' s _ _ _ name _ rfl rfl hk hloc⟩
-    · simp only [hsh, if_false] at h
+    · simp only [hsh, ite_false] at h
       obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; exact absurd rfl hne
-  · simp only [hnb, if_false] at h ⊢
+  · simp only [hnb, ite_false] at h ⊢
     by_cases hsh : s.shMemaddrs (panByteAlignHOL addr)
-    · simp only [hsh, if_true] at h ⊢
+    · simp only [hsh, ite_true] at h ⊢
       split at h
       · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h
         exact ⟨_, rfl, ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩, trivial⟩
       · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h
         exact ⟨_, rfl, ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩,
           post_locals_set' s _ _ _ name _ rfl rfl hk hloc⟩
-    · simp only [hsh, if_false] at h
+    · simp only [hsh, ite_false] at h
       obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; exact absurd rfl hne
 
 /-- Local support: shared-memory stores on the relocated state. -/
@@ -441,27 +441,27 @@ private theorem shStore_rel {width : Nat} [NeZero width] {σ : Type}
       rcases v with ⟨value⟩
       dsimp only at h ⊢
       by_cases hnb : nb = 0
-      · simp only [hnb, if_true] at h ⊢
+      · simp only [hnb, ite_true] at h ⊢
         by_cases hsh : s.shMemaddrs addr
-        · simp only [hsh, if_true] at h ⊢
+        · simp only [hsh, ite_true] at h ⊢
           split at h
           · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h
             exact ⟨_, rfl, ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩, trivial⟩
           · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h
             exact ⟨_, rfl, ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩,
               post_locals_same s _ _ _ rfl rfl hloc⟩
-        · simp only [hsh, if_false] at h
+        · simp only [hsh, ite_false] at h
           obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; exact absurd rfl hne
-      · simp only [hnb, if_false] at h ⊢
+      · simp only [hnb, ite_false] at h ⊢
         by_cases hsh : s.shMemaddrs (panByteAlignHOL addr)
-        · simp only [hsh, if_true] at h ⊢
+        · simp only [hsh, ite_true] at h ⊢
           split at h
           · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h
             exact ⟨_, rfl, ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩, trivial⟩
           · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h
             exact ⟨_, rfl, ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩,
               post_locals_same s _ _ _ rfl rfl hloc⟩
-        · simp only [hsh, if_false] at h
+        · simp only [hsh, ite_false] at h
           obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; exact absurd rfl hne
 
 /-- Local support: `ShMem`. -/
@@ -497,7 +497,7 @@ private theorem shMemStrongGoal {width : Nat} [NeZero width] {σ : Type}
               ∃ t1, crepShMemStoreExactHOL name addr nb { s with locals := tl } = (r', t1) ∧
                 crepInlineStateRelExact s1 t1 ∧ strongLocalsPost r' s s1 { s with locals := tl } t1 :=
             fun nb => shStore_rel name addr nb s tl hloc
-          cases op <;> simp only [crepIsLoadMemOp, if_true, if_false, Bool.false_eq_true,
+          cases op <;> simp only [crepIsLoadMemOp, ite_true, ite_false, Bool.false_eq_true,
             crepShMemOpExactHOL] at hev ⊢
           all_goals first
             | exact hload _ r s' hev hne

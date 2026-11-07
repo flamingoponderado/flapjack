@@ -26,9 +26,9 @@ theorem evaluate_dec_clock_aux :
   | .tick, s => by
       have ht := (evaluate_def_rebound (width := width) (C := C) (F := F)).2.2.2.2.2.2.2.2.2.2.1
       by_cases hz : s.clock = 0
-      · simp only [ht, hz, if_true, flushState]
+      · simp only [ht, hz, ite_true, flushState]
       · rw [ht s]
-        simp only [hz, if_false]
+        simp only [hz, ite_false]
         rw [ht]
         have hk : s.clock - (decClock s).clock = 1 := by simp only [decClock]; omega
         simp only [hk]
@@ -36,16 +36,16 @@ theorem evaluate_dec_clock_aux :
   | .mustTerminate q, s => by
       have ht := (evaluate_def_rebound (width := width) (C := C) (F := F)).2.2.2.2.2.2.2.2.2.2.2.1
       by_cases hz : s.termdep = 0
-      · simp only [ht, hz, if_true, Nat.sub_self]
+      · simp only [ht, hz, ite_true, Nat.sub_self]
       · rw [ht s]
-        simp only [hz, if_false]
+        simp only [hz, ite_false]
         rcases he : evaluate q { s with
             clock := wordSemMustTerminateLimit width
             termdep := s.termdep - 1 } with ⟨r, s1⟩
         rcases r with _ | x
         · simp only [Nat.sub_self]
           rw [ht]
-          simp only [hz, if_false]
+          simp only [hz, ite_false]
           have hq : ({ { s with clock := 0 } with
                 clock := wordSemMustTerminateLimit width
                 termdep := s.termdep - 1 } : WordSemStateFiniteExact width C F) =
@@ -53,7 +53,7 @@ theorem evaluate_dec_clock_aux :
                 clock := wordSemMustTerminateLimit width
                 termdep := s.termdep - 1 } := rfl
           rw [hq, he]
-        · cases x <;> simp only [Nat.sub_self] <;> rw [ht] <;> simp only [hz, if_false] <;>
+        · cases x <;> simp only [Nat.sub_self] <;> rw [ht] <;> simp only [hz, ite_false] <;>
             (have hq : ({ { s with clock := 0 } with
                 clock := wordSemMustTerminateLimit width
                 termdep := s.termdep - 1 } : WordSemStateFiniteExact width C F) =
@@ -117,17 +117,17 @@ theorem evaluate_dec_clock_aux :
       · have hrb : rb ≠ some .timeOut := by
           intro hr; subst hr; simp [wordSemContLoop] at hcont
         by_cases hz : s1.clock = 0
-        · simp only [hcont, hz, if_true]
+        · simp only [hcont, hz, ite_true]
           have hfc : (flushState true s1).clock = 0 := by simp [flushState, hz]
           rw [hfc, Nat.sub_zero]
           have hs : ({ s with clock := s.clock } : WordSemStateFiniteExact width C F) = s := rfl
           rw [hs, ht, hcs]
-          simp only [hb, hcont, hz, if_true]
+          simp only [hb, hcont, hz, ite_true]
           have : ({ flushState true s1 with clock := 0 } : WordSemStateFiniteExact width C F) =
               flushState true s1 := by
             cases s1; simp_all [flushState]
           rw [this]
-        · simp only [hcont, hz, if_true, if_false, wordSemSTOP]
+        · simp only [hcont, hz, ite_true, ite_false, wordSemSTOP]
           rcases hl : evaluate (.loop names c exitNames) (decClock s1) with ⟨rl, sl⟩
           have hcl := evaluate_clock _ _ rl sl hl
           have ihl := evaluate_dec_clock_aux (.loop names c exitNames) (decClock s1)
@@ -142,7 +142,7 @@ theorem evaluate_dec_clock_aux :
           simp only [harith, Nat.zero_add] at hadd
           rw [hadd]
           have hz' : s1.clock - sl.clock ≠ 0 := by simp only [decClock] at hcl; omega
-          simp only [hcont, hz', if_true, if_false, wordSemSTOP]
+          simp only [hcont, hz', ite_true, ite_false, wordSemSTOP]
           have hd : decClock { s1 with clock := s1.clock - sl.clock } =
               { decClock s1 with clock := (decClock s1).clock - sl.clock } := by
             simp only [decClock]
@@ -150,7 +150,7 @@ theorem evaluate_dec_clock_aux :
             omega
           rw [hd]
           exact ihl
-      · simp only [hcont, Bool.false_eq_true, if_false]
+      · simp only [hcont, Bool.false_eq_true, ite_false]
         rcases rb with _ | ⟨x, ys⟩ | ⟨x, y⟩ | (_ | k) | k | _ | _ | _ | _
         · simp [wordSemContLoop] at hcont
         rotate_left 2
@@ -182,15 +182,15 @@ theorem evaluate_dec_clock_aux :
         rw [ht, getVars_withClock, hg]
       simp only
       by_cases hbad : wordSemBadDestArgs dest args = true
-      · simp only [hbad, if_true, Nat.sub_self]
+      · simp only [hbad, ite_true, Nat.sub_self]
         rw [ht, getVars_withClock, hg]
         simp [hbad]
-      simp only [hbad, Bool.false_eq_true, if_false]
+      simp only [hbad, Bool.false_eq_true, ite_false]
       rcases hf : wordSemFindCode dest (wordSemAddRetLoc (none : Option (List Nat × WordLangCutsetsHOL × WordLangProgHOL (BitVec width) × Nat × Nat)) xs) s.code s.stackSize with
         _ | ⟨args1, prog, ss⟩
       · simp only [Nat.sub_self]
         rw [ht, getVars_withClock, hg]
-        simp only [hbad, Bool.false_eq_true, if_false]
+        simp only [hbad, Bool.false_eq_true, ite_false]
         rw [show ({ s with clock := 0 } : WordSemStateFiniteExact width C F).code = s.code from rfl,
           show ({ s with clock := 0 } : WordSemStateFiniteExact width C F).stackSize = s.stackSize from rfl,
           hf]
@@ -198,21 +198,21 @@ theorem evaluate_dec_clock_aux :
         | some _ =>
           simp only [Nat.sub_self]
           rw [ht, getVars_withClock, hg]
-          simp only [hbad, Bool.false_eq_true, if_false]
+          simp only [hbad, Bool.false_eq_true, ite_false]
           rw [show ({ s with clock := 0 } : WordSemStateFiniteExact width C F).code = s.code from rfl,
             show ({ s with clock := 0 } : WordSemStateFiniteExact width C F).stackSize = s.stackSize from rfl,
             hf]
         | none =>
           simp only
           by_cases hz : s.clock = 0
-          · simp only [hz, dif_pos, Nat.zero_sub]
+          · simp only [hz, dite_eq_left, Nat.zero_sub]
             rw [ht, getVars_withClock, hg]
-            simp only [hbad, Bool.false_eq_true, if_false]
+            simp only [hbad, Bool.false_eq_true, ite_false]
             rw [show ({ s with clock := 0 } : WordSemStateFiniteExact width C F).code = s.code from rfl,
               show ({ s with clock := 0 } : WordSemStateFiniteExact width C F).stackSize = s.stackSize from rfl,
               hf]
             cases s; simp_all [flushState]
-          · simp only [hz, dif_neg, not_false_eq_true]
+          · simp only [hz, dite_eq_right, not_false_eq_true]
             rcases hcv : evaluate prog (callEnv args1 ss (decClock s)) with ⟨rc, sc⟩
             have hc := evaluate_clock prog _ rc sc hcv
             have ih := evaluate_dec_clock_aux prog (callEnv args1 ss (decClock s))
@@ -228,11 +228,11 @@ theorem evaluate_dec_clock_aux :
             by_cases hb : wordSemBadFunReturn rc = true <;>
               simp only [hb, ↓reduceIte, Bool.false_eq_true] <;>
               rw [ht, getVars_withClock, hg] <;>
-              simp only [hbad, Bool.false_eq_true, if_false] <;>
+              simp only [hbad, Bool.false_eq_true, ite_false] <;>
               rw [show ({ s with clock := s.clock - sc.clock } : WordSemStateFiniteExact width C F).code = s.code from rfl,
                 show ({ s with clock := s.clock - sc.clock } : WordSemStateFiniteExact width C F).stackSize = s.stackSize from rfl,
                 hf] <;>
-              simp only [hz', ↓reduceIte, ↓reduceDIte, if_false, dite_false] <;>
+              simp only [hz', ↓reduceIte, ↓reduceDIte, ite_false, dite_false] <;>
               rw [hd] <;>
               simp only [callEnv, decClock] <;>
               simp only [ih] <;>
@@ -252,11 +252,11 @@ theorem evaluate_dec_clock_aux :
         rw [Nat.sub_self]
       simp only [hg] at h ⊢
       by_cases hbad : wordSemBadDestArgs dest args = true
-      · simp only [hbad, if_true, Prod.mk.injEq] at h ⊢
+      · simp only [hbad, ite_true, Prod.mk.injEq] at h ⊢
         obtain ⟨rfl, rfl⟩ := h
         rw [Nat.sub_self]
         exact ⟨rfl, rfl⟩
-      simp only [hbad, Bool.false_eq_true, if_false] at h ⊢
+      simp only [hbad, Bool.false_eq_true, ite_false] at h ⊢
       rcases hf : wordSemFindCode dest (wordSemAddRetLoc (some (n, names, retHandler, l1, l2)) xs)
           s.code s.stackSize with _ | ⟨args1, prog, ss⟩
       · simp only [hf, Prod.mk.injEq] at h
@@ -264,24 +264,24 @@ theorem evaluate_dec_clock_aux :
         rw [Nat.sub_self]
       simp only [hf] at h ⊢
       by_cases hdc : sptDomainEmpty names.fst ∨ ¬ n.Nodup
-      · simp only [hdc, if_true, Prod.mk.injEq] at h ⊢
+      · simp only [hdc, ite_true, Prod.mk.injEq] at h ⊢
         obtain ⟨rfl, rfl⟩ := h
         rw [Nat.sub_self]
         exact ⟨rfl, rfl⟩
-      simp only [hdc, if_false] at h ⊢
+      simp only [hdc, ite_false] at h ⊢
       rcases hce : wordSemCutEnvs names s.locals with _ | envs
       · simp only [hce, Prod.mk.injEq] at h
         obtain ⟨rfl, rfl⟩ := h
         rw [Nat.sub_self]
       simp only [hce] at h ⊢
       by_cases hz : s.clock = 0
-      · simp only [hz, if_true, Prod.mk.injEq] at h
+      · simp only [hz, ite_true, Prod.mk.injEq] at h
         obtain ⟨rfl, rfl⟩ := h
-        rw [if_pos (by simp [hz, flushState])]
+        rw [ite_eq_left (by simp [hz, flushState])]
         clear ht hE
         cases s
         simp_all [flushState, pushEnv_withClock]
-      simp only [hz, if_false] at h
+      simp only [hz, ite_false] at h
       rcases hcv : evaluate prog (callEnv args1 ss (pushEnv envs handler (decClock s))) with
         ⟨rc, s2⟩
       rw [hcv] at h
@@ -315,73 +315,73 @@ theorem evaluate_dec_clock_aux :
       rcases rc with _ | ⟨x, ys⟩ | ⟨x, y⟩ | k | k | _ | _ | _ | _
       rotate_left
       · by_cases hx : x ≠ WordLocW.loc l1 l2 ∨ ys.length ≠ n.length
-        · simp only [hx, if_true, Prod.mk.injEq] at h
+        · simp only [hx, ite_true, Prod.mk.injEq] at h
           obtain ⟨rfl, rfl⟩ := h
-          rw [if_neg (by omega), hd s2.clock (Nat.le_refl _), Nat.sub_self, Nat.add_zero, ih]
-          simp only [hx, if_true]
-        simp only [hx, if_false] at h
+          rw [ite_eq_right (by omega), hd s2.clock (Nat.le_refl _), Nat.sub_self, Nat.add_zero, ih]
+          simp only [hx, ite_true]
+        simp only [hx, ite_false] at h
         rcases hp : popEnv s2 with _ | s1
         · simp only [hp, Prod.mk.injEq] at h
           obtain ⟨rfl, rfl⟩ := h
-          rw [if_neg (by omega), hd s2.clock (Nat.le_refl _), Nat.sub_self, Nat.add_zero, ih]
-          simp only [hx, if_false, popEnv_withClock, hp, Option.map_none]
+          rw [ite_eq_right (by omega), hd s2.clock (Nat.le_refl _), Nat.sub_self, Nat.add_zero, ih]
+          simp only [hx, ite_false, popEnv_withClock, hp, Option.map_none]
         simp only [hp] at h
         have hc2 : s1.clock = s2.clock ∧ s1.termdep = s2.termdep :=
           ⟨popEnv_clock _ _ hp, popEnv_termdep _ _ hp⟩
         by_cases hdom : sptDomainEqUnion s1.locals envs.fst envs.snd
-        · simp only [hdom, if_true] at h
+        · simp only [hdom, ite_true] at h
           have hc3 := evaluate_clock retHandler _ r s' h
           have ihr := evaluate_dec_clock_aux retHandler (setVars n ys s1)
           rw [h] at ihr
           have hsc : (setVars n ys s1).clock = s2.clock := hc2.1
           rw [hsc] at hc3 ihr
-          rw [if_neg (by omega), hd s'.clock (by omega), ha s'.clock (by simp)]
+          rw [ite_eq_right (by omega), hd s'.clock (by omega), ha s'.clock (by simp)]
           dsimp only
-          simp only [hx, if_false, popEnv_withClock, hp, Option.map_some]
-          simp only [hdom, if_true]
+          simp only [hx, ite_false, popEnv_withClock, hp, Option.map_some]
+          simp only [hdom, ite_true]
           exact ihr
-        · simp only [hdom, if_false, Prod.mk.injEq] at h
+        · simp only [hdom, ite_false, Prod.mk.injEq] at h
           obtain ⟨rfl, rfl⟩ := h
           rw [hc2.1]
-          rw [if_neg (by omega), hd s2.clock (Nat.le_refl _), Nat.sub_self, Nat.add_zero, ih]
-          simp only [hx, if_false, popEnv_withClock, hp, Option.map_some]
-          simp only [hdom, if_false]
+          rw [ite_eq_right (by omega), hd s2.clock (Nat.le_refl _), Nat.sub_self, Nat.add_zero, ih]
+          simp only [hx, ite_false, popEnv_withClock, hp, Option.map_some]
+          simp only [hdom, ite_false]
       · cases handler with
         | none =>
           simp only [Prod.mk.injEq] at h
           obtain ⟨rfl, rfl⟩ := h
-          rw [if_neg (by omega), hd s2.clock (Nat.le_refl _), Nat.sub_self, Nat.add_zero, ih]
+          rw [ite_eq_right (by omega), hd s2.clock (Nat.le_refl _), Nat.sub_self, Nat.add_zero, ih]
         | some hv =>
           obtain ⟨n', hprog, l1', l2'⟩ := hv
           dsimp only at h ⊢
           by_cases hx : x ≠ WordLocW.loc l1' l2'
-          · rw [if_pos hx, Prod.mk.injEq] at h
+          · rw [ite_eq_left hx, Prod.mk.injEq] at h
             obtain ⟨rfl, rfl⟩ := h
-            rw [if_neg (by omega), hd s2.clock (Nat.le_refl _), Nat.sub_self, Nat.add_zero, ih]
-            dsimp only; rw [if_pos hx]
-          rw [if_neg hx] at h
+            rw [ite_eq_right (by omega), hd s2.clock (Nat.le_refl _), Nat.sub_self, Nat.add_zero, ih]
+            dsimp only; rw [ite_eq_left hx]
+          rw [ite_eq_right hx] at h
           by_cases hdom : sptDomainEqUnion s2.locals envs.fst envs.snd
-          · simp only [hdom, if_true] at h
+          · simp only [hdom, ite_true] at h
             have hc3 := evaluate_clock hprog _ r s' h
             have ihh := evaluate_dec_clock_aux hprog (setVar n' y s2)
             rw [h] at ihh
             have hsc : (setVar n' y s2).clock = s2.clock := rfl
             rw [hsc] at hc3 ihh
-            rw [if_neg (by omega), hd s'.clock (by omega), ha s'.clock (by simp)]
+            rw [ite_eq_right (by omega), hd s'.clock (by omega), ha s'.clock (by simp)]
             dsimp only
-            rw [if_neg hx]
-            simp only [hdom, if_true]
+            rw [ite_eq_right hx]
+            simp only [hdom, ite_true]
             exact ihh
-          · simp only [hdom, if_false, Prod.mk.injEq] at h
+          · simp only [hdom, ite_false, Prod.mk.injEq] at h
             obtain ⟨rfl, rfl⟩ := h
-            rw [if_neg (by omega), hd s2.clock (Nat.le_refl _), Nat.sub_self, Nat.add_zero, ih]
+            rw [ite_eq_right (by omega), hd s2.clock (Nat.le_refl _), Nat.sub_self, Nat.add_zero, ih]
             dsimp only
-            rw [if_neg hx]
-            simp only [hdom, if_false]
+            rw [ite_eq_right hx]
+            simp only [hdom, ite_false]
       all_goals
         simp only [Prod.mk.injEq] at h
         obtain ⟨rfl, rfl⟩ := h
-        rw [if_neg (by omega), hd s2.clock (Nat.le_refl _), Nat.sub_self, Nat.add_zero, ih]
+        rw [ite_eq_right (by omega), hd s2.clock (Nat.le_refl _), Nat.sub_self, Nat.add_zero, ih]
   | .skip, s => by
       rw [evaluate_const_clock s _ rfl, Nat.sub_self, evaluate_withClock_const s _ _ rfl]
   | .move a b, s => by
