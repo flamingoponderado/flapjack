@@ -52,7 +52,7 @@ theorem stateGlobalsApproxEvaluateEmpty {C F : Type} (xs : List ClosLang.Exp)
     rcases member with written | written
     · change elistGlobals xs i ≠ 0 at written
       apply written
-      simpa [FlatProps.emptyGlobalBag] using congrFun empty i
+      simpa [FlatProps.emptyGlobalBag, Flapjack.emptyBag] using congrFun empty i
     · exact (Set.disjoint_left.mp prefixDisjoint) domain written
   exact approx i value a ⟨frame.2 i value ⟨found, outside⟩, lookup⟩
 

@@ -58,7 +58,7 @@ theorem uniqueSetGlobalsSubexps {α β : Type} (co : Nat → α × List ClosLang
     intro h n k
     have bound := h n k
     simp only [elistGlobals, setGlobals, funGlobals_eq_elist,
-      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Nat.add_zero] at bound ⊢
+      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Nat.add_zero, Flapjack.bagUnion, Flapjack.emptyBag] at bound ⊢
     omega
 
 /-- Uniqueness includes the original program's own write bag. -/
@@ -107,7 +107,7 @@ theorem mglobalsDisjointRw {α : Type} (s : List (Option α))
       mglobalsDisjoint s (fns.map Prod.snd) ∧ mglobalsDisjoint s [x1]) := by
   simp only [mglobalsDisjoint, Set.disjoint_left, Set.mem_ofPred_eq, not_not,
     elistGlobals, setGlobals, funGlobals_eq_elist, FlatProps.unionGlobalBag,
-    FlatProps.emptyGlobalBag, Nat.add_zero, Nat.add_eq_zero_iff, forall_and]
+    FlatProps.emptyGlobalBag, Nat.add_zero, Nat.add_eq_zero_iff, forall_and, Flapjack.bagUnion, Flapjack.emptyBag]
   tauto
 
 /-- Safe evaluation preserves disjointness from another expression list when

@@ -40,7 +40,7 @@ theorem knownCorrect0Handle {C F : Type} (trace : BackendCommon.Tra) (body handl
     intro n i
     have bound := unique n i
     simp only [elistGlobals_append, elistGlobals, setGlobals,
-      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Nat.add_zero] at bound ⊢
+      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Nat.add_zero, Flapjack.bagUnion, Flapjack.emptyBag] at bound ⊢
     omega
   have ⟨bodyUnique, handlerUnique, swappedUnique⟩ := CorrectApprox.Cons.uniqueParts [body] [handler] s0.compileOracle uniqueBoth
   have ⟨bodyDisjoint, handlerDisjoint⟩ :=

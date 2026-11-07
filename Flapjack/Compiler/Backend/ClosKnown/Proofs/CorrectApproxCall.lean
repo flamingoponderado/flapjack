@@ -48,10 +48,10 @@ theorem knownCorrectApproxCall {C F : Type} (c : Config) (trace : BackendCommon.
   have callRun := run
   have argsUnique : uniqueSetGlobals xs s0.compileOracle := by
     simpa [uniqueSetGlobals, elistGlobals_append, elistGlobals, setGlobals,
-      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag] using unique
+      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] using unique
   have argsDisjoint : mglobalsDisjoint s0.globals xs := by
     simpa [mglobalsDisjoint, elistGlobals, setGlobals,
-      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag] using disjoint
+      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] using disjoint
   have argsSafe : ∀ e ∈ xs, esgcFree e := by
     have h := exprSafe (.call trace ticks dest xs) (by simp)
     simpa [esgcFree, esgcFreeList_iff] using h
@@ -101,7 +101,7 @@ theorem knownCorrectApproxCall {C F : Type} (c : Config) (trace : BackendCommon.
               simpa [codeRun, timeout] using run
             have emptyBag : elistGlobals [body] = FlatProps.emptyGlobalBag := by
               funext i
-              simp [elistGlobals, FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, bodyEmpty]
+              simp [elistGlobals, FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, bodyEmpty, Flapjack.bagUnion, Flapjack.emptyBag]
             have finalApprox := ApproxRuntime.stateGlobalsApproxEvaluateEmpty [body] callArgs
               (decClock (ticks + 1) middle) res s g1 bodyRun
               ((ssgcFreeDecClock (ticks + 1) middle).2 safety.1) callArgsSafe bodySafe emptyBag

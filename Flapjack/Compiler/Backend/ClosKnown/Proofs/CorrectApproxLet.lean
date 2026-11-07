@@ -37,7 +37,7 @@ theorem knownCorrectApproxLet {C F : Type} (c : Config) (trace : BackendCommon.T
     intro n i
     have bound := unique n i
     simp only [elistGlobals_append, elistGlobals, setGlobals,
-      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Nat.add_zero] at bound ⊢
+      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Nat.add_zero, Flapjack.bagUnion, Flapjack.emptyBag] at bound ⊢
     omega
   have ⟨argsUnique, bodyUnique, swappedUnique⟩ := Cons.uniqueParts xs [body] s0.compileOracle uniqueBoth
   have ⟨argsDisjoint, bodyDisjoint⟩ :=

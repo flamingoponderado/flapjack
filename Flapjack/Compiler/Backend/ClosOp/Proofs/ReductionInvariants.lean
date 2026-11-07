@@ -95,31 +95,31 @@ theorem redGlobals (xs ys : List Exp) (h : RedRel xs ys) : elistGlobals xs = eli
       simp only [List.mem_cons, List.not_mem_nil, or_false] at hm
       rcases hm with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> rfl
     funext k
-    simp [elistGlobals, setGlobals, hp, emptyGlobalBag, unionGlobalBag, congrFun ih k]
+    simp [elistGlobals, setGlobals, hp, emptyGlobalBag, unionGlobalBag, congrFun ih k, Flapjack.bagUnion, Flapjack.emptyBag]
   | nil => rfl
   | refl x => rfl
-  | var v t => funext k; simp [elistGlobals, setGlobals, emptyGlobalBag, unionGlobalBag]
+  | var v t => funext k; simp [elistGlobals, setGlobals, emptyGlobalBag, unionGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
   | multi x y zs x1 x2 hx hy ihx ihy =>
     funext k
     have h1 := congrFun ihx k
     have h2 := congrFun ihy k
-    simp [elistGlobals, unionGlobalBag, emptyGlobalBag] at h1 h2
-    simp [elistGlobals, ClosProps.elistGlobals_append, unionGlobalBag]
+    simp [elistGlobals, unionGlobalBag, emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] at h1 h2
+    simp [elistGlobals, ClosProps.elistGlobals_append, unionGlobalBag, Flapjack.bagUnion]
     omega
   | letE xs x x1 t hx hy ihx ihy =>
     funext k
     have h1 := congrFun ihx k
     have h2 := congrFun ihy k
-    simp [elistGlobals, unionGlobalBag, emptyGlobalBag] at h2
-    simp [elistGlobals, setGlobals, emptyGlobalBag, unionGlobalBag]
+    simp [elistGlobals, unionGlobalBag, emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] at h2
+    simp [elistGlobals, setGlobals, emptyGlobalBag, unionGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
     omega
   | ite t x y z x1 x2 x3 hx hy hz ihx ihy ihz =>
     funext k
     have h1 := congrFun ihx k
     have h2 := congrFun ihy k
     have h3 := congrFun ihz k
-    simp [elistGlobals, unionGlobalBag, emptyGlobalBag] at h1 h2 h3
-    simp [elistGlobals, ClosProps.elistGlobals_append, setGlobals, emptyGlobalBag, unionGlobalBag]
+    simp [elistGlobals, unionGlobalBag, emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] at h1 h2 h3
+    simp [elistGlobals, ClosProps.elistGlobals_append, setGlobals, emptyGlobalBag, unionGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
     omega
 
 /-- Smart operation preserves purity, global writes and closure safety. -/
@@ -135,5 +135,5 @@ theorem smartSimp (t : BackendCommon.Tra) (op : Op) (xs : List Exp) :
   refine ⟨by rw [smartPure t op xs], ?_, he⟩
   funext k
   have hgk := congrFun hg k
-  simpa [elistGlobals, unionGlobalBag, emptyGlobalBag] using hgk
+  simpa [elistGlobals, unionGlobalBag, emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] using hgk
 end Flapjack.Compiler.Backend.ClosOp

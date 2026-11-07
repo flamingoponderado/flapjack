@@ -67,7 +67,7 @@ theorem inlineApplicationSimulation {C F : Type} (trace : BackendCommon.Tra)
     intro n i
     have bound := unique n i
     simp only [elistGlobals_append, elistGlobals, setGlobals,
-      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Nat.add_zero] at bound ⊢
+      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Nat.add_zero, Flapjack.bagUnion, Flapjack.emptyBag] at bound ⊢
     omega
   have ⟨argsUnique, _, _⟩ := CorrectApprox.Cons.uniqueParts (first :: rest) [x] s0.compileOracle uniqueBoth
   have ⟨_, argsDisjoint⟩ :=

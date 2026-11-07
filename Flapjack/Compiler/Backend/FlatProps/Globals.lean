@@ -7,19 +7,11 @@ namespace Flapjack.Compiler.Backend.FlatProps
 /-- Global bags are HOL bags indexed by natural numbers. -/
 abbrev GlobalBag := Flapjack.Bag Nat
 
-/-- The empty global bag, definitionally the natural-indexed `emptyBag`. -/
-def emptyGlobalBag : GlobalBag := fun _ => 0
+/-- The empty global bag uses the generic HOL bag. -/
+abbrev emptyGlobalBag : GlobalBag := Flapjack.emptyBag
 
-/-- Pointwise union, definitionally the natural-indexed `bagUnion`. -/
-def unionGlobalBag (left right : GlobalBag) : GlobalBag := fun key => left key + right key
-
-/-- The generic bag left identity at the global-bag carrier. -/
-theorem unionGlobalBag_empty_left (bag : GlobalBag) : unionGlobalBag emptyGlobalBag bag = bag :=
-  Flapjack.bagUnion_empty_left bag
-
-/-- The generic bag right identity at the global-bag carrier. -/
-theorem unionGlobalBag_empty_right (bag : GlobalBag) : unionGlobalBag bag emptyGlobalBag = bag :=
-  Flapjack.bagUnion_empty_right bag
+/-- Global-bag union is generic HOL bag union. -/
+abbrev unionGlobalBag : GlobalBag → GlobalBag → GlobalBag := Flapjack.bagUnion
 
 /-- A global-initialization operator contributes its destination once. -/
 @[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "op_gbag_def"]
@@ -68,11 +60,11 @@ theorem elistGlobals_append (xs ys : List FlatLang.Exp) :
   induction xs with
   | nil =>
     funext key
-    simp [elistGlobals, emptyGlobalBag, unionGlobalBag]
+    simp [elistGlobals, emptyGlobalBag, unionGlobalBag, Flapjack.emptyBag, Flapjack.bagUnion]
   | cons x xs ih =>
     simp only [List.cons_append, elistGlobals, ih]
     funext key
-    simp [unionGlobalBag, Nat.add_assoc]
+    simp [unionGlobalBag, Flapjack.bagUnion, Nat.add_assoc]
 
 /-- Flapjack helper: the row traversal equals HOL's mapped list traversal;
 this equality is not a separate HOL declaration. -/

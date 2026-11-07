@@ -312,7 +312,7 @@ private theorem letWrites (trace : BackendCommon.Tra) (bindings : List ClosLang.
     {k | elistGlobals [.let trace bindings body] k ≠ 0} =
       {k | elistGlobals bindings k ≠ 0} ∪ {k | elistGlobals [body] k ≠ 0} := by
   ext k
-  simp [elistGlobals, setGlobals, FlatProps.unionGlobalBag, emptyGlobalBag]
+  simp [elistGlobals, setGlobals, FlatProps.unionGlobalBag, emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
   classical
   by_cases h : setGlobals body k = 0 <;> simp_all
 
@@ -389,7 +389,7 @@ private theorem handleWrites (trace : BackendCommon.Tra) (body handler : ClosLan
     {k | elistGlobals [.handle trace body handler] k ≠ 0} =
       {k | elistGlobals [body] k ≠ 0} ∪ {k | elistGlobals [handler] k ≠ 0} := by
   ext k
-  simp [elistGlobals, setGlobals, FlatProps.unionGlobalBag, emptyGlobalBag]
+  simp [elistGlobals, setGlobals, FlatProps.unionGlobalBag, emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
   classical
   by_cases h : setGlobals body k = 0 <;> simp_all
 
@@ -476,7 +476,7 @@ private theorem ifWrites (trace : BackendCommon.Tra) (condition yes no : ClosLan
       {k | elistGlobals [condition] k ≠ 0} ∪
       {k | elistGlobals [yes] k ≠ 0} ∪ {k | elistGlobals [no] k ≠ 0} := by
   ext k
-  simp [elistGlobals, setGlobals, FlatProps.unionGlobalBag, emptyGlobalBag]
+  simp [elistGlobals, setGlobals, FlatProps.unionGlobalBag, emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
   omega
 
 /-- Conditional evaluation preserves global safety under the original
@@ -635,7 +635,7 @@ theorem evaluateChangedGlobalsLetrec {C F : Type}
         simpa [evaluate, valid, buildRc] using run
       have ⟨lastSafe, resultSafe, n, oracle, frame⟩ := ih res s ⟨bodyRun, safe, bodySafe, extendedSafe⟩
       refine ⟨lastSafe, resultSafe, n, oracle, ?_⟩
-      simpa [elistGlobals, setGlobals, safeParts.1, FlatProps.unionGlobalBag, emptyGlobalBag] using frame
+      simpa [elistGlobals, setGlobals, safeParts.1, FlatProps.unionGlobalBag, emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] using frame
     | some indices =>
       cases selectedRun : lookupVars indices env with
       | none =>
@@ -655,7 +655,7 @@ theorem evaluateChangedGlobalsLetrec {C F : Type}
           simpa [evaluate, valid, selectedRun, buildRc] using run
         have ⟨lastSafe, resultSafe, n, oracle, frame⟩ := ih res s ⟨bodyRun, safe, bodySafe, extendedSafe⟩
         refine ⟨lastSafe, resultSafe, n, oracle, ?_⟩
-        simpa [elistGlobals, setGlobals, safeParts.1, FlatProps.unionGlobalBag, emptyGlobalBag] using frame
+        simpa [elistGlobals, setGlobals, safeParts.1, FlatProps.unionGlobalBag, emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] using frame
   · cases selected <;> simp [evaluate, valid] at run <;>
       rcases run with ⟨rfl, rfl⟩ <;>
       exact ⟨safe, by simp [rsgcFree], 0, shiftSeqZero _, mglobalsExtendRefl _ _⟩
@@ -708,7 +708,7 @@ theorem evaluateChangedGlobalsCall {C F : Type} (trace : BackendCommon.Tra)
     have frame : mglobalsExtend s0.globals
         ({k | elistGlobals [.call trace ticks location args] k ≠ 0} ∪
          {k | elistGlobals (List.flatten (firstNExps s0.compileOracle n)) k ≠ 0}) next.globals := by
-      simpa [elistGlobals, setGlobals, FlatProps.unionGlobalBag, emptyGlobalBag] using argsFrame
+      simpa [elistGlobals, setGlobals, FlatProps.unionGlobalBag, emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] using argsFrame
     cases argsResult with
     | err error =>
       simp only [evaluate, argsRun, fixClock] at run
@@ -745,14 +745,14 @@ theorem evaluateChangedGlobalsCall {C F : Type} (trace : BackendCommon.Tra)
             have frame2 : mglobalsExtend next.globals
                 {k | elistGlobals (List.flatten (firstNExps (Flapjack.holShiftSeq n s0.compileOracle) m)) k ≠ 0}
                 last.globals := by
-              simpa [decClock, nextOracle, elistGlobals, noWrites, FlatProps.unionGlobalBag, emptyGlobalBag] using bodyFrame
+              simpa [decClock, nextOracle, elistGlobals, noWrites, FlatProps.unionGlobalBag, emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] using bodyFrame
             have composed := mglobalsExtendTrans _ _ _ _ _ ⟨argsFrame, frame2⟩
             have finalFrame : mglobalsExtend s0.globals
                 ({k | elistGlobals [.call trace ticks location args] k ≠ 0} ∪
                  {k | elistGlobals (List.flatten (firstNExps s0.compileOracle (n + m))) k ≠ 0}) last.globals := by
               rw [Nat.add_comm n m, firstNExpsWritesShift]
               simpa [elistGlobals, setGlobals, FlatProps.unionGlobalBag, emptyGlobalBag,
-                Set.union_assoc] using composed
+                Set.union_assoc, Flapjack.bagUnion, Flapjack.emptyBag] using composed
             simp [evaluate, argsRun, fixClock, Nat.min_eq_right clockBound, codeRun, timeout, bodyRun] at run
             rcases run with ⟨rfl, rfl⟩
             exact ⟨lastSafe, resultSafe, n + m, finalOracle, finalFrame⟩
@@ -837,7 +837,7 @@ theorem evaluateAppChangedGlobalsCons {C F : Type} (location : Option Nat)
             bodyIH body env rest closureRun timeout bodyResult next ⟨bodyRun, startSafe, bodySafe, envSafe⟩
           have frame : mglobalsExtend s0.globals
               {k | elistGlobals (List.flatten (firstNExps s0.compileOracle n)) k ≠ 0} next.globals := by
-            simpa [start, decClock, elistGlobals, noWrites, FlatProps.unionGlobalBag, emptyGlobalBag] using bodyFrame
+            simpa [start, decClock, elistGlobals, noWrites, FlatProps.unionGlobalBag, emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] using bodyFrame
           have nextOracle' : next.compileOracle = Flapjack.holShiftSeq n s0.compileOracle := by
             simpa [start, decClock] using nextOracle
           cases bodyResult with
@@ -898,7 +898,7 @@ private theorem appWrites (trace : BackendCommon.Tra) (location : Option Nat)
     {k | elistGlobals [.app trace location function args] k ≠ 0} =
       {k | elistGlobals args k ≠ 0} ∪ {k | elistGlobals [function] k ≠ 0} := by
   ext k
-  simp [elistGlobals, setGlobals, FlatProps.unionGlobalBag, emptyGlobalBag]
+  simp [elistGlobals, setGlobals, FlatProps.unionGlobalBag, emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
   omega
 
 /-- Expression-level application preserves global safety under the original
@@ -1005,7 +1005,7 @@ private theorem opWrites (trace : BackendCommon.Tra) (op : ClosLang.Op) (args : 
     {k | elistGlobals [.op trace op args] k ≠ 0} =
       {k | elistGlobals args k ≠ 0} ∪ {k | opGlobalBag op k ≠ 0} := by
   ext k
-  simp [elistGlobals, setGlobals, FlatProps.unionGlobalBag, emptyGlobalBag]
+  simp [elistGlobals, setGlobals, FlatProps.unionGlobalBag, emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
   omega
 
 /-- Global safety for the ordinary primitive-dispatch branch. The two
@@ -1272,7 +1272,7 @@ theorem evaluateChangedGlobalsOpForceThunk {C F : Type} (trace : BackendCommon.T
         ({k | elistGlobals [.op trace (.thunkOp .forceThunk) args] k ≠ 0} ∪
          {k | elistGlobals (List.flatten (firstNExps s0.compileOracle n)) k ≠ 0}) next.globals := by
       rw [opWrites]
-      simpa [opGlobalBag, emptyGlobalBag] using argsFrame
+      simpa [opGlobalBag, emptyGlobalBag, Flapjack.emptyBag] using argsFrame
     cases argsResult with
     | err error =>
       simp [argsRun] at run
@@ -1310,13 +1310,13 @@ theorem evaluateChangedGlobalsOpForceThunk {C F : Type} (trace : BackendCommon.T
             have forceFrame' : mglobalsExtend next.globals
                 (∅ ∪ {k | elistGlobals (List.flatten (firstNExps next.compileOracle m)) k ≠ 0}) last.globals := by
               simpa [appUnit, elistGlobals, setGlobals, opGlobalBag,
-                FlatProps.unionGlobalBag, emptyGlobalBag] using forceFrame
+                FlatProps.unionGlobalBag, emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] using forceFrame
             have combined := combineOracleFrames s0 next last _ ∅ n m nextOracle argsFrame forceFrame'
             have finalFrame : mglobalsExtend s0.globals
                 ({k | elistGlobals [.op trace (.thunkOp .forceThunk) args] k ≠ 0} ∪
                  {k | elistGlobals (List.flatten (firstNExps s0.compileOracle (n + m))) k ≠ 0}) last.globals := by
               rw [opWrites]
-              simpa [opGlobalBag, emptyGlobalBag] using combined
+              simpa [opGlobalBag, emptyGlobalBag, Flapjack.emptyBag] using combined
             rw [forceRun] at run
             cases forceResult with
             | err error =>
@@ -1408,7 +1408,7 @@ theorem evaluateChangedGlobalsOpInstall {C F : Type} (trace : BackendCommon.Tra)
         ({k | elistGlobals [.op trace .install args] k ≠ 0} ∪
          {k | elistGlobals (List.flatten (firstNExps s0.compileOracle n)) k ≠ 0}) next.globals := by
       rw [opWrites]
-      simpa [opGlobalBag, emptyGlobalBag] using argsFrame
+      simpa [opGlobalBag, emptyGlobalBag, Flapjack.emptyBag] using argsFrame
     cases argsResult with
     | err error =>
       simp [argsRun] at run
@@ -1432,7 +1432,7 @@ theorem evaluateChangedGlobalsOpInstall {C F : Type} (trace : BackendCommon.Tra)
               ({k | elistGlobals [.op trace .install args] k ≠ 0} ∪
                {k | elistGlobals (List.flatten (firstNExps s0.compileOracle (n + q))) k ≠ 0}) installed.globals := by
             rw [opWrites]
-            simpa [opGlobalBag, emptyGlobalBag] using combined
+            simpa [opGlobalBag, emptyGlobalBag, Flapjack.emptyBag] using combined
           have finalOracle : installed.compileOracle = Flapjack.holShiftSeq (n + q) s0.compileOracle := by
             simpa only [nextOracle, shiftSeqAdd] using installedOracle
           rw [installRun] at run
@@ -1472,7 +1472,7 @@ theorem evaluateChangedGlobalsOpInstall {C F : Type} (trace : BackendCommon.Tra)
                  {k | elistGlobals (List.flatten (firstNExps s0.compileOracle ((n + 1) + m))) k ≠ 0}) last.globals := by
               apply mglobalsExtendSubset _ _ _ _ ⟨combined, ?_⟩
               rw [opWrites]
-              simp only [opGlobalBag, emptyGlobalBag, ne_eq, not_true_eq_false, Set.ofPred_false, Set.union_empty]
+              simp only [opGlobalBag, emptyGlobalBag, ne_eq, not_true_eq_false, Set.ofPred_false, Set.union_empty, Flapjack.emptyBag]
               intro k member
               rcases member with (member | member) | member
               · exact Or.inl member

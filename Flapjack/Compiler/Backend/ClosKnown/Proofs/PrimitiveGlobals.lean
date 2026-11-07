@@ -50,7 +50,7 @@ private theorem applyGlobalMglobals {C F : Type} (op : ClosLang.GlobOp) (args : 
     mglobalsExtend s0.globals {k | opGlobalBag (.globOp op) k ≠ 0} s.globals := by
   unfold applyGlobal at run
   repeat' split at run
-  all_goals simp_all [opGlobalBag, FlatProps.emptyGlobalBag, mglobalsExtendRefl]
+  all_goals simp_all [opGlobalBag, FlatProps.emptyGlobalBag, mglobalsExtendRefl, Flapjack.emptyBag]
   all_goals rcases run with ⟨_, rfl⟩
   all_goals first | exact mglobalsExtendSet _ _ _ | exact mglobalsExtendAlloc _ _
 
@@ -441,7 +441,7 @@ theorem doAppSsgcAllocGlobal {C F : Type} (args : List ClosSem.Value)
         · have newSafe := ssgcFreeAllocGlobal s0 count.toNat stateSafe
           have frame := mglobalsExtendAlloc s0.globals count.toNat
           simp [ClosSem.doApp, applyGlobal, negative, vsgcFreeUnit, newSafe,
-            opGlobalBag, FlatProps.emptyGlobalBag, frame]
+            opGlobalBag, FlatProps.emptyGlobalBag, frame, Flapjack.emptyBag]
       | _ => simp [ClosSem.doApp, applyGlobal]
 
 /-- The closure evaluator rejects the global-pointer read operation. -/

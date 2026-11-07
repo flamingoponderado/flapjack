@@ -16,7 +16,7 @@ theorem knownExprTotalLookupUnchanged (c : Config) (e : ClosLang.Exp)
     (motive3 := fun c xs env globals => ∀ k, elistGlobals xs k = 0 →
       sptLookup k (knownListTotal c xs env globals).2 = sptLookup k globals) <;>
     simp_all [knownExprTotal, knownListTotal, setGlobals, elistGlobals,
-      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Nat.add_eq_zero_iff]
+      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Nat.add_eq_zero_iff, Flapjack.bagUnion, Flapjack.emptyBag]
   case case8 =>
     intro k hop hx
     rename_i c env g0 t op xs out mid h a final opRun ih

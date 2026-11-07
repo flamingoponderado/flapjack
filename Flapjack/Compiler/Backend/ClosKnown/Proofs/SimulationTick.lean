@@ -36,7 +36,7 @@ theorem knownCorrect0Tick {C F : Type} (trace : BackendCommon.Tra) (body : ClosL
     simpa [fvMax, freeVars, freeVarExp] using free
   have bodyUnique : uniqueSetGlobals [body] s0.compileOracle := by
     simpa [uniqueSetGlobals, elistGlobals, setGlobals, FlatProps.unionGlobalBag,
-      FlatProps.emptyGlobalBag] using unique
+      FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] using unique
   cases hk : knownListTotal c [body] aenv g0 with
   | mk bodyEas bodyG =>
     obtain ⟨be, ba, eq⟩ := knownListTotal_single_result c body aenv g0 bodyG bodyEas hk
