@@ -2,6 +2,15 @@
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "eval_simulation",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvalSimulationLetrec.lean",
+  "lean_name": "evalSimulation_Letrec",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Letrec case retains the distinct-function-name guard and original recursive environment in its body induction hypothesis. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "eval_simulation",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvalSimulationLog.lean",
   "lean_name": "evalSimulation_Log",
   "statement_status": "reviewed_exact",
