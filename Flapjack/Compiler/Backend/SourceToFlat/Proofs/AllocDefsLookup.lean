@@ -122,13 +122,6 @@ theorem globalEnvInv_allocDefs (genv : GlobalEnv)
   · intro id arity stamp lookup
     cases id <;> simp [nsEmpty, nsLookup] at lookup
 
-/-- Native association-list lookup identifies a member. This Flapjack helper
-has no separate HOL declaration. -/
-theorem lookup_mem {K V : Type} [DecidableEq K] (entries : List (K × V)) (name : K) (value : V)
-    (lookup : entries.lookup name = some value) : (name, value) ∈ entries := by
-  obtain ⟨before, after, rfl, _⟩ := List.lookup_eq_some_iff.mp lookup
-  simp
-
 /-- Distinct names make membership determine lookup; this is list infrastructure
 for the original initializer proof, with no separate HOL declaration. -/
 theorem lookup_of_mem_nodup {α : Type} (entries : List (VarN × α))
@@ -162,13 +155,14 @@ private theorem lookup_reverse_of_nodup {α : Type} (entries : List (VarN × α)
     cases reversed : entries.reverse.lookup name with
     | none => rfl
     | some value =>
-      have member := List.mem_reverse.mp (lookup_mem _ _ _ reversed)
+      have member := List.mem_reverse.mp (holALookup_member entries.reverse name value
+        (by simpa [holALookup_eq_lookup] using reversed))
       have impossible := lookup_of_mem_nodup entries name value member distinct
       rw [lookup] at impossible
       cases impossible
   | some value =>
     exact lookup_of_mem_nodup entries.reverse name value
-      (List.mem_reverse.mpr (lookup_mem entries name value lookup)) reversedDistinct
+      (List.mem_reverse.mpr (holALookup_member entries name value (by simpa [holALookup_eq_lookup] using lookup))) reversedDistinct
 
 namespace AllocDefsReversePort
 /-- Canonical global-environment finite-map carrier roundtrip. -/

@@ -285,7 +285,8 @@ theorem initGlobalEnvInv_imp (genv : GlobalEnv) (compMap : Environment) (env : S
       cases id with
       | long module id => simp [nsLookup] at found
       | short name =>
-        have member := lookup_mem entries name (arity, stamp) (by simpa [nsLookup] using found)
+        have member := holALookup_member entries name (arity, stamp)
+          (by simpa [holALookup_eq_lookup, nsLookup] using found)
         have item := entriesValid (name, arity, stamp) member
         cases selected : nsLookup compMap.c (.short name) with
         | none => simp [selected] at item

@@ -862,7 +862,8 @@ theorem globalEnvInv_allocTags (genv : GlobalEnv) (idx stamp : Nat)
     | long moduleName rest => simp [nsLookup, alistToNs] at lookup
     | short name =>
       change (buildConstrs stamp constructors).reverse.lookup name = some (arity, sourceStamp) at lookup
-      have sourceMember := List.mem_reverse.mp (lookup_mem _ name (arity, sourceStamp) lookup)
+      have sourceMember := List.mem_reverse.mp (holALookup_member (buildConstrs stamp constructors).reverse name (arity, sourceStamp)
+        (by simpa [holALookup_eq_lookup] using lookup))
       simp only [buildConstrs, List.mem_map] at sourceMember
       obtain ⟨constructor, constructorMember, equality⟩ := sourceMember
       rcases constructor with ⟨constructorName, args⟩
