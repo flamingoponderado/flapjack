@@ -1567,7 +1567,7 @@ theorem localEnvBounded_word8Shift {C F : Type} [Nonempty C]
       (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
     exact post
   | @value sourceValues flatValues valuesRel =>
-    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source nextSource sourceEnv body sourceValues sourceRun
+    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source sourceEnv body nextSource sourceValues sourceRun
     cases valuesRel with
     | cons valueRel tail =>
       cases tail with
@@ -1652,7 +1652,7 @@ theorem localEnvBounded_word64Shift {C F : Type} [Nonempty C]
       (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
     exact post
   | @value sourceValues flatValues valuesRel =>
-    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source nextSource sourceEnv body sourceValues sourceRun
+    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source sourceEnv body nextSource sourceValues sourceRun
     cases valuesRel with
     | cons valueRel tail =>
       cases tail with
@@ -1738,7 +1738,7 @@ theorem localEnvBounded_conversion {C F : Type} [Nonempty C]
       (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
     exact ⟨growth, nextInvariant, nextGeneration, forward⟩
   | @value sourceValues flatValues valuesRel =>
-    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source nextSource sourceEnv body sourceValues sourceRun
+    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source sourceEnv body nextSource sourceValues sourceRun
     cases valuesRel with
     | cons valueRel tail =>
       cases tail with
@@ -1850,7 +1850,7 @@ theorem localEnvBounded_floatUnary {C F : Type} [Nonempty C]
       (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
     exact ⟨growth, nextInvariant, nextGeneration, forward⟩
   | @value sourceValues flatValues valuesRel =>
-    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source nextSource sourceEnv body sourceValues sourceRun
+    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source sourceEnv body nextSource sourceValues sourceRun
     cases valuesRel with
     | cons valueRel tail =>
       cases tail with
@@ -1962,7 +1962,7 @@ theorem localEnvBounded_booleanNot {C F : Type} [Nonempty C]
       (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
     exact ⟨growth, nextInvariant, nextGeneration, forward⟩
   | @value sourceValues flatValues valuesRel =>
-    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source nextSource sourceEnv body sourceValues sourceRun
+    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source sourceEnv body nextSource sourceValues sourceRun
     cases valuesRel with
     | cons valueRel tail =>
       cases tail with
@@ -2049,7 +2049,7 @@ theorem localEnvBounded_opderef {C F : Type} [Nonempty C]
       (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
     exact post
   | @value sourceValues flatValues valuesRel =>
-    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source nextSource sourceEnv body sourceValues sourceRun
+    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source sourceEnv body nextSource sourceValues sourceRun
     cases valuesRel with
     | cons valueRel tail =>
       cases tail with
@@ -2136,7 +2136,7 @@ theorem localEnvBounded_opref {C F : Type} [Nonempty C]
       (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
     exact post
   | @value sourceValues flatValues valuesRel =>
-    obtain ⟨value, rfl⟩ := EvaluateProps.evaluateSingFull source nextSource sourceEnv body sourceValues sourceRun
+    obtain ⟨value, rfl⟩ := EvaluateProps.evaluateSingFull source sourceEnv body nextSource sourceValues sourceRun
     cases valuesRel with
     | cons valueRel tail =>
       cases tail with

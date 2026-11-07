@@ -507,7 +507,7 @@ theorem localEnvBounded_strlen {C F : Type} [Nonempty C]
         (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
       exact post
   | @value sourceValues flatValues valuesRel =>
-    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source nextSource sourceEnv body sourceValues sourceRun
+    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source sourceEnv body nextSource sourceValues sourceRun
     cases valuesRel with
     | cons valueRel tail =>
       cases tail with
@@ -619,7 +619,7 @@ theorem localEnvBounded_vfromList {C F : Type} [Nonempty C]
         (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
       exact post
   | @value sourceValues flatValues valuesRel =>
-    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source nextSource sourceEnv body sourceValues sourceRun
+    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source sourceEnv body nextSource sourceValues sourceRun
     cases valuesRel with
     | cons valueRel tail =>
       cases tail with
@@ -734,7 +734,7 @@ theorem localEnvBounded_strcat {C F : Type} [Nonempty C]
         (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
       exact post
   | @value sourceValues flatValues valuesRel =>
-    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source nextSource sourceEnv body sourceValues sourceRun
+    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source sourceEnv body nextSource sourceValues sourceRun
     cases valuesRel with
     | cons valueRel tail =>
       cases tail with
@@ -854,7 +854,7 @@ theorem localEnvBounded_implode {C F : Type} [Nonempty C]
         (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
       exact post
   | @value sourceValues flatValues valuesRel =>
-    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source nextSource sourceEnv body sourceValues sourceRun
+    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source sourceEnv body nextSource sourceValues sourceRun
     cases valuesRel with
     | cons valueRel tail =>
       cases tail with
@@ -969,7 +969,7 @@ theorem localEnvBounded_explode {C F : Type} [Nonempty C]
         (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
       exact post
   | @value sourceValues flatValues valuesRel =>
-    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source nextSource sourceEnv body sourceValues sourceRun
+    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source sourceEnv body nextSource sourceValues sourceRun
     cases valuesRel with
     | cons valueRel tail =>
       cases tail with
@@ -1090,7 +1090,7 @@ theorem localEnvBounded_vlength {C F : Type} [Nonempty C]
         (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
       exact post
   | @value sourceValues flatValues valuesRel =>
-    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source nextSource sourceEnv body sourceValues sourceRun
+    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source sourceEnv body nextSource sourceValues sourceRun
     cases valuesRel with
     | cons valueRel tail =>
       cases tail with
@@ -1947,7 +1947,7 @@ theorem localEnvBounded_envId {C F : Type} [Nonempty C]
       rw [flatRun]
       exact post
   | @value sourceValues flatValues valuesRel =>
-    obtain ⟨value, rfl⟩ := EvaluateProps.evaluateSingFull source nextSource sourceEnv body sourceValues sourceRun
+    obtain ⟨value, rfl⟩ := EvaluateProps.evaluateSingFull source sourceEnv body nextSource sourceValues sourceRun
     cases valuesRel with
     | cons valueRel tail =>
       cases tail with
@@ -2673,7 +2673,7 @@ theorem localEnvBounded_allocThunk {C F : Type} [Nonempty C]
         (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
       exact post
   | @value sourceValues flatValues valuesRel =>
-    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source nextSource sourceEnv body sourceValues sourceRun
+    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source sourceEnv body nextSource sourceValues sourceRun
     cases valuesRel with
     | cons valueRel tail =>
       cases tail with

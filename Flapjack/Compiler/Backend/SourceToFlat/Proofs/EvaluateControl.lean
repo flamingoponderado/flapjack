@@ -215,7 +215,7 @@ theorem exprSim_raise {C F : Type} (genv : GlobalEnv) (compMap : Environment) (t
             rw [EvaluateHOL.evaluate, sourceRun, compileExp, FlatSem.evaluate, flatRun]
             exact ⟨.abort error, nextRel⟩
       | val values =>
-        obtain ⟨value, rfl⟩ := EvaluateProps.evaluateSingFull sourceState sourceNext sourceEnv body values sourceRun
+        obtain ⟨value, rfl⟩ := EvaluateProps.evaluateSingFull sourceState sourceEnv body sourceNext values sourceRun
         cases related with
         | value valuesRel =>
           cases valuesRel with

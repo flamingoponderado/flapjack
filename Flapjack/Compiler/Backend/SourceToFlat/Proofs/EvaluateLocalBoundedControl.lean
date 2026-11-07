@@ -52,7 +52,7 @@ theorem localEnvBounded_let_named {C F : Type} [Nonempty C]
         [compileExp (name :: trace) compMap first] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatFirst]
       exact firstPost
   | @value sourceValues flatValues valuesRel =>
-    obtain ⟨value, sourceEq⟩ := EvaluateProps.evaluateSingFull source middleSource sourceEnv first sourceValues sourceFirst
+    obtain ⟨value, sourceEq⟩ := EvaluateProps.evaluateSingFull source sourceEnv first middleSource sourceValues sourceFirst
     subst sourceValues
     cases valuesRel with
     | cons related tail =>
@@ -170,7 +170,7 @@ theorem localEnvBounded_if {C F : Type} [Nonempty C]
       [compileExp trace compMap cond] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatCond]
     exact condPost
   | @value sourceValues flatValues valuesRel =>
-    obtain ⟨conditionValue, sourceEq⟩ := EvaluateProps.evaluateSingFull source middleSource sourceEnv cond sourceValues sourceCond
+    obtain ⟨conditionValue, sourceEq⟩ := EvaluateProps.evaluateSingFull source sourceEnv cond middleSource sourceValues sourceCond
     subst sourceValues
     cases valuesRel with
     | cons valueRel tail =>
@@ -274,7 +274,7 @@ theorem localEnvBounded_log {C F : Type} [Nonempty C]
     cases op <;> rw [compileExp, FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flat
       [compileExp trace compMap left] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatLeft] <;> exact leftPost
   | @value sourceValues flatValues valuesRel =>
-    obtain ⟨leftValue, sourceEq⟩ := EvaluateProps.evaluateSingFull source middleSource sourceEnv left sourceValues sourceLeft
+    obtain ⟨leftValue, sourceEq⟩ := EvaluateProps.evaluateSingFull source sourceEnv left middleSource sourceValues sourceLeft
     subst sourceValues
     cases valuesRel with
     | cons valueRel tail =>
@@ -395,7 +395,7 @@ theorem localEnvBounded_let_anonymous {C F : Type} [Nonempty C]
         [compileExp trace compMap first] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatFirst]
       exact firstPost
   | @value sourceValues flatValues valuesRel =>
-    obtain ⟨sourceValue, sourceEq⟩ := EvaluateProps.evaluateSingFull source middleSource sourceEnv first sourceValues sourceFirst
+    obtain ⟨sourceValue, sourceEq⟩ := EvaluateProps.evaluateSingFull source sourceEnv first middleSource sourceValues sourceFirst
     subst sourceValues
     cases valuesRel with
     | cons headValueRel tail =>

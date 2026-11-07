@@ -129,7 +129,7 @@ theorem localExpressionListStep_cons {C F : Type} [Nonempty C]
     · rw [sourceEvaluate_cons, sourceHead, flatEvaluate_cons, flatHead]
       exact headPost
   | @value sourceValues flatValues headValues =>
-    obtain ⟨sourceValue, sourceEq⟩ := EvaluateProps.evaluateSingFull source middleSource sourceEnv first sourceValues sourceHead
+    obtain ⟨sourceValue, sourceEq⟩ := EvaluateProps.evaluateSingFull source sourceEnv first middleSource sourceValues sourceHead
     subst sourceValues
     cases headValues with
     | cons headValue tailValues =>

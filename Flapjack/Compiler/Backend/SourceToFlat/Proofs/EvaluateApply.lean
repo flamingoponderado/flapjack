@@ -82,7 +82,7 @@ theorem exprSim_opref {C F : Type} (genv : GlobalEnv) (compMap : Environment) (t
               [compileExp trace compMap body] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
             exact ⟨.abort error, nextRel⟩
       | val values =>
-        obtain ⟨value, rfl⟩ := EvaluateProps.evaluateSingFull sourceState sourceNext sourceEnv body values sourceRun
+        obtain ⟨value, rfl⟩ := EvaluateProps.evaluateSingFull sourceState sourceEnv body sourceNext values sourceRun
         cases related with
         | value valuesRel =>
           cases valuesRel with
@@ -153,7 +153,7 @@ theorem exprSim_opderef {C F : Type} (genv : GlobalEnv) (compMap : Environment) 
               [compileExp trace compMap body] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
             exact ⟨.abort error, nextRel⟩
       | val values =>
-        obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull sourceState sourceNext sourceEnv body values sourceRun
+        obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull sourceState sourceEnv body sourceNext values sourceRun
         cases related with
         | value valuesRel =>
           cases valuesRel with
@@ -1056,7 +1056,7 @@ theorem exprSim_word8Shift {C F : Type} (genv : GlobalEnv) (compMap : Environmen
               [compileExp trace compMap body] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
             exact ⟨.abort error, nextRel⟩
       | val values =>
-        obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull sourceState sourceNext sourceEnv body values sourceRun
+        obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull sourceState sourceEnv body sourceNext values sourceRun
         cases related with
         | value valuesRel =>
           cases valuesRel with
@@ -1137,7 +1137,7 @@ theorem exprSim_word64Shift {C F : Type} (genv : GlobalEnv) (compMap : Environme
               [compileExp trace compMap body] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
             exact ⟨.abort error, nextRel⟩
       | val values =>
-        obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull sourceState sourceNext sourceEnv body values sourceRun
+        obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull sourceState sourceEnv body sourceNext values sourceRun
         cases related with
         | value valuesRel =>
           cases valuesRel with
@@ -1218,7 +1218,7 @@ theorem exprSim_conversion {C F : Type} (genv : GlobalEnv) (compMap : Environmen
               [compileExp trace compMap body] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
             exact ⟨.abort error, nextRel⟩
       | val values =>
-        obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull sourceState sourceNext sourceEnv body values sourceRun
+        obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull sourceState sourceEnv body sourceNext values sourceRun
         cases related with
         | value valuesRel =>
           cases valuesRel with
@@ -1323,7 +1323,7 @@ theorem exprSim_floatUnary {C F : Type} (genv : GlobalEnv) (compMap : Environmen
               [compileExp trace compMap body] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
             exact ⟨.abort error, nextRel⟩
       | val values =>
-        obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull sourceState sourceNext sourceEnv body values sourceRun
+        obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull sourceState sourceEnv body sourceNext values sourceRun
         cases related with
         | value valuesRel =>
           cases valuesRel with
@@ -1428,7 +1428,7 @@ theorem exprSim_booleanNot {C F : Type} (genv : GlobalEnv) (compMap : Environmen
               [compileExp trace compMap body] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
             exact ⟨.abort error, nextRel⟩
       | val values =>
-        obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull sourceState sourceNext sourceEnv body values sourceRun
+        obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull sourceState sourceEnv body sourceNext values sourceRun
         cases related with
         | value valuesRel =>
           cases valuesRel with

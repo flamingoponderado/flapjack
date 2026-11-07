@@ -399,7 +399,7 @@ theorem localEnvBounded_mat {C F : Type} [Nonempty C]
         [compileExp trace compMap body] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
       exact bodyPost
   | @value sourceValues flatValues valuesRel =>
-    obtain ⟨value, rfl⟩ := EvaluateProps.evaluateSingFull source middleSource sourceEnv body sourceValues sourceRun
+    obtain ⟨value, rfl⟩ := EvaluateProps.evaluateSingFull source sourceEnv body middleSource sourceValues sourceRun
     cases valuesRel with
     | cons valueRel tail =>
       cases tail with

@@ -80,6 +80,24 @@
   "reviewer": "Compared the local original at line 2003 and its closed typed proof replay s_rel_clock2_replay in source_eval_adjust_local_probe.out. Both states share an FFI carrier, the compiler carrier is independent, and one arbitrary natural clock is assigned to both related states. The source relation and state carriers are reviewed."
 },
 {
+  "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+  "hol_name": "evaluate_length",
+  "lean_path": "Flapjack/EvaluateProps/Length.lean",
+  "lean_name": "evaluate_length",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_length_typed in cake_source_evaluate_length_probe.out: all three conjuncts retain the shared arbitrary FFI carrier, binder order, successful-result hypotheses and original conclusions, including the trivial declaration conclusion. Evaluation inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+  "hol_name": "evaluate_sing",
+  "lean_path": "Flapjack/EvaluateProps/Length.lean",
+  "lean_name": "evaluateSingFull",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_sing_typed in cake_source_evaluate_length_probe.out: the arbitrary FFI state, environment, expression, next state and result-list binders follow HOL order, and successful singleton evaluation yields an existential singleton result. Evaluation inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "orac_agrees_s_rel_IMP",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/SimulationPrerequisites.lean",

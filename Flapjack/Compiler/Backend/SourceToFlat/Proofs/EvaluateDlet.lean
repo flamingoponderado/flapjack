@@ -548,7 +548,7 @@ theorem evaluateDlet_pattern_cases {C F : Type} [Nonempty C]
           exact ⟨flatMiddle, genv, some (.abort kind), flatDec, states, GlobalGrowth.refl genv,
             _, rfl, .abort kind, trivial⟩
       | val values =>
-        obtain ⟨value, rfl⟩ := EvaluateProps.evaluateSingFull source sourceMiddle sourceEnv expr values sourceRun
+        obtain ⟨value, rfl⟩ := EvaluateProps.evaluateSingFull source sourceEnv expr sourceMiddle values sourceRun
         cases resultRel with
         | value valueRelations =>
           cases valueRelations with

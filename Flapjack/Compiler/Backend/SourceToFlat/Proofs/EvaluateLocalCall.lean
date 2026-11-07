@@ -414,7 +414,7 @@ theorem sourceCallResult_value_singleton {F : Type} (source : State F) (function
     · simp [sourceCallResult, h, zero, EvaluateHOL.timeoutError] at called
     · have run : EvaluateHOL.evaluate (EvaluateHOL.decClock source) env [body] = (after, .val values) := by
         simpa [sourceCallResult, h, zero] using called
-      exact EvaluateProps.evaluateSingFull (EvaluateHOL.decClock source) after env body values run
+      exact EvaluateProps.evaluateSingFull (EvaluateHOL.decClock source) env body after values run
 
 /-- The flat thunk-forcing expansion applies its stored function to unit.
 This relates the evaluator's synthetic expression to the call simulation. -/
@@ -836,7 +836,7 @@ theorem localEnvBounded_forceThunk {C F : Type} [Nonempty C]
         (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
       exact post
   | @value sourceValues flatValues valuesRel =>
-    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source nextSource sourceEnv body sourceValues sourceRun
+    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source sourceEnv body nextSource sourceValues sourceRun
     cases valuesRel with
     | cons operandRel tail =>
       cases tail with

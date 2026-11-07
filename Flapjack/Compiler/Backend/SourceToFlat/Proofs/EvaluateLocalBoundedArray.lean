@@ -504,7 +504,7 @@ theorem localEnvBounded_alength {C F : Type} [Nonempty C]
         (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
       exact post
   | @value sourceValues flatValues valuesRel =>
-    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source nextSource sourceEnv body sourceValues sourceRun
+    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source sourceEnv body nextSource sourceValues sourceRun
     cases valuesRel with
     | cons valueRel tail =>
       cases tail with
@@ -614,7 +614,7 @@ theorem localEnvBounded_aw8length {C F : Type} [Nonempty C]
         (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
       exact post
   | @value sourceValues flatValues valuesRel =>
-    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source nextSource sourceEnv body sourceValues sourceRun
+    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source sourceEnv body nextSource sourceValues sourceRun
     cases valuesRel with
     | cons valueRel tail =>
       cases tail with
@@ -2041,7 +2041,7 @@ theorem localEnvBounded_aallocEmpty {C F : Type} [Nonempty C]
         (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
       exact post
   | @value sourceValues flatValues valuesRel =>
-    obtain ⟨value, rfl⟩ := EvaluateProps.evaluateSingFull source nextSource sourceEnv body sourceValues sourceRun
+    obtain ⟨value, rfl⟩ := EvaluateProps.evaluateSingFull source sourceEnv body nextSource sourceValues sourceRun
     cases valuesRel with
     | cons valueRel tail =>
       cases tail with
