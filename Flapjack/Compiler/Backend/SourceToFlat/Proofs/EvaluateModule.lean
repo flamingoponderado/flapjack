@@ -30,26 +30,26 @@ theorem globalEnvInv_lift (genv : GlobalEnv) (moduleName : ModN)
     apply GlobalEnvInv.intro
     · intro id value _ lookup
       cases id with
-      | short name => simp [nsLift, nsLookup] at lookup
+      | short name => simp [nsLookup_nsLift] at lookup
       | long head rest =>
         by_cases same : head = moduleName
         · subst head
-          have inner : nsLookup sourceEnv.v rest = some value := by simpa [nsLift, nsLookup] using lookup
+          have inner : nsLookup sourceEnv.v rest = some value := by simpa [nsLookup_nsLift] using lookup
           have related := values rest value (by simp) inner
           cases related with
           | intro _ _ _ idx flat trace compiled bound slot relation =>
-            exact .intro _ _ _ _ idx flat trace (by simpa [liftEnv, nsLift, nsLookup] using compiled) bound slot relation
-        · simp [nsLift, nsLookup, List.lookup, BEq.beq, same] at lookup
+            exact .intro _ _ _ _ idx flat trace (by simpa [liftEnv, nsLookup_nsLift] using compiled) bound slot relation
+        · simp [nsLookup_nsLift, Ne.symm same] at lookup
     · intro id arity stamp lookup
       cases id with
-      | short name => simp [nsLift, nsLookup] at lookup
+      | short name => simp [nsLookup_nsLift] at lookup
       | long head rest =>
         by_cases same : head = moduleName
         · subst head
-          have inner : nsLookup sourceEnv.c rest = some (arity, stamp) := by simpa [nsLift, nsLookup] using lookup
+          have inner : nsLookup sourceEnv.c rest = some (arity, stamp) := by simpa [nsLookup_nsLift] using lookup
           obtain ⟨cn, group, compiled, mapped, types⟩ := constructors rest arity stamp inner
-          exact ⟨cn, group, by simpa [liftEnv, nsLift, nsLookup] using compiled, mapped, types⟩
-        · simp [nsLift, nsLookup, List.lookup, BEq.beq, same] at lookup
+          exact ⟨cn, group, by simpa [liftEnv, nsLookup_nsLift] using compiled, mapped, types⟩
+        · simp [nsLookup_nsLift, Ne.symm same] at lookup
 
 /-- Lift the result of an inner declaration simulation into a module. The
 flat code, state, index and oracle outcomes remain those of the inner case. -/

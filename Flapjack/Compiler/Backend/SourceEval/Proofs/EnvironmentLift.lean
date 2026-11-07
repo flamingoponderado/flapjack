@@ -20,12 +20,12 @@ theorem envRel_nsLift {α β γ : Type} (rel : Value → α → Prop)
     nsDomMod_lift_eq mn v v' modules, ?_⟩
   intro id x y found
   cases id with
-  | short name => simp [nsLift, nsLookup] at found
+  | short name => simp [nsLookup_nsLift] at found
   | long head rest =>
     by_cases same : head = mn
     · subst head
       apply values rest x y
-      simpa [nsLift, nsLookup] using found
-    · simp [nsLift, nsLookup, List.lookup, BEq.beq, same] at found
+      simpa [nsLookup_nsLift] using found
+    · simp [nsLookup_nsLift, Ne.symm same] at found
 
 end Flapjack.Compiler.Backend.SourceEval.Proofs

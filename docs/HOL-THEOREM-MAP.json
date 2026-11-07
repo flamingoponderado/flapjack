@@ -1,5 +1,21 @@
 [
 {
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml",
+  "hol_name": "nsLookup_nsLift",
+  "lean_path": "Flapjack/NamespaceProps/LiftLookup.lean",
+  "lean_name": "nsLookup_nsLift",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed namespace_lift_lookup in source_eval_oracle_adjust_probe.out: module, name and value carriers remain independent; the short and long identifier cases, module comparison orientation and lookup result match."
+},
+{
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml",
+  "hol_name": "nsLookupMod_nsLift",
+  "lean_path": "Flapjack/NamespaceProps/LiftLookup.lean",
+  "lean_name": "nsLookupMod_nsLift",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed namespace_lift_module_lookup in source_eval_oracle_adjust_probe.out: all three namespace carriers are independent, the empty path returns the lifted namespace, and the nonempty path compares module names and recurses as in HOL."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "declare_env_sim",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/DeclareEnvSimulation.lean",
