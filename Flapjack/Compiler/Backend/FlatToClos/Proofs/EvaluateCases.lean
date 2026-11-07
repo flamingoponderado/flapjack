@@ -284,11 +284,11 @@ theorem evaluate_let {C F : Type} (env : FlatSem.Environment FlatSem.Value)
             cases name with
             | none =>
               have nextEnv := envRel_skip environments closHead
-              have bound := FlatSem.evaluate_clock_spec.1 env source next [first] _ flatRun
+              have bound := FlatSem.evaluate_clock_spec.1 env source [first] _ next flatRun
               simpa [EvalSim, compile, compileExps] using bodySim _ _ next nextTarget head states bound nextEnv notTypeError
             | some key =>
               have nextEnv := envRel_cons (env := env) (name := key) environments head
-              have bound := FlatSem.evaluate_clock_spec.1 env source next [first] _ flatRun
+              have bound := FlatSem.evaluate_clock_spec.1 env source [first] _ next flatRun
               simpa [EvalSim, compile, compileExps] using bodySim _ _ next nextTarget head states bound nextEnv notTypeError
           | cons _ _ => simp at length
 
@@ -345,9 +345,9 @@ theorem evaluate_if {C F : Type} (env : FlatSem.Environment FlatSem.Value)
                 rw [doIf_asBool, choice]
                 rfl
               cases branch <;> split at notTypeError <;> simp_all
-              · have bound := FlatSem.evaluate_clock_spec.1 env source next [condition] _ flatRun
+              · have bound := FlatSem.evaluate_clock_spec.1 env source [condition] _ next flatRun
                 simpa [EvalSim, compile, compileExps] using branchSim.1 next nextTarget states bound notTypeError
-              · have bound := FlatSem.evaluate_clock_spec.1 env source next [condition] _ flatRun
+              · have bound := FlatSem.evaluate_clock_spec.1 env source [condition] _ next flatRun
                 simpa [EvalSim, compile, compileExps] using branchSim.2 next nextTarget states bound notTypeError
           | cons _ _ => simp at length
 
@@ -406,7 +406,7 @@ theorem evaluate_handle {C F : Type} (env : FlatSem.Environment FlatSem.Value)
         obtain ⟨bindingsEq, bodyEq⟩ := ‹_ ∧ _›
         subst_vars
         have nextEnv := envRel_cons (env := env) (name := name) environments related
-        have bound := FlatSem.evaluate_clock_spec.1 env source next [body] _ flatRun
+        have bound := FlatSem.evaluate_clock_spec.1 env source [body] _ next flatRun
         simpa [EvalSim, compile, compileExps] using
           handlerSim _ _ next nextTarget related states bound nextEnv notTypeError
 
@@ -457,7 +457,7 @@ theorem evaluate_cons {C F : Type} (env : FlatSem.Environment FlatSem.Value)
             have tailNot : (FlatSem.evaluate env next (second :: rest)).2 ≠ .err (.abort .typeError) := by
               intro bad
               simp [bad] at notTypeError
-            have bound := FlatSem.evaluate_clock_spec.1 env source next [first] _ flatRun
+            have bound := FlatSem.evaluate_clock_spec.1 env source [first] _ next flatRun
             have tailRelated := tailSim next nextTarget states bound tailNot
             simp only [EvalSim, compile, compileExps] at tailRelated
             cases flatTail : FlatSem.evaluate env next (second :: rest) with

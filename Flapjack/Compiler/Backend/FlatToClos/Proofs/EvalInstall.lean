@@ -199,7 +199,7 @@ theorem evaluate_eval_related {C F : Type} (env : FlatSem.Environment FlatSem.Va
         | some result =>
           obtain ⟨decs, config, value⟩ := result
           simp only [run] at notTypeError ⊢
-          have bound := FlatSem.evaluate_clock_spec.1 env source next args.reverse _ flatRun
+          have bound := FlatSem.evaluate_clock_spec.1 env source args.reverse _ next flatRun
           exact eval_install_related next nextTarget _ _ decs config value run states
             (List.rel_reverse related)
             (fun after afterTarget related smaller => decsSim decs after afterTarget related (by omega)) notTypeError

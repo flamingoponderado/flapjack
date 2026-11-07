@@ -89,7 +89,7 @@ theorem evaluate_decs_cons {C F : Type} (source : FlatSem.State C F) (target : C
             subst targetValue
             rw [ClosProps.evaluate_cons_value _ _ _ _ _ _ closRun]
             simp [FlatSem.unitValue] at notTypeError ⊢
-            have bound := FlatSem.evaluate_clock_spec.1 ⟨[]⟩ source next [declaration] _ flatRun
+            have bound := FlatSem.evaluate_clock_spec.1 ⟨[]⟩ source [declaration] _ next flatRun
             have restRelated := restSim next nextTarget states bound notTypeError
             simp only [DecSim, compileDecs, compile] at restRelated
             cases closTail : ClosSem.evaluate (compileExps [] rest) [] nextTarget with

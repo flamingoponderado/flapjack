@@ -273,32 +273,4 @@ theorem evaluateDec_source {C F : Type} (state : State C F) (declaration : FlatL
     dsimp only
     split <;> simp_all [unitValue]
 
-/-- Expression, single-declaration and declaration-list evaluation do not
-increase the clock. -/
-@[hol "cakeml/compiler/backend/semantics/flatSemScript.sml" "evaluate_clock"]
-theorem evaluate_clock_source {C F : Type} :
-    (∀ (env : Environment Value) (state : State C F) (expressions : List FlatLang.Exp)
-      (result : Result (List Value) Value) (next : State C F),
-      evaluate env state expressions = (next, result) → next.clock ≤ state.clock) ∧
-    (∀ (state : State C F) (declaration : FlatLang.Exp) (result : Option (ErrorResult Value))
-      (next : State C F), evaluateDec state declaration = (next, result) → next.clock ≤ state.clock) ∧
-    (∀ (state : State C F) (declarations : List FlatLang.Exp) (result : Option (ErrorResult Value))
-      (next : State C F), evaluateDecs state declarations = (next, result) → next.clock ≤ state.clock) := by
-  refine ⟨?_, ?_, ?_⟩
-  · intro env state expressions result next run
-    exact evaluate_clock_spec.1 env state next expressions result run
-  · intro state declaration result next run
-    exact evaluate_clock_spec.2.1 state next declaration result run
-  · intro state declarations result next run
-    exact evaluate_clock_spec.2.2 state next declarations result run
-
-/-- Clock clamping leaves each kind of completed evaluation unchanged. -/
-@[hol "cakeml/compiler/backend/semantics/flatSemScript.sml" "fix_clock_evaluate"]
-theorem fixClock_evaluations_source {C F : Type} (env : Environment Value) (state : State C F)
-    (expressions : List FlatLang.Exp) (declaration : FlatLang.Exp) (declarations : List FlatLang.Exp) :
-    fixClock state (evaluate env state expressions) = evaluate env state expressions ∧
-    fixClock state (evaluateDec state declaration) = evaluateDec state declaration ∧
-    fixClock state (evaluateDecs state declarations) = evaluateDecs state declarations :=
-  fixClock_evaluations env state expressions declaration declarations
-
 end Flapjack.Compiler.Backend.FlatSem

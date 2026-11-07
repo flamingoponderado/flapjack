@@ -11005,22 +11005,22 @@
   "reviewer": "Compared the typed original semantics equation with the expanded Lean terminating-choice predicate: the type-error guard, clock/state/result/outcome witnesses, FFI-final and abort cases, event trace, and divergence LUB all have the source shape. HOL option choice uses holOptionSome/Classical.choose and IMAGE UNIV is rendered as an existential predicate. Compiler and FFI payload types remain independent; floating operations inherit the rational-cut assumption. Inherits the reals_as_rational_cuts assumption through its dependencies."
 },
   {
-  "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/EvaluateSource.lean",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/EvaluateClock.lean",
   "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
   "hol_name": "evaluate_clock",
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
-  "lean_name": "evaluate_clock_source",
+  "lean_name": "evaluate_clock_spec",
   "reviewer": "Compared evaluate_clock_typed: the quantified environment, expression list, result and next state, followed by the single-declaration and declaration-list conjuncts, retain their original binder order and state types. The proof derives all three inequalities from the kernel-checked evaluator clock bound. Compiler and FFI payload types remain independent; the evaluator inherits the reviewed floating-point rational-cut dependency. Inherits the reals_as_rational_cuts assumption through its dependencies."
 },
   {
-  "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/EvaluateSource.lean",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/EvaluateClock.lean",
   "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
   "hol_name": "fix_clock_evaluate",
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
-  "lean_name": "fixClock_evaluations_source",
-  "reviewer": "Compared fix_clock_evaluate_typed: all three equalities use one state and the original expression, declaration and declaration-list result carriers. The proof applies the kernel-checked clock-clamp equalities. Compiler and FFI payload types remain independent; the evaluator inherits the reviewed floating-point rational-cut dependency. Inherits the reals_as_rational_cuts assumption through its dependencies."
+  "lean_name": "fixClock_evaluations",
+  "reviewer": "Compared fix_clock_evaluate_typed: all three equalities use one state and the original expression, declaration and declaration-list result carriers. The proof derives all three clock-clamp equalities from evaluation clock bounds. Compiler and FFI payload types remain independent; the evaluator inherits the reviewed floating-point rational-cut dependency. Inherits the reals_as_rational_cuts assumption through its dependencies."
 },
   {
   "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/EvaluateSource.lean",

@@ -74,7 +74,7 @@ theorem evaluate_force {C F : Type} (env : FlatSem.Environment FlatSem.Value)
                     [FlatSem.appUnit (.varLocal .none (ofString "f"))]).2 ≠ .err (.abort .typeError) := by
                   intro bad
                   simp [bad] at notTypeError
-                have bound := FlatSem.evaluate_clock_spec.1 env source next args.reverse _ flatArgs
+                have bound := FlatSem.evaluate_clock_spec.1 env source args.reverse _ next flatArgs
                 have generated := bodySim sourceValue targetValue next nextTarget payloadRel states bound generatedNot
                 simp only [EvalSim, compile_force_application] at generated
                 cases flatBody : FlatSem.evaluate ⟨[(ofString "f", sourceValue)]⟩ next
