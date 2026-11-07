@@ -2,6 +2,15 @@
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "eval_simulation",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvalSimulationCons.lean",
+  "lean_name": "evalSimulation_ExpsCons",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the expression-list cons case retains the two original induction hypotheses as one conjunction, including the tail evaluation's independent result and equality premise, and the full expression simulation conclusion. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "eval_simulation",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvalSimulationBase.lean",
   "lean_name": "evalSimulation_ExpsNil",
   "statement_status": "reviewed_exact",
