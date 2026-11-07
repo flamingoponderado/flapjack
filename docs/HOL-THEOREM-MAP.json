@@ -16322,8 +16322,9 @@
     "hol_name": "adjust_oracle_evaluate",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateExpressions.lean",
     "lean_name": "adjustOracle_evaluate_Var",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. This induction case uses curried source, insertion and non-type-error premises, a curried compiler-preservation predicate and different binder ordering; these are equivalent but do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the exact case against the typed adjust_evaluate and evaluate_induction captures in source_eval_oracle_adjust_probe.out:8 and :10. The original compiler-preservation premise, case binders, conjunctive evaluation premises and conclusion match. Evaluation inherits reals_as_rational_cuts; see SOUNDNESS item 8."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -16543,24 +16544,27 @@
     "hol_name": "adjust_oracle_evaluate",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateExpressions.lean",
     "lean_name": "adjustOracle_evaluate_ExpsNil",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. This induction case uses curried source, insertion and non-type-error premises, a curried compiler-preservation predicate and different binder ordering; these are equivalent but do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the exact case against the typed adjust_evaluate and evaluate_induction captures in source_eval_oracle_adjust_probe.out:8 and :10. The original compiler-preservation premise, case binders, conjunctive evaluation premises and conclusion match. Evaluation inherits reals_as_rational_cuts; see SOUNDNESS item 8."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
     "hol_name": "adjust_oracle_evaluate",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateExpressions.lean",
     "lean_name": "adjustOracle_evaluate_Lit",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. This induction case uses curried source, insertion and non-type-error premises, a curried compiler-preservation predicate and different binder ordering; these are equivalent but do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the exact case against the typed adjust_evaluate and evaluate_induction captures in source_eval_oracle_adjust_probe.out:8 and :10. The original compiler-preservation premise, case binders, conjunctive evaluation premises and conclusion match. Evaluation inherits reals_as_rational_cuts; see SOUNDNESS item 8."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
     "hol_name": "adjust_oracle_evaluate",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateExpressions.lean",
     "lean_name": "adjustOracle_evaluate_Fn",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original and evaluator induction captured in source_eval_oracle_adjust_probe.out. This induction case uses curried source, insertion and non-type-error premises, a curried compiler-preservation predicate and different binder ordering; these are equivalent but do not follow the literal source case shape. The assembled adjust_oracle_evaluate theorem is reviewed_exact. Case statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the exact case against the typed adjust_evaluate and evaluate_induction captures in source_eval_oracle_adjust_probe.out:8 and :10. The original compiler-preservation premise, case binders, conjunctive evaluation premises and conclusion match. Evaluation inherits reals_as_rational_cuts; see SOUNDNESS item 8."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",

@@ -14,8 +14,14 @@ theorem evaluateOracleFull {Config F : Type} (ci : CompilerInstance Config)
     (state : State F) (env : SemEnv Value) (exprs : List AstHOL.Exp) :
     ExpsOracleAdjustedAt ci f compile state env exprs := by
   intro next result run inserted safe
+  have literalPreserves : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec)
+      (after : State F) (res : Result (SemEnv Value) Value),
+      evaluateDecs s env ds = (after, res) ∧ res ≠ .err (.abort .typeError) →
+        evaluateDecs s env (compile ds) = (after, res) := by
+    intro s env ds after res h
+    exact preserves s after env ds res h.1 h.2
   cases exprs with
-  | nil => exact adjustOracle_evaluate_ExpsNil ci f compile preserves state next env result run inserted safe
+  | nil => exact adjustOracle_evaluate_ExpsNil compile ci f literalPreserves state env next result ⟨run, inserted, safe⟩
   | cons first rest =>
     cases rest with
     | cons second tail =>
@@ -26,9 +32,9 @@ theorem evaluateOracleFull {Config F : Type} (ci : CompilerInstance Config)
         exact evaluateOracleFull ci f compile preserves middle env (second :: tail)
     | nil =>
       cases first with
-      | lit lit => exact adjustOracle_evaluate_Lit ci f compile preserves lit state next env result run inserted safe
-      | var name => exact adjustOracle_evaluate_Var ci f compile preserves state next env name result run inserted safe
-      | fn name body => exact adjustOracle_evaluate_Fn ci f compile preserves name body state next env result run inserted safe
+      | lit lit => exact adjustOracle_evaluate_Lit compile ci f literalPreserves state env lit next result ⟨run, inserted, safe⟩
+      | var name => exact adjustOracle_evaluate_Var compile ci f literalPreserves state env name next result ⟨run, inserted, safe⟩
+      | fn name body => exact adjustOracle_evaluate_Fn compile ci f literalPreserves state env name body next result ⟨run, inserted, safe⟩
       | raise expr =>
         exact adjustOracle_evaluate_Raise ci f compile preserves expr state next env
           (evaluateOracleFull ci f compile preserves state env [expr]) result run inserted safe

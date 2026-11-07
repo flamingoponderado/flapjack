@@ -6,14 +6,20 @@ open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.EvaluateHOL
 
 /-- Variable-expression case of the source evaluator induction. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
-theorem adjustOracle_evaluate_Var {Config F : Type} (ci : CompilerInstance Config)
-    (f compile : List Dec → List Dec) (_compilePreserve : DeclarationCompilerPreserves (F := F) compile)
-    (state next : State F) (env : SemEnv Value) (name : Flapjack.NamespaceHOL.Ident ModN VarN)
-    (result : Result (List Value) Value) (source : evaluate state env [.var name] = (next, result))
-    (inserted : isInsertOracle ci f state.evalState) (safe : result ≠ .err (.abort .typeError)) :
-    isInsertOracle ci f next.evalState ∧
-      evaluate { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env [.var name] =
-        ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result) := by
+theorem adjustOracle_evaluate_Var {Config F : Type} (compile : List Dec → List Dec)
+    (ci : CompilerInstance Config) (f : List Dec → List Dec)
+    (_preserves : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
+      (res : Result (SemEnv Value) Value),
+      evaluateDecs s env ds = (next, res) ∧ res ≠ .err (.abort .typeError) →
+        evaluateDecs s env (compile ds) = (next, res))
+    (state : State F) (env : SemEnv Value) (name : Flapjack.NamespaceHOL.Ident ModN VarN) :
+    ∀ (next : State F) (result : Result (List Value) Value),
+      evaluate state env [.var name] = (next, result) ∧
+      isInsertOracle ci f state.evalState ∧ result ≠ .err (.abort .typeError) →
+      isInsertOracle ci f next.evalState ∧
+        evaluate { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env [.var name] =
+          ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result) := by
+  intro next result ⟨source, inserted, safe⟩
   cases lookup : Flapjack.NamespaceHOL.nsLookup env.v name with
   | none =>
     simp [evaluate, lookup, typeError] at source
@@ -48,42 +54,60 @@ theorem adjustOracle_evaluate_Letrec {Config F : Type} (ci : CompilerInstance Co
 
 /-- Empty expression-list case of the original evaluator induction. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
-theorem adjustOracle_evaluate_ExpsNil {Config F : Type} (ci : CompilerInstance Config)
-    (f compile : List Dec → List Dec) (_compilePreserve : DeclarationCompilerPreserves (F := F) compile)
-    (state next : State F) (env : SemEnv Value) (result : Result (List Value) Value)
-    (source : evaluate state env [] = (next, result))
-    (inserted : isInsertOracle ci f state.evalState) (_safe : result ≠ .err (.abort .typeError)) :
-    isInsertOracle ci f next.evalState ∧
-      evaluate { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env [] =
-        ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result) := by
+theorem adjustOracle_evaluate_ExpsNil {Config F : Type} (compile : List Dec → List Dec)
+    (ci : CompilerInstance Config) (f : List Dec → List Dec)
+    (_preserves : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
+      (res : Result (SemEnv Value) Value),
+      evaluateDecs s env ds = (next, res) ∧ res ≠ .err (.abort .typeError) →
+        evaluateDecs s env (compile ds) = (next, res))
+    (state : State F) (env : SemEnv Value) :
+    ∀ (next : State F) (result : Result (List Value) Value),
+      evaluate state env [] = (next, result) ∧
+      isInsertOracle ci f state.evalState ∧ result ≠ .err (.abort .typeError) →
+      isInsertOracle ci f next.evalState ∧
+        evaluate { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env [] =
+          ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result) := by
+  intro next result ⟨source, inserted, _⟩
   simp [evaluate] at source
   obtain ⟨rfl, rfl⟩ := source
   exact ⟨inserted, by simp [evaluate]⟩
 
 /-- Literal case of the original evaluator induction. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
-theorem adjustOracle_evaluate_Lit {Config F : Type} (ci : CompilerInstance Config)
-    (f compile : List Dec → List Dec) (_compilePreserve : DeclarationCompilerPreserves (F := F) compile)
-    (lit : Lit) (state next : State F) (env : SemEnv Value) (result : Result (List Value) Value)
-    (source : evaluate state env [.lit lit] = (next, result))
-    (inserted : isInsertOracle ci f state.evalState) (_safe : result ≠ .err (.abort .typeError)) :
-    isInsertOracle ci f next.evalState ∧
-      evaluate { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env [.lit lit] =
-        ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result) := by
+theorem adjustOracle_evaluate_Lit {Config F : Type} (compile : List Dec → List Dec)
+    (ci : CompilerInstance Config) (f : List Dec → List Dec)
+    (_preserves : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
+      (res : Result (SemEnv Value) Value),
+      evaluateDecs s env ds = (next, res) ∧ res ≠ .err (.abort .typeError) →
+        evaluateDecs s env (compile ds) = (next, res))
+    (state : State F) (env : SemEnv Value) (lit : Lit) :
+    ∀ (next : State F) (result : Result (List Value) Value),
+      evaluate state env [.lit lit] = (next, result) ∧
+      isInsertOracle ci f state.evalState ∧ result ≠ .err (.abort .typeError) →
+      isInsertOracle ci f next.evalState ∧
+        evaluate { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env [.lit lit] =
+          ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result) := by
+  intro next result ⟨source, inserted, _⟩
   simp [evaluate] at source
   obtain ⟨rfl, rfl⟩ := source
   exact ⟨inserted, by simp [evaluate]⟩
 
 /-- Function-expression case of the original evaluator induction. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
-theorem adjustOracle_evaluate_Fn {Config F : Type} (ci : CompilerInstance Config)
-    (f compile : List Dec → List Dec) (_compilePreserve : DeclarationCompilerPreserves (F := F) compile)
-    (name : VarN) (body : AstHOL.Exp) (state next : State F) (env : SemEnv Value)
-    (result : Result (List Value) Value) (source : evaluate state env [.fn name body] = (next, result))
-    (inserted : isInsertOracle ci f state.evalState) (_safe : result ≠ .err (.abort .typeError)) :
-    isInsertOracle ci f next.evalState ∧
-      evaluate { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env [.fn name body] =
-        ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result) := by
+theorem adjustOracle_evaluate_Fn {Config F : Type} (compile : List Dec → List Dec)
+    (ci : CompilerInstance Config) (f : List Dec → List Dec)
+    (_preserves : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
+      (res : Result (SemEnv Value) Value),
+      evaluateDecs s env ds = (next, res) ∧ res ≠ .err (.abort .typeError) →
+        evaluateDecs s env (compile ds) = (next, res))
+    (state : State F) (env : SemEnv Value) (name : VarN) (body : AstHOL.Exp) :
+    ∀ (next : State F) (result : Result (List Value) Value),
+      evaluate state env [.fn name body] = (next, result) ∧
+      isInsertOracle ci f state.evalState ∧ result ≠ .err (.abort .typeError) →
+      isInsertOracle ci f next.evalState ∧
+        evaluate { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env [.fn name body] =
+          ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result) := by
+  intro next result ⟨source, inserted, _⟩
   simp [evaluate] at source
   obtain ⟨rfl, rfl⟩ := source
   exact ⟨inserted, by simp [evaluate]⟩
