@@ -437,35 +437,6 @@ theorem evalOperands_six_related {C F : Type} (genv : GlobalEnv) (compMap : Envi
                     exact ⟨_, _, _, _, _, _, _, rfl,
                       .cons aRel (.cons bRel (.cons cRel (.cons dRel (.cons bytesRel (.cons wordsRel .nil))))), states⟩
 
-/-- The zero-clock Eval simulation directly consumes the expression-list
-induction hypothesis; the callback invariant applies at the flat state that
-that induction hypothesis produces. -/
-theorem exprSim_eval_timeout_from_operands {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (gen : EnvironmentGenerationStore) (genv : GlobalEnv)
-    (idxs : NextIndices × NextIndices × Set (Nat × IndexKind)) (compMap : Environment)
-    (trace : List VarN) (sourceEnv : SemEnv Value) (flatEnv : FlatSem.Environment FlatSem.Value)
-    (sourceState sourceArguments : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
-    (exprs : List AstHOL.Exp) (sa sb sc sd sourceBytes sourceWords : Value)
-    (evalEnv : SemEnv Value) (decs : List Dec) (begin : Option EvalState)
-    (sourceRun : EvaluateHOL.evaluate sourceState sourceEnv exprs.reverse =
-      (sourceArguments, .val [sourceWords, sourceBytes, sd, sc, sb, sa]))
-    (operandSim : ExprListSim genv compMap trace sourceEnv flatEnv sourceState flatState exprs.reverse)
-    (invariant : OracleInvariant.factoredInvariant interp transform gen genv idxs sourceArguments
-      (FlatSem.evaluate flatEnv flatState (compileExps trace compMap exprs).reverse).1)
-    (decoded : SemanticPrimitivesHOL.doEval [sa, sb, sc, sd, sourceBytes, sourceWords]
-      sourceArguments.evalState = some (evalEnv, decs, begin))
-    (zero : sourceArguments.clock = 0) :
-    ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState (.app .eval exprs) := by
-  obtain ⟨flatArguments, a, b, c, d, bytes, words, flatRun, valuesRel, _⟩ :=
-    evalOperands_six_related genv compMap trace sourceEnv flatEnv sourceState sourceArguments flatState
-      exprs sa sb sc sd sourceBytes sourceWords sourceRun operandSim
-  have invariant' : OracleInvariant.factoredInvariant interp transform gen genv idxs sourceArguments flatArguments := by
-    simpa [flatRun] using invariant
-  exact exprSim_eval_timeout interp transform gen genv idxs compMap trace sourceEnv flatEnv
-    sourceState sourceArguments flatState flatArguments exprs sa sb sc sd sourceBytes sourceWords
-    a b c d bytes words evalEnv decs begin sourceRun flatRun valuesRel invariant' decoded zero
-
 /-- The successful callback and operand induction hypothesis determine the
 operand shape for a zero-clock Eval; no fixed operand list is assumed. -/
 theorem exprSim_eval_timeout_from_callback {C F : Type} [Nonempty C]
@@ -502,9 +473,16 @@ theorem exprSim_eval_timeout_from_callback {C F : Type} [Nonempty C]
           interp transform gen genv idxs flatArguments flatValues.reverse ⟨decoded, invariant', valuesRel⟩
       have sourceLength : sourceValues.length = 6 := valuesRel.length_eq.trans flatLength
       obtain ⟨sa, sb, sc, sd, bytes, words, rfl⟩ := OracleInvariant.list_length_six sourceValues sourceLength
-      exact exprSim_eval_timeout_from_operands interp transform gen genv idxs compMap trace sourceEnv flatEnv
-        sourceState sourceArguments flatState exprs sa sb sc sd bytes words evalEnv decs begin
-        (by simpa using sourceRun) operandSim (by simpa [flatRun] using invariant) decoded zero
+      have sourceRunSix : EvaluateHOL.evaluate sourceState sourceEnv exprs.reverse =
+          (sourceArguments, .val [words, bytes, sd, sc, sb, sa]) := by simpa using sourceRun
+      obtain ⟨flatArgs, a, b, c, d, flatBytes, flatWords, flatRunSix, operandsRel, _⟩ :=
+        evalOperands_six_related genv compMap trace sourceEnv flatEnv sourceState sourceArguments flatState
+          exprs sa sb sc sd bytes words sourceRunSix operandSim
+      have invariantSix : OracleInvariant.factoredInvariant interp transform gen genv idxs sourceArguments flatArgs := by
+        simpa [flatRunSix] using invariant
+      exact exprSim_eval_timeout interp transform gen genv idxs compMap trace sourceEnv flatEnv
+        sourceState sourceArguments flatState flatArgs exprs sa sb sc sd bytes words
+        a b c d flatBytes flatWords evalEnv decs begin sourceRunSix flatRunSix operandsRel invariantSix decoded zero
 
 /-- Compose the successful declaration induction hypothesis with the whole
 generated Eval expression and the stored environment ID. The factored
