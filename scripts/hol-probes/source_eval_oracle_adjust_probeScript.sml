@@ -145,6 +145,7 @@ val local_extract_oracle_suc_st = Q.prove (
   >> first_x_assum drule >> simp [ADD1]);
 val _ = show_thm "extract_oracle_suc_st_replay=" local_extract_oracle_suc_st;
 val _ = show_thm "get_oracle_props=" source_evalProofTheory.get_oracle_props;
+val _ = show_thm "eval_no_eval_simulation=" evaluatePropsTheory.eval_no_eval_simulation;
 
 
 val spt_mem_to_list_a = prove(

@@ -3147,6 +3147,7 @@ import Flapjack.EvaluateProps.ClockIoCases
 import Flapjack.EvaluateProps.ClockIoExpr
 import Flapjack.EvaluateProps.ClockIoApp
 import Flapjack.EvaluateProps.ClockIoFull
+import Flapjack.EvaluateProps.NoEvalBase
 import Flapjack.EvaluateProps.ClockIoConsequences
 import Flapjack.Compiler.Inference.InferT.Display
 import Flapjack.Compiler.Inference.Infer.TypesOutput
@@ -4245,3 +4246,4 @@ The library currently contains the first Lean representation of Flapjack's
 front-end language. The source of truth used while porting is the CakeML HOL
 development in `cakeml/pancake`.
 -/
+

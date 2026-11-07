@@ -1,5 +1,212 @@
 [
 {
+  "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+  "hol_name": "eval_no_eval_simulation",
+  "lean_path": "Flapjack/EvaluateProps/NoEvalBase.lean",
+  "lean_name": "evalNoEval_ExpsNil",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the complete HOL theorem is not yet assembled. Compare the typed eval_no_eval_simulation and evaluate_induction captures in source_eval_oracle_adjust_probe.out:63 and :10. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+  "hol_name": "eval_no_eval_simulation",
+  "lean_path": "Flapjack/EvaluateProps/NoEvalBase.lean",
+  "lean_name": "evalNoEval_Lit",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the complete HOL theorem is not yet assembled. Compare the typed eval_no_eval_simulation and evaluate_induction captures in source_eval_oracle_adjust_probe.out:63 and :10. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+  "hol_name": "eval_no_eval_simulation",
+  "lean_path": "Flapjack/EvaluateProps/NoEvalBase.lean",
+  "lean_name": "evalNoEval_Fn",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the complete HOL theorem is not yet assembled. Compare the typed eval_no_eval_simulation and evaluate_induction captures in source_eval_oracle_adjust_probe.out:63 and :10. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+  "hol_name": "eval_no_eval_simulation",
+  "lean_path": "Flapjack/EvaluateProps/NoEvalBase.lean",
+  "lean_name": "evalNoEval_Var",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the complete HOL theorem is not yet assembled. Compare the typed eval_no_eval_simulation and evaluate_induction captures in source_eval_oracle_adjust_probe.out:63 and :10. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+  "hol_name": "eval_no_eval_simulation",
+  "lean_path": "Flapjack/EvaluateProps/NoEvalBase.lean",
+  "lean_name": "evalNoEval_MatchNil",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the complete HOL theorem is not yet assembled. Compare the typed eval_no_eval_simulation and evaluate_induction captures in source_eval_oracle_adjust_probe.out:63 and :10. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+  "hol_name": "eval_no_eval_simulation",
+  "lean_path": "Flapjack/EvaluateProps/NoEvalBase.lean",
+  "lean_name": "evalNoEval_DecsNil",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the complete HOL theorem is not yet assembled. Compare the typed eval_no_eval_simulation and evaluate_induction captures in source_eval_oracle_adjust_probe.out:63 and :10. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+  "hol_name": "eval_no_eval_simulation",
+  "lean_path": "Flapjack/EvaluateProps/NoEvalBase.lean",
+  "lean_name": "evalNoEval_Tannot",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the complete HOL theorem is not yet assembled. Compare the typed eval_no_eval_simulation and evaluate_induction captures in source_eval_oracle_adjust_probe.out:63 and :10. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+  "hol_name": "eval_no_eval_simulation",
+  "lean_path": "Flapjack/EvaluateProps/NoEvalBase.lean",
+  "lean_name": "evalNoEval_Lannot",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the complete HOL theorem is not yet assembled. Compare the typed eval_no_eval_simulation and evaluate_induction captures in source_eval_oracle_adjust_probe.out:63 and :10. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+  "hol_name": "eval_no_eval_simulation",
+  "lean_path": "Flapjack/EvaluateProps/NoEvalBase.lean",
+  "lean_name": "evalNoEval_Dtabbrev",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the complete HOL theorem is not yet assembled. Compare the typed eval_no_eval_simulation and evaluate_induction captures in source_eval_oracle_adjust_probe.out:63 and :10. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+  "hol_name": "eval_no_eval_simulation",
+  "lean_path": "Flapjack/EvaluateProps/NoEvalBase.lean",
+  "lean_name": "evalNoEval_Dexn",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the complete HOL theorem is not yet assembled. Compare the typed eval_no_eval_simulation and evaluate_induction captures in source_eval_oracle_adjust_probe.out:63 and :10. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+  "hol_name": "eval_no_eval_simulation",
+  "lean_path": "Flapjack/EvaluateProps/NoEvalBase.lean",
+  "lean_name": "evalNoEval_Dtype",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the complete HOL theorem is not yet assembled. Compare the typed eval_no_eval_simulation and evaluate_induction captures in source_eval_oracle_adjust_probe.out:63 and :10. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+  "hol_name": "eval_no_eval_simulation",
+  "lean_path": "Flapjack/EvaluateProps/NoEvalBase.lean",
+  "lean_name": "evalNoEval_Dletrec",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the complete HOL theorem is not yet assembled. Compare the typed eval_no_eval_simulation and evaluate_induction captures in source_eval_oracle_adjust_probe.out:63 and :10. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+  "hol_name": "eval_no_eval_simulation",
+  "lean_path": "Flapjack/EvaluateProps/NoEvalBase.lean",
+  "lean_name": "evalNoEval_Denv",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the complete HOL theorem is not yet assembled. Compare the typed eval_no_eval_simulation and evaluate_induction captures in source_eval_oracle_adjust_probe.out:63 and :10. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+  "hol_name": "eval_no_eval_simulation",
+  "lean_path": "Flapjack/EvaluateProps/NoEvalBase.lean",
+  "lean_name": "evalNoEval_Raise",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the complete HOL theorem is not yet assembled. Compare the typed eval_no_eval_simulation and evaluate_induction captures in source_eval_oracle_adjust_probe.out:63 and :10. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+  "hol_name": "eval_no_eval_simulation",
+  "lean_path": "Flapjack/EvaluateProps/NoEvalBase.lean",
+  "lean_name": "evalNoEval_ExpsCons",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the complete HOL theorem is not yet assembled. Compare the typed eval_no_eval_simulation and evaluate_induction captures in source_eval_oracle_adjust_probe.out:63 and :10. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+  "hol_name": "eval_no_eval_simulation",
+  "lean_path": "Flapjack/EvaluateProps/NoEvalBase.lean",
+  "lean_name": "evalNoEval_DecsCons",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the complete HOL theorem is not yet assembled. Compare the typed eval_no_eval_simulation and evaluate_induction captures in source_eval_oracle_adjust_probe.out:63 and :10. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+  "hol_name": "eval_no_eval_simulation",
+  "lean_path": "Flapjack/EvaluateProps/NoEvalBase.lean",
+  "lean_name": "evalNoEval_Letrec",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the complete HOL theorem is not yet assembled. Compare the typed eval_no_eval_simulation and evaluate_induction captures in source_eval_oracle_adjust_probe.out:63 and :10. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+  "hol_name": "eval_no_eval_simulation",
+  "lean_path": "Flapjack/EvaluateProps/NoEvalBase.lean",
+  "lean_name": "evalNoEval_Dmod",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the complete HOL theorem is not yet assembled. Compare the typed eval_no_eval_simulation and evaluate_induction captures in source_eval_oracle_adjust_probe.out:63 and :10. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+  "hol_name": "eval_no_eval_simulation",
+  "lean_path": "Flapjack/EvaluateProps/NoEvalBase.lean",
+  "lean_name": "evalNoEval_MatchCons",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the complete HOL theorem is not yet assembled. Compare the typed eval_no_eval_simulation and evaluate_induction captures in source_eval_oracle_adjust_probe.out:63 and :10. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+  "hol_name": "eval_no_eval_simulation",
+  "lean_path": "Flapjack/EvaluateProps/NoEvalBase.lean",
+  "lean_name": "evalNoEval_Con",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the complete HOL theorem is not yet assembled. Compare the typed eval_no_eval_simulation and evaluate_induction captures in source_eval_oracle_adjust_probe.out:63 and :10. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+  "hol_name": "eval_no_eval_simulation",
+  "lean_path": "Flapjack/EvaluateProps/NoEvalBase.lean",
+  "lean_name": "evalNoEval_Dlet",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the complete HOL theorem is not yet assembled. Compare the typed eval_no_eval_simulation and evaluate_induction captures in source_eval_oracle_adjust_probe.out:63 and :10. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+  "hol_name": "eval_no_eval_simulation",
+  "lean_path": "Flapjack/EvaluateProps/NoEvalBase.lean",
+  "lean_name": "evalNoEval_Dlocal",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the complete HOL theorem is not yet assembled. Compare the typed eval_no_eval_simulation and evaluate_induction captures in source_eval_oracle_adjust_probe.out:63 and :10. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+  "hol_name": "eval_no_eval_simulation",
+  "lean_path": "Flapjack/EvaluateProps/NoEvalBase.lean",
+  "lean_name": "evalNoEval_Let",
+  "statement_status": "pending_statement_review",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the complete HOL theorem is not yet assembled. Compare the typed eval_no_eval_simulation and evaluate_induction captures in source_eval_oracle_adjust_probe.out:63 and :10. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "get_oracle_props",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/GetOracleProps.lean",
