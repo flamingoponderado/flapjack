@@ -1,3 +1,4 @@
+less_sub_1_cases_replay=(k :num) ≤ (clock :num) ∧ (k ≤ clock − (1 :num) ⇒ (P :bool)) ⇒ k = clock ∨ k ≤ clock − (1 :num)
 env_rel_imp_c_replay=env_rel (x :v -> α -> bool) (env :v sem_env) (env' :α sem_env) ⇒ env'.c = env.c
 s_rel_clock2_replay=∀(k :num). s_rel (ci :α compiler_instance) (s :β semanticPrimitives$state) (t :β semanticPrimitives$state) ⇒ s_rel ci (s with clock := k) (t with clock := k)
 extract_oracle_some_suc_replay=IS_SOME (extract_oracle (s :α semanticPrimitives$state) (env :v sem_env) (decs :dec list) (SUC (i :num))) ⇒ IS_SOME (extract_oracle s env decs i)

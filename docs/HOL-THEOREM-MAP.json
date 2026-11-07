@@ -1456,6 +1456,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "less_sub_1_cases",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/RecordSuffix.lean",
+  "lean_name": "lessSubOneCases",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the local HOL theorem with the DECIDE_TAC replay in source_eval_adjust_local_probe.out: k and clock are naturals, P is a proposition, and the original grouped premise and clock-case conclusion are retained."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "check_dup_ctors_thm",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvalSimulationStamps.lean",
   "lean_name": "checkDupCtors_thm",

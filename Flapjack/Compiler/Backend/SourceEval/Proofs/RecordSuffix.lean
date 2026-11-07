@@ -5,6 +5,13 @@ import Flapjack.EvaluateHOL.Clock
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs
 open Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.SemanticPrimitivesHOL Flapjack.EvaluateHOL
 
+/-- The source proof's clock split, including its original logical premise. -/
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "less_sub_1_cases"]
+theorem lessSubOneCases (k clock : Nat) (P : Prop)
+    (premises : k ≤ clock ∧ (k ≤ clock - 1 → P)) :
+    k = clock ∨ k ≤ clock - 1 := by
+  omega
+
 mutual
 /-- Flapjack infrastructure: expression component of the mutual induction. -/
 private theorem expsSuffixFull {Config F : Type} (ci : CompilerInstance Config) (k : Nat)
