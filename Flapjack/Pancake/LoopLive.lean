@@ -455,37 +455,8 @@ theorem sptSize_mkBS {α : Type} (t1 t2 : Spt α) (x : α) :
 @[hol "cakeml/pancake/loop_liveScript.sml" "size_inter"]
 theorem sptSize_inter_le {α β : Type} (l1 : Spt α) (l2 : Spt β) :
     sptSize (sptInter l1 l2) <= sptSize l1 := by
-  induction l1 generalizing l2 with
-  | ln => simp [sptInter]
-  | ls value => cases l2 <;> simp [sptInter]
-  | bn first second ihFirst ihSecond =>
-      cases l2 with
-      | ln => simp [sptInter]
-      | ls value => simp [sptInter]
-      | bn f s =>
-          simp only [sptInter, sptSize_bn, sptSize_mkBN]
-          have h1 := ihFirst f
-          have h2 := ihSecond s
-          omega
-      | bs f value s =>
-          simp only [sptInter, sptSize_bn, sptSize_mkBN]
-          have h1 := ihFirst f
-          have h2 := ihSecond s
-          omega
-  | bs first value second ihFirst ihSecond =>
-      cases l2 with
-      | ln => simp [sptInter]
-      | ls v => simp [sptInter]
-      | bn f s =>
-          simp only [sptInter, sptSize_bs, sptSize_bn, sptSize_mkBN]
-          have h1 := ihFirst f
-          have h2 := ihSecond s
-          omega
-      | bs f v s =>
-          simp only [sptInter, sptSize_bs, sptSize_mkBS]
-          have h1 := ihFirst f
-          have h2 := ihSecond s
-          omega
+  induction l1 generalizing l2 <;> cases l2 <;>
+    simp [sptInter, sptSize_bn, sptSize_bs, sptSize_mkBN, sptSize_mkBS] <;> grind
 mutual
   /-- The `fixedpoint` half of HOL's single `loop_live$shrink_def` mutual block
       (`cakeml/pancake/loop_liveScript.sml:142-150`): iterate `shrink` on the
