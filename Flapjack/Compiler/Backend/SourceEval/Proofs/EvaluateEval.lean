@@ -83,7 +83,7 @@ theorem continueEval_adjust {Config F : Type} (ci : CompilerInstance Config)
       evaluateDecs s env ds = (next, res) ∧ res ≠ .err (.abort .typeError) →
         evaluateDecs s env (compile ds) = (next, res))
     (before decoded next : State F) (env : SemEnv Value) (decs : List Dec)
-    (ih : decoded.clock ≠ 0 → DecsOracleAdjustedAt ci f compile (decClock decoded) env decs)
+    (ih : decoded.clock ≠ 0 → DecsOracleAdjustedAt compile ci f (decClock decoded) env decs)
     (result : Result (List Value) Value) (run : continueEval before decoded env decs = (next, result))
     (inserted : isInsertOracle ci f decoded.evalState) (safe : result ≠ .err (.abort .typeError)) :
     isInsertOracle ci f next.evalState ∧
@@ -107,7 +107,7 @@ theorem continueEval_adjust {Config F : Type} (ci : CompilerInstance Config)
       have sourceFinish : finishEval before after env inner = (next, result) := by
         simpa [continueEval, clock, evaluated] using run
       obtain ⟨afterInserted, original⟩ :=
-        ih clock after inner evaluated (by simpa [decClock] using inserted) innerSafe
+        ih clock after inner ⟨evaluated, (by simpa [decClock] using inserted), innerSafe⟩
       have compiled := preserves _ env decs _ inner ⟨original, innerSafe⟩
       simp only [decClock] at original compiled
       obtain ⟨nextInserted, finish⟩ := finishEval_adjust ci f compile before after next env inner result sourceFinish afterInserted safe
@@ -127,8 +127,8 @@ theorem evaluate_eval_adjust_success {Config F : Type} (ci : CompilerInstance Co
         evaluateDecs s env (compile ds) = (next, res))
     (state middle decoded next : State F) (env evalEnv : SemEnv Value)
     (args : List AstHOL.Exp) (values : List Value) (decs : List Dec)
-    (argsIH : ExpsOracleAdjustedAt ci f compile state env args.reverse)
-    (decsIH : decoded.clock ≠ 0 → DecsOracleAdjustedAt ci f compile (decClock decoded) evalEnv decs)
+    (argsIH : ExpsOracleAdjustedAt compile ci f state env args.reverse)
+    (decsIH : decoded.clock ≠ 0 → DecsOracleAdjustedAt compile ci f (decClock decoded) evalEnv decs)
     (argsRun : evaluate state env args.reverse = (middle, .val values))
     (decodedRun : doEvalRes (β := Value) values.reverse middle = (decoded, .val (evalEnv, decs)))
     (result : Result (List Value) Value) (run : evaluate state env [.app .eval args] = (next, result))
@@ -136,7 +136,7 @@ theorem evaluate_eval_adjust_success {Config F : Type} (ci : CompilerInstance Co
     isInsertOracle ci f next.evalState ∧
       evaluate { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env [.app .eval args] =
         ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result) := by
-  obtain ⟨middleInserted, adjustedArgs⟩ := argsIH middle (.val values) argsRun inserted (by simp)
+  obtain ⟨middleInserted, adjustedArgs⟩ := argsIH middle (.val values) ⟨argsRun, inserted, (by simp)⟩
   obtain ⟨decodedInserted, adjustedDecode⟩ :=
     doEvalRes_adjust_success ci f compile values.reverse middle decoded evalEnv decs decodedRun middleInserted
   have continuation : continueEval middle decoded evalEnv decs = (next, result) := by
@@ -160,11 +160,11 @@ theorem adjustOracle_evaluate_Eval {Config F : Type} (ci : CompilerInstance Conf
       evaluateDecs s env ds = (next, res) ∧ res ≠ .err (.abort .typeError) →
         evaluateDecs s env (compile ds) = (next, res))
     (state next : State F) (env : SemEnv Value) (args : List AstHOL.Exp)
-    (argsIH : ExpsOracleAdjustedAt ci f compile state env args.reverse)
+    (argsIH : ExpsOracleAdjustedAt compile ci f state env args.reverse)
     (decsIH : ∀ (middle decoded : State F) (values : List Value) (evalEnv : SemEnv Value) (decs : List Dec),
       evaluate state env args.reverse = (middle, .val values) →
       doEvalRes (β := Value) values.reverse middle = (decoded, .val (evalEnv, decs)) →
-      decoded.clock ≠ 0 → DecsOracleAdjustedAt ci f compile (decClock decoded) evalEnv decs)
+      decoded.clock ≠ 0 → DecsOracleAdjustedAt compile ci f (decClock decoded) evalEnv decs)
     (result : Result (List Value) Value) (source : evaluate state env [.app .eval args] = (next, result))
     (inserted : isInsertOracle ci f state.evalState) (safe : result ≠ .err (.abort .typeError)) :
     isInsertOracle ci f next.evalState ∧
@@ -182,7 +182,7 @@ theorem adjustOracle_evaluate_Eval {Config F : Type} (ci : CompilerInstance Conf
         apply safe
         have h := congrArg Prod.snd pair
         simpa [bad] using h.symm
-      obtain ⟨middleInserted, adjustedArgs⟩ := argsIH middle (.err error) argsRun inserted innerSafe
+      obtain ⟨middleInserted, adjustedArgs⟩ := argsIH middle (.err error) ⟨argsRun, inserted, innerSafe⟩
       cases pair
       exact ⟨middleInserted, evaluate_eval_args_error _ _ env args error adjustedArgs⟩
     | val values =>

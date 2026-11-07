@@ -8,23 +8,23 @@ open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.EvaluateHOL Flapjac
 /-- Declaration adjustment at one input state and environment. This
 Flapjack predicate allows the Eval case to use its clock-bounded induction
 hypothesis without requiring a theorem for every input state. -/
-def DecsOracleAdjustedAt {Config F : Type} (ci : CompilerInstance Config)
-    (f compile : List Dec → List Dec) (state : State F) (env : SemEnv Value) (program : List Dec) : Prop :=
+def DecsOracleAdjustedAt {Config F : Type} (compile : List Dec → List Dec)
+    (ci : CompilerInstance Config) (f : List Dec → List Dec) (state : State F) (env : SemEnv Value) (program : List Dec) : Prop :=
   ∀ (next : State F) (result : Result (SemEnv Value) Value),
-    evaluateDecs state env program = (next, result) →
-    isInsertOracle ci f state.evalState → result ≠ .err (.abort .typeError) →
+    evaluateDecs state env program = (next, result) ∧
+    isInsertOracle ci f state.evalState ∧ result ≠ .err (.abort .typeError) →
     isInsertOracle ci f next.evalState ∧
       evaluateDecs { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env program =
         ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result)
 
 /-- Expression adjustment at a fixed input state and environment. This
 Flapjack predicate represents the hypothesis for one recursive evaluation. -/
-def ExpsOracleAdjustedAt {Config F : Type} (ci : CompilerInstance Config)
-    (f compile : List Dec → List Dec) (state : State F) (env : SemEnv Value)
+def ExpsOracleAdjustedAt {Config F : Type} (compile : List Dec → List Dec)
+    (ci : CompilerInstance Config) (f : List Dec → List Dec) (state : State F) (env : SemEnv Value)
     (expressions : List AstHOL.Exp) : Prop :=
   ∀ (next : State F) (result : Result (List Value) Value),
-    evaluate state env expressions = (next, result) →
-    isInsertOracle ci f state.evalState → result ≠ .err (.abort .typeError) →
+    evaluate state env expressions = (next, result) ∧
+    isInsertOracle ci f state.evalState ∧ result ≠ .err (.abort .typeError) →
     isInsertOracle ci f next.evalState ∧
       evaluate { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env expressions =
         ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result)
@@ -32,19 +32,16 @@ def ExpsOracleAdjustedAt {Config F : Type} (ci : CompilerInstance Config)
 /-- Module case of the original evaluator induction, using the induction
 hypothesis for its contained declarations. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
-theorem adjustOracle_evaluate_Dmod {Config F : Type} (ci : CompilerInstance Config)
-    (f compile : List Dec → List Dec) (_compilePreserve : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
+theorem adjustOracle_evaluate_Dmod {Config F : Type} (compile : List Dec → List Dec)
+    (ci : CompilerInstance Config) (f : List Dec → List Dec)
+    (_preserves : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
       (res : Result (SemEnv Value) Value),
       evaluateDecs s env ds = (next, res) ∧ res ≠ .err (.abort .typeError) →
         evaluateDecs s env (compile ds) = (next, res))
-    (name : ModN) (ds : List Dec)
-    (state next : State F) (env : SemEnv Value) (ih : DecsOracleAdjustedAt ci f compile state env ds) (result : Result (SemEnv Value) Value)
-    (source : evaluateDecs state env [.dmod name ds] = (next, result))
-    (inserted : isInsertOracle ci f state.evalState)
-    (safe : result ≠ .err (.abort .typeError)) :
-    isInsertOracle ci f next.evalState ∧
-      evaluateDecs { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env [.dmod name ds] =
-        ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result) := by
+    (state : State F) (env : SemEnv Value) (name : ModN) (ds : List Dec)
+    (ih : DecsOracleAdjustedAt compile ci f state env ds) :
+    DecsOracleAdjustedAt compile ci f state env [.dmod name ds] := by
+  intro next result ⟨source, inserted, safe⟩
   cases run : evaluateDecs state env ds with
   | mk middle inner =>
     cases inner with
@@ -55,14 +52,14 @@ theorem adjustOracle_evaluate_Dmod {Config F : Type} (ci : CompilerInstance Conf
         apply safe
         have h := congrArg Prod.snd pair
         simpa [bad] using h.symm
-      obtain ⟨middleInserted, replacement⟩ := ih middle (.err error) run inserted innerSafe
+      obtain ⟨middleInserted, replacement⟩ := ih middle (.err error) ⟨run, inserted, innerSafe⟩
       cases pair
       exact ⟨middleInserted, by simp [evaluateDecs, replacement]⟩
     | val innerEnv =>
       have pair : (middle, .val { v := Flapjack.NamespaceHOL.nsLift name innerEnv.v,
                                   c := Flapjack.NamespaceHOL.nsLift name innerEnv.c }) = (next, result) := by
         simpa [evaluateDecs, run] using source
-      obtain ⟨middleInserted, replacement⟩ := ih middle (.val innerEnv) run inserted (by simp)
+      obtain ⟨middleInserted, replacement⟩ := ih middle (.val innerEnv) ⟨run, inserted, (by simp)⟩
       cases pair
       exact ⟨middleInserted, by simp [evaluateDecs, replacement]⟩
 
@@ -75,10 +72,10 @@ theorem adjustOracle_evaluate_Dlocal {Config F : Type} (ci : CompilerInstance Co
       evaluateDecs s env ds = (next, res) ∧ res ≠ .err (.abort .typeError) →
         evaluateDecs s env (compile ds) = (next, res))
     (locals body : List Dec) (state next : State F) (env : SemEnv Value)
-    (localsIH : DecsOracleAdjustedAt ci f compile state env locals)
+    (localsIH : DecsOracleAdjustedAt compile ci f state env locals)
     (bodyIH : ∀ (middle : State F) (innerEnv : SemEnv Value),
       evaluateDecs state env locals = (middle, .val innerEnv) →
-      DecsOracleAdjustedAt ci f compile middle (extendDecEnv innerEnv env) body) (result : Result (SemEnv Value) Value)
+      DecsOracleAdjustedAt compile ci f middle (extendDecEnv innerEnv env) body) (result : Result (SemEnv Value) Value)
     (source : evaluateDecs state env [.dlocal locals body] = (next, result))
     (inserted : isInsertOracle ci f state.evalState)
     (safe : result ≠ .err (.abort .typeError)) :
@@ -96,15 +93,15 @@ theorem adjustOracle_evaluate_Dlocal {Config F : Type} (ci : CompilerInstance Co
         apply safe
         have h := congrArg Prod.snd pair
         simpa [bad] using h.symm
-      obtain ⟨middleInserted, replacement⟩ := localsIH middle (.err error) run inserted innerSafe
+      obtain ⟨middleInserted, replacement⟩ := localsIH middle (.err error) ⟨run, inserted, innerSafe⟩
       cases pair
       exact ⟨middleInserted, by simp [replacement]⟩
     | val innerEnv =>
       have bodyRun : evaluateDecs middle (extendDecEnv innerEnv env) body = (next, result) := by
         simpa [run] using source
-      obtain ⟨middleInserted, replacement⟩ := localsIH middle (.val innerEnv) run inserted (by simp)
+      obtain ⟨middleInserted, replacement⟩ := localsIH middle (.val innerEnv) ⟨run, inserted, (by simp)⟩
       obtain ⟨nextInserted, bodyReplacement⟩ :=
-        bodyIH middle innerEnv run next result bodyRun middleInserted safe
+        bodyIH middle innerEnv run next result ⟨bodyRun, middleInserted, safe⟩
       exact ⟨nextInserted, by simpa [replacement] using bodyReplacement⟩
 
 /-- Non-singleton declaration-list case of the evaluator induction. -/
@@ -116,10 +113,10 @@ theorem adjustOracle_evaluate_DecsCons {Config F : Type} (ci : CompilerInstance 
         evaluateDecs s env (compile ds) = (next, res))
     (first second : Dec) (rest : List Dec)
     (state next : State F) (env : SemEnv Value)
-    (firstIH : DecsOracleAdjustedAt ci f compile state env [first])
+    (firstIH : DecsOracleAdjustedAt compile ci f state env [first])
     (tailIH : ∀ (middle : State F) (innerEnv : SemEnv Value),
       evaluateDecs state env [first] = (middle, .val innerEnv) →
-      DecsOracleAdjustedAt ci f compile middle (extendDecEnv innerEnv env) (second :: rest)) (result : Result (SemEnv Value) Value)
+      DecsOracleAdjustedAt compile ci f middle (extendDecEnv innerEnv env) (second :: rest)) (result : Result (SemEnv Value) Value)
     (source : evaluateDecs state env (first :: second :: rest) = (next, result))
     (inserted : isInsertOracle ci f state.evalState)
     (safe : result ≠ .err (.abort .typeError)) :
@@ -137,7 +134,7 @@ theorem adjustOracle_evaluate_DecsCons {Config F : Type} (ci : CompilerInstance 
         apply safe
         have h := congrArg Prod.snd pair
         simpa [bad] using h.symm
-      obtain ⟨middleInserted, replacement⟩ := firstIH middle (.err error) run inserted innerSafe
+      obtain ⟨middleInserted, replacement⟩ := firstIH middle (.err error) ⟨run, inserted, innerSafe⟩
       cases pair
       exact ⟨middleInserted, by simp [replacement]⟩
     | val innerEnv =>
@@ -150,9 +147,9 @@ theorem adjustOracle_evaluate_DecsCons {Config F : Type} (ci : CompilerInstance 
           apply safe
           have h := congrArg Prod.snd pair
           simpa [bad, combineDecResult] using h.symm
-        obtain ⟨middleInserted, replacement⟩ := firstIH middle (.val innerEnv) run inserted (by simp)
+        obtain ⟨middleInserted, replacement⟩ := firstIH middle (.val innerEnv) ⟨run, inserted, (by simp)⟩
         obtain ⟨finalInserted, tailReplacement⟩ :=
-          tailIH middle innerEnv run final tailResult tailRun middleInserted tailSafe
+          tailIH middle innerEnv run final tailResult ⟨tailRun, middleInserted, tailSafe⟩
         cases pair
         exact ⟨finalInserted, by simp [replacement, tailReplacement]⟩
 
@@ -166,7 +163,7 @@ theorem adjustOracle_evaluate_Dlet {Config F : Type} (ci : CompilerInstance Conf
     (locs : Flapjack.Misc.Location.Locs) (pat : Pat) (expr : AstHOL.Exp)
     (state next : State F) (env : SemEnv Value)
     (ih : ((patBindings pat).Nodup ∧ everyExp (oneConCheck env.c) expr = true) →
-      ExpsOracleAdjustedAt ci f compile state env [expr]) (result : Result (SemEnv Value) Value)
+      ExpsOracleAdjustedAt compile ci f state env [expr]) (result : Result (SemEnv Value) Value)
     (source : evaluateDecs state env [.dlet locs pat expr] = (next, result))
     (inserted : isInsertOracle ci f state.evalState)
     (safe : result ≠ .err (.abort .typeError)) :
@@ -186,11 +183,11 @@ theorem adjustOracle_evaluate_Dlet {Config F : Type} (ci : CompilerInstance Conf
           have h := congrArg Prod.snd pair
           have errorEq : error = .abort .typeError := Result.err.inj bad
           simpa [errorEq] using h.symm
-        obtain ⟨middleInserted, replacement⟩ := ih check middle (.err error) run inserted innerSafe
+        obtain ⟨middleInserted, replacement⟩ := ih check middle (.err error) ⟨run, inserted, innerSafe⟩
         cases pair
         exact ⟨middleInserted, by simp [evaluateDecs, check, replacement]⟩
       | val values =>
-        obtain ⟨middleInserted, replacement⟩ := ih check middle (.val values) run inserted (by simp)
+        obtain ⟨middleInserted, replacement⟩ := ih check middle (.val values) ⟨run, inserted, (by simp)⟩
         cases matched : pmatch env.c middle.refs pat (headValue values) [] with
         | typeError =>
           simp [evaluateDecs, check, run, matched, typeError] at source

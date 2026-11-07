@@ -12,7 +12,7 @@ theorem adjustOracle_evaluate_AppSimple {Config F : Type} (ci : CompilerInstance
       evaluateDecs s env ds = (next, res) ∧ res ≠ .err (.abort .typeError) →
         evaluateDecs s env (compile ds) = (next, res))
     (state next : State F) (env : SemEnv Value) (op : Op) (args : List AstHOL.Exp) (opClass : getOpClass op = .simple)
-    (argsIH : ExpsOracleAdjustedAt ci f compile state env args.reverse)
+    (argsIH : ExpsOracleAdjustedAt compile ci f state env args.reverse)
     (result : Result (List Value) Value)
     (source : evaluate state env [.app op args] = (next, result))
     (inserted : isInsertOracle ci f state.evalState) (safe : result ≠ .err (.abort .typeError)) :
@@ -35,11 +35,11 @@ theorem adjustOracle_evaluate_AppSimple {Config F : Type} (ci : CompilerInstance
         apply safe
         have h := congrArg Prod.snd pair
         simpa [bad] using h.symm
-      obtain ⟨middleInserted, replacement⟩ := argsIH middle (.err error) argsRun inserted innerSafe
+      obtain ⟨middleInserted, replacement⟩ := argsIH middle (.err error) ⟨argsRun, inserted, innerSafe⟩
       cases pair
       exact ⟨middleInserted, by simp [adjusted, replacement]⟩
     | val values =>
-      obtain ⟨middleInserted, replacement⟩ := argsIH middle (.val values) argsRun inserted (by simp)
+      obtain ⟨middleInserted, replacement⟩ := argsIH middle (.val values) ⟨argsRun, inserted, (by simp)⟩
       cases app : doApp (middle.refs, middle.ffi) op values.reverse with
       | none =>
         simp [argsRun, opClass, app, typeError] at source
@@ -61,11 +61,11 @@ theorem adjustOracle_evaluate_AppFunction {Config F : Type} (ci : CompilerInstan
       evaluateDecs s env ds = (next, res) ∧ res ≠ .err (.abort .typeError) →
         evaluateDecs s env (compile ds) = (next, res))
     (state next : State F) (env : SemEnv Value) (op : Op) (args : List AstHOL.Exp)
-    (opClass : getOpClass op = .funApp) (argsIH : ExpsOracleAdjustedAt ci f compile state env args.reverse)
+    (opClass : getOpClass op = .funApp) (argsIH : ExpsOracleAdjustedAt compile ci f state env args.reverse)
     (bodyIH : ∀ (middle : State F) (values : List Value) (callEnv : SemEnv Value) (body : AstHOL.Exp),
       evaluate state env args.reverse = (middle, .val values) →
       doOpApp values.reverse = some (callEnv, body) → middle.clock ≠ 0 →
-      ExpsOracleAdjustedAt ci f compile (decClock middle) callEnv [body])
+      ExpsOracleAdjustedAt compile ci f (decClock middle) callEnv [body])
     (result : Result (List Value) Value) (source : evaluate state env [.app op args] = (next, result))
     (inserted : isInsertOracle ci f state.evalState) (safe : result ≠ .err (.abort .typeError)) :
     isInsertOracle ci f next.evalState ∧
@@ -87,11 +87,11 @@ theorem adjustOracle_evaluate_AppFunction {Config F : Type} (ci : CompilerInstan
         apply safe
         have h := congrArg Prod.snd pair
         simpa [bad] using h.symm
-      obtain ⟨middleInserted, replacement⟩ := argsIH middle (.err error) argsRun inserted innerSafe
+      obtain ⟨middleInserted, replacement⟩ := argsIH middle (.err error) ⟨argsRun, inserted, innerSafe⟩
       cases pair
       exact ⟨middleInserted, by simp [adjusted, replacement]⟩
     | val values =>
-      obtain ⟨middleInserted, replacement⟩ := argsIH middle (.val values) argsRun inserted (by simp)
+      obtain ⟨middleInserted, replacement⟩ := argsIH middle (.val values) ⟨argsRun, inserted, (by simp)⟩
       cases app : doOpApp values.reverse with
       | none =>
         simp [argsRun, opClass, app, typeError] at source
@@ -106,7 +106,7 @@ theorem adjustOracle_evaluate_AppFunction {Config F : Type} (ci : CompilerInstan
         · have bodyRun : evaluate (decClock middle) callEnv [body] = (next, result) := by
             simpa [argsRun, opClass, app, clock] using source
           obtain ⟨nextInserted, bodyReplacement⟩ :=
-            bodyIH middle values callEnv body argsRun app clock next result bodyRun (by simpa [decClock] using middleInserted) safe
+            bodyIH middle values callEnv body argsRun app clock next result ⟨bodyRun, (by simpa [decClock] using middleInserted), safe⟩
           exact ⟨nextInserted, by simpa [adjusted, replacement, opClass, app, clock, decClock] using bodyReplacement⟩
 
 /-- Flapjack proof infrastructure for the thunk-forcing branch of HOL's
@@ -117,13 +117,13 @@ theorem adjustOracle_evaluate_AppForce {Config F : Type} (ci : CompilerInstance 
       evaluateDecs s env ds = (next, res) ∧ res ≠ .err (.abort .typeError) →
         evaluateDecs s env (compile ds) = (next, res))
     (state next : State F) (env : SemEnv Value) (op : Op) (args : List AstHOL.Exp)
-    (opClass : getOpClass op = .force) (argsIH : ExpsOracleAdjustedAt ci f compile state env args.reverse)
+    (opClass : getOpClass op = .force) (argsIH : ExpsOracleAdjustedAt compile ci f state env args.reverse)
     (bodyIH : ∀ (middle : State F) (values : List Value) (thunk : Value)
       (callEnv : SemEnv Value) (body : AstHOL.Exp),
       evaluate state env args.reverse = (middle, .val values) →
       destThunk values.reverse middle.refs = .isThunk .notEvaluated thunk →
       doOpApp [thunk, .conv none []] = some (callEnv, body) → middle.clock ≠ 0 →
-      ExpsOracleAdjustedAt ci f compile (decClock middle) callEnv [body])
+      ExpsOracleAdjustedAt compile ci f (decClock middle) callEnv [body])
     (result : Result (List Value) Value) (source : evaluate state env [.app op args] = (next, result))
     (inserted : isInsertOracle ci f state.evalState) (safe : result ≠ .err (.abort .typeError)) :
     isInsertOracle ci f next.evalState ∧
@@ -145,11 +145,11 @@ theorem adjustOracle_evaluate_AppForce {Config F : Type} (ci : CompilerInstance 
         apply safe
         have h := congrArg Prod.snd pair
         simpa [bad] using h.symm
-      obtain ⟨middleInserted, replacement⟩ := argsIH middle (.err error) argsRun inserted innerSafe
+      obtain ⟨middleInserted, replacement⟩ := argsIH middle (.err error) ⟨argsRun, inserted, innerSafe⟩
       cases pair
       exact ⟨middleInserted, by simp [adjusted, replacement]⟩
     | val values =>
-      obtain ⟨middleInserted, replacement⟩ := argsIH middle (.val values) argsRun inserted (by simp)
+      obtain ⟨middleInserted, replacement⟩ := argsIH middle (.val values) ⟨argsRun, inserted, (by simp)⟩
       cases thunkRun : destThunk values.reverse middle.refs with
       | badRef | notThunk =>
         simp [argsRun, opClass, thunkRun, typeError] at source
@@ -186,15 +186,15 @@ theorem adjustOracle_evaluate_AppForce {Config F : Type} (ci : CompilerInstance 
                     have h := congrArg Prod.snd pair
                     simpa [bad] using h.symm
                   obtain ⟨afterInserted, bodyReplacement⟩ :=
-                    bodyIH middle values thunk callEnv body argsRun thunkRun app clock after (.err error) bodyRun
-                      (by simpa [decClock] using middleInserted) bodySafe
+                    bodyIH middle values thunk callEnv body argsRun thunkRun app clock after (.err error) ⟨bodyRun,
+                      (by simpa [decClock] using middleInserted), bodySafe⟩
                   simp only [decClock] at bodyReplacement
                   cases pair
                   exact ⟨afterInserted, by simp [adjusted, replacement, opClass, thunkRun, app, clock, decClock, bodyReplacement]⟩
                 | val newValues =>
                   obtain ⟨afterInserted, bodyReplacement⟩ :=
-                    bodyIH middle values thunk callEnv body argsRun thunkRun app clock after (.val newValues) bodyRun
-                      (by simpa [decClock] using middleInserted) (by simp)
+                    bodyIH middle values thunk callEnv body argsRun thunkRun app clock after (.val newValues) ⟨bodyRun,
+                      (by simpa [decClock] using middleInserted), (by simp)⟩
                   simp only [decClock] at bodyReplacement
                   cases updated : updateThunk values.reverse after.refs newValues with
                   | none =>
@@ -216,21 +216,21 @@ theorem adjustOracle_evaluate_App {Config F : Type} (ci : CompilerInstance Confi
       evaluateDecs s env ds = (next, res) ∧ res ≠ .err (.abort .typeError) →
         evaluateDecs s env (compile ds) = (next, res))
     (state next : State F) (env : SemEnv Value) (op : Op) (args : List AstHOL.Exp)
-    (argsIH : ExpsOracleAdjustedAt ci f compile state env args.reverse)
+    (argsIH : ExpsOracleAdjustedAt compile ci f state env args.reverse)
     (functionIH : getOpClass op = .funApp → ∀ (middle : State F) (values : List Value) (callEnv : SemEnv Value) (body : AstHOL.Exp),
       evaluate state env args.reverse = (middle, .val values) →
       doOpApp values.reverse = some (callEnv, body) → middle.clock ≠ 0 →
-      ExpsOracleAdjustedAt ci f compile (decClock middle) callEnv [body])
+      ExpsOracleAdjustedAt compile ci f (decClock middle) callEnv [body])
     (forceIH : getOpClass op = .force → ∀ (middle : State F) (values : List Value) (thunk : Value)
       (callEnv : SemEnv Value) (body : AstHOL.Exp),
       evaluate state env args.reverse = (middle, .val values) →
       destThunk values.reverse middle.refs = .isThunk .notEvaluated thunk →
       doOpApp [thunk, .conv none []] = some (callEnv, body) → middle.clock ≠ 0 →
-      ExpsOracleAdjustedAt ci f compile (decClock middle) callEnv [body])
+      ExpsOracleAdjustedAt compile ci f (decClock middle) callEnv [body])
     (evalIH : getOpClass op = .evalOp → ∀ (middle decoded : State F) (values : List Value) (evalEnv : SemEnv Value) (decs : List Dec),
       evaluate state env args.reverse = (middle, .val values) →
       doEvalRes (β := Value) values.reverse middle = (decoded, .val (evalEnv, decs)) →
-      decoded.clock ≠ 0 → DecsOracleAdjustedAt ci f compile (decClock decoded) evalEnv decs)
+      decoded.clock ≠ 0 → DecsOracleAdjustedAt compile ci f (decClock decoded) evalEnv decs)
     (result : Result (List Value) Value) (source : evaluate state env [.app op args] = (next, result))
     (inserted : isInsertOracle ci f state.evalState) (safe : result ≠ .err (.abort .typeError)) :
     isInsertOracle ci f next.evalState ∧
