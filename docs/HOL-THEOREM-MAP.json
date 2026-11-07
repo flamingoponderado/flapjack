@@ -340,6 +340,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "FST_PAIR_MAP_I",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/PatternStamps.lean",
+  "lean_name": "fst_pairMap_id",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared fst_pair_map_i_replay in source_to_flat_init_probe.out: the independent pair component and function result types, pair-map application, and first-projection equality agree; the local HOL proof is replayed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
   "hol_name": "opt_bind_lem",
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateLocalBoundedArray.lean",
   "lean_name": "optBind_none",

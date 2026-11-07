@@ -6,6 +6,9 @@ fun show_thm label th =
   if null (hyp th) then (print label; print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
 fun show_eval label tm = (print label; print_term (rhs (concl (EVAL tm))); print "\n");
+val fst_pair_map_i_replay = Q.prove (
+  `FST ((I ## f) x) = FST x`, Cases_on `x` \\ simp []);
+val _ = show_thm "fst_pair_map_i_replay=" fst_pair_map_i_replay;
 val _ = show_thm "opt_bind_definition_typed=" miscTheory.opt_bind_def;
 val opt_bind_lem_replay = Q.prove (
   `misc$opt_bind NONE = \x y. y`, rw [FUN_EQ_THM, miscTheory.opt_bind_def]);

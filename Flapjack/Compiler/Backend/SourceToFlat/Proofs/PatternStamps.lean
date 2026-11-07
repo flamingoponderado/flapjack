@@ -6,6 +6,13 @@ import Flapjack.Compiler.Backend.Semantics.FlatSem.PatternMatch
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.SemanticPrimitivesHOL
 
+/-- Mapping the second component of a pair preserves its first component. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "FST_PAIR_MAP_I"]
+theorem fst_pairMap_id {α β γ : Type} (f : β → γ) (pair : α × β) :
+    (Prod.map id f pair).1 = pair.1 := by
+  cases pair
+  rfl
+
 /-- Equal flat constructor IDs and arities determine the same source constructor. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml"
   "genv_c_ok_same_type_FST_eq_imp_same_ctor" (fmap_as_finite_support_parameters := [genvC])]
