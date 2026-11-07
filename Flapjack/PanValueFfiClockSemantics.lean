@@ -998,13 +998,17 @@ def evalPanValueFfiClockProgramCodeCall
     (memoryAccess := memoryAccess) (contracts := contracts)
     (memoryHandler := memoryHandler) (evaluator := evaluator)
 
-/-! The declaration-to-entry tail shared by the generic program runner and the
+/-- The declaration-to-entry tail shared by the generic program runner and the
     RV64 HOL-routed runner: evaluate the entry call from an already-evaluated
     declaration state, then enforce `panSem`'s single-value return shape. The
     state supplies the structure context, code map, globals, memory and return
     metadata, so the entry call and its shape check always read the same
-    evaluated declaration state. This adapter itself is Flapjack infrastructure
-    with no single HOL declaration. -/
+    evaluated declaration state.
+
+    It has no single HOL declaration: HOL's `panSem` evaluates declarations and
+    the entry call in one `evaluate_decls` step, while the Lean runners keep the
+    already-evaluated declaration state separate so both runners can share this
+    entry step. This adapter is therefore Flapjack infrastructure. -/
 def evalPanValueFfiClockProgramEntry
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
@@ -1013,8 +1017,8 @@ def evalPanValueFfiClockProgramEntry
     (primitive : PanPrimitiveHandler α)
     (handler : PanValueStatefulFfiHandler α σ)
     (state : PanValueProgramState α)
-    (ffi : FfiState σ) (clock : Nat)
-    (fuel : Nat) (entry : FunName) (arguments : List (Exp α))
+    (fuel : Nat) (ffi : FfiState σ) (clock : Nat)
+    (entry : FunName) (arguments : List (Exp α))
     (memoryAccess : Option (PanValueMemoryAccess α) := none)
     (memoryHandler : Option (PanValueMemoryFfiHandler α σ) := none)
     (evaluator : Option (PanExprEvaluator α) := none) :
@@ -1047,7 +1051,7 @@ def evalPanValueFfiClockProgram
     Option (PanValueFfiClockResult α σ) := do
   let state ← evalPanValueDeclarations initial.source declarations
     (memoryAccess := memoryAccess) (evaluator := evaluator)
-  evalPanValueFfiClockProgramEntry context primitive handler state initial.ffi clock fuel
+  evalPanValueFfiClockProgramEntry context primitive handler state fuel initial.ffi clock
     entry arguments (memoryAccess := memoryAccess) (memoryHandler := memoryHandler)
     (evaluator := evaluator)
 
