@@ -14393,6 +14393,22 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "reset_env_generation_orac_eqs",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleReset.lean",
+    "lean_name": "resetEnvGeneration_oracleEqs",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared reset_oracle_eqs in source_eval_oracle_adjust_probe.out: all six original conjuncts are retained, including the original identity-transform and first-component oracle shift, the three predicate equivalences, both reset equalities and arbitrary oracle-state projection equality."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "insert_declare_env",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleReset.lean",
+    "lean_name": "insert_declareEnv",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared insert_declare_env in source_eval_oracle_adjust_probe.out: the successful declaration and recording premises give the four original conclusions, including both conditional simulation and recorded-oracle well-formedness, with identity-transform and first-component shift."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
     "hol_name": "v_to_list_concrete",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/Concrete.lean",
     "lean_name": "valueToList_concrete",

@@ -58,3 +58,5 @@ val _ = show_thm "maybe_all_list_every=" source_evalProofTheory.maybe_all_list_E
 val _ = show_thm "word8_list_concrete=" source_evalProofTheory.v_to_word8_list_concrete;
 val _ = show_thm "word64_list_concrete=" source_evalProofTheory.v_to_word64_list_concrete;
 val _ = show_thm "compiler_agrees_concrete=" source_evalProofTheory.compiler_agrees;
+val _ = show_thm "reset_oracle_eqs=" source_evalProofTheory.reset_env_generation_orac_eqs;
+val _ = show_thm "insert_declare_env=" source_evalProofTheory.insert_declare_env;
