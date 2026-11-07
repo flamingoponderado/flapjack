@@ -161,52 +161,6 @@ theorem evaluateLiftLet_letrec {F : Type} (state : State F) (env : SemEnv Value)
   rw [envEq]
   simp [hb]
 
-/-- Original result-shaped anonymous-let case of the single lifting theorem. -/
-@[hol "cakeml/compiler/backend/proofs/source_letProofScript.sml" "evaluate_lift_let"]
-theorem evaluate_lift_let_anonymous {F : Type} (state next : State F) (env : SemEnv Value)
-    (loc : Flapjack.Misc.Location.Locs) (pat : Pat) (first body : AstHOL.Exp)
-    (result : Result (SemEnv Value) Value) (d1 d2 : Dec)
-    (source : EvaluateHOL.evaluateDecs state env [.dlet loc pat (.let_ none first body)] = (next, result))
-    (safe : result ≠ .err (.abort .typeError))
-    (lifted : liftLet (.dlet loc pat (.let_ none first body)) = some (d1, d2)) :
-    EvaluateHOL.evaluateDecs state env [.dlocal [d1] [d2]] = (next, result) := by
-  simp only [liftLet, Option.some.injEq, Prod.mk.injEq] at lifted
-  obtain ⟨rfl, rfl⟩ := lifted
-  have safe' : (EvaluateHOL.evaluateDecs state env [.dlet loc pat (.let_ none first body)]).2 ≠
-      .err (.abort .typeError) := by rw [source]; exact safe
-  rw [evaluateLiftLet_anonymous state env loc pat first body safe', source]
-
-/-- Original result-shaped named-let case of the single lifting theorem. -/
-@[hol "cakeml/compiler/backend/proofs/source_letProofScript.sml" "evaluate_lift_let"]
-theorem evaluate_lift_let_named {F : Type} (state next : State F) (env : SemEnv Value)
-    (loc : Flapjack.Misc.Location.Locs) (pat : Pat) (name : VarN) (first body : AstHOL.Exp)
-    (result : Result (SemEnv Value) Value) (d1 d2 : Dec)
-    (source : EvaluateHOL.evaluateDecs state env [.dlet loc pat (.let_ (some name) first body)] = (next, result))
-    (safe : result ≠ .err (.abort .typeError))
-    (lifted : liftLet (.dlet loc pat (.let_ (some name) first body)) = some (d1, d2)) :
-    EvaluateHOL.evaluateDecs state env [.dlocal [d1] [d2]] = (next, result) := by
-  simp only [liftLet, Option.some.injEq, Prod.mk.injEq] at lifted
-  obtain ⟨rfl, rfl⟩ := lifted
-  have safe' : (EvaluateHOL.evaluateDecs state env [.dlet loc pat (.let_ (some name) first body)]).2 ≠
-      .err (.abort .typeError) := by rw [source]; exact safe
-  rw [evaluateLiftLet_named state env loc pat name first body safe', source]
-
-/-- Original result-shaped recursive-let case of the single lifting theorem. -/
-@[hol "cakeml/compiler/backend/proofs/source_letProofScript.sml" "evaluate_lift_let"]
-theorem evaluate_lift_let_letrec {F : Type} (state next : State F) (env : SemEnv Value)
-    (loc : Flapjack.Misc.Location.Locs) (pat : Pat)
-    (funs : List (VarN × VarN × AstHOL.Exp)) (body : AstHOL.Exp)
-    (result : Result (SemEnv Value) Value) (d1 d2 : Dec)
-    (source : EvaluateHOL.evaluateDecs state env [.dlet loc pat (.letrec funs body)] = (next, result))
-    (safe : result ≠ .err (.abort .typeError))
-    (lifted : liftLet (.dlet loc pat (.letrec funs body)) = some (d1, d2)) :
-    EvaluateHOL.evaluateDecs state env [.dlocal [d1] [d2]] = (next, result) := by
-  simp only [liftLet, Option.some.injEq, Prod.mk.injEq] at lifted
-  obtain ⟨rfl, rfl⟩ := lifted
-  have safe' : (EvaluateHOL.evaluateDecs state env [.dlet loc pat (.letrec funs body)]).2 ≠
-      .err (.abort .typeError) := by rw [source]; exact safe
-  rw [evaluateLiftLet_letrec state env loc pat funs body safe', source]
-
 /-- A successful single let-lifting step preserves the original declaration
 evaluation whenever that evaluation does not produce a type error. -/
 @[hol "cakeml/compiler/backend/proofs/source_letProofScript.sml" "evaluate_lift_let"]
@@ -215,14 +169,26 @@ theorem evaluate_lift_let {F : Type} (state next : State F) (env : SemEnv Value)
     (source : EvaluateHOL.evaluateDecs state env [d] = (next, result))
     (safe : result ≠ .err (.abort .typeError)) (lifted : liftLet d = some (d1, d2)) :
     EvaluateHOL.evaluateDecs state env [.dlocal [d1] [d2]] = (next, result) := by
+  have safe' : (EvaluateHOL.evaluateDecs state env [d]).2 ≠ .err (.abort .typeError) := by
+    rw [source]
+    exact safe
   cases d with
   | dlet loc pat expr =>
     cases expr with
     | let_ name first body =>
       cases name with
-      | none => exact evaluate_lift_let_anonymous state next env loc pat first body result d1 d2 source safe lifted
-      | some name => exact evaluate_lift_let_named state next env loc pat name first body result d1 d2 source safe lifted
-    | letrec funs body => exact evaluate_lift_let_letrec state next env loc pat funs body result d1 d2 source safe lifted
+      | none =>
+        simp only [liftLet, Option.some.injEq, Prod.mk.injEq] at lifted
+        obtain ⟨rfl, rfl⟩ := lifted
+        rw [evaluateLiftLet_anonymous state env loc pat first body safe', source]
+      | some name =>
+        simp only [liftLet, Option.some.injEq, Prod.mk.injEq] at lifted
+        obtain ⟨rfl, rfl⟩ := lifted
+        rw [evaluateLiftLet_named state env loc pat name first body safe', source]
+    | letrec funs body =>
+      simp only [liftLet, Option.some.injEq, Prod.mk.injEq] at lifted
+      obtain ⟨rfl, rfl⟩ := lifted
+      rw [evaluateLiftLet_letrec state env loc pat funs body safe', source]
     | _ => simp [liftLet] at lifted
   | _ => simp [liftLet] at lifted
 
