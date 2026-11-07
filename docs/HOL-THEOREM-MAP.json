@@ -1,5 +1,13 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "env_rel_nsEmpty",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EnvironmentEmpty.lean",
+  "lean_name": "envRel_nsEmpty",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed environment_relation_empty in source_eval_oracle_adjust_probe.out: both conjuncts preserve constructor, value-domain and module-domain equalities. HOL prints two different free x variables at distinct types; Lean retains both independently, along with the first conjunct's universal target environment and the second base environment's independent type."
+},
+{
   "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml",
   "hol_name": "nsDom_nsLift",
   "lean_path": "Flapjack/NamespaceProps/LiftDomains.lean",
