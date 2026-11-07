@@ -153,6 +153,28 @@ def evalPanValueDeclarations
         { state with structs := structs } declarations
         (memoryAccess := memoryAccess) (evaluator := evaluator)
 
+/-- Evaluate declarations with a route builder that receives the collected
+    structure context, returning both the resulting state and the evaluator the
+    builder produced so the entry phase can reuse it. `evalPanValueDeclarations`
+    is the constant-builder case and performs the same collection and seeding
+    steps. -/
+def evalPanValueDeclarationsWithRoute
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (state : PanValueProgramState α) :
+    (declarations : List (Decl α)) →
+    (memoryAccess : Option (PanValueMemoryAccess α) := none) →
+    (route : StructContext → Option (PanExprEvaluator α)) →
+      Option (PanValueProgramState α × Option (PanExprEvaluator α))
+  | declarations, memoryAccess, route => do
+      let structs ← collectPanValueStructs declarations state.structs
+      let evaluator := route structs
+      let state ← evalPanValueDeclarationsWithStructs structs
+        { state with structs := structs } declarations
+        (memoryAccess := memoryAccess) (evaluator := evaluator)
+      return (state, evaluator)
+
 /-- A pointwise-correct expression route preserves declaration evaluation
     with a fixed structure context and source word size. -/
 theorem evalPanValueDeclarationsWithStructs_route_eq
