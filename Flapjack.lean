@@ -26,6 +26,7 @@ import Flapjack.Compiler.Backend.SourceEval.Proofs.Abort
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationBase
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationCons
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationExpressions
+import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationConstructors
 import Flapjack.SemanticPrimitivesProps.OpApp
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EnvironmentConstructors
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EnvironmentEmpty
