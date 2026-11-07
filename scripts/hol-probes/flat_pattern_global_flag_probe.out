@@ -1,3 +1,6 @@
+no_mat_decode_pos=∀(p :position) (exp :exp). no_Mat exp ⇒ no_Mat (decode_pos (t :tra) exp p)
+no_mat_decode_test=no_Mat (exp :exp) ⇒ no_Mat (decode_test (t :tra) (d :dTest) exp)
+no_mat_decode_guard=no_Mat (exp :exp) ⇒ no_Mat (decode_guard (t :tra) exp (gd :dGuard))
 no_mat_compile_bindings=∀(t :tra) (i :num) (n_bindings :(flatLang$pat # num # exp) list) (exp :exp). no_Mat exp ∧ EVERY (λ((_0 :flatLang$pat),(_1 :num),(v_exp :exp)). no_Mat v_exp) n_bindings ⇒ no_Mat (SND (compile_pat_bindings t i n_bindings exp))
 no_mat_naive_match=∀(t :tra) (xs :(flatLang$pat # exp) list). EVERY (no_Mat ∘ (SND :flatLang$pat # exp -> exp)) xs ⇒ no_Mat (naive_pattern_match t xs)
 no_mat_naive_matches=∀(t :tra) (x :exp) (xs :(flatLang$pat # exp) list) (dflt :exp). EVERY no_Mat (x::dflt::MAP (SND :flatLang$pat # exp -> exp) xs) ⇒ no_Mat (naive_pattern_matches t x xs dflt)

@@ -26,7 +26,8 @@ theorem noMat_smartIf (trace : Tra) (condition yes no : FlatLang.Exp)
       all_goals split_ifs <;> simp_all [FlatProps.noMat]
 
 /-- Following a pattern position preserves a match-free value expression. -/
-theorem noMat_decodePos (trace : Tra) (value : FlatLang.Exp) (pos : Position)
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "decode_pos_no_Mat"]
+theorem noMat_decodePos (trace : Tra) (pos : Position) (value : FlatLang.Exp)
     (safe : FlatProps.noMat value = true) : FlatProps.noMat (decodePos trace value pos) = true := by
   induction pos generalizing value with
   | emptyPos => exact safe
@@ -35,16 +36,18 @@ theorem noMat_decodePos (trace : Tra) (value : FlatLang.Exp) (pos : Position)
     simpa [FlatProps.noMat, FlatProps.noMatList] using safe
 
 /-- Generated atomic tests preserve match-freedom. -/
-theorem noMat_decodeTest (trace : Tra) (test : DTest) (value : FlatLang.Exp)
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "decode_test_no_Mat"]
+theorem noMat_decodeTest (value : FlatLang.Exp) (trace : Tra) (test : DTest)
     (safe : FlatProps.noMat value = true) : FlatProps.noMat (decodeTest trace test value) = true := by
   cases test <;> simp [decodeTest, FlatProps.noMat, FlatProps.noMatList, safe]
 
 /-- Generated decision guards preserve match-freedom. -/
-theorem noMat_decodeGuard (trace : Tra) (value : FlatLang.Exp) (guard : DGuard)
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "decode_guard_no_Mat"]
+theorem noMat_decodeGuard (value : FlatLang.Exp) (trace : Tra) (guard : DGuard)
     (safe : FlatProps.noMat value = true) : FlatProps.noMat (decodeGuard trace value guard) = true := by
   induction guard with
   | true_ => exact noMat_mkBool trace true
-  | posTest pos test => exact noMat_decodeTest trace test _ (noMat_decodePos trace value pos safe)
+  | posTest pos test => exact noMat_decodeTest _ trace test (noMat_decodePos trace pos value safe)
   | not guard ih => simp [decodeGuard, FlatProps.noMat, FlatProps.noMatList, ih, noMat_mkBool]
   | conj a b ihA ihB => exact noMat_smartIf trace _ _ _ ihA ihB (noMat_mkBool trace false)
   | disj a b ihA ihB => exact noMat_smartIf trace _ _ _ ihA (noMat_mkBool trace true) ihB
@@ -70,7 +73,7 @@ theorem noMat_decodeDtree (value default : FlatLang.Exp) (branches : Spt FlatLan
     split_ifs
     · exact ihYes
     · exact ihNo
-    · exact noMat_smartIf trace _ _ _ (noMat_decodeGuard trace value _ valueSafe) ihYes ihNo
+    · exact noMat_smartIf trace _ _ _ (noMat_decodeGuard value trace _ valueSafe) ihYes ihNo
 
 /-- Every generated child projection of a match-free expression is match-free. -/
 theorem noMat_children (trace : Tra) (value : FlatLang.Exp) (patterns : List FlatLang.Pat)

@@ -6,6 +6,9 @@ val _ = Globals.show_types := true;
 fun show_thm label th =
   if null (hyp th) then (print label; print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
+val _ = show_thm "no_mat_decode_pos=" flat_patternProofTheory.decode_pos_no_Mat;
+val _ = show_thm "no_mat_decode_test=" flat_patternProofTheory.decode_test_no_Mat;
+val _ = show_thm "no_mat_decode_guard=" flat_patternProofTheory.decode_guard_no_Mat;
 val _ = show_thm "no_mat_compile_bindings=" flat_patternProofTheory.compile_pat_bindings_no_Mat;
 val _ = show_thm "no_mat_naive_match=" flat_patternProofTheory.naive_pattern_match_no_Mat;
 val _ = show_thm "no_mat_naive_matches=" flat_patternProofTheory.naive_pattern_matches_no_Mat;

@@ -424,6 +424,30 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "decode_pos_no_Mat",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/NoMat.lean",
+  "lean_name": "noMat_decodePos",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared no_mat_decode_pos in flat_pattern_global_flag_probe.out: position and expression quantifiers, with the free trace parameter and the no_Mat premise and conclusion match."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "decode_test_no_Mat",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/NoMat.lean",
+  "lean_name": "noMat_decodeTest",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared no_mat_decode_test in flat_pattern_global_flag_probe.out: the expression, trace and decision-test carriers and the no_Mat premise and conclusion match."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "decode_guard_no_Mat",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/NoMat.lean",
+  "lean_name": "noMat_decodeGuard",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared no_mat_decode_guard in flat_pattern_global_flag_probe.out: the expression, trace and decision-guard carriers and the no_Mat premise and conclusion match."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
   "hol_name": "compile_pat_bindings_no_Mat",
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/NoMat.lean",
   "lean_name": "noMat_compilePatBindings",
