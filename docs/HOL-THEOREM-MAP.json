@@ -1,5 +1,13 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "env_rel_nsLookup_v",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EnvironmentLookup.lean",
+  "lean_name": "envRel_nsLookup_v",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed environment_relation_lookup in source_eval_oracle_adjust_probe.out: the source value type and independent target payload, related-environment and source-lookup conjunction, identifier, existential target binding, lookup equality and value relation agree."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
   "hol_name": "inc_compile_decs_intro",
   "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/InstallPipeline.lean",
