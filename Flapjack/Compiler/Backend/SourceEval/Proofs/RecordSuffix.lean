@@ -5,6 +5,13 @@ import Flapjack.EvaluateHOL.Clock
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs
 open Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.SemanticPrimitivesHOL Flapjack.EvaluateHOL
 
+/-- The equality case split used by the recording-oracle proof. -/
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "neq_IMP_to_cases"]
+theorem neqImpToCases {α : Type} (x : α) (P : Prop) :
+    ∀ y, (x ≠ y → P) → x = y ∨ x ≠ y := by
+  intro y _
+  exact Classical.em (x = y)
+
 /-- The source proof's clock split, including its original logical premise. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "less_sub_1_cases"]
 theorem lessSubOneCases (k clock : Nat) (P : Prop)

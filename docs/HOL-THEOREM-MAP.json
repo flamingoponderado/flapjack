@@ -1456,6 +1456,46 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "neq_IMP_to_cases",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/RecordSuffix.lean",
+  "lean_name": "neqImpToCases",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared neq_imp_to_cases_replay in source_eval_adjust_local_probe.out: the free x and proposition P, universally quantified y, implication and equality disjunction match the original simp proof."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "env_rel_nsLookup_c",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/Environment.lean",
+  "lean_name": "envRel_nsLookup_c",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared env_rel_nsLookup_c_replay in source_eval_adjust_local_probe.out: independent target value type, constructor identifier and lookup result types, grouped premises and reverse constructor-environment equality match."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "alist_to_ns_to_bind2",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/Environment.lean",
+  "lean_name": "alistToNs_to_bind2",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared alist_to_ns_to_bind2_replay in source_eval_adjust_local_probe.out, obtained with the original specialization and rewrite: independent module, name and value types and the universal list equation agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "nsSing_eq_bind",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/Environment.lean",
+  "lean_name": "nsSing_eq_bind",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared nsSing_eq_bind_replay in source_eval_adjust_local_probe.out, using the original definition rewrites: three independent namespace types, quantified name and value, and equation agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "pair_CASE_eq_pairarg",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/Environment.lean",
+  "lean_name": "pairCase_eq_pairarg",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared pair_case_eq_pairarg_replay in source_eval_adjust_local_probe.out: independent pair components and result type, pair elimination, function and tuple-pattern application agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "less_sub_1_cases",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/RecordSuffix.lean",
   "lean_name": "lessSubOneCases",
