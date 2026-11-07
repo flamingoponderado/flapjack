@@ -472,6 +472,24 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "v_to_list",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/ListConversion.lean",
+  "lean_name": "valueToList_related",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["c", "tys"],
+  "reviewer": "Compared the local HOL source and typed v_to_list_typed in source_to_flat_list_conversion_probe.out: the outer constructor-map condition, inner relation and decoding conjunction, and existential flat list and elementwise relation are retained. The c and tys fields use the reviewed finite-map carrier."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "v_to_char_list",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/ListConversion.lean",
+  "lean_name": "valueToCharList_related",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["c", "tys"],
+  "reviewer": "Compared the local HOL source and typed v_to_char_list_typed in source_to_flat_list_conversion_probe.out: the outer constructor-map condition, inner relation and decoding conjunction, and the identical decoded character list are retained. The c and tys fields use the reviewed finite-map carrier."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
   "hol_name": "list_to_v_v_rel",
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/ListConversion.lean",
   "lean_name": "listToValue_related",

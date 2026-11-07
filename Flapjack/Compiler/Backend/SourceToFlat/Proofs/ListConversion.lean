@@ -46,13 +46,15 @@ theorem valuesToString_related (genv : GlobalEnv)
     cases head <;> try (rfl)
     case literal lit => cases lit <;> simp [SemanticPrimitivesHOL.valuesToString, FlatSem.valuesToString, ih]
 
-/-- Successful source-list decoding is preserved by related flat values.
-This is infrastructure over the factored relation, whose HOL correspondence remains open. -/
+/-- Successful source-list decoding is preserved by related flat values. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "v_to_list"
+  (fmap_as_finite_support := [c, tys])]
 theorem valueToList_related (genv : GlobalEnv) (ok : genvCOk genv.c)
     (source : SemanticPrimitivesHOL.Value) (flat : FlatSem.Value)
     (xs : List SemanticPrimitivesHOL.Value)
-    (rel : ValueRel genv source flat) (decoded : SemanticPrimitivesHOL.valueToList source = some xs) :
+    (premises : ValueRel genv source flat ∧ SemanticPrimitivesHOL.valueToList source = some xs) :
     ∃ ys, FlatSem.valueToList flat = some ys ∧ List.Forall₂ (ValueRel genv) xs ys := by
+  obtain ⟨rel, decoded⟩ := premises
   induction source using SemanticPrimitivesHOL.valueToList.induct generalizing flat xs with
   | case1 =>
     simp [SemanticPrimitivesHOL.valueToList] at decoded
@@ -87,13 +89,15 @@ theorem valueToList_related (genv : GlobalEnv) (ok : genvCOk genv.c)
     simp only [SemanticPrimitivesHOL.valueToList] at decoded
     simp at decoded
 
-/-- Successful source-character-list decoding is preserved by related flat values.
-This is infrastructure over the factored relation, whose HOL correspondence remains open. -/
+/-- Successful source-character-list decoding is preserved by related flat values. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "v_to_char_list"
+  (fmap_as_finite_support := [c, tys])]
 theorem valueToCharList_related (genv : GlobalEnv) (ok : genvCOk genv.c)
     (source : SemanticPrimitivesHOL.Value) (flat : FlatSem.Value)
     (xs : List HolChar)
-    (rel : ValueRel genv source flat) (decoded : SemanticPrimitivesHOL.valueToCharList source = some xs) :
+    (premises : ValueRel genv source flat ∧ SemanticPrimitivesHOL.valueToCharList source = some xs) :
     FlatSem.valueToCharList flat = some xs := by
+  obtain ⟨rel, decoded⟩ := premises
   induction source using SemanticPrimitivesHOL.valueToCharList.induct generalizing flat xs with
   | case1 =>
     simp [SemanticPrimitivesHOL.valueToCharList] at decoded

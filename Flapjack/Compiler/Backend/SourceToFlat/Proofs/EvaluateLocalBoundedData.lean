@@ -639,7 +639,7 @@ theorem localEnvBounded_vfromList {C F : Type} [Nonempty C]
           | none => simp [doApp, doAppNumericCore, doAppBasic, decoded] at successful
           | some values => exact ⟨values, rfl⟩
         obtain ⟨values, decoded⟩ := sourceDecode
-        obtain ⟨flatValues, flatDecoded, relatedValues⟩ := valueToList_related nextGenv nextInvariant.1 operand flatOperand values valueRel decoded
+        obtain ⟨flatValues, flatDecoded, relatedValues⟩ := valueToList_related nextGenv nextInvariant.1 operand flatOperand values ⟨valueRel, decoded⟩
         have resultRel : ValueRel nextGenv (.vectorv values) (.vectorv flatValues) :=
           valueRel_vector nextGenv values flatValues relatedValues
         refine ⟨nextGenv, ?_, ?_⟩
@@ -754,7 +754,7 @@ theorem localEnvBounded_strcat {C F : Type} [Nonempty C]
           | none => simp [doApp, doAppNumericCore, doAppBasic, decoded] at successful
           | some values => exact ⟨values, rfl⟩
         obtain ⟨values, decoded⟩ := sourceDecode
-        obtain ⟨flatValues, flatDecoded, relatedValues⟩ := valueToList_related nextGenv nextInvariant.1 operand flatOperand values valueRel decoded
+        obtain ⟨flatValues, flatDecoded, relatedValues⟩ := valueToList_related nextGenv nextInvariant.1 operand flatOperand values ⟨valueRel, decoded⟩
         have stringDecode : ∃ str, valuesToString values = some str := by
           cases result : valuesToString values with
           | none => simp [doApp, doAppNumericCore, doAppBasic, decoded, result] at successful
@@ -876,7 +876,7 @@ theorem localEnvBounded_implode {C F : Type} [Nonempty C]
           | none => simp [doApp, doAppNumericCore, doAppBasic, decoded] at successful
           | some chars => exact ⟨chars, rfl⟩
         obtain ⟨chars, decoded⟩ := sourceDecode
-        have flatDecoded := valueToCharList_related nextGenv nextInvariant.1 operand flatOperand chars valueRel decoded
+        have flatDecoded := valueToCharList_related nextGenv nextInvariant.1 operand flatOperand chars ⟨valueRel, decoded⟩
         have resultRel : ValueRel nextGenv (.litv (.strLit (.implode chars))) (.litv (.strLit (.implode chars))) :=
           .literal nextGenv _
         refine ⟨nextGenv, ?_, ?_⟩
@@ -1714,8 +1714,8 @@ theorem localEnvBounded_listAppend {C F : Type} [Nonempty C]
             | none => simp [doApp, doAppNumericCore, doAppBasic, leftDecoded, decoded] at successful
             | some values => exact ⟨values, rfl⟩
           obtain ⟨rightValues, rightDecoded⟩ := rightDecoded
-          obtain ⟨flatLeft, flatLeftDecoded, leftRel⟩ := valueToList_related nextGenv nextInvariant.1 sourceSize flatSize leftValues sizeRel leftDecoded
-          obtain ⟨flatRight, flatRightDecoded, rightRel⟩ := valueToList_related nextGenv nextInvariant.1 sourceValue flatValue rightValues valueRel rightDecoded
+          obtain ⟨flatLeft, flatLeftDecoded, leftRel⟩ := valueToList_related nextGenv nextInvariant.1 sourceSize flatSize leftValues ⟨sizeRel, leftDecoded⟩
+          obtain ⟨flatRight, flatRightDecoded, rightRel⟩ := valueToList_related nextGenv nextInvariant.1 sourceValue flatValue rightValues ⟨valueRel, rightDecoded⟩
           have appendedRel : List.Forall₂ (ValueRel nextGenv) (leftValues ++ rightValues) (flatLeft ++ flatRight) := by
             clear leftDecoded flatLeftDecoded
             induction leftRel with

@@ -61,7 +61,7 @@ theorem valueToWord8List_related (genv : GlobalEnv)
     have decodedList : maybeAllList (values.map valueToWord8) = some bytes := by
       simpa [valueToWord8List, sourceList] using decoded
     have shape := maybeAllList_shape valueToWord8 (fun b => Value.litv (.word8 b)) word8_recover values bytes decodedList
-    obtain ⟨flatValues, flatDecoded, listRel⟩ := valueToList_related genv ok source flat values related sourceList
+    obtain ⟨flatValues, flatDecoded, listRel⟩ := valueToList_related genv ok source flat values ⟨related, sourceList⟩
     rw [shape] at listRel
     have flatShape : flatValues = bytes.map (FlatSem.Value.litv ∘ Lit.word8) := by
       simpa [List.map_map, Function.comp_def] using related_literals genv (bytes.map Lit.word8) flatValues
@@ -83,7 +83,7 @@ theorem valueToWord64List_related (genv : GlobalEnv)
     have decodedList : maybeAllList (values.map valueToWord64) = some words := by
       simpa [valueToWord64List, sourceList] using decoded
     have shape := maybeAllList_shape valueToWord64 (fun w => Value.litv (.word64 w)) word64_recover values words decodedList
-    obtain ⟨flatValues, flatDecoded, listRel⟩ := valueToList_related genv ok source flat values related sourceList
+    obtain ⟨flatValues, flatDecoded, listRel⟩ := valueToList_related genv ok source flat values ⟨related, sourceList⟩
     rw [shape] at listRel
     have flatShape : flatValues = words.map (FlatSem.Value.litv ∘ Lit.word64) := by
       simpa [List.map_map, Function.comp_def] using related_literals genv (words.map Lit.word64) flatValues
