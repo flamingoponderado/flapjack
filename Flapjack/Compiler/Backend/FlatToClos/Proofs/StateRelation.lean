@@ -168,7 +168,15 @@ theorem stateRel_decClock {C F : Type} {source : FlatSem.State C F} {target : Cl
   rcases related with ⟨maxApp, ffi, clock, store, globals, values, install⟩
   exact ⟨clock, maxApp, ffi, by simp [FlatSem.decClock, ClosSem.decClock, clock], store, globals, values, install⟩
 
+/-- The closure state roundtrips through its canonical finite-map view. -/
+theorem holFmapAsFiniteSupportRelationWitness_State {C F : Type} :
+    (∀ s : ClosSem.StateBroad C F, (ClosSem.State.ofBroad s).toBroad = s) ∧
+      (∀ s : ClosSem.State C F, ClosSem.State.ofBroad s.toBroad = s) :=
+  ClosSem.holFmapAsFiniteSupportRelationWitness_State
+
 /-- Initial closure state used in the original flat-to-closure proof. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "initial_state'_def"
+  (fmap_as_finite_support_relation := [State.refs, State.code, code])]
 def initialStateProofSide {C F : Type} (interpreter : Bool) (ffi : HolFfiState F)
     (maxApp : Nat) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
     (oracle : ClosSem.CompileOracle C) (compiler : ClosSem.Compiler C) (clock : Nat) : ClosSem.State C F :=
@@ -177,12 +185,15 @@ def initialStateProofSide {C F : Type} (interpreter : Bool) (ffi : HolFfiState F
 
 /-- Initial states satisfy the proof-side relation when the installation
 configurations agree and at least unary calls are supported. -/
-theorem initialStates_related {C F : Type} (interpreter : Bool) (ffi : HolFfiState F)
-    (maxApp clock : Nat) (config : FlatSem.InstallConfig C)
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "state_rel_initial_state"
+  (fmap_as_finite_support := [refs, code])]
+theorem initialStates_related {C F : Type} (maxApp : Nat) (config : FlatSem.InstallConfig C)
     (oracle : ClosSem.CompileOracle C) (compiler : ClosSem.Compiler C)
-    (positive : 0 < maxApp) (install : installConfigRel config oracle compiler) :
+    (ffi : HolFfiState F) (clock : Nat) (interpreter : Bool)
+    (premises : 0 < maxApp ∧ installConfigRel config oracle compiler) :
     StateRel (FlatSem.initialState ffi clock config)
-      (initialStateProofSide interpreter ffi maxApp HolFiniteMapExact.empty oracle compiler clock) := by
+      (initialStateProofSide interpreter ffi maxApp HolFiniteMapExact.empty oracle compiler clock : ClosSem.State C F) := by
+  obtain ⟨positive, install⟩ := premises
   refine ⟨positive, rfl, rfl, ?_, by simp [initialStateProofSide, ClosSem.initialState], ?_, install⟩
   · intro index
     simp [FlatSem.initialState, initialStateProofSide, ClosSem.initialState, HolFiniteMapExact.empty]

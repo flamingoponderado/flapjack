@@ -1,6 +1,24 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "initial_state'_def",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/StateRelation.lean",
+  "lean_name": "initialStateProofSide",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": ["State.refs", "State.code", "code"],
+  "reviewer": "Source comparison: Compared proof_initial_state_typed in flat_to_clos_relation_probe.out: arbitrary interpreter flag, FFI, maximum application, code, oracle, compiler and clock produce the same record fields, empty references and singleton interpreter-or-unit globals. Compiler and FFI carriers are independent. The code input and closure-state code and refs use canonical finite-support maps with the local state roundtrip witness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "state_rel_initial_state",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/StateRelation.lean",
+  "lean_name": "initialStates_related",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "reviewer": "Compared state_rel_initial_typed in flat_to_clos_relation_probe.out: the same conjunction of positive maximum application and installation relation implies the relation of the original flat initial state and proof-side closure state with empty code. Compiler and FFI carriers are independent and shared across the two states; the closure state uses canonical finite-support maps."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
   "hol_name": "env_rel_def",
   "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/ValueRelInduction.lean",
   "lean_name": "envRel_hol_cases",
