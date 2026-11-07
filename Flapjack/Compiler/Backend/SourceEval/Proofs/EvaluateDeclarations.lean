@@ -124,7 +124,7 @@ theorem adjustOracle_evaluate_Denv {Config F : Type} (ci : CompilerInstance Conf
     simp [evaluateDecs, declared] at source
     obtain ⟨rfl, rfl⟩ := source
     constructor
-    · exact declareEnv_isInsert ci f _ env value evalState declared inserted
+    · exact declareEnv_isInsert _ env value evalState ci f ⟨declared, inserted⟩
     · simp [evaluateDecs, declareEnv_adjust, declared]
 
 end Flapjack.Compiler.Backend.SourceEval.Proofs

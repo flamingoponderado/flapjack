@@ -14209,56 +14209,56 @@
     "hol_name": "is_insert_decs",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleAdjustment.lean",
     "lean_name": "isInsertDecs",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Local HOL statement and inferred types captured as a term in source_eval_adjust_local_probe.out; the original local proof is not replayed, and evaluator, carrier, and statement correspondence require review."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed local term is_insert_decs in source_eval_adjust_local_probe.out with the local HOL statement: any compiler instance, transform and EvalDecs state satisfy the insertion relation. The HOL local proof is not replayed."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
     "hol_name": "declare_env_adjust",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleAdjustment.lean",
     "lean_name": "declareEnv_adjust",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Local HOL statement and inferred types captured as a term in source_eval_adjust_local_probe.out; the original local proof is not replayed, and evaluator, carrier, and statement correspondence require review."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared declare_env_adjust_replay in source_eval_adjust_local_probe.out, proved with the original local tactic: declaration under adjustment matches the original NONE/SOME case, adjusting only the returned state."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
     "hol_name": "adjust_oracle_reset",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleAdjustment.lean",
     "lean_name": "adjustOracle_reset",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Local HOL statement and inferred types captured as a term in source_eval_adjust_local_probe.out; the original local proof is not replayed, and evaluator, carrier, and statement correspondence require review."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared adjust_oracle_reset_replay in source_eval_adjust_local_probe.out, proved with the original local tactic: adjustment commutes with resetEnvGeneration on arbitrary optional states."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
     "hol_name": "is_insert_related",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleAdjustment.lean",
     "lean_name": "isInsert_related",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Local HOL statement and inferred types captured as a term in source_eval_adjust_local_probe.out; the original local proof is not replayed, and evaluator, carrier, and statement correspondence require review."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed local term is_insert_related in source_eval_adjust_local_probe.out against the HOL source: insertion for an EvalOracle and equality of its callback and oracle imply insertion for the second state. The HOL local proof is not replayed."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
     "hol_name": "is_insert_reset",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleAdjustment.lean",
     "lean_name": "isInsert_reset",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Local HOL statement and inferred types captured as a term in source_eval_adjust_local_probe.out; the original local proof is not replayed, and evaluator, carrier, and statement correspondence require review."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed local term is_insert_reset in source_eval_adjust_local_probe.out against the HOL source: insertion after resetting is equivalent to insertion of the second optional state. The HOL local proof is not replayed."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
     "hol_name": "declare_env_is_insert",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleAdjustment.lean",
     "lean_name": "declareEnv_isInsert",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Local HOL statement and inferred types captured as a term in source_eval_adjust_local_probe.out; the original local proof is not replayed, and evaluator, carrier, and statement correspondence require review."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed local term declare_env_is_insert in source_eval_adjust_local_probe.out against the HOL source: the declaration result and insertion conjunction imply insertion for the resulting optional state. The HOL local proof is not replayed."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
     "hol_name": "do_eval_adjust",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleAdjustment.lean",
     "lean_name": "doEval_adjust",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Local HOL statement and inferred types captured as a term in source_eval_adjust_local_probe.out; the original local proof is not replayed, and evaluator, carrier, and statement correspondence require review."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed local term do_eval_adjust in source_eval_adjust_local_probe.out against the HOL source: the successful Eval and insertion conjunction imply the original mapped-or-unmapped result disjunction and resulting insertion invariant. The HOL local proof is not replayed."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -14321,8 +14321,8 @@
     "hol_name": "adjust_oracle_insert_gen_oracle",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs.lean",
     "lean_name": "adjustOracle_insertGenOracle",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed definitions and theorem captured in source_eval_oracle_adjust_probe.out; compiler instance datatype, source AST and value carriers, and choice correspondence require review."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared adjust_insert in source_eval_oracle_adjust_probe.out: adjusting after oracle insertion replaces the inserted transform while preserving the same shift, oracle and optional input state."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_letProofScript.sml",

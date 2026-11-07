@@ -520,7 +520,7 @@ run_probe flat_pattern_install_relation_probeScript.sml flat_pattern_install_rel
   "$cake_dir/compiler/backend/proofs/flat_patternProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe source_eval_adjust_local_probeScript.sml source_eval_adjust_local_probe.out \
-  is_insert_decs declare_env_adjust adjust_oracle_reset is_insert_related is_insert_reset declare_env_is_insert do_eval_adjust \
+  is_insert_decs declare_env_adjust adjust_oracle_reset is_insert_related is_insert_reset declare_env_is_insert do_eval_adjust declare_env_adjust_replay adjust_oracle_reset_replay \
   "$cake_dir/compiler/backend/proofs/source_evalProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe source_evaluate_decs_probeScript.sml source_evaluate_decs_probe.out \

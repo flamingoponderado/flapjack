@@ -24,7 +24,7 @@ theorem doEvalRes_adjust_success {Config F β : Type} (ci : CompilerInstance Con
     obtain ⟨foundEnv, foundDecs, evalState⟩ := output
     simp [doEvalRes, run] at success
     obtain ⟨rfl, rfl, rfl⟩ := success
-    obtain ⟨adjusted, nextInserted⟩ := doEval_adjust ci f compile values state.evalState foundEnv foundDecs evalState run inserted
+    obtain ⟨adjusted, nextInserted⟩ := doEval_adjust values state.evalState foundEnv foundDecs evalState ci f compile ⟨run, inserted⟩
     refine ⟨nextInserted, ?_⟩
     rcases adjusted with transformed | unchanged
     · left
@@ -81,7 +81,7 @@ theorem finishEval_adjust {Config F : Type} (ci : CompilerInstance Config)
       obtain ⟨value, evalState⟩ := pair
       simp [finishEval, declared] at run
       obtain ⟨rfl, rfl⟩ := run
-      have evalInserted := declareEnv_isInsert ci f _ (extendDecEnv newEnv env) value evalState declared inserted
+      have evalInserted := declareEnv_isInsert _ (extendDecEnv newEnv env) value evalState ci f ⟨declared, inserted⟩
       constructor
       · simpa only [isInsert_reset] using evalInserted
       · simp [finishEval, declareEnv_adjust, declared, adjustOracle_reset]
