@@ -9710,3 +9710,5 @@ its natural operands, integer coercions, and comparison operator type.
 
 `source_to_flat_list_conversion_probe.out` replays the local `vs_to_string`
 proof and captures the inferred source and flat list types.
+
+`source_to_flat_compile_globals_probe.out` includes a typed replay of the local `evaluate_foldr_let_err` theorem, including its arbitrary let trace.

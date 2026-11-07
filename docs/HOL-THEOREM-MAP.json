@@ -1,5 +1,14 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "evaluate_foldr_let_err",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateLocalBoundedArray.lean",
+  "lean_name": "flatFoldLets_error",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete statement and inferred carriers against the closed local proof replay evaluate_foldr_let_err_local in source_to_flat_compile_globals_probe.out:34. The trace is arbitrary; binders, premise and conclusion match. The evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "oracle_semantics_prog",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleSemantics.lean",

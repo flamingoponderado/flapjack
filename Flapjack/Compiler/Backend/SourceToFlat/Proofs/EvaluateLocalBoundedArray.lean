@@ -5,13 +5,14 @@ namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL
 open OracleInvariant
 
-/-- Sequencing expressions with anonymous lets propagates the same first
-error as evaluating the expression list. This is flat-evaluator infrastructure. -/
-theorem flatFoldLets_error {C F : Type} (env : FlatSem.Environment FlatSem.Value)
-    (expressions : List FlatLang.Exp) (body : FlatLang.Exp) (state last : FlatSem.State C F)
+/-- Anonymous let sequencing propagates the same error as evaluating the
+expression list, for any trace annotation. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "evaluate_foldr_let_err"]
+theorem flatFoldLets_error {C F : Type} (trace : BackendCommon.Tra) (env : FlatSem.Environment FlatSem.Value)
+    (state last : FlatSem.State C F) (expressions : List FlatLang.Exp) (body : FlatLang.Exp)
     (error : ErrorResult FlatSem.Value)
     (run : FlatSem.evaluate env state expressions = (last, .err error)) :
-    FlatSem.evaluate env state [expressions.foldr (FlatLang.Exp.let_ .none none) body] =
+    FlatSem.evaluate env state [expressions.foldr (FlatLang.Exp.let_ trace none) body] =
       (last, .err error) := by
   induction expressions generalizing state with
   | nil => simp [FlatSem.evaluate] at run
@@ -2126,8 +2127,8 @@ theorem localEnvBounded_aallocEmpty_badArity {C F : Type} [Nonempty C]
     · unfold ExprSim
       rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv args.reverse []).1, sourceRun]
       rw [compiled]
-      rw [flatFoldLets_error flatEnv (compileExps trace compMap args).reverse
-        (.app .none (.src .aalloc) [.lit .none (.intLit 0), .lit .none (.intLit 0)]) flat flatNext _ flatRun]
+      rw [flatFoldLets_error .none flatEnv flat flatNext (compileExps trace compMap args).reverse
+        (.app .none (.src .aalloc) [.lit .none (.intLit 0), .lit .none (.intLit 0)]) _ flatRun]
       exact ⟨.abort error, states⟩
     · rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv args.reverse []).1, sourceRun]
       trivial
@@ -2136,13 +2137,13 @@ theorem localEnvBounded_aallocEmpty_badArity {C F : Type} [Nonempty C]
     · unfold ExprSim
       rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv args.reverse []).1, sourceRun]
       rw [compiled]
-      rw [flatFoldLets_error flatEnv (compileExps trace compMap args).reverse
-        (.app .none (.src .aalloc) [.lit .none (.intLit 0), .lit .none (.intLit 0)]) flat flatNext _ flatRun]
+      rw [flatFoldLets_error .none flatEnv flat flatNext (compileExps trace compMap args).reverse
+        (.app .none (.src .aalloc) [.lit .none (.intLit 0), .lit .none (.intLit 0)]) _ flatRun]
       exact ⟨.raise related, states⟩
     · rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv args.reverse []).1, sourceRun]
       rw [compiled]
-      rw [flatFoldLets_error flatEnv (compileExps trace compMap args).reverse
-        (.app .none (.src .aalloc) [.lit .none (.intLit 0), .lit .none (.intLit 0)]) flat flatNext _ flatRun]
+      rw [flatFoldLets_error .none flatEnv flat flatNext (compileExps trace compMap args).reverse
+        (.app .none (.src .aalloc) [.lit .none (.intLit 0), .lit .none (.intLit 0)]) _ flatRun]
       exact post
   | @value sourceValues flatValues related =>
     have length := EvaluateProps.evaluateLengthFull source sourceNext sourceEnv args.reverse sourceValues sourceRun
