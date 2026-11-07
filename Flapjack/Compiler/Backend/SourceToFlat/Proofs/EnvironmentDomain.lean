@@ -6,6 +6,14 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvalDeclarations
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.SemanticPrimitivesHOL
 
+/-- Updating the value namespace retains the constructor namespace. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "sem_env_eq_lemma"]
+theorem semEnv_update_values {α β : Type} : ∀ (env : SemEnv α) (x : Namespace ModN VarN β),
+    { env with v := x } = ⟨x, env.c⟩ := by
+  intro env x
+  cases env
+  rfl
+
 /-- Extending compiler and source environments preserves their value,
 constructor, and module domains. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "env_domain_eq_append"]

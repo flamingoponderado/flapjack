@@ -9559,8 +9559,8 @@ replays and captures the original local recursive-function lookup proof;
 two-sided namespace identity, including the former's unused polymorphic binder.
 
 `source_to_flat_init_probe.out` also replays the local `FST_PAIR_MAP_I`,
-`ctor_same_type_SND`, `ctor_same_type_refl`, and `eta2` proofs with inferred
-types visible.
+`ctor_same_type_SND`, `ctor_same_type_refl`, `eta2`, and `sem_env_eq_lemma`
+proofs with inferred types visible, including the type-changing record update.
 
 `source_to_flat_init_probe.out` captures the typed original source-to-flat
 initialization definitions and evaluates the initial constructor entries and

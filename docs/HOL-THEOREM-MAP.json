@@ -340,6 +340,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "sem_env_eq_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EnvironmentDomain.lean",
+  "lean_name": "semEnv_update_values",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared sem_env_eq_lemma_replay in source_to_flat_init_probe.out: the original environment and replacement value namespace have independent payload types; the universally quantified record update and resulting constructor field agree. The local HOL proof is replayed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
   "hol_name": "eta2",
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/PatternStamps.lean",
   "lean_name": "eta2",

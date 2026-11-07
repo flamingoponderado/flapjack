@@ -6,6 +6,10 @@ fun show_thm label th =
   if null (hyp th) then (print label; print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
 fun show_eval label tm = (print label; print_term (rhs (concl (EVAL tm))); print "\n");
+val sem_env_eq_lemma_replay = Q.prove (
+  `!(env:'a sem_env) x. (env with v := x) = <| v := x; c := env.c |>`,
+  rw [] >> rw [semanticPrimitivesTheory.sem_env_component_equality]);
+val _ = show_thm "sem_env_eq_lemma_replay=" sem_env_eq_lemma_replay;
 val eta2_replay = Q.prove (`!f x. (\y. f x y) = f x`, metis_tac []);
 val _ = show_thm "eta2_replay=" eta2_replay;
 val ctor_same_type_refl_replay = Q.prove (

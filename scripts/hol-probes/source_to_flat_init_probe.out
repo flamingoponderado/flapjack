@@ -1,3 +1,4 @@
+sem_env_eq_lemma_replay=∀(env :α sem_env) (x :(mlstring, mlstring, β) namespace). env with v := x = <|v := x; c := env.c|>
 eta2_replay=∀(f :α -> β -> γ) (x :α). (λ(y :β). f x y) = f x
 ctor_same_type_refl_replay=ctor_same_type (x :(α # β) option) x
 ctor_same_type_snd_replay=ctor_same_type (SOME (x :α # β)) (SOME (y :γ # β)) ⇔ SND x = SND y
