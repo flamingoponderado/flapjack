@@ -1,6 +1,46 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "v_rel_cases",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/ValueRelation.lean",
+  "lean_name": "valueRel_hol_cases",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source_value_relation_cases in source_eval_oracle_adjust_probe.out: the complete disjunction retains all seven cases, existential binders, equations and original environment and list relation premises in order."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "v_rel_ind",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/ValueRelation.lean",
+  "lean_name": "valueRel_hol_induction",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source_value_relation_induction in source_eval_oracle_adjust_probe.out: an arbitrary binary predicate satisfying the same conjunction of seven source-shaped rules holds for every related value pair. The environment and list premises use the predicate itself, matching HOL's nested induction."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "env_rel_concrete_v",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/ValueRelation.lean",
+  "lean_name": "envRel_concrete",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source_environment_relation_concrete in source_eval_oracle_adjust_probe.out: nsAll requires each bound value to be concrete, and the conclusion relates the same environment to itself at an arbitrary oracle state. The constant HOL predicate is expressed by a function ignoring the identifier."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "v_rel",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/ValueRelation.lean",
+  "lean_name": "ValueRel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source_value_relation_rules, cases and induction in source_eval_oracle_adjust_probe.out: the environment, vector, constructor, closure, recursive closure, literal and location rules retain the original premises and values. The positivity-friendly ValueEnvRel is equivalent to the reviewed envRel by valueEnvRel_iff; valueRel_hol_cases and valueRel_hol_induction establish the source-shaped cases and induction. The state, source values, environment lookup, environment-id decoder and list relation use their reviewed carriers."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "v_rel_concrete_v",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/ValueRelation.lean",
+  "lean_name": "valueRel_concrete",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source_value_relation_concrete in source_eval_oracle_adjust_probe.out: the full conjunction states that every concrete value and every concrete value list is related to itself for an arbitrary oracle state. The Bool-valued concreteness tests and Forall₂ implement the reviewed HOL predicates."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "env_rel_def",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/Environment.lean",
   "lean_name": "envRel",

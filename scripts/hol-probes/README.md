@@ -489,7 +489,9 @@ The same flat-pattern probe captures the typed position, test, guard and decisio
 
 `source_eval_oracle_adjust_probe.out` captures the source evaluator's compiler-instance field types, conversion and oracle-adjustment definitions, recording callback and its decoders, decoder-concreteness theorems, recorded-oracle invariant and preservation step, agreement and extraction definitions and prefix laws, declaration and evaluation insertion and reset equalities, the full recording-preservation statement, sparse-tree traversal membership, the adjustment/insertion identity, result cases, optional-least definition and introduction theorem, the evaluator and program-semantics adjustment theorems, and the mutual evaluator induction theorem with inferred types. It also replays local sparse-tree membership, reversed transitivity and clock-specialized declaration theorems.
 The typed environment-relation captures retain the independent target value type
-and the original pointwise monotonicity premise.
+and the original pointwise monotonicity premise. The source value-relation
+captures include its rules, cases, induction theorem and concrete-value and
+concrete-environment theorems.
 
 `source_eval_adjust_local_probe.out` captures inferred types of the original script's local oracle-adjustment lemmas as typed terms. These lemmas are not exported by the HOL theory; the probe additionally replays the original proofs of `declare_env_adjust` and `adjust_oracle_reset`.
 

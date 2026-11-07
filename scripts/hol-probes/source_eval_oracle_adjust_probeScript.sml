@@ -73,3 +73,8 @@ val _ = show_thm "spt_to_list_a_def=" sptreeTheory.toListA_def;
 val _ = show_thm "spt_to_list_def=" sptreeTheory.toList_def;
 val _ = show_thm "environment_relation_definition=" source_evalProofTheory.env_rel_def;
 val _ = show_thm "environment_relation_monotonic=" source_evalProofTheory.env_rel_mono_rel;
+val _ = show_thm "source_value_relation_rules=" source_evalProofTheory.v_rel_rules;
+val _ = show_thm "source_value_relation_cases=" source_evalProofTheory.v_rel_cases;
+val _ = show_thm "source_value_relation_induction=" source_evalProofTheory.v_rel_ind;
+val _ = show_thm "source_value_relation_concrete=" source_evalProofTheory.v_rel_concrete_v;
+val _ = show_thm "source_environment_relation_concrete=" source_evalProofTheory.env_rel_concrete_v;
