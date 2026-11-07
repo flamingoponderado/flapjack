@@ -116,3 +116,25 @@ val _ = show_thm "source_value_relation_list_encoding=" source_evalProofTheory.v
 val _ = show_thm "source_value_to_list_relation=" source_evalProofTheory.v_to_list;
 val _ = show_thm "source_value_to_char_list_relation=" source_evalProofTheory.v_to_char_list;
 val _ = show_thm "source_values_to_string_relation=" source_evalProofTheory.vs_to_string;
+val _ = show_thm "source_store_value_relation_left_cases=" source_evalProofTheory.sv_rel_l_cases;
+val source_v_rel_check_type_replay = Q.prove (
+  `source_evalProof$v_rel x v1 v2 ==>
+   (semanticPrimitives$check_type ty v1 = semanticPrimitives$check_type ty v2) /\
+   (semanticPrimitives$dest_Litv v1 = semanticPrimitives$dest_Litv v2)`,
+  simp [Once source_evalProofTheory.v_rel_cases] \\
+  rw [] \\
+  gvs [semanticPrimitivesTheory.check_type_def, semanticPrimitivesTheory.dest_Litv_def,
+       oneline source_evalProofTheory.v_to_env_id_def, AllCaseEqs()] \\
+  gvs [oneline semanticPrimitivesTheory.check_type_def, semanticPrimitivesTheory.Boolv_def] \\
+  Cases_on `ty` \\
+  gvs [] \\
+  eq_tac \\
+  rw [] \\
+  gvs []);
+val _ = show_thm "source_v_rel_check_type_replay=" source_v_rel_check_type_replay;
+val source_list_rel_check_type_replay = Q.prove (
+  `LIST_REL (source_evalProof$v_rel x) vs1 vs2 ==>
+   (EVERY (semanticPrimitives$check_type ty) vs1 <=> EVERY (semanticPrimitives$check_type ty) vs2)`,
+  rw [listTheory.LIST_REL_EL_EQN, listTheory.EVERY_EL] \\
+  metis_tac [source_v_rel_check_type_replay]);
+val _ = show_thm "source_list_rel_check_type_replay=" source_list_rel_check_type_replay;

@@ -4,6 +4,21 @@ import Flapjack.SemanticPrimitivesProps.StoreRelation
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs
 open Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesProps
 
+/-- The original three left-hand constructor characterizations of store relations. -/
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "sv_rel_l_cases"]
+theorem storeValueRel_leftCases {α β : Type} :
+    (∀ (v : StoreValue β) (rv : α) (R : α → β → Prop),
+      storeValueRel R (.refv rv) v ↔ ∃ v₂, v = .refv v₂ ∧ R rv v₂) ∧
+    (∀ (xs : List (BitVec 8)) (v : StoreValue β) (R : α → β → Prop),
+      storeValueRel R (.w8array xs) v ↔ v = .w8array xs) ∧
+    (∀ (vs : List α) (v : StoreValue β) (R : α → β → Prop),
+      storeValueRel R (.varray vs) v ↔ ∃ vs₂, v = .varray vs₂ ∧ List.Forall₂ R vs vs₂) := by
+  constructor
+  · intro v rv R; cases v <;> simp [storeValueRel]
+  constructor
+  · intro xs v R; cases v <;> simp [storeValueRel, eq_comm]
+  · intro vs v R; cases v <;> simp [storeValueRel]
+
 /-- A successful assignment to related stores has a related target assignment. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "store_assign"]
 theorem storeAssign_simulation {α β : Type} (index : Nat) (value : StoreValue α)

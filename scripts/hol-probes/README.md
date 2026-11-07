@@ -9640,3 +9640,6 @@ the full `invariant_make_varls` initializer theorem, and
 `source_eval_oracle_adjust_probe.out` also captures the typed list encoding, list
 decoding, character-list decoding, and string-decoding value-relation theorems.
 These captures support statement review, not cross-language equivalence.
+
+The same source evaluator probe captures the inferred store relation left cases
+and replays the local value and list primitive-type preservation proofs in HOL.

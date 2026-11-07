@@ -1,6 +1,30 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "sv_rel_l_cases",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/Store.lean",
+  "lean_name": "storeValueRel_leftCases",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed source_store_value_relation_left_cases in source_eval_oracle_adjust_probe.out: All three separately quantified left-constructor cases preserve heterogeneous value carriers, existential witnesses and equality orientations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "v_rel_check_type",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/PrimitiveType.lean",
+  "lean_name": "valueRel_checkType",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed source_v_rel_check_type_replay in source_eval_oracle_adjust_probe.out: The local HOL proof replay preserves both the type-test Boolean equality and literal-destructor equality for arbitrary related source values and primitive type."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "LIST_REL_v_rel_check_type",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/PrimitiveType.lean",
+  "lean_name": "valueRel_listCheckType",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed source_list_rel_check_type_replay in source_eval_oracle_adjust_probe.out: The local HOL statement replay uses the original rewrite step and metis_tac to preserve Boolean EVERY equality for pointwise related source lists and arbitrary primitive type."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "v_rel_list_to_v",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/Conversions.lean",
   "lean_name": "vRelListToValue",
