@@ -2,6 +2,15 @@
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "eval_simulation",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvalSimulationDecsCons.lean",
+  "lean_name": "evalSimulation_DecsCons",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the declaration-list case retains both induction hypotheses and the intermediate result equality, and the full declaration simulation conclusion. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "eval_simulation",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvalSimulationModules.lean",
   "lean_name": "evalSimulation_Dmod",
   "statement_status": "reviewed_exact",
