@@ -322,6 +322,49 @@ theorem allocTags1_namespace_entries {M N A : Type} (constructors : List (N × L
   simp only [allocatedConstructorEntries, List.map_map]
   congr 2
 
+/-- The allocator's namespace, counter tree and tag list describe the same constructor entries. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "alloc_tags1_imp"]
+theorem allocTags1_imp {M N A : Type} :
+    ∀ (constructors : List (N × List A)) (ns : Namespace M N Nat)
+      (spt : Spt Nat) (tags : List (Nat × Nat)),
+      allocTags1 constructors = (ns, spt, tags) ∧ (constructors.map Prod.fst).Nodup →
+      ∃ entries : List (N × Nat × Nat),
+        ns = alistToNs (entries.map fun (name, tag, _) => (name, tag)) ∧
+        (fun pair => pair ∈ entries.map Prod.snd) =
+          (fun pair : Nat × Nat => ∃ max, sptLookup pair.2 spt = some max ∧ pair.1 < max) ∧
+        tags = entries.map Prod.snd ∧ tags.Nodup ∧
+        List.Forall₂ (fun (ctor : N × List A) (entry : N × Nat × Nat) =>
+          ctor.1 = entry.1 ∧ entry.2.2 = ctor.2.length) constructors entries ∧
+        constructors.map Prod.fst = entries.map Prod.fst := by
+  intro constructors ns spt tags ⟨allocated, names⟩
+  let entries := allocatedConstructorEntries (M := M) constructors
+  have projections := allocatedConstructorEntries_projections (M := M) constructors
+  have nsEq := allocTags1_namespace_entries (M := M) constructors
+  have membership := allocTags1_membership (M := M) constructors
+  have nodup := allocTags1_tags_nodup (M := M) constructors
+  have related : List.Forall₂ (fun (ctor : N × List A) (entry : N × Nat × Nat) =>
+      ctor.1 = entry.1 ∧ entry.2.2 = ctor.2.length) constructors entries := by
+    dsimp [entries]
+    clear allocated names projections nsEq membership nodup
+    induction constructors with
+    | nil => simp [allocatedConstructorEntries, allocTags1]
+    | cons ctor rest ih =>
+      rcases ctor with ⟨name, args⟩
+      generalize eq : (allocTags1 rest : Namespace M N Nat × Spt Nat × List (Nat × Nat)) = result at ih ⊢
+      rcases result with ⟨oldNs, oldSpt, oldTags⟩
+      generalize inc : lookupInc args.length oldSpt = result
+      rcases result with ⟨tag, newSpt⟩
+      simp only [allocatedConstructorEntries, allocTags1, eq, inc, List.map_cons, List.zip_cons_cons] at ih ⊢
+      exact List.Forall₂.cons ⟨rfl, rfl⟩ ih
+  rw [allocated] at nsEq projections membership nodup
+  refine ⟨entries, nsEq, ?_, projections.2.symm, ?_, related, projections.1.symm⟩
+  · funext pair
+    apply propext
+    rcases pair with ⟨tag, arity⟩
+    rw [projections.2]
+    exact membership tag arity
+  · exact nodup
+
 /-- The compiled type namespace maps each allocation entry to its tag and
 the common type table. -/
 theorem allocTags_namespace_entries (idx : Nat) (constructors : List (ConN × List AstT)) :

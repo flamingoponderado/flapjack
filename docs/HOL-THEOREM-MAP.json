@@ -14452,6 +14452,14 @@
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateDatatype.lean",
+    "lean_name": "allocTags1_imp",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "alloc_tags1_imp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared alloc_tags1_imp_typed in source_to_flat_init_probe.out: independent name, argument and module types, quantified binders, conjunctive allocation and distinctness premise, existential constructor entries and all six namespace, set, list, distinctness, relation and projection conclusions agree. HOL sets are membership predicates."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateDatatype.lean",
     "lean_name": "aLookup_map_keyPreserving",
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "ALOOKUP_MAP_3",
