@@ -43,7 +43,7 @@ theorem removeFlatProg_globals_empty (declarations : List FlatLang.Exp)
   exact bound
 
 /-- Removing declarations preserves the original per-expression
-closure-freedom predicate. The carriers remain pending HOL review. -/
+closure-freedom predicate. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "remove_flat_prog_esgc_free"]
 theorem removeFlatProg_esgcFree (declarations : List FlatLang.Exp)
     (free : ∀ expression ∈ declarations, esgcFree expression) :

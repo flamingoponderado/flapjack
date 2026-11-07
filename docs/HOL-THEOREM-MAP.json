@@ -15611,8 +15611,8 @@
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml", "hol_name": "compile_prog_esgc_free",
     "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/CompileSafety.lean", "lean_name": "compileProg_esgcFree",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Compared source lines 2434-2443 and inferred types in flat_to_clos_globals_probe.out. The EVERY source premise, no_Mat_decs premise and EVERY closure conclusion retain the original carriers; membership quantification expresses EVERY and no_Mat_decs is represented as Bool equal to true. The attached interpreter initializer is safe in both installation branches, including the interpreter body. The FlatProps esgcFree carrier and the source-to-flat syntax and compiler carriers are reviewed exact; this statement does not depend on FlatPattern definitions."
+    "statement_status": "pending_statement_review",
+    "reviewer": "Compared source lines 2434-2443 and inferred types in flat_to_clos_globals_probe.out. The EVERY source premise, no_Mat_decs premise and EVERY closure conclusion retain the original carriers; membership quantification expresses EVERY and no_Mat_decs is represented as Bool equal to true. The attached interpreter initializer is safe in both installation branches, including the interpreter body. Pending review of the FlatProps esgc_free_def carrier and any referenced FlatPattern definitions."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml", "hol_name": "compile_esgc_free",
@@ -15623,8 +15623,8 @@
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml", "hol_name": "compile_decs_esgc_free",
     "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/CompileSafety.lean", "lean_name": "compileDecs_esgcFree",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Compared source lines 2422-2432 and inferred types in flat_to_clos_globals_probe.out. The EVERY source premise, no_Mat_decs premise and EVERY closure conclusion have the same declaration-list carriers; membership quantification expresses EVERY and no_Mat_decs is represented as a Bool equal to true. The FlatProps esgcFree carrier and the source-to-flat syntax and compiler carriers are reviewed exact; this statement does not depend on FlatPattern definitions."
+    "statement_status": "pending_statement_review",
+    "reviewer": "Compared source lines 2422-2432 and inferred types in flat_to_clos_globals_probe.out. The EVERY source premise, no_Mat_decs premise and EVERY closure conclusion have the same declaration-list carriers; membership quantification expresses EVERY and no_Mat_decs is represented as a Bool equal to true. Pending review of the FlatProps esgc_free_def carrier and any referenced FlatPattern definitions."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml", "hol_name": "compile_set_globals",
@@ -15798,31 +15798,31 @@
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml", "hol_name": "compile_exp_esgc_free",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalSafety.lean", "lean_name": "compileExp_esgcFree",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared the pinned HOL statement and inferred types captured in flat_pattern_global_flag_probe.out. The three conjuncts preserve the original compilation tuple equality and safety conjunction for expression, list and match rows; EVERY is pointwise membership, and the row predicate observes the second component. The FlatProps esgcFree carrier and the source-to-flat syntax and compiler carriers are reviewed exact; this statement does not depend on FlatPattern definitions."
+    "reviewer": "Compared the pinned HOL statement and inferred types captured in flat_pattern_global_flag_probe.out. The three conjuncts preserve the original compilation tuple equality and safety conjunction for expression, list and match rows; EVERY is pointwise membership, and the row predicate observes the second component. Independent source and typed-capture review confirms the complete statement and the reviewed FlatProps and compiler definition carriers."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml", "hol_name": "compile_decs_esgc_free",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalSafety.lean", "lean_name": "compileDecs_esgcFree",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Compared the pinned HOL statement and inferred types captured in flat_pattern_global_flag_probe.out. The premise and conclusion are EVERY on source and mapped compiled declaration lists, expressed by membership quantification. Pending review of the FlatProps esgc_free_def carrier and any referenced FlatPattern definitions."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the pinned HOL statement and inferred types captured in flat_pattern_global_flag_probe.out. The premise and conclusion are EVERY on source and mapped compiled declaration lists, expressed by membership quantification. Independent source and typed-capture review confirms the complete statement and the reviewed FlatProps and compiler definition carriers."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml", "hol_name": "compile_flat_esgc_free",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/CompileFlatGlobals.lean", "lean_name": "compileFlat_esgcFree",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Compared the pinned HOL statement and inferred types captured in source_to_flat_compile_globals_probe.out. The original compilation equality and input EVERY conjunction entail EVERY on its output; FlatElim and FlatPattern preservation are composed. Pending review of the FlatProps esgc_free_def carrier and any referenced FlatPattern definitions."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the pinned HOL statement and inferred types captured in source_to_flat_compile_globals_probe.out. The original compilation equality and input EVERY conjunction entail EVERY on its output; FlatElim and FlatPattern preservation are composed. Independently reviewed against source_to_flat_compile_globals_probe.out and the reviewed source-to-flat, FlatPattern and FlatElim definitions and invariants."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml", "hol_name": "compile_esgc_free",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/CompileFlatGlobals.lean", "lean_name": "compile_esgcFree",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Compared the pinned HOL statement and inferred types captured in source_to_flat_compile_globals_probe.out. The original full compile second component is safe for every member; the executed total pass composes compileProg with compileFlatTotal. Pending review of the FlatProps esgc_free_def carrier and any referenced FlatPattern definitions."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the pinned HOL statement and inferred types captured in source_to_flat_compile_globals_probe.out. The original full compile second component is safe for every member; the executed total pass composes compileProg with compileFlatTotal. Independently reviewed against source_to_flat_compile_globals_probe.out and the reviewed source-to-flat, FlatPattern and FlatElim definitions and invariants."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml", "hol_name": "inc_compile_esgc_free",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/CompileFlatGlobals.lean", "lean_name": "incCompile_esgcFree",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Compared the pinned HOL statement and inferred types captured in source_to_flat_compile_globals_probe.out. The original incremental compile second component is safe for every member, with environment identifier as a pair of naturals. Pending review of the FlatProps esgc_free_def carrier and any referenced FlatPattern definitions."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the pinned HOL statement and inferred types captured in source_to_flat_compile_globals_probe.out. The original incremental compile second component is safe for every member, with environment identifier as a pair of naturals. Independently reviewed against source_to_flat_compile_globals_probe.out and the reviewed source-to-flat, FlatPattern and FlatElim definitions and invariants."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml", "hol_name": "compile_exp_set_globals",
@@ -15883,8 +15883,8 @@
     "hol_name": "esgc_free_compile_pats",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalInvariants.lean",
     "lean_name": "esgcFree_compilePats_hol",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Compared source lines 2233-2245 and inferred theorem type in flat_pattern_global_flag_probe.out. Inputs include the same pattern compiler config, Bool mode, traces, natural name index, local mlstring scrutinee, default expression and pattern/body list. EVERY over the mapped row bodies is rendered by membership quantification; there are no additional hypotheses. The proof covers both naive and decision-tree branches. Pending full review of dependent FlatPattern definition carriers; esgc_free_def remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 2233-2245 and inferred theorem type in flat_pattern_global_flag_probe.out. Inputs include the same pattern compiler config, Bool mode, traces, natural name index, local mlstring scrutinee, default expression and pattern/body list. EVERY over the mapped row bodies is rendered by membership quantification; there are no additional hypotheses. The proof covers both naive and decision-tree branches. Independent source and typed-capture review confirms the complete statement and the reviewed FlatProps and compiler definition carriers."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml", "hol_name": "esgc_free_decode_pos",
@@ -15907,8 +15907,8 @@
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml", "hol_name": "esgc_free_compile_pat_bindings",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalInvariants.lean", "lean_name": "esgcFree_compilePatBindings_hol",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Compared source lines 2163-2231 and inferred types in flat_pattern_global_flag_probe.out. Trace, flat expressions, patterns, decision-test and guard carriers match the corresponding definitions. The conjunction requires the continuation and every expression in the pattern, natural, expression worklist to be esgc_free; the conclusion uses the second component of compile_pat_bindings. Pending full review of dependent FlatPattern definition carriers; esgc_free_def remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 2163-2231 and inferred types in flat_pattern_global_flag_probe.out. Trace, flat expressions, patterns, decision-test and guard carriers match the corresponding definitions. The conjunction requires the continuation and every expression in the pattern, natural, expression worklist to be esgc_free; the conclusion uses the second component of compile_pat_bindings. Independent source and typed-capture review confirms the complete statement and the reviewed FlatProps and compiler definition carriers."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml", "hol_name": "esgc_free_naive_pattern_match",
@@ -15926,25 +15926,25 @@
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml", "hol_name": "make_varls_esgc_free",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/CompileDecGlobals.lean", "lean_name": "makeVarls_esgcFree",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared source lines 5690-5696 and typed probe: n and idx are naturals, t is the flat trace and xs a list of mlstring names; the conclusion is the same esgc_free predicate. The FlatProps esgcFree carrier and the source-to-flat syntax and compiler carriers are reviewed exact; this statement does not depend on FlatPattern definitions."
+    "reviewer": "Compared source lines 5690-5696 and typed probe: n and idx are naturals, t is the flat trace and xs a list of mlstring names; the conclusion is the same esgc_free predicate. Independent source and typed-capture review confirms the complete statement and the reviewed FlatProps and compiler definition carriers."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml", "hol_name": "compile_decs_esgc_free",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/CompileDecGlobals.lean", "lean_name": "compileDecs_esgcFree",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Compared source lines 5704-5717 and typed probe, including all input and output carriers, tuple order, equality premise and EVERY conclusion, represented by membership quantification. The proof covers every declaration constructor. Pending review of the FlatProps esgc_free_def carrier and any referenced FlatPattern definitions."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 5704-5717 and typed probe, including all input and output carriers, tuple order, equality premise and EVERY conclusion, represented by membership quantification. The proof covers every declaration constructor. Independent source and typed-capture review confirms the complete statement and the reviewed FlatProps and compiler definition carriers."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml", "hol_name": "compile_prog_esgc_free",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/CompileDecGlobals.lean", "lean_name": "compileProg_esgcFree",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Compared source lines 5721-5731 and typed probe: the same compilation equality entails EVERY esgc_free of its output list, represented by membership quantification. Pending review of the FlatProps esgc_free_def carrier and any referenced FlatPattern definitions."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 5721-5731 and typed probe: the same compilation equality entails EVERY esgc_free of its output list, represented by membership quantification. Independent source and typed-capture review confirms the complete statement and the reviewed FlatProps and compiler definition carriers."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml", "hol_name": "inc_compile_prog_esgc_free",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/CompileDecGlobals.lean", "lean_name": "incCompileProg_esgcFree",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared source lines 5752-5760 and typed probe: the input environment identifier is a pair of naturals, and EVERY over the second incremental compilation result is represented by membership quantification. The FlatProps esgcFree carrier and the source-to-flat syntax and compiler carriers are reviewed exact; this statement does not depend on FlatPattern definitions."
+    "reviewer": "Compared source lines 5752-5760 and typed probe: the input environment identifier is a pair of naturals, and EVERY over the second incremental compilation result is represented by membership quantification. Independent source and typed-capture review confirms the complete statement and the reviewed FlatProps and compiler definition carriers."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml", "hol_name": "op_gbag_astOp_to_flatOp",
@@ -15955,8 +15955,8 @@
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml", "hol_name": "compile_exp_esgc_free",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/CompileGlobals.lean", "lean_name": "compileExp_esgcFree",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Compared all four quantified conjuncts in source lines 5639-5672 with typed capture source_to_flat_compile_globals_probe.out. Trace is a list of MlString, environment and all source/flat expression, pattern and function carriers match the corresponding tagged syntax. HOL num bags are num -> num; EVERY is pointwise list membership. Lean's rowGlobals and funGlobals helpers are proved equal to elistGlobals of the same source projections. All expression cases, including Eval, AallocEmpty, Env_id, annotations and recursive bodies, are kernel-checked. This invariant is not the source-to-flat simulation theorem. Pending review of the FlatProps esgc_free_def carrier and any referenced FlatPattern definitions."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all four quantified conjuncts in source lines 5639-5672 with typed capture source_to_flat_compile_globals_probe.out. Trace is a list of MlString, environment and all source/flat expression, pattern and function carriers match the corresponding tagged syntax. HOL num bags are num -> num; EVERY is pointwise list membership. Lean's rowGlobals and funGlobals helpers are proved equal to elistGlobals of the same source projections. All expression cases, including Eval, AallocEmpty, Env_id, annotations and recursive bodies, are kernel-checked. This invariant is not the source-to-flat simulation theorem. Independent source and typed-capture review confirms the complete statement and the reviewed FlatProps and compiler definition carriers."
   },
   {
     "hol_path": "cakeml/compiler/backend/word_bignumScript.sml", "hol_name": "compile_def",
@@ -17292,8 +17292,8 @@
     "hol_name": "remove_flat_prog_esgc_free",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/GlobalInvariants.lean",
     "lean_name": "removeFlatProg_esgcFree",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_elim_value_globals_probe.out; HOL bags are natural-number-valued functions. Expression carriers and complete declaration review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Typed original captured in flat_elim_value_globals_probe.out; HOL bags are natural-number-valued functions. Independent source and typed-capture review confirms the complete statement and the reviewed FlatProps and compiler definition carriers."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
