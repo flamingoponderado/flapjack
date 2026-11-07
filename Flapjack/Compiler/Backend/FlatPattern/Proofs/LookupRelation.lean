@@ -191,14 +191,14 @@ theorem aLookupRel_cons_false {K V : Type} (predicate : K → Prop) (relation : 
 
 /-- A relation that is reflexive on the observed bindings relates a list to itself. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "ALOOKUP_rel_refl"]
-theorem aLookupRel_refl {K V : Type} (predicate : K → Prop) (relation : V → V → Prop)
-    (entries : List (K × V)) (refl : ∀ key value, predicate key → (key, value) ∈ entries → relation value value) :
+theorem aLookupRel_refl {K V : Type} (predicate : K → Prop) (entries : List (K × V))
+    (relation : V → V → Prop) (refl : ∀ key value, predicate key ∧ (key, value) ∈ entries → relation value value) :
     aLookupRel predicate relation entries entries := by
   intro key selected
   cases found : holALookup entries key with
   | none => simp [optionRel]
   | some value =>
-    exact refl key value selected (holALookup_member entries key value found)
+    exact refl key value ⟨selected, holALookup_member entries key value found⟩
 
 /-- Matching heads preserve the lookup relation when their values are related
 at observed keys. -/

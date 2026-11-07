@@ -32,7 +32,7 @@ theorem localEnvBounded_patternBody {C F : Type} [Nonempty C]
       { baseMap with v := nsBindList (patTups .none (patBindings pattern)) (bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v) } gen body := by
   obtain ⟨patternTraces, mapBind, patternLength⟩ := nsBindList_patTups_bindLocals
     (patBindings pattern) .none traces (flatEnv.v.map Prod.fst) baseMap.v
-  have extendedRel := envRel_nsAppend genv (alistToNs bindings) sourceLocal flatBindings flatEnv.v bindingRel localRel
+  have extendedRel := envRel_nsAppend genv (alistToNs bindings) sourceLocal flatBindings flatEnv.v ⟨bindingRel, localRel⟩
   have extendedInv : GlobalEnvInv genv baseMap (fun n => n ∈ (flatBindings ++ flatEnv.v).map Prod.fst) baseEnv := by
     cases envInv with
     | intro _ _ _ values constructors =>

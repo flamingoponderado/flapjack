@@ -153,9 +153,9 @@ theorem envRel_mono (i j : Nat) (left right : Environment Value)
 /-- Lookup of an in-range name yields related optional values. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "env_rel_ALOOKUP"]
 theorem envRel_lookup (n : Nat) (left right : Environment Value) (name : Flapjack.AstHOL.VarN)
-    (related : EnvRel n left right) (bound : decNameToNum name < n) :
+    (premises : EnvRel n left right ∧ decNameToNum name < n) :
     optionRel ValueRel (holALookup left.v name) (holALookup right.v name) :=
-  (envRel_iff_lookup n left right).1 related name bound
+  (envRel_iff_lookup n left right).1 premises.1 name premises.2
 
 /-- Adding a pair of related bindings preserves the bounded environment
 relation. This is Flapjack infrastructure for closure application. -/

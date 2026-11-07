@@ -48,8 +48,9 @@ termination_by flat.length
   (fmap_as_finite_support := [c, tys])]
 theorem envRel_alist_lookup (genv : GlobalEnv) (source : List (VarN × SemanticPrimitivesHOL.Value))
     (name : VarN) (value : SemanticPrimitivesHOL.Value) (flat : List (VarN × FlatSem.Value))
-    (lookup : source.lookup name = some value) (related : EnvRel genv (alistToNs source) flat) :
+    (premises : source.lookup name = some value ∧ EnvRel genv (alistToNs source) flat) :
     ∃ flatValue, ValueRel genv value flatValue ∧ flat.lookup name = some flatValue := by
+  obtain ⟨lookup, related⟩ := premises
   have sourceLookup : nsLookup (alistToNs source : Namespace ModN VarN SemanticPrimitivesHOL.Value)
       (.short name) = some value := by simpa [alistToNs, nsLookup] using lookup
   obtain ⟨flatValue, flatLookup, valueRel⟩ := envRel_lookup genv (alistToNs source) flat related name value sourceLookup

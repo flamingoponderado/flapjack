@@ -13936,7 +13936,7 @@
     "lean_name": "envRel_alist_lookup",
     "statement_status": "reviewed_fmap_as_finite_support",
     "fmap_as_finite_support": ["c", "tys"],
-    "reviewer": "Compared the typed local source statement parsed in source_to_flat_envrel_probe: successful lookup of an mlstring name in the source association list and its environment relation imply a related flat value found under that name. HOL ALOOKUP and Lean List.lookup both use first-match association-list lookup with the reviewed exact mlstring equality, including duplicate keys; the source and flat value carriers remain distinct. Curried premises express the original conjunction. GlobalEnv uses the reviewed canonical finite maps; the local witness re-exports its roundtrip."
+    "reviewer": "Compared the typed local source statement parsed in source_to_flat_envrel_probe: successful lookup of an mlstring name in the source association list and its environment relation imply a related flat value found under that name. HOL ALOOKUP and Lean List.lookup both use first-match association-list lookup with the reviewed exact mlstring equality, including duplicate keys; the source and flat value carriers remain distinct. The conjunctive premise has the original grouping. GlobalEnv uses the reviewed canonical finite maps; the local witness re-exports its roundtrip."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -13945,7 +13945,7 @@
     "lean_name": "envRel_nsAppend",
     "statement_status": "reviewed_fmap_as_finite_support",
     "fmap_as_finite_support": ["c", "tys"],
-    "reviewer": "Compared the typed local source statement parsed in source_to_flat_envrel_probe: two related environments imply the same namespace append and flat-list append are related, with the original source and flat carriers and mlstring namespace names. Curried Lean premises express the original conjunction. GlobalEnv uses the reviewed canonical finite maps; the local witness re-exports its roundtrip."
+    "reviewer": "Compared the typed local source statement parsed in source_to_flat_envrel_probe: two related environments imply the same namespace append and flat-list append are related, with the original source and flat carriers and mlstring namespace names. The conjunctive premise has the original grouping. GlobalEnv uses the reviewed canonical finite maps; the local witness re-exports its roundtrip."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -13963,7 +13963,7 @@
     "lean_name": "envRel_bind_one",
     "statement_status": "reviewed_fmap_as_finite_support",
     "fmap_as_finite_support": ["c", "tys"],
-    "reviewer": "Compared the exported fully typed theorem in source_to_flat_envrel_probe: the same related value and environment hypotheses imply related source binding and flat-list cons, preserving the original binder order. Curried Lean premises express the original conjunction. GlobalEnv uses the reviewed canonical finite maps; the local witness re-exports its roundtrip."
+    "reviewer": "Compared the exported fully typed theorem in source_to_flat_envrel_probe: the same related value and environment hypotheses imply related source binding and flat-list cons, preserving the original binder order. The conjunctive premise has the original grouping. GlobalEnv uses the reviewed canonical finite maps; the local witness re-exports its roundtrip."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -16699,7 +16699,7 @@
     "lean_name": "compile_semantics_oracle",
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "Compared compile_semantics_oracle in source_let_proof_probe.out: independent compiler-instance and FFI carriers, the inserted-oracle, non-failure and source-semantics conjunction, and the adjusted oracle composed with compile_decs all match the reviewed source and oracle definitions. Evaluation inherits reals_as_rational_cuts."
+    "reviewer": "Compared compile_semantics_oracle in source_let_proof_probe.out: free variables precede the quantified oracle function, compiler-instance and FFI carriers are independent, and the original grouped premises and adjusted-oracle conclusion match. Evaluation inherits reals_as_rational_cuts."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_sourceProofScript.sml",
@@ -16708,7 +16708,7 @@
     "lean_name": "compile_semantics_oracle",
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "Compared compile_semantics_oracle in source_to_source_proof_probe.out: independent compiler-instance and FFI carriers, the inserted-oracle, non-failure and source-semantics conjunction, and the adjusted oracle composed with the source-to-source driver match the reviewed source and oracle definitions. Evaluation inherits reals_as_rational_cuts."
+    "reviewer": "Compared compile_semantics_oracle in source_to_source_proof_probe.out: free variables precede the quantified oracle function, compiler-instance and FFI carriers are independent, and the original grouped premises and adjusted-oracle conclusion match. Evaluation inherits reals_as_rational_cuts."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -17321,7 +17321,7 @@
     "lean_name": "compile_semantics",
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "Compared compile_semantics in source_let_proof_probe.out: both require non-failing source semantics and the given source behavior, and conclude the same behavior for compiled declarations. The original conjunction is curried; state, FFI, environment, AST, behavior, compiler and semantics carriers match their reviewed translations. Evaluation inherits reals_as_rational_cuts."
+    "reviewer": "Compared compile_semantics in source_let_proof_probe.out: the grouped non-failure and source-behavior premise and the compiled behavior conclusion match. State, FFI, environment, AST, behavior, compiler and semantics carriers match their reviewed translations. Evaluation inherits reals_as_rational_cuts."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_sourceProofScript.sml",
@@ -17330,7 +17330,7 @@
     "lean_name": "compile_semantics",
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "Compared compile_semantics in source_to_source_proof_probe.out: both preserve any source behavior through the source-to-source compile function under the original non-failure premise. The original conjunction is curried; reviewed source semantics, compiler and carriers match. Evaluation inherits reals_as_rational_cuts."
+    "reviewer": "Compared compile_semantics in source_to_source_proof_probe.out: the grouped non-failure and source-behavior premise and the compiled behavior conclusion match. Reviewed source semantics, compiler and carriers match. Evaluation inherits reals_as_rational_cuts."
   },
   {
     "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
@@ -17431,7 +17431,7 @@
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
     "lean_name": "aLookupRel_refl",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared the HOL theorem and typed lookup_relation_reflexive capture: the observed member premise and reflexive value relation agree, with conjunction curried in Lean."
+    "reviewer": "Compared the HOL theorem and typed lookup_relation_reflexive capture: the free predicate, list and relation occur in source order, and the observed-member premise has the original grouped conjunction."
   },
   {
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
@@ -127320,7 +127320,7 @@
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/ValueRelationCases.lean",
   "lean_name": "envRel_lookup",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared the HOL source and typed environment_relation_lookup capture: related value environments and an in-range mlstring name imply the same option relation between association lookups; the conjunctive premise is curried."
+  "reviewer": "Compared the HOL source and typed environment_relation_lookup capture: related value environments and an in-range mlstring name imply the same option relation between association lookups; the conjunctive premise has the original grouping."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",

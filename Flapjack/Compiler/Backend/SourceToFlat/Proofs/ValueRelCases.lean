@@ -216,8 +216,9 @@ theorem envRel_dom (genv : GlobalEnv) (env : Namespace ModN VarN SemanticPrimiti
 theorem envRel_nsAppend (genv : GlobalEnv)
     (left right : Namespace ModN VarN SemanticPrimitivesHOL.Value)
     (flatLeft flatRight : List (VarN × FlatSem.Value))
-    (leftRel : EnvRel genv left flatLeft) (rightRel : EnvRel genv right flatRight) :
+    (premises : EnvRel genv left flatLeft ∧ EnvRel genv right flatRight) :
     EnvRel genv (nsAppend left right) (flatLeft ++ flatRight) := by
+  obtain ⟨leftRel, rightRel⟩ := premises
   induction flatLeft generalizing left with
   | nil =>
     cases leftRel
@@ -247,9 +248,9 @@ theorem envRel_one (genv : GlobalEnv) (name : VarN) (source : SemanticPrimitives
 theorem envRel_bind_one (genv : GlobalEnv) (env : Namespace ModN VarN SemanticPrimitivesHOL.Value)
     (flat : FlatSem.Value) (name : VarN) (source : SemanticPrimitivesHOL.Value)
     (flatEnv : List (VarN × FlatSem.Value))
-    (valueRel : ValueRel genv source flat) (envRel : EnvRel genv env flatEnv) :
+    (premises : ValueRel genv source flat ∧ EnvRel genv env flatEnv) :
     EnvRel genv (nsBind name source env) ((name, flat) :: flatEnv) :=
-  .bind genv name source env flatEnv flat envRel valueRel
+  .bind genv name source env flatEnv flat premises.2 premises.1
 
 namespace EnvAllRelPort
 
