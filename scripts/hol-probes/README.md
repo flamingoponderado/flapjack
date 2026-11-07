@@ -9683,3 +9683,6 @@ its complete default, value, and mapped row-body premise.
 
 `flat_pattern_global_flag_probe.out` captures `naive_pattern_matches_no_Mat`
 with its original binder order and complete EVERY premise.
+
+`flat_pattern_global_flag_probe.out` captures `naive_pattern_match_no_Mat`
+and its EVERY condition on worklist second components.

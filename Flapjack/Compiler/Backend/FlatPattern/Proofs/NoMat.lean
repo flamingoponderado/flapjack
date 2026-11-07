@@ -84,62 +84,70 @@ theorem noMat_children (trace : Tra) (value : FlatLang.Exp) (patterns : List Fla
 
 /-- Naive matching generates a match-free guard when each worklist value is
 match-free. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "naive_pattern_match_no_Mat"]
 theorem noMat_naivePatternMatch (trace : Tra) (todo : List (FlatLang.Pat × FlatLang.Exp))
-    (safe : ∀ pattern expression, (pattern, expression) ∈ todo → FlatProps.noMat expression = true) :
+    (safe : ∀ item ∈ todo, FlatProps.noMat item.2 = true) :
     FlatProps.noMat (naivePatternMatch trace todo) = true := by
-  induction todo using naivePatternMatch.induct trace with
-  | case1 => simpa [naivePatternMatch] using noMat_mkBool trace true
-  | case2 value rest ih | case3 value rest _ ih =>
-    simp only [naivePatternMatch]
-    apply ih
-    intro pattern expression member
-    exact safe pattern expression (by simp [member])
-  | case4 value rest literal ih =>
-    have valueSafe := safe (.plit literal) value (by simp)
-    have restSafe : ∀ pattern expression, (pattern, expression) ∈ rest → FlatProps.noMat expression = true := by
+  have general (todo : List (FlatLang.Pat × FlatLang.Exp))
+      (safe : ∀ pattern expression, (pattern, expression) ∈ todo → FlatProps.noMat expression = true) :
+      FlatProps.noMat (naivePatternMatch trace todo) = true := by
+    induction todo using naivePatternMatch.induct trace with
+    | case1 => simpa [naivePatternMatch] using noMat_mkBool trace true
+    | case2 value rest ih | case3 value rest _ ih =>
+      simp only [naivePatternMatch]
+      apply ih
       intro pattern expression member
       exact safe pattern expression (by simp [member])
-    simp only [naivePatternMatch]
-    apply noMat_smartIf
-    · simp [FlatProps.noMat, FlatProps.noMatList, valueSafe]
-    · exact ih restSafe
-    · exact noMat_mkBool trace false
-  | case5 value rest patterns ih =>
-    have valueSafe := safe (.pcon none patterns) value (by simp)
-    simp only [naivePatternMatch]
-    apply ih
-    intro pattern expression member
-    rcases List.mem_append.mp member with member | member
-    · exact noMat_children trace value patterns valueSafe pattern expression member
-    · exact safe pattern expression (by simp [member])
-  | case6 value rest patterns tag typ ih =>
-    have valueSafe := safe (.pcon (some (tag, typ)) patterns) value (by simp)
-    simp only [naivePatternMatch]
-    apply noMat_smartIf
-    · simp [FlatProps.noMat, FlatProps.noMatList, valueSafe]
-    · apply ih
+    | case4 value rest literal ih =>
+      have valueSafe := safe (.plit literal) value (by simp)
+      have restSafe : ∀ pattern expression, (pattern, expression) ∈ rest → FlatProps.noMat expression = true := by
+        intro pattern expression member
+        exact safe pattern expression (by simp [member])
+      simp only [naivePatternMatch]
+      apply noMat_smartIf
+      · simp [FlatProps.noMat, FlatProps.noMatList, valueSafe]
+      · exact ih restSafe
+      · exact noMat_mkBool trace false
+    | case5 value rest patterns ih =>
+      have valueSafe := safe (.pcon none patterns) value (by simp)
+      simp only [naivePatternMatch]
+      apply ih
       intro pattern expression member
       rcases List.mem_append.mp member with member | member
       · exact noMat_children trace value patterns valueSafe pattern expression member
       · exact safe pattern expression (by simp [member])
-    · exact noMat_mkBool trace false
-  | case7 value rest pattern name ih =>
-    simp only [naivePatternMatch]
-    apply ih
-    intro pattern' expression member
-    simp only [List.mem_cons, Prod.mk.injEq] at member
-    rcases member with ⟨_, rfl⟩ | member
-    · exact safe (.pas pattern name) expression (by simp)
-    · exact safe pattern' expression (by simp [member])
-  | case8 value rest pattern ih =>
-    have valueSafe := safe (.pref pattern) value (by simp)
-    simp only [naivePatternMatch]
-    apply ih
-    intro pattern' expression member
-    simp only [List.mem_cons, Prod.mk.injEq] at member
-    rcases member with ⟨_, rfl⟩ | member
-    · simpa [FlatProps.noMat, FlatProps.noMatList] using valueSafe
-    · exact safe pattern' expression (by simp [member])
+    | case6 value rest patterns tag typ ih =>
+      have valueSafe := safe (.pcon (some (tag, typ)) patterns) value (by simp)
+      simp only [naivePatternMatch]
+      apply noMat_smartIf
+      · simp [FlatProps.noMat, FlatProps.noMatList, valueSafe]
+      · apply ih
+        intro pattern expression member
+        rcases List.mem_append.mp member with member | member
+        · exact noMat_children trace value patterns valueSafe pattern expression member
+        · exact safe pattern expression (by simp [member])
+      · exact noMat_mkBool trace false
+    | case7 value rest pattern name ih =>
+      simp only [naivePatternMatch]
+      apply ih
+      intro pattern' expression member
+      simp only [List.mem_cons, Prod.mk.injEq] at member
+      rcases member with ⟨_, rfl⟩ | member
+      · exact safe (.pas pattern name) expression (by simp)
+      · exact safe pattern' expression (by simp [member])
+    | case8 value rest pattern ih =>
+      have valueSafe := safe (.pref pattern) value (by simp)
+      simp only [naivePatternMatch]
+      apply ih
+      intro pattern' expression member
+      simp only [List.mem_cons, Prod.mk.injEq] at member
+      rcases member with ⟨_, rfl⟩ | member
+      · simpa [FlatProps.noMat, FlatProps.noMatList] using valueSafe
+      · exact safe pattern' expression (by simp [member])
+
+  apply general todo
+  intro pattern expression member
+  exact safe (pattern, expression) member
 
 /-- Naive branch chains are match-free when their value, default, and
 branch expressions are match-free. -/
@@ -163,9 +171,9 @@ theorem noMat_naivePatternMatches (trace : Tra) (value : FlatLang.Exp)
     simp only [naivePatternMatches]
     apply noMat_smartIf
     · apply noMat_naivePatternMatch
-      intro pat expression member
-      simp only [List.mem_singleton, Prod.mk.injEq] at member
-      obtain ⟨_, rfl⟩ := member
+      intro item member
+      simp only [List.mem_singleton] at member
+      subst item
       exact valueSafe
     · exact branchesSafe pattern body (by simp)
     · apply ih

@@ -424,6 +424,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "naive_pattern_match_no_Mat",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/NoMat.lean",
+  "lean_name": "noMat_naivePatternMatch",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared no_mat_naive_match in flat_pattern_global_flag_probe.out: the trace and worklist binders retain the HOL order, and membership with the second projection renders EVERY (no_Mat o SND)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
   "hol_name": "naive_pattern_matches_no_Mat",
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/NoMat.lean",
   "lean_name": "noMat_naivePatternMatches",
