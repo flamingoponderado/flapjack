@@ -100,12 +100,14 @@ theorem decsPreserve_local {F : Type} (locals locals' body body' : List Dec)
       rw [replacement]
       exact bodyIH next last (extendDecEnv localEnv env) result bodyRun safe
 
-/-- A successful lifting sequence preserves evaluation of its declaration.
-This Flapjack helper specializes the repeated-lifting theorem. -/
-theorem decsPreserve_lifted {F : Type} (d : Dec) (pre : List Dec) (final : Dec)
-    (lifted : liftLets [] d = some (pre, final)) :
-    DecsPreserve (F := F) [d] [.dlocal pre [final]] := by
-  intro state next env result source safe
+/-- Starting with no preceding declarations preserves a successful lift. -/
+@[hol "cakeml/compiler/backend/proofs/source_letProofScript.sml" "evaluate_lift_start"]
+theorem evaluate_lift_start {F : Type} (d : Dec) (state : State F) (env : SemEnv Value)
+    (next : State F) (result : Result (SemEnv Value) Value) (pre : List Dec) (final : Dec)
+    (premises : evaluateDecs state env [d] = (next, result) ∧
+      result ≠ .err (.abort .typeError) ∧ liftLets [] d = some (pre, final)) :
+    evaluateDecs state env [.dlocal pre [final]] = (next, result) := by
+  obtain ⟨source, safe, lifted⟩ := premises
   let empty : SemEnv Value := ⟨nsEmpty, nsEmpty⟩
   have emptyRun : evaluateDecs state env ([] : List Dec).reverse = (state, .val empty) := by
     simp only [List.reverse_nil, evaluateDecs]
@@ -132,7 +134,9 @@ theorem compile_decs_correct {F : Type} (state next : State F) (env : SemEnv Val
       intro state next env result source safe
       simpa [compileDecs] using source
     | case2 d ds pre final lifted ih =>
-      have head := decsPreserve_lifted (F := F) d pre final lifted
+      have head : DecsPreserve (F := F) [d] [.dlocal pre [final]] := by
+        intro state next env result source safe
+        exact evaluate_lift_start d state env next result pre final ⟨source, safe, lifted⟩
       have compiled : compileDecs (d :: ds) = .dlocal pre [final] :: compileDecs ds := by
         rw [compileDecs.eq_def]
         dsimp only

@@ -14385,6 +14385,14 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_letProofScript.sml",
+    "hol_name": "evaluate_lift_start",
+    "lean_path": "Flapjack/Compiler/Backend/SourceLet/Proofs/Correct.lean",
+    "lean_name": "evaluate_lift_start",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed replay of the original SPEC and SIMP_RULE construction is captured as lift_start in source_let_proof_probe.out. Evaluator and carrier correspondence remain pending review."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_letProofScript.sml",
     "hol_name": "evaluate_lift_lets",
     "lean_path": "Flapjack/Compiler/Backend/SourceLet/Proofs/Repeated.lean",
     "lean_name": "evaluate_lift_lets",

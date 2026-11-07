@@ -1,5 +1,5 @@
-load "source_letProofTheory";
-open HolKernel Parse boolLib bossLib;
+load "preamble"; load "source_letProofTheory";
+open HolKernel Parse boolLib bossLib preamble;
 val _ = Globals.linewidth := 1000000;
 val _ = Globals.show_types := true;
 fun show_thm label th =
@@ -16,3 +16,6 @@ val _ = show_thm "lift_all_evaluation=" source_letProofTheory.evaluate_lift_lets
 val _ = show_thm "compile_declarations=" source_letProofTheory.compile_decs_correct;
 val _ = show_thm "compile_semantics=" source_letProofTheory.compile_semantics;
 val _ = show_thm "compile_semantics_oracle=" source_letProofTheory.compile_semantics_oracle;
+val lift_start = Q.SPEC `[]` source_letProofTheory.evaluate_lift_lets
+  |> SIMP_RULE (srw_ss()) [Once semanticPrimitivesTheory.extend_dec_env_def];
+val _ = show_thm "lift_start=" lift_start;
