@@ -2084,7 +2084,8 @@ def validate_inventory(
         observation_status = "reviewed_fmap_as_finite_support_result_observations"
         if manifest_observations != result_observations:
             errors.append(f"{key[0]}:{key[1]}: manifest result observation producers do not match @[hol] tag")
-        if bool(result_observations) != (status == observation_status):
+        if ((result_observations and status not in (observation_status, "pending_statement_review"))
+                or (not result_observations and status == observation_status)):
             errors.append(f"{key[0]}:{key[1]}: result observations require matching reviewed result-observation status")
         if result_observations:
             if any(tag[2:17]):

@@ -69,3 +69,5 @@ val spt_mem_to_list_a = prove(
   simp [sptreeTheory.toListA_append, GSYM sptreeTheory.toList_def, sptreeTheory.MEM_toList] >> metis_tac []);
 val _ = show_thm "spt_mem_to_list_a_replay=" spt_mem_to_list_a;
 val _ = show_thm "spt_mem_to_list=" sptreeTheory.MEM_toList;
+val _ = show_thm "spt_to_list_a_def=" sptreeTheory.toListA_def;
+val _ = show_thm "spt_to_list_def=" sptreeTheory.toList_def;
