@@ -3,27 +3,10 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EnvironmentDomain
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateDletrec
 import Flapjack.EvaluateHOL.ClockFull
 
-/-! Sequential declaration composition over the preliminary factored
-source-to-flat relations. -/
+/-! Sequential declaration composition for the source-to-flat simulation. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL
 open OracleInvariant
-
-/-- The declaration induction hypothesis over the current factored
-relations. This is not yet the reviewed HOL compiler theorem. -/
-def FactoredDecIH {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (decs : List Dec) : Prop :=
-  ∀ (genv : GlobalEnv) (env nextEnv : Environment) (sourceEnv : SemEnv Value) (trace : List VarN)
-    (source sourceLast : State F) (flat : FlatSem.State C F) (start finish next : NextIndices)
-    (other : Set (Nat × IndexKind)) (n n' : Nat) (gen nextGen : EnvironmentGenerationStore)
-    (flatDecs : List FlatLang.Exp) (result : Result (SemEnv Value) Value),
-    EvaluateHOL.evaluateDecs source sourceEnv decs = (sourceLast, result) →
-    factoredInvariant interp transform gen genv (start, finish, other) source flat →
-    compileDecs trace n start env gen decs = (n', next, nextEnv, nextGen, flatDecs) →
-    GlobalEnvInv genv env (fun _ => False) sourceEnv →
-    result ≠ .err (.abort .typeError) → envGenRel gen source.evalState →
-    envGenFutureRel interp nextGen source.evalState → idxPrev next finish →
-    FactoredDecCase interp transform genv source sourceLast flat finish next other nextGen nextEnv flatDecs result
 
 /-- Declaration simulation restricted to a source clock bound. -/
 def FactoredDecBoundedIH {C F : Type} [Nonempty C]

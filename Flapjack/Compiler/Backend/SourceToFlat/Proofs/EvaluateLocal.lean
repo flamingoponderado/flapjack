@@ -223,9 +223,8 @@ decreasing_by
   all_goals have h := List.sizeOf_lt_of_mem member
   all_goals omega
 
-/-- Simultaneous expression and declaration simulation at every clock bound.
-This closes the clock induction over the preliminary factored relations; it is
-not yet a reviewed port of HOL's pass-correctness theorem. -/
+/-- Clock-bounded simultaneous induction used to assemble the source-to-flat
+simulation. This helper has no separate HOL declaration. -/
 theorem factoredAllBounded {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
     (limit : Nat) :
@@ -244,15 +243,6 @@ theorem factoredAllBounded {C F : Type} [Nonempty C]
       apply factoredDecBoundedIH_list interp transform limit decs
       intro dec _
       exact factoredDecBoundedIH_singleton interp transform limit smallerExprs smallerDecs dec
-
-/-- Arbitrary source declaration lists satisfy the preliminary factored
-simulation. This is not yet the reviewed HOL pass-correctness statement. -/
-theorem factoredDecIH_all {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (decs : List Dec) : FactoredDecIH (F := F) interp transform decs := by
-  intro genv env nextEnv sourceEnv trace source sourceLast flat start finish next other n n' gen nextGen flatDecs result
-  exact (factoredAllBounded (F := F) interp transform source.clock).2 decs genv env nextEnv sourceEnv trace
-    source sourceLast flat start finish next other n n' gen nextGen flatDecs result (Nat.le_refl _)
 
 namespace InitialEnv
 /-- The canonical finite-map carrier used by the initial environment. -/
@@ -382,8 +372,8 @@ theorem factoredEnvAllRel_names (genv : GlobalEnv) (compMap : Environment) (sour
       rw [head.1, ih]
   exact names.symm.trans (namesOfPairs bindings flatEnv.v pairs)
 
-/-- Declaration-list result in existential form, over the preliminary
-factored relations. -/
+/-- Declaration-list result in existential form, used to assemble the
+source-to-flat simulation. This helper has no separate HOL declaration. -/
 theorem factoredCompileDeclarations {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
     (decs : List Dec) (genv : GlobalEnv) (env nextEnv : Environment) (sourceEnv : SemEnv Value) (trace : List VarN)
@@ -405,8 +395,9 @@ theorem factoredCompileDeclarations {C F : Type} [Nonempty C]
         envGenRel nextGen sourceLast.evalState ∧ GlobalEnvInv nextGenv nextEnv (fun _ => False) resultEnv) ∧
       (∀ error, result = .err error → ∃ flatErr, flatError = some flatErr ∧
         ResultRel (fun _ (_ : SemEnv Value) (_ : Unit) => True) nextGenv (.err error) (.err flatErr)) := by
-  have caseProof := factoredDecIH_all interp transform decs genv env nextEnv sourceEnv trace source sourceLast flat
-    start finish next other n n' gen nextGen flatDecs result sourceRun invariant compiled envInv safe generation future bounded
+  have caseProof := (factoredAllBounded (F := F) interp transform source.clock).2 decs genv env nextEnv
+    sourceEnv trace source sourceLast flat start finish next other n n' gen nextGen flatDecs result
+    (Nat.le_refl _) sourceRun invariant compiled envInv safe generation future bounded
   cases result with
   | val values => exact caseProof
   | err error => cases error <;> exact caseProof
