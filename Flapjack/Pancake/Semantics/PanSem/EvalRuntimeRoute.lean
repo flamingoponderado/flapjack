@@ -184,6 +184,48 @@ def evalPanSemStateExpViaHOLCached (cache : PanSemExpressionContextCache)
         panValueOfHOL
   else evalPanSemStateExp s e
 
+/-- The memory access for the routed HOL path, derived from a state's memory
+    domains and byte order. The generic fallback `evalPanSemStateExp` derives
+    its access with `panSemWordMemoryAccess`, which agrees with this definition
+    at width 64 (`panSemWordMemoryAccess_64`); the two paths therefore agree on
+    the access, though this is not the only place that derives one. -/
+def PanSemState.memoryAccess (state : PanSemState (RiscV.Word 64) (FfiState σ)) :
+    Option (PanValueMemoryAccess (RiscV.Word 64)) :=
+  some (panSemBitVec64MemoryAccess state)
+
+/-- The guarded HOL expression route and the memory access derived from the
+    same owner state. The structure groups the two so callers can take both
+    from one construction; it does not prevent a caller from building a
+    mismatched pair, so use the fields of a single value. -/
+structure PanSemExpressionRoute where
+  run : PanExprEvaluator (RiscV.Word 64)
+  access : Option (PanValueMemoryAccess (RiscV.Word 64))
+
+/-- Build the guarded HOL expression route and its memory access for one
+    state-owned run. The route pins the owner's structure context, word size and
+    memory domains; the per-call `structs`, `bytes` and `access` arguments that
+    the evaluator signature supplies are ignored, so every expression in the run
+    sees the same settings. The structure-context cache is computed once when
+    the route value is built, outside the per-expression lambda. The returned
+    access is derived from the same owner with `PanSemState.memoryAccess`, so
+    the routed and generic paths read the same memory domains when the caller
+    uses both fields. The dispatch guard itself is Flapjack infrastructure with
+    no single HOL declaration: HOL's `panSem` has one expression evaluator, while
+    the Lean runner must choose between the HOL-shaped evaluator and the
+    String-compatible fallback. -/
+def panSemExpressionRoute (owner : PanSemState (RiscV.Word 64) (FfiState σ)) :
+    PanSemExpressionRoute :=
+  let cache := panSemExpressionContextCache owner.structs
+  { run := fun _structs locals globals memory base top _bytes _access e =>
+      evalPanSemStateExpViaHOLCached cache
+        { owner with
+          locals := locals
+          globals := globals
+          memory := memory
+          baseAddress := base
+          topAddress := top } rfl e
+    access := owner.memoryAccess }
+
 /-- State-owned RV64 code evaluation with the guarded HOL expression route.
     The code-map runner carries the route through calls, branches, and leaves;
     its memory access is derived from the same source state as the route. -/
@@ -193,19 +235,11 @@ def panSemEvaluateRiscV64CodeStateViaHOL
     (handler : PanValueStatefulFfiHandler (RiscV.Word 64) σ)
     (state : PanSemState (RiscV.Word 64) (FfiState σ)) (program : Prog (RiscV.Word 64)) :
     Option (PanValueFfiClockResult (RiscV.Word 64) σ) :=
-  let cache := panSemExpressionContextCache state.structs
+  let route := panSemExpressionRoute state
   evalPanValueFfiClockCodeProg context primitive handler state.structs state.code
     state.exceptionShapes state.baseAddress state.topAddress panSemBitVec64BytesInWord
     (panSemCodeEvaluateFuel state program) state.locals state.globals state.memory state.ffi
-    state.clock program (memoryAccess := some (panSemBitVec64MemoryAccess state))
-    (evaluator := some (fun _structs locals globals memory base top _bytes _access e =>
-      evalPanSemStateExpViaHOLCached cache
-        { state with
-          locals := locals
-          globals := globals
-          memory := memory
-          baseAddress := base
-          topAddress := top } rfl e))
+    state.clock program (memoryAccess := route.access) (evaluator := some route.run)
 
 /-- State-owned RV64 HOL-routed code evaluation with its observable post-state. -/
 def panSemEvaluateRiscV64CodeStateViaHOLWithPostState
@@ -246,7 +280,20 @@ def PanSemRiscV64ProgramInput.toOwner (input : PanSemRiscV64ProgramInput σ) :
 
 /-- RV64 declaration-to-entry execution through the HOL expression route.
     The input supplies the source memory domains and byte order. A non-RV64
-    byte count keeps the generic evaluator, preserving its previous behavior. -/
+    byte count keeps the generic evaluator, preserving its previous behavior.
+    The routed branch delegates to `evalPanValueFfiClockProgramWithRoute`, so
+    the declaration setup lives in the generic runner instead of being copied
+    here.
+
+    The struct-context seed is a difference from HOL: `semantics_decls` runs
+    `decs_stcnames []`, which starts from an empty context, while the generic
+    runner collects structs from `input.initial.source.structs` (also noted on
+    `evalPanValueFfiClockProgram`). The access argument is
+    `input.toOwner.memoryAccess`, and the route builder re-pins only the
+    collected structure context: `PanSemState.memoryAccess` depends only on the
+    owner's memory domains and byte order, so the separately passed access
+    matches the route's own `access` field. The remaining differences from HOL are listed
+    on `evalPanValueFfiClockProgramEntry`. -/
 def panSemEvaluateRiscV64ProgramViaHOL
     (context : PanValueFfiContext (RiscV.Word 64))
     (input : PanSemRiscV64ProgramInput σ)
@@ -256,34 +303,12 @@ def panSemEvaluateRiscV64ProgramViaHOL
     (entry : FunName) (arguments : List (Exp (RiscV.Word 64)))
     (memoryHandler : Option (PanValueMemoryFfiHandler (RiscV.Word 64) σ) := none) :
     Option (PanValueFfiClockResult (RiscV.Word 64) σ) :=
-  if input.initial.source.bytesInWord = panSemBitVec64BytesInWord then do
-    let structs ← collectPanValueStructs decls input.initial.source.structs
-    let run := (let cache := panSemExpressionContextCache structs;
-      fun _structs locals globals memory base top _bytes _access e =>
-        evalPanSemStateExpViaHOLCached cache
-          { input.toOwner with
-            structs := structs
-            locals := locals
-            globals := globals
-            memory := memory
-            baseAddress := base
-            topAddress := top } rfl e)
-    let state ← evalPanValueDeclarationsWithStructs structs
-      { input.initial.source with structs := structs } decls
-      (some (panSemBitVec64MemoryAccess input.toOwner)) (some run)
-    let (outcome, nextClock) ← evalPanValueFfiClockProgramCodeCall context primitive handler
-      state fuel state.globals state.memory input.initial.ffi clock entry arguments
-      (memoryAccess := some (panSemBitVec64MemoryAccess input.toOwner))
-      (memoryHandler := memoryHandler) (evaluator := some run)
-    match lookupInfo entry state.returnShapes, outcome with
-    | some shape, .control (.returned locals globals memory ffi [value]) =>
-        if panShapeMatches (panValueShape state.structs value) shape then
-          some (.control (.returned locals globals memory ffi [value]), nextClock)
-        else none
-    | some _, .control (.returned _ _ _ _ _) => none
-    | _, outcome => some (outcome, nextClock)
+  if input.initial.source.bytesInWord = panSemBitVec64BytesInWord then
+    evalPanValueFfiClockProgramWithRoute context input.initial clock primitive handler fuel decls
+      entry arguments input.toOwner.memoryAccess memoryHandler
+      (fun structs => some (panSemExpressionRoute { input.toOwner with structs := structs }).run)
   else
     evalPanValueFfiClockProgram context input.initial clock primitive handler fuel decls entry arguments
-      (memoryAccess := some (panSemBitVec64MemoryAccess input.toOwner)) (memoryHandler := memoryHandler)
+      input.toOwner.memoryAccess memoryHandler
 
 end Flapjack
