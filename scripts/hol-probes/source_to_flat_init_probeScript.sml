@@ -6,7 +6,6 @@ fun show_thm label th =
   if null (hyp th) then (print label; print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
 fun show_eval label tm = (print label; print_term (rhs (concl (EVAL tm))); print "\n");
-fun show_term label tm = (print label; print_term tm; print "\n");
 val alookup_alloc_defs_el_replay = Q.prove (
   `!funs l n m. ALL_DISTINCT (MAP (\(x,y,z). x) funs) /\ n < LENGTH funs ==>
     ?tt. ALOOKUP (source_to_flat$alloc_defs m l (MAP FST (REVERSE funs))) (EL n (MAP FST funs)) =
@@ -26,10 +25,12 @@ val alookup_alloc_defs_el_replay = Q.prove (
       fs [ALL_DISTINCT_APPEND, ALL_DISTINCT_REVERSE, MAP_REVERSE] >>
       disch_then (qspec_then `l+1` assume_tac) >> fs []));
 val _ = show_thm "alookup_alloc_defs_el_replay=" alookup_alloc_defs_el_replay;
-val _ = show_term "el_add_some_some_local="
-  ``EL i (pre ++ MAP SOME xs ++ post) <> NONE <=>
+val el_add_some_some_replay = Q.prove (
+  `EL i (pre ++ MAP SOME xs ++ post) <> NONE <=>
     (EL i (pre ++ REPLICATE (LENGTH xs) NONE ++ post) <> NONE \/
-      (LENGTH pre <= i /\ i < LENGTH pre + LENGTH xs))``;
+      (LENGTH pre <= i /\ i < LENGTH pre + LENGTH xs))`,
+  simp [source_to_flatProofTheory.EL_APPEND_IF] >> rw [] >> fs [EL_MAP]);
+val _ = show_thm "el_add_some_some_replay=" el_add_some_some_replay;
 val _ = show_thm "el_append_if_typed=" source_to_flatProofTheory.EL_APPEND_IF;
 val _ = show_thm "all_disjoint_elem_typed=" source_to_flatProofTheory.ALL_DISJOINT_elem;
 val fst_snd_eq_case_replay = Q.prove (

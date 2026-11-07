@@ -9,6 +9,35 @@ namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.SemanticPrimitivesHOL
 open Flapjack.Compiler.Backend.BackendCommon
 
+/-- HOL's unbounded index equation for append, including out-of-range indices. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "EL_APPEND_IF"]
+theorem holEl_append_if {α : Type} [Nonempty α] (i : Nat) (xs ys : List α) :
+    holEl i (xs ++ ys) = if i < xs.length then holEl i xs else holEl (i - xs.length) ys := by
+  induction xs generalizing i with
+  | nil => simp
+  | cons head tail ih =>
+    cases i with
+    | zero => simp [holEl, holHd]
+    | succ i => simpa [holEl, List.tail_cons] using ih i
+
+/-- Replacing a block of absent slots by present values changes exactly that block. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "EL_add_SOME_SOME"]
+theorem holEl_add_some_some {α : Type} (i : Nat) (pre : List (Option α))
+    (xs : List α) (post : List (Option α)) :
+    holEl i (pre ++ xs.map some ++ post) ≠ none ↔
+      holEl i (pre ++ List.replicate xs.length none ++ post) ≠ none ∨
+        (pre.length ≤ i ∧ i < pre.length + xs.length) := by
+  by_cases before : i < pre.length
+  · simp [holEl_append_if, before, Nat.not_le_of_gt before]
+  · have after : pre.length ≤ i := Nat.le_of_not_gt before
+    by_cases middle : i - pre.length < xs.length
+    · have hsome : i - pre.length < (xs.map some).length := by simpa using middle
+      have hnone : i - pre.length < (List.replicate xs.length (none : Option α)).length := by simpa using middle
+      simp [holEl_append_if, before, middle, holEl_eq_getElem _ _ hsome,
+        holEl_eq_getElem _ _ hnone, after, show i < pre.length + xs.length by omega]
+    · have afterMiddle : pre.length + xs.length ≤ i := by omega
+      simp [holEl_append_if, before, middle, Nat.not_lt_of_ge afterMiddle]
+
 /-- The allocation counter is threaded for source correspondence but does not
 affect the generated bindings. -/
 theorem allocDefs_ignoreCounter {α : Type} (names : List α) (first second base : Nat) :

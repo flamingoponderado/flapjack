@@ -14452,6 +14452,22 @@
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/AllocDefsLookup.lean",
+    "lean_name": "holEl_append_if",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "EL_APPEND_IF",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared el_append_if_typed in source_to_flat_init_probe.out: the index and lists, unconditional append equation and original conditional are retained. Nonempty α expresses HOL type inhabitance required by EL, including out-of-range indices."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/AllocDefsLookup.lean",
+    "lean_name": "holEl_add_some_some",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "EL_add_SOME_SOME",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared el_add_some_some_replay in source_to_flat_init_probe.out: the unbounded EL observations, present and replicated absent blocks, original disjunction and bounds are retained. The local HOL proof is replayed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/AllocDefsLookup.lean",
     "lean_name": "aLookup_allocDefs_el",
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "ALOOKUP_alloc_defs_EL",

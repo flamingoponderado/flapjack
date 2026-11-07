@@ -1,5 +1,5 @@
 alookup_alloc_defs_el_replay=∀(funs :(α # β # γ) list) (l :num) (n :num) (m :num). ALL_DISTINCT (MAP (λ((x :α),(y :β),(z :γ)). x) funs) ∧ n < LENGTH funs ⇒ ∃(tt :tra). ALOOKUP (alloc_defs m l (MAP (FST :α # β # γ -> α) (REVERSE funs))) (MAP (FST :α # β # γ -> α) funs)❲n❳ = SOME (Glob tt (l + LENGTH funs − (n + (1 :num))))
-el_add_some_some_local=((pre :α option list) ++ MAP (SOME :α -> α option) (xs :α list) ++ (post :α option list))❲(i :num)❳ ≠ (NONE :α option) ⇔ (pre ++ REPLICATE (LENGTH xs) (NONE :α option) ++ post)❲i❳ ≠ (NONE :α option) ∨ LENGTH pre ≤ i ∧ i < LENGTH pre + LENGTH xs
+el_add_some_some_replay=((pre :α option list) ++ MAP (SOME :α -> α option) (xs :α list) ++ (post :α option list))❲(i :num)❳ ≠ (NONE :α option) ⇔ (pre ++ REPLICATE (LENGTH xs) (NONE :α option) ++ post)❲i❳ ≠ (NONE :α option) ∨ LENGTH pre ≤ i ∧ i < LENGTH pre + LENGTH xs
 el_append_if_typed=((xs :α list) ++ (ys :α list))❲(i :num)❳ = if i < LENGTH xs then xs❲i❳ else ys❲i − LENGTH xs❳
 all_disjoint_elem_typed=∀(x :α) (i :num). ALL_DISJOINT (xs :(α -> bool) list) ∧ i < LENGTH xs ∧ x ∈ xs❲i❳ ⇒ EVERY (I :bool -> bool) (MAPi (λ(j :num) (y :α -> bool). j = i ∨ x ∉ y) xs)
 fst_snd_eq_case_replay=(FST :α # β -> α) = (λ((a :α),(b :β)). a) ∧ (SND :γ # δ -> δ) = (λ((a :γ),(b :δ)). b)
