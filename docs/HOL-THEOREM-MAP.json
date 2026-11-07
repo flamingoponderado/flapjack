@@ -1,6 +1,22 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "store_assign",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/Store.lean",
+  "lean_name": "storeAssign_simulation",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source_store_assign in source_eval_oracle_adjust_probe.out: a successful source assignment, related stores and related assigned values imply an existential target store with the related-store conclusion before the target-assignment equation. Source and target value types are independent."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+  "hol_name": "store_lookup",
+  "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/Store.lean",
+  "lean_name": "storeLookup_simulation",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source_store_lookup in source_eval_oracle_adjust_probe.out: related stores and a successful source lookup imply an existential related target entry followed by the target lookup equation. Source and target value types are independent."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
   "hol_name": "Num_11",
   "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/Equality.lean",
   "lean_name": "numInjective",

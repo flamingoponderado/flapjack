@@ -26,7 +26,8 @@ theorem storeValueRel_mono {A B : Type} (P Q : A → B → Prop)
     | cons head _ ih => exact .cons (monotone _ _ head) ih
 
 /-- A related store entry can be found at the same index on the target side.
-HOL proves this lookup fact inline when needed. -/
+This shared curried helper is used by the HOL-shaped `store_lookup` port in
+the source evaluator proof. -/
 theorem storeValueRel_lookup {A B : Type} {R : A → B → Prop} {left : List (StoreValue A)}
     {right : List (StoreValue B)} (related : List.Forall₂ (storeValueRel R) left right)
     (index : Nat) (value : StoreValue A) (found : storeLookup index left = some value) :
@@ -55,7 +56,8 @@ theorem storeValueRel_sameType {A B : Type} {R : A → B → Prop}
     cases m <;> cases m' <;> simp_all
 
 /-- A successful store assignment has a related successful assignment.
-This list-level helper factors the inline HOL store reasoning. -/
+This shared curried helper is used by the HOL-shaped `store_assign` port in
+the source evaluator proof. -/
 theorem storeAssign_related {A B : Type} {R : A → B → Prop}
     {left : Store A} {right : Store B} {value : StoreValue A} {value' : StoreValue B}
     (stores : List.Forall₂ (storeValueRel R) left right) (index : Nat)

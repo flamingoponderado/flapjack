@@ -501,7 +501,8 @@ It captures the full source pattern-match simulation, its mutual induction,
 the heterogeneous product-relation definition used for bindings, a typed local
 rule-form replay, and the matchability preservation theorem. The original
 integer-conversion and full value/list equality-simulation statements and the
-equality induction scheme are also captured with inferred types.
+equality induction scheme are also captured with inferred types, as are the
+heterogeneous store assignment and lookup theorems.
 
 `source_eval_adjust_local_probe.out` captures inferred types of the original script's local oracle-adjustment lemmas as typed terms. These lemmas are not exported by the HOL theory; the probe additionally replays the original proofs of `declare_env_adjust` and `adjust_oracle_reset`.
 

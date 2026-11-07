@@ -110,3 +110,5 @@ val _ = show_thm "source_can_pmatch_all=" source_evalProofTheory.can_pmatch_all;
 val _ = show_thm "source_num_injective=" source_evalProofTheory.Num_11;
 val _ = show_thm "source_do_eq_simulation=" source_evalProofTheory.do_eq;
 val _ = show_thm "source_do_eq_induction=" semanticPrimitivesTheory.do_eq_ind;
+val _ = show_thm "source_store_assign=" source_evalProofTheory.store_assign;
+val _ = show_thm "source_store_lookup=" source_evalProofTheory.store_lookup;
