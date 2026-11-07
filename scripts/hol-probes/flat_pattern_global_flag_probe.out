@@ -1,3 +1,4 @@
+globals_decode_dtree=set_globals (x :exp) = ({||} :num -> num) ∧ set_globals (dflt :exp) = ({||} :num -> num) ∧ EVERY (λ(y :exp). set_globals y = ({||} :num -> num)) (toList (br_spt :exp sptree$num_map) :exp list) ⇒ set_globals (decode_dtree (t :tra) br_spt x dflt (dtree :dTree)) = ({||} :num -> num)
 set_toList_fromList=set (toList (fromList (xs :α list) :α sptree$num_map) :α list) = set xs
 no_mat_decode_dtree=no_Mat (v_exp :exp) ∧ no_Mat (dflt :exp) ∧ EVERY no_Mat (toList (br_spt :exp sptree$num_map) :exp list) ⇒ no_Mat (decode_dtree (t :tra) br_spt v_exp dflt (dtree :dTree))
 esgc_decode_dtree=esgc_free (v_exp :exp) ∧ esgc_free (dflt :exp) ∧ EVERY (λ(y :exp). esgc_free y) (toList (br_spt :exp sptree$num_map) :exp list) ⇒ esgc_free (decode_dtree (t :tra) br_spt v_exp dflt (dtree :dTree))

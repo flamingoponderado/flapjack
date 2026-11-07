@@ -432,6 +432,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "set_globals_decode_dtree_empty",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalInvariants.lean",
+  "lean_name": "setGlobals_decodeDtree",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared globals_decode_dtree in flat_pattern_global_flag_probe.out: the single conjunctive premise retains empty global bags for the value and default and EVERY over branch-tree values; membership renders EVERY. The global bag is the same natural multiplicity function."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
   "hol_name": "esgc_free_decode_dtree",
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalInvariants.lean",
   "lean_name": "esgcFree_decodeDtree",

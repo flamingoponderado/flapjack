@@ -538,19 +538,23 @@ theorem esgcFree_decodeDtree (value default : FlatLang.Exp) (branches : Spt Flat
     · exact ihNo
     · exact esgcFree_smartIf trace _ _ _ (esgcFree_decodeGuard trace value _ valueSafe) ihYes ihNo
 
-/-- Decoding a decision tree preserves empty global bags when every reachable
-branch and the default are global-write-free. -/
-theorem setGlobals_decodeDtree_aux (trace : Tra) (branches : Spt FlatLang.Exp) (value default : FlatLang.Exp) (tree : DTree)
-    (valueSafe : setGlobals value = emptyGlobalBag) (defaultSafe : setGlobals default = emptyGlobalBag)
-    (branchesSafe : ∀ index branch, sptLookup index branches = some branch → setGlobals branch = emptyGlobalBag) :
+/-- Decoding preserves empty global bags for a safe value, default, and
+all expressions in the branch tree. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "set_globals_decode_dtree_empty"]
+theorem setGlobals_decodeDtree (value default : FlatLang.Exp) (branches : Spt FlatLang.Exp)
+    (trace : Tra) (tree : DTree)
+    (premises : setGlobals value = emptyGlobalBag ∧ setGlobals default = emptyGlobalBag ∧
+      ∀ branch ∈ sptToList branches, setGlobals branch = emptyGlobalBag) :
     setGlobals (decodeDtree trace branches value default tree) = emptyGlobalBag := by
+  obtain ⟨valueSafe, defaultSafe, branchesSafe⟩ := premises
   induction tree with
   | fail => exact defaultSafe
   | typeFail => simp [decodeDtree, setGlobals]
   | leaf index =>
     cases found : sptLookup index branches with
     | none => simpa [decodeDtree, found] using defaultSafe
-    | some branch => simpa [decodeDtree, found] using branchesSafe index branch found
+    | some branch =>
+      simpa [decodeDtree, found] using branchesSafe branch ((sptMemToList branch branches).2 ⟨index, found⟩)
   | if_ guard yes no ihYes ihNo =>
     simp only [decodeDtree]
     split_ifs
@@ -615,15 +619,14 @@ theorem setGlobals_compilePats (cfg : Config) (naive : Bool) (t : Tra) (n : Nat)
       apply parts body
       simp only [List.mem_cons, List.mem_map]
       exact Or.inr ⟨(p, body), hmem, rfl⟩
-    have result := setGlobals_decodeDtree_aux t (branchTree (ps.map (compilePatRhs t n x))) x dflt
-      (PatternComp.comp (ps.zipIdx.map fun ((p, _), j) => (encodePat p, j))) safe.2 defaultSafe
-      (by
-        intro index branch found
+    have result := setGlobals_decodeDtree x dflt (branchTree (ps.map (compilePatRhs t n x))) t
+      (PatternComp.comp (ps.zipIdx.map fun ((p, _), j) => (encodePat p, j)))
+      ⟨safe.2, defaultSafe, by
+        intro branch member
         apply branchesSafe branch
-        have member := (sptMemToList branch _).2 ⟨index, found⟩
         have eq := congrArg (fun (values : Set FlatLang.Exp) => branch ∈ values)
           (setToList_fromList (ps.map (compilePatRhs t n x)))
-        exact eq.mp member)
+        exact eq.mp member⟩
     simp only [compilePats, Bool.false_eq_true, ↓reduceIte]
     rw [result, allEmpty]
 
