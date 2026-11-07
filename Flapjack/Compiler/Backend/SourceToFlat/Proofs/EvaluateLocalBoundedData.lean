@@ -760,9 +760,7 @@ theorem localEnvBounded_strcat {C F : Type} [Nonempty C]
           | none => simp [doApp, doAppNumericCore, doAppBasic, decoded, result] at successful
           | some str => exact ⟨str, rfl⟩
         obtain ⟨str, stringDecoded⟩ := stringDecode
-        have flatStringDecoded : FlatSem.valuesToString flatValues = some str := by
-          rw [← valuesToString_related nextGenv values flatValues relatedValues]
-          exact stringDecoded
+        have flatStringDecoded := valuesToString_related nextGenv values flatValues str relatedValues stringDecoded
         have resultRel : ValueRel nextGenv (.litv (.strLit str)) (.litv (.strLit str)) := .literal nextGenv _
         refine ⟨nextGenv, ?_, ?_⟩
         · unfold ExprSim

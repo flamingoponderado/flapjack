@@ -9701,3 +9701,6 @@ its flat value, character-list, and closure value types.
 
 `flat_to_clos_relation_probe.out` captures `imp_cmp_eq_num_cmp` with
 its natural operands, integer coercions, and comparison operator type.
+
+`source_to_flat_list_conversion_probe.out` replays the local `vs_to_string`
+proof and captures the inferred source and flat list types.

@@ -498,6 +498,15 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "vs_to_string",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/ListConversion.lean",
+  "lean_name": "valuesToString_related",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["c", "tys"],
+  "reviewer": "Compared the local HOL source and typed vs_to_string_local_typed replay in source_to_flat_list_conversion_probe.out: the free environment, list and result binders, curried list relation and successful decoding premises, and target decoding conclusion match. The environment uses the reviewed canonical finite-map fields."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
   "hol_name": "v_to_list",
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/ListConversion.lean",
   "lean_name": "valueToList_related",

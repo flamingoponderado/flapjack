@@ -1,5 +1,5 @@
-load "source_to_flatProofTheory";
-open HolKernel Parse boolLib bossLib source_to_flatProofTheory;
+load "preamble"; load "source_to_flatProofTheory";
+open HolKernel Parse boolLib bossLib preamble source_to_flatProofTheory;
 val every_case_tac = BasicProvers.EVERY_CASE_TAC;
 val _ = Globals.linewidth := 1000000;
 val local_eqns =
@@ -38,3 +38,13 @@ val _ = show_thm "v_to_char_list_typed=" chars_thm;
 val _ = show_thm "v_to_list_typed=" list_thm;
 val _ = show_thm "v_to_word8_list_rel_typed=" source_to_flatProofTheory.v_to_word8_list_rel;
 val _ = show_thm "v_to_word64_list_rel_typed=" source_to_flatProofTheory.v_to_word64_list_rel;
+
+(* Replay the original local successful string-decoding lemma. *)
+val strings_thm = prove (
+  ``∀v1 v2 s. LIST_REL (v_rel genv) v1 v2 ⇒
+      semanticPrimitives$vs_to_string v1 = SOME s ⇒ flatSem$vs_to_string v2 = SOME s``,
+  ho_match_mp_tac semanticPrimitivesTheory.vs_to_string_ind >>
+  rw [semanticPrimitivesTheory.vs_to_string_def, flatSemTheory.vs_to_string_def] >>
+  fs [local_eqns] >> pop_assum mp_tac >> TOP_CASE_TAC >> strip_tac >> rveq >> fs [] >>
+  rw [flatSemTheory.vs_to_string_def]);
+val _ = show_thm "vs_to_string_local_typed=" strings_thm;

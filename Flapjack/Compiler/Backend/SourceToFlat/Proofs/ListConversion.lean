@@ -34,17 +34,23 @@ theorem listToValue_related (genv : GlobalEnv)
     · exact .cons genv _ _ _ _ head (.cons genv _ _ _ _ ih (.nil genv))
     · exact hasLists.1
 
-/-- Concatenating related lists of values gives the same optional string.
-This is Flapjack infrastructure over the factored relation. -/
+/-- Related lists preserve successful string decoding. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "vs_to_string"
+  (fmap_as_finite_support := [c, tys])]
 theorem valuesToString_related (genv : GlobalEnv)
-    (xs : List SemanticPrimitivesHOL.Value) (ys : List FlatSem.Value)
-    (related : List.Forall₂ (ValueRel genv) xs ys) :
-    SemanticPrimitivesHOL.valuesToString xs = FlatSem.valuesToString ys := by
-  induction related with
-  | nil => rfl
-  | cons head tail ih =>
-    cases head <;> try (rfl)
-    case literal lit => cases lit <;> simp [SemanticPrimitivesHOL.valuesToString, FlatSem.valuesToString, ih]
+    (xs : List SemanticPrimitivesHOL.Value) (ys : List FlatSem.Value) (value : MlString)
+    (related : List.Forall₂ (ValueRel genv) xs ys)
+    (decoded : SemanticPrimitivesHOL.valuesToString xs = some value) :
+    FlatSem.valuesToString ys = some value := by
+  have same : SemanticPrimitivesHOL.valuesToString xs = FlatSem.valuesToString ys := by
+    clear decoded
+    induction related with
+    | nil => rfl
+    | cons head tail ih =>
+      cases head <;> try (rfl)
+      case literal lit => cases lit <;> simp [SemanticPrimitivesHOL.valuesToString, FlatSem.valuesToString, ih]
+  rw [← same]
+  exact decoded
 
 /-- Successful source-list decoding is preserved by related flat values. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "v_to_list"
