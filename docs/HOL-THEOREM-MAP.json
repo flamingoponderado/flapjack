@@ -340,6 +340,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "ctor_same_type_refl",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/PatternStamps.lean",
+  "lean_name": "ctorSameType_refl",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared ctor_same_type_refl_replay in source_to_flat_init_probe.out: the optional pair carrier has independent component types and the same argument appears on both sides of the flat constructor-type relation. The local HOL proof is replayed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
   "hol_name": "ctor_same_type_SND",
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/PatternStamps.lean",
   "lean_name": "ctorSameType_some_iff",

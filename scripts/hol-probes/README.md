@@ -9561,7 +9561,7 @@ replays and captures the original local recursive-function lookup proof;
 two-sided namespace identity, including the former's unused polymorphic binder.
 
 `source_to_flat_init_probe.out` also replays the local `FST_PAIR_MAP_I` and
-`ctor_same_type_SND` proofs with their independent inferred types visible.
+`ctor_same_type_SND` and `ctor_same_type_refl` proofs with inferred types visible.
 
 `source_to_flat_init_probe.out` captures the typed original source-to-flat
 initialization definitions and evaluates the initial constructor entries and

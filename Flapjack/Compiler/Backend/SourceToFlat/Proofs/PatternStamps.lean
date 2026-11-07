@@ -6,6 +6,14 @@ import Flapjack.Compiler.Backend.Semantics.FlatSem.PatternMatch
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.SemanticPrimitivesHOL
 
+/-- Every optional constructor identifier has the same type as itself. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "ctor_same_type_refl"]
+theorem ctorSameType_refl {α β : Type} (x : Option (α × β)) :
+    FlatSem.ctorSameType x x := by
+  cases x with
+  | none => trivial
+  | some pair => cases pair; rfl
+
 /-- Two present constructor identifiers have the same type exactly when their
 type components agree. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "ctor_same_type_SND"]
