@@ -115,12 +115,6 @@ inductive GlobalLookupRel : GlobalEnv → Environment → Ident ModN VarN → Se
       GlobalLookupRel genv compMap id source
 end
 
-/-- Under the original bounds premise, the optional lookup reads exactly the
-indexed global slot. -/
-theorem globalSlot_eq_get (globals : List (Option FlatSem.Value)) (n : Nat)
-    (bound : n < globals.length) : globals[n]?.getD none = globals[n] := by
-  simp [bound]
-
 /-- The list helper expresses the usual pointwise list relation. -/
 theorem valueListRel_iff (genv : GlobalEnv) (sources : List SemanticPrimitivesHOL.Value)
     (flats : List FlatSem.Value) :
