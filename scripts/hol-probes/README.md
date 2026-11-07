@@ -9652,3 +9652,6 @@ declaration-environment extension from semanticPrimitivesProps.
 
 The source evaluator probe captures the full typed primitive-application
 simulation, including its unused polymorphic existential witness.
+
+`source_to_flat_init_probe.out` includes a typed parse of the local
+`global_env_inv_extend` statement; the HOL proof is not replayed.

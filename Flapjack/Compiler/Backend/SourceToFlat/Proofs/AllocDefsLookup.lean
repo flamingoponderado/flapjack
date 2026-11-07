@@ -152,24 +152,35 @@ private theorem lookup_reverse_of_nodup {α : Type} (entries : List (VarN × α)
     exact lookup_of_mem_nodup entries.reverse name value
       (List.mem_reverse.mpr (lookup_mem entries name value lookup)) reversedDistinct
 
-/-- Reversed declaration bindings produce the original source global
-invariant when names are distinct. This uses the factored value relation, so
-it is not yet a reviewed port of the original HOL result. -/
-theorem globalEnvInv_allocDefs_reverse (genv : GlobalEnv)
-    (source : List (VarN × SemanticPrimitivesHOL.Value))
-    (flat : List (VarN × FlatSem.Value)) (related : EnvRel genv (alistToNs source) flat)
-    (distinct : (source.map Prod.fst).Nodup)
+namespace AllocDefsReversePort
+/-- Canonical global-environment finite-map carrier roundtrip. -/
+theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
+    GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env := GlobalEnv.holFmapAsFiniteSupportWitness env
+end AllocDefsReversePort
+
+/-- Reversed declaration bindings produce the source global invariant when
+names are distinct. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "global_env_inv_extend"
+  (fmap_as_finite_support := [c, tys])]
+theorem globalEnvInv_allocDefs_reverse (source : List (VarN × SemanticPrimitivesHOL.Value))
+    (genv : GlobalEnv) (flat : List (VarN × FlatSem.Value)) (next : Nat)
     (pre post : List (Option FlatSem.Value))
-    (slots : genv.v = pre ++ ((flat.reverse.map (fun p => some p.2)) ++ post)) (next : Nat) :
+    (premises : EnvRel genv (alistToNs source) flat ∧
+      genv.v = (pre ++ (flat.map Prod.snd).reverse.map some) ++ post ∧
+      (source.map Prod.fst).Nodup) :
     GlobalEnvInv genv
-      { emptyEnv with v := alistToNs (allocDefs next pre.length (flat.reverse.map Prod.fst)) }
+      { emptyEnv with v := alistToNs (allocDefs next pre.length ((flat.map Prod.fst).reverse)) }
       (fun _ => False) ⟨alistToNs source, nsEmpty⟩ := by
+  obtain ⟨related, slots, distinct⟩ := premises
   have reversedRelated : EnvRel genv (alistToNs source.reverse) flat.reverse := by
     apply (envRel_alist_iff genv _ _).mpr
     exact List.forall₂_reverse_iff.mpr ((envRel_alist_iff genv _ _).mp related)
-  have inv := globalEnvInv_allocDefs genv source.reverse flat.reverse reversedRelated pre post slots next
+  have reversedSlots : genv.v = pre ++ (flat.reverse.map (fun p => some p.2) ++ post) := by
+    simpa [List.map_reverse, List.map_map, Function.comp_def, List.append_assoc] using slots
+  have inv := globalEnvInv_allocDefs genv source.reverse flat.reverse reversedRelated pre post reversedSlots next
   cases inv with
   | intro _ _ _ values constructors =>
+    simp only [List.map_reverse] at *
     apply GlobalEnvInv.intro
     · intro id value unshadowed lookup
       apply values id value unshadowed

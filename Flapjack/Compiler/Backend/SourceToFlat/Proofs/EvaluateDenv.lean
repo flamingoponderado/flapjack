@@ -243,8 +243,8 @@ theorem invariantMakeVarls {C F : Type} [Nonempty C]
         | cons head tail ih => simp only [List.map_cons, head.1, ih]
       exact aux pairs
     have sourceDistinct : (env1.map Prod.fst).Nodup := by simpa [namesEq] using distinct
-    have inv := globalEnvInv_allocDefs_reverse genv' env1 env.v related sourceDistinct pre post
-      (by simp [genv', values, List.map_map]) tt
+    have inv := globalEnvInv_allocDefs_reverse env1 genv' env.v tt pre post
+      ⟨related, by simp [genv', values, List.map_map], sourceDistinct⟩
     simpa [preLength, List.map_reverse, emptyEnv] using inv
 
 /-- A compiled environment declaration initializes its allocated global slot

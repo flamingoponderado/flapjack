@@ -96,3 +96,15 @@ val _ = show_thm "nsAppend_assoc=" namespacePropsTheory.nsAppend_assoc;
 val _ = show_thm "nsLookup_nsBind=" namespacePropsTheory.nsLookup_nsBind;
 val _ = show_thm "build_rec_env_merge=" semanticPrimitivesPropsTheory.build_rec_env_merge;
 val _ = show_thm "nsAppend_nsEmpty=" namespacePropsTheory.nsAppend_nsEmpty;
+
+(* Typed parsing of the local theorem; this does not replay its HOL proof. *)
+val global_env_inv_extend_typed = ``!pat_env genv pat_env' tt g1 g2.
+  source_to_flatProof$env_rel genv (namespace$alist_to_ns pat_env) pat_env' /\
+  genv.v = g1 ++ MAP SOME (REVERSE (MAP SND pat_env')) ++ g2 /\
+  ALL_DISTINCT (MAP FST pat_env) ==>
+  source_to_flatProof$global_env_inv genv
+    <|c := namespace$nsEmpty;
+      v := namespace$alist_to_ns (source_to_flat$alloc_defs tt (LENGTH g1)
+        (REVERSE (MAP FST pat_env')))|>
+    {} <|v := namespace$alist_to_ns pat_env; c := namespace$nsEmpty|>``;
+val _ = (print "global_env_inv_extend_typed="; print_term global_env_inv_extend_typed; print "\n");

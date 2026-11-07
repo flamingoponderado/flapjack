@@ -1,5 +1,17 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "global_env_inv_extend",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/AllocDefsLookup.lean",
+  "lean_name": "globalEnvInv_allocDefs_reverse",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "c",
+    "tys"
+  ],
+  "reviewer": "Compared the local HOL statement with the typed parse global_env_inv_extend_typed in source_to_flat_init_probe.out; this capture parses the statement and does not replay the local HOL proof. Binder order, conjunction order, source and flat value carriers, reversed maps, empty shadow set and global invariant match. The updated emptyEnv is definitionally the HOL record literal with an empty constructor namespace. The GlobalEnv c and tys finite maps use the reviewed canonical carrier and its same-module roundtrip witness."
+},
+{
   "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
   "hol_name": "extend_dec_env_assoc",
   "lean_path": "Flapjack/SemanticPrimitivesProps/Environment.lean",
