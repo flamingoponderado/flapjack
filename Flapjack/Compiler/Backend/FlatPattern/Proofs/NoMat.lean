@@ -143,10 +143,19 @@ theorem noMat_naivePatternMatch (trace : Tra) (todo : List (FlatLang.Pat × Flat
 
 /-- Naive branch chains are match-free when their value, default, and
 branch expressions are match-free. -/
-theorem noMat_naivePatternMatches (trace : Tra) (value default : FlatLang.Exp) (rows : List (FlatLang.Pat × FlatLang.Exp))
-    (valueSafe : FlatProps.noMat value = true) (defaultSafe : FlatProps.noMat default = true)
-    (branchesSafe : ∀ pattern body, (pattern, body) ∈ rows → FlatProps.noMat body = true) :
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "naive_pattern_matches_no_Mat"]
+theorem noMat_naivePatternMatches (trace : Tra) (value : FlatLang.Exp)
+    (rows : List (FlatLang.Pat × FlatLang.Exp)) (default : FlatLang.Exp)
+    (safe : ∀ expression ∈ value :: default :: rows.map Prod.snd, FlatProps.noMat expression = true) :
     FlatProps.noMat (naivePatternMatches trace value rows default) = true := by
+  have valueSafe := safe value (by simp)
+  have defaultSafe := safe default (by simp)
+  have branchesSafe : ∀ pattern body, (pattern, body) ∈ rows → FlatProps.noMat body = true := by
+    intro pattern body member
+    apply safe body
+    simp only [List.mem_cons, List.mem_map]
+    exact Or.inr (Or.inr ⟨(pattern, body), member, rfl⟩)
+  clear safe
   induction rows with
   | nil => exact defaultSafe
   | cons row rest ih =>
@@ -320,9 +329,13 @@ theorem noMat_compilePats (default value : FlatLang.Exp) (rows : List (FlatLang.
     exact eq.mp member
   | true =>
     simp only [compilePats, ↓reduceIte]
-    apply noMat_naivePatternMatches trace value default _ valueSafe defaultSafe
-    intro pattern branch member
-    exact branchesSafe branch (zip_right_mem _ _ pattern branch member)
+    apply noMat_naivePatternMatches trace value _ default
+    intro expression member
+    simp only [List.mem_cons, List.mem_map] at member
+    rcases member with rfl | rfl | ⟨⟨pattern, branch⟩, row, rfl⟩
+    · exact valueSafe
+    · exact defaultSafe
+    · exact branchesSafe branch (zip_right_mem _ _ pattern branch row)
 
 
 /-- Compiling an expression eliminates every source match. -/

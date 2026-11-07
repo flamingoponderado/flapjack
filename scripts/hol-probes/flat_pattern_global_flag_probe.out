@@ -1,3 +1,4 @@
+no_mat_naive_matches=∀(t :tra) (x :exp) (xs :(flatLang$pat # exp) list) (dflt :exp). EVERY no_Mat (x::dflt::MAP (SND :flatLang$pat # exp -> exp) xs) ⇒ no_Mat (naive_pattern_matches t x xs dflt)
 no_mat_compile_pats=no_Mat (dflt :exp) ∧ no_Mat (x :exp) ∧ EVERY no_Mat (MAP (SND :flatLang$pat # exp -> exp) (ps :(flatLang$pat # exp) list)) ⇒ no_Mat (compile_pats (cfg :config) (naive :bool) (t :tra) (N :num) x dflt ps)
 globals_decode_dtree=set_globals (x :exp) = ({||} :num -> num) ∧ set_globals (dflt :exp) = ({||} :num -> num) ∧ EVERY (λ(y :exp). set_globals y = ({||} :num -> num)) (toList (br_spt :exp sptree$num_map) :exp list) ⇒ set_globals (decode_dtree (t :tra) br_spt x dflt (dtree :dTree)) = ({||} :num -> num)
 set_toList_fromList=set (toList (fromList (xs :α list) :α sptree$num_map) :α list) = set xs

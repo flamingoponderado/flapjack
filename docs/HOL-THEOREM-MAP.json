@@ -424,6 +424,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "naive_pattern_matches_no_Mat",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/NoMat.lean",
+  "lean_name": "noMat_naivePatternMatches",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared no_mat_naive_matches in flat_pattern_global_flag_probe.out: the binders retain the HOL order and the single premise covers the value, default, and mapped row bodies. Membership renders EVERY and equality to true renders no_Mat."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
   "hol_name": "compile_pats_no_Mat",
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/NoMat.lean",
   "lean_name": "noMat_compilePats",
