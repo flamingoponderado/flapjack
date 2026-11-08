@@ -8430,7 +8430,7 @@ run_probe data_resource_mono_probeScript.sml data_resource_mono_probe.out \
   cut_env_typed cut_state_typed cut_state_opt_typed call_env_typed \
   get_var_typed get_vars_typed set_var_typed set_vars_typed flush_state_typed \
   push_env_typed pop_env_typed jump_exc_typed find_code_typed is_bool_typed install_sfs_typed initial_state_typed \
-  add_space_typed op_requires_names_typed evaluate_clock_typed fix_clock_evaluate_typed \
+  add_space_typed op_requires_names_typed evaluate_clock_typed fix_clock_evaluate_typed set_vars_clock_replay_typed \
   cut_state_opt_with_swap_replay_typed cut_state_opt_stack_max_replay_typed cut_state_opt_swap_input_replay_typed \
   "$cake_dir/compiler/backend/semantics/dataPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 

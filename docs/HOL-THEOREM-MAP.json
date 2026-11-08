@@ -128365,6 +128365,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
+  "hol_name": "set_vars_clock",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/ControlClock.lean",
+  "lean_name": "setVars_clock",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared set_vars_clock_replay_typed (local theorem, typed replay): free variables ns, vs, s; independent state types; unconditional clock preservation. Follows definitionally from the reviewed set_vars_def, which updates only locals."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "evaluate_clock",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/EvaluateClock.lean",
   "lean_name": "evaluateClock",

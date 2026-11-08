@@ -42,6 +42,9 @@ val _ = show "add_space_typed" dataSemTheory.add_space_def;
 val _ = show "op_requires_names_typed" dataLangTheory.op_requires_names_def;
 val _ = show "evaluate_clock_typed" dataSemTheory.evaluate_clock;
 val _ = show "fix_clock_evaluate_typed" dataSemTheory.fix_clock_evaluate;
+val setVarsClock = prove (``(dataSem$set_vars ns vs s).clock = s.clock``,
+  simp [dataSemTheory.set_vars_def]);
+val _ = show "set_vars_clock_replay_typed" setVarsClock;
 val cutSwap = prove (``dataSem$cut_state_opt names_opt
     (s with <|stack_max := smx; safe_for_space := safe; peak_heap_length := peak|>) =
   OPTION_MAP (λt. t with <|stack_max := smx; safe_for_space := safe;
