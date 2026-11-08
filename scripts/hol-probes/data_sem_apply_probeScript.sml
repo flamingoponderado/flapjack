@@ -40,6 +40,11 @@ val _ = show "bignum_digits=" dataSemTheory.bignum_digits_def;
 val _ = show "bignum_size=" dataSemTheory.bignum_size_def;
 val _ = show "no_thunks_in_refs=" dataSemTheory.no_thunks_in_refs_def;
 val _ = show "consume_space=" dataSemTheory.consume_space_def;
+val _ = show "extract_stack=" dataSemTheory.extract_stack_def;
+val _ = show "global_to_vs=" dataSemTheory.global_to_vs_def;
+val _ = show "allowed_op=" dataSemTheory.allowed_op_def;
+val _ = show "size_of_stack_frame=" dataSemTheory.size_of_stack_frame_def;
+val _ = show "size_of_stack=" dataSemTheory.size_of_stack_def;
 val _ = show "nullary_cons=" (EVAL ``dataSem$do_app_aux (closLang$BlockOp (closLang$Cons 9)) []
   (s:('c,'ffi) dataSem$state)``);
 val _ = show "nonempty_cons=" (EVAL ``dataSem$do_app_aux (closLang$BlockOp (closLang$Cons 9))

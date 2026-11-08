@@ -369,9 +369,8 @@ success with an existing label. The capture is not a full installation proof.
 Regenerate with `HOL_PROBE_ONLY=data_sem_install_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `data_sem_apply_probe.out` captures the typed data primitive dispatcher, its
-`do_app_clock` and `check_res_IMP` theorems, the heap-accounting definitions,
-and the architecture-size and small-number definitions,
-alongside
+`do_app_clock` and `check_res_IMP` theorems, the heap and stack accounting
+definitions, and the architecture-size and small-number definitions, alongside
 original observations for block construction, timestamp updates, invalid list
 lengths, integer arithmetic, and unsupported byte copying. Lean examples cover
 the same cases; these checks do not establish full dispatcher correspondence.
@@ -389,8 +388,9 @@ establish the complete evaluator correspondence. Regenerate with
 `HOL_PROBE_ONLY=data_sem_limits_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `data_sem_stack_probe.out` captures the typed computed arithmetic call tree,
-the data-language stack-consumption clauses, and the stack update. The tree
-was regenerated against the pinned CakeML and HOL revisions; run
+its data-to-word location constants, the data-language stack-consumption
+clauses, and the stack update. The tree was regenerated against the pinned
+CakeML and HOL revisions; run
 `python3 scripts/check-data-stack-call-tree.py` to compare it with the Lean
 tree. The capture and comparison do not establish whole-evaluator correctness.
 Regenerate with `HOL_PROBE_ONLY=data_sem_stack_probeScript.sml scripts/hol-probes/regenerate.sh`.

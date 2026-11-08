@@ -33,6 +33,11 @@ bignum_digits=∀(n :num) (arch64 :bool). bignum_digits arch64 n = if n = (0 :nu
 bignum_size=∀(arch64 :bool) (i :int). bignum_size arch64 i = (1 :num) + bignum_digits arch64 (Num (ABS i))
 no_thunks_in_refs=∀(refs :α ref sptree$num_map). no_thunks_in_refs refs ⇔ ∀(k :num) (e :thunk_mode) (v :α). (lookup k refs :α ref option) ≠ SOME (Thunk e v :α ref)
 consume_space=∀(k :num) (s :(γ, 'ffi) state). consume_space k s = if s.space < k then (NONE :(γ, 'ffi) state option) else SOME (s with space := s.space − k)
+extract_stack=(∀(v0 :num option) (env :v sptree$num_map). extract_stack (Env v0 env :stack) = (toList env :v list)) ∧ ∀(v1 :num option) (env :v sptree$num_map) (v2 :num). extract_stack (Exc v1 env v2) = (toList env :v list)
+global_to_vs=global_to_vs (NONE :num option) = ([] :v list) ∧ ∀(n :num). global_to_vs (SOME n) = [(RefPtr T n :v)]
+allowed_op=∀(op :closLang$op) (v0 :α). allowed_op op v0 ⇔ op ≠ Install ∧ ∀(t :num) (i :num). op ≠ MemOp (MutCons t i)
+size_of_stack_frame=(∀(n :num option) (v0 :v sptree$num_map). size_of_stack_frame (Env n v0 :stack) = n) ∧ ∀(n :num option) (v1 :v sptree$num_map) (v2 :num). size_of_stack_frame (Exc n v1 v2) = OPTION_MAP ($+ (3 :num)) n
+size_of_stack=size_of_stack = FOLDR (OPTION_MAP2 $+ ∘ size_of_stack_frame) (SOME (1 :num))
 nullary_cons=do_app_aux (BlockOp (Cons (9 :num) :block_op)) ([] :v list) (s :(γ, 'ffi) state) = (Rval ((Block (0 :num) (9 :num) ([] :v list) :v),s) :(v # (γ, 'ffi) state, v) result)
 nonempty_cons=do_app_aux (BlockOp (Cons (9 :num) :block_op)) [(Number (4 :int) :v)] ((s :(γ, 'ffi) state) with tstamps := SOME (7 :num)) = (Rval ((Block (7 :num) (9 :num) [(Number (4 :int) :v)] :v),s with <|tstamps := SOME (8 :num); safe_for_space := ((1 :num) < (2 :num) ** s.limits.length_limit ∧ s.safe_for_space)|>) :(v # (γ, 'ffi) state, v) result)
 invalid_list_length=do_app_aux (BlockOp (FromList (9 :num))) [(Number (1 :int) :v); Block_nil] (s :(γ, 'ffi) state) = (Rerr (Rabort Rtype_error :v error_result) :(v # (γ, 'ffi) state, v) result)
