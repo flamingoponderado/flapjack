@@ -677,8 +677,8 @@ def assignWordToInt {width : Nat} [NeZero width] (conf : Config) (_secn l dest :
                   .ite .equal 1 (.imm 0) (.assign (adjustVar dest) (shiftN .lsl (.var 11) 2))
                     (writeWord32On32 conf header1 dest 11)])], l)
 
-/-- Flapjack's checked traversal. Some non-64-bit operations return `none`;
-this definition has not yet been reviewed as HOL's total `comp`. -/
+/-- Flapjack's option-valued traversal. Its totality is proved separately;
+source-level correspondence with HOL's `comp` remains to be reviewed. -/
 def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
     Nat → DataLang.Prog → Option (WordLangProgHOL (BitVec width) × Nat)
   | l, .skip => some (.skip, l)
