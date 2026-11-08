@@ -24,7 +24,9 @@ def findValuesGlobals : List FlatSem.Value → NumSet
   | value :: rest => sptUnion (findValueGlobals value) (findValuesGlobals rest)
 termination_by values => sizeOf values
 
-/-- Traverse captured bindings without allocating an intermediate value list. -/
+/-- Flapjack-specific traversal of captured bindings, rendering HOL's
+`find_v_globalsL (MAP SND env.v)` without an intermediate list. It has no
+separate HOL declaration; `findBindingsGlobals_eq_map` proves the equation. -/
 def findBindingsGlobals : List (Flapjack.AstHOL.VarN × FlatSem.Value) → NumSet
   | [] => .ln
   | (_, value) :: rest => sptUnion (findValueGlobals value) (findBindingsGlobals rest)
@@ -58,6 +60,45 @@ def findRefsGlobals : List (Flapjack.SemanticPrimitivesHOL.StoreValue FlatSem.Va
   | .varray values :: rest => sptUnion (findValuesGlobals values) (findRefsGlobals rest)
   | .thunk _ value :: rest => sptUnion (findValueGlobals value) (findRefsGlobals rest)
   | _ :: rest => findRefsGlobals rest
+
+/-- Every reference, array and thunk stored in the list has globals within
+    the set that bounds the entire reference-store analysis. -/
+@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "find_refs_globals_MEM"]
+theorem findRefsGlobals_mem (R : Nat → Prop) :
+    ∀ (refs : List (StoreValue FlatSem.Value)) (_reachable : NumSet),
+      (∀ key, sptMem key (findRefsGlobals refs) → R key) →
+      (∀ value, .refv value ∈ refs → ∀ key, sptMem key (findValueGlobals value) → R key) ∧
+      (∀ values, .varray values ∈ refs → ∀ key, sptMem key (findValuesGlobals values) → R key) ∧
+      (∀ mode value, .thunk mode value ∈ refs → ∀ key, sptMem key (findValueGlobals value) → R key) := by
+  intro refs
+  induction refs with
+  | nil => simp
+  | cons ref rest ih =>
+    intro reachable bounded
+    have restBound : ∀ key, sptMem key (findRefsGlobals rest) → R key := by
+      intro key found
+      apply bounded key
+      cases ref <;> simp_all [findRefsGlobals, sptMem_sptUnion]
+    obtain ⟨refs, arrays, thunks⟩ := ih reachable restBound
+    refine ⟨?_, ?_, ?_⟩
+    · intro value member key found
+      rcases List.mem_cons.mp member with equal | member
+      · subst ref
+        apply bounded key
+        exact (sptMem_sptUnion _ _ _).mpr (Or.inl found)
+      · exact refs value member key found
+    · intro values member key found
+      rcases List.mem_cons.mp member with equal | member
+      · subst ref
+        apply bounded key
+        exact (sptMem_sptUnion _ _ _).mpr (Or.inl found)
+      · exact arrays values member key found
+    · intro mode value member key found
+      rcases List.mem_cons.mp member with equal | member
+      · subst ref
+        apply bounded key
+        exact (sptMem_sptUnion _ _ _).mpr (Or.inl found)
+      · exact thunks mode value member key found
 
 /-- Global dependencies in a flat local environment. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "find_env_globals_def"]

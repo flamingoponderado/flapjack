@@ -3648,6 +3648,12 @@ preservation theorems, including the latter's independent unused binder, and
 the pattern matching state, clock, binding extension and append theorems,
 and the original match-result mapping definition.
 
+`flat_pattern_rows_same_probeScript.sml` captures the independently typed row
+payloads and indexed result in the pattern compiler's row-selection theorem.
+
+`flat_elim_value_globals_probeScript.sml` also captures the complete
+reference-store membership theorem, including its unused `reachable` binder.
+
 `data_to_word_memory_thunk_probeScript.sml` captures the inferred original statements of `blocks_unique_Thunk`, `blocks_unique_Thunk2`, and `blocks_unique_Word64`, including the independent type of the second pair component and the fixed 64-bit word type. Their Lean proofs are in `Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Values/Thunk.lean` and `Memory/Relation/SmallNumber.lean`. The probe also captures `memory_rel_Thunk_IMP` and `memory_rel_Thunk_inlined`, proved in `Memory/Relation/Thunk.lean`, and replays the local `thunk_tag_bits_lemma`, proved in `Memory/Relation/ThunkHeap.lean`.
 
 `word_gc_functions_probeScript.sml` captures original `word_gcFunctions` and `word_simp` GC-constant rows at 64 bits: `ptr_to_addr`, `update_addr`, `decode_length`, both `is_ref_header` outcomes, `memcpy` with its result memory and a failing domain check, `word_gc_move` on a zero and a non-zero `Loc`, a small word, a copied object and a forwarding pointer, `word_gen_gc_move` copying a data object and a reference object, `word_gen_gc_partial_move` outside and inside the young generation, `word_gc_move_roots`, `word_gc_move_list`, `glob_real` on a word and a `Loc`, the four `new_trig` branches, and `is_gc_const`/`is_gc_word_const` on an even and odd word and a `Loc` (twenty-eight rows in all). `Flapjack/Test/WordGcFunctionsParity.lean` replays every row in the kernel, comparing memories at the probed addresses.

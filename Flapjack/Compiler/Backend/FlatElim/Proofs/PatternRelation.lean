@@ -33,9 +33,11 @@ theorem flatStateRel_pmatchRows {C F : Type} (reachable : NumSet)
     simp only [FlatSem.pmatchRows, (flatStateRel_pmatch reachable removed).1 source pattern value [] related, ih]
 
 /-- A member expression's global lookups occur in the list analysis. -/
+@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "find_lookupsL_MEM"]
 theorem findLookupsList_member (body : FlatLang.Exp) (bodies : List FlatLang.Exp)
-    (member : body ∈ bodies) (key : Nat) (found : sptMem key (findLookups body)) :
-    sptMem key (findGlobalsList destGlobalVarLookup bodies) := by
+    : body ∈ bodies → ∀ key, sptMem key (findLookups body) →
+      sptMem key (findGlobalsList destGlobalVarLookup bodies) := by
+  intro member key found
   induction bodies with
   | nil => simp at member
   | cons first rest ih =>
@@ -59,20 +61,6 @@ theorem pmatchRows_findLookups {C F R : Type} (rows : List (FlatLang.Pat × Flat
   apply bounded key
   apply findLookupsList_member body _ _ key found
   exact List.mem_map.mpr ⟨(pattern, body), (FlatProps.pmatchRows_imp_pmatch rows state value bindings pattern body selected).2, rfl⟩
-
-/-- A reference value contributes its globals to the store analysis. -/
-theorem findRefsGlobals_ref_mem (refs : List (StoreValue FlatSem.Value))
-    (value : FlatSem.Value) (member : StoreValue.refv value ∈ refs) (key : Nat)
-    (found : sptMem key (findValueGlobals value)) : sptMem key (findRefsGlobals refs) := by
-  induction refs with
-  | nil => simp at member
-  | cons ref rest ih =>
-    simp only [List.mem_cons] at member
-    rcases member with equal | member
-    · subst ref
-      exact (sptMem_sptUnion _ _ _).mpr (Or.inl found)
-    · cases ref <;> simp only [findRefsGlobals, sptMem_sptUnion]
-      all_goals first | exact Or.inr (ih member) | exact ih member
 
 /-- Pattern environments use the same analysis as the original mapped list. -/
 def bindingsWithin (bindings : List (VarN × FlatSem.Value)) (reachable : NumSet) : Prop :=
@@ -138,8 +126,8 @@ theorem pmatchReachable_aux {C F : Type} (state : FlatSem.State C F) (reachable 
           case refv v =>
             apply ih v bindings result matched
             · intro key found
-              exact store key (findRefsGlobals_ref_mem state.refs v
-                (List.mem_of_getElem? (by simpa [storeLookup] using lookup)) key found)
+              exact (findRefsGlobals_mem (fun n => sptMem n reachable) state.refs .ln store).1 v
+                (List.mem_of_getElem? (by simpa [storeLookup] using lookup)) key found
             · exact env
             · exact store
     case pas =>

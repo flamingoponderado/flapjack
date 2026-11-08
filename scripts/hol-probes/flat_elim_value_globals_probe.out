@@ -49,3 +49,5 @@ pmatch_no_eval=(∀(s :(γ, 'ffi) state) (p :pat) (v :v) (bindings :(mlstring # 
 closure_lookup=SOME ()
 tuple_lookup=SOME ()
 closure_eval=T
+refs_globals_mem_typed=∀(refs :v store_v list) (reachable :sptree$num_set). (domain (find_refs_globals refs) :num -> bool) ⊆ (R :num -> bool) ⇒ (∀(a :v). MEM (Refv a) refs ⇒ (domain (find_v_globals a) :num -> bool) ⊆ R) ∧ (∀(vs :v list). MEM (Varray vs) refs ⇒ (domain (find_v_globalsL vs) :num -> bool) ⊆ R) ∧ ∀(m :thunk_mode) (a :v). MEM (Thunk m a) refs ⇒ (domain (find_v_globals a) :num -> bool) ⊆ R
+lookups_list_mem_typed=∀(e :exp) (es :exp list). MEM e es ⇒ (domain (find_lookups e) :num -> bool) ⊆ (domain (find_lookupsL es) :num -> bool)

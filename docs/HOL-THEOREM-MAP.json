@@ -19317,24 +19317,24 @@
     "hol_name": "find_v_globals_def",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ValueGlobals.lean",
     "lean_name": "findValueGlobals",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original clauses captured in flat_elim_value_globals_probe.out; complete mutual-carrier and dependency review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed value_globals clauses in flat_elim_value_globals_probe.out: Conv, Closure, Recclosure, Vectorv, Litv and Loc retain the original union and fallback behavior. findBindingsGlobals_eq_map and findFunctionGlobals_eq_map prove the two factored traversals equal the original mapped value and function-body lists; the value, environment, sparse-tree and lookup carriers are reviewed."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
     "hol_name": "find_v_globals_def",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ValueGlobals.lean",
     "lean_name": "findValuesGlobals",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original clauses captured in flat_elim_value_globals_probe.out; complete mutual-carrier and dependency review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed value_globals clauses in flat_elim_value_globals_probe.out: the empty list returns LN and a cons unions the head value analysis with the tail, in source order. The mutual value cases use the reviewed carriers and the equations findBindingsGlobals_eq_map and findFunctionGlobals_eq_map."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
     "hol_name": "find_refs_globals_def",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ValueGlobals.lean",
     "lean_name": "findRefsGlobals",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original clauses captured in flat_elim_value_globals_probe.out; complete mutual-carrier and dependency review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed refs_globals clauses in flat_elim_value_globals_probe.out: Refv and Thunk union the contained value analysis with the tail, Varray unions the list analysis with the tail, W8array skips to the tail, and the empty list returns LN. The value, store and sparse-tree carriers and constituent analyses are reviewed."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
@@ -130411,5 +130411,29 @@
   "lean_name": "pmatch_append",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared pmatch_append_typed in flat_do_app_preservation_probe.out: the shared suffix, both matching equations, and the independently typed unused universal binders in the two conjuncts are retained. The lambda appending the suffix renders HOL's flip APPEND."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "pmatch_rows_same_FST",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/PatternRowsSame.lean",
+  "lean_name": "pmatchRows_sameFst",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared pmatch_rows_same_FST_typed in flat_pattern_rows_same_probe.out. The two row payload types are independent, as are the state parameters; HOL's inhabited types are represented by Nonempty where EL requires them. The pattern-projection premise and all three cases are unchanged, including the existential index, target-list bound, original EL equality and target result using EL."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+  "hol_name": "find_refs_globals_MEM",
+  "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ValueGlobals.lean",
+  "lean_name": "findRefsGlobals_mem",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared refs_globals_mem_typed in flat_elim_value_globals_probe.out: the arbitrary set R is a Nat predicate, and the otherwise unused reachable NumSet remains universally quantified. The domain-subset premise and all reference, value-array and thunk membership/subset conclusions are retained."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+  "hol_name": "find_lookupsL_MEM",
+  "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/PatternRelation.lean",
+  "lean_name": "findLookupsList_member",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared lookups_list_mem_typed in flat_elim_value_globals_probe.out. The expression and list binders, membership premise and domain inclusion conclusion are retained. findGlobalsList destGlobalVarLookup follows the original mutual find_lookupsL clauses, and sptMem expresses membership in each domain."
 }
 ]
