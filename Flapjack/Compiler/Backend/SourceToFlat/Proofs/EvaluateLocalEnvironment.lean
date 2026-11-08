@@ -320,10 +320,4 @@ theorem localEnvBounded_variable {C F : Type} [Nonempty C]
         · rw [sourceRun, flatRun]
           exact ⟨GlobalGrowth.refl genv, invariant, generation, oracForwardRel_refl interp source.evalState⟩
 
-/-- Leaf expressions using arbitrary related local environments. -/
-inductive LocalEnvExpression : AstHOL.Exp → Prop where
-  | literal (lit : Lit) : LocalEnvExpression (.lit lit)
-  | variable_ (id : Ident ModN VarN) : LocalEnvExpression (.var id)
-  | function_ (name : VarN) (body : AstHOL.Exp) : LocalEnvExpression (.fn name body)
-
 end Flapjack.Compiler.Backend.SourceToFlat

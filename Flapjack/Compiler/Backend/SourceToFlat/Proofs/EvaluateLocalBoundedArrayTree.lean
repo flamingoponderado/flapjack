@@ -6,7 +6,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedPrimiti
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedMatch
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalCall
 
-/-! Bounded expression composition including arrays and function calls. -/
+/-! A total expression induction tree for bounded simulation. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL
 open OracleInvariant
@@ -15,7 +15,9 @@ private inductive LocalEnvBoundedArrayExpression : AstHOL.Exp → Prop where
   | simpleApp (op : Op) (args : List AstHOL.Exp) : op ≠ .aallocEmpty → op ≠ .eval →
       op ≠ .envId → getOpClass op = .simple →
       (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) → LocalEnvBoundedArrayExpression (.app op args)
-  | base (expr : AstHOL.Exp) : LocalEnvExpression expr → LocalEnvBoundedArrayExpression expr
+  | literal (lit : Lit) : LocalEnvBoundedArrayExpression (.lit lit)
+  | variable_ (id : Ident ModN VarN) : LocalEnvBoundedArrayExpression (.var id)
+  | function_ (name : VarN) (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression (.fn name body)
   | eval (args : List AstHOL.Exp) : (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) →
       LocalEnvBoundedArrayExpression (.app .eval args)
   | call (left right : AstHOL.Exp) : LocalEnvBoundedArrayExpression left → LocalEnvBoundedArrayExpression right →
@@ -136,11 +138,11 @@ private theorem allExpressions_covered : (expr : AstHOL.Exp) → LocalEnvBounded
   | .raise body => .raise_ body (allExpressions_covered body)
   | .handle body rows => .handle body rows (allExpressions_covered body)
       (fun pat row _member => allExpressions_covered row)
-  | .lit lit => .base _ (.literal lit)
+  | .lit lit => .literal lit
   | .con none args => .tuple args (fun expr _member => allExpressions_covered expr)
   | .con (some id) args => .constructor id args (fun expr _member => allExpressions_covered expr)
-  | .var id => .base _ (.variable_ id)
-  | .fn name body => .base _ (.function_ name body)
+  | .var id => .variable_ id
+  | .fn name body => .function_ name body
   | .app op args => applicationExpression_covered op args (fun expr _member => allExpressions_covered expr)
   | .log op left right => .log op left right (allExpressions_covered left) (allExpressions_covered right)
   | .if_ cond yes no => .if_ cond yes no (allExpressions_covered cond)
@@ -168,11 +170,9 @@ private theorem localEnvBounded_arrayTree {C F : Type} [Nonempty C]
     (decsIH : FactoredDecClockIH (F := F) interp transform limit)
     (expr : AstHOL.Exp) (covered : LocalEnvBoundedArrayExpression expr) : LocalEnvBoundedIH (F := F) interp transform limit expr := by
   induction covered with
-  | base expr covered =>
-    cases covered with
-    | literal lit => exact localEnvBounded_literal interp transform limit lit
-    | variable_ id => exact localEnvBounded_variable interp transform limit id
-    | function_ name body => exact localEnvBounded_function interp transform limit name body
+  | literal lit => exact localEnvBounded_literal interp transform limit lit
+  | variable_ id => exact localEnvBounded_variable interp transform limit id
+  | function_ name body => exact localEnvBounded_function interp transform limit name body
   | simpleApp op args notEmpty notEval notEnvId simple _ ih =>
     exact localEnvBounded_simpleApp interp transform limit op notEmpty notEval notEnvId simple args ih
   | eval args _ ih => exact localEnvBounded_eval interp transform limit decsIH args ih
