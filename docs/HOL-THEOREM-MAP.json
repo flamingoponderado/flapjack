@@ -128349,6 +128349,15 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "do_app_aux_safe_peak_swap",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/ResourceSwap.lean",
+  "lean_name": "doAppAux_safePeakSwap",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared do_app_aux_safe_peak_swap_typed: binders op, vs, s, q, s-prime, safe, peak; one shared state type; the successful-application premise; and existential safety and peak witnesses without a stack update. Derived from the reviewed stack-swap form and stack-maximum preservation. Inherits reals_as_rational_cuts through doAppAux (SOUNDNESS item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
   "hol_name": "do_app_aux_sm_safe_peak_swap",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/ResourceSwap.lean",
   "lean_name": "doAppAux_stackSafePeakSwap",

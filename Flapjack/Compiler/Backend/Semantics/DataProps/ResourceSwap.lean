@@ -135,4 +135,42 @@ theorem doApp_stackSafePeakSwap {C F : Type} (op : ClosLang.Op) (args : List Dat
     simp only [doApp] at run ⊢
     exact appSpace_success (.thunkOp thunkop) args state value next mx safe peak run
 
+/-- Non-FFI success preserves stack-maximum accounting. This is proof infrastructure. -/
+private theorem applyNonFfi_stackMax {C F : Type} (op : ClosLang.Op) (values : List DataSem.Value)
+    (state next : State C F) (value : DataSem.Value)
+    (run : applyNonFfi op values state = some (value, next)) : next.stackMax = state.stackMax := by
+  simp only [applyNonFfi] at run
+  split at run <;> try simp_all [Option.bind_eq_some_iff, withFreshTimestamp, checkLim]
+  all_goals try (aesop (config := { warnOnNonterminal := false }))
+  all_goals try simp_all [Option.bind_eq_some_iff]
+  all_goals try (aesop (config := { warnOnNonterminal := false }))
+  all_goals try simp_all [Option.bind_eq_some_iff]
+  all_goals aesop
+
+/-- Auxiliary primitive success preserves stack-maximum accounting. -/
+private theorem doAppAux_stackMax {C F : Type} (op : ClosLang.Op) (values : List DataSem.Value)
+    (state next : State C F) (value : DataSem.Value)
+    (run : doAppAux op values state = .val (value, next)) : next.stackMax = state.stackMax := by
+  simp only [doAppAux] at run
+  repeat' (split at run <;> try simp_all)
+  all_goals first
+    | obtain ⟨_, rfl⟩ := run; rfl
+    | exact applyNonFfi_stackMax _ _ state next value (by assumption)
+
+/-- Auxiliary primitive success is preserved by safety and peak updates. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "do_app_aux_safe_peak_swap"]
+theorem doAppAux_safePeakSwap {C F : Type} (op : ClosLang.Op) (values : List DataSem.Value)
+    (state : State C F) (value : DataSem.Value) (next : State C F) (safe : Bool) (peak : Nat)
+    (run : doAppAux op values state = .val (value, next)) :
+    ∃ safe' peak', doAppAux op values {state with safeForSpace := safe, peakHeapLength := peak} =
+      .val (value, {next with safeForSpace := safe', peakHeapLength := peak'}) := by
+  obtain ⟨safe', peak', mx', result⟩ := doAppAux_stackSafePeakSwap op values state value next state.stackMax safe peak run
+  have first := doAppAux_stackMax op values state next value run
+  have second := doAppAux_stackMax op values {state with stackMax := state.stackMax, safeForSpace := safe, peakHeapLength := peak}
+    {next with stackMax := mx', safeForSpace := safe', peakHeapLength := peak'} value result
+  have same : mx' = next.stackMax := second.trans first.symm
+  subst mx'
+  exact ⟨safe', peak', by simpa using result⟩
+
+
 end Flapjack.Compiler.Backend.DataProps
