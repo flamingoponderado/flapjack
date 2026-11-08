@@ -947,4 +947,43 @@ theorem doApp_Strcat {C F : Type} (genv : GlobalEnv)
             simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
               FlatSem.doAppData, flatDecoded, flatString]
 
+/-- The VfromList case of `do_app`; the full theorem is not yet assembled. The
+dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
+  (fmap_as_finite_support := [c, tys])]
+theorem doApp_VfromList {C F : Type} (genv : GlobalEnv)
+    (s1 s2 : Store Value × HolFfiState F) (vs : List Value)
+    (r : Result Value Value) (flat : FlatSem.State C F) (flatVs : List FlatSem.Value)
+    (premises : doApp s1 .vfromList vs = some (s2, r) ∧
+      List.Forall₂ (StoreValueRel genv) s1.1 flat.refs.tail ∧ flat.refs ≠ [] ∧
+      List.Forall₂ (ValueRel genv) vs flatVs ∧ s1.2 = flat.ffi ∧ genvCOk genv.c ∧
+      Op.vfromList ≠ .aallocEmpty ∧ Op.vfromList ≠ .envId) :
+    ∃ flatResult flatState,
+      List.Forall₂ (StoreValueRel genv) s2.1 flatState.refs.tail ∧ flatState.refs ≠ [] ∧
+      s2.2 = flatState.ffi ∧ flat.globals = flatState.globals ∧
+      flat.refs.take 1 = flatState.refs.take 1 ∧ ResultRel ValueRel genv r flatResult ∧
+      FlatSem.doApp flat (astOpToFlatOp .vfromList) flatVs = some (flatState, flatResult) := by
+  obtain ⟨run, stores, nonempty, values, ffi, ok, _, _⟩ := premises
+  cases vs with
+  | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
+  | cons value rest =>
+    cases rest with
+    | cons second rest => simp [doApp, doAppNumericCore, doAppBasic] at run
+    | nil =>
+      cases decoded : valueToList value with
+      | none => simp [doApp, doAppNumericCore, doAppBasic, decoded] at run
+      | some sourceValues =>
+        simp [doApp, doAppNumericCore, doAppBasic, decoded] at run
+        obtain ⟨rfl, rfl⟩ := run
+        cases values with
+        | cons valueRel tail =>
+          cases tail
+          rename_i flatValue
+          obtain ⟨flatValues, flatDecoded, relatedValues⟩ :=
+            valueToList_related genv ok value flatValue sourceValues ⟨valueRel, decoded⟩
+          refine ⟨.val (.vectorv flatValues), flat, stores, nonempty, ffi, rfl, rfl,
+            .value (valueRel_vector genv sourceValues flatValues relatedValues), ?_⟩
+          simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
+            FlatSem.doAppData, flatDecoded]
+
 end Flapjack.Compiler.Backend.SourceToFlat
