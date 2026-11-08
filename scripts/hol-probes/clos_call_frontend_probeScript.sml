@@ -2,6 +2,13 @@ load "clos_callTheory";
 open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
 val _ = (print "calls_sing_def_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callTheory.calls_sing_def); print "\n");
+val _ = (print "calls_def_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callTheory.calls_def); print "\n");
+val _ = (print "calls_sing_eq_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callTheory.calls_sing_eq); print "\n");
+val _ = (print "compile_def_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callTheory.compile_def); print "\n");
+val _ = (print "compile_inc_def_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callTheory.compile_inc_def); print "\n");
+val _ = (print "cond_call_compile_inc_def_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callTheory.cond_call_compile_inc_def); print "\n");
+val _ = (print "compile_eq_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callTheory.compile_eq); print "\n");
+val _ = (print "compile_inc_eq_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callTheory.compile_inc_eq); print "\n");
 val _ = (print "free="; print_term (rhs (concl (EVAL ``
  clos_call$free_sing (closLang$Fn «f» (SOME 4) NONE 1
    (closLang$Let None [closLang$Var None 3] (closLang$Var None 0)))``))); print "\n");

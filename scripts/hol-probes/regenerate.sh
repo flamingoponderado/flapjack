@@ -758,7 +758,7 @@ run_probe bvi_tmc_frontend_probeScript.sml bvi_tmc_frontend_probe.out \
   examples program "$cake_dir/compiler/backend/bvi_tmcScript.sml" "$cake_dir/compiler/backend"
 
 run_probe clos_call_frontend_probeScript.sml clos_call_frontend_probe.out \
-  calls_sing_def_typed free closed open apps letrec incremental incremental_disabled "$cake_dir/compiler/backend/clos_callScript.sml" "$cake_dir/compiler/backend"
+  calls_sing_def_typed calls_def_typed calls_sing_eq_typed compile_def_typed compile_inc_def_typed cond_call_compile_inc_def_typed compile_eq_typed compile_inc_eq_typed free closed open apps letrec incremental incremental_disabled "$cake_dir/compiler/backend/clos_callScript.sml" "$cake_dir/compiler/backend"
 
 run_probe clos_known_helpers_probeScript.sml clos_known_helpers_probe.out \
   fvs ticks letop decisions inline known_inline known_letrec_globals known_impure_inline known_impure_tree "$cake_dir/compiler/backend/clos_knownScript.sml" "$cake_dir/compiler/backend"

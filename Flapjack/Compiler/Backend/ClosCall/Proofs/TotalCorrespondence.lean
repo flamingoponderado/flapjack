@@ -1,4 +1,4 @@
-import Flapjack.Compiler.Backend.ClosCall.Calls
+import Flapjack.Compiler.Backend.ClosCall.Compile
 import Flapjack.Compiler.Backend.ClosCall.Proofs.GroupClosed
 import Flapjack.Compiler.Backend.ClosCall.Proofs.Total
 import Flapjack.Compiler.Backend.ClosKnown.Inline.Free.Correct
@@ -276,5 +276,16 @@ theorem compileIncFuel_correct (fuel : Nat) (known : NumSet)
       some (let result := callsSingList program.1 (known, [])
         (result.2.1, (result.1, result.2.2))) := by
   simp [compileIncFuel?, callsListBounded_correct]
+
+/-- The bounded executable compiler agrees with the total HOL compiler. -/
+theorem compileFuel_eq_compile (fuel : Nat) (enabled : Bool) (es : List Exp) :
+    compileFuel fuel enabled es = some (compile enabled es) := by
+  simpa [compile, calls] using compileFuel_correct fuel enabled es
+
+/-- The bounded executable incremental pass agrees with HOL's total pass. -/
+theorem compileIncFuel_eq_compileInc (fuel : Nat) (known : NumSet)
+    (program : List Exp × List (Nat × Nat × Exp)) :
+    compileIncFuel? fuel known program = some (compileInc known program) := by
+  simpa [compileInc, calls] using compileIncFuel_correct fuel known program
 
 end Flapjack.Compiler.Backend.ClosCall
