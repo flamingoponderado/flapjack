@@ -6,6 +6,19 @@ fun show_thm label th =
   if null (hyp th) then (print label; print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
 fun show_eval label tm = (print label; print_term (rhs (concl (EVAL tm))); print "\n");
+val do_app_typed = ``∀genv s1 s2 op vs r (s1_i1 : ('a, 'b) flatSem$state) vs_i1.
+  semanticPrimitives$do_app s1 op vs = SOME (s2, r) /\
+  LIST_REL (source_to_flatProof$sv_rel genv) (FST s1) (TL s1_i1.refs) /\
+  ~NULL s1_i1.refs /\ LIST_REL (source_to_flatProof$v_rel genv) vs vs_i1 /\
+  SND s1 = s1_i1.ffi /\ source_to_flatProof$genv_c_ok genv.c /\
+  op <> AallocEmpty /\ op <> Env_id ==>
+  ∃r_i1 s2_i1.
+    LIST_REL (source_to_flatProof$sv_rel genv) (FST s2) (TL s2_i1.refs) /\
+    ~NULL s2_i1.refs /\ SND s2 = s2_i1.ffi /\
+    s1_i1.globals = s2_i1.globals /\ TAKE 1 s1_i1.refs = TAKE 1 s2_i1.refs /\
+    source_to_flatProof$result_rel source_to_flatProof$v_rel genv r r_i1 /\
+    flatSem$do_app s1_i1 (source_to_flat$astOp_to_flatOp op) vs_i1 = SOME (s2_i1, r_i1)``;
+val _ = (print "do_app_typed="; print_term do_app_typed; print "\n");
 val do_app_rec_help_typed = ``!genv comp_map env_v_local env_v_local' env_v_top funs t.
   source_to_flatProof$env_rel genv env_v_local env_v_local'.v /\
   source_to_flatProof$global_env_inv genv comp_map (set (MAP FST env_v_local'.v)) env' /\
@@ -25,6 +38,17 @@ val do_app_rec_help_typed = ``!genv comp_map env_v_local env_v_local' env_v_top 
             (MAP FST funs' ++ MAP FST env_v_local'.v))) funs))``;
 val _ = (print "do_app_rec_help_typed="; print_term do_app_rec_help_typed; print "\n");
 val do_app_rec_v_rel_eqns = CONJUNCT1 source_to_flatProofTheory.v_rel_more_eqns;
+val (do_app_binders, do_app_body) = strip_forall do_app_typed;
+val do_app_configGC_typed = list_mk_forall
+  (List.take (do_app_binders, 3) @ List.drop (do_app_binders, 4),
+   subst [List.nth (do_app_binders, 3) |-> ``ast$ConfigGC``] do_app_body);
+val do_app_configGC_replay = prove (do_app_configGC_typed,
+  rpt gen_tac >> Cases_on `s1` >> Cases_on `s1_i1.refs` >> simp [] >> Cases_on `s1_i1` >>
+  simp [source_to_flatTheory.astOp_to_flatOp_def] >>
+  srw_tac[][semanticPrimitivesPropsTheory.do_app_cases, flatSemTheory.do_app_def] >>
+  full_simp_tac(srw_ss())[do_app_rec_v_rel_eqns, source_to_flatProofTheory.result_rel_cases,
+    flatSemTheory.Unitv_def]);
+val _ = show_thm "do_app_configGC_replay=" do_app_configGC_replay;
 val do_app_rec_help_replay = prove (do_app_rec_help_typed,
   Induct_on `funs`
   >- srw_tac[][do_app_rec_v_rel_eqns, source_to_flatTheory.compile_exp_def] >>

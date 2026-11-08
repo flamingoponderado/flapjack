@@ -567,6 +567,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StateRel
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StoreUpdate
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateCases
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateControl
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.DoAppConfigGC
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternRows
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternRows.Invariant
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateMatch
