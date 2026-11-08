@@ -572,6 +572,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.DoAppShift
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.DoAppEquality
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.DoAppArith
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.DoAppFromTo
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.DoAppTest
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternRows
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternRows.Invariant
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateMatch

@@ -152,6 +152,36 @@ val do_app_equality_replay = prove (do_app_equality_typed,
   metis_tac [source_to_flatProofTheory.Boolv_11, do_app_eq_rel,
     semanticPrimitivesTheory.eq_result_11, semanticPrimitivesTheory.eq_result_distinct, do_app_v_rel_lems]);
 val _ = show_thm "do_app_equality_replay=" do_app_equality_replay;
+val do_app_test_lemma = Q.prove (
+  `semanticPrimitives$do_test test ty v1 v2 = Eq_val b /\
+    source_to_flatProof$genv_c_ok genv.c /\
+    source_to_flatProof$v_rel genv v1 w1 /\ source_to_flatProof$v_rel genv v2 w2 ==>
+    flatSem$do_test test ty w1 w2 = Eq_val b`,
+  strip_tac >>
+  gvs [oneline semanticPrimitivesTheory.do_test_def, AllCaseEqs()] >>
+  gvs [oneline flatSemTheory.do_test_def, AllCaseEqs()]
+  >- (gvs [semanticPrimitivesTheory.check_type_def] >>
+      fs [Once source_to_flatProofTheory.v_rel_cases] >> gvs [] >>
+      fs [flatSemTheory.the_Litv_Float64_def] >>
+      fs [semanticPrimitivesTheory.the_Litv_Float64_def] >> gvs [flatSemTheory.check_type_def])
+  >- (drule_all (cj 1 do_app_eq_rel) >> simp [] >>
+      imp_res_tac source_to_flatProofTheory.v_rel_check_type >> fs [])
+  >- (gvs [oneline semanticPrimitivesTheory.dest_Litv_def, AllCaseEqs()] >>
+      gvs [oneline flatSemTheory.dest_Litv_def, AllCaseEqs()] >> gvs [do_app_rec_v_rel_eqns]) >>
+  gvs [oneline semanticPrimitivesTheory.dest_Litv_def, AllCaseEqs()] >>
+  fs [Once source_to_flatProofTheory.v_rel_cases] >> gvs [flatSemTheory.dest_Litv_def]);
+val test_op = ``ast$Test test ty``;
+val do_app_test_typed = list_mk_forall
+  (List.take (do_app_binders, 3) @ List.rev (free_vars test_op) @ List.drop (do_app_binders, 4),
+   subst [List.nth (do_app_binders, 3) |-> test_op] do_app_body);
+val do_app_test_replay = prove (do_app_test_typed,
+  rpt gen_tac >> Cases_on `s1` >> Cases_on `s1_i1.refs` >> simp [] >> Cases_on `s1_i1` >>
+  simp [source_to_flatTheory.astOp_to_flatOp_def, astTheory.getOpClass_def] >>
+  gvs [oneline semanticPrimitivesTheory.do_app_def, AllCaseEqs()] >>
+  gvs [oneline flatSemTheory.do_app_def, AllCaseEqs()] >>
+  rw [PULL_EXISTS] >> gvs [] >> drule_all do_app_test_lemma >> fs [] >>
+  full_simp_tac(srw_ss())[do_app_rec_v_rel_eqns, source_to_flatProofTheory.result_rel_cases, do_app_v_rel_lems]);
+val _ = show_thm "do_app_test_replay=" do_app_test_replay;
 val shift_op = ``ast$Shift w sh n``;
 val do_app_shift_typed = list_mk_forall
   (List.take (do_app_binders, 3) @ List.rev (free_vars shift_op) @ List.drop (do_app_binders, 4),

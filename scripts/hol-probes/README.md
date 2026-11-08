@@ -9568,9 +9568,9 @@ It also replays the local `do_app_rec_help` proof, retaining its unused
 polymorphic binder and separate recursive groups in the inferred statement.
 The `do_app_typed` row records the inferred statement of the local primitive
 simulation theorem; `do_app_configGC_replay`, `do_app_shift_replay`,
-`do_app_equality_replay`, `do_app_arith_replay`, and `do_app_fromto_replay`
-replay its ConfigGC, Shift, Equality, Arith, and FromTo cases. The equality,
-arithmetic, and conversion replays reconstruct their local HOL prerequisites.
+`do_app_equality_replay`, `do_app_arith_replay`, `do_app_fromto_replay`, and
+`do_app_test_replay` replay its ConfigGC, Shift, Equality, Arith, FromTo, and
+Test cases. The replays reconstruct the relevant local HOL prerequisites.
 
 `source_to_flat_init_probe.out` captures the typed original source-to-flat
 initialization definitions and evaluates the initial constructor entries and
