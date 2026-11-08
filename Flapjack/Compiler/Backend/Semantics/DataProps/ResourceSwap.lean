@@ -1,25 +1,10 @@
+import Flapjack.Compiler.Backend.Semantics.DataProps.NonFfiResources
 import Flapjack.Compiler.Backend.Semantics.DataProps.HeapSwap
 import Flapjack.Compiler.Backend.Semantics.DataProps.ApplyAuxFields
 
 /-! Primitive success under resource-field updates. -/
 namespace Flapjack.Compiler.Backend.DataProps
 open Flapjack Flapjack.Compiler.Backend.DataSem Flapjack.SemanticPrimitivesHOL
-
-set_option maxRecDepth 4096 in
-set_option maxHeartbeats 5000000 in
-/-- Safety updates preserve successful non-FFI primitive applications. This
-Flapjack helper supports the HOL resource-swap proof. The exhaustive proof
-spends about 12 seconds in simplification on this checkout; fold safety into
-the per-operation field proof to avoid repeating the case analysis. -/
-private theorem applyNonFfi_safeSuccess {C F : Type} (op : ClosLang.Op) (values : List DataSem.Value)
-    (state next : State C F) (value : DataSem.Value) (safe : Bool)
-    (run : applyNonFfi op values state = some (value, next)) :
-    ∃ safe', applyNonFfi op values {state with safeForSpace := safe} =
-      some (value, {next with safeForSpace := safe'}) := by
-  simp only [applyNonFfi, Option.bind] at run ⊢
-  all_goals repeat' (first | split at run | split) <;> simp_all [withFreshTimestamp, checkLim, Option.bind]
-  all_goals try (aesop (config := {warnOnNonterminal := false}))
-  all_goals cases safe <;> (simp; try omega)
 
 /-- Safety updates preserve successful auxiliary applications, including FFI.
 This Flapjack helper supports the HOL resource-swap proof. -/
@@ -30,7 +15,7 @@ private theorem doAppAux_safeSuccess {C F : Type} (op : ClosLang.Op) (values : L
       .val (value, {next with safeForSpace := safe'}) := by
   simp only [doAppAux] at run ⊢
   all_goals repeat' (split at run <;> simp_all)
-  all_goals try (obtain ⟨safe', result⟩ := applyNonFfi_safeSuccess _ _ state next value safe (by assumption); simp_all)
+  all_goals try (obtain ⟨safe', result⟩ := (applyNonFfi_successFields _ _ state next value safe (by assumption)).1; simp_all)
   all_goals try aesop
 
 /-- Auxiliary primitive success is preserved by updating resource fields. -/

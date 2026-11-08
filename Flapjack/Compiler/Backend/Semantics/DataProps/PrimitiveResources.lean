@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.Semantics.DataProps.NonFfiResources
 import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateControl
 import Flapjack.Compiler.Backend.BackendProps
 
@@ -135,17 +136,6 @@ theorem doAppAux_ffi_resource_frame {C F : Type} (name : Basis.Pure.MlString.MlS
                           obtain ⟨rfl, rfl⟩ := run
                           exact ⟨callFFIHOL_return_ioEvents_prefix state.ffi (.extCall name) config bytes ffi updated call, rfl, rfl⟩
 
-set_option maxRecDepth 4096 in
-set_option maxHeartbeats 5000000 in
-/-- Successful non-FFI applications preserve FFI state and cannot improve safety. -/
-private theorem nonFfiResource {C F : Type} (op : ClosLang.Op) (args : List Value)
-    (state next : State C F) (value : Value)
-    (run : applyNonFfi op args state = some (value, next)) :
-    next.ffi = state.ffi ∧ (next.safeForSpace = true → state.safeForSpace = true) := by
-  simp only [applyNonFfi, Option.bind] at run
-  repeat' (split at run <;> try simp_all [withFreshTimestamp, checkLim, Option.bind])
-  all_goals try (aesop (config := {warnOnNonterminal := false}))
-
 /-- Every successful auxiliary application preserves the event prefix and resource ordering. -/
 theorem doAppAux_resource_frame {C F : Type} (op : ClosLang.Op) (args : List Value)
     (state next : State C F) (value : Value)
@@ -159,7 +149,7 @@ theorem doAppAux_resource_frame {C F : Type} (op : ClosLang.Op) (args : List Val
   · have app : applyNonFfi op args state = some (value, next) := by
       simp only [doAppAux] at run
       repeat' (split at run <;> try simp_all)
-    obtain ⟨sameFfi, safe⟩ := nonFfiResource op args state next value app
+    obtain ⟨sameFfi, safe⟩ := (applyNonFfi_successFields op args state next value state.safeForSpace app).2
     have stack := (doAppAux_fieldFrame op args state next value run).2.2.1
     exact ⟨by simp [sameFfi], by simpa [stack] using BackendProps.optionLe_refl state.stackMax, safe⟩
 
