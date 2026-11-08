@@ -39,7 +39,8 @@ theorem reachableRefs_thunkChild (refs : Spt (BvlSem.Ref Value)) (stack : List V
 
 /-- Exposing a thunk's child preserves the abstract heap invariant. The
 original value-invariant split distinguishes an inlined evaluated child
-from a separately allocated thunk cell. -/
+from a separately allocated thunk cell and ensures the inlined child is not
+itself a thunk. -/
 theorem absMlInv_thunkChild {width : Nat} [NeZero width] (conf : Config)
     (stack : List Value) (refs : Spt (BvlSem.Ref Value))
     (roots : List (HeapAddress (WordLocW width))) (heap : ValueHeap width)
@@ -50,7 +51,7 @@ theorem absMlInv_thunkChild {width : Nat} [NeZero width] (conf : Config)
       (roots, heap, bigEndian, a, sp, sp1, gens) limit next) :
     ∃ (parent childRoot : HeapAddress (WordLocW width)) (rest : List (HeapAddress (WordLocW width))),
       roots = parent :: rest ∧ bit = false ∧
-      ((mode = .evaluated ∧ parent = childRoot) ∨
+      ((mode = .evaluated ∧ parent = childRoot ∧ destThunk child refs = .notThunk) ∨
         ∃ index, parent = .pointer index (.word 0) ∧ heapLookup index heap = some (thunkBlock mode childRoot)) ∧
       absMlInv conf (child :: .refPtr bit ptr :: stack) refs
         (childRoot :: roots, heap, bigEndian, a, sp, sp1, gens) limit next := by
@@ -103,7 +104,7 @@ theorem absMlInv_thunkChild {width : Nat} [NeZero width] (conf : Config)
           intro index annot eq
           apply rootOk index annot
           simp [eq]
-        exact ⟨parent, parent, rest, rfl, bitEq, Or.inl ⟨rfl, rfl⟩,
+        exact ⟨parent, parent, rest, rfl, bitEq, Or.inl ⟨rfl, rfl, safe⟩,
           extended parent childRelated validRoot⟩
 
 /-- The corresponding word-level invariant can expose the child at its
@@ -119,7 +120,7 @@ theorem wordMlInv_thunkChild {width : Nat} [NeZero width] (conf : Config)
       ((.refPtr bit ptr, location) :: vars)) :
     ∃ (parent childRoot : HeapAddress (WordLocW width)),
       bit = false ∧ location = wordAddr conf parent ∧
-      ((mode = .evaluated ∧ parent = childRoot) ∨
+      ((mode = .evaluated ∧ parent = childRoot ∧ destThunk child refs = .notThunk) ∨
         ∃ index, parent = .pointer index (.word 0) ∧ heapLookup index heap = some (thunkBlock mode childRoot)) ∧
       wordMlInv (heap, bigEndian, a, sp, sp1, gens) limit next conf refs
         ((child, wordAddr conf childRoot) :: (.refPtr bit ptr, location) :: vars) := by
