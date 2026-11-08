@@ -16882,6 +16882,14 @@
   },
   {
   "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
+  "hol_name": "state_orac_states_inv",
+  "lean_path": "Flapjack/Compiler/Backend/BackendProps/StateOracleInvariant.lean",
+  "lean_name": "stateOracStates_inv",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the independent state, program and output types, invariant premise and recursive-state conclusion with state_orac_states_inv_typed in backend_props_state_oracle_probe.out and the original HOL proof."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
   "hol_name": "syntax_to_full_oracle_def",
   "lean_path": "Flapjack/Compiler/Backend/BackendProps/StateCompiler.lean",
   "lean_name": "syntaxToFullOracle",
@@ -127113,7 +127121,7 @@
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml",
   "hol_name": "syntax_ok_def",
-  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/IncrementalInstall.lean",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/SyntaxOk.lean",
   "lean_name": "syntaxOk",
   "statement_status": "pending_statement_review",
   "reviewer": "Tag present; typed capture and statement review pending."

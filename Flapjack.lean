@@ -768,7 +768,7 @@ import Flapjack.Compiler.Backend.ClosMti.Proofs.GlobalTraversal
 import Flapjack.Compiler.Backend.ClosCall.Proofs.Total
 import Flapjack.Compiler.Backend.ClosCall.Proofs.IncrementalOracle
 import Flapjack.Compiler.Backend.ClosCall.Proofs.IncrementalCode
-import Flapjack.Compiler.Backend.ClosCall.Proofs.IncrementalInstall
+import Flapjack.Compiler.Backend.ClosCall.Proofs.SyntaxOk
 import Flapjack.Compiler.Backend.ClosCall.Stubs
 import Flapjack.Compiler.Backend.ClosCall.Proofs.FreeCorrect
 import Flapjack.Compiler.Backend.ClosCall.Proofs.GroupClosed
@@ -820,7 +820,6 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.ThunkWellformed
 import Flapjack.Compiler.Backend.ClosCall.Proofs.InstallWellformed
 import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateOrdinaryWellformed
 import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateControlWellformed
-import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateOracleControl
 import Flapjack.Compiler.Backend.BviInline
 import Flapjack.Compiler.Backend.BvlInline.RemoveTicks
 import Flapjack.Compiler.Backend.BvlInline.Proofs.StateRel
@@ -2490,6 +2489,7 @@ import Flapjack.Compiler.Backend.Parmove.InjOnState
 import Flapjack.Compiler.Backend.LabToTarget.AsmUpdates
 import Flapjack.Compiler.Backend.BackendProps
 import Flapjack.Compiler.Backend.BackendProps.StateCompiler
+import Flapjack.Compiler.Backend.BackendProps.StateOracleInvariant
 import Flapjack.Test.StateCompilerParity
 import Flapjack.Compiler.Backend.LabToTarget.Interference
 import Flapjack.Compiler.Backend.LabToTarget.NopEncoding

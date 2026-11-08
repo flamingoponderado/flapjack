@@ -8302,7 +8302,7 @@ run_probe backend_config_tuple_probeScript.sml backend_config_tuple_probe.out \
   "$cake_dir/compiler/backend/proofs/backendProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe backend_props_state_oracle_probeScript.sml backend_props_state_oracle_probe.out \
-  state_orac_states_typed state_co_progs_typed add_state_co_typed syntax_to_full_oracle_typed state_oracle_example \
+  state_orac_states_typed state_orac_states_inv_typed state_co_progs_typed add_state_co_typed syntax_to_full_oracle_typed state_oracle_example \
   "$cake_dir/compiler/backend/semantics/backendPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe backend_props_option_max_probeScript.sml backend_props_option_max_probe.out \

@@ -6,6 +6,7 @@ fun show_thm label th =
   if null (hyp th) then (print label; print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
 val _ = show_thm "state_orac_states_typed=" backendPropsTheory.state_orac_states_def;
+val _ = show_thm "state_orac_states_inv_typed=" backendPropsTheory.state_orac_states_inv;
 val _ = show_thm "state_co_progs_typed=" backendPropsTheory.state_co_progs_def;
 val _ = show_thm "add_state_co_typed=" backendPropsTheory.add_state_co_def;
 val _ = show_thm "syntax_to_full_oracle_typed=" backendPropsTheory.syntax_to_full_oracle_def;
