@@ -63,3 +63,26 @@ val cutSwapInput = prove (``dataSem$cut_state_opt names_opt s = SOME s2 ⇒
     s2 with <|safe_for_space := safe; peak_heap_length := peak|>``,
   rw[] \\ imp_res_tac cutStackMax \\ rw[dataSemTheory.state_component_equality]);
 val _ = show "cut_state_opt_swap_input_replay_typed" cutSwapInput;
+val _ = show "evaluate_safe_peak_swap_aux_typed" evaluate_safe_peak_swap_aux;
+val evalSwap = prove (``∀c s r s' fl smx safe peak.
+  dataSem$evaluate (c,s) = (r,s') ⇒
+    if fl then
+      (let s0 = s with <|stack_max := smx; safe_for_space := safe;
+                         peak_heap_length := peak|> in
+       ∃smx safe peak. dataSem$evaluate (c,s0) =
+         (r,s' with <|stack_max := smx; safe_for_space := safe;
+                      peak_heap_length := peak|>))
+    else
+      (let s0 = s with <|stack_max := s.stack_max; safe_for_space := safe;
+                         peak_heap_length := peak|> in
+       ∃smx safe peak. dataSem$evaluate (c,s0) =
+         (r,s' with <|stack_max := s'.stack_max; safe_for_space := safe;
+                      peak_heap_length := peak|>))``,
+  rpt gen_tac \\ strip_tac \\ Cases_on `fl` \\ simp [LET_DEF]
+  >- (first_assum (fn th => mp_tac (MATCH_MP
+       (Q.SPECL [`smx`,`safe`,`s'`,`s`,`r`,`peak`,`c`] evaluate_smx_safe_peak_swap) th))
+      \\ simp [])
+  \\ first_assum (fn th => mp_tac (MATCH_MP
+       (Q.SPECL [`safe`,`s'`,`s`,`r`,`peak`,`c`] evaluate_safe_peak_swap_aux) th))
+  \\ simp [LET_DEF]);
+val _ = show "evaluate_fl_smx_safe_peak_swap_aux_replay_typed" evalSwap;
