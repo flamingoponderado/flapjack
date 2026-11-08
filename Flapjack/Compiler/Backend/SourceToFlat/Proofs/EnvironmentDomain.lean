@@ -31,6 +31,80 @@ theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
     GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env := GlobalEnv.holFmapAsFiniteSupportWitness env
 end GlobalEnvAppendPort
 
+/-- Extending the value namespace with compiler bindings preserves the global
+environment invariant when their domain matches the new source namespace. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "global_env_inv_extend2"
+  (fmap_as_finite_support := [c, tys])]
+theorem globalEnvInv_extendBindings (genv : GlobalEnv) (compMap : Environment)
+    (env : SemEnv Value) (newVars : List (VarN × VarName))
+    (env' : Namespace ModN VarN Value) (locals : VarN → Prop)
+    (envC : Namespace ModN ConN (Nat × Stamp))
+    (premises : (fun id => id ∈ newVars.map (fun p => Ident.short p.1)) = nsDom env' ∧
+      GlobalEnvInv genv compMap locals env ∧
+      GlobalEnvInv genv { compMap with v := alistToNs newVars } locals ⟨env', envC⟩) :
+    GlobalEnvInv genv { compMap with v := nsBindList newVars compMap.v } locals
+      { env with v := nsAppend env' env.v } := by
+  obtain ⟨domain, base, added⟩ := premises
+  obtain ⟨baseValues, baseConstructors⟩ := (globalEnvInv_iff genv compMap locals env).mp base
+  obtain ⟨addedValues, _⟩ := (globalEnvInv_iff genv { compMap with v := alistToNs newVars }
+    locals ⟨env', envC⟩).mp added
+  apply (globalEnvInv_iff _ _ _ _).mpr
+  constructor
+  · intro id value notShadowed sourceLookup
+    cases id with
+    | short name =>
+      rw [nsLookup_append_short] at sourceLookup
+      cases first : nsLookup env' (.short name) with
+      | some firstValue =>
+        simp [first] at sourceLookup
+        subst firstValue
+        obtain ⟨n, flat, t, lookup, bound, slot, related⟩ := addedValues (.short name) value notShadowed first
+        refine ⟨n, flat, t, ?_, bound, slot, related⟩
+        rw [← nsAppend_to_nsBindList, nsLookup_append_short]
+        simp [lookup]
+      | none =>
+        have noBinding : nsLookup (alistToNs newVars : Namespace ModN VarN VarName) (.short name) = none := by
+          have atName := congrFun domain (.short name)
+          simp only [nsDom] at atName
+          cases found : nsLookup (alistToNs newVars : Namespace ModN VarN VarName) (.short name) with
+          | none => rfl
+          | some entry =>
+            have member : (.short name : Ident ModN VarN) ∈ newVars.map (fun p => Ident.short p.1) := by
+              have keyMember : name ∈ newVars.map Prod.fst := by
+                have someLookup : (newVars.lookup name).isSome = true := by
+                  simpa [alistToNs, nsLookup] using congrArg Option.isSome found
+                obtain ⟨pair, member, key⟩ := List.lookup_isSome_iff.mp someLookup
+                have keyEq : name = pair.1 := by simpa using key
+                exact List.mem_map.mpr ⟨pair, member, keyEq.symm⟩
+              simpa [List.mem_map] using keyMember
+            have : ∃ v, nsLookup env' (.short name) = some v := by rw [← atName]; exact member
+            simp [first] at this
+        have source : nsLookup env.v (.short name) = some value := by simpa [first] using sourceLookup
+        obtain ⟨n, flat, t, lookup, bound, slot, related⟩ := baseValues (.short name) value notShadowed source
+        refine ⟨n, flat, t, ?_, bound, slot, related⟩
+        rw [← nsAppend_to_nsBindList, nsLookup_append_short]
+        simpa [noBinding] using lookup
+    | long mod rest =>
+      have firstNone : nsLookup env' (.long mod rest) = none := by
+        have atName := congrFun domain (.long mod rest)
+        simp only [nsDom] at atName
+        cases found : nsLookup env' (.long mod rest) with
+        | none => rfl
+        | some v =>
+          have : (.long mod rest : Ident ModN VarN) ∈ newVars.map (fun p => Ident.short p.1) := by
+            rw [atName]; exact ⟨v, found⟩
+          simp at this
+      rw [nsLookup_append_long] at sourceLookup
+      cases moduleLookup : nsLookupMod env' [mod] with
+      | some module => simp [moduleLookup, firstNone] at sourceLookup
+      | none =>
+        have source : nsLookup env.v (.long mod rest) = some value := by simpa [moduleLookup] using sourceLookup
+        obtain ⟨n, flat, t, lookup, bound, slot, related⟩ := baseValues (.long mod rest) value notShadowed source
+        refine ⟨n, flat, t, ?_, bound, slot, related⟩
+        rw [← nsAppend_to_nsBindList, nsLookup_append_long]
+        simpa [alistToNs, nsLookupMod] using lookup
+  · exact baseConstructors
+
 /-- The global environment invariant composes across declaration extensions. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "global_env_inv_append"
   (fmap_as_finite_support := [c, tys])]

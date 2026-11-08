@@ -6,6 +6,30 @@ fun show_thm label th =
   if null (hyp th) then (print label; print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
 fun show_eval label tm = (print label; print_term (rhs (concl (EVAL tm))); print "\n");
+(* The theorem is local to the original proof; preserve its inferred types. *)
+val global_env_inv_extend2_typed = ``!genv comp_map env new_vars env' locals env_c.
+  set (MAP (Short o FST) new_vars) = namespace$nsDom env' /\
+  source_to_flatProof$global_env_inv genv comp_map locals env /\
+  source_to_flatProof$global_env_inv genv
+    (comp_map with v := namespace$alist_to_ns new_vars) locals <|v := env'; c := env_c|> ==>
+  source_to_flatProof$global_env_inv genv
+    (comp_map with v := namespace$nsBindList new_vars comp_map.v) locals
+    (env with v := namespace$nsAppend env' env.v)``;
+val _ = (print "global_env_inv_extend2_typed="; print_term global_env_inv_extend2_typed; print "\n");
+val global_env_inv_extend2_replay = prove (global_env_inv_extend2_typed,
+  rw [source_to_flatProofTheory.v_rel_global_eqn, GSYM namespacePropsTheory.nsAppend_to_nsBindList] >>
+  fs [namespacePropsTheory.nsLookup_nsAppend_some, namespacePropsTheory.nsLookup_alist_to_ns_none,
+      namespacePropsTheory.nsLookup_alist_to_ns_some] >>
+  res_tac >> fs [] >> rw [] >> fs [] >> rveq >> fs [] >>
+  goal_assum (first_assum o mp_then (Pat `EL _ _ = _`) mp_tac) >>
+  simp [] >> Cases_on `x` >> fs [] >> rw []
+  >- (`Short n' ∉ namespace$nsDom env'` by
+        metis_tac [namespacePropsTheory.nsLookup_nsDom, NOT_SOME_NONE] >>
+      qexists_tac `t` >> disj2_tac >> rw [ALOOKUP_NONE] >>
+      qpat_x_assum `_ = namespace$nsDom _` (assume_tac o GSYM) >>
+      fs [MEM_MAP] >> fs [namespaceTheory.id_to_mods_def])
+  >- (fs [namespaceTheory.id_to_mods_def] >> Cases_on `p1` >> fs [] >> rw []));
+val _ = show_thm "global_env_inv_extend2_replay=" global_env_inv_extend2_replay;
 val lookup_build_rec_env_lem_replay = Q.prove (
   `!x cl_env funs' funs.
     ALOOKUP (MAP (\(fn,n,e). (fn,semanticPrimitives$Recclosure cl_env funs' fn)) funs) x = SOME v ==>
