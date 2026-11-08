@@ -16304,6 +16304,12 @@
     "reviewer": "Compared with the source theorem and its captured inferred type: arbitrary natural m and n with m ≤ n yield the same ordering of n2mw digit lengths. Both lists use the same positive HOL word dimension."
   },
   {
+    "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml", "hol_name": "get_vars_append",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/Variables.lean", "lean_name": "getVars_append",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source theorem captured in bvi_to_data_state_probe.out: arbitrary natural-name lists and a polymorphic sparse-tree environment have identical nested option-bind results, including both failure cases and the successful concatenation."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml", "hol_name": "get_vars_reverse",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/Variables.lean", "lean_name": "getVars_reverse",
     "statement_status": "reviewed_exact",

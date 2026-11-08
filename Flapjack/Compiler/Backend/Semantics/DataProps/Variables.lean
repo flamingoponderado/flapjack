@@ -36,25 +36,19 @@ theorem varCorr_lookup {α : Type} (values : List α) (names : List Nat) (env : 
       simp only [List.getElem?_cons_succ] at atIndex ⊢
       exact ih index atIndex
 
-/-- Reading concatenated name lists concatenates their successful reads. -/
-private theorem getVars_append_of_reads {α : Type} (first second : List Nat) (env : Spt α)
-    (left right : List α) (firstRead : DataSem.getVars first env = some left)
-    (secondRead : DataSem.getVars second env = some right) :
-    DataSem.getVars (first ++ second) env = some (left ++ right) := by
-  induction first generalizing left with
-  | nil => simp [DataSem.getVars] at firstRead; subst left; exact secondRead
+/-- Reading concatenated name lists sequences both reads and concatenates their results. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "get_vars_append"]
+theorem getVars_append {α : Type} (first second : List Nat) (env : Spt α) :
+    DataSem.getVars (first ++ second) env =
+      (DataSem.getVars first env).bind (fun left =>
+        (DataSem.getVars second env).bind (fun right => some (left ++ right))) := by
+  induction first with
+  | nil => simp [DataSem.getVars]
   | cons name names ih =>
-    simp only [DataSem.getVars] at firstRead
-    cases found : DataSem.getVar name env with
-    | none => simp [found] at firstRead
-    | some value =>
-      simp only [found] at firstRead
-      cases rest : DataSem.getVars names env with
-      | none => simp [rest] at firstRead
-      | some tail =>
-        simp [rest] at firstRead
-        subst left
-        simp [DataSem.getVars, found, ih tail rest]
+    simp only [List.cons_append, DataSem.getVars, ih]
+    cases DataSem.getVar name env <;> simp
+    cases DataSem.getVars names env <;> simp
+    cases DataSem.getVars second env <;> simp
 
 /-- Reversing a successful list of variable names reverses its values. -/
 @[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "get_vars_reverse"]
@@ -74,7 +68,6 @@ theorem getVars_reverse {α : Type} (names : List Nat) (env : Spt α) (values : 
       | some tail =>
         simp [rest] at read
         subst values
-        simpa only [List.reverse_cons] using
-          getVars_append_of_reads names.reverse [name] env tail.reverse [value] (ih tail rest) (by simp [DataSem.getVars, found])
+        simp [List.reverse_cons, getVars_append, ih tail rest, DataSem.getVars, found]
 
 end Flapjack.Compiler.Backend.DataProps

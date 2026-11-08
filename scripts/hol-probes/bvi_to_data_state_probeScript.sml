@@ -29,6 +29,7 @@ val _ = show "data_to_bvi_do_app=" bvi_to_dataProofTheory.data_to_bvi_do_app;
 val _ = show "data_to_bvi_v_list_to_v_APPEND=" bvi_to_dataProofTheory.data_to_bvi_v_list_to_v_APPEND;
 val _ = show "var_corr=" dataPropsTheory.var_corr_def;
 val _ = show "get_vars_thm=" dataPropsTheory.get_vars_thm;
+val _ = show "get_vars_append=" dataPropsTheory.get_vars_append;
 val _ = show "get_vars_reverse=" dataPropsTheory.get_vars_reverse;
 val _ = show "var_corr_map=" bvi_to_dataProofTheory.var_corr_map;
 val _ = show "get_vars_lift_thm=" bvi_to_dataProofTheory.get_vars_lift_thm;
