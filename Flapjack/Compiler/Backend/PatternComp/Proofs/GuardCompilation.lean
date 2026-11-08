@@ -62,20 +62,6 @@ theorem holFmapAsFiniteSupportParamWitness_dtEvalGuard_mkConj_refs
     ofBroad (toBroad refs) refs.finiteSupport = refs :=
   holFmapAsFiniteSupportParamWitness_pmatchList_length_refs refs key
 
-theorem holFmapAsFiniteSupportParamWitness_patToGuard_correct_refs
-    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
-    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
-    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
-    ofBroad (toBroad refs) refs.finiteSupport = refs :=
-  holFmapAsFiniteSupportParamWitness_pmatchList_length_refs refs key
-
-theorem holFmapAsFiniteSupportParamWitness_patsToGuard_correct_refs
-    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
-    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
-    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
-    ofBroad (toBroad refs) refs.finiteSupport = refs :=
-  holFmapAsFiniteSupportParamWitness_pmatchList_length_refs refs key
-
 theorem holFmapAsFiniteSupportParamWitness_dt_eval_guard_pat_to_guard_refs
     (refs : HolFiniteMapExact Nat Term) (key : Nat) :
     (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
@@ -409,10 +395,8 @@ theorem patToGuard_consSome_at (refs : HolFiniteMapExact Nat Term) (value select
         · simp [patToGuard, dtEvalGuard_mkConj, dtEvalGuard, appPos_getPos, walked, dtTest, fail, equal]
 
 mutual
-/-- The pattern conjunct of the source guard-correctness theorem. -/
-@[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "dt_eval_guard_pat_to_guard"
-  (fmap_as_finite_support_parameters := [refs])]
-theorem patToGuard_correct (refs : HolFiniteMapExact Nat Term) (value : Term) (pattern : Pat)
+/-- Internal mutual-induction step used to prove the full guard theorem. -/
+private theorem patToGuard_correct (refs : HolFiniteMapExact Nat Term) (value : Term) (pattern : Pat)
     (path : List Nat) (selected : Term)
     (safe : pmatch refs pattern selected ≠ .typeFailure)
     (walked : walk path.reverse value refs = some selected) :
@@ -451,10 +435,8 @@ theorem patToGuard_correct (refs : HolFiniteMapExact Nat Term) (value : Term) (p
       · exact safe
 termination_by sizeOf pattern
 
-/-- The pattern-list conjunct of the source guard-correctness theorem. -/
-@[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "dt_eval_guard_pat_to_guard"
-  (fmap_as_finite_support_parameters := [refs])]
-theorem patsToGuard_correct (refs : HolFiniteMapExact Nat Term) (value : Term) (patterns : List Pat)
+/-- Internal list induction step used to prove the full guard theorem. -/
+private theorem patsToGuard_correct (refs : HolFiniteMapExact Nat Term) (value : Term) (patterns : List Pat)
     (path : List Nat) (k : Nat) (fields before : List Term)
     (safe : pmatchList refs patterns fields ≠ .typeFailure) (beforeLen : before.length = k)
     (walked : walkList path.reverse value refs = some (before ++ fields))

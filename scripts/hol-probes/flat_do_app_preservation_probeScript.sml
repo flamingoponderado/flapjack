@@ -12,3 +12,6 @@ val _ = show_thm "pmatch_rows_ignore_clock_typed=" flatPropsTheory.pmatch_rows_i
 val _ = show_thm "pmatch_extend_typed=" flatPropsTheory.pmatch_extend;
 val _ = show_thm "map_match_def_typed=" semanticPrimitivesPropsTheory.map_match_def;
 val _ = show_thm "pmatch_append_typed=" flatPropsTheory.pmatch_append;
+val _ = show_thm "pmatch_any_match_typed=" flatPropsTheory.pmatch_any_match;
+val _ = show_thm "pmatch_any_no_match_typed=" flatPropsTheory.pmatch_any_no_match;
+val _ = show_thm "pmatch_any_match_error_typed=" flatPropsTheory.pmatch_any_match_error;

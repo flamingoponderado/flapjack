@@ -3645,7 +3645,7 @@ the executed allocator. Regenerate read-only with
 `flat_do_app_preservation_probeScript.sml` captures the inferred HOL types of
 the flat primitive application's clock and evaluation-configuration
 preservation theorems, including the latter's independent unused binder, and
-the pattern matching state, clock, binding extension and append theorems,
+the pattern matching state, clock, binding extension, append and outcome theorems,
 and the original match-result mapping definition.
 
 `flat_pattern_rows_same_probeScript.sml` captures the independently typed row

@@ -116196,24 +116196,6 @@
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternExh/Proofs/Soundness.lean",
-    "lean_name": "expand_sound",
-    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
-    "hol_name": "expand_thm",
-    "statement_status": "reviewed_fmap_as_finite_support_parameters",
-    "fmap_as_finite_support_parameters": ["refs"],
-    "reviewer": "Compared the pattern conjunct, preserving the membership and non-type-failure hypotheses and both conclusions against the typed local HOL proof replay in pattern_exh_steps_probe.out. The same-module witness checks the canonical finite-map parameter roundtrip; expand_thm assembles both source conjuncts."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Proofs/Soundness.lean",
-    "lean_name": "expandList_sound",
-    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
-    "hol_name": "expand_thm",
-    "statement_status": "reviewed_fmap_as_finite_support_parameters",
-    "fmap_as_finite_support_parameters": ["refs"],
-    "reviewer": "Compared the pattern-list conjunct, preserving the membership and non-type-failure hypotheses and both conclusions against the typed local HOL proof replay in pattern_exh_steps_probe.out. The same-module witness checks the canonical finite-map parameter roundtrip; expand_thm assembles both source conjuncts."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Proofs/Soundness.lean",
     "lean_name": "expand_thm",
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
     "hol_name": "expand_thm",
@@ -116263,7 +116245,7 @@
     "fmap_as_finite_support_parameters": [
       "refs"
     ],
-    "reviewer": "Compared the complete source implication and typed local HOL proof replay: constructor information and non-type-failure imply the existence of an extracted constructor and arguments whose constructor belongs to the reported set. The same-module witness checks the canonical finite-map parameter."
+    "reviewer": "Compared the complete source implication and typed local HOL proof replay: constructor information and non-type-failure imply the existence of an extracted constructor and arguments whose constructor belongs to the reported set. The same-module witness checks the canonical finite-map parameter. Rechecked the grouped premise and source binder order against the typed HOL capture."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternExh/Proofs/Soundness.lean",
@@ -116274,7 +116256,7 @@
     "fmap_as_finite_support_parameters": [
       "refs"
     ],
-    "reviewer": "Compared the complete source statement and typed local HOL proof replay. Lean universal row membership expresses the source EVERY condition, retaining the non-type-failure condition and the existential extracted constructor and membership. The same-module witness checks the canonical finite-map parameter."
+    "reviewer": "Compared the complete source statement and typed local HOL proof replay. Lean universal row membership expresses the source EVERY condition, retaining the non-type-failure condition and the existential extracted constructor and membership. The same-module witness checks the canonical finite-map parameter. Rechecked the grouped premise and source binder order against the typed HOL capture."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternExh/Proofs/Soundness.lean",
@@ -116285,7 +116267,7 @@
     "fmap_as_finite_support_parameters": [
       "refs"
     ],
-    "reviewer": "Compared both source premises and the full match-result equality, including the extracted argument vector, against the typed local HOL proof replay. The same-module witness checks the canonical finite-map parameter."
+    "reviewer": "Compared both source premises and the full match-result equality, including the extracted argument vector, against the typed local HOL proof replay. The same-module witness checks the canonical finite-map parameter. Rechecked the grouped premise and source binder order against the typed HOL capture."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternExh/Proofs/Soundness.lean",
@@ -116296,7 +116278,7 @@
     "fmap_as_finite_support_parameters": [
       "refs"
     ],
-    "reviewer": "Compared both source premises and the existential original row, membership, and match-result equality against the typed local HOL proof replay. The same-module witness checks the canonical finite-map parameter."
+    "reviewer": "Compared both source premises and the existential original row, membership, and match-result equality against the typed local HOL proof replay. The same-module witness checks the canonical finite-map parameter. Rechecked the grouped premise and source binder order against the typed HOL capture."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternExh/Proofs/Soundness.lean",
@@ -116374,7 +116356,7 @@
     "fmap_as_finite_support_parameters": [
       "refs"
     ],
-    "reviewer": "Compared both source premises and the full conclusion against the typed HOL local proof replay; existential membership expresses EXISTS over pattern-result pairs. The same-module witness checks the canonical finite-map parameter."
+    "reviewer": "Compared both source premises and the full conclusion against the typed HOL local proof replay; existential membership expresses EXISTS over pattern-result pairs. The same-module witness checks the canonical finite-map parameter. Rechecked the grouped premise and source binder order against the typed HOL capture."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternExh/Proofs/Soundness.lean",
@@ -116396,7 +116378,7 @@
     "fmap_as_finite_support_parameters": [
       "refs"
     ],
-    "reviewer": "Compared both source premises and the existential original successful row against the typed local HOL proof replay; the row payload remains arbitrary. The same-module witness checks the canonical finite-map parameter."
+    "reviewer": "Compared both source premises and the existential original successful row against the typed local HOL proof replay; the row payload remains arbitrary. The same-module witness checks the canonical finite-map parameter. Rechecked the grouped premise and source binder order against the typed HOL capture."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternExh/Proofs/Soundness.lean",
@@ -116407,7 +116389,7 @@
     "fmap_as_finite_support_parameters": [
       "refs"
     ],
-    "reviewer": "Compared both source premises and the final no-match-failure conclusion with the typed exported HOL theorem; row payloads are natural numbers as required by match. The same-module witness checks the canonical finite-map parameter."
+    "reviewer": "Compared both source premises and the final no-match-failure conclusion with the typed exported HOL theorem; row payloads are natural numbers as required by match. The same-module witness checks the canonical finite-map parameter. Rechecked the grouped premise and source binder order against the typed HOL capture."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternComp/Proofs/RowSelection.lean",
@@ -116460,7 +116442,7 @@
     "fmap_as_finite_support_parameters": [
       "refs"
     ],
-    "reviewer": "Compared the full source non-nullary, constant-row and non-type-failure premises and failure conclusion against the typed exported theorem; the row payload is arbitrary. The same-module witness checks the canonical finite-map parameter."
+    "reviewer": "Compared the full source non-nullary, constant-row and non-type-failure premises and failure conclusion against the typed exported theorem; the row payload is arbitrary. The same-module witness checks the canonical finite-map parameter. Rechecked the grouped premise and source binder order against the typed HOL capture."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternComp/Proofs/RowSelection.lean",
@@ -116471,7 +116453,7 @@
     "fmap_as_finite_support_parameters": [
       "refs"
     ],
-    "reviewer": "Compared all three source negative premises and the non-success conclusion against the typed exported theorem; the row payload is arbitrary. The same-module witness checks the canonical finite-map parameter."
+    "reviewer": "Compared all three source negative premises and the non-success conclusion against the typed exported theorem; the row payload is arbitrary. The same-module witness checks the canonical finite-map parameter. Rechecked the grouped premise and source binder order against the typed HOL capture."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternComp/Proofs/RowSelection.lean",
@@ -116620,28 +116602,6 @@
       "refs"
     ],
     "reviewer": "Compared the full source guard evaluation equality against the typed local HOL proof replay. The same-module witness checks the canonical finite-map parameter."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/PatternComp/Proofs/GuardCompilation.lean",
-    "lean_name": "patToGuard_correct",
-    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml",
-    "hol_name": "dt_eval_guard_pat_to_guard",
-    "statement_status": "reviewed_fmap_as_finite_support_parameters",
-    "fmap_as_finite_support_parameters": [
-      "refs"
-    ],
-    "reviewer": "Compared the source pattern conjunct, including safety, successful traversal and guard result, against the typed exported theorem. The same-module witness checks the canonical finite-map parameter."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/PatternComp/Proofs/GuardCompilation.lean",
-    "lean_name": "patsToGuard_correct",
-    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml",
-    "hol_name": "dt_eval_guard_pat_to_guard",
-    "statement_status": "reviewed_fmap_as_finite_support_parameters",
-    "fmap_as_finite_support_parameters": [
-      "refs"
-    ],
-    "reviewer": "Compared the source pattern-list conjunct and all four premises against the typed exported theorem. The same-module witness checks the canonical finite-map parameter."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternComp/Proofs/GuardCompilation.lean",
@@ -130459,5 +130419,29 @@
   "lean_name": "esgcFree_filter",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared esgc_free_filter_typed in flat_elim_value_globals_probe.out, replaying the original local proof. EVERY esgc_free is rendered by universal membership before and after filtering; the list and Boolean predicate remain independently quantified."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "pmatch_any_match",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/PatternOutcome.lean",
+  "lean_name": "pmatchAnyMatch",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared pmatch_any_match_typed in flat_do_app_preservation_probe.out: both single-pattern and pattern-list conjuncts retain the original successful-match premise, universal replacement environment and existential successful output."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "pmatch_any_no_match",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/PatternOutcome.lean",
+  "lean_name": "pmatchAnyNoMatch",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared pmatch_any_no_match_typed in flat_do_app_preservation_probe.out: the single-pattern and pattern-list non-match premises imply non-match for every replacement environment, with the original shared state types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "pmatch_any_match_error",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/PatternOutcome.lean",
+  "lean_name": "pmatchAnyError",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared pmatch_any_match_error_typed in flat_do_app_preservation_probe.out: the single-pattern and pattern-list type-error premises imply type-error for every replacement environment, with the original shared state types."
 }
 ]
