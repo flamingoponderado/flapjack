@@ -130223,5 +130223,36 @@
   "statement_status": "reviewed_word_dimension_as_width",
   "word_dimension_as_width": "width",
   "reviewer": "Source comparison with byte_len_def_typed: the HOL type witness is represented by the explicit positive width, with division by four for width 32 and by eight at every other width, followed by one. The production string-constant lowering uses this definition."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
+  "hol_name": "word_test_lemma1",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/WordTest.lean",
+  "lean_name": "wordTestLemma1",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the source-local theorem and its typed replay in data_to_word_word_test_probe.out: good_dimindex is the original 32-or-64 condition; mask 60, the same iff, and bit 2 clear, bits 3, 4 and 5 set, and the right side is (8 + 6) * 4. HOL word_bit b w means b ≤ dimindex−1 and bit b is set; BitVec.getLsbD agrees for every index, including out-of-range indices. Positive-width BitVec represents the original word carrier; the Lean proof checks both permitted widths."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
+  "hol_name": "word_test_lemma2",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/WordTest.lean",
+  "lean_name": "wordTestLemma2",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the source-local theorem and its typed replay in data_to_word_word_test_probe.out: good_dimindex is the original 32-or-64 condition; mask 60, the same iff, and bits 2 and 5 clear, bits 3 and 4 set, and the right side is (0 + 6) * 4. HOL word_bit b w means b ≤ dimindex−1 and bit b is set; BitVec.getLsbD agrees for every index, including out-of-range indices. Positive-width BitVec represents the original word carrier; the Lean proof checks both permitted widths."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
+  "hol_name": "jump_exc_locals",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/JumpExc.lean",
+  "lean_name": "jumpExcLocals",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared jump_exc_locals_typed and the original proof: both sides use the same complete wordSem state and unrestricted replacement locals, and the full option of state and two numeric labels is preserved. The independent compiler and FFI carriers match the HOL state. WordSemStateFiniteExact represents the two HOL finite-map fields fp_regs and store by HolFiniteMapExact, with the local canonical roundtrip witness; positive-width BitVec represents HOL words. The original jump_exc overwrites locals from the handler frame or fails, so both sides agree. The source review and witness do not independently prove cross-language correspondence."
 }
 ]
