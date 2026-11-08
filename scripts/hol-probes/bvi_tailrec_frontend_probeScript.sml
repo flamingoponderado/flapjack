@@ -53,3 +53,14 @@ val _ = (print "program="; print_term (rhs (concl (EVAL ``
  [(3,1,bvi$Op (closLang$IntOp closLang$Add) [c 1; bvi$Call 0 (SOME 3) [bvi$Var 0] NONE]);
   (7,1,bvi$Op (closLang$IntOp closLang$Mult) [c 2; bvi$Call 0 (SOME 7) [bvi$Var 0] NONE]);
   (8,0,bvi$Var 0)]``))); print "\n");
+fun show_thm label th =
+  if null (hyp th) then
+    (print label; Lib.with_flag (Globals.show_types,true) print_term (concl th); print "\n")
+  else raise Fail ("hypotheses: " ^ label);
+val _ = show_thm "scan_expr_def_typed=" bvi_tailrecTheory.scan_expr_def;
+val _ = show_thm "check_exp_def_typed=" bvi_tailrecTheory.check_exp_def;
+val _ = show_thm "rewrite_def_typed=" bvi_tailrecTheory.rewrite_def;
+val _ = show_thm "compile_exp_def_typed=" bvi_tailrecTheory.compile_exp_def;
+val _ = show_thm "compile_each_def_typed=" bvi_tailrecTheory.compile_each_def;
+val _ = show_thm "compile_prog_def_typed=" bvi_tailrecTheory.compile_prog_def;
+val _ = show_thm "scan_expr_eq_typed=" bvi_tailrecTheory.scan_expr_eq;

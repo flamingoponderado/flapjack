@@ -48,9 +48,9 @@ theorem simpleValueRel_simps (relation : Value → Value → Prop) (lit : Flapja
 /-- Related values have the same closure status under a simple relation. -/
 @[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "simple_val_rel_isClosure"]
 theorem simpleValueRel_isClosure (relation : Value → Value → Prop) (left right : Value)
-    (simple : simpleValueRel relation) (related : relation left right) :
+    (premises : simpleValueRel relation ∧ relation left right) :
     isClosure left ↔ isClosure right :=
-  simple.1 left right related
+  premises.1.1 left right premises.2
 
 /-- A simple state relation is stable under related store and global updates
 and equal FFI updates. Compiler-state types may differ across the relation. -/

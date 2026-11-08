@@ -95,9 +95,14 @@ theorem tailrec_tmc_inline_semantics {C F : Type} (fuel : Nat)
       BviSem.semantics ffi (sptFromAList program) oracle
         (stateCc (BviTailrec.compileProgSource tailEnabled)
           (stateCc (BviTmc.compileProgSource tmcEnabled) (stateCc compileIncSource compiler))) start := by
-  have tailSemantics := BviTailrec.compileProgFuel_semantics fuel tailEnabled tailNext program ffi oracle
+  have tailSource : (BviTailrec.compileProgSource tailEnabled tailNext program).2 = afterTail := by
+    have equal := (BviTailrec.compileProgFuel_eq_source fuel tailEnabled tailNext program).symm.trans tailRun
+    exact congrArg Prod.snd (Option.some.inj equal)
+  have tailSemantics := BviTailrec.compileProgSource_semantics tailNext program oracle afterTail tailEnabled ffi
     (stateCc (BviTmc.compileProgSource tmcEnabled) (stateCc compileIncSource compiler))
-    start tailLast afterTail tailCondition tailOracleConditions tailWorkerBound tailRun notFail
+    start ⟨tailCondition,
+      (fun k n cfg prog eq => by simpa only [eq] using tailOracleConditions k),
+      (fun n ⟨member, inNamespace⟩ => tailWorkerBound n member inNamespace), tailSource, notFail⟩
   have afterTailNotFail : BviSem.semantics ffi (sptFromAList afterTail)
       (stateCo (BviTailrec.compileProgSource tailEnabled) oracle)
       (stateCc (BviTmc.compileProgSource tmcEnabled) (stateCc compileIncSource compiler)) start ≠ .fail := by

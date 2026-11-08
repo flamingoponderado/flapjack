@@ -1,0 +1,4 @@
+config_tuple2_typed=∀(c :config). config_tuple2 c = (c.bvl_conf.inlines,c.bvl_conf.next_name1,c.bvl_conf.next_name2,c.bvl_conf.next_name3,c.bvl_conf.bvi_inlines,c.word_conf.bitmaps_length,c.lab_conf)
+config_tuple1_typed=∀(c :config). config_tuple1 c = (c.source_conf,c.clos_conf.next_loc,option_val_approx_spt c.clos_conf.known_conf,FST c.clos_conf.call_state,config_tuple2 c)
+config_tuple2_type=:config -> (num # bvl$exp) sptree$num_map # num # num # num # (num # bvi$exp) sptree$num_map # num # lab_to_target$config
+config_tuple1_type=:config -> source_to_flat$config # num # val_approx sptree$num_map # sptree$num_set # (num # bvl$exp) sptree$num_map # num # num # num # (num # bvi$exp) sptree$num_map # num # lab_to_target$config

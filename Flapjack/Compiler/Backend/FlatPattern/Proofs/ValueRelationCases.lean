@@ -144,8 +144,9 @@ theorem valueRel_leftCases (right : Value) :
 
 /-- Bounded environment relatedness is monotone in the name bound. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "env_rel_mono"]
-theorem envRel_mono (i j : Nat) (left right : Environment Value)
-    (related : EnvRel i left right) (bound : j ≤ i) : EnvRel j left right := by
+theorem envRel_mono (i : Nat) (left right : Environment Value) (j : Nat)
+    (premises : EnvRel i left right ∧ j ≤ i) : EnvRel j left right := by
+  obtain ⟨related, bound⟩ := premises
   rw [envRel_iff_lookup] at related ⊢
   intro name small
   exact related name (Nat.lt_of_lt_of_le small bound)
@@ -153,9 +154,9 @@ theorem envRel_mono (i j : Nat) (left right : Environment Value)
 /-- Lookup of an in-range name yields related optional values. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "env_rel_ALOOKUP"]
 theorem envRel_lookup (n : Nat) (left right : Environment Value) (name : Flapjack.AstHOL.VarN)
-    (related : EnvRel n left right) (bound : decNameToNum name < n) :
+    (premises : EnvRel n left right ∧ decNameToNum name < n) :
     optionRel ValueRel (holALookup left.v name) (holALookup right.v name) :=
-  (envRel_iff_lookup n left right).1 related name bound
+  (envRel_iff_lookup n left right).1 premises.1 name premises.2
 
 /-- Adding a pair of related bindings preserves the bounded environment
 relation. This is Flapjack infrastructure for closure application. -/
@@ -185,7 +186,7 @@ theorem doOpApp_closure (leftEnv : Environment Value) (name : Flapjack.AstHOL.Va
       have smaller : i + 1 ≤ n := by
         have h : i < n := by simpa [compiled] using bound
         exact Nat.succ_le_of_lt h
-      have envs' := envRel_cons (i + 1) leftEnv targetEnv name arg targetArg (envRel_mono n (i + 1) leftEnv targetEnv envs smaller) args
+      have envs' := envRel_cons (i + 1) leftEnv targetEnv name arg targetArg (envRel_mono n leftEnv targetEnv (i + 1) ⟨envs, smaller⟩) args
       refine ⟨i, sg, body', { targetEnv with v := (name, targetArg) :: targetEnv.v }, cfg, compiled, envs', ?_⟩
       simp [FlatSem.doOpApp, compileDec, compiled]
 

@@ -1,3 +1,9 @@
+neq_imp_to_cases_replay=∀(y :α). ((x :α) ≠ y ⇒ (P :bool)) ⇒ x = y ∨ x ≠ y
+pair_case_eq_pairarg_replay=(pair_CASE (p :β # γ) (f :β -> γ -> α) :α) = (λ((x :β),(y :γ)). f x y) p
+alist_to_ns_to_bind2_replay=∀(l :(α # β) list). (alist_to_ns l :(γ, α, β) namespace) = nsBindList l (nsEmpty :(γ, α, β) namespace)
+nsSing_eq_bind_replay=∀(n :β) (x :γ). (nsSing n x :(α, β, γ) namespace) = nsBind n x (nsEmpty :(α, β, γ) namespace)
+env_rel_nsLookup_c_replay=env_rel (R :v -> α -> bool) (env :v sem_env) (env' :α sem_env) ∧ nsLookup env.c (id :(mlstring, mlstring) id) = (r :(num # stamp) option) ⇒ env'.c = env.c
+less_sub_1_cases_replay=(k :num) ≤ (clock :num) ∧ (k ≤ clock − (1 :num) ⇒ (P :bool)) ⇒ k = clock ∨ k ≤ clock − (1 :num)
 env_rel_imp_c_replay=env_rel (x :v -> α -> bool) (env :v sem_env) (env' :α sem_env) ⇒ env'.c = env.c
 s_rel_clock2_replay=∀(k :num). s_rel (ci :α compiler_instance) (s :β semanticPrimitives$state) (t :β semanticPrimitives$state) ⇒ s_rel ci (s with clock := k) (t with clock := k)
 extract_oracle_some_suc_replay=IS_SOME (extract_oracle (s :α semanticPrimitives$state) (env :v sem_env) (decs :dec list) (SUC (i :num))) ⇒ IS_SOME (extract_oracle s env decs i)

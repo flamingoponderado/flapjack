@@ -11,3 +11,9 @@ open Flapjack.Compiler.Backend.BackendProps
 #guard stateCc (fun (s p : Nat) => (s + 1, p + 2))
     (fun (_ _ : Nat) => (none : Option (Nat × Bool × Nat))) (4, 5) 6 ==
   none
+
+-- Captured by backend_props_state_oracle_probe.out.
+#guard (stateOracStates (fun (s p : Nat) => (2 * s + p, s + p)) 3 (fun n => n + 1) 3,
+    stateCoProgs (fun (s p : Nat) => (2 * s + p, s + p)) 3 (fun n => n + 1) 2,
+    addStateCo (fun (s p : Nat) => (2 * s + p, s + p)) 3 (fun xs i => xs i + 10) (fun n => n + 1) 2) ==
+  (35, 19, 16, 29)

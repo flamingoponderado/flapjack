@@ -1,3 +1,4 @@
+import Flapjack.Misc.Option.MapM
 import Flapjack.Compiler.Backend.BviLet.Compile
 import Flapjack.Compiler.Backend.Bvi.Budget
 
@@ -16,15 +17,6 @@ private theorem member_budget_lt (xs : List Exp) (e : Exp) (h : e ∈ xs) :
     rcases h with rfl | h
     · omega
     · have := ih h; omega
-
-private theorem mapM_succeeds {α β : Type} (xs : List α) (f : α → Option β)
-    (h : ∀ x ∈ xs, ∃ y, f x = some y) : ∃ ys, xs.mapM f = some ys := by
-  induction xs with
-  | nil => exact ⟨[], rfl⟩
-  | cons x xs ih =>
-    obtain ⟨y, hy⟩ := h x (by simp)
-    obtain ⟨ys, hys⟩ := ih (by intro z hz; exact h z (by simp [hz]))
-    exact ⟨y :: ys, by simp [List.mapM_cons, hy, hys]⟩
 
 /-- The optimizer succeeds whenever its fuel exceeds the BVI structural
 budget, for every environment and offset. -/

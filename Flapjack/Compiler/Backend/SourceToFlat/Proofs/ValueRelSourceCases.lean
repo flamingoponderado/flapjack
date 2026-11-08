@@ -1,13 +1,22 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRelCases
 
-/-! Source-shaped cases for the factored source-to-flat relations. These
-Flapjack lemmas expose the mutual relation's case structure. -/
+/-! Source-shaped cases for the mutual source-to-flat relations. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL
 open Flapjack.Compiler.Backend.BackendCommon
 
-/-- Case decomposition with the same value, local-environment, and global
-environment alternatives as the original mutual relation. -/
+namespace ValueRelSourceCasesReview
+
+/-- The global environment uses the reviewed finite-map representation. -/
+theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
+    GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env := GlobalEnv.holFmapAsFiniteSupportWitness env
+
+end ValueRelSourceCasesReview
+
+/-- The original mutual relation's case decomposition. Each list lookup is
+bounded in the same conjunct, so guarded optional lookup agrees with HOL EL. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "v_rel_cases"
+  (fmap_as_finite_support := [c, tys])]
 theorem valueRel_source_cases :
     (∀ (g : GlobalEnv) (source : Value) (flat : FlatSem.Value), ValueRel g source flat ↔
       (∃ lit, source = .litv lit ∧ flat = .litv lit) ∨
@@ -47,7 +56,7 @@ theorem valueRel_source_cases :
       ∃ name value env flatEnv flatValue, source = nsBind name value env ∧
         flat = (name, flatValue) :: flatEnv ∧ EnvRel g env flatEnv ∧ ValueRel g value flatValue) ∧
     (∀ (g : GlobalEnv) comp shadowers env, GlobalEnvInv g comp shadowers env ↔
-      (∀ id v, ¬(∃ name, shadowers name ∧ id = Ident.short name) →
+      (∀ id v, ¬(∃ name, shadowers name ∧ id = Ident.short name) ∧
         nsLookup env.v id = some v → ∃ n v' t,
           nsLookup comp.v id = some (.glob t n) ∧ n < g.v.length ∧
           g.v[n]?.getD none = some v' ∧ ValueRel g v v') ∧
@@ -98,6 +107,6 @@ theorem valueRel_source_cases :
     · rintro (⟨rfl, rfl⟩ | ⟨name, value, env, flatEnv, flatValue, rfl, rfl, lr, vr⟩)
       · exact .empty g
       · exact .bind g name value env flatEnv flatValue lr vr
-  · exact globalEnvInv_iff
+  · simpa only [and_imp] using globalEnvInv_iff
 
 end Flapjack.Compiler.Backend.SourceToFlat

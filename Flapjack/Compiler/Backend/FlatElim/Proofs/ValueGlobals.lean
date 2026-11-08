@@ -198,8 +198,8 @@ theorem findRefsGlobals_set_within (refs : List (StoreValue FlatSem.Value))
 reachable; byte arrays add no value dependencies. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "find_refs_globals_LUPDATE"]
 theorem findRefsGlobals_LUPDATE (reachable : NumSet) (refs : List (StoreValue FlatSem.Value))
-    (index : Nat) (_inBounds : index < refs.length)
-    (old : globalsWithin (findRefsGlobals refs) reachable) :
+    (index : Nat) (premises : index < refs.length ∧
+      globalsWithin (findRefsGlobals refs) reachable) :
     (∀ value, globalsWithin (findValueGlobals value) reachable →
       globalsWithin (findRefsGlobals (refs.set index (.refv value))) reachable) ∧
     (∀ values, globalsWithin (findValuesGlobals values) reachable →
@@ -207,6 +207,7 @@ theorem findRefsGlobals_LUPDATE (reachable : NumSet) (refs : List (StoreValue Fl
     (∀ bytes, globalsWithin (findRefsGlobals (refs.set index (.w8array bytes))) reachable) ∧
     (∀ mode value, globalsWithin (findValueGlobals value) reachable →
       globalsWithin (findRefsGlobals (refs.set index (.thunk mode value))) reachable) := by
+  obtain ⟨_, old⟩ := premises
   refine ⟨?_, ?_, ?_, ?_⟩
   · intro value safe
     exact findRefsGlobals_set_within refs index (.refv value) reachable old safe

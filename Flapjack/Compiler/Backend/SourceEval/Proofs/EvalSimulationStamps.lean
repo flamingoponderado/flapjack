@@ -4,6 +4,11 @@ import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationDeclarations
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs
 open Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesProps Flapjack.EvaluateHOL
 
+/-- Constructor duplication checks exactly whether the constructor names are distinct. -/
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "check_dup_ctors_thm"]
+theorem checkDupCtors_thm (vars : List TvarN) (name : TypeN) (constructors : List (ConN × List AstT)) :
+    checkDupCtors (vars, name, constructors) = decide (constructors.map Prod.fst).Nodup := rfl
+
 /-- Flapjack proof infrastructure: updating both stamp counters on related
 states preserves their recording relation. -/
 private theorem stateRel_updateStamps {Config F : Type} (ci : CompilerInstance Config)

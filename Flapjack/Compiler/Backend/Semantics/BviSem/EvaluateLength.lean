@@ -255,13 +255,4 @@ theorem evaluate_singleton {C F : Type} (expression : Bvi.Exp) (env : List Value
     | nil => exact ⟨value, rfl⟩
     | cons other tail => simp at length
 
-/-- A successful singleton has a defined head; no unspecified empty-list
-head is observed along that path. -/
-theorem evaluate_singleton_head {C F : Type} (expression : Bvi.Exp) (env : List Value)
-    (state next : BviState C F) (values : List Value)
-    (run : evaluate [expression] env state = (.val values, next)) :
-    ∃ value, values = [value] ∧ @Flapjack.holHd Value ⟨unitValue⟩ values = value := by
-  obtain ⟨value, rfl⟩ := evaluate_singleton expression env state next values run
-  exact ⟨value, rfl, rfl⟩
-
 end Flapjack.Compiler.Backend.BviSem

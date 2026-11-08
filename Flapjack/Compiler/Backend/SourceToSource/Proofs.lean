@@ -10,21 +10,20 @@ the source program does not fail with a type error. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_sourceProofScript.sml" "compile_semantics"]
 theorem compile_semantics {F : Type} (state : State F) (env : SemEnv Value)
     (program : List Dec) (outcome : HolBehaviour)
-    (noFail : ¬ semanticsProg state env program .fail)
-    (source : semanticsProg state env program outcome) :
+    (premises : ¬ semanticsProg state env program .fail ∧ semanticsProg state env program outcome) :
     semanticsProg state env (compile program) outcome :=
-  SourceLet.compile_semantics state env program outcome noFail source
+  SourceLet.compile_semantics state env program outcome premises
 
 /-- The source-to-source driver preserves observable semantics when composed
 into an inserted Eval oracle. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_sourceProofScript.sml" "compile_semantics_oracle"]
 theorem compile_semantics_oracle {Config F : Type}
-    (f : List Dec → List Dec) (ci : SourceEval.Proofs.CompilerInstance Config)
-    (state : State F) (env : SemEnv Value) (program : List Dec) (outcome : HolBehaviour)
+    (ci : SourceEval.Proofs.CompilerInstance Config) (state : State F) (env : SemEnv Value)
+    (program : List Dec) (outcome : HolBehaviour) (f : List Dec → List Dec)
     (premises : SourceEval.Proofs.isInsertOracle ci f state.evalState ∧
       ¬ semanticsProg state env program .fail ∧ semanticsProg state env program outcome) :
     semanticsProg { state with evalState := SourceEval.Proofs.adjustOracle ci (compile ∘ f) state.evalState }
       env program outcome :=
-  SourceLet.compile_semantics_oracle f ci state env program outcome premises
+  SourceLet.compile_semantics_oracle ci state env program outcome f premises
 
 end Flapjack.Compiler.Backend.SourceToSource

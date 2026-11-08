@@ -3,7 +3,7 @@
 from pathlib import Path
 import hashlib
 ROOT = Path(__file__).resolve().parents[2]
-CHECKS = {'Flapjack/RiscV/CorrectnessEncoding/MemoryStep.lean': '1f737ec69e3e2624739d8ac9eb2c92eb542c525ee88f2ab25d98590459edc971', 'scripts/hol-probes/riscv_memory_step_probeScript.sml': '289419cbaf16b7808625ba9cb7b6a46f4096a61019f146031ac48c5b0ae3d66d', 'scripts/hol-probes/riscv_memory_step_probe.out': '65fca4e9d54253d05f03b7502b3c3c9efc59545ca996ebb54f10251f89b64289'}
+CHECKS = {'Flapjack/RiscV/CorrectnessEncoding/MemoryStep.lean': 'fb424e2d50514198fb33864778b9c243e99c06e5d76cc3da809513cb13907e78', 'Flapjack/RiscV/CorrectnessEncoding/Skip.lean': '1209ac0c00ce51a2b8fce4c7c01f3ff326a70816669432b2c6a0200607984d2f', 'scripts/hol-probes/riscv_memory_step_probeScript.sml': '289419cbaf16b7808625ba9cb7b6a46f4096a61019f146031ac48c5b0ae3d66d', 'scripts/hol-probes/riscv_memory_step_probe.out': '65fca4e9d54253d05f03b7502b3c3c9efc59545ca996ebb54f10251f89b64289'}
 def check(root=ROOT):
     for name, digest in CHECKS.items():
         if hashlib.sha256((root / name).read_bytes()).hexdigest() != digest:

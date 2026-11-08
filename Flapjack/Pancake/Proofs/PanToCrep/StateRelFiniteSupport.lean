@@ -670,7 +670,7 @@ theorem localsRelExtendNewVarHOL {width : Nat} [NeZero width] :
       subst hl; subst hk
       refine ⟨ns, flattenHOL v, by rw [hvars, if_pos rfl], ?_, rfl, hwf⟩
       rw [hfun]
-      exact optMmapSomeEqZipFlookup ns t.lookup (flattenHOL v) hnd (by rw [hlen, hflen])
+      exact opt_mmap_some_eq_zip_flookup ns t.lookup (flattenHOL v) hnd (by rw [hlen, hflen])
     · rw [if_neg hk] at hl
       obtain ⟨slots, words, hv, hmm, hfl, hwfk⟩ := hlk name value hl
       refine ⟨slots, words, by rw [hvars, if_neg hk]; exact hv, ?_, hfl, hwfk⟩
@@ -679,7 +679,8 @@ theorem localsRelExtendNewVarHOL {width : Nat} [NeZero width] :
         have := hmax.2 name _ slots hv y hy'
         have := (hrange y hy).1
         omega
-      rw [hfun, optMmapDisjZipFlookup ns t.lookup slots (flattenHOL v) hdisj (by rw [hlen, hflen])]
+      rw [hfun, opt_mmap_disj_zip_flookup ns t.lookup slots (flattenHOL v) hdisj
+        (by rw [hlen, hflen])]
       simpa [FLOOKUP] using hmm
 
 /-- Exact port of HOL `ctxt_max_el_leq`

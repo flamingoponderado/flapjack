@@ -60,6 +60,14 @@ theorem scanExpr_list (ctx : List ValueType) (loc : Nat) (xs : List Exp) :
 termination_by sizeOf xs
 end
 
+/-- The list scan agrees with both source singleton and list traversals. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "scan_expr_eq"]
+theorem scanExpr_eq :
+    (∀ e ctx loc, scanExpr ctx loc [e] = [scanSing ctx loc e]) ∧
+    (∀ es ctx loc, scanExpr ctx loc es = scanList ctx loc es) := by
+  exact ⟨fun e ctx loc => scanExpr_single ctx loc e,
+    fun es ctx loc => scanExpr_list ctx loc es⟩
+
 /-- Refining an operand never changes the context length. -/
 theorem update_length (ty : ValueType) (e : Exp) (ctx : List ValueType) :
     (update ty e ctx).length = ctx.length := by
@@ -366,6 +374,7 @@ def checkExpSingle (loc arity : Nat) (e : Exp) : Option AssocOp :=
     | none => none
 
 /-- Source-shaped candidate decision using the original list-based scan. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "check_exp_def"]
 def checkExpOriginal (loc arity : Nat) (e : Exp) : Option AssocOp :=
   if !hasRec1 loc e then none else
     match scanExpr (List.replicate arity .any) loc [e] with

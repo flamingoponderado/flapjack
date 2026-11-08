@@ -1,3 +1,7 @@
 inline=[(1,1,Var 0); (2,1,Let [Var 0] (Tick (Tick (Tick (Var 0))))); (3,0,Call 0 (SOME 3) []); (4,1,Call 0 (SOME 3) [Var 0])]
 size=[0; 0; 0; 1; 2]
 letop=Op (IntOp Add) [Var 8; Var 9]
+optimise_def_typed=∀(split_seq :bool) (cut_size :num) (name :α) (arity :num) (exp :exp). optimise split_seq cut_size (name,arity,exp) = (name,arity,compile_any split_seq cut_size arity (let_op_sing (HD (remove_ticks [exp]))))
+optimise_eq_typed=∀(split_seq :bool) (cut_size :num) (name :α) (arity :num) (exp :exp). optimise split_seq cut_size (name,arity,exp) = (name,arity,compile_any split_seq cut_size arity (let_op_sing (remove_ticks_sing exp)))
+compile_inc_def_typed=∀(limit :num) (split_seq :bool) (cut_size :num) (cs :(num # exp) sptree$num_map) (prog :(num # num # exp) list). compile_inc limit split_seq cut_size cs prog = (let ((cs :(num # exp) sptree$num_map),(prog1 :(num # num # exp) list)) = tick_compile_prog limit cs prog in (cs,MAP (optimise split_seq cut_size :num # num # exp -> num # num # exp) prog1))
+compile_prog_def_typed=∀(limit :num) (split_seq :bool) (cut_size :num) (prog :(num # num # exp) list). compile_prog limit split_seq cut_size prog = compile_inc limit split_seq cut_size (LN :(num # exp) sptree$num_map) prog

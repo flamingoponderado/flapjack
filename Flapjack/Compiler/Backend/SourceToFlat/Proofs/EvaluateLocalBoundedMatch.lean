@@ -32,7 +32,7 @@ theorem localEnvBounded_patternBody {C F : Type} [Nonempty C]
       { baseMap with v := nsBindList (patTups .none (patBindings pattern)) (bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v) } gen body := by
   obtain ⟨patternTraces, mapBind, patternLength⟩ := nsBindList_patTups_bindLocals
     (patBindings pattern) .none traces (flatEnv.v.map Prod.fst) baseMap.v
-  have extendedRel := envRel_nsAppend genv (alistToNs bindings) sourceLocal flatBindings flatEnv.v bindingRel localRel
+  have extendedRel := envRel_nsAppend genv (alistToNs bindings) sourceLocal flatBindings flatEnv.v ⟨bindingRel, localRel⟩
   have extendedInv : GlobalEnvInv genv baseMap (fun n => n ∈ (flatBindings ++ flatEnv.v).map Prod.fst) baseEnv := by
     cases envInv with
     | intro _ _ _ values constructors =>
@@ -427,7 +427,7 @@ theorem localEnvBounded_mat {C F : Type} [Nonempty C]
             middleSource middleFlat baseEnv sourceLocal flatEnv traces trace baseMap gen
             (Nat.le_trans (EvaluateHOL.evaluateClockFull source middleSource sourceEnv [body] _ sourceRun) clockBound)
             middleLocal middleEnv tracesLen
-            middleInvariant middleGeneration value bindExnV flatValue FlatSem.bindExnV valueRel (exceptionValues_related middleGenv middleInvariant.1).2.2.1 rows can rowSafe each
+            middleInvariant middleGeneration value bindExnV flatValue FlatSem.bindExnV valueRel (valueRel_lemmas middleGenv middleInvariant.1).2.2.2.1 rows can rowSafe each
           have sourceOuter : EvaluateHOL.evaluate source sourceEnv [.mat body rows] =
               EvaluateHOL.evaluateMatch middleSource sourceEnv value rows bindExnV := by
             rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv [body] []).1, sourceRun]

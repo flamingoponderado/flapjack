@@ -1,111 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.BviSem.Apply
+import Flapjack.Compiler.Backend.Semantics.BviSem.ApplyRuntimeFrame
 import Flapjack.Compiler.Backend.BackendProps.StateCompiler
 
 /-! Adjusting the compiler configuration carried by a BVI oracle. -/
 namespace Flapjack.Compiler.Backend.BviProps
 open Flapjack.Compiler.Backend.BviSem
 open Flapjack.Compiler.Backend.BvlSem (Value)
-
-/-- Reframe a BVL state with callbacks of another configuration type while
-preserving every field observable by non-install primitives. -/
-def reframeBvl {C D F : Type} (template : BvlSem.State D F) (state : BvlSem.State C F) : BvlSem.State D F :=
-  ⟨state.globals, state.refs, state.clock, template.compile, template.compileOracle, state.code, state.ffi⟩
-
-/-- Transfer a successful optional primitive result to the new BVL frame. -/
-def reframeBvlOption {C D F : Type} (template : BvlSem.State D F)
-    (result : Option (Value × BvlSem.State C F)) : Option (Value × BvlSem.State D F) :=
-  result.map fun (value, state) => (value, reframeBvl template state)
-
-/-- BVL global primitives are independent of compiler callback types. -/
-theorem applyGlobal_reframeBvl {C D F : Type} (template : BvlSem.State D F)
-    (state : BvlSem.State C F) (op : ClosLang.GlobOp) (args : List Value) :
-    BvlSem.applyGlobal op args (reframeBvl template state) =
-      reframeBvlOption template (BvlSem.applyGlobal op args state) := by
-  unfold BvlSem.applyGlobal reframeBvlOption reframeBvl
-  repeat' split
-  all_goals simp_all [Function.comp_def]
-
-/-- BVL block primitives are independent of compiler callback types. -/
-theorem applyBlock_reframeBvl {C D F : Type} (template : BvlSem.State D F)
-    (state : BvlSem.State C F) (op : ClosLang.BlockOp) (args : List Value) :
-    BvlSem.applyBlock op args (reframeBvl template state) =
-      reframeBvlOption template (BvlSem.applyBlock op args state) := by
-  unfold BvlSem.applyBlock reframeBvlOption reframeBvl
-  repeat' split
-  all_goals simp_all [Option.map_bind]
-
-/-- BVL memory primitives are independent of compiler callback types. -/
-theorem applyMemory_reframeBvl {C D F : Type} (template : BvlSem.State D F)
-    (state : BvlSem.State C F) (op : ClosLang.MemOp) (args : List Value) :
-    BvlSem.applyMemory op args (reframeBvl template state) =
-      reframeBvlOption template (BvlSem.applyMemory op args state) := by
-  unfold BvlSem.applyMemory reframeBvlOption reframeBvl
-  repeat' split
-  all_goals simp_all [Option.map_bind]
-  all_goals try omega
-  all_goals try (repeat' (congr 1; funext value; cases value <;> simp [Option.map_bind]))
-
-/-- BVL numeric primitives are independent of compiler callback types. -/
-theorem applyNumeric_reframeBvl {C D F : Type} (template : BvlSem.State D F)
-    (state : BvlSem.State C F) (op : ClosLang.Op) (args : List Value) :
-    BvlSem.applyNumeric op args (reframeBvl template state) =
-      reframeBvlOption template (BvlSem.applyNumeric op args state) := by
-  cases op <;> simp [BvlSem.applyNumeric, reframeBvlOption, reframeBvl, Option.map_map, Function.comp_def]
-
-/-- Transfer a BVL primitive result into a frame with different callbacks. -/
-def reframeBvlResult {C D F : Type} (template : BvlSem.State D F)
-    (result : Flapjack.SemanticPrimitivesHOL.Result (Value × BvlSem.State C F) Value) :
-    Flapjack.SemanticPrimitivesHOL.Result (Value × BvlSem.State D F) Value :=
-  match result with
-  | .err error => .err error
-  | .val (value, state) => .val (value, reframeBvl template state)
-
-/-- All non-install BVL primitives commute with reframing their compiler
-callbacks. Install is handled separately by the oracle agreement invariant. -/
-theorem doApp_reframeBvl {C D F : Type} (template : BvlSem.State D F)
-    (state : BvlSem.State C F) (op : ClosLang.Op) (args : List Value)
-    (notInstall : op ≠ .install) :
-    BvlSem.doApp op args (reframeBvl template state) =
-      reframeBvlResult template (BvlSem.doApp op args state) := by
-  cases op with
-  | globOp operation =>
-    simp only [BvlSem.doApp, applyGlobal_reframeBvl]
-    cases h : BvlSem.applyGlobal operation args state with
-    | none => simp [reframeBvlOption, reframeBvlResult]
-    | some pair => cases pair; simp [reframeBvlOption, reframeBvlResult]
-  | blockOp operation =>
-    simp only [BvlSem.doApp, applyBlock_reframeBvl]
-    cases h : BvlSem.applyBlock operation args state with
-    | none => simp [reframeBvlOption, reframeBvlResult]
-    | some pair => cases pair; simp [reframeBvlOption, reframeBvlResult]
-  | memOp operation =>
-    simp only [BvlSem.doApp, applyMemory_reframeBvl]
-    cases h : BvlSem.applyMemory operation args state with
-    | none => simp [reframeBvlOption, reframeBvlResult]
-    | some pair => cases pair; simp [reframeBvlOption, reframeBvlResult]
-  | intOp operation =>
-    simp only [BvlSem.doApp, applyNumeric_reframeBvl]
-    cases h : BvlSem.applyNumeric (.intOp operation) args state with
-    | none => simp [reframeBvlOption, reframeBvlResult]
-    | some pair => cases pair; simp [reframeBvlOption, reframeBvlResult]
-  | wordOp operation =>
-    simp only [BvlSem.doApp, applyNumeric_reframeBvl]
-    cases h : BvlSem.applyNumeric (.wordOp operation) args state with
-    | none => simp [reframeBvlOption, reframeBvlResult]
-    | some pair => cases pair; simp [reframeBvlOption, reframeBvlResult]
-  | install => exact (notInstall rfl).elim
-  | label index =>
-    simp only [BvlSem.doApp, reframeBvl]
-    split <;> simp [reframeBvlResult, reframeBvl]
-  | ffi name =>
-    simp only [BvlSem.doApp, reframeBvl]
-    repeat' split
-    all_goals simp_all [reframeBvlResult, reframeBvl]
-  | thunkOp operation =>
-    simp only [BvlSem.doApp, reframeBvl]
-    repeat' split
-    all_goals simp_all [reframeBvlResult, reframeBvl]
-    all_goals split <;> simp_all
 
 /-- Replace the compiler and map the configuration of every oracle entry,
 leaving the runtime state unchanged. Untagged pending review of the BVI
@@ -248,22 +147,13 @@ theorem doAppAux_adjustOracle_success {C D F : Type} (compiler : Compiler D) (f 
     rfl
   · simpa [adjustOracleOk, fields.1, fields.2] using ok
 
-/-- The BVL fallback input for an adjusted state is the original BVL input
-reframed with the adjusted callback types. -/
+/-- The adjusted fallback input keeps its own arbitrary BVL fields while
+copying the original runtime fields. -/
 theorem toBvl_adjustOracle {C D F : Type} (compiler : Compiler D) (f : C → D)
     (state : BviState C F) :
     toBvl (adjustOracle compiler f state) =
-      reframeBvl (toBvl (adjustOracle compiler f state)) (toBvl state) := by
-  simp [toBvl, reframeBvl, adjustOracle]
-
-/-- Copying BVL fallback fields back commutes with oracle adjustment. -/
-theorem fromBvl_reframeBvl {C D F : Type} (compiler : Compiler D) (f : C → D)
-    (state : BviState C F) (next : BvlSem.State C F) :
-    fromBvl (reframeBvl (toBvl (adjustOracle compiler f state)) next) (adjustOracle compiler f state) =
-      adjustOracle compiler f (fromBvl next state) := by
-  cases state
-  cases next
-  rfl
+      BvlProps.fallbackFrame (toBvl state) (toBvl (adjustOracle compiler f state)) := by
+  simp [toBvl, BvlProps.fallbackFrame, adjustOracle]
 
 /-- Transfer a BVI primitive result into an adjusted oracle frame. -/
 def adjustOracleResult {C D F : Type} (compiler : Compiler D) (f : C → D)
@@ -288,12 +178,28 @@ theorem doAppFallback_adjustOracle {C D F : Type} (compiler : Compiler D) (f : C
     | some pair => cases pair; simp [adjustOracleAux, adjustOracleResult]
     | none =>
       simp only [adjustOracleAux, Option.map]
-      rw [toBvl_adjustOracle, doApp_reframeBvl _ _ _ _ notInstall]
+      have notGlobal : ∀ operation, op ≠ .globOp operation := by
+        intro operation eq
+        subst op
+        exact doAppAux_delegates_not_global operation args state aux
+      have domain : sptDomain (toBvl state).code =
+          sptDomain (toBvl (adjustOracle compiler f state)).code := by
+        simp [toBvl_domain, adjustOracle]
+      rw [toBvl_adjustOracle]
       cases run : BvlSem.doApp op args (toBvl state) with
-      | err error => cases error <;> simp [reframeBvlResult, adjustOracleResult]
+      | err error =>
+        have swapped := BvlProps.doAppFallbackRerrSwap op args (toBvl state) error
+          (toBvl (adjustOracle compiler f state)) notGlobal
+          ⟨run, notInstall, by intro key present; rwa [domain]⟩
+        rw [swapped]
+        cases error <;> simp [adjustOracleResult]
       | val pair =>
         obtain ⟨value, next⟩ := pair
-        simp [reframeBvlResult, adjustOracleResult, fromBvl_reframeBvl]
+        have swapped := BvlProps.doAppFallbackRvalSwap op args (toBvl state) next value
+          (toBvl (adjustOracle compiler f state)) notGlobal
+          ⟨run, notInstall, by intro key present; rwa [← domain]⟩
+        rw [swapped]
+        simp [adjustOracleResult, BvlProps.fallbackFrame, fromBvl, adjustOracle]
 
 /-- Successful fallback operations leave the compiler and oracle fields
 unchanged, including operations delegated to BVL. -/

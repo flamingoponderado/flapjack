@@ -68,6 +68,88 @@ val _ = show_thm "insert_do_eval=" source_evalProofTheory.insert_do_eval;
 val record_forward_trans_sym = REWRITE_RULE [Once CONJ_COMM] source_evalProofTheory.record_forward_trans;
 val _ = show_thm "record_forward_trans_sym_replay=" record_forward_trans_sym;
 val _ = show_thm "evaluate_record_forward=" source_evalProofTheory.evaluate_is_record_forward;
+val _ = show_thm "insert_oracle_correct=" source_evalProofTheory.insert_oracle_correct;
+val _ = show_thm "evaluate_record_suffix=" source_evalProofTheory.evaluate_record_suffix;
+val _ = show_thm "evaluate_decs_clock_record_common_prefix=" source_evalProofTheory.evaluate_decs_clock_record_common_prefix;
+val _ = show_thm "extract_oracle_agrees=" source_evalProofTheory.extract_oracle_agrees;
+val local_s_rel_clock2 = Q.prove (
+  `!k. source_evalProof$s_rel ci s t ==> source_evalProof$s_rel ci (s with clock := k) (t with clock := k)`,
+  rw [source_evalProofTheory.s_rel_def] >> simp [semanticPrimitivesTheory.state_component_equality]);
+val local_extract_oracle_0_st = Q.prove (
+  `source_evalProof$extract_oracle t env decs 0 = SOME r /\
+   ~ semantics$semantics_prog s env decs Fail /\
+   source_evalProof$s_rel ci s t /\
+   namespace$nsAll (K semanticPrimitives$concrete_v) env.v ==>
+   FST (SND r) = ci.config_v ci.init_state`,
+  simp [source_evalProofTheory.extract_oracle_def]
+  >> DEEP_INTRO_TAC WhileTheory.OLEAST_INTRO
+  >> simp [UNCURRY]
+  >> rw []
+  >> Cases_on `evaluate_decs (s with clock := n) env decs`
+  >> drule_then (qspec_then `n` assume_tac) local_s_rel_clock2
+  >> qspec_then `ci` drule (List.last (CONJUNCTS source_evalProofTheory.eval_simulation) |> Q.GEN `ci`)
+  >> disch_then drule
+  >> disch_then (qspec_then `env` mp_tac)
+  >> fs [semanticsTheory.semantics_prog_def, semanticsTheory.evaluate_prog_with_clock_def]
+  >> first_x_assum (qspec_then `n` mp_tac)
+  >> rw [source_evalProofTheory.env_rel_concrete_v]
+  >> rfs [source_evalProofTheory.s_rel_def]
+  >> fs [source_evalProofTheory.orac_s_def]);
+val _ = show_thm "extract_oracle_0_st_replay=" local_extract_oracle_0_st;
+val local_extract_some_suc = Q.prove (
+  `IS_SOME (source_evalProof$extract_oracle s env decs (SUC i)) ==>
+   IS_SOME (source_evalProof$extract_oracle s env decs i)`,
+  simp [source_evalProofTheory.extract_oracle_def]
+  >> DEEP_INTRO_TAC WhileTheory.OLEAST_INTRO
+  >> DEEP_INTRO_TAC WhileTheory.OLEAST_INTRO
+  >> rw [] >> simp [UNCURRY] >> res_tac >> simp []);
+val local_orac_agrees_s_rel = Q.prove (
+  `source_evalProof$orac_agrees orac t.eval_state ==>
+   source_evalProof$s_rel ci s t ==>
+   i < FST (FST ((source_evalProof$orac_s t.eval_state).oracle 0)) ==>
+   orac i = (source_evalProof$orac_s t.eval_state).oracle (i + 1)`,
+  rw [source_evalProofTheory.s_rel_def, source_evalProofTheory.orac_agrees_def]
+  >> fs [source_evalProofTheory.orac_s_def]);
+val local_extract_oracle_suc_st = Q.prove (
+  `IS_SOME (source_evalProof$extract_oracle t env decs (SUC i)) /\
+   source_evalProof$s_rel ci s t /\
+   namespace$nsAll (K semanticPrimitives$concrete_v) env.v /\
+   ~ semantics$semantics_prog s env decs Fail ==>
+   ?r r' x. source_evalProof$extract_oracle t env decs (SUC i) = SOME r' /\
+     source_evalProof$extract_oracle t env decs i = SOME r /\
+     source_evalProof$mk_compiler_fun_from_ci ci r = SOME x /\
+     FST (SND r') = FST x`,
+  rw []
+  >> drule local_extract_some_suc
+  >> fs [IS_SOME_EXISTS]
+  >> reverse (Cases_on `?n t' res. evaluate_decs (t with clock := n) env decs = (t', res) /\
+        SUC i < FST (FST ((source_evalProof$orac_s t'.eval_state).oracle 0))`)
+  >- (rpt (POP_ASSUM (mp_tac o REWRITE_RULE [source_evalProofTheory.extract_oracle_def]))
+      >> DEEP_INTRO_TAC WhileTheory.OLEAST_INTRO >> rw [] >> metis_tac [])
+  >> fs []
+  >> drule_then drule source_evalProofTheory.extract_oracle_agrees
+  >> disch_then (qspec_then `THE o source_evalProof$extract_oracle t env decs` mp_tac)
+  >> Cases_on `evaluate_decs (s with clock := n) env decs`
+  >> drule_then (qspec_then `n` assume_tac) local_s_rel_clock2
+  >> qspec_then `ci` (drule_then drule)
+       (List.last (CONJUNCTS source_evalProofTheory.eval_simulation) |> INST_TYPE [``:'a`` |-> ``:'nota``] |> Q.GEN `ci`)
+  >> disch_then (qspec_then `env` mp_tac)
+  >> fs [semanticsTheory.semantics_prog_def, semanticsTheory.evaluate_prog_with_clock_def]
+  >> first_x_assum (qspec_then `n` mp_tac)
+  >> rw [source_evalProofTheory.env_rel_concrete_v]
+  >> drule_then drule local_orac_agrees_s_rel
+  >> disch_then (fn t => qspec_then `i` mp_tac t >> qspec_then `SUC i` mp_tac t)
+  >> qpat_x_assum `source_evalProof$s_rel _ _ _` mp_tac
+  >> rw [source_evalProofTheory.s_rel_def]
+  >> fs [source_evalProofTheory.recorded_orac_wf_def, source_evalProofTheory.orac_s_def]
+  >> first_x_assum drule >> simp [ADD1]);
+val _ = show_thm "extract_oracle_suc_st_replay=" local_extract_oracle_suc_st;
+val _ = show_thm "get_oracle_props=" source_evalProofTheory.get_oracle_props;
+val _ = show_thm "eval_no_eval_simulation=" evaluatePropsTheory.eval_no_eval_simulation;
+val _ = show_thm "evaluate_prog_with_clock_put_oracle=" source_evalProofTheory.evaluate_prog_with_clock_put_oracle;
+val _ = show_thm "oracle_semantics_prog=" source_evalProofTheory.oracle_semantics_prog;
+
+
 val spt_mem_to_list_a = prove(
   ``!t acc x. MEM x (sptree$toListA acc t) <=> MEM x acc \/ ?k. sptree$lookup k t = SOME x``,
   simp [sptreeTheory.toListA_append, GSYM sptreeTheory.toList_def, sptreeTheory.MEM_toList] >> metis_tac []);
@@ -170,6 +252,7 @@ val source_abort_imp_intro_replay = Q.prove (
   simp []);
 val _ = show_thm "source_abort_imp_intro_replay=" source_abort_imp_intro_replay;
 val _ = show_thm "source_eval_simulation=" source_evalProofTheory.eval_simulation;
+val _ = show_thm "source_check_dup_ctors_thm=" source_evalProofTheory.check_dup_ctors_thm;
 val _ = show_thm "source_do_eval_simulation=" source_evalProofTheory.do_eval_sim;
 val _ = show_thm "source_declare_env_simulation=" source_evalProofTheory.declare_env_sim;
 val _ = show_thm "source_pairarg_to_pair_map=" source_evalProofTheory.pairarg_to_pair_map;

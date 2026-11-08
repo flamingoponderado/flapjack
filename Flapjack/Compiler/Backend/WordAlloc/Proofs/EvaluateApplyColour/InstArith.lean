@@ -17,28 +17,6 @@ theorem holFmapAsFiniteSupportWitness
 
 end InstArithWitnesses
 
-/-- Flapjack proof infrastructure for the source's ordered two-register
-updates. Injectivity is scoped to the two writes and final live set; aliases
-are allowed. This is not a separate HOL declaration. -/
-private theorem twoWritesLocals {α : Type} (f : Nat → Nat) (a b : Nat)
-    (live : Nat → Prop) (source target : Spt α) (x y : α)
-    (hinj : ∀ k l, (k = a ∨ k = b ∨ live k) →
-      (l = a ∨ l = b ∨ live l) → f k = f l → k = l)
-    (hrel : strongLocalsRel f (fun k => live k ∧ k ≠ a ∧ k ≠ b) source target) :
-    strongLocalsRel f live (sptInsert b y (sptInsert a x source))
-      (sptInsert (f b) y (sptInsert (f a) x target)) := by
-  apply strongLocalsRelInsert f b live _ _ y
-  constructor
-  · intro k l hk hl he
-    exact hinj k l (hk.elim (fun h => Or.inr (Or.inl h)) (fun h => Or.inr (Or.inr h)))
-      (hl.elim (fun h => Or.inr (Or.inl h)) (fun h => Or.inr (Or.inr h))) he
-  · apply strongLocalsRelInsert f a (fun k => live k ∧ k ≠ b) source target x
-    constructor
-    · intro k l hk hl he
-      exact hinj k l (hk.elim Or.inl (fun h => Or.inr (Or.inr h.1)))
-        (hl.elim Or.inl (fun h => Or.inr (Or.inr h.1))) he
-    · exact slrMono hrel (fun _ hk => ⟨hk.1.1, hk.2, hk.1.2⟩)
-
 /-- HOL `evaluate_apply_colour[Inst]`, division subcase of the shared
 get_vars block (1264-1290). The source nonzero divisor guard is retained;
 no successful-evaluation or register-distinctness premise is added. -/

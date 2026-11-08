@@ -187,6 +187,7 @@ theorem initGenv_disjoint (blankCount : Nat) (start finish : NextIndices)
     (progress : idxPrev start finish) :
     allDisjoint [idxBlock start finish, idxFinalBlock finish, ∅,
       genvAllocatedIndices { initGenv with v := some (.loc true 0) :: List.replicate blankCount none }] := by
+  rw [allDisjoint_iff_bounded]
   let allocated := genvAllocatedIndices
     { initGenv with v := some (.loc true 0) :: List.replicate blankCount none }
   have blockFuture : ∀ x, x ∈ idxBlock start finish → x ∈ idxFinalBlock finish → False := by

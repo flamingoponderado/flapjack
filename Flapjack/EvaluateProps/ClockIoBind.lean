@@ -6,8 +6,8 @@ open Flapjack.SemanticPrimitivesHOL
 
 @[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "is_clock_io_mono_bind"]
 theorem isClockIoMono_bind {σ α β γ δ : Type}
-    (f : State σ → State σ × Result α β)
-    (g : Result α β → State σ → State σ × Result γ δ) (s : State σ)
+    (f : State σ → State σ × Result α β) (s : State σ)
+    (g : Result α β → State σ → State σ × Result γ δ)
     (h : isClockIoMono f s ∧
       (∀ next result, f s = (next, result) → isClockIoMono (g result) next) ∧
       (∀ next, g (.err (.abort .timeoutError)) next = (next, .err (.abort .timeoutError)))) :

@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRelCases
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateModule
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateException
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateDatatype
@@ -297,64 +298,6 @@ theorem initGlobalEnvInv_imp (genv : GlobalEnv) (compMap : Environment) (env : S
           intro ty ctors eq
           subst group
           exact item.2
-
-namespace EnvAllRelPort
-
-/-- Roundtrip for the global carrier's canonical finite maps. -/
-theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
-    GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env :=
-  GlobalEnv.holFmapAsFiniteSupportWitness env
-
-end EnvAllRelPort
-
-/-- Combined local and global environment relation. -/
-@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "env_all_rel"
-  (fmap_as_finite_support := [c, tys])]
-def FactoredEnvAllRel (genv : GlobalEnv) (compMap : Environment) (sourceEnv : SemEnv Value)
-    (flatEnv : FlatSem.Environment FlatSem.Value) (locals : List VarN) : Prop :=
-  ∃ (baseEnv : SemEnv Value) (sourceLocal : Namespace ModN VarN Value) (bindings : List (VarN × Value)),
-    sourceEnv = { baseEnv with v := nsAppend sourceLocal baseEnv.v } ∧
-    sourceLocal = alistToNs bindings ∧ bindings.map Prod.fst = locals ∧
-    GlobalEnvInv genv compMap (fun name => name ∈ locals) baseEnv ∧ EnvRel genv sourceLocal flatEnv.v
-
-/-- The combined environment relation exposes its original case structure. -/
-@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "env_all_rel_cases"
-  (fmap_as_finite_support := [c, tys])]
-theorem factoredEnvAllRel_source_cases (genv : GlobalEnv) (compMap : Environment)
-    (sourceEnv : SemEnv Value) (flatEnv : FlatSem.Environment FlatSem.Value) (locals : List VarN) :
-    FactoredEnvAllRel genv compMap sourceEnv flatEnv locals ↔
-      ∃ sourceLocal baseEnv flatValues,
-        sourceEnv = { baseEnv with v := nsAppend sourceLocal baseEnv.v } ∧
-        flatEnv = ⟨flatValues⟩ ∧
-        (∃ bindings, sourceLocal = alistToNs bindings ∧ bindings.map Prod.fst = locals) ∧
-        GlobalEnvInv genv compMap (fun name => name ∈ locals) baseEnv ∧
-        EnvRel genv sourceLocal flatValues := by
-  constructor
-  · rintro ⟨base, sourceLocal, bindings, sourceEq, localEq, names, globals, localsRel⟩
-    exact ⟨sourceLocal, base, flatEnv.v, sourceEq, by cases flatEnv; rfl,
-      ⟨bindings, localEq, names⟩, globals, localsRel⟩
-  · rintro ⟨sourceLocal, base, values, sourceEq, rfl, ⟨bindings, localEq, names⟩, globals, localsRel⟩
-    exact ⟨base, sourceLocal, bindings, sourceEq, localEq, names, globals, localsRel⟩
-
-/-- The factored combined environment relation determines the flat local
-names. -/
-theorem factoredEnvAllRel_names (genv : GlobalEnv) (compMap : Environment) (sourceEnv : SemEnv Value)
-    (flatEnv : FlatSem.Environment FlatSem.Value) (locals : List VarN)
-    (related : FactoredEnvAllRel genv compMap sourceEnv flatEnv locals) :
-    locals = flatEnv.v.map Prod.fst := by
-  obtain ⟨_, _, bindings, _, localEq, names, _, localRel⟩ := related
-  rw [localEq] at localRel
-  have pairs := (envRel_alist_iff genv bindings flatEnv.v).mp localRel
-  have namesOfPairs : ∀ (xs : List (VarN × Value)) (ys : List (VarN × FlatSem.Value)),
-      List.Forall₂ (fun a b => a.1 = b.1 ∧ ValueRel genv a.2 b.2) xs ys →
-      xs.map Prod.fst = ys.map Prod.fst := by
-    intro xs ys pairs
-    induction pairs with
-    | nil => rfl
-    | cons head tail ih =>
-      simp only [List.map_cons]
-      rw [head.1, ih]
-  exact names.symm.trans (namesOfPairs bindings flatEnv.v pairs)
 
 /-- Declaration-list result in existential form, used to assemble the
 source-to-flat simulation. This helper has no separate HOL declaration. -/

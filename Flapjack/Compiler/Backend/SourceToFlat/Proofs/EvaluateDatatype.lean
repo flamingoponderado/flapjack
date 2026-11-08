@@ -9,6 +9,57 @@ namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL
 open OracleInvariant
 
+/-- A key-preserving map commutes with association-list lookup. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "ALOOKUP_MAP_3"]
+theorem aLookup_map_keyPreserving {K A B : Type} (xs : List (K × A))
+    (f : K × A → K × B) (key : K) (keys : ∀ x ∈ xs, (f x).1 = x.1) :
+    holALookup (xs.map f) key = (holALookup xs key).map (fun value => (f (key, value)).2) :=
+  holALookup_map_keyPreserving xs f key keys
+
+/-- Appending after a namespace fold is equivalent to appending to its initial state. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "nsAppend_foldl'"]
+theorem nsAppend_foldl_prime {M N V C : Type} :
+    ∀ (l : List (Namespace M N V × C)) (ns ns' : Namespace M N V),
+      nsAppend (l.foldl (fun acc pair => nsAppend pair.1 acc) ns') ns =
+        l.foldl (fun acc pair => nsAppend pair.1 acc) (nsAppend ns' ns) := by
+  intro l
+  induction l with
+  | nil => intro ns ns'; rfl
+  | cons pair tail ih =>
+    intro ns ns'
+    simpa only [List.foldl_cons, nsAppend_assoc] using ih ns (nsAppend pair.1 ns')
+
+/-- A namespace fold factors through its result from the empty namespace. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "nsAppend_foldl"]
+theorem nsAppend_foldl {M N V C : Type} :
+    ∀ (l : List (Namespace M N V × C)) (ns : Namespace M N V),
+      l.foldl (fun acc pair => nsAppend pair.1 acc) ns =
+        nsAppend (l.foldl (fun acc pair => nsAppend pair.1 acc) nsEmpty) ns := by
+  intro l ns
+  simpa only [(nsAppend_nsEmpty ns).2] using (nsAppend_foldl_prime l ns nsEmpty).symm
+
+/-- Type definitions introduce no nested module names. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "build_tdefs_no_mod"]
+theorem buildTdefs_no_mod : ∀ (idx : Nat) (tdefs : TypeDef),
+    nsDomMod (buildTdefs idx tdefs) = (fun path : List ModN => path = []) := by
+  have flat : ∀ (tdefs : TypeDef) (idx : Nat),
+      ∃ values, buildTdefs idx tdefs = Namespace.bind values [] := by
+    intro tdefs
+    induction tdefs with
+    | nil => intro idx; exact ⟨[], rfl⟩
+    | cons head rest ih =>
+      intro idx
+      obtain ⟨values, h⟩ := ih (idx + 1)
+      rcases head with ⟨vars, name, constructors⟩
+      refine ⟨values ++ (buildConstrs idx constructors).reverse, ?_⟩
+      simp [buildTdefs, h, nsAppend, alistToNs]
+  intro idx tdefs
+  obtain ⟨values, h⟩ := flat tdefs idx
+  rw [h]
+  funext path
+  apply propext
+  cases path <;> simp [nsDomMod, nsLookupMod]
+
 /-- A reserved type index has neither a type entry nor a constructor entry. -/
 theorem idxRangeRel_type_free {C : Type}
     (interp : Option (Value → Option (Config × C))) (genv : GlobalEnv)
@@ -20,7 +71,7 @@ theorem idxRangeRel_type_free {C : Type}
       ∀ cn arity, genv.c.lookup ((cn, some start.tidx), arity) = none := by
   obtain ⟨_, _, _, _, tuple, _, _, disjoint, _, _⟩ := range
   cases tuple
-  have separate := disjoint 0 3 (by simp) (by simp) (by decide)
+  have separate := (allDisjoint_iff_bounded _).mp disjoint 0 3 (by simp) (by simp) (by decide)
   simp only [List.getElem_cons_zero, List.getElem_cons_succ] at separate
   have block : (start.tidx, IndexKind.type) ∈ idxBlock start finish := by
     change idxBlock start finish (start.tidx, IndexKind.type)
@@ -270,6 +321,49 @@ theorem allocTags1_namespace_entries {M N A : Type} (constructors : List (N × L
   rw [allocTags1_namespace, List.zip_map_right]
   simp only [allocatedConstructorEntries, List.map_map]
   congr 2
+
+/-- The allocator's namespace, counter tree and tag list describe the same constructor entries. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "alloc_tags1_imp"]
+theorem allocTags1_imp {M N A : Type} :
+    ∀ (constructors : List (N × List A)) (ns : Namespace M N Nat)
+      (spt : Spt Nat) (tags : List (Nat × Nat)),
+      allocTags1 constructors = (ns, spt, tags) ∧ (constructors.map Prod.fst).Nodup →
+      ∃ entries : List (N × Nat × Nat),
+        ns = alistToNs (entries.map fun (name, tag, _) => (name, tag)) ∧
+        (fun pair => pair ∈ entries.map Prod.snd) =
+          (fun pair : Nat × Nat => ∃ max, sptLookup pair.2 spt = some max ∧ pair.1 < max) ∧
+        tags = entries.map Prod.snd ∧ tags.Nodup ∧
+        List.Forall₂ (fun (ctor : N × List A) (entry : N × Nat × Nat) =>
+          ctor.1 = entry.1 ∧ entry.2.2 = ctor.2.length) constructors entries ∧
+        constructors.map Prod.fst = entries.map Prod.fst := by
+  intro constructors ns spt tags ⟨allocated, names⟩
+  let entries := allocatedConstructorEntries (M := M) constructors
+  have projections := allocatedConstructorEntries_projections (M := M) constructors
+  have nsEq := allocTags1_namespace_entries (M := M) constructors
+  have membership := allocTags1_membership (M := M) constructors
+  have nodup := allocTags1_tags_nodup (M := M) constructors
+  have related : List.Forall₂ (fun (ctor : N × List A) (entry : N × Nat × Nat) =>
+      ctor.1 = entry.1 ∧ entry.2.2 = ctor.2.length) constructors entries := by
+    dsimp [entries]
+    clear allocated names projections nsEq membership nodup
+    induction constructors with
+    | nil => simp [allocatedConstructorEntries, allocTags1]
+    | cons ctor rest ih =>
+      rcases ctor with ⟨name, args⟩
+      generalize eq : (allocTags1 rest : Namespace M N Nat × Spt Nat × List (Nat × Nat)) = result at ih ⊢
+      rcases result with ⟨oldNs, oldSpt, oldTags⟩
+      generalize inc : lookupInc args.length oldSpt = result
+      rcases result with ⟨tag, newSpt⟩
+      simp only [allocatedConstructorEntries, allocTags1, eq, inc, List.map_cons, List.zip_cons_cons] at ih ⊢
+      exact List.Forall₂.cons ⟨rfl, rfl⟩ ih
+  rw [allocated] at nsEq projections membership nodup
+  refine ⟨entries, nsEq, ?_, projections.2.symm, ?_, related, projections.1.symm⟩
+  · funext pair
+    apply propext
+    rcases pair with ⟨tag, arity⟩
+    rw [projections.2]
+    exact membership tag arity
+  · exact nodup
 
 /-- The compiled type namespace maps each allocation entry to its tag and
 the common type table. -/
@@ -1094,6 +1188,61 @@ theorem GlobalGrowth.allocateTags {C : Type}
     (allocatedConstructorEntries (M := ModN) constructors.reverse) reserved keys
     (fun _ tag arity _ => free.2 tag arity)
   exact tableGrowth.trans constructorGrowth
+
+namespace AllocTagsInvariantPort
+/-- Canonical finite-map carrier witness for the global environment. -/
+theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
+    GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env := GlobalEnv.holFmapAsFiniteSupportWitness env
+end AllocTagsInvariantPort
+
+/-- Allocating one datatype's tags preserves the compilation invariant and relates its environment. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "alloc_tags_invariant"
+  (fmap_as_finite_support := [c, tys])]
+theorem allocTags_invariant {C F : Type} [Nonempty C]
+    (idx : NextIndices) (constructors : List (ConN × List AstT))
+    (ns : Namespace ModN ConN (Nat × Option (Nat × List (Nat × Nat)))) (cids : Spt Nat)
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (gen : EnvironmentGenerationStore) (genv : GlobalEnv) (finish : NextIndices)
+    (other : Set (Nat × IndexKind)) (source : State F) (flat : FlatSem.State C F)
+    (compMap : Environment) (env : SemEnv Value)
+    (premises : allocTags idx.tidx constructors = (ns, cids) ∧
+      factoredInvariant interp transform gen genv (idx, finish, other) source flat ∧
+      GlobalEnvInv genv compMap (fun _ => False) env ∧
+      (constructors.map Prod.fst).Nodup ∧ idx.tidx + 1 ≤ finish.tidx) :
+    ∃ nextGenv,
+      finiteSubmap genv.c nextGenv.c ∧ finiteSubmap genv.tys nextGenv.tys ∧ nextGenv.v = genv.v ∧
+      factoredInvariant interp transform gen nextGenv ({ idx with tidx := idx.tidx + 1 }, finish, other)
+        { source with nextTypeStamp := source.nextTypeStamp + 1 } flat ∧
+      (let buildEnv : SemEnv Value :=
+        { c := alistToNs (buildConstrs source.nextTypeStamp constructors).reverse, v := nsEmpty }
+       GlobalEnvInv nextGenv { c := ns, v := nsEmpty } (fun _ => False) buildEnv ∧
+         EnvDomainEq { c := ns, v := nsEmpty } buildEnv) := by
+  obtain ⟨allocated, valid, envInv, names, fits⟩ := premises
+  let nextGenv := installTypeConstructorList idx.tidx source.nextTypeStamp
+    (allocatedConstructorEntries (M := ModN) constructors.reverse)
+    { genv with tys := finiteUpdate genv.tys idx.tidx ((allocTags1 constructors.reverse :
+      Namespace ModN ConN Nat × Spt Nat × List (Nat × Nat)).2.2.reverse) }
+  have growth := GlobalGrowth.allocateTags interp genv source.nextTypeStamp source.nextExnStamp source.evalState
+    idx finish other constructors valid.2.2.2.1 (by omega)
+  have invariant := factoredInvariant_allocateTags interp transform gen genv idx finish other source flat
+    constructors valid fits names
+  have newEnv := globalEnvInv_allocTags genv idx.tidx source.nextTypeStamp constructors names
+  have domain := envDomainEq_allocTags idx.tidx source.nextTypeStamp constructors
+  have nsEq : (allocTags idx.tidx constructors).1 = ns := congrArg Prod.fst allocated
+  have values : ∀ (entries : List (ConN × Nat × Nat)) (g : GlobalEnv),
+      (installTypeConstructorList idx.tidx source.nextTypeStamp entries g).v = g.v := by
+    intro entries
+    induction entries with
+    | nil => intro g; rfl
+    | cons entry rest ih =>
+      rcases entry with ⟨name, tag, arity⟩
+      intro g
+      simpa [installTypeConstructorList] using ih { g with
+        c := finiteUpdate g.c ((tag, some idx.tidx), arity) (.typeStamp name source.nextTypeStamp) }
+  refine ⟨nextGenv, growth.constructors, growth.types, ?_, invariant, ?_, ?_⟩
+  · exact values _ _
+  · simpa only [nsEq] using newEnv
+  · simpa only [nsEq] using domain
 
 /-- The compiler constructor namespace for a sequence of type definitions,
 in the order used by the datatype declaration pass. -/

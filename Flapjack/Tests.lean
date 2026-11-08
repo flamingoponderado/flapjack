@@ -186,7 +186,6 @@ import Flapjack.Test.PanToCrepFirstCompileParity
 import Flapjack.Test.PanToCrepContextExactParity
 import Flapjack.Test.PanToCrepCompFuncExactParity
 import Flapjack.Test.PanCommonParity
-import Flapjack.Test.SemanticsPropsParity
 /- These legacy Crep-to-Loop theorem fixtures still assume identity variable
    resolution; source parity coverage remains in `Test.SourceToLoop`. -/
 import Flapjack.Test.StaticGlobalVarParity

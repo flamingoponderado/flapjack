@@ -1,3 +1,4 @@
+import Flapjack.Misc.Option.MapM
 import Flapjack.Compiler.Backend.BvlHandle
 import Flapjack.Compiler.Backend.ListFoldTotal
 
@@ -16,15 +17,6 @@ private theorem member_budget_lt (xs : List Exp) (e : Exp) (h : e ∈ xs) :
     rcases h with rfl | h
     · omega
     · have := ih h; omega
-
-private theorem mapM_succeeds {α β : Type} (xs : List α) (f : α → Option β)
-    (h : ∀ x ∈ xs, ∃ y, f x = some y) : ∃ ys, xs.mapM f = some ys := by
-  induction xs with
-  | nil => exact ⟨[], rfl⟩
-  | cons x xs ih =>
-    obtain ⟨y, hy⟩ := h x (by simp)
-    obtain ⟨ys, hys⟩ := ih (by intro z hz; exact h z (by simp [hz]))
-    exact ⟨y :: ys, by simp [List.mapM_cons, hy, hys]⟩
 
 /-- Raise detection succeeds under a structural traversal bound. -/
 theorem canRaiseFuel_succeeds (fuel : Nat) (e : Exp) (bound : expBudget e < fuel) :

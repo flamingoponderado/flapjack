@@ -48,44 +48,6 @@ theorem nthCode_location_before {C A : Type} (oracle : Nat → C × List (Nat ×
       obtain ⟨index, bound, found⟩ := ih (fun n => oracle (n + 1)) later
       exact ⟨index + 1, by omega, found⟩
 
-/-- Freshness against both initial code and every earlier oracle entry implies
-freshness against the accumulated target-code tree. -/
-theorem nthCode_fresh_of_pairwise {C A : Type} (oracle : Nat → C × List (Nat × A))
-    (code : Spt A)
-    (initialFresh : ∀ index location, sptMem location code → location ∉ (oracle index).2.map Prod.fst)
-    (pairwiseFresh : ∀ earlier later location, earlier < later →
-      location ∈ (oracle earlier).2.map Prod.fst → location ∉ (oracle later).2.map Prod.fst) :
-    ∀ index location, sptMem location (sptUnion code (nthCode oracle index)) →
-      location ∉ (oracle index).2.map Prod.fst := by
-  intro index location member
-  cases (sptMem_sptUnion _ _ _).1 member with
-  | inl initial => exact initialFresh index location initial
-  | inr accumulated =>
-    obtain ⟨earlier, earlierBound, found⟩ := nthCode_location_before oracle index location accumulated
-    exact pairwiseFresh earlier index location earlierBound found
-
-/-- Disjoint ordered label intervals for successive oracle entries establish
-the freshness condition for all accumulated code, including the initial tree. -/
-theorem nthCode_fresh_of_boundaries {C A : Type} (oracle : Nat → C × List (Nat × A))
-    (code : Spt A) (boundary : Nat → Nat)
-    (monotone : ∀ {i j}, i ≤ j → boundary i ≤ boundary j)
-    (initialBelow : ∀ location, sptMem location code → location < boundary 0)
-    (ranges : ∀ index location, location ∈ (oracle index).2.map Prod.fst →
-      boundary index ≤ location ∧ location < boundary (index + 1)) :
-    ∀ index location, sptMem location (sptUnion code (nthCode oracle index)) →
-      location ∉ (oracle index).2.map Prod.fst := by
-  apply nthCode_fresh_of_pairwise oracle code
-  · intro index location initial future
-    have below := initialBelow location initial
-    have order := monotone (Nat.zero_le index)
-    have lower := (ranges index location future).1
-    omega
-  · intro earlier later location indexBound old future
-    have upper := (ranges earlier location old).2
-    have lower := (ranges later location future).1
-    have order := monotone (show earlier + 1 ≤ later by omega)
-    omega
-
 /-- The compiler and oracle agree with incremental conversion, with fresh
 future labels and the source annotations required by closure conversion. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "compile_oracle_inv_def" 1069]
@@ -104,30 +66,6 @@ def compileOracleInv {CC OC Result S : Type} (maxApp : Nat) (_sourceCode : S)
     everyFnVarsSome (sourceOracle n).2.1 ∧
     (∀ entry ∈ (sourceOracle n).2.2, everyFnLocationSome [entry.2.2]) ∧
     (∀ entry ∈ (sourceOracle n).2.2, everyFnVarsSome [entry.2.2])
-
-/-- The explicit compiler and oracle transformations, annotation checks,
-distinct future labels and ordered label intervals establish the candidate
-compiler-oracle invariant used by the evaluation simulation. -/
-theorem compileOracleInv_of_boundaries {C : Type} (maxApp : Nat)
-    (sourceCode : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
-    (sourceOracle : ClosSem.CompileOracle C) (targetCode : Spt (Nat × Bvl.Exp))
-    (targetCompiler : BvlSem.Compiler C) (boundary : Nat → Nat)
-    (monotone : ∀ {i j}, i ≤ j → boundary i ≤ boundary j)
-    (initialBelow : ∀ location, sptMem location targetCode → location < boundary 0)
-    (distinct : ∀ index, ((compileInc maxApp (sourceOracle index).2).map Prod.fst).Nodup)
-    (ranges : ∀ index location, location ∈ (compileInc maxApp (sourceOracle index).2).map Prod.fst →
-      boundary index ≤ location ∧ location < boundary (index + 1))
-    (annotations : ∀ index, everyFnLocationSome (sourceOracle index).2.1 ∧
-      everyFnVarsSome (sourceOracle index).2.1 ∧
-      (∀ entry ∈ (sourceOracle index).2.2, everyFnLocationSome [entry.2.2]) ∧
-      (∀ entry ∈ (sourceOracle index).2.2, everyFnVarsSome [entry.2.2])) :
-    compileOracleInv maxApp sourceCode (pureCc (compileInc maxApp) targetCompiler) sourceOracle targetCode
-      targetCompiler (pureCo (compileInc maxApp) ∘ sourceOracle) := by
-  refine ⟨rfl, rfl, ?_, ?_, annotations⟩
-  · simpa [Function.comp_def, pureCo] using distinct
-  · apply nthCode_fresh_of_boundaries (pureCo (compileInc maxApp) ∘ sourceOracle) targetCode boundary
-      monotone initialBelow
-    simpa [Function.comp_def, pureCo] using ranges
 
 /-- The next target oracle entry is the incremental compilation of the
 source entry, with fresh and distinct labels and the corresponding callback. -/

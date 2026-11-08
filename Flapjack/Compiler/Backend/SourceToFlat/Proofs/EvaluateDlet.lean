@@ -321,7 +321,7 @@ theorem evaluateDlet_pattern_noMatch {C F : Type} [Nonempty C]
     cases flatMatch : FlatSem.pmatch flatMiddle (compilePat compMap pattern) flatValue [] <;>
       simp_all [MatchResultRel]
   refine ⟨?_, evaluateDlet_pattern_flat_noMatch flat flatMiddle trace n next compMap gen location pattern expr
-    flatValue notAlias flatRun flatMatched, (exceptionValues_related genv ok).2.2.1, states, invariant⟩
+    flatValue notAlias flatRun flatMatched, (valueRel_lemmas genv ok).2.2.2.1, states, invariant⟩
   simp [EvaluateHOL.evaluateDecs, distinct, wellformed, sourceRun, matched,
     EvaluateHOL.headValue, Flapjack.holHd]
 

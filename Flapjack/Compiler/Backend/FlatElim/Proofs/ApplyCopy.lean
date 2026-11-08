@@ -21,8 +21,8 @@ theorem byteStoreUpdate_related {C F : Type} (reachable : NumSet)
   · exact flatStateRel_setRefs reachable source target address (.w8array new) related
       (by simp [storeValueGlobals, globalsWithin, sptMem, sptDomain]) (by simp [storeHasNoEval])
 
-/-- Copying a substring preserves related states and result invariants. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+/-- Copying a substring preserves related states and result invariants.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_copyStrStr {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
@@ -79,8 +79,8 @@ theorem doApp_some_flatStateRel_copyStrStr {C F G : Type} (reachable : NumSet)
                           by simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy, copied],
                           resultSafe.1, resultSafe.2⟩
 
-/-- Copying a byte array to a string preserves related states and result invariants. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+/-- Copying a byte array to a string preserves related states and result invariants.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_copyAw8Str {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
@@ -141,8 +141,8 @@ theorem doApp_some_flatStateRel_copyAw8Str {C F G : Type} (reachable : NumSet)
                             by simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData,
                               FlatSem.doAppCopy, ← refsEq, lookup, copied], resultSafe.1, resultSafe.2⟩
 
-/-- The unsafe byte-array XOR preserves the primitive simulation. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+/-- The unsafe byte-array XOR preserves the primitive simulation.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_xorAw8StrUnsafe {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
@@ -192,8 +192,8 @@ theorem doApp_some_flatStateRel_xorAw8StrUnsafe {C F G : Type} (reachable : NumS
                     simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData,
                       FlatSem.doAppCopy, ← related.2.1, lookup, xored, assigned]
 
-/-- Copying a string into a byte array preserves the primitive simulation. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+/-- Copying a string into a byte array preserves the primitive simulation.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_copyStrAw8 {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
@@ -271,8 +271,8 @@ theorem doApp_some_flatStateRel_copyStrAw8 {C F G : Type} (reachable : NumSet)
                                       simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData,
                                         FlatSem.doAppCopy, ← refsEq, lookup, copied, assigned]
 
-/-- Copying between byte arrays preserves the primitive simulation. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+/-- Copying between byte arrays preserves the primitive simulation.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_copyAw8Aw8 {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)

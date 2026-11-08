@@ -57,30 +57,30 @@ termination_by sizeOf patterns
 end
 
 /-- Total patterns cannot produce a no-match result, including in lists of
-equal length. The evaluator and carriers remain pending HOL review. -/
+equal length. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "total_pat_IMP"]
 theorem totalPat_imp {C F : Type} :
     (∀ (state : FlatSem.State C F) (pattern : FlatLang.Pat) (value : FlatSem.Value)
       (bindings : List (Flapjack.AstHOL.VarN × FlatSem.Value)) (result : MatchResult (List (Flapjack.AstHOL.VarN × FlatSem.Value))),
-      FlatSem.pmatch state pattern value bindings = result → totalPat pattern = true → result ≠ .noMatch) ∧
+      FlatSem.pmatch state pattern value bindings = result ∧ totalPat pattern = true → result ≠ .noMatch) ∧
     (∀ (state : FlatSem.State C F) (patterns : List FlatLang.Pat) (values : List FlatSem.Value)
       (bindings : List (Flapjack.AstHOL.VarN × FlatSem.Value)) (result : MatchResult (List (Flapjack.AstHOL.VarN × FlatSem.Value))),
-      patterns.length = values.length → FlatSem.pmatchList state patterns values bindings = result →
+      patterns.length = values.length ∧ FlatSem.pmatchList state patterns values bindings = result ∧
       totalPatList patterns = true → result ≠ .noMatch) := by
   constructor
-  · intro state pattern value bindings result matched total
+  · intro state pattern value bindings result ⟨matched, total⟩
     rw [← matched]
     exact totalPat_notNoMatch state pattern value bindings total
-  · intro state patterns values bindings result sameLength matched total
+  · intro state patterns values bindings result ⟨sameLength, matched, total⟩
     rw [← matched]
     exact totalPatList_notNoMatch state patterns values bindings sameLength total
 
-/-- A row list containing a total pattern cannot produce no-match. The
-evaluator and carriers remain pending HOL review. -/
+/-- A row list containing a total pattern cannot produce no-match. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "EXISTS_total_pat"]
 theorem exists_totalPat {C F E : Type} (rows : List (FlatLang.Pat × E))
-    (state : FlatSem.State C F) (value : FlatSem.Value) (total : rows.any (fun row => totalPat row.1) = true) :
+    (state : FlatSem.State C F) (value : FlatSem.Value) (total : (rows.map Prod.fst).any totalPat = true) :
     FlatSem.pmatchRows rows state value ≠ .noMatch := by
+  simp only [List.any_map] at total
   induction rows with
   | nil => simp at total
   | cons row rest ih =>

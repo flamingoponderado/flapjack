@@ -208,7 +208,7 @@ theorem idxRangeRel_restore {C : Type}
   cases currentTuple
   have oldSeparate : ∀ key, key ∈ idxBlock start finish → key ∈ other → False := by
     intro key inBlock inOther
-    have h := oldDisjoint 0 2 (by simp) (by simp) (by decide)
+    have h := (allDisjoint_iff_bounded _).mp oldDisjoint 0 2 (by simp) (by simp) (by decide)
     have member : key ∈ idxBlock start finish ∩ other := ⟨inBlock, inOther⟩
     simp only [List.getElem_cons_zero, List.getElem_cons_succ] at h
     rw [h] at member

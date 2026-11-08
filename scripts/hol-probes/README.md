@@ -187,7 +187,8 @@ predicate and the complete typed three-conjunct source-to-flat compiler
 correctness statement. The capture supports source review of the Lean
 statement; it is not a cross-language equivalence proof.
 
-`flat_props_evaluate_match_probe.out` captures the fully typed flat-properties
+`flat_props_evaluate_match_probe.out` captures the typed flat installation
+configuration constructor and the fully typed flat-properties
 match evaluator used by source-to-flat correctness. Its Lean counterpart
 retains all three match outcomes and the distinct-binding check. The capture
 supports source review, not cross-language equivalence.
@@ -198,13 +199,22 @@ environment lookup and restriction, recursive closure construction, and the
 full-application length theorem. These captures support source review, not
 closure-evaluator or compiler correctness.
 
+`backend_props_state_oracle_probe.out` captures the polymorphic state-oracle
+monotonicity theorem with its initial compilation step and both specializations,
+as well as the
+constructors, the state invariant theorem, and a multi-step example also
+checked by `StateCompilerParity`.
+
+`backend_props_option_max_probe.out` captures typed optional-bound ordering,
+addition, and maximum theorems from the original backend properties script.
+
 `flat_to_clos_relation_probe.out` captures the original typed value and
 environment relation rules, induction and cases, state and store relations,
 polymorphic incremental and installation relations, complete compiler
 correctness and observational statements, polymorphic result and exception relations, operator and arithmetic lowering, and expanded byte-copy
 quotations. It also captures the polymorphic HOL
-`findi` definition and `env_rel_def` lookup equivalence used by the environment
-relation. It also records the proof-side initial state and initial-state relation
+`findi` definition, `LIST_REL_EL`, and `env_rel_def` lookup equivalence used by
+the relations. It also records the proof-side initial state and initial-state relation
 with their independent compiler and FFI types. The captured rules support
 source review; they do not establish cross-language equivalence.
 
@@ -483,11 +493,11 @@ The same flat-pattern probe captures the typed position, test, guard and decisio
 
 `source_to_flat_store_relation_probe.out` captures the original typed store and state relation rules, including independently typed compiler and FFI parameters. Lean's store-case and state-shape equivalences expose the same four store constructors and reserved flat-store slot, conditional on its preliminary value relation; they do not establish that relation's HOL correspondence.
 
-`source_let_proof_probe.out` captures the inferred types and clauses of the original source let-lifting definitions, prefix, evaluation, semantics and oracle-adjustment theorems, and replays the local module/local lemma and the original specialization that constructs `evaluate_lift_start`. Its `nested_lifts` row evaluates a module containing successive anonymous and named lets; `Flapjack/Test/FlatElim.lean` checks the same input and output in Lean.
+`source_let_proof_probe.out` captures the inferred types and clauses of the original source let-lifting definitions, prefix, evaluation, semantics and oracle-adjustment theorems, and replays the local constructor-environment and module/local lemmas and the original specialization that constructs `evaluate_lift_start`. Its `nested_lifts` row evaluates a module containing successive anonymous and named lets; `Flapjack/Test/FlatElim.lean` checks the same input and output in Lean.
 
 `source_to_source_proof_probe.out` captures the source-to-source pass definition and its inferred function type, plus the original semantics and oracle-adjustment theorems.
 
-`source_eval_oracle_adjust_probe.out` captures the source evaluator's compiler-instance field types, conversion and oracle-adjustment definitions, recording callback and its decoders, decoder-concreteness theorems, recorded-oracle invariant and preservation step, agreement and extraction definitions and prefix laws, declaration and evaluation insertion and reset equalities, the full recording-preservation, dynamic-evaluation simulation, and mutual evaluator simulation statements, closure application cases, abort predicate and simplification theorems, a typed replay of the local non-abort elimination lemma, sparse-tree traversal membership, the adjustment/insertion identity, result cases, optional-least definition and introduction theorem, the evaluator and program-semantics adjustment theorems, and the mutual evaluator induction theorem with inferred types. It also replays local sparse-tree membership, reversed transitivity and clock-specialized declaration theorems.
+`source_eval_oracle_adjust_probe.out` captures the source evaluator's compiler-instance field types, conversion and oracle-adjustment definitions, recording callback and its decoders, decoder-concreteness theorems, recorded-oracle invariant and preservation step, agreement and extraction definitions and prefix laws, declaration and evaluation insertion and reset equalities, the full recording-preservation, oracle-insertion correctness, recording-oracle clock suffix and declaration-clock common prefix, extracted-oracle agreement, typed replays of the local initial-event and successor-event theorems, and the extracted-oracle properties, no-Eval-state simulation, clocked oracle installation, and oracle program semantics, dynamic-evaluation simulation, and mutual evaluator simulation statements, closure application cases, abort predicate and simplification theorems, a typed replay of the local non-abort elimination lemma, sparse-tree traversal membership, the adjustment/insertion identity, result cases, optional-least definition and introduction theorem, the evaluator and program-semantics adjustment theorems, and the mutual evaluator induction theorem with inferred types. It also replays local sparse-tree membership, reversed transitivity and clock-specialized declaration theorems.
 It also captures the typed get-oracle, put-oracle and evaluator-precondition definitions and the association-list append lookup theorem.
 The typed environment-relation captures retain the independent target value type
 and the original pointwise monotonicity premise. The source value-relation
@@ -505,7 +515,7 @@ integer-conversion and full value/list equality-simulation statements and the
 equality induction scheme are also captured with inferred types, as are the
 heterogeneous store assignment and lookup theorems.
 
-`source_eval_adjust_local_probe.out` captures inferred types of the original script's local oracle-adjustment lemmas as typed terms. These lemmas are not exported by the HOL theory; the probe additionally replays proofs of `s_rel_clock2`, `extract_oracle_SOME_SUC`, `orac_agrees_s_rel_IMP`, `recorded_orac_wf_defined`, `declare_env_adjust`, and `adjust_oracle_reset`.
+`source_eval_adjust_local_probe.out` captures inferred types of the original script's local oracle-adjustment lemmas as typed terms. These lemmas are not exported by the HOL theory; the probe additionally replays `neq_IMP_to_cases`, `less_sub_1_cases`, `pair_CASE_eq_pairarg`, `alist_to_ns_to_bind2`, `nsSing_eq_bind`, `env_rel_nsLookup_c`, `s_rel_clock2`, `extract_oracle_SOME_SUC`, `orac_agrees_s_rel_IMP`, `recorded_orac_wf_defined`, `declare_env_adjust`, and `adjust_oracle_reset`.
 The `orac_agrees_s_rel_IMP` replay adds `orac_s_def` to the source proof's simplification step.
 
 `flat_pattern_install_relation_probe.out` captures inferred types for pure backend compiler/oracle transformations, FlatPattern installation, value, state and match-result relations, the state clock-decrement theorem and local state-clock proof replay, match-result case theorems, maximum-offset arithmetic bounds, environment lookup and monotonicity results, the rich-list replication relation, key-preserving mapped lookup, application simulations and their reversed-argument form, flat closure and simple-relation statements, generic equality and store-operation prerequisites, and the pass's program-semantics theorem.
@@ -516,6 +526,10 @@ It also captures flat pattern-binding names and declaration evaluation over appe
 `source_to_flat_global_env_probe.out` captures the original global environment's value-list and finite-map field types, constructor tags and map conditions, including pattern-stamp prerequisites, their independent polymorphic types and empty-map observations. The map witnesses check Lean representation roundtrips; they do not establish the value relation or pass correctness.
 
 `source_to_flat_value_relation_probe.out` captures the typed mutual relation rules, induction and case principles, and local inversion equations. The generated HOL induction uses the induction predicates alone in recursive list and lookup premises; `ValueRelInduction.lean` proves a corresponding principle for the factored Lean relations. This is evidence for reviewing those relations, not a proof of HOL-to-Lean equivalence.
+
+The `v_rel_more_eqns_typed` row captures the exported value and closure equations
+with inferred types. The `v_rel_global_eqn_typed` and `v_rel_global_eqn_replay` rows capture the
+exported global-invariant equation and replay its original simplifier derivation.
 
 `cake_flat_sem_ops_probe.out` captures the full original flat equality and closure-application equations and examples for literals, locations, constructor types, vector lengths, list mismatch, successful closure application, and duplicate recursive functions. The Lean fixtures replay these observations; they do not prove cross-language equivalence or pass correctness.
 
@@ -631,21 +645,25 @@ It also captures flat pattern-binding names and declaration evaluation over appe
 
 `bvl_const_frontend_probe.out` captures typed constant-propagation, operation rewrite and helper equations alongside selected results and signed floor division and remainder. Lean proves the executed traversal equals the total source-shaped singleton traversal. Regenerate with `HOL_PROBE_ONLY=bvl_const_frontend_probeScript.sml scripts/hol-probes/regenerate.sh`; this capture does not establish cross-language equivalence. `bvl_optimized_cake_bvi_probe.out` captures the complete BVI output for the nested-function declaration after the original BVL inlining pipeline, including constant folding, while later optimizations remain omitted.
 
+`bvl_inline_frontend_probe.out` also records the typed optimizer, incremental compiler and whole-program compiler equations, including the polymorphic function name in `optimise`. Regenerate with `HOL_PROBE_ONLY=bvl_inline_frontend_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`bvi_tailrec_semantics_probe.out` captures the typed source condition and per-function and whole-program semantics theorems; the condition has a polymorphic program payload. Regenerate with `HOL_PROBE_ONLY=bvi_tailrec_semantics_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `bvl_const_rel_probe.out` captures the typed constant-propagation value and environment relations, unary and general operation correctness and the complete semantic simulation statement, and replays the original local environment lookup, recognizer, binary operand-flip, complete binary rewrite and variable-deletion proofs. Lean checks the complete binary and general operation rewrite theorems; the full constant-propagation simulation is proved for the total traversal, with a singleton consequence for the executed bounded traversal. The simulation and the relations remain untagged because their finite-map state is hidden in a quantifier, while the evaluator theorems carry the canonical state-field qualification. Regenerate with `HOL_PROBE_ONLY=bvl_const_rel_probeScript.sml scripts/hol-probes/regenerate.sh`; the capture is review evidence, not a cross-language equivalence proof.
 
-`bvi_tailrec_frontend_probe.out` captures the original tail-recursion candidate decisions for every BVI function of that example, focused recursion-detector and type-analysis cases, positive accumulator rewrites, worker labels and tail-modulo-constructor decisions.
+`bvi_tailrec_frontend_probe.out` captures the original tail-recursion candidate decisions for every BVI function of that example, focused recursion-detector and type-analysis cases, positive accumulator rewrites, worker labels, tail-modulo-constructor decisions, and typed scan, rewrite and compilation equations.
 
 `bvi_tmc_frontend_probe.out` captures full TMC wrapper and worker examples, including nested constructors, multiple calls, effectful arguments, and program-level worker allocation. These checks are regression evidence, not a correctness theorem.
 
-`clos_call_frontend_probe.out` captures closure free-variable annotations, direct-call conversion, effectful calls, and mutually recursive code extraction. `full_clos_call_cake_word_probe.out` captures the complete word program for a nested-function CakeML declaration with direct-call conversion and the ported BVL/BVI optimizations enabled; known-function optimization is disabled.
+`clos_call_frontend_probe.out` captures the typed direct-call traversal and compiler entry points, closure free-variable annotations, direct-call conversion, effectful calls, mutually recursive code extraction, and enabled and disabled incremental conversion. `ClosCallParity` replays both conditional results through the total entry point and the enabled result at two fuel values through the bounded executable. `full_clos_call_cake_word_probe.out` captures the complete word program for a nested-function CakeML declaration with direct-call conversion and the ported BVL/BVI optimizations enabled; known-function optimization is disabled.
 
-`clos_call_code_list_probe.out` captures the polymorphic source type and typed label-accounting theorems for the direct-call code-list helper, together with a concrete example replayed by the executable-pass parity tests.
+`clos_call_code_list_probe.out` captures the polymorphic source type and typed label-accounting theorems for the direct-call code-list helper, the typed `insert_each` equations, and a concrete example replayed by the executable-pass parity tests.
 
 `clos_call_wfg_probe.out` captures the inferred polymorphic compiler-state and recursive-closure invariants, state-extension, code-inclusion and location-traversal definitions, and their structural theorems. Its state-extension, code-inclusion and location-order cases are replayed in Lean.
 
 `clos_call_env_rel_probe.out` captures the original closure free-variable equations, polymorphic reference and direct-call environment relations, their structural theorems, and positive and negative binder, reference and environment examples replayed in Lean.
 
-`clos_call_free_correct_probe.out` captures the original free-analysis and closed-function statements and replays closedness decisions in the executable Lean pass. Its group cases include unequal lengths, which HOL's `EVERY2` rejects; the Lean fold correspondence proves the length precondition before comparing results.
+`clos_call_free_correct_probe.out` captures the typed direct-call free and closed definitions and their correctness statements, and replays closedness decisions in the executable Lean pass. Its group cases include unequal lengths, which HOL's `EVERY2` rejects; the Lean fold correspondence proves the length precondition before comparing results.
 
 `clos_call_stub_probe.out` records the polymorphic source stub-generator types and clauses and checks their generated argument order and labels against the Lean source-shaped and executable forms.
 
@@ -709,7 +727,9 @@ index and malformed-tree edge cases, and closure inlining.
 
 `word_convs_simp_instructions_probe.out` freshly replays all nine literal original instruction-preservation proofs from wordConvsProof395-513 and prints their complete closed typed statements, kernel T and zero open hypotheses. The local dest_If_thm proof is replayed solely as a hoisting prerequisite, and the final compile_exp_no_inst result is compared with the exported original theorem. Native kernel proofs preserve arbitrary predicates through all actual constructors, unrestricted hoisting dummy, independent unused s carrier, returning handlers, Loop and OpCurrHeap. This supports the instruction-validity conjunct of compile_to_word_conventions; the enclosing convention theorem and whole compiler correctness remain open.
 
-`backend_config_attach_bitmaps_probe.out` captures the full original eleven-field backend config equality/field types and the independently generic byte/bitmap payload signature and both attach_bitmaps clauses. Native fields retain every frontend/backend carrier, byte-backed MlString names, literal lists and sptrees. The kernel regression checks ordered duplicate symbols, missing-name fallback and all nine unchanged configuration fields. This support group does not establish full backend composition, production routing or whole compiler correctness.
+`backend_config_tuple_probe.out` replays the backend proof's two configuration
+projections and captures their inferred result types, including sparse maps and
+sets. `backend_config_attach_bitmaps_probe.out` captures the full original eleven-field backend config equality/field types and the independently generic byte/bitmap payload signature and both attach_bitmaps clauses. Native fields retain every frontend/backend carrier, byte-backed MlString names, literal lists and sptrees. The kernel regression checks ordered duplicate symbols, missing-name fallback and all nine unchanged configuration fields. This support group does not establish full backend composition, production routing or whole compiler correctness.
 
 `bvl_to_bvi_default_probe.out` captures the complete original ten-field default initializer, both BVL stub/namespace definitions, the zero-hypothesis namespace-alignment theorem, full default type and original evaluated counts/counters. The native default uses the checked shared data-stub chain and distinct literal BVL/BVI inline trees. This support group does not establish whole compiler correctness or production routing of the backend configuration.
 `wordsem_find_code_generic_probe.out` captures the complete original inferred find_code type, typed definition and full typed zero-hypothesis find_code_map_I. The code source/target payloads and stack-size payload remain independent; evaluator callers retain their Prog/Nat specialization. This carrier repair changes no source guards or conclusion.
@@ -1358,11 +1378,9 @@ scripts/hol-probes/regenerate.sh`. These rows preserve the unspecified
 
 `semantics_props_implements_probe.out` prints the proved HOL
 `semanticsPropsTheory.implements'_trans` conclusion from
-`cakeml/semantics/proofs/semanticsPropsScript.sml:285-295`. The structural
-Lean analogue and behavior-extension regressions are in
-`Flapjack.Test.SemanticsPropsParity`; the HOL `llist` to Lean
-`CakeLazyList` carrier bridge remains unproved, so this evidence does not
-qualify those declarations for exact HOL tags.
+`cakeml/semantics/proofs/semanticsPropsScript.sml:285-295`. The corresponding
+HOL-carrier theorem is `SemanticsPropsHOL.implementsPrimeTransHOL` in
+`Flapjack/SemanticsProps/Implements.lean`.
 
 The probes currently cover the small `loop_to_word` slice used by
 `Flapjack.Test.LoopToWord`, the `panSem$mem_load` boundary used by
@@ -9560,6 +9578,56 @@ replays and captures the original local recursive-function lookup proof;
 `build_rec_env_merge` and `nsAppend_nsEmpty` capture recursive bindings and the
 two-sided namespace identity, including the former's unused polymorphic binder.
 
+`source_to_flat_init_probe.out` also replays the local `FST_PAIR_MAP_I`,
+`ctor_same_type_SND`, `ctor_same_type_refl`, `eta2`, and `sem_env_eq_lemma`
+proofs with inferred types visible, including the type-changing record update.
+It also replays `lookup_build_rec_env_lem`, whose unused tuple components have
+independent types, and the local `global_env_inv_extend2` and
+`global_env_inv_add_locals` proofs with inferred types visible.
+It also replays the local `do_app_rec_help` proof, retaining its unused
+polymorphic binder and separate recursive groups in the inferred statement.
+The `env_rel_el_replay` row records the environment relation's bounded
+association-list characterization, replaying its local HOL proof.
+The `v_rel_weakening_replay` row records the three mutual weakening clauses
+for equal maps and growing global slots.
+The `v_rel_weakening2_typed` and `v_rel_weakening2_replay` rows record the
+three mutual weakening clauses and their independently typed unused binders.
+The `drestrict_lem_replay` row records the polymorphic submap and
+restriction/union equality, replaying the local HOL proof.
+The `result_rel_eqns_replay` row records all three result-relation case
+equations, including the independent unused abort-clause binder.
+The `env_all_rel_weak_replay` row records the combined environment relation
+under global extension, replaying the local HOL proof.
+The `list_rel_imp_el2_replay` and `list_rel_imp_el_replay` rows record the
+polymorphic list-relation lookup lemmas with the bounds on each side.
+The `not_null_eq_replay` row records the polymorphic local nonempty-list lemma.
+The `v_rel_lems_replay` row records the complete local boolean and exception
+relation lemma, replaying its HOL proof. The `do_app_typed` row records the inferred statement of the local primitive
+simulation theorem; `do_app_configGC_replay`, `do_app_shift_replay`,
+`do_app_equality_replay`, `do_app_arith_replay`, `do_app_fromto_replay`,
+`do_app_test_replay`, `do_app_opapp_replay`, `do_app_opassign_replay`,
+`do_app_opref_replay`, `do_app_opderef_replay`, `do_app_aw8alloc_replay`,
+`do_app_aw8sub_replay`, `do_app_aw8length_replay`, `do_app_aw8update_replay`,
+`do_app_copystrstr_replay`, `do_app_copystraw8_replay`,
+`do_app_copyaw8str_replay`, `do_app_copyaw8aw8_replay`,
+`do_app_xoraw8str_replay`, `do_app_implode_replay`, `do_app_explode_replay`,
+`do_app_strsub_replay`, `do_app_strlen_replay`, `do_app_strcat_replay`,
+`do_app_vfromlist_replay`, `do_app_vsub_replay`, `do_app_vsubunsafe_replay`,
+`do_app_vlength_replay`, `do_app_aalloc_replay`, `do_app_aallocfixed_replay`,
+`do_app_asub_replay`, `do_app_alength_replay`, `do_app_aupdate_replay`,
+`do_app_asubunsafe_replay`, `do_app_aupdateunsafe_replay`,
+`do_app_aw8subunsafe_replay`, `do_app_aw8updateunsafe_replay`,
+`do_app_listappend_replay`, and `do_app_ffi_replay`
+replay its ConfigGC, Shift, Equality, Arith, FromTo, Test, Opapp, Opassign,
+Opref, Opderef, Aw8alloc, Aw8sub, Aw8length, Aw8update, CopyStrStr,
+CopyStrAw8, CopyAw8Str, CopyAw8Aw8, XorAw8Str_unsafe, Implode, Explode,
+Strsub, Strlen, Strcat, VfromList, Vsub, Vsub_unsafe, Vlength, Aalloc,
+AallocFixed, Asub, Alength, Aupdate, Asub_unsafe, Aupdate_unsafe,
+Aw8sub_unsafe, Aw8update_unsafe, ListAppend, and FFI cases. The replays reconstruct the relevant
+local HOL prerequisites.
+`do_app_thunkop_typed` records the complete ThunkOp specialization; the
+isolated original tactic has not been replayed.
+
 `source_to_flat_init_probe.out` captures the typed original source-to-flat
 initialization definitions and evaluates the initial constructor entries and
 next indices, together with the flat initial state, observational semantics,
@@ -9599,8 +9667,8 @@ composition replays these observations in `Flapjack/Test/CakeIncrementalBviParit
 Regenerate with `HOL_PROBE_ONLY=source_to_bvi_incremental_probeScript.sml scripts/hol-probes/regenerate.sh`.
 These observations do not prove correspondence for arbitrary programs.
 
-`clos_to_bvl_incremental_probe.out` captures the pinned original
-`clos_to_bvl_compile_inc` with closure optimizations disabled for empty input,
+`clos_to_bvl_incremental_probe.out` captures the typed original definition and
+observations of `clos_to_bvl_compile_inc` with closure optimizations disabled for empty input,
 a single closure, and a program with incoming auxiliary code and a nonempty
 call-state set. It also captures enabled multi-argument introduction for
 empty input and a nested closure, both with incoming auxiliary code. It also
@@ -9659,14 +9727,42 @@ simulation, including its unused polymorphic existential witness.
 `source_to_flat_init_probe.out` includes a typed parse of the local
 `global_env_inv_extend` statement; the HOL proof is not replayed.
 
+The same probe captures typed `abort_simps` and `nsLookup_nsBind_If` and
+replays the local `not_abort_IMP_cases`, `build_tdefs_no_mod`,
+`nsAppend_foldl'`, and `nsAppend_foldl` proofs.
+It also captures the typed `alloc_tags_invariant`, `alloc_tags1_imp`, and
+`ALOOKUP_MAP_3` statements for source comparison.
+The typed `pmatch_invariant` capture records the full invariant and pattern
+simulation relation with independent compiler and FFI carriers.
+It captures `INJ_DEF` and `some_f_inj_eq` with inferred types and replays the
+local `FST_SND_EQ_CASE` proof with all four component types visible.
+It also captures `EL_APPEND_IF`, `ALL_DISJOINT_DEF`, and `ALL_DISJOINT_elem` and replays the local
+`ALOOKUP_alloc_defs_EL` and `EL_add_SOME_SOME` proofs.
+The typed `ALL_DISJOINT_MOVE` and `ALL_DISJOINT_SUBSETS` captures retain their
+original list-update, subset, and list-relation premises.
+The same probe captures `ALL_DISJOINT_CONS` and `idx_types_FORALL` with their
+original conjunct and constructor order.
+The same probe captures `bind_locals_fold_nsBind`, `Boolv_11`, and
+`evaluate_Bool`, and replays the local `opt_case_bool_eq` proof.
+It also replays the local `env_updated_lem` identity update with its
+polymorphic flat environment type.
+The same probe captures `opt_bind_def` and replays the local `opt_bind_lem`
+with independently polymorphic name and value types.
+
 The same probe replays the original local `ALOOKUP_alloc_defs` proof with
 independent inferred key and value types.
 
 The source-to-flat initialization probe captures the complete typed
 `can_pmatch_all_IMP_pmatch_rows` theorem.
 
+`source_to_flat_value_relation_probe.out` replays the derived local
+`v_rel_eqns_non_global` theorem after reconstructing the original case equations.
+
 The source evaluator probe captures the typed pair-pattern to pair-map
 function equation, including its four independent type variables.
+
+The same probe captures the typed constructor-duplicate characterization used
+in the source evaluator simulation proof.
 
 The flat-to-closure relation probe replays the local interpreter-initializer
 `no_mti_compile_init` proof with its original Boolean case split.
@@ -9707,3 +9803,27 @@ its natural operands, integer coercions, and comparison operator type.
 
 `source_to_flat_list_conversion_probe.out` replays the local `vs_to_string`
 proof and captures the inferred source and flat list types.
+
+`source_to_flat_compile_globals_probe.out` includes a typed replay of the local `evaluate_foldr_let_err` theorem, including its arbitrary let trace.
+
+`source_to_flat_value_relation_probe.out` includes a typed parse of local `do_opapp`; its local HOL proof is not replayed.
+
+`cake_evaluate_ffi_props_probe.out` captures the typed empty-evaluation, stamp-monotonicity, and reference-length statements.
+
+`clos_constant_probe.out` records inferred HOL types for the tagged closure-constant
+definitions and theorems, together with the missing `conses_ok`, `parts_thm`,
+and `make_const_thm` declarations. Regenerate with
+`HOL_PROBE_ONLY=clos_constant_probeScript.sml scripts/hol-probes/regenerate.sh`.
+The capture supports source comparison; it does not prove Lean correspondence.
+
+`clos_to_bvl_chain_probe.out` captures typed HOL closure-code chain definitions
+and theorems, including the quantifier order and vacuous type in
+`chain_installed_thm`. Regenerate with
+`HOL_PROBE_ONLY=clos_to_bvl_chain_probeScript.sml scripts/hol-probes/regenerate.sh`.
+The capture supports source comparison; it does not establish Lean correspondence.
+
+`clos_mti_correct_probe.out` captures the typed original multi-argument
+evaluation and semantics correctness theorems, plus typed replays of the
+original local annotation-collection statements and proofs. Regenerate with
+`HOL_PROBE_ONLY=clos_mti_correct_probeScript.sml scripts/hol-probes/regenerate.sh`.
+The capture supports source comparison; it does not establish Lean correspondence.

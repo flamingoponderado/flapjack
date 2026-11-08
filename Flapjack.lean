@@ -35,6 +35,12 @@ import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationLetrec
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationDeclarations
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationDenv
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationDlet
+import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationApp
+import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulation
+import Flapjack.Compiler.Backend.SourceEval.Proofs.RecordForwardBase
+import Flapjack.Compiler.Backend.SourceEval.Proofs.RecordForward
+import Flapjack.Compiler.Backend.SourceEval.Proofs.InsertCorrect
+import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleSemantics
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationModules
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationDecsCons
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationStamps
@@ -69,7 +75,6 @@ import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateRecursive
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateExpressions
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateMatch
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateControl
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateEval
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateApp
 import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleInduction
 import Flapjack.Compiler.Backend.FlatPattern.CompileOrder
@@ -81,6 +86,7 @@ import Flapjack.Compiler.Backend.FlatProps.SimpleEquality
 import Flapjack.Compiler.Backend.FlatProps.SimpleConversions
 import Flapjack.Compiler.Backend.FlatProps.PatternMatch
 import Flapjack.Compiler.Backend.FlatProps.NoMat
+import Flapjack.Compiler.Backend.FlatProps.InstallConfig
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelation
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelationRules
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelationInduction
@@ -251,6 +257,7 @@ import Flapjack.Compiler.Backend.BackendProof.MachineInit
 import Flapjack.Compiler.Backend.BackendProof.WordToStackSfs
 import Flapjack.Compiler.Backend.BackendProof.CompileLab
 import Flapjack.Compiler.Backend.BackendProof.ConfigOk
+import Flapjack.Compiler.Backend.BackendProof.ConfigTuple
 import Flapjack.Compiler.Backend.BackendProof.ReadLimits
 import Flapjack.Compiler.Backend.DataToWord.Proofs.OptionLe
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Limits
@@ -569,10 +576,17 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StateRel
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StoreUpdate
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateCases
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateControl
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.DoAppConfigGC
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.DoAppShift
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.DoAppEquality
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.DoAppArith
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.DoAppFromTo
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.DoAppTest
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.DoAppOpassign
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.DoApp
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternRows
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternRows.Invariant
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateMatch
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateApply
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvalApp
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateDenv
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateEmptyDeclarations
@@ -586,7 +600,6 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateGrowingConstructors
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateGrowingNamedLet
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateBoundList
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateBoundConstructor
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateBoundControl
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalEnvironment
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalArray
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocal
@@ -597,7 +610,6 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.MemoryOps
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ThunkRel
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternRel
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternSimulation
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalLookup
 import Flapjack.Compiler.Backend.Semantics.FlatSem
 import Flapjack.Compiler.Backend.Semantics.ClosSem
 import Flapjack.Compiler.Backend.Semantics.ClosSem.State
@@ -756,11 +768,18 @@ import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateAppExpression
 import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateMutual
 import Flapjack.Compiler.Backend.ClosMti.Proofs.Semantics
 import Flapjack.Compiler.Backend.ClosMti.Proofs.Syntactic
+import Flapjack.Compiler.Backend.ClosMti.Proofs.NoLabels
+import Flapjack.Compiler.Backend.ClosMti.Proofs.Arity
+import Flapjack.Compiler.Backend.ClosMti.Proofs.Globals
+import Flapjack.Compiler.Backend.ClosMti.Proofs.GlobalTraversal
 import Flapjack.Compiler.Backend.ClosCall.Proofs.Total
-import Flapjack.Compiler.Backend.ClosCall.Proofs.IncrementalOracle
-import Flapjack.Compiler.Backend.ClosCall.Proofs.IncrementalCode
-import Flapjack.Compiler.Backend.ClosCall.Proofs.IncrementalInstall
+import Flapjack.Compiler.Backend.ClosCall.Proofs.SyntaxOk
 import Flapjack.Compiler.Backend.ClosCall.Stubs
+import Flapjack.Compiler.Backend.ClosCall.InsertEach
+import Flapjack.Compiler.Backend.ClosCall.Free
+import Flapjack.Compiler.Backend.ClosCall.Calls
+import Flapjack.Compiler.Backend.ClosCall.Compile
+import Flapjack.Compiler.Backend.ClosCall.Proofs.TotalCorrespondence
 import Flapjack.Compiler.Backend.ClosCall.Proofs.FreeCorrect
 import Flapjack.Compiler.Backend.ClosCall.Proofs.GroupClosed
 import Flapjack.Compiler.Backend.ClosCall.Proofs.CodeList
@@ -791,27 +810,8 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.PartialApplication
 import Flapjack.Compiler.Backend.ClosCall.Proofs.FullApplication
 import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateApplication
 import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateAppExpression
-import Flapjack.Compiler.Backend.ClosCall.Proofs.TraversalSimulation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.DirectCallLookup
 import Flapjack.Compiler.Backend.ClosCall.Proofs.DirectCallClock
-import Flapjack.Compiler.Backend.ClosCall.Proofs.DirectCallImpure
-import Flapjack.Compiler.Backend.ClosCall.Proofs.DirectCallPure
-import Flapjack.Compiler.Backend.ClosCall.Proofs.DirectCallPureSimulation
-import Flapjack.Compiler.Backend.ClosCall.Proofs.ApplicationSimulation
-import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantOrdinaryOp
-import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantThunk
-import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantRecursiveBinding
-import Flapjack.Compiler.Backend.ClosCall.Proofs.DirectCallImpureSimulation
-import Flapjack.Compiler.Backend.ClosCall.Proofs.StateWellformed
-import Flapjack.Compiler.Backend.ClosCall.Proofs.NumericWellformed
-import Flapjack.Compiler.Backend.ClosCall.Proofs.BlockWellformed
-import Flapjack.Compiler.Backend.ClosCall.Proofs.MemoryWellformed
-import Flapjack.Compiler.Backend.ClosCall.Proofs.PrimitiveWellformed
-import Flapjack.Compiler.Backend.ClosCall.Proofs.ThunkWellformed
-import Flapjack.Compiler.Backend.ClosCall.Proofs.InstallWellformed
-import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateOrdinaryWellformed
-import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateControlWellformed
-import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateOracleControl
 import Flapjack.Compiler.Backend.BviInline
 import Flapjack.Compiler.Backend.BvlInline.RemoveTicks
 import Flapjack.Compiler.Backend.ListFoldTotal
@@ -1130,7 +1130,12 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateAll
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Semantics
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.InitialState
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ProgramCode
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Incremental
+import Flapjack.Compiler.Backend.ClosToBvl.FullIncremental
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.FullIncremental
+import Flapjack.Compiler.Backend.BvlConst.SourceCompile
+import Flapjack.Compiler.Backend.BvlConst.Proofs.SourceCompile
+import Flapjack.Compiler.Backend.BvlHandle.SourceCompile
+import Flapjack.Compiler.Backend.BvlInline.SourceCompile
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateRejected
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateOrdinary
 import Flapjack.Test.ClosToBvlRecursive
@@ -1480,6 +1485,7 @@ import Flapjack.Compiler.Backend.FlatToClos.CopyByte
 import Flapjack.Compiler.Backend.FlatToClos.Op
 import Flapjack.Compiler.Backend.FlatToClos.Compile
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.ValueRelation
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.ListRel
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.StateRelation
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.IntegerOperations
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.IntegerExpressions
@@ -1717,6 +1723,7 @@ import Flapjack.RiscV.L3.Step.UpdatePC
 import Flapjack.RiscV.L3.Step.AvoidSignalAddressException
 import Flapjack.RiscV.L3.Step.RegisterALUStep
 import Flapjack.RiscV.L3.Step.ImmediateALUStep
+import Flapjack.RiscV.L3.Step.ComparisonMode
 import Flapjack.RiscV.L3.Step.ImmediateComparison
 import Flapjack.RiscV.L3.Step.ImmediateComparisonNop
 import Flapjack.RiscV.L3.Step.UpperImmediateStep
@@ -1968,6 +1975,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALoopSetup
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeConstChain
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALoopSemanticHelpers
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticShareInst
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticCut
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticFFI
 import Flapjack.Misc.BalancedMap.RotationCorrect.BalanceR
 import Flapjack.Misc.BalancedMap.RotationCorrect.RotateL
@@ -2481,6 +2489,10 @@ import Flapjack.Compiler.Backend.Parmove.InjOnState
 import Flapjack.Compiler.Backend.LabToTarget.AsmUpdates
 import Flapjack.Compiler.Backend.BackendProps
 import Flapjack.Compiler.Backend.BackendProps.StateCompiler
+import Flapjack.Compiler.Backend.BackendProps.StateOracleInvariant
+import Flapjack.Compiler.Backend.BackendProps.OracleMonotonicInit
+import Flapjack.Compiler.Backend.BackendProps.OracleMonotonicSpecializations
+import Flapjack.Compiler.Backend.BackendProps.OptionArithmetic
 import Flapjack.Test.StateCompilerParity
 import Flapjack.Compiler.Backend.LabToTarget.Interference
 import Flapjack.Compiler.Backend.LabToTarget.NopEncoding
@@ -2972,6 +2984,7 @@ import Flapjack.Compiler.Backend.Semantics.TargetSem.State
 import Flapjack.Compiler.Encoders.AsmProps.Target
 import Flapjack.Compiler.Encoders.AsmSem.State
 import Flapjack.Compiler.Encoders.AsmProps.Memory
+import Flapjack.Compiler.Encoders.MemBytes
 import Flapjack.Compiler.Encoders.AsmSem.MemOps
 import Flapjack.Compiler.Encoders.AsmSem.Step
 import Flapjack.Compiler.Encoders.AsmProps.EncoderCorrect
@@ -3150,6 +3163,7 @@ import Flapjack.EvaluateProps.ClockIoCases
 import Flapjack.EvaluateProps.ClockIoExpr
 import Flapjack.EvaluateProps.ClockIoApp
 import Flapjack.EvaluateProps.ClockIoFull
+import Flapjack.EvaluateProps.NoEval
 import Flapjack.EvaluateProps.ClockIoConsequences
 import Flapjack.Compiler.Inference.InferT.Display
 import Flapjack.Compiler.Inference.Infer.TypesOutput
@@ -3309,6 +3323,7 @@ import Flapjack.Pancake.Semantics.PanSem.StateExact
 import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
 import Flapjack.Pancake.Semantics.PanSem.EvalInd
 import Flapjack.Pancake.Semantics.PanSem.Semantics
+import Flapjack.Pancake.Semantics.PanSem.TerminationWitness
 import Flapjack.Pancake.Semantics.PanSem.TotalEvalBridge
 import Flapjack.Pancake.Semantics.PanSem.TotalEvalExpBridge
 import Flapjack.Pancake.Semantics.PanSem.EvalExecutedBridge
@@ -4248,3 +4263,4 @@ The library currently contains the first Lean representation of Flapjack's
 front-end language. The source of truth used while porting is the CakeML HOL
 development in `cakeml/pancake`.
 -/
+

@@ -31,6 +31,49 @@ inductive LinesRel {α : Type} (relation : α → α → Prop) : List α → Lis
   | cons {x y xs ys} : relation x y → LinesRel relation xs ys →
       LinesRel relation (x :: xs) (y :: ys)
 
+/-- The native line carrier of the similarity chain, with HOL's fixed word
+width and `mlstring` name payloads. -/
+abbrev NativeLine (width : Nat) [NeZero width] :=
+  Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
+    (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)
+
+/-- Proof infrastructure with no separate HOL original: erase precisely the
+bytes, lengths and resolved positions that line_similar ignores. -/
+def normalLine {width : Nat} [NeZero width] (line : NativeLine width) : NativeLine width :=
+  match line with
+  | .label s l _ => .label s l 0
+  | .asm a _ _ => .asm a [] 0
+  | .labAsm a _ _ _ => .labAsm a 0 [] 0
+
+/-- `line_similar` holds exactly when the normalized lines agree. -/
+theorem lineSimilar_normal_iff {width : Nat} [NeZero width]
+    (a b : NativeLine width) : lineSimilar a b ↔ normalLine a = normalLine b := by
+  cases a <;> cases b <;> simp [lineSimilar, normalLine]
+
+/-- List relation infrastructure for the original EVERY2; no separate HOL
+source declaration is claimed for the normalized-map characterization. -/
+theorem linesRel_normal_iff {width : Nat} [NeZero width]
+    (a b : List (NativeLine width)) :
+    LinesRel lineSimilar a b ↔ a.map normalLine = b.map normalLine := by
+  induction a generalizing b with
+  | nil =>
+    cases b with
+    | nil => exact ⟨fun _ => rfl, fun _ => .nil⟩
+    | cons y ys => constructor <;> intro h <;> cases h
+  | cons x xs ih =>
+    cases b with
+    | nil => constructor <;> intro h <;> cases h
+    | cons y ys =>
+      constructor
+      · intro h
+        cases h with
+        | cons hxy hrest =>
+          simp only [List.map_cons, List.cons.injEq]
+          exact ⟨(lineSimilar_normal_iff x y).mp hxy, (ih ys).mp hrest⟩
+      · intro h
+        simp only [List.map_cons, List.cons.injEq] at h
+        exact .cons ((lineSimilar_normal_iff x y).mpr h.1) ((ih ys).mpr h.2)
+
 @[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "code_similar_def"
   (words_as_type_indexed_bitvec)]
 def codeSimilar {width : Nat} [NeZero width] (left right : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))

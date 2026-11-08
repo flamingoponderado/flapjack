@@ -4,6 +4,8 @@ open flat_to_closProofTheory;
 open rich_listTheory;
 val _ = Globals.linewidth := 1000000;
 val _ = set_trace "Unicode" 0;
+val _ = (print "list_rel_el_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl flat_to_closProofTheory.LIST_REL_EL); print "\n");
 (* Replay the local indexed-list relation theorem using its original proof. *)
 val list_rel_map_genlist_replay = Q.prove (
   `!funs f1 f2 R.

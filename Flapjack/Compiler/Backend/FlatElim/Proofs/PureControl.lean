@@ -55,11 +55,11 @@ theorem pureEvaluation_let {C F : Type} (env : FlatSem.Environment FlatSem.Value
     simp only [clocks, Nat.min_self] at run
     cases name with
     | none =>
-      simp only at run
+      simp only [optBind_none_apply] at run
       exact bodyIH env firstState (by omega) next result reachable target run (singletonPure body pure.2)
         envSafe (singletonExpression_noEval body safe.2) (singletonLocations body reachable disjoint.2) firstRelated notTypeError
     | some name =>
-      simp only at run
+      simp only [optBind_some_apply] at run
       have extendedSafe : bindingsNoEval ((name, value) :: env.v) := by
         simpa [bindingsNoEval] using And.intro valueSafe envSafe
       exact bodyIH { env with v := (name, value) :: env.v } firstState (by omega) next result reachable target run
@@ -289,15 +289,16 @@ theorem pureEvaluation_mat {C F : Type} (env : FlatSem.Environment FlatSem.Value
         have rowTotal : rows.any (fun row => totalPat row.1) = true := by
           rw [← hasTotalPat_eq_any]
           exact pure.2
-        exact (exists_totalPat rows bodyState value rowTotal noMatch).elim
+        exact (exists_totalPat rows bodyState value
+          (by simpa only [List.any_map, Function.comp_def] using rowTotal) noMatch).elim
     · rename_i bindings branch selected
       simp only [bodyEval, clocks, Nat.min_self] at selected
       change FlatSem.selectRow bodyState rows value FlatSem.bindExnV = .ok (bindings, branch) at selected
       obtain ⟨pattern, matched⟩ := selectRow_success bodyState rows value FlatSem.bindExnV bindings branch selected
       obtain ⟨patternMatch, member⟩ :=
         FlatProps.pmatchRows_imp_pmatch rows bodyState value bindings pattern branch matched
-      have bindingSafe := pmatch_not_has_Eval.1 bodyState pattern value [] bindings patternMatch valueSafe
-        bodyRelated.2.2.2.2.2 (by simp [bindingsNoEval])
+      have bindingSafe := pmatch_not_has_Eval.1 bodyState pattern value [] bindings
+        ⟨patternMatch, valueSafe, bodyRelated.2.2.2.2.2, by simp [bindingsNoEval]⟩
       have branchSafe := hasEvalPats_member rows pattern branch member safe.2
       have branchPure := allPureBranches_member rows pattern branch member pure.1.2
       have branchEmpty : sptIsEmpty (sptInter (findLoc branch) reachable) = true := by

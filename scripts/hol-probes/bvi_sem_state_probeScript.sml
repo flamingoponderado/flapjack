@@ -59,3 +59,6 @@ val _ = show "eval_tick_timeout=" (EVAL ``bviSem$evaluate ([bvi$Tick (bvi$Var 0)
 val _ = show "eval_call_bad_handler=" (EVAL ``bviSem$evaluate ([bvi$Call 0 NONE [] (SOME (bvi$Var 0))], [], (s:('c,'ffi) bviSem$state))``);
 val _ = show "eval_force_evaluated=" (EVAL ``bviSem$evaluate ([bvi$Force 5 0], [bvlSem$RefPtr F 1], (s:('c,'ffi) bviSem$state) with refs := (FEMPTY |+ (1, bvlSem$Thunk Evaluated (bvlSem$Number 7))))``);
 val _ = show "eval_let_call_return=" (EVAL ``bviSem$evaluate ([bvi$LetCall 0 0 0 [] (bvi$Var 0)], [bvlSem$Number 7], (s:('c,'ffi) bviSem$state) with <|clock := 2; code := sptree$LS (0, bvi$Return [])|>)``);
+val _ = show "bvi_to_bvl_globals=" (EVAL ``(bviSem$bvi_to_bvl (s:('c,'ffi) bviSem$state)).globals``);
+val _ = show "bvi_to_bvl_compile=" (EVAL ``(bviSem$bvi_to_bvl (s:('c,'ffi) bviSem$state)).compile``);
+val _ = show "bvi_to_bvl_oracle=" (EVAL ``(bviSem$bvi_to_bvl (s:('c,'ffi) bviSem$state)).compile_oracle``);

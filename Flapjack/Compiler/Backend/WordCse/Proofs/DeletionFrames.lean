@@ -9,36 +9,6 @@ factoring has no separate HOL declaration; it agrees with actual native `inst`.
 These statements require neither local-map well-formedness nor destination
 separation. The inherited evaluator rational-cut assumption remains item 8. -/
 
-private def arithValue {width : Nat} [NeZero width] {C : Type} {F : Type}
-    (a : HolArith width) (s : WordSemStateFiniteExact width C F) : Option (WordLocW width) :=
-  match a with
-  | .binop op _ src ri =>
-    wordExp s (.op op [.var src, match ri with | .reg r => .var r | .imm w => .const w])
-  | .shift sh _ src ri =>
-    wordExp s (.shift sh (.var src) (match ri with | .reg r => .var r | .imm w => .const w))
-  | .div _ src1 src2 =>
-    match WordSemStateFiniteExact.getVars [src2, src1] s with
-    | some [.word q, .word v] => if q ≠ 0 then some (.word (v.sdiv q)) else none
-    | _ => none
-  | _ => none
-
-private theorem instArithMap {width : Nat} [NeZero width] {C : Type} {F : Type}
-    (a : HolArith width) (s : WordSemStateFiniteExact width C F) (h : canMemArith a = true) :
-    inst (.arith (HolArith.toWordLangArith a)) s =
-      (arithValue a s).map (fun v => setVar (firstRegOfArith a) v s) := by
-  cases a with
-  | binop op dst src ri =>
-    cases ri <;> simp [HolArith.toWordLangArith, HolRegImm.toWordRegImm, inst, arithValue,
-      firstRegOfArith, assignMap]
-  | shift sh dst src ri =>
-    cases ri <;> simp [HolArith.toWordLangArith, HolRegImm.toWordRegImm, inst, arithValue,
-      firstRegOfArith, assignMap]
-  | div dst src1 src2 =>
-    simp only [HolArith.toWordLangArith, inst, arithValue, firstRegOfArith]
-    split <;> simp_all [Option.map]
-    split <;> simp_all
-  | _ => simp [canMemArith] at h
-
 private theorem lookupDeleteOther {α : Type} (t : Spt α) (n k : Nat) (h : n ≠ k) :
     sptLookup k (sptDelete n t) = sptLookup k t := by
   simp [sptLookup_sptDelete, Ne.symm h]

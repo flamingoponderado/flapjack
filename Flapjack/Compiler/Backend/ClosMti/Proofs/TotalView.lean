@@ -1,8 +1,10 @@
 import Flapjack.Compiler.Backend.ClosMti.Proofs.FuelStable
+import Flapjack.Misc.ListEl
 
 /-! A total proof-side view of the executed multi-argument traversal. -/
 namespace Flapjack.Compiler.Backend.ClosMti
 open ClosLang
+private instance : Nonempty Exp := ⟨.var .none 0⟩
 
 /-- Extract the unique result of the executed retrying traversal for one
 expression. This helper has no separate HOL declaration. -/
@@ -70,6 +72,25 @@ theorem introList_singleton (e : Exp) (maxApp : Nat) :
 /-- The total list traversal commutes with a leading expression. -/
 theorem introList_cons (maxApp : Nat) (e : Exp) (es : List Exp) :
     introList maxApp (e :: es) = introExp maxApp e :: introList maxApp es := rfl
+
+/-- A transformed singleton is recovered from its HOL head. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "HD_intro_multi"]
+theorem hd_intro_multi (maxApp : Nat) (e : Exp) :
+    [Flapjack.holHd (introList maxApp [e])] = introList maxApp [e] := by
+  simp [introList, Flapjack.holHd]
+
+/-- The transformed head and tail form the transformed nonempty list. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "intro_multi_cons"]
+theorem intro_multi_cons (maxApp : Nat) (es : List Exp) (e : Exp) :
+    introList maxApp (e :: es) = Flapjack.holHd (introList maxApp [e]) :: introList maxApp es := by
+  simp [introList, Flapjack.holHd]
+
+/-- Universal list predicates distribute over multi-argument introduction. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "EVERY_intro_multi"]
+theorem every_intro_multi (predicate : Exp → Prop) (maxApp : Nat) (es : List Exp) :
+    (∀ e ∈ introList maxApp es, predicate e) ↔
+      ∀ e ∈ es, predicate (Flapjack.holHd (introList maxApp [e])) := by
+  simp [introList, Flapjack.holHd]
 
 /-- Variables are unchanged by the executed traversal. -/
 theorem introExp_var (maxApp : Nat) (trace : BackendCommon.Tra) (index : Nat) :

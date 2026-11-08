@@ -159,42 +159,4 @@ theorem renumberCodeLocs_everyFnSome :
   · intro start expression
     simpa [everyFnLocationSome] using renumber_locations expression start
 
-/-- The incremental numbering wrapper also assigns every function location;
-its leading name marker contains no closures. -/
-theorem compileInc_locations (start : Nat) (expressions : List Exp) :
-    everyFnLocationSome (compileInc start expressions).2 := by
-  have locations := renumberList_locations expressions
-    (let next := start + max expressions.length 1; if next % 2 = 0 then next else next + 1)
-  simpa [compileInc, everyFnLocationSome, fnLocationSomeExp] using locations
-
-/-- Incremental numbering reserves at least one entry location and returns a
-strictly larger next location. This is a prerequisite for showing successive
-incremental compilations occupy disjoint location intervals. -/
-theorem compileInc_start_lt (start : Nat) (expressions : List Exp) :
-    start < (compileInc start expressions).1 := by
-  let next := start + max expressions.length 1
-  let aligned := if next % 2 = 0 then next else next + 1
-  have numbered := renumberList_start_le expressions aligned
-  have positive : 1 ≤ max expressions.length 1 := Nat.le_max_right _ _
-  have alignment : next ≤ aligned := by
-    dsimp [aligned]
-    split <;> omega
-  simp only [compileInc]
-  change start < (renumberList aligned expressions).1
-  dsimp [next] at alignment
-  omega
-
-/-- Every member of a location-annotated list is location-annotated. -/
-theorem locations_member (expressions : List Exp) (expression : Exp)
-    (locations : everyFnLocationSome expressions) (member : expression ∈ expressions) :
-    everyFnLocationSome [expression] := by
-  induction expressions with
-  | nil => simp at member
-  | cons first rest ih =>
-    simp only [everyFnLocationSome] at locations
-    simp only [List.mem_cons] at member
-    cases member with
-    | inl equal => subst expression; simpa [everyFnLocationSome] using locations.1
-    | inr tail => exact ih locations.2 tail
-
 end Flapjack.Compiler.Backend.ClosNumber

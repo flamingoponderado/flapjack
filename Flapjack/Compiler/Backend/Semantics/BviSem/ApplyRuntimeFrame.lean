@@ -1,5 +1,5 @@
 import Flapjack.Compiler.Backend.Semantics.BviSem.Apply
-import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyRuntimeFrame
+import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyFallbackFrame
 import Aesop
 
 /-! Runtime-field transfer for BVI primitive application. -/
@@ -42,11 +42,11 @@ theorem doAppAux_frame {C D F G : Type} (op : ClosLang.Op) (args : List Value)
       | (cases val <;> simp_all <;> split <;> simp_all)
       | exact h_1 tag left a_2 right rfl rfl rfl rfl)
 
-/-- Converting a framed BVI state is the same as framing the corresponding
-BVL states. This helper has no standalone HOL declaration. -/
+/-- Converting a framed BVI state retains its own arbitrary BVL fields
+while taking the source runtime fields. This helper has no standalone HOL declaration. -/
 theorem toBvl_runtimeFrame {C D F G : Type} (source : BviState C F) (target : BviState D G) :
     toBvl (runtimeFrame source target) =
-      BvlProps.runtimeFrame (toBvl source) (toBvl target) := by
+      BvlProps.fallbackFrame (toBvl source) (toBvl (runtimeFrame source target)) := by
   cases source
   cases target
   rfl
@@ -57,9 +57,9 @@ theorem toBvl_domain {C F : Type} (source : BviState C F) :
   exact sptDomain_sptMap _ _
 
 /-- Returning from a framed BVL state commutes with the BVI runtime frame. -/
-theorem fromBvl_runtimeFrame {C D F G : Type} (source : BvlSem.State C F)
-    (target : BvlSem.State D G) (original : BviState C F) (other : BviState D G) :
-    fromBvl (BvlProps.runtimeFrame source target) (runtimeFrame original other) =
+theorem fromBvl_runtimeFrame {C D F G H : Type} (source : BvlSem.State C F)
+    (target : BvlSem.State D H) (original : BviState C F) (other : BviState D G) :
+    fromBvl (BvlProps.fallbackFrame source target) (runtimeFrame original other) =
       runtimeFrame (fromBvl source original) other := by
   cases source
   cases target
@@ -76,8 +76,9 @@ theorem doAppFallback_frame {C D F G : Type} (op : ClosLang.Op) (args : List Val
       match doAppFallback op args source with
       | .err error => .err error
       | .val (value, next) => .val (value, runtimeFrame next target) := by
-  have domainBvl : sptDomain (toBvl source).code = sptDomain (toBvl target).code := by
-    rw [toBvl_domain, toBvl_domain, domains]
+  have domainBvl : sptDomain (toBvl source).code = sptDomain (toBvl (runtimeFrame source target)).code := by
+    rw [toBvl_domain, toBvl_domain]
+    exact domains
   unfold doAppFallback
   rw [doAppAux_frame op args source target domains]
   cases aux : doAppAux op args source with
@@ -89,16 +90,22 @@ theorem doAppFallback_frame {C D F G : Type} (op : ClosLang.Op) (args : List Val
       rfl
     | none =>
       simp only [Option.map_some, Option.map_none]
+      have notGlobal : ∀ operation, op ≠ .globOp operation := by
+        intro operation eq
+        subst op
+        exact doAppAux_delegates_not_global operation args source aux
       rw [toBvl_runtimeFrame]
       cases original : BvlSem.doApp op args (toBvl source) with
       | err error =>
-        have swapped := BvlProps.doAppRerrSwap op args (toBvl source) error (toBvl target)
+        have swapped := BvlProps.doAppFallbackRerrSwap op args (toBvl source) error
+          (toBvl (runtimeFrame source target)) notGlobal
           ⟨original, notInstall, by intro key present; rwa [domainBvl]⟩
         rw [swapped]
         cases error <;> rfl
       | val pair =>
         obtain ⟨value, next⟩ := pair
-        have swapped := BvlProps.doAppRvalSwap op args (toBvl source) next value (toBvl target)
+        have swapped := BvlProps.doAppFallbackRvalSwap op args (toBvl source) next value
+          (toBvl (runtimeFrame source target)) notGlobal
           ⟨original, notInstall, by intro key present; rwa [← domainBvl]⟩
         rw [swapped]
         simp only [fromBvl_runtimeFrame]

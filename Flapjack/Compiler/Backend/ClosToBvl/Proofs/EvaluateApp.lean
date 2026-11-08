@@ -3579,42 +3579,6 @@ theorem destClosure_recclosure_exact (maxApp ptr arity index : Nat)
     omega
   simp [ClosSem.destClosure, found, ClosSem.checkLoc, bound, oldBound, length, take, drop, List.append_assoc]
 
-/-- A related mutual-recursive group is pointwise related to the closure
-blocks stored at the front of its shared environment array. -/
-theorem clRel_mutualRec_group_related {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
-    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
-    {captured : List ClosSem.Value} {fields : List BvlSem.Value} {ptr index : Nat}
-    {functions : List (Nat × ClosLang.Exp)} {target : BvlSem.Value}
-    (related : clRel maxApp (fun p => ∃ r, f.lookup r = some p) refs code
-      (captured, fields) (.recclosure (some ptr) [] captured functions index) target)
-    (envRel' : List.Forall₂ (vRel maxApp f refs code) captured fields) (many : 1 < functions.length) :
-    ∃ shared targets,
-      refs.lookup shared = some (.valueArray (targets ++ fields)) ∧
-      List.Forall₂ (vRel maxApp f refs code)
-        ((List.range functions.length).map (fun i => .recclosure (some ptr) [] captured functions i)) targets := by
-  cases related with
-  | singletonRec _ _ _ _ _ _ _ => simp at many
-  | @mutualRec exps entries ps rs loc shared env ys k expsEq psEq positions values fresh stored groupSize indexBound locations vars installed =>
-    have targetsLength : rs.length = functions.length := by simp [values, expsEq]
-    refine ⟨shared, rs, stored, ?_⟩
-    apply List.forall₂_of_length_eq_of_get
-    · simp [targetsLength]
-    · intro j sourceBound targetBound
-      have bound : j < functions.length := by simpa using sourceBound
-      have groupRel : clRel maxApp (fun p => ∃ r, f.lookup r = some p) refs code
-          (captured, fields) (.recclosure (some ptr) [] captured functions j) (holEl j rs) :=
-        .mutualRec expsEq psEq positions values fresh stored groupSize bound locations vars installed
-      cases entry : functions[j] with
-      | mk arity body =>
-        have found : functions[j]? = some (arity, body) := by
-          rw [List.getElem?_eq_getElem bound, entry]
-        obtain ⟨address, payload, shape⟩ := clRel_recclosure_target_shape groupRel found
-        have valueRel : vRel maxApp f refs code (.recclosure (some ptr) [] captured functions j) (holEl j rs) := by
-          rw [shape] at groupRel ⊢
-          exact .closure envRel' groupRel
-        rw [Flapjack.holEl_eq_getElem j rs targetBound] at valueRel
-        simpa using valueRel
-
 /-- A saturated recursive closure either times out or evaluates the selected
 body with the whole recursive group in its environment. -/
 theorem evaluateApp_recclosure_exact {C F : Type} (s : ClosSem.State C F)

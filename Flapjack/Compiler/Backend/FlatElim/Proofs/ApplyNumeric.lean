@@ -67,8 +67,8 @@ theorem applyNumericProjection_related {C F : Type} (reachable : NumSet)
             globalsWithin, sptMem, sptDomain]
         · simp [Flapjack.Compiler.Backend.FlatProps.resultValues, Flapjack.EvaluateHOL.listResult, valuesNoEval]
 
-/-- The shift case preserves the primitive simulation. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+/-- The shift case preserves the primitive simulation.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_shift {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value) (width : Flapjack.AstHOL.WordSize) (shift : Flapjack.Shift) (amount : Nat)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
@@ -91,8 +91,8 @@ theorem doApp_some_flatStateRel_shift {C F G : Type} (reachable : NumSet)
       (by simpa [FlatSem.doApp, FlatSem.doAppNumeric] using run)
   exact ⟨targetNext, stateRel, by simpa [FlatSem.doApp, FlatSem.doAppNumeric] using evaluated, closed, safe⟩
 
-/-- The arith case preserves the primitive simulation. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+/-- The arith case preserves the primitive simulation.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_arith {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value) (action : Flapjack.AstHOL.Arith) (typ : Flapjack.AstHOL.PrimType)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
@@ -115,8 +115,8 @@ theorem doApp_some_flatStateRel_arith {C F G : Type} (reachable : NumSet)
       (by simpa [FlatSem.doApp, FlatSem.doAppNumeric] using run)
   exact ⟨targetNext, stateRel, by simpa [FlatSem.doApp, FlatSem.doAppNumeric] using evaluated, closed, safe⟩
 
-/-- The fromTo case preserves the primitive simulation. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+/-- The fromTo case preserves the primitive simulation.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_fromTo {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value) (fromType toType : Flapjack.AstHOL.PrimType)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
@@ -139,8 +139,8 @@ theorem doApp_some_flatStateRel_fromTo {C F G : Type} (reachable : NumSet)
       (by simpa [FlatSem.doApp, FlatSem.doAppNumeric] using run)
   exact ⟨targetNext, stateRel, by simpa [FlatSem.doApp, FlatSem.doAppNumeric] using evaluated, closed, safe⟩
 
-/-- The equality case preserves the primitive simulation. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+/-- The equality case preserves the primitive simulation.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_equality {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value) 
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
@@ -175,8 +175,8 @@ theorem doApp_some_flatStateRel_equality {C F G : Type} (reachable : NumSet)
             (by simp [FlatSem.boolValue, valueHasEval, valuesHaveEval])
           exact ⟨target, related, by simp [FlatSem.doApp, FlatSem.doAppNumeric, comparison], resultSafe.1, resultSafe.2⟩
 
-/-- The test case preserves the primitive simulation. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+/-- The test case preserves the primitive simulation.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_test {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value) (test : Flapjack.AstHOL.Test) (typ : Flapjack.AstHOL.PrimType)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
@@ -213,23 +213,25 @@ theorem doApp_some_flatStateRel_test {C F G : Type} (reachable : NumSet)
 
 /-- Primitive application preserves the flat-elimination state relation and
 result invariants. The underlying assembled evaluator still requires its full
-source and carrier review. -/
+source and carrier review. `Nonempty G` reflects the inhabited HOL type of the
+otherwise unused removed state. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
-theorem doApp_some_flatStateRel {C F G : Type} (reachable : NumSet)
-    (source target : FlatSem.State C F) (op : FlatLang.Op) (values : List FlatSem.Value)
-    (next : FlatSem.State C F) (result : Result FlatSem.Value FlatSem.Value)
-    (unusedRemovedState : G) (tra : BackendCommon.Tra)
-    (related : flatStateRel reachable source target) (opNotApply : op ≠ .src .opapp)
-    (valuesReachable : globalsWithin (findValuesGlobals values) reachable)
-    (opReachable : globalsWithin (findLookups (.app tra op [])) reachable)
-    (valuesSafe : valuesNoEval values)
-    (run : FlatSem.doApp source op values = some (next, result))
-    (notTypeError : result ≠ .err (.abort .typeError)) :
+theorem doApp_some_flatStateRel {C F G : Type} [Nonempty G] (tra : BackendCommon.Tra)
+    (reachable : NumSet) (source target : FlatSem.State C F) (op : FlatLang.Op)
+    (values : List FlatSem.Value) (next : FlatSem.State C F)
+    (result : Result FlatSem.Value FlatSem.Value) (unusedRemovedState : G)
+    (premises : flatStateRel reachable source target ∧ op ≠ .src .opapp ∧
+      globalsWithin (findValuesGlobals values) reachable ∧
+      globalsWithin (findLookups (.app tra op [])) reachable ∧ valuesNoEval values)
+    (evaluation : FlatSem.doApp source op values = some (next, result) ∧
+      result ≠ .err (.abort .typeError)) :
     ∃ targetNext, flatStateRel reachable next targetNext ∧
       FlatSem.doApp target op values = some (targetNext, result) ∧
       globalsWithin (findPrimitiveResultGlobals (Flapjack.EvaluateHOL.listResult result)) reachable ∧
       valuesNoEval (Flapjack.Compiler.Backend.FlatProps.resultValues
         (Flapjack.EvaluateHOL.listResult result)) := by
+  obtain ⟨related, opNotApply, valuesReachable, opReachable, valuesSafe⟩ := premises
+  obtain ⟨run, notTypeError⟩ := evaluation
   cases op with
   | src sourceOp =>
     cases sourceOp with

@@ -1,4 +1,5 @@
 code_list_type=:num -> ('a # 'b) list -> 'c # (num # 'a # 'b) list -> 'c # (num # 'a # 'b) list
+insert_each_typed=(!(p :num) (g :sptree$num_set # 'a). insert_each p (0 :num) g = g) /\ !(p :num) (n :num) (g2 :'a) (g1 :sptree$num_set). insert_each p (SUC n) (g1,g2) = insert_each (p + (2 :num)) n (insert p () g1,g2)
 fst_type=!(loc :num) (fns :('a # 'b) list) (g :'c # (num # 'a # 'b) list). FST (code_list loc fns g) = FST g
 snd_type=!(loc :num) (fns :('a # 'b) list) (g :'c # (num # 'a # 'b) list) (g' :'d # (num # 'a # 'b) list). SND g = SND g' ==> SND (code_list loc fns g) = SND (code_list loc fns g')
 map_fst_type=!(loc :num) (fns :('a # 'b) list) (g :'c # (num # 'a # 'b) list). MAP (FST :num # 'a # 'b -> num) (SND (code_list loc fns g)) = REVERSE (GENLIST (\(i :num). loc + i * (2 :num) + (1 :num)) (LENGTH fns)) ++ MAP (FST :num # 'a # 'b -> num) (SND g)

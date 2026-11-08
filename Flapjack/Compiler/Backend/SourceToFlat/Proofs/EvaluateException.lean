@@ -18,7 +18,7 @@ theorem idxRangeRel_exception_free {C : Type}
     genv.c.lookup ((start.eidx, none), arity) = none := by
   obtain ⟨_, _, _, _, tuple, _, _, disjoint, _, _⟩ := range
   cases tuple
-  have separate := disjoint 0 3 (by simp) (by simp) (by decide)
+  have separate := (allDisjoint_iff_bounded _).mp disjoint 0 3 (by simp) (by simp) (by decide)
   simp only [List.getElem_cons_zero, List.getElem_cons_succ] at separate
   have block : (start.eidx, IndexKind.exception) ∈ idxBlock start finish := by
     change idxBlock start finish (start.eidx, IndexKind.exception)
