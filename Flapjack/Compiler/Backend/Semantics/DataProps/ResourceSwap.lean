@@ -135,10 +135,11 @@ theorem doApp_stackSafePeakSwap {C F : Type} (op : ClosLang.Op) (args : List Dat
     simp only [doApp] at run ⊢
     exact appSpace_success (.thunkOp thunkop) args state value next mx safe peak run
 
-/-- Non-FFI success preserves stack-maximum accounting. This is proof infrastructure. -/
-private theorem applyNonFfi_stackMax {C F : Type} (op : ClosLang.Op) (values : List DataSem.Value)
+/-- Non-FFI success preserves the resource fields used by the frame proof. -/
+private theorem applyNonFfi_resourceFrame {C F : Type} (op : ClosLang.Op) (values : List DataSem.Value)
     (state next : State C F) (value : DataSem.Value)
-    (run : applyNonFfi op values state = some (value, next)) : next.stackMax = state.stackMax := by
+    (run : applyNonFfi op values state = some (value, next)) :
+    next.stackMax = state.stackMax ∧ next.peakHeapLength = state.peakHeapLength := by
   simp only [applyNonFfi] at run
   split at run <;> try simp_all [Option.bind_eq_some_iff, withFreshTimestamp, checkLim]
   all_goals try (aesop (config := { warnOnNonterminal := false }))
@@ -147,15 +148,20 @@ private theorem applyNonFfi_stackMax {C F : Type} (op : ClosLang.Op) (values : L
   all_goals try simp_all [Option.bind_eq_some_iff]
   all_goals aesop
 
-/-- Auxiliary primitive success preserves stack-maximum accounting. -/
-private theorem doAppAux_stackMax {C F : Type} (op : ClosLang.Op) (values : List DataSem.Value)
+/-- Auxiliary primitive success preserves resource and local control fields. -/
+private theorem doAppAux_resourceFrame {C F : Type} (op : ClosLang.Op) (values : List DataSem.Value)
     (state next : State C F) (value : DataSem.Value)
-    (run : doAppAux op values state = .val (value, next)) : next.stackMax = state.stackMax := by
-  simp only [doAppAux] at run
-  repeat' (split at run <;> try simp_all)
-  all_goals first
-    | obtain ⟨_, rfl⟩ := run; rfl
-    | exact applyNonFfi_stackMax _ _ state next value (by assumption)
+    (run : doAppAux op values state = .val (value, next)) :
+    next.stackMax = state.stackMax ∧ next.peakHeapLength = state.peakHeapLength ∧
+      SameLocalControl state next := by
+  have control := auxControl op values state next value run
+  have resources : next.stackMax = state.stackMax ∧ next.peakHeapLength = state.peakHeapLength := by
+    simp only [doAppAux] at run
+    repeat' (split at run <;> try simp_all)
+    all_goals first
+      | obtain ⟨_, rfl⟩ := run; exact ⟨rfl, rfl⟩
+      | exact applyNonFfi_resourceFrame _ _ state next value (by assumption)
+  exact ⟨resources.1, resources.2, control⟩
 
 /-- Auxiliary primitive success is preserved by safety and peak updates. -/
 @[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "do_app_aux_safe_peak_swap"]
@@ -165,12 +171,14 @@ theorem doAppAux_safePeakSwap {C F : Type} (op : ClosLang.Op) (values : List Dat
     ∃ safe' peak', doAppAux op values {state with safeForSpace := safe, peakHeapLength := peak} =
       .val (value, {next with safeForSpace := safe', peakHeapLength := peak'}) := by
   obtain ⟨safe', peak', mx', result⟩ := doAppAux_stackSafePeakSwap op values state value next state.stackMax safe peak run
-  have first := doAppAux_stackMax op values state next value run
-  have second := doAppAux_stackMax op values {state with stackMax := state.stackMax, safeForSpace := safe, peakHeapLength := peak}
+  have first := (doAppAux_resourceFrame op values state next value run).1
+  have second := doAppAux_resourceFrame op values {state with stackMax := state.stackMax, safeForSpace := safe, peakHeapLength := peak}
     {next with stackMax := mx', safeForSpace := safe', peakHeapLength := peak'} value result
-  have same : mx' = next.stackMax := second.trans first.symm
+  have same : mx' = next.stackMax := second.1.trans first.symm
+  have peakEq : peak' = peak := second.2.1
   subst mx'
-  exact ⟨safe', peak', by simpa using result⟩
+  subst peak'
+  exact ⟨safe', peak, by simpa using result⟩
 
 
 /-- Space accounting preserves the stack maximum. This is proof infrastructure. -/

@@ -25,12 +25,13 @@ theorem sizeOfHeapArgs_resource {C F : Type} (values : List DataSem.Value)
       sizeOfHeapArgs values state := by
   rfl
 
-/-- A failed space reservation remains failed when the three resource
-observations change. This supports the HOL primitive error-swap proof. -/
+/-- Failed space reservation is independent of the listed state fields.
+This Flapjack helper supports the HOL primitive swap proofs. -/
 theorem doSpace_none_resource {C F : Type} (op : ClosLang.Op)
     (values : List DataSem.Value) (state : State C F) (safe : Bool) (peak : Nat) (mx : Option Nat)
+    (stack : List Stack) (localsSize : Option Nat) (locals : Spt DataSem.Value)
     (run : doSpace op values state = none) :
-    doSpace op values { state with safeForSpace := safe, peakHeapLength := peak, stackMax := mx } = none := by
+    doSpace op values { state with safeForSpace := safe, peakHeapLength := peak, stackMax := mx, stack := stack, localsSize := localsSize, locals := locals } = none := by
   cases reset : DataLang.opSpaceReset op
   · by_cases zero : DataSpace.opSpaceReq op values.length = 0
     · simp [doSpace, reset, zero] at run
@@ -99,27 +100,29 @@ theorem doInstall_error_safePeak {C F R : Type} (values : List DataSem.Value)
     doInstall (R := R) values { state with safeForSpace := safe, peakHeapLength := peak } = .err error := by
   rw [doInstall_safePeak, run]
 
-/-- Non-FFI operation failure depends on neither safety, peak, nor stack
-accounting. This supports the HOL primitive error-swap proof. -/
+/-- Non-FFI failure is independent of locals, stack, space and accounting fields.
+This Flapjack helper supports the HOL primitive swap proofs. -/
 theorem applyNonFfi_none_resource {C F : Type} (op : ClosLang.Op)
     (values : List DataSem.Value) (state : State C F) (safe : Bool) (peak : Nat) (mx : Option Nat)
+    (stack : List Stack) (localsSize : Option Nat) (locals : Spt DataSem.Value) (space : Nat)
     (run : applyNonFfi op values state = none) :
-    applyNonFfi op values { state with safeForSpace := safe, peakHeapLength := peak, stackMax := mx } = none := by
+    applyNonFfi op values { state with safeForSpace := safe, peakHeapLength := peak, stackMax := mx, stack := stack, localsSize := localsSize, locals := locals, space := space } = none := by
   simp only [applyNonFfi] at run ⊢
   all_goals repeat' (split <;> simp_all [withFreshTimestamp])
   all_goals aesop
 
-/-- Auxiliary primitive errors are independent of the three resource
-observations. This supports the HOL primitive error-swap proof. -/
+/-- Auxiliary errors are independent of locals, stack, space and resource fields.
+This Flapjack helper supports the HOL primitive swap proofs. -/
 theorem doAppAux_error_resource {C F : Type} (op : ClosLang.Op)
     (values : List DataSem.Value) (state : State C F) (safe : Bool) (peak : Nat) (mx : Option Nat)
+    (stack : List Stack) (localsSize : Option Nat) (locals : Spt DataSem.Value) (space : Nat)
     (error : Flapjack.SemanticPrimitivesHOL.ErrorResult DataSem.Value)
     (run : doAppAux op values state = .err error) :
-    doAppAux op values { state with safeForSpace := safe, peakHeapLength := peak, stackMax := mx } = .err error := by
+    doAppAux op values { state with safeForSpace := safe, peakHeapLength := peak, stackMax := mx, stack := stack, localsSize := localsSize, locals := locals, space := space } = .err error := by
   simp only [doAppAux] at run ⊢
   all_goals repeat' (split <;> simp_all)
   all_goals cases original : applyNonFfi op values state <;> simp_all
-  all_goals have changed := applyNonFfi_none_resource op values state safe peak mx original; simp_all
+  all_goals have changed := applyNonFfi_none_resource op values state safe peak mx stack localsSize locals space original; simp_all
 
 /-- The space-and-auxiliary path preserves errors under resource updates.
 This assembles the corresponding cases of the HOL primitive swap proof. -/
@@ -134,7 +137,7 @@ theorem doApp_space_error_resource {C F : Type} (op : ClosLang.Op)
       | some next => doAppAux op values (doStack op values (doLimSafe next op values))) = .err error := by
   cases source : doSpace op values state with
   | none =>
-    have target := doSpace_none_resource op values state safe peak mx source
+    have target := doSpace_none_resource op values state safe peak mx state.stack state.localsSize state.locals source
     simpa [source, target] using run
   | some next =>
     have appRun : doAppAux op values (doStack op values (doLimSafe next op values)) = .err error := by
@@ -142,7 +145,10 @@ theorem doApp_space_error_resource {C F : Type} (op : ClosLang.Op)
     obtain ⟨safe', peak', mx', target⟩ := doSpace_some_resource op values state next safe peak mx source
     obtain ⟨safe'', peak'', mx'', account⟩ := doStack_doLimSafe_resource op values next safe' peak' mx'
     have result := doAppAux_error_resource op values (doStack op values (doLimSafe next op values))
-      safe'' peak'' mx'' error appRun
+      safe'' peak'' mx'' (doStack op values (doLimSafe next op values)).stack
+      (doStack op values (doLimSafe next op values)).localsSize
+      (doStack op values (doLimSafe next op values)).locals
+      (doStack op values (doLimSafe next op values)).space error appRun
     simpa only [target, account] using result
 
 /-- Primitive errors remain unchanged when resource observations change.
