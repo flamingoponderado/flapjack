@@ -13,3 +13,5 @@ val _ = show "do_app_stack_max_typed" do_app_stack_max;
 val _ = show "evaluate_io_events_mono_typed" evaluate_io_events_mono;
 val _ = show "evaluate_safe_for_space_mono_typed" evaluate_safe_for_space_mono;
 val _ = show "evaluate_option_le_stack_max_typed" evaluate_option_le_stack_max;
+val _ = show "evaluate_smx_safe_peak_swap_typed" evaluate_smx_safe_peak_swap;
+val _ = show "evaluate_safe_peak_swap_typed" evaluate_safe_peak_swap;
