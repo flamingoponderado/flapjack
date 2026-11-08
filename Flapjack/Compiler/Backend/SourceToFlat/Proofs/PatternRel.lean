@@ -93,7 +93,7 @@ theorem pmatch_literal_related {C F : Type} (genv : GlobalEnv) (compMap : Enviro
       (FlatSem.pmatch state (compilePat compMap (.plit lit)) flat flatEnv) := by
   cases source with
   | litv actual =>
-    have hflat := (valueRel_literal_iff genv actual flat).mp valueRel
+    have hflat := ((valueRel_eqns_nonGlobal).1 flat actual genv).mp valueRel
     subst flat
     by_cases same : lit = actual
     · simp only [SemanticPrimitivesHOL.pmatch, FlatSem.pmatch, compilePat, same, if_true, MatchResultRel]
@@ -332,8 +332,9 @@ theorem pmatch_named_related {C F : Type} (genv : GlobalEnv) (compMap compMap2 :
       | none => simp [SemanticPrimitivesHOL.pmatch, sourceLookup, MatchResultRel]
       | some entry =>
         obtain ⟨arity, expected⟩ := entry
-        obtain ⟨flats, ctor, valuesRel, rfl, flatStamp, rfl, actualLookup⟩ :=
-          (valueRel_conv_iff genv _ _ flat).mp valueRel
+        have shape := ((valueRel_eqns_nonGlobal).2.1 _ flat genv _).mp valueRel
+        simp only [Option.some.injEq, reduceCtorEq, false_and, exists_false, or_false] at shape
+        obtain ⟨_, flatStamp, flats, rfl, rfl, valuesRel, actualLookup⟩ := shape
         obtain ⟨flatCn, group, compileLookup, expectedLookup, groupLookup⟩ :=
           ((globalEnvInv_iff genv compMap2 shadowers sourceEnv).mp inv).2 name arity expected sourceLookup
         rw [mapsEq] at compileLookup
