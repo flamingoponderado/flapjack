@@ -419,6 +419,32 @@ val do_app_strlen_replay = prove (do_app_strlen_typed,
   srw_tac[][semanticPrimitivesPropsTheory.do_app_cases, flatSemTheory.do_app_def] >>
   full_simp_tac(srw_ss())[do_app_rec_v_rel_eqns, source_to_flatProofTheory.result_rel_cases, do_app_v_rel_lems]);
 val _ = show_thm "do_app_strlen_replay=" do_app_strlen_replay;
+val do_app_v_to_list = let open source_to_flatProofTheory in prove (
+  ``!genv. genv_c_ok genv.c ⇒ !v1 v2 vs1.
+    v_rel genv v1 v2 ∧ semanticPrimitives$v_to_list v1 = SOME vs1 ⇒
+    ?vs2. flatSem$v_to_list v2 = SOME vs2 ∧ LIST_REL (v_rel genv) vs1 vs2``,
+  ntac 2 strip_tac >> ho_match_mp_tac semanticPrimitivesTheory.v_to_list_ind >>
+  srw_tac[][semanticPrimitivesTheory.v_to_list_def] >> every_case_tac >>
+  full_simp_tac(srw_ss())[do_app_rec_v_rel_eqns, flatSemTheory.v_to_list_def] >>
+  srw_tac[][] >> imp_res_tac genv_lookup_nil >> imp_res_tac genv_lookup_cons >>
+  fs [] >> rw [flatSemTheory.v_to_list_def] >> res_tac >> fs []) end;
+val do_app_vs_to_string = let open source_to_flatProofTheory in prove (
+  ``∀v1 v2 s. LIST_REL (v_rel genv) v1 v2 ⇒
+      semanticPrimitives$vs_to_string v1 = SOME s ⇒ flatSem$vs_to_string v2 = SOME s``,
+  ho_match_mp_tac semanticPrimitivesTheory.vs_to_string_ind >>
+  rw [semanticPrimitivesTheory.vs_to_string_def, flatSemTheory.vs_to_string_def] >>
+  fs [do_app_rec_v_rel_eqns] >> pop_assum mp_tac >> TOP_CASE_TAC >> strip_tac >> rveq >> fs [] >>
+  rw [flatSemTheory.vs_to_string_def]) end;
+val do_app_strcat_typed = list_mk_forall
+  (List.take (do_app_binders, 3) @ List.drop (do_app_binders, 4),
+   subst [List.nth (do_app_binders, 3) |-> ``ast$Strcat``] do_app_body);
+val do_app_strcat_replay = prove (do_app_strcat_typed,
+  rpt gen_tac >> Cases_on `s1` >> Cases_on `s1_i1.refs` >> simp [] >> Cases_on `s1_i1` >>
+  simp [source_to_flatTheory.astOp_to_flatOp_def, astTheory.getOpClass_def] >>
+  rw [semanticPrimitivesPropsTheory.do_app_cases, flatSemTheory.do_app_def] >>
+  fs [LIST_REL_def] >> imp_res_tac do_app_v_to_list >> fs [] >>
+  imp_res_tac do_app_vs_to_string >> fs [source_to_flatProofTheory.result_rel_cases, do_app_rec_v_rel_eqns]);
+val _ = show_thm "do_app_strcat_replay=" do_app_strcat_replay;
 val shift_op = ``ast$Shift w sh n``;
 val do_app_shift_typed = list_mk_forall
   (List.take (do_app_binders, 3) @ List.rev (free_vars shift_op) @ List.drop (do_app_binders, 4),
