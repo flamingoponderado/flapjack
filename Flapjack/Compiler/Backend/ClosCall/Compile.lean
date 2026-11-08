@@ -1,8 +1,10 @@
 import Flapjack.Compiler.Backend.ClosCall.Calls
+import Flapjack.Misc.ListEl
 
 /-! Total direct-call compiler entry points. -/
 namespace Flapjack.Compiler.Backend.ClosCall
 open ClosLang
+private instance : Nonempty Exp := ⟨.var .none 0⟩
 
 /-- The list traversal is the single-list form proved equivalent to HOL's
 `calls` by `calls_sing_eq`. -/
@@ -35,6 +37,96 @@ theorem calls_list_equations (x y : Exp) (xs : List Exp) (state : State) :
       cases rest : callsSingList (y :: xs) middle with
       | mk tail final =>
         simp [calls, callsSingList, first, rest]
+
+/-- Constructor equations of HOL's original list recursion, stated using
+HOL's head operation. They are comparison evidence for `calls_def`, not a
+separately named HOL theorem. -/
+theorem calls_singleton_simple_equations :
+    (∀ t v s, calls [.var t v] s = ([.var t v], s)) ∧
+    (∀ t x y z s, calls [.ifThenElse t x y z] s =
+      (let (xs, s) := calls [x] s
+       let (ys, s) := calls [y] s
+       let (zs, s) := calls [z] s
+       ([.ifThenElse t (Flapjack.holHd xs) (Flapjack.holHd ys) (Flapjack.holHd zs)], s))) ∧
+    (∀ t xs body s, calls [.let t xs body] s =
+      (let (xs, s) := calls xs s
+       let (body, s) := calls [body] s
+       ([.let t xs (Flapjack.holHd body)], s))) ∧
+    (∀ t x s, calls [.raise t x] s =
+      (let (x, s) := calls [x] s; ([.raise t (Flapjack.holHd x)], s))) ∧
+    (∀ t x s, calls [.tick t x] s =
+      (let (x, s) := calls [x] s; ([.tick t (Flapjack.holHd x)], s))) ∧
+    (∀ t x y s, calls [.handle t x y] s =
+      (let (x, s) := calls [x] s
+       let (y, s) := calls [y] s
+       ([.handle t (Flapjack.holHd x) (Flapjack.holHd y)], s))) ∧
+    (∀ t ticks dest xs s, calls [.call t ticks dest xs] s =
+      (let (xs, s) := calls xs s; ([.call t ticks dest xs], s))) ∧
+    (∀ t op xs s, calls [.op t op xs] s =
+      (let (xs, s) := calls xs s; ([.op t op xs], s))) := by
+  repeat' constructor
+  all_goals intros
+  all_goals simp only [calls, callsSingList, callsSing, Flapjack.holHd]
+
+/-- Length-checked zip traversal represents HOL's `EVERY2`. This generic
+comparison lemma has no separate HOL declaration. -/
+theorem every2_length_zip {α β : Type} (p : α → β → Bool) (xs : List α) (ys : List β) :
+    (xs.length == ys.length && (xs.zip ys).all (fun (x, y) => p x y)) = true ↔
+      List.Forall₂ (fun x y => p x y = true) xs ys := by
+  induction xs generalizing ys with
+  | nil => cases ys <;> simp
+  | cons x xs ih => cases ys <;> simp_all [List.forall₂_cons, and_left_comm]
+
+/-- The application, function and recursive-function clauses of HOL's list
+recursion. The length-and-zip condition represents HOL's `EVERY2`. -/
+theorem calls_singleton_closure_equations :
+    (∀ t loc x xs s, calls [.app t loc x xs] s =
+      (let (xs, s) := calls xs s
+       let (body, s) := calls [x] s
+       let body := Flapjack.holHd body
+       let n := loc.getD 0
+       if loc.isSome && (sptLookup n s.1).isSome then
+         if ClosLang.pure x then ([.call t xs.length (n + 1) xs], s)
+         else ([.let (BackendCommon.mkCons t 0) (xs ++ [body])
+           (.call (BackendCommon.mkCons t 1) xs.length (n + 1)
+             (variablesSource .none 2 xs.length))], s)
+       else ([.app t loc body xs], s))) ∧
+    (∀ name loc ws arity body s, calls [.fn name loc ws arity body] s =
+      (let n := loc.getD 0
+       let fresh := insertEachSource n 1 s
+       let (out, fresh) := calls [body] fresh
+       let fresh := (fresh.1, (n + 1, arity, Flapjack.holHd out) :: fresh.2)
+       if closed (.fn name loc ws arity (Flapjack.holHd out)) then
+         ([.fn name loc ws arity (.call .none 0 (n + 1) (variablesSource .none 1 arity))], fresh)
+       else
+         let (out, s) := calls [body] s
+         ([.fn name loc ws arity (Flapjack.holHd out)], s))) ∧
+    (∀ names loc ws fns body s, calls [.letrec names loc ws fns body] s =
+      (let n := loc.getD 0
+       let fresh := insertEachSource n fns.length s
+       let (bodies, fresh) := calls (fns.map Prod.snd) fresh
+       if fns.length == bodies.length && (fns.zip bodies).all (fun (fn, code) =>
+          closed (.fn (Flapjack.Basis.Pure.MlString.ofString "") none none fn.1 code)) then
+         let fresh := codeListSource n ((fns.map Prod.fst).zip bodies) fresh
+         let (out, s) := calls [body] fresh
+         ([.letrec names loc ws (callsListSource .none 1 n fns) (Flapjack.holHd out)], s)
+       else
+         let (bodies, s) := calls (fns.map Prod.snd) s
+         let (out, s) := calls [body] s
+         ([.letrec names loc ws ((fns.map Prod.fst).zip bodies) (Flapjack.holHd out)], s))) := by
+  constructor
+  · intro t loc x xs s
+    cases loc <;> simp only [calls, callsSingList, callsSing, Flapjack.holHd,
+      Option.isSome_none, Option.isSome_some, Option.getD_none, Option.getD_some,
+      Bool.false_and, Bool.true_and, Bool.false_eq_true, ↓reduceIte]
+    all_goals split_ifs <;> rfl
+  · constructor
+    · intros
+      simp only [calls, callsSingList, callsSing, Flapjack.holHd]
+      split <;> rfl
+    · intros
+      simp only [calls, callsSingList, callsSing, Flapjack.holHd]
+      split <;> rfl
 
 /-- Conditionally apply direct-call conversion from the empty state. -/
 @[hol "cakeml/compiler/backend/clos_callScript.sml" "compile_def"]

@@ -266,7 +266,8 @@ end
 
 /-- List-based source scan with the non-recursive singleton cases delegated to
 `scanSing`. The default for an empty singleton result is unreachable; the
-source uses `HD` in those positions. -/
+source uses `HD` in those positions; `scanExpr_single` and `scanExpr_length`
+establish that those lists are nonempty. -/
 @[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "scan_expr_def"]
 def scanExpr (ctx : List ValueType) (loc : Nat) : List Exp → List Scan
   | [] => []

@@ -16972,7 +16972,7 @@
     "hol_path": "cakeml/compiler/backend/bvl_handleScript.sml", "hol_name": "compile_def",
     "lean_path": "Flapjack/Compiler/Backend/BvlHandle/SourceCompile.lean", "lean_name": "compile",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared compile_def_typed and compile_sing_eq_typed in bvl_handle_frontend_probe.out. HOL identifies compile with the reviewed compileList; compile_list_equations checks the list clauses and compileSing_eq connects singleton clauses."
+    "reviewer": "Compared compile_def_typed and compile_sing_eq_typed in bvl_handle_frontend_probe.out. compile_list_equations proves the empty and multi-element clauses; compile_singleton_equations proves every original constructor clause using HOL-shaped list results and heads. compileSing_eq relates the shared traversal to the reviewed singleton traversal."
   },
   {
     "hol_path": "cakeml/compiler/backend/bvl_handleScript.sml", "hol_name": "compile_sing_eq",
@@ -17094,7 +17094,7 @@
     "hol_path": "cakeml/compiler/backend/bvl_constScript.sml", "hol_name": "compile_def",
     "lean_path": "Flapjack/Compiler/Backend/BvlConst/SourceCompile.lean", "lean_name": "compile",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared compile_def_typed and compile_eq_typed in bvl_const_frontend_probe.out. HOL's compile_eq identifies the source list traversal with the reviewed compileList. compile_list_equations checks its empty and multi-element clauses, while compile_eq and compileSing give the singleton cases."
+    "reviewer": "Compared compile_def_typed and compile_eq_typed in bvl_const_frontend_probe.out. compile_list_equations proves the empty and multi-element clauses; compile_singleton_equations proves every original constructor clause using HOL-shaped list results and heads. compile_eq relates the shared traversal to the reviewed singleton traversal."
   },
   {
     "hol_path": "cakeml/compiler/backend/bvl_constScript.sml", "hol_name": "compile_eq",
@@ -17124,7 +17124,7 @@
     "hol_path": "cakeml/compiler/backend/clos_callScript.sml", "hol_name": "calls_def",
     "lean_path": "Flapjack/Compiler/Backend/ClosCall/Compile.lean", "lean_name": "calls",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared calls_def_typed and calls_sing_eq_typed in clos_call_frontend_probe.out. The shared callsSingList implementation is the list traversal HOL proves equal to calls. calls_list_equations checks the original empty and multi-element clauses; callsSing_eq and the reviewed callsSing equations give the singleton cases."
+    "reviewer": "Compared calls_def_typed and calls_sing_eq_typed in clos_call_frontend_probe.out. calls_list_equations proves the empty and multi-element clauses; calls_singleton_simple_equations and calls_singleton_closure_equations prove all constructor clauses, with every2_length_zip proving the length-and-zip representation of EVERY2. callsSing_eq relates the shared traversal to the reviewed singleton traversal."
   },
   {
     "hol_path": "cakeml/compiler/backend/clos_callScript.sml", "hol_name": "calls_sing_eq",

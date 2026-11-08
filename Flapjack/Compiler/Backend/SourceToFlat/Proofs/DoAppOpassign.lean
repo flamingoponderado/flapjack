@@ -662,8 +662,8 @@ theorem doApp_CopyAw8Aw8 {C F : Type} (genv : GlobalEnv)
                               · simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
                                   FlatSem.doAppData, flatRun]
 
-/-- The XorAw8Str_unsafe case of `do_app`; the full theorem is not yet
-assembled. The dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
+/-- The XorAw8Str_unsafe case of `do_app`. The dispatcher inherits
+`reals_as_rational_cuts` (SOUNDNESS item 8). -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
   (fmap_as_finite_support := [c, tys])]
 theorem doApp_XorAw8StrUnsafe {C F : Type} (genv : GlobalEnv)

@@ -13,8 +13,7 @@ theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
 end DoAppConfigGCPort
 
 /-- ConfigGC preserves the related stores and FFI, and returns related unit
-values. This is the ConfigGC case of `do_app`; the full theorem is not yet
-assembled. The dispatcher inherits the rational-cut real-number assumption
+values. This is the ConfigGC case of `do_app`. The dispatcher inherits the rational-cut real-number assumption
 (SOUNDNESS item 8). -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
   (fmap_as_finite_support := [c, tys])]
