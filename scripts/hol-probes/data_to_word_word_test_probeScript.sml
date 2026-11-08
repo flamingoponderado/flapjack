@@ -53,3 +53,9 @@ val memory_rel_thunk_bits_replay = prove (
   \\ drule local_word_test_lemma2 \\ fs []);
 val _ = (print "memory_rel_thunk_bits_typed="; Lib.with_flag (Globals.show_types,true)
   print_term (concl memory_rel_thunk_bits_replay); print "\n");
+val v_inv_Loc_replay = prove (
+  ``v_inv c v1 s.refs (v2,f,tf,heap) ∧
+    word_addr c v2 = Loc n1 n2 ⇒ n2 = 0``,
+  rw [] \\ gvs [oneline word_addr_def, AllCaseEqs()]);
+val _ = (print "v_inv_Loc_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl v_inv_Loc_replay); print "\n");

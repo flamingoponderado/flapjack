@@ -130335,5 +130335,15 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Source comparison with memory_rel_thunk_inlined_typed in data_to_word_memory_thunk_probe.out: the original memory relation, location-or-clear-low-bit disjunction, thunk lookup and good_dimindex premises are preserved, as are the evaluated-mode and child memory-relation conclusions. HOL word index zero is rendered by getLsbD; store is the canonical finite-support map and words use positive-width BitVec. The proof preserves all source assumptions without an added simulation premise."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
+  "hol_name": "v_inv_Loc",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/ValueLoc.lean",
+  "lean_name": "valueInv_loc",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": ["f", "tf"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison: the original local proof and typed replay v_inv_Loc_typed in data_to_word_word_test_probe.out retain a state with two independent type parameters; its refs field, value invariant and explicit address, finite maps and heap tuple are unchanged. The location equality and zero-offset conclusion are unchanged. Both HOL finite maps use canonical finite support, and the shared word dimension uses positive-width BitVec."
 }
 ]

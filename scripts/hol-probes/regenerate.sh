@@ -4253,7 +4253,7 @@ run_probe data_to_word_memory_thunk_probeScript.sml data_to_word_memory_thunk_pr
   "$cake_dir/compiler/backend/proofs/data_to_word_memoryProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 run_probe data_to_word_word_test_probeScript.sml data_to_word_word_test_probe.out \
-  word_test_lemma1_typed word_test_lemma2_typed jump_exc_locals_typed memory_rel_thunk_bits_typed \
+  word_test_lemma1_typed word_test_lemma2_typed jump_exc_locals_typed memory_rel_thunk_bits_typed v_inv_Loc_typed \
   "$cake_dir/compiler/backend/proofs/data_to_wordProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 run_probe data_to_word_config_probeScript.sml data_to_word_config_probe.out \
