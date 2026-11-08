@@ -127829,8 +127829,8 @@
   "hol_name": "do_install_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Apply.lean",
   "lean_name": "doInstall",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared do_install in the typed DataSem installation probe, retaining independent compiler, FFI and error-result types, all arity and decoding failures, oracle and compiler checks, and left-biased code union. HOL shift_seq 1 is inlined as n + 1."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
@@ -128054,16 +128054,16 @@
   "hol_name": "v_to_bytes_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Conversions.lean",
   "lean_name": "valueToBytes",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared v_to_bytes in data_sem_install_probe.out; valueToBytes_eq_holChoice proves equality with HOL guarded option choice on the source predicate, using the reviewed Value and valueToList carriers."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "v_to_words_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Conversions.lean",
   "lean_name": "valueToWords",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared v_to_words in data_sem_install_probe.out; valueToWords_eq_holChoice proves equality with HOL guarded option choice on the source predicate, using the reviewed Value and valueToList carriers."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
