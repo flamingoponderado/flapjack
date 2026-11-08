@@ -1,6 +1,7 @@
 import Flapjack.Pancake.Proofs.PanSimp.CompileCorrect
 import Flapjack.Pancake.Semantics.PanSem.Semantics
 import Flapjack.Pancake.Proofs.PanSimp
+import Flapjack.Pancake.Semantics.PanSem.TerminationWitness
 
 /-!
 The original pan_simp `state_rel_imp_semantics`
@@ -24,25 +25,6 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} {σ : Type} [NeZero width] :
       PanSemStateFiniteExact.ofExact state.toExact state.toExact_finiteSupport = state) :=
   PanSemStateFiniteExact.holFmapAsFiniteSupportWitness
 end StateRelImpSemanticsSupport
-
-/-- Flapjack statement infrastructure: eliminate the evaluator pair witnesses
-inside the classical termination predicate. No independent HOL declaration. -/
-private theorem terminationWitnessReduced {width : Nat} {σ : Type} [NeZero width]
-    (run : Option (PanSemResultExact width) × PanSemStateFiniteExact width σ)
-    (outcomeRelation : Option (PanSemResultExact width) → HolOutcome → Prop)
-    (behaviour : HolBehaviour) :
-    (∃ post result outcome, run = (result, post) ∧
-      outcomeRelation result outcome ∧
-      behaviour = HolBehaviour.terminate outcome post.ffi.ioEvents) ↔
-    (∃ outcome, outcomeRelation run.1 outcome ∧
-      behaviour = HolBehaviour.terminate outcome run.2.ffi.ioEvents) := by
-  rcases run with ⟨result, post⟩
-  constructor
-  · rintro ⟨post', result', outcome, hpair, houtcome, hbehaviour⟩
-    obtain ⟨rfl, rfl⟩ := Prod.mk.inj hpair
-    exact ⟨outcome, houtcome, hbehaviour⟩
-  · rintro ⟨outcome, houtcome, hbehaviour⟩
-    exact ⟨post, result, outcome, rfl, houtcome, hbehaviour⟩
 
 /-- The semantic agreement from `state_rel` and source non-`Fail` alone; the
 source proof of `state_rel_imp_semantics` uses no other hypothesis.

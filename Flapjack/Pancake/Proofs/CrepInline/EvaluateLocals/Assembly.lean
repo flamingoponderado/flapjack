@@ -24,9 +24,10 @@ The Call handler premises (`ihHandler` here, `TransformEocCallHandlerIH`,
 (evalCrepSemHOLExp s)`, `lookupCodeFiniteHOL s.code` and
 `crepReturnInfoNodupError`, while `evaluate_ind` uses
 `args.mapM (crepExactEvalExpClassical s)`, `lookupCodeHOLFinite s.code.lookup`
-and the inline `match caltyp` selector.  The three untagged equations below
-(`callGuard_args_eq`, `callGuard_lookup_eq`, `callGuard_nodup_iff`) show that
-the two spellings are the same propositions.  They are Lean equalities
+and the inline `match caltyp` selector.  The untagged equations below
+(`callGuard_args_eq` and `callGuard_nodup_iff`) show that the argument and
+nodup spellings are the same propositions; the finite code lookup is the shared
+`lookupCodeFinite_eq_HOLFinite` of `CrepProps`. They are Lean equalities
 between Lean definitions; they make no cross-prover claim.
 -/
 
@@ -51,32 +52,6 @@ theorem callGuard_args_eq {width : Nat} [NeZero width] {σ : Type}
   congr 1
   funext e
   exact (crepExactEvalExpClassical_eq s e).symm
-
-/-- Guard equivalence (review item 4): the finite code lookup of the Call
-    handler premises equals `evaluate_ind`'s `lookupCodeHOLFinite`.  Untagged. -/
-theorem callGuard_lookup_eq {width : Nat} [NeZero width]
-    (c : HolFiniteMapExact Flapjack.Basis.Pure.MlString.MlString (List Nat × CrepProgHOL width))
-    (f : Flapjack.Basis.Pure.MlString.MlString) (args : List (HolWordLab width)) (len : Nat) :
-    lookupCodeFiniteHOL c f args len = lookupCodeHOLFinite c.lookup f args len := by
-  have h1 := lookupCodeFiniteHOL_lookup c f args len
-  unfold lookupCodeHOLFinite
-  split
-  · rename_i hn
-    rw [hn] at h1
-    cases hF : lookupCodeFiniteHOL c f args len with
-    | none => rfl
-    | some val => rw [hF] at h1; simp at h1
-  · rename_i body cl hs
-    rw [hs] at h1
-    cases hF : lookupCodeFiniteHOL c f args len with
-    | none => rw [hF] at h1; simp at h1
-    | some val =>
-        obtain ⟨b, m⟩ := val
-        rw [hF] at h1
-        simp only [Option.map_some, Option.some.injEq, Prod.mk.injEq] at h1
-        obtain ⟨rfl, hm⟩ := h1
-        congr 2
-        exact holFiniteMapExact_eq_of_lookup_eq hm
 
 /-- Guard equivalence (review item 4): `crepReturnInfoNodupError` is
     `evaluate_ind`'s inline `ALL_DISTINCT` selector.  Untagged. -/

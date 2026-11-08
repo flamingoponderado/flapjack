@@ -72,14 +72,14 @@ def maxDepth (frameSizes : Spt Nat) : CallTree → Option Nat
 /-- `sptSize` of a `mk_BN`-collapsed pair is bounded by the sum of the two
     children sizes.  Untagged Flapjack infrastructure used only for the
     `callGraph` termination measure. -/
-private theorem sptSize_sptMkBN_le {α : Type} (a r : Spt α) :
+theorem sptSize_sptMkBN_le {α : Type} (a r : Spt α) :
     sptSize (sptMkBN a r) ≤ sptSize a + sptSize r := by
   cases a <;> cases r <;> simp [sptMkBN, sptSize]
 
 /-- `sptSize` of a `mk_BS`-collapsed triple is bounded by the sum of the two
     children sizes plus one.  Untagged Flapjack infrastructure used only for
     the `callGraph` termination measure. -/
-private theorem sptSize_sptMkBS_le {α : Type} (a r : Spt α) (v : α) :
+theorem sptSize_sptMkBS_le {α : Type} (a r : Spt α) (v : α) :
     sptSize (sptMkBS a v r) ≤ sptSize a + sptSize r + 1 := by
   cases a <;> cases r <;> simp [sptMkBS, sptSize]
 
@@ -87,7 +87,7 @@ private theorem sptSize_sptMkBS_le {α : Type} (a r : Spt α) (v : α) :
     Flapjack termination lemma proves the strict inequality needed by the
     `callGraph` measure on the local tree implementation; it is not presented
     as a port of a HOL declaration. -/
-private theorem sptSize_sptDelete_lt {α : Type} (t : Spt α) (k : Nat) (v : α)
+theorem sptSize_sptDelete_lt {α : Type} (t : Spt α) (k : Nat) (v : α)
     (h : sptLookup k t = some v) : sptSize (sptDelete k t) < sptSize t := by
   induction t generalizing k v with
   | ln => simp at h
