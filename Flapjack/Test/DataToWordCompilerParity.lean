@@ -7,6 +7,87 @@ open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Backend.DataToWord
 
 private def conf : Config := ⟨1, 2, 3, 16, false, false, false, false, false, false, .simple⟩
 
+example : writeWord64 (width := 64) conf 42 3 7 = wordListSeq [
+    .assign 1 (.lookup .nextFree), .store (.op .add [.var 1, .const 8]) 7,
+    .assign 3 (.const 42), .store (.var 1) 3, .set .nextFree (.op .add [.var 1, .const 16]),
+    .assign 8 (.op .or [.shift .lsl (.op .sub [.var 1, .lookup .currHeap]) (.const 5), .const 1])] := by rfl
+
+example : writeWord64On32 (width := 32) conf 42 3 11 13 = wordListSeq [
+    .assign 1 (.lookup .nextFree), .store (.op .add [.var 1, .const 4]) 13,
+    .store (.op .add [.var 1, .const 8]) 11, .assign 3 (.const 42), .store (.var 1) 3,
+    .set .nextFree (.op .add [.var 1, .const 12]),
+    .assign 8 (.op .or [.shift .lsl (.op .sub [.var 1, .lookup .currHeap]) (.const 6), .const 1])] := by rfl
+
+/-- Expected 32-bit Word64 binary-operation layout from the HOL probe. -/
+private def wordOp32Expected (operation : WordLangProgHOL (BitVec 32)) : WordLangProgHOL (BitVec 32) :=
+  wordListSeq [
+    .assign 15 (.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 6)]),
+    .assign 17 (.op .add [.lookup .currHeap, .shift .lsr (.var 6) (.const 6)]),
+    .assign 11 (.load (.op .add [.var 15, .const 4])),
+    .assign 13 (.load (.op .add [.var 15, .const 8])),
+    .assign 21 (.load (.op .add [.var 17, .const 4])),
+    .assign 23 (.load (.op .add [.var 17, .const 8])), operation,
+    wordListSeq [
+      .assign 1 (.lookup .nextFree), .store (.op .add [.var 1, .const 4]) 31,
+      .store (.op .add [.var 1, .const 8]) 33, .assign 3 (.const 0x2000F), .store (.var 1) 3,
+      .set .nextFree (.op .add [.var 1, .const 12]),
+      .assign 8 (.op .or [.shift .lsl (.op .sub [.var 1, .lookup .currHeap]) (.const 6), .const 1])]]
+
+example : compileControl? (width := 32) conf 4 9 (.assign 3 (.wordOp (.wordOpw .w64 .andw)) [1, 2] none) =
+    some (wordOp32Expected (wordListSeq [.assign 29 (.const 0), .assign 27 (.const 0),
+      .assign 33 (.op .and [.var 13, .var 23]), .assign 31 (.op .and [.var 11, .var 21])]), 9) := by rfl
+
+example : compileControl? (width := 32) conf 4 9 (.assign 3 (.wordOp (.wordOpw .w64 .orw)) [1, 2] none) =
+    some (wordOp32Expected (wordListSeq [.assign 29 (.const 0), .assign 27 (.const 0),
+      .assign 33 (.op .or [.var 13, .var 23]), .assign 31 (.op .or [.var 11, .var 21])]), 9) := by rfl
+
+example : compileControl? (width := 32) conf 4 9 (.assign 3 (.wordOp (.wordOpw .w64 .xor)) [1, 2] none) =
+    some (wordOp32Expected (wordListSeq [.assign 29 (.const 0), .assign 27 (.const 0),
+      .assign 33 (.op .xor [.var 13, .var 23]), .assign 31 (.op .xor [.var 11, .var 21])]), 9) := by rfl
+
+example : compileControl? (width := 32) conf 4 9 (.assign 3 (.wordOp (.wordOpw .w64 .add)) [1, 2] none) =
+    some (wordOp32Expected (wordListSeq [.assign 29 (.const 0), .assign 27 (.const 0),
+      .inst (.arith (.addCarry 33 13 23 29)), .inst (.arith (.addCarry 31 11 21 29))]), 9) := by rfl
+
+example : compileControl? (width := 32) conf 4 9 (.assign 3 (.wordOp (.wordOpw .w64 .sub)) [1, 2] none) =
+    some (wordOp32Expected (wordListSeq [.assign 29 (.const 1), .assign 27 (.op .xor [.const (-1), .var 23]),
+      .inst (.arith (.addCarry 33 13 27 29)), .assign 27 (.op .xor [.const (-1), .var 21]),
+      .inst (.arith (.addCarry 31 11 27 29))]), 9) := by rfl
+
+example : compileControl? (width := 16) { conf with lenSize := 4 } 4 9
+    (.assign 3 (.wordOp (.wordOpw .w64 .add)) [1, 2] none) =
+    some (wordListSeq [
+      .assign 15 (.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)]),
+      .assign 17 (.op .add [.lookup .currHeap, .shift .lsr (.var 6) (.const 5)]),
+      .assign 11 (.load (.op .add [.var 15, .const 2])),
+      .assign 13 (.load (.op .add [.var 15, .const 4])),
+      .assign 21 (.load (.op .add [.var 17, .const 2])),
+      .assign 23 (.load (.op .add [.var 17, .const 4])),
+      wordListSeq [.assign 29 (.const 0), .assign 27 (.const 0),
+        .inst (.arith (.addCarry 33 13 23 29)), .inst (.arith (.addCarry 31 11 21 29))],
+      wordListSeq [
+        .assign 1 (.lookup .nextFree), .store (.op .add [.var 1, .const 2]) 31,
+        .store (.op .add [.var 1, .const 4]) 33, .assign 3 (.const 8207), .store (.var 1) 3,
+        .set .nextFree (.op .add [.var 1, .const 6]),
+        .assign 8 (.op .or [.shift .lsl (.op .sub [.var 1, .lookup .currHeap]) (.const 5), .const 1])]], 9) := by rfl
+
+example : compileControl? (width := 32) { conf with lenSize := 0 } 4 9
+    (.assign 3 (.wordOp (.wordOpw .w64 .add)) [1, 2] none) =
+    some (.seq (.assign 1 (.const (-1))) (.alloc 1 (adjustSets (.ln : NumSet))), 9) := by rfl
+
+example : compileControl? (width := 32) conf 4 9 (.assign 3 (.wordOp (.wordOpw .w64 .add)) [1] none) =
+    some (.skip, 9) := by rfl
+
+example : compileControl? (width := 64) conf 4 9 (.assign 3 (.wordOp (.wordOpw .w64 .xor)) [1, 2] none) =
+    some (.seq (.assign 3 (.op .xor [
+      .load (.op .add [.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)], .const 8]),
+      .load (.op .add [.op .add [.lookup .currHeap, .shift .lsr (.var 6) (.const 5)], .const 8])]))
+      (wordListSeq [
+        .assign 1 (.lookup .nextFree), .store (.op .add [.var 1, .const 8]) 3,
+        .assign 3 (.const 0x100000000000F), .store (.var 1) 3,
+        .set .nextFree (.op .add [.var 1, .const 16]),
+        .assign 8 (.op .or [.shift .lsl (.op .sub [.var 1, .lookup .currHeap]) (.const 5), .const 1])]), 9) := by rfl
+
 example : compileControl? (width := 64) conf 5 2 (.seq (.assign 3 (.intOp (.const (-7))) [] none) (.return [3])) =
     some (.seq (.assign 8 (.const 0xFFFFFFFFFFFFFFE4)) (.return 0 [8]), 2) := by rfl
 

@@ -125572,6 +125572,42 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "WriteWord64_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "writeWord64",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared write_word64_def_typed: config, header, destination and arbitrary source-register inputs are retained; the input is stored before register 3 is reused for the header, then the allocation pointer and tagged destination are updated in HOL order. Positive-width BitVec represents HOL words. The production compiler calls this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "WriteWord64_on_32_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "writeWord64On32",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared write_word64_on32_def_typed: config, header, destination and both independent input registers are retained; the second is stored at one word and the first at two words, followed by header, allocation pointer and tagged destination updates. Positive-width BitVec represents HOL words. The production compiler calls this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "WordOp64_on_32_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "wordOp64On32",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared word_op64_on32_def_typed: all five original word operations retain their ordered assignments, bitwise instructions, carry registers and two AddCarry instructions; subtraction retains both complements and initial carry. Positive-width BitVec represents HOL words. The production Word64 dispatch calls this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "assign_WordOpW64_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "assignWordOpW64",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared assign_word_op_w64_def_typed: operation, config, section, label, destination, optional names and both inputs remain in order. The width-64 branch retains the one-word header, five-case operation map, loads and WriteWord64; every other positive width retains the two-word header, six loads, WordOp64_on_32 and WriteWord64_on_32. Both encoding failures and the label are preserved. Positive-width BitVec represents HOL words. The production dispatcher uses this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
     "hol_name": "assign_LengthBlock_def",
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
     "lean_name": "assignLengthBlock",

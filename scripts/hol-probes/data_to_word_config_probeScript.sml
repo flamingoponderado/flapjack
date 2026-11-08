@@ -143,6 +143,25 @@ val _ = print_eval "assign_less_const_small_64" ``(assign ^conf 4 9 3 (closLang$
 val _ = print_eval "assign_less_const_small_bad_arity_64" ``(assign ^conf 4 9 3 (closLang$IntOp (LessConstSmall 25)) [1;2] NONE : 64 wordLang$prog # num)``;
 val _ = print_eval "assign_bool_test_compare_64" ``(assign ^conf 4 9 3 (closLang$BlockOp (BoolTest (ast$Compare ast$Lt))) [1;2] NONE : 64 wordLang$prog # num)``;
 val _ = print_eval "assign_bool_test_bad_arity_64" ``(assign ^conf 4 9 3 (closLang$BlockOp (BoolTest ast$Equal)) [1] NONE : 64 wordLang$prog # num)``;
+val _ = (print "write_word64_def_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl data_to_wordTheory.WriteWord64_def); print "\n");
+val _ = (print "write_word64_on32_def_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl data_to_wordTheory.WriteWord64_on_32_def); print "\n");
+val _ = (print "word_op64_on32_def_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl data_to_wordTheory.WordOp64_on_32_def); print "\n");
+val _ = (print "assign_word_op_w64_def_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl data_to_wordTheory.assign_WordOpW64_def); print "\n");
+val _ = print_eval "write_word64_arbitrary_src_64" ``(WriteWord64 ^conf 42w 3 7 : 64 wordLang$prog)``;
+val _ = print_eval "write_word64_two_src_32" ``(WriteWord64_on_32 ^conf 42w 3 11 13 : 32 wordLang$prog)``;
+val _ = print_eval "word_op64_and_32" ``(assign ^conf 4 9 3 (closLang$WordOp (WordOpw ast$W64 backend_common$Andw)) [1;2] NONE : 32 wordLang$prog # num)``;
+val _ = print_eval "word_op64_or_32" ``(assign ^conf 4 9 3 (closLang$WordOp (WordOpw ast$W64 backend_common$Orw)) [1;2] NONE : 32 wordLang$prog # num)``;
+val _ = print_eval "word_op64_xor_32" ``(assign ^conf 4 9 3 (closLang$WordOp (WordOpw ast$W64 backend_common$Xor)) [1;2] NONE : 32 wordLang$prog # num)``;
+val _ = print_eval "word_op64_add_32" ``(assign ^conf 4 9 3 (closLang$WordOp (WordOpw ast$W64 backend_common$Add)) [1;2] NONE : 32 wordLang$prog # num)``;
+val _ = print_eval "word_op64_sub_32" ``(assign ^conf 4 9 3 (closLang$WordOp (WordOpw ast$W64 backend_common$Sub)) [1;2] NONE : 32 wordLang$prog # num)``;
+val _ = print_eval "word_op64_add_16" ``(assign (^conf with len_size := 4) 4 9 3 (closLang$WordOp (WordOpw ast$W64 backend_common$Add)) [1;2] NONE : 16 wordLang$prog # num)``;
+val _ = print_eval "word_op64_xor_64" ``(assign ^conf 4 9 3 (closLang$WordOp (WordOpw ast$W64 backend_common$Xor)) [1;2] NONE : 64 wordLang$prog # num)``;
+val _ = print_eval "word_op64_header_failure_32" ``(assign (^conf with len_size := 0) 4 9 3 (closLang$WordOp (WordOpw ast$W64 backend_common$Add)) [1;2] NONE : 32 wordLang$prog # num)``;
+val _ = print_eval "word_op64_bad_arity_32" ``(assign ^conf 4 9 3 (closLang$WordOp (WordOpw ast$W64 backend_common$Add)) [1] NONE : 32 wordLang$prog # num)``;
 val _ = print_eval "store_each_64" ``(StoreEach 2 [4;6] 8w : 64 wordLang$prog)``;
 val _ = print_eval "mem_eq_list_64" ``(MemEqList 8w [3w;7w] : 64 wordLang$prog)``;
 val _ = print_eval "silent_ffi_off_64" ``(SilentFFI ^conf 3 (LN,LN) : 64 wordLang$prog)``;

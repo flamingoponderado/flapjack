@@ -95,21 +95,24 @@ def shiftVar {width : Nat} [NeZero width] (op : Shift) (v n : Nat) : WordLangExp
         | _ => .const 0
       else shiftN op (.var v) n
 
-/-- Storage sequence shared by the checked 64-bit word operations. -/
-private def writeWord64 {width : Nat} [NeZero width] (conf : Config) (header : BitVec width)
-    (dest : Nat) : WordLangProgHOL (BitVec width) :=
+/-- Allocate and write a one-word representation of a Word64 value. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "WriteWord64_def"
+  (words_as_type_indexed_bitvec)]
+def writeWord64 {width : Nat} [NeZero width] (conf : Config) (header : BitVec width)
+    (dest src : Nat) : WordLangProgHOL (BitVec width) :=
   let bytes := (wordSemBytesInWord : BitVec width)
   wordListSeq [
-    .assign 1 (.lookup .nextFree), .store (.op .add [.var 1, .const bytes]) 3,
+    .assign 1 (.lookup .nextFree), .store (.op .add [.var 1, .const bytes]) src,
     .assign 3 (.const header), .store (.var 1) 3,
     .set .nextFree (.op .add [.var 1, .const (2 * bytes)]),
     .assign (adjustVar dest) (.op .or [
       shiftN .lsl (.op .sub [.var 1, .lookup .currHeap]) (shiftLength conf - wordShiftAmount width),
       .const 1])]
 
-/-- Two-word representation used when lowering Word64 onto a 32-bit target.
-The standalone HOL helper is not yet independently reviewed as a port. -/
-private def writeWord64On32 {width : Nat} [NeZero width] (conf : Config) (header : BitVec width)
+/-- Allocate and write a two-word representation of a Word64 value. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "WriteWord64_on_32_def"
+  (words_as_type_indexed_bitvec)]
+def writeWord64On32 {width : Nat} [NeZero width] (conf : Config) (header : BitVec width)
     (dest high low : Nat) : WordLangProgHOL (BitVec width) :=
   let bytes := (wordSemBytesInWord : BitVec width)
   wordListSeq [
@@ -120,6 +123,24 @@ private def writeWord64On32 {width : Nat} [NeZero width] (conf : Config) (header
     .assign (adjustVar dest) (.op .or [
       shiftN .lsl (.op .sub [.var 1, .lookup .currHeap]) (shiftLength conf - wordShiftAmount width),
       .const 1])]
+
+/-- Lower a Word64 operation using two machine words. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "WordOp64_on_32_def"
+  (words_as_type_indexed_bitvec)]
+def wordOp64On32 {width : Nat} [NeZero width] (op : BackendCommon.Opw) :
+    WordLangProgHOL (BitVec width) :=
+  match op with
+  | .andw => wordListSeq [.assign 29 (.const 0), .assign 27 (.const 0),
+      .assign 33 (.op .and [.var 13, .var 23]), .assign 31 (.op .and [.var 11, .var 21])]
+  | .orw => wordListSeq [.assign 29 (.const 0), .assign 27 (.const 0),
+      .assign 33 (.op .or [.var 13, .var 23]), .assign 31 (.op .or [.var 11, .var 21])]
+  | .xor => wordListSeq [.assign 29 (.const 0), .assign 27 (.const 0),
+      .assign 33 (.op .xor [.var 13, .var 23]), .assign 31 (.op .xor [.var 11, .var 21])]
+  | .add => wordListSeq [.assign 29 (.const 0), .assign 27 (.const 0),
+      .inst (.arith (.addCarry 33 13 23 29)), .inst (.arith (.addCarry 31 11 21 29))]
+  | .sub => wordListSeq [.assign 29 (.const 1), .assign 27 (.op .xor [.const (-1), .var 23]),
+      .inst (.arith (.addCarry 33 13 27 29)), .assign 27 (.op .xor [.const (-1), .var 21]),
+      .inst (.arith (.addCarry 31 11 27 29))]
 
 /-- Select the floating-point comparison instruction and operand order. -/
 @[hol "cakeml/compiler/backend/data_to_wordScript.sml" "fp_cmp_inst_def"]
@@ -181,7 +202,7 @@ private def fpResult {width : Nat} [NeZero width] (conf : Config) (dest : Nat)
   | none => giveUp
   | some header =>
     let transfer := if width = 64 then .fpMovToReg 3 5 resultFp else .fpMovToReg 5 3 resultFp
-    let store := if width = 64 then writeWord64 conf header dest else writeWord64On32 conf header dest 5 3
+    let store := if width = 64 then writeWord64 conf header dest 3 else writeWord64On32 conf header dest 5 3
     wordListSeq (fpLoads conf sources ++ [.inst (.fp operation), .inst (.fp transfer), store])
 
 /-- Internal tag-mask construction used by checked word lowering. -/
@@ -432,6 +453,35 @@ def assignSetGlobal {width : Nat} [NeZero width] (_conf : Config) (n l dest src 
   let offset := (wordSemBytesInWord : BitVec width) * BitVec.ofNat width (n + 1)
   (.seq (.store (.op .add [.lookup .globReal, .const offset]) (adjustVar src))
     (.assign (adjustVar dest) unitExp), l)
+
+/-- Lower a Word64 binary operation using HOL's width-dependent representation. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_WordOpW64_def"
+  (words_as_type_indexed_bitvec)]
+def assignWordOpW64 {width : Nat} [NeZero width] (op : BackendCommon.Opw) (conf : Config)
+    (_secn l dest : Nat) (_names : Option NumSet) (left right : Nat) :
+    WordLangProgHOL (BitVec width) × Nat :=
+  if width = 64 then
+    match encodeHeader (width := width) conf 3 1 with
+    | none => (giveUp, l)
+    | some header =>
+        let binop := match op with
+          | .andw => BinOp.and | .orw => .or | .xor => .xor | .add => .add | .sub => .sub
+        let addr (v : Nat) := WordLangExpHOL.op .add
+          [realAddr conf (adjustVar v), .const wordSemBytesInWord]
+        (.seq (.assign 3 (.op binop [.load (addr left), .load (addr right)]))
+          (writeWord64 conf header dest 3), l)
+  else
+    match encodeHeader (width := width) conf 3 2 with
+    | none => (giveUp, l)
+    | some header =>
+        (wordListSeq [
+          .assign 15 (realAddr conf (adjustVar left)),
+          .assign 17 (realAddr conf (adjustVar right)),
+          .assign 11 (.load (.op .add [.var 15, .const wordSemBytesInWord])),
+          .assign 13 (.load (.op .add [.var 15, .const (2 * wordSemBytesInWord)])),
+          .assign 21 (.load (.op .add [.var 17, .const wordSemBytesInWord])),
+          .assign 23 (.load (.op .add [.var 17, .const (2 * wordSemBytesInWord)])),
+          wordOp64On32 op, writeWord64On32 conf header dest 33 31], l)
 
 /-- Flapjack's checked traversal. Some non-64-bit operations return `none`;
 this definition has not yet been reviewed as HOL's total `comp`. -/
@@ -741,25 +791,8 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
             else value
           some (.assign (adjustVar dest) value, l)
       | _ => some (.skip, l)
-  | l, .assign dest (.wordOp (.wordOpw .w64 op)) args _ =>
-      match args with
-      | [x, y] =>
-          if width != 64 then none else
-          match encodeHeader (width := width) conf 3 1 with
-          | none => some (giveUp, l)
-          | some header =>
-              let binop := match lookupWordOp op with | .bitwise b | .carried b => b
-              let bytes := (wordSemBytesInWord : BitVec width)
-              let addr (v : Nat) := WordLangExpHOL.op .add [realAddr conf (adjustVar v), .const bytes]
-              let stored := wordListSeq [
-                .assign 1 (.lookup .nextFree), .store (.op .add [.var 1, .const bytes]) 3,
-                .assign 3 (.const header), .store (.var 1) 3,
-                .set .nextFree (.op .add [.var 1, .const (2 * bytes)]),
-                .assign (adjustVar dest) (.op .or [
-                  shiftN .lsl (.op .sub [.var 1, .lookup .currHeap]) (shiftLength conf - wordShiftAmount width),
-                  .const 1])]
-              some (.seq (.assign 3 (.op binop [.load (addr x), .load (addr y)])) stored, l)
-      | _ => some (.skip, l)
+  | l, .assign dest (.wordOp (.wordOpw .w64 op)) args names =>
+      some (arg2 args (assignWordOpW64 op conf secn l dest names) (.skip, l))
   | l, .assign dest (.wordOp (.wordShift .w8 sh n)) args _ =>
       match args with
       | [src] =>
@@ -815,7 +848,7 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
                   some (wordListSeq [.assign 5 (shiftN .lsr (.var src) 2),
                     .assign 3 (.const 0), writeWord64On32 conf header dest 5 3], l)
                 else some (.seq (.assign 3 (shiftN .lsr (.var src) 2))
-                    (writeWord64 conf header dest), l)
+                    (writeWord64 conf header dest 3), l)
       | _ => some (.skip, l)
   | l, .assign dest (.wordOp .wordFromInt) args _ =>
       match args with
@@ -833,7 +866,7 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
                 (.assign 3 (shiftN .asr (.var src) 2))
                 (.seq loadBignum (.ite .test 1 (.imm 16) .skip
                   (.assign 3 (.op .sub [.const 0, .var 3]))))
-              some (.seq value (writeWord64 conf header dest), l)
+              some (.seq value (writeWord64 conf header dest 3), l)
       | _ => some (.skip, l)
   | l, .assign dest (.wordOp .wordToInt) args _ =>
       match args with
@@ -847,7 +880,7 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
               some (wordListSeq [
                 .assign 3 (.load address), .assign 1 (shiftN .lsr (.var 3) 61),
                 .ite .equal 1 (.imm 0) (.assign (adjustVar dest) (shiftN .lsl (.var 3) 2))
-                  (writeWord64 conf header dest)], l)
+                  (writeWord64 conf header dest 3)], l)
       | _ => some (.skip, l)
   | l, .assign dest (.blockOp .boundsCheckBlock) args _ =>
       match args with
