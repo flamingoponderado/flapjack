@@ -330,15 +330,6 @@ theorem envRel_bind_one (genv : GlobalEnv) (env : Namespace ModN VarN SemanticPr
     EnvRel genv (nsBind name source env) ((name, flat) :: flatEnv) :=
   .bind genv name source env flatEnv flat premises.2 premises.1
 
-namespace EnvAllRelPort
-
-/-- Roundtrip for the global carrier's canonical finite maps. -/
-theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
-    GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env :=
-  GlobalEnv.holFmapAsFiniteSupportWitness env
-
-end EnvAllRelPort
-
 /-- Combined local and global environment relation. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "env_all_rel"
   (fmap_as_finite_support := [c, tys])]
