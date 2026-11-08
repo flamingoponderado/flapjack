@@ -365,7 +365,9 @@ def assignFinaliseCons {width : Nat} [NeZero width] (l dest src : Nat) :
     WordLangProgHOL (BitVec width) × Nat :=
   (.assign (adjustVar dest) (.var (adjustVar src)), l)
 
-/-- Read and retag the length field of a word array. -/
+/-- Read and retag the length field of a word array. `assignLengthBlock`
+reuses this program for HOL's inline block-length branch, so changes here
+require source review of both definitions. -/
 @[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_Length_def"
   (words_as_type_indexed_bitvec)]
 def assignLength {width : Nat} [NeZero width] (conf : Config) (_secn l dest : Nat)
@@ -382,6 +384,28 @@ def assignLengthByte {width : Nat} [NeZero width] (conf : Config) (_secn l dest 
   let header := WordLangExpHOL.load (realAddr conf (adjustVar src))
   let len := shiftN .lsr header (width - wordShiftAmount width - conf.lenSize)
   (.assign (adjustVar dest) (shiftN .lsl (.op .sub [len, .const wordSemBytesInWord]) 2), l)
+
+/-- Read a block length, treating an immediate value as a zero-length block. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_LengthBlock_def"
+  (words_as_type_indexed_bitvec)]
+def assignLengthBlock {width : Nat} [NeZero width] (conf : Config) (secn l dest : Nat)
+    (names : Option NumSet) (src : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  (.ite .test (adjustVar src) (.imm 1) (.assign (adjustVar dest) (.const 0))
+    (assignLength conf secn l dest names src).1, l)
+
+/-- Compare a tagged small integer against a constant. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_LessConstSmall_def"
+  (words_as_type_indexed_bitvec)]
+def assignLessConstSmall {width : Nat} [NeZero width] (l dest i src : Nat) :
+    WordLangProgHOL (BitVec width) × Nat :=
+  (boolResult dest .less (adjustVar src) (.imm (BitVec.ofNat width (4 * i))), l)
+
+/-- Compare two tagged Boolean values for equality. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_BoolTest_def"
+  (words_as_type_indexed_bitvec)]
+def assignBoolTest {width : Nat} [NeZero width] (l dest : Nat) (_test : Flapjack.AstHOL.Test)
+    (left right : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  (boolResult dest .equal (adjustVar left) (.reg (adjustVar right)), l)
 
 /-- Set the globals pointer and its derived real address. -/
 @[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_SetGlobalsPtr_def"
@@ -476,14 +500,8 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
       | _ => some (.skip, l)
   | l, .assign dest (.blockOp .boolNot) args _ =>
       some (arg1 args (assignBoolNot l dest) (.skip, l))
-  | l, .assign dest (.blockOp .lengthBlock) args _ =>
-      match args with
-      | [src] =>
-          let header := WordLangExpHOL.load (realAddr conf (adjustVar src))
-          let length := shiftN .lsl (shiftN .lsr header (width - conf.lenSize)) 2
-          some (.ite .test (adjustVar src) (.imm 1) (.assign (adjustVar dest) (.const 0))
-            (.assign (adjustVar dest) length), l)
-      | _ => some (.skip, l)
+  | l, .assign dest (.blockOp .lengthBlock) args names =>
+      some (arg1 args (assignLengthBlock conf secn l dest names) (.skip, l))
   | l, .assign dest (.blockOp (.lenEq len)) args _ =>
       match args with
       | [src] =>
@@ -537,10 +555,8 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
               boolResult dest .equal 1 (.imm (BitVec.ofNat width (16 * tag + 2)))], l)
           else some (.assign (adjustVar dest) (.const 2), l)
       | _ => some (.skip, l)
-  | l, .assign dest (.blockOp (.boolTest _)) args _ =>
-      match args with
-      | [x, y] => some (boolResult dest .equal (adjustVar x) (.reg (adjustVar y)), l)
-      | _ => some (.skip, l)
+  | l, .assign dest (.blockOp (.boolTest test)) args _ =>
+      some (arg2 args (assignBoolTest l dest test) (.skip, l))
   | l, .assign dest (.blockOp .equal) args names =>
       match args with
       | [x, y] =>
@@ -576,9 +592,7 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
               some (code, l)
       | _ => some (.skip, l)
   | l, .assign dest (.intOp (.lessConstSmall i)) args _ =>
-      match args with
-      | [src] => some (boolResult dest .less (adjustVar src) (.imm (BitVec.ofNat width (4 * i))), l)
-      | _ => some (.skip, l)
+      some (arg1 args (assignLessConstSmall l dest i) (.skip, l))
   | l, .assign dest (.intOp .less) args names =>
       match args with
       | [x, y] =>

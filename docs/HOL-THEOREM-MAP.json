@@ -125572,6 +125572,33 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "assign_LengthBlock_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "assignLengthBlock",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared assign_length_block_def_typed: configuration, section, label, destination, optional names and source are retained; the tagged-immediate test returns zero and the other branch is the reviewed assignLength program, definitionally the original header load and shifts. The label is unchanged. Positive-width BitVec represents HOL words; the production dispatch uses this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "assign_LessConstSmall_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "assignLessConstSmall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared assign_less_const_small_def_typed: label, destination, numeric constant and source stay in order. The adjusted source is compared with n2w (4 * i), with the original true and false result constants and unchanged label. Positive-width BitVec represents HOL words; the production dispatch uses this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "assign_BoolTest_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "assignBoolTest",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared assign_bool_test_def_typed: label, destination, ast test and both inputs remain in order, including the unused test binder; the adjusted inputs are compared for equality with the original true and false result constants and label. Positive-width BitVec represents HOL words; the production dispatch uses this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
     "hol_name": "assign_BoolNot_def",
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
     "lean_name": "assignBoolNot",

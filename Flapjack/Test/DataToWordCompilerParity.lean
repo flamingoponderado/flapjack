@@ -113,6 +113,23 @@ example : compileControl? (width := 32) conf 4 9 (.assign 3 (.memOp .lengthByte)
 example : compileControl? (width := 64) conf 4 9 (.assign 3 (.memOp .lengthByte) [] none) =
     some (.skip, 9) := by rfl
 
+example : compileControl? (width := 64) conf 4 9 (.assign 3 (.blockOp .lengthBlock) [1] none) =
+    some (.ite .test 4 (.imm 1) (.assign 8 (.const 0))
+      (.assign 8 (.shift .lsl (.shift .lsr (.load
+        (.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)])) (.const 48)) (.const 2))), 9) := by rfl
+
+example : compileControl? (width := 64) conf 4 9 (.assign 3 (.blockOp .lengthBlock) [] none) =
+    some (.skip, 9) := by rfl
+
+example : compileControl? (width := 64) conf 4 9 (.assign 3 (.intOp (.lessConstSmall 25)) [1, 2] none) =
+    some (.skip, 9) := by rfl
+
+example : compileControl? (width := 64) conf 4 9 (.assign 3 (.blockOp (.boolTest (.compare .lt))) [1, 2] none) =
+    some (.ite .equal 4 (.reg 6) (.assign 8 (.const 18)) (.assign 8 (.const 2)), 9) := by rfl
+
+example : compileControl? (width := 64) conf 4 9 (.assign 3 (.blockOp (.boolTest .equal)) [1] none) =
+    some (.skip, 9) := by rfl
+
 example : compileControl? (width := 64) conf 5 2 (.ifThenElse 1 (.move 3 1) (.seq .tick (.return [1, 3]))) =
     some (.ite .equal 4 (.imm 18) (.move 0 [(8, 4)]) (.seq .tick (.return 0 [4, 8])), 2) := by rfl
 

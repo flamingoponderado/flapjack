@@ -131,6 +131,18 @@ val _ = print_eval "assign_finalise_cons_bad_arity_64" ``(assign ^conf 4 9 3 (cl
 val _ = print_eval "assign_length_64" ``(assign ^conf 4 9 3 (closLang$MemOp Length) [1] NONE : 64 wordLang$prog # num)``;
 val _ = print_eval "assign_length_byte_32" ``(assign ^conf 4 9 3 (closLang$MemOp LengthByte) [1] NONE : 32 wordLang$prog # num)``;
 val _ = print_eval "assign_length_byte_bad_arity_64" ``(assign ^conf 4 9 3 (closLang$MemOp LengthByte) [] NONE : 64 wordLang$prog # num)``;
+val _ = (print "assign_length_block_def_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl data_to_wordTheory.assign_LengthBlock_def); print "\n");
+val _ = (print "assign_less_const_small_def_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl data_to_wordTheory.assign_LessConstSmall_def); print "\n");
+val _ = (print "assign_bool_test_def_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl data_to_wordTheory.assign_BoolTest_def); print "\n");
+val _ = print_eval "assign_length_block_64" ``(assign ^conf 4 9 3 (closLang$BlockOp LengthBlock) [1] NONE : 64 wordLang$prog # num)``;
+val _ = print_eval "assign_length_block_bad_arity_64" ``(assign ^conf 4 9 3 (closLang$BlockOp LengthBlock) [] NONE : 64 wordLang$prog # num)``;
+val _ = print_eval "assign_less_const_small_64" ``(assign ^conf 4 9 3 (closLang$IntOp (LessConstSmall 25)) [1] NONE : 64 wordLang$prog # num)``;
+val _ = print_eval "assign_less_const_small_bad_arity_64" ``(assign ^conf 4 9 3 (closLang$IntOp (LessConstSmall 25)) [1;2] NONE : 64 wordLang$prog # num)``;
+val _ = print_eval "assign_bool_test_compare_64" ``(assign ^conf 4 9 3 (closLang$BlockOp (BoolTest (ast$Compare ast$Lt))) [1;2] NONE : 64 wordLang$prog # num)``;
+val _ = print_eval "assign_bool_test_bad_arity_64" ``(assign ^conf 4 9 3 (closLang$BlockOp (BoolTest ast$Equal)) [1] NONE : 64 wordLang$prog # num)``;
 val _ = print_eval "store_each_64" ``(StoreEach 2 [4;6] 8w : 64 wordLang$prog)``;
 val _ = print_eval "mem_eq_list_64" ``(MemEqList 8w [3w;7w] : 64 wordLang$prog)``;
 val _ = print_eval "silent_ffi_off_64" ``(SilentFFI ^conf 3 (LN,LN) : 64 wordLang$prog)``;
