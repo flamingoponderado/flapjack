@@ -130451,5 +130451,21 @@
   "lean_name": "pmatchListPairwise",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared pmatch_list_pairwise_typed in flat_do_app_preservation_probe.out: the pattern and value lists, state and environments have the source order; LIST_REL is List.Forall₂ and each pair matches successfully for every incoming environment."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "pmatch_list_snoc_nil",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/PatternList.lean",
+  "lean_name": "pmatchListSnocNil",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared pmatch_list_snoc_nil_typed in flat_do_app_preservation_probe.out: the source parameter order, both nonempty-list orientations and type-error results agree; SNOC is append of a singleton."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "pmatch_list_append",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/PatternList.lean",
+  "lean_name": "pmatchListAppend",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared pmatch_list_append_typed in flat_do_app_preservation_probe.out: lists, state and bindings retain source order; the length premise and all match, non-match and type-error cases preserve the original environments and outcomes."
 }
 ]

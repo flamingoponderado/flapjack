@@ -1,6 +1,6 @@
 import Flapjack.SemanticPrimitivesProps.Literals
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.PatternRowsSame
-import Flapjack.Compiler.Backend.FlatProps.PatternOutcome
+import Flapjack.Compiler.Backend.FlatProps.PatternList
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.BranchEvaluation
 import Mathlib.Data.List.Forall2
 
@@ -31,51 +31,6 @@ an earlier pattern did not match. -/
 def combineMatchDecisions : Option Bool → Option Bool → Option Bool
   | some first, some second => some (first && second)
   | _, _ => none
-
-/-- Matching appended pattern and value lists combines their decisions while
-preserving a type error from either part. -/
-theorem pmatchList_append_decision {C F : Type} (state : FlatSem.State C F)
-    (left right : List FlatLang.Pat) (leftValues rightValues : List FlatSem.Value)
-    (bindings : List (VarN × FlatSem.Value)) (lengths : left.length = leftValues.length) :
-    matchDecision (FlatSem.pmatchList state (left ++ right) (leftValues ++ rightValues) bindings) =
-      combineMatchDecisions (matchDecision (FlatSem.pmatchList state left leftValues bindings))
-        (matchDecision (FlatSem.pmatchList state right rightValues bindings)) := by
-  induction left generalizing leftValues bindings with
-  | nil =>
-    cases leftValues with
-    | nil =>
-      cases h : FlatSem.pmatchList state right rightValues bindings <;>
-        simp [FlatSem.pmatchList, matchDecision, combineMatchDecisions, h]
-    | cons _ _ => simp at lengths
-  | cons pattern left ih =>
-    cases leftValues with
-    | nil => simp at lengths
-    | cons value leftValues =>
-      have tailLengths : left.length = leftValues.length := by simpa using lengths
-      cases head : FlatSem.pmatch state pattern value bindings with
-      | typeError => simp [FlatSem.pmatchList, head, matchDecision, combineMatchDecisions]
-      | «match» next =>
-        have recurse := ih leftValues next tailLengths
-        have independent :
-          matchDecision (FlatSem.pmatchList state right rightValues next) =
-            matchDecision (FlatSem.pmatchList state right rightValues bindings) := by
-          cases original : FlatSem.pmatchList state right rightValues next with
-          | noMatch =>
-            have other := FlatProps.pmatchAnyNoMatch.2 state right rightValues next original bindings
-            simp [other, matchDecision]
-          | typeError =>
-            have other := FlatProps.pmatchAnyError.2 state right rightValues next original bindings
-            simp [other, matchDecision]
-          | «match» result =>
-            obtain ⟨result', other⟩ := FlatProps.pmatchAnyMatch.2 state right rightValues next result original bindings
-            simp [other, matchDecision]
-        simpa [FlatSem.pmatchList, head, independent] using recurse
-      | noMatch =>
-        have recurse := ih leftValues bindings tailLengths
-        cases firstResult : FlatSem.pmatchList state left leftValues bindings <;>
-          cases full : FlatSem.pmatchList state (left ++ right) (leftValues ++ rightValues) bindings <;>
-          cases last : FlatSem.pmatchList state right rightValues bindings <;>
-          simp_all [FlatSem.pmatchList, matchDecision, combineMatchDecisions]
 
 /-- A work-list guard returns the same Boolean as the pattern matcher when
 all input expressions evaluate purely and matching does not raise a type error. -/
@@ -233,34 +188,9 @@ theorem pmatchList_con_expanded_decision {C F : Type} (state : FlatSem.State C F
   have head : FlatSem.pmatch state (.pcon stamp patterns) (.conv actual fields) bindings =
       FlatSem.pmatchList state patterns fields bindings := by
     simp only [FlatSem.pmatch, if_neg notBad, if_pos same]
-  have combined := pmatchList_append_decision state patterns rest fields values bindings same.2
-  cases first : FlatSem.pmatchList state patterns fields bindings with
-  | typeError =>
-    simp [first, matchDecision, combineMatchDecisions] at combined
-    simpa [FlatSem.pmatchList, head, first, matchDecision] using combined.symm
-  | noMatch =>
-    cases tail : FlatSem.pmatchList state rest values bindings <;>
-      simp_all [FlatSem.pmatchList, matchDecision, combineMatchDecisions]
-  | «match» next =>
-    have independent :
-        matchDecision (FlatSem.pmatchList state rest values next) =
-          matchDecision (FlatSem.pmatchList state rest values bindings) := by
-      cases original : FlatSem.pmatchList state rest values next with
-      | noMatch =>
-        have other := FlatProps.pmatchAnyNoMatch.2 state rest values next original bindings
-        simp [other, matchDecision]
-      | typeError =>
-        have other := FlatProps.pmatchAnyError.2 state rest values next original bindings
-        simp [other, matchDecision]
-      | «match» result =>
-        obtain ⟨result', other⟩ := FlatProps.pmatchAnyMatch.2 state rest values next result original bindings
-        simp [other, matchDecision]
-    have comb : matchDecision (FlatSem.pmatchList state (patterns ++ rest) (fields ++ values) bindings) =
-        matchDecision (FlatSem.pmatchList state rest values bindings) := by
-      cases tail : FlatSem.pmatchList state rest values bindings <;>
-        simpa [first, tail, matchDecision, combineMatchDecisions] using combined
-    simp only [FlatSem.pmatchList, head, first]
-    exact independent.trans comb.symm
+  rw [FlatProps.pmatchListAppend patterns fields rest values state bindings same.2]
+  simp only [FlatSem.pmatchList, head]
+  cases FlatSem.pmatchList state patterns fields bindings <;> rfl
 
 /-- An incompatible constructor tag or arity gives a non-match unless the
 remaining patterns raise a type error. -/

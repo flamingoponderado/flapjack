@@ -88,7 +88,7 @@ import Flapjack.Compiler.Backend.FlatProps.SimpleEquality
 import Flapjack.Compiler.Backend.FlatProps.SimpleConversions
 import Flapjack.Compiler.Backend.FlatProps.PatternMatch
 import Flapjack.Compiler.Backend.FlatProps.PatternAppend
-import Flapjack.Compiler.Backend.FlatProps.PatternOutcome
+import Flapjack.Compiler.Backend.FlatProps.PatternList
 import Flapjack.Compiler.Backend.FlatProps.NoMat
 import Flapjack.Compiler.Backend.FlatProps.InstallConfig
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelation
