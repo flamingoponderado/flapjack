@@ -255,6 +255,38 @@ def arg1 {α β : Type} (args : List α) (f : α → β) (fallback : β) : β :=
   | [arg] => f arg
   | _ => fallback
 
+/-- Apply a binary assignment when its argument list has exactly two elements. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "arg2_def"]
+def arg2 {α β : Type} (args : List α) (f : α → α → β) (fallback : β) : β :=
+  match args with
+  | [first, second] => f first second
+  | _ => fallback
+
+/-- Construct the word offset of a block element. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "real_offset_def"
+  (words_as_type_indexed_bitvec)]
+def realOffset {width : Nat} [NeZero width] (_conf : Config) (r : Nat) :
+    WordLangExpHOL (BitVec width) :=
+  .op .add [.const wordSemBytesInWord,
+    if width = 32 then .var r else shiftN .lsl (.var r) 1]
+
+/-- Load a block element at a dynamic index. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_El_def"
+  (words_as_type_indexed_bitvec)]
+def assignEl {width : Nat} [NeZero width] (conf : Config) (l dest base index : Nat) :
+    WordLangProgHOL (BitVec width) × Nat :=
+  (.assign (adjustVar dest) (.load (.op .add [realAddr conf (adjustVar base),
+    realOffset conf (adjustVar index)])), l)
+
+/-- Load a block element at a constant index. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_ElemAt_def"
+  (words_as_type_indexed_bitvec)]
+def assignElemAt {width : Nat} [NeZero width] (conf : Config) (n l dest src : Nat) :
+    WordLangProgHOL (BitVec width) × Nat :=
+  let bytes := (wordSemBytesInWord : BitVec width)
+  (.assign (adjustVar dest) (.load (.op .add [realAddr conf (adjustVar src),
+    .const (bytes + bytes * BitVec.ofNat width n)])), l)
+
 /-- Set the globals pointer and its derived real address. -/
 @[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_SetGlobalsPtr_def"
   (words_as_type_indexed_bitvec)]
@@ -749,13 +781,7 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
                     (some memCopyLocation) [15, 11, 13, 3] none))], l + 1)
       | _ => some (.skip, l)
   | l, .assign dest (.blockOp (.elemAt n)) args _ =>
-      match args with
-      | [src] =>
-          let bytes := (wordSemBytesInWord : BitVec width)
-          let offset := bytes + bytes * BitVec.ofNat width n
-          some (.assign (adjustVar dest)
-            (.load (.op .add [realAddr conf (adjustVar src), .const offset])), l)
-      | _ => some (.skip, l)
+      some (arg1 args (assignElemAt conf n l dest) (.skip, l))
   | l, .assign dest (.ffi ffiName) args names =>
       match args with
       | [x, y] =>
@@ -829,14 +855,7 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
             (some refByteLocation) [adjustVar x, adjustVar y, 1] none)), l + 1)
       | _ => some (.skip, l)
   | l, .assign dest (.memOp .el) args _ =>
-      match args with
-      | [base, index] =>
-          let index := adjustVar index
-          let scaled := if width = 32 then WordLangExpHOL.var index
-            else .shift .lsl (.var index) (.const 1)
-          let offset := WordLangExpHOL.op .add [.const ((wordSemBytesInWord : BitVec width)), scaled]
-          some (.assign (adjustVar dest) (.load (.op .add [realAddr conf (adjustVar base), offset])), l)
-      | _ => some (.skip, l)
+      some (arg2 args (assignEl conf l dest) (.skip, l))
   | l, .assign dest (.memOp .length) args _ =>
       match args with
       | [src] =>

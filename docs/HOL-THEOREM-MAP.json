@@ -125572,6 +125572,41 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "arg2_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "arg2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared arg2_def_typed: the list-element and result types remain independent; exactly two elements are passed to the function in order and all other lists return the fallback. The executed element-load dispatch uses this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "real_offset_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "realOffset",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared real_offset_def_typed: retains the unused config and register inputs, adds the reviewed bytes_in_word constant to Var r at width 32, and otherwise to ShiftN Lsl (Var r) 1. Positive-width BitVec represents the HOL word dimension. The production element load calls this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "assign_El_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "assignEl",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared assign_el_def_typed: config, label, destination, base and index arguments agree; the adjusted base and index feed real_addr and real_offset respectively, followed by the same Add, Load and adjusted destination, returning the unchanged label. Positive-width BitVec represents HOL words. The compiler dispatch calls this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "assign_ElemAt_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "assignElemAt",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared assign_elem_at_def_typed: the offset is bytes_in_word + bytes_in_word * n2w n, with the same adjusted source, real_addr, destination, load and unchanged label. Positive-width BitVec represents HOL words. The compiler dispatch calls this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
     "hol_name": "arg1_def",
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
     "lean_name": "arg1",

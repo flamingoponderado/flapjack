@@ -46,6 +46,15 @@ assign_set_global_64=(Seq (Store (Op Add [Lookup GlobReal; Const 24w]) 14) (Assi
 assign_set_global_bad_arity_64=(Skip,9)
 assign_set_globals_ptr_64=(Seq (Set Globals (Var 14)) (Seq (Set GlobReal (Op Add [Lookup CurrHeap; ShiftN Lsr (Var 14) 5])) (Assign 8 FALSE_CONST)),9)
 assign_set_globals_ptr_bad_arity_64=(Skip,9)
+arg2_def_typed=∀(vs :β list) (f :β -> β -> α) (x :α). arg2 vs f x = case vs of ([] :β list) => x | [v1] => x | [v1; v2] => f v1 v2 | v1::v2::v12::v13 => x
+real_offset_def_typed=∀(conf :config) (r :num). (real_offset conf r :α exp) = (Op Add [(Const (bytes_in_word :α word) :α exp); if dimindex (:α) = (32 :num) then (Var r :α exp) else ShiftN Lsl (Var r :α exp) (1 :num)] :α exp)
+assign_el_def_typed=∀(c :config) (l :num) (dest :num) (v1 :num) (v2 :num). (assign_El c l dest v1 v2 :α prog # num) = ((Assign (adjust_var dest) (Load (Op Add [(real_addr c (adjust_var v1) :α exp); (real_offset c (adjust_var v2) :α exp)] :α exp) :α exp) :α prog),l)
+assign_elem_at_def_typed=∀(c :config) (n :num) (l :num) (dest :num) (v1 :num). (assign_ElemAt c n l dest v1 :α prog # num) = ((Assign (adjust_var dest) (Load (Op Add [(real_addr c (adjust_var v1) :α exp); (Const ((bytes_in_word :α word) + (bytes_in_word :α word) * (n2w n :α word)) :α exp)] :α exp) :α exp) :α prog),l)
+assign_el_32=(Assign 8 (Load (Op Add [Op Add [Lookup CurrHeap; ShiftN Lsr (Var 4) 6]; Op Add [Const 4w; Var 6]])),9)
+assign_el_64=(Assign 8 (Load (Op Add [Op Add [Lookup CurrHeap; ShiftN Lsr (Var 4) 5]; Op Add [Const 8w; ShiftN Lsl (Var 6) 1]])),9)
+assign_el_bad_arity_64=(Skip,9)
+assign_elem_at_64=(Assign 8 (Load (Op Add [Op Add [Lookup CurrHeap; ShiftN Lsr (Var 4) 5]; Const 24w])),9)
+assign_elem_at_bad_arity_64=(Skip,9)
 store_each_64=Seq (Store (Op Add [Var 2; Const 8w]) 4) (Seq (Store (Op Add [Var 2; Const 16w]) 6) Skip)
 mem_eq_list_64=Seq (Assign 5 (Load (Op Add [Var 3; Const 8w]))) (If Equal 5 (Imm 3w) (Seq (Assign 5 (Load (Op Add [Var 3; Const 16w]))) (If Equal 5 (Imm 7w) (Assign 1 TRUE_CONST) Skip)) Skip)
 silent_ffi_off_64=Skip

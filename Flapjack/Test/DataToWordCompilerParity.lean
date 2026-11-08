@@ -36,6 +36,21 @@ example : compileControl? (width := 64) conf 4 9 (.assign 3 (.globOp .setGlobals
 example : compileControl? (width := 64) conf 4 9 (.assign 3 (.globOp .setGlobalsPtr) [] none) =
     some (.skip, 9) := by rfl
 
+example : compileControl? (width := 32) conf 4 9 (.assign 3 (.memOp .el) [1, 2] none) =
+    some (.assign 8 (.load (.op .add [
+      .op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 6)],
+      .op .add [.const 4, .var 6]])), 9) := by rfl
+
+example : compileControl? (width := 64) conf 4 9 (.assign 3 (.memOp .el) [1] none) =
+    some (.skip, 9) := by rfl
+
+example : compileControl? (width := 64) conf 4 9 (.assign 3 (.blockOp (.elemAt 2)) [1] none) =
+    some (.assign 8 (.load (.op .add [
+      .op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)], .const 24])), 9) := by rfl
+
+example : compileControl? (width := 64) conf 4 9 (.assign 3 (.blockOp (.elemAt 2)) [] none) =
+    some (.skip, 9) := by rfl
+
 example : compileControl? (width := 64) conf 5 2 (.ifThenElse 1 (.move 3 1) (.seq .tick (.return [1, 3]))) =
     some (.ite .equal 4 (.imm 18) (.move 0 [(8, 4)]) (.seq .tick (.return 0 [4, 8])), 2) := by rfl
 
