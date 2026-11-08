@@ -1348,7 +1348,7 @@ def panSemEvaluateExactState
 
 /-! Exact source `Return` Error paths: an expression that fails to evaluate and
     a payload that exceeds the 32-word limit both yield `SOME Error` with the
-    full unchanged state (HOL `panSemScript.sml:633-640`). -/
+    full unchanged state (HOL `panSemScript.sml:638-644`). -/
 theorem panSemEvaluateExactState_return_error_of_eval_none
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
@@ -1394,7 +1394,7 @@ theorem panSemEvaluateExactState_return_error_of_oversized
 
 /-! Exact source `Raise` Error paths: an expression that fails to evaluate and
     a payload that fails the exception-shape or size check both yield
-    `SOME Error` with the full unchanged state (HOL `panSemScript.sml:641-650`). -/
+    `SOME Error` with the full unchanged state (HOL `panSemScript.sml:645-652`). -/
 theorem panSemEvaluateExactState_raise_error_of_eval_none
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
