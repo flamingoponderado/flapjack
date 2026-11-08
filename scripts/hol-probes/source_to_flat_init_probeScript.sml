@@ -132,6 +132,30 @@ val drestrict_lem_replay = Q.prove (
   rw [FLOOKUP_EXT, FUN_EQ_THM, FLOOKUP_FUNION] >>
   every_case_tac >> fs [FLOOKUP_DRESTRICT, SUBMAP_DEF, AllCaseEqs(), FLOOKUP_DEF]);
 val _ = show_thm "drestrict_lem_replay=" drestrict_lem_replay;
+val v_rel_weakening2_typed = ``
+  (!genv v v'. source_to_flatProof$v_rel genv v v' ==>
+    !gc. genv.c SUBMAP genv'.c /\ genv.tys SUBMAP genv'.tys /\ genv.v = genv'.v ==>
+      source_to_flatProof$v_rel genv' v v') /\
+  (!genv env env'. source_to_flatProof$env_rel genv env env' ==>
+    !gc. genv.c SUBMAP genv'.c /\ genv.tys SUBMAP genv'.tys /\ genv.v = genv'.v ==>
+      source_to_flatProof$env_rel genv' env env') /\
+  (!genv comp_map shadowers env. source_to_flatProof$global_env_inv genv comp_map shadowers env ==>
+    !gc. genv.c SUBMAP genv'.c /\ genv.tys SUBMAP genv'.tys /\ genv.v = genv'.v ==>
+      source_to_flatProof$global_env_inv genv' comp_map shadowers env)``;
+val _ = (print "v_rel_weakening2_typed="; print_term v_rel_weakening2_typed; print "\n");
+val v_rel_weakening2_replay = let open source_to_flatProofTheory in prove (
+  v_rel_weakening2_typed,
+  ho_match_mp_tac v_rel_ind >>
+  srw_tac[][do_app_rec_v_rel_eqns] >> fs [SUBMAP_FLOOKUP_EQN]
+  >- fs [LIST_REL_EL_EQN]
+  >- fs [LIST_REL_EL_EQN]
+  >- (simp [Once v_rel_cases] >> metis_tac [])
+  >- (simp [Once v_rel_cases] >> metis_tac [])
+  >- (simp [Once v_rel_cases] >>
+      MAP_EVERY qexists_tac [`comp_map`, `new_vars`, `t1`, `t2`] >> simp [])
+  >- fs [LIST_REL_EL_EQN]
+  >- (fs [v_rel_global_eqn] >> rw [] >> res_tac >> fs [] >> metis_tac [])) end;
+val _ = show_thm "v_rel_weakening2_replay=" v_rel_weakening2_replay;
 val do_app_conversion_inl = Q.prove (
   `semanticPrimitives$check_type ty1 v /\ source_to_flatProof$genv_c_ok genv.c /\
     source_to_flatProof$v_rel genv v v_i1 /\

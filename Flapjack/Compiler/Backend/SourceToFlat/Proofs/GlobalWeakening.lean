@@ -334,6 +334,32 @@ theorem globalEnvInv_weak (old : GlobalEnv) (map : Environment) (shadowers : Var
   exact globalEnvInv_growth old new (GlobalGrowth.ofSubglobals old new slots constructors types)
     map shadowers env related
 
+/-- Mutual value, local-environment, and global-environment weakening when
+the value slots agree and the constructor/type maps grow. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "v_rel_weakening2"
+  (fmap_as_finite_support := [c, tys])]
+theorem valueRel_weakening2 {A B C : Type} [Nonempty A] [Nonempty B] [Nonempty C]
+    (new : GlobalEnv) :
+    (∀ old source flat, ValueRel old source flat → ∀ (_unused : A),
+      finiteSubmap old.c new.c ∧ finiteSubmap old.tys new.tys ∧ old.v = new.v →
+        ValueRel new source flat) ∧
+    (∀ old env locals, EnvRel old env locals → ∀ (_unused : B),
+      finiteSubmap old.c new.c ∧ finiteSubmap old.tys new.tys ∧ old.v = new.v →
+        EnvRel new env locals) ∧
+    (∀ old map shadowers env, GlobalEnvInv old map shadowers env → ∀ (_unused : C),
+      finiteSubmap old.c new.c ∧ finiteSubmap old.tys new.tys ∧ old.v = new.v →
+        GlobalEnvInv new map shadowers env) := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro old source flat related _ ⟨constructors, types, slots⟩
+    exact valueRel_weak old source flat new
+      ⟨related, constructors, types, slots ▸ subglobals_refl old.v⟩
+  · intro old env locals related _ ⟨constructors, types, slots⟩
+    exact envRel_weak old env locals new
+      ⟨related, constructors, types, slots ▸ subglobals_refl old.v⟩
+  · intro old map shadowers env related _ ⟨constructors, types, slots⟩
+    exact globalEnvInv_weak old map shadowers env new
+      ⟨related, constructors, types, slots ▸ subglobals_refl old.v⟩
+
 /-- Canonical finite-map domain restriction, used for HOL's `DRESTRICT`. -/
 noncomputable def finiteRestrict {α β : Type} (map : HolFiniteMapExact α β)
     (keep : Set α) : HolFiniteMapExact α β := by

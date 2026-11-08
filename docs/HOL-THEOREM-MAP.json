@@ -340,6 +340,15 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "v_rel_weakening2",
+  "lean_name": "valueRel_weakening2",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/GlobalWeakening.lean",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["c", "tys"],
+  "reviewer": "Compared the full three-conjunct statement with v_rel_weakening2_replay in source_to_flat_init_probe.out, including the shared free target environment and the three independently polymorphic unused gc binders. The original local HOL proof is replayed; GlobalEnv.c and tys use canonical finite maps."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
   "hol_name": "drestrict_lem",
   "lean_name": "drestrict_lem",
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/GlobalWeakening.lean",
