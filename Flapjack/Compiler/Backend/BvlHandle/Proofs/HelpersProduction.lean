@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.BvlHandle.Helpers
 import Flapjack.Compiler.Backend.BvlHandle.Proofs.HelpersTotal
+import Flapjack.Misc.ListMapM
 import Aesop
 
 /-! Source and production correspondence for handler-pass helpers. -/
@@ -87,23 +88,6 @@ theorem handleAdjVarsList_eq_map (depth shift : Nat) (xs : List Exp) :
   induction xs with
   | nil => simp [handleAdjVarsList]
   | cons x xs ih => simp [handleAdjVarsList, ih]
-
-private theorem mapM_eq_map {α β : Type} (visit : α → Option β) (f : α → β)
-    (correct : ∀ x y, visit x = some y → y = f x) (xs : List α) (ys : List β)
-    (run : xs.mapM visit = some ys) : ys = xs.map f := by
-  induction xs generalizing ys with
-  | nil => simpa using run.symm
-  | cons x rest ih =>
-    simp only [List.mapM_cons] at run
-    cases first : visit x with
-    | none => simp [first] at run
-    | some value =>
-      cases remaining : rest.mapM visit with
-      | none => simp [first, remaining] at run
-      | some values =>
-        simp [first, remaining] at run
-        subst ys
-        simp [correct x value first, ih values remaining]
 
 /-- Every successful bounded variable adjustment agrees with HOL. -/
 theorem adjustVarsFuel_eq (fuel depth shift : Nat) (expression result : Exp)

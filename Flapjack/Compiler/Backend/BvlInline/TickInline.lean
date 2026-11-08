@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.BvlInline.Proofs.TraversalTotal
+import Flapjack.Misc.ListMapM
 import Aesop
 
 /-! Total source-shaped BVL call inlining and executable correspondence. -/
@@ -56,23 +57,6 @@ theorem tickInlineList_eq_map {A : Type} (code : Spt (A × Exp)) (expressions : 
   induction expressions with
   | nil => simp [tickInlineList]
   | cons first rest ih => simp [tickInlineList, ih]
-
-private theorem mapM_eq_map {α β : Type} (visit : α → Option β) (f : α → β)
-    (correct : ∀ x y, visit x = some y → y = f x) (xs : List α) (ys : List β)
-    (run : xs.mapM visit = some ys) : ys = xs.map f := by
-  induction xs generalizing ys with
-  | nil => simpa using run.symm
-  | cons x rest ih =>
-    simp only [List.mapM_cons] at run
-    cases first : visit x with
-    | none => simp [first] at run
-    | some value =>
-      cases remaining : rest.mapM visit with
-      | none => simp [first, remaining] at run
-      | some values =>
-        simp [first, remaining] at run
-        subst ys
-        simp [correct x value first, ih values remaining]
 
 /-- Any successful fuel-bounded run agrees with the total source traversal.
 This executable correspondence has no standalone HOL declaration. -/

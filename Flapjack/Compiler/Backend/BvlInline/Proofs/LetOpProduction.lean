@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.BvlInline.Proofs.LetOp
 import Flapjack.Compiler.Backend.BvlInline.Proofs.TraversalTotal
 import Flapjack.Compiler.Backend.BvlInline.TickInline
+import Flapjack.Misc.ListMapM
 
 /-! Executable correspondence for BVL let-operation optimization. -/
 namespace Flapjack.Compiler.Backend.BvlInline
@@ -33,23 +34,6 @@ theorem letOpList_eq_map (expressions : List Exp) : letOpList expressions = expr
   induction expressions with
   | nil => simp [letOpList]
   | cons head tail ih => simp [letOpList, ih]
-
-private theorem mapM_eq_map {α β : Type} (visit : α → Option β) (f : α → β)
-    (correct : ∀ x y, visit x = some y → y = f x) (xs : List α) (ys : List β)
-    (run : xs.mapM visit = some ys) : ys = xs.map f := by
-  induction xs generalizing ys with
-  | nil => simpa using run.symm
-  | cons x rest ih =>
-    simp only [List.mapM_cons] at run
-    cases first : visit x with
-    | none => simp [first] at run
-    | some value =>
-      cases remaining : rest.mapM visit with
-      | none => simp [first, remaining] at run
-      | some values =>
-        simp [first, remaining] at run
-        subst ys
-        simp [correct x value first, ih values remaining]
 
 /-- Every successful fuel-bounded traversal agrees with the original total
 traversal. This correspondence has no standalone HOL declaration. -/

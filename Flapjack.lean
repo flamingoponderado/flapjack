@@ -233,6 +233,7 @@ import Flapjack.Misc.RichList
 import Flapjack.Misc.Bag
 import Flapjack.Misc.Fun2SetUnion
 import Flapjack.Misc.UpdateList
+import Flapjack.Misc.ListMapM
 import Flapjack.Misc.DivModLemmas
 import Flapjack.Misc.DisjointInter
 import Flapjack.Misc.WordLsImp
