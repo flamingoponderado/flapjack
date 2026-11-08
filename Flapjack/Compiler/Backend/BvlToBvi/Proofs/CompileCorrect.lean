@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileInstall
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileIfCase
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileHandle
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileCall
+import Flapjack.Misc.ClockWeightInduction
 
 /-! Induction assembling BVL-to-BVI expression simulation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs
@@ -21,130 +22,118 @@ function and thunk bodies, and expression weight for structural cases.
 Untagged pending BVI evaluator and dispatcher correspondence review. -/
 theorem simulation_all {C F : Type} (xs : List Bvl.Exp) (env : List Value)
     (source : BvlSem.State (Nat × C) F) : simulation xs env source := by
-  have allRanks : ∀ clock weight : Nat, ∀ (expressions : List Bvl.Exp)
-      (environment : List Value) (state : BvlSem.State (Nat × C) F),
-      state.clock = clock → expsWeight expressions = weight → simulation expressions environment state := by
-    intro clock
-    induction clock using Nat.strongRecOn with
-    | ind clock clockIH =>
-      intro weight
-      induction weight using Nat.strongRecOn with
-      | ind weight weightIH =>
-        have exprIH : ∀ (expressions : List Bvl.Exp) (environment : List Value)
-            (state : BvlSem.State (Nat × C) F), state.clock ≤ clock → expsWeight expressions < weight →
-            simulation expressions environment state := by
-          intro expressions environment state clockLe weightLt
-          rcases Nat.lt_or_eq_of_le clockLe with clockLt | clockEq
-          · exact clockIH state.clock clockLt (expsWeight expressions) expressions environment state rfl rfl
-          · exact weightIH (expsWeight expressions) weightLt expressions environment state clockEq rfl
-        have smaller : ∀ (expressions : List Bvl.Exp) (environment : List Value)
-            (state : BvlSem.State (Nat × C) F), state.clock < clock → simulation expressions environment state := by
-          intro expressions environment state clockLt
-          exact clockIH state.clock clockLt (expsWeight expressions) expressions environment state rfl rfl
-        intro expressions environment state stateClock measure
-        cases expressions with
-        | nil => exact simulation_nil environment state
+  refine clockWeightInduction (α := List Bvl.Exp) (σ := BvlSem.State (Nat × C) F) (·.clock)
+    expsWeight
+    (motive := fun expressions state => ∀ environment, simulation expressions environment state) ?_
+    xs source env
+  intro expressions state exprIH₀ smaller₀
+  have exprIH := fun (es : List Bvl.Exp) (environment' : List Value)
+      (s : BvlSem.State (Nat × C) F) h1 h2 => exprIH₀ es s h1 h2 environment'
+  have smaller := fun (es : List Bvl.Exp) (environment' : List Value)
+      (s : BvlSem.State (Nat × C) F) h => smaller₀ es s h environment'
+  intro environment
+  cases expressions with
+  | nil => exact simulation_nil environment state
+  | cons first rest =>
+    cases rest with
+    | cons second tail =>
+      apply simulation_cons first second tail environment state
+      · apply exprIH [first] environment state (by omega)
+        simp only [expsWeight] at ⊢
+        have positive := BvlSem.expWeight_pos second
+        omega
+      · intro mid midClock
+        apply exprIH (second :: tail) environment mid (by omega)
+        simp only [expsWeight] at ⊢
+        omega
+    | nil =>
+      cases first with
+      | var index => exact simulation_var index environment state
+      | raise body =>
+        apply simulation_raise body environment state
+        apply exprIH [body] environment state (by omega)
+        simp only [expsWeight, expWeight] at ⊢
+        omega
+      | tick body =>
+        apply simulation_tick body environment state
+        apply exprIH [body] environment (BvlSem.decClock 1 state)
+        · simp [BvlSem.decClock]
+        · simp only [expsWeight, expWeight] at ⊢
+          omega
+      | op op args =>
+        apply simulation_op op args environment state
+        apply exprIH args environment state (by omega)
+        simp only [expsWeight, expWeight] at ⊢
+        omega
+      | call ticks dest args =>
+        apply simulation_call ticks dest args environment state
+        · apply exprIH args environment state (by omega)
+          simp only [expsWeight, expWeight] at ⊢
+          omega
+        · intro body values mid clockLt
+          exact smaller [body] values mid (by omega)
+      | force loc index =>
+        apply simulation_force loc index environment state
+        intro body values mid clockLt
+        exact smaller [body] values mid (by omega)
+      | ifThenElse condition yes no =>
+        apply simulation_if condition yes no environment state
+        · apply exprIH [condition] environment state (by omega)
+          simp only [expsWeight, expWeight] at ⊢
+          omega
+        · intro mid midClock
+          apply exprIH [yes] environment mid (by omega)
+          simp only [expsWeight, expWeight] at ⊢
+          omega
+        · intro mid midClock
+          apply exprIH [no] environment mid (by omega)
+          simp only [expsWeight, expWeight] at ⊢
+          omega
+      | «let» bindings body =>
+        cases bindings with
         | cons first rest =>
-          cases rest with
-          | cons second tail =>
-            apply simulation_cons first second tail environment state
-            · apply exprIH [first] environment state (by omega)
-              simp only [expsWeight] at measure ⊢
-              have positive := BvlSem.expWeight_pos second
+          apply simulation_let_cons first rest body environment state
+          · apply exprIH (first :: rest) environment state (by omega)
+            simp only [expsWeight, expWeight] at ⊢
+            omega
+          · intro mid values midClock
+            apply exprIH [body] (values ++ environment) mid (by omega)
+            simp only [expsWeight, expWeight] at ⊢
+            omega
+        | nil =>
+          cases body with
+          | «let» innerBindings innerBody =>
+            apply simulation_let_empty innerBindings innerBody environment state
+            · apply exprIH innerBindings environment state (by omega)
+              simp only [expsWeight, expWeight] at ⊢
               omega
-            · intro mid midClock
-              apply exprIH (second :: tail) environment mid (by omega)
-              simp only [expsWeight] at measure ⊢
+            · intro values
+              apply exprIH [innerBody] values state (by omega)
+              simp only [expsWeight, expWeight] at ⊢
               omega
-          | nil =>
-            cases first with
-            | var index => exact simulation_var index environment state
-            | raise body =>
-              apply simulation_raise body environment state
-              apply exprIH [body] environment state (by omega)
-              simp only [expsWeight, expWeight] at measure ⊢
-              omega
-            | tick body =>
-              apply simulation_tick body environment state
-              apply exprIH [body] environment (BvlSem.decClock 1 state)
-              · simp [BvlSem.decClock]; omega
-              · simp only [expsWeight, expWeight] at measure ⊢
-                omega
-            | op op args =>
-              apply simulation_op op args environment state
-              apply exprIH args environment state (by omega)
-              simp only [expsWeight, expWeight] at measure ⊢
-              omega
-            | call ticks dest args =>
-              apply simulation_call ticks dest args environment state
-              · apply exprIH args environment state (by omega)
-                simp only [expsWeight, expWeight] at measure ⊢
-                omega
-              · intro body values mid clockLt
-                exact smaller [body] values mid (by omega)
-            | force loc index =>
-              apply simulation_force loc index environment state
-              intro body values mid clockLt
-              exact smaller [body] values mid (by omega)
-            | ifThenElse condition yes no =>
-              apply simulation_if condition yes no environment state
-              · apply exprIH [condition] environment state (by omega)
-                simp only [expsWeight, expWeight] at measure ⊢
-                omega
-              · intro mid midClock
-                apply exprIH [yes] environment mid (by omega)
-                simp only [expsWeight, expWeight] at measure ⊢
-                omega
-              · intro mid midClock
-                apply exprIH [no] environment mid (by omega)
-                simp only [expsWeight, expWeight] at measure ⊢
-                omega
-            | «let» bindings body =>
-              cases bindings with
-              | cons first rest =>
-                apply simulation_let_cons first rest body environment state
-                · apply exprIH (first :: rest) environment state (by omega)
-                  simp only [expsWeight, expWeight] at measure ⊢
-                  omega
-                · intro mid values midClock
-                  apply exprIH [body] (values ++ environment) mid (by omega)
-                  simp only [expsWeight, expWeight] at measure ⊢
-                  omega
-              | nil =>
-                cases body with
-                | «let» innerBindings innerBody =>
-                  apply simulation_let_empty innerBindings innerBody environment state
-                  · apply exprIH innerBindings environment state (by omega)
-                    simp only [expsWeight, expWeight] at measure ⊢
-                    omega
-                  · intro values
-                    apply exprIH [innerBody] values state (by omega)
-                    simp only [expsWeight, expWeight] at measure ⊢
-                    omega
-                | _ =>
-                  all_goals
-                    apply simulation_invalidHandler
-                    simp [BvlHandle.Proofs.handleOk, BvlHandle.Proofs.letOk]
-            | handle body handler =>
-              cases body with
-              | «let» bindings inner =>
-                apply simulation_handle bindings inner handler environment state
-                · apply exprIH bindings environment state (by omega)
-                  simp only [expsWeight, expWeight] at measure ⊢
-                  omega
-                · intro values
-                  apply exprIH [inner] values state (by omega)
-                  simp only [expsWeight, expWeight] at measure ⊢
-                  omega
-                · intro exception mid midClock
-                  apply exprIH [handler] (exception :: environment) mid (by omega)
-                  simp only [expsWeight, expWeight] at measure ⊢
-                  omega
-              | _ =>
-                all_goals
-                  apply simulation_invalidHandler
-                  simp [BvlHandle.Proofs.handleOk]
-  exact allRanks source.clock (expsWeight xs) xs env source rfl rfl
+          | _ =>
+            all_goals
+              apply simulation_invalidHandler
+              simp [BvlHandle.Proofs.handleOk, BvlHandle.Proofs.letOk]
+      | handle body handler =>
+        cases body with
+        | «let» bindings inner =>
+          apply simulation_handle bindings inner handler environment state
+          · apply exprIH bindings environment state (by omega)
+            simp only [expsWeight, expWeight] at ⊢
+            omega
+          · intro values
+            apply exprIH [inner] values state (by omega)
+            simp only [expsWeight, expWeight] at ⊢
+            omega
+          · intro exception mid midClock
+            apply exprIH [handler] (exception :: environment) mid (by omega)
+            simp only [expsWeight, expWeight] at ⊢
+            omega
+        | _ =>
+          all_goals
+            apply simulation_invalidHandler
+            simp [BvlHandle.Proofs.handleOk]
 
 /-- BVL-to-BVI expression compilation simulates source evaluation while
 preserving the state relation and the existing relocation map. This has the
