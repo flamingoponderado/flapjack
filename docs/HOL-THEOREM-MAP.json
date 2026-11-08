@@ -128365,6 +128365,38 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "cut_state_opt_with_const",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/CutFields.lean",
+  "lean_name": "cutStateOpt_withConst",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared cut_state_opt_with_const_typed: free variables x, y, z, k, lsz with one state type; the three option-map commutations for stack, clock and locals-size updates in source order."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "consume_space_with_stack",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/ConsumeSpaceFields.lean",
+  "lean_name": "consumeSpace_withStack",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared consume_space_with_stack_replay_typed (local theorem, typed replay): free variables x, y, z with one state type; consume_space commutes with a stack update via option map."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "consume_space_add_space",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/ConsumeSpaceFields.lean",
+  "lean_name": "consumeSpace_addSpace",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared consume_space_add_space_typed: free variables k, t, env1; one state type; existential safety and peak witnesses; the ordered locals/space/safety/peak update after reserving and consuming the same amount."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "consume_space_with_locals",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/ConsumeSpaceFields.lean",
+  "lean_name": "consumeSpace_withLocals",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared consume_space_with_locals_replay_typed (local theorem, typed replay): free variables x, y, z; v num_map locals rendered as Spt Value; consume_space commutes with a locals update via option map."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
   "hol_name": "evaluate_fl_smx_safe_peak_swap_aux",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/EvaluateResourceSwap.lean",
   "lean_name": "evaluate_flagStackSafePeakSwap",

@@ -90,3 +90,14 @@ val _ = show "evaluate_fl_smx_safe_peak_swap_aux_replay_typed" evalSwap;
 val _ = show "same_stack_size_typed" same_stack_size_def;
 val _ = show "same_stack_size_size_of_stack_typed" same_stack_size_size_of_stack;
 val _ = show "s_peak_heap_typed" s_peak_heap;
+val _ = show "evaluate_stack_and_locals_swap_typed" evaluate_stack_and_locals_swap;
+val _ = show "cut_state_opt_with_const_typed" cut_state_opt_with_const;
+val consumeSpaceStack = prove (``dataSem$consume_space x (y with stack := z) =
+  OPTION_MAP (λs. s with stack := z) (dataSem$consume_space x y)``,
+  simp [dataSemTheory.consume_space_def] \\ every_case_tac \\ simp []);
+val _ = show "consume_space_with_stack_replay_typed" consumeSpaceStack;
+val consumeSpaceLocals = prove (``dataSem$consume_space x (y with locals := z) =
+  OPTION_MAP (λs. s with locals := z) (dataSem$consume_space x y)``,
+  simp [dataSemTheory.consume_space_def] \\ every_case_tac \\ simp []);
+val _ = show "consume_space_with_locals_replay_typed" consumeSpaceLocals;
+val _ = show "consume_space_add_space_typed" consume_space_add_space;
