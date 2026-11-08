@@ -77,6 +77,25 @@ example : compileControl? (width := 64) conf 4 9 (.assign 3 (.memOp .updateByte)
 example : compileControl? (width := 64) conf 4 9 (.assign 3 (.memOp .updateByte) [] none) =
     some (.skip, 9) := by rfl
 
+example : compileControl? (width := 64) conf 4 9
+    (.assign 3 (.thunkOp (.updateThunk .notEvaluated)) [1, 2] none) =
+    some (.seq (.store (.op .add [
+      .op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)], .const 8]) 6)
+      (.assign 8 (.const 2)), 9) := by rfl
+
+example : compileControl? (width := 64) conf 4 9
+    (.assign 3 (.thunkOp (.updateThunk .evaluated)) [1, 2] none) =
+    some (.seq (.assign 1 (.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)]))
+      (.seq (.assign 3 (.const 0x100000000003B)) (.seq (.store (.var 1) 3)
+        (.seq (.store (.op .add [.var 1, .const 8]) 6) (.assign 8 (.const 2))))), 9) := by rfl
+
+example : compileControl? (width := 64) { conf with lenSize := 0 } 4 9
+    (.assign 3 (.thunkOp (.updateThunk .evaluated)) [1, 2] none) =
+    some (.seq (.assign 1 (.const (-1))) (.alloc 1 (adjustSets (.ln : NumSet))), 9) := by rfl
+
+example : compileControl? (width := 64) conf 4 9
+    (.assign 3 (.thunkOp (.updateThunk .evaluated)) [1] none) = some (.skip, 9) := by rfl
+
 example : compileControl? (width := 64) conf 5 2 (.ifThenElse 1 (.move 3 1) (.seq .tick (.return [1, 3]))) =
     some (.ite .equal 4 (.imm 18) (.move 0 [(8, 4)]) (.seq .tick (.return 0 [4, 8])), 2) := by rfl
 

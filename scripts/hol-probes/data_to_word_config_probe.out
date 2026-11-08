@@ -67,6 +67,12 @@ assign_update_cons_64=(Seq (Store (Op Add [Op Add [Lookup CurrHeap; ShiftN Lsr (
 assign_update_bad_arity_64=(Skip,9)
 assign_update_byte_64=(Seq (Assign 1 (Op Add [Op Add [Lookup CurrHeap; ShiftN Lsr (Var 4) 5]; Op Add [Const 8w; ShiftN Lsr (Var 6) 2]])) (Seq (Assign 3 (ShiftN Lsr (Var 8) 2)) (Seq (Inst (Mem Store8 3 (Addr 1 0w))) (Assign 8 FALSE_CONST))),9)
 assign_update_byte_bad_arity_64=(Skip,9)
+unit_exp_def_typed=(Unit :α exp) = FALSE_CONST
+assign_update_thunk_def_typed=∀(ev :thunk_mode) (c :config) (l :num) (dest :num) (v1 :num) (v2 :num). (assign_UpdateThunk ev c l dest v1 v2 :α prog # num) = case ev of Evaluated => (case (encode_header c ((8 :num) + (6 :num)) (1 :num) :α word option) of (NONE :α word option) => ((GiveUp :α prog),l) | SOME header => (list_Seq [(Assign (1 :num) (real_addr c (adjust_var v1) :α exp) :α prog); (Assign (3 :num) (Const header :α exp) :α prog); (Store (Var (1 :num) :α exp) (3 :num) :α prog); (Store (Op Add [(Var (1 :num) :α exp); (Const (bytes_in_word :α word) :α exp)] :α exp) (adjust_var v2) :α prog); (Assign (adjust_var dest) (Unit :α exp) :α prog)],l)) | NotEvaluated => (Seq (Store (Op Add [(real_addr c (adjust_var v1) :α exp); (Const (bytes_in_word :α word) :α exp)] :α exp) (adjust_var v2) :α prog) (Assign (adjust_var dest) (Unit :α exp) :α prog),l)
+assign_update_thunk_pending_64=(Seq (Store (Op Add [Op Add [Lookup CurrHeap; ShiftN Lsr (Var 4) 5]; Const 8w]) 6) (Assign 8 FALSE_CONST),9)
+assign_update_thunk_done_64=(Seq (Assign 1 (Op Add [Lookup CurrHeap; ShiftN Lsr (Var 4) 5])) (Seq (Assign 3 (Const 0x100000000003Bw)) (Seq (Store (Var 1) 3) (Seq (Store (Op Add [Var 1; Const 8w]) 6) (Assign 8 FALSE_CONST)))),9)
+assign_update_thunk_header_failure_64=(Seq (Assign 1 (Const 0xFFFFFFFFFFFFFFFFw)) (Alloc 1 (⦕ 0 ⦖,LN)),9)
+assign_update_thunk_bad_arity_64=(Skip,9)
 store_each_64=Seq (Store (Op Add [Var 2; Const 8w]) 4) (Seq (Store (Op Add [Var 2; Const 16w]) 6) Skip)
 mem_eq_list_64=Seq (Assign 5 (Load (Op Add [Var 3; Const 8w]))) (If Equal 5 (Imm 3w) (Seq (Assign 5 (Load (Op Add [Var 3; Const 16w]))) (If Equal 5 (Imm 7w) (Assign 1 TRUE_CONST) Skip)) Skip)
 silent_ffi_off_64=Skip

@@ -310,13 +310,18 @@ def assignDerefByte {width : Nat} [NeZero width] (conf : Config) (l dest base in
     .inst (.mem .load8 3 (.addr 1 0)),
     .assign (adjustVar dest) (shiftN .lsl (.var 3) 2)], l)
 
+/-- The tagged word representation of the unit value. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "Unit_def"
+  (words_as_type_indexed_bitvec)]
+def unitExp {width : Nat} [NeZero width] : WordLangExpHOL (BitVec width) := .const 2
+
 /-- Store a word-valued block element and return unit. -/
 @[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_Update_def"
   (words_as_type_indexed_bitvec)]
 def assignUpdate {width : Nat} [NeZero width] (conf : Config) (l dest base index value : Nat) :
     WordLangProgHOL (BitVec width) × Nat :=
   (.seq (.store (.op .add [realAddr conf (adjustVar base), realOffset conf (adjustVar index)])
-      (adjustVar value)) (.assign (adjustVar dest) (.const 2)), l)
+      (adjustVar value)) (.assign (adjustVar dest) unitExp), l)
 
 /-- Store the byte represented by a tagged small integer and return unit. -/
 @[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_UpdateByte_def"
@@ -327,7 +332,24 @@ def assignUpdateByte {width : Nat} [NeZero width] (conf : Config) (l dest base i
     .assign 1 (.op .add [realAddr conf (adjustVar base), realByteOffset (adjustVar index)]),
     .assign 3 (shiftN .lsr (.var (adjustVar value)) 2),
     .inst (.mem .store8 3 (.addr 1 0)),
-    .assign (adjustVar dest) (.const 2)], l)
+    .assign (adjustVar dest) unitExp], l)
+
+/-- Update a thunk's stored value, installing its evaluated header when needed. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_UpdateThunk_def"
+  (words_as_type_indexed_bitvec)]
+def assignUpdateThunk {width : Nat} [NeZero width] (mode : Flapjack.AstHOL.ThunkMode)
+    (conf : Config) (l dest base value : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  match mode with
+  | .notEvaluated =>
+      (.seq (.store (.op .add [realAddr conf (adjustVar base), .const wordSemBytesInWord])
+        (adjustVar value)) (.assign (adjustVar dest) unitExp), l)
+  | .evaluated =>
+      match encodeHeader (width := width) conf (8 + 6) 1 with
+      | none => (giveUp, l)
+      | some header => (wordListSeq [
+          .assign 1 (realAddr conf (adjustVar base)), .assign 3 (.const header), .store (.var 1) 3,
+          .store (.op .add [.var 1, .const wordSemBytesInWord]) (adjustVar value),
+          .assign (adjustVar dest) unitExp], l)
 
 /-- Set the globals pointer and its derived real address. -/
 @[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_SetGlobalsPtr_def"
@@ -336,7 +358,7 @@ def assignSetGlobalsPtr {width : Nat} [NeZero width] (conf : Config) (l dest src
     WordLangProgHOL (BitVec width) × Nat :=
   (.seq (.set .globals (.var (adjustVar src)))
     (.seq (.set .globReal (realAddr conf (adjustVar src)))
-      (.assign (adjustVar dest) (.const 2))), l)
+      (.assign (adjustVar dest) unitExp)), l)
 
 /-- Load a global slot from the real globals pointer. -/
 @[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_Global_def"
@@ -353,7 +375,7 @@ def assignSetGlobal {width : Nat} [NeZero width] (_conf : Config) (n l dest src 
     WordLangProgHOL (BitVec width) × Nat :=
   let offset := (wordSemBytesInWord : BitVec width) * BitVec.ofNat width (n + 1)
   (.seq (.store (.op .add [.lookup .globReal, .const offset]) (adjustVar src))
-    (.assign (adjustVar dest) (.const 2)), l)
+    (.assign (adjustVar dest) unitExp), l)
 
 /-- Flapjack's checked traversal. Some non-64-bit operations return `none`;
 this definition has not yet been reviewed as HOL's total `comp`. -/
@@ -1004,21 +1026,7 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
                   .const 1])], l)
       | _ => some (.skip, l)
   | l, .assign dest (.thunkOp (.updateThunk mode)) args _ =>
-      match args with
-      | [base, value] =>
-          let addr := realAddr conf (adjustVar base)
-          let bytes := (wordSemBytesInWord : BitVec width)
-          match mode with
-          | .notEvaluated => some (.seq (.store (.op .add [addr, .const bytes]) (adjustVar value))
-              (.assign (adjustVar dest) (.const 2)), l)
-          | .evaluated =>
-              match encodeHeader (width := width) conf 14 1 with
-              | none => some (giveUp, l)
-              | some header => some (wordListSeq [
-                  .assign 1 addr, .assign 3 (.const header), .store (.var 1) 3,
-                  .store (.op .add [.var 1, .const bytes]) (adjustVar value),
-                  .assign (adjustVar dest) (.const 2)], l)
-      | _ => some (.skip, l)
+      some (arg2 args (assignUpdateThunk mode conf l dest) (.skip, l))
   | l, .assign dest .install args names =>
       match args with
       | [code, data, codeLen, dataLen] =>

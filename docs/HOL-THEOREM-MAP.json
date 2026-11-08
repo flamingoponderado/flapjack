@@ -125572,6 +125572,24 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "Unit_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "unitExp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared Unit_def and unit_exp_def_typed: the polymorphic word-language expression is Const 2w, rendered as the same constant at positive BitVec width. The executed thunk-update helper uses this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "assign_UpdateThunk_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "assignUpdateThunk",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared assign_update_thunk_def_typed: the mode, configuration, label, destination, base and value arguments agree. NotEvaluated stores at the real address plus bytes_in_word and returns unit; Evaluated preserves the original header encoding and failure branch, and its five instructions execute in order with the unchanged label. Positive-width BitVec represents HOL words. The production dispatcher calls this definition via arg2."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
     "hol_name": "arg3_def",
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
     "lean_name": "arg3",

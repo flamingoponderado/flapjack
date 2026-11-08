@@ -108,6 +108,14 @@ val _ = print_eval "assign_update_cons_64" ``(assign ^conf 4 9 3 (closLang$MemOp
 val _ = print_eval "assign_update_bad_arity_64" ``(assign ^conf 4 9 3 (closLang$MemOp Update) [1;2] NONE : 64 wordLang$prog # num)``;
 val _ = print_eval "assign_update_byte_64" ``(assign ^conf 4 9 3 (closLang$MemOp UpdateByte) [1;2;3] NONE : 64 wordLang$prog # num)``;
 val _ = print_eval "assign_update_byte_bad_arity_64" ``(assign ^conf 4 9 3 (closLang$MemOp UpdateByte) [] NONE : 64 wordLang$prog # num)``;
+val _ = (print "unit_exp_def_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl data_to_wordTheory.Unit_def); print "\n");
+val _ = (print "assign_update_thunk_def_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl data_to_wordTheory.assign_UpdateThunk_def); print "\n");
+val _ = print_eval "assign_update_thunk_pending_64" ``(assign ^conf 4 9 3 (closLang$ThunkOp (UpdateThunk NotEvaluated)) [1;2] NONE : 64 wordLang$prog # num)``;
+val _ = print_eval "assign_update_thunk_done_64" ``(assign ^conf 4 9 3 (closLang$ThunkOp (UpdateThunk Evaluated)) [1;2] NONE : 64 wordLang$prog # num)``;
+val _ = print_eval "assign_update_thunk_header_failure_64" ``(assign (^conf with len_size := 0) 4 9 3 (closLang$ThunkOp (UpdateThunk Evaluated)) [1;2] NONE : 64 wordLang$prog # num)``;
+val _ = print_eval "assign_update_thunk_bad_arity_64" ``(assign ^conf 4 9 3 (closLang$ThunkOp (UpdateThunk Evaluated)) [1] NONE : 64 wordLang$prog # num)``;
 val _ = print_eval "store_each_64" ``(StoreEach 2 [4;6] 8w : 64 wordLang$prog)``;
 val _ = print_eval "mem_eq_list_64" ``(MemEqList 8w [3w;7w] : 64 wordLang$prog)``;
 val _ = print_eval "silent_ffi_off_64" ``(SilentFFI ^conf 3 (LN,LN) : 64 wordLang$prog)``;
