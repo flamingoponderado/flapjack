@@ -21,15 +21,6 @@ theorem source_guard (c : Cmp) (r : Nat) (ri : HolRegImm 64) (a : BitVec 64)
   exact ⟨⟨of_decide_eq_true offset.1.1,of_decide_eq_true offset.1.2⟩,
     of_decide_eq_true offset.2,original.2⟩
 
-theorem reg_read (r : Nat) (s : AsmState 64) (ms : riscv_state)
-    (guard : asmRegOkExact r riscvConfig = true)
-    (rel : targetStateRel riscvTarget s ms) :
-    GPR (BitVec.ofNat 5 r) ms = readReg r s := by
-  have g : r < riscvConfig.regCount ∧ riscvConfig.avoidRegs.contains r = false := by
-    simpa [asmRegOkExact] using guard
-  have before := rel.2.2.2.1 r g
-  change ms.c_gpr ms.procID (BitVec.ofNat 5 r) = s.regs r at before
-  simpa [GPR,gpr,reg_nonzero r guard,readReg] using before
 theorem source_post (c : Cmp) (r : Nat) (ri : HolRegImm 64) (a : BitVec 64)
     (s1 s2 : AsmState 64) (h : asmStep riscvConfig s1 (.jumpCmp c r ri a) s2) :
     s2 = if wordCmpHOL c (readReg r s1) (regImm ri s1) then

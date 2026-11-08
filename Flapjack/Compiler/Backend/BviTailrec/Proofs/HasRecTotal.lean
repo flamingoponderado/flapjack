@@ -6,17 +6,6 @@ Flapjack infrastructure, not HOL pass-correctness ports. -/
 namespace Flapjack.Compiler.Backend.BviTailrec
 open Bvi
 
-private theorem member_budget_lt (xs : List Exp) (e : Exp) (h : e ∈ xs) :
-    expBudget e < listBudget xs := by
-  induction xs with
-  | nil => simp at h
-  | cons x xs ih =>
-    simp only [List.mem_cons] at h
-    simp only [listBudget]
-    rcases h with rfl | h
-    · omega
-    · have := ih h; omega
-
 /-- Recursion detection succeeds for every expression under its structural
 fuel bound. -/
 theorem hasRecFuel_succeeds (fuel loc : Nat) (e : Exp) (bound : expBudget e < fuel) :

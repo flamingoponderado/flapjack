@@ -6,17 +6,6 @@ Flapjack infrastructure lemmas, not HOL pass-correctness ports. -/
 namespace Flapjack.Compiler.Backend.BvlInline
 open Bvl BvlToBvi
 
-private theorem member_budget_lt (xs : List Exp) (e : Exp) (h : e ∈ xs) :
-    expBudget e < listBudget xs := by
-  induction xs with
-  | nil => simp at h
-  | cons x xs ih =>
-    simp only [List.mem_cons] at h
-    simp only [listBudget]
-    rcases h with rfl | h
-    · omega
-    · have := ih h; omega
-
 /-- Recursion detection succeeds under a structural traversal bound. -/
 theorem recursiveFuel_succeeds (fuel name : Nat) (e : Exp) (bound : expBudget e < fuel) :
     ∃ result, recursiveFuel fuel name e = some result := by

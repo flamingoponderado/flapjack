@@ -1,21 +1,11 @@
 import Flapjack.Misc.Option.MapM
 import Flapjack.Compiler.Backend.BvlConst
+import Flapjack.Compiler.Backend.ListFoldTotal
 
 /-! Structural sufficiency for BVL constant propagation. These are Flapjack
 infrastructure lemmas, not HOL correctness theorem ports. -/
 namespace Flapjack.Compiler.Backend.BvlConst
 open Bvl BvlToBvi
-
-private theorem member_budget_lt (xs : List Exp) (e : Exp) (h : e ∈ xs) :
-    expBudget e < listBudget xs := by
-  induction xs with
-  | nil => simp at h
-  | cons x xs ih =>
-    simp only [List.mem_cons] at h
-    simp only [listBudget]
-    rcases h with rfl | h
-    · omega
-    · have := ih h; omega
 
 /-- Constant propagation succeeds under a structural traversal bound. -/
 theorem compileFuel_succeeds (fuel : Nat) (env : List (Option Exp)) (e : Exp)

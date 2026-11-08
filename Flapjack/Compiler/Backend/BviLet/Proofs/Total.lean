@@ -1,22 +1,12 @@
 import Flapjack.Misc.Option.MapM
 import Flapjack.Compiler.Backend.BviLet.Compile
+import Flapjack.Compiler.Backend.ListFoldTotal
 import Flapjack.Compiler.Backend.Bvi.Budget
 
 /-! Structural sufficiency for the BVI let optimizer. This is Flapjack
 infrastructure and does not assert HOL correspondence. -/
 namespace Flapjack.Compiler.Backend.BviLet
 open Bvi
-
-private theorem member_budget_lt (xs : List Exp) (e : Exp) (h : e ∈ xs) :
-    expBudget e < listBudget xs := by
-  induction xs with
-  | nil => simp at h
-  | cons x xs ih =>
-    simp only [List.mem_cons] at h
-    simp only [listBudget]
-    rcases h with rfl | h
-    · omega
-    · have := ih h; omega
 
 /-- The optimizer succeeds whenever its fuel exceeds the BVI structural
 budget, for every environment and offset. -/

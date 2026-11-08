@@ -8,6 +8,19 @@ a word64 offset. Both retain all original conclusions and premises. -/
 namespace Flapjack.RiscV.TargetProof
 open Flapjack RiscV.L3 Compiler.Encoders.RiscV.Target
 
+/-- Flapjack infrastructure: bytes known in a memory domain remain known when
+another memory agrees on that domain. Shared by the encoder byte cases; no
+separately named HOL original. -/
+theorem bytes_from_domain (pc : BitVec 64) (bs : List (BitVec 8))
+    (m1 m2 : BitVec 64 → BitVec 8) (d : BitVec 64 → Prop)
+    (bytes : bytesInMemoryHOL pc bs m1 d)
+    (agree : ∀ a, d a → m2 a = m1 a) : bytesInMemoryHOL pc bs m2 d := by
+  induction bs generalizing pc with
+  | nil => trivial
+  | cons b bs ih =>
+    exact ⟨(agree pc bytes.2.1).trans bytes.1, bytes.2.1,
+      ih (pc + 1) bytes.2.2⟩
+
 @[hol "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "bytes_in_memory_thm"]
 theorem bytes_in_memory_thm {α : Type} (_w : α) (s : AsmState 64) (state : riscv_state)
     (a b c d : BitVec 8)
