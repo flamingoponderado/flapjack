@@ -228,6 +228,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.MoveFull
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.MoveSourceState
 import Flapjack.Misc.Sptree.AlistInsertReverse
 import Flapjack.Misc.Address
+import Flapjack.Misc.ClockWeightInduction
 import Flapjack.Misc.RichList
 import Flapjack.Misc.Bag
 import Flapjack.Misc.Fun2SetUnion
