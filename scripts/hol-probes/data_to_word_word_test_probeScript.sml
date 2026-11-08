@@ -37,3 +37,19 @@ val jump_exc_locals_replay = prove (
   fs [wordSemTheory.jump_exc_def]);
 val _ = (print "jump_exc_locals_typed="; Lib.with_flag (Globals.show_types,true)
   print_term (concl jump_exc_locals_replay); print "\n");
+val memory_rel_thunk_bits_replay = prove (
+  ``memory_rel c be ts refs sp st m dm ((RefPtr bl p,Word (w :α word))::vars) ∧
+    lookup p refs = SOME (Thunk ev z) ∧ good_dimindex (:α) ∧
+    get_real_addr c st w = SOME a ∧ m a = Word x ∧ w ' 0 ⇒
+    (¬bl ∧ ev = Evaluated ∧
+     (0b111100w && x) ≠ n2w ((0 + 6) * 4) ∧
+     (0b111100w && x) ≠ n2w ((8 + 6) * 4)) ∨
+    (case ev of
+     | NotEvaluated => 0b111100w && x = n2w ((0 + 6) * 4)
+     | Evaluated => 0b111100w && x = n2w ((8 + 6) * 4))``,
+  rw [] \\ drule_all memory_rel_Thunk_IMP \\ gvs [] \\ rw []
+  \\ Cases_on ‘ev’ \\ gvs []
+  \\ drule local_word_test_lemma1 \\ fs []
+  \\ drule local_word_test_lemma2 \\ fs []);
+val _ = (print "memory_rel_thunk_bits_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl memory_rel_thunk_bits_replay); print "\n");

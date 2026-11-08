@@ -15,3 +15,5 @@ val thunk_tag_bits_replay = prove (
   simp [thunk_tag_to_bits_def,WORD_MUL_LSL]);
 val _ = (print "thunk_tag_bits_lemma_typed="; Lib.with_flag (Globals.show_types,true)
   print_term (concl thunk_tag_bits_replay); print "\n");
+val _ = (print "memory_rel_thunk_inlined_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl memory_rel_Thunk_inlined); print "\n");

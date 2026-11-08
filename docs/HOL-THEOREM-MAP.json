@@ -130231,7 +130231,7 @@
   "lean_name": "wordTestLemma1",
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "Compared the source-local theorem and its typed replay in data_to_word_word_test_probe.out: good_dimindex is the original 32-or-64 condition; mask 60, the same iff, and bit 2 clear, bits 3, 4 and 5 set, and the right side is (8 + 6) * 4. HOL word_bit b w means b ≤ dimindex−1 and bit b is set; BitVec.getLsbD agrees for every index, including out-of-range indices. Positive-width BitVec represents the original word carrier; the Lean proof checks both permitted widths."
+  "reviewer": "Compared the source-local theorem and its typed replay in data_to_word_word_test_probe.out: good_dimindex is the original 32-or-64 condition; mask 60, the same iff, and bit 2 clear, bits 3, 4 and 5 set, and the right side is (8 + 6) * 4. HOL word_bit b w means b ≤ dimindex−1 and bit b is set; BitVec.getLsbD agrees for every index, including out-of-range indices. Positive-width BitVec represents the original word carrier; the Lean proof uses bit extensionality and finite index cases at both permitted widths, without native decision axioms."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
@@ -130240,7 +130240,7 @@
   "lean_name": "wordTestLemma2",
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "Compared the source-local theorem and its typed replay in data_to_word_word_test_probe.out: good_dimindex is the original 32-or-64 condition; mask 60, the same iff, and bits 2 and 5 clear, bits 3 and 4 set, and the right side is (0 + 6) * 4. HOL word_bit b w means b ≤ dimindex−1 and bit b is set; BitVec.getLsbD agrees for every index, including out-of-range indices. Positive-width BitVec represents the original word carrier; the Lean proof checks both permitted widths."
+  "reviewer": "Compared the source-local theorem and its typed replay in data_to_word_word_test_probe.out: good_dimindex is the original 32-or-64 condition; mask 60, the same iff, and bits 2 and 5 clear, bits 3 and 4 set, and the right side is (0 + 6) * 4. HOL word_bit b w means b ≤ dimindex−1 and bit b is set; BitVec.getLsbD agrees for every index, including out-of-range indices. Positive-width BitVec represents the original word carrier; the Lean proof uses bit extensionality and finite index cases at both permitted widths, without native decision axioms."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
@@ -130299,5 +130299,41 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Source comparison with memory_rel_Number_bignum_header_typed in data_to_word_memory_repr_probe.out. The complete original conjunction of premises, location equality, real-address lookup, header encodability and memory result agree. The independent unused existential types β, γ and δ are represented by three independent Lean types with Nonempty instances, matching HOL type inhabitation; their quantifier order is retained. The sign bit inlines multiword b2w_def and b2n_def as if-then-else over word values 1 and 0. The standalone store uses canonical finite support, and positive-width BitVec represents HOL words. The private helper additionally proves domain membership for the pending thunk proof; it is not the tagged statement."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "memory_rel_Thunk_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Thunk.lean",
+  "lean_name": "memoryRel_thunkImp",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison with memory_rel_thunk_imp_typed in data_to_word_memory_thunk_probe.out. The full original conjunction and both disjuncts are retained: the evaluated inlined case universally quantifies the represented word and yields the substituted memory relation and both header-mask inequalities; the allocated case existentially supplies the word, real and simple addresses and header, all original bit, domain, decoded-length, mode and extended-memory-relation facts. HOL word_bit and the in-range word index at bit zero are rendered by BitVec.getLsbD; domain membership is equality to true. The standalone store uses canonical finite support and positive-width BitVec and WordLocW represent HOL words and word locations. The proof handles both cases from the source value invariant and uses the source local bit tests; no additional premise is assumed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
+  "hol_name": "memory_rel_Thunk_bits",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/ThunkBits.lean",
+  "lean_name": "memoryRel_thunkBits",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison with memory_rel_thunk_bits_typed in data_to_word_word_test_probe.out: all six original conjuncts in the premise, the inlined evaluated case with both mask inequalities, and the mode-dependent mask equality in the allocated case are retained. The word bit at index zero is rendered by getLsbD; the standalone HOL finite store is HolFiniteMapExact and positive-width BitVec represents HOL words. The proof applies the complete memory_rel_Thunk_IMP and the two source-local bit-test lemmas."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "memory_rel_Thunk_inlined",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Thunk.lean",
+  "lean_name": "memoryRel_thunkInlined",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison with memory_rel_thunk_inlined_typed in data_to_word_memory_thunk_probe.out: the original memory relation, location-or-clear-low-bit disjunction, thunk lookup and good_dimindex premises are preserved, as are the evaluated-mode and child memory-relation conclusions. HOL word index zero is rendered by getLsbD; store is the canonical finite-support map and words use positive-width BitVec. The proof preserves all source assumptions without an added simulation premise."
 }
 ]

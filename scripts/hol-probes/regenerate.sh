@@ -4249,11 +4249,11 @@ run_probe word_remove_must_terminate_probeScript.sml word_remove_must_terminate_
 # `data_to_word` pointer-layout helpers: `shift_length`, `small_shift_length`
 # and `get_gen_size` (empty, in range, overflowing) at 64 and 32 bits.
 run_probe data_to_word_memory_thunk_probeScript.sml data_to_word_memory_thunk_probe.out \
-  blocks_unique_thunk_typed blocks_unique_thunk2_typed blocks_unique_word64_typed memory_rel_thunk_imp_typed thunk_tag_bits_lemma_typed \
+  blocks_unique_thunk_typed blocks_unique_thunk2_typed blocks_unique_word64_typed memory_rel_thunk_imp_typed thunk_tag_bits_lemma_typed memory_rel_thunk_inlined_typed \
   "$cake_dir/compiler/backend/proofs/data_to_word_memoryProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 run_probe data_to_word_word_test_probeScript.sml data_to_word_word_test_probe.out \
-  word_test_lemma1_typed word_test_lemma2_typed jump_exc_locals_typed \
+  word_test_lemma1_typed word_test_lemma2_typed jump_exc_locals_typed memory_rel_thunk_bits_typed \
   "$cake_dir/compiler/backend/proofs/data_to_wordProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 run_probe data_to_word_config_probeScript.sml data_to_word_config_probe.out \
