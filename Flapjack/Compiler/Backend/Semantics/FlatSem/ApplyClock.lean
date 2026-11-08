@@ -6,7 +6,7 @@ namespace Flapjack.Compiler.Backend.FlatSem
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
 
 /-- Flat-specific primitive operations preserve the clock and evaluation configuration. -/
-theorem doAppFlat_stable {C F : Type} (state next : State C F) (op : FlatLang.Op)
+private theorem doAppFlat_stable {C F : Type} (state next : State C F) (op : FlatLang.Op)
     (values : List Value) (result : Result Value Value)
     (run : doAppFlat state op values = some (some (next, result))) :
     next.clock = state.clock ∧ next.evalConfig = state.evalConfig := by
@@ -17,7 +17,7 @@ theorem doAppFlat_stable {C F : Type} (state next : State C F) (op : FlatLang.Op
   all_goals rcases run with ⟨_, _, h, _⟩; subst next; exact ⟨rfl, rfl⟩
 
 /-- The source numeric projection leaves the flat state unchanged. -/
-theorem applyNumericProjection_stable {C F : Type} (state next : State C F) (op : Op)
+private theorem applyNumericProjection_stable {C F : Type} (state next : State C F) (op : Op)
     (values : List Value) (errorValue : Value) (result : Result Value Value)
     (run : applyNumericProjection state op values errorValue = some (next, result)) :
     next.clock = state.clock ∧ next.evalConfig = state.evalConfig := by
@@ -32,7 +32,7 @@ theorem applyNumericProjection_stable {C F : Type} (state next : State C F) (op 
       cases error <;> simp [call] at run <;> rcases run with ⟨h, _⟩ <;> subst next <;> exact ⟨rfl, rfl⟩
 
 /-- Numeric and comparison primitives leave the state unchanged. -/
-theorem doAppNumeric_stable {C F : Type} (state next : State C F) (op : Op)
+private theorem doAppNumeric_stable {C F : Type} (state next : State C F) (op : Op)
     (values : List Value) (result : Result Value Value)
     (run : doAppNumeric state op values = some (some (next, result))) :
     next.clock = state.clock ∧ next.evalConfig = state.evalConfig := by
@@ -43,7 +43,7 @@ theorem doAppNumeric_stable {C F : Type} (state next : State C F) (op : Op)
   all_goals try (rcases run with ⟨h, _⟩; subst next; exact ⟨rfl, rfl⟩)
 
 /-- Bounds failures preserve the clock and evaluation configuration. -/
-theorem boundsFailure_stable {C F : Type} (state next : State C F) (unsafeOp : Bool)
+private theorem boundsFailure_stable {C F : Type} (state next : State C F) (unsafeOp : Bool)
     (result : Result Value Value) (run : boundsFailure state unsafeOp = some (next, result)) :
     next.clock = state.clock ∧ next.evalConfig = state.evalConfig := by
   cases unsafeOp <;> simp [boundsFailure] at run
@@ -52,7 +52,7 @@ theorem boundsFailure_stable {C F : Type} (state next : State C F) (unsafeOp : B
   exact ⟨rfl, rfl⟩
 
 /-- Indexed reads preserve the clock and evaluation configuration, including bounds errors. -/
-theorem readIndexed_stable {C F α : Type} (state next : State C F) (unsafeOp : Bool)
+private theorem readIndexed_stable {C F α : Type} (state next : State C F) (unsafeOp : Bool)
     (items : List α) (index : Int) (toValue : α → Value) (result : Result Value Value)
     (run : readIndexed state unsafeOp items index toValue = some (next, result)) :
     next.clock = state.clock ∧ next.evalConfig = state.evalConfig := by
@@ -67,7 +67,7 @@ theorem readIndexed_stable {C F α : Type} (state next : State C F) (unsafeOp : 
       exact ⟨rfl, rfl⟩
 
 /-- Indexed writes update only the store, including checked bounds errors. -/
-theorem updateIndexed_stable {C F α : Type} (state next : State C F) (unsafeOp : Bool)
+private theorem updateIndexed_stable {C F α : Type} (state next : State C F) (unsafeOp : Bool)
     (address : Nat) (items : List α) (index : Int) (value : α)
     (asStore : List α → StoreValue Value) (result : Result Value Value)
     (run : updateIndexed state unsafeOp address items index value asStore = some (next, result)) :
@@ -84,7 +84,7 @@ theorem updateIndexed_stable {C F α : Type} (state next : State C F) (unsafeOp 
       exact ⟨rfl, rfl⟩
 
 /-- Reference and array primitives preserve the clock and evaluation configuration. -/
-theorem doAppMemory_stable {C F : Type} (state next : State C F) (op : Op)
+private theorem doAppMemory_stable {C F : Type} (state next : State C F) (op : Op)
     (values : List Value) (result : Result Value Value)
     (run : doAppMemory state op values = some (some (next, result))) :
     next.clock = state.clock ∧ next.evalConfig = state.evalConfig := by
@@ -99,7 +99,7 @@ theorem doAppMemory_stable {C F : Type} (state next : State C F) (op : Op)
   all_goals rcases run with ⟨_, _, h, _⟩; subst next; exact ⟨rfl, rfl⟩
 
 /-- String, list, vector, thunk and FFI primitives preserve the clock and evaluation configuration. -/
-theorem doAppData_stable {C F : Type} (state next : State C F) (op : Op)
+private theorem doAppData_stable {C F : Type} (state next : State C F) (op : Op)
     (values : List Value) (result : Result Value Value)
     (run : doAppData state op values = some (some (next, result))) :
     next.clock = state.clock ∧ next.evalConfig = state.evalConfig := by
@@ -112,7 +112,7 @@ theorem doAppData_stable {C F : Type} (state next : State C F) (op : Op)
   all_goals rcases run with ⟨_, _, h, _⟩; subst next; exact ⟨rfl, rfl⟩
 
 /-- Copy and XOR primitives preserve the clock and evaluation configuration. -/
-theorem doAppCopy_stable {C F : Type} (state next : State C F) (op : Op)
+private theorem doAppCopy_stable {C F : Type} (state next : State C F) (op : Op)
     (values : List Value) (result : Result Value Value)
     (run : doAppCopy state op values = some (some (next, result))) :
     next.clock = state.clock ∧ next.evalConfig = state.evalConfig := by
