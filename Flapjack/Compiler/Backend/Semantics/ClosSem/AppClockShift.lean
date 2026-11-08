@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClockShift
+import Flapjack.Misc.ClockWeightInduction
 
 /-! Clock-extension cases for proof-side closure application. Evaluator and
 state carriers remain pending HOL correspondence review. -/
@@ -264,214 +265,222 @@ theorem evaluate_addClock {C F : Type} :
       evaluateApp location function args state = (result, next) → result ≠ .err (.abort .timeoutError) →
       evaluateApp location function args { state with clock := state.clock + extra } =
         (result, { next with clock := next.clock + extra })) := by
-  have all : ∀ clock : Nat,
-      (∀ (location : Option Nat) (function : Value) (args : List Value) (state next : State C F)
-        (result : Result (List Value) Value) (extra : Nat), state.clock = clock →
-        evaluateApp location function args state = (result, next) → result ≠ .err (.abort .timeoutError) →
-        evaluateApp location function args { state with clock := state.clock + extra } =
-          (result, { next with clock := next.clock + extra })) ∧
-      (∀ (weight : Nat) (expressions : List ClosLang.Exp) (env : List Value) (state next : State C F)
-        (result : Result (List Value) Value) (extra : Nat), state.clock = clock → expsWeight expressions = weight →
-        evaluate expressions env state = (result, next) → result ≠ .err (.abort .timeoutError) →
-        evaluate expressions env { state with clock := state.clock + extra } =
-          (result, { next with clock := next.clock + extra })) := by
-    intro clock
-    induction clock using Nat.strongRecOn with
-    | ind clock clockIH =>
-      have appAll : ∀ (location : Option Nat) (function : Value) (args : List Value) (state next : State C F)
-          (result : Result (List Value) Value) (extra : Nat), state.clock = clock →
-          evaluateApp location function args state = (result, next) → result ≠ .err (.abort .timeoutError) →
-          evaluateApp location function args { state with clock := state.clock + extra } =
-            (result, { next with clock := next.clock + extra }) := by
-        intro location function args state next result extra stateClock run notTimeout
-        apply evaluateApp_addClock_step location function args state next result extra ?_ ?_ run notTimeout
-        · intro body env bodyState bodyNext bodyResult smaller bodyRun bodyNotTimeout
-          exact (clockIH bodyState.clock (by omega)).2 (expsWeight [body]) [body] env bodyState bodyNext bodyResult extra rfl rfl bodyRun bodyNotTimeout
-        · intro value rest appState appNext appResult smaller appRun appNotTimeout
-          exact (clockIH appState.clock (by omega)).1 location value rest appState appNext appResult extra rfl appRun appNotTimeout
-      constructor
-      · exact appAll
-      · intro weight
-        induction weight using Nat.strongRecOn with
-        | ind weight weightIH =>
-          have exprIH : ∀ (expressions : List ClosLang.Exp) (env : List Value) (state next : State C F)
-              (result : Result (List Value) Value) (extra : Nat), state.clock ≤ clock → expsWeight expressions < weight →
-              evaluate expressions env state = (result, next) → result ≠ .err (.abort .timeoutError) →
-              evaluate expressions env { state with clock := state.clock + extra } =
+  have parts := clockWeightAppInduction (α := List ClosLang.Exp)
+    (β := Option Nat × Value × List Value) (σ := State C F) (·.clock) expsWeight
+    (motiveE := fun expressions state => ∀ env next result extra,
+      evaluate expressions env state = (result, next) → result ≠ .err (.abort .timeoutError) →
+      evaluate expressions env { state with clock := state.clock + extra } =
+        (result, { next with clock := next.clock + extra }))
+    (motiveA := fun b state => ∀ next result extra,
+      evaluateApp b.1 b.2.1 b.2.2 state = (result, next) →
+      result ≠ .err (.abort .timeoutError) →
+      evaluateApp b.1 b.2.1 b.2.2 { state with clock := state.clock + extra } =
+        (result, { next with clock := next.clock + extra })) ?_ ?_
+  · refine ⟨?_, ?_⟩
+    · intro expressions env state next result extra run notTimeout
+      exact parts.1 expressions state env next result extra run notTimeout
+    · intro location function args state next result extra run notTimeout
+      exact parts.2 (location, function, args) state next result extra run notTimeout
+  · intro b s bodyIH appIH
+    obtain ⟨location, function, args⟩ := b
+    intro next result extra run notTimeout
+    apply evaluateApp_addClock_step location function args s next result extra ?_ ?_ run notTimeout
+    · intro body env bodyState bodyNext bodyResult smaller bodyRun bodyNotTimeout
+      exact bodyIH [body] bodyState smaller env bodyNext bodyResult extra bodyRun bodyNotTimeout
+    · intro value rest appState appNext appResult smaller appRun appNotTimeout
+      exact appIH (location, value, rest) appState smaller appNext appResult extra appRun
+        appNotTimeout
+  · intro expressions state exprIH₀ smaller₀ appBound₀
+    have exprIH := fun (es : List ClosLang.Exp) (env : List Value) (s next : State C F)
+        (result : Result (List Value) Value) (extra : Nat) h1 h2 run notTimeout =>
+      exprIH₀ es s h1 h2 env next result extra run notTimeout
+    have smaller := fun (es : List ClosLang.Exp) (env : List Value) (s next : State C F)
+        (result : Result (List Value) Value) (extra : Nat) h1 run notTimeout =>
+      smaller₀ es s h1 env next result extra run notTimeout
+    have appBound := fun (location : Option Nat) (function : Value) (args : List Value)
+        (s next : State C F) (result : Result (List Value) Value) (extra : Nat) h run notTimeout =>
+      appBound₀ (location, function, args) s h next result extra run notTimeout
+    intro env next result extra run notTimeout
+    cases expressions with
+    | nil =>
+      simp [evaluate] at run ⊢
+      rcases run with ⟨rfl, rfl⟩
+      simp
+    | cons first rest =>
+      cases rest with
+      | cons second tail =>
+        apply evaluate_list_addClock first second tail env state next result extra ?_ ?_ run
+          notTimeout
+        · intro headResult headNext headRun headNotTimeout
+          apply exprIH [first] env state headNext headResult extra (by omega) ?_ headRun
+            headNotTimeout
+          simp only [expsWeight] at ⊢
+          omega
+        · intro headNext tailNext tailResult bound tailRun tailNotTimeout
+          apply exprIH (second :: tail) env headNext tailNext tailResult extra (by omega) ?_ tailRun
+            tailNotTimeout
+          simp only [expsWeight] at ⊢
+          omega
+      | nil =>
+        cases first with
+        | var trace index => exact evaluate_var_addClock trace index env state next result extra run
+        | fn name location selected arity body => exact evaluate_fn_addClock name location selected
+                                                    arity body env state next result extra run
+        | raise trace body =>
+          apply evaluate_raise_addClock trace body env state next result extra ?_ run notTimeout
+          intro childResult childNext childRun childNotTimeout
+          apply exprIH [body] env state childNext childResult extra (by omega) ?_ childRun
+            childNotTimeout
+          simp only [expsWeight, expWeight] at ⊢
+          omega
+        | tick trace body =>
+          apply evaluate_tick_addClock trace body env state next result extra ?_ run notTimeout
+          intro childResult childNext childRun childNotTimeout
+          by_cases zero : state.clock = 0
+          · apply exprIH [body] env (decClock 1 state) childNext childResult extra
+              (by simp [decClock]) ?_ childRun childNotTimeout
+            simp only [expsWeight, expWeight] at ⊢
+            omega
+          · apply smaller [body] env (decClock 1 state) childNext childResult extra ?_ childRun
+              childNotTimeout
+            simp [decClock]
+            omega
+        | call trace ticks location args =>
+          apply evaluate_call_addClock trace ticks location args env state next result extra ?_ ?_
+            run notTimeout
+          · intro argResult argNext argRun argNotTimeout
+            apply exprIH args env state argNext argResult extra (by omega) ?_ argRun argNotTimeout
+            simp only [expsWeight, expWeight] at ⊢
+            omega
+          · intro body values bodyState bodyNext bodyResult smallerClock bodyRun bodyNotTimeout
+            exact smaller [body] values bodyState bodyNext bodyResult extra (by omega) bodyRun
+              bodyNotTimeout
+        | «let» trace bindings body =>
+          apply evaluate_let_addClock trace bindings body env state next result extra ?_ ?_ run
+            notTimeout
+          · intro bindingResult bindingNext bindingRun bindingNotTimeout
+            apply exprIH bindings env state bindingNext bindingResult extra (by omega) ?_ bindingRun
+              bindingNotTimeout
+            simp only [expsWeight, expWeight] at ⊢
+            omega
+          · intro values bindingNext final bodyResult bound bodyRun bodyNotTimeout
+            apply exprIH [body] (values ++ env) bindingNext final bodyResult extra (by omega) ?_
+              bodyRun bodyNotTimeout
+            simp only [expsWeight, expWeight] at ⊢
+            omega
+        | letrec names location selected functions body =>
+          apply evaluate_letrec_addClock names location selected functions body env state next
+            result extra ?_ run
+          intro newEnv bodyRun
+          apply exprIH [body] newEnv state next result extra (by omega) ?_ bodyRun notTimeout
+          simp only [expsWeight, expWeight] at ⊢
+          omega
+        | handle trace body handler =>
+          apply evaluate_handle_addClock trace body handler env state next result extra ?_ ?_ run
+            notTimeout
+          · intro bodyResult bodyNext bodyRun bodyNotTimeout
+            apply exprIH [body] env state bodyNext bodyResult extra (by omega) ?_ bodyRun
+              bodyNotTimeout
+            simp only [expsWeight, expWeight] at ⊢
+            omega
+          · intro value bodyNext final handlerResult bound handlerRun handlerNotTimeout
+            apply exprIH [handler] (value :: env) bodyNext final handlerResult extra (by omega) ?_
+              handlerRun handlerNotTimeout
+            simp only [expsWeight, expWeight] at ⊢
+            omega
+        | ifThenElse trace condition yes no =>
+          apply evaluate_if_addClock trace condition yes no env state next result extra ?_ ?_ run
+            notTimeout
+          · intro conditionResult conditionNext conditionRun conditionNotTimeout
+            apply exprIH [condition] env state conditionNext conditionResult extra (by omega) ?_
+              conditionRun conditionNotTimeout
+            simp only [expsWeight, expWeight] at ⊢
+            omega
+          · intro choice conditionNext final branchResult bound branchRun branchNotTimeout
+            cases choice with
+            | false =>
+              apply exprIH [no] env conditionNext final branchResult extra (by omega) ?_ branchRun
+                branchNotTimeout
+              simp only [expsWeight, expWeight] at ⊢
+              omega
+            | true =>
+              apply exprIH [yes] env conditionNext final branchResult extra (by omega) ?_ branchRun
+                branchNotTimeout
+              simp only [expsWeight, expWeight] at ⊢
+              omega
+        | app trace location function args =>
+          apply evaluate_app_addClock trace location function args env state next result extra ?_ ?_
+            ?_ run notTimeout
+          · intro argResult argNext argRun argNotTimeout
+            apply exprIH args env state argNext argResult extra (by omega) ?_ argRun argNotTimeout
+            simp only [expsWeight, expWeight] at ⊢
+            omega
+          · intro argNext functionNext functionResult bound functionRun functionNotTimeout
+            apply exprIH [function] env argNext functionNext functionResult extra (by omega) ?_
+              functionRun functionNotTimeout
+            simp only [expsWeight, expWeight] at ⊢
+            omega
+          · intro value values functionNext final appResult bound appRun appNotTimeout
+            exact appBound location value values functionNext final appResult extra (by omega)
+              appRun appNotTimeout
+        | op trace op args =>
+          have argsSmaller : expsWeight args < expsWeight [.op trace op args] := by
+            have bound := opWeight_gt trace op args
+            simp only [expsWeight] at ⊢
+            omega
+          have ordinary : ∀ op, op ≠ .install → op ≠ .thunkOp .forceThunk →
+              evaluate [.op trace op args] env state = (result, next) →
+              evaluate [.op trace op args] env { state with clock := state.clock + extra } =
                 (result, { next with clock := next.clock + extra }) := by
-            intro expressions env state next result extra clockLe weightLt run notTimeout
-            rcases Nat.lt_or_eq_of_le clockLe with clockLt | clockEq
-            · exact (clockIH state.clock clockLt).2 (expsWeight expressions) expressions env state next result extra rfl rfl run notTimeout
-            · exact weightIH (expsWeight expressions) weightLt expressions env state next result extra clockEq rfl run notTimeout
-          have smaller : ∀ (expressions : List ClosLang.Exp) (env : List Value) (state next : State C F)
-              (result : Result (List Value) Value) (extra : Nat), state.clock < clock →
-              evaluate expressions env state = (result, next) → result ≠ .err (.abort .timeoutError) →
-              evaluate expressions env { state with clock := state.clock + extra } =
-                (result, { next with clock := next.clock + extra }) := by
-            intro expressions env state next result extra clockLt run notTimeout
-            exact (clockIH state.clock clockLt).2 (expsWeight expressions) expressions env state next result extra rfl rfl run notTimeout
-          have appBound : ∀ (location : Option Nat) (function : Value) (args : List Value) (state next : State C F)
-              (result : Result (List Value) Value) (extra : Nat), state.clock ≤ clock →
-              evaluateApp location function args state = (result, next) → result ≠ .err (.abort .timeoutError) →
-              evaluateApp location function args { state with clock := state.clock + extra } =
-                (result, { next with clock := next.clock + extra }) := by
-            intro location function args state next result extra clockLe run notTimeout
-            rcases Nat.lt_or_eq_of_le clockLe with clockLt | clockEq
-            · exact (clockIH state.clock clockLt).1 location function args state next result extra rfl run notTimeout
-            · exact appAll location function args state next result extra clockEq run notTimeout
-          intro expressions env state next result extra stateClock measure run notTimeout
-          cases expressions with
-          | nil =>
-            simp [evaluate] at run ⊢
-            rcases run with ⟨rfl, rfl⟩
-            simp
-          | cons first rest =>
-            cases rest with
-            | cons second tail =>
-              apply evaluate_list_addClock first second tail env state next result extra ?_ ?_ run notTimeout
-              · intro headResult headNext headRun headNotTimeout
-                apply exprIH [first] env state headNext headResult extra (by omega) ?_ headRun headNotTimeout
-                simp only [expsWeight] at measure ⊢
+            intro op notInstall notForce opRun
+            apply evaluate_ordinaryOp_addClock trace op args env state next result extra notInstall
+              notForce ?_ opRun notTimeout
+            intro argResult argNext argRun argNotTimeout
+            apply exprIH args env state argNext argResult extra (by omega) ?_ argRun argNotTimeout
+            exact argsSmaller
+          cases op with
+          | install =>
+            apply evaluate_install_addClock trace args env state next result extra ?_ ?_ run
+              notTimeout
+            · intro argResult argNext argRun argNotTimeout
+              apply exprIH args env state argNext argResult extra (by omega) ?_ argRun argNotTimeout
+              simp only [expsWeight, expWeight] at ⊢
+              omega
+            · intro program installed final programResult bound programRun programNotTimeout
+              exact smaller program [] installed final programResult extra (by omega) programRun
+                programNotTimeout
+          | thunkOp operation =>
+            cases operation with
+            | forceThunk =>
+              apply evaluate_force_addClock trace args env state next result extra ?_ ?_ run
+                notTimeout
+              · intro argResult argNext argRun argNotTimeout
+                apply exprIH args env state argNext argResult extra (by omega) ?_ argRun
+                  argNotTimeout
+                simp only [expsWeight, expWeight] at ⊢
                 omega
-              · intro headNext tailNext tailResult bound tailRun tailNotTimeout
-                apply exprIH (second :: tail) env headNext tailNext tailResult extra (by omega) ?_ tailRun tailNotTimeout
-                simp only [expsWeight] at measure ⊢
-                omega
-            | nil =>
-              cases first with
-              | var trace index => exact evaluate_var_addClock trace index env state next result extra run
-              | fn name location selected arity body => exact evaluate_fn_addClock name location selected arity body env state next result extra run
-              | raise trace body =>
-                apply evaluate_raise_addClock trace body env state next result extra ?_ run notTimeout
-                intro childResult childNext childRun childNotTimeout
-                apply exprIH [body] env state childNext childResult extra (by omega) ?_ childRun childNotTimeout
-                simp only [expsWeight, expWeight] at measure ⊢
-                omega
-              | tick trace body =>
-                apply evaluate_tick_addClock trace body env state next result extra ?_ run notTimeout
-                intro childResult childNext childRun childNotTimeout
-                by_cases zero : state.clock = 0
-                · apply exprIH [body] env (decClock 1 state) childNext childResult extra (by simp [decClock]; omega) ?_ childRun childNotTimeout
-                  simp only [expsWeight, expWeight] at measure ⊢
-                  omega
-                · apply smaller [body] env (decClock 1 state) childNext childResult extra ?_ childRun childNotTimeout
-                  simp [decClock]
-                  omega
-              | call trace ticks location args =>
-                apply evaluate_call_addClock trace ticks location args env state next result extra ?_ ?_ run notTimeout
-                · intro argResult argNext argRun argNotTimeout
-                  apply exprIH args env state argNext argResult extra (by omega) ?_ argRun argNotTimeout
-                  simp only [expsWeight, expWeight] at measure ⊢
-                  omega
-                · intro body values bodyState bodyNext bodyResult smallerClock bodyRun bodyNotTimeout
-                  exact smaller [body] values bodyState bodyNext bodyResult extra (by omega) bodyRun bodyNotTimeout
-              | «let» trace bindings body =>
-                apply evaluate_let_addClock trace bindings body env state next result extra ?_ ?_ run notTimeout
-                · intro bindingResult bindingNext bindingRun bindingNotTimeout
-                  apply exprIH bindings env state bindingNext bindingResult extra (by omega) ?_ bindingRun bindingNotTimeout
-                  simp only [expsWeight, expWeight] at measure ⊢
-                  omega
-                · intro values bindingNext final bodyResult bound bodyRun bodyNotTimeout
-                  apply exprIH [body] (values ++ env) bindingNext final bodyResult extra (by omega) ?_ bodyRun bodyNotTimeout
-                  simp only [expsWeight, expWeight] at measure ⊢
-                  omega
-              | letrec names location selected functions body =>
-                apply evaluate_letrec_addClock names location selected functions body env state next result extra ?_ run
-                intro newEnv bodyRun
-                apply exprIH [body] newEnv state next result extra (by omega) ?_ bodyRun notTimeout
-                simp only [expsWeight, expWeight] at measure ⊢
-                omega
-              | handle trace body handler =>
-                apply evaluate_handle_addClock trace body handler env state next result extra ?_ ?_ run notTimeout
-                · intro bodyResult bodyNext bodyRun bodyNotTimeout
-                  apply exprIH [body] env state bodyNext bodyResult extra (by omega) ?_ bodyRun bodyNotTimeout
-                  simp only [expsWeight, expWeight] at measure ⊢
-                  omega
-                · intro value bodyNext final handlerResult bound handlerRun handlerNotTimeout
-                  apply exprIH [handler] (value :: env) bodyNext final handlerResult extra (by omega) ?_ handlerRun handlerNotTimeout
-                  simp only [expsWeight, expWeight] at measure ⊢
-                  omega
-              | ifThenElse trace condition yes no =>
-                apply evaluate_if_addClock trace condition yes no env state next result extra ?_ ?_ run notTimeout
-                · intro conditionResult conditionNext conditionRun conditionNotTimeout
-                  apply exprIH [condition] env state conditionNext conditionResult extra (by omega) ?_ conditionRun conditionNotTimeout
-                  simp only [expsWeight, expWeight] at measure ⊢
-                  omega
-                · intro choice conditionNext final branchResult bound branchRun branchNotTimeout
-                  cases choice with
-                  | false =>
-                    apply exprIH [no] env conditionNext final branchResult extra (by omega) ?_ branchRun branchNotTimeout
-                    simp only [expsWeight, expWeight] at measure ⊢
-                    omega
-                  | true =>
-                    apply exprIH [yes] env conditionNext final branchResult extra (by omega) ?_ branchRun branchNotTimeout
-                    simp only [expsWeight, expWeight] at measure ⊢
-                    omega
-              | app trace location function args =>
-                apply evaluate_app_addClock trace location function args env state next result extra ?_ ?_ ?_ run notTimeout
-                · intro argResult argNext argRun argNotTimeout
-                  apply exprIH args env state argNext argResult extra (by omega) ?_ argRun argNotTimeout
-                  simp only [expsWeight, expWeight] at measure ⊢
-                  omega
-                · intro argNext functionNext functionResult bound functionRun functionNotTimeout
-                  apply exprIH [function] env argNext functionNext functionResult extra (by omega) ?_ functionRun functionNotTimeout
-                  simp only [expsWeight, expWeight] at measure ⊢
-                  omega
-                · intro value values functionNext final appResult bound appRun appNotTimeout
-                  exact appBound location value values functionNext final appResult extra (by omega) appRun appNotTimeout
-              | op trace op args =>
-                have argsSmaller : expsWeight args < weight := by
-                  have bound := opWeight_gt trace op args
-                  simp only [expsWeight] at measure
-                  omega
-                have ordinary : ∀ op, op ≠ .install → op ≠ .thunkOp .forceThunk →
-                    evaluate [.op trace op args] env state = (result, next) →
-                    evaluate [.op trace op args] env { state with clock := state.clock + extra } =
-                      (result, { next with clock := next.clock + extra }) := by
-                  intro op notInstall notForce opRun
-                  apply evaluate_ordinaryOp_addClock trace op args env state next result extra notInstall notForce ?_ opRun notTimeout
-                  intro argResult argNext argRun argNotTimeout
-                  apply exprIH args env state argNext argResult extra (by omega) ?_ argRun argNotTimeout
-                  exact argsSmaller
-                cases op with
-                | install =>
-                  apply evaluate_install_addClock trace args env state next result extra ?_ ?_ run notTimeout
-                  · intro argResult argNext argRun argNotTimeout
-                    apply exprIH args env state argNext argResult extra (by omega) ?_ argRun argNotTimeout
-                    simp only [expsWeight, expWeight] at measure ⊢
-                    omega
-                  · intro program installed final programResult bound programRun programNotTimeout
-                    exact smaller program [] installed final programResult extra (by omega) programRun programNotTimeout
-                | thunkOp operation =>
-                  cases operation with
-                  | forceThunk =>
-                    apply evaluate_force_addClock trace args env state next result extra ?_ ?_ run notTimeout
-                    · intro argResult argNext argRun argNotTimeout
-                      apply exprIH args env state argNext argResult extra (by omega) ?_ argRun argNotTimeout
-                      simp only [expsWeight, expWeight] at measure ⊢
-                      omega
-                    · intro value argNext final forceResult bound forceRun forceNotTimeout
-                      change evaluate [.app .none none (.var .none 0) [.op .none (.blockOp (.cons 0)) []]] [value] argNext = (forceResult, final) at forceRun
-                      change evaluate [.app .none none (.var .none 0) [.op .none (.blockOp (.cons 0)) []]] [value]
-                        { argNext with clock := argNext.clock + extra } = (forceResult, { final with clock := final.clock + extra })
-                      apply evaluate_app_addClock .none none (.var .none 0) [.op .none (.blockOp (.cons 0)) []]
-                        [value] argNext final forceResult extra ?_ ?_ ?_ forceRun forceNotTimeout
-                      · intro argResult argState argRun _
-                        simp [evaluate, fixClock, doApp, applyBlock] at argRun ⊢
-                        rcases argRun with ⟨rfl, rfl⟩
-                        simp
-                      · intro argState fnState fnResult _ fnRun _
-                        exact evaluate_var_addClock .none 0 [value] argState fnState fnResult extra fnRun
-                      · intro fnValue values fnState appNext appResult appLe appRun appNotTimeout
-                        exact appBound none fnValue values fnState appNext appResult extra (by omega) appRun appNotTimeout
-                  | allocThunk mode => exact ordinary _ (by simp) (by simp) run
-                  | updateThunk mode => exact ordinary _ (by simp) (by simp) run
-                | label _ | ffi _ | intOp _ | wordOp _ | blockOp _ | globOp _ | memOp _ =>
-                  exact ordinary _ (by simp) (by simp) run
-  constructor
-  · intro expressions env state next result extra run notTimeout
-    exact (all state.clock).2 (expsWeight expressions) expressions env state next result extra rfl rfl run notTimeout
-  · intro location function args state next result extra run notTimeout
-    exact (all state.clock).1 location function args state next result extra rfl run notTimeout
+              · intro value argNext final forceResult bound forceRun forceNotTimeout
+                change evaluate [.app .none none (.var .none 0) [.op .none (.blockOp (.cons 0)) []]]
+                  [value] argNext = (forceResult, final) at forceRun
+                change evaluate [.app .none none (.var .none 0) [.op .none (.blockOp (.cons 0)) []]]
+                  [value]
+                  { argNext with clock := argNext.clock + extra } =
+                    (forceResult, { final with clock := final.clock + extra })
+                apply evaluate_app_addClock .none none (.var .none 0)
+                  [.op .none (.blockOp (.cons 0)) []]
+                  [value] argNext final forceResult extra ?_ ?_ ?_ forceRun forceNotTimeout
+                · intro argResult argState argRun _
+                  simp [evaluate, fixClock, doApp, applyBlock] at argRun ⊢
+                  rcases argRun with ⟨rfl, rfl⟩
+                  simp
+                · intro argState fnState fnResult _ fnRun _
+                  exact evaluate_var_addClock .none 0 [value] argState fnState fnResult extra fnRun
+                · intro fnValue values fnState appNext appResult appLe appRun appNotTimeout
+                  exact appBound none fnValue values fnState appNext appResult extra (by omega)
+                    appRun appNotTimeout
+            | allocThunk mode => exact ordinary _ (by simp) (by simp) run
+            | updateThunk mode => exact ordinary _ (by simp) (by simp) run
+          | label _ | ffi _ | intOp _ | wordOp _ | blockOp _ | globOp _ | memOp _ =>
+            exact ordinary _ (by simp) (by simp) run
 
 end Flapjack.Compiler.Backend.ClosSem
