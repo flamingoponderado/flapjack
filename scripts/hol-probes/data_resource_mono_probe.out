@@ -55,3 +55,4 @@ map_error_result_Rtype_error_typed=map_error_result (f :β -> α) (e :β error_r
 map_error_result_I_typed=map_error_result (I :α -> α) (e :α error_result) = e
 map_result_Rval_typed=map_result (f1 :γ -> α) (f2 :δ -> β) (e :(γ, δ) result) = (Rval (x :α) :(α, β) result) ⇔ ∃(y :γ). e = (Rval y :(γ, δ) result) ∧ x = f1 y
 map_result_Rerr_typed=map_result (f1 :γ -> α) (f2 :δ -> β) (e :(γ, δ) result) = (Rerr (e' :β error_result) :(α, β) result) ⇔ ∃(a :δ error_result). e = (Rerr a :(γ, δ) result) ∧ map_error_result f2 a = e'
+do_app_aux_with_space_typed=do_app_aux (op :closLang$op) (vs :v list) ((s :(α, β) dataSem$state) with space := (z :num)) = map_result (λ((x :v),(y :(α, β) dataSem$state)). (x,y with space := z)) (I :v -> v) (do_app_aux op vs s)

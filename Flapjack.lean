@@ -334,6 +334,7 @@ import Flapjack.Compiler.Backend.Semantics.DataProps.HeapSwap
 import Flapjack.Compiler.Backend.Semantics.DataProps.ResourceSwap
 import Flapjack.Compiler.Backend.Semantics.DataProps.CutSwap
 import Flapjack.Compiler.Backend.Semantics.DataProps.CutFields
+import Flapjack.Compiler.Backend.Semantics.DataProps.ApplyAuxFields
 import Flapjack.Compiler.Backend.Semantics.DataProps.ConsumeSpaceFields
 import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateResourceSwap
 import Flapjack.Compiler.Backend.Semantics.DataProps.StackSize

@@ -108,3 +108,4 @@ val _ = show "map_error_result_Rtype_error_typed" semanticPrimitivesPropsTheory.
 val _ = show "map_error_result_I_typed" semanticPrimitivesPropsTheory.map_error_result_I;
 val _ = show "map_result_Rval_typed" semanticPrimitivesPropsTheory.map_result_Rval;
 val _ = show "map_result_Rerr_typed" semanticPrimitivesPropsTheory.map_result_Rerr;
+val _ = show "do_app_aux_with_space_typed" do_app_aux_with_space;

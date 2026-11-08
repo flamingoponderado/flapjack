@@ -128372,6 +128372,24 @@
   "reviewer": "Compared cut_state_opt_with_const_typed: free variables x, y, z, k, lsz with one state type; the three option-map commutations for stack, clock and locals-size updates in source order."
 },
 {
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "do_app_aux_with_locals",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/ApplyAuxFields.lean",
+  "lean_name": "doAppAux_withLocals",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared do_app_aux_with_locals_typed: binders op, vs, s, z; one state type; the complete map_result equation with locals replaced in successful states and HOL I (Lean id) on errors. Derived from the exact Flapjack six-field commutation doAppAux_withFields. Inherits reals_as_rational_cuts through doAppAux (SOUNDNESS item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "do_app_aux_with_space",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/ApplyAuxFields.lean",
+  "lean_name": "doAppAux_withSpace",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared do_app_aux_with_space_typed: binders op, vs, s, z; one state type; the complete map_result equation with space replaced in successful states and HOL I (Lean id) on errors. Derived from the exact Flapjack six-field commutation doAppAux_withFields. Inherits reals_as_rational_cuts through doAppAux (SOUNDNESS item 8)."
+},
+{
   "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
   "hol_name": "map_error_result_def",
   "lean_path": "Flapjack/SemanticPrimitivesProps/ResultMap.lean",
