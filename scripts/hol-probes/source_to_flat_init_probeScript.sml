@@ -104,6 +104,17 @@ val _ = show_thm "list_rel_imp_el2_replay=" list_rel_imp_el2_replay;
 val list_rel_imp_el_replay = prove (concl source_to_flatProofTheory.LIST_REL_IMP_EL,
   Induct_on `xs` >> fs [PULL_EXISTS] >> rw [] >> Cases_on `i` >> fs []);
 val _ = show_thm "list_rel_imp_el_replay=" list_rel_imp_el_replay;
+val env_all_rel_weak_replay = let open source_to_flatProofTheory in Q.prove (
+  `!genv map locals env env' genv'.
+    source_to_flatProof$env_all_rel genv map env env' locals /\
+    genv.c SUBMAP genv'.c /\ genv.tys SUBMAP genv'.tys /\
+    source_to_flatProof$subglobals genv.v genv'.v ==>
+    source_to_flatProof$env_all_rel genv' map env env' locals`,
+  rw [env_all_rel_cases] >> imp_res_tac env_rel_weak >>
+  imp_res_tac global_env_inv_weak >>
+  MAP_EVERY qexists_tac [`alist_to_ns l`, `env''`, `env'''`] >>
+  rw [] >> metis_tac [SUBMAP_FDOM_SUBSET, SUBSET_TRANS]) end;
+val _ = show_thm "env_all_rel_weak_replay=" env_all_rel_weak_replay;
 val do_app_conversion_inl = Q.prove (
   `semanticPrimitives$check_type ty1 v /\ source_to_flatProof$genv_c_ok genv.c /\
     source_to_flatProof$v_rel genv v v_i1 /\

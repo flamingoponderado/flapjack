@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StateRel
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRelCases
 
 /-! Weakening the factored source-to-flat relations across global growth. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
@@ -330,6 +331,20 @@ theorem globalEnvInv_weak (old : GlobalEnv) (map : Environment) (shadowers : Var
   obtain ⟨related, constructors, types, slots⟩ := premises
   exact globalEnvInv_growth old new (GlobalGrowth.ofSubglobals old new slots constructors types)
     map shadowers env related
+
+/-- The combined local and global environment relation survives global extension. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "env_all_rel_weak"
+  (fmap_as_finite_support := [c, tys])]
+theorem envAllRel_weak (old : GlobalEnv) (map : Environment) (locals : List VarN)
+    (env : SemEnv Value) (flatEnv : FlatSem.Environment FlatSem.Value) (new : GlobalEnv)
+    (premises : FactoredEnvAllRel old map env flatEnv locals ∧ finiteSubmap old.c new.c ∧
+      finiteSubmap old.tys new.tys ∧ subglobals old.v new.v) :
+    FactoredEnvAllRel new map env flatEnv locals := by
+  obtain ⟨⟨base, sourceLocal, bindings, envEq, localEq, names, globals, localRel⟩,
+    constructors, types, slots⟩ := premises
+  exact ⟨base, sourceLocal, bindings, envEq, localEq, names,
+    globalEnvInv_weak old map _ base new ⟨globals, constructors, types, slots⟩,
+    envRel_weak old sourceLocal flatEnv.v new ⟨localRel, constructors, types, slots⟩⟩
 
 /-- Related store lists remain related when the global environment grows. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "LIST_REL_sv_rel_weak"
