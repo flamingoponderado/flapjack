@@ -196,8 +196,12 @@ structure PanSemExpressionRoute where
     state-owned run. The route pins the owner's structure context, word size and
     memory domains; the per-call `structs`, `bytes` and `access` arguments that
     the evaluator signature supplies are ignored, so every expression in the run
-    sees the same settings. The structure-context cache is computed once when
-    the route value is built, outside the per-expression lambda. The access is
+    sees the same settings. The structure-context cache is computed once per
+    route construction, outside the per-expression lambda: `panSemExpressionRoute`
+    is marked `@[noinline]`, so the `let cache` is evaluated once when the route
+    value is built (Lean is strict) and captured by the closure. Without that
+    attribute a call site could inline the definition and float the `let` into
+    the lambda, recomputing the cache for every expression. The access is
     `some (panSemBitVec64MemoryAccess owner)`, and
     `panSemExpressionRoute_access_structs` records that re-pinning the structure
     context leaves it unchanged. The generic fallback `evalPanSemStateExp`
@@ -208,6 +212,7 @@ structure PanSemExpressionRoute where
     HOL's `panSem` has one expression evaluator, while the Lean runner must
     choose between the HOL-shaped evaluator and the String-compatible
     fallback. -/
+@[noinline]
 def panSemExpressionRoute (owner : PanSemState (RiscV.Word 64) (FfiState σ)) :
     PanSemExpressionRoute :=
   let cache := panSemExpressionContextCache owner.structs
