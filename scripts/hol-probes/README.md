@@ -368,7 +368,9 @@ cases. Lean proves both decoder choice correspondences and checks installation
 success with an existing label. The capture is not a full installation proof.
 Regenerate with `HOL_PROBE_ONLY=data_sem_install_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
-`data_sem_apply_probe.out` captures the typed data primitive dispatcher and
+`data_sem_apply_probe.out` captures the typed data primitive dispatcher, its
+`do_app_clock` theorem and the architecture-size and small-number definitions,
+alongside
 original observations for block construction, timestamp updates, invalid list
 lengths, integer arithmetic, and unsupported byte copying. Lean examples cover
 the same cases; these checks do not establish full dispatcher correspondence.

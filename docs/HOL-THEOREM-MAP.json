@@ -128374,8 +128374,8 @@
   "hol_name": "arch_size_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/State.lean",
   "lean_name": "archSize",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared arch_size in the typed DataSem probe: the reviewed Limits carrier selects 64 for arch_64_bit and 32 otherwise."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
@@ -128430,8 +128430,8 @@
   "hol_name": "small_num_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/State.lean",
   "lean_name": "smallNum",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared small_num in the typed DataSem probe: the Boolean architecture argument and integer bound retain their order, and the signed lower and strict upper bounds use powers 61 and 29."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",

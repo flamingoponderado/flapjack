@@ -31,6 +31,9 @@ val _ = show "build_sequence=" dataSemTheory.do_build_def;
 val _ = show "build_constant=" dataSemTheory.do_build_const_def;
 val _ = show "finalise_cons=" dataSemTheory.finalise_cons_def;
 val _ = show "do_app_aux=" dataSemTheory.do_app_aux_def;
+val _ = show "do_app_clock=" dataSemTheory.do_app_clock;
+val _ = show "arch_size=" dataSemTheory.arch_size_def;
+val _ = show "small_num=" dataSemTheory.small_num_def;
 val _ = show "nullary_cons=" (EVAL ``dataSem$do_app_aux (closLang$BlockOp (closLang$Cons 9)) []
   (s:('c,'ffi) dataSem$state)``);
 val _ = show "nonempty_cons=" (EVAL ``dataSem$do_app_aux (closLang$BlockOp (closLang$Cons 9))
