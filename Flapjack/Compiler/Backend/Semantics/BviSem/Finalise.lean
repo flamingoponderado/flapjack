@@ -19,8 +19,9 @@ theorem card_eraseEq_lt {α β : Type} [DecidableEq α] (map : HolFiniteMapExact
   omega
 
 /-- Finalise mutable constructor chains, removing each visited reference
-while descending. Untagged until the nested finite-map function/result
-representation has an approved independent lookup witness. -/
+while descending. -/
+@[hol "cakeml/compiler/backend/semantics/bviSemScript.sml" "finalise_cons_def"
+  (fmap_as_finite_support_heterogeneous_function := [argument_2, result_2])]
 noncomputable def finaliseCons (value : Value) (refs : HolFiniteMapExact Nat (Ref Value)) :
     Option (Value × HolFiniteMapExact Nat (Ref Value)) :=
   match value with
@@ -40,6 +41,91 @@ termination_by refs.card
 decreasing_by
   apply card_eraseEq_lt
   simp [_found]
+
+/-- Independent lookup-level execution of finalisation. The fuel bounds the
+number of distinct references followed; this is representation infrastructure,
+not a separate HOL operation. -/
+def lookupFinaliseConsFuel : Nat → Value → (Nat → Option (Ref Value)) →
+    Option (Value × (Nat → Option (Ref Value)))
+  | 0, _, _ => none
+  | fuel + 1, value, refs =>
+    match value with
+    | .refPtr flag ptr =>
+      match refs ptr with
+      | some (.mutBlock tag finalised left child right) =>
+        if finalised then none else
+          match lookupFinaliseConsFuel fuel child (fun key => if key = ptr then none else refs key) with
+          | none => none
+          | some (result, rest) =>
+            some (.block tag (left ++ [result] ++ right),
+              fun key => if key = ptr then some (.mutBlock tag true left child right) else rest key)
+      | some _ => some (.refPtr flag ptr, refs)
+      | none => none
+    | other => some (other, refs)
+
+/-- Run the independent lookup operation with one more step than the finite
+domain size. Infinite-support inputs have no HOL finite-map counterpart. -/
+noncomputable def lookupFinaliseCons (value : Value) (refs : Nat → Option (Ref Value)) :
+    Option (Value × (Nat → Option (Ref Value))) := by
+  classical
+  exact if h : {key | refs key ≠ none}.Finite then
+    lookupFinaliseConsFuel (h.toFinset.card + 1) value refs else none
+
+/-- A sufficiently large raw traversal agrees with the canonical finite-map
+operation after forgetting the output map representation. -/
+theorem lookupFinaliseConsFuel_eq (fuel : Nat) (value : Value)
+    (refs : HolFiniteMapExact Nat (Ref Value)) (bound : refs.card < fuel) :
+    (finaliseCons value refs).map (fun (result, rest) => (result, rest.lookup)) =
+      lookupFinaliseConsFuel fuel value refs.lookup := by
+  induction fuel generalizing value refs with
+  | zero => omega
+  | succ fuel ih =>
+    cases value with
+    | refPtr flag ptr =>
+      rw [finaliseCons.eq_def, lookupFinaliseConsFuel]
+      dsimp only
+      cases found : refs.lookup ptr with
+      | none => rfl
+      | some entry =>
+        cases entry with
+        | mutBlock tag finalised left child right =>
+          cases finalised with
+          | true => simp
+          | false =>
+            have smaller : (refs.eraseEq ptr).card < fuel := by
+              have decreased := card_eraseEq_lt refs ptr (by simp [found])
+              omega
+            have recEq := ih child (refs.eraseEq ptr) smaller
+            have lookupErase : (refs.eraseEq ptr).lookup =
+                (fun key => if key = ptr then none else refs.lookup key) := by
+              funext key
+              simp [HolFiniteMapExact.eraseEq, FDOMSUB_HOL, eq_comm]
+            rw [lookupErase] at recEq
+            cases run : finaliseCons child (refs.eraseEq ptr) with
+            | none => simp [run] at recEq ⊢; rw [← recEq]
+            | some pair =>
+              obtain ⟨result, rest⟩ := pair
+              simp only [run, Option.map_some] at recEq
+              simp only [Bool.false_eq_true, ↓reduceIte, run, Option.map_some]
+              rw [← recEq]
+              congr 2
+        | _ => simp
+    | _ => simp [finaliseCons.eq_def, lookupFinaliseConsFuel]
+
+/-- The finite-map finaliser and the independent lookup-level operation have
+the same result for every input, including failure. -/
+theorem holFmapAsFiniteSupportHeterogeneousFunctionWitness_finaliseCons
+    (value : Value) (refs : HolFiniteMapExact Nat (Ref Value)) :
+    (finaliseCons value refs).map (fun (result, rest) => (result, rest.lookup)) =
+      lookupFinaliseCons value refs.lookup := by
+  classical
+  unfold lookupFinaliseCons
+  have finite : {key | refs.lookup key ≠ none}.Finite := refs.domain_finite
+  simp only [finite, dite_true]
+  apply lookupFinaliseConsFuel_eq
+  change refs.card < refs.card + 1
+  omega
+
 /-- Flapjack infrastructure: successful finalisation restores every removed
 key and preserves the reference domain. This supports the evaluator's domain
 growth proof; it is not a separate HOL declaration. -/

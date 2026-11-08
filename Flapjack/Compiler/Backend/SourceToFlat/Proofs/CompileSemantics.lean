@@ -23,7 +23,7 @@ theorem factoredCompileFlat_semantics {C F : Type}
     FlatSem.semantics sourceConfig ffi program =
       FlatSem.semantics targetConfig ffi (compileFlatTotal cfg program) := by
   obtain ⟨related, safe⟩ := premises
-  have elim := FlatElim.flat_remove_semantics ffi program sourceConfig safe
+  have elim := FlatElim.flat_remove_semantics sourceConfig ffi program safe
   have elimSafe : FlatSem.semantics sourceConfig ffi (FlatElim.removeFlatProgTotal program) ≠ .fail := by
     rw [← elim]
     exact safe

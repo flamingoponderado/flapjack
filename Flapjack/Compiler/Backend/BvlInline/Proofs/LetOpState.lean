@@ -1,6 +1,6 @@
 import Flapjack.Compiler.Backend.BvlInline.Proofs.MappedApply
 import Flapjack.Compiler.Backend.BvlInline.Proofs.LetOpProduction
-import Flapjack.Compiler.Backend.BvlHandle.Proofs.ConstantComposition
+import Flapjack.Compiler.Backend.BvlHandle.SourceCompile
 
 /-! Runtime state relation for the combined let-operation and handler pass. -/
 namespace Flapjack.Compiler.Backend.BvlInline.Proofs
@@ -9,10 +9,7 @@ open Flapjack.Compiler.Backend.BvlSem
 /-- Source-shaped total version of the handler pipeline actually executed
 after let-operation optimization. -/
 def letOpTransform (splitSeq : Bool) (limit arity : Nat) (body : Bvl.Exp) : Bvl.Exp :=
-  let optimized := letOpSing body
-  if arity == 0 && splitSeq then
-    BvlHandle.compileSeqsWith (fun limit e => BvlHandle.compileExpression limit 0 e) limit optimized none
-  else BvlHandle.compileExpression limit arity optimized
+  BvlHandle.compileAny splitSeq limit arity (letOpSing body)
 
 /-- A successful production let-operation traversal followed by handler
 compilation returns the source-shaped combined transformation. -/

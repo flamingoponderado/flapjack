@@ -181,7 +181,7 @@ structure HolRef where
       exact context carrier, and its checked local roundtrip witnesses. -/
   fmapAsFiniteSupportTuple : Array String := #[]
   /-- A HOL function whose named argument and result product slots are both
-      canonical `HolFiniteMapExact` carriers but have distinct map types.
+      canonical `HolFiniteMapExact` carriers with possibly distinct map types.
       This qualifier requires a same-module
       `holFmapAsFiniteSupportHeterogeneousFunctionWitness_<decl>` theorem. The
       witness must compare the `Option.map` result projection with an

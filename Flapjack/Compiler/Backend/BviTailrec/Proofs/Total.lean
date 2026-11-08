@@ -55,48 +55,4 @@ theorem compileExpFuel_succeeds (fuel loc next arity : Nat) (e : Exp)
       rewriteFuel_succeeds fuel loc next op arity (List.replicate arity .any) e bound
     exact ⟨_, by simp [compileExpFuel, hd, hw]; rfl⟩
 
-/-- The production rewrite retry cannot fail from traversal fuel. -/
-theorem compileExpBounded_succeeds (fuel loc next arity : Nat) (e : Exp) :
-    ∃ result, compileExpBounded fuel loc next arity e = some result := by
-  cases h : compileExpFuel fuel loc next arity e with
-  | some result => exact ⟨result, by simp [compileExpBounded, h]⟩
-  | none =>
-    have bound : expBudget e < max fuel (expBudget e + 1) := by omega
-    obtain ⟨result, done⟩ := compileExpFuel_succeeds (max fuel (expBudget e + 1)) loc next arity e bound
-    exact ⟨result, by simp [compileExpBounded, h, done]⟩
-
-/-- Previously successful rewrite results are unchanged by the retry. -/
-theorem compileExpBounded_eq_of_success (fuel loc next arity : Nat) (e : Exp)
-    (result : Option (Exp × Exp)) (success : compileExpFuel fuel loc next arity e = some result) :
-    compileExpBounded fuel loc next arity e = some result := by
-  simp [compileExpBounded, success]
-
-/-- Processing all functions cannot fail from traversal fuel. -/
-theorem compileEachFuel_succeeds (fuel next : Nat) (code : List (Nat × Nat × Exp)) :
-    ∃ result, compileEachFuel fuel next code = some result := by
-  induction code generalizing next with
-  | nil => exact ⟨_, rfl⟩
-  | cons p ps ih =>
-    obtain ⟨loc, arity, body⟩ := p
-    obtain ⟨decision, hd⟩ := compileExpBounded_succeeds fuel loc next arity body
-    cases decision with
-    | none =>
-      obtain ⟨⟨next', rest⟩, hr⟩ := ih next
-      exact ⟨_, by simp [compileEachFuel, hd, hr]; rfl⟩
-    | some pair =>
-      obtain ⟨wrapper, worker⟩ := pair
-      obtain ⟨⟨next', rest⟩, hr⟩ := ih (next + Flapjack.bvlToBviNamespaces)
-      exact ⟨_, by simp [compileEachFuel, hd, hr]; rfl⟩
-
-/-- Whole-program tail-recursion conversion cannot exhaust its traversal
-budgets. This is not the HOL pass-correctness theorem. -/
-theorem compileProgFuel_succeeds (fuel : Nat) (enabled : Bool) (next : Nat)
-    (code : List (Nat × Nat × Exp)) :
-    ∃ result, compileProgFuel fuel enabled next code = some result := by
-  cases enabled with
-  | false => exact ⟨_, rfl⟩
-  | true =>
-    obtain ⟨result, h⟩ := compileEachFuel_succeeds fuel next code
-    exact ⟨result, by simpa [compileProgFuel] using h⟩
-
 end Flapjack.Compiler.Backend.BviTailrec

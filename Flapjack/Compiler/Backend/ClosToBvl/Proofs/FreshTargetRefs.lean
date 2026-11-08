@@ -86,35 +86,6 @@ theorem stateRel_targetRefs_update_fresh {C F : Type} (s : ClosSem.State C F) (t
     unmappedRefsSubmap_of_extension t.refs _ f extension, outside,
     by simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL]⟩
 
-/-- Replacing a target-only cell at an originally unused address preserves
-all original references even after earlier target-only extensions. This
-supports filling the shared array during recursive-closure construction. -/
-theorem stateRel_targetRefs_update_originally_fresh {C F : Type}
-    (s : ClosSem.State C F) (t : BvlSem.State C F) (f : HolFiniteMapExact Nat Nat)
-    (current : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (ptr : Nat) (cell : BvlSem.Ref BvlSem.Value)
-    (states : stateRel f s t) (unused : t.refs.lookup ptr = none)
-    (extension : ∀ key value, t.refs.lookup key = some value → current.lookup key = some value) :
-    stateRel f s { t with refs := current.updateEq (ptr, cell) } ∧
-    unmappedRefsSubmap t.refs (current.updateEq (ptr, cell)) f f ∧
-    (¬ ∃ sourcePtr, f.lookup sourcePtr = some ptr) ∧
-    (current.updateEq (ptr, cell)).lookup ptr = some cell := by
-  have outside : ¬ ∃ sourcePtr, f.lookup sourcePtr = some ptr := by
-    rintro ⟨sourcePtr, mapped⟩
-    have occupied := states.2.2.2.2.2.2.1 sourcePtr ptr mapped
-    exact occupied unused
-  have newExtension : ∀ key value, t.refs.lookup key = some value →
-      (current.updateEq (ptr, cell)).lookup key = some value := by
-    intro key value found
-    have different : key ≠ ptr := by
-      intro equal
-      subst key
-      rw [unused] at found
-      contradiction
-    simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, different] using extension key value found
-  exact ⟨stateRel_targetRefs_extend s t f _ states newExtension,
-    unmappedRefsSubmap_of_extension t.refs _ f newExtension, outside,
-    by simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL]⟩
-
 /-- The evaluator's least-unused address meets the target-only allocation
 conditions. -/
 theorem stateRel_targetRefs_allocate {C F : Type} (s : ClosSem.State C F) (t : BvlSem.State C F)
@@ -126,39 +97,5 @@ theorem stateRel_targetRefs_allocate {C F : Type} (s : ClosSem.State C F) (t : B
     (t.refs.updateEq (ptr, cell)).lookup ptr = some cell := by
   exact stateRel_targetRefs_update_fresh s t f (BvlSem.leastUnusedRef t.refs) cell states
     (BvlSem.leastUnusedRef_unused t.refs)
-
-/-- The BVL reference primitive allocates the shared target-only array at the
-least unused address while preserving the source-to-target state relation. -/
-theorem doApp_allocate_targetOnly {C F : Type} (s : ClosSem.State C F) (t : BvlSem.State C F)
-    (f : HolFiniteMapExact Nat Nat) (values : List BvlSem.Value) (states : stateRel f s t) :
-    let ptr := BvlSem.leastUnusedRef t.refs
-    let next := { t with refs := t.refs.updateEq (ptr, .valueArray values) }
-    BvlSem.doApp (.memOp .ref) values t = .val (.refPtr true ptr, next) ∧
-    stateRel f s next ∧ unmappedRefsSubmap t.refs next.refs f f ∧
-    (¬ ∃ sourcePtr, f.lookup sourcePtr = some ptr) ∧ next.refs.lookup ptr = some (.valueArray values) := by
-  refine ⟨?_, stateRel_targetRefs_allocate s t f (.valueArray values) states⟩
-  simp [BvlSem.doApp, BvlSem.applyMemory]
-
-/-- Updating an in-bounds element of a target-only array preserves the
-original state and reference relations, even after earlier updates to that
-fresh array. -/
-theorem doApp_update_targetOnly {C F : Type} (s : ClosSem.State C F) (t : BvlSem.State C F)
-    (f : HolFiniteMapExact Nat Nat) (current : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value))
-    (ptr index : Nat) (values : List BvlSem.Value) (value : BvlSem.Value) (flag : Bool)
-    (states : stateRel f s t) (unused : t.refs.lookup ptr = none)
-    (extension : ∀ key cell, t.refs.lookup key = some cell → current.lookup key = some cell)
-    (lookup : current.lookup ptr = some (.valueArray values)) (bound : index < values.length) :
-    let start := { t with refs := current }
-    let next := { t with refs := current.updateEq (ptr, .valueArray (values.set index value)) }
-    BvlSem.doApp (.memOp .update) [.refPtr flag ptr, .number (Int.ofNat index), value] start =
-      .val (BvlSem.unitValue, next) ∧
-    stateRel f s next ∧ unmappedRefsSubmap t.refs next.refs f f ∧
-    (¬ ∃ sourcePtr, f.lookup sourcePtr = some ptr) ∧
-    next.refs.lookup ptr = some (.valueArray (values.set index value)) := by
-  refine ⟨?_, stateRel_targetRefs_update_originally_fresh s t f current ptr (.valueArray (values.set index value))
-    states unused extension⟩
-  have nonnegative : ¬ ((index : Int) < 0) := by omega
-  have inBounds : ¬ values.length ≤ index := by omega
-  simp [BvlSem.doApp, BvlSem.applyMemory, lookup, nonnegative, inBounds]
 
 end Flapjack.Compiler.Backend.ClosToBvl

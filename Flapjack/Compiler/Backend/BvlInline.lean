@@ -183,33 +183,6 @@ def letOpBounded (fuel : Nat) (e : Exp) : Option Exp :=
   | some result => some result
   | none => letOpFuel (max fuel (expBudget e + 1)) e
 
-/-- Apply tick inlining, tick removal and let-operation reduction. The
-subsequent `bvl_handle` transformation is not included. -/
-def compileWithoutHandleFuel (fuel limit : Nat) (prog : List (Nat × Nat × Exp)) :
-    Option (Spt (Nat × Exp) × List (Nat × Nat × Exp)) := do
-  let (cache, prog) ← tickInlineAllFuel fuel limit .ln prog
-  let prog ← prog.mapM fun (name, arity, body) => do
-    let body ← removeTicksBounded fuel body
-    pure (name, arity, ← letOpBounded fuel body)
-  pure (cache, prog)
-
-/-- Continue through handler processing without its constant-folding
-prerequisite; the result is not the full original BVL optimization pass. -/
-def compileWithoutConstantsFuel (fuel inlineLimit cutSize : Nat) (splitSeq : Bool)
-    (prog : List (Nat × Nat × Exp)) : Option (Spt (Nat × Exp) × List (Nat × Nat × Exp)) := do
-  let (cache, prog) ← compileWithoutHandleFuel fuel inlineLimit prog
-  let prog ← prog.mapM fun (name, arity, body) => do
-    pure (name, arity, ← BvlHandle.compileAnyWithoutConstantsFuel fuel splitSeq cutSize arity body)
-  pure (cache, prog)
-
-/-- Execute the BVL inlining and handler pipeline with explicit fuel. -/
-def compileProgFuel (fuel inlineLimit cutSize : Nat) (splitSeq : Bool)
-    (prog : List (Nat × Nat × Exp)) : Option (Spt (Nat × Exp) × List (Nat × Nat × Exp)) := do
-  let (cache, prog) ← compileWithoutHandleFuel fuel inlineLimit prog
-  let prog ← prog.mapM fun (name, arity, body) => do
-    pure (name, arity, ← BvlHandle.compileAnyFuel fuel splitSeq cutSize arity body)
-  pure (cache, prog)
-
 /-- Incremental BVL optimization starts from the retained inline cache. -/
 def compileIncFuel (fuel inlineLimit cutSize : Nat) (splitSeq : Bool)
     (cache : Spt (Nat × Exp)) (prog : List (Nat × Nat × Exp)) :
@@ -220,5 +193,10 @@ def compileIncFuel (fuel inlineLimit cutSize : Nat) (splitSeq : Bool)
     let body ← letOpBounded fuel body
     pure (name, arity, ← BvlHandle.compileAnyFuel fuel splitSeq cutSize arity body)
   pure (cache, prog)
+
+/-- Optimize a whole program from an empty inline cache. -/
+def compileProgFuel (fuel inlineLimit cutSize : Nat) (splitSeq : Bool)
+    (prog : List (Nat × Nat × Exp)) : Option (Spt (Nat × Exp) × List (Nat × Nat × Exp)) :=
+  compileIncFuel fuel inlineLimit cutSize splitSeq .ln prog
 
 end Flapjack.Compiler.Backend.BvlInline

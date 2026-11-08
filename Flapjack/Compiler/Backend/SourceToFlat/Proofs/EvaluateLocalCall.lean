@@ -46,7 +46,7 @@ theorem doOpApp_closure_local (genv : GlobalEnv)
       GlobalEnvInv genv baseMap (fun n => n ∈ flatEnv.v.map Prod.fst) baseEnv ∧
       traces.length = flatEnv.v.length := by
   obtain ⟨baseMap, baseEnv, captured, flatCaptured, trace, traces, sourceEq, flatEq, locals, globals, len⟩ :=
-    (valueRel_closure_iff genv sourceEnv name body flatClosure).mp closureRel
+    (valueRel_more_eqns.2.1 flatClosure name genv body sourceEnv).mp closureRel
   cases traces with
   | nil => simp at len
   | cons head rest =>
@@ -153,6 +153,22 @@ theorem lookup_recursive_bindings (sourceEnv : SemEnv Value)
     · subst head
       simp
     · simp [List.lookup_cons, BEq.beq, eq, ih]
+
+/-- A successful lookup in recursively generated bindings returns the closure
+for the requested name, independently of the other tuple components. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "lookup_build_rec_env_lem"]
+theorem lookup_build_rec_env {α β : Type} {v : Value} :
+    ∀ (x : VarN) (clEnv : SemEnv Value) (funs' : List (VarN × VarN × AstHOL.Exp))
+      (funs : List (VarN × α × β)),
+      (funs.map (fun (name, _, _) => (name, Value.recclosure clEnv funs' name))).lookup x = some v →
+      v = Value.recclosure clEnv funs' x := by
+  intro x clEnv funs' funs found
+  have mapped : funs.map (fun (name, _, _) => (name, Value.recclosure clEnv funs' name)) =
+      (funs.map Prod.fst).map (fun name => (name, Value.recclosure clEnv funs' name)) := by
+    simp only [List.map_map]
+    rfl
+  rw [mapped, lookup_recursive_bindings] at found
+  split at found <;> simp_all
 
 /-- Every global slot in a top-level recursive group contains a closure
 related to the corresponding source recursive closure. -/
@@ -320,67 +336,97 @@ theorem doOpApp_topRecclosure_local (genv : GlobalEnv) (sourceEnv : SemEnv Value
   · rw [flatApp]
     simp [extendedMap, flatLocal, bindLocals, nsBindList]
 
-/-- Every successful source function application to a related argument has a
-flat call with related local environments and a compiled source body. This
-unifies ordinary, local-recursive, and top-level-recursive closure cases. -/
-theorem doOpApp_related (genv : GlobalEnv) (sourceFunction : Value) (flatFunction : FlatSem.Value)
-    (argument : Value) (flatArgument : FlatSem.Value)
-    (functionRel : ValueRel genv sourceFunction flatFunction) (argumentRel : ValueRel genv argument flatArgument)
-    (successful : doOpApp [sourceFunction, argument] ≠ none) :
-    ∃ (baseMap : Environment) (baseEnv : SemEnv Value) (sourceLocal : Namespace ModN VarN Value)
-      (flatLocal : FlatSem.Environment FlatSem.Value) (trace : List VarN) (traces : List BackendCommon.Tra)
-      (body : AstHOL.Exp),
-      doOpApp [sourceFunction, argument] = some ({ baseEnv with v := nsAppend sourceLocal baseEnv.v }, body) ∧
-      FlatSem.doOpApp [flatFunction, flatArgument] =
-        some (flatLocal, compileExp trace { baseMap with v := bindLocals traces (flatLocal.v.map Prod.fst) baseMap.v } body) ∧
-      EnvRel genv sourceLocal flatLocal.v ∧
-      GlobalEnvInv genv baseMap (fun n => n ∈ flatLocal.v.map Prod.fst) baseEnv ∧
-      traces.length = flatLocal.v.length := by
-  cases sourceFunction with
-  | litv lit => simp [doOpApp] at successful
-  | conv stamp values => simp [doOpApp] at successful
-  | loc flag address => simp [doOpApp] at successful
-  | vectorv values => simp [doOpApp] at successful
-  | env env id => simp [doOpApp] at successful
-  | closure env name body =>
-    obtain ⟨baseMap, baseEnv, sourceLocal, flatLocal, trace, traces, src, dst, locals, globals, len⟩ :=
-      doOpApp_closure_local genv env name body flatFunction argument flatArgument functionRel argumentRel
-    exact ⟨baseMap, baseEnv, sourceLocal, flatLocal, trace, traces, body, src, dst, locals, globals, len⟩
-  | recclosure env funs name =>
-    have distinct : (funs.map Prod.fst).Nodup := by
-      by_contra no
-      simp [doOpApp, no] at successful
-    cases found : findRecFun name funs with
-    | none => simp [doOpApp, distinct, found] at successful
-    | some pair =>
-      obtain ⟨arg, body⟩ := pair
-      rcases (valueRel_recclosure_iff genv env funs name flatFunction).mp functionRel with
-        ⟨baseMap, baseEnv, captured, flatCaptured, trace, traces, rfl, rfl, locals, globals, len⟩ |
-        ⟨baseMap, flatEnv, flatArg, flatBody, newVars, trace, argTrace, names, globals, empty, findFlat, closures, flatEq⟩
-      · have setup := doOpApp_recclosure_local genv baseMap baseEnv captured flatCaptured funs name arg body
-          trace traces locals globals len distinct found argument flatArgument argumentRel
-        dsimp only at setup
-        exact ⟨baseMap, baseEnv, _, _, name :: trace, .none :: traces, body, setup⟩
-      · rw [flatEq] at functionRel ⊢
-        exact doOpApp_topRecclosure_local genv env funs name flatEnv flatArg _ argument flatArgument functionRel argumentRel distinct
+namespace DoOpAppPort
+
+/-- The global environment uses the reviewed canonical finite-map representation. -/
+theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
+    GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env := GlobalEnv.holFmapAsFiniteSupportWitness env
+
+end DoOpAppPort
+
+/-- Source and flat operation application preserve the combined environment relation.
+The HOL declaration is local; the probe captures its typed source statement. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_opapp"
+  (fmap_as_finite_support := [c, tys])]
+theorem doOpApp_source (genv : GlobalEnv) (vs : List Value) (flatVs : List FlatSem.Value)
+    (env : SemEnv Value) (expr : AstHOL.Exp)
+    (h : doOpApp vs = some (env, expr) ∧ List.Forall₂ (ValueRel genv) vs flatVs) :
+    ∃ (compMap : Environment) (flatEnv : FlatSem.Environment FlatSem.Value)
+      (locals : List VarN) (trace : List VarN) (traces : List BackendCommon.Tra),
+      FactoredEnvAllRel genv compMap env flatEnv locals ∧ traces.length = locals.length ∧
+      FlatSem.doOpApp flatVs = some
+        (flatEnv, compileExp trace { compMap with v := bindLocals traces locals compMap.v } expr) := by
+  have doOpApp_related (genv : GlobalEnv) (sourceFunction : Value) (flatFunction : FlatSem.Value)
+      (argument : Value) (flatArgument : FlatSem.Value)
+      (functionRel : ValueRel genv sourceFunction flatFunction) (argumentRel : ValueRel genv argument flatArgument)
+      (successful : doOpApp [sourceFunction, argument] ≠ none) :
+      ∃ (baseMap : Environment) (baseEnv : SemEnv Value) (sourceLocal : Namespace ModN VarN Value)
+        (flatLocal : FlatSem.Environment FlatSem.Value) (trace : List VarN) (traces : List BackendCommon.Tra)
+        (body : AstHOL.Exp),
+        doOpApp [sourceFunction, argument] = some ({ baseEnv with v := nsAppend sourceLocal baseEnv.v }, body) ∧
+        FlatSem.doOpApp [flatFunction, flatArgument] =
+          some (flatLocal, compileExp trace { baseMap with v := bindLocals traces (flatLocal.v.map Prod.fst) baseMap.v } body) ∧
+        EnvRel genv sourceLocal flatLocal.v ∧
+        GlobalEnvInv genv baseMap (fun n => n ∈ flatLocal.v.map Prod.fst) baseEnv ∧
+        traces.length = flatLocal.v.length := by
+    cases sourceFunction with
+    | litv lit => simp [doOpApp] at successful
+    | conv stamp values => simp [doOpApp] at successful
+    | loc flag address => simp [doOpApp] at successful
+    | vectorv values => simp [doOpApp] at successful
+    | env env id => simp [doOpApp] at successful
+    | closure env name body =>
+      obtain ⟨baseMap, baseEnv, sourceLocal, flatLocal, trace, traces, src, dst, locals, globals, len⟩ :=
+        doOpApp_closure_local genv env name body flatFunction argument flatArgument functionRel argumentRel
+      exact ⟨baseMap, baseEnv, sourceLocal, flatLocal, trace, traces, body, src, dst, locals, globals, len⟩
+    | recclosure env funs name =>
+      have distinct : (funs.map Prod.fst).Nodup := by
+        by_contra no
+        simp [doOpApp, no] at successful
+      cases found : findRecFun name funs with
+      | none => simp [doOpApp, distinct, found] at successful
+      | some pair =>
+        obtain ⟨arg, body⟩ := pair
+        rcases (valueRel_more_eqns.2.2 name flatFunction genv funs env).mp functionRel with
+          ⟨baseMap, baseEnv, captured, flatCaptured, trace, traces, rfl, rfl, locals, globals, len⟩ |
+          ⟨baseMap, flatEnv, flatArg, flatBody, newVars, trace, argTrace, flatEq, names, globals, empty, findFlat, closures⟩
+        · have setup := doOpApp_recclosure_local genv baseMap baseEnv captured flatCaptured funs name arg body
+            trace traces locals globals len distinct found argument flatArgument argumentRel
+          dsimp only at setup
+          exact ⟨baseMap, baseEnv, _, _, name :: trace, .none :: traces, body, setup⟩
+        · rw [flatEq] at functionRel ⊢
+          exact doOpApp_topRecclosure_local genv env funs name flatEnv flatArg _ argument flatArgument functionRel argumentRel distinct
+  obtain ⟨app, related⟩ := h
+  cases vs with
+  | nil => simp [doOpApp] at app
+  | cons function rest =>
+    cases rest with
+    | nil => simp [doOpApp] at app
+    | cons argument rest =>
+      cases rest with
+      | cons third rest => cases function <;> simp [doOpApp] at app
+      | nil =>
+        cases related with
+        | cons functionRel related =>
+          cases related with
+          | cons argumentRel related =>
+            cases related
+            have successful : doOpApp [function, argument] ≠ none := by rw [app]; simp
+            obtain ⟨baseMap, baseEnv, sourceLocal, flatLocal, trace, traces, body,
+              srcApp, dstApp, localsRel, globals, len⟩ :=
+              doOpApp_related genv function _ argument _ functionRel argumentRel successful
+            rw [srcApp] at app
+            cases app
+            obtain ⟨bindings, localEq, names⟩ := envRel_dom genv sourceLocal flatLocal.v localsRel
+            refine ⟨baseMap, flatLocal, flatLocal.v.map Prod.fst, trace, traces, ?_, ?_, dstApp⟩
+            · exact ⟨baseEnv, sourceLocal, bindings, rfl, localEq, names, globals, localsRel⟩
+            · simpa using len
 
 /-- The local expression simulation available at strictly smaller source
 clocks, used as the recursive induction hypothesis for function calls. -/
-def LocalEnvClockIH {C F : Type} [Nonempty C]
+abbrev LocalEnvClockIH {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat) : Prop :=
-  ∀ (expr : AstHOL.Exp) (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
-    (source : State F) (flat : FlatSem.State C F) (baseEnv : SemEnv Value)
-    (sourceLocal : Namespace ModN VarN Value) (flatEnv : FlatSem.Environment FlatSem.Value)
-    (traces : List BackendCommon.Tra) (trace : List VarN) (baseMap : Environment) (gen : EnvironmentGenerationStore),
-    source.clock < limit → EnvRel genv sourceLocal flatEnv.v →
-    GlobalEnvInv genv baseMap (fun n => n ∈ flatEnv.v.map Prod.fst) baseEnv →
-    traces.length = flatEnv.v.length → factoredInvariant interp transform gen genv (start, finish, other) source flat →
-    envGenRel gen source.evalState →
-    (∀ last, EvaluateHOL.evaluate source { baseEnv with v := nsAppend sourceLocal baseEnv.v } [expr] ≠
-      (last, .err (.abort .typeError))) →
-    LocalExpressionStep interp transform genv start finish other source flat
-      { baseEnv with v := nsAppend sourceLocal baseEnv.v } flatEnv trace
-      { baseMap with v := bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v } gen expr
+  ∀ n, n < limit → ∀ expr, LocalEnvBoundedIH (F := F) interp transform n expr
 
 /-- Source function application after argument evaluation. -/
 noncomputable def sourceCallResult {F : Type} (source : State F) (function argument : Value) :
@@ -448,8 +494,15 @@ theorem localCallResult_related {C F : Type} [Nonempty C]
       | _ => GlobalGrowth genv nextGenv ∧
           factoredInvariant interp transform gen nextGenv (start, finish, other) src.1 dst.1 ∧
           envGenRel gen src.1.evalState ∧ oracForwardRel interp source.evalState src.1.evalState := by
-  obtain ⟨baseMap, baseEnv, sourceLocal, flatLocal, trace, traces, body, srcApp, dstApp, locals, globals, len⟩ :=
-    doOpApp_related genv function flatFunction argument flatArgument functionRel argumentRel successful
+  obtain ⟨⟨callEnv, body⟩, srcApp⟩ := Option.ne_none_iff_exists'.mp successful
+  obtain ⟨baseMap, flatLocal, localNames, trace, traces, envRel, len, dstApp⟩ :=
+    doOpApp_source genv [function, argument] [flatFunction, flatArgument] callEnv body
+      ⟨srcApp, .cons functionRel (.cons argumentRel .nil)⟩
+  have namesEq := factoredEnvAllRel_names genv baseMap callEnv flatLocal localNames envRel
+  subst localNames
+  obtain ⟨baseEnv, sourceLocal, _bindings, envEq, _, _, globals, locals⟩ := envRel
+  subst callEnv
+  simp only [List.length_map] at len
   have clocks : source.clock = flat.clock := by
     cases invariant.2.2.1 with
     | intro _ _ clock _ => exact clock
@@ -469,9 +522,9 @@ theorem localCallResult_related {C F : Type} [Nonempty C]
     have smaller : (EvaluateHOL.decClock source).clock < limit := by
       simp only [EvaluateHOL.decClock]
       omega
-    obtain ⟨nextGenv, bodySim, bodyPost⟩ := calledIH body genv start finish other
+    obtain ⟨nextGenv, bodySim, bodyPost⟩ := calledIH _ smaller body genv start finish other
       (EvaluateHOL.decClock source) (FlatSem.decClock flat) baseEnv sourceLocal flatLocal traces trace baseMap gen
-      smaller locals globals len ((invariantDecClock interp transform gen genv (start, finish, other) source flat invariant).2)
+      (Nat.le_refl _) locals globals len ((invariantDecClock interp transform gen genv (start, finish, other) source flat invariant).2)
       generation bodySafe
     refine ⟨nextGenv, ?_, ?_⟩
     · simpa [sourceCallResult, srcApp, zero, flatCallResult, dstApp, flatNonzero, ExprSim] using bodySim
@@ -959,17 +1012,6 @@ theorem localEnvBounded_forceThunk {C F : Type} [Nonempty C]
                     obtain ⟨callGrowth, finalInvariant, finalGeneration, callForward⟩ := callPost
                     exact ⟨growth.trans callGrowth, finalInvariant, finalGeneration,
                       oracForwardRel_trans interp _ _ _ ⟨forward, callForward⟩⟩
-
-/-- Bounded simulations below the current clock yield the called-body
-induction hypothesis needed by function application. -/
-theorem localEnvClockIH_of_smaller {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
-    (smaller : ∀ n, n < limit → ∀ expr, LocalEnvBoundedIH (F := F) interp transform n expr) :
-    LocalEnvClockIH (F := F) interp transform limit := by
-  intro expr genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen below
-    localRel envInv tracesLen invariant generation safe
-  exact smaller source.clock below expr genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen
-    (Nat.le_refl _) localRel envInv tracesLen invariant generation safe
 
 
 end Flapjack.Compiler.Backend.SourceToFlat

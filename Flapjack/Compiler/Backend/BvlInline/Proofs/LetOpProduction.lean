@@ -1,3 +1,4 @@
+import Flapjack.Misc.Option.MapM
 import Flapjack.Compiler.Backend.BvlInline.Proofs.LetOp
 import Flapjack.Compiler.Backend.BvlInline.Proofs.TraversalTotal
 import Flapjack.Compiler.Backend.BvlInline.TickInline

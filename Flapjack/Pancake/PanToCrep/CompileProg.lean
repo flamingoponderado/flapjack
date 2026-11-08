@@ -351,7 +351,9 @@ private theorem fupdateList_ofString_bridge {β γ : Type}
           (Flapjack.Basis.Pure.MlString.ofString name, decode value))
           (Flapjack.FUPDATE lookupProduction (name, value)) hupdated key
 
-private theorem compileParamVars_entries_nameRanged
+/-- `compile_param_vars` emits only name-ranged entries when every
+parameter name is ranged. Untagged Flapjack infrastructure. -/
+theorem compileParamVars_entries_nameRanged
     (params : List (VarName × Shape)) (offset : Nat)
     (hparams : ∀ p ∈ params, Flapjack.Pancake.PanLang.NameRanged p.1) :
     ∀ entry ∈ (compileParamVars params offset).1,

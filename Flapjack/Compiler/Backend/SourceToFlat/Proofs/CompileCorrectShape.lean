@@ -7,10 +7,46 @@ namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.SemanticPrimitivesHOL
 open Flapjack.Compiler.Backend.SourceToFlat.OracleInvariant
 
+section
+noncomputable local instance (α : Type) : DecidableEq α := Classical.typeDecidableEq α
+
+/-- Looking up a binding selects it exactly at its short name. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "nsLookup_nsBind_If"]
+theorem nsLookup_nsBind_if {M N V : Type} (n : N) (v : V)
+    (e : Namespace M N V) (nm : Ident M N) :
+    nsLookup (nsBind n v e) nm = if nm = .short n then some v else nsLookup e nm := by
+  split
+  · rename_i eq
+    subst nm
+    exact nsLookup_nsBind.1 n v e
+  · rename_i ne
+    exact nsLookup_nsBind.2 nm n v e ne
+end
+
 /-- Whether a source result is an abort rather than a value or raised exception. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "abort_def"]
 abbrev resultAbort {α β : Type} (result : Result α β) : Prop :=
   SourceEval.Proofs.abort result
+
+/-- Abort classification retains the independent result carriers in each case. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "abort_simps"]
+theorem resultAbort_simps {α β γ δ ε ζ : Type} (a : Abort) (e : δ) (v : ε) :
+    (resultAbort (.err (.abort a) : Result α β) ↔ True) ∧
+    (resultAbort (.err (.raise e) : Result γ δ) ↔ False) ∧
+    (resultAbort (.val v : Result ε ζ) ↔ False) :=
+  SourceEval.Proofs.abort_simps a e v
+
+/-- Either a result aborts, or a property implied by non-abortion holds. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "not_abort_IMP_cases"]
+theorem notAbort_imp_cases {α β : Type} (r : Result α β) (P : Prop)
+    (premise : ¬ resultAbort r → P) :
+    (∃ a, r = .err (.abort a)) ∨ (¬ resultAbort r ∧ P) := by
+  cases r with
+  | val v => exact Or.inr ⟨by simp [resultAbort, SourceEval.Proofs.abort], premise (by simp [resultAbort, SourceEval.Proofs.abort])⟩
+  | err error =>
+    cases error with
+    | abort a => exact Or.inl ⟨a, rfl⟩
+    | raise e => exact Or.inr ⟨by simp [resultAbort, SourceEval.Proofs.abort], premise (by simp [resultAbort, SourceEval.Proofs.abort])⟩
 
 /-- Combining declaration environments does not change whether a result aborts. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "abort_compile_dec_result"]

@@ -10,3 +10,11 @@ val _ = (print "size="; print_term (rhs (concl (EVAL ``
 val _ = (print "letop="; print_term (rhs (concl (EVAL ``
  bvl_inline$let_op_sing (bvl$Let [bvl$Var 8; bvl$Var 9]
    (bvl$Op (closLang$IntOp closLang$Add) [bvl$Var 0; bvl$Var 1]))``))); print "\n");
+fun show_thm label th =
+  if null (hyp th) then
+    (print label; Lib.with_flag (Globals.show_types,true) print_term (concl th); print "\n")
+  else raise Fail ("hypotheses: " ^ label);
+val _ = show_thm "optimise_def_typed=" bvl_inlineTheory.optimise_def;
+val _ = show_thm "optimise_eq_typed=" bvl_inlineTheory.optimise_eq;
+val _ = show_thm "compile_inc_def_typed=" bvl_inlineTheory.compile_inc_def;
+val _ = show_thm "compile_prog_def_typed=" bvl_inlineTheory.compile_prog_def;

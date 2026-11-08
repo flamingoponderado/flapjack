@@ -13,55 +13,6 @@ open Flapjack RiscV.L3 RiscV.L3.Step Compiler.Encoders.Asm
 set_option maxRecDepth 200000
 set_option maxHeartbeats 2000000
 
-private theorem byte0 (w : BitVec 32) :
-    RiscV.L3.holWordExtract 8 7 0 w = BitVec.extractLsb' 0 8 w := by
-  apply BitVec.eq_of_toNat_eq
-  simp [RiscV.L3.holWordExtract, BitVec.extractLsb'_toNat]
-
-private theorem byte1 (w : BitVec 32) :
-    RiscV.L3.holWordExtract 8 15 8 w = BitVec.extractLsb' 8 8 w := by
-  apply BitVec.eq_of_toNat_eq
-  simp [RiscV.L3.holWordExtract, BitVec.extractLsb'_toNat]
-
-private theorem byte2 (w : BitVec 32) :
-    RiscV.L3.holWordExtract 8 23 16 w = BitVec.extractLsb' 16 8 w := by
-  apply BitVec.eq_of_toNat_eq
-  simp [RiscV.L3.holWordExtract, BitVec.extractLsb'_toNat]
-
-private theorem byte3 (w : BitVec 32) :
-    RiscV.L3.holWordExtract 8 31 24 w = BitVec.extractLsb' 24 8 w := by
-  apply BitVec.eq_of_toNat_eq
-  simp [RiscV.L3.holWordExtract, BitVec.extractLsb'_toNat]
-
-private theorem reassemble (w : BitVec 32) :
-    RiscV.L3.holWordExtract 8 31 24 w ++
-      (RiscV.L3.holWordExtract 8 23 16 w ++
-        (RiscV.L3.holWordExtract 8 15 8 w ++
-          RiscV.L3.holWordExtract 8 7 0 w)) = w := by
-  rw [byte0,byte1,byte2,byte3]
-  apply BitVec.eq_of_getLsbD_eq_iff.mpr
-  intro i hi
-  simp only [BitVec.getLsbD_append, BitVec.getLsbD_extractLsb']
-  interval_cases i <;> simp
-
-private theorem encoded_fetch (ms : riscv_state) (w : BitVec 32)
-    (vm : (ms.c_MCSR ms.procID).mstatus.VM = 0)
-    (low0 : w.getLsbD 0 = true) (low1 : w.getLsbD 1 = true)
-    (b0 : ms.MEM8 (ms.c_PC ms.procID) = RiscV.L3.holWordExtract 8 7 0 w)
-    (b1 : ms.MEM8 (ms.c_PC ms.procID + 1) = RiscV.L3.holWordExtract 8 15 8 w)
-    (b2 : ms.MEM8 (ms.c_PC ms.procID + 2) = RiscV.L3.holWordExtract 8 23 16 w)
-    (b3 : ms.MEM8 (ms.c_PC ms.procID + 3) = RiscV.L3.holWordExtract 8 31 24 w) :
-    Fetch ms = (.Word w, {ms with c_Skip := holUpdate ms.procID 4 ms.c_Skip}) := by
-  change ms.MEM8 (ms.c_PC ms.procID + 1#64) = _ at b1
-  change ms.MEM8 (ms.c_PC ms.procID + 2#64) = _ at b2
-  change ms.MEM8 (ms.c_PC ms.procID + 3#64) = _ at b3
-  rw [fetch_bare ms vm]
-  have lo0 : (RiscV.L3.holWordExtract 8 7 0 w).getLsbD 0 = true := by
-    simpa [byte0] using low0
-  have lo1 : (RiscV.L3.holWordExtract 8 7 0 w).getLsbD 1 = true := by
-    simpa [byte0] using low1
-  simp [rawReadInst, boolify8, b0, b1, b2, b3, lo0, lo1, «write'Skip»]
-  exact reassemble w
 
 /-- Literal far Call Run reads register1 before overwriting that same register
 with the link. The mask and original PC+Skip link remain unchanged. -/

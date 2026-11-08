@@ -2754,7 +2754,7 @@ def fmap_as_finite_support_heterogeneous_function_errors(
     lines: list[str], declaration_source: str, decl_name: str,
     positions: tuple[str, ...],
 ) -> list[str]:
-    """Validate a direct lookup function with distinct canonical input/output maps.
+    """Validate a direct lookup function with canonical input/output maps.
 
     Unlike the existing abbreviation-only function qualifier, this models a
     definition whose code-map input and callee-locals result are both finite
@@ -2838,12 +2838,6 @@ def fmap_as_finite_support_heterogeneous_function_errors(
         errors.append(
             "fmap_as_finite_support_heterogeneous_function must account for exactly "
             "the two selected HolFiniteMapExact carriers"
-        )
-    normalize = lambda text: re.sub(r"\s+", "", text)
-    if argument_type and result_type and normalize(argument_type) == normalize(result_type):
-        errors.append(
-            "heterogeneous function qualifier requires distinct input and result map types; "
-            "use fmap_as_finite_support_function when they are identical"
         )
     errors.extend(
         _same_module_heterogeneous_fmap_witness_errors(

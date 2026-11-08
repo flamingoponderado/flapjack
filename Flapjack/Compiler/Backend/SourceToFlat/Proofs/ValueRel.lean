@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalEnv
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.BindLocals
 import Flapjack.Compiler.Backend.SourceToFlat.CompileExp
 import Mathlib.Data.List.Forall2
+import Flapjack.Misc.ListEl
 
 /-! Source-to-flat value and environment relations. Nested HOL list and lookup
 premises are factored through mutual inductive helpers for Lean's positivity
@@ -171,8 +172,7 @@ theorem globalLookupRel_iff (genv : GlobalEnv) (compMap : Environment) (id : Ide
     exact .intro genv compMap id source n flat t lookup bound slot related
 
 /-- Expanding the auxiliary lookup predicate recovers the two global
-environment conditions. The list-index correspondence to HOL is still subject
-to source review. -/
+environment conditions; `globalEnvInv_source_eqn` gives their HOL-shaped form. -/
 theorem globalEnvInv_iff (genv : GlobalEnv) (compMap : Environment) (shadowers : VarN → Prop)
     (env : SemEnv SemanticPrimitivesHOL.Value) :
     GlobalEnvInv genv compMap shadowers env ↔
@@ -194,5 +194,46 @@ theorem globalEnvInv_iff (genv : GlobalEnv) (compMap : Environment) (shadowers :
     exact .intro genv compMap shadowers env
       (fun id v notShadowed lookup =>
         (globalLookupRel_iff genv compMap id v).mpr (values id v notShadowed lookup)) constructors
+
+/-- The source-shaped case equation for the global environment invariant. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "v_rel_global_eqn"
+  (fmap_as_finite_support := [c, tys])]
+theorem globalEnvInv_source_eqn (genv : GlobalEnv) (compMap : Environment) (shadowers : VarN → Prop)
+    (env : SemEnv SemanticPrimitivesHOL.Value) :
+    GlobalEnvInv genv compMap shadowers env ↔
+      (∀ id v, ((∀ name, id ≠ Ident.short name ∨ ¬ shadowers name) ∧
+          nsLookup env.v id = some v) → ∃ n v' t,
+          nsLookup compMap.v id = some (.glob t n) ∧ n < genv.v.length ∧
+          Flapjack.holEl n genv.v = some v' ∧ ValueRel genv v v') ∧
+      (∀ id arity stamp, nsLookup env.c id = some (arity, stamp) →
+        ∃ cn tyGroup, nsLookup compMap.c id = some (cn, tyGroup) ∧
+          genv.c.lookup ((cn, tyGroup.map Prod.fst), arity) = some stamp ∧
+          ∀ tyId ctors, tyGroup = some (tyId, ctors) → genv.tys.lookup tyId = some ctors) := by
+  classical
+  constructor
+  · intro inv
+    obtain ⟨values, constructors⟩ := (globalEnvInv_iff genv compMap shadowers env).mp inv
+    refine ⟨?_, constructors⟩
+    intro id v ⟨unshadowed, lookup⟩
+    have notShadowed : ¬ ∃ name, shadowers name ∧ id = Ident.short name := by
+      rintro ⟨name, member, equal⟩
+      exact (unshadowed name).resolve_left (not_not.mpr equal) member
+    obtain ⟨n, flat, t, mapped, bound, slot, related⟩ := values id v notShadowed lookup
+    refine ⟨n, flat, t, mapped, bound, ?_, related⟩
+    simpa [Flapjack.holEl_eq_getElem n genv.v bound, List.getElem?_eq_getElem bound] using slot
+  · rintro ⟨values, constructors⟩
+    apply (globalEnvInv_iff genv compMap shadowers env).mpr
+    refine ⟨?_, constructors⟩
+    intro id v notShadowed lookup
+    have unshadowed : ∀ name, id ≠ Ident.short name ∨ ¬ shadowers name := by
+      intro name
+      by_cases equal : id = Ident.short name
+      · right
+        intro member
+        exact notShadowed ⟨name, member, equal⟩
+      · exact Or.inl equal
+    obtain ⟨n, flat, t, mapped, bound, slot, related⟩ := values id v ⟨unshadowed, lookup⟩
+    refine ⟨n, flat, t, mapped, bound, ?_, related⟩
+    simpa [Flapjack.holEl_eq_getElem n genv.v bound, List.getElem?_eq_getElem bound] using slot
 
 end Flapjack.Compiler.Backend.SourceToFlat

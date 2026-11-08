@@ -3,99 +3,14 @@ import Flapjack.RiscV.CorrectnessEncoding.InstructionStep
 import Flapjack.RiscV.CorrectnessEncoding.DecodeUpperImmediates
 
 /-! Far Call assembly infrastructure. Literal low/high splitting and AUIPC
-execution reuse the source-reviewed arithmetic employed by Loc. These local
-composition helpers have no separately named HOL originals. The complete
-constructor tag lives in the assembling Call module. -/
+execution use the shared composition helpers in `InstructionStep`; those have
+no separately named HOL originals. The complete constructor tag lives in the
+assembling Call module. -/
 namespace Flapjack.RiscV.TargetProof.Call
 open Flapjack RiscV.L3 RiscV.L3.Step Compiler.Encoders.Asm
   Compiler.Encoders.AsmProps Compiler.Encoders.AsmSem Compiler.Encoders.RiscV.Target
 set_option maxRecDepth 200000
 set_option maxHeartbeats 2000000
-
-private def low (c : BitVec 64) : BitVec 12 := RiscV.L3.holWordExtract 12 11 0 c
-private def high (c : BitVec 64) : BitVec 20 :=
-  RiscV.L3.holWordExtract 20 31 12 (c - (low c).signExtend 64)
-private def upperValue (c : BitVec 64) : BitVec 64 :=
-  ((high c) ++ (0#12)).signExtend 64
-
-private theorem low_eq (c : BitVec 64) : low c = BitVec.extractLsb' 0 12 c := by
-  apply BitVec.eq_of_toNat_eq
-  simp [low, RiscV.L3.holWordExtract, BitVec.extractLsb'_toNat]
-
-private theorem high_eq (c : BitVec 64) :
-    high c = BitVec.extractLsb' 12 20 (c - (BitVec.extractLsb' 0 12 c).signExtend 64) := by
-  rw [high, low_eq]
-  apply BitVec.eq_of_toNat_eq
-  simp [RiscV.L3.holWordExtract, BitVec.extractLsb'_toNat]
-
-/-- Local reconstruction from exactly the original signed offset guard; no additional
-alignment or range premise is added to the public constructor theorem. -/
-private theorem far_split (c : BitVec 64)
-    (range : -2147483648 ≤ c.toInt ∧ c.toInt ≤ 2147481599)
-    (aligned : c.toNat % 4 = 0) : upperValue c + (low c).signExtend 64 = c := by
-  have zero : (BitVec.extractLsb' 0 2 c).setWidth 64 = 0 := by
-    apply BitVec.eq_of_toNat_eq
-    simp [BitVec.extractLsb'_toNat, aligned]
-  have bit : c.getLsbD 1 = false := by
-    have e := congrArg (fun x : BitVec 64 => x.getLsbD 1) zero
-    simpa using e
-  have mask : (BitVec.extractLsb' 0 12 c) &&& ~~~(2 : BitVec 12) =
-      BitVec.extractLsb' 0 12 c := by
-    apply BitVec.eq_of_getLsbD_eq
-    intro i hi
-    simp only [BitVec.getLsbD_and, BitVec.getLsbD_not,
-      BitVec.getLsbD_extractLsb', Nat.zero_add, hi, decide_true, Bool.true_and]
-    by_cases ei : i = 1
-    · subst i
-      rw [bit]
-      rfl
-    · have eb : (2 : BitVec 12).getLsbD i = false := by
-        change Nat.testBit (2 ^ 1) i = false
-        exact Nat.testBit_two_pow_of_ne (Ne.symm ei)
-      rw [eb]
-      simp only [Bool.not_false, Bool.and_true]
-  have bounds : (0xFFFFFFFF80000000 : BitVec 64).sle c = true ∧
-      c.sle 0x7FFFF7FF = true := by
-    simp only [BitVec.sle_eq_decide, decide_eq_true_eq]
-    change -2147483648 ≤ c.toInt ∧ c.toInt ≤ 2147481599
-    exact range
-  have split := split_immediate_reconstruction c ⟨bounds.1,bounds.2,zero⟩
-  have em : (-1 : BitVec 64) = (-1#64) := by decide
-  rw [mask, em, ← BitVec.neg_eq_neg_one_mul, ← BitVec.sub_eq_add_neg] at split
-  simpa [upperValue, high_eq, low_eq] using split
-
-private theorem auipc_low (r : BitVec 5) (c : BitVec 20) :
-    (Encode (.ArithI (.AUIPC (r,c)))).getLsbD 0 = true ∧
-      (Encode (.ArithI (.AUIPC (r,c)))).getLsbD 1 = true := by
-  simp only [Encode, Utype, opc, BitVec.setWidth_eq, BitVec.getLsbD_append]
-  simp
-
-private theorem auipc_run (ms : riscv_state) (r : BitVec 5) (c : BitVec 64) :
-    Run (.ArithI (.AUIPC (r,high c)))
-      {ms with c_Skip := holUpdate ms.procID 4 ms.c_Skip} =
-    «write'GPR» (ms.c_PC ms.procID + upperValue c,r)
-      {ms with c_Skip := holUpdate ms.procID 4 ms.c_Skip} := by
-  simp [Run, «dfn'AUIPC», PC, upperValue]
-
-private theorem auipc_step (s : AsmState 64) (ms : riscv_state)
-    (r : Nat) (c : BitVec 64) (rn : BitVec.ofNat 5 r ≠ 0#5)
-    (hr : targetStateRel riscvTarget s ms)
-    (hb : bytesInMemoryHOL s.pc
-      (riscvEncode (.ArithI (.AUIPC (BitVec.ofNat 5 r,high c)))) s.mem s.memDomain) :
-    riscvTarget.next ms = writePost ms (BitVec.ofNat 5 r) (s.pc + upperValue c) := by
-  have bytes := bytes_in_memory_thm () s ms _ _ _ _ ⟨hr, hb⟩
-  have lowbits := auipc_low (BitVec.ofNat 5 r) (high c)
-  have native := write_next ms (.ArithI (.AUIPC (BitVec.ofNat 5 r,high c)))
-    (Encode (.ArithI (.AUIPC (BitVec.ofNat 5 r,high c))))
-    (BitVec.ofNat 5 r) (ms.c_PC ms.procID + upperValue c) rn hr.1
-    (decode_encode_auipc _ _) (auipc_run ms _ c) lowbits.1 lowbits.2
-    bytes.2.2.2.2.2.1 bytes.2.2.2.2.2.2.1
-    bytes.2.2.2.2.2.2.2.1 bytes.2.2.2.2.2.2.2.2.1
-  change holThe (NextRISCV ms) = _
-  rw [native]
-  have pc := hr.2.1
-  change ms.c_PC ms.procID = s.pc at pc
-  simp [pc, holThe]
 
 
 private theorem aligned_mask (a : BitVec 64) (aligned : holAligned 2 a = true) :
@@ -125,7 +40,7 @@ private theorem jalr_step (s : AsmState 64) (ms : riscv_state)
     bytes.2.2.2.2.2.2.2.1 bytes.2.2.2.2.2.2.2.2.1
   have value : ((pc + upperValue c + (low c).signExtend 64) &&&
       BitVec.signExtend 64 (2#2)) = pc+c := by
-    rw [BitVec.add_assoc, far_split c range aligned]
+    rw [BitVec.add_assoc, upperValue_add_low c range aligned]
     exact aligned_mask _ targetAligned
   rw [scratch, value] at native
   change holThe (NextRISCV ms) = _

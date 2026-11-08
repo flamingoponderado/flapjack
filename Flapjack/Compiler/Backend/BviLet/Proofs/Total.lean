@@ -1,3 +1,4 @@
+import Flapjack.Misc.Option.MapM
 import Flapjack.Compiler.Backend.BviLet.Compile
 import Flapjack.Compiler.Backend.ListFoldTotal
 import Flapjack.Compiler.Backend.Bvi.Budget

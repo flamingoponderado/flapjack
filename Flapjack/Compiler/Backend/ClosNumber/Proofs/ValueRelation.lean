@@ -45,17 +45,6 @@ theorem valueRel_number_iff (maxApp : Nat) (number : Int) (target : Value) :
     subst target
     exact .number number
 
-/-- Related blocks retain their tag and relate all component values. -/
-theorem valueRel_block_iff (maxApp tag : Nat) (values : List Value) (target : Value) :
-    ValueRel maxApp (.block tag values) target ↔
-      ∃ targetValues, target = .block tag targetValues ∧ List.Forall₂ (ValueRel maxApp) values targetValues := by
-  constructor
-  · intro related
-    cases related with
-    | block _ _ targetValues entries => exact ⟨targetValues, rfl, entries⟩
-  · rintro ⟨targetValues, rfl, entries⟩
-    exact .block tag values targetValues entries
-
 /-- List values preserve the relation when encoded as closure blocks. -/
 theorem listToValue_related (maxApp : Nat) {left right : List Value}
     (related : List.Forall₂ (ValueRel maxApp) left right) :

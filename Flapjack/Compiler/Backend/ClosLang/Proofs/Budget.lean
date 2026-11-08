@@ -1,3 +1,4 @@
+import Flapjack.Misc.Option.MapM
 import Flapjack.Compiler.Backend.ClosLang.Budget
 import Flapjack.Compiler.Backend.ListFoldTotal
 

@@ -81,12 +81,6 @@ theorem termBounded_succeeds (fuel : Nat) (ctx : List ValueType) (ty : ValueType
     obtain ⟨result, done⟩ := done
     exact ⟨result, by simp [termBounded, h, done]⟩
 
-/-- Retrying a type test preserves any original successful result. -/
-theorem termBounded_eq_of_success (fuel : Nat) (ctx : List ValueType) (ty : ValueType)
-    (e : Exp) (result : Bool) (success : termFuel fuel ctx ty e = some result) :
-    termBounded fuel ctx ty e = some result := by
-  simp [termBounded, success]
-
 /-- Candidate-operation checking cannot exhaust its term-analysis fuel. The
 inner `none` remains the ordinary decision that no rewrite applies. -/
 theorem checkOpFuel_succeeds (fuel : Nat) (ctx : List ValueType) (assoc : AssocOp)

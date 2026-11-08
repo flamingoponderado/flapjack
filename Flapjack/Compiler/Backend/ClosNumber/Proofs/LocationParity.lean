@@ -158,18 +158,4 @@ termination_by sizeOf functions
 decreasing_by all_goals subst_vars; simp_wf <;> omega
 end
 
-/-- Incremental numbering allocates even closure locations. -/
-theorem compileInc_location_even (start location : Nat) (expressions : List Exp)
-    (member : location ∈ codeLocations (compileInc start expressions).2) :
-    location % 2 = 0 := by
-  let next := start + max expressions.length 1
-  let aligned := if next % 2 = 0 then next else next + 1
-  have even : aligned % 2 = 0 := by
-    dsimp [aligned]
-    split <;> omega
-  have numbered : location ∈ codeLocations (renumberList aligned expressions).2 := by
-    simpa [compileInc, codeLocations, codeLocationsExp, next, aligned] using member
-  rw [renumberList_location_parity expressions aligned location numbered]
-  exact even
-
 end Flapjack.Compiler.Backend.ClosNumber

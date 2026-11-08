@@ -17,7 +17,7 @@ theorem compileDecs_evalSim {C F : Type} (cfg cfg2 : Config) (ffi : HolFfiState 
   subst target
   have states := stateRel_initial cfg ffi clock sourceConfig targetConfig configs
   obtain ⟨targetState, targetResult, targetRun, results, finalStates⟩ :=
-    (compileExps_evaluate cfg).2 _ source _ sourceState cfg2 _ sourceResult run rfl states sourceSafe
+    (compileExps_evaluate cfg).2 _ source _ sourceState cfg2 _ sourceResult ⟨run, rfl, states, sourceSafe⟩
   refine ⟨0, targetResult, targetState, by simpa using targetRun, finalStates.2.2.1.symm, ?_, ?_, ?_⟩
   · intro isNone
     subst sourceResult
@@ -86,8 +86,8 @@ theorem compileDecs_semantics_of_safe {C F : Type} (cfg cfg2 : Config) (ffi : Ho
     | mk sourceState sourceResult =>
       have sourceSafe : sourceResult ≠ some (.abort .typeError) := by simpa [run] using safe clock
       obtain ⟨targetState, targetResult, targetRun, results, finalStates⟩ :=
-        (compileExps_evaluate cfg).2 _ source _ sourceState cfg2 _ sourceResult run rfl
-          (stateRel_initial cfg ffi clock sourceConfig targetConfig configs) sourceSafe
+        (compileExps_evaluate cfg).2 _ source _ sourceState cfg2 _ sourceResult
+          ⟨run, rfl, stateRel_initial cfg ffi clock sourceConfig targetConfig configs, sourceSafe⟩
       simpa [run, targetRun] using And.intro results finalStates.2.2.1.symm
   have targetSafe : ∀ clock,
       (FlatSem.evaluateDecs (FlatSem.initialState ffi clock targetConfig) (source.map (compileDec cfg2))).2 ≠

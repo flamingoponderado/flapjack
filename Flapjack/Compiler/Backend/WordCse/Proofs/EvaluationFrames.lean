@@ -8,7 +8,7 @@ have no separate HOL declarations: they factor the actual native `inst` clauses
 and prove the input-field independence used in HOL's case-by-case proofs.
 Public statements keep the complete faithful evaluator and original guards. -/
 
-private def arithValue {width : Nat} [NeZero width] {C : Type} {F : Type}
+def arithValue {width : Nat} [NeZero width] {C : Type} {F : Type}
     (a : HolArith width) (s : WordSemStateFiniteExact width C F) : Option (WordLocW width) :=
   match a with
   | .binop op _ src ri =>
@@ -21,7 +21,7 @@ private def arithValue {width : Nat} [NeZero width] {C : Type} {F : Type}
     | _ => none
   | _ => none
 
-private theorem instArithMap {width : Nat} [NeZero width] {C : Type} {F : Type}
+theorem instArithMap {width : Nat} [NeZero width] {C : Type} {F : Type}
     (a : HolArith width) (s : WordSemStateFiniteExact width C F) (h : canMemArith a = true) :
     inst (.arith (HolArith.toWordLangArith a)) s =
       (arithValue a s).map (fun v => setVar (firstRegOfArith a) v s) := by

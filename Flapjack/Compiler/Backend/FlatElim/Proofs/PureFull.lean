@@ -5,11 +5,8 @@ namespace Flapjack.Compiler.Backend.FlatElim
 open Flapjack.SemanticPrimitivesHOL
 open Flapjack.Compiler.Backend.FlatSem
 
-/-- Evaluation of pure, Eval-free expressions that initialize no reachable
-globals leaves the result state related to the unchanged target and returns
-only Eval-free values. The evaluator and carriers remain pending HOL review. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "evaluate_flat_state_rel_lemma"]
-theorem evaluate_pure_flatStateRel {C F : Type} (env : FlatSem.Environment FlatSem.Value)
+/-- Induction motive for pure evaluation; this is a Flapjack proof helper. -/
+private theorem pureEvaluationSimulation_all {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     (state : FlatSem.State C F) (expressions : List FlatLang.Exp) :
     pureEvaluationSimulationAt env state expressions := by
   have allWeights : ∀ weight : Nat, ∀ (env : FlatSem.Environment FlatSem.Value)
@@ -107,5 +104,22 @@ theorem evaluate_pure_flatStateRel {C F : Type} (env : FlatSem.Environment FlatS
               have impossible := pure _ (List.mem_singleton_self _)
               simp [isPure] at impossible
   exact allWeights (expsWeight expressions) env state expressions rfl
+
+/-- Evaluation of pure, Eval-free expressions that initialize no reachable
+globals leaves the result state related to the unchanged target and returns
+only Eval-free values. The evaluator and carriers remain pending HOL review. -/
+@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "evaluate_flat_state_rel_lemma"]
+theorem evaluate_pure_flatStateRel {C F : Type} (env : FlatSem.Environment FlatSem.Value)
+    (state : FlatSem.State C F) (expressions : List FlatLang.Exp) (next : FlatSem.State C F)
+    (result : Result (List FlatSem.Value) FlatSem.Value) (reachable : NumSet) (target : FlatSem.State C F)
+    (premises : FlatSem.evaluate env state expressions = (next, result) ∧
+      (∀ expression ∈ expressions, isPure expression = true) ∧ bindingsNoEval env.v ∧
+      expressionsNoEval expressions ∧
+      (∀ expression ∈ expressions, sptIsEmpty (sptInter (findLoc expression) reachable) = true) ∧
+      flatStateRel reachable state target ∧ result ≠ .err (.abort .typeError)) :
+    ∃ values, flatStateRel reachable next target ∧ result = .val values ∧ valuesNoEval values := by
+  obtain ⟨run, pure, envSafe, expressionsSafe, locations, related, notTypeError⟩ := premises
+  exact pureEvaluationSimulation_all env state expressions next result reachable target
+    run pure envSafe expressionsSafe locations related notTypeError
 
 end Flapjack.Compiler.Backend.FlatElim

@@ -1,7 +1,5 @@
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.Evaluate
 import Flapjack.Compiler.Backend.Semantics.ClosSem.Semantics
-import Flapjack.Compiler.Backend.ClosMti.Proofs.Semantics
-import Flapjack.Compiler.Backend.ClosMti.Proofs.Syntactic
 import Flapjack.FiniteMap.EmptyExact
 
 /-! Observational consequence of the proof-side numbering simulation. -/
@@ -171,59 +169,5 @@ theorem semanticsNumberHOL {C F : Type} (ffi : HolFfiState F) (maxApp number : N
     semantics ffi maxApp Flapjack.HolFiniteMapExact.holEmpty oracle
       (stateCc (ignoreTable compileInc) compiler) program :=
   semantics_number ffi maxApp number oracle compiler program notFail safe.1 safe.2
-
-/-- Multi-argument introduction followed by closure numbering preserves the
-current Lean observations. The intermediate numbering invariants follow from
-the unary source and oracle invariants. This is not a reviewed HOL port. -/
-theorem semantics_mti_then_number {C F : Type} (ffi : HolFfiState F) (maxApp number : Nat)
-    (oracle : CompileOracle (Nat × C)) (compiler : Compiler C) (program : List ClosLang.Exp)
-    (positive : 1 ≤ maxApp)
-    (unary : ∀ e ∈ program, ClosProps.noMti e)
-    (oracleUnary : ∀ index, (oracle index).2.2 = [] ∧
-      ∀ e ∈ (oracle index).2.1, ClosProps.noMti e)
-    (notFail : semantics ffi maxApp HolFiniteMapExact.empty oracle
-      (pureCc (ClosMti.compileInc maxApp) (stateCc (ignoreTable compileInc) compiler)) program ≠ .fail) :
-    semantics ffi maxApp HolFiniteMapExact.empty
-      (stateCo (ignoreTable compileInc) (pureCo (ClosMti.compileInc maxApp) ∘ oracle)) compiler
-      (renumberList number (ClosMti.introList maxApp program)).2 =
-    semantics ffi maxApp HolFiniteMapExact.empty oracle
-      (pureCc (ClosMti.compileInc maxApp) (stateCc (ignoreTable compileInc) compiler)) program := by
-  let transformedOracle : CompileOracle (Nat × C) := pureCo (ClosMti.compileInc maxApp) ∘ oracle
-  have mtiSem := ClosMti.semantics_introMulti_candidate ffi maxApp oracle
-    (stateCc (ignoreTable compileInc) compiler) program positive oracleUnary unary
-  have transformedSafe : ¬ ClosProps.containsAppSome maxApp (ClosMti.introList maxApp program) :=
-    ClosMti.introList_numberingSafe maxApp program positive unary
-  have oracleSafe : ∀ index, (transformedOracle index).2.2 = [] ∧
-      ¬ ClosProps.containsAppSome maxApp (transformedOracle index).2.1 := by
-    intro index
-    change (ClosMti.compileInc maxApp (oracle index).2).2 = [] ∧
-      ¬ ClosProps.containsAppSome maxApp (ClosMti.compileInc maxApp (oracle index).2).1
-    exact ⟨rfl, ClosMti.introList_numberingSafe maxApp (oracle index).2.1 positive (oracleUnary index).2⟩
-  have transformedNotFail : semantics ffi maxApp HolFiniteMapExact.empty transformedOracle
-      (stateCc (ignoreTable compileInc) compiler) (ClosMti.introList maxApp program) ≠ .fail := by
-    simpa [transformedOracle, ← mtiSem] using notFail
-  have numberSem := semantics_number ffi maxApp number transformedOracle compiler
-    (ClosMti.introList maxApp program) transformedNotFail transformedSafe oracleSafe
-  exact numberSem.trans mtiSem.symm
-
-/-- The same observation equality for the executed fuelled traversal. This
-does not cover the subsequent known-function and call passes. -/
-theorem semantics_compileFuel_then_number {C F : Type} (ffi : HolFfiState F)
-    (fuel maxApp number : Nat) (oracle : CompileOracle (Nat × C))
-    (compiler : Compiler C) (program : List ClosLang.Exp)
-    (positive : 1 ≤ maxApp)
-    (unary : ∀ e ∈ program, ClosProps.noMti e)
-    (oracleUnary : ∀ index, (oracle index).2.2 = [] ∧
-      ∀ e ∈ (oracle index).2.1, ClosProps.noMti e)
-    (notFail : semantics ffi maxApp HolFiniteMapExact.empty oracle
-      (pureCc (ClosMti.compileInc maxApp) (stateCc (ignoreTable compileInc) compiler)) program ≠ .fail) :
-    ∃ transformed, ClosMti.compileFuel fuel true maxApp program = some transformed ∧
-      semantics ffi maxApp HolFiniteMapExact.empty
-        (stateCo (ignoreTable compileInc) (pureCo (ClosMti.compileInc maxApp) ∘ oracle)) compiler
-        (renumberList number transformed).2 =
-      semantics ffi maxApp HolFiniteMapExact.empty oracle
-        (pureCc (ClosMti.compileInc maxApp) (stateCc (ignoreTable compileInc) compiler)) program := by
-  exact ⟨ClosMti.introList maxApp program, ClosMti.compileFuel_introList fuel maxApp program,
-    semantics_mti_then_number ffi maxApp number oracle compiler program positive unary oracleUnary notFail⟩
 
 end Flapjack.Compiler.Backend.ClosNumber

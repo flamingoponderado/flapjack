@@ -383,7 +383,7 @@ private theorem returningCalleeOutcomes {width : Nat} [NeZero width] {C F : Type
           sourceRootRead targetRootRead rootMap firstRelated injective sourceKeys targetKeys valuesEqual
       have sourceNames : sptDomain popped.locals = sptDomain (sptUnion firstNames secondNames) := by
         rw [poppedDomain,sptDomain_sptUnion,firstDomain,secondDomain]
-      have restricted := returningCutSSA counter ssa (sptUnion firstNames secondNames)
+      have restricted := cutLocalsRelation counter ssa (sptUnion firstNames secondNames)
         popped.locals targetPopped.locals mapped sourceNames (poppedValues _) cutBounds
       have sourceUnion : sptDomainEqUnion popped.locals first second := by
         intro key
@@ -750,7 +750,7 @@ private theorem returningHandlerCalleeOutcomes {width : Nat} [NeZero width] {C F
           rootMap firstRelated injective sourceRun
       have sourceNames : sptDomain returned.locals = sptDomain (sptUnion firstNames secondNames) := by
         rw [returnedDomain,sptDomain_sptUnion,firstDomain,secondDomain]
-      have restricted := returningCutSSA counter ssa (sptUnion firstNames secondNames)
+      have restricted := cutLocalsRelation counter ssa (sptUnion firstNames secondNames)
         returned.locals targetReturned.locals mapped sourceNames (returnedValues _) cutBounds
       have sourceUnion : sptDomainEqUnion returned.locals first second := by
         intro key
@@ -790,7 +790,7 @@ private theorem returningHandlerCalleeOutcomes {width : Nat} [NeZero width] {C F
           sourceRootRead targetRootRead rootMap firstRelated injective sourceKeys targetKeys valuesEqual
       have sourceNames : sptDomain popped.locals = sptDomain (sptUnion firstNames secondNames) := by
         rw [poppedDomain,sptDomain_sptUnion,firstDomain,secondDomain]
-      have restricted := returningCutSSA counter ssa (sptUnion firstNames secondNames)
+      have restricted := cutLocalsRelation counter ssa (sptUnion firstNames secondNames)
         popped.locals targetPopped.locals mapped sourceNames (poppedValues _) cutBounds
       have sourceUnion : sptDomainEqUnion popped.locals first second := by
         intro key

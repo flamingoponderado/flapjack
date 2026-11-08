@@ -9,11 +9,4 @@ def arrayLength {state value exception : Type} (getArr : state → List value) :
     M state Nat exception :=
   fun s => (.success (getArr s).length, s)
 
-/-- Flapjack infrastructure exposing the definition for arbitrary carriers;
-there is no separate HOL theorem for this pointwise equation. -/
-theorem arrayLength_apply {state value exception : Type}
-    (getArr : state → List value) (s : state) :
-    arrayLength (exception := exception) getArr s =
-      (.success (getArr s).length, s) := rfl
-
 end Flapjack.Translator.Monadic.MonadBase

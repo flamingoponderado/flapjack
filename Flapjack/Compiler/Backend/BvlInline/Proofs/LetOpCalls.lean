@@ -18,7 +18,7 @@ theorem evaluate_letOpTransform {C F : Type} (splitSeq : Bool) (limit : Nat)
     evaluate [letOpTransform splitSeq limit env.length body] env state = (result, final) := by
   obtain ⟨output, compiled, evaluation⟩ := BvlHandle.Proofs.evaluate_compileAnyFuel
     0 splitSeq limit (letOpSing body) env state final result run notType
-  have source := BvlHandle.compileAnyFuel_eq_source 0 splitSeq limit env.length (letOpSing body)
+  have source := BvlHandle.compileAnyFuel_eq_compileAny 0 splitSeq limit env.length (letOpSing body)
   rw [compiled] at source
   have same : output = letOpTransform splitSeq limit env.length body := by
     simpa [letOpTransform] using source
@@ -289,12 +289,12 @@ theorem letOpTransform_wellFormed (splitSeq : Bool) (limit arity : Nat) (body : 
     BvlHandle.Proofs.compileAnyFuel_varBound 0 splitSeq limit arity (letOpSing body)
   obtain ⟨shaped, shapeRun, shape⟩ :=
     BvlHandle.Proofs.compileAnyFuel_handleOk 0 splitSeq limit arity (letOpSing body)
-  have actual := BvlHandle.compileAnyFuel_eq_source 0 splitSeq limit arity (letOpSing body)
+  have actual := BvlHandle.compileAnyFuel_eq_compileAny 0 splitSeq limit arity (letOpSing body)
   have boundEq : bounded = letOpTransform splitSeq limit arity body := by
     rw [boundRun] at actual
     simpa [letOpTransform] using actual
   have shapeEq : shaped = letOpTransform splitSeq limit arity body := by
-    have actual := BvlHandle.compileAnyFuel_eq_source 0 splitSeq limit arity (letOpSing body)
+    have actual := BvlHandle.compileAnyFuel_eq_compileAny 0 splitSeq limit arity (letOpSing body)
     rw [shapeRun] at actual
     simpa [letOpTransform] using actual
   simpa [boundEq, shapeEq] using And.intro bound shape

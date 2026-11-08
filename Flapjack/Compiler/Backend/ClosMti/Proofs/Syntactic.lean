@@ -1,12 +1,78 @@
+import Flapjack.Misc.Option.MapM
 import Flapjack.Compiler.Backend.ClosMti.Proofs.TotalView
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
 import Flapjack.Compiler.Backend.Semantics.ClosProps.NoMtiSyntactic
+import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic.LabelsAndArity
 
 /-! Syntactic invariants needed by the pass after multi-argument introduction. -/
 namespace Flapjack.Compiler.Backend.ClosMti
 open ClosLang ClosProps
 
-/-- Argument collection preserves the absence of captured-variable annotations. -/
+/-- Collecting function arguments preserves absence of label operations. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "collect_args_no_Labels"]
+theorem collectArgs_noLabels (maxApp count : Nat) (expression : Exp) (arity : Nat) (body : Exp)
+    (premises : collectArgs maxApp count expression = (arity, body) ∧ noLabels expression) :
+    noLabels body := by
+  obtain ⟨run, valid⟩ := premises
+  cases expression with
+  | fn name location vars n inner =>
+    cases location with
+    | some location =>
+      simp only [collectArgs, Prod.mk.injEq] at run
+      obtain ⟨rfl, rfl⟩ := run
+      exact valid
+    | none =>
+      cases vars with
+      | some vars =>
+        simp only [collectArgs, Prod.mk.injEq] at run
+        obtain ⟨rfl, rfl⟩ := run
+        exact valid
+      | none =>
+        simp only [collectArgs] at run
+        split at run
+        · exact collectArgs_noLabels maxApp (count + n) inner arity body ⟨run, by simpa [noLabels] using valid⟩
+        · cases run
+          exact valid
+  | _ => simp only [collectArgs, Prod.mk.injEq] at run; obtain ⟨rfl, rfl⟩ := run; exact valid
+termination_by sizeOf expression
+
+/-- Collecting applications preserves absence of label operations. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "collect_apps_no_Labels"]
+theorem collectApps_noLabels (maxApp : Nat) (args : List Exp) (expression : Exp)
+    (collected : List Exp) (head : Exp)
+    (premises : collectApps maxApp args expression = (collected, head) ∧
+      (∀ e ∈ args, noLabels e) ∧ noLabels expression) :
+    (∀ e ∈ collected, noLabels e) ∧ noLabels head := by
+  obtain ⟨run, argsValid, valid⟩ := premises
+  cases expression with
+  | app trace location inner more =>
+    cases location with
+    | some location =>
+      simp only [collectApps, Prod.mk.injEq] at run
+      obtain ⟨rfl, rfl⟩ := run
+      exact ⟨argsValid, valid⟩
+    | none =>
+      simp only [collectApps] at run
+      split at run
+      · simp only [noLabels] at valid
+        have innerValid : noLabels inner := valid.1
+        have moreValid : ∀ e ∈ more, noLabels e := (noLabelsList_iff more).mp valid.2
+        have allValid : ∀ e ∈ args ++ more, noLabels e := by
+          intro e member
+          rcases List.mem_append.mp member with member | member
+          · exact argsValid e member
+          · exact moreValid e member
+        exact collectApps_noLabels maxApp (args ++ more) inner collected head ⟨run, allValid, innerValid⟩
+      · cases run
+        exact ⟨argsValid, valid⟩
+  | _ =>
+    simp only [collectApps, Prod.mk.injEq] at run
+    obtain ⟨rfl, rfl⟩ := run
+    exact ⟨argsValid, valid⟩
+termination_by sizeOf expression
+
+/-- Flapjack projection form of `every_Fn_vs_NONE_collect_args`, used by the
+recursive traversal proof. -/
 theorem collectArgs_varsNone (maxApp count : Nat) (expression : Exp) :
     fnVarsNoneExp expression ↔ fnVarsNoneExp (collectArgs maxApp count expression).2 := by
   cases expression with
@@ -24,7 +90,8 @@ theorem collectArgs_varsNone (maxApp count : Nat) (expression : Exp) :
   | _ => simp [collectArgs]
 termination_by sizeOf expression
 
-/-- Application collection preserves the property over the head and arguments. -/
+/-- Flapjack projection form of `every_Fn_vs_NONE_collect_apps`, used by the
+recursive traversal proof. -/
 theorem collectApps_varsNone (maxApp : Nat) (args : List Exp) (expression : Exp) :
     (everyFnVarsNone args ∧ fnVarsNoneExp expression) ↔
       (everyFnVarsNone (collectApps maxApp args expression).1 ∧
@@ -48,6 +115,25 @@ theorem collectApps_varsNone (maxApp : Nat) (args : List Exp) (expression : Exp)
   | _ => simp [collectApps]
 termination_by sizeOf expression
 
+/-- Argument collection preserves the singleton annotation predicate. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "every_Fn_vs_NONE_collect_args"]
+theorem everyFnVarsNone_collectArgs (maxApp count : Nat) (expression : Exp)
+    (arity : Nat) (body : Exp) (run : collectArgs maxApp count expression = (arity, body)) :
+    everyFnVarsNone [body] ↔ everyFnVarsNone [expression] := by
+  have invariant := collectArgs_varsNone maxApp count expression
+  rw [run] at invariant
+  simpa [everyFnVarsNone] using invariant.symm
+
+/-- Application collection preserves the annotation predicate on both parts. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "every_Fn_vs_NONE_collect_apps"]
+theorem everyFnVarsNone_collectApps (maxApp : Nat) (args : List Exp) (expression : Exp)
+    (collected : List Exp) (head : Exp) (run : collectApps maxApp args expression = (collected, head)) :
+    (everyFnVarsNone collected ∧ everyFnVarsNone [head]) ↔
+      (everyFnVarsNone args ∧ everyFnVarsNone [expression]) := by
+  have invariant := collectApps_varsNone maxApp args expression
+  rw [run] at invariant
+  simpa [everyFnVarsNone] using invariant.symm
+
 /-- The application-safety predicate distributes over appended lists. -/
 theorem containsAppSome_append (maxApp : Nat) (left right : List Exp) :
     containsAppSome maxApp (left ++ right) ↔
@@ -56,8 +142,8 @@ theorem containsAppSome_append (maxApp : Nat) (left right : List Exp) :
   | nil => simp [containsAppSome]
   | cons head tail ih => simp [containsAppSome, ih, or_assoc]
 
-/-- Collecting function arguments does not change application safety. This
-is a Lean-side collector property pending complete HOL correspondence review. -/
+/-- Flapjack projection form of `contains_App_SOME_collect_args`, used by the
+recursive traversal proof. -/
 theorem collectArgs_containsAppSome (maxApp count : Nat) (expression : Exp) :
     containsAppSomeExp maxApp expression ↔
       containsAppSomeExp maxApp (collectArgs maxApp count expression).2 := by
@@ -76,8 +162,8 @@ theorem collectArgs_containsAppSome (maxApp count : Nat) (expression : Exp) :
   | _ => simp [collectArgs]
 termination_by sizeOf expression
 
-/-- The application collector preserves the combined safety condition for its
-accumulator and head, including the configured argument limit. -/
+/-- Flapjack projection form of `contains_App_SOME_collect_apps`, used by the
+recursive traversal proof. -/
 theorem collectApps_containsAppSome (maxApp : Nat) (args : List Exp) (expression : Exp) :
     (maxApp < args.length ∨ containsAppSome maxApp args ∨ containsAppSomeExp maxApp expression) ↔
       (maxApp < (collectApps maxApp args expression).1.length ∨
@@ -103,53 +189,53 @@ theorem collectApps_containsAppSome (maxApp : Nat) (args : List Exp) (expression
   | _ => simp [collectApps]
 termination_by sizeOf expression
 
+/-- Argument collection preserves the singleton application predicate. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "contains_App_SOME_collect_args"]
+theorem containsAppSome_collectArgs (maxApp count : Nat) (expression : Exp)
+    (arity : Nat) (body : Exp) (run : collectArgs maxApp count expression = (arity, body)) :
+    containsAppSome maxApp [expression] ↔ containsAppSome maxApp [body] := by
+  have invariant := collectArgs_containsAppSome maxApp count expression
+  rw [run] at invariant
+  simpa [containsAppSome] using invariant
+
+/-- Application collection preserves the complete application predicate. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "contains_App_SOME_collect_apps"]
+theorem containsAppSome_collectApps (maxApp : Nat) (args : List Exp) (expression : Exp)
+    (collected : List Exp) (head : Exp) (run : collectApps maxApp args expression = (collected, head)) :
+    (maxApp < args.length ∨ containsAppSome maxApp args ∨ containsAppSome maxApp [expression]) ↔
+      (maxApp < collected.length ∨ containsAppSome maxApp collected ∨ containsAppSome maxApp [head]) := by
+  have invariant := collectApps_containsAppSome maxApp args expression
+  rw [run] at invariant
+  simpa [containsAppSome] using invariant
+
 /-- A pointwise traversal that preserves application safety also preserves it
 over the complete list. -/
-theorem mapM_containsAppSome (maxApp : Nat) (f : Exp → Option Exp) (source target : List Exp)
+private theorem mapM_containsAppSome (maxApp : Nat) (f : Exp → Option Exp) (source target : List Exp)
     (pointwise : ∀ e result, f e = some result →
       (containsAppSomeExp maxApp e ↔ containsAppSomeExp maxApp result))
     (run : source.mapM f = some target) :
     containsAppSome maxApp source ↔ containsAppSome maxApp target := by
-  induction source generalizing target with
-  | nil =>
-    simp at run
-    subst target
-    rfl
-  | cons first rest ih =>
-    cases head : f first with
-    | none => simp [List.mapM_cons, head] at run
-    | some next =>
-      cases tail : rest.mapM f with
-      | none => simp [List.mapM_cons, head, tail] at run
-      | some nextRest =>
-        have equal : next :: nextRest = target := by simpa [List.mapM_cons, head, tail] using run
-        subst target
-        simp only [containsAppSome, pointwise first next head, ih nextRest tail]
+  have rel := mapM_rel f (fun e result => containsAppSomeExp maxApp e ↔ containsAppSomeExp maxApp result) pointwise source target run
+  clear run
+  induction rel with
+  | nil => rfl
+  | cons first rest ih => simp only [containsAppSome, first, ih]
 
 /-- The corresponding traversal property for recursive function bundles. -/
-theorem mapM_funs_containsAppSome (maxApp : Nat) (f : Nat × Exp → Option (Nat × Exp))
+private theorem mapM_funs_containsAppSome (maxApp : Nat) (f : Nat × Exp → Option (Nat × Exp))
     (source target : List (Nat × Exp))
     (pointwise : ∀ entry result, f entry = some result →
       (containsAppSomeExp maxApp entry.2 ↔ containsAppSomeExp maxApp result.2))
     (run : source.mapM f = some target) :
     containsAppSomeFuns maxApp source ↔ containsAppSomeFuns maxApp target := by
-  induction source generalizing target with
-  | nil =>
-    simp at run
-    subst target
-    rfl
-  | cons first rest ih =>
-    cases head : f first with
-    | none => simp [List.mapM_cons, head] at run
-    | some next =>
-      cases tail : rest.mapM f with
-      | none => simp [List.mapM_cons, head, tail] at run
-      | some nextRest =>
-        have equal : next :: nextRest = target := by simpa [List.mapM_cons, head, tail] using run
-        subst target
-        cases first
-        cases next
-        simp only [containsAppSomeFuns, pointwise _ _ head, ih nextRest tail]
+  have rel := mapM_rel f (fun entry result => containsAppSomeExp maxApp entry.2 ↔ containsAppSomeExp maxApp result.2) pointwise source target run
+  clear run
+  induction rel with
+  | nil => rfl
+  | @cons a b xs ys first rest ih =>
+    cases a
+    cases b
+    simp only [containsAppSomeFuns, first, ih]
 
 /-- Every successful executable traversal preserves application safety. -/
 theorem introMultiFuel_containsAppSome (fuel maxApp : Nat) (expression result : Exp)
@@ -335,51 +421,32 @@ theorem introMultiFuel_containsAppSome (fuel maxApp : Nat) (expression result : 
 
 /-- A pointwise traversal that preserves absence of captured-variable annotations also preserves it
 over the complete list. -/
-theorem mapM_varsNone (f : Exp → Option Exp) (source target : List Exp)
+private theorem mapM_varsNone (f : Exp → Option Exp) (source target : List Exp)
     (pointwise : ∀ e result, f e = some result →
       (fnVarsNoneExp e ↔ fnVarsNoneExp result))
     (run : source.mapM f = some target) :
     everyFnVarsNone source ↔ everyFnVarsNone target := by
-  induction source generalizing target with
-  | nil =>
-    simp at run
-    subst target
-    rfl
-  | cons first rest ih =>
-    cases head : f first with
-    | none => simp [List.mapM_cons, head] at run
-    | some next =>
-      cases tail : rest.mapM f with
-      | none => simp [List.mapM_cons, head, tail] at run
-      | some nextRest =>
-        have equal : next :: nextRest = target := by simpa [List.mapM_cons, head, tail] using run
-        subst target
-        simp only [everyFnVarsNone, pointwise first next head, ih nextRest tail]
+  have rel := mapM_rel f (fun e result => fnVarsNoneExp e ↔ fnVarsNoneExp result) pointwise source target run
+  clear run
+  induction rel with
+  | nil => rfl
+  | cons first rest ih => simp only [everyFnVarsNone, first, ih]
 
 /-- The corresponding traversal property for recursive function bundles. -/
-theorem mapM_funs_varsNone (f : Nat × Exp → Option (Nat × Exp))
+private theorem mapM_funs_varsNone (f : Nat × Exp → Option (Nat × Exp))
     (source target : List (Nat × Exp))
     (pointwise : ∀ entry result, f entry = some result →
       (fnVarsNoneExp entry.2 ↔ fnVarsNoneExp result.2))
     (run : source.mapM f = some target) :
     fnVarsNoneFuns source ↔ fnVarsNoneFuns target := by
-  induction source generalizing target with
-  | nil =>
-    simp at run
-    subst target
-    rfl
-  | cons first rest ih =>
-    cases head : f first with
-    | none => simp [List.mapM_cons, head] at run
-    | some next =>
-      cases tail : rest.mapM f with
-      | none => simp [List.mapM_cons, head, tail] at run
-      | some nextRest =>
-        have equal : next :: nextRest = target := by simpa [List.mapM_cons, head, tail] using run
-        subst target
-        cases first
-        cases next
-        simp only [fnVarsNoneFuns, pointwise _ _ head, ih nextRest tail]
+  have rel := mapM_rel f (fun entry result => fnVarsNoneExp entry.2 ↔ fnVarsNoneExp result.2) pointwise source target run
+  clear run
+  induction rel with
+  | nil => rfl
+  | @cons a b xs ys first rest ih =>
+    cases a
+    cases b
+    simp only [fnVarsNoneFuns, first, ih]
 
 /-- Every successful executable traversal preserves absence of captured-variable annotations. -/
 theorem introMultiFuel_varsNone (fuel maxApp : Nat) (expression result : Exp)
@@ -568,8 +635,10 @@ theorem introExp_varsNone (maxApp : Nat) (expression : Exp) :
   exact introMultiFuel_varsNone fuel maxApp expression (introExp maxApp expression) success
 
 /-- The executable traversal preserves the annotation invariant on programs. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "every_Fn_vs_NONE_intro_multi"]
 theorem introList_varsNone (maxApp : Nat) (program : List Exp) :
-    everyFnVarsNone program ↔ everyFnVarsNone (introList maxApp program) := by
+    everyFnVarsNone (introList maxApp program) ↔ everyFnVarsNone program := by
+  apply Iff.symm
   induction program with
   | nil => simp [introList, everyFnVarsNone]
   | cons head tail ih =>
@@ -583,33 +652,13 @@ theorem introExp_containsAppSome (maxApp : Nat) (expression : Exp) :
   exact introMultiFuel_containsAppSome fuel maxApp expression (introExp maxApp expression) success
 
 /-- The executed multi-argument traversal preserves application safety over
-complete programs. The original theorem and all carriers still need source
-review before this result can be classified as an exact HOL port. -/
+complete programs. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "contains_App_SOME_intro_multi"]
 theorem introList_containsAppSome (maxApp : Nat) (program : List Exp) :
     containsAppSome maxApp (introList maxApp program) ↔ containsAppSome maxApp program := by
   induction program with
   | nil => simp [introList, containsAppSome]
   | cons head tail ih =>
     simp only [introList_cons, containsAppSome, ← introExp_containsAppSome maxApp head, ih]
-
-/-- A unary program remains eligible for closure numbering after
-multi-argument introduction when the application limit is positive. -/
-theorem introList_numberingSafe (maxApp : Nat) (program : List Exp)
-    (positive : 0 < maxApp) (unary : ∀ e ∈ program, noMti e) :
-    ¬ containsAppSome maxApp (introList maxApp program) := by
-  intro invalid
-  exact (noMtiList_syntactic maxApp positive program unary).2
-    ((introList_containsAppSome maxApp program).mp invalid)
-
-/-- The executed optional traversal always returns a numbering-safe program
-when its input satisfies the unary invariant and the application limit is positive. -/
-theorem compileFuel_numberingSafe (fuel : Nat) (enabled : Bool) (maxApp : Nat) (program : List Exp)
-    (positive : 0 < maxApp) (unary : ∀ e ∈ program, noMti e) :
-    ∃ result, compileFuel fuel enabled maxApp program = some result ∧
-      ¬ containsAppSome maxApp result := by
-  cases enabled with
-  | false => exact ⟨program, rfl, (noMtiList_syntactic maxApp positive program unary).2⟩
-  | true => exact ⟨introList maxApp program, compileFuel_introList fuel maxApp program,
-      introList_numberingSafe maxApp program positive unary⟩
 
 end Flapjack.Compiler.Backend.ClosMti

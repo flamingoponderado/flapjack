@@ -149,53 +149,6 @@ decreasing_by all_goals subst_vars; simp_wf <;> omega
 
 end
 
-/-- Incremental numbering puts all main-expression closure locations within
-the interval from the input state to the returned state. -/
-theorem compileInc_location_bounds (start location : Nat) (expressions : List Exp)
-    (member : location ∈ codeLocations (compileInc start expressions).2) :
-    start ≤ location ∧ location < (compileInc start expressions).1 := by
-  let next := start + max expressions.length 1
-  let aligned := if next % 2 = 0 then next else next + 1
-  have startBound : start ≤ aligned := by
-    dsimp [aligned, next]
-    split <;> omega
-  have numbered : location ∈ codeLocations (renumberList aligned expressions).2 := by
-    simpa [compileInc, codeLocations, codeLocationsExp, next, aligned] using member
-  have bounds := renumberList_location_bounds expressions aligned location numbered
-  have upper : (compileInc start expressions).1 = (renumberList aligned expressions).1 := by
-    simp [compileInc, next, aligned]
-  rw [upper]
-  omega
-
-/-- Closure locations are assigned only after the entry-label reservation. -/
-theorem compileInc_location_after_entries (start location : Nat) (expressions : List Exp)
-    (member : location ∈ codeLocations (compileInc start expressions).2) :
-    start + max 1 expressions.length ≤ location := by
-  let next := start + max expressions.length 1
-  let aligned := if next % 2 = 0 then next else next + 1
-  have lower : start + max 1 expressions.length ≤ aligned := by
-    dsimp [aligned, next]
-    split <;> omega
-  have numbered : location ∈ codeLocations (renumberList aligned expressions).2 := by
-    simpa [compileInc, codeLocations, codeLocationsExp, next, aligned] using member
-  have bounds := renumberList_location_bounds expressions aligned location numbered
-  omega
-
-/-- Incremental numbering reserves enough entry labels for the whole input
-list before allocating closure locations. -/
-theorem compileInc_reservation (start : Nat) (expressions : List Exp) :
-    start + max 1 expressions.length ≤ (compileInc start expressions).1 := by
-  let next := start + max expressions.length 1
-  let aligned := if next % 2 = 0 then next else next + 1
-  have numbered := renumberList_start_le expressions aligned
-  have lower : next ≤ aligned := by
-    dsimp [aligned]
-    split <;> omega
-  change start + max 1 expressions.length ≤ (renumberList aligned expressions).1
-  dsimp [next] at lower
-  omega
-
-
 mutual
 
 /-- Numbering reserves the successor of every emitted closure location. -/
@@ -339,24 +292,6 @@ termination_by sizeOf functions
 decreasing_by all_goals subst_vars; simp_wf <;> omega
 
 end
-
-
-/-- Incremental numbering reserves each closure label and its successor. -/
-theorem compileInc_location_successor_bounds (start location : Nat) (expressions : List Exp)
-    (member : location ∈ codeLocations (compileInc start expressions).2) :
-    start ≤ location ∧ location + 1 < (compileInc start expressions).1 := by
-  let next := start + max expressions.length 1
-  let aligned := if next % 2 = 0 then next else next + 1
-  have startBound : start ≤ aligned := by
-    dsimp [aligned, next]
-    split <;> omega
-  have numbered : location ∈ codeLocations (renumberList aligned expressions).2 := by
-    simpa [compileInc, codeLocations, codeLocationsExp, next, aligned] using member
-  have bounds := renumberList_location_successor_bounds expressions aligned location numbered
-  have upper : (compileInc start expressions).1 = (renumberList aligned expressions).1 := by
-    simp [compileInc, next, aligned]
-  rw [upper]
-  omega
 
 
 end Flapjack.Compiler.Backend.ClosNumber

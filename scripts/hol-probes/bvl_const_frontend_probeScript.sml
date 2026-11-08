@@ -1,6 +1,14 @@
 load "bvl_constTheory";
 open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
+fun show_thm label th =
+  if null (hyp th) then
+    (print label; Lib.with_flag (Globals.show_types,true) print_term (concl th); print "\n")
+  else raise Fail ("hypotheses: " ^ label);
+val _ = show_thm "compile_def_typed=" bvl_constTheory.compile_def;
+val _ = show_thm "compile_eq_typed=" bvl_constTheory.compile_eq;
+val _ = show_thm "compile_exp_def_typed=" bvl_constTheory.compile_exp_def;
+val _ = show_thm "compile_exp_eq_typed=" bvl_constTheory.compile_exp_eq;
 val _ = (print "divs="; print_term (rhs (concl (EVAL ``
  [(7:int) / 3; (-7:int) / 3; (7:int) / -3; (-7:int) / -3;
   (7:int) % 3; (-7:int) % 3; (7:int) % -3; (-7:int) % -3]``))); print "\n");

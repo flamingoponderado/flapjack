@@ -1,8 +1,9 @@
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EnvironmentBind
 import Flapjack.Compiler.Backend.SourceEval.Proofs.ValueRelation
 import Flapjack.SemanticPrimitivesProps.RecursiveFunctions
+import Flapjack.SemanticPrimitivesProps.OpApp
 
-/-! Recursive environments preserve source value relations. -/
+/-! Recursive environments and closure application preserve source value relations. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs
 open Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesProps
 
@@ -27,5 +28,41 @@ theorem envRel_buildRecEnv (es : EvalOracleState) (env env' cl cl' : SemEnv Valu
   rw [buildRecEnv_merge funs () cl ev, buildRecEnv_merge funs () cl' ev']
   rw [nsAppend_to_nsBindList, nsAppend_to_nsBindList]
   exact envRel_add_nsBindList _ env ev env' ev' _ _ ⟨baseRel, bindingsRel funs⟩
+
+/-- Flapjack infrastructure: HOL proves closure and recursive-closure application preservation inline in the application simulation case. -/
+theorem doOpApp_related (oracle : EvalOracleState) (source target : List Value)
+    (callEnv : SemEnv Value) (body : Flapjack.AstHOL.Exp)
+    (values : List.Forall₂ (ValueRel oracle) source target)
+    (run : doOpApp source = some (callEnv, body)) :
+    ∃ callEnv', doOpApp target = some (callEnv', body) ∧
+      envRel (ValueRel oracle) callEnv callEnv' := by
+  rcases (doOpApp_cases callEnv source body).mp run with closure | recursive
+  · obtain ⟨arg, env, name, exp, rfl, rfl, rfl⟩ := closure
+    cases values with
+    | cons funRel tail =>
+      cases tail with
+      | @cons _ arg' _ _ argRel tail =>
+        cases tail
+        cases funRel with
+        | @closure _ env' _ _ envRel' =>
+          refine ⟨{ env' with v := nsBind name arg' env'.v }, ?_, ?_⟩
+          · simp [doOpApp]
+          · apply envRel_add_nsBind (ValueRel oracle)
+            exact ⟨(valueEnvRel_iff _ _ _).mp envRel', argRel⟩
+  · obtain ⟨arg, env, funs, name, param, exp, rfl, found, distinct, rfl, rfl⟩ := recursive
+    cases values with
+    | cons funRel tail =>
+      cases tail with
+      | @cons _ arg' _ _ argRel tail =>
+        cases tail
+        cases funRel with
+        | @recclosure _ env' _ _ envRel' =>
+          refine ⟨{ env' with v := nsBind param arg' (buildRecEnv funs env' env'.v) }, ?_, ?_⟩
+          · simp [doOpApp, found, distinct]
+          · apply envRel_add_nsBind (ValueRel oracle)
+            constructor
+            · apply envRel_buildRecEnv
+              exact ⟨(valueEnvRel_iff _ _ _).mp envRel', (valueEnvRel_iff _ _ _).mp envRel'⟩
+            · exact argRel
 
 end Flapjack.Compiler.Backend.SourceEval.Proofs

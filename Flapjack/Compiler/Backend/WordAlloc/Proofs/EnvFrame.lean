@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.WordAlloc.KeyMaps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.StrongLocalsRel
 import Flapjack.Compiler.Backend.Semantics.WordSem.Alloc
 import Flapjack.Compiler.Backend.Semantics.WordSem.EnvListSupport
+import Flapjack.Misc.Sptree.ToAList
 
 /-!
 # Word allocation environment-list and GC frame lemmas
@@ -270,91 +271,6 @@ theorem listRearrangePerm {α : Type} (xs ys : List α) (h : xs.Perm ys) :
   obtain ⟨m, hb, hlen, hel⟩ := rearrangeWitnessOfPerm h
   exact ⟨m, listRearrangeEqOf m xs ys hb hlen hel⟩
 
-/-! ### HOL library `ALL_DISTINCT_MAP_FST_toAList` (untagged Sptree support) -/
-
-private theorem sptAccZero (index : Nat) : sptAcc index 0 = index := by
-  rw [sptAcc_eq]; simp
-
-theorem sptFoldiSplit {α : Type} (tree : Spt α) :
-    ∀ (index : Nat) (acc : List (Nat × α)),
-      ∃ emitted, sptFoldi (fun k v entries => (k, v) :: entries) index acc tree =
-          emitted ++ acc ∧ (emitted.map Prod.fst).Nodup ∧
-          ∀ p ∈ emitted, ∃ k, p.1 = sptAcc index k := by
-  induction tree with
-  | ln => intro index acc; exact ⟨[], by simp [sptFoldi], by simp, by simp⟩
-  | ls v =>
-      intro index acc
-      exact ⟨[(index, v)], by simp [sptFoldi], by simp,
-        by intro p hp; simp at hp; subst hp; exact ⟨0, (sptAccZero index).symm⟩⟩
-  | bn left right ihl ihr =>
-      intro index acc
-      obtain ⟨el, hl, hlnd, hlk⟩ := ihl (index + 2 * lrNext index) acc
-      obtain ⟨er, hr, hrnd, hrk⟩ := ihr (index + lrNext index) (el ++ acc)
-      refine ⟨er ++ el, ?_, ?_, ?_⟩
-      · change sptFoldi _ (index + lrNext index)
-          (sptFoldi _ (index + 2 * lrNext index) acc left) right = _
-        rw [hl, hr, List.append_assoc]
-      · rw [List.map_append, List.nodup_append]
-        refine ⟨hrnd, hlnd, ?_⟩
-        intro a ha b hb hab
-        obtain ⟨pa, hpa, rfl⟩ := List.mem_map.mp ha
-        obtain ⟨pb, hpb, rfl⟩ := List.mem_map.mp hb
-        obtain ⟨ka, hka⟩ := hrk pa hpa
-        obtain ⟨kb, hkb⟩ := hlk pb hpb
-        rw [hka, hkb, sptAcc_childRight, sptAcc_childLeft] at hab
-        have := sptAcc_injective index hab
-        omega
-      · intro p hp
-        rcases List.mem_append.mp hp with h | h
-        · obtain ⟨k, hk⟩ := hrk p h; exact ⟨2 * k + 1, by rw [hk, sptAcc_childRight]⟩
-        · obtain ⟨k, hk⟩ := hlk p h; exact ⟨2 * k + 2, by rw [hk, sptAcc_childLeft]⟩
-  | bs left v right ihl ihr =>
-      intro index acc
-      obtain ⟨el, hl, hlnd, hlk⟩ := ihl (index + 2 * lrNext index) acc
-      obtain ⟨er, hr, hrnd, hrk⟩ := ihr (index + lrNext index) ((index, v) :: (el ++ acc))
-      refine ⟨er ++ (index, v) :: el, ?_, ?_, ?_⟩
-      · change sptFoldi _ (index + lrNext index)
-          ((index, v) :: sptFoldi _ (index + 2 * lrNext index) acc left) right = _
-        rw [hl, hr]; simp
-      · have hroot : ∀ p ∈ el, p.1 ≠ index := by
-          intro p hp heq
-          obtain ⟨k, hk⟩ := hlk p hp
-          rw [hk, sptAcc_childLeft] at heq
-          have := sptAcc_injective index (heq.trans (sptAccZero index).symm)
-          omega
-        rw [List.map_append, List.nodup_append]
-        refine ⟨hrnd, ?_, ?_⟩
-        · simp only [List.map_cons, List.nodup_cons]
-          refine ⟨?_, hlnd⟩
-          intro hm
-          obtain ⟨p, hp, hpe⟩ := List.mem_map.mp hm
-          exact hroot p hp hpe
-        · intro a ha b hb hab
-          obtain ⟨pa, hpa, rfl⟩ := List.mem_map.mp ha
-          obtain ⟨ka, hka⟩ := hrk pa hpa
-          rw [hka, sptAcc_childRight] at hab
-          simp only [List.map_cons, List.mem_cons] at hb
-          rcases hb with hb | hb
-          · rw [hb] at hab
-            have := sptAcc_injective index (hab.trans (sptAccZero index).symm)
-            omega
-          · obtain ⟨pb, hpb, rfl⟩ := List.mem_map.mp hb
-            obtain ⟨kb, hkb⟩ := hlk pb hpb
-            rw [hkb, sptAcc_childLeft] at hab
-            have := sptAcc_injective index hab
-            omega
-      · intro p hp
-        simp only [List.mem_append, List.mem_cons] at hp
-        rcases hp with h | h | h
-        · obtain ⟨k, hk⟩ := hrk p h; exact ⟨2 * k + 1, by rw [hk, sptAcc_childRight]⟩
-        · subst h; exact ⟨0, (sptAccZero index).symm⟩
-        · obtain ⟨k, hk⟩ := hlk p h; exact ⟨2 * k + 2, by rw [hk, sptAcc_childLeft]⟩
-
-theorem sptToAListKeysNodup {α : Type} (tree : Spt α) :
-    ((sptToAList tree).map Prod.fst).Nodup := by
-  obtain ⟨e, he, hnd, -⟩ := sptFoldiSplit tree 0 []
-  simpa [sptToAList, he] using hnd
-
 /-! ### `list_rearrange` is a permutation (HOL `PERM_list_rearrange`) -/
 
 theorem listRearrangePermSelf {α : Type} (m : Nat → Nat) (xs : List α) :
@@ -509,7 +425,7 @@ theorem injUnion {α β : Type} (f : α → β) (A B : α → Prop) (C : β → 
 
 private theorem sortedKeysNodup {α : Type} (r : Nat × α → Nat × α → Bool) (x : Spt α) :
     ((Basis.Pure.MlList.sort r (sptToAList x)).map Prod.fst).Nodup :=
-  ((sortPerm r (sptToAList x)).map Prod.fst).nodup_iff.mpr (sptToAListKeysNodup x)
+  ((sortPerm r (sptToAList x)).map Prod.fst).nodup_iff.mpr (sptAllDistinctMapFstToAList x)
 
 private theorem sortedMem {α : Type} (r : Nat × α → Nat × α → Bool) (x : Spt α)
     (k : Nat) (v : α) :

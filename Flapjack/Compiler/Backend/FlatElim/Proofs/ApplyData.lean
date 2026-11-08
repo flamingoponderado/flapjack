@@ -4,8 +4,8 @@ import Flapjack.Compiler.Backend.FlatElim.Proofs.ApplyMemory
 namespace Flapjack.Compiler.Backend.FlatElim
 open Flapjack.SemanticPrimitivesHOL
 
-/-- The vectorSub case preserves related states and primitive-result invariants. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+/-- The vectorSub case preserves related states and primitive-result invariants.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_vectorSub {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
@@ -50,8 +50,8 @@ theorem doApp_some_flatStateRel_vectorSub {C F G : Type} (reachable : NumSet)
               refine ⟨targetNext, stateRel, ?_, closed, safe⟩
               simpa [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, opEq] using read
 
-/-- The vectorSubUnsafe case preserves related states and primitive-result invariants. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+/-- The vectorSubUnsafe case preserves related states and primitive-result invariants.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_vectorSubUnsafe {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
@@ -96,8 +96,8 @@ theorem doApp_some_flatStateRel_vectorSubUnsafe {C F G : Type} (reachable : NumS
               refine ⟨targetNext, stateRel, ?_, closed, safe⟩
               simpa [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] using read
 
-/-- The vectorLength case preserves related states and primitive-result invariants. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+/-- The vectorLength case preserves related states and primitive-result invariants.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_vectorLength {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
@@ -127,8 +127,8 @@ theorem doApp_some_flatStateRel_vectorLength {C F G : Type} (reachable : NumSet)
         exact ⟨target, related, by simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData],
           resultSafe.1, resultSafe.2⟩
 
-/-- The stringLength case preserves related states and primitive-result invariants. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+/-- The stringLength case preserves related states and primitive-result invariants.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_stringLength {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
@@ -160,8 +160,8 @@ theorem doApp_some_flatStateRel_stringLength {C F G : Type} (reachable : NumSet)
           exact ⟨target, related, by simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData],
             resultSafe.1, resultSafe.2⟩
 
-/-- String subscripting preserves related states and result invariants. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+/-- String subscripting preserves related states and result invariants.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_stringSub {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
@@ -200,8 +200,8 @@ theorem doApp_some_flatStateRel_stringSub {C F G : Type} (reachable : NumSet)
                 refine ⟨targetNext, stateRel, ?_, closed, safe⟩
                 simpa [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] using read
 
-/-- The stringImplode case preserves related states and primitive-result invariants. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+/-- The stringImplode case preserves related states and primitive-result invariants.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_stringImplode {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
@@ -233,8 +233,8 @@ theorem doApp_some_flatStateRel_stringImplode {C F G : Type} (reachable : NumSet
         exact ⟨target, related, by simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, charsEq],
           resultSafe.1, resultSafe.2⟩
 
-/-- The stringConcat case preserves related states and primitive-result invariants. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+/-- The stringConcat case preserves related states and primitive-result invariants.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_stringConcat {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
@@ -329,9 +329,10 @@ theorem valueToList_invariants (value : FlatSem.Value) (values : List FlatSem.Va
 /-- Decoding a list cannot add global dependencies. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "find_v_globals_v_to_list"]
 theorem findValueGlobals_valueToList (value : FlatSem.Value) (reachable : NumSet)
-    (values : List FlatSem.Value) (closed : globalsWithin (findValueGlobals value) reachable)
-    (decoded : FlatSem.valueToList value = some values) :
+    (values : List FlatSem.Value) (premises : globalsWithin (findValueGlobals value) reachable ∧
+      FlatSem.valueToList value = some values) :
     globalsWithin (findValuesGlobals values) reachable := by
+  obtain ⟨closed, decoded⟩ := premises
   induction value using FlatSem.valueToList.induct generalizing values with
   | case1 cid tid valid =>
     simp [FlatSem.valueToList, valid] at decoded
@@ -355,9 +356,10 @@ theorem findValueGlobals_valueToList (value : FlatSem.Value) (reachable : NumSet
 /-- Encoding a list cannot add global dependencies. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "find_v_globals_list_to_v"]
 theorem findValueGlobals_listToValue (values : List FlatSem.Value) (reachable : NumSet)
-    (value : FlatSem.Value) (closed : globalsWithin (findValuesGlobals values) reachable)
-    (encoded : FlatSem.listToValue values = value) :
+    (value : FlatSem.Value) (premises : globalsWithin (findValuesGlobals values) reachable ∧
+      FlatSem.listToValue values = value) :
     globalsWithin (findValueGlobals value) reachable := by
+  obtain ⟨closed, encoded⟩ := premises
   subst value
   induction values with
   | nil => simp [FlatSem.listToValue, findValueGlobals, findValuesGlobals, globalsWithin, sptMem, sptDomain]
@@ -369,10 +371,11 @@ theorem findValueGlobals_listToValue (values : List FlatSem.Value) (reachable : 
 /-- Encoding an append preserves the combined global-dependency bound. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "find_v_globals_list_to_v_APPEND"]
 theorem findValueGlobals_listToValue_append (left : List FlatSem.Value) (reachable : NumSet)
-    (right : List FlatSem.Value) (leftClosed : globalsWithin (findValuesGlobals left) reachable)
-    (rightClosed : globalsWithin (findValuesGlobals right) reachable) :
+    (right : List FlatSem.Value) (premises : globalsWithin (findValuesGlobals left) reachable ∧
+      globalsWithin (findValuesGlobals right) reachable) :
     globalsWithin (findValueGlobals (FlatSem.listToValue (left ++ right))) reachable := by
-  apply findValueGlobals_listToValue (left ++ right) reachable _ ?_ rfl
+  obtain ⟨leftClosed, rightClosed⟩ := premises
+  apply findValueGlobals_listToValue (left ++ right) reachable _ ⟨?_, rfl⟩
   apply (findValuesGlobals_within_iff _ _).mpr
   intro value member
   rcases List.mem_append.mp member with leftMember | rightMember
@@ -411,8 +414,8 @@ theorem valueHasEval_valueToList (value : FlatSem.Value) (values : List FlatSem.
     simp only [FlatSem.valueToList] at decoded
     simp at decoded
 
-/-- String explosion preserves the primitive simulation. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+/-- String explosion preserves the primitive simulation.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_stringExplode {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
@@ -454,8 +457,8 @@ theorem doApp_some_flatStateRel_stringExplode {C F G : Type} (reachable : NumSet
           exact ⟨target, related, by simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData],
             resultSafe.1, resultSafe.2⟩
 
-/-- Garbage-collector configuration preserves the primitive simulation. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+/-- Garbage-collector configuration preserves the primitive simulation.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_configGC {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
@@ -495,8 +498,8 @@ theorem doApp_some_flatStateRel_configGC {C F G : Type} (reachable : NumSet)
                 exact ⟨target, related, by simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData],
                   resultSafe.1, resultSafe.2⟩
 
-/-- Converting a list to a vector preserves the primitive simulation. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+/-- Converting a list to a vector preserves the primitive simulation.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_vectorFromList {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
@@ -535,8 +538,8 @@ theorem doApp_some_flatStateRel_vectorFromList {C F G : Type} (reachable : NumSe
         exact ⟨target, related, by simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, decoded],
           resultSafe.1, resultSafe.2⟩
 
-/-- Appending decoded lists preserves the primitive simulation. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+/-- Appending decoded lists preserves the primitive simulation.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_listAppend {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
@@ -594,8 +597,8 @@ theorem doApp_some_flatStateRel_listAppend {C F G : Type} (reachable : NumSet)
               by simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, leftDecoded, rightDecoded],
               resultSafe.1, resultSafe.2⟩
 
-/-- Thunk allocation preserves the primitive simulation. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+/-- Thunk allocation preserves the primitive simulation.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_thunkAlloc {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value) (mode : Flapjack.AstHOL.ThunkMode)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
@@ -635,8 +638,8 @@ theorem doApp_some_flatStateRel_thunkAlloc {C F G : Type} (reachable : NumSet)
         · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData,
             ← refsEq, bad, storeAlloc]
 
-/-- Thunk update preserves the primitive simulation. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+/-- Thunk update preserves the primitive simulation.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_thunkUpdate {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value) (mode : Flapjack.AstHOL.ThunkMode)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
@@ -699,8 +702,8 @@ theorem doApp_some_flatStateRel_thunkUpdate {C F G : Type} (reachable : NumSet)
                     ← refsEq, bad, assigned]
 
 /-- An FFI call preserves the primitive simulation, including both returning
-calls that update a byte array and final FFI events. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+calls that update a byte array and final FFI events.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_ffi {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value) (name : Flapjack.AstHOL.VarN)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)

@@ -37,7 +37,10 @@ theorem sptMemToAList {α : Type} :
 private theorem sptAccZero (index : Nat) : sptAcc index 0 = index := by
   rw [sptAcc_eq]; simp
 
-private theorem sptFoldiEmitted {α : Type} (tree : Spt α) :
+/-- Flapjack infrastructure for the `toAList` library facts: folding with
+cons appends a duplicate-free prefix whose keys are exactly the SSA addresses
+emitted at `index`. Not a separately named HOL declaration. -/
+theorem sptFoldiSplit {α : Type} (tree : Spt α) :
     ∀ (index : Nat) (acc : List (Nat × α)),
       ∃ emitted, sptFoldi (fun k v entries => (k, v) :: entries) index acc tree =
           emitted ++ acc ∧ (emitted.map Prod.fst).Nodup ∧
@@ -118,7 +121,7 @@ HOL `ALL_DISTINCT` is `List.Nodup`. -/
 theorem sptAllDistinctMapFstToAList {α : Type} :
     ∀ (t : Spt α), ((sptToAList t).map Prod.fst).Nodup := by
   intro tree
-  obtain ⟨e, he, hnd, -⟩ := sptFoldiEmitted tree 0 []
+  obtain ⟨e, he, hnd, -⟩ := sptFoldiSplit tree 0 []
   simpa [sptToAList, he] using hnd
 
 /-- Exact HOL `domain_insert` (`sptreeScript.sml:658-663`). -/

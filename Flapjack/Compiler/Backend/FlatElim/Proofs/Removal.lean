@@ -15,11 +15,11 @@ theorem evaluate_sing_notKeep_flatStateRel {C F α : Type} (env : FlatSem.Enviro
     (state : FlatSem.State C F) (expressions : List FlatLang.Exp) (next : FlatSem.State C F)
     (result : Result (List FlatSem.Value) FlatSem.Value) (expression : FlatLang.Exp)
     (reachable : NumSet) (target : FlatSem.State C F)
-    (run : FlatSem.evaluate (emptyEnvironment env) state expressions = (next, result))
-    (singleton : expressions = [expression]) (safe : hasEval expression = false)
-    (notKept : keep reachable expression = false) (related : flatStateRel reachable state target)
-    (notTypeError : result ≠ .err (.abort .typeError)) :
+    (premises : FlatSem.evaluate (emptyEnvironment env) state expressions = (next, result) ∧
+      expressions = [expression] ∧ hasEval expression = false ∧ keep reachable expression = false ∧
+      flatStateRel reachable state target ∧ result ≠ .err (.abort .typeError)) :
     flatStateRel reachable next target ∧ ∃ value : FlatSem.Value, result = .val [value] := by
+  obtain ⟨run, singleton, safe, notKept, related, notTypeError⟩ := premises
   subst expressions
   have pure : isPure expression = true := by
     cases purity : isPure expression <;> simp [keep, purity] at notKept ⊢
@@ -28,9 +28,9 @@ theorem evaluate_sing_notKeep_flatStateRel {C F α : Type} (env : FlatSem.Enviro
   have envSafe : bindingsNoEval (emptyEnvironment env : FlatSem.Environment FlatSem.Value).v := by
     simp [emptyEnvironment, bindingsNoEval]
   obtain ⟨values, nextRelated, resultEq, _⟩ :=
-    evaluate_pure_flatStateRel (emptyEnvironment env) state [expression] next result reachable target run
-      (singletonPure expression pure) envSafe (singletonExpression_noEval expression safe)
-      (singletonLocations expression reachable empty) related notTypeError
+    evaluate_pure_flatStateRel (emptyEnvironment env) state [expression] next result reachable target
+      ⟨run, singletonPure expression pure, envSafe, singletonExpression_noEval expression safe,
+        singletonLocations expression reachable empty, related, notTypeError⟩
   subst result
   obtain ⟨value, rfl⟩ := Flapjack.Compiler.Backend.FlatProps.evaluate_sing (emptyEnvironment env) state next expression values run
   exact ⟨nextRelated, value, rfl⟩
@@ -54,8 +54,8 @@ theorem evaluateDec_notKept {C F : Type} (state next target : FlatSem.State C F)
       exact notTypeError rfl
     obtain ⟨bodyRelated, value, valueEq⟩ :=
       evaluate_sing_notKeep_flatStateRel (⟨[]⟩ : FlatSem.Environment FlatSem.Value)
-        state [declaration] bodyState bodyResult declaration reachable target evaluated rfl
-        (by simpa [hasEvalDec] using safe) notKept related bodyNotTypeError
+        state [declaration] bodyState bodyResult declaration reachable target
+        ⟨evaluated, rfl, by simpa [hasEvalDec] using safe, notKept, related, bodyNotTypeError⟩
     subst bodyResult
     simp only [FlatSem.evaluateDec, evaluated] at run
     split at run <;> simp_all
@@ -116,7 +116,8 @@ theorem evaluateDecs_removal_related {C F : Type} (declarations : List FlatLang.
       cases kept : keep reachable declaration with
       | true =>
         obtain ⟨targetHeadState, targetHeadEval, headRelated⟩ :=
-          evaluate_dec_flatStateRel state declaration headState headResult reachable target headEval headClosed related kept headSafe headNotTypeError
+          evaluate_dec_flatStateRel state declaration headState headResult reachable target
+            ⟨headEval, headClosed, related, kept, headSafe, headNotTypeError⟩
         have clampedRelated : flatStateRel reachable
             { headState with clock := min state.clock headState.clock }
             { targetHeadState with clock := min target.clock targetHeadState.clock } := by
@@ -151,12 +152,12 @@ review. -/
 theorem flat_decs_removal {C F : Type} (state : FlatSem.State C F) (declarations : List FlatLang.Exp)
     (next : FlatSem.State C F) (result : Option (ErrorResult FlatSem.Value)) (reachable : NumSet)
     (removed : List FlatLang.Exp) (target : FlatSem.State C F)
-    (run : FlatSem.evaluateDecs state declarations = (next, result))
-    (notTypeError : result ≠ some (.abort .typeError)) (filtered : removeUnreachable reachable declarations = removed)
-    (related : flatStateRel reachable state target)
-    (safe : ∀ declaration ∈ declarations, hasEvalDec declaration = false)
-    (closed : decsClosed reachable declarations) :
+    (premises : FlatSem.evaluateDecs state declarations = (next, result) ∧
+      result ≠ some (.abort .typeError) ∧ removeUnreachable reachable declarations = removed ∧
+      flatStateRel reachable state target ∧ (∀ declaration ∈ declarations, hasEvalDec declaration = false) ∧
+      decsClosed reachable declarations) :
     ∃ targetNext, targetNext.ffi = next.ffi ∧ FlatSem.evaluateDecs target removed = (targetNext, result) := by
+  obtain ⟨run, notTypeError, filtered, related, safe, closed⟩ := premises
   subst removed
   obtain ⟨targetNext, evaluated, nextRelated⟩ :=
     evaluateDecs_removal_related declarations state next result reachable target run notTypeError related safe closed
@@ -166,16 +167,17 @@ theorem flat_decs_removal {C F : Type} (state : FlatSem.State C F) (declarations
 evaluation result and FFI state. The evaluator and carriers remain pending
 HOL correspondence review. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "flat_removal_thm"]
-theorem flat_removal {C F : Type} (ffi : HolFfiState F) (clock : Nat)
+theorem flat_removal {C F : Type} (config : FlatSem.InstallConfig C) (ffi : HolFfiState F) (clock : Nat)
     (declarations : List FlatLang.Exp) (next : FlatSem.State C F)
     (result : Option (ErrorResult FlatSem.Value)) (roots : NumSet) (tree : Spt NumSet)
-    (reachable : NumSet) (removed : List FlatLang.Exp) (config : FlatSem.InstallConfig C)
-    (run : FlatSem.evaluateDecs (FlatSem.initialState ffi clock config) declarations = (next, result))
-    (notTypeError : result ≠ some (.abort .typeError)) (analysis : (roots, tree) = analyseCode declarations)
-    (closure : reachable = closureTotal roots tree) (safe : declarations.any hasEvalDec = false)
-    (filtered : removeUnreachable reachable declarations = removed) :
+    (reachable : NumSet) (removed : List FlatLang.Exp)
+    (premises : FlatSem.evaluateDecs (FlatSem.initialState ffi clock config) declarations = (next, result) ∧
+      result ≠ some (.abort .typeError) ∧ (roots, tree) = analyseCode declarations ∧
+      reachable = closureTotal roots tree ∧ declarations.any hasEvalDec = false ∧
+      removeUnreachable reachable declarations = removed) :
     ∃ targetNext, targetNext.ffi = next.ffi ∧
       FlatSem.evaluateDecs (FlatSem.initialState ffi clock config) removed = (targetNext, result) := by
+  obtain ⟨run, notTypeError, analysis, closure, safe, filtered⟩ := premises
   subst reachable
   have initialRelated : flatStateRel (closureTotal roots tree)
       (FlatSem.initialState ffi clock config) (FlatSem.initialState ffi clock config) := by
@@ -185,8 +187,9 @@ theorem flat_removal {C F : Type} (ffi : HolFfiState F) (clock : Nat)
     intro declaration member
     have h := (List.any_eq_false.mp safe) declaration member
     simpa using h
-  exact flat_decs_removal _ declarations next result (closureTotal roots tree) removed _ run notTypeError filtered
-    initialRelated eachSafe (decsClosed_analysisClosure declarations roots tree analysis.symm)
+  exact flat_decs_removal _ declarations next result (closureTotal roots tree) removed _
+    ⟨run, notTypeError, filtered, initialRelated, eachSafe,
+      decsClosed_analysisClosure declarations roots tree analysis.symm⟩
 
 /-- Flat elimination preserves the exact result and FFI state at the same
 clock whenever the source result is not a type error. This Flapjack helper
@@ -207,8 +210,8 @@ theorem flat_remove_sameClock {C F : Type} (ffi : HolFfiState F) (declarations :
     | mk roots tree =>
       have filtered : removeUnreachable (closureTotal roots tree) declarations = removeFlatProgTotal declarations := by
         simp [removeFlatProgTotal, safe, analysis]
-      exact flat_removal ffi clock declarations sourceState result roots tree (closureTotal roots tree)
-        (removeFlatProgTotal declarations) config run notTypeError analysis.symm rfl safe filtered
+      exact flat_removal config ffi clock declarations sourceState result roots tree (closureTotal roots tree)
+        (removeFlatProgTotal declarations) ⟨run, notTypeError, analysis.symm, rfl, safe, filtered⟩
 
 /-- The flat elimination pass satisfies the original evaluation simulation
 relation with no added clock. The evaluator and carriers remain pending HOL
@@ -233,8 +236,8 @@ theorem flat_remove_evalSim {C F : Type} (ffi : HolFfiState F) (declarations : L
 the source semantics is not failure. The evaluator, semantics definition,
 and carriers remain pending complete HOL correspondence review. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "flat_remove_semantics"]
-theorem flat_remove_semantics {C F : Type} (ffi : HolFfiState F) (declarations : List FlatLang.Exp)
-    (config : FlatSem.InstallConfig C) (notFail : FlatSem.semantics config ffi declarations ≠ .fail) :
+theorem flat_remove_semantics {C F : Type} (config : FlatSem.InstallConfig C)
+    (ffi : HolFfiState F) (declarations : List FlatLang.Exp) (notFail : FlatSem.semantics config ffi declarations ≠ .fail) :
     FlatSem.semantics config ffi declarations = FlatSem.semantics config ffi (removeFlatProgTotal declarations) := by
   classical
   have sourceSafe : ∀ clock, (FlatSem.evaluateDecs (FlatSem.initialState ffi clock config) declarations).2 ≠

@@ -28,9 +28,9 @@ program that cannot fail with a type error. -/
 @[hol "cakeml/compiler/backend/proofs/source_letProofScript.sml" "compile_semantics"]
 theorem compile_semantics {F : Type} (state : State F) (env : SemEnv Value)
     (program : List Dec) (outcome : HolBehaviour)
-    (noFail : ¬ semanticsProg state env program .fail)
-    (source : semanticsProg state env program outcome) :
+    (premises : ¬ semanticsProg state env program .fail ∧ semanticsProg state env program outcome) :
     semanticsProg state env (compileDecs program) outcome := by
+  obtain ⟨noFail, source⟩ := premises
   have observations := compileDecs_clock_observations state env program noFail
   cases outcome <;> simpa only [semanticsProg, observations] using source
 
@@ -38,8 +38,8 @@ theorem compile_semantics {F : Type} (state : State F) (env : SemEnv Value)
 Eval oracle. -/
 @[hol "cakeml/compiler/backend/proofs/source_letProofScript.sml" "compile_semantics_oracle"]
 theorem compile_semantics_oracle {Config F : Type}
-    (f : List Dec → List Dec) (ci : SourceEval.Proofs.CompilerInstance Config)
-    (state : State F) (env : SemEnv Value) (program : List Dec) (outcome : HolBehaviour)
+    (ci : SourceEval.Proofs.CompilerInstance Config) (state : State F) (env : SemEnv Value)
+    (program : List Dec) (outcome : HolBehaviour) (f : List Dec → List Dec)
     (premises : SourceEval.Proofs.isInsertOracle ci f state.evalState ∧
       ¬ semanticsProg state env program .fail ∧ semanticsProg state env program outcome) :
     semanticsProg { state with evalState := SourceEval.Proofs.adjustOracle ci (compileDecs ∘ f) state.evalState }

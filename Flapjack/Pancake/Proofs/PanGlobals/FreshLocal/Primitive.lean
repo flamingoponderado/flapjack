@@ -1,10 +1,12 @@
 import Flapjack.Pancake.Proofs.PanGlobals
 import Flapjack.Pancake.Semantics.PanProps.EvalInvariant
+import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Support
 
 namespace Flapjack.PanGlobalsFreshLocalPrimitive
 
 open Flapjack.Pancake.PanLang
 open Flapjack.PanSemStateFiniteExact
+open Flapjack.PanGlobalsFreshLocalSupport
 
 /-- Canonical finite state roundtrip; no separate HOL original. -/
 theorem holFmapAsFiniteSupportWitness {width : Nat} {σ : Type} [NeZero width] :
@@ -13,26 +15,6 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} {σ : Type} [NeZero width] :
     (∀ state : PanSemStateFiniteExact width σ,
       PanSemStateFiniteExact.ofExact state.toExact state.toExact_finiteSupport = state) :=
   PanSemStateFiniteExact.holFmapAsFiniteSupportWitness
-
-/-- Flapjack-specific transport of existing broad expression freshness through
-the canonical state codec. The domain decision is internal, not a premise. -/
-private theorem evalFreshUpdate {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateFiniteExact width σ) (name : MlS) (value : ValueHOL width)
-    (expression : List (ExpHOL width)) (h : name ∉ (expression.map varExpHOL).flatten) :
-    @evalListHOLExact width σ _
-      ({state with locals := state.locals.updateEq (name, value)} :
-        PanSemStateFiniteExact width σ).toExact
-      (fun address => Classical.propDecidable (state.memaddrs address)) expression =
-    @evalListHOLExact width σ _ state.toExact
-      (fun address => Classical.propDecidable (state.memaddrs address)) expression := by
-  classical
-  have hlookup : (state.locals.updateEq (name, value)).lookup =
-      FUPDATE_HOL state.locals.lookup (name, value) := by
-    funext key
-    exact HolFiniteMapExact.lookup_updateEq _ _ _
-  simpa only [toExact_setLocals, hlookup] using
-    (@evalListHOLExact_updLocals_not_mem width σ _ state.toExact
-      (fun address => Classical.propDecidable (state.memaddrs address)) name value expression h)
 
 /-- Genuine Primitive case; no extra premises. -/
 @[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "evaluate_fresh_local"
@@ -52,7 +34,7 @@ theorem evaluateFreshLocal_Primitive {width : Nat} {σ : Type} [NeZero width]
   classical
   have hf : name ≠ target ∧ name ∉ (source.map varExpHOL).flatten := by
     simpa only [freeVarIdsHOL, List.mem_cons, not_or] using h.1
-  have he := evalFreshUpdate state name value source hf.2
+  have he := evalFreshUpdateList state name value source hf.2
   have hv : ∀ assigned : ValueHOL width,
       isValidValueHOLFinite {state with locals := state.locals.updateEq (name, value)}
           .local target assigned = isValidValueHOLFinite state .local target assigned := by
