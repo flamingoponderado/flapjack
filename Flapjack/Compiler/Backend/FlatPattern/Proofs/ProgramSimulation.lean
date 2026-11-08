@@ -66,15 +66,22 @@ theorem outcomeRel_noTypeError (source target : Option (SemanticPrimitivesHOL.Er
   | some error =>
     cases error <;> simp_all [optionRel, SemanticPrimitivesProps.excRel]
 
-/-- Flapjack helper for the program semantics theorem: source clocks that
-avoid type errors yield equal observations. -/
-theorem compileDecs_semantics_of_safe {C F : Type} (cfg cfg2 : Config) (ffi : HolFfiState F)
+/-- Pattern compilation preserves the semantics of a non-failing program. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "compile_decs_semantics"]
+theorem compileDecs_semantics {C F : Type} (cfg cfg2 : Config) (ffi : HolFfiState F)
     (source : List FlatLang.Exp) (sourceConfig targetConfig : FlatSem.InstallConfig C)
     (configs : installConfRel cfg sourceConfig targetConfig)
-    (safe : ∀ clock, (FlatSem.evaluateDecs (FlatSem.initialState ffi clock sourceConfig) source).2 ≠
-      some (.abort .typeError)) :
+    (notFail : FlatSem.semantics sourceConfig ffi source ≠ .fail) :
     FlatSem.semantics sourceConfig ffi source = FlatSem.semantics targetConfig ffi (source.map (compileDec cfg2)) := by
   classical
+  have safe : ∀ clock, (FlatSem.evaluateDecs (FlatSem.initialState ffi clock sourceConfig) source).2 ≠
+      some (.abort .typeError) := by
+    intro clock error
+    have failure : FlatSem.semantics sourceConfig ffi source = .fail := by
+      unfold FlatSem.semantics
+      simp [show ∃ clock, (FlatSem.evaluateDecs (FlatSem.initialState ffi clock sourceConfig) source).2 =
+        some (.abort .typeError) from ⟨clock, error⟩]
+    exact notFail failure
   have observations : ∀ clock,
       optionRel (SemanticPrimitivesProps.excRel ValueRel)
         (FlatSem.evaluateDecs (FlatSem.initialState ffi clock sourceConfig) source).2
@@ -136,20 +143,5 @@ theorem compileDecs_semantics_of_safe {C F : Type} (cfg cfg2 : Config) (ffi : Ho
       (source.map (compileDec cfg2))).2 = some (.abort .typeError) := fun ⟨clock, error⟩ => targetSafe clock error
   simp only [sourceNoError, targetNoError, if_false]
   rw [terminatingEq, tracesEq]
-
-/-- Pattern compilation preserves the semantics of a non-failing program. -/
-@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "compile_decs_semantics"]
-theorem compileDecs_semantics {C F : Type} (cfg cfg2 : Config) (ffi : HolFfiState F)
-    (source : List FlatLang.Exp) (sourceConfig targetConfig : FlatSem.InstallConfig C)
-    (configs : installConfRel cfg sourceConfig targetConfig)
-    (notFail : FlatSem.semantics sourceConfig ffi source ≠ .fail) :
-    FlatSem.semantics sourceConfig ffi source = FlatSem.semantics targetConfig ffi (source.map (compileDec cfg2)) := by
-  apply compileDecs_semantics_of_safe cfg cfg2 ffi source sourceConfig targetConfig configs
-  intro clock error
-  have failure : FlatSem.semantics sourceConfig ffi source = .fail := by
-    unfold FlatSem.semantics
-    simp [show ∃ clock, (FlatSem.evaluateDecs (FlatSem.initialState ffi clock sourceConfig) source).2 =
-      some (.abort .typeError) from ⟨clock, error⟩]
-  exact notFail failure
 
 end Flapjack.Compiler.Backend.FlatPattern
