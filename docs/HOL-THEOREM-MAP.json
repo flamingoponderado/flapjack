@@ -16945,6 +16945,12 @@
     "reviewer": "Compared every original premise and conclusion and independently typed state, config, input, output carriers in backend_oracle_monotonic_probe.out. The proof maintains the invariant and nondecreasing counter, then orders earlier and later identifier sets."
   },
   {
+    "hol_path": "cakeml/compiler/backend/clos_callScript.sml", "hol_name": "insert_each_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosCall/InsertEach.lean", "lean_name": "insertEachSource",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared insert_each_typed in clos_call_code_list_probe.out: the second state component has an independent polymorphic type, and both recursive equations preserve the original Spt insertion and location increment. insertEach_eq_source connects the executable fold to this definition."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml", "hol_name": "oracle_monotonic_state_with_inv_init",
     "lean_path": "Flapjack/Compiler/Backend/BackendProps/OracleMonotonicInit.lean", "lean_name": "oracleMonotonic_stateWithInvInit",
     "statement_status": "reviewed_exact",

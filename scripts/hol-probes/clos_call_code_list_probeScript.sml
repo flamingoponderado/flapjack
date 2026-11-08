@@ -3,6 +3,7 @@ open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
 val _ = set_trace "Unicode" 0;
 val _ = (print "code_list_type="; print_type (type_of ``clos_call$code_list``); print "\n");
+val _ = (print "insert_each_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callTheory.insert_each_def); print "\n");
 val _ = (print "fst_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.FST_code_list); print "\n");
 val _ = (print "snd_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.SND_code_list_change); print "\n");
 val _ = (print "map_fst_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.MAP_FST_code_list); print "\n");
