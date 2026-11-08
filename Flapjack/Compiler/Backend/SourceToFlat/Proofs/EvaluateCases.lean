@@ -4,6 +4,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalEnvConditions
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
 import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
 import Flapjack.EvaluateHOL.Definition
+import Flapjack.Misc.ListEl
 
 /-! Source-to-flat lookup and variable helpers, including the HOL
 `env_rel_lookup` port. The untagged helpers are Flapjack-specific infrastructure
@@ -19,6 +20,25 @@ theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
     GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env := GlobalEnv.holFmapAsFiniteSupportWitness env
 
 end EnvRelLookupReview
+
+/-- Pointwise relation at an index bounded by the second list. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "LIST_REL_IMP_EL2"]
+theorem listRel_imp_el2 {α β : Type} [Nonempty α] [Nonempty β]
+    (relation : α → β → Prop) (xs : List α) (ys : List β)
+    (related : List.Forall₂ relation xs ys) (i : Nat) (bound : i < ys.length) :
+    relation (Flapjack.holEl i xs) (Flapjack.holEl i ys) := by
+  have leftBound : i < xs.length := by simpa [related.length_eq] using bound
+  rw [Flapjack.holEl_eq_getElem i xs leftBound, Flapjack.holEl_eq_getElem i ys bound]
+  exact related.get leftBound bound
+
+/-- Pointwise relation at an index bounded by the first list. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "LIST_REL_IMP_EL"]
+theorem listRel_imp_el {α β : Type} [Nonempty α] [Nonempty β]
+    (relation : α → β → Prop) (xs : List α) (ys : List β)
+    (related : List.Forall₂ relation xs ys) (i : Nat) (bound : i < xs.length) :
+    relation (Flapjack.holEl i xs) (Flapjack.holEl i ys) := by
+  have rightBound : i < ys.length := by simpa [← related.length_eq] using bound
+  exact listRel_imp_el2 relation xs ys related i rightBound
 
 /-- A list is nonempty exactly when it has a head and tail. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "NOT_NULL_EQ"]

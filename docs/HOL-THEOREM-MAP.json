@@ -340,6 +340,22 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "LIST_REL_IMP_EL2",
+  "lean_name": "listRel_imp_el2",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateCases.lean",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the polymorphic relation, independent element carriers, right-list index bound and EL conclusion with list_rel_imp_el2_replay in source_to_flat_init_probe.out; the HOL proof is replayed. The original EL is the tagged holEl, with inherited nonempty HOL type carriers."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "LIST_REL_IMP_EL",
+  "lean_name": "listRel_imp_el",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateCases.lean",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the polymorphic relation, independent element carriers, left-list index bound and EL conclusion with list_rel_imp_el_replay in source_to_flat_init_probe.out; the HOL proof is replayed. The original EL is the tagged holEl, with inherited nonempty HOL type carriers."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
   "hol_name": "NOT_NULL_EQ",
   "lean_name": "notNull_eq_cons",
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateCases.lean",
