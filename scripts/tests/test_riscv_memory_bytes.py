@@ -18,7 +18,7 @@ class MemoryBytesGuard(unittest.TestCase):
    with self.assertRaises(ValueError):guard.check(root)
  def test_narrow_register(self):self.mutate('Flapjack/RiscV/CorrectnessEncoding/MemoryBytes.lean','(rd rs : BitVec 5)','(rd rs : BitVec 4)')
  def test_target_assumption(self):self.mutate('Flapjack/RiscV/CorrectnessEncoding/MemoryBytes.lean','(ok : Flapjack.Compiler.Encoders.RiscV.Target.riscvOk s = true) :','(ok : Flapjack.Compiler.Encoders.RiscV.Target.riscvOk s = true) (target_run : True) :')
- def test_missing_store_case(self):self.mutate('Flapjack/RiscV/CorrectnessEncoding/MemoryBytes.lean','theorem memory_raw_write_region_frame','theorem omitted_region_frame')
+ def test_missing_store_case(self):self.mutate('Flapjack/RiscV/L3/Step/ByteMemory.lean','theorem memory_raw_write_region_frame','theorem omitted_region_frame')
  def test_false_oracle(self):self.mutate('scripts/hol-probes/riscv_memory_bytes_probe.out','write8_cross=T','write8_cross=F')
  def test_added_source_hypothesis(self):self.mutate('scripts/hol-probes/riscv_memory_bytes_probe.out','write_source_hypotheses=0','write_source_hypotheses=1')
  def test_lost_sentinel(self):self.mutate('scripts/hol-probes/regenerate.sh','read_wrap_last read_wrap_cross','read_wrap_last')
