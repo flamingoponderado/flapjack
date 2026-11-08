@@ -13,64 +13,6 @@ theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
 
 end EnvRelListReview
 
-/-- A related source closure must be a compiled flat closure with related
-captured locals and a compatible global environment. This is an inversion
-lemma for the factored relation, not a separate HOL theorem port. -/
-theorem valueRel_closure_iff (genv : GlobalEnv) (sourceEnv : SemEnv Value)
-    (name : VarN) (body : AstHOL.Exp) (flat : FlatSem.Value) :
-    ValueRel genv (.closure sourceEnv name body) flat ↔
-      ∃ compMap globalEnv sourceLocal flatLocal trace traces,
-        sourceEnv = { globalEnv with v := nsAppend sourceLocal globalEnv.v } ∧
-        flat = .closure flatLocal name
-          (compileExp trace { compMap with v := bindLocals traces (name :: flatLocal.v.map Prod.fst) compMap.v } body) ∧
-        EnvRel genv sourceLocal flatLocal.v ∧
-        GlobalEnvInv genv compMap (fun n => n ∈ flatLocal.v.map Prod.fst) globalEnv ∧
-        traces.length = flatLocal.v.length + 1 := by
-  constructor
-  · intro related
-    cases related with
-    | closure compMap globalEnv sourceLocal _ _ flatLocal trace traces locals globals length =>
-      exact ⟨compMap, globalEnv, sourceLocal, flatLocal, trace, traces, rfl, rfl, locals, globals, length⟩
-  · rintro ⟨compMap, globalEnv, sourceLocal, flatLocal, trace, traces, rfl, rfl, locals, globals, length⟩
-    exact .closure genv compMap globalEnv sourceLocal name body flatLocal trace traces locals globals length
-
-/-- Recursive closures relate either to a compiled local recursive closure or
-to the top-level global-closure representation. -/
-theorem valueRel_recclosure_iff (genv : GlobalEnv) (sourceEnv : SemEnv Value)
-    (funs : List (VarN × VarN × AstHOL.Exp)) (name : VarN) (flat : FlatSem.Value) :
-    ValueRel genv (.recclosure sourceEnv funs name) flat ↔
-      (∃ compMap globalEnv sourceLocal flatLocal trace traces,
-        sourceEnv = { globalEnv with v := nsAppend sourceLocal globalEnv.v } ∧
-        flat = .recclosure flatLocal
-          (compileFuns trace { compMap with v := bindLocals traces (funs.map Prod.fst ++ flatLocal.v.map Prod.fst) compMap.v } funs) name ∧
-        EnvRel genv sourceLocal flatLocal.v ∧
-        GlobalEnvInv genv compMap (fun n => n ∈ flatLocal.v.map Prod.fst) globalEnv ∧
-        traces.length = funs.length + flatLocal.v.length) ∨
-      (∃ compMap flatEnv arg body newVars trace localTrace,
-        newVars.map Prod.fst = funs.reverse.map Prod.fst ∧
-        GlobalEnvInv genv compMap (fun _ => False) sourceEnv ∧ flatEnv.v = [] ∧
-        findRecFun name funs = some (arg, body) ∧
-        (∀ x, x ∈ funs.map Prod.fst → ∃ n y e storedTrace bodyTrace argTrace,
-          newVars.lookup x = some (.glob storedTrace n) ∧ n < genv.v.length ∧
-          findRecFun x funs = some (y, e) ∧
-          genv.v[n]?.getD none = some (.closure flatEnv y
-            (compileExp bodyTrace { compMap with v := nsBindList ((y, .localName argTrace y) :: newVars) compMap.v } e))) ∧
-        flat = .closure flatEnv arg
-          (compileExp trace { compMap with v := nsBindList ((arg, .localName localTrace arg) :: newVars) compMap.v } body)) := by
-  constructor
-  · intro related
-    cases related with
-    | recclosure compMap globalEnv sourceLocal _ _ flatLocal trace traces locals globals length =>
-      exact Or.inl ⟨compMap, globalEnv, sourceLocal, flatLocal, trace, traces, rfl, rfl, locals, globals, length⟩
-    | topRecclosure =>
-      rename_i compMap flatEnv arg body newVars trace localTrace empty globals names closures found
-      exact Or.inr ⟨compMap, flatEnv, arg, body, newVars, trace, localTrace, names, globals, empty, found, closures, rfl⟩
-  · rintro (⟨compMap, globalEnv, sourceLocal, flatLocal, trace, traces, rfl, rfl, locals, globals, length⟩ |
-      ⟨compMap, flatEnv, arg, body, newVars, trace, localTrace, names, globals, empty, found, closures, rfl⟩)
-    · exact .recclosure genv compMap globalEnv sourceLocal funs name flatLocal trace traces locals globals length
-    · exact .topRecclosure genv compMap sourceEnv funs flatEnv name arg body newVars trace localTrace
-        names globals empty found closures
-
 /-- Related literal values have the same literal. -/
 theorem valueRel_literal_iff (genv : GlobalEnv) (lit : Lit) (flat : FlatSem.Value) :
     ValueRel genv (.litv lit) flat ↔ flat = .litv lit := by
@@ -276,20 +218,30 @@ theorem valueRel_more_eqns :
             (compileExp bodyTrace { compMap with v := nsBindList ((y, .localName argTrace y) :: newVars) compMap.v } e)))) := by
   refine ⟨valueRel_eqns_nonGlobal, ?_, ?_⟩
   · intro v nm genv exp env
-    exact valueRel_closure_iff genv env nm exp v
-  · intro x v genv funs env
-    rw [valueRel_recclosure_iff]
     constructor
-    · rintro (h | ⟨comp, flat, arg, body, vars, t, t', names, globals, empty, found, closures, eq⟩)
-      · exact Or.inl h
-      · refine Or.inr ⟨comp, flat, arg, body, vars, t, t', eq, names, globals, empty, found, ?_⟩
+    · intro related
+      cases related with
+      | closure compMap globalEnv sourceLocal _ _ flatLocal trace traces locals globals length =>
+        exact ⟨compMap, globalEnv, sourceLocal, flatLocal, trace, traces, rfl, rfl, locals, globals, length⟩
+    · rintro ⟨compMap, globalEnv, sourceLocal, flatLocal, trace, traces, rfl, rfl, locals, globals, length⟩
+      exact .closure genv compMap globalEnv sourceLocal nm exp flatLocal trace traces locals globals length
+  · intro x v genv funs env
+    constructor
+    · intro related
+      cases related with
+      | recclosure comp globalEnv sourceLocal _ _ flatLocal trace traces locals globals length =>
+        exact Or.inl ⟨comp, globalEnv, sourceLocal, flatLocal, trace, traces, rfl, rfl, locals, globals, length⟩
+      | topRecclosure =>
+        rename_i comp flat arg body vars t t' empty globals names closures found
+        refine Or.inr ⟨comp, flat, arg, body, vars, t, t', rfl, names, globals, empty, found, ?_⟩
         intro name mem
         obtain ⟨n, y, e, st, bt, argTr, lookup, bound, find, slot⟩ := closures name mem
         refine ⟨n, y, e, st, bt, argTr, lookup, bound, find, ?_⟩
         simpa [Flapjack.holEl_eq_getElem n genv.v bound, List.getElem?_eq_getElem bound] using slot
-    · rintro (h | ⟨comp, flat, arg, body, vars, t, t', eq, names, globals, empty, found, closures⟩)
-      · exact Or.inl h
-      · refine Or.inr ⟨comp, flat, arg, body, vars, t, t', names, globals, empty, found, ?_, eq⟩
+    · rintro (⟨comp, globalEnv, sourceLocal, flatLocal, trace, traces, rfl, rfl, locals, globals, length⟩ |
+        ⟨comp, flat, arg, body, vars, t, t', rfl, names, globals, empty, found, closures⟩)
+      · exact .recclosure genv comp globalEnv sourceLocal funs x flatLocal trace traces locals globals length
+      · apply ValueRel.topRecclosure genv comp env funs flat x arg body vars t t' names globals empty found
         intro name mem
         obtain ⟨n, y, e, st, bt, argTr, lookup, bound, find, slot⟩ := closures name mem
         refine ⟨n, y, e, st, bt, argTr, lookup, bound, find, ?_⟩

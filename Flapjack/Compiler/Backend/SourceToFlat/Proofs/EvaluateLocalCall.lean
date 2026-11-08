@@ -46,7 +46,7 @@ theorem doOpApp_closure_local (genv : GlobalEnv)
       GlobalEnvInv genv baseMap (fun n => n ∈ flatEnv.v.map Prod.fst) baseEnv ∧
       traces.length = flatEnv.v.length := by
   obtain ⟨baseMap, baseEnv, captured, flatCaptured, trace, traces, sourceEq, flatEq, locals, globals, len⟩ :=
-    (valueRel_closure_iff genv sourceEnv name body flatClosure).mp closureRel
+    (valueRel_more_eqns.2.1 flatClosure name genv body sourceEnv).mp closureRel
   cases traces with
   | nil => simp at len
   | cons head rest =>
@@ -387,9 +387,9 @@ theorem doOpApp_source (genv : GlobalEnv) (vs : List Value) (flatVs : List FlatS
       | none => simp [doOpApp, distinct, found] at successful
       | some pair =>
         obtain ⟨arg, body⟩ := pair
-        rcases (valueRel_recclosure_iff genv env funs name flatFunction).mp functionRel with
+        rcases (valueRel_more_eqns.2.2 name flatFunction genv funs env).mp functionRel with
           ⟨baseMap, baseEnv, captured, flatCaptured, trace, traces, rfl, rfl, locals, globals, len⟩ |
-          ⟨baseMap, flatEnv, flatArg, flatBody, newVars, trace, argTrace, names, globals, empty, findFlat, closures, flatEq⟩
+          ⟨baseMap, flatEnv, flatArg, flatBody, newVars, trace, argTrace, flatEq, names, globals, empty, findFlat, closures⟩
         · have setup := doOpApp_recclosure_local genv baseMap baseEnv captured flatCaptured funs name arg body
             trace traces locals globals len distinct found argument flatArgument argumentRel
           dsimp only at setup
