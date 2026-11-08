@@ -48781,8 +48781,8 @@
   {
     "hol_path": null,
     "hol_name": null,
-    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCallReturn.lean",
-    "lean_name": "returningCutSSA",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCut.lean",
+    "lean_name": "cutLocalsRelation",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific inline returning Call8477-8550 factoring, no standalone HOL declaration. Actual callee key/value stack facts and pushed root-map correspondence derive successful source/target pops, complete wordStateEqRel, popped cut domain and all value lookup transport using native pushEnvPopEnvSKeyEq/popEnvFrame/keyMapImplies/allocLocalsRel. Internal actual cut domain/scoped lookup relation plus map-domain and source-bound facts reconstruct all restricted SSA conjuncts. No desired popped-local relation/output SSA or target evaluation premise. Full returning Call and full SSA assembly are ported; production migration and end-to-end correctness remain open."
   },
@@ -49441,8 +49441,8 @@
   {
     "hol_path": null,
     "hol_name": null,
-    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstall.lean",
-    "lean_name": "installRefreshCutNames",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCut.lean",
+    "lean_name": "refreshCutNames",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific factoring of original Install9710-9800 preparation, no standalone HOL declaration. Successful source argument/cut guards are evaluator branch facts; actual native rename/scratch execution, preserved data arguments and mapped-cut relation are conclusions, never final correctness premises. Useful dependency of full Install case, not an additional completed HOL theorem port; full six-premise Install simulation and callback/post-rename assembly remain open on flapjack-sola-install."
   },
