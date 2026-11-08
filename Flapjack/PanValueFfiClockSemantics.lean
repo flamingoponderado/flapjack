@@ -1005,14 +1005,23 @@ def panValueFfiControlGlobalsStable (structs : StructContext)
   ∀ r, result = some r →
     panValueGlobalsShapeStable structs globals (panValueControlGlobals r)
 
+/-- The globals component of a clocked outcome. -/
+def panValueFfiClockOutcomeGlobals {α : Type u} {σ : Type v} :
+    PanValueFfiClockOutcome α σ → (VarName → Option (PanValue α))
+  | .control control => panValueControlGlobals control
+  | .timeout _ globals _ _ => globals
+
+/-- The globals component of a clocked result. -/
+def panValueFfiClockResultGlobals {α : Type u} {σ : Type v}
+    (result : PanValueFfiClockResult α σ) : VarName → Option (PanValue α) :=
+  panValueFfiClockOutcomeGlobals result.1
+
 /-- Every `some` clocked result keeps the input globals shape-stable. -/
 def panValueFfiClockGlobalsStable (structs : StructContext)
     (globals : VarName → Option (PanValue α))
     (result : Option (PanValueFfiClockResult α σ)) : Prop :=
   ∀ r, result = some r →
-    match r.1 with
-    | .control c => panValueGlobalsShapeStable structs globals (panValueControlGlobals c)
-    | .timeout _ g _ _ => panValueGlobalsShapeStable structs globals g
+    panValueGlobalsShapeStable structs globals (panValueFfiClockResultGlobals r)
 
 theorem panValueGlobalsShapeStable_refl (structs : StructContext)
     (globals : VarName → Option (PanValue α)) :
@@ -1774,6 +1783,120 @@ theorem panValueFfiExtCallResult_globals_stable
 
 /-- A clocked leaf result is the control result at the unchanged clock, so a
     control-level globals-stability fact lifts to the clocked result. -/
+theorem panValueFfiClockGlobalsStable_none
+    (structs : StructContext) (globals : VarName → Option (PanValue α)) :
+    panValueFfiClockGlobalsStable (α := α) (σ := σ) structs globals none := by
+  intro r hr
+  simp at hr
+
+/-- A clocked result with a fixed outcome keeps the input globals shape-stable
+    when the outcome's own globals are. -/
+theorem panValueFfiClockGlobalsStable_some_outcome
+    (structs : StructContext) (globals : VarName → Option (PanValue α))
+    (outcome : PanValueFfiClockOutcome α σ) (clock : Nat)
+    (h : panValueGlobalsShapeStable structs globals (panValueFfiClockOutcomeGlobals outcome)) :
+    panValueFfiClockGlobalsStable structs globals (some (outcome, clock)) := by
+  intro r hr
+  obtain ⟨nextOutcome, nextClock⟩ := r
+  simp only [Option.some.injEq, Prod.mk.injEq] at hr
+  obtain ⟨hnext, _⟩ := hr
+  subst nextOutcome
+  simpa [panValueFfiClockResultGlobals] using h
+
+/-- Restoring an old local binding keeps the outcome's globals component. -/
+theorem panValueFfiClockOutcomeGlobals_restoreLocal [BEq String]
+    (name : VarName) (oldValue : Option (PanValue α))
+    (outcome : PanValueFfiClockOutcome α σ) :
+    panValueFfiClockOutcomeGlobals (panValueFfiClockRestoreLocal name oldValue outcome) =
+      panValueFfiClockOutcomeGlobals outcome := by
+  cases outcome with
+  | control result => cases result <;> rfl
+  | timeout locals globals memory ffi => rfl
+
+/-- A clocked result whose outcome had a local binding restored keeps the input
+    globals shape-stable. -/
+theorem panValueFfiClockGlobalsStable_some_restoreLocal [BEq String]
+    (structs : StructContext) (globals : VarName → Option (PanValue α))
+    (name : VarName) (oldValue : Option (PanValue α))
+    (outcome : PanValueFfiClockOutcome α σ) (clock : Nat)
+    (h : panValueGlobalsShapeStable structs globals (panValueFfiClockOutcomeGlobals outcome)) :
+    panValueFfiClockGlobalsStable structs globals
+      (some (panValueFfiClockRestoreLocal name oldValue outcome, clock)) := by
+  intro r hr
+  obtain ⟨nextOutcome, nextClock⟩ := r
+  simp only [Option.some.injEq, Prod.mk.injEq] at hr
+  obtain ⟨hnext, _⟩ := hr
+  subst nextOutcome
+  simp only [panValueFfiClockResultGlobals]
+  rw [panValueFfiClockOutcomeGlobals_restoreLocal]
+  exact h
+
+/-- Composing two globals-stability facts through an intermediate clocked
+    result. -/
+theorem panValueFfiClockGlobalsStable_trans
+    {structs : StructContext} {globals : VarName → Option (PanValue α)}
+    {first : PanValueFfiClockResult α σ}
+    (hfirst : panValueGlobalsShapeStable structs globals (panValueFfiClockResultGlobals first))
+    {second : Option (PanValueFfiClockResult α σ)}
+    (hsecond : panValueFfiClockGlobalsStable structs (panValueFfiClockResultGlobals first)
+      second) :
+    panValueFfiClockGlobalsStable structs globals second := by
+  intro r hr
+  exact panValueGlobalsShapeStable_trans hfirst (hsecond r hr)
+
+/-- A successful `assignPanValueCallResult` keeps the callee post-state globals
+    shape-stable: the `local` and empty-value clauses return the input globals,
+    and the `global` clause performs a validated update. -/
+theorem assignPanValueCallResult_globals_stable
+    (structs : StructContext) (locals globals : VarName → Option (PanValue α))
+    (destination : Option (VarKind × VarName)) (values : List (PanValue α))
+    (callerLocals callerGlobals : VarName → Option (PanValue α))
+    (h : assignPanValueCallResult locals globals destination values (structs := structs) =
+      some (callerLocals, callerGlobals)) :
+    panValueGlobalsShapeStable structs globals callerGlobals := by
+  cases destination with
+  | none =>
+      cases values with
+      | nil =>
+          simp only [assignPanValueCallResult, Option.some.injEq, Prod.mk.injEq] at h
+          obtain ⟨_, hglobals⟩ := h
+          subst callerGlobals
+          exact panValueGlobalsShapeStable_refl structs globals
+      | cons value rest =>
+          cases rest with
+          | nil =>
+              simp only [assignPanValueCallResult, Option.some.injEq, Prod.mk.injEq] at h
+              obtain ⟨_, hglobals⟩ := h
+              subst callerGlobals
+              exact panValueGlobalsShapeStable_refl structs globals
+          | cons value' rest' => simp [assignPanValueCallResult] at h
+  | some destination =>
+      obtain ⟨kind, name⟩ := destination
+      cases values with
+      | nil => simp [assignPanValueCallResult] at h
+      | cons value rest =>
+          cases rest with
+          | nil =>
+              cases kind with
+              | «local» =>
+                  by_cases hvalid : panValueAssignmentValid structs locals (fun _ => none)
+                    .local name value
+                  · simp [assignPanValueCallResult, hvalid] at h
+                    obtain ⟨_, hglobals⟩ := h
+                    subst callerGlobals
+                    exact panValueGlobalsShapeStable_refl structs globals
+                  · simp [assignPanValueCallResult, hvalid] at h
+              | «global» =>
+                  by_cases hvalid : panValueAssignmentValid structs locals globals
+                    .global name value
+                  · simp [assignPanValueCallResult, hvalid] at h
+                    obtain ⟨_, hglobals⟩ := h
+                    subst callerGlobals
+                    exact panValueGlobalsShapeStable_update_of_valid structs locals globals name
+                      value hvalid
+                  · simp [assignPanValueCallResult, hvalid] at h
+          | cons value' rest' => simp [assignPanValueCallResult] at h
+
 theorem panValueFfiClockGlobalsStable_map_control
     (structs : StructContext) (globals : VarName → Option (PanValue α)) (clock : Nat)
     (result : Option (PanValueFfiControlResult α σ))
