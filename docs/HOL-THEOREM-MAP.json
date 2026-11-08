@@ -125572,6 +125572,15 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "assign_WordFromWord_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "assignWordFromWord",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared assign_word_from_word_def_typed: Boolean, config, section, label, destination, optional names and source retain their types and order. Narrowing uses the two-word offset exactly at width 32 and the one-word offset otherwise. Widening selects a two-word header below width 64 and a one-word header otherwise, preserving both encoding outcomes, register order and unchanged label. Positive-width BitVec represents HOL words. The production dispatcher calls this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
     "hol_name": "LoadWord64_def",
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
     "lean_name": "loadWord64",

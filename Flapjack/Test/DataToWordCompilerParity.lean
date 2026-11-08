@@ -7,6 +7,59 @@ open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Backend.DataToWord
 
 private def conf : Config := ⟨1, 2, 3, 16, false, false, false, false, false, false, .simple⟩
 
+/-- Original one-byte conversion layout, parameterized by the captured width-specific offsets. -/
+private def narrowWordExpected {width : Nat} [NeZero width] (shift offset : Nat) :
+    WordLangProgHOL (BitVec width) := wordListSeq [
+  .assign 1 (.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const (BitVec.ofNat width shift))]),
+  .assign 1 (.load (.op .add [.var 1, .const (BitVec.ofNat width offset)])),
+  .assign 1 (.op .and [.var 1, .const 255]), .assign 8 (.shift .lsl (.var 1) (.const 2))]
+
+example : compileControl? (width := 16) { conf with lenSize := 4 } 4 9
+    (.assign 3 (.wordOp (.wordFromWord true)) [1] none) = some (narrowWordExpected 5 2, 9) := by rfl
+example : compileControl? (width := 32) conf 4 9
+    (.assign 3 (.wordOp (.wordFromWord true)) [1] none) = some (narrowWordExpected 6 8, 9) := by rfl
+example : compileControl? (width := 64) conf 4 9
+    (.assign 3 (.wordOp (.wordFromWord true)) [1] none) = some (narrowWordExpected 5 8, 9) := by rfl
+example : compileControl? (width := 128) conf 4 9
+    (.assign 3 (.wordOp (.wordFromWord true)) [1] none) = some (narrowWordExpected 5 16, 9) := by rfl
+
+example : compileControl? (width := 16) { conf with lenSize := 4 } 4 9
+    (.assign 3 (.wordOp (.wordFromWord false)) [1] none) = some (wordListSeq [
+      .assign 5 (.shift .lsr (.var 4) (.const 2)), .assign 3 (.const 0),
+      wordListSeq [.assign 1 (.lookup .nextFree), .store (.op .add [.var 1, .const 2]) 3,
+        .store (.op .add [.var 1, .const 4]) 5, .assign 3 (.const 8207), .store (.var 1) 3,
+        .set .nextFree (.op .add [.var 1, .const 6]),
+        .assign 8 (.op .or [.shift .lsl (.op .sub [.var 1, .lookup .currHeap]) (.const 5), .const 1])]], 9) := by rfl
+
+example : compileControl? (width := 32) conf 4 9 (.assign 3 (.wordOp (.wordFromWord false)) [1] none) =
+    some (wordListSeq [
+      .assign 5 (.shift .lsr (.var 4) (.const 2)), .assign 3 (.const 0),
+      wordListSeq [.assign 1 (.lookup .nextFree), .store (.op .add [.var 1, .const 4]) 3,
+        .store (.op .add [.var 1, .const 8]) 5, .assign 3 (.const 0x2000F), .store (.var 1) 3,
+        .set .nextFree (.op .add [.var 1, .const 12]),
+        .assign 8 (.op .or [.shift .lsl (.op .sub [.var 1, .lookup .currHeap]) (.const 6), .const 1])]], 9) := by rfl
+
+example : compileControl? (width := 64) conf 4 9 (.assign 3 (.wordOp (.wordFromWord false)) [1] none) =
+    some (wordListSeq [.assign 3 (.shift .lsr (.var 4) (.const 2)),
+      wordListSeq [.assign 1 (.lookup .nextFree), .store (.op .add [.var 1, .const 8]) 3,
+        .assign 3 (.const 0x100000000000F), .store (.var 1) 3,
+        .set .nextFree (.op .add [.var 1, .const 16]),
+        .assign 8 (.op .or [.shift .lsl (.op .sub [.var 1, .lookup .currHeap]) (.const 5), .const 1])]], 9) := by rfl
+
+example : compileControl? (width := 128) conf 4 9 (.assign 3 (.wordOp (.wordFromWord false)) [1] none) =
+    some (wordListSeq [.assign 3 (.shift .lsr (.var 4) (.const 2)),
+      wordListSeq [.assign 1 (.lookup .nextFree), .store (.op .add [.var 1, .const 16]) 3,
+        .assign 3 (.const 0x1000000000000000000000000000F), .store (.var 1) 3,
+        .set .nextFree (.op .add [.var 1, .const 32]),
+        .assign 8 (.op .or [.shift .lsl (.op .sub [.var 1, .lookup .currHeap]) (.const 5), .const 1])]], 9) := by rfl
+
+example : compileControl? (width := 32) { conf with lenSize := 0 } 4 9
+    (.assign 3 (.wordOp (.wordFromWord false)) [1] none) =
+    some (.seq (.assign 1 (.const (-1))) (.alloc 1 (adjustSets (.ln : NumSet))), 9) := by rfl
+
+example : compileControl? (width := 16) { conf with lenSize := 4 } 4 9
+    (.assign 3 (.wordOp (.wordFromWord false)) [] none) = some (.skip, 9) := by rfl
+
 example : loadWord64 (width := 64) conf 11 5 =
     .assign 11 (.load (.op .add [.op .add [.lookup .currHeap, .shift .lsr (.var 5) (.const 5)], .const 8])) := by rfl
 

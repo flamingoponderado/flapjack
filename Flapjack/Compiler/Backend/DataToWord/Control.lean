@@ -539,6 +539,31 @@ def assignWordShiftW64 {width : Nat} [NeZero width] (sh : Shift) (n : Nat) (conf
           .assign 13 (.load (.op .add [.var 15, .const (2 * wordSemBytesInWord)])),
           wordShift64On32 sh n, writeWord64On32 conf header dest 33 31], l)
 
+/-- Convert between tagged byte words and boxed Word64 values. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_WordFromWord_def"
+  (words_as_type_indexed_bitvec)]
+def assignWordFromWord {width : Nat} [NeZero width] (narrow : Bool) (conf : Config)
+    (_secn l dest : Nat) (_names : Option NumSet) (src : Nat) :
+    WordLangProgHOL (BitVec width) × Nat :=
+  if narrow then
+    (wordListSeq [
+      .assign 1 (realAddr conf (adjustVar src)),
+      .assign 1 (.load (.op .add [.var 1, .const
+        (if width = 32 then 2 * wordSemBytesInWord else wordSemBytesInWord)])),
+      .assign 1 (.op .and [.var 1, .const 255]),
+      .assign (adjustVar dest) (shiftVar .lsl 1 2)], l)
+  else
+    let len := if width < 64 then 2 else 1
+    match encodeHeader (width := width) conf 3 len with
+    | none => (giveUp, l)
+    | some header =>
+        (if len = 1 then
+          wordListSeq [.assign 3 (shiftN .lsr (.var (adjustVar src)) 2),
+            writeWord64 conf header dest 3]
+         else
+          wordListSeq [.assign 5 (shiftN .lsr (.var (adjustVar src)) 2), .assign 3 (.const 0),
+            writeWord64On32 conf header dest 5 3], l)
+
 /-- Flapjack's checked traversal. Some non-64-bit operations return `none`;
 this definition has not yet been reviewed as HOL's total `comp`. -/
 def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
@@ -866,30 +891,8 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
       | _ => some (.skip, l)
   | l, .assign dest (.wordOp (.wordShift .w64 sh n)) args names =>
       some (arg1 args (assignWordShiftW64 sh n conf secn l dest names) (.skip, l))
-  | l, .assign dest (.wordOp (.wordFromWord narrow)) args _ =>
-      match args with
-      | [src] =>
-          if width != 32 && width != 64 then none else
-          let src := adjustVar src
-          let bytes := (wordSemBytesInWord : BitVec width)
-          if narrow then
-            let offset := if width = 32 then 2 * bytes else bytes
-            some (wordListSeq [
-              .assign 1 (realAddr conf src),
-              .assign 1 (.load (.op .add [.var 1, .const offset])),
-              .assign 1 (.op .and [.var 1, .const 255]),
-              .assign (adjustVar dest) (shiftVar .lsl 1 2)], l)
-          else
-            let count := if width < 64 then 2 else 1
-            match encodeHeader (width := width) conf 3 count with
-            | none => some (giveUp, l)
-            | some header =>
-                if width < 64 then
-                  some (wordListSeq [.assign 5 (shiftN .lsr (.var src) 2),
-                    .assign 3 (.const 0), writeWord64On32 conf header dest 5 3], l)
-                else some (.seq (.assign 3 (shiftN .lsr (.var src) 2))
-                    (writeWord64 conf header dest 3), l)
-      | _ => some (.skip, l)
+  | l, .assign dest (.wordOp (.wordFromWord narrow)) args names =>
+      some (arg1 args (assignWordFromWord narrow conf secn l dest names) (.skip, l))
   | l, .assign dest (.wordOp .wordFromInt) args _ =>
       match args with
       | [src] =>

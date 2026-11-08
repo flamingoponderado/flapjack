@@ -185,6 +185,18 @@ val _ = print_eval "word_shift64_ror_64" ``(assign ^conf 4 9 3 (closLang$WordOp 
 val _ = print_eval "word_shift64_lsl_128" ``(assign ^conf 4 9 3 (closLang$WordOp (WordShift ast$W64 Lsl 1)) [1] NONE : 128 wordLang$prog # num)``;
 val _ = print_eval "word_shift64_header_failure_32" ``(assign (^conf with len_size := 0) 4 9 3 (closLang$WordOp (WordShift ast$W64 Lsl 1)) [1] NONE : 32 wordLang$prog # num)``;
 val _ = print_eval "word_shift64_bad_arity_32" ``(assign ^conf 4 9 3 (closLang$WordOp (WordShift ast$W64 Lsl 1)) [] NONE : 32 wordLang$prog # num)``;
+val _ = (print "assign_word_from_word_def_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl data_to_wordTheory.assign_WordFromWord_def); print "\n");
+val _ = print_eval "word_from_word_narrow_16" ``(assign (^conf with len_size := 4) 4 9 3 (closLang$WordOp (WordFromWord T)) [1] NONE : 16 wordLang$prog # num)``;
+val _ = print_eval "word_from_word_narrow_32" ``(assign ^conf 4 9 3 (closLang$WordOp (WordFromWord T)) [1] NONE : 32 wordLang$prog # num)``;
+val _ = print_eval "word_from_word_narrow_64" ``(assign ^conf 4 9 3 (closLang$WordOp (WordFromWord T)) [1] NONE : 64 wordLang$prog # num)``;
+val _ = print_eval "word_from_word_narrow_128" ``(assign ^conf 4 9 3 (closLang$WordOp (WordFromWord T)) [1] NONE : 128 wordLang$prog # num)``;
+val _ = print_eval "word_from_word_wide_16" ``(assign (^conf with len_size := 4) 4 9 3 (closLang$WordOp (WordFromWord F)) [1] NONE : 16 wordLang$prog # num)``;
+val _ = print_eval "word_from_word_wide_32" ``(assign ^conf 4 9 3 (closLang$WordOp (WordFromWord F)) [1] NONE : 32 wordLang$prog # num)``;
+val _ = print_eval "word_from_word_wide_64" ``(assign ^conf 4 9 3 (closLang$WordOp (WordFromWord F)) [1] NONE : 64 wordLang$prog # num)``;
+val _ = print_eval "word_from_word_wide_128" ``(assign ^conf 4 9 3 (closLang$WordOp (WordFromWord F)) [1] NONE : 128 wordLang$prog # num)``;
+val _ = print_eval "word_from_word_header_failure_32" ``(assign (^conf with len_size := 0) 4 9 3 (closLang$WordOp (WordFromWord F)) [1] NONE : 32 wordLang$prog # num)``;
+val _ = print_eval "word_from_word_bad_arity_16" ``(assign (^conf with len_size := 4) 4 9 3 (closLang$WordOp (WordFromWord F)) [] NONE : 16 wordLang$prog # num)``;
 val _ = print_eval "store_each_64" ``(StoreEach 2 [4;6] 8w : 64 wordLang$prog)``;
 val _ = print_eval "mem_eq_list_64" ``(MemEqList 8w [3w;7w] : 64 wordLang$prog)``;
 val _ = print_eval "silent_ffi_off_64" ``(SilentFFI ^conf 3 (LN,LN) : 64 wordLang$prog)``;
