@@ -144,86 +144,76 @@ theorem evaluate_induct {width : Nat} [NeZero width] {F : Type}
     (hffi : ∀ ffi_index ptr1 len1 ptr2 len2 cutset s,
         P (.ffi ffi_index ptr1 len1 ptr2 len2 cutset, s)) :
     ∀ v v1, P (v, v1) := by
-  have key : ∀ (x : Nat × Nat) (p : HolLoopProg width) (s : LoopSemStateFiniteExact width F),
-      (s.clock, sizeOf p) = x → P (p, s) := by
-    intro x
-    induction x using (Prod.lex Nat.lt_wfRel Nat.lt_wfRel).wf.induction with
-    | h x ih0 =>
-      intro p s hx
-      have ih : ∀ (p' : HolLoopProg width) (s' : LoopSemStateFiniteExact width F),
-          Prod.Lex (· < ·) (· < ·) (s'.clock, sizeOf p') (s.clock, sizeOf p) → P (p', s') :=
-        fun p' s' hlt => ih0 _ (hx ▸ hlt) p' s' rfl
-      clear ih0 hx
-      cases p with
-      | skip => exact hskip s
-      | fail => exact hfail s
-      | assign v exp => exact hassign v exp s
-      | primitive lhss pop rhss => exact hprimitive lhss pop rhss s
-      | arith a => exact harith a s
-      | store exp v => exact hstore exp v s
-      | setGlobal dst exp => exact hsetGlobal dst exp s
-      | load32 a v => exact hload32 a v s
-      | loadByte a v => exact hloadByte a v s
-      | store32 a w => exact hstore32 a w s
-      | storeByte a w => exact hstoreByte a w s
-      | seq c1 c2 =>
-          refine hseq c1 c2 s ?_ ?_
-          · intro res s1 heq _
-            have hclk := evaluate_clock c1 s res s1 heq.symm
-            exact ih c2 s1 (lexLt hclk (by simp +arith))
-          · exact ih c1 s (lexLt (Nat.le_refl _) (by simp +arith))
-      | ite cmp r1 ri c1 c2 live_out =>
-          refine hif cmp r1 ri c1 c2 live_out s ?_
-          intro v2 v3 v5 x v13 y b _ _ _ _ _ _
-          cases b
-          · exact ih c2 s (lexLt (Nat.le_refl _) (by simp +arith))
-          · exact ih c1 s (lexLt (Nat.le_refl _) (by simp +arith))
-      | mark p => exact hmark p s (ih p s (lexLt (Nat.le_refl _) (by simp +arith)))
-      | «break» k => exact hbreak k s
-      | «continue» k => exact hcontinue k s
-      | loop live_in body live_out =>
-          refine hloop live_in body live_out s ?_ ?_ ?_
-          · intro v4 s' v s'' v3 v12 hcut hv4 heval _ _ _
-            subst hv4
-            have h1 := cutRes_none_clock hcut
-            have h2 := evaluate_clock body s' v s'' heval
-            exact ih _ s'' (lexLtClock (by omega))
-          · intro v4 s' v s'' hcut hv4 heval _
-            subst hv4
-            have h1 := cutRes_none_clock hcut
-            have h2 := evaluate_clock body s' v s'' heval
-            exact ih _ s'' (lexLtClock (by omega))
-          · intro v4 s' hcut hv4
-            subst hv4
-            exact ih body s' (lexLtClock (cutRes_none_clock hcut))
-      | «raise» n => exact hraise n s
-      | «return» ns => exact hreturn ns s
-      | shMem op v ad => exact hshMem op v ad s
-      | tick => exact htick s
-      | locValue r l1 => exact hlocValue r l1 s
-      | call ret dest argvars handler =>
-          refine hcall ret dest argvars handler s ?_ ?_ ?_ ?_
-          · intro argvals v7 env prog v6 ns live v9 s' v8 st v11 retvs v v1 v2 v3 v4 r
-              live_out _ _ _ _ _ _ hcut hv9 heval _ _ _ _ _ _ _
-            subst hv9
-            have h1 := cutRes_none_clock hcut
-            have h2 := evaluate_clock prog _ v8 st heval
-            exact ih r _ (lexLtClock (by simp only [setVars] at h2 ⊢; omega))
-          · intro argvals v7 env prog v6 ns live v9 s' v8 st v11 exn v n v2 h v4 v5
-              live_out _ _ _ _ _ _ hcut hv9 heval _ _ _ _ _ _
-            subst hv9
-            have h1 := cutRes_none_clock hcut
-            have h2 := evaluate_clock prog _ v8 st heval
-            exact ih h _ (lexLtClock (by simp only [setVar] at h2 ⊢; omega))
-          · intro argvals v7 env prog v6 ns live v9 s' _ _ _ _ _ _ hcut hv9
-            subst hv9
-            have h1 := cutRes_none_clock hcut
-            exact ih prog _ (lexLtClock h1)
-          · intro argvals v7 env prog _ _ _ _ _ hclock
-            exact ih prog _ (lexLtClock (by simp only [decClock]; omega))
-      | ffi ffi_index ptr1 len1 ptr2 len2 cutset => exact hffi ffi_index ptr1 len1 ptr2 len2 cutset s
-  intro v v1
-  exact key _ v v1 rfl
+  refine clockSizeLexInduction (α := HolLoopProg width) (·.clock) (motive := fun p s => P (p, s)) ?_
+  intro p s ih
+  cases p with
+  | skip => exact hskip s
+  | fail => exact hfail s
+  | assign v exp => exact hassign v exp s
+  | primitive lhss pop rhss => exact hprimitive lhss pop rhss s
+  | arith a => exact harith a s
+  | store exp v => exact hstore exp v s
+  | setGlobal dst exp => exact hsetGlobal dst exp s
+  | load32 a v => exact hload32 a v s
+  | loadByte a v => exact hloadByte a v s
+  | store32 a w => exact hstore32 a w s
+  | storeByte a w => exact hstoreByte a w s
+  | seq c1 c2 =>
+      refine hseq c1 c2 s ?_ ?_
+      · intro res s1 heq _
+        have hclk := evaluate_clock c1 s res s1 heq.symm
+        exact ih c2 s1 (lexLt hclk (by simp +arith))
+      · exact ih c1 s (lexLt (Nat.le_refl _) (by simp +arith))
+  | ite cmp r1 ri c1 c2 live_out =>
+      refine hif cmp r1 ri c1 c2 live_out s ?_
+      intro v2 v3 v5 x v13 y b _ _ _ _ _ _
+      cases b
+      · exact ih c2 s (lexLt (Nat.le_refl _) (by simp +arith))
+      · exact ih c1 s (lexLt (Nat.le_refl _) (by simp +arith))
+  | mark p => exact hmark p s (ih p s (lexLt (Nat.le_refl _) (by simp +arith)))
+  | «break» k => exact hbreak k s
+  | «continue» k => exact hcontinue k s
+  | loop live_in body live_out =>
+      refine hloop live_in body live_out s ?_ ?_ ?_
+      · intro v4 s' v s'' v3 v12 hcut hv4 heval _ _ _
+        subst hv4
+        have h1 := cutRes_none_clock hcut
+        have h2 := evaluate_clock body s' v s'' heval
+        exact ih _ s'' (lexLtClock (by omega))
+      · intro v4 s' v s'' hcut hv4 heval _
+        subst hv4
+        have h1 := cutRes_none_clock hcut
+        have h2 := evaluate_clock body s' v s'' heval
+        exact ih _ s'' (lexLtClock (by omega))
+      · intro v4 s' hcut hv4
+        subst hv4
+        exact ih body s' (lexLtClock (cutRes_none_clock hcut))
+  | «raise» n => exact hraise n s
+  | «return» ns => exact hreturn ns s
+  | shMem op v ad => exact hshMem op v ad s
+  | tick => exact htick s
+  | locValue r l1 => exact hlocValue r l1 s
+  | call ret dest argvars handler =>
+      refine hcall ret dest argvars handler s ?_ ?_ ?_ ?_
+      · intro argvals v7 env prog v6 ns live v9 s' v8 st v11 retvs v v1 v2 v3 v4 r
+          live_out _ _ _ _ _ _ hcut hv9 heval _ _ _ _ _ _ _
+        subst hv9
+        have h1 := cutRes_none_clock hcut
+        have h2 := evaluate_clock prog _ v8 st heval
+        exact ih r _ (lexLtClock (by simp only [setVars] at h2 ⊢; omega))
+      · intro argvals v7 env prog v6 ns live v9 s' v8 st v11 exn v n v2 h v4 v5
+          live_out _ _ _ _ _ _ hcut hv9 heval _ _ _ _ _ _
+        subst hv9
+        have h1 := cutRes_none_clock hcut
+        have h2 := evaluate_clock prog _ v8 st heval
+        exact ih h _ (lexLtClock (by simp only [setVar] at h2 ⊢; omega))
+      · intro argvals v7 env prog v6 ns live v9 s' _ _ _ _ _ _ hcut hv9
+        subst hv9
+        have h1 := cutRes_none_clock hcut
+        exact ih prog _ (lexLtClock h1)
+      · intro argvals v7 env prog _ _ _ _ _ hclock
+        exact ih prog _ (lexLtClock (by simp only [decClock]; omega))
+  | ffi ffi_index ptr1 len1 ptr2 len2 cutset => exact hffi ffi_index ptr1 len1 ptr2 len2 cutset s
 
 end LoopSemStateFiniteExact
 end Flapjack

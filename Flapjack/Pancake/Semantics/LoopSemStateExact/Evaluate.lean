@@ -336,42 +336,33 @@ theorem cutRes_clock_le {width : Nat} [NeZero width] {F : Type} (live : NumSet)
 theorem evaluate_clock_snd {width : Nat} [NeZero width] {F : Type}
     (p : HolLoopProg width) (s : LoopSemStateFiniteExact width F) :
     (evaluate p s).2.clock ≤ s.clock := by
-  have key : ∀ (x : Nat × Nat) (p : HolLoopProg width) (s : LoopSemStateFiniteExact width F),
-      (s.clock, sizeOf p) = x → (evaluate p s).2.clock ≤ s.clock := by
-    intro x
-    induction x using (Prod.lex Nat.lt_wfRel Nat.lt_wfRel).wf.induction with
-    | h x ih0 =>
-      intro p s hx
-      have ih : ∀ (p' : HolLoopProg width) (s' : LoopSemStateFiniteExact width F),
-          Prod.Lex (· < ·) (· < ·) (s'.clock, sizeOf p') (s.clock, sizeOf p) →
-            (evaluate p' s').2.clock ≤ s'.clock :=
-        fun p' s' hlt => ih0 _ (hx ▸ hlt) p' s' rfl
-      clear ih0 hx
-      have ihEq : ∀ (p' : HolLoopProg width) (s' : LoopSemStateFiniteExact width F) r t,
-          evaluate p' s' = (r, t) →
-          Prod.Lex (· < ·) (· < ·) (s'.clock, sizeOf p') (s.clock, sizeOf p) →
-            t.clock ≤ s'.clock := by
-        intro p' s' r t he hl; have := ih p' s' hl; rw [he] at this; exact this
-      cases p <;> rw [evaluate]
-      all_goals (repeat' split)
-      all_goals (try simp only [setVar, setVars, setGlobals, callEnv, decClock, shMemOp_clock])
-      all_goals (try (exact Nat.le_refl _))
-      all_goals (try refine Nat.le_trans (cutRes_clock_le _ _) ?_)
-      all_goals (try dsimp only)
-      all_goals (try have h_ms := memStore_clock ‹_›)
-      all_goals (try have h_la := loopArith_clock ‹_›)
-      all_goals (try have h_fc := fixClock_eq_clock_le ‹_›)
-      all_goals (try have h_cr := cutRes_none_clock ‹_›)
-      all_goals (try have h_cs := cutState_clock ‹_›)
-      all_goals (try have h_ev := ihEq _ _ _ _ ‹evaluate _ _ = (_, _)› ?_)
-      all_goals (try refine Nat.le_trans (ih _ _ ?_) ?_)
-      all_goals (try simp only [decClock] at *)
-      all_goals first
-        | omega
-        | exact lexLt (by omega) (by simp +arith)
-        | exact lexLtClock (by omega)
-        | (refine Nat.le_trans (fixClock_clock_le _ _) ?_; dsimp only; omega)
-  exact key _ p s rfl
+  refine clockSizeLexInduction (α := HolLoopProg width) (·.clock) (motive := fun p s =>
+    (evaluate p s).2.clock ≤ s.clock) ?_ p s
+  intro p s ih
+  have ihEq : ∀ (p' : HolLoopProg width) (s' : LoopSemStateFiniteExact width F) r t,
+      evaluate p' s' = (r, t) →
+      Prod.Lex (· < ·) (· < ·) (s'.clock, sizeOf p') (s.clock, sizeOf p) →
+        t.clock ≤ s'.clock := by
+    intro p' s' r t he hl; have := ih p' s' hl; rw [he] at this; exact this
+  cases p <;> rw [evaluate]
+  all_goals (repeat' split)
+  all_goals (try simp only [setVar, setVars, setGlobals, callEnv, decClock, shMemOp_clock])
+  all_goals (try (exact Nat.le_refl _))
+  all_goals (try refine Nat.le_trans (cutRes_clock_le _ _) ?_)
+  all_goals (try dsimp only)
+  all_goals (try have h_ms := memStore_clock ‹_›)
+  all_goals (try have h_la := loopArith_clock ‹_›)
+  all_goals (try have h_fc := fixClock_eq_clock_le ‹_›)
+  all_goals (try have h_cr := cutRes_none_clock ‹_›)
+  all_goals (try have h_cs := cutState_clock ‹_›)
+  all_goals (try have h_ev := ihEq _ _ _ _ ‹evaluate _ _ = (_, _)› ?_)
+  all_goals (try refine Nat.le_trans (ih _ _ ?_) ?_)
+  all_goals (try simp only [decClock] at *)
+  all_goals first
+    | omega
+    | exact lexLt (by omega) (by simp +arith)
+    | exact lexLtClock (by omega)
+    | (refine Nat.le_trans (fixClock_clock_le _ _) ?_; dsimp only; omega)
 
 /-- Exact HOL `evaluate_clock` (`loopSemScript.sml:458-486`):
     `!xs s1 vs s2. (evaluate (xs,s1) = (vs,s2)) ==> s2.clock <= s1.clock`. -/
