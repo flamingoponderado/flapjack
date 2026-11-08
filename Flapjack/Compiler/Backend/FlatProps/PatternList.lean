@@ -61,4 +61,30 @@ theorem pmatchListAppend {C F : Type} (ps : List FlatLang.Pat) (vs : List Value)
             cases b : FlatSem.pmatchList state ps' vs' env <;>
             simp_all [FlatSem.pmatchList]
 
+/-- Appending one pattern and value preserves the preceding match outcome. -/
+@[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "pmatch_list_snoc"]
+theorem pmatchListSnoc {C F : Type} (ps : List FlatLang.Pat) (vs : List Value) (p : FlatLang.Pat) (v : Value)
+    (state : FlatSem.State C F) (env : List (VarN × Value)) (lengths : ps.length = vs.length) :
+    FlatSem.pmatchList state (ps ++ [p]) (vs ++ [v]) env =
+      match FlatSem.pmatchList state ps vs env with
+      | .match env' => FlatSem.pmatch state p v env'
+      | .typeError => .typeError
+      | .noMatch => match FlatSem.pmatch state p v env with
+        | .typeError => .typeError
+        | _ => .noMatch := by
+  rw [pmatchListAppend ps vs [p] [v] state env lengths]
+  cases FlatSem.pmatchList state ps vs env <;>
+    simp only [FlatSem.pmatchList]
+  all_goals cases FlatSem.pmatch state p v _ <;> simp
+
+/-- Mapping a match changes its payload and leaves either failure unchanged. -/
+@[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "map_match_eq_case"]
+theorem mapMatchEqCase {α : Type} (f : α → α)
+    (value : Flapjack.SemanticPrimitivesHOL.MatchResult α) :
+    Flapjack.SemanticPrimitivesProps.mapMatch f value =
+      match value with
+      | .match result => .match (f result)
+      | other => other := by
+  cases value <;> rfl
+
 end Flapjack.Compiler.Backend.FlatProps

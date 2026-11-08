@@ -130467,5 +130467,21 @@
   "lean_name": "pmatchListAppend",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared pmatch_list_append_typed in flat_do_app_preservation_probe.out: lists, state and bindings retain source order; the length premise and all match, non-match and type-error cases preserve the original environments and outcomes."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "pmatch_list_snoc",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/PatternList.lean",
+  "lean_name": "pmatchListSnoc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared pmatch_list_snoc_typed in flat_do_app_preservation_probe.out: the independent inputs retain their HOL order, SNOC is append of a singleton, and the equal-length premise and complete three-way match result use the original bindings."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "map_match_eq_case",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/PatternList.lean",
+  "lean_name": "mapMatchEqCase",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared map_match_eq_case_typed in flat_do_app_preservation_probe.out: the same arbitrary endofunction and match-result carrier are retained, and both error alternatives return the original result."
 }
 ]

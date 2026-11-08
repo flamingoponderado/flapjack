@@ -18,3 +18,5 @@ val _ = show_thm "pmatch_any_match_error_typed=" flatPropsTheory.pmatch_any_matc
 val _ = show_thm "pmatch_list_pairwise_typed=" flatPropsTheory.pmatch_list_pairwise;
 val _ = show_thm "pmatch_list_snoc_nil_typed=" flatPropsTheory.pmatch_list_snoc_nil;
 val _ = show_thm "pmatch_list_append_typed=" flatPropsTheory.pmatch_list_append;
+val _ = show_thm "pmatch_list_snoc_typed=" flatPropsTheory.pmatch_list_snoc;
+val _ = show_thm "map_match_eq_case_typed=" flatPropsTheory.map_match_eq_case;
