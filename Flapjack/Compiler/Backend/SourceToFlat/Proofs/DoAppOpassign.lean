@@ -1,7 +1,7 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.DoAppConfigGC
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.MemoryOps
 
-/-! Assignment and reference allocation cases of the primitive simulation. -/
+/-! Assignment, allocation, and dereference cases of the primitive simulation. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
 
@@ -104,5 +104,47 @@ theorem doApp_Opref {C F : Type} (genv : GlobalEnv)
             refine ⟨.val (.loc true flatAddress), { flat with refs := flatRefs }, afterStores,
               afterNonempty, afterFfi, rfl, reserved.symm, .value related, ?_⟩
             simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, flatApply]
+
+/-- The Opderef case of `do_app`; the full theorem is not yet assembled. The
+dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
+  (fmap_as_finite_support := [c, tys])]
+theorem doApp_Opderef {C F : Type} (genv : GlobalEnv)
+    (s1 s2 : Store Value × HolFfiState F) (vs : List Value)
+    (r : Result Value Value) (flat : FlatSem.State C F) (flatVs : List FlatSem.Value)
+    (premises : doApp s1 .opderef vs = some (s2, r) ∧
+      List.Forall₂ (StoreValueRel genv) s1.1 flat.refs.tail ∧ flat.refs ≠ [] ∧
+      List.Forall₂ (ValueRel genv) vs flatVs ∧ s1.2 = flat.ffi ∧ genvCOk genv.c ∧
+      Op.opderef ≠ .aallocEmpty ∧ Op.opderef ≠ .envId) :
+    ∃ flatResult flatState,
+      List.Forall₂ (StoreValueRel genv) s2.1 flatState.refs.tail ∧ flatState.refs ≠ [] ∧
+      s2.2 = flatState.ffi ∧ flat.globals = flatState.globals ∧
+      flat.refs.take 1 = flatState.refs.take 1 ∧ ResultRel ValueRel genv r flatResult ∧
+      FlatSem.doApp flat (astOpToFlatOp .opderef) flatVs = some (flatState, flatResult) := by
+  obtain ⟨run, stores, nonempty, values, ffi, _, _, _⟩ := premises
+  cases vs with
+  | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
+  | cons first rest =>
+    cases rest with
+    | cons second rest => simp [doApp, doAppNumericCore, doAppBasic] at run
+    | nil =>
+      cases first <;> simp [doApp, doAppNumericCore, doAppBasic] at run
+      case loc flag address =>
+        cases lookup : storeLookup address s1.1 with
+        | none => simp [lookup] at run
+        | some stored =>
+          cases stored <;> simp [lookup] at run
+          case refv value =>
+            obtain ⟨rfl, rfl⟩ := run
+            cases values with
+            | cons locationRel tail =>
+              cases tail
+              cases locationRel
+              let source : SemanticPrimitivesHOL.State F := ⟨flat.clock, s1.1, s1.2, 0, 0, none⟩
+              have states : StateRel genv source flat := .intro source flat nonempty stores rfl ffi
+              obtain ⟨flatValue, flatLookup, related⟩ :=
+                stateRel_ref_lookup genv source flat states address value lookup
+              refine ⟨.val flatValue, flat, stores, nonempty, ffi, rfl, rfl, .value related, ?_⟩
+              simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppFlat, flatLookup]
 
 end Flapjack.Compiler.Backend.SourceToFlat
