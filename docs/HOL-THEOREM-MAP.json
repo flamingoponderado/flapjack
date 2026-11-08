@@ -129409,7 +129409,7 @@
   "lean_path": "Flapjack/Compiler/Backend/FlatProps/SimpleRelations.lean",
   "lean_name": "simpleStateRel",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared the HOL definition and typed simple_state_relation_def capture: the compiler-state types remain independent with a shared FFI type, and all six original store, globals, FFI and update conjuncts are retained; conjunction premises are curried."
+  "reviewer": "Compared the HOL definition and typed simple_state_relation_def capture: the compiler-state types remain independent with a shared FFI type, and all six original store, globals, FFI and update conjuncts are retained, including grouped update premises."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
@@ -129457,7 +129457,7 @@
   "lean_path": "Flapjack/Compiler/Backend/FlatProps/SimpleEquality.lean",
   "lean_name": "simpleDoEq_ind",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared the HOL source and typed simple_equality_induction capture: both value and list conjuncts retain the simple-relation, successful-result and pairwise relation premises, the same Boolean result, and the original quantification; conjunction premises are curried."
+  "reviewer": "Compared the HOL source and typed simple_equality_induction capture: both value and list conjuncts retain the simple-relation, successful-result and pairwise relation premises, the same Boolean result, and the original quantification and grouped premises."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
@@ -129465,7 +129465,7 @@
   "lean_path": "Flapjack/Compiler/Backend/FlatProps/SimpleEquality.lean",
   "lean_name": "simpleDoEq",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared the original generated first-conjunct theorem and typed simple_equality capture: all four values, Boolean result and original simple-relation and equality premises are retained; conjunction premises are curried."
+  "reviewer": "Compared the original generated first-conjunct theorem and typed simple_equality capture: all four values, Boolean result and original simple-relation and equality premises are retained in the original grouped implication."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
@@ -130024,7 +130024,7 @@
   "lean_name": "doApp_simulation",
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared do_app_simulation in flat_pattern_install_relation_probe.out: independent compiler and FFI state types, original input arguments and two curried premises, result relation, final state relation and target execution match the typed HOL statement. The theorem inherits reals_as_rational_cuts through flat primitive evaluation."
+  "reviewer": "Compared do_app_simulation in flat_pattern_install_relation_probe.out: independent compiler and FFI state types, original input arguments with free operation and configuration before quantified variables, two curried premises, result relation, final state relation and target execution match the typed HOL statement. The theorem inherits reals_as_rational_cuts through flat primitive evaluation."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
@@ -130443,5 +130443,13 @@
   "lean_name": "pmatchAnyError",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared pmatch_any_match_error_typed in flat_do_app_preservation_probe.out: the single-pattern and pattern-list type-error premises imply type-error for every replacement environment, with the original shared state types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "pmatch_list_pairwise",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/PatternOutcome.lean",
+  "lean_name": "pmatchListPairwise",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared pmatch_list_pairwise_typed in flat_do_app_preservation_probe.out: the pattern and value lists, state and environments have the source order; LIST_REL is List.Forall₂ and each pair matches successfully for every incoming environment."
 }
 ]

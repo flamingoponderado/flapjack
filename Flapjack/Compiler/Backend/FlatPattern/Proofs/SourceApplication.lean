@@ -222,9 +222,10 @@ theorem doApp_source_related {C F : Type} (cfg : Config) (op : Op)
     | forceThunk => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at run
 
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "do_app_thm"]
-theorem doApp_simulation {C F : Type} (source : FlatSem.State C F) (values : List FlatSem.Value)
+theorem doApp_simulation {C F : Type} (op : FlatLang.Op) (cfg : Config)
+    (source : FlatSem.State C F) (values : List FlatSem.Value)
     (sourceFinal : FlatSem.State C F) (result : Result FlatSem.Value FlatSem.Value)
-    (target : FlatSem.State C F) (values' : List FlatSem.Value) (op : FlatLang.Op) (cfg : Config)
+    (target : FlatSem.State C F) (values' : List FlatSem.Value)
     (run : FlatSem.doApp source op values = some (sourceFinal, result))
     (premises : StateRel cfg source target ∧ List.Forall₂ ValueRel values values') :
     ∃ targetFinal result', SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' ∧

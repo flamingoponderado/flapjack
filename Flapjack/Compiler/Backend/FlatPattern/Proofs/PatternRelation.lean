@@ -306,15 +306,15 @@ theorem simpleStateRel_stateRel {C F : Type} (cfg : Config) :
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro source target related
     exact related.2.1
-  · intro source target sourceRefs targetRefs related refs
+  · rintro source target sourceRefs targetRefs ⟨related, refs⟩
     exact ⟨related.1, refs, related.2.2.1, related.2.2.2.1, related.2.2.2.2⟩
   · intro source target related
     exact related.2.2.2.1
-  · intro source target sourceGlobals targetGlobals related globals
+  · rintro source target sourceGlobals targetGlobals ⟨related, globals⟩
     exact ⟨related.1, related.2.1, related.2.2.1, globals, related.2.2.2.2⟩
   · intro source target related
     exact related.2.2.1.symm
-  · intro source target sourceFfi targetFfi related ffi
+  · rintro source target sourceFfi targetFfi ⟨related, ffi⟩
     exact ⟨related.1, related.2.1, ffi.symm, related.2.2.2.1, related.2.2.2.2⟩
 
 end Flapjack.Compiler.Backend.FlatPattern

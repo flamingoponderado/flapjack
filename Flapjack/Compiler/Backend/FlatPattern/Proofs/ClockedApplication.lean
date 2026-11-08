@@ -64,7 +64,7 @@ theorem compile_simpleApp_simulation_upTo {C F : Type} (cfg stateCfg : Config) (
       | some outcome =>
         obtain ⟨sourceAfter, result⟩ := outcome
         obtain ⟨targetAfter, result', relation, afterStates, targetPrimitive⟩ := doApp_simulation
-          sourceFixed sourceValues.reverse sourceAfter result targetFixed targetValues.reverse op stateCfg
+          op stateCfg sourceFixed sourceValues.reverse sourceAfter result targetFixed targetValues.reverse
           primitive ⟨fixedStates, List.forall₂_reverse_iff.mpr valuesRel⟩
         cases result with
         | val value =>

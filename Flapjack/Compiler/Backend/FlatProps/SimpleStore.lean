@@ -19,7 +19,7 @@ theorem simpleStateRel_storeAssign {C D F : Type} (valueRel : FlatSem.Value → 
       stateRel { source with refs := sourceRefs } { target with refs := targetRefs } := by
   obtain ⟨simple, assigned, states, values⟩ := premises
   obtain ⟨targetRefs, assigned', refs⟩ := storeAssign_related (simple.1 source target states) index values assigned
-  exact ⟨targetRefs, assigned', simple.2.1 source target sourceRefs targetRefs states refs⟩
+  exact ⟨targetRefs, assigned', simple.2.1 source target sourceRefs targetRefs ⟨states, refs⟩⟩
 
 /-- Allocation preserves a simple state relation and the allocated index. -/
 @[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "simple_state_rel_store_alloc"]
@@ -39,7 +39,7 @@ theorem simpleStateRel_storeAlloc {C D F : Type} (valueRel : FlatSem.Value → F
   have refs := simple.1 source target states
   refine ⟨target.refs ++ [y], ?_, ?_⟩
   · simp [storeAlloc, ← List.Forall₂.length_eq refs]
-  · exact simple.2.1 source target _ _ states (List.rel_append refs (.cons values .nil))
+  · exact simple.2.1 source target _ _ ⟨states, List.rel_append refs (.cons values .nil)⟩
 
 /-- Store lookup in related states yields related entries at the same index. -/
 @[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "simple_state_rel_store_lookup"]

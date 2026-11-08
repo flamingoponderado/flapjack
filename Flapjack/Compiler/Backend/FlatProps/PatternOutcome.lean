@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.FlatProps.PatternAppend
+import Batteries.Data.List.Basic
 /-! Pattern-match outcome independence from incoming bindings. -/
 namespace Flapjack.Compiler.Backend.FlatProps
 open Flapjack.AstHOL Flapjack.Compiler.Backend.FlatSem
@@ -84,4 +85,29 @@ theorem pmatchAnyError {C F : Type} :
     exact (pmatchChange state).1 pattern value env other |>.2.1 run
   · intro state patterns values env run other
     exact (pmatchChange state).2 patterns values env other |>.2.1 run
+/-- Successful list matching entails successful matching of each pair, for any incoming bindings. -/
+@[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "pmatch_list_pairwise"]
+theorem pmatchListPairwise {C F : Type} (patterns : List FlatLang.Pat) (values : List Value)
+    (state : FlatSem.State C F) (env result : List (VarN × Value))
+    (matched : FlatSem.pmatchList state patterns values env = .match result) :
+    List.Forall₂ (fun p v => ∀ env, ∃ result, FlatSem.pmatch state p v env = .match result) patterns values := by
+  induction patterns generalizing values env result with
+  | nil =>
+    cases values with
+    | nil => exact .nil
+    | cons v vs => simp [FlatSem.pmatchList] at matched
+  | cons p ps ih =>
+    cases values with
+    | nil => simp [FlatSem.pmatchList] at matched
+    | cons v vs =>
+      cases head : FlatSem.pmatch state p v env with
+      | typeError => simp [FlatSem.pmatchList, head] at matched
+      | noMatch =>
+        simp only [FlatSem.pmatchList, head] at matched
+        cases tail : FlatSem.pmatchList state ps vs env <;> simp_all
+      | «match» next =>
+        have tail : FlatSem.pmatchList state ps vs next = .match result := by
+          simpa [FlatSem.pmatchList, head] using matched
+        exact .cons (fun other => (pmatchAnyMatch (C := C) (F := F)).1 state p v env next head other) (ih vs next result tail)
+
 end Flapjack.Compiler.Backend.FlatProps
