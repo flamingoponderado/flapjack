@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.BvlInline.Proofs.LetOpCases
 import Flapjack.Compiler.Backend.BvlHandle.Proofs.SequenceCorrect
 import Flapjack.Compiler.Backend.BvlHandle.Proofs.GeneratedShape
+import Flapjack.Misc.ClockWeightInduction
 
 /-! Call and force cases for the combined let-operation and handler pass. -/
 namespace Flapjack.Compiler.Backend.BvlInline.Proofs
@@ -177,98 +178,91 @@ review against HOL. -/
 theorem letOpSimulation_all {C F : Type} (splitSeq : Bool) (limit : Nat)
     (expressions : List Bvl.Exp) (env : List Value) (source : State C F) :
     letOpSimulation splitSeq limit expressions env source := by
-  have allRanks : ∀ clock weight : Nat, ∀ (es : List Bvl.Exp) (environment : List Value) (s : State C F),
-      s.clock = clock → expsWeight es = weight → letOpSimulation splitSeq limit es environment s := by
-    intro clock
-    induction clock using Nat.strongRecOn with
-    | ind clock clockIH =>
-      intro weight
-      induction weight using Nat.strongRecOn with
-      | ind weight weightIH =>
-        have exprIH : ∀ (es : List Bvl.Exp) (environment : List Value) (s : State C F),
-            s.clock ≤ clock → expsWeight es < weight → letOpSimulation splitSeq limit es environment s := by
-          intro es environment s clockLe weightLt
-          rcases Nat.lt_or_eq_of_le clockLe with clockLt | clockEq
-          · exact clockIH s.clock clockLt (expsWeight es) es environment s rfl rfl
-          · exact weightIH (expsWeight es) weightLt es environment s clockEq rfl
-        intro es environment s stateClock measure
-        cases es with
-        | nil => exact letOpSimulation_nil splitSeq limit environment s
-        | cons first rest =>
-          cases rest with
-          | cons second tail =>
-            apply letOpSimulation_cons splitSeq limit first second tail environment s ?_ ?_
-            · apply exprIH [first] environment s (by omega) ?_
-              simp only [expsWeight] at measure ⊢
-              have := expWeight_pos second
-              omega
-            · intro next bound
-              apply exprIH (second :: tail) environment next (by omega) ?_
-              simp only [expsWeight] at measure ⊢
-              have := expWeight_pos first
-              omega
-          | nil =>
-            cases first with
-            | var index => exact letOpSimulation_var splitSeq limit index environment s
-            | force location index =>
-              apply letOpSimulation_force splitSeq limit location index environment s
-              intro body values next smaller
-              exact clockIH next.clock (by omega) (expsWeight [body]) [body] values next rfl rfl
-            | tick body =>
-              apply letOpSimulation_tick splitSeq limit body environment s
-              intro next smaller
-              exact clockIH next.clock (by omega) (expsWeight [body]) [body] environment next rfl rfl
-            | raise body =>
-              apply letOpSimulation_raise splitSeq limit body environment s
-              apply exprIH [body] environment s (by omega) ?_
-              simp only [expsWeight, expWeight] at measure ⊢
-              omega
-            | op op args =>
-              apply letOpSimulation_op splitSeq limit op args environment s
-              apply exprIH args environment s (by omega) ?_
-              simp only [expsWeight, expWeight] at measure ⊢
-              omega
-            | call ticks dest args =>
-              apply letOpSimulation_call splitSeq limit ticks dest args environment s ?_ ?_
-              · apply exprIH args environment s (by omega) ?_
-                simp only [expsWeight, expWeight] at measure ⊢
-                omega
-              · intro body values next smaller
-                exact clockIH next.clock (by omega) (expsWeight [body]) [body] values next rfl rfl
-            | «let» bindings body =>
-              apply letOpSimulation_let splitSeq limit bindings body environment s ?_ ?_
-              · apply exprIH bindings environment s (by omega) ?_
-                simp only [expsWeight, expWeight] at measure ⊢
-                omega
-              · intro bodyEnv next bound
-                apply exprIH [body] bodyEnv next (by omega) ?_
-                simp only [expsWeight, expWeight] at measure ⊢
-                omega
-            | handle body handler =>
-              apply letOpSimulation_handle splitSeq limit body handler environment s ?_ ?_
-              · apply exprIH [body] environment s (by omega) ?_
-                simp only [expsWeight, expWeight] at measure ⊢
-                omega
-              · intro handlerEnv next bound
-                apply exprIH [handler] handlerEnv next (by omega) ?_
-                simp only [expsWeight, expWeight] at measure ⊢
-                omega
-            | ifThenElse condition yes no =>
-              apply letOpSimulation_if splitSeq limit condition yes no environment s ?_ ?_
-              · apply exprIH [condition] environment s (by omega) ?_
-                simp only [expsWeight, expWeight] at measure ⊢
-                omega
-              · intro choice next bound
-                cases choice with
-                | false =>
-                  apply exprIH [no] environment next (by omega) ?_
-                  simp only [expsWeight, expWeight] at measure ⊢
-                  omega
-                | true =>
-                  apply exprIH [yes] environment next (by omega) ?_
-                  simp only [expsWeight, expWeight] at measure ⊢
-                  omega
-  exact allRanks source.clock (expsWeight expressions) expressions env source rfl rfl
+  refine clockWeightInduction (α := List Bvl.Exp) (σ := State C F) (·.clock) expsWeight
+    (motive := fun es s => ∀ environment, letOpSimulation splitSeq limit es environment s) ?_
+    expressions source env
+  intro es s exprIH₀ smaller₀
+  have exprIH := fun (es' : List Bvl.Exp) (environment' : List Value) (s' : State C F)
+      h1 h2 => exprIH₀ es' s' h1 h2 environment'
+  have smaller := fun (es' : List Bvl.Exp) (environment' : List Value) (s' : State C F)
+      h => smaller₀ es' s' h environment'
+  intro environment
+  cases es with
+  | nil => exact letOpSimulation_nil splitSeq limit environment s
+  | cons first rest =>
+    cases rest with
+    | cons second tail =>
+      apply letOpSimulation_cons splitSeq limit first second tail environment s ?_ ?_
+      · apply exprIH [first] environment s (by omega) ?_
+        simp only [expsWeight] at ⊢
+        have := expWeight_pos second
+        omega
+      · intro next bound
+        apply exprIH (second :: tail) environment next (by omega) ?_
+        simp only [expsWeight] at ⊢
+        have := expWeight_pos first
+        omega
+    | nil =>
+      cases first with
+      | var index => exact letOpSimulation_var splitSeq limit index environment s
+      | force location index =>
+        apply letOpSimulation_force splitSeq limit location index environment s
+        intro body values next smaller
+        exact smaller₀ [body] next (by omega) values
+      | tick body =>
+        apply letOpSimulation_tick splitSeq limit body environment s
+        intro next smaller
+        exact smaller₀ [body] next (by omega) environment
+      | raise body =>
+        apply letOpSimulation_raise splitSeq limit body environment s
+        apply exprIH [body] environment s (by omega) ?_
+        simp only [expsWeight, expWeight] at ⊢
+        omega
+      | op op args =>
+        apply letOpSimulation_op splitSeq limit op args environment s
+        apply exprIH args environment s (by omega) ?_
+        simp only [expsWeight, expWeight] at ⊢
+        omega
+      | call ticks dest args =>
+        apply letOpSimulation_call splitSeq limit ticks dest args environment s ?_ ?_
+        · apply exprIH args environment s (by omega) ?_
+          simp only [expsWeight, expWeight] at ⊢
+          omega
+        · intro body values next smaller
+          exact smaller₀ [body] next (by omega) values
+      | «let» bindings body =>
+        apply letOpSimulation_let splitSeq limit bindings body environment s ?_ ?_
+        · apply exprIH bindings environment s (by omega) ?_
+          simp only [expsWeight, expWeight] at ⊢
+          omega
+        · intro bodyEnv next bound
+          apply exprIH [body] bodyEnv next (by omega) ?_
+          simp only [expsWeight, expWeight] at ⊢
+          omega
+      | handle body handler =>
+        apply letOpSimulation_handle splitSeq limit body handler environment s ?_ ?_
+        · apply exprIH [body] environment s (by omega) ?_
+          simp only [expsWeight, expWeight] at ⊢
+          omega
+        · intro handlerEnv next bound
+          apply exprIH [handler] handlerEnv next (by omega) ?_
+          simp only [expsWeight, expWeight] at ⊢
+          omega
+      | ifThenElse condition yes no =>
+        apply letOpSimulation_if splitSeq limit condition yes no environment s ?_ ?_
+        · apply exprIH [condition] environment s (by omega) ?_
+          simp only [expsWeight, expWeight] at ⊢
+          omega
+        · intro choice next bound
+          cases choice with
+          | false =>
+            apply exprIH [no] environment next (by omega) ?_
+            simp only [expsWeight, expWeight] at ⊢
+            omega
+          | true =>
+            apply exprIH [yes] environment next (by omega) ?_
+            simp only [expsWeight, expWeight] at ⊢
+            omega
 
 /-- The combined transformation preserves a non-type-error singleton run
 between mapped states, including calls and dynamic code installation. -/
