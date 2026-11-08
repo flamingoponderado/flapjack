@@ -11,6 +11,11 @@ import Flapjack.Test.FullDefaultFrontendWordOracle
 import Flapjack.Test.BvlInlineCakeBviOracle
 import Flapjack.Test.BvlHandleCakeBviOracle
 import Flapjack.Test.BvlOptimizedCakeBviOracle
+import Flapjack.Compiler.Backend.BvlInline.Program
+import Flapjack.Compiler.Backend.BvlInline.LetOp
+import Flapjack.Compiler.Backend.BvlInline.RemoveTicks
+import Flapjack.Compiler.Backend.BvlHandle.Compile
+import Flapjack.Compiler.Backend.BvlHandle.Simplify
 
 /-! Original examples for checked multi-argument introduction. -/
 namespace Flapjack.Test.ClosMtiParity
@@ -41,22 +46,35 @@ open Flapjack.Compiler.Backend Flapjack.Basis.Pure.MlString
 private def mtiConfig : ClosToBvl.Config :=
   { ClosToBvl.defaultConfig with doMti := true, doCall := false, knownConf := none, maxApp := 2 }
 
+-- Replay the original HOL stage probes directly, without adding partial
+-- compiler entry points to the production pipeline.
+private def bvlStage (withHandle : Bool) (decls : List AstHOL.Dec) :
+    Option (List (Nat × Nat × Bvi.Exp)) := do
+  let (_, exps) ← SourceToFlat.compileCakeToClosFuel 100 SourceToFlat.emptyConfig decls
+  let (closure, bvl, _) ← ClosToBvl.compileMtiOnlyFuel? 100 mtiConfig exps
+  let bvl := (BvlInline.tickCompileProg 8 .ln bvl).2.map fun (n, a, e) =>
+    (n, a, BvlInline.letOpSing (BvlInline.removeTicksSing e))
+  let bvl := if withHandle then bvl.map (fun (n, a, e) =>
+    (n, a, (BvlHandle.compileSing 100 a (BvlHandle.handleSimp e)).1)) else bvl
+  let (_, code, _) ← BvlToBvi.compileProgFuel 100 100 closure.start 0 bvl
+  pure code
+
 #guard match SourceToFlat.compileCakeToBviMtiFuel 100 SourceToFlat.emptyConfig mtiConfig
     [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "f"))
       (.fn (ofString "x") (.fn (ofString "y") (.var (.short (ofString "x")))))] with
   | some (_, _, _, code, _, _) => Flapjack.Test.MtiCakeBviOracle.matchesCaptured code
   | none => false
 
-#guard match SourceToFlat.compileCakeToBviBvlInlineFuel 100 8 SourceToFlat.emptyConfig mtiConfig
+#guard match bvlStage false
     [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "f"))
       (.fn (ofString "x") (.fn (ofString "y") (.var (.short (ofString "x")))))] with
-  | some (_, _, _, code, _, _) => Flapjack.Test.BvlInlineCakeBviOracle.matchesCaptured code
+  | some code => Flapjack.Test.BvlInlineCakeBviOracle.matchesCaptured code
   | none => false
 
-#guard match SourceToFlat.compileCakeToBviBvlHandleFuel 100 8 100 false SourceToFlat.emptyConfig mtiConfig
+#guard match bvlStage true
     [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "f"))
       (.fn (ofString "x") (.fn (ofString "y") (.var (.short (ofString "x")))))] with
-  | some (_, _, _, code, _, _) => Flapjack.Test.BvlHandleCakeBviOracle.matchesCaptured code
+  | some code => Flapjack.Test.BvlHandleCakeBviOracle.matchesCaptured code
   | none => false
 
 #guard match SourceToFlat.compileCakeToBviBvlOptimizedFuel 100 8 100 false SourceToFlat.emptyConfig mtiConfig
@@ -75,12 +93,6 @@ private def mtiConfig : ClosToBvl.Config :=
          (72, some false), (73, some false), (76, some false), (77, some false),
          (80, some false), (84, some false), (88, some false), (92, some false),
          (96, some false), (100, some false)]
-  | none => false
-
-#guard match SourceToFlat.compileCakeToBviTailrecCheckedFuel 100 8 100 false SourceToFlat.emptyConfig mtiConfig
-    [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "f"))
-      (.fn (ofString "x") (.fn (ofString "y") (.var (.short (ofString "x")))))] with
-  | some (_, _, _, _, _, _) => true
   | none => false
 
 private def wordConfig : DataToWord.Config :=

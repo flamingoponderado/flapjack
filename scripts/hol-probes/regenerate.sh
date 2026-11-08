@@ -701,7 +701,7 @@ run_probe bvl_inline_frontend_probeScript.sml bvl_inline_frontend_probe.out \
   inline size letop "$cake_dir/compiler/backend/bvl_inlineScript.sml" "$cake_dir/compiler/backend"
 
 run_probe bvl_handle_frontend_probeScript.sml bvl_handle_frontend_probe.out \
-  simplify compiled cut seq can_raise dest_handle_Raise dest_handle_Let dest_handle_If handle_adj_vars handle_size handle_simp handle_size_non_zero_replay "$cake_dir/compiler/backend/bvl_handleScript.sml" "$cake_dir/compiler/backend"
+  compile_def_typed compile_sing_eq_typed compile_exp_def_typed compile_exp_eq_typed compile_seqs_def_typed compile_any_def_typed simplify compiled cut seq can_raise dest_handle_Raise dest_handle_Let dest_handle_If handle_adj_vars handle_size handle_simp handle_size_non_zero_replay "$cake_dir/compiler/backend/bvl_handleScript.sml" "$cake_dir/compiler/backend"
 
 run_probe bvl_const_frontend_probeScript.sml bvl_const_frontend_probe.out \
   compile_def_typed compile_eq_typed compile_exp_def_typed compile_exp_eq_typed divs ops compile algebra dest_simple case_op_const SmartOp_flip SmartOp2 SmartOp1 SmartOp extract extract_list delete_var compile_sing compile_eq compile_exp compile_exp_eq "$cake_dir/compiler/backend/bvl_constScript.sml" "$cake_dir/compiler/backend"

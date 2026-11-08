@@ -16945,6 +16945,42 @@
     "reviewer": "Compared every original premise and conclusion and independently typed state, config, input, output carriers in backend_oracle_monotonic_probe.out. The proof maintains the invariant and nondecreasing counter, then orders earlier and later identifier sets."
   },
   {
+    "hol_path": "cakeml/compiler/backend/bvl_handleScript.sml", "hol_name": "compile_def",
+    "lean_path": "Flapjack/Compiler/Backend/BvlHandle/SourceCompile.lean", "lean_name": "compile",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared compile_def_typed and compile_sing_eq_typed in bvl_handle_frontend_probe.out. HOL identifies compile with the reviewed compileList; compile_list_equations checks the list clauses and compileSing_eq connects singleton clauses."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_handleScript.sml", "hol_name": "compile_sing_eq",
+    "lean_path": "Flapjack/Compiler/Backend/BvlHandle/SourceCompile.lean", "lean_name": "compileSing_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared both quantified conjuncts and four result components with compile_sing_eq_typed in bvl_handle_frontend_probe.out."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_handleScript.sml", "hol_name": "compile_exp_def",
+    "lean_path": "Flapjack/Compiler/Backend/BvlHandle/SourceCompile.lean", "lean_name": "compileExp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared compile_exp_def_typed and compile_exp_eq_typed in bvl_handle_frontend_probe.out; compileExp_list_head checks that HOL's HD argument is the singleton containing the result, and the source theorem identifies it with the existing total compileExpression."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_handleScript.sml", "hol_name": "compile_exp_eq",
+    "lean_path": "Flapjack/Compiler/Backend/BvlHandle/SourceCompile.lean", "lean_name": "compileExp_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared compile_exp_eq_typed in bvl_handle_frontend_probe.out, including constant propagation, simplification, and singleton-result projection."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_handleScript.sml", "hol_name": "compile_seqs_def",
+    "lean_path": "Flapjack/Compiler/Backend/BvlHandle/SourceCompile.lean", "lean_name": "compileSeqs",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared compile_seqs_def_typed in bvl_handle_frontend_probe.out, including the sequence pattern, accumulator, and empty and nonempty accumulator cases."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_handleScript.sml", "hol_name": "compile_any_def",
+    "lean_path": "Flapjack/Compiler/Backend/BvlHandle/SourceCompile.lean", "lean_name": "compileAny",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared compile_any_def_typed in bvl_handle_frontend_probe.out, including the zero-arity/split condition and NONE accumulator. compileAnyFuel_eq_compileAny connects the executed pass."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/bvl_constScript.sml", "hol_name": "compile_def",
     "lean_path": "Flapjack/Compiler/Backend/BvlConst/SourceCompile.lean", "lean_name": "compile",
     "statement_status": "reviewed_exact",

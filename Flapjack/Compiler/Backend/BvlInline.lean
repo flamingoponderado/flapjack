@@ -193,15 +193,6 @@ def compileWithoutHandleFuel (fuel limit : Nat) (prog : List (Nat × Nat × Exp)
     pure (name, arity, ← letOpBounded fuel body)
   pure (cache, prog)
 
-/-- Continue through handler processing without its constant-folding
-prerequisite; the result is not the full original BVL optimization pass. -/
-def compileWithoutConstantsFuel (fuel inlineLimit cutSize : Nat) (splitSeq : Bool)
-    (prog : List (Nat × Nat × Exp)) : Option (Spt (Nat × Exp) × List (Nat × Nat × Exp)) := do
-  let (cache, prog) ← compileWithoutHandleFuel fuel inlineLimit prog
-  let prog ← prog.mapM fun (name, arity, body) => do
-    pure (name, arity, ← BvlHandle.compileAnyWithoutConstantsFuel fuel splitSeq cutSize arity body)
-  pure (cache, prog)
-
 /-- Execute the BVL inlining and handler pipeline with explicit fuel. -/
 def compileProgFuel (fuel inlineLimit cutSize : Nat) (splitSeq : Bool)
     (prog : List (Nat × Nat × Exp)) : Option (Spt (Nat × Exp) × List (Nat × Nat × Exp)) := do
