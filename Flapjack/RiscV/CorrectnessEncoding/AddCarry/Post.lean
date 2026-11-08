@@ -1,7 +1,8 @@
-import Flapjack.RiscV.CorrectnessEncoding.AddCarry.Native
+import Flapjack.RiscV.CorrectnessEncoding.ArithNative
 import Flapjack.RiscV.CorrectnessEncoding.AddCarry.Arithmetic
 import Flapjack.RiscV.CorrectnessEncoding.ConstRelation
 namespace Flapjack.RiscV.TargetProof.AddCarry
+open Flapjack.RiscV.TargetProof.ArithNative
 open Flapjack RiscV.L3 RiscV.L3.Step Compiler.Encoders.RiscV.Target
   Compiler.Encoders.Asm Compiler.Encoders.AsmSem Compiler.Encoders.AsmProps
 set_option autoImplicit false
@@ -12,12 +13,11 @@ def program (r1 r2 r3 r4 : BitVec 5) : List instruction :=
   [.ArithR (.SLTU (31,0,r4)), .ArithR (.ADD (r1,r2,r3)),
    .ArithR (.SLTU (r4,r1,r3)), .ArithR (.ADD (r1,r1,31)),
    .ArithR (.SLTU (31,r1,31)), .ArithR (.OR (r4,r4,31))]
-/-- AddCarry-local execution/source composition; no separately named HOL declaration. -/
-theorem step_eq (op : Op) (rd rs rt : BitVec 5) (ms : riscv_state)
-    (rn : rd ≠ 0#5) (ok : riscvOk ms = true) :
-    constStep (instructionOf op rd rs rt) ms =
-      writePost ms rd (valueOf op (GPR rs ms) (GPR rt ms)) := by
-  have run := run_eq op rd rs rt ms ok
+/-- Complete native pure step; no separately named HOL original. -/
+theorem step_eq (i : instruction) (kind : Family i) (ms : riscv_state)
+    (rn : destination i ≠ 0#5) (ok : riscvOk ms = true) :
+    constStep i ms = writePost ms (destination i) (value i ms) := by
+  have run := run_eq i kind ms ok
   simp [constStep, run, writePost, «write'GPR», «write'gpr», rn]
 /-- AddCarry-local execution/source composition; no separately named HOL declaration. -/
 theorem singleton (c : Bool) : holV2w 64 [c] = (if c then 1 else 0) := by
@@ -68,16 +68,18 @@ theorem pure_post (r1 r2 r3 r4 : BitVec 5) (ms : riscv_state)
   have add (rd rs rt : BitVec 5) (s : riscv_state)
       (nz : rd ≠ 0#5) (valid : riscvOk s = true) :
       constStep (.ArithR (.ADD (rd,rs,rt))) s =
-        writePost s rd (GPR rs s + GPR rt s) := step_eq .add rd rs rt s nz valid
+        writePost s rd (GPR rs s + GPR rt s) :=
+      step_eq (.ArithR (.ADD (rd,rs,rt))) (.add rd rs rt) s nz valid
   have sltu (rd rs rt : BitVec 5) (s : riscv_state)
       (nz : rd ≠ 0#5) (valid : riscvOk s = true) :
       constStep (.ArithR (.SLTU (rd,rs,rt))) s =
         writePost s rd (holV2w 64 [BitVec.ult (GPR rs s) (GPR rt s)]) :=
-      step_eq .sltu rd rs rt s nz valid
+      step_eq (.ArithR (.SLTU (rd,rs,rt))) (.sltu rd rs rt) s nz valid
   have bitOr (rd rs rt : BitVec 5) (s : riscv_state)
       (nz : rd ≠ 0#5) (valid : riscvOk s = true) :
       constStep (.ArithR (.OR (rd,rs,rt))) s =
-        writePost s rd (GPR rs s ||| GPR rt s) := step_eq .or rd rs rt s nz valid
+        writePost s rd (GPR rs s ||| GPR rt s) :=
+      step_eq (.ArithR (.OR (rd,rs,rt))) (.or rd rs rt) s nz valid
   simp only [program, List.foldl_cons, List.foldl_nil]
   rw [sltu 31 0 r4 ms nz31 ok]
   rw [add r1 r2 r3 _ nz1 (writePost_ok _ _ _ ok)]
